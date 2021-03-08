@@ -2,214 +2,167 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 94C803306AB
-	for <lists+io-uring@lfdr.de>; Mon,  8 Mar 2021 04:56:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 56810330877
+	for <lists+io-uring@lfdr.de>; Mon,  8 Mar 2021 07:53:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234101AbhCHDzc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 7 Mar 2021 22:55:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33360 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234099AbhCHDzZ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 7 Mar 2021 22:55:25 -0500
-Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A7D8C06175F
-        for <io-uring@vger.kernel.org>; Sun,  7 Mar 2021 19:55:17 -0800 (PST)
-Received: by mail-pg1-x52d.google.com with SMTP id h4so5576012pgf.13
-        for <io-uring@vger.kernel.org>; Sun, 07 Mar 2021 19:55:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=VvRbjq0mrkefdd7O/F3HULQqRDNy+fW1K5pYetgWW0g=;
-        b=vJFqYaN8ffoB4X+tdlcLBi+UCqaPaloeNCLLrPBEUh4JWN055kLIrN69c8zLC/UDMn
-         tqwvNoBEHnB9mzSghJMtVUr+Sr4EtAudkjaJEGqit0s5YAUNQ9uSA6wzWIPM28DF5Nn+
-         Jf/Lm+i4aHEYDwb6H5tuUyVcD6Z6NaYrWY35QeKIBy/at/RO4HQOXHE+EH5xlwD+JpeH
-         /EH6XME3SmSCWGdFxvr5UpKUsA03w2pv4se7q7/hucvRJtjPmCxgqQit0+hNt4MEBG6W
-         tJWkzcenzu5Ea7qEhtui8w2t/d9dLCWnFUtBbGxMiecIay1h7HHGNuesOzBzT/SCOyeM
-         DhMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=VvRbjq0mrkefdd7O/F3HULQqRDNy+fW1K5pYetgWW0g=;
-        b=DON4+1pdb3VcjxlHsj0iRcuxp5roZBk9/dUHMASXN4B17M/S6Frm8QIMve3UNLdvue
-         4Md1iFBkzXaoCHna145PXC25CyIZ6XErDs57aGV8w/oeT5SXrq0JxgzGIJUXf5Te7RoZ
-         bKiTYNibiD2iRJp7zBcJyLjsrM9ddxG3Q0ZPCQbHGxx4INkGxrlQBGrhlw/iHt8Tncur
-         fb5Fvs2BHO2Mpg3rDAEIcm0M1FxUeqRn9xIbWPUttncvvistLszz6dEFL2C0DLlIHBe4
-         R+VRtavobKd2WfK1kL+J1dbjveeaMyNV0EK4CtvJYmT+9HWD8X7vv1UX4rZGXl4pCa70
-         +Fcw==
-X-Gm-Message-State: AOAM5311cPPMMo4gOgkkysr704YefEGI4l3MIsZ1YWjITSZZNRsDiZaV
-        0lAsl00gT0s/BaIvJFZAoFhwk17zDSZvCw==
-X-Google-Smtp-Source: ABdhPJzJIXCz62D8J+cVfkO4/8FhMxNYso7SgK4dKCjzP4vTw9PW0t0PR3sRftYXwfotEngqe86yZA==
-X-Received: by 2002:a63:534f:: with SMTP id t15mr19641380pgl.126.1615175716895;
-        Sun, 07 Mar 2021 19:55:16 -0800 (PST)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id p25sm5159674pfe.100.2021.03.07.19.55.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 07 Mar 2021 19:55:16 -0800 (PST)
-Subject: Re: [dm-devel] [PATCH 4/4] dm: support I/O polling
-To:     JeffleXu <jefflexu@linux.alibaba.com>,
-        Heinz Mauelshagen <heinzm@redhat.com>,
-        Mikulas Patocka <mpatocka@redhat.com>
-Cc:     Mike Snitzer <msnitzer@redhat.com>, caspar@linux.alibaba.com,
-        io-uring@vger.kernel.org, linux-block@vger.kernel.org,
-        joseph.qi@linux.alibaba.com, dm-devel@redhat.com, hch@lst.de
-References: <20210302190555.201228400@debian-a64.vm>
- <33fa121a-88a8-5c27-0a43-a7efc9b5b3e3@linux.alibaba.com>
- <alpine.LRH.2.02.2103030505460.29593@file01.intranet.prod.int.rdu2.redhat.com>
- <157a750d-3d58-ae2e-07f1-b677c1b471c7@linux.alibaba.com>
- <bd447632-f174-e6f2-ddf8-d5385da13f6b@redhat.com>
- <fc9707dc-0a21-90d3-ed4f-e201406c50eb@redhat.com>
- <06d17f27-c043-f69c-eeef-f6df714c1764@linux.alibaba.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <000ca63a-46a7-3c93-9b6b-e04bebc971cc@kernel.dk>
-Date:   Sun, 7 Mar 2021 20:55:13 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S235067AbhCHGwZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 8 Mar 2021 01:52:25 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:13480 "EHLO
+        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235100AbhCHGwQ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 8 Mar 2021 01:52:16 -0500
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
+        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Dv89X6YcCzrSLp;
+        Mon,  8 Mar 2021 14:50:24 +0800 (CST)
+Received: from code-website.localdomain (10.175.127.227) by
+ DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
+ 14.3.498.0; Mon, 8 Mar 2021 14:52:01 +0800
+From:   yangerkun <yangerkun@huawei.com>
+To:     <axboe@kernel.dk>, <asml.silence@gmail.com>
+CC:     <io-uring@vger.kernel.org>, <yi.zhang@huawei.com>,
+        <yangerkun@huawei.com>
+Subject: [PATCH 1/2] io_uring: fix UAF for personality_idr
+Date:   Mon, 8 Mar 2021 14:59:02 +0800
+Message-ID: <20210308065903.2228332-1-yangerkun@huawei.com>
+X-Mailer: git-send-email 2.25.4
 MIME-Version: 1.0
-In-Reply-To: <06d17f27-c043-f69c-eeef-f6df714c1764@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.127.227]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/7/21 8:54 PM, JeffleXu wrote:
-> 
-> 
-> On 3/6/21 1:56 AM, Heinz Mauelshagen wrote:
->>
->> On 3/5/21 6:46 PM, Heinz Mauelshagen wrote:
->>> On 3/5/21 10:52 AM, JeffleXu wrote:
->>>>
->>>> On 3/3/21 6:09 PM, Mikulas Patocka wrote:
->>>>>
->>>>> On Wed, 3 Mar 2021, JeffleXu wrote:
->>>>>
->>>>>>
->>>>>> On 3/3/21 3:05 AM, Mikulas Patocka wrote:
->>>>>>
->>>>>>> Support I/O polling if submit_bio_noacct_mq_direct returned non-empty
->>>>>>> cookie.
->>>>>>>
->>>>>>> Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
->>>>>>>
->>>>>>> ---
->>>>>>>   drivers/md/dm.c |    5 +++++
->>>>>>>   1 file changed, 5 insertions(+)
->>>>>>>
->>>>>>> Index: linux-2.6/drivers/md/dm.c
->>>>>>> ===================================================================
->>>>>>> --- linux-2.6.orig/drivers/md/dm.c    2021-03-02
->>>>>>> 19:26:34.000000000 +0100
->>>>>>> +++ linux-2.6/drivers/md/dm.c    2021-03-02 19:26:34.000000000 +0100
->>>>>>> @@ -1682,6 +1682,11 @@ static void __split_and_process_bio(stru
->>>>>>>           }
->>>>>>>       }
->>>>>>>   +    if (ci.poll_cookie != BLK_QC_T_NONE) {
->>>>>>> +        while (atomic_read(&ci.io->io_count) > 1 &&
->>>>>>> +               blk_poll(ci.poll_queue, ci.poll_cookie, true)) ;
->>>>>>> +    }
->>>>>>> +
->>>>>>>       /* drop the extra reference count */
->>>>>>>       dec_pending(ci.io, errno_to_blk_status(error));
->>>>>>>   }
->>>>>> It seems that the general idea of your design is to
->>>>>> 1) submit *one* split bio
->>>>>> 2) blk_poll(), waiting the previously submitted split bio complets
->>>>> No, I submit all the bios and poll for the last one.
->>>>>
->>>>>> and then submit next split bio, repeating the above process. I'm
->>>>>> afraid
->>>>>> the performance may be an issue here, since the batch every time
->>>>>> blk_poll() reaps may decrease.
->>>>> Could you benchmark it?
->>>> I only tested dm-linear.
->>>>
->>>> The configuration (dm table) of dm-linear is:
->>>> 0 1048576 linear /dev/nvme0n1 0
->>>> 1048576 1048576 linear /dev/nvme2n1 0
->>>> 2097152 1048576 linear /dev/nvme5n1 0
->>>>
->>>>
->>>> fio script used is:
->>>> ```
->>>> $cat fio.conf
->>>> [global]
->>>> name=iouring-sqpoll-iopoll-1
->>>> ioengine=io_uring
->>>> iodepth=128
->>>> numjobs=1
->>>> thread
->>>> rw=randread
->>>> direct=1
->>>> registerfiles=1
->>>> hipri=1
->>>> runtime=10
->>>> time_based
->>>> group_reporting
->>>> randrepeat=0
->>>> filename=/dev/mapper/testdev
->>>> bs=4k
->>>>
->>>> [job-1]
->>>> cpus_allowed=14
->>>> ```
->>>>
->>>> IOPS (IRQ mode) | IOPS (iopoll mode (hipri=1))
->>>> --------------- | --------------------
->>>>             213k |           19k
->>>>
->>>> At least, it doesn't work well with io_uring interface.
->>>>
->>>>
->>>
->>>
->>> Jeffle,
->>>
->>> I ran your above fio test on a linear LV split across 3 NVMes to
->>> second your split mapping
->>> (system: 32 core Intel, 256GiB RAM) comparing io engines sync, libaio
->>> and io_uring,
->>> the latter w/ and w/o hipri (sync+libaio obviously w/o registerfiles
->>> and hipri) which resulted ok:
->>>
->>>
->>>
->>> sync  |  libaio  |  IRQ mode (hipri=0) | iopoll (hipri=1)
->>> ------|----------|---------------------|----------------- 56.3K |   
->>> 290K  |                329K |             351K I can't second your
->>> drastic hipri=1 drop here...
->>
->>
->> Sorry, email mess.
->>
->>
->> sync   |  libaio  |  IRQ mode (hipri=0) | iopoll (hipri=1)
->> -------|----------|---------------------|-----------------
->> 56.3K  |    290K  |                329K |             351K
->>
->>
->>
->> I can't second your drastic hipri=1 drop here...
->>
-> 
-> Hummm, that's indeed somewhat strange...
-> 
-> My test environment:
-> - CPU: 128 cores, though only one CPU core is used since
-> 'cpus_allowed=14' in fio configuration
-> - memory: 983G memory free
-> - NVMe: Huawai ES3510P (HWE52P434T0L005N), with 'nvme.poll_queues=3'
-> 
-> Maybe you didn't specify 'nvme.poll_queues=XXX'? In this case, IO still
-> goes into IRQ mode, even you have specified 'hipri=1'?
+Loop with follow can trigger a UAF:
 
-That would be my guess too, and the patches also have a very suspicious
-clear of HIPRI which shouldn't be there (which would let that fly through).
+void main()
+{
+        int ret;
+        struct io_uring ring;
+        struct io_uring_params p;
+        int i;
 
+        ret = io_uring_queue_init(1, &ring, 0);
+        assert(ret == 0);
+
+        for (i = 0; i < 10000; i++) {
+                ret = io_uring_register_personality(&ring);
+                if (ret < 0)
+                        break;
+        }
+
+        ret = io_uring_unregister_personality(&ring, 1024);
+        assert(ret == 0);
+}
+
+==================================================================
+BUG: KASAN: use-after-free in radix_tree_next_slot
+include/linux/radix-tree.h:422 [inline]
+BUG: KASAN: use-after-free in idr_for_each+0x88/0x18c lib/idr.c:202
+Read of size 8 at addr ffff0001096539f8 by task syz-executor.2/3166
+
+CPU: 0 PID: 3166 Comm: syz-executor.2 Not tainted
+5.10.0-00843-g352c8610ccd2 #2
+Hardware name: linux,dummy-virt (DT)
+Call trace:
+ dump_backtrace+0x0/0x1d8 arch/arm64/kernel/stacktrace.c:132
+ show_stack+0x28/0x34 arch/arm64/kernel/stacktrace.c:196
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x110/0x164 lib/dump_stack.c:118
+ print_address_description+0x78/0x5c8 mm/kasan/report.c:385
+ __kasan_report mm/kasan/report.c:545 [inline]
+ kasan_report+0x148/0x1e4 mm/kasan/report.c:562
+ check_memory_region_inline mm/kasan/generic.c:183 [inline]
+ __asan_load8+0xb4/0xbc mm/kasan/generic.c:252
+ radix_tree_next_slot include/linux/radix-tree.h:422 [inline]
+ idr_for_each+0x88/0x18c lib/idr.c:202
+ io_ring_ctx_wait_and_kill+0xf0/0x210 fs/io_uring.c:8429
+ io_uring_release+0x3c/0x50 fs/io_uring.c:8454
+ __fput+0x1b8/0x3a8 fs/file_table.c:281
+ ____fput+0x1c/0x28 fs/file_table.c:314
+ task_work_run+0xec/0x13c kernel/task_work.c:151
+ exit_task_work include/linux/task_work.h:30 [inline]
+ do_exit+0x384/0xd68 kernel/exit.c:809
+ do_group_exit+0xb8/0x13c kernel/exit.c:906
+ get_signal+0x794/0xb04 kernel/signal.c:2758
+ do_signal arch/arm64/kernel/signal.c:658 [inline]
+ do_notify_resume+0x1dc/0x8a8 arch/arm64/kernel/signal.c:722
+ work_pending+0xc/0x180
+
+Allocated by task 3149:
+ stack_trace_save+0x80/0xb8 kernel/stacktrace.c:121
+ kasan_save_stack mm/kasan/common.c:48 [inline]
+ kasan_set_track mm/kasan/common.c:56 [inline]
+ __kasan_kmalloc+0xdc/0x120 mm/kasan/common.c:461
+ kasan_slab_alloc+0x14/0x1c mm/kasan/common.c:469
+ slab_post_alloc_hook+0x50/0x8c mm/slab.h:535
+ slab_alloc_node mm/slub.c:2891 [inline]
+ slab_alloc mm/slub.c:2899 [inline]
+ kmem_cache_alloc+0x1f4/0x2fc mm/slub.c:2904
+ radix_tree_node_alloc+0x70/0x19c lib/radix-tree.c:274
+ idr_get_free+0x180/0x528 lib/radix-tree.c:1504
+ idr_alloc_u32+0xa8/0x164 lib/idr.c:46
+ idr_alloc_cyclic+0x8c/0x150 lib/idr.c:125
+ io_register_personality fs/io_uring.c:9512 [inline]
+ __io_uring_register+0xed8/0x1d9c fs/io_uring.c:9741
+ __do_sys_io_uring_register fs/io_uring.c:9791 [inline]
+ __se_sys_io_uring_register fs/io_uring.c:9773 [inline]
+ __arm64_sys_io_uring_register+0xd0/0x108 fs/io_uring.c:9773
+ __invoke_syscall arch/arm64/kernel/syscall.c:36 [inline]
+ invoke_syscall arch/arm64/kernel/syscall.c:48 [inline]
+ el0_svc_common arch/arm64/kernel/syscall.c:158 [inline]
+ do_el0_svc+0x120/0x260 arch/arm64/kernel/syscall.c:227
+ el0_svc+0x20/0x2c arch/arm64/kernel/entry-common.c:367
+ el0_sync_handler+0x98/0x170 arch/arm64/kernel/entry-common.c:383
+ el0_sync+0x140/0x180 arch/arm64/kernel/entry.S:670
+
+Freed by task 4399:
+ stack_trace_save+0x80/0xb8 kernel/stacktrace.c:121
+ kasan_save_stack mm/kasan/common.c:48 [inline]
+ kasan_set_track+0x38/0x6c mm/kasan/common.c:56
+ kasan_set_free_info+0x20/0x40 mm/kasan/generic.c:355
+ __kasan_slab_free+0x124/0x150 mm/kasan/common.c:422
+ kasan_slab_free+0x10/0x1c mm/kasan/common.c:431
+ slab_free_hook mm/slub.c:1544 [inline]
+ slab_free_freelist_hook+0xb0/0x1ac mm/slub.c:1577
+ slab_free mm/slub.c:3142 [inline]
+ kmem_cache_free+0xc4/0x268 mm/slub.c:3158
+ radix_tree_node_rcu_free+0x60/0x6c lib/radix-tree.c:302
+ rcu_do_batch+0x180/0x404 kernel/rcu/tree.c:2479
+ rcu_core+0x3e0/0x410 kernel/rcu/tree.c:2714
+ rcu_core_si+0xc/0x14 kernel/rcu/tree.c:2727
+ __do_softirq+0x180/0x3e0 kernel/softirq.c:298
+
+radix_tree_next_slot called by idr_for_each will traverse all slot
+regardless of whether the slot is valid. And once the last valid slot
+has been remove, we will try to free the node, and lead to a UAF.
+
+idr_destroy will do what we want. So, just stop call idr_remove in
+io_unregister_personality to fix the problem.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: yangerkun <yangerkun@huawei.com>
+---
+ fs/io_uring.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 92c25b5f1349..b462c2bf0f2c 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -8494,9 +8494,9 @@ static int io_unregister_personality(struct io_ring_ctx *ctx, unsigned id)
+ 
+ static int io_remove_personalities(int id, void *p, void *data)
+ {
+-	struct io_ring_ctx *ctx = data;
++	const struct cred *creds = p;
+ 
+-	io_unregister_personality(ctx, id);
++	put_cred(creds);
+ 	return 0;
+ }
+ 
 -- 
-Jens Axboe
+2.25.4
 

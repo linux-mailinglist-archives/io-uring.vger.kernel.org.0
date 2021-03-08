@@ -2,124 +2,225 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AC1C8330D35
-	for <lists+io-uring@lfdr.de>; Mon,  8 Mar 2021 13:19:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AF24330F08
+	for <lists+io-uring@lfdr.de>; Mon,  8 Mar 2021 14:20:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229928AbhCHMSk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 8 Mar 2021 07:18:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56246 "EHLO
+        id S229701AbhCHNUU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 8 Mar 2021 08:20:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229488AbhCHMSQ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 8 Mar 2021 07:18:16 -0500
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BFA0C06174A
-        for <io-uring@vger.kernel.org>; Mon,  8 Mar 2021 04:18:16 -0800 (PST)
-Received: by mail-wm1-x330.google.com with SMTP id i9so5872106wml.0
-        for <io-uring@vger.kernel.org>; Mon, 08 Mar 2021 04:18:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=4hk8YPTbD9MAJu6QjIAD0VpkIA8XgxlOXzORbxAHL+c=;
-        b=WtWvTer5J7E7asnpLtS0guxd9JV2p1CmT7ZpqgxS5L5quKY9LKcSjwyHRI2eUatEV7
-         5psz+XiTxXDcckrjbywyywAf1jXolfTz2XNdfBnAwBdZxRxPf9iTApl/DToJNvwCJk9K
-         ejLdhbC2jnyVn3y7j1GwwwbbhmEgw0wIiPXmdOLBAi+6CANpRKH3E0DSS9jBxviSU8iH
-         egdIIQFKr4M6qQDUpB6FA0wIJXNp4uIHiQ1Hd+EGHs06t4utrE1O5z/h/5FxZr6kXfZU
-         ROkUg4S2mGhlwjJTP/tGahuH4KqYMtCpnMVkKJPJdZxyrqlp9XZ/rrIz/9KJetqIhydH
-         kMTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=4hk8YPTbD9MAJu6QjIAD0VpkIA8XgxlOXzORbxAHL+c=;
-        b=MntDKkHKhEqqUX9QjYNK/fqW3gckMCedgstrMH32CyBPwn7SHvRUdFKgo49n1GpPAR
-         YsF1tFXH+4hLclGMarEKDB/zaOq0MK2CxXiTcbV02mBFCkWPY8F5a3iPTUDYTMMfS9hE
-         zsNRl27KnENk4/ADXYpB8F0BrJd4HgIwP9GwV8TR3jqq3KE5rYZwP3xG5p0dR6nw34QH
-         t2Yu5iyqsmzwYEDK4/d7Fnqly72J5KG18Ow7Pfah2dClmuH9BIzg8pGuLH9OxBPViWl+
-         Qiy8HnG+Oj9kMOUiJBu1gTx668+1jRnp1qfFb3YkVI4FByppUXJDoeSsMvBrB5U1+47V
-         s4Tw==
-X-Gm-Message-State: AOAM531EgufTZVFqSSho/DHtEJ4x6gQP+OON+VjKd9bzBlGQdCP6REpG
-        rKBuaO8vzwrxkDuakcBOBOI=
-X-Google-Smtp-Source: ABdhPJxIuhWmxShJspA2UlERqDNoW7/Fy/NUJ6tH8wq2mqb53Y5XTD6IwX03f3eEqv0QrFPMDpjy6g==
-X-Received: by 2002:a1c:7fd8:: with SMTP id a207mr21365028wmd.40.1615205895323;
-        Mon, 08 Mar 2021 04:18:15 -0800 (PST)
-Received: from localhost.localdomain ([148.252.132.144])
-        by smtp.gmail.com with ESMTPSA id j16sm51357951wmi.2.2021.03.08.04.18.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Mar 2021 04:18:14 -0800 (PST)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 5.12] io_uring: fix unrelated ctx reqs cancellation
-Date:   Mon,  8 Mar 2021 12:14:14 +0000
-Message-Id: <b34efa4aeca7473d884f204961839b30a292e2fa.1615205524.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
+        with ESMTP id S229646AbhCHNUJ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 8 Mar 2021 08:20:09 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CFFEC06174A
+        for <io-uring@vger.kernel.org>; Mon,  8 Mar 2021 05:20:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=xM/FJAhQs2pm/IScZi7o2bJK/m5pn5l7YWkP69rLTf8=; b=lTEg4aqktiaimQ96hSq6wjJpwe
+        ikjSUZb9+7ACbh7FzMvMqRFgXGadCMPk91tTaqwTOyt6lgVdPv+cm+uj09FO+PMJ1oLyYmsBwjhIz
+        UFJG+Rs6aCxuTXhiQOY9zMdRQlmICZSZu0qeN8Se8GcIRLStcBe6vC9LIcW3zN/pEbv6WhIzs7jJ1
+        zSdqOhk3BcIUAD++Ig45wjeglStg/K+PUG3LpK4DAZCnkt8UVPKBkIyMjmkIoMidXYincPzxOQlfg
+        qc0TczFtiJr/qU4HUPwvxlg6Q1/a2PWwDsc6P1m59TpF2BNoNaBDqB2zurXpq53W1HGJQBzcXx2Xq
+        EU7cOqiw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lJFnl-00FVoM-JU; Mon, 08 Mar 2021 13:20:02 +0000
+Date:   Mon, 8 Mar 2021 13:20:01 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     yangerkun <yangerkun@huawei.com>, axboe@kernel.dk,
+        io-uring@vger.kernel.org, yi.zhang@huawei.com
+Subject: Re: [PATCH 1/2] io_uring: fix UAF for personality_idr
+Message-ID: <20210308132001.GA3479805@casper.infradead.org>
+References: <20210308065903.2228332-1-yangerkun@huawei.com>
+ <e4b79f4d-c777-103d-e87e-d72dc49cb440@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e4b79f4d-c777-103d-e87e-d72dc49cb440@gmail.com>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-io-wq now is per-task, so cancellations now should match against
-request's ctx.
+On Mon, Mar 08, 2021 at 10:46:37AM +0000, Pavel Begunkov wrote:
+> Matthew, any chance you remember whether idr_for_each tolerates
+> idr_remove() from within the callback? Nothing else is happening in
+> parallel.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+No, that's not allowed.  The design of the IDR is that you would free
+the thing being pointed to and then call idr_destroy() afterwards to
+free the IDR's data structures.  But this should use an XArray anyway.
+Compile-tested only.
+
+PS, I found this commit:
+
+commit 41726c9a50e7464beca7112d0aebf3a0090c62d2
+Author: Jens Axboe <axboe@kernel.dk>
+Date:   Sun Feb 23 13:11:42 2020 -0700
+
+    io_uring: fix personality idr leak
+    
+    We somehow never free the idr, even though we init it for every ctx.
+    Free it when the rest of the ring data is freed.
+
+The IDR hasn't needed to be freed since I reimplemented it on top of
+the radix tree in 2016.  The same is true for the XArray, which is
+why idr_destroy() is simply deleted below instead of replaced with
+xa_destroy().
+
+From 8b0b4d331bdd9861eaac7322eba7a2669f18be80 Mon Sep 17 00:00:00 2001
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Date: Mon, 8 Mar 2021 08:04:38 -0500
+Subject: [PATCH] io_uring: Convert personality_idr to XArray
+
+You can't call idr_remove() from within a idr_for_each() callback,
+but you can call xa_erase() from an xa_for_each() loop, so switch the
+entire personality_idr from the IDR to the XArray.  This manifests as a
+use-after-free as idr_for_each() attempts to walk the rest of the node
+after removing the last entry from it.
+
+Fixes: 071698e13ac6 ("io_uring: allow registering credentials")
+Reported-by: Pavel Begunkov <asml.silence@gmail.com>
+Reported-by: yangerkun <yangerkun@huawei.com>
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
-
-p.s. have a test for it, but will in a bundle after another problem gets
-solved.
-
- fs/io_uring.c | 19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
+ fs/io_uring.c | 47 ++++++++++++++++++++++++-----------------------
+ 1 file changed, 24 insertions(+), 23 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 9a7cb641210a..5c6a54520be0 100644
+index 92c25b5f1349..72355903daa1 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -5574,22 +5574,30 @@ static int io_timeout(struct io_kiocb *req, unsigned int issue_flags)
- 	return 0;
+@@ -408,7 +408,8 @@ struct io_ring_ctx {
+ 
+ 	struct idr		io_buffer_idr;
+ 
+-	struct idr		personality_idr;
++	struct xarray		personalities;
++	u32			pers_next;
+ 
+ 	struct {
+ 		unsigned		cached_cq_tail;
+@@ -1131,7 +1132,7 @@ static struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
+ 	init_completion(&ctx->ref_comp);
+ 	init_completion(&ctx->sq_thread_comp);
+ 	idr_init(&ctx->io_buffer_idr);
+-	idr_init(&ctx->personality_idr);
++	xa_init_flags(&ctx->personalities, XA_FLAGS_ALLOC1);
+ 	mutex_init(&ctx->uring_lock);
+ 	init_waitqueue_head(&ctx->wait);
+ 	spin_lock_init(&ctx->completion_lock);
+@@ -5921,7 +5922,7 @@ static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags)
+ 
+ 		if (!(issue_flags & IO_URING_F_NONBLOCK))
+ 			mutex_lock(&ctx->uring_lock);
+-		new_creds = idr_find(&ctx->personality_idr, req->work.personality);
++		new_creds = xa_load(&ctx->personalities, req->work.personality);
+ 		if (!(issue_flags & IO_URING_F_NONBLOCK))
+ 			mutex_unlock(&ctx->uring_lock);
+ 		if (!new_creds)
+@@ -8418,7 +8419,6 @@ static void io_ring_ctx_free(struct io_ring_ctx *ctx)
+ 	mutex_unlock(&ctx->uring_lock);
+ 	io_eventfd_unregister(ctx);
+ 	io_destroy_buffers(ctx);
+-	idr_destroy(&ctx->personality_idr);
+ 
+ #if defined(CONFIG_UNIX)
+ 	if (ctx->ring_sock) {
+@@ -8483,7 +8483,7 @@ static int io_unregister_personality(struct io_ring_ctx *ctx, unsigned id)
+ {
+ 	const struct cred *creds;
+ 
+-	creds = idr_remove(&ctx->personality_idr, id);
++	creds = xa_erase(&ctx->personalities, id);
+ 	if (creds) {
+ 		put_cred(creds);
+ 		return 0;
+@@ -8492,14 +8492,6 @@ static int io_unregister_personality(struct io_ring_ctx *ctx, unsigned id)
+ 	return -EINVAL;
  }
  
-+struct io_cancel_data {
-+	struct io_ring_ctx *ctx;
-+	u64 user_data;
-+};
+-static int io_remove_personalities(int id, void *p, void *data)
+-{
+-	struct io_ring_ctx *ctx = data;
+-
+-	io_unregister_personality(ctx, id);
+-	return 0;
+-}
+-
+ static bool io_run_ctx_fallback(struct io_ring_ctx *ctx)
+ {
+ 	struct callback_head *work, *next;
+@@ -8541,13 +8533,17 @@ static void io_ring_exit_work(struct work_struct *work)
+ 
+ static void io_ring_ctx_wait_and_kill(struct io_ring_ctx *ctx)
+ {
++	unsigned long index;
++	struct creds *creds;
 +
- static bool io_cancel_cb(struct io_wq_work *work, void *data)
- {
- 	struct io_kiocb *req = container_of(work, struct io_kiocb, work);
-+	struct io_cancel_data *cd = data;
+ 	mutex_lock(&ctx->uring_lock);
+ 	percpu_ref_kill(&ctx->refs);
+ 	/* if force is set, the ring is going away. always drop after that */
+ 	ctx->cq_overflow_flushed = 1;
+ 	if (ctx->rings)
+ 		__io_cqring_overflow_flush(ctx, true, NULL, NULL);
+-	idr_for_each(&ctx->personality_idr, io_remove_personalities, ctx);
++	xa_for_each(&ctx->personalities, index, creds)
++		io_unregister_personality(ctx, index);
+ 	mutex_unlock(&ctx->uring_lock);
  
--	return req->user_data == (unsigned long) data;
-+	return req->ctx == cd->ctx && req->user_data == cd->user_data;
+ 	io_kill_timeouts(ctx, NULL, NULL);
+@@ -9127,10 +9123,9 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
  }
  
--static int io_async_cancel_one(struct io_uring_task *tctx, void *sqe_addr)
-+static int io_async_cancel_one(struct io_uring_task *tctx, u64 user_data,
-+			       struct io_ring_ctx *ctx)
+ #ifdef CONFIG_PROC_FS
+-static int io_uring_show_cred(int id, void *p, void *data)
++static int io_uring_show_cred(struct seq_file *m, unsigned int id,
++		const struct cred *cred)
  {
-+	struct io_cancel_data data = { .ctx = ctx, .user_data = user_data, };
- 	enum io_wq_cancel cancel_ret;
- 	int ret = 0;
- 
--	if (!tctx->io_wq)
-+	if (!tctx || !tctx->io_wq)
- 		return -ENOENT;
- 
--	cancel_ret = io_wq_cancel_cb(tctx->io_wq, io_cancel_cb, sqe_addr, false);
-+	cancel_ret = io_wq_cancel_cb(tctx->io_wq, io_cancel_cb, &data, false);
- 	switch (cancel_ret) {
- 	case IO_WQ_CANCEL_OK:
- 		ret = 0;
-@@ -5612,8 +5620,7 @@ static void io_async_find_and_cancel(struct io_ring_ctx *ctx,
- 	unsigned long flags;
+-	const struct cred *cred = p;
+-	struct seq_file *m = data;
+ 	struct user_namespace *uns = seq_user_ns(m);
+ 	struct group_info *gi;
+ 	kernel_cap_t cap;
+@@ -9198,9 +9193,13 @@ static void __io_uring_show_fdinfo(struct io_ring_ctx *ctx, struct seq_file *m)
+ 		seq_printf(m, "%5u: 0x%llx/%u\n", i, buf->ubuf,
+ 						(unsigned int) buf->len);
+ 	}
+-	if (has_lock && !idr_is_empty(&ctx->personality_idr)) {
++	if (has_lock && !xa_empty(&ctx->personalities)) {
++		unsigned long index;
++		const struct cred *cred;
++
+ 		seq_printf(m, "Personalities:\n");
+-		idr_for_each(&ctx->personality_idr, io_uring_show_cred, m);
++		xa_for_each(&ctx->personalities, index, cred)
++			io_uring_show_cred(m, index, cred);
+ 	}
+ 	seq_printf(m, "PollList:\n");
+ 	spin_lock_irq(&ctx->completion_lock);
+@@ -9532,14 +9531,16 @@ static int io_probe(struct io_ring_ctx *ctx, void __user *arg, unsigned nr_args)
+ static int io_register_personality(struct io_ring_ctx *ctx)
+ {
+ 	const struct cred *creds;
++	u32 id;
  	int ret;
  
--	ret = io_async_cancel_one(req->task->io_uring,
--					(void *) (unsigned long) sqe_addr);
-+	ret = io_async_cancel_one(req->task->io_uring, sqe_addr, ctx);
- 	if (ret != -ENOENT) {
- 		spin_lock_irqsave(&ctx->completion_lock, flags);
- 		goto done;
+ 	creds = get_current_cred();
+ 
+-	ret = idr_alloc_cyclic(&ctx->personality_idr, (void *) creds, 1,
+-				USHRT_MAX, GFP_KERNEL);
+-	if (ret < 0)
+-		put_cred(creds);
++	ret = xa_alloc_cyclic(&ctx->personalities, &id, (void *)creds,
++			XA_LIMIT(0, USHRT_MAX), &ctx->pers_next, GFP_KERNEL);
++	if (!ret)
++		return id;
++	put_cred(creds);
+ 	return ret;
+ }
+ 
 -- 
-2.24.0
+2.30.0
 

@@ -2,28 +2,28 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F1855331D31
-	for <lists+io-uring@lfdr.de>; Tue,  9 Mar 2021 03:58:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 02803331D33
+	for <lists+io-uring@lfdr.de>; Tue,  9 Mar 2021 03:59:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229611AbhCIC5s (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 8 Mar 2021 21:57:48 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:13454 "EHLO
-        szxga06-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229688AbhCIC5U (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 8 Mar 2021 21:57:20 -0500
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
-        by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4DvfwQ2vNnzkWY1;
-        Tue,  9 Mar 2021 10:55:50 +0800 (CST)
+        id S229611AbhCIC6z (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 8 Mar 2021 21:58:55 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:13074 "EHLO
+        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229589AbhCIC60 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 8 Mar 2021 21:58:26 -0500
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Dvfwj0zDgzMkpH;
+        Tue,  9 Mar 2021 10:56:05 +0800 (CST)
 Received: from code-website.localdomain (10.175.127.227) by
- DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
- 14.3.498.0; Tue, 9 Mar 2021 10:57:09 +0800
+ DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
+ 14.3.498.0; Tue, 9 Mar 2021 10:58:08 +0800
 From:   yangerkun <yangerkun@huawei.com>
 To:     <axboe@kernel.dk>, <asml.silence@gmail.com>
 CC:     <io-uring@vger.kernel.org>, <yi.zhang@huawei.com>,
         <yangerkun@huawei.com>
-Subject: [PATCH 1/2] io-wq: fix ref leak for req
-Date:   Tue, 9 Mar 2021 11:04:10 +0800
-Message-ID: <20210309030410.3294078-1-yangerkun@huawei.com>
+Subject: [PATCH] io-wq: fix ref leak for req
+Date:   Tue, 9 Mar 2021 11:05:08 +0800
+Message-ID: <20210309030508.3294675-1-yangerkun@huawei.com>
 X-Mailer: git-send-email 2.25.4
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT

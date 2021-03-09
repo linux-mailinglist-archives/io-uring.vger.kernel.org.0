@@ -2,81 +2,94 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 921F033297D
-	for <lists+io-uring@lfdr.de>; Tue,  9 Mar 2021 16:01:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB6CE332A0D
+	for <lists+io-uring@lfdr.de>; Tue,  9 Mar 2021 16:17:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231254AbhCIPBN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 9 Mar 2021 10:01:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37220 "EHLO
+        id S230490AbhCIPQo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 9 Mar 2021 10:16:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231468AbhCIPBE (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 9 Mar 2021 10:01:04 -0500
-Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1A6DC06174A
-        for <io-uring@vger.kernel.org>; Tue,  9 Mar 2021 07:01:03 -0800 (PST)
-Received: by mail-il1-x133.google.com with SMTP id g9so12433995ilc.3
-        for <io-uring@vger.kernel.org>; Tue, 09 Mar 2021 07:01:03 -0800 (PST)
+        with ESMTP id S231924AbhCIPQb (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 9 Mar 2021 10:16:31 -0500
+Received: from mail-vs1-xe42.google.com (mail-vs1-xe42.google.com [IPv6:2607:f8b0:4864:20::e42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A048C061762
+        for <io-uring@vger.kernel.org>; Tue,  9 Mar 2021 07:16:31 -0800 (PST)
+Received: by mail-vs1-xe42.google.com with SMTP id e21so4960115vsh.5
+        for <io-uring@vger.kernel.org>; Tue, 09 Mar 2021 07:16:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=BOw8i5QB9HP/HGQSgum1G2lk8HYOGO0pN+CBwWNIyW0=;
-        b=DZYBwidp+Oc8d2WSQmWg5UL0PE0LlIeG+dqrTSpYZHyqz9qmDBZc3JqpcrVFZ08tsn
-         uyqMp96jZkqexKnpiuwc0S1uDbL7kiVHomnxQoNKhWzDSbh5odSaKUE99S1wAE7o7j65
-         9zVcC7za+sSRwBaHwECztu93FOHGzlLzy6KD4Ss9Fjqln7jVmOcOvtOLggSF1DdiIvDi
-         xOLFIhqmrGc8ES5V5Qnao9/fl1mpBqc0jTkySAO4p1g7YK8ogvSOXNzQhqIliKJfWvz9
-         QdfSwjJbfSLf9RuWGcokKCiiXnZmNlul36bhPbRf2D0Nr6sONKV0BYHjB7KgV45TCG8F
-         eT+w==
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=7Vrbe4gpVhb7cfcmpNanXi5E+OCzidx3VGMrGNR2bC4=;
+        b=iG+PEPmaHlHo7BIDTdfef5r88OuWpQOqhEH2qmezQYHakeueSZdtECnOxaNFPKT9CB
+         aLLijSjwuQVorDAEHnskHKoazheLbTgoFOH2IO0bywpBdkqxbvNhSp+AuzzkPltfZjkD
+         FjTTrNk9SO33wfLNvS9nByjMp72fepAXXy19dOfqtAsx4HxmPonpcVTJXrYVQmJxHxXa
+         AzJWFsWLVvJfVScuD99VDxmPz5IFH+JeT+BdI/5UjB5u3ljOPGeno4uGqlf/Z8N2nRtY
+         ROlA+uMiGucX8LIxOcsYJNKNu/TkjgiHO1C+jXYPHopFB15mBvJWDTUfIUXFYNAfd4q+
+         86Og==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=BOw8i5QB9HP/HGQSgum1G2lk8HYOGO0pN+CBwWNIyW0=;
-        b=Vj86DMcjxy3fAif5uOncBUMSFHpPiP/mb901XvLy+D9buPyCaiJhATiQbwTB6LbANp
-         JzIM09AiQD9BtoB8Zi++IZl9phUXN03aKdRtxnWgMiRVSpk7P5L8g9qjt9RfiFfpPgax
-         UfEYonD3rfhqi6sGmco1Zcw1DGVmtsX72aFp6vH7p9eY/fECL1+kOAzo+qLA9R6Jnoyt
-         Ql48LijaeFivljSI/aiJL5Kl8XzmaclNiXj5UQQ9LBV60C3xffX6UF5H4uwcWZvJjCut
-         rXi7I3DgdC5tErNQCuiLLoTBwf7IWzYpiNl/agfVgdSzb8LvGVAcBHrM2r1sry1YhkDM
-         5+pA==
-X-Gm-Message-State: AOAM5334PEgC57jOAxlkKKqAUmD3g8+nn29aXeuTRVLufawldf/Z/LH/
-        732Ov7ySid2zAvUGBRPO6twy/iAkNV91IA==
-X-Google-Smtp-Source: ABdhPJzNMpTBDnErQ8aqoH1EJt41ZLazTnSOFSBl4kwyz8QUeRkzfedVDilzhJ8QNmrBRQ+r98Yviw==
-X-Received: by 2002:a92:b70c:: with SMTP id k12mr26152449ili.60.1615302063162;
-        Tue, 09 Mar 2021 07:01:03 -0800 (PST)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id i67sm7785521ioa.3.2021.03.09.07.01.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Mar 2021 07:01:02 -0800 (PST)
-Subject: Re: [PATCH 0/2] io_req_complete_post() fix
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <cover.1615250156.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <81ae0ee6-4a06-46d6-2ff1-4f2962f914b9@kernel.dk>
-Date:   Tue, 9 Mar 2021 08:01:02 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=7Vrbe4gpVhb7cfcmpNanXi5E+OCzidx3VGMrGNR2bC4=;
+        b=c34tnPRMd5shduFYV9MpxM337tvIHTuje82Z508rjosYdKJiflvY8W/2O0JY9hOGA5
+         NyEDddOuvIrtozUZVVRMaA/29wU4+EYnd+6JajP0NQCP2q4M3hfO1y448o32dN9OVaEE
+         5VWoFiE97CXY78MU6YWYwOEZbabWu1i4Qvkw16k3WfdTa3rVdQSls2QzZgd9pv6p4NdT
+         Tp2yk10wZrmoylzABIJRd8Edvg+ZCZCRXvwFYUXpfdfhtqDj4Fyer7iFbYYizXjxzPAh
+         cKPs0RDtghep9UD6eKYCSLNF7UodRbw564vvIWIjg4Qv8MROhnPpZ1B4m6B5QrvgL0Be
+         OEog==
+X-Gm-Message-State: AOAM531MAlfjas0CENRE9fh0t902BMdIo9xqerByB92Y9BmeLxj5W+mm
+        9iK+HMtLFtkYqyLj48X3s9i1ukxGQkYOQv6EdJI=
+X-Google-Smtp-Source: ABdhPJy9BBpeWXWCzuTiulojyYdgac59jMaZMyVdwFl3oYPmplUKQv1r1LrJzyZzXExNPs2KOA/1mgAnINQBECvVh48=
+X-Received: by 2002:a67:2686:: with SMTP id m128mr15206115vsm.31.1615302990249;
+ Tue, 09 Mar 2021 07:16:30 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <cover.1615250156.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:ab0:2e8f:0:0:0:0:0 with HTTP; Tue, 9 Mar 2021 07:16:29 -0800 (PST)
+Reply-To: ezbtg22@gmail.com
+From:   "Mrs.E.Glenn" <mrganuserge654@gmail.com>
+Date:   Tue, 9 Mar 2021 07:16:29 -0800
+Message-ID: <CAH16wSN04Q1+cGtUxisTrHBY3uKhmkpr-ckyqweDCj+psxNsgA@mail.gmail.com>
+Subject: From Mrs.E.Glenn
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/8/21 5:37 PM, Pavel Begunkov wrote:
-> May use more gazing by someone to avoid obvious/stupid mistakes
-> 
-> Pavel Begunkov (2):
->   io_uring: add io_disarm_next() helper
->   io_uring: fix complete_post races for linked req
-> 
->  fs/io_uring.c | 89 ++++++++++++++++++++++++++++-----------------------
->  1 file changed, 49 insertions(+), 40 deletions(-)
-
-I looked through it and it looks good to me.
-
 -- 
-Jens Axboe
+Dear Beloved,
 
+I am Mrs Elizabet Glenn from Israel. I am a missionary but right now
+in a hospital bed in Israel. I am 59 years and childless; my husband
+is dead. I was diagnosed with terminal cancer. And my doctor just
+predicted that I have but very limited time to live due to damages in
+my system and as a result of that I decided to dispose my 10.5 million
+US dollars to a God-fearing one for the continuation of charitable
+work. This is why I located you.
+
+My guess about you may not be accurate because I came across your
+contact at the humanitarian calendar event of the year but I believe
+in God who divinely directed me to you for this solemn proposal of
+charitable work.
+
+Therefore I wholeheartedly wish to bequeath my fortune to you as a
+God-fearing person for the continuation of charitable work anywhere
+around the world.
+
+I shall be going in for a surgery operations soonest and desire this
+money to be transferred to you as I do not wish to leave this money in
+the bank because bankers might misuse it for their own interest after
+my death.
+
+As soon as I receive your quick reply assuring me that you will
+utilize the money as I instructed you for the benefit of the less
+privilege, I shall give you more details and also instruct my bank to
+release the money to you for the charity project. I hope you receive
+this mail in good health.
+
+Please contact me on this E-mail (ezbtg22@gmail.com) because I don t
+know what will be my situation in next minute,
+
+I am waiting for your reply.
+
+Yours sincerely,
+Mrs Elizabet Glenn.

@@ -2,137 +2,99 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EB673349BB
-	for <lists+io-uring@lfdr.de>; Wed, 10 Mar 2021 22:15:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 04F73334A3D
+	for <lists+io-uring@lfdr.de>; Wed, 10 Mar 2021 23:00:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232056AbhCJVPM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 10 Mar 2021 16:15:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34862 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232417AbhCJVOp (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 10 Mar 2021 16:14:45 -0500
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 902ABC061574
-        for <io-uring@vger.kernel.org>; Wed, 10 Mar 2021 13:14:44 -0800 (PST)
-Received: by mail-lj1-x229.google.com with SMTP id r25so27462083ljk.11
-        for <io-uring@vger.kernel.org>; Wed, 10 Mar 2021 13:14:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mWjSyj9+MgpkAuhvTxP4EPO0ZRIe4bF8NB224VR5k5Y=;
-        b=PIqDJ2U0GSCx4NtqwWKrFE9QHN7qXy5qh2Js/ocQazC6t5gl+kXnW0bxIJE/LFuD2k
-         T6xs2xk/6PHqSWp9K4hjRH0M1ASKEW1Ap/K9lX9Q8UAOfl66sg1BvnzXj2ilccmkluus
-         iX3LkCYCwJNr7hiSwfQg9Kx4Hg3FIHAwDl0VY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mWjSyj9+MgpkAuhvTxP4EPO0ZRIe4bF8NB224VR5k5Y=;
-        b=Y1tNOTDa8al4rUEqu5SEImoi1dkxxHjqWOkWeXUJ8OcRQuQE5MzBjjzsB1txexmUUY
-         +qF8gYrxGsFZ9KF2tYwhglWgXJoCJgMH5TiaQW+g5TPgBL7oi/ldnwqEKbjEBfRNrcws
-         WV5rZQ7F80UGyoKVCibeQZMv6tXAEyoubI4ZDpPUn0YKgf6gveHkxC4VcQ+7K+vsa+de
-         oNcXTsjIwbzA8f+B9QsFHKB6BsM81z529CMPTsVNh9tyPXpLV8foOen5p1B3YoIUyygx
-         JgSMuCJYZ9nAwdyh1kYhnP3FCHv9GTfu3X7sw//4aSzYfJEfAfknz1uGnsJmyFsBqAS6
-         66EQ==
-X-Gm-Message-State: AOAM533U+fg8aR5Cb9KLac9qBCGCMyvBHUqebZH8HhYGkkgkyIW6NzCz
-        JanmzY55fLeE3ipO/CRLY86gQnzL6OJsLQ==
-X-Google-Smtp-Source: ABdhPJzC6SuKaSofnl7XmQl6wUojAeI0NNtQVKiP2sWh0CqkJhL7WX0vKWsfBU5NimEO6fp3FYD4MQ==
-X-Received: by 2002:a2e:b523:: with SMTP id z3mr2942734ljm.242.1615410882752;
-        Wed, 10 Mar 2021 13:14:42 -0800 (PST)
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
-        by smtp.gmail.com with ESMTPSA id v129sm144738lfa.43.2021.03.10.13.14.41
-        for <io-uring@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Mar 2021 13:14:41 -0800 (PST)
-Received: by mail-lj1-f179.google.com with SMTP id c19so19185112ljn.12
-        for <io-uring@vger.kernel.org>; Wed, 10 Mar 2021 13:14:41 -0800 (PST)
-X-Received: by 2002:a2e:5c84:: with SMTP id q126mr2800569ljb.61.1615410880841;
- Wed, 10 Mar 2021 13:14:40 -0800 (PST)
+        id S231935AbhCJV5y (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 10 Mar 2021 16:57:54 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:20063 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231301AbhCJV5h (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 10 Mar 2021 16:57:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1615413457;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=lbP0fY/AimR+3m1w1TVNpTvBeGaBYaBvKVfRdOhqRpY=;
+        b=YHwEBgvwQGAhRKuy6aJaSvreb3qdLEMEEkFIEsvzYNpCjlOQw63s+BLVkAPCfJnERajtd0
+        PeQNWqonePgSQMjMXblGdOUVvk95UyvfrFE21ghQ/0q6z4oUJLro9LkYY8uKpcJadvI3VU
+        Qy5YjB9VqzpZWEOcv9FdaIIsllik7ZM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-574-Dpl0IHafPMacUKJLY_O3rw-1; Wed, 10 Mar 2021 16:57:33 -0500
+X-MC-Unique: Dpl0IHafPMacUKJLY_O3rw-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 43AB719067E0;
+        Wed, 10 Mar 2021 21:57:32 +0000 (UTC)
+Received: from localhost (unknown [10.18.25.174])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 864A15C22A;
+        Wed, 10 Mar 2021 21:57:28 +0000 (UTC)
+Date:   Wed, 10 Mar 2021 16:57:27 -0500
+From:   Mike Snitzer <snitzer@redhat.com>
+To:     Jeffle Xu <jefflexu@linux.alibaba.com>
+Cc:     axboe@kernel.dk, io-uring@vger.kernel.org, dm-devel@redhat.com,
+        linux-block@vger.kernel.org, mpatocka@redhat.com,
+        caspar@linux.alibaba.com, joseph.qi@linux.alibaba.com
+Subject: Re: [PATCH v5 09/12] nvme/pci: don't wait for locked polling queue
+Message-ID: <20210310215727.GA23410@redhat.com>
+References: <20210303115740.127001-1-jefflexu@linux.alibaba.com>
+ <20210303115740.127001-10-jefflexu@linux.alibaba.com>
 MIME-Version: 1.0
-References: <cover.1615372955.git.gladkov.alexey@gmail.com> <59ee3289194cd97d70085cce701bc494bfcb4fd2.1615372955.git.gladkov.alexey@gmail.com>
-In-Reply-To: <59ee3289194cd97d70085cce701bc494bfcb4fd2.1615372955.git.gladkov.alexey@gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 10 Mar 2021 13:14:24 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whg4aVxA7LFAUFCzOn78_7TL1CPo+esPKgN5JTHy8H-Rg@mail.gmail.com>
-Message-ID: <CAHk-=whg4aVxA7LFAUFCzOn78_7TL1CPo+esPKgN5JTHy8H-Rg@mail.gmail.com>
-Subject: Re: [PATCH v8 3/8] Use atomic_t for ucounts reference counting
-To:     Alexey Gladkov <gladkov.alexey@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Alexey Gladkov <legion@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
-        Kees Cook <keescook@chromium.org>,
-        Oleg Nesterov <oleg@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210303115740.127001-10-jefflexu@linux.alibaba.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Mar 10, 2021 at 4:01 AM Alexey Gladkov <gladkov.alexey@gmail.com> wrote:
->
->
-> +/* 127: arbitrary random number, small enough to assemble well */
-> +#define refcount_zero_or_close_to_overflow(ucounts) \
-> +       ((unsigned int) atomic_read(&ucounts->count) + 127u <= 127u)
+On Wed, Mar 03 2021 at  6:57am -0500,
+Jeffle Xu <jefflexu@linux.alibaba.com> wrote:
+
+> There's no sense waiting for the hw queue when it currently has been
+> locked by another polling instance. The polling instance currently
+> occupying the hw queue will help reap the completion events.
+> 
+> It shall be safe to surrender the hw queue, as long as we could reapply
+> for polling later. For Synchronous polling, blk_poll() will reapply for
+> polling, since @spin is always True in this case. While For asynchronous
+> polling, i.e. io_uring itself will reapply for polling when the previous
+> polling returns 0.
+> 
+> Besides, it shall do no harm to the polling performance of mq devices.
+> 
+> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
+
+You should probably just send this to the linux-nvme list independent of
+this patchset.
+
+Mike
+
+
+> ---
+>  drivers/nvme/host/pci.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+> index 38b0d694dfc9..150e56ed6d15 100644
+> --- a/drivers/nvme/host/pci.c
+> +++ b/drivers/nvme/host/pci.c
+> @@ -1106,7 +1106,9 @@ static int nvme_poll(struct blk_mq_hw_ctx *hctx)
+>  	if (!nvme_cqe_pending(nvmeq))
+>  		return 0;
+>  
+> -	spin_lock(&nvmeq->cq_poll_lock);
+> +	if (!spin_trylock(&nvmeq->cq_poll_lock))
+> +		return 0;
 > +
-> +struct ucounts *get_ucounts(struct ucounts *ucounts)
-> +{
-> +       if (ucounts) {
-> +               if (refcount_zero_or_close_to_overflow(ucounts)) {
-> +                       WARN_ONCE(1, "ucounts: counter has reached its maximum value");
-> +                       return NULL;
-> +               }
-> +               atomic_inc(&ucounts->count);
-> +       }
-> +       return ucounts;
+>  	found = nvme_process_cq(nvmeq);
+>  	spin_unlock(&nvmeq->cq_poll_lock);
+>  
+> -- 
+> 2.27.0
+> 
 
-Side note: you probably should just make the limit be the "oh, the
-count overflows into the sign bit".
-
-The reason the page cache did that tighter thing is that it actually
-has _two_ limits:
-
- - the "try_get_page()" thing uses the sign bit as a "uhhuh, I've now
-used up half of the available reference counting bits, and I will
-refuse to use any more".
-
-   This is basically your "get_ucounts()" function. It's a "I want a
-refcount, but I'm willing to deal with failures".
-
- - the page cache has a _different_ set of "I need to unconditionally
-get a refcount, and I can *not* deal with failures".
-
-   This is basically the traditional "get_page()", which is only used
-in fairly controlled places, and should never be something that can
-overflow.
-
-    And *that* special code then uses that
-"zero_or_close_to_overflow()" case as a "doing a get_page() in this
-situation is very very wrong". This is purely a debugging feature used
-for a VM_BUG_ON() (that has never triggered, as far as I know).
-
-For your ucounts situation, you don't have that second case at all, so
-you have no reason to ever allow the count to even get remotely close
-to overflowing.
-
-A reference count being within 128 counts of overflow (when we're
-talking a 32-bit count) is basically never a good idea. It means that
-you are way too close to the limit, and there's a risk that lots of
-concurrent people all first see an ok value, and then *all* decide to
-do the increment, and then you're toast.
-
-In contrast, if you use the sign bit as a "ok, let's stop
-incrementing", the fact that your "overflow" test and the increment
-aren't atomic really isn't a big deal.
-
-(And yes, you could use a cmpxchg to *make* the overflow test atomic,
-but it's often much much more expensive, so..)
-
-                    Linus

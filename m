@@ -2,92 +2,89 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 19455333FBD
-	for <lists+io-uring@lfdr.de>; Wed, 10 Mar 2021 14:57:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D747033404D
+	for <lists+io-uring@lfdr.de>; Wed, 10 Mar 2021 15:27:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232768AbhCJN4q (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 10 Mar 2021 08:56:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53004 "EHLO
+        id S233093AbhCJO1T (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 10 Mar 2021 09:27:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232659AbhCJN4n (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 10 Mar 2021 08:56:43 -0500
-Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54E98C061760
-        for <io-uring@vger.kernel.org>; Wed, 10 Mar 2021 05:56:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-         s=42; h=Date:Message-ID:From:To:CC;
-        bh=cVso1WlCNppsFMjN3mmjiU84pQGbVJPCDnM0jE/ZTu0=; b=N4PYyZ+u0ge97I36kVP4srGEVE
-        m7+4h1t+6Cytc69zmKJpB/aeenfMYtlzuSP/PST+no0D3OIwQsdA4DEfJJMxt64/9T0efI66HeFnB
-        DAh4ztNhHPBM1IT8JILfIJtwH7FREo73rrpdlvCLgTs+sHpDekhc9ooABbYIKYa+M4p/5r1OZLg6I
-        WDt9SEN0vExGMBJKsG+BCqu/e9sdAqktL3AZThjGTzA3X9eAOAi5/VDit58yF8wBaaOkD3fZWlTB8
-        oKIaNynGhM9IMEaRRugJnCLJWblZ0bmpg0FYLL+sFNnkZ0TRdKEQ0mK8tJKqXWKFJZeFgYwKXRNcO
-        uXyRCfOxFvGvCB6FdL9N598x5DKTJaQu0tNmgrek5O/HasMP35/mTvkQW+4bGDjZINg76ndZRo+J1
-        LP48e0R7lbQ40a1C2XwnfrTKr0oqcEHNKzwPlUP13w7Mk0BKwLrbefOHAvNkriqofDMLBZq0I5XWy
-        pMwCtFlQRnQE3SQ0V8/vK7j8;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
-        (Exim)
-        id 1lJzKH-0008Dh-EM; Wed, 10 Mar 2021 13:56:37 +0000
+        with ESMTP id S231139AbhCJO07 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 10 Mar 2021 09:26:59 -0500
+Received: from mail-il1-x135.google.com (mail-il1-x135.google.com [IPv6:2607:f8b0:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66DE7C061760
+        for <io-uring@vger.kernel.org>; Wed, 10 Mar 2021 06:26:59 -0800 (PST)
+Received: by mail-il1-x135.google.com with SMTP id e7so15685056ile.7
+        for <io-uring@vger.kernel.org>; Wed, 10 Mar 2021 06:26:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=yIRaibrsRIkKXb+iD3yFHrNLgUG6Foz7IExjF6ajw+c=;
+        b=gJAcKkRo1uOYCRPT3AqWAPXNxCzcvYnpwhDXUoyqVp+e8HDEMKdmLcLjAPuzkbikVB
+         wyw72LT+8vibaSy+uZVD0Ot4wF7fBvScTZTQRwRYONijBvc304lltWmge1x6iNCqYooD
+         pmUMHBDasjhvNPfssCCkfbN0/8JtxHm2qHWh1Q4Mt7Bb8RpMW3r486Fg9nKA3EBpGpNX
+         gBlMz+fZDUBe5SGI5Ik90b/BCLKdTnPHm0VEecSe/Mv8V/LjWdxk/uioAqH8dlStCTkI
+         t1aWrhNJyczMRurahH+CecUFww82rcKj4fgCkZBbXGPnjTxO+8mOO2xEszi/Ocbd2wkN
+         d6Yw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=yIRaibrsRIkKXb+iD3yFHrNLgUG6Foz7IExjF6ajw+c=;
+        b=ZJIte9G897CKTJrwDAhPAsly+U8ForLImrVNeIaQ84IX+ZjRK/d31QidmPgN0EY1Lu
+         fRIp8aTZMP2OK2b6qZN5y1eiketrWK4exBe8jdHdibaSrMO4aErGMeNyax7T/VXkbfDW
+         zx0MtuMTvpqCPmhoNS/17qOkQHD9LetHtP1VrMn89Id2qDgGWOMWYuL/DWrFnyyci4XE
+         tAdJUfRhBtCiwnsgc614neoaqiXSTyxiAX9+46Azkgedj+PdxQd5ypPAPD1f1i1Q4+N3
+         dmoM+Imp9o7KQgyBUELJpzrG/8tsMVJ9D+hTevqatN4TCrc7jgXBdT+W+PyXrrzOWJ9Z
+         iyEQ==
+X-Gm-Message-State: AOAM531DTUMUxgTgdQPkE79SyTTAS8ai9kKAMDN3Z5xAVtZONMZHk3TH
+        jHh+5O/OaX1iD+DUli9mq6ueVQ==
+X-Google-Smtp-Source: ABdhPJxsAfpscc4DuNlHnSHVAabmgIREeu7mBR9NQ00Heu3w8L52Sq/PS1XSxMrpoynBAgMWfp0d+A==
+X-Received: by 2002:a05:6e02:180d:: with SMTP id a13mr2752680ilv.156.1615386418850;
+        Wed, 10 Mar 2021 06:26:58 -0800 (PST)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id k14sm9073465iob.34.2021.03.10.06.26.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Mar 2021 06:26:58 -0800 (PST)
+Subject: Re: [syzbot] possible deadlock in io_sq_thread_finish
 To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-References: <cover.1615381765.git.asml.silence@gmail.com>
- <fd8edef7aecde8d776d703350b3f6c0ec3154ed3.1615381765.git.asml.silence@gmail.com>
-From:   Stefan Metzmacher <metze@samba.org>
-Subject: Re: [PATCH 1/3] io_uring: fix invalid ctx->sq_thread_idle
-Message-ID: <a25f115b-830c-e0f6-6d61-ff171412ea8b@samba.org>
-Date:   Wed, 10 Mar 2021 14:56:37 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
+        Hillf Danton <hdanton@sina.com>,
+        syzbot <syzbot+ac39856cb1b332dbbdda@syzkaller.appspotmail.com>
+Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+References: <5112d102-d849-c640-868f-ee820163d02e@kernel.dk>
+ <20210310041025.2438-1-hdanton@sina.com>
+ <b8e8a0f8-12fa-5dc4-6bcc-a274a8b2adec@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <d20d356f-6086-f3cd-eca6-f8bd16365686@kernel.dk>
+Date:   Wed, 10 Mar 2021 07:26:58 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <fd8edef7aecde8d776d703350b3f6c0ec3154ed3.1615381765.git.asml.silence@gmail.com>
+In-Reply-To: <b8e8a0f8-12fa-5dc4-6bcc-a274a8b2adec@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-
-Hi Pavel,
-
-> We have to set ctx->sq_thread_idle before adding a ring to an SQ task,
-> otherwise sqd races for seeing zero and accounting it as such.
+On 3/10/21 6:40 AM, Pavel Begunkov wrote:
+> On 10/03/2021 04:10, Hillf Danton wrote:> 
+>> Fix 05ff6c4a0e07 ("io_uring: SQPOLL parking fixes") in the current tree
+>> by removing the extra set of IO_SQ_THREAD_SHOULD_STOP in response to
+>> the arrival of urgent signal because it misleads io_sq_thread_stop(),
+>> though a followup cleanup should go there.
 > 
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> ---
->  fs/io_uring.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+> That's actually reasonable, just like
+> 8bff1bf8abeda ("io_uring: fix io_sq_offload_create error handling")
 > 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 896a7845447c..0b39c3818809 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -7827,14 +7827,14 @@ static int io_sq_offload_create(struct io_ring_ctx *ctx,
->  
->  		ctx->sq_creds = get_current_cred();
->  		ctx->sq_data = sqd;
-> -		io_sq_thread_park(sqd);
-> -		list_add(&ctx->sqd_list, &sqd->ctx_new_list);
-> -		io_sq_thread_unpark(sqd);
-> -
->  		ctx->sq_thread_idle = msecs_to_jiffies(p->sq_thread_idle);
->  		if (!ctx->sq_thread_idle)
->  			ctx->sq_thread_idle = HZ;
->  
-> +		io_sq_thread_park(sqd);
-> +		list_add(&ctx->sqd_list, &sqd->ctx_new_list);
-> +		io_sq_thread_unpark(sqd);
+> Are you going to send a patch?
 
-I wondered about the exact same change this morning, while researching
-the IORING_SETUP_ATTACH_WQ behavior :-)
+Agree - Hillf, do you mind if I just fold this one in?
 
-It still seems to me that IORING_SETUP_ATTACH_WQ changed over time.
-As you introduced that flag, can you summaries it's behavior (and changes)
-over time (over the releases).
+-- 
+Jens Axboe
 
-I'm wondering if ctx->sq_creds is really the only thing we need to take care of.
-
-Do we know about existing users of IORING_SETUP_ATTACH_WQ and their use case?
-As mm, files and other things may differ now between sqe producer and the sq_thread.
-
-metze

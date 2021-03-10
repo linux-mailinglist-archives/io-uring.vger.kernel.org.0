@@ -2,179 +2,358 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D8080334BDC
-	for <lists+io-uring@lfdr.de>; Wed, 10 Mar 2021 23:45:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 34646334C5C
+	for <lists+io-uring@lfdr.de>; Thu, 11 Mar 2021 00:19:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233947AbhCJWoq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 10 Mar 2021 17:44:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54212 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233986AbhCJWoc (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 10 Mar 2021 17:44:32 -0500
-Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32F12C061574
-        for <io-uring@vger.kernel.org>; Wed, 10 Mar 2021 14:44:32 -0800 (PST)
-Received: by mail-pg1-x531.google.com with SMTP id l2so12379774pgb.1
-        for <io-uring@vger.kernel.org>; Wed, 10 Mar 2021 14:44:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=sTi8VO+Et1tjWrDOt3SimemQrp3IyEkEwFt5xPVJM1I=;
-        b=Qz6aLDAf2PFe3cvFZJrkzOvOCHUPNYbMCYtMTeVZ7U7Hy1/IyPZHIOGOEjolEAe2GK
-         V3WbwEUy2OIHj7cI/Jvg+3vj8FAbhip2VxWtsfVrzvImvhGmM/NNVAEqOvG3UzqLSpIy
-         uYglLrQJCR/sLea2WRHPFjkJP3R2z/+4nm9BIYgjhWq82cXBgTBnpgrjYcWn7NgummLJ
-         NljIwg9A0KXvpliSmZGH40Wp4+KlBdfJ5UpcPt8U2TYU0yRE31KRA9WlECiAtjLO0Pas
-         v2ad0IM10i4BfOKt20QG/hz3uolMNN4VzEPhpjX9PlI5s2as+wqJnR1Ak9ioTOLNIQ2t
-         O9kQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=sTi8VO+Et1tjWrDOt3SimemQrp3IyEkEwFt5xPVJM1I=;
-        b=lmbixPxiSX79aiYDnkCK1rbX5bw9YIhbIMuc/GXteAoSiQsXmEArCMNtCSQ2b2XlMj
-         1KRwUP9+vbesEYGEfLFjP9Nuf7J01uVCzWZs0jb4gEY6HLMr7Y96GqGQ1+ELPHj+OqGJ
-         u91k5zxJqsYw3W7Axhk5yV/NLRzz2mC7P42ezBq+K6LHe9pSewbMFLJUysttkCtccjje
-         yNDKJc7WYDQemOpiWUUuraN6vu/VuwUZWbjTUDeDsGfCVZZC5Rc0CRAicdpuyTEjZYqn
-         7uXkZOfhnXpYo41RhH+BVQei4IhCuFtJnPKzentrsHgtRGIn0gVyYGi4gwz00NJd1MUx
-         aMhQ==
-X-Gm-Message-State: AOAM533MAVKldlGsASXUp1ysvDOQsln+z3g+CAHuGeXXk2TMZ4OiaNpj
-        T2eDZaf9B3ufMY+yZviCmMCSxbsEoLNqbA==
-X-Google-Smtp-Source: ABdhPJwdi8KRTfjkB4Kh6vozMhX/xLPbrbBguOt2Isq3oBrxRxxNZt+TGExaoUehLMDLdF0t2Q4A7A==
-X-Received: by 2002:a65:610f:: with SMTP id z15mr4654648pgu.360.1615416271444;
-        Wed, 10 Mar 2021 14:44:31 -0800 (PST)
-Received: from localhost.localdomain ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id j23sm475783pfn.94.2021.03.10.14.44.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Mar 2021 14:44:31 -0800 (PST)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 27/27] io_uring: remove indirect ctx into sqo injection
-Date:   Wed, 10 Mar 2021 15:43:58 -0700
-Message-Id: <20210310224358.1494503-28-axboe@kernel.dk>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210310224358.1494503-1-axboe@kernel.dk>
-References: <20210310224358.1494503-1-axboe@kernel.dk>
+        id S233699AbhCJXSg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 10 Mar 2021 18:18:36 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:40949 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232933AbhCJXSR (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 10 Mar 2021 18:18:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1615418296;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=uQa2y2z0XvsRj129MhvdBh9Jiis+7gxwF1yLINcwOYQ=;
+        b=NZiwRkl5Mv55AnsUi59fZlHEHSFJmEiWlLGFFaKHoKIlKudhXz4WakGlOAR2hQTJ5pI8Fd
+        /jn6FD99GA7svzsYk5DNvwHOmVeK1CZeSO1wU4HLgxplPs3gnKSlqc/eL4pO+jYpJleLAI
+        Y34nRoppZ/MgT5ukDJxswWIgt4IbXZY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-469-E5v-o-OuOiaI18dHgGKnWQ-1; Wed, 10 Mar 2021 18:18:14 -0500
+X-MC-Unique: E5v-o-OuOiaI18dHgGKnWQ-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C872A1005D4C;
+        Wed, 10 Mar 2021 23:18:12 +0000 (UTC)
+Received: from localhost (unknown [10.18.25.174])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3CDE05D6D7;
+        Wed, 10 Mar 2021 23:18:08 +0000 (UTC)
+Date:   Wed, 10 Mar 2021 18:18:08 -0500
+From:   Mike Snitzer <snitzer@redhat.com>
+To:     Jeffle Xu <jefflexu@linux.alibaba.com>
+Cc:     axboe@kernel.dk, io-uring@vger.kernel.org, dm-devel@redhat.com,
+        linux-block@vger.kernel.org, mpatocka@redhat.com,
+        caspar@linux.alibaba.com, joseph.qi@linux.alibaba.com
+Subject: Re: [PATCH v5 10/12] block: fastpath for bio-based polling
+Message-ID: <20210310231808.GD23410@redhat.com>
+References: <20210303115740.127001-1-jefflexu@linux.alibaba.com>
+ <20210303115740.127001-11-jefflexu@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210303115740.127001-11-jefflexu@linux.alibaba.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Pavel Begunkov <asml.silence@gmail.com>
+On Wed, Mar 03 2021 at  6:57am -0500,
+Jeffle Xu <jefflexu@linux.alibaba.com> wrote:
 
-We use ->ctx_new_list to notify sqo about new ctx pending, then sqo
-should stop and splice it to its sqd->ctx_list, paired with
-->sq_thread_comp.
+> Offer one fastpath for bio-based polling when bio submitted to dm
+> device is not split.
+> 
+> In this case, there will be only one bio submitted to only one polling
+> hw queue of one underlying mq device, and thus we don't need to track
+> all split bios or iterate through all polling hw queues. The pointer to
+> the polling hw queue the bio submitted to is returned here as the
+> returned cookie. In this case, the polling routine will call
+> mq_ops->poll() directly with the hw queue converted from the input
+> cookie.
+> 
+> If the original bio submitted to dm device is split to multiple bios and
+> thus submitted to multiple polling hw queues, the polling routine will
+> fall back to iterating all hw queues (in polling mode) of all underlying
+> mq devices.
+> 
+> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
+> ---
+>  block/blk-core.c          | 73 +++++++++++++++++++++++++++++++++++++--
+>  include/linux/blk_types.h | 66 +++++++++++++++++++++++++++++++++--
+>  include/linux/types.h     |  2 +-
+>  3 files changed, 135 insertions(+), 6 deletions(-)
+> 
+> diff --git a/block/blk-core.c b/block/blk-core.c
+> index 6d7d53030d7c..e5cd4ff08f5c 100644
+> --- a/block/blk-core.c
+> +++ b/block/blk-core.c
+> @@ -947,14 +947,22 @@ static blk_qc_t __submit_bio_noacct(struct bio *bio)
+>  {
+>  	struct bio_list bio_list_on_stack[2];
+>  	blk_qc_t ret = BLK_QC_T_NONE;
+> +	struct request_queue *top_q;
+> +	bool poll_on;
+>  
+>  	BUG_ON(bio->bi_next);
+>  
+>  	bio_list_init(&bio_list_on_stack[0]);
+>  	current->bio_list = bio_list_on_stack;
+>  
+> +	top_q = bio->bi_bdev->bd_disk->queue;
+> +	poll_on = test_bit(QUEUE_FLAG_POLL, &top_q->queue_flags) &&
+> +		  (bio->bi_opf & REQ_HIPRI);
+> +
+>  	do {
+> -		struct request_queue *q = bio->bi_bdev->bd_disk->queue;
+> +		blk_qc_t cookie;
+> +		struct block_device *bdev = bio->bi_bdev;
+> +		struct request_queue *q = bdev->bd_disk->queue;
+>  		struct bio_list lower, same;
+>  
+>  		if (unlikely(bio_queue_enter(bio) != 0))
+> @@ -966,7 +974,23 @@ static blk_qc_t __submit_bio_noacct(struct bio *bio)
+>  		bio_list_on_stack[1] = bio_list_on_stack[0];
+>  		bio_list_init(&bio_list_on_stack[0]);
+>  
+> -		ret = __submit_bio(bio);
+> +		cookie = __submit_bio(bio);
+> +
+> +		if (poll_on && blk_qc_t_valid(cookie)) {
+> +			unsigned int queue_num = blk_qc_t_to_queue_num(cookie);
+> +			unsigned int devt = bdev_whole(bdev)->bd_dev;
+> +
+> +			cookie = blk_qc_t_get_by_devt(devt, queue_num);
 
-The last one is broken because nobody reinitialises it, and trying to
-fix it would only add more complexity and bugs. And the first isn't
-really needed as is done under park(), that protects from races well.
-Add ctx into sqd->ctx_list directly (under park()), it's much simpler
-and allows to kill both, ctx_new_list and sq_thread_comp.
+The need to rebuild the cookie here is pretty awkward.  This
+optimization living in block core may be worthwhile but the duality of
+block core conditionally overriding the driver's returned cookie (that
+is meant to be opaque to upper layer) is not great.
 
-note: apparently there is no real problem at the moment, because
-sq_thread_comp is used only by io_sq_thread_finish() followed by
-parking, where list_del(&ctx->sqd_list) removes it well regardless
-whether it's in the new or the active list.
+> +
+> +			if (!blk_qc_t_valid(ret)) {
+> +				/* set initial value */
+> +				ret = cookie;
+> +			} else if (ret != cookie) {
+> +				/* bio gets split and enqueued to multi hctxs */
+> +				ret = BLK_QC_T_BIO_POLL_ALL;
+> +				poll_on = false;
+> +			}
+> +		}
+>  
+>  		/*
+>  		 * Sort new bios into those for a lower level and those for the
+> @@ -989,6 +1013,7 @@ static blk_qc_t __submit_bio_noacct(struct bio *bio)
+>  	} while ((bio = bio_list_pop(&bio_list_on_stack[0])));
+>  
+>  	current->bio_list = NULL;
+> +
+>  	return ret;
+>  }
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- fs/io_uring.c | 28 +++-------------------------
- 1 file changed, 3 insertions(+), 25 deletions(-)
+Nit: Not seeing need to alter white space here.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 7072c0eb22c1..5c045a9f7ffe 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -262,7 +262,6 @@ struct io_sq_data {
- 
- 	/* ctx's that are using this sqd */
- 	struct list_head	ctx_list;
--	struct list_head	ctx_new_list;
- 
- 	struct task_struct	*thread;
- 	struct wait_queue_head	wait;
-@@ -398,7 +397,6 @@ struct io_ring_ctx {
- 	struct user_struct	*user;
- 
- 	struct completion	ref_comp;
--	struct completion	sq_thread_comp;
- 
- #if defined(CONFIG_UNIX)
- 	struct socket		*ring_sock;
-@@ -1137,7 +1135,6 @@ static struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
- 	init_waitqueue_head(&ctx->cq_wait);
- 	INIT_LIST_HEAD(&ctx->cq_overflow_list);
- 	init_completion(&ctx->ref_comp);
--	init_completion(&ctx->sq_thread_comp);
- 	idr_init(&ctx->io_buffer_idr);
- 	xa_init_flags(&ctx->personalities, XA_FLAGS_ALLOC1);
- 	mutex_init(&ctx->uring_lock);
-@@ -6640,19 +6637,6 @@ static void io_sqd_update_thread_idle(struct io_sq_data *sqd)
- 	sqd->sq_thread_idle = sq_thread_idle;
- }
- 
--static void io_sqd_init_new(struct io_sq_data *sqd)
--{
--	struct io_ring_ctx *ctx;
--
--	while (!list_empty(&sqd->ctx_new_list)) {
--		ctx = list_first_entry(&sqd->ctx_new_list, struct io_ring_ctx, sqd_list);
--		list_move_tail(&ctx->sqd_list, &sqd->ctx_list);
--		complete(&ctx->sq_thread_comp);
--	}
--
--	io_sqd_update_thread_idle(sqd);
--}
--
- static int io_sq_thread(void *data)
- {
- 	struct io_sq_data *sqd = data;
-@@ -6683,11 +6667,8 @@ static int io_sq_thread(void *data)
- 			up_read(&sqd->rw_lock);
- 			cond_resched();
- 			down_read(&sqd->rw_lock);
--			continue;
--		}
--		if (unlikely(!list_empty(&sqd->ctx_new_list))) {
--			io_sqd_init_new(sqd);
- 			timeout = jiffies + sqd->sq_thread_idle;
-+			continue;
- 		}
- 		if (fatal_signal_pending(current))
- 			break;
-@@ -7099,9 +7080,6 @@ static void io_sq_thread_finish(struct io_ring_ctx *ctx)
- 
- 	if (sqd) {
- 		complete(&sqd->startup);
--		if (sqd->thread)
--			wait_for_completion(&ctx->sq_thread_comp);
--
- 		io_sq_thread_park(sqd);
- 		list_del(&ctx->sqd_list);
- 		io_sqd_update_thread_idle(sqd);
-@@ -7153,7 +7131,6 @@ static struct io_sq_data *io_get_sq_data(struct io_uring_params *p)
- 
- 	refcount_set(&sqd->refs, 1);
- 	INIT_LIST_HEAD(&sqd->ctx_list);
--	INIT_LIST_HEAD(&sqd->ctx_new_list);
- 	init_rwsem(&sqd->rw_lock);
- 	init_waitqueue_head(&sqd->wait);
- 	init_completion(&sqd->startup);
-@@ -7834,7 +7811,8 @@ static int io_sq_offload_create(struct io_ring_ctx *ctx,
- 			ctx->sq_thread_idle = HZ;
- 
- 		io_sq_thread_park(sqd);
--		list_add(&ctx->sqd_list, &sqd->ctx_new_list);
-+		list_add(&ctx->sqd_list, &sqd->ctx_list);
-+		io_sqd_update_thread_idle(sqd);
- 		io_sq_thread_unpark(sqd);
- 
- 		if (sqd->thread)
--- 
-2.30.2
+>  
+> @@ -1119,6 +1144,44 @@ blk_qc_t submit_bio(struct bio *bio)
+>  }
+>  EXPORT_SYMBOL(submit_bio);
+>  
+> +static int blk_poll_bio(blk_qc_t cookie)
+> +{
+> +	unsigned int devt = blk_qc_t_to_devt(cookie);
+> +	unsigned int queue_num = blk_qc_t_to_queue_num(cookie);
+> +	struct block_device *bdev;
+> +	struct request_queue *q;
+> +	struct blk_mq_hw_ctx *hctx;
+> +	int ret;
+> +
+> +	bdev = blkdev_get_no_open(devt);
+
+As you pointed out to me in private, but for the benefit of others,
+blkdev_get_no_open()'s need to take inode lock is not ideal here.
+
+> +
+> +	/*
+> +	 * One such case is that dm device has reloaded table and the original
+> +	 * underlying device the bio submitted to has been detached. When
+> +	 * reloading table, dm will ensure that previously submitted IOs have
+> +	 * all completed, thus return directly here.
+> +	 */
+> +	if (!bdev)
+> +		return 1;
+> +
+> +	q = bdev->bd_disk->queue;
+> +	hctx = q->queue_hw_ctx[queue_num];
+> +
+> +	/*
+> +	 * Similar to the case described in the above comment, that dm device
+> +	 * has reloaded table and the original underlying device the bio
+> +	 * submitted to has been detached. Thus the dev_t stored in cookie may
+> +	 * be reused by another blkdev, and if that's the case, return directly
+> +	 * here.
+> +	 */
+> +	if (hctx->type != HCTX_TYPE_POLL)
+> +		return 1;
+
+These checks really aren't authoritative or safe enough.  If the bdev
+may have changed then it may not have queue_num hctxs (so you'd access
+out-of-bounds). Similarly, a new bdev may have queue_num hctxs and may
+just so happen to have its type be HCTX_TYPE_POLL.. but in reality it
+isn't the same bdev the cookie was generated from.
+
+And I'm now curious how blk-mq's polling code isn't subject to async io
+polling tripping over the possibility of the underlying device having
+been changed out from under it -- meaning should this extra validation
+be common to bio and request-based?  If not, why not?
+
+> +
+> +	ret = blk_mq_poll_hctx(q, hctx);
+> +
+> +	blkdev_put_no_open(bdev);
+> +	return ret;
+> +}
+>  
+>  static int blk_bio_poll(struct request_queue *q, blk_qc_t cookie, bool spin)
+>  {
+> @@ -1129,7 +1192,11 @@ static int blk_bio_poll(struct request_queue *q, blk_qc_t cookie, bool spin)
+>  	do {
+>  		int ret;
+>  
+> -		ret = disk->fops->poll(q, cookie);
+> +		if (unlikely(blk_qc_t_is_poll_multi(cookie)))
+> +			ret = disk->fops->poll(q, cookie);
+> +		else
+> +			ret = blk_poll_bio(cookie);
+> +
+
+Again, this just seems too limiting. Would rather always call into
+disk->fops->poll and have it optimize for single hctx based on cookie it
+established.
+
+Not seeing why all this needs to be driven by block core _yet_.
+Could be I'm just wanting some flexibility for the design to harden (and
+potential for optimization left as a driver concern.. as I mentioned in
+my reply to the 0th patch header for this v5 patchset).
+
+>  		if (ret > 0) {
+>  			__set_current_state(TASK_RUNNING);
+>  			return ret;
+> diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+> index fb429daaa909..8f970e026be9 100644
+> --- a/include/linux/blk_types.h
+> +++ b/include/linux/blk_types.h
+> @@ -505,10 +505,19 @@ static inline int op_stat_group(unsigned int op)
+>  	return op_is_write(op);
+>  }
+>  
+> -/* Macros for blk_qc_t */
+> +/*
+> + * blk_qc_t for request-based mq devices.
+> + * 63                    31 30          15          0 (bit)
+> + * +----------------------+-+-----------+-----------+
+> + * |      reserved        | | queue_num |    tag    |
+> + * +----------------------+-+-----------+-----------+
+> + *                         ^
+> + *                         BLK_QC_T_INTERNAL
+> + */
+>  #define BLK_QC_T_NONE		-1U
+>  #define BLK_QC_T_SHIFT		16
+>  #define BLK_QC_T_INTERNAL	(1U << 31)
+> +#define BLK_QC_T_QUEUE_NUM_SIZE	15
+>  
+>  static inline bool blk_qc_t_valid(blk_qc_t cookie)
+>  {
+> @@ -517,7 +526,8 @@ static inline bool blk_qc_t_valid(blk_qc_t cookie)
+>  
+>  static inline unsigned int blk_qc_t_to_queue_num(blk_qc_t cookie)
+>  {
+> -	return (cookie & ~BLK_QC_T_INTERNAL) >> BLK_QC_T_SHIFT;
+> +	return (cookie >> BLK_QC_T_SHIFT) &
+> +	       ((1u << BLK_QC_T_QUEUE_NUM_SIZE) - 1);
+>  }
+>  
+>  static inline unsigned int blk_qc_t_to_tag(blk_qc_t cookie)
+> @@ -530,6 +540,58 @@ static inline bool blk_qc_t_is_internal(blk_qc_t cookie)
+>  	return (cookie & BLK_QC_T_INTERNAL) != 0;
+>  }
+>  
+> +/*
+> + * blk_qc_t for bio-based devices.
+> + *
+> + * 1. When @bio is not split, the returned cookie has following format.
+> + *    @dev_t specifies the dev_t number of the underlying device the bio
+> + *    submitted to, while @queue_num specifies the hw queue the bio submitted
+> + *    to.
+> + *
+> + * 63                    31 30          15          0 (bit)
+> + * +----------------------+-+-----------+-----------+
+> + * |        dev_t         | | queue_num |  reserved |
+> + * +----------------------+-+-----------+-----------+
+> + *                         ^
+> + *                         reserved for compatibility with mq
+> + *
+> + * 2. When @bio gets split and enqueued into multi hw queues, the returned
+> + *    cookie is just BLK_QC_T_BIO_POLL_ALL flag.
+> + *
+> + * 63                                              0 (bit)
+> + * +----------------------------------------------+-+
+> + * |                                              |1|
+> + * +----------------------------------------------+-+
+> + *                                                 ^
+> + *                                                 BLK_QC_T_BIO_POLL_ALL
+> + *
+> + * 3. Otherwise, return BLK_QC_T_NONE as the cookie.
+> + *
+> + * 63                                              0 (bit)
+> + * +-----------------------------------------------+
+> + * |                  BLK_QC_T_NONE                |
+> + * +-----------------------------------------------+
+> + */
+> +#define BLK_QC_T_HIGH_SHIFT	32
+> +#define BLK_QC_T_BIO_POLL_ALL	1U
+
+Pulling on same thread I raised above, the cookie is meant to be
+opaque.  Pinning down how the cookie is (ab)used in block core seems to
+undermine the intended flexibility.
+
+I'd much rather these details be pushed into drivers/md/bio-poll.h or
+something for the near-term.  We can always elevate it to block core
+if/when there is sufficient justification.
+
+Just feels we're getting too constraining too quickly.
+
+Mike
+
+
+> +
+> +static inline unsigned int blk_qc_t_to_devt(blk_qc_t cookie)
+> +{
+> +	return cookie >> BLK_QC_T_HIGH_SHIFT;
+> +}
+> +
+> +static inline blk_qc_t blk_qc_t_get_by_devt(unsigned int dev,
+> +					    unsigned int queue_num)
+> +{
+> +	return ((blk_qc_t)dev << BLK_QC_T_HIGH_SHIFT) |
+> +	       (queue_num << BLK_QC_T_SHIFT);
+> +}
+> +
+> +static inline bool blk_qc_t_is_poll_multi(blk_qc_t cookie)
+> +{
+> +	return cookie & BLK_QC_T_BIO_POLL_ALL;
+> +}
+> +
+>  struct blk_rq_stat {
+>  	u64 mean;
+>  	u64 min;
+> diff --git a/include/linux/types.h b/include/linux/types.h
+> index 52a54ed6ffac..7ff4bb96e0ea 100644
+> --- a/include/linux/types.h
+> +++ b/include/linux/types.h
+> @@ -126,7 +126,7 @@ typedef u64 sector_t;
+>  typedef u64 blkcnt_t;
+>  
+>  /* cookie used for IO polling */
+> -typedef unsigned int blk_qc_t;
+> +typedef u64 blk_qc_t;
+>  
+>  /*
+>   * The type of an index into the pagecache.
+> -- 
+> 2.27.0
+> 
 

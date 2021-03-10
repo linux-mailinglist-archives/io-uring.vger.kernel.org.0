@@ -2,60 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F07B833330D
-	for <lists+io-uring@lfdr.de>; Wed, 10 Mar 2021 03:19:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F4048333343
+	for <lists+io-uring@lfdr.de>; Wed, 10 Mar 2021 03:49:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231235AbhCJCTM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 9 Mar 2021 21:19:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42854 "EHLO
+        id S231703AbhCJCtA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 9 Mar 2021 21:49:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49342 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231571AbhCJCSh (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 9 Mar 2021 21:18:37 -0500
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3F25C06174A
-        for <io-uring@vger.kernel.org>; Tue,  9 Mar 2021 18:18:26 -0800 (PST)
-Received: by mail-pj1-x1032.google.com with SMTP id f2-20020a17090a4a82b02900c67bf8dc69so6362553pjh.1
-        for <io-uring@vger.kernel.org>; Tue, 09 Mar 2021 18:18:26 -0800 (PST)
+        with ESMTP id S231464AbhCJCsz (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 9 Mar 2021 21:48:55 -0500
+Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA742C061760
+        for <io-uring@vger.kernel.org>; Tue,  9 Mar 2021 18:48:55 -0800 (PST)
+Received: by mail-pj1-x1033.google.com with SMTP id a22-20020a17090aa516b02900c1215e9b33so6395010pjq.5
+        for <io-uring@vger.kernel.org>; Tue, 09 Mar 2021 18:48:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:references:from:message-id:date:user-agent:mime-version
          :in-reply-to:content-language:content-transfer-encoding;
-        bh=RrPzKgExLakSNfglFinl/rLo5PZVVt54ykNip4IxOYo=;
-        b=Z/uUQSqxocqOZX8J7RHcXC56RqQamTlEYNS62KbiW6twgpjFZ544/kkdonfB5nTB3N
-         oz8qETeZ5ObLlpqxhJb4ih0OzVOJXFHltqVyTDDQRinuAeRpzccXp21uzeEJryERBWhZ
-         1pG524zmUGIcgwwQ1K6sOy6IXWY7XO86UXDwgWzWd1/x08k/Spb+wXfWmiDJ+YL/A776
-         HKzSyURiuO04qlsWTNaNBy8JdJvAkhl+O3F3zhM6Ph8l9EA6aqfKL5Mpro0a8iDgFfeA
-         wHZ20pkzVOedRHswZx449PIAQvTSUOfsuo7J5DPIjK1HV7Uc9yO4k36W96Tf6/EMeozV
-         SUqA==
+        bh=SSM2NdMm5I7+I/4ZH3H1cFrXbjEOIb78kT0+qdRhlMA=;
+        b=NHJz5ikagGAMmuCe4/xpZRWTs8giri08Ra4JAEwP1fHCylgU1kTW0axqrTFJagCOCG
+         pqOQW/YGU0maQUcsnF0fBY8Ol/yE12Us64aVk3r3a0Wb3kAkbgmpGc3Xx81AIPMFqiWR
+         q6aFXavmyCZzBqlyUdMD0+BLUNfYzfmQc+NMwCw7wbnHzFwuF4UuXXPXQk1gr2UI7Bt6
+         fB1LhSXO6KTSYFYgvLRjWCvQKytja5mCPvCUSayJvE86gzMXfgHEuZ3GHYmXbbPcZqLq
+         TYkjF80cxLSyAhr9bEf+iIrb8U9N8PW1h+LQoAy/QzeC1GWiAYaik/XddPiJ2PJlavIx
+         DFSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=RrPzKgExLakSNfglFinl/rLo5PZVVt54ykNip4IxOYo=;
-        b=GRdysahtD2DQCLmctv1Qc0VMf/DA9YONBkkiFrrIoWI8+V/UkSNO9BzbcawWQhsFOO
-         pHNNNwUW/iHtFlOGEcLYXkTK0liUNI3uaPmm7/rVY23m0qlnjyaj6J1DUf1HNeeRMnJa
-         LZm539BGxk9/90V8cGntbLLdfNbp5grMVWbk8IUrET3LCncGFmx1p3Ao+J1puyyn0RkI
-         1RSh8HimmH4OIC/aipGYJnrA+09o5XO0JY7n+DkxCzFprbSdBpz3Wzv3IBtuNBLsp1HB
-         UQ6L6rPKeRkjN+lAxcGI/WJkAU0inUml3mTyjLdUgTct+ciNwb/mopyKeN5+pGnyTRrF
-         Wljw==
-X-Gm-Message-State: AOAM532hG4vttBbqB/uKmdLnJF9MeoTiB+haPI188VaOepvFdd1XxRNt
-        G1PxoRrViiwrV7MoL2r4feBKxWT6IfjbsA==
-X-Google-Smtp-Source: ABdhPJyWu/sQQK+wQ4rlIGXbSdQalPOWx0Cxcqzh5Obvk3cZkLsdZNCGPjfLt1dhW7o1G8pfVcMouQ==
-X-Received: by 2002:a17:902:b18c:b029:e4:4cfd:1f7d with SMTP id s12-20020a170902b18cb02900e44cfd1f7dmr946005plr.84.1615342706104;
-        Tue, 09 Mar 2021 18:18:26 -0800 (PST)
+        bh=SSM2NdMm5I7+I/4ZH3H1cFrXbjEOIb78kT0+qdRhlMA=;
+        b=n/cz/9fOytIGZlAdQ9U/Nwot2D8dJIDA6nztsuQf4/uZQkbMRwWk/KbQDoxNWoavDc
+         Is4aAmr89A0yZZiqVYXIOfhD5KKPn1x/0O4TwEucHtT/VD3pZAdIpemwvfNFehBPzGnh
+         fdBl+b9Qk0aECWIQWtoyY5A8EyAuTkxXHRKMOX1ieoRmMFbjQjPQ59y0q7P2UnO1pZ5D
+         aKCNK+j9iY13fQKB4pAVCu5zViVRQpOUwulRWlU9qLVqL1zdazoC9ruKRZJamh25Omk1
+         0BnSNiwiLT7TndiE60BK9d/HHj1eWnNwT/nvC6U6Dq9W17jYdgHjDARGlUBUune/1r0R
+         znQQ==
+X-Gm-Message-State: AOAM532duWwvbIdYSwxbsGb8fpu7niYV8MjFXoeDBtK/e+3/olou0ziK
+        ZKUpmS7M54TEIlemYO1/oOQSjw==
+X-Google-Smtp-Source: ABdhPJznsmRwat2YmybFdZ5bTxueFvrvVVQiG2apqCgI0KKf3BljkZ0EZcLavVVs/8YBwAlz6Cak5A==
+X-Received: by 2002:a17:90a:77c8:: with SMTP id e8mr1109294pjs.48.1615344535032;
+        Tue, 09 Mar 2021 18:48:55 -0800 (PST)
 Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id d124sm14698761pfa.149.2021.03.09.18.18.24
+        by smtp.gmail.com with ESMTPSA id j35sm14785971pgj.45.2021.03.09.18.48.53
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Mar 2021 18:18:25 -0800 (PST)
+        Tue, 09 Mar 2021 18:48:54 -0800 (PST)
 Subject: Re: [v5.12-rc2 regression] io_uring: high CPU use after
  suspend-to-ram
 To:     Kevin Locke <kevin@kevinlocke.name>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+        linux-kernel@vger.kernel.org, rafael.j.wysocki@intel.com
 References: <YEgnIp43/6kFn8GL@kevinlocke.name>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <44808ad3-e4f7-8a05-9c52-a1224bf6c534@kernel.dk>
-Date:   Tue, 9 Mar 2021 19:18:24 -0700
+Message-ID: <0d333d67-9a3e-546d-ad1c-ecebfdbe9932@kernel.dk>
+Date:   Tue, 9 Mar 2021 19:48:53 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
@@ -87,9 +87,64 @@ On 3/9/21 6:55 PM, Kevin Locke wrote:
 > 
 > Let me know if there's anything else I can do to help diagnose/test.
 
-Thanks for the report, let me take a look and try and reproduce (and
-fix) it. I'll let you know if I fail in reproducing and need your
-help in testing a fix!
+The below makes it work as expected for me - but I don't quite
+understand why we're continually running after the freeze. Adding Rafael
+to help understand this.
+
+Rafael, what appears to happen here from a quick look is that the io
+threads are frozen fine and the system suspends. But when we resume,
+signal_pending() is perpetually true, and that is why we then see the
+io_wq_manager() thread just looping like crazy. Is there anything
+special I need to do? Note that these are not kthreads, PF_KTHREAD is
+not true. I'm guessing it may have something to do with that, but
+haven't dug deeper yet.
+
+
+diff --git a/fs/io-wq.c b/fs/io-wq.c
+index 3d7060ba547a..0ae9ecadf295 100644
+--- a/fs/io-wq.c
++++ b/fs/io-wq.c
+@@ -591,7 +591,7 @@ static bool create_io_worker(struct io_wq *wq, struct io_wqe *wqe, int index)
+ 	tsk->pf_io_worker = worker;
+ 	worker->task = tsk;
+ 	set_cpus_allowed_ptr(tsk, cpumask_of_node(wqe->node));
+-	tsk->flags |= PF_NOFREEZE | PF_NO_SETAFFINITY;
++	tsk->flags |= PF_NO_SETAFFINITY;
+ 
+ 	raw_spin_lock_irq(&wqe->lock);
+ 	hlist_nulls_add_head_rcu(&worker->nulls_node, &wqe->free_list);
+@@ -709,7 +709,6 @@ static int io_wq_manager(void *data)
+ 		set_current_state(TASK_INTERRUPTIBLE);
+ 		io_wq_check_workers(wq);
+ 		schedule_timeout(HZ);
+-		try_to_freeze();
+ 		if (fatal_signal_pending(current))
+ 			set_bit(IO_WQ_BIT_EXIT, &wq->state);
+ 	} while (!test_bit(IO_WQ_BIT_EXIT, &wq->state));
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 280133f3abc4..8f4128eb4aa2 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -6735,7 +6735,6 @@ static int io_sq_thread(void *data)
+ 
+ 			up_read(&sqd->rw_lock);
+ 			schedule();
+-			try_to_freeze();
+ 			down_read(&sqd->rw_lock);
+ 			list_for_each_entry(ctx, &sqd->ctx_list, sqd_list)
+ 				io_ring_clear_wakeup_flag(ctx);
+diff --git a/kernel/fork.c b/kernel/fork.c
+index d3171e8e88e5..72e444cd0ffe 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -2436,6 +2436,7 @@ struct task_struct *create_io_thread(int (*fn)(void *), void *arg, int node)
+ 	if (!IS_ERR(tsk)) {
+ 		sigfillset(&tsk->blocked);
+ 		sigdelsetmask(&tsk->blocked, sigmask(SIGKILL));
++		tsk->flags |= PF_NOFREEZE;
+ 	}
+ 	return tsk;
+ }
 
 -- 
 Jens Axboe

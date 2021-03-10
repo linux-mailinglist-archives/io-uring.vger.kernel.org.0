@@ -2,137 +2,187 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D67C9333440
-	for <lists+io-uring@lfdr.de>; Wed, 10 Mar 2021 05:13:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 40264333BEF
+	for <lists+io-uring@lfdr.de>; Wed, 10 Mar 2021 13:02:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229521AbhCJEM3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 9 Mar 2021 23:12:29 -0500
-Received: from mail-il1-f200.google.com ([209.85.166.200]:43797 "EHLO
-        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232209AbhCJEMF (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 9 Mar 2021 23:12:05 -0500
-Received: by mail-il1-f200.google.com with SMTP id b4so11863140ilj.10
-        for <io-uring@vger.kernel.org>; Tue, 09 Mar 2021 20:12:05 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=5OqF6VJ+CXLAAtRQ+kLi1XLegd503eawwJIvdTcetWc=;
-        b=mOvLo2u9u3tfFyPFCAUIjCj9tltgHpUta89hdjza2cRs55SHK8ZZJUCAC5pt1D4CF1
-         1v9PBdXt0AhI7wrtv80a19B3/bnyx43VswyWouuK4hWdEq+X+HxPSyB5S4frs0WMqtCv
-         sPB5hpA+ra8I3SI9jImS7EPsFcwJzgsSPmbfpnA2Poyu6FUZ9gUAPBN+GsE/ToBc5gE0
-         N3vjsVGB+z+yH6rqM9El9QRLze02qnN9IXKTptxLb1SobH37dYzXTGMn/03z9V37MXo0
-         lAEP6ZkXEdNfAMGC1fMRkanpLZuKvk36WvngQYU6JyX6RO++LKh7TsseTS1qSsLe5Fpx
-         ClIw==
-X-Gm-Message-State: AOAM5325MQdioczm1Lb2tovg667x5GFifjXL2RCpWgnE6rhxL7Y1jL0r
-        HAfRBS6jvuAEMCLWOXn8qRrEzlOVRSjlU+W3sV5tyyq+mRLy
-X-Google-Smtp-Source: ABdhPJxd1ttW8Ue+EVOOjJOW6RWy649Eb+T3iGy63L+9AJlmZhWiN5hNB2ipvFSKjsz7Mqc8vElwXx1F7jIzsXjsezjwmF9I4EE+
+        id S231867AbhCJMCK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 10 Mar 2021 07:02:10 -0500
+Received: from raptor.unsafe.ru ([5.9.43.93]:56010 "EHLO raptor.unsafe.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230341AbhCJMBo (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Wed, 10 Mar 2021 07:01:44 -0500
+Received: from comp-core-i7-2640m-0182e6.redhat.com (ip-94-113-225-162.net.upcbroadband.cz [94.113.225.162])
+        by raptor.unsafe.ru (Postfix) with ESMTPSA id 6C66440D01;
+        Wed, 10 Mar 2021 12:01:37 +0000 (UTC)
+From:   Alexey Gladkov <gladkov.alexey@gmail.com>
+To:     LKML <linux-kernel@vger.kernel.org>, io-uring@vger.kernel.org,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        linux-mm@kvack.org
+Cc:     Alexey Gladkov <legion@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
+        Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>
+Subject: [PATCH v8 0/8] Count rlimits in each user namespace
+Date:   Wed, 10 Mar 2021 13:01:25 +0100
+Message-Id: <cover.1615372955.git.gladkov.alexey@gmail.com>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-X-Received: by 2002:a02:ce8d:: with SMTP id y13mr1396469jaq.29.1615349524740;
- Tue, 09 Mar 2021 20:12:04 -0800 (PST)
-Date:   Tue, 09 Mar 2021 20:12:04 -0800
-In-Reply-To: <7dff5f11-817d-228a-5623-1df17b05402b@kernel.dk>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009c3d4505bd26de32@google.com>
-Subject: Re: [syzbot] possible deadlock in io_sq_thread_finish
-From:   syzbot <syzbot+ac39856cb1b332dbbdda@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.4 (raptor.unsafe.ru [0.0.0.0]); Wed, 10 Mar 2021 12:01:42 +0000 (UTC)
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
+Preface
+-------
+These patches are for binding the rlimit counters to a user in user namespace.
+This patch set can be applied on top of:
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KASAN: use-after-free Read in io_sq_thread
+git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git v5.11
 
-==================================================================
-BUG: KASAN: use-after-free in __lock_acquire+0x3e6f/0x54c0 kernel/locking/lockdep.c:4770
-Read of size 8 at addr ffff88801d418c78 by task iou-sqp-10269/10271
+Problem
+-------
+The RLIMIT_NPROC, RLIMIT_MEMLOCK, RLIMIT_SIGPENDING, RLIMIT_MSGQUEUE rlimits
+implementation places the counters in user_struct [1]. These limits are global
+between processes and persists for the lifetime of the process, even if
+processes are in different user namespaces.
 
-CPU: 1 PID: 10271 Comm: iou-sqp-10269 Not tainted 5.12.0-rc2-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:79 [inline]
- dump_stack+0x141/0x1d7 lib/dump_stack.c:120
- print_address_description.constprop.0.cold+0x5b/0x2f8 mm/kasan/report.c:232
- __kasan_report mm/kasan/report.c:399 [inline]
- kasan_report.cold+0x7c/0xd8 mm/kasan/report.c:416
- __lock_acquire+0x3e6f/0x54c0 kernel/locking/lockdep.c:4770
- lock_acquire kernel/locking/lockdep.c:5510 [inline]
- lock_acquire+0x1ab/0x740 kernel/locking/lockdep.c:5475
- down_write+0x92/0x150 kernel/locking/rwsem.c:1406
- io_sq_thread+0x1220/0x1b10 fs/io_uring.c:6754
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+To illustrate the impact of rlimits, let's say there is a program that does not
+fork. Some service-A wants to run this program as user X in multiple containers.
+Since the program never fork the service wants to set RLIMIT_NPROC=1.
 
-Allocated by task 10269:
- kasan_save_stack+0x1b/0x40 mm/kasan/common.c:38
- kasan_set_track mm/kasan/common.c:46 [inline]
- set_alloc_info mm/kasan/common.c:427 [inline]
- ____kasan_kmalloc mm/kasan/common.c:506 [inline]
- ____kasan_kmalloc mm/kasan/common.c:465 [inline]
- __kasan_kmalloc+0x99/0xc0 mm/kasan/common.c:515
- kmalloc include/linux/slab.h:554 [inline]
- kzalloc include/linux/slab.h:684 [inline]
- io_get_sq_data fs/io_uring.c:7153 [inline]
- io_sq_offload_create fs/io_uring.c:7827 [inline]
- io_uring_create fs/io_uring.c:9443 [inline]
- io_uring_setup+0x154b/0x2940 fs/io_uring.c:9523
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xae
+service-A
+ \- program (uid=1000, container1, rlimit_nproc=1)
+ \- program (uid=1000, container2, rlimit_nproc=1)
 
-Freed by task 9:
- kasan_save_stack+0x1b/0x40 mm/kasan/common.c:38
- kasan_set_track+0x1c/0x30 mm/kasan/common.c:46
- kasan_set_free_info+0x20/0x30 mm/kasan/generic.c:357
- ____kasan_slab_free mm/kasan/common.c:360 [inline]
- ____kasan_slab_free mm/kasan/common.c:325 [inline]
- __kasan_slab_free+0xf5/0x130 mm/kasan/common.c:367
- kasan_slab_free include/linux/kasan.h:199 [inline]
- slab_free_hook mm/slub.c:1562 [inline]
- slab_free_freelist_hook+0x92/0x210 mm/slub.c:1600
- slab_free mm/slub.c:3161 [inline]
- kfree+0xe5/0x7f0 mm/slub.c:4213
- io_put_sq_data fs/io_uring.c:7095 [inline]
- io_sq_thread_finish+0x48e/0x5b0 fs/io_uring.c:7113
- io_ring_ctx_free fs/io_uring.c:8355 [inline]
- io_ring_exit_work+0x333/0xcf0 fs/io_uring.c:8525
- process_one_work+0x98d/0x1600 kernel/workqueue.c:2275
- worker_thread+0x64c/0x1120 kernel/workqueue.c:2421
- kthread+0x3b1/0x4a0 kernel/kthread.c:292
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+The service-A sets RLIMIT_NPROC=1 and runs the program in container1. When the
+service-A tries to run a program with RLIMIT_NPROC=1 in container2 it fails
+since user X already has one running process.
 
-The buggy address belongs to the object at ffff88801d418c00
- which belongs to the cache kmalloc-512 of size 512
-The buggy address is located 120 bytes inside of
- 512-byte region [ffff88801d418c00, ffff88801d418e00)
-The buggy address belongs to the page:
-page:00000000311e6f59 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x1d418
-head:00000000311e6f59 order:2 compound_mapcount:0 compound_pincount:0
-flags: 0xfff00000010200(slab|head)
-raw: 00fff00000010200 dead000000000100 dead000000000122 ffff88800fc41c80
-raw: 0000000000000000 0000000000100010 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
+The problem is not that the limit from container1 affects container2. The
+problem is that limit is verified against the global counter that reflects
+the number of processes in all containers.
 
-Memory state around the buggy address:
- ffff88801d418b00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff88801d418b80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->ffff88801d418c00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                                                ^
- ffff88801d418c80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff88801d418d00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
+This problem can be worked around by using different users for each container
+but in this case we face a different problem of uid mapping when transferring
+files from one container to another.
 
+Eric W. Biederman mentioned this issue [2][3].
 
-Tested on:
+Introduced changes
+------------------
+To address the problem, we bind rlimit counters to user namespace. Each counter
+reflects the number of processes in a given uid in a given user namespace. The
+result is a tree of rlimit counters with the biggest value at the root (aka
+init_user_ns). The limit is considered exceeded if it's exceeded up in the tree.
 
-commit:         dc5c40fb io_uring: always wait for sqd exited when stoppin..
-git tree:       git://git.kernel.dk/linux-block io_uring-5.12
-console output: https://syzkaller.appspot.com/x/log.txt?x=111d175cd00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b3c6cab008c50864
-dashboard link: https://syzkaller.appspot.com/bug?extid=ac39856cb1b332dbbdda
-compiler:       
+[1]: https://lore.kernel.org/containers/87imd2incs.fsf@x220.int.ebiederm.org/
+[2]: https://lists.linuxfoundation.org/pipermail/containers/2020-August/042096.html
+[3]: https://lists.linuxfoundation.org/pipermail/containers/2020-October/042524.html
+
+Changelog
+---------
+v8:
+* Used atomic_t for ucounts reference counting. Also added counter overflow
+  check (thanks to Linus Torvalds for the idea).
+* Fixed other issues found by lkp-tests project in the patch that Reimplements
+  RLIMIT_MEMLOCK on top of ucounts.
+
+v7:
+* Fixed issues found by lkp-tests project in the patch that Reimplements
+  RLIMIT_MEMLOCK on top of ucounts.
+
+v6:
+* Fixed issues found by lkp-tests project.
+* Rebased onto v5.11.
+
+v5:
+* Split the first commit into two commits: change ucounts.count type to atomic_long_t
+  and add ucounts to cred. These commits were merged by mistake during the rebase.
+* The __get_ucounts() renamed to alloc_ucounts().
+* The cred.ucounts update has been moved from commit_creds() as it did not allow
+  to handle errors.
+* Added error handling of set_cred_ucounts().
+
+v4:
+* Reverted the type change of ucounts.count to refcount_t.
+* Fixed typo in the kernel/cred.c
+
+v3:
+* Added get_ucounts() function to increase the reference count. The existing
+  get_counts() function renamed to __get_ucounts().
+* The type of ucounts.count changed from atomic_t to refcount_t.
+* Dropped 'const' from set_cred_ucounts() arguments.
+* Fixed a bug with freeing the cred structure after calling cred_alloc_blank().
+* Commit messages have been updated.
+* Added selftest.
+
+v2:
+* RLIMIT_MEMLOCK, RLIMIT_SIGPENDING and RLIMIT_MSGQUEUE are migrated to ucounts.
+* Added ucounts for pair uid and user namespace into cred.
+* Added the ability to increase ucount by more than 1.
+
+v1:
+* After discussion with Eric W. Biederman, I increased the size of ucounts to
+  atomic_long_t.
+* Added ucount_max to avoid the fork bomb.
+
+--
+
+Alexey Gladkov (8):
+  Increase size of ucounts to atomic_long_t
+  Add a reference to ucounts for each cred
+  Use atomic_t for ucounts reference counting
+  Reimplement RLIMIT_NPROC on top of ucounts
+  Reimplement RLIMIT_MSGQUEUE on top of ucounts
+  Reimplement RLIMIT_SIGPENDING on top of ucounts
+  Reimplement RLIMIT_MEMLOCK on top of ucounts
+  kselftests: Add test to check for rlimit changes in different user
+    namespaces
+
+ fs/exec.c                                     |   6 +-
+ fs/hugetlbfs/inode.c                          |  16 +-
+ fs/io-wq.c                                    |  22 ++-
+ fs/io-wq.h                                    |   2 +-
+ fs/io_uring.c                                 |   2 +-
+ fs/proc/array.c                               |   2 +-
+ include/linux/cred.h                          |   4 +
+ include/linux/hugetlb.h                       |   4 +-
+ include/linux/mm.h                            |   4 +-
+ include/linux/sched/user.h                    |   7 -
+ include/linux/shmem_fs.h                      |   2 +-
+ include/linux/signal_types.h                  |   4 +-
+ include/linux/user_namespace.h                |  26 ++-
+ ipc/mqueue.c                                  |  41 ++---
+ ipc/shm.c                                     |  26 +--
+ kernel/cred.c                                 |  50 +++++-
+ kernel/exit.c                                 |   2 +-
+ kernel/fork.c                                 |  18 +-
+ kernel/signal.c                               |  57 +++----
+ kernel/sys.c                                  |  14 +-
+ kernel/ucount.c                               | 140 ++++++++++++---
+ kernel/user.c                                 |   3 -
+ kernel/user_namespace.c                       |   9 +-
+ mm/memfd.c                                    |   4 +-
+ mm/mlock.c                                    |  23 ++-
+ mm/mmap.c                                     |   4 +-
+ mm/shmem.c                                    |   8 +-
+ tools/testing/selftests/Makefile              |   1 +
+ tools/testing/selftests/rlimits/.gitignore    |   2 +
+ tools/testing/selftests/rlimits/Makefile      |   6 +
+ tools/testing/selftests/rlimits/config        |   1 +
+ .../selftests/rlimits/rlimits-per-userns.c    | 161 ++++++++++++++++++
+ 32 files changed, 512 insertions(+), 159 deletions(-)
+ create mode 100644 tools/testing/selftests/rlimits/.gitignore
+ create mode 100644 tools/testing/selftests/rlimits/Makefile
+ create mode 100644 tools/testing/selftests/rlimits/config
+ create mode 100644 tools/testing/selftests/rlimits/rlimits-per-userns.c
+
+-- 
+2.29.2
 

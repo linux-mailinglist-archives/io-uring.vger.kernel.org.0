@@ -2,58 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EA97D334BD5
-	for <lists+io-uring@lfdr.de>; Wed, 10 Mar 2021 23:45:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A3690334BE1
+	for <lists+io-uring@lfdr.de>; Wed, 10 Mar 2021 23:45:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233933AbhCJWon (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 10 Mar 2021 17:44:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54186 "EHLO
+        id S233029AbhCJWpL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 10 Mar 2021 17:45:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233937AbhCJWoW (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 10 Mar 2021 17:44:22 -0500
-Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6A92C061762
-        for <io-uring@vger.kernel.org>; Wed, 10 Mar 2021 14:44:21 -0800 (PST)
-Received: by mail-pl1-x630.google.com with SMTP id n17so5678793plc.7
-        for <io-uring@vger.kernel.org>; Wed, 10 Mar 2021 14:44:21 -0800 (PST)
+        with ESMTP id S232828AbhCJWop (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 10 Mar 2021 17:44:45 -0500
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E948EC061765
+        for <io-uring@vger.kernel.org>; Wed, 10 Mar 2021 14:44:22 -0800 (PST)
+Received: by mail-pl1-x62e.google.com with SMTP id w7so5746244pll.8
+        for <io-uring@vger.kernel.org>; Wed, 10 Mar 2021 14:44:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=59YkVLHv9p4gDp+PspYIzvk09Z0rD1LrFtUWdlBVLaA=;
-        b=YfurdH5po3utSwvVL1T8o6Q2VyLLK3DFesPuGJ+lQvepc24hU/BzH968wt5mvdSuwH
-         QzHTiZJuamaQs5OSaOaifiJobTuPvygZ3ph9B8tvTX1KyW6GtIl1oRCnehQY+r8r4C2N
-         fwUqpZLytUoQmSknDltMKvGEiFqs/g/3EY5H0VWIj19NtpQpTk/qSeSC1kYrooz8q5VO
-         U3yg+UQeFvUY8/FmOJFQgKdyZ/6y/K5LfqmKZwtr9YdR6hX+Dk3QR1mN1SiNJ++adSvl
-         NUHk335F43uIPq/ggBUufEfJ0JXiK3s/MVIwD/EcMVU2GmqvR2N4rQMbwf+gSgQAn2Rz
-         Rx5Q==
+        bh=qcVOeUQhRs/9vWtpN/zYBknfy9jeviMZsnGOob8rcX4=;
+        b=yiXwR/3w9+Ml2acRSMw8w5Mr6U2neEOITa+jqNqUZtftkkeuSfSI/siF4XCX+JN0l2
+         MWQ3YopnNFb98vFlx/xQKCCcxuEaC/l1miaeg3KOqixLp1fnmcZ9xZ051Z4FNvKUJq1k
+         uwzLgbV8PvxpidlYezJ2OMRu89sfu7ZzpHDM381BNvApYgqk5HXQ+qpEzkrZd1Ob3J1V
+         dZvL5F+8KbcCxaEalhHBIG5r0mLWm7t23DEkumTge+NvrcRtKaszzo1L1zpBlREwsyXm
+         S1gxbI+HTZ2MTxAWV06W7X9laX2m7udDFeOTWzS9BQyilJ0gkkaTgWX48IrxU2d5qzt5
+         dUSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=59YkVLHv9p4gDp+PspYIzvk09Z0rD1LrFtUWdlBVLaA=;
-        b=C8zUqRxWTvdBtawQPBL/2zxcVgb4A6uh+lUnwoVjWyFf08vP7fKt8VjrcHkz8DUejC
-         lb6RW5X8kuEQhJrcpAWMggjSlCkmasqvTDE6muNIcXfUf5qQFq25uA1H3O2Zf9irbM4I
-         irO2l+LhJ9vvzp53ZxJxa7tEmnhNN6Og6aFDcZE4hBvXRlAYS4nVZKBadVbutamResv7
-         cnpw4RakLK2HmPSU7/hoxuveV3gLL+TZTkOE6ctm9mMGqprJh4pX5DlMZW6E279TgjqS
-         7cgVTsUZmXtpGcHyTp38ec87StEYIf8AcVJp+O7m+y2Z5W0UL4xu/EIqDEh9QXmoGi2D
-         B3cg==
-X-Gm-Message-State: AOAM533T75sUop5MvCKPK76gkLdH1KO9BjdTRQ6Av1vMhSeGSyKquvNw
-        mDBDxLuzT8AL5xxnT5aopmCIUygYoaevLg==
-X-Google-Smtp-Source: ABdhPJxGiQma0+8a6Ges+1MFo+TrH07glM/OQFYQpcv707UC7ARlgRv//8T6v8EOdQiNyJEYvgKONg==
-X-Received: by 2002:a17:902:a617:b029:e5:b41e:4d7b with SMTP id u23-20020a170902a617b02900e5b41e4d7bmr5224024plq.33.1615416259770;
-        Wed, 10 Mar 2021 14:44:19 -0800 (PST)
+        bh=qcVOeUQhRs/9vWtpN/zYBknfy9jeviMZsnGOob8rcX4=;
+        b=YZwP5cEZYUg1mpAIto7xCnM4nbL67M+y02WPoUJfRnJW4RQvo96EPm/6drp5V+9L+z
+         ZFC9wYSsu3xuWAHnxpVcoxk9nD39SeduNPwgK1+V/QC/TlB9oOgZFoQp35mbgAFr6e73
+         JwHsygoDN51LzVdHypFZXT8xU8Ue6eo7m1LslPG+3+D1rdbdK8SRZ1bG8570gz/vOGZM
+         XCX0u6Ik2nlP0pSxmTVg5/vWk7gp1xX07pexE9FpbuqYU1rgY2p//5bcJ+UCS5RYqtdR
+         bFx5LAtqQ7uRDyP3WOI14FhZeVInS+Oxv2NrypjukkxnPDmY459wM2ev44GvdImopO0g
+         8q0g==
+X-Gm-Message-State: AOAM533LNEYytII+RLC18r/NzxjimyIjKvUFsCqYIGnSizl/DF5G9q++
+        nds0VGEtb1dPaarVGB4D1gatoSgC3MYj6A==
+X-Google-Smtp-Source: ABdhPJwqRwsOmJkIDjqqLdWhQpNQV5jxrL++3lxgfzWHnlwDzeisv/ldet+Sbgo8tfTVSwtC/2yXqA==
+X-Received: by 2002:a17:902:cec8:b029:e4:a497:da8d with SMTP id d8-20020a170902cec8b02900e4a497da8dmr5115754plg.16.1615416260794;
+        Wed, 10 Mar 2021 14:44:20 -0800 (PST)
 Received: from localhost.localdomain ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id j23sm475783pfn.94.2021.03.10.14.44.18
+        by smtp.gmail.com with ESMTPSA id j23sm475783pfn.94.2021.03.10.14.44.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Mar 2021 14:44:19 -0800 (PST)
+        Wed, 10 Mar 2021 14:44:20 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        stable@vger.kernel.org, yangerkun <yangerkun@huawei.com>,
         Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 15/27] io_uring: clean R_DISABLED startup mess
-Date:   Wed, 10 Mar 2021 15:43:46 -0700
-Message-Id: <20210310224358.1494503-16-axboe@kernel.dk>
+Subject: [PATCH 16/27] io_uring: Convert personality_idr to XArray
+Date:   Wed, 10 Mar 2021 15:43:47 -0700
+Message-Id: <20210310224358.1494503-17-axboe@kernel.dk>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210310224358.1494503-1-axboe@kernel.dk>
 References: <20210310224358.1494503-1-axboe@kernel.dk>
@@ -63,90 +64,157 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Pavel Begunkov <asml.silence@gmail.com>
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-There are enough of problems with IORING_SETUP_R_DISABLED, including the
-burden of checking and kicking off the SQO task all over the codebase --
-for exit/cancel/etc.
+You can't call idr_remove() from within a idr_for_each() callback,
+but you can call xa_erase() from an xa_for_each() loop, so switch the
+entire personality_idr from the IDR to the XArray.  This manifests as a
+use-after-free as idr_for_each() attempts to walk the rest of the node
+after removing the last entry from it.
 
-Rework it, always start the thread but don't do submit unless the flag
-is gone, that's much easier.
-
+Fixes: 071698e13ac6 ("io_uring: allow registering credentials")
+Cc: stable@vger.kernel.org # 5.6+
+Reported-by: yangerkun <yangerkun@huawei.com>
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+[Pavel: rebased (creds load was moved into io_init_req())]
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+Link: https://lore.kernel.org/r/7ccff36e1375f2b0ebf73d957f037b43becc0dde.1615212806.git.asml.silence@gmail.com
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/io_uring.c | 25 ++++++-------------------
- 1 file changed, 6 insertions(+), 19 deletions(-)
+ fs/io_uring.c | 47 ++++++++++++++++++++++++-----------------------
+ 1 file changed, 24 insertions(+), 23 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index d4f018f5838d..3f6db813d670 100644
+index 3f6db813d670..84eb499368a4 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -6606,7 +6606,8 @@ static int __io_sq_thread(struct io_ring_ctx *ctx, bool cap_entries)
- 		if (!list_empty(&ctx->iopoll_list))
- 			io_do_iopoll(ctx, &nr_events, 0);
+@@ -406,7 +406,8 @@ struct io_ring_ctx {
  
--		if (to_submit && likely(!percpu_ref_is_dying(&ctx->refs)))
-+		if (to_submit && likely(!percpu_ref_is_dying(&ctx->refs)) &&
-+		    !(ctx->flags & IORING_SETUP_R_DISABLED))
- 			ret = io_submit_sqes(ctx, to_submit);
- 		mutex_unlock(&ctx->uring_lock);
- 	}
-@@ -7861,6 +7862,7 @@ static int io_sq_offload_create(struct io_ring_ctx *ctx,
- 		wake_up_new_task(tsk);
- 		if (ret)
- 			goto err;
-+		complete(&sqd->startup);
- 	} else if (p->flags & IORING_SETUP_SQ_AFF) {
- 		/* Can't have SQ_AFF without SQPOLL */
- 		ret = -EINVAL;
-@@ -7873,15 +7875,6 @@ static int io_sq_offload_create(struct io_ring_ctx *ctx,
- 	return ret;
+ 	struct idr		io_buffer_idr;
+ 
+-	struct idr		personality_idr;
++	struct xarray		personalities;
++	u32			pers_next;
+ 
+ 	struct {
+ 		unsigned		cached_cq_tail;
+@@ -1137,7 +1138,7 @@ static struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
+ 	init_completion(&ctx->ref_comp);
+ 	init_completion(&ctx->sq_thread_comp);
+ 	idr_init(&ctx->io_buffer_idr);
+-	idr_init(&ctx->personality_idr);
++	xa_init_flags(&ctx->personalities, XA_FLAGS_ALLOC1);
+ 	mutex_init(&ctx->uring_lock);
+ 	init_waitqueue_head(&ctx->wait);
+ 	spin_lock_init(&ctx->completion_lock);
+@@ -6337,7 +6338,7 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
+ 	req->work.list.next = NULL;
+ 	personality = READ_ONCE(sqe->personality);
+ 	if (personality) {
+-		req->work.creds = idr_find(&ctx->personality_idr, personality);
++		req->work.creds = xa_load(&ctx->personalities, personality);
+ 		if (!req->work.creds)
+ 			return -EINVAL;
+ 		get_cred(req->work.creds);
+@@ -8355,7 +8356,6 @@ static void io_ring_ctx_free(struct io_ring_ctx *ctx)
+ 	mutex_unlock(&ctx->uring_lock);
+ 	io_eventfd_unregister(ctx);
+ 	io_destroy_buffers(ctx);
+-	idr_destroy(&ctx->personality_idr);
+ 
+ #if defined(CONFIG_UNIX)
+ 	if (ctx->ring_sock) {
+@@ -8420,7 +8420,7 @@ static int io_unregister_personality(struct io_ring_ctx *ctx, unsigned id)
+ {
+ 	const struct cred *creds;
+ 
+-	creds = idr_remove(&ctx->personality_idr, id);
++	creds = xa_erase(&ctx->personalities, id);
+ 	if (creds) {
+ 		put_cred(creds);
+ 		return 0;
+@@ -8429,14 +8429,6 @@ static int io_unregister_personality(struct io_ring_ctx *ctx, unsigned id)
+ 	return -EINVAL;
  }
  
--static void io_sq_offload_start(struct io_ring_ctx *ctx)
+-static int io_remove_personalities(int id, void *p, void *data)
 -{
--	struct io_sq_data *sqd = ctx->sq_data;
+-	struct io_ring_ctx *ctx = data;
 -
--	ctx->flags &= ~IORING_SETUP_R_DISABLED;
--	if (ctx->flags & IORING_SETUP_SQPOLL)
--		complete(&sqd->startup);
+-	io_unregister_personality(ctx, id);
+-	return 0;
 -}
 -
- static inline void __io_unaccount_mem(struct user_struct *user,
- 				      unsigned long nr_pages)
+ static bool io_run_ctx_fallback(struct io_ring_ctx *ctx)
  {
-@@ -8742,11 +8735,6 @@ static void io_uring_cancel_task_requests(struct io_ring_ctx *ctx,
- 	struct task_struct *task = current;
+ 	struct callback_head *work, *next;
+@@ -8526,13 +8518,17 @@ static void io_ring_exit_work(struct work_struct *work)
  
- 	if ((ctx->flags & IORING_SETUP_SQPOLL) && ctx->sq_data) {
--		/* never started, nothing to cancel */
--		if (ctx->flags & IORING_SETUP_R_DISABLED) {
--			io_sq_offload_start(ctx);
--			return;
--		}
- 		io_sq_thread_park(ctx->sq_data);
- 		task = ctx->sq_data->thread;
- 		if (task)
-@@ -9449,9 +9437,6 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p,
- 	if (ret)
- 		goto err;
+ static void io_ring_ctx_wait_and_kill(struct io_ring_ctx *ctx)
+ {
++	unsigned long index;
++	struct creds *creds;
++
+ 	mutex_lock(&ctx->uring_lock);
+ 	percpu_ref_kill(&ctx->refs);
+ 	/* if force is set, the ring is going away. always drop after that */
+ 	ctx->cq_overflow_flushed = 1;
+ 	if (ctx->rings)
+ 		__io_cqring_overflow_flush(ctx, true, NULL, NULL);
+-	idr_for_each(&ctx->personality_idr, io_remove_personalities, ctx);
++	xa_for_each(&ctx->personalities, index, creds)
++		io_unregister_personality(ctx, index);
+ 	mutex_unlock(&ctx->uring_lock);
  
--	if (!(p->flags & IORING_SETUP_R_DISABLED))
--		io_sq_offload_start(ctx);
--
- 	memset(&p->sq_off, 0, sizeof(p->sq_off));
- 	p->sq_off.head = offsetof(struct io_rings, sq.head);
- 	p->sq_off.tail = offsetof(struct io_rings, sq.tail);
-@@ -9668,7 +9653,9 @@ static int io_register_enable_rings(struct io_ring_ctx *ctx)
- 	if (ctx->restrictions.registered)
- 		ctx->restricted = 1;
+ 	io_kill_timeouts(ctx, NULL, NULL);
+@@ -9162,10 +9158,9 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
+ }
  
--	io_sq_offload_start(ctx);
-+	ctx->flags &= ~IORING_SETUP_R_DISABLED;
-+	if (ctx->sq_data && wq_has_sleeper(&ctx->sq_data->wait))
-+		wake_up(&ctx->sq_data->wait);
- 	return 0;
+ #ifdef CONFIG_PROC_FS
+-static int io_uring_show_cred(int id, void *p, void *data)
++static int io_uring_show_cred(struct seq_file *m, unsigned int id,
++		const struct cred *cred)
+ {
+-	const struct cred *cred = p;
+-	struct seq_file *m = data;
+ 	struct user_namespace *uns = seq_user_ns(m);
+ 	struct group_info *gi;
+ 	kernel_cap_t cap;
+@@ -9233,9 +9228,13 @@ static void __io_uring_show_fdinfo(struct io_ring_ctx *ctx, struct seq_file *m)
+ 		seq_printf(m, "%5u: 0x%llx/%u\n", i, buf->ubuf,
+ 						(unsigned int) buf->len);
+ 	}
+-	if (has_lock && !idr_is_empty(&ctx->personality_idr)) {
++	if (has_lock && !xa_empty(&ctx->personalities)) {
++		unsigned long index;
++		const struct cred *cred;
++
+ 		seq_printf(m, "Personalities:\n");
+-		idr_for_each(&ctx->personality_idr, io_uring_show_cred, m);
++		xa_for_each(&ctx->personalities, index, cred)
++			io_uring_show_cred(m, index, cred);
+ 	}
+ 	seq_printf(m, "PollList:\n");
+ 	spin_lock_irq(&ctx->completion_lock);
+@@ -9564,14 +9563,16 @@ static int io_probe(struct io_ring_ctx *ctx, void __user *arg, unsigned nr_args)
+ static int io_register_personality(struct io_ring_ctx *ctx)
+ {
+ 	const struct cred *creds;
++	u32 id;
+ 	int ret;
+ 
+ 	creds = get_current_cred();
+ 
+-	ret = idr_alloc_cyclic(&ctx->personality_idr, (void *) creds, 1,
+-				USHRT_MAX, GFP_KERNEL);
+-	if (ret < 0)
+-		put_cred(creds);
++	ret = xa_alloc_cyclic(&ctx->personalities, &id, (void *)creds,
++			XA_LIMIT(0, USHRT_MAX), &ctx->pers_next, GFP_KERNEL);
++	if (!ret)
++		return id;
++	put_cred(creds);
+ 	return ret;
  }
  
 -- 

@@ -2,58 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EBFE4334BDF
-	for <lists+io-uring@lfdr.de>; Wed, 10 Mar 2021 23:45:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EA97D334BD5
+	for <lists+io-uring@lfdr.de>; Wed, 10 Mar 2021 23:45:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233950AbhCJWor (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 10 Mar 2021 17:44:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54178 "EHLO
+        id S233933AbhCJWon (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 10 Mar 2021 17:44:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54186 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233988AbhCJWoi (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 10 Mar 2021 17:44:38 -0500
-Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5058C061761
-        for <io-uring@vger.kernel.org>; Wed, 10 Mar 2021 14:44:20 -0800 (PST)
-Received: by mail-pl1-x62c.google.com with SMTP id d23so6023352plq.2
-        for <io-uring@vger.kernel.org>; Wed, 10 Mar 2021 14:44:20 -0800 (PST)
+        with ESMTP id S233937AbhCJWoW (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 10 Mar 2021 17:44:22 -0500
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6A92C061762
+        for <io-uring@vger.kernel.org>; Wed, 10 Mar 2021 14:44:21 -0800 (PST)
+Received: by mail-pl1-x630.google.com with SMTP id n17so5678793plc.7
+        for <io-uring@vger.kernel.org>; Wed, 10 Mar 2021 14:44:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=r9XFkReTLkzFRXIBuwwNwR484zcFdJuoSDjnAE+1n/s=;
-        b=ezpbd5wUR6IuEmG7GmW9PJfsSeiOUjb3brHKmMtudZMhoPE6jZnhkw0Q3ffUFnTuiR
-         qryfpCbYQEwQQRizba0etH3OVeNcFbm7NtGSvGNF8geBJbGwnjzZV6yaIdleX58E5KSQ
-         2au+OJA6m5qEc7blsT4nVZyQOmiMN+FfzVAPKRNfinaMhC+K4jYOm25yh7lLCuvIcfxi
-         RMimYZQRPHbe1tjFBwghN4uFUkWAh95svk6BmazvSvKaQbfdXEdNxMZIAkDQLjVGoTe7
-         oM4ckblD0HtySVYO6Epk1WID0Q0JbfrrkD/ngDNrc5oCkhNt+zzSwWyoZm9pC+wl/uz8
-         7sjg==
+        bh=59YkVLHv9p4gDp+PspYIzvk09Z0rD1LrFtUWdlBVLaA=;
+        b=YfurdH5po3utSwvVL1T8o6Q2VyLLK3DFesPuGJ+lQvepc24hU/BzH968wt5mvdSuwH
+         QzHTiZJuamaQs5OSaOaifiJobTuPvygZ3ph9B8tvTX1KyW6GtIl1oRCnehQY+r8r4C2N
+         fwUqpZLytUoQmSknDltMKvGEiFqs/g/3EY5H0VWIj19NtpQpTk/qSeSC1kYrooz8q5VO
+         U3yg+UQeFvUY8/FmOJFQgKdyZ/6y/K5LfqmKZwtr9YdR6hX+Dk3QR1mN1SiNJ++adSvl
+         NUHk335F43uIPq/ggBUufEfJ0JXiK3s/MVIwD/EcMVU2GmqvR2N4rQMbwf+gSgQAn2Rz
+         Rx5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=r9XFkReTLkzFRXIBuwwNwR484zcFdJuoSDjnAE+1n/s=;
-        b=DYExgC+CjZhYRpSixDlOliT/14vFc9YnhtuBkwOVp4NHFLJanSS/WC4Vz3EZcVSKqW
-         w+p5g5kznEASeDIwp6APyzmuta/9UyhvUDUwv4QyFcxlbOQLhoSHDMMPFI+PqZ1JwlyI
-         zeH3ZjBQ6B/ZEbNXt4eh4XyPY4SU16WsmkeREcVC462xMNtMctEIyyvw8mdGbI0wXK+t
-         jsfzYWWoisLsfrW7CtzoiGoNj+ceKRqQ8d0ejaQiWUFVvO3huD/Z3n/UGcHNQjX0SN+k
-         kIb99Bx0XrS0ZHSGg15bsv+u0UqA/M4hlWWO9Ebh58sxQ+HWDwiIEfbQqjIF978d1sQE
-         RGBw==
-X-Gm-Message-State: AOAM531QbC+Gi4YmYwjxeGJBE+WxUZ94vBc7fEeXv/0vQY9lWHnnUNoP
-        tZcya2WtUkJPoOGL1lGp6zkVuZn42ahDQw==
-X-Google-Smtp-Source: ABdhPJyBUZkR/eo85P6KXZqCoQDEGylWNZiZroFr2Zp7SXNn+Q5YgR3OZT3InmqjCPZeKGC4DpWCzA==
-X-Received: by 2002:a17:903:1cb:b029:e5:f712:c13c with SMTP id e11-20020a17090301cbb02900e5f712c13cmr4931447plh.22.1615416258761;
-        Wed, 10 Mar 2021 14:44:18 -0800 (PST)
+        bh=59YkVLHv9p4gDp+PspYIzvk09Z0rD1LrFtUWdlBVLaA=;
+        b=C8zUqRxWTvdBtawQPBL/2zxcVgb4A6uh+lUnwoVjWyFf08vP7fKt8VjrcHkz8DUejC
+         lb6RW5X8kuEQhJrcpAWMggjSlCkmasqvTDE6muNIcXfUf5qQFq25uA1H3O2Zf9irbM4I
+         irO2l+LhJ9vvzp53ZxJxa7tEmnhNN6Og6aFDcZE4hBvXRlAYS4nVZKBadVbutamResv7
+         cnpw4RakLK2HmPSU7/hoxuveV3gLL+TZTkOE6ctm9mMGqprJh4pX5DlMZW6E279TgjqS
+         7cgVTsUZmXtpGcHyTp38ec87StEYIf8AcVJp+O7m+y2Z5W0UL4xu/EIqDEh9QXmoGi2D
+         B3cg==
+X-Gm-Message-State: AOAM533T75sUop5MvCKPK76gkLdH1KO9BjdTRQ6Av1vMhSeGSyKquvNw
+        mDBDxLuzT8AL5xxnT5aopmCIUygYoaevLg==
+X-Google-Smtp-Source: ABdhPJxGiQma0+8a6Ges+1MFo+TrH07glM/OQFYQpcv707UC7ARlgRv//8T6v8EOdQiNyJEYvgKONg==
+X-Received: by 2002:a17:902:a617:b029:e5:b41e:4d7b with SMTP id u23-20020a170902a617b02900e5b41e4d7bmr5224024plq.33.1615416259770;
+        Wed, 10 Mar 2021 14:44:19 -0800 (PST)
 Received: from localhost.localdomain ([66.219.217.173])
         by smtp.gmail.com with ESMTPSA id j23sm475783pfn.94.2021.03.10.14.44.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Mar 2021 14:44:18 -0800 (PST)
+        Wed, 10 Mar 2021 14:44:19 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     Pavel Begunkov <asml.silence@gmail.com>,
         Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 14/27] io_uring: fix unrelated ctx reqs cancellation
-Date:   Wed, 10 Mar 2021 15:43:45 -0700
-Message-Id: <20210310224358.1494503-15-axboe@kernel.dk>
+Subject: [PATCH 15/27] io_uring: clean R_DISABLED startup mess
+Date:   Wed, 10 Mar 2021 15:43:46 -0700
+Message-Id: <20210310224358.1494503-16-axboe@kernel.dk>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210310224358.1494503-1-axboe@kernel.dk>
 References: <20210310224358.1494503-1-axboe@kernel.dk>
@@ -65,64 +65,90 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 From: Pavel Begunkov <asml.silence@gmail.com>
 
-io-wq now is per-task, so cancellations now should match against
-request's ctx.
+There are enough of problems with IORING_SETUP_R_DISABLED, including the
+burden of checking and kicking off the SQO task all over the codebase --
+for exit/cancel/etc.
+
+Rework it, always start the thread but don't do submit unless the flag
+is gone, that's much easier.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/io_uring.c | 19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
+ fs/io_uring.c | 25 ++++++-------------------
+ 1 file changed, 6 insertions(+), 19 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 2a3542b487ff..d4f018f5838d 100644
+index d4f018f5838d..3f6db813d670 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -5573,22 +5573,30 @@ static int io_timeout(struct io_kiocb *req, unsigned int issue_flags)
+@@ -6606,7 +6606,8 @@ static int __io_sq_thread(struct io_ring_ctx *ctx, bool cap_entries)
+ 		if (!list_empty(&ctx->iopoll_list))
+ 			io_do_iopoll(ctx, &nr_events, 0);
+ 
+-		if (to_submit && likely(!percpu_ref_is_dying(&ctx->refs)))
++		if (to_submit && likely(!percpu_ref_is_dying(&ctx->refs)) &&
++		    !(ctx->flags & IORING_SETUP_R_DISABLED))
+ 			ret = io_submit_sqes(ctx, to_submit);
+ 		mutex_unlock(&ctx->uring_lock);
+ 	}
+@@ -7861,6 +7862,7 @@ static int io_sq_offload_create(struct io_ring_ctx *ctx,
+ 		wake_up_new_task(tsk);
+ 		if (ret)
+ 			goto err;
++		complete(&sqd->startup);
+ 	} else if (p->flags & IORING_SETUP_SQ_AFF) {
+ 		/* Can't have SQ_AFF without SQPOLL */
+ 		ret = -EINVAL;
+@@ -7873,15 +7875,6 @@ static int io_sq_offload_create(struct io_ring_ctx *ctx,
+ 	return ret;
+ }
+ 
+-static void io_sq_offload_start(struct io_ring_ctx *ctx)
+-{
+-	struct io_sq_data *sqd = ctx->sq_data;
+-
+-	ctx->flags &= ~IORING_SETUP_R_DISABLED;
+-	if (ctx->flags & IORING_SETUP_SQPOLL)
+-		complete(&sqd->startup);
+-}
+-
+ static inline void __io_unaccount_mem(struct user_struct *user,
+ 				      unsigned long nr_pages)
+ {
+@@ -8742,11 +8735,6 @@ static void io_uring_cancel_task_requests(struct io_ring_ctx *ctx,
+ 	struct task_struct *task = current;
+ 
+ 	if ((ctx->flags & IORING_SETUP_SQPOLL) && ctx->sq_data) {
+-		/* never started, nothing to cancel */
+-		if (ctx->flags & IORING_SETUP_R_DISABLED) {
+-			io_sq_offload_start(ctx);
+-			return;
+-		}
+ 		io_sq_thread_park(ctx->sq_data);
+ 		task = ctx->sq_data->thread;
+ 		if (task)
+@@ -9449,9 +9437,6 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p,
+ 	if (ret)
+ 		goto err;
+ 
+-	if (!(p->flags & IORING_SETUP_R_DISABLED))
+-		io_sq_offload_start(ctx);
+-
+ 	memset(&p->sq_off, 0, sizeof(p->sq_off));
+ 	p->sq_off.head = offsetof(struct io_rings, sq.head);
+ 	p->sq_off.tail = offsetof(struct io_rings, sq.tail);
+@@ -9668,7 +9653,9 @@ static int io_register_enable_rings(struct io_ring_ctx *ctx)
+ 	if (ctx->restrictions.registered)
+ 		ctx->restricted = 1;
+ 
+-	io_sq_offload_start(ctx);
++	ctx->flags &= ~IORING_SETUP_R_DISABLED;
++	if (ctx->sq_data && wq_has_sleeper(&ctx->sq_data->wait))
++		wake_up(&ctx->sq_data->wait);
  	return 0;
  }
  
-+struct io_cancel_data {
-+	struct io_ring_ctx *ctx;
-+	u64 user_data;
-+};
-+
- static bool io_cancel_cb(struct io_wq_work *work, void *data)
- {
- 	struct io_kiocb *req = container_of(work, struct io_kiocb, work);
-+	struct io_cancel_data *cd = data;
- 
--	return req->user_data == (unsigned long) data;
-+	return req->ctx == cd->ctx && req->user_data == cd->user_data;
- }
- 
--static int io_async_cancel_one(struct io_uring_task *tctx, void *sqe_addr)
-+static int io_async_cancel_one(struct io_uring_task *tctx, u64 user_data,
-+			       struct io_ring_ctx *ctx)
- {
-+	struct io_cancel_data data = { .ctx = ctx, .user_data = user_data, };
- 	enum io_wq_cancel cancel_ret;
- 	int ret = 0;
- 
--	if (!tctx->io_wq)
-+	if (!tctx || !tctx->io_wq)
- 		return -ENOENT;
- 
--	cancel_ret = io_wq_cancel_cb(tctx->io_wq, io_cancel_cb, sqe_addr, false);
-+	cancel_ret = io_wq_cancel_cb(tctx->io_wq, io_cancel_cb, &data, false);
- 	switch (cancel_ret) {
- 	case IO_WQ_CANCEL_OK:
- 		ret = 0;
-@@ -5611,8 +5619,7 @@ static void io_async_find_and_cancel(struct io_ring_ctx *ctx,
- 	unsigned long flags;
- 	int ret;
- 
--	ret = io_async_cancel_one(req->task->io_uring,
--					(void *) (unsigned long) sqe_addr);
-+	ret = io_async_cancel_one(req->task->io_uring, sqe_addr, ctx);
- 	if (ret != -ENOENT) {
- 		spin_lock_irqsave(&ctx->completion_lock, flags);
- 		goto done;
 -- 
 2.30.2
 

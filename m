@@ -2,59 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A3690334BE1
-	for <lists+io-uring@lfdr.de>; Wed, 10 Mar 2021 23:45:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 09375334BD3
+	for <lists+io-uring@lfdr.de>; Wed, 10 Mar 2021 23:45:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233029AbhCJWpL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 10 Mar 2021 17:45:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54192 "EHLO
+        id S233905AbhCJWon (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 10 Mar 2021 17:44:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232828AbhCJWop (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 10 Mar 2021 17:44:45 -0500
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E948EC061765
+        with ESMTP id S233941AbhCJWoW (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 10 Mar 2021 17:44:22 -0500
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38A1BC061763
         for <io-uring@vger.kernel.org>; Wed, 10 Mar 2021 14:44:22 -0800 (PST)
-Received: by mail-pl1-x62e.google.com with SMTP id w7so5746244pll.8
+Received: by mail-pl1-x630.google.com with SMTP id u18so9214385plc.12
         for <io-uring@vger.kernel.org>; Wed, 10 Mar 2021 14:44:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=qcVOeUQhRs/9vWtpN/zYBknfy9jeviMZsnGOob8rcX4=;
-        b=yiXwR/3w9+Ml2acRSMw8w5Mr6U2neEOITa+jqNqUZtftkkeuSfSI/siF4XCX+JN0l2
-         MWQ3YopnNFb98vFlx/xQKCCcxuEaC/l1miaeg3KOqixLp1fnmcZ9xZ051Z4FNvKUJq1k
-         uwzLgbV8PvxpidlYezJ2OMRu89sfu7ZzpHDM381BNvApYgqk5HXQ+qpEzkrZd1Ob3J1V
-         dZvL5F+8KbcCxaEalhHBIG5r0mLWm7t23DEkumTge+NvrcRtKaszzo1L1zpBlREwsyXm
-         S1gxbI+HTZ2MTxAWV06W7X9laX2m7udDFeOTWzS9BQyilJ0gkkaTgWX48IrxU2d5qzt5
-         dUSg==
+        bh=XOMAq/oxzmWsD5x+J1237ergaI5C/YWGcY56phEQ/fs=;
+        b=BXUs06Jv//HRi/u6j2//wI2NkUiP+Sh0OQp60klBUol0i5vpSB9AxTGA5mYJaKH9l5
+         2BYNH/S0wwFRp0XPUaBAOIBpKDpqlYEb9iSIQWjzD4aj7UJpf3voN/bO95dZHNKsmUjE
+         5LE0kUCNqu2AGXpoH113jS2ovzEQX9vQr3Jr70jlZNltXdeYF/7Nux33q2Ki+Z2vRrWA
+         ci71MOCmS4tcAi4GOogOpCevBSyB9p9hC/Tw704pkfxhUUAjd38vwlQzBR/ccmExD/E3
+         6pPQuI3TFSX520izV8iLjCNKWU1CBAjGHKuinucW0qrbLm/pzS420RbuCXpJdYEcB1GA
+         vIUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=qcVOeUQhRs/9vWtpN/zYBknfy9jeviMZsnGOob8rcX4=;
-        b=YZwP5cEZYUg1mpAIto7xCnM4nbL67M+y02WPoUJfRnJW4RQvo96EPm/6drp5V+9L+z
-         ZFC9wYSsu3xuWAHnxpVcoxk9nD39SeduNPwgK1+V/QC/TlB9oOgZFoQp35mbgAFr6e73
-         JwHsygoDN51LzVdHypFZXT8xU8Ue6eo7m1LslPG+3+D1rdbdK8SRZ1bG8570gz/vOGZM
-         XCX0u6Ik2nlP0pSxmTVg5/vWk7gp1xX07pexE9FpbuqYU1rgY2p//5bcJ+UCS5RYqtdR
-         bFx5LAtqQ7uRDyP3WOI14FhZeVInS+Oxv2NrypjukkxnPDmY459wM2ev44GvdImopO0g
-         8q0g==
-X-Gm-Message-State: AOAM533LNEYytII+RLC18r/NzxjimyIjKvUFsCqYIGnSizl/DF5G9q++
-        nds0VGEtb1dPaarVGB4D1gatoSgC3MYj6A==
-X-Google-Smtp-Source: ABdhPJwqRwsOmJkIDjqqLdWhQpNQV5jxrL++3lxgfzWHnlwDzeisv/ldet+Sbgo8tfTVSwtC/2yXqA==
-X-Received: by 2002:a17:902:cec8:b029:e4:a497:da8d with SMTP id d8-20020a170902cec8b02900e4a497da8dmr5115754plg.16.1615416260794;
-        Wed, 10 Mar 2021 14:44:20 -0800 (PST)
+        bh=XOMAq/oxzmWsD5x+J1237ergaI5C/YWGcY56phEQ/fs=;
+        b=PLCbFpiE4s+qEAgY6Ns/KoLoDt/n+lGMtYYIGRL2rgmzcQRHbC3rgqJzbEbjihPt5U
+         q6X//izU3VktNa0C01F0f16VBuCE0Ng/8rH0e2ogpPWGrRfPqD8UmSgnUv5KRy3ZePFe
+         UIJQ5qoX1+FILnoUumNGku0LhPn7IHlbGK8KQNQCYM86VLeAmafVTXfnpPeQXbzb52gt
+         DEs4NIdGpWcIKnWKD93QYIUEPEh2sfBaSYh2cvnxUj5UEmnfaoUDvkjVURUZdDKA1XUi
+         dnZqdFH+RWabpCFNTtfOE1snV9LPsPaBIennVKdmHlKHIHoDpYrvTDw38E7Dz8lBJhEu
+         fGOg==
+X-Gm-Message-State: AOAM531Dl8YFKluYuhg2c+S3HKyGdkBHIFSm2JUSHO05qMThBoy2f5IQ
+        7R/WGvyal13EhUcR8ALTaVTzsg4dFdZ7Ag==
+X-Google-Smtp-Source: ABdhPJyO0Em3dic1nYcHsMdxAILNj8jSrsVSoHd+RMvHWnAnflZH1M7qcLGDcmTr4YXQtxWf/ogpMA==
+X-Received: by 2002:a17:902:ee82:b029:e5:fd49:ca09 with SMTP id a2-20020a170902ee82b02900e5fd49ca09mr5182937pld.55.1615416261570;
+        Wed, 10 Mar 2021 14:44:21 -0800 (PST)
 Received: from localhost.localdomain ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id j23sm475783pfn.94.2021.03.10.14.44.19
+        by smtp.gmail.com with ESMTPSA id j23sm475783pfn.94.2021.03.10.14.44.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Mar 2021 14:44:20 -0800 (PST)
+        Wed, 10 Mar 2021 14:44:21 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        stable@vger.kernel.org, yangerkun <yangerkun@huawei.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 16/27] io_uring: Convert personality_idr to XArray
-Date:   Wed, 10 Mar 2021 15:43:47 -0700
-Message-Id: <20210310224358.1494503-17-axboe@kernel.dk>
+Cc:     Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 17/27] io-wq: remove unused 'user' member of io_wq
+Date:   Wed, 10 Mar 2021 15:43:48 -0700
+Message-Id: <20210310224358.1494503-18-axboe@kernel.dk>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210310224358.1494503-1-axboe@kernel.dk>
 References: <20210310224358.1494503-1-axboe@kernel.dk>
@@ -64,158 +62,25 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Previous patches killed the last user of this, now it's just a dead member
+in the struct. Get rid of it.
 
-You can't call idr_remove() from within a idr_for_each() callback,
-but you can call xa_erase() from an xa_for_each() loop, so switch the
-entire personality_idr from the IDR to the XArray.  This manifests as a
-use-after-free as idr_for_each() attempts to walk the rest of the node
-after removing the last entry from it.
-
-Fixes: 071698e13ac6 ("io_uring: allow registering credentials")
-Cc: stable@vger.kernel.org # 5.6+
-Reported-by: yangerkun <yangerkun@huawei.com>
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-[Pavel: rebased (creds load was moved into io_init_req())]
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-Link: https://lore.kernel.org/r/7ccff36e1375f2b0ebf73d957f037b43becc0dde.1615212806.git.asml.silence@gmail.com
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/io_uring.c | 47 ++++++++++++++++++++++++-----------------------
- 1 file changed, 24 insertions(+), 23 deletions(-)
+ fs/io-wq.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 3f6db813d670..84eb499368a4 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -406,7 +406,8 @@ struct io_ring_ctx {
+diff --git a/fs/io-wq.c b/fs/io-wq.c
+index 1ab9324e602f..c2e7031f6d09 100644
+--- a/fs/io-wq.c
++++ b/fs/io-wq.c
+@@ -110,7 +110,6 @@ struct io_wq {
+ 	io_wq_work_fn *do_work;
  
- 	struct idr		io_buffer_idr;
+ 	struct task_struct *manager;
+-	struct user_struct *user;
  
--	struct idr		personality_idr;
-+	struct xarray		personalities;
-+	u32			pers_next;
- 
- 	struct {
- 		unsigned		cached_cq_tail;
-@@ -1137,7 +1138,7 @@ static struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
- 	init_completion(&ctx->ref_comp);
- 	init_completion(&ctx->sq_thread_comp);
- 	idr_init(&ctx->io_buffer_idr);
--	idr_init(&ctx->personality_idr);
-+	xa_init_flags(&ctx->personalities, XA_FLAGS_ALLOC1);
- 	mutex_init(&ctx->uring_lock);
- 	init_waitqueue_head(&ctx->wait);
- 	spin_lock_init(&ctx->completion_lock);
-@@ -6337,7 +6338,7 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
- 	req->work.list.next = NULL;
- 	personality = READ_ONCE(sqe->personality);
- 	if (personality) {
--		req->work.creds = idr_find(&ctx->personality_idr, personality);
-+		req->work.creds = xa_load(&ctx->personalities, personality);
- 		if (!req->work.creds)
- 			return -EINVAL;
- 		get_cred(req->work.creds);
-@@ -8355,7 +8356,6 @@ static void io_ring_ctx_free(struct io_ring_ctx *ctx)
- 	mutex_unlock(&ctx->uring_lock);
- 	io_eventfd_unregister(ctx);
- 	io_destroy_buffers(ctx);
--	idr_destroy(&ctx->personality_idr);
- 
- #if defined(CONFIG_UNIX)
- 	if (ctx->ring_sock) {
-@@ -8420,7 +8420,7 @@ static int io_unregister_personality(struct io_ring_ctx *ctx, unsigned id)
- {
- 	const struct cred *creds;
- 
--	creds = idr_remove(&ctx->personality_idr, id);
-+	creds = xa_erase(&ctx->personalities, id);
- 	if (creds) {
- 		put_cred(creds);
- 		return 0;
-@@ -8429,14 +8429,6 @@ static int io_unregister_personality(struct io_ring_ctx *ctx, unsigned id)
- 	return -EINVAL;
- }
- 
--static int io_remove_personalities(int id, void *p, void *data)
--{
--	struct io_ring_ctx *ctx = data;
--
--	io_unregister_personality(ctx, id);
--	return 0;
--}
--
- static bool io_run_ctx_fallback(struct io_ring_ctx *ctx)
- {
- 	struct callback_head *work, *next;
-@@ -8526,13 +8518,17 @@ static void io_ring_exit_work(struct work_struct *work)
- 
- static void io_ring_ctx_wait_and_kill(struct io_ring_ctx *ctx)
- {
-+	unsigned long index;
-+	struct creds *creds;
-+
- 	mutex_lock(&ctx->uring_lock);
- 	percpu_ref_kill(&ctx->refs);
- 	/* if force is set, the ring is going away. always drop after that */
- 	ctx->cq_overflow_flushed = 1;
- 	if (ctx->rings)
- 		__io_cqring_overflow_flush(ctx, true, NULL, NULL);
--	idr_for_each(&ctx->personality_idr, io_remove_personalities, ctx);
-+	xa_for_each(&ctx->personalities, index, creds)
-+		io_unregister_personality(ctx, index);
- 	mutex_unlock(&ctx->uring_lock);
- 
- 	io_kill_timeouts(ctx, NULL, NULL);
-@@ -9162,10 +9158,9 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
- }
- 
- #ifdef CONFIG_PROC_FS
--static int io_uring_show_cred(int id, void *p, void *data)
-+static int io_uring_show_cred(struct seq_file *m, unsigned int id,
-+		const struct cred *cred)
- {
--	const struct cred *cred = p;
--	struct seq_file *m = data;
- 	struct user_namespace *uns = seq_user_ns(m);
- 	struct group_info *gi;
- 	kernel_cap_t cap;
-@@ -9233,9 +9228,13 @@ static void __io_uring_show_fdinfo(struct io_ring_ctx *ctx, struct seq_file *m)
- 		seq_printf(m, "%5u: 0x%llx/%u\n", i, buf->ubuf,
- 						(unsigned int) buf->len);
- 	}
--	if (has_lock && !idr_is_empty(&ctx->personality_idr)) {
-+	if (has_lock && !xa_empty(&ctx->personalities)) {
-+		unsigned long index;
-+		const struct cred *cred;
-+
- 		seq_printf(m, "Personalities:\n");
--		idr_for_each(&ctx->personality_idr, io_uring_show_cred, m);
-+		xa_for_each(&ctx->personalities, index, cred)
-+			io_uring_show_cred(m, index, cred);
- 	}
- 	seq_printf(m, "PollList:\n");
- 	spin_lock_irq(&ctx->completion_lock);
-@@ -9564,14 +9563,16 @@ static int io_probe(struct io_ring_ctx *ctx, void __user *arg, unsigned nr_args)
- static int io_register_personality(struct io_ring_ctx *ctx)
- {
- 	const struct cred *creds;
-+	u32 id;
- 	int ret;
- 
- 	creds = get_current_cred();
- 
--	ret = idr_alloc_cyclic(&ctx->personality_idr, (void *) creds, 1,
--				USHRT_MAX, GFP_KERNEL);
--	if (ret < 0)
--		put_cred(creds);
-+	ret = xa_alloc_cyclic(&ctx->personalities, &id, (void *)creds,
-+			XA_LIMIT(0, USHRT_MAX), &ctx->pers_next, GFP_KERNEL);
-+	if (!ret)
-+		return id;
-+	put_cred(creds);
- 	return ret;
- }
+ 	struct io_wq_hash *hash;
  
 -- 
 2.30.2

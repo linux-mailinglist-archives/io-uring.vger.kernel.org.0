@@ -2,57 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CA00334BDB
-	for <lists+io-uring@lfdr.de>; Wed, 10 Mar 2021 23:45:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 54ADF334BDD
+	for <lists+io-uring@lfdr.de>; Wed, 10 Mar 2021 23:45:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233942AbhCJWop (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 10 Mar 2021 17:44:45 -0500
+        id S233889AbhCJWoq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 10 Mar 2021 17:44:46 -0500
 Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233889AbhCJWoa (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 10 Mar 2021 17:44:30 -0500
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02A87C061574
-        for <io-uring@vger.kernel.org>; Wed, 10 Mar 2021 14:44:30 -0800 (PST)
-Received: by mail-pj1-x1029.google.com with SMTP id lr10-20020a17090b4b8ab02900dd61b95c5eso5807018pjb.4
-        for <io-uring@vger.kernel.org>; Wed, 10 Mar 2021 14:44:29 -0800 (PST)
+        with ESMTP id S233981AbhCJWob (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 10 Mar 2021 17:44:31 -0500
+Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A219C061574
+        for <io-uring@vger.kernel.org>; Wed, 10 Mar 2021 14:44:31 -0800 (PST)
+Received: by mail-pf1-x42a.google.com with SMTP id y13so9694697pfr.0
+        for <io-uring@vger.kernel.org>; Wed, 10 Mar 2021 14:44:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=LOD7UCLzdZv/GvvaVFLkBbpbgKjkQPfHEN9JWmlIG48=;
-        b=MJU01lKlNTNHWyJdVSk+BjYXgXBC+8/FbSqBIoycFQaI6CX/94w6goYl6enoNIwfLH
-         mpEQ2Ou7TH2dBI3ym9DADpDPoqdeRplBqCHya5SGSN4vbPmUi2F8I1hLJ1OuNjjRaguk
-         h1RIf1swreFyHb6idLyqdaqU79HMOg1SgV6wbEyhz5tV4vzvCF0PdZxleUbwtCLJuo19
-         umGaNl7isTBuVvwxjWdZkLf5iVOleq3fjJWl/Q1ENDvXMeFPd9H5lyQEC8WAikfgYny6
-         xEppnQ3DErIVoQyM5U9elS+dOziXL2nS4QbYfxCSOlkwwnB8naNeT5jZyrjYMw8WOecE
-         oV4g==
+        bh=wnlWTmvZzR454d3YCmWjC6EBvh1B1ejWi+vO/YNiOn4=;
+        b=ZroTEFeaL4NLQtJQTjtRIIdlFPDON05cwfCwAgYpSK7YJ0luZ/6qCaxtrJ3plgWqCY
+         dBGqHjNHxM9M0405YvysJrUHWUYvx2jobROarlB+RB2hIE41Unw6kxlhTfQtV5jn0jrF
+         MTQgK4aMUnseH/bkXs2erpYMs0e+rDGq+0Myu8Cv2yJ5FJ6XFoTYvMG+FiBD270CGy4o
+         DCJ4HzhZcoVvH7yF2X/Tm2xdygjtNOAmWx9JWxVRJ7xll8wDpvsGKrGBPMTS3vROLQgR
+         BQwUVjXilT64QL18a27oOoLr2+YwCAM+onZ/mPn+rnuEzU+JWfU4Zb6ThPI98f6+OSEB
+         YDGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=LOD7UCLzdZv/GvvaVFLkBbpbgKjkQPfHEN9JWmlIG48=;
-        b=FVcomeXcK5m7XSTod/DlpA2ZzbUiySftaX2TK+B5eh3EFPlg6KJtHPDT0DrYW+guyH
-         G86ZzGUNNK96FZLjXvsuQTORqQh6R/mIlNbt11HKO7kG9Vv7IP9M/EOED7PoAwlfEQ06
-         bMhMz3Axc+E6NybgJXQR3XOia8QTbokebOLFz8xTw2nDTueKnvHw0dJIuG3ED0nQJXmz
-         sPHT9tw0+Z+65hmaXAnPX3lSyCX5UYtoQUV5yZ6KK/5I8aIX4mQ9cNvBB7DLAAMExoX7
-         sJdrogQ+QGVhIoFcAZAFS5PlmKr6c/ygdHPqGaHhuAdY37qInuy/VIqFs20jhpFyl+z5
-         jaZw==
-X-Gm-Message-State: AOAM531VcUmEXzw2+e6qP398fkNjLQYDTrAkMFcthHslp5gh5sSPXSXa
-        W2vHBZ84a/842dphlok1HplK+lsI4CuiqQ==
-X-Google-Smtp-Source: ABdhPJy3gY8g1whwmsbJlpeimMamzwPNNv72UAAeVgw+stOqYQkW9XcgvdgAd6me5TY4nY+/9UkTlg==
-X-Received: by 2002:a17:90a:1fcc:: with SMTP id z12mr5640344pjz.65.1615416269278;
-        Wed, 10 Mar 2021 14:44:29 -0800 (PST)
+        bh=wnlWTmvZzR454d3YCmWjC6EBvh1B1ejWi+vO/YNiOn4=;
+        b=l9za8/jvHNmViqMNRTAD3vfJFUdpafcZoy0iU+V7R1evyyy4Q4069d8ghJ2wnMqSjy
+         aw2Qf4M5Uh81SRwsLQIqVCRt35F6jSA4X8/AsF7vNR2qCeR9uNQzjoeQj84f1qgGREJI
+         XeMdrXyX6F4a1NVzrpRuwespy3WaydWynETpDks44vwzQU+6cE3uhRvuy3AFZjbvO4p3
+         E0dD/7FjKcQ7Bs2T/0EE+IKRMVrfctaAD3AALUKPHtOmT9v3xpcjZNkv3XrUT7yQwX70
+         U1ULMxYyJl1/Gxq1c+2Cw+dN0T+L3ht6KTDqWiPos0G4/Dz5SZC+W5JKExNeC3JCzsGC
+         mfxA==
+X-Gm-Message-State: AOAM533XD5P28OXh09tKaBKCktyjAWQ5d6OMx3rZHwS8cWxyrdvmAkMA
+        ZVSGvDckgjXt+y33PTFATL0JbI4InXd47A==
+X-Google-Smtp-Source: ABdhPJyMAtChRaLkEJnqDG0mnTAk5ohgMoch9yktCaXeiOoiYgHPEX/z8iPK4h1HtwIl0rzIZd2BnQ==
+X-Received: by 2002:a63:c248:: with SMTP id l8mr4699864pgg.136.1615416270332;
+        Wed, 10 Mar 2021 14:44:30 -0800 (PST)
 Received: from localhost.localdomain ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id j23sm475783pfn.94.2021.03.10.14.44.28
+        by smtp.gmail.com with ESMTPSA id j23sm475783pfn.94.2021.03.10.14.44.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Mar 2021 14:44:28 -0800 (PST)
+        Wed, 10 Mar 2021 14:44:30 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, Kevin Locke <kevin@kevinlocke.name>
-Subject: [PATCH 25/27] kernel: make IO threads unfreezable by default
-Date:   Wed, 10 Mar 2021 15:43:56 -0700
-Message-Id: <20210310224358.1494503-26-axboe@kernel.dk>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 26/27] io_uring: fix invalid ctx->sq_thread_idle
+Date:   Wed, 10 Mar 2021 15:43:57 -0700
+Message-Id: <20210310224358.1494503-27-axboe@kernel.dk>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210310224358.1494503-1-axboe@kernel.dk>
 References: <20210310224358.1494503-1-axboe@kernel.dk>
@@ -62,67 +63,40 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The io-wq threads were already marked as no-freeze, but the manager was
-not. On resume, we perpetually have signal_pending() being true, and
-hence the manager will loop and spin 100% of the time.
+From: Pavel Begunkov <asml.silence@gmail.com>
 
-Just mark the tasks created by create_io_thread() as PF_NOFREEZE by
-default, and remove any knowledge of it in io-wq and io_uring.
+We have to set ctx->sq_thread_idle before adding a ring to an SQ task,
+otherwise sqd races for seeing zero and accounting it as such.
 
-Reported-by: Kevin Locke <kevin@kevinlocke.name>
-Tested-by: Kevin Locke <kevin@kevinlocke.name>
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/io-wq.c    | 3 +--
- fs/io_uring.c | 1 -
- kernel/fork.c | 1 +
- 3 files changed, 2 insertions(+), 3 deletions(-)
+ fs/io_uring.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/fs/io-wq.c b/fs/io-wq.c
-index 3d7060ba547a..0ae9ecadf295 100644
---- a/fs/io-wq.c
-+++ b/fs/io-wq.c
-@@ -591,7 +591,7 @@ static bool create_io_worker(struct io_wq *wq, struct io_wqe *wqe, int index)
- 	tsk->pf_io_worker = worker;
- 	worker->task = tsk;
- 	set_cpus_allowed_ptr(tsk, cpumask_of_node(wqe->node));
--	tsk->flags |= PF_NOFREEZE | PF_NO_SETAFFINITY;
-+	tsk->flags |= PF_NO_SETAFFINITY;
- 
- 	raw_spin_lock_irq(&wqe->lock);
- 	hlist_nulls_add_head_rcu(&worker->nulls_node, &wqe->free_list);
-@@ -709,7 +709,6 @@ static int io_wq_manager(void *data)
- 		set_current_state(TASK_INTERRUPTIBLE);
- 		io_wq_check_workers(wq);
- 		schedule_timeout(HZ);
--		try_to_freeze();
- 		if (fatal_signal_pending(current))
- 			set_bit(IO_WQ_BIT_EXIT, &wq->state);
- 	} while (!test_bit(IO_WQ_BIT_EXIT, &wq->state));
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 62f998bf2ce8..14165e18020c 100644
+index 14165e18020c..7072c0eb22c1 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -6733,7 +6733,6 @@ static int io_sq_thread(void *data)
+@@ -7829,14 +7829,14 @@ static int io_sq_offload_create(struct io_ring_ctx *ctx,
  
- 			up_read(&sqd->rw_lock);
- 			schedule();
--			try_to_freeze();
- 			down_read(&sqd->rw_lock);
- 			list_for_each_entry(ctx, &sqd->ctx_list, sqd_list)
- 				io_ring_clear_wakeup_flag(ctx);
-diff --git a/kernel/fork.c b/kernel/fork.c
-index d3171e8e88e5..72e444cd0ffe 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -2436,6 +2436,7 @@ struct task_struct *create_io_thread(int (*fn)(void *), void *arg, int node)
- 	if (!IS_ERR(tsk)) {
- 		sigfillset(&tsk->blocked);
- 		sigdelsetmask(&tsk->blocked, sigmask(SIGKILL));
-+		tsk->flags |= PF_NOFREEZE;
- 	}
- 	return tsk;
- }
+ 		ctx->sq_creds = get_current_cred();
+ 		ctx->sq_data = sqd;
+-		io_sq_thread_park(sqd);
+-		list_add(&ctx->sqd_list, &sqd->ctx_new_list);
+-		io_sq_thread_unpark(sqd);
+-
+ 		ctx->sq_thread_idle = msecs_to_jiffies(p->sq_thread_idle);
+ 		if (!ctx->sq_thread_idle)
+ 			ctx->sq_thread_idle = HZ;
+ 
++		io_sq_thread_park(sqd);
++		list_add(&ctx->sqd_list, &sqd->ctx_new_list);
++		io_sq_thread_unpark(sqd);
++
+ 		if (sqd->thread)
+ 			return 0;
+ 
 -- 
 2.30.2
 

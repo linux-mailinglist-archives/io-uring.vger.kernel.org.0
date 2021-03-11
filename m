@@ -2,105 +2,81 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B59F7337CE3
-	for <lists+io-uring@lfdr.de>; Thu, 11 Mar 2021 19:47:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BCCF1338186
+	for <lists+io-uring@lfdr.de>; Fri, 12 Mar 2021 00:34:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229756AbhCKSrO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 11 Mar 2021 13:47:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58780 "EHLO
+        id S229678AbhCKXeR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 11 Mar 2021 18:34:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230076AbhCKSqt (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 11 Mar 2021 13:46:49 -0500
-Received: from mail-il1-x12c.google.com (mail-il1-x12c.google.com [IPv6:2607:f8b0:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97254C061574
-        for <io-uring@vger.kernel.org>; Thu, 11 Mar 2021 10:46:49 -0800 (PST)
-Received: by mail-il1-x12c.google.com with SMTP id p10so240163ils.9
-        for <io-uring@vger.kernel.org>; Thu, 11 Mar 2021 10:46:49 -0800 (PST)
+        with ESMTP id S229476AbhCKXdm (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 11 Mar 2021 18:33:42 -0500
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62219C061574
+        for <io-uring@vger.kernel.org>; Thu, 11 Mar 2021 15:33:41 -0800 (PST)
+Received: by mail-wm1-x332.google.com with SMTP id w203-20020a1c49d40000b029010c706d0642so3776036wma.0
+        for <io-uring@vger.kernel.org>; Thu, 11 Mar 2021 15:33:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=P+SMdHkWjNske5F9ITT8zL7uXv1IJqgB3DJOVsHPtL8=;
-        b=VQmM9b2YT0YbNw8vrHICogVsuuKiVYoWx6rfeosh0ECY78oSRy+DRBCGWRdRAiPF+n
-         zHU1iOmcxLyatk20Xr3TeLeZ1eZEbLGLWndCg07zIJ7RRR5cbFmUOqRAVwnGRmXHkrTC
-         hxjgyJn9x2ZsM20DNeF859J2lnz6IQWm1mw0c2V6fENjjiAHrJJi3i3WjQcrmGVS7qfT
-         aWYm9YF8vK1TEBhay8lFQkZhr1Yu+fz2ReTcL5uyOVm1Pte2JtMtyTpzgAB/OvZ58xT/
-         Ox/YOOWMSHc4pMD5TFWqEPX/pkpx8eJdGPB0pFoxXRBVRBaFHOd/Wk01j6wtHeG2mpNH
-         Aknw==
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=MY0NLcKhN3GBS8R3AGLwvY5gF9caWp30xKlLuOKORf0=;
+        b=h8mNwf64HxlY0tFKyWFS6LWwXAJt+p7+k+vT/CadYx3TcKI2yOZ78kKAFS6iB2aiFY
+         o6EyWkSxE9k9ujKE+4s057wVD0OihQlVv3PebNHWemYmGV3KzvaC6y/MHNa7vkeTDrpm
+         kby0GrK/jsrcBBVS8UWS0o5WM/QDW33hFsLf8HvyHYGvqWpN5Ifyfu96VlKyV4+CUj+M
+         nFDc7uLStpAH3l53erdwzRinFquDcYV7l/tAaxRmXc1JCXcplNEfCJiHaYrW3qI22HZ+
+         r7zUvscYg2x7AN4V483GM+p4Lsa2lHwchfQXHuVEDilbDPWu9MPos4Zrqi6jk5ZzD43p
+         LMFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=P+SMdHkWjNske5F9ITT8zL7uXv1IJqgB3DJOVsHPtL8=;
-        b=M9OwA8uk82w7OPOoCMlbJIGAOugHA+y15H6WFmLhvwPk+zTkTcI1N1shDDAdD39Wc+
-         c+B796gO3aGkA6CSQHIQAMNxfzU6NvJ/Lu4/W4ydzK0oVGLXNU0Js0D7uyfyI1MSRErz
-         1aOm8QnroatZngDYKkQCHrduqWFr44yYsyzXZUBsKTOJYl4oBnTQlOcpGtjkZJ5mOrhx
-         Tku8a4c6vS7R0cL4jX2dpBdTQ3rcMzqzosxntp1Rs06fDqMaFGQSI+KlNgPQOS2Ppq51
-         5JxPs9ZBwuoIg+TY7/7xNtNX5iMxGXuDRm7OL9e1o+rpi07KXi6OObqwLxSm4lrIeQtV
-         dMaQ==
-X-Gm-Message-State: AOAM533dFXXFsusN9CjxfPwxJN1V9EF2nPR3qie0C9FLqUUXupK1yE2p
-        JmHT07g9Q1YJ3P/FK+Pr7fyyCzk92fcRGQ==
-X-Google-Smtp-Source: ABdhPJzsMiSn9hDO3lHG6cLLos+RzezamQRoeQT7fUtY70OoH1OkWkQUrlamKBFCmZETR1nibJWZZQ==
-X-Received: by 2002:a92:c641:: with SMTP id 1mr8396927ill.94.1615488408809;
-        Thu, 11 Mar 2021 10:46:48 -0800 (PST)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id g11sm1701772iom.23.2021.03.11.10.46.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Mar 2021 10:46:48 -0800 (PST)
-Subject: Re: Backporting to stable... Re: [GIT PULL] io_uring thread worker
- change
-To:     Stefan Metzmacher <metze@samba.org>, torvalds@linux-foundation.org
-Cc:     io-uring@vger.kernel.org
-References: <0c142458-9473-9df3-535f-34c06957d464@kernel.dk>
- <adb0cce8-0533-b7b0-d12c-9beb9e28f81a@samba.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <78f5accb-1b4a-6a30-fa1b-a675c8aec469@kernel.dk>
-Date:   Thu, 11 Mar 2021 11:46:47 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        bh=MY0NLcKhN3GBS8R3AGLwvY5gF9caWp30xKlLuOKORf0=;
+        b=Co5l1SaAywALwmJodAy79VX/AjfdHeKx63grR4aOoHBmYMcZ1+/blrLkTdMw9GSnAX
+         Ogb/vTzZMdEEV7KopEuKUPlKciigc8cpQ5KnNIzmm26hg0RavxsAy43P6yp48e+0Ot/P
+         81D5zKl9CLM8w/HpPV4D3HUjC7AXzo3zk9zRI/TVT48sIY8TEqH1rvCXOnZM00TqVifw
+         Og9lt9C5MDdNumpTugQt7C1DS29MgnX00ThpeVxFyr3mY7fS+WqtVVxulwRLmRECEfjz
+         Miz8rU/Xk9AqeGaE17LeYZ4iUa0KxN/2sOr4rC9YPgllwrKbDsYho3lzzemQlly+kpot
+         fHeg==
+X-Gm-Message-State: AOAM532R0lQgt47Gee8S4wBP2wzpjq32YoR+nHJR/rkecEt+4C+Q1LGp
+        jkThn7WeD8Q9s2Fyhx8Dd9Jfc0oZIopsjA==
+X-Google-Smtp-Source: ABdhPJwvo61UGJlgpH6zecvGzkHPMQypk5WCmFLMXOVaZsPMIZ1EVZx0fQOh3C2g0nyVenshYdNfPw==
+X-Received: by 2002:a1c:6707:: with SMTP id b7mr10672512wmc.185.1615505620186;
+        Thu, 11 Mar 2021 15:33:40 -0800 (PST)
+Received: from localhost.localdomain ([185.69.144.148])
+        by smtp.gmail.com with ESMTPSA id m11sm5828062wrz.40.2021.03.11.15.33.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Mar 2021 15:33:39 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [PATCH 0/4] sqpoll fixes
+Date:   Thu, 11 Mar 2021 23:29:34 +0000
+Message-Id: <cover.1615504663.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <adb0cce8-0533-b7b0-d12c-9beb9e28f81a@samba.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/11/21 3:43 AM, Stefan Metzmacher wrote:
-> Hi Jens,
-> 
->> I'm sure we're going to find little things to patch up after this
->> series, but testing has been pretty thorough, from the usual regression
->> suite to production. Any issue that may crop up should be manageable.
->> There's also a nice series of further reductions we can do on top of
->> this, but I wanted to get the meat of it out sooner rather than later.
->> The general worry here isn't that it's fundamentally broken. Most of the
->> little issues we've found over the last week have been related to just
->> changes in how thread startup/exit is done, since that's the main
->> difference between using kthreads and these kinds of threads. In fact,
->> if all goes according to plan, I want to get this into the 5.10 and 5.11
->> stable branches as well.
-> 
-> That would mean that IORING_FEAT_SQPOLL_NONFIXED would be implicitly
-> be backported from 5.11 to 5.10, correct?
+1-3 are relatively easy. 2/3 is rather a cleanup, but it's better to
+throw it out of the equation, makes life easier.
 
-Right, that would happen by default if we moved the new worker code back
-to 5.10 and 5.11.
+4/4 removes the park/unpark dance for cancellations, and fixes a couple
+of issues (will send one test later).
+Signals in io_sq_thread() add troubles adding more cases to think about
+and care about races b/w dying SQPOLL task, dying ctxs and going away
+userspace tasks.
 
-> I'm wondering if I can advice people to move to 5.10 (as it's an lts
-> release) in order to get a kernel that is most likely very useful to
-> use in combination with Samba's drafted usage of io_uring, where I'd
-> like to use IORING_FEAT_SQPOLL_NONFIXED and IORING_FEAT_NATIVE_WORKERS
-> in order to use SENDMSG/RECVMSG with msg_control buffers (where the
-> control buffers may reference file descriptors).
+Pavel Begunkov (4):
+  io_uring: cancel deferred requests in try_cancel
+  io_uring: remove useless ->startup completion
+  io_uring: prevent racy sqd->thread checks
+  io_uring: cancel sqpoll via task_work
 
-Understandable! It's worth nothing that 5.10 would also need a backport
-of the TIF_NOTIFY_SIGNAL change - could be done without, but then we'd
-have diverging code bases to some degree, which would be something I'd
-love to avoid.
+ fs/io_uring.c | 195 +++++++++++++++++++++++++-------------------------
+ 1 file changed, 99 insertions(+), 96 deletions(-)
 
 -- 
-Jens Axboe
+2.24.0
 

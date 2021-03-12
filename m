@@ -2,64 +2,65 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AFA41339919
-	for <lists+io-uring@lfdr.de>; Fri, 12 Mar 2021 22:32:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B0C633991B
+	for <lists+io-uring@lfdr.de>; Fri, 12 Mar 2021 22:33:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235164AbhCLVbs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 12 Mar 2021 16:31:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37658 "EHLO
+        id S235255AbhCLVdY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 12 Mar 2021 16:33:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235227AbhCLVbY (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 12 Mar 2021 16:31:24 -0500
-Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BB32C061574
-        for <io-uring@vger.kernel.org>; Fri, 12 Mar 2021 13:31:23 -0800 (PST)
-Received: by mail-pg1-x534.google.com with SMTP id t37so5893241pga.11
-        for <io-uring@vger.kernel.org>; Fri, 12 Mar 2021 13:31:23 -0800 (PST)
+        with ESMTP id S235227AbhCLVdM (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 12 Mar 2021 16:33:12 -0500
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05E80C061574
+        for <io-uring@vger.kernel.org>; Fri, 12 Mar 2021 13:33:11 -0800 (PST)
+Received: by mail-pj1-x1036.google.com with SMTP id bt4so5774899pjb.5
+        for <io-uring@vger.kernel.org>; Fri, 12 Mar 2021 13:33:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=O28SrWxFoKuT+W8E0Bqi2pxmRgQgeT6wV86Murma5d8=;
-        b=XLWHVYdgsxc8SX+b7SVgTuijmRFGe387AAc68g28G60jTR2WMSCHlAATbKxn5RI1FY
-         Zq35BW1/j/QEeLrPK1sGs/f9V9Rj7avlJj8VRXkkU/J0PHl+Fdciv+gJIxXOG396OUE9
-         szU7lEkVEg1MPjnmHdGQ/ymx4nF7fE1+oywY5x22fa4CibcLyGcBt/RGKeIGcMFd7sEe
-         ekvDjSZcSIY/bsZ6eyadmsc8uU4Ofh0n2PcfEPtv7VrTVo6uZWOhhcbsIUhISuc2IIVn
-         4ucM276FQsdcsUAIb0UO+73YuZxfgJWPegc3vx2J5Nj41NvNq2IjGhAn+k1T9nHW1bJT
-         Bcag==
+        bh=Hh2aGM/cKuplaaaiTbmB3XWWXVNVKynpeNFPEkYTow0=;
+        b=aQy0KFhyZhilV39CSWUkhAIhm6N4/TVCcZ/FzvhYgFIYUOM0KOER8FJ5ut0yZPY2Ra
+         FbfZem+58A+7saEtFc4jpSxfZl8joPMNk68bctgXWVf2XYJhGePV2qmQZVOAst+ZRb7m
+         WNbksoTPXsW0eJ2VAWszVuDJ90ISz19XtQgKRmAbHeimeUdRcyunBUroOKItjzEV0Ddi
+         GvZGCyXoSo5hPmgn1dPc/xpwZjEIS2e1baebDbfwMvngrd8XVKqOZJ8EoUJqvm1dRlxr
+         Ka1/POfuGgqExgD9YY8/vxdFwRmW/Z1pXciFCCvhz9gSWOeehluv/V//e7oZEr/3vsca
+         EWyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=O28SrWxFoKuT+W8E0Bqi2pxmRgQgeT6wV86Murma5d8=;
-        b=oFmc3PFmDCwFmmGvomYDq6fKM+oKc4B3hWoYudK8fVNjwJkfXJQlKHn8VnGyl/xsLi
-         gey8PC5oB2Vso5CfmYZzhFnYo4YIsxoK4p9w+CQHkQC/ZtolQoNzRDS1hV8RffimA2KL
-         rhn5kpV143TAq9IjnG08//rxNUZCJXS3elv4zR56XgZc9koy04kW30NgU0Om9NpszmXD
-         8P+/21immdbgLVpJn8VoXB/mTW4Ke+vQuG0tuRRi6O/0TocUm8/XQ89m/Enp3O4wQP+U
-         QR6LvRlMm+E6VtXoY6TJeGK4Pk1KDfE3/s3FmHlAa86A2n25JL/oDeSoLeyIW5ZTNYL0
-         oDHA==
-X-Gm-Message-State: AOAM533at8x7K4bByQYw1lof26+mbjlxvTgRUYMsrFq0kmr60ARAtrx0
-        64zeI9hD2u4eRIFbJHg/7JNV9hdUPAZDmw==
-X-Google-Smtp-Source: ABdhPJzT+iBMcPshD3FbOHrhFBAI5OPCckt/kOx9Yz6R42v6hHs2EQgiKS1IG9mALnlt9emr3VKpng==
-X-Received: by 2002:a63:6642:: with SMTP id a63mr13285896pgc.333.1615584682514;
-        Fri, 12 Mar 2021 13:31:22 -0800 (PST)
+        bh=Hh2aGM/cKuplaaaiTbmB3XWWXVNVKynpeNFPEkYTow0=;
+        b=uL9V3j3DfiTRlHZ+0/LWwBHoMKXCP0q2ypyvXdNxjD7zW73Up4ANHJTSh9bmxjSPBJ
+         2oHqjiMW9bi7PyyDLDYC2/UcYpcY1jntVGX3qnxTrBOvHAcYyr+z2IhaJflNgsX7J1xS
+         tIgh1kJi3Bop491juC/GvPP1zEkLVmTiSoxB7mNzsVw5j1SIBlFk/KJ+92aWokcAGob+
+         Ar8wn6pZsSXasRGodJfQ+eO2HIjXDvUNeQ1d2kyU6u2e7bXcua0AqZNuB5DD8lbdZ6Hw
+         ab8Fkk4k3h9ENgLAjhrHlkP6leDvAZIjK2jIhJ4Qybo2WAAYZ2Bi7Nffw3TFOp72CPnD
+         z6Mg==
+X-Gm-Message-State: AOAM5312Mmyt25dOq3VVTMQd9Gatvu9lIw3gUBaOfLkkNTpX/RnFhmvk
+        28NT1r+fnoT4WPq3oaFisyVSD54xEak52A==
+X-Google-Smtp-Source: ABdhPJybeJ7t7MJVA7Dzu3JMMsaPJ4BS3+XjIsAXeU57Cw+mnj021xbKfiVGos81dsRXHyCb4mrEYA==
+X-Received: by 2002:a17:902:a606:b029:e6:4c7e:1cba with SMTP id u6-20020a170902a606b02900e64c7e1cbamr475765plq.46.1615584790954;
+        Fri, 12 Mar 2021 13:33:10 -0800 (PST)
 Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id 9sm6157075pgy.79.2021.03.12.13.31.21
+        by smtp.gmail.com with ESMTPSA id ds3sm3113694pjb.23.2021.03.12.13.33.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Mar 2021 13:31:22 -0800 (PST)
+        Fri, 12 Mar 2021 13:33:10 -0800 (PST)
 Subject: Re: [GIT PULL] io_uring fixes for 5.12-rc3
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     io-uring <io-uring@vger.kernel.org>
 References: <a5447498-4a4c-20b3-ed1a-68b61df8b26b@kernel.dk>
  <CAHk-=wjpS-kwozJQFNBestco=q5j3bcfXpVXc6uz=9_mmQ7oYg@mail.gmail.com>
+ <CAHk-=wj3gu-1djZ-YPGeUNwpsQzbCYGO2j1k_Hf1zO+z5VjSpA@mail.gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <647a0f56-3dd5-2eeb-8d57-2180f2ab1bca@kernel.dk>
-Date:   Fri, 12 Mar 2021 14:31:21 -0700
+Message-ID: <d7350ce7-17dc-75d7-611b-27ebf2cb539b@kernel.dk>
+Date:   Fri, 12 Mar 2021 14:33:09 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=wjpS-kwozJQFNBestco=q5j3bcfXpVXc6uz=9_mmQ7oYg@mail.gmail.com>
+In-Reply-To: <CAHk-=wj3gu-1djZ-YPGeUNwpsQzbCYGO2j1k_Hf1zO+z5VjSpA@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -67,34 +68,51 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/12/21 2:17 PM, Linus Torvalds wrote:
-> On Fri, Mar 12, 2021 at 11:48 AM Jens Axboe <axboe@kernel.dk> wrote:
+On 3/12/21 2:24 PM, Linus Torvalds wrote:
+> On Fri, Mar 12, 2021 at 1:17 PM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
 >>
->> - Make IO threads unfreezable by default, on account of a bug report
->>   that had them spinning on resume. Honestly not quite sure why thawing
->>   leaves us with a perpetual signal pending (causing the spin), but for
->>   now make them unfreezable like there were in 5.11 and prior.
+>> I'm _guessing_ it's just that now those threads are user threads, and
+>> then the freezing logic expects them to freeze/thaw using a signal
+>> machinery or something like that. And that doesn't work when there is
+>> no signal handling for those threads.
 > 
-> That "not quite sure" doesn't exactly give my the warm and fuzzies,
-> but not being new is ok, I guess. But I'd really like you to try to
-> figure out what is actually going on.
-
-Oh I agree, which is why I wanted to bring it up as I do feel like we're
-just working around this issue.
-
-> I'm _guessing_ it's just that now those threads are user threads, and
-> then the freezing logic expects them to freeze/thaw using a signal
-> machinery or something like that. And that doesn't work when there is
-> no signal handling for those threads.
+> IOW, I think it's this logic in freeze_task():
 > 
-> But it would be good to _know_.
+>         if (!(p->flags & PF_KTHREAD))
+>                 fake_signal_wake_up(p);
+>         else
+>                 wake_up_state(p, TASK_INTERRUPTIBLE);
+> 
+> where that "not a PF_KTHREAD" test will trigger for the io_uring
+> threads, and it does that fake_signal_wake_up(), and then
+> signal_wake_up() does that
+> 
+>         set_tsk_thread_flag(t, TIF_SIGPENDING);
+> 
+> but the io_uring thread has no way to react to it.
+> 
+> So now the io_uring thread will see "I have pending signals" (even if
+> there is no actual pending signal - it's just a way to get normal
+> processes to get out of TASK_INTERRUPTIBLE and return to user space
+> handling).
+> 
+> And the pending fake signal will never go away, because there is no
+> "return to user space" handling.
+> 
+> So I think the fix is to simply make freeze_task() not do that fake
+> signal thing for IO-uring threads either.
 
-That's very much my guess too, since the symptom is that we loop all
-the time because we think there's a signal pending. I am investigating
-it and reached out to Rafael to try and figure this out, but at the same
-time I did not want to have an -rc3 that caused resume issues for users.
-Hence the "let's just disable freezing for now so that things work, get
-it fixed for real when we can" kind of solution.
+Ah good catch, I missed it. Yes I bet this is exactly what it is, and
+it just needs the one liner doing:
+
+         if (!(p->flags & (PF_IO_WORKER | PF_KTHREAD)))
+                 fake_signal_wake_up(p);
+         else
+                 wake_up_state(p, TASK_INTERRUPTIBLE);
+
+instead. I'll try this out and test it, then we can drop the PF_NOFREEZE
+business going forward. Thanks!
 
 -- 
 Jens Axboe

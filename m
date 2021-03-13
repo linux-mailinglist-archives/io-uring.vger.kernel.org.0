@@ -2,109 +2,113 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F5DE339F84
-	for <lists+io-uring@lfdr.de>; Sat, 13 Mar 2021 18:33:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30A9133A028
+	for <lists+io-uring@lfdr.de>; Sat, 13 Mar 2021 20:02:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234149AbhCMRca convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+io-uring@lfdr.de>); Sat, 13 Mar 2021 12:32:30 -0500
-Received: from smtp.econet.co.zw ([77.246.51.158]:44359 "EHLO
-        ironportDMZ.econet.co.zw" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S233635AbhCMRcL (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 13 Mar 2021 12:32:11 -0500
-X-Greylist: delayed 427 seconds by postgrey-1.27 at vger.kernel.org; Sat, 13 Mar 2021 12:32:10 EST
-IronPort-SDR: mG++oMwpMikjGVEIpGPgG7TR2HicTVC1Oc/u8Du7OAAazc5rBb+ZovLxee6yCY0B42LRsd3Uis
- 2lj1syEv0qfmwsUk1gaD8okEV1xuLpXgGQaO5HMOM0Gq39+DjWiNcJM2QRDkO/X/+8sVhq1eYC
- XGqeVZP2PX/5wh7i+QGayTGwKK7bOGoAWZqOB08fyZZikNRRpm3U8wfCa4aRUF5v/0xDXW2uzQ
- NPPm8jo3QirXi3efCraAjMudQSGBD2I6piuxvbzrtT/x9aBU3wXzzPXiR7XDQKFnOBpSh9C64N
- GD0=
-IronPort-HdrOrdr: A9a23:yhvQU619xizxJFU3gR7pTwqjBEIkLtp033Aq2lEZdDV+dMuEm8
- ey2MkB3RjvhzoLHF0mk9aMOK6PKEm9ybde544NMbC+GDT3oWfAFu9fxKbr3jGIIVybysdzzq
- FlGpIOauHYKXhfoYLE7BKjE9AmqePnzImNif3Fx3lgCSFGApsO0y5DBgyWElJ7SWB9bPJTfv
- fx2uN9qye9YnNSV8ynBxA+Lo/+jufWn5HrawNuPW9F1CCyi1qTmdvHLyQ=
-X-IronPort-AV: E=Sophos;i="5.81,245,1610402400"; 
-   d="scan'208";a="3414921"
-Received: from unknown (HELO WVALE-MB-SVR-05.econetzw.local) ([192.168.101.173])
-  by ironportLAN.econet.co.zw with ESMTP; 13 Mar 2021 19:25:01 +0200
-Received: from WVALE-CAS-SVR-9.econetzw.local (192.168.101.184) by
- WVALE-MB-SVR-05.econetzw.local (192.168.101.173) with Microsoft SMTP Server
- (TLS) id 15.0.1473.3; Sat, 13 Mar 2021 19:24:56 +0200
-Received: from User (165.231.148.189) by WVALE-CAS-SVR-9.econetzw.local
- (10.10.11.230) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Sat, 13 Mar 2021 19:25:07 +0200
-Reply-To: <r19772744@daum.net>
-From:   "Reem E. A" <chawora@econet.co.zw>
-Subject: Re:
-Date:   Sat, 13 Mar 2021 17:24:54 -0800
+        id S234366AbhCMTCE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 13 Mar 2021 14:02:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59210 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234329AbhCMTBk (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 13 Mar 2021 14:01:40 -0500
+Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EF10C061574
+        for <io-uring@vger.kernel.org>; Sat, 13 Mar 2021 11:01:40 -0800 (PST)
+Received: by mail-pg1-x532.google.com with SMTP id p21so17980118pgl.12
+        for <io-uring@vger.kernel.org>; Sat, 13 Mar 2021 11:01:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=etzd6dSAv6JKKsXGvImaRac1XGuniQs79OggVru5qtE=;
+        b=TYBByVIr2Yp0uLh/BmLur0bOqOH+1nnzzXDuAX5zv7rk+VmdZqzb2ErkUp2Ly5A1Gd
+         icBouGuyNgQOu/u4IrShxS6+FracQPQi4Q7YHN3DBtFYJoKo334svRR0GYSU5tS+ThXC
+         SqbGhpfPRT+TJ7pGDg/4+hZ5FQ2VpOSjQ8vwrr4Cx8j0PSX3ulkmxYIVcfWaubJKJ2tg
+         rg5sXPvudXvMC64KqwTFbgEgWj7kxcSlZmCZeMt7BL909pnMaCxYN2xSDtfHmRo3Y3w7
+         Ey6LKxeDVs0ty2JV9O0XxBn2/yr0OJjfIF8P6H6fF0nlZNqjlX2nLuA6J1rDoYzcrH3K
+         z1tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=etzd6dSAv6JKKsXGvImaRac1XGuniQs79OggVru5qtE=;
+        b=K/oMe+cJfcVu0x3PTLM1jJzVsq0paBRSUp3+lnG+wpml/iov2hhqE5ZGNyyDKNMgdE
+         CfPVPcKnDFkNL+Va/vKZw5D1057sfHU90da+9YjiHVgEt1tzkWNLjXH0iHphcnz93nXV
+         m3IcfhYH4yM7FkmJqT2Z3sq9qdzUdS5m+nVCDxeLkxE5i4xlhSix6lnsyQw6dQRnhFbo
+         uMRh2qqeCFgaEhUzsYFcPeR/EoXTFXJMITBhqgj9vlMuqIoFwZbykU08ze/UfC1rY4ec
+         uWYLJV7Ei7gzRCgrv+DH7Ben3XHt0qbEYeR8uSaQMDNB+sWpgy+lmcvx4dPDzwoMzO7w
+         pLzg==
+X-Gm-Message-State: AOAM532grgLtlZpHDVUz9pO1xxyYRmR7eOmo4Hi1yY4cPxcetFeyxtrD
+        W4DZ97cvZel1nhrdkUI/cMCgjA==
+X-Google-Smtp-Source: ABdhPJxcs/GHYrNUDwdboHTnrHREIyvPSwd3/Ts3NFBdJ6l/4J/dAi1WGXbJR/rT3w0vAwsi8LCGvQ==
+X-Received: by 2002:a63:5a02:: with SMTP id o2mr16549036pgb.202.1615662099518;
+        Sat, 13 Mar 2021 11:01:39 -0800 (PST)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id y9sm6058997pja.50.2021.03.13.11.01.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 13 Mar 2021 11:01:38 -0800 (PST)
+Subject: Re: [PATCH 5.12] io_uring: Convert personality_idr to XArray
+From:   Jens Axboe <axboe@kernel.dk>
+To:     yangerkun <yangerkun@huawei.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring@vger.kernel.org
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Stefan Metzmacher <metze@samba.org>, yi.zhang@huawei.com
+References: <7ccff36e1375f2b0ebf73d957f037b43becc0dde.1615212806.git.asml.silence@gmail.com>
+ <803bad80-093a-5fbf-7677-754c9afad530@gmail.com>
+ <8b553635-b3d9-cb36-34f0-83777bec94ab@huawei.com>
+ <81464ae1-cac4-df4c-cd0e-1d518461d4c3@huawei.com>
+ <7a905382-8598-f351-8a5b-423d7246200a@kernel.dk>
+Message-ID: <e6c9ed79-827b-7a45-3ad8-9ba5a21d5780@kernel.dk>
+Date:   Sat, 13 Mar 2021 12:01:39 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="Windows-1251"
-Content-Transfer-Encoding: 8BIT
-X-Priority: 3
-X-MSMail-Priority: Normal
-X-Mailer: Microsoft Outlook Express 6.00.2600.0000
-X-MimeOLE: Produced By Microsoft MimeOLE V6.00.2600.0000
-Message-ID: <94b8c3ee9eee4fa181a35f7f308e9a8e@WVALE-CAS-SVR-9.econetzw.local>
-To:     Undisclosed recipients:;
+In-Reply-To: <7a905382-8598-f351-8a5b-423d7246200a@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
+On 3/13/21 8:34 AM, Jens Axboe wrote:
+> On 3/13/21 1:02 AM, yangerkun wrote:
+>>
+>>
+>> 在 2021/3/9 19:23, yangerkun 写道:
+>>>
+>>>
+>>> 在 2021/3/8 22:22, Pavel Begunkov 写道:
+>>>> On 08/03/2021 14:16, Pavel Begunkov wrote:
+>>>>> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+>>>>>
+>>>>> You can't call idr_remove() from within a idr_for_each() callback,
+>>>>> but you can call xa_erase() from an xa_for_each() loop, so switch the
+>>>>> entire personality_idr from the IDR to the XArray.  This manifests as a
+>>>>> use-after-free as idr_for_each() attempts to walk the rest of the node
+>>>>> after removing the last entry from it.
+>>>>
+>>>> yangerkun, can you test it and similarly take care of buffer idr?
+>>>
+>>> Will try it latter :)
+>>
+>> Sorry for the latter reply. The patch pass the testcase.
+>>
+>> Besides, should we apply this patch first to deal with the same UAF for
+>> io_buffer_idr before convert to XArray?
+>>
+>> https://lore.kernel.org/io-uring/20210308065903.2228332-2-yangerkun@huawei.com/T/#u
+> 
+> Agree, and then defer an xarray conversion to 5.13. I'll take a look at
+> your patch and get it applied.
 
-My name is Ms. Reem Ebrahim Al-Hashimi, I am the "Minister of state
-and Petroleum" also "Minister of State for International Cooperation"
-in UAE. I write to you on behalf of my other "three (2) colleagues"
-who has approved me to solicit for your "partnership in claiming of
-{us$47=Million}" from a Financial Home on their behalf and
-for our "Mutual Benefits".
+That one is very broken, it both fails removal cases and it's got leak
+issues too.
 
-The Fund {us$47=Million} is our share from the (over-invoiced) Oil/Gas
-deal with Turkish Government within 2013/2014, however, we
-don't want our government to know about the fund. If this proposal
-interests you, let me know, by sending me an email and I will send to
-you detailed information on how this business would be successfully
-transacted. Be informed that nobody knows about the secret of this
-fund except us, and we know how to carry out the entire transaction.
-So I am compelled to ask, that you will stand on our behalf and
-receive this fund into any account that is solely controlled by you.
+I'm going to take a look at just doing xarray instead.
 
-We will compensate you with 15% of the total amount involved as
-gratification for being our partner in this transaction. Reply to:
-reem.alhashimi@yandex.com
+-- 
+Jens Axboe
 
-Regards,
-Ms. Reem.
-This mail was sent through Econet Wireless, a Global telecoms leader.
-
-DISCLAIMER
-
-The information in this message is confidential and is legally privileged. It is intended solely for the addressee. Access to this message by anyone else is unauthorized. If received in error please accept our apologies and notify the sender immediately. You must also delete the original message from your machine. If you are not the intended recipient, any use, disclosure, copying, distribution or action taken in reliance of it, is prohibited and may be unlawful. The information, attachments, opinions or advice contained in this email are not the views or opinions of Econet Wireless, its subsidiaries or affiliates. Econet Wireless therefore accepts no liability for claims, losses, or damages arising from the inaccuracy, incorrectness, or lack of integrity of such information.
-[https://mail.econet.co.zw/OWA/auth/current/themes/resources/Agile/AgileBanner.png]
-WORK ISN'T A PLACE
-IT'S WHAT WE DO
-________________________________
-
-
-
-
-
-[https://mail.econet.co.zw/OWA/auth/current/themes/resources/Agile/telephone.png]
-
-
-
-
-[https://mail.econet.co.zw/OWA/auth/current/themes/resources/Agile/email.png]
-
-<mailto:>
-
-
-[https://mail.econet.co.zw/OWA/auth/current/themes/resources/Agile/location.png]
-
-
-
-
-[https://mail.econet.co.zw/OWA/auth/current/themes/resources/Agile/website.png]
-
-www.econet.co.zw<https://www.econet.co.zw>
-
-
-[https://mail.econet.co.zw/OWA/auth/current/themes/resources/Agile/inspired.jpg]

@@ -2,56 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0383D33B068
-	for <lists+io-uring@lfdr.de>; Mon, 15 Mar 2021 11:54:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F59D33B09A
+	for <lists+io-uring@lfdr.de>; Mon, 15 Mar 2021 12:06:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229699AbhCOKxd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 15 Mar 2021 06:53:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60812 "EHLO
+        id S229520AbhCOLF7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 15 Mar 2021 07:05:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229624AbhCOKxR (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 15 Mar 2021 06:53:17 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DDF4C061574
-        for <io-uring@vger.kernel.org>; Mon, 15 Mar 2021 03:53:17 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id g20so7839018wmk.3
-        for <io-uring@vger.kernel.org>; Mon, 15 Mar 2021 03:53:17 -0700 (PDT)
+        with ESMTP id S229812AbhCOLF6 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 15 Mar 2021 07:05:58 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63244C061574
+        for <io-uring@vger.kernel.org>; Mon, 15 Mar 2021 04:05:58 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id z2so5471101wrl.5
+        for <io-uring@vger.kernel.org>; Mon, 15 Mar 2021 04:05:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+        h=to:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=8pbNpR8NJQa3kF4NlWK/Srrx+wXKyEVLs4V/YBQUENE=;
-        b=A8jRU/MLpaVAqkKCsKqReeUpEpzd2ZQHdAMoZVzSv8f3KStQV5WsaYG5Psq2lDqIHl
-         CmlO4qDZXMOJlVlzsmkj1qS+jb3CPOtH7VlLHvKjNmvHGcCl5S6Pq2Xsw0Jf5DmtvwUG
-         3xsAUsIQpfzmMUG7ZEqVD+L89azYw5JFStUoJdg5HzObjD1caZpdiRF8ftZlgbGOiPns
-         IPsQvbNafIdotxCsDpsreiwVovLiJIS6zKpskbxhfGN4o9HztOiXow40W2WsKcFm9TbD
-         9BruVN/CotN20mjvToQYUhoyjA4MbLld3Lq9eKwdRP034QSj55teSZghW5UAr4IfbRy9
-         uDhg==
+        bh=2lRHdn0/fXWwyMNnLDhrw+py3/WTDbDqXMG0p31Z7Uw=;
+        b=n2LaFrv515/QdAFiJASNCoC3LwuG4zkuq5u9f/D5OPGhOZfsShc7Kd/i6KEp+L6PUA
+         eSqXOSZz8dIPiehPG5xSHEFwrF/5BH26GHNni2jYGGLzd1CRQaUv06Xcm5irrlWRA40x
+         ++4LEM3NheRmcrEhLjk/KXyf767b7P+Ls5Lm3RAsY+l3GqSlWMRn6/0a64jipy00zcwW
+         mpZjPztiif7zKYUbdc36RWuTntTG42ntwTA0ECQsDhZIP0jDfM/eIzUVL5YqLvspd6jo
+         o6n6EX5Pmmxj5zcDKsme3Oj/1soe2nwu/AFlcP5wqZEO8dWhHbTPH48VuFS84QQsMKGS
+         HEDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=8pbNpR8NJQa3kF4NlWK/Srrx+wXKyEVLs4V/YBQUENE=;
-        b=ZFkl/+JEEdQ2y50c6jjaRXKoGPrBwnGmNX05POQU2Itwc6VEN1EMxFhHE12kO8Vl+h
-         zOYcpk/7KPONRpoczltmymqU8/h+c9aJjajKm2YoTZoC+vBeVhEhgsd374TzIcbClx6a
-         /g6V6L4WxtyjBe3dxYZEdJuVJM41n2ZlCJBv3aGNzEUUSxkn7g8CCd0nitiRtK/kS15K
-         Hos3NZC/fcaGWAIJQsIuvMNG60mJJTiZLhdBYKWpGBRfDv/T7ir7TgTq+utLupnKKe/I
-         oEflz2CeiHz2vNOqDcMRlHnKNALY6a3Dz1Tni0juUGVEDIi0L0hclDBYOBf9/92CDCWd
-         cKlw==
-X-Gm-Message-State: AOAM532+O6YfSGBknfpmctnjVJsolqqvN1M/WV9leGiBSBeFrXToBZtx
-        1fDw1qaZpZUvqMZ6qsQhegqmaKCowF4=
-X-Google-Smtp-Source: ABdhPJwAT86Yfxvhcjx6QBs0WbiTqSpodvAW6hE7tU7Ecr0NOpAnrwbxUsYzMysAkBJW3B2ZEYrCOw==
-X-Received: by 2002:a1c:a5c7:: with SMTP id o190mr25992664wme.172.1615805595747;
-        Mon, 15 Mar 2021 03:53:15 -0700 (PDT)
+        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=2lRHdn0/fXWwyMNnLDhrw+py3/WTDbDqXMG0p31Z7Uw=;
+        b=STDIldyxfeUW+SBqC9+r6MP755zQc5GnA1nI+6MAXyzgJ40r74jc6CAJrEMRs1eyyE
+         lAny5RThsujbcKAQjGeAONG1xWNUcGe3NVMCffCXfzAcCqefezsT+lNwxF0b3oaiU17c
+         71rLm6YCoLmgLVW/BYuAXSotPLqOAAqaxtFTeb8maV28w4N+BS/+Ibodqn7RczItAiPH
+         wSouXn4NuJesc9navkG2t/9lmd84SUP3Aqz7qgjqJjHkcNKqTeHeBV2FW/89YMRhe+O3
+         ksM2OQNCs5ADKe1g8/EoMv+XDnkndak5AscHV7EtRbTk29U79qkL62VyksMACGPwR/hn
+         gs0Q==
+X-Gm-Message-State: AOAM5303Qe7AAWzr2eHRaIfwRGN2K+MkgxwBSbCvYPOPV9vah1UmmiPZ
+        8pP9b5/XawshbVsrd57oFZtsa8JO4Yg=
+X-Google-Smtp-Source: ABdhPJyrieZVxQQERxW/vniUV26evATw43B1dU7AYirvjgxtjx10bJi6pw6pduCqMZv8ZZ3RtXkklA==
+X-Received: by 2002:a05:6000:11c1:: with SMTP id i1mr26580532wrx.215.1615806356899;
+        Mon, 15 Mar 2021 04:05:56 -0700 (PDT)
 Received: from [192.168.8.151] ([85.255.232.154])
-        by smtp.gmail.com with ESMTPSA id m10sm12046377wmh.13.2021.03.15.03.53.14
+        by smtp.gmail.com with ESMTPSA id o11sm18228262wrq.74.2021.03.15.04.05.55
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Mar 2021 03:53:15 -0700 (PDT)
-Subject: Re: [PATCH] io_uring: don't iterate ctx list to update sq_thread_idle
-To:     Hao Xu <haoxu@linux.alibaba.com>, Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <1615798614-1044-1-git-send-email-haoxu@linux.alibaba.com>
+        Mon, 15 Mar 2021 04:05:56 -0700 (PDT)
+To:     Stefan Metzmacher <metze@samba.org>, io-uring@vger.kernel.org
+References: <cover.1615719251.git.metze@samba.org>
+ <ccbcc90b-d937-2094-5a8d-2fdeba87fc82@samba.org>
+ <5c692b22-9042-14b4-1466-e4a209f15a7b@gmail.com>
+ <44a742f9-4631-7dc5-48f3-1d07b1334c86@samba.org>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -96,47 +97,38 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <4caf1b47-56fd-85d8-87d0-ab7d43ac2914@gmail.com>
-Date:   Mon, 15 Mar 2021 10:49:18 +0000
+Subject: Re: [PATCH 1/2] io_uring: remove structures from
+ include/linux/io_uring.h
+Message-ID: <1d57b68c-8033-7816-4b42-e19f3cc6efee@gmail.com>
+Date:   Mon, 15 Mar 2021 11:02:00 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <1615798614-1044-1-git-send-email-haoxu@linux.alibaba.com>
+In-Reply-To: <44a742f9-4631-7dc5-48f3-1d07b1334c86@samba.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 15/03/2021 08:56, Hao Xu wrote:
-> sqd->sq_thread_idle can be updated by a simple max(), rather than
-> iterating the whole ctx list to get the max one.
+On 14/03/2021 17:14, Stefan Metzmacher wrote:
+> Hi Pavel,
+> 
+>> Both patches are really nice. However, 1/2 doesn't apply
+>> and looks it needs small stylistic changes, see nits below
+> 
+> It seems the mails got corrupted, I played with git imap-send... :-(
+> 
+> Here a branch with the patches:
+> https://git.samba.org/?p=metze/linux/wip.git;a=shortlog;h=refs/heads/io_uring-5.12
+> 
+> Should I resend them once I fixed my mail setup?
+Who knows. Jens, do you want to take it for 5.12?
 
-I left it as a more fool proof option. Do you have a performance issue
-with it? E.g. dozens rings sharing a single SQPOLL and constantly adding
-new ones.
-
-> 
-> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
-> ---
->  fs/io_uring.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index a4bce17af506..17697b9890e3 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -7871,7 +7871,7 @@ static int io_sq_offload_create(struct io_ring_ctx *ctx,
->  			ret = -ENXIO;
->  		} else {
->  			list_add(&ctx->sqd_list, &sqd->ctx_list);
-> -			io_sqd_update_thread_idle(sqd);
-> +			sqd->sq_thread_idle = max(sqd->sq_thread_idle, ctx->sq_thread_idle);
->  		}
->  		io_sq_thread_unpark(sqd);
->  
-> 
+I just recently converted tctx->last from file* to ctx* and had to
+gaze enough to not screw, in this light 2/2 looks good from the
+safety perspective.
 
 -- 
 Pavel Begunkov

@@ -2,67 +2,95 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A191D33B1E6
-	for <lists+io-uring@lfdr.de>; Mon, 15 Mar 2021 12:58:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A138A33B1E8
+	for <lists+io-uring@lfdr.de>; Mon, 15 Mar 2021 12:59:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229748AbhCOL6V (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 15 Mar 2021 07:58:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46578 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230512AbhCOL57 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 15 Mar 2021 07:57:59 -0400
-Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EA34C061574
-        for <io-uring@vger.kernel.org>; Mon, 15 Mar 2021 04:57:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-         s=42; h=Message-Id:Date:Cc:To:From;
-        bh=e4BOt8hBBHUs6LXZMInRLpx+oxcb6taGQ0UMYz8+j1A=; b=kxLjbQu3ET/E6Mm/135vMWZKhn
-        g43uZS3JMToDrImiBbohIVVYnDNn/yEhLhNEEImKgd1NDsFWcOo6okj1srI+YYjEIgzBEm3U5q2vl
-        r8+jpIyF264mRj///XaJuo5AFKttiQgPzKxidlusH3JDbAlhDgvbvjCA1YNWRKH1/oWpiBy0I+U81
-        Z1S1nWF3DtwofN52C5NbSQTAg6gcq0a4Zwm9BPcqSu1RAYjSlZHdCZ8wcyK5CuK0feLIBhRKUWu+k
-        777e0KOqNm3AXdl0Pi6WAWWwy/04wW4yffyZBWrf0DwZ8ZN/EHRwOs7+JEWKhN1Inc3c2EYqcTZ45
-        d0Rx2ag8JJ4bP05xNfLElYbNaDQxFUK56kEwVJoG3jCkfyzHzSamn/jSuOheox6G2kF1MU1gPmYfg
-        TdA16WBCNJfed+RT3MOfZqijeVpl6yMnygbsPlakwebDiEVRidAqCYb/vB8qqy7w12BtLOriPDeAi
-        S0rGFcGtlMQRDvxU9kgyu12y;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
-        (Exim)
-        id 1lLlrB-0002Al-Kx; Mon, 15 Mar 2021 11:57:57 +0000
-From:   Stefan Metzmacher <metze@samba.org>
-To:     io-uring@vger.kernel.org
-Cc:     Stefan Metzmacher <metze@samba.org>
-Subject: [PATCH v2 2/2] io_uring: use typesafe pointers in io_uring_task
-Date:   Mon, 15 Mar 2021 12:56:57 +0100
-Message-Id: <ce2a598e66e48347bb04afbaf2acc67c0cc7971a.1615809009.git.metze@samba.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1615809009.git.metze@samba.org>
-References: <ccbcc90b-d937-2094-5a8d-2fdeba87fc82@samba.org> <cover.1615809009.git.metze@samba.org>
+        id S229675AbhCOL6x (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 15 Mar 2021 07:58:53 -0400
+Received: from mail-il1-f199.google.com ([209.85.166.199]:35758 "EHLO
+        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229754AbhCOL6X (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 15 Mar 2021 07:58:23 -0400
+Received: by mail-il1-f199.google.com with SMTP id y8so1723367ill.2
+        for <io-uring@vger.kernel.org>; Mon, 15 Mar 2021 04:58:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=zVew5zknVz/SDYTOBAB5XP8NCWN9xTo8o8UbGi8sA2Y=;
+        b=YbS95cHN8qFYbqX+bfnnsDk2EZOAMq8wND4ZT1TnxLXyIVwWWSmXqPIXvnRYC5GH4B
+         Mbchc6laqOUuO0l9IQ9BKNp3ibUTsVf1oZKKHX7WTnFpg3MlwkWZfetcKtFEoAGR2wof
+         Bv7EIljBfpMI1tsDUVaJemdVgN34PiJeGdwPooTS8m+w+hy55KEZzGdLQACSieeqDccg
+         M4r4fW1/WVQUNPQbyme7SzL9nluMk6APbgOmj2jUrcL+RKRcHLY0ipFSMlcn3PV5gypg
+         IyBxR+xbRCDlkALWJa7gzk1GFojyV9w1gZJ7FVu5Pf3qbbHj+obhpTBFmkVpBOLc3lpt
+         sU8Q==
+X-Gm-Message-State: AOAM530DU+sHWMOg662bWYbzRTbN26rnTNo70QgG/UO7aooEyseMKnrK
+        2WHmtUdxmoDNPGd78yJQtl9clMcA4BYicLid7J3sbdY+YB6Q
+X-Google-Smtp-Source: ABdhPJzt6U2UiQnm1uR2O7jvWXd0cbIOd5v9irKsEuRD094wi1MXX7Y929i2+qhLbT7Ly0Q9gjCtVw2Ut9CMBwmgYbzYYgNT2L/C
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6638:102f:: with SMTP id n15mr9113881jan.28.1615809502681;
+ Mon, 15 Mar 2021 04:58:22 -0700 (PDT)
+Date:   Mon, 15 Mar 2021 04:58:22 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000006e9e0705bd91f762@google.com>
+Subject: [syzbot] WARNING in __percpu_ref_exit (2)
+From:   syzbot <syzbot+d6218cb2fae0b2411e9d@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Signed-off-by: Stefan Metzmacher <metze@samba.org>
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    75013c6c Merge tag 'perf_urgent_for_v5.12-rc3' of git://gi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=174df32ad00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=844457676c06b88c
+dashboard link: https://syzkaller.appspot.com/bug?extid=d6218cb2fae0b2411e9d
+userspace arch: i386
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d6218cb2fae0b2411e9d@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 53 at lib/percpu-refcount.c:113 __percpu_ref_exit+0x98/0x100 lib/percpu-refcount.c:113
+Modules linked in:
+CPU: 1 PID: 53 Comm: kworker/u4:2 Not tainted 5.12.0-rc2-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Workqueue: events_unbound io_ring_exit_work
+RIP: 0010:__percpu_ref_exit+0x98/0x100 lib/percpu-refcount.c:113
+Code: fd 49 8d 7c 24 10 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 80 3c 02 00 75 61 49 83 7c 24 10 00 74 07 e8 28 42 ac fd <0f> 0b e8 21 42 ac fd 48 89 ef e8 e9 fa da fd 48 89 da 48 b8 00 00
+RSP: 0018:ffffc90000f1fb78 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: ffff88805c976000 RCX: 0000000000000000
+RDX: ffff888011839bc0 RSI: ffffffff83c76be8 RDI: ffff88802b2a9010
+RBP: 0000607f46077778 R08: 0000000000000000 R09: ffffffff8fab0967
+R10: ffffffff83c76b88 R11: 0000000000000009 R12: ffff88802b2a9000
+R13: 0000000000000001 R14: ffff88802b2a9000 R15: dffffc0000000000
+FS:  0000000000000000(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000085a0004 CR3: 000000001896a000 CR4: 00000000001506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ percpu_ref_exit+0x3b/0x140 lib/percpu-refcount.c:134
+ io_ring_ctx_free fs/io_uring.c:8419 [inline]
+ io_ring_exit_work+0x599/0xcf0 fs/io_uring.c:8565
+ process_one_work+0x98d/0x1600 kernel/workqueue.c:2275
+ worker_thread+0x64c/0x1120 kernel/workqueue.c:2421
+ kthread+0x3b1/0x4a0 kernel/kthread.c:292
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+
+
 ---
- fs/io_uring.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 52b5ed71d770..f048c42d8b8f 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -458,8 +458,8 @@ struct io_uring_task {
- 	/* submission side */
- 	struct xarray		xa;
- 	struct wait_queue_head	wait;
--	void			*last;
--	void			*io_wq;
-+	const struct io_ring_ctx *last;
-+	struct io_wq		*io_wq;
- 	struct percpu_counter	inflight;
- 	atomic_t		in_idle;
- 	bool			sqpoll;
--- 
-2.25.1
-
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.

@@ -2,116 +2,141 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8070F33AF9B
-	for <lists+io-uring@lfdr.de>; Mon, 15 Mar 2021 11:09:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0383D33B068
+	for <lists+io-uring@lfdr.de>; Mon, 15 Mar 2021 11:54:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229494AbhCOKJM convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+io-uring@lfdr.de>); Mon, 15 Mar 2021 06:09:12 -0400
-Received: from smtp.econet.co.zw ([77.246.51.158]:32775 "EHLO
-        ironportDMZ.econet.co.zw" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S229574AbhCOKIy (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 15 Mar 2021 06:08:54 -0400
-IronPort-SDR: PdHFBXMoeLv/pYmFgPZdoO+BURAdqRDUiqdaIHcTRPebPe+H5ypBDGWLwlCcjLDE7QvNgMQfh+
- AuEN2Lbk0iw+q2/MvJb2LBBvXwhBoOoqUSJq+xaXrTAMuezbBjIUAVkshlUS4Fnt8+EKxOyD74
- yniSC9IXm1RnvuvWvm2uGej4u08l4260481ZSzO9PiwyPnoPnT0e79LCmkB0jM/ZEann92k4iF
- jkA32vY13MprXWWL6IuAI70lAsA9le2AwFUJFk31o5vc/cXqpEmoqflLVR+BgR+cpomt38KXJ7
- AYY=
-IronPort-HdrOrdr: A9a23:FjpUT6nlNFRCMHbYWs+n4/yFdkHpDfKO3DAbvn1ZSRFFG/Gwvc
- aogfgdyFvIkz4XQn4tgpStP6OHTHPa+/dOkOwsFJ2lWxTrv3btEZF64eLZsl/dMgD36+I178
- ddWodkDtmYNzZHpOLbxCX9LNo62tmA98mT9ITj5lNgVxtjZa0lzyoRMHfiLmRMSANLBYU0Gf
- Onj6ItzVfNRV0tYt2/Fj05WYH4yOHjr576fQUAQycu9Qjmt0LT1JfBDxOa0h0COgkv/Z4e9w
- H+4nfEz5Tml8uewh/Yk1bJ75JMmMbwo+EzY/Cku4wwIjXohh3AXvUGZ5Sy+BQ0pO2IzXpCqq
- i0nz4Qe/1p63XLfnykyCGdvzXd7A==
-X-IronPort-AV: E=Sophos;i="5.81,249,1610402400"; 
-   d="scan'208";a="5177592"
-Received: from unknown (HELO wvale-jmb-svr-1.econetzw.local) ([192.168.101.35])
-  by ironportLAN.econet.co.zw with ESMTP; 15 Mar 2021 08:35:15 +0200
-Received: from MRE-MB-SVR-2.econetzw.local (192.168.64.154) by
- wvale-jmb-svr-1.econetzw.local (192.168.101.35) with Microsoft SMTP Server
- (TLS) id 15.0.1497.2; Mon, 15 Mar 2021 08:34:18 +0200
-Received: from mre-mb-svr-2.econetzw.local ((192.168.64.154)) by
- mre-mb-svr-2.econetzw.local ((192.168.64.154)) with ShadowRedundancy id
- 15.0.1473.3; Mon, 15 Mar 2021 06:28:15 +0000
-Received: from WVALE-MB-SVR-05.econetzw.local (192.168.101.173) by
- mre-mb-svr-2.econetzw.local (192.168.64.154) with Microsoft SMTP Server (TLS)
- id 15.0.1473.3; Sat, 13 Mar 2021 19:24:57 +0200
-Received: from User (165.231.148.189) by WVALE-CAS-SVR-9.econetzw.local
- (10.10.11.230) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Sat, 13 Mar 2021 19:25:07 +0200
-Reply-To: <r19772744@daum.net>
-From:   "Reem E. A" <chawora@econet.co.zw>
-Subject: Re:
-Date:   Sat, 13 Mar 2021 17:24:54 -0800
+        id S229699AbhCOKxd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 15 Mar 2021 06:53:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60812 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229624AbhCOKxR (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 15 Mar 2021 06:53:17 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DDF4C061574
+        for <io-uring@vger.kernel.org>; Mon, 15 Mar 2021 03:53:17 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id g20so7839018wmk.3
+        for <io-uring@vger.kernel.org>; Mon, 15 Mar 2021 03:53:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=8pbNpR8NJQa3kF4NlWK/Srrx+wXKyEVLs4V/YBQUENE=;
+        b=A8jRU/MLpaVAqkKCsKqReeUpEpzd2ZQHdAMoZVzSv8f3KStQV5WsaYG5Psq2lDqIHl
+         CmlO4qDZXMOJlVlzsmkj1qS+jb3CPOtH7VlLHvKjNmvHGcCl5S6Pq2Xsw0Jf5DmtvwUG
+         3xsAUsIQpfzmMUG7ZEqVD+L89azYw5JFStUoJdg5HzObjD1caZpdiRF8ftZlgbGOiPns
+         IPsQvbNafIdotxCsDpsreiwVovLiJIS6zKpskbxhfGN4o9HztOiXow40W2WsKcFm9TbD
+         9BruVN/CotN20mjvToQYUhoyjA4MbLld3Lq9eKwdRP034QSj55teSZghW5UAr4IfbRy9
+         uDhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=8pbNpR8NJQa3kF4NlWK/Srrx+wXKyEVLs4V/YBQUENE=;
+        b=ZFkl/+JEEdQ2y50c6jjaRXKoGPrBwnGmNX05POQU2Itwc6VEN1EMxFhHE12kO8Vl+h
+         zOYcpk/7KPONRpoczltmymqU8/h+c9aJjajKm2YoTZoC+vBeVhEhgsd374TzIcbClx6a
+         /g6V6L4WxtyjBe3dxYZEdJuVJM41n2ZlCJBv3aGNzEUUSxkn7g8CCd0nitiRtK/kS15K
+         Hos3NZC/fcaGWAIJQsIuvMNG60mJJTiZLhdBYKWpGBRfDv/T7ir7TgTq+utLupnKKe/I
+         oEflz2CeiHz2vNOqDcMRlHnKNALY6a3Dz1Tni0juUGVEDIi0L0hclDBYOBf9/92CDCWd
+         cKlw==
+X-Gm-Message-State: AOAM532+O6YfSGBknfpmctnjVJsolqqvN1M/WV9leGiBSBeFrXToBZtx
+        1fDw1qaZpZUvqMZ6qsQhegqmaKCowF4=
+X-Google-Smtp-Source: ABdhPJwAT86Yfxvhcjx6QBs0WbiTqSpodvAW6hE7tU7Ecr0NOpAnrwbxUsYzMysAkBJW3B2ZEYrCOw==
+X-Received: by 2002:a1c:a5c7:: with SMTP id o190mr25992664wme.172.1615805595747;
+        Mon, 15 Mar 2021 03:53:15 -0700 (PDT)
+Received: from [192.168.8.151] ([85.255.232.154])
+        by smtp.gmail.com with ESMTPSA id m10sm12046377wmh.13.2021.03.15.03.53.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Mar 2021 03:53:15 -0700 (PDT)
+Subject: Re: [PATCH] io_uring: don't iterate ctx list to update sq_thread_idle
+To:     Hao Xu <haoxu@linux.alibaba.com>, Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
+References: <1615798614-1044-1-git-send-email-haoxu@linux.alibaba.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Message-ID: <4caf1b47-56fd-85d8-87d0-ab7d43ac2914@gmail.com>
+Date:   Mon, 15 Mar 2021 10:49:18 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="Windows-1251"
-Content-Transfer-Encoding: 8BIT
-X-Priority: 3
-X-MSMail-Priority: Normal
-X-Mailer: Microsoft Outlook Express 6.00.2600.0000
-X-MimeOLE: Produced By Microsoft MimeOLE V6.00.2600.0000
-Message-ID: <94b8c3ee9eee4fa181a35f7f308e9a8e@WVALE-CAS-SVR-9.econetzw.local>
-To:     Undisclosed recipients:;
+In-Reply-To: <1615798614-1044-1-git-send-email-haoxu@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
+On 15/03/2021 08:56, Hao Xu wrote:
+> sqd->sq_thread_idle can be updated by a simple max(), rather than
+> iterating the whole ctx list to get the max one.
 
-My name is Ms. Reem Ebrahim Al-Hashimi, I am the "Minister of state
-and Petroleum" also "Minister of State for International Cooperation"
-in UAE. I write to you on behalf of my other "three (2) colleagues"
-who has approved me to solicit for your "partnership in claiming of
-{us$47=Million}" from a Financial Home on their behalf and
-for our "Mutual Benefits".
+I left it as a more fool proof option. Do you have a performance issue
+with it? E.g. dozens rings sharing a single SQPOLL and constantly adding
+new ones.
 
-The Fund {us$47=Million} is our share from the (over-invoiced) Oil/Gas
-deal with Turkish Government within 2013/2014, however, we
-don't want our government to know about the fund. If this proposal
-interests you, let me know, by sending me an email and I will send to
-you detailed information on how this business would be successfully
-transacted. Be informed that nobody knows about the secret of this
-fund except us, and we know how to carry out the entire transaction.
-So I am compelled to ask, that you will stand on our behalf and
-receive this fund into any account that is solely controlled by you.
+> 
+> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
+> ---
+>  fs/io_uring.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index a4bce17af506..17697b9890e3 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -7871,7 +7871,7 @@ static int io_sq_offload_create(struct io_ring_ctx *ctx,
+>  			ret = -ENXIO;
+>  		} else {
+>  			list_add(&ctx->sqd_list, &sqd->ctx_list);
+> -			io_sqd_update_thread_idle(sqd);
+> +			sqd->sq_thread_idle = max(sqd->sq_thread_idle, ctx->sq_thread_idle);
+>  		}
+>  		io_sq_thread_unpark(sqd);
+>  
+> 
 
-We will compensate you with 15% of the total amount involved as
-gratification for being our partner in this transaction. Reply to:
-reem.alhashimi@yandex.com
-
-Regards,
-Ms. Reem.
-This mail was sent through Econet Wireless, a Global telecoms leader.
-
-DISCLAIMER
-
-The information in this message is confidential and is legally privileged. It is intended solely for the addressee. Access to this message by anyone else is unauthorized. If received in error please accept our apologies and notify the sender immediately. You must also delete the original message from your machine. If you are not the intended recipient, any use, disclosure, copying, distribution or action taken in reliance of it, is prohibited and may be unlawful. The information, attachments, opinions or advice contained in this email are not the views or opinions of Econet Wireless, its subsidiaries or affiliates. Econet Wireless therefore accepts no liability for claims, losses, or damages arising from the inaccuracy, incorrectness, or lack of integrity of such information.
-[https://mail.econet.co.zw/OWA/auth/current/themes/resources/Agile/AgileBanner.png]
-WORK ISN'T A PLACE
-IT'S WHAT WE DO
-________________________________
-
-
-
-
-
-[https://mail.econet.co.zw/OWA/auth/current/themes/resources/Agile/telephone.png]
-
-
-
-
-[https://mail.econet.co.zw/OWA/auth/current/themes/resources/Agile/email.png]
-
-<mailto:>
-
-
-[https://mail.econet.co.zw/OWA/auth/current/themes/resources/Agile/location.png]
-
-
-
-
-[https://mail.econet.co.zw/OWA/auth/current/themes/resources/Agile/website.png]
-
-www.econet.co.zw<https://www.econet.co.zw>
-
-
-[https://mail.econet.co.zw/OWA/auth/current/themes/resources/Agile/inspired.jpg]
+-- 
+Pavel Begunkov

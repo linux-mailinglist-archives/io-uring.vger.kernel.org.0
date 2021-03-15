@@ -2,91 +2,118 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DD8BF33C67C
-	for <lists+io-uring@lfdr.de>; Mon, 15 Mar 2021 20:09:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF56033C8FD
+	for <lists+io-uring@lfdr.de>; Mon, 15 Mar 2021 23:03:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233254AbhCOTJN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 15 Mar 2021 15:09:13 -0400
-Received: from mail-il1-f199.google.com ([209.85.166.199]:33742 "EHLO
-        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232825AbhCOTIl (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 15 Mar 2021 15:08:41 -0400
-Received: by mail-il1-f199.google.com with SMTP id k4so15828670ili.0
-        for <io-uring@vger.kernel.org>; Mon, 15 Mar 2021 12:08:41 -0700 (PDT)
+        id S231857AbhCOWDN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 15 Mar 2021 18:03:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36876 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231913AbhCOWDB (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 15 Mar 2021 18:03:01 -0400
+Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36454C06174A
+        for <io-uring@vger.kernel.org>; Mon, 15 Mar 2021 15:03:01 -0700 (PDT)
+Received: by mail-pf1-x435.google.com with SMTP id x7so7456673pfi.7
+        for <io-uring@vger.kernel.org>; Mon, 15 Mar 2021 15:03:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=pM/cP6/Lz3nYNB1A2BCPvDYZL5Nv+dU7p0YG5FmdOHs=;
+        b=i+Pu5UNw/TgHu/fQEXmZOHFShdZNm0HYjuktOVvh43UQqWK9OXoxwTL0KfkLH1Lh3o
+         Mkcv0D3zl4D39+93TZwtmfQnzTN3Fg40p8XufRexRcM6m8VQsn9YV4Kt6YovAUS/J0Qh
+         oZNwlAoLttJ/w9GIdPY7BRwFC7DF52oYAgWR8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=/mrm/Dlydg6hO1FVZ+2T84nuCJe4bOszaXqCBMOqrkM=;
-        b=sW6RTTF6gom8ttjPv0XhLUvu9S22rMuVDq5rhH3VMo0uXm9AY5kC0KM4GsSYHzW6yx
-         lpDavgV2iQdnyP9479lvNzdupwpu7ij2+ekKVFwu4GpolyjbJ3euT2tqeYVc8R8Erni6
-         RFcvrZdw6/7+aeWfWAKSNMLK5lDTxVeD3GiWZ+asn9IgOg8VEUDnYNzOehbw087/EiqH
-         nWgIR1p63peZKIFgXqvu4Ylte9hhgaawBD6oGEpg5oRrZg8DhdBOYwR3F6xyvIoXFcrL
-         Gk/CkutghTI60QYaj7VRAsb4ky4V5snMCaW+cgt6jx6cNcDnjyqx50xstYQFflmfXetk
-         fbCA==
-X-Gm-Message-State: AOAM531sl5ORMp16LWXi4aOOfYZZ5aVLUtzePww3eWWQqtwipa7UHf8Z
-        aqUcZw3C3gnr756BFbVV9FJUrUfQdl4seB2KA7buoEt4a+/5
-X-Google-Smtp-Source: ABdhPJxpfkuCB0z+KQgDbj9FZZCNswQBHJfoFoPaaCWLGG9Ad7xWgel986EaH/AwaISW8/y4M6eF+ITlI1Av0+iJ7BGUG9YNhB8k
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=pM/cP6/Lz3nYNB1A2BCPvDYZL5Nv+dU7p0YG5FmdOHs=;
+        b=c2q2SWDhMPlDy1/NzZ99GHwv7zVbBcvrJb/vmPlnBqzwWVNs6SsDUZ47fseFvrFpX2
+         Oc/ljK67jr4dgJjs6Kht6x37E+POIB93yoDOOcm+yZ3PvrY96WcGzWogdwccBmWPJpa+
+         qLreEY0n/hlF4VDEO0V7bPWI53CyhAgoQ/SE4t54+/jwNLoEALtFJWNN3mWmbcORvpLR
+         kMyeBJ2n1U5wKQDtOjk6i8uDGQKmiwxEsvtFPZ9cXHUy5ePlkfQqPMHOCjSmCJP3VnZV
+         CDdF+1YBOKMOXwteXc0eWGKHFTq04D2GNIhptYMjz0LtWImsHza+F1gQIglwHYwTvtb1
+         xshw==
+X-Gm-Message-State: AOAM531yAkps/WJ5pnU/Lnwk9qA87Gi4ud7nqv2w7a7fRuPqfC9APS1D
+        f7EyU4dv5WL9HYWBpaEvlBuc2g==
+X-Google-Smtp-Source: ABdhPJy8q9F/S8HF2FiROpt7pJm13akaXdXmtXbP3bYKMQOOiCIYaDmmj4n4Edotx3q4QzWSMo2peA==
+X-Received: by 2002:a63:f808:: with SMTP id n8mr995720pgh.115.1615845780563;
+        Mon, 15 Mar 2021 15:03:00 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id h15sm14597755pfo.20.2021.03.15.15.02.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Mar 2021 15:02:59 -0700 (PDT)
+Date:   Mon, 15 Mar 2021 15:02:58 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Alexey Gladkov <gladkov.alexey@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, io-uring@vger.kernel.org,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        linux-mm@kvack.org, Alexey Gladkov <legion@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [PATCH v8 3/8] Use atomic_t for ucounts reference counting
+Message-ID: <202103151426.ED27141@keescook>
+References: <cover.1615372955.git.gladkov.alexey@gmail.com>
+ <59ee3289194cd97d70085cce701bc494bfcb4fd2.1615372955.git.gladkov.alexey@gmail.com>
 MIME-Version: 1.0
-X-Received: by 2002:a5e:8d01:: with SMTP id m1mr788943ioj.72.1615835320949;
- Mon, 15 Mar 2021 12:08:40 -0700 (PDT)
-Date:   Mon, 15 Mar 2021 12:08:40 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005225a605bd97fa64@google.com>
-Subject: [syzbot] WARNING in io_ring_exit_work
-From:   syzbot <syzbot+00e15cda746c5bc70e24@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <59ee3289194cd97d70085cce701bc494bfcb4fd2.1615372955.git.gladkov.alexey@gmail.com>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
+On Wed, Mar 10, 2021 at 01:01:28PM +0100, Alexey Gladkov wrote:
+> The current implementation of the ucounts reference counter requires the
+> use of spin_lock. We're going to use get_ucounts() in more performance
+> critical areas like a handling of RLIMIT_SIGPENDING.
 
-syzbot found the following issue on:
+This really looks like it should be refcount_t. I read the earlier
+thread[1] on this, and it's not clear to me that this is a "normal"
+condition. I think there was a bug in that version (This appeared
+to *instantly* crash at boot with mnt_init() calling alloc_mnt_ns()
+calling inc_ucount()). The current code looks like just a "regular"
+reference counter of the allocated struct ucounts. Overflow should be
+very unexpected, yes? And operating on a "0" ucounts should be a bug
+too, right?
 
-HEAD commit:    b01d57bf Add linux-next specific files for 20210310
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=10ae049ed00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=95af83fd326c2b5
-dashboard link: https://syzkaller.appspot.com/bug?extid=00e15cda746c5bc70e24
+> [...]
+> +/* 127: arbitrary random number, small enough to assemble well */
+> +#define refcount_zero_or_close_to_overflow(ucounts) \
+> +	((unsigned int) atomic_read(&ucounts->count) + 127u <= 127u)
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Regardless, this should absolutely not have "refcount" as a prefix. I
+realize it's only used here, but that's needlessly confusing with regard
+to it being atomic_t not refcount_t.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+00e15cda746c5bc70e24@syzkaller.appspotmail.com
+> +struct ucounts *get_ucounts(struct ucounts *ucounts)
+> +{
+> +	if (ucounts) {
+> +		if (refcount_zero_or_close_to_overflow(ucounts)) {
+> +			WARN_ONCE(1, "ucounts: counter has reached its maximum value");
+> +			return NULL;
+> +		}
+> +		atomic_inc(&ucounts->count);
+> +	}
+> +	return ucounts;
+> +}
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 225 at fs/io_uring.c:8456 io_ring_exit_work+0x130/0xcf0 fs/io_uring.c:8456
-Modules linked in:
-CPU: 0 PID: 225 Comm: kworker/u4:5 Not tainted 5.12.0-rc2-next-20210310-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Workqueue: events_unbound io_ring_exit_work
-RIP: 0010:io_ring_exit_work+0x130/0xcf0 fs/io_uring.c:8456
-Code: 7d 00 00 0f 85 bf 09 00 00 48 8b 05 3a 15 e5 09 4d 89 f5 31 ff 49 29 c5 4c 89 ee e8 6a 09 98 ff 4d 85 ed 79 a5 e8 40 01 98 ff <0f> 0b eb 9c e8 37 01 98 ff 31 f6 49 bf 00 00 00 00 00 fc ff df 4c
-RSP: 0018:ffffc9000163fbc8 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: ffff88801dd36930 RCX: 0000000000000000
-RDX: ffff8880120d9c00 RSI: ffffffff81dbdc60 RDI: 0000000000000003
-RBP: fffffbfff1781e30 R08: 0000000000000000 R09: 0000000000000000
-R10: ffffffff81dbdc56 R11: 0000000000000000 R12: ffff88801dd364e0
-R13: fffffffffffffffe R14: 00000001000040a4 R15: ffff88801dd36000
-FS:  0000000000000000(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fcf0ff32000 CR3: 00000000180fb000 CR4: 00000000001506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- process_one_work+0x98d/0x1600 kernel/workqueue.c:2275
- worker_thread+0x64c/0x1120 kernel/workqueue.c:2421
- kthread+0x3b1/0x4a0 kernel/kthread.c:292
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+I feel like this should just be:
 
+	refcount_inc_not_zero(&ucounts->count);
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Or, to address Linus's comment in the v3 series, change get_ucounts to
+not return NULL first -- I can't see why that can ever happen in v8.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+-Kees
+
+[1] https://lore.kernel.org/lkml/116c7669744404364651e3b380db2d82bb23f983.1610722473.git.gladkov.alexey@gmail.com/
+
+-- 
+Kees Cook

@@ -2,88 +2,170 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CD81633D87F
-	for <lists+io-uring@lfdr.de>; Tue, 16 Mar 2021 17:01:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B907933D8C9
+	for <lists+io-uring@lfdr.de>; Tue, 16 Mar 2021 17:12:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238265AbhCPQBN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 16 Mar 2021 12:01:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42954 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238386AbhCPQAM (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 16 Mar 2021 12:00:12 -0400
-Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85E32C061756
-        for <io-uring@vger.kernel.org>; Tue, 16 Mar 2021 09:00:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-         s=42; h=Date:Message-ID:From:To:CC;
-        bh=ad4vdd6FJ5m0FjpwXbYrm26nhLVju9gq4YP3QuiYB3Y=; b=z1Hj4SyR+d2T0YEuKBzr1fN2/L
-        fOtx4apOXQLRl/FFOwGbi7/0WuDMIzaVbYVvBTRYsWWbW0FfTUy/E84touLFxsrc1zxdPGUgD4ROC
-        urLYwKyw117d1UPvEN+15LdSzXdZgtVU+i9R1EHobGGsdfw/ZOTqyADcjMyQr2cXg0C4tb/u0AhyE
-        RACGzbHoVyHGEN/07grA5gCjjZp2wLoB2K2CvGjdJ+w6uw32Li3SA3H0WCdeCIxxxjwVhu/kC+5XI
-        BwAKwMwE98dBi9NMhQ0QWsiVPprUym8bGAy5uJud5iI4HcUJVc6Mqza0PdUqcE68HVPDArsJYhx6o
-        a0GsRAswYcRd9ddlrq9uGcvHtBlanPc7XzRYK015FAyFBXLYD7Fy3XqqYPi1FXKdvFQ7ALWf9CSrt
-        x02zwf1GycAvxhKn9tX1qvDSwQ76Vwd6MY0NXoJYCFoeuyBe2VZI7bNDSyTbi/F0L1AyzqwhZRQZn
-        BTI0kU0FT2mnIB+xoejsVm1m;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
-        (Exim)
-        id 1lMC77-00016m-8z; Tue, 16 Mar 2021 16:00:09 +0000
-To:     Jens Axboe <axboe@kernel.dk>,
-        Norman Maurer <norman.maurer@googlemail.com>,
-        io-uring <io-uring@vger.kernel.org>
-References: <371592A7-A199-4F5C-A906-226FFC6CEED9@googlemail.com>
- <e83c9ef0-8016-2c4a-9dd0-b2a1318238ef@kernel.dk>
-From:   Stefan Metzmacher <metze@samba.org>
-Subject: Re: IORING_OP_RECVMSG not respects non-blocking nature of the fd
-Message-ID: <f61d1b62-fab6-75db-1e2a-695d8765d15f@samba.org>
-Date:   Tue, 16 Mar 2021 17:00:09 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
+        id S235227AbhCPQLd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 16 Mar 2021 12:11:33 -0400
+Received: from hmm.wantstofly.org ([213.239.204.108]:46750 "EHLO
+        mail.wantstofly.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234785AbhCPQLC (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 16 Mar 2021 12:11:02 -0400
+Received: by mail.wantstofly.org (Postfix, from userid 1000)
+        id 6245E7F279; Tue, 16 Mar 2021 18:11:00 +0200 (EET)
+Date:   Tue, 16 Mar 2021 18:11:00 +0200
+From:   Lennert Buytenhek <buytenh@wantstofly.org>
+To:     Tavian Barnes <tavianator@tavianator.com>
+Cc:     io-uring@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] io_uring: add support for IORING_OP_GETDENTS
+Message-ID: <YFDYlMmskAM5t7ET@wantstofly.org>
+References: <ea2b3ae7-d5c4-a46e-1d2d-e2c7b5fd8730@tavianator.com>
 MIME-Version: 1.0
-In-Reply-To: <e83c9ef0-8016-2c4a-9dd0-b2a1318238ef@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ea2b3ae7-d5c4-a46e-1d2d-e2c7b5fd8730@tavianator.com>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+Hello!
 
-Am 16.03.21 um 15:23 schrieb Jens Axboe:
-> On 3/16/21 8:00 AM, Norman Maurer wrote:
->> Hi there,
->>
->> I think I found a bug in the current io_uring implementation. It seems
->> like recvmsg currently not respect when a fd is set to non-blocking.
->> At the moment recvmsg never returns in this case. I can work around
->> this by using MSG_DONTWAIT but I don’t think this should be needed.
->>
->> I am using the latest 5.12 code base atm.
+
+On Tue, Mar 16, 2021 at 11:39:25AM -0400, Tavian Barnes wrote:
+
+> > IORING_OP_GETDENTS behaves much like getdents64(2) and takes the same
+> > arguments, but with a small twist: it takes an additional offset
+> > argument, and reading from the specified directory starts at the given
+> > offset.
+> >
+> > For the first IORING_OP_GETDENTS call on a directory, the offset
+> > parameter can be set to zero, and for subsequent calls, it can be
+> > set to the ->d_off field of the last struct linux_dirent64 returned
+> > by the previous IORING_OP_GETDENTS call.
+> >
+> > Internally, if necessary, IORING_OP_GETDENTS will vfs_llseek() to
+> > the right directory position before calling vfs_getdents().
 > 
-> This is actually "by design" in that system calls that offer a "don't
-> block for this operation" (like MSG_DONTWAIT here) will not be looking
-> at the O_NONBLOCK flag. Though it is a bit confusing and potentially
-> inconsistent, my argument here is that this is the case for system calls
-> in general, where even O_NONBLOCK has very hazy semantics depending on
-> what system call you are looking at.
+> For my envisioned use case it would be important to support reading from
+> the current file position when offset == -1 (IORING_FEAT_RW_CUR_POS).
+
+Thank you for the feedback!  This is easy enough to do:
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 306e2bd9fd75..1ffe58462ab3 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -4349,7 +4349,7 @@ static int io_getdents(struct io_kiocb *req, unsigned int issue_flags)
+ 	/* for vfs_llseek and to serialize ->iterate_shared() on this file */
+ 	mutex_lock(&req->file->f_pos_lock);
+ 
+-	if (req->file->f_pos != getdents->pos) {
++	if (getdents->pos != -1 && req->file->f_pos != getdents->pos) {
+ 		loff_t res = vfs_llseek(req->file, getdents->pos, SEEK_SET);
+ 		if (res < 0)
+ 			ret = res;
+
+(A corresponding patch to the liburing testsuite is below.)
+
+
+> Among other things, this would let me fully read a directory with fewer
+> round-trips.  Normally after the first getdents(), another one must be
+> issued to distinguish between EOF and a short first read.  It would be
+> nice to do both calls with linked SQEs so I could immediately know that
+> I've reached the end of the directory.
+
+Does that work with this patch?
+
+
+> > IORING_OP_GETDENTS may or may not update the specified directory's
+> > file offset, and the file offset should not be relied upon having
+> > any particular value during or after an IORING_OP_GETDENTS call.
 > 
-> The issue is mostly around when to use -EAGAIN to arm async retry, and
-> when to return -EAGAIN to the application.
-> 
-> I'd like to hear from others here, but as far as io_uring is concerned,
-> we _should_ be consistent in how we treat O_NONBLOCK _depending_ on if
-> that system call allows a flags method of passing in nonblock behavior.
+> Obviously for the above to work, we'd have to get rid of this
+> limitation.  Is that possible?
 
-As ____sys_recvmsg() has this:
+The idea behind wording it this way was that this would allow for
+further in-kernel parallelization of getdents calls in the future
+(by not serializing on the current-file-position-mutex), but I can
+see how this behavior conflicts with your use case.
 
-        if (sock->file->f_flags & O_NONBLOCK)
-                flags |= MSG_DONTWAIT;
+Also, given how the current implementation _does_ update the
+directory's file offset, some userspace code will surely end up
+depending on that behavior, which would make it hard to change
+in the future.
 
-The difference is that we don't block in__sys_recvmsg() within a worker thread,
-but instead handle it via io_arm_poll_handler()?
+Also, allowing unserialized in-kernel getdents calls on the same file
+descriptor would require a bunch more VFS work (including auditing
+all filesystems), and, to be completely honest, I am unlikely to be
+doing that work.
 
-I think it should be documented, but I guess it might be useful to keep a way
-to switch between the 3 available modes in order to find the one that
-performances best depending on the workload.
+All in all, maybe we should just state that IORING_OP_GETDENTS is
+a seek (if needed) plus a getdents combo that does together update
+the directory's file offset, and be done with it.
 
-metze
+
+
+
+A corresponding incremental patch to the testsuite to test the
+"off == -1 means current file position" case:
+
+diff --git a/test/getdents.c b/test/getdents.c
+index 3ca7b05..532e6f4 100644
+--- a/test/getdents.c
++++ b/test/getdents.c
+@@ -130,6 +130,7 @@ int main(int argc, char *argv[])
+ 	while (bufp < end) {
+ 		struct linux_dirent64 *dent;
+ 		uint8_t buf2[BUFSZ];
++		off_t ret2;
+ 
+ 		dent = (struct linux_dirent64 *)bufp;
+ 
+@@ -165,6 +166,47 @@ int main(int argc, char *argv[])
+ 
+ 			return 1;
+ 		}
++
++		/*
++		 * Now seek the directory to the given offset manually,
++		 * and perform a getdents call with offset -1 (which means:
++		 * "read from current offset"), and make sure we get the
++		 * same data back.
++		 */
++		ret2 = lseek(dirfd, dent->d_off, SEEK_SET);
++		if (ret2 != dent->d_off) {
++			if (ret2 == (off_t)-1) {
++				perror("lseek");
++			} else {
++				fprintf(stderr, "error seeking directory "
++						"to offset %" PRId64 "\n",
++					(uint64_t)dent->d_off);
++			}
++			return 1;
++		}
++
++		memset(buf2, 0, sizeof(buf2));
++
++		ret = test_getdents(&ring, buf2, sizeof(buf2), (uint64_t)-1);
++		if (ret < 0) {
++			fprintf(stderr, "getdents: %s\n", strerror(-ret));
++			return 1;
++		}
++
++		if (ret != end - bufp || memcmp(bufp, buf2, ret)) {
++			fprintf(stderr, "getdents: read from seeked offset "
++					"%" PRId64 " returned unexpected "
++					"data\n\n", (uint64_t)dent->d_off);
++
++			fprintf(stderr, "read from offset zero:\n");
++			dump_dents(bufp, end - bufp);
++
++			fprintf(stderr, "offsetted read:\n");
++			dump_dents(buf2, ret);
++
++			return 1;
++		}
++
+ 	}
+ 
+ 	if (!found_dot)

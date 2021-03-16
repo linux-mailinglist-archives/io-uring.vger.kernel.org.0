@@ -2,94 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E715E33D59F
-	for <lists+io-uring@lfdr.de>; Tue, 16 Mar 2021 15:24:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B53133D7A8
+	for <lists+io-uring@lfdr.de>; Tue, 16 Mar 2021 16:34:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235273AbhCPOXm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 16 Mar 2021 10:23:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49974 "EHLO
+        id S229494AbhCPPeZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 16 Mar 2021 11:34:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235176AbhCPOXP (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 16 Mar 2021 10:23:15 -0400
-Received: from mail-il1-x12a.google.com (mail-il1-x12a.google.com [IPv6:2607:f8b0:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D45FC06174A
-        for <io-uring@vger.kernel.org>; Tue, 16 Mar 2021 07:23:13 -0700 (PDT)
-Received: by mail-il1-x12a.google.com with SMTP id i18so12771435ilq.13
-        for <io-uring@vger.kernel.org>; Tue, 16 Mar 2021 07:23:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=mG0otpdBlgKByCH9h0shmT85CsQKGZouNXNl9JM+Wxc=;
-        b=hfdrWqzsLvlGX4Q50uqQT09TLseF1z/iacpQWRxCdf6Tg6zNmyoLgdQ9FE3svb932Y
-         697nZiz/Jjk5kNwjp39whl7UwToqz5U18TY3rJizC9devmxaqgBROqM0p84PW8U3POG9
-         wINIPF1Qi/gFVgLqxl6D1+qOfTCxRgxgbNcHccKvRXGy242HXbbMh8O89Z1LWblohvjS
-         FY1r2UPmbhke9CYuWbgYu0zTDryFUeKU13CH5MzvT5XWOF/W1BCYRnnobQ92VigpFsYw
-         Twnb31yi29N/cAwJtN/dLG6a+A6tvdF7DE3pLh3eers4spzkPYVlza1gsOST9v3odHGw
-         MqJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=mG0otpdBlgKByCH9h0shmT85CsQKGZouNXNl9JM+Wxc=;
-        b=jZM6fBTbFXGhe2P2vtDECcE3ExZyB0VTx+2F3rfoGNZAkmao0MraGQbNtq7x5/3obX
-         LRiMgs16AQZoCGOTp4RzRvjL0vBeSHfQC6zymt2mvtHqhgMExXr7ugZ1Sdpd6DoLK5Wl
-         JunWGS5Pw974/FfrST4TKIuIi0SYIPvz4yAS7oC2jgovlWsRdooNeQOtGRdg05dlEiRF
-         HFtiW8HKDydN0XtlGjTD41uMPJTiizjCNG34hE+t7F7/xmQ06VJ6EbK41tIZO9G6Iz2Q
-         h+YOFc1S+8b/p51GeiJ+RxxBFPg4nokWpnFlMZwISD53grf0/1nNwnDeHiPGMVN97O8O
-         vekg==
-X-Gm-Message-State: AOAM531K9d+PY4wwTpEdd/Y7c2Iw+vPBxJQ8ndqiMziOyYJl7t1ywGnm
-        DKXe9u6gDJN37C4L6RbrkZo7rbdnxyVogQ==
-X-Google-Smtp-Source: ABdhPJyMxEVJWeDYfdlxzopwSkeIAIsMF6n8tDth1JJT9dy6ZGlCYdxE+ijvjJUUHyZGlzRnxLTtaQ==
-X-Received: by 2002:a92:c102:: with SMTP id p2mr3775243ile.227.1615904592330;
-        Tue, 16 Mar 2021 07:23:12 -0700 (PDT)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id r3sm9452901ilq.42.2021.03.16.07.23.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Mar 2021 07:23:11 -0700 (PDT)
-Subject: Re: IORING_OP_RECVMSG not respects non-blocking nature of the fd
-To:     Norman Maurer <norman.maurer@googlemail.com>,
-        io-uring <io-uring@vger.kernel.org>
-References: <371592A7-A199-4F5C-A906-226FFC6CEED9@googlemail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <e83c9ef0-8016-2c4a-9dd0-b2a1318238ef@kernel.dk>
-Date:   Tue, 16 Mar 2021 08:23:11 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        with ESMTP id S238155AbhCPPd7 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 16 Mar 2021 11:33:59 -0400
+Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99837C061756
+        for <io-uring@vger.kernel.org>; Tue, 16 Mar 2021 08:33:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+         s=42; h=Message-Id:Date:Cc:To:From;
+        bh=p9+PuS1qkcz/Tze45p8IBSudQSlVQwB89X91zVzlRGE=; b=EgzbzRXv0lhXq2wvlLB7c275Ny
+        cdvrys12KEwQrkU81Z68fSfChO3pZw96+YqG+eQoppsVFe6jUXzzXbpxWXUej9oeQsjSgkmYLPvPi
+        qnBhbePKs84w2EtAIE6L7gt3hCYwIEn5uRYrqWhCApFdMRpcezo4FF2ZtvIT8XU1af9Jlw+Si5VXJ
+        nBvFQy7nffTe4UxMd6ACgC59Wpro2Lmakr17GJtZkPyVWS+5CGQohTe/r9AaNbpbzAl6N0T/ZnBHg
+        wd0ymZSIX4NInyD4Dn5i/3nl/0CdY7grKMOWEOSYs6zQgPTsLYtMTk7nNE2hVWZWZH8Iq1sPPFi+L
+        clR75QLhUJdx2uPnGcdlw11431JQ9aKefsEdB1R5FY158YqFdh7PjAzo0BOBE7Yd7O50rsHCe9yIj
+        jDs/Q1HzGEvmmfaaQLk+BoRWo0kM+p6TmrNq9xvdSC8GKuUNbjjbTKr1PgtADxyE01tQDbkxxFlFG
+        QclhkPJRtCeWrtCCQC9nPzv5;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
+        (Exim)
+        id 1lMBha-0000jO-0A; Tue, 16 Mar 2021 15:33:46 +0000
+From:   Stefan Metzmacher <metze@samba.org>
+To:     io-uring@vger.kernel.org
+Cc:     Stefan Metzmacher <metze@samba.org>
+Subject: [PATCH 0/2] send[msg]()/recv[msg]() fixes/improvements
+Date:   Tue, 16 Mar 2021 16:33:25 +0100
+Message-Id: <cover.1615908477.git.metze@samba.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <371592A7-A199-4F5C-A906-226FFC6CEED9@googlemail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/16/21 8:00 AM, Norman Maurer wrote:
-> Hi there,
-> 
-> I think I found a bug in the current io_uring implementation. It seems
-> like recvmsg currently not respect when a fd is set to non-blocking.
-> At the moment recvmsg never returns in this case. I can work around
-> this by using MSG_DONTWAIT but I don’t think this should be needed.
-> 
-> I am using the latest 5.12 code base atm.
+Hi,
 
-This is actually "by design" in that system calls that offer a "don't
-block for this operation" (like MSG_DONTWAIT here) will not be looking
-at the O_NONBLOCK flag. Though it is a bit confusing and potentially
-inconsistent, my argument here is that this is the case for system calls
-in general, where even O_NONBLOCK has very hazy semantics depending on
-what system call you are looking at.
+here're patches which fix linking of send[msg]()/recv[msg]() calls
+and make sure io_uring_enter() never generate a SIGPIPE.
 
-The issue is mostly around when to use -EAGAIN to arm async retry, and
-when to return -EAGAIN to the application.
+Stefan Metzmacher (2):
+  io_uring: call req_set_fail_links() on short send[msg]()/recv[msg]()
+    calls
+  io_uring: imply MSG_NOSIGNAL for send[msg]()/recv[msg]() calls
 
-I'd like to hear from others here, but as far as io_uring is concerned,
-we _should_ be consistent in how we treat O_NONBLOCK _depending_ on if
-that system call allows a flags method of passing in nonblock behavior.
+ fs/io_uring.c | 24 ++++++++++++++++--------
+ 1 file changed, 16 insertions(+), 8 deletions(-)
 
 -- 
-Jens Axboe
+2.25.1
 

@@ -2,49 +2,49 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0036A33D55F
+	by mail.lfdr.de (Postfix) with ESMTP id 83E1533D55E
 	for <lists+io-uring@lfdr.de>; Tue, 16 Mar 2021 15:03:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235648AbhCPODA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 16 Mar 2021 10:03:00 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:50085 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235224AbhCPOCk (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 16 Mar 2021 10:02:40 -0400
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20210316140238epoutp016f1753a9ca1638615d2d8267a19d0512~s14sccY7E2827728277epoutp01Z
-        for <io-uring@vger.kernel.org>; Tue, 16 Mar 2021 14:02:38 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20210316140238epoutp016f1753a9ca1638615d2d8267a19d0512~s14sccY7E2827728277epoutp01Z
+        id S235224AbhCPODC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 16 Mar 2021 10:03:02 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:42832 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235358AbhCPOCo (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 16 Mar 2021 10:02:44 -0400
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20210316140242epoutp020db942a6999a2f4da43f0a07da1bed4b~s14v3uWJG2937429374epoutp02p
+        for <io-uring@vger.kernel.org>; Tue, 16 Mar 2021 14:02:42 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20210316140242epoutp020db942a6999a2f4da43f0a07da1bed4b~s14v3uWJG2937429374epoutp02p
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1615903358;
-        bh=QtFMwLMCMBlFlOoboW+80gxR0CXhPEogINbPxqfzfes=;
+        s=mail20170921; t=1615903362;
+        bh=akeDu1dcbf20zA+acxip5drXbMvBeQYjrWKxp7SkhRQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jk74dEERICuZdsqmieot3zyV9HYwf7s9e3OLy9+Jc38fhe0MBJm+M/tOkctYnn6RN
-         vS9dTl+4cbkJEPQGwLkvudaaL/n349OU4aZmUM2uphTmd3WPsdRAiUP03LVB9b5nGu
-         CSENBVmHziTxgBqiPZs+djnJsn6yPxKzG6IKFlGc=
-Received: from epsmges5p3new.samsung.com (unknown [182.195.42.75]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20210316140237epcas5p30027a95b56175a643140644c22188f4b~s14rS_kG80793507935epcas5p3N;
-        Tue, 16 Mar 2021 14:02:37 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        CB.6D.33964.D7AB0506; Tue, 16 Mar 2021 23:02:37 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-        20210316140236epcas5p4de087ee51a862402146fbbc621d4d4c6~s14qlVq_b1877618776epcas5p4k;
-        Tue, 16 Mar 2021 14:02:36 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20210316140236epsmtrp18cb05d34faa39ecb868fe9e024c74aa2~s14qkgtTB0307603076epsmtrp1d;
-        Tue, 16 Mar 2021 14:02:36 +0000 (GMT)
-X-AuditID: b6c32a4b-eb7ff700000184ac-87-6050ba7d43ae
+        b=JfEMGRrHM30g8TYE1VHCqp4kzSGNoOZTkwIk+6RlhasiGIhmgRyvfEDSt9s4dBc2j
+         bduEx0dM3jixsgsn0PTvZMhjviwkh5lIebnU+OrVY4THTPsA+IahfwppI+880bsF2A
+         WF7LIBqHpKiQLVolxnOS/0n6av20bUy3fu8Ysbuo=
+Received: from epsmges5p1new.samsung.com (unknown [182.195.42.73]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+        20210316140241epcas5p12a8acf27b164b7ed9529e41f11b33562~s14uho-FN2091120911epcas5p1P;
+        Tue, 16 Mar 2021 14:02:41 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        43.B5.15682.08AB0506; Tue, 16 Mar 2021 23:02:40 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+        20210316140240epcas5p3e71bfe2afecd728c5af60056f21cc9b7~s14uHR0NL0795407954epcas5p3C;
+        Tue, 16 Mar 2021 14:02:40 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20210316140240epsmtrp2ac5e06e0b9b7f1a5776e0c375ca85a7b~s14uGXBQf3156531565epsmtrp2I;
+        Tue, 16 Mar 2021 14:02:40 +0000 (GMT)
+X-AuditID: b6c32a49-8d5ff70000013d42-29-6050ba808565
 Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        5F.54.08745.C7AB0506; Tue, 16 Mar 2021 23:02:36 +0900 (KST)
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        03.93.13470.08AB0506; Tue, 16 Mar 2021 23:02:40 +0900 (KST)
 Received: from localhost.localdomain (unknown [107.110.206.5]) by
         epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20210316140235epsmtip2f21aceaef8fee2ba6e70ad68977c685f~s14o7A4lE1114511145epsmtip2f;
-        Tue, 16 Mar 2021 14:02:34 +0000 (GMT)
+        20210316140238epsmtip2cfe56ce2cc2373dffe29819f94ed2068~s14sTuTbB1114911149epsmtip2e;
+        Tue, 16 Mar 2021 14:02:38 +0000 (GMT)
 From:   Kanchan Joshi <joshi.k@samsung.com>
 To:     axboe@kernel.dk, hch@lst.de, kbusch@kernel.org,
         chaitanya.kulkarni@wdc.com
@@ -52,178 +52,373 @@ Cc:     io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
         anuj20.g@samsung.com, javier.gonz@samsung.com,
         nj.shetty@samsung.com, selvakuma.s1@samsung.com,
         Kanchan Joshi <joshi.k@samsung.com>
-Subject: [RFC PATCH v3 2/3] nvme: keep nvme_command instead of pointer to it
-Date:   Tue, 16 Mar 2021 19:31:25 +0530
-Message-Id: <20210316140126.24900-3-joshi.k@samsung.com>
+Subject: [RFC PATCH v3 3/3] nvme: wire up support for async passthrough
+Date:   Tue, 16 Mar 2021 19:31:26 +0530
+Message-Id: <20210316140126.24900-4-joshi.k@samsung.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210316140126.24900-1-joshi.k@samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOKsWRmVeSWpSXmKPExsWy7bCmum7troAEg3nd0hZNE/4yW6y+289m
-        Mev2axaLlauPMlm8az3HYvH4zmd2i6P/37JZTDp0jdFi/rKn7Bbbfs9ntrgyZRGzxesfJ9kc
-        eDwuny312LSqk81j85J6j903G9g8+rasYvT4vEnOo/1AN1MAexSXTUpqTmZZapG+XQJXxp6+
-        +2wFJxUqFjedZ2xg/CrVxcjBISFgInH4pVgXIxeHkMBuRonr03axQDifGCVuvjvHBOF8ZpT4
-        v2IPexcjJ1jHmY1/2CESuxgl3q15glC1oekDG8hcNgFNiQuTS0EaRAQCJHYd/MwEYjMLHGWU
-        eLSyGsQWFvCRuH11CTOIzSKgKjHleSOYzStgIfF5zmxWiGXyEjMvfQdbzClgKbFvbw8bRI2g
-        xMmZT1ggZspLNG+dzQxRP5ND4tsvbgjbRWJibycThC0s8er4FqgHpCRe9rdB2cUSv+4cZQa5
-        X0KgA+j/hpksEAl7iYt7/jKB/MIM9Mv6XfoQu/gken8/YYIEHa9ER5sQRLWixL1JT6FOFpd4
-        OGMJlO0h0bCtBexkIYEeRolJ0xQnMMrPQvLBLCQfzEJYtoCReRWjZGpBcW56arFpgXFearle
-        cWJucWleul5yfu4mRnBa0vLewfjowQe9Q4xMHIyHGCU4mJVEeE3zAhKEeFMSK6tSi/Lji0pz
-        UosPMUpzsCiJ8+4weBAvJJCeWJKanZpakFoEk2Xi4JRqYLq/xPLJKZn1j97/PntQu6bCc/PF
-        p7aHpv6aslLpnFDDUh7jP7p5bdNdDBfs5rqRITQ/62+b8JdYhYoZNQfexv2Ov5C23WjD9c86
-        i3NfdG6daFTxaUWUtZp2Fm9BUeQT9t6lcqJ2jlaMrGqZ4loHlJsORHY4+Bg8LeHIKw83Mm3P
-        Mt1+xexRzdeQypS4p9kGmyZeeFjdLSQ669xup8M9SydnnNBM1T8/p2D/12PxTbeTRCM/Wd4u
-        XL7sy5QiidNxc8z2y2r+zb5q0+1t9Cky07hbt+6fx8PZBUKrsk0fbSgKae/nMV+iHb/mR21W
-        XmaqS67PLTeHn5nl7RXuzjzTsmWrxH/ce/fyxCn7iCRnJZbijERDLeai4kQAEuFpS7oDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrOLMWRmVeSWpSXmKPExsWy7bCSvG7NroAEg5WNOhZNE/4yW6y+289m
-        Mev2axaLlauPMlm8az3HYvH4zmd2i6P/37JZTDp0jdFi/rKn7Bbbfs9ntrgyZRGzxesfJ9kc
-        eDwuny312LSqk81j85J6j903G9g8+rasYvT4vEnOo/1AN1MAexSXTUpqTmZZapG+XQJXxp6+
-        +2wFJxUqFjedZ2xg/CrVxcjJISFgInFm4x92EFtIYAejxIZvqhBxcYnmaz/YIWxhiZX/ngPZ
-        XEA1HxklbrbPYe5i5OBgE9CUuDC5FKRGRCBEomveNiaQGmaBs4wSyx+3M4IkhAV8JG5fXcIM
-        YrMIqEpMed4IZvMKWEh8njObFWKBvMTMS9/BlnEKWErs29vDBnGQhcT0k5fYIOoFJU7OfMIC
-        YjMD1Tdvnc08gVFgFpLULCSpBYxMqxglUwuKc9Nziw0LjPJSy/WKE3OLS/PS9ZLzczcxguNC
-        S2sH455VH/QOMTJxMB5ilOBgVhLhNc0LSBDiTUmsrEotyo8vKs1JLT7EKM3BoiTOe6HrZLyQ
-        QHpiSWp2ampBahFMlomDU6qBKdlGYEHS0dOmf3QsVh1q2t305cxv7fcqAplJp7c/3PvqdzyX
-        5Ls+iex/mbf425YxHf5gcVxULGR709L3X5aJ13f8tkxLvsky223C7Cc7Zif8PlLjucy6kNMv
-        f+ucWfEXKhcsnqU7b4FQ+fPlaa/n1nCtUnbP+mDkHSfF8qJGVvTqfe0FyZsSTlov/xya32Wf
-        9X7ZuQMHlfl+fDyvJlZcxvqoJFRqtlemy9I1TxewSCs/m5DxtPP+jpsuEgfvRv1aeSRR7I24
-        9Dav7YrKVneybBxUdCc4fdkQdfSwe0q59os23ptiXTyvXVKKe0oucK1NvBZZedPinPVZxlOS
-        6wsmtkYHChTODni6LsHmkExHjBJLcUaioRZzUXEiABQvSTv6AgAA
-X-CMS-MailID: 20210316140236epcas5p4de087ee51a862402146fbbc621d4d4c6
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBKsWRmVeSWpSXmKPExsWy7bCmpm7DroAEg7d7LSyaJvxltlh9t5/N
+        Ytbt1ywWK1cfZbJ413qOxeLxnc/sFkf/v2WzmHToGqPF/GVP2S22/Z7PbHFlyiJmi9c/TrI5
+        8HhcPlvqsWlVJ5vH5iX1HrtvNrB59G1ZxejxeZOcR/uBbqYA9igum5TUnMyy1CJ9uwSujK6L
+        u1kLtgZWvHlxlq2B8YtTFyMnh4SAicTUq3/Zuhi5OIQEdjNKtO3byQLhfGKUuPXoBJTzjVFi
+        detmNpiWOVMms0Mk9jJKLJm1ixnC+cwocXf+FKAMBwebgKbEhcmlIA0iAgESuw5+ZgKxmQWO
+        Mko8WlkNYgsLuEv0TT4JNpRFQFWiaQHINg4OXgELib8XSiF2yUvMvPSdHcTmFLCU2Le3B6yc
+        V0BQ4uTMJywQI+UlmrfOBjtBQmAmh8TfXY8ZIZpdJKZe2AxlC0u8Or6FHcKWkvj8bi/UM8US
+        v+4chWruYJS43jCTBSJhL3Fxz18mkIOYgX5Zv0sfYhmfRO/vJ2BhCQFeiY42IYhqRYl7k56y
+        QtjiEg9nLGGFKPGQeLRFBhI6PYwSPe2rGCcwys9C8sIsJC/MQli2gJF5FaNkakFxbnpqsWmB
+        YV5quV5xYm5xaV66XnJ+7iZGcGLS8tzBePfBB71DjEwcjIcYJTiYlUR4TfMCEoR4UxIrq1KL
+        8uOLSnNSiw8xSnOwKInz7jB4EC8kkJ5YkpqdmlqQWgSTZeLglGpgElj82LPp7wnhON+UTbOn
+        zgmb4Su97NjK2fdXi+3UtNDfubt0w5z2BpfrS58dL1ZzecbPbzHtBmdiwa2lH79XnFq9dvFy
+        PbV/jtrac8R+hR7aFVWv2Htp812+mqn7vRUm7hPxnczwfJHA8pdCylUSpiJN5tL3ZnccWppl
+        n7VhhxdH46emlSdXuN29Hbzt7WvPs0pvy744vcr05M+oNc2XsQhw9zqy+WuR0cUlV5YHz51n
+        lu/gWHvjYgjvhdnhvY7bN3nKOuxf4aorayPy9ttjvtNCdU7uF7eeLPeYxcyzZeWf7RF2yZnt
+        WU/7Hvis9r71XfKCcHxW/mIp6YTWhdvVPnKVLLmonDvzvEP2uk2Zr5RYijMSDbWYi4oTAcDV
+        N++7AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrOLMWRmVeSWpSXmKPExsWy7bCSvG7DroAEg/YmcYumCX+ZLVbf7Wez
+        mHX7NYvFytVHmSzetZ5jsXh85zO7xdH/b9ksJh26xmgxf9lTdottv+czW1yZsojZ4vWPk2wO
+        PB6Xz5Z6bFrVyeaxeUm9x+6bDWwefVtWMXp83iTn0X6gmymAPYrLJiU1J7MstUjfLoEro+vi
+        btaCrYEVb16cZWtg/OLUxcjJISFgIjFnymT2LkYuDiGB3YwSdz/+YodIiEs0X/sBZQtLrPz3
+        HKroI6PEx/NtzF2MHBxsApoSFyaXgtSICIRIdM3bxgRSwyxwllFi+eN2RpCEsIC7RN/kk2wg
+        NouAqkTTghMsIL28AhYSfy+UQsyXl5h56TvYLk4BS4l9e3vAyoWASqafvARm8woISpyc+YQF
+        xGYGqm/eOpt5AqPALCSpWUhSCxiZVjFKphYU56bnFhsWGOallusVJ+YWl+al6yXn525iBMeF
+        luYOxu2rPugdYmTiYDzEKMHBrCTCa5oXkCDEm5JYWZValB9fVJqTWnyIUZqDRUmc90LXyXgh
+        gfTEktTs1NSC1CKYLBMHp1QDkw3rq+xKq0WZFTfmbk/1kJ3/fOb2Sy5XrZM/fGj9rd5uX/DY
+        WyDi0ybXWeum/DLX0C52uBMu2ap3XJ61X6v4gMzjIxdF8lKXTi1ZmVkhcF9fucfOI1qLrzFG
+        TmzSj3Z9h2OKNW8Y/she0c+LPpztnO55l7G6Qqt3SsxGd6kwzhn3lCarstQfec3wIkno9DbD
+        FX7TpudJiG4tnFPP32BbvFlyd+wGvcu/9h9+uenDvc8ekd7udga3tsqUGoZsPBQuYmb/Veap
+        g9GF7uAMruDZTty5xbrv/0awKLxO3Xq14C/bSpegbBfdlHCBnps906fsnKMzb9emM+nMG2d/
+        7+cIsGtJOLio/+6Mnc/ZNm9VYinOSDTUYi4qTgQAENB5ZvoCAAA=
+X-CMS-MailID: 20210316140240epcas5p3e71bfe2afecd728c5af60056f21cc9b7
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 105P
-X-CMS-RootMailID: 20210316140236epcas5p4de087ee51a862402146fbbc621d4d4c6
+X-CMS-RootMailID: 20210316140240epcas5p3e71bfe2afecd728c5af60056f21cc9b7
 References: <20210316140126.24900-1-joshi.k@samsung.com>
-        <CGME20210316140236epcas5p4de087ee51a862402146fbbc621d4d4c6@epcas5p4.samsung.com>
+        <CGME20210316140240epcas5p3e71bfe2afecd728c5af60056f21cc9b7@epcas5p3.samsung.com>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-nvme_req structure originally contained a pointer to nvme_command.
-Change nvme_req structure to keep the command itself.
-This helps in avoiding hot-path memory-allocation for async-passthrough.
+Introduce handler for mq_ops->uring_cmd(), implementing async
+passthrough on block-device.
 
-Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
 Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
 ---
- drivers/nvme/host/core.c     |  6 +++---
- drivers/nvme/host/fabrics.c  |  4 ++--
- drivers/nvme/host/lightnvm.c | 16 +++++-----------
- drivers/nvme/host/nvme.h     |  2 +-
- 4 files changed, 11 insertions(+), 17 deletions(-)
+ drivers/nvme/host/core.c | 180 ++++++++++++++++++++++++++++++++++-----
+ drivers/nvme/host/nvme.h |   3 +
+ drivers/nvme/host/pci.c  |   1 +
+ 3 files changed, 162 insertions(+), 22 deletions(-)
 
 diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index e68a8c4ac5a6..46c1bb7a89f0 100644
+index 46c1bb7a89f0..c4f0e54fe9a5 100644
 --- a/drivers/nvme/host/core.c
 +++ b/drivers/nvme/host/core.c
-@@ -596,7 +596,7 @@ static inline void nvme_init_request(struct request *req,
- 
- 	req->cmd_flags |= REQ_FAILFAST_DRIVER;
- 	nvme_clear_nvme_request(req);
--	nvme_req(req)->cmd = cmd;
-+	nvme_req(req)->cmd = *cmd;
+@@ -1053,6 +1053,88 @@ static void *nvme_add_user_metadata(struct bio *bio, void __user *ubuf,
+ 	return ERR_PTR(ret);
  }
  
- struct request *nvme_alloc_request(struct request_queue *q,
-@@ -728,7 +728,7 @@ static void nvme_assign_write_stream(struct nvme_ctrl *ctrl,
- static void nvme_setup_passthrough(struct request *req,
- 		struct nvme_command *cmd)
++/*
++ * Convert integer values from ioctl structures to user pointers, silently
++ * ignoring the upper bits in the compat case to match behaviour of 32-bit
++ * kernels.
++ */
++static void __user *nvme_to_user_ptr(uintptr_t ptrval)
++{
++	if (in_compat_syscall())
++		ptrval = (compat_uptr_t)ptrval;
++	return (void __user *)ptrval;
++}
++/*
++ * This is carved within the block_uring_cmd, to avoid dynamic allocation.
++ * Care should be taken not to grow this beyond what is available.
++ */
++struct uring_cmd_data {
++	union {
++		struct bio *bio;
++		u64 result; /* nvme cmd result */
++	};
++	void *meta; /* kernel-resident buffer */
++	int status; /* nvme cmd status */
++};
++
++inline u64 *ucmd_data_addr(struct io_uring_cmd *ioucmd)
++{
++	return &(((struct block_uring_cmd *)&ioucmd->pdu)->unused[0]);
++}
++
++void ioucmd_task_cb(struct io_uring_cmd *ioucmd)
++{
++	struct uring_cmd_data *ucd;
++	struct nvme_passthru_cmd __user *ptcmd;
++	struct block_uring_cmd *bcmd;
++
++	bcmd = (struct block_uring_cmd *) &ioucmd->pdu;
++	ptcmd = (void __user *) bcmd->addr;
++	ucd = (struct uring_cmd_data *) ucmd_data_addr(ioucmd);
++
++	/* handle meta update */
++	if (ucd->meta) {
++		void __user *umeta = nvme_to_user_ptr(ptcmd->metadata);
++
++		if (!ucd->status)
++			if (copy_to_user(umeta, ucd->meta, ptcmd->metadata_len))
++				ucd->status = -EFAULT;
++		kfree(ucd->meta);
++	}
++	/* handle result update */
++	if (put_user(ucd->result, (u32 __user *)&ptcmd->result))
++		ucd->status = -EFAULT;
++	io_uring_cmd_done(ioucmd, ucd->status);
++}
++
++void nvme_end_async_pt(struct request *req, blk_status_t err)
++{
++	struct io_uring_cmd *ioucmd;
++	struct uring_cmd_data *ucd;
++	struct bio *bio;
++	int ret;
++
++	ioucmd = req->end_io_data;
++	ucd = (struct uring_cmd_data *) ucmd_data_addr(ioucmd);
++	/* extract bio before reusing the same field for status */
++	bio = ucd->bio;
++
++	if (nvme_req(req)->flags & NVME_REQ_CANCELLED)
++		ucd->status = -EINTR;
++	else
++		ucd->status = nvme_req(req)->status;
++	ucd->result = le64_to_cpu(nvme_req(req)->result.u64);
++
++	/* this takes care of setting up task-work */
++	ret = uring_cmd_complete_in_task(ioucmd, ioucmd_task_cb);
++	if (ret < 0)
++		kfree(ucd->meta);
++
++	/* unmap pages, free bio, nvme command and request */
++	blk_rq_unmap_user(bio);
++	blk_mq_free_request(req);
++}
++
+ static u32 nvme_known_admin_effects(u8 opcode)
  {
--	memcpy(cmd, nvme_req(req)->cmd, sizeof(*cmd));
-+	memcpy(cmd, &nvme_req(req)->cmd, sizeof(*cmd));
- 	/* passthru commands should let the driver set the SGL flags */
- 	cmd->common.flags &= ~NVME_CMD_SGL_ALL;
+ 	switch (opcode) {
+@@ -1140,10 +1222,27 @@ void nvme_execute_passthru_rq(struct request *rq)
  }
-@@ -1128,7 +1128,7 @@ static void nvme_passthru_end(struct nvme_ctrl *ctrl, u32 effects)
+ EXPORT_SYMBOL_NS_GPL(nvme_execute_passthru_rq, NVME_TARGET_PASSTHRU);
  
- void nvme_execute_passthru_rq(struct request *rq)
++static void nvme_setup_uring_cmd_data(struct request *rq,
++		struct io_uring_cmd *ioucmd, void *meta, bool write)
++{
++	struct uring_cmd_data *ucd;
++
++	ucd = (struct uring_cmd_data *) ucmd_data_addr(ioucmd);
++	/* to free bio on completion, as req->bio will be null at that time */
++	ucd->bio = rq->bio;
++	/* meta update is required only for read requests */
++	if (meta && !write)
++		ucd->meta = meta;
++	else
++		ucd->meta = NULL;
++	rq->end_io_data = ioucmd;
++}
++
+ static int nvme_submit_user_cmd(struct request_queue *q,
+ 		struct nvme_command *cmd, void __user *ubuffer,
+ 		unsigned bufflen, void __user *meta_buffer, unsigned meta_len,
+-		u32 meta_seed, u64 *result, unsigned timeout)
++		u32 meta_seed, u64 *result, unsigned int timeout,
++		struct io_uring_cmd *ioucmd)
  {
--	struct nvme_command *cmd = nvme_req(rq)->cmd;
-+	struct nvme_command *cmd = &nvme_req(rq)->cmd;
- 	struct nvme_ctrl *ctrl = nvme_req(rq)->ctrl;
- 	struct nvme_ns *ns = rq->q->queuedata;
- 	struct gendisk *disk = ns ? ns->disk : NULL;
-diff --git a/drivers/nvme/host/fabrics.c b/drivers/nvme/host/fabrics.c
-index 5dfd806fc2d2..c374dcf6595e 100644
---- a/drivers/nvme/host/fabrics.c
-+++ b/drivers/nvme/host/fabrics.c
-@@ -578,8 +578,8 @@ bool __nvmf_check_ready(struct nvme_ctrl *ctrl, struct request *rq,
- 	 */
- 	switch (ctrl->state) {
- 	case NVME_CTRL_CONNECTING:
--		if (blk_rq_is_passthrough(rq) && nvme_is_fabrics(req->cmd) &&
--		    req->cmd->fabrics.fctype == nvme_fabrics_type_connect)
-+		if (blk_rq_is_passthrough(rq) && nvme_is_fabrics(&req->cmd) &&
-+		    req->cmd.fabrics.fctype == nvme_fabrics_type_connect)
- 			return true;
- 		break;
- 	default:
-diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
-index b705988629f2..5f4d7f0f5d8d 100644
---- a/drivers/nvme/host/lightnvm.c
-+++ b/drivers/nvme/host/lightnvm.c
-@@ -640,7 +640,6 @@ static void nvme_nvm_end_io(struct request *rq, blk_status_t status)
- 	rqd->error = nvme_req(rq)->status;
- 	nvm_end_io(rqd);
+ 	bool write = nvme_is_write(cmd);
+ 	struct nvme_ns *ns = q->queuedata;
+@@ -1179,6 +1278,20 @@ static int nvme_submit_user_cmd(struct request_queue *q,
+ 			req->cmd_flags |= REQ_INTEGRITY;
+ 		}
+ 	}
++	if (ioucmd) { /* async handling */
++		u32 effects;
++
++		effects = nvme_command_effects(ns->ctrl, ns, cmd->common.opcode);
++		/* filter commands with non-zero effects, keep it simple for now*/
++		if (effects) {
++			ret = -EOPNOTSUPP;
++			goto out_unmap;
++		}
++		nvme_setup_uring_cmd_data(req, ioucmd, meta, write);
++		blk_execute_rq_nowait(ns ? ns->disk : NULL, req, 0,
++					nvme_end_async_pt);
++		return 0;
++	}
  
--	kfree(nvme_req(rq)->cmd);
- 	blk_mq_free_request(rq);
+ 	nvme_execute_passthru_rq(req);
+ 	if (nvme_req(req)->flags & NVME_REQ_CANCELLED)
+@@ -1544,18 +1657,6 @@ static void nvme_enable_aen(struct nvme_ctrl *ctrl)
+ 	queue_work(nvme_wq, &ctrl->async_event_work);
  }
  
-@@ -672,25 +671,21 @@ static int nvme_nvm_submit_io(struct nvm_dev *dev, struct nvm_rq *rqd,
- {
- 	struct nvm_geo *geo = &dev->geo;
- 	struct request_queue *q = dev->q;
--	struct nvme_nvm_command *cmd;
-+	struct nvme_nvm_command cmd;
- 	struct request *rq;
- 	int ret;
- 
--	cmd = kzalloc(sizeof(struct nvme_nvm_command), GFP_KERNEL);
--	if (!cmd)
--		return -ENOMEM;
+-/*
+- * Convert integer values from ioctl structures to user pointers, silently
+- * ignoring the upper bits in the compat case to match behaviour of 32-bit
+- * kernels.
+- */
+-static void __user *nvme_to_user_ptr(uintptr_t ptrval)
+-{
+-	if (in_compat_syscall())
+-		ptrval = (compat_uptr_t)ptrval;
+-	return (void __user *)ptrval;
+-}
 -
--	rq = nvme_nvm_alloc_request(q, rqd, cmd);
-+	rq = nvme_nvm_alloc_request(q, rqd, &cmd);
- 	if (IS_ERR(rq)) {
- 		ret = PTR_ERR(rq);
--		goto err_free_cmd;
-+		goto err_cmd;
+ static int nvme_submit_io(struct nvme_ns *ns, struct nvme_user_io __user *uio)
+ {
+ 	struct nvme_user_io io;
+@@ -1616,11 +1717,13 @@ static int nvme_submit_io(struct nvme_ns *ns, struct nvme_user_io __user *uio)
+ 
+ 	return nvme_submit_user_cmd(ns->queue, &c,
+ 			nvme_to_user_ptr(io.addr), length,
+-			metadata, meta_len, lower_32_bits(io.slba), NULL, 0);
++			metadata, meta_len, lower_32_bits(io.slba), NULL, 0,
++			NULL);
+ }
+ 
+ static int nvme_user_cmd(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
+-			struct nvme_passthru_cmd __user *ucmd)
++			struct nvme_passthru_cmd __user *ucmd,
++			struct io_uring_cmd *ioucmd)
+ {
+ 	struct nvme_passthru_cmd cmd;
+ 	struct nvme_command c;
+@@ -1654,9 +1757,9 @@ static int nvme_user_cmd(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
+ 	status = nvme_submit_user_cmd(ns ? ns->queue : ctrl->admin_q, &c,
+ 			nvme_to_user_ptr(cmd.addr), cmd.data_len,
+ 			nvme_to_user_ptr(cmd.metadata), cmd.metadata_len,
+-			0, &result, timeout);
++			0, &result, timeout, ioucmd);
+ 
+-	if (status >= 0) {
++	if (!ioucmd && status >= 0) {
+ 		if (put_user(result, &ucmd->result))
+ 			return -EFAULT;
  	}
+@@ -1698,7 +1801,7 @@ static int nvme_user_cmd64(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
+ 	status = nvme_submit_user_cmd(ns ? ns->queue : ctrl->admin_q, &c,
+ 			nvme_to_user_ptr(cmd.addr), cmd.data_len,
+ 			nvme_to_user_ptr(cmd.metadata), cmd.metadata_len,
+-			0, &cmd.result, timeout);
++			0, &cmd.result, timeout, NULL);
  
- 	if (buf) {
- 		ret = blk_rq_map_kern(q, rq, buf, geo->csecs * rqd->nr_ppas,
- 				GFP_KERNEL);
- 		if (ret)
--			goto err_free_cmd;
-+			goto err_cmd;
- 	}
+ 	if (status >= 0) {
+ 		if (put_user(cmd.result, &ucmd->result))
+@@ -1760,7 +1863,7 @@ static int nvme_handle_ctrl_ioctl(struct nvme_ns *ns, unsigned int cmd,
  
- 	rq->end_io_data = rqd;
-@@ -699,8 +694,7 @@ static int nvme_nvm_submit_io(struct nvm_dev *dev, struct nvm_rq *rqd,
- 
- 	return 0;
- 
--err_free_cmd:
--	kfree(cmd);
-+err_cmd:
+ 	switch (cmd) {
+ 	case NVME_IOCTL_ADMIN_CMD:
+-		ret = nvme_user_cmd(ctrl, NULL, argp);
++		ret = nvme_user_cmd(ctrl, NULL, argp, NULL);
+ 		break;
+ 	case NVME_IOCTL_ADMIN64_CMD:
+ 		ret = nvme_user_cmd64(ctrl, NULL, argp);
+@@ -1799,7 +1902,7 @@ static int nvme_ioctl(struct block_device *bdev, fmode_t mode,
+ 		ret = ns->head->ns_id;
+ 		break;
+ 	case NVME_IOCTL_IO_CMD:
+-		ret = nvme_user_cmd(ns->ctrl, ns, argp);
++		ret = nvme_user_cmd(ns->ctrl, ns, argp, NULL);
+ 		break;
+ 	case NVME_IOCTL_SUBMIT_IO:
+ 		ret = nvme_submit_io(ns, argp);
+@@ -1818,6 +1921,39 @@ static int nvme_ioctl(struct block_device *bdev, fmode_t mode,
  	return ret;
  }
  
++int nvme_uring_cmd(struct request_queue *q, struct io_uring_cmd *ioucmd,
++		enum io_uring_cmd_flags flags)
++{
++	struct nvme_ns_head *head = NULL;
++	struct block_device *bdev = I_BDEV(ioucmd->file->f_mapping->host);
++	struct block_uring_cmd *bcmd = (struct block_uring_cmd *)&ioucmd->pdu;
++	struct nvme_ns *ns;
++	int srcu_idx, ret;
++	void __user *argp = (void __user *) bcmd->addr;
++
++	BUILD_BUG_ON(sizeof(struct uring_cmd_data) >
++			sizeof(struct block_uring_cmd) -
++			offsetof(struct block_uring_cmd, unused));
++
++	ns = nvme_get_ns_from_disk(bdev->bd_disk, &head, &srcu_idx);
++	if (unlikely(!ns))
++		return -EWOULDBLOCK;
++
++	switch (bcmd->ioctl_cmd) {
++	case NVME_IOCTL_IO_CMD:
++		ret = nvme_user_cmd(ns->ctrl, ns, argp, ioucmd);
++		break;
++	default:
++		ret = -ENOTTY;
++	}
++
++	if (ret >= 0)
++		ret = -EIOCBQUEUED;
++	nvme_put_ns_from_disk(head, srcu_idx);
++	return ret;
++}
++EXPORT_SYMBOL_GPL(nvme_uring_cmd);
++
+ #ifdef CONFIG_COMPAT
+ struct nvme_user_io32 {
+ 	__u8	opcode;
+@@ -3309,7 +3445,7 @@ static int nvme_dev_user_cmd(struct nvme_ctrl *ctrl, void __user *argp)
+ 	kref_get(&ns->kref);
+ 	up_read(&ctrl->namespaces_rwsem);
+ 
+-	ret = nvme_user_cmd(ctrl, ns, argp);
++	ret = nvme_user_cmd(ctrl, ns, argp, NULL);
+ 	nvme_put_ns(ns);
+ 	return ret;
+ 
+@@ -3326,7 +3462,7 @@ static long nvme_dev_ioctl(struct file *file, unsigned int cmd,
+ 
+ 	switch (cmd) {
+ 	case NVME_IOCTL_ADMIN_CMD:
+-		return nvme_user_cmd(ctrl, NULL, argp);
++		return nvme_user_cmd(ctrl, NULL, argp, NULL);
+ 	case NVME_IOCTL_ADMIN64_CMD:
+ 		return nvme_user_cmd64(ctrl, NULL, argp);
+ 	case NVME_IOCTL_IO_CMD:
 diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-index 07b34175c6ce..0254aa611dfa 100644
+index 0254aa611dfa..f3daee4a4848 100644
 --- a/drivers/nvme/host/nvme.h
 +++ b/drivers/nvme/host/nvme.h
-@@ -157,7 +157,7 @@ enum nvme_quirks {
-  * this structure as the first member of their request-private data.
-  */
- struct nvme_request {
--	struct nvme_command	*cmd;
-+	struct nvme_command	cmd;
- 	union nvme_result	result;
- 	u8			retries;
- 	u8			flags;
+@@ -19,6 +19,7 @@
+ #include <linux/t10-pi.h>
+ 
+ #include <trace/events/block.h>
++#include <linux/io_uring.h>
+ 
+ extern unsigned int nvme_io_timeout;
+ #define NVME_IO_TIMEOUT	(nvme_io_timeout * HZ)
+@@ -620,6 +621,8 @@ int nvme_wait_freeze_timeout(struct nvme_ctrl *ctrl, long timeout);
+ void nvme_start_freeze(struct nvme_ctrl *ctrl);
+ 
+ #define NVME_QID_ANY -1
++int nvme_uring_cmd(struct request_queue *q, struct io_uring_cmd *ucmd,
++		enum io_uring_cmd_flags flags);
+ struct request *nvme_alloc_request(struct request_queue *q,
+ 		struct nvme_command *cmd, blk_mq_req_flags_t flags);
+ void nvme_cleanup_cmd(struct request *req);
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index 7b6632c00ffd..6c84dc964259 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -1629,6 +1629,7 @@ static const struct blk_mq_ops nvme_mq_ops = {
+ 	.map_queues	= nvme_pci_map_queues,
+ 	.timeout	= nvme_timeout,
+ 	.poll		= nvme_poll,
++	.uring_cmd	= nvme_uring_cmd,
+ };
+ 
+ static void nvme_dev_remove_admin(struct nvme_dev *dev)
 -- 
 2.25.1
 

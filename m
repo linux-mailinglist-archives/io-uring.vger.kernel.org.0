@@ -2,94 +2,87 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 64D2C33D7CB
-	for <lists+io-uring@lfdr.de>; Tue, 16 Mar 2021 16:40:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C2E033D7E3
+	for <lists+io-uring@lfdr.de>; Tue, 16 Mar 2021 16:44:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232286AbhCPPjm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 16 Mar 2021 11:39:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38278 "EHLO
+        id S230158AbhCPPnm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 16 Mar 2021 11:43:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231833AbhCPPj2 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 16 Mar 2021 11:39:28 -0400
-Received: from mail-qv1-xf32.google.com (mail-qv1-xf32.google.com [IPv6:2607:f8b0:4864:20::f32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87909C06174A
-        for <io-uring@vger.kernel.org>; Tue, 16 Mar 2021 08:39:28 -0700 (PDT)
-Received: by mail-qv1-xf32.google.com with SMTP id o19so3744756qvu.0
-        for <io-uring@vger.kernel.org>; Tue, 16 Mar 2021 08:39:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:in-reply-to:to:cc:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=0SWcxvHr1doPcXrvFZSpO+eG4ggEv4aMDq+iprwxbi8=;
-        b=BV+25bJKleBG/x0giuit6DXn4Ay4UjM87reIk7tNOQBKl+NyqLqHoh4RQuaSpqTrN0
-         zN6WmZ+fZSB/TaJNApUow5VgveOp6rDkQc9F1+CAOEUAJD8mfPBN5SdWRBHMYWfRhBwl
-         Of2or1Wycz2w6T3RvTiwfSHRPqgFxSHDzK2ul0WoH9A/Id72hX5ZGpRBOWXxc4tu4cmI
-         lmW53o1rJXknHULbKyXOD3PbKcUT01WDBoevQZ09alm8LDy+d/fZPpDQjZ8opVsNWTf7
-         8TaiUofTK2UhnGttzhNTQ2Oa24jQfZROgcXOp9bWphPIJFxmKnPj4776JAeSBxG0Hx8X
-         RSVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:in-reply-to:to:cc:from:subject:message-id
-         :date:user-agent:mime-version:content-language
-         :content-transfer-encoding;
-        bh=0SWcxvHr1doPcXrvFZSpO+eG4ggEv4aMDq+iprwxbi8=;
-        b=fpXkKRSMfnHXfifclvLomGRGnPwumUrcf+Q5F2+D79uHCIOPK7d0CjnCfcQh/L9jSv
-         EI/vqLA//6YumMyLqhgwNJSaVQkewXoqjQMYQcCXdAlQQGOj/PeygPRa3zYfSwT/Z7m4
-         alAgPwqktPDA82aRyTlH8xtlWDbLRQThLOpc6tMHm5EUln9bxMVowyTTRx+P19mv4Lul
-         +BlAeWHVlovY6+iQnlCOlkwa68GuOX5xApuu6bF41IxoPvmoXBTam6nmB6UU3YUX/HZV
-         F9m1L3WoU3TeInoixfW2lyZCvZtPpdEdaguhZxYDhIKe/ymDTSb1TzzAW2+x9n8jf1mF
-         f0Ug==
-X-Gm-Message-State: AOAM532myCxvIiPjsmgH/2QNt1r3dZcz2S1I+tgjn7zU/qWOoA5t317M
-        M9QMo3gkyoeK5NbQMKgnakoZj6t+wfzQAg==
-X-Google-Smtp-Source: ABdhPJyYj4316u+D0jwR2rV1WBcdtoQmujTMokds6jBOLB8nJM1i4qBdfUWkbDd6vLJclQsYHYgp6A==
-X-Received: by 2002:a0c:c1cc:: with SMTP id v12mr16100680qvh.47.1615909166803;
-        Tue, 16 Mar 2021 08:39:26 -0700 (PDT)
-Received: from [192.168.1.200] ([192.159.179.131])
-        by smtp.gmail.com with ESMTPSA id 90sm13577831qtc.86.2021.03.16.08.39.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Mar 2021 08:39:26 -0700 (PDT)
-Sender: Tavian Barnes <tavianator@gmail.com>
-In-Reply-To: 
-To:     buytenh@wantstofly.org
-Cc:     io-uring@vger.kernel.org
-From:   Tavian Barnes <tavianator@tavianator.com>
-Subject: RE: [PATCH v4 2/2] io_uring: add support for IORING_OP_GETDENTS
-Message-ID: <ea2b3ae7-d5c4-a46e-1d2d-e2c7b5fd8730@tavianator.com>
-Date:   Tue, 16 Mar 2021 11:39:25 -0400
+        with ESMTP id S230289AbhCPPnS (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 16 Mar 2021 11:43:18 -0400
+Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84B48C06174A
+        for <io-uring@vger.kernel.org>; Tue, 16 Mar 2021 08:43:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+         s=42; h=Date:Message-ID:From:Cc:To;
+        bh=jk2Nswj7x26s8HzoXxrcKWz9+ZAxPLO+IO4tkFcAoRY=; b=nGTU9iE34wRKSYSrP497UhqcQE
+        m+ZNRnDEY/r7naGJH/zBdpQE25xQg1IKcfA10H3RI8e6r4iS6qtHOy1NjX4BeH3FIOvc3NPqgiSW6
+        bcRK95d6eI1At3l//Ir0cl9gy/pGqFUu4pKrXsGgLdGBenmchE4I1UMtvgV/Q5x/QSXHCmG4VQB5A
+        usTQZiskXoJJpDp/hktO86uQySBTAouVcxf5loCCOih4ARfmaZUGeKNI2oJzAOX5OsLTvhghnrGGR
+        SEsKwKQmYg6lmfA9hCAmVZQ1+inw+z6cN3a00wXQzPod1k+o7q5bvtAA9TyrZ0h/5IX8oHUQTs1lO
+        zDmZXkOtj6YcuAec6DExjUVju40eEYZbOUpCqilUOCPRuAAzvNlpuufXjZvGR0OwPMInSjz5YZj0v
+        5k7TMwvHCStKIdlSpdIx6wYMlD19ehWDFQnfaFTRgcxzt8IJod41Ec7Ku4VnPiz107kTRR2tAt2s+
+        +GgC1WwrKplhrCgtNMOXVVEH;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
+        (Exim)
+        id 1lMBqi-0000rV-ME; Tue, 16 Mar 2021 15:43:12 +0000
+To:     Kanchan Joshi <joshi.k@samsung.com>, axboe@kernel.dk, hch@lst.de,
+        kbusch@kernel.org, chaitanya.kulkarni@wdc.com
+Cc:     io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
+        anuj20.g@samsung.com, javier.gonz@samsung.com,
+        nj.shetty@samsung.com, selvakuma.s1@samsung.com
+References: <20210316140126.24900-1-joshi.k@samsung.com>
+ <CGME20210316140233epcas5p372405e7cb302c61dba5e1094fa796513@epcas5p3.samsung.com>
+ <20210316140126.24900-2-joshi.k@samsung.com>
+From:   Stefan Metzmacher <metze@samba.org>
+Subject: Re: [RFC PATCH v3 1/3] io_uring: add helper for uring_cmd completion
+ in submitter-task
+Message-ID: <7a986342-f745-a084-fcb7-1d20a64a7f87@samba.org>
+Date:   Tue, 16 Mar 2021 16:43:12 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+ Thunderbird/78.7.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20210316140126.24900-2-joshi.k@samsung.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
- > IORING_OP_GETDENTS behaves much like getdents64(2) and takes the same
- > arguments, but with a small twist: it takes an additional offset
- > argument, and reading from the specified directory starts at the given
- > offset.
- >
- > For the first IORING_OP_GETDENTS call on a directory, the offset
- > parameter can be set to zero, and for subsequent calls, it can be
- > set to the ->d_off field of the last struct linux_dirent64 returned
- > by the previous IORING_OP_GETDENTS call.
- >
- > Internally, if necessary, IORING_OP_GETDENTS will vfs_llseek() to
- > the right directory position before calling vfs_getdents().
 
-For my envisioned use case it would be important to support reading from
-the current file position when offset == -1 (IORING_FEAT_RW_CUR_POS).
-Among other things, this would let me fully read a directory with fewer
-round-trips.  Normally after the first getdents(), another one must be
-issued to distinguish between EOF and a short first read.  It would be
-nice to do both calls with linked SQEs so I could immediately know that
-I've reached the end of the directory.
+Hi Kanchan,
 
- > IORING_OP_GETDENTS may or may not update the specified directory's
- > file offset, and the file offset should not be relied upon having
- > any particular value during or after an IORING_OP_GETDENTS call.
+> +static void uring_cmd_work(struct callback_head *cb)
+> +{
+> +	struct io_kiocb *req = container_of(cb, struct io_kiocb, task_work);
+> +	struct io_uring_cmd *cmd = &req->uring_cmd;
+> +
+> +	req->driver_cb(cmd);
+> +}
+> +int uring_cmd_complete_in_task(struct io_uring_cmd *ioucmd,
+> +			void (*driver_cb)(struct io_uring_cmd *))
+> +{
+> +	int ret;
+> +	struct io_kiocb *req = container_of(ioucmd, struct io_kiocb, uring_cmd);
+> +
+> +	req->driver_cb = driver_cb;
+> +	req->task_work.func = uring_cmd_work;
+> +	ret = io_req_task_work_add(req);
+> +	if (unlikely(ret)) {
+> +		req->result = -ECANCELED;
+> +		percpu_ref_get(&req->ctx->refs);
+> +		io_req_task_work_add_fallback(req, io_req_task_cancel);
+> +	}
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL(uring_cmd_complete_in_task);
 
-Obviously for the above to work, we'd have to get rid of this 
-limitation.  Is that possible?
+I think this should be have an io_ prefix:
+io_uring_cmd_complete_in_task()
+
+I'll let Jens comment if this is needed at all...
+
+metze

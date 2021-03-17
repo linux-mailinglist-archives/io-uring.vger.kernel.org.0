@@ -2,142 +2,140 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B8EC33FBCC
-	for <lists+io-uring@lfdr.de>; Thu, 18 Mar 2021 00:27:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9ADAF33FBF7
+	for <lists+io-uring@lfdr.de>; Thu, 18 Mar 2021 00:44:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229721AbhCQX1K (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 17 Mar 2021 19:27:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58322 "EHLO
+        id S229558AbhCQXnh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 17 Mar 2021 19:43:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229702AbhCQX05 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 17 Mar 2021 19:26:57 -0400
-Received: from mail-pg1-x529.google.com (mail-pg1-x529.google.com [IPv6:2607:f8b0:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E798C06174A
-        for <io-uring@vger.kernel.org>; Wed, 17 Mar 2021 16:26:57 -0700 (PDT)
-Received: by mail-pg1-x529.google.com with SMTP id n11so218425pgm.12
-        for <io-uring@vger.kernel.org>; Wed, 17 Mar 2021 16:26:57 -0700 (PDT)
+        with ESMTP id S229841AbhCQXnR (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 17 Mar 2021 19:43:17 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C493C06174A
+        for <io-uring@vger.kernel.org>; Wed, 17 Mar 2021 16:43:17 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id x13so3572010wrs.9
+        for <io-uring@vger.kernel.org>; Wed, 17 Mar 2021 16:43:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=3D/LAYlmQ15bXmYQVLsutCFW4mR0bFPUOpRy2QOLTZI=;
-        b=DLQMM8x2cXzjrNwznCRr7z8rBROxx8J2kiYliJRwr1iUa5SvtkF9FpXpCzuyXfOPXw
-         Bif0Y4BmNESGIfgt/XSHlCQfpknuOOnv8aEcyq9WHdp5gRoYlOQj5PHjUwS1gQCNQkDD
-         2HL29FlOT++R+8bV7LJfuoRnfWV8jUwZpRA3BXXWJo+fyl0jTxpBYcDIYikCr7q8H4tM
-         UISw7ytauVLBAmzNPvbS9PSi6Yr27Sf4cHD0Hf5fnHlS/8uE1ejhkPGjwgwGlp6qg0TF
-         QeVZK31jh8UgIZzmlfqIIAVy3fYJb/zXVNm/Nge6YfL+cOb4RxKZoB+OZJZlg7Ihl1g6
-         bugw==
+        d=gmail.com; s=20161025;
+        h=to:references:from:autocrypt:subject:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=XbNMC2OQNQl6axVFtFtC8NC3FLzHe1cgHRBRGjIA+jI=;
+        b=dRYLcj/Vf4jVAU9O29yFRyzvxQZbri0r2W2GV7MMnaEqJXiBlTMqrflZrrWwWHljJF
+         f8CiG5kQxQMWQG9LHZ2hN1hNpIuFSjySQ7p+vWpEmzIYFy0Hb0IHBt2LFMKRDXFd/yEt
+         tA/C/4paASeDsCKvvOgWH40ceQ9FW4i/DVEJJIQqBXlVJnAx/PwHL0cKdpOy/nKxkweP
+         Y//0deNK3X8ETqzPZlyohGAQlxuMv5MvKT200DLWbiWHwLZdEOUH1/o4U9he8uzpUZC/
+         RgZzWopK3o0cB5P5RRXQL57WAHQMpMC9gjAcrVqilDtI71Ee2oJgQoEytPWMTBv/jCcn
+         h9dg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=3D/LAYlmQ15bXmYQVLsutCFW4mR0bFPUOpRy2QOLTZI=;
-        b=UG6rbkx/ok50/14EwAEeSp2X4Ya2Ha/P84c8YEI8TR4/gYF/8buER9+mnlcCC9uv8Z
-         9eLaog55qT0iT1R6O385dkEoYZrA6CelkFaTsm7LytC9ZeyjTt1LFWhlgrkYqM6ryDnS
-         hg6eDLF1wnRL82SCLNx1lJjaM8jewst3prcWC56ZnYOHZTQaANJdxrjJqsHh+U/S0yqM
-         DHHE1Ev1rQ7FDg/046pC2iFB0CcdgjNV6JE/n1U9Czq4eDay1Rz0AJF3EP/LCi82SpPR
-         4vdFlJRGuEfRNdYOaNGcuHHmhd/bFPyRCbw1q+cJ3c5Hs0d/kjOgvS70hdjwDNjhHHaL
-         Saiw==
-X-Gm-Message-State: AOAM531nfyqyAIIr2xE7eQ7kWahWAHeBo65Oqv4R4aDtNBFn4ayrFs6V
-        Xl1NqhI+JII7jR/QQ0d/4+DEYJbXAkHLp/+u
-X-Google-Smtp-Source: ABdhPJwjXxn+p96pM018B04RbhJ5STE8y1zjQugfKtMe95SklDlw9fNJu5iLL/6k6X4JOauq1j8XFA==
-X-Received: by 2002:a63:fd0a:: with SMTP id d10mr4360782pgh.405.1616023616329;
-        Wed, 17 Mar 2021 16:26:56 -0700 (PDT)
-Received: from ?IPv6:2600:380:4a51:337f:2eaa:706:9b3d:17d9? ([2600:380:4a51:337f:2eaa:706:9b3d:17d9])
-        by smtp.gmail.com with ESMTPSA id a19sm153350pfn.181.2021.03.17.16.26.55
+        bh=XbNMC2OQNQl6axVFtFtC8NC3FLzHe1cgHRBRGjIA+jI=;
+        b=ZbtcjsgW2DYOxVE6vAAMlTDzXimqggWyi5aaBZODhpptZlskFaigLdGGGK90ZYHOK9
+         sgNEKSOPeuoKvJEEm3m1RVicUWZjbVDYWZXHlZqyIPw7sNz26F18iUAjqWifFxi8SJSx
+         84ZRq7x8/lDwA2QBKfomzoIXeYGCJJhzE9yjHiSJ2dcJMhrpkHra/cM6oCWUR1Fmo2Ti
+         U9W5SMTP2TCadkN5cAuBb9Kna/ktlD+3kZxzz8qR33poelsXCeKc5ql0ITRyR1AqvCX5
+         LOoL+8mXJQH38GjUnHPFkXn+U3h/oHPd2wk0fF6ByNfwIBR7iI9ZZlzrykyRy4GBTX1a
+         t/dQ==
+X-Gm-Message-State: AOAM530+dnkwwBDIjjq+0Zs7xcdqNBAV0KgpsSaPERG7DaGXrA33SV5r
+        UOBPEmHbzPJNksvaY7/noqnBsUlDwUs2ig==
+X-Google-Smtp-Source: ABdhPJyvmaaDAn6mMTaZEWND2Smy/lC2dZxQ5P3mvvfhT6grztpcHGXYlqJ8hQCO17xoAOg4fnLaGw==
+X-Received: by 2002:a5d:4281:: with SMTP id k1mr6659875wrq.374.1616024595792;
+        Wed, 17 Mar 2021 16:43:15 -0700 (PDT)
+Received: from [192.168.8.169] ([185.69.144.156])
+        by smtp.gmail.com with ESMTPSA id s8sm478266wrn.97.2021.03.17.16.43.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Mar 2021 16:26:55 -0700 (PDT)
-Subject: Re: [RFC PATCH 00/10] Complete setup before calling
- wake_up_new_task() and improve task->comm
-To:     Stefan Metzmacher <metze@samba.org>, io-uring@vger.kernel.org
-References: <cover.1615826736.git.metze@samba.org>
- <60a6919e-259b-fcc8-86fd-d85105545675@kernel.dk>
- <0784fd4d-cf3a-f638-0fd3-f631be1e490a@samba.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <8dca99dd-a82e-1c88-31b6-621ea7b4db63@kernel.dk>
-Date:   Wed, 17 Mar 2021 17:26:53 -0600
+        Wed, 17 Mar 2021 16:43:15 -0700 (PDT)
+To:     Stefan Metzmacher <metze@samba.org>, Jens Axboe <axboe@kernel.dk>,
+        io-uring@vger.kernel.org
+References: <cover.1615908477.git.metze@samba.org>
+ <47ae1117-0de3-47a9-26a2-80f92e242426@kernel.dk>
+ <b2f00537-a8a3-9243-6990-d6708e7f7691@gmail.com>
+ <e15f23a2-4efc-c12a-9a4f-b4e3c347ae63@samba.org>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Subject: Re: [PATCH 0/2] send[msg]()/recv[msg]() fixes/improvements
+Message-ID: <c5b26bbe-7d95-ec86-5ddb-c2bd2b6c79a7@gmail.com>
+Date:   Wed, 17 Mar 2021 23:39:18 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <0784fd4d-cf3a-f638-0fd3-f631be1e490a@samba.org>
+In-Reply-To: <e15f23a2-4efc-c12a-9a4f-b4e3c347ae63@samba.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/17/21 5:06 PM, Stefan Metzmacher wrote:
+On 17/03/2021 23:26, Stefan Metzmacher wrote:
+> Hi Pavel,
 > 
-> Hi Jens,
-> 
->>> now that we have an explicit wake_up_new_task() in order to start the
->>> result from create_io_thread(), we should things up before calling
->>> wake_up_new_task().
->>>
->>> There're also some improvements around task->comm:
->>> - We return 0 bytes for /proc/<pid>/cmdline
->>> - We no longer allow a userspace process to change
->>>   /proc/<pid>/[task/<tid>]/comm
->>> - We dynamically generate comm names (up to 63 chars)
->>>   via io_wq_worker_comm(), similar to wq_worker_comm()
->>>
->>> While doing this I noticed a few places we check for
->>> PF_KTHREAD, but not PF_IO_WORKER, maybe we should
->>> have something like a PS_IS_KERNEL_THREAD_MASK() macro
->>> that should be used in generic places and only
->>> explicitly use PF_IO_WORKER or PF_KTHREAD checks where the
->>> difference matters.
->>>
->>> There are also quite a number of cases where we use
->>> same_thread_group(), I guess these need to be checked.
->>> Should that return true if userspace threads and their iothreds
->>> are compared?
-> 
-> Can you comment more deeply here and recheck this in the code
-> I just noticed possible problems by reading the code and playing
-> with git grep. I don't have time right now to build my own 5.12 kernel
-> and play with it. (I'm planing to do some livepath tricks to inject
-> backported io_uring into an older kernel...).
-> 
-> For a lot of things regarding PF_KTHREAD v. PF_IO_WORKER and
-> same_thread_group() I'm just unsure what the correct behavior would be.
-
-FWIW, I do agree that we should probably have an umbrella that covers
-PF_KTHREAD and PF_IO_WORKER, though not in all cases would that be
-useful. But we have had a few, so definitely useful.
-
-> It would help if you could post dumps of things like:
-> ps axf -o user,pid,tid,comm,cmd
-> ls -laR /proc/$pid/
-> 
-> Currently I can only guess how things will look like.
-
-I'm not too worried about the comm side, and in fact, I'd prefer
-deferring that to 5.13 and we can just stable backport it instead.
-Trying to keep the amount of churn down to bare necessities at this
-point.
-
->>> I've compiled but didn't test, I hope there's something useful...
+>>>> here're patches which fix linking of send[msg]()/recv[msg]() calls
+>>>> and make sure io_uring_enter() never generate a SIGPIPE.
 >>
->> Looks pretty good to me. Can I talk you into splitting this into
->> a series for 5.12, and then a 5.13 on top? It looks a bit mixed
->> right now. For 5.12, basically just things we absolutely need for
->> release. Any cleanups or improvements on top should go to 5.13.
+>> 1/2 breaks userspace.
 > 
-> I'll rebase tomorrow. Actually I'd like to see all of them in 5.12
-> because it would means that do the admin visible change only once.
-> 
-> The WARN_ON() fixes are not strictly needed, but for me it would be
-> strange to defer them.
-> io_wq_worker_comm() patches are not strictly required,
-> but they would make the new design more consistent and
-> avoid changing things again in 5.13.
+> Can you explain that a bit please, how could some application ever
+> have a useful use of IOSQE_IO_LINK with these socket calls?
 
-Right, hence I'd prefer to push comm changes, and anything that isn't
-strictly a bug.
+Packet delivery of variable size, i.e. recv(max_size). Byte stream
+that consumes whatever you've got and links something (e.g. notification
+delivery, or poll). Not sure about netlink, but maybe. Or some
+"create a file via send" crap, or some made-up custom protocols
+
+>> Sounds like 2/2 might too, does it?
+> 
+> Do you think any application really expects to get a SIGPIPE
+> when calling io_uring_enter()?
+
+If it was about what I think I would remove lots of old garbage :)
+I doubt it wasn't working well before, e.g. because of iowq, but
+who knows
 
 -- 
-Jens Axboe
-
+Pavel Begunkov

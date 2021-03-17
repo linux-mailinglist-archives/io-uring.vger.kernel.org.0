@@ -2,59 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 445E133FACE
-	for <lists+io-uring@lfdr.de>; Wed, 17 Mar 2021 23:11:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 79F6833FACC
+	for <lists+io-uring@lfdr.de>; Wed, 17 Mar 2021 23:11:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229944AbhCQWK7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 17 Mar 2021 18:10:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41996 "EHLO
+        id S230006AbhCQWLA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 17 Mar 2021 18:11:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230032AbhCQWKg (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 17 Mar 2021 18:10:36 -0400
-Received: from mail-il1-x12f.google.com (mail-il1-x12f.google.com [IPv6:2607:f8b0:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CAC4C06174A
-        for <io-uring@vger.kernel.org>; Wed, 17 Mar 2021 15:10:36 -0700 (PDT)
-Received: by mail-il1-x12f.google.com with SMTP id v3so3027199ilj.12
-        for <io-uring@vger.kernel.org>; Wed, 17 Mar 2021 15:10:36 -0700 (PDT)
+        with ESMTP id S230036AbhCQWKh (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 17 Mar 2021 18:10:37 -0400
+Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31B7EC06174A
+        for <io-uring@vger.kernel.org>; Wed, 17 Mar 2021 15:10:37 -0700 (PDT)
+Received: by mail-io1-xd2c.google.com with SMTP id z3so191208ioc.8
+        for <io-uring@vger.kernel.org>; Wed, 17 Mar 2021 15:10:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=INWD228NDqgvD4EQCIgWqmgA38TSZn5zi4fEppVIAaE=;
-        b=JUuWX7jXSv7otlp/27lCUgHF6L3SHeEVV0M7xfAPdMkGPo+7qq8uuY5NGNUt60M/4e
-         lAFtN8vfKmVH6pdcJdzGyn9nMEgtUlIHdTFBGIv+EN6DWz4HS+XWpSYuO5TwEIP00s8l
-         uIuv0qD6KQLoiS7I4WAAoLavcT78MHOY3ONW800NQElifiBRzRTFeE6e1O6oAFqDBayR
-         IjVnYkcnW+Fz26SddIbxHn1iYHeAcctlczlBFhNcZLl91rstJ1bgenA4xaLcDv1Btlhv
-         ey87Y6vA0V4MPDONB6LHjRkhmtYOaVl+vex9qIitod9nJ9Y2+8q0A10Q53367jzwZ3dX
-         L3CQ==
+        bh=8W7+YYUKDmGyivm8spLtYU/+YJefZ0TTuK53JMdcwuc=;
+        b=kJpn053CDGSDSFKkT+BuV67pbHLv+J3RjCdYZU8NrHGWb+A1JSkLWM7WTUD9FwMm9P
+         rbP8YDN40/AEzZuerKFc0YSSlUvDr/VXpFPQyuuukUtgK5tdQrulT3802piNYEzVAcqc
+         RMhYvZIL2TwX9zA+xkM1AAG6cVcXgq7hn6O/LzO1VBu7ODTEl6RHEBRkKYxJPjsAGXJA
+         MIqxD0x3N6hK/bUt4LKuq9yqz5xIcbnNvnr4Fna/zQtx6mg3moV/SKG+3rRyIjOQqvlU
+         /YodPoCjNMLI/pYZ5cDhMnxl0C5jV0W2Q3xz2FRyDJmmkQWiQjNjNIRJ5PGh05UA6Awe
+         H0Hw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=INWD228NDqgvD4EQCIgWqmgA38TSZn5zi4fEppVIAaE=;
-        b=uNY0PsCcikjGUv48ID8Xe4159hNTUksYwgxAvADZ3Trs+ECQ8z2EXjYpF1GkdYEOyZ
-         teWl0BU/vvmDeXrzdVNLoBYAk2LgXsBJwMO0dgDCNdrPmxLgJeHPjMOmXFyckEAMfbee
-         KglT5nrPPHZrrLLJgmUnzPkanIFGdmWQqDDm1ALjFz5MTuj7Z+uICZ4x0vrtwJqjldj7
-         kxBa7ZEknatM+bQmlme+uNlf/XshCXqCaYayMY+gJDzSuzh879i4Ak5BKpw9a9SnC3m5
-         4QDBuY3GBR2DYpZZyacueEZ1yps9OHTeX2Xh7/k6229uosY1LJji8KOk2N0VYsYxVEVL
-         bZBw==
-X-Gm-Message-State: AOAM532U61k76ajZ5FrF+fsTBG+AAGXtAJJL8NCm5FKnQ0ml5d/RjPwW
-        cxIuNNVSp3V8pc2+iq51bBGP2aQs2GNksQ==
-X-Google-Smtp-Source: ABdhPJy/mUmlue3lytLdRDmQyub1t+nKmUYu879MJQ25ta1InhoMKLytKtK/XjYEVz3he9ghS2AyUg==
-X-Received: by 2002:a92:d5d2:: with SMTP id d18mr8389631ilq.50.1616019035543;
-        Wed, 17 Mar 2021 15:10:35 -0700 (PDT)
+        bh=8W7+YYUKDmGyivm8spLtYU/+YJefZ0TTuK53JMdcwuc=;
+        b=L8jeVlRczExhEsb3LF1uhQcSJJ2HoMFssrCAl2iIGZ6nLL4YCBK6nW9kzTb8WJCx3W
+         qxFkpsKzQD5YwYW+0klrhRgh7V8jfT0+bWC0GXLiYsHzOoEQ5ydjXHpBgYQLSRICIzrz
+         fggGzBEq/xe1CmcBy7NAGv6WlPNR2fj2AsPjqSl8WH+2BjjgrHbcAKLCgsLFErwZcom5
+         fbJYcsb8MeAAg8VlX7si9a3umkioV1f7JlB/nqjzDrLN7yaH/wZ24Rw1Qhm3RhbZEvBk
+         H2n7LQxTiVlM+4/+RwqEWi2w7NU/dG45aHhZRYDc9eXf8Ki8de/ABPJouX2FuK46hzF+
+         QsaA==
+X-Gm-Message-State: AOAM5319q4t/2gRr43vFKh/4Axvr3nvUWWu4LkgYzr4lQMwaHm3zn2fN
+        8VnEI+5Je2awLhw1c8NFRv9K0FK8XmiR7w==
+X-Google-Smtp-Source: ABdhPJw5Ck1Am8737XlkTvQ8dG9m//Gff1fYra95vWECv4y5EfCwE/8akIC1dsAJSv+7yV4ooLZGFQ==
+X-Received: by 2002:a5d:8b09:: with SMTP id k9mr8011584ion.185.1616019036485;
+        Wed, 17 Mar 2021 15:10:36 -0700 (PDT)
 Received: from p1.localdomain ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id r3sm160700ilq.42.2021.03.17.15.10.34
+        by smtp.gmail.com with ESMTPSA id r3sm160700ilq.42.2021.03.17.15.10.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Mar 2021 15:10:35 -0700 (PDT)
+        Wed, 17 Mar 2021 15:10:36 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     joshi.k@samsung.com, hch@lst.de, kbusch@kernel.org,
         linux-nvme@lists.infradead.org, metze@samba.org,
         Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4/8] io_uring: add support for IORING_OP_URING_CMD
-Date:   Wed, 17 Mar 2021 16:10:23 -0600
-Message-Id: <20210317221027.366780-5-axboe@kernel.dk>
+Subject: [PATCH 5/8] block: wire up support for file_operations->uring_cmd()
+Date:   Wed, 17 Mar 2021 16:10:24 -0600
+Message-Id: <20210317221027.366780-6-axboe@kernel.dk>
 X-Mailer: git-send-email 2.31.0
 In-Reply-To: <20210317221027.366780-1-axboe@kernel.dk>
 References: <20210317221027.366780-1-axboe@kernel.dk>
@@ -64,144 +64,104 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This is a file private kind of request. io_uring doesn't know what's
-in this command type, it's for the file_operations->uring_cmd()
-handler to deal with.
+Pass it through the mq_ops->uring_cmd() handler, so we can plumb it
+through all the way to the device driver.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/io_uring.c            | 54 ++++++++++++++++++++++++++++++++++++++++
- include/linux/io_uring.h | 16 ++++++++++++
- 2 files changed, 70 insertions(+)
+ block/blk-mq.c         | 11 +++++++++++
+ fs/block_dev.c         | 10 ++++++++++
+ include/linux/blk-mq.h |  6 ++++++
+ include/linux/blkdev.h |  2 ++
+ 4 files changed, 29 insertions(+)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index fecf10e0625f..a66f953f71d4 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -770,6 +770,7 @@ struct io_kiocb {
- 		struct io_shutdown	shutdown;
- 		struct io_rename	rename;
- 		struct io_unlink	unlink;
-+		struct io_uring_cmd	uring_cmd;
- 		/* use only after cleaning per-op data, see io_clean_op() */
- 		struct io_completion	compl;
- 	};
-@@ -1002,6 +1003,7 @@ static const struct io_op_def io_op_defs[] = {
- 	[IORING_OP_RENAMEAT] = {},
- 	[IORING_OP_UNLINKAT] = {},
- 	[IORING_OP_URING_CMD] = {
-+		.needs_file		= 1,
- 		.offsets		= 1,
- 	},
- };
-@@ -3565,6 +3567,53 @@ static int io_unlinkat(struct io_kiocb *req, unsigned int issue_flags)
- 	return 0;
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index d4d7c1caa439..6c68540a89c0 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -3919,6 +3919,17 @@ int blk_poll(struct request_queue *q, blk_qc_t cookie, bool spin)
  }
+ EXPORT_SYMBOL_GPL(blk_poll);
  
-+/*
-+ * Called by consumers of io_uring_cmd, if they originally returned
-+ * -EIOCBQUEUED upon receiving the command.
-+ */
-+void io_uring_cmd_done(struct io_uring_cmd *cmd, ssize_t ret)
++int blk_uring_cmd(struct block_device *bdev, struct io_uring_cmd *cmd,
++		  enum io_uring_cmd_flags issue_flags)
 +{
-+	struct io_kiocb *req = container_of(cmd, struct io_kiocb, uring_cmd);
++	struct request_queue *q = bdev_get_queue(bdev);
 +
-+	if (ret < 0)
-+		req_set_fail_links(req);
-+	io_req_complete(req, ret);
-+}
-+EXPORT_SYMBOL(io_uring_cmd_done);
-+
-+static int io_uring_cmd_prep(struct io_kiocb *req,
-+			     const struct io_uring_sqe *sqe)
-+{
-+	const struct io_uring_cmd_sqe *csqe = (const void *) sqe;
-+	struct io_uring_cmd *cmd = &req->uring_cmd;
-+
-+	if (!req->file->f_op->uring_cmd)
++	if (!q->mq_ops || !q->mq_ops->uring_cmd)
 +		return -EOPNOTSUPP;
 +
-+	cmd->op = READ_ONCE(csqe->op);
-+	cmd->len = READ_ONCE(csqe->len);
-+
-+	/*
-+	 * The payload is the last 40 bytes of an io_uring_cmd_sqe, with the
-+	 * type being defined by the recipient.
-+	 */
-+	memcpy(&cmd->pdu, &csqe->pdu, sizeof(cmd->pdu));
-+	return 0;
++	return q->mq_ops->uring_cmd(q, cmd, issue_flags);
 +}
 +
-+static int io_uring_cmd(struct io_kiocb *req, unsigned int issue_flags)
-+{
-+	struct file *file = req->file;
-+	int ret;
-+
-+	ret = file->f_op->uring_cmd(&req->uring_cmd, issue_flags);
-+	/* queued async, consumer will call io_uring_cmd_done() when complete */
-+	if (ret == -EIOCBQUEUED)
-+		return 0;
-+	io_uring_cmd_done(&req->uring_cmd, ret);
-+	return 0;
-+}
-+
- static int io_shutdown_prep(struct io_kiocb *req,
- 			    const struct io_uring_sqe *sqe)
+ unsigned int blk_mq_rq_cpu(struct request *rq)
  {
-@@ -5858,6 +5907,8 @@ static int io_req_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 		return io_renameat_prep(req, sqe);
- 	case IORING_OP_UNLINKAT:
- 		return io_unlinkat_prep(req, sqe);
-+	case IORING_OP_URING_CMD:
-+		return io_uring_cmd_prep(req, sqe);
- 	}
+ 	return rq->mq_ctx->cpu;
+diff --git a/fs/block_dev.c b/fs/block_dev.c
+index 92ed7d5df677..cbc403ad0330 100644
+--- a/fs/block_dev.c
++++ b/fs/block_dev.c
+@@ -34,6 +34,7 @@
+ #include <linux/part_stat.h>
+ #include <linux/uaccess.h>
+ #include <linux/suspend.h>
++#include <linux/io_uring.h>
+ #include "internal.h"
  
- 	printk_once(KERN_WARNING "io_uring: unhandled opcode %d\n",
-@@ -6114,6 +6165,9 @@ static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags)
- 	case IORING_OP_UNLINKAT:
- 		ret = io_unlinkat(req, issue_flags);
- 		break;
-+	case IORING_OP_URING_CMD:
-+		ret = io_uring_cmd(req, issue_flags);
-+		break;
- 	default:
- 		ret = -EINVAL;
- 		break;
-diff --git a/include/linux/io_uring.h b/include/linux/io_uring.h
-index 9761a0ec9f95..fd5c8ca40a70 100644
---- a/include/linux/io_uring.h
-+++ b/include/linux/io_uring.h
-@@ -30,7 +30,20 @@ struct io_uring_task {
- 	struct callback_head	task_work;
+ struct bdev_inode {
+@@ -317,6 +318,14 @@ struct blkdev_dio {
+ 
+ static struct bio_set blkdev_dio_pool;
+ 
++static int blkdev_uring_cmd(struct io_uring_cmd *cmd,
++			    enum io_uring_cmd_flags flags)
++{
++	struct block_device *bdev = I_BDEV(cmd->file->f_mapping->host);
++
++	return blk_uring_cmd(bdev, cmd, flags);
++}
++
+ static int blkdev_iopoll(struct kiocb *kiocb, bool wait)
+ {
+ 	struct block_device *bdev = I_BDEV(kiocb->ki_filp->f_mapping->host);
+@@ -1840,6 +1849,7 @@ const struct file_operations def_blk_fops = {
+ 	.splice_read	= generic_file_splice_read,
+ 	.splice_write	= iter_file_splice_write,
+ 	.fallocate	= blkdev_fallocate,
++	.uring_cmd	= blkdev_uring_cmd,
  };
  
-+/*
-+ * Note that the first member here must be a struct file, as the
-+ * io_uring command layout depends on that.
-+ */
-+struct io_uring_cmd {
-+	struct file	*file;
-+	__u16		op;
-+	__u16		unused;
-+	__u32		len;
-+	__u64		pdu[5];	/* 40 bytes available inline for free use */
-+};
+ /**
+diff --git a/include/linux/blk-mq.h b/include/linux/blk-mq.h
+index 2c473c9b8990..70ee55c148c1 100644
+--- a/include/linux/blk-mq.h
++++ b/include/linux/blk-mq.h
+@@ -376,6 +376,12 @@ struct blk_mq_ops {
+ 	 */
+ 	int (*map_queues)(struct blk_mq_tag_set *set);
+ 
++	/**
++	 * @uring_cmd: queues requests through io_uring IORING_OP_URING_CMD
++	 */
++	int (*uring_cmd)(struct request_queue *q, struct io_uring_cmd *cmd,
++				enum io_uring_cmd_flags issue_flags);
 +
- #if defined(CONFIG_IO_URING)
-+void io_uring_cmd_done(struct io_uring_cmd *cmd, ssize_t ret);
- struct sock *io_uring_get_socket(struct file *file);
- void __io_uring_task_cancel(void);
- void __io_uring_files_cancel(struct files_struct *files);
-@@ -52,6 +65,9 @@ static inline void io_uring_free(struct task_struct *tsk)
- 		__io_uring_free(tsk);
- }
- #else
-+static inline void io_uring_cmd_done(struct io_uring_cmd *cmd, ssize_t ret)
-+{
-+}
- static inline struct sock *io_uring_get_socket(struct file *file)
+ #ifdef CONFIG_BLK_DEBUG_FS
+ 	/**
+ 	 * @show_rq: Used by the debugfs implementation to show driver-specific
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index bc6bc8383b43..7eb993e82783 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -957,6 +957,8 @@ int blk_status_to_errno(blk_status_t status);
+ blk_status_t errno_to_blk_status(int errno);
+ 
+ int blk_poll(struct request_queue *q, blk_qc_t cookie, bool spin);
++int blk_uring_cmd(struct block_device *bdev, struct io_uring_cmd *cmd,
++			enum io_uring_cmd_flags issue_flags);
+ 
+ static inline struct request_queue *bdev_get_queue(struct block_device *bdev)
  {
- 	return NULL;
 -- 
 2.31.0
 

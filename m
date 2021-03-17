@@ -2,59 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5941933FAD1
+	by mail.lfdr.de (Postfix) with ESMTP id 0E31B33FAD0
 	for <lists+io-uring@lfdr.de>; Wed, 17 Mar 2021 23:11:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230036AbhCQWLA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 17 Mar 2021 18:11:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42016 "EHLO
+        id S230041AbhCQWLB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 17 Mar 2021 18:11:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42018 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230045AbhCQWKj (ORCPT
+        with ESMTP id S230080AbhCQWKj (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Wed, 17 Mar 2021 18:10:39 -0400
-Received: from mail-il1-x135.google.com (mail-il1-x135.google.com [IPv6:2607:f8b0:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9C6BC06174A
-        for <io-uring@vger.kernel.org>; Wed, 17 Mar 2021 15:10:38 -0700 (PDT)
-Received: by mail-il1-x135.google.com with SMTP id t7so3021266ilq.5
-        for <io-uring@vger.kernel.org>; Wed, 17 Mar 2021 15:10:38 -0700 (PDT)
+Received: from mail-io1-xd2f.google.com (mail-io1-xd2f.google.com [IPv6:2607:f8b0:4864:20::d2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9860AC06174A
+        for <io-uring@vger.kernel.org>; Wed, 17 Mar 2021 15:10:39 -0700 (PDT)
+Received: by mail-io1-xd2f.google.com with SMTP id n198so188854iod.0
+        for <io-uring@vger.kernel.org>; Wed, 17 Mar 2021 15:10:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=QcIC9AJXtpThxMkHO6EHpl8vXTIqJ7UbjVf3Kn/bC7o=;
-        b=pz9PXLINzEse5f48mEUswt2YeHFMy7zQw9f9ObmtPhY3P022fn8QSQ/+HUoVxdDdO0
-         SsbMoDPHB2E/Nu68mzCgZotkmjNzw1Y4gS+6zmKXN563Sgg1mzkI7tekhnWe+cuOmAFt
-         HkyR70fOmRng0SsAWc6aPIRlQsytQYwLg3UIi1HimjoJLONPbM6DsyHI5c7MnQGJzxHj
-         am9sowvXT5Nir+w1ZDsN++6Bsl8eCjes2hZbAH54SkENRn9OLFGRGHOyVhHTDxIL8YiZ
-         vp/GeiS+1XF1utw2rjvLTMsLw+HjTogkzoNE7sMXTTiC2+RkF+QI2gzEAW7h31GtgRaW
-         HTYg==
+        bh=yFfTTrDlXU/aoA5+ezDGI+JriDDqafa03HZ3PC/E9nE=;
+        b=rk/INnSk1hUFZsKelBzhxsDuOZYVgDDxnHKY1J14kmE213QylibJmganh17BtPNNmg
+         jx6RIoTGAc13KH+o/+JzyMmToHMQ3gF++0cC0q59WVRwKYkCVK5V6hBm6ABxQawAiOJB
+         trsBo3Wbz0RSS3HUhy8yB96NcTnkyILkejJ1WWLrIZ0ojh8WSlIUnaoE2Pg19IPGC1Z4
+         f3xl1QKzToyGd4ppOZvwzcqUJTphx7XTjfOBHJpfuCRdhu+DaZK61Xzl0ULo7j7aUcuU
+         BrH0fup8D6FXvNFY8zYc/oqk4xSbwjeMXvS9axNsUiWM6PUMwaIZpY46eFhuyedJH889
+         /Nzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=QcIC9AJXtpThxMkHO6EHpl8vXTIqJ7UbjVf3Kn/bC7o=;
-        b=Jc7FeSazJjBJxqHAf7Ov2bhxBwXGW6Bq6PwEXpXr0kOUvw2bYBhHwAUqgPGkZz8/Er
-         ExFd8a/+7IWM/+C+CzTHFcYZdD6mZ/56yDiFmULkEXwT2YJFv0slbFhCYYZCckYtFzAZ
-         JPQZay3BoHtyp+iZAS1s3xAXlHtVTbAzVUc4lilFgpbb2uR5dzPBOU2vHSd3Wc0cm51W
-         OwySmoVY9H75ZHPUXCTz50+YVBoOWPmb/eYLoUw6Ab0vuG2TC8CJBEcIUkFWPor7yg/x
-         Ebzej4FqfulSxNIkKZlxQvziKhuGO1J0JMQ2Gadzi6z0iliipJTGdQU9MU6cZsSve9Jf
-         jsXA==
-X-Gm-Message-State: AOAM533BQJcTisWCaMNt1sLRTkaWH5knPisthIXVgUakD2svlXpuEqQc
-        KvTmuh+9tXh6yvy/nNsYeB6CkJLwK4sXoQ==
-X-Google-Smtp-Source: ABdhPJyUPe18vW6d4l74brZYi4w3YGoKQOFCe4ikfiz2AzueqCCUYCh7yoEJeqkhNWVsK4cUSpT08Q==
-X-Received: by 2002:a92:d352:: with SMTP id a18mr8790000ilh.33.1616019037985;
-        Wed, 17 Mar 2021 15:10:37 -0700 (PDT)
+        bh=yFfTTrDlXU/aoA5+ezDGI+JriDDqafa03HZ3PC/E9nE=;
+        b=Kvz3IXRL8s9Jcaog31UNOGXQbgc/dI5hs8AQDa1NjArzOHlyCyXngz14S9Cylxzs0A
+         abnwWiWX8NDlNO+C4oKjGyGqkDSAmoAnrS7qON9dwIRco0VdCFVpCmKH0XacltM2NJgk
+         mMt8BF9ZBhUqvxGGER2nfMjHubux59IykgUKQ6jveQ/e5j2af6+3O4n9uAiv9SsGL/iY
+         ITeSpMKSb4YkQ/uQ5fp2sKGsGmAb77oyQgdo3gLZRtEdgkntYByKAG9KGaUO9fGm9L1q
+         1t/oXqGe2L0dsYesV8gVdaSua2fDwMus27xxFf0ZmIoxj4cawqboc1vJ3zIIwX+M0nl/
+         Jb2Q==
+X-Gm-Message-State: AOAM53076yh0Q7W9t75R4UkTHwlOQ4cqHpAisCyISmh2n9t8JsQIn7KQ
+        PVEzR9y5dIinZHOccNNvJ7yRIJkJY5+ViA==
+X-Google-Smtp-Source: ABdhPJzeeyb2mVHxCDRlIG8DgSu9F7f7LU/o7DNQNaiCpkxp7a3sONMBcasz+YqJEt9vVaTEAniEFw==
+X-Received: by 2002:a6b:5818:: with SMTP id m24mr8041012iob.144.1616019038784;
+        Wed, 17 Mar 2021 15:10:38 -0700 (PDT)
 Received: from p1.localdomain ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id r3sm160700ilq.42.2021.03.17.15.10.37
+        by smtp.gmail.com with ESMTPSA id r3sm160700ilq.42.2021.03.17.15.10.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Mar 2021 15:10:37 -0700 (PDT)
+        Wed, 17 Mar 2021 15:10:38 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     joshi.k@samsung.com, hch@lst.de, kbusch@kernel.org,
         linux-nvme@lists.infradead.org, metze@samba.org,
         Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 7/8] net: wire up support for file_operations->uring_cmd()
-Date:   Wed, 17 Mar 2021 16:10:26 -0600
-Message-Id: <20210317221027.366780-8-axboe@kernel.dk>
+Subject: [PATCH 8/8] net: add example SOCKET_URING_OP_SIOCINQ/SOCKET_URING_OP_SIOCOUTQ
+Date:   Wed, 17 Mar 2021 16:10:27 -0600
+Message-Id: <20210317221027.366780-9-axboe@kernel.dk>
 X-Mailer: git-send-email 2.31.0
 In-Reply-To: <20210317221027.366780-1-axboe@kernel.dk>
 References: <20210317221027.366780-1-axboe@kernel.dk>
@@ -64,236 +64,291 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Pass it through the proto_ops->uring_cmd() handler, so we can plumb it
-through all the way to the proto->uring_cmd() handler.
+This adds support for these sample ioctls for tcp/udp/raw ipv4/ipv6.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- include/linux/net.h  |  2 ++
- include/net/sock.h   |  6 ++++++
- net/core/sock.c      | 17 +++++++++++++++--
- net/dccp/ipv4.c      |  1 +
- net/ipv4/af_inet.c   |  3 +++
- net/l2tp/l2tp_ip.c   |  1 +
- net/mptcp/protocol.c |  1 +
- net/sctp/protocol.c  |  1 +
- net/socket.c         | 13 +++++++++++++
- 9 files changed, 43 insertions(+), 2 deletions(-)
+ include/net/raw.h        |  3 +++
+ include/net/tcp.h        |  2 ++
+ include/net/udp.h        |  2 ++
+ include/uapi/linux/net.h | 17 +++++++++++++++++
+ net/ipv4/raw.c           | 27 +++++++++++++++++++++++++++
+ net/ipv4/tcp.c           | 36 ++++++++++++++++++++++++++++++++++++
+ net/ipv4/tcp_ipv4.c      |  1 +
+ net/ipv4/udp.c           | 18 ++++++++++++++++++
+ net/ipv6/raw.c           |  1 +
+ net/ipv6/tcp_ipv6.c      |  1 +
+ net/ipv6/udp.c           |  1 +
+ 11 files changed, 109 insertions(+)
 
-diff --git a/include/linux/net.h b/include/linux/net.h
-index ba736b457a06..b61c6cfefc15 100644
---- a/include/linux/net.h
-+++ b/include/linux/net.h
-@@ -159,6 +159,8 @@ struct proto_ops {
- 	int	 	(*compat_ioctl) (struct socket *sock, unsigned int cmd,
- 				      unsigned long arg);
+diff --git a/include/net/raw.h b/include/net/raw.h
+index 8ad8df594853..27098db724dd 100644
+--- a/include/net/raw.h
++++ b/include/net/raw.h
+@@ -82,4 +82,7 @@ static inline bool raw_sk_bound_dev_eq(struct net *net, int bound_dev_if,
  #endif
-+	int		(*uring_cmd)(struct socket *sock, struct io_uring_cmd *cmd,
-+					enum io_uring_cmd_flags issue_flags);
- 	int		(*gettstamp) (struct socket *sock, void __user *userstamp,
- 				      bool timeval, bool time32);
- 	int		(*listen)    (struct socket *sock, int len);
-diff --git a/include/net/sock.h b/include/net/sock.h
-index 636810ddcd9b..9c2921f4357a 100644
---- a/include/net/sock.h
-+++ b/include/net/sock.h
-@@ -110,6 +110,7 @@ typedef struct {
- struct sock;
- struct proto;
- struct net;
-+struct io_uring_cmd;
- 
- typedef __u32 __bitwise __portpair;
- typedef __u64 __bitwise __addrpair;
-@@ -1146,6 +1147,9 @@ struct proto {
- 
- 	int			(*ioctl)(struct sock *sk, int cmd,
- 					 unsigned long arg);
-+	int			(*uring_cmd)(struct sock *sk,
-+					struct io_uring_cmd *cmd,
-+					enum io_uring_cmd_flags issue_flags);
- 	int			(*init)(struct sock *sk);
- 	void			(*destroy)(struct sock *sk);
- 	void			(*shutdown)(struct sock *sk, int how);
-@@ -1761,6 +1765,8 @@ int sock_common_recvmsg(struct socket *sock, struct msghdr *msg, size_t size,
- 			int flags);
- int sock_common_setsockopt(struct socket *sock, int level, int optname,
- 			   sockptr_t optval, unsigned int optlen);
-+int sock_common_uring_cmd(struct socket *sock, struct io_uring_cmd *cmd,
-+				enum io_uring_cmd_flags issue_flags);
- 
- void sk_common_release(struct sock *sk);
- 
-diff --git a/net/core/sock.c b/net/core/sock.c
-index 0ed98f20448a..e3c1bd68fdfd 100644
---- a/net/core/sock.c
-+++ b/net/core/sock.c
-@@ -3264,6 +3264,18 @@ int sock_common_setsockopt(struct socket *sock, int level, int optname,
  }
- EXPORT_SYMBOL(sock_common_setsockopt);
  
-+int sock_common_uring_cmd(struct socket *sock, struct io_uring_cmd *cmd,
-+				enum io_uring_cmd_flags issue_flags)
-+{
-+	struct sock *sk = sock->sk;
++int raw_uring_cmd(struct sock *sk, struct io_uring_cmd *cmd,
++			enum io_uring_cmd_flags issue_flags);
 +
-+	if (!sk->sk_prot || !sk->sk_prot->uring_cmd)
-+		return -EOPNOTSUPP;
-+
-+	return sk->sk_prot->uring_cmd(sk, cmd, issue_flags);
-+}
-+EXPORT_SYMBOL(sock_common_uring_cmd);
-+
- void sk_common_release(struct sock *sk)
- {
- 	if (sk->sk_prot->destroy)
-@@ -3615,7 +3627,7 @@ static void proto_seq_printf(struct seq_file *seq, struct proto *proto)
- {
+ #endif	/* _RAW_H */
+diff --git a/include/net/tcp.h b/include/net/tcp.h
+index 963cd86d12dd..b2aca8ce3293 100644
+--- a/include/net/tcp.h
++++ b/include/net/tcp.h
+@@ -350,6 +350,8 @@ void tcp_twsk_destructor(struct sock *sk);
+ ssize_t tcp_splice_read(struct socket *sk, loff_t *ppos,
+ 			struct pipe_inode_info *pipe, size_t len,
+ 			unsigned int flags);
++int tcp_uring_cmd(struct sock *sk, struct io_uring_cmd *cmd,
++			enum io_uring_cmd_flags issue_flags);
  
- 	seq_printf(seq, "%-9s %4u %6d  %6ld   %-3s %6u   %-3s  %-10s "
--			"%2c %2c %2c %2c %2c %2c %2c %2c %2c %2c %2c %2c %2c %2c %2c %2c %2c %2c %2c\n",
-+			"%2c %2c %2c %2c %2c %2c %2c %2c %2c %2c %2c %2c %2c %2c %2c %2c %2c %2c %2c %2c\n",
- 		   proto->name,
- 		   proto->obj_size,
- 		   sock_prot_inuse_get(seq_file_net(seq), proto),
-@@ -3629,6 +3641,7 @@ static void proto_seq_printf(struct seq_file *seq, struct proto *proto)
- 		   proto_method_implemented(proto->disconnect),
- 		   proto_method_implemented(proto->accept),
- 		   proto_method_implemented(proto->ioctl),
-+		   proto_method_implemented(proto->uring_cmd),
- 		   proto_method_implemented(proto->init),
- 		   proto_method_implemented(proto->destroy),
- 		   proto_method_implemented(proto->shutdown),
-@@ -3657,7 +3670,7 @@ static int proto_seq_show(struct seq_file *seq, void *v)
- 			   "maxhdr",
- 			   "slab",
- 			   "module",
--			   "cl co di ac io in de sh ss gs se re sp bi br ha uh gp em\n");
-+			   "cl co di ac io ur in de sh ss gs se re sp bi br ha uh gp em\n");
- 	else
- 		proto_seq_printf(seq, list_entry(v, struct proto, node));
- 	return 0;
-diff --git a/net/dccp/ipv4.c b/net/dccp/ipv4.c
-index 2455b0c0e486..8ba02865ae98 100644
---- a/net/dccp/ipv4.c
-+++ b/net/dccp/ipv4.c
-@@ -983,6 +983,7 @@ static const struct proto_ops inet_dccp_ops = {
- 	/* FIXME: work on tcp_poll to rename it to inet_csk_poll */
- 	.poll		   = dccp_poll,
- 	.ioctl		   = inet_ioctl,
-+	.uring_cmd	   = sock_common_uring_cmd,
- 	.gettstamp	   = sock_gettstamp,
- 	/* FIXME: work on inet_listen to rename it to sock_common_listen */
- 	.listen		   = inet_dccp_listen,
-diff --git a/net/ipv4/af_inet.c b/net/ipv4/af_inet.c
-index 1355e6c0d567..7dc4d399b2ef 100644
---- a/net/ipv4/af_inet.c
-+++ b/net/ipv4/af_inet.c
-@@ -1030,6 +1030,7 @@ const struct proto_ops inet_stream_ops = {
- 	.getname	   = inet_getname,
- 	.poll		   = tcp_poll,
- 	.ioctl		   = inet_ioctl,
-+	.uring_cmd	   = sock_common_uring_cmd,
- 	.gettstamp	   = sock_gettstamp,
- 	.listen		   = inet_listen,
- 	.shutdown	   = inet_shutdown,
-@@ -1064,6 +1065,7 @@ const struct proto_ops inet_dgram_ops = {
- 	.getname	   = inet_getname,
- 	.poll		   = udp_poll,
- 	.ioctl		   = inet_ioctl,
-+	.uring_cmd	   = sock_common_uring_cmd,
- 	.gettstamp	   = sock_gettstamp,
- 	.listen		   = sock_no_listen,
- 	.shutdown	   = inet_shutdown,
-@@ -1095,6 +1097,7 @@ static const struct proto_ops inet_sockraw_ops = {
- 	.getname	   = inet_getname,
- 	.poll		   = datagram_poll,
- 	.ioctl		   = inet_ioctl,
-+	.uring_cmd	   = sock_common_uring_cmd,
- 	.gettstamp	   = sock_gettstamp,
- 	.listen		   = sock_no_listen,
- 	.shutdown	   = inet_shutdown,
-diff --git a/net/l2tp/l2tp_ip.c b/net/l2tp/l2tp_ip.c
-index 97ae1255fcb6..9b5a4b3b5acb 100644
---- a/net/l2tp/l2tp_ip.c
-+++ b/net/l2tp/l2tp_ip.c
-@@ -615,6 +615,7 @@ static const struct proto_ops l2tp_ip_ops = {
- 	.getname	   = l2tp_ip_getname,
- 	.poll		   = datagram_poll,
- 	.ioctl		   = inet_ioctl,
-+	.uring_cmd	   = sock_common_uring_cmd,
- 	.gettstamp	   = sock_gettstamp,
- 	.listen		   = sock_no_listen,
- 	.shutdown	   = inet_shutdown,
-diff --git a/net/mptcp/protocol.c b/net/mptcp/protocol.c
-index 76958570ae7f..7f61fb783f50 100644
---- a/net/mptcp/protocol.c
-+++ b/net/mptcp/protocol.c
-@@ -3454,6 +3454,7 @@ static const struct proto_ops mptcp_stream_ops = {
- 	.getname	   = inet_getname,
- 	.poll		   = mptcp_poll,
- 	.ioctl		   = inet_ioctl,
-+	.uring_cmd	   = sock_common_uring_cmd,
- 	.gettstamp	   = sock_gettstamp,
- 	.listen		   = mptcp_listen,
- 	.shutdown	   = inet_shutdown,
-diff --git a/net/sctp/protocol.c b/net/sctp/protocol.c
-index 6f2bbfeec3a4..fdb960e752b3 100644
---- a/net/sctp/protocol.c
-+++ b/net/sctp/protocol.c
-@@ -1133,6 +1133,7 @@ static const struct proto_ops inet_seqpacket_ops = {
- 	.getname	   = inet_getname,	/* Semantics are different.  */
- 	.poll		   = sctp_poll,
- 	.ioctl		   = inet_ioctl,
-+	.uring_cmd	   = sock_common_uring_cmd,
- 	.gettstamp	   = sock_gettstamp,
- 	.listen		   = sctp_inet_listen,
- 	.shutdown	   = inet_shutdown,	/* Looks harmless.  */
-diff --git a/net/socket.c b/net/socket.c
-index 84a8049c2b09..19ab0986af9d 100644
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -86,6 +86,7 @@
- #include <linux/xattr.h>
- #include <linux/nospec.h>
- #include <linux/indirect_call_wrapper.h>
+ void tcp_enter_quickack_mode(struct sock *sk, unsigned int max_quickacks);
+ static inline void tcp_dec_quickack_mode(struct sock *sk,
+diff --git a/include/net/udp.h b/include/net/udp.h
+index a132a02b2f2c..0588ca8a9406 100644
+--- a/include/net/udp.h
++++ b/include/net/udp.h
+@@ -329,6 +329,8 @@ struct sock *__udp6_lib_lookup(struct net *net,
+ 			       struct sk_buff *skb);
+ struct sock *udp6_lib_lookup_skb(const struct sk_buff *skb,
+ 				 __be16 sport, __be16 dport);
++int udp_uring_cmd(struct sock *sk, struct io_uring_cmd *cmd,
++			enum io_uring_cmd_flags issue_flags);
+ 
+ /* UDP uses skb->dev_scratch to cache as much information as possible and avoid
+  * possibly multiple cache miss on dequeue()
+diff --git a/include/uapi/linux/net.h b/include/uapi/linux/net.h
+index 4dabec6bd957..5e8d604e4cc6 100644
+--- a/include/uapi/linux/net.h
++++ b/include/uapi/linux/net.h
+@@ -19,6 +19,7 @@
+ #ifndef _UAPI_LINUX_NET_H
+ #define _UAPI_LINUX_NET_H
+ 
++#include <linux/types.h>
+ #include <linux/socket.h>
+ #include <asm/socket.h>
+ 
+@@ -55,4 +56,20 @@ typedef enum {
+ 
+ #define __SO_ACCEPTCON	(1 << 16)	/* performed a listen		*/
+ 
++enum {
++	SOCKET_URING_OP_SIOCINQ		= 0,
++	SOCKET_URING_OP_SIOCOUTQ,
++
++	/*
++	 * This is reserved for custom sub protocol
++	 */
++	SOCKET_URING_OP_SUBPROTO_CMD	= 0xffff,
++};
++
++struct sock_uring_cmd {
++	__u16	op;
++	__u16	unused[3];
++	__u64	unused2[4];
++};
++
+ #endif /* _UAPI_LINUX_NET_H */
+diff --git a/net/ipv4/raw.c b/net/ipv4/raw.c
+index 50a73178d63a..f93011d8f174 100644
+--- a/net/ipv4/raw.c
++++ b/net/ipv4/raw.c
+@@ -75,6 +75,7 @@
+ #include <linux/netfilter_ipv4.h>
+ #include <linux/compat.h>
+ #include <linux/uio.h>
 +#include <linux/io_uring.h>
  
- #include <linux/uaccess.h>
- #include <asm/unistd.h>
-@@ -113,6 +114,7 @@ unsigned int sysctl_net_busy_poll __read_mostly;
- static ssize_t sock_read_iter(struct kiocb *iocb, struct iov_iter *to);
- static ssize_t sock_write_iter(struct kiocb *iocb, struct iov_iter *from);
- static int sock_mmap(struct file *file, struct vm_area_struct *vma);
-+static int sock_uring_cmd(struct io_uring_cmd *cmd, enum io_uring_cmd_flags issue_flags);
- 
- static int sock_close(struct inode *inode, struct file *file);
- static __poll_t sock_poll(struct file *file,
-@@ -156,6 +158,7 @@ static const struct file_operations socket_file_ops = {
- #ifdef CONFIG_COMPAT
- 	.compat_ioctl = compat_sock_ioctl,
- #endif
-+	.uring_cmd =	sock_uring_cmd,
- 	.mmap =		sock_mmap,
- 	.release =	sock_close,
- 	.fasync =	sock_fasync,
-@@ -1182,6 +1185,16 @@ static long sock_ioctl(struct file *file, unsigned cmd, unsigned long arg)
- 	return err;
+ struct raw_frag_vec {
+ 	struct msghdr *msg;
+@@ -878,6 +879,31 @@ static int raw_getsockopt(struct sock *sk, int level, int optname,
+ 	return do_raw_getsockopt(sk, level, optname, optval, optlen);
  }
  
-+static int sock_uring_cmd(struct io_uring_cmd *cmd, enum io_uring_cmd_flags issue_flags)
++int raw_uring_cmd(struct sock *sk, struct io_uring_cmd *cmd,
++		  enum io_uring_cmd_flags issue_flags)
 +{
-+	struct socket *sock = cmd->file->private_data;
++	struct sock_uring_cmd *scmd = (struct sock_uring_cmd *)&cmd->pdu;
 +
-+	if (!sock->ops || !sock->ops->uring_cmd)
++	switch (scmd->op) {
++	case SOCKET_URING_OP_SIOCOUTQ:
++		return sk_wmem_alloc_get(sk);
++	case SOCKET_URING_OP_SIOCINQ: {
++		struct sk_buff *skb;
++		int amount = 0;
++
++		spin_lock_bh(&sk->sk_receive_queue.lock);
++		skb = skb_peek(&sk->sk_receive_queue);
++		if (skb)
++			amount = skb->len;
++		spin_unlock_bh(&sk->sk_receive_queue.lock);
++		return amount;
++		}
++	default:
 +		return -EOPNOTSUPP;
-+
-+	return sock->ops->uring_cmd(sock, cmd, issue_flags);
++	}
 +}
++EXPORT_SYMBOL_GPL(raw_uring_cmd);
 +
- /**
-  *	sock_create_lite - creates a socket
-  *	@family: protocol family (AF_INET, ...)
+ static int raw_ioctl(struct sock *sk, int cmd, unsigned long arg)
+ {
+ 	switch (cmd) {
+@@ -956,6 +982,7 @@ struct proto raw_prot = {
+ 	.release_cb	   = ip4_datagram_release_cb,
+ 	.hash		   = raw_hash_sk,
+ 	.unhash		   = raw_unhash_sk,
++	.uring_cmd	   = raw_uring_cmd,
+ 	.obj_size	   = sizeof(struct raw_sock),
+ 	.useroffset	   = offsetof(struct raw_sock, filter),
+ 	.usersize	   = sizeof_field(struct raw_sock, filter),
+diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+index de7cc8445ac0..b9d4c6098049 100644
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -279,6 +279,7 @@
+ #include <linux/uaccess.h>
+ #include <asm/ioctls.h>
+ #include <net/busy_poll.h>
++#include <linux/io_uring.h>
+ 
+ /* Track pending CMSGs. */
+ enum {
+@@ -600,6 +601,41 @@ __poll_t tcp_poll(struct file *file, struct socket *sock, poll_table *wait)
+ }
+ EXPORT_SYMBOL(tcp_poll);
+ 
++int tcp_uring_cmd(struct sock *sk, struct io_uring_cmd *cmd,
++		  enum io_uring_cmd_flags issue_flags)
++{
++	struct sock_uring_cmd *scmd = (struct sock_uring_cmd *)&cmd->pdu;
++	struct tcp_sock *tp = tcp_sk(sk);
++	bool slow;
++	int ret;
++
++	switch (scmd->op) {
++	case SOCKET_URING_OP_SIOCINQ:
++		if (sk->sk_state == TCP_LISTEN)
++			return -EINVAL;
++
++		slow = lock_sock_fast(sk);
++		ret = tcp_inq(sk);
++		unlock_sock_fast(sk, slow);
++		break;
++	case SOCKET_URING_OP_SIOCOUTQ:
++		if (sk->sk_state == TCP_LISTEN)
++			return -EINVAL;
++
++		if ((1 << sk->sk_state) & (TCPF_SYN_SENT | TCPF_SYN_RECV))
++			ret = 0;
++		else
++			ret = READ_ONCE(tp->write_seq) - tp->snd_una;
++		break;
++	default:
++		ret = -EOPNOTSUPP;
++		break;
++	}
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(tcp_uring_cmd);
++
+ int tcp_ioctl(struct sock *sk, int cmd, unsigned long arg)
+ {
+ 	struct tcp_sock *tp = tcp_sk(sk);
+diff --git a/net/ipv4/tcp_ipv4.c b/net/ipv4/tcp_ipv4.c
+index daad4f99db32..c131eb1007b1 100644
+--- a/net/ipv4/tcp_ipv4.c
++++ b/net/ipv4/tcp_ipv4.c
+@@ -2791,6 +2791,7 @@ struct proto tcp_prot = {
+ 	.disconnect		= tcp_disconnect,
+ 	.accept			= inet_csk_accept,
+ 	.ioctl			= tcp_ioctl,
++	.uring_cmd		= tcp_uring_cmd,
+ 	.init			= tcp_v4_init_sock,
+ 	.destroy		= tcp_v4_destroy_sock,
+ 	.shutdown		= tcp_shutdown,
+diff --git a/net/ipv4/udp.c b/net/ipv4/udp.c
+index 4a0478b17243..809ac8ae7e41 100644
+--- a/net/ipv4/udp.c
++++ b/net/ipv4/udp.c
+@@ -113,6 +113,7 @@
+ #include <net/sock_reuseport.h>
+ #include <net/addrconf.h>
+ #include <net/udp_tunnel.h>
++#include <linux/io_uring.h>
+ #if IS_ENABLED(CONFIG_IPV6)
+ #include <net/ipv6_stubs.h>
+ #endif
+@@ -1682,6 +1683,22 @@ static int first_packet_length(struct sock *sk)
+ 	return res;
+ }
+ 
++int udp_uring_cmd(struct sock *sk, struct io_uring_cmd *cmd,
++		  enum io_uring_cmd_flags issue_flags)
++{
++	struct sock_uring_cmd *scmd = (struct sock_uring_cmd *)&cmd->pdu;
++
++	switch (scmd->op) {
++	case SOCKET_URING_OP_SIOCINQ:
++		return max_t(int, 0, first_packet_length(sk));
++	case SOCKET_URING_OP_SIOCOUTQ:
++		return sk_wmem_alloc_get(sk);
++	default:
++		return -EOPNOTSUPP;
++	}
++}
++EXPORT_SYMBOL_GPL(udp_uring_cmd);
++
+ /*
+  *	IOCTL requests applicable to the UDP protocol
+  */
+@@ -2837,6 +2854,7 @@ struct proto udp_prot = {
+ 	.connect		= ip4_datagram_connect,
+ 	.disconnect		= udp_disconnect,
+ 	.ioctl			= udp_ioctl,
++	.uring_cmd		= udp_uring_cmd,
+ 	.init			= udp_init_sock,
+ 	.destroy		= udp_destroy_sock,
+ 	.setsockopt		= udp_setsockopt,
+diff --git a/net/ipv6/raw.c b/net/ipv6/raw.c
+index 1f56d9aae589..50f1e8189482 100644
+--- a/net/ipv6/raw.c
++++ b/net/ipv6/raw.c
+@@ -1235,6 +1235,7 @@ struct proto rawv6_prot = {
+ 	.connect	   = ip6_datagram_connect_v6_only,
+ 	.disconnect	   = __udp_disconnect,
+ 	.ioctl		   = rawv6_ioctl,
++	.uring_cmd	   = raw_uring_cmd,
+ 	.init		   = rawv6_init_sk,
+ 	.setsockopt	   = rawv6_setsockopt,
+ 	.getsockopt	   = rawv6_getsockopt,
+diff --git a/net/ipv6/tcp_ipv6.c b/net/ipv6/tcp_ipv6.c
+index bd44ded7e50c..1ce253cc28f5 100644
+--- a/net/ipv6/tcp_ipv6.c
++++ b/net/ipv6/tcp_ipv6.c
+@@ -2119,6 +2119,7 @@ struct proto tcpv6_prot = {
+ 	.disconnect		= tcp_disconnect,
+ 	.accept			= inet_csk_accept,
+ 	.ioctl			= tcp_ioctl,
++	.uring_cmd		= tcp_uring_cmd,
+ 	.init			= tcp_v6_init_sock,
+ 	.destroy		= tcp_v6_destroy_sock,
+ 	.shutdown		= tcp_shutdown,
+diff --git a/net/ipv6/udp.c b/net/ipv6/udp.c
+index d25e5a9252fd..082593726a1e 100644
+--- a/net/ipv6/udp.c
++++ b/net/ipv6/udp.c
+@@ -1702,6 +1702,7 @@ struct proto udpv6_prot = {
+ 	.connect		= ip6_datagram_connect,
+ 	.disconnect		= udp_disconnect,
+ 	.ioctl			= udp_ioctl,
++	.uring_cmd		= udp_uring_cmd,
+ 	.init			= udp_init_sock,
+ 	.destroy		= udpv6_destroy_sock,
+ 	.setsockopt		= udpv6_setsockopt,
 -- 
 2.31.0
 

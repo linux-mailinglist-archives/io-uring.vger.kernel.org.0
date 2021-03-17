@@ -2,108 +2,132 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EE5033F89E
-	for <lists+io-uring@lfdr.de>; Wed, 17 Mar 2021 20:00:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5E1933FAC8
+	for <lists+io-uring@lfdr.de>; Wed, 17 Mar 2021 23:11:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232932AbhCQTAX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 17 Mar 2021 15:00:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57316 "EHLO
+        id S230180AbhCQWK6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 17 Mar 2021 18:10:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41980 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232388AbhCQTAB (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 17 Mar 2021 15:00:01 -0400
-Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D0B1C06174A
-        for <io-uring@vger.kernel.org>; Wed, 17 Mar 2021 12:00:01 -0700 (PDT)
-Received: by mail-il1-x12d.google.com with SMTP id v3so2544168ilj.12
-        for <io-uring@vger.kernel.org>; Wed, 17 Mar 2021 12:00:01 -0700 (PDT)
+        with ESMTP id S229898AbhCQWKd (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 17 Mar 2021 18:10:33 -0400
+Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0611BC06174A
+        for <io-uring@vger.kernel.org>; Wed, 17 Mar 2021 15:10:33 -0700 (PDT)
+Received: by mail-io1-xd2d.google.com with SMTP id v3so188497ioq.2
+        for <io-uring@vger.kernel.org>; Wed, 17 Mar 2021 15:10:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=24epm+HLwoWEEH5mLWqlHEJ7HnczD4429RGvWkKWVyk=;
-        b=Ybh7rru3SgKj/NlvUpPhRNJuVh3sqSr08l9YAuKoT4GsSdX3Uy3x0yhH+z4YTqvZ94
-         lt0WDS4plq0fzWSQlpkMRx6VHeLGpMv5raM0ObfugRRpKahUTlAljN9mWy4HwVRMnD69
-         7lSMtq63k7OyWbhGyjnb0C0wh4UxlHIytQbmYk0bIfbC8URDrgSyEF6Lq+s1J8HFtcjZ
-         SUU0RwEXeNun0BrRHcleU266YUuiS+f1NruLe6vJ1PrZaNFaBR576qMqPhtlY+f3g0g0
-         Ph8ldT0rJaGBoq0RZnSCiesgm50SjheFfy2rUfsXOlC93TqGH4Xq8jTGYT0yVb/2GQ2n
-         IFTA==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qFhJnmX/s0oUEcROladmsKEjjXMSFe33w6iAkZJqd+0=;
+        b=0oWT/E00w/f76eaGEEfnywI9EeZXkLvXaW89KycflSyDIvWxMtuOayhT5Xr+1yN8rS
+         3vJaNQvjuDegrUBEtqDO+a2TAIkT8FemWaRbURwFm596X5RuQcxuL2FHbhxrJZA/ku1Z
+         1Uhcto5dfHz+SBCX6nRfDPcrbJsYpd/kkAi8oT8TIuNw/19p8gh1QUw4xfYTZ1oGmbHn
+         G+1Lgp9BZhwd4RuLsY0PyjZxrs1ZgTBfysvWDnIGO0ya72LC2pSTKdHOok7u5+rmQS/v
+         2bMTnoy08wZOX4228PZqWp/x7LKlu8e60+8SVXtQUQcKLoO1NjOMVveEq15ZvFvwBFxO
+         eQbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=24epm+HLwoWEEH5mLWqlHEJ7HnczD4429RGvWkKWVyk=;
-        b=mMXu3iPOJAgQ20+eZMd2YW1KZVMDTu6AMskhE7PUXuJvQnkmoJvN9HewQ1N2XMQIon
-         qbRn4/manpAdM+kgaP5rf5yYqSHs4XdWcxL53EOrz7kWQY5twB6/HGmpAar3uQwfle/1
-         /5wLubnLQdaQZza3wqI1myMOa+/XeUW911HNMUBLCE1atU7twqfHJN0d6sYWP8Smenmz
-         7i6fzVk2hAtsw5HVqCwjsan8mFOGQpWWcfEnqdH7ImXB39iteoTpC8ikzVocTdFMlU6Q
-         JK2xpOlNsbN/tMMx3as9ZfNKPRIWIiDCPy6ygajAmUxRapK6GxeUmI60+XPKCNm9nKVU
-         LcTg==
-X-Gm-Message-State: AOAM530wn/xKFz70TMRDRB8B+g8pH/x5OpxDKZafUhuYGdMG7EG7LVvB
-        NSxGP1DA0pMtx4YKvGg5dr7LQQ==
-X-Google-Smtp-Source: ABdhPJyaMfuu7Q/FfalIzvc9n1/4D+00TyuDpDLhuUZvfSBAnK8XP1a3xlNZgyi6Z7BtuiyndZjUcw==
-X-Received: by 2002:a05:6e02:190a:: with SMTP id w10mr2732777ilu.39.1616007600092;
-        Wed, 17 Mar 2021 12:00:00 -0700 (PDT)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id v17sm10623728ios.46.2021.03.17.11.59.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Mar 2021 11:59:59 -0700 (PDT)
-Subject: Re: [RFC PATCH v3 3/3] nvme: wire up support for async passthrough
+        bh=qFhJnmX/s0oUEcROladmsKEjjXMSFe33w6iAkZJqd+0=;
+        b=SZnVWV+sofgDALl4bjDBn7UcL/2M5kKG3FWimSZHNho3ICTKjfNcm6hi+rDvfdLniz
+         4gKF7zkrU76F6EVQX368G3EuB3XY+v6TiEfzm3cNvrlmsjcqBuy/TxKC88y/RooegkTb
+         NRpKOvS0b2gMPBH4TQz5vpb7QJI1X+Mz3VA4el9YX9U0yJEsu3TiheXS7OiwdcXD097w
+         aaG3j/LrwDBiGoR6zB88x/dtd5OFU2+7eCHk0pD+j+lh6nMuKjuq4iXiDSZXSE0xaFTv
+         Dkukr4k9FSqLlqZKxjyZPBFKPkBBW9ON6xrQph7qoPaI900PbTYYrtoDXIM+5CjErOH0
+         2Ysg==
+X-Gm-Message-State: AOAM533NPTPJbLSEpBpwlnc0X1y1poNfPTp6pssnd5MbrhOCHh8El1S2
+        w8NLpNMcwcOxXCHUEkCxSyKHX91uTDeeaA==
+X-Google-Smtp-Source: ABdhPJxGlbDabSp3OtWPg2oo3h1A2WRDvHZzIhmSMzBeQg7akxFm83lwUcAt5NriSELf25wT5kBitg==
+X-Received: by 2002:a5d:9245:: with SMTP id e5mr8312613iol.97.1616019032068;
+        Wed, 17 Mar 2021 15:10:32 -0700 (PDT)
+Received: from p1.localdomain ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id r3sm160700ilq.42.2021.03.17.15.10.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Mar 2021 15:10:31 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Kanchan Joshi <joshi.k@samsung.com>, kbusch@kernel.org,
-        chaitanya.kulkarni@wdc.com, io-uring@vger.kernel.org,
-        linux-nvme@lists.infradead.org, anuj20.g@samsung.com,
-        javier.gonz@samsung.com, nj.shetty@samsung.com,
-        selvakuma.s1@samsung.com
-References: <20210316140126.24900-1-joshi.k@samsung.com>
- <CGME20210316140240epcas5p3e71bfe2afecd728c5af60056f21cc9b7@epcas5p3.samsung.com>
- <20210316140126.24900-4-joshi.k@samsung.com> <20210317085258.GA19580@lst.de>
- <149d2bc7-ec80-2e51-7db1-15765f35a27f@kernel.dk>
- <20210317165959.GA25097@lst.de>
- <3b383e8e-b248-b8c4-2eea-6f5708845604@kernel.dk>
-Message-ID: <acf7cbd4-3db1-2c53-2ba4-67a396f39053@kernel.dk>
-Date:   Wed, 17 Mar 2021 12:59:58 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+To:     io-uring@vger.kernel.org
+Cc:     joshi.k@samsung.com, hch@lst.de, kbusch@kernel.org,
+        linux-nvme@lists.infradead.org, metze@samba.org
+Subject: [PATCHSET v4 0/8] io_uring passthrough support
+Date:   Wed, 17 Mar 2021 16:10:19 -0600
+Message-Id: <20210317221027.366780-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.31.0
 MIME-Version: 1.0
-In-Reply-To: <3b383e8e-b248-b8c4-2eea-6f5708845604@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/17/21 11:21 AM, Jens Axboe wrote:
-> On 3/17/21 10:59 AM, Christoph Hellwig wrote:
->> On Wed, Mar 17, 2021 at 10:49:28AM -0600, Jens Axboe wrote:
->>> I will post it soon, only reason I haven't reposted is that I'm not that
->>> happy with how the sqe split is done (and that it's done in the first
->>> place). But I'll probably just post the current version for comments,
->>> and hopefully we can get it to where it needs to be soon.
->>
->> Yes, I don't like that at all either.  I almost wonder if we should
->> use an entirely different format after opcode and flags, although
->> I suspect fd would be nice to have in the same spot as well.
-> 
-> Exactly - trying to think of how best to do this. It's somewhat a shame
-> that I didn't place user_data right after fd, or even at the end of the
-> struct. But oh well.
-> 
-> One idea would be to have io_uring_sqe_hdr and have that be
-> op/flags/prio/fd as we should have those for anything, and just embed
-> that at the top of both io_uring_sqe (our general command), and
-> io_uring_whatever which is what the passthrough stuff would use.
-> 
-> Not sure, I need to dabble in the code a bit and see how we can make it
-> the cleanest.
+Hi,
 
-How about something like the top two patches here to kick it off, then
-build on top?
+I fiddled a bit with the v3 repo, and came up with what I think is a
+better solution. Basically we split the io_uring_sqe into a header part,
+and then a main part. io_uring_sqe remains the same, obviously, but
+io_uring_cmd_sqe is then the sqe for these kinds of passthrough payloads.
+
+In turn, consumers of that can then overlay on io_uring_cmd_sqe. Since
+I think we need the personality in there, we may as well add op and len
+as most/all will want that too. That leaves 40 bytes that can be used
+freely. That may not seem like much, but remember that's 40 bytes outside
+of the fd, len, and command op.
+
+I updated and tested the block ioctl example, but didn't update the
+net side outside of needing a tweak on the net command. Outside of that,
+it should work like before.
+
+I'd be interested in feedback on this approach. My main goal is to make
+this flexible enough to be useful, but also fast enough to be useful.
+That means no extra allocations if at all avoidable, and even being wary
+of adding extra branches to the io_uring hot path. With this series, we
+don't do the nasty split in io_init_req() anymore, which I really
+disliked in the previous series.
+
+This is by no means perfect yet, but I do think it's better than v3 by
+quite a lot. So please send feedback and comments, I'd like to get this
+moving forward as we have various folks already lined up to use it...
+
+Kanchan, can you try and address the NVMe feedback and rebase on top
+of this branch? Thanks!
+
+You can also find this branch here:
 
 https://git.kernel.dk/cgit/linux-block/log/?h=io_uring-fops.v4
 
+ block/blk-mq.c                |  11 +++
+ fs/block_dev.c                |  30 ++++++
+ fs/io_uring.c                 | 181 ++++++++++++++++++++++++----------
+ include/linux/blk-mq.h        |   6 ++
+ include/linux/blkdev.h        |  13 +++
+ include/linux/fs.h            |  11 +++
+ include/linux/io_uring.h      |  16 +++
+ include/linux/net.h           |   2 +
+ include/net/raw.h             |   3 +
+ include/net/sock.h            |   6 ++
+ include/net/tcp.h             |   2 +
+ include/net/udp.h             |   2 +
+ include/uapi/linux/io_uring.h |  21 ++++
+ include/uapi/linux/net.h      |  17 ++++
+ net/core/sock.c               |  17 +++-
+ net/dccp/ipv4.c               |   1 +
+ net/ipv4/af_inet.c            |   3 +
+ net/ipv4/raw.c                |  27 +++++
+ net/ipv4/tcp.c                |  36 +++++++
+ net/ipv4/tcp_ipv4.c           |   1 +
+ net/ipv4/udp.c                |  18 ++++
+ net/ipv6/raw.c                |   1 +
+ net/ipv6/tcp_ipv6.c           |   1 +
+ net/ipv6/udp.c                |   1 +
+ net/l2tp/l2tp_ip.c            |   1 +
+ net/mptcp/protocol.c          |   1 +
+ net/sctp/protocol.c           |   1 +
+ net/socket.c                  |  13 +++
+ 28 files changed, 391 insertions(+), 52 deletions(-)
+
 -- 
 Jens Axboe
+
+
 

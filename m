@@ -2,62 +2,63 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 776EF33FB51
-	for <lists+io-uring@lfdr.de>; Wed, 17 Mar 2021 23:36:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AF5333FB6A
+	for <lists+io-uring@lfdr.de>; Wed, 17 Mar 2021 23:43:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229699AbhCQWgJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 17 Mar 2021 18:36:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47460 "EHLO
+        id S229562AbhCQWmw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 17 Mar 2021 18:42:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229545AbhCQWgH (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 17 Mar 2021 18:36:07 -0400
-Received: from mail-io1-xd2f.google.com (mail-io1-xd2f.google.com [IPv6:2607:f8b0:4864:20::d2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51D42C06174A
-        for <io-uring@vger.kernel.org>; Wed, 17 Mar 2021 15:36:07 -0700 (PDT)
-Received: by mail-io1-xd2f.google.com with SMTP id k8so250038iop.12
-        for <io-uring@vger.kernel.org>; Wed, 17 Mar 2021 15:36:07 -0700 (PDT)
+        with ESMTP id S229537AbhCQWmv (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 17 Mar 2021 18:42:51 -0400
+Received: from mail-il1-x136.google.com (mail-il1-x136.google.com [IPv6:2607:f8b0:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67A90C06174A
+        for <io-uring@vger.kernel.org>; Wed, 17 Mar 2021 15:42:51 -0700 (PDT)
+Received: by mail-il1-x136.google.com with SMTP id u10so3087847ilb.0
+        for <io-uring@vger.kernel.org>; Wed, 17 Mar 2021 15:42:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:references:from:message-id:date:user-agent:mime-version
          :in-reply-to:content-language:content-transfer-encoding;
-        bh=YAK0syGUzHNjIKUa/0XWf4V+SPaSJYdlNxIdg0L4kGw=;
-        b=NbF+jPeE50lRHlAvT5y3rTCZ3pZVn2HJiw7bkIVPyxYw7EfwKuFOnq7mRFx5/uDfKa
-         SoIg7OTIUpBxSuDcQKq1kdabhCR7Wr8nLZm2+zabvfBdEACgRJOpCPKBsuB5Wd91234a
-         Yk//sGFHeJsOyc7N3aO+ZlK/yGqbL/JMo/0Fvr3s//3wmSKqt/Up1PsAX1pxJ62PpIdv
-         VHSjhg8F6TRpSvuyd3wOHCu54JwvM+cUfrhUypwFPKmHLxCtvcZJVXlPvq5/o7Ig4Zj1
-         oXQValvdp4TS9qH4934NskzsuhXByE2s+t0RQG4KP7QyePtx1uk0nkDWbnA12Ln5l6QP
-         V8mQ==
+        bh=2aPD0mmmIMzcgYXYl5/1ynYMPLsxJtrI6V7bN8YS/kc=;
+        b=mdbaBkTiSOZUjtpcB8BXfxTdVP6vwS0RmQnIcswFsy7kx3xXBbJzOU5z+pvvyGPwO2
+         u9i8X24gA0D2GyVJVkkAO1Xoew45J+nDxmNtI3qbiE9CCLyoyXGDthccVRX6s7hJUbRQ
+         wo2uygeRJ2vfsAQ3KdFpdTgNKa/fmbT3dgnbOoDTY0G25UB7BGWsMIr/8n2avHC9D3xk
+         XSjPKrC0Bdwlt3Gl92V6tVFEM5Du8c9YW8rQB71MeOrzyea+9Bc4YH061fdqC2rxS6jO
+         MWORosYqmKj5YDTqjAVZfGNVWtKsy21x2uV01MYBKtkfNXcfcxKugPeKesh6dDoMKbd/
+         GMog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=YAK0syGUzHNjIKUa/0XWf4V+SPaSJYdlNxIdg0L4kGw=;
-        b=eL6AzMsAPgsj42wiaaDAzbr83v0+np3huF3Al9041i3zroLJ8rU6VAsllfvP3JPSzl
-         ORzWIxoG5+B30lhYYCjh5YNaVLFYU9ZTHozyn7/M5wGNPh+YP4VszKqX8rOsGWEzvqmJ
-         DkMx8bH1C+Bc0qPyQ9Bo8LHZwl0/2Et6jlalB9NGTc0C6WLXzodMVmAwVWpbZOavaXSv
-         PATWplZbe1FfHYFz+axdXgTkL3FFoHlDQdfvS3XLHyMBuj560HI1KIf11OscMv9Nkygw
-         0nYaFhhYOniAoIiYSRsa1wA4CLlmS5h+n3ALPR1M+Y95Q4VJlztXr12FLS7lUq3r1QOG
-         5fsg==
-X-Gm-Message-State: AOAM531iYK36H8ZaDclSEK1Wdcj93F2TCyhwz6f/C776tHvo7+dqbrVB
-        niObrC4jmWiVoTaUIPmjqPbmUM8F1ZKQbg==
-X-Google-Smtp-Source: ABdhPJwIG9sw0wjXgGvofJ0qs1WhsPX/lWfMvvnEav+fqSUcoOegKnUOK61UNQQOSTaqp566TrDhzA==
-X-Received: by 2002:a6b:7808:: with SMTP id j8mr8368889iom.118.1616020566339;
-        Wed, 17 Mar 2021 15:36:06 -0700 (PDT)
+        bh=2aPD0mmmIMzcgYXYl5/1ynYMPLsxJtrI6V7bN8YS/kc=;
+        b=OcnyaB9nKdRr2RjX2L+UPrf0uRxGviJQcUV8Zwgb38DMRsSHOQScFn1JZnvrFL1R3H
+         Bk3+ZlKLyMejg03D0VtvP5e6teGrx/gFsdT3X+opAziAMI/raujMCk2WbuGnlBRm1O1R
+         zcF+HPY64uD54s22cxCXlZTDZUnHqo27PR0Sek7tv3FTRyqujOgKo8uylsX2uhRQ5OqA
+         PlfJdLMLk3FYi6MlfrA32GZQIDpRn4WFPFCjVzf9f5mtxfmGrqLLnPh2IaaYTOmALODY
+         EAhLcwcSA8RZ8iew0FbmPyq6U+lL97jgum5G11KUjrGH0YJvWaM0MssW8GrHLwJEzgC+
+         ZCVA==
+X-Gm-Message-State: AOAM531URvz2GQhnwCLY7LF0h2qnqZGMrScGpQ17udmibBpg2dAJT8/e
+        c3G9F4BloFJ1S9JRSBN57Q2Q3HrOr/x/Gw==
+X-Google-Smtp-Source: ABdhPJzQdGVDlwu3/WRBzdTdFgO5eDPk6OEwl+Lng5lph8xiIYTTEKLdT1P/0r9kW+9UHVbl1nVZHg==
+X-Received: by 2002:a92:ce4e:: with SMTP id a14mr9487687ilr.219.1616020970621;
+        Wed, 17 Mar 2021 15:42:50 -0700 (PDT)
 Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id m4sm179156ilf.80.2021.03.17.15.36.05
+        by smtp.gmail.com with ESMTPSA id h12sm201051ilj.41.2021.03.17.15.42.49
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Mar 2021 15:36:05 -0700 (PDT)
-Subject: Re: [PATCH 0/2] send[msg]()/recv[msg]() fixes/improvements
+        Wed, 17 Mar 2021 15:42:50 -0700 (PDT)
+Subject: Re: [RFC PATCH 00/10] Complete setup before calling
+ wake_up_new_task() and improve task->comm
 To:     Stefan Metzmacher <metze@samba.org>, io-uring@vger.kernel.org
-References: <cover.1615908477.git.metze@samba.org>
+References: <cover.1615826736.git.metze@samba.org>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <47ae1117-0de3-47a9-26a2-80f92e242426@kernel.dk>
-Date:   Wed, 17 Mar 2021 16:36:05 -0600
+Message-ID: <60a6919e-259b-fcc8-86fd-d85105545675@kernel.dk>
+Date:   Wed, 17 Mar 2021 16:42:49 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <cover.1615908477.git.metze@samba.org>
+In-Reply-To: <cover.1615826736.git.metze@samba.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -65,21 +66,38 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/16/21 9:33 AM, Stefan Metzmacher wrote:
+On 3/15/21 11:01 AM, Stefan Metzmacher wrote:
 > Hi,
 > 
-> here're patches which fix linking of send[msg]()/recv[msg]() calls
-> and make sure io_uring_enter() never generate a SIGPIPE.
+> now that we have an explicit wake_up_new_task() in order to start the
+> result from create_io_thread(), we should things up before calling
+> wake_up_new_task().
 > 
-> Stefan Metzmacher (2):
->   io_uring: call req_set_fail_links() on short send[msg]()/recv[msg]()
->     calls
->   io_uring: imply MSG_NOSIGNAL for send[msg]()/recv[msg]() calls
+> There're also some improvements around task->comm:
+> - We return 0 bytes for /proc/<pid>/cmdline
+> - We no longer allow a userspace process to change
+>   /proc/<pid>/[task/<tid>]/comm
+> - We dynamically generate comm names (up to 63 chars)
+>   via io_wq_worker_comm(), similar to wq_worker_comm()
 > 
->  fs/io_uring.c | 24 ++++++++++++++++--------
->  1 file changed, 16 insertions(+), 8 deletions(-)
+> While doing this I noticed a few places we check for
+> PF_KTHREAD, but not PF_IO_WORKER, maybe we should
+> have something like a PS_IS_KERNEL_THREAD_MASK() macro
+> that should be used in generic places and only
+> explicitly use PF_IO_WORKER or PF_KTHREAD checks where the
+> difference matters.
+> 
+> There are also quite a number of cases where we use
+> same_thread_group(), I guess these need to be checked.
+> Should that return true if userspace threads and their iothreds
+> are compared?
+> 
+> I've compiled but didn't test, I hope there's something useful...
 
-Applied for 5.12, thanks.
+Looks pretty good to me. Can I talk you into splitting this into
+a series for 5.12, and then a 5.13 on top? It looks a bit mixed
+right now. For 5.12, basically just things we absolutely need for
+release. Any cleanups or improvements on top should go to 5.13.
 
 -- 
 Jens Axboe

@@ -2,52 +2,52 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A08734064C
-	for <lists+io-uring@lfdr.de>; Thu, 18 Mar 2021 14:05:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B14A34069B
+	for <lists+io-uring@lfdr.de>; Thu, 18 Mar 2021 14:13:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231553AbhCRNFC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 18 Mar 2021 09:05:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36308 "EHLO
+        id S230398AbhCRNMd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 18 Mar 2021 09:12:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231549AbhCRNE4 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 18 Mar 2021 09:04:56 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F33C2C06174A;
-        Thu, 18 Mar 2021 06:04:55 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id v11so5447777wro.7;
-        Thu, 18 Mar 2021 06:04:55 -0700 (PDT)
+        with ESMTP id S231368AbhCRNMQ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 18 Mar 2021 09:12:16 -0400
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1E9CC06174A;
+        Thu, 18 Mar 2021 06:12:15 -0700 (PDT)
+Received: by mail-wr1-x430.google.com with SMTP id k8so5480046wrc.3;
+        Thu, 18 Mar 2021 06:12:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=kD9f7EJt967Vs8rvZeiLRZRkcXEY63wSRXxQmqx7JMY=;
-        b=cLGnyis23lh/4pwMCbAc8zud9/N+0C9SLBSUfgitJnWkglsOHiUXoS6ucJmgf/gyNe
-         7rnfRWDTP4alx0QJwQ7PfLRyl4Uz+aaZhBzeGuiLv7p7bun66l88lo7ULWsrBy7Hj4F3
-         X4z5w4IkujG2Lf7ujGXz1PMG/jxpLfme4MrQgkqvb2v2sZ0ZP1/u3Bj3/eZ5h3zd92bB
-         gECbnLW6gi4Lp6BhnPqI76/yu/0iGZsE9onjjB3I66klax7kLdbY5h/sHuTX3KL5k8bu
-         Alx+Z3e1gf5OFSZxiKJrPTdJ//bu4J5j8dZoroa40oaZiHSykIq0sVBM7R64P7l2k3xm
-         nCUA==
+        bh=WujOkaxEvEJpD/Zs6YorKOgzT5TSdZcfUYZ1Kr0AUvs=;
+        b=WFDv6+KI4ievn0bw8/TI0Vcx3zdiEHcalxY/kLYyMraFjUhqvmaJo8ssV48WF9XVgf
+         u1f2YkWB0Q1I83hUvMhmboajCR58YmU1tDprIbneoE0Pwi4Bm+MMWEdhDOaukpoZuJV0
+         8V0OkUwXSJYZ13VuC2FHm7eqtu2DkfuPKjcw8aNtzfOijBuR9VeX79GS9ydmbfNk3jtI
+         bnBMSdRvM8rYRemjiUrLUN9mz/nFWs8ywyLMdPkT3dZg1/Fl2NfUWIEYIIASQN0B1cBx
+         NT6djVphykD84/TzZ3FvMxvHLEfHqAZgMnk6Zqe1EYwCOyGclSsmLEJnTAWlQ16sm8xP
+         uLzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:to:cc:references:from:autocrypt:subject
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=kD9f7EJt967Vs8rvZeiLRZRkcXEY63wSRXxQmqx7JMY=;
-        b=FdgVbcPjwKJKSPH3HdsabIRHAQjRFPvujUHZNL9+E+t5dBjmofcu78Bn9Wq2ccXpvz
-         LwsPz9rRn1FrybbLnHae99Tnbu3p49tE92f6DfrbDIqpDezVl30SqBXS88UMyqfiDW5e
-         U59azuLHqr3luAwew3ncavKR79ZMkt+yrs68cUP/xAOUKAeU7g0YtnsbJdR0QTZSbR+V
-         5J2OyIS0xh1C6amlkwzcm5E8TrEo8P7SOTitsXmE8gXnqS3u9HDV1Btgyqvh0YvDRbvt
-         ws3zKotxvLXphOhhb70+Bf7nWHGaV+Jr8OW6EtxJE4df9z4poQaITJZGG5NowRkcIu/m
-         koUg==
-X-Gm-Message-State: AOAM533cim2o5LX9hSsgxMdUX9HLFNNiTakSdvpkkfHbMrKODBvrryfg
-        nqrzPl5CllHPOkSRTPOwZhMLeGVoGm/RtA==
-X-Google-Smtp-Source: ABdhPJziErOl3aFhOHWHP+3pL/XJYHyxahHnPIAY3vhZsc357wuBlNALQu1n4bW7RiwejIZ83qITiA==
-X-Received: by 2002:adf:f303:: with SMTP id i3mr9454427wro.67.1616072694007;
-        Thu, 18 Mar 2021 06:04:54 -0700 (PDT)
+        bh=WujOkaxEvEJpD/Zs6YorKOgzT5TSdZcfUYZ1Kr0AUvs=;
+        b=m4kDd/4yYm1ObEhjEMm7AdHP38aiCgfdT4EWp3uUjbBGdPfqgMPmUyx0TApyJQq4d2
+         QslYOeRjw2oO6HPfjDxh/e5KPEUZqPruYcl3qZabPs/f3NZ39lx43Mp04W2AQMGo8DEz
+         L0gBMVuvCPboKnCbAqw84zHG++pKgoT5iFDUrC0xPw+iv60ndPTGCYTHKsvMGcjlsvSo
+         M2+jF0QYsV+oHxMIMBe/Zv5VC/hwAPQFg0jy24e25QatQAf4xHtMF7tlAdvxky8jmSg1
+         0HZn/Jv94JhgZ39zxWw/qURaTmDDPymTPlpVLB5SchGgVfgY5jsFnZ+5D4mEvcw4G4bF
+         jFSA==
+X-Gm-Message-State: AOAM532i29304YfyWGrCgbC4K5ZhX5Vc3gzTTUCTnEF7WtrTNHuIf//Q
+        zXj/bHdMK5E9YLYkJh/dyODu2N9CLNZNpg==
+X-Google-Smtp-Source: ABdhPJxuaGHAoNsdXxqYA4Gwaaj7ay4UWogTKp2LdwCtCwifTXAM0dz8wORkuOz10Ds95FaO4rSoyg==
+X-Received: by 2002:a05:6000:11cd:: with SMTP id i13mr9476407wrx.417.1616073133634;
+        Thu, 18 Mar 2021 06:12:13 -0700 (PDT)
 Received: from [192.168.8.170] ([185.69.144.156])
-        by smtp.gmail.com with ESMTPSA id c11sm2957837wrm.67.2021.03.18.06.04.52
+        by smtp.gmail.com with ESMTPSA id o11sm2923726wrq.74.2021.03.18.06.12.12
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Mar 2021 06:04:52 -0700 (PDT)
+        Thu, 18 Mar 2021 06:12:13 -0700 (PDT)
 To:     Stefan Metzmacher <metze@samba.org>, Jens Axboe <axboe@kernel.dk>,
         io-uring@vger.kernel.org
 Cc:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>
@@ -102,8 +102,8 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
 Subject: Re: [PATCH 0/2] send[msg]()/recv[msg]() fixes/improvements
-Message-ID: <0aabb09c-4f53-c581-1996-153072779108@gmail.com>
-Date:   Thu, 18 Mar 2021 13:00:55 +0000
+Message-ID: <8d9bf2bd-779d-6c5e-915c-88d9750c2f09@gmail.com>
+Date:   Thu, 18 Mar 2021 13:08:15 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
@@ -116,97 +116,6 @@ List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 On 18/03/2021 00:15, Stefan Metzmacher wrote:
-> Hi Pavel,
-> 
->>>>>> here're patches which fix linking of send[msg]()/recv[msg]() calls
->>>>>> and make sure io_uring_enter() never generate a SIGPIPE.
->>>>
->>>> 1/2 breaks userspace.
->>>
->>> Can you explain that a bit please, how could some application ever
->>> have a useful use of IOSQE_IO_LINK with these socket calls?
->>
->> Packet delivery of variable size, i.e. recv(max_size). Byte stream
->> that consumes whatever you've got and links something (e.g. notification
->> delivery, or poll). Not sure about netlink, but maybe. Or some
->> "create a file via send" crap, or some made-up custom protocols
-> 
-> Ok, then we need a flag or a new opcode to provide that behavior?
-> 
-> For recv() and recvmsg() MSG_WAITALL might be usable.
-
-Hmm, unrelated, but there is a good chance MSG_WAITALL with io_uring
-is broken because of our first MSG_DONTWAIT attempt. 
-
-> It's not defined in 'man 2 sendmsg', but should we use it anyway
-> for IORING_OP_SEND[MSG] in order to activate the short send check
-> as the low level sock_sendmsg() call seem to ignore unused flags,
-> which seems to be the reason for the following logic in tcp_sendmsg_locked:
-> 
-> if (flags & MSG_ZEROCOPY && size && sock_flag(sk, SOCK_ZEROCOPY)) {
-
-Yep, it maintains compatibility because of unchecked unsupported flags.
-Alleviating an old design problem, IIRC.
-
-> 
-> You need to set SOCK_ZEROCOPY in the socket in order to give a meaning
-> to MSG_ZEROCOPY.
-> 
-> Should I prepare an add-on patch to make the short send/recv logic depend
-> on MSG_WAITALL?
-
-IMHO, conceptually it would make much more sense with MSG_WAITALL.
-
-> 
-> I'm cc'ing netdev@vger.kernel.org in order to more feedback of
-> MSG_WAITALL can be passed to sendmsg without fear to trigger
-> -EINVAL.
-> 
-> The example for io_sendmsg() would look like this:
-> 
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -4383,7 +4383,7 @@ static int io_sendmsg(struct io_kiocb *req, unsigned int issue_flags)
->         struct io_async_msghdr iomsg, *kmsg;
->         struct socket *sock;
->         unsigned flags;
-> -       int expected_ret;
-> +       int min_ret = 0;
->         int ret;
-> 
->         sock = sock_from_file(req->file);
-> @@ -4404,9 +4404,11 @@ static int io_sendmsg(struct io_kiocb *req, unsigned int issue_flags)
->         else if (issue_flags & IO_URING_F_NONBLOCK)
->                 flags |= MSG_DONTWAIT;
-> 
-> -       expected_ret = iov_iter_count(&kmsg->msg.msg_iter);
-> -       if (unlikely(expected_ret == MAX_RW_COUNT))
-> -               expected_ret += 1;
-> +       if (flags & MSG_WAITALL) {
-> +               min_ret = iov_iter_count(&kmsg->msg.msg_iter);
-> +               if (unlikely(min_ret == MAX_RW_COUNT))
-> +                       min_ret += 1;
-> +       }
->         ret = __sys_sendmsg_sock(sock, &kmsg->msg, flags);
->         if ((issue_flags & IO_URING_F_NONBLOCK) && ret == -EAGAIN)
->                 return io_setup_async_msg(req, kmsg);
-> @@ -4417,7 +4419,7 @@ static int io_sendmsg(struct io_kiocb *req, unsigned int issue_flags)
->         if (kmsg->free_iov)
->                 kfree(kmsg->free_iov);
->         req->flags &= ~REQ_F_NEED_CLEANUP;
-> -       if (ret != expected_ret)
-> +       if (ret < min_ret)
->                 req_set_fail_links(req);
->         __io_req_complete(req, issue_flags, ret, 0);
->         return 0;
-> 
-> Which means the default of min_ret = 0 would result in:
-> 
->         if (ret < 0)
->                 req_set_fail_links(req);
-> 
-> again...
-> 
 >>>> Sounds like 2/2 might too, does it?
 >>>
 >>> Do you think any application really expects to get a SIGPIPE
@@ -217,6 +126,18 @@ IMHO, conceptually it would make much more sense with MSG_WAITALL.
 >> who knows
 > 
 > Yes, it was inconsistent before and now it's reliable.
+
+Yep, that where my hesitation was coming from, but the case I had
+in mind is 
+
+1) send() -> gone to io-wq
+2) close the other end
+3) send() fails, probably without SIGPIPE (because io-wq)
+4) userspace retries send() and inline execution delivers SIGPIPE
+
+But I guess we don't really care. In any case, let's drop stable tag,
+maybe? I don't see a reason for it, considering that stable tries hard
+to preserve ABI.
 
 -- 
 Pavel Begunkov

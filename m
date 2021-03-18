@@ -2,69 +2,73 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B43233FCF2
-	for <lists+io-uring@lfdr.de>; Thu, 18 Mar 2021 02:58:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC87433FCF5
+	for <lists+io-uring@lfdr.de>; Thu, 18 Mar 2021 02:59:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229472AbhCRB6L (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 17 Mar 2021 21:58:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33990 "EHLO
+        id S229946AbhCRB7P (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 17 Mar 2021 21:59:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229946AbhCRB5q (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 17 Mar 2021 21:57:46 -0400
-Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4154C06174A
-        for <io-uring@vger.kernel.org>; Wed, 17 Mar 2021 18:57:46 -0700 (PDT)
-Received: by mail-pf1-x435.google.com with SMTP id b184so2394508pfa.11
-        for <io-uring@vger.kernel.org>; Wed, 17 Mar 2021 18:57:46 -0700 (PDT)
+        with ESMTP id S229880AbhCRB6r (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 17 Mar 2021 21:58:47 -0400
+Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BB11C06174A
+        for <io-uring@vger.kernel.org>; Wed, 17 Mar 2021 18:58:47 -0700 (PDT)
+Received: by mail-pl1-x62c.google.com with SMTP id t20so484580plr.13
+        for <io-uring@vger.kernel.org>; Wed, 17 Mar 2021 18:58:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=/AblZbqG1zvhUU4AtoW11+9MHGqRD3cJF+pFxBcZ/J4=;
-        b=q/ov1maYChXBxVyui08P8Y90pRBvikFIfN+RGHIIAhB4VM7OTakFDPmwOQSlWh+ZYp
-         qMbrFbo0DXj1M+gJ8+iEAnR7Chywnq6e+FYSF1A743SH4l9z0O/WhzcpI1fdohdiI/u5
-         H2S8Xy6j60oh/VAEdxAwt5dd9YK4R9VnvPqtww8KlaiIrJVJPgPscP+FeYEC1FVbjEj+
-         dQ5NRXkXem1qQszQVds9QbO40CnTbfS/0HKaTFNQ9NyTytYri12yjER/tSXmxCABGpyK
-         F0dnfW4JIRchAF1u8cpui5iXphCbwXZ1ztNPoPyjpsR1S2tA7eB1ZEelyBq2NnDPFlZQ
-         AjTA==
+        bh=23hDjiDr6dOC6qpQTBiXHAkrBttU7LaznfUpSLfV5mE=;
+        b=j/YvT6mWycCXCDGME/+oXrSDLQ5unOMr3ChK1dfLau26ExbG3SQMJmBSkMHQM9oLQP
+         N017A52YqvgtolsiEfjmL/LYqzNJGXkI9HKqc7yqVmXW8chU3jFvJKDhC3lItHH6Mo3x
+         oO4m5qV5rA0UmjA204xfj3k7Xao33W4kD4ZzWZ0AijL8m0E+CwiW6tMD6laA6+RZUbmd
+         nQbY3x9l4kPvfbbkO75akOZu3/pWx5ORAK0CI4DoMS6DFMzgIDYMji/EOLfIGFoeRsX7
+         KU7wMklpOnLPkq2iGMFmk22rgRFwtk7yLrrpsoWYaNKLn6uKOU+YUC3y7vkfUQjuNkTe
+         w9VA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=/AblZbqG1zvhUU4AtoW11+9MHGqRD3cJF+pFxBcZ/J4=;
-        b=KvIFipa2wnc7s/sE2NDpwR+wkOay4mWmIrTVK37EAez/2JLO/W83mZdae3Vlo5Eb1s
-         y9mTb4BR063TK81Oky9hMQujT48DU86rUXhQDuzLuEzCtXbeBi0mV8KGefdUtDpBRe/p
-         XOJmvTAlHeAnhayZa7hewA5cc7FqUwsRhAIhhp0sgUCxmfsqca2V2gA89+URBZy9OO+h
-         nd9TRi24XGKfA1WHmVc3Q9Js0NaiGmoPP3dXyHKZTFT7crUp6hENJ6ImbXNehyT/qHMs
-         gN2eK3dOFDPkq3GfY/RehVIjjRybnvOIX9/VbWUvC2uHIi58KLiOoH0dkDXS6vmRIvnH
-         9wlw==
-X-Gm-Message-State: AOAM530mRIcspjVL3aykblMaFnaECYN7/2knFY5qYx2rVJQ0lUbEq3nw
-        9DAqcgNXH96w+tWjbaAc4Q0uXHthFzbcaA==
-X-Google-Smtp-Source: ABdhPJxZSYlz4Wxp13k7Kza1gBmiA3e3SuqHF6nx0sejGX3ol1ARi9dTZqDJ7opVJ6EzOwt+314Hjg==
-X-Received: by 2002:a05:6a00:a83:b029:1ed:55fc:e22a with SMTP id b3-20020a056a000a83b02901ed55fce22amr1728155pfl.45.1616032666076;
-        Wed, 17 Mar 2021 18:57:46 -0700 (PDT)
+        bh=23hDjiDr6dOC6qpQTBiXHAkrBttU7LaznfUpSLfV5mE=;
+        b=VQBxH/ynZ6S49rj4YJwrP4alo0KDhaHXS2V9S+OsvMkaFyshGVaEAPV5sAHcgqD2fT
+         2oWpMhzLVBqiXuRgUbDk2n3PIrT9HtSywCgZ1qpJnW0Ppj+yFgg85/1wVgV/rTCvnG1Q
+         7L8MwDHHRBw/YNBpfgiJTLYiADjkoiaReXX0NMtRDEncsLkTryUAbqcpt5Zrsx092Ir6
+         iNkUbhIWWAcq4jmL7k0TICFIxiWtD+43EgVuRkOTh6gmPWL23/MSHwnErnMdSSNVf/+J
+         ItRXTIupGbnxYQDqb5RAg/7hcRY9OD1PNfKpWLa5XUfagVJMwdQO/QNhcCNDD9Hol0cJ
+         JX8Q==
+X-Gm-Message-State: AOAM533S7F31aYbmj/TuaVCnkSZx9Wcm8kX0bB0w8jCgQiytnJVTgTk0
+        FONdnRphh9SjNCfziZ+nU7gjFQ==
+X-Google-Smtp-Source: ABdhPJx8r1dmMYTB0XGagKLwOwWeb2T4iBlofj2quYfLLc0ruDUVcIQHHBPcdrKrf72BTXv2VPvAOg==
+X-Received: by 2002:a17:902:70c5:b029:e6:cba1:5d94 with SMTP id l5-20020a17090270c5b02900e6cba15d94mr4444301plt.84.1616032726909;
+        Wed, 17 Mar 2021 18:58:46 -0700 (PDT)
 Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id k128sm325953pfd.137.2021.03.17.18.57.44
+        by smtp.gmail.com with ESMTPSA id w188sm324224pfw.177.2021.03.17.18.58.45
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Mar 2021 18:57:45 -0700 (PDT)
-Subject: Re: [RFC PATCH v3 1/3] io_uring: add helper for uring_cmd completion
- in submitter-task
-To:     Kanchan Joshi <joshi.k@samsung.com>, hch@lst.de, kbusch@kernel.org,
-        chaitanya.kulkarni@wdc.com
-Cc:     io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
-        anuj20.g@samsung.com, javier.gonz@samsung.com,
-        nj.shetty@samsung.com, selvakuma.s1@samsung.com
-References: <20210316140126.24900-1-joshi.k@samsung.com>
- <CGME20210316140233epcas5p372405e7cb302c61dba5e1094fa796513@epcas5p3.samsung.com>
- <20210316140126.24900-2-joshi.k@samsung.com>
+        Wed, 17 Mar 2021 18:58:46 -0700 (PDT)
+Subject: Re: [RFC PATCH v3 0/3] Async nvme passthrough over io_uring
+To:     Kanchan Joshi <joshiiitr@gmail.com>
+Cc:     Kanchan Joshi <joshi.k@samsung.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Keith Busch <kbusch@kernel.org>,
+        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
+        io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
+        anuj20.g@samsung.com, Javier Gonzalez <javier.gonz@samsung.com>,
+        Nitesh Shetty <nj.shetty@samsung.com>,
+        Selvakumar S <selvakuma.s1@samsung.com>
+References: <CGME20210316140229epcas5p23d68a4c9694bbf7759b5901115a4309b@epcas5p2.samsung.com>
+ <20210316140126.24900-1-joshi.k@samsung.com>
+ <b5476c77-813a-6416-d317-38e8537b83cb@kernel.dk>
+ <CA+1E3rLOOaggA0p5wr5ndTWx42zjebCeEm5XzfOq7QcH6oP=wA@mail.gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <05a91368-1ba8-8583-d2ab-8db70b92df76@kernel.dk>
-Date:   Wed, 17 Mar 2021 19:57:44 -0600
+Message-ID: <63a127c2-e2ed-ad5f-a6d3-8d56e3e95380@kernel.dk>
+Date:   Wed, 17 Mar 2021 19:58:45 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20210316140126.24900-2-joshi.k@samsung.com>
+In-Reply-To: <CA+1E3rLOOaggA0p5wr5ndTWx42zjebCeEm5XzfOq7QcH6oP=wA@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -72,109 +76,27 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/16/21 8:01 AM, Kanchan Joshi wrote:
-> Completion of a uring_cmd ioctl may involve referencing certain
-> ioctl-specific fields, requiring original subitter context.
-> Introduce 'uring_cmd_complete_in_task' that driver can use for this
-> purpose. The API facilitates task-work infra, while driver gets to
-> implement cmd-specific handling in a callback.
+On 3/17/21 3:31 AM, Kanchan Joshi wrote:
+> On Tue, Mar 16, 2021 at 9:31 PM Jens Axboe <axboe@kernel.dk> wrote:
+>>
+>> On 3/16/21 8:01 AM, Kanchan Joshi wrote:
+>>> This series adds async passthrough capability for nvme block-dev over
+>>> iouring_cmd. The patches are on top of Jens uring-cmd branch:
+>>> https://git.kernel.dk/cgit/linux-block/log/?h=io_uring-fops.v3
+>>>
+>>> Application is expected to allocate passthrough command structure, set
+>>> it up traditionally, and pass its address via "block_uring_cmd->addr".
+>>> On completion, CQE is posted with completion-status after any ioctl
+>>> specific buffer/field update.
+>>
+>> Do you have a test app? I'd be curious to try and add support for this
+>> to t/io_uring from fio just to run some perf numbers.
 > 
-> Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
-> ---
->  fs/io_uring.c            | 36 ++++++++++++++++++++++++++++++++----
->  include/linux/io_uring.h |  8 ++++++++
->  2 files changed, 40 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 583f8fd735d8..ca459ea9cb83 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -772,9 +772,12 @@ struct io_kiocb {
->  		/* use only after cleaning per-op data, see io_clean_op() */
->  		struct io_completion	compl;
->  	};
-> -
-> -	/* opcode allocated if it needs to store data for async defer */
-> -	void				*async_data;
-> +	union {
-> +		/* opcode allocated if it needs to store data for async defer */
-> +		void				*async_data;
-> +		/* used for uring-cmd, when driver needs to update in task */
-> +		void (*driver_cb)(struct io_uring_cmd *cmd);
-> +	};
+> Yes Jens. Need to do a couple of things to make it public, will post it today.
 
-I don't like this at all, it's very possible that we'd need async
-data for passthrough commands as well in certain cases. And what it
-gets to that point, we'll have no other recourse than to un-unionize
-this and pay the cost. It also means we end up with:
-
-> @@ -1716,7 +1719,7 @@ static void io_dismantle_req(struct io_kiocb *req)
->  {
->  	io_clean_op(req);
->  
-> -	if (req->async_data)
-> +	if (io_op_defs[req->opcode].async_size && req->async_data)
->  		kfree(req->async_data);
->  	if (req->file)
->  		io_put_file(req, req->file, (req->flags & REQ_F_FIXED_FILE));
-
-which are also very fragile.
-
-We already have the task work, just have the driver init and/or call a
-helper to get it run from task context with the callback it desires?
-
-If you look at this:
-
-> @@ -2032,6 +2035,31 @@ static void io_req_task_submit(struct callback_head *cb)
->  	__io_req_task_submit(req);
->  }
->  
-> +static void uring_cmd_work(struct callback_head *cb)
-> +{
-> +	struct io_kiocb *req = container_of(cb, struct io_kiocb, task_work);
-> +	struct io_uring_cmd *cmd = &req->uring_cmd;
-> +
-> +	req->driver_cb(cmd);
-> +}
-> +int uring_cmd_complete_in_task(struct io_uring_cmd *ioucmd,
-> +			void (*driver_cb)(struct io_uring_cmd *))
-> +{
-> +	int ret;
-> +	struct io_kiocb *req = container_of(ioucmd, struct io_kiocb, uring_cmd);
-> +
-> +	req->driver_cb = driver_cb;
-> +	req->task_work.func = uring_cmd_work;
-> +	ret = io_req_task_work_add(req);
-> +	if (unlikely(ret)) {
-> +		req->result = -ECANCELED;
-> +		percpu_ref_get(&req->ctx->refs);
-> +		io_req_task_work_add_fallback(req, io_req_task_cancel);
-> +	}
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL(uring_cmd_complete_in_task);
-
-Then you're basically jumping through hoops to get that callback.
-Why don't you just have:
-
-io_uring_schedule_task(struct io_uring_cmd *cmd, task_work_func_t cb)
-{
-	struct io_kiocb *req = container_of(cmd, struct io_kiocb, uring_cmd);
-	int ret;
-
-	req->task_work.func = cb;
-	ret = io_req_task_work_add(req);
-	if (unlikely(ret)) {
-		req->result = -ECANCELED;
-		io_req_task_work_add_fallback(req, io_req_task_cancel);
-	}
-	return ret;
-}
-
-?
-
-Also, please export any symbol with _GPL. I don't want non-GPL drivers
-using this infrastructure.
+Sounds good! I commented on 1/3, I think it can be simplified and
+cleaned up quite a bit, which is great. Then let's base it on top of v4
+that I posted, let me know if you run into any issues with that.
 
 -- 
 Jens Axboe

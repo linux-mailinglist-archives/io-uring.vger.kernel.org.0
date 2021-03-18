@@ -2,105 +2,108 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1753F340068
-	for <lists+io-uring@lfdr.de>; Thu, 18 Mar 2021 08:48:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 349CD340506
+	for <lists+io-uring@lfdr.de>; Thu, 18 Mar 2021 12:59:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229743AbhCRHsY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 18 Mar 2021 03:48:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52780 "EHLO
+        id S229747AbhCRL6w (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 18 Mar 2021 07:58:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229739AbhCRHsV (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 18 Mar 2021 03:48:21 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B73ACC06174A
-        for <io-uring@vger.kernel.org>; Thu, 18 Mar 2021 00:48:20 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id r10-20020a05600c35cab029010c946c95easo2720857wmq.4
-        for <io-uring@vger.kernel.org>; Thu, 18 Mar 2021 00:48:20 -0700 (PDT)
+        with ESMTP id S229745AbhCRL6n (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 18 Mar 2021 07:58:43 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 643B3C06174A
+        for <io-uring@vger.kernel.org>; Thu, 18 Mar 2021 04:58:43 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id t9so5211203wrn.11
+        for <io-uring@vger.kernel.org>; Thu, 18 Mar 2021 04:58:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TG7YlWDsVFQll45rVCenXqdxqCRGUryVl0R9Q9CGIEE=;
-        b=tS4qDC4ZQ5pPfJwDVXyCedaUhR1HKjXliuwPA0dgHMkQLPhlwuS05d0cuzyF6HWIzn
-         i8DdBxUH9KhTLpoy4ytcBKlpwDK980x7Y7gVLNRiI6sOwsG0tFhOQbu7Jx78byt8MbJq
-         zL4I2G7tUSWglNejAZ4WHP0k76AMuxlODA8o6AALsBByodxG/jNxMsxohpp0WafR2u5W
-         4/eYyKuboT9Uj3x4yiXO/BVWbxIMB2vxvQuTsax5q07XHS5H8ufa0fytEFdw8+i3nivi
-         5BK2dUj9ia6dRm+5XTpSxwoZO0c5+q/OD/IgYrY76KZeaHSrtLrU7r0hVLNPef9SVQu6
-         uhMA==
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=HEVa+LFBSyizvjoG7dqOngE69ycWWFmDeci7hkBX9sg=;
+        b=mjNrXQjqlYcPl06hlCDxIoojTlN4hehp9iA8ohjSA5hN7+vQNEddeHyd50Begrtv18
+         HyFPwXhnZwZfYr/ofAOC1Yz5gmZVQK8nO7q7xTcvGw2mFhhhmtoz8OZ+6C5pnXHOSmwD
+         uJO1IBMlg+d8V0Ee9R0XvgyahXTItHEHPBuO28bK1jskAifUdvo3Yl4z6Dfv4FjQtDGb
+         ZjKezull/0YiRZSvp44pIUr0LU9MlC1LAYaGrTdMlQOKlQxC/ortDoIpyZN9oTRJ3Vra
+         C4PaskVmsMDLI5NmaGDfkqDXEKxQoc7gCw99+eHctS1y76yYGIYBbxVjPp5i9Rl+GhfB
+         Wa1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TG7YlWDsVFQll45rVCenXqdxqCRGUryVl0R9Q9CGIEE=;
-        b=aLYRUZzMGaII2ERkOntoePi2k3dmWArv97fa8YMuUDGGQiCH9bWDQNwpj4KiXid3wL
-         1WlXQRW9ZZ5lnk7ZtwAguJgrOwr/K8prkpGDWC58PBnkaO196RPUZdRK0FWrZH5HxB8w
-         BmfRHpG8BUOpe2GoPXEkj8FSt4FSR5lLdxP0qMqllaid4/igZil4sIwPejfOxFKfsWp6
-         WR9xp+52wiysmb6HxmzHNdKJq6zQ5QW++pUk0LMEfWII6aLUY/zM4v8WHdbFZnmTUpHH
-         2OVBMHevo1LNBzUskKsVJzlVnPXwce/JTRyB+MvcUAJFy2j9Tcfj6CsNGhL+JJcLRStm
-         qrvA==
-X-Gm-Message-State: AOAM533tQ/mLhaqAdnbJ70m8vR56q7vtsG1Iokv3eT3fvU2ke1LFnr6L
-        8FHCdF4sqoYW2pl5kQQeIPTlbvoNEb4s6t4SdUTrEDMCKBXZig==
-X-Google-Smtp-Source: ABdhPJzfXm9JgoR6BcOdccwdmN0b1PPTp0RUszAvhDYTkb4OcnL/bD1xb+yTieB+Uugq6/qgpIs6q9S9Nba9ta5I31Y=
-X-Received: by 2002:a05:600c:4fc2:: with SMTP id o2mr2220575wmq.25.1616053699300;
- Thu, 18 Mar 2021 00:48:19 -0700 (PDT)
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=HEVa+LFBSyizvjoG7dqOngE69ycWWFmDeci7hkBX9sg=;
+        b=dPBaRM5M3Go5oojNlmgW/Vnt10dQs9ctVyBHJDY4TshZotQDBWYpeDNqhRMzHz5UQN
+         SoL3jgxUvq/JblUG6NqvMBmDsYiVS2RWQmYeSYUIalW+UC/FNmEBpRHpNdOMNbqkZhRQ
+         ZlSKU99VxdRuyF9X4vUYNJy7783ByUv2E8jJStGAJ9iBaAfXcAlQA/SyOobaFiAd5K+8
+         wv5taX7g/3F2tAW3K43LniZXrt2+8l/mHWp59zCGEQWmjF5kl5CSXlTX14UnHFXg71yP
+         8m3Szv1s6V1Y/OueBxOWYrKEraM1CRcg6375KSx4yJM2moy88j8jF5LXBTJQlfWSrGVZ
+         w+9g==
+X-Gm-Message-State: AOAM532mjwK4aQy0VctxWoSVKDOZQJeHwte6q1T5p4vpwCvJ3ophn6Vl
+        pTyGi1oQ8DkjrXtTrP4W2OvOf52uQOdc3Q==
+X-Google-Smtp-Source: ABdhPJxluTYPxCbNX//U7iHL+mbGHYPfKJ1xNwTJ3IWKb8CKze6qXriy8bioYSeIlDPaknX1dblEXg==
+X-Received: by 2002:adf:a1d8:: with SMTP id v24mr9091056wrv.378.1616068722165;
+        Thu, 18 Mar 2021 04:58:42 -0700 (PDT)
+Received: from localhost.localdomain ([185.69.144.156])
+        by smtp.gmail.com with ESMTPSA id i11sm2714452wro.53.2021.03.18.04.58.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Mar 2021 04:58:41 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [PATCH 1/1] io_uring: don't leak creds on SQO attach error
+Date:   Thu, 18 Mar 2021 11:54:35 +0000
+Message-Id: <7c7e783bbc4b785825b159d4172527de0014ebc2.1616066965.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-References: <CGME20210316140229epcas5p23d68a4c9694bbf7759b5901115a4309b@epcas5p2.samsung.com>
- <20210316140126.24900-1-joshi.k@samsung.com> <b5476c77-813a-6416-d317-38e8537b83cb@kernel.dk>
- <CA+1E3rLOOaggA0p5wr5ndTWx42zjebCeEm5XzfOq7QcH6oP=wA@mail.gmail.com> <63a127c2-e2ed-ad5f-a6d3-8d56e3e95380@kernel.dk>
-In-Reply-To: <63a127c2-e2ed-ad5f-a6d3-8d56e3e95380@kernel.dk>
-From:   Kanchan Joshi <joshiiitr@gmail.com>
-Date:   Thu, 18 Mar 2021 13:17:52 +0530
-Message-ID: <CA+1E3r+_rNmDBgL2cabxboG4GDaRx=XRt=SiNPt3hnvOuTYd5A@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 0/3] Async nvme passthrough over io_uring
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Kanchan Joshi <joshi.k@samsung.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Keith Busch <kbusch@kernel.org>,
-        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
-        io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
-        anuj20.g@samsung.com, Javier Gonzalez <javier.gonz@samsung.com>,
-        Nitesh Shetty <nj.shetty@samsung.com>,
-        Selvakumar S <selvakuma.s1@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Mar 18, 2021 at 7:28 AM Jens Axboe <axboe@kernel.dk> wrote:
->
-> On 3/17/21 3:31 AM, Kanchan Joshi wrote:
-> > On Tue, Mar 16, 2021 at 9:31 PM Jens Axboe <axboe@kernel.dk> wrote:
-> >>
-> >> On 3/16/21 8:01 AM, Kanchan Joshi wrote:
-> >>> This series adds async passthrough capability for nvme block-dev over
-> >>> iouring_cmd. The patches are on top of Jens uring-cmd branch:
-> >>> https://git.kernel.dk/cgit/linux-block/log/?h=io_uring-fops.v3
-> >>>
-> >>> Application is expected to allocate passthrough command structure, set
-> >>> it up traditionally, and pass its address via "block_uring_cmd->addr".
-> >>> On completion, CQE is posted with completion-status after any ioctl
-> >>> specific buffer/field update.
-> >>
-> >> Do you have a test app? I'd be curious to try and add support for this
-> >> to t/io_uring from fio just to run some perf numbers.
-> >
-> > Yes Jens. Need to do a couple of things to make it public, will post it today.
+Attaching to already dead/dying SQPOLL task is disallowed in
+io_sq_offload_create(), but cleanup is hand coded by calling
+io_put_sq_data()/etc., that miss to put ctx->sq_creds.
 
-Please see if this is accessible to you -
-https://github.com/joshkan/fio/commit/6c18653bc87015213a18c23d56518d4daf21b191
+Defer everything to error-path io_sq_thread_finish(), adding
+ctx->sqd_list in the error case as well as finish will handle it.
 
-I run it on nvme device with the extra option "-uring_cmd=1". And pit
-passthru read/write against regular uring read/write.
-While write perf looks fine, I notice higher-qd reads going tad-bit
-low which is puzzling.
-But I need to test more to see if this is about my test-env (including
-the added test-code) itself.
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ fs/io_uring.c | 17 ++++++-----------
+ 1 file changed, 6 insertions(+), 11 deletions(-)
 
-It will be great if you could, at some point in future, have a look at
-this test or spin off what you already had in mind.
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index dcdb6e83f1a2..f258264a2e89 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -7904,22 +7904,17 @@ static int io_sq_offload_create(struct io_ring_ctx *ctx,
+ 
+ 		ret = 0;
+ 		io_sq_thread_park(sqd);
++		list_add(&ctx->sqd_list, &sqd->ctx_list);
++		io_sqd_update_thread_idle(sqd);
+ 		/* don't attach to a dying SQPOLL thread, would be racy */
+-		if (attached && !sqd->thread) {
++		if (attached && !sqd->thread)
+ 			ret = -ENXIO;
+-		} else {
+-			list_add(&ctx->sqd_list, &sqd->ctx_list);
+-			io_sqd_update_thread_idle(sqd);
+-		}
+ 		io_sq_thread_unpark(sqd);
+ 
+-		if (ret < 0) {
+-			io_put_sq_data(sqd);
+-			ctx->sq_data = NULL;
+-			return ret;
+-		} else if (attached) {
++		if (ret < 0)
++			goto err;
++		if (attached)
+ 			return 0;
+-		}
+ 
+ 		if (p->flags & IORING_SETUP_SQ_AFF) {
+ 			int cpu = p->sq_thread_cpu;
+-- 
+2.24.0
 
-> Sounds good! I commented on 1/3, I think it can be simplified and
-> cleaned up quite a bit, which is great. Then let's base it on top of v4
-> that I posted, let me know if you run into any issues with that.
-
-Yes, will move to V4,  thanks!

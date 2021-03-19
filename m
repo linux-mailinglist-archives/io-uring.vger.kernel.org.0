@@ -2,89 +2,61 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5444C341A39
-	for <lists+io-uring@lfdr.de>; Fri, 19 Mar 2021 11:40:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EBE38341ABD
+	for <lists+io-uring@lfdr.de>; Fri, 19 Mar 2021 12:03:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229756AbhCSKkR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 19 Mar 2021 06:40:17 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:40446 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229512AbhCSKjz (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 19 Mar 2021 06:39:55 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212])
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1lNCXq-0001CN-99; Fri, 19 Mar 2021 10:39:54 +0000
-Subject: Re: [PATCH] io_uring: fix provide_buffers sign extension
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-References: <562376a39509e260d8532186a06226e56eb1f594.1616149233.git.asml.silence@gmail.com>
- <a0a52343-0bf9-79c0-d1c3-0d049487c5cc@canonical.com>
- <763d7d4f-5264-2db0-ee17-1b10699c095b@gmail.com>
-From:   Colin Ian King <colin.king@canonical.com>
-Message-ID: <280d0b86-1d49-2641-edc7-02de8bb01b92@canonical.com>
-Date:   Fri, 19 Mar 2021 10:39:53 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.0
+        id S229904AbhCSLCU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 19 Mar 2021 07:02:20 -0400
+Received: from mail-il1-f199.google.com ([209.85.166.199]:42889 "EHLO
+        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229767AbhCSLCM (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 19 Mar 2021 07:02:12 -0400
+Received: by mail-il1-f199.google.com with SMTP id r16so24562485ilj.9
+        for <io-uring@vger.kernel.org>; Fri, 19 Mar 2021 04:02:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=3kE9urkd9NS2DuoN7WUKMGk6xYQqlb0lhJPiUJGc07Q=;
+        b=MPtZccur1BMnR9Mzt25ZCSpjppNxmKZ09ph757CVDJeYDlMyPkZqVNcT9uMI8QD/aZ
+         jyelPNpDYJxzfpfj1UyG6rMaeHhl3mMHilbm/S984UXUC9fiU8AnIQIZFmzr9zueIdt1
+         /e6WO2+J5Oso1DBqCtqL+jqrwMoFvSPsZ936L1dw6gqNNv7wtRcbmy4CEjHMAmVScalM
+         rvdZbOjWkn/xv6Fdu7U2elMbYAnwUxhvZTTwk5m/BT877OuB+5OtdriAKrw+gT/x5K4S
+         nW65JTre9VMH3J9vllFVbo/cVQsRhTHp98C7ceVAlnaz9R21VxJ5mgoUOy2IoO7Y8fX1
+         Yu2g==
+X-Gm-Message-State: AOAM533UWF+dde5erIevl+LuX5h5BZOZr5hLl3ZgdvHQUx3G6XC3DYbE
+        4HwN2iSvuui8fJON3H8vUrl4TNQbm+OhPgfAqNX12KzYUMzX
+X-Google-Smtp-Source: ABdhPJz+kK4gMhywPYy9lQKtIKqExdj6dBXtuhCNKCvGyX4ec6P8xmes238+oDV+K8NqRw7qdQfcXpEuNSpryoDeSuUPHnN4TqSf
 MIME-Version: 1.0
-In-Reply-To: <763d7d4f-5264-2db0-ee17-1b10699c095b@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:2141:: with SMTP id d1mr2302995ilv.85.1616151731732;
+ Fri, 19 Mar 2021 04:02:11 -0700 (PDT)
+Date:   Fri, 19 Mar 2021 04:02:11 -0700
+In-Reply-To: <cd88eb14-f250-54d1-d36b-7af3917d3bec@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000df888f05bde1a5b4@google.com>
+Subject: Re: [syzbot] KASAN: use-after-free Read in idr_for_each (2)
+From:   syzbot <syzbot+12056a09a0311d758e60@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 19/03/2021 10:34, Pavel Begunkov wrote:
-> On 19/03/2021 10:31, Colin Ian King wrote:
->> On 19/03/2021 10:21, Pavel Begunkov wrote:
->>> io_provide_buffers_prep()'s "p->len * p->nbufs" to sign extension
->>> problems. Not a huge problem as it's only used for access_ok() and
->>> increases the checked length, but better to keep typing right.
->>>
->>> Reported-by: Colin Ian King <colin.king@canonical.com>
->>> Fixes: efe68c1ca8f49 ("io_uring: validate the full range of provided buffers for access")
->>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
->>> ---
->>>  fs/io_uring.c | 4 +++-
->>>  1 file changed, 3 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/fs/io_uring.c b/fs/io_uring.c
->>> index c2489b463eb9..4f1c98502a09 100644
->>> --- a/fs/io_uring.c
->>> +++ b/fs/io_uring.c
->>> @@ -3978,6 +3978,7 @@ static int io_remove_buffers(struct io_kiocb *req, unsigned int issue_flags)
->>>  static int io_provide_buffers_prep(struct io_kiocb *req,
->>>  				   const struct io_uring_sqe *sqe)
->>>  {
->>> +	unsigned long size;
->>>  	struct io_provide_buf *p = &req->pbuf;
->>>  	u64 tmp;
->>>  
->>> @@ -3991,7 +3992,8 @@ static int io_provide_buffers_prep(struct io_kiocb *req,
->>>  	p->addr = READ_ONCE(sqe->addr);
->>>  	p->len = READ_ONCE(sqe->len);
->>>  
->>> -	if (!access_ok(u64_to_user_ptr(p->addr), (p->len * p->nbufs)))
->>> +	size = (unsigned long)p->len * p->nbufs;
->>> +	if (!access_ok(u64_to_user_ptr(p->addr), size))
->>>  		return -EFAULT;
->>>  
->>>  	p->bgid = READ_ONCE(sqe->buf_group);
->>>
->>
->> Does it make sense to make size a u64 and cast to a u64 rather than
->> unsigned long?
-> 
-> static inline int __access_ok(unsigned long addr, unsigned long size)
-> {
-> 	return 1;
-> }
-> 
-> Not sure. I was thinking about size_t, but ended up sticking
-> to access_ok types.
-> 
-Ah, yep. OK.
+Hello,
 
-Reviewed-by: Colin Ian King <colin.king@canonical.com>
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+
+Reported-and-tested-by: syzbot+12056a09a0311d758e60@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         ece5fae7 io_uring: don't leak creds on SQO attach error
+git tree:       git://git.kernel.dk/linux-block io_uring-5.12
+kernel config:  https://syzkaller.appspot.com/x/.config?x=28f8268e740d48dd
+dashboard link: https://syzkaller.appspot.com/bug?extid=12056a09a0311d758e60
+compiler:       
+
+Note: testing is done by a robot and is best-effort only.

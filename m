@@ -2,95 +2,85 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7800B342590
-	for <lists+io-uring@lfdr.de>; Fri, 19 Mar 2021 20:00:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E18B73426F9
+	for <lists+io-uring@lfdr.de>; Fri, 19 Mar 2021 21:36:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229990AbhCSS7j (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 19 Mar 2021 14:59:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57338 "EHLO
+        id S230310AbhCSUfh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 19 Mar 2021 16:35:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230351AbhCSS7Q (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 19 Mar 2021 14:59:16 -0400
-Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88598C06174A
-        for <io-uring@vger.kernel.org>; Fri, 19 Mar 2021 11:59:16 -0700 (PDT)
-Received: by mail-io1-xd2c.google.com with SMTP id v17so7197557iot.6
-        for <io-uring@vger.kernel.org>; Fri, 19 Mar 2021 11:59:16 -0700 (PDT)
+        with ESMTP id S230281AbhCSUfW (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 19 Mar 2021 16:35:22 -0400
+Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E901C06175F
+        for <io-uring@vger.kernel.org>; Fri, 19 Mar 2021 13:35:22 -0700 (PDT)
+Received: by mail-pf1-x42d.google.com with SMTP id x126so6706817pfc.13
+        for <io-uring@vger.kernel.org>; Fri, 19 Mar 2021 13:35:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=8IKyNH67EimzqsQHRt2EcKZG5N53JSEbdBmk0DECGS8=;
-        b=jwji7jvmiYIto2TjT9rCsBO3XvvcLSZ/obuk3qVC060Oasx7T5fHNNQ9fgdrATiq/q
-         oIgLPqBUmvX7sbcwClY1OPIEtFD7/Gk61gjERPztFbPJT0aZhZlJ60DQfFkZXwAWMYgx
-         Kkw5zuCam9zfHsjR33pjQg7hhhg12qj7k+winLnKVoq9futOG8tK9tNUS2kV9HRz5Ms5
-         SjiNzedEqRgOIAH/7pnwoUM0V4qHja2sl6hCnavGRkfiwW3brJOrcE6RfSyKV1Un2UxP
-         8aP2RJXyGgJ+yu1Hk+3sZpw0fa+5xx1U367IMYmdoQ+ZhkOpDdT1QP7tqBkTrLiRw7fv
-         CEUA==
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=B1w5gAZ9TX7nypJfuRp/xT3zEUxljPxqA/ekijQDG2g=;
+        b=YUNXiDJ5uILFI/QTRzSQjggdArc0HZ7bgUC//mPaRyT9TYCmEmA2b9LWNIQAbcT8zV
+         aJWnk3gLJpI1+nCr3k7nBJd1m38mX3wiYynUQaWrm1x/HBbynGx7cwShOOM3DAfsPvdU
+         8fgx24ZPZ5jxjJsdjJsjZkxg2fpQjZIhFKneT+HRJmIBU8sagwu7CwdEsNNlgdBnbRzS
+         htLd0x1ejQwNLcSl5RhQCkiCFYQM5dtraO92Zz1PpfHuwUhb3fvoe+cSzatF0YZ5NPgU
+         T+MW87dojFdS8ngHPePaV8Wah/FfJEmgJnz7Y6HBK3kgjdyWmB4ecFEgavm85xOrHf9p
+         0KrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=8IKyNH67EimzqsQHRt2EcKZG5N53JSEbdBmk0DECGS8=;
-        b=QTza3xVX3P8VqZse6PjPutLjHjO9RGonA+h6qfBUPqCUQUcKXRkXq0manQD5lVIfjm
-         16A0T6LIduZAepsNsqx0ywnB0uyhCBqO9UnPa9+RqFhVcWukUQEA8TUccr81Mdz5tEcv
-         hOpc64H5sKQM81zJp5hvmbg6ctD77XXJB72p0hsN/bI45BLIGJX1TFtbeaXamh42V/Ae
-         Z+6XwOZ6nXXMkWu8r2nmnczAJaaskJWQB15+1NMFym4M1TutxEzLlIGSTjvh9KbNRbvL
-         mhHS01jjoI0tLBcm5RuGMBgHOrL6hJFL1kFuGCTnB7vYTrHHfMKh1iasImL9OfWFaqIl
-         VB/A==
-X-Gm-Message-State: AOAM531+DB7bIrbEPR0Je4WsJ52MuUrYRxKn+f8zbw1dfhOD6KUGVCel
-        pA/ovTMrp31v61G7wF+vQpwOviHYxXj60w==
-X-Google-Smtp-Source: ABdhPJyf9UigTdZVME1o8o9r9U2McMOZ7ThiQYQ1dbt3GFORZWokH2mYs1z8gE3BuqgBBGn2fD4T3g==
-X-Received: by 2002:a6b:7f4d:: with SMTP id m13mr3750014ioq.134.1616180355720;
-        Fri, 19 Mar 2021 11:59:15 -0700 (PDT)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id m5sm2979605ilq.65.2021.03.19.11.59.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Mar 2021 11:59:15 -0700 (PDT)
-Subject: Re: [PATCH 00/16] random 5.13 bits
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <cover.1616167719.git.asml.silence@gmail.com>
+        bh=B1w5gAZ9TX7nypJfuRp/xT3zEUxljPxqA/ekijQDG2g=;
+        b=dwZbaWrK0LQSCigWeHL9hfoQ25oMMwTndwEzgMSNWJDFxplRW5vgKqdVKXIg6Q4aIg
+         eDLg3I/AkWtJq/GAPhww47wUH5UxC/uUU3aMvpMHcB6/PpVSL+SpjXjD/uwvEqezskgo
+         zB5VQuMxSfmUznQSFcqCwdssU+bknCXye+62LN/M/w1QHidxQaDiCI2W704sz0Q4+Bgs
+         WE/nEqTr8kJk0cKoRe7duOiny45nROd8czpOfcktiOv4GvXYgwXNZKi3hgxAbnpho7BL
+         8u2hpDe4IXsOyp1BCriT7eIDFoooXOLKdi5M9MqRCs/uKp6mradm05yca+5yzgXVpuM1
+         hrRA==
+X-Gm-Message-State: AOAM530tq47/K9k5SOWaUnWgk5KmCyQIy9nce1uVUcXTtsYDchXJROFT
+        Fu7mxB+gsT8tfHyuw5Om7UN8wumttUNtqA==
+X-Google-Smtp-Source: ABdhPJx8RB9HX4RL89Pz/QKmEID2aAXu8gZuIXTX1Mu4GKLj1eOgo6aHHL113IjNr1NXt6NeEjKo1g==
+X-Received: by 2002:a63:cb12:: with SMTP id p18mr9175676pgg.191.1616186121882;
+        Fri, 19 Mar 2021 13:35:21 -0700 (PDT)
+Received: from localhost.localdomain ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id b17sm6253498pfp.136.2021.03.19.13.35.21
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Mar 2021 13:35:21 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <2fcae175-dff9-2a0b-84e1-f4dfc8d69d86@kernel.dk>
-Date:   Fri, 19 Mar 2021 12:59:15 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+To:     io-uring@vger.kernel.org
+Subject: [PATCHSET v2 0/8] Poll improvements
+Date:   Fri, 19 Mar 2021 14:35:08 -0600
+Message-Id: <20210319203516.790984-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.31.0
 MIME-Version: 1.0
-In-Reply-To: <cover.1616167719.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/19/21 11:22 AM, Pavel Begunkov wrote:
-> Random cleanups / small optimisations, should be fairly easy.
-> 
-> Pavel Begunkov (16):
->   io_uring: don't take ctx refs in task_work handler
->   io_uring: optimise io_uring_enter()
->   io_uring: optimise tctx node checks/alloc
->   io_uring: keep io_req_free_batch() call locality
->   io_uring: inline __io_queue_linked_timeout()
->   io_uring: optimise success case of __io_queue_sqe
->   io_uring: refactor io_flush_cached_reqs()
->   io_uring: refactor rsrc refnode allocation
->   io_uring: inline io_put_req and friends
->   io_uring: refactor io_free_req_deferred()
->   io_uring: add helper flushing locked_free_list
->   io_uring: remove __io_req_task_cancel()
->   io_uring: inline io_clean_op()'s fast path
->   io_uring: optimise io_dismantle_req() fast path
->   io_uring: abolish old io_put_file()
->   io_uring: optimise io_req_task_work_add()
-> 
->  fs/io_uring.c | 358 ++++++++++++++++++++++++--------------------------
->  1 file changed, 169 insertions(+), 189 deletions(-)
+Hi,
 
-Thanks added, all look pretty straight forward to me.
+Here's v2 of the poll improvements planned for 5.13. For a description,
+see the v1 posting here:
+
+https://lore.kernel.org/io-uring/20210317162943.173837-1-axboe@kernel.dk/
+
+Changes since v1:
+
+- Split poll update into an events and user_data update. Some users like
+  to embed fd etc data in the user_data, so makes sense to allow update
+  of that too. So we now have POLL_UPDATE_EVENTS and
+  POLL_UPDATE_USER_DATA that can be used independently or together.
+
+- Fix missing hangup for some cases.
+
+- Rebase on current 5.13 io_uring tree.
+
+- Various little fixes.
 
 -- 
 Jens Axboe
+
 

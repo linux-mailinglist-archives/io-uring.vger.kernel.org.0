@@ -2,104 +2,213 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 361FF340D72
-	for <lists+io-uring@lfdr.de>; Thu, 18 Mar 2021 19:44:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C5E63341376
+	for <lists+io-uring@lfdr.de>; Fri, 19 Mar 2021 04:32:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232764AbhCRSoQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 18 Mar 2021 14:44:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53944 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232623AbhCRSoN (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 18 Mar 2021 14:44:13 -0400
-Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F2E2C06174A
-        for <io-uring@vger.kernel.org>; Thu, 18 Mar 2021 11:44:13 -0700 (PDT)
-Received: by mail-io1-xd32.google.com with SMTP id f19so3382316ion.3
-        for <io-uring@vger.kernel.org>; Thu, 18 Mar 2021 11:44:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=dcg1y//+DoAkTXSWSFL8u0Yi01QGJS6gRj6Nwc1cgM0=;
-        b=XQq4hQ2GavpXdun8/b2ixrOFx72Uj8N6FzkAUpld3TlamNL/NCe51NW51nf3XK0EQ+
-         XlCae3vEus8x4R09b5N9bLEfpcjTlQNlL2QdoIWDSElrOvJBm1B0x9xPlHjmXZVRoSxg
-         t5fQvaef+Bw3tVOpXtMXmoTrYxD3Dm9GVPfh8sh1lCS9DokUrfsPTs88d8m8Rx94p07r
-         XzN9C7XNNqoZINkJhHE50uolL8hMQfFWJ7BU4xX/CvseFVvCPF+uSZZ1vrHdJaJE3AA7
-         +DBd087MLPOuBVQWkH3Et97XXwwHvnBrL+KmulR9axC7BIDb7x5UNNB1TrlMv4L+AXBu
-         bPyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=dcg1y//+DoAkTXSWSFL8u0Yi01QGJS6gRj6Nwc1cgM0=;
-        b=PVJ+Eevhr3prYR3iAbRK2oS/Jl+sh/zfMjxvgE8N/JS2EmBnn3XWSYv0YHKkokHaAo
-         pRPwoIr/K66bGF1z9B7txhoxOOBb03nGHOYrCYlqggHVdzw/sFAA82MrT6nUulrdux26
-         kAgy6LBuSOSBgZpKL26okAyIhDp9ZZmDtSwdl3tFMQbkcLfaUmiqrKwOkLS06Idgu272
-         nSPhIiuTMO9GTaTDh82UPvhrIMSfZwVBBrcq5Cz5ThvYkb7T2ARCrCWsR+7wI+yyi2vL
-         ilOQQFA7j0ohX0xA4eXysihtG9/Pr5hxs9EIEvXGXdpWhLwDdeeT6ixIGeFJMdJaVOAZ
-         ehOg==
-X-Gm-Message-State: AOAM5330kAVxOC8X8kHRnY+eBzkLZg12jlzNmDJhkCA5+FxmLrlQL4Cx
-        RKXxs02tzQxqMlaEOAub570cVK4ASEkrlg==
-X-Google-Smtp-Source: ABdhPJwJRyLj13ds04OCULiOrI0adobTqekGYabE96Pj6mEQ6XF1RKXSQgUlmGiYA2ymNnQkUeD7yA==
-X-Received: by 2002:a6b:3bc7:: with SMTP id i190mr11572503ioa.163.1616093052890;
-        Thu, 18 Mar 2021 11:44:12 -0700 (PDT)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id h6sm1366812ild.79.2021.03.18.11.44.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Mar 2021 11:44:12 -0700 (PDT)
-Subject: Re: [PATCH 6/8] block: add example ioctl
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     io-uring@vger.kernel.org, joshi.k@samsung.com, kbusch@kernel.org,
-        linux-nvme@lists.infradead.org, metze@samba.org
-References: <20210317221027.366780-1-axboe@kernel.dk>
- <20210317221027.366780-7-axboe@kernel.dk> <20210318054506.GE28063@lst.de>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <df428685-0729-8d7c-b079-97e9efd6ae15@kernel.dk>
-Date:   Thu, 18 Mar 2021 12:44:12 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S229931AbhCSDbv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 18 Mar 2021 23:31:51 -0400
+Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:58480 "EHLO
+        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229948AbhCSDb3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 18 Mar 2021 23:31:29 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=2;SR=0;TI=SMTPD_---0USVAfjt_1616124686;
+Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0USVAfjt_1616124686)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 19 Mar 2021 11:31:27 +0800
+Subject: Re: [PATCH 9/9] io_uring: allow events update of running poll
+ requests
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <20210317162943.173837-1-axboe@kernel.dk>
+ <20210317162943.173837-10-axboe@kernel.dk>
+From:   Hao Xu <haoxu@linux.alibaba.com>
+Message-ID: <5c62f6bf-057c-e4b1-5cbf-102e73f8bfcc@linux.alibaba.com>
+Date:   Fri, 19 Mar 2021 11:31:26 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.8.0
 MIME-Version: 1.0
-In-Reply-To: <20210318054506.GE28063@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20210317162943.173837-10-axboe@kernel.dk>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/17/21 11:45 PM, Christoph Hellwig wrote:
-> On Wed, Mar 17, 2021 at 04:10:25PM -0600, Jens Axboe wrote:
->> +static int blkdev_uring_ioctl(struct block_device *bdev,
->> +			      struct io_uring_cmd *cmd)
->> +{
->> +	struct block_uring_cmd *bcmd = (struct block_uring_cmd *) &cmd->pdu;
->> +
->> +	switch (bcmd->ioctl_cmd) {
->> +	case BLKBSZGET:
->> +		return block_size(bdev);
->> +	default:
->> +		return -ENOTTY;
->> +	}
->> +}
->> +
->>  static int blkdev_uring_cmd(struct io_uring_cmd *cmd,
->>  			    enum io_uring_cmd_flags flags)
->>  {
->>  	struct block_device *bdev = I_BDEV(cmd->file->f_mapping->host);
->>  
->> +	switch (cmd->op) {
->> +	case BLOCK_URING_OP_IOCTL:
->> +		return blkdev_uring_ioctl(bdev, cmd);
+ÔÚ 2021/3/18 ÉÏÎç12:29, Jens Axboe Ð´µÀ:
+> This adds a new POLL_ADD flag, IORING_POLL_UPDATE. As with the other
+> POLL_ADD flag, this one is masked into sqe->len. If set, the POLL_ADD
+> will have the following behavior:
 > 
-> I don't think the two level dispatch here makes any sense.  Then again
-> I don't think this code makes sense either except as an example..
-
-That's all it is, an example. And, for me, just a quick way to test
-that everything stacks and layers appropriately. But yes, once we have
-something more concrete, this POC can be dropped and then re-introduced
-when there's a real use case.
-
--- 
-Jens Axboe
+> - sqe->addr must contain the the user_data of the poll request that
+>    needs to be modified. This field is otherwise invalid for a POLL_ADD
+>    command.
+> 
+> - sqe->poll_events must contain the new mask for the existing poll
+>    request. There are no checks for whether these are identical or not,
+>    if a matching poll request is found, then it is re-armed with the new
+>    mask.
+> 
+> A POLL_ADD with the IORING_POLL_UPDATE flag set may complete with any
+> of the following results:
+> 
+> 1) 0, which means that we successfully found the existing poll request
+>     specified, and performed the re-arm procedure. Any error from that
+>     re-arm will be exposed as a completion event for that original poll
+>     request, not for the update request.
+> 2) -ENOENT, if no existing poll request was found with the given
+>     user_data.
+> 3) -EALREADY, if the existing poll request was already in the process of
+>     being removed/canceled/completing.
+> 4) -EACCES, if an attempt was made to modify an internal poll request
+>     (eg not one originally issued ass IORING_OP_POLL_ADD).
+> 
+> The usual -EINVAL cases apply as well, if any invalid fields are set
+> in the sqe for this command type.
+> 
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> ---
+>   fs/io_uring.c                 | 73 ++++++++++++++++++++++++++++++++---
+>   include/uapi/linux/io_uring.h |  4 ++
+>   2 files changed, 72 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 8ed363bd95aa..79a40364e041 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -467,10 +467,14 @@ struct io_ring_ctx {
+>    */
+>   struct io_poll_iocb {
+>   	struct file			*file;
+> -	struct wait_queue_head		*head;
+> +	union {
+> +		struct wait_queue_head	*head;
+> +		u64			addr;
+> +	};
+>   	__poll_t			events;
+>   	bool				done;
+>   	bool				canceled;
+> +	bool				update;
+>   	struct wait_queue_entry		wait;
+>   };
+>   
+> @@ -5004,6 +5008,7 @@ static void io_init_poll_iocb(struct io_poll_iocb *poll, __poll_t events,
+>   	poll->head = NULL;
+>   	poll->done = false;
+>   	poll->canceled = false;
+> +	poll->update = false;
+>   	poll->events = events;
+>   	INIT_LIST_HEAD(&poll->wait.entry);
+>   	init_waitqueue_func_entry(&poll->wait, wake_func);
+> @@ -5382,24 +5387,32 @@ static int io_poll_add_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe
+>   
+>   	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
+>   		return -EINVAL;
+> -	if (sqe->addr || sqe->ioprio || sqe->off || sqe->buf_index)
+> +	if (sqe->ioprio || sqe->off || sqe->buf_index)
+>   		return -EINVAL;
+>   	flags = READ_ONCE(sqe->len);
+> -	if (flags & ~IORING_POLL_ADD_MULTI)
+> +	if (flags & ~(IORING_POLL_ADD_MULTI | IORING_POLL_UPDATE))
+>   		return -EINVAL;
+>   
+>   	events = READ_ONCE(sqe->poll32_events);
+>   #ifdef __BIG_ENDIAN
+>   	events = swahw32(events);
+>   #endif
+> -	if (!flags)
+> +	if (!(flags & IORING_POLL_ADD_MULTI))
+>   		events |= EPOLLONESHOT;
+> +	if (flags & IORING_POLL_UPDATE) {
+> +		poll->update = true;
+> +		poll->addr = READ_ONCE(sqe->addr);
+> +	} else {
+> +		if (sqe->addr)
+> +			return -EINVAL;
+> +		poll->update = false;
+Hi Jens, is `poll->update = false` redundant?
+> +	}
+>   	poll->events = demangle_poll(events) | EPOLLERR | EPOLLHUP |
+>   		       (events & (EPOLLEXCLUSIVE|EPOLLONESHOT));
+>   	return 0;
+>   }
+>   
+> -static int io_poll_add(struct io_kiocb *req, unsigned int issue_flags)
+> +static int __io_poll_add(struct io_kiocb *req)
+>   {
+>   	struct io_poll_iocb *poll = &req->poll;
+>   	struct io_ring_ctx *ctx = req->ctx;
+> @@ -5425,6 +5438,56 @@ static int io_poll_add(struct io_kiocb *req, unsigned int issue_flags)
+>   	return ipt.error;
+>   }
+>   
+> +static int io_poll_update(struct io_kiocb *req)
+> +{
+> +	struct io_ring_ctx *ctx = req->ctx;
+> +	struct io_kiocb *preq;
+> +	int ret;
+> +
+> +	spin_lock_irq(&ctx->completion_lock);
+> +	preq = io_poll_find(ctx, req->poll.addr);
+> +	if (!preq) {
+> +		ret = -ENOENT;
+> +		goto err;
+> +	} else if (preq->opcode != IORING_OP_POLL_ADD) {
+> +		/* don't allow internal poll updates */
+> +		ret = -EACCES;
+> +		goto err;
+> +	}
+> +	if (!__io_poll_remove_one(preq, &preq->poll)) {
+> +		/* in process of completing/removal */
+> +		ret = -EALREADY;
+> +		goto err;
+> +	}
+> +	/* we now have a detached poll request. reissue. */
+> +	ret = 0;
+> +err:
+> +	spin_unlock_irq(&ctx->completion_lock);
+> +	if (ret < 0) {
+> +		req_set_fail_links(req);
+> +finish:
+> +		io_req_complete(req, ret);
+> +		return 0;
+> +	}
+> +	/* only mask one event flags, keep behavior flags */
+> +	preq->poll.events &= ~0xffff;
+> +	preq->poll.events |= req->poll.events & 0xffff;
+> +	ret = __io_poll_add(preq);
+> +	if (ret < 0) {
+> +		req_set_fail_links(preq);
+> +		io_req_complete(preq, ret);
+> +	}
+> +	ret = 0;
+> +	goto finish;
+> +}
+> +
+> +static int io_poll_add(struct io_kiocb *req, unsigned int issue_flags)
+> +{
+> +	if (!req->poll.update)
+> +		return __io_poll_add(req);
+> +	return io_poll_update(req);
+> +}
+> +
+>   static enum hrtimer_restart io_timeout_fn(struct hrtimer *timer)
+>   {
+>   	struct io_timeout_data *data = container_of(timer,
+> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+> index 76c967621601..44fe7f80c851 100644
+> --- a/include/uapi/linux/io_uring.h
+> +++ b/include/uapi/linux/io_uring.h
+> @@ -166,8 +166,12 @@ enum {
+>    * IORING_POLL_ADD_MULTI	Multishot poll. Sets IORING_CQE_F_MORE if
+>    *				the poll handler will continue to report
+>    *				CQEs on behalf of the same SQE.
+> + *
+> + * IORING_POLL_UPDATE		Update existing poll request, matching
+> + *				sqe->addr as the old user_data field.
+>    */
+>   #define IORING_POLL_ADD_MULTI	(1U << 0)
+> +#define IORING_POLL_UPDATE	(1U << 1)
+>   
+>   /*
+>    * IO completion data structure (Completion Queue Entry)
+> 
 

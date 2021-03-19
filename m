@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B175534234C
+	by mail.lfdr.de (Postfix) with ESMTP id 5ACCA34234B
 	for <lists+io-uring@lfdr.de>; Fri, 19 Mar 2021 18:27:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230297AbhCSR1G (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 19 Mar 2021 13:27:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37206 "EHLO
+        id S230335AbhCSR1H (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 19 Mar 2021 13:27:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230336AbhCSR0y (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 19 Mar 2021 13:26:54 -0400
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D8C1C06174A
-        for <io-uring@vger.kernel.org>; Fri, 19 Mar 2021 10:26:54 -0700 (PDT)
-Received: by mail-wm1-x335.google.com with SMTP id u5-20020a7bcb050000b029010e9316b9d5so5651807wmj.2
-        for <io-uring@vger.kernel.org>; Fri, 19 Mar 2021 10:26:54 -0700 (PDT)
+        with ESMTP id S230028AbhCSR0z (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 19 Mar 2021 13:26:55 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15FF0C06174A
+        for <io-uring@vger.kernel.org>; Fri, 19 Mar 2021 10:26:55 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id p19so5880294wmq.1
+        for <io-uring@vger.kernel.org>; Fri, 19 Mar 2021 10:26:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=6iWiVrillEo0yFlgs9YBvt1poKT1j2p/6Cw/1CTx5Fs=;
-        b=VzcZF/MPObek3BB7mMXuVKIdpi1G6pMxSZtpVqJCYJ0WJ/OvfqSzgWrH6mkY/GWdqn
-         6QAjTLZINAr500Lpg8NZDPIB9/Z70GPs7FDMDfg9pqOZoyEyecAeRKdN3u0mI9dgBpan
-         Gsn4/M95ChKipVOQczw4GrEYtSZvBplPQA0+d20oOX+fP6n80ab3NpTKLrvGs0p3sSmI
-         ve0z/6n2EZs4TUz7PkRNNsecqQzZl9Hairw6mbI6o36pl5N8EKAfVNQaS2OzCvkRLF4M
-         Nlq4ASHfsZqLeS5aK1yYzLlPgdZ/HmWQkhhYwe8J05hOPKNOPufUG9nDCcgIj5DQvpUE
-         ou8A==
+        bh=0/lZbrZpwazEnXHDhWuypvoXCMvcboLmJwq+xjSGfnM=;
+        b=tCavWi3dNEaH2UMxwske63Nh68GHia5sCo/8dlNynKOgyf8sbj1FH2ol0AkM33Psse
+         4UgLlgd9YglucrF2E1P8LmnqOS41EnGNKSF+ilmpikOzzEaTXyobWDmWHg8Dt+79g1QT
+         jw0JKr97HUzis6Ib2jhRRxKn785PzYBo3A0Ux+JBStUe/TMjEle0p4HW7I5mq3y2WKOU
+         isEgLTBxLPs56cAYtvy2oApAK7K53xxbiMOCnumBnibuuVdUPBCudmi63Fm+ouAMXIAH
+         FfcVw7B5eYpq5pISUeQhXuzUNFuUBIi/fLDFacPiJRnoEI+O+n3u5Eh4CIiH38DWgf+3
+         PSYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=6iWiVrillEo0yFlgs9YBvt1poKT1j2p/6Cw/1CTx5Fs=;
-        b=iT7qRDoNW38y5BivVBgM++SLxVzYzLWHeWfkuY9Zn1naNvNQvbwRNFUq+EK9ahEueU
-         eSK4boMPyf+pMG/SFgZJiA3V7xn6xd8AXqRHsD36R9X7cA3sbP8l0DGuZGwYkiwNv5wY
-         MoPVThykmXeSpU0Il8Ge3tnm9SwXsFCKNdsN3YVgYCFmG5yC3tmnwwAAx4aqONlm1Q6T
-         8c11aTbTAQO8AhlH/YaDcpLYp50ZVct6zMX4ME2DK2/vAdOREMyqY+XZ0oYVCy+JDcy7
-         j4qKJ+AiXtbmUo202zlG3+8dd6ZQ8WJplTPb54syHzTBvxlpjvUYv8EvF1G8X1HighFb
-         ZP6Q==
-X-Gm-Message-State: AOAM532h/Z+bm48hihfcCmWDXUR/KjNTTB7GYLdGSiYddRrJJTFugkFu
-        xrAQ0U7Xpvvod5pqMeiGk3E=
-X-Google-Smtp-Source: ABdhPJzjyHh763Jfv9+nYBh2G7rLt5lUkWlwZaqN6LUtO65RlA19kH7vE9zoAIRFwplJqBeEUtJjVQ==
-X-Received: by 2002:a1c:bc56:: with SMTP id m83mr4729975wmf.174.1616174812937;
-        Fri, 19 Mar 2021 10:26:52 -0700 (PDT)
+        bh=0/lZbrZpwazEnXHDhWuypvoXCMvcboLmJwq+xjSGfnM=;
+        b=KcPdCP7ySilMoPhBwhax4C0KsiOQ5/eyRYq8JNrvimyFYGUzHUWmkgZwD+NRxDjDLF
+         3dME6Z1bPeZWW1ec7gYz1p1yOOJ6nMnuTRCGBmCm7rBo8tP7tDs4EFVEVIQ1GXxDvXFb
+         IS2RxQ3wdlx5O0ILYkkp9s0NkD6t2YZp1kEtKxXz6jKC1sIMbhr95YR7W3e6OMQ3t0gX
+         xTXjKtaweLsDWyD3qtiVHBMbPxXEl59O0TFj6K2HrIowPiI9B9onpJ10EE062sDnTBGs
+         XH1S4NdJg3JfNRePdZ9PVEzvAyg1HAiXK9IHoba3DrKqbbF02hSpT8Riq0DlEXKXeQ6p
+         4L8A==
+X-Gm-Message-State: AOAM532GRd7RFv48i5pu4wqJG7hzVD2nFY3AS0qfwlDBMqeTSvZONmur
+        JmaydH/+ijo/aZKikp2mD9c=
+X-Google-Smtp-Source: ABdhPJz9UtiwvCWkDFllINUgwOQKSOssBFh9sgUpA0JGtd9mTYscQeHTuFYAOIknUH4bb5Pme7/tCw==
+X-Received: by 2002:a1c:f701:: with SMTP id v1mr2680443wmh.69.1616174813904;
+        Fri, 19 Mar 2021 10:26:53 -0700 (PDT)
 Received: from localhost.localdomain ([148.252.133.195])
-        by smtp.gmail.com with ESMTPSA id i8sm7112943wmi.6.2021.03.19.10.26.52
+        by smtp.gmail.com with ESMTPSA id i8sm7112943wmi.6.2021.03.19.10.26.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Mar 2021 10:26:52 -0700 (PDT)
+        Fri, 19 Mar 2021 10:26:53 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 03/16] io_uring: optimise tctx node checks/alloc
-Date:   Fri, 19 Mar 2021 17:22:31 +0000
-Message-Id: <23ef5a5588e533a2e07cbdebfacb836eaf9207a4.1616167719.git.asml.silence@gmail.com>
+Subject: [PATCH 04/16] io_uring: keep io_req_free_batch() call locality
+Date:   Fri, 19 Mar 2021 17:22:32 +0000
+Message-Id: <d3cf238567d3b074286f82b9223e75c2b64ff1c1.1616167719.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1616167719.git.asml.silence@gmail.com>
 References: <cover.1616167719.git.asml.silence@gmail.com>
@@ -61,92 +61,35 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-First of all, w need to set tctx->sqpoll only when we add a new entry
-into ->xa, so move it from the hot path. Also extract a hot path for
-io_uring_add_task_file() as an inline helper.
+Don't do a function call (io_dismantle_req()) in the middle and place it
+to near other function calls, otherwise may lead to excessive register
+spilling.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 53 ++++++++++++++++++++++++++++-----------------------
- 1 file changed, 29 insertions(+), 24 deletions(-)
+ fs/io_uring.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 439f95111b18..e00ac529df0e 100644
+index e00ac529df0e..e8be345c81ff 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -8803,10 +8803,7 @@ static void io_uring_cancel_files(struct io_ring_ctx *ctx,
- 	}
- }
- 
--/*
-- * Note that this task has used io_uring. We use it for cancelation purposes.
-- */
--static int io_uring_add_task_file(struct io_ring_ctx *ctx)
-+static int __io_uring_add_task_file(struct io_ring_ctx *ctx)
+@@ -2132,6 +2132,7 @@ static void io_req_free_batch(struct req_batch *rb, struct io_kiocb *req,
+ 			      struct io_submit_state *state)
  {
- 	struct io_uring_task *tctx = current->io_uring;
- 	struct io_tctx_node *node;
-@@ -8818,32 +8815,40 @@ static int io_uring_add_task_file(struct io_ring_ctx *ctx)
- 			return ret;
- 		tctx = current->io_uring;
- 	}
--	if (tctx->last != ctx) {
--		void *old = xa_load(&tctx->xa, (unsigned long)ctx);
--
--		if (!old) {
--			node = kmalloc(sizeof(*node), GFP_KERNEL);
--			if (!node)
--				return -ENOMEM;
--			node->ctx = ctx;
--			node->task = current;
--
--			ret = xa_err(xa_store(&tctx->xa, (unsigned long)ctx,
--						node, GFP_KERNEL));
--			if (ret) {
--				kfree(node);
--				return ret;
--			}
-+	if (!xa_load(&tctx->xa, (unsigned long)ctx)) {
-+		node = kmalloc(sizeof(*node), GFP_KERNEL);
-+		if (!node)
-+			return -ENOMEM;
-+		node->ctx = ctx;
-+		node->task = current;
+ 	io_queue_next(req);
++	io_dismantle_req(req);
  
--			mutex_lock(&ctx->uring_lock);
--			list_add(&node->ctx_node, &ctx->tctx_list);
--			mutex_unlock(&ctx->uring_lock);
-+		ret = xa_err(xa_store(&tctx->xa, (unsigned long)ctx,
-+					node, GFP_KERNEL));
-+		if (ret) {
-+			kfree(node);
-+			return ret;
- 		}
--		tctx->last = ctx;
-+
-+		mutex_lock(&ctx->uring_lock);
-+		list_add(&node->ctx_node, &ctx->tctx_list);
-+		mutex_unlock(&ctx->uring_lock);
- 	}
-+	tctx->last = ctx;
- 	return 0;
- }
+ 	if (req->task != rb->task) {
+ 		if (rb->task)
+@@ -2142,7 +2143,6 @@ static void io_req_free_batch(struct req_batch *rb, struct io_kiocb *req,
+ 	rb->task_refs++;
+ 	rb->ctx_refs++;
  
-+/*
-+ * Note that this task has used io_uring. We use it for cancelation purposes.
-+ */
-+static inline int io_uring_add_task_file(struct io_ring_ctx *ctx)
-+{
-+	struct io_uring_task *tctx = current->io_uring;
-+
-+	if (likely(tctx && tctx->last == ctx))
-+		return 0;
-+	return __io_uring_add_task_file(ctx);
-+}
-+
- /*
-  * Remove this io_uring_file -> task mapping.
-  */
+-	io_dismantle_req(req);
+ 	if (state->free_reqs != ARRAY_SIZE(state->reqs))
+ 		state->reqs[state->free_reqs++] = req;
+ 	else
 -- 
 2.24.0
 

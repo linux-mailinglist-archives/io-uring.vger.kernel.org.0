@@ -2,66 +2,71 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EDC80343012
-	for <lists+io-uring@lfdr.de>; Sat, 20 Mar 2021 23:39:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 783A734301B
+	for <lists+io-uring@lfdr.de>; Sat, 20 Mar 2021 23:42:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230247AbhCTWjK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 20 Mar 2021 18:39:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44880 "EHLO
+        id S229901AbhCTWmZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 20 Mar 2021 18:42:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45596 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230283AbhCTWjD (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 20 Mar 2021 18:39:03 -0400
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C04E3C061574
-        for <io-uring@vger.kernel.org>; Sat, 20 Mar 2021 15:39:03 -0700 (PDT)
-Received: by mail-pl1-x636.google.com with SMTP id l1so4643595plg.12
-        for <io-uring@vger.kernel.org>; Sat, 20 Mar 2021 15:39:03 -0700 (PDT)
+        with ESMTP id S230314AbhCTWmM (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 20 Mar 2021 18:42:12 -0400
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19089C061762
+        for <io-uring@vger.kernel.org>; Sat, 20 Mar 2021 15:42:12 -0700 (PDT)
+Received: by mail-pj1-x102c.google.com with SMTP id f2-20020a17090a4a82b02900c67bf8dc69so8482346pjh.1
+        for <io-uring@vger.kernel.org>; Sat, 20 Mar 2021 15:42:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=7NZQ5Ih9EId3GOjeRQBWcWyq53rJC7Hq5ccDaCIc3so=;
-        b=GR320Bk/0ZsTEqEEV2ehV/9ayP2SY4McL19Tv1IPUkLkQ+amXvEgVvgdFb1WImG6IF
-         0GULtcB0LpDXWSW3KL1YKMg82inZ8YxI6N4RrufyRjqzsOM2yEY54rwTrA87kb4FvbZ+
-         z9NQ9Vf4LWNY4K6woatkp1sqmaGqqKUCrgG2Lz5HwAN1JA+HOB3zubS+mpv1jkDuq0aH
-         Tu7NlnVVV3nF0MBJ7fdoaoAhoS01AQ0Mg2e2czv+o6kk0GrgEEp31Ifo8u5JHUGYUmgd
-         USjDHoEriZXbxueAPOGV+/5IPDgCxmPX0S3TxibojTxdRn6ih3wDoQ1vMxIjj+d/HWC/
-         9QLQ==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=CP6XWAgVpuegbTUMFWEzWCVzLKWLQ4kM5wh2fwuAa3k=;
+        b=QCoTt0q8o50hCJ8UjJQemjoANIbbaJDpuwoPqbATB6EIz/Pc1vN3X3dOSSwWRYMSrc
+         7cmtlIO7o/9ZmKite6RZZc4mmsKvit/GK4IFTFH4gZ623/ccyPh389sYimYUUWVpHsHG
+         AwgQu2we0zKfZXoNLiqsJlAZqIzTTIc2c5QdNsk7SiD8ugQjuiFpUWKr3s7VegBr5X1A
+         ktzseNUXTTtGnCN21Ai41CmbWirMAGVSK45KLItke2XKfLxCNi+w9kQwM01NmsRv4Vgx
+         z5oJ3HJteK0zPWM6lQrgkWy8g2TOMDagQQ5YtNa1Q0uJuFt13UQkkaIhCU7PsfHrm1cG
+         pPzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=7NZQ5Ih9EId3GOjeRQBWcWyq53rJC7Hq5ccDaCIc3so=;
-        b=FBCdZxHxX/75nhvjXFYS2fmPjpRjiXOQNtVOAkAsb7CgSDtp0gBbhaHcDUFzvKcaKK
-         xFibBJ0ncGI5A9l4x8537jz7+5K+x2DyQLKK2N68MMR7CO0MDFKX8IMYi0QA2qgnmiXp
-         EdhvCBEJjKDZ2x4upYoMSm5xzIlvc7TUrXgyEbcdE1M9uM/4eggXVN0e113sWF0dQcOh
-         acfjn57BHaSrCHMlmgL5/PHXCdw5uAOg3f0I1enm3tqdbUxjWzduXhvSv4pN9SJM+Y42
-         o939FkkZCRf/FBh16bTe901bCHcEzBuXG2a34XQ7MUkl2s8lfGbSJ959iNMeLqUKn13o
-         emWg==
-X-Gm-Message-State: AOAM531ldJ0Xx8+F/KHsUJHm8UHiUkh4JoqYt8gUvnmjcQ5PX9MU9okm
-        ZrwLjwsBPn55+pyvRBwF0faHYRQQkF2s0Q==
-X-Google-Smtp-Source: ABdhPJzonjbnykbt1lPmulpuHRPMd9owK+Cpu8GFeWstEhWK4WJZYExGrYFAZ56+xwi4Z2Eh1YFgmQ==
-X-Received: by 2002:a17:90a:5889:: with SMTP id j9mr5560311pji.69.1616279942835;
-        Sat, 20 Mar 2021 15:39:02 -0700 (PDT)
+        bh=CP6XWAgVpuegbTUMFWEzWCVzLKWLQ4kM5wh2fwuAa3k=;
+        b=HxIebIVCEHcn4B5j6DpSLhKeepg2J8jczg97srYwd9CrGiOlK0Ey8O46GcAHqzbFAl
+         Ifc5KpOpGI/UBux2tu8OUisSvokLcxcMGmGbsPdLlKZPQCrgwCJGB92zl3ckAIKB57Eo
+         Gdok/RiBgxkSvZR+7kX5glwZAvAgAAuyZ3XvVtruno08TIS0nFtGUDRceYwU2Ad7AWvk
+         C3ZRRrtloc7O31NWjQPtkon4p5PHAmIk1ihb0C8h3qpTqlTGJjLWiNrV9sRLtr6AVZYh
+         85xV9HUd9uW2AuY9iMkAXxfkONh7Zo4PfxJwGT58J4RtjJdoc/vGr7Tj6Os0Ot7Sj2l5
+         KPVg==
+X-Gm-Message-State: AOAM533MjTnFGdaazLDvX/TrIBgp7llU8bX1AGH5EcAbnwmK+xPmQ2E3
+        yLfxaHL1bvNGAMTWsfrzMOso7Q==
+X-Google-Smtp-Source: ABdhPJx0He7mkEzKdzieiot3buPG3NUDE5uB5sDIpiCJP0xJE8B/hnR/XxQxOQl9Z8opYTIIdHRlkA==
+X-Received: by 2002:a17:90a:5898:: with SMTP id j24mr5336476pji.110.1616280131349;
+        Sat, 20 Mar 2021 15:42:11 -0700 (PDT)
 Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id v126sm9210051pfv.163.2021.03.20.15.39.02
+        by smtp.gmail.com with ESMTPSA id b9sm8679749pgn.42.2021.03.20.15.42.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 20 Mar 2021 15:39:02 -0700 (PDT)
-Subject: Re: [PATCH v2 0/5] Complete setup before calling wake_up_new_task()
- and improve task->comm
-To:     Stefan Metzmacher <metze@samba.org>, io-uring@vger.kernel.org
-References: <d1a8958c-aec7-4f94-45f8-f4c2f2ecacff@samba.org>
- <cover.1616197787.git.metze@samba.org>
- <61c5e1b6-210e-fb04-5afa-4b12c3a22daa@kernel.dk>
- <7e75d8c0-6c20-316e-0a27-961b343c724a@samba.org>
+        Sat, 20 Mar 2021 15:42:10 -0700 (PDT)
+Subject: Re: [PATCH 1/2] signal: don't allow sending any signals to
+ PF_IO_WORKER threads
+To:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Stefan Metzmacher <metze@samba.org>
+References: <20210320153832.1033687-1-axboe@kernel.dk>
+ <20210320153832.1033687-2-axboe@kernel.dk> <m1eeg9bxyi.fsf@fess.ebiederm.org>
+ <CAHk-=wjLMy+J20ZSBec4iarw2NeSu5sWXm6wdMH59n-e0Qe06g@mail.gmail.com>
+ <m1czvt8q0r.fsf@fess.ebiederm.org>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <a38f4102-ab18-934b-c724-7b97f24d66a7@kernel.dk>
-Date:   Sat, 20 Mar 2021 16:39:01 -0600
+Message-ID: <43f05d70-11a9-d59a-1eac-29adc8c53894@kernel.dk>
+Date:   Sat, 20 Mar 2021 16:42:09 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <7e75d8c0-6c20-316e-0a27-961b343c724a@samba.org>
+In-Reply-To: <m1czvt8q0r.fsf@fess.ebiederm.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -69,118 +74,59 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/20/21 1:22 PM, Stefan Metzmacher wrote:
+On 3/20/21 3:38 PM, Eric W. Biederman wrote:
+> Linus Torvalds <torvalds@linux-foundation.org> writes:
 > 
-> Am 20.03.21 um 02:24 schrieb Jens Axboe:
->> On 3/19/21 6:00 PM, Stefan Metzmacher wrote:
->>> Hi,
+>> On Sat, Mar 20, 2021 at 9:19 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
 >>>
->>> now that we have an explicit wake_up_new_task() in order to start the
->>> result from create_io_thread(), we should things up before calling
->>> wake_up_new_task().
->>>
->>> There're also some improvements around task->comm:
->>> - We return 0 bytes for /proc/<pid>/cmdline
->>>
->>> While doing this I noticed a few places we check for
->>> PF_KTHREAD, but not PF_IO_WORKER, maybe we should
->>> have something like a PS_IS_KERNEL_THREAD_MASK() macro
->>> that should be used in generic places and only
->>> explicitly use PF_IO_WORKER or PF_KTHREAD checks where the
->>> difference matters.
->>>
->>> There are also quite a number of cases where we use
->>> same_thread_group(), I guess these need to be checked.
->>> Should that return true if userspace threads and their iothreds
->>> are compared?
+>>> The creds should be reasonably in-sync with the rest of the threads.
 >>
->> Any particular ones you are worried about here?
-> 
-> The signal problems and it's used to allow certain modifications
-> between threads in the same group.
-
-Gotcha
-
-> With your same_thread_group_account() change it should be all fixed
-> magically. I guess the thread also doesn't appear in /proc/pid/tasks/
-> any more, correct?
-
-I think it'll still show up there, as they are still linked.
-
-> Would 'top' still hide them with the thread group
-> and only show them with 'H' (which show the individual threads)?
-
-I think it'll show them as a thread group still.
-
-> In future we may want to have /proc/pid/iothreads/ instead...
-
-Maybe?
-
->>> I did some basic testing and found the problems I explained here:
->>> https://lore.kernel.org/io-uring/F3B6EA77-99D1-4424-85AC-CFFED7DC6A4B@kernel.dk/T/#t
->>> They appear with and without my changes.
->>>
->>> Changes in v2:
->>>
->>> - I dropped/deferred these changes:
->>>   - We no longer allow a userspace process to change
->>>     /proc/<pid>/[task/<tid>]/comm
->>>   - We dynamically generate comm names (up to 63 chars)
->>>     via io_wq_worker_comm(), similar to wq_worker_comm()
->>>
->>> Stefan Metzmacher (5):
->>>   kernel: always initialize task->pf_io_worker to NULL
->>>   io_uring: io_sq_thread() no longer needs to reset
->>>     current->pf_io_worker
->>>   io-wq: call set_task_comm() before wake_up_new_task()
->>>   io_uring: complete sq_thread setup before calling wake_up_new_task()
->>>   fs/proc: hide PF_IO_WORKER in get_task_cmdline()
->>>
->>>  fs/io-wq.c     | 17 +++++++++--------
->>>  fs/io_uring.c  | 22 +++++++++++-----------
->>>  fs/proc/base.c |  3 +++
->>>  kernel/fork.c  |  1 +
->>>  4 files changed, 24 insertions(+), 19 deletions(-)
+>> It's not about credentials (despite the -EPERM).
 >>
->> I don't disagree with any of this, but view them more as cleanups than
->> fixes. In which case I think 5.13 is fine, and that's where they should
->> go. That seems true for both the first two fixes, and the comm related
->> ones too.
+>> It's about the fact that kernel threads cannot handle signals, and
+>> then get caught in endless loops of "if (sigpending()) return
+>> -EAGAIN".
 >>
->> If you don't agree, can you detail why? The comm changes seem fine, but
->> doesn't change the visible name. We can make it wider, sure, but any
->> reason to?
+>> For a normal user thread, that "return -EAGAIN" (or whatever) will end
+>> up returning an error to user space - and before it does that, it will
+>> go through the "oh, returning to user space, so handle signal" path.
+>> Which will clear sigpending etc.
+>>
+>> A thread that never returns to user space fundamentally cannot handle
+>> this. The sigpending() stays on forever, the signal never gets
+>> handled, the thread can't do anything.
+>>
+>> So delivering a signal to a kernel thread fundamentally cannot work
+>> (although we do have some threads that explicitly see "oh, if I was
+>> killed, I will exit" - think things like in-kernel nfsd etc).
 > 
-> Ok, I guess we want to take only 'fs/proc: hide PF_IO_WORKER in
-> get_task_cmdline()' so that ps and top show them as '[iou_mgr_12345]'
-> instead of showing the userspace cmd.
+> I agree that getting a kernel thread to receive a signal is quite
+> tricky.  But that is not what the patch affects.
+> 
+> The patch covers the case when instead of specifying the pid of the
+> process to kill(2) someone specifies the tid of a thread.  Which implies
+> that type is PIDTYPE_TGID, and in turn the signal is being placed on the
+> t->signal->shared_pending queue.  Not the thread specific t->pending
+> queue.
+> 
+> So my question is since the signal is delivered to the process as a
+> whole why do we care if someone specifies the tid of a kernel thread,
+> rather than the tid of a userspace thread?
 
-That one makes sense, to keep it consistent with earlier to some extent,
-and not to have 5.12 be the odd one out compared to later kernels as
-well.
+Right, that's what this first patch does, and in all honesty, it's not
+required like the 2/2 patch is. I do think it makes it more consistent,
+though - the threads don't take signals, period. Allowing delivery from
+eg kill(2) and then pass it to the owning task of the io_uring is
+somewhat counterintuitive, and differs from earlier kernels where there
+was no relationsship between that owning task and the async worker
+thread.
 
-> And with your same_thread_group_account() change we only need this hunk:
-> 
-> @@ -1822,7 +1826,7 @@ void task_dump_owner(struct task_struct *task, umode_t mode,
->         kuid_t uid;
->         kgid_t gid;
-> 
-> -       if (unlikely(task->flags & PF_KTHREAD)) {
-> +       if (unlikely(task->flags & (PF_KTHREAD | PF_IO_WORKER))) {
->                 *ruid = GLOBAL_ROOT_UID;
->                 *rgid = GLOBAL_ROOT_GID;
->                 return;
-> 
-> From here:
-> https://lore.kernel.org/io-uring/97ad63bef490139bb4996e75dea408af1e78fa47.1615826736.git.metze@samba.org/T/#u
-> 
-> I think we should also take that hunk...
-> 
-> What do you think?
+That's why I think the patch DOES make sense. These threads may share a
+personality with the owning task, but I don't think we should be able to
+manipulate them from userspace at all. That includes SIGSTOP, of course,
+but also regular signals.
 
-I'll have to look into that, on the face of it it seems wrong. Why just
-assign global root uid/gid for the io worker? It's using the same
-credentials as the original task.
+Hence I do think we should do something like this.
 
 -- 
 Jens Axboe

@@ -2,146 +2,207 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9555C342F36
-	for <lists+io-uring@lfdr.de>; Sat, 20 Mar 2021 20:23:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B6E9342F47
+	for <lists+io-uring@lfdr.de>; Sat, 20 Mar 2021 20:35:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229805AbhCTTWs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 20 Mar 2021 15:22:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59408 "EHLO
+        id S229780AbhCTTea (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 20 Mar 2021 15:34:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229787AbhCTTWY (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 20 Mar 2021 15:22:24 -0400
+        with ESMTP id S229618AbhCTTeE (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 20 Mar 2021 15:34:04 -0400
 Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6726C061574
-        for <io-uring@vger.kernel.org>; Sat, 20 Mar 2021 12:22:15 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 026ECC061574;
+        Sat, 20 Mar 2021 12:34:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-         s=42; h=Date:Message-ID:From:To:CC;
-        bh=Qc4vcI9ATyLXpBXXuf/0WDG+YPUM9N6crgxK/O/JYC8=; b=MgnElvmIqcQhvY2HQNvBH0zERv
-        K3bueEKtRO7I40znlf7vg2E5LcLhTWDPxQyFkIVrGQ6ZllrQ/KQgSRmQvuevqnO3Ff4EFNKXa4SAG
-        wLKePrf1Xa6AD8boNLhZn4UdtBARaQ9zw8Fs1bRVBogTvMJ0ufoJXY//4eRW4Sha9FukZtkcuIjOO
-        8iE7NmS+hOYLqni+WDDmU1NyVQMs3/YIboCEdQnBqMG5N7+Q395OuMPnEZS93mJ7VVTCojNF6nsrw
-        sW4cbARnUeCEQnBv0yJYqGYrmEvfExV9Rc12JUA08/hwFt6okkbTHi7fkTE3B9vLt78GXPbkZL6xJ
-        v+XIBtn95vDiioBNAXV5XrJC6eb3S8pJetO8wveUHcANkQuB81oG9CL2NC4oUwOldSKE91Q0TJzxv
-        yZdQJLgAPZ1cVJEtwn1YC38r1EP83yLpDUPT1ZMnDgUICERjSeB/Kmotf1t6QbMeimYKouGsIClT6
-        /fxao3ZtussKBVMCicA3yHWv;
+         s=42; h=Message-Id:Date:Cc:To:From;
+        bh=rMGUY++m322+w5Ub86qe3mkvPr0CfrAZ5ssaHcPRAo4=; b=cff3O8Snb9KjXbxFsgZBIQGzIX
+        SqbWqL5x7SWEs7/q/DLckeaEilDzxjS+gP1Tau8AJu4eHSIPATheJcPFRRJUXXjjCjmWkpGMO4+zC
+        1yt6O8cSjXNk1VRqRpdtgZ0mXM257zdcGL+l7kJDYDE/yHw0oQ+12rR9M9F2+ze1yNkYWjATCUhhz
+        OWGhIw6atYEr1YmeXuSO5GJ/+fSFFicX08eiCXjmXAOXCynL89jSkHmSG9h8Zi9oLvzuSY0J845hr
+        3ZIaxE0AliMYGMbdlTlNfrfpSs5v4J4/3gM76uUtE79ntlK2mOjvFkGamcamwfSMXKjUSBmvJ3OyU
+        ufkYK9q6DwzQux5uzASMQnoUOt0EVtJiXIno4aTtkDtPc+Jj6dfcC/BPgl167tmlecl1q18Iaj3Sz
+        KMUu4sB1lkvzg21/VajcF9JW20G+dmOwQXdYK4rC7CgINQPphIiiEZ69/2sVGapf1o4nKyuPiZAU6
+        2QCHfWlpqqu0R+f5P0cil+1L;
 Received: from [127.0.0.2] (localhost [127.0.0.1])
         by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
         (Exim)
-        id 1lNhAq-0005sn-W6; Sat, 20 Mar 2021 19:22:13 +0000
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-References: <d1a8958c-aec7-4f94-45f8-f4c2f2ecacff@samba.org>
- <cover.1616197787.git.metze@samba.org>
- <61c5e1b6-210e-fb04-5afa-4b12c3a22daa@kernel.dk>
+        id 1lNhMH-0005vY-Vg; Sat, 20 Mar 2021 19:34:02 +0000
 From:   Stefan Metzmacher <metze@samba.org>
-Subject: Re: [PATCH v2 0/5] Complete setup before calling wake_up_new_task()
- and improve task->comm
-Message-ID: <7e75d8c0-6c20-316e-0a27-961b343c724a@samba.org>
-Date:   Sat, 20 Mar 2021 20:22:12 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
+To:     io-uring@vger.kernel.org
+Cc:     Stefan Metzmacher <metze@samba.org>, netdev@vger.kernel.org
+Subject: [PATCH v2 1/1] io_uring: call req_set_fail_links() on short send[msg]()/recv[msg]() with MSG_WAITALL
+Date:   Sat, 20 Mar 2021 20:33:36 +0100
+Message-Id: <12efc18b6bef3955500080a238197e90ca6a402c.1616268538.git.metze@samba.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <c4e1a4cc0d905314f4d5dc567e65a7b09621aab3.1615908477.git.metze@samba.org>
+References: <c4e1a4cc0d905314f4d5dc567e65a7b09621aab3.1615908477.git.metze@samba.org>
 MIME-Version: 1.0
-In-Reply-To: <61c5e1b6-210e-fb04-5afa-4b12c3a22daa@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+Without that it's not safe to use them in a linked combination with
+others.
 
-Am 20.03.21 um 02:24 schrieb Jens Axboe:
-> On 3/19/21 6:00 PM, Stefan Metzmacher wrote:
->> Hi,
->>
->> now that we have an explicit wake_up_new_task() in order to start the
->> result from create_io_thread(), we should things up before calling
->> wake_up_new_task().
->>
->> There're also some improvements around task->comm:
->> - We return 0 bytes for /proc/<pid>/cmdline
->>
->> While doing this I noticed a few places we check for
->> PF_KTHREAD, but not PF_IO_WORKER, maybe we should
->> have something like a PS_IS_KERNEL_THREAD_MASK() macro
->> that should be used in generic places and only
->> explicitly use PF_IO_WORKER or PF_KTHREAD checks where the
->> difference matters.
->>
->> There are also quite a number of cases where we use
->> same_thread_group(), I guess these need to be checked.
->> Should that return true if userspace threads and their iothreds
->> are compared?
-> 
-> Any particular ones you are worried about here?
+Now combinations like IORING_OP_SENDMSG followed by IORING_OP_SPLICE
+should be possible.
 
-The signal problems and it's used to allow certain modifications
-between threads in the same group.
+We already handle short reads and writes for the following opcodes:
 
-With your same_thread_group_account() change it should be all fixed
-magically. I guess the thread also doesn't appear in /proc/pid/tasks/
-any more, correct?
+- IORING_OP_READV
+- IORING_OP_READ_FIXED
+- IORING_OP_READ
+- IORING_OP_WRITEV
+- IORING_OP_WRITE_FIXED
+- IORING_OP_WRITE
+- IORING_OP_SPLICE
+- IORING_OP_TEE
 
-Would 'top' still hide them with the thread group
-and only show them with 'H' (which show the individual threads)?
+Now we have it for these as well:
 
-In future we may want to have /proc/pid/iothreads/ instead...
+- IORING_OP_SENDMSG
+- IORING_OP_SEND
+- IORING_OP_RECVMSG
+- IORING_OP_RECV
 
->> I did some basic testing and found the problems I explained here:
->> https://lore.kernel.org/io-uring/F3B6EA77-99D1-4424-85AC-CFFED7DC6A4B@kernel.dk/T/#t
->> They appear with and without my changes.
->>
->> Changes in v2:
->>
->> - I dropped/deferred these changes:
->>   - We no longer allow a userspace process to change
->>     /proc/<pid>/[task/<tid>]/comm
->>   - We dynamically generate comm names (up to 63 chars)
->>     via io_wq_worker_comm(), similar to wq_worker_comm()
->>
->> Stefan Metzmacher (5):
->>   kernel: always initialize task->pf_io_worker to NULL
->>   io_uring: io_sq_thread() no longer needs to reset
->>     current->pf_io_worker
->>   io-wq: call set_task_comm() before wake_up_new_task()
->>   io_uring: complete sq_thread setup before calling wake_up_new_task()
->>   fs/proc: hide PF_IO_WORKER in get_task_cmdline()
->>
->>  fs/io-wq.c     | 17 +++++++++--------
->>  fs/io_uring.c  | 22 +++++++++++-----------
->>  fs/proc/base.c |  3 +++
->>  kernel/fork.c  |  1 +
->>  4 files changed, 24 insertions(+), 19 deletions(-)
-> 
-> I don't disagree with any of this, but view them more as cleanups than
-> fixes. In which case I think 5.13 is fine, and that's where they should
-> go. That seems true for both the first two fixes, and the comm related
-> ones too.
-> 
-> If you don't agree, can you detail why? The comm changes seem fine, but
-> doesn't change the visible name. We can make it wider, sure, but any
-> reason to?
+For IORING_OP_RECVMSG we also check for the MSG_TRUNC and MSG_CTRUNC
+flags in order to call req_set_fail_links().
 
-Ok, I guess we want to take only 'fs/proc: hide PF_IO_WORKER in get_task_cmdline()'
-so that ps and top show them as '[iou_mgr_12345]' instead of showing the userspace
-cmd.
+There might be applications arround depending on the behavior
+that even short send[msg]()/recv[msg]() retuns continue an
+IOSQE_IO_LINK chain.
 
-And with your same_thread_group_account() change we only need this hunk:
+It's very unlikely that such applications pass in MSG_WAITALL,
+which is only defined in 'man 2 recvmsg', but not in 'man 2 sendmsg'.
 
-@@ -1822,7 +1826,7 @@ void task_dump_owner(struct task_struct *task, umode_t mode,
-        kuid_t uid;
-        kgid_t gid;
+It's expected that the low level sock_sendmsg() call just ignores
+MSG_WAITALL, as MSG_ZEROCOPY is also ignored without explicitly set
+SO_ZEROCOPY.
 
--       if (unlikely(task->flags & PF_KTHREAD)) {
-+       if (unlikely(task->flags & (PF_KTHREAD | PF_IO_WORKER))) {
-                *ruid = GLOBAL_ROOT_UID;
-                *rgid = GLOBAL_ROOT_GID;
-                return;
+We also expect the caller to know about the implicit truncation to
+MAX_RW_COUNT, which we don't detect.
 
-From here:
-https://lore.kernel.org/io-uring/97ad63bef490139bb4996e75dea408af1e78fa47.1615826736.git.metze@samba.org/T/#u
+cc: netdev@vger.kernel.org
+Link: https://lore.kernel.org/r/c4e1a4cc0d905314f4d5dc567e65a7b09621aab3.1615908477.git.metze@samba.org
+Signed-off-by: Stefan Metzmacher <metze@samba.org>
+---
+ fs/io_uring.c | 24 ++++++++++++++++++++----
+ 1 file changed, 20 insertions(+), 4 deletions(-)
 
-I think we should also take that hunk...
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 75b791ff21ec..746435e3f534 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -4386,6 +4386,7 @@ static int io_sendmsg(struct io_kiocb *req, unsigned int issue_flags)
+ 	struct io_async_msghdr iomsg, *kmsg;
+ 	struct socket *sock;
+ 	unsigned flags;
++	int min_ret = 0;
+ 	int ret;
+ 
+ 	sock = sock_from_file(req->file);
+@@ -4406,6 +4407,9 @@ static int io_sendmsg(struct io_kiocb *req, unsigned int issue_flags)
+ 	else if (issue_flags & IO_URING_F_NONBLOCK)
+ 		flags |= MSG_DONTWAIT;
+ 
++	if (flags & MSG_WAITALL)
++		min_ret = iov_iter_count(&kmsg->msg.msg_iter);
++
+ 	ret = __sys_sendmsg_sock(sock, &kmsg->msg, flags);
+ 	if ((issue_flags & IO_URING_F_NONBLOCK) && ret == -EAGAIN)
+ 		return io_setup_async_msg(req, kmsg);
+@@ -4416,7 +4420,7 @@ static int io_sendmsg(struct io_kiocb *req, unsigned int issue_flags)
+ 	if (kmsg->free_iov)
+ 		kfree(kmsg->free_iov);
+ 	req->flags &= ~REQ_F_NEED_CLEANUP;
+-	if (ret < 0)
++	if (ret < min_ret)
+ 		req_set_fail_links(req);
+ 	__io_req_complete(req, issue_flags, ret, 0);
+ 	return 0;
+@@ -4429,6 +4433,7 @@ static int io_send(struct io_kiocb *req, unsigned int issue_flags)
+ 	struct iovec iov;
+ 	struct socket *sock;
+ 	unsigned flags;
++	int min_ret = 0;
+ 	int ret;
+ 
+ 	sock = sock_from_file(req->file);
+@@ -4450,6 +4455,9 @@ static int io_send(struct io_kiocb *req, unsigned int issue_flags)
+ 	else if (issue_flags & IO_URING_F_NONBLOCK)
+ 		flags |= MSG_DONTWAIT;
+ 
++	if (flags & MSG_WAITALL)
++		min_ret = iov_iter_count(&msg.msg_iter);
++
+ 	msg.msg_flags = flags;
+ 	ret = sock_sendmsg(sock, &msg);
+ 	if ((issue_flags & IO_URING_F_NONBLOCK) && ret == -EAGAIN)
+@@ -4457,7 +4465,7 @@ static int io_send(struct io_kiocb *req, unsigned int issue_flags)
+ 	if (ret == -ERESTARTSYS)
+ 		ret = -EINTR;
+ 
+-	if (ret < 0)
++	if (ret < min_ret)
+ 		req_set_fail_links(req);
+ 	__io_req_complete(req, issue_flags, ret, 0);
+ 	return 0;
+@@ -4609,6 +4617,7 @@ static int io_recvmsg(struct io_kiocb *req, unsigned int issue_flags)
+ 	struct socket *sock;
+ 	struct io_buffer *kbuf;
+ 	unsigned flags;
++	int min_ret = 0;
+ 	int ret, cflags = 0;
+ 	bool force_nonblock = issue_flags & IO_URING_F_NONBLOCK;
+ 
+@@ -4640,6 +4649,9 @@ static int io_recvmsg(struct io_kiocb *req, unsigned int issue_flags)
+ 	else if (force_nonblock)
+ 		flags |= MSG_DONTWAIT;
+ 
++	if (flags & MSG_WAITALL)
++		min_ret = iov_iter_count(&kmsg->msg.msg_iter);
++
+ 	ret = __sys_recvmsg_sock(sock, &kmsg->msg, req->sr_msg.umsg,
+ 					kmsg->uaddr, flags);
+ 	if (force_nonblock && ret == -EAGAIN)
+@@ -4653,7 +4665,7 @@ static int io_recvmsg(struct io_kiocb *req, unsigned int issue_flags)
+ 	if (kmsg->free_iov)
+ 		kfree(kmsg->free_iov);
+ 	req->flags &= ~REQ_F_NEED_CLEANUP;
+-	if (ret < 0)
++	if (ret < min_ret || ((flags & MSG_WAITALL) && (kmsg->msg.msg_flags & (MSG_TRUNC | MSG_CTRUNC))))
+ 		req_set_fail_links(req);
+ 	__io_req_complete(req, issue_flags, ret, cflags);
+ 	return 0;
+@@ -4668,6 +4680,7 @@ static int io_recv(struct io_kiocb *req, unsigned int issue_flags)
+ 	struct socket *sock;
+ 	struct iovec iov;
+ 	unsigned flags;
++	int min_ret = 0;
+ 	int ret, cflags = 0;
+ 	bool force_nonblock = issue_flags & IO_URING_F_NONBLOCK;
+ 
+@@ -4699,6 +4712,9 @@ static int io_recv(struct io_kiocb *req, unsigned int issue_flags)
+ 	else if (force_nonblock)
+ 		flags |= MSG_DONTWAIT;
+ 
++	if (flags & MSG_WAITALL)
++		min_ret = iov_iter_count(&msg.msg_iter);
++
+ 	ret = sock_recvmsg(sock, &msg, flags);
+ 	if (force_nonblock && ret == -EAGAIN)
+ 		return -EAGAIN;
+@@ -4707,7 +4723,7 @@ static int io_recv(struct io_kiocb *req, unsigned int issue_flags)
+ out_free:
+ 	if (req->flags & REQ_F_BUFFER_SELECTED)
+ 		cflags = io_put_recv_kbuf(req);
+-	if (ret < 0)
++	if (ret < min_ret || ((flags & MSG_WAITALL) && (msg.msg_flags & (MSG_TRUNC | MSG_CTRUNC))))
+ 		req_set_fail_links(req);
+ 	__io_req_complete(req, issue_flags, ret, cflags);
+ 	return 0;
+-- 
+2.25.1
 
-What do you think?
-
-metze

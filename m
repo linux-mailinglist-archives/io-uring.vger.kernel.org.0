@@ -2,57 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DBBC0343343
-	for <lists+io-uring@lfdr.de>; Sun, 21 Mar 2021 16:44:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C3CEF343383
+	for <lists+io-uring@lfdr.de>; Sun, 21 Mar 2021 17:39:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230113AbhCUPnm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 21 Mar 2021 11:43:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36594 "EHLO
+        id S229904AbhCUQi5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 21 Mar 2021 12:38:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230115AbhCUPnT (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 21 Mar 2021 11:43:19 -0400
-Received: from mail-pg1-x529.google.com (mail-pg1-x529.google.com [IPv6:2607:f8b0:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E58FDC061574
-        for <io-uring@vger.kernel.org>; Sun, 21 Mar 2021 08:43:18 -0700 (PDT)
-Received: by mail-pg1-x529.google.com with SMTP id v2so7006859pgk.11
-        for <io-uring@vger.kernel.org>; Sun, 21 Mar 2021 08:43:18 -0700 (PDT)
+        with ESMTP id S229874AbhCUQiT (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 21 Mar 2021 12:38:19 -0400
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E9D5C061574
+        for <io-uring@vger.kernel.org>; Sun, 21 Mar 2021 09:38:08 -0700 (PDT)
+Received: by mail-pj1-x1029.google.com with SMTP id nh23-20020a17090b3657b02900c0d5e235a8so7307332pjb.0
+        for <io-uring@vger.kernel.org>; Sun, 21 Mar 2021 09:38:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=to:from:subject:message-id:date:user-agent:mime-version
+        h=from:subject:to:cc:message-id:date:user-agent:mime-version
          :content-language:content-transfer-encoding;
-        bh=iJJTTHjhkg3IKG2+5ahibbnd+3jQ6pQuqkguBVsrkvw=;
-        b=scTy1Thrc204zSEz4zPnFtKRXy/EaDJsDw/4zzHAwwIQ5hr/pLiENH9yCPiPRqmj05
-         CaWgOrbTcAXDgySonQjxeR7Md4amATmb0PlZcoLMIsPAyL5Exx0my++5+wa0DTbr2Ymv
-         xI7Y5NFbdCYkgTXUFABdscfLAxet5GclOvcm7rMM8d56RaprmMODQeLs34326/3m5tRQ
-         JH2hfUk8hYEezazfA2/ZmDChkVPDY1MYV9SxYZkRM1E3o2je44Bxrml2JNUv5D0cNoe8
-         WefyvyoKYEwb+4iTAMbvnj1NUUIJXJahMd9niBx/OwrDDMCQY6Wdlmri7ITtQ1iVXKf8
-         QsPQ==
+        bh=5N9DOBNg5q+cX1nThPiWZ6ZK66G2Hs/lXfr1BIfQ6bI=;
+        b=bok2Rpaa9lxPeYRNWQ9PjghCs+hzkICxgl0Hn8gfGAClySVtOu/lZkblCXdwOzT4kO
+         Rjxvm8u3hr/uMYQd1fKwQwbO42MVQf9Jf2ysChYin6eJfpta73UelDBQj4n0iQW96xOd
+         aBqZKu+50MDz/H69LifB27M3SIY4QWzTSyDBX+eNeouC0lLiz98VnO0iAU9Raz/6fw7W
+         KrwnluO+bclyegl5mCcz5Go3Px30KdZ/P9K0+51RxJgYo3wDvvrY97aMyp0StQmY6bJG
+         LKhS8Z2beZKXrakBAKkE70uVe3/H1zZkd1msW7RUeQNPlIA4XArh4B+6C7llacVLgjed
+         DSdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
+        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
          :mime-version:content-language:content-transfer-encoding;
-        bh=iJJTTHjhkg3IKG2+5ahibbnd+3jQ6pQuqkguBVsrkvw=;
-        b=dDoYqpG2GDuiJUY38wHqh6OBAPtE9sAD+iccD5S4HAxS1WvfMIGqaMs/+DZrFTqwSe
-         stNZ+G3yPw1n/GZL51eSzBIesVqDo+WBcLsi5obPlCLr4feHbInTHilVRrvvIltJ9ws8
-         ++PGSk8XgXy04SGMCzI7A62IlEz41Wxx2yJ7Lve27PcVoz/9m5cprKnYdy+KtDP2dxDr
-         SSlFYJDiQBuBIIyEUrM5NoNe8tYHs0+1ysEbBvZK1udSKIrg/2H7+EwHQQ28YT3eFDwf
-         G+f/tT9ZgVWtokI+U5vi9y7AT2Rkdx05qn5B1cvfzkdUO/WV0LIvK8CuadZMFB2HC5Tj
-         pK+A==
-X-Gm-Message-State: AOAM53383oYWvF3X9AjT6E3Q9CZFBUqDYCNzFSKHuhfHZIrZvn2THu3W
-        LSnyHZIzy99J4ytFf2DTtc9mcE1VMsJ+JQ==
-X-Google-Smtp-Source: ABdhPJygk3hioIV9qVRwBZeNKJaWsA5n5ziH6bmZvarCQtTHQE3Q898Fdq6Wof4bZR6oMo86WL0IEg==
-X-Received: by 2002:a62:cfc4:0:b029:200:49d8:6f29 with SMTP id b187-20020a62cfc40000b029020049d86f29mr17309535pfg.45.1616341398273;
-        Sun, 21 Mar 2021 08:43:18 -0700 (PDT)
+        bh=5N9DOBNg5q+cX1nThPiWZ6ZK66G2Hs/lXfr1BIfQ6bI=;
+        b=bezmXnR5NJYivfbW1d0zZvEMptVy9E10LzxIXkfT67k3LuafrkGr5HUpbh3TCtM7Du
+         BJwHXUZz+ksbW/e45KAyY9tVUfAG2AadscjbbFHYK0u/etETech0BflBTa4DUezBsMRU
+         wDLu1xJLNDzocj3TxPmEK/hViOplnAbaw7jLKBLxDYkyTnIqjXx0XN+0CFJghC910PNX
+         WNgVoV+if47svrV4OZXfgFpjz2CeBjKjm8JKC7RTNODdhcyC3PbgzD7W0Er+SxLTvMSS
+         At74pZ6GmF45nW+Hc2vs1CYad2Itr9QnXNuD86GShWAozuBZhsBsk7UFe9oJ1bpF0gTL
+         vEuA==
+X-Gm-Message-State: AOAM532b+jIkAarXw+UAuyCnJsziSwjnWPTqZ6iaAIH4Qd17lA9vHMzp
+        ipTxgnIw/53W9mC0RSFTiIBoIMC5eW7dtQ==
+X-Google-Smtp-Source: ABdhPJx5jlTHtmIllV5ZH3877irJ+uzY0PbBmrzJHKndmknI0bZRvO0j/dVfEMtXZLt0W1dxcHzLQg==
+X-Received: by 2002:a17:902:ce8d:b029:e4:bc38:c4 with SMTP id f13-20020a170902ce8db02900e4bc3800c4mr22778542plg.48.1616344687261;
+        Sun, 21 Mar 2021 09:38:07 -0700 (PDT)
 Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id z9sm10078465pgs.32.2021.03.21.08.43.17
-        for <io-uring@vger.kernel.org>
+        by smtp.gmail.com with ESMTPSA id c6sm12165070pfj.99.2021.03.21.09.38.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 21 Mar 2021 08:43:17 -0700 (PDT)
-To:     io-uring <io-uring@vger.kernel.org>
+        Sun, 21 Mar 2021 09:38:06 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io-wq: ensure task is running before processing task_work
-Message-ID: <b0f22674-5294-cfef-234f-5f161b26cc04@kernel.dk>
-Date:   Sun, 21 Mar 2021 09:43:17 -0600
+Subject: [GIT PULL] io_uring followup fixes for 5.12-rc4
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        io-uring <io-uring@vger.kernel.org>
+Message-ID: <ea7f768a-fd67-a265-9d90-27cd5aa26ac9@kernel.dk>
+Date:   Sun, 21 Mar 2021 10:38:04 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
@@ -63,48 +64,56 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Mark the current task as running if we need to run task_work from the
-io-wq threads as part of work handling. If that is the case, then return
-as such so that the caller can appropriately loop back and reset if it
-was part of a going-to-sleep flush.
+Hi Linus,
 
-Fixes: 3bfe6106693b ("io-wq: fork worker threads from original task")
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Was planning on holding these for -rc5, but I think we may as well
+flush them out. In this pull request:
 
----
+- The SIGSTOP change from Eric, so we properly ignore that for
+  PF_IO_WORKER threads.
 
-diff --git a/fs/io-wq.c b/fs/io-wq.c
-index e05f996d088f..3dc10bfd8c3b 100644
---- a/fs/io-wq.c
-+++ b/fs/io-wq.c
-@@ -386,13 +386,16 @@ static struct io_wq_work *io_get_next_work(struct io_wqe *wqe)
- 	return NULL;
- }
- 
--static void io_flush_signals(void)
-+static bool io_flush_signals(void)
- {
- 	if (unlikely(test_tsk_thread_flag(current, TIF_NOTIFY_SIGNAL))) {
-+		__set_current_state(TASK_RUNNING);
- 		if (current->task_works)
- 			task_work_run();
- 		clear_tsk_thread_flag(current, TIF_NOTIFY_SIGNAL);
-+		return true;
- 	}
-+	return false;
- }
- 
- static void io_assign_current_work(struct io_worker *worker,
-@@ -499,7 +502,8 @@ static int io_wqe_worker(void *data)
- 		}
- 		__io_worker_idle(wqe, worker);
- 		raw_spin_unlock_irq(&wqe->lock);
--		io_flush_signals();
-+		if (io_flush_signals())
-+			continue;
- 		ret = schedule_timeout(WORKER_IDLE_TIMEOUT);
- 		if (try_to_freeze() || ret)
- 			continue;
+- Disallow sending signals to PF_IO_WORKER threads in general, we're not
+  interested in having them funnel back to the io_uring owning task.
+
+- Stable fix from Stefan, ensuring we properly break links for short
+  send/sendmsg recv/recvmsg if MSG_WAITALL is set.
+
+- Catch and loop when needing to run task_work before a PF_IO_WORKER
+  threads goes to sleep.
+
+Please pull!
+
+
+The following changes since commit de75a3d3f5a14c9ab3c4883de3471d3c92a8ee78:
+
+  io_uring: don't leak creds on SQO attach error (2021-03-18 09:44:35 -0600)
+
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux-block.git tags/io_uring-5.12-2021-03-21
+
+for you to fetch changes up to 0031275d119efe16711cd93519b595e6f9b4b330:
+
+  io_uring: call req_set_fail_links() on short send[msg]()/recv[msg]() with MSG_WAITALL (2021-03-21 09:41:14 -0600)
+
+----------------------------------------------------------------
+io_uring-5.12-2021-03-21
+
+----------------------------------------------------------------
+Eric W. Biederman (1):
+      signal: don't allow STOP on PF_IO_WORKER threads
+
+Jens Axboe (2):
+      signal: don't allow sending any signals to PF_IO_WORKER threads
+      io-wq: ensure task is running before processing task_work
+
+Stefan Metzmacher (1):
+      io_uring: call req_set_fail_links() on short send[msg]()/recv[msg]() with MSG_WAITALL
+
+ fs/io-wq.c      |  8 ++++++--
+ fs/io_uring.c   | 24 ++++++++++++++++++++----
+ kernel/signal.c |  6 +++++-
+ 3 files changed, 31 insertions(+), 7 deletions(-)
 
 -- 
 Jens Axboe

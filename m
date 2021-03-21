@@ -2,65 +2,61 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AE6C343497
-	for <lists+io-uring@lfdr.de>; Sun, 21 Mar 2021 21:16:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B632534349D
+	for <lists+io-uring@lfdr.de>; Sun, 21 Mar 2021 21:22:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230133AbhCUUPh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 21 Mar 2021 16:15:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39304 "EHLO
+        id S230064AbhCUUVi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 21 Mar 2021 16:21:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230511AbhCUUPU (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 21 Mar 2021 16:15:20 -0400
-Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9EF4C061574
-        for <io-uring@vger.kernel.org>; Sun, 21 Mar 2021 13:15:19 -0700 (PDT)
-Received: by mail-pl1-x62c.google.com with SMTP id f17so5461934plr.0
-        for <io-uring@vger.kernel.org>; Sun, 21 Mar 2021 13:15:19 -0700 (PDT)
+        with ESMTP id S229941AbhCUUVI (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 21 Mar 2021 16:21:08 -0400
+Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77C58C061574
+        for <io-uring@vger.kernel.org>; Sun, 21 Mar 2021 13:21:08 -0700 (PDT)
+Received: by mail-pf1-x42d.google.com with SMTP id 11so9580764pfn.9
+        for <io-uring@vger.kernel.org>; Sun, 21 Mar 2021 13:21:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=NsX9GakXRd3y9pktZ+pFylFGRaP7s/pLt3YBAC4PcRM=;
-        b=KPMj181omgYbmC11rELPdTFIwNOAFy4uG6EBows/Gb1v2DldTiRpOG5ZWIiegj9J3Q
-         Q1IHFGe2C/2fFCptSRVOSSjG/fMURmBGJ5zYvFazzIdkrRsNfprnvkKfyweRCGvrT7g3
-         pg+G0mwmytOjowDaVWaNUuyyAG5DprO5tw6HtdsXekqAYdLmjZI0qsadFRNdZftC/rNW
-         luhVKF/YrehbO6VhCXgZvXY3ljCvJQDIHOjZH3jWfXsLWJbX6qhN4NZAX8HX0cfTIC6V
-         0xmquWMenOmcE+BLDuhx/FEfAWb5cG0ypV7QsLVd+J1XlDneBx4Jjkd9ho3tkWrARXjR
-         qlcw==
+        h=to:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=ECWEaxowq9HCF2XD6mjGeDAcq7HNoBR+R6uIuejgYgE=;
+        b=oGS8qPaM80V13sUcl1Z9BHlZ/Wym36CLTnksI3NkxNzvrH+UVJIiaKBgTmIz3CYbfj
+         Su63r3ihwgUm3SH/JbB2LJ0+LX/K06KjCYsSW5mCDgYxoXC63purrQzkAD07w37XTFmO
+         S6tkM7GrvXhsJmg7W024AgFNYvelH+l/MAB0C/21vNsMKJ3+0qR2Oq64eu0dDi2SWWYq
+         so1yAvaUynxBDJyKGWfcAMDsgHAK79q9aI2V9kgcBLc7tqw0LNd4OH2aGki9iWarFmbD
+         nvvxWVqXeWEQw8U6ueb6GCOkFiWMjEtWjPbnNFMFyLJ6bvbHf/I6dnKHsgE+CkFXlA1H
+         sIUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=NsX9GakXRd3y9pktZ+pFylFGRaP7s/pLt3YBAC4PcRM=;
-        b=gwHIlS6jzY+aS08RtxIdSp/I9dxdADW6jKVdAGDFA7I1Kq0OCfMB/UovlkvHoDrzbW
-         xY4tpcfIimYSRqlbTc2WQan5kzk383x5UdR34dWhg3NnUe89AG2BqUFzeiXC0lOQhptA
-         l/dVAv1aJgVGdTeZTYslqnANIWDQTI3NR8ADX931C2zH5hEMfsSe3t75LAao3TmwGEoI
-         5afLhL4AVs7DeVnTSqOkTslegyz/RskjKQcBxbF54OM0+x0Tl+VodeQqkutcbjDdLuLh
-         fxDrIAMuXZwB1f55hHjLDRiI9T6WPfrph+nmKtKRCn8Ibdt7+bVR8t+cSFjjjKIvRBki
-         5Sug==
-X-Gm-Message-State: AOAM532i0oFLSwRwFOfF1KHsAoubMqmcdH5iv/SGnAXUAUy6JfKNS02w
-        VGcdzzCTMu2ae9hbhukWRT9BYYuDig7DCQ==
-X-Google-Smtp-Source: ABdhPJyE/fT6EkpTTUYCXUJuoCLM5ICzEzeEvHVkP4Uen1ZvcySoq3viS6rOxjObyg9uqmyrMBKxrA==
-X-Received: by 2002:a17:902:ed0a:b029:e4:3589:e4f9 with SMTP id b10-20020a170902ed0ab02900e43589e4f9mr24222684pld.36.1616357719250;
-        Sun, 21 Mar 2021 13:15:19 -0700 (PDT)
+        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=ECWEaxowq9HCF2XD6mjGeDAcq7HNoBR+R6uIuejgYgE=;
+        b=k9Jl7a1UlLawl0H2yNfg4/ypW1uaBzm4pBHfI6mTgobhDbRopvA6UFXDCWhIFGk1tD
+         GMsZXrJWZ7dAS5xY/A2j5kgMUz9rQKJw7V+NkOBStve7SfxyfWgQA/krvrjSNDYob7Lb
+         0Z6x0vVB9Mj4XohLuDnqyEk22Uj4b/SsBrVpfrK/VPqMEe5vUvubszc/HDFJ+6TvgfE6
+         Y3aYK5YskWixGXQSJH9xhVRnTLsQKoTqcTF/m/ekNDbOwlaHSEw9yZoBiSMeeDDFTgqW
+         FrOn1BNHzAyiZuO8R/QdQaMGpO4kwdD8h28qQigzaD6x0+aJ2xoL7OyuUKl5WnBG7suN
+         77LA==
+X-Gm-Message-State: AOAM533RhZO7+HI3BjMJkOs6ptxx63uvUyx27v6Nar0Lp88QY/ryImDm
+        GcgEC1eZs2db/pdzaUOWgh/IfdjCAhIpoQ==
+X-Google-Smtp-Source: ABdhPJy6zQWKDtjHHawRhwRlkWDkHmZZ8i0mM7uUrCMRuRBa4oWNo6aCUR4+P09SlojJg0WN3LJLCQ==
+X-Received: by 2002:a63:1026:: with SMTP id f38mr20382482pgl.142.1616358067807;
+        Sun, 21 Mar 2021 13:21:07 -0700 (PDT)
 Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id c16sm10995479pfc.112.2021.03.21.13.15.18
+        by smtp.gmail.com with ESMTPSA id q25sm10896807pff.104.2021.03.21.13.21.07
+        for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 21 Mar 2021 13:15:18 -0700 (PDT)
-Subject: Re: [GIT PULL] io_uring followup fixes for 5.12-rc4
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        io-uring <io-uring@vger.kernel.org>
-References: <ea7f768a-fd67-a265-9d90-27cd5aa26ac9@kernel.dk>
- <CAHk-=wgYhNck33YHKZ14mFB5MzTTk8gqXHcfj=RWTAXKwgQJgg@mail.gmail.com>
+        Sun, 21 Mar 2021 13:21:07 -0700 (PDT)
+To:     io-uring <io-uring@vger.kernel.org>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <ce33b95a-1300-adc6-97de-0019a4273f3a@kernel.dk>
-Date:   Sun, 21 Mar 2021 14:15:17 -0600
+Subject: [PATCH] io_uring: don't use {test,clear}_tsk_thread_flag() for
+ current
+Message-ID: <411aeec5-9951-cdbb-1b18-d0d2ae9fc931@kernel.dk>
+Date:   Sun, 21 Mar 2021 14:21:06 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=wgYhNck33YHKZ14mFB5MzTTk8gqXHcfj=RWTAXKwgQJgg@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -68,81 +64,54 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/21/21 1:57 PM, Linus Torvalds wrote:
-> On Sun, Mar 21, 2021 at 9:38 AM Jens Axboe <axboe@kernel.dk> wrote:
->>
->> - Catch and loop when needing to run task_work before a PF_IO_WORKER
->>   threads goes to sleep.
-> 
-> Hmm. The patch looks fine, but it makes me wonder: why does that code
-> use test_tsk_thread_flag() and clear_tsk_thread_flag() on current?
-> 
-> It should just use test_thread_flag() and clear_thread_flag().
-> 
-> Now it looks up "current" - which goes through the thread info - and
-> then looks up the thread from that. It's all kinds of stupid.
-> 
-> It should just have used the thread_info from the beginning, which is
-> what test_thread_flag() and clear_thread_flag() do.
-> 
-> I see the same broken pattern in both fs/io-wq.c (which is where I
-> noticed it when looking at the patch) and in fs/io-uring.c.
-> 
-> Please don't do "*_tsk_thread_flag(current, x)", when just
-> "*_thread_flag(x)" is simpler, and more efficient.
-> 
-> In fact, you should avoid *_tsk_thread_flag() as much as possible in general.
-> 
-> Thread flags should be considered mostly private to that thread - the
-> exceptions are generally some very low-level system stuff, ie core
-> signal handling and things like that.
-> 
-> So please change things like
-> 
->         if (test_tsk_thread_flag(current, TIF_NOTIFY_SIGNAL))
-> 
-> to
-> 
->         if (test_thread_flag(TIF_NOTIFY_SIGNAL))
-> 
-> etc.
-> 
-> And yes, we have a design mistake in a closely related area:
-> "signal_pending()" should *not* take the task pointer either, and we
-> should have the "current thread" separate from "another thread".
-> 
-> Maybe the "signal_pending(current)" makes people think it's a good
-> idea to pass in "current" to the thread flag checkers. We would have
-> been better off with "{fatal_,}signal_pending(void)" for the current
-> task, and "tsk_(fatal_,}signal_pending(tsk)" for the (very few) cases
-> of checking another task.
-> 
-> Because it really is all kinds of stupid (yes, often historical -
-> going all the way back to when 'current' was the main model - but now
-> stupid) to look up "current" to then look up thread data, when these
-> days, when the basic pattern is
-> 
->   #define current get_current()
->   #define get_current() (current_thread_info()->task)
-> 
-> ioe, the *thread_info* is the primary and quick thing, and "current"
-> is the indirection, and so if you see code that basically does
-> "task_thread_info()" on "current", it is literally going back and
-> forth between the two.
-> 
-> And yes, on architectures that use "THREAD_INFO_IN_TASK" (which does
-> include x86), the back-and-forth ends up being a non-issue (because
-> it's just offsets into containing structs) and it doesn't really
-> matter. But conceptually, patterns like "test_tsk_thread_flag(current,
-> x)" really are wrong, and on some architectures it generates
-> potentially *much* worse code.
+Linus correctly points out that this is both unnecessary and generates
+much worse code on some archs as going from current to thread_info is
+actually backwards - and obviously just wasteful, since the thread_info
+is what we care about.
 
-Thanks, that's useful information, I guess it just ended up being used
-by chance and I didn't realize it made a difference for some archs. I'll
-change these, and I also think that io-wq should be a bit nicer and use
-tracehook_notify_signal() if TIF_NOTIFY_SIGNAL is set. Doesn't matter
-now, but very well might in the future when TIF_NOTIFY_SIGNAL gets
-used for more than just task_work notifications.
+Since io_uring only operates on current for these operations, just use
+test_thread_flag() instead. For io-wq, we can further simplify and use
+tracehook_notify_signal() to handle the TIF_NOTIFY_SIGNAL work and clear
+the flag. The latter isn't an actual bug right now, but it may very well
+be in the future if we place other work items under TIF_NOTIFY_SIGNAL.
+
+Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+Link: https://lore.kernel.org/io-uring/CAHk-=wgYhNck33YHKZ14mFB5MzTTk8gqXHcfj=RWTAXKwgQJgg@mail.gmail.com/
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+
+---
+
+diff --git a/fs/io-wq.c b/fs/io-wq.c
+index 3dc10bfd8c3b..2dd43bdb9c7b 100644
+--- a/fs/io-wq.c
++++ b/fs/io-wq.c
+@@ -388,11 +388,9 @@ static struct io_wq_work *io_get_next_work(struct io_wqe *wqe)
+ 
+ static bool io_flush_signals(void)
+ {
+-	if (unlikely(test_tsk_thread_flag(current, TIF_NOTIFY_SIGNAL))) {
++	if (unlikely(test_thread_flag(TIF_NOTIFY_SIGNAL))) {
+ 		__set_current_state(TASK_RUNNING);
+-		if (current->task_works)
+-			task_work_run();
+-		clear_tsk_thread_flag(current, TIF_NOTIFY_SIGNAL);
++		tracehook_notify_signal();
+ 		return true;
+ 	}
+ 	return false;
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 543551d70327..be04bc6b5b99 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -6873,7 +6873,7 @@ static int io_run_task_work_sig(void)
+ 		return 1;
+ 	if (!signal_pending(current))
+ 		return 0;
+-	if (test_tsk_thread_flag(current, TIF_NOTIFY_SIGNAL))
++	if (test_thread_flag(TIF_NOTIFY_SIGNAL))
+ 		return -ERESTARTSYS;
+ 	return -EINTR;
+ }
 
 -- 
 Jens Axboe

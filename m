@@ -2,73 +2,72 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CBB8C34333D
-	for <lists+io-uring@lfdr.de>; Sun, 21 Mar 2021 16:42:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 417A9343341
+	for <lists+io-uring@lfdr.de>; Sun, 21 Mar 2021 16:44:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230016AbhCUPkZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 21 Mar 2021 11:40:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35930 "EHLO
+        id S230131AbhCUPnF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 21 Mar 2021 11:43:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230091AbhCUPkO (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 21 Mar 2021 11:40:14 -0400
-Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B403C061574
-        for <io-uring@vger.kernel.org>; Sun, 21 Mar 2021 08:40:14 -0700 (PDT)
-Received: by mail-pg1-x531.google.com with SMTP id n11so6995360pgm.12
-        for <io-uring@vger.kernel.org>; Sun, 21 Mar 2021 08:40:14 -0700 (PDT)
+        with ESMTP id S230112AbhCUPmj (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 21 Mar 2021 11:42:39 -0400
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F638C061574
+        for <io-uring@vger.kernel.org>; Sun, 21 Mar 2021 08:42:39 -0700 (PDT)
+Received: by mail-pj1-x1029.google.com with SMTP id k23-20020a17090a5917b02901043e35ad4aso9089885pji.3
+        for <io-uring@vger.kernel.org>; Sun, 21 Mar 2021 08:42:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=cSj4LvG+PL+eupZk/yxZhhmPk+3KBEqBV8K2BbUolG4=;
-        b=KYshwrcu3AyE3tNU4VO8dcqQojtWeMPb4f1BV/G+muf9WUX/BBUc/WBs/zG+9qwRu4
-         GxNpXPABZollLWQhsEQ0w/ybfytvsF1bMtyWabM8Z5Pd9WDrUk5bi+13rbFxRQkBnqQr
-         qA9fB+TJNvHjDrPXapVqic7qESbZqW4HyEldw3qpptYvZYEvubUmVyHx3MycWTGxVVjY
-         iCUpYPxbKrmilIv8ITWPSVItyMj8FOMPEo0/oGKpbhanWTH1xYWvlZ5Mr2BpIoe85/GJ
-         xXRVFrkTO5+hzFZW484IdZjD92tbkcjoCjjEpASwmz3AAfW0x035Mvk3GGPDxK6QhOQG
-         ZYCQ==
+        bh=lfjjDnUJu9opPPSvQVQubITocISsFGgS1UWLUqrIkKA=;
+        b=2Q4EYjPPArir5nkhENmAqet6f7qHsv+Fd0FeFVmw9hhZRfkEXbnUUQjDkz2ovHu3Fv
+         CLgenqXPoHqF/MtNiJ/GCf1NUNW/yMsohywIk0spdMmjpgcq4FG28nDcOQCPqkc6nuOA
+         44YxEIUkOavNg+lt0Jn7q5R0u5yyW0pZPo/z9dy50yllOMZcImxM0xgWn0eqSTWoWPiT
+         ot5sn5G07FOsMrUgli1JPU2WEdPpQa231UTywAfBwcg2rl8Hd7YxR3E0kedGBhcq0mFp
+         whHxeDJacp/3JHCR3tGVWe7WuQhTixcw6HSYq055Qdi6XS7kHRhKnKNq8FNEUiHdoVdg
+         ZaEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=cSj4LvG+PL+eupZk/yxZhhmPk+3KBEqBV8K2BbUolG4=;
-        b=I7DUVmrXeHosY14BvWywrKqOcDy/2JYL6iQ+N6hn4VGrmiVJYqzuGjUoGV5/oKjf+W
-         bmwGHst9ZyuYH/fwGtN2Eg4SLozyFFBFQ61g6MWvsp9EPcE8vNYptCIiQeNG+xg8uTGL
-         zAUWFoXhV8+YYKB6ysjht4Gd7h1Tl54DmmeZBq/5iEGpyQruBhOPX0kLBWge2dDy5lMy
-         v99vQXtQGLrvuzJwV/BwbrQQJzPrS+FEMql2ESvzL4hXmHKgq9/+LteEQ86BXyfAIbFH
-         F95YvdqMXL1541BI8MLotgRYAOWmuyAW+x3Z/kFZaUJapNB7HsNhHlEHoZbTs0ht7r3D
-         mKRg==
-X-Gm-Message-State: AOAM532VNsBEd/f71XK5gYaFJTOcsWRQtyIhDD7/pDL2MMgSD8SAAPdf
-        EyxH5sjFhjegSYaoLKwMHo2syIAaonH5jA==
-X-Google-Smtp-Source: ABdhPJzkEljh7QTeleWw+cpe++zUJ3kSw3VX50bIm/uaYYsI7lE2HHrje0z7cXDC6hmhZKjU4u9KXw==
-X-Received: by 2002:a05:6a00:138e:b029:204:422e:a87e with SMTP id t14-20020a056a00138eb0290204422ea87emr17837504pfg.24.1616341213914;
-        Sun, 21 Mar 2021 08:40:13 -0700 (PDT)
+        bh=lfjjDnUJu9opPPSvQVQubITocISsFGgS1UWLUqrIkKA=;
+        b=dmx6G2nzI+An8WKcB8Q/oUbVtxGCX3kwwyltQUvTx00ZxDifoF3pZh/zlyKcPaO+9l
+         rxoR+M+8r5yTk/Get/xKUpvALFjjkYRhOXiFb9j1lbTgAf8v2YL5VaK8GSVZsTJ7Hnnd
+         8NcgxB+5c5Mr5lDDrNAIbYS4Dn/mzU2P0uis3/YRrKJ4AOelRPuWQzzVJCPPlge2h7gn
+         4MgwH5Lgsn5K6///8nJ6ezICBXJYYvZN2Y1HV1vmmJcB/XjlNhBcW5W/2TUUs41yoJgH
+         mTiEPUQR82U1RdeA24FxbAMa0Ru97PVCMpgKRVVW86AgvZitC9igdqXeK6xYo8o7oxge
+         NvNw==
+X-Gm-Message-State: AOAM531ehUYYWlwKBAtE9KwsVeOwxiVGhpkzoiDUAjnYrFBEAGS/Hf/v
+        XopB4mtKqgZk+yk8HNzqeiUGv5fAfh8JlA==
+X-Google-Smtp-Source: ABdhPJzmQLX2cg+/nJ82cLk9xUY3UiFH3iaFNYt6lVtZkHB0fyjrGJ0Qn8wtyIc26JtTTa9teUqtbQ==
+X-Received: by 2002:a17:90a:b392:: with SMTP id e18mr8771052pjr.66.1616341358593;
+        Sun, 21 Mar 2021 08:42:38 -0700 (PDT)
 Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id j92sm11120505pja.29.2021.03.21.08.40.12
+        by smtp.gmail.com with ESMTPSA id w2sm10522754pgh.54.2021.03.21.08.42.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 21 Mar 2021 08:40:13 -0700 (PDT)
-Subject: Re: [PATCH 1/2] signal: don't allow sending any signals to
- PF_IO_WORKER threads
+        Sun, 21 Mar 2021 08:42:38 -0700 (PDT)
+Subject: Re: [PATCHSET 0/2] PF_IO_WORKER signal tweaks
 To:     "Eric W. Biederman" <ebiederm@xmission.com>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         io-uring <io-uring@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Stefan Metzmacher <metze@samba.org>
+        Oleg Nesterov <oleg@redhat.com>, criu@openvz.org
 References: <20210320153832.1033687-1-axboe@kernel.dk>
- <20210320153832.1033687-2-axboe@kernel.dk> <m1eeg9bxyi.fsf@fess.ebiederm.org>
- <CAHk-=wjLMy+J20ZSBec4iarw2NeSu5sWXm6wdMH59n-e0Qe06g@mail.gmail.com>
- <m1czvt8q0r.fsf@fess.ebiederm.org>
- <43f05d70-11a9-d59a-1eac-29adc8c53894@kernel.dk>
- <m18s6g5zhz.fsf@fess.ebiederm.org>
+ <m14kh5aj0n.fsf@fess.ebiederm.org>
+ <CAHk-=whyL6prwWR0GdgxLZm_w-QWwo7jPw_DkEGYFbMeCdo8YQ@mail.gmail.com>
+ <CAHk-=wh3DCgezr5RKQ4Mqffoj-F4i47rp85Q4MSFRNhrr8tg3w@mail.gmail.com>
+ <m1im5l5vi5.fsf@fess.ebiederm.org>
+ <907b36b6-a022-019a-34ea-58ce46dc2d12@kernel.dk>
+ <m135wo5yd3.fsf@fess.ebiederm.org>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <c95750c6-5e91-6c3a-550a-515eab5716eb@kernel.dk>
-Date:   Sun, 21 Mar 2021 09:40:11 -0600
+Message-ID: <718e91db-5f0b-9aed-7b65-9d41c9f9f8f4@kernel.dk>
+Date:   Sun, 21 Mar 2021 09:42:36 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <m18s6g5zhz.fsf@fess.ebiederm.org>
+In-Reply-To: <m135wo5yd3.fsf@fess.ebiederm.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -76,75 +75,124 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/21/21 8:54 AM, Eric W. Biederman wrote:
+On 3/21/21 9:18 AM, Eric W. Biederman wrote:
 > Jens Axboe <axboe@kernel.dk> writes:
 > 
->> On 3/20/21 3:38 PM, Eric W. Biederman wrote:
+>> On 3/20/21 4:08 PM, Eric W. Biederman wrote:
+>>>
+>>> Added criu because I just realized that io_uring (which can open files
+>>> from an io worker thread) looks to require some special handling for
+>>> stopping and freezing processes.  If not in the SIGSTOP case in the
+>>> related cgroup freezer case.
+>>>
 >>> Linus Torvalds <torvalds@linux-foundation.org> writes:
 >>>
->>>> On Sat, Mar 20, 2021 at 9:19 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
+>>>> On Sat, Mar 20, 2021 at 10:51 AM Linus Torvalds
+>>>> <torvalds@linux-foundation.org> wrote:
 >>>>>
->>>>> The creds should be reasonably in-sync with the rest of the threads.
+>>>>> Alternatively, make it not use
+>>>>> CLONE_SIGHAND|CLONE_THREAD at all, but that would make it
+>>>>> unnecessarily allocate its own signal state, so that's "cleaner" but
+>>>>> not great either.
 >>>>
->>>> It's not about credentials (despite the -EPERM).
+>>>> Thinking some more about that, it would be problematic for things like
+>>>> the resource counters too. They'd be much better shared.
 >>>>
->>>> It's about the fact that kernel threads cannot handle signals, and
->>>> then get caught in endless loops of "if (sigpending()) return
->>>> -EAGAIN".
+>>>> Not adding it to the thread list etc might be clever, but feels a bit too scary.
 >>>>
->>>> For a normal user thread, that "return -EAGAIN" (or whatever) will end
->>>> up returning an error to user space - and before it does that, it will
->>>> go through the "oh, returning to user space, so handle signal" path.
->>>> Which will clear sigpending etc.
->>>>
->>>> A thread that never returns to user space fundamentally cannot handle
->>>> this. The sigpending() stays on forever, the signal never gets
->>>> handled, the thread can't do anything.
->>>>
->>>> So delivering a signal to a kernel thread fundamentally cannot work
->>>> (although we do have some threads that explicitly see "oh, if I was
->>>> killed, I will exit" - think things like in-kernel nfsd etc).
+>>>> So on the whole I think Jens' minor patches to just not have IO helper
+>>>> threads accept signals are probably the right thing to do.
 >>>
->>> I agree that getting a kernel thread to receive a signal is quite
->>> tricky.  But that is not what the patch affects.
+>>> The way I see it we have two options:
 >>>
->>> The patch covers the case when instead of specifying the pid of the
->>> process to kill(2) someone specifies the tid of a thread.  Which implies
->>> that type is PIDTYPE_TGID, and in turn the signal is being placed on the
->>> t->signal->shared_pending queue.  Not the thread specific t->pending
->>> queue.
+>>> 1) Don't ask PF_IO_WORKERs to stop do_signal_stop and in
+>>>    task_join_group_stop.
 >>>
->>> So my question is since the signal is delivered to the process as a
->>> whole why do we care if someone specifies the tid of a kernel thread,
->>> rather than the tid of a userspace thread?
+>>>    The easiest comprehensive implementation looks like just
+>>>    updating task_set_jobctl_pending to treat PF_IO_WORKER
+>>>    as it treats PF_EXITING.
+>>>
+>>> 2) Have the main loop of the kernel thread test for JOBCTL_STOP_PENDING
+>>>    and call into do_signal_stop.
+>>>
+>>> It is a wee bit trickier to modify the io_workers to stop, but it does
+>>> not look prohibitively difficult.
+>>>
+>>> All of the work performed by the io worker is work scheduled via
+>>> io_uring by the process being stopped.
+>>>
+>>> - Is the amount of work performed by the io worker thread sufficiently
+>>>   negligible that we don't care?
+>>>
+>>> - Or is the amount of work performed by the io worker so great that it
+>>>   becomes a way for an errant process to escape SIGSTOP?
+>>>
+>>> As the code is all intermingled with the cgroup_freezer.  I am also
+>>> wondering creating checkpoints needs additional stopping guarantees.
 >>
->> Right, that's what this first patch does, and in all honesty, it's not
->> required like the 2/2 patch is. I do think it makes it more consistent,
->> though - the threads don't take signals, period. Allowing delivery from
->> eg kill(2) and then pass it to the owning task of the io_uring is
->> somewhat counterintuitive, and differs from earlier kernels where there
->> was no relationsship between that owning task and the async worker
->> thread.
+>> The work done is the same a syscall, basically. So it could be long
+>> running and essentially not doing anything (eg read from a socket, no
+>> data is there), or it's pretty short lived (eg read from a file, just
+>> waiting on DMA).
 >>
->> That's why I think the patch DOES make sense. These threads may share a
->> personality with the owning task, but I don't think we should be able to
->> manipulate them from userspace at all. That includes SIGSTOP, of course,
->> but also regular signals.
+>> This is outside of my domain of expertise, which is exactly why I added
+>> you and Linus to make some calls on what the best approach here would
+>> be. My two patches obviously go route #1 in terms of STOP. And fwiw,
+>> I tested this:
 >>
->> Hence I do think we should do something like this.
+>>> To solve the issue that SIGSTOP is simply broken right now I am totally
+>>> fine with something like:
+>>>
+>>> diff --git a/kernel/signal.c b/kernel/signal.c
+>>> index ba4d1ef39a9e..cb9acdfb32fa 100644
+>>> --- a/kernel/signal.c
+>>> +++ b/kernel/signal.c
+>>> @@ -288,7 +288,8 @@ bool task_set_jobctl_pending(struct task_struct *task, unsigned long mask)
+>>>  			JOBCTL_STOP_SIGMASK | JOBCTL_TRAPPING));
+>>>  	BUG_ON((mask & JOBCTL_TRAPPING) && !(mask & JOBCTL_PENDING_MASK));
+>>>  
+>>> -	if (unlikely(fatal_signal_pending(task) || (task->flags & PF_EXITING)))
+>>> +	if (unlikely(fatal_signal_pending(task) ||
+>>> +		     (task->flags & (PF_EXITING | PF_IO_WORKER))))
+>>>  		return false;
+>>>  
+>>>  	if (mask & JOBCTL_STOP_SIGMASK)
+>>
+>> and can confirm it works fine for me with 2/2 reverted and this applied
+>> instead.
+>>
+>>> Which just keeps from creating unstoppable processes today.  I am just
+>>> not convinced that is what we want as a long term solution.
+>>
+>> How about we go with either my 2/2 or yours above to at least ensure we
+>> don't leave workers looping as schedule() is a nop with sigpending? If
+>> there's a longer timeline concern that "evading" SIGSTOP is a concern, I
+>> have absolutely no qualms with making the IO threads participate. But
+>> since it seems conceptually simple but with potentially lurking minor
+>> issues, probably not the ideal approach for right now.
 > 
-> I agree about signals.  Especially because being able to use kill(2)
-> with the tid of thread is a linuxism and a backwards compatibility thing
-> from before we had CLONE_THREAD.
 > 
-> I think for kill(2) we should just return -ESRCH.
+> Here is the signoff for mine.
 > 
-> Thank you for providing the reasoning that is what I really saw missing
-> in the patches.  The why.  And software is difficult to maintain without
-> the why.
+> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+> 
+> Yours misses the joining of group stop during fork.  So we better use
+> mine.
 
-Thanks Eric, I'll change that patch to -ESRCH and augment the commit
-message a bit.
+I've updated it and attributed it to you, here is is:
+
+https://git.kernel.dk/cgit/linux-block/commit/?h=io_uring-5.12&id=4db4b1a0d1779dc159f7b87feb97030ec0b12597
+
+> As far as I can see that fixes the outstanding bugs.
+
+Great!
+
+> Jens can you make a proper patch out of it and send it to Linus for
+> -rc4?  I unfortunately have other commitments and this is all I can do
+> for today.
+
+Will do - I'm going to sanity run the current branch and do a followup
+pull request for Linus once I've verified everything is still sane.
 
 -- 
 Jens Axboe

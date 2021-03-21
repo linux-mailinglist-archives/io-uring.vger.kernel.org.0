@@ -2,147 +2,155 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AD2C43432AF
-	for <lists+io-uring@lfdr.de>; Sun, 21 Mar 2021 14:12:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 42344343311
+	for <lists+io-uring@lfdr.de>; Sun, 21 Mar 2021 15:56:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229815AbhCUNLo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 21 Mar 2021 09:11:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60658 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229834AbhCUNLA (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 21 Mar 2021 09:11:00 -0400
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BA48C061762
-        for <io-uring@vger.kernel.org>; Sun, 21 Mar 2021 06:11:00 -0700 (PDT)
-Received: by mail-pj1-x1030.google.com with SMTP id w8so6972559pjf.4
-        for <io-uring@vger.kernel.org>; Sun, 21 Mar 2021 06:11:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=pdpLGwZVWgH1ZXWMGAb8CDhHmencOHZRTJisrrYzukM=;
-        b=fvWoMaWKDwk6hbHahxH0fr03yS1R0JQXZ+P3M7Lpq3ImM/PaVyww/cZvAiYqOCi0uP
-         HI4UKfyIMVX4IHv1CvoGFjLOM3pgXdxuwK9C+c35WKr9MkHDwugQOcNE9wu0pvZP5wA3
-         74CxJHxm8ER0YHyiFIJZ4OmnZ8WU8h48i334nKcZUYHsOA7dyS5Ebaf9C88X1zd+ITUu
-         v2FPOFL40YCvfVIrJzZVVCVTvJtn6tr4pfsaTkCdzBDilBsv2IRDMeeCac+u+U+FTMEe
-         Iy+caqnh4ZQyCu7ph09heaPpdTV8bYG2mzvdvP7Mk24v2T/h2ikb+HoGmSaVXUP5CSb2
-         nWlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=pdpLGwZVWgH1ZXWMGAb8CDhHmencOHZRTJisrrYzukM=;
-        b=XvzAB8kLwD0l+Vy/rXjl78wksNKEtLadi1gZvxnkpaM25YELsbydRg9QWeDhnTwSYp
-         lUKl6hUcvr+Vd5+ZdqP3lPtbl7NDXVz08miKscqGPC3uBI/rXt1JCA6BqH9d1sFvid9S
-         lkA5AOymyYI0FnpG7DmsU+ASIaxSwYmtyT82ZCs2ck1aDCtEyPZ0ThFrK8NtzThgPSVA
-         Y/MOmJfyeIibo1rz7J86Etin6c4gt5+dkShCVcl1/Q1VzHrzjF6O5r6YxB91FEf+cFBo
-         Rz4q2qKPJ0/OXNNAjtsERS2er9sL1JC0Tb7/PWvvS7TNwa8K5IF+WQQ3o8cCoOJ/W/Ag
-         Ltug==
-X-Gm-Message-State: AOAM533uR9aXK4RlUy59Cy9fthp/nxG4+0/M3cVp6i0bWeiLOoY6CRsM
-        LYZGfOzrnXRj+TnQlCyeYbSiNg==
-X-Google-Smtp-Source: ABdhPJxpvivSu2v/AqSP0cBfVHCiJ7bwze7KKyc67QgGvffOBPql6pVgZ37iVMPtkfpSsVnehbm8rQ==
-X-Received: by 2002:a17:90a:a403:: with SMTP id y3mr8259581pjp.227.1616332259284;
-        Sun, 21 Mar 2021 06:10:59 -0700 (PDT)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id a20sm11374868pfl.97.2021.03.21.06.10.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 21 Mar 2021 06:10:58 -0700 (PDT)
-Subject: Re: [PATCH v2 1/1] io_uring: call req_set_fail_links() on short
- send[msg]()/recv[msg]() with MSG_WAITALL
-To:     Stefan Metzmacher <metze@samba.org>, io-uring@vger.kernel.org
-Cc:     netdev@vger.kernel.org
-References: <c4e1a4cc0d905314f4d5dc567e65a7b09621aab3.1615908477.git.metze@samba.org>
- <12efc18b6bef3955500080a238197e90ca6a402c.1616268538.git.metze@samba.org>
- <38a987b9-d962-7531-6164-6dde9b4d133b@kernel.dk>
- <d68edf13-99a7-d010-cfc8-542f59ac7e27@samba.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <b624c6ad-fa60-d745-8393-3c778fdeca73@kernel.dk>
-Date:   Sun, 21 Mar 2021 07:10:57 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S229986AbhCUOz0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 21 Mar 2021 10:55:26 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:49836 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229815AbhCUOzG (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 21 Mar 2021 10:55:06 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1lNzTs-007iGy-Fi; Sun, 21 Mar 2021 08:55:04 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=fess.xmission.com)
+        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1lNzTr-00Bp84-2a; Sun, 21 Mar 2021 08:55:04 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        io-uring <io-uring@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Stefan Metzmacher <metze@samba.org>
+References: <20210320153832.1033687-1-axboe@kernel.dk>
+        <20210320153832.1033687-2-axboe@kernel.dk>
+        <m1eeg9bxyi.fsf@fess.ebiederm.org>
+        <CAHk-=wjLMy+J20ZSBec4iarw2NeSu5sWXm6wdMH59n-e0Qe06g@mail.gmail.com>
+        <m1czvt8q0r.fsf@fess.ebiederm.org>
+        <43f05d70-11a9-d59a-1eac-29adc8c53894@kernel.dk>
+Date:   Sun, 21 Mar 2021 09:54:00 -0500
+In-Reply-To: <43f05d70-11a9-d59a-1eac-29adc8c53894@kernel.dk> (Jens Axboe's
+        message of "Sat, 20 Mar 2021 16:42:09 -0600")
+Message-ID: <m18s6g5zhz.fsf@fess.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <d68edf13-99a7-d010-cfc8-542f59ac7e27@samba.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-XM-SPF: eid=1lNzTr-00Bp84-2a;;;mid=<m18s6g5zhz.fsf@fess.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19Urg+ixCg8xQilwYhLhejmznGP1MApdtk=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
+X-Spam-Level: **
+X-Spam-Status: No, score=2.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
+        T_TooManySym_02,XMNoVowels,XMSubLong autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4994]
+        *  0.7 XMSubLong Long Subject
+        *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_02 5+ unique symbols in subject
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Jens Axboe <axboe@kernel.dk>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 753 ms - load_scoreonly_sql: 0.04 (0.0%),
+        signal_user_changed: 12 (1.6%), b_tie_ro: 10 (1.4%), parse: 1.12
+        (0.1%), extract_message_metadata: 21 (2.8%), get_uri_detail_list: 2.7
+        (0.4%), tests_pri_-1000: 15 (2.1%), tests_pri_-950: 1.27 (0.2%),
+        tests_pri_-900: 0.99 (0.1%), tests_pri_-90: 127 (16.8%), check_bayes:
+        113 (15.0%), b_tokenize: 8 (1.0%), b_tok_get_all: 9 (1.2%),
+        b_comp_prob: 2.9 (0.4%), b_tok_touch_all: 90 (12.0%), b_finish: 0.89
+        (0.1%), tests_pri_0: 303 (40.2%), check_dkim_signature: 0.52 (0.1%),
+        check_dkim_adsp: 2.4 (0.3%), poll_dns_idle: 251 (33.3%), tests_pri_10:
+        3.0 (0.4%), tests_pri_500: 266 (35.4%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH 1/2] signal: don't allow sending any signals to PF_IO_WORKER threads
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/21/21 4:20 AM, Stefan Metzmacher wrote:
-> 
-> Am 20.03.21 um 23:57 schrieb Jens Axboe:
->> On 3/20/21 1:33 PM, Stefan Metzmacher wrote:
->>> Without that it's not safe to use them in a linked combination with
->>> others.
->>>
->>> Now combinations like IORING_OP_SENDMSG followed by IORING_OP_SPLICE
->>> should be possible.
->>>
->>> We already handle short reads and writes for the following opcodes:
->>>
->>> - IORING_OP_READV
->>> - IORING_OP_READ_FIXED
->>> - IORING_OP_READ
->>> - IORING_OP_WRITEV
->>> - IORING_OP_WRITE_FIXED
->>> - IORING_OP_WRITE
->>> - IORING_OP_SPLICE
->>> - IORING_OP_TEE
->>>
->>> Now we have it for these as well:
->>>
->>> - IORING_OP_SENDMSG
->>> - IORING_OP_SEND
->>> - IORING_OP_RECVMSG
->>> - IORING_OP_RECV
->>>
->>> For IORING_OP_RECVMSG we also check for the MSG_TRUNC and MSG_CTRUNC
->>> flags in order to call req_set_fail_links().
->>>
->>> There might be applications arround depending on the behavior
->>> that even short send[msg]()/recv[msg]() retuns continue an
->>> IOSQE_IO_LINK chain.
->>>
->>> It's very unlikely that such applications pass in MSG_WAITALL,
->>> which is only defined in 'man 2 recvmsg', but not in 'man 2 sendmsg'.
->>>
->>> It's expected that the low level sock_sendmsg() call just ignores
->>> MSG_WAITALL, as MSG_ZEROCOPY is also ignored without explicitly set
->>> SO_ZEROCOPY.
->>>
->>> We also expect the caller to know about the implicit truncation to
->>> MAX_RW_COUNT, which we don't detect.
->>
->> Thanks, I do think this is much better and I feel comfortable getting
->> htis applied for 5.12 (and stable).
->>
-> 
-> Great thanks!
-> 
-> Related to that I have a questing regarding the IOSQE_IO_LINK behavior.
-> (Assuming I have a dedicated ring for the send-path of each socket.)
-> 
-> Is it possible to just set IOSQE_IO_LINK on every sqe in order to create
-> an endless chain of requests so that userspace can pass as much sqes as possible
-> which all need to be submitted in the exact correct order. And if any request
-> is short, then all remaining get ECANCELED, without the risk of running any later
-> request out of order.
-> 
-> Are such link chains possible also over multiple io_uring_submit() calls?
-> Is there still a race between, having an iothread removing the request from
-> from the list and fill in a cqe with ECANCELED, that userspace is not awaire
-> of yet, which then starts a new independed link chain with a request that
-> ought to be submitted after all the canceled once.
-> 
-> Or do I have to submit a link chain with just a single __io_uring_flush_sq()
-> and then strictly need to wait until I got a cqe for the last request in
-> the chain?
+Jens Axboe <axboe@kernel.dk> writes:
 
-A chain can only exist within a single submit attempt, so it will not work
-if you need to break it up over multiple io_uring_enter() calls.
+> On 3/20/21 3:38 PM, Eric W. Biederman wrote:
+>> Linus Torvalds <torvalds@linux-foundation.org> writes:
+>> 
+>>> On Sat, Mar 20, 2021 at 9:19 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
+>>>>
+>>>> The creds should be reasonably in-sync with the rest of the threads.
+>>>
+>>> It's not about credentials (despite the -EPERM).
+>>>
+>>> It's about the fact that kernel threads cannot handle signals, and
+>>> then get caught in endless loops of "if (sigpending()) return
+>>> -EAGAIN".
+>>>
+>>> For a normal user thread, that "return -EAGAIN" (or whatever) will end
+>>> up returning an error to user space - and before it does that, it will
+>>> go through the "oh, returning to user space, so handle signal" path.
+>>> Which will clear sigpending etc.
+>>>
+>>> A thread that never returns to user space fundamentally cannot handle
+>>> this. The sigpending() stays on forever, the signal never gets
+>>> handled, the thread can't do anything.
+>>>
+>>> So delivering a signal to a kernel thread fundamentally cannot work
+>>> (although we do have some threads that explicitly see "oh, if I was
+>>> killed, I will exit" - think things like in-kernel nfsd etc).
+>> 
+>> I agree that getting a kernel thread to receive a signal is quite
+>> tricky.  But that is not what the patch affects.
+>> 
+>> The patch covers the case when instead of specifying the pid of the
+>> process to kill(2) someone specifies the tid of a thread.  Which implies
+>> that type is PIDTYPE_TGID, and in turn the signal is being placed on the
+>> t->signal->shared_pending queue.  Not the thread specific t->pending
+>> queue.
+>> 
+>> So my question is since the signal is delivered to the process as a
+>> whole why do we care if someone specifies the tid of a kernel thread,
+>> rather than the tid of a userspace thread?
+>
+> Right, that's what this first patch does, and in all honesty, it's not
+> required like the 2/2 patch is. I do think it makes it more consistent,
+> though - the threads don't take signals, period. Allowing delivery from
+> eg kill(2) and then pass it to the owning task of the io_uring is
+> somewhat counterintuitive, and differs from earlier kernels where there
+> was no relationsship between that owning task and the async worker
+> thread.
+>
+> That's why I think the patch DOES make sense. These threads may share a
+> personality with the owning task, but I don't think we should be able to
+> manipulate them from userspace at all. That includes SIGSTOP, of course,
+> but also regular signals.
+>
+> Hence I do think we should do something like this.
 
--- 
-Jens Axboe
+I agree about signals.  Especially because being able to use kill(2)
+with the tid of thread is a linuxism and a backwards compatibility thing
+from before we had CLONE_THREAD.
+
+I think for kill(2) we should just return -ESRCH.
+
+Thank you for providing the reasoning that is what I really saw missing
+in the patches.  The why.  And software is difficult to maintain without
+the why.
+
+
+
+
+
+Eric
+
+
 

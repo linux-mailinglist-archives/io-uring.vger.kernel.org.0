@@ -2,119 +2,135 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C3CEF343383
-	for <lists+io-uring@lfdr.de>; Sun, 21 Mar 2021 17:39:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A128343473
+	for <lists+io-uring@lfdr.de>; Sun, 21 Mar 2021 20:58:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229904AbhCUQi5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 21 Mar 2021 12:38:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48234 "EHLO
+        id S230409AbhCUT6Q (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 21 Mar 2021 15:58:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229874AbhCUQiT (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 21 Mar 2021 12:38:19 -0400
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E9D5C061574
-        for <io-uring@vger.kernel.org>; Sun, 21 Mar 2021 09:38:08 -0700 (PDT)
-Received: by mail-pj1-x1029.google.com with SMTP id nh23-20020a17090b3657b02900c0d5e235a8so7307332pjb.0
-        for <io-uring@vger.kernel.org>; Sun, 21 Mar 2021 09:38:08 -0700 (PDT)
+        with ESMTP id S230346AbhCUT57 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 21 Mar 2021 15:57:59 -0400
+Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90CDEC061574
+        for <io-uring@vger.kernel.org>; Sun, 21 Mar 2021 12:57:58 -0700 (PDT)
+Received: by mail-lj1-x22c.google.com with SMTP id 184so18472409ljf.9
+        for <io-uring@vger.kernel.org>; Sun, 21 Mar 2021 12:57:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=from:subject:to:cc:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=5N9DOBNg5q+cX1nThPiWZ6ZK66G2Hs/lXfr1BIfQ6bI=;
-        b=bok2Rpaa9lxPeYRNWQ9PjghCs+hzkICxgl0Hn8gfGAClySVtOu/lZkblCXdwOzT4kO
-         Rjxvm8u3hr/uMYQd1fKwQwbO42MVQf9Jf2ysChYin6eJfpta73UelDBQj4n0iQW96xOd
-         aBqZKu+50MDz/H69LifB27M3SIY4QWzTSyDBX+eNeouC0lLiz98VnO0iAU9Raz/6fw7W
-         KrwnluO+bclyegl5mCcz5Go3Px30KdZ/P9K0+51RxJgYo3wDvvrY97aMyp0StQmY6bJG
-         LKhS8Z2beZKXrakBAKkE70uVe3/H1zZkd1msW7RUeQNPlIA4XArh4B+6C7llacVLgjed
-         DSdA==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iFEaGtipHtB5ksp/gPeMOr+K0OZmJ87uSOi18F3mCyA=;
+        b=I72KWcFfoSdYkhi0ePgAbmAQjZkBcOfPuuVt9tHelZl0w0AQBkFx18g2hAIWGrfwyD
+         BC/zoYoo95x09q/MCf8QdqLRqZlYHqWMXcNAyoa/Hj1tN+7dda8iiUpS69u9202Blax4
+         4Kq0diCQVk7Ek6880eA4nhMC+POKy40AZq4Jw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=5N9DOBNg5q+cX1nThPiWZ6ZK66G2Hs/lXfr1BIfQ6bI=;
-        b=bezmXnR5NJYivfbW1d0zZvEMptVy9E10LzxIXkfT67k3LuafrkGr5HUpbh3TCtM7Du
-         BJwHXUZz+ksbW/e45KAyY9tVUfAG2AadscjbbFHYK0u/etETech0BflBTa4DUezBsMRU
-         wDLu1xJLNDzocj3TxPmEK/hViOplnAbaw7jLKBLxDYkyTnIqjXx0XN+0CFJghC910PNX
-         WNgVoV+if47svrV4OZXfgFpjz2CeBjKjm8JKC7RTNODdhcyC3PbgzD7W0Er+SxLTvMSS
-         At74pZ6GmF45nW+Hc2vs1CYad2Itr9QnXNuD86GShWAozuBZhsBsk7UFe9oJ1bpF0gTL
-         vEuA==
-X-Gm-Message-State: AOAM532b+jIkAarXw+UAuyCnJsziSwjnWPTqZ6iaAIH4Qd17lA9vHMzp
-        ipTxgnIw/53W9mC0RSFTiIBoIMC5eW7dtQ==
-X-Google-Smtp-Source: ABdhPJx5jlTHtmIllV5ZH3877irJ+uzY0PbBmrzJHKndmknI0bZRvO0j/dVfEMtXZLt0W1dxcHzLQg==
-X-Received: by 2002:a17:902:ce8d:b029:e4:bc38:c4 with SMTP id f13-20020a170902ce8db02900e4bc3800c4mr22778542plg.48.1616344687261;
-        Sun, 21 Mar 2021 09:38:07 -0700 (PDT)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id c6sm12165070pfj.99.2021.03.21.09.38.06
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iFEaGtipHtB5ksp/gPeMOr+K0OZmJ87uSOi18F3mCyA=;
+        b=UuRwQYP5fNhPruOtkcN+5jWyjGXuWKs3CSqhbCL117ensAmLq1ecyT7EdNd/0wJK8F
+         P46tK0Tyf8rug+LAVHB0sqBTNqGtwlOMq7lvUjcKT9b+UsUKd85NSodgsQyA+rlztYVz
+         cHDw2wldH9ov+3nm21qyJ7dPfrfjE5oTcl2PuqtRzzRUoN2CVCcoiRpyhCBJMCuvzajh
+         KFBhN6OTJLQRUTey97ewQc7tPrhxCdVkLdgraZ/knLhnajc/pnqPjlh6j1D9XP66nr9N
+         /x98MWPFYIT8zD5GFWV7Y69omIjDZJWlofp2Kko+zqTfuOV9iwpNcAvUa5lWkWV45jsi
+         v3ZQ==
+X-Gm-Message-State: AOAM530mIqW+irbdimHbqlpEsICYvsxhkGLsnZRiSoCKsW7z97hyHMVf
+        An70tu6AYVDf35XSkrytSXhGDAhNscYaXg==
+X-Google-Smtp-Source: ABdhPJwRKpKHhx4E9ZYwhO11eEMNyrENkcMX6vocV/dd6+av0oR5pDXj74Por0KbAJaOFbcpmqsQMw==
+X-Received: by 2002:a2e:5804:: with SMTP id m4mr7416382ljb.419.1616356676712;
+        Sun, 21 Mar 2021 12:57:56 -0700 (PDT)
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com. [209.85.167.49])
+        by smtp.gmail.com with ESMTPSA id j144sm1318728lfj.241.2021.03.21.12.57.56
+        for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 21 Mar 2021 09:38:06 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] io_uring followup fixes for 5.12-rc4
-To:     Linus Torvalds <torvalds@linux-foundation.org>
+        Sun, 21 Mar 2021 12:57:56 -0700 (PDT)
+Received: by mail-lf1-f49.google.com with SMTP id x28so18016826lfu.6
+        for <io-uring@vger.kernel.org>; Sun, 21 Mar 2021 12:57:56 -0700 (PDT)
+X-Received: by 2002:ac2:4250:: with SMTP id m16mr6691566lfl.40.1616356676047;
+ Sun, 21 Mar 2021 12:57:56 -0700 (PDT)
+MIME-Version: 1.0
+References: <ea7f768a-fd67-a265-9d90-27cd5aa26ac9@kernel.dk>
+In-Reply-To: <ea7f768a-fd67-a265-9d90-27cd5aa26ac9@kernel.dk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sun, 21 Mar 2021 12:57:40 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgYhNck33YHKZ14mFB5MzTTk8gqXHcfj=RWTAXKwgQJgg@mail.gmail.com>
+Message-ID: <CAHk-=wgYhNck33YHKZ14mFB5MzTTk8gqXHcfj=RWTAXKwgQJgg@mail.gmail.com>
+Subject: Re: [GIT PULL] io_uring followup fixes for 5.12-rc4
+To:     Jens Axboe <axboe@kernel.dk>
 Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
         io-uring <io-uring@vger.kernel.org>
-Message-ID: <ea7f768a-fd67-a265-9d90-27cd5aa26ac9@kernel.dk>
-Date:   Sun, 21 Mar 2021 10:38:04 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Linus,
+On Sun, Mar 21, 2021 at 9:38 AM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> - Catch and loop when needing to run task_work before a PF_IO_WORKER
+>   threads goes to sleep.
 
-Was planning on holding these for -rc5, but I think we may as well
-flush them out. In this pull request:
+Hmm. The patch looks fine, but it makes me wonder: why does that code
+use test_tsk_thread_flag() and clear_tsk_thread_flag() on current?
 
-- The SIGSTOP change from Eric, so we properly ignore that for
-  PF_IO_WORKER threads.
+It should just use test_thread_flag() and clear_thread_flag().
 
-- Disallow sending signals to PF_IO_WORKER threads in general, we're not
-  interested in having them funnel back to the io_uring owning task.
+Now it looks up "current" - which goes through the thread info - and
+then looks up the thread from that. It's all kinds of stupid.
 
-- Stable fix from Stefan, ensuring we properly break links for short
-  send/sendmsg recv/recvmsg if MSG_WAITALL is set.
+It should just have used the thread_info from the beginning, which is
+what test_thread_flag() and clear_thread_flag() do.
 
-- Catch and loop when needing to run task_work before a PF_IO_WORKER
-  threads goes to sleep.
+I see the same broken pattern in both fs/io-wq.c (which is where I
+noticed it when looking at the patch) and in fs/io-uring.c.
 
-Please pull!
+Please don't do "*_tsk_thread_flag(current, x)", when just
+"*_thread_flag(x)" is simpler, and more efficient.
 
+In fact, you should avoid *_tsk_thread_flag() as much as possible in general.
 
-The following changes since commit de75a3d3f5a14c9ab3c4883de3471d3c92a8ee78:
+Thread flags should be considered mostly private to that thread - the
+exceptions are generally some very low-level system stuff, ie core
+signal handling and things like that.
 
-  io_uring: don't leak creds on SQO attach error (2021-03-18 09:44:35 -0600)
+So please change things like
 
-are available in the Git repository at:
+        if (test_tsk_thread_flag(current, TIF_NOTIFY_SIGNAL))
 
-  git://git.kernel.dk/linux-block.git tags/io_uring-5.12-2021-03-21
+to
 
-for you to fetch changes up to 0031275d119efe16711cd93519b595e6f9b4b330:
+        if (test_thread_flag(TIF_NOTIFY_SIGNAL))
 
-  io_uring: call req_set_fail_links() on short send[msg]()/recv[msg]() with MSG_WAITALL (2021-03-21 09:41:14 -0600)
+etc.
 
-----------------------------------------------------------------
-io_uring-5.12-2021-03-21
+And yes, we have a design mistake in a closely related area:
+"signal_pending()" should *not* take the task pointer either, and we
+should have the "current thread" separate from "another thread".
 
-----------------------------------------------------------------
-Eric W. Biederman (1):
-      signal: don't allow STOP on PF_IO_WORKER threads
+Maybe the "signal_pending(current)" makes people think it's a good
+idea to pass in "current" to the thread flag checkers. We would have
+been better off with "{fatal_,}signal_pending(void)" for the current
+task, and "tsk_(fatal_,}signal_pending(tsk)" for the (very few) cases
+of checking another task.
 
-Jens Axboe (2):
-      signal: don't allow sending any signals to PF_IO_WORKER threads
-      io-wq: ensure task is running before processing task_work
+Because it really is all kinds of stupid (yes, often historical -
+going all the way back to when 'current' was the main model - but now
+stupid) to look up "current" to then look up thread data, when these
+days, when the basic pattern is
 
-Stefan Metzmacher (1):
-      io_uring: call req_set_fail_links() on short send[msg]()/recv[msg]() with MSG_WAITALL
+  #define current get_current()
+  #define get_current() (current_thread_info()->task)
 
- fs/io-wq.c      |  8 ++++++--
- fs/io_uring.c   | 24 ++++++++++++++++++++----
- kernel/signal.c |  6 +++++-
- 3 files changed, 31 insertions(+), 7 deletions(-)
+ioe, the *thread_info* is the primary and quick thing, and "current"
+is the indirection, and so if you see code that basically does
+"task_thread_info()" on "current", it is literally going back and
+forth between the two.
 
--- 
-Jens Axboe
+And yes, on architectures that use "THREAD_INFO_IN_TASK" (which does
+include x86), the back-and-forth ends up being a non-issue (because
+it's just offsets into containing structs) and it doesn't really
+matter. But conceptually, patterns like "test_tsk_thread_flag(current,
+x)" really are wrong, and on some architectures it generates
+potentially *much* worse code.
 
+           Linus

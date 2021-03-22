@@ -2,95 +2,126 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BB0333447ED
-	for <lists+io-uring@lfdr.de>; Mon, 22 Mar 2021 15:50:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D9DB344855
+	for <lists+io-uring@lfdr.de>; Mon, 22 Mar 2021 15:58:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230119AbhCVOtw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 22 Mar 2021 10:49:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53772 "EHLO
+        id S230286AbhCVO5o (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 22 Mar 2021 10:57:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230129AbhCVOtX (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 22 Mar 2021 10:49:23 -0400
-Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE229C061574
-        for <io-uring@vger.kernel.org>; Mon, 22 Mar 2021 07:49:22 -0700 (PDT)
-Received: by mail-io1-xd2b.google.com with SMTP id k25so2088146iob.6
-        for <io-uring@vger.kernel.org>; Mon, 22 Mar 2021 07:49:22 -0700 (PDT)
+        with ESMTP id S231366AbhCVO5M (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 22 Mar 2021 10:57:12 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F540C061574
+        for <io-uring@vger.kernel.org>; Mon, 22 Mar 2021 07:57:11 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id v4so17357959wrp.13
+        for <io-uring@vger.kernel.org>; Mon, 22 Mar 2021 07:57:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=zbmqmyP4vA69N/YXo4MMAZFgfhUCEg914AmEuMVnxP4=;
-        b=ZnypxfODvzxR31UKGqi06d1fFdGF15NlAaZAObOg2So+kEhARUeuljNu4VcPpQYK3N
-         45bzdq67oaIlIWKIE82Qt/NQOhwrYJT72Mspp19ridM8/CyvKtc6CqDczpAj0ZU0wiQ1
-         cHt4IKxbnugj5a2YVSQKCRvKVPDSD1oMYa8H2lvpzVHO53oCkwD5r3dP5j5E3q8sR9Ws
-         PT/9kRKKhLQ15AWNxkSeAIFiqwv1HoqKDIdhKSVg6xhMj8OgqxpLmO1ZrE4brh/YnM1F
-         Vc6UFmbqlcvM7YxRVzzjuyraCLKHBVG3OWU9RPC/hom/oyVa20SWUlHXeJZY3GQHCCFp
-         wqvA==
+        d=gmail.com; s=20161025;
+        h=to:references:from:autocrypt:subject:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=2jxSe4jqbWZo+DjnR09r9zSnUVs7irZ5I9IDfAkA1jY=;
+        b=eEbUyxujRiD5KVwA8CHxxK8HWf2v+yVh7N0+2HmybDo1c3yxLKgCU2yhZuN3SaqVgX
+         BpX83baMAnuJfh7oOtp83rW2heTt9lzA9/vwmcIJiNLM0R8GJdNa4wleFyK5SQGGjFOr
+         bzY/jIsH8KrbwjWNYRfnJdjZycjliZ1WSpXQvepmKztF6s8+drGN4DNJIuVh/yJmtGa7
+         JS+DZFG1UK/ZnRpr6DiIxY914AXhNTtndPTVr0XgVxCGaJ+QGdge8LuGs4E+XmCv2JRc
+         LALfPA2HmYvRWTPrHw379OHFg6rBUCHjuXImxxC/n2moapQsu/04KEHiH+CKepU0eQkO
+         elFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=zbmqmyP4vA69N/YXo4MMAZFgfhUCEg914AmEuMVnxP4=;
-        b=aAtJus6EmV5zBgK7ZHeI2Bc4dfT1h8xwtuHE/TtfSSUR/TeGnPFwXN/LsaMcH5vk8J
-         MXP5c/L2eoNHWtVdNRFYXnPxLi7DZkvDpHrrHEV9CkBfnUcDoqciVxuWPd2rYAzcQYUn
-         t1l4w1Thn7bkXaW0T4AacW9FnMD2OMqLWX7Oa5kcS+GB2BZgb5mpyO/L4fCpvEdvglfE
-         +d8HISwpQmYRq0wGnfaYoUZTu92nhb22KBMJmJdLOkvYkhr18FRZo5RQCnFnJ1UMcbja
-         Ff4dKn7ttAdwXQujccDabYudRqwoY4WBJjV0IvkwJDyDdRU+1IAscaVauezW1JYjVRf/
-         TCNQ==
-X-Gm-Message-State: AOAM532Cuc8QEUbU4LzrgqPhtEvWmxO8ZKL9Q9gCd/v7h7fCnr37aJud
-        hq43aBASXgNgLRx4PETHoyWuO+OeObfe2w==
-X-Google-Smtp-Source: ABdhPJwrqmoIazQd1kNxOBHagoHgpZk1uPjZ4TWiP8NljLKfK8UIyGfj+CU9imjzs3MiO6VcvbOblg==
-X-Received: by 2002:a02:7119:: with SMTP id n25mr11688793jac.48.1616424562309;
-        Mon, 22 Mar 2021 07:49:22 -0700 (PDT)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id k12sm7704852ios.2.2021.03.22.07.49.21
+        bh=2jxSe4jqbWZo+DjnR09r9zSnUVs7irZ5I9IDfAkA1jY=;
+        b=ccPEnJBCZlRZuSxK7vtGhBKx2o/QmdFTV6aOxUwf8yfdUfSBQ1K+pXTG19pCRx2gWR
+         Ih2aWVTPtWhOakEsfFvl83hLHJzFa4QqYmtEmxIAOped95yc1VmPGBZt02+f7iHZ+vTi
+         tveqneSFYhYHb57czdQEtW5tgm8NHeXNyX+EA1ea16gcDttOkQBtFoHlYaf/im45schu
+         ETEZ6PYO/cDdPeq0mvBEdz0F9s/XZ7lHEEg3zZ2wftxY2ipxgMEKYxUPO91upEwUvES4
+         MM0m4LDf0+awVvOgaGTvNKYRqg5QMtoAzcu6tFxHtuFHEV9TOKiit0mp+5HtAFBOKwAM
+         Q5Vw==
+X-Gm-Message-State: AOAM530RIMjD8xK4Gg1JM2+Os5wQ54/w4LIljOeyz6pdxpfIjDlGqsXN
+        6B/aKpuU+u4U2u1Ii1NkLQLxqaraHuAfig==
+X-Google-Smtp-Source: ABdhPJxF7P/1kTYHkiWhu+ScfwlphLEXXpSQGLdqargfOBZZWTY1akRS0GVc69uGppnR2OM0yUd5mA==
+X-Received: by 2002:a5d:4fd0:: with SMTP id h16mr18250397wrw.178.1616425029579;
+        Mon, 22 Mar 2021 07:57:09 -0700 (PDT)
+Received: from [192.168.8.179] ([85.255.234.182])
+        by smtp.gmail.com with ESMTPSA id u9sm16288426wmc.38.2021.03.22.07.57.08
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Mar 2021 07:49:21 -0700 (PDT)
-Subject: Re: [ANNOUNCEMENT] io_uring SQPOLL sharing changes
-To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring <io-uring@vger.kernel.org>,
-        joseph qi <joseph.qi@linux.alibaba.com>,
-        Hao Xu <haoxu@linux.alibaba.com>
-References: <ca41ede6-7040-5eac-f4f0-9467427b1589@gmail.com>
- <30563957-709a-73a2-7d54-58419089d61a@linux.alibaba.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <1afd5237-4363-9178-917e-3132ba1b89c3@kernel.dk>
-Date:   Mon, 22 Mar 2021 08:49:21 -0600
+        Mon, 22 Mar 2021 07:57:09 -0700 (PDT)
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <cover.1616378197.git.asml.silence@gmail.com>
+ <ff3273b5111fdb10eea0e3d4f81f620fb58c5a5b.1616378197.git.asml.silence@gmail.com>
+ <e8da4108-21a1-62b4-5556-bc9208e930f3@kernel.dk>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Subject: Re: [PATCH 03/11] io_uring: optimise out task_work checks on enter
+Message-ID: <75e9acac-7fb7-747c-9832-3abcd0dfdfd9@gmail.com>
+Date:   Mon, 22 Mar 2021 14:53:08 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <30563957-709a-73a2-7d54-58419089d61a@linux.alibaba.com>
+In-Reply-To: <e8da4108-21a1-62b4-5556-bc9208e930f3@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/21/21 11:54 PM, Xiaoguang Wang wrote:
-> hi Pavel,
+On 22/03/2021 13:45, Jens Axboe wrote:
+> On 3/21/21 7:58 PM, Pavel Begunkov wrote:
+>> io_run_task_work() does some extra work for safety, that isn't actually
+>> needed in many cases, particularly when it's known that current is not
+>> exiting and in the TASK_RUNNING state, like in the beginning of a
+>> syscall.
 > 
->> Hey,
->>
->> You may have already noticed, but there will be a change how SQPOLL
->> is shared in 5.12. In particular, SQPOLL may be shared only by processes
->> belonging to the same thread group. If this condition is not fulfilled,
->> then it silently creates a new SQPOLL task.
->
-> Thanks for your kindly reminder, currently we only share sqpoll thread
-> in threads belonging to one same process.
+> Is this really worth it?
 
-That's good to know, imho it is also the only thing that _really_ makes
-sense to do.
-
-Since we're on the topic, are you actively using the percpu thread setup
-that you sent out patches for earlier? That could still work within
-the new scheme of having io threads, but I'd be curious to know first
-if you guys are actually using it.
+Not alone, but ifs tend to pile up, and I may argue that PF_EXITING in
+the beginning of a syscall may be confusing. Are you afraid it will get
+out of sync with time?
 
 -- 
-Jens Axboe
-
+Pavel Begunkov

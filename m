@@ -2,124 +2,137 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F1A6343682
-	for <lists+io-uring@lfdr.de>; Mon, 22 Mar 2021 03:03:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF460343687
+	for <lists+io-uring@lfdr.de>; Mon, 22 Mar 2021 03:05:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229872AbhCVCDW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 21 Mar 2021 22:03:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58056 "EHLO
+        id S229904AbhCVCFB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 21 Mar 2021 22:05:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229880AbhCVCCx (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 21 Mar 2021 22:02:53 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A519C061756
-        for <io-uring@vger.kernel.org>; Sun, 21 Mar 2021 19:02:52 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id x13so14998937wrs.9
-        for <io-uring@vger.kernel.org>; Sun, 21 Mar 2021 19:02:52 -0700 (PDT)
+        with ESMTP id S229696AbhCVCEf (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 21 Mar 2021 22:04:35 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCA68C061574
+        for <io-uring@vger.kernel.org>; Sun, 21 Mar 2021 19:04:34 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id b9so15005160wrt.8
+        for <io-uring@vger.kernel.org>; Sun, 21 Mar 2021 19:04:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=vMMd91PYOtnROWXcWYUQZQzXa3epe1bIuPvlsvAfxxQ=;
-        b=Uf17Qu/oguQGCBK0bMkca5zNEck7NHe8UwONHhwbb1Qv4DPm5pMl8QYpAr5iTT0WPA
-         u7OZX75uuWamBC7P+UklaMq3YY4yBHB/0VJV+D7tPc2zVebJfmekva3lMJWjW/NuRsMr
-         MW2OZp835M5wMYcxrazg46w06Tbtkbsvpg7Vk0IdOV6GtJGRWf94MHcWxdLOGTSCBcOp
-         x2IXad7f51Nf2ULWR/+79jHKu/JT1EOjv3qxLcMHYv+03oKNmPSKept8Jp2kx11qXecg
-         WCfOdbhL3esDgVV/ysM9gzPm1GeABTxucn0TaA/WiU2j3EUGBCl8G9vd7DpPG61oD7fT
-         2EFQ==
+        h=subject:from:to:references:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=9pBR6H9vxt40eu+G/1MtwBQNDgptHFPnsxWtqcvCKO0=;
+        b=WCnubOYygAcrxRU/Bbp79iFiQEgyZedjCJ2II14amkZqFHkZ0GrjnHu1rWXJ1jFlPC
+         4lzskMaDi3tjRIJZirhDc9yMTY2tbVcjaXsaf/d0O8ccd5bGCUtguZp/QWvkmahvvZ8i
+         SztVHzpou+Qph76D/aQDMt0vYGRaNIWiACtKoVMJeWAeGOc83RNOYg2d9LfzblCjTGs0
+         NdGHCwRlodaWx/bQNVBQoX1XSahCSuol20ztpeQM1exw09dlzGyVaFm7YYOfTOmG7gh3
+         sLEn6ZGSQXAVO+s0+uUXU3q9UlH4AMfIvNaCUia+e3E18Q0R0PymncJ/t/AVExTP8tnM
+         e3Gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=vMMd91PYOtnROWXcWYUQZQzXa3epe1bIuPvlsvAfxxQ=;
-        b=aMI0I1O/jBr+Ws2WtnA3XI00ykzPDq+MITKtwnnpetR8REqrNuBM38DGfBcn7YOmEJ
-         ZttfgUvc+DYLaY5JuPMhHYjNvt5Im0iFU7sRpJj2cQVJL1tTMAPxUJMc0Zdw9NeNrjJ9
-         wmwmIfSGGi4Gp57ormi1jjiVWsrIzJgzp5yZAZDkDXoTH2UGgIspU2WW/j9ClwjEiyOd
-         jaJMPg4lNhM8CYW3J2ndgylzur5dYph1kc3lC9x12S2EJUYsYHGtg32+E5JQ0QQR/Fue
-         UCp3FzUwK6S8CO2ktSmjrNXOHE629s/wwmUIwF+iXTs46pL4quBf4b+trlUPHcYji3J8
-         TSjw==
-X-Gm-Message-State: AOAM532Ryi56LoI/4R2uT7+FRsrNMUM0HNG/CyICe/5FMt020asENuoF
-        3T/47mwWG1hOW8kmxKPkCgPhlVv6xZAE8g==
-X-Google-Smtp-Source: ABdhPJxa6GffuTshEvOrQxurBYckFC/ht7EN6pfrZaxpcqQWAjMd+BbaiOV/TVxBD8co5q2cwBGNLw==
-X-Received: by 2002:adf:e391:: with SMTP id e17mr15673603wrm.285.1616378571147;
-        Sun, 21 Mar 2021 19:02:51 -0700 (PDT)
-Received: from localhost.localdomain ([85.255.234.202])
-        by smtp.gmail.com with ESMTPSA id i8sm15066695wmi.6.2021.03.21.19.02.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Mar 2021 19:02:50 -0700 (PDT)
+        h=x-gm-message-state:subject:from:to:references:autocrypt:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=9pBR6H9vxt40eu+G/1MtwBQNDgptHFPnsxWtqcvCKO0=;
+        b=bJgXHSYbxGjLMUg8Zu39Y7BrxLcehL+GgAtNsG76zv9ELGvzmXQFSFCxSqFVKhiQEG
+         mxdHXLP0FxnNwiZbR+rrX3X4uK328Pu0fZeOhtpqJIre2hmBL9rE/1to6NA+w0m1nt+O
+         +PZsoJ2gCGpzyDN7UgJoUc3sewTIbRW0mXsDW0E98oywQBwd6QnUPUUwNlE8gft5k6Zl
+         1nNyug++tl9vAz92TdMcLLoWGzjswS44gTFi26nQKgF5ZP4Nwdi38yxAHiUj2xndegt3
+         voPl1R7Yus5yx2nsJJz2YP9acIVrhpg4ukCg72FqKiyjgK9Kb6mjyAZLQS5UEs5fW7uC
+         IfDw==
+X-Gm-Message-State: AOAM530VR0Z0U8MMhB+B7yaWHsDmHOn+ccZegGYdya+NBxD6uFmOV9ys
+        LezB2O51TePlyK87TmZ13v7Bg3/mVNax8w==
+X-Google-Smtp-Source: ABdhPJwb/EJ2D/HxnEA1xbEop+j605+uMZXNSv8N3irW2ChfIpcMMnA6yQsyIhzDNaxLvrLPL7rz9A==
+X-Received: by 2002:adf:de91:: with SMTP id w17mr16069207wrl.268.1616378673352;
+        Sun, 21 Mar 2021 19:04:33 -0700 (PDT)
+Received: from [192.168.8.179] ([85.255.234.202])
+        by smtp.gmail.com with ESMTPSA id p27sm15579368wmi.12.2021.03.21.19.04.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 21 Mar 2021 19:04:33 -0700 (PDT)
+Subject: Re: [PATCH 5.13 00/11] yet another series of random 5.13 patches
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 11/11] io_uring: optimise rw complete error handling
-Date:   Mon, 22 Mar 2021 01:58:34 +0000
-Message-Id: <d2c892c8e1220976d590584c2070d0a4d0f71277.1616378197.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <cover.1616378197.git.asml.silence@gmail.com>
 References: <cover.1616378197.git.asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Message-ID: <63da2c83-9237-7e03-7354-29ea94518deb@gmail.com>
+Date:   Mon, 22 Mar 2021 02:00:34 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <cover.1616378197.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Expect read/write to succeed and create a hot path for this case, in
-particular hide all error handling with resubmission under a single
-check with the desired result.
+On 22/03/2021 01:58, Pavel Begunkov wrote:
+> Random improvements for the most part, 8-11 are about optimising rw and
+> rw reissue.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 28 +++++++++++++++-------------
- 1 file changed, 15 insertions(+), 13 deletions(-)
+note: depends on just sent "io_uring: don't skip file_end_write() on
+reissue" for-5.12 patch
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 775139e9d00f..481da674c9bf 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -2530,10 +2530,11 @@ static void __io_complete_rw(struct io_kiocb *req, long res, long res2,
- 
- 	if (req->rw.kiocb.ki_flags & IOCB_WRITE)
- 		kiocb_end_write(req);
--	if ((res == -EAGAIN || res == -EOPNOTSUPP) && io_rw_reissue(req))
--		return;
--	if (res != req->result)
-+	if (unlikely(res != req->result)) {
-+		if ((res == -EAGAIN || res == -EOPNOTSUPP) && io_rw_reissue(req))
-+			return;
- 		req_set_fail_links(req);
-+	}
- 	if (req->flags & REQ_F_BUFFER_SELECTED)
- 		cflags = io_put_rw_kbuf(req);
- 	__io_req_complete(req, issue_flags, res, cflags);
-@@ -2550,19 +2551,20 @@ static void io_complete_rw_iopoll(struct kiocb *kiocb, long res, long res2)
- {
- 	struct io_kiocb *req = container_of(kiocb, struct io_kiocb, rw.kiocb);
- 
--#ifdef CONFIG_BLOCK
--	if (res == -EAGAIN && io_rw_should_reissue(req)) {
--		if (!io_resubmit_prep(req))
--			req->flags |= REQ_F_DONT_REISSUE;
--	}
--#endif
--
- 	if (kiocb->ki_flags & IOCB_WRITE)
- 		kiocb_end_write(req);
-+	if (unlikely(res != req->result)) {
-+		bool fail = true;
- 
--	if (res != -EAGAIN && res != req->result) {
--		req->flags |= REQ_F_DONT_REISSUE;
--		req_set_fail_links(req);
-+#ifdef CONFIG_BLOCK
-+		if (res == -EAGAIN && io_rw_should_reissue(req) &&
-+		    io_resubmit_prep(req))
-+			fail = false;
-+#endif
-+		if (fail) {
-+			req_set_fail_links(req);
-+			req->flags |= REQ_F_DONT_REISSUE;
-+		}
- 	}
- 
- 	WRITE_ONCE(req->result, res);
+> 
+> Pavel Begunkov (11):
+>   io_uring: don't clear REQ_F_LINK_TIMEOUT
+>   io_uring: don't do extra EXITING cancellations
+>   io_uring: optimise out task_work checks on enter
+>   io_uring: remove tctx->sqpoll
+>   io-wq: refactor *_get_acct()
+>   io_uring: don't init req->work fully in advance
+>   io_uring: kill unused REQ_F_NO_FILE_TABLE
+>   io_uring: optimise kiocb_end_write for !ISREG
+>   io_uring: don't alter iopoll reissue fail ret code
+>   io_uring: hide iter revert in resubmit_prep
+>   io_uring: optimise rw complete error handling
+> 
+>  fs/io-wq.c    |  17 +++----
+>  fs/io_uring.c | 128 +++++++++++++++++++++++++-------------------------
+>  2 files changed, 72 insertions(+), 73 deletions(-)
+> 
+
 -- 
-2.24.0
-
+Pavel Begunkov

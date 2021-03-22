@@ -2,83 +2,100 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E9058343678
-	for <lists+io-uring@lfdr.de>; Mon, 22 Mar 2021 03:03:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 04865343679
+	for <lists+io-uring@lfdr.de>; Mon, 22 Mar 2021 03:03:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229579AbhCVCCo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 21 Mar 2021 22:02:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58004 "EHLO
+        id S229692AbhCVCDQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 21 Mar 2021 22:03:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229865AbhCVCCn (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 21 Mar 2021 22:02:43 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75BAEC061574
-        for <io-uring@vger.kernel.org>; Sun, 21 Mar 2021 19:02:43 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id k8so14994939wrc.3
-        for <io-uring@vger.kernel.org>; Sun, 21 Mar 2021 19:02:43 -0700 (PDT)
+        with ESMTP id S229613AbhCVCCp (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 21 Mar 2021 22:02:45 -0400
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94055C061574
+        for <io-uring@vger.kernel.org>; Sun, 21 Mar 2021 19:02:44 -0700 (PDT)
+Received: by mail-wr1-x42b.google.com with SMTP id j18so15011874wra.2
+        for <io-uring@vger.kernel.org>; Sun, 21 Mar 2021 19:02:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
+        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=m9iakSfSm7QA4GmcLSXa6Xx3QKwRHBtG8eLBc4nnOrQ=;
-        b=pNfh8oQhqD1gV5YsQaA2XNX7m+npjqSEocSEU+pQenjLUPTZuAJpDFyJY+dkavhWZP
-         jxotG/+OLLv6RKwu70SgttbFiwBMNzVZPCa4gtAE3P9MhHL8Y2WsSE6PwQYMtUAH42zy
-         9yRUqU8qWTRx+R4usoLjA+UctKI9LV3dUhy8RhIhhUow6E5dlgkKuoze6j7D3Mj3JAsX
-         QQeojokDxcl7hqZDf8V5UFhdFSXCFNsSuTr0DnvkdKkSWqvrXpSnjiJZZ9rzSzjkOnA4
-         eC469mKjE2h/f10/At5U8Tv0E+S6mqpvP5y6f2zx3Dpr5zPPlFHFtf2ovRLZiYMB8sBC
-         sa4g==
+        bh=3RwD8YETc1smZeKZNC6FG4o/MT3oJk5Dn15un9qg1zE=;
+        b=OyZ05B9RggcpTcUxtmVyyspg74X4S1qF3ChW4Pg1kwZgNXa1uVMK286WuDfcLHeM1W
+         nUCM4RVgnlntL72K9E4RGdXmNLD4FaUQTEfqB3jFASCFS6AiTDxQ/Y9trl3yPf7HDoph
+         K7VFwpxkKfH232MfuEeuzOqYwkJipVGo+YkT/nBm/C+A4+m7UpdbnFjcM42pjgxjWaSF
+         h0BoIGawu+sYf7QfI56aJzhgY45Pw6FIFeTDTGmfi/7bDvwpWm1O2u+cXDKsigWA0u0F
+         szyr5qfUjVrgtpAVNK9pGO2Vt4aWEZrLRVcLutDTmqoicOH9BJiRqH09L+OGxEiFxsdg
+         mIZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=m9iakSfSm7QA4GmcLSXa6Xx3QKwRHBtG8eLBc4nnOrQ=;
-        b=pjO7kCufe/f5V63A2iRqS3pA3y0EX2gY5yhnG64Zl4mIX7njsJyv/6XcYUwA+FgV6Z
-         SrraCiuqtYXIgSz7XhYPSBEl/Kz2xy3mbGK4k9V23N3IRbXRyBG+PXL2e41s3zk/J0nn
-         +bF/I7VJK1aVImiEAVH6nO7bAZquepN64DApPHDqHp6/g1WidbWZWOIXXeuUG3wpsjcl
-         oGXv2nYoQfVuCETDOQYnvEZWN4E5PcQ2oIqSmrwAz9OlaZnv/lcUG8fXPTeG2N1XDnne
-         IMmt8Oqgyjvn6DkrcuXmqQfu/ze9zLVoHaYXcG/7PcxqHu6lLb7+jH7UFPc/82Y+EUZY
-         77hQ==
-X-Gm-Message-State: AOAM531uiCWYE5OHRyLXvVmuyjq7Gh+DZJyk5ccIcv5vQ0vgM7L7DXA7
-        wo3zLHbGCZY3gW5jfAfTxROWbUTV7XM/XQ==
-X-Google-Smtp-Source: ABdhPJwVIMNEYCQh5Z04YeygjdVAVHxTergUNSUzVPjyssfKwT+Ncxf9VnsFA2BE5rludYHF22UAkw==
-X-Received: by 2002:a5d:570b:: with SMTP id a11mr15591517wrv.281.1616378562276;
-        Sun, 21 Mar 2021 19:02:42 -0700 (PDT)
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=3RwD8YETc1smZeKZNC6FG4o/MT3oJk5Dn15un9qg1zE=;
+        b=h4OPDUl1R1DgYD5iFwM5jJ2fTL8UOsRYYcI4w+ZhGZEzn969U9EkNHkXVC5GVDA8yy
+         1BzvkDWx2nropLbTGHcgJX1msA48xibqZMGiXyzlBuys9t7ZsbqXOK+V2ScXW/JuPoZh
+         uQ7rn5rvzFZK7MlZrjOY4dEdH0PyBRnHTDqjc73LQCM1XN2hjHYzVhZmYQ4GO2cn6Foz
+         TtArC+NiUSGeEfMr4mpMKpWjzQsykvxrOykSo905++6P4Vq0bPa/mQPMRfvpaN2uF6bR
+         jsipMaD2rzTHcuPolYR++ZdG3d7as023btOLcb0ihHrKHJeecvZxrEdUaTvm5MaJEY1u
+         d9GQ==
+X-Gm-Message-State: AOAM531rjDyNCVKA5NVMaTtEdNOUpbq+HE2Qjahm64qTiQvicU3VLUu8
+        yODpSSlirakzM5C5PSl1Jb9KHHyJReoV2Q==
+X-Google-Smtp-Source: ABdhPJxIkP3Gj7HoZ1d08gcns1OfjD/TrikK7PAuByE2CUsIb88Vdi2xz0MYcxMmAX8bB7iCqUDQLQ==
+X-Received: by 2002:a5d:5487:: with SMTP id h7mr16059611wrv.348.1616378563367;
+        Sun, 21 Mar 2021 19:02:43 -0700 (PDT)
 Received: from localhost.localdomain ([85.255.234.202])
-        by smtp.gmail.com with ESMTPSA id i8sm15066695wmi.6.2021.03.21.19.02.41
+        by smtp.gmail.com with ESMTPSA id i8sm15066695wmi.6.2021.03.21.19.02.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Mar 2021 19:02:41 -0700 (PDT)
+        Sun, 21 Mar 2021 19:02:42 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 5.13 00/11] yet another series of random 5.13 patches
-Date:   Mon, 22 Mar 2021 01:58:23 +0000
-Message-Id: <cover.1616378197.git.asml.silence@gmail.com>
+Subject: [PATCH 01/11] io_uring: don't clear REQ_F_LINK_TIMEOUT
+Date:   Mon, 22 Mar 2021 01:58:24 +0000
+Message-Id: <4b31a0e4bc06400c79402cd22be3218d5535036f.1616378197.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
+In-Reply-To: <cover.1616378197.git.asml.silence@gmail.com>
+References: <cover.1616378197.git.asml.silence@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Random improvements for the most part, 8-11 are about optimising rw and
-rw reissue.
+REQ_F_LINK_TIMEOUT is a hint that to look for linked timeouts to cancel,
+we're leaving it even when it's already fired. Hence don't care to clear
+it in io_kill_linked_timeout(), it's safe and is called only once.
 
-Pavel Begunkov (11):
-  io_uring: don't clear REQ_F_LINK_TIMEOUT
-  io_uring: don't do extra EXITING cancellations
-  io_uring: optimise out task_work checks on enter
-  io_uring: remove tctx->sqpoll
-  io-wq: refactor *_get_acct()
-  io_uring: don't init req->work fully in advance
-  io_uring: kill unused REQ_F_NO_FILE_TABLE
-  io_uring: optimise kiocb_end_write for !ISREG
-  io_uring: don't alter iopoll reissue fail ret code
-  io_uring: hide iter revert in resubmit_prep
-  io_uring: optimise rw complete error handling
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ fs/io_uring.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
- fs/io-wq.c    |  17 +++----
- fs/io_uring.c | 128 +++++++++++++++++++++++++-------------------------
- 2 files changed, 72 insertions(+), 73 deletions(-)
-
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 67a463f1ccdb..5cba23347092 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -1786,7 +1786,6 @@ static bool io_kill_linked_timeout(struct io_kiocb *req)
+ 	__must_hold(&req->ctx->completion_lock)
+ {
+ 	struct io_kiocb *link = req->link;
+-	bool cancelled = false;
+ 
+ 	/*
+ 	 * Can happen if a linked timeout fired and link had been like
+@@ -1802,11 +1801,10 @@ static bool io_kill_linked_timeout(struct io_kiocb *req)
+ 		if (ret != -1) {
+ 			io_cqring_fill_event(link, -ECANCELED);
+ 			io_put_req_deferred(link, 1);
+-			cancelled = true;
++			return true;
+ 		}
+ 	}
+-	req->flags &= ~REQ_F_LINK_TIMEOUT;
+-	return cancelled;
++	return false;
+ }
+ 
+ static void io_fail_links(struct io_kiocb *req)
 -- 
 2.24.0
 

@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 73EF534367E
-	for <lists+io-uring@lfdr.de>; Mon, 22 Mar 2021 03:03:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CBAEB34367D
+	for <lists+io-uring@lfdr.de>; Mon, 22 Mar 2021 03:03:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229874AbhCVCDS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 21 Mar 2021 22:03:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58026 "EHLO
+        id S229731AbhCVCDU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 21 Mar 2021 22:03:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58028 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229865AbhCVCCr (ORCPT
+        with ESMTP id S229621AbhCVCCr (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Sun, 21 Mar 2021 22:02:47 -0400
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF7BCC061574
-        for <io-uring@vger.kernel.org>; Sun, 21 Mar 2021 19:02:46 -0700 (PDT)
-Received: by mail-wm1-x332.google.com with SMTP id t5-20020a1c77050000b029010e62cea9deso8379427wmi.0
-        for <io-uring@vger.kernel.org>; Sun, 21 Mar 2021 19:02:46 -0700 (PDT)
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F648C061574
+        for <io-uring@vger.kernel.org>; Sun, 21 Mar 2021 19:02:47 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id z6-20020a1c4c060000b029010f13694ba2so8336629wmf.5
+        for <io-uring@vger.kernel.org>; Sun, 21 Mar 2021 19:02:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=DNTpkA3Ww5fUFv7EFo7fVpqh3mJX5dvLugKI9OWjBZw=;
-        b=Yv7HzXt+iIwQs+NqNgwSm81k9cUm9UbLN+11oU2ntSxuzzFd2RJVA9od/+XqBZYNgr
-         x+g356RZK0clJHGikDZRTiyrgNxA5caRigXaSNKkdS55wPPKOZoJIQ7MY9UAGetlV9cW
-         ECy5vvvX0+Vw0OIcLehImJ3nhOwT4QtS8JF6LHhJyROPQh148LroVBF2jldyLTY9S9cU
-         pqijVfPIT9igdCLsbrKxuJsYxjvAPkr8lMPTxGURubBqTho75egvnrInxXuz1CZuagi2
-         lPZjvk8kuSh2+2Um/AHqb/uAVvxQcj2Vw7cOdTSbR7b1DwnAu4T6VeUqk2lv931oTbh7
-         zddQ==
+        bh=fzGqPv7pyLJoz0l7v7UEGNA2fEh2yiZC2RebX94r6Y8=;
+        b=qD76Is64gtE0aqTyG+gJTs3ExI9SI7Jw+e5yMproWDkoMbhq4ETaGRW/B7ACRJW6cA
+         mJ1AT2jr+rqYVTIByzRltRN21eUtRK53mre74bgbcJN84vz5GhSMJJILpipNbAJTAxDF
+         ZG77jpLqZ7U9dcxcwvOilZCsCXVLU8UPPdkQ5AKgtaTychVA0ZX7SW8IprBeQcYxIVw7
+         HGPelBqsVz0Mn3r4DjamhJvDOW6txgFq/Ob3uRXXMqFzZhwdWYA/2WYx68NtxfXce+cZ
+         85SIZqGdzaLeVdYhP+2xFYIrMfeSjMp8h0kNzod0boDfE/BKB63HZN+X+TYe7Vw/GBgv
+         ztvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=DNTpkA3Ww5fUFv7EFo7fVpqh3mJX5dvLugKI9OWjBZw=;
-        b=RhSyPCOQA4Cp/aegRO1vYrBZD9sXcThI2QCdOneNjB6Ou+J53VjDX82TYUfO0amTNw
-         qTL9bxSbWEHrOiET6JWrSK/Ba4xz9tDSTD2pTO1iaPsxCOwP5Nll9ryX62KkkK2ISeWX
-         HyZ4RIc3l1gtUI/jpugo3vgmLHwG5+3ucSqx7RPLmnvPkPKlt9yxMpOFZCIgdUbyaV2l
-         oDR3f2Hh64SO5pRD4ln7LU/83nx1rzjKT9lLKwCekl8ZyYBBuvYF2g5mBPpGRBALFZ6a
-         zWZbS2Dd0gnTuzZ5we3hNiSkeKG58HM5NvkjkHl+/uy1GidSq6uGlRVX4txGSm4SdlDc
-         gEgw==
-X-Gm-Message-State: AOAM532c/i8e+DMYP9gtPX2w2TyEzYBVyXovhw72NoQ2WNzq3FM25rQY
-        jG7Y+//Q/xNpMWRN6YXyN12dqLkzYw+HAQ==
-X-Google-Smtp-Source: ABdhPJzfcwHA73tECjeYUXM7lblzVMvgTPmECrrZ1IBdL9ST6vy+qO8JTRoWIrsx/cUmP7sF5ErWQA==
-X-Received: by 2002:a1c:9a47:: with SMTP id c68mr13545715wme.63.1616378565705;
-        Sun, 21 Mar 2021 19:02:45 -0700 (PDT)
+        bh=fzGqPv7pyLJoz0l7v7UEGNA2fEh2yiZC2RebX94r6Y8=;
+        b=i+ek3Uep2ZSc+zLaxdKVn85RwEB5k2BYSK35cMh3PPfFlFS/HoKSzsJ2A1rixsbJ2l
+         uA8q7M1kU6JNIREJ5MyHYA+/swhF8767C2oUKBhDNjNQ31dfNx49IER0SPdhKhYuCfrv
+         RLVI3Udge39VCb/Gi3P5RlFaZT3Sz5P1yPfwtHTzp2wZjwcb2RszNueSRfVgO5tvCtZK
+         XdvF2PdzMkLWsmS9svLSu2GuMcgdiHbT6oFLomvcRJUUhi/cTSWYGX7iwkeKAMtaXjiG
+         2zZyhBpQ0vnVU+MXGpv8yPXCiRYILWyYdjIBlAo/U22L4VEpXe3abcjHOCysbjpsUc7m
+         +ryQ==
+X-Gm-Message-State: AOAM5316qJISaUj6ZD2tZcvGjIaDWk8j6m0/Cg+uiM5z5KRKphBJ4Ge7
+        Je1lHZschx2Rc/VGVNh7Lik=
+X-Google-Smtp-Source: ABdhPJwhCA3EEzfHKcoJWjw5+0zCjt3p8HzQXu/muWIlFBvR1X4wopqoM5yzAh2qoKM2Dxbwir+SyA==
+X-Received: by 2002:a05:600c:4a18:: with SMTP id c24mr13205454wmp.173.1616378566427;
+        Sun, 21 Mar 2021 19:02:46 -0700 (PDT)
 Received: from localhost.localdomain ([85.255.234.202])
         by smtp.gmail.com with ESMTPSA id i8sm15066695wmi.6.2021.03.21.19.02.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Mar 2021 19:02:45 -0700 (PDT)
+        Sun, 21 Mar 2021 19:02:46 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 04/11] io_uring: remove tctx->sqpoll
-Date:   Mon, 22 Mar 2021 01:58:27 +0000
-Message-Id: <a4aba990c9fd73b18a107ef363aad7590d54d533.1616378197.git.asml.silence@gmail.com>
+Subject: [PATCH 05/11] io-wq: refactor *_get_acct()
+Date:   Mon, 22 Mar 2021 01:58:28 +0000
+Message-Id: <bc0d0c19eea02c0261f78e3c20d01407267e2ed7.1616378197.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1616378197.git.asml.silence@gmail.com>
 References: <cover.1616378197.git.asml.silence@gmail.com>
@@ -61,25 +61,49 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-struct io_uring_task::sqpoll is not used anymore, kill it
+Extract a helper for io_work_get_acct() and io_wqe_get_acct() to avoid
+duplication.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 1 -
- 1 file changed, 1 deletion(-)
+ fs/io-wq.c | 17 +++++++----------
+ 1 file changed, 7 insertions(+), 10 deletions(-)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 45b49273df8b..ff238dc503db 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -465,7 +465,6 @@ struct io_uring_task {
- 	struct io_wq		*io_wq;
- 	struct percpu_counter	inflight;
- 	atomic_t		in_idle;
--	bool			sqpoll;
+diff --git a/fs/io-wq.c b/fs/io-wq.c
+index e05f996d088f..ba4e0ece3894 100644
+--- a/fs/io-wq.c
++++ b/fs/io-wq.c
+@@ -148,23 +148,20 @@ static void io_worker_release(struct io_worker *worker)
+ 		complete(&worker->ref_done);
+ }
  
- 	spinlock_t		task_lock;
- 	struct io_wq_work_list	task_list;
++static inline struct io_wqe_acct *io_get_acct(struct io_wqe *wqe, bool bound)
++{
++	return &wqe->acct[bound ? IO_WQ_ACCT_BOUND : IO_WQ_ACCT_UNBOUND];
++}
++
+ static inline struct io_wqe_acct *io_work_get_acct(struct io_wqe *wqe,
+ 						   struct io_wq_work *work)
+ {
+-	if (work->flags & IO_WQ_WORK_UNBOUND)
+-		return &wqe->acct[IO_WQ_ACCT_UNBOUND];
+-
+-	return &wqe->acct[IO_WQ_ACCT_BOUND];
++	return io_get_acct(wqe, !(work->flags & IO_WQ_WORK_UNBOUND));
+ }
+ 
+ static inline struct io_wqe_acct *io_wqe_get_acct(struct io_worker *worker)
+ {
+-	struct io_wqe *wqe = worker->wqe;
+-
+-	if (worker->flags & IO_WORKER_F_BOUND)
+-		return &wqe->acct[IO_WQ_ACCT_BOUND];
+-
+-	return &wqe->acct[IO_WQ_ACCT_UNBOUND];
++	return io_get_acct(worker->wqe, worker->flags & IO_WORKER_F_BOUND);
+ }
+ 
+ static void io_worker_exit(struct io_worker *worker)
 -- 
 2.24.0
 

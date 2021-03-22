@@ -2,117 +2,72 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B632534349D
-	for <lists+io-uring@lfdr.de>; Sun, 21 Mar 2021 21:22:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 684BE34366D
+	for <lists+io-uring@lfdr.de>; Mon, 22 Mar 2021 02:51:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230064AbhCUUVi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 21 Mar 2021 16:21:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40546 "EHLO
+        id S229574AbhCVBuc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 21 Mar 2021 21:50:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229941AbhCUUVI (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 21 Mar 2021 16:21:08 -0400
-Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77C58C061574
-        for <io-uring@vger.kernel.org>; Sun, 21 Mar 2021 13:21:08 -0700 (PDT)
-Received: by mail-pf1-x42d.google.com with SMTP id 11so9580764pfn.9
-        for <io-uring@vger.kernel.org>; Sun, 21 Mar 2021 13:21:08 -0700 (PDT)
+        with ESMTP id S229893AbhCVBuL (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 21 Mar 2021 21:50:11 -0400
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CA91C061574
+        for <io-uring@vger.kernel.org>; Sun, 21 Mar 2021 18:50:08 -0700 (PDT)
+Received: by mail-wr1-x42c.google.com with SMTP id j18so14994928wra.2
+        for <io-uring@vger.kernel.org>; Sun, 21 Mar 2021 18:50:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=to:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=ECWEaxowq9HCF2XD6mjGeDAcq7HNoBR+R6uIuejgYgE=;
-        b=oGS8qPaM80V13sUcl1Z9BHlZ/Wym36CLTnksI3NkxNzvrH+UVJIiaKBgTmIz3CYbfj
-         Su63r3ihwgUm3SH/JbB2LJ0+LX/K06KjCYsSW5mCDgYxoXC63purrQzkAD07w37XTFmO
-         S6tkM7GrvXhsJmg7W024AgFNYvelH+l/MAB0C/21vNsMKJ3+0qR2Oq64eu0dDi2SWWYq
-         so1yAvaUynxBDJyKGWfcAMDsgHAK79q9aI2V9kgcBLc7tqw0LNd4OH2aGki9iWarFmbD
-         nvvxWVqXeWEQw8U6ueb6GCOkFiWMjEtWjPbnNFMFyLJ6bvbHf/I6dnKHsgE+CkFXlA1H
-         sIUw==
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6XY7/QDUNtKjIKqSNiLqXsNMIV8y6lenxaK8FTbB4Cw=;
+        b=pNUazxw/BInMPWqoAa47gsDfpIOvVpkY+0m1ohMUiF+9YkcVktAfoCewiBsUXyhjy8
+         uQ74C8+dLImd1zRSkXxQ1Ofy5hYuz9KuOQXA7WoMocT64wUjkIFfAFSCbkm2stM9PICJ
+         ySzUUVc1oyyjWCJSHA/CcMIXat91rGIcD2dQyzeVGYLExAa6ebx6fR26PPZ3GmY3Mhki
+         rZzr+qXczHoKAB5nDH3tbntUIq578RJp/tZGCbZwY990aijmRN+cpY653kCBmfZOCX6u
+         U/+BBS/174pBF/PPO44jpGI1WZJ1iTCdkZ9eWsfInF1PZx/k6oJufQmCPxf9mn2TBNDw
+         Y0rQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=ECWEaxowq9HCF2XD6mjGeDAcq7HNoBR+R6uIuejgYgE=;
-        b=k9Jl7a1UlLawl0H2yNfg4/ypW1uaBzm4pBHfI6mTgobhDbRopvA6UFXDCWhIFGk1tD
-         GMsZXrJWZ7dAS5xY/A2j5kgMUz9rQKJw7V+NkOBStve7SfxyfWgQA/krvrjSNDYob7Lb
-         0Z6x0vVB9Mj4XohLuDnqyEk22Uj4b/SsBrVpfrK/VPqMEe5vUvubszc/HDFJ+6TvgfE6
-         Y3aYK5YskWixGXQSJH9xhVRnTLsQKoTqcTF/m/ekNDbOwlaHSEw9yZoBiSMeeDDFTgqW
-         FrOn1BNHzAyiZuO8R/QdQaMGpO4kwdD8h28qQigzaD6x0+aJ2xoL7OyuUKl5WnBG7suN
-         77LA==
-X-Gm-Message-State: AOAM533RhZO7+HI3BjMJkOs6ptxx63uvUyx27v6Nar0Lp88QY/ryImDm
-        GcgEC1eZs2db/pdzaUOWgh/IfdjCAhIpoQ==
-X-Google-Smtp-Source: ABdhPJy6zQWKDtjHHawRhwRlkWDkHmZZ8i0mM7uUrCMRuRBa4oWNo6aCUR4+P09SlojJg0WN3LJLCQ==
-X-Received: by 2002:a63:1026:: with SMTP id f38mr20382482pgl.142.1616358067807;
-        Sun, 21 Mar 2021 13:21:07 -0700 (PDT)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id q25sm10896807pff.104.2021.03.21.13.21.07
-        for <io-uring@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 21 Mar 2021 13:21:07 -0700 (PDT)
-To:     io-uring <io-uring@vger.kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring: don't use {test,clear}_tsk_thread_flag() for
- current
-Message-ID: <411aeec5-9951-cdbb-1b18-d0d2ae9fc931@kernel.dk>
-Date:   Sun, 21 Mar 2021 14:21:06 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6XY7/QDUNtKjIKqSNiLqXsNMIV8y6lenxaK8FTbB4Cw=;
+        b=NvhbDbMURyVCs1Wb7S9DCaTHyL80aFVyzdpk8n+7S/hg0nzLdjYCVZrcT7tMD4EUsX
+         2ybLrDFbSFlVSA6DzqLaKNvfz8fMECw6TiPL4h/R56fZu/YChijKdiX/embynq11Hy6w
+         15F/QGmGxWsYDLsjwhXvpGFLbb/NQt5hIfgEAZUGwWYX5IkisfcXqCJ6vIllHmIhrPil
+         0T7o+LbI7ahuG7qiXIN1k7InxM2EY8kcs2OkhOFpqH6zN8ZA52P/2PDU5eJEibnJ0DT1
+         XVBM06/SogruW0ebyRTMtwxci2j3+pW00XMyOdBH/pZ9omtKHqOAHOB00DiKZmZzxOcb
+         VNEQ==
+X-Gm-Message-State: AOAM531KY0SOy8UXOK2UHHqnlx2nHKZO7QNIL3lcbvW/jS8BPHWEpirL
+        /ZAQrG1YAC+/LONBnG2KJmbL4tHXUwUSXw==
+X-Google-Smtp-Source: ABdhPJxSlTLlT7SIbMxCqllH173N3JlyWS2kx0p8AallzxncumtmklLMEHr+d5FsdrCy86LPEmvO0Q==
+X-Received: by 2002:adf:82af:: with SMTP id 44mr15054383wrc.279.1616377807251;
+        Sun, 21 Mar 2021 18:50:07 -0700 (PDT)
+Received: from localhost.localdomain ([85.255.234.202])
+        by smtp.gmail.com with ESMTPSA id x13sm17653138wrt.75.2021.03.21.18.50.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 21 Mar 2021 18:50:06 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [PATCH 5.12 0/2] minor fixes
+Date:   Mon, 22 Mar 2021 01:45:57 +0000
+Message-Id: <cover.1616366969.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Linus correctly points out that this is both unnecessary and generates
-much worse code on some archs as going from current to thread_info is
-actually backwards - and obviously just wasteful, since the thread_info
-is what we care about.
+Two minor fixes, nothing serious
 
-Since io_uring only operates on current for these operations, just use
-test_thread_flag() instead. For io-wq, we can further simplify and use
-tracehook_notify_signal() to handle the TIF_NOTIFY_SIGNAL work and clear
-the flag. The latter isn't an actual bug right now, but it may very well
-be in the future if we place other work items under TIF_NOTIFY_SIGNAL.
+Pavel Begunkov (2):
+  io_uring: correct io_queue_async_work() traces
+  io_uring: don't skip file_end_write() on reissue
 
-Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/io-uring/CAHk-=wgYhNck33YHKZ14mFB5MzTTk8gqXHcfj=RWTAXKwgQJgg@mail.gmail.com/
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-
----
-
-diff --git a/fs/io-wq.c b/fs/io-wq.c
-index 3dc10bfd8c3b..2dd43bdb9c7b 100644
---- a/fs/io-wq.c
-+++ b/fs/io-wq.c
-@@ -388,11 +388,9 @@ static struct io_wq_work *io_get_next_work(struct io_wqe *wqe)
- 
- static bool io_flush_signals(void)
- {
--	if (unlikely(test_tsk_thread_flag(current, TIF_NOTIFY_SIGNAL))) {
-+	if (unlikely(test_thread_flag(TIF_NOTIFY_SIGNAL))) {
- 		__set_current_state(TASK_RUNNING);
--		if (current->task_works)
--			task_work_run();
--		clear_tsk_thread_flag(current, TIF_NOTIFY_SIGNAL);
-+		tracehook_notify_signal();
- 		return true;
- 	}
- 	return false;
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 543551d70327..be04bc6b5b99 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -6873,7 +6873,7 @@ static int io_run_task_work_sig(void)
- 		return 1;
- 	if (!signal_pending(current))
- 		return 0;
--	if (test_tsk_thread_flag(current, TIF_NOTIFY_SIGNAL))
-+	if (test_thread_flag(TIF_NOTIFY_SIGNAL))
- 		return -ERESTARTSYS;
- 	return -EINTR;
- }
+ fs/io_uring.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
 -- 
-Jens Axboe
+2.24.0
 

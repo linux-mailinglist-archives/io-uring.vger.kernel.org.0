@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 06932346148
-	for <lists+io-uring@lfdr.de>; Tue, 23 Mar 2021 15:18:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC94C346144
+	for <lists+io-uring@lfdr.de>; Tue, 23 Mar 2021 15:18:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232139AbhCWOSB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        id S232281AbhCWOSB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
         Tue, 23 Mar 2021 10:18:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46352 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232301AbhCWORa (ORCPT
+        with ESMTP id S232305AbhCWORa (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Tue, 23 Mar 2021 10:17:30 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C8C1C0613D9
-        for <io-uring@vger.kernel.org>; Tue, 23 Mar 2021 07:17:26 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id z6-20020a1c4c060000b029010f13694ba2so10914509wmf.5
-        for <io-uring@vger.kernel.org>; Tue, 23 Mar 2021 07:17:26 -0700 (PDT)
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2918AC0613DA
+        for <io-uring@vger.kernel.org>; Tue, 23 Mar 2021 07:17:28 -0700 (PDT)
+Received: by mail-wr1-x430.google.com with SMTP id c8so8038644wrq.11
+        for <io-uring@vger.kernel.org>; Tue, 23 Mar 2021 07:17:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=1lgdxUViKuWWIDdG438HIIaVZgn63bsbSOyXiDdZOLw=;
-        b=pnIozRJj7hXcR19UmWchyA2R+u9B6zF2fxCSYNRUqKc2J5z4+MCVQHrUbn9FwKJgW5
-         4PieCv4WMIfSQ+WhCnXCrgY032ViGbkk3RTVihlAU6oFphx410wU7tH7PQZkQLKPA/Er
-         dw9ZMDffFbIHEPIhMSydy9DGwCbUEPjaR5fXKDOo1jkF1LaTH+4Txv5p+ekUxv/zZxg9
-         r0w2/wamz8JqdR0e5CfILDjaxj6RMWHXVmV578LDhX0hoW3Q/vHecHGVKKGgLnENINZI
-         vaHWdcTWEYKR+ozz6GE9FaHZsd2cEjNxo2lWqc0FVrk6tktJ+tpFqUlsNDtfhElHeUwe
-         5wvA==
+        bh=U85TZZTUM9w8Ru7FIjGY3BovYh1CW+ZdNIf4ACVlEFo=;
+        b=Yhpgo5kOVB7W2Jge436/2DhEnUc6nEVCYNaOT3RXS4BGoXxELqQJsJvOIbufxqlLo2
+         L7fbsDiQiz0PB6+M+cJaA/ay563yR2SwGnHYada7EdUEbqy/PLa8XD+9IJhq/05PlR/c
+         HZyg7DhcswYwBKO3w9W6/Ek8e5MXNQC8A7XV622QL3n0DnpgAHV7pYVPBiy9t3EAAuCa
+         dfbnXkRchNFV9SFfXfgE17lJdioTkB3rRkT5avAw8rNpZBbrZnBy0v5lQbFrol4xpfdL
+         yJnVbtg2imyDC6dg51oBIFgGdzTIOt9AupruGXc+7qAAgUWCZyxCyP5Sc6zPv47Xtnse
+         H5Kg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=1lgdxUViKuWWIDdG438HIIaVZgn63bsbSOyXiDdZOLw=;
-        b=OIxjZB41AMedGSiMRpKpQL6qTGfVwvomOXH7F4vDXO2FOjbcyhD+Md9u7K3dfY3d4M
-         oRj4bFxoeS4PA+K08XYjnrwD/5SUDM8iT7vB4PdEVvjGlSO8spijBHhgrw54NjwACgGj
-         r1gaXO7ef/XxJW8Ver658FnZn+5dp/r5TuV750AhHIuhjfqwfBgMurLwZhYy5QvCHoiZ
-         aOL1glv6axQtxreALdekli+J3+IDEamvqPd86p+WWeWUEk3iVWQ+UOgWJ5b2teY0s8DD
-         MNxp/X/NFlIFh0DzY8yWLXD4DBlJ573FHe1Cx0XiVhFFhu3YsEVUIpw3nX0JH/0UiBu6
-         Yp2w==
-X-Gm-Message-State: AOAM532KOd5JH9GHJudJvvZtvDZK6DLeLT0uAMaVm6HR51oVPkZVfPgU
-        VNfFspKpKMgKX5kminj3vMhhXo49JXPQlQ==
-X-Google-Smtp-Source: ABdhPJw6uHbGHSBXkkRSrRGokqHHIoS1ERqeOG11WjR9dgy3CdH7J1RVt8es03pP/+r6Ez7DEm9IFA==
-X-Received: by 2002:a05:600c:2254:: with SMTP id a20mr3729090wmm.115.1616509045366;
-        Tue, 23 Mar 2021 07:17:25 -0700 (PDT)
+        bh=U85TZZTUM9w8Ru7FIjGY3BovYh1CW+ZdNIf4ACVlEFo=;
+        b=P7NdwKarquMg1rZKvwYdTUi5JrmO22Dqyl5tQ5Gy70u8qkG7wG3iMIVJtGfMTbx1gL
+         KVANOl74dVzg+pQSvushjzQuXlLeXzNYgMg5OhRQixSOk/NPjoS4ZsukKXrcZXUZBftg
+         pcdOKcXayy+yPl8vF76p8LY08jBmgyy6VX/rTGajKSt7Q8xvjBpuifyG5Q5JqBi3q0Yx
+         3ced06XRh8fJDIk30+E5eNiQi5LOBIWDX1Ldx2VEKne1DpiqA8HVeyzBGrfCfspk80+d
+         bf/d2uXe2NiZgSsAr1TjRd9PMkRDNUv2nmrXo9o62egK1b27eis8kZGqMvAgvR10qaOq
+         d8qQ==
+X-Gm-Message-State: AOAM531l4fXNJ5Cgblc44uNaI0IfAfUXZCtwGyUvrD6rHPT2jQHbHG1E
+        DIVeRuv48LqBFoHxonkjgeb7BAXBcCE2pQ==
+X-Google-Smtp-Source: ABdhPJwTSPxFD8zl0k0ZhFq7cFG5v2IsXxQCnIEtzis2QMw/BAo4DJmzm6f/1BuKIPZeDmqLtodv/Q==
+X-Received: by 2002:a5d:6307:: with SMTP id i7mr4259067wru.305.1616509046985;
+        Tue, 23 Mar 2021 07:17:26 -0700 (PDT)
 Received: from localhost.localdomain ([85.255.236.147])
-        by smtp.gmail.com with ESMTPSA id c2sm2861277wmr.22.2021.03.23.07.17.24
+        by smtp.gmail.com with ESMTPSA id c2sm2861277wmr.22.2021.03.23.07.17.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Mar 2021 07:17:24 -0700 (PDT)
+        Tue, 23 Mar 2021 07:17:26 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 2/7] io_uring: simplify io_rsrc_node_ref_zero
-Date:   Tue, 23 Mar 2021 14:13:12 +0000
-Message-Id: <b589ce62c73cd9a65858ac8ce4e2e5846b43ec0e.1616508751.git.asml.silence@gmail.com>
+Subject: [PATCH 3/7] io_uring: use rsrc prealloc infra for files reg
+Date:   Tue, 23 Mar 2021 14:13:13 +0000
+Message-Id: <0dd2bcd20e0d52d7eb503f97f3cf480d731d989b.1616508751.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1616508751.git.asml.silence@gmail.com>
 References: <cover.1616508751.git.asml.silence@gmail.com>
@@ -61,45 +61,75 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Replace queue_delayed_work() with mod_delayed_work() in
-io_rsrc_node_ref_zero() as the later one can schedule a new work, and
-cleanup it further for better readability.
+Keep it consistent with update and use io_rsrc_node_prealloc() +
+io_rsrc_node_get() in io_sqe_files_register() as well, that will be used
+in future patches, not as error prone and allows to deduplicate
+rsrc_node init.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ fs/io_uring.c | 21 ++++++---------------
+ 1 file changed, 6 insertions(+), 15 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 2ecb21ba0ca4..8c5fd7a8f31d 100644
+index 8c5fd7a8f31d..bcbb946db326 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -7448,7 +7448,7 @@ static void io_rsrc_node_ref_zero(struct percpu_ref *ref)
- 	struct io_rsrc_data *data = node->rsrc_data;
- 	struct io_ring_ctx *ctx = data->ctx;
- 	bool first_add = false;
--	int delay = HZ;
-+	int delay;
- 
- 	io_rsrc_ref_lock(ctx);
- 	node->done = true;
-@@ -7464,13 +7464,9 @@ static void io_rsrc_node_ref_zero(struct percpu_ref *ref)
- 	}
- 	io_rsrc_ref_unlock(ctx);
- 
--	if (percpu_ref_is_dying(&data->refs))
--		delay = 0;
--
--	if (!delay)
--		mod_delayed_work(system_wq, &ctx->rsrc_put_work, 0);
--	else if (first_add)
--		queue_delayed_work(system_wq, &ctx->rsrc_put_work, delay);
-+	delay = percpu_ref_is_dying(&data->refs) ? 0 : HZ;
-+	if (first_add || !delay)
-+		mod_delayed_work(system_wq, &ctx->rsrc_put_work, delay);
+@@ -7488,13 +7488,6 @@ static struct io_rsrc_node *io_rsrc_node_alloc(struct io_ring_ctx *ctx)
+ 	return ref_node;
  }
  
- static struct io_rsrc_node *io_rsrc_node_alloc(struct io_ring_ctx *ctx)
+-static void init_fixed_file_ref_node(struct io_ring_ctx *ctx,
+-				     struct io_rsrc_node *ref_node)
+-{
+-	ref_node->rsrc_data = ctx->file_data;
+-	ref_node->rsrc_put = io_ring_file_put;
+-}
+-
+ static void io_rsrc_node_destroy(struct io_rsrc_node *ref_node)
+ {
+ 	percpu_ref_exit(&ref_node->refs);
+@@ -7507,7 +7500,7 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
+ 	__s32 __user *fds = (__s32 __user *) arg;
+ 	unsigned nr_tables, i;
+ 	struct file *file;
+-	int fd, ret = -ENOMEM;
++	int fd, ret;
+ 	struct io_rsrc_node *ref_node;
+ 	struct io_rsrc_data *file_data;
+ 
+@@ -7517,12 +7510,16 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
+ 		return -EINVAL;
+ 	if (nr_args > IORING_MAX_FIXED_FILES)
+ 		return -EMFILE;
++	ret = io_rsrc_node_prealloc(ctx);
++	if (ret)
++		return ret;
+ 
+ 	file_data = io_rsrc_data_alloc(ctx);
+ 	if (!file_data)
+ 		return -ENOMEM;
+ 	ctx->file_data = file_data;
+ 
++	ret = -ENOMEM;
+ 	nr_tables = DIV_ROUND_UP(nr_args, IORING_MAX_FILES_TABLE);
+ 	file_data->table = kcalloc(nr_tables, sizeof(*file_data->table),
+ 				   GFP_KERNEL);
+@@ -7575,13 +7572,7 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
+ 		return ret;
+ 	}
+ 
+-	ref_node = io_rsrc_node_alloc(ctx);
+-	if (!ref_node) {
+-		io_sqe_files_unregister(ctx);
+-		return -ENOMEM;
+-	}
+-	init_fixed_file_ref_node(ctx, ref_node);
+-
++	ref_node = io_rsrc_node_get(ctx, ctx->file_data, io_ring_file_put);
+ 	io_rsrc_node_set(ctx, file_data, ref_node);
+ 	return ret;
+ out_fput:
 -- 
 2.24.0
 

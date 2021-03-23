@@ -2,79 +2,67 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CF560345768
-	for <lists+io-uring@lfdr.de>; Tue, 23 Mar 2021 06:41:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC96D345C5F
+	for <lists+io-uring@lfdr.de>; Tue, 23 Mar 2021 11:57:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229675AbhCWFkm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 23 Mar 2021 01:40:42 -0400
-Received: from mail-io1-f71.google.com ([209.85.166.71]:40184 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229451AbhCWFkQ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 23 Mar 2021 01:40:16 -0400
-Received: by mail-io1-f71.google.com with SMTP id x26so1102925ior.7
-        for <io-uring@vger.kernel.org>; Mon, 22 Mar 2021 22:40:15 -0700 (PDT)
+        id S230165AbhCWK5A (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 23 Mar 2021 06:57:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59024 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230147AbhCWK4r (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 23 Mar 2021 06:56:47 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE03AC061574
+        for <io-uring@vger.kernel.org>; Tue, 23 Mar 2021 03:56:46 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id z2so20292785wrl.5
+        for <io-uring@vger.kernel.org>; Tue, 23 Mar 2021 03:56:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=W2e4V6btT8f2fSGHoqTZewbhbBDL/D51RLeXyK9qpWc=;
+        b=B/IqVRo0nQ+7k7KJFMizVVc+heQSKYOb6rC/gFDAz5j5glriebwrh4VwYlknO15eBH
+         0HeDwpMQDwzkBS1bUA/bN9LrERAwtPnK17GCqegloO2KrwLSmZtMs90V/iE3R+hQxXOP
+         zDiiFh3Wn7bDbGH4N6ZH1YV7RMEupK6fxKdIKgEmR3GmV0hKRcrA6Q88NwOWauaBvVD/
+         KGDBOxkb9Ighua+Ytb/5mjVqtc2bTJWPsnKl0o802WGh9YCTeJYG/lvXED4qXK3O8kJs
+         BYE6P8x6bONu8+yCpVyKsIBg4XntWqI2eF5JggmA48UEjrf7z/8RyHgGy0qmd8i0l197
+         AOug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=8UIJBBCFx9G0AZ6QPsyJ2f+Jnb2J4vHizufHfr/0rys=;
-        b=T3qCySpxKhFCNzZDt0DICW5F/WrfT7XBwn+VVW/eOeoSaXKmVcqRdbXPd5Oqlz+Ia9
-         r/wKOdnloaY/ks6vXJD2AIrPdv29IhXLn1C84oZLRCN0YdelfOSQuMV/xLQ7GZh7j6t/
-         5sT/66ogUYyCShedU9gpMrTwBJYGsZDJpm+GolJJyPhsu1XjVEHorMbnATsWAD+hAlVE
-         qVo2GgYiMgNV2MOqtzg8SwJ3ppsPZfGbmDQ4EQMxieQcuRII8uFhNUENtwrF4HB0Fewh
-         c1ARz0cA4jBqbcl3nSpxPISYirDY9wb2JIMJhAnOAJC4OUxwVaIa5x0TQGCxALbw3XiN
-         pQ0Q==
-X-Gm-Message-State: AOAM533VaKYA4nJi7StouNi5CR99vQnSXoVwYWFNcaCNSKEYWiYCXefD
-        weHiKgcfS4nYfJDRD7D9WWpaQf5nbfoGIj26PJUtiEittzpL
-X-Google-Smtp-Source: ABdhPJywzjL2S5675jBi+LjUShhiMQm7FNQYgD96vO6uxEMlOimdM9ZcZ5MgYdoqaCNTTcck/jPUQlNts8o3Nona6u5GfutE1+LY
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=W2e4V6btT8f2fSGHoqTZewbhbBDL/D51RLeXyK9qpWc=;
+        b=LAjkEjxdBIPCHcMUs3z/0Q60eti49lJbQ8cj9JDRNSk9DTm1wrF9e8ataXMatM/KuW
+         GsoodZyQQ9HPnqXWXmfiUTNepCPoGsvHQp1xR+HQxaBywGui6/cx98ow2rtwJxzwb5AK
+         gLV6Wa3jWfLzKtDVUqp2POZ64SVKSnDyTDffWQJMeYR5/3OXp0rPQtmwiGj3vEzyyOZ1
+         D6oEFp6DlHVp+l5guWKHqWUsaSyR79JTsKJByhB+SEmR1YzXGdnj3pk5nV5FxX+pizZb
+         q7RAlgMWWABz2jYTN686XAb2wEYpfh+CVdoISHpfPPaYClqA9vJnqZExYtlPzDsuI4Ee
+         1PGw==
+X-Gm-Message-State: AOAM531GVMcI7s/Xs+EnRoB/zOUqj+Bu94FzZCrgAtbUl8PUKaDeAy4S
+        KAeXZu3s+b6I/LAieftQvHk=
+X-Google-Smtp-Source: ABdhPJy1b2eRV1zWvSlkLU4N8ciRVGZiOzcN1bfttOQ3ekUJJqoOu19fup5MXkmbggnBHuoWCOpZhA==
+X-Received: by 2002:adf:fa41:: with SMTP id y1mr3274696wrr.256.1616497005414;
+        Tue, 23 Mar 2021 03:56:45 -0700 (PDT)
+Received: from localhost.localdomain ([85.255.234.182])
+        by smtp.gmail.com with ESMTPSA id t8sm23212059wrr.10.2021.03.23.03.56.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Mar 2021 03:56:45 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc:     syzbot+e3a3f84f5cecf61f0583@syzkaller.appspotmail.com
+Subject: [PATCH 5.12] io_uring: do ctx sqd ejection in a clear context
+Date:   Tue, 23 Mar 2021 10:52:38 +0000
+Message-Id: <e90df88b8ff2cabb14a7534601d35d62ab4cb8c7.1616496707.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:802:: with SMTP id u2mr3172526ilm.298.1616478015540;
- Mon, 22 Mar 2021 22:40:15 -0700 (PDT)
-Date:   Mon, 22 Mar 2021 22:40:15 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e754b705be2d9d69@google.com>
-Subject: [syzbot] WARNING in io_sq_thread_park
-From:   syzbot <syzbot+e3a3f84f5cecf61f0583@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    84196390 Merge tag 'selinux-pr-20210322' of git://git.kern..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=152a6ad6d00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5adab0bdee099d7a
-dashboard link: https://syzkaller.appspot.com/bug?extid=e3a3f84f5cecf61f0583
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e3a3f84f5cecf61f0583@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
 WARNING: CPU: 1 PID: 27907 at fs/io_uring.c:7147 io_sq_thread_park+0xb5/0xd0 fs/io_uring.c:7147
-Modules linked in:
 CPU: 1 PID: 27907 Comm: iou-sqp-27905 Not tainted 5.12.0-rc4-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
 RIP: 0010:io_sq_thread_park+0xb5/0xd0 fs/io_uring.c:7147
-Code: 3c 02 00 75 29 48 8b ab a8 00 00 00 48 85 ed 74 0d e8 df a3 99 ff 48 89 ef e8 f7 49 75 ff 5b 5d e9 d0 a3 99 ff e8 cb a3 99 ff <0f> 0b eb 85 48 89 ef e8 bf 36 dd ff eb cd 48 89 ef e8 b5 36 dd ff
-RSP: 0018:ffffc90001bff9e8 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: ffff88802489a000 RCX: 0000000000000000
-RDX: ffff88808e7e0000 RSI: ffffffff81da4a65 RDI: ffff88802489a000
-RBP: ffff88802489a0a8 R08: 0000000000000001 R09: ffff88806a7420c7
-R10: ffffed100d4e8418 R11: 0000000000000000 R12: ffff88806a742590
-R13: ffff88806a742458 R14: 1ffff9200037ff42 R15: ffff88806a7424b8
-FS:  00007f63505a8700(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000540198 CR3: 0000000024531000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 000000000111062a
 Call Trace:
  io_ring_ctx_wait_and_kill+0x214/0x700 fs/io_uring.c:8619
  io_uring_release+0x3e/0x50 fs/io_uring.c:8646
@@ -89,11 +77,53 @@ Call Trace:
  io_sq_thread+0x3e2/0x18d0 fs/io_uring.c:6763
  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
 
+May happen that last ctx ref is killed in io_uring_cancel_sqpoll(), so
+fput callback (i.e. io_uring_release()) is enqueued through task_work,
+and run by same cancellation. As it's deeply nested we can't do parking
+or taking sqd->lock there, because its state is unclear. So avoid
+ctx ejection from sqd list from io_ring_ctx_wait_and_kill() and do it
+in a clear context in io_ring_exit_work().
 
+Reported-by: syzbot+e3a3f84f5cecf61f0583@syzkaller.appspotmail.com
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ fs/io_uring.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index f3ae83a2d7bc..8c5789b96dbb 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -8564,6 +8564,14 @@ static void io_ring_exit_work(struct work_struct *work)
+ 	struct io_tctx_node *node;
+ 	int ret;
+ 
++	/* prevent SQPOLL from submitting new requests */
++	if (ctx->sq_data) {
++		io_sq_thread_park(ctx->sq_data);
++		list_del_init(&ctx->sqd_list);
++		io_sqd_update_thread_idle(ctx->sq_data);
++		io_sq_thread_unpark(ctx->sq_data);
++	}
++
+ 	/*
+ 	 * If we're doing polled IO and end up having requests being
+ 	 * submitted async (out-of-line), then completions can come in while
+@@ -8615,14 +8623,6 @@ static void io_ring_ctx_wait_and_kill(struct io_ring_ctx *ctx)
+ 		io_unregister_personality(ctx, index);
+ 	mutex_unlock(&ctx->uring_lock);
+ 
+-	/* prevent SQPOLL from submitting new requests */
+-	if (ctx->sq_data) {
+-		io_sq_thread_park(ctx->sq_data);
+-		list_del_init(&ctx->sqd_list);
+-		io_sqd_update_thread_idle(ctx->sq_data);
+-		io_sq_thread_unpark(ctx->sq_data);
+-	}
+-
+ 	io_kill_timeouts(ctx, NULL, NULL);
+ 	io_poll_remove_all(ctx, NULL, NULL);
+ 
+-- 
+2.24.0
+

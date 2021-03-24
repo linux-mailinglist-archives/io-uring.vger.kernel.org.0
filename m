@@ -2,71 +2,63 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 39EA6346F4B
-	for <lists+io-uring@lfdr.de>; Wed, 24 Mar 2021 03:15:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 97A223478F0
+	for <lists+io-uring@lfdr.de>; Wed, 24 Mar 2021 13:56:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231284AbhCXCOk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 23 Mar 2021 22:14:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60278 "EHLO
+        id S233950AbhCXMz4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 24 Mar 2021 08:55:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234788AbhCXCOX (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 23 Mar 2021 22:14:23 -0400
-Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC91DC061763
-        for <io-uring@vger.kernel.org>; Tue, 23 Mar 2021 19:14:22 -0700 (PDT)
-Received: by mail-pf1-x436.google.com with SMTP id x126so16233769pfc.13
-        for <io-uring@vger.kernel.org>; Tue, 23 Mar 2021 19:14:22 -0700 (PDT)
+        with ESMTP id S233762AbhCXMzi (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 24 Mar 2021 08:55:38 -0400
+Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F21CDC061763
+        for <io-uring@vger.kernel.org>; Wed, 24 Mar 2021 05:55:37 -0700 (PDT)
+Received: by mail-pf1-x42a.google.com with SMTP id l123so17269686pfl.8
+        for <io-uring@vger.kernel.org>; Wed, 24 Mar 2021 05:55:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=L5VATD+SgSvP0uDDMv0XEmMh9UsDKLQL6ZxPV2i7Yxw=;
-        b=EbIbrB3jhU2ezolVNh038d93wXGIPGQlWRfFzJtv3R7zlPJdVHGDPnpgAjpK1CUFTV
-         GN0BMr+Ls8uCBrL168IF4TOtYziKqCs/Rl0v2ADkD4hu2vEEQbV4XQV1B3vbfy4UwiuS
-         SIyrembSTHx8vy+bHVbUDjAyZy5QYUuU3gVtAw4uPnWpChDK4S/moJj/WIRmHbaG5xWJ
-         /J9rByvniMcAulkWI4zEMT0S7cT+k80232Dzy3SSjrkWy+8/dvMRyZ5BX8kVk/jCp/2n
-         RiSpfhJD2UTtf+GZVzABgr/Lw4p/+Unx1JRsi1cn6D7U9m0WgGwKjDBW6OFLmFZA39kb
-         iXdQ==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=3oB9r1aWavYR/wOuWK5AzazaFayFPTACRUbZQF6JVy8=;
+        b=Qv9FgYPiO29QbO95y0hQBiFgKgHoE1PtUxvd2lgA4BqHM9A7sPTzFKJvLkHo//VgzJ
+         jl7DJEz6clpAVqxhbseNKLmYBITP/A1Eet6U2XJTahWa9TWwx7Xx8GAq8xlSDOdATCPI
+         FYcqkh8wok+EGVUxN2HIk0BZscfsWzDtlJz3qocBgS42duuYRbFTCbdlOYCYmC2YLYC/
+         3JArL7jGoSzjiNOVh9hTK1pYt9RDEK/gmsWM51DDOoJAAB1NdgWSondQkhVcPJLaGjsC
+         13KXqQigcvGrmrVTK3ZZdb+F6+SsRnfX5VvGUPiI+bTGxvh8nthPiFixmGC9Qd5INxqL
+         uA7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=L5VATD+SgSvP0uDDMv0XEmMh9UsDKLQL6ZxPV2i7Yxw=;
-        b=bSZijcoEq/GCC3avYuaZuq+K/kfDY2wGxZsumL59ZNpeI8ZgJwL6YSbyuifRNRQmJ9
-         10jx47NL1Lds9rK2fXpcCIvwj234+euJ5DdDbEgnsnzki0zDgIPupFi5ezs3puGhqKdc
-         Gqb4yQzWZfJOWREf0mScin+mOK3nXe8V4tVTISIi15049yrIjctwDC2y6DEPKFa5hzUE
-         lWRLjSyUGvazk5UmxWAtQeErSzM+kjL/E5fw1beKxW1m30dXdBiTTEAp2LFiKfmQztg2
-         ieYa9a0TvLN+ji6RVgYzZZk9sEKfK6fl6ynU/SexMYqqFAneDvjQ8Eqyx5qGvEEXvqNO
-         //xA==
-X-Gm-Message-State: AOAM531rAzhPt+l+bpvIE2idZjNyo38+KyxipJF1/795mEXhOOhPdWoK
-        3cqg4uDsTxEtUf7xrWZBbtFsS6KflqY=
-X-Google-Smtp-Source: ABdhPJzQ3MpLwZgTV9MzaxYNulsP4JQQX6g+Wo5jJcSRpREb2UzwbmT2r1ThtR0FNHZ4y0EsbIQ5qg==
-X-Received: by 2002:a63:de53:: with SMTP id y19mr1019050pgi.191.1616552062571;
-        Tue, 23 Mar 2021 19:14:22 -0700 (PDT)
-Received: from B-D1K7ML85-0059.local ([47.89.83.92])
-        by smtp.gmail.com with ESMTPSA id d2sm404214pjx.42.2021.03.23.19.14.20
+        bh=3oB9r1aWavYR/wOuWK5AzazaFayFPTACRUbZQF6JVy8=;
+        b=hqVacmxGkWBxUg1Gmu+ltJkp+MDiPDk+uq56MElWhaKfuUCdq0R47382yl3Pl+VL+9
+         04Tdx25m8t2xs1aver8tls3/IfpQKVmDV/jYG+n5gZVtLycBnMWdIsHiI+CC8+iB4c+R
+         KTSnQxbGCYZHSSGLryxBkutWzt64HVM4YzQBiYtTFGMgMj0Cl/kcUCKv1OCTH+a7J/zr
+         vuvnnyQz3Pc6ua3hH7wR3aXYvWRJedeHioWPTBwuf//ke119sykI4NsM0/U1BGxrf7vY
+         Cjrufsi/xvSGEj9MoiV+yZyLdakil/KmHgpAY5HLYWYM3ZZEeHPXrHKbHZp6GX6v5rVD
+         LfSg==
+X-Gm-Message-State: AOAM5322LsuLc3g3LOGG7FlhPx+whXPuv9SAIVGIHpfG3w1mwGuWpaBK
+        u1EbyNdS8iNvPibcoSolnaj0KQ==
+X-Google-Smtp-Source: ABdhPJzZCUpMKgok2Apw9F8rrPHzyHLvtqFvLppx5ayW/vmoI1yRJyZP3x4DCdYIdzGsDxxOFIvzow==
+X-Received: by 2002:a63:cd09:: with SMTP id i9mr2985950pgg.407.1616590537370;
+        Wed, 24 Mar 2021 05:55:37 -0700 (PDT)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id k15sm2638346pfi.0.2021.03.24.05.55.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Mar 2021 19:14:22 -0700 (PDT)
-Subject: Re: [ANNOUNCEMENT] io_uring SQPOLL sharing changes
-To:     Jens Axboe <axboe@kernel.dk>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring <io-uring@vger.kernel.org>,
-        Hao Xu <haoxu@linux.alibaba.com>
-References: <ca41ede6-7040-5eac-f4f0-9467427b1589@gmail.com>
- <30563957-709a-73a2-7d54-58419089d61a@linux.alibaba.com>
- <1afd5237-4363-9178-917e-3132ba1b89c3@kernel.dk>
- <293e88d8-7fa5-edf4-226c-1e42dec9af67@linux.alibaba.com>
- <7a6899a6-ece8-f2f8-3fbc-3adfcbf942b2@kernel.dk>
-From:   Joseph Qi <jiangqi903@gmail.com>
-Message-ID: <67d886e8-12ee-0b4c-25a7-a8cf687c2e49@gmail.com>
-Date:   Wed, 24 Mar 2021 10:14:15 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.8.1
+        Wed, 24 Mar 2021 05:55:36 -0700 (PDT)
+Subject: Re: [PATCH 5.12] io_uring: do ctx sqd ejection in a clear context
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+Cc:     syzbot+e3a3f84f5cecf61f0583@syzkaller.appspotmail.com
+References: <e90df88b8ff2cabb14a7534601d35d62ab4cb8c7.1616496707.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <e6444da0-ba50-e5ff-bcd8-90bf140b6c49@kernel.dk>
+Date:   Wed, 24 Mar 2021 06:55:36 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <7a6899a6-ece8-f2f8-3fbc-3adfcbf942b2@kernel.dk>
+In-Reply-To: <e90df88b8ff2cabb14a7534601d35d62ab4cb8c7.1616496707.git.asml.silence@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -74,43 +66,33 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-
-
-On 3/24/21 12:22 AM, Jens Axboe wrote:
-> On 3/22/21 10:09 PM, Joseph Qi wrote:
->>
->>
->> On 3/22/21 10:49 PM, Jens Axboe wrote:
->>> On 3/21/21 11:54 PM, Xiaoguang Wang wrote:
->>>> hi Pavel,
->>>>
->>>>> Hey,
->>>>>
->>>>> You may have already noticed, but there will be a change how SQPOLL
->>>>> is shared in 5.12. In particular, SQPOLL may be shared only by processes
->>>>> belonging to the same thread group. If this condition is not fulfilled,
->>>>> then it silently creates a new SQPOLL task.
->>>>
->>>> Thanks for your kindly reminder, currently we only share sqpoll thread
->>>> in threads belonging to one same process.
->>>
->>> That's good to know, imho it is also the only thing that _really_ makes
->>> sense to do.
->>>
->>> Since we're on the topic, are you actively using the percpu thread setup
->>> that you sent out patches for earlier? That could still work within
->>> the new scheme of having io threads, but I'd be curious to know first
->>> if you guys are actually using it.
->>>
->>
->> Yes, we've already used percpu sqthread feature in our production
->> environment, in which 16 application threads share the same sqthread,
->> and it gains ~20% rt improvement compared with libaio.
+On 3/23/21 4:52 AM, Pavel Begunkov wrote:
+> WARNING: CPU: 1 PID: 27907 at fs/io_uring.c:7147 io_sq_thread_park+0xb5/0xd0 fs/io_uring.c:7147
+> CPU: 1 PID: 27907 Comm: iou-sqp-27905 Not tainted 5.12.0-rc4-syzkaller #0
+> RIP: 0010:io_sq_thread_park+0xb5/0xd0 fs/io_uring.c:7147
+> Call Trace:
+>  io_ring_ctx_wait_and_kill+0x214/0x700 fs/io_uring.c:8619
+>  io_uring_release+0x3e/0x50 fs/io_uring.c:8646
+>  __fput+0x288/0x920 fs/file_table.c:280
+>  task_work_run+0xdd/0x1a0 kernel/task_work.c:140
+>  io_run_task_work fs/io_uring.c:2238 [inline]
+>  io_run_task_work fs/io_uring.c:2228 [inline]
+>  io_uring_try_cancel_requests+0x8ec/0xc60 fs/io_uring.c:8770
+>  io_uring_cancel_sqpoll+0x1cf/0x290 fs/io_uring.c:8974
+>  io_sqpoll_cancel_cb+0x87/0xb0 fs/io_uring.c:8907
+>  io_run_task_work_head+0x58/0xb0 fs/io_uring.c:1961
+>  io_sq_thread+0x3e2/0x18d0 fs/io_uring.c:6763
+>  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
 > 
-> Great! Any chance I can get you to re-post the patches against the
-> current tree?
-> 
-Yes, we'll do it later.
+> May happen that last ctx ref is killed in io_uring_cancel_sqpoll(), so
+> fput callback (i.e. io_uring_release()) is enqueued through task_work,
+> and run by same cancellation. As it's deeply nested we can't do parking
+> or taking sqd->lock there, because its state is unclear. So avoid
+> ctx ejection from sqd list from io_ring_ctx_wait_and_kill() and do it
+> in a clear context in io_ring_exit_work().
 
-Thanks,
-Joseph
+Applied, thanks.
+
+-- 
+Jens Axboe
+

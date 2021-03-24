@@ -2,99 +2,149 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CE38347B38
-	for <lists+io-uring@lfdr.de>; Wed, 24 Mar 2021 15:56:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C958347BA6
+	for <lists+io-uring@lfdr.de>; Wed, 24 Mar 2021 16:07:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236376AbhCXOz7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 24 Mar 2021 10:55:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55634 "EHLO
+        id S236440AbhCXPGr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 24 Mar 2021 11:06:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236410AbhCXOzq (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 24 Mar 2021 10:55:46 -0400
-Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EEF2C061763
-        for <io-uring@vger.kernel.org>; Wed, 24 Mar 2021 07:55:45 -0700 (PDT)
-Received: by mail-io1-xd2b.google.com with SMTP id x17so10512629iog.2
-        for <io-uring@vger.kernel.org>; Wed, 24 Mar 2021 07:55:45 -0700 (PDT)
+        with ESMTP id S236469AbhCXPGR (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 24 Mar 2021 11:06:17 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 868F3C061763
+        for <io-uring@vger.kernel.org>; Wed, 24 Mar 2021 08:06:17 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id d8-20020a1c1d080000b029010f15546281so1381496wmd.4
+        for <io-uring@vger.kernel.org>; Wed, 24 Mar 2021 08:06:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=/uD0nuq+cvGVh7+29Dol4ldLu5eZndNQPAsET2rYGpI=;
-        b=ELn8c68yEbcDlfhXx6CCdJxslOwsBukAwdIxS6NGAmHdEsYhlKeoKJBUEHex6UPikE
-         +yVarVSKeQjcJ4p8Ae9Iahu/rYxpDGoWpZg0DwMeS2bl1eoffcW7EhAagyhIEoApHVXA
-         +7fVjstOt/O+bYziqLy16sfvinr5KTUZ6OIUnoYBDjQQXwIzPar9NuQ2N2P+3em6i7KQ
-         z2Cetg/nRccbBBjBrx7ywLN/eDPcFXPmhNoDmaqSlX8i6R6VRmpZMoo8xD6zg3asBjya
-         JQABcGEa4r2AWLJNtv8MBa8AUSTHF8r/8kB764rlRjZM2UO+QENNXvY7uNwx6V/EqoMJ
-         VKRw==
+        d=gmail.com; s=20161025;
+        h=to:references:from:autocrypt:subject:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ixmoxyp0tVl6JfZaqMkAHqpCD5ZLtVr2hxTlVtOpumM=;
+        b=AlSicVms7MObdh55IwN/2Xnpen26wh9YhYUMru9ve3pnT/F7Dn9W2sH09nxDMaMlOE
+         gU+hpSRyJIahUneERzb0obtJZ2bc0yeKucR6XmjKmVpB0gCWMQpGq9IKf4rZoNPAijCX
+         AP5h7UCTs+GwJeQOj+VPnNlwfWlJoD5CnlMUeEO4JtBauVoq0a3SldoAGzK8hu8DyK81
+         IC3Zmhu51ayqMOw3C95ZAci1RnaFc5T26PBJjrF7ZlaJxx54kJwEPalbHQpVk11uEBxF
+         pqpbT1q3808pCVMYZsmCXyD9OGz6yARPrWP8t9uUJpYmAZbEBvLq2Iie7ih1ztfvn6Rt
+         Vg0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=/uD0nuq+cvGVh7+29Dol4ldLu5eZndNQPAsET2rYGpI=;
-        b=LMBBKMTZV4o/wjLzZTctxhrxygWMG3YXDAVkUbJHnWpJPiFNmKSgs5QiNdjBxrBZ98
-         hxXn2kg/s5y/8dFffM/9mhIkAo7R/MI8oA//5CmrgQLd6dSk2GhYK8yV3QQ3jUX882tA
-         LQJO8nKifHK22R4MkG35xeQA2ZbQg9KdZoHoc4tLZnumr+6PG9M5iqXO/LZ7oKegxt0K
-         sDjWv1plliWCfvvGduIIpzYQGfGIbvwgBswJwMH8WE82KGSIVIzIScgwiAYoA0rQpDKi
-         i9P3fGZRqtSRJHgTxhrUDwdWK47xjQDTELcRBLJIJOxY79xFmhIwaoxy9EicbyJSMAUy
-         duxg==
-X-Gm-Message-State: AOAM533kabxU7U6vbJfwsjvwFqlwIJs0i+4nJp73NGLhAbDmNQulW0U8
-        x/7dLb39vXS+gQ5kJYW2eGFY9hCkO2KJpA==
-X-Google-Smtp-Source: ABdhPJyDKbqTe00mS744WRSH8ClQtfmjeszGlyaocf6X9QQzcZqL/PQvLILGf3aKFiCUetKJIa5YDQ==
-X-Received: by 2002:a6b:4411:: with SMTP id r17mr2693692ioa.64.1616597744851;
-        Wed, 24 Mar 2021 07:55:44 -0700 (PDT)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id b5sm1210259ioq.7.2021.03.24.07.55.44
+        bh=ixmoxyp0tVl6JfZaqMkAHqpCD5ZLtVr2hxTlVtOpumM=;
+        b=XOucXR1C5D/qrEyI+QFsRUpkNwszEz6lmahWOXggsSVCZnjbrdcbojOq1iImIGmO6f
+         QF++BMS2cykyZscAaWacdMnZGkbh2usS3ZXQd6VBdSdnkiuTwpKt84oB06LptFC/xvAf
+         0yvM5dNoa6UOvRHADHmuJaTvmGASi+bbFHrUZdtPSoF0pc0DGztGcECdVvyU1fDzMylh
+         5m+Rsi4d2dx3nzi8j+7a8yYzLuQMZUsnIHKgUABAxkwUKYaWVNawKWdgaJ3fJ8+ptYuC
+         G1IBWIa8cZQEixyuj8aED+fe/14XiilW/5KqIc9gt4uECYkyX4SAK82euNiEkGHjtwIC
+         sNHg==
+X-Gm-Message-State: AOAM533b9OKXttH6cGz1EnLCXVLaenDmLHAleic+MouUiNNT2grpMYPP
+        MJZPRHxBdZdy0j7k+LHGwm0DgG37WywwoA==
+X-Google-Smtp-Source: ABdhPJzBg3YmkoownXE7RXve5l6Mnm56tTZ0QWgM58ONVB6qCvtFyEJb9qBQmtIUwZGm6V/CSiSaYw==
+X-Received: by 2002:a1c:9d96:: with SMTP id g144mr3450000wme.46.1616598375657;
+        Wed, 24 Mar 2021 08:06:15 -0700 (PDT)
+Received: from [192.168.8.194] ([85.255.236.168])
+        by smtp.gmail.com with ESMTPSA id v189sm2962171wme.39.2021.03.24.08.06.14
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Mar 2021 07:55:44 -0700 (PDT)
-Subject: Re: [PATCH 5.12] io_uring: reg buffer overflow checks hardening
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+        Wed, 24 Mar 2021 08:06:15 -0700 (PDT)
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
 References: <41c8fce27c696171e845a6304f87ec06d853c5a6.1616596655.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <da6587a4-9c40-cb62-b545-ef96556638be@kernel.dk>
-Date:   Wed, 24 Mar 2021 08:55:43 -0600
+ <da6587a4-9c40-cb62-b545-ef96556638be@kernel.dk>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Subject: Re: [PATCH 5.12] io_uring: reg buffer overflow checks hardening
+Message-ID: <67591fd4-d1c3-8caa-7d63-27d3e8766c6c@gmail.com>
+Date:   Wed, 24 Mar 2021 15:02:14 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <41c8fce27c696171e845a6304f87ec06d853c5a6.1616596655.git.asml.silence@gmail.com>
+In-Reply-To: <da6587a4-9c40-cb62-b545-ef96556638be@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/24/21 8:40 AM, Pavel Begunkov wrote:
-> We are safe with overflows in io_sqe_buffer_register() because it will
-> only yield allocation failure, but it's nicer to check explicitly.
+On 24/03/2021 14:55, Jens Axboe wrote:
+> On 3/24/21 8:40 AM, Pavel Begunkov wrote:
+>> We are safe with overflows in io_sqe_buffer_register() because it will
+>> only yield allocation failure, but it's nicer to check explicitly.
+> 
+> Right, either that or fault when mapping. So nothing serious here, but
+> would be nice to clean up though and just explicitly make it return
+> -EOVERFLOW when that is the case.
+> 
+>> @@ -8306,6 +8306,8 @@ static int io_buffers_map_alloc(struct io_ring_ctx *ctx, unsigned int nr_args)
+>>  
+>>  static int io_buffer_validate(struct iovec *iov)
+>>  {
+>> +	u64 tmp, acct_len = iov->iov_len + (PAGE_SIZE - 1);
+>> +
+> 
+> No need for those parens.
 
-Right, either that or fault when mapping. So nothing serious here, but
-would be nice to clean up though and just explicitly make it return
--EOVERFLOW when that is the case.
+Right, but purely formally underflows are UB.
 
-> @@ -8306,6 +8306,8 @@ static int io_buffers_map_alloc(struct io_ring_ctx *ctx, unsigned int nr_args)
->  
->  static int io_buffer_validate(struct iovec *iov)
->  {
-> +	u64 tmp, acct_len = iov->iov_len + (PAGE_SIZE - 1);
-> +
+>>  	/*
+>>  	 * Don't impose further limits on the size and buffer
+>>  	 * constraints here, we'll -EINVAL later when IO is
+>> @@ -8318,6 +8320,9 @@ static int io_buffer_validate(struct iovec *iov)
+>>  	if (iov->iov_len > SZ_1G)
+>>  		return -EFAULT;
+>>  
+>> +	if (check_add_overflow((u64)iov->iov_base, acct_len, &tmp))
+>> +		return -EOVERFLOW;
+>> +
+> 
+> Is this right for 32-bit?
 
-No need for those parens.
+Nope, better be unsigned long.
 
->  	/*
->  	 * Don't impose further limits on the size and buffer
->  	 * constraints here, we'll -EINVAL later when IO is
-> @@ -8318,6 +8320,9 @@ static int io_buffer_validate(struct iovec *iov)
->  	if (iov->iov_len > SZ_1G)
->  		return -EFAULT;
->  
-> +	if (check_add_overflow((u64)iov->iov_base, acct_len, &tmp))
-> +		return -EOVERFLOW;
-> +
-
-Is this right for 32-bit?
+btw, imu and io_import_fixed does it through u64, that's confusing.
 
 -- 
-Jens Axboe
-
+Pavel Begunkov

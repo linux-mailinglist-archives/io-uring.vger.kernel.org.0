@@ -2,92 +2,128 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 282B23493B6
-	for <lists+io-uring@lfdr.de>; Thu, 25 Mar 2021 15:10:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 90A833494D3
+	for <lists+io-uring@lfdr.de>; Thu, 25 Mar 2021 16:01:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231363AbhCYOJn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 25 Mar 2021 10:09:43 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:34297 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231396AbhCYOJg (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 25 Mar 2021 10:09:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1616681375;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=iaDke1NgQpj10lzGIPu+G9iEQAtRNGG6aKLxoB2aQKQ=;
-        b=EtbC3OsVWtXw4uSseofnlQp3PS6Dlfnh1WHRiZ4Vxwi4N7mDqxFqWIi456JC7wFOYhqkap
-        xd7nVVCbFlRy5r/ILOH7j5/dgxCrAWmrte3skX3dwPzAWqurj99W24eRWS7IgKhRfPsFVI
-        9d6lo+zLotJsay2PukUrjVYIHF2ggxI=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-23-d2lMZNObMaidVSw8c-wpTA-1; Thu, 25 Mar 2021 10:09:32 -0400
-X-MC-Unique: d2lMZNObMaidVSw8c-wpTA-1
-Received: by mail-wm1-f70.google.com with SMTP id g187so210274wme.3
-        for <io-uring@vger.kernel.org>; Thu, 25 Mar 2021 07:09:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=iaDke1NgQpj10lzGIPu+G9iEQAtRNGG6aKLxoB2aQKQ=;
-        b=svxbg+RPg0zZqNwiWI4OFd5Vdh0P4EiAbrFJoI4/QESFmEzY3JPk7TBEUqFXUTsKvE
-         AF5aBPxVAsj4zDYK57FtTX2oRjtfGDV7Gyvp0nK8w91T9pYqOUW7oxtazzunONKudz0r
-         8FHQeWEROQMXuMTCyfA6BA1RASmJJtYZ2DlTMnRL8IgB3+Wk1tIckTyeKdfrue2s5zT5
-         +zl89dIKGMj1kSrJpppKRbTu9whcq4A6ujDSnNOzH/nvbbVFMeLMrseOI1v09Pq0Gzdy
-         stssCDREg8SQJHZUQeFfS1n/TSZXIZTnFURHe+gOuSiezMpMfM7cRQ3UoRjFAidhvJYZ
-         WZHw==
-X-Gm-Message-State: AOAM533euvtzWp9Oa9lFvpRR28wVefeSpDow0TlwV+KpD6z9y9rBKZ8R
-        1Z0BW/KNJk2MSx8phOpAfpEDGkFsutoQUtILks/4QdFTmjrd33+f8BWOrLomOLpMkg1fujqcLxS
-        dxrCJuddwC3op7+vaenU=
-X-Received: by 2002:a05:600c:290a:: with SMTP id i10mr8272480wmd.91.1616681370909;
-        Thu, 25 Mar 2021 07:09:30 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyMy3i2A1hdSFW1ZkN1C1u1NvHTtrAalRIM+aRukLMYU90MuvjYASV0lEQmFAfYwRtdc9GnNg==
-X-Received: by 2002:a05:600c:290a:: with SMTP id i10mr8272448wmd.91.1616681370673;
-        Thu, 25 Mar 2021 07:09:30 -0700 (PDT)
-Received: from steredhat (host-79-34-249-199.business.telecomitalia.it. [79.34.249.199])
-        by smtp.gmail.com with ESMTPSA id y1sm6355140wmq.29.2021.03.25.07.09.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Mar 2021 07:09:30 -0700 (PDT)
-Date:   Thu, 25 Mar 2021 15:09:28 +0100
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Are CAP_SYS_ADMIN and CAP_SYS_NICE still needed for SQPOLL?
-Message-ID: <20210325140928.fuu2iap54ysevssz@steredhat>
-References: <20210325113322.ecnji3xejozqdpwt@steredhat>
- <842e6993-8cde-bc00-4de1-7b8689a397a8@gmail.com>
- <46016d10-7b87-c0f6-ed0f-18f89a2572d0@kernel.dk>
+        id S230377AbhCYPBT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 25 Mar 2021 11:01:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32892 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229869AbhCYPAr (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Thu, 25 Mar 2021 11:00:47 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9154C61A07;
+        Thu, 25 Mar 2021 15:00:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1616684446;
+        bh=13C25K8GpAKJvovS5Zi7tPUjVBZx0IifXkUDl2Fuozg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=BEMgf6QbLULmr/G2Li61zttTA9RP/kiQu53Ypg/vwWSSg0Fah5HIboCQQ7xxgugl2
+         Sp97QocjvZHLerpimRbrwUb0/1P4DEhiROkZ/pG2FjqEYo5KBv5dUBk8lW+N+nQ1Qb
+         GQqXTRRb7w2c+yFiXElINyoLKDOckcxlpI8favSwt8EwfezI6Zlh9N6mk9/O1jyuSl
+         Jpi+3t+KT+IWYh8sbOSZJCKk40hM4WvGmaftbBBi20PgjjG0E2cImq9b/D7kyygh43
+         3Hym/fbhIHTqLfQ7HzjSM0nFG8DQoWi5NxFGWjZTiMapdJMWYdXtAdPvlb1RVE3qI5
+         nVkzKl2AjlNzA==
+Date:   Thu, 25 Mar 2021 11:00:45 -0400
+From:   Sasha Levin <sashal@kernel.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Stefan Metzmacher <metze@samba.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        io-uring <io-uring@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH AUTOSEL 5.11 43/44] signal: don't allow STOP on
+ PF_IO_WORKER threads
+Message-ID: <YFylnZ6eEEObO4FT@sashalap>
+References: <20210325112459.1926846-1-sashal@kernel.org>
+ <20210325112459.1926846-43-sashal@kernel.org>
+ <f4c932b4-b787-651e-dd9f-584b386acddb@samba.org>
+ <m1r1k34ey1.fsf@fess.ebiederm.org>
+ <41589c56-9219-3ec2-55b3-3f010752ac7b@samba.org>
+ <2b2a9701-cbe0-4538-ed3b-6917b85bebf8@kernel.dk>
+ <acf9263d-7572-525d-9116-acb119399c13@samba.org>
+ <15712d38-8ea4-e8c7-85ba-9d800b99c976@kernel.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <46016d10-7b87-c0f6-ed0f-18f89a2572d0@kernel.dk>
+In-Reply-To: <15712d38-8ea4-e8c7-85ba-9d800b99c976@kernel.dk>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Mar 25, 2021 at 08:02:45AM -0600, Jens Axboe wrote:
->On 3/25/21 7:44 AM, Pavel Begunkov wrote:
->> On 25/03/2021 11:33, Stefano Garzarella wrote:
->>> Hi Jens, Hi Pavel,
->>> I was taking a look at the new SQPOLL handling with io_thread instead of kthread. Great job! Really nice feature that maybe can be reused also in other scenarios (e.g. vhost).
+On Thu, Mar 25, 2021 at 08:02:11AM -0600, Jens Axboe wrote:
+>On 3/25/21 7:56 AM, Stefan Metzmacher wrote:
+>> Am 25.03.21 um 14:38 schrieb Jens Axboe:
+>>> On 3/25/21 6:11 AM, Stefan Metzmacher wrote:
+>>>>
+>>>> Am 25.03.21 um 13:04 schrieb Eric W. Biederman:
+>>>>> Stefan Metzmacher <metze@samba.org> writes:
+>>>>>
+>>>>>> Am 25.03.21 um 12:24 schrieb Sasha Levin:
+>>>>>>> From: "Eric W. Biederman" <ebiederm@xmission.com>
+>>>>>>>
+>>>>>>> [ Upstream commit 4db4b1a0d1779dc159f7b87feb97030ec0b12597 ]
+>>>>>>>
+>>>>>>> Just like we don't allow normal signals to IO threads, don't deliver a
+>>>>>>> STOP to a task that has PF_IO_WORKER set. The IO threads don't take
+>>>>>>> signals in general, and have no means of flushing out a stop either.
+>>>>>>>
+>>>>>>> Longer term, we may want to look into allowing stop of these threads,
+>>>>>>> as it relates to eg process freezing. For now, this prevents a spin
+>>>>>>> issue if a SIGSTOP is delivered to the parent task.
+>>>>>>>
+>>>>>>> Reported-by: Stefan Metzmacher <metze@samba.org>
+>>>>>>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>>>>>>> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+>>>>>>> Signed-off-by: Sasha Levin <sashal@kernel.org>
+>>>>>>> ---
+>>>>>>>  kernel/signal.c | 3 ++-
+>>>>>>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>>>>>>
+>>>>>>> diff --git a/kernel/signal.c b/kernel/signal.c
+>>>>>>> index 55526b941011..00a3840f6037 100644
+>>>>>>> --- a/kernel/signal.c
+>>>>>>> +++ b/kernel/signal.c
+>>>>>>> @@ -288,7 +288,8 @@ bool task_set_jobctl_pending(struct task_struct *task, unsigned long mask)
+>>>>>>>  			JOBCTL_STOP_SIGMASK | JOBCTL_TRAPPING));
+>>>>>>>  	BUG_ON((mask & JOBCTL_TRAPPING) && !(mask & JOBCTL_PENDING_MASK));
+>>>>>>>
+>>>>>>> -	if (unlikely(fatal_signal_pending(task) || (task->flags & PF_EXITING)))
+>>>>>>> +	if (unlikely(fatal_signal_pending(task) ||
+>>>>>>> +		     (task->flags & (PF_EXITING | PF_IO_WORKER))))
+>>>>>>>  		return false;
+>>>>>>>
+>>>>>>>  	if (mask & JOBCTL_STOP_SIGMASK)
+>>>>>>>
+>>>>>>
+>>>>>> Again, why is this proposed for 5.11 and 5.10 already?
+>>>>>
+>>>>> Has the bit about the io worker kthreads been backported?
+>>>>> If so this isn't horrible.  If not this is nonsense.
 >>>
->>> Regarding SQPOLL, IIUC these new threads are much closer to user threads, so is there still a need to require CAP_SYS_ADMIN and CAP_SYS_NICE to enable SQPOLL?
+>>> No not yet - my plan is to do that, but not until we're 100% satisfied
+>>> with it.
 >>
->> Hmm, good question. If there are under same cgroup (should be in
->> theory), and if we add more scheduling points (i.e. need_resched()), and
->> don't see a reason why not. Jens?
->>
->> Better not right away though. IMHO it's safer to let the change settle
->> down for some time.
+>> Do you understand why the patches where autoselected for 5.11 and 5.10?
 >
->Yes, agree on both counts - we are not going to need elevated privileges
->going forward, but I'd also rather defer making that change until 5.13
->so we have a bit more time on the current (new) base first.
+>As far as I know, selections like these (AUTOSEL) are done by some bot
+>that uses whatever criteria to see if they should be applied for earlier
+>revisions. I'm sure Sasha can expand on that :-)
 
-Yeah, that makes sense to me!
+Right, it's just heuristics that help catch commits that don't have a
+stable tag but should have one.
 
-Thank you both for the quick clarification,
-Stefano
+>Hence it's reasonable to expect that sometimes it'll pick patches that
+>should not go into stable, at least not just yet. It's important to
+>understand that this message is just a notice that it's queued up for
+>stable -rc, not that it's _in_ stable just yet. There's time to object.
 
+Right, it's even more than that: this mail (tagged with "AUTOSEL") is a
+notification that happens at least a week before the patch will go in
+the stable queue.
+
+If you think any AUTOSEL patches don't need to be backported, it's
+usually enough to just quickly nack them.
+
+-- 
+Thanks,
+Sasha

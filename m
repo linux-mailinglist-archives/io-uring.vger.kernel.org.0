@@ -2,38 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 90A833494D3
-	for <lists+io-uring@lfdr.de>; Thu, 25 Mar 2021 16:01:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E12103494FA
+	for <lists+io-uring@lfdr.de>; Thu, 25 Mar 2021 16:11:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230377AbhCYPBT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 25 Mar 2021 11:01:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32892 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229869AbhCYPAr (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Thu, 25 Mar 2021 11:00:47 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9154C61A07;
-        Thu, 25 Mar 2021 15:00:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1616684446;
-        bh=13C25K8GpAKJvovS5Zi7tPUjVBZx0IifXkUDl2Fuozg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BEMgf6QbLULmr/G2Li61zttTA9RP/kiQu53Ypg/vwWSSg0Fah5HIboCQQ7xxgugl2
-         Sp97QocjvZHLerpimRbrwUb0/1P4DEhiROkZ/pG2FjqEYo5KBv5dUBk8lW+N+nQ1Qb
-         GQqXTRRb7w2c+yFiXElINyoLKDOckcxlpI8favSwt8EwfezI6Zlh9N6mk9/O1jyuSl
-         Jpi+3t+KT+IWYh8sbOSZJCKk40hM4WvGmaftbBBi20PgjjG0E2cImq9b/D7kyygh43
-         3Hym/fbhIHTqLfQ7HzjSM0nFG8DQoWi5NxFGWjZTiMapdJMWYdXtAdPvlb1RVE3qI5
-         nVkzKl2AjlNzA==
-Date:   Thu, 25 Mar 2021 11:00:45 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Stefan Metzmacher <metze@samba.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        io-uring <io-uring@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
+        id S230284AbhCYPKa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 25 Mar 2021 11:10:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59680 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230416AbhCYPKD (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 25 Mar 2021 11:10:03 -0400
+Received: from mail-il1-x12e.google.com (mail-il1-x12e.google.com [IPv6:2607:f8b0:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4ED78C06175F
+        for <io-uring@vger.kernel.org>; Thu, 25 Mar 2021 08:10:03 -0700 (PDT)
+Received: by mail-il1-x12e.google.com with SMTP id t14so2409418ilu.3
+        for <io-uring@vger.kernel.org>; Thu, 25 Mar 2021 08:10:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=cmfGnJhW1ZKpR18NP8XlvFCkJb4ulhMaonqbFk4lIRA=;
+        b=ULidRotO2LfWr6HUVz7F+13oeRHQrR0Te92Q6AhStG07v4sXu65tyzn1Dcv+PUu2N9
+         ON+YiOySujyGPyvB28p4uc2dJggdZk3SHxtJbjgR7pH6TMUWdUcQHWCmk4wpyusl7B23
+         sKOHn2WhHia8E84urDDxTs42Ryg9BckVetuGQZeoYUXibO8EMV5KSaDrxIkknw3GRTNv
+         Xu6QqG25lALREsz637kyfIA1AfOtev0Q9TAgopelkXU3wD0OPb0avMc0cfE2MNRzNd+J
+         76j6WDI9If0rRLPYu09KhvOnP7IaHNi5lFQnR0ZtW/Iczd6WhbRbTKKNsu1B46QOqeB7
+         K8Ig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=cmfGnJhW1ZKpR18NP8XlvFCkJb4ulhMaonqbFk4lIRA=;
+        b=IAkXf1WjP9gEFqIwtbA4pLzDmqSc0N9kO6sizy/vzw/gEipzqP4TBPeb/q1k0NRvJ0
+         cW2m09BraYpA/eDiWJB+LX907HTbcYymp2VikFvazs81Jyr5zN+dHYWuqU4H1gzAuz6u
+         7GLpSw7/RJUMN3xEhds+/SGDJsm6FgrY+Gx2Z82L3G1kIeBOBtRyDKagEzIPfw2Flkkg
+         FMGH7oc7xRunnoV3Gib2d/r463PNdPMkYqmtEIvcGVV3Dyg2Q/WJxntXbMkNjrY+CWwN
+         Nx5/4sJfC/HNsxdDW/BlKDgjlUJa4Jr3HJnXOYF4jowV/L1k6OS3Sl5cIFOwiVR1x5S0
+         WkGA==
+X-Gm-Message-State: AOAM533a8q+ZBehrXcSvMcCjRf4BDdJWFY1nStO55Ac5DxfNKXMS4T5h
+        xC8HJGLEHjZuYKRF6fJIziCmQw==
+X-Google-Smtp-Source: ABdhPJzgM4t4KvMBGf+62u4KTbHXouqVgSpIz4nucxMJ6+4NWvoJtwX0BywbEEdhiSvLJXq+wcJtkg==
+X-Received: by 2002:a05:6e02:1ca7:: with SMTP id x7mr7076094ill.68.1616685002463;
+        Thu, 25 Mar 2021 08:10:02 -0700 (PDT)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id p5sm2848483iod.31.2021.03.25.08.10.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 25 Mar 2021 08:10:02 -0700 (PDT)
 Subject: Re: [PATCH AUTOSEL 5.11 43/44] signal: don't allow STOP on
  PF_IO_WORKER threads
-Message-ID: <YFylnZ6eEEObO4FT@sashalap>
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Stefan Metzmacher <metze@samba.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, io-uring <io-uring@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
 References: <20210325112459.1926846-1-sashal@kernel.org>
  <20210325112459.1926846-43-sashal@kernel.org>
  <f4c932b4-b787-651e-dd9f-584b386acddb@samba.org>
@@ -42,16 +64,21 @@ References: <20210325112459.1926846-1-sashal@kernel.org>
  <2b2a9701-cbe0-4538-ed3b-6917b85bebf8@kernel.dk>
  <acf9263d-7572-525d-9116-acb119399c13@samba.org>
  <15712d38-8ea4-e8c7-85ba-9d800b99c976@kernel.dk>
+Message-ID: <f38622bd-cd98-8c3b-8779-9384d0279f5d@kernel.dk>
+Date:   Thu, 25 Mar 2021 09:10:01 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
 In-Reply-To: <15712d38-8ea4-e8c7-85ba-9d800b99c976@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Mar 25, 2021 at 08:02:11AM -0600, Jens Axboe wrote:
->On 3/25/21 7:56 AM, Stefan Metzmacher wrote:
+On 3/25/21 8:02 AM, Jens Axboe wrote:
+> On 3/25/21 7:56 AM, Stefan Metzmacher wrote:
 >> Am 25.03.21 um 14:38 schrieb Jens Axboe:
 >>> On 3/25/21 6:11 AM, Stefan Metzmacher wrote:
 >>>>
@@ -86,12 +113,12 @@ On Thu, Mar 25, 2021 at 08:02:11AM -0600, Jens Axboe wrote:
 >>>>>>> @@ -288,7 +288,8 @@ bool task_set_jobctl_pending(struct task_struct *task, unsigned long mask)
 >>>>>>>  			JOBCTL_STOP_SIGMASK | JOBCTL_TRAPPING));
 >>>>>>>  	BUG_ON((mask & JOBCTL_TRAPPING) && !(mask & JOBCTL_PENDING_MASK));
->>>>>>>
+>>>>>>>  
 >>>>>>> -	if (unlikely(fatal_signal_pending(task) || (task->flags & PF_EXITING)))
 >>>>>>> +	if (unlikely(fatal_signal_pending(task) ||
 >>>>>>> +		     (task->flags & (PF_EXITING | PF_IO_WORKER))))
 >>>>>>>  		return false;
->>>>>>>
+>>>>>>>  
 >>>>>>>  	if (mask & JOBCTL_STOP_SIGMASK)
 >>>>>>>
 >>>>>>
@@ -104,26 +131,141 @@ On Thu, Mar 25, 2021 at 08:02:11AM -0600, Jens Axboe wrote:
 >>> with it.
 >>
 >> Do you understand why the patches where autoselected for 5.11 and 5.10?
->
->As far as I know, selections like these (AUTOSEL) are done by some bot
->that uses whatever criteria to see if they should be applied for earlier
->revisions. I'm sure Sasha can expand on that :-)
+> 
+> As far as I know, selections like these (AUTOSEL) are done by some bot
+> that uses whatever criteria to see if they should be applied for earlier
+> revisions. I'm sure Sasha can expand on that :-)
+> 
+> Hence it's reasonable to expect that sometimes it'll pick patches that
+> should not go into stable, at least not just yet. It's important to
+> understand that this message is just a notice that it's queued up for
+> stable -rc, not that it's _in_ stable just yet. There's time to object.
+> 
+>>>> I don't know, I hope not...
+>>>>
+>>>> But I just tested v5.12-rc4 and attaching to
+>>>> an application with iothreads with gdb is still not possible,
+>>>> it still loops forever trying to attach to the iothreads.
+>>>
+>>> I do see the looping, gdb apparently doesn't give up when it gets
+>>> -EPERM trying to attach to the threads. Which isn't really a kernel
+>>> thing, but:
+>>
+>> Maybe we need to remove the iothreads from /proc/pid/tasks/
+> 
+> Is that how it finds them? It's arguably a bug in gdb that it just
+> keeps retrying, but it would be nice if we can ensure that it just
+> ignores them. Because if gdb triggers something like that, probably
+> others too...
+> 
+>>>> And I tested 'kill -9 $pidofiothread', and it feezed the whole
+>>>> machine...
+>>>
+>>> that sounds very strange, I haven't seen anything like that running
+>>> the exact same scenario.
+>>>
+>>>> So there's still work to do in order to get 5.12 stable.
+>>>>
+>>>> I'm short on time currently, but I hope to send more details soon.
+>>>
+>>> Thanks! I'll play with it this morning and see if I can provoke
+>>> something odd related to STOP/attach.
+>>
+>> Thanks!
+>>
+>> Somehow I have the impression that your same_thread_group_account patch
+>> may fix a lot of things...
+> 
+> Maybe? I'll look closer.
 
-Right, it's just heuristics that help catch commits that don't have a
-stable tag but should have one.
+It needs a bit more love than that. If you have threads already in your
+app, then we just want to skip over the PF_IO_WORKER threads. We can't
+just terminate the loop.
 
->Hence it's reasonable to expect that sometimes it'll pick patches that
->should not go into stable, at least not just yet. It's important to
->understand that this message is just a notice that it's queued up for
->stable -rc, not that it's _in_ stable just yet. There's time to object.
+Something like the below works for me.
 
-Right, it's even more than that: this mail (tagged with "AUTOSEL") is a
-notification that happens at least a week before the patch will go in
-the stable queue.
 
-If you think any AUTOSEL patches don't need to be backported, it's
-usually enough to just quickly nack them.
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index 3851bfcdba56..abff2fe10bfa 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -3723,7 +3723,7 @@ static struct task_struct *first_tid(struct pid *pid, int tid, loff_t f_pos,
+ 	 */
+ 	pos = task = task->group_leader;
+ 	do {
+-		if (!nr--)
++		if (same_thread_group(task, pos) && !nr--)
+ 			goto found;
+ 	} while_each_thread(task, pos);
+ fail:
+@@ -3744,16 +3744,22 @@ static struct task_struct *first_tid(struct pid *pid, int tid, loff_t f_pos,
+  */
+ static struct task_struct *next_tid(struct task_struct *start)
+ {
+-	struct task_struct *pos = NULL;
++	struct task_struct *tmp, *pos = NULL;
++
+ 	rcu_read_lock();
+-	if (pid_alive(start)) {
+-		pos = next_thread(start);
+-		if (thread_group_leader(pos))
+-			pos = NULL;
+-		else
+-			get_task_struct(pos);
++	if (!pid_alive(start))
++		goto no_thread;
++	list_for_each_entry_rcu(tmp, &start->thread_group, thread_group) {
++		if (!thread_group_leader(tmp) && same_thread_group(start, tmp)) {
++			get_task_struct(tmp);
++			pos = tmp;
++			break;
++		}
+ 	}
++no_thread:
+ 	rcu_read_unlock();
++	if (!pos)
++		return NULL;
+ 	put_task_struct(start);
+ 	return pos;
+ }
+diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
+index 3f6a0fcaa10c..4f621e386abf 100644
+--- a/include/linux/sched/signal.h
++++ b/include/linux/sched/signal.h
+@@ -668,11 +668,18 @@ static inline bool thread_group_leader(struct task_struct *p)
+ }
+ 
+ static inline
+-bool same_thread_group(struct task_struct *p1, struct task_struct *p2)
++bool same_thread_group_account(struct task_struct *p1, struct task_struct *p2)
+ {
+ 	return p1->signal == p2->signal;
+ }
+ 
++static inline
++bool same_thread_group(struct task_struct *p1, struct task_struct *p2)
++{
++	return same_thread_group_account(p1, p2) &&
++			!((p1->flags | p2->flags) & PF_IO_WORKER);
++}
++
+ static inline struct task_struct *next_thread(const struct task_struct *p)
+ {
+ 	return list_entry_rcu(p->thread_group.next,
+diff --git a/kernel/sched/cputime.c b/kernel/sched/cputime.c
+index 5f611658eeab..625110cacc2a 100644
+--- a/kernel/sched/cputime.c
++++ b/kernel/sched/cputime.c
+@@ -307,7 +307,7 @@ void thread_group_cputime(struct task_struct *tsk, struct task_cputime *times)
+ 	 * those pending times and rely only on values updated on tick or
+ 	 * other scheduler action.
+ 	 */
+-	if (same_thread_group(current, tsk))
++	if (same_thread_group_account(current, tsk))
+ 		(void) task_sched_runtime(current);
+ 
+ 	rcu_read_lock();
 
 -- 
-Thanks,
-Sasha
+Jens Axboe
+

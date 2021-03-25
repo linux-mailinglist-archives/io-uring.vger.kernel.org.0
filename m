@@ -2,110 +2,151 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FE6E3492DB
-	for <lists+io-uring@lfdr.de>; Thu, 25 Mar 2021 14:13:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE2DF34932E
+	for <lists+io-uring@lfdr.de>; Thu, 25 Mar 2021 14:39:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230166AbhCYNND (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 25 Mar 2021 09:13:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34224 "EHLO
+        id S230296AbhCYNjX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 25 Mar 2021 09:39:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230231AbhCYNMd (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 25 Mar 2021 09:12:33 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B1C2C06174A
-        for <io-uring@vger.kernel.org>; Thu, 25 Mar 2021 06:12:32 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id v4so2198220wrp.13
-        for <io-uring@vger.kernel.org>; Thu, 25 Mar 2021 06:12:32 -0700 (PDT)
+        with ESMTP id S230134AbhCYNiv (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 25 Mar 2021 09:38:51 -0400
+Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16DC3C061760
+        for <io-uring@vger.kernel.org>; Thu, 25 Mar 2021 06:38:51 -0700 (PDT)
+Received: by mail-io1-xd2c.google.com with SMTP id n21so1936400ioa.7
+        for <io-uring@vger.kernel.org>; Thu, 25 Mar 2021 06:38:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=u1x4v1eSeYB712uO5ksTGe54BRFc/lGPPNtA9Sawhpo=;
-        b=SPo/ErQ5o6aBwHybUmt8xc9jRGncviOuz1emwq3+gqu2/vm7lgyP/++KW2allAt/Gf
-         msjduYuh0g56Yg8geiRgIXVQBsfEu8QYskhIakbB543aSAO12ILTIn2Q7SbdZgamnlGS
-         H0uP//CH9ciaRYPIWLwc2JbSff1bb+ltL7a158cmTe1XN26ctnLwoxnqAhnqwMuld4GV
-         oQ2XWb1OeKpOrGx0/e40ZLIij8yz8MbJw3AGkZW0CYfsFZfh5Er79lTRz806GRU6HD5D
-         L7kO0Sax4d4EuH+BdKe8CTS4LUwxDJtI8qEGOj/aVU4jO16j67QqQrgaZdcyoGnos5wa
-         yb9A==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=eM1i1Yk87DzUyuufIUGNIKd4zH4tVzCeadWKa9Xb/JU=;
+        b=XdHRtgYk0+DLpDrv3ToQu5LWl0EYWRXpd/TbmPrRxtPCCkTI1FtzSRyh+dBxxClmvL
+         +q9RzafC27umFrgzVkXSOeHFGrfjKrrqJTm7RqEDtLXp7PwkuxLlD46X/G1Tssmszq6G
+         H3bjL9t24Wj3tcTTmVqNoHu/QwKYDo76LNFmaag0zJ9hhsFJ0dJ4VNFm70qp+KBVcXpJ
+         M1thxus4OrUpRTyMkoXMORYOiKpO+fQx3AnD0lUgQ0Wih12kQpF+7omp4c3lv1Uihm8i
+         n94wWdDv7paeA6/5WbaZxsn/dwpQScoYDCcQKuTXN4/s52NloR4Al9i92lhhyd0lTdCF
+         GfTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=u1x4v1eSeYB712uO5ksTGe54BRFc/lGPPNtA9Sawhpo=;
-        b=hr4BqKQTx5AlkN9nOuaQKqrImF7g9vzsp04doylosx1Seh+brdeEPVwE7i1//0Sd16
-         LpC3a6veznkK7xiy0/gNdT7qT7MKtdrL0ehk8UN0XcYb9D3cBewSleSysRjxBmAUXG2f
-         iMPwnWtwpEUa0rvX1fHJW2lHfjCx4oyVMlfn7XAcGVc5msDloVpyGYqdV4hSkDWrK7Cx
-         +APWY7Gk+lzZlpgSGrWz57RlGYmkkcpjMsS0DrdN1mGYHHGeyUOQdYr1Rk2tTXMr7HvH
-         iZLXbxsK11Li9nJoS/9uM1qnfciMLopXo2w5FFJGSTZ2NuYc34l/0njMl+6D1CeOCTpR
-         SVRA==
-X-Gm-Message-State: AOAM530YSNwJ6YNUgPF9kflI4Jb41XU2U2ckoIA5CIuSXgmM3bzNrmA/
-        6anX+g3j04Ej1wjRDQ93wg8=
-X-Google-Smtp-Source: ABdhPJxcMUxECexkVP4mCHzrGO+peZyyrN0lJEElZJxW8nEt8vRM7zhwnSq/HV2P7MyMF5iXLKXnWg==
-X-Received: by 2002:adf:e791:: with SMTP id n17mr8832817wrm.322.1616677951271;
-        Thu, 25 Mar 2021 06:12:31 -0700 (PDT)
-Received: from localhost.localdomain ([148.252.129.162])
-        by smtp.gmail.com with ESMTPSA id i4sm5754285wmq.12.2021.03.25.06.12.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Mar 2021 06:12:30 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH v3 17/17] io_uring: kill unused forward decls
-Date:   Thu, 25 Mar 2021 13:08:06 +0000
-Message-Id: <1d978452a1271f717d3ae6bf77c909a295c92031.1616677487.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <cover.1616677487.git.asml.silence@gmail.com>
-References: <cover.1616677487.git.asml.silence@gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=eM1i1Yk87DzUyuufIUGNIKd4zH4tVzCeadWKa9Xb/JU=;
+        b=V2alIscPdpuGLTuac0kgmZ64t5m92J+NG57btOcBofRK5W4mqyLWFH4oyULi/nAUzy
+         +RXokFqtjqgPXp9I+bfVeP10zNJnNwKPvyYq6vULBhO4OuXMeDq1iQxSGVxXjSISW77I
+         XDmOEfAtohBdrBu8McWl1q0D5oRJnLCm7Z6vNhj293F5zcjkbUS88dMKNtWpq8QcwiNZ
+         dPpolgHkGj6QyjQiJiK2iFL3q1MYBTFRufGCP2qNiXq0sOWlAZJUpaXtC0vIc5lGIGQo
+         9Hk3LhyCMKPpB1ZZC1cd/3WMas1ZezvZjOBwSPmScl+ru4d4QI+ckhQ9X0CotY4bFts4
+         0ykQ==
+X-Gm-Message-State: AOAM530qF3Cpu0H2+EfKP4OS+2d3/TTmihYtsLMnO1W3L24dP2Vru10F
+        BwKpL1AZQLb+i2b3vir819LpoQ==
+X-Google-Smtp-Source: ABdhPJztg2JZ0lfPBKpRS5e6PcjYOMvW4/3r4DT52HfPZ2N9pX0RvjFWOsn0Ee82mHqUxfdIURFLbw==
+X-Received: by 2002:a02:11c9:: with SMTP id 192mr7529596jaf.135.1616679530405;
+        Thu, 25 Mar 2021 06:38:50 -0700 (PDT)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id v7sm2770160ilu.72.2021.03.25.06.38.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 25 Mar 2021 06:38:50 -0700 (PDT)
+Subject: Re: [PATCH AUTOSEL 5.11 43/44] signal: don't allow STOP on
+ PF_IO_WORKER threads
+To:     Stefan Metzmacher <metze@samba.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, io-uring <io-uring@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <20210325112459.1926846-1-sashal@kernel.org>
+ <20210325112459.1926846-43-sashal@kernel.org>
+ <f4c932b4-b787-651e-dd9f-584b386acddb@samba.org>
+ <m1r1k34ey1.fsf@fess.ebiederm.org>
+ <41589c56-9219-3ec2-55b3-3f010752ac7b@samba.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <2b2a9701-cbe0-4538-ed3b-6917b85bebf8@kernel.dk>
+Date:   Thu, 25 Mar 2021 07:38:51 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <41589c56-9219-3ec2-55b3-3f010752ac7b@samba.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Kill unused forward declarations for io_ring_file_put() and
-io_queue_next(). Also btw rename the first one.
+On 3/25/21 6:11 AM, Stefan Metzmacher wrote:
+> 
+> Am 25.03.21 um 13:04 schrieb Eric W. Biederman:
+>> Stefan Metzmacher <metze@samba.org> writes:
+>>
+>>> Am 25.03.21 um 12:24 schrieb Sasha Levin:
+>>>> From: "Eric W. Biederman" <ebiederm@xmission.com>
+>>>>
+>>>> [ Upstream commit 4db4b1a0d1779dc159f7b87feb97030ec0b12597 ]
+>>>>
+>>>> Just like we don't allow normal signals to IO threads, don't deliver a
+>>>> STOP to a task that has PF_IO_WORKER set. The IO threads don't take
+>>>> signals in general, and have no means of flushing out a stop either.
+>>>>
+>>>> Longer term, we may want to look into allowing stop of these threads,
+>>>> as it relates to eg process freezing. For now, this prevents a spin
+>>>> issue if a SIGSTOP is delivered to the parent task.
+>>>>
+>>>> Reported-by: Stefan Metzmacher <metze@samba.org>
+>>>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>>>> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+>>>> Signed-off-by: Sasha Levin <sashal@kernel.org>
+>>>> ---
+>>>>  kernel/signal.c | 3 ++-
+>>>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/kernel/signal.c b/kernel/signal.c
+>>>> index 55526b941011..00a3840f6037 100644
+>>>> --- a/kernel/signal.c
+>>>> +++ b/kernel/signal.c
+>>>> @@ -288,7 +288,8 @@ bool task_set_jobctl_pending(struct task_struct *task, unsigned long mask)
+>>>>  			JOBCTL_STOP_SIGMASK | JOBCTL_TRAPPING));
+>>>>  	BUG_ON((mask & JOBCTL_TRAPPING) && !(mask & JOBCTL_PENDING_MASK));
+>>>>  
+>>>> -	if (unlikely(fatal_signal_pending(task) || (task->flags & PF_EXITING)))
+>>>> +	if (unlikely(fatal_signal_pending(task) ||
+>>>> +		     (task->flags & (PF_EXITING | PF_IO_WORKER))))
+>>>>  		return false;
+>>>>  
+>>>>  	if (mask & JOBCTL_STOP_SIGMASK)
+>>>>
+>>>
+>>> Again, why is this proposed for 5.11 and 5.10 already?
+>>
+>> Has the bit about the io worker kthreads been backported?
+>> If so this isn't horrible.  If not this is nonsense.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+No not yet - my plan is to do that, but not until we're 100% satisfied
+with it.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 9f062bddae31..661082f2094e 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1012,14 +1012,12 @@ static void io_uring_try_cancel_requests(struct io_ring_ctx *ctx,
- 					 struct files_struct *files);
- static void io_uring_cancel_sqpoll(struct io_ring_ctx *ctx);
- static struct io_rsrc_node *io_rsrc_node_alloc(struct io_ring_ctx *ctx);
--static void io_ring_file_put(struct io_ring_ctx *ctx, struct io_rsrc_put *prsrc);
- 
- static void io_cqring_fill_event(struct io_kiocb *req, long res);
- static void io_put_req(struct io_kiocb *req);
- static void io_put_req_deferred(struct io_kiocb *req, int nr);
- static void io_dismantle_req(struct io_kiocb *req);
- static void io_put_task(struct task_struct *task, int nr);
--static void io_queue_next(struct io_kiocb *req);
- static struct io_kiocb *io_prep_linked_timeout(struct io_kiocb *req);
- static void io_queue_linked_timeout(struct io_kiocb *req);
- static int __io_sqe_files_update(struct io_ring_ctx *ctx,
-@@ -7324,7 +7322,7 @@ static int io_sqe_alloc_file_tables(struct io_rsrc_data *file_data,
- 	return 1;
- }
- 
--static void io_ring_file_put(struct io_ring_ctx *ctx, struct io_rsrc_put *prsrc)
-+static void io_rsrc_file_put(struct io_ring_ctx *ctx, struct io_rsrc_put *prsrc)
- {
- 	struct file *file = prsrc->file;
- #if defined(CONFIG_UNIX)
-@@ -7486,7 +7484,7 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
- 	if (ret)
- 		return ret;
- 
--	file_data = io_rsrc_data_alloc(ctx, io_ring_file_put);
-+	file_data = io_rsrc_data_alloc(ctx, io_rsrc_file_put);
- 	if (!file_data)
- 		return -ENOMEM;
- 	ctx->file_data = file_data;
+> I don't know, I hope not...
+> 
+> But I just tested v5.12-rc4 and attaching to
+> an application with iothreads with gdb is still not possible,
+> it still loops forever trying to attach to the iothreads.
+
+I do see the looping, gdb apparently doesn't give up when it gets
+-EPERM trying to attach to the threads. Which isn't really a kernel
+thing, but:
+
+> And I tested 'kill -9 $pidofiothread', and it feezed the whole
+> machine...
+
+that sounds very strange, I haven't seen anything like that running
+the exact same scenario.
+
+> So there's still work to do in order to get 5.12 stable.
+> 
+> I'm short on time currently, but I hope to send more details soon.
+
+Thanks! I'll play with it this morning and see if I can provoke
+something odd related to STOP/attach.
+
 -- 
-2.24.0
+Jens Axboe
 

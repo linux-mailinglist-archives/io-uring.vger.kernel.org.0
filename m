@@ -2,99 +2,112 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 080A7349ADF
-	for <lists+io-uring@lfdr.de>; Thu, 25 Mar 2021 21:13:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4802A349AF2
+	for <lists+io-uring@lfdr.de>; Thu, 25 Mar 2021 21:23:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229833AbhCYUNU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 25 Mar 2021 16:13:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41318 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230042AbhCYUNC (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 25 Mar 2021 16:13:02 -0400
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BB90C06175F
-        for <io-uring@vger.kernel.org>; Thu, 25 Mar 2021 13:13:01 -0700 (PDT)
-Received: by mail-lf1-x12a.google.com with SMTP id b4so4353678lfi.6
-        for <io-uring@vger.kernel.org>; Thu, 25 Mar 2021 13:13:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iSCZD0WysGru/kVbyNvevo1VRTVBoKkOp1lzPAHeWdQ=;
-        b=GemDuBlk7PzUL2Fb3Mi1u+hLLL1HEDKYeh2Hbjs1BW61m4FQbvXD22/IGQ38dao6HV
-         y9nQhMQjlF47CrpXbP9GKzIRwhDsvNCl/DEmzolXE3cUG1JXPp/jR8UzT/LgJ0KaFCpR
-         rf/4UWJ4RL0zAyhp4Qc+xCgBMm7YF057ScHws=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iSCZD0WysGru/kVbyNvevo1VRTVBoKkOp1lzPAHeWdQ=;
-        b=rDXp5orm/fdb2FGNlK9gSqAEtjBb7sQF4SMAhNCApzH66xO7+9W4x+ciIFu6nGMg3x
-         IJpERVQgecFUiU9FWELvqnmMoCbNtlxRmrijEPLIKBtsbKcci7ZzigYF41/EQ0f2Z09o
-         /rg7lRb7kJTfrDdV1yVVPmNNbDUqJuCpw1+2NP7tGHbB06NEtXXgpO6vGOwwzJ+3/kD3
-         C67o7zCBWb4JYVBDNXcErIcvYKw1JEetnkZShww8mS2UmGoz/utKA0zK77kXxO99F6YA
-         4kTsQhGzP/Uf/t4E9TdVrRBcdkT1msZeNIwBGpjtwgk3kIWTEPrlWE+p+8Yng72FMznn
-         Tlyw==
-X-Gm-Message-State: AOAM533EwUq39Tu8vaajMQ/5gzQYKRzej6SFna0aqOCNnd+yzBrrD3Jx
-        j59W/WTfrlbkIX3zUkLtv+iBHPP9MHLgsw==
-X-Google-Smtp-Source: ABdhPJyhZ+fKMGzUNOpC+WTIfeBHU/IHLADXR1CAOV0x39O3XPQ6bGr11P/kMvSTQ4mxXmIOAaJ30w==
-X-Received: by 2002:ac2:5fe6:: with SMTP id s6mr5856666lfg.445.1616703179930;
-        Thu, 25 Mar 2021 13:12:59 -0700 (PDT)
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
-        by smtp.gmail.com with ESMTPSA id b9sm638464lfo.237.2021.03.25.13.12.58
-        for <io-uring@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Mar 2021 13:12:59 -0700 (PDT)
-Received: by mail-lj1-f180.google.com with SMTP id f16so4810955ljm.1
-        for <io-uring@vger.kernel.org>; Thu, 25 Mar 2021 13:12:58 -0700 (PDT)
-X-Received: by 2002:a2e:864d:: with SMTP id i13mr6644465ljj.48.1616703178433;
- Thu, 25 Mar 2021 13:12:58 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210325164343.807498-1-axboe@kernel.dk> <m1ft0j3u5k.fsf@fess.ebiederm.org>
- <CAHk-=wjOXiEAjGLbn2mWRsxqpAYUPcwCj2x5WgEAh=gj+o0t4Q@mail.gmail.com> <CAHk-=wg1XpX=iAv=1HCUReMbEgeN5UogZ4_tbi+ehaHZG6d==g@mail.gmail.com>
-In-Reply-To: <CAHk-=wg1XpX=iAv=1HCUReMbEgeN5UogZ4_tbi+ehaHZG6d==g@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 25 Mar 2021 13:12:42 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgUcVeaKhtBgJO3TfE69miJq-krtL8r_Wf_=LBTJw6WSg@mail.gmail.com>
-Message-ID: <CAHk-=wgUcVeaKhtBgJO3TfE69miJq-krtL8r_Wf_=LBTJw6WSg@mail.gmail.com>
-Subject: Re: [PATCH 0/2] Don't show PF_IO_WORKER in /proc/<pid>/task/
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>,
+        id S229581AbhCYUXC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 25 Mar 2021 16:23:02 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:49264 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229576AbhCYUWf (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 25 Mar 2021 16:22:35 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out03.mta.xmission.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1lPWUx-00GDix-Cj; Thu, 25 Mar 2021 14:22:31 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=fess.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1lPWUw-00086p-Jg; Thu, 25 Mar 2021 14:22:31 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        io-uring <io-uring@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Oleg Nesterov <oleg@redhat.com>,
         Stefan Metzmacher <metze@samba.org>
-Content-Type: text/plain; charset="UTF-8"
+References: <20210325164343.807498-1-axboe@kernel.dk>
+        <m1ft0j3u5k.fsf@fess.ebiederm.org>
+        <CAHk-=wjOXiEAjGLbn2mWRsxqpAYUPcwCj2x5WgEAh=gj+o0t4Q@mail.gmail.com>
+        <CAHk-=wg1XpX=iAv=1HCUReMbEgeN5UogZ4_tbi+ehaHZG6d==g@mail.gmail.com>
+        <3a1c02a5-db6d-e3e1-6ff5-69dd7cd61258@kernel.dk>
+Date:   Thu, 25 Mar 2021 15:21:30 -0500
+In-Reply-To: <3a1c02a5-db6d-e3e1-6ff5-69dd7cd61258@kernel.dk> (Jens Axboe's
+        message of "Thu, 25 Mar 2021 13:46:46 -0600")
+Message-ID: <m1zgyr2ddh.fsf@fess.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1lPWUw-00086p-Jg;;;mid=<m1zgyr2ddh.fsf@fess.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19McYpu4UMpmJM1/6UzapWqyVIobH1ipzY=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
+X-Spam-Level: **
+X-Spam-Status: No, score=2.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
+        T_TooManySym_02,T_TooManySym_03,T_TooManySym_04,XMNoVowels,XMSubLong
+        autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4362]
+        *  0.7 XMSubLong Long Subject
+        *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+        *  0.0 T_TooManySym_04 7+ unique symbols in subject
+        *  0.0 T_TooManySym_03 6+ unique symbols in subject
+        *  0.0 T_TooManySym_02 5+ unique symbols in subject
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Jens Axboe <axboe@kernel.dk>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 533 ms - load_scoreonly_sql: 0.06 (0.0%),
+        signal_user_changed: 12 (2.3%), b_tie_ro: 11 (2.0%), parse: 1.24
+        (0.2%), extract_message_metadata: 17 (3.2%), get_uri_detail_list: 1.15
+        (0.2%), tests_pri_-1000: 26 (4.9%), tests_pri_-950: 1.27 (0.2%),
+        tests_pri_-900: 1.06 (0.2%), tests_pri_-90: 286 (53.6%), check_bayes:
+        284 (53.3%), b_tokenize: 5.0 (0.9%), b_tok_get_all: 153 (28.7%),
+        b_comp_prob: 2.4 (0.4%), b_tok_touch_all: 120 (22.5%), b_finish: 0.99
+        (0.2%), tests_pri_0: 173 (32.5%), check_dkim_signature: 0.56 (0.1%),
+        check_dkim_adsp: 2.1 (0.4%), poll_dns_idle: 0.56 (0.1%), tests_pri_10:
+        2.3 (0.4%), tests_pri_500: 9 (1.7%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH 0/2] Don't show PF_IO_WORKER in /proc/<pid>/task/
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Mar 25, 2021 at 12:42 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+Jens Axboe <axboe@kernel.dk> writes:
+
+> On 3/25/21 1:42 PM, Linus Torvalds wrote:
+>> On Thu, Mar 25, 2021 at 12:38 PM Linus Torvalds
+>> <torvalds@linux-foundation.org> wrote:
+>>>
+>>> I don't know what the gdb logic is, but maybe there's some other
+>>> option that makes gdb not react to them?
+>> 
+>> .. maybe we could have a different name for them under the task/
+>> subdirectory, for example (not  just the pid)? Although that probably
+>> messes up 'ps' too..
 >
-> On Thu, Mar 25, 2021 at 12:38 PM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > I don't know what the gdb logic is, but maybe there's some other
-> > option that makes gdb not react to them?
->
-> .. maybe we could have a different name for them under the task/
-> subdirectory, for example (not  just the pid)? Although that probably
-> messes up 'ps' too..
+> Heh, I can try, but my guess is that it would mess up _something_, if
+> not ps/top.
 
-Actually, maybe the right model is to simply make all the io threads
-take signals, and get rid of all the special cases.
+Hmm.
 
-Sure, the signals will never be delivered to user space, but if we
+So looking quickly the flip side of the coin is gdb (and other
+debuggers) needs a way to know these threads are special, so it can know
+not to attach.
 
- - just made the thread loop do "get_signal()" when there are pending signals
+I suspect getting -EPERM (or possibly a different error code) when
+attempting attach is the right was to know that a thread is not
+available to be debugged.
 
- - allowed ptrace_attach on them
+Eric
 
-they'd look pretty much like regular threads that just never do the
-user-space part of signal handling.
-
-The whole "signals are very special for IO threads" thing has caused
-so many problems, that maybe the solution is simply to _not_ make them
-special?
-
-           Linus

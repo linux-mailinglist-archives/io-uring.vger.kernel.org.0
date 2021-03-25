@@ -2,87 +2,119 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A393434971D
+	by mail.lfdr.de (Postfix) with ESMTP id A3FFB34971E
 	for <lists+io-uring@lfdr.de>; Thu, 25 Mar 2021 17:44:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229760AbhCYQoH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        id S229666AbhCYQoH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
         Thu, 25 Mar 2021 12:44:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52614 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229670AbhCYQnt (ORCPT
+        with ESMTP id S229629AbhCYQnt (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Thu, 25 Mar 2021 12:43:49 -0400
-Received: from mail-il1-x129.google.com (mail-il1-x129.google.com [IPv6:2607:f8b0:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FA5BC06175F
+Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC5C3C06175F
         for <io-uring@vger.kernel.org>; Thu, 25 Mar 2021 09:43:49 -0700 (PDT)
-Received: by mail-il1-x129.google.com with SMTP id l5so2642273ilv.9
+Received: by mail-io1-xd2d.google.com with SMTP id k25so2544920iob.6
         for <io-uring@vger.kernel.org>; Thu, 25 Mar 2021 09:43:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Zd+IsOavNCUB3RDkiixfR35fwyjwyYlctF6Wye7U1Rw=;
-        b=z8nwVK7KTLGXlhTh29caKmGDPHyWZ+Hwy4smuIbtvvmPKGCe4F4fNOOcDrQSbBnmkv
-         TX8YICMC7KqkA8zXeuADv5O660hqplSUdMT+CjMC83uCoZzCCUIOSqdIaOnFNwjWqyjD
-         Tzc/RryizZzr/Ij8AeHRRWQOPbdKuGDJsSoC2KAIrHLxxsglB731j2F4MnTxjyot3QYw
-         NDDb3SpUbOZ+QvDlf6f4dGPVWjZ99geBmc7OsV/3kqMOOwxeH5Xe3P0MUr7VwMSp0MiS
-         HhJN3ExL4iAOk5z6K1TgC5L1Q+1MBVMDkyIvSPd/6Mde6euG+H3qG7HcuK1dlNWwNl+j
-         sxlA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Zelrk36zpmC+2fEIaTzCe8iAs0QYE8m4zqDOwegDXxU=;
+        b=QLqByaEHTRPwGeUS1pOq5E8tTBozcYgNoU0DBDvnF2zaT4Moftc+JhKY6s7sagWObm
+         pQuhuSWdD53SqSqWiQ60vUU+WrpJwTOLrbdnSAOrv5FHd1mf8yi8JX0S//j4bZxzhlKR
+         qt1E1tR5X1rsX31PtU4jNGpbucp+ruUSzfDwXIXyCwHi4MNqLoK6shp9KlsyA429DdMW
+         kpnB/Y4xtQp39aO8MK36jUB27WAfnrN6XfftZCG1cEb/pGnaLwgTFRMjrBtXXvyRrbRI
+         uHc6sPcSmCOmCTU0OtWuynAM15qkhs2Dr68y+h07fTmhtexCh63eoQT7dhmOZWz96LnE
+         4tnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Zd+IsOavNCUB3RDkiixfR35fwyjwyYlctF6Wye7U1Rw=;
-        b=QJU/0GxFiNVrljDSsNAfRiVLINVBL/9ugfmmZvlQOv7FTMEYC0ld+D9Js29vaUqF1l
-         q3sr+lsnADx2NLgD6HHAfRJ5QLHPLDE1+P+R4T0sgIf3wP18eQ58lHuPSjnEzJeIM0lk
-         U3ciZ/3zZ8MVGhfORYfisgKM3cyAGmfEi0NayUS3/ANCn74pVOqk8TILjKZsYuenC3EV
-         0V36cTfhTb4mC0gtAa8+Usi9pNalfiMw9U8wGuveBot8YmjbZLXGzM1rtvoihadmcBCD
-         Jfsnl9UuYTMsDjI0xypJtftjXEl68dEvZ/OShAYmC0xeoFrGZkKea54GvpAYs0EVK2MB
-         6k8Q==
-X-Gm-Message-State: AOAM532SpwGQlpa4dIysqzw0mFOiDebwIVFeCg/mx8jPJ3GRC6H36Zus
-        60diZLNIFPEvM4EOfNp3luxx6f9LIzB2AQ==
-X-Google-Smtp-Source: ABdhPJxgDaNwKoXUuCDPPpYFGCrpVPZ13dHm//wX1tMJ485IcmkfeQg4Ez4fsCZ1xMdaXjoasgvbzQ==
-X-Received: by 2002:a05:6e02:1bc2:: with SMTP id x2mr7101915ilv.205.1616690628478;
-        Thu, 25 Mar 2021 09:43:48 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Zelrk36zpmC+2fEIaTzCe8iAs0QYE8m4zqDOwegDXxU=;
+        b=purAYQhepCs+e0b4uGnMp8RywtgFcvPYEw9MQbwDih3shpElEv739UzR1oiIFnEr8d
+         glNbByZzQlCXXp95xYml3+j8o1PmQbbDDWSUvFMJzCT6GldLdDhpeurVLdSLy/ywXINV
+         6oOsRaOse7zj5glF+AWMzVfNlk7YPhKHEAUI6xZAWYhfMiBZmhaNfcQkjyo5FFdKJo8g
+         G1zapmqwrlRIEjowMKI8JiJn8XYwRUzvnFoTXM+0xCenCIGz+5VUJ0g541hXrfjCQj8M
+         4uAhhmlVruRglpNW5pAOzp31LG5H1GznjGJTbO+Kor8oC+nUlCZjFs8wX46JaknqUSX0
+         9ETQ==
+X-Gm-Message-State: AOAM533naW0voo7GfDNzFBZob8yn5LCbY96uZ5zFfojJJ+HLWRToIGDt
+        KBBd2jtpsEJYGGVjRLM3fnygZkzG7X5UUQ==
+X-Google-Smtp-Source: ABdhPJyFxG6jE4JyH3R/U5GLHMaVOP8xt4cFnvszKiM7dZP9MvQ6l80nPe2d2VkNep1HFuDssJGtFQ==
+X-Received: by 2002:a02:714f:: with SMTP id n15mr8440902jaf.6.1616690629100;
+        Thu, 25 Mar 2021 09:43:49 -0700 (PDT)
 Received: from p1.localdomain ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id k12sm2990605ios.2.2021.03.25.09.43.47
+        by smtp.gmail.com with ESMTPSA id k12sm2990605ios.2.2021.03.25.09.43.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Thu, 25 Mar 2021 09:43:48 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     torvalds@linux-foundation.org, ebiederm@xmission.com,
-        linux-kernel@vger.kernel.org, oleg@redhat.com, metze@samba.org
-Subject: [PATCH 0/2] Don't show PF_IO_WORKER in /proc/<pid>/task/
-Date:   Thu, 25 Mar 2021 10:43:41 -0600
-Message-Id: <20210325164343.807498-1-axboe@kernel.dk>
+        linux-kernel@vger.kernel.org, oleg@redhat.com, metze@samba.org,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 1/2] kernel: don't include PF_IO_WORKERs as part of same_thread_group()
+Date:   Thu, 25 Mar 2021 10:43:42 -0600
+Message-Id: <20210325164343.807498-2-axboe@kernel.dk>
 X-Mailer: git-send-email 2.31.0
+In-Reply-To: <20210325164343.807498-1-axboe@kernel.dk>
+References: <20210325164343.807498-1-axboe@kernel.dk>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi,
+Don't pretend that the IO threads are in the same thread group, the only
+case where that seems to be desired is for accounting purposes. Add
+a special accounting function for that and make the scheduler side use it.
 
-Stefan reports that attaching to a task with io_uring will leave gdb
-very confused and just repeatedly attempting to attach to the IO threads,
-even though it receives an -EPERM every time. This patchset proposes to
-skip PF_IO_WORKER threads as same_thread_group(), except for accounting
-purposes which we still desire.
+For signals and ptrace, we don't allow them to be treated as threads
+anyway.
 
-We also skip listing the IO threads in /proc/<pid>/task/ so that gdb
-doesn't think it should stop and attach to them. This makes us consistent
-with earlier kernels, where these async threads were not related to the
-ring owning task, and hence gdb (and others) ignored them anyway.
+Reported-by: Stefan Metzmacher <metze@samba.org>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+---
+ include/linux/sched/signal.h | 9 ++++++++-
+ kernel/sched/cputime.c       | 2 +-
+ 2 files changed, 9 insertions(+), 2 deletions(-)
 
-Seems to me that this is the right approach, but open to comments on if
-others agree with this. Oleg, I did see your messages as well on SIGSTOP,
-and as was discussed with Eric as well, this is something we most
-certainly can revisit. I do think that the visibility of these threads
-is a separate issue. Even with SIGSTOP implemented (which I did try as
-well), we're never going to allow ptrace attach and hence gdb would still
-be broken. Hence I'd rather treat them as separate issues to attack.
-
+diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
+index 3f6a0fcaa10c..4f621e386abf 100644
+--- a/include/linux/sched/signal.h
++++ b/include/linux/sched/signal.h
+@@ -668,11 +668,18 @@ static inline bool thread_group_leader(struct task_struct *p)
+ }
+ 
+ static inline
+-bool same_thread_group(struct task_struct *p1, struct task_struct *p2)
++bool same_thread_group_account(struct task_struct *p1, struct task_struct *p2)
+ {
+ 	return p1->signal == p2->signal;
+ }
+ 
++static inline
++bool same_thread_group(struct task_struct *p1, struct task_struct *p2)
++{
++	return same_thread_group_account(p1, p2) &&
++			!((p1->flags | p2->flags) & PF_IO_WORKER);
++}
++
+ static inline struct task_struct *next_thread(const struct task_struct *p)
+ {
+ 	return list_entry_rcu(p->thread_group.next,
+diff --git a/kernel/sched/cputime.c b/kernel/sched/cputime.c
+index 5f611658eeab..625110cacc2a 100644
+--- a/kernel/sched/cputime.c
++++ b/kernel/sched/cputime.c
+@@ -307,7 +307,7 @@ void thread_group_cputime(struct task_struct *tsk, struct task_cputime *times)
+ 	 * those pending times and rely only on values updated on tick or
+ 	 * other scheduler action.
+ 	 */
+-	if (same_thread_group(current, tsk))
++	if (same_thread_group_account(current, tsk))
+ 		(void) task_sched_runtime(current);
+ 
+ 	rcu_read_lock();
 -- 
-Jens Axboe
-
+2.31.0
 

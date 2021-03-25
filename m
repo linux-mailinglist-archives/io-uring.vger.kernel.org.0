@@ -2,212 +2,75 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1114E348F9E
-	for <lists+io-uring@lfdr.de>; Thu, 25 Mar 2021 12:29:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68498349088
+	for <lists+io-uring@lfdr.de>; Thu, 25 Mar 2021 12:36:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231331AbhCYL2m (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 25 Mar 2021 07:28:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36180 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231304AbhCYL0u (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Thu, 25 Mar 2021 07:26:50 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id E533661A36;
-        Thu, 25 Mar 2021 11:26:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1616671609;
-        bh=0aF/PdqEgb2ANeMXTtBHFO+YHGb1fKkmuij9qI2K66k=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RSOATvyl5LsGsFiGkdS7TISGUVRJXEFqJkWKfzDQvFL9P+Bnka7aEB9sfck+oXuzV
-         wIwkkLAjTEnjooLu8s4f42HzLPR1Ebs+8gdk28GOXNg85DsjnmkMLHzsnfU9fFKGCr
-         aGWtlgKX61NXSInqD6kAQ26/RJuPV53laUrOoeg9Or4x5RGwv2NfTkCPNlRIISnabX
-         ORr4m+WHYHXNtBYfkGgvGPFPdx4LsbQPocO6J6eZNEqaPy0g2fD7DB2z3qTJaXBxPY
-         Slt5gw4YixF9FNbsQORxA0GimWkab3H0qHpvDfKAtM1aXRrG7pbkgzt9I9M4FiVoHF
-         Xu5WMVqm2knJQ==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Stefan Metzmacher <metze@samba.org>, netdev@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 39/39] io_uring: call req_set_fail_links() on short send[msg]()/recv[msg]() with MSG_WAITALL
-Date:   Thu, 25 Mar 2021 07:25:58 -0400
-Message-Id: <20210325112558.1927423-39-sashal@kernel.org>
-X-Mailer: git-send-email 2.30.1
-In-Reply-To: <20210325112558.1927423-1-sashal@kernel.org>
-References: <20210325112558.1927423-1-sashal@kernel.org>
+        id S230120AbhCYLfj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 25 Mar 2021 07:35:39 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:28649 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231340AbhCYLd3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 25 Mar 2021 07:33:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1616672008;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+        bh=WzowP+sLkDfedW5lZC+DZjAa2iepM0HqhQ8ixqDL3Ws=;
+        b=NHpsNXcXwwkkDMC88GAr7Rb1LmpCS2dwscpNkqiCPix4kuRaCLFk+bFRWzom5NH83d+4U3
+        Kr3OHUWKjfGaWFYZqfwVpwfMLwSRwWMur/DTLH+ToFa7hE4MEL/itEzL0ddWpfhcI7wNhU
+        01MfI/nBqEmyGQ3EBw4OAY86TB9ZSEM=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-321-kV-li-nsMCWlFuL8A5bj4g-1; Thu, 25 Mar 2021 07:33:26 -0400
+X-MC-Unique: kV-li-nsMCWlFuL8A5bj4g-1
+Received: by mail-wm1-f71.google.com with SMTP id r65-20020a1c2b440000b029010f4ee06223so842385wmr.1
+        for <io-uring@vger.kernel.org>; Thu, 25 Mar 2021 04:33:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=WzowP+sLkDfedW5lZC+DZjAa2iepM0HqhQ8ixqDL3Ws=;
+        b=TW8kikKJ/63+ffbNWRaaKOdJrH0wTgglHVYY7AHd9Oo+GFngTotODAm+eiOuwetmdk
+         RTmwjkoNnYU/V21Omy1YAkyB7UdEdGHCYLQAKSrMpVElULh+kjbdEwJBMRUhgyinso6w
+         0II7nKKDr8H7Muvml1tid2+nRCyWhKM9fB5r/S35EK1iUcWFmdZVUMzL5HgxbS34pDgx
+         TEdTa6RqsDapuO+u59q20BZj8r2fmols4GeGGX9RhbpX+a+RWes6vUy4GPoCdkWXdyDP
+         n0APow0HpVAn5YaD9Ber1OondCPqM9wngo8ERvDYN0ZI7O4gg3SOl5fO90IOs7S/KO+G
+         hlbw==
+X-Gm-Message-State: AOAM532BFVGuKd6qtLmUWlHlZ3ktS8GXnoCQh+CwIqQACbWuRiV8IDNy
+        kdH/pKCypiB0spjczVzSbrYIa809Mak9LeahyfuP78pkxe24qxfNHNBqgcdg1rEy6bQovJ2pNvW
+        IqIt02LrvOIqe7AlqwUI=
+X-Received: by 2002:a05:600c:4f89:: with SMTP id n9mr7614718wmq.133.1616672005209;
+        Thu, 25 Mar 2021 04:33:25 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxeb+RXeOXpc4pbgT9ly41sA9xcWuuvPd6YRWfU5Ap/hhUSDfGV3R125XtSc3HB9Ye+rOnpVQ==
+X-Received: by 2002:a05:600c:4f89:: with SMTP id n9mr7614700wmq.133.1616672005034;
+        Thu, 25 Mar 2021 04:33:25 -0700 (PDT)
+Received: from steredhat (host-79-34-249-199.business.telecomitalia.it. [79.34.249.199])
+        by smtp.gmail.com with ESMTPSA id 1sm11022599wmj.0.2021.03.25.04.33.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Mar 2021 04:33:24 -0700 (PDT)
+Date:   Thu, 25 Mar 2021 12:33:22 +0100
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Are CAP_SYS_ADMIN and CAP_SYS_NICE still needed for SQPOLL?
+Message-ID: <20210325113322.ecnji3xejozqdpwt@steredhat>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Stefan Metzmacher <metze@samba.org>
+Hi Jens, Hi Pavel,
+I was taking a look at the new SQPOLL handling with io_thread instead of 
+kthread. Great job! Really nice feature that maybe can be reused also in 
+other scenarios (e.g. vhost).
 
-[ Upstream commit 0031275d119efe16711cd93519b595e6f9b4b330 ]
+Regarding SQPOLL, IIUC these new threads are much closer to user 
+threads, so is there still a need to require CAP_SYS_ADMIN and 
+CAP_SYS_NICE to enable SQPOLL?
 
-Without that it's not safe to use them in a linked combination with
-others.
-
-Now combinations like IORING_OP_SENDMSG followed by IORING_OP_SPLICE
-should be possible.
-
-We already handle short reads and writes for the following opcodes:
-
-- IORING_OP_READV
-- IORING_OP_READ_FIXED
-- IORING_OP_READ
-- IORING_OP_WRITEV
-- IORING_OP_WRITE_FIXED
-- IORING_OP_WRITE
-- IORING_OP_SPLICE
-- IORING_OP_TEE
-
-Now we have it for these as well:
-
-- IORING_OP_SENDMSG
-- IORING_OP_SEND
-- IORING_OP_RECVMSG
-- IORING_OP_RECV
-
-For IORING_OP_RECVMSG we also check for the MSG_TRUNC and MSG_CTRUNC
-flags in order to call req_set_fail_links().
-
-There might be applications arround depending on the behavior
-that even short send[msg]()/recv[msg]() retuns continue an
-IOSQE_IO_LINK chain.
-
-It's very unlikely that such applications pass in MSG_WAITALL,
-which is only defined in 'man 2 recvmsg', but not in 'man 2 sendmsg'.
-
-It's expected that the low level sock_sendmsg() call just ignores
-MSG_WAITALL, as MSG_ZEROCOPY is also ignored without explicitly set
-SO_ZEROCOPY.
-
-We also expect the caller to know about the implicit truncation to
-MAX_RW_COUNT, which we don't detect.
-
-cc: netdev@vger.kernel.org
-Link: https://lore.kernel.org/r/c4e1a4cc0d905314f4d5dc567e65a7b09621aab3.1615908477.git.metze@samba.org
-Signed-off-by: Stefan Metzmacher <metze@samba.org>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/io_uring.c | 24 ++++++++++++++++++++----
- 1 file changed, 20 insertions(+), 4 deletions(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 38a394c6260d..f8a47cebeacd 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -4390,6 +4390,7 @@ static int io_sendmsg(struct io_kiocb *req, bool force_nonblock,
- 	struct io_async_msghdr iomsg, *kmsg;
- 	struct socket *sock;
- 	unsigned flags;
-+	int min_ret = 0;
- 	int ret;
- 
- 	sock = sock_from_file(req->file, &ret);
-@@ -4416,6 +4417,9 @@ static int io_sendmsg(struct io_kiocb *req, bool force_nonblock,
- 	else if (force_nonblock)
- 		flags |= MSG_DONTWAIT;
- 
-+	if (flags & MSG_WAITALL)
-+		min_ret = iov_iter_count(&kmsg->msg.msg_iter);
-+
- 	ret = __sys_sendmsg_sock(sock, &kmsg->msg, flags);
- 	if (force_nonblock && ret == -EAGAIN)
- 		return io_setup_async_msg(req, kmsg);
-@@ -4425,7 +4429,7 @@ static int io_sendmsg(struct io_kiocb *req, bool force_nonblock,
- 	if (kmsg->iov != kmsg->fast_iov)
- 		kfree(kmsg->iov);
- 	req->flags &= ~REQ_F_NEED_CLEANUP;
--	if (ret < 0)
-+	if (ret < min_ret)
- 		req_set_fail_links(req);
- 	__io_req_complete(req, ret, 0, cs);
- 	return 0;
-@@ -4439,6 +4443,7 @@ static int io_send(struct io_kiocb *req, bool force_nonblock,
- 	struct iovec iov;
- 	struct socket *sock;
- 	unsigned flags;
-+	int min_ret = 0;
- 	int ret;
- 
- 	sock = sock_from_file(req->file, &ret);
-@@ -4460,6 +4465,9 @@ static int io_send(struct io_kiocb *req, bool force_nonblock,
- 	else if (force_nonblock)
- 		flags |= MSG_DONTWAIT;
- 
-+	if (flags & MSG_WAITALL)
-+		min_ret = iov_iter_count(&msg.msg_iter);
-+
- 	msg.msg_flags = flags;
- 	ret = sock_sendmsg(sock, &msg);
- 	if (force_nonblock && ret == -EAGAIN)
-@@ -4467,7 +4475,7 @@ static int io_send(struct io_kiocb *req, bool force_nonblock,
- 	if (ret == -ERESTARTSYS)
- 		ret = -EINTR;
- 
--	if (ret < 0)
-+	if (ret < min_ret)
- 		req_set_fail_links(req);
- 	__io_req_complete(req, ret, 0, cs);
- 	return 0;
-@@ -4619,6 +4627,7 @@ static int io_recvmsg(struct io_kiocb *req, bool force_nonblock,
- 	struct socket *sock;
- 	struct io_buffer *kbuf;
- 	unsigned flags;
-+	int min_ret = 0;
- 	int ret, cflags = 0;
- 
- 	sock = sock_from_file(req->file, &ret);
-@@ -4654,6 +4663,9 @@ static int io_recvmsg(struct io_kiocb *req, bool force_nonblock,
- 	else if (force_nonblock)
- 		flags |= MSG_DONTWAIT;
- 
-+	if (flags & MSG_WAITALL)
-+		min_ret = iov_iter_count(&kmsg->msg.msg_iter);
-+
- 	ret = __sys_recvmsg_sock(sock, &kmsg->msg, req->sr_msg.umsg,
- 					kmsg->uaddr, flags);
- 	if (force_nonblock && ret == -EAGAIN)
-@@ -4666,7 +4678,7 @@ static int io_recvmsg(struct io_kiocb *req, bool force_nonblock,
- 	if (kmsg->iov != kmsg->fast_iov)
- 		kfree(kmsg->iov);
- 	req->flags &= ~REQ_F_NEED_CLEANUP;
--	if (ret < 0)
-+	if (ret < min_ret || ((flags & MSG_WAITALL) && (kmsg->msg.msg_flags & (MSG_TRUNC | MSG_CTRUNC))))
- 		req_set_fail_links(req);
- 	__io_req_complete(req, ret, cflags, cs);
- 	return 0;
-@@ -4682,6 +4694,7 @@ static int io_recv(struct io_kiocb *req, bool force_nonblock,
- 	struct socket *sock;
- 	struct iovec iov;
- 	unsigned flags;
-+	int min_ret = 0;
- 	int ret, cflags = 0;
- 
- 	sock = sock_from_file(req->file, &ret);
-@@ -4712,6 +4725,9 @@ static int io_recv(struct io_kiocb *req, bool force_nonblock,
- 	else if (force_nonblock)
- 		flags |= MSG_DONTWAIT;
- 
-+	if (flags & MSG_WAITALL)
-+		min_ret = iov_iter_count(&msg.msg_iter);
-+
- 	ret = sock_recvmsg(sock, &msg, flags);
- 	if (force_nonblock && ret == -EAGAIN)
- 		return -EAGAIN;
-@@ -4720,7 +4736,7 @@ static int io_recv(struct io_kiocb *req, bool force_nonblock,
- out_free:
- 	if (req->flags & REQ_F_BUFFER_SELECTED)
- 		cflags = io_put_recv_kbuf(req);
--	if (ret < 0)
-+	if (ret < min_ret || ((flags & MSG_WAITALL) && (msg.msg_flags & (MSG_TRUNC | MSG_CTRUNC))))
- 		req_set_fail_links(req);
- 	__io_req_complete(req, ret, cflags, cs);
- 	return 0;
--- 
-2.30.1
+Thanks,
+Stefano
 

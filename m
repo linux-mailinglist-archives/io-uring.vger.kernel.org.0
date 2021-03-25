@@ -2,114 +2,95 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C8B7A3491A3
-	for <lists+io-uring@lfdr.de>; Thu, 25 Mar 2021 13:12:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 123CE3492D5
+	for <lists+io-uring@lfdr.de>; Thu, 25 Mar 2021 14:13:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229963AbhCYMLv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 25 Mar 2021 08:11:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49208 "EHLO
+        id S230191AbhCYNMb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 25 Mar 2021 09:12:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229533AbhCYMLq (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 25 Mar 2021 08:11:46 -0400
-Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A224C06174A;
-        Thu, 25 Mar 2021 05:11:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-         s=42; h=Date:Message-ID:From:Cc:To;
-        bh=miwPIcGRmxLognFQqT73uzsqflhmzM1L7+w2rU8vpmM=; b=0zO0h1f70agryRb7uyRn/iCH5S
-        W7b5b1W1pqfnbUHSIeHQAG468ootZEDLihJFyseJAxE4CPkwGFtedVi26Pcedayo0SVaTAxfkI+oK
-        ENROBq/YJ31yjgKoeOMnarCMxdNOrYWRIRVQMHfwjxGTLjl3sorunH+BQl2SFoncF+JTvvTP8o1tJ
-        j1oiMkKHkMyUV4RVjv+eCTGWox2eJxrhEF7D7amj/3fBKIA6do+CSJpmtsXjdKTklZ7z1vqzYdZH4
-        QaumKP9rvOqH9/UwPP5XjQXoq+AaJXPwjJSzoqgs+TM1rMyKlVZ2mOBo9s4ipES+uvfNy+1Jl3wNx
-        ElY3iN4OsnlfCefug4wMrkrf65uTSSpPStDlGkAkSybeDmOa/jH6Too3gH4lDpcouf97kXAXH2KE2
-        me02RrMSTsYolwGRfGIbVOUvxaZvxnrn42NOYvo/dUn/kSSKaVPtyjBuFI7TIMtnzv65ErmCVvMeg
-        hUj2X5e5uu9N3rbwY1xpAIvr;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
-        (Exim)
-        id 1lPOpz-0007nn-AF; Thu, 25 Mar 2021 12:11:43 +0000
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        io-uring <io-uring@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <20210325112459.1926846-1-sashal@kernel.org>
- <20210325112459.1926846-43-sashal@kernel.org>
- <f4c932b4-b787-651e-dd9f-584b386acddb@samba.org>
- <m1r1k34ey1.fsf@fess.ebiederm.org>
-From:   Stefan Metzmacher <metze@samba.org>
-Subject: Re: [PATCH AUTOSEL 5.11 43/44] signal: don't allow STOP on
- PF_IO_WORKER threads
-Message-ID: <41589c56-9219-3ec2-55b3-3f010752ac7b@samba.org>
-Date:   Thu, 25 Mar 2021 13:11:41 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
+        with ESMTP id S230167AbhCYNMP (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 25 Mar 2021 09:12:15 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 026BDC06174A
+        for <io-uring@vger.kernel.org>; Thu, 25 Mar 2021 06:12:15 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id y124-20020a1c32820000b029010c93864955so3061994wmy.5
+        for <io-uring@vger.kernel.org>; Thu, 25 Mar 2021 06:12:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Lei1Vp2rZLsZeBG1j38rlO8E89kA31Ge3PEj55dzWQE=;
+        b=PhIbHTYw2OO1JoWyPEjPkvcC+8Tm9/eEA9GeJEE6/yHv4t5DZddHlUqnqy13XoWKND
+         pZZaTEB1r93dGm0Hwo6z/nX60L+mVw7jkmNTLAl8V/kM4HZB1D1WP00HNArW2ItJGYLD
+         u8l/WcEvk3h/0qheovfVsjhRn+SD16zoHnK5oeW5HXpsOs4oOdB4lD89+nbZgHb1NokV
+         I/JnGKFNsAck4wBzTYnUbMaXTSl8aimfsq+o4SFHMabOKc/f+5bPrtAG0kRmKpIsAYV+
+         5RfocEVAx+Ktg0CYmjDN0JSFa1HStG1LcsBnpBBSGwn0uctcOjxgem1uUyWfZX2l85/x
+         jcUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Lei1Vp2rZLsZeBG1j38rlO8E89kA31Ge3PEj55dzWQE=;
+        b=AgZokIsY6tr6N4rf/879GPHBh/R976+0g8ZulI5jMlevCXy4bOtBK+ktcD/VA8qECu
+         2GMm9L8WrQJSQVMEghAi2AWGCQYahz45oefABUFxvllx9uAsUFALFnY0vmFdhh2//uzf
+         xm58AbO/qLag5sl/AgB4ziCA+c6WIRTQuVOqg49Y0aAR6geU1LzsNqZuMfyBE7jkvDiF
+         /hnvGOp0wAQMi7nnmxLIB4xNOeys7NZQ/HQ4MPfCPxw2RV6XJHYU3rZ0usSFkDfL+Gfo
+         Y9Yba/KPH4oq2BnVcXu8bYU2fhpmJb2O5NC0VcCWtU/JgjHmPoG+ge0QlHLvri8VDPYR
+         2YUA==
+X-Gm-Message-State: AOAM530uXDjCEDyWp+KwKbCC09rA0qML2mdNAV2X8exXc0xyBZ+b/ZC9
+        7FqXJPjeU6N1x9bU+YqkKMs=
+X-Google-Smtp-Source: ABdhPJzVyvA7H4blh/Qp7k6SSLJgeZr/XhsNemvGwte432HypLGS4IMWrgXUxfbAF5EYT+3iTEPyUw==
+X-Received: by 2002:a1c:2857:: with SMTP id o84mr7943056wmo.181.1616677933681;
+        Thu, 25 Mar 2021 06:12:13 -0700 (PDT)
+Received: from localhost.localdomain ([148.252.129.162])
+        by smtp.gmail.com with ESMTPSA id i4sm5754285wmq.12.2021.03.25.06.12.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Mar 2021 06:12:13 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [PATCH v3 for-5.13 00/17] ctx wide rsrc nodes + other stuff
+Date:   Thu, 25 Mar 2021 13:07:49 +0000
+Message-Id: <cover.1616677487.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <m1r1k34ey1.fsf@fess.ebiederm.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+1-7 implement ctx wide rsrc nodes. The main idea here is to make make
+rsrc nodes (aka ref nodes) to be per ctx rather than per rsrc_data, that
+is a requirement for having multiple resource types. All the meat to it
+in 7/7. Btw improve rsrc API, because it was too easy to misuse.
 
-Am 25.03.21 um 13:04 schrieb Eric W. Biederman:
-> Stefan Metzmacher <metze@samba.org> writes:
-> 
->> Am 25.03.21 um 12:24 schrieb Sasha Levin:
->>> From: "Eric W. Biederman" <ebiederm@xmission.com>
->>>
->>> [ Upstream commit 4db4b1a0d1779dc159f7b87feb97030ec0b12597 ]
->>>
->>> Just like we don't allow normal signals to IO threads, don't deliver a
->>> STOP to a task that has PF_IO_WORKER set. The IO threads don't take
->>> signals in general, and have no means of flushing out a stop either.
->>>
->>> Longer term, we may want to look into allowing stop of these threads,
->>> as it relates to eg process freezing. For now, this prevents a spin
->>> issue if a SIGSTOP is delivered to the parent task.
->>>
->>> Reported-by: Stefan Metzmacher <metze@samba.org>
->>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->>> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
->>> Signed-off-by: Sasha Levin <sashal@kernel.org>
->>> ---
->>>  kernel/signal.c | 3 ++-
->>>  1 file changed, 2 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/kernel/signal.c b/kernel/signal.c
->>> index 55526b941011..00a3840f6037 100644
->>> --- a/kernel/signal.c
->>> +++ b/kernel/signal.c
->>> @@ -288,7 +288,8 @@ bool task_set_jobctl_pending(struct task_struct *task, unsigned long mask)
->>>  			JOBCTL_STOP_SIGMASK | JOBCTL_TRAPPING));
->>>  	BUG_ON((mask & JOBCTL_TRAPPING) && !(mask & JOBCTL_PENDING_MASK));
->>>  
->>> -	if (unlikely(fatal_signal_pending(task) || (task->flags & PF_EXITING)))
->>> +	if (unlikely(fatal_signal_pending(task) ||
->>> +		     (task->flags & (PF_EXITING | PF_IO_WORKER))))
->>>  		return false;
->>>  
->>>  	if (mask & JOBCTL_STOP_SIGMASK)
->>>
->>
->> Again, why is this proposed for 5.11 and 5.10 already?
-> 
-> Has the bit about the io worker kthreads been backported?
-> If so this isn't horrible.  If not this is nonsense.
+8-17 are necessarily related cleanups
 
-I don't know, I hope not...
+v2: io_rsrc_node_destroy() last rsrc_node on ctx_free()
+v3: add 8-17, 1-7 are unchanged
 
-But I just tested v5.12-rc4 and attaching to
-an application with iothreads with gdb is still not possible,
-it still loops forever trying to attach to the iothreads.
+Pavel Begunkov (17):
+  io_uring: name rsrc bits consistently
+  io_uring: simplify io_rsrc_node_ref_zero
+  io_uring: use rsrc prealloc infra for files reg
+  io_uring: encapsulate rsrc node manipulations
+  io_uring: move rsrc_put callback into io_rsrc_data
+  io_uring: refactor io_queue_rsrc_removal()
+  io_uring: ctx-wide rsrc nodes
+  io_uring: reuse io_rsrc_node_destroy()
+  io_uring: remove useless is_dying check on quiesce
+  io_uring: refactor rw reissue
+  io_uring: combine lock/unlock sections on exit
+  io_uring: better ref handling in poll_remove_one
+  io_uring: remove unused hash_wait
+  io_uring: refactor io_async_cancel()
+  io_uring: improve import_fixed overflow checks
+  io_uring: store reg buffer end instead of length
+  io_uring: kill unused forward decls
 
-And I tested 'kill -9 $pidofiothread', and it feezed the whole
-machine...
+ fs/io_uring.c | 333 ++++++++++++++++++++------------------------------
+ 1 file changed, 135 insertions(+), 198 deletions(-)
 
-So there's still work to do in order to get 5.12 stable.
+-- 
+2.24.0
 
-I'm short on time currently, but I hope to send more details soon.
-
-metze

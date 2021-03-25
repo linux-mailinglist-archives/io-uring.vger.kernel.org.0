@@ -2,143 +2,174 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 29B243498D8
-	for <lists+io-uring@lfdr.de>; Thu, 25 Mar 2021 19:01:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3655A34998B
+	for <lists+io-uring@lfdr.de>; Thu, 25 Mar 2021 19:33:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229664AbhCYSAk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 25 Mar 2021 14:00:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41038 "EHLO
+        id S230104AbhCYScm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 25 Mar 2021 14:32:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229622AbhCYSAi (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 25 Mar 2021 14:00:38 -0400
-Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DABCC06175F
-        for <io-uring@vger.kernel.org>; Thu, 25 Mar 2021 11:00:36 -0700 (PDT)
-Received: by mail-il1-x12d.google.com with SMTP id c17so2860910ilj.7
-        for <io-uring@vger.kernel.org>; Thu, 25 Mar 2021 11:00:36 -0700 (PDT)
+        with ESMTP id S229622AbhCYScf (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 25 Mar 2021 14:32:35 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56B9AC06174A
+        for <io-uring@vger.kernel.org>; Thu, 25 Mar 2021 11:32:35 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id c8so3267268wrq.11
+        for <io-uring@vger.kernel.org>; Thu, 25 Mar 2021 11:32:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=z4pjN5lLrhX2yHOuzAG/jxD1z0VP0bybkL9OIgTm0Wc=;
-        b=LMlOpnItkELi1vW5YcrLN0yLr/qe1OyM5PENDlFsCFCEMtgKl4Xd5DfWxkhKH2UCxG
-         pbbjLC2RicNVin7wCNo5Iv+d7Y8sc/3GtUXnze0vncGa36Im38ghNcblpR7IxrTQZteP
-         N1/tN6AYc5Zp6msG2mkVO5Y5IsFRJn6pBGHKAbMGmylJA2gDLVB5LJW6Srmlsin9Pydg
-         Z+EAleZdMGugWc9slRh8/A8aO5C4O1ngA+VN8KLJWQ2wRoPmbYx03186snBtOucQq3nG
-         tNLCqdvz+w33CiD+vRj07KIPbR6WpoesLSpvXAZ/vBaRTfuxaVsv10epuQFAQlaK2nE5
-         Ypew==
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=pNgKQpSK4bF6Z1YA+z84szyBfUYAkJcRRcc84b0cgH4=;
+        b=skkJtoalQsfvTdTj1wyvIHpq3cRk8DQOpYJS5CNFOaC1sFvbh4EYEL3DYWsYAhn/PB
+         oHL+Fx4sk7iL7WuxXTdqwMzBbMnWim+0mEt7tj21jMw7MrdBw7+MFUhYebalorwq8QVY
+         OMYGy/D2pw2fJEGSKkyIWZPEdvrEj9Vu5NLVAgIZ1WMmg7fediDmOmDVOb414SIChk8K
+         ljBRLZJvs/v1CG2Dawq/HDZ3w7yReL6tH56JIppF9UOF4zsYItJoT9WUcDBtHRmVQIng
+         sGAKOfzbV3Fe/C8q0S9e1roDmQhIWhTK4WE6zaiYppzadCtRjYI3fPC7ORBawZCux7J+
+         a8Cw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=z4pjN5lLrhX2yHOuzAG/jxD1z0VP0bybkL9OIgTm0Wc=;
-        b=kjKj33hdACdlUZAv+9i5440nEDkmX2e2Y/+wb7Pfy2yz0nujRUoSu49I+GjRqGlqmO
-         zoYXyXEm/qlvfxBR6cCNzX/hJLUjQX3cOncC8RlU++s3resLmypdw6P5p8MPEpH7Fx3c
-         UACYQw8YQpmbc2wbi4utSTEFVxpCcz/l2VpK0WGoJ9/gQKv0LCYVwuSR/w8NbBMcEib+
-         jMJgek11vk+tTLW5DJlS8M2J+7+9FZyBjJ50+5CIxytCYwrXSfmrZoalovq/D/8/Z2St
-         0cqwF4hExW9gdNBlAGlG3+Q6qX6rSOHCkQwArZOQ1WcR/WG8ITIzTVLmXKNPuRCrWtiB
-         QX9A==
-X-Gm-Message-State: AOAM530IKNU0N6hQgsMtGXjOH/IbhHkayWlXXL82ZRFFo/HkbInAqUan
-        87SNkO+8AG1W8t84bzbmwVQN8Q==
-X-Google-Smtp-Source: ABdhPJzROouLj8zTEt1i/fz4nuzn4a4b3s6u4RzYHnkG0uf8lpE7JD/8J6ATnSVenpBExw48EILLuQ==
-X-Received: by 2002:a05:6e02:1564:: with SMTP id k4mr7477160ilu.65.1616695235357;
-        Thu, 25 Mar 2021 11:00:35 -0700 (PDT)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id b9sm3028698ioz.49.2021.03.25.11.00.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Mar 2021 11:00:35 -0700 (PDT)
-Subject: Re: [syzbot] WARNING in io_wq_put
-To:     syzbot <syzbot+77a738a6bc947bf639ca@syzkaller.appspotmail.com>,
-        asml.silence@gmail.com, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <000000000000a0025805be6028a0@google.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <ccd9749c-626f-31d3-f187-83fc3465713c@kernel.dk>
-Date:   Thu, 25 Mar 2021 12:00:34 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        bh=pNgKQpSK4bF6Z1YA+z84szyBfUYAkJcRRcc84b0cgH4=;
+        b=LGo6JJcpvs045BL+U0+De37GXVFAj2Fs7P5cp+k3fMiFB4UJ9YSwLkq9ZhlGx7KJCO
+         nOYQEhg2Ld+w1/mmOwhGH2HxLixp3H/SKjInpVc9zWpCQJqX3RslGJ7DeFiHpkOW1ExU
+         ZX8SH19s4r2z/5T6Pw10gmvQOop2K0xsSaLfM9rdgeTgflYv0XX9+KOG3Xr56DJ8Mbvp
+         PIjmZJVU5Aqy5iD8GIHPIPqZz2e3sBzBgxAMMCRrVwpcYHoTZzEInHqTn3/MT2iPOcJt
+         sZDUwQPf4Ma09g0D0wjaN+GS73fLw3fIJD+1NHb7cAAkX+yruKO6T3SZdIsRUNYaauY7
+         VFCw==
+X-Gm-Message-State: AOAM531GI5qBcTdHww8nTbPutyn8+mdnyc638dNG1qwoZTeSQYpJHjvV
+        GTu6Mknrt6HAoDIxOtvz59sqdXCeA+FN/w==
+X-Google-Smtp-Source: ABdhPJwKAPU1i2cRdcU6DnOGsPinv+bI1yj0DnFklCzjvbYKZQw6oXCGQVkWuOJI+t+S+veIGPzOMA==
+X-Received: by 2002:adf:e411:: with SMTP id g17mr10473738wrm.225.1616697154018;
+        Thu, 25 Mar 2021 11:32:34 -0700 (PDT)
+Received: from localhost.localdomain ([148.252.129.162])
+        by smtp.gmail.com with ESMTPSA id y8sm7338923wmi.46.2021.03.25.11.32.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Mar 2021 11:32:33 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [PATCH 1/1] tests: more cancellation tests
+Date:   Thu, 25 Mar 2021 18:28:24 +0000
+Message-Id: <914c86e2d94aafe7e623c07f4e39c7eba0c04228.1616696841.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <000000000000a0025805be6028a0@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/25/21 11:58 AM, syzbot wrote:
-> Hello,
-> 
-> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-> WARNING in kvm_wait
-> 
-> ------------[ cut here ]------------
-> raw_local_irq_restore() called with IRQs enabled
-> WARNING: CPU: 1 PID: 191 at kernel/locking/irqflag-debug.c:10 warn_bogus_irq_restore+0x1f/0x30 kernel/locking/irqflag-debug.c:10
-> Modules linked in:
-> CPU: 1 PID: 191 Comm: kworker/u4:4 Not tainted 5.12.0-rc2-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> Workqueue:  0x0 (events_unbound)
-> RIP: 0010:warn_bogus_irq_restore+0x1f/0x30 kernel/locking/irqflag-debug.c:10
-> Code: cc cc cc cc cc cc cc cc cc cc cc 80 3d c7 af b1 03 00 74 01 c3 c6 05 bd af b1 03 01 48 c7 c7 c0 5f ae 89 31 c0 e8 d1 dd f6 f7 <0f> 0b c3 cc cc cc cc cc cc cc cc cc cc cc cc cc cc 41 56 53 48 83
-> RSP: 0018:ffffc90000dc0a08 EFLAGS: 00010246
-> RAX: 6a712abdc5855100 RBX: ffffffff8f982d60 RCX: ffff8880118bb880
-> RDX: 0000000000000103 RSI: 0000000000000103 RDI: 0000000000000000
-> RBP: 1ffff920001b8142 R08: ffffffff81609502 R09: ffffed10173e5fe8
-> R10: ffffed10173e5fe8 R11: 0000000000000000 R12: 0000000000000003
-> R13: ffff88823ffe6880 R14: 0000000000000246 R15: dffffc0000000000
-> FS:  0000000000000000(0000) GS:ffff8880b9f00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f44d117d718 CR3: 000000001340a000 CR4: 00000000001506e0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <IRQ>
->  kvm_wait+0x10e/0x160 arch/x86/kernel/kvm.c:860
->  pv_wait arch/x86/include/asm/paravirt.h:564 [inline]
->  pv_wait_head_or_lock kernel/locking/qspinlock_paravirt.h:470 [inline]
->  __pv_queued_spin_lock_slowpath+0x6b5/0xb90 kernel/locking/qspinlock.c:508
->  pv_queued_spin_lock_slowpath arch/x86/include/asm/paravirt.h:554 [inline]
->  queued_spin_lock_slowpath arch/x86/include/asm/qspinlock.h:51 [inline]
->  queued_spin_lock include/asm-generic/qspinlock.h:85 [inline]
->  do_raw_spin_lock+0x430/0x810 kernel/locking/spinlock_debug.c:113
->  spin_lock include/linux/spinlock.h:354 [inline]
->  mac80211_hwsim_tx_frame_no_nl+0x60e/0x1860 drivers/net/wireless/mac80211_hwsim.c:1514
->  mac80211_hwsim_tx_frame+0x143/0x180 drivers/net/wireless/mac80211_hwsim.c:1775
->  mac80211_hwsim_beacon_tx+0x4b9/0x870 drivers/net/wireless/mac80211_hwsim.c:1829
->  __iterate_interfaces+0x23e/0x4b0 net/mac80211/util.c:793
->  ieee80211_iterate_active_interfaces_atomic+0x9b/0x120 net/mac80211/util.c:829
->  mac80211_hwsim_beacon+0xa4/0x180 drivers/net/wireless/mac80211_hwsim.c:1852
->  __run_hrtimer kernel/time/hrtimer.c:1519 [inline]
->  __hrtimer_run_queues+0x4c9/0xa00 kernel/time/hrtimer.c:1583
->  hrtimer_run_softirq+0x176/0x1e0 kernel/time/hrtimer.c:1600
->  __do_softirq+0x318/0x714 kernel/softirq.c:345
->  invoke_softirq kernel/softirq.c:221 [inline]
->  __irq_exit_rcu+0x1d8/0x200 kernel/softirq.c:422
->  irq_exit_rcu+0x5/0x20 kernel/softirq.c:434
->  sysvec_apic_timer_interrupt+0x91/0xb0 arch/x86/kernel/apic/apic.c:1100
->  </IRQ>
->  asm_sysvec_apic_timer_interrupt+0x12/0x20 arch/x86/include/asm/idtentry.h:632
-> RIP: 0010:__raw_spin_unlock_irq include/linux/spinlock_api_smp.h:169 [inline]
-> RIP: 0010:_raw_spin_unlock_irq+0x25/0x40 kernel/locking/spinlock.c:199
-> Code: b4 fd ff 66 90 53 48 89 fb 48 83 c7 18 48 8b 74 24 08 e8 0e 56 09 f8 48 89 df e8 56 2b 0b f8 e8 41 9f 2b f8 fb bf 01 00 00 00 <e8> c6 3b ff f7 65 8b 05 c7 9f ae 76 85 c0 74 02 5b c3 e8 7b fb ac
-> RSP: 0018:ffffc9000143fca0 EFLAGS: 00000286
-> RAX: 6a712abdc5855100 RBX: ffff8880b9f34c40 RCX: ffffffff8f59cb03
-> RDX: 0000000040000000 RSI: 0000000000000002 RDI: 0000000000000001
-> RBP: ffffc9000143fd00 R08: ffffffff817eef20 R09: ffffed10173e6989
-> R10: ffffed10173e6989 R11: 0000000000000000 R12: ffff8880b9f34c40
-> R13: ffff8880118bb880 R14: dffffc0000000000 R15: 0000000000000000
->  finish_task_switch+0x145/0x620 kernel/sched/core.c:4193
->  context_switch kernel/sched/core.c:4327 [inline]
->  __schedule+0x9a1/0xe70 kernel/sched/core.c:5075
->  schedule+0x14b/0x200 kernel/sched/core.c:5154
->  worker_thread+0xfe6/0x1300 kernel/workqueue.c:2442
->  kthread+0x39a/0x3c0 kernel/kthread.c:292
->  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+Add a test checking we don't cancel extra on exit() cancellation.
 
-This is a different issue, not related to this code at all.
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ test/io-cancel.c | 79 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 79 insertions(+)
 
+diff --git a/test/io-cancel.c b/test/io-cancel.c
+index 9b52c7b..c08b7e5 100644
+--- a/test/io-cancel.c
++++ b/test/io-cancel.c
+@@ -11,6 +11,7 @@
+ #include <sys/types.h>
+ #include <sys/time.h>
+ #include <sys/wait.h>
++#include <sys/poll.h>
+ 
+ #include "helpers.h"
+ #include "liburing.h"
+@@ -365,6 +366,79 @@ static int test_cancel_req_across_fork(void)
+ 	return 0;
+ }
+ 
++static int test_cancel_inflight_exit(void)
++{
++	struct __kernel_timespec ts = { .tv_sec = 1, .tv_nsec = 0, };
++	struct io_uring ring;
++	struct io_uring_cqe *cqe;
++	struct io_uring_sqe *sqe;
++	int ret, i;
++	pid_t p;
++
++	ret = io_uring_queue_init(8, &ring, 0);
++	if (ret) {
++		fprintf(stderr, "ring create failed: %d\n", ret);
++		return 1;
++	}
++	p = fork();
++	if (p == -1) {
++		fprintf(stderr, "fork() failed\n");
++		return 1;
++	}
++
++	if (p == 0) {
++		sqe = io_uring_get_sqe(&ring);
++		io_uring_prep_poll_add(sqe, ring.ring_fd, POLLIN);
++		sqe->user_data = 1;
++		sqe->flags |= IOSQE_IO_LINK;
++
++		sqe = io_uring_get_sqe(&ring);
++		io_uring_prep_timeout(sqe, &ts, 0, 0);
++		sqe->user_data = 2;
++
++		sqe = io_uring_get_sqe(&ring);
++		io_uring_prep_timeout(sqe, &ts, 0, 0);
++		sqe->user_data = 3;
++
++		ret = io_uring_submit(&ring);
++		if (ret != 3) {
++			fprintf(stderr, "io_uring_submit() failed %s, ret %i\n", __FUNCTION__, ret);
++			exit(1);
++		}
++		exit(0);
++	} else {
++		int wstatus;
++
++		if (waitpid(p, &wstatus, 0) == (pid_t)-1) {
++			perror("waitpid()");
++			return 1;
++		}
++		if (!WIFEXITED(wstatus) || WEXITSTATUS(wstatus)) {
++			fprintf(stderr, "child failed %i\n", WEXITSTATUS(wstatus));
++			return 1;
++		}
++	}
++
++	for (i = 0; i < 3; ++i) {
++		ret = io_uring_wait_cqe(&ring, &cqe);
++		if (ret) {
++			fprintf(stderr, "wait_cqe=%d\n", ret);
++			return 1;
++		}
++		if ((cqe->user_data == 1 && cqe->res != -ECANCELED) ||
++		    (cqe->user_data == 2 && cqe->res != -ECANCELED) ||
++		    (cqe->user_data == 3 && cqe->res != -ETIME)) {
++			fprintf(stderr, "%i %i\n", (int)cqe->user_data, cqe->res);
++			return 1;
++		}
++		io_uring_cqe_seen(&ring, cqe);
++	}
++
++	io_uring_queue_exit(&ring);
++	return 0;
++}
++
++
+ int main(int argc, char *argv[])
+ {
+ 	int i, ret;
+@@ -382,6 +456,11 @@ int main(int argc, char *argv[])
+ 		return 1;
+ 	}
+ 
++	if (test_cancel_inflight_exit()) {
++		fprintf(stderr, "test_cancel_inflight_exit() failed\n");
++		return 1;
++	}
++
+ 	t_create_file(".basic-rw", FILE_SIZE);
+ 
+ 	vecs = t_create_buffers(BUFFERS, BS);
 -- 
-Jens Axboe
+2.24.0
 

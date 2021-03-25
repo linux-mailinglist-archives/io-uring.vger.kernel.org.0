@@ -2,112 +2,79 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4802A349AF2
-	for <lists+io-uring@lfdr.de>; Thu, 25 Mar 2021 21:23:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 01E4F349B05
+	for <lists+io-uring@lfdr.de>; Thu, 25 Mar 2021 21:33:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229581AbhCYUXC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 25 Mar 2021 16:23:02 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:49264 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229576AbhCYUWf (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 25 Mar 2021 16:22:35 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out03.mta.xmission.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1lPWUx-00GDix-Cj; Thu, 25 Mar 2021 14:22:31 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=fess.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1lPWUw-00086p-Jg; Thu, 25 Mar 2021 14:22:31 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
+        id S230042AbhCYUc4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 25 Mar 2021 16:32:56 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:47363 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230290AbhCYUcX (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 25 Mar 2021 16:32:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1616704342;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=GPeAC2SU3JAKEkwGdDypjlr3Iu8SDL5k3qtAn7Yo0i8=;
+        b=Owqc452d+tF6dVwWmC4DKYCYCzbhAFTnKfiHspjHHfrm4UTxvKV2KHcD4MKd748MV+WKta
+        I8qevfj1WSARyZkY+Qlt1K9BTasMVeqlLpUR45B6EyY//xznCm+pdLva5x7PCFZWza7tlM
+        FE+lvRwBqEiF7VGFbdnnvpIbMJ6dl64=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-564--UhNXdL_PEmlrwUDqHWcxw-1; Thu, 25 Mar 2021 16:32:18 -0400
+X-MC-Unique: -UhNXdL_PEmlrwUDqHWcxw-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C56388018A1;
+        Thu, 25 Mar 2021 20:32:17 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.40.192.41])
+        by smtp.corp.redhat.com (Postfix) with SMTP id DF09A1000324;
+        Thu, 25 Mar 2021 20:32:15 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Thu, 25 Mar 2021 21:32:17 +0100 (CET)
+Date:   Thu, 25 Mar 2021 21:32:14 +0100
+From:   Oleg Nesterov <oleg@redhat.com>
 To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        io-uring <io-uring@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Stefan Metzmacher <metze@samba.org>
-References: <20210325164343.807498-1-axboe@kernel.dk>
-        <m1ft0j3u5k.fsf@fess.ebiederm.org>
-        <CAHk-=wjOXiEAjGLbn2mWRsxqpAYUPcwCj2x5WgEAh=gj+o0t4Q@mail.gmail.com>
-        <CAHk-=wg1XpX=iAv=1HCUReMbEgeN5UogZ4_tbi+ehaHZG6d==g@mail.gmail.com>
-        <3a1c02a5-db6d-e3e1-6ff5-69dd7cd61258@kernel.dk>
-Date:   Thu, 25 Mar 2021 15:21:30 -0500
-In-Reply-To: <3a1c02a5-db6d-e3e1-6ff5-69dd7cd61258@kernel.dk> (Jens Axboe's
-        message of "Thu, 25 Mar 2021 13:46:46 -0600")
-Message-ID: <m1zgyr2ddh.fsf@fess.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1lPWUw-00086p-Jg;;;mid=<m1zgyr2ddh.fsf@fess.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19McYpu4UMpmJM1/6UzapWqyVIobH1ipzY=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
-X-Spam-Level: **
-X-Spam-Status: No, score=2.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
-        T_TooManySym_02,T_TooManySym_03,T_TooManySym_04,XMNoVowels,XMSubLong
-        autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4362]
-        *  0.7 XMSubLong Long Subject
-        *  1.5 XMNoVowels Alpha-numberic number with no vowels
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-        *  0.0 T_TooManySym_04 7+ unique symbols in subject
-        *  0.0 T_TooManySym_03 6+ unique symbols in subject
-        *  0.0 T_TooManySym_02 5+ unique symbols in subject
-X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;Jens Axboe <axboe@kernel.dk>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 533 ms - load_scoreonly_sql: 0.06 (0.0%),
-        signal_user_changed: 12 (2.3%), b_tie_ro: 11 (2.0%), parse: 1.24
-        (0.2%), extract_message_metadata: 17 (3.2%), get_uri_detail_list: 1.15
-        (0.2%), tests_pri_-1000: 26 (4.9%), tests_pri_-950: 1.27 (0.2%),
-        tests_pri_-900: 1.06 (0.2%), tests_pri_-90: 286 (53.6%), check_bayes:
-        284 (53.3%), b_tokenize: 5.0 (0.9%), b_tok_get_all: 153 (28.7%),
-        b_comp_prob: 2.4 (0.4%), b_tok_touch_all: 120 (22.5%), b_finish: 0.99
-        (0.2%), tests_pri_0: 173 (32.5%), check_dkim_signature: 0.56 (0.1%),
-        check_dkim_adsp: 2.1 (0.4%), poll_dns_idle: 0.56 (0.1%), tests_pri_10:
-        2.3 (0.4%), tests_pri_500: 9 (1.7%), rewrite_mail: 0.00 (0.0%)
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        io-uring@vger.kernel.org, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, metze@samba.org
 Subject: Re: [PATCH 0/2] Don't show PF_IO_WORKER in /proc/<pid>/task/
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Message-ID: <20210325203214.GC28349@redhat.com>
+References: <20210325164343.807498-1-axboe@kernel.dk>
+ <m1ft0j3u5k.fsf@fess.ebiederm.org>
+ <5ee8ad82-e145-3ed6-1421-eede1ada0d7e@kernel.dk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5ee8ad82-e145-3ed6-1421-eede1ada0d7e@kernel.dk>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Jens Axboe <axboe@kernel.dk> writes:
+I didn't even try to read this series yet, will try tomorrow.
 
-> On 3/25/21 1:42 PM, Linus Torvalds wrote:
->> On Thu, Mar 25, 2021 at 12:38 PM Linus Torvalds
->> <torvalds@linux-foundation.org> wrote:
->>>
->>> I don't know what the gdb logic is, but maybe there's some other
->>> option that makes gdb not react to them?
->> 
->> .. maybe we could have a different name for them under the task/
->> subdirectory, for example (not  just the pid)? Although that probably
->> messes up 'ps' too..
+But sorry, I can't resist...
+
+On 03/25, Jens Axboe wrote:
 >
-> Heh, I can try, but my guess is that it would mess up _something_, if
-> not ps/top.
+> On 3/25/21 1:33 PM, Eric W. Biederman wrote:
+> > Jens Axboe <axboe@kernel.dk> writes:
+> >
+> >> Hi,
+> >>
+> >> Stefan reports that attaching to a task with io_uring will leave gdb
+> >> very confused and just repeatedly attempting to attach to the IO threads,
+> >> even though it receives an -EPERM every time.
 
-Hmm.
+Heh. As expected :/
 
-So looking quickly the flip side of the coin is gdb (and other
-debuggers) needs a way to know these threads are special, so it can know
-not to attach.
+> And arguably it _is_ a gdb bug, but...
 
-I suspect getting -EPERM (or possibly a different error code) when
-attempting attach is the right was to know that a thread is not
-available to be debugged.
+Why do you think so?
 
-Eric
+Oleg.
 

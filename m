@@ -2,73 +2,65 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C659234938B
-	for <lists+io-uring@lfdr.de>; Thu, 25 Mar 2021 15:03:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C2F7C349391
+	for <lists+io-uring@lfdr.de>; Thu, 25 Mar 2021 15:03:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231180AbhCYOCh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 25 Mar 2021 10:02:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44918 "EHLO
+        id S230242AbhCYODG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 25 Mar 2021 10:03:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231246AbhCYOCP (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 25 Mar 2021 10:02:15 -0400
-Received: from mail-io1-xd36.google.com (mail-io1-xd36.google.com [IPv6:2607:f8b0:4864:20::d36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D99E9C061760
-        for <io-uring@vger.kernel.org>; Thu, 25 Mar 2021 07:02:13 -0700 (PDT)
-Received: by mail-io1-xd36.google.com with SMTP id x16so2035109iob.1
-        for <io-uring@vger.kernel.org>; Thu, 25 Mar 2021 07:02:13 -0700 (PDT)
+        with ESMTP id S231305AbhCYOCr (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 25 Mar 2021 10:02:47 -0400
+Received: from mail-il1-x12e.google.com (mail-il1-x12e.google.com [IPv6:2607:f8b0:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DBE5C06174A
+        for <io-uring@vger.kernel.org>; Thu, 25 Mar 2021 07:02:47 -0700 (PDT)
+Received: by mail-il1-x12e.google.com with SMTP id 19so2226356ilj.2
+        for <io-uring@vger.kernel.org>; Thu, 25 Mar 2021 07:02:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=HFv8VCE+2t0FkrFbMVVnvkMOygoCtlm+GkhoqToaFus=;
-        b=g1ARPunAo2VHJVSakV91ELUKWVfsgFM9+LE2zSLWzhFrruzS+YNpsJawyae5LImEz9
-         37saVXKhErs5MFN6pe6cVKpTgBzfxsApdISEst6QHmZDLKCbPjW9cWsylvj2Q2MTrzf+
-         nHtuahMcBockm/6hGM2LnLW0osKNaLaXh3vRNu0HGBL/Rh9f/W5/WBtSFrPg80pZz99U
-         yr5ISSyHv2Xq4fz4ubkJZS/sBTKO2k2e9CQgXbL31o3zsXnho7/V3GLhTL9XC+zeYKQB
-         or1LZlSYhYuuW1HyeauzZweA9ntOD367mQsO420U0HWtXTToSQF24semz9dW200po4lD
-         pjUA==
+        bh=uui5a2oxxV+bwHUJbRgbxWLfj5T7kr4j6jjOle6T7XI=;
+        b=0TgDRLwmC8HDiV152IBCAqqdrtE24Y390ZTej2c2FnMRvBN7kPv3vMiIiSrNk8raxR
+         Mna00pxYW2dtR/m18RR+u5h53l0uVLQlCZ3s2/Gj42lmOuQvwC4ujSwk6/xRWeQRKJ54
+         bWbQBwt5HP/iR/VHNRQ8zcKsVDrvc1EVHgJzO053zodZtJ0B6/JH/9wXQZCIqawTHAhv
+         f3kuyjKXWCqx7ol4c9w5/QTp4fQ3U2Fkc+G5/9IZguQZdv2aPFlUXKUozX9Wyp+AJLM+
+         JfHn4XK5+d7awchuNTF/RL66kajhe15tIBtZCCvfOHvHzxHFVRqthl4LOMAKEMTrSmXl
+         nySg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=HFv8VCE+2t0FkrFbMVVnvkMOygoCtlm+GkhoqToaFus=;
-        b=buG5GBYLhiv3K2Y3kXGYlEqP3yDjlXH8r+UrzBN8XL/BqN4MU4RdMAwCRkmJa/X4lw
-         obvf0QS7kVNsIbjd0hvRfaDsBf1wY5S7kYQMT7bDI24iTkfOjyfg8M5T/eXsWsTEAG0j
-         R5E71z1m+2WHBV0bhu1T6WJtljaX+6gQuKFOyKVolfYVq4uHFJ8kXZOsuGino9H1Fxr7
-         1wL0R0uzBiBo3y4hUdnKX6kVbUkd5lrb/j9rfiiyVNdDL9zBdpd5M13LVhapGVHx5lsx
-         Vp44CtUXv+Qey4sGxdaDOC0Az6ZyyevUZcPtIdOxIw+tbG1lm7vVenC0yDD1hI2RvQ7z
-         Cwtw==
-X-Gm-Message-State: AOAM530ks1xF6eDnR7YGwm315Je3cEgNOljA1Z8Sc20Prhv2d+Bi7Gom
-        fm2XApeXjD6t7rHQCs1siGgObQ==
-X-Google-Smtp-Source: ABdhPJy+wtzxwAMmr8FbRmDcChSqZ0BJZf3wTR1j8uSjlatyEB5QXaMK2w9Q0zg77ULZ6kMCsL5xOA==
-X-Received: by 2002:a6b:ed08:: with SMTP id n8mr6427941iog.197.1616680933027;
-        Thu, 25 Mar 2021 07:02:13 -0700 (PDT)
+        bh=uui5a2oxxV+bwHUJbRgbxWLfj5T7kr4j6jjOle6T7XI=;
+        b=fzCf7PA2Zyi9ZuwPVsV1YJuqjAV8KRtwhd7ysy/Hn6ClIINMjaUS8ABEuYStMeAXlv
+         oWWyKAwuwwVWISdyyo+VsWZnVrVbVcZpQb+14UhBod9RtcK+9zApccAnuCUiclbvw1Db
+         M1VapzFrRfLnkx8APj+VMduLa8VEsY17vrS1jMMfYbNbBtmUkF0+28355VCkk0WlWZAv
+         WXG/LOnSoWQORBXrAyD1dxXbBATtOBEj+4YTS6N3dYcvq4x+A5M3b+Qr6Xrn29Lm7Za/
+         t0yyZHbcP1WwoMbZM1q2BmTBFK0liIM1kozFj9ZWhLtPVILRPnOwMaReRmfcQPlUti4Y
+         LigQ==
+X-Gm-Message-State: AOAM530+n58LVjD06h6jvoyFehYdmC5KSE36Crk3zJ9cBYyEI8rtxt7M
+        squY8+sxd6cNWydkfEBZwxLt/Q==
+X-Google-Smtp-Source: ABdhPJxCmDscdqVLvLkVFtL37YbSiDv5nqipeM0bcr1okBhaoiMKNf3oPkrX4smPjOLRnP/ZORZJZA==
+X-Received: by 2002:a05:6e02:d53:: with SMTP id h19mr6871217ilj.157.1616680966589;
+        Thu, 25 Mar 2021 07:02:46 -0700 (PDT)
 Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id q12sm2877518ilm.63.2021.03.25.07.02.12
+        by smtp.gmail.com with ESMTPSA id o15sm2799441ils.87.2021.03.25.07.02.46
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Mar 2021 07:02:12 -0700 (PDT)
-Subject: Re: [PATCH AUTOSEL 5.11 43/44] signal: don't allow STOP on
- PF_IO_WORKER threads
-To:     Stefan Metzmacher <metze@samba.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, io-uring <io-uring@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <20210325112459.1926846-1-sashal@kernel.org>
- <20210325112459.1926846-43-sashal@kernel.org>
- <f4c932b4-b787-651e-dd9f-584b386acddb@samba.org>
- <m1r1k34ey1.fsf@fess.ebiederm.org>
- <41589c56-9219-3ec2-55b3-3f010752ac7b@samba.org>
- <2b2a9701-cbe0-4538-ed3b-6917b85bebf8@kernel.dk>
- <acf9263d-7572-525d-9116-acb119399c13@samba.org>
+        Thu, 25 Mar 2021 07:02:46 -0700 (PDT)
+Subject: Re: Are CAP_SYS_ADMIN and CAP_SYS_NICE still needed for SQPOLL?
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Stefano Garzarella <sgarzare@redhat.com>
+Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210325113322.ecnji3xejozqdpwt@steredhat>
+ <842e6993-8cde-bc00-4de1-7b8689a397a8@gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <15712d38-8ea4-e8c7-85ba-9d800b99c976@kernel.dk>
-Date:   Thu, 25 Mar 2021 08:02:11 -0600
+Message-ID: <46016d10-7b87-c0f6-ed0f-18f89a2572d0@kernel.dk>
+Date:   Thu, 25 Mar 2021 08:02:45 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <acf9263d-7572-525d-9116-acb119399c13@samba.org>
+In-Reply-To: <842e6993-8cde-bc00-4de1-7b8689a397a8@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -76,105 +68,23 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/25/21 7:56 AM, Stefan Metzmacher wrote:
-> Am 25.03.21 um 14:38 schrieb Jens Axboe:
->> On 3/25/21 6:11 AM, Stefan Metzmacher wrote:
->>>
->>> Am 25.03.21 um 13:04 schrieb Eric W. Biederman:
->>>> Stefan Metzmacher <metze@samba.org> writes:
->>>>
->>>>> Am 25.03.21 um 12:24 schrieb Sasha Levin:
->>>>>> From: "Eric W. Biederman" <ebiederm@xmission.com>
->>>>>>
->>>>>> [ Upstream commit 4db4b1a0d1779dc159f7b87feb97030ec0b12597 ]
->>>>>>
->>>>>> Just like we don't allow normal signals to IO threads, don't deliver a
->>>>>> STOP to a task that has PF_IO_WORKER set. The IO threads don't take
->>>>>> signals in general, and have no means of flushing out a stop either.
->>>>>>
->>>>>> Longer term, we may want to look into allowing stop of these threads,
->>>>>> as it relates to eg process freezing. For now, this prevents a spin
->>>>>> issue if a SIGSTOP is delivered to the parent task.
->>>>>>
->>>>>> Reported-by: Stefan Metzmacher <metze@samba.org>
->>>>>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->>>>>> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
->>>>>> Signed-off-by: Sasha Levin <sashal@kernel.org>
->>>>>> ---
->>>>>>  kernel/signal.c | 3 ++-
->>>>>>  1 file changed, 2 insertions(+), 1 deletion(-)
->>>>>>
->>>>>> diff --git a/kernel/signal.c b/kernel/signal.c
->>>>>> index 55526b941011..00a3840f6037 100644
->>>>>> --- a/kernel/signal.c
->>>>>> +++ b/kernel/signal.c
->>>>>> @@ -288,7 +288,8 @@ bool task_set_jobctl_pending(struct task_struct *task, unsigned long mask)
->>>>>>  			JOBCTL_STOP_SIGMASK | JOBCTL_TRAPPING));
->>>>>>  	BUG_ON((mask & JOBCTL_TRAPPING) && !(mask & JOBCTL_PENDING_MASK));
->>>>>>  
->>>>>> -	if (unlikely(fatal_signal_pending(task) || (task->flags & PF_EXITING)))
->>>>>> +	if (unlikely(fatal_signal_pending(task) ||
->>>>>> +		     (task->flags & (PF_EXITING | PF_IO_WORKER))))
->>>>>>  		return false;
->>>>>>  
->>>>>>  	if (mask & JOBCTL_STOP_SIGMASK)
->>>>>>
->>>>>
->>>>> Again, why is this proposed for 5.11 and 5.10 already?
->>>>
->>>> Has the bit about the io worker kthreads been backported?
->>>> If so this isn't horrible.  If not this is nonsense.
+On 3/25/21 7:44 AM, Pavel Begunkov wrote:
+> On 25/03/2021 11:33, Stefano Garzarella wrote:
+>> Hi Jens, Hi Pavel,
+>> I was taking a look at the new SQPOLL handling with io_thread instead of kthread. Great job! Really nice feature that maybe can be reused also in other scenarios (e.g. vhost).
 >>
->> No not yet - my plan is to do that, but not until we're 100% satisfied
->> with it.
+>> Regarding SQPOLL, IIUC these new threads are much closer to user threads, so is there still a need to require CAP_SYS_ADMIN and CAP_SYS_NICE to enable SQPOLL?
 > 
-> Do you understand why the patches where autoselected for 5.11 and 5.10?
-
-As far as I know, selections like these (AUTOSEL) are done by some bot
-that uses whatever criteria to see if they should be applied for earlier
-revisions. I'm sure Sasha can expand on that :-)
-
-Hence it's reasonable to expect that sometimes it'll pick patches that
-should not go into stable, at least not just yet. It's important to
-understand that this message is just a notice that it's queued up for
-stable -rc, not that it's _in_ stable just yet. There's time to object.
-
->>> I don't know, I hope not...
->>>
->>> But I just tested v5.12-rc4 and attaching to
->>> an application with iothreads with gdb is still not possible,
->>> it still loops forever trying to attach to the iothreads.
->>
->> I do see the looping, gdb apparently doesn't give up when it gets
->> -EPERM trying to attach to the threads. Which isn't really a kernel
->> thing, but:
+> Hmm, good question. If there are under same cgroup (should be in
+> theory), and if we add more scheduling points (i.e. need_resched()), and
+> don't see a reason why not. Jens?
 > 
-> Maybe we need to remove the iothreads from /proc/pid/tasks/
+> Better not right away though. IMHO it's safer to let the change settle
+> down for some time.
 
-Is that how it finds them? It's arguably a bug in gdb that it just
-keeps retrying, but it would be nice if we can ensure that it just
-ignores them. Because if gdb triggers something like that, probably
-others too...
-
->>> And I tested 'kill -9 $pidofiothread', and it feezed the whole
->>> machine...
->>
->> that sounds very strange, I haven't seen anything like that running
->> the exact same scenario.
->>
->>> So there's still work to do in order to get 5.12 stable.
->>>
->>> I'm short on time currently, but I hope to send more details soon.
->>
->> Thanks! I'll play with it this morning and see if I can provoke
->> something odd related to STOP/attach.
-> 
-> Thanks!
-> 
-> Somehow I have the impression that your same_thread_group_account patch
-> may fix a lot of things...
-
-Maybe? I'll look closer.
+Yes, agree on both counts - we are not going to need elevated privileges
+going forward, but I'd also rather defer making that change until 5.13
+so we have a bit more time on the current (new) base first.
 
 -- 
 Jens Axboe

@@ -2,59 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 44B69349E2A
-	for <lists+io-uring@lfdr.de>; Fri, 26 Mar 2021 01:41:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C08A349E28
+	for <lists+io-uring@lfdr.de>; Fri, 26 Mar 2021 01:41:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229761AbhCZAlT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        id S230101AbhCZAlT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
         Thu, 25 Mar 2021 20:41:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42170 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230022AbhCZAkv (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 25 Mar 2021 20:40:51 -0400
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 060DCC06175F
-        for <io-uring@vger.kernel.org>; Thu, 25 Mar 2021 17:40:51 -0700 (PDT)
-Received: by mail-pj1-x1032.google.com with SMTP id lr1-20020a17090b4b81b02900ea0a3f38c1so4783515pjb.0
-        for <io-uring@vger.kernel.org>; Thu, 25 Mar 2021 17:40:51 -0700 (PDT)
+        with ESMTP id S230026AbhCZAkw (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 25 Mar 2021 20:40:52 -0400
+Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31926C06175F
+        for <io-uring@vger.kernel.org>; Thu, 25 Mar 2021 17:40:52 -0700 (PDT)
+Received: by mail-pg1-x52c.google.com with SMTP id y32so2318840pga.11
+        for <io-uring@vger.kernel.org>; Thu, 25 Mar 2021 17:40:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=3RrQjdii+9GTdxPaONZzqHC3ARJF5t/OnNTbRKIfjxA=;
-        b=cPq6NYuPcWiz1YnkqI4+j23jl0NuBpWjEyTnhetuFJ8mXdXmK/d9CKD//StV7GmBLH
-         KNIPEDDjbT2Vtvo8ru6daG1AfiDVBTPnPuVjgvWCCcYYugdzQwaZcF9anuf5VCGI5Khp
-         lx7YtkdEKhZc2Vzz3fObwnGwIRfuhLzrxl/DYt3WZJe7MNObMH6/8TYK9xDVRZ182vxn
-         aF2w73crzdFOh841SPwVkWjBv30MRWHufE+DPZ4b/7IPijMNiKHsgRZaBZ3UanjRi5eO
-         cAXQze1Le1A8s+eaTOHR51GPl6xDOYAMYUPmaoS9swmk5EP3ZPHJMimCapNJKzchyFNS
-         zdHw==
+        bh=li3YfRJpVv71xu0WVsVssRzCMBArHCH1EvW6QYE1yT0=;
+        b=MfWye79Yf8JWfCDBBSFadlq1VPdjANsXJAzdqkMvdiVSDZCz9cXBj2JkqY1WSaF1Ll
+         GFkmQZbdvIMTar7P5/42xpyj7r4DVGVw6T62NuYIg25IkGyAiOqAcC2XDngdeSz/HAQw
+         mpxTed8upnVFPUuDX/zAH/tujDhzrUSkgK8mEmdhjlA919CzoIs3nJ1oERKTnJZzPcbI
+         MUHpbunHjin+H13LdXiKTesoqaQewfoMp9HBY67SLK0wo4MWJiDNSRyymPqMJO5QrTm/
+         hI945ZIrVEtQrMfcD2aHatE1AK5mZbOtHt70XwutTxBytslCr6PmK6LG3yX5N3Gy/sNP
+         +dfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=3RrQjdii+9GTdxPaONZzqHC3ARJF5t/OnNTbRKIfjxA=;
-        b=XZbeMn6uBRwmr1kp8K7uDwt0X3266v4LLeOdIjjZVi2ZiJ+pCFhCwuHvd44GZ2Vaej
-         dyZGTogzEvPYRkJqDnx5HTlAt+xYBRhgzbC2GRCnkDmnrbSoVTVYSvSZ67AE9PfKX/Im
-         MxykooC4xLpI1RIxH6NT4PAduRNf20lDlVg1BZxtmuWOZOBAkW/mqA1ySc0gVhL0CFrn
-         c1GvxDFb7IMF/hASG+C1ceW44+N9e/pqEsYZDlsVL7+AFIAOx9T4xGfquxiE31z3ysZq
-         68fvy/kUqD8tY3vfMiTUSMlP6KVM9/R8nhMVUMiwgjfjdc5PhZ5me2jkgOahknmbOjTT
-         +wyQ==
-X-Gm-Message-State: AOAM53213+7CXesB5WQRI9VG7WwatiaxksEDHR/IU9PTujROXMJF5fq+
-        EV/0HmhFLnlypDCnVh1T/eWqPFibqQ4hGw==
-X-Google-Smtp-Source: ABdhPJyzp1FhvuYSapeL5MI+i2oJfZ44GcrdxL3hN5HJlgr1NvktY2XOtc3Sf0XaJsSFMa+TM05gxA==
-X-Received: by 2002:a17:90b:3449:: with SMTP id lj9mr11545275pjb.55.1616719250367;
-        Thu, 25 Mar 2021 17:40:50 -0700 (PDT)
+        bh=li3YfRJpVv71xu0WVsVssRzCMBArHCH1EvW6QYE1yT0=;
+        b=jghxAfHEBqk7YffY/2vJ8WD2rvBxEnDrjsc2cv2aSzWrYwb/9PNJ1ddAQUknD/ZPwr
+         tESjOsWBbPv9baRbHmHxSDeT3/nv28GfZR14/mIyy797NqP4As8qI4FnN+LMdbDxxeQq
+         xl02LPRgh6K2wubgKxKvq81wJpzKCGlI6UYTtntiPo8nd+Ee4/7VHt2VzTazvEl1MfnC
+         Hh/Ts4qGIB+YrhCJT6141crAyB8I/O9KT4ah17+QY4sz+8CQCUbVLAsKZUezeIztAxoz
+         LWpfF+rjYQj83jHTDn/o47GDqigWWmuKtnXCpbxciTJ0rN9ePXx6Ix+BgywzIGydVMfu
+         M9Xg==
+X-Gm-Message-State: AOAM532pLirrv/MZaR3Rir/QdzEgzC9PWy5MSQjtpEo5AFc+tX8cWCGN
+        b0U1XXmqSXuv+LcxwkjGw4sKV70f/NDHLA==
+X-Google-Smtp-Source: ABdhPJwY3NU6GsrSvtT2o7cvfU5oDMdkRCWF/omROwCnq0eok2ylfvU+FVNQNvKEIGXmHJoAfYbEIA==
+X-Received: by 2002:a63:e42:: with SMTP id 2mr9886459pgo.100.1616719251568;
+        Thu, 25 Mar 2021 17:40:51 -0700 (PDT)
 Received: from localhost.localdomain ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id c128sm6899448pfc.76.2021.03.25.17.40.49
+        by smtp.gmail.com with ESMTPSA id c128sm6899448pfc.76.2021.03.25.17.40.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Mar 2021 17:40:50 -0700 (PDT)
+        Thu, 25 Mar 2021 17:40:51 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     torvalds@linux-foundation.org, ebiederm@xmission.com,
         metze@samba.org, oleg@redhat.com, linux-kernel@vger.kernel.org,
         Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4/8] Revert "kernel: treat PF_IO_WORKER like PF_KTHREAD for ptrace/signals"
-Date:   Thu, 25 Mar 2021 18:39:27 -0600
-Message-Id: <20210326003928.978750-5-axboe@kernel.dk>
+Subject: [PATCH 5/8] Revert "kernel: freezer should treat PF_IO_WORKER like PF_KTHREAD for freezing"
+Date:   Thu, 25 Mar 2021 18:39:28 -0600
+Message-Id: <20210326003928.978750-6-axboe@kernel.dk>
 X-Mailer: git-send-email 2.31.0
 In-Reply-To: <20210326003928.978750-1-axboe@kernel.dk>
 References: <20210326003928.978750-1-axboe@kernel.dk>
@@ -64,55 +64,31 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This reverts commit 6fb8f43cede0e4bd3ead847de78d531424a96be9.
+This reverts commit 15b2219facadec583c24523eed40fa45865f859f.
 
-The IO threads do allow signals now, including SIGSTOP, and we can allow
-ptrace attach. Attaching won't reveal anything interesting for the IO
-threads, but it will allow eg gdb to attach to a task with io_urings
-and IO threads without complaining. And once attached, it will allow
-the usual introspection into regular threads.
+Before IO threads accepted signals, the freezer using take signals to wake
+up an IO thread would cause them to loop without any way to clear the
+pending signal. That is no longer the case, so stop special casing
+PF_IO_WORKER in the freezer.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- kernel/ptrace.c | 2 +-
- kernel/signal.c | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ kernel/freezer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/ptrace.c b/kernel/ptrace.c
-index 821cf1723814..61db50f7ca86 100644
---- a/kernel/ptrace.c
-+++ b/kernel/ptrace.c
-@@ -375,7 +375,7 @@ static int ptrace_attach(struct task_struct *task, long request,
- 	audit_ptrace(task);
+diff --git a/kernel/freezer.c b/kernel/freezer.c
+index 1a2d57d1327c..dc520f01f99d 100644
+--- a/kernel/freezer.c
++++ b/kernel/freezer.c
+@@ -134,7 +134,7 @@ bool freeze_task(struct task_struct *p)
+ 		return false;
+ 	}
  
- 	retval = -EPERM;
--	if (unlikely(task->flags & (PF_KTHREAD | PF_IO_WORKER)))
-+	if (unlikely(task->flags & PF_KTHREAD))
- 		goto out;
- 	if (same_thread_group(task, current))
- 		goto out;
-diff --git a/kernel/signal.c b/kernel/signal.c
-index cb9acdfb32fa..8ce96078cb76 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -91,7 +91,7 @@ static bool sig_task_ignored(struct task_struct *t, int sig, bool force)
- 		return true;
- 
- 	/* Only allow kernel generated signals to this kthread */
--	if (unlikely((t->flags & (PF_KTHREAD | PF_IO_WORKER)) &&
-+	if (unlikely((t->flags & PF_KTHREAD) &&
- 		     (handler == SIG_KTHREAD_KERNEL) && !force))
- 		return true;
- 
-@@ -1097,7 +1097,7 @@ static int __send_signal(int sig, struct kernel_siginfo *info, struct task_struc
- 	/*
- 	 * Skip useless siginfo allocation for SIGKILL and kernel threads.
- 	 */
--	if ((sig == SIGKILL) || (t->flags & (PF_KTHREAD | PF_IO_WORKER)))
-+	if ((sig == SIGKILL) || (t->flags & PF_KTHREAD))
- 		goto out_set;
- 
- 	/*
+-	if (!(p->flags & (PF_KTHREAD | PF_IO_WORKER)))
++	if (!(p->flags & PF_KTHREAD))
+ 		fake_signal_wake_up(p);
+ 	else
+ 		wake_up_state(p, TASK_INTERRUPTIBLE);
 -- 
 2.31.0
 

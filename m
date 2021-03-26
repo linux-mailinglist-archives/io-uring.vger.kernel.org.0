@@ -2,59 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E042B34ABEA
-	for <lists+io-uring@lfdr.de>; Fri, 26 Mar 2021 16:53:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C4AD834ABEB
+	for <lists+io-uring@lfdr.de>; Fri, 26 Mar 2021 16:53:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231178AbhCZPwn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 26 Mar 2021 11:52:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41358 "EHLO
+        id S230320AbhCZPwo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 26 Mar 2021 11:52:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230489AbhCZPwJ (ORCPT
+        with ESMTP id S230494AbhCZPwJ (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Fri, 26 Mar 2021 11:52:09 -0400
-Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE8A8C0613B3
-        for <io-uring@vger.kernel.org>; Fri, 26 Mar 2021 08:52:08 -0700 (PDT)
-Received: by mail-io1-xd2c.google.com with SMTP id k8so5828575iop.12
-        for <io-uring@vger.kernel.org>; Fri, 26 Mar 2021 08:52:08 -0700 (PDT)
+Received: from mail-il1-x12c.google.com (mail-il1-x12c.google.com [IPv6:2607:f8b0:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DC98C0613B4
+        for <io-uring@vger.kernel.org>; Fri, 26 Mar 2021 08:52:09 -0700 (PDT)
+Received: by mail-il1-x12c.google.com with SMTP id 19so5431599ilj.2
+        for <io-uring@vger.kernel.org>; Fri, 26 Mar 2021 08:52:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=hMymc1XEJnHboewJHBELgaGAh0vm6Ei5t+AwJJuno7Y=;
-        b=jtzZjkCkA/H6kRKeE68HEeSfq8vuIBht94T40JDSITJdp9qEpLwFkX+Qhcj+9j22qB
-         NlgXpiRJqjfhZmX/hc011a+n91cZtsn2f+YqFMmgAryjmyQ/w9PjK4DK6TstMln0TvjI
-         LenX1AuewIuMnv7MoT+B8mcBqVGuqDJvr/YbmEd3XmDulZGXSHINPnmM9mQs4tMWxFSG
-         pkNWyf4fsYymXOA0AGJWe//uNHGkJiDgYdSXdguIIVtIrTx+lnvI7nVF7ZTIFfpe6UvI
-         nrfEIpVxvR5IpJRJcL+uaXmWpLV/F90u123YB4LJefu32Gr40yWAQUiMfxZYTf12NaNH
-         Q00Q==
+        bh=li3YfRJpVv71xu0WVsVssRzCMBArHCH1EvW6QYE1yT0=;
+        b=n7oHJNJCUAxOzOa/CGB3u4Q7UE5CWm5TKevwGbzL3PRl8+GI6vh0c4qFK6r6FNlPm3
+         ylHkElPhL0Xh++BcEfdRjU0EJa/IvxICaOUe/yWv7GojHTTqNv8bIZL7XEBPbBOfSWp+
+         zQoBfYMqj62OtPnmh2UF+XJBfBnOeAguzP46pdRk7g/GmFcIXSCA8tmdW/Jp1wWGAOQq
+         BvjCc6fIIjh0epHDbR2byBUoASCGIr3loqA+yqcBmEYsJX+RLdfCbRjOVJOnnN0bEZl+
+         EFZAZw/QDIWEkqzUK1k20yY0WfL0X2Lg6pCFE+B8tzG1u3W2ixxnvkqkWpyE3gbjm7kb
+         OVow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=hMymc1XEJnHboewJHBELgaGAh0vm6Ei5t+AwJJuno7Y=;
-        b=BBJtQFTDZ1rfbEGvH+aKRg8gyxIyx0RrWjbS5dlUAOORH3frMncqMsZGW90BT1VmCh
-         XIJ8XYM/eNAOf8lcIItxcDVrTIOrtOMRzfTxvOfK4O1PRersLTEY/1WCDHSmhVsiuGaE
-         CnUNd1rfL/Hz9VMLG6PLoz0TZr1iD2zGpg41lcxxK3KRalBX/pRQrg/6vlPLXaShVeFn
-         AIG5slscNDdjR7kDgEL4xEiybYQAh9jXin2Wg2DIqOE8Krs9jy7ZCi9Vef0ZJrjW3G/G
-         431GP2y0rFJCJuAgRKYu9Tu0200tAwG9AdpdfEEKnkKwfeLC01EvU0nsVU8Wuj3N8JDh
-         9p8w==
-X-Gm-Message-State: AOAM53387BgzhTmWj/LWFPpwIFdyetRPOFHZ+j7TDmIhYf+dZy0+vMUE
-        rVGht6+YU60uwjxpUYuZZUPtf2HPIGnu5g==
-X-Google-Smtp-Source: ABdhPJxZ9jOtQE1q+sJuYHM/GF053zovfxLbtCUAhIwA06HgAEMFNk2Dgm6x9FtO61jESbjwU1RIuQ==
-X-Received: by 2002:a02:7410:: with SMTP id o16mr12537133jac.37.1616773928109;
+        bh=li3YfRJpVv71xu0WVsVssRzCMBArHCH1EvW6QYE1yT0=;
+        b=oB7ixYfg+uuoFSmxXsYDN+tYBbrhvDOEPy08PoNWd/9aHvFPl5FDt47oWdYfA5UDBp
+         eD4ZVeKCJwhjlzC/+6tLIVca9xsipFys5TgNMnr7kv8iycsxx30lccAKEr9P9yMNQdpt
+         whQT78MVTIBVFTOjMpOk3T/x7olIIkpdfkm11HbtKaj3mZXT6EwjTQPDUczQNM69jfBL
+         3o/Is35Jl9qrPwwfE0dX551AD/xBWInZJ2vQm59qzjNpMizGtzMy0t9ukiLvNDIEeatw
+         r5OnQUQL8qlLiXD0Y8OjRlCJo1AvCaLJyfrIsHXmi5Jh7W14uahclfgbSo45r60J/hC/
+         noKw==
+X-Gm-Message-State: AOAM531uIliFr2lHl76u9neR6S4NS/MFG9Dat5QKvKgQTVlZoS4aroSL
+        DaitGmbDixYEsp73NW1jXSubxpwt0NFudQ==
+X-Google-Smtp-Source: ABdhPJwBwx8cRwQ7I43gdoBP66bssGfrR1P/zEt8f5ovURJegjRD93MoycFphMyp79wX/sfVZ5SbVg==
+X-Received: by 2002:a05:6e02:219e:: with SMTP id j30mr10764366ila.196.1616773928942;
         Fri, 26 Mar 2021 08:52:08 -0700 (PDT)
 Received: from p1.localdomain ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id a7sm4456337ilj.64.2021.03.26.08.52.07
+        by smtp.gmail.com with ESMTPSA id a7sm4456337ilj.64.2021.03.26.08.52.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Mar 2021 08:52:07 -0700 (PDT)
+        Fri, 26 Mar 2021 08:52:08 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     torvalds@linux-foundation.org, ebiederm@xmission.com,
         metze@samba.org, oleg@redhat.com, linux-kernel@vger.kernel.org,
         Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4/7] Revert "signal: don't allow sending any signals to PF_IO_WORKER threads"
-Date:   Fri, 26 Mar 2021 09:51:19 -0600
-Message-Id: <20210326155128.1057078-7-axboe@kernel.dk>
+Subject: [PATCH 05/10] Revert "kernel: freezer should treat PF_IO_WORKER like PF_KTHREAD for freezing"
+Date:   Fri, 26 Mar 2021 09:51:20 -0600
+Message-Id: <20210326155128.1057078-8-axboe@kernel.dk>
 X-Mailer: git-send-email 2.31.0
 In-Reply-To: <20210326155128.1057078-1-axboe@kernel.dk>
 References: <20210326155128.1057078-1-axboe@kernel.dk>
@@ -64,30 +64,31 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This reverts commit 5be28c8f85ce99ed2d329d2ad8bdd18ea19473a5.
+This reverts commit 15b2219facadec583c24523eed40fa45865f859f.
 
-IO threads now take signals just fine, so there's no reason to limit them
-specifically. Revert the change that prevented that from happening.
+Before IO threads accepted signals, the freezer using take signals to wake
+up an IO thread would cause them to loop without any way to clear the
+pending signal. That is no longer the case, so stop special casing
+PF_IO_WORKER in the freezer.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- kernel/signal.c | 3 ---
- 1 file changed, 3 deletions(-)
+ kernel/freezer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/signal.c b/kernel/signal.c
-index e3e1b8fbfe8a..af890479921a 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -834,9 +834,6 @@ static int check_kill_permission(int sig, struct kernel_siginfo *info,
+diff --git a/kernel/freezer.c b/kernel/freezer.c
+index 1a2d57d1327c..dc520f01f99d 100644
+--- a/kernel/freezer.c
++++ b/kernel/freezer.c
+@@ -134,7 +134,7 @@ bool freeze_task(struct task_struct *p)
+ 		return false;
+ 	}
  
- 	if (!valid_signal(sig))
- 		return -EINVAL;
--	/* PF_IO_WORKER threads don't take any signals */
--	if (t->flags & PF_IO_WORKER)
--		return -ESRCH;
- 
- 	if (!si_fromuser(info))
- 		return 0;
+-	if (!(p->flags & (PF_KTHREAD | PF_IO_WORKER)))
++	if (!(p->flags & PF_KTHREAD))
+ 		fake_signal_wake_up(p);
+ 	else
+ 		wake_up_state(p, TASK_INTERRUPTIBLE);
 -- 
 2.31.0
 

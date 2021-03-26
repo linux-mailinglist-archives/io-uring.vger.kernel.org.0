@@ -2,73 +2,66 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BBD6334AA95
-	for <lists+io-uring@lfdr.de>; Fri, 26 Mar 2021 15:56:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0654834AAC4
+	for <lists+io-uring@lfdr.de>; Fri, 26 Mar 2021 16:01:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230051AbhCZOzs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 26 Mar 2021 10:55:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57194 "EHLO
+        id S230226AbhCZPBN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 26 Mar 2021 11:01:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229986AbhCZOzp (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 26 Mar 2021 10:55:45 -0400
-Received: from mail-il1-x12e.google.com (mail-il1-x12e.google.com [IPv6:2607:f8b0:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B42DC0613AA
-        for <io-uring@vger.kernel.org>; Fri, 26 Mar 2021 07:55:45 -0700 (PDT)
-Received: by mail-il1-x12e.google.com with SMTP id w2so4786345ilj.12
-        for <io-uring@vger.kernel.org>; Fri, 26 Mar 2021 07:55:45 -0700 (PDT)
+        with ESMTP id S230187AbhCZPBC (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 26 Mar 2021 11:01:02 -0400
+Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F5FBC0613AA
+        for <io-uring@vger.kernel.org>; Fri, 26 Mar 2021 08:01:02 -0700 (PDT)
+Received: by mail-io1-xd2c.google.com with SMTP id k8so5650172iop.12
+        for <io-uring@vger.kernel.org>; Fri, 26 Mar 2021 08:01:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:references:message-id:date:user-agent
+        h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ShOD9ANK+k5zonsBbQI1RoVppoAyPVg9mfaoGxQR9eU=;
-        b=GO1oyAFDNMwSU4xCrtFjN3Y2rI1BLjkYdaQo4XiiNvhy03JIhN2vsLZv32tA9ZPHrC
-         G0Ku6NBbJq0UA1twegAxAomeJmaPu7GUzxuTv53PhIQAU2poxrTa0k8PnHtdmZpItGrf
-         ybUDroiYIZlGg8uLtQ96Jn3DJHybJZIECUxFVronQAs1mnDX8WnGv/h82GXybUXtR+WB
-         kcKC+hG3G7IpOJ+I9gLqN9XRaWNI+D7LQlcEgtZ0qPAH5O5vjfZhgQIqf6XyxFHvJcha
-         mfcxXMUi+MIawEuBSbI5olQ/Q6oVK1/XJYJ2/t+pgd4K16ze5rFE/V4ZmNlM6xf/7kAx
-         9GmA==
+        bh=bg/XFgK0j4Bi2nzOGM6CJPuGBSSM2wwPb1IUUNZ4ZrY=;
+        b=w5p4jCPEbegwqL/nLPd0eJhquxW4K7gr74rDlgmo0q9j5vfRhtfBbo3QQa8S56E8fu
+         AGx2JxN0WMKpb2iZSEFWWrZE76sPsjvq7FRce0E2ewdJa2iSVOZcPR8WzLEFnx6w+ZPU
+         YMDPY8WM5jVGiSkwE6QdEoJlpALgByfLgkqQ+vh/vtDanm1fByUbHfAGpasJCLNoTSeH
+         93D7GXS8OzVYnnnPTln82sGuVUWABUnlMZ8tW6W9+qsJ2JdQ5emGr1422YvR+UXYDRdK
+         hWRucUvSjF3XYTluWRew/75UOe0ljhp2ooDHLivMCE97IflSY5mdjTalDMt5NVqrjsv7
+         4h8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=ShOD9ANK+k5zonsBbQI1RoVppoAyPVg9mfaoGxQR9eU=;
-        b=ueXETktBlazBYs39g+vdjIxIgpyjSuJBoSvK+ZrNjSSH97u0t048iC7gVb6tzQTut0
-         4vkT+A/juB7+eYd7PaaV8rGsrSuj743+mAoa4kzzbZDQxsJKDVvi7OtNtNdtDgLgsRGr
-         DVBkLDfTOkYamt5hHpHi7IdNTnSoJKie/DdKbH2xtMYABhcf30WT8dBZW5CE7kj7Uxav
-         99As+4MNMuSge5fXluFEPgiD+IqnAb5DMPvAzBYGq+ENG51LYrZC0A2C3D9EAK/bLeZT
-         b3rm0G6r/TxEb/ziUnMIh07xNHgwWs7kGUzmBu/aGC47Kcs6K0KEIOs7AUs9ssvMAazv
-         4P0w==
-X-Gm-Message-State: AOAM531aOJ6Kxy9fVqn9WoWtIwgBU7KzsVlEZNgX3KkJXSUtdhNIuX9u
-        cDImhA5Gfub8NlXDTlsV/6GlOg==
-X-Google-Smtp-Source: ABdhPJx8GoZAb06zYZhZWKCAzh39CvH3mJP+f3t0zhDQw8tiX/iOr4TJhZGR6imLGWgNpkyPj03v2Q==
-X-Received: by 2002:a05:6e02:4a4:: with SMTP id e4mr10298335ils.114.1616770544540;
-        Fri, 26 Mar 2021 07:55:44 -0700 (PDT)
+        bh=bg/XFgK0j4Bi2nzOGM6CJPuGBSSM2wwPb1IUUNZ4ZrY=;
+        b=mg10Et8dKcGaXuHJVfOm+o3ev8bWc+ACJpTDQYU2XgAOwroFIZUSNMQljRZQYl0zjO
+         pBEckruSaVNOyW67Ooa46wUMtxj8RWcnZSTqaYCQWbvgfZYubvmQNVJCiKHdg2Skl5JW
+         F6Mm3ARozIQR1/uvoYU3OfcGSy3Q0Gvh4zsp+h0k9kXqgpyHFttWWyWvTR/klgqh5TJ1
+         jaxi6a8uFY3OWapxkOxvd2jwRiRInPFALa429azc3JzSw9s1PBBPZk7sHKatfLfmHYQj
+         mg39CDwejtUVuba+qq4Cm/o10K/uzifxNN2kBks0DkdjqTZxmNkUsm7UuGdze9aQSw+Z
+         UI4w==
+X-Gm-Message-State: AOAM533FwBE3TU+8vdNQ26xYmhMJLY1Tm+vHwH5wmw9V9W97r248Y8iS
+        uFZBVErwiQvrqf9Wj2H7kFvzIA==
+X-Google-Smtp-Source: ABdhPJztBUwc5LhorRM9v0qt8CshTMiYbtZYm1iwC/n0UNrWtWPlWKltgXE2SKA9UpeDT9fnUgobjQ==
+X-Received: by 2002:a05:6602:21cd:: with SMTP id c13mr10293909ioc.44.1616770861565;
+        Fri, 26 Mar 2021 08:01:01 -0700 (PDT)
 Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id j6sm4090911ila.31.2021.03.26.07.55.43
+        by smtp.gmail.com with ESMTPSA id i67sm4584479ioa.3.2021.03.26.08.01.00
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Mar 2021 07:55:44 -0700 (PDT)
-Subject: Re: [PATCH 0/6] Allow signals for IO threads
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Stefan Metzmacher <metze@samba.org>, io-uring@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, ebiederm@xmission.com,
-        oleg@redhat.com, linux-kernel@vger.kernel.org
+        Fri, 26 Mar 2021 08:01:01 -0700 (PDT)
+Subject: Re: [PATCH 2/8] kernel: unmask SIGSTOP for IO threads
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     io-uring@vger.kernel.org, torvalds@linux-foundation.org,
+        ebiederm@xmission.com, metze@samba.org,
+        linux-kernel@vger.kernel.org
 References: <20210326003928.978750-1-axboe@kernel.dk>
- <e6de934a-a794-f173-088d-a140d0645188@samba.org>
- <f2c93b75-a18b-fc2c-7941-9208c19869c1@kernel.dk>
- <8efd9977-003b-be65-8ae2-4b04d8dd1224@samba.org>
- <0c91d9e7-82cd-bec2-19ae-cc592ec757c6@kernel.dk>
- <bfaae5fd-5de9-bae4-89b6-2d67bbfb86c6@kernel.dk>
- <66fa3cfc-4161-76fe-272e-160097f32a53@kernel.dk>
- <67a83ad5-1a94-39e5-34c7-6b2192eb7edb@samba.org>
- <ac807735-53d0-0c9e-e119-775e5e01d971@samba.org>
- <0396df33-7f91-90c8-6c0d-8a3afd3fff3c@kernel.dk>
-Message-ID: <1304f480-a8db-44cf-5d89-aa9b99efdcd7@kernel.dk>
-Date:   Fri, 26 Mar 2021 08:55:43 -0600
+ <20210326003928.978750-3-axboe@kernel.dk> <20210326134840.GA1290@redhat.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <a179ad33-5656-b644-0d92-e74a6bd26cc8@kernel.dk>
+Date:   Fri, 26 Mar 2021 09:01:00 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <0396df33-7f91-90c8-6c0d-8a3afd3fff3c@kernel.dk>
+In-Reply-To: <20210326134840.GA1290@redhat.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -76,75 +69,50 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/26/21 8:53 AM, Jens Axboe wrote:
-> On 3/26/21 8:45 AM, Stefan Metzmacher wrote:
->> Am 26.03.21 um 15:43 schrieb Stefan Metzmacher:
->>> Am 26.03.21 um 15:38 schrieb Jens Axboe:
->>>> On 3/26/21 7:59 AM, Jens Axboe wrote:
->>>>> On 3/26/21 7:54 AM, Jens Axboe wrote:
->>>>>>> The KILL after STOP deadlock still exists.
->>>>>>
->>>>>> In which tree? Sounds like you're still on the old one with that
->>>>>> incremental you sent, which wasn't complete.
->>>>>>
->>>>>>> Does io_wq_manager() exits without cleaning up on SIGKILL?
->>>>>>
->>>>>> No, it should kill up in all cases. I'll try your stop + kill, I just
->>>>>> tested both of them separately and didn't observe anything. I also ran
->>>>>> your io_uring-cp example (and found a bug in the example, fixed and
->>>>>> pushed), fwiw.
->>>>>
->>>>> I can reproduce this one! I'll take a closer look.
->>>>
->>>> OK, that one is actually pretty straight forward - we rely on cleaning
->>>> up on exit, but for fatal cases, get_signal() will call do_exit() for us
->>>> and never return. So we might need a special case in there to deal with
->>>> that, or some other way of ensuring that fatal signal gets processed
->>>> correctly for IO threads.
->>>
->>> And if (fatal_signal_pending(current)) doesn't prevent get_signal() from being called?
+On 3/26/21 7:48 AM, Oleg Nesterov wrote:
+> Jens, sorry, I got lost :/
+
+Let's bring you back in :-)
+
+> On 03/25, Jens Axboe wrote:
 >>
->> Ah, we're still in the first get_signal() from SIGSTOP, correct?
+>> With IO threads accepting signals, including SIGSTOP,
 > 
-> Yes exactly, we're waiting in there being stopped. So we either need to
-> check to something ala:
-> 
-> relock:
-> +	if (current->flags & PF_IO_WORKER && fatal_signal_pending(current))
-> +		return false;
-> 
-> to catch it upfront and from the relock case, or add:
-> 
-> 	fatal:
-> +		if (current->flags & PF_IO_WORKER)
-> +			return false;
-> 
-> to catch it in the fatal section.
+> where can I find this change? Looks like I wasn't cc'ed...
 
-Can you try this? Not crazy about adding a special case, but I don't
-think there's any way around this one. And should be pretty cheap, as
-we're already pulling in ->flags right above anyway.
+It's this very series.
 
-diff --git a/kernel/signal.c b/kernel/signal.c
-index 5ad8566534e7..5b75fbe3d2d6 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -2752,6 +2752,15 @@ bool get_signal(struct ksignal *ksig)
- 		 */
- 		current->flags |= PF_SIGNALED;
- 
-+		/*
-+		 * PF_IO_WORKER threads will catch and exit on fatal signals
-+		 * themselves. They have cleanup that must be performed, so
-+		 * we cannot call do_exit() on their behalf. coredumps also
-+		 * do not apply to them.
-+		 */
-+		if (current->flags & PF_IO_WORKER)
-+			return false;
-+
- 		if (sig_kernel_coredump(signr)) {
- 			if (print_fatal_signals)
- 				print_fatal_signal(ksig->info.si_signo);
+>> unmask the
+>> SIGSTOP signal from the default blocked mask.
+>>
+>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>> ---
+>>  kernel/fork.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/kernel/fork.c b/kernel/fork.c
+>> index d3171e8e88e5..d5a40552910f 100644
+>> --- a/kernel/fork.c
+>> +++ b/kernel/fork.c
+>> @@ -2435,7 +2435,7 @@ struct task_struct *create_io_thread(int (*fn)(void *), void *arg, int node)
+>>  	tsk = copy_process(NULL, 0, node, &args);
+>>  	if (!IS_ERR(tsk)) {
+>>  		sigfillset(&tsk->blocked);
+>> -		sigdelsetmask(&tsk->blocked, sigmask(SIGKILL));
+>> +		sigdelsetmask(&tsk->blocked, sigmask(SIGKILL)|sigmask(SIGSTOP));
+> 
+> siginitsetinv(blocked, sigmask(SIGKILL)|sigmask(SIGSTOP)) but this is minor.
+
+Ah thanks.
+
+> To remind, either way this is racy and can't really help.
+> 
+> And if "IO threads accepting signals" then I don't understand why. Sorry,
+> I must have missed something.
+
+I do think the above is a no-op at this point, and we can probably just
+kill it. Let me double check, hopefully we can just remove this blocked
+part.
 
 -- 
 Jens Axboe

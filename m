@@ -2,92 +2,79 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 30237349E27
-	for <lists+io-uring@lfdr.de>; Fri, 26 Mar 2021 01:41:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 561FD34A04D
+	for <lists+io-uring@lfdr.de>; Fri, 26 Mar 2021 04:36:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230109AbhCZAlU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 25 Mar 2021 20:41:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42190 "EHLO
+        id S230370AbhCZDg0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 25 Mar 2021 23:36:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230035AbhCZAkx (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 25 Mar 2021 20:40:53 -0400
-Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D3B6C06175F
-        for <io-uring@vger.kernel.org>; Thu, 25 Mar 2021 17:40:53 -0700 (PDT)
-Received: by mail-pf1-x436.google.com with SMTP id h3so3699413pfr.12
-        for <io-uring@vger.kernel.org>; Thu, 25 Mar 2021 17:40:53 -0700 (PDT)
+        with ESMTP id S230239AbhCZDgH (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 25 Mar 2021 23:36:07 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A713C06174A
+        for <io-uring@vger.kernel.org>; Thu, 25 Mar 2021 20:36:06 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id u5so6311104ejn.8
+        for <io-uring@vger.kernel.org>; Thu, 25 Mar 2021 20:36:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=5VFZ5F0P95MRNgw+SRJmF8MhV5XYlr1esTCnEdLFx4o=;
-        b=qVdGD1kJFYnAUL/8agkIHKHlk1DUiRz/niBuNGe2UQqFQxOaqLAmr4dB+ZfmgViGhj
-         6BdzWJQvFrBv0zBVncmzEtVO6+ntgLQNq/e6opxduxqeOV3F/BkYCCu3UY0JnIgNdXm/
-         003pMD1vav2qydRplabfZtOyW27RspJXnw0e9Jahwhaw0DxUmz9YSk06kdr+IWYolcfi
-         Sph+LTQAm/wa5UXt+EbeCdh+SEhIBmlsASSBe8c5pocCfQUfYxuHjQGtHGZpTRtvPnIc
-         WHFOXTk3pHhxJUGI+1rHlBvH4BD5aHn2nojKPVT9p2mTaZkl4SYJlWhxyybf34Jte5xv
-         i+wA==
+        d=nametag.social; s=google;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=LXU7t747LhChb7LEpjd0zru/jdmQVp/KYGrnp7Jiul8=;
+        b=SsGZnB+UudlzKyivzUVLMgZpI3kHpuykcnGf+SI9fWx8PH+uQBC6jH3liiT6aXjbNV
+         FBs0jhQIW2+Hd7dA/9sfUBjT7H+xumNa+o6wEiHTljFAUethOf3+qQzuUqhPPB2YUf32
+         CQBV6bC4GgRMytirMFNOAgVQGSSthefPKmZSX9g4JHgOTjyfQkDbwGgLOcd0N4NsC3el
+         sSCiSzDWcq07+lj3VR31xRYlwmdF0c6Fo3vx/yTiGbqyTf55T8fNqSdVCp8YRb5VYBC+
+         Iz+Tp4X7Zkuw/zXXj9G7/5ObhdzSxAW5r4wUTvL/wnWZabucELqjq/Z5TFnWk/y6GAc2
+         AC4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=5VFZ5F0P95MRNgw+SRJmF8MhV5XYlr1esTCnEdLFx4o=;
-        b=i7x4CBIR/UgLemvd4nC5yYOVXETPRBOCpKTX6zT0KX3z4tDMklq2hEjmkvwe3lmJY7
-         Cc1SPeCAFSTCvkXQAF4GodGsyYdUmaB+CCr4W0hs2R7V3tPbwTNp1rcE7OxfsCXLwG+C
-         ssZQVVkLTLHt0yG/T/iwwBxf080pkq+X03FF1eqi0wS3t2kcb2WtvH34/VKKgl1SoJme
-         DiqQo7CAeDHqQRqQQK8982qxOULbf51fnhBy58Gsl56QUylPGYQTxA5ZxDXLv+P9GuaS
-         ukhIZA8dsHKh051kxzPdvVUUT3cHikv+S1v5rS08ea3auqfPew+l5NLi0NLLcDtVaEyz
-         9aqg==
-X-Gm-Message-State: AOAM530CNAWRqrYKb37j30TVKA6Zg5lk93qQwY+QYa8f3z7e2q2u7Hwk
-        GsK45uOK/l6+f+NEHxuw1+RNsOcEMnBXLA==
-X-Google-Smtp-Source: ABdhPJxFVacuwBUxGD4VWOgd1yUZQMHk67UTiQd7TPnQ2Ns3/JLb81YEYG2HgwV/He+GCLmRfaOJ2Q==
-X-Received: by 2002:a63:e511:: with SMTP id r17mr9835094pgh.163.1616719252790;
-        Thu, 25 Mar 2021 17:40:52 -0700 (PDT)
-Received: from localhost.localdomain ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id c128sm6899448pfc.76.2021.03.25.17.40.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Mar 2021 17:40:52 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, ebiederm@xmission.com,
-        metze@samba.org, oleg@redhat.com, linux-kernel@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 6/8] Revert "signal: don't allow STOP on PF_IO_WORKER threads"
-Date:   Thu, 25 Mar 2021 18:39:29 -0600
-Message-Id: <20210326003928.978750-7-axboe@kernel.dk>
-X-Mailer: git-send-email 2.31.0
-In-Reply-To: <20210326003928.978750-1-axboe@kernel.dk>
-References: <20210326003928.978750-1-axboe@kernel.dk>
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=LXU7t747LhChb7LEpjd0zru/jdmQVp/KYGrnp7Jiul8=;
+        b=Y9PDys/1knW+oR9gpJoCzLzBAc15XKdq/iMxCI2zJn1GbWVRvMZDfGpnL2xXJ3uNlU
+         PJzDfngXmkb/FMnNDuB4QDmDC6j/59kBPLP0U1rN4rTVBW8Pk0vlKihlSCVwbXXKWoCH
+         sStMHpG5iq2QpEtt2w5+5KHRD6eozk/ti7z3ODY5DlhvKsvHDz+WbFb0RS8J1Pr+jvfK
+         4x2wkmOPB3TWVBPuW8Yvm8wkWU3LKpvHIO55GGpyyRMem58pSmTw8L08YqicQ8Pbk8n7
+         G5oPNUH2xPv0VwGE5YK9/3HiZrBdKotzF5hiF5Xg2nf6LVRwIEqiainZw1iuNue+RKPL
+         8TFg==
+X-Gm-Message-State: AOAM531yJiFffC/bHFwdxrsjfXYuPDQVdpiWHZmaRu/90AJC/wQ9/ETv
+        xnHoGkR/Ocmq/7PkxMRJUO65OJsdh+3uDdNjDPafN0Dut8FYGg==
+X-Google-Smtp-Source: ABdhPJzOg09Z+ZKDGFCQd+JqPlW6hYCh4fi1fI7sgRZYZa3BWSuLFL9h7TITUHUF03qAH9N6kYim+iPbY+9P19P8c2M=
+X-Received: by 2002:a17:906:4d44:: with SMTP id b4mr13030673ejv.338.1616729764919;
+ Thu, 25 Mar 2021 20:36:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From:   Victor Stewart <v@nametag.social>
+Date:   Thu, 25 Mar 2021 23:35:54 -0400
+Message-ID: <CAM1kxwjT66zgh8k=Jnkhn5-UHrBfMjSDyKyrKhuhtCESo9tMew@mail.gmail.com>
+Subject: [POSSIBLE BUG] sendmsg ops returning -ETIME
+To:     io-uring <io-uring@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This reverts commit 4db4b1a0d1779dc159f7b87feb97030ec0b12597.
+i wrote a quic performance tool to research maximal quic server
+performance namely syscalls vs io-uring and quic library vs library
+(in an apples to apples scenario).
 
-The IO threads allow and handle SIGSTOP now, so don't special case them
-anymore in task_set_jobctl_pending().
+i'm having some issues with the stability of the io-uring networking
+layer... and at least thought my rings were just overflowing, but they
+aren't. during most runs, all of a sudden submitted sendmsg ops start
+failing and returning -ETIME... even though there are absolutely no
+timeouts associated with those operations. and it's always that -ETIME
+error delivered once things start to fail.
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- kernel/signal.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+the only performance test implemented so far is a 1GB transfer over
+udp over ipv6 loopback. my working guess at the moment is that the
+operation pressure rate is exposing some kind of bug somewhere in
+io-ring?
 
-diff --git a/kernel/signal.c b/kernel/signal.c
-index 8ce96078cb76..5ad8566534e7 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -288,8 +288,7 @@ bool task_set_jobctl_pending(struct task_struct *task, unsigned long mask)
- 			JOBCTL_STOP_SIGMASK | JOBCTL_TRAPPING));
- 	BUG_ON((mask & JOBCTL_TRAPPING) && !(mask & JOBCTL_PENDING_MASK));
- 
--	if (unlikely(fatal_signal_pending(task) ||
--		     (task->flags & (PF_EXITING | PF_IO_WORKER))))
-+	if (unlikely(fatal_signal_pending(task) || (task->flags & PF_EXITING)))
- 		return false;
- 
- 	if (mask & JOBCTL_STOP_SIGMASK)
--- 
-2.31.0
+i just posted the project on github. the README is basic but i think
+provides enough instructions to run the binaries and see for yourself.
 
+let me know what data i can extract so we can quickly rule this
+definitely my bug or definitely an io-uring bug. it's really the
+bizzare -ETIME that makes me think it might not be mine.
+
+the code is super brief, check perf.networking.cpp
+
+https://github.com/victorstewart/quicperf

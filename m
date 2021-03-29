@@ -2,63 +2,64 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A22DA34D05D
-	for <lists+io-uring@lfdr.de>; Mon, 29 Mar 2021 14:49:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D8B034D08D
+	for <lists+io-uring@lfdr.de>; Mon, 29 Mar 2021 14:55:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230296AbhC2MtX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 29 Mar 2021 08:49:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51794 "EHLO
+        id S229873AbhC2MzQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 29 Mar 2021 08:55:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53028 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231193AbhC2MtR (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 29 Mar 2021 08:49:17 -0400
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41764C061574
-        for <io-uring@vger.kernel.org>; Mon, 29 Mar 2021 05:49:17 -0700 (PDT)
-Received: by mail-pj1-x1034.google.com with SMTP id nh23-20020a17090b3657b02900c0d5e235a8so5881479pjb.0
-        for <io-uring@vger.kernel.org>; Mon, 29 Mar 2021 05:49:17 -0700 (PDT)
+        with ESMTP id S231659AbhC2Myw (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 29 Mar 2021 08:54:52 -0400
+Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B0FAC061756
+        for <io-uring@vger.kernel.org>; Mon, 29 Mar 2021 05:54:52 -0700 (PDT)
+Received: by mail-pg1-x534.google.com with SMTP id f10so9337376pgl.9
+        for <io-uring@vger.kernel.org>; Mon, 29 Mar 2021 05:54:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=rxlu6rAulce6a90QUtb/XK4PFThX3KZXeA9ndiQKAD0=;
-        b=O3JZ/VqkdF7O5Qe9ac40V92foBx1RmvRfDS3ShA9R6sqZNlc+MyIhhchNEOEGA4e1T
-         kOSGSzRNQmBjvvK3+YVcIoauR0EVewLKYW3Bxe1+KgxM5wlgSjEbijDACiXxJe6DI5lp
-         IQSAgx9NV3cZHJQxs5O77Dl9ADPvfDK71Pq0jF0V7VKTVyPCJqshADAZuONCSDpPMsMD
-         BIzV0pUnG+9sJhpxRQGDc9gZ40x45cD2KvooCeQNkrXyMOVr+cJS9lei/N/5O7A2Qt1t
-         W7HJDF7wcfl6k9IARwGRkKml3elCm2SXQLL69PSlhiqxQdWwR+nxaM+TkJCsvPJ2bUBQ
-         cvkw==
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=US+rAtdbkqLkNl3oRSj3/J0RXu7PFDi44LyNiScUT2c=;
+        b=Md5xAZ9bNGtWowXcdfE+VZgCgdw2isAbm75OG5MDCkIP9sCzF/xgvYwDF6OJJFfRYq
+         woInjtbc9ubtyksesDpzR0lgUt+dZeycUjGZHwRYiWGjAz6CfM7HahGgIH1el6nzJP7x
+         WfOJmPrDeXhOr0fInxBYUHdPg3vaxEarEmncCpCjPkhWUGWj4GBUL6veZVChZ0aQb4Jr
+         VAEkoL4U+wk8fll7Ja/LMl4eNYDO8wnOTlJ6LhxFRw7ld7VVHKgGUw2y5fyfBUbeivnV
+         6ENBGVcbv3OuHZyaGGKkCwS1WE4z/JnuuvVSMvOmmU+R+Jt5Rf6GZ+tZyn47hsRvjc8u
+         zq9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=rxlu6rAulce6a90QUtb/XK4PFThX3KZXeA9ndiQKAD0=;
-        b=SnerPyl7EFHl/uIgEheN1VLGebHbTf8tqMj2rQWZTFXt78RTWTreou/0dcZxiJCmQW
-         V6g+gkF9z4BwzGj8t4MFWe6RXKlFhvWPKOXc9kCDG75vo35TZDNcF81qngnFwnyTvruL
-         5+Y+duHaVtCE26jr7SpT7bEHMbUTSQCIvtL1a+19qH8V6dCIYSbOyK6qS8WXb3dj3/lp
-         6fuvZr1G0CNrWRvqcKijwNvgliiNTq0AoYAEbxYRjAV+WTBIw8z4/3YRaPNNrD3PT30N
-         W9qtpHwQF+K0dFlm80RszF9b/GFUlCmkzhQETuqLsqlUM3KMm5vqyj2Lt9QavrbNvOLM
-         bzaA==
-X-Gm-Message-State: AOAM5339FrJ2DnHe7UGCJd0LOXnCNzXbhq4k/RxGFMXA++UAC1Nz1SzH
-        9N9YGt+6+0+70UBpDbLtElXg6Q==
-X-Google-Smtp-Source: ABdhPJw+/2KIGaxprmCBKaLnoWZm/nWeWz9Fa9dRxy/4tiQFzOIhH2h8XYRoddN6MrYmcfipbPEksg==
-X-Received: by 2002:a17:90a:e2ca:: with SMTP id fr10mr26902096pjb.18.1617022156746;
-        Mon, 29 Mar 2021 05:49:16 -0700 (PDT)
+        bh=US+rAtdbkqLkNl3oRSj3/J0RXu7PFDi44LyNiScUT2c=;
+        b=gB67L0QSnxUDAlWzYHu0zmQsRpTjdjbQVuQX6w9LdMW4MS4k/6YRMyGxWNALsaMkYG
+         BOhvvxAp8A1W8rsOT2TgirUzVXhgbSkMVhOfk7ej01s9TvAIy3lrFtBoZedEzRSrIu12
+         hFrarqgHeE79fVqTHYccKKuZSwwxsjjTm6S7V0LZ+CPSgq2BCrsF3XrV72t/IK7hhvq+
+         coLoM55UKBbjLISYrOvZy9J4N3e8q4WGz/PkCrz7mGjy9XBzPxiheIipvFlvyDOf/Mxl
+         jl1JNak1zosvYxfVpiA6jViACzk9CFCou/tQWb43cimBAvXBA9k2LaDvuQHI7w2mRo7O
+         UTgg==
+X-Gm-Message-State: AOAM530/HPsed+sD2Xq+DtwnPOpQIt0L5RZxYD6HnkAYDcX3HVCt2WJx
+        XUK01a7I9WlwChSTQGcfYe8cNg==
+X-Google-Smtp-Source: ABdhPJwB4Wa1NWUtHJyMTM6wO9ZES46yFhG7C57uH0kHw+TJ3ehN31SiTDJoqkK/HdxbPtwuH7GbRg==
+X-Received: by 2002:a63:f00d:: with SMTP id k13mr24223787pgh.295.1617022491576;
+        Mon, 29 Mar 2021 05:54:51 -0700 (PDT)
 Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id q15sm17846229pje.28.2021.03.29.05.49.15
+        by smtp.gmail.com with ESMTPSA id l3sm14901449pju.44.2021.03.29.05.54.50
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Mar 2021 05:49:16 -0700 (PDT)
-Subject: Re: [PATCH 5.12] io_uring: handle setup-failed ctx in kill_timeouts
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-Cc:     syzbot+0e905eb8228070c457a0@syzkaller.appspotmail.com
-References: <660261a48f0e7abf260c8e43c87edab3c16736fa.1617014345.git.asml.silence@gmail.com>
+        Mon, 29 Mar 2021 05:54:50 -0700 (PDT)
+Subject: Re: [syzbot] WARNING: still has locks held in io_sq_thread
+To:     syzbot <syzbot+796d767eb376810256f5@syzkaller.appspotmail.com>,
+        asml.silence@gmail.com, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <000000000000cbcdca05bea7e829@google.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <433a5e13-12f0-8abb-865c-aeb4a41cbc49@kernel.dk>
-Date:   Mon, 29 Mar 2021 06:49:14 -0600
+Message-ID: <61897224-d54b-9390-6721-57bed6a144e5@kernel.dk>
+Date:   Mon, 29 Mar 2021 06:54:48 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <660261a48f0e7abf260c8e43c87edab3c16736fa.1617014345.git.asml.silence@gmail.com>
+In-Reply-To: <000000000000cbcdca05bea7e829@google.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -66,25 +67,20 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/29/21 4:39 AM, Pavel Begunkov wrote:
-> general protection fault, probably for non-canonical address
-> 	0xdffffc0000000018: 0000 [#1] KASAN: null-ptr-deref
-> 	in range [0x00000000000000c0-0x00000000000000c7]
-> RIP: 0010:io_commit_cqring+0x37f/0xc10 fs/io_uring.c:1318
-> Call Trace:
->  io_kill_timeouts+0x2b5/0x320 fs/io_uring.c:8606
->  io_ring_ctx_wait_and_kill+0x1da/0x400 fs/io_uring.c:8629
->  io_uring_create fs/io_uring.c:9572 [inline]
->  io_uring_setup+0x10da/0x2ae0 fs/io_uring.c:9599
->  do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
->  entry_SYSCALL_64_after_hwframe+0x44/0xae
+On 3/29/21 1:34 AM, syzbot wrote:
+> Hello,
 > 
-> It can get into wait_and_kill() before setting up ctx->rings, and hence
-> io_commit_cqring() fails. Mimic poll cancel and do it only when we
-> completed events, there can't be any requests if it failed before
-> initialising rings.
+> syzbot found the following issue on:
+> 
+> HEAD commit:    81b1d39f Merge tag '5.12-rc4-smb3' of git://git.samba.org/..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=10fcce62d00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=d4e9addca54f3b44
+> dashboard link: https://syzkaller.appspot.com/bug?extid=796d767eb376810256f5
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17d06ddcd00000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=150764bed00000
 
-Thanks, applied.
+#syz test: git://git.kernel.dk/linux-block io_uring-5.12
 
 -- 
 Jens Axboe

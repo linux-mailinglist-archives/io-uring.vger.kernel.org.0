@@ -2,65 +2,66 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BC98C34D916
-	for <lists+io-uring@lfdr.de>; Mon, 29 Mar 2021 22:38:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DA1734D91E
+	for <lists+io-uring@lfdr.de>; Mon, 29 Mar 2021 22:40:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229689AbhC2Uhy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 29 Mar 2021 16:37:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40370 "EHLO
+        id S231158AbhC2Uja (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 29 Mar 2021 16:39:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229555AbhC2Uhm (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 29 Mar 2021 16:37:42 -0400
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25281C061762
-        for <io-uring@vger.kernel.org>; Mon, 29 Mar 2021 13:37:42 -0700 (PDT)
-Received: by mail-pj1-x1032.google.com with SMTP id il9-20020a17090b1649b0290114bcb0d6c2so8324074pjb.0
-        for <io-uring@vger.kernel.org>; Mon, 29 Mar 2021 13:37:42 -0700 (PDT)
+        with ESMTP id S229950AbhC2Ui6 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 29 Mar 2021 16:38:58 -0400
+Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92727C061574
+        for <io-uring@vger.kernel.org>; Mon, 29 Mar 2021 13:38:58 -0700 (PDT)
+Received: by mail-pg1-x52d.google.com with SMTP id k8so1016940pgf.4
+        for <io-uring@vger.kernel.org>; Mon, 29 Mar 2021 13:38:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=yHw9sshxoYuACLrTjqNN6yy+mznnvpE/1N42vZsEoUs=;
-        b=h5F9vdRjQ4LioJG8eD9OmaooCXnroWwcI7ACooozOP9Cf8J3AjghvHTR9E/XFPxuJO
-         xRZGLs0FI0RIexkC89/kGGBdQA5Khpvf+3BBT9uZpZBywUoWwfRjyyKtuWLMiNDz/S+v
-         b7k/sPntQJy4rp2SazSrLRsHdeJ8gtvCrirojjQ8QO+HUlZGOJdTx8dgfpHEanUc9L4g
-         QrBjx6c5m1MGZu6/cv+aVsgW6pDbaZgMDaReujs921UUMPPAGuJBWbFNAvGim1XfY/5n
-         nLsH5+NmfIwiwmdzxlYtFXaHp+VJc3ok21R7bs085bQKNmZiUltWtf9HIYpm7IFu1nf7
-         NuSQ==
+        bh=zkHWfQmcvkX73ALmQtfT/dMgLtpUYjokLV5A+ra7aPA=;
+        b=NGD/oGDdTsHlXc0LBNKLLFrOdp5PDi57ozZMqjYlu6LPG3rlcjDn1Sbf4dB9vl9p08
+         pRwVhxszXvNSxUYCe3itM4pcSztQ0AdPMuK1iczBcgKRR/ylTBe4gnPT8GMp8sOFqwYm
+         4fNSoJxDKzf3UurJkPmZXXe0FcA3X9evAEXVQVAD/OXsunRw2kQyXZ4F6HN033rFtCoY
+         pGprFloHW6w/CsLCSrUdJimSqpQcY8CatDe5KNDvX4rjLzrsGb4sYzX7QXrPMKnXuhXP
+         tF45Bip9Bxlwp+ZI4rfmXeKZMpcqsRadfcRFJQd3Vem202FQOonlIRQbcKyYJaujS3qw
+         4FKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=yHw9sshxoYuACLrTjqNN6yy+mznnvpE/1N42vZsEoUs=;
-        b=HMuF/Ny5kGFoooGbe/fHV2H0f2GVDAhBniNIJ7EgZrUmklpFBvNYeXgzS+G45ran0m
-         vNTjD9NgxaArX+jSNVoXk84X/Ol9azJvNTYuGHPMWLGAzHvzH+7XzTMDH0NSxyeFh3S7
-         gX9/Td8Ty//mr/PuUfaaBEWDX5AUWn9EUae40o9knNP80hG0rOu1W1L0wmwXUnep7AIE
-         sgHi5pXGusD3RlckaamvazmQmF10RzAPc2IihI9SVrElneq3d213LxcMqPM7wBeqQQeF
-         aQ55nphua4m1D0dVL4X2DHPjJ6d7uTqS/FiLpGHprXfmX+/4irkd4Kwcnfbq5m+gYGp6
-         pGag==
-X-Gm-Message-State: AOAM533vYgCMrd5C3zXaUiUlSfyJ1NeEvztBt7qs1I/7WLE4lTK9B3YK
-        yoO0lsN/CnIr9U7bbkjGahuplVYOBE3YsQ==
-X-Google-Smtp-Source: ABdhPJzJTU9hNPRCb3LW8F5vA4F04gPYzY16Ecx9WfPIlEfDFKSb/4CUxWGqJp8gvey7vWpPt4dlew==
-X-Received: by 2002:a17:90a:f489:: with SMTP id bx9mr876313pjb.80.1617050261376;
-        Mon, 29 Mar 2021 13:37:41 -0700 (PDT)
+        bh=zkHWfQmcvkX73ALmQtfT/dMgLtpUYjokLV5A+ra7aPA=;
+        b=QL8Ee1Yyg/1QcZvsSCJXhHeoA3Re59L9m1twfnPybZk8VbmrA66JXxzUzWAofrGYM0
+         +79RDY2oVK/Vp0A4MPY6UMLglpvED2jmpNcuEx4f+uU2END5pYyyK19iQEg16pVygWkE
+         z6q8Uo7teo7Ec3HkaTJJVv/XkoSn+8zCTjv68YTw0/4568dkjWkizkLFqraKvVYI7DZ/
+         5uGQgveApL31CMkRNhfgymC1SbT0m9zrlZH8TVdFF5xylhqKx/q/BIGUizSsVC8STAUH
+         y+S949/P6Vvc1SXoFLPOH6z1x0+CmUBd8imM3DqpkOGuNah3DHRd36IdxR3M9Ls3vCwE
+         /3QQ==
+X-Gm-Message-State: AOAM533PyUL4dSusBzds7FxfGAoZqLS//ySG/wVjE2p2NM+GbvbOfSMi
+        eBb0UYZfMN/lzWDL9NgP5L9hf/ognv0dBQ==
+X-Google-Smtp-Source: ABdhPJx0li6XjdkZT3HqOc9PM9ncGiYgOib2tmuYH82gsurb9DJZSezE+S2huOzia/8ziYIjuRkGUA==
+X-Received: by 2002:a05:6a00:b45:b029:207:16ba:12c4 with SMTP id p5-20020a056a000b45b029020716ba12c4mr26878935pfo.31.1617050338125;
+        Mon, 29 Mar 2021 13:38:58 -0700 (PDT)
 Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id o3sm422731pjm.30.2021.03.29.13.37.40
+        by smtp.gmail.com with ESMTPSA id fv9sm487081pjb.23.2021.03.29.13.38.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Mar 2021 13:37:40 -0700 (PDT)
-Subject: Re: [PATCH v2 0/2] io_uring: add mkdirat support
-To:     Dmitry Kadashev <dkadashev@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
-References: <20210202082353.2152271-1-dkadashev@gmail.com>
+        Mon, 29 Mar 2021 13:38:57 -0700 (PDT)
+Subject: Re: [PATCH v4 1/2] readdir: split the core of getdents64(2) out into
+ vfs_getdents()
+To:     Lennert Buytenhek <buytenh@wantstofly.org>,
+        io-uring@vger.kernel.org
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
+References: <YEuNMc5LlGftOHW6@wantstofly.org>
+ <YEuNlKWpQqGMCtL8@wantstofly.org>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <81aae948-940e-8fd3-7ac8-5b37692a931b@kernel.dk>
-Date:   Mon, 29 Mar 2021 14:37:39 -0600
+Message-ID: <a0301cec-2ec3-a3ea-40bd-7d00845705a1@kernel.dk>
+Date:   Mon, 29 Mar 2021 14:38:56 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20210202082353.2152271-1-dkadashev@gmail.com>
+In-Reply-To: <YEuNlKWpQqGMCtL8@wantstofly.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -68,22 +69,16 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/2/21 1:23 AM, Dmitry Kadashev wrote:
-> This adds mkdirat support to io_uring and is heavily based on recently
-> added renameat() / unlinkat() support.
+On 3/12/21 8:49 AM, Lennert Buytenhek wrote:
+> So that IORING_OP_GETDENTS may use it, split out the core of the
+> getdents64(2) syscall into a helper function, vfs_getdents().
 > 
-> The first patch is preparation with no functional changes, makes
-> do_mkdirat accept struct filename pointer rather than the user string.
-> 
-> The second one leverages that to implement mkdirat in io_uring.
-> 
-> Based on for-5.11/io_uring.
+> vfs_getdents() calls into filesystems' ->iterate{,_shared}() which
+> expect serialization on struct file, which means that callers of
+> vfs_getdents() are responsible for either using fdget_pos() or
+> performing the equivalent serialization by hand.
 
-Can you check if it still applies against for-5.13/io_uring? Both the
-vfs and io_uring bits.
-
-It'd be nice to get this moving forward, there's no reason why this
-should keep getting stalled.
+Al, how do you feel about this one?
 
 -- 
 Jens Axboe

@@ -2,85 +2,104 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BBDFF34C507
-	for <lists+io-uring@lfdr.de>; Mon, 29 Mar 2021 09:35:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B851B34CE1B
+	for <lists+io-uring@lfdr.de>; Mon, 29 Mar 2021 12:44:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230224AbhC2Hep (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 29 Mar 2021 03:34:45 -0400
-Received: from mail-il1-f199.google.com ([209.85.166.199]:53790 "EHLO
-        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230052AbhC2HeT (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 29 Mar 2021 03:34:19 -0400
-Received: by mail-il1-f199.google.com with SMTP id k12so1424978ilo.20
-        for <io-uring@vger.kernel.org>; Mon, 29 Mar 2021 00:34:18 -0700 (PDT)
+        id S232648AbhC2KoR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 29 Mar 2021 06:44:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51900 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232611AbhC2Knp (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 29 Mar 2021 06:43:45 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 988FDC061574
+        for <io-uring@vger.kernel.org>; Mon, 29 Mar 2021 03:43:44 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id d8-20020a1c1d080000b029010f15546281so8275028wmd.4
+        for <io-uring@vger.kernel.org>; Mon, 29 Mar 2021 03:43:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3Pl9BcFLNXFbmmCNqGWv2Vn4rYnc2KZZO0ikC+cK8oU=;
+        b=gcnHC0NnwC58nSV0Lw/bYvuVyO0htYcg+9xK1E0gf+CHcbpb74N/n+ucOroHe5sxv/
+         RiQB7hv2rvOAIFtwUxCoi0nTuN+T5WSAsxxie/PdZlwHONlsIcmIEOsoHTlPnFrsbaFe
+         FNQ2u5EVHJ3j8AjJSgfF/jSKZ47earyy/Qs+V+BWKfGeuZFT+T7vDqjnfH87SDtqkoQ8
+         dTrs3v4u6pKHd1fakyvR1H+e2qyZZrtLHh5e5cSNLpxTct2i0aUrEbxGDC1J7pOrx2sG
+         BvcSyHFgYDLLs3oW77STTbyIImT7LocNrSCLDvUJi2uzieU8NvrooTBGOQNPlERI+Mbo
+         G0Jg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=rkx6f5eZxM8bJf3bhoFtK8wtJFTPJJFa5t60FGLf0/Q=;
-        b=sMpc5XwcwTb5j03VXhvdBViVj1Jq2cm4/kFwxVvtSLsJy9fgKhusWdh/B6rvZ+RfBU
-         08NhOkuwjQDRAHbqFCXWZbUtYxYGMW9FL5nDCZLzw39Jd18fJLdOb/fZ/SxZSU3Hk4nV
-         HN1nnhl/dBI8lPg7hb1rpoXIx7rw9mWUZCY/zCZk14etmulyF9mUZQDzMQtlyiZwLA/C
-         gSZG44EN7tA+fpVzlgaBjDE4Mv4X/nwT54Ax3EJHmr5EnCNmd8k9EutP7wDfhQrU+RVY
-         0aHKBDoxLD0Jg4Ih5s9f2h3tDdlvsZoTza5FlkVnzo1xkj8P3yt1QFu6W7ra2i1kzLBE
-         n4gQ==
-X-Gm-Message-State: AOAM531zpLjUzwAVzgsxl6DXBwKBa/wJ5gIYt5bOcDr/7ZIOOx9dJ+SL
-        cf3NZkEQ/vxEDDgtczp2QoPZ+xwR6Hwrl+xGVOwxuQ8dV+I8
-X-Google-Smtp-Source: ABdhPJzYITpmri6/x2Ymkbatr4u8o4D5pL32ACoBzIVypQdBNjw4pvA13SQb2JFhAHLNwpjjb0JknvExUT5m3zQ5XAzWxMFfvIj0
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3Pl9BcFLNXFbmmCNqGWv2Vn4rYnc2KZZO0ikC+cK8oU=;
+        b=QECXqPOo4ypuUvTVnNhxFnNWCtmPatzaDh2dPYhl76BlXDQBJZqXvxQYMDf89IOLVM
+         +vD0kkn8OY0y3ENZb4/bppX1IN74V9aHZheVAVeUf3rvo8eVcv9her7xoKhD4iILN2vz
+         EYv3d0Vb8GyPY+PcjIrF+3Xn8M1A0l6LwYspTHxRdzwzgAYtiCY3xB2rWHV+7hNcEo19
+         4VjJZPrejNFKComXS/6Fw2wDM+yRT65Q+qpBNfkOT2KUpYGxGSJfn5n5l5zX5s9V/KgH
+         vgb9rAP1Y0XqT5oTF1PLJl3R+bg1K/H38zau7y7Lm67gx+/OPpJ9XsB4fkqylcKU28q7
+         MFYw==
+X-Gm-Message-State: AOAM533FPhMRX4lIyTpMIVtc1/VYzc87W4oiyaQGkWdNfkC79fginF38
+        fm7jXD2McESv1H9P9xfOE58ZuPR7RjSYEQ==
+X-Google-Smtp-Source: ABdhPJx8RKaf2vofxlLapUjpKNvzf36b5RmE5tEIEmO/svG0IJ92rf+2o4UvbzEaBzqHZ9bJTRdY8w==
+X-Received: by 2002:a1c:7ec4:: with SMTP id z187mr24294341wmc.3.1617014623397;
+        Mon, 29 Mar 2021 03:43:43 -0700 (PDT)
+Received: from localhost.localdomain ([148.252.129.162])
+        by smtp.gmail.com with ESMTPSA id x11sm24092938wmi.3.2021.03.29.03.43.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Mar 2021 03:43:43 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc:     syzbot+0e905eb8228070c457a0@syzkaller.appspotmail.com
+Subject: [PATCH 5.12] io_uring: handle setup-failed ctx in kill_timeouts
+Date:   Mon, 29 Mar 2021 11:39:29 +0100
+Message-Id: <660261a48f0e7abf260c8e43c87edab3c16736fa.1617014345.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-X-Received: by 2002:a02:694b:: with SMTP id e72mr22964093jac.89.1617003258037;
- Mon, 29 Mar 2021 00:34:18 -0700 (PDT)
-Date:   Mon, 29 Mar 2021 00:34:18 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000cbcdca05bea7e829@google.com>
-Subject: [syzbot] WARNING: still has locks held in io_sq_thread
-From:   syzbot <syzbot+796d767eb376810256f5@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    81b1d39f Merge tag '5.12-rc4-smb3' of git://git.samba.org/..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10fcce62d00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d4e9addca54f3b44
-dashboard link: https://syzkaller.appspot.com/bug?extid=796d767eb376810256f5
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17d06ddcd00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=150764bed00000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+796d767eb376810256f5@syzkaller.appspotmail.com
-
-====================================
-WARNING: iou-sqp-8386/8387 still has locks held!
-5.12.0-rc4-syzkaller #0 Not tainted
-------------------------------------
-1 lock held by iou-sqp-8386/8387:
- #0: ffff88801e1d2470 (&sqd->lock){+.+.}-{3:3}, at: io_sq_thread+0x24c/0x13a0 fs/io_uring.c:6731
-
-stack backtrace:
-CPU: 1 PID: 8387 Comm: iou-sqp-8386 Not tainted 5.12.0-rc4-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+general protection fault, probably for non-canonical address
+	0xdffffc0000000018: 0000 [#1] KASAN: null-ptr-deref
+	in range [0x00000000000000c0-0x00000000000000c7]
+RIP: 0010:io_commit_cqring+0x37f/0xc10 fs/io_uring.c:1318
 Call Trace:
- __dump_stack lib/dump_stack.c:79 [inline]
- dump_stack+0x141/0x1d7 lib/dump_stack.c:120
- try_to_freeze include/linux/freezer.h:66 [inline]
- get_signal+0x171a/0x2150 kernel/signal.c:2576
- io_sq_thread+0x8d2/0x13a0 fs/io_uring.c:6748
+ io_kill_timeouts+0x2b5/0x320 fs/io_uring.c:8606
+ io_ring_ctx_wait_and_kill+0x1da/0x400 fs/io_uring.c:8629
+ io_uring_create fs/io_uring.c:9572 [inline]
+ io_uring_setup+0x10da/0x2ae0 fs/io_uring.c:9599
+ do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
 
+It can get into wait_and_kill() before setting up ctx->rings, and hence
+io_commit_cqring() fails. Mimic poll cancel and do it only when we
+completed events, there can't be any requests if it failed before
+initialising rings.
 
+Fixes: 80c4cbdb5ee60 ("io_uring: do post-completion chore on t-out cancel")
+Reported-by: syzbot+0e905eb8228070c457a0@syzkaller.appspotmail.com
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ fs/io_uring.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index a4a944da95a0..088a9d3c420a 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -8603,9 +8603,9 @@ static bool io_kill_timeouts(struct io_ring_ctx *ctx, struct task_struct *tsk,
+ 			canceled++;
+ 		}
+ 	}
+-	io_commit_cqring(ctx);
++	if (canceled != 0)
++		io_commit_cqring(ctx);
+ 	spin_unlock_irq(&ctx->completion_lock);
+-
+ 	if (canceled != 0)
+ 		io_cqring_ev_posted(ctx);
+ 	return canceled != 0;
+-- 
+2.24.0
+

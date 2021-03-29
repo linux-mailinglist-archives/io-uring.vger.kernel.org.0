@@ -2,101 +2,62 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 91EA134DAE0
-	for <lists+io-uring@lfdr.de>; Tue, 30 Mar 2021 00:25:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E07E534DC85
+	for <lists+io-uring@lfdr.de>; Tue, 30 Mar 2021 01:33:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232306AbhC2WXu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 29 Mar 2021 18:23:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47590 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232361AbhC2WXC (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Mon, 29 Mar 2021 18:23:02 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C634D619A5;
-        Mon, 29 Mar 2021 22:23:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617056581;
-        bh=CenMTdIaxDdx8VHOhggwuKQQZythbrynCZREHZd/1nQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aWgqThtc4WBfGVkiBfON4PVBvnj/mSiEMAVYGMp95ZznGr8bamSqUZFchgQuxYvPp
-         CcBOSOAIzvk7XQ8wga6Lu9tNaV5/+BrJlqooG9HKXoW7TwyoyoNwq+pb909oxIRKjb
-         Yhl3p10hPBepFCL0ThdECWM08obkujugKt90+sGsFooYwcRweVOnwCkZCVBLu+j+gL
-         +RCjC6zA7wxxA6CJ8u8Mh2jJBGtW0wDxPKbPkHPqd2U5TwD0bJZM6zcanG2S6euiq6
-         SgOZnHBPXpbC9mRioIZ08pWmgBkCRkCB071G3EKgLcsSwB5FL7JyC3VBWVWpJTQAvS
-         yXlLoJUT4BW7g==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        io-uring@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 32/33] io_uring: fix timeout cancel return code
-Date:   Mon, 29 Mar 2021 18:22:20 -0400
-Message-Id: <20210329222222.2382987-32-sashal@kernel.org>
-X-Mailer: git-send-email 2.30.1
-In-Reply-To: <20210329222222.2382987-1-sashal@kernel.org>
-References: <20210329222222.2382987-1-sashal@kernel.org>
+        id S230161AbhC2XdY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 29 Mar 2021 19:33:24 -0400
+Received: from mail-io1-f72.google.com ([209.85.166.72]:46480 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229873AbhC2XdI (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 29 Mar 2021 19:33:08 -0400
+Received: by mail-io1-f72.google.com with SMTP id w8so12018075iox.13
+        for <io-uring@vger.kernel.org>; Mon, 29 Mar 2021 16:33:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=lMlioT72BHXScbFHNZMJLoPdODEiwb40F9vPrqeqLoM=;
+        b=N++F85TmF7bMyzmtq1HdQdUQCH8DKjfy+qocjqr/jjtN5hvKzcqshg9B98/PXspEKq
+         WQFyMpDxMgXxB2vXH8U4PzKg0LbK6j7a1skSh0ae8vWEUVeYXQvzcLc+1SqCwPsXP9p6
+         ZfYub5NjW3qemFbLIIBLfgQSywlP7SYl9zDrQ/FYGeOytpoUQICc7XNFzAMYP9C2Z9Dy
+         VDMnhUO//3QAeCjFZPsBB2lHeMHwLI1f3ozl7KYHX6ts6Gn6nmlPmQM59yXbCJfcdUUy
+         zaJgpiHGinw19AAHxSmySCKiqUAwoSvbjvhvder293sH9SfeAEvnGBcRrQzp72UuvbYl
+         B4hQ==
+X-Gm-Message-State: AOAM533t4Llv0jBAT7XJiKUSeMPwhzvoOdrx/8nVpgi/uy+dQQ+zC9kJ
+        /MSSXMpO43t1ziHQLfD20CbYiH0Z7Mi9p6Vhl/lQi/ziwMrd
+X-Google-Smtp-Source: ABdhPJwbpo1qBtqFDEAozEtKpv7+6pbc039Tmkz4JX4dPkyQ4fE1JV42MwydMp0mlXFrwMNWtxLegYbPzDkz6Bc18A4ABmxVHB+9
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6638:378c:: with SMTP id w12mr26304998jal.127.1617060787957;
+ Mon, 29 Mar 2021 16:33:07 -0700 (PDT)
+Date:   Mon, 29 Mar 2021 16:33:07 -0700
+In-Reply-To: <f96bff2f-bcd5-a04f-4130-1c3a933f97a2@kernel.dk>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d8bb1905beb54dcf@google.com>
+Subject: Re: [syzbot] KASAN: use-after-free Read in create_worker_cb
+From:   syzbot <syzbot+099593561bbd1805b839@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mingo@kernel.org, mingo@redhat.com,
+        peterz@infradead.org, rostedt@goodmis.org,
+        syzkaller-bugs@googlegroups.com, will@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Pavel Begunkov <asml.silence@gmail.com>
+Hello,
 
-[ Upstream commit 1ee4160c73b2102a52bc97a4128a89c34821414f ]
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-When we cancel a timeout we should emit a sensible return code, like
--ECANCELED but not 0, otherwise it may trick users.
+Reported-and-tested-by: syzbot+099593561bbd1805b839@syzkaller.appspotmail.com
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-Link: https://lore.kernel.org/r/7b0ad1065e3bd1994722702bd0ba9e7bc9b0683b.1616696997.git.asml.silence@gmail.com
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/io_uring.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Tested on:
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 06e9c2181995..f635749766a7 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1489,7 +1489,7 @@ static void io_queue_async_work(struct io_kiocb *req)
- 		io_queue_linked_timeout(link);
- }
- 
--static void io_kill_timeout(struct io_kiocb *req)
-+static void io_kill_timeout(struct io_kiocb *req, int status)
- {
- 	struct io_timeout_data *io = req->async_data;
- 	int ret;
-@@ -1499,7 +1499,7 @@ static void io_kill_timeout(struct io_kiocb *req)
- 		atomic_set(&req->ctx->cq_timeouts,
- 			atomic_read(&req->ctx->cq_timeouts) + 1);
- 		list_del_init(&req->timeout.list);
--		io_cqring_fill_event(req, 0);
-+		io_cqring_fill_event(req, status);
- 		io_put_req_deferred(req, 1);
- 	}
- }
-@@ -1516,7 +1516,7 @@ static bool io_kill_timeouts(struct io_ring_ctx *ctx, struct task_struct *tsk,
- 	spin_lock_irq(&ctx->completion_lock);
- 	list_for_each_entry_safe(req, tmp, &ctx->timeout_list, timeout.list) {
- 		if (io_match_task(req, tsk, files)) {
--			io_kill_timeout(req);
-+			io_kill_timeout(req, -ECANCELED);
- 			canceled++;
- 		}
- 	}
-@@ -1568,7 +1568,7 @@ static void io_flush_timeouts(struct io_ring_ctx *ctx)
- 			break;
- 
- 		list_del_init(&req->timeout.list);
--		io_kill_timeout(req);
-+		io_kill_timeout(req, 0);
- 	} while (!list_empty(&ctx->timeout_list));
- 
- 	ctx->cq_last_tm_flush = seq;
--- 
-2.30.1
+commit:         24996dbd io_uring: reg buffer overflow checks hardening
+git tree:       git://git.kernel.dk/linux-block for-5.13/io_uring
+kernel config:  https://syzkaller.appspot.com/x/.config?x=cbb3af9ca0d22f7a
+dashboard link: https://syzkaller.appspot.com/bug?extid=099593561bbd1805b839
+compiler:       
 
+Note: testing is done by a robot and is best-effort only.

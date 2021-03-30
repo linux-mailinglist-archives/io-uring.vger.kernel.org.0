@@ -2,68 +2,141 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AA0ED34E1F6
-	for <lists+io-uring@lfdr.de>; Tue, 30 Mar 2021 09:17:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3211234E578
+	for <lists+io-uring@lfdr.de>; Tue, 30 Mar 2021 12:31:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231259AbhC3HRW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 30 Mar 2021 03:17:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54268 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229483AbhC3HRF (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Tue, 30 Mar 2021 03:17:05 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 5789961989;
-        Tue, 30 Mar 2021 07:17:03 +0000 (UTC)
-Date:   Tue, 30 Mar 2021 09:17:00 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Dmitry Kadashev <dkadashev@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] fs: make do_mkdirat() take struct filename
-Message-ID: <20210330071700.kpjoyp5zlni7uejm@wittgenstein>
-References: <20210330055957.3684579-1-dkadashev@gmail.com>
- <20210330055957.3684579-2-dkadashev@gmail.com>
+        id S231701AbhC3Kaf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 30 Mar 2021 06:30:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50002 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231579AbhC3KaX (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 30 Mar 2021 06:30:23 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E36CC061574
+        for <io-uring@vger.kernel.org>; Tue, 30 Mar 2021 03:30:20 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id j18so15720745wra.2
+        for <io-uring@vger.kernel.org>; Tue, 30 Mar 2021 03:30:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=IlEfzAhLue7KXkSCB3k2Sceuj/YicMS0nq+WNJb1zpw=;
+        b=T2jgvpDYCcb1qHcYOXIf4acdORmzWDc80nHU1h8uc1A465Vim95uW0POCK4T65PQpA
+         BKVmSdKlKRQZMCYh+Q5eeHjVReTLOIZSX39Ylj8dpPrXpmc0igE2cV6WGh6UsQRjcd6c
+         b3bRskl7ul4XwNySfmZ5Q6B733UCFqcdc8bbGavuc/djFBQdqhAEnDLF04RQ58AQHcKr
+         S3ZuRavOihK9YCoOtl921zppHWThvUcqLsm/8LQhq6Y3x+uW4kyIQuADdIVjmK048AO/
+         MkmkjEWfYstzoO7yHehEMxoQwpMkg+F/+1m7PPdvQoRfYbdUcE9BLvrDioJ/Ni8HHj2T
+         shBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=IlEfzAhLue7KXkSCB3k2Sceuj/YicMS0nq+WNJb1zpw=;
+        b=Xs/8/EcuphWdH+sE46wurbQqaiuXI3Kkutu7trCiSDxOZRvtRjxBHMi3b/52LsEIuJ
+         /ZPAXaINVTh0gHpfI1DMeCzs4+qaY8j264kYkXWOJFaKr8lSt2mm/d5bwW/huc0ruayM
+         Q+7NWQ2wqzzjDvMcb8Rpr5bvnkVhwFaLAQ+5DS2obYmroTiQsuLmS+tW18Ww+1kQn/AP
+         MtqaX7mVt7dgZhuvmGSaaLKjhFxiq09FeQoJv28Kio9YKm9YbsMixBiViZvaXS0TD/eB
+         US1fzRcNYAegbYISRqGq3wG+wdJVnbtQJotHVoBlWgLNYmGVrZjoFKyJR4jGO/VsfyXR
+         6eYQ==
+X-Gm-Message-State: AOAM533VBfkkb9ih3SfZzOumMjvW6AeBmnbrVuIQbDxveuRDoFOtYqzY
+        3mXalSa4BNypZEvAjzDseJxTQAF8swXZRA==
+X-Google-Smtp-Source: ABdhPJzU/rFIHL/HXio2Q5GYy2zG8aPrlnhI7t/1cpO7ucUhGRmNoU5OiNvOvdnH8w5/sVWf7PiFyg==
+X-Received: by 2002:a5d:604b:: with SMTP id j11mr23719938wrt.424.1617100219453;
+        Tue, 30 Mar 2021 03:30:19 -0700 (PDT)
+Received: from localhost.localdomain ([85.255.234.174])
+        by smtp.gmail.com with ESMTPSA id c131sm2794178wma.37.2021.03.30.03.30.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Mar 2021 03:30:18 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [PATCH liburing] tests: test CQE ordering on early submission fail
+Date:   Tue, 30 Mar 2021 11:26:09 +0100
+Message-Id: <bfc0ffac5d54adeb3472ec6160f6aeaf8f70c1ca.1617099951.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20210330055957.3684579-2-dkadashev@gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Mar 30, 2021 at 12:59:56PM +0700, Dmitry Kadashev wrote:
-> Pass in the struct filename pointers instead of the user string, and
-> update the three callers to do the same. This is heavily based on
-> commit dbea8d345177 ("fs: make do_renameat2() take struct filename").
-> 
-> This behaves like do_unlinkat() and do_renameat2().
-> 
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Signed-off-by: Dmitry Kadashev <dkadashev@gmail.com>
-> ---
->  fs/internal.h |  1 +
->  fs/namei.c    | 25 +++++++++++++++++++------
->  2 files changed, 20 insertions(+), 6 deletions(-)
+Check that CQEs of a link comes in the order of submission, even when
+a link fails early during submission initial prep.
 
-The only thing that is a bit unpleasant here is that this change
-breaks the consistency between the creation helpers:
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ test/link.c | 53 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 53 insertions(+)
 
-do_mkdirat()
-do_symlinkat()
-do_linkat()
-do_mknodat()
+diff --git a/test/link.c b/test/link.c
+index c89d6b2..fadd0b5 100644
+--- a/test/link.c
++++ b/test/link.c
+@@ -429,6 +429,53 @@ err:
+ 	return 1;
+ }
+ 
++static int test_link_fail_ordering(struct io_uring *ring)
++{
++	struct io_uring_cqe *cqe;
++	struct io_uring_sqe *sqe;
++	int ret, i, nr_compl;
++
++	sqe = io_uring_get_sqe(ring);
++	io_uring_prep_nop(sqe);
++	sqe->flags |= IOSQE_IO_LINK;
++	sqe->user_data = 0;
++
++	sqe = io_uring_get_sqe(ring);
++	io_uring_prep_write(sqe, -1, NULL, 100, 0);
++	sqe->flags |= IOSQE_IO_LINK;
++	sqe->user_data = 1;
++
++	sqe = io_uring_get_sqe(ring);
++	io_uring_prep_nop(sqe);
++	sqe->flags |= IOSQE_IO_LINK;
++	sqe->user_data = 2;
++
++	nr_compl = ret = io_uring_submit(ring);
++	/* at least the first nop should have been submitted */
++	if (ret < 1) {
++		fprintf(stderr, "sqe submit failed: %d\n", ret);
++		goto err;
++	}
++
++	for (i = 0; i < nr_compl; i++) {
++		ret = io_uring_wait_cqe(ring, &cqe);
++		if (ret) {
++			fprintf(stderr, "wait completion %d\n", ret);
++			goto err;
++		}
++		if (cqe->user_data != i) {
++			fprintf(stderr, "wrong CQE order, got %i, expected %i\n",
++					(int)cqe->user_data, i);
++			goto err;
++		}
++		io_uring_cqe_seen(ring, cqe);
++	}
++
++	return 0;
++err:
++	return 1;
++}
++
+ int main(int argc, char *argv[])
+ {
+ 	struct io_uring ring, poll_ring;
+@@ -492,5 +539,11 @@ int main(int argc, char *argv[])
+ 		return ret;
+ 	}
+ 
++	ret = test_link_fail_ordering(&ring);
++	if (ret) {
++		fprintf(stderr, "test_link_fail_ordering last failed\n");
++		return ret;
++	}
++
+ 	return 0;
+ }
+-- 
+2.24.0
 
-All but of them currently take
-const char __user *pathname
-and call
-user_path_create()
-with that do_mkdirat() change that's no longer true. One of the major
-benefits over the recent years in this code is naming and type consistency.
-And since it's just matter of time until io_uring will also gain support
-for do_{symlinkat,linkat,mknodat} I would think switching all of them to
-take a struct filename
-and then have all do_* helpers call getname() might just be nicer in the
-long run.
-
-Christian

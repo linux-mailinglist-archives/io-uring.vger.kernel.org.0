@@ -2,355 +2,105 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3901C3503FF
-	for <lists+io-uring@lfdr.de>; Wed, 31 Mar 2021 18:00:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F25E350409
+	for <lists+io-uring@lfdr.de>; Wed, 31 Mar 2021 18:02:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233305AbhCaP7i (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 31 Mar 2021 11:59:38 -0400
-Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:49377 "EHLO
-        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232805AbhCaP7b (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 31 Mar 2021 11:59:31 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R791e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UTyvTgi_1617206366;
-Received: from localhost(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0UTyvTgi_1617206366)
+        id S233433AbhCaQBt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 31 Mar 2021 12:01:49 -0400
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:56939 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233738AbhCaQBq (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 31 Mar 2021 12:01:46 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UTyrMIb_1617206502;
+Received: from localhost(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0UTyrMIb_1617206502)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 31 Mar 2021 23:59:26 +0800
+          Thu, 01 Apr 2021 00:01:42 +0800
 From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
 To:     io-uring@vger.kernel.org
 Cc:     axboe@kernel.dk, asml.silence@gmail.com,
         joseph.qi@linux.alibaba.com
-Subject: [PATCH] io_uring: support multiple rings to share same poll thread by specifying same cpu
-Date:   Wed, 31 Mar 2021 23:59:26 +0800
-Message-Id: <20210331155926.22913-1-xiaoguang.wang@linux.alibaba.com>
+Subject: [FIO PATCH] engines/io_uring: add sqthread_poll_percpu option
+Date:   Thu,  1 Apr 2021 00:01:42 +0800
+Message-Id: <20210331160142.22998-1-xiaoguang.wang@linux.alibaba.com>
 X-Mailer: git-send-email 2.17.2
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-We have already supported multiple rings to share one same poll thread
-by passing IORING_SETUP_ATTACH_WQ, but it's not that convenient to use.
-IORING_SETUP_ATTACH_WQ needs users to ensure that a parent ring instance
-has beed created firstly, that means it will require app to regulate the
-creation oder between uring instances.
-
-Currently we can make this a bit simpler, for those rings which will
-have SQPOLL enabled and are willing to be bound to one same cpu, add a
-capability that these rings can share one poll thread by specifying
-a new IORING_SETUP_SQPOLL_PERCPU flag, then we have 3 cases
-  1, IORING_SETUP_ATTACH_WQ: if user specifies this flag, we'll always
-try to attach this ring to an existing ring's corresponding poll thread,
-no matter whether IORING_SETUP_SQ_AFF or IORING_SETUP_SQPOLL_PERCPU is
-set.
-  2, IORING_SETUP_SQ_AFF and IORING_SETUP_SQPOLL_PERCPU are both enabled,
-for this case, we'll create a single poll thread to be shared by rings
-rings which have same sq_thread_cpu.
-  3, for any other cases, we'll just create one new poll thread for the
-corresponding ring.
-
-And for case 2, don't need to regulate creation oder of multiple uring
-instances, we use a mutex to synchronize creation, for example, say five
-rings which all have IORING_SETUP_SQ_AFF & IORING_SETUP_SQPOLL_PERCPU
-enabled, and are willing to be bound same cpu, one ring that gets the
-mutex lock will create one poll thread, the other four rings will just
-attach themselves to the previous created poll thread once they get lock
-successfully.
-
-To implement above function, define below data structs:
-  struct percpu_sqd_entry {
-        struct list_head        node;
-        struct io_sq_data       *sqd;
-        pid_t                   tgid;
-  };
-
-  struct percpu_sqd_list {
-        struct list_head        head;
-        struct mutex            lock;
-  };
-
-  static struct percpu_sqd_list __percpu *percpu_sqd_list;
-
-sqthreads that have same sq_thread_cpu will be linked together in a percpu
-percpu_sqd_list's head. When IORING_SETUP_SQ_AFF and IORING_SETUP_SQPOLL_PERCPU
-are both enabled, we will use struct io_uring_params' sq_thread_cpu and
-current-tgid locate corresponding sqd.
+This option is only meaningful when sqthread_poll and sqthread_poll_cpu
+are both set. If this option is effective, for multiple io_uring instances
+which are all bound to one same cpu, only one kernel thread is created for
+this cpu to perform these io_uring instances' submission queue polling.
 
 Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
 ---
- fs/io_uring.c                 | 155 ++++++++++++++++++++++++++++------
- include/uapi/linux/io_uring.h |   1 +
- 2 files changed, 131 insertions(+), 25 deletions(-)
+ engines/io_uring.c  | 12 ++++++++++++
+ fio.1               |  6 ++++++
+ os/linux/io_uring.h |  1 +
+ 3 files changed, 19 insertions(+)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 1949b80677e7..4c24ceb1893b 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -255,6 +255,8 @@ enum {
- 	IO_SQ_THREAD_SHOULD_PARK,
- };
- 
-+struct percpu_sqd_entry;
-+
- struct io_sq_data {
- 	refcount_t		refs;
- 	atomic_t		park_pending;
-@@ -271,11 +273,25 @@ struct io_sq_data {
- 	pid_t			task_pid;
- 	pid_t			task_tgid;
- 
-+	struct percpu_sqd_entry	*percpu_sqd_entry;
- 	unsigned long		state;
- 	struct completion	exited;
- 	struct callback_head	*park_task_work;
- };
- 
-+struct percpu_sqd_entry {
-+	struct list_head	node;
-+	struct io_sq_data	*sqd;
-+	pid_t			tgid;
-+};
-+
-+struct percpu_sqd_list {
-+	struct list_head	head;
-+	struct mutex		lock;
-+};
-+
-+static struct percpu_sqd_list __percpu *percpu_sqd_list;
-+
- #define IO_IOPOLL_BATCH			8
- #define IO_COMPL_BATCH			32
- #define IO_REQ_CACHE_SIZE		32
-@@ -7153,7 +7169,18 @@ static void io_put_sq_data(struct io_sq_data *sqd)
- 		WARN_ON_ONCE(atomic_read(&sqd->park_pending));
- 
- 		io_sq_thread_stop(sqd);
--		kfree(sqd);
-+		if (sqd->percpu_sqd_entry) {
-+			struct percpu_sqd_list *psl;
-+
-+			psl = per_cpu_ptr(percpu_sqd_list, sqd->sq_cpu);
-+			mutex_lock(&psl->lock);
-+			list_del(&sqd->percpu_sqd_entry->node);
-+			kfree(sqd->percpu_sqd_entry);
-+			kfree(sqd);
-+			mutex_unlock(&psl->lock);
-+		} else {
-+			kfree(sqd);
-+		}
- 	}
- }
- 
-@@ -7204,10 +7231,30 @@ static struct io_sq_data *io_attach_sq_data(struct io_uring_params *p)
- 	return sqd;
- }
- 
--static struct io_sq_data *io_get_sq_data(struct io_uring_params *p,
-+static struct io_sq_data *io_alloc_sq_data(void)
-+{
-+	struct io_sq_data *sqd;
-+
-+	sqd = kzalloc(sizeof(*sqd), GFP_KERNEL);
-+	if (!sqd)
-+		return ERR_PTR(-ENOMEM);
-+
-+	atomic_set(&sqd->park_pending, 0);
-+	refcount_set(&sqd->refs, 1);
-+	INIT_LIST_HEAD(&sqd->ctx_list);
-+	mutex_init(&sqd->lock);
-+	init_waitqueue_head(&sqd->wait);
-+	init_completion(&sqd->exited);
-+	return sqd;
-+}
-+
-+static struct io_sq_data *io_get_sq_data(struct io_uring_params *p, int cpu,
- 					 bool *attached)
- {
- 	struct io_sq_data *sqd;
-+	struct percpu_sqd_entry *sqd_entry;
-+	struct percpu_sqd_list *psl;
-+	bool found = false;
- 
- 	*attached = false;
- 	if (p->flags & IORING_SETUP_ATTACH_WQ) {
-@@ -7221,16 +7268,43 @@ static struct io_sq_data *io_get_sq_data(struct io_uring_params *p,
- 			return sqd;
- 	}
- 
--	sqd = kzalloc(sizeof(*sqd), GFP_KERNEL);
-+	if (!(p->flags & IORING_SETUP_SQ_AFF) ||
-+	    !(p->flags & IORING_SETUP_SQ_PERCPU)) {
-+		sqd = io_alloc_sq_data();
-+		if (!IS_ERR(sqd))
-+			sqd->sq_cpu = cpu;
-+		return sqd;
-+	}
-+
-+	psl = per_cpu_ptr(percpu_sqd_list, cpu);
-+	list_for_each_entry(sqd_entry, &psl->head, node) {
-+		if (sqd_entry->tgid == current->tgid) {
-+			found = true;
-+			break;
-+		}
-+	}
-+	if (found) {
-+		sqd = sqd_entry->sqd;
-+		refcount_inc(&sqd->refs);
-+		*attached = true;
-+		return sqd;
-+	}
-+
-+	sqd = io_alloc_sq_data();
- 	if (!sqd)
- 		return ERR_PTR(-ENOMEM);
- 
--	atomic_set(&sqd->park_pending, 0);
--	refcount_set(&sqd->refs, 1);
--	INIT_LIST_HEAD(&sqd->ctx_list);
--	mutex_init(&sqd->lock);
--	init_waitqueue_head(&sqd->wait);
--	init_completion(&sqd->exited);
-+	sqd_entry = kzalloc(sizeof(*sqd_entry), GFP_KERNEL);
-+	if (!sqd_entry) {
-+		kfree(sqd);
-+		return ERR_PTR(-ENOMEM);
-+	}
-+
-+	sqd->sq_cpu = cpu;
-+	sqd->percpu_sqd_entry = sqd_entry;
-+	sqd_entry->sqd = sqd;
-+	sqd_entry->tgid = current->tgid;
-+	list_add(&sqd_entry->node, &psl->head);
- 	return sqd;
- }
- 
-@@ -7870,6 +7944,8 @@ static int io_sq_offload_create(struct io_ring_ctx *ctx,
- 				struct io_uring_params *p)
- {
- 	int ret;
-+	struct percpu_sqd_list *psl;
-+	bool lock_held = false;
- 
- 	/* Retain compatibility with failing for an invalid attach attempt */
- 	if ((ctx->flags & (IORING_SETUP_ATTACH_WQ | IORING_SETUP_SQPOLL)) ==
-@@ -7889,12 +7965,36 @@ static int io_sq_offload_create(struct io_ring_ctx *ctx,
- 		struct task_struct *tsk;
- 		struct io_sq_data *sqd;
- 		bool attached;
-+		int cpu;
- 
- 		ret = -EPERM;
- 		if (!capable(CAP_SYS_ADMIN) && !capable(CAP_SYS_NICE))
- 			goto err;
- 
--		sqd = io_get_sq_data(p, &attached);
-+		if (p->flags & IORING_SETUP_SQ_AFF) {
-+			cpu = p->sq_thread_cpu;
-+
-+			ret = -EINVAL;
-+			if (cpu >= nr_cpu_ids)
-+				goto err;
-+			if (!cpu_online(cpu))
-+				goto err;
-+		} else {
-+			cpu = -1;
-+		}
-+
-+		/*
-+		 * For percpu sqthread, need to synchronize creation oder
-+		 * between uring instances.
-+		 */
-+		if ((p->flags & IORING_SETUP_SQ_AFF) &&
-+		    (p->flags & IORING_SETUP_SQ_PERCPU)) {
-+			psl = per_cpu_ptr(percpu_sqd_list, cpu);
-+			lock_held = true;
-+			mutex_lock(&psl->lock);
-+		}
-+
-+		sqd = io_get_sq_data(p, cpu, &attached);
- 		if (IS_ERR(sqd)) {
- 			ret = PTR_ERR(sqd);
- 			goto err;
-@@ -7917,21 +8017,10 @@ static int io_sq_offload_create(struct io_ring_ctx *ctx,
- 
- 		if (ret < 0)
- 			goto err;
--		if (attached)
-+		if (attached) {
-+			if (lock_held)
-+				mutex_unlock(&psl->lock);
- 			return 0;
--
--		if (p->flags & IORING_SETUP_SQ_AFF) {
--			int cpu = p->sq_thread_cpu;
--
--			ret = -EINVAL;
--			if (cpu >= nr_cpu_ids)
--				goto err_sqpoll;
--			if (!cpu_online(cpu))
--				goto err_sqpoll;
--
--			sqd->sq_cpu = cpu;
--		} else {
--			sqd->sq_cpu = -1;
- 		}
- 
- 		sqd->task_pid = current->pid;
-@@ -7953,9 +8042,13 @@ static int io_sq_offload_create(struct io_ring_ctx *ctx,
- 		goto err;
- 	}
- 
-+	if (lock_held)
-+		mutex_unlock(&psl->lock);
- 	return 0;
- err:
- 	io_sq_thread_finish(ctx);
-+	if (lock_held)
-+		mutex_unlock(&psl->lock);
- 	return ret;
- err_sqpoll:
- 	complete(&ctx->sq_data->exited);
-@@ -9593,7 +9686,7 @@ static long io_uring_setup(u32 entries, struct io_uring_params __user *params)
- 	if (p.flags & ~(IORING_SETUP_IOPOLL | IORING_SETUP_SQPOLL |
- 			IORING_SETUP_SQ_AFF | IORING_SETUP_CQSIZE |
- 			IORING_SETUP_CLAMP | IORING_SETUP_ATTACH_WQ |
--			IORING_SETUP_R_DISABLED))
-+			IORING_SETUP_R_DISABLED | IORING_SETUP_SQ_PERCPU))
- 		return -EINVAL;
- 
- 	return  io_uring_create(entries, &p, params);
-@@ -9928,6 +10021,8 @@ SYSCALL_DEFINE4(io_uring_register, unsigned int, fd, unsigned int, opcode,
- 
- static int __init io_uring_init(void)
- {
-+	int cpu;
-+
- #define __BUILD_BUG_VERIFY_ELEMENT(stype, eoffset, etype, ename) do { \
- 	BUILD_BUG_ON(offsetof(stype, ename) != eoffset); \
- 	BUILD_BUG_ON(sizeof(etype) != sizeof_field(stype, ename)); \
-@@ -9969,6 +10064,16 @@ static int __init io_uring_init(void)
- 	BUILD_BUG_ON(__REQ_F_LAST_BIT >= 8 * sizeof(int));
- 	req_cachep = KMEM_CACHE(io_kiocb, SLAB_HWCACHE_ALIGN | SLAB_PANIC |
- 				SLAB_ACCOUNT);
-+
-+	percpu_sqd_list = alloc_percpu(struct percpu_sqd_list);
-+	for_each_possible_cpu(cpu) {
-+		struct percpu_sqd_list *sqd_list;
-+
-+		sqd_list = per_cpu_ptr(percpu_sqd_list, cpu);
-+		INIT_LIST_HEAD(&sqd_list->head);
-+		mutex_init(&sqd_list->lock);
-+	}
-+
- 	return 0;
- };
- __initcall(io_uring_init);
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 2514eb6b1cf2..0b80472fd3c5 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -98,6 +98,7 @@ enum {
+diff --git a/engines/io_uring.c b/engines/io_uring.c
+index b962e804..638e5b71 100644
+--- a/engines/io_uring.c
++++ b/engines/io_uring.c
+@@ -78,6 +78,7 @@ struct ioring_options {
+ 	unsigned int fixedbufs;
+ 	unsigned int registerfiles;
+ 	unsigned int sqpoll_thread;
++	unsigned int sqpoll_thread_percpu;
+ 	unsigned int sqpoll_set;
+ 	unsigned int sqpoll_cpu;
+ 	unsigned int nonvectored;
+@@ -162,6 +163,15 @@ static struct fio_option options[] = {
+ 		.category = FIO_OPT_C_ENGINE,
+ 		.group	= FIO_OPT_G_IOURING,
+ 	},
++	{
++		.name   = "sqthread_poll_percpu",
++		.lname  = "Kernel percpu SQ thread polling",
++		.type   = FIO_OPT_INT,
++		.off1   = offsetof(struct ioring_options, sqpoll_thread_percpu),
++		.help   = "Offload submission/completion to kernel thread, use percpu thread",
++		.category = FIO_OPT_C_ENGINE,
++		.group  = FIO_OPT_G_IOURING,
++	},
+ 	{
+ 		.name	= "sqthread_poll_cpu",
+ 		.lname	= "SQ Thread Poll CPU",
+@@ -615,6 +625,8 @@ static int fio_ioring_queue_init(struct thread_data *td)
+ 		p.flags |= IORING_SETUP_IOPOLL;
+ 	if (o->sqpoll_thread) {
+ 		p.flags |= IORING_SETUP_SQPOLL;
++		if (o->sqpoll_thread_percpu)
++			p.flags |= IORING_SETUP_SQ_PERCPU;
+ 		if (o->sqpoll_set) {
+ 			p.flags |= IORING_SETUP_SQ_AFF;
+ 			p.sq_thread_cpu = o->sqpoll_cpu;
+diff --git a/fio.1 b/fio.1
+index ad4a662b..7925a511 100644
+--- a/fio.1
++++ b/fio.1
+@@ -1925,6 +1925,12 @@ the cost of using more CPU in the system.
+ When `sqthread_poll` is set, this option provides a way to define which CPU
+ should be used for the polling thread.
+ .TP
++.BI (io_uring)sqthread_poll_percpu
++This option is only meaningful when `sqthread_poll` and `sqthread_poll_cpu` are
++both set. If this option is effective, for multiple io_uring instances which are all
++bound to one same cpu, only one polling thread in the kernel is created to perform
++these io_uring instances' submission queue polling.
++.TP
+ .BI (libaio)userspace_reap
+ Normally, with the libaio engine in use, fio will use the
+ \fBio_getevents\fR\|(3) system call to reap newly returned events. With
+diff --git a/os/linux/io_uring.h b/os/linux/io_uring.h
+index d39b45fd..7839e487 100644
+--- a/os/linux/io_uring.h
++++ b/os/linux/io_uring.h
+@@ -99,6 +99,7 @@ enum {
+ #define IORING_SETUP_CQSIZE	(1U << 3)	/* app defines CQ size */
  #define IORING_SETUP_CLAMP	(1U << 4)	/* clamp SQ/CQ ring sizes */
  #define IORING_SETUP_ATTACH_WQ	(1U << 5)	/* attach to existing wq */
- #define IORING_SETUP_R_DISABLED	(1U << 6)	/* start with ring disabled */
 +#define IORING_SETUP_SQ_PERCPU	(1U << 7)	/* use percpu SQ poll thread */
  
  enum {

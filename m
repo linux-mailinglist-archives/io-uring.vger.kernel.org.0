@@ -2,182 +2,190 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AE2233509F6
-	for <lists+io-uring@lfdr.de>; Thu,  1 Apr 2021 00:11:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7F39350AA3
+	for <lists+io-uring@lfdr.de>; Thu,  1 Apr 2021 01:23:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229812AbhCaWK7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 31 Mar 2021 18:10:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33040 "EHLO
+        id S229959AbhCaXW4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 31 Mar 2021 19:22:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48528 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229615AbhCaWKt (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 31 Mar 2021 18:10:49 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92478C061574
-        for <io-uring@vger.kernel.org>; Wed, 31 Mar 2021 15:10:49 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id b2-20020a7bc2420000b029010be1081172so1868213wmj.1
-        for <io-uring@vger.kernel.org>; Wed, 31 Mar 2021 15:10:49 -0700 (PDT)
+        with ESMTP id S229486AbhCaXWr (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 31 Mar 2021 19:22:47 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A83FC061574
+        for <io-uring@vger.kernel.org>; Wed, 31 Mar 2021 16:22:47 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id z2so21248865wrl.5
+        for <io-uring@vger.kernel.org>; Wed, 31 Mar 2021 16:22:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=EgYBIsizi06lMbml/WyuXtgHIvtcy56Eyh1Zmkg/LUU=;
-        b=PK7KGDjrAmCS0Wtjmaa55Uhe3wCpUXH2Ak0gwcPH7NFbZwPNaxlRG2f172msM+vII/
-         ALIHfLXc3xAVWIVoLHKTewc6psDSKlMS/5hICZ67qlAtGlmV/wDHGD6yNldRXzPT31pb
-         RWQN1aJDOT7Xgi4E92q1C15VGEuEBTCHBKfCY1RsYT3uGOWhrfphn/aIfB69sgtpGg6W
-         vZ0v/1PXxaMeHdF1D0LAY9mOdgGEX+QuldVhUuURrZ2L7zvfcHhUGm6/5/uRY2qQOrrY
-         3IlY9Gz3epKDSTyN57eMPdJi4sWrDxaRC027Rg3YG66mGokYSKR8SJ1OG+BfdUNo1Wi2
-         oerw==
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4wW2JcqEh97IdBeuUyJTZKK7yRDMpDHl41cu8XCfjuI=;
+        b=d+bIwTYG1dXyN2IV/1d5JhjCxEMYHsbOyj47jIN1v7VWkNCC5ZWeFaz3FVFSpnVO4A
+         l6LRBi+zCpg55LQrrY1HwYmkkteDhffb/l5dC0zqKda+8cC4DxYqQewVw/oTAnzmGlbm
+         iJVnHx6aIXgZ2zf7icLbQyRZ6VfTXvx822lO9wv2fEMTrzWheNIXPYLb7D50f7GlXqsm
+         LIb/AcdimyLAuU1TdXIB6siR8jCs04ykrYWJlc5lzH9sRRVPifmubfXJjli8reL15JGl
+         PbBrCEHZsVL+5TibEIReVxODlGl+1txyoIc7DRywr6YmTHFT+9waI1a/ZjT0yEuzmn5U
+         MbVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=EgYBIsizi06lMbml/WyuXtgHIvtcy56Eyh1Zmkg/LUU=;
-        b=mmq/J7/Wg5zHgjGAE18VmhkUZ/RzALfTyd6zhHiXIQI57iL+JxKOeI/lqgEJc1Ol23
-         /X7jl8wJe3aADkaz9KwXqs6wt/w1U6WIlDPbT6HOI6HAW9BXd5r+CN8yUjo9d4eFwnNQ
-         +IOUn8LBHWJ/TCp/1CA1n4giPQyEShHbeaBoHV82MLCnnlSk5GNdsxsI5VD7j7jXJSfT
-         3rkBYc2zW4Vz0jhdzSxChDFczlBvPbcAXl/Esc1zro2rosSCg2OFB9jVlGm7FjSSz9hF
-         ut+uKnc6pHjmqoAwtvz82vt0w3bBzFLGhVK44r0mv704pjNQs8jQp6/TjTkDyc6bhNMu
-         xsQA==
-X-Gm-Message-State: AOAM5302pfrPfedAl7IxcjNbzkqhMaeClWY5Z+r3v3XSNJoJA8vtBwJg
-        /Jj47Ti8tMSvstS+Jlom5KhCLVRz4NceMA==
-X-Google-Smtp-Source: ABdhPJyQQMksfoQTDSPLIllVqvloCO42mDxuQVWv9mRwyDteCLnZ/HyQZntqaggstPuOxKo4YFGxsA==
-X-Received: by 2002:a7b:c357:: with SMTP id l23mr4963716wmj.152.1617228648317;
-        Wed, 31 Mar 2021 15:10:48 -0700 (PDT)
-Received: from [192.168.8.120] ([148.252.132.152])
-        by smtp.gmail.com with ESMTPSA id s13sm6783457wrv.80.2021.03.31.15.10.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 31 Mar 2021 15:10:47 -0700 (PDT)
-To:     Hao Xu <haoxu@linux.alibaba.com>, Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <1617181262-66724-1-git-send-email-haoxu@linux.alibaba.com>
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4wW2JcqEh97IdBeuUyJTZKK7yRDMpDHl41cu8XCfjuI=;
+        b=ZLmLDPe82H+MfeN81Ra46/41P9WTdxk9ziUNBYE7TMpujqbdn/o2Xr5goCIEZzoiGs
+         2Qmem9hOzZeVlPW2evXSF6/8yI6n99SgIDLjrffim8A+7+Jqc6JzifkTvMx2vmIzJNVZ
+         8hkAPtmspBha0XIppNFoSmtbJFoBoTuDspmmd/FcnoxiaSFBck7o9/wcMkmSdjidQ8f8
+         6SK+A6XmYlkvUlT3MJcYY+zGSn3pUpgiQ3sszVXoP8r4m+uwB7aL0bQ5l4l6nxzEuZ8x
+         8ldj0t1/gijgq5ly+pcF41eYA2NPVoMRbVamk8jfWlQL1QcJPZb363xS3z8Eh27iPdn3
+         NDPg==
+X-Gm-Message-State: AOAM533DaAwVBZL6Nx5eFrKDaK7lnsACkiqeEN5qH/xON+n1v1uK6Joo
+        oNc2/5a5BQLpJj/hT2Wf1uvYWI+Ji8Qf3A==
+X-Google-Smtp-Source: ABdhPJyq7LMGmatNht3PbEx2Klfcnpq5u3vXeLSZT6V3FXER+W4rcpXSY/7DgqmQzyYD31wcfsJFaA==
+X-Received: by 2002:a5d:564b:: with SMTP id j11mr6264456wrw.326.1617232966265;
+        Wed, 31 Mar 2021 16:22:46 -0700 (PDT)
+Received: from localhost.localdomain ([148.252.132.152])
+        by smtp.gmail.com with ESMTPSA id w22sm6236845wmi.22.2021.03.31.16.22.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Mar 2021 16:22:45 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Subject: Re: [PATCH for-5.13] io_uring: maintain drain requests' logic
-Message-ID: <55b29f0f-967d-fc91-a959-60e01acc55a3@gmail.com>
-Date:   Wed, 31 Mar 2021 23:06:43 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [PATCH v2] io-wq: forcefully cancel on io-wq destroy
+Date:   Thu,  1 Apr 2021 00:18:34 +0100
+Message-Id: <e8330d71aad136224b2f3a7f479121a32b496836.1617232645.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <1617181262-66724-1-git-send-email-haoxu@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+[  491.222908] INFO: task thread-exit:2490 blocked for more than 122 seconds.
+[  491.222957] Call Trace:
+[  491.222967]  __schedule+0x36b/0x950
+[  491.222985]  schedule+0x68/0xe0
+[  491.222994]  schedule_timeout+0x209/0x2a0
+[  491.223003]  ? tlb_flush_mmu+0x28/0x140
+[  491.223013]  wait_for_completion+0x8b/0xf0
+[  491.223023]  io_wq_destroy_manager+0x24/0x60
+[  491.223037]  io_wq_put_and_exit+0x18/0x30
+[  491.223045]  io_uring_clean_tctx+0x76/0xa0
+[  491.223061]  __io_uring_files_cancel+0x1b9/0x2e0
+[  491.223068]  ? blk_finish_plug+0x26/0x40
+[  491.223085]  do_exit+0xc0/0xb40
+[  491.223099]  ? syscall_trace_enter.isra.0+0x1a1/0x1e0
+[  491.223109]  __x64_sys_exit+0x1b/0x20
+[  491.223117]  do_syscall_64+0x38/0x50
+[  491.223131]  entry_SYSCALL_64_after_hwframe+0x44/0xae
+[  491.223177] INFO: task iou-mgr-2490:2491 blocked for more than 122 seconds.
+[  491.223194] Call Trace:
+[  491.223198]  __schedule+0x36b/0x950
+[  491.223206]  ? pick_next_task_fair+0xcf/0x3e0
+[  491.223218]  schedule+0x68/0xe0
+[  491.223225]  schedule_timeout+0x209/0x2a0
+[  491.223236]  wait_for_completion+0x8b/0xf0
+[  491.223246]  io_wq_manager+0xf1/0x1d0
+[  491.223255]  ? recalc_sigpending+0x1c/0x60
+[  491.223265]  ? io_wq_cpu_online+0x40/0x40
+[  491.223272]  ret_from_fork+0x22/0x30
 
+When io-wq worker exits and sees IO_WQ_BIT_EXIT it tries not cancel all
+left requests but to execute them, hence we may wait for the exiting
+task for long until someone pushes it, e.g. with SIGKILL. Actively
+cancel pending work items on io-wq destruction.
 
-On 31/03/2021 10:01, Hao Xu wrote:
-> Now that we have multishot poll requests, one sqe can emit multiple
-> cqes. given below example:
->     sqe0(multishot poll)-->sqe1-->sqe2(drain req)
-> sqe2 is designed to issue after sqe0 and sqe1 completed, but since sqe0
-> is a multishot poll request, sqe2 may be issued after sqe0's event
-> triggered twice before sqe1 completed. This isn't what users leverage
-> drain requests for.
-> Here a simple solution is to ignore all multishot poll cqes, which means
-> drain requests  won't wait those request to be done.
-> 
-> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
-> ---
->  fs/io_uring.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 513096759445..cd6d44cf5940 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -455,6 +455,7 @@ struct io_ring_ctx {
->  	struct callback_head		*exit_task_work;
->  
->  	struct wait_queue_head		hash_wait;
-> +	unsigned                        multishot_cqes;
->  
->  	/* Keep this last, we don't need it for the fast path */
->  	struct work_struct		exit_work;
-> @@ -1181,8 +1182,8 @@ static bool req_need_defer(struct io_kiocb *req, u32 seq)
->  	if (unlikely(req->flags & REQ_F_IO_DRAIN)) {
->  		struct io_ring_ctx *ctx = req->ctx;
->  
-> -		return seq != ctx->cached_cq_tail
-> -				+ READ_ONCE(ctx->cached_cq_overflow);
-> +		return seq + ctx->multishot_cqes != ctx->cached_cq_tail
-> +			+ READ_ONCE(ctx->cached_cq_overflow);
->  	}
->  
->  	return false;
-> @@ -4897,6 +4898,7 @@ static bool io_poll_complete(struct io_kiocb *req, __poll_t mask, int error)
->  {
->  	struct io_ring_ctx *ctx = req->ctx;
->  	unsigned flags = IORING_CQE_F_MORE;
-> +	bool multishot_poll = !(req->poll.events & EPOLLONESHOT);
->  
->  	if (!error && req->poll.canceled) {
->  		error = -ECANCELED;
-> @@ -4911,6 +4913,9 @@ static bool io_poll_complete(struct io_kiocb *req, __poll_t mask, int error)
->  		req->poll.done = true;
->  		flags = 0;
->  	}
-> +	if (multishot_poll)
-> +		ctx->multishot_cqes++;
-> +
+note: io_run_cancel() moved up without any changes.
 
-We need to make sure we do that only for a non-final complete, i.e.
-not killing request, otherwise it'll double account the last one.
-E.g. is failed __io_cqring_fill_event() in io_poll_complete() fine?
-Other places?
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
 
-Btw, we can use some tests :)
+v2: fix broken last minute change
 
+ fs/io-wq.c | 50 +++++++++++++++++++++++++++++++++++---------------
+ 1 file changed, 35 insertions(+), 15 deletions(-)
 
->  	io_commit_cqring(ctx);
->  	return !(flags & IORING_CQE_F_MORE);
->  }
-> 
-
+diff --git a/fs/io-wq.c b/fs/io-wq.c
+index 7434eb40ca8c..45771bc06651 100644
+--- a/fs/io-wq.c
++++ b/fs/io-wq.c
+@@ -342,6 +342,20 @@ static void io_wait_on_hash(struct io_wqe *wqe, unsigned int hash)
+ 	spin_unlock(&wq->hash->wait.lock);
+ }
+ 
++static struct io_wq_work *io_get_work_all(struct io_wqe *wqe)
++	__must_hold(wqe->lock)
++{
++	struct io_wq_work_list *list = &wqe->work_list;
++	struct io_wq_work_node *node = list->first;
++	int i;
++
++	list->first = list->last = NULL;
++	for (i = 0; i < IO_WQ_NR_HASH_BUCKETS; i++)
++		wqe->hash_tail[i] = NULL;
++
++	return node ? container_of(node, struct io_wq_work, list) : NULL;
++}
++
+ static struct io_wq_work *io_get_next_work(struct io_wqe *wqe)
+ 	__must_hold(wqe->lock)
+ {
+@@ -410,6 +424,17 @@ static void io_assign_current_work(struct io_worker *worker,
+ 
+ static void io_wqe_enqueue(struct io_wqe *wqe, struct io_wq_work *work);
+ 
++static void io_run_cancel(struct io_wq_work *work, struct io_wqe *wqe)
++{
++	struct io_wq *wq = wqe->wq;
++
++	do {
++		work->flags |= IO_WQ_WORK_CANCEL;
++		wq->do_work(work);
++		work = wq->free_work(work);
++	} while (work);
++}
++
+ static void io_worker_handle_work(struct io_worker *worker)
+ 	__releases(wqe->lock)
+ {
+@@ -518,11 +543,17 @@ static int io_wqe_worker(void *data)
+ 	}
+ 
+ 	if (test_bit(IO_WQ_BIT_EXIT, &wq->state)) {
++		struct io_wq_work *work, *next;
++
+ 		raw_spin_lock_irq(&wqe->lock);
+-		if (!wq_list_empty(&wqe->work_list))
+-			io_worker_handle_work(worker);
+-		else
+-			raw_spin_unlock_irq(&wqe->lock);
++		work = io_get_work_all(wqe);
++		raw_spin_unlock_irq(&wqe->lock);
++
++		while (work) {
++			next = wq_next_work(work);
++			io_run_cancel(work, wqe);
++			work = next;
++		}
+ 	}
+ 
+ 	io_worker_exit(worker);
+@@ -748,17 +779,6 @@ static int io_wq_manager(void *data)
+ 	do_exit(0);
+ }
+ 
+-static void io_run_cancel(struct io_wq_work *work, struct io_wqe *wqe)
+-{
+-	struct io_wq *wq = wqe->wq;
+-
+-	do {
+-		work->flags |= IO_WQ_WORK_CANCEL;
+-		wq->do_work(work);
+-		work = wq->free_work(work);
+-	} while (work);
+-}
+-
+ static void io_wqe_insert_work(struct io_wqe *wqe, struct io_wq_work *work)
+ {
+ 	unsigned int hash;
 -- 
-Pavel Begunkov
+2.24.0
+

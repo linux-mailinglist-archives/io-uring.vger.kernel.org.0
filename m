@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 42E5F351BE2
-	for <lists+io-uring@lfdr.de>; Thu,  1 Apr 2021 20:12:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 810B2351BE5
+	for <lists+io-uring@lfdr.de>; Thu,  1 Apr 2021 20:12:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237013AbhDASLo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 1 Apr 2021 14:11:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35766 "EHLO
+        id S235304AbhDASLq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 1 Apr 2021 14:11:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236519AbhDASH0 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 1 Apr 2021 14:07:26 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A824AC00458B
-        for <io-uring@vger.kernel.org>; Thu,  1 Apr 2021 07:48:36 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id w203-20020a1c49d40000b029010c706d0642so3999844wma.0
-        for <io-uring@vger.kernel.org>; Thu, 01 Apr 2021 07:48:36 -0700 (PDT)
+        with ESMTP id S236750AbhDASHh (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 1 Apr 2021 14:07:37 -0400
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6481C00458F
+        for <io-uring@vger.kernel.org>; Thu,  1 Apr 2021 07:48:40 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id b2-20020a7bc2420000b029010be1081172so1051421wmj.1
+        for <io-uring@vger.kernel.org>; Thu, 01 Apr 2021 07:48:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=NmExFTpGFaKKTwHwMhh2BP9udcIgF9lVL9NcWszLAcg=;
-        b=L1rlZNlORtrz/6eWFqBu7LmPfHV2vQVbsH7CFjiC3GehLyDzqhuPJIhccrhaIrrmzi
-         FZmVUGCi89pfSKDe6uztiC+LLeJiFwzmigM3Lj7bG+o4EmfO6x5caeFm3OrLmq+7hvFn
-         XKt+rulvL/WP2IREvIpZ/TXFtmospq7Edbymxo1OlEzFNyK9hpJfWiOt31r3uBDrIf0f
-         fTHm0OYqvuxhcjmSSdVFHOVmiU+TDikT8CVuRIB57hmVwzXstNCOySW+yJdMw/73nUag
-         7c3HbaGsR5FCYqXAjgBK/tL28UCs2daWkZCZw39O1//49sNXTJp84xblSdFXLSXUxzoe
-         NXEw==
+        bh=2LjyfYXzXA1la/QDFN+3KlX8lUV8vmHzNnU55kjgdmU=;
+        b=pHADcGhikEhOG8SE5H/H+fnQQ0Z3bZ2SPyaYeS7It+k8O+pBO3XdIuNVNH0wTSHfkw
+         gs8UQ1xesQ4ZBdD4WO+wWELwT1JajAAdjrz+k3qXR3/38Zov9GmR2ScgvYK8YB9aDhXG
+         Lf4KELz7Jvtnubgs15YDOLsoPyaxOqmkYGjNOpyTU8DKB9iH7PjypPC9dtNRq/GyKAFj
+         iAQ2oZuoxU8iZuf6yuaU3ae+BjilZGgXEwD4Kb2oCP4yUysHrN4kD+LQ46i78t6Nh3oX
+         CT/KdohCnXgBA7qhfjpbc+BMxE3l2h6l6GNiLWbOkpZBRnE/DzntC9EDMNj/wTTINJt/
+         mFSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=NmExFTpGFaKKTwHwMhh2BP9udcIgF9lVL9NcWszLAcg=;
-        b=U1HLSpKeUMIc5BJMkIXzVFmEP0Ny9vQE2p9FyAE+uU+ht/i52VblClp+uCil7ZWG25
-         HNYc64KH6SprE2onecG0gmFLxx/aeRPKUET0aNLrGP+rmSgv4o+rOmCz5CGSUaZ46Okl
-         QbfKdlV/c28NwzbL2nO9WikS/9QhIiIuhnuGPOZj0md+MojlacmOAQd/s6eg/1WtWu5j
-         J/gO55hkQxGMUi/hyh+Lq1JiqxLjOxCA1BwmMPQiHSeTbFMLPyApi3d9zE+cB+AP9zy8
-         9CnwadLhoOoucFZ2TQxHERHjsbcJxVv4533aq3YmfYG7nWCPAiwaDCI3jI1X6JI0ReVK
-         6v6A==
-X-Gm-Message-State: AOAM533+Pwx2YCD8We6uIcOxSon9WHVBTYoSbWT141dyBGOQsjnGXE0k
-        9TvdWms6zHBeJkoKWehY57M=
-X-Google-Smtp-Source: ABdhPJzXT/3R2EpNgJkYU/oolklDYAb7JwW1orAmJRA3oQ2/rTHrKnqyUfW5kx0/1GVucjftKd7lYA==
-X-Received: by 2002:a7b:c195:: with SMTP id y21mr8400376wmi.178.1617288515521;
-        Thu, 01 Apr 2021 07:48:35 -0700 (PDT)
+        bh=2LjyfYXzXA1la/QDFN+3KlX8lUV8vmHzNnU55kjgdmU=;
+        b=ob7OeyHm0dhneA9FloITzHgAuG9E9hZ4zrxQONdyeQg6ZhMtOITKqXlMIMCX5CEH2F
+         RevPAKp6J9cG906+fEW07qr7qAP/3I2ewLNvuYwNjKncOzCCNcVCFE/3tetJ9jCigVM5
+         flCKXpufNifXwYbiLDL4QNrlaRnnRbZraq3sGILrBNbYSozIDzr9Yva4z1PncLC9D8hG
+         qy4DpcteXUqBcapZUA5CCpbcrcqblq9NQ/t2IirqCyx+BMJkuBDNxOSHMqXwKFjXX05m
+         68B6yMrrRd6/TrbkTAYg4UOLBuHjrhzLxYMrmshwv5dtsqxv8JKMDKbOIDOd/cv6v+EQ
+         ADGA==
+X-Gm-Message-State: AOAM532FSOH/7mU4SBmQ2pOf6GXcxZX9JnbGX5Du/cYt7XRqRp88H000
+        h49Xz4vuPKAD9wOIcSSPSnF0ZrAEwcsKqw==
+X-Google-Smtp-Source: ABdhPJwDjgJJSnjYnUt5yJ4TUoh1gl7tpmsrxX/qRxMvIZZIhvKgkcMmHg8a1yHGD0bk7NpNtdg2tw==
+X-Received: by 2002:a1c:f701:: with SMTP id v1mr8446693wmh.69.1617288519509;
+        Thu, 01 Apr 2021 07:48:39 -0700 (PDT)
 Received: from localhost.localdomain ([148.252.132.152])
-        by smtp.gmail.com with ESMTPSA id x13sm8183948wmp.39.2021.04.01.07.48.34
+        by smtp.gmail.com with ESMTPSA id x13sm8183948wmp.39.2021.04.01.07.48.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Apr 2021 07:48:35 -0700 (PDT)
+        Thu, 01 Apr 2021 07:48:39 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH v4 18/26] io_uring: lock annotate timeouts and poll
-Date:   Thu,  1 Apr 2021 15:43:57 +0100
-Message-Id: <2345325643093d41543383ba985a735aeb899eac.1617287883.git.asml.silence@gmail.com>
+Subject: [PATCH v4 22/26] io_uring: set proper FFS* flags on reg file update
+Date:   Thu,  1 Apr 2021 15:44:01 +0100
+Message-Id: <df29a841a2d3d3695b509cdffce5070777d9d942.1617287883.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1617287883.git.asml.silence@gmail.com>
 References: <cover.1617287883.git.asml.silence@gmail.com>
@@ -61,98 +61,73 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Add timeout and poll ->comletion_lock annotations for Sparse, makes life
-easier while looking at the functions.
+Set FFS_* flags (e.g. FFS_ASYNC_READ) not only in initial registration
+but also on registered files update. Not a bug, but may miss getting
+profit out of the feature.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ fs/io_uring.c | 26 +++++++++++++++-----------
+ 1 file changed, 15 insertions(+), 11 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 352c231571dd..683db49a766e 100644
+index 421e9d7d02fd..c5dd00babf59 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -4865,6 +4865,7 @@ static struct io_poll_iocb *io_poll_get_single(struct io_kiocb *req)
+@@ -6272,6 +6272,19 @@ static inline struct file *io_file_from_index(struct io_ring_ctx *ctx,
+ 	return (struct file *) ((unsigned long) *file_slot & FFS_MASK);
  }
  
- static void io_poll_remove_double(struct io_kiocb *req)
-+	__must_hold(&req->ctx->completion_lock)
++static void io_fixed_file_set(struct file **file_slot, struct file *file)
++{
++	unsigned long file_ptr = (unsigned long) file;
++
++	if (__io_file_supports_async(file, READ))
++		file_ptr |= FFS_ASYNC_READ;
++	if (__io_file_supports_async(file, WRITE))
++		file_ptr |= FFS_ASYNC_WRITE;
++	if (S_ISREG(file_inode(file)->i_mode))
++		file_ptr |= FFS_ISREG;
++	*file_slot = (struct file *)file_ptr;
++}
++
+ static struct file *io_file_get(struct io_submit_state *state,
+ 				struct io_kiocb *req, int fd, bool fixed)
  {
- 	struct io_poll_iocb *poll = io_poll_get_double(req);
+@@ -7608,8 +7621,6 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
+ 		goto out_free;
  
-@@ -4883,6 +4884,7 @@ static void io_poll_remove_double(struct io_kiocb *req)
- }
+ 	for (i = 0; i < nr_args; i++, ctx->nr_user_files++) {
+-		unsigned long file_ptr;
+-
+ 		if (copy_from_user(&fd, &fds[i], sizeof(fd))) {
+ 			ret = -EFAULT;
+ 			goto out_fput;
+@@ -7634,14 +7645,7 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
+ 			fput(file);
+ 			goto out_fput;
+ 		}
+-		file_ptr = (unsigned long) file;
+-		if (__io_file_supports_async(file, READ))
+-			file_ptr |= FFS_ASYNC_READ;
+-		if (__io_file_supports_async(file, WRITE))
+-			file_ptr |= FFS_ASYNC_WRITE;
+-		if (S_ISREG(file_inode(file)->i_mode))
+-			file_ptr |= FFS_ISREG;
+-		*io_fixed_file_slot(file_data, i) = (struct file *) file_ptr;
++		io_fixed_file_set(io_fixed_file_slot(file_data, i), file);
+ 	}
  
- static bool io_poll_complete(struct io_kiocb *req, __poll_t mask, int error)
-+	__must_hold(&req->ctx->completion_lock)
- {
- 	struct io_ring_ctx *ctx = req->ctx;
- 	unsigned flags = IORING_CQE_F_MORE;
-@@ -5188,6 +5190,7 @@ static bool io_arm_poll_handler(struct io_kiocb *req)
- 
- static bool __io_poll_remove_one(struct io_kiocb *req,
- 				 struct io_poll_iocb *poll, bool do_cancel)
-+	__must_hold(&req->ctx->completion_lock)
- {
- 	bool do_complete = false;
- 
-@@ -5206,6 +5209,7 @@ static bool __io_poll_remove_one(struct io_kiocb *req,
- }
- 
- static bool io_poll_remove_waitqs(struct io_kiocb *req)
-+	__must_hold(&req->ctx->completion_lock)
- {
- 	bool do_complete;
- 
-@@ -5229,6 +5233,7 @@ static bool io_poll_remove_waitqs(struct io_kiocb *req)
- }
- 
- static bool io_poll_remove_one(struct io_kiocb *req)
-+	__must_hold(&req->ctx->completion_lock)
- {
- 	bool do_complete;
- 
-@@ -5272,6 +5277,7 @@ static bool io_poll_remove_all(struct io_ring_ctx *ctx, struct task_struct *tsk,
- }
- 
- static struct io_kiocb *io_poll_find(struct io_ring_ctx *ctx, __u64 sqe_addr)
-+	__must_hold(&ctx->completion_lock)
- {
- 	struct hlist_head *list;
- 	struct io_kiocb *req;
-@@ -5287,6 +5293,7 @@ static struct io_kiocb *io_poll_find(struct io_ring_ctx *ctx, __u64 sqe_addr)
- }
- 
- static int io_poll_cancel(struct io_ring_ctx *ctx, __u64 sqe_addr)
-+	__must_hold(&ctx->completion_lock)
- {
- 	struct io_kiocb *req;
- 
-@@ -5493,6 +5500,7 @@ static enum hrtimer_restart io_timeout_fn(struct hrtimer *timer)
- 
- static struct io_kiocb *io_timeout_extract(struct io_ring_ctx *ctx,
- 					   __u64 user_data)
-+	__must_hold(&ctx->completion_lock)
- {
- 	struct io_timeout_data *io;
- 	struct io_kiocb *req;
-@@ -5517,6 +5525,7 @@ static struct io_kiocb *io_timeout_extract(struct io_ring_ctx *ctx,
- }
- 
- static int io_timeout_cancel(struct io_ring_ctx *ctx, __u64 user_data)
-+	__must_hold(&ctx->completion_lock)
- {
- 	struct io_kiocb *req = io_timeout_extract(ctx, user_data);
- 
-@@ -5531,6 +5540,7 @@ static int io_timeout_cancel(struct io_ring_ctx *ctx, __u64 user_data)
- 
- static int io_timeout_update(struct io_ring_ctx *ctx, __u64 user_data,
- 			     struct timespec64 *ts, enum hrtimer_mode mode)
-+	__must_hold(&ctx->completion_lock)
- {
- 	struct io_kiocb *req = io_timeout_extract(ctx, user_data);
- 	struct io_timeout_data *data;
+ 	ret = io_sqe_files_scm(ctx);
+@@ -7783,7 +7787,7 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+ 				err = -EBADF;
+ 				break;
+ 			}
+-			*file_slot = file;
++			io_fixed_file_set(file_slot, file);
+ 			err = io_sqe_file_register(ctx, file, i);
+ 			if (err) {
+ 				*file_slot = NULL;
 -- 
 2.24.0
 

@@ -2,190 +2,110 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E7F39350AA3
-	for <lists+io-uring@lfdr.de>; Thu,  1 Apr 2021 01:23:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54D40350BC9
+	for <lists+io-uring@lfdr.de>; Thu,  1 Apr 2021 03:18:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229959AbhCaXW4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 31 Mar 2021 19:22:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48528 "EHLO
+        id S229959AbhDABRw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 31 Mar 2021 21:17:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229486AbhCaXWr (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 31 Mar 2021 19:22:47 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A83FC061574
-        for <io-uring@vger.kernel.org>; Wed, 31 Mar 2021 16:22:47 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id z2so21248865wrl.5
-        for <io-uring@vger.kernel.org>; Wed, 31 Mar 2021 16:22:47 -0700 (PDT)
+        with ESMTP id S229486AbhDABRw (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 31 Mar 2021 21:17:52 -0400
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C62C3C061574
+        for <io-uring@vger.kernel.org>; Wed, 31 Mar 2021 18:17:51 -0700 (PDT)
+Received: by mail-pj1-x102d.google.com with SMTP id kk2-20020a17090b4a02b02900c777aa746fso96502pjb.3
+        for <io-uring@vger.kernel.org>; Wed, 31 Mar 2021 18:17:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=4wW2JcqEh97IdBeuUyJTZKK7yRDMpDHl41cu8XCfjuI=;
-        b=d+bIwTYG1dXyN2IV/1d5JhjCxEMYHsbOyj47jIN1v7VWkNCC5ZWeFaz3FVFSpnVO4A
-         l6LRBi+zCpg55LQrrY1HwYmkkteDhffb/l5dC0zqKda+8cC4DxYqQewVw/oTAnzmGlbm
-         iJVnHx6aIXgZ2zf7icLbQyRZ6VfTXvx822lO9wv2fEMTrzWheNIXPYLb7D50f7GlXqsm
-         LIb/AcdimyLAuU1TdXIB6siR8jCs04ykrYWJlc5lzH9sRRVPifmubfXJjli8reL15JGl
-         PbBrCEHZsVL+5TibEIReVxODlGl+1txyoIc7DRywr6YmTHFT+9waI1a/ZjT0yEuzmn5U
-         MbVg==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=VraptSf7dwPO5UR5ade7TQoIgKyz4G2cu1MUk4R/MQU=;
+        b=WHw9Rm1J5Lw3uqINN5YXlQwLhHWT7egdvz3ZPpxRo/junyYJHyuv+P44vhLdRnSoIn
+         nj7KCbaITKENpYKxBcgG7fE9ASS2xZsceqmoCDBrbMoCgi1+ALvvN8Pun/xNVDDhJ73T
+         aqc5xQ79zfHX8UpwCvyso2h6JhCvm6eliBHMLQhkpbZuJYKk5a5a6OAS/O5mSBQMt6tm
+         yAeOb+3cnPH6T6HEaUqHGEgIjGRBx4wWgXC2jaT5n3dUuT8To1C3iaIzyLKuzJQ+ZhzL
+         UVQ2YwAzc+XX0BiroZ8SscJXumN4lRvGa494QhcU2X8OgBU3HmT87WjNVFribD4CTMo2
+         9b5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=4wW2JcqEh97IdBeuUyJTZKK7yRDMpDHl41cu8XCfjuI=;
-        b=ZLmLDPe82H+MfeN81Ra46/41P9WTdxk9ziUNBYE7TMpujqbdn/o2Xr5goCIEZzoiGs
-         2Qmem9hOzZeVlPW2evXSF6/8yI6n99SgIDLjrffim8A+7+Jqc6JzifkTvMx2vmIzJNVZ
-         8hkAPtmspBha0XIppNFoSmtbJFoBoTuDspmmd/FcnoxiaSFBck7o9/wcMkmSdjidQ8f8
-         6SK+A6XmYlkvUlT3MJcYY+zGSn3pUpgiQ3sszVXoP8r4m+uwB7aL0bQ5l4l6nxzEuZ8x
-         8ldj0t1/gijgq5ly+pcF41eYA2NPVoMRbVamk8jfWlQL1QcJPZb363xS3z8Eh27iPdn3
-         NDPg==
-X-Gm-Message-State: AOAM533DaAwVBZL6Nx5eFrKDaK7lnsACkiqeEN5qH/xON+n1v1uK6Joo
-        oNc2/5a5BQLpJj/hT2Wf1uvYWI+Ji8Qf3A==
-X-Google-Smtp-Source: ABdhPJyq7LMGmatNht3PbEx2Klfcnpq5u3vXeLSZT6V3FXER+W4rcpXSY/7DgqmQzyYD31wcfsJFaA==
-X-Received: by 2002:a5d:564b:: with SMTP id j11mr6264456wrw.326.1617232966265;
-        Wed, 31 Mar 2021 16:22:46 -0700 (PDT)
-Received: from localhost.localdomain ([148.252.132.152])
-        by smtp.gmail.com with ESMTPSA id w22sm6236845wmi.22.2021.03.31.16.22.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Mar 2021 16:22:45 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH v2] io-wq: forcefully cancel on io-wq destroy
-Date:   Thu,  1 Apr 2021 00:18:34 +0100
-Message-Id: <e8330d71aad136224b2f3a7f479121a32b496836.1617232645.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
+        bh=VraptSf7dwPO5UR5ade7TQoIgKyz4G2cu1MUk4R/MQU=;
+        b=MLqfPPra+gOm3spWHXRM9ow0Vt068UPrGlpM43dKkfijjMiewT1qWigWOYRlM1Sngd
+         qSee/8VMu5NKG9S+3DwRCZzxXkqPJ8BPXudGeelqnS2aPZEUOaCBdy27JvMpDvE32ymm
+         ylD+rj5SOin/SZhQbbCyCj6Toyf1btMXw4Lhe6yD93Q2PP/8kFAIxaoyY0TKLUv5+pWL
+         CLqdrt/HR/rOoro9sjXDkNYYP2nNSGy8gOQjqKmRlCEGG6n+k4VRCPvDGjiwUJVYG8yf
+         4F1j9PWGev43DfG18sLNkOe+RDc6kc8EvHbdWqI6QVTjO5BDdwkDgSsTkO5wvO7x7cBF
+         cINA==
+X-Gm-Message-State: AOAM533iAr2kEjZdDjUO2f/8yNq8ViTX834ThxApAzfENYXnqvjjT3D4
+        vqsK7ykApLk78hTdFJcrTauMOhvv5jg+vg==
+X-Google-Smtp-Source: ABdhPJwrci50JmQERN8bkbT91GY0N/3cC6FOq8IWz9Se0y2ur+yM/EHSWcY4Fr0av0F9svsO1Ptd8w==
+X-Received: by 2002:a17:902:b289:b029:e4:bc38:a7 with SMTP id u9-20020a170902b289b02900e4bc3800a7mr5750419plr.50.1617239870808;
+        Wed, 31 Mar 2021 18:17:50 -0700 (PDT)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id r23sm3434069pje.38.2021.03.31.18.17.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 31 Mar 2021 18:17:50 -0700 (PDT)
+Subject: Re: [PATCH v2] io-wq: forcefully cancel on io-wq destroy
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <e8330d71aad136224b2f3a7f479121a32b496836.1617232645.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <b575afc6-f699-84dc-245c-93af568fad0a@kernel.dk>
+Date:   Wed, 31 Mar 2021 19:17:49 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <e8330d71aad136224b2f3a7f479121a32b496836.1617232645.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-[  491.222908] INFO: task thread-exit:2490 blocked for more than 122 seconds.
-[  491.222957] Call Trace:
-[  491.222967]  __schedule+0x36b/0x950
-[  491.222985]  schedule+0x68/0xe0
-[  491.222994]  schedule_timeout+0x209/0x2a0
-[  491.223003]  ? tlb_flush_mmu+0x28/0x140
-[  491.223013]  wait_for_completion+0x8b/0xf0
-[  491.223023]  io_wq_destroy_manager+0x24/0x60
-[  491.223037]  io_wq_put_and_exit+0x18/0x30
-[  491.223045]  io_uring_clean_tctx+0x76/0xa0
-[  491.223061]  __io_uring_files_cancel+0x1b9/0x2e0
-[  491.223068]  ? blk_finish_plug+0x26/0x40
-[  491.223085]  do_exit+0xc0/0xb40
-[  491.223099]  ? syscall_trace_enter.isra.0+0x1a1/0x1e0
-[  491.223109]  __x64_sys_exit+0x1b/0x20
-[  491.223117]  do_syscall_64+0x38/0x50
-[  491.223131]  entry_SYSCALL_64_after_hwframe+0x44/0xae
-[  491.223177] INFO: task iou-mgr-2490:2491 blocked for more than 122 seconds.
-[  491.223194] Call Trace:
-[  491.223198]  __schedule+0x36b/0x950
-[  491.223206]  ? pick_next_task_fair+0xcf/0x3e0
-[  491.223218]  schedule+0x68/0xe0
-[  491.223225]  schedule_timeout+0x209/0x2a0
-[  491.223236]  wait_for_completion+0x8b/0xf0
-[  491.223246]  io_wq_manager+0xf1/0x1d0
-[  491.223255]  ? recalc_sigpending+0x1c/0x60
-[  491.223265]  ? io_wq_cpu_online+0x40/0x40
-[  491.223272]  ret_from_fork+0x22/0x30
+On 3/31/21 5:18 PM, Pavel Begunkov wrote:
+> [  491.222908] INFO: task thread-exit:2490 blocked for more than 122 seconds.
+> [  491.222957] Call Trace:
+> [  491.222967]  __schedule+0x36b/0x950
+> [  491.222985]  schedule+0x68/0xe0
+> [  491.222994]  schedule_timeout+0x209/0x2a0
+> [  491.223003]  ? tlb_flush_mmu+0x28/0x140
+> [  491.223013]  wait_for_completion+0x8b/0xf0
+> [  491.223023]  io_wq_destroy_manager+0x24/0x60
+> [  491.223037]  io_wq_put_and_exit+0x18/0x30
+> [  491.223045]  io_uring_clean_tctx+0x76/0xa0
+> [  491.223061]  __io_uring_files_cancel+0x1b9/0x2e0
+> [  491.223068]  ? blk_finish_plug+0x26/0x40
+> [  491.223085]  do_exit+0xc0/0xb40
+> [  491.223099]  ? syscall_trace_enter.isra.0+0x1a1/0x1e0
+> [  491.223109]  __x64_sys_exit+0x1b/0x20
+> [  491.223117]  do_syscall_64+0x38/0x50
+> [  491.223131]  entry_SYSCALL_64_after_hwframe+0x44/0xae
+> [  491.223177] INFO: task iou-mgr-2490:2491 blocked for more than 122 seconds.
+> [  491.223194] Call Trace:
+> [  491.223198]  __schedule+0x36b/0x950
+> [  491.223206]  ? pick_next_task_fair+0xcf/0x3e0
+> [  491.223218]  schedule+0x68/0xe0
+> [  491.223225]  schedule_timeout+0x209/0x2a0
+> [  491.223236]  wait_for_completion+0x8b/0xf0
+> [  491.223246]  io_wq_manager+0xf1/0x1d0
+> [  491.223255]  ? recalc_sigpending+0x1c/0x60
+> [  491.223265]  ? io_wq_cpu_online+0x40/0x40
+> [  491.223272]  ret_from_fork+0x22/0x30
+> 
+> When io-wq worker exits and sees IO_WQ_BIT_EXIT it tries not cancel all
+> left requests but to execute them, hence we may wait for the exiting
+> task for long until someone pushes it, e.g. with SIGKILL. Actively
+> cancel pending work items on io-wq destruction.
+> 
+> note: io_run_cancel() moved up without any changes.
 
-When io-wq worker exits and sees IO_WQ_BIT_EXIT it tries not cancel all
-left requests but to execute them, hence we may wait for the exiting
-task for long until someone pushes it, e.g. with SIGKILL. Actively
-cancel pending work items on io-wq destruction.
+Just to pull some of the discussion in here - I don't think this is a
+good idea as-is. At the very least, this should be gated on UNBOUND,
+and just waiting for bounded requests while canceling unbounded ones.
 
-note: io_run_cancel() moved up without any changes.
-
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
-
-v2: fix broken last minute change
-
- fs/io-wq.c | 50 +++++++++++++++++++++++++++++++++++---------------
- 1 file changed, 35 insertions(+), 15 deletions(-)
-
-diff --git a/fs/io-wq.c b/fs/io-wq.c
-index 7434eb40ca8c..45771bc06651 100644
---- a/fs/io-wq.c
-+++ b/fs/io-wq.c
-@@ -342,6 +342,20 @@ static void io_wait_on_hash(struct io_wqe *wqe, unsigned int hash)
- 	spin_unlock(&wq->hash->wait.lock);
- }
- 
-+static struct io_wq_work *io_get_work_all(struct io_wqe *wqe)
-+	__must_hold(wqe->lock)
-+{
-+	struct io_wq_work_list *list = &wqe->work_list;
-+	struct io_wq_work_node *node = list->first;
-+	int i;
-+
-+	list->first = list->last = NULL;
-+	for (i = 0; i < IO_WQ_NR_HASH_BUCKETS; i++)
-+		wqe->hash_tail[i] = NULL;
-+
-+	return node ? container_of(node, struct io_wq_work, list) : NULL;
-+}
-+
- static struct io_wq_work *io_get_next_work(struct io_wqe *wqe)
- 	__must_hold(wqe->lock)
- {
-@@ -410,6 +424,17 @@ static void io_assign_current_work(struct io_worker *worker,
- 
- static void io_wqe_enqueue(struct io_wqe *wqe, struct io_wq_work *work);
- 
-+static void io_run_cancel(struct io_wq_work *work, struct io_wqe *wqe)
-+{
-+	struct io_wq *wq = wqe->wq;
-+
-+	do {
-+		work->flags |= IO_WQ_WORK_CANCEL;
-+		wq->do_work(work);
-+		work = wq->free_work(work);
-+	} while (work);
-+}
-+
- static void io_worker_handle_work(struct io_worker *worker)
- 	__releases(wqe->lock)
- {
-@@ -518,11 +543,17 @@ static int io_wqe_worker(void *data)
- 	}
- 
- 	if (test_bit(IO_WQ_BIT_EXIT, &wq->state)) {
-+		struct io_wq_work *work, *next;
-+
- 		raw_spin_lock_irq(&wqe->lock);
--		if (!wq_list_empty(&wqe->work_list))
--			io_worker_handle_work(worker);
--		else
--			raw_spin_unlock_irq(&wqe->lock);
-+		work = io_get_work_all(wqe);
-+		raw_spin_unlock_irq(&wqe->lock);
-+
-+		while (work) {
-+			next = wq_next_work(work);
-+			io_run_cancel(work, wqe);
-+			work = next;
-+		}
- 	}
- 
- 	io_worker_exit(worker);
-@@ -748,17 +779,6 @@ static int io_wq_manager(void *data)
- 	do_exit(0);
- }
- 
--static void io_run_cancel(struct io_wq_work *work, struct io_wqe *wqe)
--{
--	struct io_wq *wq = wqe->wq;
--
--	do {
--		work->flags |= IO_WQ_WORK_CANCEL;
--		wq->do_work(work);
--		work = wq->free_work(work);
--	} while (work);
--}
--
- static void io_wqe_insert_work(struct io_wqe *wqe, struct io_wq_work *work)
- {
- 	unsigned int hash;
 -- 
-2.24.0
+Jens Axboe
 

@@ -2,226 +2,105 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 047BE351A94
-	for <lists+io-uring@lfdr.de>; Thu,  1 Apr 2021 20:07:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 212BB351C9C
+	for <lists+io-uring@lfdr.de>; Thu,  1 Apr 2021 20:47:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236077AbhDASCH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 1 Apr 2021 14:02:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34048 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237315AbhDAR7x (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Thu, 1 Apr 2021 13:59:53 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4083661001;
-        Thu,  1 Apr 2021 17:59:22 +0000 (UTC)
-Date:   Thu, 1 Apr 2021 19:59:19 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Jens Axboe <axboe@kernel.dk>, viro@zeniv.linux.org.uk
-Cc:     syzbot <syzbot+c88a7030da47945a3cc3@syzkaller.appspotmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, io-uring@vger.kernel.org
-Subject: Re: [syzbot] WARNING in mntput_no_expire (2)
-Message-ID: <20210401175919.jpiylhfrlb4xb67u@wittgenstein>
-References: <0000000000003a565e05bee596f2@google.com>
- <20210401154515.k24qdd2lzhtneu47@wittgenstein>
- <90e7e339-eaec-adb2-cfed-6dc058a117a3@kernel.dk>
- <20210401174613.vymhhrfsemypougv@wittgenstein>
+        id S235590AbhDASS4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 1 Apr 2021 14:18:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35608 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234637AbhDASKo (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 1 Apr 2021 14:10:44 -0400
+Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DC4AC0045E5;
+        Thu,  1 Apr 2021 07:40:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+         s=42; h=Date:Message-ID:Cc:To:From;
+        bh=JAhe/kVm5RlUfIXG3d28OFe9fHKwCAi5mQmsyoLxPQk=; b=prNxZCHuW5yBFgVGyBtP7FZl4l
+        /i+wo8cszkl1eQcXFS8t1iFq4e/yeYB0FlNrahfI0TurKnHnUchJL7hg9wfdtbG6FuepdJeXMM7D6
+        P+wGzfeHC+x02J86iR2X3CZBW20tKeXm9iqnz03yHppaXw9M4b0B40DEBpKzih3T9t0/vhHUSyriJ
+        J1Z3ldi794ZY0fVOq7Ng8XOHjDMt5HMO9stJ+lOVy45okLBR8wKNvfwYUThF79KJXONxnY+Vo3043
+        8TZseI1m+LKS/aTRjoe2rb7XSBwNWoSlRGDY0ihz4ZmezR6TCc/zhytUWr5xllkNYYpfM4cLJY7lc
+        qgFr6ikJu8UVp5biNZFOBrKk0AOIqjfFmaCNNJfaxyxWdBxl2u17aC4R+SNJZy0Fa+cj6XflOa9TD
+        VcBuXp1MBLleFc5ECSAjGyDf9GYRo1vX2K1GOMY9/JhWv5LcwRQRiotrnkItYwD1mo+5T1a1Az12v
+        nVd/7Zyy58F1QHU3RckVGznJ;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
+        (Exim)
+        id 1lRyUy-0007Kf-A6; Thu, 01 Apr 2021 14:40:40 +0000
+From:   Stefan Metzmacher <metze@samba.org>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>
+References: <20210325164343.807498-1-axboe@kernel.dk>
+ <m1ft0j3u5k.fsf@fess.ebiederm.org>
+ <CAHk-=wjOXiEAjGLbn2mWRsxqpAYUPcwCj2x5WgEAh=gj+o0t4Q@mail.gmail.com>
+ <CAHk-=wg1XpX=iAv=1HCUReMbEgeN5UogZ4_tbi+ehaHZG6d==g@mail.gmail.com>
+ <CAHk-=wgUcVeaKhtBgJO3TfE69miJq-krtL8r_Wf_=LBTJw6WSg@mail.gmail.com>
+ <ad21da2b-01ea-e77c-70b2-0401059e322b@kernel.dk>
+ <f9bc0bac-2ad9-827e-7360-099e1e310df5@kernel.dk>
+ <5563d244-52c0-dafb-5839-e84990340765@samba.org>
+ <6a2c4fe3-a019-2744-2e17-34b6325967d7@kernel.dk>
+ <04b006fd-f3fa-bd92-9ab6-4e2341315cc2@samba.org>
+Subject: Re: [PATCH 0/2] Don't show PF_IO_WORKER in /proc/<pid>/task/
+Message-ID: <a6a3961b-19a9-2476-effa-33bee33dd57b@samba.org>
+Date:   Thu, 1 Apr 2021 16:40:31 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.1
 MIME-Version: 1.0
+In-Reply-To: <04b006fd-f3fa-bd92-9ab6-4e2341315cc2@samba.org>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20210401174613.vymhhrfsemypougv@wittgenstein>
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Apr 01, 2021 at 07:46:13PM +0200, Christian Brauner wrote:
-> On Thu, Apr 01, 2021 at 10:09:18AM -0600, Jens Axboe wrote:
-> > On 4/1/21 9:45 AM, Christian Brauner wrote:
-> > > On Thu, Apr 01, 2021 at 02:09:20AM -0700, syzbot wrote:
-> > >> Hello,
-> > >>
-> > >> syzbot found the following issue on:
-> > >>
-> > >> HEAD commit:    d19cc4bf Merge tag 'trace-v5.12-rc5' of git://git.kernel.o..
-> > >> git tree:       upstream
-> > >> console output: https://syzkaller.appspot.com/x/log.txt?x=1018f281d00000
-> > >> kernel config:  https://syzkaller.appspot.com/x/.config?x=d1a3d65a48dbd1bc
-> > >> dashboard link: https://syzkaller.appspot.com/bug?extid=c88a7030da47945a3cc3
-> > >> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12f50d11d00000
-> > >> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=137694a1d00000
-> > >>
-> > >> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > >> Reported-by: syzbot+c88a7030da47945a3cc3@syzkaller.appspotmail.com
-> > >>
-> > >> ------------[ cut here ]------------
-> > >> WARNING: CPU: 1 PID: 8409 at fs/namespace.c:1186 mntput_no_expire+0xaca/0xcb0 fs/namespace.c:1186
-> > >> Modules linked in:
-> > >> CPU: 1 PID: 8409 Comm: syz-executor035 Not tainted 5.12.0-rc5-syzkaller #0
-> > >> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> > >> RIP: 0010:mntput_no_expire+0xaca/0xcb0 fs/namespace.c:1186
-> > >> Code: ff 48 c7 c2 e0 cb 78 89 be c2 02 00 00 48 c7 c7 a0 cb 78 89 c6 05 e5 6d e5 0b 01 e8 ff e1 f6 06 e9 3f fd ff ff e8 c6 a5 a8 ff <0f> 0b e9 fc fc ff ff e8 ba a5 a8 ff e8 55 dc 94 ff 31 ff 89 c5 89
-> > >> RSP: 0018:ffffc9000165fc78 EFLAGS: 00010293
-> > >> RAX: 0000000000000000 RBX: 1ffff920002cbf95 RCX: 0000000000000000
-> > >> RDX: ffff88802072d4c0 RSI: ffffffff81cb4b8a RDI: 0000000000000003
-> > >> RBP: ffff888011656900 R08: 0000000000000000 R09: ffffffff8fa978af
-> > >> R10: ffffffff81cb4884 R11: 0000000000000000 R12: 0000000000000008
-> > >> R13: ffffc9000165fcc8 R14: dffffc0000000000 R15: 00000000ffffffff
-> > >> FS:  0000000000000000(0000) GS:ffff8880b9d00000(0000) knlGS:0000000000000000
-> > >> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > >> CR2: 000055a722053160 CR3: 000000000bc8e000 CR4: 00000000001506e0
-> > >> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > >> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > >> Call Trace:
-> > >>  mntput fs/namespace.c:1232 [inline]
-> > >>  cleanup_mnt+0x523/0x530 fs/namespace.c:1132
-> > >>  task_work_run+0xdd/0x1a0 kernel/task_work.c:140
-> > >>  exit_task_work include/linux/task_work.h:30 [inline]
-> > >>  do_exit+0xbfc/0x2a60 kernel/exit.c:825
-> > >>  do_group_exit+0x125/0x310 kernel/exit.c:922
-> > >>  __do_sys_exit_group kernel/exit.c:933 [inline]
-> > >>  __se_sys_exit_group kernel/exit.c:931 [inline]
-> > >>  __x64_sys_exit_group+0x3a/0x50 kernel/exit.c:931
-> > >>  do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
-> > >>  entry_SYSCALL_64_after_hwframe+0x44/0xae
-> > >> RIP: 0033:0x446af9
-> > >> Code: Unable to access opcode bytes at RIP 0x446acf.
-> > >> RSP: 002b:00000000005dfe48 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-> > >> RAX: ffffffffffffffda RBX: 00000000004ce450 RCX: 0000000000446af9
-> > >> RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000001
-> > >> RBP: 0000000000000001 R08: ffffffffffffffbc R09: 0000000000000000
-> > >> R10: 0000000000000000 R11: 0000000000000246 R12: 00000000004ce450
-> > >> R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000001
-> > > 
-> > > [+Cc Jens + io_uring]
-> > > 
-> > > Hm, this reproducer uses io_uring and it's the io_uring_enter() that
-> > > triggers this reliably. With this reproducer I've managed to reproduce
-> > > the issue on v5.12-rc4, and v5.12-rc3, v5.12-rc2 and v5.12-rc1.
-> > > It's not reproducible at
-> > > 9820b4dca0f9c6b7ab8b4307286cdace171b724d
-> > > which is the commit immediately before the first v5.12 io_uring merge.
-> > > It's first reproducible with the first io_uring merge for v5.12, i.e.
-> > > 5bbb336ba75d95611a7b9456355b48705016bdb1
-> > 
-> > Thanks, that's good info. I'll take a look at it and see if I can
-> > reproduce.
-> 
-> Ok, I was deep into this anyway and it didn't make much sense to do
-> anything else at that point so I bisected this a bit further. The first
-> bad commit is:
-> 
-> commit 3a81fd02045c329f25e5900fa61f613c9b317644
-> Author: Jens Axboe <axboe@kernel.dk>
-> Date:   Thu Dec 10 12:25:36 2020 -0700
-> 
->     io_uring: enable LOOKUP_CACHED path resolution for filename lookups
-> 
->     Instead of being pessimistic and assume that path lookup will block, use
->     LOOKUP_CACHED to attempt just a cached lookup. This ensures that the
->     fast path is always done inline, and we only punt to async context if
->     IO is needed to satisfy the lookup.
-> 
->     For forced nonblock open attempts, mark the file O_NONBLOCK over the
->     actual ->open() call as well. We can safely clear this again before
->     doing fd_install(), so it'll never be user visible that we fiddled with
->     it.
-> 
->     This greatly improves the performance of file open where the dentry is
->     already cached:
-> 
->     ached           5.10-git        5.10-git+LOOKUP_CACHED  Speedup
->     ---------------------------------------------------------------
->     33%             1,014,975       900,474                 1.1x
->     89%              545,466        292,937                 1.9x
->     100%             435,636        151,475                 2.9x
-> 
->     The more cache hot we are, the faster the inline LOOKUP_CACHED
->     optimization helps. This is unsurprising and expected, as a thread
->     offload becomes a more dominant part of the total overhead. If we look
->     at io_uring tracing, doing an IORING_OP_OPENAT on a file that isn't in
->     the dentry cache will yield:
-> 
->     275.550481: io_uring_create: ring 00000000ddda6278, fd 3 sq size 8, cq size 16, flags 0
->     275.550491: io_uring_submit_sqe: ring 00000000ddda6278, op 18, data 0x0, non block 1, sq_thread 0
->     275.550498: io_uring_queue_async_work: ring 00000000ddda6278, request 00000000c0267d17, flags 69760, normal queue, work 000000003d683991
->     275.550502: io_uring_cqring_wait: ring 00000000ddda6278, min_events 1
->     275.550556: io_uring_complete: ring 00000000ddda6278, user_data 0x0, result 4
-> 
->     which shows a failed nonblock lookup, then punt to worker, and then we
->     complete with fd == 4. This takes 65 usec in total. Re-running the same
->     test case again:
-> 
->     281.253956: io_uring_create: ring 0000000008207252, fd 3 sq size 8, cq size 16, flags 0
->     281.253967: io_uring_submit_sqe: ring 0000000008207252, op 18, data 0x0, non block 1, sq_thread 0
->     281.253973: io_uring_complete: ring 0000000008207252, user_data 0x0, result 4
-> 
->     shows the same request completing inline, also returning fd == 4. This
->     takes 6 usec.
-> 
->     Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Hi Jens,
 
-I _think_ I see what the issue is. It seems that an assumption made in
-this commit might be wrong and we're missing a mnt_add_count() bump that
-we would otherwise have gotten if we've moved the failure handling into
-the unlazy helpers themselves.
+>> I know you brought this one up as part of your series, not sure I get
+>> why you want it owned by root and read-only? cmdline and exe, yeah those
+>> could be hidden, but is there really any point?
+>>
+>> Maybe I'm missing something here, if so, do clue me in!
+> 
+> I looked through /proc and I think it's mostly similar to
+> the unshare() case, if userspace wants to do stupid things
+> like changing "comm" of iothreads, it gets what was asked for.
+> 
+> But the "cmdline" hiding would be very useful.
+> 
+> While most tools use "comm", by default.
+> 
+> ps -eLf or 'iotop' use "cmdline".
+> 
+> Some processes use setproctitle to change "cmdline" in order
+> to identify the process better, without the 15 chars comm restriction,
+> that's why I very often press 'c' in 'top' to see the cmdline,
+> in that case it would be very helpful to see '[iou-wrk-1234]'
+> instead of the seeing the cmdline.
+> 
+> So I'd very much prefer if this could be applied:
+> https://lore.kernel.org/io-uring/d4487f959c778d0b1d4c5738b75bcff17d21df5b.1616197787.git.metze@samba.org/T/#u
+> 
+> If you want I can add a comment and a more verbose commit message...
 
-Al, does that sound plausible?
+I noticed that 'iotop' actually appends ' [iou-wrk-1234]' to the cmdline value,
+so that leaves us with 'ps -eLf' and 'top' (with 'c').
 
-commit eacd9aa8cedeb412842c7b339adbaa0477fdd5ad
-Author: Al Viro <viro@zeniv.linux.org.uk>
-Date:   Mon Feb 15 12:03:23 2021 -0500
+pstree -a -t -p is also fine:
+      │   └─io_uring-cp,1315 /root/kernel/linux-image-5.12.0-rc2+-dbg_5.12.0-rc2+-5_amd64.deb file
+      │       ├─{iou-mgr-1315},1316
+      │       ├─{iou-wrk-1315},1317
+      │       ├─{iou-wrk-1315},1318
+      │       ├─{iou-wrk-1315},1319
+      │       ├─{iou-wrk-1315},1320
 
-    fix handling of nd->depth on LOOKUP_CACHED failures in try_to_unlazy*
 
-    After switching to non-RCU mode, we want nd->depth to match the number
-    of entries in nd->stack[] that need eventual path_put().
-    legitimize_links() takes care of that on failures; unfortunately,
-    failure exits added for LOOKUP_CACHED do not.
+In the spirit of "avoid special PF_IO_WORKER checks" I guess it's ok
+to leave of as is...
 
-    We could add the logics for that into those failure exits, both in
-    try_to_unlazy() and in try_to_unlazy_next(), but since both checks
-    are immediately followed by legitimize_links() and there's no calls
-    of legitimize_links() other than those two...  It's easier to
-    move the check (and required handling of nd->depth on failure) into
-    legitimize_links() itself.
-
-    [caught by Jens: ... and since we are zeroing ->depth here, we need
-    to do drop_links() first]
-
-    Fixes: 6c6ec2b0a3e0 "fs: add support for LOOKUP_CACHED"
-    Tested-by: Jens Axboe <axboe@kernel.dk>
-    Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-
-diff --git a/fs/namei.c b/fs/namei.c
-index 4cae88733a5c..de74ad2bc6e2 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -630,6 +630,11 @@ static inline bool legitimize_path(struct nameidata *nd,
- static bool legitimize_links(struct nameidata *nd)
- {
-        int i;
-+       if (unlikely(nd->flags & LOOKUP_CACHED)) {
-+               drop_links(nd);
-+               nd->depth = 0;
-+               return false;
-+       }
-        for (i = 0; i < nd->depth; i++) {
-                struct saved *last = nd->stack + i;
-                if (unlikely(!legitimize_path(nd, &last->link, last->seq))) {
-@@ -686,8 +691,6 @@ static bool try_to_unlazy(struct nameidata *nd)
-        BUG_ON(!(nd->flags & LOOKUP_RCU));
-
-        nd->flags &= ~LOOKUP_RCU;
--       if (nd->flags & LOOKUP_CACHED)
--               goto out1;
-        if (unlikely(!legitimize_links(nd)))
-                goto out1;
-        if (unlikely(!legitimize_path(nd, &nd->path, nd->seq)))
-@@ -724,8 +727,6 @@ static bool try_to_unlazy_next(struct nameidata *nd, struct dentry *dentry, unsi
-        BUG_ON(!(nd->flags & LOOKUP_RCU));
-
-        nd->flags &= ~LOOKUP_RCU;
--       if (nd->flags & LOOKUP_CACHED)
--               goto out2;
-        if (unlikely(!legitimize_links(nd)))
-                goto out2;
-        if (unlikely(!legitimize_mnt(nd->path.mnt, nd->m_seq)))
+metze

@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E9A54351837
-	for <lists+io-uring@lfdr.de>; Thu,  1 Apr 2021 19:48:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C185935183C
+	for <lists+io-uring@lfdr.de>; Thu,  1 Apr 2021 19:48:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236309AbhDARoT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 1 Apr 2021 13:44:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57144 "EHLO
+        id S236324AbhDARoU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 1 Apr 2021 13:44:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57208 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234705AbhDARjT (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 1 Apr 2021 13:39:19 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B6C2C0045FB
-        for <io-uring@vger.kernel.org>; Thu,  1 Apr 2021 07:48:28 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id x16so2104366wrn.4
-        for <io-uring@vger.kernel.org>; Thu, 01 Apr 2021 07:48:28 -0700 (PDT)
+        with ESMTP id S234711AbhDARjU (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 1 Apr 2021 13:39:20 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F8A6C0045FD
+        for <io-uring@vger.kernel.org>; Thu,  1 Apr 2021 07:48:30 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id 12so1180057wmf.5
+        for <io-uring@vger.kernel.org>; Thu, 01 Apr 2021 07:48:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=Y95CJayNrwzOaVNWU8hPBC0uk5jvclW1/zV21RVy3lU=;
-        b=HZMrXOWLd5+RgUMiSHSSG6xTU83bpDrF/TjegyCEBxQ+qW1t/c3w7FHloGcZeeV81J
-         n7asFYsa/vECUhCebFlDIE30Pp2P9fquCFVsmNlVytAp5qUAjExnHyQ2eZN1Co9ahmit
-         +1rWeflZ1hX0Gh5BL4i/dZBZim6Z4sSA1LnNQ7Daf5esGYFpBvru8qR4rUj3zf4L6EKl
-         ldfW5gjeb8e2Ao950FRcAjNTRQTIHpOlBTfbuIyabxrxwH6LDPUxscHgvxUlMx4NgFdO
-         5S4gA0wutwScrwILnChALUqdU3DVDGM5e4ADs2X/LmaPbpF4xDms7DMyLUjZqiHfPKyU
-         qyKw==
+        bh=va+DMaUPpcC5b2FUdXa9GOf2WrafA7WZA1VBL0yavDQ=;
+        b=f2Llp5dLDsve/VDOghEoor7NJBk26x74ANMTrYdnmSJzdYwdCEBq4w+rgNtw6fbcWW
+         ShkoV/Tt62ROP2zJYstY9QKF6xh2WkFcV+UKlhSXz9ehoHWs31aLHuRbbCXzXv3Rp+25
+         UtVEWtzGbWioSnlBjaebMgzaEf+IT4VdaNOPxNZOqlw3zuDq3aOZ4Ojv96IyWIjhQkeV
+         AaIH2OOvM5UpZS7kIcxUYRx8iI6Gmym3SRKSrZUTbNinaDfWuFfKbVdhEprF13F2Nbf9
+         AQnGrmlrTwlVhw67rx0UBXH9PMO4wpOYmBZcxJPjFcu+ZHoN07kyLU2Ht7O3t9lIvzpa
+         Gbcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Y95CJayNrwzOaVNWU8hPBC0uk5jvclW1/zV21RVy3lU=;
-        b=SGt0I6i1C/vr/NaycUGrOBRv8Dt0/3zV/PUtg9MIlsTtM5mLbXQSU765OJibaBwnZI
-         Re/GU3HTbn+fm0Jr1+JEHxW9lZBedTxf2ptJ3lj+EleXKUAiKdcSqjDzmZ4IUdIH2UGT
-         BMYDu/xttoxqKot9gwYXa40lnsIDNp5d+ZGoGPeKK2emeCSy8yVO/tNYwhuVDEV3i6jI
-         lZpjW6YeIhPNGI/lVsuK3BqGOY48helPcIrqX7YmBisc0OJsryqCx6bNcZ3cdPdO9xRN
-         25LbnTcDD3TfSwLCWHYGQtQ/SrcX4stNvKQ41i3Z8/jweMP9CWL8fPE35tB+hk/+ZYLG
-         flUQ==
-X-Gm-Message-State: AOAM532jGtMDskMkB2HR5p+iVgJTeFgIS8RCyPxHLqhHRXe/er0A0+Yy
-        fCYClicICMWHTRX5QSFP2k8=
-X-Google-Smtp-Source: ABdhPJyAAu6DL1N74FGdZAXtE8rQA+C000Zln6JEjIfDsFZRcUxImJEQIcZal6XhYRV1QZgXdkwQhA==
-X-Received: by 2002:adf:e791:: with SMTP id n17mr10128112wrm.322.1617288507437;
-        Thu, 01 Apr 2021 07:48:27 -0700 (PDT)
+        bh=va+DMaUPpcC5b2FUdXa9GOf2WrafA7WZA1VBL0yavDQ=;
+        b=glntX2NNwLcBCjAsK0bIhNzUnkq0gyyDbO/LZfPcXcQfeH5s4wIS/b+NeWEmCYpcZv
+         tbxrlp9EYy/54D0Z5bt8oRvWcEcpRj9RH7zsvtu8mEaRD2bW5qY4MEDmBINktQlbV212
+         g6rR9TUOtVnBgVTviwJINswg1oOf73I3QhSz8Mek+9ulBWrwvRVxtr0r6WMDA99z6IDd
+         FxyLIgqvgMLzSfz/FOWFrSqKk57RSiauP0L7n3mzmVBy5jTn2gjB198UHdBZxQGQEbBU
+         IS+tT7RoNhNfEUiRklTz93tRvNEXZ03cN0J/4hk2gRDELBtg0aAvVFAevFUdIJIXtyDe
+         N9tA==
+X-Gm-Message-State: AOAM530bsgs7W2TIxUqTaLgP8Yc/3D3br9SU331jQYDZnhiIKWn8GvBP
+        Z5YqvUFA6oFAmYxAPEGsoSWMmjHBphgGiQ==
+X-Google-Smtp-Source: ABdhPJy4ZEs3gtgMxBxPwBhLLGNJf1Q6x5zpk/sROAEIoNmse2UZDZmCDO5iEcY1L/MfDFbWfPfQOA==
+X-Received: by 2002:a05:600c:214d:: with SMTP id v13mr8538480wml.162.1617288509445;
+        Thu, 01 Apr 2021 07:48:29 -0700 (PDT)
 Received: from localhost.localdomain ([148.252.132.152])
-        by smtp.gmail.com with ESMTPSA id x13sm8183948wmp.39.2021.04.01.07.48.26
+        by smtp.gmail.com with ESMTPSA id x13sm8183948wmp.39.2021.04.01.07.48.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Apr 2021 07:48:26 -0700 (PDT)
+        Thu, 01 Apr 2021 07:48:29 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH v4 10/26] io_uring: refactor rw reissue
-Date:   Thu,  1 Apr 2021 15:43:49 +0100
-Message-Id: <a0d8f74f5a03bded8374bd29c0978aaa5af17fdf.1617287883.git.asml.silence@gmail.com>
+Subject: [PATCH v4 12/26] io_uring: better ref handling in poll_remove_one
+Date:   Thu,  1 Apr 2021 15:43:51 +0100
+Message-Id: <85b5774ce13ae55cc2e705abdc8cbafe1212f1bd.1617287883.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1617287883.git.asml.silence@gmail.com>
 References: <cover.1617287883.git.asml.silence@gmail.com>
@@ -61,90 +61,27 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Move io_rw_should_reissue() check into io_resubmit_prep(), so we don't
-need, so we can remove it from io_rw_reissue() and
-io_complete_rw_iopoll().
+Instead of io_put_req() to drop not a final ref, use req_ref_put(),
+which is slimmer and will also check the invariant.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 37 ++++++++++++++++---------------------
- 1 file changed, 16 insertions(+), 21 deletions(-)
+ fs/io_uring.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index e8d95feed75f..e9bfe137270c 100644
+index 9ebdd288653f..bf3eeabda71d 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -2441,17 +2441,6 @@ static void kiocb_end_write(struct io_kiocb *req)
- }
- 
- #ifdef CONFIG_BLOCK
--static bool io_resubmit_prep(struct io_kiocb *req)
--{
--	struct io_async_rw *rw = req->async_data;
--
--	if (!rw)
--		return !io_req_prep_async(req);
--	/* may have left rw->iter inconsistent on -EIOCBQUEUED */
--	iov_iter_revert(&rw->iter, req->result - iov_iter_count(&rw->iter));
--	return true;
--}
--
- static bool io_rw_should_reissue(struct io_kiocb *req)
- {
- 	umode_t mode = file_inode(req->file)->i_mode;
-@@ -2467,26 +2456,34 @@ static bool io_rw_should_reissue(struct io_kiocb *req)
- 	 * Don't attempt to reissue from that path, just let it fail with
- 	 * -EAGAIN.
- 	 */
--	if (percpu_ref_is_dying(&ctx->refs))
--		return false;
--	return true;
-+	return !percpu_ref_is_dying(&ctx->refs);
- }
--#endif
- 
--static bool io_rw_reissue(struct io_kiocb *req)
-+static bool io_resubmit_prep(struct io_kiocb *req)
- {
--#ifdef CONFIG_BLOCK
-+	struct io_async_rw *rw = req->async_data;
-+
- 	if (!io_rw_should_reissue(req))
- 		return false;
- 
- 	lockdep_assert_held(&req->ctx->uring_lock);
- 
-+	if (!rw)
-+		return !io_req_prep_async(req);
-+	/* may have left rw->iter inconsistent on -EIOCBQUEUED */
-+	iov_iter_revert(&rw->iter, req->result - iov_iter_count(&rw->iter));
-+	return true;
-+}
-+#endif
-+
-+static bool io_rw_reissue(struct io_kiocb *req)
-+{
-+#ifdef CONFIG_BLOCK
- 	if (io_resubmit_prep(req)) {
- 		req_ref_get(req);
- 		io_queue_async_work(req);
- 		return true;
- 	}
--	req_set_fail_links(req);
- #endif
- 	return false;
- }
-@@ -2525,9 +2522,7 @@ static void io_complete_rw_iopoll(struct kiocb *kiocb, long res, long res2)
- 		bool fail = true;
- 
- #ifdef CONFIG_BLOCK
--		if (res == -EAGAIN && io_rw_should_reissue(req) &&
--		    io_resubmit_prep(req))
--			fail = false;
-+		fail = res != -EAGAIN || !io_resubmit_prep(req);
- #endif
- 		if (fail) {
- 			req_set_fail_links(req);
+@@ -5224,7 +5224,7 @@ static bool io_poll_remove_waitqs(struct io_kiocb *req)
+ 		/* non-poll requests have submit ref still */
+ 		do_complete = __io_poll_remove_one(req, &apoll->poll, true);
+ 		if (do_complete) {
+-			io_put_req(req);
++			req_ref_put(req);
+ 			kfree(apoll->double_poll);
+ 			kfree(apoll);
+ 		}
 -- 
 2.24.0
 

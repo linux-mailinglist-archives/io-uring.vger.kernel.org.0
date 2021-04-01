@@ -2,88 +2,72 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ACC1C351A4F
-	for <lists+io-uring@lfdr.de>; Thu,  1 Apr 2021 20:04:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54D01351A91
+	for <lists+io-uring@lfdr.de>; Thu,  1 Apr 2021 20:06:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236426AbhDAR7B (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 1 Apr 2021 13:59:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32870 "EHLO
+        id S235953AbhDASB7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 1 Apr 2021 14:01:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236973AbhDAR4k (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 1 Apr 2021 13:56:40 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C8B5C0045AE
-        for <io-uring@vger.kernel.org>; Thu,  1 Apr 2021 07:48:44 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id v4so2078141wrp.13
-        for <io-uring@vger.kernel.org>; Thu, 01 Apr 2021 07:48:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=RhIVYRCEBp2P76QiFo+AOMrQ2AaXGewjKYXOu/DMYlY=;
-        b=IbgISJmKXOnk19WZS3J2ySq3FVtnrxDi4hLax9YvS6t1XBCNhXjxpk679NzsW2fdgV
-         w54k2SjAZ3TpaU7EWId4lgguNTVU601a6QexPvk5+ZD20SZ8RgIz6uvE3pDJu2g+TrTp
-         VKGmM4M5iQqsIJASRziFNeZ8KOR8CGyOUjYr4JHyvOCpXLzeJvIvvKKBM3EctNu29n5v
-         vyK7DWUhBDPx9q3/kF0V1aFsM2UGYmVduu6o12IRfYYno3+bSFQm8DsPlvEr5uz/Hu8O
-         cuIyDhbq74GigNCXA7DO7LvefBscwd1YsE2z4Lry+SP4qm1jO8Oq3eedd+WMhpN/CQI0
-         kNUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=RhIVYRCEBp2P76QiFo+AOMrQ2AaXGewjKYXOu/DMYlY=;
-        b=Yu0Gd9hIxpYx+3rqn8ltQhghsm5JcE38XGJ/Oi1AB4PgXNgGCYYnnmTw67YJHkWuJt
-         2sfcRUQ/DJY2UT5khpYj3WEP80/5L1TVhAOPBVPhGPqWPYKm80LzWGM/e2JgaES1RQoq
-         rHyQUdhQDO2BxXaKX7knbWzfl7cUizQQcPJ0PdqnDnrWA+7YnHFFDSR5rDm9kg/J3zRZ
-         MB7qgryBlNNgwr97oFUsy9Ao5vMvNlfOhXoivBj1nwH5N6qqJbLmERcHEoHdrnCEefXb
-         jB78v0oGirE2z/MyzZdkLXBt7nhIqlNypVMkQJigkqxGDSFmWtS9x1efs1CJPs5PjOlc
-         MNew==
-X-Gm-Message-State: AOAM533obSetca9s6mHwnGR9UUomHTfbyBj3kYUB7rgqwsaua7DJQ8x9
-        AXC4VSMIS1QeL0RCmYPy36jZGbV7NXglIw==
-X-Google-Smtp-Source: ABdhPJz3FAPhCBkTBF6tKUr3aQxZoVpxlNtWRzdL1bslbqmRtc5kicABYfB4fZknrhzuqF/aeCEIZQ==
-X-Received: by 2002:adf:e4c7:: with SMTP id v7mr10231107wrm.245.1617288523242;
-        Thu, 01 Apr 2021 07:48:43 -0700 (PDT)
-Received: from localhost.localdomain ([148.252.132.152])
-        by smtp.gmail.com with ESMTPSA id x13sm8183948wmp.39.2021.04.01.07.48.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Apr 2021 07:48:42 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH v4 26/26] io_uring: kill outdated comment about splice punt
-Date:   Thu,  1 Apr 2021 15:44:05 +0100
-Message-Id: <892a549c89c3d422b679677b8e68ffd3fcb736b6.1617287883.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <cover.1617287883.git.asml.silence@gmail.com>
-References: <cover.1617287883.git.asml.silence@gmail.com>
+        with ESMTP id S236065AbhDAR5R (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 1 Apr 2021 13:57:17 -0400
+Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60FFBC0D9426;
+        Thu,  1 Apr 2021 07:53:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+         s=42; h=Date:Message-ID:Cc:To:From;
+        bh=8jYVTSHcDUfHY7lSnRvxzqvV+XEOiioVeMCNkU5pL/U=; b=gmeqKFSfEmZMR4ikxGpeC9sR6z
+        HstPDGcPczEeSWVvfeQryWdLv5R0S8Lvi/AS+peqlhACr6i8pQZvrjTYs8gXY5UGXcNAh11PcNS9h
+        L4rOw1MMvCOPtEg7gPMyfgcuEIKpI+SsdA1FnVDympI0txP4z1iGSHrA3YpHoJjq1YCuDNAu04YSN
+        GQ2RP1MO7lwug85uFQi7RCikLv5eL9DW8VmzFnPV9DVPXKQnQ68TODydm0GPBcNefySbrIi6JVebG
+        dXpnluVTE8W71WJ5ORgMnuBsJlp3ot2ldpSPuXaP93I+7leTSMfTBM6j4kFtCrrlSJXRUyOiHxedD
+        qhfjLZo0vOT54tB7E4WWwA/g60y9moxBetQSLwZklwq3ny8AgUd95GtqLA39O29qHkdA3J949aHsx
+        TvowkICdfdpaqLCdV/7V2UtVaXPzLpt+qjNcX/xRDAcRPZBxJFt/tVQ3bK8XevOdoCql1pTR3Tpoy
+        ArP01jTDNK8Xbe9/GkJ5X9Ae;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
+        (Exim)
+        id 1lRyhE-0007Rp-QU; Thu, 01 Apr 2021 14:53:20 +0000
+Subject: Re: [PATCH 2/8] kernel: unmask SIGSTOP for IO threads
+From:   Stefan Metzmacher <metze@samba.org>
+To:     Jens Axboe <axboe@kernel.dk>, Oleg Nesterov <oleg@redhat.com>
+Cc:     io-uring@vger.kernel.org, torvalds@linux-foundation.org,
+        ebiederm@xmission.com, linux-kernel@vger.kernel.org
+References: <20210326003928.978750-1-axboe@kernel.dk>
+ <20210326003928.978750-3-axboe@kernel.dk> <20210326134840.GA1290@redhat.com>
+ <a179ad33-5656-b644-0d92-e74a6bd26cc8@kernel.dk>
+ <8f2a4b48-77c9-393f-5194-100ed63c05fc@samba.org>
+ <58f67a8b-166e-f19c-ccac-157153e4f17c@kernel.dk>
+ <c61fc5eb-c997-738b-1a60-5e3db2754f49@samba.org>
+Message-ID: <a891f9b7-81fb-5534-891c-306593961156@samba.org>
+Date:   Thu, 1 Apr 2021 16:53:12 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <c61fc5eb-c997-738b-1a60-5e3db2754f49@samba.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The splice/tee comment in io_prep_async_work() isn't relevant since the
-section was moved, delete it.
+Hi Jens,
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 4 ----
- 1 file changed, 4 deletions(-)
+>>> I don't assume signals wanted by userspace should potentially handled in an io_thread...
+>>> e.g. things set with fcntl(fd, F_SETSIG,) used together with F_SETLEASE?
+>>
+>> I guess we do actually need it, if we're not fiddling with
+>> wants_signal() for them. To quell Oleg's concerns, we can just move it
+>> to post dup_task_struct(), that should eliminate any race concerns
+>> there.
+> 
+> If that one is racy, don' we better also want this one?
+> https://lore.kernel.org/io-uring/438b738c1e4827a7fdfe43087da88bbe17eedc72.1616197787.git.metze@samba.org/T/#u
+> 
+> And clear tsk->pf_io_worker ?
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index c1d9fface7f4..b20fec2e2be6 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1224,10 +1224,6 @@ static void io_prep_async_work(struct io_kiocb *req)
- 	switch (req->opcode) {
- 	case IORING_OP_SPLICE:
- 	case IORING_OP_TEE:
--		/*
--		 * Splice operation will be punted aync, and here need to
--		 * modify io_wq_work.flags, so initialize io_wq_work firstly.
--		 */
- 		if (!S_ISREG(file_inode(req->splice.file_in)->i_mode))
- 			req->work.flags |= IO_WQ_WORK_UNBOUND;
- 		break;
--- 
-2.24.0
+As the workers don't clone other workers I guess it's fine to defer this to 5.13.
+
+metze
 

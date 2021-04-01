@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C185935183C
-	for <lists+io-uring@lfdr.de>; Thu,  1 Apr 2021 19:48:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16674351832
+	for <lists+io-uring@lfdr.de>; Thu,  1 Apr 2021 19:48:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236324AbhDARoU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 1 Apr 2021 13:44:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57208 "EHLO
+        id S236283AbhDARoR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 1 Apr 2021 13:44:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234711AbhDARjU (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 1 Apr 2021 13:39:20 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F8A6C0045FD
-        for <io-uring@vger.kernel.org>; Thu,  1 Apr 2021 07:48:30 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id 12so1180057wmf.5
-        for <io-uring@vger.kernel.org>; Thu, 01 Apr 2021 07:48:30 -0700 (PDT)
+        with ESMTP id S234702AbhDARjS (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 1 Apr 2021 13:39:18 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B101C0045FE
+        for <io-uring@vger.kernel.org>; Thu,  1 Apr 2021 07:48:31 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id x16so2104557wrn.4
+        for <io-uring@vger.kernel.org>; Thu, 01 Apr 2021 07:48:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=va+DMaUPpcC5b2FUdXa9GOf2WrafA7WZA1VBL0yavDQ=;
-        b=f2Llp5dLDsve/VDOghEoor7NJBk26x74ANMTrYdnmSJzdYwdCEBq4w+rgNtw6fbcWW
-         ShkoV/Tt62ROP2zJYstY9QKF6xh2WkFcV+UKlhSXz9ehoHWs31aLHuRbbCXzXv3Rp+25
-         UtVEWtzGbWioSnlBjaebMgzaEf+IT4VdaNOPxNZOqlw3zuDq3aOZ4Ojv96IyWIjhQkeV
-         AaIH2OOvM5UpZS7kIcxUYRx8iI6Gmym3SRKSrZUTbNinaDfWuFfKbVdhEprF13F2Nbf9
-         AQnGrmlrTwlVhw67rx0UBXH9PMO4wpOYmBZcxJPjFcu+ZHoN07kyLU2Ht7O3t9lIvzpa
-         Gbcg==
+        bh=+6V1gcmMJW+HhZl07X6y1rGQPOCvMHoxbm1Z544xQLs=;
+        b=GDwff2sFPPOR1eZAb10sQNwWThpZQz73olK5HdJEOpVA6+GPTR9XjX3gNjj7bs1cYu
+         LOzIwLORnciOpH5UZIslTPv9o8vnGpNQibJ4Z46ry+kWaUxVGnYDPByvzMzba2SZl56Y
+         TJRNgCWob90UxcVj5a5WEZ8IfNGLVaYUHY2yU4/Zm7gBX5DbI1MWJGeKd4r0dfbf1ohA
+         C/BjW1ythNE911UKhmLdeQMP4zGOj1tDebzeLhLF7q3hQqakQhYlqx/jhl5fZfG9Wq4f
+         jRC+sa6ULquxOpkBM/AZevBQ2wGVDJh7RGklaK2HF+qf+w2AisjdfzK721lm/2aZLQf/
+         cwBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=va+DMaUPpcC5b2FUdXa9GOf2WrafA7WZA1VBL0yavDQ=;
-        b=glntX2NNwLcBCjAsK0bIhNzUnkq0gyyDbO/LZfPcXcQfeH5s4wIS/b+NeWEmCYpcZv
-         tbxrlp9EYy/54D0Z5bt8oRvWcEcpRj9RH7zsvtu8mEaRD2bW5qY4MEDmBINktQlbV212
-         g6rR9TUOtVnBgVTviwJINswg1oOf73I3QhSz8Mek+9ulBWrwvRVxtr0r6WMDA99z6IDd
-         FxyLIgqvgMLzSfz/FOWFrSqKk57RSiauP0L7n3mzmVBy5jTn2gjB198UHdBZxQGQEbBU
-         IS+tT7RoNhNfEUiRklTz93tRvNEXZ03cN0J/4hk2gRDELBtg0aAvVFAevFUdIJIXtyDe
-         N9tA==
-X-Gm-Message-State: AOAM530bsgs7W2TIxUqTaLgP8Yc/3D3br9SU331jQYDZnhiIKWn8GvBP
-        Z5YqvUFA6oFAmYxAPEGsoSWMmjHBphgGiQ==
-X-Google-Smtp-Source: ABdhPJy4ZEs3gtgMxBxPwBhLLGNJf1Q6x5zpk/sROAEIoNmse2UZDZmCDO5iEcY1L/MfDFbWfPfQOA==
-X-Received: by 2002:a05:600c:214d:: with SMTP id v13mr8538480wml.162.1617288509445;
-        Thu, 01 Apr 2021 07:48:29 -0700 (PDT)
+        bh=+6V1gcmMJW+HhZl07X6y1rGQPOCvMHoxbm1Z544xQLs=;
+        b=oH/HLujGc9L9s5S1wrcVnBS3h2/ptv/iyIPTjKzU1x/q84EcAIrmSPjMQiy8pkLX5I
+         32EZx6AItFMIBh3s5pXO+nehpIF9HZgWyldoaXuhyG8nqDCCGC+t/ESHXuM/EQshIVmx
+         4dldWUoCwQ+tmEDyohtUSU58zKg2SUVUnlksIEeJERzO3dXAvyNqCKiMmvpl8/fE/0U0
+         ZScnqOYfo/3VKSd40cqRYAG3tDFTkDH7Jc/0DmAog7YCA45MUqJyLRJ7O7cMx2J7SvUi
+         qK+N0/UCEXEED66ajzhGLsB2GlxgprS9tBw2yNKwD6LJDT50esgeMGsM0iV64S7Au452
+         annA==
+X-Gm-Message-State: AOAM530QkFs6MmFElYPa9ZkU7GMPCKxAW8UtXtrnu51RpVyjkmDQ53KJ
+        QqZxcWzCDzskj8IF6Gi/7j6Fd6g0TC5UKQ==
+X-Google-Smtp-Source: ABdhPJxWtsAW7e0+vHEQFrk/BvtktkGEo0V3o4acxCk+Ba0+Ld/4yqECCpCqNC43NdskhZgE02frLA==
+X-Received: by 2002:adf:f843:: with SMTP id d3mr9994261wrq.55.1617288510369;
+        Thu, 01 Apr 2021 07:48:30 -0700 (PDT)
 Received: from localhost.localdomain ([148.252.132.152])
-        by smtp.gmail.com with ESMTPSA id x13sm8183948wmp.39.2021.04.01.07.48.28
+        by smtp.gmail.com with ESMTPSA id x13sm8183948wmp.39.2021.04.01.07.48.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Apr 2021 07:48:29 -0700 (PDT)
+        Thu, 01 Apr 2021 07:48:30 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH v4 12/26] io_uring: better ref handling in poll_remove_one
-Date:   Thu,  1 Apr 2021 15:43:51 +0100
-Message-Id: <85b5774ce13ae55cc2e705abdc8cbafe1212f1bd.1617287883.git.asml.silence@gmail.com>
+Subject: [PATCH v4 13/26] io_uring: remove unused hash_wait
+Date:   Thu,  1 Apr 2021 15:43:52 +0100
+Message-Id: <e25cb83c233a5f75f15275596b49fbafbea606fa.1617287883.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1617287883.git.asml.silence@gmail.com>
 References: <cover.1617287883.git.asml.silence@gmail.com>
@@ -61,27 +61,26 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Instead of io_put_req() to drop not a final ref, use req_ref_put(),
-which is slimmer and will also check the invariant.
+No users of io_uring_ctx::hash_wait left, kill it.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/io_uring.c | 2 --
+ 1 file changed, 2 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 9ebdd288653f..bf3eeabda71d 100644
+index bf3eeabda71d..4314e738c2ad 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -5224,7 +5224,7 @@ static bool io_poll_remove_waitqs(struct io_kiocb *req)
- 		/* non-poll requests have submit ref still */
- 		do_complete = __io_poll_remove_one(req, &apoll->poll, true);
- 		if (do_complete) {
--			io_put_req(req);
-+			req_ref_put(req);
- 			kfree(apoll->double_poll);
- 			kfree(apoll);
- 		}
+@@ -455,8 +455,6 @@ struct io_ring_ctx {
+ 	/* exit task_work */
+ 	struct callback_head		*exit_task_work;
+ 
+-	struct wait_queue_head		hash_wait;
+-
+ 	/* Keep this last, we don't need it for the fast path */
+ 	struct work_struct		exit_work;
+ 	struct list_head		tctx_list;
 -- 
 2.24.0
 

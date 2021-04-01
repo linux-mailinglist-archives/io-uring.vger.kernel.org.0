@@ -2,96 +2,158 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A839351833
-	for <lists+io-uring@lfdr.de>; Thu,  1 Apr 2021 19:48:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97AD73518F6
+	for <lists+io-uring@lfdr.de>; Thu,  1 Apr 2021 19:49:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236279AbhDARoR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 1 Apr 2021 13:44:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57230 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234647AbhDARi4 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 1 Apr 2021 13:38:56 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95D9DC02FEB2
-        for <io-uring@vger.kernel.org>; Thu,  1 Apr 2021 09:25:16 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id m12so3674247lfq.10
-        for <io-uring@vger.kernel.org>; Thu, 01 Apr 2021 09:25:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zqCMOBypWMQrFbhLJ32mebAruTX9rIeMsT/rUeGN8s4=;
-        b=MJa57M9nPQRBm1aVYcjskVj7GsuwnBIkQ2OKLCY1TaQbheJTjtHLCiiLXpyBtHdYnG
-         GYn1R3QF5JvAJ5heSIw+Xkj46s7bdiCDIIabYjiWbgc3bwnaKSuzjz32xAyKWQwckGQR
-         o+BzYcd/n0S6QJ/6MepO2U9OBI0Wt1MFV7qT8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zqCMOBypWMQrFbhLJ32mebAruTX9rIeMsT/rUeGN8s4=;
-        b=Tew5A+LfhHGn7NoOGhdkevcsYv2F6Enqd6sGjrKOgi/Yh3PkcIiNlv3ztVt32qdB3E
-         OC46B4/XQ1coVFpVDdeQY7zVUG4N7KtAoSSC7w82J4ex8Sd1W5ruoSjO2GSuUuoJ1sVo
-         cCyT242tRv8bCcFLbtqy1nQFjdCsUa4WR540Ic/vj66r3eJnW6UxNNtiUCIJvn4q2a8p
-         cWuZ9UP4og3zSs9AOwvOqiSAFHM3AQuvcGkMy07Z7wb3XQqv2kLmjrtrt4CjaET70pX5
-         W2GWlY9+yNl0RqxqjciFti4c/nHhHJ4DXM5M3wsVsv55EO+BAg+5FbY0N0QXwkVEoSzw
-         epBA==
-X-Gm-Message-State: AOAM532m0MuySlXHvXQMPkdDWiUKCP9r1nvzLlcevDstjJFKRm7y7h7n
-        060Ggc42BfJ5F9wYc26pnB788KJjaPy5rPe8
-X-Google-Smtp-Source: ABdhPJzp02E0UyFwgoJWCGoVQ2pKGith7vodCAspE8r1ZcBPPdwuVyY2WlRwSvfGrHalB7O4v9FTDg==
-X-Received: by 2002:a05:6512:208b:: with SMTP id t11mr5634017lfr.131.1617294314163;
-        Thu, 01 Apr 2021 09:25:14 -0700 (PDT)
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com. [209.85.167.44])
-        by smtp.gmail.com with ESMTPSA id e20sm601396lfc.20.2021.04.01.09.25.13
-        for <io-uring@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Apr 2021 09:25:13 -0700 (PDT)
-Received: by mail-lf1-f44.google.com with SMTP id q29so3692761lfb.4
-        for <io-uring@vger.kernel.org>; Thu, 01 Apr 2021 09:25:13 -0700 (PDT)
-X-Received: by 2002:a05:6512:3ba9:: with SMTP id g41mr5782359lfv.421.1617294313081;
- Thu, 01 Apr 2021 09:25:13 -0700 (PDT)
+        id S235054AbhDARse (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 1 Apr 2021 13:48:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47286 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235535AbhDARq0 (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Thu, 1 Apr 2021 13:46:26 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 2BF6261165;
+        Thu,  1 Apr 2021 17:46:17 +0000 (UTC)
+Date:   Thu, 1 Apr 2021 19:46:13 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     syzbot <syzbot+c88a7030da47945a3cc3@syzkaller.appspotmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+        io-uring@vger.kernel.org
+Subject: Re: [syzbot] WARNING in mntput_no_expire (2)
+Message-ID: <20210401174613.vymhhrfsemypougv@wittgenstein>
+References: <0000000000003a565e05bee596f2@google.com>
+ <20210401154515.k24qdd2lzhtneu47@wittgenstein>
+ <90e7e339-eaec-adb2-cfed-6dc058a117a3@kernel.dk>
 MIME-Version: 1.0
-References: <20210326003928.978750-1-axboe@kernel.dk> <e6de934a-a794-f173-088d-a140d0645188@samba.org>
- <f2c93b75-a18b-fc2c-7941-9208c19869c1@kernel.dk> <8efd9977-003b-be65-8ae2-4b04d8dd1224@samba.org>
- <358c5225-c23f-de08-65cb-ca3349793c0e@samba.org> <5bb47c3a-2990-e4c4-69c6-1b5d1749a241@samba.org>
- <CAHk-=whEObPkZBe4766DmR46-=5QTUiatWbSOaD468eTgYc1tg@mail.gmail.com> <2d8a73ef-2f18-6872-bad1-a34deb20f641@samba.org>
-In-Reply-To: <2d8a73ef-2f18-6872-bad1-a34deb20f641@samba.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 1 Apr 2021 09:24:57 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wh-VE=4puZ+r-Mo0GcAUou3aKrvnNsU3JxjnMXNcJOoug@mail.gmail.com>
-Message-ID: <CAHk-=wh-VE=4puZ+r-Mo0GcAUou3aKrvnNsU3JxjnMXNcJOoug@mail.gmail.com>
-Subject: Re: [PATCH 0/6] Allow signals for IO threads
-To:     Stefan Metzmacher <metze@samba.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <90e7e339-eaec-adb2-cfed-6dc058a117a3@kernel.dk>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Apr 1, 2021 at 9:00 AM Stefan Metzmacher <metze@samba.org> wrote:
->
-> I haven't tried it, but it seems gdb tries to use PTRACE_PEEKUSR
-> against the last thread tid listed under /proc/<pid>/tasks/ in order to
-> get the architecture for the userspace application
+On Thu, Apr 01, 2021 at 10:09:18AM -0600, Jens Axboe wrote:
+> On 4/1/21 9:45 AM, Christian Brauner wrote:
+> > On Thu, Apr 01, 2021 at 02:09:20AM -0700, syzbot wrote:
+> >> Hello,
+> >>
+> >> syzbot found the following issue on:
+> >>
+> >> HEAD commit:    d19cc4bf Merge tag 'trace-v5.12-rc5' of git://git.kernel.o..
+> >> git tree:       upstream
+> >> console output: https://syzkaller.appspot.com/x/log.txt?x=1018f281d00000
+> >> kernel config:  https://syzkaller.appspot.com/x/.config?x=d1a3d65a48dbd1bc
+> >> dashboard link: https://syzkaller.appspot.com/bug?extid=c88a7030da47945a3cc3
+> >> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12f50d11d00000
+> >> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=137694a1d00000
+> >>
+> >> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> >> Reported-by: syzbot+c88a7030da47945a3cc3@syzkaller.appspotmail.com
+> >>
+> >> ------------[ cut here ]------------
+> >> WARNING: CPU: 1 PID: 8409 at fs/namespace.c:1186 mntput_no_expire+0xaca/0xcb0 fs/namespace.c:1186
+> >> Modules linked in:
+> >> CPU: 1 PID: 8409 Comm: syz-executor035 Not tainted 5.12.0-rc5-syzkaller #0
+> >> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> >> RIP: 0010:mntput_no_expire+0xaca/0xcb0 fs/namespace.c:1186
+> >> Code: ff 48 c7 c2 e0 cb 78 89 be c2 02 00 00 48 c7 c7 a0 cb 78 89 c6 05 e5 6d e5 0b 01 e8 ff e1 f6 06 e9 3f fd ff ff e8 c6 a5 a8 ff <0f> 0b e9 fc fc ff ff e8 ba a5 a8 ff e8 55 dc 94 ff 31 ff 89 c5 89
+> >> RSP: 0018:ffffc9000165fc78 EFLAGS: 00010293
+> >> RAX: 0000000000000000 RBX: 1ffff920002cbf95 RCX: 0000000000000000
+> >> RDX: ffff88802072d4c0 RSI: ffffffff81cb4b8a RDI: 0000000000000003
+> >> RBP: ffff888011656900 R08: 0000000000000000 R09: ffffffff8fa978af
+> >> R10: ffffffff81cb4884 R11: 0000000000000000 R12: 0000000000000008
+> >> R13: ffffc9000165fcc8 R14: dffffc0000000000 R15: 00000000ffffffff
+> >> FS:  0000000000000000(0000) GS:ffff8880b9d00000(0000) knlGS:0000000000000000
+> >> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> >> CR2: 000055a722053160 CR3: 000000000bc8e000 CR4: 00000000001506e0
+> >> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> >> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> >> Call Trace:
+> >>  mntput fs/namespace.c:1232 [inline]
+> >>  cleanup_mnt+0x523/0x530 fs/namespace.c:1132
+> >>  task_work_run+0xdd/0x1a0 kernel/task_work.c:140
+> >>  exit_task_work include/linux/task_work.h:30 [inline]
+> >>  do_exit+0xbfc/0x2a60 kernel/exit.c:825
+> >>  do_group_exit+0x125/0x310 kernel/exit.c:922
+> >>  __do_sys_exit_group kernel/exit.c:933 [inline]
+> >>  __se_sys_exit_group kernel/exit.c:931 [inline]
+> >>  __x64_sys_exit_group+0x3a/0x50 kernel/exit.c:931
+> >>  do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+> >>  entry_SYSCALL_64_after_hwframe+0x44/0xae
+> >> RIP: 0033:0x446af9
+> >> Code: Unable to access opcode bytes at RIP 0x446acf.
+> >> RSP: 002b:00000000005dfe48 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+> >> RAX: ffffffffffffffda RBX: 00000000004ce450 RCX: 0000000000446af9
+> >> RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000001
+> >> RBP: 0000000000000001 R08: ffffffffffffffbc R09: 0000000000000000
+> >> R10: 0000000000000000 R11: 0000000000000246 R12: 00000000004ce450
+> >> R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000001
+> > 
+> > [+Cc Jens + io_uring]
+> > 
+> > Hm, this reproducer uses io_uring and it's the io_uring_enter() that
+> > triggers this reliably. With this reproducer I've managed to reproduce
+> > the issue on v5.12-rc4, and v5.12-rc3, v5.12-rc2 and v5.12-rc1.
+> > It's not reproducible at
+> > 9820b4dca0f9c6b7ab8b4307286cdace171b724d
+> > which is the commit immediately before the first v5.12 io_uring merge.
+> > It's first reproducible with the first io_uring merge for v5.12, i.e.
+> > 5bbb336ba75d95611a7b9456355b48705016bdb1
+> 
+> Thanks, that's good info. I'll take a look at it and see if I can
+> reproduce.
 
-Christ, what an odd hack. Why wouldn't it just do it on the initial
-thread you actually attached to?
+Ok, I was deep into this anyway and it didn't make much sense to do
+anything else at that point so I bisected this a bit further. The first
+bad commit is:
 
-Are you sure it's not simply because your test-case was to attach to
-the io_uring thread? Because the io_uring thread might as well be
-considered to be 64-bit.
+commit 3a81fd02045c329f25e5900fa61f613c9b317644
+Author: Jens Axboe <axboe@kernel.dk>
+Date:   Thu Dec 10 12:25:36 2020 -0700
 
-> so my naive assumption
-> would be that it wouldn't allow the detection of a 32-bit application
-> using a 64-bit kernel.
+    io_uring: enable LOOKUP_CACHED path resolution for filename lookups
 
-I'm not entirely convinced we want to care about a confused gdb
-implementation and somebody debugging a case that I don't believe
-happens in practice.
+    Instead of being pessimistic and assume that path lookup will block, use
+    LOOKUP_CACHED to attempt just a cached lookup. This ensures that the
+    fast path is always done inline, and we only punt to async context if
+    IO is needed to satisfy the lookup.
 
-32-bit user space is legacy. And legacy isn't io_uring. If somebody
-insists on doing odd things, they can live with the odd results.
+    For forced nonblock open attempts, mark the file O_NONBLOCK over the
+    actual ->open() call as well. We can safely clear this again before
+    doing fd_install(), so it'll never be user visible that we fiddled with
+    it.
 
-                  Linus
+    This greatly improves the performance of file open where the dentry is
+    already cached:
+
+    ached           5.10-git        5.10-git+LOOKUP_CACHED  Speedup
+    ---------------------------------------------------------------
+    33%             1,014,975       900,474                 1.1x
+    89%              545,466        292,937                 1.9x
+    100%             435,636        151,475                 2.9x
+
+    The more cache hot we are, the faster the inline LOOKUP_CACHED
+    optimization helps. This is unsurprising and expected, as a thread
+    offload becomes a more dominant part of the total overhead. If we look
+    at io_uring tracing, doing an IORING_OP_OPENAT on a file that isn't in
+    the dentry cache will yield:
+
+    275.550481: io_uring_create: ring 00000000ddda6278, fd 3 sq size 8, cq size 16, flags 0
+    275.550491: io_uring_submit_sqe: ring 00000000ddda6278, op 18, data 0x0, non block 1, sq_thread 0
+    275.550498: io_uring_queue_async_work: ring 00000000ddda6278, request 00000000c0267d17, flags 69760, normal queue, work 000000003d683991
+    275.550502: io_uring_cqring_wait: ring 00000000ddda6278, min_events 1
+    275.550556: io_uring_complete: ring 00000000ddda6278, user_data 0x0, result 4
+
+    which shows a failed nonblock lookup, then punt to worker, and then we
+    complete with fd == 4. This takes 65 usec in total. Re-running the same
+    test case again:
+
+    281.253956: io_uring_create: ring 0000000008207252, fd 3 sq size 8, cq size 16, flags 0
+    281.253967: io_uring_submit_sqe: ring 0000000008207252, op 18, data 0x0, non block 1, sq_thread 0
+    281.253973: io_uring_complete: ring 0000000008207252, user_data 0x0, result 4
+
+    shows the same request completing inline, also returning fd == 4. This
+    takes 6 usec.
+
+    Signed-off-by: Jens Axboe <axboe@kernel.dk>

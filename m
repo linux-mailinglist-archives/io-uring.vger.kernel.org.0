@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ABAD4351A93
-	for <lists+io-uring@lfdr.de>; Thu,  1 Apr 2021 20:07:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F3D2351B3E
+	for <lists+io-uring@lfdr.de>; Thu,  1 Apr 2021 20:09:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235188AbhDASCG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 1 Apr 2021 14:02:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33960 "EHLO
+        id S236321AbhDASHD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 1 Apr 2021 14:07:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34002 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237072AbhDAR7X (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 1 Apr 2021 13:59:23 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75CBCC004595
-        for <io-uring@vger.kernel.org>; Thu,  1 Apr 2021 07:48:42 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id e18so2097225wrt.6
-        for <io-uring@vger.kernel.org>; Thu, 01 Apr 2021 07:48:42 -0700 (PDT)
+        with ESMTP id S234948AbhDASBg (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 1 Apr 2021 14:01:36 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7211FC0045AD
+        for <io-uring@vger.kernel.org>; Thu,  1 Apr 2021 07:48:43 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id j7so2118037wrd.1
+        for <io-uring@vger.kernel.org>; Thu, 01 Apr 2021 07:48:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=Lts/+5hOa/YhPSU2wiR4/8PByloonIOYAkIaAxbEMFg=;
-        b=FwxETJCN4jne9U2I7ILFR0LxuESImL95sF3NGA3qq76q1ToUkPl/rvJ4tW6xHhHFJ3
-         JaDlsH6cewc72F1GrigpLVVa2V2OJrOK07PwbcFt5hMlUl+LNaKXqOcl1b5CkG+Ks4Wl
-         Lo/wiQ3SgccCZqcUHVnc5k60DO6ojPAwaa8/F+E7MkY6CCN/pYD8PRhyUATNdYEWrVKh
-         cRF1AQAMEsVQvqGE+qGMQ6WyA+1KlPRIgzRqvwdGQIUtd94w7rgEpliGNr1I6uH6CQch
-         zAnXVuwS94wk/8B8Q3gSjre554g8TIugbs4x9/AKCvTBwThUfOzZyCB97Km9+s0GZgAP
-         bS1g==
+        bh=s22CuATe5GCgeX1rZ2yZpcLd6X6eiNLeecA60QJEAK8=;
+        b=cq/65Vw0deQVXsVMF109QEQiKVZ7QdUK65FN2tDW3F8kwm3gotIivUTI+Nz8J3XQnD
+         LlkWytSUcIFGLYsy4N+5zUwl566Sq2OR17u6POlRDgO+NaClaBs//wXxsgDnJoSlnuta
+         cMIlvfeaao+FKFGXaQOBuWtsCI1hdE2Bnn+NAj6k0MTt+D+7Y90EjpAQ2nvhVWFXs/tR
+         tCJG5EUw3HJ3MW63K/OaTmyNczVJ2HfsFIkXQnwk8OKB16YqbJzjU72W2TU9dTZtAqxU
+         HvFBkCV5QW5TqzNjCC7TrC2fKpeiXRI5RFW3uP5hu9/wx3YmIUS9Vm/WtzywMJdZ5+0W
+         qR4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Lts/+5hOa/YhPSU2wiR4/8PByloonIOYAkIaAxbEMFg=;
-        b=MOhtLAnvVFLDNg9i0GRLij18x3MDResR2Wx0+qD4mxG1NSp5ShBlpylTw7Dv3gjfUa
-         mMVgTmeRCLOIhjB+O1377EhDzAOdczRgkXRYxJiWgbTtPEw7Lf0ekE1wP93v8ts8dPPM
-         G8DVd7kupaKVpX7VJFxv9bY2kDq6nZVTubR5hor07WEMF7HAz+vc10Djn13lJtjvZ8oH
-         TxBDY7v+hVWvMVNwVBEf9s0tPjpFldky2LY1rFvy8ryhERZtAVaW3AmpaBMQ/HypGiuU
-         NccSrNtbXqM0jEk2psLx1vTZLXKzEjogH4v17k0J+uLOmox8zKfnVqAGr+a/jN1po5OV
-         0C2Q==
-X-Gm-Message-State: AOAM530O7isJBC8NhymXIZvIPA7IARsMu4L0uJbzMMRV5P8YrMoFieVk
-        yUh9xgrrD8I+uI0fSGKpeqOoiCv26CnIhA==
-X-Google-Smtp-Source: ABdhPJychMB7qdw/P3I+q6lVHAzKotBZCV1a5e8HE9H9vaLGc/QGxBJXG8w0y8dH8kPCOi9KxNGP5A==
-X-Received: by 2002:a5d:4686:: with SMTP id u6mr10106732wrq.60.1617288521304;
-        Thu, 01 Apr 2021 07:48:41 -0700 (PDT)
+        bh=s22CuATe5GCgeX1rZ2yZpcLd6X6eiNLeecA60QJEAK8=;
+        b=mB8l8tmZ0Ik2R/MbRRnKtcNkoZ4ze5wwoXccwbJ3IXLqkIXt9Nb4F0dtm3PT6iAbFq
+         t6+8YwNi9nfjVGNfFUR5xUnfMPkOXBm0o3/URhkF23flWny0YRpSyyFeYWIkm7MPbH0s
+         /h5dh5MfEW8rJ47asgujZvIe9hc5aN6qSw38vaaZA3ziPMT0hOh/xqF7UKZ4SfkHPaXB
+         JZ2gTpDmdCzugNtzmLSDTlX4aER12LVuXv9mEQSiaxU1qAn5Xm1NUntWgYijx7jnHTfm
+         cgMts4HBF7yujLctvLNzmHfx14/lMrbuzVr/xXGBFqEoudiPCl88t8myiJISiRLhLNFj
+         WL1A==
+X-Gm-Message-State: AOAM5316L0tMv0MTq8AhjrKAO21Z/82p6fjITZFhyKLRTNLjFWKr71Gh
+        7zTwu7K3o1J82r8tpxR6p0Y=
+X-Google-Smtp-Source: ABdhPJwlPoZaZJEwoRS6LNQQykoa3orHDc9i+4DyliSW0sNqW9kL2XHr+ZckMfoMzS7fW0i/WhV0xQ==
+X-Received: by 2002:a05:6000:1789:: with SMTP id e9mr10275445wrg.237.1617288522293;
+        Thu, 01 Apr 2021 07:48:42 -0700 (PDT)
 Received: from localhost.localdomain ([148.252.132.152])
-        by smtp.gmail.com with ESMTPSA id x13sm8183948wmp.39.2021.04.01.07.48.40
+        by smtp.gmail.com with ESMTPSA id x13sm8183948wmp.39.2021.04.01.07.48.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Thu, 01 Apr 2021 07:48:41 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH v4 24/26] io_uring: refactor file tables alloc/free
-Date:   Thu,  1 Apr 2021 15:44:03 +0100
-Message-Id: <502a84ebf41ff119b095e59661e678eacb752bf8.1617287883.git.asml.silence@gmail.com>
+Subject: [PATCH v4 25/26] io_uring: encapsulate fixed files into struct
+Date:   Thu,  1 Apr 2021 15:44:04 +0100
+Message-Id: <78669731a605a7614c577c3de552631cfaf0869a.1617287883.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1617287883.git.asml.silence@gmail.com>
 References: <cover.1617287883.git.asml.silence@gmail.com>
@@ -61,141 +61,121 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Introduce a heler io_free_file_tables() doing all the cleaning, there
-are several places where it's hand coded. Also move all allocations into
-io_sqe_alloc_file_tables() and rename it, so all of it is in one place.
+Add struct io_fixed_file representing a single registered file, first to
+hide ugly struct file **, which may be misleading, and secondly to
+retype it to unsigned long as conversions to it and back to file * for
+handling and masking FFS_* flags are getting nasty.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 52 +++++++++++++++++++++++++--------------------------
- 1 file changed, 26 insertions(+), 26 deletions(-)
+ fs/io_uring.c | 32 +++++++++++++++++++-------------
+ 1 file changed, 19 insertions(+), 13 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 2b8496f76baa..a9984ca025ba 100644
+index a9984ca025ba..c1d9fface7f4 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -7031,6 +7031,16 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
- 	return READ_ONCE(rings->cq.head) == READ_ONCE(rings->cq.tail) ? ret : 0;
- }
+@@ -207,6 +207,11 @@ struct io_overflow_cqe {
+ 	struct list_head list;
+ };
  
-+static void io_free_file_tables(struct io_rsrc_data *data, unsigned nr_files)
-+{
-+	unsigned i, nr_tables = DIV_ROUND_UP(nr_files, IORING_MAX_FILES_TABLE);
++struct io_fixed_file {
++	/* file * with additional FFS_* flags */
++	unsigned long file_ptr;
++};
 +
-+	for (i = 0; i < nr_tables; i++)
-+		kfree(data->table[i].files);
-+	kfree(data->table);
-+	data->table = NULL;
-+}
-+
- static void __io_sqe_files_unregister(struct io_ring_ctx *ctx)
- {
- #if defined(CONFIG_UNIX)
-@@ -7167,14 +7177,12 @@ static struct io_rsrc_data *io_rsrc_data_alloc(struct io_ring_ctx *ctx,
- static void io_rsrc_data_free(struct io_rsrc_data *data)
- {
- 	percpu_ref_exit(&data->refs);
--	kfree(data->table);
- 	kfree(data);
- }
+ struct io_rsrc_put {
+ 	struct list_head list;
+ 	union {
+@@ -216,7 +221,7 @@ struct io_rsrc_put {
+ };
  
- static int io_sqe_files_unregister(struct io_ring_ctx *ctx)
- {
- 	struct io_rsrc_data *data = ctx->file_data;
--	unsigned nr_tables, i;
- 	int ret;
+ struct fixed_rsrc_table {
+-	struct file		**files;
++	struct io_fixed_file *files;
+ };
  
- 	if (!data)
-@@ -7184,9 +7192,7 @@ static int io_sqe_files_unregister(struct io_ring_ctx *ctx)
- 		return ret;
- 
- 	__io_sqe_files_unregister(ctx);
--	nr_tables = DIV_ROUND_UP(ctx->nr_user_files, IORING_MAX_FILES_TABLE);
--	for (i = 0; i < nr_tables; i++)
--		kfree(data->table[i].files);
-+	io_free_file_tables(data, ctx->nr_user_files);
- 	io_rsrc_data_free(data);
- 	ctx->file_data = NULL;
- 	ctx->nr_user_files = 0;
-@@ -7416,16 +7422,20 @@ static int io_sqe_files_scm(struct io_ring_ctx *ctx)
- }
+ struct io_rsrc_node {
+@@ -6255,8 +6260,8 @@ static void io_wq_submit_work(struct io_wq_work *work)
  #endif
+ #define FFS_MASK		~(FFS_ASYNC_READ|FFS_ASYNC_WRITE|FFS_ISREG)
  
--static int io_sqe_alloc_file_tables(struct io_rsrc_data *file_data,
--				    unsigned nr_tables, unsigned nr_files)
-+static bool io_alloc_file_tables(struct io_rsrc_data *file_data,
-+				 unsigned nr_files)
+-static inline struct file **io_fixed_file_slot(struct io_rsrc_data *file_data,
+-					       unsigned i)
++static inline struct io_fixed_file *io_fixed_file_slot(struct io_rsrc_data *file_data,
++						      unsigned i)
  {
--	int i;
-+	unsigned i, nr_tables = DIV_ROUND_UP(nr_files, IORING_MAX_FILES_TABLE);
-+
-+	file_data->table = kcalloc(nr_tables, sizeof(*file_data->table),
-+				   GFP_KERNEL);
-+	if (!file_data->table)
-+		return false;
+ 	struct fixed_rsrc_table *table;
  
- 	for (i = 0; i < nr_tables; i++) {
- 		struct fixed_rsrc_table *table = &file_data->table[i];
--		unsigned this_files;
-+		unsigned int this_files = min(nr_files, IORING_MAX_FILES_TABLE);
+@@ -6267,12 +6272,12 @@ static inline struct file **io_fixed_file_slot(struct io_rsrc_data *file_data,
+ static inline struct file *io_file_from_index(struct io_ring_ctx *ctx,
+ 					      int index)
+ {
+-	struct file **file_slot = io_fixed_file_slot(ctx->file_data, index);
++	struct io_fixed_file *slot = io_fixed_file_slot(ctx->file_data, index);
  
--		this_files = min(nr_files, IORING_MAX_FILES_TABLE);
- 		table->files = kcalloc(this_files, sizeof(struct file *),
- 					GFP_KERNEL);
- 		if (!table->files)
-@@ -7434,13 +7444,10 @@ static int io_sqe_alloc_file_tables(struct io_rsrc_data *file_data,
- 	}
- 
- 	if (i == nr_tables)
--		return 0;
-+		return true;
- 
--	for (i = 0; i < nr_tables; i++) {
--		struct fixed_rsrc_table *table = &file_data->table[i];
--		kfree(table->files);
--	}
--	return 1;
-+	io_free_file_tables(file_data, nr_tables * IORING_MAX_FILES_TABLE);
-+	return false;
+-	return (struct file *) ((unsigned long) *file_slot & FFS_MASK);
++	return (struct file *) (slot->file_ptr & FFS_MASK);
  }
  
- static void io_rsrc_file_put(struct io_ring_ctx *ctx, struct io_rsrc_put *prsrc)
-@@ -7590,9 +7597,9 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
+-static void io_fixed_file_set(struct file **file_slot, struct file *file)
++static void io_fixed_file_set(struct io_fixed_file *file_slot, struct file *file)
+ {
+ 	unsigned long file_ptr = (unsigned long) file;
+ 
+@@ -6282,7 +6287,7 @@ static void io_fixed_file_set(struct file **file_slot, struct file *file)
+ 		file_ptr |= FFS_ASYNC_WRITE;
+ 	if (S_ISREG(file_inode(file)->i_mode))
+ 		file_ptr |= FFS_ISREG;
+-	*file_slot = (struct file *)file_ptr;
++	file_slot->file_ptr = file_ptr;
+ }
+ 
+ static struct file *io_file_get(struct io_submit_state *state,
+@@ -6297,7 +6302,7 @@ static struct file *io_file_get(struct io_submit_state *state,
+ 		if (unlikely((unsigned int)fd >= ctx->nr_user_files))
+ 			return NULL;
+ 		fd = array_index_nospec(fd, ctx->nr_user_files);
+-		file_ptr = (unsigned long) *io_fixed_file_slot(ctx->file_data, fd);
++		file_ptr = io_fixed_file_slot(ctx->file_data, fd)->file_ptr;
+ 		file = (struct file *) (file_ptr & FFS_MASK);
+ 		file_ptr &= ~FFS_MASK;
+ 		/* mask in overlapping REQ_F and FFS bits */
+@@ -7733,7 +7738,8 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
  				 unsigned nr_args)
  {
- 	__s32 __user *fds = (__s32 __user *) arg;
--	unsigned nr_tables, i;
- 	struct file *file;
- 	int fd, ret;
-+	unsigned i;
- 	struct io_rsrc_data *file_data;
+ 	struct io_rsrc_data *data = ctx->file_data;
+-	struct file *file, **file_slot;
++	struct io_fixed_file *file_slot;
++	struct file *file;
+ 	__s32 __user *fds;
+ 	int fd, i, err;
+ 	__u32 done;
+@@ -7760,12 +7766,12 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+ 		i = array_index_nospec(up->offset + done, ctx->nr_user_files);
+ 		file_slot = io_fixed_file_slot(ctx->file_data, i);
  
- 	if (ctx->file_data)
-@@ -7611,13 +7618,7 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
- 	ctx->file_data = file_data;
- 
- 	ret = -ENOMEM;
--	nr_tables = DIV_ROUND_UP(nr_args, IORING_MAX_FILES_TABLE);
--	file_data->table = kcalloc(nr_tables, sizeof(*file_data->table),
--				   GFP_KERNEL);
--	if (!file_data->table)
--		goto out_free;
--
--	if (io_sqe_alloc_file_tables(file_data, nr_tables, nr_args))
-+	if (!io_alloc_file_tables(file_data, nr_args))
- 		goto out_free;
- 
- 	for (i = 0; i < nr_args; i++, ctx->nr_user_files++) {
-@@ -7662,8 +7663,7 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
- 		if (file)
- 			fput(file);
- 	}
--	for (i = 0; i < nr_tables; i++)
--		kfree(file_data->table[i].files);
-+	io_free_file_tables(file_data, nr_args);
- 	ctx->nr_user_files = 0;
- out_free:
- 	io_rsrc_data_free(ctx->file_data);
+-		if (*file_slot) {
+-			file = (struct file *) ((unsigned long) *file_slot & FFS_MASK);
++		if (file_slot->file_ptr) {
++			file = (struct file *)(file_slot->file_ptr & FFS_MASK);
+ 			err = io_queue_rsrc_removal(data, ctx->rsrc_node, file);
+ 			if (err)
+ 				break;
+-			*file_slot = NULL;
++			file_slot->file_ptr = 0;
+ 			needs_switch = true;
+ 		}
+ 		if (fd != -1) {
+@@ -7790,7 +7796,7 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+ 			io_fixed_file_set(file_slot, file);
+ 			err = io_sqe_file_register(ctx, file, i);
+ 			if (err) {
+-				*file_slot = NULL;
++				file_slot->file_ptr = 0;
+ 				fput(file);
+ 				break;
+ 			}
 -- 
 2.24.0
 

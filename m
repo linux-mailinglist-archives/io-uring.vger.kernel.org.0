@@ -2,85 +2,93 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DB0D835181E
-	for <lists+io-uring@lfdr.de>; Thu,  1 Apr 2021 19:48:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AA53351818
+	for <lists+io-uring@lfdr.de>; Thu,  1 Apr 2021 19:48:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234290AbhDARoD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 1 Apr 2021 13:44:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57168 "EHLO
+        id S234418AbhDARn7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 1 Apr 2021 13:43:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57130 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234563AbhDARiC (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 1 Apr 2021 13:38:02 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EDD8C004593
-        for <io-uring@vger.kernel.org>; Thu,  1 Apr 2021 07:48:41 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id o16so2130908wrn.0
-        for <io-uring@vger.kernel.org>; Thu, 01 Apr 2021 07:48:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=751Gqch0rT59Zvg6aVoR1Vgc/ywvQ75X0+XYDNYxxRI=;
-        b=vHqdCJH/jAkInnTbMEGNEZZTbT+kaq8ut4d6Pwh2RkU4EPzoKkunfRRSbXbUaaq4B0
-         o9snBOERCaSKzexNm+MH7rLt/upd073FNGxclGRc/mPhYcFcBscPKXinpvZiydsoP/Qx
-         2PDidcf8LY34rEfflGgwT7aChed2jKBpXUfLFzwHhdIMRGgLr1Ka0r9rJxPwF23lhaVY
-         kFOXPJlgxqU37LWGh2C4dav0v6tsSrgM+9IWY0WnXKX8nZAJiQDaMedu0zRnsKIbkuKZ
-         U4l/9g9FZhxoWmbW/X/qkv2MRHqkuhW2Slnm3TZF7Aqam3NaqcdduRF7U1WqD55EQDNp
-         MPYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=751Gqch0rT59Zvg6aVoR1Vgc/ywvQ75X0+XYDNYxxRI=;
-        b=e4XivhWQedIXSjAg6MxVZnWCQsy/yrfUOZunZHzHOk9qV6s+5Ugl87lv1COSots5Hw
-         vmgd+b5F7Ws4xe5NXN3/jtdQM0TvypB9rWH2OykLbFrj1Aoz4IuZFlqnQV+i5J2etYMz
-         VoZ4uR8/L5b8FZcGAUnMqdldeKdlviVRjd4M3T/BNq59zfVK/UOFf4A+e3uCfVZwWge2
-         xg7LPlxlWSo03Ns9gIHJVHGfTtalV/549Q8iBFan3PYA9VW7wpRrhX3vZu1Jb28DNrzx
-         ZZFKgY5l1joO/4+0PWOJ7ka6nge/EKj/mqXhRS2FpzgXLSxfsBF1n8dqO8YaNgTeR86M
-         2cSg==
-X-Gm-Message-State: AOAM533NnWaw9oiFze5y7SRtm9oAtHiGlcIgW2GoBNWvWipzCPeNWv+P
-        v5UL0ctF9DONcHXIZNApicY=
-X-Google-Smtp-Source: ABdhPJyTC/Kbc0TmdhtdafwnqVOzkuzr8Jh5XzAPpnPJTBTGPkY0bcK+qCk11bvUssr6U1Xa+nubBQ==
-X-Received: by 2002:a5d:6b84:: with SMTP id n4mr10150603wrx.258.1617288520424;
-        Thu, 01 Apr 2021 07:48:40 -0700 (PDT)
-Received: from localhost.localdomain ([148.252.132.152])
-        by smtp.gmail.com with ESMTPSA id x13sm8183948wmp.39.2021.04.01.07.48.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Apr 2021 07:48:40 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
+        with ESMTP id S234354AbhDARh3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 1 Apr 2021 13:37:29 -0400
+Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE17DC0F26D1;
+        Thu,  1 Apr 2021 07:58:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+         s=42; h=Date:Message-ID:Cc:To:From;
+        bh=qsREKFlh59lQ4zdk5VkHPiTTnXwKjF0VPiMuSccVscw=; b=ktFjLEl9BtTHht4JW3GOztN5r5
+        4Q+b3DFeFQT6GjH9r7Zd5BKSgYHxlGH1Yn1HvH4sAiuHWioIHXVbe7xL1zsf3bqa2v+J9LuBx8sss
+        /Mq3g48+G9wfQxT5NF6Y8eAg4CjiW1ESTRYUGwOF6QyjG2UFrTS4FQC8JTDpe9dynG/fg8A/i9TCk
+        sjKZgRqjLmxLjn8NvKnTkfdkVSdVASm5Erp3RpZnYqHiy2zNZnrROY3/qIje3z+tchV75RxnnKfE0
+        8wlEZtfrG1tkNdlX2IdkS0LJanPg30Qs0VDeigjzwiwhoT5jamAojf5mfZg4O6wrZNEmzzpp4k+7F
+        AiUgd/8Zk7Zqg/s4TMaNSeEQNJOa6KhMT4U6CxFvNTqBxDqudRRf2UtVlMk74SX1UswKzkvhbNkcJ
+        Q/1O+1sQORmrERLtQqjTgQQse7nME4eLZWI1VL8EimhxU9gxJG1tbwg8ML4PagKIGd77Jr+yIERZO
+        F4i+vnbnBhUeIJupWJfjxwW0;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
+        (Exim)
+        id 1lRym4-0007U6-Qv; Thu, 01 Apr 2021 14:58:20 +0000
+From:   Stefan Metzmacher <metze@samba.org>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH v4 23/26] io_uring: don't quiesce intial files register
-Date:   Thu,  1 Apr 2021 15:44:02 +0100
-Message-Id: <563bb8060bb2d3efbc32fce6101678281c574d2a.1617287883.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <cover.1617287883.git.asml.silence@gmail.com>
-References: <cover.1617287883.git.asml.silence@gmail.com>
+Cc:     torvalds@linux-foundation.org, ebiederm@xmission.com,
+        oleg@redhat.com, linux-kernel@vger.kernel.org
+References: <20210326003928.978750-1-axboe@kernel.dk>
+ <e6de934a-a794-f173-088d-a140d0645188@samba.org>
+ <f2c93b75-a18b-fc2c-7941-9208c19869c1@kernel.dk>
+ <8efd9977-003b-be65-8ae2-4b04d8dd1224@samba.org>
+ <358c5225-c23f-de08-65cb-ca3349793c0e@samba.org>
+Subject: Re: [PATCH 0/6] Allow signals for IO threads
+Message-ID: <5bb47c3a-2990-e4c4-69c6-1b5d1749a241@samba.org>
+Date:   Thu, 1 Apr 2021 16:58:12 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.1
 MIME-Version: 1.0
+In-Reply-To: <358c5225-c23f-de08-65cb-ca3349793c0e@samba.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-There is no reason why we would want to fully quiesce ring on
-IORING_REGISTER_FILES, if it's already registered we fail.
+Hi Jens,
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 1 +
- 1 file changed, 1 insertion(+)
+>> For help, type "help".
+>> Type "apropos word" to search for commands related to "word".
+>> Attaching to process 1320
+>> [New LWP 1321]
+>> [New LWP 1322]
+>>
+>> warning: Selected architecture i386:x86-64 is not compatible with reported target architecture i386
+>>
+>> warning: Architecture rejected target-supplied description
+>> syscall () at ../sysdeps/unix/sysv/linux/x86_64/syscall.S:38
+>> 38      ../sysdeps/unix/sysv/linux/x86_64/syscall.S: No such file or directory.
+>> (gdb)
+> 
+> Ok, the following makes gdb happy again:
+> 
+> --- a/arch/x86/kernel/process.c
+> +++ b/arch/x86/kernel/process.c
+> @@ -163,6 +163,8 @@ int copy_thread(unsigned long clone_flags, unsigned long sp, unsigned long arg,
+>         /* Kernel thread ? */
+>         if (unlikely(p->flags & (PF_KTHREAD | PF_IO_WORKER))) {
+>                 memset(childregs, 0, sizeof(struct pt_regs));
+> +               if (p->flags & PF_IO_WORKER)
+> +                       childregs->cs = current_pt_regs()->cs;
+>                 kthread_frame_init(frame, sp, arg);
+>                 return 0;
+>         }
+> 
+> I'm wondering if we should decouple the PF_KTHREAD and PF_IO_WORKER cases even more
+> and keep as much of a userspace-like copy_thread as possible.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index c5dd00babf59..2b8496f76baa 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -9790,6 +9790,7 @@ static int io_register_enable_rings(struct io_ring_ctx *ctx)
- static bool io_register_op_must_quiesce(int op)
- {
- 	switch (op) {
-+	case IORING_REGISTER_FILES:
- 	case IORING_UNREGISTER_FILES:
- 	case IORING_REGISTER_FILES_UPDATE:
- 	case IORING_REGISTER_PROBE:
--- 
-2.24.0
+Would it be possible to fix this remaining problem before 5.12 final?
+(I don't think my change would be the correct fix actually
+and other architectures may have similar problems).
+
+Thanks!
+metze
+
+
 

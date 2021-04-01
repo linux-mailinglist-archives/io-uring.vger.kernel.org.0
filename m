@@ -2,57 +2,55 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 25BB33511B7
-	for <lists+io-uring@lfdr.de>; Thu,  1 Apr 2021 11:16:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5176E35139D
+	for <lists+io-uring@lfdr.de>; Thu,  1 Apr 2021 12:30:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233801AbhDAJQA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 1 Apr 2021 05:16:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34922 "EHLO
+        id S234024AbhDAK3l (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 1 Apr 2021 06:29:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233921AbhDAJPw (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 1 Apr 2021 05:15:52 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1F85C0613E6
-        for <io-uring@vger.kernel.org>; Thu,  1 Apr 2021 02:15:51 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id k128so679875wmk.4
-        for <io-uring@vger.kernel.org>; Thu, 01 Apr 2021 02:15:51 -0700 (PDT)
+        with ESMTP id S234306AbhDAK32 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 1 Apr 2021 06:29:28 -0400
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A9AFC0613A6
+        for <io-uring@vger.kernel.org>; Thu,  1 Apr 2021 03:29:25 -0700 (PDT)
+Received: by mail-wr1-x42b.google.com with SMTP id z2so1289083wrl.5
+        for <io-uring@vger.kernel.org>; Thu, 01 Apr 2021 03:29:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+        h=to:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=dhUGpHjm7W6NN0Nbh6WuEFS/FaFWfRZuSNMBsVNYnoc=;
-        b=q1K1+UD4yOCdF6GUscJnyjQ3q8Spgr4V/FGxB3zpPoyp2AH1u+UNmkw1lW46DSteUe
-         /ao/qUmzwPQo/Ftr33+HAkxn01e6aoo3TgmNmSvSwa8+9Ye5g1MYMp+mIaRadO4wIU30
-         j4TAkHTv1A6mYeEH4BQoTnwuyfdRARGfrDpR3QVMgeBIn51yRpFtoBYR8Fs5wPaoIUnb
-         8UelCAlqGb6VMhOt0pBH2dBa/zkbCaaW6jK/lEvOKP9a/xEKmfQzHDYhRLDxIR/qsxdX
-         LB6r0AItV1JVfme9SqVp+PzXyMIsAQ6XsH0aQFORwwq5rKMB/bXg0i2nbAe6uLhaTaTx
-         hutg==
+        bh=x05r8YWvUwGqjuKmJSu/YGmYOasyDxlpP0oBK3PABTE=;
+        b=QQAwSrjGUXTL7xC5qoz+3c217YM45qBXyfCVRfj+wQ8UxOS4iHhNtdeYL8nqrMtka2
+         kmFEiHOVIuasQj0jk11mfirc4oFBUQr/TKLf7rCBDF0vDHJ+zR+G4cqMslhq/F00J8Fx
+         gtazPrTiiw2ZDb0ESj58RhG5UUfIXRJSnfLVHtJtbcNlREkJ51iXkTs2G+l23hYycRVa
+         jEwre4kCo9WJk3WSr83CbA4SfwVcnYoGorm9HI5q/SuKnsSX31DTjJJ+A3sFkQkuCM0Z
+         3PxGKB+/tffFoI5Hmrmmsmg3UaK5mryHqsKJHza7vJ9UsdXiYt64OyylDp/HYTdo+ZSk
+         ZOKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=dhUGpHjm7W6NN0Nbh6WuEFS/FaFWfRZuSNMBsVNYnoc=;
-        b=LOB8O3a/c1/5WTYARb4napdOavsArqkjW6Iv1YlpEEvNVvbsdQT7hDNbNwCyxA1l/M
-         gTmWQWIqIotGK4scac7/JJqTxljdbywLIbMDIMkrjKX2lsehsK1wc/kPXJAvCJpu5FrJ
-         FzmdAoqGkLIFOLIJcmpACtAn5TNJMoGLK96hGQdXk8czjfx4oRXFRA3rracLyrcqVESN
-         cZ6OHUv4mjURp1KsZ+CfeAge/BYHMunNnLHYmBQCzfpiMKhN1Lw9jo1yPjjtmWbG4v2Q
-         pILmi7tMAunyp17WUaWi4hsVwwRpHVGbpjWPMshNtxio6iwYqcbXOyG+UJzpk5XbdDHV
-         YGvQ==
-X-Gm-Message-State: AOAM5319uYV7VxhBlULDGTfe+UxARuqFxIjLNw0WZZUpG6E275WqJ/73
-        MhwWaPNhf9LlXbavxQUuqCg6WvxJZsYiMg==
-X-Google-Smtp-Source: ABdhPJwCgiR3IdjDBQ1MjKkJ+yFxlg6zli/dK6EHeuVpicRmOficOTl6871xsn/enW/BAw5ey4r/jA==
-X-Received: by 2002:a05:600c:3515:: with SMTP id h21mr7095664wmq.35.1617268550708;
-        Thu, 01 Apr 2021 02:15:50 -0700 (PDT)
+        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=x05r8YWvUwGqjuKmJSu/YGmYOasyDxlpP0oBK3PABTE=;
+        b=rDIoXjEC6raHZliHubd314Cc4c/Tiw9a2POQ9e8G/W0B6i/XpKF6M2CsvD6l9FgctH
+         Y7O+s8dSfrlFrKOB5sBp4w0mIsaU1I8xYNwwtrjU/QRFfTaA+30lb9CZZu2GRUgyNQGO
+         1lwqw6YtxPJ+lLOoyYF7xfx44TaB1lQrSXcAPevNJuFsLRWNqrzbJieahTTzVsgk2sl6
+         eUh+fpxa8uBkF8KiFMG6/2TG1lehjVbN9E2Vr+Q81OHE6jRP4ooTKeD6cP/2/h59+S/A
+         t9OyYwe1V8Yq5h6niunXt/cPA3WzNHWbSw8g8g4DigNXGVwRl+pHQ+0uz1eF7j8NtXpK
+         PU/g==
+X-Gm-Message-State: AOAM530Gjvh4kWASNM2nvosziOzgDTRJo66rCt7mg8F/6sWzyM74jPa3
+        d8vnCUdgbrV0bzEhEZF7uZ6grg412sUddg==
+X-Google-Smtp-Source: ABdhPJxZ6wqNSYI2c1tc+gtKNIv36H7HjR/Vfgp87KlYCz/m+89KqfPpAr3Fknk09/QPRAeO1kyU7A==
+X-Received: by 2002:adf:83c2:: with SMTP id 60mr8756347wre.386.1617272963945;
+        Thu, 01 Apr 2021 03:29:23 -0700 (PDT)
 Received: from [192.168.8.122] ([148.252.132.152])
-        by smtp.gmail.com with ESMTPSA id i17sm8861976wrp.77.2021.04.01.02.15.49
+        by smtp.gmail.com with ESMTPSA id z8sm9001854wrh.37.2021.04.01.03.29.22
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Apr 2021 02:15:50 -0700 (PDT)
-Subject: Re: [PATCH] io_uring: fix ctx cancellation for rings allocation
- failure
-To:     Hao Xu <haoxu@linux.alibaba.com>, Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <1617268222-151286-1-git-send-email-haoxu@linux.alibaba.com>
+        Thu, 01 Apr 2021 03:29:23 -0700 (PDT)
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <e8330d71aad136224b2f3a7f479121a32b496836.1617232645.git.asml.silence@gmail.com>
+ <b575afc6-f699-84dc-245c-93af568fad0a@kernel.dk>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -97,56 +95,71 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <800534b6-1dff-ea79-d53a-c1743e9abb3a@gmail.com>
-Date:   Thu, 1 Apr 2021 10:11:46 +0100
+Subject: Re: [PATCH v2] io-wq: forcefully cancel on io-wq destroy
+Message-ID: <6597f401-b697-674a-954a-34d89a204c56@gmail.com>
+Date:   Thu, 1 Apr 2021 11:25:19 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <1617268222-151286-1-git-send-email-haoxu@linux.alibaba.com>
+In-Reply-To: <b575afc6-f699-84dc-245c-93af568fad0a@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-> This is caused by access ctx->rings in io_ring_ctx_wait_and_kill()
-> while ctx->rings is NULL because of allocation failure.
-
-Yep, missed it out but already fixed
-https://git.kernel.dk/cgit/linux-block/commit/?h=io_uring-5.12&id=51520426f4bc3e61cbbf7a39ccf4e411b665002d
-
- 
-> Reported-by: Abaci <abaci@linux.alibaba.com>
-> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
-> ---
->  fs/io_uring.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
+On 01/04/2021 02:17, Jens Axboe wrote:
+> On 3/31/21 5:18 PM, Pavel Begunkov wrote:
+>> [  491.222908] INFO: task thread-exit:2490 blocked for more than 122 seconds.
+>> [  491.222957] Call Trace:
+>> [  491.222967]  __schedule+0x36b/0x950
+>> [  491.222985]  schedule+0x68/0xe0
+>> [  491.222994]  schedule_timeout+0x209/0x2a0
+>> [  491.223003]  ? tlb_flush_mmu+0x28/0x140
+>> [  491.223013]  wait_for_completion+0x8b/0xf0
+>> [  491.223023]  io_wq_destroy_manager+0x24/0x60
+>> [  491.223037]  io_wq_put_and_exit+0x18/0x30
+>> [  491.223045]  io_uring_clean_tctx+0x76/0xa0
+>> [  491.223061]  __io_uring_files_cancel+0x1b9/0x2e0
+>> [  491.223068]  ? blk_finish_plug+0x26/0x40
+>> [  491.223085]  do_exit+0xc0/0xb40
+>> [  491.223099]  ? syscall_trace_enter.isra.0+0x1a1/0x1e0
+>> [  491.223109]  __x64_sys_exit+0x1b/0x20
+>> [  491.223117]  do_syscall_64+0x38/0x50
+>> [  491.223131]  entry_SYSCALL_64_after_hwframe+0x44/0xae
+>> [  491.223177] INFO: task iou-mgr-2490:2491 blocked for more than 122 seconds.
+>> [  491.223194] Call Trace:
+>> [  491.223198]  __schedule+0x36b/0x950
+>> [  491.223206]  ? pick_next_task_fair+0xcf/0x3e0
+>> [  491.223218]  schedule+0x68/0xe0
+>> [  491.223225]  schedule_timeout+0x209/0x2a0
+>> [  491.223236]  wait_for_completion+0x8b/0xf0
+>> [  491.223246]  io_wq_manager+0xf1/0x1d0
+>> [  491.223255]  ? recalc_sigpending+0x1c/0x60
+>> [  491.223265]  ? io_wq_cpu_online+0x40/0x40
+>> [  491.223272]  ret_from_fork+0x22/0x30
+>>
+>> When io-wq worker exits and sees IO_WQ_BIT_EXIT it tries not cancel all
+>> left requests but to execute them, hence we may wait for the exiting
+>> task for long until someone pushes it, e.g. with SIGKILL. Actively
+>> cancel pending work items on io-wq destruction.
+>>
+>> note: io_run_cancel() moved up without any changes.
 > 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 1949b80677e7..03f593f5e740 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -8616,12 +8616,16 @@ static void io_ring_ctx_wait_and_kill(struct io_ring_ctx *ctx)
->  	unsigned long index;
->  	struct creds *creds;
->  
-> +	if (!ctx->rings) {
-> +		io_ring_ctx_free(ctx);
-> +		return;
-> +	}
-> +
->  	mutex_lock(&ctx->uring_lock);
->  	percpu_ref_kill(&ctx->refs);
->  	/* if force is set, the ring is going away. always drop after that */
->  	ctx->cq_overflow_flushed = 1;
-> -	if (ctx->rings)
-> -		__io_cqring_overflow_flush(ctx, true, NULL, NULL);
-> +	__io_cqring_overflow_flush(ctx, true, NULL, NULL);
->  	xa_for_each(&ctx->personalities, index, creds)
->  		io_unregister_personality(ctx, index);
->  	mutex_unlock(&ctx->uring_lock);
-> 
+> Just to pull some of the discussion in here - I don't think this is a
+> good idea as-is. At the very least, this should be gated on UNBOUND,
+> and just waiting for bounded requests while canceling unbounded ones.
+
+Right, and this may be unexpected for userspace as well, e.g.
+sockets/pipes. Another approach would be go executing for some time, but
+if doesn't help go and kill them all. Or mixture of both. This at least
+would give a chance for socket ops to get it done if it's dynamic and
+doesn't stuck waiting.
+
+Though, as the original problem it locks do_exit() for some time,
+that's not nice, so maybe it would need deferring this final io-wq
+execution to async and letting do_exit() to proceed.
 
 -- 
 Pavel Begunkov

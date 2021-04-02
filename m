@@ -2,177 +2,131 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B2AA352DB6
-	for <lists+io-uring@lfdr.de>; Fri,  2 Apr 2021 18:26:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A3CE352DEE
+	for <lists+io-uring@lfdr.de>; Fri,  2 Apr 2021 18:56:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229932AbhDBQ0r (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 2 Apr 2021 12:26:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43366 "EHLO
+        id S234275AbhDBQ4r (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 2 Apr 2021 12:56:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234548AbhDBQ0q (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 2 Apr 2021 12:26:46 -0400
-Received: from mail-il1-x12f.google.com (mail-il1-x12f.google.com [IPv6:2607:f8b0:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E22AC0613E6
-        for <io-uring@vger.kernel.org>; Fri,  2 Apr 2021 09:26:44 -0700 (PDT)
-Received: by mail-il1-x12f.google.com with SMTP id o15so923446ilf.11
-        for <io-uring@vger.kernel.org>; Fri, 02 Apr 2021 09:26:44 -0700 (PDT)
+        with ESMTP id S229722AbhDBQ4q (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 2 Apr 2021 12:56:46 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C222C0613E6
+        for <io-uring@vger.kernel.org>; Fri,  2 Apr 2021 09:56:45 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id z6-20020a1c4c060000b029010f13694ba2so2627403wmf.5
+        for <io-uring@vger.kernel.org>; Fri, 02 Apr 2021 09:56:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Hn40bJBlTBATV+azNkuBgNlV84MuYO3hU1eZaj+u9Fk=;
-        b=uOYLnk6kMncaFjl8A/ExK1RWatwMj6DkL3uvwUyT3TI7M57zZSk+LsDPB/RWs/H1Hb
-         7ysZeaLTjh0EMC9uIwwq3lPSa8fl7kJWZzBiX9VF81PBUJWrVfr8p3P7IxdvZiuATB4p
-         4g20BL/+bddbwSHZIK/H8aT1zoCerh6pJ4mMBEmRZkqaGZXz4Ug7svXis6GDZ+mBXS5i
-         88l37oVPJKZCTslzuekiqB5RZmAAMaSP5AtX0L70ZuPP+NQtW9NuKZlcAxV6ZX+m4inT
-         1WDH489DAs9kWqvx/y7t8fAulIV9DjxYPMDPioxYZOxcqAsr+4aQLXUESVs08QossG8e
-         MzUg==
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=a6D1LcYlbmCIpob1zuDPXwQZfxcxuqOkwFTIQWkL3KM=;
+        b=hiHcUZifNBdAYBvjarxcLM7w5P/c8qxM+Y3LbQzvxvCIuKE4gpLhNoFzo3Ueckmq5U
+         l/duwDJphpBZaiLOl9zxAhWRqYYgzehSrfKPs5Ygcvpewn5nusgp8vBZmXX4TrxTQNP1
+         NTyvulWUmEmb29q6K3qkW6GevLyEFM+u0b6EkBJhSziaT/XazLnrHbMfbTjC/TZDnrbH
+         NOdObzD9VSzFaZl/JFcPiuZk8HpAF6MxoRPHbaBl4WXNJ8L/RklXwx1O+CCVTN+21dgz
+         btnOce48pejHtIIa+Zvas8318AttPAlMcAOO95WMbQh4nBkWXChDcCyuyDpXMFzoTeWj
+         R19Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=Hn40bJBlTBATV+azNkuBgNlV84MuYO3hU1eZaj+u9Fk=;
-        b=WRAf/5ppgs/6n3vNjyDWAzIZuDBhdkD0tr6/fRTXFy2bemfRP3GgPl1ua64I1W04zC
-         iMoOmB59GBQe0RgP84UKJJB2ZLxPxy7n5i6wF9DTxnjDJJBtIAO1AQ56U1dMrns7bFD8
-         /c8RfDUAD5Jo6UkeCUzEFt9k99sIot1K0TVRfARQgfY8oVGyPnWubrUkzBAwNGP+yDvZ
-         HD9GlRv8V5UeB+6NnU/koMCfFx3WcQAASjRon5RpP5ZnxknXnE77eMpcdHix2RwuAqqH
-         2kYWQOWYjx+JmsRljs8D9F/VUBs7FrYqt8mEvh+LDjRZHc3TX+XHvIPVQHYjgQIF/OpO
-         mWYg==
-X-Gm-Message-State: AOAM532uwQjLljfUx/f6PA6+k6+txYX7zWhJ3uUY2fTBl8o1ZxWJ3QVc
-        uhhGINWQNb93rrkilJ+1hJ7m1KbeS6/JTw==
-X-Google-Smtp-Source: ABdhPJytHRUm1y/S/ZGTjgFx4zIYADx5RAn4J4NcvacXzNm7k+aafYLjuLjjK9G6idvwWssyC0MTmQ==
-X-Received: by 2002:a05:6e02:1286:: with SMTP id y6mr11541067ilq.270.1617380803892;
-        Fri, 02 Apr 2021 09:26:43 -0700 (PDT)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id g16sm4327609ilk.22.2021.04.02.09.26.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 02 Apr 2021 09:26:43 -0700 (PDT)
-Subject: Re: [PATCH v3 RESEND] iomap: set REQ_NOWAIT according to IOCB_NOWAIT
- in Direct IO
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        JeffleXu <jefflexu@linux.alibaba.com>,
-        Dave Chinner <david@fromorbit.com>
-Cc:     Hao Xu <haoxu@linux.alibaba.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-fsdevel@vger.kernel.org,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <1607075096-94235-1-git-send-email-haoxu@linux.alibaba.com>
- <20201207022130.GC4170059@dread.disaster.area>
- <9bbfafcf-688c-bad9-c288-6478a88c6097@linux.alibaba.com>
- <20201209212358.GE4170059@dread.disaster.area>
- <adf32418-dede-0b58-13da-40093e1e4e2d@linux.alibaba.com>
- <20201210051808.GF4170059@dread.disaster.area>
- <fdb6e01a-a662-90fa-3844-410b2107e850@linux.alibaba.com>
- <20201214025655.GH3913616@dread.disaster.area>
- <a0760c52-cdd7-eb66-27dc-27582c2db825@linux.alibaba.com>
- <1e687bef-3d96-69ad-ec98-c674f5a88ca2@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <62452618-d44f-fb88-18b6-80bcf5c8b81d@kernel.dk>
-Date:   Fri, 2 Apr 2021 10:26:42 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        bh=a6D1LcYlbmCIpob1zuDPXwQZfxcxuqOkwFTIQWkL3KM=;
+        b=DQtxZ7OYDrSEFs9VYgQsCGEnvQko8zc4Zdp0YBUilb8cKXFIcyBURpbCfZdNoHJHwU
+         wq4PrJ5gBYviDLEdHaOaNpUvEupZBeYVsDLj0hiq/QAJcbucRvdhODKIwfJgCglDVYnd
+         AytddKYYfzBFwRuml7RBkFFShtvAV41yGTtObZl+2E9/OSYyYTLTYPbzfqcknaIbw2TO
+         STcI/IwESEiMGFAHO1jGDYwbY58vfLYoVxnBX4cDetwQns3dQGy6ijNMbIySsMC5g7rY
+         7vmnllSFhgtZBVRrpulMiQPcNOgv2uGxQvmZxTZttfhPsZv5DlPzB08+Nb0uJ/qk6K5v
+         or5A==
+X-Gm-Message-State: AOAM533o/CO/ry5b+GG9X+YhiV6Zz7hGPZ79WBg4drURrfKajSaNGCLT
+        DGH4rhEc7SJ0X0R6YlcTFG4ymiiicycUSQ==
+X-Google-Smtp-Source: ABdhPJxp1ipmj4EoPHYHVBEOpTJI0Gp06fkKMTGYThHbDtQV+GcGgio/K0THNGZtk4SOwA9aOnXdUw==
+X-Received: by 2002:a1c:e912:: with SMTP id q18mr13627678wmc.59.1617382603727;
+        Fri, 02 Apr 2021 09:56:43 -0700 (PDT)
+Received: from localhost.localdomain ([148.252.129.229])
+        by smtp.gmail.com with ESMTPSA id s12sm12124022wmj.28.2021.04.02.09.56.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Apr 2021 09:56:43 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [RFC 5.12] io-wq: cancel unbounded works on io-wq destroy
+Date:   Fri,  2 Apr 2021 17:52:32 +0100
+Message-Id: <932defeefef1b025b22f69f7f420f162460eb842.1617382191.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <1e687bef-3d96-69ad-ec98-c674f5a88ca2@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/2/21 8:32 AM, Pavel Begunkov wrote:
-> On 15/12/2020 09:43, JeffleXu wrote:
->> Thanks for your explanation, again.
-> 
-> Got stale, let's bring it up again.
+[  491.222908] INFO: task thread-exit:2490 blocked for more than 122 seconds.
+[  491.222957] Call Trace:
+[  491.222967]  __schedule+0x36b/0x950
+[  491.222985]  schedule+0x68/0xe0
+[  491.222994]  schedule_timeout+0x209/0x2a0
+[  491.223003]  ? tlb_flush_mmu+0x28/0x140
+[  491.223013]  wait_for_completion+0x8b/0xf0
+[  491.223023]  io_wq_destroy_manager+0x24/0x60
+[  491.223037]  io_wq_put_and_exit+0x18/0x30
+[  491.223045]  io_uring_clean_tctx+0x76/0xa0
+[  491.223061]  __io_uring_files_cancel+0x1b9/0x2e0
+[  491.223068]  ? blk_finish_plug+0x26/0x40
+[  491.223085]  do_exit+0xc0/0xb40
+[  491.223099]  ? syscall_trace_enter.isra.0+0x1a1/0x1e0
+[  491.223109]  __x64_sys_exit+0x1b/0x20
+[  491.223117]  do_syscall_64+0x38/0x50
+[  491.223131]  entry_SYSCALL_64_after_hwframe+0x44/0xae
+[  491.223177] INFO: task iou-mgr-2490:2491 blocked for more than 122 seconds.
+[  491.223194] Call Trace:
+[  491.223198]  __schedule+0x36b/0x950
+[  491.223206]  ? pick_next_task_fair+0xcf/0x3e0
+[  491.223218]  schedule+0x68/0xe0
+[  491.223225]  schedule_timeout+0x209/0x2a0
+[  491.223236]  wait_for_completion+0x8b/0xf0
+[  491.223246]  io_wq_manager+0xf1/0x1d0
+[  491.223255]  ? recalc_sigpending+0x1c/0x60
+[  491.223265]  ? io_wq_cpu_online+0x40/0x40
+[  491.223272]  ret_from_fork+0x22/0x30
 
-How about something like this - check upfront if we're going to be
-using multiple bios, and -EAGAIN for NOWAIT being set if that is
-the case. That avoids the partial problem, and still retains (what
-I consider) proper NOWAIT behavior for O_DIRECT with IOCB_NOWAIT
-set.
+Cancel all unbound works on exit, otherwise do_exit() ->
+io_uring_files_cancel() may wait for io-wq destruction for long, e.g.
+until somewhat sends a SIGKILL.
 
-It's also worth nothing that this condition exists already for
-polled IO. If the bio is marked as polled, then we implicitly
-set NOWAIT as well, as there's no way to support polled IO with
-sleeping request allocations. Hence it's worth considering this
-a fix for that case, too.
+Suggested-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
 
+Not quite happy about it as it cancels pipes and sockets, but
+is probably better than waiting.
 
-diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index e2c4991833b8..6f932fe99440 100644
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -66,6 +66,8 @@ static void iomap_dio_submit_bio(struct iomap_dio *dio, struct iomap *iomap,
+ fs/io-wq.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/fs/io-wq.c b/fs/io-wq.c
+index 433c4d3c3c1c..e2ab569e47b9 100644
+--- a/fs/io-wq.c
++++ b/fs/io-wq.c
+@@ -702,6 +702,11 @@ static void io_wq_cancel_pending(struct io_wq *wq)
+ 		io_wqe_cancel_pending_work(wq->wqes[node], &match);
+ }
  
- 	if (dio->iocb->ki_flags & IOCB_HIPRI)
- 		bio_set_polled(bio, dio->iocb);
-+	if (dio->iocb->ki_flags & IOCB_NOWAIT)
-+		bio->bi_opf |= REQ_NOWAIT;
- 
- 	dio->submit.last_queue = bdev_get_queue(iomap->bdev);
- 	if (dio->dops && dio->dops->submit_io)
-@@ -236,6 +238,7 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
- 	unsigned int blkbits = blksize_bits(bdev_logical_block_size(iomap->bdev));
- 	unsigned int fs_block_size = i_blocksize(inode), pad;
- 	unsigned int align = iov_iter_alignment(dio->submit.iter);
-+	bool nowait = dio->iocb->ki_flags & (IOCB_HIPRI | IOCB_NOWAIT);
- 	unsigned int bio_opf;
- 	struct bio *bio;
- 	bool need_zeroout = false;
-@@ -296,7 +299,17 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
- 	 */
- 	bio_opf = iomap_dio_bio_opflags(dio, iomap, use_fua);
- 
--	nr_pages = bio_iov_vecs_to_alloc(dio->submit.iter, BIO_MAX_PAGES);
-+	nr_pages = bio_iov_vecs_to_alloc(dio->submit.iter, INT_MAX);
++static bool io_wq_cancel_unbounded(struct io_wq_work *work, void *data)
++{
++	return work->flags & IO_WQ_WORK_UNBOUND;
++}
 +
-+	/* Can't handle IOCB_NOWAIT for split bios */
-+	if (nr_pages > BIO_MAX_PAGES) {
-+		if (nowait) {
-+			ret = -EAGAIN;
-+			goto out;
-+		}
-+		nr_pages = BIO_MAX_PAGES;
-+	}
-+
- 	do {
- 		size_t n;
- 		if (dio->error) {
-@@ -326,6 +339,19 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
- 			goto zero_tail;
- 		}
+ /*
+  * Manager thread. Tasked with creating new workers, if we need them.
+  */
+@@ -736,6 +741,8 @@ static int io_wq_manager(void *data)
  
-+		/*
-+		 * If there are leftover pages, bail if nowait is set to avoid
-+		 * multiple bios and potentially having one of them -EAGAIN
-+		 * with the other succeeding.
-+		 */
-+		nr_pages = bio_iov_vecs_to_alloc(dio->submit.iter,
-+						 BIO_MAX_PAGES);
-+		if (nr_pages && nowait) {
-+			ret = -EAGAIN;
-+			bio_put(bio);
-+			goto out;
-+		}
+ 	if (atomic_dec_and_test(&wq->worker_refs))
+ 		complete(&wq->worker_done);
 +
- 		n = bio->bi_iter.bi_size;
- 		if (dio->flags & IOMAP_DIO_WRITE) {
- 			task_io_account_write(n);
-@@ -337,8 +363,6 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
- 		dio->size += n;
- 		copied += n;
++	io_wq_cancel_cb(wq, io_wq_cancel_unbounded, NULL, true);
+ 	wait_for_completion(&wq->worker_done);
  
--		nr_pages = bio_iov_vecs_to_alloc(dio->submit.iter,
--						 BIO_MAX_PAGES);
- 		iomap_dio_submit_bio(dio, iomap, bio, pos);
- 		pos += n;
- 	} while (nr_pages);
-
+ 	spin_lock_irq(&wq->hash->wait.lock);
 -- 
-Jens Axboe
+2.24.0
 

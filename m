@@ -2,57 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DADF3529DD
-	for <lists+io-uring@lfdr.de>; Fri,  2 Apr 2021 12:43:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2208F3529EC
+	for <lists+io-uring@lfdr.de>; Fri,  2 Apr 2021 12:52:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229605AbhDBKnD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 2 Apr 2021 06:43:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53616 "EHLO
+        id S229605AbhDBKwf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 2 Apr 2021 06:52:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229599AbhDBKnC (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 2 Apr 2021 06:43:02 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49242C0613E6
-        for <io-uring@vger.kernel.org>; Fri,  2 Apr 2021 03:43:01 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id o16so4410773wrn.0
-        for <io-uring@vger.kernel.org>; Fri, 02 Apr 2021 03:43:01 -0700 (PDT)
+        with ESMTP id S229599AbhDBKwe (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 2 Apr 2021 06:52:34 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD3FAC0613E6
+        for <io-uring@vger.kernel.org>; Fri,  2 Apr 2021 03:52:33 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id t5-20020a1c77050000b029010e62cea9deso2205719wmi.0
+        for <io-uring@vger.kernel.org>; Fri, 02 Apr 2021 03:52:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+        h=from:to:references:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=NIPdhZNlxClDKJ7DwzjH19+sy+7VDt6tjTLEhc1UlHs=;
-        b=Ub53PuLYoArto0t5NB8t0murFXzgUCCIVzysilHofwUCYk+0Na7TWe6q3tlG2wpZGD
-         AGoLoVAXHzDX5CTzXy23EuiVOYUYQx3iLAgD1R1OXOpyNFDyQmxV0EaUGGYo3/J8Vkbw
-         mu9gC0qJwYq61nwf4VAtpsrH2Ftyr4vsbDVMImFBFolpXsANPBZb2B7UWJDYPC+AvffS
-         CWEq42/0jYCkGYAL2M6i69t1aan40jZcQacUmurEjG2tpzAVRsfs1PGcz6x/hPpQhz7v
-         6ruyuXXgAz4OdBVkaTg2rIlGI6ssdRQNfV4660x53tD+wuVOspnxaQXmjPBUh7mZlew5
-         Sg1g==
+        bh=DGrkQZI4ipy3J7wHaVe5t+hh9ker+LZzfxH8iuAu3YY=;
+        b=f+zLH5RbehsWmRH3Vqq9QMjvpREfR2oJUliQXQnVXBhEahPl8GOr7RV6dWLCCRSOBB
+         +xdE7gBvI7aGZAT3zsNyCA+C2C8sleha6spUZcFskHSPyN8kIVEsbFWN3dp/zEj8Hdxu
+         mLEmUGDcqOHefbRDkOVqOM29mwr68W7pyNGVSCPJtmOkMAMiAzpDJyTKBrLQ0lYjpMx1
+         /CQHNl/Wm2vfByBdBk+CdysQ1HGfWMqGIN3xpBkel1/lD/pD5lZE8jEbTIZBoq35kj2j
+         JW9ga9GU5dgJW3WuKN7PA0MSPyiuFgC/TGUR5EZHHDdR4iyNJPw7LetjDu8S2vRcgvk5
+         A5JQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=NIPdhZNlxClDKJ7DwzjH19+sy+7VDt6tjTLEhc1UlHs=;
-        b=LzsinkpWe5xK0+UW/V3DDluhBH/cAeoRIugyOz3C90wQiVva1vGUuZ541Uok8SxR8e
-         w7V3CMCejx106pWWSnMjtrQ8WWJq6I1az9DudcABBkGmuRKWcVFP3u+b12kLb+gLzT9Y
-         OC+WvVxaC4PM5cVAT3WzBN/qrt4kMXj0iAuU23j05Vto/TNH5RACOcyEaf9MYsFQMtjQ
-         gD9c6G2ikKlWc2KQiKHjVpTggVraFfw448wBskwdNR9VO0r5DsOGAABZZS1LHcKruOZy
-         j5WuGaTw+dIx5yDShyjdK5klp9xe69EW3GT5DCBKh9fjHim3fPrzNEnZgSFXcNbzwi8n
-         LxSg==
-X-Gm-Message-State: AOAM530xU8mgDRxvzmgebdZOTlJdCbVAFe07trzWi9KHHP4sLpXZaCUa
-        x+7zBomlvqOG6na3WdEuCqNOnoHV+GWYAQ==
-X-Google-Smtp-Source: ABdhPJzI3XlS3ImUmT5rucQcWlg43goxn0t70THXaFe3vQgBKkTFwtf2o6e+oOMbBz92KUx/ltaOLA==
-X-Received: by 2002:a5d:64af:: with SMTP id m15mr14432507wrp.231.1617360180051;
-        Fri, 02 Apr 2021 03:43:00 -0700 (PDT)
+        h=x-gm-message-state:from:to:references:autocrypt:subject:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=DGrkQZI4ipy3J7wHaVe5t+hh9ker+LZzfxH8iuAu3YY=;
+        b=mc1FpgpBumSDESm3Uhsp5K4r6o8NceE3agncGcplb/p4qeoTbZBvkwkemj762OrGKl
+         fJNLBzMg16v5Y5pTPNtS2ivIoVGQdhjjqnCtoj0hjybZd81ew++YjET3DqiYFC5lcZPm
+         u1j9V7iJAj1rG6/XCOPxP+33h2vghqkvvTBDmDJzxXCRJzpQLmHqppx7gsEtDdUtyP4U
+         7GO9yvq6gjtJo482dMnNlSm3eD2jSuXZR0EiNNN5lq8LAltJqQF/LPJPfu2XAJChazLu
+         P8SAP8MQf/eRWVaAV8ZHoB2vCiHEdZTevvjsJ6AfdubVqKk4DBOjsvu9OkRVQFMDc7Qd
+         Vq2w==
+X-Gm-Message-State: AOAM531t3dR+lwbqlbg0tnGBZL/1yasjJrPzK27KGIhQLlEMMLcTsdhI
+        AWa5HcuoFvh8cbvYfjDHVeF/lT/F5EL9/A==
+X-Google-Smtp-Source: ABdhPJwebCTHPZ7FEFqWMoZuwwOUc/5wGw5YznIJnJIT5jkrZT9VovdD6cLCNDsdXjacAHzbJNfoYQ==
+X-Received: by 2002:a05:600c:4f14:: with SMTP id l20mr11969977wmq.71.1617360752175;
+        Fri, 02 Apr 2021 03:52:32 -0700 (PDT)
 Received: from [192.168.8.131] ([148.252.132.152])
-        by smtp.gmail.com with ESMTPSA id b15sm14396988wmd.41.2021.04.02.03.42.59
+        by smtp.gmail.com with ESMTPSA id w11sm1617750wmb.35.2021.04.02.03.52.31
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 02 Apr 2021 03:42:59 -0700 (PDT)
-Subject: Re: [PATCH] io-wq: simplify code in __io_worker_busy
-To:     Hao Xu <haoxu@linux.alibaba.com>, Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <1617358729-36761-1-git-send-email-haoxu@linux.alibaba.com>
+        Fri, 02 Apr 2021 03:52:31 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Hao Xu <haoxu@linux.alibaba.com>, Jens Axboe <axboe@kernel.dk>,
+        io-uring <io-uring@vger.kernel.org>
+References: <a96971ea-2787-149a-a4bd-422fa696a586@kernel.dk>
+ <48023516-ac7d-8393-f603-f9bf4faa722f@linux.alibaba.com>
+ <a4661870-a839-f949-e5cf-18022d070384@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
  bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
@@ -96,64 +97,60 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <91175ea9-950a-868b-bddf-dfe4c0184225@gmail.com>
-Date:   Fri, 2 Apr 2021 11:38:55 +0100
+Subject: Re: [PATCH] io_uring: don't mark S_ISBLK async work as unbounded
+Message-ID: <2c0ce39f-3ccb-3e25-9dcf-d9876c30efb1@gmail.com>
+Date:   Fri, 2 Apr 2021 11:48:28 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <1617358729-36761-1-git-send-email-haoxu@linux.alibaba.com>
+In-Reply-To: <a4661870-a839-f949-e5cf-18022d070384@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 02/04/2021 11:18, Hao Xu wrote:
-> leverage xor to simplify code in __io_worker_busy
-
-I don't like hard-coded ^1 because if indexes change it may break.
-One option is to leave it to the compiler:
-
-idx = bound : WQ_BOUND ? WQ_UNBOUND;
-compl_idx = bound : WQ_UNBOUND ? WQ_BOUND;
-
-Or add a BUILD_BUG_ON() checking that WQ_BOUND and WQ_UNBOUND
-are mod 2 complementary.
-
-
+On 02/04/2021 11:32, Pavel Begunkov wrote:
+> On 02/04/2021 09:52, Hao Xu wrote:
+>> 在 2021/4/1 下午10:57, Jens Axboe 写道:
+>>> S_ISBLK is marked as unbounded work for async preparation, because it
+>>> doesn't match S_ISREG. That is incorrect, as any read/write to a block
+>>> device is also a bounded operation. Fix it up and ensure that S_ISBLK
+>>> isn't marked unbounded.
+>>>
+>>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>>>
+>> Hi Jens, I saw a (un)bounded work is for a (un)bounded worker to
+>> execute. What is the difference between bounded and unbounded?
 > 
-> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
-> ---
->  fs/io-wq.c | 13 ++++---------
->  1 file changed, 4 insertions(+), 9 deletions(-)
-> 
-> diff --git a/fs/io-wq.c b/fs/io-wq.c
-> index 7434eb40ca8c..f77e4704d7c7 100644
-> --- a/fs/io-wq.c
-> +++ b/fs/io-wq.c
-> @@ -292,16 +292,11 @@ static void __io_worker_busy(struct io_wqe *wqe, struct io_worker *worker,
->  	worker_bound = (worker->flags & IO_WORKER_F_BOUND) != 0;
->  	work_bound = (work->flags & IO_WQ_WORK_UNBOUND) == 0;
->  	if (worker_bound != work_bound) {
-> +		int index = work_bound ? IO_WQ_ACCT_UNBOUND : IO_WQ_ACCT_BOUND;
->  		io_wqe_dec_running(worker);
-> -		if (work_bound) {
-> -			worker->flags |= IO_WORKER_F_BOUND;
-> -			wqe->acct[IO_WQ_ACCT_UNBOUND].nr_workers--;
-> -			wqe->acct[IO_WQ_ACCT_BOUND].nr_workers++;
-> -		} else {
-> -			worker->flags &= ~IO_WORKER_F_BOUND;
-> -			wqe->acct[IO_WQ_ACCT_UNBOUND].nr_workers++;
-> -			wqe->acct[IO_WQ_ACCT_BOUND].nr_workers--;
-> -		}
-> +		worker->flags ^= IO_WORKER_F_BOUND;
-> +		wqe->acct[index].nr_workers--;
-> +		wqe->acct[index^1].nr_workers++;
->  		io_wqe_inc_running(worker);
->  	 }
->  }
-> 
+> Unbounded works are not bounded in execution time, i.e. they may take
+> forever to complete. E.g. recv depends on the other end to send something,
+> that not necessarily will ever happen.
+
+To elaborate a bit, one example of how it's used: because unbounded may
+stay for long, it always spawns a new worker thread for each of them.
+
+If app submits SQEs as below, and send's are not actually sent for execution
+but stashed somewhere internally in a list, e.g. waiting for a worker thread
+to get free, it would just hang from the userspace perspective.
+
+recv(fd1), recv(fd1), send(fd1), send(fd1)
+
+
+>>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>>> index 6d7a1b69712b..a16b7df934d1 100644
+>>> --- a/fs/io_uring.c
+>>> +++ b/fs/io_uring.c
+>>> @@ -1213,7 +1213,7 @@ static void io_prep_async_work(struct io_kiocb *req)
+>>>       if (req->flags & REQ_F_ISREG) {
+>>>           if (def->hash_reg_file || (ctx->flags & IORING_SETUP_IOPOLL))
+>>>               io_wq_hash_work(&req->work, file_inode(req->file));
+>>> -    } else {
+>>> +    } else if (!req->file || !S_ISBLK(file_inode(req->file)->i_mode)) {
+>>>           if (def->unbound_nonreg_file)
+>>>               req->work.flags |= IO_WQ_WORK_UNBOUND;
+>>>       }
 
 -- 
 Pavel Begunkov

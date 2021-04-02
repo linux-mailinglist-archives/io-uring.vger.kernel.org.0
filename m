@@ -2,58 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2208F3529EC
-	for <lists+io-uring@lfdr.de>; Fri,  2 Apr 2021 12:52:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B47AA352A26
+	for <lists+io-uring@lfdr.de>; Fri,  2 Apr 2021 13:17:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229605AbhDBKwf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 2 Apr 2021 06:52:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55658 "EHLO
+        id S234161AbhDBLRI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 2 Apr 2021 07:17:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229599AbhDBKwe (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 2 Apr 2021 06:52:34 -0400
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD3FAC0613E6
-        for <io-uring@vger.kernel.org>; Fri,  2 Apr 2021 03:52:33 -0700 (PDT)
-Received: by mail-wm1-x335.google.com with SMTP id t5-20020a1c77050000b029010e62cea9deso2205719wmi.0
-        for <io-uring@vger.kernel.org>; Fri, 02 Apr 2021 03:52:33 -0700 (PDT)
+        with ESMTP id S229932AbhDBLRH (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 2 Apr 2021 07:17:07 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C3DFC0613E6
+        for <io-uring@vger.kernel.org>; Fri,  2 Apr 2021 04:17:06 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id c8so4444637wrq.11
+        for <io-uring@vger.kernel.org>; Fri, 02 Apr 2021 04:17:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:references:autocrypt:subject:message-id:date:user-agent
+        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=DGrkQZI4ipy3J7wHaVe5t+hh9ker+LZzfxH8iuAu3YY=;
-        b=f+zLH5RbehsWmRH3Vqq9QMjvpREfR2oJUliQXQnVXBhEahPl8GOr7RV6dWLCCRSOBB
-         +xdE7gBvI7aGZAT3zsNyCA+C2C8sleha6spUZcFskHSPyN8kIVEsbFWN3dp/zEj8Hdxu
-         mLEmUGDcqOHefbRDkOVqOM29mwr68W7pyNGVSCPJtmOkMAMiAzpDJyTKBrLQ0lYjpMx1
-         /CQHNl/Wm2vfByBdBk+CdysQ1HGfWMqGIN3xpBkel1/lD/pD5lZE8jEbTIZBoq35kj2j
-         JW9ga9GU5dgJW3WuKN7PA0MSPyiuFgC/TGUR5EZHHDdR4iyNJPw7LetjDu8S2vRcgvk5
-         A5JQ==
+        bh=Df9Y1oWHivPyeYi86kqVEvEp7cZ8nTjGKGhhBsO10Xo=;
+        b=mTbanyueOrdNo6e3TG1bkpbqHJ8ldaLGX/nAjr+3wArb7iHmYqfUw8C8VKHG0vS3er
+         vGu+bWjdvAPrBtbh6mlCj0MiK/rSNDLUUv18r4bYZjXeQ72i4gdIE15XCGIOsTAqXY9S
+         cuQhOZeWgvzlKbR/LjWU+NGUdYNn3yat8p8kIRkML5uvE+pq47MZXxVJ1EWWgZfvSzeh
+         d5ptIHJAHhk7U03qGoJhBtEHvtUSD0ciZUiJWTjkBkSHIITqbIUKdXbi9axvxZS8dFQU
+         tj7skbm/FxY/UFHqUA81m/BZTDHc83qiXo59Qio8EWppWyzpZDpvUo/m2jt/jamrTrkc
+         suhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:references:autocrypt:subject:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=DGrkQZI4ipy3J7wHaVe5t+hh9ker+LZzfxH8iuAu3YY=;
-        b=mc1FpgpBumSDESm3Uhsp5K4r6o8NceE3agncGcplb/p4qeoTbZBvkwkemj762OrGKl
-         fJNLBzMg16v5Y5pTPNtS2ivIoVGQdhjjqnCtoj0hjybZd81ew++YjET3DqiYFC5lcZPm
-         u1j9V7iJAj1rG6/XCOPxP+33h2vghqkvvTBDmDJzxXCRJzpQLmHqppx7gsEtDdUtyP4U
-         7GO9yvq6gjtJo482dMnNlSm3eD2jSuXZR0EiNNN5lq8LAltJqQF/LPJPfu2XAJChazLu
-         P8SAP8MQf/eRWVaAV8ZHoB2vCiHEdZTevvjsJ6AfdubVqKk4DBOjsvu9OkRVQFMDc7Qd
-         Vq2w==
-X-Gm-Message-State: AOAM531t3dR+lwbqlbg0tnGBZL/1yasjJrPzK27KGIhQLlEMMLcTsdhI
-        AWa5HcuoFvh8cbvYfjDHVeF/lT/F5EL9/A==
-X-Google-Smtp-Source: ABdhPJwebCTHPZ7FEFqWMoZuwwOUc/5wGw5YznIJnJIT5jkrZT9VovdD6cLCNDsdXjacAHzbJNfoYQ==
-X-Received: by 2002:a05:600c:4f14:: with SMTP id l20mr11969977wmq.71.1617360752175;
-        Fri, 02 Apr 2021 03:52:32 -0700 (PDT)
+        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=Df9Y1oWHivPyeYi86kqVEvEp7cZ8nTjGKGhhBsO10Xo=;
+        b=Vq7IVof7l4N3UNXYXAmkMJRuVGg3eCjfrhEaL7GiXFA8fQgSaReTZ11c1YU9AulMmg
+         2qD4X14QVAaB0QfkGSwv4TdMPuEBzTyQvizyv9oa/uZczLOuQPN+KZWxlA+iHbAMYU4R
+         x1Asr/CUlRWD0cZFewK2HllG2vFvuAuElItfHIqkyRs8n4WpkdgsyTPN51gbrAzQSYWl
+         vtS2HpiuJco5LRWjMhg44xHxKkxhFDuqMyzNJ6VImzHDb03v8P7au7mUbyAYomcMT3CE
+         DcqvYShBeeap5JTP4RxPln5QWuKSl6MScmAivco/ZAjuJSkeG4gTucKqSQ/EDWpP9h+Y
+         FpPw==
+X-Gm-Message-State: AOAM531qYnCa8OMbCugZOgeUJG3wV1fe2WhtbL8WTT1om0i27aIA0SXd
+        kh9MMVy98gOkiVF+HdHdVJvQwSWbbM3rmQ==
+X-Google-Smtp-Source: ABdhPJzwbBCMROR4e0n+npoA1XBNL7LTfjdzPwQW2HrPnHRYP+0QriaOirIWfEIyQOEh2cg6IvjXPA==
+X-Received: by 2002:a5d:4523:: with SMTP id j3mr15192832wra.288.1617362225392;
+        Fri, 02 Apr 2021 04:17:05 -0700 (PDT)
 Received: from [192.168.8.131] ([148.252.132.152])
-        by smtp.gmail.com with ESMTPSA id w11sm1617750wmb.35.2021.04.02.03.52.31
+        by smtp.gmail.com with ESMTPSA id p18sm14060221wrs.68.2021.04.02.04.17.04
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 02 Apr 2021 03:52:31 -0700 (PDT)
+        Fri, 02 Apr 2021 04:17:04 -0700 (PDT)
+To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
+        io-uring@vger.kernel.org
+Cc:     axboe@kernel.dk, joseph.qi@linux.alibaba.com
+References: <20210331155926.22913-1-xiaoguang.wang@linux.alibaba.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Hao Xu <haoxu@linux.alibaba.com>, Jens Axboe <axboe@kernel.dk>,
-        io-uring <io-uring@vger.kernel.org>
-References: <a96971ea-2787-149a-a4bd-422fa696a586@kernel.dk>
- <48023516-ac7d-8393-f603-f9bf4faa722f@linux.alibaba.com>
- <a4661870-a839-f949-e5cf-18022d070384@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
  bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
@@ -97,13 +96,14 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: [PATCH] io_uring: don't mark S_ISBLK async work as unbounded
-Message-ID: <2c0ce39f-3ccb-3e25-9dcf-d9876c30efb1@gmail.com>
-Date:   Fri, 2 Apr 2021 11:48:28 +0100
+Subject: Re: [PATCH] io_uring: support multiple rings to share same poll
+ thread by specifying same cpu
+Message-ID: <0e7acba9-1e45-2891-3461-42ca1485ac61@gmail.com>
+Date:   Fri, 2 Apr 2021 12:13:01 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <a4661870-a839-f949-e5cf-18022d070384@gmail.com>
+In-Reply-To: <20210331155926.22913-1-xiaoguang.wang@linux.alibaba.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -111,46 +111,99 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 02/04/2021 11:32, Pavel Begunkov wrote:
-> On 02/04/2021 09:52, Hao Xu wrote:
->> 在 2021/4/1 下午10:57, Jens Axboe 写道:
->>> S_ISBLK is marked as unbounded work for async preparation, because it
->>> doesn't match S_ISREG. That is incorrect, as any read/write to a block
->>> device is also a bounded operation. Fix it up and ensure that S_ISBLK
->>> isn't marked unbounded.
->>>
->>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->>>
->> Hi Jens, I saw a (un)bounded work is for a (un)bounded worker to
->> execute. What is the difference between bounded and unbounded?
+On 31/03/2021 16:59, Xiaoguang Wang wrote:
+> We have already supported multiple rings to share one same poll thread
+> by passing IORING_SETUP_ATTACH_WQ, but it's not that convenient to use.
+> IORING_SETUP_ATTACH_WQ needs users to ensure that a parent ring instance
+> has beed created firstly, that means it will require app to regulate the
+> creation oder between uring instances.
 > 
-> Unbounded works are not bounded in execution time, i.e. they may take
-> forever to complete. E.g. recv depends on the other end to send something,
-> that not necessarily will ever happen.
+> Currently we can make this a bit simpler, for those rings which will
+> have SQPOLL enabled and are willing to be bound to one same cpu, add a
+> capability that these rings can share one poll thread by specifying
+> a new IORING_SETUP_SQPOLL_PERCPU flag, then we have 3 cases
+>   1, IORING_SETUP_ATTACH_WQ: if user specifies this flag, we'll always
+> try to attach this ring to an existing ring's corresponding poll thread,
+> no matter whether IORING_SETUP_SQ_AFF or IORING_SETUP_SQPOLL_PERCPU is
+> set.
+>   2, IORING_SETUP_SQ_AFF and IORING_SETUP_SQPOLL_PERCPU are both enabled,
+> for this case, we'll create a single poll thread to be shared by rings
+> rings which have same sq_thread_cpu.
+>   3, for any other cases, we'll just create one new poll thread for the
+> corresponding ring.
+> 
+> And for case 2, don't need to regulate creation oder of multiple uring
+> instances, we use a mutex to synchronize creation, for example, say five
+> rings which all have IORING_SETUP_SQ_AFF & IORING_SETUP_SQPOLL_PERCPU
+> enabled, and are willing to be bound same cpu, one ring that gets the
+> mutex lock will create one poll thread, the other four rings will just
+> attach themselves to the previous created poll thread once they get lock
+> successfully.
+> 
+> To implement above function, define below data structs:
+>   struct percpu_sqd_entry {
+>         struct list_head        node;
+>         struct io_sq_data       *sqd;
+>         pid_t                   tgid;
+>   };
+> 
+>   struct percpu_sqd_list {
+>         struct list_head        head;
+>         struct mutex            lock;
+>   };
+> 
+>   static struct percpu_sqd_list __percpu *percpu_sqd_list;
+> 
+> sqthreads that have same sq_thread_cpu will be linked together in a percpu
+> percpu_sqd_list's head. When IORING_SETUP_SQ_AFF and IORING_SETUP_SQPOLL_PERCPU
+> are both enabled, we will use struct io_uring_params' sq_thread_cpu and
+> current-tgid locate corresponding sqd.
 
-To elaborate a bit, one example of how it's used: because unbounded may
-stay for long, it always spawns a new worker thread for each of them.
+I can't help myself but wonder why not something in the userspace like
+a pseudo-coded snippet below?
 
-If app submits SQEs as below, and send's are not actually sent for execution
-but stashed somewhere internally in a list, e.g. waiting for a worker thread
-to get free, it would just hang from the userspace perspective.
-
-recv(fd1), recv(fd1), send(fd1), send(fd1)
+BTW, don't think "pid_t tgid" will work with namespaces/cgroups.
 
 
->>> diff --git a/fs/io_uring.c b/fs/io_uring.c
->>> index 6d7a1b69712b..a16b7df934d1 100644
->>> --- a/fs/io_uring.c
->>> +++ b/fs/io_uring.c
->>> @@ -1213,7 +1213,7 @@ static void io_prep_async_work(struct io_kiocb *req)
->>>       if (req->flags & REQ_F_ISREG) {
->>>           if (def->hash_reg_file || (ctx->flags & IORING_SETUP_IOPOLL))
->>>               io_wq_hash_work(&req->work, file_inode(req->file));
->>> -    } else {
->>> +    } else if (!req->file || !S_ISBLK(file_inode(req->file)->i_mode)) {
->>>           if (def->unbound_nonreg_file)
->>>               req->work.flags |= IO_WQ_WORK_UNBOUND;
->>>       }
+
+static std::vector<std::set<struct io_uring *>> percpu_rings;
+static std::mutex lock;
+
+int io_uring_queue_init_params_percpu(unsigned entries,
+				      struct io_uring *ring,
+				      struct io_uring_params *p);
+{
+	unsigned int cpu = p->sq_thread_cpu;
+	std::unique_lock guard(lock);
+
+	if (!(p->flags & IORING_SETUP_SQPOLL))
+		return -EINVAL;
+	if (percpu_rings.size() <= cpu)
+		percpu_rings.resize(cpu + 1);
+
+	p->flags &= ~IORING_SETUP_ATTACH_WQ;
+	if (!percpu_rings[cpu].empty()) {
+		struct io_uring *shared_ring = *percpu_rings[cpu].begin();
+		p->wq_fd = shared_ring->ring_fd;
+		p->flags |= IORING_SETUP_ATTACH_WQ;
+	}
+
+	int ret = io_uring_queue_init_params(entries, ring, p);
+	if (!ret)
+		percpu_rings[cpu].insert(ring);
+	return ret;
+}
+
+void io_uring_queue_exit_percpu(struct io_uring *ring)
+{
+	std::unique_lock guard(lock);
+
+	for (auto& cpu_set: percpu_rings)
+		if (cpu_set.erase(ring))
+			break;
+	guard.release();
+	io_uring_queue_exit(ring);
+}
 
 -- 
 Pavel Begunkov

@@ -2,172 +2,76 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C07BC3537DA
-	for <lists+io-uring@lfdr.de>; Sun,  4 Apr 2021 13:37:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E788C3538A5
+	for <lists+io-uring@lfdr.de>; Sun,  4 Apr 2021 17:45:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230388AbhDDLe4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 4 Apr 2021 07:34:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60394 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230209AbhDDLez (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Sun, 4 Apr 2021 07:34:55 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id DAA9361165;
-        Sun,  4 Apr 2021 11:34:48 +0000 (UTC)
-Date:   Sun, 4 Apr 2021 13:34:45 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        syzbot <syzbot+c88a7030da47945a3cc3@syzkaller.appspotmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, io-uring@vger.kernel.org
-Subject: Re: [syzbot] WARNING in mntput_no_expire (2)
-Message-ID: <20210404113445.xo6ntgfpxigcb3x6@wittgenstein>
-References: <0000000000003a565e05bee596f2@google.com>
- <20210401154515.k24qdd2lzhtneu47@wittgenstein>
- <90e7e339-eaec-adb2-cfed-6dc058a117a3@kernel.dk>
- <20210401174613.vymhhrfsemypougv@wittgenstein>
- <20210401175919.jpiylhfrlb4xb67u@wittgenstein>
- <YGYa0B4gabEYi2Tx@zeniv-ca.linux.org.uk>
- <YGkloJhMFc4hEatk@zeniv-ca.linux.org.uk>
+        id S230237AbhDDPpu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 4 Apr 2021 11:45:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57938 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229861AbhDDPpt (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 4 Apr 2021 11:45:49 -0400
+Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74D78C061756
+        for <io-uring@vger.kernel.org>; Sun,  4 Apr 2021 08:45:45 -0700 (PDT)
+Received: by mail-pj1-x102f.google.com with SMTP id k23-20020a17090a5917b02901043e35ad4aso6730010pji.3
+        for <io-uring@vger.kernel.org>; Sun, 04 Apr 2021 08:45:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=cm5OkjpR6CLG4CW1MbbGihDBBI/JssfOqZwgcuKEJtc=;
+        b=qW9yo91OPHn7gA85ymTXOLuJb7m4LjFgF0Z+022U9PwW0W27zed0EXF4HRyrDZNUsq
+         iuVIwBVdTFBXH+nDwxd1EoMp+HI36cTqIOpRP1ckg8ulRDetjkzn2EGGpJNC7AOGQAxI
+         uxABAqOBwiei/D+/TXM7KPHwp4d7Cy2NNZl9T8MA+PFnEQfP9QfOaMjNM/omrtwzR9bJ
+         D1vm0B03cy2Vkjzbj+5vnIs/DesWrlBAp0GYnB7UQM9qg0IO9qaRSLcm+QSfCgFkkCk+
+         c/ICOtl2uBTf7em83c77hLmlPx1huadhHSU5kryLfuSqjzkcsT5fSQGimuFy1C92l70n
+         SvzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=cm5OkjpR6CLG4CW1MbbGihDBBI/JssfOqZwgcuKEJtc=;
+        b=N/t7IXksDvpbHyKc8kioGS/EjJpjtYF6eGkKzoHg9ZfLjENt64pwqgvb//7RhlmUAa
+         eMDSRmUYzWCbUJ2OvGKXTkbdaSaRsNHVlfWyKZfzs2bEiro+XkIltrkuyGV5a5e7Ueb5
+         adiWdPIJNGGOjKAWSN8+Cfww7zHLywFpLwn9IB7tM44HAf79ryF1ocKQxgaHgaqG77TY
+         3SKXh7DZbzO+V2VdjB6MrrVwCq8SoAFa7uzzR886VgnGa8yJGfo78cLcg61A/cRJuwH7
+         9jr5FpxhYXENbxBEzeNRErSifWxeVM/Xv6pC32AH9gHBSCDJFyfTIkgbYFnFxFx285eS
+         rGBg==
+X-Gm-Message-State: AOAM532S4JKF0ru1nB35cTyC1M90u1Zv9YZexPFAKsWFCEl/0li1l75Q
+        RfPaUYuZuaAyk6X0hARaeDOi0xxOuUa1hg==
+X-Google-Smtp-Source: ABdhPJxHR1pYHkuNY3cjnSG98HowdOtNnyA0xah8PpYER7NaIzTS6muUQ/ooXuK3X1nPC2f0eJaBVg==
+X-Received: by 2002:a17:90b:3718:: with SMTP id mg24mr2190137pjb.164.1617551144590;
+        Sun, 04 Apr 2021 08:45:44 -0700 (PDT)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id d20sm13118286pjv.47.2021.04.04.08.45.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 04 Apr 2021 08:45:44 -0700 (PDT)
+Subject: Re: [PATCH liburing] tests: test CQE ordering on early submission
+ fail
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <bfc0ffac5d54adeb3472ec6160f6aeaf8f70c1ca.1617099951.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <7700fae5-20ab-d368-2383-d0eddf3a5320@kernel.dk>
+Date:   Sun, 4 Apr 2021 09:45:42 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <bfc0ffac5d54adeb3472ec6160f6aeaf8f70c1ca.1617099951.git.asml.silence@gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <YGkloJhMFc4hEatk@zeniv-ca.linux.org.uk>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Sun, Apr 04, 2021 at 02:34:08AM +0000, Al Viro wrote:
-> On Thu, Apr 01, 2021 at 07:11:12PM +0000, Al Viro wrote:
-> 
-> > > I _think_ I see what the issue is. It seems that an assumption made in
-> > > this commit might be wrong and we're missing a mnt_add_count() bump that
-> > > we would otherwise have gotten if we've moved the failure handling into
-> > > the unlazy helpers themselves.
-> > > 
-> > > Al, does that sound plausible?
-> > 
-> > mnt_add_count() on _what_?  Failure in legitimize_links() ends up with
-> > nd->path.mnt zeroed, in both callers.  So which vfsmount would be
-> > affected?
+On 3/30/21 4:26 AM, Pavel Begunkov wrote:
+> Check that CQEs of a link comes in the order of submission, even when
+> a link fails early during submission initial prep.
 
-It looks to me like it's the vfsmount of the nd->root after we called
-chroot or pivot_root.
+Applied, thanks.
 
-> 
-> Could you turn that WARN_ON(count < 0) into
-> 	if (WARN_ON(count < 0))
-> 		printk(KERN_ERR "id = %d, dev = %s, count = %d\n",
-> 				mnt->mnt_id,
-> 				mnt->mnt_sb->s_id,
-> 				count);
-> add system("cat /proc/self/mountinfo"); right after sandbox_common()
-> call and try to reproduce that?
+-- 
+Jens Axboe
 
-Sorry for not replying to your earlier mail but I've been debugging this
-too. My current theory is that it's related to LOOKUP_ROOT_GRABBED when
-LOOKUP_CACHED is specified _possibly_ with an interaction how
-create_io_thread() is created with CLONE_FS. The reproducer requires you
-either have called pivot_root() or chroot() in order for the failure to
-happen. So I think the fact that we skip legitimize_root() when
-LOOKUP_CACHED is set might figure into this. I can keep digging.
-
-Funny enough I already placed a printk statement into the place you
-wanted one too so I just amended mine. Here's what you get:
-
-If pivot pivot_root() is used before the chroot() you get:
-
-[  637.464555] AAAA: count(-1) | mnt_mntpoint(/) | mnt->mnt.mnt_root(/) | id(579) | dev(tmpfs)
-
-if you only call chroot, i.e. make the pivot_root() branch a simple
-if (true) you get:
-
-[  955.206117] AAAA: count(-2) | mnt_mntpoint(/) | mnt->mnt.mnt_root(/) | id(580) | dev(tmpfs)
-
-The cat /proc/self/mountinfo is for the id(579) below:
-
-514 513 8:2 / / rw,relatime - ext4 /dev/sda2 rw
-515 514 0:5 / /dev rw,nosuid,noexec,relatime - devtmpfs udev rw,size=302716k,nr_inodes=75679,mode=755
-516 515 0:26 / /dev/pts rw,nosuid,noexec,relatime - devpts devpts rw,gid=5,mode=620,ptmxmode=000
-517 515 0:28 / /dev/shm rw,nosuid,nodev - tmpfs tmpfs rw
-518 515 0:48 / /dev/hugepages rw,relatime - hugetlbfs hugetlbfs rw,pagesize=2M
-519 515 0:21 / /dev/mqueue rw,nosuid,nodev,noexec,relatime - mqueue mqueue rw
-520 514 0:27 / /run rw,nosuid,nodev,noexec,relatime - tmpfs tmpfs rw,size=62152k,mode=755
-521 520 0:29 / /run/lock rw,nosuid,nodev,noexec,relatime - tmpfs tmpfs rw,size=5120k
-522 520 0:49 / /run/lxd_agent rw,relatime - tmpfs tmpfs rw,size=51200k,mode=700
-523 520 0:59 / /run/user/1000 rw,nosuid,nodev,relatime - tmpfs tmpfs rw,size=62148k,nr_inodes=15537,mode=700,uid=1000,gid=1000
-524 514 0:24 / /sys rw,nosuid,nodev,noexec,relatime - sysfs sysfs rw
-525 524 0:6 / /sys/kernel/security rw,nosuid,nodev,noexec,relatime - securityfs securityfs rw
-526 524 0:30 / /sys/fs/cgroup ro,nosuid,nodev,noexec - tmpfs tmpfs ro,size=4096k,nr_inodes=1024,mode=755
-527 526 0:31 /../../.. /sys/fs/cgroup/unified rw,nosuid,nodev,noexec,relatime - cgroup2 cgroup2 rw
-528 526 0:32 /../../.. /sys/fs/cgroup/systemd rw,nosuid,nodev,noexec,relatime - cgroup cgroup rw,xattr,name=systemd
-529 526 0:36 /../../.. /sys/fs/cgroup/memory rw,nosuid,nodev,noexec,relatime - cgroup cgroup rw,memory
-530 526 0:37 /.. /sys/fs/cgroup/cpu,cpuacct rw,nosuid,nodev,noexec,relatime - cgroup cgroup rw,cpu,cpuacct
-531 526 0:38 / /sys/fs/cgroup/hugetlb rw,nosuid,nodev,noexec,relatime - cgroup cgroup rw,hugetlb
-549 526 0:39 /.. /sys/fs/cgroup/blkio rw,nosuid,nodev,noexec,relatime - cgroup cgroup rw,blkio
-550 526 0:40 /../../.. /sys/fs/cgroup/freezer rw,nosuid,nodev,noexec,relatime - cgroup cgroup rw,freezer
-551 526 0:41 /../../.. /sys/fs/cgroup/pids rw,nosuid,nodev,noexec,relatime - cgroup cgroup rw,pids
-552 526 0:42 / /sys/fs/cgroup/net_cls,net_prio rw,nosuid,nodev,noexec,relatime - cgroup cgroup rw,net_cls,net_prio
-553 526 0:43 / /sys/fs/cgroup/perf_event rw,nosuid,nodev,noexec,relatime - cgroup cgroup rw,perf_event
-554 526 0:44 / /sys/fs/cgroup/cpuset rw,nosuid,nodev,noexec,relatime - cgroup cgroup rw,cpuset,clone_children
-555 526 0:45 /.. /sys/fs/cgroup/devices rw,nosuid,nodev,noexec,relatime - cgroup cgroup rw,devices
-556 526 0:46 / /sys/fs/cgroup/rdma rw,nosuid,nodev,noexec,relatime - cgroup cgroup rw,rdma
-557 524 0:33 / /sys/fs/pstore rw,nosuid,nodev,noexec,relatime - pstore pstore rw
-558 524 0:34 / /sys/firmware/efi/efivars rw,nosuid,nodev,noexec,relatime - efivarfs efivarfs rw
-559 524 0:35 / /sys/fs/bpf rw,nosuid,nodev,noexec,relatime - bpf none rw,mode=700
-560 524 0:7 / /sys/kernel/debug rw,nosuid,nodev,noexec,relatime - debugfs debugfs rw
-561 524 0:12 / /sys/kernel/tracing rw,nosuid,nodev,noexec,relatime - tracefs tracefs rw
-562 524 0:51 / /sys/fs/fuse/connections rw,nosuid,nodev,noexec,relatime - fusectl fusectl rw
-563 524 0:20 / /sys/kernel/config rw,nosuid,nodev,noexec,relatime - configfs configfs rw
-564 514 0:25 / /proc rw,nosuid,nodev,noexec,relatime - proc proc rw
-565 564 0:47 / /proc/sys/fs/binfmt_misc rw,relatime - autofs systemd-1 rw,fd=29,pgrp=0,timeout=0,minproto=5,maxproto=5,direct,pipe_ino=31453
-566 565 0:52 / /proc/sys/fs/binfmt_misc rw,nosuid,nodev,noexec,relatime - binfmt_misc binfmt_misc rw
-567 514 0:50 / /home/ubuntu/src/compiled rw,relatime - virtiofs lxd_lxc rw
-568 514 8:1 / /boot/efi rw,relatime - vfat /dev/sda1 rw,fmask=0022,dmask=0022,codepage=437,iocharset=iso8859-1,shortname=mixed,errors=remount-ro
-569 514 0:57 / /var/lib/lxcfs rw,nosuid,nodev,relatime - fuse.lxcfs lxcfs rw,user_id=0,group_id=0,allow_other
-
-> 
-> I really wonder what mount is it happening to.  BTW, how painful would
-> it be to teach syzcaller to turn those cascades of
-> 	NONFAILING(*(uint8_t*)0x20000080 = 0x12);
-> 	NONFAILING(*(uint8_t*)0x20000081 = 0);
-> 	NONFAILING(*(uint16_t*)0x20000082 = 0);
-> 	NONFAILING(*(uint32_t*)0x20000084 = 0xffffff9c);
-> 	NONFAILING(*(uint64_t*)0x20000088 = 0);
-> 	NONFAILING(*(uint64_t*)0x20000090 = 0x20000180);
-> 	NONFAILING(memcpy((void*)0x20000180, "./file0\000", 8));
-> 	NONFAILING(*(uint32_t*)0x20000098 = 0);
-> 	NONFAILING(*(uint32_t*)0x2000009c = 0x80);
-> 	NONFAILING(*(uint64_t*)0x200000a0 = 0x23456);
-> 	....
-> 	NONFAILING(syz_io_uring_submit(r[1], r[2], 0x20000080, 0));
-> into something more readable?  Bloody annoyance every time...  Sure, I can
-> manually translate it into
-> 	struct io_uring_sqe *sqe = (void *)0x20000080;
-> 	char *s = (void *)0x20000180;
-> 	memset(sqe, '\0', sizeof(*sqe));
-> 	sqe->opcode = 0x12; // IORING_OP_OPENAT?
-> 	sqe->fd = -100;	// AT_FDCWD?
-> 	sqe->addr = s;
-> 	strcpy(s, "./file0");
-> 	sqe->open_flags = 0x80;	// O_EXCL???
-> 	sqe->user_data = 0x23456;	// random tag?
-> 	syz_io_uring_submit(r[1], r[2], (unsigned long)p, 0);
-> but it's really annoying as hell, especially since syz_io_uring_submit()
-> comes from syzcaller and the damn thing _knows_ that the third argument
-> is sodding io_uring_sqe, and never passed to anything other than
-> memcpy() in there, at that, so the exact address can't matter.
-
-Yeah, it's terrible to get an idea of what's going on in such produces.
-I did the same exercise as you. I should probably have replied with all
-of that data sooner so you wouldn't have to do the same shite I had to.
-Oh well.
-
-> 
-> Incidentally, solitary O_EXCL (without O_CREAT) is... curious.  Does that
-> sucker still trigger without it?  I.e. with store to 0x2000009c replaced
-> with storing 0?
-
-Yeah, I did that as well yesterday morning and it still triggers.
-
-Christian

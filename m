@@ -2,76 +2,97 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E788C3538A5
-	for <lists+io-uring@lfdr.de>; Sun,  4 Apr 2021 17:45:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 952E23538B8
+	for <lists+io-uring@lfdr.de>; Sun,  4 Apr 2021 17:56:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230237AbhDDPpu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 4 Apr 2021 11:45:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57938 "EHLO
+        id S231152AbhDDP4N (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 4 Apr 2021 11:56:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229861AbhDDPpt (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 4 Apr 2021 11:45:49 -0400
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74D78C061756
-        for <io-uring@vger.kernel.org>; Sun,  4 Apr 2021 08:45:45 -0700 (PDT)
-Received: by mail-pj1-x102f.google.com with SMTP id k23-20020a17090a5917b02901043e35ad4aso6730010pji.3
-        for <io-uring@vger.kernel.org>; Sun, 04 Apr 2021 08:45:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=cm5OkjpR6CLG4CW1MbbGihDBBI/JssfOqZwgcuKEJtc=;
-        b=qW9yo91OPHn7gA85ymTXOLuJb7m4LjFgF0Z+022U9PwW0W27zed0EXF4HRyrDZNUsq
-         iuVIwBVdTFBXH+nDwxd1EoMp+HI36cTqIOpRP1ckg8ulRDetjkzn2EGGpJNC7AOGQAxI
-         uxABAqOBwiei/D+/TXM7KPHwp4d7Cy2NNZl9T8MA+PFnEQfP9QfOaMjNM/omrtwzR9bJ
-         D1vm0B03cy2Vkjzbj+5vnIs/DesWrlBAp0GYnB7UQM9qg0IO9qaRSLcm+QSfCgFkkCk+
-         c/ICOtl2uBTf7em83c77hLmlPx1huadhHSU5kryLfuSqjzkcsT5fSQGimuFy1C92l70n
-         SvzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=cm5OkjpR6CLG4CW1MbbGihDBBI/JssfOqZwgcuKEJtc=;
-        b=N/t7IXksDvpbHyKc8kioGS/EjJpjtYF6eGkKzoHg9ZfLjENt64pwqgvb//7RhlmUAa
-         eMDSRmUYzWCbUJ2OvGKXTkbdaSaRsNHVlfWyKZfzs2bEiro+XkIltrkuyGV5a5e7Ueb5
-         adiWdPIJNGGOjKAWSN8+Cfww7zHLywFpLwn9IB7tM44HAf79ryF1ocKQxgaHgaqG77TY
-         3SKXh7DZbzO+V2VdjB6MrrVwCq8SoAFa7uzzR886VgnGa8yJGfo78cLcg61A/cRJuwH7
-         9jr5FpxhYXENbxBEzeNRErSifWxeVM/Xv6pC32AH9gHBSCDJFyfTIkgbYFnFxFx285eS
-         rGBg==
-X-Gm-Message-State: AOAM532S4JKF0ru1nB35cTyC1M90u1Zv9YZexPFAKsWFCEl/0li1l75Q
-        RfPaUYuZuaAyk6X0hARaeDOi0xxOuUa1hg==
-X-Google-Smtp-Source: ABdhPJxHR1pYHkuNY3cjnSG98HowdOtNnyA0xah8PpYER7NaIzTS6muUQ/ooXuK3X1nPC2f0eJaBVg==
-X-Received: by 2002:a17:90b:3718:: with SMTP id mg24mr2190137pjb.164.1617551144590;
-        Sun, 04 Apr 2021 08:45:44 -0700 (PDT)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id d20sm13118286pjv.47.2021.04.04.08.45.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 04 Apr 2021 08:45:44 -0700 (PDT)
-Subject: Re: [PATCH liburing] tests: test CQE ordering on early submission
- fail
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <bfc0ffac5d54adeb3472ec6160f6aeaf8f70c1ca.1617099951.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <7700fae5-20ab-d368-2383-d0eddf3a5320@kernel.dk>
-Date:   Sun, 4 Apr 2021 09:45:42 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        with ESMTP id S230495AbhDDP4L (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 4 Apr 2021 11:56:11 -0400
+Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61B70C061756;
+        Sun,  4 Apr 2021 08:56:06 -0700 (PDT)
+Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lT56Y-002UUF-A9; Sun, 04 Apr 2021 15:56:02 +0000
+Date:   Sun, 4 Apr 2021 15:56:02 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        syzbot <syzbot+c88a7030da47945a3cc3@syzkaller.appspotmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, io-uring@vger.kernel.org
+Subject: Re: [syzbot] WARNING in mntput_no_expire (2)
+Message-ID: <YGnhkoTfVfMSMPpK@zeniv-ca.linux.org.uk>
+References: <0000000000003a565e05bee596f2@google.com>
+ <20210401154515.k24qdd2lzhtneu47@wittgenstein>
+ <90e7e339-eaec-adb2-cfed-6dc058a117a3@kernel.dk>
+ <20210401174613.vymhhrfsemypougv@wittgenstein>
+ <20210401175919.jpiylhfrlb4xb67u@wittgenstein>
+ <YGYa0B4gabEYi2Tx@zeniv-ca.linux.org.uk>
+ <YGkloJhMFc4hEatk@zeniv-ca.linux.org.uk>
+ <20210404113445.xo6ntgfpxigcb3x6@wittgenstein>
 MIME-Version: 1.0
-In-Reply-To: <bfc0ffac5d54adeb3472ec6160f6aeaf8f70c1ca.1617099951.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210404113445.xo6ntgfpxigcb3x6@wittgenstein>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/30/21 4:26 AM, Pavel Begunkov wrote:
-> Check that CQEs of a link comes in the order of submission, even when
-> a link fails early during submission initial prep.
+On Sun, Apr 04, 2021 at 01:34:45PM +0200, Christian Brauner wrote:
 
-Applied, thanks.
+> Sorry for not replying to your earlier mail but I've been debugging this
+> too. My current theory is that it's related to LOOKUP_ROOT_GRABBED when
+> LOOKUP_CACHED is specified _possibly_ with an interaction how
+> create_io_thread() is created with CLONE_FS. The reproducer requires you
+> either have called pivot_root() or chroot() in order for the failure to
+> happen. So I think the fact that we skip legitimize_root() when
+> LOOKUP_CACHED is set might figure into this. I can keep digging.
+> 
 
--- 
-Jens Axboe
+> Funny enough I already placed a printk statement into the place you
+> wanted one too so I just amended mine. Here's what you get:
+> 
+> If pivot pivot_root() is used before the chroot() you get:
+> 
+> [  637.464555] AAAA: count(-1) | mnt_mntpoint(/) | mnt->mnt.mnt_root(/) | id(579) | dev(tmpfs)
+> 
+> if you only call chroot, i.e. make the pivot_root() branch a simple
+> if (true) you get:
+> 
+> [  955.206117] AAAA: count(-2) | mnt_mntpoint(/) | mnt->mnt.mnt_root(/) | id(580) | dev(tmpfs)
 
+Very interesting.  What happens if you call loop() twice?  And now I wonder
+whether it's root or cwd, actually...  Hmm...
+
+How about this:
+	fd = open("/proc/self/mountinfo", 0);
+	mkdir("./newroot/foo", 0777);
+	mount("./newroot/foo", "./newroot/foo", 0, MS_BIND, NULL);
+	chroot("./newroot");
+	chdir("/foo");
+	while (1) {
+		static char buf[4096];
+		int n = read(fd, buf, 4096);
+		if (n <= 0)
+			break;
+		write(1, buf, n);
+	}
+	close(fd);
+	drop_caps();
+	loop();
+as the end of namespace_sandbox_proc(), instead of
+	chroot("./newroot");
+	chdir("/");
+	drop_caps();
+	loop();
+sequence we have there?
+
+> The cat /proc/self/mountinfo is for the id(579) below:
+... and it misses the damn thing, since we call it before the mount
+in question had been created ;-/  So we'd probably be better off not
+trying to be clever and just doing that as explicit (and completely
+untested) read-write loop above.

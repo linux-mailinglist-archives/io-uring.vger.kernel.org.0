@@ -2,172 +2,196 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 02FD43536F1
-	for <lists+io-uring@lfdr.de>; Sun,  4 Apr 2021 06:49:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C34673537D1
+	for <lists+io-uring@lfdr.de>; Sun,  4 Apr 2021 12:50:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229550AbhDDEuA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 4 Apr 2021 00:50:00 -0400
-Received: from bee.birch.relay.mailchannels.net ([23.83.209.14]:22967 "EHLO
-        bee.birch.relay.mailchannels.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229517AbhDDEuA (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 4 Apr 2021 00:50:00 -0400
-X-Sender-Id: dreamhost|x-authsender|cosmos@claycon.org
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-        by relay.mailchannels.net (Postfix) with ESMTP id 16BFB1E211B;
-        Sun,  4 Apr 2021 04:42:22 +0000 (UTC)
-Received: from pdx1-sub0-mail-a40.g.dreamhost.com (100-96-16-41.trex.outbound.svc.cluster.local [100.96.16.41])
-        (Authenticated sender: dreamhost)
-        by relay.mailchannels.net (Postfix) with ESMTPA id B85241E1F8F;
-        Sun,  4 Apr 2021 04:42:19 +0000 (UTC)
-X-Sender-Id: dreamhost|x-authsender|cosmos@claycon.org
-Received: from pdx1-sub0-mail-a40.g.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384)
-        by 100.96.16.41 (trex/6.1.1);
-        Sun, 04 Apr 2021 04:42:21 +0000
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|cosmos@claycon.org
-X-MailChannels-Auth-Id: dreamhost
-X-Trade-Lettuce: 7d3518032b9af67c_1617511341842_3188806789
-X-MC-Loop-Signature: 1617511341842:92390533
-X-MC-Ingress-Time: 1617511341842
-Received: from pdx1-sub0-mail-a40.g.dreamhost.com (localhost [127.0.0.1])
-        by pdx1-sub0-mail-a40.g.dreamhost.com (Postfix) with ESMTP id 7F69A89AB8;
-        Sun,  4 Apr 2021 04:42:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=claycon.org; h=date:from
-        :to:cc:subject:message-id:references:mime-version:content-type
-        :in-reply-to; s=claycon.org; bh=E5OLbiFYgXBHGri/cGg/775OEgs=; b=
-        ZIq0sNam0rewSjmjF99WJqlJ0utjyCssgwwYW9Fongg+RfiH6A8OX2IaBt7PzGa+
-        R5QcIn/Rg/b9l3Lp5dPzVi/nVHYnjWwxyHs9eyqOe2DF3mue+Pv+HaIy9pOZ8ac3
-        GxX6/UsxNg5Zj6Jk/IhaD6rkNQl4W1gURpFiECvlbn4=
-Received: from ps29521.dreamhostps.com (ps29521.dreamhostps.com [69.163.186.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: cosmos@claycon.org)
-        by pdx1-sub0-mail-a40.g.dreamhost.com (Postfix) with ESMTPSA id E513C89AB5;
-        Sun,  4 Apr 2021 04:42:18 +0000 (UTC)
-Date:   Sat, 3 Apr 2021 23:42:16 -0500
-X-DH-BACKEND: pdx1-sub0-mail-a40
-From:   Clay Harris <bugs@claycon.org>
-To:     Lennert Buytenhek <buytenh@wantstofly.org>
-Cc:     io-uring@vger.kernel.org,
-        Tavian Barnes <tavianator@tavianator.com>,
-        Dmitry Kadashev <dkadashev@gmail.com>
-Subject: Re: [PATCH v5 0/2] io_uring: add support for IORING_OP_GETDENTS
-Message-ID: <20210404044216.w7dqrioahqvbg4dz@ps29521.dreamhostps.com>
-References: <YGMIwcxAIJPAWGLu@wantstofly.org>
+        id S230397AbhDDKuM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 4 Apr 2021 06:50:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51192 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230180AbhDDKuL (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 4 Apr 2021 06:50:11 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BB96C061756
+        for <io-uring@vger.kernel.org>; Sun,  4 Apr 2021 03:50:06 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id c8so8504704wrq.11
+        for <io-uring@vger.kernel.org>; Sun, 04 Apr 2021 03:50:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:references:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=PVj1XTMtncgkj12du7ScTNiwShWPTuR66eAdzXn2EWA=;
+        b=eMKhkIZnjfAo+V52YZ43U9EnvJSTyUV0tA6ZnrpFfOiSihbNPWcp4PkW1R+0QC+4eh
+         vFO+fw9GTByaK3R7EFUBckoFEJXTYnskCHA+CSlgxIB0wc3MbJ16USJgzS2cy7KLMlK7
+         wHKTDkuPckis83IJ2ZJ7wwQDJ5D1avQT949ZxxNYO4Vlrm5vUTZn4YpGRUWqVPsR7AzS
+         2cDcsJVwmr67ek5nw0UBtieAfIpiHjvman+uTztHZUFW0SrXUDTRpk5OEJ+xUuAmEGs6
+         Q2CHoRBEHK79PPxLjIZAbs+1hOveS1wFOWIsDEsXqTUC/V5+NDu6gTNFolabPwXDWCO6
+         sZJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:references:autocrypt:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=PVj1XTMtncgkj12du7ScTNiwShWPTuR66eAdzXn2EWA=;
+        b=LUnKWUIaVaCUwLekfso29Rn5mQPhnVseZ9XTfv04sTTjFs2OFaFE/WzfflKhfLATru
+         1TKjkIKVQhV0/yaJhzqsXXdNWESDspofuldOJ0LA/kx+/VkzaH7aLxYOz/GVjqDsF9dv
+         pygla4uCTmkJ3/vAObxSjYTyjlV78H0VbGr8JLDtTQjWKEqMnJrsaXBVTrA+jCeMheh+
+         wnhiy6lAxLXgfaJqy7UNGyU95zLNq7NNCa1xpM2yNkgi/qA0t8F8wv19NdP+3PGBDeXF
+         Hqtmye0mc68VB7v5ebX5cVYmnBb9dEvOeYslWoWL0dpBG1Y8mrsn/AJic+lpBNv0mB5x
+         NFFQ==
+X-Gm-Message-State: AOAM533+J3U/gYEggyvuL/Gs+MBK4WdHUmd37/q6K0JwLksplSjsg8zq
+        FAfo9nLX0jkwM7jG+a8pA4EF+COWSHe/oA==
+X-Google-Smtp-Source: ABdhPJxCUq79zK8Do+mXmWnJplTnSnA1hFH0M4gM26oLG8ZNZvkHfSf0N9JVjWEt+BZBpdmjeHOrNA==
+X-Received: by 2002:a5d:6c6a:: with SMTP id r10mr24170889wrz.42.1617533404668;
+        Sun, 04 Apr 2021 03:50:04 -0700 (PDT)
+Received: from [192.168.8.132] ([148.252.129.227])
+        by smtp.gmail.com with ESMTPSA id o5sm5179541wmc.44.2021.04.04.03.50.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 04 Apr 2021 03:50:04 -0700 (PDT)
+Subject: Re: [PATCH liburing] tests: test CQE ordering on early submission
+ fail
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <bfc0ffac5d54adeb3472ec6160f6aeaf8f70c1ca.1617099951.git.asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Message-ID: <600acb5f-d8a0-4589-29ae-3e8a517fcb7e@gmail.com>
+Date:   Sun, 4 Apr 2021 11:45:59 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YGMIwcxAIJPAWGLu@wantstofly.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <bfc0ffac5d54adeb3472ec6160f6aeaf8f70c1ca.1617099951.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Mar 30 2021 at 14:17:21 +0300, Lennert Buytenhek quoth thus:
+On 30/03/2021 11:26, Pavel Begunkov wrote:
+> Check that CQEs of a link comes in the order of submission, even when
+> a link fails early during submission initial prep.
 
-> (These patches depend on IORING_OP_MKDIRAT going in first.)
-> 
-> These patches add support for IORING_OP_GETDENTS, which is a new io_uring
-> opcode that more or less does an lseek(sqe->fd, sqe->off, SEEK_SET)
-> followed by a getdents64(sqe->fd, (void *)sqe->addr, sqe->len).
-> 
-> A dumb test program which recursively scans through a directory tree
-> and prints the names of all directories and files it encounters along
-> the way is available here:
-> 
->         https://krautbox.wantstofly.org/~buytenh/uringfind-v3.c
-> 
-> Changes since v4:
-> 
-> - Make IORING_OP_GETDENTS read from the directory's current position
->   if the specified offset value is -1 (IORING_FEAT_RW_CUR_POS).
->   (Requested / pointed out by Tavian Barnes.)
+up
 
-This seems like a good feature.  As I understand it, this would
-allow submitting pairs of IORING_OP_GETDENTS with IOSQE_IO_HARDLINK
-wherein the first specifies the current offset and the second specifies
-offset -1, thereby halfing the number of kernel round trips for N getdents64.
-
-If the entire directory fits into the first buffer, the second would
-indicate EOF.  This would certainly seem like a win, but note there
-are diminishing returns as the directory size increases, versus just
-doubling the buffer size.
-
-
-An alternate / additional idea you may wish to consider is changing
-getdents64 itself.
-
-Ordinary read functions must return 0 length to indicate EOF, because
-they can return arbitrary data.  This is not the case for getdents64.
-
-1) Define a struct linux_dirent of minimum size containing an abnormal
-value as a sentinel.  d_off = 0 or -1 should work.
-
-2) Implement a flag for getdents64.
-
-IF
-	the flag is set AND
-	we are returning a non-zero length buffer AND
-	there is room in the buffer for the sentinel structure AND
-	a getdents64 call using the d_off of the last struct in the
-		buffer would return EOF
-THEN
-	append the sentinel struct to the buffer.
-
-
-Using the arrangement, we would still handle a 0 length return as an
-EOF, but if we see the sentinel struct, we can skip the additional call
-altogether.  The saves all of the pairing of buffers and extra logic,
-and unless we're unlucky and the sentinel structure did not fit in
-the buffer at EOF, would always reduce the number of getdents64
-calls by one.
-
-Moreover, if the flag was available outside of io_uring, for smaller
-directories, this feature would cut the number of directory reads
-of readdir(3) by up to half.
-
-> - Rebase onto for-5.13/io_uring as of 2021/03/30 plus v3 of Dmitry
->   Kadashev's "io_uring: add mkdirat support".
 > 
-> Changes since v3:
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> ---
+>  test/link.c | 53 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 53 insertions(+)
 > 
-> - Made locking in io_getdents() unconditional, as the prior
->   optimization was racy.  (Pointed out by Pavel Begunkov.)
+> diff --git a/test/link.c b/test/link.c
+> index c89d6b2..fadd0b5 100644
+> --- a/test/link.c
+> +++ b/test/link.c
+> @@ -429,6 +429,53 @@ err:
+>  	return 1;
+>  }
+>  
+> +static int test_link_fail_ordering(struct io_uring *ring)
+> +{
+> +	struct io_uring_cqe *cqe;
+> +	struct io_uring_sqe *sqe;
+> +	int ret, i, nr_compl;
+> +
+> +	sqe = io_uring_get_sqe(ring);
+> +	io_uring_prep_nop(sqe);
+> +	sqe->flags |= IOSQE_IO_LINK;
+> +	sqe->user_data = 0;
+> +
+> +	sqe = io_uring_get_sqe(ring);
+> +	io_uring_prep_write(sqe, -1, NULL, 100, 0);
+> +	sqe->flags |= IOSQE_IO_LINK;
+> +	sqe->user_data = 1;
+> +
+> +	sqe = io_uring_get_sqe(ring);
+> +	io_uring_prep_nop(sqe);
+> +	sqe->flags |= IOSQE_IO_LINK;
+> +	sqe->user_data = 2;
+> +
+> +	nr_compl = ret = io_uring_submit(ring);
+> +	/* at least the first nop should have been submitted */
+> +	if (ret < 1) {
+> +		fprintf(stderr, "sqe submit failed: %d\n", ret);
+> +		goto err;
+> +	}
+> +
+> +	for (i = 0; i < nr_compl; i++) {
+> +		ret = io_uring_wait_cqe(ring, &cqe);
+> +		if (ret) {
+> +			fprintf(stderr, "wait completion %d\n", ret);
+> +			goto err;
+> +		}
+> +		if (cqe->user_data != i) {
+> +			fprintf(stderr, "wrong CQE order, got %i, expected %i\n",
+> +					(int)cqe->user_data, i);
+> +			goto err;
+> +		}
+> +		io_uring_cqe_seen(ring, cqe);
+> +	}
+> +
+> +	return 0;
+> +err:
+> +	return 1;
+> +}
+> +
+>  int main(int argc, char *argv[])
+>  {
+>  	struct io_uring ring, poll_ring;
+> @@ -492,5 +539,11 @@ int main(int argc, char *argv[])
+>  		return ret;
+>  	}
+>  
+> +	ret = test_link_fail_ordering(&ring);
+> +	if (ret) {
+> +		fprintf(stderr, "test_link_fail_ordering last failed\n");
+> +		return ret;
+> +	}
+> +
+>  	return 0;
+>  }
 > 
-> - Rebase onto for-5.13/io_uring as of 2021/03/12 plus a manually
->   applied version of the mkdirat patch.
-> 
-> Changes since v2 RFC:
-> 
-> - Rebase onto io_uring-2021-02-17 plus a manually applied version of
->   the mkdirat patch.  The latter is needed because userland (liburing)
->   has already merged the opcode for IORING_OP_MKDIRAT (in commit
->   "io_uring.h: 5.12 pending kernel sync") while this opcode isn't in
->   the kernel yet (as of io_uring-2021-02-17), and this means that this
->   can't be merged until IORING_OP_MKDIRAT is merged.
-> 
-> - Adapt to changes made in "io_uring: replace force_nonblock with flags"
->   that are in io_uring-2021-02-17.
-> 
-> Changes since v1 RFC:
-> 
-> - Drop the trailing '64' from IORING_OP_GETDENTS64 (suggested by
->   Matthew Wilcox).
-> 
-> - Instead of requiring that sqe->off be zero, use this field to pass
->   in a directory offset to start reading from.  For the first
->   IORING_OP_GETDENTS call on a directory, this can be set to zero,
->   and for subsequent calls, it can be set to the ->d_off field of
->   the last struct linux_dirent64 returned by the previous call.
-> 
-> Lennert Buytenhek (2):
->   readdir: split the core of getdents64(2) out into vfs_getdents()
->   io_uring: add support for IORING_OP_GETDENTS
-> 
->  fs/io_uring.c                 |   66 ++++++++++++++++++++++++++++++++++++++++++
->  fs/readdir.c                  |   25 ++++++++++-----
->  include/linux/fs.h            |    4 ++
->  include/uapi/linux/io_uring.h |    1
->  4 files changed, 88 insertions(+), 8 deletions(-)
+
+-- 
+Pavel Begunkov

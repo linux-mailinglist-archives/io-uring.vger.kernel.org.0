@@ -2,97 +2,94 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 46D45354756
-	for <lists+io-uring@lfdr.de>; Mon,  5 Apr 2021 22:07:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40092354845
+	for <lists+io-uring@lfdr.de>; Mon,  5 Apr 2021 23:46:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240469AbhDEUHu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 5 Apr 2021 16:07:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45204 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239120AbhDEUHt (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Mon, 5 Apr 2021 16:07:49 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 85237613C2;
-        Mon,  5 Apr 2021 20:07:40 +0000 (UTC)
-Date:   Mon, 5 Apr 2021 22:07:37 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        syzbot <syzbot+c88a7030da47945a3cc3@syzkaller.appspotmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, io-uring@vger.kernel.org
-Subject: Re: [syzbot] WARNING in mntput_no_expire (2)
-Message-ID: <20210405200737.qurhkqitoxweousx@wittgenstein>
-References: <20210404164040.vtxdcfzgliuzghwk@wittgenstein>
- <YGns1iPBHeeMAtn8@zeniv-ca.linux.org.uk>
- <20210404170513.mfl5liccdaxjnpls@wittgenstein>
- <YGoKYktYPA86Qwju@zeniv-ca.linux.org.uk>
- <YGoe0VPs/Qmz/RxC@zeniv-ca.linux.org.uk>
- <20210405114437.hjcojekyp5zt6huu@wittgenstein>
- <YGs4clcRhyoXX8D0@zeniv-ca.linux.org.uk>
- <20210405170801.zrdhnon6g4ggb6c7@wittgenstein>
- <YGtVtfbYXck3qPRl@zeniv-ca.linux.org.uk>
- <YGtW5g6EFFArtevk@zeniv-ca.linux.org.uk>
+        id S241289AbhDEVq4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 5 Apr 2021 17:46:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51088 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S241284AbhDEVq4 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 5 Apr 2021 17:46:56 -0400
+Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59F8DC061756
+        for <io-uring@vger.kernel.org>; Mon,  5 Apr 2021 14:46:49 -0700 (PDT)
+Received: by mail-pj1-x1032.google.com with SMTP id q6-20020a17090a4306b02900c42a012202so6529258pjg.5
+        for <io-uring@vger.kernel.org>; Mon, 05 Apr 2021 14:46:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=BtWUHXM1i8S7R+Xdr2usuILxhJfxzyVCdQLbpzPrB1Y=;
+        b=DxxiHQePokWOb6RS77EC7FFBeA2ucS4YFDkh+QhWMUjT+kvzHIiJgep9Ee9kz7XgFe
+         u/K9qGmb7hfbHaPm5B+5q4qTGyNPDrDYpF9VGIlgOW17HGv/D4We5BuW943Zk/ruFJC0
+         jUIWV8p+k2t7gUiIgM+Jo/Mku2ZHO15Ed1wbVhC36cCY3wq+z+PX2C4/KdEsZ29wHSv3
+         4WYh7mI6sSL2dOocP1NXzjtA86RuqVawQnby5r/RrlsdRTKRT7hbbj1bcK25mTDJ9Q11
+         FE5oqBUNydclwFrsYa8I1fmFTQ7ZviPIYNWGSY+XBPj2boV8yC23VImv+xLqg/WtKH8h
+         NF1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=BtWUHXM1i8S7R+Xdr2usuILxhJfxzyVCdQLbpzPrB1Y=;
+        b=WVM0f7u65tSxAC3vN8KqEVC9tB7nBX67F/moGRFspAFzpYQ0V9BZvVqizMb45PS+op
+         Su4G5ySdtfyMl1wa5jyVUPO3dxan6LhfTkV2IwyC9MHzNvsRkhxIxHSAaUE8bXRVcYGc
+         g+zNohLp7KLL1vU6JJb9+OYoCAuRquJV+QcrD1Lt6xd7V7gaXl+xOuoWDRzim7kovMhA
+         m+fPtZqJNU6QMkLBK4rjr+2GHkHu+/txS+zri9XCVGMZ8HDpWCvzvctbpyripvyc2b5f
+         jeMBUc7GB9/h2klXgIqnn8VbTJo3Qs8RQatn2+hGmOIBBYis8m3shqFvrbimDZaSYjjJ
+         2dkA==
+X-Gm-Message-State: AOAM533oes8+hgPtqe33MpE1yhOWWs+7GS4/9jJ1iEnb+zBhJSFEaHSb
+        MXUVlJS1w61u8oGoPaEywlTCoQ==
+X-Google-Smtp-Source: ABdhPJx9EsayeuSW5gj/DM6vIGT5hsracAq2NeOOt5+YSBf2i1et31pP5d+9bEg+okMFHY3JtEvgjQ==
+X-Received: by 2002:a17:90a:ab09:: with SMTP id m9mr1228978pjq.122.1617659208948;
+        Mon, 05 Apr 2021 14:46:48 -0700 (PDT)
+Received: from [192.168.4.41] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
+        by smtp.gmail.com with ESMTPSA id kk6sm334675pjb.51.2021.04.05.14.46.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 05 Apr 2021 14:46:48 -0700 (PDT)
+Subject: Re: [PATCH v3] io-wq: simplify code in __io_worker_busy
+To:     Hao Xu <haoxu@linux.alibaba.com>
+Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>
+References: <7f078f30-d60f-2b19-7933-f1ccba8e7282@kernel.dk>
+ <1617609210-227185-1-git-send-email-haoxu@linux.alibaba.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <c1f66f6e-64b1-4c65-3b0c-e87d705adb26@kernel.dk>
+Date:   Mon, 5 Apr 2021 15:46:47 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <1617609210-227185-1-git-send-email-haoxu@linux.alibaba.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <YGtW5g6EFFArtevk@zeniv-ca.linux.org.uk>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, Apr 05, 2021 at 06:28:54PM +0000, Al Viro wrote:
-> On Mon, Apr 05, 2021 at 06:23:49PM +0000, Al Viro wrote:
-> > On Mon, Apr 05, 2021 at 07:08:01PM +0200, Christian Brauner wrote:
-> > 
-> > > Ah dentry count of -127 looks... odd.
-> > 
-> > dead + 1...
-> > 
-> > void lockref_mark_dead(struct lockref *lockref)
-> > {
-> >         assert_spin_locked(&lockref->lock);
-> > 	lockref->count = -128;
-> > }
-> > 
-> > IOW, a leaked (uncounted) reference to dentry, that got dget() called on
-> > it after dentry had been freed.
-> > 
-> > 	IOW, current->fs->pwd.dentry happens to point to an already freed
-> > struct dentry here.  Joy...
-> > 
-> > 	Could you slap
-> > 
-> > spin_lock(&current->fs->lock);
-> > WARN_ON(d_count(current->fs->pwd.dentry) < 0);
-> > spin_unlock(&current->fs->lock);
-> > 
-> > before and after calls of io_issue_sqe() and see if it triggers?  We definitely
-> > are seeing buggered dentry refcounting here.
+On 4/5/21 1:53 AM, Hao Xu wrote:
+> leverage xor to simplify code in __io_worker_busy
 > 
-> Check if this helps, please.
+> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
+> ---
+>  fs/io-wq.c | 17 +++++++----------
+>  1 file changed, 7 insertions(+), 10 deletions(-)
 > 
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 216f16e74351..82344f1139ff 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -2289,6 +2289,9 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
->  	int error;
->  	const char *s = nd->name->name;
->  
-> +	nd->path.mnt = NULL;
-> +	nd->path.dentry = NULL;
-> +
->  	/* LOOKUP_CACHED requires RCU, ask caller to retry */
->  	if ((flags & (LOOKUP_RCU | LOOKUP_CACHED)) == LOOKUP_CACHED)
->  		return ERR_PTR(-EAGAIN);
-> @@ -2322,8 +2325,6 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
->  	}
->  
->  	nd->root.mnt = NULL;
-> -	nd->path.mnt = NULL;
-> -	nd->path.dentry = NULL;
->  
->  	/* Absolute pathname -- fetch the root (LOOKUP_IN_ROOT uses nd->dfd). */
->  	if (*s == '/' && !(flags & LOOKUP_IN_ROOT)) {
+> diff --git a/fs/io-wq.c b/fs/io-wq.c
+> index 433c4d3c3c1c..8d8324eba2ec 100644
+> --- a/fs/io-wq.c
+> +++ b/fs/io-wq.c
+> @@ -276,10 +276,12 @@ static void io_wqe_dec_running(struct io_worker *worker)
+>   */
+>  static void __io_worker_busy(struct io_wqe *wqe, struct io_worker *worker,
+>  			     struct io_wq_work *work)
+> -	__must_hold(wqe->lock)
+> +	__must_hold(w qe->lock)
 
-Bingo. That fixes it.
+Looks like something is off there? I see a v2 as well, but this one is
+later, so...
+
+-- 
+Jens Axboe
+

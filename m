@@ -2,94 +2,198 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 40092354845
-	for <lists+io-uring@lfdr.de>; Mon,  5 Apr 2021 23:46:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E01C354A07
+	for <lists+io-uring@lfdr.de>; Tue,  6 Apr 2021 03:28:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241289AbhDEVq4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 5 Apr 2021 17:46:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51088 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241284AbhDEVq4 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 5 Apr 2021 17:46:56 -0400
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59F8DC061756
-        for <io-uring@vger.kernel.org>; Mon,  5 Apr 2021 14:46:49 -0700 (PDT)
-Received: by mail-pj1-x1032.google.com with SMTP id q6-20020a17090a4306b02900c42a012202so6529258pjg.5
-        for <io-uring@vger.kernel.org>; Mon, 05 Apr 2021 14:46:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=BtWUHXM1i8S7R+Xdr2usuILxhJfxzyVCdQLbpzPrB1Y=;
-        b=DxxiHQePokWOb6RS77EC7FFBeA2ucS4YFDkh+QhWMUjT+kvzHIiJgep9Ee9kz7XgFe
-         u/K9qGmb7hfbHaPm5B+5q4qTGyNPDrDYpF9VGIlgOW17HGv/D4We5BuW943Zk/ruFJC0
-         jUIWV8p+k2t7gUiIgM+Jo/Mku2ZHO15Ed1wbVhC36cCY3wq+z+PX2C4/KdEsZ29wHSv3
-         4WYh7mI6sSL2dOocP1NXzjtA86RuqVawQnby5r/RrlsdRTKRT7hbbj1bcK25mTDJ9Q11
-         FE5oqBUNydclwFrsYa8I1fmFTQ7ZviPIYNWGSY+XBPj2boV8yC23VImv+xLqg/WtKH8h
-         NF1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=BtWUHXM1i8S7R+Xdr2usuILxhJfxzyVCdQLbpzPrB1Y=;
-        b=WVM0f7u65tSxAC3vN8KqEVC9tB7nBX67F/moGRFspAFzpYQ0V9BZvVqizMb45PS+op
-         Su4G5ySdtfyMl1wa5jyVUPO3dxan6LhfTkV2IwyC9MHzNvsRkhxIxHSAaUE8bXRVcYGc
-         g+zNohLp7KLL1vU6JJb9+OYoCAuRquJV+QcrD1Lt6xd7V7gaXl+xOuoWDRzim7kovMhA
-         m+fPtZqJNU6QMkLBK4rjr+2GHkHu+/txS+zri9XCVGMZ8HDpWCvzvctbpyripvyc2b5f
-         jeMBUc7GB9/h2klXgIqnn8VbTJo3Qs8RQatn2+hGmOIBBYis8m3shqFvrbimDZaSYjjJ
-         2dkA==
-X-Gm-Message-State: AOAM533oes8+hgPtqe33MpE1yhOWWs+7GS4/9jJ1iEnb+zBhJSFEaHSb
-        MXUVlJS1w61u8oGoPaEywlTCoQ==
-X-Google-Smtp-Source: ABdhPJx9EsayeuSW5gj/DM6vIGT5hsracAq2NeOOt5+YSBf2i1et31pP5d+9bEg+okMFHY3JtEvgjQ==
-X-Received: by 2002:a17:90a:ab09:: with SMTP id m9mr1228978pjq.122.1617659208948;
-        Mon, 05 Apr 2021 14:46:48 -0700 (PDT)
-Received: from [192.168.4.41] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id kk6sm334675pjb.51.2021.04.05.14.46.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 Apr 2021 14:46:48 -0700 (PDT)
-Subject: Re: [PATCH v3] io-wq: simplify code in __io_worker_busy
-To:     Hao Xu <haoxu@linux.alibaba.com>
-Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <7f078f30-d60f-2b19-7933-f1ccba8e7282@kernel.dk>
- <1617609210-227185-1-git-send-email-haoxu@linux.alibaba.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <c1f66f6e-64b1-4c65-3b0c-e87d705adb26@kernel.dk>
-Date:   Mon, 5 Apr 2021 15:46:47 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S238724AbhDFB26 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 5 Apr 2021 21:28:58 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:15600 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230476AbhDFB25 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 5 Apr 2021 21:28:57 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4FDqcb002Rz17QKx;
+        Tue,  6 Apr 2021 09:26:38 +0800 (CST)
+Received: from [10.174.176.73] (10.174.176.73) by
+ DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
+ 14.3.498.0; Tue, 6 Apr 2021 09:28:44 +0800
+Subject: Re: [PATCH] block: reexpand iov_iter after read/write
+To:     <viro@zeniv.linux.org.uk>, <axboe@kernel.dk>,
+        <asml.silence@gmail.com>
+CC:     <linux-fsdevel@vger.kernel.org>, <linux-block@vger.kernel.org>,
+        <io-uring@vger.kernel.org>
+References: <20210401071807.3328235-1-yangerkun@huawei.com>
+From:   yangerkun <yangerkun@huawei.com>
+Message-ID: <3bd14a60-b259-377b-38d5-907780bc2416@huawei.com>
+Date:   Tue, 6 Apr 2021 09:28:44 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <1617609210-227185-1-git-send-email-haoxu@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20210401071807.3328235-1-yangerkun@huawei.com>
+Content-Type: text/plain; charset="gbk"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.174.176.73]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/5/21 1:53 AM, Hao Xu wrote:
-> leverage xor to simplify code in __io_worker_busy
+Ping...
+
+ÔÚ 2021/4/1 15:18, yangerkun Ð´µÀ:
+> We get a bug:
 > 
-> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
+> BUG: KASAN: slab-out-of-bounds in iov_iter_revert+0x11c/0x404
+> lib/iov_iter.c:1139
+> Read of size 8 at addr ffff0000d3fb11f8 by task
+> 
+> CPU: 0 PID: 12582 Comm: syz-executor.2 Not tainted
+> 5.10.0-00843-g352c8610ccd2 #2
+> Hardware name: linux,dummy-virt (DT)
+> Call trace:
+>   dump_backtrace+0x0/0x2d0 arch/arm64/kernel/stacktrace.c:132
+>   show_stack+0x28/0x34 arch/arm64/kernel/stacktrace.c:196
+>   __dump_stack lib/dump_stack.c:77 [inline]
+>   dump_stack+0x110/0x164 lib/dump_stack.c:118
+>   print_address_description+0x78/0x5c8 mm/kasan/report.c:385
+>   __kasan_report mm/kasan/report.c:545 [inline]
+>   kasan_report+0x148/0x1e4 mm/kasan/report.c:562
+>   check_memory_region_inline mm/kasan/generic.c:183 [inline]
+>   __asan_load8+0xb4/0xbc mm/kasan/generic.c:252
+>   iov_iter_revert+0x11c/0x404 lib/iov_iter.c:1139
+>   io_read fs/io_uring.c:3421 [inline]
+>   io_issue_sqe+0x2344/0x2d64 fs/io_uring.c:5943
+>   __io_queue_sqe+0x19c/0x520 fs/io_uring.c:6260
+>   io_queue_sqe+0x2a4/0x590 fs/io_uring.c:6326
+>   io_submit_sqe fs/io_uring.c:6395 [inline]
+>   io_submit_sqes+0x4c0/0xa04 fs/io_uring.c:6624
+>   __do_sys_io_uring_enter fs/io_uring.c:9013 [inline]
+>   __se_sys_io_uring_enter fs/io_uring.c:8960 [inline]
+>   __arm64_sys_io_uring_enter+0x190/0x708 fs/io_uring.c:8960
+>   __invoke_syscall arch/arm64/kernel/syscall.c:36 [inline]
+>   invoke_syscall arch/arm64/kernel/syscall.c:48 [inline]
+>   el0_svc_common arch/arm64/kernel/syscall.c:158 [inline]
+>   do_el0_svc+0x120/0x290 arch/arm64/kernel/syscall.c:227
+>   el0_svc+0x1c/0x28 arch/arm64/kernel/entry-common.c:367
+>   el0_sync_handler+0x98/0x170 arch/arm64/kernel/entry-common.c:383
+>   el0_sync+0x140/0x180 arch/arm64/kernel/entry.S:670
+> 
+> Allocated by task 12570:
+>   stack_trace_save+0x80/0xb8 kernel/stacktrace.c:121
+>   kasan_save_stack mm/kasan/common.c:48 [inline]
+>   kasan_set_track mm/kasan/common.c:56 [inline]
+>   __kasan_kmalloc+0xdc/0x120 mm/kasan/common.c:461
+>   kasan_kmalloc+0xc/0x14 mm/kasan/common.c:475
+>   __kmalloc+0x23c/0x334 mm/slub.c:3970
+>   kmalloc include/linux/slab.h:557 [inline]
+>   __io_alloc_async_data+0x68/0x9c fs/io_uring.c:3210
+>   io_setup_async_rw fs/io_uring.c:3229 [inline]
+>   io_read fs/io_uring.c:3436 [inline]
+>   io_issue_sqe+0x2954/0x2d64 fs/io_uring.c:5943
+>   __io_queue_sqe+0x19c/0x520 fs/io_uring.c:6260
+>   io_queue_sqe+0x2a4/0x590 fs/io_uring.c:6326
+>   io_submit_sqe fs/io_uring.c:6395 [inline]
+>   io_submit_sqes+0x4c0/0xa04 fs/io_uring.c:6624
+>   __do_sys_io_uring_enter fs/io_uring.c:9013 [inline]
+>   __se_sys_io_uring_enter fs/io_uring.c:8960 [inline]
+>   __arm64_sys_io_uring_enter+0x190/0x708 fs/io_uring.c:8960
+>   __invoke_syscall arch/arm64/kernel/syscall.c:36 [inline]
+>   invoke_syscall arch/arm64/kernel/syscall.c:48 [inline]
+>   el0_svc_common arch/arm64/kernel/syscall.c:158 [inline]
+>   do_el0_svc+0x120/0x290 arch/arm64/kernel/syscall.c:227
+>   el0_svc+0x1c/0x28 arch/arm64/kernel/entry-common.c:367
+>   el0_sync_handler+0x98/0x170 arch/arm64/kernel/entry-common.c:383
+>   el0_sync+0x140/0x180 arch/arm64/kernel/entry.S:670
+> 
+> Freed by task 12570:
+>   stack_trace_save+0x80/0xb8 kernel/stacktrace.c:121
+>   kasan_save_stack mm/kasan/common.c:48 [inline]
+>   kasan_set_track+0x38/0x6c mm/kasan/common.c:56
+>   kasan_set_free_info+0x20/0x40 mm/kasan/generic.c:355
+>   __kasan_slab_free+0x124/0x150 mm/kasan/common.c:422
+>   kasan_slab_free+0x10/0x1c mm/kasan/common.c:431
+>   slab_free_hook mm/slub.c:1544 [inline]
+>   slab_free_freelist_hook mm/slub.c:1577 [inline]
+>   slab_free mm/slub.c:3142 [inline]
+>   kfree+0x104/0x38c mm/slub.c:4124
+>   io_dismantle_req fs/io_uring.c:1855 [inline]
+>   __io_free_req+0x70/0x254 fs/io_uring.c:1867
+>   io_put_req_find_next fs/io_uring.c:2173 [inline]
+>   __io_queue_sqe+0x1fc/0x520 fs/io_uring.c:6279
+>   __io_req_task_submit+0x154/0x21c fs/io_uring.c:2051
+>   io_req_task_submit+0x2c/0x44 fs/io_uring.c:2063
+>   task_work_run+0xdc/0x128 kernel/task_work.c:151
+>   get_signal+0x6f8/0x980 kernel/signal.c:2562
+>   do_signal+0x108/0x3a4 arch/arm64/kernel/signal.c:658
+>   do_notify_resume+0xbc/0x25c arch/arm64/kernel/signal.c:722
+>   work_pending+0xc/0x180
+> 
+> blkdev_read_iter can truncate iov_iter's count since the count + pos may
+> exceed the size of the blkdev. This will confuse io_read that we have
+> consume the iovec. And once we do the iov_iter_revert in io_read, we
+> will trigger the slab-out-of-bounds. Fix it by reexpand the count with
+> size has been truncated.
+> 
+> blkdev_write_iter can trigger the problem too.
+> 
+> Signed-off-by: yangerkun <yangerkun@huawei.com>
 > ---
->  fs/io-wq.c | 17 +++++++----------
->  1 file changed, 7 insertions(+), 10 deletions(-)
+>   fs/block_dev.c | 20 +++++++++++++++++---
+>   1 file changed, 17 insertions(+), 3 deletions(-)
 > 
-> diff --git a/fs/io-wq.c b/fs/io-wq.c
-> index 433c4d3c3c1c..8d8324eba2ec 100644
-> --- a/fs/io-wq.c
-> +++ b/fs/io-wq.c
-> @@ -276,10 +276,12 @@ static void io_wqe_dec_running(struct io_worker *worker)
->   */
->  static void __io_worker_busy(struct io_wqe *wqe, struct io_worker *worker,
->  			     struct io_wq_work *work)
-> -	__must_hold(wqe->lock)
-> +	__must_hold(w qe->lock)
-
-Looks like something is off there? I see a v2 as well, but this one is
-later, so...
-
--- 
-Jens Axboe
-
+> diff --git a/fs/block_dev.c b/fs/block_dev.c
+> index 92ed7d5df677..788e1014576f 100644
+> --- a/fs/block_dev.c
+> +++ b/fs/block_dev.c
+> @@ -1680,6 +1680,7 @@ ssize_t blkdev_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>   	struct inode *bd_inode = bdev_file_inode(file);
+>   	loff_t size = i_size_read(bd_inode);
+>   	struct blk_plug plug;
+> +	size_t shorted = 0;
+>   	ssize_t ret;
+>   
+>   	if (bdev_read_only(I_BDEV(bd_inode)))
+> @@ -1697,12 +1698,17 @@ ssize_t blkdev_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>   	if ((iocb->ki_flags & (IOCB_NOWAIT | IOCB_DIRECT)) == IOCB_NOWAIT)
+>   		return -EOPNOTSUPP;
+>   
+> -	iov_iter_truncate(from, size - iocb->ki_pos);
+> +	size -= iocb->ki_pos;
+> +	if (iov_iter_count(from) > size) {
+> +		shorted = iov_iter_count(from) - size;
+> +		iov_iter_truncate(from, size);
+> +	}
+>   
+>   	blk_start_plug(&plug);
+>   	ret = __generic_file_write_iter(iocb, from);
+>   	if (ret > 0)
+>   		ret = generic_write_sync(iocb, ret);
+> +	iov_iter_reexpand(from, iov_iter_count(from) + shorted);
+>   	blk_finish_plug(&plug);
+>   	return ret;
+>   }
+> @@ -1714,13 +1720,21 @@ ssize_t blkdev_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>   	struct inode *bd_inode = bdev_file_inode(file);
+>   	loff_t size = i_size_read(bd_inode);
+>   	loff_t pos = iocb->ki_pos;
+> +	size_t shorted = 0;
+> +	ssize_t ret;
+>   
+>   	if (pos >= size)
+>   		return 0;
+>   
+>   	size -= pos;
+> -	iov_iter_truncate(to, size);
+> -	return generic_file_read_iter(iocb, to);
+> +	if (iov_iter_count(to) > size) {
+> +		shorted = iov_iter_count(to) - size;
+> +		iov_iter_truncate(to, size);
+> +	}
+> +
+> +	ret = generic_file_read_iter(iocb, to);
+> +	iov_iter_reexpand(to, iov_iter_count(to) + shorted);
+> +	return ret;
+>   }
+>   EXPORT_SYMBOL_GPL(blkdev_read_iter);
+>   
+> 

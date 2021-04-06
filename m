@@ -2,281 +2,321 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CBFD5355194
-	for <lists+io-uring@lfdr.de>; Tue,  6 Apr 2021 13:09:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A609355404
+	for <lists+io-uring@lfdr.de>; Tue,  6 Apr 2021 14:35:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234119AbhDFLJE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 6 Apr 2021 07:09:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55386 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232290AbhDFLJD (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 6 Apr 2021 07:09:03 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B79E3C06174A;
-        Tue,  6 Apr 2021 04:08:55 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id f6so7671802wrv.12;
-        Tue, 06 Apr 2021 04:08:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=iiqRrCWUZIueVHnEVy2DV3+c6C09yobx7qcNjqDEblA=;
-        b=Gxj1u1eiMrZ8JKfJZ6friWoQLprvfnVw3Rq2H4Moa67AHCsKSON58b0XhE4ta2iKBB
-         LJ28GD16zJSlcqfQ+FfkJbc8qoPCTMAa4OTSRy5qE6f/yrqpbe9lkDvTF3kJjPQLtlJ3
-         KwmHAcEVOFojq0FSDpUQ3xmgNjzRXZbByZAIjmbqoEGWETe6GAqGX1+08XgHipjFSL//
-         iwGVIUQ87ZUVtscccM5y7ZAOXRK0vmF3w9RIi6IGtUi5vlg6+2e6NuyVKF1S532ldjCI
-         udMXLiyMTI19O1MDtx1PUHl6gNC2qbJ/44gPLUSOhKHbzj6WzNHcEZT/zYuuf//3womr
-         kLvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=iiqRrCWUZIueVHnEVy2DV3+c6C09yobx7qcNjqDEblA=;
-        b=Yqdsxd1SlHB6TLN3ESnxIcY1TAfWziHStknsxNFdzznClYs2liO5mmWUXymPoSut9z
-         NIizTC6xsHw9WudpynX9vKVQwmNkkfx5LBkkK4xnADsrga3xrZYO7TI9ImTyNkgKr6my
-         zvD74yWm2v5vo0X2bDcw54+wNtR/9i39Op7hBrlr9wKyAlOysjy5eE9wSF2lwAyXhtUc
-         Tye81pLFM09zZ5PaqZ+5ag7/8TATSZ8HpzNuLAF+vlE5GMK2fYozEO6vmJrdGoWrx11a
-         IkT3n7WCQsBVkzK/6GfZOQq4Tqp+XiBcj3RCNIfBpnM0p72xU51WEbzvVf7r1vjEpBrg
-         +dHQ==
-X-Gm-Message-State: AOAM532OD+7YILvsLgIglbQb4hD5f/SBWcnk9MorLplQxwymrHnIhOAE
-        UJKcWIDzTqZO2A3b1go/OndK0tMO9xLwJQ==
-X-Google-Smtp-Source: ABdhPJxLVxToGzabpVSbcWQfG61qrSnCU/9SiS1kB3NqAobjceiaxf4N/4FPeUvJjAOIuqH4k+9gTA==
-X-Received: by 2002:adf:deca:: with SMTP id i10mr15962911wrn.319.1617707334233;
-        Tue, 06 Apr 2021 04:08:54 -0700 (PDT)
-Received: from [192.168.8.143] ([185.69.145.134])
-        by smtp.gmail.com with ESMTPSA id b5sm244817wri.57.2021.04.06.04.08.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Apr 2021 04:08:53 -0700 (PDT)
-To:     yangerkun <yangerkun@huawei.com>, viro@zeniv.linux.org.uk,
-        axboe@kernel.dk
-Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        io-uring@vger.kernel.org
-References: <20210401071807.3328235-1-yangerkun@huawei.com>
- <3bd14a60-b259-377b-38d5-907780bc2416@huawei.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Subject: Re: [PATCH] block: reexpand iov_iter after read/write
-Message-ID: <a0bcd483-180d-7c8b-b0bf-a419606a6c7e@gmail.com>
-Date:   Tue, 6 Apr 2021 12:04:49 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S239469AbhDFMfU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 6 Apr 2021 08:35:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45114 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232730AbhDFMfS (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Tue, 6 Apr 2021 08:35:18 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 96597613C6;
+        Tue,  6 Apr 2021 12:35:08 +0000 (UTC)
+Date:   Tue, 6 Apr 2021 14:35:05 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        syzbot <syzbot+c88a7030da47945a3cc3@syzkaller.appspotmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, io-uring@vger.kernel.org
+Subject: Re: [syzbot] WARNING in mntput_no_expire (2)
+Message-ID: <20210406123505.auxqtquoys6xg6yf@wittgenstein>
+References: <20210404170513.mfl5liccdaxjnpls@wittgenstein>
+ <YGoKYktYPA86Qwju@zeniv-ca.linux.org.uk>
+ <YGoe0VPs/Qmz/RxC@zeniv-ca.linux.org.uk>
+ <20210405114437.hjcojekyp5zt6huu@wittgenstein>
+ <YGs4clcRhyoXX8D0@zeniv-ca.linux.org.uk>
+ <20210405170801.zrdhnon6g4ggb6c7@wittgenstein>
+ <YGtVtfbYXck3qPRl@zeniv-ca.linux.org.uk>
+ <YGtW5g6EFFArtevk@zeniv-ca.linux.org.uk>
+ <20210405200737.qurhkqitoxweousx@wittgenstein>
+ <YGu7n+dhMep1741/@zeniv-ca.linux.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <3bd14a60-b259-377b-38d5-907780bc2416@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <YGu7n+dhMep1741/@zeniv-ca.linux.org.uk>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 06/04/2021 02:28, yangerkun wrote:
-> Ping...
-
-It wasn't forgotten, but wouln't have worked because of
-other reasons. With these two already queued, that's a
-different story.
-
-https://git.kernel.dk/cgit/linux-block/commit/?h=io_uring-5.12&id=07204f21577a1d882f0259590c3553fe6a476381
-https://git.kernel.dk/cgit/linux-block/commit/?h=io_uring-5.12&id=230d50d448acb6639991440913299e50cacf1daf
-
-Can you re-confirm, that the bug is still there (should be)
-and your patch fixes it?
-
+On Tue, Apr 06, 2021 at 01:38:39AM +0000, Al Viro wrote:
+> On Mon, Apr 05, 2021 at 10:07:37PM +0200, Christian Brauner wrote:
 > 
-> 在 2021/4/1 15:18, yangerkun 写道:
->> We get a bug:
->>
->> BUG: KASAN: slab-out-of-bounds in iov_iter_revert+0x11c/0x404
->> lib/iov_iter.c:1139
->> Read of size 8 at addr ffff0000d3fb11f8 by task
->>
->> CPU: 0 PID: 12582 Comm: syz-executor.2 Not tainted
->> 5.10.0-00843-g352c8610ccd2 #2
->> Hardware name: linux,dummy-virt (DT)
->> Call trace:
->>   dump_backtrace+0x0/0x2d0 arch/arm64/kernel/stacktrace.c:132
->>   show_stack+0x28/0x34 arch/arm64/kernel/stacktrace.c:196
->>   __dump_stack lib/dump_stack.c:77 [inline]
->>   dump_stack+0x110/0x164 lib/dump_stack.c:118
->>   print_address_description+0x78/0x5c8 mm/kasan/report.c:385
->>   __kasan_report mm/kasan/report.c:545 [inline]
->>   kasan_report+0x148/0x1e4 mm/kasan/report.c:562
->>   check_memory_region_inline mm/kasan/generic.c:183 [inline]
->>   __asan_load8+0xb4/0xbc mm/kasan/generic.c:252
->>   iov_iter_revert+0x11c/0x404 lib/iov_iter.c:1139
->>   io_read fs/io_uring.c:3421 [inline]
->>   io_issue_sqe+0x2344/0x2d64 fs/io_uring.c:5943
->>   __io_queue_sqe+0x19c/0x520 fs/io_uring.c:6260
->>   io_queue_sqe+0x2a4/0x590 fs/io_uring.c:6326
->>   io_submit_sqe fs/io_uring.c:6395 [inline]
->>   io_submit_sqes+0x4c0/0xa04 fs/io_uring.c:6624
->>   __do_sys_io_uring_enter fs/io_uring.c:9013 [inline]
->>   __se_sys_io_uring_enter fs/io_uring.c:8960 [inline]
->>   __arm64_sys_io_uring_enter+0x190/0x708 fs/io_uring.c:8960
->>   __invoke_syscall arch/arm64/kernel/syscall.c:36 [inline]
->>   invoke_syscall arch/arm64/kernel/syscall.c:48 [inline]
->>   el0_svc_common arch/arm64/kernel/syscall.c:158 [inline]
->>   do_el0_svc+0x120/0x290 arch/arm64/kernel/syscall.c:227
->>   el0_svc+0x1c/0x28 arch/arm64/kernel/entry-common.c:367
->>   el0_sync_handler+0x98/0x170 arch/arm64/kernel/entry-common.c:383
->>   el0_sync+0x140/0x180 arch/arm64/kernel/entry.S:670
->>
->> Allocated by task 12570:
->>   stack_trace_save+0x80/0xb8 kernel/stacktrace.c:121
->>   kasan_save_stack mm/kasan/common.c:48 [inline]
->>   kasan_set_track mm/kasan/common.c:56 [inline]
->>   __kasan_kmalloc+0xdc/0x120 mm/kasan/common.c:461
->>   kasan_kmalloc+0xc/0x14 mm/kasan/common.c:475
->>   __kmalloc+0x23c/0x334 mm/slub.c:3970
->>   kmalloc include/linux/slab.h:557 [inline]
->>   __io_alloc_async_data+0x68/0x9c fs/io_uring.c:3210
->>   io_setup_async_rw fs/io_uring.c:3229 [inline]
->>   io_read fs/io_uring.c:3436 [inline]
->>   io_issue_sqe+0x2954/0x2d64 fs/io_uring.c:5943
->>   __io_queue_sqe+0x19c/0x520 fs/io_uring.c:6260
->>   io_queue_sqe+0x2a4/0x590 fs/io_uring.c:6326
->>   io_submit_sqe fs/io_uring.c:6395 [inline]
->>   io_submit_sqes+0x4c0/0xa04 fs/io_uring.c:6624
->>   __do_sys_io_uring_enter fs/io_uring.c:9013 [inline]
->>   __se_sys_io_uring_enter fs/io_uring.c:8960 [inline]
->>   __arm64_sys_io_uring_enter+0x190/0x708 fs/io_uring.c:8960
->>   __invoke_syscall arch/arm64/kernel/syscall.c:36 [inline]
->>   invoke_syscall arch/arm64/kernel/syscall.c:48 [inline]
->>   el0_svc_common arch/arm64/kernel/syscall.c:158 [inline]
->>   do_el0_svc+0x120/0x290 arch/arm64/kernel/syscall.c:227
->>   el0_svc+0x1c/0x28 arch/arm64/kernel/entry-common.c:367
->>   el0_sync_handler+0x98/0x170 arch/arm64/kernel/entry-common.c:383
->>   el0_sync+0x140/0x180 arch/arm64/kernel/entry.S:670
->>
->> Freed by task 12570:
->>   stack_trace_save+0x80/0xb8 kernel/stacktrace.c:121
->>   kasan_save_stack mm/kasan/common.c:48 [inline]
->>   kasan_set_track+0x38/0x6c mm/kasan/common.c:56
->>   kasan_set_free_info+0x20/0x40 mm/kasan/generic.c:355
->>   __kasan_slab_free+0x124/0x150 mm/kasan/common.c:422
->>   kasan_slab_free+0x10/0x1c mm/kasan/common.c:431
->>   slab_free_hook mm/slub.c:1544 [inline]
->>   slab_free_freelist_hook mm/slub.c:1577 [inline]
->>   slab_free mm/slub.c:3142 [inline]
->>   kfree+0x104/0x38c mm/slub.c:4124
->>   io_dismantle_req fs/io_uring.c:1855 [inline]
->>   __io_free_req+0x70/0x254 fs/io_uring.c:1867
->>   io_put_req_find_next fs/io_uring.c:2173 [inline]
->>   __io_queue_sqe+0x1fc/0x520 fs/io_uring.c:6279
->>   __io_req_task_submit+0x154/0x21c fs/io_uring.c:2051
->>   io_req_task_submit+0x2c/0x44 fs/io_uring.c:2063
->>   task_work_run+0xdc/0x128 kernel/task_work.c:151
->>   get_signal+0x6f8/0x980 kernel/signal.c:2562
->>   do_signal+0x108/0x3a4 arch/arm64/kernel/signal.c:658
->>   do_notify_resume+0xbc/0x25c arch/arm64/kernel/signal.c:722
->>   work_pending+0xc/0x180
->>
->> blkdev_read_iter can truncate iov_iter's count since the count + pos may
->> exceed the size of the blkdev. This will confuse io_read that we have
->> consume the iovec. And once we do the iov_iter_revert in io_read, we
->> will trigger the slab-out-of-bounds. Fix it by reexpand the count with
->> size has been truncated.
->>
->> blkdev_write_iter can trigger the problem too.
->>
->> Signed-off-by: yangerkun <yangerkun@huawei.com>
->> ---
->>   fs/block_dev.c | 20 +++++++++++++++++---
->>   1 file changed, 17 insertions(+), 3 deletions(-)
->>
->> diff --git a/fs/block_dev.c b/fs/block_dev.c
->> index 92ed7d5df677..788e1014576f 100644
->> --- a/fs/block_dev.c
->> +++ b/fs/block_dev.c
->> @@ -1680,6 +1680,7 @@ ssize_t blkdev_write_iter(struct kiocb *iocb, struct iov_iter *from)
->>       struct inode *bd_inode = bdev_file_inode(file);
->>       loff_t size = i_size_read(bd_inode);
->>       struct blk_plug plug;
->> +    size_t shorted = 0;
->>       ssize_t ret;
->>         if (bdev_read_only(I_BDEV(bd_inode)))
->> @@ -1697,12 +1698,17 @@ ssize_t blkdev_write_iter(struct kiocb *iocb, struct iov_iter *from)
->>       if ((iocb->ki_flags & (IOCB_NOWAIT | IOCB_DIRECT)) == IOCB_NOWAIT)
->>           return -EOPNOTSUPP;
->>   -    iov_iter_truncate(from, size - iocb->ki_pos);
->> +    size -= iocb->ki_pos;
->> +    if (iov_iter_count(from) > size) {
->> +        shorted = iov_iter_count(from) - size;
->> +        iov_iter_truncate(from, size);
->> +    }
->>         blk_start_plug(&plug);
->>       ret = __generic_file_write_iter(iocb, from);
->>       if (ret > 0)
->>           ret = generic_write_sync(iocb, ret);
->> +    iov_iter_reexpand(from, iov_iter_count(from) + shorted);
->>       blk_finish_plug(&plug);
->>       return ret;
->>   }
->> @@ -1714,13 +1720,21 @@ ssize_t blkdev_read_iter(struct kiocb *iocb, struct iov_iter *to)
->>       struct inode *bd_inode = bdev_file_inode(file);
->>       loff_t size = i_size_read(bd_inode);
->>       loff_t pos = iocb->ki_pos;
->> +    size_t shorted = 0;
->> +    ssize_t ret;
->>         if (pos >= size)
->>           return 0;
->>         size -= pos;
->> -    iov_iter_truncate(to, size);
->> -    return generic_file_read_iter(iocb, to);
->> +    if (iov_iter_count(to) > size) {
->> +        shorted = iov_iter_count(to) - size;
->> +        iov_iter_truncate(to, size);
->> +    }
->> +
->> +    ret = generic_file_read_iter(iocb, to);
->> +    iov_iter_reexpand(to, iov_iter_count(to) + shorted);
->> +    return ret;
->>   }
->>   EXPORT_SYMBOL_GPL(blkdev_read_iter);
->>  
+> > > diff --git a/fs/namei.c b/fs/namei.c
+> > > index 216f16e74351..82344f1139ff 100644
+> > > --- a/fs/namei.c
+> > > +++ b/fs/namei.c
+> > > @@ -2289,6 +2289,9 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
+> > >  	int error;
+> > >  	const char *s = nd->name->name;
+> > >  
+> > > +	nd->path.mnt = NULL;
+> > > +	nd->path.dentry = NULL;
+> > > +
+> > >  	/* LOOKUP_CACHED requires RCU, ask caller to retry */
+> > >  	if ((flags & (LOOKUP_RCU | LOOKUP_CACHED)) == LOOKUP_CACHED)
+> > >  		return ERR_PTR(-EAGAIN);
+> > > @@ -2322,8 +2325,6 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
+> > >  	}
+> > >  
+> > >  	nd->root.mnt = NULL;
+> > > -	nd->path.mnt = NULL;
+> > > -	nd->path.dentry = NULL;
+> > >  
+> > >  	/* Absolute pathname -- fetch the root (LOOKUP_IN_ROOT uses nd->dfd). */
+> > >  	if (*s == '/' && !(flags & LOOKUP_IN_ROOT)) {
+> > 
+> > Bingo. That fixes it.
+> 
+> *grumble*
+> 
+> OK, I suppose it'll do for backports, but longer term... I don't like how
+> convoluted the rules for nameidata fields' validity are.  In particular,
+> for nd->path I would rather have it
+> 	* cleared in set_nameidata()
+> 	* cleared when it become invalid.  That would be
+> 		* places that drop rcu_read_lock() without having legitimized the sucker
+> 		  (already done, except for terminate_walk())
+> 		* terminate_walk() in non-RCU case after path_put(&nd->path)
+> 
+> OTOH... wait a sec - the whole thing is this cycle regression, so...
+> 
+> Could you verify that the variant below fixes that crap?
+> 
+> Make sure nd->path.mnt and nd->path.dentry are always valid pointers
+> 
+> Initialize them in set_nameidata() and make sure that terminate_walk() clears them
+> once the pointers become potentially invalid (i.e. we leave RCU mode or drop them
+> in non-RCU one).  Currently we have "path_init() always initializes them and nobody
+> accesses them outside of path_init()/terminate_walk() segments", which is asking
+> for trouble.
+> 
+> With that change we would have nd->path.{mnt,dentry}
+> 	1) always valid - NULL or pointing to currently allocated objects.
+> 	2) non-NULL while we are successfully walking
+> 	3) NULL when we are not walking at all
+> 	4) contributing to refcounts whenever non-NULL outside of RCU mode.
+> 
+> Hopefully-fixes: 6c6ec2b0a3e0 ("fs: add support for LOOKUP_CACHED")
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> ---
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 216f16e74351..fc8760d4314e 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -579,6 +579,8 @@ static void set_nameidata(struct nameidata *p, int dfd, struct filename *name)
+>  	p->stack = p->internal;
+>  	p->dfd = dfd;
+>  	p->name = name;
+> +	p->path.mnt = NULL;
+> +	p->path.dentry = NULL;
+>  	p->total_link_count = old ? old->total_link_count : 0;
+>  	p->saved = old;
+>  	current->nameidata = p;
+> @@ -652,6 +654,8 @@ static void terminate_walk(struct nameidata *nd)
+>  		rcu_read_unlock();
+>  	}
+>  	nd->depth = 0;
+> +	nd->path.mnt = NULL;
+> +	nd->path.dentry = NULL;
+>  }
+>  
+>  /* path_put is needed afterwards regardless of success or failure */
+> @@ -2322,8 +2326,6 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
+>  	}
+>  
+>  	nd->root.mnt = NULL;
+> -	nd->path.mnt = NULL;
+> -	nd->path.dentry = NULL;
+>  
+>  	/* Absolute pathname -- fetch the root (LOOKUP_IN_ROOT uses nd->dfd). */
+>  	if (*s == '/' && !(flags & LOOKUP_IN_ROOT)) {
 
+Yeah, that works too.
+Though I'm not a fan of this open-coding as it looks pretty brittle
+especially if we ever introduce another LOOKUP_* flag that requires us
+to clear some other field carefully. I think a tiny static inline void
+helper might make it easier to grok what's going on.
+
+And while we're at it might I bring up the possibility of an additional
+cleanup of how we currently call path_init().
+Right now we pass the return value from path_init() directly into e.g.
+link_path_walk() which as a first thing checks for error. Which feels
+rather wrong and has always confused me when looking at these codepaths.
+I get that it might make sense for reasons unrelated to path_init() that
+link_path_walk() checks its first argument for error but path_init()
+should be checked for error right away especially now that we return
+early when LOOKUP_CACHED is set without LOOKUP_RCU. I have two/three
+additional patches on top of the one below that massage path_lookupat(),
+path_openat() to get rid of such - imho - hard to parse while
+constructs:
+
+		while (!(error = link_path_walk(s, nd)) &&
+		       (s = <foo>(nd, file, op)) != NULL)
+			;
+
+in favor of a for (;;) like we do in link_path_walk() itself already
+with early exits to a cleanup label. I'm not too fond of the
+
+if (!error)
+	error = foo();
+if (!error)
+	error = bar();
+
+terminate_walk();
+return error;
+
+thing especially in longer functions such as path_lookupat() where it
+gets convoluted pretty quickly. I think it would be cleaner to have
+something like [1]. The early exists make the code easier to reason
+about imho. But I get that that's a style discussion.  If you want to
+see the whole thing and not just the patch below I'm happy to send it
+though. Here's the tweaked fix for the immediate syzbot issue only:
+
+From d6d669aaaba64debb9c433e281109b5494ad9bc5 Mon Sep 17 00:00:00 2001
+From: Al Viro <viro@zeniv.linux.org.uk>
+Date: Tue, 6 Apr 2021 13:20:26 +0200
+Subject: [PATCH 1/3] namei: Ensure nd->path.{dentry,mnt} are always valid
+ pointers
+
+Initialize them in set_nameidata() and make sure that terminate_walk()
+clears them once the pointers become potentially invalid (i.e.
+we leave RCU mode or drop them in non-RCU one).  Currently we have
+"path_init() always initializes them and nobody accesses them outside of
+path_init()/terminate_walk() segments", which is asking for trouble.
+
+With that change we would have nd->path.{mnt,dentry}
+1) always valid - NULL or pointing to currently allocated objects.
+2) non-NULL while we are successfully walking
+3) NULL when we are not walking at all
+4) contributing to refcounts whenever non-NULL outside of RCU mode.
+
+Fixes: 6c6ec2b0a3e0 ("fs: add support for LOOKUP_CACHED")
+Reported-by: syzbot+c88a7030da47945a3cc3@syzkaller.appspotmail.com
+Cc: stable@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+---
+ fs/namei.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
+
+diff --git a/fs/namei.c b/fs/namei.c
+index 216f16e74351..618055419da3 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -573,9 +573,18 @@ struct nameidata {
+ 	umode_t		dir_mode;
+ } __randomize_layout;
+ 
++static inline void clear_nameidata(struct nameidata *nd)
++{
++	nd->depth = 0;
++	nd->path.mnt = NULL;
++	nd->path.dentry = NULL;
++}
++
+ static void set_nameidata(struct nameidata *p, int dfd, struct filename *name)
+ {
+ 	struct nameidata *old = current->nameidata;
++
++	clear_nameidata(p);
+ 	p->stack = p->internal;
+ 	p->dfd = dfd;
+ 	p->name = name;
+@@ -651,7 +660,7 @@ static void terminate_walk(struct nameidata *nd)
+ 		nd->flags &= ~LOOKUP_RCU;
+ 		rcu_read_unlock();
+ 	}
+-	nd->depth = 0;
++	clear_nameidata(nd);
+ }
+ 
+ /* path_put is needed afterwards regardless of success or failure */
+@@ -2322,8 +2331,6 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
+ 	}
+ 
+ 	nd->root.mnt = NULL;
+-	nd->path.mnt = NULL;
+-	nd->path.dentry = NULL;
+ 
+ 	/* Absolute pathname -- fetch the root (LOOKUP_IN_ROOT uses nd->dfd). */
+ 	if (*s == '/' && !(flags & LOOKUP_IN_ROOT)) {
 -- 
-Pavel Begunkov
+2.27.0
+
+
+
+[1]:
+diff --git a/fs/namei.c b/fs/namei.c
+index ae1b5cd7b1a9..572a0d6e22cc 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -2424,33 +2424,49 @@ static int path_lookupat(struct nameidata *nd, unsigned flags, struct path *path
+        int err;
+
+        s = path_init(nd, flags);
+-       if (IS_ERR(s))
+-               return PTR_ERR(s);
++       if (IS_ERR(s)) {
++               err = PTR_ERR(s);
++               goto out_terminate;
++       }
+
+        if (unlikely(flags & LOOKUP_DOWN)) {
+                err = handle_lookup_down(nd);
+                if (unlikely(err < 0))
+-                       s = ERR_PTR(err);
++                       goto out_terminate;
+        }
+
+-       while (!(err = link_path_walk(s, nd)) &&
+-              (s = lookup_last(nd)) != NULL)
+-               ;
+-       if (!err)
+-               err = complete_walk(nd);
++       for (;;) {
++               err = link_path_walk(s, nd);
++               if (err)
++                       goto out_terminate;
+
+-       if (!err && nd->flags & LOOKUP_DIRECTORY)
+-               if (!d_can_lookup(nd->path.dentry))
+-                       err = -ENOTDIR;
+-       if (!err && unlikely(nd->flags & LOOKUP_MOUNTPOINT)) {
++               s = lookup_last(nd);
++               if (!s)
++                       break;
++       }
++
++       err = complete_walk(nd);
++       if (err)
++               goto out_terminate;
++
++       if ((nd->flags & LOOKUP_DIRECTORY) &&
++           (!d_can_lookup(nd->path.dentry))) {
++               err = -ENOTDIR;
++               goto out_terminate;
++       }
++
++       if (unlikely(nd->flags & LOOKUP_MOUNTPOINT)) {
+                err = handle_lookup_down(nd);
+                nd->flags &= ~LOOKUP_JUMPED; // no d_weak_revalidate(), please...
++               if (err)
++                       goto out_terminate;
+        }
+-       if (!err) {
+-               *path = nd->path;
+-               nd->path.mnt = NULL;
+-               nd->path.dentry = NULL;
+-       }
++
++       *path = nd->path;
++       nd->path.mnt = NULL;
++       nd->path.dentry = NULL;
++
++out_terminate:
+        terminate_walk(nd);
+        return err;
+ }

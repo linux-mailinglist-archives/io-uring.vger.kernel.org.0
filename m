@@ -2,198 +2,136 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E01C354A07
-	for <lists+io-uring@lfdr.de>; Tue,  6 Apr 2021 03:28:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6D86354A39
+	for <lists+io-uring@lfdr.de>; Tue,  6 Apr 2021 03:38:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238724AbhDFB26 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 5 Apr 2021 21:28:58 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:15600 "EHLO
-        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230476AbhDFB25 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 5 Apr 2021 21:28:57 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
-        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4FDqcb002Rz17QKx;
-        Tue,  6 Apr 2021 09:26:38 +0800 (CST)
-Received: from [10.174.176.73] (10.174.176.73) by
- DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
- 14.3.498.0; Tue, 6 Apr 2021 09:28:44 +0800
-Subject: Re: [PATCH] block: reexpand iov_iter after read/write
-To:     <viro@zeniv.linux.org.uk>, <axboe@kernel.dk>,
-        <asml.silence@gmail.com>
-CC:     <linux-fsdevel@vger.kernel.org>, <linux-block@vger.kernel.org>,
-        <io-uring@vger.kernel.org>
-References: <20210401071807.3328235-1-yangerkun@huawei.com>
-From:   yangerkun <yangerkun@huawei.com>
-Message-ID: <3bd14a60-b259-377b-38d5-907780bc2416@huawei.com>
-Date:   Tue, 6 Apr 2021 09:28:44 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        id S232429AbhDFBiv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 5 Apr 2021 21:38:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44658 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232367AbhDFBiv (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 5 Apr 2021 21:38:51 -0400
+Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9ABACC06174A;
+        Mon,  5 Apr 2021 18:38:44 -0700 (PDT)
+Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lTafv-002se4-CA; Tue, 06 Apr 2021 01:38:39 +0000
+Date:   Tue, 6 Apr 2021 01:38:39 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        syzbot <syzbot+c88a7030da47945a3cc3@syzkaller.appspotmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, io-uring@vger.kernel.org
+Subject: Re: [syzbot] WARNING in mntput_no_expire (2)
+Message-ID: <YGu7n+dhMep1741/@zeniv-ca.linux.org.uk>
+References: <YGns1iPBHeeMAtn8@zeniv-ca.linux.org.uk>
+ <20210404170513.mfl5liccdaxjnpls@wittgenstein>
+ <YGoKYktYPA86Qwju@zeniv-ca.linux.org.uk>
+ <YGoe0VPs/Qmz/RxC@zeniv-ca.linux.org.uk>
+ <20210405114437.hjcojekyp5zt6huu@wittgenstein>
+ <YGs4clcRhyoXX8D0@zeniv-ca.linux.org.uk>
+ <20210405170801.zrdhnon6g4ggb6c7@wittgenstein>
+ <YGtVtfbYXck3qPRl@zeniv-ca.linux.org.uk>
+ <YGtW5g6EFFArtevk@zeniv-ca.linux.org.uk>
+ <20210405200737.qurhkqitoxweousx@wittgenstein>
 MIME-Version: 1.0
-In-Reply-To: <20210401071807.3328235-1-yangerkun@huawei.com>
-Content-Type: text/plain; charset="gbk"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.174.176.73]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210405200737.qurhkqitoxweousx@wittgenstein>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Ping...
+On Mon, Apr 05, 2021 at 10:07:37PM +0200, Christian Brauner wrote:
 
-ÔÚ 2021/4/1 15:18, yangerkun Ð´µÀ:
-> We get a bug:
+> > diff --git a/fs/namei.c b/fs/namei.c
+> > index 216f16e74351..82344f1139ff 100644
+> > --- a/fs/namei.c
+> > +++ b/fs/namei.c
+> > @@ -2289,6 +2289,9 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
+> >  	int error;
+> >  	const char *s = nd->name->name;
+> >  
+> > +	nd->path.mnt = NULL;
+> > +	nd->path.dentry = NULL;
+> > +
+> >  	/* LOOKUP_CACHED requires RCU, ask caller to retry */
+> >  	if ((flags & (LOOKUP_RCU | LOOKUP_CACHED)) == LOOKUP_CACHED)
+> >  		return ERR_PTR(-EAGAIN);
+> > @@ -2322,8 +2325,6 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
+> >  	}
+> >  
+> >  	nd->root.mnt = NULL;
+> > -	nd->path.mnt = NULL;
+> > -	nd->path.dentry = NULL;
+> >  
+> >  	/* Absolute pathname -- fetch the root (LOOKUP_IN_ROOT uses nd->dfd). */
+> >  	if (*s == '/' && !(flags & LOOKUP_IN_ROOT)) {
 > 
-> BUG: KASAN: slab-out-of-bounds in iov_iter_revert+0x11c/0x404
-> lib/iov_iter.c:1139
-> Read of size 8 at addr ffff0000d3fb11f8 by task
-> 
-> CPU: 0 PID: 12582 Comm: syz-executor.2 Not tainted
-> 5.10.0-00843-g352c8610ccd2 #2
-> Hardware name: linux,dummy-virt (DT)
-> Call trace:
->   dump_backtrace+0x0/0x2d0 arch/arm64/kernel/stacktrace.c:132
->   show_stack+0x28/0x34 arch/arm64/kernel/stacktrace.c:196
->   __dump_stack lib/dump_stack.c:77 [inline]
->   dump_stack+0x110/0x164 lib/dump_stack.c:118
->   print_address_description+0x78/0x5c8 mm/kasan/report.c:385
->   __kasan_report mm/kasan/report.c:545 [inline]
->   kasan_report+0x148/0x1e4 mm/kasan/report.c:562
->   check_memory_region_inline mm/kasan/generic.c:183 [inline]
->   __asan_load8+0xb4/0xbc mm/kasan/generic.c:252
->   iov_iter_revert+0x11c/0x404 lib/iov_iter.c:1139
->   io_read fs/io_uring.c:3421 [inline]
->   io_issue_sqe+0x2344/0x2d64 fs/io_uring.c:5943
->   __io_queue_sqe+0x19c/0x520 fs/io_uring.c:6260
->   io_queue_sqe+0x2a4/0x590 fs/io_uring.c:6326
->   io_submit_sqe fs/io_uring.c:6395 [inline]
->   io_submit_sqes+0x4c0/0xa04 fs/io_uring.c:6624
->   __do_sys_io_uring_enter fs/io_uring.c:9013 [inline]
->   __se_sys_io_uring_enter fs/io_uring.c:8960 [inline]
->   __arm64_sys_io_uring_enter+0x190/0x708 fs/io_uring.c:8960
->   __invoke_syscall arch/arm64/kernel/syscall.c:36 [inline]
->   invoke_syscall arch/arm64/kernel/syscall.c:48 [inline]
->   el0_svc_common arch/arm64/kernel/syscall.c:158 [inline]
->   do_el0_svc+0x120/0x290 arch/arm64/kernel/syscall.c:227
->   el0_svc+0x1c/0x28 arch/arm64/kernel/entry-common.c:367
->   el0_sync_handler+0x98/0x170 arch/arm64/kernel/entry-common.c:383
->   el0_sync+0x140/0x180 arch/arm64/kernel/entry.S:670
-> 
-> Allocated by task 12570:
->   stack_trace_save+0x80/0xb8 kernel/stacktrace.c:121
->   kasan_save_stack mm/kasan/common.c:48 [inline]
->   kasan_set_track mm/kasan/common.c:56 [inline]
->   __kasan_kmalloc+0xdc/0x120 mm/kasan/common.c:461
->   kasan_kmalloc+0xc/0x14 mm/kasan/common.c:475
->   __kmalloc+0x23c/0x334 mm/slub.c:3970
->   kmalloc include/linux/slab.h:557 [inline]
->   __io_alloc_async_data+0x68/0x9c fs/io_uring.c:3210
->   io_setup_async_rw fs/io_uring.c:3229 [inline]
->   io_read fs/io_uring.c:3436 [inline]
->   io_issue_sqe+0x2954/0x2d64 fs/io_uring.c:5943
->   __io_queue_sqe+0x19c/0x520 fs/io_uring.c:6260
->   io_queue_sqe+0x2a4/0x590 fs/io_uring.c:6326
->   io_submit_sqe fs/io_uring.c:6395 [inline]
->   io_submit_sqes+0x4c0/0xa04 fs/io_uring.c:6624
->   __do_sys_io_uring_enter fs/io_uring.c:9013 [inline]
->   __se_sys_io_uring_enter fs/io_uring.c:8960 [inline]
->   __arm64_sys_io_uring_enter+0x190/0x708 fs/io_uring.c:8960
->   __invoke_syscall arch/arm64/kernel/syscall.c:36 [inline]
->   invoke_syscall arch/arm64/kernel/syscall.c:48 [inline]
->   el0_svc_common arch/arm64/kernel/syscall.c:158 [inline]
->   do_el0_svc+0x120/0x290 arch/arm64/kernel/syscall.c:227
->   el0_svc+0x1c/0x28 arch/arm64/kernel/entry-common.c:367
->   el0_sync_handler+0x98/0x170 arch/arm64/kernel/entry-common.c:383
->   el0_sync+0x140/0x180 arch/arm64/kernel/entry.S:670
-> 
-> Freed by task 12570:
->   stack_trace_save+0x80/0xb8 kernel/stacktrace.c:121
->   kasan_save_stack mm/kasan/common.c:48 [inline]
->   kasan_set_track+0x38/0x6c mm/kasan/common.c:56
->   kasan_set_free_info+0x20/0x40 mm/kasan/generic.c:355
->   __kasan_slab_free+0x124/0x150 mm/kasan/common.c:422
->   kasan_slab_free+0x10/0x1c mm/kasan/common.c:431
->   slab_free_hook mm/slub.c:1544 [inline]
->   slab_free_freelist_hook mm/slub.c:1577 [inline]
->   slab_free mm/slub.c:3142 [inline]
->   kfree+0x104/0x38c mm/slub.c:4124
->   io_dismantle_req fs/io_uring.c:1855 [inline]
->   __io_free_req+0x70/0x254 fs/io_uring.c:1867
->   io_put_req_find_next fs/io_uring.c:2173 [inline]
->   __io_queue_sqe+0x1fc/0x520 fs/io_uring.c:6279
->   __io_req_task_submit+0x154/0x21c fs/io_uring.c:2051
->   io_req_task_submit+0x2c/0x44 fs/io_uring.c:2063
->   task_work_run+0xdc/0x128 kernel/task_work.c:151
->   get_signal+0x6f8/0x980 kernel/signal.c:2562
->   do_signal+0x108/0x3a4 arch/arm64/kernel/signal.c:658
->   do_notify_resume+0xbc/0x25c arch/arm64/kernel/signal.c:722
->   work_pending+0xc/0x180
-> 
-> blkdev_read_iter can truncate iov_iter's count since the count + pos may
-> exceed the size of the blkdev. This will confuse io_read that we have
-> consume the iovec. And once we do the iov_iter_revert in io_read, we
-> will trigger the slab-out-of-bounds. Fix it by reexpand the count with
-> size has been truncated.
-> 
-> blkdev_write_iter can trigger the problem too.
-> 
-> Signed-off-by: yangerkun <yangerkun@huawei.com>
-> ---
->   fs/block_dev.c | 20 +++++++++++++++++---
->   1 file changed, 17 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/block_dev.c b/fs/block_dev.c
-> index 92ed7d5df677..788e1014576f 100644
-> --- a/fs/block_dev.c
-> +++ b/fs/block_dev.c
-> @@ -1680,6 +1680,7 @@ ssize_t blkdev_write_iter(struct kiocb *iocb, struct iov_iter *from)
->   	struct inode *bd_inode = bdev_file_inode(file);
->   	loff_t size = i_size_read(bd_inode);
->   	struct blk_plug plug;
-> +	size_t shorted = 0;
->   	ssize_t ret;
->   
->   	if (bdev_read_only(I_BDEV(bd_inode)))
-> @@ -1697,12 +1698,17 @@ ssize_t blkdev_write_iter(struct kiocb *iocb, struct iov_iter *from)
->   	if ((iocb->ki_flags & (IOCB_NOWAIT | IOCB_DIRECT)) == IOCB_NOWAIT)
->   		return -EOPNOTSUPP;
->   
-> -	iov_iter_truncate(from, size - iocb->ki_pos);
-> +	size -= iocb->ki_pos;
-> +	if (iov_iter_count(from) > size) {
-> +		shorted = iov_iter_count(from) - size;
-> +		iov_iter_truncate(from, size);
-> +	}
->   
->   	blk_start_plug(&plug);
->   	ret = __generic_file_write_iter(iocb, from);
->   	if (ret > 0)
->   		ret = generic_write_sync(iocb, ret);
-> +	iov_iter_reexpand(from, iov_iter_count(from) + shorted);
->   	blk_finish_plug(&plug);
->   	return ret;
->   }
-> @@ -1714,13 +1720,21 @@ ssize_t blkdev_read_iter(struct kiocb *iocb, struct iov_iter *to)
->   	struct inode *bd_inode = bdev_file_inode(file);
->   	loff_t size = i_size_read(bd_inode);
->   	loff_t pos = iocb->ki_pos;
-> +	size_t shorted = 0;
-> +	ssize_t ret;
->   
->   	if (pos >= size)
->   		return 0;
->   
->   	size -= pos;
-> -	iov_iter_truncate(to, size);
-> -	return generic_file_read_iter(iocb, to);
-> +	if (iov_iter_count(to) > size) {
-> +		shorted = iov_iter_count(to) - size;
-> +		iov_iter_truncate(to, size);
-> +	}
-> +
-> +	ret = generic_file_read_iter(iocb, to);
-> +	iov_iter_reexpand(to, iov_iter_count(to) + shorted);
-> +	return ret;
->   }
->   EXPORT_SYMBOL_GPL(blkdev_read_iter);
->   
-> 
+> Bingo. That fixes it.
+
+*grumble*
+
+OK, I suppose it'll do for backports, but longer term... I don't like how
+convoluted the rules for nameidata fields' validity are.  In particular,
+for nd->path I would rather have it
+	* cleared in set_nameidata()
+	* cleared when it become invalid.  That would be
+		* places that drop rcu_read_lock() without having legitimized the sucker
+		  (already done, except for terminate_walk())
+		* terminate_walk() in non-RCU case after path_put(&nd->path)
+
+OTOH... wait a sec - the whole thing is this cycle regression, so...
+
+Could you verify that the variant below fixes that crap?
+
+Make sure nd->path.mnt and nd->path.dentry are always valid pointers
+
+Initialize them in set_nameidata() and make sure that terminate_walk() clears them
+once the pointers become potentially invalid (i.e. we leave RCU mode or drop them
+in non-RCU one).  Currently we have "path_init() always initializes them and nobody
+accesses them outside of path_init()/terminate_walk() segments", which is asking
+for trouble.
+
+With that change we would have nd->path.{mnt,dentry}
+	1) always valid - NULL or pointing to currently allocated objects.
+	2) non-NULL while we are successfully walking
+	3) NULL when we are not walking at all
+	4) contributing to refcounts whenever non-NULL outside of RCU mode.
+
+Hopefully-fixes: 6c6ec2b0a3e0 ("fs: add support for LOOKUP_CACHED")
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+---
+diff --git a/fs/namei.c b/fs/namei.c
+index 216f16e74351..fc8760d4314e 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -579,6 +579,8 @@ static void set_nameidata(struct nameidata *p, int dfd, struct filename *name)
+ 	p->stack = p->internal;
+ 	p->dfd = dfd;
+ 	p->name = name;
++	p->path.mnt = NULL;
++	p->path.dentry = NULL;
+ 	p->total_link_count = old ? old->total_link_count : 0;
+ 	p->saved = old;
+ 	current->nameidata = p;
+@@ -652,6 +654,8 @@ static void terminate_walk(struct nameidata *nd)
+ 		rcu_read_unlock();
+ 	}
+ 	nd->depth = 0;
++	nd->path.mnt = NULL;
++	nd->path.dentry = NULL;
+ }
+ 
+ /* path_put is needed afterwards regardless of success or failure */
+@@ -2322,8 +2326,6 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
+ 	}
+ 
+ 	nd->root.mnt = NULL;
+-	nd->path.mnt = NULL;
+-	nd->path.dentry = NULL;
+ 
+ 	/* Absolute pathname -- fetch the root (LOOKUP_IN_ROOT uses nd->dfd). */
+ 	if (*s == '/' && !(flags & LOOKUP_IN_ROOT)) {

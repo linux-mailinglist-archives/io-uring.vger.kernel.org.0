@@ -2,58 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E7A8356B74
-	for <lists+io-uring@lfdr.de>; Wed,  7 Apr 2021 13:43:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 222FA356B7C
+	for <lists+io-uring@lfdr.de>; Wed,  7 Apr 2021 13:45:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237080AbhDGLnS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 7 Apr 2021 07:43:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39480 "EHLO
+        id S238432AbhDGLqF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 7 Apr 2021 07:46:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40070 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234582AbhDGLnS (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 7 Apr 2021 07:43:18 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87D9CC061756
-        for <io-uring@vger.kernel.org>; Wed,  7 Apr 2021 04:43:08 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id e12so4563461wro.11
-        for <io-uring@vger.kernel.org>; Wed, 07 Apr 2021 04:43:08 -0700 (PDT)
+        with ESMTP id S234728AbhDGLqE (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 7 Apr 2021 07:46:04 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63309C061756
+        for <io-uring@vger.kernel.org>; Wed,  7 Apr 2021 04:45:55 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id x15so8428110wrq.3
+        for <io-uring@vger.kernel.org>; Wed, 07 Apr 2021 04:45:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=jpQHvfRnZ/EkRLvDCOmo2YgVf+KbCcjimrfVzcoa/rc=;
-        b=hyGRROcsxKVBhvpywBjgzwpXgPPdDX0zCEGIbBfEBGzD7ip/YfRkwIYFWw5oGVMGLP
-         dHD7N72A+kjbUBjrbQwsCmgReBtoXo2A/OtSqEXysJOFyw/LLHnAV2HddbHAVTUotrme
-         GhmmVaqMAtremdPGC8OZAxAgQQ5ykagQ1XfHeoBEX9yGY2uSavkavf8vVwFhpXThS4Xw
-         pv8IwsMeq6Ce4WrwSzcSA3TF0tTq3pG93FEf4jh1Lj2syK68qpVChCONZb1GltacVc9c
-         +QZwrZuvlIVZ05N5t5cgbBzCB8zE+Gvyz8XPYGzKglVabVrHDSFY1l5cI05MX6+84p7F
-         kIPw==
+        bh=z7tUE3Of+DTxza1gF2XQ4dgAH4PAsi/Dw9bCthgW9u4=;
+        b=UBjbZvC8ZCKE3n9zWUspEF8gsSEBhS4fLaLzbM707U0PPtxdWK74gIYcC+Y9wjBhca
+         NKtMI30RkZFtgc2cY6s/q605FaOsITFs2cThdfI7GVIeKzkFWnBty6F7xafnLlKDVbLw
+         SWd8M4rxT9NwiM2sj4O04aUfGt8SQ14cVp80co9Sjhg9h2nXCV0DT84HwqFmGsBdj/YN
+         9yTz99ehk8GvLU8LnwYa6f8RaB+pZB+1xNHGga6JepChjgk91I4egZd1zW4dYgN0N+vy
+         kXB0oXlwwzzA7lMQ3gviNItIcVkjbSGIQpmu3RtkowBhNtDono6eQ/qDzxw/LVE0BUUK
+         EaqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=jpQHvfRnZ/EkRLvDCOmo2YgVf+KbCcjimrfVzcoa/rc=;
-        b=L7G+FQvLQXtteiMmp3sl0jKXWGsOcjU/omVHEhlSjjsjqiG3Bi5NBro9SENGSErOjy
-         XVgGa0RKJeBPFHSTBvnUkcHN2YmRu9Wy0lJ1PyDGUjphHJYkgKgvR6UL9d+Axy4CODHi
-         xOd5Q4tu96GEkXHp8P+AC3ZgaSR9rFuIRpERu50H2YIH8QjoJqBpE5fmpM12sgb32Kz6
-         Lkz0G9SmukgwvDK1kNPrMjP5RA3TUQli9b0oocnRJf/fwzHKt+y3CSjVZdgcjCQKP0Me
-         aQDU552c+AxSA21btjkdiceYNrs6mO0zCDx9rpQjDdjKE8b2+Ao9Uroe/Ju9rhVUDcBq
-         nbYw==
-X-Gm-Message-State: AOAM530uTqpbdFCvyFSSBPGySNU+KCHGIU4mqhru6r5Dno2/iUvWUEJu
-        S147O/0SFqn9FzDjGMs5Vw/LhQCNLsWj9Q==
-X-Google-Smtp-Source: ABdhPJy+XWNdQzEyJa5yRhDEDEQE43XAyOTQwn3WNI3vYpyhwb8gEmYOZrLDuBpQgLU5BzWkoEJCPA==
-X-Received: by 2002:adf:f7d2:: with SMTP id a18mr3939080wrq.262.1617795787188;
-        Wed, 07 Apr 2021 04:43:07 -0700 (PDT)
+        bh=z7tUE3Of+DTxza1gF2XQ4dgAH4PAsi/Dw9bCthgW9u4=;
+        b=ngsD1mRIV3j5KTHUsi45kMSJvDC3m5olgc4kSHanKtODl29Cnj0gkMV/nAmLrcFtEQ
+         8lx+1yxuaiqWPqrN8opsmWCh1VgC+tGgWdpx+GFrezBm1SN2pwjgOjJklcuWHTARUhir
+         +pW5eOXsZjwbBAp70Tk3d2tsqsaeIiNzYa45TlMI9R5T0ICGCqnIGYjzgwqZcFyPWk5O
+         jRD1Ap7YpgDd2H2t70ZIRHkdUIBgqed/8RZdmYzgLRAsqYpzVgA20x7BsoLQRJPGJLCj
+         nCBk24frOLX/QYJg6+6ABkppFlNS81nYqFiwJLk7y0c2vpWK44SSOkF4DOnrql6rKOcS
+         dZ5Q==
+X-Gm-Message-State: AOAM532/idThs9yCUhjTtsgrJvlwMk2/reNsAmJVDExv7EW/yUsEkBOL
+        CQQ7pkhyXcPE8CjbjcWDp5Q=
+X-Google-Smtp-Source: ABdhPJwyC8MATpkvMYIST2ihhI0XtU1SqBr9x5vPK5RZjX1f+OGFTTIIfCRLfUyGp+zE+7m4Ao0W/g==
+X-Received: by 2002:a5d:6c62:: with SMTP id r2mr4115411wrz.62.1617795954173;
+        Wed, 07 Apr 2021 04:45:54 -0700 (PDT)
 Received: from [192.168.8.145] ([148.252.132.202])
-        by smtp.gmail.com with ESMTPSA id e10sm23740639wru.52.2021.04.07.04.43.06
+        by smtp.gmail.com with ESMTPSA id p17sm8081510wmg.5.2021.04.07.04.45.53
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Apr 2021 04:43:06 -0700 (PDT)
-Subject: Re: [PATCH 1/3] io_uring: add IOSQE_MULTI_CQES/REQ_F_MULTI_CQES for
- multishot requests
+        Wed, 07 Apr 2021 04:45:53 -0700 (PDT)
+Subject: Re: [PATCH 2/3] io_uring: maintain drain logic for multishot requests
 To:     Hao Xu <haoxu@linux.alibaba.com>, Jens Axboe <axboe@kernel.dk>
 Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
 References: <1617794605-35748-1-git-send-email-haoxu@linux.alibaba.com>
- <1617794605-35748-2-git-send-email-haoxu@linux.alibaba.com>
+ <1617794605-35748-3-git-send-email-haoxu@linux.alibaba.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -98,12 +97,12 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <25890431-0d42-ded6-1a10-e9cf3b3c343d@gmail.com>
-Date:   Wed, 7 Apr 2021 12:38:58 +0100
+Message-ID: <4d6f9688-4a8b-5fc6-f965-4903b5b82074@gmail.com>
+Date:   Wed, 7 Apr 2021 12:41:46 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <1617794605-35748-2-git-send-email-haoxu@linux.alibaba.com>
+In-Reply-To: <1617794605-35748-3-git-send-email-haoxu@linux.alibaba.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -112,75 +111,123 @@ List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 On 07/04/2021 12:23, Hao Xu wrote:
-> Since we now have requests that may generate multiple cqes, we need a
-> new flag to mark them, so that we can maintain features like drain io
-> easily for them.
+> Now that we have multishot poll requests, one sqe can emit multiple
+> cqes. given below example:
+>     sqe0(multishot poll)-->sqe1-->sqe2(drain req)
+> sqe2 is designed to issue after sqe0 and sqe1 completed, but since sqe0
+> is a multishot poll request, sqe2 may be issued after sqe0's event
+> triggered twice before sqe1 completed. This isn't what users leverage
+> drain requests for.
+> Here a simple solution is to ignore all multishot poll cqes, which means
+> drain requests won't wait those request to be done.
+> To achieve this, we should reconsider the req_need_defer equation, the
+> original one is:
+> 
+>     all_sqes(excluding dropped ones) == all_cqes(including dropped ones)
+> 
+> this means we issue a drain request when all the previous submitted
+> sqes have generated their cqes.
+> Now we should ignore multishot requests, so:
+>     all_sqes - multishot_sqes == all_cqes - multishot_cqes ==>
+>     all_sqes + multishot_cqes - multishot_cqes == all_cqes
+> 
+> Thus we have to track the submittion of a multishot request and the cqes
+> generation of it, including the ECANCELLED cqes. Here we introduce
+> cq_extra = multishot_cqes - multishot_cqes for it.
+> 
+> There are other solutions like:
+>   - just track multishot (non-ECNCELLED)cqes, don't track multishot sqes.
+>       this way we include multishot sqes in the left end of the equation
+>       this means we have to see multishot sqes as normal ones, then we
+>       have to keep right one cqe for each multishot sqe. It's hard to do
+>       this since there may be some multishot sqes which triggered
+>       several events and then was cancelled, meanwhile other multishot
+>       sqes just triggered events but wasn't cancelled. We still need to
+>       track number of multishot sqes that haven't been cancelled, which
+>       make things complicated
+> 
+> For implementations, just do the submittion tracking in
+> io_submit_sqe() --> io_init_req() to make things simple. Otherwise if
+> we do it in per opcode issue place, then we need to carefully consider
+> each caller of io_req_complete_failed() because trick cases like cancel
+> multishot reqs in link.
 > 
 > Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
 > ---
->  fs/io_uring.c                 | 5 ++++-
->  include/uapi/linux/io_uring.h | 3 +++
->  2 files changed, 7 insertions(+), 1 deletion(-)
+>  fs/io_uring.c | 16 +++++++++++++++-
+>  1 file changed, 15 insertions(+), 1 deletion(-)
 > 
 > diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 81e5d156af1c..192463bb977a 100644
+> index 192463bb977a..a7bd223ce2cc 100644
 > --- a/fs/io_uring.c
 > +++ b/fs/io_uring.c
-> @@ -102,7 +102,7 @@
->  
->  #define SQE_VALID_FLAGS	(IOSQE_FIXED_FILE|IOSQE_IO_DRAIN|IOSQE_IO_LINK|	\
->  				IOSQE_IO_HARDLINK | IOSQE_ASYNC | \
-> -				IOSQE_BUFFER_SELECT)
-> +				IOSQE_BUFFER_SELECT | IOSQE_MULTI_CQES)
->  
->  struct io_uring {
->  	u32 head ____cacheline_aligned_in_smp;
-> @@ -700,6 +700,7 @@ enum {
->  	REQ_F_HARDLINK_BIT	= IOSQE_IO_HARDLINK_BIT,
->  	REQ_F_FORCE_ASYNC_BIT	= IOSQE_ASYNC_BIT,
->  	REQ_F_BUFFER_SELECT_BIT	= IOSQE_BUFFER_SELECT_BIT,
-> +	REQ_F_MULTI_CQES_BIT	= IOSQE_MULTI_CQES_BIT,
->  
->  	REQ_F_FAIL_LINK_BIT,
->  	REQ_F_INFLIGHT_BIT,
-> @@ -766,6 +767,8 @@ enum {
->  	REQ_F_ASYNC_WRITE	= BIT(REQ_F_ASYNC_WRITE_BIT),
->  	/* regular file */
->  	REQ_F_ISREG		= BIT(REQ_F_ISREG_BIT),
-> +	/* a request can generate multiple cqes */
-> +	REQ_F_MULTI_CQES	= BIT(REQ_F_MULTI_CQES_BIT),
+> @@ -423,6 +423,7 @@ struct io_ring_ctx {
+>  		unsigned		cq_mask;
+>  		atomic_t		cq_timeouts;
+>  		unsigned		cq_last_tm_flush;
+> +		unsigned		cq_extra;
+>  		unsigned long		cq_check_overflow;
+>  		struct wait_queue_head	cq_wait;
+>  		struct fasync_struct	*cq_fasync;
+> @@ -879,6 +880,8 @@ struct io_op_def {
+>  	unsigned		needs_async_setup : 1;
+>  	/* should block plug */
+>  	unsigned		plug : 1;
+> +	/* set if opcode may generate multiple cqes */
+> +	unsigned		multi_cqes : 1;
+>  	/* size of async data needed, if any */
+>  	unsigned short		async_size;
 >  };
+> @@ -924,6 +927,7 @@ struct io_op_def {
+>  	[IORING_OP_POLL_ADD] = {
+>  		.needs_file		= 1,
+>  		.unbound_nonreg_file	= 1,
+> +		.multi_cqes		= 1,
+>  	},
+>  	[IORING_OP_POLL_REMOVE] = {},
+>  	[IORING_OP_SYNC_FILE_RANGE] = {
+> @@ -1186,7 +1190,7 @@ static bool req_need_defer(struct io_kiocb *req, u32 seq)
+>  	if (unlikely(req->flags & REQ_F_IO_DRAIN)) {
+>  		struct io_ring_ctx *ctx = req->ctx;
 >  
->  struct async_poll {
-> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-> index 5beaa6bbc6db..303ac8005572 100644
-> --- a/include/uapi/linux/io_uring.h
-> +++ b/include/uapi/linux/io_uring.h
-> @@ -70,6 +70,7 @@ enum {
->  	IOSQE_IO_HARDLINK_BIT,
->  	IOSQE_ASYNC_BIT,
->  	IOSQE_BUFFER_SELECT_BIT,
-> +	IOSQE_MULTI_CQES_BIT,
->  };
-
-It's user API flags, I doubt you want to touch them.
-1) there are not much of bits left
-2) it almost always means you add overhead in generic path,
-even for those who don't care about multishots or drains.
-
-Let's keep out of it
-
+> -		return seq != ctx->cached_cq_tail
+> +		return seq + ctx->cq_extra != ctx->cached_cq_tail
+>  				+ READ_ONCE(ctx->cached_cq_overflow);
+>  	}
 >  
->  /*
-> @@ -87,6 +88,8 @@ enum {
->  #define IOSQE_ASYNC		(1U << IOSQE_ASYNC_BIT)
->  /* select buffer from sqe->buf_group */
->  #define IOSQE_BUFFER_SELECT	(1U << IOSQE_BUFFER_SELECT_BIT)
-> +/* may generate multiple cqes */
-> +#define IOSQE_MULTI_CQES	(1U << IOSQE_MULTI_CQES_BIT)
+> @@ -1516,6 +1520,9 @@ static bool __io_cqring_fill_event(struct io_kiocb *req, long res,
 >  
->  /*
->   * io_uring_setup() flags
+>  	trace_io_uring_complete(ctx, req->user_data, res, cflags);
+>  
+> +	if (req->flags & REQ_F_MULTI_CQES)
+> +		req->ctx->cq_extra++;
+> +
+
+
+Here we go, additional overhead burdening everyone but used for
+a little new feature. All that can be done in poll or in *_prep()
+on opcode by opcode basis.
+
+>  	/*
+>  	 * If we can't get a cq entry, userspace overflowed the
+>  	 * submission (by quite a lot). Increment the overflow count in
+> @@ -6504,6 +6511,13 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
+>  	req->result = 0;
+>  	req->work.creds = NULL;
+>  
+> +	if (sqe_flags & IOSQE_MULTI_CQES) {
+> +		ctx->cq_extra--;
+> +		if (!io_op_defs[req->opcode].multi_cqes) {
+> +			return -EOPNOTSUPP;
+> +		}
+> +	}
+> +
+
+see above
+
+>  	/* enforce forwards compatibility on users */
+>  	if (unlikely(sqe_flags & ~SQE_VALID_FLAGS)) {
+>  		req->flags = 0;
 > 
 
 -- 

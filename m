@@ -2,92 +2,116 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BB9EA358A06
-	for <lists+io-uring@lfdr.de>; Thu,  8 Apr 2021 18:47:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC3E0358B9B
+	for <lists+io-uring@lfdr.de>; Thu,  8 Apr 2021 19:44:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232382AbhDHQrH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 8 Apr 2021 12:47:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54352 "EHLO
+        id S232543AbhDHRo2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 8 Apr 2021 13:44:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38920 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232381AbhDHQrH (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Apr 2021 12:47:07 -0400
-Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7658C061760;
-        Thu,  8 Apr 2021 09:46:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=desiato.20200630; h=Content-Type:MIME-Version:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=Gq/rdyGTyQ0u+Ooonn/Pvwu5OLrn0QqmtopJqPVCiv8=; b=d9fxvosm0WowzxDsYdm1j+w9zp
-        i44NxxJXj+1FRM2OhLp3rHqJbY67o1Z5V3di2LW19ZEgvJfzCYYdVMbzNgqNkwPs/QLzC3N4FGJNz
-        PM/YDLES2vs3oIto0SSdfvvDdB/r5gfmS9qqCERY7BATxqVDegCPGr0AkzmsUuSem4JdWeOwIBCI+
-        DB1b9VHqLQCwzdD3Oy7JAUdjLD7jcps48ZUdv/t2515ENxgdE87WHDWyv0jz2U7A+XkCbd+DTzQXr
-        WzLLuxF7H1+oQYhtMTxbw++Ycs3PtTCenYa10Sbudx4Faq3gAEAB2oMFO8Wa3E2j5WGrn+/N6YxaN
-        iFgw0xtw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by desiato.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
-        id 1lUXnx-008g4r-2r; Thu, 08 Apr 2021 16:46:53 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 5C22E3001D0;
-        Thu,  8 Apr 2021 18:46:30 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 2624C2BE57BB8; Thu,  8 Apr 2021 11:44:50 +0200 (CEST)
-Date:   Thu, 8 Apr 2021 11:44:50 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     asml.silence@gmail.com, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] io-wq: Fix io_wq_worker_affinity()
-Message-ID: <YG7QkiUzlEbW85TU@hirez.programming.kicks-ass.net>
+        with ESMTP id S231566AbhDHRo1 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Apr 2021 13:44:27 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AA3FC061760
+        for <io-uring@vger.kernel.org>; Thu,  8 Apr 2021 10:44:16 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id s7so2897988wru.6
+        for <io-uring@vger.kernel.org>; Thu, 08 Apr 2021 10:44:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=iBVX5guzp1NeERwHYDK2JX09tSlVmQK41EyooT6iW9o=;
+        b=WWq9bb0Fi0o3t0MoIPh3BofCcmrqjYwsQM2zYCuvN5elvN8QOajwmwOK5iDapeGqxB
+         2UOXY9XaGv1G1noANVBRg6LhUD2rccKtSJSG2nGqxezAt858oaD4HhY1dQgdSVHi6NUq
+         ZYORIprYhJRetYUggI8MkZG3DawUtfHDbdPO/8gqxIDZn006GlVvt1PtafK7F++bAzsr
+         g2Ufgxg7rZ0wv8cFFntbaFXEZJ5AOAIXRwtke6u+vMJsygpo3q+Cknz1rshcwzXlDs2p
+         kfn2gMQ9vypjcYhkRG2D+dkBz9TIp/PUU18Pr17Xh5jqKlRhD0QUSq7mDVTzbWh1DveN
+         GGgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=iBVX5guzp1NeERwHYDK2JX09tSlVmQK41EyooT6iW9o=;
+        b=QKjzRvogSmBqZp2X1EWzx3c8qWKf5qJB2sI1aLOor860UJExtt713Oe0qQrOYeSx5X
+         BK7ZdXUQUgbnhzWMgI05MoOSEJnePzM+/B53dwlTGD59amgGKU887smifuOe6mAdz36o
+         j04Xtx4nFZ6yFol+2AdGHz48pF7x0exmCNKDAKszSXJWlVkiul9k+NcW7pHq7Npi1vpw
+         eHIIEqlW+5Ypyawy5/LC9lHBFcxgzrTeERPcv5yuRmg5skOb3krRQwRZogXiyugy45pi
+         K3Z7tLC5/1X1oDg5wq1neia8zIAsZsPxuKMwxVkM7moT0XgmMSl+3AAydwNpKPU9Ww3V
+         sQiA==
+X-Gm-Message-State: AOAM531ymHkU8wSUT7p8GOrG8Qd1cre2QZNY4ufJrvOtyMYzv4JdgUHT
+        XNLpEMM/s4qoxfSxYVov0YjuoC2tqNvWAA==
+X-Google-Smtp-Source: ABdhPJyhG/ZqT9mFi/D3UE8gG2I5RGJqlo8TfWDUjt0cnGrx+QUbMBjAD4l0g/nePa7fewG96bfsKg==
+X-Received: by 2002:adf:cd0a:: with SMTP id w10mr13174652wrm.39.1617903855107;
+        Thu, 08 Apr 2021 10:44:15 -0700 (PDT)
+Received: from localhost.localdomain ([148.252.128.224])
+        by smtp.gmail.com with ESMTPSA id m14sm4169794wrh.28.2021.04.08.10.44.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Apr 2021 10:44:14 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [PATCH 5.12 v2] io_uring: fix rw req completion
+Date:   Thu,  8 Apr 2021 18:40:02 +0100
+Message-Id: <a1db1d9603cf6abb6de51a58fe6e966c7ea1e5d3.1617903478.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+WARNING: at fs/io_uring.c:8578 io_ring_exit_work.cold+0x0/0x18
 
-Do not include private headers and do not frob in internals.
+As reissuing is now passed back by REQ_F_REISSUE, kiocb_done() may just
+set the flag and do nothing leaving dangling requests. The handling is a
+bit fragile, e.g. can't just complete them because the case of reading
+beyond file boundary needs blocking context to return 0, otherwise it
+may be -EAGAIN.
 
-On top of that, while the previous code restores the affinity, it
-doesn't ensure the task actually moves there if it was running,
-leading to the fun situation that it can be observed running outside
-of its allowed mask for potentially significant time.
+Go the easy way for now, just emulate how it was by io_rw_reissue() in
+kiocb_done()
 
-Use the proper API instead.
-
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Fixes: 230d50d448ac ("io_uring: move reissue into regular IO path")
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+Link: https://lore.kernel.org/r/f602250d292f8a84cca9a01d747744d1e797be26.1617842918.git.asml.silence@gmail.com
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/io-wq.c |   11 ++---------
- 1 file changed, 2 insertions(+), 9 deletions(-)
 
---- a/fs/io-wq.c
-+++ b/fs/io-wq.c
-@@ -17,7 +17,6 @@
- #include <linux/cpu.h>
- #include <linux/tracehook.h>
- 
--#include "../kernel/sched/sched.h"
- #include "io-wq.h"
- 
- #define WORKER_IDLE_TIMEOUT	(5 * HZ)
-@@ -1098,14 +1097,8 @@ void io_wq_put_and_exit(struct io_wq *wq
- 
- static bool io_wq_worker_affinity(struct io_worker *worker, void *data)
+v2: io_rw_reissue() may fail, check return code
+
+ fs/io_uring.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index f1881ac0744b..f2df0569a60a 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -2762,6 +2762,7 @@ static void kiocb_done(struct kiocb *kiocb, ssize_t ret,
  {
--	struct task_struct *task = worker->task;
--	struct rq_flags rf;
--	struct rq *rq;
--
--	rq = task_rq_lock(task, &rf);
--	do_set_cpus_allowed(task, cpumask_of_node(worker->wqe->node));
--	task->flags |= PF_NO_SETAFFINITY;
--	task_rq_unlock(rq, task, &rf);
-+	set_cpus_allowed_ptr(worker->task, cpumask_of_node(worker->wqe->node));
+ 	struct io_kiocb *req = container_of(kiocb, struct io_kiocb, rw.kiocb);
+ 	struct io_async_rw *io = req->async_data;
++	bool check_reissue = (kiocb->ki_complete == io_complete_rw);
+ 
+ 	/* add previously done IO, if any */
+ 	if (io && io->bytes_done > 0) {
+@@ -2777,6 +2778,18 @@ static void kiocb_done(struct kiocb *kiocb, ssize_t ret,
+ 		__io_complete_rw(req, ret, 0, issue_flags);
+ 	else
+ 		io_rw_done(kiocb, ret);
 +
- 	return false;
++	if (check_reissue && req->flags & REQ_F_REISSUE) {
++		req->flags &= ~REQ_F_REISSUE;
++		if (!io_rw_reissue(req)) {
++			int cflags = 0;
++
++			req_set_fail_links(req);
++			if (req->flags & REQ_F_BUFFER_SELECTED)
++				cflags = io_put_rw_kbuf(req);
++			__io_req_complete(req, issue_flags, ret, cflags);
++		}
++	}
  }
  
+ static int io_import_fixed(struct io_kiocb *req, int rw, struct iov_iter *iter)
+-- 
+2.24.0
+

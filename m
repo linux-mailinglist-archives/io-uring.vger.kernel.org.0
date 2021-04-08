@@ -2,105 +2,71 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FF5D358D80
-	for <lists+io-uring@lfdr.de>; Thu,  8 Apr 2021 21:33:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3902A358D99
+	for <lists+io-uring@lfdr.de>; Thu,  8 Apr 2021 21:43:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231596AbhDHTd7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 8 Apr 2021 15:33:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34586 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231451AbhDHTd7 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Apr 2021 15:33:59 -0400
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C1C9C061760
-        for <io-uring@vger.kernel.org>; Thu,  8 Apr 2021 12:33:48 -0700 (PDT)
-Received: by mail-pl1-x62f.google.com with SMTP id ay2so1581262plb.3
-        for <io-uring@vger.kernel.org>; Thu, 08 Apr 2021 12:33:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=iNUV5Xh7Ax2z63pVpUG2PHFDNp3G1RyPuZYUGEdkTsA=;
-        b=1HOtkoY+cLN+SEtmYgYh5SQcedbaR3dgzFUPil+xQLpUSnG+WSqqzMRiPcP8xFUSxw
-         b5MRa8VZCR+Wv2wFDx4MDzTAe+lxZagyjWl1VR8ugMp8yQQjR3Y0gCyh+xuC4qB5v5e2
-         wnbFWBweEOz5D7XfM6KhvtrDhZaZo/5+qs1ZqpzConja86EOKQYonCOxsr/BHXILZQDn
-         oh3WimxqPUbK8xlmUo/LnHiXnhvD/sXG6XNLhwtxzoIbyO59xLEwT7l5rMcwrZqyqEXu
-         SsfIhmLoDYf8u8SRCMtwJTUeiBfHbVqICHaoAOIJup2oatK+jQlOYocR6H23AgXu2jIc
-         oK2Q==
+        id S231843AbhDHTnV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 8 Apr 2021 15:43:21 -0400
+Received: from mail-io1-f70.google.com ([209.85.166.70]:46990 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231715AbhDHTnV (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Apr 2021 15:43:21 -0400
+Received: by mail-io1-f70.google.com with SMTP id w8so2097392iox.13
+        for <io-uring@vger.kernel.org>; Thu, 08 Apr 2021 12:43:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=iNUV5Xh7Ax2z63pVpUG2PHFDNp3G1RyPuZYUGEdkTsA=;
-        b=PSKLQaZoO1xFY45sae4v1ZUVhKk0h8kVIJsbcFjCfFZVg2b6PcqpK+VlSrJsuEcTlW
-         Acg5TZ8SoRwK0p8UcwUC1M/116HQ/tMJZyTIwlLM2LtLtR873QhvhTfFsa0iO9eiSsYB
-         dis47ZMPy35zim+nPi0pF4L9+F4+Nr3nuQTvVRWd2pc7Hvkq45ajJiKo1iGbnDq0ElSM
-         FdOSjKCYJV7Hr84mX0xjlzxrjfwNC0JlMCvn2uJLaNJoqUMJLsIPMSsLeKgLvW7WH8b4
-         yvNTOqeW5A/z4H0JZBh2svuXwUZCdyTDX1iWv7gJGbz3s7bu5Ll5LU07zNhIGlsama60
-         K2nQ==
-X-Gm-Message-State: AOAM530m1OXlIweTfh9vFofF8489Lbn6xsdtelS5VA21iDNOvE274I0v
-        aNOXS6jfDXZDsSquoheM/62p69RehKSvmA==
-X-Google-Smtp-Source: ABdhPJygKmZhu5mjlsmP0ncTQ05M7x9Rn6LV/vtij82dZqfst03Nxd0SjTtGtAUirsSoWk3TgwHJfw==
-X-Received: by 2002:a17:902:c408:b029:e7:3242:5690 with SMTP id k8-20020a170902c408b02900e732425690mr9419058plk.85.1617910427324;
-        Thu, 08 Apr 2021 12:33:47 -0700 (PDT)
-Received: from [192.168.4.41] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id 144sm230431pfy.75.2021.04.08.12.33.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Apr 2021 12:33:46 -0700 (PDT)
-Subject: Re: [PATCH 5.12 v3] io_uring: fix rw req completion
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <01f81563aacb51972dacff4f2080087c321e424a.1617906241.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <5dc06cf4-fdf8-62b3-20df-e2edaee06317@kernel.dk>
-Date:   Thu, 8 Apr 2021 13:33:45 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=QAQHHUTa7Tp/+HffxF26prPlCaL4a426RwfTcuHtH+o=;
+        b=I/fZhTTtxE9eHpWhM/VNEh0nFo7FyaWrnn1i/I5YgPQ9haNzeFbx8HgWoquHLJloQc
+         cyq4WCRyU7kM6qutjZ1YADqi13myDuH09BewVmi2Esz0l2vJcDP2pl7PBsuU8gfWy08C
+         Bvj3veG8z3fw7ezfwmS1hMSUQlZswlJP+TLyyxHKf933vNTb00CU55PQ2fAbG7q8jYne
+         7c3cOXrRTUpoZqEZKgXcCAYNz7n8Fp7Asxoh8O2oJbU5vlSIESnlF8T/PMPd5Rv8OuM5
+         HFy9LlKxPyjwIu3DbhUfld+0+EQ07SgNyMtixoQGO9YGAmMZupqJ6xlWuqAr9027cxNN
+         mnQQ==
+X-Gm-Message-State: AOAM530aH1jQYZUT5VTqcKHMGnUdCeYFj3HoGbSjfEF3Xp8uJk8TBdx8
+        uBa96QHAG0hqAHFcxgUr1T2Y2b4JO3uGiEfc4c97P31BP8h3
+X-Google-Smtp-Source: ABdhPJyn4ilIIDryRqlPdr9Xyrum6gvlbzGTLCpVJ28iXXrYaFVYW1uN84V49TH9mcJWXqqJlGwn40JFc7lEhhEoqq6IyjX7VZXK
 MIME-Version: 1.0
-In-Reply-To: <01f81563aacb51972dacff4f2080087c321e424a.1617906241.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:20cd:: with SMTP id 13mr8230433ilq.126.1617910989145;
+ Thu, 08 Apr 2021 12:43:09 -0700 (PDT)
+Date:   Thu, 08 Apr 2021 12:43:09 -0700
+In-Reply-To: <000000000000430bf505bcef3b00@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c94d8605bf7b4135@google.com>
+Subject: Re: [syzbot] possible deadlock in io_sq_thread_finish
+From:   syzbot <syzbot+ac39856cb1b332dbbdda@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, bp@alien8.de,
+        hdanton@sina.com, hpa@zytor.com, io-uring@vger.kernel.org,
+        jmattson@google.com, joro@8bytes.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mingo@redhat.com,
+        pbonzini@redhat.com, seanjc@google.com,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
+        vkuznets@redhat.com, wanpengli@tencent.com, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/8/21 12:28 PM, Pavel Begunkov wrote:
-> WARNING: at fs/io_uring.c:8578 io_ring_exit_work.cold+0x0/0x18
-> 
-> As reissuing is now passed back by REQ_F_REISSUE and kiocb_done()
-> internally uses __io_complete_rw(), it may stop after setting the flag
-> so leaving a dangling request.
-> 
-> There are tricky edge cases, e.g. reading beyound file, boundary, so
-> the easiest way is to hand code reissue in kiocb_done() as
-> __io_complete_rw() was doing for us before.
-> 
-> Fixes: 230d50d448ac ("io_uring: move reissue into regular IO path")
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> Link: https://lore.kernel.org/r/f602250d292f8a84cca9a01d747744d1e797be26.1617842918.git.asml.silence@gmail.com
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> ---
-> 
-> 
-> v2: io_rw_reissue() may fail, check return code
-> v3: adjust commit message
-> 
->  fs/io_uring.c | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index f1881ac0744b..f2df0569a60a 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -2762,6 +2762,7 @@ static void kiocb_done(struct kiocb *kiocb, ssize_t ret,
->  {
->  	struct io_kiocb *req = container_of(kiocb, struct io_kiocb, rw.kiocb);
->  	struct io_async_rw *io = req->async_data;
-> +	bool check_reissue = (kiocb->ki_complete == io_complete_rw);
+syzbot suspects this issue was fixed by commit:
 
-I removed these unnecessary parens, and updated the patch. Thanks.
+commit f4e61f0c9add3b00bd5f2df3c814d688849b8707
+Author: Wanpeng Li <wanpengli@tencent.com>
+Date:   Mon Mar 15 06:55:28 2021 +0000
 
--- 
-Jens Axboe
+    x86/kvm: Fix broken irq restoration in kvm_wait
 
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1022d7aad00000
+start commit:   144c79ef Merge tag 'perf-tools-fixes-for-v5.12-2020-03-07'..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=db9c6adb4986f2f2
+dashboard link: https://syzkaller.appspot.com/bug?extid=ac39856cb1b332dbbdda
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=167574dad00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12c8f566d00000
+
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: x86/kvm: Fix broken irq restoration in kvm_wait
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection

@@ -2,71 +2,84 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3902A358D99
-	for <lists+io-uring@lfdr.de>; Thu,  8 Apr 2021 21:43:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 51FFB358D9F
+	for <lists+io-uring@lfdr.de>; Thu,  8 Apr 2021 21:44:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231843AbhDHTnV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 8 Apr 2021 15:43:21 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:46990 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231715AbhDHTnV (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Apr 2021 15:43:21 -0400
-Received: by mail-io1-f70.google.com with SMTP id w8so2097392iox.13
-        for <io-uring@vger.kernel.org>; Thu, 08 Apr 2021 12:43:09 -0700 (PDT)
+        id S232573AbhDHTnb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 8 Apr 2021 15:43:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36626 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231676AbhDHTna (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Apr 2021 15:43:30 -0400
+Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FB19C061760
+        for <io-uring@vger.kernel.org>; Thu,  8 Apr 2021 12:43:19 -0700 (PDT)
+Received: by mail-pj1-x1031.google.com with SMTP id ep1-20020a17090ae641b029014d48811e37so1969519pjb.4
+        for <io-uring@vger.kernel.org>; Thu, 08 Apr 2021 12:43:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=E9M5KeILaLL2DX4wfYwCCBsqzscZxy2gc8zICwtanXk=;
+        b=cd2isfYsbhE4d4Fq/QWNSBdRy9nv0/o/63vwQ8SHwwgOUl7MxMm1f3LDntIrAACkA/
+         XHhv7UAPcnv1iRX6lOovanhhF9rE+pfYPtP/4m+wl27NZRyLUSETa9+R4NoH0WWYixPQ
+         cY6tjohpXq3USIDbesxcwP0T9rDElGG/DqCNUldLrXuUCiQHq0avzcW5J+U6d5nSQh1D
+         2OHBJV1MnzePCD594Vt+jvvQ+woM1FsNK7m7EL40r1+4i642IR2M/125+7esXUB/MdKO
+         /cCgzMed0kmWa1/szbWaicYHr1JTQGE/WR1Z3LwzkbgcNgFKPTU0xR4m0nYhvBmOGwvM
+         GICA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=QAQHHUTa7Tp/+HffxF26prPlCaL4a426RwfTcuHtH+o=;
-        b=I/fZhTTtxE9eHpWhM/VNEh0nFo7FyaWrnn1i/I5YgPQ9haNzeFbx8HgWoquHLJloQc
-         cyq4WCRyU7kM6qutjZ1YADqi13myDuH09BewVmi2Esz0l2vJcDP2pl7PBsuU8gfWy08C
-         Bvj3veG8z3fw7ezfwmS1hMSUQlZswlJP+TLyyxHKf933vNTb00CU55PQ2fAbG7q8jYne
-         7c3cOXrRTUpoZqEZKgXcCAYNz7n8Fp7Asxoh8O2oJbU5vlSIESnlF8T/PMPd5Rv8OuM5
-         HFy9LlKxPyjwIu3DbhUfld+0+EQ07SgNyMtixoQGO9YGAmMZupqJ6xlWuqAr9027cxNN
-         mnQQ==
-X-Gm-Message-State: AOAM530aH1jQYZUT5VTqcKHMGnUdCeYFj3HoGbSjfEF3Xp8uJk8TBdx8
-        uBa96QHAG0hqAHFcxgUr1T2Y2b4JO3uGiEfc4c97P31BP8h3
-X-Google-Smtp-Source: ABdhPJyn4ilIIDryRqlPdr9Xyrum6gvlbzGTLCpVJ28iXXrYaFVYW1uN84V49TH9mcJWXqqJlGwn40JFc7lEhhEoqq6IyjX7VZXK
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=E9M5KeILaLL2DX4wfYwCCBsqzscZxy2gc8zICwtanXk=;
+        b=gCLwlrzy77mT7NdTlzSnG83r8n3HXLIKIXwlqdQgY4rI8zjZhvPk9ev/BSJeHZuban
+         AHK8ZKC628e7jUAizHsQyTOSPQkOoNQNjE7mh12R8evAPNO0eZrZh/kkhtlhIVfViWVW
+         Jij0Lx2SQ42hShEnqQflQtm885ttnZ3KCvnQpsnLN7XkbXRCPG+1DyliQVTh/TVjDy5Z
+         xjxVJ/j9cViBSyfl/CST+lZJodKjxKhlwYv7M39M5FGXd3q6aiI90vFnrLqEnXEar2Ca
+         Ah/QbjsI0eDVrSyaLFHTvrgo0ND+G1YnygsUgCdWiJCv4X2i7RhYvLQPY7SeXUxLXa9F
+         zK0w==
+X-Gm-Message-State: AOAM533h7f11oD1FTjIW5BtgCoaHm/BeON50SkCf+GlVtdtjJbjWXi2p
+        rJAqtrU8WONLvi/6NUzyQosJOE0nJiEwyw==
+X-Google-Smtp-Source: ABdhPJyVrUFStDtvz2k0wishikZ9tsR5d3JDh26XKD0FanAazRRVwTsiNSqVeQf5PxcfZfRxB6BpGw==
+X-Received: by 2002:a17:90a:8815:: with SMTP id s21mr9950762pjn.200.1617910998777;
+        Thu, 08 Apr 2021 12:43:18 -0700 (PDT)
+Received: from [192.168.4.41] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
+        by smtp.gmail.com with ESMTPSA id p17sm246558pfn.62.2021.04.08.12.43.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 08 Apr 2021 12:43:18 -0700 (PDT)
+Subject: Re: [PATCH] io-wq: Fix io_wq_worker_affinity()
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     asml.silence@gmail.com, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <YG7QkiUzlEbW85TU@hirez.programming.kicks-ass.net>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <c30520c7-6c20-6a32-e9ce-3673285ebc4d@kernel.dk>
+Date:   Thu, 8 Apr 2021 13:43:17 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:20cd:: with SMTP id 13mr8230433ilq.126.1617910989145;
- Thu, 08 Apr 2021 12:43:09 -0700 (PDT)
-Date:   Thu, 08 Apr 2021 12:43:09 -0700
-In-Reply-To: <000000000000430bf505bcef3b00@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c94d8605bf7b4135@google.com>
-Subject: Re: [syzbot] possible deadlock in io_sq_thread_finish
-From:   syzbot <syzbot+ac39856cb1b332dbbdda@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, bp@alien8.de,
-        hdanton@sina.com, hpa@zytor.com, io-uring@vger.kernel.org,
-        jmattson@google.com, joro@8bytes.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mingo@redhat.com,
-        pbonzini@redhat.com, seanjc@google.com,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
-        vkuznets@redhat.com, wanpengli@tencent.com, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <YG7QkiUzlEbW85TU@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-syzbot suspects this issue was fixed by commit:
+On 4/8/21 3:44 AM, Peter Zijlstra wrote:
+> 
+> Do not include private headers and do not frob in internals.
+> 
+> On top of that, while the previous code restores the affinity, it
+> doesn't ensure the task actually moves there if it was running,
+> leading to the fun situation that it can be observed running outside
+> of its allowed mask for potentially significant time.
+> 
+> Use the proper API instead.
 
-commit f4e61f0c9add3b00bd5f2df3c814d688849b8707
-Author: Wanpeng Li <wanpengli@tencent.com>
-Date:   Mon Mar 15 06:55:28 2021 +0000
+Applied, thanks Peter.
 
-    x86/kvm: Fix broken irq restoration in kvm_wait
+-- 
+Jens Axboe
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1022d7aad00000
-start commit:   144c79ef Merge tag 'perf-tools-fixes-for-v5.12-2020-03-07'..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=db9c6adb4986f2f2
-dashboard link: https://syzkaller.appspot.com/bug?extid=ac39856cb1b332dbbdda
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=167574dad00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12c8f566d00000
-
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: x86/kvm: Fix broken irq restoration in kvm_wait
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection

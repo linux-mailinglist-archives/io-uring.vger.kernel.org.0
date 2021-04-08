@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 841AA35793F
-	for <lists+io-uring@lfdr.de>; Thu,  8 Apr 2021 02:59:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9A3D357941
+	for <lists+io-uring@lfdr.de>; Thu,  8 Apr 2021 02:59:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229862AbhDHA7J (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 7 Apr 2021 20:59:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44822 "EHLO
+        id S229492AbhDHA7K (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 7 Apr 2021 20:59:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44826 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229505AbhDHA7I (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 7 Apr 2021 20:59:08 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 829F0C061760
-        for <io-uring@vger.kernel.org>; Wed,  7 Apr 2021 17:58:58 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id a4so253316wrr.2
-        for <io-uring@vger.kernel.org>; Wed, 07 Apr 2021 17:58:58 -0700 (PDT)
+        with ESMTP id S229505AbhDHA7J (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 7 Apr 2021 20:59:09 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89FC4C061760
+        for <io-uring@vger.kernel.org>; Wed,  7 Apr 2021 17:58:59 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id x7so227733wrw.10
+        for <io-uring@vger.kernel.org>; Wed, 07 Apr 2021 17:58:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=syC+GdFnCob3DTPUkWMFswmoy6bCsfBnXBIXr4QmVCw=;
-        b=hoBr2cmT79mbESp4t1BFF8fCLGPz1OyU3SqbfUH0ZbQCwEt84KjU2DjTXWaPC1tP7J
-         kq9OPzpf4wY6KOO4brMVdilUPszUnHnb27gshIbaNqQzQPdIwmG2F84LXZtiqoDnQfDZ
-         +GQEHi5+u8RJzVjCWeuyT+Ci8vsIFZoM3YXJjGhMzxslJnRdg2/5Nm3l95BnnW5QAofS
-         9+R7LMfd6AgAcIJaZegNv0HqLoEMvYHjznMnqQF8ugT6FkMMTiAQ0mNJU+5D8c+2EKHh
-         hgzYOhR6BHIkWrjDkkud6z5/K1At6H8ZM8oNf2sL+Dz7RRYYl8cQ5Fvyu2Y40AJDfVbu
-         J75A==
+        bh=NJFWCtSUTIX3Om34TUeDbdMgaO1alz798FcR0S1QSO4=;
+        b=emNya+A4AOooPN966I+HMzlCaBETLYInvF/ePIxJYwmYPRFL92p1wvhy0fbSUWGEof
+         ksf9WhEJMKcqpwLEanTy+erUpSK10nyI1oqcmgaNFa42YtBwL8AVHfgAA/MtPZLmltPf
+         Mp303liYuQ2mJo7fUYOVYxOAshH3Awi/hbItP/WmBGnf7LxSniWMksXs5xDwI2XAejEP
+         pMl4Nd8bq43uhiMTyh70VtNgkHGXSNG7q9YjtNPiXC6/xt69NmLaZMmw6zpZ/Vy+hjt/
+         8jwk6DoE7N5yBHrDFmhmZZP1xp6/JbhotQITxqwGXtx8d2NwM85TbJN7E15TI8txkSJ2
+         0+eQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=syC+GdFnCob3DTPUkWMFswmoy6bCsfBnXBIXr4QmVCw=;
-        b=YpLj37IxMUgEJ/EE/3MSLsBduuJdTW1rWvl1vvG4UmU7DJSSl5hnleFJLg+SqBz+se
-         h4mZzfmUKWs92Yo6P28h7G3FRd+zZawEIaWFHL25vM4yFp2Azf2c4IngzgtzCh4d61E0
-         GAQT6VuMf6s2eWEkomBpatlPFOm67ISRJZC1hYrkPNSdZxwhkOKxRLCPmSaMF4ifBfoa
-         APf7Dlqjhx+rCFfL5NYZk7yAwCE+NTOEIbf/QJLiiqP0DLQOriUOl3GzCBJ/XH45Gk51
-         SvY18VYNUE70z9MtLVnJfXUumU+auKyeHi1P7Udw3pFfBzR5dWMZ5l9btiylRMTxpsNV
-         r5SA==
-X-Gm-Message-State: AOAM532MHqRHEMdrTnZeSOfVTAVIc+ybVV9wwwkTy7oZnWMObpuNxeEd
-        j6Ee3nzNuEG0flCvt401UhxvSDMPysZOVg==
-X-Google-Smtp-Source: ABdhPJwW39HuROTlwbKkuVJcacMfwrd2njkgD8JuELK6lrgADbrAKi//+UOsfptQuM6PHRMVAKlX9A==
-X-Received: by 2002:a5d:5082:: with SMTP id a2mr7482641wrt.267.1617843537367;
-        Wed, 07 Apr 2021 17:58:57 -0700 (PDT)
+        bh=NJFWCtSUTIX3Om34TUeDbdMgaO1alz798FcR0S1QSO4=;
+        b=XVrvPCMwyXozsoC04CEmY+DsqyZvInl3q890Q22fjRvR+Ha1UIdX2aPK91Hg26i1Ls
+         wuRaWqSJsE2D8ERCa/x9chD7InkZOpjdS3AsqrEhuFMTmDYFsY6AA1nDsyQaGr4R+sE6
+         4yFWeIK9vHOkGoxCMP4wIdDpAyA53yvz72tDkuiB1DCHbA/ZNCSJzTXwK2DQaoLWzthQ
+         P/LnBXyJhepKgmVtV7IXxb0z7+B5v8fpG2hLdI3PZ45OJk6UxVcKL9mt14jTA4FaLYRO
+         xwQi90CoiiLzyZ2m6l2aXoCQPQoSk7fp5RwKNIyY1ubjpYQBKOdopSMXiUW523SeWEnb
+         eNVQ==
+X-Gm-Message-State: AOAM530b5+s0P/8YPgKFL43L0hJ6U8A/kuP6lCvWkdcaTsDYRcGyZsh6
+        O8a7IOxk5frkywRvU8BhUtc=
+X-Google-Smtp-Source: ABdhPJwLyHrZNBfOWJMhj+kOIaV/lNjqHIH2pXmTLkfy4nYa8XWCVWZhNPrKJXid+LZ1K2jEZba2Cg==
+X-Received: by 2002:adf:f883:: with SMTP id u3mr7475170wrp.405.1617843538329;
+        Wed, 07 Apr 2021 17:58:58 -0700 (PDT)
 Received: from localhost.localdomain ([148.252.132.202])
-        by smtp.gmail.com with ESMTPSA id s9sm12219287wmh.31.2021.04.07.17.58.56
+        by smtp.gmail.com with ESMTPSA id s9sm12219287wmh.31.2021.04.07.17.58.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Apr 2021 17:58:57 -0700 (PDT)
+        Wed, 07 Apr 2021 17:58:58 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 3/4] io_uring: fix poll_rewait racing for ->canceled
-Date:   Thu,  8 Apr 2021 01:54:41 +0100
-Message-Id: <f6d92429952fbcb27eed4236238564d84e0f26cc.1617842918.git.asml.silence@gmail.com>
+Subject: [PATCH 4/4] io-wq: cancel unbounded works on io-wq destroy
+Date:   Thu,  8 Apr 2021 01:54:42 +0100
+Message-Id: <cd4b543154154cba055cf86f351441c2174d7f71.1617842918.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1617842918.git.asml.silence@gmail.com>
 References: <cover.1617842918.git.asml.silence@gmail.com>
@@ -61,38 +61,70 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-poll->canceled may be set from different contexts, even async, so
-io_poll_rewait() should be prepared that it can change and not read it
-twice.
+WARNING: CPU: 5 PID: 227 at fs/io_uring.c:8578 io_ring_exit_work+0xe6/0x470
+RIP: 0010:io_ring_exit_work+0xe6/0x470
+Call Trace:
+ process_one_work+0x206/0x400
+ worker_thread+0x4a/0x3d0
+ kthread+0x129/0x170
+ ret_from_fork+0x22/0x30
 
+INFO: task lfs-openat:2359 blocked for more than 245 seconds.
+task:lfs-openat      state:D stack:    0 pid: 2359 ppid:     1 flags:0x00000004
+Call Trace:
+ ...
+ wait_for_completion+0x8b/0xf0
+ io_wq_destroy_manager+0x24/0x60
+ io_wq_put_and_exit+0x18/0x30
+ io_uring_clean_tctx+0x76/0xa0
+ __io_uring_files_cancel+0x1b9/0x2e0
+ do_exit+0xc0/0xb40
+ ...
+
+Even after io-wq destroy has been issued io-wq worker threads will
+continue executing all left work items as usual, and may hang waiting
+for I/O that won't ever complete (aka unbounded).
+
+[<0>] pipe_read+0x306/0x450
+[<0>] io_iter_do_read+0x1e/0x40
+[<0>] io_read+0xd5/0x330
+[<0>] io_issue_sqe+0xd21/0x18a0
+[<0>] io_wq_submit_work+0x6c/0x140
+[<0>] io_worker_handle_work+0x17d/0x400
+[<0>] io_wqe_worker+0x2c0/0x330
+[<0>] ret_from_fork+0x22/0x30
+
+Cancel all unbounded I/O instead of executing them. This changes the
+user visible behaviour, but that's inevitable as io-wq is not per task.
+
+Suggested-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fs/io-wq.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index de5822350345..376d9c875dc2 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -4897,15 +4897,16 @@ static bool io_poll_rewait(struct io_kiocb *req, struct io_poll_iocb *poll)
- 	__acquires(&req->ctx->completion_lock)
+diff --git a/fs/io-wq.c b/fs/io-wq.c
+index 433c4d3c3c1c..4eba531bea5a 100644
+--- a/fs/io-wq.c
++++ b/fs/io-wq.c
+@@ -415,6 +415,7 @@ static void io_worker_handle_work(struct io_worker *worker)
  {
- 	struct io_ring_ctx *ctx = req->ctx;
-+	bool canceled = READ_ONCE(poll->canceled);
+ 	struct io_wqe *wqe = worker->wqe;
+ 	struct io_wq *wq = wqe->wq;
++	bool do_kill = test_bit(IO_WQ_BIT_EXIT, &wq->state);
  
--	if (!req->result && !READ_ONCE(poll->canceled)) {
-+	if (!req->result && !canceled) {
- 		struct poll_table_struct pt = { ._key = poll->events };
+ 	do {
+ 		struct io_wq_work *work;
+@@ -444,6 +445,9 @@ static void io_worker_handle_work(struct io_worker *worker)
+ 			unsigned int hash = io_get_work_hash(work);
  
- 		req->result = vfs_poll(req->file, &pt) & poll->events;
- 	}
+ 			next_hashed = wq_next_work(work);
++
++			if (unlikely(do_kill) && (work->flags & IO_WQ_WORK_UNBOUND))
++				work->flags |= IO_WQ_WORK_CANCEL;
+ 			wq->do_work(work);
+ 			io_assign_current_work(worker, NULL);
  
- 	spin_lock_irq(&ctx->completion_lock);
--	if (!req->result && !READ_ONCE(poll->canceled)) {
-+	if (!req->result && !canceled) {
- 		add_wait_queue(poll->head, &poll->wait);
- 		return true;
- 	}
 -- 
 2.24.0
 

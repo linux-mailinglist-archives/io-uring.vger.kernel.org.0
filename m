@@ -2,90 +2,147 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 83459358750
-	for <lists+io-uring@lfdr.de>; Thu,  8 Apr 2021 16:42:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DF5835897E
+	for <lists+io-uring@lfdr.de>; Thu,  8 Apr 2021 18:18:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231574AbhDHOmZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 8 Apr 2021 10:42:25 -0400
-Received: from mail-il1-f200.google.com ([209.85.166.200]:54685 "EHLO
-        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231480AbhDHOmY (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Apr 2021 10:42:24 -0400
-Received: by mail-il1-f200.google.com with SMTP id f14so1433443ilr.21
-        for <io-uring@vger.kernel.org>; Thu, 08 Apr 2021 07:42:13 -0700 (PDT)
+        id S232258AbhDHQSx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 8 Apr 2021 12:18:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48114 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231893AbhDHQSv (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Apr 2021 12:18:51 -0400
+Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07A79C061760
+        for <io-uring@vger.kernel.org>; Thu,  8 Apr 2021 09:18:39 -0700 (PDT)
+Received: by mail-pl1-x62f.google.com with SMTP id t20so1293317plr.13
+        for <io-uring@vger.kernel.org>; Thu, 08 Apr 2021 09:18:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=93jAfYyln1KsbpfZkKRr65icniT3oHxmEeH1ecZDh8s=;
+        b=yhApnqDqxbugy2/i4VHCQo7jZLPfuRQrP8qBxI3nCvgavJwMgpsqk8UadiJcELJF7o
+         lFGP1r0ekzhT40bD46zM/KTmZPSs3qjs6uE9u/pDIyCiG8E0CNhNu3vRLALy+mAA4WYR
+         CW5bn94+IM2cnEGjn5j20uuCCgYIfkBm39hy0dbdwBxM3LFCdvLa2Jb9me927lSv7mbz
+         Beb8AnRI2QwWBtruZlHORnaObtQQ0u7L6+237EjmrF7K9kFDY3nl5983wrIhFPFD7YZb
+         rJVmUjCPbZkkB8EFSIcR0NT3lCidt7pGrpcWzv1oBCEiHnL3FywICT3QmmMaEHjOFyXB
+         /JNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=omWXKOI+6Y8Uu1OPaxNuoex04esEAItjZ32ZmdFimmw=;
-        b=IVIuG6T3UKwxk4WSPqY0MvkpidrE9W8oDF+Ecf0JRxflwYb1RcSjFrXna9YfMmPhYQ
-         e7Ijmt5KK1rr7eqfvuti1hTjz4Oh6wElgLMNFPIAqDMm1w7z45L1dny5Xacdq1ZhF9/F
-         x2v/yl5kb8Kz409XFv+gJEWnlun7nBr23uwQ0CCWJPk6l72BvtmRT9CmcSCiziSMwPok
-         Y5ma/V1cxZZo/e+IiR1gG8dj9Rn2BEdUsBCFzC7/K08/w9gHWfxjx40Ze4cRaWFaiIME
-         Rl/PYpyTGGAqmshLA+NZ+spjsWh4O+8YWWJuhJq8bW8uw6RRe08iqmoRbZWJabDUp/RS
-         anlQ==
-X-Gm-Message-State: AOAM531x8yGbFmtGbQbI7CU/HFiis6INZXsRq13riSjihCpIbnRp4xIC
-        xEeOVo6bHu45BFPHi1JSINUcxlvFn+5XuCHuBSjIHOKuq1xT
-X-Google-Smtp-Source: ABdhPJxT4mVuv0smV/u0E+2/BNXePBlc2qm71w8Ei4gtIMnXhxIoO1l841fQD80v+mhg1g7hQOoSD2BRAO6vX0trzrZ2iHsUzVsX
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=93jAfYyln1KsbpfZkKRr65icniT3oHxmEeH1ecZDh8s=;
+        b=kn5J2DXp/CnTyVGtctes6Bd5m9oX2SyhinCP5iV1ZWm5DM9A3eDWeeAgdHnMCaK5Yh
+         M/+7LTgiyl/FDvFDzUZU//rhxubfkoSaJm2PJohTbU8o4vJgwslePA0hrGPDc2o8X3fP
+         pX9FFj16IsMgMFI1b4jHXTOnZOG6Y8hLEDohRUyyuuJ7w3myYbqPc2196LR8FfqSu31Q
+         t1jeeh5Pd5ShWIfSjet/qRYwCRYOm3TgdyASzL4ivtRzYjdnXsdZXeXC9jdGp6AvquKj
+         n55vGBi56uqcVmhbI3uIkBBVHoF1AXcPjRhjIYyxtEkagD6kWO3elnUs5BFsehRqtkpU
+         z0TA==
+X-Gm-Message-State: AOAM5302AuLEi0ddU7+Ph/4ezTsRCgQZ48vpMV7aF9JxvwoXrD9Y97el
+        kcpAGZZDXFWClVbDZiqp/69La8Fw1pkI1A==
+X-Google-Smtp-Source: ABdhPJw+i6IMmeQLsAfN9qiSJhebuOvFJzpCr+52hN/hTPgyCSNWt6VeRqn+mDe4WBkFjCZP5gRUOA==
+X-Received: by 2002:a17:902:a9c7:b029:e8:de49:6a76 with SMTP id b7-20020a170902a9c7b02900e8de496a76mr8673337plr.63.1617898718256;
+        Thu, 08 Apr 2021 09:18:38 -0700 (PDT)
+Received: from [192.168.4.41] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
+        by smtp.gmail.com with ESMTPSA id b10sm25318895pgm.76.2021.04.08.09.18.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 08 Apr 2021 09:18:37 -0700 (PDT)
+Subject: Re: [PATCH 5.13 v2] io_uring: maintain drain requests' logic
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Hao Xu <haoxu@linux.alibaba.com>
+Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
+References: <1617794605-35748-1-git-send-email-haoxu@linux.alibaba.com>
+ <00898a9b-d2f2-1108-b9d9-2d6acea6e713@kernel.dk>
+ <32f812e1-c044-d4b3-d26f-3721e4611a1d@linux.alibaba.com>
+ <119436dd-5e55-9812-472c-7a257bda12fb@linux.alibaba.com>
+ <826e199f-1cc0-f529-f200-5fa643a62bca@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <19183813-6755-52bb-5391-4809a837ec5f@kernel.dk>
+Date:   Thu, 8 Apr 2021 10:18:36 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-X-Received: by 2002:a02:6654:: with SMTP id l20mr9360186jaf.55.1617892932933;
- Thu, 08 Apr 2021 07:42:12 -0700 (PDT)
-Date:   Thu, 08 Apr 2021 07:42:12 -0700
-In-Reply-To: <346fb87c-6fae-284d-62a0-edafde451861@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000008d622905bf770dd6@google.com>
-Subject: Re: [syzbot] INFO: task hung in io_ring_exit_work
-From:   syzbot <syzbot+93f72b3885406bb09e0d@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <826e199f-1cc0-f529-f200-5fa643a62bca@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
+On 4/8/21 6:22 AM, Pavel Begunkov wrote:
+> On 08/04/2021 12:43, Hao Xu wrote:
+>> 在 2021/4/8 下午6:16, Hao Xu 写道:
+>>> 在 2021/4/7 下午11:49, Jens Axboe 写道:
+>>>> On 4/7/21 5:23 AM, Hao Xu wrote:
+>>>>> more tests comming, send this out first for comments.
+>>>>>
+>>>>> Hao Xu (3):
+>>>>>    io_uring: add IOSQE_MULTI_CQES/REQ_F_MULTI_CQES for multishot requests
+>>>>>    io_uring: maintain drain logic for multishot requests
+>>>>>    io_uring: use REQ_F_MULTI_CQES for multipoll IORING_OP_ADD
+>>>>>
+>>>>>   fs/io_uring.c                 | 34 +++++++++++++++++++++++++++++-----
+>>>>>   include/uapi/linux/io_uring.h |  8 +++-----
+>>>>>   2 files changed, 32 insertions(+), 10 deletions(-)
+>>>>
+>>>> Let's do the simple cq_extra first. I don't see a huge need to add an
+>>>> IOSQE flag for this, probably best to just keep this on a per opcode
+>>>> basis for now, which also then limits the code path to just touching
+>>>> poll for now, as nothing else supports multishot CQEs at this point.
+>>>>
+>>> gotcha.
+>>> a small issue here:
+>>>   sqe-->sqe(link)-->sqe(link)-->sqe(link, multishot)-->sqe(drain)
+>>>
+>>> in the above case, assume the first 3 single-shot reqs have completed.
+>>> then I think the drian request won't be issued now unless the multishot request in the linkchain has been issued. The trick is: a multishot req
+>>> in a linkchain consumes cached_sq_head when io_get_sqe(), which means it
+>>> is counted in seq, but we will deduct the sqe when it is issued if we
+>>> want to do the job per opcode not in the main code path.
+>>> before the multishot req issued:
+>>>       all_sqes(4) - multishot_sqes(0) == all_cqes(3) - multishot_cqes(0)
+>>> after the multishot req issued:
+>>>       all_sqes(4) - multishot_sqes(1) == all_cqes(3) - multishot_cqes(0)
+>>
+>> Sorry, my statement is wrong. It's not "won't be issued now unless the
+>> multishot request in the linkchain has been issued". Actually I now
+>> think the drain req won't be issued unless the multishot request in the
+>> linkchain has completed. Because we may first check req_need_defer()
+>> then issue(req->link), so:
+>>    sqe0-->sqe1(link)-->sqe2(link)-->sqe3(link, multishot)-->sqe4(drain)
+>>
+>>   sqe2 is completed:
+>>     call req_need_defer:
+>>     all_sqes(4) - multishot_sqes(0) == all_cqes(3) - multishot_cqes(0)
+>>   sqe3 is issued:
+>>     all_sqes(4) - multishot_sqes(1) == all_cqes(3) - multishot_cqes(0)
+>>   sqe3 is completed:
+>>     call req_need_defer:
+>>     all_sqes(4) - multishot_sqes(1) == all_cqes(3) - multishot_cqes(0)
+>>
+>> sqe4 shouldn't wait sqe3.
+> 
+> Do you mean it wouldn't if the patch is applied? Because any drain
+> request must wait for all requests submitted before to complete. And
+> so before issuing sqe4 it must wait for sqe3 __request__ to die, and
+> so for all sqe3's CQEs.
+> 
+> previously 
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-INFO: task hung in io_ring_exit_work
+I think we need to agree on what multishot means for dependencies. Does
+it mean it just needs to trigger once? Or does it mean that it needs to
+be totally finished. The latter may obviously never happen, depending on
+the use case. Or it may be an expected condition because the caller will
+cancel it at some point.
 
-INFO: task kworker/u4:0:9 blocked for more than 143 seconds.
-      Not tainted 5.12.0-rc2-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:kworker/u4:0    state:D stack:26056 pid:    9 ppid:     2 flags:0x00004000
-Workqueue: events_unbound io_ring_exit_work
-Call Trace:
- context_switch kernel/sched/core.c:4324 [inline]
- __schedule+0x911/0x21b0 kernel/sched/core.c:5075
- schedule+0xcf/0x270 kernel/sched/core.c:5154
- schedule_timeout+0x1db/0x250 kernel/time/timer.c:1868
- do_wait_for_common kernel/sched/completion.c:85 [inline]
- __wait_for_common kernel/sched/completion.c:106 [inline]
- wait_for_common kernel/sched/completion.c:117 [inline]
- wait_for_completion+0x168/0x270 kernel/sched/completion.c:138
- io_ring_exit_work+0x4e8/0x12d0 fs/io_uring.c:8616
- process_one_work+0x98d/0x1600 kernel/workqueue.c:2275
- worker_thread+0x64c/0x1120 kernel/workqueue.c:2421
- kthread+0x3b1/0x4a0 kernel/kthread.c:292
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
-INFO: task kworker/u4:1:25 blocked for more than 143 seconds.
-      Not tainted 5.12.0-rc2-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:kworker/u4:1    state:D stack:25560 pid:   25 ppid:     2 flags:0x00004000
-Workqueue: events_unbound io_ring_exit_work
-Call Trace:
- context_switch kernel/sched/core.c:4324 [inline]
- __schedule+0x911/0x21b0 kernel/sched/core.c:5075
- schedule+0xcf/0x270 kernel/sched/core.c:5154
- schedule_timeout+0x14a/0x250 kernel/time/timer.c:1892
+The most logical view imho is that multishot changes nothing wrt drain.
+If you ask for drain before something executes and you are using
+multishot, then you need to understand that the multishot request needs
+to fully complete before that condition is true and your dependency can
+execute.
 
-
-Tested on:
-
-commit:         a2a68d4c io_uring: signalling fun / syz test
-git tree:       https://github.com/isilence/linux.git syz_test3
-console output: https://syzkaller.appspot.com/x/log.txt?x=12eed711d00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=86318203e865a02b
-dashboard link: https://syzkaller.appspot.com/bug?extid=93f72b3885406bb09e0d
-compiler:       
+-- 
+Jens Axboe
 

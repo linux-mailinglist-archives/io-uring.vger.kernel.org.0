@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B2DCC35977C
-	for <lists+io-uring@lfdr.de>; Fri,  9 Apr 2021 10:17:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3431A35977D
+	for <lists+io-uring@lfdr.de>; Fri,  9 Apr 2021 10:17:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229803AbhDIIRs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 9 Apr 2021 04:17:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59226 "EHLO
+        id S232091AbhDIIRt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 9 Apr 2021 04:17:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232170AbhDIIRs (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 9 Apr 2021 04:17:48 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92853C061761
-        for <io-uring@vger.kernel.org>; Fri,  9 Apr 2021 01:17:35 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id j5so3744585wrn.4
-        for <io-uring@vger.kernel.org>; Fri, 09 Apr 2021 01:17:35 -0700 (PDT)
+        with ESMTP id S232007AbhDIIRt (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 9 Apr 2021 04:17:49 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75F92C061760
+        for <io-uring@vger.kernel.org>; Fri,  9 Apr 2021 01:17:36 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id p22so2444134wmc.3
+        for <io-uring@vger.kernel.org>; Fri, 09 Apr 2021 01:17:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=x/sUcHIjy6GH/QgPhH2HHQ3MAhGBh8Uk5B4W6hvhJbU=;
-        b=l0XHeNFJNQCVvPBJMhXo1Z5uNzSShtAklOyu7Zh0o24+CWIEHXblArH6RgTyv9uONw
-         JkA/lH2XjZEzP3nHipFRv56A7+F5bbUDJH7x3s21rKdP3FH0CN0k/DQYVXK0Q4d0Bvl9
-         lGUlQGTyZYT4UeUAeo2ekkjfp+pexsB7puL1UhYDhg2jqH3ZXgyBKkq3G5Lpp1JRv+q+
-         eNxmTosfdBk0LxKBjPAcDzWbnWWIhHTnmMCuQzqdbId3JRf3oGIATOztSXkFUy+nCNpG
-         MIo/ivvIPhvV3uP47F1YvSnukoG7+OTdogk15tlE44TWOLQBciVc1Sd9ZphqeqF+ejyY
-         DnjA==
+        bh=IBH95+Nh4kZtzWHWb4PICs8jkhyjjHTADzhvH3RFsII=;
+        b=GkhO8+QYCrjJiR2j+kwolEclGTnRczq5UCyWZXGytJIqseKvNloacFaI+3foKI25y7
+         ZDMHKrVDblxpGDYmuExoYPTJMAJiOfv3Ix4izJgBuGfklEHD0ZPO6Ue2E33HKPNIAIyx
+         jb6B38iM3GTWNZAdT5lz8NKfJ2B/6AzfzZqw9JCqAIvFyUitFncQbcnOnc7GW6agNaME
+         W9ukSlWAqEu2cfAPyx/InHtpL2QTuWkrg3yy4QcRnL1j8xnT8GkKQZ8F7wDVmx7zlQxh
+         kwdpMhVk/tbzH+fx+HniTrzNzU2Kb7yf6fO/GMk9DmWUTQTdzycnWUQdpvGel90rJbLx
+         G8nQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=x/sUcHIjy6GH/QgPhH2HHQ3MAhGBh8Uk5B4W6hvhJbU=;
-        b=CDRYCqi+RyTavZlcPdeugUZ3LLI0TN6YxspauZLNfxZjprYQmx1BInr38V3ckzgFbj
-         VKT8TbH/N9WKefUuO6pOUPpSUHsEs5p9Epjkr5bzk/oX2gBQy/WDQi0ntIXg+KmjuFqt
-         6N592ZZe8MnRrcRYIikCiGkU3L8cV24MIy4G1CumHzo2CS6ZTDGBgWTUANy7BMayRra0
-         5WekNAObXEIr4jSQ88Cs0tUJivBiDM/FAVGxL5EzppBS6l6ZkV1I/F2gUb0Jo3D6BtvU
-         9lpIig1868nRy5dzm9285WGZF2Eig2PE6oJqyaZSX5rSS59fabtAEi854ogOC0j2IWfs
-         zyUw==
-X-Gm-Message-State: AOAM532UnKXhGH5UzIH03acHupH2jq8A4EbvU7UialCCdQxMIW9KpmzN
-        ICOshfe/GquXodDt1gJ9a1aH+vG0nhGYzg==
-X-Google-Smtp-Source: ABdhPJymEVuhO9cBksyH0w7D5XxiVe5DmFCAM+ep4Znngsh9n4LNbk86oCPV0cV3ULqO63vKFhqtYA==
-X-Received: by 2002:a5d:4dcb:: with SMTP id f11mr8762584wru.129.1617956254446;
-        Fri, 09 Apr 2021 01:17:34 -0700 (PDT)
+        bh=IBH95+Nh4kZtzWHWb4PICs8jkhyjjHTADzhvH3RFsII=;
+        b=jLfr7vDh0VAo0S3ilzC9VKMY4RnP4MDXm3A1ZRgl1BlaIfuwYCnoW6vnGhLZ//qmkl
+         L9ZnJa6ha4x9VhAH3aj30Psyt1QLUJlKDfGZXW3HzLty6pKTFBcf45C2tkBLEOIS6vc3
+         qa54SJzuOmeP2H2b2KplB5HNVjBnQTk61TvRYzsltc0fPNA9ee+6q7Dpc7GlO2JRO9W1
+         btFGScNXJQ78+/50FEeqUPEpRZpIZd/3D1gPJmhwDcUQ0BjqfOKG7AYgHzE47KzYGA9s
+         KzzN143HZ1bKPlF09lbmwJweBt58V1n3Zw50iBCsouvMjX3qqjEyHM6kqDWRht4XSrHG
+         JAQQ==
+X-Gm-Message-State: AOAM531oZiIGcQKHBKSytjYYY65q9zjwBCkpnPvtcboPQRtK2WXY8ye7
+        2B7O7w0M3gQrW/LPoUxBR9U=
+X-Google-Smtp-Source: ABdhPJxelgbRydUPmAhlfeBxnVm/bLktCml9QTgWhtyHHLdSkUl3eTknsb9K6DNOUjE5GDTooqWqEw==
+X-Received: by 2002:a05:600c:9:: with SMTP id g9mr13016921wmc.134.1617956255331;
+        Fri, 09 Apr 2021 01:17:35 -0700 (PDT)
 Received: from localhost.localdomain ([148.252.128.224])
-        by smtp.gmail.com with ESMTPSA id d2sm3262133wrq.26.2021.04.09.01.17.33
+        by smtp.gmail.com with ESMTPSA id d2sm3262133wrq.26.2021.04.09.01.17.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Fri, 09 Apr 2021 01:17:34 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 1/3] io_uring: clean up io_poll_task_func()
-Date:   Fri,  9 Apr 2021 09:13:19 +0100
-Message-Id: <07902fdec3207f0e11ff8e73b6a16a4a24f7ebac.1617955705.git.asml.silence@gmail.com>
+Subject: [PATCH 2/3] io_uring: refactor io_poll_complete()
+Date:   Fri,  9 Apr 2021 09:13:20 +0100
+Message-Id: <beb0f934268dc7e619367118e8e59afd7047f9f5.1617955705.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1617955705.git.asml.silence@gmail.com>
 References: <cover.1617955705.git.asml.silence@gmail.com>
@@ -61,47 +61,60 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-io_poll_complete() always fills an event (even an overflowed one), so we
-always should do io_cqring_ev_posted() afterwards. And that's what is
-currently happening, because second EPOLLONESHOT check is always true,
-it can't return !done for oneshots.
-
-Remove those branching, it's much easier to read.
+Remove error parameter from io_poll_complete(), 0 is always passed,
+and do a bit of cleaning on top.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ fs/io_uring.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 81e5d156af1c..f662b81bdc22 100644
+index f662b81bdc22..c5a0091e4042 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -4907,20 +4907,18 @@ static void io_poll_task_func(struct callback_head *cb)
- 	if (io_poll_rewait(req, &req->poll)) {
- 		spin_unlock_irq(&ctx->completion_lock);
- 	} else {
--		bool done, post_ev;
-+		bool done;
+@@ -4875,18 +4875,19 @@ static void io_poll_remove_double(struct io_kiocb *req)
+ 	}
+ }
  
--		post_ev = done = io_poll_complete(req, req->result, 0);
-+		done = io_poll_complete(req, req->result, 0);
+-static bool io_poll_complete(struct io_kiocb *req, __poll_t mask, int error)
++static bool io_poll_complete(struct io_kiocb *req, __poll_t mask)
+ 	__must_hold(&req->ctx->completion_lock)
+ {
+ 	struct io_ring_ctx *ctx = req->ctx;
+ 	unsigned flags = IORING_CQE_F_MORE;
++	int error;
+ 
+-	if (!error && req->poll.canceled) {
++	if (READ_ONCE(req->poll.canceled)) {
+ 		error = -ECANCELED;
+ 		req->poll.events |= EPOLLONESHOT;
+-	}
+-	if (!error)
++	} else {
+ 		error = mangle_poll(mask);
++	}
+ 	if (req->poll.events & EPOLLONESHOT)
+ 		flags = 0;
+ 	if (!__io_cqring_fill_event(req, error, flags)) {
+@@ -4909,7 +4910,7 @@ static void io_poll_task_func(struct callback_head *cb)
+ 	} else {
+ 		bool done;
+ 
+-		done = io_poll_complete(req, req->result, 0);
++		done = io_poll_complete(req, req->result);
  		if (done) {
  			hash_del(&req->hash_node);
--		} else if (!(req->poll.events & EPOLLONESHOT)) {
--			post_ev = true;
-+		} else {
- 			req->result = 0;
- 			add_wait_queue(req->poll.head, &req->poll.wait);
- 		}
- 		spin_unlock_irq(&ctx->completion_lock);
-+		io_cqring_ev_posted(ctx);
+ 		} else {
+@@ -5395,7 +5396,7 @@ static int __io_poll_add(struct io_kiocb *req)
  
--		if (post_ev)
--			io_cqring_ev_posted(ctx);
- 		if (done) {
- 			nxt = io_put_req_find_next(req);
- 			if (nxt)
+ 	if (mask) { /* no async, we'd stolen it */
+ 		ipt.error = 0;
+-		io_poll_complete(req, mask, 0);
++		io_poll_complete(req, mask);
+ 	}
+ 	spin_unlock_irq(&ctx->completion_lock);
+ 
 -- 
 2.24.0
 

@@ -2,84 +2,116 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 51FFB358D9F
-	for <lists+io-uring@lfdr.de>; Thu,  8 Apr 2021 21:44:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E46DA3592B5
+	for <lists+io-uring@lfdr.de>; Fri,  9 Apr 2021 05:12:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232573AbhDHTnb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 8 Apr 2021 15:43:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36626 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231676AbhDHTna (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Apr 2021 15:43:30 -0400
-Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FB19C061760
-        for <io-uring@vger.kernel.org>; Thu,  8 Apr 2021 12:43:19 -0700 (PDT)
-Received: by mail-pj1-x1031.google.com with SMTP id ep1-20020a17090ae641b029014d48811e37so1969519pjb.4
-        for <io-uring@vger.kernel.org>; Thu, 08 Apr 2021 12:43:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=E9M5KeILaLL2DX4wfYwCCBsqzscZxy2gc8zICwtanXk=;
-        b=cd2isfYsbhE4d4Fq/QWNSBdRy9nv0/o/63vwQ8SHwwgOUl7MxMm1f3LDntIrAACkA/
-         XHhv7UAPcnv1iRX6lOovanhhF9rE+pfYPtP/4m+wl27NZRyLUSETa9+R4NoH0WWYixPQ
-         cY6tjohpXq3USIDbesxcwP0T9rDElGG/DqCNUldLrXuUCiQHq0avzcW5J+U6d5nSQh1D
-         2OHBJV1MnzePCD594Vt+jvvQ+woM1FsNK7m7EL40r1+4i642IR2M/125+7esXUB/MdKO
-         /cCgzMed0kmWa1/szbWaicYHr1JTQGE/WR1Z3LwzkbgcNgFKPTU0xR4m0nYhvBmOGwvM
-         GICA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=E9M5KeILaLL2DX4wfYwCCBsqzscZxy2gc8zICwtanXk=;
-        b=gCLwlrzy77mT7NdTlzSnG83r8n3HXLIKIXwlqdQgY4rI8zjZhvPk9ev/BSJeHZuban
-         AHK8ZKC628e7jUAizHsQyTOSPQkOoNQNjE7mh12R8evAPNO0eZrZh/kkhtlhIVfViWVW
-         Jij0Lx2SQ42hShEnqQflQtm885ttnZ3KCvnQpsnLN7XkbXRCPG+1DyliQVTh/TVjDy5Z
-         xjxVJ/j9cViBSyfl/CST+lZJodKjxKhlwYv7M39M5FGXd3q6aiI90vFnrLqEnXEar2Ca
-         Ah/QbjsI0eDVrSyaLFHTvrgo0ND+G1YnygsUgCdWiJCv4X2i7RhYvLQPY7SeXUxLXa9F
-         zK0w==
-X-Gm-Message-State: AOAM533h7f11oD1FTjIW5BtgCoaHm/BeON50SkCf+GlVtdtjJbjWXi2p
-        rJAqtrU8WONLvi/6NUzyQosJOE0nJiEwyw==
-X-Google-Smtp-Source: ABdhPJyVrUFStDtvz2k0wishikZ9tsR5d3JDh26XKD0FanAazRRVwTsiNSqVeQf5PxcfZfRxB6BpGw==
-X-Received: by 2002:a17:90a:8815:: with SMTP id s21mr9950762pjn.200.1617910998777;
-        Thu, 08 Apr 2021 12:43:18 -0700 (PDT)
-Received: from [192.168.4.41] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id p17sm246558pfn.62.2021.04.08.12.43.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Apr 2021 12:43:18 -0700 (PDT)
-Subject: Re: [PATCH] io-wq: Fix io_wq_worker_affinity()
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     asml.silence@gmail.com, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <YG7QkiUzlEbW85TU@hirez.programming.kicks-ass.net>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <c30520c7-6c20-6a32-e9ce-3673285ebc4d@kernel.dk>
-Date:   Thu, 8 Apr 2021 13:43:17 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S232926AbhDIDMs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 8 Apr 2021 23:12:48 -0400
+Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:51970 "EHLO
+        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232858AbhDIDMs (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Apr 2021 23:12:48 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UUxBy.U_1617937954;
+Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UUxBy.U_1617937954)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 09 Apr 2021 11:12:34 +0800
+Subject: Re: [PATCH 5.13 v2] io_uring: maintain drain requests' logic
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
+References: <1617794605-35748-1-git-send-email-haoxu@linux.alibaba.com>
+ <00898a9b-d2f2-1108-b9d9-2d6acea6e713@kernel.dk>
+ <32f812e1-c044-d4b3-d26f-3721e4611a1d@linux.alibaba.com>
+ <119436dd-5e55-9812-472c-7a257bda12fb@linux.alibaba.com>
+ <826e199f-1cc0-f529-f200-5fa643a62bca@gmail.com>
+From:   Hao Xu <haoxu@linux.alibaba.com>
+Message-ID: <9e38a7cc-9dbc-371e-3d6e-344afecb554a@linux.alibaba.com>
+Date:   Fri, 9 Apr 2021 11:12:33 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.9.0
 MIME-Version: 1.0
-In-Reply-To: <YG7QkiUzlEbW85TU@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <826e199f-1cc0-f529-f200-5fa643a62bca@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/8/21 3:44 AM, Peter Zijlstra wrote:
+在 2021/4/8 下午8:22, Pavel Begunkov 写道:
+> On 08/04/2021 12:43, Hao Xu wrote:
+>> 在 2021/4/8 下午6:16, Hao Xu 写道:
+>>> 在 2021/4/7 下午11:49, Jens Axboe 写道:
+>>>> On 4/7/21 5:23 AM, Hao Xu wrote:
+>>>>> more tests comming, send this out first for comments.
+>>>>>
+>>>>> Hao Xu (3):
+>>>>>     io_uring: add IOSQE_MULTI_CQES/REQ_F_MULTI_CQES for multishot requests
+>>>>>     io_uring: maintain drain logic for multishot requests
+>>>>>     io_uring: use REQ_F_MULTI_CQES for multipoll IORING_OP_ADD
+>>>>>
+>>>>>    fs/io_uring.c                 | 34 +++++++++++++++++++++++++++++-----
+>>>>>    include/uapi/linux/io_uring.h |  8 +++-----
+>>>>>    2 files changed, 32 insertions(+), 10 deletions(-)
+>>>>
+>>>> Let's do the simple cq_extra first. I don't see a huge need to add an
+>>>> IOSQE flag for this, probably best to just keep this on a per opcode
+>>>> basis for now, which also then limits the code path to just touching
+>>>> poll for now, as nothing else supports multishot CQEs at this point.
+>>>>
+>>> gotcha.
+>>> a small issue here:
+>>>    sqe-->sqe(link)-->sqe(link)-->sqe(link, multishot)-->sqe(drain)
+>>>
+>>> in the above case, assume the first 3 single-shot reqs have completed.
+>>> then I think the drian request won't be issued now unless the multishot request in the linkchain has been issued. The trick is: a multishot req
+>>> in a linkchain consumes cached_sq_head when io_get_sqe(), which means it
+>>> is counted in seq, but we will deduct the sqe when it is issued if we
+>>> want to do the job per opcode not in the main code path.
+>>> before the multishot req issued:
+>>>        all_sqes(4) - multishot_sqes(0) == all_cqes(3) - multishot_cqes(0)
+>>> after the multishot req issued:
+>>>        all_sqes(4) - multishot_sqes(1) == all_cqes(3) - multishot_cqes(0)
+>>
+>> Sorry, my statement is wrong. It's not "won't be issued now unless the
+>> multishot request in the linkchain has been issued". Actually I now
+>> think the drain req won't be issued unless the multishot request in the
+>> linkchain has completed. Because we may first check req_need_defer()
+>> then issue(req->link), so:
+>>     sqe0-->sqe1(link)-->sqe2(link)-->sqe3(link, multishot)-->sqe4(drain)
+>>
+>>    sqe2 is completed:
+>>      call req_need_defer:
+>>      all_sqes(4) - multishot_sqes(0) == all_cqes(3) - multishot_cqes(0)
+>>    sqe3 is issued:
+>>      all_sqes(4) - multishot_sqes(1) == all_cqes(3) - multishot_cqes(0)
+>>    sqe3 is completed:
+>>      call req_need_defer:
+>>      all_sqes(4) - multishot_sqes(1) == all_cqes(3) - multishot_cqes(0)
+>>
+>> sqe4 shouldn't wait sqe3.
 > 
-> Do not include private headers and do not frob in internals.
+> Do you mean it wouldn't if the patch is applied? Because any drain
+> request must wait for all requests submitted before to complete. And
+> so before issuing sqe4 it must wait for sqe3 __request__ to die, and
+> so for all sqe3's CQEs.
 > 
-> On top of that, while the previous code restores the affinity, it
-> doesn't ensure the task actually moves there if it was running,
-> leading to the fun situation that it can be observed running outside
-> of its allowed mask for potentially significant time.
+> previously
 > 
-> Use the proper API instead.
+Hi Pavel, the issue is what will happen after the patch being applied. 
+The patch is to ignore all the multishot sqes and cqes. So by design,
+sqe4 should wait for sqe0,1,2's completion, not sqe3's. But since we
+implement it in per opcode place and don't touch the main code path, we
+deduct a multishot sqe when issusing it(eg. call io_poll_add()).
+So only when we issue sqe3, the equation is true:
+     all_sqes(4) - multishot_sqes(1) == all_cqes(3) - multishot_cqes(0)
+But at this point, we already missed
+io_commit_cqring()-->__io_queue_deferred(), the next time 
+__io_queue_deferred() being called is when sqe3 completed, so now sqe4
+has waited for sqe3, this is not by design.
 
-Applied, thanks Peter.
+Regards,
+Hao
 
--- 
-Jens Axboe
+
+> 
 

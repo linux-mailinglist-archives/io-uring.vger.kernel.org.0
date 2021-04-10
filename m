@@ -2,59 +2,81 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7355835A8BB
-	for <lists+io-uring@lfdr.de>; Sat, 10 Apr 2021 00:34:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1741C35B077
+	for <lists+io-uring@lfdr.de>; Sat, 10 Apr 2021 22:44:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234976AbhDIWee (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 9 Apr 2021 18:34:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34484 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234602AbhDIWee (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Fri, 9 Apr 2021 18:34:34 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 07DA0610F9;
-        Fri,  9 Apr 2021 22:34:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1618007661;
-        bh=3HKi6E4Q2IaiPmHvhcyQT6mVvlidEOn3KsDTqFlRMa8=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=aKW+gAHxMHojWw7LaLidTgyPuXnK5eoPCWfML0Nb7KFlSBMS50mx/UEAuLYXgwidQ
-         kx+E9RpULHVQ/2UnwmeVJqjbg8n15brMZl1VYZcb93FjrDu3/TvHuj+B0g6GVKxx/z
-         TR0VJ1tItfRdRgc5qXu3U/fEgrMd2t8fXLe76ScBwyC91OB4zcwkAGFnTK3sm1wAGJ
-         oLL6xWgfk9tVuBrWlykC5raDX9c9AYdbkxpsYYQi2UvdIv4OHlrRoYUtJjzjfMyiQZ
-         uKe4TeH37IMIoQxwe9M8A0x69TsUCO6y6GN8ATBaOzYxjMsyoixRDvaSbgFhHPbPAl
-         yU95Vi3VLGqMA==
-Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id EA3DE609B6;
-        Fri,  9 Apr 2021 22:34:20 +0000 (UTC)
-Subject: Re: [GIT PULL] io_uring fixes for 5.12-rc7
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <e782a5ec-f2c1-4980-6428-8b0067df213a@kernel.dk>
-References: <e782a5ec-f2c1-4980-6428-8b0067df213a@kernel.dk>
-X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
-X-PR-Tracked-Message-Id: <e782a5ec-f2c1-4980-6428-8b0067df213a@kernel.dk>
-X-PR-Tracked-Remote: git://git.kernel.dk/linux-block.git tags/io_uring-5.12-2021-04-09
-X-PR-Tracked-Commit-Id: c60eb049f4a19ddddcd3ee97a9c79ab8066a6a03
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 3b9784350f990d8fe2ca08978dc25cd5180d5c21
-Message-Id: <161800766089.9164.4674075082872791153.pr-tracker-bot@kernel.org>
-Date:   Fri, 09 Apr 2021 22:34:20 +0000
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        io-uring <io-uring@vger.kernel.org>
+        id S234668AbhDJUox (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 10 Apr 2021 16:44:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52162 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234439AbhDJUox (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 10 Apr 2021 16:44:53 -0400
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30C9FC06138A
+        for <io-uring@vger.kernel.org>; Sat, 10 Apr 2021 13:44:38 -0700 (PDT)
+Received: by mail-pj1-x1030.google.com with SMTP id il9-20020a17090b1649b0290114bcb0d6c2so6701893pjb.0
+        for <io-uring@vger.kernel.org>; Sat, 10 Apr 2021 13:44:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=Bo8J3/vmthGeI4S9k3sEPafecsWtkfpUSdF9OPct6WE=;
+        b=g7oA8ICZhn6hs3To6upAEIpferdRrdE30gM95RgB0WRp9GvSbw/wsroh59pNxr11F6
+         6AbewISxRro+90CaPK5kpOfIpkfn6zPBeNylm2GT5DPVi2cVDvjLpp8svXgkARK6kYW0
+         OjsZ78hSo2ZJE+NHiFbQOeHUZeqaVSA7fAByEOOq3KNTVLRNlo7h/J7Hi+xFR6emc1h7
+         XB/Fd7rha0yxq2rG3DxNjFeqZr0RloP7hfYIrR3VsDBMmV8M3L+0e1erM3da1GLCuVmb
+         hgUqQp8qm77CEFBK7uhNMRP1PoF+LRk3UxwNqLF8UUcU1G75ZxoyWbsemSbRQ99Q5PA2
+         jgKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Bo8J3/vmthGeI4S9k3sEPafecsWtkfpUSdF9OPct6WE=;
+        b=sXWeW+ifP2bjlYgFBIt3Ux5N/nr9dZq+VM7KxkfUK+bkHKGQzBLeyDGIFCfgi8/Vsy
+         x+owZpfcbputhfYytSxAUgR1EsCeKeihlPY8PGoC/w9zCp/sVWOeO7d5g0Am5b+7fm56
+         u42d8LgvIYawb9VtvK8U9rPXHKwAlvyWkWXIbrqmEyCDcHviEIS+POsLjDqZM7PbK3JU
+         Gr6O/gG53AsX8URR87RrPrfYFKRkU//KRtUnXzf6S+D2nrM0n9za5wmLtzHq00fhYE/D
+         JkRQD5vtCxH5cNAKVCzu1xaKDd0AqOvkSrt0EfudAM14TMojI8vmQmdvf8FpyLY2ujC2
+         Tq8g==
+X-Gm-Message-State: AOAM533wOs8YN/NyjL7heS+v3/IckYZNmb7Jgxrnjo6wO5w6gHV9o8Xn
+        4LjWVj9gv5pLYgbOrfGc8Wi5TRd5rK/+Gg==
+X-Google-Smtp-Source: ABdhPJz9OrDwDU9C5OKKs4RRvBr8DsWIXJqPlTbQXqyLJ0t35ejMpJLpPqXtC28ZWwNHQW9fSs67XQ==
+X-Received: by 2002:a17:902:e806:b029:e5:cb85:dc4d with SMTP id u6-20020a170902e806b02900e5cb85dc4dmr18931781plg.11.1618087477360;
+        Sat, 10 Apr 2021 13:44:37 -0700 (PDT)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id x2sm6713256pgb.89.2021.04.10.13.44.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 10 Apr 2021 13:44:36 -0700 (PDT)
+Subject: Re: [PATCH 0/3] first batch of poll cleanups
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <cover.1617955705.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <e2f3bc4e-18cf-c225-5d19-41929c6fa8aa@kernel.dk>
+Date:   Sat, 10 Apr 2021 14:44:36 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <cover.1617955705.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The pull request you sent on Fri, 9 Apr 2021 14:53:06 -0600:
+On 4/9/21 2:13 AM, Pavel Begunkov wrote:
+> Few early readability changes for poll found while going through it.
 
-> git://git.kernel.dk/linux-block.git tags/io_uring-5.12-2021-04-09
+Thanks, looks good to me. Applied.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/3b9784350f990d8fe2ca08978dc25cd5180d5c21
+> # ./poll-mshot-update fails sometimes as below, but true w/o patches
+> submitted -16, 500
+> poll-many failed
 
-Thank you!
+Yeah I think it can run into overflow, the test case should be
+improved. I'll take a look.
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Jens Axboe
+

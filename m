@@ -2,56 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3071A35B0EB
-	for <lists+io-uring@lfdr.de>; Sun, 11 Apr 2021 02:35:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04E7735B0FB
+	for <lists+io-uring@lfdr.de>; Sun, 11 Apr 2021 02:42:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234708AbhDKAgB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 10 Apr 2021 20:36:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44730 "EHLO
+        id S234757AbhDKAmj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 10 Apr 2021 20:42:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234548AbhDKAgB (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 10 Apr 2021 20:36:01 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80EB7C06138B
-        for <io-uring@vger.kernel.org>; Sat, 10 Apr 2021 17:35:45 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id x7so9214053wrw.10
-        for <io-uring@vger.kernel.org>; Sat, 10 Apr 2021 17:35:45 -0700 (PDT)
+        with ESMTP id S234548AbhDKAmi (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 10 Apr 2021 20:42:38 -0400
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 364F0C06138B
+        for <io-uring@vger.kernel.org>; Sat, 10 Apr 2021 17:42:23 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id x7so9220179wrw.10
+        for <io-uring@vger.kernel.org>; Sat, 10 Apr 2021 17:42:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:from:to:references:autocrypt:message-id:date:user-agent
+        h=subject:to:references:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=TXRrbn15yKfmKTe4gcNeRe5U31f3yUatpzVbRqOj5BY=;
-        b=g1o8jmWRpzLtwa8T6Qm45zpeWz2XmNofwEH1ADLppfXfK2rJiFUiyw/0ZP7hNcqz0t
-         OsbbRr0axqxKv2M0pxbIfM7Ciam362s4L5cliH0FHLiYUM0tvQ+nDJU7IA+9bR/fIn+d
-         cnKjLLsfj+/dsiyvdteQUdaKEWmnJZI9wCha14kEbqarXj+rrdCdRjn02QSvWj21ZiW4
-         rF/9ImzzwnKT61XatI4II0JxmaHSaH0V1PXKOrdjqEnii2IqHYssskUSQ9VktESpnPLH
-         BjYvTACEx/vtmq54cjsO8zs749R+u//EM3ogAKR51mGiLan64vFOU7BNuAb3VHdHXsLi
-         ms8g==
+        bh=XpJiAjFGK0E6/e6mAw6RSzK4Ywt+nZnPWezhS8sG1Hg=;
+        b=W1aVxK3b1FbCxP25WJ/zt7I4ArPYSZwI0NRiiSOC0NMfy8PRRHm+SmxYudf7iTfRY5
+         TbHzrrWJhPqLlnnClrhpywaMKMRvLRsMiPk2R5Glp4mD+xPUrvlnVfgzn8GFU3xA2rRM
+         2zbzmkh17OEkrm0oAnxPknHEbwbTBcuuCIi5Ajliw/y8oGib6/K7siAchwash3wtnYoL
+         b4WVtqV26evj/GUpK8lzgg3yLtE5X/0aNh7W6rV2OYlPuvVCTEV/1roUYHSsCDr8HRSB
+         1T0lL2JTPeY7qCRaWhkWyzmkH4Cm0KLMtG3B7Ml3etojNDSr/Tn0M3dtr2Nsa5zly+O2
+         nd7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:references:autocrypt:message-id
+        h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
          :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=TXRrbn15yKfmKTe4gcNeRe5U31f3yUatpzVbRqOj5BY=;
-        b=EXPrij6b2n9sKq06dy/lVgQatf51XmGtiIHGXwvjQbOMkydxnuzoUx3URzDq+/6If6
-         iwoSgTK25lYABlaw5vnCln1Kegek2VOEqYJjYGCpuHGviwaokQY7zC7VtrwhbXOfNmkG
-         mgFi8Na1QZKYzHN4ddEioxKsFx+hs1L2oJ6/sbSSrLV5c2O33HTyivY7vf/SiTBHmrrY
-         TfEPkdga6+AZEvYM+ryu3S6fGWktRhN4GDRmihXv/rh2FDRgZKs2eIXlF89uK6GqkeU1
-         mVuzR/uLhifiHLRRF2SG0d8qzbza5VKZC8eaVkXXLMph1c/TKezbzrugPuE1nQFKBdA1
-         UqVw==
-X-Gm-Message-State: AOAM5327piW8hTAP29iUF5rqjArt9kUvbkO69K7hnx7KoiTc9OpjyZJA
-        XwMXPjSre1pQMPpD1oTuev+0dPeEoUsO7Q==
-X-Google-Smtp-Source: ABdhPJy2dml3YmtA6yU868jDmjN22vt2Qk0gm4J+kZjyxKQpwhcgH85injs75mk0ULA+qQ6Ea4gsRQ==
-X-Received: by 2002:a05:6000:12cb:: with SMTP id l11mr4447394wrx.267.1618101342604;
-        Sat, 10 Apr 2021 17:35:42 -0700 (PDT)
+        bh=XpJiAjFGK0E6/e6mAw6RSzK4Ywt+nZnPWezhS8sG1Hg=;
+        b=qnszl1+oHdaOKhXdehi6ulzl+IMX2X7zvj2UiQTZpWsw7oznA9vb4+ZblnFGqgWcaz
+         optg7UphfQuS9Ly9e4/rIdUNUtM0IulJ9aSn++knO4aUhXGFiVLUsmPHVA+1l2RsM3sj
+         Ry1FLOvU2RQ5oH9ZR+tlaDMjdIvLEODsnZ6mUplH/J0TBFfPXEySnW6fsqFSRWNJvfiT
+         KixOljAmI6fHi/DhdphwjnlrKJdPsgiA6JgDuVoFy1EXXjDbnDOsMo831iiD1TZ2kBLq
+         qZjIw4JOSRq5BcOu8DHk4z8KAULmFCUj4VL2gO7GYgfo1PBGRIpGpTkMCP9W5NrXJWcv
+         9/3A==
+X-Gm-Message-State: AOAM533/fWI+Hi9K8hWEfcQvJ8DdqV6sOXUDDUyiul8rJQaK4Oemgoso
+        JbN9wgWwXWENAiKujmMHxaxh041qLXJzPA==
+X-Google-Smtp-Source: ABdhPJyOZbiZRvT+zqE1kGt5HmVI2VgrGQ6hsN1x4r+9CkL7wwdcWT7B7issgDG7qR5zFO4HqcAO0w==
+X-Received: by 2002:a5d:4acf:: with SMTP id y15mr14187839wrs.245.1618101741850;
+        Sat, 10 Apr 2021 17:42:21 -0700 (PDT)
 Received: from [192.168.8.169] ([85.255.237.117])
-        by smtp.gmail.com with ESMTPSA id o7sm11033266wrs.16.2021.04.10.17.35.41
+        by smtp.gmail.com with ESMTPSA id g12sm1705860wru.47.2021.04.10.17.42.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 10 Apr 2021 17:35:41 -0700 (PDT)
-Subject: Re: [PATCH 5.12 v3] io_uring: fix rw req completion
-From:   Pavel Begunkov <asml.silence@gmail.com>
+        Sat, 10 Apr 2021 17:42:21 -0700 (PDT)
+Subject: Re: [PATCH 0/3] first batch of poll cleanups
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-References: <01f81563aacb51972dacff4f2080087c321e424a.1617906241.git.asml.silence@gmail.com>
+References: <cover.1617955705.git.asml.silence@gmail.com>
+ <e2f3bc4e-18cf-c225-5d19-41929c6fa8aa@kernel.dk>
+From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
  bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
@@ -95,12 +96,12 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <88a1e893-b75e-8569-fc4e-3c6a54cfbcb6@gmail.com>
-Date:   Sun, 11 Apr 2021 01:31:35 +0100
+Message-ID: <d3c6328f-e8b3-c4f2-a352-80a5833c0e55@gmail.com>
+Date:   Sun, 11 Apr 2021 01:38:14 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <01f81563aacb51972dacff4f2080087c321e424a.1617906241.git.asml.silence@gmail.com>
+In-Reply-To: <e2f3bc4e-18cf-c225-5d19-41929c6fa8aa@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -108,53 +109,24 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 08/04/2021 19:28, Pavel Begunkov wrote:
-> WARNING: at fs/io_uring.c:8578 io_ring_exit_work.cold+0x0/0x18
+On 10/04/2021 21:44, Jens Axboe wrote:
+> On 4/9/21 2:13 AM, Pavel Begunkov wrote:
+>> Few early readability changes for poll found while going through it.
 > 
-> As reissuing is now passed back by REQ_F_REISSUE and kiocb_done()
-> internally uses __io_complete_rw(), it may stop after setting the flag
-> so leaving a dangling request.
+> Thanks, looks good to me. Applied.
 > 
-> There are tricky edge cases, e.g. reading beyound file, boundary, so
-> the easiest way is to hand code reissue in kiocb_done() as
-> __io_complete_rw() was doing for us before.
+>> # ./poll-mshot-update fails sometimes as below, but true w/o patches
+>> submitted -16, 500
+>> poll-many failed
+> 
+> Yeah I think it can run into overflow, the test case should be
 
-fwiw, was using this fixed up version for 5.13
+fwiw, also hangs sometimes
 
+> improved. I'll take a look.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 959df7666d45..a1de599dce55 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -2743,6 +2743,7 @@ static void kiocb_done(struct kiocb *kiocb, ssize_t ret,
- {
- 	struct io_kiocb *req = container_of(kiocb, struct io_kiocb, rw.kiocb);
- 	struct io_async_rw *io = req->async_data;
-+	bool check_reissue = kiocb->ki_complete == io_complete_rw;
- 
- 	/* add previously done IO, if any */
- 	if (io && io->bytes_done > 0) {
-@@ -2758,6 +2759,22 @@ static void kiocb_done(struct kiocb *kiocb, ssize_t ret,
- 		__io_complete_rw(req, ret, 0, issue_flags);
- 	else
- 		io_rw_done(kiocb, ret);
-+
-+	if (check_reissue && req->flags & REQ_F_REISSUE) {
-+		req->flags &= ~REQ_F_REISSUE;
-+
-+		if (io_resubmit_prep(req)) {
-+			req_ref_get(req);
-+			io_queue_async_work(req);
-+		} else {
-+			int cflags = 0;
-+
-+			req_set_fail_links(req);
-+			if (req->flags & REQ_F_BUFFER_SELECTED)
-+				cflags = io_put_rw_kbuf(req);
-+			__io_req_complete(req, issue_flags, ret, cflags);
-+		}
-+	}
- }
- 
- static int io_import_fixed(struct io_kiocb *req, int rw, struct iov_iter *iter)
+Great, but it doesn't bother, was going to fix it myself but after
+I'm done with other poll stuff. 
 
+-- 
+Pavel Begunkov

@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CFED35B10D
-	for <lists+io-uring@lfdr.de>; Sun, 11 Apr 2021 02:51:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B14835B10E
+	for <lists+io-uring@lfdr.de>; Sun, 11 Apr 2021 02:51:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234903AbhDKAvS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 10 Apr 2021 20:51:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48002 "EHLO
+        id S234945AbhDKAvT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 10 Apr 2021 20:51:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234944AbhDKAvS (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 10 Apr 2021 20:51:18 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C288FC06138B
-        for <io-uring@vger.kernel.org>; Sat, 10 Apr 2021 17:51:02 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id w7-20020a1cdf070000b0290125f388fb34so4161406wmg.0
-        for <io-uring@vger.kernel.org>; Sat, 10 Apr 2021 17:51:02 -0700 (PDT)
+        with ESMTP id S234944AbhDKAvT (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 10 Apr 2021 20:51:19 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8F03C06138B
+        for <io-uring@vger.kernel.org>; Sat, 10 Apr 2021 17:51:03 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id g18-20020a7bc4d20000b0290116042cfdd8so6671167wmk.4
+        for <io-uring@vger.kernel.org>; Sat, 10 Apr 2021 17:51:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=9lCEYPxf4hNnsd0Z6/dDvyyRYtbQnAl3yGpR4xYBRdQ=;
-        b=AkL2tIiUyGtymLQLkKA5GPDP1Tees6h5f12BJP8pCwHgeN8xmgCUe1LuK1lw8LT/GD
-         UMt4yBSwemfIGhhEABnc0CrIgafbO5uNPMB3quEcouscKLD9X0nhbh5fPMfCR0cpyUPA
-         5cyYHTiiDZN9FucgFjsm8wxD2QOupj+kbPX+urUK/1Jha8lxXW6dH6Ozp+V2cS6flL/h
-         yIlL2OJfwDMCylVEsvokAwr3kB96xmSCh58IPMRm5GCusv6/PHkCf5sNlooisFX39Wad
-         QtRuztv0ddOmnSe/Um+6ijkKMpJI4DXRnqYSpNU3Mz4uvEFSqsh4301k8nG4N/Aua3MC
-         se/Q==
+        bh=iYskV1jhr/lvYvhYixl6Sgxmmk7vOzRS+S2jyYJvaGY=;
+        b=MekDcoxJAY9JfZYqESVbBfWUeUcePK7TZ5lcCT1NKGmDlguWqbaNc4LTqSYc4IHHN1
+         5Xb9mypAQOld9bDVdlBJPykdh2OgioCWDNSz32ElZYoFNgKrEj+uX88kxqL5Hm3KZ/Kb
+         lT7McpUIAsy6+vabjBf3l7b4MyoTtVAOLhYSLbjKuPmisRtMBLEFOeov9KXGEEawjWTa
+         mQ/e9ae80vxRJFBhKltFnSe8a/kzf+ok1H2FiQ5mxxQPxLAmLnICkdxIX175FMnV98LJ
+         m/N16eJifi/q2jsGTmkRM0iKD43vLdZ5VW0pcAqCVspZ2diUkeUYgMUrjhri2wMFe8Y9
+         b1uA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=9lCEYPxf4hNnsd0Z6/dDvyyRYtbQnAl3yGpR4xYBRdQ=;
-        b=g1ifBcuqC6MReVGPfigFeAGwRlhsqc1kLZO9m2wtXEUlNML+p9Wt/n0R0xA89l+iOQ
-         mUTPhWBIzlTIgSETpF7GM0nHtO5nFTvJEkAluCUVVoAHMcIlR8RDJozA6s8xb3L8kjXG
-         wGnPYqZBBGOqzU/xGuN9btyvcdpeLuooDp5xTAIDTjF8oL8rsz87bB1hyqqrwT9DzzVk
-         38ljt2B2EvHzBFWk0Sum864M4HkUdR4hobJSY66Dn2JsqfNZEr1kHYqK39RfBPVRctLC
-         e3oWAWGDhcnGeFnTptJhbJBF5L8w3jHGBV28hdY+kFlkp1zstddpn3Nj7Lau6XAMusCf
-         Aldg==
-X-Gm-Message-State: AOAM532F+ewWUJzblvQL08LG11uxqoaO5ox2H2q7dAHi2T5kmL9kjdi6
-        txAWaDNLxkf55qwXVSfmmeLgWYqm9i17kA==
-X-Google-Smtp-Source: ABdhPJxCzzZF1GULol8LeV699nN8AWqbPFNDGr2FbhPPeS45b7DNVoHuM2pLB46fq9LqMDWLWOzAzg==
-X-Received: by 2002:a05:600c:154a:: with SMTP id f10mr19578440wmg.20.1618102261610;
-        Sat, 10 Apr 2021 17:51:01 -0700 (PDT)
+        bh=iYskV1jhr/lvYvhYixl6Sgxmmk7vOzRS+S2jyYJvaGY=;
+        b=S+corsCJmFez7pZS1I/rd9U6qLzLtC16W457i0C8I1GBFj1pb8jCnGsOAmSrk8TjQK
+         W3OKgYKjWsAC4Rn+CW0JzAy/PB2iFMMvD1CqrjzkVDcv5THjQNDVrrLRGNo0pKls5hGk
+         QCcqzr2YMM5fffFicj3RCRL/pTITH32H1FLAg5PaIqZSBFor3C4YBZpG05JNAm+AEUBb
+         3rmSdatwBALQCOrO9CZjo/CZTn+1H/UyChiGy1YH94xuOglrjCsrqV1PCRG4FuJgO5fN
+         Cg3GBIPsUbxaYLQzRZYOQlo8h/7VV98nVR1ucq4hAAFLNk3hB7+ZReAq5fyl/XuKWUHi
+         Prpg==
+X-Gm-Message-State: AOAM531o8ckV+0iv0O8+dcS72micE9JAKD5jAkq+puQmVUTtTpbzg669
+        7hHSIf7l1XTvU3zS1voIqj8=
+X-Google-Smtp-Source: ABdhPJylVry1lmZ39RPRld52Mmyzr8yXoPoWe66Bymu5JiQtghPFE/nQAyWOghcOKRhC/2yrg+lg0w==
+X-Received: by 2002:a1c:6709:: with SMTP id b9mr7248666wmc.56.1618102262460;
+        Sat, 10 Apr 2021 17:51:02 -0700 (PDT)
 Received: from localhost.localdomain ([85.255.237.117])
-        by smtp.gmail.com with ESMTPSA id y20sm9204735wma.45.2021.04.10.17.51.00
+        by smtp.gmail.com with ESMTPSA id y20sm9204735wma.45.2021.04.10.17.51.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 10 Apr 2021 17:51:01 -0700 (PDT)
+        Sat, 10 Apr 2021 17:51:02 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 09/16] io_uring: optimise fill_event() by inlining
-Date:   Sun, 11 Apr 2021 01:46:33 +0100
-Message-Id: <a11d59424bf4417aca33f5ec21008bb3b0ebd11e.1618101759.git.asml.silence@gmail.com>
+Subject: [PATCH 10/16] io_uring: simplify io_rsrc_data refcounting
+Date:   Sun, 11 Apr 2021 01:46:34 +0100
+Message-Id: <1551d90f7c9b183cf2f0d7b5e5b923430acb03fa.1618101759.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1618101759.git.asml.silence@gmail.com>
 References: <cover.1618101759.git.asml.silence@gmail.com>
@@ -61,127 +61,149 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-There are three cases where we much care about performance of
-io_cqring_fill_event() -- flushing inline completions, iopoll and
-io_req_complete_post(). Inline a hot part of fill_event() into them.
-
-All others are not as important and we don't want to bloat binary for
-them, so add a noinline version of the function for all other use
-use cases.
-
-nops test(batch=32): 16.932 vs 17.822 KIOPS
+We don't take many references of struct io_rsrc_data, only one per each
+io_rsrc_node, so using percpu refs is overkill. Use atomic ref instead,
+which is much simpler.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 57 ++++++++++++++++++++++++++++++++-------------------
- 1 file changed, 36 insertions(+), 21 deletions(-)
+ fs/io_uring.c | 48 ++++++++++++++++--------------------------------
+ 1 file changed, 16 insertions(+), 32 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 1a7bfb10d2b2..a8d6ea1ecd2d 100644
+index a8d6ea1ecd2d..143afe827cad 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -1338,7 +1338,7 @@ static inline unsigned int __io_cqring_events(struct io_ring_ctx *ctx)
- 	return ctx->cached_cq_tail - READ_ONCE(ctx->rings->cq.head);
+@@ -240,7 +240,7 @@ struct io_rsrc_data {
+ 	struct io_ring_ctx		*ctx;
+ 
+ 	rsrc_put_fn			*do_put;
+-	struct percpu_ref		refs;
++	atomic_t			refs;
+ 	struct completion		done;
+ 	bool				quiesce;
+ };
+@@ -7082,13 +7082,6 @@ static void __io_sqe_files_unregister(struct io_ring_ctx *ctx)
+ #endif
  }
  
--static struct io_uring_cqe *io_get_cqring(struct io_ring_ctx *ctx)
-+static inline struct io_uring_cqe *io_get_cqring(struct io_ring_ctx *ctx)
- {
- 	struct io_rings *rings = ctx->rings;
- 	unsigned tail;
-@@ -1494,26 +1494,11 @@ static inline void req_ref_get(struct io_kiocb *req)
- 	atomic_inc(&req->refs);
- }
- 
--static bool io_cqring_fill_event(struct io_kiocb *req, long res,
--				 unsigned int cflags)
-+static bool io_cqring_event_overflow(struct io_kiocb *req, long res,
-+				     unsigned int cflags)
- {
- 	struct io_ring_ctx *ctx = req->ctx;
--	struct io_uring_cqe *cqe;
- 
--	trace_io_uring_complete(ctx, req->user_data, res, cflags);
+-static void io_rsrc_data_ref_zero(struct percpu_ref *ref)
+-{
+-	struct io_rsrc_data *data = container_of(ref, struct io_rsrc_data, refs);
 -
--	/*
--	 * If we can't get a cq entry, userspace overflowed the
--	 * submission (by quite a lot). Increment the overflow count in
--	 * the ring.
--	 */
--	cqe = io_get_cqring(ctx);
--	if (likely(cqe)) {
--		WRITE_ONCE(cqe->user_data, req->user_data);
--		WRITE_ONCE(cqe->res, res);
--		WRITE_ONCE(cqe->flags, cflags);
--		return true;
--	}
- 	if (!atomic_read(&req->task->io_uring->in_idle)) {
- 		struct io_overflow_cqe *ocqe;
+-	complete(&data->done);
+-}
+-
+ static inline void io_rsrc_ref_lock(struct io_ring_ctx *ctx)
+ {
+ 	spin_lock_bh(&ctx->rsrc_ref_lock);
+@@ -7119,7 +7112,7 @@ static void io_rsrc_node_switch(struct io_ring_ctx *ctx,
+ 		list_add_tail(&rsrc_node->node, &ctx->rsrc_ref_list);
+ 		io_rsrc_ref_unlock(ctx);
  
-@@ -1541,6 +1526,36 @@ static bool io_cqring_fill_event(struct io_kiocb *req, long res,
- 	return false;
+-		percpu_ref_get(&data_to_kill->refs);
++		atomic_inc(&data_to_kill->refs);
+ 		percpu_ref_kill(&rsrc_node->refs);
+ 		ctx->rsrc_node = NULL;
+ 	}
+@@ -7153,14 +7146,17 @@ static int io_rsrc_ref_quiesce(struct io_rsrc_data *data, struct io_ring_ctx *ct
+ 			break;
+ 		io_rsrc_node_switch(ctx, data);
+ 
+-		percpu_ref_kill(&data->refs);
++		/* kill initial ref, already quiesced if zero */
++		if (atomic_dec_and_test(&data->refs))
++			break;
+ 		flush_delayed_work(&ctx->rsrc_put_work);
+-
+ 		ret = wait_for_completion_interruptible(&data->done);
+ 		if (!ret)
+ 			break;
+ 
+-		percpu_ref_resurrect(&data->refs);
++		atomic_inc(&data->refs);
++		/* wait for all works potentially completing data->done */
++		flush_delayed_work(&ctx->rsrc_put_work);
+ 		reinit_completion(&data->done);
+ 
+ 		mutex_unlock(&ctx->uring_lock);
+@@ -7181,23 +7177,13 @@ static struct io_rsrc_data *io_rsrc_data_alloc(struct io_ring_ctx *ctx,
+ 	if (!data)
+ 		return NULL;
+ 
+-	if (percpu_ref_init(&data->refs, io_rsrc_data_ref_zero,
+-			    PERCPU_REF_ALLOW_REINIT, GFP_KERNEL)) {
+-		kfree(data);
+-		return NULL;
+-	}
++	atomic_set(&data->refs, 1);
+ 	data->ctx = ctx;
+ 	data->do_put = do_put;
+ 	init_completion(&data->done);
+ 	return data;
  }
  
-+static inline bool __io_cqring_fill_event(struct io_kiocb *req, long res,
-+					     unsigned int cflags)
-+{
-+	struct io_ring_ctx *ctx = req->ctx;
-+	struct io_uring_cqe *cqe;
-+
-+	trace_io_uring_complete(ctx, req->user_data, res, cflags);
-+
-+	/*
-+	 * If we can't get a cq entry, userspace overflowed the
-+	 * submission (by quite a lot). Increment the overflow count in
-+	 * the ring.
-+	 */
-+	cqe = io_get_cqring(ctx);
-+	if (likely(cqe)) {
-+		WRITE_ONCE(cqe->user_data, req->user_data);
-+		WRITE_ONCE(cqe->res, res);
-+		WRITE_ONCE(cqe->flags, cflags);
-+		return true;
-+	}
-+	return io_cqring_event_overflow(req, res, cflags);
-+}
-+
-+/* not as hot to bloat with inlining */
-+static noinline bool io_cqring_fill_event(struct io_kiocb *req, long res,
-+					  unsigned int cflags)
-+{
-+	return __io_cqring_fill_event(req, res, cflags);
-+}
-+
- static void io_req_complete_post(struct io_kiocb *req, long res,
- 				 unsigned int cflags)
+-static void io_rsrc_data_free(struct io_rsrc_data *data)
+-{
+-	percpu_ref_exit(&data->refs);
+-	kfree(data);
+-}
+-
+ static int io_sqe_files_unregister(struct io_ring_ctx *ctx)
  {
-@@ -1548,7 +1563,7 @@ static void io_req_complete_post(struct io_kiocb *req, long res,
- 	unsigned long flags;
+ 	struct io_rsrc_data *data = ctx->file_data;
+@@ -7211,7 +7197,7 @@ static int io_sqe_files_unregister(struct io_ring_ctx *ctx)
  
- 	spin_lock_irqsave(&ctx->completion_lock, flags);
--	io_cqring_fill_event(req, res, cflags);
-+	__io_cqring_fill_event(req, res, cflags);
- 	/*
- 	 * If we're the last reference to this request, add to our locked
- 	 * free_list cache.
-@@ -2103,7 +2118,7 @@ static void io_submit_flush_completions(struct io_comp_state *cs,
- 	spin_lock_irq(&ctx->completion_lock);
- 	for (i = 0; i < nr; i++) {
- 		req = cs->reqs[i];
--		io_cqring_fill_event(req, req->result, req->compl.cflags);
-+		__io_cqring_fill_event(req, req->result, req->compl.cflags);
+ 	__io_sqe_files_unregister(ctx);
+ 	io_free_file_tables(data, ctx->nr_user_files);
+-	io_rsrc_data_free(data);
++	kfree(data);
+ 	ctx->file_data = NULL;
+ 	ctx->nr_user_files = 0;
+ 	return 0;
+@@ -7544,7 +7530,8 @@ static void __io_rsrc_put_work(struct io_rsrc_node *ref_node)
  	}
- 	io_commit_cqring(ctx);
- 	spin_unlock_irq(&ctx->completion_lock);
-@@ -2243,7 +2258,7 @@ static void io_iopoll_complete(struct io_ring_ctx *ctx, unsigned int *nr_events,
- 		if (req->flags & REQ_F_BUFFER_SELECTED)
- 			cflags = io_put_rw_kbuf(req);
  
--		io_cqring_fill_event(req, req->result, cflags);
-+		__io_cqring_fill_event(req, req->result, cflags);
- 		(*nr_events)++;
+ 	io_rsrc_node_destroy(ref_node);
+-	percpu_ref_put(&rsrc_data->refs);
++	if (atomic_dec_and_test(&rsrc_data->refs))
++		complete(&rsrc_data->done);
+ }
  
- 		if (req_ref_put_and_test(req))
+ static void io_rsrc_put_work(struct work_struct *work)
+@@ -7568,10 +7555,8 @@ static void io_rsrc_put_work(struct work_struct *work)
+ static void io_rsrc_node_ref_zero(struct percpu_ref *ref)
+ {
+ 	struct io_rsrc_node *node = container_of(ref, struct io_rsrc_node, refs);
+-	struct io_rsrc_data *data = node->rsrc_data;
+-	struct io_ring_ctx *ctx = data->ctx;
++	struct io_ring_ctx *ctx = node->rsrc_data->ctx;
+ 	bool first_add = false;
+-	int delay;
+ 
+ 	io_rsrc_ref_lock(ctx);
+ 	node->done = true;
+@@ -7587,9 +7572,8 @@ static void io_rsrc_node_ref_zero(struct percpu_ref *ref)
+ 	}
+ 	io_rsrc_ref_unlock(ctx);
+ 
+-	delay = percpu_ref_is_dying(&data->refs) ? 0 : HZ;
+-	if (first_add || !delay)
+-		mod_delayed_work(system_wq, &ctx->rsrc_put_work, delay);
++	if (first_add)
++		mod_delayed_work(system_wq, &ctx->rsrc_put_work, HZ);
+ }
+ 
+ static struct io_rsrc_node *io_rsrc_node_alloc(struct io_ring_ctx *ctx)
+@@ -7684,7 +7668,7 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
+ 	io_free_file_tables(file_data, nr_args);
+ 	ctx->nr_user_files = 0;
+ out_free:
+-	io_rsrc_data_free(ctx->file_data);
++	kfree(ctx->file_data);
+ 	ctx->file_data = NULL;
+ 	return ret;
+ }
 -- 
 2.24.0
 

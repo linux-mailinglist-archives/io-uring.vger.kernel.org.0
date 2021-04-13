@@ -2,113 +2,93 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F38B35DCB8
-	for <lists+io-uring@lfdr.de>; Tue, 13 Apr 2021 12:47:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9823635E304
+	for <lists+io-uring@lfdr.de>; Tue, 13 Apr 2021 17:38:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343847AbhDMKrl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 13 Apr 2021 06:47:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38248 "EHLO
+        id S231684AbhDMPii (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 13 Apr 2021 11:38:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343834AbhDMKrh (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 13 Apr 2021 06:47:37 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1A37C061574;
-        Tue, 13 Apr 2021 03:47:17 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id 12so8454481wmf.5;
-        Tue, 13 Apr 2021 03:47:17 -0700 (PDT)
+        with ESMTP id S231652AbhDMPih (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 13 Apr 2021 11:38:37 -0400
+Received: from mail-oi1-x229.google.com (mail-oi1-x229.google.com [IPv6:2607:f8b0:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95743C061574
+        for <io-uring@vger.kernel.org>; Tue, 13 Apr 2021 08:38:17 -0700 (PDT)
+Received: by mail-oi1-x229.google.com with SMTP id k25so17418850oic.4
+        for <io-uring@vger.kernel.org>; Tue, 13 Apr 2021 08:38:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=4lMXsJO9v5huIB4nN6VmdX8CnLsm8ybpqVlxJ2R7FVs=;
-        b=ELmLOhG/JzTuPw+abAxVSGpQo9tp2HacHyCaObvq6UlYYbUl+DqeSqXuMkoOvcCGDw
-         DhJvRQizNiW3xw3sJQ65BsMh++L530eghGKewiFQeB5xuS4IwDUi/9F+T0R/e6T8Sb3+
-         wtzN1FqVwHSGn29hP94okdBTPKGef/jd0YQhtXxaMVVWBA230BTu5n1KNigcc93+pyIk
-         wzKwYv1ZuvUkr7c9XvCUHFIiDoTMW7XKsBl1FXR2NuVSWlSQnI2KpNTQGbl3N6dhG1wC
-         q1PTta+YQWBrzqEOxnuSQlketwFJvGhffXM/P9XFV4Of4l8Q0niAr65AU0fno+86HsEF
-         juFw==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=7/5RGeZ1nTL6ccENWkv1pA2LHYMxN6cPxYi5wTou2Hg=;
+        b=mDLmi244wmcVrIwZEPYK8nNUtow1dBA+8m/xrbvveiEy0Ptj3wnQJLSrMCygjXMGaK
+         dSs4GcaeTEol0z2wO1TgNcVw14H4nxfrTTxVzjzR2frP/BXqcqWIKilBqd10ZZfeyYjL
+         mbJbW4rTCVlWdBk2OpEc+ATK123sMeUi9f41CVMY0F06I+/4EUT083CtEFC2DSad9+/e
+         exfw63CxQgwZnOCdh6GpThztkCJgZx8s18U8ZRVabhbtGBsejOdfANb1XZo2zK1x6nY5
+         rTnGIj6ElDA6KaH8XQrbrI9+y75CJFgodalmKCMMmIcv+65R8RXVzs4i0TznjpiGJ+1I
+         e3ig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=4lMXsJO9v5huIB4nN6VmdX8CnLsm8ybpqVlxJ2R7FVs=;
-        b=pEDnP/KvDyVy7umft0QG6O19qErfraiVRTekww4dIieaQoZH3crwVgguJBDJiTlNic
-         PljPTmzDjCSwnV8jil9l7zRr3nt0TYZZBRRnOjjnj1SOHJ457oLmDNL66MrshVS54MNX
-         CVI9hnhsKo1DV2a3uRg276qF1gB0APHkVn49ARVANq5C9JVt19U/kwo3dBF0CizTNW1L
-         FuMncmWZbKs989155/3+v02EzKReEk9n4RBaS+34nBfgmHL/6mAkmBRrQpFHQ6OtLOj9
-         Why+7fFls/lfeyvcwBM0CRzX0cmKFCGfqOKiB+Za88MBBObwgST/5tqzENwJyxei48co
-         mqtg==
-X-Gm-Message-State: AOAM5309SjaRB+6YTmzXVGZ18sPJArJjGVEBXJ905EWt4ECUnGvW//IF
-        USYL2VfUYyTSokGRPSrXKy5Dy9GPR68=
-X-Google-Smtp-Source: ABdhPJz4J8Jjbmwm6dq3O8ZWcfcakv3BJzPUQF4u6SLru8tOhXO7PHs5miqfh2mg9rbX78a2p0R3sg==
-X-Received: by 2002:a1c:750d:: with SMTP id o13mr3475157wmc.76.1618310836535;
-        Tue, 13 Apr 2021 03:47:16 -0700 (PDT)
-Received: from localhost.localdomain ([148.252.128.208])
-        by smtp.gmail.com with ESMTPSA id m14sm19858640wrh.28.2021.04.13.03.47.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Apr 2021 03:47:15 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc:     stable@vger.kernel.org, Joakim Hassila <joj@mac.com>
-Subject: [PATCH] io_uring: fix early sqd_list removal sqpoll hangs
-Date:   Tue, 13 Apr 2021 11:43:00 +0100
-Message-Id: <1592cc2b0418a0512c83898dbef0b1c9722e8645.1618310545.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
+        bh=7/5RGeZ1nTL6ccENWkv1pA2LHYMxN6cPxYi5wTou2Hg=;
+        b=QyeEFBVWTUyJGiDniDGoXz7i4j+2o/oHPf42UkqugABLBNW04FO3BKz57S0xESkRB1
+         0esTccopsM7wGlRnrfdqKhf5fMGDByo9YzmQ704R5oHolQhHh8o/UiIFSofsutuRa6Vf
+         WpC4io45H4InQXDqYlmxLfPIZHBfp/xhPaNYq1Os1iiZTZO8KGwMVXvLxjNBEvG9KBbW
+         aaSPTqi6yVGgzRvKCrWNbjvONa4MBUzuc9u8m5QQBmOc6nQD8VQgY4Gac/THjyMoIbVW
+         skBIvxUdvfEU9LDDQ+ZQ90OjZOFv6/2CFx6xG9JkFpmJMUk0XpMPtHAohbpwygiRjfNV
+         GHfA==
+X-Gm-Message-State: AOAM532jyXJSG1sOyvEXlVqTLcMwJNqqDdCWD4hdgkq9xE5VoKS+h3n9
+        4BGg2SlU/u1VOvmttzXhKF2ewOgtD6ISyw==
+X-Google-Smtp-Source: ABdhPJy4nVic7zbJQ9efgzmaEuXNunO6HtbW9gVB6MojbGPnu4qbvH8v2yO/17L2eFmZ/637b2kAzA==
+X-Received: by 2002:aca:6545:: with SMTP id j5mr427113oiw.31.1618328296155;
+        Tue, 13 Apr 2021 08:38:16 -0700 (PDT)
+Received: from [192.168.1.30] ([207.135.233.147])
+        by smtp.gmail.com with ESMTPSA id m14sm3590663otn.69.2021.04.13.08.38.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Apr 2021 08:38:15 -0700 (PDT)
+Subject: Re: [PATCH 5.13 0/9] another 5.13 pack
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <cover.1618278933.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <a82e7352-ed1c-a2b7-82af-41cd7990ff78@kernel.dk>
+Date:   Tue, 13 Apr 2021 09:38:16 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <cover.1618278933.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-[  245.463317] INFO: task iou-sqp-1374:1377 blocked for more than 122 seconds.
-[  245.463334] task:iou-sqp-1374    state:D flags:0x00004000
-[  245.463345] Call Trace:
-[  245.463352]  __schedule+0x36b/0x950
-[  245.463376]  schedule+0x68/0xe0
-[  245.463385]  __io_uring_cancel+0xfb/0x1a0
-[  245.463407]  do_exit+0xc0/0xb40
-[  245.463423]  io_sq_thread+0x49b/0x710
-[  245.463445]  ret_from_fork+0x22/0x30
+On 4/12/21 7:58 PM, Pavel Begunkov wrote:
+> 1-2 are fixes
+> 
+> 7/9 is about nicer overflow handling while someones exits
+> 
+> 8-9 changes how we do iopoll with iopoll_list empty, saves from burning
+> CPU for nothing.
+> 
+> Pavel Begunkov (9):
+>   io_uring: fix leaking reg files on exit
+>   io_uring: fix uninit old data for poll event upd
+>   io_uring: split poll and poll update structures
+>   io_uring: add timeout completion_lock annotation
+>   io_uring: refactor hrtimer_try_to_cancel uses
+>   io_uring: clean up io_poll_remove_waitqs()
+>   io_uring: don't fail overflow on in_idle
+>   io_uring: skip futile iopoll iterations
+>   io_uring: inline io_iopoll_getevents()
+> 
+>  fs/io_uring.c | 236 ++++++++++++++++++++++----------------------------
+>  1 file changed, 104 insertions(+), 132 deletions(-)
 
-It happens when sqpoll forgot to run park_task_work and goes to exit,
-then exiting user may remove ctx from sqd_list, and so corresponding
-io_sq_thread() -> io_uring_cancel_sqpoll() won't be executed. Hopefully
-it just stucks in do_exit() in this case.
+Applied, thanks.
 
-Cc: stable@vger.kernel.org
-Reported-by: Joakim Hassila <joj@mac.com>
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index cadd7a65a7f4..f390914666b1 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -6817,6 +6817,9 @@ static int io_sq_thread(void *data)
- 	current->flags |= PF_NO_SETAFFINITY;
- 
- 	mutex_lock(&sqd->lock);
-+	/* a user may had exited before the thread wstarted */
-+	io_run_task_work_head(&sqd->park_task_work);
-+
- 	while (!test_bit(IO_SQ_THREAD_SHOULD_STOP, &sqd->state)) {
- 		int ret;
- 		bool cap_entries, sqt_spin, needs_sched;
-@@ -6833,10 +6836,10 @@ static int io_sq_thread(void *data)
- 			}
- 			cond_resched();
- 			mutex_lock(&sqd->lock);
--			if (did_sig)
--				break;
- 			io_run_task_work();
- 			io_run_task_work_head(&sqd->park_task_work);
-+			if (did_sig)
-+				break;
- 			timeout = jiffies + sqd->sq_thread_idle;
- 			continue;
- 		}
 -- 
-2.24.0
+Jens Axboe
 

@@ -2,158 +2,90 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ACB3635D51E
-	for <lists+io-uring@lfdr.de>; Tue, 13 Apr 2021 04:03:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4900B35D8C0
+	for <lists+io-uring@lfdr.de>; Tue, 13 Apr 2021 09:21:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245348AbhDMCDb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 12 Apr 2021 22:03:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37346 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245183AbhDMCDa (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 12 Apr 2021 22:03:30 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9ADFC061574
-        for <io-uring@vger.kernel.org>; Mon, 12 Apr 2021 19:03:11 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id w4so11055228wrt.5
-        for <io-uring@vger.kernel.org>; Mon, 12 Apr 2021 19:03:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=fSq3/gd3oUythXAR8rDJiTRRQnh9nEoRskewKWWVFSU=;
-        b=BiOsmkQLadta9a2Uc1Z/eD1aWIX2CasTIBem89dsq6qD+7wb32Hh9tM3ubrmvPsIiJ
-         fe4hVdbGrTJ+4g0XgoDHyXyGxObipG3jN2d/aRx6H71eVT9K9xOe+33XjdfSdRfEVFNe
-         Z28CjHvazXuGdRAvOVZug2zo6BSR8i3b+sWNEdcbPzFHVR3J7ts8m/fyZP0UHF2RQ78A
-         Rdx8/3gbwnQqD+ElByA1CSy8M0QVsrSdBYLNuJiFxR0QqDGJa4iGK+C/vplGGbZmCJgA
-         fMpmKp1mp2gRY65jdTVAG+o8ot5vQpo9DFtGkCUbQRwjzUs6Glg7W2rIoH+CBwncQ45V
-         ampQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=fSq3/gd3oUythXAR8rDJiTRRQnh9nEoRskewKWWVFSU=;
-        b=b7o8v9RxjZed3BzPUdqVm1Jej3LXPqGFFUcvv/wuXYAOYZiPywWVrR26kdMuoz0HMY
-         r8Nr88UoHoNZSCGO6w4J97yNigpvojUgDqQToVeg3tnDGqu/G5PyokNZ3RCaKLL/W058
-         HT9xHFGrpDdUBg6eq6NegjVLVSAb2JOSSw6eqYmyRJzFvSSANIFvl4JHOmMYLsgj26J5
-         r8DfUc4FFZoYXXMGsJSwFNwxc5eKb/Dj9ENk6GVoUJnt+kwx1XOO83rwtdX0a6UnHSYh
-         dbEXiN73Iw3lK8L++YM1FiGEADlpOJ0zEKUBYv9B0zKp+Gd3nk31dmqRqMnIHzjENWV6
-         T90A==
-X-Gm-Message-State: AOAM5311Gquxb0Z/EzfHHzayBRedakMY5Y6SqvXehBdN7oAKqXw/R7FZ
-        cnsm5+okgdv8Kuws0+vFDfgO1LjUd7Q=
-X-Google-Smtp-Source: ABdhPJw5p/s1nNzYvuzpfhr0KrOtLBBk0DLUiixjOCX/e5A7cLoZ0qmCWBGYksYQrgq0KJ75ugUVFQ==
-X-Received: by 2002:a5d:6ac6:: with SMTP id u6mr12657699wrw.290.1618279390725;
-        Mon, 12 Apr 2021 19:03:10 -0700 (PDT)
-Received: from localhost.localdomain ([148.252.128.208])
-        by smtp.gmail.com with ESMTPSA id k7sm18771331wrw.64.2021.04.12.19.03.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Apr 2021 19:03:10 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 9/9] io_uring: inline io_iopoll_getevents()
-Date:   Tue, 13 Apr 2021 02:58:46 +0100
-Message-Id: <7e50b8917390f38bee4f822c6f4a6a98a27be037.1618278933.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <cover.1618278933.git.asml.silence@gmail.com>
-References: <cover.1618278933.git.asml.silence@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S238902AbhDMHVN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 13 Apr 2021 03:21:13 -0400
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:35007 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229580AbhDMHVM (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 13 Apr 2021 03:21:12 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UVQQ6R5_1618298439;
+Received: from e18g09479.et15sqa.tbsite.net(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UVQQ6R5_1618298439)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 13 Apr 2021 15:20:51 +0800
+From:   Hao Xu <haoxu@linux.alibaba.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>
+Subject: [PATCH v3] io_uring: maintain drain logic for multishot poll requests
+Date:   Tue, 13 Apr 2021 15:20:39 +0800
+Message-Id: <1618298439-136286-1-git-send-email-haoxu@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-io_iopoll_getevents() is of no use to us anymore, io_iopoll_check()
-handles all the cases.
+Now that we have multishot poll requests, one SQE can emit multiple
+CQEs. given below example:
+    sqe0(multishot poll)-->sqe1-->sqe2(drain req)
+sqe2 is designed to issue after sqe0 and sqe1 completed, but since sqe0
+is a multishot poll request, sqe2 may be issued after sqe0's event
+triggered twice before sqe1 completed. This isn't what users leverage
+drain requests for.
+Here the solution is to wait for multishot poll requests fully
+completed.
+To achieve this, we should reconsider the req_need_defer equation, the
+original one is:
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+    all_sqes(excluding dropped ones) == all_cqes(including dropped ones)
+
+This means we issue a drain request when all the previous submitted
+SQEs have generated their CQEs.
+Now we should consider multishot requests, we deduct all the multishot
+CQEs except the cancellation one, In this way a multishot poll request
+behave like a normal request, so:
+    all_sqes == all_cqes - multishot_cqes(except cancellations)
+
+Here we introduce cq_extra for it.
+
+Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
 ---
- fs/io_uring.c | 52 +++++++++++++--------------------------------------
- 1 file changed, 13 insertions(+), 39 deletions(-)
+ fs/io_uring.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 1111968bbe7f..05c67ebeabd5 100644
+index 8564c7908126..0ccdeef8cd26 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -2331,27 +2331,6 @@ static int io_do_iopoll(struct io_ring_ctx *ctx, unsigned int *nr_events,
- 	return ret;
- }
+@@ -424,6 +424,7 @@ struct io_ring_ctx {
+ 		unsigned		cq_mask;
+ 		atomic_t		cq_timeouts;
+ 		unsigned		cq_last_tm_flush;
++		unsigned		cq_extra;
+ 		unsigned long		cq_check_overflow;
+ 		struct wait_queue_head	cq_wait;
+ 		struct fasync_struct	*cq_fasync;
+@@ -1190,7 +1191,7 @@ static bool req_need_defer(struct io_kiocb *req, u32 seq)
+ 	if (unlikely(req->flags & REQ_F_IO_DRAIN)) {
+ 		struct io_ring_ctx *ctx = req->ctx;
  
--/*
-- * Poll for a minimum of 'min' events. Note that if min == 0 we consider that a
-- * non-spinning poll check - we'll still enter the driver poll loop, but only
-- * as a non-spinning completion check.
-- */
--static int io_iopoll_getevents(struct io_ring_ctx *ctx, unsigned int *nr_events,
--				long min)
--{
--	while (!list_empty(&ctx->iopoll_list) && !need_resched()) {
--		int ret;
--
--		ret = io_do_iopoll(ctx, nr_events, min);
--		if (ret < 0)
--			return ret;
--		if (*nr_events >= min)
--			return 0;
--	}
--
--	return 1;
--}
--
- /*
-  * We can't just wait for polled events to come to us, we have to actively
-  * find and complete them.
-@@ -2395,17 +2374,16 @@ static int io_iopoll_check(struct io_ring_ctx *ctx, long min)
- 	 * that got punted to a workqueue.
- 	 */
- 	mutex_lock(&ctx->uring_lock);
-+	/*
-+	 * Don't enter poll loop if we already have events pending.
-+	 * If we do, we can potentially be spinning for commands that
-+	 * already triggered a CQE (eg in error).
-+	 */
-+	if (test_bit(0, &ctx->cq_check_overflow))
-+		__io_cqring_overflow_flush(ctx, false);
-+	if (io_cqring_events(ctx))
-+		goto out;
- 	do {
--		/*
--		 * Don't enter poll loop if we already have events pending.
--		 * If we do, we can potentially be spinning for commands that
--		 * already triggered a CQE (eg in error).
--		 */
--		if (test_bit(0, &ctx->cq_check_overflow))
--			__io_cqring_overflow_flush(ctx, false);
--		if (io_cqring_events(ctx))
--			break;
--
- 		/*
- 		 * If a submit got punted to a workqueue, we can have the
- 		 * application entering polling for a command before it gets
-@@ -2424,13 +2402,9 @@ static int io_iopoll_check(struct io_ring_ctx *ctx, long min)
- 			if (list_empty(&ctx->iopoll_list))
- 				break;
- 		}
--
--		ret = io_iopoll_getevents(ctx, &nr_events, min);
--		if (ret <= 0)
--			break;
--		ret = 0;
--	} while (min && !nr_events && !need_resched());
--
-+		ret = io_do_iopoll(ctx, &nr_events, min);
-+	} while (!ret && nr_events < min && !need_resched());
-+out:
- 	mutex_unlock(&ctx->uring_lock);
- 	return ret;
+-		return seq != ctx->cached_cq_tail
++		return seq + ctx->cq_extra != ctx->cached_cq_tail
+ 				+ READ_ONCE(ctx->cached_cq_overflow);
+ 	}
+ 
+@@ -4911,6 +4912,9 @@ static bool io_poll_complete(struct io_kiocb *req, __poll_t mask)
+ 		req->poll.done = true;
+ 		flags = 0;
+ 	}
++	if (flags & IORING_CQE_F_MORE)
++		ctx->cq_extra++;
++
+ 	io_commit_cqring(ctx);
+ 	return !(flags & IORING_CQE_F_MORE);
  }
-@@ -2543,7 +2517,7 @@ static void io_complete_rw_iopoll(struct kiocb *kiocb, long res, long res2)
- /*
-  * After the iocb has been issued, it's safe to be found on the poll list.
-  * Adding the kiocb to the list AFTER submission ensures that we don't
-- * find it from a io_iopoll_getevents() thread before the issuer is done
-+ * find it from a io_do_iopoll() thread before the issuer is done
-  * accessing the kiocb cookie.
-  */
- static void io_iopoll_req_issued(struct io_kiocb *req, bool in_async)
 -- 
-2.24.0
+1.8.3.1
 

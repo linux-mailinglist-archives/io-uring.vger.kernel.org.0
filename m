@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CC8D935D519
-	for <lists+io-uring@lfdr.de>; Tue, 13 Apr 2021 04:03:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A71835D51A
+	for <lists+io-uring@lfdr.de>; Tue, 13 Apr 2021 04:03:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241547AbhDMCD0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 12 Apr 2021 22:03:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37320 "EHLO
+        id S241556AbhDMCD1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 12 Apr 2021 22:03:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241515AbhDMCD0 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 12 Apr 2021 22:03:26 -0400
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B040C061574
-        for <io-uring@vger.kernel.org>; Mon, 12 Apr 2021 19:03:07 -0700 (PDT)
-Received: by mail-wm1-x331.google.com with SMTP id w7-20020a1cdf070000b0290125f388fb34so7233660wmg.0
-        for <io-uring@vger.kernel.org>; Mon, 12 Apr 2021 19:03:07 -0700 (PDT)
+        with ESMTP id S241515AbhDMCD1 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 12 Apr 2021 22:03:27 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BFF0C061574
+        for <io-uring@vger.kernel.org>; Mon, 12 Apr 2021 19:03:08 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id r7so2798515wrm.1
+        for <io-uring@vger.kernel.org>; Mon, 12 Apr 2021 19:03:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=tEVCg4ybGNNIH9IeQQvksiWm4r8oRf+iULnBmFxmVW0=;
-        b=Gs0YojdmBqskuD/AjqU0XRQ05BhOzrwbciYxGyk4R/l+grwO4WVlBEo2Q5kZQzlnTa
-         6ECf93pxhe1k8Dh1XeSdPspdYkKXIuL3tVuN3cOOPnTaaZ2i4x0hOfyfM9hYyVbucXR5
-         FQqEcUIv9BVirgu42eICGVxL5XVdPjFoiFl5Dea1//vYeVTjKUrrILy052MG0NguhS3E
-         SxNA+CGaziYxJnHdWW3AowjJSXNnOQ6kvC6din1+MjfAmz09O6D2l1qWQgp4Trmwoqrh
-         cWKNRXImHdQbZyXf3A4c/PMve0CCqKXTaYBs4bO8lki20g8Qa6jazr2wyvgEzyiv/nWI
-         OyCw==
+        bh=y1em+y19+ZjAJB1ADk1ACSLWpAbTHIWAagFxhBAIHgI=;
+        b=BLqibXT06jX7nGYNdK4ore+41ULSqh1Lpul6hdosQUHcl/FsyBPiyd5s9L/J5nhbPA
+         N1JAJlCtbq4IIVn+t6lQ7mGnxzO9DF4skga0NdpJPgDqyFkhiT7eWlrS4V9+SAMDwOt9
+         N/Mw7e0ssX0SWJxdHBQtwXqeuLv6WfXO+3kc4DML5iAMH+DsRB9Hjdt+ahOol4TSOD6A
+         +595ELdZPT/f6dh6cuWK6gLlfu561mngbPwleY0CxfWMer2Eai3n/b3OY4E3c0XLsSlO
+         OIpnHmrH2rjqUgdd7pBpEbUtMJRgsoAPqCRPeRwZPK5gbwp9maFa/BNYbYZtD6wDfBnf
+         OXew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=tEVCg4ybGNNIH9IeQQvksiWm4r8oRf+iULnBmFxmVW0=;
-        b=Ze8J2/fcD1K5UzjtVY1JqB1Vx4SzS7JtfhO4TGjPPHXDI+bzY3B3a+q9mR8YYIR4an
-         g9ncCxBzax83KA8JfdCTriuMQToQTQ4DuPHR3RCTqT7EQRitk1+5GGZGKNeX5QAeGvF9
-         UHIlYX5Fe7P/PJr5/Cl4aM541AG8eCSRW1WCrrxmaiCw6VTPahaS+OLky+7ntIn/guT3
-         YWcEvEuakul2mtbCNutSXS6My969td3T3AF3+atXoAn9u7s6URWsAGjHMH21exgFbM4v
-         ZyE8KS16kcR9ORK7j/t73J7zv2q61iX2bfsI1K4SEh44ZdZPT4jPOH77dbR4FjhIHv7p
-         yG6A==
-X-Gm-Message-State: AOAM531f8xsaA2TDT66MUge3nk/jqXlIOLP7JdwtC+8eO22nOqvewPCD
-        8n/crt9MiFH+MDa7h22UbFrVH+/1wOY=
-X-Google-Smtp-Source: ABdhPJwoph4keMYYeFE8A0kk34OAzyZ/EdxZ55P0/LOB5T6Pu7GzTVbgD28H8HRGl4E3PhUzZpjsOA==
-X-Received: by 2002:a7b:c770:: with SMTP id x16mr1676648wmk.78.1618279386349;
-        Mon, 12 Apr 2021 19:03:06 -0700 (PDT)
+        bh=y1em+y19+ZjAJB1ADk1ACSLWpAbTHIWAagFxhBAIHgI=;
+        b=G+keyG374OGc7RUK+pLjjutR36Dgk9LBmjDkq4Qc9QLsIFOoHVuQ1Oqj+mYJ8BLpK2
+         FE0fPr9VZHCA1h4UbidQE8SMwTtuyvQzFu21Wc29ZFN3lvlxYYOekmyrHaZKok/b4UiB
+         Fn8/rXFmhEysEC96tgP6NJVkH2A8bO+/S7xhMklJitituNuf/PCC1WsccpX/u0zSukFZ
+         oIW9HbYsc2PlVBu1Fv+T7gPTBEo85/4mwe9sclygKAKNdgS0Pc39KQ2j1jQ2sqPs8nJr
+         2jsm8t0Wdn+PIy4zM6zzXCakt96+QgQ7JpxdYJHyrvqo6ljK3MIGYf9+5j/WeVjo1/c6
+         8JOQ==
+X-Gm-Message-State: AOAM532Mqz/FuB4k2iBaCH2DRZRLEOl6DLNb2MXQfZYY5mMcrcuYiMBY
+        nxU4L5VZahGqIsVxO4hvNwE=
+X-Google-Smtp-Source: ABdhPJwX4FFgiP1SGROaISJSVkKLb+gXgLbXvqkLBI6cxldUZgT1B1VwN09ybp0A/3YN/MqZEu0NlA==
+X-Received: by 2002:adf:e58f:: with SMTP id l15mr3372715wrm.175.1618279387275;
+        Mon, 12 Apr 2021 19:03:07 -0700 (PDT)
 Received: from localhost.localdomain ([148.252.128.208])
-        by smtp.gmail.com with ESMTPSA id k7sm18771331wrw.64.2021.04.12.19.03.05
+        by smtp.gmail.com with ESMTPSA id k7sm18771331wrw.64.2021.04.12.19.03.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Apr 2021 19:03:05 -0700 (PDT)
+        Mon, 12 Apr 2021 19:03:06 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 4/9] io_uring: add timeout completion_lock annotation
-Date:   Tue, 13 Apr 2021 02:58:41 +0100
-Message-Id: <bdbb22026024eac29203c1aa0045c4954a2488d1.1618278933.git.asml.silence@gmail.com>
+Subject: [PATCH 5/9] io_uring: refactor hrtimer_try_to_cancel uses
+Date:   Tue, 13 Apr 2021 02:58:42 +0100
+Message-Id: <d2566ef7ce632e6882dc13e022a26249b3fd30b5.1618278933.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1618278933.git.asml.silence@gmail.com>
 References: <cover.1618278933.git.asml.silence@gmail.com>
@@ -61,26 +61,74 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Add one more sparse locking annotation for readability in
-io_kill_timeout().
+Don't save return values of hrtimer_try_to_cancel() in a variable, but
+use right away. It's in general safer to not have an intermediate
+variable, which may be reused and passed out wrongly, but it be
+contracted out. Also clean io_timeout_extract().
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/io_uring.c | 23 ++++++++---------------
+ 1 file changed, 8 insertions(+), 15 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index a0f207e62e32..eaa8f1af29cc 100644
+index eaa8f1af29cc..4f4b4f4bff2d 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -1269,6 +1269,7 @@ static void io_queue_async_work(struct io_kiocb *req)
- }
- 
- static void io_kill_timeout(struct io_kiocb *req, int status)
-+	__must_hold(&req->ctx->completion_lock)
+@@ -1272,10 +1272,8 @@ static void io_kill_timeout(struct io_kiocb *req, int status)
+ 	__must_hold(&req->ctx->completion_lock)
  {
  	struct io_timeout_data *io = req->async_data;
- 	int ret;
+-	int ret;
+ 
+-	ret = hrtimer_try_to_cancel(&io->timer);
+-	if (ret != -1) {
++	if (hrtimer_try_to_cancel(&io->timer) != -1) {
+ 		atomic_set(&req->ctx->cq_timeouts,
+ 			atomic_read(&req->ctx->cq_timeouts) + 1);
+ 		list_del_init(&req->timeout.list);
+@@ -1792,12 +1790,10 @@ static bool io_kill_linked_timeout(struct io_kiocb *req)
+ 	 */
+ 	if (link && (link->flags & REQ_F_LTIMEOUT_ACTIVE)) {
+ 		struct io_timeout_data *io = link->async_data;
+-		int ret;
+ 
+ 		io_remove_next_linked(req);
+ 		link->timeout.head = NULL;
+-		ret = hrtimer_try_to_cancel(&io->timer);
+-		if (ret != -1) {
++		if (hrtimer_try_to_cancel(&io->timer) != -1) {
+ 			io_cqring_fill_event(link, -ECANCELED, 0);
+ 			io_put_req_deferred(link, 1);
+ 			return true;
+@@ -5533,21 +5529,18 @@ static struct io_kiocb *io_timeout_extract(struct io_ring_ctx *ctx,
+ {
+ 	struct io_timeout_data *io;
+ 	struct io_kiocb *req;
+-	int ret = -ENOENT;
++	bool found = false;
+ 
+ 	list_for_each_entry(req, &ctx->timeout_list, timeout.list) {
+-		if (user_data == req->user_data) {
+-			ret = 0;
++		found = user_data == req->user_data;
++		if (found)
+ 			break;
+-		}
+ 	}
+-
+-	if (ret == -ENOENT)
+-		return ERR_PTR(ret);
++	if (!found)
++		return ERR_PTR(-ENOENT);
+ 
+ 	io = req->async_data;
+-	ret = hrtimer_try_to_cancel(&io->timer);
+-	if (ret == -1)
++	if (hrtimer_try_to_cancel(&io->timer) == -1)
+ 		return ERR_PTR(-EALREADY);
+ 	list_del_init(&req->timeout.list);
+ 	return req;
 -- 
 2.24.0
 

@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C2E5435F1A2
-	for <lists+io-uring@lfdr.de>; Wed, 14 Apr 2021 12:48:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CCD2735F19F
+	for <lists+io-uring@lfdr.de>; Wed, 14 Apr 2021 12:48:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233833AbhDNKsg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 14 Apr 2021 06:48:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42120 "EHLO
+        id S233742AbhDNKse (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 14 Apr 2021 06:48:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233163AbhDNKsf (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 14 Apr 2021 06:48:35 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBFDBC061574
-        for <io-uring@vger.kernel.org>; Wed, 14 Apr 2021 03:48:11 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id h4so10376229wrt.12
-        for <io-uring@vger.kernel.org>; Wed, 14 Apr 2021 03:48:11 -0700 (PDT)
+        with ESMTP id S233163AbhDNKsd (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 14 Apr 2021 06:48:33 -0400
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6FF7C061756
+        for <io-uring@vger.kernel.org>; Wed, 14 Apr 2021 03:48:12 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id 12so19423927wrz.7
+        for <io-uring@vger.kernel.org>; Wed, 14 Apr 2021 03:48:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=r2rUyVx69NtQe/JuEWNbtS17jy4jnwfRvpUBRCF96P0=;
-        b=icwNIWhC2V6yCVrGNWVCOQ4qDpjrPxV77q6mv4aHvss1eaAJ0PYaqIfJetuGTLnvme
-         mkT7kXKMcRtvgaxn8rCT043jD9B/Ar2ClA355tD1z01+AWce4caYtmKjAjOmlVTuDOcL
-         /1YYVAGU1USVY0cgF6xLUDPK4qdYZORs1j4wpP58MsNizqTa+sBBqzOcnKu9Ffn6nGCW
-         EMut+EuzoDXZYzdBA3vyB1aPKWI3z38tVJe10AkvJpX9IhVulrOiO82gx5hcNCDzcxWd
-         YEWs87PDCqdfe5YuvGVNmSC5W5xEJJ2vecb9IEyRGKYCN9ITiSWaEidSRQftGl5B/R1z
-         Pq0w==
+        bh=VI1fw/7EK9qWyY0VWzJLFtkCSBonMMUYXtzaKXPeiKA=;
+        b=ieiGAYMRXERBfzofXjPeQS7hZ1R0EYtiKOC3IcZrALTW45mPjD9xsbECfqxEfb+Z/r
+         p4ookxyuNv3fnYrAas7pKEnf6AqF+pkHXvSc4mCWNQh1V7va4qe3vM/sSBHJrT/8EqKJ
+         0u/Z28tKwh4M3dtStHzqj0Bt0AP4nFJCXPat5WVUNQG1Lb30pEMb2bO58VR3Aqm+znGz
+         ZEL0woOYuFMaXlNItcSRPc2LxsJugWIiUifeh8NwS6kwNp6zelDAUfQinwHl8h5W8Iga
+         3TKmWvjq8+7GkZWlOZ9wzE2fccqzN7S4GivMX4XDWarJ54ysmX+lWUKlm3AR2KRCXloe
+         6y1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=r2rUyVx69NtQe/JuEWNbtS17jy4jnwfRvpUBRCF96P0=;
-        b=ryWhlrhL0gch14v5vTmrVquiDi3nm7LNTfS16y7JVAgiiiLLnrEeHxMv7TOZ76MdrW
-         oWLqkIE/IamDpoSFSBsiHPmk+f6PjZ3f1+W24yoShxrDUcr44UPYEAX6s9n2t2xD/P4V
-         ePdcxaWXGTboNXyu24sTzuotaVk9ClBE4VbLSq6vpoipO81yi5vOtR+x0RY53wma+MJN
-         OFIR6er06ycUPSqst/fhRrifP6b4vx+Rl41q5QQK82/39sNAikQxAzWuTbivzQwPG4z1
-         M9p/ogqRG75LDOGAZALDD9BpOLIl4sAk5006xkvQ8eXKeUv3PeP/biaCM5zzJAv9A8Ut
-         WJug==
-X-Gm-Message-State: AOAM532m4ALl8cGHBcDzBgmWOOHGL7D5okAPVWzjT5xKb5LPXnShPdXR
-        egzU+ahqS+aUcEMPh+tHpOA=
-X-Google-Smtp-Source: ABdhPJwy4kLihgC2sGnCShOShbH5JneHpySPR5nHEl5qfhPTQjxWTUXjF1WF2GfVc/04hYeUR76+AQ==
-X-Received: by 2002:adf:a40f:: with SMTP id d15mr33338692wra.375.1618397290607;
-        Wed, 14 Apr 2021 03:48:10 -0700 (PDT)
+        bh=VI1fw/7EK9qWyY0VWzJLFtkCSBonMMUYXtzaKXPeiKA=;
+        b=IBVa7osWgtLZC+f7v/l8YdL2op2cTcDH4YzVU+CQmML8xFlXLEO8Wwu7d1C3fDtxK2
+         94sKhdaTHn7cuW2HEVa0ZrE34FJegy/kYrdOxcO3KBuNjZjhZidYoXdiwNdK6qtpbOwO
+         5GOgAKdqNpBP9L9SbstunKqTLZbzQQi1q9eP6QwKg76s1+mNBE+ZMpqDX6Hau6t0GSh/
+         tcgXRK5+ZCokZX2W9w4Rno+iaHkEgwjc5PyLRdPz4X759S3oQQBZJzOg5iHjvT36sYpd
+         J/r5BtUT4lnfiaQp5zbvKgVYDsys4ADEeLK6+N6ja/tRE8aaAFHVvJmp9LNZDo2kG0NL
+         PX5Q==
+X-Gm-Message-State: AOAM532M6zKHF0e/+uVgiXV0Z6yu3fItV9OPOZ85y/XW+cUSFL0GgSkc
+        fRyja1MXFmZjD1ynxZmKm9c=
+X-Google-Smtp-Source: ABdhPJz+HbWVOKKDB3ZcT0zhKHn0MJZe2cQTsl0KRnWTAUihWcfjLpTZwWozUYButqDI0KPjSZNAeg==
+X-Received: by 2002:a5d:6607:: with SMTP id n7mr33375170wru.146.1618397291466;
+        Wed, 14 Apr 2021 03:48:11 -0700 (PDT)
 Received: from localhost.localdomain ([148.252.128.163])
-        by smtp.gmail.com with ESMTPSA id n14sm5003002wmk.5.2021.04.14.03.48.09
+        by smtp.gmail.com with ESMTPSA id n14sm5003002wmk.5.2021.04.14.03.48.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Apr 2021 03:48:10 -0700 (PDT)
+        Wed, 14 Apr 2021 03:48:11 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 1/5] io_uring: improve sqpoll event/state handling
-Date:   Wed, 14 Apr 2021 11:43:50 +0100
-Message-Id: <2c8c6e0710653bf6396ea011be106dcb57e175fc.1618396838.git.asml.silence@gmail.com>
+Subject: [PATCH 2/5] io_uring: refactor io_ring_exit_work()
+Date:   Wed, 14 Apr 2021 11:43:51 +0100
+Message-Id: <8042ff02416ca0ced8305c30417b635c59ac570a.1618396838.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1618396838.git.asml.silence@gmail.com>
 References: <cover.1618396838.git.asml.silence@gmail.com>
@@ -61,99 +61,50 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-As sqd->state changes rarely, don't check every event one by one but
-look them all at once. Add a helper function. Also don't go into event
-waiting sleeping with STOP flag set.
+Don't reinit io_ring_exit_work()'s exit work/completions on each
+iteration, that's wasteful. Also add list_rotate_left(), so if we failed
+to complete the task job, we don't try it again and again but defer it
+until others are processed.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 45 ++++++++++++++++++++++++++++-----------------
- 1 file changed, 28 insertions(+), 17 deletions(-)
+ fs/io_uring.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index e3b679c5547e..693fb5c5e58c 100644
+index 693fb5c5e58c..6a70bf455c49 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -6742,6 +6742,11 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr)
- 	return submitted;
- }
+@@ -8601,6 +8601,9 @@ static void io_ring_exit_work(struct work_struct *work)
+ 		WARN_ON_ONCE(time_after(jiffies, timeout));
+ 	} while (!wait_for_completion_timeout(&ctx->ref_comp, HZ/20));
  
-+static inline bool io_sqd_events_pending(struct io_sq_data *sqd)
-+{
-+	return READ_ONCE(sqd->state);
-+}
-+
- static inline void io_ring_set_wakeup_flag(struct io_ring_ctx *ctx)
- {
- 	/* Tell userspace we may need a wakeup call */
-@@ -6796,6 +6801,24 @@ static void io_sqd_update_thread_idle(struct io_sq_data *sqd)
- 	sqd->sq_thread_idle = sq_thread_idle;
- }
++	init_completion(&exit.completion);
++	init_task_work(&exit.task_work, io_tctx_exit_cb);
++	exit.ctx = ctx;
+ 	/*
+ 	 * Some may use context even when all refs and requests have been put,
+ 	 * and they are free to do so while still holding uring_lock or
+@@ -8613,9 +8616,8 @@ static void io_ring_exit_work(struct work_struct *work)
  
-+static bool io_sqd_handle_event(struct io_sq_data *sqd)
-+{
-+	bool did_sig = false;
-+	struct ksignal ksig;
-+
-+	if (test_bit(IO_SQ_THREAD_SHOULD_PARK, &sqd->state) ||
-+	    signal_pending(current)) {
-+		mutex_unlock(&sqd->lock);
-+		if (signal_pending(current))
-+			did_sig = get_signal(&ksig);
-+		cond_resched();
-+		mutex_lock(&sqd->lock);
-+	}
-+	io_run_task_work();
-+	io_run_task_work_head(&sqd->park_task_work);
-+	return did_sig || test_bit(IO_SQ_THREAD_SHOULD_STOP, &sqd->state);
-+}
-+
- static int io_sq_thread(void *data)
- {
- 	struct io_sq_data *sqd = data;
-@@ -6818,29 +6841,17 @@ static int io_sq_thread(void *data)
- 	/* a user may had exited before the thread wstarted */
- 	io_run_task_work_head(&sqd->park_task_work);
- 
--	while (!test_bit(IO_SQ_THREAD_SHOULD_STOP, &sqd->state)) {
-+	while (1) {
- 		int ret;
- 		bool cap_entries, sqt_spin, needs_sched;
- 
--		if (test_bit(IO_SQ_THREAD_SHOULD_PARK, &sqd->state) ||
--		    signal_pending(current)) {
--			bool did_sig = false;
--
--			mutex_unlock(&sqd->lock);
--			if (signal_pending(current)) {
--				struct ksignal ksig;
--
--				did_sig = get_signal(&ksig);
--			}
--			cond_resched();
--			mutex_lock(&sqd->lock);
--			io_run_task_work();
--			io_run_task_work_head(&sqd->park_task_work);
--			if (did_sig)
-+		if (io_sqd_events_pending(sqd) || signal_pending(current)) {
-+			if (io_sqd_handle_event(sqd))
- 				break;
- 			timeout = jiffies + sqd->sq_thread_idle;
+ 		node = list_first_entry(&ctx->tctx_list, struct io_tctx_node,
+ 					ctx_node);
+-		exit.ctx = ctx;
+-		init_completion(&exit.completion);
+-		init_task_work(&exit.task_work, io_tctx_exit_cb);
++		/* don't spin on a single task if cancellation failed */
++		list_rotate_left(&ctx->tctx_list);
+ 		ret = task_work_add(node->task, &exit.task_work, TWA_SIGNAL);
+ 		if (WARN_ON_ONCE(ret))
  			continue;
- 		}
-+
- 		sqt_spin = false;
- 		cap_entries = !list_is_singular(&sqd->ctx_list);
- 		list_for_each_entry(ctx, &sqd->ctx_list, sqd_list) {
-@@ -6877,7 +6888,7 @@ static int io_sq_thread(void *data)
- 			}
- 		}
+@@ -8623,7 +8625,6 @@ static void io_ring_exit_work(struct work_struct *work)
  
--		if (needs_sched && !test_bit(IO_SQ_THREAD_SHOULD_PARK, &sqd->state)) {
-+		if (needs_sched && !io_sqd_events_pending(sqd)) {
- 			list_for_each_entry(ctx, &sqd->ctx_list, sqd_list)
- 				io_ring_set_wakeup_flag(ctx);
- 
+ 		mutex_unlock(&ctx->uring_lock);
+ 		wait_for_completion(&exit.completion);
+-		cond_resched();
+ 		mutex_lock(&ctx->uring_lock);
+ 	}
+ 	mutex_unlock(&ctx->uring_lock);
 -- 
 2.24.0
 

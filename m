@@ -2,57 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CAD5935FBA9
-	for <lists+io-uring@lfdr.de>; Wed, 14 Apr 2021 21:31:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA5B035FBB7
+	for <lists+io-uring@lfdr.de>; Wed, 14 Apr 2021 21:36:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345596AbhDNTbo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 14 Apr 2021 15:31:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44128 "EHLO
+        id S1353424AbhDNTgu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 14 Apr 2021 15:36:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45230 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232277AbhDNTbo (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 14 Apr 2021 15:31:44 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 936E4C061574
-        for <io-uring@vger.kernel.org>; Wed, 14 Apr 2021 12:31:22 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id a4so20969439wrr.2
-        for <io-uring@vger.kernel.org>; Wed, 14 Apr 2021 12:31:22 -0700 (PDT)
+        with ESMTP id S1353449AbhDNTgs (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 14 Apr 2021 15:36:48 -0400
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F4ACC061574
+        for <io-uring@vger.kernel.org>; Wed, 14 Apr 2021 12:36:23 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id j5so19995671wrn.4
+        for <io-uring@vger.kernel.org>; Wed, 14 Apr 2021 12:36:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:references:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=NbiRGY1mwA5uXDxZVM+JedWA8wm7d8ci6vsQ5aAV4Ts=;
-        b=RHdVdQiD3sd9kj0cV3DoW3T/bWl1C6MQhBxWbOQ2+2KRgOOQhJWXLjjjfB0g+W84i3
-         qOY86DJpYCiq/DooxwX7TWULZEueA/ZYEz/lvcXMgKmimEW6+nW0ICYPePBsk7L63XpH
-         NX7uIRcdsWeuWcl8j2Stil7TliGMmUnRo6Ar1eGwuU6SH3YRs/xGtzd0+pLsp1YNpsBw
-         Wc3h50KN4eQpkjpVIpCLLQ9JeMGIPLCYCs0oGXngj3Y3LvME7j4Kg3dr3JTABYhkqJEg
-         4SbB2YDsWXqW0y3+A0PLNgKi5OF5WcqcAo3d/gdF1SO5RHCe37Gvaz19Tz2Ljq88dXou
-         Lu9A==
+        bh=3nQZOTSwvpg/vV7zCoPFBLa91cmSpyTn5CWGyrpXQNM=;
+        b=QbdAmDQ5aKDrPi8cCRsFV8kLQP3ptDX+XFUyvCS19rtvYyTjsMnn/fScMGUQ0u8V+/
+         TbbLtnBh39n1tcSsmJ8Z+jZEkTIFgLq5nIGu9Xg/krZ807JnvEcl+RIyI3giZb597g13
+         ZoXImLcBM7d0VeX+1+TzpcOY+f8H0V0T96w4RluOWhu4Ekn/n7XTDQLrxsgL5x6wU8Ov
+         zO3TI62P8HQSyGckr4r3ihcs0SWY3fESwrvb+iHthQKpbJ5UbtIjwO4A/eXdMGOm4CzH
+         3Evd77hWg2xKaH38C4Cm/aeMD4rzZvfS24fQc6razi0GRi3jNyI7DkPKY7tuPUMr36GP
+         7BJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
          :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=NbiRGY1mwA5uXDxZVM+JedWA8wm7d8ci6vsQ5aAV4Ts=;
-        b=tpdS9yBPdxgqFFA8VhHIt8c78/CIDgKVYGu7fbxkrRnSHrGFsIa06cG8mO8hPjpUuJ
-         GjHfmB2dyWQKaCJYFxKkUC88Jf/qiUAk/MAljUqrU6aJhkYSHuHMzS48wWaK/GXQGFWO
-         uGq3iX3RD6duAJMkYc4QiO7HwC1QwuEo9YI6UNtP08FUseYG6jYfb/2lka3wTzPhgCDt
-         w+XbTy430HTrj2/SPdDVsF/dFH+2Yu+IUW2Vr4Djz3OpWgzi3t3V3DqONLyKIDAUeXMp
-         t9tSof8N6F8hu/E/w4RwiHWDL5o/yx1GwvE0czfgwoYTbAIEcVLcUC2EMwCXJ02n/yyZ
-         daqg==
-X-Gm-Message-State: AOAM533rjPumtl7pKfD/mNRtuawwHFivXt8KR+62VsJlcZaDer0VJDNq
-        TiEBGgEG7orypsDO1+2FEDAc95v3sGt6pw==
-X-Google-Smtp-Source: ABdhPJxB1gH1cHYzeE0DHzC04ygeerHcidksLiRu2CvRSQCRkf454qs5mS8/KldoPMv3Ap2jFZxsPA==
-X-Received: by 2002:adf:dd08:: with SMTP id a8mr34010479wrm.252.1618428681210;
-        Wed, 14 Apr 2021 12:31:21 -0700 (PDT)
+        bh=3nQZOTSwvpg/vV7zCoPFBLa91cmSpyTn5CWGyrpXQNM=;
+        b=BmieYKHVnRTyu9HI4mxyQAQh70jl/MbuYzh1hVFs6mMGmNlJRzsHvIwQFdDO9WiniL
+         tFtaZsb1QkKqBZlcAlihJXv1o49o3uEa3JiJr6c9cx3MNkGi8XzGuL14V7g6cpVN+lsw
+         RkyCH2sBHnm0x1IbM5imsDWGm/cuNcHbPJH3odG5S30JzkyX3jIGP0cpQ6yrxwlvcMUH
+         YLn3aE7WhWm58SluE7IpxQ7CbLUtRJcFfIokP7tR/ybsknKZChP0/5O7VPY7ZRMTDLtA
+         HLF2FmogqkSOR0NuVsLQ3vyUa/SaNnTJ1jhS5vbdfIwZ//HV93etQxmqOZRDxijhbb93
+         M1Qw==
+X-Gm-Message-State: AOAM530al82zzas2vgzdDwUCo7zHTZFJRGp16+hmYq4oAQZnnPmcyqIM
+        +QlRKVy/f4attc+YmnjMk/nD6BTHHkMJOg==
+X-Google-Smtp-Source: ABdhPJymljGv37lBEq4yN1BlGLn5TgI2PV7e82BWPRAJSGK6zxp/vZGT3aEfmV+AgXQns2tKPmDHjg==
+X-Received: by 2002:adf:dd48:: with SMTP id u8mr43851798wrm.139.1618428981785;
+        Wed, 14 Apr 2021 12:36:21 -0700 (PDT)
 Received: from [192.168.8.186] ([185.69.144.21])
-        by smtp.gmail.com with ESMTPSA id u8sm332406wrp.66.2021.04.14.12.31.20
+        by smtp.gmail.com with ESMTPSA id a3sm362199wru.40.2021.04.14.12.36.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Apr 2021 12:31:20 -0700 (PDT)
-Subject: Re: [PATCH v2 1/5] io_uring: improve sqpoll event/state handling
+        Wed, 14 Apr 2021 12:36:21 -0700 (PDT)
+Subject: Re: [PATCH v2 5.13 0/5] poll update into poll remove
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
 References: <cover.1618403742.git.asml.silence@gmail.com>
- <2c8c6e0710653bf6396ea011be106dcb57e175fc.1618403742.git.asml.silence@gmail.com>
- <159378a6-082c-d11a-ab36-03f851878c76@kernel.dk>
+ <66cf75ca-05d9-2c92-1038-253377ba0fd5@kernel.dk>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -97,12 +96,12 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <9906abbc-18d0-4056-946d-501f8ffebae2@gmail.com>
-Date:   Wed, 14 Apr 2021 20:27:12 +0100
+Message-ID: <e9de7a38-5bb1-e04e-3685-c8db6c5e5846@gmail.com>
+Date:   Wed, 14 Apr 2021 20:32:11 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <159378a6-082c-d11a-ab36-03f851878c76@kernel.dk>
+In-Reply-To: <66cf75ca-05d9-2c92-1038-253377ba0fd5@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -110,17 +109,23 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 14/04/2021 17:41, Jens Axboe wrote:
+On 14/04/2021 17:20, Jens Axboe wrote:
 > On 4/14/21 6:38 AM, Pavel Begunkov wrote:
->> As sqd->state changes rarely, don't check every event one by one but
->> look them all at once. Add a helper function. Also don't go into event
->> waiting sleeping with STOP flag set.
+>> 1-2 are are small improvements
+>>
+>> The rest moves all poll update into IORING_OP_POLL_REMOVE,
+>> see 5/5 for justification.
+>>
+>> v2: fix io_poll_remove_one() on the remove request, not the one
+>> we cancel.
 > 
-> Can we defer this one to post -rc1? It'll cause a conflict with
-> 5.12.
+> I like moving update into remove, imho it makes a lot more sense. Will
+> you be sending a test case patch for it too?
 
-Yeah, just as always drop what doesn't fit, and  I'll resend after
-rebase or for 5.14
+I was testing with your test case, 3 line change, can send it.
+
+We definitely need a helper though. There was something for liburing
+from Joakim, right?
 
 -- 
 Pavel Begunkov

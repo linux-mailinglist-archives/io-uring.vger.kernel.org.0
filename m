@@ -2,147 +2,78 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 33E5835E803
-	for <lists+io-uring@lfdr.de>; Tue, 13 Apr 2021 23:07:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D21635F19E
+	for <lists+io-uring@lfdr.de>; Wed, 14 Apr 2021 12:48:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345585AbhDMVHh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 13 Apr 2021 17:07:37 -0400
-Received: from mail-il1-f200.google.com ([209.85.166.200]:37132 "EHLO
-        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229610AbhDMVHg (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 13 Apr 2021 17:07:36 -0400
-Received: by mail-il1-f200.google.com with SMTP id m1so522188ilu.4
-        for <io-uring@vger.kernel.org>; Tue, 13 Apr 2021 14:07:16 -0700 (PDT)
+        id S233795AbhDNKse (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 14 Apr 2021 06:48:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42110 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233742AbhDNKsc (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 14 Apr 2021 06:48:32 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3301C061756
+        for <io-uring@vger.kernel.org>; Wed, 14 Apr 2021 03:48:10 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id x7so19385622wrw.10
+        for <io-uring@vger.kernel.org>; Wed, 14 Apr 2021 03:48:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UClraf7P1R3peIOL5r6K4wlKKIsYihJEcAzUU1axiHw=;
+        b=Mm2Pxjsw0xpB5P8AB858KWWYf/Mv0IzG0lwJsfNj3Y1q/EerKHs71UBitynkpyjPuO
+         Ag+HtK7KwIrj+MlQn49ZMfMHIVPs0Ve0fumYaddCdmkfmrbh6yJDa+s4zOA3pnIlaJX3
+         dI2J4dtL2/MTTqJ2xcyPlWDPQKwjwv89WaI5cdeaPYOopYjxmQJNLjIvmLusizrPo0ZD
+         UVJEdXR8NQ/9jmLuAOW0fyJe0cGV5Ou7vZH+3tusmwNfLQrMnGoT0Wnf8KdoUE2PRLuk
+         98PlnRZ9B8NIQWTcKPn+OZ6Uc7CWdNSEttuRrXJojyConCOoCtoI0SoyhlSYSFQ8Agrc
+         l0zw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=gBB56l8B63o8JGJvBXflD8n3+2lDt1Rtdswdt5GflVQ=;
-        b=Dp9dJo0vq2WjmOpJJ+4tylOB5eIxiUIKEM56pbgnAqmU9P4JOk9UOHSalbNz4QzPF5
-         GkHmyEoS42I7Uilu0h+o2sDhun3wMZdyY/qlfqSsaF9srVbAXstBhFXANpbqnqUxIgiR
-         mDx9J3FQHggmm0brlien2gbmnoyHMx0LSZxvz+4zLBQBRbtcTwFULuc29/oLc+f0tk6w
-         okbvUX9O4c4jry3Ap8YPP7gIO6Jv8af4tj84EznjhkConoATpYvmfgrNfj7VxW8zqTTX
-         Esevq8bo3lAAj2zXZadRRU7gSBEYwsiiMEope+3XWAakxKUHTuJxnTDW71/KenztRwZQ
-         hRew==
-X-Gm-Message-State: AOAM53020b/zpToZqWJ32uOUnAWAN84RMkKZ+YQEqpUa+eOKUXB2Ipq9
-        bpLm3Mrng22vvE2o2/7EH7BwS42wyDmvG0AFHJT1pq/kW8ix
-X-Google-Smtp-Source: ABdhPJy4S/Wn2LnO8XH5aRFz6TbtDBXu7JtnGDHPqPXclmhiG+hj4a8tgRASZhqc1tVTclgPM0WDm5wGnWyy0XuitQJ7xJGW9yBX
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UClraf7P1R3peIOL5r6K4wlKKIsYihJEcAzUU1axiHw=;
+        b=OQkiH54mKf3nsPTjRD+HCbHJ+YgBiqRtBCT+rveeIUVCa+TOE3Uo+sOU57nbSmeqfh
+         /mD6ZSgQBkoMnnPE8pkanYZOK7oLgALH5wmkSB7J87zshSNGNCzwRRH4iTVGC5p46RuY
+         tV5dXui2IZCur/lcmnFrjPV7aLgPxtxipyw/t7GcrEzCYFLq3UKdkJLdtOo9gB2tZYQ4
+         fGsOUwpFJm6DwHgAgFOXBe/Hg2KUXEJYHP7lUKBu3Q/Pdr8pSoyEiBOD36Sy38ho34hU
+         C4nfHRmmVXkhLdZZgOzAPwWuz0Qq2Qsse5hAnlxeLdyH2AFsoUm4Ckuo/KqfU+jJxaIP
+         Az3A==
+X-Gm-Message-State: AOAM530B1SjfIyoL9KSJPwH7Uf2sUdVY/LAJ1eT8fPPFNwtS8HYM0Xtq
+        QQkUpg38gd+I4+WDcDAdwNE=
+X-Google-Smtp-Source: ABdhPJz+1U+6auZx4G/i4sDCXACiIO8JUS5RelbLaX+y+fdENXdOrFI3X4crY90CVWg7f4vVRoQskw==
+X-Received: by 2002:a5d:564a:: with SMTP id j10mr3120024wrw.108.1618397289713;
+        Wed, 14 Apr 2021 03:48:09 -0700 (PDT)
+Received: from localhost.localdomain ([148.252.128.163])
+        by smtp.gmail.com with ESMTPSA id n14sm5003002wmk.5.2021.04.14.03.48.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Apr 2021 03:48:09 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [PATCH 5.13 0/5] poll update into poll remove
+Date:   Wed, 14 Apr 2021 11:43:49 +0100
+Message-Id: <cover.1618396838.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:a56:: with SMTP id 22mr20638222jap.33.1618348036402;
- Tue, 13 Apr 2021 14:07:16 -0700 (PDT)
-Date:   Tue, 13 Apr 2021 14:07:16 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d5358b05bfe10354@google.com>
-Subject: [syzbot] possible deadlock in io_poll_double_wake (3)
-From:   syzbot <syzbot+e654d4e15e6b3b9deb53@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
+1-2 are are small improvements
 
-syzbot found the following issue on:
+The rest moves all poll update into IORING_OP_POLL_REMOVE,
+see 5/5 for justification.
 
-HEAD commit:    17e7124a Merge tag '5.12-rc6-smb3' of git://git.samba.org/..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=102c3891d00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9320464bf47598bd
-dashboard link: https://syzkaller.appspot.com/bug?extid=e654d4e15e6b3b9deb53
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15fe3096d00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=147b9431d00000
+Pavel Begunkov (5):
+  io_uring: improve sqpoll event/state handling
+  io_uring: refactor io_ring_exit_work()
+  io_uring: fix POLL_REMOVE removing apoll
+  io_uring: add helper for parsing poll events
+  io_uring: move poll update into remove not add
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e654d4e15e6b3b9deb53@syzkaller.appspotmail.com
+ fs/io_uring.c | 197 ++++++++++++++++++++++++--------------------------
+ 1 file changed, 94 insertions(+), 103 deletions(-)
 
-============================================
-WARNING: possible recursive locking detected
-5.12.0-rc6-syzkaller #0 Not tainted
---------------------------------------------
-swapper/0/0 is trying to acquire lock:
-ffff88802108c130 (&runtime->sleep){..-.}-{2:2}, at: spin_lock include/linux/spinlock.h:354 [inline]
-ffff88802108c130 (&runtime->sleep){..-.}-{2:2}, at: io_poll_double_wake+0x25f/0x6a0 fs/io_uring.c:4988
+-- 
+2.24.0
 
-but task is already holding lock:
-ffff888014fd8130 (&runtime->sleep){..-.}-{2:2}, at: __wake_up_common_lock+0xb4/0x130 kernel/sched/wait.c:137
-
-other info that might help us debug this:
- Possible unsafe locking scenario:
-
-       CPU0
-       ----
-  lock(&runtime->sleep);
-  lock(&runtime->sleep);
-
- *** DEADLOCK ***
-
- May be due to missing lock nesting notation
-
-2 locks held by swapper/0/0:
- #0: ffff888020d18108 (&group->lock){..-.}-{2:2}, at: _snd_pcm_stream_lock_irqsave+0x9f/0xd0 sound/core/pcm_native.c:170
- #1: ffff888014fd8130 (&runtime->sleep){..-.}-{2:2}, at: __wake_up_common_lock+0xb4/0x130 kernel/sched/wait.c:137
-
-stack backtrace:
-CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.12.0-rc6-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- <IRQ>
- __dump_stack lib/dump_stack.c:79 [inline]
- dump_stack+0x141/0x1d7 lib/dump_stack.c:120
- print_deadlock_bug kernel/locking/lockdep.c:2829 [inline]
- check_deadlock kernel/locking/lockdep.c:2872 [inline]
- validate_chain kernel/locking/lockdep.c:3661 [inline]
- __lock_acquire.cold+0x14c/0x3b4 kernel/locking/lockdep.c:4900
- lock_acquire kernel/locking/lockdep.c:5510 [inline]
- lock_acquire+0x1ab/0x740 kernel/locking/lockdep.c:5475
- __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
- _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:151
- spin_lock include/linux/spinlock.h:354 [inline]
- io_poll_double_wake+0x25f/0x6a0 fs/io_uring.c:4988
- __wake_up_common+0x147/0x650 kernel/sched/wait.c:108
- __wake_up_common_lock+0xd0/0x130 kernel/sched/wait.c:138
- snd_pcm_update_state+0x46a/0x540 sound/core/pcm_lib.c:203
- snd_pcm_update_hw_ptr0+0xa75/0x1a50 sound/core/pcm_lib.c:464
- snd_pcm_period_elapsed+0x160/0x250 sound/core/pcm_lib.c:1805
- dummy_hrtimer_callback+0x94/0x1b0 sound/drivers/dummy.c:377
- __run_hrtimer kernel/time/hrtimer.c:1537 [inline]
- __hrtimer_run_queues+0x609/0xe40 kernel/time/hrtimer.c:1601
- hrtimer_run_softirq+0x17b/0x360 kernel/time/hrtimer.c:1618
- __do_softirq+0x29b/0x9f6 kernel/softirq.c:345
- invoke_softirq kernel/softirq.c:221 [inline]
- __irq_exit_rcu kernel/softirq.c:422 [inline]
- irq_exit_rcu+0x134/0x200 kernel/softirq.c:434
- sysvec_apic_timer_interrupt+0x93/0xc0 arch/x86/kernel/apic/apic.c:1100
- </IRQ>
- asm_sysvec_apic_timer_interrupt+0x12/0x20 arch/x86/include/asm/idtentry.h:632
-RIP: 0010:native_save_fl arch/x86/include/asm/irqflags.h:29 [inline]
-RIP: 0010:arch_local_save_flags arch/x86/include/asm/irqflags.h:70 [inline]
-RIP: 0010:arch_irqs_disabled arch/x86/include/asm/irqflags.h:137 [inline]
-RIP: 0010:acpi_safe_halt drivers/acpi/processor_idle.c:112 [inline]
-RIP: 0010:acpi_idle_do_entry+0x1c9/0x250 drivers/acpi/processor_idle.c:517
-Code: cd cb 6e f8 84 db 75 ac e8 14 c5 6e f8 e8 1f b4 74 f8 e9 0c 00 00 00 e8 05 c5 6e f8 0f 00 2d 0e 18 c8 00 e8 f9 c4 6e f8 fb f4 <9c> 5b 81 e3 00 02 00 00 fa 31 ff 48 89 de e8 04 cd 6e f8 48 85 db
-RSP: 0018:ffffffff8bc07d60 EFLAGS: 00000293
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: ffffffff8bcbc400 RSI: ffffffff89052c17 RDI: 0000000000000000
-RBP: ffff888015078064 R08: 0000000000000001 R09: 0000000000000001
-R10: ffffffff8179e058 R11: 0000000000000000 R12: 0000000000000001
-R13: ffff888015078000 R14: ffff888015078064 R15: ffff888143a48004
- acpi_idle_enter+0x361/0x500 drivers/acpi/processor_idle.c:654
- cpuidle_enter_state+0x1b1/0xc80 drivers/cpuidle/cpuidle.c:237
- cpuidle_enter+0x4a/0xa0 drivers/cpuidle/cpuidle.c:351
- call_cpuidle kernel/sched/idle.c:158 [inline]
- cpuidle_idle_call kernel/sched/idle.c:239 [inline]
- do_idle+0x3e1/0x590 kernel/sched/idle.c:300
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches

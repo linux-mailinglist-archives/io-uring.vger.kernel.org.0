@@ -2,115 +2,76 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F66935FE6E
-	for <lists+io-uring@lfdr.de>; Thu, 15 Apr 2021 01:27:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A829435FE71
+	for <lists+io-uring@lfdr.de>; Thu, 15 Apr 2021 01:29:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237629AbhDNX11 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 14 Apr 2021 19:27:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38940 "EHLO
+        id S235197AbhDNX3c (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 14 Apr 2021 19:29:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237554AbhDNX10 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 14 Apr 2021 19:27:26 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47518C061574
-        for <io-uring@vger.kernel.org>; Wed, 14 Apr 2021 16:27:04 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id s7so21307426wru.6
-        for <io-uring@vger.kernel.org>; Wed, 14 Apr 2021 16:27:04 -0700 (PDT)
+        with ESMTP id S235104AbhDNX3c (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 14 Apr 2021 19:29:32 -0400
+Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA537C061574
+        for <io-uring@vger.kernel.org>; Wed, 14 Apr 2021 16:29:08 -0700 (PDT)
+Received: by mail-pf1-x431.google.com with SMTP id c17so14796276pfn.6
+        for <io-uring@vger.kernel.org>; Wed, 14 Apr 2021 16:29:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=xxO1eQifE15mqFgDeUegFvEwi1YyrXts/RTYX9gshT4=;
-        b=qL8XKbXGi4x4f7wK4h7n33MJ/9s5s7SHi/9eZ/du7ldmLc9Jrn4yWlGVmtAPlAqKMD
-         uR4FoK4Yg+7xKc5vxSgV5n2PICt8eoPDzvbXUmzM8qDFHRRCspMEKWBc254UyWEvTKE1
-         pU/zlQCEVEG6x5QkcIxT2wqV/J15qg1nYeYV0duMS07msVxmWaN0v4n/ZVN+0MdGf1lp
-         SpsJeTEsAbq5RX2BYhGWdPtQJg5lTVjngalD4KICfo5sKR10QzvixnDKGvFHcs1Zebon
-         tUoWLJ/RK6k9yATJ3ZIaMzg+dHYQkY9pWCH/UzawpAWuSmH4c/j+AjIOmrOdrrxD/DsY
-         hIug==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=5gxKEMPAS/iqm4IOmXNIkQmZ3GWwOtCt5TsoIHjxqp0=;
+        b=avr1o69v7wgTLgk4MuS031i0gJJXTadaJ7JMz3yEWw61rB0H7F1nXEM/8MHcsh+eOf
+         6G6Uv52+BmZ4Cj2GIIdfgXyjHG9tH4dYalspXhYlaUiJq10q/NNQ9i3NuT3HyaFovs37
+         OG+f+n+GuGKwJLqXbXFW049quoXL0sr51Kg4CiqYHmi1VqD6fzG8XwCIi5gPHnS7AAL1
+         sm/V/xa/l7kuCzzMKdKfHYDxj6MbposibzQFmh6Rw5Lg9iMSn8bzYUkTPBzy78fn2p5r
+         r83ov/n95EdRMe7OcBTarvzzvuHJAOHi6LgXKNP1huIBPLdfSGfetWdDCRBpo0DGVMQE
+         3Wqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=xxO1eQifE15mqFgDeUegFvEwi1YyrXts/RTYX9gshT4=;
-        b=ibBawvC6GT8oN0bcXTYQGQTggdkfaP36Zk9639W08tIF2nKK7qadKnesNDUGCtHjIZ
-         bjMwAqoA9+DsRtyYfJhHaxGr/M1RyeYUsIn/iP6nPj5vaZzczmuEsySR0jZ5N+Abjetb
-         UDAhWGo3v8l93dVPVwovFG1QltOZcbydwHXN4IZAhr0Io91GjZ0K8zT8tYxKQbxAiAWg
-         1hLYiFvnhXMvecXHn2tJze1ojKpyYhdNj+UQszRRSzJg356J7/cIAnUb7kDV66PAbuUp
-         0YJkHdD1AUtH68+2CB/wBgj0vyVyiZJc7zmkOBtoN4+sBVHzZMZ32js2tXjokD6QapJr
-         5ong==
-X-Gm-Message-State: AOAM532muRaOTW0hM1hRR2w4qO1TqXdW4ekY7nrpFfM95XVDDQ5zuynU
-        rdoXch9cwGzroTSbbAWpPrl87h+y6g7uDQ==
-X-Google-Smtp-Source: ABdhPJyQvmsFGOtSGY97UVOhWnCtYbK4KJhm3vhpWiCydrAaVRhjClcJqtgSVScKH8Bc06ObDgOlmw==
-X-Received: by 2002:adf:dfc2:: with SMTP id q2mr316702wrn.128.1618442823024;
-        Wed, 14 Apr 2021 16:27:03 -0700 (PDT)
-Received: from localhost.localdomain ([185.69.144.21])
-        by smtp.gmail.com with ESMTPSA id m3sm667143wme.40.2021.04.14.16.27.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Apr 2021 16:27:02 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH liburing] tests/poll: poll update as a part of poll remove
-Date:   Thu, 15 Apr 2021 00:22:47 +0100
-Message-Id: <3d7646712081cf84346f13d94098cda257cab11a.1618442414.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
+        bh=5gxKEMPAS/iqm4IOmXNIkQmZ3GWwOtCt5TsoIHjxqp0=;
+        b=NU3deoqHfTCOxy8WYaUg7b/clf/jxu9W6B6tFP7oVi7IgMKylGLVVnusiNhlWWhNDP
+         1om6Yng7DRo6Z5LYnpxKMByXnotCicaFusF1LMV7h1bIz0Py86VNH4HWjsT70yqNnd7m
+         7G3ejhDyP9yQv7jgGbQJt16Q4pAt+ClRS8tlc8nM9DqHwfkeGi5uxM9p41/wowSj/8qs
+         iO2UITHTRBu6fByngd6wWFVJAoAjrWAYZ6kIpTIex0lmRPJXBeLWtnJ0ZaCvZkpQFK5n
+         QuW0fPZFW9jvOUF73lfaj7WoDeodqXjHBf07cHoUjVFG65VWjAEgJ3es214RCLqRjiLf
+         ZNSA==
+X-Gm-Message-State: AOAM531uX5SB0uh3MEP9thi/IQtrYEu0oVqF+fa3/U3WDefGUGQ73ZGW
+        QCUwxPvOODz38UEGwgpZkqnlNAeAWLR1lQ==
+X-Google-Smtp-Source: ABdhPJyUXAq4YIDgb6nU5M2ufUCi4VN38fuJ7LhppeWNpJOAKjt55DQhl+qCP5NKVlTgWqpsNl3tXw==
+X-Received: by 2002:a62:6585:0:b029:241:cf5d:93b2 with SMTP id z127-20020a6265850000b0290241cf5d93b2mr466476pfb.15.1618442948138;
+        Wed, 14 Apr 2021 16:29:08 -0700 (PDT)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id mu6sm371318pjb.35.2021.04.14.16.29.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 Apr 2021 16:29:07 -0700 (PDT)
+Subject: Re: [PATCH liburing] tests/poll: poll update as a part of poll remove
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <3d7646712081cf84346f13d94098cda257cab11a.1618442414.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <33532d00-2e39-508c-28cc-2f5a0ed27251@kernel.dk>
+Date:   Wed, 14 Apr 2021 17:29:06 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <3d7646712081cf84346f13d94098cda257cab11a.1618442414.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Fix up poll-mshot-update test doing poll updates as we moved poll
-updates under IORING_OP_POLL_REMOVE. And add a helper for updates.
+On 4/14/21 5:22 PM, Pavel Begunkov wrote:
+> Fix up poll-mshot-update test doing poll updates as we moved poll
+> updates under IORING_OP_POLL_REMOVE. And add a helper for updates.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- src/include/liburing.h   | 13 +++++++++++++
- test/poll-mshot-update.c |  7 +++----
- 2 files changed, 16 insertions(+), 4 deletions(-)
+Applied, thanks. Now it just need a documentation update, but it's not
+the only one... I'll make a pass at that soonish.
 
-diff --git a/src/include/liburing.h b/src/include/liburing.h
-index 5b96e02..5bda635 100644
---- a/src/include/liburing.h
-+++ b/src/include/liburing.h
-@@ -329,6 +329,19 @@ static inline void io_uring_prep_poll_remove(struct io_uring_sqe *sqe,
- 	io_uring_prep_rw(IORING_OP_POLL_REMOVE, sqe, -1, user_data, 0, 0);
- }
- 
-+static inline void io_uring_prep_poll_update(struct io_uring_sqe *sqe,
-+					     void *old_user_data,
-+					     void *new_user_data,
-+					     unsigned poll_mask, unsigned flags)
-+{
-+	io_uring_prep_rw(IORING_OP_POLL_REMOVE, sqe, -1, old_user_data, flags,
-+			 (__u64)new_user_data);
-+#if __BYTE_ORDER == __BIG_ENDIAN
-+	poll_mask = __swahw32(poll_mask);
-+#endif
-+	sqe->poll32_events = poll_mask;
-+}
-+
- static inline void io_uring_prep_fsync(struct io_uring_sqe *sqe, int fd,
- 				       unsigned fsync_flags)
- {
-diff --git a/test/poll-mshot-update.c b/test/poll-mshot-update.c
-index bfe96c8..1a9ea0a 100644
---- a/test/poll-mshot-update.c
-+++ b/test/poll-mshot-update.c
-@@ -56,11 +56,10 @@ static int reap_polls(struct io_uring *ring)
- 		struct io_uring_sqe *sqe;
- 
- 		sqe = io_uring_get_sqe(ring);
--		io_uring_prep_poll_add(sqe, p[i].fd[0], POLLIN);
-+		/* update event */
-+		io_uring_prep_poll_update(sqe, (void *)(unsigned long)i, NULL,
-+					  POLLIN, 2);
- 		sqe->user_data = 0x12345678;
--		sqe->addr = i;
--		sqe->off = POLLIN;
--		sqe->len = 2;
- 	}
- 
- 	ret = io_uring_submit(ring);
 -- 
-2.24.0
+Jens Axboe
 

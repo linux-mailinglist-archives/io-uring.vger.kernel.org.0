@@ -2,57 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6084E35F1B1
-	for <lists+io-uring@lfdr.de>; Wed, 14 Apr 2021 12:51:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD59135F1C1
+	for <lists+io-uring@lfdr.de>; Wed, 14 Apr 2021 12:55:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234144AbhDNKu4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 14 Apr 2021 06:50:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42610 "EHLO
+        id S234546AbhDNKx0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 14 Apr 2021 06:53:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234107AbhDNKus (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 14 Apr 2021 06:50:48 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7627C061574;
-        Wed, 14 Apr 2021 03:50:22 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id j5so18440451wrn.4;
-        Wed, 14 Apr 2021 03:50:22 -0700 (PDT)
+        with ESMTP id S234300AbhDNKx0 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 14 Apr 2021 06:53:26 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BE6CC061756
+        for <io-uring@vger.kernel.org>; Wed, 14 Apr 2021 03:53:03 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id q123-20020a1c43810000b029012c7d852459so2377568wma.0
+        for <io-uring@vger.kernel.org>; Wed, 14 Apr 2021 03:53:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:autocrypt:message-id:date:user-agent
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=wtL4NEaz1e7dZ5rH59pH/u2eUopJxXPtepf8OA0VPwo=;
-        b=uEnENVCGrAkSwljvFQE8R7TjyuNNrtj3oBbFJksFZ/DWUtDLvXkHPf7Flp6L+I2+ZY
-         XRd22nOx9aq/gGdw2eTN0ibQXrVqqYogIb/y8oRWL9ApNCqxV0I5pqlt9aZgwLXubhoH
-         fE9f/wOP7XvvVr1hh0p4FvdCkaf438ibhI0FnO75Vd0EoYf0KlEO7aCBf8m33Gy2eenW
-         QkjRJaeQE9gdrpgl1dlBjfZHiW+qf/ePFsZaqUKyvvV/0OHnSRlZAE6P+PRXd26sYwFz
-         FrawXOg6+ulsYWAwTQ2w24FJGhuRHIgYQf3XkD3YeJeIpVLQeV4QwhfiW2FDDeRA/3/N
-         FWYQ==
+        bh=tYHXkVzeOtxIGD/qm7ciiOabdmN2P2nuUfWoT7Nk93E=;
+        b=K1a5VRc5A1iUZcRLpQYheQhwnM12F9CBHas0jPJyA0pS5Mth0tE/5/x2muZKSuVC1C
+         OfbC/1F2aNESOSUSYLHS5VQOjnIJtuNwFCER3yuYIeTY6MC5JMaHPvfD4rncyR3uCXZt
+         k66T+czr47PFGOPBXeLtbVu7yPlNrJNuWYhmUPF/Ban5yy0jQft+K/PM1shYyxXoUv6C
+         ojSD/E7zRq8D4gsoJ8hze1ZjAEJFNtP8UuACpCZdT/6kROENdymdmo+WaaKVuYn9tBS1
+         ttCXHlOxtvTg99JutworTgaV1JKsLa+l0jKN+qzRKVG3TUC1sK5Z7yNksKuG7jJYnA5V
+         +Ksg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:autocrypt
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=wtL4NEaz1e7dZ5rH59pH/u2eUopJxXPtepf8OA0VPwo=;
-        b=VUswseiJOHaVng8+AOsBWIs0I+kp1hzpmF5o/eH4lz0ZLXtVA6ku5xvbW1N+aJm4jJ
-         3ARuSpFOl5GAE5JxAdlLhayIQiF3ArLL4+Z0fxFE49mgNvJ86sYALaRl6McdE2sdg87U
-         0GJsVvczq0Sd3L1L9p4DFQADm80cghR1m8AEWTHT+cAb2kp4+XefTJdNHQXDtXGmAQUu
-         m/GwsR6XRlY8sP5alUHRlV2CUV8yEcN1eFE9Wtdw0whQFUJ5lmQqc25xgyIre2saUt7w
-         Z+C3oixSvJZYVNFMlK9o0y1xGdp15ej9q6/j3KQ5L9RUD7xqShEQAxCH5OcrY9F1+6nO
-         3cLQ==
-X-Gm-Message-State: AOAM532obfPLRu3sI+TFwTRCO1Zt7gHF06+SijoeE4/1l3RZwrnRed7C
-        AwxD/QHU7X/43b/A2IjD31M=
-X-Google-Smtp-Source: ABdhPJx49Q41j8rkIdSXW71tA52j9UGdlFNEgF/xeODVi39kbf8ltkthI2NabfinVZySZsMJ0UdOsQ==
-X-Received: by 2002:a5d:4584:: with SMTP id p4mr13181762wrq.383.1618397421724;
-        Wed, 14 Apr 2021 03:50:21 -0700 (PDT)
+        bh=tYHXkVzeOtxIGD/qm7ciiOabdmN2P2nuUfWoT7Nk93E=;
+        b=FYiBkM06EjRGwrv2DZl55SaLwOTZx2JXg3IlehwEWnjjkyhFdX8VxiUx+kZlW9Ic9A
+         mb/t/BURJN9Lnfi6O8MDKZ+4DpOdCrk0iKMcoTBxUBIjo0vqrqeAEh4ApMmnZrS/47ol
+         VJYS/dOI8mzKvvJTKW745nvJ4dgd4G+aOHlc383UCQCrsST6ANxefB3XiYGmn7uLTblp
+         6Sc7mzV7ueARYEumFOcY8pHYIxcrX/A8YApwZ0OPISqp7bVav1cX6PpwVPoqpe0j5Yuh
+         c6A3RXB9JNYsqvX4fa3Edht+8FYiUdKqkMq+UMsXV9VeRgR/ZZzA7Yz3MNW91lXEk0Jz
+         QDeA==
+X-Gm-Message-State: AOAM531gx1QHnwLG2TJ+/8261hb6Z6TiGs5O8ZYvJfd4QPALEWGD2MHH
+        rGYwWFs5p+kZcYfJQzxEm4WNrWXNiOlzcQ==
+X-Google-Smtp-Source: ABdhPJyxHWbGuWF1lMOMB/56yH/55ePe9YOtrsY/lRgACkRLT9h3xIzUpeqrjVzY9u7boIhfQxi7ig==
+X-Received: by 2002:a05:600c:4142:: with SMTP id h2mr2429537wmm.87.1618397582066;
+        Wed, 14 Apr 2021 03:53:02 -0700 (PDT)
 Received: from [192.168.8.185] ([148.252.128.163])
-        by smtp.gmail.com with ESMTPSA id f7sm4456804wmq.11.2021.04.14.03.50.20
+        by smtp.gmail.com with ESMTPSA id l24sm5061489wmc.4.2021.04.14.03.53.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Apr 2021 03:50:21 -0700 (PDT)
-Subject: Re: [PATCH] io_uring: fix early sqd_list removal sqpoll hangs
+        Wed, 14 Apr 2021 03:53:01 -0700 (PDT)
+Subject: Re: [PATCH v2] add tests for drain io with multishot reqs
+To:     Hao Xu <haoxu@linux.alibaba.com>, Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
+References: <1618298439-136286-1-git-send-email-haoxu@linux.alibaba.com>
+ <1618298628-137451-1-git-send-email-haoxu@linux.alibaba.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc:     stable@vger.kernel.org, Joakim Hassila <joj@mac.com>
-References: <1592cc2b0418a0512c83898dbef0b1c9722e8645.1618310545.git.asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
  bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
@@ -96,12 +97,12 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <5df3c1f9-fbf5-ed78-00df-87850de67c71@gmail.com>
-Date:   Wed, 14 Apr 2021 11:46:12 +0100
+Message-ID: <53c24fe3-5d2a-2173-2bae-955f8459b7cc@gmail.com>
+Date:   Wed, 14 Apr 2021 11:48:53 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <1592cc2b0418a0512c83898dbef0b1c9722e8645.1618310545.git.asml.silence@gmail.com>
+In-Reply-To: <1618298628-137451-1-git-send-email-haoxu@linux.alibaba.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -109,60 +110,456 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 13/04/2021 11:43, Pavel Begunkov wrote:
-> [  245.463317] INFO: task iou-sqp-1374:1377 blocked for more than 122 seconds.
-> [  245.463334] task:iou-sqp-1374    state:D flags:0x00004000
-> [  245.463345] Call Trace:
-> [  245.463352]  __schedule+0x36b/0x950
-> [  245.463376]  schedule+0x68/0xe0
-> [  245.463385]  __io_uring_cancel+0xfb/0x1a0
-> [  245.463407]  do_exit+0xc0/0xb40
-> [  245.463423]  io_sq_thread+0x49b/0x710
-> [  245.463445]  ret_from_fork+0x22/0x30
+On 13/04/2021 08:23, Hao Xu wrote:
+> Add a simple test for drain io with multishot reqs. A generic one as
+> well, which randomly generates sqes for testing. The later will cover
+> most cases.
+
+Great job crafting tests and patches. It's a fix, so ok to get it in
+later RCs, so I'll take a look but in a week (if Jens won't take it
+earlier).
+
 > 
-> It happens when sqpoll forgot to run park_task_work and goes to exit,
-> then exiting user may remove ctx from sqd_list, and so corresponding
-> io_sq_thread() -> io_uring_cancel_sqpoll() won't be executed. Hopefully
-> it just stucks in do_exit() in this case.
-
-fwiw, it's actually a 5.12 problem and I have a reliable enough
-way to reproduce it.
-
-
-> Cc: stable@vger.kernel.org
-> Reported-by: Joakim Hassila <joj@mac.com>
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
 > ---
->  fs/io_uring.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
+>  src/include/liburing/io_uring.h |  15 ++
+>  test/Makefile                   |   2 +
+>  test/multicqes_drain.c          | 380 ++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 397 insertions(+)
+>  create mode 100644 test/multicqes_drain.c
 > 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index cadd7a65a7f4..f390914666b1 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -6817,6 +6817,9 @@ static int io_sq_thread(void *data)
->  	current->flags |= PF_NO_SETAFFINITY;
+> diff --git a/src/include/liburing/io_uring.h b/src/include/liburing/io_uring.h
+> index d3d166e57be8..eed991d08655 100644
+> --- a/src/include/liburing/io_uring.h
+> +++ b/src/include/liburing/io_uring.h
+> @@ -165,6 +165,21 @@ enum {
+>  #define SPLICE_F_FD_IN_FIXED	(1U << 31) /* the last bit of __u32 */
 >  
->  	mutex_lock(&sqd->lock);
-> +	/* a user may had exited before the thread wstarted */
-> +	io_run_task_work_head(&sqd->park_task_work);
+>  /*
+> + * POLL_ADD flags. Note that since sqe->poll_events is the flag space, the
+> + * command flags for POLL_ADD are stored in sqe->len.
+> + *
+> + * IORING_POLL_ADD_MULTI        Multishot poll. Sets IORING_CQE_F_MORE if
+> + *                              the poll handler will continue to report
+> + *                              CQEs on behalf of the same SQE.
+> + *
+> + * IORING_POLL_UPDATE           Update existing poll request, matching
+> + *                              sqe->addr as the old user_data field.
+> + */
+> +#define IORING_POLL_ADD_MULTI   (1U << 0)
+> +#define IORING_POLL_UPDATE_EVENTS       (1U << 1)
+> +#define IORING_POLL_UPDATE_USER_DATA    (1U << 2)
 > +
->  	while (!test_bit(IO_SQ_THREAD_SHOULD_STOP, &sqd->state)) {
->  		int ret;
->  		bool cap_entries, sqt_spin, needs_sched;
-> @@ -6833,10 +6836,10 @@ static int io_sq_thread(void *data)
->  			}
->  			cond_resched();
->  			mutex_lock(&sqd->lock);
-> -			if (did_sig)
-> -				break;
->  			io_run_task_work();
->  			io_run_task_work_head(&sqd->park_task_work);
-> +			if (did_sig)
-> +				break;
->  			timeout = jiffies + sqd->sq_thread_idle;
->  			continue;
->  		}
+> +/*
+>   * IO completion data structure (Completion Queue Entry)
+>   */
+>  struct io_uring_cqe {
+> diff --git a/test/Makefile b/test/Makefile
+> index 210571c22b40..5ffad0309914 100644
+> --- a/test/Makefile
+> +++ b/test/Makefile
+> @@ -66,6 +66,7 @@ test_targets += \
+>  	link-timeout \
+>  	link_drain \
+>  	madvise \
+> +	multicqes_drain \
+>  	nop \
+>  	nop-all-sizes \
+>  	open-close \
+> @@ -202,6 +203,7 @@ test_srcs := \
+>  	link.c \
+>  	link_drain.c \
+>  	madvise.c \
+> +	multicqes_drain.c \
+>  	nop-all-sizes.c \
+>  	nop.c \
+>  	open-close.c \
+> diff --git a/test/multicqes_drain.c b/test/multicqes_drain.c
+> new file mode 100644
+> index 000000000000..4f657e5c444a
+> --- /dev/null
+> +++ b/test/multicqes_drain.c
+> @@ -0,0 +1,380 @@
+> +/* SPDX-License-Identifier: MIT */
+> +/*
+> + * Description: generic tests for  io_uring drain io
+> + *
+> + * The main idea is to randomly generate different type of sqe to
+> + * challenge the drain logic. There are some restrictions for the
+> + * generated sqes, details in io_uring maillist:
+> + * https://lore.kernel.org/io-uring/39a49b4c-27c2-1035-b250-51daeccaab9b@linux.alibaba.com/
+> + *
+> + */
+> +#include <errno.h>
+> +#include <stdio.h>
+> +#include <unistd.h>
+> +#include <stdlib.h>
+> +#include <string.h>
+> +#include <time.h>
+> +#include <sys/poll.h>
+> +
+> +#include "liburing.h"
+> +
+> +enum {
+> +	multi,
+> +	single,
+> +	nop,
+> +	cancel,
+> +	op_last,
+> +};
+> +
+> +struct sqe_info {
+> +	__u8 op;
+> +	unsigned flags;
+> +};
+> +
+> +#define max_entry 50
+> +
+> +/*
+> + * sqe_flags: combination of sqe flags
+> + * multi_sqes: record the user_data/index of all the multishot sqes
+> + * cnt: how many entries there are in multi_sqes
+> + * we can leverage multi_sqes array for cancellation: we randomly pick
+> + * up an entry in multi_sqes when form a cancellation sqe.
+> + * multi_cap: limitation of number of multishot sqes
+> + */
+> +const unsigned sqe_flags[4] = {0, IOSQE_IO_LINK, IOSQE_IO_DRAIN,
+> +	IOSQE_IO_LINK | IOSQE_IO_DRAIN};
+> +int multi_sqes[max_entry], cnt = 0;
+> +int multi_cap = max_entry / 5;
+> +
+> +int write_pipe(int pipe, char *str)
+> +{
+> +	int ret;
+> +	do {
+> +		errno = 0;
+> +		ret = write(pipe, str, 3);
+> +	} while (ret == -1 && errno == EINTR);
+> +	return ret;
+> +}
+> +
+> +void read_pipe(int pipe)
+> +{
+> +	char str[4] = {0};
+> +
+> +	read(pipe, &str, 3);
+> +}
+> +
+> +int trigger_event(int p[])
+> +{
+> +	int ret;
+> +	if ((ret = write_pipe(p[1], "foo")) != 3) {
+> +		fprintf(stderr, "bad write return %d\n", ret);
+> +		return 1;
+> +	}
+> +	read_pipe(p[0]);
+> +	return 0;
+> +}
+> +
+> +void io_uring_sqe_prep(int op, struct io_uring_sqe *sqe, unsigned sqe_flags, int arg)
+> +{
+> +	switch (op) {
+> +		case multi:
+> +			io_uring_prep_poll_add(sqe, arg, POLLIN);
+> +			sqe->len |= IORING_POLL_ADD_MULTI;
+> +			break;
+> +		case single:
+> +			io_uring_prep_poll_add(sqe, arg, POLLIN);
+> +			break;
+> +		case nop:
+> +			io_uring_prep_nop(sqe);
+> +			break;
+> +		case cancel:
+> +			io_uring_prep_poll_remove(sqe, (void *)(long)arg);
+> +			break;
+> +	}
+> +	sqe->flags = sqe_flags;
+> +}
+> +
+> +__u8 generate_flags(int sqe_op)
+> +{
+> +	__u8 flags = 0;
+> +	/*
+> +	 * drain sqe must be put after multishot sqes cancelled
+> +	 */
+> +	do {
+> +		flags = sqe_flags[rand() % 4];
+> +	} while ((flags & IOSQE_IO_DRAIN) && cnt);
+> +
+> +	/*
+> +	 * cancel req cannot have drain or link flag
+> +	 */
+> +	if (sqe_op == cancel) {
+> +		flags &= ~(IOSQE_IO_DRAIN | IOSQE_IO_LINK);
+> +	}
+> +	/*
+> +	 * avoid below case:
+> +	 * sqe0(multishot, link)->sqe1(nop, link)->sqe2(nop)->sqe3(cancel_sqe0)
+> +	 * sqe3 may excute before sqe0 so that sqe0 isn't cancelled
+> +	 */
+> +	if (sqe_op == multi)
+> +		flags &= ~IOSQE_IO_LINK;
+> +
+> +	return flags;
+> +
+> +}
+> +
+> +/*
+> + * function to generate opcode of a sqe
+> + * several restrictions here:
+> + * - cancel all the previous multishot sqes as soon as possible when
+> + *   we reach high watermark.
+> + * - ensure there is some multishot sqe when generating a cancel sqe
+> + * - ensure a cancel/multshot sqe is not in a linkchain
+> + * - ensure number of multishot sqes doesn't exceed multi_cap
+> + * - don't generate multishot sqes after high watermark
+> + */
+> +int generate_opcode(int i, int pre_flags)
+> +{
+> +	int sqe_op;
+> +	int high_watermark = max_entry - max_entry / 5;
+> +	bool retry0 = false, retry1 = false, retry2 = false;
+> +
+> +	if ((i >= high_watermark) && cnt) {
+> +		sqe_op = cancel;
+> +	} else {
+> +		do {
+> +			sqe_op = rand() % op_last;
+> +			retry0 = (sqe_op == cancel) && (!cnt || (pre_flags & IOSQE_IO_LINK));
+> +			retry1 = (sqe_op == multi) && ((multi_cap - 1 < 0) || i >= high_watermark);
+> +			retry2 = (sqe_op == multi) && (pre_flags & IOSQE_IO_LINK);
+> +		} while (retry0 || retry1 || retry2);
+> +	}
+> +
+> +	if (sqe_op == multi)
+> +		multi_cap--;
+> +	return sqe_op;
+> +}
+> +
+> +inline void add_multishot_sqe(int index)
+> +{
+> +	multi_sqes[cnt++] = index;
+> +}
+> +
+> +int remove_multishot_sqe()
+> +{
+> +	int ret;
+> +
+> +	int rem_index = rand() % cnt;
+> +	ret = multi_sqes[rem_index];
+> +	multi_sqes[rem_index] = multi_sqes[cnt - 1];
+> +	cnt--;
+> +
+> +	return ret;
+> +}
+> +
+> +static int test_generic_drain(struct io_uring *ring)
+> +{
+> +	struct io_uring_cqe *cqe;
+> +	struct io_uring_sqe *sqe[max_entry];
+> +	struct sqe_info si[max_entry];
+> +	int cqe_data[max_entry << 1], cqe_res[max_entry << 1];
+> +	int i, j, ret, arg = 0;
+> +	int pipes[max_entry][2];
+> +	int pre_flags = 0;
+> +
+> +	for (i = 0; i < max_entry; i++) {
+> +		if (pipe(pipes[i]) != 0) {
+> +			perror("pipe");
+> +			return 1;
+> +		}
+> +	}
+> +
+> +	srand((unsigned)time(NULL));
+> +	for (i = 0; i < max_entry; i++) {
+> +		sqe[i] = io_uring_get_sqe(ring);
+> +		if (!sqe[i]) {
+> +			printf("get sqe failed\n");
+> +			goto err;
+> +		}
+> +
+> +		int sqe_op = generate_opcode(i, pre_flags);
+> +		__u8 flags = generate_flags(sqe_op);
+> +
+> +		if (sqe_op == cancel)
+> +			arg = remove_multishot_sqe();
+> +		if (sqe_op == multi || sqe_op == single)
+> +			arg = pipes[i][0];
+> +		io_uring_sqe_prep(sqe_op, sqe[i], flags, arg);
+> +		sqe[i]->user_data = i;
+> +		si[i].op = sqe_op;
+> +		si[i].flags = flags;
+> +		pre_flags = flags;
+> +		if (sqe_op == multi)
+> +			add_multishot_sqe(i);
+> +	}
+> +
+> +	ret = io_uring_submit(ring);
+> +	if (ret < 0) {
+> +		printf("sqe submit failed\n");
+> +		goto err;
+> +	} else if (ret < max_entry) {
+> +		printf("Submitted only %d\n", ret);
+> +		goto err;
+> +	}
+> +
+> +	sleep(4);
+> +	// TODO: randomize event triggerring order
+> +	for (i = 0; i < max_entry; i++) {
+> +		if (si[i].op != multi && si[i].op != single)
+> +			continue;
+> +
+> +		if (trigger_event(pipes[i]))
+> +			goto err;
+> +	}
+> +	sleep(5);
+> +	i = 0;
+> +	while (!io_uring_peek_cqe(ring, &cqe)) {
+> +		cqe_data[i] = cqe->user_data;
+> +		cqe_res[i++] = cqe->res;
+> +		io_uring_cqe_seen(ring, cqe);
+> +	}
+> +
+> +	/*
+> +	 * compl_bits is a bit map to record completions.
+> +	 * eg. sqe[0], sqe[1], sqe[2] fully completed
+> +	 * then compl_bits is 000...00111b
+> +	 * 
+> +	 */
+> +	unsigned long long compl_bits = 0;
+> +	for (j = 0; j < i; j++) {
+> +		int index = cqe_data[j];
+> +		if ((si[index].flags & IOSQE_IO_DRAIN) && index) {
+> +			if ((~compl_bits) & ((1ULL << index) - 1)) {
+> +				printf("drain failed\n");
+> +				goto err;
+> +			}
+> +		}
+> +		/*
+> +		 * for multishot sqes, record them only when it is cancelled
+> +		 */
+> +		if ((si[index].op != multi) || (cqe_res[j] == -ECANCELED))
+> +			compl_bits |= (1ULL << index);
+> +	}
+> +
+> +	return 0;
+> +err:
+> +	return 1;
+> +}
+> +
+> +static int test_simple_drain(struct io_uring *ring)
+> +{
+> +	struct io_uring_cqe *cqe;
+> +	struct io_uring_sqe *sqe[2];
+> +	int i, ret;
+> +	int pipe1[2], pipe2[2];
+> +
+> +	if (pipe(pipe1) != 0 || pipe(pipe2) != 0) {
+> +		perror("pipe");
+> +		return 1;
+> +	}
+> +
+> +	for (i = 0; i < 2; i++) {
+> +		sqe[i] = io_uring_get_sqe(ring);
+> +		if (!sqe[i]) {
+> +			printf("get sqe failed\n");
+> +			goto err;
+> +		}
+> +	}
+> +
+> +	io_uring_prep_poll_add(sqe[0], pipe1[0], POLLIN);
+> +	sqe[0]->len |= IORING_POLL_ADD_MULTI;
+> +	sqe[0]->user_data = 0;
+> +	io_uring_prep_poll_add(sqe[1], pipe2[0], POLLIN);
+> +	sqe[1]->user_data = 1;
+> +
+> +	ret = io_uring_submit(ring);
+> +	if (ret < 0) {
+> +		printf("sqe submit failed\n");
+> +		goto err;
+> +	} else if (ret < 2) {
+> +		printf("Submitted only %d\n", ret);
+> +		goto err;
+> +	}
+> +
+> +	for (i = 0; i < 2; i++) {
+> +		if (trigger_event(pipe1))
+> +			goto err;
+> +	}
+> +	if (trigger_event(pipe2))
+> +			goto err;
+> +
+> +	for (i = 0; i < 2; i++) {
+> +		sqe[i] = io_uring_get_sqe(ring);
+> +		if (!sqe[i]) {
+> +			printf("get sqe failed\n");
+> +			goto err;
+> +		}
+> +	}
+> +
+> +	io_uring_prep_poll_remove(sqe[0], 0);
+> +	sqe[0]->user_data = 2;
+> +	io_uring_prep_nop(sqe[1]);
+> +	sqe[1]->flags |= IOSQE_IO_DRAIN;
+> +	sqe[1]->user_data = 3;
+> +
+> +	ret = io_uring_submit(ring);
+> +	if (ret < 0) {
+> +		printf("sqe submit failed\n");
+> +		goto err;
+> +	} else if (ret < 2) {
+> +		printf("Submitted only %d\n", ret);
+> +		goto err;
+> +	}
+> +
+> +
+> +	for (i = 0; i < 6; i++) {
+> +		ret = io_uring_wait_cqe(ring, &cqe);
+> +		if (ret < 0) {
+> +			printf("wait completion %d\n", ret);
+> +			goto err;
+> +		}
+> +		io_uring_cqe_seen(ring, cqe);
+> +		if ((i == 5) && (cqe->user_data != 3))
+> +			goto err;
+> +	}
+> +
+> +	return 0;
+> +err:
+> +	return 1;
+> +}
+> +
+> +int main(int argc, char *argv[])
+> +{
+> +	struct io_uring ring;
+> +	int i, ret;
+> +
+> +	if (argc > 1)
+> +		return 0;
+> +
+> +	ret = io_uring_queue_init(1024, &ring, 0);
+> +	if (ret) {
+> +		printf("ring setup failed\n");
+> +		return 1;
+> +	}
+> +
+> +	for (i = 0; i < 5; i++) {
+> +		ret = test_simple_drain(&ring);
+> +		if (ret) {
+> +			fprintf(stderr, "test_simple_drain failed\n");
+> +			break;
+> +		}
+> +	}
+> +
+> +	for (i = 0; i < 5; i++) {
+> +		ret = test_generic_drain(&ring);
+> +		if (ret) {
+> +			fprintf(stderr, "test_generic_drain failed\n");
+> +			break;
+> +		}
+> +	}
+> +	return ret;
+> +}
 > 
 
 -- 

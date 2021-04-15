@@ -2,52 +2,52 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D5F68361144
-	for <lists+io-uring@lfdr.de>; Thu, 15 Apr 2021 19:42:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C0FD361147
+	for <lists+io-uring@lfdr.de>; Thu, 15 Apr 2021 19:43:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234325AbhDORm2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 15 Apr 2021 13:42:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52742 "EHLO
+        id S233311AbhDORoC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 15 Apr 2021 13:44:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53088 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233610AbhDORm1 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 15 Apr 2021 13:42:27 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCFDBC061574;
-        Thu, 15 Apr 2021 10:42:02 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id j5so23165711wrn.4;
-        Thu, 15 Apr 2021 10:42:02 -0700 (PDT)
+        with ESMTP id S233134AbhDORoC (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 15 Apr 2021 13:44:02 -0400
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA829C061574;
+        Thu, 15 Apr 2021 10:43:38 -0700 (PDT)
+Received: by mail-wr1-x430.google.com with SMTP id j5so23170180wrn.4;
+        Thu, 15 Apr 2021 10:43:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:from:to:cc:references:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=uEjbmIlAYJr/chkPHgEovS37j8EeMpHOWLqyA5kaHHk=;
-        b=rg81Y52c74FFPUJHGbFwesSapImx1QoWoJI3kId+pUt7+4xA0yZcd/XjpzyPdlepxE
-         2yCeLR684plNnQxr0miHx8T+QLN63CPrKw+TOd6s2koNyJad+zQyvo3kPKIlmZuWolQS
-         W3X3JeGLnDkG5hDfrsG27kw2p4jtuxuHIl1j0EQLARWcCwEaq2hZjPAw9zXjUp18p/MW
-         aoVH2Ddxp9jh/NHe1zXCjeKpDxO+6+cd/wyEdiVy0e4042Emdl7naeP2CJpmFheJ+32G
-         /nBj9vFH2SYYqlVUszpWTO5ErQuzCYyfh5dvcA2yN4Hsh0/idNv2L2cAZXlq0eVyrK0N
-         dx0A==
+        bh=glqV8G4m2t3RXY1t9mEDvQG/54QxYFUk50FCtMFS2ls=;
+        b=cNEpAKQqW4MSV0nssyqfwCF7DrEKeafDE2FgXHb4b9zBIf+mEFIW1snCWNzgJ+I37J
+         umUaLxvNKAACxQcNhK0ZADSzJxinP4OH2f3aZ3t72qoZ8Bgxvyx65+NWj1kU842m1eJ8
+         woyDF1oCEgoJ580BGUh+TyKNyVeDGoWSw3d8wlV2dcnfgQy6YGFOJFo0Ld18Q//gsz5R
+         GJFShCLcnxuTQEv3nC/x1IrUTG8TePLYpDSe5QcJ7BJ3CRJKyy1eAPYEuf2bIQYxrtnr
+         s5+7lm1LNnpm4JS2JZoyBEhuQLuiExZG085Db7JD7VcKtiWnxsrjs+SKA4CoEdbzHZKu
+         jDag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:from:to:cc:references:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=uEjbmIlAYJr/chkPHgEovS37j8EeMpHOWLqyA5kaHHk=;
-        b=FtfZVpIBn1c3Su0NK5sNkM07D9fMXODQ8WMGPZKSHhwbyVGKqFqCpMS/H/OH49heMs
-         cNuBE5nJCRr/TX4foXCXHRIISrZ266LkGYbYgPZigyh4Ug4b2sPA1gPQ6UAyauITlvND
-         1EZ2XCC9Fl3PVqFvARA+K8bC7a0wymfEZlwpFei0WKX0g3E28rW7Tts94nnWwVlSJwHt
-         rB4H3uYJuuZBklEfnfkxZKoxJwM4cumM8ON1Y0jsHpgWt+tOykYMTHrif8Yz+Z105e2S
-         TNYLKEtD41ngtF06zrZdw9rfOWWwjvdA44nGDPP34weOpfl6q86J3O+KAU1zJtvGk3pR
-         hBlQ==
-X-Gm-Message-State: AOAM532jG78qC7QEUxNgrpL0V45Mh8vDxgsQaeRXmZf870/EXURdtqD1
-        qCKzeAWi9x465I/0qEoz6oc3c/9ZauJJSg==
-X-Google-Smtp-Source: ABdhPJzg1wWuONXjWedvc2gZqj9aFK0JFCeYfMzaOK/8Vn58gK7kr8Di8DcbNgeaBFYkQU6DPnzHbA==
-X-Received: by 2002:adf:f302:: with SMTP id i2mr4596297wro.423.1618508521460;
-        Thu, 15 Apr 2021 10:42:01 -0700 (PDT)
+        bh=glqV8G4m2t3RXY1t9mEDvQG/54QxYFUk50FCtMFS2ls=;
+        b=YPGz3/rzKhgatWmuDM+0yZHjGwOmLEQYiDAsFadxxGAqdbc7VH+N+7TDDQYN7xVDdF
+         ItcHsfSZhLAE8+Q8spHnRRPvii24eK8d01cbt3U1/AXoM7Zp0ryaiVG847p6UJYIReP6
+         g5Xg2gDvfexHtXotqVgzAyTMqTo4UA6qMTc+5wRW9bwSHmOnvZhYQTWIf05sFZR/WGUM
+         vEK4DC1i+neq8ygm/5T5kF7Brk+fBvftwXZG1UsI/yT8ZHeb9j/uNbNH2c/RxUP9BBYl
+         WiOl0KA5oUC/gkLI/bWLGWE3FjB+Zsowkfz/j1sd1eZMh9+OjbPPAX25PNHD8NJkU2vZ
+         lt6w==
+X-Gm-Message-State: AOAM532lfwDAf+AKi4+otYFkPWsTCyAr57S2bWbEo8WikiSsNFdKP6Qr
+        Y8DT12Rr0rI8pxl0lOJVvj0SMUuOeqrsrw==
+X-Google-Smtp-Source: ABdhPJzxEiG8boH/apJggGvbonN24EV2GC50+Yy3C8+/Wpjj8jl9pA5lcULpAHJSTKvh5xTgZdr4wA==
+X-Received: by 2002:a5d:4bce:: with SMTP id l14mr4750994wrt.359.1618508617405;
+        Thu, 15 Apr 2021 10:43:37 -0700 (PDT)
 Received: from [192.168.8.188] ([185.69.144.21])
-        by smtp.gmail.com with ESMTPSA id 61sm5038669wrm.52.2021.04.15.10.41.59
+        by smtp.gmail.com with ESMTPSA id a72sm3899058wme.29.2021.04.15.10.43.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 Apr 2021 10:42:00 -0700 (PDT)
+        Thu, 15 Apr 2021 10:43:37 -0700 (PDT)
 Subject: Re: [PATCH] block: reexpand iov_iter after read/write
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     yangerkun <yangerkun@huawei.com>, axboe@kernel.dk
@@ -55,6 +55,7 @@ Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
         linux-block@vger.kernel.org, io-uring@vger.kernel.org
 References: <20210401071807.3328235-1-yangerkun@huawei.com>
  <a2e97190-936d-ebe0-2adc-748328076f31@gmail.com>
+ <7ff7d1b7-8b6d-a684-1740-6a62565f77b6@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
  bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
@@ -98,12 +99,12 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <7ff7d1b7-8b6d-a684-1740-6a62565f77b6@gmail.com>
-Date:   Thu, 15 Apr 2021 18:37:51 +0100
+Message-ID: <3368729f-e61d-d4b6-f2ae-e17ebe59280e@gmail.com>
+Date:   Thu, 15 Apr 2021 18:39:28 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <a2e97190-936d-ebe0-2adc-748328076f31@gmail.com>
+In-Reply-To: <7ff7d1b7-8b6d-a684-1740-6a62565f77b6@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -111,105 +112,110 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 09/04/2021 15:49, Pavel Begunkov wrote:
-> On 01/04/2021 08:18, yangerkun wrote:
->> We get a bug:
+On 15/04/2021 18:37, Pavel Begunkov wrote:
+> On 09/04/2021 15:49, Pavel Begunkov wrote:
+>> On 01/04/2021 08:18, yangerkun wrote:
+>>> We get a bug:
+>>>
+>>> BUG: KASAN: slab-out-of-bounds in iov_iter_revert+0x11c/0x404
+>>> lib/iov_iter.c:1139
+>>> Read of size 8 at addr ffff0000d3fb11f8 by task
+>>>
+>>> CPU: 0 PID: 12582 Comm: syz-executor.2 Not tainted
+>>> 5.10.0-00843-g352c8610ccd2 #2
+>>> Hardware name: linux,dummy-virt (DT)
+>>> Call trace:
+> ...
+>>>  __asan_load8+0xb4/0xbc mm/kasan/generic.c:252
+>>>  iov_iter_revert+0x11c/0x404 lib/iov_iter.c:1139
+>>>  io_read fs/io_uring.c:3421 [inline]
+>>>  io_issue_sqe+0x2344/0x2d64 fs/io_uring.c:5943
+>>>  __io_queue_sqe+0x19c/0x520 fs/io_uring.c:6260
+>>>  io_queue_sqe+0x2a4/0x590 fs/io_uring.c:6326
+>>>  io_submit_sqe fs/io_uring.c:6395 [inline]
+>>>  io_submit_sqes+0x4c0/0xa04 fs/io_uring.c:6624
+> ...
+>>>
+>>> blkdev_read_iter can truncate iov_iter's count since the count + pos may
+>>> exceed the size of the blkdev. This will confuse io_read that we have
+>>> consume the iovec. And once we do the iov_iter_revert in io_read, we
+>>> will trigger the slab-out-of-bounds. Fix it by reexpand the count with
+>>> size has been truncated.
 >>
->> BUG: KASAN: slab-out-of-bounds in iov_iter_revert+0x11c/0x404
->> lib/iov_iter.c:1139
->> Read of size 8 at addr ffff0000d3fb11f8 by task
+>> Looks right,
 >>
->> CPU: 0 PID: 12582 Comm: syz-executor.2 Not tainted
->> 5.10.0-00843-g352c8610ccd2 #2
->> Hardware name: linux,dummy-virt (DT)
->> Call trace:
-...
->>  __asan_load8+0xb4/0xbc mm/kasan/generic.c:252
->>  iov_iter_revert+0x11c/0x404 lib/iov_iter.c:1139
->>  io_read fs/io_uring.c:3421 [inline]
->>  io_issue_sqe+0x2344/0x2d64 fs/io_uring.c:5943
->>  __io_queue_sqe+0x19c/0x520 fs/io_uring.c:6260
->>  io_queue_sqe+0x2a4/0x590 fs/io_uring.c:6326
->>  io_submit_sqe fs/io_uring.c:6395 [inline]
->>  io_submit_sqes+0x4c0/0xa04 fs/io_uring.c:6624
-...
->>
->> blkdev_read_iter can truncate iov_iter's count since the count + pos may
->> exceed the size of the blkdev. This will confuse io_read that we have
->> consume the iovec. And once we do the iov_iter_revert in io_read, we
->> will trigger the slab-out-of-bounds. Fix it by reexpand the count with
->> size has been truncated.
+>> Acked-by: Pavel Begunkov <asml.silencec@gmail.com>
 > 
-> Looks right,
+> Fwiw, we need to forget to drag it through 5.13 + stable
+
+Err, yypo, to _not_ forget to 5.13 + stable...
+
 > 
-> Acked-by: Pavel Begunkov <asml.silencec@gmail.com>
-
-Fwiw, we need to forget to drag it through 5.13 + stable
-
-
->>
->> blkdev_write_iter can trigger the problem too.
->>
->> Signed-off-by: yangerkun <yangerkun@huawei.com>
->> ---
->>  fs/block_dev.c | 20 +++++++++++++++++---
->>  1 file changed, 17 insertions(+), 3 deletions(-)
->>
->> diff --git a/fs/block_dev.c b/fs/block_dev.c
->> index 92ed7d5df677..788e1014576f 100644
->> --- a/fs/block_dev.c
->> +++ b/fs/block_dev.c
->> @@ -1680,6 +1680,7 @@ ssize_t blkdev_write_iter(struct kiocb *iocb, struct iov_iter *from)
->>  	struct inode *bd_inode = bdev_file_inode(file);
->>  	loff_t size = i_size_read(bd_inode);
->>  	struct blk_plug plug;
->> +	size_t shorted = 0;
->>  	ssize_t ret;
->>  
->>  	if (bdev_read_only(I_BDEV(bd_inode)))
->> @@ -1697,12 +1698,17 @@ ssize_t blkdev_write_iter(struct kiocb *iocb, struct iov_iter *from)
->>  	if ((iocb->ki_flags & (IOCB_NOWAIT | IOCB_DIRECT)) == IOCB_NOWAIT)
->>  		return -EOPNOTSUPP;
->>  
->> -	iov_iter_truncate(from, size - iocb->ki_pos);
->> +	size -= iocb->ki_pos;
->> +	if (iov_iter_count(from) > size) {
->> +		shorted = iov_iter_count(from) - size;
->> +		iov_iter_truncate(from, size);
->> +	}
->>  
->>  	blk_start_plug(&plug);
->>  	ret = __generic_file_write_iter(iocb, from);
->>  	if (ret > 0)
->>  		ret = generic_write_sync(iocb, ret);
->> +	iov_iter_reexpand(from, iov_iter_count(from) + shorted);
->>  	blk_finish_plug(&plug);
->>  	return ret;
->>  }
->> @@ -1714,13 +1720,21 @@ ssize_t blkdev_read_iter(struct kiocb *iocb, struct iov_iter *to)
->>  	struct inode *bd_inode = bdev_file_inode(file);
->>  	loff_t size = i_size_read(bd_inode);
->>  	loff_t pos = iocb->ki_pos;
->> +	size_t shorted = 0;
->> +	ssize_t ret;
->>  
->>  	if (pos >= size)
->>  		return 0;
->>  
->>  	size -= pos;
->> -	iov_iter_truncate(to, size);
->> -	return generic_file_read_iter(iocb, to);
->> +	if (iov_iter_count(to) > size) {
->> +		shorted = iov_iter_count(to) - size;
->> +		iov_iter_truncate(to, size);
->> +	}
->> +
->> +	ret = generic_file_read_iter(iocb, to);
->> +	iov_iter_reexpand(to, iov_iter_count(to) + shorted);
->> +	return ret;
->>  }
->>  EXPORT_SYMBOL_GPL(blkdev_read_iter);
->>  
+> 
+>>>
+>>> blkdev_write_iter can trigger the problem too.
+>>>
+>>> Signed-off-by: yangerkun <yangerkun@huawei.com>
+>>> ---
+>>>  fs/block_dev.c | 20 +++++++++++++++++---
+>>>  1 file changed, 17 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/fs/block_dev.c b/fs/block_dev.c
+>>> index 92ed7d5df677..788e1014576f 100644
+>>> --- a/fs/block_dev.c
+>>> +++ b/fs/block_dev.c
+>>> @@ -1680,6 +1680,7 @@ ssize_t blkdev_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>>>  	struct inode *bd_inode = bdev_file_inode(file);
+>>>  	loff_t size = i_size_read(bd_inode);
+>>>  	struct blk_plug plug;
+>>> +	size_t shorted = 0;
+>>>  	ssize_t ret;
+>>>  
+>>>  	if (bdev_read_only(I_BDEV(bd_inode)))
+>>> @@ -1697,12 +1698,17 @@ ssize_t blkdev_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>>>  	if ((iocb->ki_flags & (IOCB_NOWAIT | IOCB_DIRECT)) == IOCB_NOWAIT)
+>>>  		return -EOPNOTSUPP;
+>>>  
+>>> -	iov_iter_truncate(from, size - iocb->ki_pos);
+>>> +	size -= iocb->ki_pos;
+>>> +	if (iov_iter_count(from) > size) {
+>>> +		shorted = iov_iter_count(from) - size;
+>>> +		iov_iter_truncate(from, size);
+>>> +	}
+>>>  
+>>>  	blk_start_plug(&plug);
+>>>  	ret = __generic_file_write_iter(iocb, from);
+>>>  	if (ret > 0)
+>>>  		ret = generic_write_sync(iocb, ret);
+>>> +	iov_iter_reexpand(from, iov_iter_count(from) + shorted);
+>>>  	blk_finish_plug(&plug);
+>>>  	return ret;
+>>>  }
+>>> @@ -1714,13 +1720,21 @@ ssize_t blkdev_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>>>  	struct inode *bd_inode = bdev_file_inode(file);
+>>>  	loff_t size = i_size_read(bd_inode);
+>>>  	loff_t pos = iocb->ki_pos;
+>>> +	size_t shorted = 0;
+>>> +	ssize_t ret;
+>>>  
+>>>  	if (pos >= size)
+>>>  		return 0;
+>>>  
+>>>  	size -= pos;
+>>> -	iov_iter_truncate(to, size);
+>>> -	return generic_file_read_iter(iocb, to);
+>>> +	if (iov_iter_count(to) > size) {
+>>> +		shorted = iov_iter_count(to) - size;
+>>> +		iov_iter_truncate(to, size);
+>>> +	}
+>>> +
+>>> +	ret = generic_file_read_iter(iocb, to);
+>>> +	iov_iter_reexpand(to, iov_iter_count(to) + shorted);
+>>> +	return ret;
+>>>  }
+>>>  EXPORT_SYMBOL_GPL(blkdev_read_iter);
+>>>  
+>>>
 >>
 > 
 

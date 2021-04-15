@@ -2,175 +2,206 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F3361360382
-	for <lists+io-uring@lfdr.de>; Thu, 15 Apr 2021 09:39:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37BE836069C
+	for <lists+io-uring@lfdr.de>; Thu, 15 Apr 2021 12:08:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231358AbhDOHkE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 15 Apr 2021 03:40:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60800 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230090AbhDOHkD (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 15 Apr 2021 03:40:03 -0400
-Received: from mail-qk1-x731.google.com (mail-qk1-x731.google.com [IPv6:2607:f8b0:4864:20::731])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47DCDC061574
-        for <io-uring@vger.kernel.org>; Thu, 15 Apr 2021 00:39:41 -0700 (PDT)
-Received: by mail-qk1-x731.google.com with SMTP id o5so24325721qkb.0
-        for <io-uring@vger.kernel.org>; Thu, 15 Apr 2021 00:39:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RQ4Q87xBrzCDyq10w6Xjp2756dW0ujWlXDbBBS5gu3g=;
-        b=TH83Sm2XDd8xPQ3hDBxUDg3ty0nGrnvVdnVbOMVdR174U9BJUkMz8JM2K7i9z/q2eo
-         xPtmQ85CYtbrW5R7xZ/Kpt0qmD3IPFzqoM6qEo0Pe4VwzGc0JX9aKY+4kVbaGWPFGit5
-         iCP++hPrlKkZV925xgmkWkYkPJiCenAo6+sOW36UX0KLGH1XN68SfMjrQCmVCIiknI+f
-         QP84IPgsnb3IDI4ShxL1nppD0CrCqOViWHlfPIbd3JfycH9G0CGIcrGSj9G1x02UWBSM
-         qipZnCBC5W2d0zWOX2guBqZXHC6ZOGH6uV/nW51qw7+4XfqonialxtrLswU3dYEwQU9H
-         hBfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RQ4Q87xBrzCDyq10w6Xjp2756dW0ujWlXDbBBS5gu3g=;
-        b=VHaTC935EXIjPkapAk8yqpQn3lfuEaNUnPeVXDW08Nf7UJuVgzM/MUKIJyYFAEUXGB
-         yf76lVYplQZ2jSMKZ1OWsOvqUsNWuPpfigQtIV0MwEz2G+Yh22aOtiYoE/BzFZH3njQA
-         djLzBdrIis1YV0xuorEVAaGXT2WZOh9n9bVXxwLYXBguG7alRTtVMMtRh1fQzYWNNtl6
-         d3HBvo9ybqu+sbE4zu0iBYZnx10cGsR96uEbQ9dHAfGjBvGTl3OYpagYdcqUrng5AFQa
-         ZVAcQ9dH5XmEiHqWNotF55sXn4geYK2WtBKOCanraQkTKnfikQiCOpPou9OmSSfQXWdw
-         t1Rw==
-X-Gm-Message-State: AOAM530CmTGIwrtjbO/oR9QW+SZmoPKDjzz9h0N3ZLAAxziyHkcKUCAL
-        y/3GDITRVEwDoB3eM+K0yLMx8Vjwavcr/Q+YK0O3NA==
-X-Google-Smtp-Source: ABdhPJzQYDJ19v6r6vobTgNRmzq6or+GRPWPSG3B3q75i30MJId/Xl2qbljRywyB69CyppZNiFmSmrp0sXmIAbL3tpI=
-X-Received: by 2002:a37:a993:: with SMTP id s141mr2142569qke.265.1618472380261;
- Thu, 15 Apr 2021 00:39:40 -0700 (PDT)
-MIME-Version: 1.0
-References: <000000000000d5358b05bfe10354@google.com> <20210415072313.629-1-hdanton@sina.com>
-In-Reply-To: <20210415072313.629-1-hdanton@sina.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Thu, 15 Apr 2021 09:39:28 +0200
-Message-ID: <CACT4Y+aCda1r=Ss1ERQK4ruOZjp71CRt-HPT9ujjiNtkimNg5g@mail.gmail.com>
-Subject: Re: [syzbot] possible deadlock in io_poll_double_wake (3)
-To:     Hillf Danton <hdanton@sina.com>
-Cc:     syzbot <syzbot+e654d4e15e6b3b9deb53@syzkaller.appspotmail.com>,
+        id S232285AbhDOKIn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 15 Apr 2021 06:08:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40454 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231482AbhDOKIn (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Thu, 15 Apr 2021 06:08:43 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 5950C61074;
+        Thu, 15 Apr 2021 10:08:18 +0000 (UTC)
+Date:   Thu, 15 Apr 2021 12:08:15 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Dmitry Kadashev <dkadashev@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
         Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+        Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel@vger.kernel.org, io-uring <io-uring@vger.kernel.org>
+Subject: Re: [PATCH v3 1/2] fs: make do_mkdirat() take struct filename
+Message-ID: <20210415100815.edrn4a7cy26wkowe@wittgenstein>
+References: <20210330055957.3684579-1-dkadashev@gmail.com>
+ <20210330055957.3684579-2-dkadashev@gmail.com>
+ <20210330071700.kpjoyp5zlni7uejm@wittgenstein>
+ <CAOKbgA6spFzCJO+L_uwm9nhG+5LEo_XjVt7R7D8K=B5BcWSDbA@mail.gmail.com>
+ <CAOKbgA6Qrs5DoHsHgBvrSGbyzHcaiGVpP+UBS5f25CtdBx3SdA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAOKbgA6Qrs5DoHsHgBvrSGbyzHcaiGVpP+UBS5f25CtdBx3SdA@mail.gmail.com>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Apr 15, 2021 at 9:23 AM Hillf Danton <hdanton@sina.com> wrote:
->
-> On Tue, 13 Apr 2021 14:07:16
-> > Hello,
+On Thu, Apr 15, 2021 at 02:14:17PM +0700, Dmitry Kadashev wrote:
+> On Thu, Apr 8, 2021 at 3:45 PM Dmitry Kadashev <dkadashev@gmail.com> wrote:
 > >
-> > syzbot found the following issue on:
+> > On Tue, Mar 30, 2021 at 2:17 PM Christian Brauner
+> > <christian.brauner@ubuntu.com> wrote:
+> > > The only thing that is a bit unpleasant here is that this change
+> > > breaks the consistency between the creation helpers:
+> > >
+> > > do_mkdirat()
+> > > do_symlinkat()
+> > > do_linkat()
+> > > do_mknodat()
+> > >
+> > > All but of them currently take
+> > > const char __user *pathname
+> > > and call
+> > > user_path_create()
+> > > with that do_mkdirat() change that's no longer true. One of the major
+> > > benefits over the recent years in this code is naming and type consistency.
+> > > And since it's just matter of time until io_uring will also gain support
+> > > for do_{symlinkat,linkat,mknodat} I would think switching all of them to
+> > > take a struct filename
+> > > and then have all do_* helpers call getname() might just be nicer in the
+> > > long run.
 > >
-> > HEAD commit:    17e7124a Merge tag '5.12-rc6-smb3' of git://git.samba.org/..
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=102c3891d00000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=9320464bf47598bd
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=e654d4e15e6b3b9deb53
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15fe3096d00000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=147b9431d00000
+> > So, I've finally got some time to look into this. do_mknodat() and
+> > do_symlinkat() are easy. But do_linkat() is more complicated, I could use some
+> > hints as to what's the reasonable way to implement the change.
 > >
-> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > Reported-by: syzbot+e654d4e15e6b3b9deb53@syzkaller.appspotmail.com
+> > The problem is linkat() requires CAP_DAC_READ_SEARCH capability if AT_EMPTY_PATH
+> > flag is passed. Right now do_linkat checks the capability before calling
+> > getname_flags (essentially). If do_linkat is changed to accept struct filename
+> > then there is no bulletproof way to force CAP_DAC_READ_SEARCH presence (e.g. if
+> > for whatever reason AT_EMPTY_PATH is not in flags passed to do_linkat). Also, it
+> > means that the caller is responsible to process AT_EMPTY_PATH in the first
+> > place, which means logic duplication.
 > >
-> > ============================================
-> > WARNING: possible recursive locking detected
-> > 5.12.0-rc6-syzkaller #0 Not tainted
-> > --------------------------------------------
-> > swapper/0/0 is trying to acquire lock:
-> > ffff88802108c130 (&runtime->sleep){..-.}-{2:2}, at: spin_lock include/linux/spinlock.h:354 [inline]
-> > ffff88802108c130 (&runtime->sleep){..-.}-{2:2}, at: io_poll_double_wake+0x25f/0x6a0 fs/io_uring.c:4988
-> >
-> > but task is already holding lock:
-> > ffff888014fd8130 (&runtime->sleep){..-.}-{2:2}, at: __wake_up_common_lock+0xb4/0x130 kernel/sched/wait.c:137
-> >
-> > other info that might help us debug this:
-> >  Possible unsafe locking scenario:
-> >
-> >        CPU0
-> >        ----
-> >   lock(&runtime->sleep);
-> >   lock(&runtime->sleep);
-> >
-> >  *** DEADLOCK ***
->
-> Wasnt it fixed by 1c3b3e6527e57, given the same call trace at the first
-> glance?
+> > Any ideas what's the best way to approach this?
+> 
+> Ping. If someone can see how we can avoid making do_linkat() callers
+> ensure the process has CAP_DAC_READ_SEARCH capability if AT_EMPTY_PATH
+> was passed then the hints would be really appreciated.
 
-1c3b3e6527e57 is present in the tested tree on 17e7124a. So syzbot
-just gave the answer to your question.
+Would something like this help?
 
-> >  May be due to missing lock nesting notation
-> >
-> > 2 locks held by swapper/0/0:
-> >  #0: ffff888020d18108 (&group->lock){..-.}-{2:2}, at: _snd_pcm_stream_lock_irqsave+0x9f/0xd0 sound/core/pcm_native.c:170
-> >  #1: ffff888014fd8130 (&runtime->sleep){..-.}-{2:2}, at: __wake_up_common_lock+0xb4/0x130 kernel/sched/wait.c:137
-> >
-> > stack backtrace:
-> > CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.12.0-rc6-syzkaller #0
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> > Call Trace:
-> >  <IRQ>
-> >  __dump_stack lib/dump_stack.c:79 [inline]
-> >  dump_stack+0x141/0x1d7 lib/dump_stack.c:120
-> >  print_deadlock_bug kernel/locking/lockdep.c:2829 [inline]
-> >  check_deadlock kernel/locking/lockdep.c:2872 [inline]
-> >  validate_chain kernel/locking/lockdep.c:3661 [inline]
-> >  __lock_acquire.cold+0x14c/0x3b4 kernel/locking/lockdep.c:4900
-> >  lock_acquire kernel/locking/lockdep.c:5510 [inline]
-> >  lock_acquire+0x1ab/0x740 kernel/locking/lockdep.c:5475
-> >  __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
-> >  _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:151
-> >  spin_lock include/linux/spinlock.h:354 [inline]
-> >  io_poll_double_wake+0x25f/0x6a0 fs/io_uring.c:4988
-> >  __wake_up_common+0x147/0x650 kernel/sched/wait.c:108
-> >  __wake_up_common_lock+0xd0/0x130 kernel/sched/wait.c:138
-> >  snd_pcm_update_state+0x46a/0x540 sound/core/pcm_lib.c:203
-> >  snd_pcm_update_hw_ptr0+0xa75/0x1a50 sound/core/pcm_lib.c:464
-> >  snd_pcm_period_elapsed+0x160/0x250 sound/core/pcm_lib.c:1805
-> >  dummy_hrtimer_callback+0x94/0x1b0 sound/drivers/dummy.c:377
-> >  __run_hrtimer kernel/time/hrtimer.c:1537 [inline]
-> >  __hrtimer_run_queues+0x609/0xe40 kernel/time/hrtimer.c:1601
-> >  hrtimer_run_softirq+0x17b/0x360 kernel/time/hrtimer.c:1618
-> >  __do_softirq+0x29b/0x9f6 kernel/softirq.c:345
-> >  invoke_softirq kernel/softirq.c:221 [inline]
-> >  __irq_exit_rcu kernel/softirq.c:422 [inline]
-> >  irq_exit_rcu+0x134/0x200 kernel/softirq.c:434
-> >  sysvec_apic_timer_interrupt+0x93/0xc0 arch/x86/kernel/apic/apic.c:1100
-> >  </IRQ>
-> >  asm_sysvec_apic_timer_interrupt+0x12/0x20 arch/x86/include/asm/idtentry.h:632
-> > RIP: 0010:native_save_fl arch/x86/include/asm/irqflags.h:29 [inline]
-> > RIP: 0010:arch_local_save_flags arch/x86/include/asm/irqflags.h:70 [inline]
-> > RIP: 0010:arch_irqs_disabled arch/x86/include/asm/irqflags.h:137 [inline]
-> > RIP: 0010:acpi_safe_halt drivers/acpi/processor_idle.c:112 [inline]
-> > RIP: 0010:acpi_idle_do_entry+0x1c9/0x250 drivers/acpi/processor_idle.c:517
-> > Code: cd cb 6e f8 84 db 75 ac e8 14 c5 6e f8 e8 1f b4 74 f8 e9 0c 00 00 00 e8 05 c5 6e f8 0f 00 2d 0e 18 c8 00 e8 f9 c4 6e f8 fb f4 <9c> 5b 81 e3 00 02 00 00 fa 31 ff 48 89 de e8 04 cd 6e f8 48 85 db
-> > RSP: 0018:ffffffff8bc07d60 EFLAGS: 00000293
-> > RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-> > RDX: ffffffff8bcbc400 RSI: ffffffff89052c17 RDI: 0000000000000000
-> > RBP: ffff888015078064 R08: 0000000000000001 R09: 0000000000000001
-> > R10: ffffffff8179e058 R11: 0000000000000000 R12: 0000000000000001
-> > R13: ffff888015078000 R14: ffff888015078064 R15: ffff888143a48004
-> >  acpi_idle_enter+0x361/0x500 drivers/acpi/processor_idle.c:654
-> >  cpuidle_enter_state+0x1b1/0xc80 drivers/cpuidle/cpuidle.c:237
-> >  cpuidle_enter+0x4a/0xa0 drivers/cpuidle/cpuidle.c:351
-> >  call_cpuidle kernel/sched/idle.c:158 [inline]
-> >  cpuidle_idle_call kernel/sched/idle.c:239 [inline]
-> >  do_idle+0x3e1/0x590 kernel/sched/idle.c:300
-> >
-> >
-> > ---
-> > This report is generated by a bot. It may contain errors.
-> > See https://goo.gl/tpsmEJ for more information about syzbot.
-> > syzbot engineers can be reached at syzkaller@googlegroups.com.
-> >
-> > syzbot will keep track of this issue. See:
-> > https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> > syzbot can test patches for this issue, for details see:
-> > https://goo.gl/tpsmEJ#testing-patches
+From 7adeec2fe4a954e4e4b8a158a4d9fe705b82b978 Mon Sep 17 00:00:00 2001
+From: Christian Brauner <christian.brauner@ubuntu.com>
+Date: Thu, 15 Apr 2021 12:03:42 +0200
+Subject: [PATCH] namei: add getname_uflags()
+
+There are a couple of places where we already open-code the (flags &
+AT_EMPTY_PATH) check and io_uring will likely add another one in the future.
+Let's just add a simple helper getname_uflags() that handles this directly and
+use it.
+getname_flags() itself doesn't need access to lookup flags other than
+LOOKUP_EMPTY so this is basically just a boolean already so be honest about it.
+
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+---
+ fs/exec.c          | 10 ++--------
+ fs/fsopen.c        |  6 +++---
+ fs/namei.c         |  6 +++---
+ include/linux/fs.h |  4 ++++
+ 4 files changed, 12 insertions(+), 14 deletions(-)
+
+diff --git a/fs/exec.c b/fs/exec.c
+index 18594f11c31f..53c633f69f4a 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -2069,10 +2069,7 @@ SYSCALL_DEFINE5(execveat,
+ 		const char __user *const __user *, envp,
+ 		int, flags)
+ {
+-	int lookup_flags = (flags & AT_EMPTY_PATH) ? LOOKUP_EMPTY : 0;
+-
+-	return do_execveat(fd,
+-			   getname_flags(filename, lookup_flags, NULL),
++	return do_execveat(fd, getname_uflags(filename, flags),
+ 			   argv, envp, flags);
+ }
+ 
+@@ -2090,10 +2087,7 @@ COMPAT_SYSCALL_DEFINE5(execveat, int, fd,
+ 		       const compat_uptr_t __user *, envp,
+ 		       int,  flags)
+ {
+-	int lookup_flags = (flags & AT_EMPTY_PATH) ? LOOKUP_EMPTY : 0;
+-
+-	return compat_do_execveat(fd,
+-				  getname_flags(filename, lookup_flags, NULL),
++	return compat_do_execveat(fd, getname_uflags(filename, flags),
+ 				  argv, envp, flags);
+ }
+ #endif
+diff --git a/fs/fsopen.c b/fs/fsopen.c
+index 27a890aa493a..00906abaf466 100644
+--- a/fs/fsopen.c
++++ b/fs/fsopen.c
+@@ -321,7 +321,7 @@ SYSCALL_DEFINE5(fsconfig,
+ 	struct fs_context *fc;
+ 	struct fd f;
+ 	int ret;
+-	int lookup_flags = 0;
++	bool lookup_empty = false;
+ 
+ 	struct fs_parameter param = {
+ 		.type	= fs_value_is_undefined,
+@@ -411,11 +411,11 @@ SYSCALL_DEFINE5(fsconfig,
+ 		}
+ 		break;
+ 	case FSCONFIG_SET_PATH_EMPTY:
+-		lookup_flags = LOOKUP_EMPTY;
++		lookup_empty = true;
+ 		fallthrough;
+ 	case FSCONFIG_SET_PATH:
+ 		param.type = fs_value_is_filename;
+-		param.name = getname_flags(_value, lookup_flags, NULL);
++		param.name = getname_flags(_value, lookup_empty, NULL);
+ 		if (IS_ERR(param.name)) {
+ 			ret = PTR_ERR(param.name);
+ 			goto out_key;
+diff --git a/fs/namei.c b/fs/namei.c
+index 216f16e74351..7694f6bcd711 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -125,7 +125,7 @@
+ #define EMBEDDED_NAME_MAX	(PATH_MAX - offsetof(struct filename, iname))
+ 
+ struct filename *
+-getname_flags(const char __user *filename, int flags, int *empty)
++getname_flags(const char __user *filename, bool lookup_empty, int *empty)
+ {
+ 	struct filename *result;
+ 	char *kname;
+@@ -191,7 +191,7 @@ getname_flags(const char __user *filename, int flags, int *empty)
+ 	if (unlikely(!len)) {
+ 		if (empty)
+ 			*empty = 1;
+-		if (!(flags & LOOKUP_EMPTY)) {
++		if (lookup_empty) {
+ 			putname(result);
+ 			return ERR_PTR(-ENOENT);
+ 		}
+@@ -206,7 +206,7 @@ getname_flags(const char __user *filename, int flags, int *empty)
+ struct filename *
+ getname(const char __user * filename)
+ {
+-	return getname_flags(filename, 0, NULL);
++	return getname_flags(filename, false, NULL);
+ }
+ 
+ struct filename *
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index ec8f3ddf4a6a..6dbd629ece04 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2644,6 +2644,10 @@ static inline struct file *file_clone_open(struct file *file)
+ extern int filp_close(struct file *, fl_owner_t id);
+ 
+ extern struct filename *getname_flags(const char __user *, int, int *);
++extern struct filename *getname_uflags(const char __user *filename, int uflags)
++{
++	return getname_flags(filename, (flags & AT_EMPTY_PATH), NULL);
++}
+ extern struct filename *getname(const char __user *);
+ extern struct filename *getname_kernel(const char *);
+ extern void putname(struct filename *name);
+-- 
+2.27.0
+

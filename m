@@ -2,60 +2,55 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D308E3620D3
-	for <lists+io-uring@lfdr.de>; Fri, 16 Apr 2021 15:22:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A05B23620F0
+	for <lists+io-uring@lfdr.de>; Fri, 16 Apr 2021 15:30:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235713AbhDPNVT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 16 Apr 2021 09:21:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56300 "EHLO
+        id S243904AbhDPNaV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 16 Apr 2021 09:30:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235361AbhDPNVT (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 16 Apr 2021 09:21:19 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93B55C061574
-        for <io-uring@vger.kernel.org>; Fri, 16 Apr 2021 06:20:54 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id p6so19969719wrn.9
-        for <io-uring@vger.kernel.org>; Fri, 16 Apr 2021 06:20:54 -0700 (PDT)
+        with ESMTP id S243857AbhDPNaU (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 16 Apr 2021 09:30:20 -0400
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D036C061756
+        for <io-uring@vger.kernel.org>; Fri, 16 Apr 2021 06:29:56 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id o21-20020a1c4d150000b029012e52898006so4576294wmh.0
+        for <io-uring@vger.kernel.org>; Fri, 16 Apr 2021 06:29:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+        h=to:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Z31yadWI7DhDAyI+ke3moTU9OmKbDGLtgHmHc2C4zwY=;
-        b=G9zzBfoVqrONeA0C9vKP59Rej5UUY0KMITPgaYhqwUJqXoZ/OIS/OKzWB7Gbkmbq2T
-         joAYK3td5qyy+jYUaH3Dxe9ZrcmLEMUzzZnBTGk8eK928XjhyxSjUmIZp/bxH2BS9tG1
-         FkG2DARlgZ7o5GtkftojtnqGclNN9PvjyNRZB77QC5cHIrllrmDoKyCIW6gHv9t1Q3LD
-         O8WYu8+D+O9CS86XEbQnHy/q8MOKExCiOAcece1ErEJCfGS/9ttmNwhrizUH0F/VBsjQ
-         nrXwhwuwU8HMCI8eugQpqPiKMtQwMGbb1K9IZa0rjhaLIpj2Bnwtru6VUyqp8i58MIIl
-         9o0A==
+        bh=5Ow0E+QN/JJr1BSXgIVj405CMC+LwmFnq5fgVg00MD8=;
+        b=k7Dg/N/Ep6y/VQgW502MAW3hVl0GQ/qglZfIKllRHT/I+uRNwNpJPPKr6YGBlPhHAf
+         M/E1D9E69p4h77fi164lg/6x6XtuJGbTZdj0yVe9g0NVyA1CuW9QHpIbxkyu7r63QLO8
+         HNe4f9WTaJdgdwE+cChidNYODzXqrFpWjsrWlItLeG3UWYhbElMB0I5Qi/vnJSeWoiMB
+         IftALNodRipDLLqThvETFEZK2Eoz8Dpf/i5f2RcZDnHy8w6jyNKMACmCSSPju5guWj2s
+         RLaUi2cQdC/tufb4XHe0VyCPQiI9QnyG2eFxs7WO4c0aRRQnu6pK1UYDSuIotkgeuqpf
+         5uhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=Z31yadWI7DhDAyI+ke3moTU9OmKbDGLtgHmHc2C4zwY=;
-        b=knLGSJryYZR1S16qsZiuvJq6QdKQuiPcNwNhmrutzoE9yMdOjprLDzwJdEYFDF43Ti
-         R+gBms6QFxtkKxVsg09B7ED9/SDd5hsr4g+J06/IUwILoOtpXmFjOAj6baxzbEB5Le2v
-         G9UzT22nrKsgZecugmhMYTQqirfPKjJVU/HPU5UHRNYu++vYH50abgji5lBW3w3gJhBx
-         Za/33FGV6K8Y9nm6TrSL6hobw+wGU8+u2PQoUh0ldstDPxh61evdV0bdHu6m9DYBELxb
-         rK65UouNs/Cp4AZdb+4t2kodum53pDMayYm9gkEmgAsg6FvsWe9r21hsbS3HQqpIki5b
-         By2Q==
-X-Gm-Message-State: AOAM532NNnKDUoeJp32QUU3H2otN8g+jbYUdQxfvaB1UYmpkfwBDQufw
-        98GD2uAEJvDeplmHlf6elOo=
-X-Google-Smtp-Source: ABdhPJxVLWi8BIrAeg6anZXBmVbuUnjJ/j2l2dCj6uu6Ibg1EOI5xvfqdm/DkorHifVbEdrHFEEHeg==
-X-Received: by 2002:a5d:6d0d:: with SMTP id e13mr4798023wrq.73.1618579253392;
-        Fri, 16 Apr 2021 06:20:53 -0700 (PDT)
+        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=5Ow0E+QN/JJr1BSXgIVj405CMC+LwmFnq5fgVg00MD8=;
+        b=rCRqO3Rs8afCw+HQJzPfcuEJ4Y1G2P2AXuvrlJdCkxPzZFZiFGEoxC2gVgl5vr2h7s
+         Rn8OpufNSBSoZMSFkfEunCio0uHPRib3aipR/bkU6jKS7HQw7RrXdEGasYJwOKs6gPBs
+         gxfFNv4e/RzepTzBen92oI/Z6WxOLzo1fm8g7i75TMU/J1pwKJLnl9boZB+WNW+mt7xe
+         78dn8x52gqTpnwIBjXqbdwTcutMGpud3QW7lcQ/3deeu9N/JfpKqrE4JbeGSHrqHi6l4
+         F2UjuCBhzunYWtWkX2cnGOMRXTbw9JTTi7IjPwStdN4tCfJzLTW9hmT1pk6FgoFYU4pd
+         Jj2g==
+X-Gm-Message-State: AOAM531XxINvjpFe8Ehy9clcLC15oh8hgTjBkX9feRo1x2vBTK7cssSb
+        Qwtqve9zKMzTcgSOoI6HdLj9FmjdbI1W4g==
+X-Google-Smtp-Source: ABdhPJxrBC7jUuZYz7a+EPFaNGhoxIw+F+eWH7piAeiA9OKeMD3MG5rlkvmwojPLaD6lN6COize1ew==
+X-Received: by 2002:a05:600c:21c2:: with SMTP id x2mr8206661wmj.161.1618579794660;
+        Fri, 16 Apr 2021 06:29:54 -0700 (PDT)
 Received: from [192.168.8.191] ([148.252.132.77])
-        by smtp.gmail.com with ESMTPSA id u9sm9093043wmc.38.2021.04.16.06.20.51
+        by smtp.gmail.com with ESMTPSA id h8sm5172181wmq.19.2021.04.16.06.29.53
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 Apr 2021 06:20:52 -0700 (PDT)
-Subject: Re: [PATCH 1/2] percpu_ref: add percpu_ref_atomic_count()
-To:     Dennis Zhou <dennis@kernel.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux.com>,
-        Joakim Hassila <joj@mac.com>, Ming Lei <ming.lei@redhat.com>
-References: <cover.1618532491.git.asml.silence@gmail.com>
- <d17d951b120bb2d65870013bfdc7495a92c6fb82.1618532491.git.asml.silence@gmail.com>
- <YHkWdgLKBrH51GA7@google.com>
+        Fri, 16 Apr 2021 06:29:54 -0700 (PDT)
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <20210416012523.724073-1-axboe@kernel.dk>
+ <20210416012523.724073-3-axboe@kernel.dk>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -100,103 +95,99 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <10b84fd7-4c40-3fe6-6993-061b524b1487@gmail.com>
-Date:   Fri, 16 Apr 2021 14:16:41 +0100
+Subject: Re: [PATCH 2/3] io_uring: put flag checking for needing req cleanup
+ in one spot
+Message-ID: <82666c0c-fad4-05b7-5af7-5c3dbe879c8c@gmail.com>
+Date:   Fri, 16 Apr 2021 14:25:43 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <YHkWdgLKBrH51GA7@google.com>
+In-Reply-To: <20210416012523.724073-3-axboe@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 16/04/2021 05:45, Dennis Zhou wrote:
-> Hello,
+On 16/04/2021 02:25, Jens Axboe wrote:
+> We have this in two spots right now, which is a bit fragile. In
+> preparation for moving REQ_F_POLLED cleanup into the same spot, move
+> the check into io_clean_op() itself so we only have it once.
 > 
-> On Fri, Apr 16, 2021 at 01:22:51AM +0100, Pavel Begunkov wrote:
->> Add percpu_ref_atomic_count(), which returns number of references of a
->> percpu_ref switched prior into atomic mode, so the caller is responsible
->> to make sure it's in the right mode.
->>
->> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
->> ---
->>  include/linux/percpu-refcount.h |  1 +
->>  lib/percpu-refcount.c           | 26 ++++++++++++++++++++++++++
->>  2 files changed, 27 insertions(+)
->>
->> diff --git a/include/linux/percpu-refcount.h b/include/linux/percpu-refcount.h
->> index 16c35a728b4c..0ff40e79efa2 100644
->> --- a/include/linux/percpu-refcount.h
->> +++ b/include/linux/percpu-refcount.h
->> @@ -131,6 +131,7 @@ void percpu_ref_kill_and_confirm(struct percpu_ref *ref,
->>  void percpu_ref_resurrect(struct percpu_ref *ref);
->>  void percpu_ref_reinit(struct percpu_ref *ref);
->>  bool percpu_ref_is_zero(struct percpu_ref *ref);
->> +unsigned long percpu_ref_atomic_count(struct percpu_ref *ref);
->>  
->>  /**
->>   * percpu_ref_kill - drop the initial ref
->> diff --git a/lib/percpu-refcount.c b/lib/percpu-refcount.c
->> index a1071cdefb5a..56286995e2b8 100644
->> --- a/lib/percpu-refcount.c
->> +++ b/lib/percpu-refcount.c
->> @@ -425,6 +425,32 @@ bool percpu_ref_is_zero(struct percpu_ref *ref)
->>  }
->>  EXPORT_SYMBOL_GPL(percpu_ref_is_zero);
->>  
->> +/**
->> + * percpu_ref_atomic_count - returns number of left references
->> + * @ref: percpu_ref to test
->> + *
->> + * This function is safe to call as long as @ref is switch into atomic mode,
->> + * and is between init and exit.
->> + */
->> +unsigned long percpu_ref_atomic_count(struct percpu_ref *ref)
->> +{
->> +	unsigned long __percpu *percpu_count;
->> +	unsigned long count, flags;
->> +
->> +	if (WARN_ON_ONCE(__ref_is_percpu(ref, &percpu_count)))
->> +		return -1UL;
->> +
->> +	/* protect us from being destroyed */
->> +	spin_lock_irqsave(&percpu_ref_switch_lock, flags);
->> +	if (ref->data)
->> +		count = atomic_long_read(&ref->data->count);
->> +	else
->> +		count = ref->percpu_count_ptr >> __PERCPU_REF_FLAG_BITS;
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> ---
+>  fs/io_uring.c | 19 ++++++++-----------
+>  1 file changed, 8 insertions(+), 11 deletions(-)
 > 
-> Sorry I missed Jens' patch before and also the update to percpu_ref.
-> However, I feel like I'm missing something. This isn't entirely related
-> to your patch, but I'm not following why percpu_count_ptr stores the
-> excess count of an exited percpu_ref and doesn't warn when it's not
-> zero. It seems like this should be an error if it's not 0?
-> 
-> Granted we have made some contract with the user to do the right thing,
-> but say someone does mess up, we don't indicate to them hey this ref is
-> actually dead and if they're waiting for it to go to 0, it never will.
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 87ce3dbcd4ca..a668d6a3319c 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -1601,8 +1601,7 @@ static void io_req_complete_post(struct io_kiocb *req, long res,
+>  static void io_req_complete_state(struct io_kiocb *req, long res,
+>  				  unsigned int cflags)
+>  {
+> -	if (req->flags & (REQ_F_NEED_CLEANUP | REQ_F_BUFFER_SELECTED))
+> -		io_clean_op(req);
+> +	io_clean_op(req);
+>  	req->result = res;
+>  	req->compl.cflags = cflags;
+>  	req->flags |= REQ_F_COMPLETE_INLINE;
+> @@ -1713,16 +1712,12 @@ static void io_dismantle_req(struct io_kiocb *req)
+>  
+>  	if (!(flags & REQ_F_FIXED_FILE))
+>  		io_put_file(req->file);
+> -	if (flags & (REQ_F_NEED_CLEANUP | REQ_F_BUFFER_SELECTED |
+> -		     REQ_F_INFLIGHT)) {
+> -		io_clean_op(req);
+> +	io_clean_op(req);
+> +	if (req->flags & REQ_F_INFLIGHT) {
+> +		struct io_uring_task *tctx = req->task->io_uring;
 
-fwiw, I copied is_zero, but skimming through the code don't immediately
-see myself why it is so...
+Not in particular happy about it.
+1. adds extra if
+2. adds extra function call
+3. extra memory load in that function call.
 
-Cc Ming, he split out some parts of it to dynamic allocation not too
-long ago, maybe he knows the trick.
+Pushes us back in terms of performance. I'd suggest to have
+a helper, which is pretty much optimisable and may be coalesced by a compiler with
+adjacent flag checks.
 
+static inline bool io_need_cleanup(unsigned flags)
+{
+	return flags & (REQ_F_NEED_CLEANUP | REQ_F_BUFFER_SELECTED);
+}
+
+if (io_need_cleanup(flags) || (flags & INFLIGHT)) {
+    io_clean_op();
+    if (INFLIGHT) {}
+}
+
+
+
+>  
+> -		if (req->flags & REQ_F_INFLIGHT) {
+> -			struct io_uring_task *tctx = req->task->io_uring;
+> -
+> -			atomic_dec(&tctx->inflight_tracked);
+> -			req->flags &= ~REQ_F_INFLIGHT;
+> -		}
+> +		atomic_dec(&tctx->inflight_tracked);
+> +		req->flags &= ~REQ_F_INFLIGHT;
+>  	}
+>  	if (req->fixed_rsrc_refs)
+>  		percpu_ref_put(req->fixed_rsrc_refs);
+> @@ -5995,6 +5990,8 @@ static int io_req_defer(struct io_kiocb *req)
+>  
+>  static void io_clean_op(struct io_kiocb *req)
+>  {
+> +	if (!(req->flags & (REQ_F_BUFFER_SELECTED | REQ_F_NEED_CLEANUP)))
+> +		return;
+>  	if (req->flags & REQ_F_BUFFER_SELECTED) {
+>  		switch (req->opcode) {
+>  		case IORING_OP_READV:
 > 
->> +	spin_unlock_irqrestore(&percpu_ref_switch_lock, flags);
->> +
->> +	return count;
->> +}
->> +
->>  /**
->>   * percpu_ref_reinit - re-initialize a percpu refcount
->>   * @ref: perpcu_ref to re-initialize
->> -- 
->> 2.24.0
->>
 
 -- 
 Pavel Begunkov

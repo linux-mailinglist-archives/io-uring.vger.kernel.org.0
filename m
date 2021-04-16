@@ -2,68 +2,65 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F0E8362408
-	for <lists+io-uring@lfdr.de>; Fri, 16 Apr 2021 17:34:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49135362452
+	for <lists+io-uring@lfdr.de>; Fri, 16 Apr 2021 17:46:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243343AbhDPPer (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 16 Apr 2021 11:34:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58432 "EHLO
+        id S244071AbhDPPmd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 16 Apr 2021 11:42:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343730AbhDPPer (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 16 Apr 2021 11:34:47 -0400
-Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7F9EC061574
-        for <io-uring@vger.kernel.org>; Fri, 16 Apr 2021 08:34:22 -0700 (PDT)
-Received: by mail-io1-xd30.google.com with SMTP id a11so25979678ioo.0
-        for <io-uring@vger.kernel.org>; Fri, 16 Apr 2021 08:34:22 -0700 (PDT)
+        with ESMTP id S241651AbhDPPm2 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 16 Apr 2021 11:42:28 -0400
+Received: from mail-il1-x12f.google.com (mail-il1-x12f.google.com [IPv6:2607:f8b0:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60311C061574
+        for <io-uring@vger.kernel.org>; Fri, 16 Apr 2021 08:42:02 -0700 (PDT)
+Received: by mail-il1-x12f.google.com with SMTP id c15so23483958ilj.1
+        for <io-uring@vger.kernel.org>; Fri, 16 Apr 2021 08:42:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ajuPbq2KoOSxi5i/wHRwgz7F42IvaTFI6eL4te6L1IQ=;
-        b=ttwAl5Em+9GXw8XpCYuS5Rk9wDJpIWpBnqKGnFBTQ7TWeYsEnAblKg8ex+vgv1tQSZ
-         SBWgURHdwaO71lbEw47+qAyFEqH7OaPyaNVFeespxDqfsFTPoor8JOGrVuSzPS2sHKkr
-         V/eKicBlS57QQl3+CSNe/QlpjjddhH9JD9Zdypozot4ZgbHO/1lrbdYtWyCVEaIJGQU0
-         yGeMSwmcd4xJQYG8uxUgMWwiA5LhnSef6t38u5RKM5YINKBE8G10APHz9n3SqSyM7PTm
-         Oh/Mie1/jfL93ahPKuhkIfuuUzyTQtq44/UnLVTrQLgVKagHggSHYbKGjTdMUaVPFpp9
-         k0SA==
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=3nnck9alDGZ6YDi3422ygJEudVtXdumKp57eWU1TVIY=;
+        b=1CYPksrSrdYNoK/UegVUBrGOAfMO6TuCcocC2l1ct1Dpx2GmLjccoi2JrZCyNKKvTo
+         K3r0Fv6vqtM3z5Ga6FYPp9kGsxvrCqY2Qscywm6cq1OpA2gynzzAo3jiz1oHcX4FumQB
+         RicUH1bNwS5o8tkM+Y5hG9ccSnx5vmx7KZm5K0BQSnkadKrqpIevUs12DOTtt8bUr6SJ
+         RTfO8pyXzge3Wk/CMl86LEC920qIw9NWv+GWsOD85+1UH8G4yQeL9yRFqSs2uTYGzPHF
+         1fV64rU8jU6ESQa298D2b9kbpDpoZ5nQ90mkcGGs8tzbBCC3H4I0o0q0gkBMvZ5JhBNH
+         tK3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=ajuPbq2KoOSxi5i/wHRwgz7F42IvaTFI6eL4te6L1IQ=;
-        b=BU/3497eT6kR00PSjDrxfbypQlWiRVmEdgit56Ko/9Wkt0Ejo0a+iQ+CItEDdiDkCZ
-         FV0LBJVlek0eCRBauQSTmTtx05Yp5Biz2WLe0OaC/wm3DIUZ6a1VQv5UuW92xichpSyl
-         ijeX3k8gsZjD+SSsMi32NoC9zM7Z9pEqgON/H5SajLeKOWrzxNMDdws1Olu2uDlLeNec
-         Uy6/FlM/mxRBOCp+tRyD2wwAiZO5rY37Z21tOWwcaiygVy8vYzANuTWc+tuZsJ6iEfMQ
-         3v6tudR4kmFjAc3l9yle1DsBM/HP0aQxCKkTaoKm+AAE+hTY//el/BgoXffkaMEG0kqh
-         y7cg==
-X-Gm-Message-State: AOAM530eLgtE2yCF/V6o/5l0VmVIZ2YryBbr/ajA/H8Z3ChraMdfRB+b
-        rSTApFIitvwWTkY9w+g1VqzNKg==
-X-Google-Smtp-Source: ABdhPJyJHNdRSB6rnKP/oluTBLt9DxPZH/0xVQBFyTUUVdDRZ75oLiA+41aNUsybWuX8QA04+426hA==
-X-Received: by 2002:a02:cbaf:: with SMTP id v15mr4474339jap.118.1618587262078;
-        Fri, 16 Apr 2021 08:34:22 -0700 (PDT)
+        bh=3nnck9alDGZ6YDi3422ygJEudVtXdumKp57eWU1TVIY=;
+        b=SxssRCPIVRZNPC9/UwJOR76k3hhkDjRVgu5thCi0jkEYBdOmUsYU24eepOku5BrFnB
+         1UAYXV7MwTvJc9/Vc3L/BWyLjAsq5+mJkNBx6AUbeTbh98Grc2TJ9m63M+5Y8MhVeg7H
+         nSIeJSGeQcpYNTXAjpVUN/nEFdnd7Y+KhxQ0NvJ3jrjyE925Weyv8Brj7ePBA+i5uICv
+         oWi0NDooiM3YaHWhyrABtndJEHeYrTLadbSmlS3ECk9J6effNpGrZQsuZk/I4QcVSN6O
+         AzT7kuQQJBmNt0GQBFpggY+QU0xAdKXcl3TMqGVFXLYr43t7vd0QbNBX//HwSOrg47Xx
+         YzIA==
+X-Gm-Message-State: AOAM533OJhZSmIXvc1FWGGhKSLMU3u0dtNojWQfDHcYkA/xvk7oV1MpZ
+        lPx0eT3wn98AJBcqdCOLmJKBmRjBU2+FWA==
+X-Google-Smtp-Source: ABdhPJzixAibeW6JGeACkFvXJtzK6xMlU9owEPl6+iutXZJJA+6t3EprGw69jAa8fh4Vd1oFmKuECw==
+X-Received: by 2002:a92:c26a:: with SMTP id h10mr7258269ild.294.1618587721553;
+        Fri, 16 Apr 2021 08:42:01 -0700 (PDT)
 Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id f18sm2877503ile.40.2021.04.16.08.34.21
+        by smtp.gmail.com with ESMTPSA id e6sm2864391ilr.81.2021.04.16.08.42.00
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 Apr 2021 08:34:21 -0700 (PDT)
-Subject: Re: [PATCH 1/2] percpu_ref: add percpu_ref_atomic_count()
-To:     Bart Van Assche <bvanassche@acm.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring@vger.kernel.org
-Cc:     Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
-        Christoph Lameter <cl@linux.com>, Joakim Hassila <joj@mac.com>
-References: <cover.1618532491.git.asml.silence@gmail.com>
- <d17d951b120bb2d65870013bfdc7495a92c6fb82.1618532491.git.asml.silence@gmail.com>
- <a393b2dd-bf2d-236d-8262-e908862789e4@acm.org>
+        Fri, 16 Apr 2021 08:42:00 -0700 (PDT)
+Subject: Re: [PATCH 2/3] io_uring: put flag checking for needing req cleanup
+ in one spot
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <20210416012523.724073-1-axboe@kernel.dk>
+ <20210416012523.724073-3-axboe@kernel.dk>
+ <82666c0c-fad4-05b7-5af7-5c3dbe879c8c@gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <54cbda99-0cde-6b1c-e65a-0df96e290d90@kernel.dk>
-Date:   Fri, 16 Apr 2021 09:34:21 -0600
+Message-ID: <b65f80c4-482c-403d-f594-f81433a931ac@kernel.dk>
+Date:   Fri, 16 Apr 2021 09:42:00 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <a393b2dd-bf2d-236d-8262-e908862789e4@acm.org>
+In-Reply-To: <82666c0c-fad4-05b7-5af7-5c3dbe879c8c@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -71,31 +68,63 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/16/21 9:31 AM, Bart Van Assche wrote:
-> On 4/15/21 5:22 PM, Pavel Begunkov wrote:
->> diff --git a/lib/percpu-refcount.c b/lib/percpu-refcount.c
->> index a1071cdefb5a..56286995e2b8 100644
->> --- a/lib/percpu-refcount.c
->> +++ b/lib/percpu-refcount.c
->> @@ -425,6 +425,32 @@ bool percpu_ref_is_zero(struct percpu_ref *ref)
->>  }
->>  EXPORT_SYMBOL_GPL(percpu_ref_is_zero);
+On 4/16/21 7:25 AM, Pavel Begunkov wrote:
+> On 16/04/2021 02:25, Jens Axboe wrote:
+>> We have this in two spots right now, which is a bit fragile. In
+>> preparation for moving REQ_F_POLLED cleanup into the same spot, move
+>> the check into io_clean_op() itself so we only have it once.
+>>
+>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>> ---
+>>  fs/io_uring.c | 19 ++++++++-----------
+>>  1 file changed, 8 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>> index 87ce3dbcd4ca..a668d6a3319c 100644
+>> --- a/fs/io_uring.c
+>> +++ b/fs/io_uring.c
+>> @@ -1601,8 +1601,7 @@ static void io_req_complete_post(struct io_kiocb *req, long res,
+>>  static void io_req_complete_state(struct io_kiocb *req, long res,
+>>  				  unsigned int cflags)
+>>  {
+>> -	if (req->flags & (REQ_F_NEED_CLEANUP | REQ_F_BUFFER_SELECTED))
+>> -		io_clean_op(req);
+>> +	io_clean_op(req);
+>>  	req->result = res;
+>>  	req->compl.cflags = cflags;
+>>  	req->flags |= REQ_F_COMPLETE_INLINE;
+>> @@ -1713,16 +1712,12 @@ static void io_dismantle_req(struct io_kiocb *req)
 >>  
->> +/**
->> + * percpu_ref_atomic_count - returns number of left references
->> + * @ref: percpu_ref to test
->> + *
->> + * This function is safe to call as long as @ref is switch into atomic mode,
->> + * and is between init and exit.
->> + */
+>>  	if (!(flags & REQ_F_FIXED_FILE))
+>>  		io_put_file(req->file);
+>> -	if (flags & (REQ_F_NEED_CLEANUP | REQ_F_BUFFER_SELECTED |
+>> -		     REQ_F_INFLIGHT)) {
+>> -		io_clean_op(req);
+>> +	io_clean_op(req);
+>> +	if (req->flags & REQ_F_INFLIGHT) {
+>> +		struct io_uring_task *tctx = req->task->io_uring;
 > 
-> How about using the name percpu_ref_read() instead of
-> percpu_ref_atomic_count()?
+> Not in particular happy about it.
+> 1. adds extra if
+> 2. adds extra function call
+> 3. extra memory load in that function call.
+> 
+> Pushes us back in terms of performance. I'd suggest to have
+> a helper, which is pretty much optimisable and may be coalesced by a compiler with
+> adjacent flag checks.
+> 
+> static inline bool io_need_cleanup(unsigned flags)
+> {
+> 	return flags & (REQ_F_NEED_CLEANUP | REQ_F_BUFFER_SELECTED);
+> }
+> 
+> if (io_need_cleanup(flags) || (flags & INFLIGHT)) {
+>     io_clean_op();
+>     if (INFLIGHT) {}
+> }
 
-Not sure we're going that route, but in any case, I think it's important
-to have it visibly require the ref to be in atomic mode. Maybe
-percpu_ref_read_atomic() would be better, but I do think 'atomic' has
-to be in the name.
+Sure, we can do that. Particularly because of needing to rearrange
+to get it inlined, but no big deal. I'll fiddle it.
 
 -- 
 Jens Axboe

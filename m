@@ -2,70 +2,76 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 90138361217
-	for <lists+io-uring@lfdr.de>; Thu, 15 Apr 2021 20:28:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AEE53616C1
+	for <lists+io-uring@lfdr.de>; Fri, 16 Apr 2021 02:27:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233923AbhDOS2j (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 15 Apr 2021 14:28:39 -0400
-Received: from mail-io1-f69.google.com ([209.85.166.69]:55829 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233052AbhDOS2j (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 15 Apr 2021 14:28:39 -0400
-Received: by mail-io1-f69.google.com with SMTP id x4-20020a0566022c44b02903c39f49d075so2379699iov.22
-        for <io-uring@vger.kernel.org>; Thu, 15 Apr 2021 11:28:15 -0700 (PDT)
+        id S234940AbhDPA1e (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 15 Apr 2021 20:27:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56210 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234716AbhDPA1e (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 15 Apr 2021 20:27:34 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 305FEC061574
+        for <io-uring@vger.kernel.org>; Thu, 15 Apr 2021 17:27:10 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id w4so21256212wrt.5
+        for <io-uring@vger.kernel.org>; Thu, 15 Apr 2021 17:27:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=yikmZNxXD5s4Kl0dHs2RSuRBb86yT5dUIv506LoOs7w=;
+        b=M2mW2xlGoiAQq3mUd6Xw+/do5jygEIGSel/CdVXBsCNdu75haRdhWRfAQp3NMhtMvS
+         jb7Ig8Wr2j4FXjJPY/voDFXLBimNvb1Il+6OhMd1RTSyKd0YIOtUxA1r5F7TYQtfXaLe
+         ioXiDoy26UdmVYreWDH7lvC5tY4nh8SFyPhVHJIGzAgL/60QIIbJ1PflsDZr1+Ro67Vy
+         3y1gdunK1mwUAAQaQzwlZYCtzfEHK3RToZ+uCmUm9DqZiHVJ8XX0DDrKVV5RV+kFeee2
+         GudkM9e3qQ1EHdU05nTVNGpJ7cCag2u9BnAJSy5Fa+CVitEKf4r1c8+vhE4tuwEWvPvT
+         +OCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=QcBQJFJwd2aEtIteetaGG/NNxY6JLsPcvgrNpo8jHbk=;
-        b=TiRWRO5uLtfVNEtdGZxorlfsm3nVLCQkx8r5W2RB7mQnywqD0riBF3D3hUFJqiB4zE
-         oUTqsvZNV55u3ljtEceonXhouZcdip2QkmFJUBuzibhhSHY1PhggJ/PPzskRPXqy6A3c
-         36BpuO+NjlEAklaQvtKpvu4/2YhGrCw4GUoeW4O5scryjZrrET+Zo2DNDIu9SQ/Tian2
-         aqUQpHiUqrD1V5NRsbOZNk951iolOOqZxV2D+59boR+u1oZ8SL4pMypdcKkuU3PTL7cK
-         9bG23wnIfmszFkNkclnHiF0KcPTId8tSkLOX3HSn/wXNsLVuil7wcBGQLTkrJrSLV/RP
-         JLtg==
-X-Gm-Message-State: AOAM532d/0FGCITPRieMqRYMc4jvCaVT47ES/DpL/c+nMV/tZoQNiEud
-        IihkBMQMrik9KeJGBZz/HtooLQiAiKc1F1yttzfrufCGFL//
-X-Google-Smtp-Source: ABdhPJzR7sLHcpumy/6kCx1qc15PEYlD0neZyz+Ah1Ca4KfHJ6bce2sBktWLqLWHsbeivK+sCNtzs8AsWnq00gxoLBZplqdQ5jdZ
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=yikmZNxXD5s4Kl0dHs2RSuRBb86yT5dUIv506LoOs7w=;
+        b=C7vDQyRx38y0zuXZbHGhzcyBKK0nwEYFBtZZfN1yAAYc/a0N3VcHn+0cQERIs62sEw
+         koyI8nJ+riTu+S+2cdqe6wPWhgV1f2q0piv5XtYKQS2xOdadSIFzuCOwe/J4/d7Msx+w
+         yzxdO5Ic+zabPeMGQxeTYjM9QaSASOXv50V+i3abcVhMq80x8p1IYmjgjkWKJLY+2SDx
+         FoXdiyYJIGGgOl1hBa2cwGZmnyxJ6kaUo2XZuTKZkEV930zJPrf2fRpqRstpLjHZpdA+
+         IQUZzodlQyx2e6ttlJ7sZCHvT1tC33CZWfA1xL3E0/OQoFmYXqv2vzRaOAKs5MbZaQRq
+         +5jw==
+X-Gm-Message-State: AOAM532HimbPXalbhB84zGCkVh74xq+3XHoVpUc6ECAwF4SNqK+RU2bQ
+        PyR+i9+ruS/gIAPvd8HuDxQ=
+X-Google-Smtp-Source: ABdhPJx2i8ZSOBLrNMjMRYO9SCHVsjeDH1PcP9lHVQ46cTjekM8+YUvqpNOtt3h1Y+tKpfHb+sDoZg==
+X-Received: by 2002:adf:a119:: with SMTP id o25mr5997591wro.36.1618532829021;
+        Thu, 15 Apr 2021 17:27:09 -0700 (PDT)
+Received: from localhost.localdomain ([185.69.144.21])
+        by smtp.gmail.com with ESMTPSA id x15sm5611421wmi.41.2021.04.15.17.27.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Apr 2021 17:27:08 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc:     Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
+        Christoph Lameter <cl@linux.com>, Joakim Hassila <joj@mac.com>
+Subject: [PATCH 0/2] fix hangs with shared sqpoll
+Date:   Fri, 16 Apr 2021 01:22:50 +0100
+Message-Id: <cover.1618532491.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1ca7:: with SMTP id x7mr4050791ill.10.1618511295436;
- Thu, 15 Apr 2021 11:28:15 -0700 (PDT)
-Date:   Thu, 15 Apr 2021 11:28:15 -0700
-In-Reply-To: <000000000000ca835605b0e8a723@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d45f8005c00706a1@google.com>
-Subject: Re: [syzbot] KASAN: use-after-free Read in idr_for_each (2)
-From:   syzbot <syzbot+12056a09a0311d758e60@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk,
-        egiptomarmol@loucastone.com, hdanton@sina.com,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mail@anirudhrb.com,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-        willy@infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-syzbot suspects this issue was fixed by commit:
+Late catched 5.12 bug with nasty hangs. Thanks Jens for a reproducer.
 
-commit 61cf93700fe6359552848ed5e3becba6cd760efa
-Author: Matthew Wilcox (Oracle) <willy@infradead.org>
-Date:   Mon Mar 8 14:16:16 2021 +0000
+Pavel Begunkov (2):
+  percpu_ref: add percpu_ref_atomic_count()
+  io_uring: fix shared sqpoll cancellation hangs
 
-    io_uring: Convert personality_idr to XArray
+ fs/io_uring.c                   |  5 +++--
+ include/linux/percpu-refcount.h |  1 +
+ lib/percpu-refcount.c           | 26 ++++++++++++++++++++++++++
+ 3 files changed, 30 insertions(+), 2 deletions(-)
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16f91b9ad00000
-start commit:   dd86e7fa Merge tag 'pci-v5.11-fixes-2' of git://git.kernel..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e83e68d0a6aba5f6
-dashboard link: https://syzkaller.appspot.com/bug?extid=12056a09a0311d758e60
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=174b80ef500000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=165522d4d00000
+-- 
+2.24.0
 
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: io_uring: Convert personality_idr to XArray
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection

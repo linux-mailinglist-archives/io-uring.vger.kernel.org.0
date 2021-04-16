@@ -2,56 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9636D362BEF
-	for <lists+io-uring@lfdr.de>; Sat, 17 Apr 2021 01:38:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC52D362BF2
+	for <lists+io-uring@lfdr.de>; Sat, 17 Apr 2021 01:42:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234816AbhDPXjC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 16 Apr 2021 19:39:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52386 "EHLO
+        id S234723AbhDPXmf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 16 Apr 2021 19:42:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53152 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234856AbhDPXjC (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 16 Apr 2021 19:39:02 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7403FC061574
-        for <io-uring@vger.kernel.org>; Fri, 16 Apr 2021 16:38:36 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id o21-20020a1c4d150000b029012e52898006so5351638wmh.0
-        for <io-uring@vger.kernel.org>; Fri, 16 Apr 2021 16:38:36 -0700 (PDT)
+        with ESMTP id S231997AbhDPXmf (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 16 Apr 2021 19:42:35 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04388C061574
+        for <io-uring@vger.kernel.org>; Fri, 16 Apr 2021 16:42:10 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id n127so3303556wmb.5
+        for <io-uring@vger.kernel.org>; Fri, 16 Apr 2021 16:42:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:from:to:references:autocrypt:message-id:date:user-agent
+        h=subject:to:references:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=AqRVgXq42lzWuhRobalwHNP70HACnfG3wOndPfpLOFw=;
-        b=gBRiPzXHJYXWS0Pls5E/SFXHBKwF/cCnG9QBQoMtKOJLwBiqXSCOSMsciffrayRVwW
-         s6VbUvqhOR6Lua9wy6aIvUGy1sX4rx7REr1t7HUzYdNU/UUPcSv38DpueTL5S12cwZea
-         BRy9Ixb/sKQZPTxd+2Rr8y+ygv+Pa5sXP44HNcn9uZ5kEmP/PyDyKpgLALbVcZx803du
-         LzkocY66to8kPJ/CWTC40BVtguEuAuHNeUk/LOQMsQ1eGQDvR1NO9X+q3B0/BDz3ETz2
-         oeIIzfN8Ij2SOElhNMyysGj0lZwe/NyKWSOc2zVo6OX4/UJIujPWPuumRAQfPaqoIWN2
-         y61Q==
+        bh=kCkJUUGP/jAneol4/6D3/WWnKggJA199JkwaCpkdsNI=;
+        b=hHnKPVrqr3dh8l3NIsmSC5s9T+Awc1kYZ0vRnB3mHnsEY72JQrwnd1E0MqLBHjz6Y4
+         Mir3cqa3K+5O+vOlfwM2sAdh1fh9O2kEZCMlYeX0XIyfCCmAG7sA2Sy1JNn066dlbGBH
+         tSc3xaafQA5A7sce5v4oC310F/jMUv+U+M4OFHZ4M+jYgLT0G33RTTLCV6RqovKAT/DZ
+         EuETOo8tD/0Tpbgyreq6gDSzFcye/7ZpxJ7JqsSaX/jIPFoWonzNHCri1ceJb7GQ1mvB
+         1tUUqUBqijwZqYFD+5LeJwUmm0+2cRpUXm0HRALREtqVicoZukEKlxpmqJeRbbdUSesb
+         urWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:references:autocrypt:message-id
+        h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
          :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=AqRVgXq42lzWuhRobalwHNP70HACnfG3wOndPfpLOFw=;
-        b=Ijm89Fv3KqUPGJqjxzWUaysIYvlqb5llISayUcZo1vtXURw6Z3JAK1pBcE8Je2mCuX
-         MryUsQjtSDpegu+7Nb7ny0BbzAacXUu9EpZ0yIKBrEHQrQnNJQUMzNOBKm5roEPlhtA7
-         YfEyTHU+Qm1YGiV43N35B2XbCgOIrbOtjHB3goZ24JAAa3fljkzL45iFLEEKyMQILYli
-         qsD78ejYpuIxNa2kpzxPd7ZSbBdNUhfIUi0OMZSkWMjJfZCIlQ3s3FNnkE60tSl4UlM4
-         kQt+LeWaIxFiQsYEO7lpGm4Z7hSvs6bEHcqmWMbIlBV+ugY0JG+5l3kIe48azKtyMJNS
-         29YQ==
-X-Gm-Message-State: AOAM532XJIar0iQGv9nw0+HW+1sUqSuASeDFDSPQealntfSul5jJGr/r
-        gBnuTk5/MHr5YqpywhKDAOXLcgOO7Bftvw==
-X-Google-Smtp-Source: ABdhPJxDEMVW3RlgJnJ/Quayi4zzbRRYolfX6W/iQb51W7Ru78STRAtNVSzc/CxBwUjRN4+Aex/J6w==
-X-Received: by 2002:a1c:ed0a:: with SMTP id l10mr10257047wmh.151.1618616315101;
-        Fri, 16 Apr 2021 16:38:35 -0700 (PDT)
+        bh=kCkJUUGP/jAneol4/6D3/WWnKggJA199JkwaCpkdsNI=;
+        b=Psr8tGSuTL2QiLqN1c/yp3WeXi9Pef+BV1VNgJkk/Mv6VfsC1QPDy8k9GZx9vMLQP4
+         7aLZGNOGO1DAkV3lQ5tJp8jGJPOtmEw7RDfjAsKHMWopDtGUkBODB+8hvkD1v8GsNvUU
+         QMivmIlsZb91ASZW4EzRkCa15A+nAhxeVj8ZR3jNOXMOX+JXZWJdtD4gPogtFGSY0Hlm
+         4Bo2akebbU1QTy85YNsvRHsU4DPGkE0WiWvq1KjlSHIVK6RgdGIX3+THNhR35Zvq7n3b
+         DozAx+eof16rG9M7LiG74mqt++bbMWhQ2QyOO/+ohq64t2/N2XHrrMVLwONWUfsnFg1I
+         ymLA==
+X-Gm-Message-State: AOAM532+EnecuoPDTC795Bva8zLwmh1wXx9E57Pifa69uXRA9JKuY0Du
+        RqCX/9RBuYOYwaxNYE79WsZymkBnqdM8gw==
+X-Google-Smtp-Source: ABdhPJx4bgC2yOBNcP4OxnoTmUUcUNj1g6+Hxvis2eRDtZvSwwx+c7KiRXpW5ye1E4eyJrGEvAD6+Q==
+X-Received: by 2002:a7b:c5d8:: with SMTP id n24mr10296884wmk.52.1618616527894;
+        Fri, 16 Apr 2021 16:42:07 -0700 (PDT)
 Received: from [192.168.8.194] ([148.252.132.77])
-        by smtp.gmail.com with ESMTPSA id a4sm10855773wmm.12.2021.04.16.16.38.34
+        by smtp.gmail.com with ESMTPSA id i15sm11379784wrr.73.2021.04.16.16.42.07
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 Apr 2021 16:38:34 -0700 (PDT)
-Subject: Re: [PATCH 0/2] two small patches
-From:   Pavel Begunkov <asml.silence@gmail.com>
+        Fri, 16 Apr 2021 16:42:07 -0700 (PDT)
+Subject: Re: [PATCH 2/3] io_uring: put flag checking for needing req cleanup
+ in one spot
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-References: <cover.1618488258.git.asml.silence@gmail.com>
+References: <20210416161018.879915-1-axboe@kernel.dk>
+ <20210416161018.879915-3-axboe@kernel.dk>
+From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
  bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
@@ -95,12 +97,12 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <d2480889-8949-5e31-6199-01a69dd58d05@gmail.com>
-Date:   Sat, 17 Apr 2021 00:34:21 +0100
+Message-ID: <0451cd0b-1f86-9a36-ed61-d68f99ccd90f@gmail.com>
+Date:   Sat, 17 Apr 2021 00:37:56 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <cover.1618488258.git.asml.silence@gmail.com>
+In-Reply-To: <20210416161018.879915-3-axboe@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -108,18 +110,52 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 15/04/2021 13:07, Pavel Begunkov wrote:
-> Small patches improving userspace values handling.
+On 16/04/2021 17:10, Jens Axboe wrote:
+> We have this in two spots right now, which is a bit fragile. In
+> preparation for moving REQ_F_POLLED cleanup into the same spot, move
+> the check into a separate helper so we only have it once.
 
-imho, those are good for 5.13, as well as look small and clean
+Perfect, others look good to me as well
 
 > 
-> Pavel Begunkov (2):
->   io_uring: fix overflows checks in provide buffers
->   io_uring: check register restriction afore quiesce
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> ---
+>  fs/io_uring.c | 11 +++++++----
+>  1 file changed, 7 insertions(+), 4 deletions(-)
 > 
->  fs/io_uring.c | 31 ++++++++++++++++---------------
->  1 file changed, 16 insertions(+), 15 deletions(-)
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 4803e31e9301..8e6dcb69f3e9 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -1598,10 +1598,15 @@ static void io_req_complete_post(struct io_kiocb *req, long res,
+>  	}
+>  }
+>  
+> +static inline bool io_req_needs_clean(struct io_kiocb *req)
+> +{
+> +	return req->flags & (REQ_F_BUFFER_SELECTED | REQ_F_NEED_CLEANUP);
+> +}
+> +
+>  static void io_req_complete_state(struct io_kiocb *req, long res,
+>  				  unsigned int cflags)
+>  {
+> -	if (req->flags & (REQ_F_NEED_CLEANUP | REQ_F_BUFFER_SELECTED))
+> +	if (io_req_needs_clean(req))
+>  		io_clean_op(req);
+>  	req->result = res;
+>  	req->compl.cflags = cflags;
+> @@ -1713,10 +1718,8 @@ static void io_dismantle_req(struct io_kiocb *req)
+>  
+>  	if (!(flags & REQ_F_FIXED_FILE))
+>  		io_put_file(req->file);
+> -	if (flags & (REQ_F_NEED_CLEANUP | REQ_F_BUFFER_SELECTED |
+> -		     REQ_F_INFLIGHT)) {
+> +	if (io_req_needs_clean(req) || (req->flags & REQ_F_INFLIGHT)) {
+>  		io_clean_op(req);
+> -
+>  		if (req->flags & REQ_F_INFLIGHT) {
+>  			struct io_uring_task *tctx = req->task->io_uring;
+>  
 > 
 
 -- 

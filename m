@@ -2,131 +2,158 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 104F93618FC
-	for <lists+io-uring@lfdr.de>; Fri, 16 Apr 2021 06:45:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AF33362076
+	for <lists+io-uring@lfdr.de>; Fri, 16 Apr 2021 15:04:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238233AbhDPEqJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 16 Apr 2021 00:46:09 -0400
-Received: from mail-il1-f173.google.com ([209.85.166.173]:42755 "EHLO
-        mail-il1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229555AbhDPEqI (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 16 Apr 2021 00:46:08 -0400
-Received: by mail-il1-f173.google.com with SMTP id 6so22071536ilt.9
-        for <io-uring@vger.kernel.org>; Thu, 15 Apr 2021 21:45:44 -0700 (PDT)
+        id S239124AbhDPNE2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 16 Apr 2021 09:04:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52474 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234291AbhDPNE1 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 16 Apr 2021 09:04:27 -0400
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 615D0C061574
+        for <io-uring@vger.kernel.org>; Fri, 16 Apr 2021 06:04:03 -0700 (PDT)
+Received: by mail-pj1-x102c.google.com with SMTP id e8-20020a17090a7288b029014e51f5a6baso9325492pjg.2
+        for <io-uring@vger.kernel.org>; Fri, 16 Apr 2021 06:04:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=S3/IqSe2iQQV5Lq0Sn+HG/eLxgX76zBzCLRht01ibzY=;
+        b=fKFTuN4VyznKKVpeE44zL40qOobTZ+NB8ZvHXcW6ucXCbQ9myVJKmU9pH/mbvib3Lg
+         GoUsOAgzkUkQsZpuxv2MG7CCWuS4t9v/V10Ar/yyOoLV9TJ+NFUAvLp5JT7gRrJ3FAoo
+         PvTuc9hKD/R+ZGG0UuK0CAqDtw+xdaGeLHXECwBV5GgM/gfY9UKUzOk0ZbDEmYaTczSx
+         ZjWvioIGnRKbrMg+nEr90qnFOPPagcfxQ/dAIQbwAeY5NRs9I5hjRNrDqfqNdyim08WX
+         Ax1BLCZwhs4NLCWULw5kclUvi1SfB2WP3FcWVAi3FrpQdwSZ3FCVc4/vOUQ5XLLlP5uH
+         hjEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ZgNrbPB+QEUq5jEEl+jYLXTOt7AD2GG6F7AnkjqmgoE=;
-        b=YNIsdtNmX/onUkENAMepufOBLVJurXMwTwvu49zECKara/sRdqzD5ZVUfvqVZvj9qM
-         LZflZbjCUKkBMLS2eOBxwlRLg877R9JCdWwSDvNY+BdyUq107Con40JaYRCfM41+CnsB
-         0h91SFI4s9/Da79TbMWtb98tm29FtPU+l5/w1w0Iap+bDSthcFd/JsTp/cVe9nElTN/A
-         8GCDUm+bFRqdXCX/k4+nU4R5UjQEtBNxaT0/TSk+raogTrUI8CzLjt7WvLB0NIvOgpZR
-         DmGYNtOD/2KBdgkfTGE0+KnlW8LeFihWCHdua3PPla9K0QNxGs/ACiVghmruqWCmrjRb
-         j+hA==
-X-Gm-Message-State: AOAM533CoxAKyELTM/bKALu2TMLC39FMu2r1vVlsG9RhG7I6WhFJcCk9
-        Gl25zpIBi97z0CyC75cJzRw=
-X-Google-Smtp-Source: ABdhPJyec/kSV99X/AuXmjwPXSleDoigg37o+MCue4g9FoiLSPxwfa8kQPipi2mvQdOX/Nz/qOHs1w==
-X-Received: by 2002:a05:6e02:de6:: with SMTP id m6mr5610984ilj.81.1618548344341;
-        Thu, 15 Apr 2021 21:45:44 -0700 (PDT)
-Received: from google.com (243.199.238.35.bc.googleusercontent.com. [35.238.199.243])
-        by smtp.gmail.com with ESMTPSA id a11sm2241279ilj.22.2021.04.15.21.45.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Apr 2021 21:45:43 -0700 (PDT)
-Date:   Fri, 16 Apr 2021 04:45:42 +0000
-From:   Dennis Zhou <dennis@kernel.org>
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux.com>,
-        Joakim Hassila <joj@mac.com>
-Subject: Re: [PATCH 1/2] percpu_ref: add percpu_ref_atomic_count()
-Message-ID: <YHkWdgLKBrH51GA7@google.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=S3/IqSe2iQQV5Lq0Sn+HG/eLxgX76zBzCLRht01ibzY=;
+        b=ojgAlfVvRMmKiT68fkWso7MH71vr6NT0frZ1W9z0WpNeJEBFkBCeI09CTTQaCVXors
+         v120O+NX8hlCJrsVmjNIM0FJ0gL5/1CmiKlCH6Fw0JF6Xr9uNXArzX3jmF3J6hxS17PB
+         AUXhciMicf3ykb1hHXRJe2CCuiTMHuUsq+reYobShcH3paMRF+srYtfxRAS9SZh2rTEm
+         QverAQDlpdyG9ZYHegVjZCLlBl4FmILDfY0u7ll7DYW8tUvxW4DylPxyIzledDz3dc0A
+         ivo2u7s1zudWxune1yXbLObxcgsVu6w2szyOfT0aT/kWX2vH01pWOiYxDUwLpv/rAYT7
+         Al9Q==
+X-Gm-Message-State: AOAM531t5Uc9eSZVKxJXVi4YZTRpsytxJMnlSx7Y+Ob+L1pDdJ5ID3Ay
+        nV/ABDbdQzW/uMDRwaId1yvRbw==
+X-Google-Smtp-Source: ABdhPJz/N7qLqxpe+r1Z5dmPVsc6ymxgg2T0SzWLtgsha6q16saLuT2n7CmpJs3ZxMazvcq5FKY2oA==
+X-Received: by 2002:a17:90a:ba05:: with SMTP id s5mr9858955pjr.194.1618578242793;
+        Fri, 16 Apr 2021 06:04:02 -0700 (PDT)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id z23sm5094906pgj.56.2021.04.16.06.04.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 16 Apr 2021 06:04:02 -0700 (PDT)
+Subject: Re: [PATCH 0/2] fix hangs with shared sqpoll
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+Cc:     Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
+        Christoph Lameter <cl@linux.com>, Joakim Hassila <joj@mac.com>
 References: <cover.1618532491.git.asml.silence@gmail.com>
- <d17d951b120bb2d65870013bfdc7495a92c6fb82.1618532491.git.asml.silence@gmail.com>
+ <8d04fa58-d8d0-8760-a6aa-d2bd6d66d09d@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <36df5986-0716-b7e7-3dac-261a483d074a@kernel.dk>
+Date:   Fri, 16 Apr 2021 07:04:00 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d17d951b120bb2d65870013bfdc7495a92c6fb82.1618532491.git.asml.silence@gmail.com>
+In-Reply-To: <8d04fa58-d8d0-8760-a6aa-d2bd6d66d09d@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
-
-On Fri, Apr 16, 2021 at 01:22:51AM +0100, Pavel Begunkov wrote:
-> Add percpu_ref_atomic_count(), which returns number of references of a
-> percpu_ref switched prior into atomic mode, so the caller is responsible
-> to make sure it's in the right mode.
+On 4/15/21 6:26 PM, Pavel Begunkov wrote:
+> On 16/04/2021 01:22, Pavel Begunkov wrote:
+>> Late catched 5.12 bug with nasty hangs. Thanks Jens for a reproducer.
 > 
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> ---
->  include/linux/percpu-refcount.h |  1 +
->  lib/percpu-refcount.c           | 26 ++++++++++++++++++++++++++
->  2 files changed, 27 insertions(+)
-> 
-> diff --git a/include/linux/percpu-refcount.h b/include/linux/percpu-refcount.h
-> index 16c35a728b4c..0ff40e79efa2 100644
-> --- a/include/linux/percpu-refcount.h
-> +++ b/include/linux/percpu-refcount.h
-> @@ -131,6 +131,7 @@ void percpu_ref_kill_and_confirm(struct percpu_ref *ref,
->  void percpu_ref_resurrect(struct percpu_ref *ref);
->  void percpu_ref_reinit(struct percpu_ref *ref);
->  bool percpu_ref_is_zero(struct percpu_ref *ref);
-> +unsigned long percpu_ref_atomic_count(struct percpu_ref *ref);
->  
->  /**
->   * percpu_ref_kill - drop the initial ref
-> diff --git a/lib/percpu-refcount.c b/lib/percpu-refcount.c
-> index a1071cdefb5a..56286995e2b8 100644
-> --- a/lib/percpu-refcount.c
-> +++ b/lib/percpu-refcount.c
-> @@ -425,6 +425,32 @@ bool percpu_ref_is_zero(struct percpu_ref *ref)
->  }
->  EXPORT_SYMBOL_GPL(percpu_ref_is_zero);
->  
-> +/**
-> + * percpu_ref_atomic_count - returns number of left references
-> + * @ref: percpu_ref to test
-> + *
-> + * This function is safe to call as long as @ref is switch into atomic mode,
-> + * and is between init and exit.
-> + */
-> +unsigned long percpu_ref_atomic_count(struct percpu_ref *ref)
-> +{
-> +	unsigned long __percpu *percpu_count;
-> +	unsigned long count, flags;
-> +
-> +	if (WARN_ON_ONCE(__ref_is_percpu(ref, &percpu_count)))
-> +		return -1UL;
-> +
-> +	/* protect us from being destroyed */
-> +	spin_lock_irqsave(&percpu_ref_switch_lock, flags);
-> +	if (ref->data)
-> +		count = atomic_long_read(&ref->data->count);
-> +	else
-> +		count = ref->percpu_count_ptr >> __PERCPU_REF_FLAG_BITS;
+> 1/2 is basically a rip off of one of old Jens' patches, but can't
+> find it anywhere. If you still have it, especially if it was
+> reviewed/etc., may make sense to go with it instead
 
-Sorry I missed Jens' patch before and also the update to percpu_ref.
-However, I feel like I'm missing something. This isn't entirely related
-to your patch, but I'm not following why percpu_count_ptr stores the
-excess count of an exited percpu_ref and doesn't warn when it's not
-zero. It seems like this should be an error if it's not 0?
+I wonder if we can do something like the below instead - we don't
+care about a particularly stable count in terms of wakeup
+reliance, and it'd save a nasty sync atomic switch.
 
-Granted we have made some contract with the user to do the right thing,
-but say someone does mess up, we don't indicate to them hey this ref is
-actually dead and if they're waiting for it to go to 0, it never will.
+Totally untested...
 
-> +	spin_unlock_irqrestore(&percpu_ref_switch_lock, flags);
-> +
-> +	return count;
-> +}
-> +
->  /**
->   * percpu_ref_reinit - re-initialize a percpu refcount
->   * @ref: perpcu_ref to re-initialize
-> -- 
-> 2.24.0
-> 
 
-Thanks,
-Dennis
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 6c182a3a221b..9edbcf01ea49 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -8928,7 +8928,7 @@ static void io_uring_cancel_sqpoll(struct io_ring_ctx *ctx)
+ 	atomic_inc(&tctx->in_idle);
+ 	do {
+ 		/* read completions before cancelations */
+-		inflight = tctx_inflight(tctx, false);
++		inflight = percpu_ref_sum(&ctx->refs);
+ 		if (!inflight)
+ 			break;
+ 		io_uring_try_cancel_requests(ctx, current, NULL);
+@@ -8939,7 +8939,7 @@ static void io_uring_cancel_sqpoll(struct io_ring_ctx *ctx)
+ 		 * avoids a race where a completion comes in before we did
+ 		 * prepare_to_wait().
+ 		 */
+-		if (inflight == tctx_inflight(tctx, false))
++		if (inflight == percpu_ref_sum(&ctx->refs))
+ 			schedule();
+ 		finish_wait(&tctx->wait, &wait);
+ 	} while (1);
+diff --git a/include/linux/percpu-refcount.h b/include/linux/percpu-refcount.h
+index 16c35a728b4c..2f29f34bc993 100644
+--- a/include/linux/percpu-refcount.h
++++ b/include/linux/percpu-refcount.h
+@@ -131,6 +131,7 @@ void percpu_ref_kill_and_confirm(struct percpu_ref *ref,
+ void percpu_ref_resurrect(struct percpu_ref *ref);
+ void percpu_ref_reinit(struct percpu_ref *ref);
+ bool percpu_ref_is_zero(struct percpu_ref *ref);
++long percpu_ref_sum(struct percpu_ref *ref);
+ 
+ /**
+  * percpu_ref_kill - drop the initial ref
+diff --git a/lib/percpu-refcount.c b/lib/percpu-refcount.c
+index a1071cdefb5a..b09ed9fdd32d 100644
+--- a/lib/percpu-refcount.c
++++ b/lib/percpu-refcount.c
+@@ -475,3 +475,31 @@ void percpu_ref_resurrect(struct percpu_ref *ref)
+ 	spin_unlock_irqrestore(&percpu_ref_switch_lock, flags);
+ }
+ EXPORT_SYMBOL_GPL(percpu_ref_resurrect);
++
++/**
++ * percpu_ref_sum - return approximate ref counts
++ * @ref: perpcu_ref to sum
++ *
++ * Note that this should only really be used to compare refs, as by the
++ * very nature of percpu references, the value may be stale even before it
++ * has been returned.
++ */
++long percpu_ref_sum(struct percpu_ref *ref)
++{
++	unsigned long __percpu *percpu_count;
++	long ret;
++
++	rcu_read_lock();
++	if (__ref_is_percpu(ref, &percpu_count)) {
++		ret = atomic_long_read(&ref->data->count);
++	} else {
++		int cpu;
++
++		ret = 0;
++		for_each_possible_cpu(cpu)
++			ret += *per_cpu_ptr(percpu_count, cpu);
++	}
++	rcu_read_unlock();
++
++	return ret;
++}
+
+-- 
+Jens Axboe
+

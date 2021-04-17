@@ -2,77 +2,81 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 436CE362E75
-	for <lists+io-uring@lfdr.de>; Sat, 17 Apr 2021 10:06:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BD163630A2
+	for <lists+io-uring@lfdr.de>; Sat, 17 Apr 2021 16:29:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235981AbhDQIEC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 17 Apr 2021 04:04:02 -0400
-Received: from us2-ob2-2.mailhostbox.com ([162.210.70.54]:34096 "EHLO
-        us2-ob2-2.mailhostbox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236040AbhDQIEB (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 17 Apr 2021 04:04:01 -0400
-X-Greylist: delayed 386 seconds by postgrey-1.27 at vger.kernel.org; Sat, 17 Apr 2021 04:04:01 EDT
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-        (using TLSv1 with cipher AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: hello@oswalpalash.com)
-        by us2.outbound.mailhostbox.com (Postfix) with ESMTPSA id D5ABB781DB2
-        for <io-uring@vger.kernel.org>; Sat, 17 Apr 2021 07:57:08 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oswalpalash.com;
-        s=20160715; t=1618646229;
-        bh=nOWtxwvsdLSGA+5YNQeiAIaP2n2MR29tVu7qdfAUunU=;
-        h=From:Date:Subject:To;
-        b=aucUzsuZbWFHSaesdctKU3yWe+/Qx8sW5qbhhwtxL0NIB8NK/wA8V4uTqA7Y70143
-         KL5B1KqNSjKqqLIK022XDyq91TjALie/zLw313Q8vcbySZMPgPB6S+65XNmjq4Zs69
-         xExTT77udzdTPlgT5CgTJ3rka8VEeLHHK5QGqRUM=
-Received: by mail-lj1-f173.google.com with SMTP id z8so33504654ljm.12
-        for <io-uring@vger.kernel.org>; Sat, 17 Apr 2021 00:57:08 -0700 (PDT)
-X-Gm-Message-State: AOAM532UmaX1D1enm+E7b2k4jCbkf+2gy60FWzSbgmKEQPz7LDb9+YEo
-        noNToEz4jOxM9vzlUZ67L+Wtnm8dDmDXK52uRzo=
-X-Google-Smtp-Source: ABdhPJyNnOq+E2e9dbcaW7LWieGHvB+WWsHGZ/Yc/ZKnIfh/M3RexKiO3OUeXzjiFFlxGIhyLTT+46AoGbNN05mKt+o=
-X-Received: by 2002:a2e:b5b5:: with SMTP id f21mr4899856ljn.340.1618646227231;
- Sat, 17 Apr 2021 00:57:07 -0700 (PDT)
+        id S236058AbhDQO3b (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 17 Apr 2021 10:29:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47516 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233008AbhDQO3a (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 17 Apr 2021 10:29:30 -0400
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E748DC061574
+        for <io-uring@vger.kernel.org>; Sat, 17 Apr 2021 07:29:03 -0700 (PDT)
+Received: by mail-pl1-x62d.google.com with SMTP id q11so2337952plx.2
+        for <io-uring@vger.kernel.org>; Sat, 17 Apr 2021 07:29:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=SlIQBVRVwpA/1zR2QLNnLiM/iAyzGCEsLW3Nw2TTqcs=;
+        b=kB5Y25qX43eab8/BRJwPStYx0CsKX7jDOP+QBJ5i3U2FX02IJS36UUhH8IV8ed6cqG
+         HKSx9hQzVop84sbmWMXS9prhS58L7UyA3r2lKSrsuMnClb1LraedGkyC5wH8cCM4U7gA
+         1bbb6D88xGnaVdUAqW6TTtQ4ilzrIa5gv/O658QFbX8qDKbCINxPwJPMgifJanQD/q+Z
+         NjaU4vN52K0fpcILcdD3FRCexq01s9ys/ZJ2ANzXv0Xr34ZC0QAn5kDJsZ7THU1xnYpL
+         YrFNBjrUa+ES3JbWh3TYR0bhOQR9mT0kfHfCIYjh0tgMqJdcVryb1KuqnA4yOO/tF9c8
+         HuzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=SlIQBVRVwpA/1zR2QLNnLiM/iAyzGCEsLW3Nw2TTqcs=;
+        b=XTE6gYPswvmq6RppLC+D3azzBr9fzh/+NPn9kxn1lRhUkyCb82cyWyrLSEPwW0SXlR
+         ZH8ExpM8K3pdObG6/ddECsFnlQR2ixP+wU6lp3IuMJ2cmUbHufdU1UYYMxLYikf4QFKZ
+         x3G/dAEautg8Z5yqtVRHhdWqKcBHFuMYUY56DKs5ZPkGCinIBWGvwbevXArBcJdUKTY8
+         5lK8qRFxqRJgnYNyEdRp7syA/cNZ046TVDSRBjs/RfqAEKQ9G4fv4eAiQ3MZITDepeCC
+         HqccFOJB0rrgZUdJO8OFEyJWUbA9imav9l9SxOCDQxWp1BHkPfDQ0rbtimjv51BVckCM
+         SGsA==
+X-Gm-Message-State: AOAM533Oqf7CzmWp70c2KcWIGGzdboC+iqJYjgzeQxesO/N9+Ao132k8
+        Ezk0SyF5O3FA5teLQuJ/u2s2nHsd4+QczQ==
+X-Google-Smtp-Source: ABdhPJzhZfHE8LTASoJf4L+Ar7IxVfsOjPirCjASYLFZxLkR09VBQEYKh8FiA8gu7c0GVCxOUhnvVA==
+X-Received: by 2002:a17:902:ce90:b029:eb:a5fa:3ace with SMTP id f16-20020a170902ce90b02900eba5fa3acemr10842569plg.43.1618669742944;
+        Sat, 17 Apr 2021 07:29:02 -0700 (PDT)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id i14sm8028006pgl.79.2021.04.17.07.29.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 17 Apr 2021 07:29:02 -0700 (PDT)
+Subject: Re: [PATCH 0/2] two small patches
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <cover.1618488258.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <3eef78ca-39a5-ac2d-8baa-ef16798a90e1@kernel.dk>
+Date:   Sat, 17 Apr 2021 08:29:01 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-From:   Palash Oswal <hello@oswalpalash.com>
-Date:   Sat, 17 Apr 2021 13:26:56 +0530
-X-Gmail-Original-Message-ID: <CAGyP=7cWH6PsO=gbF0owuSXV7D18LgK=jP+wiPN-Q=VM29vKTg@mail.gmail.com>
-Message-ID: <CAGyP=7cWH6PsO=gbF0owuSXV7D18LgK=jP+wiPN-Q=VM29vKTg@mail.gmail.com>
-Subject: [RFC] Patch for null-ptr-deref read in io_uring_create 5.11.12
-To:     axboe@kernel.dk, io-uring@vger.kernel.org,
-        Pavel Begunkov <asml.silence@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=I7wbu+og c=1 sm=1 tr=0
-        a=uiWFakvDa7lx8AkR5Wbrfw==:117 a=IkcTkHD0fZMA:10 a=3YhXtTcJ-WEA:10
-        a=hEAMlF8AIHaD93pZH-EA:9 a=QEXdDO2ut3YA:10
+In-Reply-To: <cover.1618488258.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
+On 4/15/21 6:07 AM, Pavel Begunkov wrote:
+> Small patches improving userspace values handling.
+> 
+> Pavel Begunkov (2):
+>   io_uring: fix overflows checks in provide buffers
+>   io_uring: check register restriction afore quiesce
+> 
+>  fs/io_uring.c | 31 ++++++++++++++++---------------
+>  1 file changed, 16 insertions(+), 15 deletions(-)
 
-I have been trying to decipher a bug that my local syzkaller instance
-discovered in the v5.11.12 stable tree. I have more details in [1].
-Could someone please review.
-
-[1] https://oswalpalash.com/exploring-null-ptr-deref-io-uring-submit/
-Signed-off-by: Palash Oswal <hello@oswalpalash.com>
----
- fs/io_uring.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 8b4213de9e08..00b35079b91a 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -8995,7 +8995,7 @@ static void io_disable_sqo_submit(struct io_ring_ctx *ctx)
- {
-     mutex_lock(&ctx->uring_lock);
-     ctx->sqo_dead = 1;
--    if (ctx->flags & IORING_SETUP_R_DISABLED)
-+    if (ctx->flags & IORING_SETUP_R_DISABLED && ctx->sq_data)
-         io_sq_offload_start(ctx);
-     mutex_unlock(&ctx->uring_lock);
+Applied, thanks.
 
 -- 
-2.27.0
+Jens Axboe
+

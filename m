@@ -2,188 +2,118 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 57E633635BE
-	for <lists+io-uring@lfdr.de>; Sun, 18 Apr 2021 15:52:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8EA53635C6
+	for <lists+io-uring@lfdr.de>; Sun, 18 Apr 2021 15:56:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229474AbhDRNwu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 18 Apr 2021 09:52:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36712 "EHLO
+        id S231436AbhDRN4r (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 18 Apr 2021 09:56:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230029AbhDRNwt (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 18 Apr 2021 09:52:49 -0400
+        with ESMTP id S231460AbhDRN4r (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 18 Apr 2021 09:56:47 -0400
 Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69EB0C061760;
-        Sun, 18 Apr 2021 06:52:21 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id o21-20020a1c4d150000b029012e52898006so7001619wmh.0;
-        Sun, 18 Apr 2021 06:52:21 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69AB0C06174A
+        for <io-uring@vger.kernel.org>; Sun, 18 Apr 2021 06:56:18 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id p19so16757278wmq.1
+        for <io-uring@vger.kernel.org>; Sun, 18 Apr 2021 06:56:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=jvc6wOfAhuptfNvgUyE5utiM3n5M2Mer/TQrKGGfMAc=;
-        b=PJib7R6rmjnJXh6xx/v6XjHOEKcsg6hITImHj6pJsu0ZCLLZNNtSXSMUS8pSzhQEUo
-         r6gvTgmQoMHgkRNCOfREcTbiO7Mz3IRkj7Ue8J2TbeMWP8+bpnX0SWmUISWPKvgIC/Bc
-         YDixq2LoPk9/TnX+9lnpZFJ/Kbn9akiFVpioBYOyKfOxGu4O3yJUf0a7+zKvufjHsAe4
-         1U/wytO3q1MA/uzCrOw905XIr0YSXr20JCrowpVng4Sr08dwtD9SBsE7iU9YD94qyfQG
-         g78sWq10iKaxoG5JbQAd7Heb5Mat0jNspASxZyHmWDzikQANsG7FSHFpcxz2kJRz+qTt
-         GGUA==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=lywoVbkc99+4ZFSf+vvv6L19uzHNEVp1vF1SDRobVB0=;
+        b=YvLmqkae3MOpl6xTcPbte8nX7YEdmGAK4hObwUaxHq2ZbLBvHlp0T9ltYZjP2AMZwA
+         l0srpeqtbbMgoQX6cS9YDVp49nFJZCk2yUx3BTkYPf6tPQVKKSl6CyMf+ahEA2iBTAqH
+         KYLsQiB2Fpymm0RrTJkktoeOP5zlre+diaHNiyfi7S7sBAJg0dVn/IjY5kEJ1eNwm19Y
+         X9IULAQgpf3VfERfUxfSH/i9htUa7iMH9Y8mIbthhiiHm0PvxhLGp69oWOIo9a0BvKUc
+         /v2yWhlKaT30XuAzrxlQpujeGQoHpSXlacFGELgNEE2kcoprC8ZE34B5JcFPddKwIpG/
+         aPqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=jvc6wOfAhuptfNvgUyE5utiM3n5M2Mer/TQrKGGfMAc=;
-        b=DIsABqXv3HpiZupQtCaoAli4POsjQ3fcghLQ8MA5uIAmX/r9oeBu6kauS0nuNcGcks
-         TDKNCCCSooZPHpiw3SCefa8j13EOltCAvJ9CEv4THiREe+/bpe3Feu0ElhwBso3ghUvX
-         6qU/rw+4NpojNLysFH4H6bG3+nPmD+EjbdGLTam/zl1aYNyVHahLHaLFcdaN8Y+u47v0
-         BsGM7dv65StCGtAcjmVYoxENz9rewIv//jESitFFAPNqbEGHqRW+6UwVpS6DfIWPJ015
-         qXHF0TqK39DIPge5nYujlRyKnlAIm5tPykczlrwAoyGF5pmxeeI9xDwSm5t7MItyvGL0
-         UESA==
-X-Gm-Message-State: AOAM532AnGVxzP4XxqjaPSkySMNhGoUSQFjkUS4Ai8o5pXg6hKy9IyyO
-        /TS75xqdAVE+RzqTv7rsp18=
-X-Google-Smtp-Source: ABdhPJxpkQR+PeniNWOn8j2VjIKvEioyN7DMj3BodYAOGJI939rUUT49DBUO4mkgQjhD5gW+/YWstg==
-X-Received: by 2002:a05:600c:4a18:: with SMTP id c24mr16617731wmp.70.1618753940194;
-        Sun, 18 Apr 2021 06:52:20 -0700 (PDT)
-Received: from localhost.localdomain ([148.252.133.62])
-        by smtp.gmail.com with ESMTPSA id f11sm16320397wmc.6.2021.04.18.06.52.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 Apr 2021 06:52:19 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=lywoVbkc99+4ZFSf+vvv6L19uzHNEVp1vF1SDRobVB0=;
+        b=c8Cuk7SmL/shIeQtftVsTuSGUHxKcBUnGfx4NPdupqX3t5QlRQLhbS5jKpfdSOItzw
+         RaooawclTS672iSAaQqwb/IQvm3IID0ElTELJmuqNjphTt/xjED1N4CUJyR++SlSVBMt
+         9/U0v2OoQm9SF4U/DMuI2yPOzdVjkDB28lBqrRi4Dt89Q8r4isv4oSqVLfQacNgJhDiq
+         jLKLZ5pcax4GvXGDyh8uBw18pjoez+/K0Hd+zR1rcwsNWMF/96YKs+E1Zl89sMLd+HJe
+         x00ooGhwLG2/LuL/vQ6tZoxUpQsU8/hk/4Tj5vcM+hvGUz2L50SKwO8iDLRANVXhCbzM
+         44cQ==
+X-Gm-Message-State: AOAM531LjLOIwHHvv11mr3faCqPZJucKLsb/zxzyfvv54L+mPO6VUgLH
+        /R6Gtk9B8wvIE2mbzmk2OburSgJvvY8tagWn
+X-Google-Smtp-Source: ABdhPJxI4mbRFp39+TLUIJXAK5QW6BBtpZAYPFgeEnMht2hTlvZyTZyGg/9j6nelrpN1T2l7gmUOiQ==
+X-Received: by 2002:a05:600c:1405:: with SMTP id g5mr17352474wmi.186.1618754176939;
+        Sun, 18 Apr 2021 06:56:16 -0700 (PDT)
+Received: from [192.168.8.197] ([148.252.133.62])
+        by smtp.gmail.com with ESMTPSA id z17sm19599091wro.1.2021.04.18.06.56.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 18 Apr 2021 06:56:16 -0700 (PDT)
+Subject: Re: [PATCH 0/2] fix hangs with shared sqpoll
+To:     Hillf Danton <hdanton@sina.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <cover.1618532491.git.asml.silence@gmail.com>
+ <8d04fa58-d8d0-8760-a6aa-d2bd6d66d09d@gmail.com>
+ <36df5986-0716-b7e7-3dac-261a483d074a@kernel.dk>
+ <dd77a2f6-c989-8970-b4c4-44380124a894@gmail.com>
+ <dabc5451-c184-9357-c665-697fe22c2e9e@kernel.dk>
+ <1c26a568-e532-0987-158a-4cad6195f284@gmail.com>
+ <20210417013115.15032-1-hdanton@sina.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc:     Joakim Hassila <joj@mac.com>, stable@vger.kernel.org
-Subject: [PATCH 2/2] io_uring: fix shared sqpoll cancellation hangs
-Date:   Sun, 18 Apr 2021 14:52:09 +0100
-Message-Id: <1bded7e6c6b32e0bae25fce36be2868e46b116a0.1618752958.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <cover.1618752958.git.asml.silence@gmail.com>
-References: <cover.1618752958.git.asml.silence@gmail.com>
+Message-ID: <2fb7b552-6c63-9720-c184-1e54b24a62f5@gmail.com>
+Date:   Sun, 18 Apr 2021 14:56:15 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210417013115.15032-1-hdanton@sina.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-[  736.982891] INFO: task iou-sqp-4294:4295 blocked for more than 122 seconds.
-[  736.982897] Call Trace:
-[  736.982901]  schedule+0x68/0xe0
-[  736.982903]  io_uring_cancel_sqpoll+0xdb/0x110
-[  736.982908]  io_sqpoll_cancel_cb+0x24/0x30
-[  736.982911]  io_run_task_work_head+0x28/0x50
-[  736.982913]  io_sq_thread+0x4e3/0x720
+On 4/17/21 2:31 AM, Hillf Danton wrote:
+> On Fri, 16 Apr 2021 15:42:07 Pavel Begunkov wrote:
+>> On 16/04/2021 15:09, Pavel Begunkov wrote:
+>>> On 16/04/2021 14:58, Jens Axboe wrote:
+>>>> On 4/16/21 7:12 AM, Pavel Begunkov wrote:
+>>>>> On 16/04/2021 14:04, Jens Axboe wrote:
+>>>>>> On 4/15/21 6:26 PM, Pavel Begunkov wrote:
+>>>>>>> On 16/04/2021 01:22, Pavel Begunkov wrote:
+>>>>>>>> Late catched 5.12 bug with nasty hangs. Thanks Jens for a reproducer.
+>>>>>>>
+>>>>>>> 1/2 is basically a rip off of one of old Jens' patches, but can't
+>>>>>>> find it anywhere. If you still have it, especially if it was
+>>>>>>> reviewed/etc., may make sense to go with it instead
+>>>>>>
+>>>>>> I wonder if we can do something like the below instead - we don't
+>>>>>> care about a particularly stable count in terms of wakeup
+>>>>>> reliance, and it'd save a nasty sync atomic switch.
+>>>>>
+>>>>> But we care about it being monotonous. There are nuances with it.
+>>>>
+>>>> Do we, though? We care about it changing when something has happened,
+>>>> but not about it being monotonic.
+>>>
+>>> We may find inflight == get_inflight(), when it's not really so,
+>>> and so get to schedule() awhile there are pending requests that
+>>> are not going to be cancelled by itself. And those pending requests
+>>> may have been non-discoverable and so non-cancellable, e.g. because
+>>> were a part of a ling/hardlink.
+>>
+>> Anyway, there might be other problems because of how wake_up()'s
+>> and ctx->refs putting is ordered. Needs to be remade, probably
+>> without ctx->refs in the first place.
+>>
+> Given the test rounds in the current tree, next tree and his tree the
 
-We call io_uring_cancel_sqpoll() one by one for each ctx either in
-sq_thread() itself or via task works, and it's intended to cancel all
-requests of a specified context. However the function uses per-task
-counters to track the number of inflight requests, so it counts more
-requests than available via currect io_uring ctx and goes to sleep for
-them to appear (e.g. from IRQ), that will never happen.
+Whose "his" tree?
 
-Cancel a bit more than before, i.e. all ctxs that share sqpoll
-and continue to use shared counters. Don't forget that we should not
-remove ctx from the list before running that task_work sqpoll-cancel,
-otherwise the function wouldn't be able to find the context and will
-hang.
+> percpu count had survived, one of the quick questions is how it fell apart
+> last night?
 
-Reported-by: Joakim Hassila <joj@mac.com>
-Reported-by: Jens Axboe <axboe@kernel.dk>
-Fixes: 37d1e2e3642e2 ("io_uring: move SQPOLL thread io-wq forked worker")
-Cc: stable@vger.kernel.org
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 27 ++++++++++++++-------------
- 1 file changed, 14 insertions(+), 13 deletions(-)
+What "percpu count had survived"? Do you mean the percpu-related patch
+from the series? What fell apart?
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index fb41725204f0..99e55f7f6c34 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1022,7 +1022,7 @@ static void io_uring_del_task_file(unsigned long index);
- static void io_uring_try_cancel_requests(struct io_ring_ctx *ctx,
- 					 struct task_struct *task,
- 					 struct files_struct *files);
--static void io_uring_cancel_sqpoll(struct io_ring_ctx *ctx);
-+static void io_uring_cancel_sqpoll(struct io_sq_data *sqd);
- static struct io_rsrc_node *io_rsrc_node_alloc(struct io_ring_ctx *ctx);
- 
- static bool io_cqring_fill_event(struct io_kiocb *req, long res, unsigned cflags);
-@@ -6867,15 +6867,14 @@ static int io_sq_thread(void *data)
- 		timeout = jiffies + sqd->sq_thread_idle;
- 	}
- 
--	list_for_each_entry(ctx, &sqd->ctx_list, sqd_list)
--		io_uring_cancel_sqpoll(ctx);
-+	io_uring_cancel_sqpoll(sqd);
- 	sqd->thread = NULL;
- 	list_for_each_entry(ctx, &sqd->ctx_list, sqd_list)
- 		io_ring_set_wakeup_flag(ctx);
--	mutex_unlock(&sqd->lock);
--
- 	io_run_task_work();
- 	io_run_task_work_head(&sqd->park_task_work);
-+	mutex_unlock(&sqd->lock);
-+
- 	complete(&sqd->exited);
- 	do_exit(0);
- }
-@@ -8867,11 +8866,11 @@ static s64 tctx_inflight(struct io_uring_task *tctx, bool tracked)
- static void io_sqpoll_cancel_cb(struct callback_head *cb)
- {
- 	struct io_tctx_exit *work = container_of(cb, struct io_tctx_exit, task_work);
--	struct io_ring_ctx *ctx = work->ctx;
--	struct io_sq_data *sqd = ctx->sq_data;
-+	struct io_sq_data *sqd = work->ctx->sq_data;
- 
- 	if (sqd->thread)
--		io_uring_cancel_sqpoll(ctx);
-+		io_uring_cancel_sqpoll(sqd);
-+	list_del_init(&work->ctx->sqd_list);
- 	complete(&work->completion);
- }
- 
-@@ -8882,7 +8881,6 @@ static void io_sqpoll_cancel_sync(struct io_ring_ctx *ctx)
- 	struct task_struct *task;
- 
- 	io_sq_thread_park(sqd);
--	list_del_init(&ctx->sqd_list);
- 	io_sqd_update_thread_idle(sqd);
- 	task = sqd->thread;
- 	if (task) {
-@@ -8890,6 +8888,8 @@ static void io_sqpoll_cancel_sync(struct io_ring_ctx *ctx)
- 		init_task_work(&work.task_work, io_sqpoll_cancel_cb);
- 		io_task_work_add_head(&sqd->park_task_work, &work.task_work);
- 		wake_up_process(task);
-+	} else {
-+		list_del_init(&ctx->sqd_list);
- 	}
- 	io_sq_thread_unpark(sqd);
- 
-@@ -8915,14 +8915,14 @@ static void io_uring_try_cancel(struct files_struct *files)
- }
- 
- /* should only be called by SQPOLL task */
--static void io_uring_cancel_sqpoll(struct io_ring_ctx *ctx)
-+static void io_uring_cancel_sqpoll(struct io_sq_data *sqd)
- {
--	struct io_sq_data *sqd = ctx->sq_data;
- 	struct io_uring_task *tctx = current->io_uring;
-+	struct io_ring_ctx *ctx;
- 	s64 inflight;
- 	DEFINE_WAIT(wait);
- 
--	WARN_ON_ONCE(!sqd || ctx->sq_data->thread != current);
-+	WARN_ON_ONCE(!sqd || sqd->thread != current);
- 
- 	atomic_inc(&tctx->in_idle);
- 	do {
-@@ -8930,7 +8930,8 @@ static void io_uring_cancel_sqpoll(struct io_ring_ctx *ctx)
- 		inflight = tctx_inflight(tctx, false);
- 		if (!inflight)
- 			break;
--		io_uring_try_cancel_requests(ctx, current, NULL);
-+		list_for_each_entry(ctx, &sqd->ctx_list, sqd_list)
-+			io_uring_try_cancel_requests(ctx, current, NULL);
- 
- 		prepare_to_wait(&tctx->wait, &wait, TASK_UNINTERRUPTIBLE);
- 		/*
--- 
-2.31.1
-
+--   
+Pavel Begunkov

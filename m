@@ -2,118 +2,87 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D8EA53635C6
-	for <lists+io-uring@lfdr.de>; Sun, 18 Apr 2021 15:56:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E4CA363753
+	for <lists+io-uring@lfdr.de>; Sun, 18 Apr 2021 21:30:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231436AbhDRN4r (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 18 Apr 2021 09:56:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37560 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231460AbhDRN4r (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 18 Apr 2021 09:56:47 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69AB0C06174A
-        for <io-uring@vger.kernel.org>; Sun, 18 Apr 2021 06:56:18 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id p19so16757278wmq.1
-        for <io-uring@vger.kernel.org>; Sun, 18 Apr 2021 06:56:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=lywoVbkc99+4ZFSf+vvv6L19uzHNEVp1vF1SDRobVB0=;
-        b=YvLmqkae3MOpl6xTcPbte8nX7YEdmGAK4hObwUaxHq2ZbLBvHlp0T9ltYZjP2AMZwA
-         l0srpeqtbbMgoQX6cS9YDVp49nFJZCk2yUx3BTkYPf6tPQVKKSl6CyMf+ahEA2iBTAqH
-         KYLsQiB2Fpymm0RrTJkktoeOP5zlre+diaHNiyfi7S7sBAJg0dVn/IjY5kEJ1eNwm19Y
-         X9IULAQgpf3VfERfUxfSH/i9htUa7iMH9Y8mIbthhiiHm0PvxhLGp69oWOIo9a0BvKUc
-         /v2yWhlKaT30XuAzrxlQpujeGQoHpSXlacFGELgNEE2kcoprC8ZE34B5JcFPddKwIpG/
-         aPqw==
+        id S231337AbhDRTam (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 18 Apr 2021 15:30:42 -0400
+Received: from mail-io1-f71.google.com ([209.85.166.71]:46944 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229488AbhDRTal (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 18 Apr 2021 15:30:41 -0400
+Received: by mail-io1-f71.google.com with SMTP id p8-20020a5d9c880000b02903dc877cd48dso8225816iop.13
+        for <io-uring@vger.kernel.org>; Sun, 18 Apr 2021 12:30:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=lywoVbkc99+4ZFSf+vvv6L19uzHNEVp1vF1SDRobVB0=;
-        b=c8Cuk7SmL/shIeQtftVsTuSGUHxKcBUnGfx4NPdupqX3t5QlRQLhbS5jKpfdSOItzw
-         RaooawclTS672iSAaQqwb/IQvm3IID0ElTELJmuqNjphTt/xjED1N4CUJyR++SlSVBMt
-         9/U0v2OoQm9SF4U/DMuI2yPOzdVjkDB28lBqrRi4Dt89Q8r4isv4oSqVLfQacNgJhDiq
-         jLKLZ5pcax4GvXGDyh8uBw18pjoez+/K0Hd+zR1rcwsNWMF/96YKs+E1Zl89sMLd+HJe
-         x00ooGhwLG2/LuL/vQ6tZoxUpQsU8/hk/4Tj5vcM+hvGUz2L50SKwO8iDLRANVXhCbzM
-         44cQ==
-X-Gm-Message-State: AOAM531LjLOIwHHvv11mr3faCqPZJucKLsb/zxzyfvv54L+mPO6VUgLH
-        /R6Gtk9B8wvIE2mbzmk2OburSgJvvY8tagWn
-X-Google-Smtp-Source: ABdhPJxI4mbRFp39+TLUIJXAK5QW6BBtpZAYPFgeEnMht2hTlvZyTZyGg/9j6nelrpN1T2l7gmUOiQ==
-X-Received: by 2002:a05:600c:1405:: with SMTP id g5mr17352474wmi.186.1618754176939;
-        Sun, 18 Apr 2021 06:56:16 -0700 (PDT)
-Received: from [192.168.8.197] ([148.252.133.62])
-        by smtp.gmail.com with ESMTPSA id z17sm19599091wro.1.2021.04.18.06.56.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 18 Apr 2021 06:56:16 -0700 (PDT)
-Subject: Re: [PATCH 0/2] fix hangs with shared sqpoll
-To:     Hillf Danton <hdanton@sina.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-References: <cover.1618532491.git.asml.silence@gmail.com>
- <8d04fa58-d8d0-8760-a6aa-d2bd6d66d09d@gmail.com>
- <36df5986-0716-b7e7-3dac-261a483d074a@kernel.dk>
- <dd77a2f6-c989-8970-b4c4-44380124a894@gmail.com>
- <dabc5451-c184-9357-c665-697fe22c2e9e@kernel.dk>
- <1c26a568-e532-0987-158a-4cad6195f284@gmail.com>
- <20210417013115.15032-1-hdanton@sina.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <2fb7b552-6c63-9720-c184-1e54b24a62f5@gmail.com>
-Date:   Sun, 18 Apr 2021 14:56:15 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.9.1
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=o4KQiklVcBx9Xsuj2l4QvFT11+qMXN3OVLiwWc6tv00=;
+        b=AmJ/uCNMVkXeYLO00bo2XKU+a7EWRpSALwE5Co3joFSznVzol0CfOUK/6Q0R54MCSF
+         S9blIs90KgFtkxKJpdaYExTlQTYdkjtDx8KM+ZjHrDoMLQw6vYQ3RJQPrsMYyIUoIKy6
+         UB7q/7BJ8S10IexdprMNoakART1dEpsoz9Z8lrC48HqYwDBDJVGPaRYEVaved/p0rTev
+         Ao6g+8HqTiaXsPqbkV8bQpTN7mugSgw528ldqjbgzsD2J8R8mbr8+iAPFOrIYx1pLIwm
+         pA98KF7AtlV+fewUhVNQ6S2z4PD/+lkYMcQFs9CBudyvmL30TYzr0xVrYgKt6CixvUca
+         g//Q==
+X-Gm-Message-State: AOAM531cufCjDvUmwDhW5BerUNBXmtQyH512i9FaMPxoMRY5+ocPRomw
+        qMfmb7zWD7vC5cvGaRswE9/45Qmd0kBCtrq7RFuyM9hP/OG1
+X-Google-Smtp-Source: ABdhPJwMzHZdP4U+GhKlzG5cfrk3jeLXo4gFMq/u/1fZUy1oRz6DVYk499bN0SZZFZxp9u+/WG3tBkgJkBjGF67jt+g/n9KfqhP0
 MIME-Version: 1.0
-In-Reply-To: <20210417013115.15032-1-hdanton@sina.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a6b:5819:: with SMTP id m25mr11499054iob.99.1618774212883;
+ Sun, 18 Apr 2021 12:30:12 -0700 (PDT)
+Date:   Sun, 18 Apr 2021 12:30:12 -0700
+In-Reply-To: <0000000000006e9e0705bd91f762@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ee3bbf05c0443da6@google.com>
+Subject: Re: [syzbot] WARNING in __percpu_ref_exit (2)
+From:   syzbot <syzbot+d6218cb2fae0b2411e9d@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, hdanton@sina.com,
+        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ming.lei@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/17/21 2:31 AM, Hillf Danton wrote:
-> On Fri, 16 Apr 2021 15:42:07 Pavel Begunkov wrote:
->> On 16/04/2021 15:09, Pavel Begunkov wrote:
->>> On 16/04/2021 14:58, Jens Axboe wrote:
->>>> On 4/16/21 7:12 AM, Pavel Begunkov wrote:
->>>>> On 16/04/2021 14:04, Jens Axboe wrote:
->>>>>> On 4/15/21 6:26 PM, Pavel Begunkov wrote:
->>>>>>> On 16/04/2021 01:22, Pavel Begunkov wrote:
->>>>>>>> Late catched 5.12 bug with nasty hangs. Thanks Jens for a reproducer.
->>>>>>>
->>>>>>> 1/2 is basically a rip off of one of old Jens' patches, but can't
->>>>>>> find it anywhere. If you still have it, especially if it was
->>>>>>> reviewed/etc., may make sense to go with it instead
->>>>>>
->>>>>> I wonder if we can do something like the below instead - we don't
->>>>>> care about a particularly stable count in terms of wakeup
->>>>>> reliance, and it'd save a nasty sync atomic switch.
->>>>>
->>>>> But we care about it being monotonous. There are nuances with it.
->>>>
->>>> Do we, though? We care about it changing when something has happened,
->>>> but not about it being monotonic.
->>>
->>> We may find inflight == get_inflight(), when it's not really so,
->>> and so get to schedule() awhile there are pending requests that
->>> are not going to be cancelled by itself. And those pending requests
->>> may have been non-discoverable and so non-cancellable, e.g. because
->>> were a part of a ling/hardlink.
->>
->> Anyway, there might be other problems because of how wake_up()'s
->> and ctx->refs putting is ordered. Needs to be remade, probably
->> without ctx->refs in the first place.
->>
-> Given the test rounds in the current tree, next tree and his tree the
+syzbot has found a reproducer for the following issue on:
 
-Whose "his" tree?
+HEAD commit:    c98ff1d0 Merge tag 'scsi-fixes' of git://git.kernel.org/pu..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=163d7229d00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1c70e618af4c2e92
+dashboard link: https://syzkaller.appspot.com/bug?extid=d6218cb2fae0b2411e9d
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=145cb2b6d00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=157b72b1d00000
 
-> percpu count had survived, one of the quick questions is how it fell apart
-> last night?
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d6218cb2fae0b2411e9d@syzkaller.appspotmail.com
 
-What "percpu count had survived"? Do you mean the percpu-related patch
-from the series? What fell apart?
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 169 at lib/percpu-refcount.c:113 __percpu_ref_exit+0x98/0x100 lib/percpu-refcount.c:113
+Modules linked in:
+CPU: 1 PID: 169 Comm: kworker/u4:3 Not tainted 5.12.0-rc7-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Workqueue: events_unbound io_ring_exit_work
+RIP: 0010:__percpu_ref_exit+0x98/0x100 lib/percpu-refcount.c:113
+Code: fd 49 8d 7c 24 10 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 80 3c 02 00 75 61 49 83 7c 24 10 00 74 07 e8 a8 4a ab fd <0f> 0b e8 a1 4a ab fd 48 89 ef e8 69 f0 d9 fd 48 89 da 48 b8 00 00
+RSP: 0018:ffffc90001077b48 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: ffff88802d5ca000 RCX: 0000000000000000
+RDX: ffff88801217a1c0 RSI: ffffffff83c7db28 RDI: ffff88801d58f010
+RBP: 0000607f4607bcb8 R08: 0000000000000000 R09: ffffffff8fa9f977
+R10: ffffffff83c7dac8 R11: 0000000000000009 R12: ffff88801d58f000
+R13: 000000010002865e R14: ffff88801d58f000 R15: ffff88802d5ca8b0
+FS:  0000000000000000(0000) GS:ffff8880b9d00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020000044 CR3: 0000000015c02000 CR4: 00000000001506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ percpu_ref_exit+0x3b/0x140 lib/percpu-refcount.c:134
+ io_ring_ctx_free fs/io_uring.c:8483 [inline]
+ io_ring_exit_work+0xa64/0x12d0 fs/io_uring.c:8620
+ process_one_work+0x98d/0x1600 kernel/workqueue.c:2275
+ worker_thread+0x64c/0x1120 kernel/workqueue.c:2421
+ kthread+0x3b1/0x4a0 kernel/kthread.c:292
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
 
---   
-Pavel Begunkov

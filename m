@@ -2,68 +2,66 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 270C1364937
-	for <lists+io-uring@lfdr.de>; Mon, 19 Apr 2021 19:51:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA4E9364944
+	for <lists+io-uring@lfdr.de>; Mon, 19 Apr 2021 19:56:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240149AbhDSRvi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 19 Apr 2021 13:51:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34670 "EHLO
+        id S239986AbhDSR4w (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 19 Apr 2021 13:56:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240158AbhDSRvi (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 19 Apr 2021 13:51:38 -0400
-Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0ACF7C061761
-        for <io-uring@vger.kernel.org>; Mon, 19 Apr 2021 10:51:07 -0700 (PDT)
-Received: by mail-io1-xd30.google.com with SMTP id g125so7075306iof.3
-        for <io-uring@vger.kernel.org>; Mon, 19 Apr 2021 10:51:07 -0700 (PDT)
+        with ESMTP id S232904AbhDSR4v (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 19 Apr 2021 13:56:51 -0400
+Received: from mail-io1-xd2f.google.com (mail-io1-xd2f.google.com [IPv6:2607:f8b0:4864:20::d2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83E07C06174A
+        for <io-uring@vger.kernel.org>; Mon, 19 Apr 2021 10:56:21 -0700 (PDT)
+Received: by mail-io1-xd2f.google.com with SMTP id x16so35798248iob.1
+        for <io-uring@vger.kernel.org>; Mon, 19 Apr 2021 10:56:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:references:from:message-id:date:user-agent:mime-version
          :in-reply-to:content-language:content-transfer-encoding;
-        bh=mBPy/kuTJuUrZLkWwHS3lWj/u450VV6pB+rdfegfvjY=;
-        b=wGFGo25NU3QUJ9xq/yU8mQlt12iDfbifCsx6oQ3o0IMQe0mbQnhKW477azrdYqkJsx
-         0EkErXshYLbgkVSllkG+4V6fDmt/4hD2+9E4tHzD9awbKzFq6NYBTkBjSlTRNJ5urTqe
-         srEelnboOvSRbMWiGSE6McaZo5YZc369NeQzT1nmwm2m4PTFV8yxLfiTt4TAUy0Yyyug
-         1QHeofzDafyqQjiKuTWSph/S94CjkqeJVBeNLWLuKhnoBavQkNRRSD32pwq7rQWgNmTy
-         zX0TcefxLnpIvcS2CcMbzqn0Z+fCTGTitmYaETMl+1EDhJNAWvvnTaTPb55Q9YDbEVic
-         zT1g==
+        bh=UaHhG9GjhH16KyT6wD+AMErOXAvHsspPbBTiFIqnuaI=;
+        b=o+t5ZaauRNLZB/NkC22jEe2WM29+J9dvtwmzjqajMX9136E1PLxCAL67mX4z/9zGxa
+         dE7B36ZUxx7hwJ12zc75LQ92fxQ/6BZfJR0fGyARnZ5jJh+edWsDSZH5AzUaH4mtNCkZ
+         62ZvyNp4P8Zarvc1U6inYSc5yBMS6RrREqH0IZlCZidUdCpLkfDFVAXBGU2PM+bwwjZe
+         vvdm21ELaxzmmN1BO3XUR+2coqcgdwX6ge3u+HaR2ikmYeHECxVZL/ZoUD6PTBsXkiRm
+         iHbrF0GAoUBuYZ2kb+wMC6WkuZa52Dc/SekbgDRMzPSbtrVrsTcJbicVQvcLBz6YHlzM
+         3H/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=mBPy/kuTJuUrZLkWwHS3lWj/u450VV6pB+rdfegfvjY=;
-        b=PXjw4nHl/8xsx9EUcKrCj+AO52CwYhJ/3ZjwIX/eFdghrhtAajbx4o5ST4Xn/hZALJ
-         3ItS2Z7XIqe6ri8SuHXHNFBO31BwpDjV6mpqtMootImnaFjmqp/ndqYQmoee/UQGZnMU
-         wV27eYUU2Ld+oZAYloO4WJ/4Pp4ctsEzDL0wtU1hxJ2X3yv6eWFF9HgvqfNSRC/Vnr8m
-         qDyQetXsqKeg9u+EdqBj6kGjKAE1JJZDQYBho7PSt9k0umdyn/H2JUtKOwX36k0TtFKf
-         Cad2Gm0ugzhy6lvpIr8NdujufeEfpziSBgCulzX54XvDhWmawRy6ucI18rTPh3k1qJcQ
-         wJOA==
-X-Gm-Message-State: AOAM530e3xYwYIM1xjNBxBOawcYdqt9dCPvdLrxXy1mqmp9VDbA2+2ke
-        oTHSxssao+0Ndh6jOhsDCi/YDQ==
-X-Google-Smtp-Source: ABdhPJzU0RP1DjE6xL0Yu1H6Ul3Mx/9UxO3jL5+rkP0peg9JfXJpharVKCTfxx+P/2slMQi+ROXrsQ==
-X-Received: by 2002:a05:6602:342a:: with SMTP id n42mr15511410ioz.88.1618854666497;
-        Mon, 19 Apr 2021 10:51:06 -0700 (PDT)
+        bh=UaHhG9GjhH16KyT6wD+AMErOXAvHsspPbBTiFIqnuaI=;
+        b=LvraDZtnndn1VN0xyUUmjpbYJPM2xUY63tFvUM519h/9tKL5WwZzMKwSHelI2qQxt5
+         Pqhm4PThyW9cm3f7Ex96J35Xj7s1ptlCzbkDvUHp4+sUZnZo9O3HcjLGGg/SkjmHHT9u
+         PZA25QqoFGYf6aSWk2s9/8ueVGzFkDIvcrUPUCI7wCqRCJlwVKbmy++eFlLp4sdmdiY3
+         5XsLjuU8ubjEmCsIAnYyjkeB8yzF/40Hp2v384gO875C8mwlQD9NbGePrurOSYEqfTZc
+         VHHZIhcCQCB+QdyVnsHvBcr2bNU0p1ran9+5NujnzWU31rCD7ojfrA2uIT335Isxpbzp
+         a9Yg==
+X-Gm-Message-State: AOAM533mdQkLsAGK8F9XrV4wybQCZ2+DmptgZslKTC3iw/dkxsc0SKgA
+        tD/TcWT2eQJAE5AMIiFPlBv+tg3gePwTIg==
+X-Google-Smtp-Source: ABdhPJzcUoaPEMhNhyNqr210rk8IlMIG/uYe7qF61kR71/dLorG2qPOtfnA8Ox3lIrcs28uCaaqLTw==
+X-Received: by 2002:a02:cc:: with SMTP id 195mr18099419jaa.73.1618854980993;
+        Mon, 19 Apr 2021 10:56:20 -0700 (PDT)
 Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id b9sm7301940ioz.49.2021.04.19.10.51.05
+        by smtp.gmail.com with ESMTPSA id 1sm7324479ilz.11.2021.04.19.10.56.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Apr 2021 10:51:06 -0700 (PDT)
-Subject: Re: [syzbot] KASAN: use-after-free Read in
- __cpuhp_state_remove_instance
-To:     syzbot <syzbot+38769495e847cea2dcca@syzkaller.appspotmail.com>,
-        asml.silence@gmail.com, ducheng2@gmail.com, dvyukov@google.com,
-        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mpe@ellerman.id.au, paulmck@kernel.org, peterz@infradead.org,
-        qais.yousef@arm.com, syzkaller-bugs@googlegroups.com,
-        tglx@linutronix.de
-References: <0000000000000c120805c05452c0@google.com>
+        Mon, 19 Apr 2021 10:56:20 -0700 (PDT)
+Subject: Re: [PATCH] io_uring: check ctx->sq_data before io_sq_offload_start
+To:     Palash Oswal <hello@oswalpalash.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20210419123630.62212-1-hello@oswalpalash.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <c46f1e7f-17a5-7739-5290-185226f31c14@kernel.dk>
-Date:   Mon, 19 Apr 2021 11:51:05 -0600
+Message-ID: <857554eb-d020-7e45-edd5-0b15bc2d1945@kernel.dk>
+Date:   Mon, 19 Apr 2021 11:56:20 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <0000000000000c120805c05452c0@google.com>
+In-Reply-To: <20210419123630.62212-1-hello@oswalpalash.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -71,26 +69,48 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/19/21 8:41 AM, syzbot wrote:
-> syzbot suspects this issue was fixed by commit:
+On 4/19/21 6:36 AM, Palash Oswal wrote:
+> syzkaller identified KASAN: null-ptr-deref Read in io_uring_create
+> bug on the stable 5.11-y tree.
 > 
-> commit 470ec4ed8c91b4db398ad607c700e9ce88365202
-> Author: Jens Axboe <axboe@kernel.dk>
-> Date:   Fri Feb 26 17:20:34 2021 +0000
+> BUG: KASAN: null-ptr-deref in io_sq_offload_start fs/io_uring.c:8254 [inline]
+> BUG: KASAN: null-ptr-deref in io_disable_sqo_submit fs/io_uring.c:8999 [inline]
+> BUG: KASAN: null-ptr-deref in io_uring_create+0x1275/0x22f0 fs/io_uring.c:9824
+> Read of size 8 at addr 0000000000000068 by task syz-executor.0/4350
 > 
->     io-wq: fix double put of 'wq' in error path
+> A simple reproducer for this bug is:
 > 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11e89cc5d00000
-> start commit:   cee407c5 Merge tag 'for-linus' of git://git.kernel.org/pub..
-> git tree:       upstream
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=8f67201de02a572b
-> dashboard link: https://syzkaller.appspot.com/bug?extid=38769495e847cea2dcca
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=154e360ad00000
+> int main(void)
+> {
+>   syscall(__NR_mmap, 0x20000000ul, 0x1000000ul, 7ul, 0x32ul, -1, 0ul);
+>   intptr_t res = 0;
+>   pid_t parent = getpid();
+>   *(uint32_t*)0x20000084 = 0;
+>   *(uint32_t*)0x20000088 = 0x42;
+>   *(uint32_t*)0x2000008c = 0;
+>   *(uint32_t*)0x20000090 = 0;
+>   *(uint32_t*)0x20000098 = -1;
+>   *(uint32_t*)0x2000009c = 0;
+>   *(uint32_t*)0x200000a0 = 0;
+>   *(uint32_t*)0x200000a4 = 0;
+>   if (fork() == 0) {
+>     kill(parent,SIGKILL);
+>     exit(0);
+>   }
+>   res = syscall(__NR_io_uring_setup, 0x7994, 0x20000080ul);
+>   return 0;
+> }
 > 
-> If the result looks correct, please mark the issue as fixed by replying with:
+> Due to the SIGKILL sent to the process before io_uring_setup
+> completes, ctx->sq_data is NULL. Therefore, io_sq_offload_start
+> does a null pointer dereferenced read. More details on this bug
+> are in [1]. Discussion for this patch happened in [2].
+> 
+> [1] https://oswalpalash.com/exploring-null-ptr-deref-io-uring-submit
+> [2] https://lore.kernel.org/io-uring/a08121be-f481-e9f8-b28d-3eb5d4f
+> a5b76@gmail.com/
 
-#syz fix: io-wq: fix double put of 'wq' in error path
-
+This should be a backport of the 5.12 fix, not a separate patch.
 
 -- 
 Jens Axboe

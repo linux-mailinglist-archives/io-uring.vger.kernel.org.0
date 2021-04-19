@@ -2,153 +2,103 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5596736393F
-	for <lists+io-uring@lfdr.de>; Mon, 19 Apr 2021 04:03:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0E6C363E53
+	for <lists+io-uring@lfdr.de>; Mon, 19 Apr 2021 11:14:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237155AbhDSCE0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 18 Apr 2021 22:04:26 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:21996 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232288AbhDSCEZ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 18 Apr 2021 22:04:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1618797836;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Y/DQcesXXNGI82SX8ndVgTAKV7N+8tegDuzwUqjcVZc=;
-        b=XxnQOLOQX9cDWDTmJXuLbm8QczCWaKtV5dBs9766zmC1MqUNKXSfOSHL1rbQqzLPycxtjp
-        npZWhvNwpiO+F9swE9Tc0w3oKH9ZKbiX/CCqT2P3xNFBoYo+mc4tjDG7fgq+GJFA1OpSFP
-        79MqWm7DrmP6p9/weFKJAup4/8shaFg=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-397-RHCE9CRpPGmfa2ZH4t9Hrg-1; Sun, 18 Apr 2021 22:03:54 -0400
-X-MC-Unique: RHCE9CRpPGmfa2ZH4t9Hrg-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DFCDA501F5;
-        Mon, 19 Apr 2021 02:03:52 +0000 (UTC)
-Received: from T590 (ovpn-12-222.pek2.redhat.com [10.72.12.222])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0217A5B4B5;
-        Mon, 19 Apr 2021 02:03:45 +0000 (UTC)
-Date:   Mon, 19 Apr 2021 10:03:43 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Dennis Zhou <dennis@kernel.org>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux.com>,
-        Joakim Hassila <joj@mac.com>
-Subject: Re: [PATCH 1/2] percpu_ref: add percpu_ref_atomic_count()
-Message-ID: <YHzk/1eID0WCrLUe@T590>
-References: <cover.1618532491.git.asml.silence@gmail.com>
- <d17d951b120bb2d65870013bfdc7495a92c6fb82.1618532491.git.asml.silence@gmail.com>
- <YHkWdgLKBrH51GA7@google.com>
- <10b84fd7-4c40-3fe6-6993-061b524b1487@gmail.com>
- <YHmavyeoB6gQDuX2@T590>
- <YHmhD5wnVLceYyM7@google.com>
+        id S231925AbhDSJOl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 19 Apr 2021 05:14:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60774 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231852AbhDSJOj (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 19 Apr 2021 05:14:39 -0400
+Received: from mail-qt1-x833.google.com (mail-qt1-x833.google.com [IPv6:2607:f8b0:4864:20::833])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B961C06174A
+        for <io-uring@vger.kernel.org>; Mon, 19 Apr 2021 02:14:10 -0700 (PDT)
+Received: by mail-qt1-x833.google.com with SMTP id a18so1781529qtj.10
+        for <io-uring@vger.kernel.org>; Mon, 19 Apr 2021 02:14:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=reduxio-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=lk9G7TpP51+hD8c7SRRqP1+uQAGcpJTJnNllkqfHvOU=;
+        b=zH+wrBApGX3itGsjN+iGFjOoh3QsdEbVk2IGMkjw+KR9nvnKUe5wEjzOb/5ZQaAJl7
+         3q7p/MBqLW3Hkoyq3xEHYh1n4JDD4BddGs0ruur1sVb++M45RSvLxMICV2C50SBxQDUh
+         kAY9YFSySPDATGsCkqEyZGUNeX532/clkzAHB/925k0Z9pUJQTzi5TwghHfxswR+Sye7
+         Cs8JliT8vsDzHVhqChz3h1pUVMriMkpPXH56rpDkFG1GmULu31nasITcxUVk7Es7g1fP
+         DcUaGciVNeD/7Y4/DK2LD3pvEtD5UkJJ6SM40XgWdlwz/AAAVLDpj3Fude/op3HfNmIu
+         2t1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=lk9G7TpP51+hD8c7SRRqP1+uQAGcpJTJnNllkqfHvOU=;
+        b=QK1PFlFc/Msc1hBoPW4RvQcIKrYjlXlIAv/NZbKxcJvbbZgUhbai2v9JSB3b7L8FAY
+         T1yFBr+iD5CPSzLCSNNNJtPZOu9eh26FYFfQZolND/P7Lr0+ebQipq5UxW4un2UCvjcN
+         qhJoZ4dI7mV3ke2wRYtK4MH8TQSWLuseOvb7McTJ0LIPEgRzBIn6MhUoCKLtLR3DkeKF
+         erFj0fYPT3qpb36UgzgeDru92MaqAAKkfSfIm+CrWjczqGhn6cmZ9AKyj/hdpcJZH5ji
+         MnoUNEdJOLKGBRpAlR8u1J/uFClYsq8I3A4ZaHUzyIMWivFtPaGDyOc1sK2UHsgom94h
+         aQSA==
+X-Gm-Message-State: AOAM533P+Cc7UiVGLQeOjlCIEKN6GcTNPgl7InzIk0s2TLWsvUKg7CGD
+        354aoguGxsTQ9CNBVCN61PcQAU8ZVeNXT4uUZoIMDQZ3VKg=
+X-Google-Smtp-Source: ABdhPJzIPlm19946gYoqTxzG//GWWOh1d4GRN0B2CfWgZaGz5VTE3DMKQqx9QJGszDXL8qrn8W4r0HYhA/K5/fV41Ns=
+X-Received: by 2002:a05:622a:1454:: with SMTP id v20mr10601921qtx.372.1618823649346;
+ Mon, 19 Apr 2021 02:14:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YHmhD5wnVLceYyM7@google.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+From:   Michael Stoler <michaels@reduxio.com>
+Date:   Mon, 19 Apr 2021 12:13:58 +0300
+Message-ID: <CAN633em2Kq-F_B_LPWWDpadTYbetRsf9q4Gy6nFgM8BujSueZQ@mail.gmail.com>
+Subject: io_uring networking performance degradation
+To:     io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, Apr 16, 2021 at 02:37:03PM +0000, Dennis Zhou wrote:
-> On Fri, Apr 16, 2021 at 10:10:07PM +0800, Ming Lei wrote:
-> > On Fri, Apr 16, 2021 at 02:16:41PM +0100, Pavel Begunkov wrote:
-> > > On 16/04/2021 05:45, Dennis Zhou wrote:
-> > > > Hello,
-> > > > 
-> > > > On Fri, Apr 16, 2021 at 01:22:51AM +0100, Pavel Begunkov wrote:
-> > > >> Add percpu_ref_atomic_count(), which returns number of references of a
-> > > >> percpu_ref switched prior into atomic mode, so the caller is responsible
-> > > >> to make sure it's in the right mode.
-> > > >>
-> > > >> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> > > >> ---
-> > > >>  include/linux/percpu-refcount.h |  1 +
-> > > >>  lib/percpu-refcount.c           | 26 ++++++++++++++++++++++++++
-> > > >>  2 files changed, 27 insertions(+)
-> > > >>
-> > > >> diff --git a/include/linux/percpu-refcount.h b/include/linux/percpu-refcount.h
-> > > >> index 16c35a728b4c..0ff40e79efa2 100644
-> > > >> --- a/include/linux/percpu-refcount.h
-> > > >> +++ b/include/linux/percpu-refcount.h
-> > > >> @@ -131,6 +131,7 @@ void percpu_ref_kill_and_confirm(struct percpu_ref *ref,
-> > > >>  void percpu_ref_resurrect(struct percpu_ref *ref);
-> > > >>  void percpu_ref_reinit(struct percpu_ref *ref);
-> > > >>  bool percpu_ref_is_zero(struct percpu_ref *ref);
-> > > >> +unsigned long percpu_ref_atomic_count(struct percpu_ref *ref);
-> > > >>  
-> > > >>  /**
-> > > >>   * percpu_ref_kill - drop the initial ref
-> > > >> diff --git a/lib/percpu-refcount.c b/lib/percpu-refcount.c
-> > > >> index a1071cdefb5a..56286995e2b8 100644
-> > > >> --- a/lib/percpu-refcount.c
-> > > >> +++ b/lib/percpu-refcount.c
-> > > >> @@ -425,6 +425,32 @@ bool percpu_ref_is_zero(struct percpu_ref *ref)
-> > > >>  }
-> > > >>  EXPORT_SYMBOL_GPL(percpu_ref_is_zero);
-> > > >>  
-> > > >> +/**
-> > > >> + * percpu_ref_atomic_count - returns number of left references
-> > > >> + * @ref: percpu_ref to test
-> > > >> + *
-> > > >> + * This function is safe to call as long as @ref is switch into atomic mode,
-> > > >> + * and is between init and exit.
-> > > >> + */
-> > > >> +unsigned long percpu_ref_atomic_count(struct percpu_ref *ref)
-> > > >> +{
-> > > >> +	unsigned long __percpu *percpu_count;
-> > > >> +	unsigned long count, flags;
-> > > >> +
-> > > >> +	if (WARN_ON_ONCE(__ref_is_percpu(ref, &percpu_count)))
-> > > >> +		return -1UL;
-> > > >> +
-> > > >> +	/* protect us from being destroyed */
-> > > >> +	spin_lock_irqsave(&percpu_ref_switch_lock, flags);
-> > > >> +	if (ref->data)
-> > > >> +		count = atomic_long_read(&ref->data->count);
-> > > >> +	else
-> > > >> +		count = ref->percpu_count_ptr >> __PERCPU_REF_FLAG_BITS;
-> > > > 
-> > > > Sorry I missed Jens' patch before and also the update to percpu_ref.
-> > > > However, I feel like I'm missing something. This isn't entirely related
-> > > > to your patch, but I'm not following why percpu_count_ptr stores the
-> > > > excess count of an exited percpu_ref and doesn't warn when it's not
-> > > > zero. It seems like this should be an error if it's not 0?
-> > > > 
-> > > > Granted we have made some contract with the user to do the right thing,
-> > > > but say someone does mess up, we don't indicate to them hey this ref is
-> > > > actually dead and if they're waiting for it to go to 0, it never will.
-> > > 
-> > > fwiw, I copied is_zero, but skimming through the code don't immediately
-> > > see myself why it is so...
-> > > 
-> > > Cc Ming, he split out some parts of it to dynamic allocation not too
-> > > long ago, maybe he knows the trick.
-> > 
-> > I remembered that percpu_ref_is_zero() can be called even after percpu_ref_exit()
-> > returns, and looks percpu_ref_is_zero() isn't classified into 'active use'.
-> > 
-> 
-> Looking at the commit prior, it seems like percpu_ref_is_zero() was
-> subject to the usual init and exit lifetime. I guess I'm just not
-> convinced it should ever be > 0. I'll think about it a little longer and
-> might fix it.
+We are trying to reproduce reported on page
+https://github.com/frevib/io_uring-echo-server/blob/master/benchmarks/benchmarks.md
+results with a more realistic environment:
+1. Internode networking in AWS cluster with i3.16xlarge nodes type(25
+Gigabit network connection between client and server)
+2. 128 and 2048 packet sizes, to simulate typical payloads
+3. 10 clients to get 75-95% CPU utilization by server to simulate
+server's normal load
+4. 20 clients to get 100% CPU utilization by server to simulate
+server's hard load
 
-There may not be > 0 at that time, but it was allowed for
-percpu_ref_is_zero() to read un-initialized refcount, and there was
-such kernel oops report:
+Software:
+1. OS: Ubuntu 20.04.2 LTS HWE with 5.8.0-45-generic kernel with latest liburing
+2. io_uring-echo-server: https://github.com/frevib/io_uring-echo-server
+3. epoll-echo-server: https://github.com/frevib/epoll-echo-server
+4. benchmark: https://github.com/haraldh/rust_echo_bench
+5. all commands runs with "hwloc-bind os=eth1"
 
-https://lore.kernel.org/lkml/165db20c-bfc5-fca8-1ecf-45d85ea5d9e2@kernel.dk/#r
+The results are confusing, epoll_echo_server shows stable advantage
+over io_uring-echo-server, despite reported advantage of
+io_uring-echo-server:
 
+128 bytes packet size, 10 clients, 75-95% CPU core utilization by server:
+echo_bench --address '172.22.117.67:7777' -c 10 -t 60 -l 128
+epoll_echo_server:      Speed: 80999 request/sec, 80999 response/sec
+io_uring_echo_server:   Speed: 74488 request/sec, 74488 response/sec
+epoll_echo_server is 8% faster
 
+128 bytes packet size, 20 clients, 100% CPU core utilization by server:
+echo_bench --address '172.22.117.67:7777' -c 20 -t 60 -l 128
+epoll_echo_server:      Speed: 129063 request/sec, 129063 response/sec
+io_uring_echo_server:    Speed: 102681 request/sec, 102681 response/sec
+epoll_echo_server is 25% faster
 
+2048 bytes packet size, 10 clients, 75-95% CPU core utilization by server:
+echo_bench --address '172.22.117.67:7777' -c 10 -t 60 -l 2048
+epoll_echo_server:       Speed: 74421 request/sec, 74421 response/sec
+io_uring_echo_server:    Speed: 66510 request/sec, 66510 response/sec
+epoll_echo_server is 11% faster
 
-Thanks, 
-Ming
+2048 bytes packet size, 20 clients, 100% CPU core utilization by server:
+echo_bench --address '172.22.117.67:7777' -c 20 -t 60 -l 2048
+epoll_echo_server:       Speed: 108704 request/sec, 108704 response/sec
+io_uring_echo_server:    Speed: 85536 request/sec, 85536 response/sec
+epoll_echo_server is 27% faster
 
+Why io_uring shows consistent performance degradation? What is going wrong?
+
+Regards
+    Michael Stoler

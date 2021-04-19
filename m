@@ -2,65 +2,67 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 774D536413E
-	for <lists+io-uring@lfdr.de>; Mon, 19 Apr 2021 14:07:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09D01364143
+	for <lists+io-uring@lfdr.de>; Mon, 19 Apr 2021 14:09:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238876AbhDSMIB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 19 Apr 2021 08:08:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42648 "EHLO
+        id S231799AbhDSMJj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 19 Apr 2021 08:09:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43002 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238738AbhDSMIA (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 19 Apr 2021 08:08:00 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FA9BC06174A;
-        Mon, 19 Apr 2021 05:07:30 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id y204so16651687wmg.2;
-        Mon, 19 Apr 2021 05:07:30 -0700 (PDT)
+        with ESMTP id S229790AbhDSMJi (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 19 Apr 2021 08:09:38 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB132C06174A;
+        Mon, 19 Apr 2021 05:09:06 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id u20so13506984wmj.0;
+        Mon, 19 Apr 2021 05:09:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:references:from:message-id:date:user-agent:mime-version
          :in-reply-to:content-language:content-transfer-encoding;
-        bh=xPeO3RkDuZrVjDiDI8h5kXkPCEdRAXX+jvd/8Nrz93o=;
-        b=GXIT9p6+BD6apV7osZ3YxuXINaoTzqCqsF4lgc8KfwKFZJkAzgTwOK/m8eYpeCQiQD
-         p4ZWJX6QSSyjw3+T8+7w3uuk8g/yRcdD6FtGZvqswWQgB541A4Zkv+aJfJOzK46ORiNp
-         SybZOpzZgVEi3brdIPV6Z/pakkoWVYK4PbgovBFjIyHrJV7Vup4bK00w5A9gkOrTq4qA
-         rWChtS+ZLY8rCOQYPrG75M4S95lduf807mepBQKpbtw9gMl9wYsgFpoXK6eCzUudPKJi
-         nZQhu3kN3gE67ld6MN8cGedh8CEkA4WUYwUDwT9yMBxvlLz9ZNlB7PPxkPDoJgR4PXap
-         3vOQ==
+        bh=wn8Ty+mw20wGFWpDWqVoK+9j1cUNrHpSGL2+OCH4Fb4=;
+        b=sPv+1YeGV40XSNce99bdQK1JiXy4QacHcU9WC9AhYM1fd+nQsTM50hUITrkmLtnZ1G
+         lFnlzXsYndITe4VTurGzmp3KWenbTLT/TL011vlX3bzC43ZL8xiw2AHP4D5HkMqV/jh+
+         IkC/VxDPKE/nhWOFxopcAXmHPBbjZ7e8WO4+IYgeBApe0dLfTwRAz753hD6pg80z7CiN
+         1C5Ic5AKbEh+Qpf0kJA3JTwVojs5wbkEXP5R5TQ29eHeG2kA5nAVCX21hQuXp9FhFkfc
+         nSYU3lf66oWSklEEuxDezCJAeO3LQf4P/A2hVb+i0IkadbhTHLqOYWbdaqyLnf714M56
+         4okA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=xPeO3RkDuZrVjDiDI8h5kXkPCEdRAXX+jvd/8Nrz93o=;
-        b=W/VrW8pbFM1Nj27hE112cJx03C9UNHBIPPB12R/+NUeNms5rQ62Dh7B/Rxq/YHM4sA
-         7tTN2jUHQuPz1N1DpFPu/MsJO3wykSGK2hgW3JJZCekVZSY3tYcg/RxmyJgrx40ZGnDk
-         3pIcG5yekTU3csch0whVub0pcZGhKYuJOTUQWZ5aq6VHmulYNF5jzXyzGKWJTIfzJ9GH
-         FhNElJBGzgXmC/TiBZViR6w+RkYU9KNb/5IstMf4RhFkEHUr7OskEphNF2EtaHq14FTG
-         y1xYGaYzZv/NPhVrSh537gKNsq3h2XQa2q876E5ciHUoyqlqtWv9a7JcYvULdX2l+RMW
-         KjzA==
-X-Gm-Message-State: AOAM531AyTYxJHut4SmUHpyR8oud6TLWFyEpkPqbwC6MgCh0JPuFoUhO
-        aNHVbzdYvABo3YLAFVv0KFM=
-X-Google-Smtp-Source: ABdhPJw94Rhgmzhj1n5ZHbVOUKKYAnF3N7+CXqP3q0wkaNzYCkLYY+nfBDKA1iwhfTaJhte62VNp2g==
-X-Received: by 2002:a7b:c8cf:: with SMTP id f15mr21399621wml.135.1618834048961;
-        Mon, 19 Apr 2021 05:07:28 -0700 (PDT)
+        bh=wn8Ty+mw20wGFWpDWqVoK+9j1cUNrHpSGL2+OCH4Fb4=;
+        b=ADSahlJu2NEQ95HGGNbuh2WLrH0EPF5FsMVTxmsBwmu1NRi/iYbhLD4C/ySZbUgNB0
+         Bk0FCg43gue4aaWP/Oz4vJ3c62jWN1LkpYp/u48DO3opsAD0Fu4JGkixfVdSvweoNSU3
+         gZM7JDo2n/jNC4Y/Ta13uZbYqZgrveHv7nRdCgY5MKFGtfkevGC/1Rcx8Xxj91uCd23J
+         Ej0nIsvrj+3nQiCTx9Kj9m0IazjpNjvbQesabUM/BwOl5S2zNqq6cO42IZm6dLK1XgHM
+         CNxavnWDM2HBK7gf38JngeRHQw+R+Cj6rlGqOtIRnTzqFsXxwcNYAVA6jVIqdnmwQct0
+         nNYA==
+X-Gm-Message-State: AOAM532B7gLJy31zOZ4iKU9U0bqUMdBQhhAgeWPc8cuqXhrwKVYp5/ju
+        Lq7FTycboYR9sA31ZDr6wCk=
+X-Google-Smtp-Source: ABdhPJwahqJBQVg23/gRZDAh1TfXm2rrCHSf905r4Y3xBukgqePcsSaA90P8vce66fB8zvdZpF1BCg==
+X-Received: by 2002:a05:600c:6d4:: with SMTP id b20mr21135895wmn.99.1618834145615;
+        Mon, 19 Apr 2021 05:09:05 -0700 (PDT)
 Received: from [192.168.8.197] ([85.255.232.103])
-        by smtp.gmail.com with ESMTPSA id u11sm14240605wrt.72.2021.04.19.05.07.27
+        by smtp.gmail.com with ESMTPSA id s10sm22364037wrt.23.2021.04.19.05.09.04
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Apr 2021 05:07:28 -0700 (PDT)
-Subject: Re: [syzbot] WARNING in __percpu_ref_exit (2)
-To:     syzbot <syzbot+d6218cb2fae0b2411e9d@syzkaller.appspotmail.com>,
-        axboe@kernel.dk, hdanton@sina.com, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ming.lei@redhat.com,
-        syzkaller-bugs@googlegroups.com
-References: <000000000000ee3bbf05c0443da6@google.com>
+        Mon, 19 Apr 2021 05:09:05 -0700 (PDT)
+Subject: Re: [syzbot] KASAN: use-after-free Read in idr_for_each (2)
+To:     syzbot <syzbot+12056a09a0311d758e60@syzkaller.appspotmail.com>,
+        axboe@kernel.dk, egiptomarmol@loucastone.com, hdanton@sina.com,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mail@anirudhrb.com,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+        willy@infradead.org
+References: <000000000000d45f8005c00706a1@google.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <c12b0100-50be-907b-503d-3aa00223194c@gmail.com>
-Date:   Mon, 19 Apr 2021 13:07:26 +0100
+Message-ID: <a9eeb6ef-79dd-0185-4ec0-87b6101be9e4@gmail.com>
+Date:   Mon, 19 Apr 2021 13:09:03 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.9.1
 MIME-Version: 1.0
-In-Reply-To: <000000000000ee3bbf05c0443da6@google.com>
+In-Reply-To: <000000000000d45f8005c00706a1@google.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -68,50 +70,30 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/18/21 8:30 PM, syzbot wrote:
-> syzbot has found a reproducer for the following issue on:
+On 4/15/21 7:28 PM, syzbot wrote:
+> syzbot suspects this issue was fixed by commit:
 > 
-> HEAD commit:    c98ff1d0 Merge tag 'scsi-fixes' of git://git.kernel.org/pu..
+> commit 61cf93700fe6359552848ed5e3becba6cd760efa
+> Author: Matthew Wilcox (Oracle) <willy@infradead.org>
+> Date:   Mon Mar 8 14:16:16 2021 +0000
+> 
+>     io_uring: Convert personality_idr to XArray
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16f91b9ad00000
+> start commit:   dd86e7fa Merge tag 'pci-v5.11-fixes-2' of git://git.kernel..
 > git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=163d7229d00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=1c70e618af4c2e92
-> dashboard link: https://syzkaller.appspot.com/bug?extid=d6218cb2fae0b2411e9d
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=145cb2b6d00000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=157b72b1d00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=e83e68d0a6aba5f6
+> dashboard link: https://syzkaller.appspot.com/bug?extid=12056a09a0311d758e60
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=174b80ef500000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=165522d4d00000
 > 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+d6218cb2fae0b2411e9d@syzkaller.appspotmail.com
+> If the result looks correct, please mark the issue as fixed by replying with:
 > 
-> ------------[ cut here ]------------
-> WARNING: CPU: 1 PID: 169 at lib/percpu-refcount.c:113 __percpu_ref_exit+0x98/0x100 lib/percpu-refcount.c:113
-> Modules linked in:
-> CPU: 1 PID: 169 Comm: kworker/u4:3 Not tainted 5.12.0-rc7-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> Workqueue: events_unbound io_ring_exit_work
-> RIP: 0010:__percpu_ref_exit+0x98/0x100 lib/percpu-refcount.c:113
-> Code: fd 49 8d 7c 24 10 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 80 3c 02 00 75 61 49 83 7c 24 10 00 74 07 e8 a8 4a ab fd <0f> 0b e8 a1 4a ab fd 48 89 ef e8 69 f0 d9 fd 48 89 da 48 b8 00 00
-> RSP: 0018:ffffc90001077b48 EFLAGS: 00010293
-> RAX: 0000000000000000 RBX: ffff88802d5ca000 RCX: 0000000000000000
-> RDX: ffff88801217a1c0 RSI: ffffffff83c7db28 RDI: ffff88801d58f010
-> RBP: 0000607f4607bcb8 R08: 0000000000000000 R09: ffffffff8fa9f977
-> R10: ffffffff83c7dac8 R11: 0000000000000009 R12: ffff88801d58f000
-> R13: 000000010002865e R14: ffff88801d58f000 R15: ffff88802d5ca8b0
-> FS:  0000000000000000(0000) GS:ffff8880b9d00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000020000044 CR3: 0000000015c02000 CR4: 00000000001506e0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  percpu_ref_exit+0x3b/0x140 lib/percpu-refcount.c:134
->  io_ring_ctx_free fs/io_uring.c:8483 [inline]
->  io_ring_exit_work+0xa64/0x12d0 fs/io_uring.c:8620
->  process_one_work+0x98d/0x1600 kernel/workqueue.c:2275
->  worker_thread+0x64c/0x1120 kernel/workqueue.c:2421
->  kthread+0x3b1/0x4a0 kernel/kthread.c:292
->  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+> #syz fix: io_uring: Convert personality_idr to XArray
 > 
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
-#syz test: git://git.kernel.dk/linux-block for-5.13/io_uring
+#syz fix: io_uring: Convert personality_idr to XArray
 
 -- 
 Pavel Begunkov

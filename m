@@ -2,116 +2,155 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AA4E9364944
-	for <lists+io-uring@lfdr.de>; Mon, 19 Apr 2021 19:56:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 391A5364CDF
+	for <lists+io-uring@lfdr.de>; Mon, 19 Apr 2021 23:10:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239986AbhDSR4w (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 19 Apr 2021 13:56:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35822 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232904AbhDSR4v (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 19 Apr 2021 13:56:51 -0400
-Received: from mail-io1-xd2f.google.com (mail-io1-xd2f.google.com [IPv6:2607:f8b0:4864:20::d2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83E07C06174A
-        for <io-uring@vger.kernel.org>; Mon, 19 Apr 2021 10:56:21 -0700 (PDT)
-Received: by mail-io1-xd2f.google.com with SMTP id x16so35798248iob.1
-        for <io-uring@vger.kernel.org>; Mon, 19 Apr 2021 10:56:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=UaHhG9GjhH16KyT6wD+AMErOXAvHsspPbBTiFIqnuaI=;
-        b=o+t5ZaauRNLZB/NkC22jEe2WM29+J9dvtwmzjqajMX9136E1PLxCAL67mX4z/9zGxa
-         dE7B36ZUxx7hwJ12zc75LQ92fxQ/6BZfJR0fGyARnZ5jJh+edWsDSZH5AzUaH4mtNCkZ
-         62ZvyNp4P8Zarvc1U6inYSc5yBMS6RrREqH0IZlCZidUdCpLkfDFVAXBGU2PM+bwwjZe
-         vvdm21ELaxzmmN1BO3XUR+2coqcgdwX6ge3u+HaR2ikmYeHECxVZL/ZoUD6PTBsXkiRm
-         iHbrF0GAoUBuYZ2kb+wMC6WkuZa52Dc/SekbgDRMzPSbtrVrsTcJbicVQvcLBz6YHlzM
-         3H/A==
+        id S229795AbhDSVK5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 19 Apr 2021 17:10:57 -0400
+Received: from mail-il1-f200.google.com ([209.85.166.200]:36607 "EHLO
+        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229718AbhDSVK4 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 19 Apr 2021 17:10:56 -0400
+Received: by mail-il1-f200.google.com with SMTP id t15-20020a92dc0f0000b029016b11675c42so12350933iln.3
+        for <io-uring@vger.kernel.org>; Mon, 19 Apr 2021 14:10:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=UaHhG9GjhH16KyT6wD+AMErOXAvHsspPbBTiFIqnuaI=;
-        b=LvraDZtnndn1VN0xyUUmjpbYJPM2xUY63tFvUM519h/9tKL5WwZzMKwSHelI2qQxt5
-         Pqhm4PThyW9cm3f7Ex96J35Xj7s1ptlCzbkDvUHp4+sUZnZo9O3HcjLGGg/SkjmHHT9u
-         PZA25QqoFGYf6aSWk2s9/8ueVGzFkDIvcrUPUCI7wCqRCJlwVKbmy++eFlLp4sdmdiY3
-         5XsLjuU8ubjEmCsIAnYyjkeB8yzF/40Hp2v384gO875C8mwlQD9NbGePrurOSYEqfTZc
-         VHHZIhcCQCB+QdyVnsHvBcr2bNU0p1ran9+5NujnzWU31rCD7ojfrA2uIT335Isxpbzp
-         a9Yg==
-X-Gm-Message-State: AOAM533mdQkLsAGK8F9XrV4wybQCZ2+DmptgZslKTC3iw/dkxsc0SKgA
-        tD/TcWT2eQJAE5AMIiFPlBv+tg3gePwTIg==
-X-Google-Smtp-Source: ABdhPJzcUoaPEMhNhyNqr210rk8IlMIG/uYe7qF61kR71/dLorG2qPOtfnA8Ox3lIrcs28uCaaqLTw==
-X-Received: by 2002:a02:cc:: with SMTP id 195mr18099419jaa.73.1618854980993;
-        Mon, 19 Apr 2021 10:56:20 -0700 (PDT)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id 1sm7324479ilz.11.2021.04.19.10.56.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Apr 2021 10:56:20 -0700 (PDT)
-Subject: Re: [PATCH] io_uring: check ctx->sq_data before io_sq_offload_start
-To:     Palash Oswal <hello@oswalpalash.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20210419123630.62212-1-hello@oswalpalash.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <857554eb-d020-7e45-edd5-0b15bc2d1945@kernel.dk>
-Date:   Mon, 19 Apr 2021 11:56:20 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=GxSpPYxkUsP/ERiVTjpzjF3u68ZCtAv+UgFiC84CCo4=;
+        b=ND7gkJlTJIFjejtdZW6+t8Do5536u1v57+my6n891FyAG9QCXMSB3FPFog5njAKPQV
+         Osf1OvlCOj2a0rL65+EBED4eqpnQzdwWNMS0ZIQR8IkW4mdVRy7FuiIK/6skZNmkxABJ
+         7u4z2/rW4ISq+EQT6ee1Uovg8Wm+z1oWGGEDy0QaoJtYWM0XxCA4YFINQms3do9rzoOT
+         kEAi5SSh7h6YHVkTsKFxGUhFy89Z9vtpGDdO5KCE3IlFUVVggl11g1nI0Rtm4esILBSL
+         822sL4w+s+S+AQMfIWiBI0J2BSerbkkudvI4bCbGMxm+rNfQmEtygcPvY12N6kaHC5q9
+         IYZA==
+X-Gm-Message-State: AOAM53338ULvWQwKMzt1A5+5OmHYCE8lnsDhkoEThx4CNdU8SYg8lqqf
+        R151hbrBTbeZdD55FdfYF1+6ac6GKw2mAqbeBY6v8x1FXYT6
+X-Google-Smtp-Source: ABdhPJyH+56P9BDVL61iQj8tqGBuwYwwY3RHME4kqm6YgYLbwY+ooRl4E5DS2k8OkGzfxtfxjoBbKn/UsdjXNYaCUoHfZz1qYtBo
 MIME-Version: 1.0
-In-Reply-To: <20210419123630.62212-1-hello@oswalpalash.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a6b:d60e:: with SMTP id w14mr16037432ioa.187.1618866625653;
+ Mon, 19 Apr 2021 14:10:25 -0700 (PDT)
+Date:   Mon, 19 Apr 2021 14:10:25 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000029326505c059c220@google.com>
+Subject: [syzbot] INFO: task hung in __io_uring_cancel
+From:   syzbot <syzbot+47fc00967b06a3019bd2@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/19/21 6:36 AM, Palash Oswal wrote:
-> syzkaller identified KASAN: null-ptr-deref Read in io_uring_create
-> bug on the stable 5.11-y tree.
-> 
-> BUG: KASAN: null-ptr-deref in io_sq_offload_start fs/io_uring.c:8254 [inline]
-> BUG: KASAN: null-ptr-deref in io_disable_sqo_submit fs/io_uring.c:8999 [inline]
-> BUG: KASAN: null-ptr-deref in io_uring_create+0x1275/0x22f0 fs/io_uring.c:9824
-> Read of size 8 at addr 0000000000000068 by task syz-executor.0/4350
-> 
-> A simple reproducer for this bug is:
-> 
-> int main(void)
-> {
->   syscall(__NR_mmap, 0x20000000ul, 0x1000000ul, 7ul, 0x32ul, -1, 0ul);
->   intptr_t res = 0;
->   pid_t parent = getpid();
->   *(uint32_t*)0x20000084 = 0;
->   *(uint32_t*)0x20000088 = 0x42;
->   *(uint32_t*)0x2000008c = 0;
->   *(uint32_t*)0x20000090 = 0;
->   *(uint32_t*)0x20000098 = -1;
->   *(uint32_t*)0x2000009c = 0;
->   *(uint32_t*)0x200000a0 = 0;
->   *(uint32_t*)0x200000a4 = 0;
->   if (fork() == 0) {
->     kill(parent,SIGKILL);
->     exit(0);
->   }
->   res = syscall(__NR_io_uring_setup, 0x7994, 0x20000080ul);
->   return 0;
-> }
-> 
-> Due to the SIGKILL sent to the process before io_uring_setup
-> completes, ctx->sq_data is NULL. Therefore, io_sq_offload_start
-> does a null pointer dereferenced read. More details on this bug
-> are in [1]. Discussion for this patch happened in [2].
-> 
-> [1] https://oswalpalash.com/exploring-null-ptr-deref-io-uring-submit
-> [2] https://lore.kernel.org/io-uring/a08121be-f481-e9f8-b28d-3eb5d4f
-> a5b76@gmail.com/
+Hello,
 
-This should be a backport of the 5.12 fix, not a separate patch.
+syzbot found the following issue on:
 
--- 
-Jens Axboe
+HEAD commit:    1216f02e Add linux-next specific files for 20210415
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=130bbeded00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3491b04113499f81
+dashboard link: https://syzkaller.appspot.com/bug?extid=47fc00967b06a3019bd2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14734dc5d00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16dfaf65d00000
 
+The issue was bisected to:
+
+commit d9d05217cb6990b9a56e13b56e7a1b71e2551f6c
+Author: Pavel Begunkov <asml.silence@gmail.com>
+Date:   Fri Jan 8 20:57:25 2021 +0000
+
+    io_uring: stop SQPOLL submit on creator's death
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11b86f9ad00000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=13b86f9ad00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=15b86f9ad00000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+47fc00967b06a3019bd2@syzkaller.appspotmail.com
+Fixes: d9d05217cb69 ("io_uring: stop SQPOLL submit on creator's death")
+
+INFO: task iou-sqp-8700:8701 blocked for more than 143 seconds.
+      Not tainted 5.12.0-rc7-next-20210415-syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:iou-sqp-8700    state:D stack:28960 pid: 8701 ppid:  8414 flags:0x00004004
+Call Trace:
+ context_switch kernel/sched/core.c:4329 [inline]
+ __schedule+0x917/0x2170 kernel/sched/core.c:5079
+ schedule+0xcf/0x270 kernel/sched/core.c:5158
+ __io_uring_cancel+0x285/0x420 fs/io_uring.c:8977
+ io_uring_files_cancel include/linux/io_uring.h:16 [inline]
+ do_exit+0x299/0x2a70 kernel/exit.c:780
+ io_sq_thread+0x60a/0x1340 fs/io_uring.c:6873
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+
+Showing all locks held in the system:
+1 lock held by khungtaskd/1653:
+ #0: ffffffff8bf76560 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x53/0x260 kernel/locking/lockdep.c:6333
+1 lock held by in:imklog/8133:
+ #0: ffff888013088370 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0xe9/0x100 fs/file.c:990
+
+=============================================
+
+NMI backtrace for cpu 1
+CPU: 1 PID: 1653 Comm: khungtaskd Not tainted 5.12.0-rc7-next-20210415-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:79 [inline]
+ dump_stack+0x141/0x1d7 lib/dump_stack.c:120
+ nmi_cpu_backtrace.cold+0x44/0xd7 lib/nmi_backtrace.c:105
+ nmi_trigger_cpumask_backtrace+0x1b3/0x230 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:146 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:253 [inline]
+ watchdog+0xd3b/0xf50 kernel/hung_task.c:338
+ kthread+0x3b1/0x4a0 kernel/kthread.c:292
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0
+CPU: 0 PID: 7 Comm: kworker/0:1 Not tainted 5.12.0-rc7-next-20210415-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Workqueue: events toggle_allocation_gate
+RIP: 0010:__preempt_count_sub arch/x86/include/asm/preempt.h:85 [inline]
+RIP: 0010:preempt_count_sub+0x56/0x150 kernel/sched/core.c:4772
+Code: 85 e4 00 00 00 8b 0d 19 08 e5 0e 85 c9 75 1b 65 8b 05 ae 60 b3 7e 89 c2 81 e2 ff ff ff 7f 39 da 7c 13 81 fb fe 00 00 00 76 63 <f7> db 65 01 1d 91 60 b3 7e 5b c3 e8 4a cd c2 07 85 c0 74 f5 48 c7
+RSP: 0018:ffffc90000cc79f8 EFLAGS: 00000002
+RAX: 0000000080000002 RBX: 0000000000000001 RCX: 0000000000000000
+RDX: 0000000000000002 RSI: ffffffff83e7543f RDI: 0000000000000001
+RBP: ffff8880b9c34a80 R08: 0000000000000002 R09: 000000000000eb19
+R10: ffffffff83e7538c R11: 000000000000003f R12: 0000000000000008
+R13: ffff888140120660 R14: 0000000000000000 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffa2b511018 CR3: 000000000bc8e000 CR4: 00000000001506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ flush_tlb_mm_range+0x111/0x230 arch/x86/mm/tlb.c:957
+ __text_poke+0x590/0x8c0 arch/x86/kernel/alternative.c:837
+ text_poke_bp_batch+0x3d7/0x560 arch/x86/kernel/alternative.c:1150
+ text_poke_flush arch/x86/kernel/alternative.c:1240 [inline]
+ text_poke_flush arch/x86/kernel/alternative.c:1237 [inline]
+ text_poke_finish+0x16/0x30 arch/x86/kernel/alternative.c:1247
+ arch_jump_label_transform_apply+0x13/0x20 arch/x86/kernel/jump_label.c:122
+ jump_label_update+0x1da/0x400 kernel/jump_label.c:825
+ static_key_enable_cpuslocked+0x1b1/0x260 kernel/jump_label.c:177
+ static_key_enable+0x16/0x20 kernel/jump_label.c:190
+ toggle_allocation_gate mm/kfence/core.c:610 [inline]
+ toggle_allocation_gate+0xbf/0x2e0 mm/kfence/core.c:602
+ process_one_work+0x98d/0x1600 kernel/workqueue.c:2275
+ worker_thread+0x64c/0x1120 kernel/workqueue.c:2421
+ kthread+0x3b1/0x4a0 kernel/kthread.c:292
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches

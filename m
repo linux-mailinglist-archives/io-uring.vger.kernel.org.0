@@ -2,61 +2,78 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B2CDC3646A0
-	for <lists+io-uring@lfdr.de>; Mon, 19 Apr 2021 17:02:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B4DE364917
+	for <lists+io-uring@lfdr.de>; Mon, 19 Apr 2021 19:35:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240680AbhDSPCf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 19 Apr 2021 11:02:35 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:57328 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240663AbhDSPCf (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 19 Apr 2021 11:02:35 -0400
-Received: by mail-io1-f70.google.com with SMTP id y20-20020a6bd8140000b02903e6787c4986so4876235iob.23
-        for <io-uring@vger.kernel.org>; Mon, 19 Apr 2021 08:02:05 -0700 (PDT)
+        id S239744AbhDSRfc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 19 Apr 2021 13:35:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59376 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239743AbhDSRfc (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 19 Apr 2021 13:35:32 -0400
+Received: from mail-il1-x131.google.com (mail-il1-x131.google.com [IPv6:2607:f8b0:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35EF9C06174A
+        for <io-uring@vger.kernel.org>; Mon, 19 Apr 2021 10:35:01 -0700 (PDT)
+Received: by mail-il1-x131.google.com with SMTP id l19so25913356ilk.13
+        for <io-uring@vger.kernel.org>; Mon, 19 Apr 2021 10:35:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=YzamsHI6GibHhkEOBpDY0TcEeZnq+4o0JuC/zTfbpX8=;
+        b=gJ97dVgAAkVsrG8b72JaQWK34ma5FhlvnLjWeO2HMAPI0x6vLTMt2wDOsoIQPBoEUf
+         w/3QL3xnZO3ggTBnRkpNbX3wa9dq/m6Q1wj1W7SetxaKsh838uB5xLck4Kwx9Bt8/K29
+         boktKtaA/zwBunDjpNdvUmC6F9fMw1i1ArDRT5ZOYB40Y4e919XeIanNyaQiX9e2FgBk
+         d+/qBFldD0J4wehI1vhdiKLle7ZEsq6a32lAywKO9iIwgs6oazoHMGaC231l/mAghRKV
+         vJTDuayxzcb/1lkyR40Di1YpO82BLYOSfRLujIjNbZmtsG+uU1gv/yrSQt4kOepICmgv
+         XfXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=WMrYoKskNr7U70R71k3smKLM3Le7PTj2L2OFTVziLOM=;
-        b=DetL7RqYihva8kV+Yhj8XB5oSvinPo7BDUndiFA19wbM3mW9TGM/VjRI2LXFynPdop
-         UVglUWTH0tvHiQfBwoJ9zTdUmsZCAZjcaxICXM7cTMjczHh4S4oid/C+pfSa2x7Zr40L
-         MsxgT0MPYhM3fJrxNAUOicAkT8P0Fwl2iHQfUmyY4rI+Zp2i2gNV+NblzdNRZBV2dN/3
-         YMBFTbt1LoR2iaDtVv83w05vxcyhNBsKke/aOotpJ3jSDQH1fdH21ly7aSx4uxe9Rzg+
-         0n5lvbjbYwPvfkPnTAS1XcmE9HGGOOp8It3ds9yGYQpmaq3ALXyIRdZq+iCPgXRsHpLw
-         XS8w==
-X-Gm-Message-State: AOAM531BrfOQLJGvv9mS+w2ssJ33xjHLWHcBxcxz+0WVTRP+5GpLoWlj
-        fQGp+ghAIYFvznDnzoqGnNxnFf+wSdVBC884Ps608T4YocjF
-X-Google-Smtp-Source: ABdhPJxYspjPxbt+oEACm+W93vLXmTGM6mpe1oQlCLjG/LKWOtqLnPpBqJY/Q6iaKq+tNonPoDwvDyRgWFknhroP/xGQrazCyEeB
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=YzamsHI6GibHhkEOBpDY0TcEeZnq+4o0JuC/zTfbpX8=;
+        b=JXEVgkIjgutbCfLa2RD0cANiP9FXYku08Jqk5A3e+pU4TnQiQK+NeplIo1GU32VhID
+         kChyFTljUnhiKpY0ufvowPmJwccy4ffwKd5i//n0FOyxn6zaGEbxy5RckyKPqS8ziiES
+         I45OzEHa7+WS8XmrKnpbCnY91xrLII+xlfZRskbNMd/GlXhU6jen007p4RThHX28iE+V
+         MVIqJjq2zn6mMpbtJ1W5t+6ZV78vEsg+zchsMud/6/WjQzrg5afzvYxQz15bifExmSMu
+         2KmlkIAqDPAQ0tBZ2clV4ZSqwbhfODMpsFSzkklQByG3zRfMMq5H4J0R4R5HPbtU0+9G
+         TOzA==
+X-Gm-Message-State: AOAM5302IdnfwFgvoKoZNBxGoUGcwSgcozRNR8Ij7zgWO7uCPPGh2g1z
+        PPw/YSt0cwSsSbEItcqxl1golvprnnON4w==
+X-Google-Smtp-Source: ABdhPJx4TtlIDjd9JZ/UOCZYQWUyGw9dcI1VHSc+DZVcqIko03OvQpmzNmHE9BA+yjGI6iUmNLmN3Q==
+X-Received: by 2002:a92:340e:: with SMTP id b14mr19048427ila.285.1618853700033;
+        Mon, 19 Apr 2021 10:35:00 -0700 (PDT)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id b9sm3926827ils.44.2021.04.19.10.34.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Apr 2021 10:34:59 -0700 (PDT)
+Subject: Re: [PATCH v2 0/2] fix hangs with shared sqpoll
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+Cc:     Joakim Hassila <joj@mac.com>
+References: <cover.1618752958.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <338ee408-8c52-6e0b-0346-7f3c0d9502d0@kernel.dk>
+Date:   Mon, 19 Apr 2021 11:34:59 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-X-Received: by 2002:a02:1c07:: with SMTP id c7mr16825882jac.111.1618844524745;
- Mon, 19 Apr 2021 08:02:04 -0700 (PDT)
-Date:   Mon, 19 Apr 2021 08:02:04 -0700
-In-Reply-To: <c12b0100-50be-907b-503d-3aa00223194c@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000dc7eb305c0549c1a@google.com>
-Subject: Re: [syzbot] WARNING in __percpu_ref_exit (2)
-From:   syzbot <syzbot+d6218cb2fae0b2411e9d@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, hdanton@sina.com,
-        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ming.lei@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <cover.1618752958.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
+On 4/18/21 7:52 AM, Pavel Begunkov wrote:
+> Jens' reproducers catches shared sqpoll hangs, address them.
+> 
+> v2: do full cancel, and remove ctx from the sqd_list _after_ running
+>     sqpoll cancel as it depends on it.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Tests good for me, applied for 5.13 - thanks!
 
-Reported-and-tested-by: syzbot+d6218cb2fae0b2411e9d@syzkaller.appspotmail.com
+-- 
+Jens Axboe
 
-Tested on:
-
-commit:         75c4021a io_uring: check register restriction afore quiesce
-git tree:       git://git.kernel.dk/linux-block for-5.13/io_uring
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1dfd9a1e63100694
-dashboard link: https://syzkaller.appspot.com/bug?extid=d6218cb2fae0b2411e9d
-compiler:       
-
-Note: testing is done by a robot and is best-effort only.

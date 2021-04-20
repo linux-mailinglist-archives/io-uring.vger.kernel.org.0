@@ -2,128 +2,96 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 025F3365D7F
-	for <lists+io-uring@lfdr.de>; Tue, 20 Apr 2021 18:37:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18331365E03
+	for <lists+io-uring@lfdr.de>; Tue, 20 Apr 2021 18:59:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232929AbhDTQhv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 20 Apr 2021 12:37:51 -0400
-Received: from mail-eopbgr670115.outbound.protection.outlook.com ([40.107.67.115]:6069
-        "EHLO CAN01-TO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S232901AbhDTQhu (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Tue, 20 Apr 2021 12:37:50 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=bYLC3WPene5Zk+WY6RKpjgFUc2Z4RhaG7YMpdm00GUbIjgAeXKEL+9oErjeEekeDyqxv1GYPBKNk23eBDZwCe8Bxe3o/oSwy7HChype3Nsm37ira8OsAx/Tfp1h8JMVE1KagJA3oIBnelLQSXmdf4UhbizUraQ0FyCxRKdjy/SPMhV4NMu2FSnhpoB9MK8yVA+0lvZpoKcHW7wkkigfJEJK6aY/Qnh6UGLwdytVNGwzUNqsWf8XonhlveBoQhuDXP+KGvIsqr4pABvYGbblieabBQ+ITGXFkZYphI6g1TPVJf0RrAI8WY6oLH3w5IxAfixbZxtiQ/cvwquEkmM2Bqg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=f0VlpvXMgrBktGz7KVPe3pf398KsxvdkWDnLOMJ6qdg=;
- b=RRmySZooYn38l2bL41vKN11I8AIRZwsdaUUSa2F6AWMXauIeOPyniIGaFmO9U2torMjuqkMEz4gqr1Y5Ta0JcOpCVcTWOWYs5k3c58PQulh/8MKmJ4tLaEO9okPiLiL2yqqESog3wiOjH1v1/MoLZELFWCK1cHkXVLBLpxIyALPYKKf6i0RoVkauQ291H9fj7oBXMBLkSQxQa9wc60lqRgODsYYc5olx7hCJdxJ94432k7AvVNVi3cBAQ8haKTdMPMONaMTS/krOhKqpun8/6eD1pkHO77zuu2LKuoWxvSKSghe3mzKFIhP7P+USLa+AodcatSiGUpdlCgDpL+oLCA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=eqalpha.com; dmarc=pass action=none header.from=eqalpha.com;
- dkim=pass header.d=eqalpha.com; arc=none
+        id S233103AbhDTRAF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 20 Apr 2021 13:00:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56838 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233141AbhDTRAE (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 20 Apr 2021 13:00:04 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FFF8C06174A
+        for <io-uring@vger.kernel.org>; Tue, 20 Apr 2021 09:59:33 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id n127so8820453wmb.5
+        for <io-uring@vger.kernel.org>; Tue, 20 Apr 2021 09:59:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=csquaremfg.onmicrosoft.com; s=selector2-csquaremfg-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=f0VlpvXMgrBktGz7KVPe3pf398KsxvdkWDnLOMJ6qdg=;
- b=KmGUOYnCcRbyyQpAwhPPiqfuo+mNtUl1t2A+VNwPPcIdjAZtUFOyEkswz5muqgkeg1oqvvqce7NpQROXfAhjbpdSAFU2AYob5l8qf0zYrNAA+17sPOoqeD4JGdyhmAU8kgdq3VSrecKkP/nsBFsBiNb3+WbmExLdld/8MMw+2QE=
-Received: from YTBPR01MB2798.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:1d::31)
- by YT3PR01MB5025.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:48::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4042.24; Tue, 20 Apr
- 2021 16:37:17 +0000
-Received: from YTBPR01MB2798.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::e8a3:bb7:6229:147b]) by YTBPR01MB2798.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::e8a3:bb7:6229:147b%5]) with mapi id 15.20.4042.024; Tue, 20 Apr 2021
- 16:37:17 +0000
-From:   Jesse Hughes <jesse@eqalpha.com>
-To:     "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
-CC:     John <john@eqalpha.com>
-Subject: Emulating epoll
-Thread-Topic: Emulating epoll
-Thread-Index: AQHXNgKeA6wGUR0R8UaY2Dy58MZDZA==
-Date:   Tue, 20 Apr 2021 16:37:17 +0000
-Message-ID: <YTBPR01MB2798B37324ED46A33DCD21B0BF489@YTBPR01MB2798.CANPRD01.PROD.OUTLOOK.COM>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=none action=none
- header.from=eqalpha.com;
-x-originating-ip: [2001:569:fb57:d900:8470:78bc:670d:bd9]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 039dba1e-2b89-4884-90aa-08d9041a8fde
-x-ms-traffictypediagnostic: YT3PR01MB5025:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <YT3PR01MB50251A87377A74585567ABBDBF489@YT3PR01MB5025.CANPRD01.PROD.OUTLOOK.COM>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: cN86hnft1j9/Wt4iU1KDfTj7GxH5pjvTHuqp6AdypXpl37w0rZlkuFQtYVIsH80xFYWqIKfJ+kO98oLQN7pcMBrYmifHVBF/m7WhD3fdTR8SOwKr0T1V2XW7TP7wSZ9K5ggUab9yUgRldxO2L7egZxAxcwdT2FPlNSSpE9CtO4XND9GIUkBF4u59NINOxUUqxG8MahB7svcB4SULwCTaeQ9E9bEYky1MIEVVIKmVLbMS9ujV8yW+WUifz6QXeIOZ5dAExAZ9JPCRCfaQ+kXqrP8+cXmMwPdkaaX1AfnzP2qTvhgXYZ7veu+9kA0/b22c6nxDBq4GZA4aPm5hDq7w0Ox9pavaPawfAiXl2nkj3XfQpbqYeRujvTlKdwWJ6MsybEzZhAQn0ed8dO9MOmkXSBWe00EaAGlApJnfVN2RacdujeDrL2vHa0lr+sLmX2zIG7McxUC63V9DMmR0TaBlkkIpXHEohSoX9w0CV2lYSGpd6sX5CeBAavPe1EfddpKy/srR9SqH7u+w8g6AtJjwCIsqUWkV/LG6QY6HyEBnVE420GV3Dap2EuDN+0CyFHLTvblfOse5gq1TD6vHMZgqpvi0paEsVYud6wk2beq99uuwaNpd+7z4YNmpok0dOwhUcv5ap+RiTkb1YlKAnWJes3X5mJ5iRZxwi01HxNh/PHsOBbJVMy3dz2CNK1YAQnWw
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YTBPR01MB2798.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(4636009)(366004)(136003)(396003)(376002)(39830400003)(346002)(71200400001)(66556008)(66476007)(91956017)(76116006)(4744005)(7116003)(86362001)(3480700007)(55016002)(9686003)(66446008)(7696005)(316002)(64756008)(6506007)(52536014)(66946007)(2906002)(5660300002)(122000001)(8936002)(186003)(4326008)(6916009)(478600001)(8676002)(38100700002)(966005)(33656002)(107886003);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata: =?utf-8?B?YUszVDMzdG1NWmREd2tEZHh3QmZmTTN3NFhFMkkyd1hrMVJkWTZ0ay8weU9Q?=
- =?utf-8?B?NUFmdFNPVzNKci9pNjd2RUhhVzZHb3lzQTcrRnAwcUN1ZVgzT1ZEOWNHdEEw?=
- =?utf-8?B?WkVhQXR0aTZidmhuS25ScEtwMS9HY0JHWDF5ZTVnekU1bStBQlp5Vk5NRkFR?=
- =?utf-8?B?VmRHMjdsZnNiLzNiaWJBY2RiMmZmdE5SNStLVUdOLzU3d09kTzkvd1F1dmwx?=
- =?utf-8?B?MGRjdXlDMVZhc3A3MTVOU2hMUnVoSU9EUnF1OEtBT1p4VDJBdWtJeW1Kck43?=
- =?utf-8?B?cUc1eHkyWHllUVd2MGpXcVRsZ2dSZlhweThiTGlhUnRDc3AzR3pzbStaL1p2?=
- =?utf-8?B?UnVoeGRjZGViSlR3MjExdGkweHlQWngwcEF6WWdsdTJqQmJQN1ZJUDJNVTNm?=
- =?utf-8?B?K0ZEbi9LYVN3ZERxUFI4bkcwdVdPWU1idmE3OUxXUGQ0YVI1T1VnUWtoNHBY?=
- =?utf-8?B?QmJDWDB4OGZ5QWd4T3BhVWFVZHM0c3pIeFJWbmVLaWJLY1FnbXllYTU3ekQ5?=
- =?utf-8?B?cm5TcTBwd2xnSHZpMlF4QmttUGNKWVFSVGM0aXI4QWxpM1hoRHMxeXhzVUs4?=
- =?utf-8?B?aytFQlY3NEpYVnJOeVo5MExLR1pSdUl0SExYQUNTYVphZjhwY0N0MUdnTGRm?=
- =?utf-8?B?cmN0U0hxZUhKWTEvRFdlUzN4QzYxMmNPWXlDaCs2UTh4VUxvdFJ6S0lPRURY?=
- =?utf-8?B?WjU1WFY3cHJkTm5waFI0amdTV3E1NWpOeGFyeWgxNVNxdlp6MVM4dzQ0cGF6?=
- =?utf-8?B?djFmQUwyM002STkwVkNBdlN3ZXBkWWI2TjB0VXlFZ3NnamVkYWhiSngvc0F1?=
- =?utf-8?B?YUZlanIrNytZSm5BcjNZRGFML25JTzQ4K1NqWVFYdXRtNm1PTHpzdDFNMDh5?=
- =?utf-8?B?OFRBQ00rS2RJa3lWZ1pFL3BGVUhZRFpxMkxGbHJ3OVFNK2RFL3J6WFlvcTFQ?=
- =?utf-8?B?VFdzTENOdWtNSnBHeWk3STRYTjVkRkFkSVcyWUdmMWVETHZMV01qVUVRMndl?=
- =?utf-8?B?SjRtR0s1TE9GMCt5ZEtsZTRsWGh5TVRva21nTGZ2Rk5rZkRMeUk1NUJLeXRP?=
- =?utf-8?B?VlNCRGNYUStZSHhObE9FejlZdTFGbWp0eXdCS2hIeGZoUzg4ZitPV3E5QjRW?=
- =?utf-8?B?RjMrSXhOWC81MHdUVjFDdmQ2VENUa1NGTE10cXh6MlFRTjkrdUtFaUF0bnFq?=
- =?utf-8?B?ak1FcmFWS1huU24wUEsvUDdoSDdhYWZYQWw4OVFuMTZ6NjRxVFBmdlVYNHV6?=
- =?utf-8?B?U29jZ05SQjFpUStRTmhUN3NTcVlzN0U0SnY3ZEloSGcvbGcvUlRzTkFrVEF3?=
- =?utf-8?B?WVBMalNTbXhidTdsdzlmWm5HU1hSa1NRM0RLZHEwVk9FcmJ3QVAwMVdhRExI?=
- =?utf-8?B?d29QeDVKRGY3OWxUa0grY21JMHlrMlU1c2t5eEVyd3QyVUx0RzhwNVowTUR3?=
- =?utf-8?B?NWZjSDhkVzZLSU5kU3FmTjFWbjY4RE5EZjR1Wld0MVgrMklJZ255WS9UT25T?=
- =?utf-8?B?d05reFY2azBZNUVhQjR1cXcrei9ZRFZTK2MwSnR5Yk1oc2xSQm8wTU50VWJ6?=
- =?utf-8?B?bFAxTUZuL2p6NFBzNDBTZmR3WW9oNnY5RG9IWTFhaWtxU0VEeGFoTXdmTFhw?=
- =?utf-8?B?cEszQjN6M0RjcmY4Y25lRHhOZG0zQXg4RHBlUTUwTFdSQmIzZ3VxVnA2K241?=
- =?utf-8?B?bkkrbzNjMHpHSC93Y2R0L3JURnAwV096c2dmMjBMSFNTRS9nMk9ySnJkaW9Z?=
- =?utf-8?B?amgrMXhnUC9RaXVSbXVtdFc3VTdXK0hLVXNEYWNxelJsOG9ZdXhWZHRNcTZH?=
- =?utf-8?Q?ic/D06RHV6bTzsCd6beV1bRcQYOXFf06HLeCg=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=reE9tUJogarS5NvJyxlLcfwgilzQVWwQORQb0nYfXac=;
+        b=cLRHS04JbEHO9ku5vZU0LhSBbWf+GdX0tOucx6NGPinnYcztBJZXd+y/LWWKVfWFNa
+         VwmnIlPvSrVBZ/LF7ts1RKWR8XFgNEd9NmAtOLufpvyIVQDMCv6waCIma65Hop+NuL4g
+         AKUYt/9nvAQTrJU9XcdrWf+Y2A5HpyYgD5C7n8aBOaamBmdOHjEWWF6/0/UDDlcpQRiX
+         h7HNZttFyVsop1kmpEmQRanXsFDJOQu6sL7bIaPnq+YAqCT0I86E0wjZx7ygvLCnD0W1
+         9uO8qCRH+ESO0XpwSNzih0qs0b9c6s4b/2r1nWKPYzEi2t3dwTCUbyAiC0x2aCxnV1EI
+         Ax/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=reE9tUJogarS5NvJyxlLcfwgilzQVWwQORQb0nYfXac=;
+        b=L0+BoalhP+71mWNJ4lDxOvQhLPoUwmaaW9JfsU2cZYvMyTMD4jEH6Oi1nGSGZmOM7h
+         L4qOKRMzhBTOGqP6Jlw3np3FsyyiAkfKNkKY1yPZW1EeT/GRdKOYxteV6S+k3gr7eYm9
+         I2HRsqZ4Ahk2vmw2+YKK7b6Cn5bC/VEjC+Z9UgZNtKWIOEB7iw9r0x1btH3+IlPd7/YT
+         PMWCexCtP7C+E9FEB/NrpjtzqU0vrQ5lqeMlGZ1Z/I6QPtW9/N0R4+O9THuIeWrpu9Jw
+         JM7rAonKxUSGnLPEYpWSNvsda915EAAGokrGSdpmarh+ci6sTVaO+qL+oiyoKvvzm16+
+         NBxA==
+X-Gm-Message-State: AOAM531ZueqSzbdZKg94Ww5GBJkl8/ToqyBlTIN4+hIRpqt5hr6sM4ZY
+        riQ8wFHfWb4RYpkuU/18OwuPQzh5DVNwvw==
+X-Google-Smtp-Source: ABdhPJyoV7EjetC+2onX8qJfjftEy1RG/L+et6KFcE8/uo5NxAm4t97CLMDKHiFxJaSpXOz2WdL+0Q==
+X-Received: by 2002:a1c:4d08:: with SMTP id o8mr5413601wmh.57.1618937971876;
+        Tue, 20 Apr 2021 09:59:31 -0700 (PDT)
+Received: from [192.168.8.197] ([85.255.232.116])
+        by smtp.gmail.com with ESMTPSA id g132sm3872532wmg.42.2021.04.20.09.59.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 20 Apr 2021 09:59:31 -0700 (PDT)
+Subject: Re: Emulating epoll
+To:     Jesse Hughes <jesse@eqalpha.com>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
+Cc:     John <john@eqalpha.com>
+References: <YTBPR01MB2798B37324ED46A33DCD21B0BF489@YTBPR01MB2798.CANPRD01.PROD.OUTLOOK.COM>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Message-ID: <98e1c6bb-1706-e1b3-b7f1-c5418ee880be@gmail.com>
+Date:   Tue, 20 Apr 2021 17:59:29 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.1
 MIME-Version: 1.0
-X-OriginatorOrg: eqalpha.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: YTBPR01MB2798.CANPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 039dba1e-2b89-4884-90aa-08d9041a8fde
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Apr 2021 16:37:17.8544
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 25e0269f-f34c-4b1c-9d3f-7df00678a65b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Anu+HtXETeSRrco2CktdmGWpYxU4VhR+h3QVwEQWnJLFW9J2RP8lmLZDJKZ1dwqS2EDJkzg+zYMauF0LZKQe2A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT3PR01MB5025
+In-Reply-To: <YTBPR01MB2798B37324ED46A33DCD21B0BF489@YTBPR01MB2798.CANPRD01.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-SGVsbG8sCgpJIHdhbnQgdG8gc3RhcnQgYnkgc2F5aW5nIHRoYW5rLXlvdSBmb3Igd29ya2luZyBv
-biBpb191cmluZy7CoCBNeSBleHBlcmllbmNlIHVzaW5nIGl0IHRodXMgZmFyIGhhcyBiZWVuIGdy
-ZWF0LgoKSSdtIHdvcmtpbmcgb24gYW4gb3Blbi1zb3VyY2UgZGF0YWJhc2UgcHJvZHVjdCAoS2V5
-REIsIGEgbXVsdGktdGhyZWFkZWQgcmVkaXMgZm9yaykgYW5kIHdlJ3JlIGNvbnNpZGVyaW5nIHJl
-d3JpdGluZyBvdXIgSU8gdG8gdXNlIGlvX3VyaW5nLsKgIE91ciBjdXJyZW50IGltcGxlbWVudGF0
-aW9uIHVzZXMgZXBvbGwsIGFuZCBwcm9jZXNzZXMgSU8gb24gKG1haW5seSkgc29ja2V0cyBhcyB0
-aGV5IGJlY29tZSByZWFkeS4KCklmIEknbSB1bmRlcnN0YW5kaW5nIHRoZSBsaXRlcmF0dXJlIGNv
-cnJlY3RseSwgdG8gZW11bGF0ZSBlcG9sbCwgd2Ugc2hvdWxkIGJlIGFibGUgdG8gc2V0IHVwIGEg
-dXJpbmcsIHB1dCBpbiBhIHJlYWQgc3FlIGZvciBlYWNoIGluY29taW5nIHNvY2tldCBjb25uZWN0
-aW9uLCB0aGVuICh1c2luZyBsaWJ1cmluZykgY2FsbMKgaW9fdXJpbmdfd2FpdF9zcWXigIsuwqAg
-Q29ycmVjdD/CoCBJcyB0aGVyZSBhIGJldHRlciB3YXkgb2YgZG9pbmcgdGhhdD8KCk91ciBlbmQt
-Z29hbCBpcyBub3QgdG8gZW11bGF0ZSBlcG9sbCwgYnV0IHRoYXQgc2VlbXMgbGlrZSB0aGUgcXVp
-Y2tlc3Qgd2F5IG9mIGdldHRpbmcgc29tZXRoaW5nIHdvcmtpbmcgdGhhdCB3ZSBjYW4gZG8gZnVy
-dGhlciBleHBlcmltZW50cyB3aXRoLgoKRm9yIHJlZmVyZW5jZSwgaWYgYW55b25lJ3MgaW50ZXJl
-c3RlZCwgb3VyIHNvdXJjZSByZXBvIGlzIGF0IDogaHR0cHM6Ly9naXRodWIuY29tL0VRLUFscGhh
-L0tleURCCgpDaGVlcnMsCkplc3Nl
+On 4/20/21 5:37 PM, Jesse Hughes wrote:
+> Hello,
+> 
+> I want to start by saying thank-you for working on io_uring.  My experience using it thus far has been great.
+> 
+> I'm working on an open-source database product (KeyDB, a multi-threaded redis fork) and we're considering rewriting our IO to use io_uring.  Our current implementation uses epoll, and processes IO on (mainly) sockets as they become ready.
+
+Wonderful, always interesting to learn about emerging use cases
+and new apps using it.
+
+> 
+> If I'm understanding the literature correctly, to emulate epoll, we should be able to set up a uring, put in a read sqe for each incoming socket connection, then (using liburing) call io_uring_wait_sqe​.  Correct?  Is there a better way of doing that?
+
+In general, the best way to do I/O is to issue a read/write/etc. sqe
+directly as you've mentioned. io_uring will take care of doing polling
+internally or finding a better way to execute it.
+
+However, to simply emulate epoll IORING_OP_POLL_ADD requests can be
+used There is support for multi-shot poll requests, which Jens added
+for coming linux 5.13
+
+> 
+> Our end-goal is not to emulate epoll, but that seems like the quickest way of getting something working that we can do further experiments with.
+> 
+> For reference, if anyone's interested, our source repo is at : https://github.com/EQ-Alpha/KeyDB
+
+-- 
+Pavel Begunkov

@@ -2,184 +2,75 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C35ED366F63
-	for <lists+io-uring@lfdr.de>; Wed, 21 Apr 2021 17:47:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6737D3670D9
+	for <lists+io-uring@lfdr.de>; Wed, 21 Apr 2021 19:03:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241197AbhDUPrc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 21 Apr 2021 11:47:32 -0400
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:40689 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S240048AbhDUPrc (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 21 Apr 2021 11:47:32 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UWK0rq._1619020017;
-Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UWK0rq._1619020017)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 21 Apr 2021 23:46:57 +0800
-Subject: Re: [PATCH] io_uring: check sqring and iopoll_list before shedule
-From:   Hao Xu <haoxu@linux.alibaba.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <1619018351-75883-1-git-send-email-haoxu@linux.alibaba.com>
-Message-ID: <a7c70456-5c1d-b300-3449-00f822dda193@linux.alibaba.com>
-Date:   Wed, 21 Apr 2021 23:46:57 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.9.1
+        id S244625AbhDURER (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 21 Apr 2021 13:04:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35714 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S244583AbhDUREI (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 21 Apr 2021 13:04:08 -0400
+Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77C59C06174A
+        for <io-uring@vger.kernel.org>; Wed, 21 Apr 2021 10:03:34 -0700 (PDT)
+Received: by mail-io1-xd32.google.com with SMTP id q25so11402039iog.5
+        for <io-uring@vger.kernel.org>; Wed, 21 Apr 2021 10:03:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=jhpUKjKeF03jdkdsiH6FBXeP0UI71BLbC4nhsSYvY4c=;
+        b=QlZ0boo8kAUOEe8Dse9c1E9IuAnBvoMRa+zuXQgfLmmDwqnDiEMkWPvFkwQFNIOZG+
+         kUR4iFYcxqo/krIryckuJEh3Xj9fW2a8uggRLsAtVTWKFiOwAhX5BhTzt6SkCJq5NvzV
+         y647sIGsADQIfJApFo88z3BGjmoJ6+hhS+XWqF9bxYD8TpE4fSHVPrYD/VQMGXkhy3Xn
+         zcWArgx8CFTvURrOqQ7OgVuWkv7T8xTk2hIPAVx3itSsA6Bq2UO9dEuFi/8ZIaGnwg1v
+         B39F76gECAC9K2igL6nBpQSF20s09jHVoMbVzoewLnplXgUFrlD2Itfuf0X2POpgFTBQ
+         lyTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=jhpUKjKeF03jdkdsiH6FBXeP0UI71BLbC4nhsSYvY4c=;
+        b=ty7XbO2Ao+bFjIk7bZc55LhJD0Dprx/wy4Rb/bGs4SbUlkM6wPTMiV7z4AZjgScYAu
+         dGwiVKYLi6CRXhO5rbxAnAOTRB0DMqYInuWJasVeuTtnUg/Ssnc1n5csh9rl66ChfT6f
+         IAozys0Uopieht1k2rNfPJfWxwX356RZDEgnRb3/S1sIU/T0OPFmdIU4CTJ5p+6a9dQg
+         hk0uGGfYJVq1/rTixIT5I+7VUtikriwlFrvwVF9YxO642C3J/JPFi9DlTu4WHpN2qf/K
+         V745Zvc2XVzdo/kuCzfHnqZuiHwuJu6rDqA2m36co9y9B3Bld6jLHB7usQkU2BgZQI/k
+         LnwA==
+X-Gm-Message-State: AOAM533LBVumIBaWKKXz8cXLVvUGxq3cblR0O/wmYYDJpqztIRb+/Moe
+        C3u2l8xK/rGjBl/UsAg0Vqu5pleR1JgY1A==
+X-Google-Smtp-Source: ABdhPJy0kNmB1m5Yvbd2qGROssINJMIdxIUOqBJOlX5s9GaUCNR/OHXePByTqOezYAIFV7A9AZx8QQ==
+X-Received: by 2002:a02:5d82:: with SMTP id w124mr26801602jaa.21.1619024613847;
+        Wed, 21 Apr 2021 10:03:33 -0700 (PDT)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id d4sm1231047ilg.65.2021.04.21.10.03.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 21 Apr 2021 10:03:33 -0700 (PDT)
+Subject: Re: [PATCH liburing] tests: remove -EBUSY on CQE backlog tests
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <602ed592631aaa6605d414b12419ca2f1896a810.1618956047.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <1a298439-bec8-160d-e7a0-672542d0be76@kernel.dk>
+Date:   Wed, 21 Apr 2021 11:03:33 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <1619018351-75883-1-git-send-email-haoxu@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <602ed592631aaa6605d414b12419ca2f1896a810.1618956047.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-在 2021/4/21 下午11:19, Hao Xu 写道:
-> do this to avoid race below:
-> 
->           userspace                         kernel
-> 
->                                 |  check sqring and iopoll_list
-> submit sqe                     |
-> check IORING_SQ_NEED_WAKEUP    |
-> (which is not set)    |        |
->                                 |  set IORING_SQ_NEED_WAKEUP
-> wait cqe                       |  schedule(never wakeup again)
-> 
-> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
-> ---
-> 
-> Hi all,
-> I'm doing some work to reduce cpu usage in low IO pression, and I
-> removed timeout logic in io_sq_thread() to do some test with fio-3.26,
-> I found that fio hangs in getevents, inifinitely trying to get a cqe,
-> While sq-thread is sleeping. It seems there is race situation, and it
-> is still there even after I fix the issue described above in the commit
-> message. I doubt it is something to do with memory barrier logic
-> between userspace and kernel, I'm trying to address it, not many clues
-> for now.
-> I'll send the fio config and kernel modification I did for test in
-> following mail soon.
-> 
-fio test config:
-[global]
-ioengine=io_uring
-sqthread_poll=1
-hipri=1
-thread=1
-bs=4k
-direct=1
-rw=randread
-time_based=1
-runtime=30
-group_reporting=1
-filename=/dev/nvme1n1
-sqthread_poll_cpu=30
+On 4/20/21 4:01 PM, Pavel Begunkov wrote:
+> From 5.13 the kernel doesn't limit users submission with CQE backlog,
+> that was previously failed with -EBUSY. Remove related tests.
 
-[job0]
-iodepth=1
+Applied, thanks.
 
-the issue mainly occur when iodepth=1 during my test.
-I removed timeout logic in io_sq_thread() like this:
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 042f1149db51..dd9c95016f7f 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -6739,7 +6739,6 @@ static int io_sq_thread(void *data)
-  {
-         struct io_sq_data *sqd = data;
-         struct io_ring_ctx *ctx;
--       unsigned long timeout = 0;
-         char buf[TASK_COMM_LEN];
-         DEFINE_WAIT(wait);
-
-@@ -6777,7 +6776,6 @@ static int io_sq_thread(void *data)
-                         io_run_task_work_head(&sqd->park_task_work);
-                         if (did_sig)
-                                 break;
--                       timeout = jiffies + sqd->sq_thread_idle;
-                         continue;
-                 }
-                 sqt_spin = false;
-@@ -6794,11 +6792,9 @@ static int io_sq_thread(void *data)
-                                 sqt_spin = true;
-                 }
-
--               if (sqt_spin || !time_after(jiffies, timeout)) {
-+               if (sqt_spin) {
-                         io_run_task_work();
-                         cond_resched();
--                       if (sqt_spin)
--                               timeout = jiffies + sqd->sq_thread_idle;
-                         continue;
-                 }
-
-@@ -6831,7 +6827,6 @@ static int io_sq_thread(void *data)
-
-                 finish_wait(&sqd->wait, &wait);
-                 io_run_task_work_head(&sqd->park_task_work);
--               timeout = jiffies + sqd->sq_thread_idle;
-         }
-
-         list_for_each_entry(ctx, &sqd->ctx_list, sqd_list)
-~
-~
-> Thanks,
-> Hao
-> 
->   fs/io_uring.c | 36 +++++++++++++++++++-----------------
->   1 file changed, 19 insertions(+), 17 deletions(-)
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index dff34975d86b..042f1149db51 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -6802,27 +6802,29 @@ static int io_sq_thread(void *data)
->   			continue;
->   		}
->   
-> -		needs_sched = true;
->   		prepare_to_wait(&sqd->wait, &wait, TASK_INTERRUPTIBLE);
-> -		list_for_each_entry(ctx, &sqd->ctx_list, sqd_list) {
-> -			if ((ctx->flags & IORING_SETUP_IOPOLL) &&
-> -			    !list_empty_careful(&ctx->iopoll_list)) {
-> -				needs_sched = false;
-> -				break;
-> -			}
-> -			if (io_sqring_entries(ctx)) {
-> -				needs_sched = false;
-> -				break;
-> -			}
-> -		}
-> -
-> -		if (needs_sched && !test_bit(IO_SQ_THREAD_SHOULD_PARK, &sqd->state)) {
-> +		if (!test_bit(IO_SQ_THREAD_SHOULD_PARK, &sqd->state)) {
->   			list_for_each_entry(ctx, &sqd->ctx_list, sqd_list)
->   				io_ring_set_wakeup_flag(ctx);
->   
-> -			mutex_unlock(&sqd->lock);
-> -			schedule();
-> -			mutex_lock(&sqd->lock);
-> +			needs_sched = true;
-> +			list_for_each_entry(ctx, &sqd->ctx_list, sqd_list) {
-> +				if ((ctx->flags & IORING_SETUP_IOPOLL) &&
-> +				    !list_empty_careful(&ctx->iopoll_list)) {
-> +					needs_sched = false;
-> +					break;
-> +				}
-> +				if (io_sqring_entries(ctx)) {
-> +					needs_sched = false;
-> +					break;
-> +				}
-> +			}
-> +
-> +			if (needs_sched) {
-> +				mutex_unlock(&sqd->lock);
-> +				schedule();
-> +				mutex_lock(&sqd->lock);
-> +			}
->   			list_for_each_entry(ctx, &sqd->ctx_list, sqd_list)
->   				io_ring_clear_wakeup_flag(ctx);
->   		}
-> 
+-- 
+Jens Axboe
 

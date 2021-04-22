@@ -2,133 +2,157 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E9070368261
-	for <lists+io-uring@lfdr.de>; Thu, 22 Apr 2021 16:22:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B443236826E
+	for <lists+io-uring@lfdr.de>; Thu, 22 Apr 2021 16:27:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236672AbhDVOX1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 22 Apr 2021 10:23:27 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:48292 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236496AbhDVOX1 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 22 Apr 2021 10:23:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1619101371;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=6dM3vlskxaUCVoSymQo+tBQHrfX2GxQW1OumkU4YCLc=;
-        b=IDkbV92cR3h6tzXj8nMckejhxPOSznY5KdfsMUp2DS5vlsuYiLc4icbWSvE3Sz+Hp/Vm2F
-        vW5aZW3cEkCnXN1Xr94OxBXYWAjUUpyI2jYgG13FEmxcQE9kYHSK08rqUefY1VMku3yQKd
-        h0F4lNkqxKEQS/9EZeAoiEXqP1Un4SY=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-18-MEap3KgBOkuugFQyDrm1RQ-1; Thu, 22 Apr 2021 10:22:49 -0400
-X-MC-Unique: MEap3KgBOkuugFQyDrm1RQ-1
-Received: by mail-ej1-f72.google.com with SMTP id o25-20020a1709061d59b029037c94676df5so7281285ejh.7
-        for <io-uring@vger.kernel.org>; Thu, 22 Apr 2021 07:22:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=6dM3vlskxaUCVoSymQo+tBQHrfX2GxQW1OumkU4YCLc=;
-        b=RHVbDEYawyOLroGX7aLMu6Rh8xhD26BZm5zj/X8StdSlwSAr5oK3Yjbl4tbtZN3nkp
-         hF+GYgAL/iCVTAcFQfftwX9p7TK1HWg1iB+IeO3CLpJf7KJ0p8oaRje7i5+AtVhOUJNs
-         Hw9hAXFF3CFSIxpqYtseHBoX07gCWLCXRvj/KzATMCq3XxuhBNQr8f8kYP972S0auDPT
-         nEMVkFzKfGu80KKQXjJNBSk6ko/gLpazcWC8nlCVisfk/6P1hP0mVraEArESH+WDLJrM
-         BfTdBnkCq6RjoXBJAnj+59XGJCGVIQ2ZkV5+eR4FK6xCYCYsP1t9d27l/iX7ZD6CljNI
-         5VFg==
-X-Gm-Message-State: AOAM530k9IUHu2dc4I5Tu5EOqyGcbYZ9wGMOscsdYOPI8bT50kuefv8Y
-        LzZhurUs6ScpYA2i9eKf7umQpYW1tFQm4erftL8+wpz1zuIy+NWDIIocfkqfCkLBE3pc2WoLDYS
-        ZvpldI4lFXGU6dWFBn6E=
-X-Received: by 2002:a17:906:60d6:: with SMTP id f22mr3627822ejk.177.1619101368045;
-        Thu, 22 Apr 2021 07:22:48 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxg6IpTdebpcD59morQGAl2NDtrxuofK+0xAYW+6pVHquUotCJVra+jBhH6twGEGfu7JKrqBg==
-X-Received: by 2002:a17:906:60d6:: with SMTP id f22mr3627797ejk.177.1619101367853;
-        Thu, 22 Apr 2021 07:22:47 -0700 (PDT)
-Received: from steredhat (host-79-34-249-199.business.telecomitalia.it. [79.34.249.199])
-        by smtp.gmail.com with ESMTPSA id ws15sm1985849ejb.38.2021.04.22.07.22.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Apr 2021 07:22:47 -0700 (PDT)
-Date:   Thu, 22 Apr 2021 16:22:45 +0200
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     Stefan Hajnoczi <stefanha@redhat.com>
-Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, libc-alpha@sourceware.org,
-        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
-Subject: Re: [PATCH liburing] examples/ucontext-cp.c: cope with variable
- SIGSTKSZ
-Message-ID: <20210422142245.evlxjvfw3emh7ivw@steredhat>
-References: <20210413150319.764600-1-stefanha@redhat.com>
- <YH2VE2RdcH0ISvxH@stefanha-x1.localdomain>
- <CAMe9rOpK08CJ5TdQ1fZJ2sGUVjHqoTHS2kT8EzDEejuodu8Ksg@mail.gmail.com>
- <YIFJDgno7deI5syK@stefanha-x1.localdomain>
+        id S236428AbhDVO1k (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 22 Apr 2021 10:27:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36086 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236398AbhDVO1i (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 22 Apr 2021 10:27:38 -0400
+Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 745A0C06174A;
+        Thu, 22 Apr 2021 07:27:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+         s=42; h=Date:Message-ID:From:Cc:To;
+        bh=4Kb9zfRmA2ZmFuTqllA0SoHgtgUqa0tGA+vIBLYFziw=; b=sm00KaolnOUY/MttJ+l1D+2AQR
+        xIG86ZNCWPUvBbDFabP5V3SkAUe2jbxaRFOt78RC36JP7g5aO9GJkZAqKu9Ssl5EAlZwhY7U4xNXY
+        5qiW0E2vGE0RnHvazIBxCWoqTT+1d5FYe6U1cOfF97kDsLhHfIsrCf/moo1ToXXoWoxYAEQiKhGcD
+        8ML6riR3uyR3DepNGjry2tjHVFh6TWKrGmdpITy27nl4dXtCf55WuXa1OO6rCN49Doi9GnXGOtypB
+        K8XBZAIWcf1vmdSHDHhn/nbyvutiT8VyY5LOzF81RAwSiroZ88rQGdXqaPCR+YKMMWAYTNnTjdAzy
+        AHk77OX/PPoW+PY7cebiU+NpFwV1JpeXL7E9z7OH85qytu/ha78EK1W+8eERrf7solt0Oen3v4LUD
+        3uRdXyXSyOHa9f/5BLgvAOkHJ4CNVB7oWwFccik6U/fBSp1f0ru/Ilf4q5enR+HWj9uhLk7yD4BgG
+        6I91CvMLM+813cekxJpBdEgx;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
+        (Exim)
+        id 1lZaID-0000dI-Sn; Thu, 22 Apr 2021 14:26:57 +0000
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>
+Cc:     linux-trace-devel@vger.kernel.org,
+        io-uring <io-uring@vger.kernel.org>
+From:   Stefan Metzmacher <metze@samba.org>
+Subject: Tracing busy processes/threads freezes/stalls the whole machine
+Message-ID: <293cfb1d-8a53-21e1-83c1-cdb6e2f32c65@samba.org>
+Date:   Thu, 22 Apr 2021 16:26:57 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <YIFJDgno7deI5syK@stefanha-x1.localdomain>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-+Cc: io-uring@vger.kernel.org
-+Cc: Pavel Begunkov <asml.silence@gmail.com>
 
-Original message: 
-https://www.spinics.net/lists/linux-block/msg67077.html
+Hi Steven, hi Ingo,
 
-On Thu, Apr 22, 2021 at 10:59:42AM +0100, Stefan Hajnoczi wrote:
->On Mon, Apr 19, 2021 at 11:38:07AM -0700, H.J. Lu wrote:
->> On Mon, Apr 19, 2021 at 7:35 AM Stefan Hajnoczi <stefanha@redhat.com> wrote:
->> >
->> > On Tue, Apr 13, 2021 at 04:03:19PM +0100, Stefan Hajnoczi wrote:
->> > > The size of C arrays at file scope must be constant. The following
->> > > compiler error occurs with recent upstream glibc (2.33.9000):
->> > >
->> > >   CC ucontext-cp
->> > >   ucontext-cp.c:31:23: error: variably modified ‘stack_buf’ at file scope
->> > >   31 |         unsigned char stack_buf[SIGSTKSZ];
->> > >      |                       ^~~~~~~~~
->> > >   make[1]: *** [Makefile:26: ucontext-cp] Error 1
->> > >
->> > > The following glibc commit changed SIGSTKSZ from a constant value to a
->> > > variable:
->> > >
->> > >   commit 6c57d320484988e87e446e2e60ce42816bf51d53
->> > >   Author: H.J. Lu <hjl.tools@gmail.com>
->> > >   Date:   Mon Feb 1 11:00:38 2021 -0800
->> > >
->> > >     sysconf: Add _SC_MINSIGSTKSZ/_SC_SIGSTKSZ [BZ #20305]
->> > >   ...
->> > >   +# define SIGSTKSZ sysconf (_SC_SIGSTKSZ)
->> > >
->> > > Allocate the stack buffer explicitly to avoid declaring an array at file
->> > > scope.
->> > >
->> > > Cc: H.J. Lu <hjl.tools@gmail.com>
->> > > Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
->> > > ---
->> > > Perhaps the glibc change needs to be revised before releasing glibc 2.34
->> > > since it might break applications. That's up to the glibc folks. It
->> > > doesn't hurt for liburing to take a safer approach that copes with the
->> > > SIGSTKSZ change in any case.
->> >
->> > glibc folks, please take a look. The commit referenced above broke
->> > compilation of liburing's tests. It's possible that applications will
->> > hit similar issues. Can you check whether the SIGSTKSZ change needs to
->> > be reverted/fixed before releasing glibc 2.34?
->> >
->>
->> It won't be changed for glibc 2.34.
->
->Thanks for the response, H.J. and Paul.
->
->In that case liburing needs this patch.
->
+I recently tried to analyze the performance of Samba using io-uring.
 
-I think so:
+I was using ubuntu 20.04 with the 5.10.0-1023-oem kernel, which is based on v5.10.25, see:
+https://kernel.ubuntu.com/git/kernel-ppa/mirror/ubuntu-oem-5.10-focal.git/log/?h=oem-5.10-prep
+trace-cmd is at version 2.8.3-4build1.
 
-Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
+In order to find the bottleneck I tried to use (trace-cmd is at version 2.8.3-4build1):
 
+  trace-cmd -e all -P ${pid_of_io_uring_worker}
+
+As a result the server was completely dead immediately.
+
+I tried to reproduce this in a virtual machine (inside virtualbox).
+
+I used a modified 'io_uring-cp' that loops forever, see:
+https://github.com/metze-samba/liburing/commit/5e98efed053baf03521692e786c1c55690b04d8e
+
+When I run './io_uring-cp-forever link-cp.c file',
+I see a 'io_wq_manager' and a 'io_wqe_worker-0' kernel thread,
+while './io_uring-cp-forever link-cp.c file' as well as 'io_wqe_worker-0'
+consume about 25% cpu each.
+
+When I run 'trace-cmd -e all -P $pid' for 'io_wqe_worker-0' or 'io_wq_manager'
+I can reproduce the problem, then I found that the same seems to happen for
+also for other kernel threads e.g. '[kworker/1:1-events]', it seems that
+it happens for all kernel threads, which are not completely idle.
+
+Which this:
+
+ From 'top':
+   1341 root      20   0    2512    576    508 S  33,4   0,1   0:10.39 io_uring-cp-for
+   1343 root      20   0       0      0      0 R  29,8   0,0   0:08.43 io_wqe_worker-0
+      7 root      20   0       0      0      0 I   0,3   0,0   0:00.31 kworker/0:1-events
+
+   PID 5 is [kworker/0:0-ata_sff]
+
+# trace-cmd record -e all -P 5'
+Hit Ctrl^C to stop recording
+^CCPU0 data recorded at offset=0x7b8000
+    0 bytes in size
+CPU1 data recorded at offset=0x7b8000
+    69632 bytes in size
+
+# But
+# trace-cmd record -e all -P 7
+=> machine unresponsive (no blinking cursor on the console anymore)
+On the host 'top' shows that the VirtualBoxVM cpu emulator thread 'EMT-1'
+uses 100% cpu, so I guess the guest kernel is in something like an endless
+recursion loop. Maybe a trace function recursing to itself?
+
+On the same VM I tried a 5.12rc8 kernel and there I can also reproduce the
+problem.
+
+I also managed to reproduce the problem without io-uring, just using:
+
+ while true; do cat linux-image-5.12.0-rc8-dbg_5.12.0-rc8-22_amd64.deb > /dev/null; done
+
+in order to keep some kernel threads moving.
+This happens with 5.12rc8 and 5.10.0-1023-oem, but I was not able to
+reproduce any of this using the 5.8.0-50-generic kernel, see
+https://kernel.ubuntu.com/git/ubuntu/ubuntu-focal.git/log/?h=Ubuntu-hwe-5.8-5.8.0-50.56_20.04.1
+
+I was also able to reproduce this with a ubuntu 21.04 vm using
+the 5.11.0-14-generic kernel, see:
+https://kernel.ubuntu.com/git/ubuntu/ubuntu-hirsute.git/log/?h=Ubuntu-5.11.0-14.15
+On this one I only managed to reproduce the problem with
+'./io_uring-cp-forever link-cp.c file', but not with
+'while true; do cat linux-image-5.12.0-rc8-dbg_5.12.0-rc8-22_amd64.deb > /dev/null; done'
+
+
+So it seems the problem was introduced after 5.8 and is not really related to
+io-uring. And it may not be purely related to kernel threads.
+
+With this on 5.12-rc8 (again):
+
+  └─tmux: server,903
+      ├─bash,904
+      │   └─io_uring-cp-for,925 link-cp.c file
+      │       ├─{iou-mgr-925},926
+      │       └─{iou-wrk-925},927
+      └─bash,929
+          └─pstree,938 -a -t -p
+
+I was able to to trace once:
+
+root@ub1704-166:~# trace-cmd record -e all -P 925
+Hit Ctrl^C to stop recording
+^CCPU0 data recorded at offset=0x7b8000
+    10842112 bytes in size
+CPU1 data recorded at offset=0x120f000
+    36450304 bytes in size
+
+But the 2nd run reproduced the problem:
+root@ub1704-166:~# trace-cmd record -e all -P 925
+
+I was also able to reproduce it with:
+
+while true; do cat linux-image-5.12.0-rc8-dbg_5.12.0-rc8-22_amd64.deb > /dev/null; done
+and
+pidofcat=$(pidof cat); echo $pidofcat; trace-cmd record -e all -P $pidofcat
+
+So it seems any busy thread (user or kernel) triggers the problem.
+
+Any ideas what has changed after 5.8?
+
+Thanks!
+metze

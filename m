@@ -2,75 +2,133 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6737D3670D9
-	for <lists+io-uring@lfdr.de>; Wed, 21 Apr 2021 19:03:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E9070368261
+	for <lists+io-uring@lfdr.de>; Thu, 22 Apr 2021 16:22:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244625AbhDURER (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 21 Apr 2021 13:04:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35714 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244583AbhDUREI (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 21 Apr 2021 13:04:08 -0400
-Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77C59C06174A
-        for <io-uring@vger.kernel.org>; Wed, 21 Apr 2021 10:03:34 -0700 (PDT)
-Received: by mail-io1-xd32.google.com with SMTP id q25so11402039iog.5
-        for <io-uring@vger.kernel.org>; Wed, 21 Apr 2021 10:03:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=jhpUKjKeF03jdkdsiH6FBXeP0UI71BLbC4nhsSYvY4c=;
-        b=QlZ0boo8kAUOEe8Dse9c1E9IuAnBvoMRa+zuXQgfLmmDwqnDiEMkWPvFkwQFNIOZG+
-         kUR4iFYcxqo/krIryckuJEh3Xj9fW2a8uggRLsAtVTWKFiOwAhX5BhTzt6SkCJq5NvzV
-         y647sIGsADQIfJApFo88z3BGjmoJ6+hhS+XWqF9bxYD8TpE4fSHVPrYD/VQMGXkhy3Xn
-         zcWArgx8CFTvURrOqQ7OgVuWkv7T8xTk2hIPAVx3itSsA6Bq2UO9dEuFi/8ZIaGnwg1v
-         B39F76gECAC9K2igL6nBpQSF20s09jHVoMbVzoewLnplXgUFrlD2Itfuf0X2POpgFTBQ
-         lyTw==
+        id S236672AbhDVOX1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 22 Apr 2021 10:23:27 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:48292 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S236496AbhDVOX1 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 22 Apr 2021 10:23:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1619101371;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=6dM3vlskxaUCVoSymQo+tBQHrfX2GxQW1OumkU4YCLc=;
+        b=IDkbV92cR3h6tzXj8nMckejhxPOSznY5KdfsMUp2DS5vlsuYiLc4icbWSvE3Sz+Hp/Vm2F
+        vW5aZW3cEkCnXN1Xr94OxBXYWAjUUpyI2jYgG13FEmxcQE9kYHSK08rqUefY1VMku3yQKd
+        h0F4lNkqxKEQS/9EZeAoiEXqP1Un4SY=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-18-MEap3KgBOkuugFQyDrm1RQ-1; Thu, 22 Apr 2021 10:22:49 -0400
+X-MC-Unique: MEap3KgBOkuugFQyDrm1RQ-1
+Received: by mail-ej1-f72.google.com with SMTP id o25-20020a1709061d59b029037c94676df5so7281285ejh.7
+        for <io-uring@vger.kernel.org>; Thu, 22 Apr 2021 07:22:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=jhpUKjKeF03jdkdsiH6FBXeP0UI71BLbC4nhsSYvY4c=;
-        b=ty7XbO2Ao+bFjIk7bZc55LhJD0Dprx/wy4Rb/bGs4SbUlkM6wPTMiV7z4AZjgScYAu
-         dGwiVKYLi6CRXhO5rbxAnAOTRB0DMqYInuWJasVeuTtnUg/Ssnc1n5csh9rl66ChfT6f
-         IAozys0Uopieht1k2rNfPJfWxwX356RZDEgnRb3/S1sIU/T0OPFmdIU4CTJ5p+6a9dQg
-         hk0uGGfYJVq1/rTixIT5I+7VUtikriwlFrvwVF9YxO642C3J/JPFi9DlTu4WHpN2qf/K
-         V745Zvc2XVzdo/kuCzfHnqZuiHwuJu6rDqA2m36co9y9B3Bld6jLHB7usQkU2BgZQI/k
-         LnwA==
-X-Gm-Message-State: AOAM533LBVumIBaWKKXz8cXLVvUGxq3cblR0O/wmYYDJpqztIRb+/Moe
-        C3u2l8xK/rGjBl/UsAg0Vqu5pleR1JgY1A==
-X-Google-Smtp-Source: ABdhPJy0kNmB1m5Yvbd2qGROssINJMIdxIUOqBJOlX5s9GaUCNR/OHXePByTqOezYAIFV7A9AZx8QQ==
-X-Received: by 2002:a02:5d82:: with SMTP id w124mr26801602jaa.21.1619024613847;
-        Wed, 21 Apr 2021 10:03:33 -0700 (PDT)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id d4sm1231047ilg.65.2021.04.21.10.03.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 Apr 2021 10:03:33 -0700 (PDT)
-Subject: Re: [PATCH liburing] tests: remove -EBUSY on CQE backlog tests
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <602ed592631aaa6605d414b12419ca2f1896a810.1618956047.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <1a298439-bec8-160d-e7a0-672542d0be76@kernel.dk>
-Date:   Wed, 21 Apr 2021 11:03:33 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=6dM3vlskxaUCVoSymQo+tBQHrfX2GxQW1OumkU4YCLc=;
+        b=RHVbDEYawyOLroGX7aLMu6Rh8xhD26BZm5zj/X8StdSlwSAr5oK3Yjbl4tbtZN3nkp
+         hF+GYgAL/iCVTAcFQfftwX9p7TK1HWg1iB+IeO3CLpJf7KJ0p8oaRje7i5+AtVhOUJNs
+         Hw9hAXFF3CFSIxpqYtseHBoX07gCWLCXRvj/KzATMCq3XxuhBNQr8f8kYP972S0auDPT
+         nEMVkFzKfGu80KKQXjJNBSk6ko/gLpazcWC8nlCVisfk/6P1hP0mVraEArESH+WDLJrM
+         BfTdBnkCq6RjoXBJAnj+59XGJCGVIQ2ZkV5+eR4FK6xCYCYsP1t9d27l/iX7ZD6CljNI
+         5VFg==
+X-Gm-Message-State: AOAM530k9IUHu2dc4I5Tu5EOqyGcbYZ9wGMOscsdYOPI8bT50kuefv8Y
+        LzZhurUs6ScpYA2i9eKf7umQpYW1tFQm4erftL8+wpz1zuIy+NWDIIocfkqfCkLBE3pc2WoLDYS
+        ZvpldI4lFXGU6dWFBn6E=
+X-Received: by 2002:a17:906:60d6:: with SMTP id f22mr3627822ejk.177.1619101368045;
+        Thu, 22 Apr 2021 07:22:48 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxg6IpTdebpcD59morQGAl2NDtrxuofK+0xAYW+6pVHquUotCJVra+jBhH6twGEGfu7JKrqBg==
+X-Received: by 2002:a17:906:60d6:: with SMTP id f22mr3627797ejk.177.1619101367853;
+        Thu, 22 Apr 2021 07:22:47 -0700 (PDT)
+Received: from steredhat (host-79-34-249-199.business.telecomitalia.it. [79.34.249.199])
+        by smtp.gmail.com with ESMTPSA id ws15sm1985849ejb.38.2021.04.22.07.22.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Apr 2021 07:22:47 -0700 (PDT)
+Date:   Thu, 22 Apr 2021 16:22:45 +0200
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     Stefan Hajnoczi <stefanha@redhat.com>
+Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, libc-alpha@sourceware.org,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
+Subject: Re: [PATCH liburing] examples/ucontext-cp.c: cope with variable
+ SIGSTKSZ
+Message-ID: <20210422142245.evlxjvfw3emh7ivw@steredhat>
+References: <20210413150319.764600-1-stefanha@redhat.com>
+ <YH2VE2RdcH0ISvxH@stefanha-x1.localdomain>
+ <CAMe9rOpK08CJ5TdQ1fZJ2sGUVjHqoTHS2kT8EzDEejuodu8Ksg@mail.gmail.com>
+ <YIFJDgno7deI5syK@stefanha-x1.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <602ed592631aaa6605d414b12419ca2f1896a810.1618956047.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <YIFJDgno7deI5syK@stefanha-x1.localdomain>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/20/21 4:01 PM, Pavel Begunkov wrote:
-> From 5.13 the kernel doesn't limit users submission with CQE backlog,
-> that was previously failed with -EBUSY. Remove related tests.
++Cc: io-uring@vger.kernel.org
++Cc: Pavel Begunkov <asml.silence@gmail.com>
 
-Applied, thanks.
+Original message: 
+https://www.spinics.net/lists/linux-block/msg67077.html
 
--- 
-Jens Axboe
+On Thu, Apr 22, 2021 at 10:59:42AM +0100, Stefan Hajnoczi wrote:
+>On Mon, Apr 19, 2021 at 11:38:07AM -0700, H.J. Lu wrote:
+>> On Mon, Apr 19, 2021 at 7:35 AM Stefan Hajnoczi <stefanha@redhat.com> wrote:
+>> >
+>> > On Tue, Apr 13, 2021 at 04:03:19PM +0100, Stefan Hajnoczi wrote:
+>> > > The size of C arrays at file scope must be constant. The following
+>> > > compiler error occurs with recent upstream glibc (2.33.9000):
+>> > >
+>> > >   CC ucontext-cp
+>> > >   ucontext-cp.c:31:23: error: variably modified ‘stack_buf’ at file scope
+>> > >   31 |         unsigned char stack_buf[SIGSTKSZ];
+>> > >      |                       ^~~~~~~~~
+>> > >   make[1]: *** [Makefile:26: ucontext-cp] Error 1
+>> > >
+>> > > The following glibc commit changed SIGSTKSZ from a constant value to a
+>> > > variable:
+>> > >
+>> > >   commit 6c57d320484988e87e446e2e60ce42816bf51d53
+>> > >   Author: H.J. Lu <hjl.tools@gmail.com>
+>> > >   Date:   Mon Feb 1 11:00:38 2021 -0800
+>> > >
+>> > >     sysconf: Add _SC_MINSIGSTKSZ/_SC_SIGSTKSZ [BZ #20305]
+>> > >   ...
+>> > >   +# define SIGSTKSZ sysconf (_SC_SIGSTKSZ)
+>> > >
+>> > > Allocate the stack buffer explicitly to avoid declaring an array at file
+>> > > scope.
+>> > >
+>> > > Cc: H.J. Lu <hjl.tools@gmail.com>
+>> > > Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
+>> > > ---
+>> > > Perhaps the glibc change needs to be revised before releasing glibc 2.34
+>> > > since it might break applications. That's up to the glibc folks. It
+>> > > doesn't hurt for liburing to take a safer approach that copes with the
+>> > > SIGSTKSZ change in any case.
+>> >
+>> > glibc folks, please take a look. The commit referenced above broke
+>> > compilation of liburing's tests. It's possible that applications will
+>> > hit similar issues. Can you check whether the SIGSTKSZ change needs to
+>> > be reverted/fixed before releasing glibc 2.34?
+>> >
+>>
+>> It won't be changed for glibc 2.34.
+>
+>Thanks for the response, H.J. and Paul.
+>
+>In that case liburing needs this patch.
+>
+
+I think so:
+
+Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
 

@@ -2,159 +2,140 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 353FD36946C
-	for <lists+io-uring@lfdr.de>; Fri, 23 Apr 2021 16:11:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE5D9369474
+	for <lists+io-uring@lfdr.de>; Fri, 23 Apr 2021 16:13:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229890AbhDWOMb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 23 Apr 2021 10:12:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38180 "EHLO
+        id S239051AbhDWOOH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 23 Apr 2021 10:14:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38536 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231585AbhDWOMa (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 23 Apr 2021 10:12:30 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 065AAC061574
-        for <io-uring@vger.kernel.org>; Fri, 23 Apr 2021 07:11:54 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id e7so39586925wrs.11
-        for <io-uring@vger.kernel.org>; Fri, 23 Apr 2021 07:11:53 -0700 (PDT)
+        with ESMTP id S231362AbhDWOOE (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 23 Apr 2021 10:14:04 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A2DAC061574;
+        Fri, 23 Apr 2021 07:13:27 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id y204so24724629wmg.2;
+        Fri, 23 Apr 2021 07:13:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=t9EbI1PDI6EZj8PQ2N+Xk0uN/rsbxe1bUqf1DKTAJjA=;
-        b=pK2WYDLmpdGgSGVkQWhgbaDIJQH3G356nI1USjCpqmlec/X/on7735g2vRPNV4YRW5
-         g7L6YeqBaaa5QtTAl3HYE71AK5CpA1FMhNzBmnVPkaqVFrQj8MZ5IYvqmOUVCIeraVkU
-         aavqB+xK596sPFweYbDcbCjh2xljFOodEg7mif/oevXQdOqVR82jbpOmfCbZR+vd+Heu
-         vPG5A6+FGn+uFBB7dkhJGpVo3bp939yN7HnVacZidj4elmkoXdBShKLiw3FmL5xPjGMJ
-         DKM2PXhTY3a5N+R65j4RXNoA6zaeY1UTccLxb/9G1DjeyOFxDhFQK4aAVCSQajXnz7EJ
-         6OWw==
+        bh=+xcvu/qUqC379ECYMecXBCghxgPo0LkCVkt2Sha9gI0=;
+        b=gQgwCnTzceuYX9YXXn/QOmHMV11y2gRdZn+SaqQAqce3IYcX2Wu6DPsa2XTyXMwA8c
+         Vcs5xo5CfyzTiBEG8jBLci4gkAg46lPW9wOna7DHauPVw3xZ76hVSl8aOT2RQITKOgag
+         SJ3JbPnHe9P+PWd+SODYhml/XsWppDUqCEI64TzAToDrmy9IB1D5Oi9nQanNpAzb6LLu
+         9vOF32avT/iwL3ShCQdjSqnrC5tBgNGMHi9dhlHorSlIX4yLXMvjGkb+JbIZW/I0L9UD
+         n0nou87Fi8LkD1W1jeng96D6VgE+9vAvuhe2nYqHoqTQBnPWkBDqqBhFRZdjVr5jCwKj
+         2wbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=t9EbI1PDI6EZj8PQ2N+Xk0uN/rsbxe1bUqf1DKTAJjA=;
-        b=PE0JFG+J7HhL0FVXU2NP7TjeOdn8O9czkGbTyXKqVxc/Qgd9IJqvYHFffmWSl8jz0d
-         45Ts5xRhgCpio9dBGIWQqmU2mA+n3IJpRd2xQ7x0ORH6glUkE/AdaKATXlWbR6g5KfdK
-         L1VbG/vhXHPMTtmmDB4zmITI/InhI/+XZT17BqZ8yPBkZeKKyfheitWSPyDys+BH4v/Q
-         A38et5SyuPoarAjHuGnlRYwPthV5sTZi1KDv24fCVwjW66qYL3/n2TM4U67Rz97QSR49
-         CgcH4lk1MV3SnEs/SUcKAf2Jrg5DmJizHimHOCXrKKJNmaAn5H+RcwXmvSAZdunwudtC
-         1tJw==
-X-Gm-Message-State: AOAM531w3T/gjgmkUt2YCJPZ3nDLhXbizc9Jpc8Afci1GPmZHUoV2rli
-        pmsCw5j/8fc1akyLHF9mscJdLneXpKP51g==
-X-Google-Smtp-Source: ABdhPJyY3YIFreWKtklukZdNrA503AkQXDWPauakshQdGlRsXV/sZQWpQvW2YCVlr9g6huq+fimlBw==
-X-Received: by 2002:adf:ce12:: with SMTP id p18mr5079081wrn.144.1619187112768;
-        Fri, 23 Apr 2021 07:11:52 -0700 (PDT)
+        bh=+xcvu/qUqC379ECYMecXBCghxgPo0LkCVkt2Sha9gI0=;
+        b=Avu4Hly2pnTL4//HJpe/jOoxGDmBauAJvgyvy/x3mLkeoo6WLvpuz1MU30+BmuHkE/
+         zV9yADX5exXcrseMjZ+cCliub3Eva02iMv0IkzvDi34AaZIiqim1qN3rEugZ+BIqa8md
+         +JWmnfKWV+vVvRGn2LdRlImS0CEM9acy+IlCrGWicA6cVVe11RWcy7lKWLvTjQWtjAcn
+         qZAIWay9k4ieLh08Gahe0CawPsijtG2XoxkVJ7CtK7Xoq5xTXpkMnJhfphFagAFjh/Hg
+         Rs1VjZtCD17yRZcCwPzvSE+dYaCDhLjNlEIxhh4acCOYqTwdPEskMNtPHZcN4vKLlsZK
+         T2VA==
+X-Gm-Message-State: AOAM5325oqdvhBYv/jB72PxfZ6vA2uhq1yMdzYAC7oGRJ6ffG6U/3E/b
+        SKTgq80CdpNtS+lwBgXbN3rapsYu7iY6LA==
+X-Google-Smtp-Source: ABdhPJwGYKqIZGrnrk6Gs4g9YAaDa7qDHh64cpdd7i8Xm82tWJs9djKmU8ZbylX1l5Vqc6GiYhAgWg==
+X-Received: by 2002:a05:600c:6d4:: with SMTP id b20mr5806496wmn.99.1619187206018;
+        Fri, 23 Apr 2021 07:13:26 -0700 (PDT)
 Received: from [192.168.8.197] ([148.252.128.225])
-        by smtp.gmail.com with ESMTPSA id e9sm9460892wrs.84.2021.04.23.07.11.51
+        by smtp.gmail.com with ESMTPSA id j12sm9135705wro.29.2021.04.23.07.13.25
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 Apr 2021 07:11:52 -0700 (PDT)
-Subject: Re: [PATCH] io_uring: check sqring and iopoll_list before shedule
-To:     Hao Xu <haoxu@linux.alibaba.com>, Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <1619018351-75883-1-git-send-email-haoxu@linux.alibaba.com>
+        Fri, 23 Apr 2021 07:13:25 -0700 (PDT)
+Subject: Re: [PATCH liburing] examples/ucontext-cp.c: cope with variable
+ SIGSTKSZ
+To:     Stefano Garzarella <sgarzare@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>
+Cc:     io-uring@vger.kernel.org, "H.J. Lu" <hjl.tools@gmail.com>,
+        libc-alpha@sourceware.org, Jens Axboe <axboe@kernel.dk>,
+        linux-block@vger.kernel.org
+References: <20210413150319.764600-1-stefanha@redhat.com>
+ <YH2VE2RdcH0ISvxH@stefanha-x1.localdomain>
+ <CAMe9rOpK08CJ5TdQ1fZJ2sGUVjHqoTHS2kT8EzDEejuodu8Ksg@mail.gmail.com>
+ <YIFJDgno7deI5syK@stefanha-x1.localdomain>
+ <20210422142245.evlxjvfw3emh7ivw@steredhat>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <88b94017-ab33-510a-b8c7-c1f3c6eb9d70@gmail.com>
-Date:   Fri, 23 Apr 2021 15:11:47 +0100
+Message-ID: <89aaba8e-9a39-5269-201f-83d1f96e1ec0@gmail.com>
+Date:   Fri, 23 Apr 2021 15:13:21 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.9.1
 MIME-Version: 1.0
-In-Reply-To: <1619018351-75883-1-git-send-email-haoxu@linux.alibaba.com>
+In-Reply-To: <20210422142245.evlxjvfw3emh7ivw@steredhat>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/21/21 4:19 PM, Hao Xu wrote:
-> do this to avoid race below:
+On 4/22/21 3:22 PM, Stefano Garzarella wrote:
+> +Cc: io-uring@vger.kernel.org
+> +Cc: Pavel Begunkov <asml.silence@gmail.com>
 > 
->          userspace                         kernel
+> Original message: https://www.spinics.net/lists/linux-block/msg67077.html
 > 
->                                |  check sqring and iopoll_list
-> submit sqe                     |
-> check IORING_SQ_NEED_WAKEUP    |
-> (which is not set)    |        |
->                                |  set IORING_SQ_NEED_WAKEUP
-> wait cqe                       |  schedule(never wakeup again)
+> On Thu, Apr 22, 2021 at 10:59:42AM +0100, Stefan Hajnoczi wrote:
+>> On Mon, Apr 19, 2021 at 11:38:07AM -0700, H.J. Lu wrote:
+>>> On Mon, Apr 19, 2021 at 7:35 AM Stefan Hajnoczi <stefanha@redhat.com> wrote:
+>>> >
+>>> > On Tue, Apr 13, 2021 at 04:03:19PM +0100, Stefan Hajnoczi wrote:
+>>> > > The size of C arrays at file scope must be constant. The following
+>>> > > compiler error occurs with recent upstream glibc (2.33.9000):
+>>> > >
+>>> > >   CC ucontext-cp
+>>> > >   ucontext-cp.c:31:23: error: variably modified ‘stack_buf’ at file scope
+>>> > >   31 |         unsigned char stack_buf[SIGSTKSZ];
+>>> > >      |                       ^~~~~~~~~
+>>> > >   make[1]: *** [Makefile:26: ucontext-cp] Error 1
+>>> > >
+>>> > > The following glibc commit changed SIGSTKSZ from a constant value to a
+>>> > > variable:
+>>> > >
+>>> > >   commit 6c57d320484988e87e446e2e60ce42816bf51d53
+>>> > >   Author: H.J. Lu <hjl.tools@gmail.com>
+>>> > >   Date:   Mon Feb 1 11:00:38 2021 -0800
+>>> > >
+>>> > >     sysconf: Add _SC_MINSIGSTKSZ/_SC_SIGSTKSZ [BZ #20305]
+>>> > >   ...
+>>> > >   +# define SIGSTKSZ sysconf (_SC_SIGSTKSZ)
+>>> > >
+>>> > > Allocate the stack buffer explicitly to avoid declaring an array at file
+>>> > > scope.
+>>> > >
+>>> > > Cc: H.J. Lu <hjl.tools@gmail.com>
+>>> > > Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
+>>> > > ---
+>>> > > Perhaps the glibc change needs to be revised before releasing glibc 2.34
+>>> > > since it might break applications. That's up to the glibc folks. It
+>>> > > doesn't hurt for liburing to take a safer approach that copes with the
+>>> > > SIGSTKSZ change in any case.
+>>> >
+>>> > glibc folks, please take a look. The commit referenced above broke
+>>> > compilation of liburing's tests. It's possible that applications will
+>>> > hit similar issues. Can you check whether the SIGSTKSZ change needs to
+>>> > be reverted/fixed before releasing glibc 2.34?
+>>> >
+>>>
+>>> It won't be changed for glibc 2.34.
+>>
+>> Thanks for the response, H.J. and Paul.
+>>
+>> In that case liburing needs this patch.
+>>
+> 
+> I think so:
+> 
+> Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
 
-Agree, the flag should be set first.
-Haven't tried it, but the patch looks reasonable
+Right, and there are already people complaining
+https://github.com/axboe/liburing/issues/320
 
-> 
-> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
-> ---
-> 
-> Hi all,
-> I'm doing some work to reduce cpu usage in low IO pression, and I
-> removed timeout logic in io_sq_thread() to do some test with fio-3.26,
-> I found that fio hangs in getevents, inifinitely trying to get a cqe,
-> While sq-thread is sleeping. It seems there is race situation, and it
-> is still there even after I fix the issue described above in the commit
-> message. I doubt it is something to do with memory barrier logic
-> between userspace and kernel, I'm trying to address it, not many clues
-> for now.
-> I'll send the fio config and kernel modification I did for test in
-> following mail soon.
-> 
-> Thanks,
-> Hao
-> 
->  fs/io_uring.c | 36 +++++++++++++++++++-----------------
->  1 file changed, 19 insertions(+), 17 deletions(-)
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index dff34975d86b..042f1149db51 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -6802,27 +6802,29 @@ static int io_sq_thread(void *data)
->  			continue;
->  		}
->  
-> -		needs_sched = true;
->  		prepare_to_wait(&sqd->wait, &wait, TASK_INTERRUPTIBLE);
-> -		list_for_each_entry(ctx, &sqd->ctx_list, sqd_list) {
-> -			if ((ctx->flags & IORING_SETUP_IOPOLL) &&
-> -			    !list_empty_careful(&ctx->iopoll_list)) {
-> -				needs_sched = false;
-> -				break;
-> -			}
-> -			if (io_sqring_entries(ctx)) {
-> -				needs_sched = false;
-> -				break;
-> -			}
-> -		}
-> -
-> -		if (needs_sched && !test_bit(IO_SQ_THREAD_SHOULD_PARK, &sqd->state)) {
-> +		if (!test_bit(IO_SQ_THREAD_SHOULD_PARK, &sqd->state)) {
->  			list_for_each_entry(ctx, &sqd->ctx_list, sqd_list)
->  				io_ring_set_wakeup_flag(ctx);
->  
-> -			mutex_unlock(&sqd->lock);
-> -			schedule();
-> -			mutex_lock(&sqd->lock);
-> +			needs_sched = true;
-> +			list_for_each_entry(ctx, &sqd->ctx_list, sqd_list) {
-> +				if ((ctx->flags & IORING_SETUP_IOPOLL) &&
-> +				    !list_empty_careful(&ctx->iopoll_list)) {
-> +					needs_sched = false;
-> +					break;
-> +				}
-> +				if (io_sqring_entries(ctx)) {
-> +					needs_sched = false;
-> +					break;
-> +				}
-> +			}
-> +
-> +			if (needs_sched) {
-> +				mutex_unlock(&sqd->lock);
-> +				schedule();
-> +				mutex_lock(&sqd->lock);
-> +			}
->  			list_for_each_entry(ctx, &sqd->ctx_list, sqd_list)
->  				io_ring_clear_wakeup_flag(ctx);
->  		}
-> 
 
 -- 
 Pavel Begunkov

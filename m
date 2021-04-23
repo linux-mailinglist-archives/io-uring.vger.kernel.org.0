@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 907A23689B0
-	for <lists+io-uring@lfdr.de>; Fri, 23 Apr 2021 02:19:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A60773689B3
+	for <lists+io-uring@lfdr.de>; Fri, 23 Apr 2021 02:19:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235829AbhDWAUS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 22 Apr 2021 20:20:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53754 "EHLO
+        id S235812AbhDWAUU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 22 Apr 2021 20:20:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231605AbhDWAUR (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 22 Apr 2021 20:20:17 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2938AC06174A
-        for <io-uring@vger.kernel.org>; Thu, 22 Apr 2021 17:19:42 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id t14-20020a05600c198eb029012eeb3edfaeso262472wmq.2
-        for <io-uring@vger.kernel.org>; Thu, 22 Apr 2021 17:19:42 -0700 (PDT)
+        with ESMTP id S235960AbhDWAUT (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 22 Apr 2021 20:20:19 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4689AC06174A
+        for <io-uring@vger.kernel.org>; Thu, 22 Apr 2021 17:19:43 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id h4so37504903wrt.12
+        for <io-uring@vger.kernel.org>; Thu, 22 Apr 2021 17:19:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=UtiIxQMHHlP0o1mHfpWI6vrlAZnfhwNJEFQFjeXQwdg=;
-        b=Yw+6uhRrHBOaJ/3qSyvAXJMCPjH+CKHd4gRBs4Y/JXsugYle3p9XkI3C2/nE2hUctU
-         dY9OPmb9fAdNSYZ6+kgYwDHjDMXSPLFYYdDLV6SrHaRFxXe25uZZUCoE1e1lvGpOC1pE
-         C/62rkUvIcAyWvuvhlPNWx3BwZT8EBQuw2lYmMPJHPsUl8XXIylbHL5pwMERJHqbFt+J
-         qxMVSiHtuc9VqRNMGpAMQvyicyYSY0XUfQqaeMgvMUA5novRU96JUhyULjtDf1LqEaoM
-         GJM6vbAKQsPrSK3s4GHJD5F1WI7Si/Ym7C6PEaSYwsaq2aU+fnGFzLqUyygSyLfVx5ou
-         4I2w==
+        bh=aQG4jTT7YcrwNfDP6CXuUUy04D+QKli+V496CCL1Nqk=;
+        b=vhJDxvrapgLttBeiRekqcMDPZUNUoj5qW+Vnl58jTxUjGZtJXmLt9J74zbs1lVYIvw
+         4hHXQt4nok9/t71ZNsxmwozjOnGFSbgGO26T5cBio9zub9ikYnPGsCJODbBnjkGBS8Wx
+         7xQQSlJZgOBO7UZS+X/ghqsU53A0uQ+Uucs2WuVSRR+vQBebVWZpGGm230lv72Egn2KJ
+         3yW+kxQ/nn9M3mjSU7tNfKELHc7lu+XFcudLqfs5aEjZ5y9HOdBFzJd4cA0VvVApdFAq
+         tvZig3NQu5YdOrl1u/ZSSPbNE3PT97U4EJKYqPYDO6AiltFZfmniPzOm/uzLpHmRvyiS
+         7hNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=UtiIxQMHHlP0o1mHfpWI6vrlAZnfhwNJEFQFjeXQwdg=;
-        b=IWdXlM5ypy0TO5hwWXZFq0k8BUxYkJa7mQ+jbx3+cHM6sBF/g9wOpBrrdGrkQWLUhu
-         c6XTBaDTas4iroi4+b+pRE1mmmzjBICXF9R4VQlaczXtcvIpmValn/Py0Ly6Pmg7PdxH
-         b0lRaKB5pZzGSqY82yzuyb7Bpko+EFTq3edYE2RsPtkvSyn1jBaseRxjhY7IKk6QuDsZ
-         T34UOTevb34FupmDxDQ/SL/towzW5NXzNeIQCgR85mKYlp7OKGG++/im8Y0F7O4vtPYV
-         WZ4Ok8YsEtyjvkzHGqD9wGIXSG9KpGt5XGBjXKYrTHQiXE2khv9mgmDJSXyJB7xJKFLq
-         OPiA==
-X-Gm-Message-State: AOAM5316FQE6kJRZDP1A4WdUG0URDvpwXtQmXv5XEQzl5/s21zbpJnQy
-        ESZKA5m/tzPU+x6h9IRXyQA=
-X-Google-Smtp-Source: ABdhPJxuIQ02EcPlCjhgu/wZE4EnAD/IUjrzYL2DJduLTi1QTweXJN7ui5VUKuRgTaCqfg9NHc7x5A==
-X-Received: by 2002:a1c:2c0a:: with SMTP id s10mr2621024wms.158.1619137180974;
-        Thu, 22 Apr 2021 17:19:40 -0700 (PDT)
+        bh=aQG4jTT7YcrwNfDP6CXuUUy04D+QKli+V496CCL1Nqk=;
+        b=c9m/Du9YO36vdLLP35qbLYmcen6UG5XgcC3eFuUMnL5mj0L0maN+dKIXflZUEP6twR
+         yazUx/KVaswvIblmjcD0noBAm94G5Cnau2Br4Y+iGz6BeDjlQjf1tDyqh5zHBWvSMFfq
+         6kmddQ9P4KW4k5vj9KB1+Z4N+3rosjD6B8sDP/iJSWRh4YQdrwVbAzcMLAxCBc2f4GLV
+         xkHUd3vIWDV95su6kH6XQGP7E0SvQ6xhG1IP4qfNA9c0TAAEH0eyEZiZljsYVmK1m+UV
+         XPc4w+i2mi6q/v6nWWgSPirGc5EHPgWGQPZJdwsJEe1TvDDGDcZpStG4w7zb4APYTxb8
+         vAgg==
+X-Gm-Message-State: AOAM531GQ6eH0HpWLMUttqH1bl4DhRbltycNu57nJH3CNkL/rvwEw37F
+        +O22woUBKYVv0GNgtqn0sFc=
+X-Google-Smtp-Source: ABdhPJx24sjxZzQdULknrw9JFeYyeOf2LfvAgkOCG2mjrAEItlbJ1FyQqgryeVaq80DdGSJ12D4NYg==
+X-Received: by 2002:a5d:414c:: with SMTP id c12mr1070441wrq.392.1619137182124;
+        Thu, 22 Apr 2021 17:19:42 -0700 (PDT)
 Received: from localhost.localdomain ([148.252.128.225])
-        by smtp.gmail.com with ESMTPSA id g12sm6369605wru.47.2021.04.22.17.19.40
+        by smtp.gmail.com with ESMTPSA id g12sm6369605wru.47.2021.04.22.17.19.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Apr 2021 17:19:40 -0700 (PDT)
+        Thu, 22 Apr 2021 17:19:41 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 03/11] io_uring: decouple CQE filling from requests
-Date:   Fri, 23 Apr 2021 01:19:20 +0100
-Message-Id: <c9b8da9e42772db2033547dfebe479dc972a0f2c.1619128798.git.asml.silence@gmail.com>
+Subject: [PATCH 04/11] io_uring: preparation for rsrc tagging
+Date:   Fri, 23 Apr 2021 01:19:21 +0100
+Message-Id: <83729010aa9b34121aa6c2c3110d8d39e693e22f.1619128798.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <cover.1619128798.git.asml.silence@gmail.com>
 References: <cover.1619128798.git.asml.silence@gmail.com>
@@ -61,211 +61,128 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Make __io_cqring_fill_event() agnostic of struct io_kiocb, pass all the
-data needed directly into it. Will be used to post rsrc removal
-completions, which don't have an associated request.
+We need a way to notify userspace when a lazily removed resource
+actually died out. This will be done by associating a tag, which is u64
+exactly like req->user_data, with each rsrc (e.g. buffer of file). A CQE
+will be posted once a resource is actually put down.
+
+Tag 0 is a special value set by default, for whcih it don't generate an
+CQE, so providing the old behaviour.
+
+Don't expose it to the userspace yet, but prepare internally, allocate
+buffers, add all posting hooks, etc.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 55 ++++++++++++++++++++++++++-------------------------
- 1 file changed, 28 insertions(+), 27 deletions(-)
+ fs/io_uring.c | 35 +++++++++++++++++++++++++++++++----
+ 1 file changed, 31 insertions(+), 4 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index a1f89340e844..23f052a1d964 100644
+index 23f052a1d964..0c3936fe1943 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -1025,7 +1025,8 @@ static void io_uring_try_cancel_requests(struct io_ring_ctx *ctx,
- static void io_uring_cancel_sqpoll(struct io_sq_data *sqd);
- static struct io_rsrc_node *io_rsrc_node_alloc(struct io_ring_ctx *ctx);
+@@ -214,6 +214,7 @@ struct io_fixed_file {
  
--static bool io_cqring_fill_event(struct io_kiocb *req, long res, unsigned cflags);
-+static bool io_cqring_fill_event(struct io_ring_ctx *ctx, u64 user_data,
-+				 long res, unsigned int cflags);
- static void io_put_req(struct io_kiocb *req);
- static void io_put_req_deferred(struct io_kiocb *req, int nr);
- static void io_dismantle_req(struct io_kiocb *req);
-@@ -1266,7 +1267,7 @@ static void io_kill_timeout(struct io_kiocb *req, int status)
- 		atomic_set(&req->ctx->cq_timeouts,
- 			atomic_read(&req->ctx->cq_timeouts) + 1);
- 		list_del_init(&req->timeout.list);
--		io_cqring_fill_event(req, status, 0);
-+		io_cqring_fill_event(req->ctx, req->user_data, status, 0);
- 		io_put_req_deferred(req, 1);
- 	}
- }
-@@ -1500,10 +1501,9 @@ static inline void req_ref_get(struct io_kiocb *req)
- 	atomic_inc(&req->refs);
- }
+ struct io_rsrc_put {
+ 	struct list_head list;
++	u64 tag;
+ 	union {
+ 		void *rsrc;
+ 		struct file *file;
+@@ -239,6 +240,7 @@ typedef void (rsrc_put_fn)(struct io_ring_ctx *ctx, struct io_rsrc_put *prsrc);
+ struct io_rsrc_data {
+ 	struct io_ring_ctx		*ctx;
  
--static bool io_cqring_event_overflow(struct io_kiocb *req, long res,
--				     unsigned int cflags)
-+static bool io_cqring_event_overflow(struct io_ring_ctx *ctx, u64 user_data,
-+				     long res, unsigned int cflags)
++	u64				*tags;
+ 	rsrc_put_fn			*do_put;
+ 	atomic_t			refs;
+ 	struct completion		done;
+@@ -7112,11 +7114,13 @@ static int io_rsrc_ref_quiesce(struct io_rsrc_data *data, struct io_ring_ctx *ct
+ 
+ static void io_rsrc_data_free(struct io_rsrc_data *data)
  {
--	struct io_ring_ctx *ctx = req->ctx;
- 	struct io_overflow_cqe *ocqe;
- 
- 	ocqe = kmalloc(sizeof(*ocqe), GFP_ATOMIC | __GFP_ACCOUNT);
-@@ -1521,20 +1521,19 @@ static bool io_cqring_event_overflow(struct io_kiocb *req, long res,
- 		set_bit(0, &ctx->cq_check_overflow);
- 		ctx->rings->sq_flags |= IORING_SQ_CQ_OVERFLOW;
- 	}
--	ocqe->cqe.user_data = req->user_data;
-+	ocqe->cqe.user_data = user_data;
- 	ocqe->cqe.res = res;
- 	ocqe->cqe.flags = cflags;
- 	list_add_tail(&ocqe->list, &ctx->cq_overflow_list);
- 	return true;
++	kvfree(data->tags);
+ 	kfree(data);
  }
  
--static inline bool __io_cqring_fill_event(struct io_kiocb *req, long res,
--					     unsigned int cflags)
-+static inline bool __io_cqring_fill_event(struct io_ring_ctx *ctx, u64 user_data,
-+					  long res, unsigned int cflags)
+ static struct io_rsrc_data *io_rsrc_data_alloc(struct io_ring_ctx *ctx,
+-					       rsrc_put_fn *do_put)
++					       rsrc_put_fn *do_put,
++					       unsigned nr)
  {
--	struct io_ring_ctx *ctx = req->ctx;
- 	struct io_uring_cqe *cqe;
+ 	struct io_rsrc_data *data;
  
--	trace_io_uring_complete(ctx, req->user_data, res, cflags);
-+	trace_io_uring_complete(ctx, user_data, res, cflags);
+@@ -7124,6 +7128,12 @@ static struct io_rsrc_data *io_rsrc_data_alloc(struct io_ring_ctx *ctx,
+ 	if (!data)
+ 		return NULL;
  
- 	/*
- 	 * If we can't get a cq entry, userspace overflowed the
-@@ -1543,19 +1542,19 @@ static inline bool __io_cqring_fill_event(struct io_kiocb *req, long res,
- 	 */
- 	cqe = io_get_cqring(ctx);
- 	if (likely(cqe)) {
--		WRITE_ONCE(cqe->user_data, req->user_data);
-+		WRITE_ONCE(cqe->user_data, user_data);
- 		WRITE_ONCE(cqe->res, res);
- 		WRITE_ONCE(cqe->flags, cflags);
- 		return true;
++	data->tags = kvcalloc(nr, sizeof(*data->tags), GFP_KERNEL);
++	if (!data->tags) {
++		kfree(data);
++		return NULL;
++	}
++
+ 	atomic_set(&data->refs, 1);
+ 	data->ctx = ctx;
+ 	data->do_put = do_put;
+@@ -7488,6 +7498,21 @@ static void __io_rsrc_put_work(struct io_rsrc_node *ref_node)
+ 
+ 	list_for_each_entry_safe(prsrc, tmp, &ref_node->rsrc_list, list) {
+ 		list_del(&prsrc->list);
++
++		if (prsrc->tag) {
++			bool ring_lock = ctx->flags & IORING_SETUP_IOPOLL;
++			unsigned long flags;
++
++			io_ring_submit_lock(ctx, ring_lock);
++			spin_lock_irqsave(&ctx->completion_lock, flags);
++			io_cqring_fill_event(ctx, prsrc->tag, 0, 0);
++			/* TODO: drain cq accounting */
++			io_commit_cqring(ctx);
++			spin_unlock_irqrestore(&ctx->completion_lock, flags);
++			io_cqring_ev_posted(ctx);
++			io_ring_submit_unlock(ctx, ring_lock);
++		}
++
+ 		rsrc_data->do_put(ctx, prsrc);
+ 		kfree(prsrc);
  	}
--	return io_cqring_event_overflow(req, res, cflags);
-+	return io_cqring_event_overflow(ctx, user_data, res, cflags);
+@@ -7577,7 +7602,7 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
+ 	if (ret)
+ 		return ret;
+ 
+-	file_data = io_rsrc_data_alloc(ctx, io_rsrc_file_put);
++	file_data = io_rsrc_data_alloc(ctx, io_rsrc_file_put, nr_args);
+ 	if (!file_data)
+ 		return -ENOMEM;
+ 	ctx->file_data = file_data;
+@@ -7678,7 +7703,7 @@ static int io_sqe_file_register(struct io_ring_ctx *ctx, struct file *file,
+ #endif
  }
  
- /* not as hot to bloat with inlining */
--static noinline bool io_cqring_fill_event(struct io_kiocb *req, long res,
--					  unsigned int cflags)
-+static noinline bool io_cqring_fill_event(struct io_ring_ctx *ctx, u64 user_data,
-+					  long res, unsigned int cflags)
+-static int io_queue_rsrc_removal(struct io_rsrc_data *data,
++static int io_queue_rsrc_removal(struct io_rsrc_data *data, unsigned idx,
+ 				 struct io_rsrc_node *node, void *rsrc)
  {
--	return __io_cqring_fill_event(req, res, cflags);
-+	return __io_cqring_fill_event(ctx, user_data, res, cflags);
- }
+ 	struct io_rsrc_put *prsrc;
+@@ -7687,6 +7712,7 @@ static int io_queue_rsrc_removal(struct io_rsrc_data *data,
+ 	if (!prsrc)
+ 		return -ENOMEM;
  
- static void io_req_complete_post(struct io_kiocb *req, long res,
-@@ -1565,7 +1564,7 @@ static void io_req_complete_post(struct io_kiocb *req, long res,
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&ctx->completion_lock, flags);
--	__io_cqring_fill_event(req, res, cflags);
-+	__io_cqring_fill_event(ctx, req->user_data, res, cflags);
- 	/*
- 	 * If we're the last reference to this request, add to our locked
- 	 * free_list cache.
-@@ -1776,7 +1775,8 @@ static bool io_kill_linked_timeout(struct io_kiocb *req)
- 		io_remove_next_linked(req);
- 		link->timeout.head = NULL;
- 		if (hrtimer_try_to_cancel(&io->timer) != -1) {
--			io_cqring_fill_event(link, -ECANCELED, 0);
-+			io_cqring_fill_event(link->ctx, link->user_data,
-+					     -ECANCELED, 0);
- 			io_put_req_deferred(link, 1);
- 			return true;
- 		}
-@@ -1795,7 +1795,7 @@ static void io_fail_links(struct io_kiocb *req)
- 		link->link = NULL;
- 
- 		trace_io_uring_fail_link(req, link);
--		io_cqring_fill_event(link, -ECANCELED, 0);
-+		io_cqring_fill_event(link->ctx, link->user_data, -ECANCELED, 0);
- 		io_put_req_deferred(link, 2);
- 		link = nxt;
- 	}
-@@ -2116,7 +2116,8 @@ static void io_submit_flush_completions(struct io_comp_state *cs,
- 	spin_lock_irq(&ctx->completion_lock);
- 	for (i = 0; i < nr; i++) {
- 		req = cs->reqs[i];
--		__io_cqring_fill_event(req, req->result, req->compl.cflags);
-+		__io_cqring_fill_event(ctx, req->user_data, req->result,
-+					req->compl.cflags);
- 	}
- 	io_commit_cqring(ctx);
- 	spin_unlock_irq(&ctx->completion_lock);
-@@ -2256,7 +2257,7 @@ static void io_iopoll_complete(struct io_ring_ctx *ctx, unsigned int *nr_events,
- 		if (req->flags & REQ_F_BUFFER_SELECTED)
- 			cflags = io_put_rw_kbuf(req);
- 
--		__io_cqring_fill_event(req, req->result, cflags);
-+		__io_cqring_fill_event(ctx, req->user_data, req->result, cflags);
- 		(*nr_events)++;
- 
- 		if (req_ref_put_and_test(req))
-@@ -4869,7 +4870,7 @@ static bool io_poll_complete(struct io_kiocb *req, __poll_t mask)
- 	}
- 	if (req->poll.events & EPOLLONESHOT)
- 		flags = 0;
--	if (!io_cqring_fill_event(req, error, flags)) {
-+	if (!io_cqring_fill_event(ctx, req->user_data, error, flags)) {
- 		io_poll_remove_waitqs(req);
- 		req->poll.done = true;
- 		flags = 0;
-@@ -5197,7 +5198,7 @@ static bool io_poll_remove_one(struct io_kiocb *req)
- 
- 	do_complete = io_poll_remove_waitqs(req);
- 	if (do_complete) {
--		io_cqring_fill_event(req, -ECANCELED, 0);
-+		io_cqring_fill_event(req->ctx, req->user_data, -ECANCELED, 0);
- 		io_commit_cqring(req->ctx);
- 		req_set_fail_links(req);
- 		io_put_req_deferred(req, 1);
-@@ -5449,7 +5450,7 @@ static enum hrtimer_restart io_timeout_fn(struct hrtimer *timer)
- 	atomic_set(&req->ctx->cq_timeouts,
- 		atomic_read(&req->ctx->cq_timeouts) + 1);
- 
--	io_cqring_fill_event(req, -ETIME, 0);
-+	io_cqring_fill_event(ctx, req->user_data, -ETIME, 0);
- 	io_commit_cqring(ctx);
- 	spin_unlock_irqrestore(&ctx->completion_lock, flags);
- 
-@@ -5491,7 +5492,7 @@ static int io_timeout_cancel(struct io_ring_ctx *ctx, __u64 user_data)
- 		return PTR_ERR(req);
- 
- 	req_set_fail_links(req);
--	io_cqring_fill_event(req, -ECANCELED, 0);
-+	io_cqring_fill_event(ctx, req->user_data, -ECANCELED, 0);
- 	io_put_req_deferred(req, 1);
++	prsrc->tag = data->tags[idx];
+ 	prsrc->rsrc = rsrc;
+ 	list_add(&prsrc->list, &node->rsrc_list);
  	return 0;
- }
-@@ -5564,7 +5565,7 @@ static int io_timeout_remove(struct io_kiocb *req, unsigned int issue_flags)
- 		ret = io_timeout_update(ctx, tr->addr, &tr->ts,
- 					io_translate_timeout_mode(tr->flags));
+@@ -7727,7 +7753,8 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
  
--	io_cqring_fill_event(req, ret, 0);
-+	io_cqring_fill_event(ctx, req->user_data, ret, 0);
- 	io_commit_cqring(ctx);
- 	spin_unlock_irq(&ctx->completion_lock);
- 	io_cqring_ev_posted(ctx);
-@@ -5716,7 +5717,7 @@ static void io_async_find_and_cancel(struct io_ring_ctx *ctx,
- done:
- 	if (!ret)
- 		ret = success_ret;
--	io_cqring_fill_event(req, ret, 0);
-+	io_cqring_fill_event(ctx, req->user_data, ret, 0);
- 	io_commit_cqring(ctx);
- 	spin_unlock_irqrestore(&ctx->completion_lock, flags);
- 	io_cqring_ev_posted(ctx);
-@@ -5773,7 +5774,7 @@ static int io_async_cancel(struct io_kiocb *req, unsigned int issue_flags)
- 
- 	spin_lock_irq(&ctx->completion_lock);
- done:
--	io_cqring_fill_event(req, ret, 0);
-+	io_cqring_fill_event(ctx, req->user_data, ret, 0);
- 	io_commit_cqring(ctx);
- 	spin_unlock_irq(&ctx->completion_lock);
- 	io_cqring_ev_posted(ctx);
+ 		if (file_slot->file_ptr) {
+ 			file = (struct file *)(file_slot->file_ptr & FFS_MASK);
+-			err = io_queue_rsrc_removal(data, ctx->rsrc_node, file);
++			err = io_queue_rsrc_removal(data, up->offset + done,
++						    ctx->rsrc_node, file);
+ 			if (err)
+ 				break;
+ 			file_slot->file_ptr = 0;
 -- 
 2.31.1
 

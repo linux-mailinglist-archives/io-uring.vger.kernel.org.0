@@ -2,80 +2,75 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BE71036A393
-	for <lists+io-uring@lfdr.de>; Sun, 25 Apr 2021 01:26:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2516B36A394
+	for <lists+io-uring@lfdr.de>; Sun, 25 Apr 2021 01:26:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230086AbhDXX1M (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 24 Apr 2021 19:27:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45596 "EHLO
+        id S230111AbhDXX1T (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 24 Apr 2021 19:27:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230099AbhDXX1K (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 24 Apr 2021 19:27:10 -0400
+        with ESMTP id S230099AbhDXX1S (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 24 Apr 2021 19:27:18 -0400
 Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B74E5C061574
-        for <io-uring@vger.kernel.org>; Sat, 24 Apr 2021 16:26:30 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D24CFC061574
+        for <io-uring@vger.kernel.org>; Sat, 24 Apr 2021 16:26:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
          s=42; h=Message-Id:Date:Cc:To:From;
-        bh=Qa49ru3tr2Ruzg+RyqK06FZnXXKocYRzJqRAX/emBW4=; b=GQkRc2r8Xu3zK+k3C/FnoAWrNU
-        aN81ZFRbClEvFmq8hoKYDd+lAVfmJFAiIFe0AeSLNjVEoe68q/A8n/Exhc3TK4LVNPjuFH4zRdP9f
-        SEOkvD61vOYF+fri4evlLRQQaIVcsG9WEbW2fQigkqqy51qdclqukYKBM+LkDXPsnKVvPTn9FT7Jf
-        89MJJM0hFlHAv03Y0EnXydclbP+cOBnXJQkvAYoM8l9dMf8Zs+LGu9Vf1SRoK1ZY6KuP6gty+OjCh
-        vUfm0p3skg0H35ZUIF0P60Bb3atybewroIkZBewf896/lxUN++1q0mJRwjH85puvhX1cqdE5f6i3t
-        AVkM6fRudbiH141n2v9Yh7c0K2kX+jo2qJ5mq5aUVL+RWj5s6B6vuifESZkiMeTRtn6TZTS4ghesa
-        xX2/AJ8b7Lw4M/bWZMV4v0WDQqQ2x0TmwfuQL0bpih1u4GKj2Wp9uE4npLqgDlRGlkIXeXZcvAGWC
-        rYfIhSFDXulNtPuJr2lng20q;
+        bh=4kjcA47Fen3EsGKPal3bxcwWV/ZU/R6V1kTvJ6dCdcc=; b=IEUKV85qtlNgxDJsc6Nq7G3k71
+        Y6bz5Dj1n4fGPcinJL7dMe05Iynz/cRZwIseN5VUjvioakXpGWiNhLlNxhVE3hl6G3dW1Iy8fZvsD
+        mwF4rx6utqnlctKyvG9c7xMEF9vKjNQIs8z9a9wNw1baT9VTFzAWdfE2fYUpHsbAwm0RxvN0RaW6I
+        8FjJfcA0SIK+9WcHILjg2TtxLdNVjsG/6I+1CI9YVa783wSGMxkgApJpG798XVNCAD8SoLtfy9is5
+        TXy2oIykichiVtgf+sD+cJPQYPuXtJgEYvjKw8XznqsjtS5oNbsuC7yRUE9VtKEMVIlf1PyYF3mtp
+        XGvrIXH1HXlDH3KfPhd8neKrEHsET6izJDeJHatlWsQouFEpl2jb7lLBU+vFHrsuGEhUBDmLnFo7y
+        SDf1mICNpQMIq3VyFBgeoJ1TCSmFQ9qh5nhFdE/xG7kdee6DD+xr95XweU0PwqPhlwl8tTXhHPqYS
+        r5Ef68IkUR/EUTv38Kdy/5St;
 Received: from [127.0.0.2] (localhost [127.0.0.1])
         by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
         (Exim)
-        id 1laRfI-0007Vd-G1; Sat, 24 Apr 2021 23:26:20 +0000
+        id 1laRfX-0007W2-0c; Sat, 24 Apr 2021 23:26:35 +0000
 From:   Stefan Metzmacher <metze@samba.org>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
 Cc:     Stefan Metzmacher <metze@samba.org>
-Subject: [PATCH v3 0/6] Complete setup before calling wake_up_new_task()
-Date:   Sun, 25 Apr 2021 01:26:02 +0200
-Message-Id: <cover.1619306115.git.metze@samba.org>
+Subject: [PATCH v3 1/6] kernel: always initialize task->pf_io_worker to NULL
+Date:   Sun, 25 Apr 2021 01:26:03 +0200
+Message-Id: <9ac733469378af9c154b2eb496f71a7d5e4182ef.1619306115.git.metze@samba.org>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1619306115.git.metze@samba.org>
+References: <cover.1619306115.git.metze@samba.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi,
+Otherwise io_wq_worker_{running,sleeping}() may dereference an
+invalid pointer (in future). Currently all users of create_io_thread()
+are fine and get task->pf_io_worker = NULL implicitly from the
+wq_manager, which got it either from the userspace thread
+of the sq_thread, which explicitly reset it to NULL.
 
-now that we have an explicit wake_up_new_task() in order to start the
-result from create_io_thread(), we should set things up before calling
-wake_up_new_task().
+I think it's safer to always reset it in order to avoid future
+problems.
 
-Changes in v3:
- - rebased on for-5.13/io_uring.
- - I dropped this:
-  fs/proc: hide PF_IO_WORKER in get_task_cmdline()
- - I added:
-  set_task_comm() overflow checks
+Fixes: 3bfe6106693b ("io-wq: fork worker threads from original task")
+cc: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Stefan Metzmacher <metze@samba.org>
+---
+ kernel/fork.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Changes in v2:
-
-- I dropped/deferred these changes:
-  - We no longer allow a userspace process to change
-    /proc/<pid>/[task/<tid>]/comm
-  - We dynamically generate comm names (up to 63 chars)
-    via io_wq_worker_comm(), similar to wq_worker_comm()
-
-Stefan Metzmacher (6):
-  kernel: always initialize task->pf_io_worker to NULL
-  io_uring: io_sq_thread() no longer needs to reset
-    current->pf_io_worker
-  io-wq: call set_task_comm() before wake_up_new_task()
-  io_uring: complete sq_thread setup before calling wake_up_new_task()
-  io-wq: warn about future set_task_comm() overflows.
-  io_uring: warn about future set_task_comm() overflows.
-
- fs/io-wq.c    | 20 ++++++++++++++++----
- fs/io_uring.c | 34 +++++++++++++++++++++++-----------
- kernel/fork.c |  1 +
- 3 files changed, 40 insertions(+), 15 deletions(-)
-
+diff --git a/kernel/fork.c b/kernel/fork.c
+index b81ccb1ca3a7..224c8317df34 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -927,6 +927,7 @@ static struct task_struct *dup_task_struct(struct task_struct *orig, int node)
+ 	tsk->splice_pipe = NULL;
+ 	tsk->task_frag.page = NULL;
+ 	tsk->wake_q.next = NULL;
++	tsk->pf_io_worker = NULL;
+ 
+ 	account_kernel_stack(tsk, 1);
+ 
 -- 
 2.25.1
 

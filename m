@@ -2,56 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A01D336A78E
-	for <lists+io-uring@lfdr.de>; Sun, 25 Apr 2021 15:32:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C5F3936A78F
+	for <lists+io-uring@lfdr.de>; Sun, 25 Apr 2021 15:32:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230235AbhDYNd1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 25 Apr 2021 09:33:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57876 "EHLO
+        id S230238AbhDYNd2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 25 Apr 2021 09:33:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229997AbhDYNd1 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 25 Apr 2021 09:33:27 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48C11C061574
-        for <io-uring@vger.kernel.org>; Sun, 25 Apr 2021 06:32:46 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id i21-20020a05600c3555b029012eae2af5d4so3670025wmq.4
-        for <io-uring@vger.kernel.org>; Sun, 25 Apr 2021 06:32:46 -0700 (PDT)
+        with ESMTP id S229997AbhDYNd2 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 25 Apr 2021 09:33:28 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 271D2C061756
+        for <io-uring@vger.kernel.org>; Sun, 25 Apr 2021 06:32:47 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id e5so24403083wrg.7
+        for <io-uring@vger.kernel.org>; Sun, 25 Apr 2021 06:32:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=nnhNhGQkVpAobDJ3mIZeuFkl+LPGEeJpZsBSaAgVrJQ=;
-        b=VzEQbXWgujbqOZfCT6Z9jsjw3wQbmwGQSylDKMse1nQZLn6t6KmpgESaW6b0ZLHaVh
-         +Im5599V41h4RzfazdfL1QgE5o0qbJHVUH8bKadMloUR8JsIAUrVa5qDwhqkOlgIVAKf
-         uFQZOVa+vbM6FSej0wqVALCPvxCiQGv0pByJjkepj5kNeRe63ZbwLk/CdpIwjp9WU1g4
-         huJ4qZyiKP0gs5IZD2D7S1A5u/o8bOem8nqIi3dmObiar6pnIUU7r9U/QEtRmI13QuLL
-         mdU7FwWtnTJ2iIk4TfxMh/BH5YtNHpIdaENkYDULCG49CvZyABAOdY5w0xmV7zknGOm6
-         9nXQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=y5ry5ZCEQKPQ4311QpKvMS+Z84DoM6EOvBGc5rOLRlY=;
+        b=i08qJ0AkboGFCtVDWp3bmo4FAcbBEaFxiz2SkLs3jxMFCpiqa6V2uuDYrycxmdOyjK
+         FUfPhDOaXnvY90AskjCMu3Vv1IIjIP2hkQfxXWD0Q92/sbCZr4Dt8JizmXWU4dG19lXa
+         v1Qbl3ReyYij9pNOepuVIqbhFCanG1IrRWXbmZisMgIalVCqZIZS1jZ/Jo/r/vb4B28L
+         jOopVFNrmfdGVlsajEJK8YZz7Zvxxp+RIMJoiIIPw47YB8mrzKy2xzTRwo0JlH9NtZTk
+         NFjMxs2UeefYL0bLFpgOz1Uc3IQD/ILcFYzidwAUABFUkJPghUgisgQGOWAcgy2Sx8tl
+         DQBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=nnhNhGQkVpAobDJ3mIZeuFkl+LPGEeJpZsBSaAgVrJQ=;
-        b=DxPLnDOKak4m2F0QmS+wQ2G9AnrbInlQ/DwV6qtxEZeDYNosqWycpFoVf/Dhsf4rWY
-         KoUyJYi6/M8Jp6pt99miFxYGrEy9s9a0+e+WarVTmZzHxavnXVJvLNOx/VW2XaTaV9i5
-         YrNA7sNiF4rlXFnT6CM7Yq4e/Ui9idzbiNNi5SBKmYe6ChwO/oI4CCVX0b0TAmE7tJkN
-         DPHReifVudWVs2G/nXMztdSEdIArcA6b2TC5MU7v9FK+5tFYOLOgSR7XUbw6AaRhdNTD
-         YPWnys1FFjps/ieoNH64p5MSspGKkT/YrwBsfgW0EwKJrd9zmPMyQ2wwaVibcACxt54e
-         ppbw==
-X-Gm-Message-State: AOAM532hA1GxMhcqlvFaXBm5O9I1d+IfIPWC68DLX4oZOZwT5qF7i3L4
-        MtPxEM7+v/F3NgDmm4rQ3MamEtB9lYM=
-X-Google-Smtp-Source: ABdhPJwclwsHXSR8YS/C0RzoErxkdMd+T+yPSex6TIoNsBxfX7La64qTVjUKS9Vz3TDg+4tE3bnFKw==
-X-Received: by 2002:a1c:7c08:: with SMTP id x8mr15812189wmc.130.1619357565071;
+        bh=y5ry5ZCEQKPQ4311QpKvMS+Z84DoM6EOvBGc5rOLRlY=;
+        b=H3ROUDO6QZ5hjSqNcuAs2fp9O7NxfX5oWaTqq8Rah26KiWw9NJtfYR8ND9Ro93klYg
+         lFQYbK5KFUr+XiqR4iaEW9I+SASfuHvIOwhekpC5IdiNrA5xbbQHzqLbV0Ep4Toi1IKD
+         ylvioLELLiprTWg1z9mBor+hAW+NpAw5C/JNblMACK9q6gbVkfICvtWsUvqGAiNBOmfj
+         bYlNvSElWFXtTfulii9acXjqGPjgRkI0VLH5VSkjH7kmUlgMPZ0D9sYrhm5uVMjE0D4d
+         tI3nNaarRjpb8LtqBihaMDfh5L9MBiSyBvFTK/sbNg4SUk+PSOyeVqvvdv0/iCkyxz6B
+         8yuQ==
+X-Gm-Message-State: AOAM533JJqfTfWiSbKIxmETNZBm5cBmt1IKDOE6IXn/bDdBvPdETerVJ
+        dBEBCxxqUcPDlGGgRJhpRcE=
+X-Google-Smtp-Source: ABdhPJyDG8OBApFypU2V6cPTpMHKRyTbQUcZeMbvwVhytwRAO8VFd+sHcITGUU+b4YE5PgC5uIP0hA==
+X-Received: by 2002:a5d:4b8b:: with SMTP id b11mr16813985wrt.256.1619357565979;
         Sun, 25 Apr 2021 06:32:45 -0700 (PDT)
 Received: from localhost.localdomain ([148.252.133.108])
-        by smtp.gmail.com with ESMTPSA id a2sm16551552wrt.82.2021.04.25.06.32.44
+        by smtp.gmail.com with ESMTPSA id a2sm16551552wrt.82.2021.04.25.06.32.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Apr 2021 06:32:44 -0700 (PDT)
+        Sun, 25 Apr 2021 06:32:45 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH v2 10/12] io_uring: prepare fixed rw for dynanic buffers
-Date:   Sun, 25 Apr 2021 14:32:24 +0100
-Message-Id: <21a2302d07766ae956640b6f753292c45200fe8f.1619356238.git.asml.silence@gmail.com>
+Cc:     Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
+Subject: [PATCH v2 11/12] io_uring: implement fixed buffers registration similar to fixed files
+Date:   Sun, 25 Apr 2021 14:32:25 +0100
+Message-Id: <17035f4f75319dc92962fce4fc04bc0afb5a68dc.1619356238.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <cover.1619356238.git.asml.silence@gmail.com>
 References: <cover.1619356238.git.asml.silence@gmail.com>
@@ -61,101 +62,177 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-With dynamic buffer updates, registered buffers in the table may change
-at any moment. First of all we want to prevent future races between
-updating and importing (i.e. io_import_fixed()), where the latter one
-may happen without uring_lock held, e.g. from io-wq.
+From: Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
 
-Save the first loaded io_mapped_ubuf buffer and reuse.
+Apply fixed_rsrc functionality for fixed buffers support.
 
+Signed-off-by: Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
+[rebase, remove multi-level tables, fix unregister on exit]
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 39 +++++++++++++++++++++++++++++----------
- 1 file changed, 29 insertions(+), 10 deletions(-)
+ fs/io_uring.c | 71 ++++++++++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 56 insertions(+), 15 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index ea725c0cbf79..083917bd7aa6 100644
+index 083917bd7aa6..30f0563349db 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -839,6 +839,8 @@ struct io_kiocb {
- 	struct hlist_node		hash_node;
- 	struct async_poll		*apoll;
- 	struct io_wq_work		work;
-+	/* store used ubuf, so we can prevent reloading */
-+	struct io_mapped_ubuf		*imu;
+@@ -218,6 +218,7 @@ struct io_rsrc_put {
+ 	union {
+ 		void *rsrc;
+ 		struct file *file;
++		struct io_mapped_ubuf *buf;
+ 	};
  };
  
- struct io_tctx_node {
-@@ -2683,6 +2685,12 @@ static int io_prep_rw(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 		kiocb->ki_complete = io_complete_rw;
- 	}
+@@ -404,6 +405,7 @@ struct io_ring_ctx {
+ 	unsigned		nr_user_files;
  
-+	if (req->opcode == IORING_OP_READ_FIXED ||
-+	    req->opcode == IORING_OP_WRITE_FIXED) {
-+		req->imu = NULL;
-+		io_req_set_rsrc_node(req);
-+	}
-+
- 	req->rw.addr = READ_ONCE(sqe->addr);
- 	req->rw.len = READ_ONCE(sqe->len);
- 	req->buf_index = READ_ONCE(sqe->buf_index);
-@@ -2748,21 +2756,13 @@ static void kiocb_done(struct kiocb *kiocb, ssize_t ret,
- 	}
+ 	/* if used, fixed mapped user buffers */
++	struct io_rsrc_data	*buf_data;
+ 	unsigned		nr_user_bufs;
+ 	struct io_mapped_ubuf	**user_bufs;
+ 
+@@ -5921,7 +5923,7 @@ static int io_req_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 
+ 	printk_once(KERN_WARNING "io_uring: unhandled opcode %d\n",
+ 			req->opcode);
+-	return-EINVAL;
++	return -EINVAL;
  }
  
--static int io_import_fixed(struct io_kiocb *req, int rw, struct iov_iter *iter)
-+static int __io_import_fixed(struct io_kiocb *req, int rw, struct iov_iter *iter,
-+			     struct io_mapped_ubuf *imu)
+ static int io_req_prep_async(struct io_kiocb *req)
+@@ -8105,19 +8107,36 @@ static void io_buffer_unmap(struct io_ring_ctx *ctx, struct io_mapped_ubuf **slo
+ 	*slot = NULL;
+ }
+ 
+-static int io_sqe_buffers_unregister(struct io_ring_ctx *ctx)
++static void io_rsrc_buf_put(struct io_ring_ctx *ctx, struct io_rsrc_put *prsrc)
  {
--	struct io_ring_ctx *ctx = req->ctx;
- 	size_t len = req->rw.len;
--	struct io_mapped_ubuf *imu;
--	u16 index, buf_index = req->buf_index;
- 	u64 buf_end, buf_addr = req->rw.addr;
- 	size_t offset;
+-	unsigned int i;
++	/* no updates yet, so not used */
++	WARN_ON_ONCE(1);
++}
  
--	if (unlikely(buf_index >= ctx->nr_user_bufs))
--		return -EFAULT;
--	index = array_index_nospec(buf_index, ctx->nr_user_bufs);
--	imu = ctx->user_bufs[index];
--	buf_addr = req->rw.addr;
--
- 	if (unlikely(check_add_overflow(buf_addr, (u64)len, &buf_end)))
- 		return -EFAULT;
- 	/* not inside the mapped region */
-@@ -2814,6 +2814,22 @@ static int io_import_fixed(struct io_kiocb *req, int rw, struct iov_iter *iter)
- 	return 0;
- }
- 
-+static int io_import_fixed(struct io_kiocb *req, int rw, struct iov_iter *iter)
+-	if (!ctx->user_bufs)
+-		return -ENXIO;
++static void __io_sqe_buffers_unregister(struct io_ring_ctx *ctx)
 +{
-+	struct io_ring_ctx *ctx = req->ctx;
-+	struct io_mapped_ubuf *imu = req->imu;
-+	u16 index, buf_index = req->buf_index;
-+
-+	if (likely(!imu)) {
-+		if (unlikely(buf_index >= ctx->nr_user_bufs))
-+			return -EFAULT;
-+		index = array_index_nospec(buf_index, ctx->nr_user_bufs);
-+		imu = READ_ONCE(ctx->user_bufs[index]);
-+		req->imu = imu;
-+	}
-+	return __io_import_fixed(req, rw, iter, imu);
++	unsigned int i;
+ 
+ 	for (i = 0; i < ctx->nr_user_bufs; i++)
+ 		io_buffer_unmap(ctx, &ctx->user_bufs[i]);
+ 	kfree(ctx->user_bufs);
++	kfree(ctx->buf_data);
+ 	ctx->user_bufs = NULL;
++	ctx->buf_data = NULL;
+ 	ctx->nr_user_bufs = 0;
+-	return 0;
 +}
 +
- static void io_ring_submit_unlock(struct io_ring_ctx *ctx, bool needs_lock)
- {
- 	if (needs_lock)
-@@ -9463,6 +9479,9 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p,
- 	ret = io_sq_offload_create(ctx, p);
- 	if (ret)
- 		goto err;
-+	/* always set a rsrc node */
-+	io_rsrc_node_switch_start(ctx);
-+	io_rsrc_node_switch(ctx, NULL);
++static int io_sqe_buffers_unregister(struct io_ring_ctx *ctx)
++{
++	int ret;
++
++	if (!ctx->buf_data)
++		return -ENXIO;
++
++	ret = io_rsrc_ref_quiesce(ctx->buf_data, ctx);
++	if (!ret)
++		__io_sqe_buffers_unregister(ctx);
++	return ret;
+ }
  
- 	memset(&p->sq_off, 0, sizeof(p->sq_off));
- 	p->sq_off.head = offsetof(struct io_rings, sq.head);
+ static int io_copy_iov(struct io_ring_ctx *ctx, struct iovec *dst,
+@@ -8337,17 +8356,26 @@ static int io_buffer_validate(struct iovec *iov)
+ static int io_sqe_buffers_register(struct io_ring_ctx *ctx, void __user *arg,
+ 				   unsigned int nr_args)
+ {
++	struct page *last_hpage = NULL;
++	struct io_rsrc_data *data;
+ 	int i, ret;
+ 	struct iovec iov;
+-	struct page *last_hpage = NULL;
+ 
+ 	if (ctx->user_bufs)
+ 		return -EBUSY;
+ 	if (!nr_args || nr_args > UIO_MAXIOV)
+ 		return -EINVAL;
+-	ret = io_buffers_map_alloc(ctx, nr_args);
++	ret = io_rsrc_node_switch_start(ctx);
+ 	if (ret)
+ 		return ret;
++	data = io_rsrc_data_alloc(ctx, io_rsrc_buf_put, nr_args);
++	if (!data)
++		return -ENOMEM;
++	ret = io_buffers_map_alloc(ctx, nr_args);
++	if (ret) {
++		kfree(data);
++		return ret;
++	}
+ 
+ 	for (i = 0; i < nr_args; i++, ctx->nr_user_bufs++) {
+ 		ret = io_copy_iov(ctx, &iov, arg, i);
+@@ -8363,9 +8391,13 @@ static int io_sqe_buffers_register(struct io_ring_ctx *ctx, void __user *arg,
+ 			break;
+ 	}
+ 
+-	if (ret)
+-		io_sqe_buffers_unregister(ctx);
++	WARN_ON_ONCE(ctx->buf_data);
+ 
++	ctx->buf_data = data;
++	if (ret)
++		__io_sqe_buffers_unregister(ctx);
++	else
++		io_rsrc_node_switch(ctx, NULL);
+ 	return ret;
+ }
+ 
+@@ -8440,10 +8472,18 @@ static void io_req_caches_free(struct io_ring_ctx *ctx)
+ 	mutex_unlock(&ctx->uring_lock);
+ }
+ 
++static bool io_wait_rsrc_data(struct io_rsrc_data *data)
++{
++	if (!data)
++		return false;
++	if (!atomic_dec_and_test(&data->refs))
++		wait_for_completion(&data->done);
++	return true;
++}
++
+ static void io_ring_ctx_free(struct io_ring_ctx *ctx)
+ {
+ 	io_sq_thread_finish(ctx);
+-	io_sqe_buffers_unregister(ctx);
+ 
+ 	if (ctx->mm_account) {
+ 		mmdrop(ctx->mm_account);
+@@ -8451,11 +8491,10 @@ static void io_ring_ctx_free(struct io_ring_ctx *ctx)
+ 	}
+ 
+ 	mutex_lock(&ctx->uring_lock);
+-	if (ctx->file_data) {
+-		if (!atomic_dec_and_test(&ctx->file_data->refs))
+-			wait_for_completion(&ctx->file_data->done);
++	if (io_wait_rsrc_data(ctx->buf_data))
++		__io_sqe_buffers_unregister(ctx);
++	if (io_wait_rsrc_data(ctx->file_data))
+ 		__io_sqe_files_unregister(ctx);
+-	}
+ 	if (ctx->rings)
+ 		__io_cqring_overflow_flush(ctx, true);
+ 	mutex_unlock(&ctx->uring_lock);
+@@ -9782,6 +9821,8 @@ static int io_register_rsrc(struct io_ring_ctx *ctx, void __user *arg,
+ static bool io_register_op_must_quiesce(int op)
+ {
+ 	switch (op) {
++	case IORING_REGISTER_BUFFERS:
++	case IORING_UNREGISTER_BUFFERS:
+ 	case IORING_REGISTER_FILES:
+ 	case IORING_UNREGISTER_FILES:
+ 	case IORING_REGISTER_FILES_UPDATE:
 -- 
 2.31.1
 

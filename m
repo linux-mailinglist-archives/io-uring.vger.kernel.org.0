@@ -2,65 +2,63 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EB28B36B381
-	for <lists+io-uring@lfdr.de>; Mon, 26 Apr 2021 14:51:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38E8036B387
+	for <lists+io-uring@lfdr.de>; Mon, 26 Apr 2021 14:53:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231903AbhDZMw1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 26 Apr 2021 08:52:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53232 "EHLO
+        id S233444AbhDZMyN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 26 Apr 2021 08:54:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231876AbhDZMw0 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 26 Apr 2021 08:52:26 -0400
-Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7194EC061574
-        for <io-uring@vger.kernel.org>; Mon, 26 Apr 2021 05:51:45 -0700 (PDT)
-Received: by mail-pj1-x1031.google.com with SMTP id e8-20020a17090a7288b029014e51f5a6baso5138115pjg.2
-        for <io-uring@vger.kernel.org>; Mon, 26 Apr 2021 05:51:45 -0700 (PDT)
+        with ESMTP id S233218AbhDZMx3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 26 Apr 2021 08:53:29 -0400
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 412BEC061756
+        for <io-uring@vger.kernel.org>; Mon, 26 Apr 2021 05:52:48 -0700 (PDT)
+Received: by mail-pj1-x102b.google.com with SMTP id gc22-20020a17090b3116b02901558435aec1so1503678pjb.4
+        for <io-uring@vger.kernel.org>; Mon, 26 Apr 2021 05:52:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Ie15wHFE76bzG+Wxt/79MF6wdJrWeejBS8p/vm45PF4=;
-        b=gPNn9QbO/x2+6+ep8RdXTKii7vY3o891ydwruA9Mm6Egq1iofqvwrGDQGksONOmTYT
-         5v3k+HL9xqzifguqnNkHS+barYyarLAA2VzXbA6EYbXg/XnjeofqJNlUbOcVtBNwjq4l
-         jJYYs/3rMbFtfzs3GB9HDme0TmX2IeJUY3c9IKhj9dQ1CUAXkpNdMhA0UAkMwl/KBXoY
-         xVL21lI7A5dx9B1U3AxhZ0qz9BVbrpqtaY0ZxiKLEdalJwvl+L9ZtgkksI35u5WdnPhf
-         B2Z6122xu3wCBnD22Gi6hr+l6+O0E6RYapnEAcLO/HaoapheFN9dVpvhYsnK7jMx628t
-         AoOw==
+        bh=pvHuTTRvu3dqKlBUowkHr2MzHQoOwsFjVpAFUDJTe34=;
+        b=o+vJrGun2/dJdUi4n8ksg6UbFFP6F7n5g/1xioCB1RNzNg4eAUHR097Sg0RE00C1/+
+         KBLFzqlwLPHVxmFxGPwPahZ2ZIvLzhRJ32v+P8tZJbG+Ir27D9OiBXeihKI8Es/YRGSS
+         u1BSBYz/X11eMkDi0Btkan5vMUvaMDHOyvYfQtStk70dZ7OScSii16Flwllc5X8md8Xt
+         K6+LVNwENtxg6wHPy3ghdLhui+wluykPSaIZWkutwsIdYHqIyoGEGIKsDVA0Z6Uf/10T
+         +MsBTcuStqmY3FqCCdIjq2zWnqrY3cx6nfD9QPJ1xoLPx7Q0fySIcLEeVyMdZiogMIRW
+         DPVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=Ie15wHFE76bzG+Wxt/79MF6wdJrWeejBS8p/vm45PF4=;
-        b=PJy72sW+BLxKMQVcJ5y5eq3joZqgG3KYlkUnXGVd8gWEYDJI9FOpXwrcykYMPQB9uz
-         9qwCQv44/7NIkliSDm07dH9Nh6bkdzbbAqpNUiftl2JqcB0mLvtSLFTg/gYHB2G8FBD5
-         RPZ5IMVtIoIrdxzwyjxv9c6vAWI8ytgdXQs8YnrbeoLtL8F8ndPL9vdpNjj2gbQ1xmU9
-         6cm3ASFZ3Zq0rknSxwFk1iEFutCrd1rRrkW8QnnCysUtvm+OWW/EJUCjn+bA6JF2+SEw
-         KQx67tXyKkCVRyKb9DHhWw+c6DhbRcKo8e8dY3oub2q5Y67ZYpBbewrc9kCTq38Yz/Nd
-         DdrQ==
-X-Gm-Message-State: AOAM530/4EGcYVQn0K5KteRqfg6iFF/GFnPdhuBgUTeJscVkAPBmrSPp
-        kCSnCAxfzfmd44hb2XLlPfSfCA==
-X-Google-Smtp-Source: ABdhPJycZeWxEAEMvutxAr4Nn+NLUpl9AyywYZpRHWrQ7XW+sELMqfLQLPVrKb5fPV4AKGvJR4VwCQ==
-X-Received: by 2002:a17:90a:9409:: with SMTP id r9mr21154964pjo.157.1619441504978;
-        Mon, 26 Apr 2021 05:51:44 -0700 (PDT)
+        bh=pvHuTTRvu3dqKlBUowkHr2MzHQoOwsFjVpAFUDJTe34=;
+        b=p+Egcw0hq1IJo/JgIBOdHu4eGCvkB77HjzVs7X45B38Uv3Q/nu+xn44zl8n6CR2b/w
+         vS4KcZatQF6wgrkwSj3XHi2bMcrPA0emeGzpv0GNjot8AcRg+phyB12QYHQ9VEViRpSu
+         EPSeIAms5mtADX3NzJIuj6gcPbhxLRedRqT4pK5ZDo7ImWxOhuKbEZIfwtiDoGOVdIl8
+         TMJ8StGfxBy2+pdh7+P5wWqTgHwOKectFkAbH0kR9gkbDBDSPj0cxJJ2xur2RuEuumt6
+         MRwPBdJAIDbQSGffLznZfPM1d3mtFUGMVsn2//k/gHCREchU7ARCXD2I9gftm15Ur8Fy
+         NA5Q==
+X-Gm-Message-State: AOAM530aH6lMBSo2RKwW+zW37MWyFf7pDJRu0b9YpFodFXpY7aH0ddpe
+        eJtYSl91fJSl7/T8dCArbdJoHA==
+X-Google-Smtp-Source: ABdhPJxySmudKVeg9KHxeKwyhIijJlOQ+/ThlXz/HrWJuuEqCfXY/aGlnVI6CSJIBq+y1h7i2PZjtg==
+X-Received: by 2002:a17:90b:60a:: with SMTP id gb10mr23151230pjb.71.1619441567760;
+        Mon, 26 Apr 2021 05:52:47 -0700 (PDT)
 Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id u17sm11156058pfm.113.2021.04.26.05.51.44
+        by smtp.gmail.com with ESMTPSA id j29sm11113089pgl.30.2021.04.26.05.52.46
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Apr 2021 05:51:44 -0700 (PDT)
-Subject: Re: [PATCH][next] io_uring: Fix uninitialized variable up.resv
-To:     Colin King <colin.king@canonical.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210426094735.8320-1-colin.king@canonical.com>
+        Mon, 26 Apr 2021 05:52:47 -0700 (PDT)
+Subject: Re: [PATCH] io_uring: fix invalid error check after malloc
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+Cc:     kernel test robot <lkp@intel.com>
+References: <d28eb1bc4384284f69dbce35b9f70c115ff6176f.1619392565.git.asml.silence@gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <d65b1763-ac78-acd6-3b92-e28bd4402a75@kernel.dk>
-Date:   Mon, 26 Apr 2021 06:51:48 -0600
+Message-ID: <1ca67df2-d38f-4e78-15e8-a860aec7edea@kernel.dk>
+Date:   Mon, 26 Apr 2021 06:52:50 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20210426094735.8320-1-colin.king@canonical.com>
+In-Reply-To: <d28eb1bc4384284f69dbce35b9f70c115ff6176f.1619392565.git.asml.silence@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -68,15 +66,11 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/26/21 3:47 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable up.resv is not initialized and is being checking for a
-> non-zero value in the call to _io_register_rsrc_update. Fix this by
-> explicitly setting the pointer to 0.
+On 4/25/21 5:16 PM, Pavel Begunkov wrote:
+> Now we allocate io_mapped_ubuf instead of bvec, so we clearly have to
+> check its address after allocation.
 
-Thanks Colin, applied. I changed the pointer to variable while doing
-so.
+Applied, thanks.
 
 -- 
 Jens Axboe

@@ -2,80 +2,107 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9792436B562
-	for <lists+io-uring@lfdr.de>; Mon, 26 Apr 2021 17:04:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 248B436B660
+	for <lists+io-uring@lfdr.de>; Mon, 26 Apr 2021 18:02:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233752AbhDZPFG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 26 Apr 2021 11:05:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54586 "EHLO
+        id S234510AbhDZQCQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 26 Apr 2021 12:02:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233573AbhDZPFE (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 26 Apr 2021 11:05:04 -0400
-Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1347C061574
-        for <io-uring@vger.kernel.org>; Mon, 26 Apr 2021 08:04:21 -0700 (PDT)
-Received: by mail-io1-xd2e.google.com with SMTP id t21so5471629iob.2
-        for <io-uring@vger.kernel.org>; Mon, 26 Apr 2021 08:04:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=6lhnpvMAH5HQlkr9mQ9bdVEThT/5dRtaDfV+/pvaNWc=;
-        b=Ktj3v+SQQphxUE5vcd7QLTWUBHcO4kMmxpRXFpq+uOCeUXeJzDAql1/fTWYsva4+/o
-         yNHo+YvoG8McIg+1fHECBz1+a2/wMK7mv41V+gQ5GMVBbMKpMdLk08FT25/DeoaOGQU5
-         LGw5T16dStxsd8DaY5xMk3fLuvjqDtPjf7U1wP/GdIWIVlWU1QM3U7dC0v/mLDrH2rVN
-         nAr0PU9P9pnk6iQSS3mY5A/w/We4pmXBWa7TQz8dMLyHYbmWCCROUOmxDL9J2/hkucWr
-         eP21Tj8iiRp5R6G+mz6/Pd231d2UvFP+7Q0qLSwQzN4nFgFE0y5IUWxb+PW7ku9iCuru
-         //BA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=6lhnpvMAH5HQlkr9mQ9bdVEThT/5dRtaDfV+/pvaNWc=;
-        b=rLJvcb3fwnnJPZrmi9YMvfLzaHQSRpYo8WXZQxOQBpM0oSbJvlSut2UlqfStN/34Oq
-         QI5gZifsEHlDEB+aWcZxcswgcIkv6giIbwqdBfQCwioSVz6eAlKcR/1JdukTe8qjO1G9
-         On4iNXeWWqcx062RT0FVDTP96b0sJRg4KOJCplOFSNCxLuRv80dbdsILc5Dtf2yfERDQ
-         Yc28XFLqG/1Vry9dbUYT9J+p8zck6fiT3PQvVCBy0SPbE65/t1avW2hrVJ6a3lER5skL
-         P7fUJAR6otjWzIA5wF77exU7ENO4XOE/5uQlVPoUda5QCHIX5ZoBEUYs9pZk2aBH3J/u
-         +Sew==
-X-Gm-Message-State: AOAM532Ba97d697O5yEAsxEwZ8HcDm4clkatJRAlXuaXISpuHhce357+
-        5h9xaLMTDBziOurbKs/HI3P47tnpu7bSww==
-X-Google-Smtp-Source: ABdhPJxPHEYiYj79dXFp/vBE3qOscuL8EM3dplrGbo0rD0TStiJFlQmg16ffbK/vPkfYjDz9Er5IiQ==
-X-Received: by 2002:a5d:924b:: with SMTP id e11mr14862391iol.133.1619449460934;
-        Mon, 26 Apr 2021 08:04:20 -0700 (PDT)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id x14sm68595ill.74.2021.04.26.08.04.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Apr 2021 08:04:20 -0700 (PDT)
-Subject: Re: [PATCH 5.13] io_uring: fix NULL reg-buffer
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <830020f9c387acddd51962a3123b5566571b8c6d.1619446608.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <488d60ff-8020-8c11-d3e0-715b071c32ec@kernel.dk>
-Date:   Mon, 26 Apr 2021 09:04:20 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        with ESMTP id S234502AbhDZQCP (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 26 Apr 2021 12:02:15 -0400
+Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 327CEC061574
+        for <io-uring@vger.kernel.org>; Mon, 26 Apr 2021 09:01:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+         s=42; h=Date:Message-ID:From:To:CC;
+        bh=PauBmpIneSFC1tu0KfpvpZFo8XVxlxhN7j9VHy+uD3k=; b=BrKV/sftobXw0PwRgPahwGDohk
+        vN4T4DT401sauGK8oRbd2UniJzHZVXJXbknn7JCJT5lOU47lKqGXdPkRnqpY9EVM6F9ydlPvKFb9Z
+        gGQzxmUOgR+XNUZzy5WKuM7OzZ5vhoRRMBTKWrWwCQZhKJNF6suFUtzmyrLzpc04ud/nx99wmULrX
+        bY2o07AMJDzeZbWkVxO68PzFXtBGg/a+zd9RRm50RFAM2gvjW/Q9Z/+sNh85SSsHxFqNgBxBqJnsI
+        hMqpIoYCg8UYviIe4b44Zm8PzN5sv/HtdxuZN55uFltFD5OPByAlp+qOu1keCXPZSLxRAKuytGSJF
+        beBuIE9ufOj9sRceCDRNeeQsFWs+nHkrQSqafVoExpcU2CVkOQEXkUjxhE3jj5aOVDxh1wgqOpNUZ
+        p7yW47Xz1RDu46Nu0St3WtMDzS6vaTjEU7UdRHGaQu4Ip4vQ9YlBgI4Lr/B2uR1XqqH4TbU9zjJaw
+        rAPsEMJK/+pJqT/1+LZmf0kH;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
+        (Exim)
+        id 1lb3fu-0000WH-BZ; Mon, 26 Apr 2021 16:01:30 +0000
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <cover.1619306115.git.metze@samba.org>
+ <9ba4228d-d346-766d-de5c-7d7d2bab92fa@kernel.dk>
+From:   Stefan Metzmacher <metze@samba.org>
+Subject: Re: [PATCH v3 0/6] Complete setup before calling wake_up_new_task()
+Message-ID: <422fe390-11b4-203b-455c-5a1e456e6321@samba.org>
+Date:   Mon, 26 Apr 2021 18:01:30 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.1
 MIME-Version: 1.0
-In-Reply-To: <830020f9c387acddd51962a3123b5566571b8c6d.1619446608.git.asml.silence@gmail.com>
+In-Reply-To: <9ba4228d-d346-766d-de5c-7d7d2bab92fa@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/26/21 8:17 AM, Pavel Begunkov wrote:
-> io_import_fixed() doesn't expect a registered buffer slot to be NULL and
-> would fail stumbling on it. We don't allow it, but if during
-> __io_sqe_buffers_update() rsrc removal succeeds but following register
-> fails, we'll get such a situation.
+Hi Jens,
+
+>> now that we have an explicit wake_up_new_task() in order to start the
+>> result from create_io_thread(), we should set things up before calling
+>> wake_up_new_task().
+>>
+>> Changes in v3:
+>>  - rebased on for-5.13/io_uring.
+>>  - I dropped this:
+>>   fs/proc: hide PF_IO_WORKER in get_task_cmdline()
+>>  - I added:
+>>   set_task_comm() overflow checks
 > 
-> Do it atomically and don't remove buffers until we sure that a new one
-> can be set.
+> Looks good to me, a few comments:
+> 
+> 1) I agree with Pavel that the WARN on overflow is kinda silly,
+>    it doesn't matter that much. So I'd rather drop those for now.
 
-Applied, thanks.
+I think the overflow matters, the last time, it went unnoticed in
+commit c5def4ab849494d3c97f6c9fc84b2ddb868fe78c
 
--- 
-Jens Axboe
+        worker->task = kthread_create_on_node(io_wqe_worker, worker, wqe->node,
+-                                               "io_wqe_worker-%d", wqe->node);
++                               "io_wqe_worker-%d/%d", index, wqe->node);
 
+With that "io_wqe_worker-0" or "io_wqe_worker-1" are still (up to 5.11)
+reported to userspace. And between 5.3 and 5.4 the meaning changed,
+the shown value is now unbound vs. bound, while it was the numa node before.
+
+While I was debugging numa related problems, that took a long time to
+figure out.
+
+Now that we have the pid encoded in the name, it should not be truncated,
+otherwise it will make it impossible to debug problems.
+
+If the userspace application has 10 threads (with pids which would all cause
+on overflow) and each uses io_uring (64 io-workers each), then we may have
+640 io-workers all with the same name, which are all in the same userspace
+process, and it's not possible to find which workers belong to which userspace
+thread.
+
+Currently we can ignore as there's no problem, so I'm fine with dropping
+5-6 for now.
+
+Maybe a better assertion would be BUILD_BUG_ON(PID_MAX_LIMIT > 9999999);
+(or something similar) in order to prevent this from happening.
+
+> 2) Would really love it to see some decent commit messages, quite
+>    a few of them are empty. In general some reasoning is nice in
+>    the commit message, when you don't have the context available.
+> 
+> Do you want to do a v4 with 5-6/6 dropped for now, and 3-4 having
+> some reasoning? I can also just apply as-is and write some commit
+> message myself, let me know. I'll add 1-2 for now.
+
+I'm currently busy with other stuff, it would be great if you could
+expand the commit messages!
+
+Thanks!
+metze

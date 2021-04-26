@@ -2,156 +2,274 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F5DA36B1E9
-	for <lists+io-uring@lfdr.de>; Mon, 26 Apr 2021 12:51:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FC3936B27F
+	for <lists+io-uring@lfdr.de>; Mon, 26 Apr 2021 13:49:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233181AbhDZKwH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 26 Apr 2021 06:52:07 -0400
-Received: from mx01-muc.bfs.de ([193.174.230.67]:42897 "EHLO mx01-muc.bfs.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233134AbhDZKwH (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Mon, 26 Apr 2021 06:52:07 -0400
-X-Greylist: delayed 441 seconds by postgrey-1.27 at vger.kernel.org; Mon, 26 Apr 2021 06:52:06 EDT
-Received: from SRVEX01-SZ.bfs.intern (exchange-sz.bfs.de [10.129.90.31])
-        by mx01-muc.bfs.de (Postfix) with ESMTPS id 77011203E3;
-        Mon, 26 Apr 2021 12:44:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bfs.de; s=dkim201901;
-        t=1619433843;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=CN1EadlOcJbMEc7RUViIyObDkCP4jxrU+GKcEXbe0Xg=;
-        b=07I+Eddij4EPl+O3Lks6w4bT9ENPt6PSz/eF7PV1sIuT2rlAceYMeOOPif1kHj3UUzIuvR
-        zYrHyPWhULgIjtmgbs7mlWpqHATb6g659AzY2iA1Ltn8pgoCTy3HKxj5N8lPgL6ijS+usI
-        Q/CqJkidr6CT3H4ttFeigpI/queqxZo7XlSjv6FuRKKbWeWW/L5RLH8ZnXVEzHVSChMYG/
-        cw/78M5sW84KDwn6Uo82f78wLmAEmAkP9aQyUmGEtI6ApNodOBnUrm27uAPxUcpI610BVR
-        ibbyV/YhB7Z9dj5zzvzIKtcK5z/L6DB960kghfStoL3CQiKFnAGOHWAHc1FkHw==
-Received: from SRVEX01-SZ.bfs.intern (10.129.90.31) by SRVEX01-SZ.bfs.intern
- (10.129.90.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2242.4; Mon, 26 Apr
- 2021 12:44:02 +0200
-Received: from SRVEX01-SZ.bfs.intern ([fe80::7d2d:f9cb:2761:d24a]) by
- SRVEX01-SZ.bfs.intern ([fe80::7d2d:f9cb:2761:d24a%13]) with mapi id
- 15.01.2242.008; Mon, 26 Apr 2021 12:44:02 +0200
-From:   Walter Harms <wharms@bfs.de>
-To:     Colin King <colin.king@canonical.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        "Pavel Begunkov" <asml.silence@gmail.com>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
-CC:     "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: AW: [PATCH][next][V2] io_uring: Fix uninitialized variable up.resv
-Thread-Topic: [PATCH][next][V2] io_uring: Fix uninitialized variable up.resv
-Thread-Index: AQHXOoTfpdBElL+S8UuH+t8Syt902arGnMMm
-Date:   Mon, 26 Apr 2021 10:44:02 +0000
-Message-ID: <23460b552c344907bd6f254149519119@bfs.de>
-References: <20210426101353.9237-1-colin.king@canonical.com>
-In-Reply-To: <20210426101353.9237-1-colin.king@canonical.com>
-Accept-Language: de-DE, en-US
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.137.16.40]
-x-tm-as-product-ver: SMEX-14.0.0.3080-8.6.1012-26114.006
-x-tm-as-result: No-10-0.663500-5.000000
-x-tmase-matchedrid: dtkKbEKn3AnRubRCcrbc5grcxrzwsv5u3dCmvEa6IiGoLZarzrrPme6X
-        ODXRWDdKxkb9fACVrLIWgZoMea78SXgEmMsrY8ykiVJZi91I9JgORjM32hn2b63DfQXYDXXmRiM
-        0r5DoZkAcEwO4f1ey3nakECIa+Y+L35CXmGCLTEU5FhAF440dkZ54zspPOxzffGAgiBknOLXxZ8
-        6WI5OtobTU+D0ttl649Zy0Abon06cB5jDL4tJv076EJGSqPePTRiPTMMc/MmkDAA5uRHailgN06
-        QRaBqZ4jxqOaLLtmI1c4eBDXe7orqp9JB8tr9I3LZ01719etEh8s0cy6t/KSDVjvc93O9dkQBzo
-        PKhLasiPqQJ9fQR1zkgXurX+wtIA/Vk1QoTj6earm7DrUlmNkF+24nCsUSFNjaPj0W1qn0TKayT
-        /BQTiGtQYs0qry+30Z0NSz7eJS83lOFtSxQd27Sha0WRI/FvmUd+sqX3TeLAJ3PUOotbczqKexv
-        pua0brgVArSQ9tw7eIji5iFASLgGk5lMFB6EFJcCmyZvDwQy2t5ahRvDIGLa2t1VXHehFeLnS15
-        FcU1hfvdCUIFuasqw==
-x-tm-as-user-approved-sender: No
-x-tm-as-user-blocked-sender: No
-x-tmase-result: 10-0.663500-5.000000
-x-tmase-version: SMEX-14.0.0.3080-8.6.1012-26114.006
-x-tm-snts-smtp: 6D111E8F88184EEAC1061FD27B2F032A87388310536EA6692307AC678EE65E282000:9
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S231911AbhDZLuB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 26 Apr 2021 07:50:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39202 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231864AbhDZLuA (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 26 Apr 2021 07:50:00 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31271C061574
+        for <io-uring@vger.kernel.org>; Mon, 26 Apr 2021 04:49:19 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id n3-20020a05600c4f83b02901425630b2c2so632103wmq.1
+        for <io-uring@vger.kernel.org>; Mon, 26 Apr 2021 04:49:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=fUN83aO6Ui8oau0kwNgxqbXnlgM3IobDYebaVWaXM0Q=;
+        b=LQY2Cknnec/8lxZNYUOzcHdyrILCOXMBanDcE05igBf+TtJHoJC5iuJaZsSgCwqRYq
+         nYL7FwZfrgxlidzKE30cmwSrQRmqtz1AY06OkPg4eNDeiYVRU6v94e+LzPyo2yOI+DST
+         iiJeLL9C0mLArXnHojtThmLVQ9LdkrWTAccsICukCmzCf9sSZW0sDyMC1WCaqhWIPE7I
+         CO4ycvRUUdxeeTRpbM3/MgUTbeUmms6ofYkJ5StymexIzh4TsHSl2VwRXbspcIN5QStK
+         h4lB+n/I0fHPcDyMQVLZX6DneljpPVRJCqZ5Bif+8VGwIYhmUVu7+VsAX2ELEWAE39aq
+         TCJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=fUN83aO6Ui8oau0kwNgxqbXnlgM3IobDYebaVWaXM0Q=;
+        b=NFwHUUK7ITuBve2lYgbjc/YQiPx6qjWmofLDLJaB/3x3ikHzZk3/BisuR6BiYpjJ8i
+         irEOnKy11Geh2qJ8bSTdYSSgDTslnnfBSYB+wKIYslBxQWi4QGd6eQWtmDzJK2Q/f13t
+         vs80dJY4X9yvSng/qHj4ekebSvSOQKxso7dIZon9BnSRhsyM+vqAu4oFr+hwe/Xdv4Jh
+         XSANVQ3vpL5uhYsZr5M3k8tWok6Vt7UJCkY+gZ/pE3dTFgfAjb5VzIK2c7E7dzKLDSJu
+         QtrqlW8gHc+nXOQGhES0pyokIwDrD94ebM490AGZlzdO+BKKh+yAj/yM+7pMOTGNexov
+         iygA==
+X-Gm-Message-State: AOAM533bOJZX1QxduawEl9r7EzFHDdRf3UQIQg6wCyJIGxP0o1AZPuMn
+        I3uicIRJ8TWchq2LTo7JBgw=
+X-Google-Smtp-Source: ABdhPJzvWPTNsGiWHF2ETwu5AB5nQ/jDEJsHDFqGRWm2imVU6GE5JEeSPTccb9mxm/8XgvKucIjjnA==
+X-Received: by 2002:a7b:ce1a:: with SMTP id m26mr20788292wmc.137.1619437757748;
+        Mon, 26 Apr 2021 04:49:17 -0700 (PDT)
+Received: from [192.168.8.197] ([148.252.129.131])
+        by smtp.gmail.com with ESMTPSA id c15sm20630837wrr.3.2021.04.26.04.49.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Apr 2021 04:49:17 -0700 (PDT)
+Subject: Re: io_uring networking performance degradation
+To:     Michael Stoler <michaels@reduxio.com>
+Cc:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
+References: <CAN633em2Kq-F_B_LPWWDpadTYbetRsf9q4Gy6nFgM8BujSueZQ@mail.gmail.com>
+ <6d9d2610-e7c0-ad29-fd30-85da8222ab83@gmail.com>
+ <CAN633emhHEo3x6S77ZszzNRr4F6Xt8aP3VDn6w3GSRtNz5Qeww@mail.gmail.com>
+ <CAN633emWn60bbFqCF7Yxu4XDFiBXq5Z_BE5NZdX2qwQP8ju=_A@mail.gmail.com>
+ <CAN633e=OkHW-hYNhCgQLakRu4SjUXD5Ut8UYsrvTzwH54U4mzA@mail.gmail.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Message-ID: <285e496e-a921-ce16-1fb9-e914362439b9@gmail.com>
+Date:   Mon, 26 Apr 2021 12:49:12 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.1
 MIME-Version: 1.0
-X-Spamd-Result: default: False [-16.50 / 7.00];
-         ARC_NA(0.00)[];
-         TO_DN_EQ_ADDR_SOME(0.00)[];
-         HAS_XOIP(0.00)[];
-         FROM_HAS_DN(0.00)[];
-         TO_DN_SOME(0.00)[];
-         FREEMAIL_ENVRCPT(0.00)[gmail.com];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         TAGGED_RCPT(0.00)[];
-         MIME_GOOD(-0.10)[text/plain];
-         RCPT_COUNT_FIVE(0.00)[6];
-         DKIM_SIGNED(0.00)[bfs.de:s=dkim201901];
-         BAYES_HAM(-3.00)[99.99%];
-         WHITELIST_LOCAL_IP(-15.00)[10.129.90.31];
-         FREEMAIL_TO(0.00)[canonical.com,kernel.dk,gmail.com,vger.kernel.org];
-         RCVD_NO_TLS_LAST(0.10)[];
-         FROM_EQ_ENVFROM(0.00)[];
-         MIME_TRACE(0.00)[0:+];
-         RCVD_COUNT_TWO(0.00)[2];
-         MID_RHS_MATCH_FROM(0.00)[];
-         SUSPICIOUS_RECIPS(1.50)[]
-Authentication-Results: mx01-muc.bfs.de;
-        none
-X-Spam-Status: No, score=-16.50
+In-Reply-To: <CAN633e=OkHW-hYNhCgQLakRu4SjUXD5Ut8UYsrvTzwH54U4mzA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-why not:
- struct io_uring_rsrc_update up=3D{0};
+On 4/25/21 10:52 AM, Michael Stoler wrote:
+> Because of unstable working of perf over AWS VM I recheck test on
+> physical machine: Ubuntu 20.04, 5.8.0-50-generic kernel, CPU AMD EPYC
+> 7272 12-Core Processor 3200MHz, BogoMIPS 5789.39, NIC melanox 5,
+> Speed: 25000Mb/s Full Duplex.
+> Over physical machine performance degradation is much less pronounced
+> but still exists:
+> io_uring-echo-server    Speed: 143081 request/sec, 143081 response/sec
+> epoll-echo-server   Speed: 150692 request/sec, 150692 response/sec
+> epoll-echo-server is 5% faster
 
-would be future proof :)
+Have to note that I haven't check the userspace programs, so not sure
+it's a fair comparison (may be or may be not). So, with it being said:
 
-jm2c,
+1) The last report had lot of idle time, so it may be a question of
+latency but not throughput for it.
 
-re,
- wh
-________________________________________
-Von: Colin King <colin.king@canonical.com>
-Gesendet: Montag, 26. April 2021 12:13:53
-An: Jens Axboe; Pavel Begunkov; io-uring@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org; linux-kernel@vger.kernel.org
-Betreff: [PATCH][next][V2] io_uring: Fix uninitialized variable up.resv
+2) Did you do proper pinning to a CPU/core? taskset or cset? Also,
+did it saturate the CPU/core you used in the most recent post?
 
-WARNUNG: Diese E-Mail kam von au=DFerhalb der Organisation. Klicken Sie nic=
-ht auf Links oder =F6ffnen Sie keine Anh=E4nge, es sei denn, Sie kennen den=
-/die Absender*in und wissen, dass der Inhalt sicher ist.
+3) Looking at __skb_datagram_iter taking 1%, seems there are other
+tasks taking a relatively good share of CPU/NIC resources. What is
+this datagram? UDP on the same NIC? Is something else using your
+NIC/interface?
+
+4) don't see even close anything related to io_uring in the recent
+run, and it was only a small fraction in previous ones. So it's
+definitely not the overhead on submit/complete. If there is a
+io_uring problem, it could be the difference in polling / iowq
+punting comparing with epoll. It may be interesting to look into.
+
+And related thing I'm curious about is to compare FAST_POLL
+requests with io_uring multi-shot polling + send/recv.
 
 
-From: Colin Ian King <colin.king@canonical.com>
+> 
+> "perf top" with io_uring-echo-server:
+> PerfTop:   16481 irqs/sec  kernel:98.5%  exact: 99.8% lost: 0/0 drop:
+> 0/0 [4000Hz cycles],  (all, 24 CPUs)
+> -------------------------------------------------------------------------------
+>      8.66%  [kernel]          [k] __x86_indirect_thunk_rax
+>      8.49%  [kernel]          [k] copy_user_generic_string
+>      5.57%  [kernel]          [k] memset
+>      2.81%  [kernel]          [k] tcp_rate_skb_sent
+>      2.32%  [kernel]          [k] __alloc_skb
+>      2.16%  [kernel]          [k] __check_object_size
+>      1.44%  [unknown]         [k] 0xffffffffc100c296
+>      1.28%  [kernel]          [k] tcp_write_xmit
+>      1.22%  [kernel]          [k] iommu_dma_map_page
+>      1.16%  [kernel]          [k] kmem_cache_free
+>      1.14%  [kernel]          [k] __softirqentry_text_start
+>      1.06%  [unknown]         [k] 0xffffffffc1008a7e
+>      1.03%  [kernel]          [k] __skb_datagram_iter
+>      0.97%  [kernel]          [k] __dev_queue_xmit
+>      0.86%  [kernel]          [k] ipv4_mtu
+>      0.85%  [kernel]          [k] tcp_schedule_loss_probe
+>      0.80%  [kernel]          [k] tcp_release_cb
+>      0.78%  [unknown]         [k] 0xffffffffc100c290
+>      0.77%  [unknown]         [k] 0xffffffffc100c295
+>      0.76%  perf              [.] __symbols__insert
+> 
+> "perf top" with epoll-echo-server:
+> PerfTop:   24255 irqs/sec  kernel:98.3%  exact: 99.6% lost: 0/0 drop:
+> 0/0 [4000Hz cycles],  (all, 24 CPUs)
+> -------------------------------------------------------------------------------
+>      8.77%  [kernel]          [k] __x86_indirect_thunk_rax
+>      7.50%  [kernel]          [k] copy_user_generic_string
+>      4.10%  [kernel]          [k] memset
+>      2.70%  [kernel]          [k] tcp_rate_skb_sent
+>      2.18%  [kernel]          [k] __check_object_size
+>      2.09%  [kernel]          [k] __alloc_skb
+>      1.61%  [unknown]         [k] 0xffffffffc100c296
+>      1.47%  [kernel]          [k] __virt_addr_valid
+>      1.40%  [kernel]          [k] iommu_dma_map_page
+>      1.37%  [unknown]         [k] 0xffffffffc1008a7e
+>      1.22%  [kernel]          [k] tcp_poll
+>      1.16%  [kernel]          [k] __softirqentry_text_start
+>      1.15%  [kernel]          [k] tcp_stream_memory_free
+>      1.07%  [kernel]          [k] tcp_write_xmit
+>      1.06%  [kernel]          [k] kmem_cache_free
+>      1.03%  [kernel]          [k] tcp_release_cb
+>      0.96%  [kernel]          [k] syscall_return_via_sysret
+>      0.90%  [kernel]          [k] __lock_text_start
+>      0.82%  [kernel]          [k] __copy_skb_header
+>      0.81%  [kernel]          [k] amd_iommu_map
+> 
+> Regards
+>     Michael Stoler
+> 
+> On Tue, Apr 20, 2021 at 1:44 PM Michael Stoler <michaels@reduxio.com> wrote:
+>>
+>> Hi, perf data and tops for linux-5.8 are here:
+>> http://rdxdownloads.rdxdyn.com/michael_stoler_perf_data.tgz
+>>
+>> Regards
+>>     Michael Stoler
+>>
+>> On Mon, Apr 19, 2021 at 5:27 PM Michael Stoler <michaels@reduxio.com> wrote:
+>>>
+>>> 1)  linux-5.12-rc8 shows generally same picture:
+>>>
+>>> average load, 70-85% CPU core usage, 128 bytes packets
+>>>     echo_bench --address '172.22.150.170:7777' --number 10 --duration
+>>> 60 --length 128`
+>>> epoll-echo-server:      Speed: 71513 request/sec, 71513 response/sec
+>>> io_uring_echo_server:   Speed: 64091 request/sec, 64091 response/sec
+>>>     epoll-echo-server is 11% faster
+>>>
+>>> high load, 95-100% CPU core usage, 128 bytes packets
+>>>     echo_bench --address '172.22.150.170:7777' --number 20 --duration
+>>> 60 --length 128`
+>>> epoll-echo-server:      Speed: 130186 request/sec, 130186 response/sec
+>>> io_uring_echo_server:   Speed: 109793 request/sec, 109793 response/sec
+>>>     epoll-echo-server is 18% faster
+>>>
+>>> average load, 70-85% CPU core usage, 2048 bytes packets
+>>>     echo_bench --address '172.22.150.170:7777' --number 10 --duration
+>>> 60 --length 2048`
+>>> epoll-echo-server:      Speed: 63082 request/sec, 63082 response/sec
+>>> io_uring_echo_server:   Speed: 59449 request/sec, 59449 response/sec
+>>>     epoll-echo-server is 6% faster
+>>>
+>>> high load, 95-100% CPU core usage, 2048 bytes packets
+>>>     echo_bench --address '172.22.150.170:7777' --number 20 --duration
+>>> 60 --length 2048`
+>>> epoll-echo-server:      Speed: 110402 request/sec, 110402 response/sec
+>>> io_uring_echo_server:   Speed: 88718 request/sec, 88718 response/sec
+>>>     epoll-echo-server is 24% faster
+>>>
+>>>
+>>> 2-3) The "perf top" doesn't work stable with Ubuntu over AWS. All the
+>>> time it shows errors: "Uhhuh. NMI received for unknown reason", "Do
+>>> you have a strange power saving mode enabled?",  "Dazed and confused,
+>>> but trying to continue".
+>>>
+>>> Regards
+>>>     Michael Stoler
+>>>
+>>> On Mon, Apr 19, 2021 at 1:20 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
+>>>>
+>>>> On 4/19/21 10:13 AM, Michael Stoler wrote:
+>>>>> We are trying to reproduce reported on page
+>>>>> https://github.com/frevib/io_uring-echo-server/blob/master/benchmarks/benchmarks.md
+>>>>> results with a more realistic environment:
+>>>>> 1. Internode networking in AWS cluster with i3.16xlarge nodes type(25
+>>>>> Gigabit network connection between client and server)
+>>>>> 2. 128 and 2048 packet sizes, to simulate typical payloads
+>>>>> 3. 10 clients to get 75-95% CPU utilization by server to simulate
+>>>>> server's normal load
+>>>>> 4. 20 clients to get 100% CPU utilization by server to simulate
+>>>>> server's hard load
+>>>>>
+>>>>> Software:
+>>>>> 1. OS: Ubuntu 20.04.2 LTS HWE with 5.8.0-45-generic kernel with latest liburing
+>>>>> 2. io_uring-echo-server: https://github.com/frevib/io_uring-echo-server
+>>>>> 3. epoll-echo-server: https://github.com/frevib/epoll-echo-server
+>>>>> 4. benchmark: https://github.com/haraldh/rust_echo_bench
+>>>>> 5. all commands runs with "hwloc-bind os=eth1"
+>>>>>
+>>>>> The results are confusing, epoll_echo_server shows stable advantage
+>>>>> over io_uring-echo-server, despite reported advantage of
+>>>>> io_uring-echo-server:
+>>>>>
+>>>>> 128 bytes packet size, 10 clients, 75-95% CPU core utilization by server:
+>>>>> echo_bench --address '172.22.117.67:7777' -c 10 -t 60 -l 128
+>>>>> epoll_echo_server:      Speed: 80999 request/sec, 80999 response/sec
+>>>>> io_uring_echo_server:   Speed: 74488 request/sec, 74488 response/sec
+>>>>> epoll_echo_server is 8% faster
+>>>>>
+>>>>> 128 bytes packet size, 20 clients, 100% CPU core utilization by server:
+>>>>> echo_bench --address '172.22.117.67:7777' -c 20 -t 60 -l 128
+>>>>> epoll_echo_server:      Speed: 129063 request/sec, 129063 response/sec
+>>>>> io_uring_echo_server:    Speed: 102681 request/sec, 102681 response/sec
+>>>>> epoll_echo_server is 25% faster
+>>>>>
+>>>>> 2048 bytes packet size, 10 clients, 75-95% CPU core utilization by server:
+>>>>> echo_bench --address '172.22.117.67:7777' -c 10 -t 60 -l 2048
+>>>>> epoll_echo_server:       Speed: 74421 request/sec, 74421 response/sec
+>>>>> io_uring_echo_server:    Speed: 66510 request/sec, 66510 response/sec
+>>>>> epoll_echo_server is 11% faster
+>>>>>
+>>>>> 2048 bytes packet size, 20 clients, 100% CPU core utilization by server:
+>>>>> echo_bench --address '172.22.117.67:7777' -c 20 -t 60 -l 2048
+>>>>> epoll_echo_server:       Speed: 108704 request/sec, 108704 response/sec
+>>>>> io_uring_echo_server:    Speed: 85536 request/sec, 85536 response/sec
+>>>>> epoll_echo_server is 27% faster
+>>>>>
+>>>>> Why io_uring shows consistent performance degradation? What is going wrong?
+>>>>
+>>>> 5.8 is pretty old, and I'm not sure all the performance problems were
+>>>> addressed there. Apart from missing common optimisations as you may
+>>>> have seen in the thread, it looks to me it doesn't have sighd(?) lock
+>>>> hammering fix. Jens, knows better it has been backported or not.
+>>>>
+>>>> So, things you can do:
+>>>> 1) try out 5.12
+>>>> 2) attach `perf top` output or some other profiling for your 5.8
+>>>> 3) to have a more complete picture do 2) with 5.12
+>>>>
 
-The variable up.resv is not initialized and is being checking for a
-non-zero value in the call to _io_register_rsrc_update. Fix this by
-explicitly setting up.resv to 0.
 
-Addresses-Coverity: ("Uninitialized scalar variable)"
-Fixes: c3bdad027183 ("io_uring: add generic rsrc update with tags")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
----
-
-V2: replace "pointer" in commit message with "up.resv"
-
----
- fs/io_uring.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index f4ec092c23f4..63f610ee274b 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -5842,6 +5842,7 @@ static int io_files_update(struct io_kiocb *req, unsi=
-gned int issue_flags)
-        up.data =3D req->rsrc_update.arg;
-        up.nr =3D 0;
-        up.tags =3D 0;
-+       up.resv =3D 0;
-
-        mutex_lock(&ctx->uring_lock);
-        ret =3D __io_register_rsrc_update(ctx, IORING_RSRC_FILE,
---
-2.30.2
-
+-- 
+Pavel Begunkov

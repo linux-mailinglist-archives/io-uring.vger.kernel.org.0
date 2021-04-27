@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B36636C875
-	for <lists+io-uring@lfdr.de>; Tue, 27 Apr 2021 17:14:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C899036C877
+	for <lists+io-uring@lfdr.de>; Tue, 27 Apr 2021 17:14:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237164AbhD0POu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 27 Apr 2021 11:14:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36618 "EHLO
+        id S236861AbhD0POw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 27 Apr 2021 11:14:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235466AbhD0POu (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 27 Apr 2021 11:14:50 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF71CC061574
-        for <io-uring@vger.kernel.org>; Tue, 27 Apr 2021 08:14:05 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id n2so6696415wrm.0
-        for <io-uring@vger.kernel.org>; Tue, 27 Apr 2021 08:14:05 -0700 (PDT)
+        with ESMTP id S235466AbhD0POv (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 27 Apr 2021 11:14:51 -0400
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0B17C061756
+        for <io-uring@vger.kernel.org>; Tue, 27 Apr 2021 08:14:06 -0700 (PDT)
+Received: by mail-wr1-x42b.google.com with SMTP id k14so9935888wrv.5
+        for <io-uring@vger.kernel.org>; Tue, 27 Apr 2021 08:14:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=5FXGc7LbcprPPafTigenRVmTagq9hTc7XnYitirT/u4=;
-        b=DOAc4VFMNmoxYPYGSN46pPzY7ZripziO5WklJaPUMfe5bCGB9kNYJZ2ttmEFpod1aj
-         I0j8JpT4VS0PxZBjQLgk9t0RUHvJ8S0Nzh29Xako+LWM4mSi6s6QgsPppSz2swWPBK2C
-         Kgt2PQ4RVNLrALafBevAaViyMS2X82HEsKY2Czp7jA5dSNuWyyMstAXa2P3NJ7NMDMPL
-         D9pi9mzB7RnVR/WTEW/wwOYjwU1t2fws2NEiUcqLM1hBhMZtna9J89hWM4082Nd8mOcR
-         ouXdy7RhDS2e6EG/A7wv1wgAMQuIqRdj0Wnb6nya9qScUdZqS0IHy019/SwuKVkquMLu
-         ux4g==
+        bh=IyjGJ6ajq70QcBsatsOARYaJD4M8/wklyqTGu1x8SUM=;
+        b=r+baP4rdnkC/i9BZ73XfgjNjrkZVYIGFPEyRP2u1bqUPsAJZnKysseD1GQR/56Tfh6
+         2HOjetIUmp33VINBCRtymEnfSPX/I1bqG0veLXAMmXtfv28qBnQvxLMtUomsh4ALjPfS
+         TNopsNeNggNsupqzbbaDL+VvSSabxt5KCd8MKgoJ1o1un6gCrkwyFhWP8k7XFVODhBwW
+         5THOE9JDn9LB3vd9cy2jAhmwnfncO7FdU7HU/VqMniXokhaSynh6Lg7qZTGeTyu/fFdA
+         aX+RS8vPltNf8af7wMXQC8+I/Lv9I/qBcXoS5roSLMggD44zwMPYi/zEgIYuDso3YJnD
+         JfWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=5FXGc7LbcprPPafTigenRVmTagq9hTc7XnYitirT/u4=;
-        b=eQ4c79H9EHNCzjIh1B/eWfA1YWqFP+1JuTrks9uxbk8S/10NiS5eGmh8O9fcPOxZer
-         2iTpLPeddakklqQTg2hQ3F2O6R2vqC5PQOgtKkRx5RMFsP4xuDpjRnKFMVZ4tUx7O2gN
-         rTnkebrbQ/pnqQMZ+nyVz9MXWcoPN+CxGcNKlKHe5TBGbTpkeTCn46D4bDHnKgsXe67a
-         Lyi/Ci7HW3vDzFKw6pHv8sfV3S2hZIEnSdszgURTweit5zqrsyhshS1BBenU0vY1cgnh
-         TYbR81ORUQzvVov9wdQMhdUdjgmJUefM3DAmIPfVEReZIuHxa8pfAZeJm/A6zImFDk/U
-         ZLpQ==
-X-Gm-Message-State: AOAM533GBEPlrkvUvJzjNK1030pw/6fsHZpRh+nV4WxktvN70GEYQkyw
-        +9DH1rHm6mQmIhjS3HurXZzck9jzdgA=
-X-Google-Smtp-Source: ABdhPJwHv3rHd1tnofy+vqWFGebaqGlYQ1whNMevDNF5O9kl4KdStLAAAY+/8aRc3dCeDEUvv3Ctqg==
-X-Received: by 2002:adf:8046:: with SMTP id 64mr29159969wrk.176.1619536444549;
-        Tue, 27 Apr 2021 08:14:04 -0700 (PDT)
+        bh=IyjGJ6ajq70QcBsatsOARYaJD4M8/wklyqTGu1x8SUM=;
+        b=BrNnD0RYN3t0qCG/hlBQPlbVSrNB/hNUJw62ofaXOv4Je4yYuKa3GmFqT9aGvYJQSx
+         95lekNW1Us1/PG5f5FVGrJ4xzBlQk0tqJFMzESSfQZGK8PjfWUpUVXPeiiwyHkFqUVwO
+         58griIO0COxbwb7VO9qO4ZKGhBeeky7p6h04s7a5nv0oGGHhx0mH9qGt9QoazYDkPFsd
+         hujM/pLjb9x75MKXaVvoPu1XYiJUvr7scTgqUs7rxDu1yU8qxJYPXdB1XRzJ6Ds43puw
+         /Btev3hF0XrN7pgrmkQloLJ012AhcTqvh6EonS/kS0i4Q0Iwx5IWqnvxPjSMCXQ0J783
+         GQhA==
+X-Gm-Message-State: AOAM530t66hYGaMnNQIw2F0NdpsHXI5N4Xnnn8Feci/sY+3/SoD/D9lq
+        7jXIpFs6VhUFey0HP1UTauo=
+X-Google-Smtp-Source: ABdhPJzJfoYi7j8MfnFb3dCjoXajwB9gEzfXlBxbHHEdcQjFhJIAkZKVzhG0IU2VzlGbyprXbPjm7Q==
+X-Received: by 2002:adf:f947:: with SMTP id q7mr29889344wrr.414.1619536445620;
+        Tue, 27 Apr 2021 08:14:05 -0700 (PDT)
 Received: from localhost.localdomain ([148.252.129.131])
-        by smtp.gmail.com with ESMTPSA id i2sm1629630wro.0.2021.04.27.08.14.03
+        by smtp.gmail.com with ESMTPSA id i2sm1629630wro.0.2021.04.27.08.14.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Apr 2021 08:14:04 -0700 (PDT)
+        Tue, 27 Apr 2021 08:14:05 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 1/3] io_uring: fix drain with rsrc CQEs
-Date:   Tue, 27 Apr 2021 16:13:51 +0100
-Message-Id: <2b32f5f0a40d5928c3466d028f936e167f0654be.1619536280.git.asml.silence@gmail.com>
+Subject: [PATCH 2/3] io_uring: dont overlap internal and user req flags
+Date:   Tue, 27 Apr 2021 16:13:52 +0100
+Message-Id: <b8b5b02d1ab9d786fcc7db4a3fe86db6b70b8987.1619536280.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <cover.1619536280.git.asml.silence@gmail.com>
 References: <cover.1619536280.git.asml.silence@gmail.com>
@@ -61,27 +61,49 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Resource emitted CQEs are not bound to requests, so fix up counters used
-for DRAIN/defer logic.
+CQE flags take one byte that we store in req->flags together with other
+REQ_F_* internal flags. CQE flags are copied directly into req and then
+verified that requires some handling on failures, e.g. to make sure that
+that copy doesn't set some of the internal flags.
 
-Fixes: b60c8dce33895 ("io_uring: preparation for rsrc tagging")
+More all internal flags to take bits after the first byte, so we don't
+need extra handling and make it safer overall.
+
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/io_uring.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 63ff70587d4f..d3b7fe6ccb0e 100644
+index d3b7fe6ccb0e..3419548ccaf5 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -7536,6 +7536,7 @@ static void __io_rsrc_put_work(struct io_rsrc_node *ref_node)
- 			io_ring_submit_lock(ctx, lock_ring);
- 			spin_lock_irqsave(&ctx->completion_lock, flags);
- 			io_cqring_fill_event(ctx, prsrc->tag, 0, 0);
-+			ctx->cq_extra++;
- 			io_commit_cqring(ctx);
- 			spin_unlock_irqrestore(&ctx->completion_lock, flags);
- 			io_cqring_ev_posted(ctx);
+@@ -702,7 +702,8 @@ enum {
+ 	REQ_F_FORCE_ASYNC_BIT	= IOSQE_ASYNC_BIT,
+ 	REQ_F_BUFFER_SELECT_BIT	= IOSQE_BUFFER_SELECT_BIT,
+ 
+-	REQ_F_FAIL_LINK_BIT,
++	/* first byte is taken by user flags, shift it to not overlap */
++	REQ_F_FAIL_LINK_BIT	= 8,
+ 	REQ_F_INFLIGHT_BIT,
+ 	REQ_F_CUR_POS_BIT,
+ 	REQ_F_NOWAIT_BIT,
+@@ -6503,14 +6504,10 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
+ 	req->work.creds = NULL;
+ 
+ 	/* enforce forwards compatibility on users */
+-	if (unlikely(sqe_flags & ~SQE_VALID_FLAGS)) {
+-		req->flags = 0;
++	if (unlikely(sqe_flags & ~SQE_VALID_FLAGS))
+ 		return -EINVAL;
+-	}
+-
+ 	if (unlikely(req->opcode >= IORING_OP_LAST))
+ 		return -EINVAL;
+-
+ 	if (unlikely(!io_check_restriction(ctx, req, sqe_flags)))
+ 		return -EACCES;
+ 
 -- 
 2.31.1
 

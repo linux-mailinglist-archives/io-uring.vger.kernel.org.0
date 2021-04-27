@@ -2,107 +2,172 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 248B436B660
-	for <lists+io-uring@lfdr.de>; Mon, 26 Apr 2021 18:02:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 380B536BF4E
+	for <lists+io-uring@lfdr.de>; Tue, 27 Apr 2021 08:31:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234510AbhDZQCQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 26 Apr 2021 12:02:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39180 "EHLO
+        id S234620AbhD0Gal (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 27 Apr 2021 02:30:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33040 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234502AbhDZQCP (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 26 Apr 2021 12:02:15 -0400
-Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 327CEC061574
-        for <io-uring@vger.kernel.org>; Mon, 26 Apr 2021 09:01:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-         s=42; h=Date:Message-ID:From:To:CC;
-        bh=PauBmpIneSFC1tu0KfpvpZFo8XVxlxhN7j9VHy+uD3k=; b=BrKV/sftobXw0PwRgPahwGDohk
-        vN4T4DT401sauGK8oRbd2UniJzHZVXJXbknn7JCJT5lOU47lKqGXdPkRnqpY9EVM6F9ydlPvKFb9Z
-        gGQzxmUOgR+XNUZzy5WKuM7OzZ5vhoRRMBTKWrWwCQZhKJNF6suFUtzmyrLzpc04ud/nx99wmULrX
-        bY2o07AMJDzeZbWkVxO68PzFXtBGg/a+zd9RRm50RFAM2gvjW/Q9Z/+sNh85SSsHxFqNgBxBqJnsI
-        hMqpIoYCg8UYviIe4b44Zm8PzN5sv/HtdxuZN55uFltFD5OPByAlp+qOu1keCXPZSLxRAKuytGSJF
-        beBuIE9ufOj9sRceCDRNeeQsFWs+nHkrQSqafVoExpcU2CVkOQEXkUjxhE3jj5aOVDxh1wgqOpNUZ
-        p7yW47Xz1RDu46Nu0St3WtMDzS6vaTjEU7UdRHGaQu4Ip4vQ9YlBgI4Lr/B2uR1XqqH4TbU9zjJaw
-        rAPsEMJK/+pJqT/1+LZmf0kH;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
-        (Exim)
-        id 1lb3fu-0000WH-BZ; Mon, 26 Apr 2021 16:01:30 +0000
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-References: <cover.1619306115.git.metze@samba.org>
- <9ba4228d-d346-766d-de5c-7d7d2bab92fa@kernel.dk>
-From:   Stefan Metzmacher <metze@samba.org>
-Subject: Re: [PATCH v3 0/6] Complete setup before calling wake_up_new_task()
-Message-ID: <422fe390-11b4-203b-455c-5a1e456e6321@samba.org>
-Date:   Mon, 26 Apr 2021 18:01:30 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
+        with ESMTP id S229578AbhD0Gal (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 27 Apr 2021 02:30:41 -0400
+Received: from mail-qk1-x730.google.com (mail-qk1-x730.google.com [IPv6:2607:f8b0:4864:20::730])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82AF7C061574
+        for <io-uring@vger.kernel.org>; Mon, 26 Apr 2021 23:29:58 -0700 (PDT)
+Received: by mail-qk1-x730.google.com with SMTP id z2so22028416qkb.9
+        for <io-uring@vger.kernel.org>; Mon, 26 Apr 2021 23:29:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=/pV0AqXqbkthcwk38nLrMq1WVbt4ZRnRJR4uUDC7/ME=;
+        b=LtDpQqhqRKg1LRrtuXslfNLH06XS3SHGL9cCs8S3kZEwfU5eTHjLzs0OzeRM5EF10c
+         S67kZcrBH0t/iesFTHoQiBzEThBqwY0mW/paDJ7Tu/hbKKLPfbGDCFYxkwQgOEaejDot
+         3wLqdp2bRQOqL2Zk0JGdW1NqJazdjWJ9NLsDT3KM0Z2bmzmzy8uv5yzPv0cvmCVmtb67
+         59nQfRu4YKXM3NY/tdlfKESTQ29rEjHtQZh83psbcOSg9ho0Pf61O7k+PZQhxgQJLYPj
+         ub2S14D82/4NZXeJyjyE66oyEHrR8cq81GMDIw8yluLM0IsuZjZADBWZTx/yyn6icyih
+         uySA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=/pV0AqXqbkthcwk38nLrMq1WVbt4ZRnRJR4uUDC7/ME=;
+        b=HGCylWu7SpygX/NSEMxbILcfMizplJtDkkArS0nJNds0duhB432xanByn2Ta7cDgWj
+         WGWQPDErDwghHbVQaQVyV6HjBtlDyfV3ZzvfR7ZYcTLCl12Ygk2bpjl6ZaTBFNRafdWD
+         rcLv5yr6uLLa2FD+aSendmOZLGvgkTwni7nZHY2OiBW1OjQ72fdBLzZXI1fl/2zDzI7M
+         EVXduQ4GKvbt7cxczvN0YzEHVPJZPeUHW8FgeFEGmj3dMrRUeijuwgi4Dj38E/FOjVLI
+         WvWzjQBxj3kK5KG6GwIOS5PYol9sX+lb83pEOS3t71KkhOOGoY1vKQBiaMbqb+S7Vye8
+         cN+A==
+X-Gm-Message-State: AOAM531vTKH5IxGj7eVMJc9Mkc5qlpmOSbR5b5xWenzbmYw4HGLgS00V
+        IGn+k5BLEjtjTLFBrWd08ndAOhGGCjxd4qS0XLD/eA==
+X-Google-Smtp-Source: ABdhPJxcsBydfmT6CZ7+3NAVrZkaZgOaWm1qGfP6YqLXcJtvGOQAQ3vF/Xnv4j286mRezb1Vtgyx1G7mSO4SapbWyiQ=
+X-Received: by 2002:a37:8f06:: with SMTP id r6mr21527712qkd.424.1619504997400;
+ Mon, 26 Apr 2021 23:29:57 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <9ba4228d-d346-766d-de5c-7d7d2bab92fa@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <00000000000022ebeb05bc39f582@google.com> <e939af11-7ce8-46af-8c76-651add0ae56bn@googlegroups.com>
+In-Reply-To: <e939af11-7ce8-46af-8c76-651add0ae56bn@googlegroups.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Tue, 27 Apr 2021 08:29:46 +0200
+Message-ID: <CACT4Y+aPRCZcLvkuWgK=A_rR0PqdEAM+xssWU4N7hNRSm9=mSA@mail.gmail.com>
+Subject: Re: KASAN: null-ptr-deref Write in io_uring_cancel_sqpoll
+To:     Palash Oswal <oswalpalash@gmail.com>, Jens Axboe <axboe@kernel.dk>,
+        io-uring@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Cc:     syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        syzbot+be51ca5a4d97f017cd50@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Jens,
-
->> now that we have an explicit wake_up_new_task() in order to start the
->> result from create_io_thread(), we should set things up before calling
->> wake_up_new_task().
+On Mon, Apr 26, 2021 at 5:58 PM Palash Oswal <oswalpalash@gmail.com> wrote:
+> On Friday, February 26, 2021 at 3:03:16 PM UTC+5:30 syzbot wrote:
 >>
->> Changes in v3:
->>  - rebased on for-5.13/io_uring.
->>  - I dropped this:
->>   fs/proc: hide PF_IO_WORKER in get_task_cmdline()
->>  - I added:
->>   set_task_comm() overflow checks
-> 
-> Looks good to me, a few comments:
-> 
-> 1) I agree with Pavel that the WARN on overflow is kinda silly,
->    it doesn't matter that much. So I'd rather drop those for now.
+>> Hello,
+>>
+>> syzbot found the following issue on:
+>>
+>> HEAD commit: d01f2f7e Add linux-next specific files for 20210226
+>> git tree: linux-next
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=3D108dc5a8d000=
+00
+>> kernel config: https://syzkaller.appspot.com/x/.config?x=3Da1746d2802a82=
+a05
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=3Dbe51ca5a4d97f0=
+17cd50
+>>
+>> Unfortunately, I don't have any reproducer for this issue yet.
+>>
+>> IMPORTANT: if you fix the issue, please add the following tag to the com=
+mit:
+>> Reported-by: syzbot+be51ca...@syzkaller.appspotmail.com
+>>
+>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>> BUG: KASAN: null-ptr-deref in instrument_atomic_read_write include/linux=
+/instrumented.h:101 [inline]
+>> BUG: KASAN: null-ptr-deref in atomic_inc include/asm-generic/atomic-inst=
+rumented.h:240 [inline]
+>> BUG: KASAN: null-ptr-deref in io_uring_cancel_sqpoll+0x2c7/0x450 fs/io_u=
+ring.c:8871
+>> Write of size 4 at addr 0000000000000110 by task iou-sqp-19439/19447
+>>
+>> CPU: 0 PID: 19447 Comm: iou-sqp-19439 Not tainted 5.11.0-next-20210226-s=
+yzkaller #0
+>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS =
+Google 01/01/2011
+>> Call Trace:
+>> __dump_stack lib/dump_stack.c:79 [inline]
+>> dump_stack+0xfa/0x151 lib/dump_stack.c:120
+>> __kasan_report mm/kasan/report.c:403 [inline]
+>> kasan_report.cold+0x5f/0xd8 mm/kasan/report.c:416
+>> check_region_inline mm/kasan/generic.c:180 [inline]
+>> kasan_check_range+0x13d/0x180 mm/kasan/generic.c:186
+>> instrument_atomic_read_write include/linux/instrumented.h:101 [inline]
+>> atomic_inc include/asm-generic/atomic-instrumented.h:240 [inline]
+>> io_uring_cancel_sqpoll+0x2c7/0x450 fs/io_uring.c:8871
+>> io_sq_thread+0x1109/0x1ae0 fs/io_uring.c:6782
+>> ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>> Kernel panic - not syncing: panic_on_warn set ...
+>> CPU: 0 PID: 19447 Comm: iou-sqp-19439 Tainted: G B 5.11.0-next-20210226-=
+syzkaller #0
+>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS =
+Google 01/01/2011
+>> Call Trace:
+>> __dump_stack lib/dump_stack.c:79 [inline]
+>> dump_stack+0xfa/0x151 lib/dump_stack.c:120
+>> panic+0x306/0x73d kernel/panic.c:231
+>> end_report mm/kasan/report.c:102 [inline]
+>> end_report.cold+0x5a/0x5a mm/kasan/report.c:88
+>> __kasan_report mm/kasan/report.c:406 [inline]
+>> kasan_report.cold+0x6a/0xd8 mm/kasan/report.c:416
+>> check_region_inline mm/kasan/generic.c:180 [inline]
+>> kasan_check_range+0x13d/0x180 mm/kasan/generic.c:186
+>> instrument_atomic_read_write include/linux/instrumented.h:101 [inline]
+>> atomic_inc include/asm-generic/atomic-instrumented.h:240 [inline]
+>> io_uring_cancel_sqpoll+0x2c7/0x450 fs/io_uring.c:8871
+>> io_sq_thread+0x1109/0x1ae0 fs/io_uring.c:6782
+>> ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+>> Kernel Offset: disabled
+>> Rebooting in 86400 seconds..
+>>
+>>
+>> ---
+>> This report is generated by a bot. It may contain errors.
+>> See https://goo.gl/tpsmEJ for more information about syzbot.
+>> syzbot engineers can be reached at syzk...@googlegroups.com.
+>>
+>> syzbot will keep track of this issue. See:
+>> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>
+>
+> My syzkaller instance reported a syz-repro for this bug:
+> Syzkaller reproducer: # {Threaded:true Collide:true Repeat:true RepeatTim=
+es:0 Procs:2 Slowdown:1 Sandbox:none Fault:false FaultCall:-1 FaultNth:0 Le=
+ak:false NetInjection:true NetDevices:true NetReset:true Cgroups:true Binfm=
+tMisc:true CloseFDs:true KCSAN:false DevlinkPCI:false USB:false VhciInjecti=
+on:false Wifi:false IEEE802154:false Sysctl:true UseTmpDir:true HandleSegv:=
+true Repro:false Trace:false}
+> r0 =3D fsmount(0xffffffffffffffff, 0x1, 0xc)
+> syz_io_uring_setup(0x329b, &(0x7f0000000080)=3D{0x0, 0x850e, 0x2, 0x2, 0x=
+1b4}, &(0x7f0000ffc000/0x4000)=3Dnil, &(0x7f0000ffa000/0x4000)=3Dnil, 0x0, =
+0x0)
+> syz_io_uring_setup(0x3de2, &(0x7f0000001480)=3D{0x0, 0x4f62, 0x4, 0x2, 0x=
+75}, &(0x7f0000ffb000/0x3000)=3Dnil, &(0x7f0000ffd000/0x3000)=3Dnil, 0x0, 0=
+x0)
+> fsetxattr$trusted_overlay_nlink(r0, &(0x7f0000000140), 0x0, 0x0, 0x0)
+>
+> I'm working to get a c reproducer for it that is consistent. This syz-rep=
+ro does not produce a working reproducer for me just yet.
+> Initial suspicion is that io_sq_thread_stop sets set_bit(IO_SQ_THREAD_SHO=
+ULD_STOP, &sqd->state);
+> And subsequently after a return from fork, where the process receives a S=
+IGKILL and io_uring_cancel_sqpoll(ctx) is called with a NULL ctx in io_sq_t=
+hread(). I haven't connected all of the dots yet, working on it.
 
-I think the overflow matters, the last time, it went unnoticed in
-commit c5def4ab849494d3c97f6c9fc84b2ddb868fe78c
-
-        worker->task = kthread_create_on_node(io_wqe_worker, worker, wqe->node,
--                                               "io_wqe_worker-%d", wqe->node);
-+                               "io_wqe_worker-%d/%d", index, wqe->node);
-
-With that "io_wqe_worker-0" or "io_wqe_worker-1" are still (up to 5.11)
-reported to userspace. And between 5.3 and 5.4 the meaning changed,
-the shown value is now unbound vs. bound, while it was the numa node before.
-
-While I was debugging numa related problems, that took a long time to
-figure out.
-
-Now that we have the pid encoded in the name, it should not be truncated,
-otherwise it will make it impossible to debug problems.
-
-If the userspace application has 10 threads (with pids which would all cause
-on overflow) and each uses io_uring (64 io-workers each), then we may have
-640 io-workers all with the same name, which are all in the same userspace
-process, and it's not possible to find which workers belong to which userspace
-thread.
-
-Currently we can ignore as there's no problem, so I'm fine with dropping
-5-6 for now.
-
-Maybe a better assertion would be BUILD_BUG_ON(PID_MAX_LIMIT > 9999999);
-(or something similar) in order to prevent this from happening.
-
-> 2) Would really love it to see some decent commit messages, quite
->    a few of them are empty. In general some reasoning is nice in
->    the commit message, when you don't have the context available.
-> 
-> Do you want to do a v4 with 5-6/6 dropped for now, and 3-4 having
-> some reasoning? I can also just apply as-is and write some commit
-> message myself, let me know. I'll add 1-2 for now.
-
-I'm currently busy with other stuff, it would be great if you could
-expand the commit messages!
-
-Thanks!
-metze
++kernel lists and syzbot email
+(almost nobody is reading syzkaller-bugs@ itself)

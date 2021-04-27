@@ -2,52 +2,81 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E331436C640
-	for <lists+io-uring@lfdr.de>; Tue, 27 Apr 2021 14:45:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B750E36C66F
+	for <lists+io-uring@lfdr.de>; Tue, 27 Apr 2021 14:52:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235428AbhD0MqS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 27 Apr 2021 08:46:18 -0400
-Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:28708 "EHLO
-        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235489AbhD0MqS (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 27 Apr 2021 08:46:18 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UX-Z1zZ_1619527526;
-Received: from e18g09479.et15sqa.tbsite.net(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UX-Z1zZ_1619527526)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 27 Apr 2021 20:45:33 +0800
-From:   Hao Xu <haoxu@linux.alibaba.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>
-Subject: [PATCH 5.13] io_uring: don't set IORING_SQ_NEED_WAKEUP when sqthread is dying
-Date:   Tue, 27 Apr 2021 20:45:26 +0800
-Message-Id: <1619527526-103300-1-git-send-email-haoxu@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
+        id S236247AbhD0MxF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 27 Apr 2021 08:53:05 -0400
+Received: from us2-ob1-7.mailhostbox.com ([208.91.199.213]:35480 "EHLO
+        us2-ob1-7.mailhostbox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235426AbhD0MxF (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 27 Apr 2021 08:53:05 -0400
+Received: from smtp.oswalpalash.com (unknown [49.36.71.250])
+        (Authenticated sender: hello@oswalpalash.com)
+        by us2.outbound.mailhostbox.com (Postfix) with ESMTPA id D3507185091;
+        Tue, 27 Apr 2021 12:52:15 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oswalpalash.com;
+        s=20160715; t=1619527939;
+        bh=QJ1ItH+nby/xw42i3yg7qBH/TbUz3BBp9ZHK6FTGYB0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=OdckFU0fJid7KqGPk3e2N7cQrEkblGfvE+861jC6730L1f3Qc8y30JUnFWclKB/ck
+         3jug+RMij0FXdZKxXs3jjCgg2rdwkJHHExndUpC313ZXVbHIPGVSpgfNih/QZdoOYT
+         /TYRWgt+9TbIx9JpkgbWyGoELgefgTTd6e2o9wMo=
+From:   Palash Oswal <hello@oswalpalash.com>
+To:     asml.silence@gmail.com
+Cc:     axboe@kernel.dk, dvyukov@google.com, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, oswalpalash@gmail.com,
+        syzbot+be51ca5a4d97f017cd50@syzkaller.appspotmail.com,
+        syzkaller-bugs@googlegroups.com,
+        Palash Oswal <hello@oswalpalash.com>, stable@vger.kernel.org
+Subject: [PATCH 5.13] io_uring: Check current->io_uring in io_uring_cancel_sqpoll
+Date:   Tue, 27 Apr 2021 18:21:49 +0530
+Message-Id: <20210427125148.21816-1-hello@oswalpalash.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <e67b2f55-dd0a-1e1f-e34b-87e8613cd701@gmail.com>
+References: <e67b2f55-dd0a-1e1f-e34b-87e8613cd701@gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=M6Qz1B4s c=1 sm=1 tr=0
+        a=/01j2yjeSAkpGUovTkZ0Ew==:117 a=/01j2yjeSAkpGUovTkZ0Ew==:17
+        a=X6f2t9OlHk8md9mV9bYA:9
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-we don't need to re-fork the sqthread over exec, so no need to set
-IORING_SQ_NEED_WAKEUP when sqthread is dying.
+syzkaller identified KASAN: null-ptr-deref Write in
+io_uring_cancel_sqpoll on v5.12
 
-Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
+io_uring_cancel_sqpoll is called by io_sq_thread before calling
+io_uring_alloc_task_context. This leads to current->io_uring being
+NULL. io_uring_cancel_sqpoll should not have to deal with threads
+where current->io_uring is NULL.
+
+In order to cast a wider safety net, perform input sanitisation
+directly in io_uring_cancel_sqpoll and return for NULL value of
+current->io_uring.
+
+Reported-by: syzbot+be51ca5a4d97f017cd50@syzkaller.appspotmail.com
+Cc: stable@vger.kernel.org
+Signed-off-by: Palash Oswal <hello@oswalpalash.com>
 ---
- fs/io_uring.c | 2 --
- 1 file changed, 2 deletions(-)
+ fs/io_uring.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 6b578c380e73..92dcd1c21516 100644
+index dff34975d86b..eccad51b7954 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -6897,8 +6897,6 @@ static int io_sq_thread(void *data)
+@@ -8998,6 +8998,8 @@ static void io_uring_cancel_sqpoll(struct io_ring_ctx *ctx)
+ 	s64 inflight;
+ 	DEFINE_WAIT(wait);
  
- 	io_uring_cancel_sqpoll(sqd);
- 	sqd->thread = NULL;
--	list_for_each_entry(ctx, &sqd->ctx_list, sqd_list)
--		io_ring_set_wakeup_flag(ctx);
- 	io_run_task_work();
- 	io_run_task_work_head(&sqd->park_task_work);
- 	mutex_unlock(&sqd->lock);
++	if (!current->io_uring)
++		return;
+ 	WARN_ON_ONCE(!sqd || ctx->sq_data->thread != current);
+ 
+ 	atomic_inc(&tctx->in_idle);
 -- 
-1.8.3.1
+2.27.0
 

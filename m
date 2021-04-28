@@ -2,132 +2,186 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E4E736D4C1
-	for <lists+io-uring@lfdr.de>; Wed, 28 Apr 2021 11:28:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69EA036D70C
+	for <lists+io-uring@lfdr.de>; Wed, 28 Apr 2021 14:11:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232153AbhD1J2w (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 28 Apr 2021 05:28:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51286 "EHLO
+        id S229907AbhD1MM0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 28 Apr 2021 08:12:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230113AbhD1J2w (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 28 Apr 2021 05:28:52 -0400
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F15CAC061574
-        for <io-uring@vger.kernel.org>; Wed, 28 Apr 2021 02:28:07 -0700 (PDT)
-Received: by mail-wm1-x331.google.com with SMTP id n84so6175782wma.0
-        for <io-uring@vger.kernel.org>; Wed, 28 Apr 2021 02:28:07 -0700 (PDT)
+        with ESMTP id S229645AbhD1MMZ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 28 Apr 2021 08:12:25 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E843EC061574
+        for <io-uring@vger.kernel.org>; Wed, 28 Apr 2021 05:11:40 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id x7so62741442wrw.10
+        for <io-uring@vger.kernel.org>; Wed, 28 Apr 2021 05:11:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=YRHuhMwDCrPHV/QDc4nWNRUB5omGRLxOSJ/I1S5Etmk=;
-        b=VC04ropbsaswc4s9FxoYnasuBBZyFGW7+tdBnJ+zdvrfEB0VWCrPTzOV/nQvEMBO7Z
-         S1ISmWENzL7QgU1p7jHju9b7wUO8uigZtq86YUUvYN5/bEfpMityUh/7XbX0S7z81nMF
-         BowjQWHBP2N0jW8zN1XNmwyoeZwtDB0srv/+vRD28qVrxxOdrF39TstxFq2EsYwegD9G
-         1KayMdpNkVJQthaRgWejR6s+eS6vV7u8/My0+LFpqZjLLywAxiW2rozH9CPnlPibffsY
-         XJLVp0CQVwRhvS80jI6/PKiVyt0gj2h/XIuFjSSxz3BQKCdddRO1ueOYMSD6cq6LLSoC
-         Co+w==
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=OgqNKHz8cApoWHdoNbal6CUGWuS3XtIKiLVV+Qua8u8=;
+        b=QD+3L1f97riEDVlHf1wpqBgC+IXgwccYmSOFJYjF8Qy4xWWR1BCH1L/zMIcpJXWgIy
+         ALj5DmZA9pB5NtzoKsQOYFybjRLEn38qN3ymLEZ5HFyQ29Sbs0vtBCgwjV9SsHCfBlbV
+         aj1LRULyCQj8VsgEEsSUDbcctsOjTF8rM1N/4vn5V6t0J/ejHdGMsZK9g++H0A6QGoeF
+         dopBEjjUDkskf7+NSj7EAfL4AWKX+Y08hTjN8gHC6Z6NERgq/z7FVPqlXdBrteZTXZCb
+         ZkSfyVMmq6BcRx5LUfMGKgSf+mbZE/2LjoPvBPxv2AP1ebpTlEajSW11thB6/iGclfSb
+         k3Dw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=YRHuhMwDCrPHV/QDc4nWNRUB5omGRLxOSJ/I1S5Etmk=;
-        b=uMHXvvPw2uzmvzjdrTQIqxzP3rpt2ySasphy23V22HKo5b5loSNfykjhmusoANcg9Z
-         GH37c6Bz0RsQBRQZLWi5Nc0QUpDeEGtVdxeMirG2eosP+jQpWkG0iiGDsVjIqgPbNMXM
-         yofSFZQpK+IfeoiSIas717yQ+nLd1zwAny8JAVSVqMdAZkopVNGcw737WtWUXmFMBucD
-         FieuGEhchK5WszlOVfH1Hu1VN1NUHAboC81dphtOx5u6T9Q9wcxMD4Vcrl51qsOgrZMu
-         7wigqNfg7n77CDhQ8r7DEXvhHk38jh52FWKpeATCBPtDY9gNqTQ8r5Nyj7NiGXWFeMRu
-         xKxw==
-X-Gm-Message-State: AOAM530ep+P356da2P8Ja9HUf/t8p1LUYv5fLqyiX5lO3zq8nWhqmrIl
-        Q/fbyOVDGyq6+JHcZfDqX18dQN5kznQ=
-X-Google-Smtp-Source: ABdhPJxfQufFY9EXMPjJlfL74khSP0Pc5h+g9oxeuR5bOzg2h/N3XDSamsCIOcLhpia+vfBvksL6fQ==
-X-Received: by 2002:a1c:7711:: with SMTP id t17mr7585246wmi.6.1619602086779;
-        Wed, 28 Apr 2021 02:28:06 -0700 (PDT)
-Received: from [192.168.8.197] ([185.69.145.35])
-        by smtp.gmail.com with ESMTPSA id v185sm3132816wmb.25.2021.04.28.02.28.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Apr 2021 02:28:06 -0700 (PDT)
-Subject: Re: [PATCH 5.13] io_uring: don't set IORING_SQ_NEED_WAKEUP when
- sqthread is dying
-To:     Hao Xu <haoxu@linux.alibaba.com>, Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <1619527526-103300-1-git-send-email-haoxu@linux.alibaba.com>
- <24c7503d-769f-953e-854f-5090b4bfca3b@gmail.com>
- <68ce18b8-7bbd-f655-c745-f7cfaac76457@linux.alibaba.com>
- <dbc1ccd4-54ae-3bf1-d15a-0322cfeeb885@linux.alibaba.com>
+        bh=OgqNKHz8cApoWHdoNbal6CUGWuS3XtIKiLVV+Qua8u8=;
+        b=VtHRXSOg8HEbMcRE24btIvBjvhoLlQUYoLLjKdpcMHbo1mxUhgTjJy6BpZMPnSEWWF
+         ZEOSj6LplS5xoPhkT2WlS1Pl5+C+LhNWWJgXLWz0eP8ay0RsfC2wFM8y5RpON/619lzS
+         Xeke9BJSh/JiAbfmp/jxGVZzcrehghfi3RCL8gYEvVXUuROUwSWZe7GNxNDbzQ35Y5Kj
+         nhjDmDfTjFquSW+cbggw/+bNZNLpMjtEswo5O40CmkbHuZ52rSudjPwZpJbUBhuzVAWj
+         VjhcNuGgqVxtCVhJfTAgXvGNnrh7VtHlTKJElAtcyQAEgJJZXpWMaXm+qHR65LA5UUZh
+         v6WA==
+X-Gm-Message-State: AOAM531bn2k/osy1Iym3ovcXo+nRHVUP50jqcgdHmKClmtmAaABBl0iz
+        3ryYXWlt0Ge/LkavOj2lBUs/9KuKNPE=
+X-Google-Smtp-Source: ABdhPJy9OoOdd/qu+CLzv9gMqsr+sbRQpH8so+tX/4u/xnZPdXlvU83zWFeFHnK5Nh6VUa9iEZ47fA==
+X-Received: by 2002:a05:6000:136b:: with SMTP id q11mr14281702wrz.350.1619611899671;
+        Wed, 28 Apr 2021 05:11:39 -0700 (PDT)
+Received: from localhost.localdomain ([185.69.145.35])
+        by smtp.gmail.com with ESMTPSA id t14sm7876514wrz.55.2021.04.28.05.11.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Apr 2021 05:11:39 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <06b764e1-adfa-dfdc-2e28-1fdfba49b970@gmail.com>
-Date:   Wed, 28 Apr 2021 10:28:01 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.9.1
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [PATCH 1/1] io_uring: allow empty slots for reg buffers
+Date:   Wed, 28 Apr 2021 13:11:29 +0100
+Message-Id: <7e95e4d700082baaf010c648c72ac764c9cc8826.1619611868.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-In-Reply-To: <dbc1ccd4-54ae-3bf1-d15a-0322cfeeb885@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/28/21 7:38 AM, Hao Xu wrote:
-> 在 2021/4/27 下午10:35, Hao Xu 写道:
->> 在 2021/4/27 下午9:13, Pavel Begunkov 写道:
->>> On 4/27/21 1:45 PM, Hao Xu wrote:
->>>> we don't need to re-fork the sqthread over exec, so no need to set
->>>> IORING_SQ_NEED_WAKEUP when sqthread is dying.
->>>
->>> It forces users to call io_uring_enter() for it to return
->>> -EOWNERDEAD. Consider that scenario with the ring given
->>> away to some other task not in current group, e.g. via socket.
->>>
->> Ah, I see. Thank you Pavel.
-> Here I've a question: for processes that aren't in same group, io_uring
-> is now designed that sqthread cannot be shared between these processes?
+Allow empty reg buffer slots any request using which should fail. This
+allows users to not register all buffers in advance, but do it lazily
+and/or on demand via updates. That is achieved by setting iov_base and
+iov_len to zero for registration and/or buffer updates. Empty buffer
+can't have a non-zero tag.
 
-Right, sqthread can't be shared by rings created in different thread
-groups, but it doesn't mean the ring itself can't be shared.
+Implementation details: to not add extra overhead to io_import_fixed(),
+create a dummy buffer crafted to fail any request using it, and set it
+to all empty buffer slots.
 
-> But It seems if users do fork(), they can still call io_uring_enter()
-> in the forked task?
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ fs/io_uring.c | 36 +++++++++++++++++++++++++++++-------
+ 1 file changed, 29 insertions(+), 7 deletions(-)
 
-IIRC, forking CLONE_THREAD task is discouraged but allowed, but in any
-case it's ok from the io_uring perspective. Requests will be fully
-executed in the context of the sqpoll task
-
->>> if (ctx->flags & IORING_SETUP_SQPOLL) {
->>>     io_cqring_overflow_flush(ctx, false);
->>>
->>>     ret = -EOWNERDEAD;
->>>     if (unlikely(ctx->sq_data->thread == NULL)) {
->>>         goto out;
->>>     }
->>>     ...
->>> }
->>>
->>> btw, can use a comment
->>>
->>>>
->>>> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
->>>> ---
->>>>   fs/io_uring.c | 2 --
->>>>   1 file changed, 2 deletions(-)
->>>>
->>>> diff --git a/fs/io_uring.c b/fs/io_uring.c
->>>> index 6b578c380e73..92dcd1c21516 100644
->>>> --- a/fs/io_uring.c
->>>> +++ b/fs/io_uring.c
->>>> @@ -6897,8 +6897,6 @@ static int io_sq_thread(void *data)
->>>>       io_uring_cancel_sqpoll(sqd);
->>>>       sqd->thread = NULL;
->>>> -    list_for_each_entry(ctx, &sqd->ctx_list, sqd_list)
->>>> -        io_ring_set_wakeup_flag(ctx);
->>>>       io_run_task_work();
->>>>       io_run_task_work_head(&sqd->park_task_work);
->>>>       mutex_unlock(&sqd->lock);
->>>>
->>>
-> 
-
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index a48b88b3e289..43b00077dbd3 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -456,6 +456,7 @@ struct io_ring_ctx {
+ 	spinlock_t			rsrc_ref_lock;
+ 	struct io_rsrc_node		*rsrc_node;
+ 	struct io_rsrc_node		*rsrc_backup_node;
++	struct io_mapped_ubuf		*dummy_ubuf;
+ 
+ 	struct io_restriction		restrictions;
+ 
+@@ -1158,6 +1159,12 @@ static struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
+ 		goto err;
+ 	__hash_init(ctx->cancel_hash, 1U << hash_bits);
+ 
++	ctx->dummy_ubuf = kzalloc(sizeof(*ctx->dummy_ubuf), GFP_KERNEL);
++	if (!ctx->dummy_ubuf)
++		goto err;
++	/* set invalid range, so io_import_fixed() fails meeting it */
++	ctx->dummy_ubuf->ubuf = -1UL;
++
+ 	if (percpu_ref_init(&ctx->refs, io_ring_ctx_ref_free,
+ 			    PERCPU_REF_ALLOW_REINIT, GFP_KERNEL))
+ 		goto err;
+@@ -1185,6 +1192,7 @@ static struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
+ 	INIT_LIST_HEAD(&ctx->submit_state.comp.locked_free_list);
+ 	return ctx;
+ err:
++	kfree(ctx->dummy_ubuf);
+ 	kfree(ctx->cancel_hash);
+ 	kfree(ctx);
+ 	return NULL;
+@@ -8106,11 +8114,13 @@ static void io_buffer_unmap(struct io_ring_ctx *ctx, struct io_mapped_ubuf **slo
+ 	struct io_mapped_ubuf *imu = *slot;
+ 	unsigned int i;
+ 
+-	for (i = 0; i < imu->nr_bvecs; i++)
+-		unpin_user_page(imu->bvec[i].bv_page);
+-	if (imu->acct_pages)
+-		io_unaccount_mem(ctx, imu->acct_pages);
+-	kvfree(imu);
++	if (imu != ctx->dummy_ubuf) {
++		for (i = 0; i < imu->nr_bvecs; i++)
++			unpin_user_page(imu->bvec[i].bv_page);
++		if (imu->acct_pages)
++			io_unaccount_mem(ctx, imu->acct_pages);
++		kvfree(imu);
++	}
+ 	*slot = NULL;
+ }
+ 
+@@ -8250,6 +8260,11 @@ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, struct iovec *iov,
+ 	size_t size;
+ 	int ret, pret, nr_pages, i;
+ 
++	if (!iov->iov_base) {
++		*pimu = ctx->dummy_ubuf;
++		return 0;
++	}
++
+ 	ubuf = (unsigned long) iov->iov_base;
+ 	end = (ubuf + iov->iov_len + PAGE_SIZE - 1) >> PAGE_SHIFT;
+ 	start = ubuf >> PAGE_SHIFT;
+@@ -8347,7 +8362,9 @@ static int io_buffer_validate(struct iovec *iov)
+ 	 * constraints here, we'll -EINVAL later when IO is
+ 	 * submitted if they are wrong.
+ 	 */
+-	if (!iov->iov_base || !iov->iov_len)
++	if (!iov->iov_base)
++		return iov->iov_len ? -EFAULT : 0;
++	if (!iov->iov_len)
+ 		return -EFAULT;
+ 
+ 	/* arbitrary limit, but we need something */
+@@ -8397,6 +8414,8 @@ static int io_sqe_buffers_register(struct io_ring_ctx *ctx, void __user *arg,
+ 		ret = io_buffer_validate(&iov);
+ 		if (ret)
+ 			break;
++		if (!iov.iov_base && tag)
++			return -EINVAL;
+ 
+ 		ret = io_sqe_buffer_register(ctx, &iov, &ctx->user_bufs[i],
+ 					     &last_hpage);
+@@ -8446,12 +8465,14 @@ static int __io_sqe_buffers_update(struct io_ring_ctx *ctx,
+ 		err = io_buffer_validate(&iov);
+ 		if (err)
+ 			break;
++		if (!iov.iov_base && tag)
++			return -EINVAL;
+ 		err = io_sqe_buffer_register(ctx, &iov, &imu, &last_hpage);
+ 		if (err)
+ 			break;
+ 
+ 		i = array_index_nospec(offset, ctx->nr_user_bufs);
+-		if (ctx->user_bufs[i]) {
++		if (ctx->user_bufs[i] != ctx->dummy_ubuf) {
+ 			err = io_queue_rsrc_removal(ctx->buf_data, offset,
+ 						    ctx->rsrc_node, ctx->user_bufs[i]);
+ 			if (unlikely(err)) {
+@@ -8599,6 +8620,7 @@ static void io_ring_ctx_free(struct io_ring_ctx *ctx)
+ 	if (ctx->hash_map)
+ 		io_wq_put_hash(ctx->hash_map);
+ 	kfree(ctx->cancel_hash);
++	kfree(ctx->dummy_ubuf);
+ 	kfree(ctx);
+ }
+ 
 -- 
-Pavel Begunkov
+2.31.1
+

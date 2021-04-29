@@ -2,39 +2,39 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C250A36EBBF
-	for <lists+io-uring@lfdr.de>; Thu, 29 Apr 2021 16:00:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE6A936EC3C
+	for <lists+io-uring@lfdr.de>; Thu, 29 Apr 2021 16:18:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237302AbhD2OAz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 29 Apr 2021 10:00:55 -0400
-Received: from mail-il1-f197.google.com ([209.85.166.197]:41686 "EHLO
-        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233862AbhD2OAx (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 29 Apr 2021 10:00:53 -0400
-Received: by mail-il1-f197.google.com with SMTP id m4-20020a9287040000b0290166e96ff634so35064297ild.8
-        for <io-uring@vger.kernel.org>; Thu, 29 Apr 2021 07:00:06 -0700 (PDT)
+        id S237419AbhD2OS4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 29 Apr 2021 10:18:56 -0400
+Received: from mail-io1-f71.google.com ([209.85.166.71]:42501 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235277AbhD2OSz (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 29 Apr 2021 10:18:55 -0400
+Received: by mail-io1-f71.google.com with SMTP id v3-20020a5d90430000b02903da4a3efc9dso36213761ioq.9
+        for <io-uring@vger.kernel.org>; Thu, 29 Apr 2021 07:18:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
          :from:to;
-        bh=RGZQlqYRDcws6lKbGiNkhAc8TLY6zhzM1dhv48k3sxc=;
-        b=XaWvUhogM4ioT/CoqLuRGq58w09gsOUW+wDWWBhJfsMwkxWt1altAcmMrdx9Z+Da/n
-         BdsMeDt/9sMfy2AR4SzICEfS/wzRqy5ANUpkBamytn3uRTL3P2+t6uNh3NtyfDi9u2+w
-         RGENJaQU6Dpxuj8egaP/GSPQIeTfgG7ZFbcmMoUfRAykfNPc+BVs8IxwdvfZO1djxI3V
-         7Z12W4IYuQT3kX1VgKrzCOEWvjmZcBf8Xfh0QaB1mDFlIeGlCyzlDI59nu5Cglg5tcD/
-         nzuv5yHy9gp3sALSGXZlinCpZFhzGk1sz/yLhyFijAEmyePdUvn/BpMXuCdLu3dKJjKU
-         gSsg==
-X-Gm-Message-State: AOAM530p7l27DUexb2JtByV+s431b8Cv+ZgtGGOTT5KkeGIvrFHuMm7g
-        J0dA/VA07UVaMWWi0kPSckkPV1fxtp41Sg+z6fnMqds4Nvm9
-X-Google-Smtp-Source: ABdhPJzuadjvDEHr9FHFGBzYheTEwO+GMWuYnAix7ZVEK/4HZPPAE5I0GJqznk7dtb2LAXrPUSmq6sKslvhgmpGf5WVREMCYuE7p
+        bh=Ol3FICnYJQdFXP8aGYDo9pndJt2yyzEHkFMgQR8y69o=;
+        b=LrQ6vV2EbU2A2s++NUphkXbLbTSbUVRaIQYhcO43PQr81oXzSqIKF5tKMoEMz4mKpS
+         X7RfBdpFifChMu9O+MF0v7zEUWqUfHPTTjx3qDRl3/Dh2jo/j+r2/ebTYpp9yAIpJuA5
+         cz5n8eQUw07SnXOy1xEv4Kxs5+LBP8i7LIur6drWiGrPjOXv8EP75JQg8NR64J3qifU0
+         JgmtGslQFchVvtK88ekdfzhyeGEDiooLPSoENtJ66/a0lgzT73/C/DMckrv2F7GsYc0a
+         8/Gz2Ocv2zIF4wLRKmrF81h4td3K/a0mfWQoUAbuISTGkjsZEw5r7JJ4yx07ze1qfZVO
+         zA5g==
+X-Gm-Message-State: AOAM533rifnDmb2jmRARH/KhTPus6t6G35bVJahBSLkRCKjkMB/V6CBT
+        cZyiZBneU/1fXmUYe44xoL423qyo1yTKTCBaShNzTJKTLWkw
+X-Google-Smtp-Source: ABdhPJwNDr/qiNG74QRIq6/oPCyd607LZke6i+enHOPBDanqDiOuDmiArvw8Ojk8rH8fewVJ6bL5aEd0TuiEOR4nZywQFl37x0HF
 MIME-Version: 1.0
-X-Received: by 2002:a02:3406:: with SMTP id x6mr6293704jae.137.1619704804712;
- Thu, 29 Apr 2021 07:00:04 -0700 (PDT)
-Date:   Thu, 29 Apr 2021 07:00:04 -0700
-In-Reply-To: <000000000000b23f7805c119dee8@google.com>
+X-Received: by 2002:a02:a695:: with SMTP id j21mr88590jam.29.1619705888636;
+ Thu, 29 Apr 2021 07:18:08 -0700 (PDT)
+Date:   Thu, 29 Apr 2021 07:18:08 -0700
+In-Reply-To: <311be205-e56a-cc06-dfed-df9aef527268@gmail.com>
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000086cb9005c11ce9e8@google.com>
+Message-ID: <0000000000002202fb05c11d2a78@google.com>
 Subject: Re: [syzbot] WARNING in io_rsrc_node_switch
 From:   syzbot <syzbot+a4715dd4b7c866136f79@syzkaller.appspotmail.com>
 To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
@@ -44,25 +44,18 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-syzbot has bisected this issue to:
+Hello,
 
-commit eae071c9b4cefbcc3f985c5abf9a6e32c1608ca9
-Author: Pavel Begunkov <asml.silence@gmail.com>
-Date:   Sun Apr 25 13:32:24 2021 +0000
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-    io_uring: prepare fixed rw for dynanic buffers
+Reported-and-tested-by: syzbot+a4715dd4b7c866136f79@syzkaller.appspotmail.com
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14498f59d00000
-start commit:   d72cd4ad Merge tag 'scsi-misc' of git://git.kernel.org/pub..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=16498f59d00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=12498f59d00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=65c207250bba4efe
+Tested on:
+
+commit:         ccb5e40e io_uring: Fix premature return from loop and memo..
+git tree:       https://github.com/isilence/linux.git syz_test4
+kernel config:  https://syzkaller.appspot.com/x/.config?x=601d16d8cd22e315
 dashboard link: https://syzkaller.appspot.com/bug?extid=a4715dd4b7c866136f79
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11893de1d00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=161c19d5d00000
+compiler:       
 
-Reported-by: syzbot+a4715dd4b7c866136f79@syzkaller.appspotmail.com
-Fixes: eae071c9b4ce ("io_uring: prepare fixed rw for dynanic buffers")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Note: testing is done by a robot and is best-effort only.

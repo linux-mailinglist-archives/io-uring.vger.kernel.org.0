@@ -2,59 +2,68 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D247336E1AD
-	for <lists+io-uring@lfdr.de>; Thu, 29 Apr 2021 01:02:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2366C36E276
+	for <lists+io-uring@lfdr.de>; Thu, 29 Apr 2021 02:15:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232163AbhD1WZm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 28 Apr 2021 18:25:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52838 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231607AbhD1WZl (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Wed, 28 Apr 2021 18:25:41 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 6119161423;
-        Wed, 28 Apr 2021 22:24:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1619648696;
-        bh=zNZTDNHSjnhB6B4k7YWMAc5UOQWjbhkKTz2wpI+yhGg=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=ksLfyQCdXPW/Em/TWGYW6yYk4XUs7S50adC2fGeNyaxYJ4DbgQOPEpF+PN3f+8lYU
-         /HmwRMOcjBUAFjoreRbgAP76v+2J4UR97UeHLtZF8MiQbsRlx5j6N0a6H/39zIYQTR
-         fjLMr2LDkT6XP+0zNBpgoxeH+Z4Av6sQEQW6erOmlDk7EwLcZh9HBpVCk0LfeAsfx5
-         lLb+K6h+QfwbVLSZwvMq7ct23fouTPYl9ElWBuFhDh9ji+0So+o+Se0/+wvD60uEDS
-         JDCZIOgxaUrfRHdg7xTfiQ/32Gg0jwGi0S8ZpHjkhF5TMEo0pz8C68tTTKxVb9SO+z
-         U79o5pLs9eH+w==
-Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id 5A6D2609B3;
-        Wed, 28 Apr 2021 22:24:56 +0000 (UTC)
-Subject: Re: [GIT PULL] io_uring changes for 5.13-rc
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <2f9d2015-5897-1b6e-1d23-c210fef4ff77@kernel.dk>
-References: <2f9d2015-5897-1b6e-1d23-c210fef4ff77@kernel.dk>
-X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
-X-PR-Tracked-Message-Id: <2f9d2015-5897-1b6e-1d23-c210fef4ff77@kernel.dk>
-X-PR-Tracked-Remote: git://git.kernel.dk/linux-block.git tags/for-5.13/io_uring-2021-04-27
-X-PR-Tracked-Commit-Id: 7b289c38335ec7bebe45ed31137d596c808e23ac
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 625434dafdd97372d15de21972be4b682709e854
-Message-Id: <161964869636.18647.4009671773834357516.pr-tracker-bot@kernel.org>
-Date:   Wed, 28 Apr 2021 22:24:56 +0000
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        io-uring <io-uring@vger.kernel.org>
+        id S232310AbhD2AP4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 28 Apr 2021 20:15:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50402 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231874AbhD2AP4 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 28 Apr 2021 20:15:56 -0400
+Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 301FDC06138C
+        for <io-uring@vger.kernel.org>; Wed, 28 Apr 2021 17:15:09 -0700 (PDT)
+Received: by mail-pj1-x1042.google.com with SMTP id gc22-20020a17090b3116b02901558435aec1so6290818pjb.4
+        for <io-uring@vger.kernel.org>; Wed, 28 Apr 2021 17:15:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=TvDH0Ufqq951p1SmGaor3zZZi0JBju1aRHwGT5Ex+6c=;
+        b=qBqSa5y4lwZrW9yJxdbfp3up47xMlGY3ERU2Co6DLeMlTxHgOl33wHQ7Qedh4ZnPOp
+         cEmCFYj9QBM+WVEZSl+PD4fQhn2nyARttU63UzBKkQIOvQ7lopOSQb1EB2xfujQUGYqS
+         DOLhNC7xvTPHWXEYRz8S9N2tgfqd4+vD23c7/HzxbSoPBbcO4+XporMn8ZgRszB880Fz
+         PHg+k2WVHn4PzCP5qUb8IVjQAVxME/4YwfpuH6RNbK93xLHYrZIiexW5WqysXcbWIcdF
+         EfY/yjMH9v6thuJDKO2fhkSJoIWAVp6NAktrn/mdYCOM3fMiUtp/ZOGn9kjk16UYSeap
+         kB9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=TvDH0Ufqq951p1SmGaor3zZZi0JBju1aRHwGT5Ex+6c=;
+        b=iQ/v82XKCf15H/THk/cdMEqZlGjw/baradSzZ1jMLQVCpeyxYHAlAvvvz4TWS0btuR
+         qDEZVTgZzSys/0csKt1Q6vqvPPb4i9ChLc8yNnUpjUimF04h3jbpQjdZtEHZdb1ArOgi
+         E7CkychE7ahzTzTUNi8YBLejmsqJwb6QKTFBzBeqJUETMxmJ2mIryrji84KlDQoEMjVH
+         YNKIAsL0gCebCXp3jxrF6RwZaqE+1ZXLnzoFoiI7zA+g1C5y+1WEYB9uLiVYB6TPnY6/
+         pZZKJYZMTdnkJ+4hwcl2bb8dfeNRn1CibzvvlWtHYSnmijHC69TD2xRlCntoNhEawANm
+         u5Zg==
+X-Gm-Message-State: AOAM531qZ1WXz3bkL9cQyq/olk8czFgIz/xrJ2GoIkCe94Cg+Y7yLt9v
+        39Qc9eT9bSzZPl48K+NY7fvcT5NfXFLMT641k7Q=
+X-Google-Smtp-Source: ABdhPJzaS8iuASekFzePJRCv/4h3Mp4EuDBzGJNNr/KrR5gadsFo9jSHiYVf0bgSuybLyaJzun+sT1rdvSYrhl+Xpjg=
+X-Received: by 2002:a17:902:d70f:b029:ec:b679:f122 with SMTP id
+ w15-20020a170902d70fb02900ecb679f122mr34035019ply.38.1619655308836; Wed, 28
+ Apr 2021 17:15:08 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a05:7300:6426:b029:19:764e:b00a with HTTP; Wed, 28 Apr 2021
+ 17:15:08 -0700 (PDT)
+Reply-To: bwalysam@gmail.com
+From:   Mr Kingsley Obiora <maryclove123@gmail.com>
+Date:   Thu, 29 Apr 2021 01:15:08 +0100
+Message-ID: <CAFBdPmcHES2tj56kGhDYXjigWTO3OJYXPKgPOPe=6rF5B5p=NA@mail.gmail.com>
+Subject: Hello From Dr Kingsley Obiora
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The pull request you sent on Tue, 27 Apr 2021 12:25:51 -0600:
+Dear Sir,
 
-> git://git.kernel.dk/linux-block.git tags/for-5.13/io_uring-2021-04-27
+After our meeting held today based on your funds, the management want
+to bring to your notice that we are making a special arrangement to
+bring your said fund by cash through diplomatic Immunity to your
+country home. Further details of this arrangement will be given to you
+once you acknowledged this idea.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/625434dafdd97372d15de21972be4b682709e854
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Waiting for your soonest response.
+Kingsley Obiora

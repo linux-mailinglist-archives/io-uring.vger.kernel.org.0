@@ -2,68 +2,68 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E408336E7AB
-	for <lists+io-uring@lfdr.de>; Thu, 29 Apr 2021 11:13:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3FEB36E7F9
+	for <lists+io-uring@lfdr.de>; Thu, 29 Apr 2021 11:28:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234456AbhD2JMt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 29 Apr 2021 05:12:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54882 "EHLO
+        id S232734AbhD2J3C (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 29 Apr 2021 05:29:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58474 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232775AbhD2JMt (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 29 Apr 2021 05:12:49 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22635C06138B
-        for <io-uring@vger.kernel.org>; Thu, 29 Apr 2021 02:12:03 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id n84so8198559wma.0
-        for <io-uring@vger.kernel.org>; Thu, 29 Apr 2021 02:12:03 -0700 (PDT)
+        with ESMTP id S231883AbhD2J3C (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 29 Apr 2021 05:29:02 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C284C06138B
+        for <io-uring@vger.kernel.org>; Thu, 29 Apr 2021 02:28:15 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id l2so13815450wrm.9
+        for <io-uring@vger.kernel.org>; Thu, 29 Apr 2021 02:28:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ZUVhnmxK/gTDIXETJpvPfdgnFDmeU+JLvtk0C0cOCtQ=;
-        b=uwBpJNC/iWEiUTw24Gp2qyaSAkKgwcd9obHDJthVW44nGpmLYR4BZ6kdNoFwfFYAbt
-         iTfxQL3WLHN3FqJsLZZHPkoKmXP77mVRW+SFGo8f6RsldxeN+clzk/Wj/Mxi3G4NwqAq
-         lh1HpSnIxibMlqH1fwGPwiwc7HZDMj0K0E6se05+SFb205KIDcBDFY4jRdLbJdhEMvXL
-         CouJBVlaPslVBzBoaaI690dOXdnvcZu4pfjhLuaisfHk8cqvBBMwcg0o83tY/ftdwRXq
-         Y1VI5u1vx+uhXV70OWBzZ66A4hktJ7kviOyDrGQezT/Kp0YbtNrGUctwa6aMXrrQPMIv
-         V1Eg==
+        bh=dfT7N35neR7XxnK8Io1to9V5fd7ttZVvS1/DZ370O3k=;
+        b=F/PkjiV1GvppL8e+GByGPu8D9LKSv0a97uKq5CLSRxA+b3vQg4yj5Hv1YtmZOhwGZD
+         C4xUKiltfbloBd61gB05KSQOvzIGta2pnOQNaMYFdDHovCLHarfoJCckUgtdZq6/PyA9
+         +pNMlzIhtNfgurcru8u0obPW06e5kcpBmmxg6TREVwl55wxyovww4FsaRG8+Kj5XSSz1
+         2M5MtY6JDROZP9YSWxVr3nMFYShJV8UqAJDjT44Uo4dhuTtHjoZLP3dHYT+e7mFDO6iY
+         DfepAfNWcdtM7+/zV/55YkyOOMnL/LjsQh3w5ysaucaoM4yhMDGXvcIWXo6xgBrvLmf5
+         TrhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=ZUVhnmxK/gTDIXETJpvPfdgnFDmeU+JLvtk0C0cOCtQ=;
-        b=Z61tRHpwQZm983Qx8IUGx4eWXFN9YSEf5x87O9oRCv/zqvzt2b9FezX9ip+oiWLiZY
-         L0Unx0QEQGFj6QWP7PcBxB6yStoqCswQNDYTE5s5qJmkNhRfiYZp5HedrNTuNKRJ96tc
-         ZmK5lh0NLnThxe8UUte8PziiWlGMJv3rudfXMbDA03BqpBtG/Z/i5NWLJFbtg0XBm5Kj
-         KTLJLEa7XjQe5EqmHTG9yzDh3LHogTNqq9fdU7BdX4vVSxiH5hmP0GqN0y9R8ZyS5l+1
-         VWCF85vT6Evnrk7I5z7VO12H7xddvb6xbfiXBUmMu3438oilCYVazA1Jm6hP0vzpvTlv
-         /UFw==
-X-Gm-Message-State: AOAM5302qtVtR/H8CeWg9+XlZFlU8ZotN0LEhQ9eIN96xzl1ZHtmW0hs
-        /K5rxDDii6gq0Sshtq1OvN4VLu/cKAI=
-X-Google-Smtp-Source: ABdhPJzIQQdhNiHXoDfRXdF3iF5qABbhrJzClp4uwAvOXH9tW9mQ7+/pM2EGrrNukch/PM7CAE8byA==
-X-Received: by 2002:a1c:7311:: with SMTP id d17mr34926075wmb.183.1619687521867;
-        Thu, 29 Apr 2021 02:12:01 -0700 (PDT)
+        bh=dfT7N35neR7XxnK8Io1to9V5fd7ttZVvS1/DZ370O3k=;
+        b=Zw+eZTNmfiP+xp7C7OkHxU5/MkZQ24WaM80x34/wLcEXCFjOBdRJ9Ab+scAuzuEqEZ
+         TcbsfX77Tda8K3RF2bNijJd+uPAO/Mrl82AmGU6MgJO6Hpw2u8NBgRhwZ3SQI3L5nrzb
+         gc8bH0ZmeK8i1UP+VEbnMijTo772CTQojpy9RXHJW9V6X8wmnXTcNn5dGbLPf6ha9F0p
+         2Zxb1zxk4DgnXcuziGMiF0QdDLkuo59Bdn919YExs+bHqO4OaUg4MVoY7clcOAqh0ZeZ
+         sKG0Bl7ttEo3Ym0OXhHlmMWov0b18pNq6bmHEm9yUhJc0k2qjw3Tsdx0XgITggoJSxhY
+         2oJw==
+X-Gm-Message-State: AOAM532Q6OAX/cOavfCmEVTxOwrNW0Z7WwtYDZ5muzScWXv7hhjBxgf6
+        sh/V3ogTZ7JczRg3V94ra6eoBGrO8Ps=
+X-Google-Smtp-Source: ABdhPJyWbApSqI38R3MaXkym4phekFXx5ny5i5q0J/56SbZTW1m1PtQtj+E0t5lMac/6c2brN//POA==
+X-Received: by 2002:adf:d084:: with SMTP id y4mr1166228wrh.0.1619688494346;
+        Thu, 29 Apr 2021 02:28:14 -0700 (PDT)
 Received: from [192.168.8.197] ([148.252.132.80])
-        by smtp.gmail.com with ESMTPSA id c5sm3844342wrs.73.2021.04.29.02.12.00
+        by smtp.gmail.com with ESMTPSA id y11sm3015480wmi.41.2021.04.29.02.28.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Apr 2021 02:12:00 -0700 (PDT)
-Subject: Re: [PATCH RFC 5.13 1/2] io_uring: add support for ns granularity of
- io_sq_thread_idle
+        Thu, 29 Apr 2021 02:28:13 -0700 (PDT)
+Subject: Re: [PATCH RFC 5.13 2/2] io_uring: submit sqes in the original
+ context when waking up sqthread
 To:     Hao Xu <haoxu@linux.alibaba.com>, Jens Axboe <axboe@kernel.dk>
 Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
 References: <1619616748-17149-1-git-send-email-haoxu@linux.alibaba.com>
- <1619616748-17149-2-git-send-email-haoxu@linux.alibaba.com>
- <7136bf4f-089f-25d5-eaf8-1f55b946c005@gmail.com>
- <2fadf565-beb3-4227-8fe7-3f9e308a14a0@kernel.dk>
- <3aa943b1-b53e-c3c5-7a45-278c2eebb861@linux.alibaba.com>
+ <1619616748-17149-3-git-send-email-haoxu@linux.alibaba.com>
+ <571b5633-3286-feba-af6b-e388f52fc89b@gmail.com>
+ <6cc0020d-bfad-d723-6cc3-8bb2b8c4d313@gmail.com>
+ <ab087171-9396-2b68-beab-ca1a4ad25bb0@linux.alibaba.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <d936d0b1-880e-601f-b27e-f36f79947cde@gmail.com>
-Date:   Thu, 29 Apr 2021 10:11:55 +0100
+Message-ID: <ae26b825-37b8-11d3-4c44-9b23a27e2d69@gmail.com>
+Date:   Thu, 29 Apr 2021 10:28:08 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.9.1
 MIME-Version: 1.0
-In-Reply-To: <3aa943b1-b53e-c3c5-7a45-278c2eebb861@linux.alibaba.com>
+In-Reply-To: <ab087171-9396-2b68-beab-ca1a4ad25bb0@linux.alibaba.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -71,47 +71,119 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/29/21 4:41 AM, Hao Xu wrote:
-> 在 2021/4/28 下午10:16, Jens Axboe 写道:
->> On 4/28/21 8:07 AM, Pavel Begunkov wrote:
->>>> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
->>>> index e1ae46683301..311532ff6ce3 100644
->>>> --- a/include/uapi/linux/io_uring.h
->>>> +++ b/include/uapi/linux/io_uring.h
->>>> @@ -98,6 +98,7 @@ enum {
->>>>   #define IORING_SETUP_CLAMP    (1U << 4)    /* clamp SQ/CQ ring sizes */
->>>>   #define IORING_SETUP_ATTACH_WQ    (1U << 5)    /* attach to existing wq */
->>>>   #define IORING_SETUP_R_DISABLED    (1U << 6)    /* start with ring disabled */
->>>> +#define IORING_SETUP_IDLE_NS    (1U << 7)    /* unit of thread_idle is nano second */
->>>>     enum {
->>>>       IORING_OP_NOP,
->>>> @@ -259,7 +260,7 @@ struct io_uring_params {
->>>>       __u32 cq_entries;
->>>>       __u32 flags;
->>>>       __u32 sq_thread_cpu;
->>>> -    __u32 sq_thread_idle;
->>>> +    __u64 sq_thread_idle;
+On 4/29/21 5:37 AM, Hao Xu wrote:
+> 在 2021/4/28 下午10:37, Pavel Begunkov 写道:
+>> On 4/28/21 3:34 PM, Pavel Begunkov wrote:
+>>> On 4/28/21 2:32 PM, Hao Xu wrote:
+>>>> sqes are submitted by sqthread when it is leveraged, which means there
+>>>> is IO latency when waking up sqthread. To wipe it out, submit limited
+>>>> number of sqes in the original task context.
+>>>> Tests result below:
 >>>
->>> breaks userspace API
+>>> Frankly, it can be a nest of corner cases if not now then in the future,
+>>> leading to a high maintenance burden. Hence, if we consider the change,
+>>> I'd rather want to limit the userspace exposure, so it can be removed
+>>> if needed.
+>>>
+>>> A noticeable change of behaviour here, as Hao recently asked, is that
+>>> the ring can be passed to a task from a completely another thread group,
+>>> and so the feature would execute from that context, not from the
+>>> original/sqpoll one.
 >>
->> And I don't think we need to. If you're using IDLE_NS, then the value
->> should by definition be small enough that it'd fit in 32-bits. If you
-> I make it u64 since I thought users may want a full flexibility to set
-> idle in nanosecond granularity(eg. (1e6 + 10) ns cannot be set by
+>> So maybe something like:
+>> if (same_thread_group()) {
+>>     /* submit */
+>> }I thought this case(cross independent processes) for some time, Pavel,
+> could you give more hints about how this may trigger errors?
 
-It's a really weird user requiring such a precision. u32 allows up to
-~1s, and if more is needed users can switch to ms mode, so in the worst
-case the precision is 1/1000 of the desired value, more than enough.
+Currently? We need to audit cancellation, but don't think it's a problem.
 
-> millisecond granularity). But I'm not sure if this deserve changing the
-> userspace API.
- 
-That's not about deserve or not, we can't break ABI. Can be worked around,
-e.g. by taking resv fields, but don't see a reason
+But as said, it's about the future. Your patch adds a new quirky
+userspace behaviour (submitting from alien context as described), and
+once commited it can't be removed and should be maintained. 
 
->> need higher timeouts, don't set it and it's in usec instead.
+I can easily imagine it either over-complicating cancellations (and
+we had enough of troubles with it), or just preventing more important
+optimisations, or anything else often happening with new features.
+
+
 >>
->> So I'd just leave this one alone.
+>>>
+>>> Not sure IORING_ENTER_SQ_DEPUTY knob is needed, but at least can be
+>>> ignored if the previous point is addressed.
+>>
+>> I'd question whether it'd be better with the flag or without doing
+>> this feature by default.
+> Just like what Jens said, the flag here is to allow users to do their
+> decision, there may be cases like a application wants to offload as much
+> as possible IO related work to sqpoll, so that it can be dedicated to
+> computation work etc.
+>>
+>>>
+>>>>
+>>>> 99th latency:
+>>>> iops\idle    10us    60us    110us    160us    210us    260us    310us    360us    410us    460us    510us
+>>>> with this patch:
+>>>> 2k          13    13    12    13    13    12    12    11    11    10.304    11.84
+>>>> without this patch:
+>>>> 2k          15    14    15    15    15    14    15    14    14    13    11.84
+>>>
+>>> Not sure the second nine describes it well enough, please can you
+>>> add more data? Mean latency, 50%, 90%, 99%, 99.9%, t-put.
+> Sure, I will.
+
+Forgot but it's important, should compared with non-sqpoll as well
+because the feature is taking the middle ground between them.
+
+>>>
+>>> Btw, how happened that only some of the numbers have fractional part?
+>>> Can't believe they all but 3 were close enough to integer values.
+> This confused me a little bit too, but it is indeed what fio outputs.
+
+That's just always when I see such, something tells me that data has
+been manipulated. Even if it's fio, it's really weird and suspicious, 
+and worth to look what's wrong with it.
+
+>>>
+>>>> fio config:
+>>>> ./run_fio.sh
+>>>> fio \
+>>>> --ioengine=io_uring --sqthread_poll=1 --hipri=1 --thread=1 --bs=4k \
+>>>> --direct=1 --rw=randread --time_based=1 --runtime=300 \
+>>>> --group_reporting=1 --filename=/dev/nvme1n1 --sqthread_poll_cpu=30 \
+>>>> --randrepeat=0 --cpus_allowed=35 --iodepth=128 --rate_iops=${1} \
+>>>> --io_sq_thread_idle=${2}
+>>>>
+>>>> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
+>>>> ---
+>>>>   fs/io_uring.c                 | 29 +++++++++++++++++++++++------
+>>>>   include/uapi/linux/io_uring.h |  1 +
+>>>>   2 files changed, 24 insertions(+), 6 deletions(-)
+>>>>
+>>>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>>>> index 1871fad48412..f0a01232671e 100644
+>>>> --- a/fs/io_uring.c
+>>>> +++ b/fs/io_uring.c
+>>>> @@ -1252,7 +1252,12 @@ static void io_queue_async_work(struct io_kiocb *req)
+>>>>   {
+>>>>       struct io_ring_ctx *ctx = req->ctx;
+>>>>       struct io_kiocb *link = io_prep_linked_timeout(req);
+>>>> -    struct io_uring_task *tctx = req->task->io_uring;
+>>>> +    struct io_uring_task *tctx = NULL;
+>>>> +
+>>>> +    if (ctx->sq_data && ctx->sq_data->thread)
+>>>> +        tctx = ctx->sq_data->thread->io_uring;
+>>>
+>>> without park it's racy, sq_data->thread may become NULL and removed,
+>>> as well as its ->io_uring.
+>>>
+>>>> +    else
+>>>> +        tctx = req->task->io_uring;
+>>>>         BUG_ON(!tctx);
+>>>>       BUG_ON(!tctx->io_wq);
+>>>
+>>> [snip]
+>>>
 >>
 > 
 

@@ -2,84 +2,113 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E667E36EC5C
-	for <lists+io-uring@lfdr.de>; Thu, 29 Apr 2021 16:27:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BCDED36ECE9
+	for <lists+io-uring@lfdr.de>; Thu, 29 Apr 2021 17:01:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237392AbhD2O2K (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 29 Apr 2021 10:28:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39980 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239655AbhD2O2K (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 29 Apr 2021 10:28:10 -0400
-Received: from mail-il1-x12e.google.com (mail-il1-x12e.google.com [IPv6:2607:f8b0:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 529D9C06138C
-        for <io-uring@vger.kernel.org>; Thu, 29 Apr 2021 07:27:21 -0700 (PDT)
-Received: by mail-il1-x12e.google.com with SMTP id l19so13745955ilk.13
-        for <io-uring@vger.kernel.org>; Thu, 29 Apr 2021 07:27:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=oX7qYgxXYUDTnDWIrAAdrMAk23CW1FWOs8hQTp5c3yY=;
-        b=U4mbRlv5UHD7sn2yKKFCrR+4XJ13UgOrePmZ9r2zi4LgU/UxNb72eYOLK/TvO7VUlz
-         30WM7WkrcRFNI/x/ite+fOcgwI2QEtgUxsjoskRUTfetp2ZeV8V6EvbTQJQ8k/LVqLSz
-         LkoD3TnCV+fTaXYxRE35BxH8SiXnv7w1dxW3bIcojZXcQEWKEdKLy4tpks1Cw+gUrAkq
-         VuQqMkHFdQ0zszYyHwo5cmhjNf9iphNdIiDdkLefNDM7yiRp1rrPoe+45r/HOSWh/7WI
-         vNsgd2MnuJMVvW5PuGtKQDv4GD6uCtf2xJAILqgH4/102fTtZdT3o7pZTZtcy7g1yg4X
-         791A==
+        id S240648AbhD2PCK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 29 Apr 2021 11:02:10 -0400
+Received: from mail-io1-f72.google.com ([209.85.166.72]:50146 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240611AbhD2PCK (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 29 Apr 2021 11:02:10 -0400
+Received: by mail-io1-f72.google.com with SMTP id i204-20020a6bb8d50000b02903f266b8e1c5so25450841iof.16
+        for <io-uring@vger.kernel.org>; Thu, 29 Apr 2021 08:01:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=oX7qYgxXYUDTnDWIrAAdrMAk23CW1FWOs8hQTp5c3yY=;
-        b=NSIMrel3/sdX38rGIdWU1cBQEGp956wtzXN3VPvhbm9IDEZGCEnobHScpGh6i9n5iH
-         F+JKfeaaSV1YXzrsS/MkFNikLWTlagPUg2kkgzsO1S2tYW5/0vWasQq32x6kwrxK4YP/
-         5MPO8rh71hz012wkX2SF2Ij88e6yO27TerRZQDcwVMHD/2G1pNY2GAYeqWsiGNh9MiRE
-         jPpR3U2Y/9PGKgYBpLG+88ujSVXDk/uISSBb8GxA2M9vE9Dy/Pct5tBP8CLvFvwswV+M
-         h7ubm250A28ch0P0z1TCqXwsrU0mpBVR8c7AnCLbOP1DP3mIP7F8pK8mdoaBlLIyZ3Al
-         ZLjQ==
-X-Gm-Message-State: AOAM533KSRUrpdchY+upNtOkddKUabZ6bN4gezj9oEa1ym2erVBBo3oI
-        cJ8AP94pZhdLIzpDl3M7HU8EjQ==
-X-Google-Smtp-Source: ABdhPJzWaBrIbWy1Gn3RmYAqSSx+0mMumwirKFFqogCYQtG1qxtNM3so9mUBItXCb//RX9HCWkhDEg==
-X-Received: by 2002:a05:6e02:20ed:: with SMTP id q13mr26252658ilv.235.1619706440821;
-        Thu, 29 Apr 2021 07:27:20 -0700 (PDT)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id p1sm1453223ilp.10.2021.04.29.07.27.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Apr 2021 07:27:20 -0700 (PDT)
-Subject: Re: [PATCH][next][V2] io_uring: Fix premature return from loop and
- memory leak
-To:     Colin King <colin.king@canonical.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210429104602.62676-1-colin.king@canonical.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <8513d853-fd44-c90f-26ba-45b763b8879a@kernel.dk>
-Date:   Thu, 29 Apr 2021 08:27:20 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=p08hvBbKA+73t6PrwVyec5Fgw0enIkiE1avPmk1LtBY=;
+        b=NBnp44LS+JtfT8pUFHWxtdmjpI3nikwSZD+wWCdnEamIgaqErfNTDXGfoUQhhEZgwE
+         rPoKR0VnrWdDrCEAPd7f3NT8/qHZgJ+3DXhlvZbqyLPUMyhYJzSv2atoqz51Kyf0Ea85
+         q4/9eT2oOAz6Z2e25JuEchFViXTGIHN/+tNa+eTVQynopsVMwbZW0bNm7njZbOy7jOF6
+         mZAksbM9/rWMnP8K3wXUvkIDMnYwMuftqDjpR0Xuy9ss3DbwmFeTYfkzt3OTE02PD4FU
+         /xydsYEVaxStPwGW67M/qwV3kwlz8Ud680PHK3kITdMriaOSVXVH1oH7c1KpSgePItyI
+         eRwg==
+X-Gm-Message-State: AOAM531vziP6x9sHrBVERbPFG53YZG8I/6PfzPaHv3c0eeq56lUNnW5I
+        mQnDh5QPLT8JMt/E19e7ggUCh3zCr/PWZrG4KZdmf439/KMo
+X-Google-Smtp-Source: ABdhPJyFL2nLdyv3A910LI1aEMALDvqFplKoJdnPUb6yPAgJUhSJ3fsN1630b3VlOcRDd6M4OTjoLlX6nskl/dPjzntWIgoHoMVl
 MIME-Version: 1.0
-In-Reply-To: <20210429104602.62676-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a5d:9a8c:: with SMTP id c12mr29251309iom.166.1619708483616;
+ Thu, 29 Apr 2021 08:01:23 -0700 (PDT)
+Date:   Thu, 29 Apr 2021 08:01:23 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ce433f05c11dc4e6@google.com>
+Subject: [syzbot] WARNING in io_uring_setup (2)
+From:   syzbot <syzbot+1eca5b0d7ac82b74d347@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/29/21 4:46 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently the -EINVAL error return path is leaking memory allocated
-> to data. Fix this by not returning immediately but instead setting
-> the error return variable to -EINVAL and breaking out of the loop.
-> 
-> Kudos to Pavel Begunkov for suggesting a correct fix.
+Hello,
 
-Applied, thanks.
+syzbot found the following issue on:
 
--- 
-Jens Axboe
+HEAD commit:    d72cd4ad Merge tag 'scsi-misc' of git://git.kernel.org/pub..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=175285a3d00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=53fdf14defd48c56
+dashboard link: https://syzkaller.appspot.com/bug?extid=1eca5b0d7ac82b74d347
+compiler:       Debian clang version 11.0.1-2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15aeff43d00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1747117dd00000
 
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+1eca5b0d7ac82b74d347@syzkaller.appspotmail.com
+
+RSP: 002b:00007ffe79f6a2c8 EFLAGS: 00000202 ORIG_RAX: 00000000000001a9
+RAX: ffffffffffffffda RBX: 0000000020000000 RCX: 000000000043fa99
+RDX: 0000000000000010 RSI: 0000000020000000 RDI: 0000000000000345
+RBP: 0000000000000001 R08: 0000000000000001 R09: bfe829bde5bd92dc
+R10: 0000000000000000 R11: 0000000000000202 R12: 0000000020ffd000
+R13: 0000000000000000 R14: 00000000004ad018 R15: 0000000000400488
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 8379 at fs/io_uring.c:7081 io_rsrc_node_switch_start fs/io_uring.c:7107 [inline]
+WARNING: CPU: 0 PID: 8379 at fs/io_uring.c:7081 io_uring_create fs/io_uring.c:9610 [inline]
+WARNING: CPU: 0 PID: 8379 at fs/io_uring.c:7081 io_uring_setup fs/io_uring.c:9689 [inline]
+WARNING: CPU: 0 PID: 8379 at fs/io_uring.c:7081 __do_sys_io_uring_setup fs/io_uring.c:9695 [inline]
+WARNING: CPU: 0 PID: 8379 at fs/io_uring.c:7081 __se_sys_io_uring_setup+0x2059/0x3100 fs/io_uring.c:9692
+Modules linked in:
+CPU: 0 PID: 8379 Comm: syz-executor223 Not tainted 5.12.0-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:io_rsrc_node_switch fs/io_uring.c:7107 [inline]
+RIP: 0010:io_uring_create fs/io_uring.c:9611 [inline]
+RIP: 0010:io_uring_setup fs/io_uring.c:9689 [inline]
+RIP: 0010:__do_sys_io_uring_setup fs/io_uring.c:9695 [inline]
+RIP: 0010:__se_sys_io_uring_setup+0x2059/0x3100 fs/io_uring.c:9692
+Code: dc ff eb 05 e8 78 09 97 ff 48 b8 00 00 00 00 00 fc ff df 41 80 7c 05 00 00 74 08 4c 89 ff e8 ce a1 dd ff 49 c7 07 00 00 00 00 <0f> 0b e9 e1 00 00 00 e8 4b 09 97 ff 49 8d 5c 24 10 48 89 d8 48 c1
+RSP: 0000:ffffc9000112fd00 EFLAGS: 00010246
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffff88802fee0000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff888011441780
+RBP: ffffc9000112ff20 R08: 0000000000000dc0 R09: fffffbfff19bc9e3
+R10: fffffbfff19bc9e3 R11: 0000000000000000 R12: ffff88802452010c
+R13: 1ffff11005c31501 R14: 0000000000000000 R15: ffff88802e18a808
+FS:  00000000009a23c0(0000) GS:ffff8880b9b00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f8918d3b000 CR3: 00000000133b0000 CR4: 00000000001506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ do_syscall_64+0x3f/0xb0 arch/x86/entry/common.c:47
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x43fa99
+Code: 28 c3 e8 2a 14 00 00 66 2e 0f 1f 84 00 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c4 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffe79f6a2c8 EFLAGS: 00000202 ORIG_RAX: 00000000000001a9
+RAX: ffffffffffffffda RBX: 0000000020000000 RCX: 000000000043fa99
+RDX: 0000000000000010 RSI: 0000000020000000 RDI: 0000000000000345
+RBP: 0000000000000001 R08: 0000000000000001 R09: bfe829bde5bd92dc
+R10: 0000000000000000 R11: 0000000000000202 R12: 0000000020ffd000
+R13: 0000000000000000 R14: 00000000004ad018 R15: 0000000000400488
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches

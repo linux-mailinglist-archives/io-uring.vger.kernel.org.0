@@ -2,123 +2,197 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A04B36E9C9
-	for <lists+io-uring@lfdr.de>; Thu, 29 Apr 2021 13:49:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE3CB36EB55
+	for <lists+io-uring@lfdr.de>; Thu, 29 Apr 2021 15:27:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231823AbhD2Lu0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 29 Apr 2021 07:50:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33150 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231168AbhD2Lu0 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 29 Apr 2021 07:50:26 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67E71C06138B;
-        Thu, 29 Apr 2021 04:49:38 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id a4so66625113wrr.2;
-        Thu, 29 Apr 2021 04:49:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=z6/XNYCpDCxd2T01X3C5oYnHIXvWBFT6Gme1aHiNx7o=;
-        b=DSzseGNaAkSIp4f/Xporo0k+PTw8ejBlx3y0VkFdMmGU427Y5gamsLO6UKZovS2R2Y
-         J7XXqDzhzlI5k4LKsr9E8/2QoG/FEz/mMY192BhY/1P0a9puQYuAcRPqhSTTzJr0lQNX
-         ZYpHqqc6EYwKWDkyyVAenNgGFbQLMwqdVR6VOQ83OFN/pSgmyt0/6qcTG10brIWpNX2A
-         93/ZixMx/P/DAWEdAeQD6kPqcysSrF/gL1QI9IZQ8dsPyYlO3lBAXWsejwzNwIAihncl
-         Cd3KNUzkgorksTYG/bBlAB3Cb4ojRhSAerifLxVc3AP7jJWrDS5omT0O9EoPbyOpVMn4
-         ySJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=z6/XNYCpDCxd2T01X3C5oYnHIXvWBFT6Gme1aHiNx7o=;
-        b=cmnqSIniYmqxdGtJnRaIyDpa4oXZ/fIs3EBDnyXDOpydIhEmwMucKstXjb8ejMw1FD
-         Bj8om4lglFIzHl5JSZokIPprkS8Jry8bVlGgSoqDMEpk/qljCKw950RmGcBPCIW4uQYA
-         N7qIgKxn+KqivnOTaNeUqz4kmPRytVgdVQw5hiUc/lyCJJEWEu5AUxc0psIGWxMlGTbL
-         CQYHm9G9FcQSkCSPZUkUoSFQaZK2zX+O/v7y+/1R9l5jTJf5epu1Niao0JVsnQzx5M3v
-         8kkHZPWxVbc9JFjambp5wInuGSA/JOw4izLp2zDBjRBpE+OGutnNbRmRCv8gN3f/4KAO
-         U9Ng==
-X-Gm-Message-State: AOAM533hKgL3yMD3HKlxYAYu9zLYacVUeM9/nQx1esPrdlQr8j3dMwX3
-        cZIJMKY4kCvayWpoQp9ZRn0=
-X-Google-Smtp-Source: ABdhPJwqSykzR/8x8k3TkKv0LDYDxycrpAycLoCGADKMQlblVpHsXMaTeCknwte65fCRj8I6aGPBhQ==
-X-Received: by 2002:adf:ffcc:: with SMTP id x12mr26438614wrs.162.1619696977158;
-        Thu, 29 Apr 2021 04:49:37 -0700 (PDT)
-Received: from [192.168.8.197] ([148.252.132.80])
-        by smtp.gmail.com with ESMTPSA id l21sm11667546wme.10.2021.04.29.04.49.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Apr 2021 04:49:36 -0700 (PDT)
-Subject: Re: [syzbot] WARNING in io_rsrc_node_switch
-To:     syzbot <syzbot+a4715dd4b7c866136f79@syzkaller.appspotmail.com>,
-        axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <0000000000008dfbaf05c11a023c@google.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <311be205-e56a-cc06-dfed-df9aef527268@gmail.com>
-Date:   Thu, 29 Apr 2021 12:49:32 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.0
+        id S235944AbhD2N2M convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+io-uring@lfdr.de>); Thu, 29 Apr 2021 09:28:12 -0400
+Received: from mailgate.zerties.org ([144.76.28.47]:37760 "EHLO
+        mailgate.zerties.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237302AbhD2N2M (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 29 Apr 2021 09:28:12 -0400
+Received: from a89-182-232-8.net-htp.de ([89.182.232.8] helo=localhost)
+        by mailgate.zerties.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <stettberger@dokucode.de>)
+        id 1lc6hO-0001vq-Ne; Thu, 29 Apr 2021 13:27:24 +0000
+From:   Christian Dietrich <stettberger@dokucode.de>
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring <io-uring@vger.kernel.org>
+Cc:     Horst Schirmeier <horst.schirmeier@tu-dortmund.de>,
+        "Franz-B. Tuneke" <franz-bernhard.tuneke@tu-dortmund.de>
+In-Reply-To: <f1e5d6cf-08a9-9110-071f-e89b09837e37@gmail.com>
+Organization: Technische =?utf-8?Q?Universit=C3=A4t?= Hamburg
+References: <s7bsg4slmn3.fsf@dokucode.de>
+ <9b3a8815-9a47-7895-0f4d-820609c15e9b@gmail.com>
+ <s7btuo6wi7l.fsf@dokucode.de>
+ <4a553a51-50ff-e986-acf0-da9e266d97cd@gmail.com>
+ <s7bmttssyl4.fsf@dokucode.de>
+ <f1e5d6cf-08a9-9110-071f-e89b09837e37@gmail.com>
+X-Commit-Hash-org: 43cc44e3fdb1c3837853682a65069e9bc0757e24
+X-Commit-Hash-Maildir: fb91d5079a3bcc193f2005b0c3d9d38911866475
+Date:   Thu, 29 Apr 2021 15:27:22 +0200
+Message-ID: <s7bv985te4l.fsf@dokucode.de>
 MIME-Version: 1.0
-In-Reply-To: <0000000000008dfbaf05c11a023c@google.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8BIT
+X-SA-Do-Not-Rej: Yes
+X-SA-Exim-Connect-IP: 89.182.232.8
+X-SA-Exim-Mail-From: stettberger@dokucode.de
+X-Spam-Checker-Version: SpamAssassin 3.4.4 (2020-01-24) on mailgate.zerties.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.9 required=4.0 tests=ALL_TRUSTED,BAYES_00,
+        URIBL_BLOCKED shortcircuit=no autolearn=ham autolearn_force=no
+        version=3.4.4
+Subject: Re: [RFC] Programming model for io_uring + eBPF
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/29/21 11:32 AM, syzbot wrote:
-> syzbot has found a reproducer for the following issue on:
-> 
-> HEAD commit:    d72cd4ad Merge tag 'scsi-misc' of git://git.kernel.org/pub..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=12c045d5d00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=65c207250bba4efe
-> dashboard link: https://syzkaller.appspot.com/bug?extid=a4715dd4b7c866136f79
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11893de1d00000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=161c19d5d00000
+Pavel Begunkov <asml.silence@gmail.com> [23. April 2021]:
 
-#syz test: https://github.com/isilence/linux.git syz_test4
+> Yeah, absolutely. I don't see much profit in registering them
+> dynamically, so for now they will be needed to be loaded and attached
+> in advance. Or can be done in a more dynamic fashion, doesn't really
+> matter.
+>
+> btw, bpf splits compilation and attach steps, adds some flexibility.
 
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+a4715dd4b7c866136f79@syzkaller.appspotmail.com
-> 
-> RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 0000000000440a49
-> RDX: 0000000000000010 RSI: 00000000200002c0 RDI: 0000000000000182
-> RBP: 00007fff0b88f050 R08: 0000000000000001 R09: 00007fff0b88f038
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000003
-> R13: 00007fff0b88f03a R14: 00000000004b74b0 R15: 000000000000000c
-> ------------[ cut here ]------------
-> WARNING: CPU: 0 PID: 8397 at fs/io_uring.c:7081 io_rsrc_node_switch+0x2a5/0x390 fs/io_uring.c:7081
-> Modules linked in:
-> CPU: 0 PID: 8397 Comm: syz-executor469 Not tainted 5.12.0-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> RIP: 0010:io_rsrc_node_switch+0x2a5/0x390 fs/io_uring.c:7081
-> Code: ff 4d 85 e4 74 a4 48 83 c4 20 5b 5d 41 5c 41 5d 41 5e 41 5f e9 fc 00 99 ff e8 f7 00 99 ff 0f 0b e9 ee fd ff ff e8 eb 00 99 ff <0f> 0b e9 9d fd ff ff 4c 89 f7 e8 7c e0 dc ff eb 8b 4c 89 ef e8 72
-> RSP: 0018:ffffc9000164fd90 EFLAGS: 00010293
-> RAX: 0000000000000000 RBX: ffff8880196fe000 RCX: 0000000000000000
-> RDX: ffff88801c7a1c40 RSI: ffffffff81db5d25 RDI: ffff8880196fe000
-> RBP: 0000000000000000 R08: 0000000000000dc0 R09: ffffffff8c0b37d3
-> R10: fffffbfff18166fa R11: 0000000000000000 R12: 0000000000000000
-> R13: 0000000000000000 R14: ffff8880196fe808 R15: 0000000000000000
-> FS:  0000000001485300(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00000000200002c4 CR3: 00000000160b2000 CR4: 0000000000350ef0
-> Call Trace:
->  io_uring_create fs/io_uring.c:9611 [inline]
->  io_uring_setup+0xf75/0x2a80 fs/io_uring.c:9689
->  do_syscall_64+0x3a/0xb0 arch/x86/entry/common.c:47
->  entry_SYSCALL_64_after_hwframe+0x44/0xae
-> RIP: 0033:0x440a49
-> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 41 15 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007fff0b88f008 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
-> RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 0000000000440a49
-> RDX: 0000000000000010 RSI: 00000000200002c0 RDI: 0000000000000182
-> RBP: 00007fff0b88f050 R08: 0000000000000001 R09: 00007fff0b88f038
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000003
-> R13: 00007fff0b88f03a R14: 00000000004b74b0 R15: 000000000000000c
-> 
+So, I'm currently working on rebasing your work onto the tag
+'for-5.13/io_uring-2021-04-27'. So if you already have some branch on
+this, just let me know to save the work.
 
+> Should look similar to the userspace, fill a 64B chunk of memory,
+> where the exact program is specified by an index, the same that is
+> used during attach/registration
+
+When looking at the current implementation, when can only perform the
+attachment once and there is no "append eBPF". While this is probably OK
+for code, for eBPF maps, we will need some kind of append eBPF map.
+
+> and context fd is just another field in the SQE. On the space -- it
+> depends. Some opcodes pass more info than others, and even for those we
+> yet have 16 bytes unused. For bpf I don't expect passing much in SQE, so
+> it should be ok.
+
+So besides an eBPF-Progam ID, we would also pass an ID for an eEBF map
+in the SQE.
+
+One thought that came to my mind: Why do we have to register the eBPF
+programs and maps? We could also just pass the FDs for those objects in
+the SQE. As long as there is no other state, it could be the userspaces
+choice to either attach it or pass it every time. For other FDs we
+already support both modes, right?
+
+>> - My proposed serialization promise
+>
+> It can be an optional feature, but 1) it may become a bottleneck at
+> some point, 2) users use several rings, e.g. per-thread, so they
+> might need to reimplement serialisation anyway.
+
+If we make it possible to pass some FD to an synchronization object
+(e.g. semaphore), this might do the trick to support both modes at the interface.
+
+>> - Exposing synchronization primitives to the eBPF program. I don't think
+>>   that we can argue for semaphores in an eBPF program.
+>
+> I remember a discussion about sleep-able bpf, we need to look what has
+> happened with it.
+
+But surely this would hurt a lot as we would have to manage not only
+eBPF programs, but also eBPF processes. While this is surely possible, I
+don't know if it is really suitable for a high-performance interface
+like io_uring. But, don't know about the state.
+
+>
+>> With the serialization promise, we at least avoid the need to
+>> synchronize callbacks with callbacks. However, synchronization between
+>> user space and callback is still a problem.
+>
+> Need to look up up-to-date BPF capabilities, but can also be spinlocks,
+> for both: bpf-userspace sync, and between bpf 
+> https://lwn.net/ml/netdev/20190116050830.1881316-1-ast@kernel.org/
+
+Using Spinlocks between kernel and userspace just feels wrong, very
+wrong. But it might be an alternate route to synchronization
+
+> With a bit of work nothing forbids to make them userspace visible,
+> just next step to the idea. In the end I want to have no difference
+> between CQs, and everyone can reap from anywhere, and it's up to
+> user to use/synchronise properly.
+
+I like the notion of orthogonality with this route. Perhaps, we don't
+need to have user-invisible CQs but it can be enough to address the CQ
+of another uring in my SQE as the sink for the resulting CQE.
+
+Downside with that idea would be that the user has to setup another 
+ring with SQ and CQ, but only the CQ is used.
+
+> [...]
+
+> CQ is specified by index in SQE, in each SQE. So either as you say, or
+> just specify index of the main CQ in that previous linked request in
+> the first place.
+
+From looking at the code: This is not yet the case, or? 
+
+>> How do I indicate at the first SQE into which CQ the result should be
+>> written?
+
+> Yes, adds a bit of complexity, but without it you can only get last CQE,
+> 1) it's not flexible enough and shoots off different potential scenarios
+>
+> 2) not performance efficient -- overhead on running a bpf request after
+> each I/O request can be too large.
+>
+> 3) does require mandatory linking if you want to get result. Without it
+> we can submit a single BPF request and let it running multiple times,
+> e.g. waiting for on CQ, but linking would much limit options
+>
+> 4) bodgy from the implementation perspective
+
+When taking a step back, this is nearly a io_uring_enter(minwait=N)-SQE
+with an attached eBPF callback, or? At that point, we are nearly full
+circle.
+
+>> Are we able to encode all of that into a single SQE that also holds an
+>> eBPF function pointer and (potenitally) an pointer to a context map?
+>
+> yes, but can be just a separate linked request...
+
+So, let's make a little collection about the (potential) information
+that our poor SQE has to hold. Thereby, FDs should be registrable and
+addressible by an index.
+
+- FD to eBPF program
+- FD to eBPF map
+- FD to synchronization object during the execution
+- FD to foreign CQ for waiting on N CQEs
+
+That are a lot of references to other object for which we would have
+to extend the registration interface.
+
+> Right. And it should know what it's doing anyway in most cases. All
+> more complex dispatching / state machines can be pretty well
+> implemented via context.
+
+You convinced me that an eBPF map as a context is the more canonical way
+of doing it by achieving the same degree of flexibility.
+
+> I believe there was something for accessing userspace memory, we
+> need to look it up.
+
+Either way, from a researcher perspective, we can just allow it and look
+how it can performs.
+
+chris
 -- 
-Pavel Begunkov
+Dr.-Ing. Christian Dietrich
+Operating System Group (E-EXK4)
+Technische Universität Hamburg
+Am Schwarzenberg-Campus 3 (E)
+21073 Hamburg
+
+eMail:  christian.dietrich@tuhh.de
+Tel:    +49 40 42878 2188
+WWW:    https://osg.tuhh.de/

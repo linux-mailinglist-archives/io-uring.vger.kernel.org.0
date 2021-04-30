@@ -2,103 +2,95 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A54236F574
-	for <lists+io-uring@lfdr.de>; Fri, 30 Apr 2021 07:44:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E99FF36F5FF
+	for <lists+io-uring@lfdr.de>; Fri, 30 Apr 2021 08:55:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229599AbhD3FpB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 30 Apr 2021 01:45:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44094 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229482AbhD3FpB (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 30 Apr 2021 01:45:01 -0400
-Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E230C06174A
-        for <io-uring@vger.kernel.org>; Thu, 29 Apr 2021 22:44:12 -0700 (PDT)
-Received: by mail-yb1-xb31.google.com with SMTP id i4so44066608ybe.2
-        for <io-uring@vger.kernel.org>; Thu, 29 Apr 2021 22:44:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=UegiCgM61O59Fpbkl3MCSV4dP1qhCw5bzv4wFI6/wbw=;
-        b=s5ATRlCiEE7Tyv4sBioTQTbnDslz1aZW1gcyoZnH4D3NHeFaPNjJbAasd0NvqOhquB
-         5nzp+lqXeh89t9WHRDGIWupbdgAS6D8Bm11wnbyVaRCNuMQHSjY5J7rj6fIaB8yzIurV
-         CrFul6yJP0ElMLlOnhA2xRYqeinTO9HKTHq66XwqBw+kQvPKtT7g4yFuBcM5KzOi9wzI
-         IWd5X+zY8Qf7WcH6+a0jy2o32R5/rqlfhlaaQ/9CGUkwWxn+u4HljLxfAA07rTpByGSW
-         cK30DIMWiEnNqkb7mO+RMZBtMGLeWu3rw2Swd4MuG4dmso3DGhP5TOTPjaylYlFJOtzH
-         XVEQ==
+        id S229647AbhD3G4L (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 30 Apr 2021 02:56:11 -0400
+Received: from mail-io1-f72.google.com ([209.85.166.72]:34682 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229610AbhD3G4J (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 30 Apr 2021 02:56:09 -0400
+Received: by mail-io1-f72.google.com with SMTP id v25-20020a0566020159b02904017f565b33so13986977iot.1
+        for <io-uring@vger.kernel.org>; Thu, 29 Apr 2021 23:55:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=UegiCgM61O59Fpbkl3MCSV4dP1qhCw5bzv4wFI6/wbw=;
-        b=SyY895gY90VGe8VxGtD3pizqVb4yRE/I0bnJDHZ+j2Z74BO6t4tL9VLAJsRhvdeh0G
-         GQ+YBJpEh0V39pT/vfp3ZRMozlwVeU1wtcsJKvlgudCo1uE7ZUXgU/PYbietmQEHeWZV
-         vtRVuoki9yuTA9ANkPDNCrsJxCHj/nlj32K8B/tvX4kUiD09uhl+lQLeYlIorfh29t1I
-         w2GriBxmCXhvL/BqYrGCX1jV1GqCTCE7L68VleCa61GBz+kclBk1lYVmw0IEpwsOztjJ
-         s3kgOmCyvDDnPkx9O8dtVEWTynyIQo1Pp0WqHEotixrP0CF72a/nrV0IR9YD46eWmBNT
-         DsBw==
-X-Gm-Message-State: AOAM533QB/Xakx+jlmImOvDtaVdjd6k/81PNBEeSW/maLKSFyIhHmw/Z
-        OA2LGksVGRcs2aPbKVdY7eTSaW1PIM0X0KTO3JyRZbduNdTjhQ==
-X-Google-Smtp-Source: ABdhPJzg7MOb4+GKZeS907KHGaZPDfay9484Jk0JBtppSA+gJs5xwTPVeMe54HAKnfoFPeBaEOoKpNaVj3fV86HeCRI=
-X-Received: by 2002:a25:bc83:: with SMTP id e3mr4573701ybk.487.1619761451540;
- Thu, 29 Apr 2021 22:44:11 -0700 (PDT)
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=EHef1FvwWSkR56z6QkPtMzzrDYUPUDgt3XTVoI0D6gU=;
+        b=Fa1Gv8uV7aV78bYXGKAgHuoBzFmh1KB+ne3Aowjm6jJifTMK0AJnGUVdhnIOZ+wnRc
+         4Kjxh2tFCoR67u2WAZgvM01VywgWcOiTiRepsI94G5E1w51bCcuEswsJ4bvfRJNjHTfy
+         MJuUHO4W1HALUKXf/pyjNUQDyM5tb7r7LVRW/h8fqJ0OnTz6OyWeFURzk4yjIM5s8gSX
+         jMiaOvpQ/nTyTvfs72aRNbRIx7PTaXjKeCR1boQcK/CW4PZ4o11fkBurJ9RMrGyWFFGB
+         ck4fa94jiQYXT90MShwGD9lL+NBbWC/nf6ahNn12PZpPxlDnxfsnaRj9VWWlw+Ldxize
+         9HWg==
+X-Gm-Message-State: AOAM530SKhm4GmW/mJDBxoQO6MbUGeCpJV7y+ADDGEvxSdLeXpKsz51U
+        HTlPuLTPUW0d7d8S2aa4tSstaVbP6E12ORulwnOZ+Fa+WUQT
+X-Google-Smtp-Source: ABdhPJxwzKEFtm8/qzASZm5JdkNfg5YuL9nzG4q+9DqNLWDpKwpNdA/pPjhfHa+Z+SAEbXeaa2fZFox7+GUaZwWSvsy5z0tknvTd
 MIME-Version: 1.0
-From:   yihao yang <yangyihao1992@gmail.com>
-Date:   Thu, 29 Apr 2021 22:44:00 -0700
-Message-ID: <CAKVAn+CUffHxN3XTTXjOHJvfXaz0KCzp-XKFq8iY7kX0wHnvKQ@mail.gmail.com>
-Subject: Wired result of OP_RECVMSG in EC2 environment
-To:     io-uring@vger.kernel.org
+X-Received: by 2002:a05:6e02:13ca:: with SMTP id v10mr2756708ilj.191.1619765721663;
+ Thu, 29 Apr 2021 23:55:21 -0700 (PDT)
+Date:   Thu, 29 Apr 2021 23:55:21 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000758d3005c12b18d2@google.com>
+Subject: [syzbot] memory leak in io_sqe_buffers_register
+From:   syzbot <syzbot+0f32d05d8b6cd8d7ea3e@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi folks,
+Hello,
 
-Need some help on using Liburing 0.6.
-I am trying io_uring in EC2 environment (kernel version
-5.4.95-47.164.amzn2int.x86_64, github
-https://github.com/amazonlinux/linux/tree/kernel-5.4.95-47.164.amzn2int).
-The test code logic is simple. I use one uring and two threads.
-One thread is continuously submitting nonblocking recvmsg from a TCP socket
-          struct msghdr msg;
-          struct io_uring_sqe* sqe = nullptr;
-          memset(&msg, 0, sizeof(msg));
-          msg.msg_iov = iov;
-          msg.msg_iovlen = count;
-          sqe = io_uring_get_sqe(m_ring);
-          io_uring_prep_recvmsg(sqe, sockfd, &msg, 0);
-          sqe->user_data = (uint64_t) context;
-          int ret = io_uring_submit(m_ring);
-          if (ret < 0) {
-              GLOG(ERRO, "failed to submit io: %d", ret);
-          }
+syzbot found the following issue on:
 
-Another thread is continuously polling by calling io_uring_wait_cqes.
-          struct io_uring_cqe *cqe = nullptr;
-          while (!m_stopped) {
-              int ret = ::io_uring_wait_cqes(m_ring, &cqe, 0, nullptr, nullptr);
-              if (ret != 0) {
-                  if (ret != -EAGAIN) {
-                      GLOG(ERRO, "cqe wait failed: %d", ret);
-                  }
-                  continue;
-              }
-              ::io_uring_cqe_seen(m_ring, cqe);
-              void *ctx = ::io_uring_cqe_get_data(cqe);
-              if (ctx == nullptr || cqe->res == 0) {
-                  continue;
-              }
-              if (cqe->res != -EAGAIN) {
-                  // For some reason, randomly I will get EMSGSIZE or
-EINVAL. Retry on the same sockfd will succeed.
-                  GLOG(ERRO, "cqe: %p %d %llu", cqe, cqe->res, cqe->user_data);
-              }
-              int err = (cqe->res > 0) ? 0 : -cqe->res;
-              int transferred = (err == 0) ? cqe->res : 0;
-          }
+HEAD commit:    d2b6f8a1 Merge tag 'xfs-5.13-merge-3' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=173639a3d00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=337dc545ba10a406
+dashboard link: https://syzkaller.appspot.com/bug?extid=0f32d05d8b6cd8d7ea3e
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14df6ba3d00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12815385d00000
 
-Would like to know what could be the reason for the random EMSGSIZE or
-EINVAL error (see comments above).
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+0f32d05d8b6cd8d7ea3e@syzkaller.appspotmail.com
 
-Thanks a lot.
-Yihao
+Debian GNU/Linux 9 syzkaller ttyS0
+Warning: Permanently added '10.128.1.62' (ECDSA) to the list of known hosts.
+executing program
+executing program
+executing program
+BUG: memory leak
+unreferenced object 0xffff8881123bf0a0 (size 32):
+  comm "syz-executor557", pid 8384, jiffies 4294946143 (age 12.360s)
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<ffffffff81469b71>] kmalloc_node include/linux/slab.h:579 [inline]
+    [<ffffffff81469b71>] kvmalloc_node+0x61/0xf0 mm/util.c:587
+    [<ffffffff815f0b3f>] kvmalloc include/linux/mm.h:795 [inline]
+    [<ffffffff815f0b3f>] kvmalloc_array include/linux/mm.h:813 [inline]
+    [<ffffffff815f0b3f>] kvcalloc include/linux/mm.h:818 [inline]
+    [<ffffffff815f0b3f>] io_rsrc_data_alloc+0x4f/0xc0 fs/io_uring.c:7164
+    [<ffffffff815f26d8>] io_sqe_buffers_register+0x98/0x3d0 fs/io_uring.c:8383
+    [<ffffffff815f84a7>] __io_uring_register+0xf67/0x18c0 fs/io_uring.c:9986
+    [<ffffffff81609222>] __do_sys_io_uring_register fs/io_uring.c:10091 [inline]
+    [<ffffffff81609222>] __se_sys_io_uring_register fs/io_uring.c:10071 [inline]
+    [<ffffffff81609222>] __x64_sys_io_uring_register+0x112/0x230 fs/io_uring.c:10071
+    [<ffffffff842f616a>] do_syscall_64+0x3a/0xb0 arch/x86/entry/common.c:47
+    [<ffffffff84400068>] entry_SYSCALL_64_after_hwframe+0x44/0xae
+
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches

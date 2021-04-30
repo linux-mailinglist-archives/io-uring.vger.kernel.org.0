@@ -2,136 +2,306 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D61C36FB37
-	for <lists+io-uring@lfdr.de>; Fri, 30 Apr 2021 15:10:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83B2436FC40
+	for <lists+io-uring@lfdr.de>; Fri, 30 Apr 2021 16:24:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232202AbhD3NLM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 30 Apr 2021 09:11:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58084 "EHLO
+        id S233382AbhD3OWq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 30 Apr 2021 10:22:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45474 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230020AbhD3NLL (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 30 Apr 2021 09:11:11 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B829C06174A
-        for <io-uring@vger.kernel.org>; Fri, 30 Apr 2021 06:10:23 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id h4so61484250wrt.12
-        for <io-uring@vger.kernel.org>; Fri, 30 Apr 2021 06:10:23 -0700 (PDT)
+        with ESMTP id S233433AbhD3OW2 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 30 Apr 2021 10:22:28 -0400
+Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDBD3C061349;
+        Fri, 30 Apr 2021 07:21:39 -0700 (PDT)
+Received: by mail-lj1-x22b.google.com with SMTP id l22so73654486ljc.9;
+        Fri, 30 Apr 2021 07:21:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=dOLUA4U0+orWelrZj4UP9WQEHXIZUx8F0WoWf9nlf5g=;
-        b=NHcSlDS8aPk8KfNv7r9wlYspHZOYJK99iC6lo+Ii6djLoqgTNP1LdmAMMSnfEmOlVC
-         nbgVEcVSNrAE/3Y9aw02DE8bQcBdCf+l1rq9WAEBVMy4kBvxbls2E90pgaZsCIlxDGu8
-         0WAQ/jvoX+250cC7UcWv9ORybNGUvpEMaFYoaFJZK88H/FoMbB9ZC1DNY11u2xgzOqKr
-         qunnJTtP9AwX8GRXmu9nmGmA1vvLSJbGMEPWSUjnB2Fl5DpUDO3Cd1IXtrbupwA8c8/m
-         ufih87ic04tsbF62qFl6jDZAZHqX/CTOAYcvgo0rmjqiCxkZjRYOfdnC6qGIBJ4VlGOd
-         WTFA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=womN+HALGbo/rTuRoeSBkROLbDHFEZu2tvAM14dy0m0=;
+        b=Q2WEPjheENLxxMa7SiiVh7w0Cb1dJlqfMCn767ir5TdwWu+vPhTkGSio2YLz/gagAo
+         wQ4mm2wIiT6hWcvc4laivPDR2WhIpq6IqTp1zYaKI3z6jvEdrCbWy3wZCaWvTKgn+899
+         cWJkZ3LcDcKTQcnz4NWuCVLfTvgbXhHZE7HtVBHVwcL1lw+M8SSN9P9esEgUdDQ1KPDe
+         kTRSlzmt1ZZqPUftaen5eVvKeCBR2vuKD0xHYUe7JSAYC8jZfsq5XAADQEr0b9rUpdB7
+         HaxtTpR6WORqEtOIsDfj4M5CYKhW0jF4leWljEW2GwRYvFgoe6yQM+sFY+0WgBgJX+0G
+         4Log==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=dOLUA4U0+orWelrZj4UP9WQEHXIZUx8F0WoWf9nlf5g=;
-        b=WgtapxxpFQF/j27KQdf1tQxDUbLYS8K4XrApT6YWIcMa4HqxEG2rM5lq0teuSOxrqp
-         AUh0HvMBuknMGJCPfnMinrAfZQp0/aGafhn1roS0EmqVnBdKSmNzbqRq1oFD4PbKwvns
-         N2d7Tav7I3SKU0LQ9pxc6c1tZEdRU2U9U+WVUUy6x+f4EPOnLa7m/zbN+/uRPWk4RYdN
-         d+PBBz+zaswhrePHwHKyABdWkLp9aiPoEwm4DcbTGCEeiWIbrNG5sR6mPMeyNC+kivDj
-         DHOOVUonU7XQYuZgeDKxbdzKH+If6SSDAINCt2gSpXhjf+dyjtNc5POnLyueP4H/wlVv
-         v4Jg==
-X-Gm-Message-State: AOAM530jsiP0PX1abqxczW/Q4WTQgQqjUAIBAWnT+QqJlzGzJgKD62Ui
-        UyFR9MDMsayw0yK2MxQxjX+xO0mbcWc=
-X-Google-Smtp-Source: ABdhPJyjH2Ry16Q5KlYXuJha13NiVaPWVW2H5wF8SSJONiTME1+uia2PRVlSZWRd1iGo20G6bknX9Q==
-X-Received: by 2002:adf:f5c6:: with SMTP id k6mr7136088wrp.338.1619788222200;
-        Fri, 30 Apr 2021 06:10:22 -0700 (PDT)
-Received: from localhost.localdomain ([148.252.132.80])
-        by smtp.gmail.com with ESMTPSA id v13sm2292925wrt.65.2021.04.30.06.10.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Apr 2021 06:10:21 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 2/2] io_uring: localise fixed resources fields
-Date:   Fri, 30 Apr 2021 14:10:08 +0100
-Message-Id: <b1d3ac6dde55e08718bfd181385a8d1a13df21ee.1619788055.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <cover.1619788055.git.asml.silence@gmail.com>
-References: <cover.1619788055.git.asml.silence@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=womN+HALGbo/rTuRoeSBkROLbDHFEZu2tvAM14dy0m0=;
+        b=a9QCP3AzH9o/LqrYrmqZF7bcPqYbsUD7tJ55sjrB5IVgC193qrIE+FQyVxLYkrHiLr
+         pCdoS2JMelHO8vnURR8cMo95C8Q9W3wqX34tlJ92HkaZTW5BmvH32IhkbnAC6Yoqw0fx
+         6UIFFqG1PyPhygIEJhSC7NBPcPn+zD1ydBNsZdLvbJpLlpP8V7wL2PsEYxiEE/lBUMQx
+         TKJuBLCJewuAFU7olfcBptnX6euD8BAaDDLYWxKOBR4qgcGFHZUgJNcGHt+ATYiP9r0c
+         XSlXOo8AaMOQRfJDBTxkvJHzjJnkjth8vhJoKe77/I4hFVJrfI6EWkqxZGYKTOTp0Hd9
+         nkzA==
+X-Gm-Message-State: AOAM531g29T84ykgswn6cNY9ROs9NnC9cEy52O22lo8bG3v1JjX/N042
+        KhIIxUaEVf1ICUCez5AvUGfyTgSo9ghtkF11tW4cUQO8Ftv61w==
+X-Google-Smtp-Source: ABdhPJy6AIzCLcNffqnjY66RGCo0VqXUaBEZxCm50v4IpyxliIpRQm3LN2nabvugee9Md46a+z+JFX9q+kvGfbzTM50=
+X-Received: by 2002:a2e:a7cc:: with SMTP id x12mr3970827ljp.473.1619792498123;
+ Fri, 30 Apr 2021 07:21:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <0000000000000c97e505bdd1d60e@google.com> <cfa0f9b8-91ec-4772-a6c2-c5206f32373fn@googlegroups.com>
+ <53a22ab4-7a2d-4ebd-802d-9d1b4ce4e087n@googlegroups.com>
+In-Reply-To: <53a22ab4-7a2d-4ebd-802d-9d1b4ce4e087n@googlegroups.com>
+From:   Palash Oswal <oswalpalash@gmail.com>
+Date:   Fri, 30 Apr 2021 19:51:25 +0530
+Message-ID: <CAGyP=7fpNBhbmczjDq-vpzbSDyqwCw2jS7xQo4XO=bxwsy2ddQ@mail.gmail.com>
+Subject: INFO: task hung in io_uring_cancel_sqpoll
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzbot+11bf59db879676f59e52@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-ring has two types of resource-related fields, used for request
-submission, and field needed for update/registration. Reshuffle them
-into these two groups for better locality and readability. The second
-group is not in the hot path, so it's natural to place them somewhere in
-the end. Also update an outdated comment.
+On Thursday, March 18, 2021 at 9:40:21 PM UTC+5:30 syzbot wrote:
+>
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit: 0d7588ab riscv: process: Fix no prototype for arch_dup_tas..
+> git tree: git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git fixes
+> console output: https://syzkaller.appspot.com/x/log.txt?x=12dde5aed00000
+> kernel config: https://syzkaller.appspot.com/x/.config?x=81c0b708b31626cc
+> dashboard link: https://syzkaller.appspot.com/bug?extid=11bf59db879676f59e52
+> userspace arch: riscv64
+> CC: [asml.s...@gmail.com ax...@kernel.dk io-u...@vger.kernel.org linux-...@vger.kernel.org]
+>
+> Unfortunately, I don't have any reproducer for this issue yet.
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+11bf59...@syzkaller.appspotmail.com
+>
+> INFO: task iou-sqp-4867:4871 blocked for more than 430 seconds.
+> Not tainted 5.12.0-rc2-syzkaller-00467-g0d7588ab9ef9 #0
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> task:iou-sqp-4867 state:D stack: 0 pid: 4871 ppid: 4259 flags:0x00000004
+> Call Trace:
+> [<ffffffe003bc3252>] context_switch kernel/sched/core.c:4324 [inline]
+> [<ffffffe003bc3252>] __schedule+0x478/0xdec kernel/sched/core.c:5075
+> [<ffffffe003bc3c2a>] schedule+0x64/0x166 kernel/sched/core.c:5154
+> [<ffffffe0004b80ee>] io_uring_cancel_sqpoll+0x1de/0x294 fs/io_uring.c:8858
+> [<ffffffe0004c19cc>] io_sq_thread+0x548/0xe58 fs/io_uring.c:6750
+> [<ffffffe000005570>] ret_from_exception+0x0/0x14
+>
+> Showing all locks held in the system:
+> 3 locks held by kworker/u4:0/7:
+> 3 locks held by kworker/1:0/19:
+> 1 lock held by khungtaskd/1556:
+> #0: ffffffe00592b5e8 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x32/0x1fa kernel/locking/lockdep.c:6329
+> 1 lock held by klogd/3947:
+> 2 locks held by getty/4142:
+> #0: ffffffe00f1aa098 (&tty->ldisc_sem){++++}-{0:0}, at: ldsem_down_read+0x3c/0x48 drivers/tty/tty_ldsem.c:340
+> #1: ffffffd010b6f2e8 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x9ac/0xb08 drivers/tty/n_tty.c:2178
+> 2 locks held by kworker/0:1/4375:
+>
+> =============================================
+>
+>
+>
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzk...@googlegroups.com.
+>
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 33 +++++++++++++++++----------------
- 1 file changed, 17 insertions(+), 16 deletions(-)
+Attaching a C reproducer for this bug:
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index ff5d0757b5c5..e8b05e4a049f 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -390,21 +390,17 @@ struct io_ring_ctx {
- 	struct list_head	sqd_list;
- 
- 	/*
--	 * If used, fixed file set. Writers must ensure that ->refs is dead,
--	 * readers must ensure that ->refs is alive as long as the file* is
--	 * used. Only updated through io_uring_register(2).
-+	 * Fixed resources fast path, should be accessed only under uring_lock,
-+	 * and updated through io_uring_register(2)
- 	 */
--	struct io_rsrc_data	*file_data;
-+	struct io_rsrc_node	*rsrc_node;
-+
- 	struct io_file_table	file_table;
- 	unsigned		nr_user_files;
--
--	/* if used, fixed mapped user buffers */
--	struct io_rsrc_data	*buf_data;
- 	unsigned		nr_user_bufs;
- 	struct io_mapped_ubuf	**user_bufs;
- 
- 	struct xarray		io_buffers;
--
- 	struct xarray		personalities;
- 	u32			pers_next;
- 
-@@ -436,16 +432,21 @@ struct io_ring_ctx {
- 		bool			poll_multi_file;
- 	} ____cacheline_aligned_in_smp;
- 
--	struct delayed_work		rsrc_put_work;
--	struct llist_head		rsrc_put_llist;
--	struct list_head		rsrc_ref_list;
--	spinlock_t			rsrc_ref_lock;
--	struct io_rsrc_node		*rsrc_node;
--	struct io_rsrc_node		*rsrc_backup_node;
--	struct io_mapped_ubuf		*dummy_ubuf;
--
- 	struct io_restriction		restrictions;
- 
-+	/* slow path rsrc auxilary data, used by update/register */
-+	struct {
-+		struct io_rsrc_node		*rsrc_backup_node;
-+		struct io_mapped_ubuf		*dummy_ubuf;
-+		struct io_rsrc_data		*file_data;
-+		struct io_rsrc_data		*buf_data;
-+
-+		struct delayed_work		rsrc_put_work;
-+		struct llist_head		rsrc_put_llist;
-+		struct list_head		rsrc_ref_list;
-+		spinlock_t			rsrc_ref_lock;
-+	};
-+
- 	/* Keep this last, we don't need it for the fast path */
- 	struct {
- 		#if defined(CONFIG_UNIX)
--- 
-2.31.1
+#define _GNU_SOURCE
 
+#include <fcntl.h>
+#include <signal.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/mman.h>
+#include <sys/syscall.h>
+#include <sys/wait.h>
+#include <time.h>
+#include <unistd.h>
+
+static uint64_t current_time_ms(void)
+{
+    struct timespec ts;
+    if (clock_gettime(CLOCK_MONOTONIC, &ts))
+        exit(1);
+    return (uint64_t)ts.tv_sec * 1000 + (uint64_t)ts.tv_nsec / 1000000;
+}
+
+#define SIZEOF_IO_URING_SQE 64
+#define SIZEOF_IO_URING_CQE 16
+#define SQ_TAIL_OFFSET 64
+#define SQ_RING_MASK_OFFSET 256
+#define SQ_RING_ENTRIES_OFFSET 264
+#define CQ_RING_ENTRIES_OFFSET 268
+#define CQ_CQES_OFFSET 320
+
+struct io_sqring_offsets {
+    uint32_t head;
+    uint32_t tail;
+    uint32_t ring_mask;
+    uint32_t ring_entries;
+    uint32_t flags;
+    uint32_t dropped;
+    uint32_t array;
+    uint32_t resv1;
+    uint64_t resv2;
+};
+
+struct io_cqring_offsets {
+    uint32_t head;
+    uint32_t tail;
+    uint32_t ring_mask;
+    uint32_t ring_entries;
+    uint32_t overflow;
+    uint32_t cqes;
+    uint64_t resv[2];
+};
+
+struct io_uring_params {
+    uint32_t sq_entries;
+    uint32_t cq_entries;
+    uint32_t flags;
+    uint32_t sq_thread_cpu;
+    uint32_t sq_thread_idle;
+    uint32_t features;
+    uint32_t resv[4];
+    struct io_sqring_offsets sq_off;
+    struct io_cqring_offsets cq_off;
+};
+
+#define IORING_OFF_SQ_RING 0
+#define IORING_OFF_SQES 0x10000000ULL
+
+#define sys_io_uring_setup 425
+static long syz_io_uring_setup(volatile long a0, volatile long a1,
+volatile long a2, volatile long a3, volatile long a4, volatile long
+a5)
+{
+    uint32_t entries = (uint32_t)a0;
+    struct io_uring_params* setup_params = (struct io_uring_params*)a1;
+    void* vma1 = (void*)a2;
+    void* vma2 = (void*)a3;
+    void** ring_ptr_out = (void**)a4;
+    void** sqes_ptr_out = (void**)a5;
+    uint32_t fd_io_uring = syscall(sys_io_uring_setup, entries, setup_params);
+    uint32_t sq_ring_sz = setup_params->sq_off.array +
+setup_params->sq_entries * sizeof(uint32_t);
+    uint32_t cq_ring_sz = setup_params->cq_off.cqes +
+setup_params->cq_entries * SIZEOF_IO_URING_CQE;
+    uint32_t ring_sz = sq_ring_sz > cq_ring_sz ? sq_ring_sz : cq_ring_sz;
+    *ring_ptr_out = mmap(vma1, ring_sz, PROT_READ | PROT_WRITE,
+MAP_SHARED | MAP_POPULATE | MAP_FIXED, fd_io_uring,
+IORING_OFF_SQ_RING);
+    uint32_t sqes_sz = setup_params->sq_entries * SIZEOF_IO_URING_SQE;
+    *sqes_ptr_out = mmap(vma2, sqes_sz, PROT_READ | PROT_WRITE,
+MAP_SHARED | MAP_POPULATE | MAP_FIXED, fd_io_uring, IORING_OFF_SQES);
+    return fd_io_uring;
+}
+
+static long syz_io_uring_submit(volatile long a0, volatile long a1,
+volatile long a2, volatile long a3)
+{
+    char* ring_ptr = (char*)a0;
+    char* sqes_ptr = (char*)a1;
+    char* sqe = (char*)a2;
+    uint32_t sqes_index = (uint32_t)a3;
+    uint32_t sq_ring_entries = *(uint32_t*)(ring_ptr + SQ_RING_ENTRIES_OFFSET);
+    uint32_t cq_ring_entries = *(uint32_t*)(ring_ptr + CQ_RING_ENTRIES_OFFSET);
+    uint32_t sq_array_off = (CQ_CQES_OFFSET + cq_ring_entries *
+SIZEOF_IO_URING_CQE + 63) & ~63;
+    if (sq_ring_entries)
+        sqes_index %= sq_ring_entries;
+    char* sqe_dest = sqes_ptr + sqes_index * SIZEOF_IO_URING_SQE;
+    memcpy(sqe_dest, sqe, SIZEOF_IO_URING_SQE);
+    uint32_t sq_ring_mask = *(uint32_t*)(ring_ptr + SQ_RING_MASK_OFFSET);
+    uint32_t* sq_tail_ptr = (uint32_t*)(ring_ptr + SQ_TAIL_OFFSET);
+    uint32_t sq_tail = *sq_tail_ptr & sq_ring_mask;
+    uint32_t sq_tail_next = *sq_tail_ptr + 1;
+    uint32_t* sq_array = (uint32_t*)(ring_ptr + sq_array_off);
+    *(sq_array + sq_tail) = sqes_index;
+    __atomic_store_n(sq_tail_ptr, sq_tail_next, __ATOMIC_RELEASE);
+    return 0;
+}
+
+static void kill_and_wait(int pid, int* status)
+{
+    kill(-pid, SIGKILL);
+    kill(pid, SIGKILL);
+    while (waitpid(-1, status, __WALL) != pid) {
+    }
+}
+
+#define WAIT_FLAGS __WALL
+
+uint64_t r[3] = {0xffffffffffffffff, 0x0, 0x0};
+
+void trigger_bug(void)
+{
+    intptr_t res = 0;
+    *(uint32_t*)0x20000204 = 0;
+    *(uint32_t*)0x20000208 = 2;
+    *(uint32_t*)0x2000020c = 0;
+    *(uint32_t*)0x20000210 = 0;
+    *(uint32_t*)0x20000218 = -1;
+    memset((void*)0x2000021c, 0, 12);
+    res = -1;
+    res = syz_io_uring_setup(0x7987, 0x20000200, 0x20400000,
+0x20ffd000, 0x200000c0, 0x200001c0);
+    if (res != -1) {
+        r[0] = res;
+        r[1] = *(uint64_t*)0x200000c0;
+        r[2] = *(uint64_t*)0x200001c0;
+    }
+    *(uint8_t*)0x20000180 = 0xb;
+    *(uint8_t*)0x20000181 = 1;
+    *(uint16_t*)0x20000182 = 0;
+    *(uint32_t*)0x20000184 = 0;
+    *(uint64_t*)0x20000188 = 4;
+    *(uint64_t*)0x20000190 = 0x20000140;
+    *(uint64_t*)0x20000140 = 0x77359400;
+    *(uint64_t*)0x20000148 = 0;
+    *(uint32_t*)0x20000198 = 1;
+    *(uint32_t*)0x2000019c = 0;
+    *(uint64_t*)0x200001a0 = 0;
+    *(uint16_t*)0x200001a8 = 0;
+    *(uint16_t*)0x200001aa = 0;
+    memset((void*)0x200001ac, 0, 20);
+    syz_io_uring_submit(r[1], r[2], 0x20000180, 1);
+    *(uint32_t*)0x20000544 = 0;
+    *(uint32_t*)0x20000548 = 0x36;
+    *(uint32_t*)0x2000054c = 0;
+    *(uint32_t*)0x20000550 = 0;
+    *(uint32_t*)0x20000558 = r[0];
+    memset((void*)0x2000055c, 0, 12);
+    syz_io_uring_setup(0x4bf1, 0x20000540, 0x20ffd000, 0x20ffc000, 0, 0);
+
+}
+int main(void)
+{
+    syscall(__NR_mmap, 0x20000000ul, 0x1000000ul, 7ul, 0x32ul, -1, 0ul);
+    int pid = fork();
+    if (pid < 0)
+        exit(1);
+    if (pid == 0) {
+        trigger_bug();
+        exit(0);
+    }
+    int status = 0;
+    uint64_t start = current_time_ms();
+    for (;;) {
+        if (current_time_ms() - start < 1000) {
+            continue;
+        }
+        kill_and_wait(pid, &status);
+        break;
+    }
+    return 0;
+}

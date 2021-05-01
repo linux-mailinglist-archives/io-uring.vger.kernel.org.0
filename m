@@ -2,108 +2,212 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E1B253705C7
-	for <lists+io-uring@lfdr.de>; Sat,  1 May 2021 07:52:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DDB037063B
+	for <lists+io-uring@lfdr.de>; Sat,  1 May 2021 09:39:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231695AbhEAFwK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 1 May 2021 01:52:10 -0400
-Received: from mail-il1-f199.google.com ([209.85.166.199]:37587 "EHLO
-        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231739AbhEAFwI (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 1 May 2021 01:52:08 -0400
-Received: by mail-il1-f199.google.com with SMTP id q2-20020a056e0220e2b0290150996f2750so399088ilv.4
-        for <io-uring@vger.kernel.org>; Fri, 30 Apr 2021 22:51:17 -0700 (PDT)
+        id S231596AbhEAHj7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 1 May 2021 03:39:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45580 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229510AbhEAHj7 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 1 May 2021 03:39:59 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71554C06174A;
+        Sat,  1 May 2021 00:39:08 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id n2so303396wrm.0;
+        Sat, 01 May 2021 00:39:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=9U3Ktb6g5X10Yi+froXLKqXmopFzmhhqCBWbEhjUe08=;
+        b=RWKYGf4pOJTCzaX9G1wMb4SutKcIOSiUZuK/+yT88bTsz+yskCXmMNzj8SAM8Y/V/e
+         B39qxUhTicAYYUayaruQPEcEn7aM1gC5hwAV4lnzPvQ32t0eyCJqsXz4ac27vtmEuqKI
+         uNKyT6ORLnPfuWUVDI8yOB3gf/KeWi8zOE9tCVX5QVs08DDnj+l5O4SNuztGJE+s9vwn
+         0uQhbdXFJoNQihzEuyDd/LylDliWHdIAIoVRkB+NrjvRNc+E6NwhM0vZib7IkDyLhwhi
+         jxqKhsUcl9ttLyP8mFz03nsRY0nFPIvNpVaPLwyzDph2T81J8xg7jkGEK1IIYVRqYCqJ
+         AiTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=dAtoNwPD7FCF677AGpToLr51wbvur/5fNAZn5Ya0mW8=;
-        b=ucI3LrB56p4vCXue353RNieuICzJ1KSP1XRLPsIPjvndjJWSNy8IXb8VSASFIcBPAI
-         RbjVq8wZyXl8iUe1nkoWyCKobL6mZmQymT6zHy8UJjEjH3cLibdh+d7vx52tDABM46WK
-         qtLIiUydmsCy2LsRvMrf04WFGdC6kDjN05mWLw/CrpwIE0YVM0JD3FjlQnNkv0FnU1ih
-         kpaSG4+Qca6wivGHMenMDmjRIhk2K05gI4MjG5Q3acyp1MG/58HrxN4zCojPn9AF/2sS
-         xhuufk40UhJwt+zgFkX+ZT9JlqjDx9mxef3Pc6FLMrywIMoPgjcn/wp4qAjFMKLCLFHF
-         MMVw==
-X-Gm-Message-State: AOAM531G+T8Q+X8qF1lTMBk3DmHh2Ay4uQ6EG4OSGLgGBSFSzVszTS6J
-        gjM6TgOfpqIt7CsRmk/WyHWDmhvLkf8NEUEpdRbzrloQ5Vr0
-X-Google-Smtp-Source: ABdhPJwXIG82/d2Q8uOyVXJvuhpdm0Za7/yPa8xvd+6E620WPkeTofOL8AhlNblUhTCa8UoCZnj7MAxHLP9G+vDbUSlKkcNA+xcu
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=9U3Ktb6g5X10Yi+froXLKqXmopFzmhhqCBWbEhjUe08=;
+        b=KfoOIhrWY9D/gnHKtiQsOlkBhn17P2H845nsk45MlvW6QJ+T+Qeybba66rinRGOb5G
+         8983NDN2Tleyjw6KRigljA1++IDONRTD4RCNHbnIP3wJQqPmHGZQd6Vq8Psp93XruGkL
+         BG+Ez72nOdo9xTnTqv649Q6ab1HjCrYmi4DvCNCmFwWzOcyXd/A+6ufBKMUEf2jN2RmM
+         4Xu/n0sMuUkIVW9ciMDUAxfRGaUf4KjOfRiNBsYEpQG1oc+b1AEhdhE7bZk85mUOe9d1
+         dKdYFVxpFpT1cGKfETeshm1LZ5VEd1twaGYOSUoUpnpM9dQ+fg/n3lyuLkTGesKi1jXI
+         L9nQ==
+X-Gm-Message-State: AOAM533Pk2WLuCpKE0edorbsg1/lF0YW7kH2zpmlBfqOs9BchJwjul9r
+        0hD0U9F8lDD9W3IoswN+TXA=
+X-Google-Smtp-Source: ABdhPJzK9bpiWcPkv5svQnuJRlOx63F00X5ggpg0BSsFfp4beGcF1/3QThsKHI0BEY9IS7lzslpjIQ==
+X-Received: by 2002:a5d:65c4:: with SMTP id e4mr12534110wrw.287.1619854747105;
+        Sat, 01 May 2021 00:39:07 -0700 (PDT)
+Received: from [192.168.8.197] ([185.69.145.138])
+        by smtp.gmail.com with ESMTPSA id f22sm4728445wmj.42.2021.05.01.00.39.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 01 May 2021 00:39:06 -0700 (PDT)
+Subject: Re: INFO: task hung in io_uring_cancel_sqpoll
+To:     Palash Oswal <oswalpalash@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzbot+11bf59db879676f59e52@syzkaller.appspotmail.com
+References: <0000000000000c97e505bdd1d60e@google.com>
+ <cfa0f9b8-91ec-4772-a6c2-c5206f32373fn@googlegroups.com>
+ <53a22ab4-7a2d-4ebd-802d-9d1b4ce4e087n@googlegroups.com>
+ <CAGyP=7fpNBhbmczjDq-vpzbSDyqwCw2jS7xQo4XO=bxwsy2ddQ@mail.gmail.com>
+ <a6ce21f4-04e7-f34c-8cfc-f8158f7fe163@gmail.com>
+ <CAGyP=7czG1nmzpM5T784iBdApVL14hGoAfw-nhS=tNH5t9C79g@mail.gmail.com>
+ <d350afac-eef2-c33f-e435-fe0ec7ffd1cf@gmail.com>
+ <9a7c2040-e26f-1c59-b7e9-25784d5b854e@gmail.com>
+ <CAGyP=7dFy3t72P9GQ8a-gxO6oYojqh0PnTS0zvMGidu6Q+cNZw@mail.gmail.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Message-ID: <bdc2da2f-dc27-1693-5404-13d523838d20@gmail.com>
+Date:   Sat, 1 May 2021 08:39:01 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.0
 MIME-Version: 1.0
-X-Received: by 2002:a02:ca45:: with SMTP id i5mr8156252jal.118.1619848276068;
- Fri, 30 Apr 2021 22:51:16 -0700 (PDT)
-Date:   Fri, 30 Apr 2021 22:51:16 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000015ce3005c13e512a@google.com>
-Subject: [syzbot] WARNING: refcount bug in __io_queue_sqe
-From:   syzbot <syzbot+a2910119328ce8e7996f@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAGyP=7dFy3t72P9GQ8a-gxO6oYojqh0PnTS0zvMGidu6Q+cNZw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
+On 5/1/21 5:51 AM, Palash Oswal wrote:
+> On Sat, May 1, 2021 at 2:35 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
+>>
+>> On 4/30/21 7:34 PM, Pavel Begunkov wrote:
+>>> On 4/30/21 4:02 PM, Palash Oswal wrote:
+>>>> On Fri, Apr 30, 2021 at 8:03 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
+>>>>>
+>>>>> On 4/30/21 3:21 PM, Palash Oswal wrote:
+>>>>>> On Thursday, March 18, 2021 at 9:40:21 PM UTC+5:30 syzbot wrote:
+>>>>>>>
+>>>>>>> Hello,
+>>>>>>>
+>>>>>>> syzbot found the following issue on:
+>>>>>>>
+>>>>>>> HEAD commit: 0d7588ab riscv: process: Fix no prototype for arch_dup_tas..
+>>>>>>> git tree: git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git fixes
+>>>>>>> console output: https://syzkaller.appspot.com/x/log.txt?x=12dde5aed00000
+>>>>>>> kernel config: https://syzkaller.appspot.com/x/.config?x=81c0b708b31626cc
+>>>>>>> dashboard link: https://syzkaller.appspot.com/bug?extid=11bf59db879676f59e52
+>>>>>>> userspace arch: riscv64
+>>>>>>> CC: [asml.s...@gmail.com ax...@kernel.dk io-u...@vger.kernel.org linux-...@vger.kernel.org]
+>>>>>>>
+>>>>>>> Unfortunately, I don't have any reproducer for this issue yet.
+>>>>>
+>>>>> There was so many fixes in 5.12 after this revision, including sqpoll
+>>>>> cancellation related... Can you try something more up-to-date? Like
+>>>>> released 5.12 or for-next
+>>>>>
+>>>>
+>>>> The reproducer works for 5.12.
+>>>>
+>>>> I tested against the HEAD b1ef997bec4d5cf251bfb5e47f7b04afa49bcdfe
+>>>> commit on for-next tree
+>>>> https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/?h=for-next
+>>>> and the reproducer fails.
+>>>
+>>> Can't reproduce. Does it hang as in the original's report dmesg?
+>>> Can you paste logs?
+>>
+>> and `uname -r` if you could
 
-syzbot found the following issue on:
+Great, thanks. I'll take a look later
+ 
+> 
+> root@syzkaller:~# echo 30 > /proc/sys/kernel/hung_task_timeout_secs
+> root@syzkaller:~# uname -a
+> Linux syzkaller 5.12.0 #112 SMP Sat May 1 10:13:41 IST 2021 x86_64 GNU/Linux
+> root@syzkaller:~# ./repro
+> [   70.412424] repro[365]: segfault at 0 ip 0000556d88201005 sp
+> 00007ffc7ddf2cd0 error 6 in repro[556d8]
+> [   70.417215] Code: cc 8b 75 c0 48 8b 45 e8 41 b9 00 00 00 00 41 89
+> d0 b9 11 80 00 00 ba 03 00 00 00 48
+> [  121.593305] INFO: task iou-sqp-365:366 blocked for more than 30 seconds.
+> [  121.594448]       Not tainted 5.12.0 #112
+> [  121.595072] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
+> disables this message.
+> [  121.596250] task:iou-sqp-365     state:D stack:    0 pid:  366
+> ppid:   364 flags:0x00004004
+> [  121.597514] Call Trace:
+> [  121.598019]  __schedule+0xb1d/0x1130
+> [  121.598774]  ? __sched_text_start+0x8/0x8
+> [  121.599580]  ? io_wq_worker_sleeping+0x145/0x500
+> [  121.600442]  schedule+0x131/0x1c0
+> [  121.600902]  io_uring_cancel_sqpoll+0x288/0x350
+> [  121.601571]  ? io_sq_thread_unpark+0xd0/0xd0
+> [  121.602410]  ? mutex_lock+0xbb/0x130
+> [  121.603027]  ? init_wait_entry+0xe0/0xe0
+> [  121.603573]  ? wait_for_completion_killable_timeout+0x20/0x20
+> [  121.604454]  io_sq_thread+0x174c/0x18c0
+> [  121.605014]  ? io_rsrc_put_work+0x380/0x380
+> [  121.605652]  ? init_wait_entry+0xe0/0xe0
+> [  121.606428]  ? _raw_spin_lock_irq+0xa5/0x180
+> [  121.607262]  ? _raw_spin_lock_irqsave+0x190/0x190
+> [  121.608005]  ? calculate_sigpending+0x6b/0xa0
+> [  121.608636]  ? io_rsrc_put_work+0x380/0x380
+> [  121.609301]  ret_from_fork+0x22/0x30
+> 
+> 
+> root@syzkaller:~# ps
+>   PID TTY          TIME CMD
+>   294 ttyS0    00:00:00 login
+>   357 ttyS0    00:00:00 bash
+>   365 ttyS0    00:00:00 repro
+>   370 ttyS0    00:00:00 ps
+> root@syzkaller:~# kill -9 365
+> root@syzkaller:~# [  305.888970] INFO: task iou-sqp-365:366 blocked
+> for more than 215 seconds.
+> [  305.893275]       Not tainted 5.12.0 #112
+> [  305.895507] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
+> disables this message.
+> [  305.899685] task:iou-sqp-365     state:D stack:    0 pid:  366
+> ppid:     1 flags:0x00004004
+> [  305.904071] Call Trace:
+> [  305.905616]  __schedule+0xb1d/0x1130
+> [  305.907660]  ? __sched_text_start+0x8/0x8
+> [  305.910314]  ? io_wq_worker_sleeping+0x145/0x500
+> [  305.913328]  schedule+0x131/0x1c0
+> [  305.914562]  io_uring_cancel_sqpoll+0x288/0x350
+> [  305.916513]  ? io_sq_thread_unpark+0xd0/0xd0
+> [  305.918346]  ? mutex_lock+0xbb/0x130
+> [  305.919616]  ? init_wait_entry+0xe0/0xe0
+> [  305.920896]  ? wait_for_completion_killable_timeout+0x20/0x20
+> [  305.922805]  io_sq_thread+0x174c/0x18c0
+> [  305.923876]  ? io_rsrc_put_work+0x380/0x380
+> [  305.924748]  ? init_wait_entry+0xe0/0xe0
+> [  305.925523]  ? _raw_spin_lock_irq+0xa5/0x180
+> [  305.926353]  ? _raw_spin_lock_irqsave+0x190/0x190
+> [  305.927436]  ? calculate_sigpending+0x6b/0xa0
+> [  305.928266]  ? io_rsrc_put_work+0x380/0x380
+> [  305.929104]  ret_from_fork+0x22/0x30
+> 
+> The trace from my syzkaller instance:
+> 
+> Syzkaller hit 'INFO: task hung in io_uring_cancel_sqpoll' bug.
+> 
+> syz-executor198[307]: segfault at 0 ip 00000000004020f3 sp
+> 00007ffd21853620 error 6 in syz-executor198379463[401000+96000]
+> Code: 89 d8 8d 34 90 8b 45 04 ba 03 00 00 00 c1 e0 04 03 45 64 39 c6
+> 48 0f 42 f0 45 31 c9 e8 96 8a 04 00 8b 75 00 41 89 d8 4c 89 ef <49> 89
+> 06 41 b9 00 00 00 10 b9 11 80 00 00 ba 03 00 00 00 c1 e6 06
+> INFO: task iou-sqp-307:308 blocked for more than 120 seconds.
+>       Not tainted 5.12.0 #2
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> task:iou-sqp-307     state:D stack:    0 pid:  308 ppid:   306 flags:0x00004004
+> Call Trace:
+>  context_switch kernel/sched/core.c:4322 [inline]
+>  __schedule+0x75f/0xa10 kernel/sched/core.c:5073
+>  schedule+0xb7/0x110 kernel/sched/core.c:5152
+>  io_uring_cancel_sqpoll+0x1c6/0x290 fs/io_uring.c:9018
+>  io_sq_thread+0xf8c/0x1080 fs/io_uring.c:6836
+>  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+> 
 
-HEAD commit:    16fc44d6 Merge tag 'mmc-v5.12-rc5' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1450f471d00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c0a6882014fd3d45
-dashboard link: https://syzkaller.appspot.com/bug?extid=a2910119328ce8e7996f
-compiler:       Debian clang version 11.0.1-2
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a2910119328ce8e7996f@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-refcount_t: underflow; use-after-free.
-WARNING: CPU: 0 PID: 10242 at lib/refcount.c:28 refcount_warn_saturate+0x15b/0x1a0 lib/refcount.c:28
-Modules linked in:
-CPU: 0 PID: 10242 Comm: syz-executor.2 Not tainted 5.12.0-rc8-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:refcount_warn_saturate+0x15b/0x1a0 lib/refcount.c:28
-Code: c7 20 5a 71 8a 31 c0 e8 23 03 55 fd 0f 0b eb 85 e8 9a a0 88 fd c6 05 44 db 0b 0a 01 48 c7 c7 80 5a 71 8a 31 c0 e8 05 03 55 fd <0f> 0b e9 64 ff ff ff e8 79 a0 88 fd c6 05 24 db 0b 0a 01 48 c7 c7
-RSP: 0018:ffffc90002e77928 EFLAGS: 00010246
-RAX: 15eb98be5e94ee00 RBX: 0000000000000003 RCX: 0000000000040000
-RDX: ffffc9000d56a000 RSI: 0000000000006606 RDI: 0000000000006607
-RBP: 0000000000000003 R08: ffffffff8164f2f2 R09: ffffed1017383f1c
-R10: ffffed1017383f1c R11: 0000000000000000 R12: dffffc0000000000
-R13: ffff8881412ea608 R14: 00000000ffffffff R15: ffff888013dd9cdc
-FS:  00007ffb95ca5700(0000) GS:ffff8880b9d00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffffd5a8690 CR3: 0000000023ce1000 CR4: 00000000001526e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- __refcount_sub_and_test include/linux/refcount.h:283 [inline]
- __refcount_dec_and_test include/linux/refcount.h:315 [inline]
- refcount_dec_and_test include/linux/refcount.h:333 [inline]
- io_put_req fs/io_uring.c:2140 [inline]
- io_queue_linked_timeout fs/io_uring.c:6300 [inline]
- __io_queue_sqe+0xbef/0xec0 fs/io_uring.c:6354
- io_submit_sqe fs/io_uring.c:6534 [inline]
- io_submit_sqes+0x2bbd/0x7c50 fs/io_uring.c:6660
- __do_sys_io_uring_enter fs/io_uring.c:9240 [inline]
- __se_sys_io_uring_enter+0x256/0x1d60 fs/io_uring.c:9182
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-RIP: 0033:0x466459
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffb95ca5188 EFLAGS: 00000246 ORIG_RAX: 00000000000001aa
-RAX: ffffffffffffffda RBX: 000000000056bf60 RCX: 0000000000466459
-RDX: 0000000000000000 RSI: 00000000000055bc RDI: 0000000000000003
-RBP: 00000000004bf9fb R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 000000000056bf60
-R13: 00007ffcaf4241ff R14: 00007ffb95ca5300 R15: 0000000000022000
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+-- 
+Pavel Begunkov

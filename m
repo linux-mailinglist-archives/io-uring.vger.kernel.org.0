@@ -2,66 +2,73 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 71725370DBE
-	for <lists+io-uring@lfdr.de>; Sun,  2 May 2021 17:55:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BA1A370DC1
+	for <lists+io-uring@lfdr.de>; Sun,  2 May 2021 17:56:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231130AbhEBP4p (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 2 May 2021 11:56:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37324 "EHLO
+        id S230154AbhEBP53 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 2 May 2021 11:57:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37500 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230154AbhEBP4o (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 2 May 2021 11:56:44 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5447AC06174A;
-        Sun,  2 May 2021 08:55:52 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id k128so1895465wmk.4;
-        Sun, 02 May 2021 08:55:52 -0700 (PDT)
+        with ESMTP id S232392AbhEBP53 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 2 May 2021 11:57:29 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75237C06174A;
+        Sun,  2 May 2021 08:56:37 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id g65so1902183wmg.2;
+        Sun, 02 May 2021 08:56:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=4qSNjpnYVIrWjdPYzqg5I/2wMnH8TyjLJXPRqrLpUXY=;
-        b=T/RsU0qUGKEeiTqc+DKhx+CgzqIe32Em9ieeJWEgxs+JgK1TiY6I/i4vptsQzh4uY6
-         x7YmnfC8HbYAx2qVTXEViF46/0tkJMwgQXAzKvMGJg8XE0HE1iAR8o3s1f4cXKLf4rKn
-         zCWtnhbUrltCXWk/cVu+StEjp42SQ/OCwYZrt655UkkAxlrCndvuJ5Mki9LWeR6AWaFG
-         u9/H2SQnv4EU5B+4sswKvmt/CZD9v7Sfb/FMteFt2d4UL4WKh62QPgMu1h5fIvv1wSKE
-         38q+GqsEotIoX/JqzYuX3HmmFeIDA9CsrrwDWaqKgv9/BAncWnj4PHAKcaQPReqZhwiJ
-         6gEg==
+        bh=iE0/1+DQAvjT7mxedPOLj9B11v3SoDtPVESyVolZSTM=;
+        b=G3/iYb6NJJ/JXrFJYLkjgnsFEaVcS/vu10zurP0bOQtWqwZkK+hN5JyTD/p+nw8uSZ
+         /LoDZrFP5z+Cxh1XtzB43BEPi0CEFSzQKpxSZrfLLbUxOKJZ9fJDMGejQ2lRaMdRK5e/
+         CATosKQR76z4Z57n3zItIhaeKrCkCk9qPgMRp6/ugSOAnTrznotP/6CXvqDUP9Nx7zbT
+         cXjVYI43WgMqp3/L87gxu8Q8x2AjMQnIFlNx7RHO0a/0TtqcMygqYBwQHOpV7G3Rds98
+         GjPy8madettgexgiPCwRbxPvlz6Ae3PzffHtMxDtbiVjhLvsEEoSAxGWR0Wzx0YFLTOV
+         1cwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=4qSNjpnYVIrWjdPYzqg5I/2wMnH8TyjLJXPRqrLpUXY=;
-        b=cPGmHnpfKtVfKyMPq5KiJg3pJ/iCTfONNSR5YZD4mr1PvqkGhVXTq7f+spWJtZhlOs
-         5C9U0y9Wm6Px77aIBQuquA2pF7vOU3Exexo84sVvjejOG9P5obH8Od5/K6WMm6GzOGM+
-         xaWDkCYT7V2UBsq1dhlgyLTU4lvr9tvVry1JZsO0eYmMRLAXb2DxAEQEpSjvHtUVNc/2
-         jWSLtenXMmy9P/QyECGeHOEvO5gf8/uWTJIfkuPXO/lPSvdu1J5hPQG03GmxvnDqPX5a
-         5gPxQUgku2/1y9FXq29fdcC+gEaXAtZgmgyuIZsq/z86dKV/2a3iFVeMWNBm89cIZQFZ
-         6PXQ==
-X-Gm-Message-State: AOAM5336NTSgMysllqYdLfew5i1oC9B9Yok0B5CHjaFbo4b1Ep7RH0tt
-        hQRh0yzetWxpVXj4UIFV/dioDIorsU8=
-X-Google-Smtp-Source: ABdhPJxhlEOgthBdZGeHO4K6jWKoQu1Vxem1SoNbkK7cpvD3FKpjYsbIdnmUsuU3OO7s+WiFMgv0Rw==
-X-Received: by 2002:a05:600c:4a19:: with SMTP id c25mr16780867wmp.94.1619970950806;
-        Sun, 02 May 2021 08:55:50 -0700 (PDT)
+        bh=iE0/1+DQAvjT7mxedPOLj9B11v3SoDtPVESyVolZSTM=;
+        b=OdExbTOikzWKuHmD6nS0a31VD3wsZYXJBF2zLe52MBUnQ18bwi1GHrlyK7uIB4aBIK
+         V9yeY4y3DZoRBhFhJiFuCQ/Az4RTaUbQQ2eYfgREnzP6twxTNKtqCuIX5nZ+HQyqV/hf
+         OQ4gXikee5+WhHaISmIdDpljJvMK9mViA4YVJRu4FfZVR7hkxH+i4S8ZP9AiGsiu7Yrj
+         8bLR7fiNTf1wPQVslHU+Kl3vz7aeEntS3IkU7w3JR5dtw0xsaD6gJV79b3lnYlpm/PGi
+         AAf98e+g+QnzfwymSND7FmfBkUEO+QlLlBYq9jGdoDDEIlT2Lr0qKTgoKEBNMCPOBjIW
+         xT/Q==
+X-Gm-Message-State: AOAM5301pmfXI2hUa7oWdDLAxxN6Lvfw+tgwnbRL+AOw/QpMutSapQnX
+        s/XrVcxwliewUd5j9OLG+LI=
+X-Google-Smtp-Source: ABdhPJwVAc9Oli13vnWIUUcEZz5cucZedc3rCenFGPZUTO7GOr8Tu8Pl/RG4ERd68Ia+vsGJGMV+rQ==
+X-Received: by 2002:a05:600c:322a:: with SMTP id r42mr6065428wmp.98.1619970996227;
+        Sun, 02 May 2021 08:56:36 -0700 (PDT)
 Received: from [192.168.8.197] ([185.69.145.156])
-        by smtp.gmail.com with ESMTPSA id f8sm8163830wmg.43.2021.05.02.08.55.50
+        by smtp.gmail.com with ESMTPSA id 6sm22916152wmg.9.2021.05.02.08.56.35
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 02 May 2021 08:55:50 -0700 (PDT)
-Subject: Re: KASAN: stack-out-of-bounds Read in iov_iter_revert
-To:     Palash Oswal <oswalpalash@gmail.com>
+        Sun, 02 May 2021 08:56:35 -0700 (PDT)
+Subject: Re: INFO: task hung in io_uring_cancel_sqpoll
+To:     Palash Oswal <oswalpalash@gmail.com>,
+        Hillf Danton <hdanton@sina.com>
 Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-References: <CAGyP=7exAVOC0Er5VzmwL=HLih-wpmyDijEPVjGzUEj3SCYENA@mail.gmail.com>
- <4b2c435c-699b-b29f-6893-4beae6d004a9@gmail.com>
- <CAGyP=7cGLwtw=14JSfOd40x08Xsj3T2GCeWTjDf2z2v0nb8e9Q@mail.gmail.com>
+        LKML <linux-kernel@vger.kernel.org>,
+        syzbot+11bf59db879676f59e52@syzkaller.appspotmail.com
+References: <0000000000000c97e505bdd1d60e@google.com>
+ <cfa0f9b8-91ec-4772-a6c2-c5206f32373fn@googlegroups.com>
+ <53a22ab4-7a2d-4ebd-802d-9d1b4ce4e087n@googlegroups.com>
+ <CAGyP=7fpNBhbmczjDq-vpzbSDyqwCw2jS7xQo4XO=bxwsy2ddQ@mail.gmail.com>
+ <a6ce21f4-04e7-f34c-8cfc-f8158f7fe163@gmail.com>
+ <CAGyP=7czG1nmzpM5T784iBdApVL14hGoAfw-nhS=tNH5t9C79g@mail.gmail.com>
+ <12e84e19-a803-25e3-7d15-d105b56d15b6@gmail.com>
+ <CAGyP=7fAsgXjaK9MHOCLAWLY9ay6Z03KtxaFQVcNtk25KQ5poQ@mail.gmail.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <e968c546-fbfd-2fec-0380-af81df7c791f@gmail.com>
-Date:   Sun, 2 May 2021 16:55:46 +0100
+Message-ID: <35f8d506-fb3b-94a5-8aab-f1bde0e5f48a@gmail.com>
+Date:   Sun, 2 May 2021 16:56:31 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.0
 MIME-Version: 1.0
-In-Reply-To: <CAGyP=7cGLwtw=14JSfOd40x08Xsj3T2GCeWTjDf2z2v0nb8e9Q@mail.gmail.com>
+In-Reply-To: <CAGyP=7fAsgXjaK9MHOCLAWLY9ay6Z03KtxaFQVcNtk25KQ5poQ@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -69,17 +76,32 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/2/21 4:13 PM, Palash Oswal wrote:
-> On Sun, May 2, 2021 at 4:07 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
->> May be related to
->> http://mail.spinics.net/lists/io-uring/msg07874.html
->>
->> Was it raw bdev I/O, or a normal filesystem?
+On 5/2/21 4:01 PM, Palash Oswal wrote:
+> On Sun, May 2, 2021 at 4:04 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
 > 
-> Normal filesystem.
+>>> I tested against the HEAD b1ef997bec4d5cf251bfb5e47f7b04afa49bcdfe
+>>
+>> However, there is a bunch patches fixing sqpoll cancellations in
+>> 5.13, all are waiting for backporting. and for-next doesn't trigger
+>> the issue for me.
+>>
+>> Are you absolutely sure b1ef997bec4d5cf251bfb5e47f7b04afa49bcdfe
+>> does hit it?
+>>
+>>> commit on for-next tree
+>>> https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/?h=for-next
+>>> and the reproducer fails.
+> 
+> Hi Pavel and Hillf,
+> 
+> I believe there's a little misunderstanding, apologies. The reproducer
+> does not trigger the bug on the for-next tree which has patches for
+> 5.13. The reproducer process exits correctly. Likely one of those
+> commits that will be back-ported to 5.12 will address this issue.
+> When I wrote `the reproducer fails`, I meant to indicate that the bug
+> is not triggered on for-next. I will word it better next time!
 
-To avoid delays when I get to it, can you tell what fs it was?
-Just it case it is an fs specific deviation
+I see, great it's clarified
 
 -- 
 Pavel Begunkov

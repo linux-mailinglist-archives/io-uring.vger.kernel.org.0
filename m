@@ -2,134 +2,170 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A86283713BD
-	for <lists+io-uring@lfdr.de>; Mon,  3 May 2021 12:45:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A8303718D3
+	for <lists+io-uring@lfdr.de>; Mon,  3 May 2021 18:05:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233095AbhECKq3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 3 May 2021 06:46:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56206 "EHLO
+        id S230484AbhECQGM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 3 May 2021 12:06:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230246AbhECKq2 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 3 May 2021 06:46:28 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5BFCC06174A;
-        Mon,  3 May 2021 03:45:34 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id n2so5064231wrm.0;
-        Mon, 03 May 2021 03:45:34 -0700 (PDT)
+        with ESMTP id S230236AbhECQGM (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 3 May 2021 12:06:12 -0400
+Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC777C06174A
+        for <io-uring@vger.kernel.org>; Mon,  3 May 2021 09:05:18 -0700 (PDT)
+Received: by mail-pj1-x1031.google.com with SMTP id gj14so3381698pjb.5
+        for <io-uring@vger.kernel.org>; Mon, 03 May 2021 09:05:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=CIFshGooUaaV2myZRcB/yBy/Ci9EHmfy/WmpGw13goE=;
-        b=mip3Qf0U2lZUELW2ocfz6r8j+/8sAYud/ndpff7RbzAX7QhkPPb0636WUFNp/oHTma
-         7zLIh+s49IjrHp8hQKvvBTPJL4wpTsXBOX62OZ1agy2sR9IIJBacXC4O0VqQ7ReMS+WS
-         7xXv7mt8O/wbV6qNv4P7WXsJbJ9o30KpBPBzLyU+QD8QPeTP+QmGHBZAser1iPTubpBU
-         0bmbN05AW/ns/fkBGWbM4/p8puw7Uro7RtRwwAzNVCKeoTsQGnqd6alGKClBxu68iGy4
-         2ceUUmp2Ta0T/BBSDujFYTJ3LbHm4kzph6CrvKWf5/IephQ8HBRvBPd8XkqZOeY27fk1
-         J9ZQ==
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=content-transfer-encoding:from:mime-version:subject:date:message-id
+         :references:cc:in-reply-to:to;
+        bh=uLnt91tc2pnUIyT7YI8X96lYU8WCxDw6ZB6QLt1X+W4=;
+        b=Ue92zNTA0q1aHeR5Ncr/UOW9zdBS1jD+IYbVdMndT7N+rdhSAfmJDMkGZw8dyop9Fg
+         j7MWa5HE6oo8yuqfl9LWBFeHC+5FW12nQcdEpPxbx3UkQCZ2RXoXWnpIqZTLu4XwtmDx
+         3S41jyYW6SLz3P9Kln1mvAF8PCOHKnU3qOVslOq8pz5lQD3fu4BDXW2GFWAdzDKTZSYB
+         F9tAhy2RAa+PuO8+iTGgkvNCWsK1/oxSp3G+G3fVOCQEwXwrcyiS2UKaqtsN82rsz+8t
+         WBkwDrj6M/B/EQYXQcYbGPEes22h0xUOgbiHbFP+K/kUqQqH81mZb6zQhEImG1MfmgX9
+         gkCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=CIFshGooUaaV2myZRcB/yBy/Ci9EHmfy/WmpGw13goE=;
-        b=LCmDoyATfVGRYRep358KyDNJrxticXFPpoLxmTJvqzYmzERumgj/knu8+JWLUcFh6k
-         TFmnAUzW8qvvI/NThZq1UeuFZsK3RkzuD3T3ZMIDFLmbwDA+2kdQiFtG/aSlwI55n65j
-         JQWqN3ktckDe+VMkWkfJx5h1+e2Vr/6EArg1S0wr76bzW6i4yq/lI+aVtbTZMTfu1Y0Y
-         DB9XEYNAvLvhnjGBJoWBadGubm2xCBmKgg2AwAXB6x/JNeSpBvJhIMvep3IqnYUH4Cyy
-         WwZWIo4opBC21zp3yDBq+YiBLpcpgJoN02KrRSNkRyOWrIIes0wrWigZqOfDK4heVdEu
-         lmWg==
-X-Gm-Message-State: AOAM531N8JF7qzE2++BUTNSp0cJUtRK3Nf7m5LaGKJv/amXLQtQ5UfvB
-        XgTL1PoCMuQrs0lpZCpK6h8=
-X-Google-Smtp-Source: ABdhPJwM/U7znsng8urh2Ji7fU0M55EqgIsxWVGnWn22C7rTr9N8VvO2lAnLmup/ZsvG1v2sxmPwug==
-X-Received: by 2002:a05:6000:1863:: with SMTP id d3mr8852476wri.126.1620038732261;
-        Mon, 03 May 2021 03:45:32 -0700 (PDT)
-Received: from [192.168.8.197] ([148.252.132.80])
-        by smtp.gmail.com with ESMTPSA id p10sm12511600wre.84.2021.05.03.03.45.31
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version
+         :subject:date:message-id:references:cc:in-reply-to:to;
+        bh=uLnt91tc2pnUIyT7YI8X96lYU8WCxDw6ZB6QLt1X+W4=;
+        b=QXvzrOky5QMpUVKWr65+XXr3ddQOvlz4Bf5xU+SBrqv7po39l8F1g5WIxIFjREv2RD
+         a305eB+qXz2Rc1hPM3AAE9ZaJTY7QlqAkPl0kZUbIL3+3VB9T2nGowM5eReUlU1MbiwZ
+         QBQRQG2RzZguHlTZhUy215hliAzGjtHa+xqeF9fx2HIKK+ECfdniunQqfjYKD30IVp3g
+         nAf2Ktwn/3AQupVOG2mYyFT+sxKPeQstQ9dbUDjnjw4ji0KlqQWDpbl+HXnZgCpLv+K+
+         Z1QdtGGRzQfjxqvghR44X9hrNWBY+Rm6jPZQHtAu1lDg0bf9BO7EdrT+HWZ3vq4i+Cbi
+         +Dlw==
+X-Gm-Message-State: AOAM530W+5/RrVmo2htF4pEF8Azi7dzt60Y9m1B/qj0yWr16h29nGhID
+        ymPJmB78r3i+ddTlszyMrsAW05SyeggcLCTD
+X-Google-Smtp-Source: ABdhPJwtDAaXX4mlafMNdmEkobxScO2VjZ8KFmDQuNM9DPTdtvPtlCUHfvVD6cFGnY1U/Dj83hZ6Cg==
+X-Received: by 2002:a17:90a:ae10:: with SMTP id t16mr22736759pjq.86.1620057918132;
+        Mon, 03 May 2021 09:05:18 -0700 (PDT)
+Received: from smtpclient.apple ([2601:646:c200:1ef2:1960:85f5:fe97:e8ac])
+        by smtp.gmail.com with ESMTPSA id f135sm9268244pfa.102.2021.05.03.09.05.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 May 2021 03:45:31 -0700 (PDT)
-Subject: Re: INFO: task hung in io_uring_cancel_sqpoll
-To:     Palash Oswal <oswalpalash@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzbot+11bf59db879676f59e52@syzkaller.appspotmail.com
-References: <0000000000000c97e505bdd1d60e@google.com>
- <cfa0f9b8-91ec-4772-a6c2-c5206f32373fn@googlegroups.com>
- <53a22ab4-7a2d-4ebd-802d-9d1b4ce4e087n@googlegroups.com>
- <CAGyP=7fpNBhbmczjDq-vpzbSDyqwCw2jS7xQo4XO=bxwsy2ddQ@mail.gmail.com>
- <d5844c03-fa61-d256-be0d-b40446414299@gmail.com>
- <CAGyP=7e-3QtS-Z3KoAyFAbvm4y+9=725WR_+PyADYDi8HYxMXA@mail.gmail.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <af911546-72e4-5525-6b31-1ad1f555799e@gmail.com>
-Date:   Mon, 3 May 2021 11:45:26 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.0
-MIME-Version: 1.0
-In-Reply-To: <CAGyP=7e-3QtS-Z3KoAyFAbvm4y+9=725WR_+PyADYDi8HYxMXA@mail.gmail.com>
+        Mon, 03 May 2021 09:05:17 -0700 (PDT)
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+From:   Andy Lutomirski <luto@amacapital.net>
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH] io_thread/x86: don't reset 'cs', 'ss', 'ds' and 'es' registers for io_threads
+Date:   Mon, 3 May 2021 09:05:16 -0700
+Message-Id: <3C41339D-29A2-4AB1-958F-19DB0A92D8D7@amacapital.net>
+References: <8735v3ex3h.ffs@nanos.tec.linutronix.de>
+Cc:     Stefan Metzmacher <metze@samba.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
+        io-uring@vger.kernel.org, x86@kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+In-Reply-To: <8735v3ex3h.ffs@nanos.tec.linutronix.de>
+To:     Thomas Gleixner <tglx@linutronix.de>
+X-Mailer: iPhone Mail (18E199)
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/3/21 5:41 AM, Palash Oswal wrote:
-> On Mon, May 3, 2021 at 3:42 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
->> The test might be very useful. Would you send a patch to
->> liburing? Or mind the repro being taken as a test?
-> 
-> Pavel,
-> 
-> I'm working on a PR for liburing with this test. Do you know how I can
 
-Perfect, thanks
+> On May 3, 2021, at 7:00 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
+>=20
+> =EF=BB=BFStefan,
+>=20
+> On Sun, Apr 11 2021 at 17:27, Stefan Metzmacher wrote:
+>=20
+> Can you please CC x86 people on patches which are x86 related?
+>=20
+>> This allows gdb attach to userspace processes using io-uring,
+>> which means that they have io_threads (PF_IO_WORKER), which appear
+>> just like normal as userspace threads.
+>=20
+> That's not a changelog, really. Please describe what the problem is and
+> why the chosen solution is correct.
+>=20
+>> See the code comment for more details.
+>=20
+> The changelog should be self contained.
+>=20
+>> Fixes: 4727dc20e04 ("arch: setup PF_IO_WORKER threads like PF_KTHREAD")
+>> Signed-off-by: Stefan Metzmacher <metze@samba.org>
+>> cc: Linus Torvalds <torvalds@linux-foundation.org>
+>> cc: Jens Axboe <axboe@kernel.dk>
+>> cc: linux-kernel@vger.kernel.org
+>> cc: io-uring@vger.kernel.org
+>> ---
+>> arch/x86/kernel/process.c | 49 +++++++++++++++++++++++++++++++++++++++
+>> 1 file changed, 49 insertions(+)
+>>=20
+>> diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
+>> index 9c214d7085a4..72120c4b7618 100644
+>> --- a/arch/x86/kernel/process.c
+>> +++ b/arch/x86/kernel/process.c
+>> @@ -163,6 +163,55 @@ int copy_thread(unsigned long clone_flags, unsigned l=
+ong sp, unsigned long arg,
+>>    /* Kernel thread ? */
+>>    if (unlikely(p->flags & (PF_KTHREAD | PF_IO_WORKER))) {
+>>        memset(childregs, 0, sizeof(struct pt_regs));
+>> +        /*
+>> +         * gdb sees all userspace threads,
+>> +         * including io threads (PF_IO_WORKER)!
+>> +         *
+>> +         * gdb uses:
+>> +         * PTRACE_PEEKUSR, offsetof (struct user_regs_struct, cs)
+>> +         *  returning with 0x33 (51) to detect 64 bit
+>> +         * and:
+>> +         * PTRACE_PEEKUSR, offsetof (struct user_regs_struct, ds)
+>> +         *  returning 0x2b (43) to detect 32 bit.
+>> +         *
+>> +         * GDB relies on that the kernel returns the
+>> +         * same values for all threads, which means
+>> +         * we don't zero these out.
+>> +         *
+>> +         * Note that CONFIG_X86_64 handles 'es' and 'ds'
+>> +         * differently, see the following above:
+>> +         *   savesegment(es, p->thread.es);
+>> +         *   savesegment(ds, p->thread.ds);
+>> +         * and the CONFIG_X86_64 version of get_segment_reg().
+>> +         *
+>> +         * Linus proposed something like this:
+>> +         * (https://lore.kernel.org/io-uring/CAHk-=3DwhEObPkZBe4766DmR46=
+-=3D5QTUiatWbSOaD468eTgYc1tg@mail.gmail.com/)
+>> +         *
+>> +         *   childregs->cs =3D __USER_CS;
+>> +         *   childregs->ss =3D __USER_DS;
+>> +         *   childregs->ds =3D __USER_DS;
+>> +         *   childregs->es =3D __USER_DS;
+>> +         *
+>> +         * might make sense (just do it unconditionally, rather than mak=
+ing it
+>> +         * special to PF_IO_WORKER).
+>> +         *
+>> +         * But that doesn't make gdb happy in all cases.
+>> +         *
+>> +         * While 32bit userspace on a 64bit kernel is legacy,
+>> +         * it's still useful to allow 32bit libraries or nss modules
+>> +         * use the same code as the 64bit version of that library, which=
 
-> address this behavior?
+>> +         * can use io-uring just fine.
 
-As the hang is sqpoll cancellations, it's most probably
-fixed in 5.13 + again awaits to be taken for stable.
+Whoa there!  Can we take a big step back?
 
-Don't know about segfaults, but it was so for long, and
-syz reproducers are ofthen faults for me, and exit with 0
-in the end. So, I wouldn't worry about it.
+I saw all the hubbub about making io threads visible to gdb.  Fine, but why d=
+o we allow gdb to read and write their register files at all?  They *don=E2=80=
+=99t have user state* because they *are not user threads*.  Beyond that, Lin=
+ux does not really have a concept of a 32-bit thread and a 64-bit thread. I r=
+ealize that gdb does have this concept, but gdb is *wrong*, and it regularly=
+ causes problems when debugging mixed-mode programs or VMs.
 
-> root@syzkaller:~/liburing/test# ./runtests.sh sqpoll-cancel-hang
-> Running test sqp[   15.310997] Running test sqpoll-cancel-hang:
-> oll-cancel-hang:
-> [   15.333348] sqpoll-cancel-h[305]: segfault at 0 ip 000055ad00e265e3 sp]
-> [   15.334940] Code: 89 d8 8d 34 90 8b 45 04 ba 03 00 00 00 c1 e0 04 03 46
-> All tests passed
-> 
-> root@syzkaller:~/liburing/test# ./sqpoll-cancel-hang
-> [   13.572639] sqpoll-cancel-h[298]: segfault at 0 ip 00005634c4a455e3 sp]
-> [   13.576506] Code: 89 d8 8d 34 90 8b 45 04 ba 03 00 00 00 c1 e0 04 03 46
-> [   23.350459] random: crng init done
-> [   23.352837] random: 7 urandom warning(s) missed due to ratelimiting
-> [  243.090865] INFO: task iou-sqp-298:299 blocked for more than 120 secon.
-> [  243.095187]       Not tainted 5.12.0 #142
-> [  243.099800] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disable.
-> [  243.105928] task:iou-sqp-298     state:D stack:    0 pid:  299 ppid:  4
-> [  243.111044] Call Trace:
-> [  243.112855]  __schedule+0xb1d/0x1130
-> [  243.115549]  ? __sched_text_start+0x8/0x8
-> [  243.118328]  ? io_wq_worker_sleeping+0x145/0x500
-> [  243.121790]  schedule+0x131/0x1c0
-> [  243.123698]  io_uring_cancel_sqpoll+0x288/0x350
-> [  243.125977]  ? io_sq_thread_unpark+0xd0/0xd0
-> [  243.128966]  ? mutex_lock+0xbb/0x130
-> [  243.132572]  ? init_wait_entry+0xe0/0xe0
-> [  243.135429]  ? wait_for_completion_killable_timeout+0x20/0x20
-> [  243.138303]  io_sq_thread+0x174c/0x18c0
-> [  243.140162]  ? io_rsrc_put_work+0x380/0x380
-> [  243.141613]  ? init_wait_entry+0xe0/0xe0
-> [  243.143686]  ? _raw_spin_lock_irq+0xa5/0x180
-> [  243.145619]  ? _raw_spin_lock_irqsave+0x190/0x190
-> [  243.147671]  ? calculate_sigpending+0x6b/0xa0
-> [  243.149036]  ? io_rsrc_put_work+0x380/0x380
-> [  243.150694]  ret_from_fork+0x22/0x30
-> 
-> Palash
-> 
+Linus, what is the actual effect of allowing gdb to attach these threads?  C=
+an we instead make all the regset ops do:
 
--- 
-Pavel Begunkov
+if (not actually a user thread) return -EINVAL;
+
+Any other solution results in all kinds of nasty questions. For example, ker=
+nel threads don=E2=80=99t have FPU state =E2=80=94 what happens if gdb tries=
+ to access FPU state?  What happens if gdb tries to *allocate* AMX state for=
+ an io_uring thread? What happens if the various remote arch_prctl accessors=
+ are used?
+
+=E2=80=94Andy=

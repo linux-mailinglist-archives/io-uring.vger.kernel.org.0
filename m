@@ -2,63 +2,71 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 92ECC372B23
-	for <lists+io-uring@lfdr.de>; Tue,  4 May 2021 15:35:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07FBF372D0D
+	for <lists+io-uring@lfdr.de>; Tue,  4 May 2021 17:35:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231222AbhEDNgr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 4 May 2021 09:36:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60310 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231159AbhEDNgq (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Tue, 4 May 2021 09:36:46 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        id S230322AbhEDPgQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 4 May 2021 11:36:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44666 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230112AbhEDPgQ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 4 May 2021 11:36:16 -0400
+Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DB1DC061574;
+        Tue,  4 May 2021 08:35:21 -0700 (PDT)
+Received: from zn.tnic (p200300ec2f0c8400351ab2c4e1964d4a.dip0.t-ipconnect.de [IPv6:2003:ec:2f0c:8400:351a:b2c4:e196:4d4a])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A8029610A7;
-        Tue,  4 May 2021 13:35:51 +0000 (UTC)
-Date:   Tue, 4 May 2021 09:35:50 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Stefan Metzmacher <metze@samba.org>
-Cc:     Ingo Molnar <mingo@redhat.com>, linux-trace-devel@vger.kernel.org,
-        io-uring <io-uring@vger.kernel.org>
-Subject: Re: Tracing busy processes/threads freezes/stalls the whole machine
-Message-ID: <20210504093550.5719d4bd@gandalf.local.home>
-In-Reply-To: <f590b26d-c027-cc5a-bcbd-1dc734f72e7e@samba.org>
-References: <293cfb1d-8a53-21e1-83c1-cdb6e2f32c65@samba.org>
-        <20210504092404.6b12aba4@gandalf.local.home>
-        <f590b26d-c027-cc5a-bcbd-1dc734f72e7e@samba.org>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 519341EC050F;
+        Tue,  4 May 2021 17:35:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1620142518;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=9YS8rpRnHR92Rd5/l+wwPCakLldpm8xdN3Lf3MsyQh8=;
+        b=NHbqzZHE9oHZ2K47IzFD2XP14aByJ1lvs5bM7HgyFKtKbiwF1K79ObjEsABzG4WJrebBfz
+        EP92t1w0sl6vKwjOyFHBQpVp+FWSYh9BRi/PGWLg9s/A7TB8qsgpwb4eTBwOPtuKCLmA31
+        Dz9/uaTfrC7Ad3jrnULYWcHldJ7cUnQ=
+Date:   Tue, 4 May 2021 17:35:16 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Stefan Metzmacher <metze@samba.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        io-uring <io-uring@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        linux-toolchains@vger.kernel.org
+Subject: Re: [PATCH] io_thread/x86: don't reset 'cs', 'ss', 'ds' and 'es'
+ registers for io_threads
+Message-ID: <YJFptPyDtow//5LU@zn.tnic>
+References: <8735v3ex3h.ffs@nanos.tec.linutronix.de>
+ <3C41339D-29A2-4AB1-958F-19DB0A92D8D7@amacapital.net>
+ <CAHk-=wh0KoEZXPYMGkfkeVEerSCEF1AiCZSvz9TRrx=Kj74D+Q@mail.gmail.com>
+ <YJEIOx7GVyZ+36zJ@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <YJEIOx7GVyZ+36zJ@hirez.programming.kicks-ass.net>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, 4 May 2021 15:28:12 +0200
-Stefan Metzmacher <metze@samba.org> wrote:
+On Tue, May 04, 2021 at 10:39:23AM +0200, Peter Zijlstra wrote:
+> Anybody on toolchains that can help get GDB fixed?
 
-> Am 04.05.21 um 15:24 schrieb Steven Rostedt:
-> > On Thu, 22 Apr 2021 16:26:57 +0200
-> > Stefan Metzmacher <metze@samba.org> wrote:
-> >   
-> >> Hi Steven, hi Ingo,
-> >>  
-> > 
-> > Sorry, somehow I missed this.
-> >   
-> >> # But
-> >> # trace-cmd record -e all -P 7  
+In the meantime, Tom is looking at fixing this, in case people wanna try
+gdb patches or give him a test case or so...
 
-Perhaps you could try something like this:
+https://sourceware.org/bugzilla/show_bug.cgi?id=27822
 
- # trace-cmd list -s |
-    while read e ; do
-      echo "testing $e";
-      trace-cmd record -P 7 -e $e sleep 1;
-    done
+Thx.
 
-Which will enable each system at a time, and see if we can pin point what
-is causing the lock up. Narrow it down to a tracing system.
+-- 
+Regards/Gruss,
+    Boris.
 
--- Steve
+https://people.kernel.org/tglx/notes-about-netiquette

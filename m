@@ -2,53 +2,34 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E2253723B4
-	for <lists+io-uring@lfdr.de>; Tue,  4 May 2021 01:48:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADF7B3723C2
+	for <lists+io-uring@lfdr.de>; Tue,  4 May 2021 02:02:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229570AbhECXtW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 3 May 2021 19:49:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33538 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229497AbhECXtV (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 3 May 2021 19:49:21 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6F77C06174A
-        for <io-uring@vger.kernel.org>; Mon,  3 May 2021 16:48:26 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id c3so6574692lfs.7
-        for <io-uring@vger.kernel.org>; Mon, 03 May 2021 16:48:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8cxTD+RC9r0CXS9dr55V7a29XytNEKtivWFE6svy/UU=;
-        b=KrSrP6H1kg0Ou7qIlA2hC/fEOBjjQfOdxSm1qFRBv7hG/LVf94xY1oTR/3v8qlxSNU
-         Y5cJkh+yGLgafUhxEeFCJZpZ0CpYr0JoegHkOpGzvdxEaFsNlt8k0Dih/m8mzHTSjesG
-         XgRhnzhg3g7Qy7Lf0CH85Q//wk+LxtHK1uwqw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8cxTD+RC9r0CXS9dr55V7a29XytNEKtivWFE6svy/UU=;
-        b=JLdxxGM2nWhPr+CIlImGDxVwmRo4rk+dRySjQdVUt5lHPUISFFAqkiAtR7dw/oi/l6
-         tzJPmPpr0ucGQzajqnxR5Bs0nTkpNoo9jgWpZKkNEQW+NWcPjt8THYBlYvc4wZe0MiQz
-         cW3R6+rX5wDFJVriyiaNqUHMasTLJWs5H1DRxhaYIi6DnWJbvmYNMvt1ykr0XXma3Aqb
-         1W+JFddGQsrE7m1TEDfbgb2flvqEuHCx9cEIkREhwgA4lL7UA4IokSLye04eSGpF6IWG
-         pUGQNRZ+kezbv02ITrBb+TrXRZMjAU83n4Z6uDvswM+AkexNQjbSG9bRC/VzvfjXs8hV
-         HZrg==
-X-Gm-Message-State: AOAM532MDGAYrkkzNB/oV6EQdFkR+7m/gq9SvzY1uyAZXqC7cBHZK5Vg
-        SnsDTXiJCKVWtjQ/z4d49An396AScEuiY0LC
-X-Google-Smtp-Source: ABdhPJx/wlGjDXxXWjC4oqlahdm0Ctn9aAw3tWNXk2tMkulRWzM99hqHJJBcGGJcIOTFjqXBS8m3wQ==
-X-Received: by 2002:ac2:5a01:: with SMTP id q1mr10897359lfn.148.1620085705084;
-        Mon, 03 May 2021 16:48:25 -0700 (PDT)
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com. [209.85.208.170])
-        by smtp.gmail.com with ESMTPSA id r1sm46639ljj.21.2021.05.03.16.48.23
-        for <io-uring@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 May 2021 16:48:23 -0700 (PDT)
-Received: by mail-lj1-f170.google.com with SMTP id b21so8913991ljf.11
-        for <io-uring@vger.kernel.org>; Mon, 03 May 2021 16:48:23 -0700 (PDT)
-X-Received: by 2002:a05:651c:3de:: with SMTP id f30mr344166ljp.251.1620085703543;
- Mon, 03 May 2021 16:48:23 -0700 (PDT)
+        id S229677AbhEDACw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 3 May 2021 20:02:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37752 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229499AbhEDACw (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Mon, 3 May 2021 20:02:52 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 22318610E6
+        for <io-uring@vger.kernel.org>; Tue,  4 May 2021 00:01:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1620086518;
+        bh=IKpKf7PhC4k2UZheSYL1fEwwAl2gFqXtlCWhSayr0sY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Qawfd1SE7EDaQtWrx5lNXQlaa6e/mPEldFfkFRDevH8IcTz5YkOYjCK1/JyZI4UkB
+         crpWEcIDIcqWcNLrvE0D/VGYJLuREY4B3/jHr/4xgs1gLwNwf1wOC5W7JJ+aeLolEi
+         lOOfYejUhkHXocyB3LNG8KBFKDF4UFUQaA9xW9RNZHYIoMglM/B4ubR5LBSB/9nxGC
+         /1js7N+YgjlYKzBQ63S3GL43xYlPDZL12QkgqjJVFlP8DfswEllWCTmcyUorv2VB8t
+         WoC3SMhWbW6gCwK6OYY47ABF4d97KhDZnJRqqoMGGf7mLsucExFdqDmR8Y3z9Rv/An
+         sxmlML8xUY3SA==
+Received: by mail-ej1-f52.google.com with SMTP id r9so10444144ejj.3
+        for <io-uring@vger.kernel.org>; Mon, 03 May 2021 17:01:58 -0700 (PDT)
+X-Gm-Message-State: AOAM530Y5oCdERsKd3Swd967xgXVRiXW60Pay4HP/BRYi6A3QRY/Me2l
+        YKsCUq6mMjE0KrnkCrGOvNxBCZEklFRI9aMm2C3Grg==
+X-Google-Smtp-Source: ABdhPJwBn8JeNuxiPtZcB6RVcrwDaqmLIJBExddckI7Y2zSt42SGvalk9nv7cMZmnP7w5qND43ZrGzZSHhcr/YmRkkg=
+X-Received: by 2002:a17:906:4f91:: with SMTP id o17mr18944005eju.503.1620086516574;
+ Mon, 03 May 2021 17:01:56 -0700 (PDT)
 MIME-Version: 1.0
 References: <8735v3ex3h.ffs@nanos.tec.linutronix.de> <3C41339D-29A2-4AB1-958F-19DB0A92D8D7@amacapital.net>
  <CAHk-=wh0KoEZXPYMGkfkeVEerSCEF1AiCZSvz9TRrx=Kj74D+Q@mail.gmail.com>
@@ -57,18 +38,18 @@ References: <8735v3ex3h.ffs@nanos.tec.linutronix.de> <3C41339D-29A2-4AB1-958F-19
  <d26e3a82-8a2c-7354-d36b-cac945c208c7@kernel.dk> <CALCETrWmhquicE2C=G2Hmwfj4VNypXVxY-K3CWOkyMe9Edv88A@mail.gmail.com>
  <CAHk-=wgqK0qUskrzeWXmChErEm32UiOaUmynWdyrjAwNzkDKaw@mail.gmail.com>
  <8735v3jujv.ffs@nanos.tec.linutronix.de> <CAHk-=wi4Dyg_Z70J_hJbtFLPQDG+Zx3dP2jB5QrOdZC6W6j4Gw@mail.gmail.com>
- <12710fda-1732-ee55-9ac1-0df9882aa71b@samba.org>
-In-Reply-To: <12710fda-1732-ee55-9ac1-0df9882aa71b@samba.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 3 May 2021 16:48:07 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiR7c-UHh_3Rj-EU8=AbURKchnMFJWW7=5EH=qEUDT8wg@mail.gmail.com>
-Message-ID: <CAHk-=wiR7c-UHh_3Rj-EU8=AbURKchnMFJWW7=5EH=qEUDT8wg@mail.gmail.com>
+In-Reply-To: <CAHk-=wi4Dyg_Z70J_hJbtFLPQDG+Zx3dP2jB5QrOdZC6W6j4Gw@mail.gmail.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Mon, 3 May 2021 17:01:45 -0700
+X-Gmail-Original-Message-ID: <CALCETrXW4BxhXt5AhW9-kOOqtz7O9cHtCsMNg7UWcAuS5HBB8Q@mail.gmail.com>
+Message-ID: <CALCETrXW4BxhXt5AhW9-kOOqtz7O9cHtCsMNg7UWcAuS5HBB8Q@mail.gmail.com>
 Subject: Re: [PATCH] io_thread/x86: don't reset 'cs', 'ss', 'ds' and 'es'
  registers for io_threads
-To:     Stefan Metzmacher <metze@samba.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Andy Lutomirski <luto@kernel.org>,
         Jens Axboe <axboe@kernel.dk>,
+        Stefan Metzmacher <metze@samba.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         io-uring <io-uring@vger.kernel.org>,
         "the arch/x86 maintainers" <x86@kernel.org>
@@ -77,26 +58,85 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, May 3, 2021 at 4:27 PM Stefan Metzmacher <metze@samba.org> wrote:
+On Mon, May 3, 2021 at 4:16 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-> If I remember correctly gdb showed bogus addresses for the backtraces of the io_threads,
-> as some regs where not cleared.
+> On Mon, May 3, 2021 at 3:56 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+> >
+> > It's all fine that we have lots of blurb about GDB, but there is no
+> > reasoning why this does not affect regular kernel threads which take the
+> > same code path.
+>
+> Actual kernel threads don't get attached to by ptrace.
+>
+> > This is a half setup user space thread which is assumed to behave like a
+> > regular kernel thread, but is this assumption actually true?
+>
+> No, no.
+>
+> It's a *fully set up USER thread*.
+>
+> Those IO threads used to be kernel threads. That didn't work out for
+> the reasons already mentioned earlier.
+>
+> These days they really are fully regular user threads, they just don't
+> return to user space because they continue to do the IO work that they
+> were created for.
+>
+> Maybe instead of Stefan's patch, we could do something like this:
+>
+>    diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
+>    index 43cbfc84153a..890f3992e781 100644
+>    --- a/arch/x86/kernel/process.c
+>    +++ b/arch/x86/kernel/process.c
+>    @@ -156,7 +156,7 @@ int copy_thread(unsigned long clone_flags,
+> unsigned long sp, unsigned long arg,
+>     #endif
+>
+>         /* Kernel thread ? */
+>    -    if (unlikely(p->flags & (PF_KTHREAD | PF_IO_WORKER))) {
+>    +    if (unlikely(p->flags & PF_KTHREAD)) {
+>                 memset(childregs, 0, sizeof(struct pt_regs));
+>                 kthread_frame_init(frame, sp, arg);
+>                 return 0;
+>    @@ -168,6 +168,17 @@ int copy_thread(unsigned long clone_flags,
+> unsigned long sp, unsigned long arg,
+>         if (sp)
+>                 childregs->sp = sp;
+>
+>    +    /*
+>    +     * An IO thread is a user space thread, but it doesn't
+>    +     * return to ret_after_fork(), it does the same kernel
+>    +     * frame setup to return to a kernel function that
+>    +     * a kernel thread does.
+>    +     */
+>    +    if (unlikely(p->flags & PF_IO_WORKER)) {
+>    +            kthread_frame_init(frame, sp, arg);
+>    +            return 0;
+>    +    }
+>    +
+>     #ifdef CONFIG_X86_32
+>         task_user_gs(p) = get_user_gs(current_pt_regs());
+>     #endif
+>
+> does that clarify things and make people happier?
+>
+> Maybe the compiler might even notice that the
+>
+>                 kthread_frame_init(frame, sp, arg);
+>                 return 0;
+>
+> part is common code and then it will result in less generated code too.
+>
+> NOTE! The above is - as usual - COMPLETELY UNTESTED. It looks obvious
+> enough, and it builds cleanly. But that's all I'm going to guarantee.
+>
+> It's whitespace-damaged on purpose.
 
-Yeah, so that patch will make the IO thread have the user stack
-pointer point to the original user stack, but that stack will
-obviously be used by the original thread which means that it will
-contain random stuff on it.
+I like this patch considerably more than I liked the previous patch.
 
-Doing a
+FWIW, I have this fixlet sitting around:
 
-        childregs->sp = 0;
+https://git.kernel.org/pub/scm/linux/kernel/git/luto/linux.git/commit/?h=x86/kentry&id=1eef07ae5b236112c9a0c5d880d7f9bb13e73761
 
-is probably a good idea for that PF_IO_WORKER case, since it really
-doesn't have - or need - a user stack.
-
-Of course, it doesn't really have - or need - any of the other user
-registers either, but once you fill in the segment stuff to make gdb
-happy, you might as well fill it all in using the same code that the
-regular case does.
-
-          Linus
+Your patch fixes the same bug for the specific case of io_uring.

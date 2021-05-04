@@ -2,95 +2,137 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BE5E37271D
-	for <lists+io-uring@lfdr.de>; Tue,  4 May 2021 10:22:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 462D437275D
+	for <lists+io-uring@lfdr.de>; Tue,  4 May 2021 10:39:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230032AbhEDIXF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 4 May 2021 04:23:05 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:55910 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230074AbhEDIXE (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 4 May 2021 04:23:04 -0400
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-215-aOd_GTZbN5S5WGRdRq-7kA-1; Tue, 04 May 2021 09:22:06 +0100
-X-MC-Unique: aOd_GTZbN5S5WGRdRq-7kA-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) with Microsoft SMTP
- Server (TLS) id 15.0.1497.2; Tue, 4 May 2021 09:22:06 +0100
-Received: from AcuMS.Aculab.com ([fe80::994c:f5c2:35d6:9b65]) by
- AcuMS.aculab.com ([fe80::994c:f5c2:35d6:9b65%12]) with mapi id
- 15.00.1497.015; Tue, 4 May 2021 09:22:06 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Linus Torvalds' <torvalds@linux-foundation.org>,
-        Stefan Metzmacher <metze@samba.org>
-CC:     Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
+        id S230156AbhEDIke (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 4 May 2021 04:40:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37186 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230122AbhEDIk2 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 4 May 2021 04:40:28 -0400
+Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 149BFC06174A;
+        Tue,  4 May 2021 01:39:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=jHj0U851XAR8dHLCObZjvsMxkhCDRfe/hly+/JhNV6I=; b=i58/6+bhGSraSN+KcG3X89rTmB
+        fhTwqUp8GO7z5KV9/cXXwo6ImpdHjCATymAK8Ue9U0dVBfSj1CLBLUMc5kETh3WNRiIOBLrxsfdXs
+        ujSOJWFg0jIArJcvyOYUzLQYiE/qI2pyNISmOZEvUGx3YmgYp1IWCgmYdLJdcFMs8pyKVAmMs+mIY
+        b+WI2qaeBU3bQv+Sonsso7Y1wLYCCF6G3JdAWTUSff0UrDccxrwcHrgEZc9nT2cVWs+SPjy25YGS0
+        nwzG4eG2t5AU+NvsJAG+aCx+dVqFPIXHqyEq14SjsNIt04zVYAtlI+e1qM4GWCm/CYOWmBiVowWSE
+        unLQnalg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by desiato.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
+        id 1ldqaT-00Floj-Gh; Tue, 04 May 2021 08:39:25 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id BDE55300036;
+        Tue,  4 May 2021 10:39:23 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id ACADB20D77EF8; Tue,  4 May 2021 10:39:23 +0200 (CEST)
+Date:   Tue, 4 May 2021 10:39:23 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Stefan Metzmacher <metze@samba.org>,
         Jens Axboe <axboe@kernel.dk>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         io-uring <io-uring@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>
-Subject: RE: [PATCH] io_thread/x86: don't reset 'cs', 'ss', 'ds' and 'es'
+        the arch/x86 maintainers <x86@kernel.org>,
+        linux-toolchains@vger.kernel.org
+Subject: Re: [PATCH] io_thread/x86: don't reset 'cs', 'ss', 'ds' and 'es'
  registers for io_threads
-Thread-Topic: [PATCH] io_thread/x86: don't reset 'cs', 'ss', 'ds' and 'es'
- registers for io_threads
-Thread-Index: AQHXQHbTElK5zn4+eUeudkt5GoEV9qrS+gvg
-Date:   Tue, 4 May 2021 08:22:05 +0000
-Message-ID: <2119eef25fec413099a13763f8d34bc1@AcuMS.aculab.com>
+Message-ID: <YJEIOx7GVyZ+36zJ@hirez.programming.kicks-ass.net>
 References: <8735v3ex3h.ffs@nanos.tec.linutronix.de>
  <3C41339D-29A2-4AB1-958F-19DB0A92D8D7@amacapital.net>
  <CAHk-=wh0KoEZXPYMGkfkeVEerSCEF1AiCZSvz9TRrx=Kj74D+Q@mail.gmail.com>
- <CALCETrV9bCenqzzaW6Ra18tCvNP-my09decTjmLDVZZAQxR6VA@mail.gmail.com>
- <CAHk-=wgo6XEz3VQ9ntqzWLR3-hm1YXrXUz4_heDs4wcLe9NYvA@mail.gmail.com>
- <d26e3a82-8a2c-7354-d36b-cac945c208c7@kernel.dk>
- <CALCETrWmhquicE2C=G2Hmwfj4VNypXVxY-K3CWOkyMe9Edv88A@mail.gmail.com>
- <CAHk-=wgqK0qUskrzeWXmChErEm32UiOaUmynWdyrjAwNzkDKaw@mail.gmail.com>
- <8735v3jujv.ffs@nanos.tec.linutronix.de>
- <CAHk-=wi4Dyg_Z70J_hJbtFLPQDG+Zx3dP2jB5QrOdZC6W6j4Gw@mail.gmail.com>
- <12710fda-1732-ee55-9ac1-0df9882aa71b@samba.org>
- <CAHk-=wiR7c-UHh_3Rj-EU8=AbURKchnMFJWW7=5EH=qEUDT8wg@mail.gmail.com>
-In-Reply-To: <CAHk-=wiR7c-UHh_3Rj-EU8=AbURKchnMFJWW7=5EH=qEUDT8wg@mail.gmail.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wh0KoEZXPYMGkfkeVEerSCEF1AiCZSvz9TRrx=Kj74D+Q@mail.gmail.com>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-RnJvbTogTGludXMgVG9ydmFsZHMNCj4gU2VudDogMDQgTWF5IDIwMjEgMDA6NDgNCj4gDQo+IE9u
-IE1vbiwgTWF5IDMsIDIwMjEgYXQgNDoyNyBQTSBTdGVmYW4gTWV0em1hY2hlciA8bWV0emVAc2Ft
-YmEub3JnPiB3cm90ZToNCj4gPg0KPiA+IElmIEkgcmVtZW1iZXIgY29ycmVjdGx5IGdkYiBzaG93
-ZWQgYm9ndXMgYWRkcmVzc2VzIGZvciB0aGUgYmFja3RyYWNlcyBvZiB0aGUgaW9fdGhyZWFkcywN
-Cj4gPiBhcyBzb21lIHJlZ3Mgd2hlcmUgbm90IGNsZWFyZWQuDQo+IA0KPiBZZWFoLCBzbyB0aGF0
-IHBhdGNoIHdpbGwgbWFrZSB0aGUgSU8gdGhyZWFkIGhhdmUgdGhlIHVzZXIgc3RhY2sNCj4gcG9p
-bnRlciBwb2ludCB0byB0aGUgb3JpZ2luYWwgdXNlciBzdGFjaywgYnV0IHRoYXQgc3RhY2sgd2ls
-bA0KPiBvYnZpb3VzbHkgYmUgdXNlZCBieSB0aGUgb3JpZ2luYWwgdGhyZWFkIHdoaWNoIG1lYW5z
-IHRoYXQgaXQgd2lsbA0KPiBjb250YWluIHJhbmRvbSBzdHVmZiBvbiBpdC4NCj4gDQo+IERvaW5n
-IGENCj4gDQo+ICAgICAgICAgY2hpbGRyZWdzLT5zcCA9IDA7DQo+IA0KPiBpcyBwcm9iYWJseSBh
-IGdvb2QgaWRlYSBmb3IgdGhhdCBQRl9JT19XT1JLRVIgY2FzZSwgc2luY2UgaXQgcmVhbGx5DQo+
-IGRvZXNuJ3QgaGF2ZSAtIG9yIG5lZWQgLSBhIHVzZXIgc3RhY2suDQo+IA0KPiBPZiBjb3Vyc2Us
-IGl0IGRvZXNuJ3QgcmVhbGx5IGhhdmUgLSBvciBuZWVkIC0gYW55IG9mIHRoZSBvdGhlciB1c2Vy
-DQo+IHJlZ2lzdGVycyBlaXRoZXIsIGJ1dCBvbmNlIHlvdSBmaWxsIGluIHRoZSBzZWdtZW50IHN0
-dWZmIHRvIG1ha2UgZ2RiDQo+IGhhcHB5LCB5b3UgbWlnaHQgYXMgd2VsbCBmaWxsIGl0IGFsbCBp
-biB1c2luZyB0aGUgc2FtZSBjb2RlIHRoYXQgdGhlDQo+IHJlZ3VsYXIgY2FzZSBkb2VzLg0KDQpQ
-cmVzdW1hYmx5IGdkYiBjYW4gb25seSByZWFkL3dyaXRlIHRoZSAndXNlcicgcmVnaXN0ZXJzIChu
-b3JtYWxseQ0Kc2F2ZWQgb24ga2VybmVsIGVudHJ5KS4NClNpbmNlIHRoZXNlIHdpbGwgbmV2ZXIg
-YmUgbG9hZGVkIGl0IHJlYWxseSBkb2Vzbid0IG1hdHRlciAodG8gdGhlDQprZXJuZWwpIHdoYXQg
-aXMgcmV0dXJuZWQgdG8gZ2RiIG9yIHdoYXQgZ2RiIHdyaXRlcyBpbnRvIHRoZW0uDQpUaGUgc2Ft
-ZSBvdWdodCB0byBiZSB0cnVlIG9mIHRoZSBGUCBzdGF0ZS4NCg0KSWYgZ2RiIHdyaXRlcyB0byBh
-biBGUCAoZXRjKSByZWdpc3RlciB0aGUgcHJvY2VzcyBkb2Vzbid0IGN1cnJlbnRseQ0KaGF2ZSAo
-ZWcgYW4gQVZYNTEyIHJlZ2lzdGVyKSB0aGVuIHRoYXQgaXMgbm90IHJlYWxseSBkaWZmZXJlbnQg
-ZnJvbQ0KZG9pbmcgaXQgdG8gYSBub3JtYWwgcHJvY2Vzcy4NCg0KCURhdmlkDQoNCi0NClJlZ2lz
-dGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24g
-S2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
 
++ linux-toolchains
+
+On Mon, May 03, 2021 at 12:14:45PM -0700, Linus Torvalds wrote:
+> On Mon, May 3, 2021 at 9:05 AM Andy Lutomirski <luto@amacapital.net> wrote:
+> >
+> > Linus, what is the actual effect of allowing gdb to attach these threads?  Can we instead make all the regset ops do:
+> >
+> > if (not actually a user thread) return -EINVAL;
+> 
+> I don't think it matters - the end result ends up  being the same, ie
+> gdb gets confused about whether the (parent) thread is a 32-bit or
+> 64-bit one.
+> 
+> So the basic issue is
+> 
+>  (a) we want the IO threads to look exactly like normal user threads
+> as far as the kernel is concerned, because we had way too many bugs
+> due to special cases.
+> 
+>  (b) but that means that they are also visible to user space, and then
+> gdb has this odd thing where it takes the 64-bit vs 32-bit data for
+> the whole process from one thread, and picks the worst possible thread
+> to do it (ie explicitly not even the main thread, so usually the IO
+> thread!)
+> 
+> That (a) ended up really being critical. The issues with special cases
+> were just horrendous, both for security issues (ie "make them kernel
+> threads but carry user credentials" just caused lots of problems) but
+> also for various just random other state handling issues (signal state
+> in particular).
+> 
+> So generally, the IO threads are now 100% normal threads - it's
+> literally just that they never return to user space because they are
+> always just doing the IO offload on the kernel side.
+> 
+> That part is lovely, but part of the "100% IO threads" really is that
+> they share the signal struct too, which in turn means that they very
+> much show up as normal threads. Again, not a problem: they really
+> _are_ normal threads for all intents and purposes.
+> 
+> But then that (b) issue means that gdb gets confused by them. I
+> personally think that's just a pure gdb mis-feature, but I also think
+> that "hey, if we just make the register state look like the main
+> thread, and unconfuse gdb that way, problem solved".
+> 
+> So I'd actually rather not make these non-special threads any more
+> special at all. And I strongly suspect that making ptrace() not work
+> on them will just confuse gdb even more - so it would make them just
+> unnecessarily special in the kernel, for no actual gain.
+> 
+> Is the right thing to do to fix gdb to not look at irrelevant thread B
+> when deciding whether thread A is 64-bit or not? Yeah, that seems like
+> obviously the RightThing(tm) to me.
+> 
+> But at the same time, this is arguably about "regression", although at
+> the same time it's "gdb doesn't understand new user programs that use
+> new features, film at 11", so I think that argument is partly bogus
+> too.
+> 
+> So my personal preference would be:
+> 
+>  - make those threads look even more like user threads, even if that
+> means giving them pointless user segment data that the threads
+> themselves will never use
+> 
+>    So I think Stefan's patch is reasonable, if not pretty. Literally
+> becasue of that "make these threads look even more normal"
+> 
+>  - ALSO fix gdb that is doing obviously garbage stupid things
+> 
+> But I'm obviously not involved in that "ALSO fix gdb" part, and
+> arguably the kernel hack then makes it more likely that gdb will
+> continue doing its insane broken thing.
+
+Anybody on toolchains that can help get GDB fixed?

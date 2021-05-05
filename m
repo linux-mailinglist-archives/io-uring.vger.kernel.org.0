@@ -2,225 +2,126 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E15E374BD3
-	for <lists+io-uring@lfdr.de>; Thu,  6 May 2021 01:22:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6437D374BFA
+	for <lists+io-uring@lfdr.de>; Thu,  6 May 2021 01:35:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229719AbhEEXXk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 5 May 2021 19:23:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57942 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229619AbhEEXXk (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Wed, 5 May 2021 19:23:40 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D29F5613EC
-        for <io-uring@vger.kernel.org>; Wed,  5 May 2021 23:22:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1620256962;
-        bh=F+mnMMlF78TxCmvF3CvXV4DSs15i/Wd7uu7DampNkVI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=r5oHMC6uQn0rBeksxQYQ6ORMY/A7fulWtjrZqmMKwQFeNs13fMzlCTBGlgVzlgEx9
-         HKeQ/ToXjxOzoPGA9iyXXph0f1ZBb7mPn7tqF3An7tmnAzh1cJHltFtdDmujC6q7nq
-         RaMr23uagsa1hinYpVSENgnUwLl/plMGEx3xv4hU6JE2mJhO1DAHYi8Vf6YgTLKS8G
-         rXQd64h4lrbHu5IAU60+8oQcmZI0ljSLnuQLK33IkF34DIxkohxyfJiBOxlvQtC0tK
-         ouqcww5XnHDAI2bD9n3I0N9WhrV9AIB1rrBCA7tPnGMKoS2DcdtVWYwGEF2ZyRhlte
-         InFZ5YXDONLOg==
-Received: by mail-ed1-f50.google.com with SMTP id s6so3932952edu.10
-        for <io-uring@vger.kernel.org>; Wed, 05 May 2021 16:22:42 -0700 (PDT)
-X-Gm-Message-State: AOAM530tREVDcp7tuqwwP7pMj3XQd4bHaqod3EqODfN/v6rPAKhjlLgU
-        sui+vWOeGhe5mG9FD4VDUX8YHeDpst4G4gfQCM9P5A==
-X-Google-Smtp-Source: ABdhPJwFLoNYrpL4CTxTz77gnCsjjNufMO1tqV2hkAAFm4x4wfWew/wKMDOsGcOIqKLM5rVvMeRc+E3805CM1Qbq05U=
-X-Received: by 2002:a05:6402:17b0:: with SMTP id j16mr1524042edy.97.1620256961331;
- Wed, 05 May 2021 16:22:41 -0700 (PDT)
-MIME-Version: 1.0
-References: <8735v3ex3h.ffs@nanos.tec.linutronix.de> <3C41339D-29A2-4AB1-958F-19DB0A92D8D7@amacapital.net>
- <CAHk-=wh0KoEZXPYMGkfkeVEerSCEF1AiCZSvz9TRrx=Kj74D+Q@mail.gmail.com>
- <YJEIOx7GVyZ+36zJ@hirez.programming.kicks-ass.net> <YJFptPyDtow//5LU@zn.tnic>
- <044d0bad-6888-a211-e1d3-159a4aeed52d@polymtl.ca> <932d65e1-5a8f-c86a-8673-34f0e006c27f@samba.org>
- <30e248aa-534d-37ff-2954-a70a454391fc@polymtl.ca> <CALCETrUF5M+Qw+RfY8subR7nzmpMyFsE3NHSAPoMVWMz6_hr-w@mail.gmail.com>
- <YJMmVHGn33W2n2Ux@zn.tnic>
-In-Reply-To: <YJMmVHGn33W2n2Ux@zn.tnic>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Wed, 5 May 2021 16:22:29 -0700
-X-Gmail-Original-Message-ID: <CALCETrXieCM3f2sYQLk36horw1Cgt9OrZyDqCYrN71VgGusdVg@mail.gmail.com>
-Message-ID: <CALCETrXieCM3f2sYQLk36horw1Cgt9OrZyDqCYrN71VgGusdVg@mail.gmail.com>
-Subject: Re: [PATCH] io_thread/x86: don't reset 'cs', 'ss', 'ds' and 'es'
- registers for io_threads
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Simon Marchi <simon.marchi@polymtl.ca>,
+        id S230003AbhEEXgU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 5 May 2021 19:36:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47418 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229708AbhEEXgT (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 5 May 2021 19:36:19 -0400
+Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B080CC06174A
+        for <io-uring@vger.kernel.org>; Wed,  5 May 2021 16:35:21 -0700 (PDT)
+Received: by mail-pf1-x436.google.com with SMTP id e15so3493006pfv.10
+        for <io-uring@vger.kernel.org>; Wed, 05 May 2021 16:35:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=926cAGvfUgvmtC8pdeJ7FxZmXpISXd5xiZDilkdp/Wg=;
+        b=rIHZValSBd+t1BgZ2OSP/xJZ10TMnVGal1r+/yi5a609d7m2DmHcNITOwbOb0Wb5zd
+         vfrn238jpQq5UgnFr4AVlBrHcX2ijgxjKbewbzz0xUI5hEtkvwp1DaPWkYaJ4DQw/tiF
+         vdk37LSH0WNrDlQWW9N8lRFXVwVNASLp1ilgArxRXWAvoYCQ4710JiyURetvKXpqpNUB
+         KjFPQqob5AHwCcwO7fUVWP132fLCBFuE7F5pmTg0ceC35VOjXKQEE6Qe2pA1x14IksHy
+         UrM28wmnYkbJjtA/JIZOqaqxFppR4WNkDixrHQoDfnrU2v6rZw3lEjFtrJK9Z/G5+Q1I
+         mFtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=926cAGvfUgvmtC8pdeJ7FxZmXpISXd5xiZDilkdp/Wg=;
+        b=mJIfDFGhXnlTTYpBL+TJy9hp3LFzz+dOAeCCiDIRk6+GwTpb7eqqGKLOH2QcOiB3FU
+         q4C7dIU/8yahrgzjsM+X+TjV/JJg9Pf66QPVPV9vEslCovL+7bXYJ7pXw0B6LJYRDlij
+         hDVOfznt1f5Tyf45B8NOFGPwwiBAdC2P9D+UWpJxFDRJqi7BD339kBp6pDRTg2UqpxrP
+         ArEi27mKlFaaQrzZR4j1UwK0RWRTCdasrxFgRfoSCtqHhOmyau4NpyZTMJNbi366tuUM
+         Yz2KLfOxnKgGVpmogSEmAlnrcvx9irFwF2felp+3bOCoRRoIsUOrD+PXGnRmfwTt57l4
+         D77Q==
+X-Gm-Message-State: AOAM5327+LC1Ehhcu7TvL4jf4pQX1uPnGq84RJkqZEtf2Nf/RNr/egse
+        tR1ft5VDiORjqfuFrxkbhu3XWA==
+X-Google-Smtp-Source: ABdhPJyZ+bOFrOh2PvNWL+GEGQRsxCp6ZkSSjIz0iIqR4GDHW9pR/j90bCvjg0gbyLQ/9p+4anBz6Q==
+X-Received: by 2002:a63:4607:: with SMTP id t7mr1240499pga.269.1620257721047;
+        Wed, 05 May 2021 16:35:21 -0700 (PDT)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id d18sm244862pgo.66.2021.05.05.16.35.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 May 2021 16:35:20 -0700 (PDT)
+Subject: Re: [PATCH v2] io_thread/x86: setup io_threads more like normal user
+ space threads
+To:     Thomas Gleixner <tglx@linutronix.de>,
         Stefan Metzmacher <metze@samba.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jens Axboe <axboe@kernel.dk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        linux-toolchains@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andy Lutomirski <luto@kernel.org>, linux-kernel@vger.kernel.org,
+        io-uring@vger.kernel.org, x86@kernel.org
+References: <20210411152705.2448053-1-metze@samba.org>
+ <20210505110310.237537-1-metze@samba.org>
+ <df4b116a-3324-87b7-ff40-67d134b4e55c@kernel.dk>
+ <878s4soncx.ffs@nanos.tec.linutronix.de>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <4d79811e-7b71-009d-ef31-d6af045b25fd@kernel.dk>
+Date:   Wed, 5 May 2021 17:35:19 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <878s4soncx.ffs@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, May 5, 2021 at 4:12 PM Borislav Petkov <bp@alien8.de> wrote:
->
-> On Wed, May 05, 2021 at 03:11:18PM -0700, Andy Lutomirski wrote:
-> > Since I'm not holding my breath, please at least keep in mind that
-> > anything you do here is merely a heuristic, cannot be fully correct,
-> > and then whenever gdb determines that a thread group or a thread is
-> > "32-bit", gdb is actually deciding to operate in a degraded mode for
-> > that task, is not accurately representing the task state, and is at
-> > risk of crashing, malfunctioning, or crashing the inferior due to its
-> > incorrect assumptions.  If you have ever attached gdb to QEMU's
-> > gdbserver and tried to debug the early boot process of a 64-bit Linux
-> > kernel, you may have encountered this class of bugs.  gdb works very,
-> > very poorly for this use case.
->
-> So we were talking about this with toolchain folks today and they gave
-> me this example:
->
-> Imagine you've stopped the target this way:
->
->         <insn><-- stopped here
->         <insn>
->         <mode changing insn>
->         <insn>
->         <insn>
->         ...
->
-> now, if you dump rIP and say, rIP + the 10 following insns at the place
-> you've stopped it, gdb cannot know that 2 insns further into the stream
-> a
->
-> <mode changing insn>
->
-> is coming and it should change the disassembly of the insns after that
-> <mode changing insn> to the new mode. Unless it goes and inspects all
-> further instructions and disassembles them and analyzes the flow...
+On 5/5/21 3:57 PM, Thomas Gleixner wrote:
+> On Wed, May 05 2021 at 15:24, Jens Axboe wrote:
+>> On 5/5/21 5:03 AM, Stefan Metzmacher wrote:
+>>> As io_threads are fully set up USER threads it's clearer to
+>>> separate the code path from the KTHREAD logic.
+>>>
+>>> The only remaining difference to user space threads is that
+>>> io_threads never return to user space again.
+>>> Instead they loop within the given worker function.
+>>>
+>>> The fact that they never return to user space means they
+>>> don't have an user space thread stack. In order to
+>>> indicate that to tools like gdb we reset the stack and instruction
+>>> pointers to 0.
+>>>
+>>> This allows gdb attach to user space processes using io-uring,
+>>> which like means that they have io_threads, without printing worrying
+>>> message like this:
+>>>
+>>>   warning: Selected architecture i386:x86-64 is not compatible with reported target architecture i386
+>>>
+>>>   warning: Architecture rejected target-supplied description
+>>>
+>>> The output will be something like this:
+>>>
+>>>   (gdb) info threads
+>>>     Id   Target Id                  Frame
+>>>   * 1    LWP 4863 "io_uring-cp-for" syscall () at ../sysdeps/unix/sysv/linux/x86_64/syscall.S:38
+>>>     2    LWP 4864 "iou-mgr-4863"    0x0000000000000000 in ?? ()
+>>>     3    LWP 4865 "iou-wrk-4863"    0x0000000000000000 in ?? ()
+>>>   (gdb) thread 3
+>>>   [Switching to thread 3 (LWP 4865)]
+>>>   #0  0x0000000000000000 in ?? ()
+>>>   (gdb) bt
+>>>   #0  0x0000000000000000 in ?? ()
+>>>   Backtrace stopped: Cannot access memory at address 0x0
+>>
+>> I have queued this one up in the io_uring branch, also happy to drop it if
+>> the x86 folks want to take it instead. Let me know!
+> 
+> I have no objections, but heck what's the rush here?
+> 
+> Waiting a day for the x86 people to respond it not too much asked for
+> right?
 
-That's fine.  x86 machine code is like this.  You also can't
-disassemble instructions before rIP accurately either.
+There's no rush. I just said I've queued it up, and to object if you
+want to take it through the tip tree. It's not going out before end of
+week anyway, so there's plenty of time. Then I know I won't forget...
 
->
-> So what you can do is
->
-> (gdb) set arch ...
->
-> at the <mode changing insn> to the mode you're changing to.
->
-> Dunno, maybe I'm missing something but this sounds like without user
-> help gdb can only assume things.
+-- 
+Jens Axboe
 
-In the tools/testing/x86/selftests directory, edited slightly for brevity:
-
-$ gdb ./test_syscall_vdso_32
-(gdb) b call64_from_32
-Breakpoint 1 at 0x80499ef: file thunks_32.S, line 19.
-(gdb) display/i $pc
-1: x/i $pc
-<error: No registers.>
-(gdb) r
-Starting program:
-/home/luto/apps/linux/tools/testing/selftests/x86/test_syscall_vdso_32
-...
-[RUN]    Executing 6-argument 32-bit syscall via VDSO
-
-Breakpoint 1, call64_from_32 () at thunks_32.S:19
-19        mov    4(%esp), %eax
-1: x/i $pc
-=> 0x80499ef <call64_from_32>:    mov    0x4(%esp),%eax
-(gdb) si
-22        push    %ecx
-1: x/i $pc
-=> 0x80499f3 <call64_from_32+4>:    push   %ecx
-(gdb)
-call64_from_32 () at thunks_32.S:23
-23        push    %edx
-1: x/i $pc
-=> 0x80499f4 <call64_from_32+5>:    push   %edx
-(gdb)
-call64_from_32 () at thunks_32.S:24
-24        push    %esi
-1: x/i $pc
-=> 0x80499f5 <call64_from_32+6>:    push   %esi
-(gdb)
-call64_from_32 () at thunks_32.S:25
-25        push    %edi
-1: x/i $pc
-=> 0x80499f6 <call64_from_32+7>:    push   %edi
-(gdb)
-call64_from_32 () at thunks_32.S:28
-28        jmp    $0x33,$1f
-1: x/i $pc
-=> 0x80499f7 <call64_from_32+8>:    ljmp   $0x33,$0x80499fe
-(gdb) info registers
-eax            0x80492e8           134517480
-ecx            0x3f                63
-edx            0x1                 1
-ebx            0xf7fc8550          -134445744
-esp            0xffffc57c          0xffffc57c
-ebp            0xffffc5e8          0xffffc5e8
-esi            0x0                 0
-edi            0x8049180           134517120
-eip            0x80499f7           0x80499f7 <call64_from_32+8>
-eflags         0x292               [ AF SF IF ]
-cs             0x23                35
-ss             0x2b                43
-ds             0x2b                43
-es             0x2b                43
-fs             0x0                 0
-gs             0x63                99
-(gdb) si
-32        call    *%rax
-1: x/i $pc
-=> 0x80499fe <call64_from_32+15>:    call   *%eax
-(gdb) info registers
-eax            0x80492e8           134517480
-
-^^^ Should be rax
-
-ecx            0x3f                63
-edx            0x1                 1
-ebx            0xf7fc8550          -134445744
-esp            0xffffc57c          0xffffc57c
-ebp            0xffffc5e8          0xffffc5e8
-esi            0x0                 0
-edi            0x8049180           134517120
-eip            0x80499fe           0x80499fe <call64_from_32+15>
-
-^^^ r8, etc are all missing
-
-eflags         0x292               [ AF SF IF ]
-cs             0x33                51
-
-^^^ 64-bit!
-
-ss             0x2b                43
-ds             0x2b                43
-es             0x2b                43
-fs             0x0                 0
-gs             0x63                99
-(gdb) si
-poison_regs64 () at test_syscall_vdso.c:35
-35    long syscall_addr;
-1: x/i $pc
-=> 0x80492e8 <poison_regs64>:    dec    %ecx
-(gdb) si
-36    long get_syscall(char **envp)
-1: x/i $pc
-=> 0x80492ef <poison_regs64+7>:    dec    %ecx
-(gdb) set arch i386:x86-64
-warning: Selected architecture i386:x86-64 is not compatible with
-reported target architecture i386
-Architecture `i386:x86-64' not recognized.
-The target architecture is set to "auto" (currently "i386").
-(gdb) set arch i386:x86-64:intel
-warning: Selected architecture i386:x86-64:intel is not compatible
-with reported target architecture i386
-Architecture `i386:x86-64:intel' not recognized.
-The target architecture is set to "auto" (currently "i386").
-
-I don't know enough about gdb internals to know precisely what failed
-here, but this did not work the way it should have.
-
-Sure, ptrace should provide a nice API to figure out that CS == 0x33
-means long mode, but gdb could do a whole lot better here.

@@ -2,87 +2,99 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 20761373D06
-	for <lists+io-uring@lfdr.de>; Wed,  5 May 2021 16:07:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC5E6373F56
+	for <lists+io-uring@lfdr.de>; Wed,  5 May 2021 18:13:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233517AbhEEOIs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 5 May 2021 10:08:48 -0400
-Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:46645 "EHLO
-        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232569AbhEEOIr (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 5 May 2021 10:08:47 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R751e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UXogiuT_1620223659;
-Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UXogiuT_1620223659)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 05 May 2021 22:07:40 +0800
-Subject: Re: [PATCH RFC 5.13 1/2] io_uring: add support for ns granularity of
- io_sq_thread_idle
+        id S233858AbhEEQOu convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+io-uring@lfdr.de>); Wed, 5 May 2021 12:14:50 -0400
+Received: from mailgate.zerties.org ([144.76.28.47]:37778 "EHLO
+        mailgate.zerties.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233838AbhEEQOs (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 5 May 2021 12:14:48 -0400
+Received: from a89-182-233-83.net-htp.de ([89.182.233.83] helo=localhost)
+        by mailgate.zerties.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <stettberger@dokucode.de>)
+        id 1leK9j-0005do-SY; Wed, 05 May 2021 16:13:49 +0000
+From:   Christian Dietrich <stettberger@dokucode.de>
 To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <1619616748-17149-1-git-send-email-haoxu@linux.alibaba.com>
- <1619616748-17149-2-git-send-email-haoxu@linux.alibaba.com>
- <7136bf4f-089f-25d5-eaf8-1f55b946c005@gmail.com>
- <2fadf565-beb3-4227-8fe7-3f9e308a14a0@kernel.dk>
- <3aa943b1-b53e-c3c5-7a45-278c2eebb861@linux.alibaba.com>
- <d936d0b1-880e-601f-b27e-f36f79947cde@gmail.com>
-From:   Hao Xu <haoxu@linux.alibaba.com>
-Message-ID: <1b19b9c4-c0ed-6fbd-3e9c-9c4de942bc32@linux.alibaba.com>
-Date:   Wed, 5 May 2021 22:07:39 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.10.0
+        io-uring <io-uring@vger.kernel.org>
+Cc:     Horst Schirmeier <horst.schirmeier@tu-dortmund.de>,
+        "Franz-B. Tuneke" <franz-bernhard.tuneke@tu-dortmund.de>
+In-Reply-To: <s7bpmy5pcc3.fsf@dokucode.de>
+Organization: Technische =?utf-8?Q?Universit=C3=A4t?= Hamburg
+References: <s7bsg4slmn3.fsf@dokucode.de>
+ <9b3a8815-9a47-7895-0f4d-820609c15e9b@gmail.com>
+ <s7btuo6wi7l.fsf@dokucode.de>
+ <4a553a51-50ff-e986-acf0-da9e266d97cd@gmail.com>
+ <s7bmttssyl4.fsf@dokucode.de>
+ <f1e5d6cf-08a9-9110-071f-e89b09837e37@gmail.com>
+ <s7bv985te4l.fsf@dokucode.de>
+ <46229c8c-7e9d-9232-1e97-d1716dfc3056@gmail.com>
+ <s7bpmy5pcc3.fsf@dokucode.de>
+X-Commit-Hash-org: 6d4641337834dfde749b899ec805359d074f9152
+X-Commit-Hash-Maildir: 17bb32204bb02047dc6f0f754ffd7868c982f554
+Date:   Wed, 05 May 2021 18:13:47 +0200
+Message-ID: <s7bbl9pp39g.fsf@dokucode.de>
 MIME-Version: 1.0
-In-Reply-To: <d936d0b1-880e-601f-b27e-f36f79947cde@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-SA-Do-Not-Rej: Yes
+X-SA-Exim-Connect-IP: 89.182.233.83
+X-SA-Exim-Mail-From: stettberger@dokucode.de
+X-Spam-Checker-Version: SpamAssassin 3.4.4 (2020-01-24) on mailgate.zerties.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-4.4 required=4.0 tests=ALL_TRUSTED,BAYES_00,
+        GREYLIST_ISWHITE,URIBL_BLOCKED shortcircuit=no autolearn=ham
+        autolearn_force=no version=3.4.4
+Subject: Re: [RFC] Programming model for io_uring + eBPF
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-在 2021/4/29 下午5:11, Pavel Begunkov 写道:
-> On 4/29/21 4:41 AM, Hao Xu wrote:
->> 在 2021/4/28 下午10:16, Jens Axboe 写道:
->>> On 4/28/21 8:07 AM, Pavel Begunkov wrote:
->>>>> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
->>>>> index e1ae46683301..311532ff6ce3 100644
->>>>> --- a/include/uapi/linux/io_uring.h
->>>>> +++ b/include/uapi/linux/io_uring.h
->>>>> @@ -98,6 +98,7 @@ enum {
->>>>>    #define IORING_SETUP_CLAMP    (1U << 4)    /* clamp SQ/CQ ring sizes */
->>>>>    #define IORING_SETUP_ATTACH_WQ    (1U << 5)    /* attach to existing wq */
->>>>>    #define IORING_SETUP_R_DISABLED    (1U << 6)    /* start with ring disabled */
->>>>> +#define IORING_SETUP_IDLE_NS    (1U << 7)    /* unit of thread_idle is nano second */
->>>>>      enum {
->>>>>        IORING_OP_NOP,
->>>>> @@ -259,7 +260,7 @@ struct io_uring_params {
->>>>>        __u32 cq_entries;
->>>>>        __u32 flags;
->>>>>        __u32 sq_thread_cpu;
->>>>> -    __u32 sq_thread_idle;
->>>>> +    __u64 sq_thread_idle;
->>>>
->>>> breaks userspace API
->>>
->>> And I don't think we need to. If you're using IDLE_NS, then the value
->>> should by definition be small enough that it'd fit in 32-bits. If you
->> I make it u64 since I thought users may want a full flexibility to set
->> idle in nanosecond granularity(eg. (1e6 + 10) ns cannot be set by
-> 
-> It's a really weird user requiring such a precision. u32 allows up to
-> ~1s, and if more is needed users can switch to ms mode, so in the worst
-> case the precision is 1/1000 of the desired value, more than enough.
-> 
->> millisecond granularity). But I'm not sure if this deserve changing the
->> userspace API.
->   
-> That's not about deserve or not, we can't break ABI. Can be worked around,
-Is it for compatibility reason?
-> e.g. by taking resv fields, but don't see a reason
-> 
->>> need higher timeouts, don't set it and it's in usec instead.
->>>
->>> So I'd just leave this one alone.
->>>
->>
-> 
+Christian Dietrich <stettberger@dokucode.de> [05. May 2021]:
 
+> So perhaps, we would do something like
+>
+>     // alloc 3 groups
+>     io_uring_register(fd, REGISTER_SYNCHRONIZATION_GROUPS, 3);
+>
+>     // submit a synchronized SQE
+>     sqe->flags |= IOSQE_SYNCHRONIZE;
+>     sqe->synchronize_group = 1;     // could probably be restricted to uint8_t.
+>
+> When looking at this, this could generally be a nice feature to have
+> with SQEs, or? Hereby, the user could insert all of his SQEs and they
+> would run sequentially. In contrast to SQE linking, the order of SQEs
+> would not be determined, which might be beneficial at some point.
+
+I was thinking further about this statement: "Performing (optional)
+serialization of eBPF-SQEs is similar to SQE linking".
+
+If we would want to implement the above interface of synchronization
+groups, it could be done without taking locks but by fixing the
+execution order at submit time. Thereby, synchronization groups would
+become a form of "implicit SQE linking".
+
+The following SQE would become: Append this SQE to the SQE-link chain
+with the name '1'. If the link chain has completed, start a new one.
+Thereby, the user could add an SQE to an existing link chain, even other
+SQEs are already submitted.
+
+>     sqe->flags |= IOSQE_SYNCHRONIZE;
+>     sqe->synchronize_group = 1;     // could probably be restricted to uint8_t.
+
+Implementation wise, we would hold a pointer to the last element of the
+implicitly generated link chain.
+
+chris
+-- 
+Prof. Dr.-Ing. Christian Dietrich
+Operating System Group (E-EXK4)
+Technische Universität Hamburg
+Am Schwarzenberg-Campus 3 (E)
+21073 Hamburg
+
+eMail:  christian.dietrich@tuhh.de
+Tel:    +49 40 42878 2188
+WWW:    https://osg.tuhh.de/

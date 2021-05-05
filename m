@@ -2,99 +2,115 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AA8CC374AF7
-	for <lists+io-uring@lfdr.de>; Thu,  6 May 2021 00:07:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57ADC374B05
+	for <lists+io-uring@lfdr.de>; Thu,  6 May 2021 00:11:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232650AbhEEWIl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 5 May 2021 18:08:41 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:34752 "EHLO
-        galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229691AbhEEWIl (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 5 May 2021 18:08:41 -0400
-From:   Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1620252463;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=UMR0l2eOxbZlG3eP2GKSR1qj/t2c7J2/JGyBVU+eog8=;
-        b=cQHZmYHC6OYkUivvmP5eyqSEXFNg16rNN1F3SKS5vPsTkpvWp85BMTQMA1rYCrgvy6JpKF
-        ngLJOlo35ELIF+UdKXvgw7f0Ub0fPxaXkV/jVTdp6MO63zkNZnP/SAEg+wJjUbOtoAqOsK
-        +fEuB+qlfVvTYTODzHwYTfeEe9OP8oSGROYkXHZOQwLZNMVHECOoELLMrv8/8wErAxEL6O
-        rWPAjg/sshQJXTCEyOhDsWx5Y83In6keIYekwWCMZWQkm4Sh4xoDJXRsgavKJCvpdcnnZ8
-        WjG9NC+skOS55MavRrKp4h32zRK6mL4ToC/tN84T5PuDsSGaGfhq2ZgCsA9F2g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1620252463;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=UMR0l2eOxbZlG3eP2GKSR1qj/t2c7J2/JGyBVU+eog8=;
-        b=1EBA3+V804rt47qlprd0RUNtZvDTp3gX9e+JSaQkFYVvO9my28iAerpC6JKqTLv3aXw/9Q
-        WnPrz1E9oDgXBwBg==
-To:     Jens Axboe <axboe@kernel.dk>, Stefan Metzmacher <metze@samba.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andy Lutomirski <luto@kernel.org>, linux-kernel@vger.kernel.org,
-        io-uring@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH v2] io_thread/x86: setup io_threads more like normal user space threads
-In-Reply-To: <878s4soncx.ffs@nanos.tec.linutronix.de>
-References: <20210411152705.2448053-1-metze@samba.org> <20210505110310.237537-1-metze@samba.org> <df4b116a-3324-87b7-ff40-67d134b4e55c@kernel.dk> <878s4soncx.ffs@nanos.tec.linutronix.de>
-Date:   Thu, 06 May 2021 00:07:43 +0200
-Message-ID: <875yzwomvk.ffs@nanos.tec.linutronix.de>
+        id S233522AbhEEWM2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 5 May 2021 18:12:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53916 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233500AbhEEWM2 (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Wed, 5 May 2021 18:12:28 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 337C8613EC
+        for <io-uring@vger.kernel.org>; Wed,  5 May 2021 22:11:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1620252691;
+        bh=rI0oHHeZd9YFRS4z4bbyC/mM0GIFRiRccYpAXqggogU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=UefWFi1yB6sGKXkq0KUiaiPofvpVlfmFlOCcXNAb4bogajrzoMZIPFSYCIqKcqryB
+         04vo8ftBG4KRwEqcypNybAKi7+0PkmY2prwnbsEvc4T+nCkaAAlqX0+XSO6mk0ApUo
+         XKHxWiyKIdOrtq8VpKWPTrqmhjd/b+GQUNdMTuOhdxGI0P9I1LFOPx6jNUWB7LQ16k
+         yNpxxNSrDo7xQXviyDdBtvnxRFKhNzXm6EQnz0G8sEHREQCxmuiWX3wk8FYAe8PQIO
+         dJkk8BWZq6ktjxtPoJCKUoP2uA+RdrCy2MkazrFFYV97U0wadCtGIuaUwPxD+te7MB
+         njq/1zA7X9//w==
+Received: by mail-ed1-f43.google.com with SMTP id h10so3780819edt.13
+        for <io-uring@vger.kernel.org>; Wed, 05 May 2021 15:11:31 -0700 (PDT)
+X-Gm-Message-State: AOAM530cd6ASOU1z1CRng+ixTEE//DjFlRp6yg6QLmeBgg3YYu1caCWm
+        jYwy9WXAwkuzttqsZP4WUbGBZv5UzmDSu7nT1nNn/g==
+X-Google-Smtp-Source: ABdhPJwa1mtDX6B2XDVMbQyd/7X5vw28833micGneWZAkt/jXimVIn3YzNyG7UEDSe95fdqdlTKw38uZT/OEYSmo6BA=
+X-Received: by 2002:a50:fc91:: with SMTP id f17mr1291143edq.23.1620252689704;
+ Wed, 05 May 2021 15:11:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <8735v3ex3h.ffs@nanos.tec.linutronix.de> <3C41339D-29A2-4AB1-958F-19DB0A92D8D7@amacapital.net>
+ <CAHk-=wh0KoEZXPYMGkfkeVEerSCEF1AiCZSvz9TRrx=Kj74D+Q@mail.gmail.com>
+ <YJEIOx7GVyZ+36zJ@hirez.programming.kicks-ass.net> <YJFptPyDtow//5LU@zn.tnic>
+ <044d0bad-6888-a211-e1d3-159a4aeed52d@polymtl.ca> <932d65e1-5a8f-c86a-8673-34f0e006c27f@samba.org>
+ <30e248aa-534d-37ff-2954-a70a454391fc@polymtl.ca>
+In-Reply-To: <30e248aa-534d-37ff-2954-a70a454391fc@polymtl.ca>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Wed, 5 May 2021 15:11:18 -0700
+X-Gmail-Original-Message-ID: <CALCETrUF5M+Qw+RfY8subR7nzmpMyFsE3NHSAPoMVWMz6_hr-w@mail.gmail.com>
+Message-ID: <CALCETrUF5M+Qw+RfY8subR7nzmpMyFsE3NHSAPoMVWMz6_hr-w@mail.gmail.com>
+Subject: Re: [PATCH] io_thread/x86: don't reset 'cs', 'ss', 'ds' and 'es'
+ registers for io_threads
+To:     Simon Marchi <simon.marchi@polymtl.ca>
+Cc:     Stefan Metzmacher <metze@samba.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jens Axboe <axboe@kernel.dk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        io-uring <io-uring@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        linux-toolchains@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, May 05 2021 at 23:57, Thomas Gleixner wrote:
-> On Wed, May 05 2021 at 15:24, Jens Axboe wrote:
->> On 5/5/21 5:03 AM, Stefan Metzmacher wrote:
->>> As io_threads are fully set up USER threads it's clearer to
->>> separate the code path from the KTHREAD logic.
->>> 
->>> The only remaining difference to user space threads is that
->>> io_threads never return to user space again.
->>> Instead they loop within the given worker function.
->>> 
->>> The fact that they never return to user space means they
->>> don't have an user space thread stack. In order to
->>> indicate that to tools like gdb we reset the stack and instruction
->>> pointers to 0.
->>> 
->>> This allows gdb attach to user space processes using io-uring,
->>> which like means that they have io_threads, without printing worrying
->>> message like this:
->>> 
->>>   warning: Selected architecture i386:x86-64 is not compatible with reported target architecture i386
->>> 
->>>   warning: Architecture rejected target-supplied description
->>> 
->>> The output will be something like this:
->>> 
->>>   (gdb) info threads
->>>     Id   Target Id                  Frame
->>>   * 1    LWP 4863 "io_uring-cp-for" syscall () at ../sysdeps/unix/sysv/linux/x86_64/syscall.S:38
->>>     2    LWP 4864 "iou-mgr-4863"    0x0000000000000000 in ?? ()
->>>     3    LWP 4865 "iou-wrk-4863"    0x0000000000000000 in ?? ()
->>>   (gdb) thread 3
->>>   [Switching to thread 3 (LWP 4865)]
->>>   #0  0x0000000000000000 in ?? ()
->>>   (gdb) bt
->>>   #0  0x0000000000000000 in ?? ()
->>>   Backtrace stopped: Cannot access memory at address 0x0
->>
->> I have queued this one up in the io_uring branch, also happy to drop it if
->> the x86 folks want to take it instead. Let me know!
+I'm not holding my breath, but:
+
+On Wed, May 5, 2021 at 2:59 PM Simon Marchi <simon.marchi@polymtl.ca> wrote:
 >
-> I have no objections, but heck what's the rush here?
+> On 2021-05-05 7:29 a.m., Stefan Metzmacher wrote:
+> > See https://lore.kernel.org/io-uring/0375b37f-2e1e-7999-53b8-c567422aa181@samba.org/
+> > and https://lore.kernel.org/io-uring/20210411152705.2448053-1-metze@samba.org/T/#m461f280e8c3d32a49bc7da7bb5e214e90d97cf65
+> >
+> > The question is why does inferior_ptid doesn't represent the thread
+> > that was specified by 'gdb --pid PIDVAL'
 >
-> Waiting a day for the x86 people to respond it not too much asked for
-> right?
+> Hi Stefan,
+>
+> When you attach to PIDVAL (assuming that PIDVAL is a thread-group
+> leader), GDB attaches to all the threads of that thread group.  The
+> inferior_ptid global variable is "the thread we are currently working
+> with", and changes whenever GDB wants to deal with a different thread.
+>
+> After attaching to all threads, GDB wants to know more about that
+> process' architecture (that read_description call mentioned in [1]).
 
-That said, the proper subject line would be:
+^^^^^^
 
-  x86/process: Setup io_threads ....
+For what it's worth, this is already fundamentally incorrect.  On
+x86_64 Linux, a process *does* *not* *have* an architecture.  Every
+task on an x86_64 Linux host has a full 64-bit register state.  The
+task can, and sometimes does, change CS using far transfers or other
+bizarre techniques, and neither the kernel nor GDB will be notified or
+have a chance to take any action in response.  ELF files can be
+32-bit, CS:rIP can point at 32-bit code, and system calls can be
+32-bit (even from 64-bit code), but *tasks* are not 32-bit.
 
-Aside of that:
+Now I realize that the ptrace() API is awful and makes life difficult
+in several respects for no good reason but, if gdb is ever interested
+in fixing its ideas about architecture to understand that all tasks,
+even those that think of themselves as "compat", have full 64-bit
+state, I would be more than willing to improve the ptrace() API as
+needed to make this work well.
 
-      Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Since I'm not holding my breath, please at least keep in mind that
+anything you do here is merely a heuristic, cannot be fully correct,
+and then whenever gdb determines that a thread group or a thread is
+"32-bit", gdb is actually deciding to operate in a degraded mode for
+that task, is not accurately representing the task state, and is at
+risk of crashing, malfunctioning, or crashing the inferior due to its
+incorrect assumptions.  If you have ever attached gdb to QEMU's
+gdbserver and tried to debug the early boot process of a 64-bit Linux
+kernel, you may have encountered this class of bugs.  gdb works very,
+very poorly for this use case.
+
+(To avoid confusion, this is not a universal property of Linux.  arm64
+and arm32 tasks on an arm64 Linux host are different and cannot
+arbitrarily switch modes.)
+
+--Andy

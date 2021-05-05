@@ -2,197 +2,136 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 85D43373816
-	for <lists+io-uring@lfdr.de>; Wed,  5 May 2021 11:50:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54F283738F4
+	for <lists+io-uring@lfdr.de>; Wed,  5 May 2021 13:03:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232509AbhEEJvE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 5 May 2021 05:51:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60374 "EHLO
+        id S232300AbhEELEv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 5 May 2021 07:04:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232265AbhEEJvE (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 5 May 2021 05:51:04 -0400
+        with ESMTP id S232403AbhEELEu (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 5 May 2021 07:04:50 -0400
 Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2109EC06174A;
-        Wed,  5 May 2021 02:50:06 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE9A6C061574;
+        Wed,  5 May 2021 04:03:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-         s=42; h=Date:Message-ID:From:Cc:To;
-        bh=yttUlyQN/i7TOkPRQyRgGSJ9sGYKA6fErhJPMAIPDbY=; b=auqjCPdpeGXtmNNoCxAren2/kE
-        +f6GWm3SHK8EHODjUGHJ7XasobY88kpu1+yKcOk7p/GnHf2gkJ2ic8dxHcWPOcqp9U5JSW3DIW1qK
-        qJVjqOMQ1A5JWYk61DDL+TqlsSEqmW1YqQ3bnKzzRchiMOlPQlXessd7NhwxV2tDLmqgIYmtCLkHc
-        t0p3wVoXYGb/SOnduxaxf077RLkpKcVSbH2miT3J6BAaKEtXA+EHRz/7Z7Rljofbex3hG5BQ0oK6N
-        wrppDfFUUpnTdI4Yrx7NE88byh6xnV6mmLIK4fn7hMBgUvUc082xrSEupXApxZBcbCisuy3Pt/t2o
-        f56wrt9CDIJAKnDr0lsnCqO2PUxYvTxS9t5vHeXChqEkyBo2nemUVMj/MTtSYW0HB5vJuJx1YpD3u
-        CCNFwp7PLs7GkNzB8yvk/rRQmK5FOmrSuwb9y912WNQ7cOOVyV9Het7n3gK6FaFRmqtp+hfWHgraU
-        vw943+uicvuzYOcBAhbsT3A/;
+         s=42; h=Message-Id:Date:Cc:To:From;
+        bh=LFmASb7+Qh69wknfhzFhMRba205E6B5Mf0FBOcwFrRY=; b=FAWOI7mIDBoVOuvaRay7/8hBTW
+        MhQGaVO2rAQxj5zagzmRGY2is20Kt2D0fDmWq+dNr6qad9W13I74+9Mgd+XEkwXoVJZNLd0mLGaiI
+        7UxGpGMux6eZrDTSlK9Bbx4I9k04KfU+uH4NEY1FUYOxAIotjzFMBTiPcJnNIkNLATLF9f7/E+63b
+        gKuu1tpmKbDxJiwW1ozgWfO4w+p0fbRroMuiLLhg0sNGBM3wujx8Rx7iJT8zHbm7yszcXtwr8GW4M
+        7Pu4VagkcXYb1HWMl8yKiitQcc+QC3un5LwHHT4fehOT13lMaKB73U1/QLNPgrnHa4xLg5CNk32K1
+        8TVBylVz2y6kwzSSyhSvNuVWd5Kz8kKB8Ri6pMZ+/7YBwrA7uhDUgF8qbeN4TpxhIpaFdjL75Ogm0
+        NL1imK+7P2ZLfGrtir5h1XjhuAOlf087jQLdAWK94PURx7tJoAhofmihZ7I+lOCgOwMv/uH3NJNZO
+        6HvrNkb+U9nmFKqygzMJ+WaV;
 Received: from [127.0.0.2] (localhost [127.0.0.1])
         by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
         (Exim)
-        id 1leEAM-0000B0-5l; Wed, 05 May 2021 09:50:02 +0000
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Ingo Molnar <mingo@redhat.com>, linux-trace-devel@vger.kernel.org,
-        io-uring <io-uring@vger.kernel.org>
-References: <293cfb1d-8a53-21e1-83c1-cdb6e2f32c65@samba.org>
- <20210504092404.6b12aba4@gandalf.local.home>
- <f590b26d-c027-cc5a-bcbd-1dc734f72e7e@samba.org>
- <20210504093550.5719d4bd@gandalf.local.home>
+        id 1leFJn-0000nS-4i; Wed, 05 May 2021 11:03:51 +0000
 From:   Stefan Metzmacher <metze@samba.org>
-Subject: Re: Tracing busy processes/threads freezes/stalls the whole machine
-Message-ID: <f351bdfa-5223-e457-0396-a24ffa09d6b5@samba.org>
-Date:   Wed, 5 May 2021 11:50:01 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Stefan Metzmacher <metze@samba.org>, Jens Axboe <axboe@kernel.dk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
+        x86@kernel.org
+Subject: [PATCH v2] io_thread/x86: setup io_threads more like normal user space threads
+Date:   Wed,  5 May 2021 13:03:10 +0200
+Message-Id: <20210505110310.237537-1-metze@samba.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210411152705.2448053-1-metze@samba.org>
+References: <20210411152705.2448053-1-metze@samba.org>
 MIME-Version: 1.0
-In-Reply-To: <20210504093550.5719d4bd@gandalf.local.home>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+As io_threads are fully set up USER threads it's clearer to
+separate the code path from the KTHREAD logic.
 
-Am 04.05.21 um 15:35 schrieb Steven Rostedt:
-> On Tue, 4 May 2021 15:28:12 +0200
-> Stefan Metzmacher <metze@samba.org> wrote:
-> 
->> Am 04.05.21 um 15:24 schrieb Steven Rostedt:
->>> On Thu, 22 Apr 2021 16:26:57 +0200
->>> Stefan Metzmacher <metze@samba.org> wrote:
->>>   
->>>> Hi Steven, hi Ingo,
->>>>  
->>>
->>> Sorry, somehow I missed this.
->>>   
->>>> # But
->>>> # trace-cmd record -e all -P 7  
-> 
-> Perhaps you could try something like this:
-> 
->  # trace-cmd list -s |
->     while read e ; do
->       echo "testing $e";
->       trace-cmd record -P 7 -e $e sleep 1;
->     done
-> 
-> Which will enable each system at a time, and see if we can pin point what
-> is causing the lock up. Narrow it down to a tracing system.
+The only remaining difference to user space threads is that
+io_threads never return to user space again.
+Instead they loop within the given worker function.
 
-I wasn't able to reproduce it.
+The fact that they never return to user space means they
+don't have an user space thread stack. In order to
+indicate that to tools like gdb we reset the stack and instruction
+pointers to 0.
 
-With a 5.12 kernel and ubuntu 20.04 amd64 userspace I was able
-to produce the following strace output (in the 2nd try), like this:
+This allows gdb attach to user space processes using io-uring,
+which like means that they have io_threads, without printing worrying
+message like this:
 
-# ssh root@172.31.9.166 strace -f -ttT trace-cmd record -e all -P 101 2>&1 | tee out
+  warning: Selected architecture i386:x86-64 is not compatible with reported target architecture i386
 
-101 is the pid of a kthread while my './io-uring_cp-forever link-cp.c file' runs
-on '172.31.9.166'. See https://github.com/metze-samba/liburing/commits/io_uring-cp-forever
-pid 1375 is the pid of 'iou-wrk-1373'.
+  warning: Architecture rejected target-supplied description
 
-Maybe it's related to writing the pid into /sys/kernel/tracing/set_event_pid
-as it ends like this:
-> 10:56:07.493869 stat("/sys/kernel/tracing/set_event_pid", {st_mode=S_IFREG|0644, st_size=0, ...}) = 0 <0.000222>
-> 10:56:07.494500 openat(AT_FDCWD, "/sys/kernel/tracing/set_event_pid", O_RDONLY) = 3 <0.000134>
-> 10:56:07.494934 read(3, "1375\n", 8192) = 5 <0.000433>
-> 10:56:07.495708 close(3)                = 0 <0.000121>
-...> [pid  1443] 10:56:10.045293 openat(AT_FDCWD, "/sys/kernel/tracing/set_ftrace_pid", O_WRONLY|O_TRUNC|O_CLOEXEC <unfinished ...>
-> [pid  1444] 10:56:10.045650 <... read resumed>"sysfs /sys sysfs rw,nosuid,nodev"..., 1024) = 1024 <0.000948>
-> [pid  1443] 10:56:10.045821 <... openat resumed>) = 5 <0.000359>
-> [pid  1445] 10:56:10.046000 <... fstat resumed>{st_mode=S_IFREG|0444, st_size=0, ...}) = 0 <0.000873>
-> [pid  1443] 10:56:10.046174 write(5, "101 ", 4 <unfinished ...>
-> [pid  1444] 10:56:10.046674 read(5,  <unfinished ...>
-> [pid  1443] 10:56:10.047007 <... write resumed>) = 4 <0.000475>
-> [pid  1445] 10:56:10.047188 read(5,  <unfinished ...>
-> [pid  1443] 10:56:10.047498 write(5, " ", 1 <unfinished ...>
-> [pid  1444] 10:56:10.048343 <... read resumed>"_cls,net_prio cgroup rw,nosuid,n"..., 1024) = 1024 <0.001312>
-> [pid  1445] 10:56:10.048578 <... read resumed>"sysfs /sys sysfs rw,nosuid,nodev"..., 1024) = 1024 <0.001224>
-> [pid  1444] 10:56:10.048796 read(5,  <unfinished ...>
-> [pid  1445] 10:56:10.049195 read(5,  <unfinished ...>
-> [pid  1444] 10:56:10.049547 <... read resumed>"ges hugetlbfs rw,relatime,pagesi"..., 1024) = 690 <0.000403>
-> [pid  1445] 10:56:10.049722 <... read resumed>"_cls,net_prio cgroup rw,nosuid,n"..., 1024) = 1024 <0.000339>
-> [pid  1444] 10:56:10.049924 close(5 <unfinished ...>
-> [pid  1445] 10:56:10.050224 read(5,  <unfinished ...>
-> [pid  1444] 10:56:10.050550 <... close resumed>) = 0 <0.000323>
-> [pid  1445] 10:56:10.050714 <... read resumed>"ges hugetlbfs rw,relatime,pagesi"..., 1024) = 690 <0.000327>
-> [pid  1444] 10:56:10.050883 openat(AT_FDCWD, "trace.dat.cpu0", O_WRONLY|O_CREAT|O_TRUNC, 0644 <unfinished ...>
-> [pid  1445] 10:56:10.051299 close(5)    = 0 <0.016204>
-> [pid  1445] 10:56:10.067841 openat(AT_FDCWD, "trace.dat.cpu1", O_WRONLY|O_CREAT|O_TRUNC, 0644 <unfinished ...>
-> [pid  1443] 10:56:10.100729 <... write resumed>) = 0 <0.052057>
-> [pid  1443] 10:56:10.101022 openat(AT_FDCWD, "/sys/kernel/tracing/set_event_pid", O_WRONLY|O_TRUNC|O_CLOEXEC) = 6 <0.014801>
-> [pid  1443] 10:56:10.116299 write(6, "101 ", 4
+The output will be something like this:
 
-The full output can be found here:
-https://www.samba.org/~metze/strace.5.12-trace-cmd-record-all-P-101-kthread-fail-01.txt
+  (gdb) info threads
+    Id   Target Id                  Frame
+  * 1    LWP 4863 "io_uring-cp-for" syscall () at ../sysdeps/unix/sysv/linux/x86_64/syscall.S:38
+    2    LWP 4864 "iou-mgr-4863"    0x0000000000000000 in ?? ()
+    3    LWP 4865 "iou-wrk-4863"    0x0000000000000000 in ?? ()
+  (gdb) thread 3
+  [Switching to thread 3 (LWP 4865)]
+  #0  0x0000000000000000 in ?? ()
+  (gdb) bt
+  #0  0x0000000000000000 in ?? ()
+  Backtrace stopped: Cannot access memory at address 0x0
 
-I redid it on ubuntu 21.04 with this kernel:
-https://kernel.ubuntu.com/git/ubuntu/ubuntu-hirsute.git/tag/?h=Ubuntu-5.11.0-16.17
-which is based on Linux 5.11.12
+Fixes: 4727dc20e04 ("arch: setup PF_IO_WORKER threads like PF_KTHREAD")
+Link: https://lore.kernel.org/io-uring/044d0bad-6888-a211-e1d3-159a4aeed52d@polymtl.ca/T/#m1bbf5727e3d4e839603f6ec7ed79c7eebfba6267
+Signed-off-by: Stefan Metzmacher <metze@samba.org>
+cc: Linus Torvalds <torvalds@linux-foundation.org>
+cc: Jens Axboe <axboe@kernel.dk>
+cc: Thomas Gleixner <tglx@linutronix.de>
+cc: Andy Lutomirski <luto@kernel.org>
+cc: linux-kernel@vger.kernel.org
+cc: io-uring@vger.kernel.org
+cc: x86@kernel.org
+---
+ arch/x86/kernel/process.c | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
 
-I tried it onces using of pid from a kthread and it didn't reproduce:
-> 09:10:50.719423 openat(AT_FDCWD, "/sys/kernel/tracing/set_event_pid", O_RDONLY) = 3 <0.000084>
-> 09:10:50.719605 read(3, "", 8192)       = 0 <0.000075>
-> 09:10:50.719774 close(3)                = 0 <0.000080>
-...
-> [pid  1135] 09:10:53.468541 fcntl(6, F_GETPIPE_SZ) = 65536 <0.000009>
-> [pid  1135] 09:10:53.468589 splice(5, NULL, 7, NULL, 4096, SPLICE_F_MOVE <unfinished ...>
-> [pid  1134] 09:10:53.480165 <... write resumed>) = 0 <0.014106>
-> [pid  1134] 09:10:53.480201 close(4)    = 0 <0.000011>
-> [pid  1134] 09:10:53.480250 openat(AT_FDCWD, "/sys/kernel/tracing/set_event_pid", O_WRONLY|O_TRUNC|O_CLOEXEC) = 4 <0.000024>
-> [pid  1134] 09:10:53.480311 write(4, "7 ", 2) = 2 <0.000194>
-> [pid  1134] 09:10:53.480530 close(4)    = 0 <0.000011>
-> [pid  1134] 09:10:53.480565 openat(AT_FDCWD, "/sys/kernel/tracing/tracing_enabled", O_WRONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory) <0.000013>
-> [pid  1134] 09:10:53.480605 write(3, "1", 1) = 1 <0.000008>
-> [pid  1134] 09:10:53.480632 newfstatat(1, "", {st_mode=S_IFIFO|0600, st_size=0, ...}, AT_EMPTY_PATH) = 0 <0.000007>
-> [pid  1134] 09:10:53.480673 pidfd_open(7, 0) = 4 <0.000010>
-> [pid  1134] 09:10:53.480701 poll([{fd=4, events=POLLIN}], 1, -1
+diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
+index 9c214d7085a4..6a64ee204897 100644
+--- a/arch/x86/kernel/process.c
++++ b/arch/x86/kernel/process.c
+@@ -161,7 +161,7 @@ int copy_thread(unsigned long clone_flags, unsigned long sp, unsigned long arg,
+ #endif
+ 
+ 	/* Kernel thread ? */
+-	if (unlikely(p->flags & (PF_KTHREAD | PF_IO_WORKER))) {
++	if (unlikely(p->flags & PF_KTHREAD)) {
+ 		memset(childregs, 0, sizeof(struct pt_regs));
+ 		kthread_frame_init(frame, sp, arg);
+ 		return 0;
+@@ -177,6 +177,23 @@ int copy_thread(unsigned long clone_flags, unsigned long sp, unsigned long arg,
+ 	task_user_gs(p) = get_user_gs(current_pt_regs());
+ #endif
+ 
++	if (unlikely(p->flags & PF_IO_WORKER)) {
++		/*
++		 * An IO thread is a user space thread, but it doesn't
++		 * return to ret_after_fork().
++		 *
++		 * In order to indicate that to tools like gdb,
++		 * we reset the stack and instruction pointers.
++		 *
++		 * It does the same kernel frame setup to return to a kernel
++		 * function that a kernel thread does.
++		 */
++		childregs->sp = 0;
++		childregs->ip = 0;
++		kthread_frame_init(frame, sp, arg);
++		return 0;
++	}
++
+ 	/* Set a new TLS for the child thread? */
+ 	if (clone_flags & CLONE_SETTLS)
+ 		ret = set_new_tls(p, tls);
+-- 
+2.25.1
 
-The full output can be found here:
-https://www.samba.org/~metze/strace.5.11.12-trace-cmd-record-all-P-7-kthread-nofail-02.txt
-
-And using the pid of io_wqe_worker-0 it happened again,
-also writing the pid into /sys/kernel/tracing/set_event_pid:
-(remember 7 was the pid of the kthread):
-> 09:13:18.000315 openat(AT_FDCWD, "/sys/kernel/tracing/set_event_pid", O_RDONLY) = 3 <0.000074>
-> 09:13:18.000471 read(3, "7\n", 8192)    = 2 <0.000158>
-> 09:13:18.000703 close(3)                = 0 <0.000052>
-...> [pid  1224] 09:13:20.671939 close(4)    = 0 <0.000084>
-> [pid  1224] 09:13:20.672106 openat(AT_FDCWD, "trace.dat.cpu0", O_WRONLY|O_CREAT|O_TRUNC, 0644) = 4 <0.000085>
-> [pid  1224] 09:13:20.672292 openat(AT_FDCWD, "/sys/kernel/tracing/per_cpu/cpu0/trace_pipe_raw", O_RDONLY) = 5 <0.000062>
-> [pid  1224] 09:13:20.672432 pipe([6, 7]) = 0 <0.000057>
-> [pid  1224] 09:13:20.672595 fcntl(6, F_GETPIPE_SZ) = 65536 <0.000051>
-> [pid  1224] 09:13:20.672728 splice(5, NULL, 7, NULL, 4096, SPLICE_F_MOVE <unfinished ...>
-> [pid  1223] 09:13:20.688172 <... write resumed>) = 0 <0.020134>
-> [pid  1223] 09:13:20.688215 close(4)    = 0 <0.000015>
-> [pid  1223] 09:13:20.688276 openat(AT_FDCWD, "/sys/kernel/tracing/set_event_pid", O_WRONLY|O_TRUNC|O_CLOEXEC) = 4 <0.027854>
-> [pid  1223] 09:13:20.716198 write(4, "1043 ", 5
-
-The full output can be found here:
-https://www.samba.org/~metze/strace.5.11.12-trace-cmd-record-all-P-1043-io_wqe_worker-fail-03.txt
-
-I thought it happens always if there was already a value in /sys/kernel/tracing/set_event_pid...,
-but the next time I started with pid 6 from a kthread and directly triggered it:
-
-> 09:41:24.029860 openat(AT_FDCWD, "/sys/kernel/tracing/set_event_pid", O_RDONLY) = 3 <0.000048>
-> 09:41:24.029982 read(3, "", 8192)       = 0 <0.000046>
-> 09:41:24.030101 close(3)                = 0 <0.000045>
-...
-> [pid  1425] 09:41:26.212972 read(4, "sysfs /sys sysfs rw,nosuid,nodev"..., 1024) = 1024 <0.000077>
-> [pid  1425] 09:41:26.213128 read(4, "group/rdma cgroup rw,nosuid,node"..., 1024) = 1024 <0.000075>
-> [pid  1425] 09:41:26.213316 read(4, "ev/hugepages hugetlbfs rw,relati"..., 1024) = 1024 <0.000058>
-> [pid  1425] 09:41:26.213459 close(4)    = 0 <0.000044>
-> [pid  1425] 09:41:26.213584 openat(AT_FDCWD, "trace.dat.cpu0", O_WRONLY|O_CREAT|O_TRUNC, 0644) = 4 <0.000229>
-> [pid  1425] 09:41:26.213895 openat(AT_FDCWD, "/sys/kernel/tracing/per_cpu/cpu0/trace_pipe_raw", O_RDONLY) = 5 <0.000055>
-> [pid  1425] 09:41:26.214030 pipe([6, 7]) = 0 <0.000066>
-> [pid  1425] 09:41:26.214188 fcntl(6, F_GETPIPE_SZ) = 65536 <0.000065>
-> [pid  1425] 09:41:26.214332 splice(5, NULL, 7, NULL, 4096, SPLICE_F_MOVE
-
-It ended here, but I think the rest ( close(4); openat("/sys/kernel/tracing/set_event_pid"); write("6 ")
-was just eaten by the delayed output of the ssh session.
-
-The full output can be found here:
-https://www.samba.org/~metze/strace.5.11.12-trace-cmd-record-all-P-6-kthread-fail-04.txt
-
-Does these details help already?
-
-Thanks!
-metze

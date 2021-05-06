@@ -2,67 +2,65 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 800B23758D5
-	for <lists+io-uring@lfdr.de>; Thu,  6 May 2021 18:59:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 109403758F4
+	for <lists+io-uring@lfdr.de>; Thu,  6 May 2021 19:09:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236083AbhEFRAw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 6 May 2021 13:00:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53248 "EHLO
+        id S236101AbhEFRKk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 6 May 2021 13:10:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235881AbhEFRAw (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 6 May 2021 13:00:52 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01A02C061574
-        for <io-uring@vger.kernel.org>; Thu,  6 May 2021 09:59:53 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id l13so6359014wru.11
-        for <io-uring@vger.kernel.org>; Thu, 06 May 2021 09:59:52 -0700 (PDT)
+        with ESMTP id S236042AbhEFRKj (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 6 May 2021 13:10:39 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC4F4C061574
+        for <io-uring@vger.kernel.org>; Thu,  6 May 2021 10:09:40 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id l2so6398863wrm.9
+        for <io-uring@vger.kernel.org>; Thu, 06 May 2021 10:09:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:references:from:message-id:date:user-agent:mime-version
          :in-reply-to:content-language:content-transfer-encoding;
-        bh=1DqeisAlwqf9HpPlgZy+6QaZnu5jrZkqLhdvm9xBFnA=;
-        b=FdbxLuyOWLj6TtW6DABWKqdDcx9dyKNhAYIyhCDoqYuOKxJ3RpiF/qYDSo1pS9S9V1
-         uROflavbdynb0Egbwjxbg7wfY8i4qcZZDjQO1lErLlNKdyKS7YvfaVHulRKg79i8919s
-         4MPwnDjs8yFtuyGaTNRrjhnpSECh1nRipyWhIDA+6OXWHfxAwMKFI/IXOUFsX1adIa9s
-         udPsQztK8sSVdj//NEVYCDD+upmVrkfEOf9v4OaKw8Wgxpf4EaXnRdlQATzrXuvodgRg
-         6oC5o6ICemNVNVrJXFAfZ13wjT2hvXbk1ZySwGAMOTeL1E6uZiX9SpaB2G6+OwxXRX7v
-         130w==
+        bh=clJ3bCg9yus33maNyP2n0C+PtxvqKG4QG3EIHeSD4vg=;
+        b=K/vGJPsTaOIGCM+Dwaci0SGdVLQQI8exONxx84e/2bo63rjgucyVnrjzgZF2zGOyma
+         jghtDtxVaINQ/e46jgac1S/gu0xfUugG340nhDajEy8I/Cr5fjFRHxV1+s6t+XJBIQW2
+         LfZxt0LH1ZjnT3pJ+/qJG7pdWplw5jpTUEZ1SMRgDqWGuLfNNj8QyaDjzYSlKt5sitpy
+         7/mjyQI+HGxucBA/JOhfSHA4uTZWU2QQopltr7yPmfZzWl/NJXKdzPl28cSAxbApQyhy
+         L6yZe77F6hSquKg0PxsHcbU/83Kw8QDJLWBmlELlbJUMtOdWbOWcVttdDFVWXtuNp+fy
+         i/8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=1DqeisAlwqf9HpPlgZy+6QaZnu5jrZkqLhdvm9xBFnA=;
-        b=Wiv3n+IjgSOuxKkIsTokj5O9JMptP6OeOCNGBg0SqPI2kFmHT4f48ndgkMuYkh/zeK
-         i3Ymk2SNYwBPSZPMymwxbdstGB87Vmzid8tAc+5AtZ8Xk0LU4Re65UK9DezBcFaf9+wa
-         MZI/E4IaifnXj+Sp7FpZ8O1LO8/Fjc7GWIDQCJjtB5u+mSTxjQ1zn9KNL8yWaJVLWfWk
-         Mhhcp47aySOPAkow4w0JZRqXGKPVD5LkwIhLuAkvbfRHZvklPtxQyRIuOwUo3uPGurfp
-         uwSjwoswxGzKcMgX4E/BsK8R8D/9CPU9q4+xbdimsmxEkvE8Vo2241edfmpi8zhor88E
-         vHow==
-X-Gm-Message-State: AOAM5339j8IFFK6PaxdJOvFDFV1q8Ypo6oIWuCQkHrJaqTWD6LZbh844
-        J00PBNV/u4HDYLWtOpuhXm/4Yu07L00=
-X-Google-Smtp-Source: ABdhPJx3+muqlMbeTS0RAEPt10onNLE2tmO0o3AyA7cLHiXiz+xUgPwLbi7S95BWNsZ+onpzFj5giw==
-X-Received: by 2002:a5d:4d52:: with SMTP id a18mr6576019wru.45.1620320391399;
-        Thu, 06 May 2021 09:59:51 -0700 (PDT)
+        bh=clJ3bCg9yus33maNyP2n0C+PtxvqKG4QG3EIHeSD4vg=;
+        b=j+0VddDB10Bwotr4P8HVM+g06v3FIu9mz4V5Jp4L4jCCDjC456kLPYSk2LG+mkIoW9
+         iUK1YanCTYbhhpRFWQsbk2zzDiqYnx4B6tsEU7/euWQFhI4sy/MqtBWfqNQI5mZ52pdB
+         20GA5Rfa8Dfufb+9wOve8Z1YHV5xjGpPQE2m0rzl/kWcF077yv9NFp4D6FhuJP5jhniP
+         qpm1HjFt5q9oH8J57dKgM21LLX8nIZusa+HK1hgbLq6+stPOpQs6VPkjCnqIiHFMTfaj
+         mp/S4lcUvOEPqhr5yoAal0HRYqIRpujDSrYQ9rtlVxwxp2KaIvKQWWdcalODr6xif41W
+         aSYA==
+X-Gm-Message-State: AOAM533NX2mJh5jlGfjtkbPcNFuxrxgORIY11523C5rPLD5slrWwbIK8
+        KqG1N6zKEDkMTASy6FdvkLrzw2YSngw=
+X-Google-Smtp-Source: ABdhPJzhb4JGHfbI8x/JwZzjK+j+Irb0GOL12W7QuWb5eXWgd5MgzOhjG/LOf2olajkqL8RQuIpEew==
+X-Received: by 2002:adf:fb43:: with SMTP id c3mr6693826wrs.360.1620320979253;
+        Thu, 06 May 2021 10:09:39 -0700 (PDT)
 Received: from [192.168.8.197] ([185.69.144.215])
-        by smtp.gmail.com with ESMTPSA id k10sm18786539wmf.0.2021.05.06.09.59.50
+        by smtp.gmail.com with ESMTPSA id f18sm9454277wmg.26.2021.05.06.10.09.38
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 May 2021 09:59:51 -0700 (PDT)
+        Thu, 06 May 2021 10:09:38 -0700 (PDT)
 Subject: Re: IORING_OP_POLL_ADD/IORING_OP_POLL_REMOVE questions
 To:     Olivier Langlois <olivier@trillion01.com>,
         io-uring <io-uring@vger.kernel.org>
 References: <8992f5f989808798ad2666b0a3ef8ae8d777b7de.camel@trillion01.com>
  <db4d01cc-9f58-c04d-d1b6-1208f8fb7220@gmail.com>
  <0a12170604cfcbce61259661f579fe5640cc7ffb.camel@trillion01.com>
- <7fa90154d1fbe1969383261539b7fbee20caad43.camel@trillion01.com>
- <2a4437a06ad910142d27d22d9e17a843dbd6d6fc.camel@trillion01.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <ff1f9ac3-51e6-2f1e-3f23-b0901d8d43fa@gmail.com>
-Date:   Thu, 6 May 2021 17:59:45 +0100
+Message-ID: <44491721-56a0-3188-a1ba-5a0920881ac2@gmail.com>
+Date:   Thu, 6 May 2021 18:09:33 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.0
 MIME-Version: 1.0
-In-Reply-To: <2a4437a06ad910142d27d22d9e17a843dbd6d6fc.camel@trillion01.com>
+In-Reply-To: <0a12170604cfcbce61259661f579fe5640cc7ffb.camel@trillion01.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -70,128 +68,149 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/6/21 4:46 PM, Olivier Langlois wrote:
-> On Thu, 2021-05-06 at 04:42 -0400, Olivier Langlois wrote:
->> On Wed, 2021-05-05 at 23:17 -0400, Olivier Langlois wrote:
->>> Note that the poll remove sqe and the following poll add sqe don't
->>> have
->>> exactly the same user_data.
+On 5/6/21 4:17 AM, Olivier Langlois wrote:
+> Hi Pavel,
+> 
+> On Wed, 2021-05-05 at 18:56 +0100, Pavel Begunkov wrote:
+>> On 5/4/21 7:06 PM, Olivier Langlois wrote:
 >>>
->>> I have this statement in between:
->>> /* increment generation counter to avoid handling old events */
->>>           ++anfds [fd].egen;
 >>>
->>> poll remove cancel the previous poll add having gen 1 in its user
->>> data.
->>> the next poll add has it user_data storing gen var set to 2:
->>>
->>> 1 3 remove 85 1
->>> 1 3 add 85 2
->>>
->>> 85 gen 1 res -125
->>> 85 gen 1 res 4
->>>
->> Good news!
+>>> 2. I don't understand what I am looking at. Why am I receiving a
+>>> completion notification for a POLL request that has just been
+>>> cancelled? What is the logic behind silently discarding a
+>>> IORING_OP_POLL_ADD sqe meant to replace an existing one?
 >>
->> I have used the io_uring tracepoints and they confirm that io_uring
->> works as expected:
+>> I'm lost in your message, so let's start with simple reasons. All
+>> requests post one CQE (almost true), including poll_remove requests.
 >>
->> For the above printfs, I get the following perf traces:
+>> io_uring_prep_poll_remove(sqe, iouring_build_user_data(IOURING_POLL,
+>> fd, anfds [fd].egen));
+>> // io_uring_sqe_set_data(sqe, iouring_build_user_data(IOURING_POLL, fd,
+>> anfds [fd].egen));
 >>
->>  11940.259 Execution SVC/134675 io_uring:io_uring_submit_sqe(ctx:
->> 0xffff9d3c4368c000, opcode: 7, force_nonblock: 1)
->>  11940.270 Execution SVC/134675 io_uring:io_uring_complete(ctx:
->> 0xffff9d3c4368c000, user_data: 4294967382, res: -125)
->>  11940.272 Execution SVC/134675 io_uring:io_uring_complete(ctx:
->> 0xffff9d3c4368c000)
->>  11940.275 Execution SVC/134675 io_uring:io_uring_file_get(ctx:
->> 0xffff9d3c4368c000, fd: 86)
->>  11940.277 Execution SVC/134675 io_uring:io_uring_submit_sqe(ctx:
->> 0xffff9d3c4368c000, opcode: 6, user_data: 4294967382, force_nonblock:
->> 1)
->>  11940.279 Execution SVC/134675 io_uring:io_uring_complete(ctx:
->> 0xffff9d3c4368c000, user_data: 4294967382, res: 4)
+>> If poll remove and poll requests have identical user_data, as in
+>> the second (commented?) line you'll get two CQEs with that user_data.
 >>
->> So, it seems the compiler is playing games on me. It prints the correct
->> gen 2 value but is passing 1 to io_uring_sqe_set_data()...
->>
->> I'll try to turn optimization off to see if it helps.
->>
->> thx a lot again for your exceptional work!
->>
->>
-> The more I fool around trying to find the problem, the more I think
-> that my problem is somewhere in the liburing (v2.0) code because of a
-> possibly missing memory barrier.
+>> Did you check return value (in CQE) of poll remove? I'd recommend
+>> set its user_data to something unique. Did you consider that it
+>> may fail?
 > 
-> The function that I do use to submit the sqes is
-> io_uring_wait_cqe_timeout().
+> Your comments does help me to see clearer!
 > 
-> My problem did appear when I did replace libev original boilerplate
-> code for liburing (v2.0) used for filling and submitting the sqes.
+> You are correct that setting the poll remove user_data is not done.
+> (hence the commented out statement for that purpose but I must have
+> entertain the idea to set it at some point to see what good it would
+> do)
 > 
-> Do you remember when you pointed out that I wasn't setting the
-> user_data field for my poll remove request in:
+> The reason being that I do not care about whether or not it succeeds
+> because the very next thing that I do is to rearm the poll for the same
+> fd with a different event mask.
 > 
-> io_uring_prep_poll_remove(sqe,
-> iouring_build_user_data(IOURING_POLL, fd, anfds [fd].egen));
-> //          io_uring_sqe_set_data(sqe,
-> iouring_build_user_data(IOURING_POLL, fd, anfds [fd].egen));
-> 
-> ?
-> 
-> The last call to remove the non-existant 'add 85 2' is replied by
-> ENOENT by io_uring and this was caught by an assert in my case
-> IOURING_POLL cqe handler.
-> 
->   iouring_decode_user_data(cqe->user_data, &type, &fd, &gen);
-> 
->   switch (type) {
-> 
-> This is impossible to end up there because if you do not explicitly set
-> user_data, io_uring_prep_rw() is setting it to 0.
-> 
-> In order for my assert to be hit, user_data would have to be set with
-> the commented out io_uring_sqe_set_data(), and it happens to also be
-> the value of the previously sent sqe user_data...
-> 
-> I did replace the code above with:
-> 
-> io_uring_prep_poll_remove(sqe,
-> iouring_build_user_data(IOURING_POLL_ADD, fd, anfds [fd].egen));
-> io_uring_sqe_set_data(sqe, iouring_build_user_data(IOURING_POLL_REMOVE,
-> fd, anfds [fd].egen));
-> 
-> and my assert for cqe->res != -ENOENT has stopped being hit.
-> 
-> There is clearly something messing with the sqe user_data communication
-> between user and kernel and I start to suspect that this might be
-> somewhere inside io_uring_wait_cqe_timeout()...
+> Beside, the removed poll original sqe is reported back as ECANCELED (-
+> 125):
+> 85 gen 1 res -125
 
-What's your kernel? IORING_FEAT_EXT_ARG?
+That's why I mentioned setting user_data, so can distinguish cqes.
 
-e.g. ring->features & IORING_FEAT_EXT_ARG
+> This appear to be the code returned in io_poll_remove_one()
+> 
+> Does the poll remove operation generates 2 cqes?
+> 1 for the canceled sqe and and 1 for the poll remove sqe itself?
 
-Because:
+No, only one.
 
-/*
- * Like io_uring_wait_cqe(), except it accepts a timeout value as well. Note
- * that an sqe is used internally to handle the timeout. For kernel doesn't
- * support IORING_FEAT_EXT_ARG, applications using this function must never
- * set sqe->user_data to LIBURING_UDATA_TIMEOUT!
- *
- * For kernels without IORING_FEAT_EXT_ARG (5.10 and older), if 'ts' is
- * specified, the application need not call io_uring_submit() before
- * calling this function, as we will do that on its behalf. From this it also
- * follows that this function isn't safe to use for applications that split SQ
- * and CQ handling between two threads and expect that to work without
- * synchronization, as this function manipulates both the SQ and CQ side.
- *
- * For kernels with IORING_FEAT_EXT_ARG, no implicit submission is done and
- * hence this function is safe to use for applications that split SQ and CQ
- * handling between two threads.
- */
+> 
+> I am not too sure what good setting a distinct user_data to the poll
+> remove sqe could do but I will definitely give it a shot to perhaps see
+> clearer.
 
+again to be able to distinguish cqes, at least for debugging,
+but I don't see how it can be not racy without it.
+
+> Note that the poll remove sqe and the following poll add sqe don't have
+> exactly the same user_data.
+
+Right, I noticed. Was concerned about gen1 poll and its poll
+remove.
+
+ 
+> I have this statement in between:
+> /* increment generation counter to avoid handling old events */
+>           ++anfds [fd].egen;
+> 
+> poll remove cancel the previous poll add having gen 1 in its user data.
+> the next poll add has it user_data storing gen var set to 2:
+> 
+> 1 3 remove 85 1
+> 1 3 add 85 2
+> 
+> 85 gen 1 res -125
+> 85 gen 1 res 4
+> 
+> I'll try to be more succinct this time.
+> 
+> If the poll add sqe having gen 1 in its user_data is cancelled, how can
+> its completion can be reported in the very next cqe?
+> 
+> and I never hear back about the poll add gen 2 sqe...
+
+This one sounds like that "85 gen 1 res 4"
+is actually gen2 but with screwed user_data. I'd rather
+double check that you set it right, and don't race
+with multiple threads.
+
+FWIW, submission queue filling is not synchronised by
+liburing, users should do that.
+
+> 
+> I'll try to get more familiar with the fs/io_uring.c code but it feels
+> like it could be some optimization done where because the cancelled
+> poll result is available while inside io_uring_enter(), instead of
+> discarding it to immediately rearm it for the new poll add request,
+> io_uring_enter() instead decide to return it back to reply to the gen 2
+> request but it forgets to update the user_data field before doing so...
+
+There definitely may be a bug, but it's much more likely
+lurking in your code.
+
+> Maybe what is confusing is that the heading "1 3" in my traces is the
+> EV_READ EV_WRITE bitmask which values are:
+> 
+> EV_READ  = 1
+> EV_WRITE = 2
+> 
+> while
+> 
+> POLLIN  = 1
+> POLLOUT = 4
+> 
+> So my poll add gen 1 request was for be notified for POLLIN. This is
+> what I got with the question #1 "195" result.
+> 
+> Therefore the:
+> 85 gen 1 res 4
+> 
+> can only be for my poll add gen 2 requesting for POLLIN|POLLOUT. Yet,
+> it is reported with the previous request user_data...
+> 
+> I feel the mystery is almost solved with your help... I'll continue my
+> investigation and I'll report back if I finally solve the mystery.
+>>  
+>>> 3. As I am writing this email, I have just noticed that it was
+>>> possible
+>>> to update an existing POLL entry with IORING_OP_POLL_REMOVE through
+>>> io_uring_prep_poll_update(). Is this what I should do to eliminate my
+>>> problems? What are the possible race conditions scenarios that I
+>>> should
+>>> be prepared to handle by using io_uring_prep_poll_update() (ie:
+>>> completion of the poll entry to update while my process is inside
+>>> io_uring_enter() to update it...)?
+>>
+>> Update is preferable, but it's Linux kernel 5.13.
+>> Both remove and update may fail. e.g. with -EALREADY
+>>
+> I am just about to install 5.12 on my system and this and the new
+> multishot poll feature makes me already crave 5.13!
 
 -- 
 Pavel Begunkov

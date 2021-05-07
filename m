@@ -2,141 +2,75 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B7CB93768FD
-	for <lists+io-uring@lfdr.de>; Fri,  7 May 2021 18:42:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 386C3376903
+	for <lists+io-uring@lfdr.de>; Fri,  7 May 2021 18:48:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232135AbhEGQny (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 7 May 2021 12:43:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58064 "EHLO
+        id S237023AbhEGQtk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 7 May 2021 12:49:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59342 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229849AbhEGQny (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 7 May 2021 12:43:54 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F29EC061574
-        for <io-uring@vger.kernel.org>; Fri,  7 May 2021 09:42:54 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id l13so9899171wru.11
-        for <io-uring@vger.kernel.org>; Fri, 07 May 2021 09:42:54 -0700 (PDT)
+        with ESMTP id S234054AbhEGQtj (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 7 May 2021 12:49:39 -0400
+Received: from mail-io1-xd36.google.com (mail-io1-xd36.google.com [IPv6:2607:f8b0:4864:20::d36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BA2EC061574
+        for <io-uring@vger.kernel.org>; Fri,  7 May 2021 09:48:39 -0700 (PDT)
+Received: by mail-io1-xd36.google.com with SMTP id b10so8512958iot.4
+        for <io-uring@vger.kernel.org>; Fri, 07 May 2021 09:48:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=kuX4oD7lpMvPRiPLwD2/PQeeHlMvzKp4RG2PXdKvH50=;
-        b=scpbD0o4sqEbwC4TMtc3TWAwVBQ3r4cl2iSMCmEQKu/emlVCzlJCj/A5w/pMl3a8u6
-         vNkHWsvcH2RxnMRr8OpgTl0ohP1bpAXjy+jsSz0HFWYx+/MUF//cZuhDPI9rGnwEfSPD
-         nBd3zxIReuDRimu9oyX/OYtxpUlaiGJ2f3GJg4O1BKnYHfG5aQuKYwcvKr5ntETcP4V2
-         IPmBcumKDWcrEhhBJ9gXjdyITLUS6C5kSDagjDlZqttu1u0lgfbT0S0tu6HwHszU+D+t
-         wfaAq+gq+EKgRhq8BfZfmiog9cN2LIJJLgK7XSvhJKB+n0jN9+hBlYPGs/Z2P/LKL25t
-         ylgQ==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=wCVEYiQPOhsajnv2EopkiNZsWpsS1DnS1rJ4qfw28M8=;
+        b=pcAbn2GFCsmwW1DYt/wKt2Lout0jCXFF2GPdcRgJoPA5zKO+1SYPErfjEXxveL1ixB
+         9tSr+cEP3KSmavRVimEDZeBQPEGEW4cSGhpRXnM1FhGgwkn1rv1HZ54J0Ka7Iip1yDT4
+         KUPH2rryYFlKgCyl7GlpXdd+1qUv43b0TtxTZ790buIKQj8bZpAJBsJbFgEViIXE+ZrJ
+         oB/ukk36Cm32a3OD972oplG3VsA6WDxOPz/Mt/KmrMCnSLuW4JWMhQyGQS0cT0gCZ1WC
+         VnELEIbeMIbIbz7JwyPQOKP/oIPngZlyYk+qYIHx/9L2vPn4JK79SYWZ0u747LHxnsje
+         xUTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=kuX4oD7lpMvPRiPLwD2/PQeeHlMvzKp4RG2PXdKvH50=;
-        b=sHm6Sbja6YQMIsX6EBzNdBEtzfL2l5BoWladE4N9iabtMB7QApnicq1GeHC16ksN+5
-         ZRrhJA2nMMPte8bBcbqqItBekzyu6Zd0yo1sYxgs6DWaqG+65NQkOlEh0Xpit5w7Hcib
-         ZD814xR6UDladq8lHMJ41iz2CIof05618abEEb9MfzcMtozadG++EksO9TWvBW5IHI0Y
-         S2DTkOq2GNjRMN+nk5ChxMv5JzU00jMAWBnJcN+6HqSwIm0XvjHnWbRlZqueSFSOlpaG
-         0L0LvwBWOnTpl+YfNMAwqgbmvSU7eF7/gJnB2v9Oq3VYI9oYILP50hmv78h6Fk3DSOJJ
-         jJ3A==
-X-Gm-Message-State: AOAM5327YTGSkNlK9RGR4HHpZ91O5uwi5oh2qdadyIhV37juGNRIPX1D
-        L5THq47f82Vw9XfcVxYpNkdpIdKu+jY=
-X-Google-Smtp-Source: ABdhPJxUMTtNYeDBL2sfGV+ulupD5W4hVS8lDCXCMZbX858mzovpLkVrfr2q537wbb014RhzyrxGbQ==
-X-Received: by 2002:a5d:4386:: with SMTP id i6mr13587210wrq.207.1620405773011;
-        Fri, 07 May 2021 09:42:53 -0700 (PDT)
-Received: from localhost.localdomain ([148.252.132.80])
-        by smtp.gmail.com with ESMTPSA id x8sm8821990wrs.25.2021.05.07.09.42.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 May 2021 09:42:52 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH liburing 1/1] tests: remove test_link_fail_ordering()
-Date:   Fri,  7 May 2021 17:42:41 +0100
-Message-Id: <2038218a804134079c8883293f6d89a1723ac563.1620405748.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.31.1
+        bh=wCVEYiQPOhsajnv2EopkiNZsWpsS1DnS1rJ4qfw28M8=;
+        b=k/k1Z103l3oQTdiijX0yisMuUuL1/tu3tpeallbRP8UtNALaght/5fjAVzOvS3+wZV
+         Wy3Vlx+N3q/VZ4+25fnOFjXYbd84tlQD7hsY+FVLndNLmc2ocoqNfafxSve/WPSg7vvp
+         cYV7daLK8d7S2oIjtGaCmjbwdnxNFQpHGYlZAniumdvLlbxKCX9viSzYlCY+G8ZpQ2UD
+         Qn6FFZXPRmiOFJAOPp3yksDg3d+qehXCEM3Y9kP97pD+lAdwjlvLP1/+DaXUaguvl5i8
+         krnvzOtcYINw2bU7JhDwoH8YWGRItwttM2BeS68AkQvmkmSklH1hTuzX+IubPuBe/UKs
+         +rJQ==
+X-Gm-Message-State: AOAM5333yp2NpDQefY3X9FSGojS4gsCOqSLMOkV/pwqPjsHRT+fqTp3A
+        sZFQ/Yz8ZM4QiC4nscl6qZyrVx47bTnneg==
+X-Google-Smtp-Source: ABdhPJxQ11+BwUvb8mRLms+AZy6U121E4z5StVarUCyfm0B8jn6N5TzFqZKK+oYfEy67Kd+nuZc+lg==
+X-Received: by 2002:a6b:6013:: with SMTP id r19mr8438575iog.208.1620406118169;
+        Fri, 07 May 2021 09:48:38 -0700 (PDT)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id j2sm2416495ioj.20.2021.05.07.09.48.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 May 2021 09:48:37 -0700 (PDT)
+Subject: Re: [PATCH liburing 1/1] tests: remove test_link_fail_ordering()
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <2038218a804134079c8883293f6d89a1723ac563.1620405748.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <8bbb0ec6-e1c8-812c-7d2a-4232010118b2@kernel.dk>
+Date:   Fri, 7 May 2021 10:48:37 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <2038218a804134079c8883293f6d89a1723ac563.1620405748.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Apparently old kernels were posting CQEs of a link failed during
-submission in a strange order, kill the test.
+On 5/7/21 10:42 AM, Pavel Begunkov wrote:
+> Apparently old kernels were posting CQEs of a link failed during
+> submission in a strange order, kill the test.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- test/link.c | 53 -----------------------------------------------------
- 1 file changed, 53 deletions(-)
+Applied, thanks.
 
-diff --git a/test/link.c b/test/link.c
-index fadd0b5..c89d6b2 100644
---- a/test/link.c
-+++ b/test/link.c
-@@ -429,53 +429,6 @@ err:
- 	return 1;
- }
- 
--static int test_link_fail_ordering(struct io_uring *ring)
--{
--	struct io_uring_cqe *cqe;
--	struct io_uring_sqe *sqe;
--	int ret, i, nr_compl;
--
--	sqe = io_uring_get_sqe(ring);
--	io_uring_prep_nop(sqe);
--	sqe->flags |= IOSQE_IO_LINK;
--	sqe->user_data = 0;
--
--	sqe = io_uring_get_sqe(ring);
--	io_uring_prep_write(sqe, -1, NULL, 100, 0);
--	sqe->flags |= IOSQE_IO_LINK;
--	sqe->user_data = 1;
--
--	sqe = io_uring_get_sqe(ring);
--	io_uring_prep_nop(sqe);
--	sqe->flags |= IOSQE_IO_LINK;
--	sqe->user_data = 2;
--
--	nr_compl = ret = io_uring_submit(ring);
--	/* at least the first nop should have been submitted */
--	if (ret < 1) {
--		fprintf(stderr, "sqe submit failed: %d\n", ret);
--		goto err;
--	}
--
--	for (i = 0; i < nr_compl; i++) {
--		ret = io_uring_wait_cqe(ring, &cqe);
--		if (ret) {
--			fprintf(stderr, "wait completion %d\n", ret);
--			goto err;
--		}
--		if (cqe->user_data != i) {
--			fprintf(stderr, "wrong CQE order, got %i, expected %i\n",
--					(int)cqe->user_data, i);
--			goto err;
--		}
--		io_uring_cqe_seen(ring, cqe);
--	}
--
--	return 0;
--err:
--	return 1;
--}
--
- int main(int argc, char *argv[])
- {
- 	struct io_uring ring, poll_ring;
-@@ -539,11 +492,5 @@ int main(int argc, char *argv[])
- 		return ret;
- 	}
- 
--	ret = test_link_fail_ordering(&ring);
--	if (ret) {
--		fprintf(stderr, "test_link_fail_ordering last failed\n");
--		return ret;
--	}
--
- 	return 0;
- }
 -- 
-2.31.1
+Jens Axboe
 

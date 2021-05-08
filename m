@@ -2,60 +2,91 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 39478376EF8
-	for <lists+io-uring@lfdr.de>; Sat,  8 May 2021 04:50:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64AA9377250
+	for <lists+io-uring@lfdr.de>; Sat,  8 May 2021 16:17:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230376AbhEHCvK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 7 May 2021 22:51:10 -0400
-Received: from mail-il1-f200.google.com ([209.85.166.200]:47968 "EHLO
-        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229836AbhEHCvJ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 7 May 2021 22:51:09 -0400
-Received: by mail-il1-f200.google.com with SMTP id m18-20020a056e020df2b02901a467726f49so8706704ilj.14
-        for <io-uring@vger.kernel.org>; Fri, 07 May 2021 19:50:08 -0700 (PDT)
+        id S229515AbhEHOS3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 8 May 2021 10:18:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56966 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229500AbhEHOS3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 8 May 2021 10:18:29 -0400
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34CDDC061574;
+        Sat,  8 May 2021 07:17:27 -0700 (PDT)
+Received: by mail-wr1-x430.google.com with SMTP id z6so12043191wrm.4;
+        Sat, 08 May 2021 07:17:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=H3c5ec7McH5Zt4hIpHC+Y3YBw9oxk9RjSdvboac24Mk=;
+        b=cI9frh2jqh7zWEi4uhTuc4yKutnoTEH+9cpqpZbeqkuzr4YHNyxvur0Wm1h+hOlxIB
+         GdjfrTA0xoeOvMyML0J41fabzDhp66p0ckS+RHFDNDdJ6H3ZcV8J+1uoYwrS0L0jRlrC
+         4kzSuSU4egJLjzrIZ+ItBsSWHczvYcoiYbmy3KYEMPOp5e+z4OpAMz/MNkxMn1YH7+Uy
+         sPYu9AudF8DtmK6+Zvgbv1zA0Oh9ZRWe8r1+PtUWm3diPfzfdiXfm3KpMfx7ogI/AsCh
+         8BzgqY4Cx5OrCjWfVvkvkmXEnJQh3cEytOgFJGdOHkKuCSXfG+KHfvAGt3gVGnVG1oxM
+         3fgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=Ep5Ziog6b4PKDEAUjUK1xGZkkgiBko+vVQSZys20w/w=;
-        b=FkVo64mElMrcvGIMlcbDhfY6sCNYyL4UnFjkGO0WQ1SxsfjLqpXFpJXNRP26BDjwhv
-         puPvAAVirHLAo8k1rpAxGO6ZWLXkztMY7UYh7O/rICb347KdcU7uutk1BN3qeiW4LiSd
-         95xD2zdY/LRaITRqgcD+J9KNEMn/3f2Bkkcxzjr1nos+K/ceX/9sDha/7cDywtLSgIOa
-         S/OpPJ8T4dphfFP1UpQ0DX3tRrEjMCH5b359mUIJWFAh07htNZysxbrE9t4Yci9Hgg00
-         zdXOauSB3JMJkMu/bw5dNTeWhnZ0xdX1i/1f7xzBpewL2nQRtxNZZu5vL42UeBJwcYSA
-         k9RA==
-X-Gm-Message-State: AOAM531zCd09ozf9kIGoZhIp/KtmtjJlFiyWBybdShCJs0sgcqXMRXa4
-        rwdm77nKDFOmS1kUaJAvitefb7ZvOddZKnXQJMv+o760O7Vb
-X-Google-Smtp-Source: ABdhPJxJyzmD1z8zzw7DF6Q34svdnXoJ9Xh8K888+JYMQuz28+XX+2x/TaSJClKQ4EyWMRjU8m0a1b7xCm9QrsSB+vQf1gKpJGhg
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=H3c5ec7McH5Zt4hIpHC+Y3YBw9oxk9RjSdvboac24Mk=;
+        b=IKS+Cut80tnonXJOt7hWj1jE8o3tLJ6jiX5C6qAd0amE+lw3+hHFIAAbxjJzGnQBou
+         F9xk7k1PYjZTXA+4/WE3ILsel9Lk3m3r5K/25Fs7f6X4Yc0pvw/mD16tBEqCmU2nYrO4
+         l/KxMDnx4Hn0PZC8uGX6ojT2GUb6hd/vWj5BVZhVR9TEROQ9sA8yZYtPA8hs4Ozz2YkW
+         hhv0zyeUeDw4M0Uexx0319FVHCqgYRauk1A54iQGLBUvb5z3euixLl88M1aEJ4ES6lib
+         NQJF4XQw6BcEh6y1iudqmZm9rLtd0pEZblexJMpQErewa4W1rDEDGII9ZlWPM3fO0Auj
+         SS0w==
+X-Gm-Message-State: AOAM531e40olD6DOGJHttoGT0sd2mYsLDKN77s15HD+N3Ro5pU+K5zro
+        c8RKi1gZJHKQStIQ4XwLRlk=
+X-Google-Smtp-Source: ABdhPJyLdig4xicDV+GKZswgYqckgYoB7vw2Ow/WK44uKVYYamhRUA9+gdBrs/5G2QKJCc+xwFoRcQ==
+X-Received: by 2002:a5d:660c:: with SMTP id n12mr19405903wru.87.1620483445776;
+        Sat, 08 May 2021 07:17:25 -0700 (PDT)
+Received: from [192.168.8.197] ([148.252.132.80])
+        by smtp.gmail.com with ESMTPSA id f25sm13693750wrd.67.2021.05.08.07.17.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 08 May 2021 07:17:25 -0700 (PDT)
+Subject: Re: [syzbot] INFO: task hung in __io_uring_cancel
+To:     syzbot <syzbot+47fc00967b06a3019bd2@syzkaller.appspotmail.com>,
+        axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+References: <00000000000004f05705c1c86547@google.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Message-ID: <c2bba1fe-a091-e08f-2e0e-cfe7759e3f72@gmail.com>
+Date:   Sat, 8 May 2021 15:17:19 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.0
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:de7:: with SMTP id m7mr3239161ilj.76.1620442207980;
- Fri, 07 May 2021 19:50:07 -0700 (PDT)
-Date:   Fri, 07 May 2021 19:50:07 -0700
-In-Reply-To: <e2fe2053-c413-daa4-1151-c4476d32d23a@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000002f920305c1c89a25@google.com>
-Subject: Re: [syzbot] INFO: task hung in io_ring_exit_work
-From:   syzbot <syzbot+93f72b3885406bb09e0d@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <00000000000004f05705c1c86547@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
+On 5/8/21 3:35 AM, syzbot wrote:
+> Hello,
+> 
+> syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+> 
+> Reported-and-tested-by: syzbot+47fc00967b06a3019bd2@syzkaller.appspotmail.com
+> 
+> Tested on:
+> 
+> commit:         50b7b6f2 x86/process: setup io_threads more like normal us..
+> git tree:       git://git.kernel.dk/linux-block io_uring-5.13
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=5e1cf8ad694ca2e1
+> dashboard link: https://syzkaller.appspot.com/bug?extid=47fc00967b06a3019bd2
+> compiler:       
+> 
+> Note: testing is done by a robot and is best-effort only.
+> 
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+#syz fix: io_uring: fix work_exit sqpoll cancellations
 
-Reported-and-tested-by: syzbot+93f72b3885406bb09e0d@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         50b7b6f2 x86/process: setup io_threads more like normal us..
-git tree:       git://git.kernel.dk/linux-block io_uring-5.13
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f81a36128b448b98
-dashboard link: https://syzkaller.appspot.com/bug?extid=93f72b3885406bb09e0d
-compiler:       
-
-Note: testing is done by a robot and is best-effort only.
+-- 
+Pavel Begunkov

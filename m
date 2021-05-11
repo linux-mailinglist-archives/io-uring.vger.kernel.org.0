@@ -2,78 +2,70 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BBB94379BDC
-	for <lists+io-uring@lfdr.de>; Tue, 11 May 2021 03:11:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E16037A033
+	for <lists+io-uring@lfdr.de>; Tue, 11 May 2021 08:58:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230151AbhEKBMO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 10 May 2021 21:12:14 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:2619 "EHLO
-        szxga06-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229628AbhEKBMN (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 10 May 2021 21:12:13 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
-        by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4FfKZ01cgczklbx;
-        Tue, 11 May 2021 09:08:56 +0800 (CST)
-Received: from [10.174.177.210] (10.174.177.210) by
- DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
- 14.3.498.0; Tue, 11 May 2021 09:11:04 +0800
-Subject: Re: [PATCH 16/16] io_uring: return back safer resurrect
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, <io-uring@vger.kernel.org>
-References: <cover.1618101759.git.asml.silence@gmail.com>
- <7a080c20f686d026efade810b116b72f88abaff9.1618101759.git.asml.silence@gmail.com>
- <2ac2c145-5e08-d1e3-ea13-83284a0f477a@huawei.com>
- <925d3206-b67b-f800-c41d-6167e30d3c9c@gmail.com>
-From:   yangerkun <yangerkun@huawei.com>
-Message-ID: <a8fbcb69-9fdc-32ac-4752-7e1016239702@huawei.com>
-Date:   Tue, 11 May 2021 09:11:04 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        id S230229AbhEKG7M (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 11 May 2021 02:59:12 -0400
+Received: from mail-io1-f70.google.com ([209.85.166.70]:53174 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229984AbhEKG7L (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 11 May 2021 02:59:11 -0400
+Received: by mail-io1-f70.google.com with SMTP id o6-20020a05660213c6b0290438e33a3335so6865546iov.19
+        for <io-uring@vger.kernel.org>; Mon, 10 May 2021 23:58:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=WAlEVy0ZMfNVjKlh40M9CEJnUjL9y5ekxYFhQsRtRM8=;
+        b=BTV9NjJPrujeF/+qYK6+ZQjXyw3cNQ7JryInObBxfdSiha2ywBl69bnEVoLuRnXUeK
+         hcqKpDTT5Eg/rcDrdMrZToCu/XmpE4OBWb0L3VIDEyvmX79DhX2ZaAEFgNcooektCf/s
+         Ixg0TJcgHp4ZuEF5QeeA6dTq7bwCEV2JiWyVMQ51om2SJwtSgGWdpAQeCcqPVPPmbP9S
+         h0HrKv7CKm7yqaQe28fgy391wqYVH1jnYBO1HMATFCVPQUL6MaprL5n0dG7fvYqYxwMW
+         t+iyKq8QvWZZvcEmqwf7Yp6yrICO6+eQBaXkTQkeoNHCl/QovMDYgjVHZxWmER2TqQtC
+         QsAQ==
+X-Gm-Message-State: AOAM530nWPjSQyFo09hay64Ci+Rvh93GZEmzNTwwqqS2uoL4eCNQU1n7
+        WdbUOerUXuXlUL3kIeu21nl20hBuVzZJ3vdvR+TFgKx47cuf
+X-Google-Smtp-Source: ABdhPJy1+7M05LR396Fy+WAxn+ZHCqn77sqp5GoH6r5WKwYW5bJvDqONdE4jmh/SCNdH5aovFYTBZFc/A80DtjSEiAYMyZW+NOLF
 MIME-Version: 1.0
-In-Reply-To: <925d3206-b67b-f800-c41d-6167e30d3c9c@gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.174.177.210]
-X-CFilter-Loop: Reflected
+X-Received: by 2002:a92:de49:: with SMTP id e9mr23983574ilr.132.1620716285105;
+ Mon, 10 May 2021 23:58:05 -0700 (PDT)
+Date:   Mon, 10 May 2021 23:58:05 -0700
+In-Reply-To: <000000000000b304d505bc3e5b3a@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000749f0605c2086a95@google.com>
+Subject: Re: [syzbot] general protection fault in try_to_wake_up (2)
+From:   syzbot <syzbot+b4a81dc8727e513f364d@syzkaller.appspotmail.com>
+To:     alaaemadhossney.ae@gmail.com, asml.silence@gmail.com,
+        axboe@kernel.dk, christian@brauner.io, gregkh@linuxfoundation.org,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        shankarkoli@quadrogen.com, shuah@kernel.org,
+        skhan@linuxfoundation.org, syzkaller-bugs@googlegroups.com,
+        valentina.manea.m@gmail.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+syzbot suspects this issue was fixed by commit:
 
+commit 363eaa3a450abb4e63bd6e3ad79d1f7a0f717814
+Author: Shuah Khan <skhan@linuxfoundation.org>
+Date:   Tue Mar 30 01:36:51 2021 +0000
 
-在 2021/5/10 17:15, Pavel Begunkov 写道:
-> On 5/10/21 3:22 AM, yangerkun wrote:
->> 在 2021/4/11 8:46, Pavel Begunkov 写道:
->>> Revert of revert of "io_uring: wait potential ->release() on resurrect",
->>> which adds a helper for resurrect not racing completion reinit, as was
->>> removed because of a strange bug with no clear root or link to the
->>> patch.
->>>
->>> Was improved, instead of rcu_synchronize(), just wait_for_completion()
->>> because we're at 0 refs and it will happen very shortly. Specifically
->>> use non-interruptible version to ignore all pending signals that may
->>> have ended prior interruptible wait.
->>>
->>> This reverts commit cb5e1b81304e089ee3ca948db4d29f71902eb575.
->>>
->>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
->>
->> I have a question. Compare with the logical before this patch. We need call reinit_completion(&ctx->ref_comp) to make sure the effective use of the ref_comp.
->>
->> Does we forget to do this? Or I miss something?
-> If percpu_ref_tryget() there succeeds, it should have not called
-> complete by design, otherwise it do complete once (+1 completion
-> count) following with a single wait(-1 completion count), so +1 -1
-> should return it back to zero. See how struct completion works,
-> e.g. completion.rst, number of completions is counted inside.
+    usbip: synchronize event handler with sysfs code paths
 
-Got it. Thanks for your explain!
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=114c0579d00000
+start commit:   d4961772 Merge tag 'clk-fixes-for-linus' of git://git.kern..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9320464bf47598bd
+dashboard link: https://syzkaller.appspot.com/bug?extid=b4a81dc8727e513f364d
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=126d1de9d00000
 
-> 
-> btw, you have a strange mail encoding, apparently it's not Unicode
+If the result looks correct, please mark the issue as fixed by replying with:
 
-Yeah... I have change to Unicode!
+#syz fix: usbip: synchronize event handler with sysfs code paths
 
-Thanks,
-Kun.
-> 
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection

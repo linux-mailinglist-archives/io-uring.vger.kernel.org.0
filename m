@@ -2,69 +2,78 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DFCDD37981C
-	for <lists+io-uring@lfdr.de>; Mon, 10 May 2021 22:06:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBB94379BDC
+	for <lists+io-uring@lfdr.de>; Tue, 11 May 2021 03:11:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229877AbhEJUH0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 10 May 2021 16:07:26 -0400
-Received: from flippie-beckerwealth.xyz ([62.173.147.203]:59254 "EHLO
-        host.flippie-beckerwealth.xyz" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229566AbhEJUHZ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 10 May 2021 16:07:25 -0400
-X-Greylist: delayed 13371 seconds by postgrey-1.27 at vger.kernel.org; Mon, 10 May 2021 16:07:24 EDT
-Received: from flippie-beckerwealth.xyz (ec2-18-116-239-23.us-east-2.compute.amazonaws.com [18.116.239.23])
-        by host.flippie-beckerwealth.xyz (Postfix) with ESMTPA id 492771CF388
-        for <io-uring@vger.kernel.org>; Mon, 10 May 2021 17:25:30 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 host.flippie-beckerwealth.xyz 492771CF388
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=flippie-beckerwealth.xyz; s=default; t=1620656730;
-        bh=Lxx5rGQCX/MQzrwE9epz1Mb5yPYRqDyEupWj6GReobo=;
-        h=Reply-To:From:To:Subject:Date:From;
-        b=FifPtHypXeD3/bWC2Q3vf6e0ysISUpeSbKWwE4XbvMQYcHtblpmPJvZp3VK62kMBt
-         M8Vj3tm2e3B9JS/0ynKSn0CRCHeaD6aDKVrzRZNrQ5hUJLxwuG0qfLpH56Oq6UpLNx
-         agQGykVqcOliryTYzC6sVjjb8XenZfF3MHtpEu3Y=
-DKIM-Filter: OpenDKIM Filter v2.11.0 host.flippie-beckerwealth.xyz 492771CF388
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=flippie-beckerwealth.xyz; s=default; t=1620656730;
-        bh=Lxx5rGQCX/MQzrwE9epz1Mb5yPYRqDyEupWj6GReobo=;
-        h=Reply-To:From:To:Subject:Date:From;
-        b=FifPtHypXeD3/bWC2Q3vf6e0ysISUpeSbKWwE4XbvMQYcHtblpmPJvZp3VK62kMBt
-         M8Vj3tm2e3B9JS/0ynKSn0CRCHeaD6aDKVrzRZNrQ5hUJLxwuG0qfLpH56Oq6UpLNx
-         agQGykVqcOliryTYzC6sVjjb8XenZfF3MHtpEu3Y=
-Reply-To: cpavlides@flippiebeckerwealthservices.com
-From:   Christos <cpavlides@flippie-beckerwealth.xyz>
-To:     io-uring@vger.kernel.org
-Subject: Proposal
-Date:   10 May 2021 14:25:29 +0000
-Message-ID: <20210510142529.0CC1AE302A0FD197@flippie-beckerwealth.xyz>
-Mime-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+        id S230151AbhEKBMO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 10 May 2021 21:12:14 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:2619 "EHLO
+        szxga06-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229628AbhEKBMN (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 10 May 2021 21:12:13 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
+        by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4FfKZ01cgczklbx;
+        Tue, 11 May 2021 09:08:56 +0800 (CST)
+Received: from [10.174.177.210] (10.174.177.210) by
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.498.0; Tue, 11 May 2021 09:11:04 +0800
+Subject: Re: [PATCH 16/16] io_uring: return back safer resurrect
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, <io-uring@vger.kernel.org>
+References: <cover.1618101759.git.asml.silence@gmail.com>
+ <7a080c20f686d026efade810b116b72f88abaff9.1618101759.git.asml.silence@gmail.com>
+ <2ac2c145-5e08-d1e3-ea13-83284a0f477a@huawei.com>
+ <925d3206-b67b-f800-c41d-6167e30d3c9c@gmail.com>
+From:   yangerkun <yangerkun@huawei.com>
+Message-ID: <a8fbcb69-9fdc-32ac-4752-7e1016239702@huawei.com>
+Date:   Tue, 11 May 2021 09:11:04 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
+MIME-Version: 1.0
+In-Reply-To: <925d3206-b67b-f800-c41d-6167e30d3c9c@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.174.177.210]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello there,
 
-I hope this message finds you in good spirits especially during=20
-this challenging time of coronavirus pandemic. I hope you and=20
-your family are well and keeping safe. Anyway, I am Chris=20
-Pavlides, a broker working with Flippiebecker Wealth. I got your=20
-contact (along with few other contacts) through an online=20
-business directory and I thought I should contact you to see if=20
-you are interested in this opportunity. I am contacting you=20
-because one of my high profile clients is interested in investing=20
-abroad and has asked me to look for individuals and companies=20
-with interesting business ideas and projects that he can invest=20
-in. He wants to invest a substantial amount of asset abroad.
 
-Please kindly respond back to this email if you are interested in=20
-this opportunity. Once I receive your response, I will give you=20
-more details and we can plan a strategy that will be beneficial=20
-to all parties.
+在 2021/5/10 17:15, Pavel Begunkov 写道:
+> On 5/10/21 3:22 AM, yangerkun wrote:
+>> 在 2021/4/11 8:46, Pavel Begunkov 写道:
+>>> Revert of revert of "io_uring: wait potential ->release() on resurrect",
+>>> which adds a helper for resurrect not racing completion reinit, as was
+>>> removed because of a strange bug with no clear root or link to the
+>>> patch.
+>>>
+>>> Was improved, instead of rcu_synchronize(), just wait_for_completion()
+>>> because we're at 0 refs and it will happen very shortly. Specifically
+>>> use non-interruptible version to ignore all pending signals that may
+>>> have ended prior interruptible wait.
+>>>
+>>> This reverts commit cb5e1b81304e089ee3ca948db4d29f71902eb575.
+>>>
+>>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+>>
+>> I have a question. Compare with the logical before this patch. We need call reinit_completion(&ctx->ref_comp) to make sure the effective use of the ref_comp.
+>>
+>> Does we forget to do this? Or I miss something?
+> If percpu_ref_tryget() there succeeds, it should have not called
+> complete by design, otherwise it do complete once (+1 completion
+> count) following with a single wait(-1 completion count), so +1 -1
+> should return it back to zero. See how struct completion works,
+> e.g. completion.rst, number of completions is counted inside.
 
-Best regards
+Got it. Thanks for your explain!
 
-C Pavlides
-Flippiebecker Wealth
+> 
+> btw, you have a strange mail encoding, apparently it's not Unicode
+
+Yeah... I have change to Unicode!
+
+Thanks,
+Kun.
+> 

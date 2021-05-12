@@ -2,84 +2,65 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B27837EE7F
-	for <lists+io-uring@lfdr.de>; Thu, 13 May 2021 00:58:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 177C437EE83
+	for <lists+io-uring@lfdr.de>; Thu, 13 May 2021 00:59:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237181AbhELVvw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 12 May 2021 17:51:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36610 "EHLO
+        id S236677AbhELVv5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 12 May 2021 17:51:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1389935AbhELVEC (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 12 May 2021 17:04:02 -0400
-Received: from mail-qv1-xf35.google.com (mail-qv1-xf35.google.com [IPv6:2607:f8b0:4864:20::f35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2DE7C061142
-        for <io-uring@vger.kernel.org>; Wed, 12 May 2021 13:55:15 -0700 (PDT)
-Received: by mail-qv1-xf35.google.com with SMTP id z1so12831281qvo.4
-        for <io-uring@vger.kernel.org>; Wed, 12 May 2021 13:55:15 -0700 (PDT)
+        with ESMTP id S1390033AbhELVEl (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 12 May 2021 17:04:41 -0400
+Received: from mail-qk1-x736.google.com (mail-qk1-x736.google.com [IPv6:2607:f8b0:4864:20::736])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 506EAC0610E6
+        for <io-uring@vger.kernel.org>; Wed, 12 May 2021 13:57:02 -0700 (PDT)
+Received: by mail-qk1-x736.google.com with SMTP id l129so23647891qke.8
+        for <io-uring@vger.kernel.org>; Wed, 12 May 2021 13:57:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=mv09EXSN8YMgLNRJHYq6AfwdGG3FEKwFc2Di0Cry05Q=;
-        b=leSeXQeHW5ZY4wdM4lD6mAJGIIVaOJvSk903NpWsPuieedUZVhYbK9uu8YHNBHTM/U
-         kv4TbjioAYnTIVDviYbXczNiTzwIZc+EwgAY5DT0PkJnUGnahGDDWc2KTZ4lFjA7p0Ip
-         fokkDzLZK+/ED+9Du5nzJmUd1i/2QJ3dKmlg3l25pML/xUmjF7mRoKy0im+1dAR4i0K+
-         RqxJi9qKIBOGFTrZkbORJoHHl0RymVnk0yMzWYlkrniSodl2A1C7ZGZpHPql8TGF5mDA
-         AYuff76dSJlLnWAOaeayXh/I1K/MfZjfG31C+fwv+EHX5SSSZcK/7dJvePb+aoa+8Q7y
-         moAg==
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=fUmgKpvM3TjwZN8rVbl/N4SL7bVVAib9UaaWICf1ILY=;
+        b=FHpF2OM+ci2rPHyJS+qWdbL0Aj9VeLmpZozeDD1oCaI3xemzonLoJFHsV3Up/zcOMz
+         ROdUXXeN2BMpaoa7nAhSXFctB02ZyewGnnLzEDHxOrZQeouFNbBrYrJDuyVYBNhJPHvu
+         71wY6YzwejXNOqUHCqByMglYVAhrrGh2XqfmWc74MW+qGcagRALNmRT96QoX/qosuc9D
+         4tJjyxgjryzxMzWzvJYBWFMn/FY+GGTzisnarhc4Ca0zkBU+W0bDI9dbtA05ex4c27jf
+         3mEaMWYah1snwm4cQ1scQn77yIE+t3GGT9yp0l9cf4uADyxuPIp8+JRkVcJqIi+zo9WE
+         NuDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=mv09EXSN8YMgLNRJHYq6AfwdGG3FEKwFc2Di0Cry05Q=;
-        b=LckbbPWyYR52CXKkBWZOLc3R1QqrXeIH57kj+oZzPaUtwjY7mocE4x4GLxgLY9PgSr
-         3i1p++IrIvw60obn7S0Ohje+Z1XOGg/gXZLKdmUUlxai+vYOcQRb0LNpdsjm8WHJNkS7
-         Yc54TJd6QF5bJdstuFwkToR9+riqv+Q8dv29ryQ2ib80zMPiP7qHbQjcCtqY2ZHZSiuG
-         8lrKzL5HiSjWm0o4sAyAPnNByqGIpJk+IomVKPvTct/qf3UwBm7CmMl/ShYgqNeIAmgE
-         ececnT7V+HubxBIBwdPeD5Azfentt5HreFjs/qtoWGm486/hsQQTZ+xjU4BPvlrtSV6J
-         Czig==
-X-Gm-Message-State: AOAM530IFOTVkqA3NhN8NwVOVtATFN1Jj3sIVskXA7Rs0ZSkXZ+S4Hcg
-        FoTRQGBnZjeAT2d57k1fytJXzUoRnHo2ZA==
-X-Google-Smtp-Source: ABdhPJxy5Q2QantP/1nAIpA42y0zMuSNsfAG7ZAl/LlMVllxl4TSu4B8/lkq5CNkZEQ3M1wtD2C0HA==
-X-Received: by 2002:ad4:4c49:: with SMTP id cs9mr37114961qvb.43.1620852914734;
-        Wed, 12 May 2021 13:55:14 -0700 (PDT)
+        bh=fUmgKpvM3TjwZN8rVbl/N4SL7bVVAib9UaaWICf1ILY=;
+        b=phN61FL//qo++fuW6pxBOW1Qj72ZHBsL+hs1fKWIts6/VZhLRsZFQevzQESwj//Nnn
+         cKiL7gxXKvkkehv/+vJkEKMgiIsPiCaIOWCOxxWrjHc0ovSYma6EmTef58abojjQq5Qo
+         5l63DODQ+KIBMKPIGMyBwSE4Ft3BLc2xNY628O1bYbwQd2oZVAw7oTtJ8h2va10FdNMo
+         SGyuzaGX6d1t0PCZwbU25U64+XppSe3x49a/pJyBc1P7f1vsVUj0xrxsOvhivKTpga10
+         5P0RHCaS+02VaKMEAWrC5TLVytjHrdSHNH+i4xfh+uRxC9K37FeHJdD6ozoT41DMQzcx
+         ipwA==
+X-Gm-Message-State: AOAM53330opXbGOgFeTqxbbpcDMkJaVC8vOj8nNnWzG8AjD0+lfObtPE
+        GaWS4XM1SRk1ELFO5LAmcHYhAA==
+X-Google-Smtp-Source: ABdhPJzY5dLOqY/MyBJw6D0GtpD0+Wwnyh8zcY6kSOe6AwquwAjt2P4UmnSjxJXKA4s/sMFCnFWlvw==
+X-Received: by 2002:a37:a4c6:: with SMTP id n189mr30270865qke.221.1620853021523;
+        Wed, 12 May 2021 13:57:01 -0700 (PDT)
 Received: from [172.19.131.127] ([8.46.72.121])
-        by smtp.gmail.com with ESMTPSA id n17sm975665qke.14.2021.05.12.13.55.06
+        by smtp.gmail.com with ESMTPSA id l6sm889767qkk.130.2021.05.12.13.56.52
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 May 2021 13:55:14 -0700 (PDT)
-Subject: Re: [PATCH] io_thread/x86: don't reset 'cs', 'ss', 'ds' and 'es'
- registers for io_threads
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Olivier Langlois <olivier@trillion01.com>
-Cc:     Stefan Metzmacher <metze@samba.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>
-References: <8735v3ex3h.ffs@nanos.tec.linutronix.de>
- <3C41339D-29A2-4AB1-958F-19DB0A92D8D7@amacapital.net>
- <CAHk-=wh0KoEZXPYMGkfkeVEerSCEF1AiCZSvz9TRrx=Kj74D+Q@mail.gmail.com>
- <CALCETrV9bCenqzzaW6Ra18tCvNP-my09decTjmLDVZZAQxR6VA@mail.gmail.com>
- <CAHk-=wgo6XEz3VQ9ntqzWLR3-hm1YXrXUz4_heDs4wcLe9NYvA@mail.gmail.com>
- <d26e3a82-8a2c-7354-d36b-cac945c208c7@kernel.dk>
- <CALCETrWmhquicE2C=G2Hmwfj4VNypXVxY-K3CWOkyMe9Edv88A@mail.gmail.com>
- <CAHk-=wgqK0qUskrzeWXmChErEm32UiOaUmynWdyrjAwNzkDKaw@mail.gmail.com>
- <8735v3jujv.ffs@nanos.tec.linutronix.de>
- <CAHk-=wi4Dyg_Z70J_hJbtFLPQDG+Zx3dP2jB5QrOdZC6W6j4Gw@mail.gmail.com>
- <12710fda-1732-ee55-9ac1-0df9882aa71b@samba.org>
- <CAHk-=wiR7c-UHh_3Rj-EU8=AbURKchnMFJWW7=5EH=qEUDT8wg@mail.gmail.com>
- <59ea3b5a-d7b3-b62e-cc83-1f32a83c4ac2@kernel.dk>
- <17471c9fec18765449ef3a5a4cddc23561b97f52.camel@trillion01.com>
- <CAHk-=whoJCocFsQ7+Sqq=dkuzHE+RXxvRdd4ZvyYqnsKBqsKAA@mail.gmail.com>
+        Wed, 12 May 2021 13:57:01 -0700 (PDT)
+Subject: Re: [syzbot] WARNING in io_link_timeout_fn
+To:     syzbot <syzbot+5a864149dd970b546223@syzkaller.appspotmail.com>,
+        asml.silence@gmail.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+References: <0000000000004d849405c227da64@google.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <3df541c3-728c-c63d-eaeb-a4c382e01f0b@kernel.dk>
-Date:   Wed, 12 May 2021 14:55:02 -0600
+Message-ID: <bb6f7045-863c-ca86-3925-7d65dc90d5b7@kernel.dk>
+Date:   Wed, 12 May 2021 14:56:44 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=whoJCocFsQ7+Sqq=dkuzHE+RXxvRdd4ZvyYqnsKBqsKAA@mail.gmail.com>
+In-Reply-To: <0000000000004d849405c227da64@google.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -87,56 +68,40 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/12/21 11:44 AM, Linus Torvalds wrote:
-> On Tue, May 11, 2021 at 9:24 PM Olivier Langlois <olivier@trillion01.com> wrote:
->>
->> I have reported an issue that I have with a user process using io_uring
->> where when it core dumps, the dump fails to be generated.
->> https://github.com/axboe/liburing/issues/346
+On 5/12/21 2:28 PM, syzbot wrote:
+> Hello,
 > 
-> I suspect most kernel developers don't have github notifications
-> enabled. I know I have them disabled because it would be *way* too
-> noisy not to.
+> syzbot found the following issue on:
 > 
-> But maybe Jens does for that libiouring part.
+> HEAD commit:    88b06399 Merge tag 'for-5.13-rc1-part2-tag' of git://git.k..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=13c0d265d00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=807beec6b4d66bf1
+> dashboard link: https://syzkaller.appspot.com/bug?extid=5a864149dd970b546223
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10436223d00000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1715208bd00000
 > 
->> Pavel did comment to my report and he did point out this thread as
->> possibly a related issue.
+> The issue was bisected to:
 > 
-> I don't think this is related. The gdb confusion wouldn't affect core
-> dump generation.
+> commit 91f245d5d5de0802428a478802ec051f7de2f5d6
+> Author: Jens Axboe <axboe@kernel.dk>
+> Date:   Tue Feb 9 20:48:50 2021 +0000
 > 
-> I don't see why a core-dump shouldn't work from an IO thread these
-> days - the signal struct and synchronization should all be the same as
-> for a regular user thread.
-> 
-> That said, I do wonder if we should avoid generating core dumps from
-> the IO worker thread itself. The IO thread itself should never get a
-> SIGSEGV/SIGBUS anyway, it should have been turned into -EFAULT.
-> 
-> So maybe the
-> 
->                 if (current->flags & PF_IO_WORKER)
->                         goto out;
-> 
-> in kernel/signal.c should be moved up above the do_coredump() logic regardless.
+>     io_uring: enable kmemcg account for io_uring requests
 
-I actually think that's how I originally had it, but Eric had some comment
-on that and we moved it. IIRC. I'll dig out the conversation.
+Don't think that's right...
 
-> Jens, have you played with core-dumping when there are active io_uring
-> threads? There's a test-program in that github issue report..
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=144fbb23d00000
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=164fbb23d00000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=124fbb23d00000
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+5a864149dd970b546223@syzkaller.appspotmail.com
+> Fixes: 91f245d5d5de ("io_uring: enable kmemcg account for io_uring requests")
 
-Yes, I also did that again after the report, and did so again right now
-just to verify. I'm not seeing any issues with coredumps being generated
-if the app crashes, or if I send it SIGILL, for example... I also just
-now tried Olivier's test case, and it seems to dump just fine for me.
+I think this one is already fixed:
 
-I then tried backing out the patch from Stefan, and it works fine with
-that reverted too. So a bit puzzled as to what is going on here...
-
-Anyway, I'll check in on that github thread and see if we can narrow
-this down.
+#syz test: git://git.kernel.dk/linux-block.git io_uring-5.13
 
 -- 
 Jens Axboe

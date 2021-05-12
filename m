@@ -2,160 +2,142 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D01537EE7D
-	for <lists+io-uring@lfdr.de>; Thu, 13 May 2021 00:58:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B27837EE7F
+	for <lists+io-uring@lfdr.de>; Thu, 13 May 2021 00:58:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231261AbhELVvs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 12 May 2021 17:51:48 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:46015 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345958AbhELUhc (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 12 May 2021 16:37:32 -0400
-Received: by mail-io1-f70.google.com with SMTP id y15-20020a5d9b0f0000b02903e840cb5f09so16543200ion.12
-        for <io-uring@vger.kernel.org>; Wed, 12 May 2021 13:36:24 -0700 (PDT)
+        id S237181AbhELVvw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 12 May 2021 17:51:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36610 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1389935AbhELVEC (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 12 May 2021 17:04:02 -0400
+Received: from mail-qv1-xf35.google.com (mail-qv1-xf35.google.com [IPv6:2607:f8b0:4864:20::f35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2DE7C061142
+        for <io-uring@vger.kernel.org>; Wed, 12 May 2021 13:55:15 -0700 (PDT)
+Received: by mail-qv1-xf35.google.com with SMTP id z1so12831281qvo.4
+        for <io-uring@vger.kernel.org>; Wed, 12 May 2021 13:55:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=mv09EXSN8YMgLNRJHYq6AfwdGG3FEKwFc2Di0Cry05Q=;
+        b=leSeXQeHW5ZY4wdM4lD6mAJGIIVaOJvSk903NpWsPuieedUZVhYbK9uu8YHNBHTM/U
+         kv4TbjioAYnTIVDviYbXczNiTzwIZc+EwgAY5DT0PkJnUGnahGDDWc2KTZ4lFjA7p0Ip
+         fokkDzLZK+/ED+9Du5nzJmUd1i/2QJ3dKmlg3l25pML/xUmjF7mRoKy0im+1dAR4i0K+
+         RqxJi9qKIBOGFTrZkbORJoHHl0RymVnk0yMzWYlkrniSodl2A1C7ZGZpHPql8TGF5mDA
+         AYuff76dSJlLnWAOaeayXh/I1K/MfZjfG31C+fwv+EHX5SSSZcK/7dJvePb+aoa+8Q7y
+         moAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=p2gWWp2dZEJgHhYny1RpbKA50V7ZgrhW/5wfqVoEc2M=;
-        b=EDd/OsN5HezLwvMBit0gZo6R6nsOfFkKl9nJ/WcYsKoQaPR2FcJgUWP1lVCVYsx9HM
-         ELqi92qfzxMiG3GiiX13cNDW0SwxBqktDZG/E0mGzxhEw1N0NWBdOEbZQ14ssDnPdlso
-         7SY9sXohArrzT+bElPlS3O+X/xMVdVvxV5MDYsDyMFxn/lYT9CZASOC0jWgcDYDjUk6l
-         VClCSJdOWU00e4m0Z3prKRLcIJvxrlK2/suN6neVYpV4TpM2sfcrG+Q0h1n8+BZZwD1N
-         YYseKQOabcDiV6M1XbxBG2rOqYyHEiubmRsbu6VBP4FieRti51niKhbDpj0CtlSGrDII
-         00/A==
-X-Gm-Message-State: AOAM531ojseUNy+n6GeC4AlVre3WhwcPcEY3LMAp/e+kImWsIktfbii4
-        bf6rxEOdnuidYIGEtDBqlhPuz876hnYPQp3dGGtcBAaamKok
-X-Google-Smtp-Source: ABdhPJwe3e5rvNfTerqpWt3Q7Zz0ibimpSGTUxCie7tvWszx+jULM13/TFQWqlDiFFAqTdvkuXoWVxw6jFXb2zYamAe3k8mxGeVa
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=mv09EXSN8YMgLNRJHYq6AfwdGG3FEKwFc2Di0Cry05Q=;
+        b=LckbbPWyYR52CXKkBWZOLc3R1QqrXeIH57kj+oZzPaUtwjY7mocE4x4GLxgLY9PgSr
+         3i1p++IrIvw60obn7S0Ohje+Z1XOGg/gXZLKdmUUlxai+vYOcQRb0LNpdsjm8WHJNkS7
+         Yc54TJd6QF5bJdstuFwkToR9+riqv+Q8dv29ryQ2ib80zMPiP7qHbQjcCtqY2ZHZSiuG
+         8lrKzL5HiSjWm0o4sAyAPnNByqGIpJk+IomVKPvTct/qf3UwBm7CmMl/ShYgqNeIAmgE
+         ececnT7V+HubxBIBwdPeD5Azfentt5HreFjs/qtoWGm486/hsQQTZ+xjU4BPvlrtSV6J
+         Czig==
+X-Gm-Message-State: AOAM530IFOTVkqA3NhN8NwVOVtATFN1Jj3sIVskXA7Rs0ZSkXZ+S4Hcg
+        FoTRQGBnZjeAT2d57k1fytJXzUoRnHo2ZA==
+X-Google-Smtp-Source: ABdhPJxy5Q2QantP/1nAIpA42y0zMuSNsfAG7ZAl/LlMVllxl4TSu4B8/lkq5CNkZEQ3M1wtD2C0HA==
+X-Received: by 2002:ad4:4c49:: with SMTP id cs9mr37114961qvb.43.1620852914734;
+        Wed, 12 May 2021 13:55:14 -0700 (PDT)
+Received: from [172.19.131.127] ([8.46.72.121])
+        by smtp.gmail.com with ESMTPSA id n17sm975665qke.14.2021.05.12.13.55.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 May 2021 13:55:14 -0700 (PDT)
+Subject: Re: [PATCH] io_thread/x86: don't reset 'cs', 'ss', 'ds' and 'es'
+ registers for io_threads
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Olivier Langlois <olivier@trillion01.com>
+Cc:     Stefan Metzmacher <metze@samba.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        io-uring <io-uring@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>
+References: <8735v3ex3h.ffs@nanos.tec.linutronix.de>
+ <3C41339D-29A2-4AB1-958F-19DB0A92D8D7@amacapital.net>
+ <CAHk-=wh0KoEZXPYMGkfkeVEerSCEF1AiCZSvz9TRrx=Kj74D+Q@mail.gmail.com>
+ <CALCETrV9bCenqzzaW6Ra18tCvNP-my09decTjmLDVZZAQxR6VA@mail.gmail.com>
+ <CAHk-=wgo6XEz3VQ9ntqzWLR3-hm1YXrXUz4_heDs4wcLe9NYvA@mail.gmail.com>
+ <d26e3a82-8a2c-7354-d36b-cac945c208c7@kernel.dk>
+ <CALCETrWmhquicE2C=G2Hmwfj4VNypXVxY-K3CWOkyMe9Edv88A@mail.gmail.com>
+ <CAHk-=wgqK0qUskrzeWXmChErEm32UiOaUmynWdyrjAwNzkDKaw@mail.gmail.com>
+ <8735v3jujv.ffs@nanos.tec.linutronix.de>
+ <CAHk-=wi4Dyg_Z70J_hJbtFLPQDG+Zx3dP2jB5QrOdZC6W6j4Gw@mail.gmail.com>
+ <12710fda-1732-ee55-9ac1-0df9882aa71b@samba.org>
+ <CAHk-=wiR7c-UHh_3Rj-EU8=AbURKchnMFJWW7=5EH=qEUDT8wg@mail.gmail.com>
+ <59ea3b5a-d7b3-b62e-cc83-1f32a83c4ac2@kernel.dk>
+ <17471c9fec18765449ef3a5a4cddc23561b97f52.camel@trillion01.com>
+ <CAHk-=whoJCocFsQ7+Sqq=dkuzHE+RXxvRdd4ZvyYqnsKBqsKAA@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <3df541c3-728c-c63d-eaeb-a4c382e01f0b@kernel.dk>
+Date:   Wed, 12 May 2021 14:55:02 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-X-Received: by 2002:a92:d3c1:: with SMTP id c1mr32529456ilh.21.1620851305578;
- Wed, 12 May 2021 13:28:25 -0700 (PDT)
-Date:   Wed, 12 May 2021 13:28:25 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004d849405c227da64@google.com>
-Subject: [syzbot] WARNING in io_link_timeout_fn
-From:   syzbot <syzbot+5a864149dd970b546223@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAHk-=whoJCocFsQ7+Sqq=dkuzHE+RXxvRdd4ZvyYqnsKBqsKAA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
+On 5/12/21 11:44 AM, Linus Torvalds wrote:
+> On Tue, May 11, 2021 at 9:24 PM Olivier Langlois <olivier@trillion01.com> wrote:
+>>
+>> I have reported an issue that I have with a user process using io_uring
+>> where when it core dumps, the dump fails to be generated.
+>> https://github.com/axboe/liburing/issues/346
+> 
+> I suspect most kernel developers don't have github notifications
+> enabled. I know I have them disabled because it would be *way* too
+> noisy not to.
+> 
+> But maybe Jens does for that libiouring part.
+> 
+>> Pavel did comment to my report and he did point out this thread as
+>> possibly a related issue.
+> 
+> I don't think this is related. The gdb confusion wouldn't affect core
+> dump generation.
+> 
+> I don't see why a core-dump shouldn't work from an IO thread these
+> days - the signal struct and synchronization should all be the same as
+> for a regular user thread.
+> 
+> That said, I do wonder if we should avoid generating core dumps from
+> the IO worker thread itself. The IO thread itself should never get a
+> SIGSEGV/SIGBUS anyway, it should have been turned into -EFAULT.
+> 
+> So maybe the
+> 
+>                 if (current->flags & PF_IO_WORKER)
+>                         goto out;
+> 
+> in kernel/signal.c should be moved up above the do_coredump() logic regardless.
 
-syzbot found the following issue on:
+I actually think that's how I originally had it, but Eric had some comment
+on that and we moved it. IIRC. I'll dig out the conversation.
 
-HEAD commit:    88b06399 Merge tag 'for-5.13-rc1-part2-tag' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13c0d265d00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=807beec6b4d66bf1
-dashboard link: https://syzkaller.appspot.com/bug?extid=5a864149dd970b546223
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10436223d00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1715208bd00000
+> Jens, have you played with core-dumping when there are active io_uring
+> threads? There's a test-program in that github issue report..
 
-The issue was bisected to:
+Yes, I also did that again after the report, and did so again right now
+just to verify. I'm not seeing any issues with coredumps being generated
+if the app crashes, or if I send it SIGILL, for example... I also just
+now tried Olivier's test case, and it seems to dump just fine for me.
 
-commit 91f245d5d5de0802428a478802ec051f7de2f5d6
-Author: Jens Axboe <axboe@kernel.dk>
-Date:   Tue Feb 9 20:48:50 2021 +0000
+I then tried backing out the patch from Stefan, and it works fine with
+that reverted too. So a bit puzzled as to what is going on here...
 
-    io_uring: enable kmemcg account for io_uring requests
+Anyway, I'll check in on that github thread and see if we can narrow
+this down.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=144fbb23d00000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=164fbb23d00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=124fbb23d00000
+-- 
+Jens Axboe
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+5a864149dd970b546223@syzkaller.appspotmail.com
-Fixes: 91f245d5d5de ("io_uring: enable kmemcg account for io_uring requests")
-
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 8784 at fs/io_uring.c:1499 req_ref_sub_and_test fs/io_uring.c:1499 [inline]
-WARNING: CPU: 1 PID: 8784 at fs/io_uring.c:1499 io_put_req_deferred fs/io_uring.c:2191 [inline]
-WARNING: CPU: 1 PID: 8784 at fs/io_uring.c:1499 io_link_timeout_fn+0x96c/0xb20 fs/io_uring.c:6369
-Modules linked in:
-CPU: 1 PID: 8784 Comm: systemd-cgroups Not tainted 5.13.0-rc1-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:req_ref_sub_and_test fs/io_uring.c:1499 [inline]
-RIP: 0010:io_put_req_deferred fs/io_uring.c:2191 [inline]
-RIP: 0010:io_link_timeout_fn+0x96c/0xb20 fs/io_uring.c:6369
-Code: 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 84 f9 fd ff ff e8 ae ff da ff e9 ef fd ff ff e8 f4 03 96 ff <0f> 0b e9 6a fc ff ff e8 e8 03 96 ff 4c 89 ef e8 10 96 ff ff 48 8d
-RSP: 0018:ffffc90000dc0d70 EFLAGS: 00010046
-RAX: 0000000080010001 RBX: ffff88802c080c80 RCX: 0000000000000000
-RDX: ffff8880373954c0 RSI: ffffffff81dece4c RDI: 0000000000000003
-RBP: ffff88802c080cdc R08: 000000000000007f R09: ffff88802c080cdf
-R10: ffffffff81decab3 R11: 0000000000000000 R12: 000000000000007f
-R13: 0000000000000000 R14: ffff88802c15e000 R15: ffff88802c15e680
-FS:  0000000000000000(0000) GS:ffff8880b9d00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f6ba37daab4 CR3: 0000000015bdf000 CR4: 00000000001506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <IRQ>
- __run_hrtimer kernel/time/hrtimer.c:1537 [inline]
- __hrtimer_run_queues+0x609/0xe40 kernel/time/hrtimer.c:1601
- hrtimer_interrupt+0x330/0xa00 kernel/time/hrtimer.c:1663
- local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1089 [inline]
- __sysvec_apic_timer_interrupt+0x146/0x540 arch/x86/kernel/apic/apic.c:1106
- sysvec_apic_timer_interrupt+0x8e/0xc0 arch/x86/kernel/apic/apic.c:1100
- </IRQ>
- asm_sysvec_apic_timer_interrupt+0x12/0x20 arch/x86/include/asm/idtentry.h:647
-RIP: 0010:orc_find arch/x86/kernel/unwind_orc.c:166 [inline]
-RIP: 0010:unwind_next_frame+0x308/0x1ce0 arch/x86/kernel/unwind_orc.c:443
-Code: 48 8d 3c 40 4c 8d 8c 3f cc 27 3d 8e 83 c2 01 49 81 f9 a4 0c dd 8e 0f 83 f3 10 00 00 89 d7 48 8d 3c 7f 48 8d bc 3f cc 27 3d 8e <48> 81 ff a4 0c dd 8e 0f 87 d8 10 00 00 48 8d 3c 85 3c 8f d2 8d 29
-RSP: 0018:ffffc9000918f6a8 EFLAGS: 00000293
-RAX: 000000000002bff1 RBX: 1ffff92001231edd RCX: 000000000002bff1
-RDX: 000000000002bffb RSI: 000000000000b9cd RDI: ffffffff8e4da7ae
-RBP: 0000000000000001 R08: 0000000000000000 R09: ffffffff8e4da772
-R10: fffff52001231efb R11: 0000000000084087 R12: ffffc9000918f7c8
-R13: ffffc9000918f7b5 R14: ffffc9000918f780 R15: ffffffff81b9cd7f
- arch_stack_walk+0x7d/0xe0 arch/x86/kernel/stacktrace.c:25
- stack_trace_save+0x8c/0xc0 kernel/stacktrace.c:121
- kasan_save_stack+0x1b/0x40 mm/kasan/common.c:38
- kasan_set_track+0x1c/0x30 mm/kasan/common.c:46
- kasan_set_free_info+0x20/0x30 mm/kasan/generic.c:357
- ____kasan_slab_free mm/kasan/common.c:360 [inline]
- ____kasan_slab_free mm/kasan/common.c:325 [inline]
- __kasan_slab_free+0xfb/0x130 mm/kasan/common.c:368
- kasan_slab_free include/linux/kasan.h:212 [inline]
- slab_free_hook mm/slub.c:1581 [inline]
- slab_free_freelist_hook+0xdf/0x240 mm/slub.c:1606
- slab_free mm/slub.c:3166 [inline]
- kmem_cache_free+0x8a/0x740 mm/slub.c:3182
- anon_vma_chain_free mm/rmap.c:141 [inline]
- unlink_anon_vmas+0x472/0x860 mm/rmap.c:439
- free_pgtables+0xe2/0x2f0 mm/memory.c:413
- exit_mmap+0x2b7/0x590 mm/mmap.c:3209
- __mmput+0x122/0x470 kernel/fork.c:1096
- mmput+0x58/0x60 kernel/fork.c:1117
- exit_mm kernel/exit.c:502 [inline]
- do_exit+0xb0a/0x2a60 kernel/exit.c:813
- do_group_exit+0x125/0x310 kernel/exit.c:923
- __do_sys_exit_group kernel/exit.c:934 [inline]
- __se_sys_exit_group kernel/exit.c:932 [inline]
- __x64_sys_exit_group+0x3a/0x50 kernel/exit.c:932
- do_syscall_64+0x3a/0xb0 arch/x86/entry/common.c:47
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-RIP: 0033:0x7f6ba4eb3618
-Code: Unable to access opcode bytes at RIP 0x7f6ba4eb35ee.
-RSP: 002b:00007ffd8038caf8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f6ba4eb3618
-RDX: 0000000000000000 RSI: 000000000000003c RDI: 0000000000000000
-RBP: 00007f6ba51908e0 R08: 00000000000000e7 R09: fffffffffffffee8
-R10: 00007f6ba336e158 R11: 0000000000000246 R12: 00007f6ba51908e0
-R13: 00007f6ba5195c20 R14: 0000000000000000 R15: 0000000000000000
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches

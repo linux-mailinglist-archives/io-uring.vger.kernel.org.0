@@ -2,126 +2,114 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AE4AD37B4E7
-	for <lists+io-uring@lfdr.de>; Wed, 12 May 2021 06:24:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 931B937BBAE
+	for <lists+io-uring@lfdr.de>; Wed, 12 May 2021 13:20:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229597AbhELEZn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 12 May 2021 00:25:43 -0400
-Received: from cloud48395.mywhc.ca ([173.209.37.211]:36816 "EHLO
-        cloud48395.mywhc.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229447AbhELEZm (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 12 May 2021 00:25:42 -0400
-Received: from modemcable064.203-130-66.mc.videotron.ca ([66.130.203.64]:53822 helo=[192.168.1.177])
-        by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <olivier@trillion01.com>)
-        id 1lggQD-00008a-LO; Wed, 12 May 2021 00:24:33 -0400
-Message-ID: <17471c9fec18765449ef3a5a4cddc23561b97f52.camel@trillion01.com>
-Subject: Re: [PATCH] io_thread/x86: don't reset 'cs', 'ss', 'ds' and 'es'
- registers for io_threads
-From:   Olivier Langlois <olivier@trillion01.com>
-To:     Jens Axboe <axboe@kernel.dk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Stefan Metzmacher <metze@samba.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>
-Date:   Wed, 12 May 2021 00:24:32 -0400
-In-Reply-To: <59ea3b5a-d7b3-b62e-cc83-1f32a83c4ac2@kernel.dk>
-References: <8735v3ex3h.ffs@nanos.tec.linutronix.de>
-         <3C41339D-29A2-4AB1-958F-19DB0A92D8D7@amacapital.net>
-         <CAHk-=wh0KoEZXPYMGkfkeVEerSCEF1AiCZSvz9TRrx=Kj74D+Q@mail.gmail.com>
-         <CALCETrV9bCenqzzaW6Ra18tCvNP-my09decTjmLDVZZAQxR6VA@mail.gmail.com>
-         <CAHk-=wgo6XEz3VQ9ntqzWLR3-hm1YXrXUz4_heDs4wcLe9NYvA@mail.gmail.com>
-         <d26e3a82-8a2c-7354-d36b-cac945c208c7@kernel.dk>
-         <CALCETrWmhquicE2C=G2Hmwfj4VNypXVxY-K3CWOkyMe9Edv88A@mail.gmail.com>
-         <CAHk-=wgqK0qUskrzeWXmChErEm32UiOaUmynWdyrjAwNzkDKaw@mail.gmail.com>
-         <8735v3jujv.ffs@nanos.tec.linutronix.de>
-         <CAHk-=wi4Dyg_Z70J_hJbtFLPQDG+Zx3dP2jB5QrOdZC6W6j4Gw@mail.gmail.com>
-         <12710fda-1732-ee55-9ac1-0df9882aa71b@samba.org>
-         <CAHk-=wiR7c-UHh_3Rj-EU8=AbURKchnMFJWW7=5EH=qEUDT8wg@mail.gmail.com>
-         <59ea3b5a-d7b3-b62e-cc83-1f32a83c4ac2@kernel.dk>
-Organization: Trillion01 Inc
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.40.1 
+        id S230168AbhELLVl convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+io-uring@lfdr.de>); Wed, 12 May 2021 07:21:41 -0400
+Received: from mailgate.zerties.org ([144.76.28.47]:58162 "EHLO
+        mailgate.zerties.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230037AbhELLVk (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 12 May 2021 07:21:40 -0400
+Received: from eduroam-185-226.wlan.tu-harburg.de ([134.28.185.226] helo=localhost)
+        by mailgate.zerties.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <stettberger@dokucode.de>)
+        id 1lgmuj-0005E9-2r; Wed, 12 May 2021 11:20:30 +0000
+From:   Christian Dietrich <stettberger@dokucode.de>
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring <io-uring@vger.kernel.org>
+Cc:     Horst Schirmeier <horst.schirmeier@tu-dortmund.de>,
+        "Franz-B. Tuneke" <franz-bernhard.tuneke@tu-dortmund.de>
+In-Reply-To: <c45d633e-1278-1dcb-0d59-f0886abc3e60@gmail.com>
+Organization: Technische =?utf-8?Q?Universit=C3=A4t?= Hamburg
+References: <s7bsg4slmn3.fsf@dokucode.de>
+ <9b3a8815-9a47-7895-0f4d-820609c15e9b@gmail.com>
+ <s7btuo6wi7l.fsf@dokucode.de>
+ <4a553a51-50ff-e986-acf0-da9e266d97cd@gmail.com>
+ <s7bmttssyl4.fsf@dokucode.de>
+ <f1e5d6cf-08a9-9110-071f-e89b09837e37@gmail.com>
+ <s7bv985te4l.fsf@dokucode.de>
+ <46229c8c-7e9d-9232-1e97-d1716dfc3056@gmail.com>
+ <s7bpmy5pcc3.fsf@dokucode.de> <s7bbl9pp39g.fsf@dokucode.de>
+ <c45d633e-1278-1dcb-0d59-f0886abc3e60@gmail.com>
+X-Commit-Hash-org: d18408fc8e33b9521828b731e7d04f3eb9eaa916
+X-Commit-Hash-Maildir: 32898faea6b599e182c6b1687fb9971becc55f2a
+Date:   Wed, 12 May 2021 13:20:27 +0200
+Message-ID: <s7beeec8ah0.fsf@dokucode.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - trillion01.com
-X-Get-Message-Sender-Via: cloud48395.mywhc.ca: authenticated_id: olivier@trillion01.com
-X-Authenticated-Sender: cloud48395.mywhc.ca: olivier@trillion01.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-SA-Do-Not-Rej: Yes
+X-SA-Exim-Connect-IP: 134.28.185.226
+X-SA-Exim-Mail-From: stettberger@dokucode.de
+X-Spam-Checker-Version: SpamAssassin 3.4.4 (2020-01-24) on mailgate.zerties.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.9 required=4.0 tests=ALL_TRUSTED,BAYES_00,
+        URIBL_BLOCKED shortcircuit=no autolearn=ham autolearn_force=no
+        version=3.4.4
+Subject: Re: [RFC] Programming model for io_uring + eBPF
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, 2021-05-03 at 20:50 -0600, Jens Axboe wrote:
-> 
-> I tested the below, which is the two combined, with a case that
-> deliberately has two types of io threads - one for SQPOLL submission,
-> and one that was created due to async work being needed. gdb attaches
-> just fine to the creator, with a slight complaint:
-> 
-> Attaching to process 370
-> [New LWP 371]
-> [New LWP 372]
-> Error while reading shared library symbols for
-> /usr/lib/libpthread.so.0:
-> Cannot find user-level thread for LWP 372: generic error
-> 0x00007f1a74675125 in clock_nanosleep@GLIBC_2.2.5 () from
-> /usr/lib/libc.so.6
-> (gdb) info threads
-> † Id†† Target Id†††††††††††† Frame 
-> * 1††† LWP 370 "io_uring"††† 0x00007f1a74675125 in
-> clock_nanosleep@GLIBC_2.2.5 ()
-> †† from /usr/lib/libc.so.6
-> † 2††† LWP 371 "iou-sqp-370" 0x00007f1a746a7a9d in syscall () from
-> /usr/lib/libc.so.6
-> † 3††† LWP 372 "io_uring"††† 0x00007f1a74675125 in
-> clock_nanosleep@GLIBC_2.2.5 ()
-> †† from /usr/lib/libc.so.6
-> 
-> (gdb) thread 2
-> [Switching to thread 2 (LWP 371)]
-> #0† 0x00007f1a746a7a9d in syscall () from /usr/lib/libc.so.6
-> (gdb) bt
-> #0† 0x00007f1a746a7a9d in syscall () from /usr/lib/libc.so.6
-> Backtrace stopped: Cannot access memory at address 0x0
-> 
-> (gdb) thread 1
-> [Switching to thread 1 (LWP 370)]
-> #0† 0x00007f1a74675125 in clock_nanosleep@GLIBC_2.2.5 () from
-> /usr/lib/libc.so.6
-> (gdb) bt
-> #0† 0x00007f1a74675125 in clock_nanosleep@GLIBC_2.2.5 () from
-> /usr/lib/libc.so.6
-> #1† 0x00007f1a7467a357 in nanosleep () from /usr/lib/libc.so.6
-> #2† 0x00007f1a7467a28e in sleep () from /usr/lib/libc.so.6
-> #3† 0x000055bd41e929ba in main (argc=<optimized out>, argv=<optimized
-> out>)
-> ††† at t/io_uring.c:658
-> 
-> which looks very reasonable to me - no backtraces for the io threads,
-> and
-> no arch complaints.
-> 
-I have reported an issue that I have with a user process using io_uring
-where when it core dumps, the dump fails to be generated.
-https://github.com/axboe/liburing/issues/346
+Pavel Begunkov <asml.silence@gmail.com> [07. May 2021]:
 
-Pavel did comment to my report and he did point out this thread as
-possibly a related issue.
+>> The following SQE would become: Append this SQE to the SQE-link chain
+>> with the name '1'. If the link chain has completed, start a new one.
+>> Thereby, the user could add an SQE to an existing link chain, even other
+>> SQEs are already submitted.
+>> 
+>>>     sqe->flags |= IOSQE_SYNCHRONIZE;
+>>>     sqe->synchronize_group = 1;     // could probably be restricted to uint8_t.
+>> 
+>> Implementation wise, we would hold a pointer to the last element of the
+>> implicitly generated link chain.
+>
+> It will be in the common path hurting performance for those not using
+> it, and with no clear benefit that can't be implemented in userspace.
+> And io_uring is thin enough for all those extra ifs to affect end
+> performance.
+>
+> Let's consider if we run out of userspace options.
 
-I'm far from being 100% convinced that Stefan patch can help but I am
-going to give it a try and report back here if it does help.
+So summarize my proposal: I want io_uring to support implicit
+synchronization by sequentialization at submit time. Doing this would
+avoid the overheads of locking (and potentially sleeping).
 
-Greetings,
-Olivier
+So the problem that I see with a userspace solution is the following:
+If I want to sequentialize an SQE with another SQE that was submitted
+waaaaaay earlier, the usual IOSQE_IO_LINK cannot be used as I cannot the
+the link flag of that already submitted SQE. Therefore, I would have to
+wait in userspace for the CQE and submit my second SQE lateron.
 
+Especially if the goal is to remain in Kernelspace as long as possible
+via eBPF-SQEs this is not optimal.
+
+> Such things go really horribly with performant APIs as io_uring, even
+> if not used. Just see IOSQE_IO_DRAIN, it maybe almost never used but
+> still in the hot path.
+
+If we extend the semantic of IOSEQ_IO_LINK instead of introducing a new
+flag, we should be able to limit the problem, or?
+
+- With synchronize_group=0, the usual link-the-next SQE semantic could
+  remain.
+- While synchronize_group!=0 could expose the described synchronization
+  semantic.
+
+Thereby, the overhead is at least hidden behind the existing check for
+IOSEQ_IO_LINK, which is there anyway. Do you consider IOSQE_IO_LINK=1
+part of the hot path?
+
+chris
+-- 
+Prof. Dr.-Ing. Christian Dietrich
+Operating System Group (E-EXK4)
+Technische Universit√§t Hamburg
+Am Schwarzenberg-Campus 3 (E), 4.092
+21073 Hamburg
+
+eMail:  christian.dietrich@tuhh.de
+Tel:    +49 40 42878 2188
+WWW:    https://osg.tuhh.de/

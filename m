@@ -2,104 +2,109 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C6FC37F3AF
-	for <lists+io-uring@lfdr.de>; Thu, 13 May 2021 09:46:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 089B737F660
+	for <lists+io-uring@lfdr.de>; Thu, 13 May 2021 13:07:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231910AbhEMHri (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 13 May 2021 03:47:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37906 "EHLO
+        id S233098AbhEMLIV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 13 May 2021 07:08:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231641AbhEMHrC (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 13 May 2021 03:47:02 -0400
-Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3219FC061760;
-        Thu, 13 May 2021 00:45:51 -0700 (PDT)
-Received: by mail-yb1-xb2b.google.com with SMTP id e190so33774161ybb.10;
-        Thu, 13 May 2021 00:45:51 -0700 (PDT)
+        with ESMTP id S232434AbhEMLIJ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 13 May 2021 07:08:09 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FCA2C061760;
+        Thu, 13 May 2021 04:07:00 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id l4so39312908ejc.10;
+        Thu, 13 May 2021 04:06:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+W/n1QoXcsHe+NwYrSh/O57L0KSIAv6lK9nGMhRnD0I=;
-        b=G8c0euQZvUJR8/LiGUpL5JyZVQjCNDh9eDvua4Y97kxDNOIY+p4Zg7/b5mWMxZxsol
-         FO0jfi3obdmLcGhRG7HveejzOPtOJ6vUMOZEEFsMoHOx/2Sq4pET4pigh5k7VQ56H3I6
-         w/ZbD1+csjJ+BSluu6iuRIS53WsuahDd9beDFgEJ1r78xpscRo+l1zuWlVWvNpgQLSVJ
-         bnbLZy2gBCvBK+pLYNUv3J+x41jEmkC+XSIeOw5RcbyZg7KRcmsYaQZ5NomYkWW77BcN
-         SMl3E7Fc5gvh9V00UF/m/qfqxOte5Yhdm5m0VYalrUB5U/ngVBoVoL5XyfebGioSV/n0
-         EtWQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sYSPPrflhhxfPIkiu9hWxAkdC6u5jwyGv1D2zzGLaRo=;
+        b=OgGIYvew1B3p3Gm5NKC/CZWnAn89K7tk3xPTD89rqSA9cYOENBd3HiPdS9gS7XRoKC
+         URmUcTVXILz7NUEXHXRUZW9WnaridIoKW/zCk8sM4MghW3yzm4jWPLS/qfxPZcgxsDxi
+         XDX/xlQ4RTjXcSIvlqIkB8KJvKHt3N9d7qq90aKvXZVLmtIC1+wP7qCUv1icSkNKLm4b
+         zbVB0Zug1CI5761k8ciFXa4Sp07dT5BpSufNAFaVkl3zDcnb0fCdVyOBZwc4xR3i32/5
+         R0emYNDSH+b2mC5eNuPo7/qC6toCsFnrB4HjcsaSN5i9QzC423pPmf3KpjClt0Gcpgv+
+         j5xQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+W/n1QoXcsHe+NwYrSh/O57L0KSIAv6lK9nGMhRnD0I=;
-        b=iM7qzjbja25g0By+xqAuvDNtJ2a07RSRcTp6ZLFwvh5S4L1g4K6jwpjLcWdIm12yzB
-         19wFCrqmqvHJBWmcBZZkt/Yz5NpnGYmSU9mKjCuYB60/mmyiFb9dfZKhMsVNnplTBwLC
-         acWUF8boDnRhDGtP+BdjxzVkd/sxLf6hf9T8Qi59huTWw2txWKw6fk2S3ghAn+mdnqbo
-         +yKW+j1QjHN8vJxNvfoohSdsFp/SKtlucCtWuk5dLVj5SAgU5BBoj9AMLYIz3Bq+sgHF
-         +AUVexblTj4ARJbCF2l+5I/CvsCSrlsSolTzf5+CGVaWusl6Nj1FF7GtdGqxfcagN7kG
-         BODQ==
-X-Gm-Message-State: AOAM530lO/swIZGOXg1AtsifXsAAuBQe/+MYvcPFlUF7X5RyD5XKnqWw
-        76YMe+r10o/58/iUS7Ev3jtfgUGro+H5m4QFO+E=
-X-Google-Smtp-Source: ABdhPJxnDTyS6SszYWpogLwxuFOjj+CwVec48G3WISHLQL4mhuCIPDZYCR/nhbvqIglJKH5x8tJ473BpYAg35uLd9D8=
-X-Received: by 2002:a25:ac4e:: with SMTP id r14mr18388269ybd.289.1620891950578;
- Thu, 13 May 2021 00:45:50 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210330055957.3684579-1-dkadashev@gmail.com> <20210330055957.3684579-2-dkadashev@gmail.com>
- <20210330071700.kpjoyp5zlni7uejm@wittgenstein> <CAOKbgA6spFzCJO+L_uwm9nhG+5LEo_XjVt7R7D8K=B5BcWSDbA@mail.gmail.com>
- <CAOKbgA6Qrs5DoHsHgBvrSGbyzHcaiGVpP+UBS5f25CtdBx3SdA@mail.gmail.com>
- <20210415100815.edrn4a7cy26wkowe@wittgenstein> <20210415100928.3ukgiaui4rhspiq6@wittgenstein>
- <CAOKbgA6Tn9uLJCAWOzWfysQDmFWcPBCOT6x47D-q-+_tu9z2Hg@mail.gmail.com> <20210415140932.uriiqjx3klzzmluu@wittgenstein>
-In-Reply-To: <20210415140932.uriiqjx3klzzmluu@wittgenstein>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sYSPPrflhhxfPIkiu9hWxAkdC6u5jwyGv1D2zzGLaRo=;
+        b=eoewuexwVg+9YFQ1DPAYtvOMBpJk22eaG/Kg2IR8B8HrVGMlnhgxPuW0Fh1QRVOPFA
+         QGfR3ilpo8AQzr7oPFu6IIoQoKzaxdOQ0brL2i4noSpeRjrDt3X7VLaCrd1Ftru5IO45
+         PNcTR/XNhetEQFtvKAHWyeGjbvEYNlVVp1kJkaUed9iPSWKF5fm0VM4xrLithjpiNpp6
+         84h/1P7LRKqOf7iVNo3sL/cKGQw9Hl4hZNZ1k9x4+NAlmaNGKOlBCo9nFz12tkkvdt3D
+         3cwcF/e/JbeW3C4SvLGy8GkhKCw6sWAyut1N9uneYK6AEn/Sjsz4NHD6W8BXCb/p7uuE
+         KMwQ==
+X-Gm-Message-State: AOAM531RNus8LaRaIwKvVEobPHtpY8UviDI89XM8Kfx86GFdidZ4vwQh
+        Z0NVH5c813e+66EmkWBLG+Q=
+X-Google-Smtp-Source: ABdhPJw/FNYZOLigDM7w0JPB1wwvhx5KEKVVaovv0AnP4JmT++Or/DJcLzrQRPuxqi6gZ1jNpGKT+w==
+X-Received: by 2002:a17:906:5855:: with SMTP id h21mr43445480ejs.522.1620904018831;
+        Thu, 13 May 2021 04:06:58 -0700 (PDT)
+Received: from carbon.v ([108.61.166.58])
+        by smtp.googlemail.com with ESMTPSA id bn7sm1670864ejb.111.2021.05.13.04.06.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 May 2021 04:06:58 -0700 (PDT)
 From:   Dmitry Kadashev <dkadashev@gmail.com>
-Date:   Thu, 13 May 2021 14:45:39 +0700
-Message-ID: <CAOKbgA7JM24D2iuCoVjRV=oC1LW8JCcUMeAWMvFr1GHxb7T57g@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] fs: make do_mkdirat() take struct filename
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
+To:     Jens Axboe <axboe@kernel.dk>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org, io-uring <io-uring@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+        Dmitry Kadashev <dkadashev@gmail.com>
+Subject: [PATCH v4 0/6] io_uring: add mkdirat support
+Date:   Thu, 13 May 2021 18:06:06 +0700
+Message-Id: <20210513110612.688851-1-dkadashev@gmail.com>
+X-Mailer: git-send-email 2.30.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Apr 15, 2021 at 9:09 PM Christian Brauner
-<christian.brauner@ubuntu.com> wrote:
-> Hm, I get your point but if you e.g. look at fs/exec.c we already do
-> have that problem today:
->
->  SYSCALL_DEFINE5(execveat,
->                 int, fd, const char __user *, filename,
->                 const char __user *const __user *, argv,
->                 const char __user *const __user *, envp,
->                 int, flags)
-> {
->         int lookup_flags = (flags & AT_EMPTY_PATH) ? LOOKUP_EMPTY : 0;
->
->         return do_execveat(fd,
->                            getname_flags(filename, lookup_flags, NULL),
->                            argv, envp, flags);
-> }
->
-> The new simple flag helper would simplify things because right now it
-> pretends that it cares about multiple flags where it actually just cares
-> about whether or not empty pathnames are allowed and it forces callers
-> to translate between flags too.
+This adds mkdirat support to io_uring and is heavily based on recently
+added renameat() / unlinkat() support.
 
-Hi Christian,
+The first patch is preparation with no functional changes, makes
+do_mkdirat accept struct filename pointer rather than the user string.
 
-Sorry for the long silence, I got overwhelmed by the primary job and life
-stuff. I've finally carved out some time to work on this. I left out the
-"make getname_flags accept a single boolean instead of flags" bit to
-make the change smaller. If you think it's something that definitely
-should be in this patch set then let me know, I'll put it back in. I'm
-still somewhat concerned about the separation of the capability check
-and the actual logic to get the name, but I guess I'll just post what I
-have and collect comments.
+The second one leverages that to implement mkdirat in io_uring.
 
-I'll send the v4 soon.
+The rest of the patches just convert other similar do_* functions in
+namei.c to accept struct filename, for uniformity with do_mkdirat,
+do_renameat and do_unlinkat. No functional changes there.
+
+Based on io_uring-5.13.
+
+v4:
+- update do_mknodat, do_symlinkat and do_linkat to accept struct
+  filename for uniformity with do_mkdirat, do_renameat and do_unlinkat;
+
+v3:
+- rebase;
+
+v2:
+- do not mess with struct filename's refcount in do_mkdirat, instead add
+  and use __filename_create() that does not drop the name on success;
+
+Dmitry Kadashev (6):
+  fs: make do_mkdirat() take struct filename
+  io_uring: add support for IORING_OP_MKDIRAT
+  fs: make do_mknodat() take struct filename
+  fs: make do_symlinkat() take struct filename
+  namei: add getname_uflags()
+  fs: make do_linkat() take struct filename
+
+ fs/exec.c                     |   8 +-
+ fs/internal.h                 |   1 +
+ fs/io_uring.c                 |  55 ++++++++++++++
+ fs/namei.c                    | 135 +++++++++++++++++++++++-----------
+ include/linux/fs.h            |   1 +
+ include/uapi/linux/io_uring.h |   1 +
+ 6 files changed, 152 insertions(+), 49 deletions(-)
 
 -- 
-Dmitry Kadashev
+2.30.2
+

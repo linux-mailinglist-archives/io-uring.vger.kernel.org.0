@@ -2,44 +2,43 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E75B38010E
-	for <lists+io-uring@lfdr.de>; Fri, 14 May 2021 02:08:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DCBB38011D
+	for <lists+io-uring@lfdr.de>; Fri, 14 May 2021 02:21:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231311AbhENAJT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 13 May 2021 20:09:19 -0400
-Received: from mail-il1-f197.google.com ([209.85.166.197]:44625 "EHLO
-        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230466AbhENAJS (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 13 May 2021 20:09:18 -0400
-Received: by mail-il1-f197.google.com with SMTP id p6-20020a92d6860000b02901bb4be9e3c1so2054201iln.11
-        for <io-uring@vger.kernel.org>; Thu, 13 May 2021 17:08:08 -0700 (PDT)
+        id S231597AbhENAWQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 13 May 2021 20:22:16 -0400
+Received: from mail-io1-f70.google.com ([209.85.166.70]:36521 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229701AbhENAWQ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 13 May 2021 20:22:16 -0400
+Received: by mail-io1-f70.google.com with SMTP id q3-20020a5d9f030000b029043969850b7eso11075660iot.3
+        for <io-uring@vger.kernel.org>; Thu, 13 May 2021 17:21:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
          :from:to;
-        bh=cXyNGd9Vrd2aON7CjiL60tt9ApHuhPJmJpF0UyZNllw=;
-        b=boZs8sSvxWrC594rBj36YHHQZAri9yrAgjpQ8Zk0cNjMJB6W83EBfWXLSBgmCpUmtg
-         g2U+FPZRqObUtmemjYb5okTqag+WwRJ6Z1itaNtFWqqFR0aVN7qiSIH7875dVAJ4dlDE
-         hXj+mP4CpJZO/Y6h9k3a1hvUbshQzAi5oZrfcW3rdC5/787v+15zRn6Hy6ZvylLASjHP
-         /WCm9kxZj4pCjHfubBTDebR0hUDkW2pSPhj9ydjO6MzKWJm8IBEAFzSa+KvgIok/OtJp
-         jTfrncrv7oHrQNfk8JU63Br4Y/2EDeZGTtqR7C4A3+4UdnU7DdR5YExMa0rPaHFt9Rku
-         TykQ==
-X-Gm-Message-State: AOAM531Id/arn25nYsNSXWKb4YE4++PZ3sLwLtN2MJSJx2UZ7MAva0+X
-        YfsgaUu/bJkK0l1BJc/iLkgiu5HjieM9CnPuQDLGYHiOb/Or
-X-Google-Smtp-Source: ABdhPJwOaEbURDnPKBMzitivcDtxibTJxpVP8paGWM4P05ST1L7tdcG9nXvIXXTcmWfsN+xmlHc9t75I8WycfQHrt6QM4wMZIN8m
+        bh=qs3j7sN54gCoXeBCa9Mh9bdRmfPvxJxpxP8e3oLlm1w=;
+        b=gTd2FCscIUYOerR7EnqEL12s7vQrLyWfzuv4TUqg9jiv5QmVcqpDQgkjK32v/VWe3K
+         XbtYBRyMdkkBKgGNW0p3Gm93vVfNNvZVE8sTYIpl2mChKRegfqlnomeIDXY8/d9VatBY
+         wBmrVbuswpEbuovVyog7Dq6kLKLiHukCdyiZfH2K08S2yy7YuVnfSSJehQ3B0HPoVqC8
+         IvBE0lYrlvFqnKsBPlHEGMayeH6M8HiiXhjCI8aUEgIhV0O9hDWopArsK1LIJoe89/QM
+         r1ol0Ru86YaqIag+KiJPz3wB/1yVqih9HLz7dEWIRLAQPblld8cYus805PdNvqPGcLjV
+         UwaQ==
+X-Gm-Message-State: AOAM533myj2YlXjm8DrwPmiOR7+zsXQ/RSpIkwa3GEotTIi2KeKcnA/E
+        QjwHAdVqrV1sYta/sG9kYHlWzNqUqDLWC99OpCvqpemwVQKv
+X-Google-Smtp-Source: ABdhPJw1QvMSgVwOc0L830Blrmnf2bkJxl1lgI9velE3PSYN7v2VHGvKjKey1hPwVJkc3RPr/175q8DNhq0IE4ic5B4Mpsgf4sKs
 MIME-Version: 1.0
-X-Received: by 2002:a6b:c981:: with SMTP id z123mr31798891iof.6.1620950887615;
- Thu, 13 May 2021 17:08:07 -0700 (PDT)
-Date:   Thu, 13 May 2021 17:08:07 -0700
-In-Reply-To: <8915be59-5ac9-232d-878e-b09c141059d5@gmail.com>
+X-Received: by 2002:a05:6e02:de7:: with SMTP id m7mr29942456ilj.76.1620951665414;
+ Thu, 13 May 2021 17:21:05 -0700 (PDT)
+Date:   Thu, 13 May 2021 17:21:05 -0700
+In-Reply-To: <eb659001-f646-95e7-2037-8615e116582f@gmail.com>
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000dacff205c23f0955@google.com>
-Subject: Re: [syzbot] WARNING in io_link_timeout_fn
-From:   syzbot <syzbot+5a864149dd970b546223@syzkaller.appspotmail.com>
+Message-ID: <00000000000037188905c23f3816@google.com>
+Subject: Re: [syzbot] INFO: task hung in io_ring_exit_work
+From:   syzbot <syzbot+93f72b3885406bb09e0d@syzkaller.appspotmail.com>
 To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
@@ -48,67 +47,434 @@ X-Mailing-List: io-uring@vger.kernel.org
 Hello,
 
 syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KASAN: use-after-free Read in hrtimer_active
+INFO: task hung in io_ring_exit_work
 
-==================================================================
-BUG: KASAN: use-after-free in hrtimer_active+0x1d6/0x1f0 kernel/time/hrtimer.c:1462
-Read of size 8 at addr ffff8880129a64b8 by task syz-executor.0/9928
+INFO: task kworker/u4:1:25 blocked for more than 143 seconds.
+      Not tainted 5.12.0-syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/u4:1    state:D stack:26336 pid:   25 ppid:     2 flags:0x00004000
+Workqueue: events_unbound io_ring_exit_work
+Call Trace:
+ context_switch kernel/sched/core.c:4339 [inline]
+ __schedule+0x916/0x2410 kernel/sched/core.c:5147
+ schedule+0xcf/0x270 kernel/sched/core.c:5226
+ schedule_timeout+0x1db/0x250 kernel/time/timer.c:1868
+ do_wait_for_common kernel/sched/completion.c:85 [inline]
+ __wait_for_common kernel/sched/completion.c:106 [inline]
+ wait_for_common kernel/sched/completion.c:117 [inline]
+ wait_for_completion+0x168/0x270 kernel/sched/completion.c:138
+ io_ring_exit_work+0x4a9/0x15f0 fs/io_uring.c:8774
+ process_one_work+0x98d/0x1600 kernel/workqueue.c:2275
+ worker_thread+0x64c/0x1120 kernel/workqueue.c:2421
+ kthread+0x3b1/0x4a0 kernel/kthread.c:313
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+INFO: task kworker/u4:3:109 blocked for more than 144 seconds.
+      Not tainted 5.12.0-syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/u4:3    state:D stack:26200 pid:  109 ppid:     2 flags:0x00004000
+Workqueue: events_unbound io_ring_exit_work
+Call Trace:
+ context_switch kernel/sched/core.c:4339 [inline]
+ __schedule+0x916/0x2410 kernel/sched/core.c:5147
+ schedule+0xcf/0x270 kernel/sched/core.c:5226
+ schedule_timeout+0x1db/0x250 kernel/time/timer.c:1868
+ do_wait_for_common kernel/sched/completion.c:85 [inline]
+ __wait_for_common kernel/sched/completion.c:106 [inline]
+ wait_for_common kernel/sched/completion.c:117 [inline]
+ wait_for_completion+0x168/0x270 kernel/sched/completion.c:138
+ io_ring_exit_work+0x4a9/0x15f0 fs/io_uring.c:8774
+ process_one_work+0x98d/0x1600 kernel/workqueue.c:2275
+ worker_thread+0x64c/0x1120 kernel/workqueue.c:2421
+ kthread+0x3b1/0x4a0 kernel/kthread.c:313
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+INFO: task kworker/u4:6:10251 blocked for more than 144 seconds.
+      Not tainted 5.12.0-syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/u4:6    state:D stack:26336 pid:10251 ppid:     2 flags:0x00004000
+Workqueue: events_unbound io_ring_exit_work
+Call Trace:
+ context_switch kernel/sched/core.c:4339 [inline]
+ __schedule+0x916/0x2410 kernel/sched/core.c:5147
+ schedule+0xcf/0x270 kernel/sched/core.c:5226
+ schedule_timeout+0x1db/0x250 kernel/time/timer.c:1868
+ do_wait_for_common kernel/sched/completion.c:85 [inline]
+ __wait_for_common kernel/sched/completion.c:106 [inline]
+ wait_for_common kernel/sched/completion.c:117 [inline]
+ wait_for_completion+0x168/0x270 kernel/sched/completion.c:138
+ io_ring_exit_work+0x4a9/0x15f0 fs/io_uring.c:8774
+ process_one_work+0x98d/0x1600 kernel/workqueue.c:2275
+ worker_thread+0x64c/0x1120 kernel/workqueue.c:2421
+ kthread+0x3b1/0x4a0 kernel/kthread.c:313
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
 
-CPU: 0 PID: 9928 Comm: syz-executor.0 Not tainted 5.12.0-syzkaller #0
+Showing all locks held in the system:
+3 locks held by systemd/1:
+2 locks held by kworker/u4:0/9:
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x871/0x1600 kernel/workqueue.c:2246
+ #1: ffffc90000ce7da8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x8a5/0x1600 kernel/workqueue.c:2250
+2 locks held by kworker/u4:1/25:
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x871/0x1600 kernel/workqueue.c:2246
+ #1: ffffc90000dffda8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x8a5/0x1600 kernel/workqueue.c:2250
+2 locks held by kworker/u4:2/50:
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x871/0x1600 kernel/workqueue.c:2246
+ #1: ffffc90000effda8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x8a5/0x1600 kernel/workqueue.c:2250
+2 locks held by kworker/u4:3/109:
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x871/0x1600 kernel/workqueue.c:2246
+ #1: ffffc90000e6fda8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x8a5/0x1600 kernel/workqueue.c:2250
+2 locks held by kworker/u4:4/225:
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x871/0x1600 kernel/workqueue.c:2246
+ #1: ffffc900018dfda8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x8a5/0x1600 kernel/workqueue.c:2250
+1 lock held by khungtaskd/1633:
+ #0: ffffffff8b778460 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x53/0x260 kernel/locking/lockdep.c:6333
+1 lock held by kswapd0/2125:
+ #0: ffffffff8b891ce0 (fs_reclaim){+.+.}-{0:0}, at: __fs_reclaim_acquire+0x0/0x30 mm/page_alloc.c:5203
+2 locks held by kswapd1/2132:
+2 locks held by kworker/u4:5/3224:
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x871/0x1600 kernel/workqueue.c:2246
+ #1: ffffc90003187da8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x8a5/0x1600 kernel/workqueue.c:2250
+2 locks held by systemd-udevd/4838:
+ #0: ffff88802104f288 (&type->i_mutex_dir_key#4){++++}-{3:3}, at: inode_lock_shared include/linux/fs.h:786 [inline]
+ #0: ffff88802104f288 (&type->i_mutex_dir_key#4){++++}-{3:3}, at: lookup_slow fs/namei.c:1645 [inline]
+ #0: ffff88802104f288 (&type->i_mutex_dir_key#4){++++}-{3:3}, at: walk_component+0x409/0x6a0 fs/namei.c:1942
+ #1: ffff8880b9e35258 (&rq->lock){-.-.}-{2:2}, at: rq_lock kernel/sched/sched.h:1334 [inline]
+ #1: ffff8880b9e35258 (&rq->lock){-.-.}-{2:2}, at: __schedule+0x21c/0x2410 kernel/sched/core.c:5061
+1 lock held by in:imklog/8101:
+6 locks held by rs:main Q:Reg/8104:
+4 locks held by syz-executor.4/8806:
+ #0: ffffffff8b843230 (dup_mmap_sem){.+.+}-{0:0}, at: dup_mmap kernel/fork.c:479 [inline]
+ #0: ffffffff8b843230 (dup_mmap_sem){.+.+}-{0:0}, at: dup_mm+0x108/0x1380 kernel/fork.c:1369
+ #1: ffff8880209a4758 (&mm->mmap_lock#2){++++}-{3:3}, at: mmap_write_lock_killable include/linux/mmap_lock.h:87 [inline]
+ #1: ffff8880209a4758 (&mm->mmap_lock#2){++++}-{3:3}, at: dup_mmap kernel/fork.c:480 [inline]
+ #1: ffff8880209a4758 (&mm->mmap_lock#2){++++}-{3:3}, at: dup_mm+0x12e/0x1380 kernel/fork.c:1369
+ #2: ffff8880690e1d58 (&mm->mmap_lock/1){+.+.}-{3:3}, at: mmap_write_lock_nested include/linux/mmap_lock.h:78 [inline]
+ #2: ffff8880690e1d58 (&mm->mmap_lock/1){+.+.}-{3:3}, at: dup_mmap kernel/fork.c:489 [inline]
+ #2: ffff8880690e1d58 (&mm->mmap_lock/1){+.+.}-{3:3}, at: dup_mm+0x18a/0x1380 kernel/fork.c:1369
+ #3: ffffffff8b891ce0 (fs_reclaim){+.+.}-{0:0}, at: fs_reclaim_acquire+0xf7/0x150 mm/page_alloc.c:4354
+5 locks held by syz-executor.0/8813:
+ #0: ffffffff8b843230 (dup_mmap_sem){.+.+}-{0:0}, at: dup_mmap kernel/fork.c:479 [inline]
+ #0: ffffffff8b843230 (dup_mmap_sem){.+.+}-{0:0}, at: dup_mm+0x108/0x1380 kernel/fork.c:1369
+ #1: ffff8880209a3958 (&mm->mmap_lock#2){++++}-{3:3}, at: mmap_write_lock_killable include/linux/mmap_lock.h:87 [inline]
+ #1: ffff8880209a3958 (&mm->mmap_lock#2){++++}-{3:3}, at: dup_mmap kernel/fork.c:480 [inline]
+ #1: ffff8880209a3958 (&mm->mmap_lock#2){++++}-{3:3}, at: dup_mm+0x12e/0x1380 kernel/fork.c:1369
+ #2: ffff8880690e1658 (&mm->mmap_lock/1){+.+.}-{3:3}, at: mmap_write_lock_nested include/linux/mmap_lock.h:78 [inline]
+ #2: ffff8880690e1658 (&mm->mmap_lock/1){+.+.}-{3:3}, at: dup_mmap kernel/fork.c:489 [inline]
+ #2: ffff8880690e1658 (&mm->mmap_lock/1){+.+.}-{3:3}, at: dup_mm+0x18a/0x1380 kernel/fork.c:1369
+ #3: ffffffff8b891ce0 (fs_reclaim){+.+.}-{0:0}, at: fs_reclaim_acquire+0xf7/0x150 mm/page_alloc.c:4354
+ #4: ffff8880b9e35258 (&rq->lock){-.-.}-{2:2}, at: rq_lock kernel/sched/sched.h:1334 [inline]
+ #4: ffff8880b9e35258 (&rq->lock){-.-.}-{2:2}, at: __schedule+0x21c/0x2410 kernel/sched/core.c:5061
+4 locks held by syz-executor.3/8814:
+ #0: ffffffff8b843230 (dup_mmap_sem){.+.+}-{0:0}, at: dup_mmap kernel/fork.c:479 [inline]
+ #0: ffffffff8b843230 (dup_mmap_sem){.+.+}-{0:0}, at: dup_mm+0x108/0x1380 kernel/fork.c:1369
+ #1: ffff88802f189d58 (&mm->mmap_lock#2){++++}-{3:3}, at: mmap_write_lock_killable include/linux/mmap_lock.h:87 [inline]
+ #1: ffff88802f189d58 (&mm->mmap_lock#2){++++}-{3:3}, at: dup_mmap kernel/fork.c:480 [inline]
+ #1: ffff88802f189d58 (&mm->mmap_lock#2){++++}-{3:3}, at: dup_mm+0x12e/0x1380 kernel/fork.c:1369
+ #2: ffff8880b9f24218 (&base->lock){-.-.}-{2:2}, at: lock_timer_base+0x5a/0x1f0 kernel/time/timer.c:944
+ #3: ffffffff8b778460 (rcu_read_lock){....}-{1:2}, at: trace_sched_stat_runtime include/trace/events/sched.h:519 [inline]
+ #3: ffffffff8b778460 (rcu_read_lock){....}-{1:2}, at: update_curr+0x2e4/0x840 kernel/sched/fair.c:866
+4 locks held by syz-executor.2/8815:
+ #0: ffffffff8b843230 (dup_mmap_sem){.+.+}-{0:0}, at: dup_mmap kernel/fork.c:479 [inline]
+ #0: ffffffff8b843230 (dup_mmap_sem){.+.+}-{0:0}, at: dup_mm+0x108/0x1380 kernel/fork.c:1369
+ #1: ffff8880231e8158 (&mm->mmap_lock#2){++++}-{3:3}, at: mmap_write_lock_killable include/linux/mmap_lock.h:87 [inline]
+ #1: ffff8880231e8158 (&mm->mmap_lock#2){++++}-{3:3}, at: dup_mmap kernel/fork.c:480 [inline]
+ #1: ffff8880231e8158 (&mm->mmap_lock#2){++++}-{3:3}, at: dup_mm+0x12e/0x1380 kernel/fork.c:1369
+ #2: ffff88803833c058 (&mm->mmap_lock/1){+.+.}-{3:3}, at: mmap_write_lock_nested include/linux/mmap_lock.h:78 [inline]
+ #2: ffff88803833c058 (&mm->mmap_lock/1){+.+.}-{3:3}, at: dup_mmap kernel/fork.c:489 [inline]
+ #2: ffff88803833c058 (&mm->mmap_lock/1){+.+.}-{3:3}, at: dup_mm+0x18a/0x1380 kernel/fork.c:1369
+ #3: ffffffff8b891ce0 (fs_reclaim){+.+.}-{0:0}, at: fs_reclaim_acquire+0xf7/0x150 mm/page_alloc.c:4354
+2 locks held by kworker/u4:6/10251:
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x871/0x1600 kernel/workqueue.c:2246
+ #1: ffffc9000b307da8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x8a5/0x1600 kernel/workqueue.c:2250
+2 locks held by kworker/u4:7/10591:
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x871/0x1600 kernel/workqueue.c:2246
+ #1: ffffc9000be5fda8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x8a5/0x1600 kernel/workqueue.c:2250
+2 locks held by kworker/u4:8/10870:
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x871/0x1600 kernel/workqueue.c:2246
+ #1: ffffc9000c9dfda8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x8a5/0x1600 kernel/workqueue.c:2250
+2 locks held by kworker/u4:9/10902:
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x871/0x1600 kernel/workqueue.c:2246
+ #1: ffffc9000caffda8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x8a5/0x1600 kernel/workqueue.c:2250
+2 locks held by kworker/u4:10/11440:
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x871/0x1600 kernel/workqueue.c:2246
+ #1: ffffc9000dbdfda8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x8a5/0x1600 kernel/workqueue.c:2250
+2 locks held by kworker/u4:11/11452:
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x871/0x1600 kernel/workqueue.c:2246
+ #1: ffffc9000dc2fda8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x8a5/0x1600 kernel/workqueue.c:2250
+2 locks held by kworker/u4:12/11543:
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x871/0x1600 kernel/workqueue.c:2246
+ #1: ffffc9000df3fda8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x8a5/0x1600 kernel/workqueue.c:2250
+2 locks held by kworker/u4:13/11689:
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x871/0x1600 kernel/workqueue.c:2246
+ #1: ffffc90001a2fda8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x8a5/0x1600 kernel/workqueue.c:2250
+2 locks held by kworker/u4:14/12369:
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x871/0x1600 kernel/workqueue.c:2246
+ #1: ffffc900034cfda8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x8a5/0x1600 kernel/workqueue.c:2250
+2 locks held by kworker/u4:15/12410:
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x871/0x1600 kernel/workqueue.c:2246
+ #1: ffffc9000363fda8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x8a5/0x1600 kernel/workqueue.c:2250
+2 locks held by kworker/u4:16/12506:
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x871/0x1600 kernel/workqueue.c:2246
+ #1: ffffc9000395fda8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x8a5/0x1600 kernel/workqueue.c:2250
+2 locks held by kworker/u4:17/12529:
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x871/0x1600 kernel/workqueue.c:2246
+ #1: ffffc90003a3fda8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x8a5/0x1600 kernel/workqueue.c:2250
+2 locks held by kworker/u4:18/12743:
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x871/0x1600 kernel/workqueue.c:2246
+ #1: ffffc900041cfda8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x8a5/0x1600 kernel/workqueue.c:2250
+2 locks held by kworker/u4:19/13110:
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x871/0x1600 kernel/workqueue.c:2246
+ #1: ffffc9000a757da8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x8a5/0x1600 kernel/workqueue.c:2250
+2 locks held by kworker/u4:20/13346:
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x871/0x1600 kernel/workqueue.c:2246
+ #1: ffffc9000b017da8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x8a5/0x1600 kernel/workqueue.c:2250
+2 locks held by kworker/u4:21/13619:
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x871/0x1600 kernel/workqueue.c:2246
+ #1: ffffc9000c0cfda8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x8a5/0x1600 kernel/workqueue.c:2250
+2 locks held by kworker/u4:22/14622:
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x871/0x1600 kernel/workqueue.c:2246
+ #1: ffffc90002637da8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x8a5/0x1600 kernel/workqueue.c:2250
+2 locks held by kworker/u4:23/14956:
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x871/0x1600 kernel/workqueue.c:2246
+ #1: ffffc9000385fda8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x8a5/0x1600 kernel/workqueue.c:2250
+2 locks held by kworker/u4:24/14968:
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x871/0x1600 kernel/workqueue.c:2246
+ #1: ffffc900034bfda8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x8a5/0x1600 kernel/workqueue.c:2250
+2 locks held by kworker/u4:25/15611:
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x871/0x1600 kernel/workqueue.c:2246
+ #1: ffffc9000c22fda8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x8a5/0x1600 kernel/workqueue.c:2250
+2 locks held by kworker/u4:27/16130:
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x871/0x1600 kernel/workqueue.c:2246
+ #1: ffffc9000e98fda8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x8a5/0x1600 kernel/workqueue.c:2250
+2 locks held by kworker/u4:29/16444:
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x871/0x1600 kernel/workqueue.c:2246
+ #1: ffffc9000f3dfda8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x8a5/0x1600 kernel/workqueue.c:2250
+2 locks held by kworker/u4:30/16538:
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x871/0x1600 kernel/workqueue.c:2246
+ #1: ffffc9000f4cfda8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x8a5/0x1600 kernel/workqueue.c:2250
+2 locks held by kworker/u4:35/16663:
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x871/0x1600 kernel/workqueue.c:2246
+ #1: ffffc9000fa8fda8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x8a5/0x1600 kernel/workqueue.c:2250
+2 locks held by kworker/u4:36/16739:
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x871/0x1600 kernel/workqueue.c:2246
+ #1: ffffc9000fdbfda8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x8a5/0x1600 kernel/workqueue.c:2250
+2 locks held by kworker/u4:39/16757:
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x871/0x1600 kernel/workqueue.c:2246
+ #1: ffffc9000fcafda8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x8a5/0x1600 kernel/workqueue.c:2250
+2 locks held by kworker/u4:42/16764:
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x871/0x1600 kernel/workqueue.c:2246
+ #1: ffffc9000febfda8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x8a5/0x1600 kernel/workqueue.c:2250
+1 lock held by syz-executor.5/20150:
+ #0: ffffffff8b781668 (rcu_state.exp_mutex){+.+.}-{3:3}, at: exp_funnel_lock kernel/rcu/tree_exp.h:290 [inline]
+ #0: ffffffff8b781668 (rcu_state.exp_mutex){+.+.}-{3:3}, at: synchronize_rcu_expedited+0x4fa/0x620 kernel/rcu/tree_exp.h:837
+1 lock held by syz-executor.5/20155:
+ #0: ffffffff8b781668 (rcu_state.exp_mutex){+.+.}-{3:3}, at: exp_funnel_lock kernel/rcu/tree_exp.h:322 [inline]
+ #0: ffffffff8b781668 (rcu_state.exp_mutex){+.+.}-{3:3}, at: synchronize_rcu_expedited+0x27e/0x620 kernel/rcu/tree_exp.h:837
+1 lock held by syz-executor.4/20156:
+ #0: ffff88802fb58648 (&mapping->i_mmap_rwsem){++++}-{3:3}, at: i_mmap_lock_write include/linux/fs.h:496 [inline]
+ #0: ffff88802fb58648 (&mapping->i_mmap_rwsem){++++}-{3:3}, at: unlink_file_vma+0x82/0x1c0 mm/mmap.c:171
+1 lock held by syz-executor.0/20159:
+ #0: ffff88802fb58648 (&mapping->i_mmap_rwsem){++++}-{3:3}, at: i_mmap_lock_write include/linux/fs.h:496 [inline]
+ #0: ffff88802fb58648 (&mapping->i_mmap_rwsem){++++}-{3:3}, at: unlink_file_vma+0x82/0x1c0 mm/mmap.c:171
+
+=============================================
+
+NMI backtrace for cpu 1
+CPU: 1 PID: 1633 Comm: khungtaskd Not tainted 5.12.0-syzkaller #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
 Call Trace:
  __dump_stack lib/dump_stack.c:79 [inline]
  dump_stack+0x141/0x1d7 lib/dump_stack.c:120
- print_address_description.constprop.0.cold+0x5b/0x2f8 mm/kasan/report.c:233
- __kasan_report mm/kasan/report.c:419 [inline]
- kasan_report.cold+0x7c/0xd8 mm/kasan/report.c:436
- hrtimer_active+0x1d6/0x1f0 kernel/time/hrtimer.c:1462
- hrtimer_try_to_cancel+0x21/0x1e0 kernel/time/hrtimer.c:1180
- io_kill_linked_timeout fs/io_uring.c:1794 [inline]
- io_disarm_next+0x196/0xad0 fs/io_uring.c:1827
- __io_req_find_next+0xca/0x160 fs/io_uring.c:1852
- io_req_find_next fs/io_uring.c:1868 [inline]
- io_queue_next fs/io_uring.c:2070 [inline]
- io_free_req fs/io_uring.c:2078 [inline]
- io_put_req_deferred_cb+0x253/0x4a0 fs/io_uring.c:2180
- __tctx_task_work fs/io_uring.c:1909 [inline]
- tctx_task_work+0x24e/0x550 fs/io_uring.c:1923
- task_work_run+0xdd/0x1a0 kernel/task_work.c:161
- tracehook_notify_signal include/linux/tracehook.h:212 [inline]
- handle_signal_work kernel/entry/common.c:145 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:171 [inline]
- exit_to_user_mode_prepare+0x24a/0x280 kernel/entry/common.c:208
- __syscall_exit_to_user_mode_work kernel/entry/common.c:290 [inline]
- syscall_exit_to_user_mode+0x19/0x60 kernel/entry/common.c:301
- do_syscall_64+0x47/0xb0 arch/x86/entry/common.c:57
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-RIP: 0033:0x4665f9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f9092a97188 EFLAGS: 00000246 ORIG_RAX: 00000000000001aa
-RAX: 0000000000000100 RBX: 000000000056bf60 RCX: 00000000004665f9
-RDX: 0000000000000000 RSI: 000000000000450c RDI: 0000000000000003
-RBP: 00000000004bfce1 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 000000000056bf60
-R13: 0000000000a9fb1f R14: 00007f9092a97300 R15: 0000000000022000
-
-Allocated by task 9928:
- kasan_save_stack+0x1b/0x40 mm/kasan/common.c:38
- kasan_set_track mm/kasan/common.c:46 [inline]
- set_alloc_info mm/kasan/common.c:427 [inline]
- ____kasan_kmalloc mm/kasan/common.c:506 [inline]
- ____kasan_kmalloc mm/kasan/common.c:465 [inline]
- __kasan_kmalloc+0x99/0xc0 mm/kasan/common.c:515
- kmalloc include/linux/slab.h:561 [inline]
- io_alloc_async_data fs/io_uring.c:3116 [inline]
- io_timeout_prep+0x3d9/0x500 fs/io_uring.c:5637
- io_req_prep fs/io_uring.c:5908 [inline]
- io_submit_sqe fs/io_uring.c:6576 [inline]
- io_submit_sqes+0x4e4c/0x6c50 fs/io_uring.c:6734
- __do_sys_io_uring_enter+0xeaf/0x1d50 fs/io_uring.c:9319
- do_syscall_64+0x3a/0xb0 arch/x86/entry/common.c:47
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-
-Freed by task 4826:
+ nmi_cpu_backtrace.cold+0x44/0xd7 lib/nmi_backtrace.c:105
+ nmi_trigger_cpumask_backtrace+0x1b3/0x230 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:146 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:209 [inline]
+ watchdog+0xd48/0xfb0 kernel/hung_task.c:294
+ kthread+0x3b1/0x4a0 kernel/kthread.c:313
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0
+CPU: 0 PID: 4833 Comm: systemd-journal Not tainted 5.12.0-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:stack_trace_consume_entry+0xd3/0x160 kernel/stacktrace.c:92
+Code: 02 00 0f 85 92 00 00 00 8d 45 01 89 43 10 48 8b 03 48 8d 2c e8 48 b8 00 00 00 00 00 fc ff df 48 89 ea 48 c1 ea 03 80 3c 02 00 <75> 5c 48 89 75 00 8b 43 08 39 43 10 0f 92 c0 48 83 c4 08 5b 5d c3
+RSP: 0000:ffffc9000164ef10 EFLAGS: 00000246
+RAX: dffffc0000000000 RBX: ffffc9000164efe8 RCX: 0000000000000000
+RDX: 1ffff920002c9e15 RSI: ffffffff819aeacf RDI: ffffc9000164eff4
+RBP: ffffc9000164f0a8 R08: ffffffff8dd0dd1a R09: 0000000000000001
+R10: fffff520002c9df1 R11: 0000000000084087 R12: ffffc9000164efe8
+R13: 0000000000000000 R14: ffff888025e7d4c0 R15: ffff888010041780
+FS:  00007f3b3381b8c0(0000) GS:ffff8880b9e00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f3b3350d3e0 CR3: 000000001e517000 CR4: 00000000001506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ arch_stack_walk+0x6d/0xe0 arch/x86/kernel/stacktrace.c:27
+ stack_trace_save+0x8c/0xc0 kernel/stacktrace.c:121
  kasan_save_stack+0x1b/0x40 mm/kasan/common.c:38
  kasan_set_track+0x1c/0x30 mm/kasan/common.c:46
  kasan_set_free_info+0x20/0x30 mm/kasan/generic.c:357
@@ -120,96 +486,42 @@ Freed by task 4826:
  slab_free_freelist_hook+0x92/0x210 mm/slub.c:1601
  slab_free mm/slub.c:3162 [inline]
  kfree+0xe5/0x7f0 mm/slub.c:4216
- io_dismantle_req+0x116/0x250 fs/io_uring.c:1743
- io_req_complete_post+0x1d7/0x890 fs/io_uring.c:1600
- io_link_timeout_fn+0x5f7/0xb10 fs/io_uring.c:6369
- __run_hrtimer kernel/time/hrtimer.c:1537 [inline]
- __hrtimer_run_queues+0x609/0xe40 kernel/time/hrtimer.c:1601
- hrtimer_interrupt+0x330/0xa00 kernel/time/hrtimer.c:1663
- local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1089 [inline]
- __sysvec_apic_timer_interrupt+0x146/0x540 arch/x86/kernel/apic/apic.c:1106
- sysvec_apic_timer_interrupt+0x8e/0xc0 arch/x86/kernel/apic/apic.c:1100
- asm_sysvec_apic_timer_interrupt+0x12/0x20 arch/x86/include/asm/idtentry.h:632
-
-The buggy address belongs to the object at ffff8880129a6480
- which belongs to the cache kmalloc-96 of size 96
-The buggy address is located 56 bytes inside of
- 96-byte region [ffff8880129a6480, ffff8880129a64e0)
-The buggy address belongs to the page:
-page:ffffea00004a6980 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x129a6
-flags: 0xfff00000000200(slab|node=0|zone=1|lastcpupid=0x7ff)
-raw: 00fff00000000200 dead000000000100 dead000000000122 ffff888010841780
-raw: 0000000000000000 0000000000200020 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x12cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY), pid 9928, ts 107924339577
- set_page_owner include/linux/page_owner.h:31 [inline]
- post_alloc_hook+0x161/0x1c0 mm/page_alloc.c:2302
- prep_new_page mm/page_alloc.c:2311 [inline]
- get_page_from_freelist+0x1c6f/0x3fb0 mm/page_alloc.c:3951
- __alloc_pages_nodemask+0x2d6/0x730 mm/page_alloc.c:5001
- alloc_pages_current+0x18c/0x2a0 mm/mempolicy.c:2277
- alloc_pages include/linux/gfp.h:561 [inline]
- alloc_slab_page mm/slub.c:1639 [inline]
- allocate_slab+0x2c5/0x4c0 mm/slub.c:1779
- new_slab mm/slub.c:1842 [inline]
- new_slab_objects mm/slub.c:2588 [inline]
- ___slab_alloc+0x44c/0x7a0 mm/slub.c:2751
- __slab_alloc.constprop.0+0xa7/0xf0 mm/slub.c:2791
- slab_alloc_node mm/slub.c:2872 [inline]
- slab_alloc mm/slub.c:2916 [inline]
- __kmalloc+0x2e5/0x300 mm/slub.c:4054
- kmalloc include/linux/slab.h:561 [inline]
- io_alloc_async_data fs/io_uring.c:3116 [inline]
- io_timeout_prep+0x3d9/0x500 fs/io_uring.c:5637
- io_req_prep fs/io_uring.c:5908 [inline]
- io_submit_sqe fs/io_uring.c:6576 [inline]
- io_submit_sqes+0x4e4c/0x6c50 fs/io_uring.c:6734
- __do_sys_io_uring_enter+0xeaf/0x1d50 fs/io_uring.c:9319
- do_syscall_64+0x3a/0xb0 arch/x86/entry/common.c:47
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-page last free stack trace:
- reset_page_owner include/linux/page_owner.h:24 [inline]
- free_pages_prepare mm/page_alloc.c:1271 [inline]
- free_pcp_prepare+0x2cb/0x410 mm/page_alloc.c:1310
- free_unref_page_prepare mm/page_alloc.c:3205 [inline]
- free_unref_page+0x12/0x1d0 mm/page_alloc.c:3253
- qlink_free mm/kasan/quarantine.c:146 [inline]
- qlist_free_all+0x5a/0xc0 mm/kasan/quarantine.c:165
- kasan_quarantine_reduce+0x180/0x200 mm/kasan/quarantine.c:272
- __kasan_slab_alloc+0x7f/0x90 mm/kasan/common.c:437
- kasan_slab_alloc include/linux/kasan.h:223 [inline]
- slab_post_alloc_hook mm/slab.h:516 [inline]
- slab_alloc_node mm/slub.c:2908 [inline]
- slab_alloc mm/slub.c:2916 [inline]
- kmem_cache_alloc+0x153/0x370 mm/slub.c:2921
- getname_flags.part.0+0x50/0x4f0 fs/namei.c:138
- getname_flags include/linux/audit.h:319 [inline]
- getname+0x8e/0xd0 fs/namei.c:209
- do_sys_openat2+0xf5/0x420 fs/open.c:1181
- do_sys_open fs/open.c:1203 [inline]
- __do_sys_open fs/open.c:1211 [inline]
- __se_sys_open fs/open.c:1207 [inline]
- __x64_sys_open+0x119/0x1c0 fs/open.c:1207
- do_syscall_64+0x3a/0xb0 arch/x86/entry/common.c:47
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-
-Memory state around the buggy address:
- ffff8880129a6380: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
- ffff8880129a6400: 00 00 00 00 00 00 00 00 00 00 00 00 fc fc fc fc
->ffff8880129a6480: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
-                                        ^
- ffff8880129a6500: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
- ffff8880129a6580: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
-==================================================================
+ ext4_ext_map_blocks+0xa15/0x5fb0 fs/ext4/extents.c:4332
+ ext4_map_blocks+0x9a8/0x17d0 fs/ext4/inode.c:563
+ ext4_mpage_readpages+0xdc5/0x1f10 fs/ext4/readpage.c:304
+ ext4_readahead+0x102/0x140 fs/ext4/inode.c:3262
+ read_pages+0x1df/0x8d0 mm/readahead.c:130
+ page_cache_ra_unbounded+0x4e4/0x920 mm/readahead.c:210
+ do_page_cache_ra+0xf9/0x140 mm/readahead.c:267
+ do_sync_mmap_readahead mm/filemap.c:2878 [inline]
+ filemap_fault+0x1a61/0x2b50 mm/filemap.c:2966
+ ext4_filemap_fault+0x87/0xc0 fs/ext4/inode.c:6196
+ __do_fault+0x10d/0x4d0 mm/memory.c:3637
+ do_read_fault mm/memory.c:3939 [inline]
+ do_fault mm/memory.c:4067 [inline]
+ handle_pte_fault mm/memory.c:4318 [inline]
+ __handle_mm_fault+0x2c87/0x4f70 mm/memory.c:4453
+ handle_mm_fault+0x1bc/0x7e0 mm/memory.c:4551
+ do_user_addr_fault+0x483/0x1210 arch/x86/mm/fault.c:1390
+ handle_page_fault arch/x86/mm/fault.c:1475 [inline]
+ exc_page_fault+0x9e/0x180 arch/x86/mm/fault.c:1531
+ asm_exc_page_fault+0x1e/0x30 arch/x86/include/asm/idtentry.h:577
+RIP: 0033:0x7f3b3350d3e0
+Code: Unable to access opcode bytes at RIP 0x7f3b3350d3b6.
+RSP: 002b:00007fffed8974a8 EFLAGS: 00010293
+RAX: 00007f3b3381b6c0 RBX: 00007fffed8977b0 RCX: fffffffffffffe00
+RDX: 00000000000001a0 RSI: 0000000000080042 RDI: 000055fa9b261e60
+RBP: 000000000000000d R08: 0000000000000000 R09: 00000000ffffffff
+R10: 0000000000000069 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 00000000fffffffe R14: 00007fffed897770 R15: 000055fa9b261e60
 
 
 Tested on:
 
-commit:         a519b86e io_uring: syz debug output
-git tree:       https://github.com/isilence/linux.git syz_test6
-console output: https://syzkaller.appspot.com/x/log.txt?x=14127779d00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ae2e6c63d6410fd3
-dashboard link: https://syzkaller.appspot.com/bug?extid=5a864149dd970b546223
+commit:         43b8be10 io_uring: test: continue to quiesce on buffers reg
+git tree:       https://github.com/isilence/linux.git syz_test7
+console output: https://syzkaller.appspot.com/x/log.txt?x=1269bfc3d00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f81a36128b448b98
+dashboard link: https://syzkaller.appspot.com/bug?extid=93f72b3885406bb09e0d
 compiler:       
 

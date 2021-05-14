@@ -2,95 +2,64 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 327A138080F
-	for <lists+io-uring@lfdr.de>; Fri, 14 May 2021 13:07:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BEBF380BD7
+	for <lists+io-uring@lfdr.de>; Fri, 14 May 2021 16:32:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230377AbhENLIL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 14 May 2021 07:08:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35100 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229516AbhENLIK (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 14 May 2021 07:08:10 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C7F4C061574
-        for <io-uring@vger.kernel.org>; Fri, 14 May 2021 04:06:58 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id n2so29737172wrm.0
-        for <io-uring@vger.kernel.org>; Fri, 14 May 2021 04:06:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=C7HA2mxb1CmfsNPe9TxX16VXUrE+YBOYQdbQwETx7hg=;
-        b=icHuuyn26JyzUefekoCpoCAkAZht8q2O8t4p5droiupFJnuIAO1aKTEsPOQK0kbFJ9
-         D+FDcxOQdlCAv5EWV+Y8jTb/i949OJL2ZZ5CuunVovZfbqEA/bDB1h5KfCGLk7aubQwQ
-         /ODhbIA3fouHipHTo928dDISzgPGI2oAlTTvg9g3PhHqwm/w8oy1UtlPoQx4QDdVS2NV
-         hYrPhSW3NrHfV0yAIJ9wGvuGGTxZzJ8X/GT9jid8Oj98P06UOjmzW8/LZMjAFVsnAihs
-         zN5iKquy07BfSrp3jpFBUu2FX3vMwWM25HdzRC3uT/PCfBTwSdqGNiHmm80mwbgBN1x3
-         NFTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=C7HA2mxb1CmfsNPe9TxX16VXUrE+YBOYQdbQwETx7hg=;
-        b=I8G4A+7xN1EOlRXhFQtB9RaMhl3QQ+9BZfpQkJDGiGOe9sXkCbOATL4YskLyCTI9np
-         mxkNJcyKLpFKwyFnFjG9Kwo2boe+rGrllVwBTGnBuWdE2NGtb1yrypbOR/IAqTofdsTz
-         fOBQVyJoVpTP0tVoJKrUDki9/Z5rHdXivCm9R8yOeq6yROBCnUAdpybbwHhJAfaHSvMA
-         hVefKo0PWtUFRtCteB03baAW6Cp1D4GNLjF+5Wd0dme5l+oUkAN59ebfklKbNqN9Lsyq
-         +mt9AfkAmTUKxhRPNw6mjkKFqnPSkk470GsI6/XpupIbp0EDKkoH+PkoKaIVGOEGuhg0
-         qmLQ==
-X-Gm-Message-State: AOAM532TDZ0AptPuYs/LFSyhpytxXxdigNouwU3PemYwuZhVts/zJ6Bv
-        gpWSY1FNNPU8CBSG6nSB+dg=
-X-Google-Smtp-Source: ABdhPJyg4dySDLYPomzD1RGSxDd0XtM8ycTGLsuVjuS+1SSezdxySE7pYAssgL7ffmEvjyPp52P+Pg==
-X-Received: by 2002:a5d:64c7:: with SMTP id f7mr56945122wri.257.1620990417001;
-        Fri, 14 May 2021 04:06:57 -0700 (PDT)
-Received: from localhost.localdomain ([148.252.132.196])
-        by smtp.gmail.com with ESMTPSA id n2sm6007326wmb.32.2021.05.14.04.06.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 May 2021 04:06:56 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH] io_uring: increase max number of reg buffers
-Date:   Fri, 14 May 2021 12:06:44 +0100
-Message-Id: <d3dee1da37f46da416aa96a16bf9e5094e10584d.1620990371.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.31.1
+        id S231865AbhENOdS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 14 May 2021 10:33:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41976 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230141AbhENOdS (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Fri, 14 May 2021 10:33:18 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 14C0E6141F;
+        Fri, 14 May 2021 14:32:04 +0000 (UTC)
+Date:   Fri, 14 May 2021 16:32:02 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Dmitry Kadashev <dkadashev@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
+Subject: Re: [PATCH v4 1/6] fs: make do_mkdirat() take struct filename
+Message-ID: <20210514143202.dmzfcgz5hnauy7ze@wittgenstein>
+References: <20210513110612.688851-1-dkadashev@gmail.com>
+ <20210513110612.688851-2-dkadashev@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20210513110612.688851-2-dkadashev@gmail.com>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Since recent changes instead of storing a large array of struct
-io_mapped_ubuf, we store pointers to them, that is 4 times slimmer and
-we should not to so worry about restricting max number of registererd
-buffer slots, increase the limit 4 times.
+On Thu, May 13, 2021 at 06:06:07PM +0700, Dmitry Kadashev wrote:
+> Pass in the struct filename pointers instead of the user string, and
+> update the three callers to do the same. This is heavily based on
+> commit dbea8d345177 ("fs: make do_renameat2() take struct filename").
+> 
+> This behaves like do_unlinkat() and do_renameat2().
+> 
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Signed-off-by: Dmitry Kadashev <dkadashev@gmail.com>
+> ---
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Independent of the following patches I think this is ok and with
+do_renameat2() that form of conversion has precedence.
+Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 9ac5e278a91e..8f718d26f01c 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -100,6 +100,8 @@
- #define IORING_MAX_RESTRICTIONS	(IORING_RESTRICTION_LAST + \
- 				 IORING_REGISTER_LAST + IORING_OP_LAST)
- 
-+#define IORING_MAX_REG_BUFFERS	(1U << 14)
-+
- #define SQE_VALID_FLAGS	(IOSQE_FIXED_FILE|IOSQE_IO_DRAIN|IOSQE_IO_LINK|	\
- 				IOSQE_IO_HARDLINK | IOSQE_ASYNC | \
- 				IOSQE_BUFFER_SELECT)
-@@ -8390,7 +8392,7 @@ static int io_sqe_buffers_register(struct io_ring_ctx *ctx, void __user *arg,
- 
- 	if (ctx->user_bufs)
- 		return -EBUSY;
--	if (!nr_args || nr_args > UIO_MAXIOV)
-+	if (!nr_args || nr_args > IORING_MAX_REG_BUFFERS)
- 		return -EINVAL;
- 	ret = io_rsrc_node_switch_start(ctx);
- 	if (ret)
--- 
-2.31.1
+>  fs/internal.h |  1 +
+>  fs/namei.c    | 22 ++++++++++++++++------
+>  2 files changed, 17 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/internal.h b/fs/internal.h
+> index 6aeae7ef3380..848e165ef0f1 100644
+> --- a/fs/internal.h
+> +++ b/fs/internal.h
+> @@ -77,6 +77,7 @@ long do_unlinkat(int dfd, struct filename *name);
+>  int may_linkat(struct user_namespace *mnt_userns, struct path *link);
+>  int do_renameat2(int olddfd, struct filename *oldname, int newdfd,
+>  		 struct filename *newname, unsigned int flags);
+> +long do_mkdirat(int dfd, struct filename *name, umode_t mode);
 
+(We should probably have all helpers just return either long or int
+instead of alternating between long and int.)

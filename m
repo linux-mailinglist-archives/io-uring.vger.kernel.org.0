@@ -2,61 +2,96 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F18AC38016B
-	for <lists+io-uring@lfdr.de>; Fri, 14 May 2021 03:05:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE45F3807FE
+	for <lists+io-uring@lfdr.de>; Fri, 14 May 2021 13:03:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231869AbhENBGW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 13 May 2021 21:06:22 -0400
-Received: from mail-il1-f198.google.com ([209.85.166.198]:37796 "EHLO
-        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231265AbhENBGV (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 13 May 2021 21:06:21 -0400
-Received: by mail-il1-f198.google.com with SMTP id r13-20020a92cd8d0000b02901a627ef20a2so23558350ilb.4
-        for <io-uring@vger.kernel.org>; Thu, 13 May 2021 18:05:11 -0700 (PDT)
+        id S232316AbhENLEb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 14 May 2021 07:04:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34284 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231364AbhENLEb (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 14 May 2021 07:04:31 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68440C061574
+        for <io-uring@vger.kernel.org>; Fri, 14 May 2021 04:03:20 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id r12so4053362wrp.1
+        for <io-uring@vger.kernel.org>; Fri, 14 May 2021 04:03:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SKMxMIOWFv8tyb3DQCYQ6WmL3t8Xk43yThLEYCbPbXM=;
+        b=HR0g6jh9OIjam1Co5FrCNMWdStQv7OF4DtFZXGFLseTRa8zz1f1DXd16o+f3ToQExA
+         5qI4sCwf7eE4IF5mwraVKGbv53oBdROlW672Emo1J4MHdHjjnSJ6QPhqUhLv/o/8N3nI
+         Jb6zq9xhQFzZFAhSr/gF6+hWFbzo9r5Weow5WSuRcmWVeUpom+nZLVvryXxKEpbomg3v
+         u9/QFhhgF3qg8JUsUbhzonGFFMgVjbYtdBYat5cr52Nj9ImbPRhKIi93nTsuYukjdgDe
+         RDI1WahJL8DZh1KvR6NDRgBTcEU2G7LlpFbNY71R8wVLVLWJ3uXERzucZ1bdFyjW7VoX
+         zBNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=WyhwVb/2nAKSCjZePQHr7y74mXP0pKdra5nG2NU9qyo=;
-        b=EyAjhXoKrQU1/I5SMUf1JqXtIAKBAUqktY1T1t8UPct9yo5397jvd0gH53g0VqqAsb
-         X8IKZ8UTj1VpMQV4/Ur/aPW7IiJLGRUWQuaEmcvfS6E4kjOIy72/VY9eBZlVerzSZDQf
-         c4tRSl1zKCgV4tsWEcIWM0PMsvFhkXZR9eA6R2d+k6F107cZ7WGu12DUvjUN7CoPuouF
-         AeadiAriojf1AaH3lSUHBS0LVk/r1kibO9zUr6+A7BTCuMnAjupycthAXrTyrjsM/Z81
-         +0He9kgXsWOoGOB9JdR8hCwqtTPR6HPHy1D1xGezYk6T3hpXscuXGiB+mfQubnX5B3vX
-         dTcA==
-X-Gm-Message-State: AOAM530nD9E2tqpbiK0zxjmyQUPnllGGURC08PxOAqZgHsepc92cSOnb
-        KpupMO+3c+T6BktEc2RwwkN8Cx45M/zAFcK0y1TXqWFzD28v
-X-Google-Smtp-Source: ABdhPJzQ/Z36cpwXZM75ay+7M7e7JrJdMP6eFRSLZrA/471M4WuQmbzCyB4PZILkNutR+YB8DeBbVbSICSoaUPSnk/lGLMld8n6k
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SKMxMIOWFv8tyb3DQCYQ6WmL3t8Xk43yThLEYCbPbXM=;
+        b=QkeDDg41o3/+1AvAQaRi+t7Y0FoAGewCON6xsR00THFDHbX+tP/JlpziBk4Zw2m129
+         cf3ApJKsDAZ57c0AFQ0WiS4RR9IYbTNG3uwa0/ayKlatRUmverTWPcEWLQJRW7JfvWJb
+         NS0f+Of9oDY6m6yOS5qE+o0WpUDARsLyBZ+TR6Ac8uMfq35sTNW2knLiLzcueprAIQTF
+         RArmiqgRJzZSN525aDvq2+MDUuq23Z9GslqnpD4KbDai4CZNTDEKAJQoly1rWKsLqxae
+         UTcWNW8uKqNNq1VX31bP2wARFRc6V41UCIEqvJPCcD+W+aFfaR42CyyWqEt0VBKY3VGY
+         bFlA==
+X-Gm-Message-State: AOAM531BDlSDe6HVcKVBILWitzs+rVKt7fnCLhIk1s6SzFik05Tym+X7
+        fls60ubdtWPCxWHpD6KuQ2l+JPeSGfk=
+X-Google-Smtp-Source: ABdhPJwHKncToUNQt0UHAFrzV2cmBzjGfLhlmHwn+8oKJpO4/KPcR9mDMj3sBh/8ZJ7idsBclhWP6A==
+X-Received: by 2002:adf:f7c4:: with SMTP id a4mr57127026wrq.20.1620990199128;
+        Fri, 14 May 2021 04:03:19 -0700 (PDT)
+Received: from localhost.localdomain ([148.252.132.196])
+        by smtp.gmail.com with ESMTPSA id s5sm4965744wrw.95.2021.05.14.04.03.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 May 2021 04:03:18 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc:     asml.silence@gmail.com
+Subject: [PATCH 1/1] io_uring: fix ltout double free on completion race
+Date:   Fri, 14 May 2021 12:02:50 +0100
+Message-Id: <69c46bf6ce37fec4fdcd98f0882e18eb07ce693a.1620990121.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-X-Received: by 2002:a02:cac6:: with SMTP id f6mr40166255jap.118.1620954311158;
- Thu, 13 May 2021 18:05:11 -0700 (PDT)
-Date:   Thu, 13 May 2021 18:05:11 -0700
-In-Reply-To: <314c4ece-d8c1-2d13-804b-3652488d09de@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e9f47605c23fd526@google.com>
-Subject: Re: [syzbot] WARNING in io_link_timeout_fn
-From:   syzbot <syzbot+5a864149dd970b546223@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
+Always remove linked timeout on io_link_timeout_fn() from the master
+request link list, otherwise we may get use-after-free when first
+io_link_timeout_fn() puts linked timeout in the fail path, and then
+will be found and put on master's free.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
-
+Cc: stable@vger.kernel.org # 5.10+
+Fixes: 90cd7e424969d ("io_uring: track link timeout's master explicitly")
 Reported-and-tested-by: syzbot+5a864149dd970b546223@syzkaller.appspotmail.com
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ fs/io_uring.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-Tested on:
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 9ac5e278a91e..599102cc6dfc 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -6354,10 +6354,11 @@ static enum hrtimer_restart io_link_timeout_fn(struct hrtimer *timer)
+ 	 * We don't expect the list to be empty, that will only happen if we
+ 	 * race with the completion of the linked work.
+ 	 */
+-	if (prev && req_ref_inc_not_zero(prev))
++	if (prev) {
+ 		io_remove_next_linked(prev);
+-	else
+-		prev = NULL;
++		if (!req_ref_inc_not_zero(prev))
++			prev = NULL;
++	}
+ 	spin_unlock_irqrestore(&ctx->completion_lock, flags);
+ 
+ 	if (prev) {
+-- 
+2.31.1
 
-commit:         b580b3d6 io_uring: always remove ltimeout on cb run
-git tree:       https://github.com/isilence/linux.git syz_test8
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ae2e6c63d6410fd3
-dashboard link: https://syzkaller.appspot.com/bug?extid=5a864149dd970b546223
-compiler:       
-
-Note: testing is done by a robot and is best-effort only.

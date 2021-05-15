@@ -2,83 +2,109 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D8D8C380C94
-	for <lists+io-uring@lfdr.de>; Fri, 14 May 2021 17:11:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24BC938155C
+	for <lists+io-uring@lfdr.de>; Sat, 15 May 2021 05:05:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232316AbhENPMw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 14 May 2021 11:12:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60912 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229524AbhENPMv (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Fri, 14 May 2021 11:12:51 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B3AA5613E6;
-        Fri, 14 May 2021 15:11:37 +0000 (UTC)
-Date:   Fri, 14 May 2021 17:11:34 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Dmitry Kadashev <dkadashev@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org, io-uring <io-uring@vger.kernel.org>
-Subject: Re: [PATCH v3 1/2] fs: make do_mkdirat() take struct filename
-Message-ID: <20210514151134.tefjju5sc4fmk2fq@wittgenstein>
-References: <20210330055957.3684579-1-dkadashev@gmail.com>
- <20210330055957.3684579-2-dkadashev@gmail.com>
- <20210330071700.kpjoyp5zlni7uejm@wittgenstein>
- <CAOKbgA6spFzCJO+L_uwm9nhG+5LEo_XjVt7R7D8K=B5BcWSDbA@mail.gmail.com>
- <CAOKbgA6Qrs5DoHsHgBvrSGbyzHcaiGVpP+UBS5f25CtdBx3SdA@mail.gmail.com>
- <20210415100815.edrn4a7cy26wkowe@wittgenstein>
- <20210415100928.3ukgiaui4rhspiq6@wittgenstein>
- <CAOKbgA6Tn9uLJCAWOzWfysQDmFWcPBCOT6x47D-q-+_tu9z2Hg@mail.gmail.com>
- <20210415140932.uriiqjx3klzzmluu@wittgenstein>
- <CAOKbgA7JM24D2iuCoVjRV=oC1LW8JCcUMeAWMvFr1GHxb7T57g@mail.gmail.com>
+        id S231681AbhEODHK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 14 May 2021 23:07:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50954 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231355AbhEODHK (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 14 May 2021 23:07:10 -0400
+Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38B08C06174A
+        for <io-uring@vger.kernel.org>; Fri, 14 May 2021 20:05:58 -0700 (PDT)
+Received: by mail-pl1-x62f.google.com with SMTP id t4so312536plc.6
+        for <io-uring@vger.kernel.org>; Fri, 14 May 2021 20:05:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=from:subject:to:cc:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=hpQ+QuuUD1IRim24cWYz0AJ2KPRL6JaYgBzzycBbX3c=;
+        b=PsVrHMrOJVc27WAJlTT8N8cAdKHILpAw6xpvH5yK+B463hReZuExRLRxKneziqhmL0
+         HQq2I7/Qs/QhDRJ1+he1rLDd2aUTu0EZfTzhu8XIBXeyQdRduulMwW5SQhP+YLL/eEtp
+         yiwbYoxIamIYQJqY8ZqqBDETCriRA3CLrfYjxBi2yJ1NK8ce9qP0umfZNaEdI8L1uE8x
+         qNc6aDsj6vEbAKOPs4D+8b/RDnJBF1fB4FS5vTd+2VnfZ7wMwpQwkLOPbDYiAlKIE+Dj
+         ORF3Pi4HcUAO02I4cVw0rC5AKuTrSooUwZDRB9m16EDNPKb1YyVyKo+xKRqnhoTouS2r
+         weBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=hpQ+QuuUD1IRim24cWYz0AJ2KPRL6JaYgBzzycBbX3c=;
+        b=n0HZ526gF51LztYDoKziqWOzNye7K39RalaAwBmHo1tSMU4z1xsrDTKLMHZqKnNYl9
+         DPKNikwi4zNEcOS7JmPiKUh7CSI3BTRQVH6F78BT9+BC6BRwZ5WheXjXe8O0+oolzk7b
+         uODBqB/S6FOl+6c0A8PokFTRvbGZkiJYMHCX1CVOGbZx1XSWlcE79vKUj06Dh2EusVAi
+         Me+ygeWrfnwmaGtaGTI2lAYXe4p8eP/XdUQnROOYZdml9gkzbc/weALZrmoyEtKkd3d3
+         S0bYhUDDRL12t3VusaAfzNnlBECp8S/eOilC2TzQeq4qQIlMOskL4eaz3nvPFIZ0sLPf
+         uhRQ==
+X-Gm-Message-State: AOAM530m/780rRS3BqyUX6kXJz299dLKX3Ldc+9lL9F/tguy3yIY83XW
+        gH3xZSNO09xB5dxtemcUO9h3rK1Ue8J+Vg==
+X-Google-Smtp-Source: ABdhPJx1rXJaLhucERJAmkDW4kuZVe8j15ZXGYLi+JPGaJjbPgKqA24TaOnlTFV5D/4nqQLeTfu0Og==
+X-Received: by 2002:a17:90a:390d:: with SMTP id y13mr29822406pjb.52.1621047957351;
+        Fri, 14 May 2021 20:05:57 -0700 (PDT)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id v12sm5076749pgi.44.2021.05.14.20.05.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 May 2021 20:05:56 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring fixes for 5.13-rc
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     io-uring <io-uring@vger.kernel.org>
+Message-ID: <b2514806-2c8d-eb6c-51d9-2214fa5c573f@kernel.dk>
+Date:   Fri, 14 May 2021 21:05:55 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAOKbgA7JM24D2iuCoVjRV=oC1LW8JCcUMeAWMvFr1GHxb7T57g@mail.gmail.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, May 13, 2021 at 02:45:39PM +0700, Dmitry Kadashev wrote:
-> On Thu, Apr 15, 2021 at 9:09 PM Christian Brauner
-> <christian.brauner@ubuntu.com> wrote:
-> > Hm, I get your point but if you e.g. look at fs/exec.c we already do
-> > have that problem today:
-> >
-> >  SYSCALL_DEFINE5(execveat,
-> >                 int, fd, const char __user *, filename,
-> >                 const char __user *const __user *, argv,
-> >                 const char __user *const __user *, envp,
-> >                 int, flags)
-> > {
-> >         int lookup_flags = (flags & AT_EMPTY_PATH) ? LOOKUP_EMPTY : 0;
-> >
-> >         return do_execveat(fd,
-> >                            getname_flags(filename, lookup_flags, NULL),
-> >                            argv, envp, flags);
-> > }
-> >
-> > The new simple flag helper would simplify things because right now it
-> > pretends that it cares about multiple flags where it actually just cares
-> > about whether or not empty pathnames are allowed and it forces callers
-> > to translate between flags too.
-> 
-> Hi Christian,
-> 
-> Sorry for the long silence, I got overwhelmed by the primary job and life
-> stuff. I've finally carved out some time to work on this. I left out the
+Hi Linus,
 
-No problem at all! Yeah, I can relate. :)
+Just a few minor fixes/changes:
 
-> "make getname_flags accept a single boolean instead of flags" bit to
-> make the change smaller. If you think it's something that definitely
-> should be in this patch set then let me know, I'll put it back in. I'm
-> still somewhat concerned about the separation of the capability check
-> and the actual logic to get the name, but I guess I'll just post what I
-> have and collect comments.
+- Fix issue with double free race for linked timeout completions
 
-Sounds good!
+- Fix reference issue with timeouts
 
-Christian
+- Remove last few places that make SQPOLL special, since it's just an io
+  thread now.
+
+- Bump maximum allowed registered buffers, as we don't allocate as much
+  anymore.
+
+Please pull!
+
+
+The following changes since commit 50b7b6f29de3e18e9d6c09641256a0296361cfee:
+
+  x86/process: setup io_threads more like normal user space threads (2021-05-05 17:47:41 -0600)
+
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux-block.git tags/io_uring-5.13-2021-05-14
+
+for you to fetch changes up to 489809e2e22b3dedc0737163d97eb2b574137b42:
+
+  io_uring: increase max number of reg buffers (2021-05-14 06:06:34 -0600)
+
+----------------------------------------------------------------
+io_uring-5.13-2021-05-14
+
+----------------------------------------------------------------
+Pavel Begunkov (4):
+      io_uring: fix link timeout refs
+      io_uring: fix ltout double free on completion race
+      io_uring: further remove sqpoll limits on opcodes
+      io_uring: increase max number of reg buffers
+
+ fs/io_uring.c | 19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
+
+-- 
+Jens Axboe
+

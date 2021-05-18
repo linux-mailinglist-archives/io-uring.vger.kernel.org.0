@@ -2,88 +2,154 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 456E43875C8
-	for <lists+io-uring@lfdr.de>; Tue, 18 May 2021 11:54:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D860387B61
+	for <lists+io-uring@lfdr.de>; Tue, 18 May 2021 16:39:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242914AbhERJ4G (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 18 May 2021 05:56:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48516 "EHLO
+        id S234026AbhEROlG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 18 May 2021 10:41:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57614 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241006AbhERJ4F (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 18 May 2021 05:56:05 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F8D4C061573
-        for <io-uring@vger.kernel.org>; Tue, 18 May 2021 02:54:47 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id z17so9473840wrq.7
-        for <io-uring@vger.kernel.org>; Tue, 18 May 2021 02:54:46 -0700 (PDT)
+        with ESMTP id S234200AbhEROk6 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 18 May 2021 10:40:58 -0400
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C667BC06138F
+        for <io-uring@vger.kernel.org>; Tue, 18 May 2021 07:39:39 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id t206so5597330wmf.0
+        for <io-uring@vger.kernel.org>; Tue, 18 May 2021 07:39:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
+        h=to:cc:references:from:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=JvecSrP9x/KMAZX4pNzcbiPl3UglER5OLg4o0TUv1lA=;
-        b=rip/D4sNdxO8H5SLUBRs+AIK6QCQV7iGGsx2jU8Qcejrpjcizn6jWZ6+fo/sK45BJ0
-         SP/cERUJKSKS5++H9KJhzDTN1CF59Hn55qrqXG6lj3N3ScPBJ1k/DkqUAY+w6HAiI5dq
-         T4p0z2FT+lvREBWejL1fy5SjMpNnhn709QbI/E/VBh4+zaFvvAN11RC1S6nEdcIU4q9p
-         ALYnmk9ErX/ur6ndAghns6ejU9eWNSCyR2o/JTeO3Wd15EGnHwIj3v/cfcufRwmKr/CG
-         hEZIXGjta37nTsG4uGHPx/BFjf9oGmpUtQqIBlGhypdHkiyUvAFSqPum2OtmfSffLxxH
-         cJTA==
+        bh=3v4f5tA9Od6WJ2nn8bVzZo72cAQxgdQtC8rgVSrK56s=;
+        b=Px4EzM4gD0lP9hiKi2RdibCuu9T6KRoCnBqy1VacErL96GP2mp8ZxzX2AxfQzLGPf0
+         LIvfjqg1o8iX8Ftd7RlXezV66IpQ7EsdVe6ZpVrWq/yLVmu3V/y+04Jns0qU5iw3EX0F
+         M49/my5aizqmFyQSIKborh5V1Ks65W47eTr51EhFuxOvmgZ7r2kJhQgQnS4nyQXLaTAR
+         fZy08uBn9e7ZDwVEmm7dbTrEXooiR7+R0yLuLvaeWzyjxlmSa7JVCCH1ZpLshuGjvLWF
+         sPoSN9KrgjUD+69Ccxbl14b038vSxjHt+e6kViIwNVD9h05O8D6Fbgl0yeuy7uYLh4cd
+         pmZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=JvecSrP9x/KMAZX4pNzcbiPl3UglER5OLg4o0TUv1lA=;
-        b=oNJ/xXZh7c8FynWFErkjmZAzQ/tELZUMErKiNtAePqoPzSRiHqmpqYui9h/iM+3CLO
-         lN9ppT5Zt3uT2iDkVRxEqeY6LOYJnw1xfu1XYfBdjdZ00oMsa6+PTZp86EWsfXvyCsWe
-         ZqYox/f+WI3EEfzAhc1ieiAVxEdz1u2Bx8QUgQuEPGmD+oiF7nA5EnEs56GYI84S2Y7l
-         HEB4soDaFoGb0umlp7F3BodEkI2LLsYGYCDp9qU1t/B8eHb4zShNfCSgqFlEEfnxiYa+
-         APvHZkE4VgUUyuyJc+C4f0TP0MIb6dphkkW7WKB8HGkzAzgYFFQWUAc/VoERtlEVTavg
-         VDZw==
-X-Gm-Message-State: AOAM532R7coDwr5xnmA17uu0Q7mCSXQAZYn5te+MYTvuajFU9SC5vcQ4
-        mp27LHuYYZB9Du/1yD0wLnI=
-X-Google-Smtp-Source: ABdhPJwxyJftkYURyksX0bVk/YeLdjloBd7BKFDRBbFGbbwo4TBI7ubuX0G40IazpqWFs86hEGvkow==
-X-Received: by 2002:adf:e84e:: with SMTP id d14mr2302280wrn.323.1621331685788;
-        Tue, 18 May 2021 02:54:45 -0700 (PDT)
-Received: from ?IPv6:2620:10d:c096:310::2810? ([2620:10d:c093:600::2:f06d])
-        by smtp.gmail.com with ESMTPSA id g5sm7363957wmi.8.2021.05.18.02.54.45
+        bh=3v4f5tA9Od6WJ2nn8bVzZo72cAQxgdQtC8rgVSrK56s=;
+        b=XNKsGEDnT3KJ44be73H2FU3LjhhiMWKFfElFvQsnpHHG5qUpXrQ0nXvKDypw8SC+AW
+         hwZIvM7j+anMtq2cs7E+gDabYZJzo1hPwS3K+627Qf6EM6cRR9caf03BA/JEGhn8gyOm
+         5Wk5S2iZbKWcdeLo4YwjfdfhVCW25UPzuHw9LCWloJsHtM/nsktA4c+K3KuDDwKX9A4l
+         Ju+FNbjfsx9S/2lSclWK2Fr/0zKDiiEtig0kdtJiqSIcJfXTapubs6FhdI1gF3Qliubl
+         ok5ijlQt1UTm+EPP97h9WIGssb27ex2MAzg9e8GHE90npcHGXrGGkT5b6ch5l0REUIdx
+         hz5g==
+X-Gm-Message-State: AOAM531obStGS3jXNkTYJaStpJ9+/NfQlnBS9NYkl2k4Z+iy7DnfJnJ3
+        pyZpDBsablzMDBMpCfm8W8YNwZVBHE68Sw==
+X-Google-Smtp-Source: ABdhPJxaRTy4ejeFE0T1DeVRrgHFJ/GowFe9x/Z/HjqDiLxaeWfqGTp8jqyKRzTYrLtpR1hc75DRlg==
+X-Received: by 2002:a1c:6a08:: with SMTP id f8mr2811420wmc.143.1621348778553;
+        Tue, 18 May 2021 07:39:38 -0700 (PDT)
+Received: from ?IPv6:2620:10d:c096:310::2810? ([2620:10d:c092:600::2:d9b4])
+        by smtp.gmail.com with ESMTPSA id z12sm139591wmc.5.2021.05.18.07.39.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 May 2021 02:54:45 -0700 (PDT)
-Subject: Re: [PATCH] io_uring: add IORING_FEAT_FILES_SKIP feature flag
-To:     Drew DeVault <sir@cmpwn.com>, io-uring@vger.kernel.org
-Cc:     noah <goldstein.w.n@gmail.com>, Jens Axboe <axboe@kernel.dk>
-References: <20210517192253.23313-1-sir@cmpwn.com>
- <b836b9cd-e91b-7e46-ce29-8f32e24fb6ab@gmail.com>
- <CBFWQ64F7PWU.3EOQ3BQXFHZY7@taiga>
- <7f2c075d-bf3a-7101-23ac-ef63eecb70cd@gmail.com>
- <CBFWWQBIO18Q.18PQR27VN9NEV@taiga>
+        Tue, 18 May 2021 07:39:38 -0700 (PDT)
+To:     Christian Dietrich <stettberger@dokucode.de>,
+        io-uring <io-uring@vger.kernel.org>
+Cc:     Horst Schirmeier <horst.schirmeier@tu-dortmund.de>,
+        "Franz-B. Tuneke" <franz-bernhard.tuneke@tu-dortmund.de>
+References: <s7bsg4slmn3.fsf@dokucode.de>
+ <9b3a8815-9a47-7895-0f4d-820609c15e9b@gmail.com>
+ <s7btuo6wi7l.fsf@dokucode.de>
+ <4a553a51-50ff-e986-acf0-da9e266d97cd@gmail.com>
+ <s7bmttssyl4.fsf@dokucode.de>
+ <f1e5d6cf-08a9-9110-071f-e89b09837e37@gmail.com>
+ <s7bv985te4l.fsf@dokucode.de>
+ <46229c8c-7e9d-9232-1e97-d1716dfc3056@gmail.com>
+ <s7bpmy5pcc3.fsf@dokucode.de> <s7bbl9pp39g.fsf@dokucode.de>
+ <c45d633e-1278-1dcb-0d59-f0886abc3e60@gmail.com>
+ <s7beeec8ah0.fsf@dokucode.de>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <f1cf7294-3730-a6b8-a023-5e38c497cbb6@gmail.com>
-Date:   Tue, 18 May 2021 10:54:38 +0100
+Subject: Re: [RFC] Programming model for io_uring + eBPF
+Message-ID: <fd68fd2d-3816-e326-8016-b9d5c5c429ed@gmail.com>
+Date:   Tue, 18 May 2021 15:39:31 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.1
 MIME-Version: 1.0
-In-Reply-To: <CBFWWQBIO18Q.18PQR27VN9NEV@taiga>
+In-Reply-To: <s7beeec8ah0.fsf@dokucode.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/18/21 12:33 AM, Drew DeVault wrote:
-> On Mon May 17, 2021 at 7:32 PM EDT, Pavel Begunkov wrote:
->>> What is the relationship between IORING_FEAT_NATIVE_WORKERS and
->>> IORING_REGISTER_FILES_SKIP? Actually, what is NATIVE_WORKERS? The
->>> documentation is sparse on this detail.
->>
->> They are not related by both came in 5.12, so if you have one
->> you have another
+On 5/12/21 12:20 PM, Christian Dietrich wrote:
+> Pavel Begunkov <asml.silence@gmail.com> [07. May 2021]:
 > 
-> Gotcha. I'm open to a simple alias in liburing, in that case. I'll send
-> a new patch tomorrow morning.
+>>> The following SQE would become: Append this SQE to the SQE-link chain
+>>> with the name '1'. If the link chain has completed, start a new one.
+>>> Thereby, the user could add an SQE to an existing link chain, even other
+>>> SQEs are already submitted.
+>>>
+>>>>     sqe->flags |= IOSQE_SYNCHRONIZE;
+>>>>     sqe->synchronize_group = 1;     // could probably be restricted to uint8_t.
+>>>
+>>> Implementation wise, we would hold a pointer to the last element of the
+>>> implicitly generated link chain.
+>>
+>> It will be in the common path hurting performance for those not using
+>> it, and with no clear benefit that can't be implemented in userspace.
+>> And io_uring is thin enough for all those extra ifs to affect end
+>> performance.
+>>
+>> Let's consider if we run out of userspace options.
+> 
+> So summarize my proposal: I want io_uring to support implicit
+> synchronization by sequentialization at submit time. Doing this would
+> avoid the overheads of locking (and potentially sleeping).
+> 
+> So the problem that I see with a userspace solution is the following:
+> If I want to sequentialize an SQE with another SQE that was submitted
+> waaaaaay earlier, the usual IOSQE_IO_LINK cannot be used as I cannot the
+> the link flag of that already submitted SQE. Therefore, I would have to
+> wait in userspace for the CQE and submit my second SQE lateron.
+> 
+> Especially if the goal is to remain in Kernelspace as long as possible
+> via eBPF-SQEs this is not optimal.
+> 
+>> Such things go really horribly with performant APIs as io_uring, even
+>> if not used. Just see IOSQE_IO_DRAIN, it maybe almost never used but
+>> still in the hot path.
+> 
+> If we extend the semantic of IOSEQ_IO_LINK instead of introducing a new
+> flag, we should be able to limit the problem, or?
+> 
+> - With synchronize_group=0, the usual link-the-next SQE semantic could
+>   remain.
+> - While synchronize_group!=0 could expose the described synchronization
+>   semantic.
+> 
+> Thereby, the overhead is at least hidden behind the existing check for
+> IOSEQ_IO_LINK, which is there anyway. Do you consider IOSQE_IO_LINK=1
+> part of the hot path?
 
-At least there won't be one release delay between feature and the flag
-this way as it can't lend earlier than 5.13
+Let's clarify in case I misunderstood you. In a snippet below, should
+it serialise execution of sqe1 and sqe2, so they don't run
+concurrently? Once request is submitted we don't keep an explicit
+reference to it, and it's hard and unreliably trying to find it, so
+would not really be "submission" time, but would require additional
+locking:
+
+1) either on completion of a request it looks up its group, but
+then submission should do +1 spinlock to keep e.g. a list for each
+group.
+2) or try to find a running request and append to its linked list,
+but that won't work.
+3) or do some other magic, but all options would rather be far from
+free.
+
+If it shouldn't serialise it this case, then I don't see much
+difference with IOSEQ_IO_LINK.
+
+prep_sqe1(group=1);
+submit();
+prep_sqe2(group=1);
+submit();
 
 -- 
 Pavel Begunkov

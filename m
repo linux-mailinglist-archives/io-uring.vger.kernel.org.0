@@ -2,231 +2,94 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DEF90389081
-	for <lists+io-uring@lfdr.de>; Wed, 19 May 2021 16:16:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3765B389261
+	for <lists+io-uring@lfdr.de>; Wed, 19 May 2021 17:18:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354211AbhESORy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 19 May 2021 10:17:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37618 "EHLO
+        id S1354324AbhESPUQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 19 May 2021 11:20:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52814 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354221AbhESOQb (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 19 May 2021 10:16:31 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC0ACC06135C;
-        Wed, 19 May 2021 07:14:19 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id y184-20020a1ce1c10000b02901769b409001so3432981wmg.3;
-        Wed, 19 May 2021 07:14:19 -0700 (PDT)
+        with ESMTP id S1354376AbhESPUJ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 19 May 2021 11:20:09 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12376C06175F
+        for <io-uring@vger.kernel.org>; Wed, 19 May 2021 08:18:48 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id i13so15801225edb.9
+        for <io-uring@vger.kernel.org>; Wed, 19 May 2021 08:18:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=iBBRv8iSs8vsCboxbXfrG1xclNCmAan+98X/JNnVwAg=;
-        b=XSBlrvEvMACuV/Mdl4wp5JepMkofpVjHeuZWupaz3AcrddBD9wrL9TmBdnkW2CJB7+
-         K0mlbLXjdCRUzD4ntkCCJpzNL6SMuLMkVs/fqUq7LSAvLn4OfqFzpaf9wqQmQUyI4rd6
-         G2kJqroWvHAhpBPrAfFTZHP2tNbSohWOK+pwu+dACKTH7naQqzpnfkP39nxfAjbKQrSf
-         aZQdBfFganrJ5aVynzXPA622Ya4kwRZTO/ec7N38veAZ79xHTC+PwdHLQdea/HvVfd/w
-         J16yGF0rVYI6s4j5eA/Bd5PriuILuvXBMGQNS4nGW2P89rkiDjMdlgp1FSlmwrlfpD7N
-         9pkw==
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2+/4m4rfJ/qusBu6xKLeqSfoq/WhFXeBjZFbets1dms=;
+        b=L1dTZ/cejTl+mgSkbTA6g3xoBK1uVV3OJBQYenHp/RsDHmtHbJH61VtRY/tS2t9i2v
+         6rG/tuZPjwK1A36hZ+ZFrO02elZzCn0m6ck3ZEXouML3ey2StNCu3+0X7DXjif36uQGj
+         1D0bU8X/8Sx9Y+dqTtv51adgzo5SWy1LVnKIN2qg6D6Tc/OTHkw3sQQiyOLnPp+hWGMc
+         CH2HLX/oWClPhnOEH0OiBAtPOukmLfjLyQIR2fApxy0sqctGF0OUvNi3xBcJX4lAXdIG
+         OB3zli27dx9nzBvlk936qedg9Y//j1IiyOMJWaCzkvGJplG6k3DLinY5tU5hP8CldXVc
+         b/nQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=iBBRv8iSs8vsCboxbXfrG1xclNCmAan+98X/JNnVwAg=;
-        b=ClsF0h8t+KShvkVJ9tSIRj72ByBKg3GWb4Cn8QYNO6vyixfxvjBxjrLtwo3yk4nzy+
-         zFTwNz4wQcZ9Sdx6/ssv1ikxDbhYpLxo3/v2gvXYu8j9vxdENax6ePH3edDF1FhiDzS0
-         rcDloWTnWAMC/4wD2trixCHLHFMOhOgmSWOYwWR246pSvFfyIVHZg2SxVraPRuJ2WNRM
-         Iy8sgblC6+thQ9EZHSxGRVHprR+bHNV44jK3Thzqhjlxp5ymv8hQyNsTck46rXHORpSI
-         8o6SrZ1SRBXtdw0EwN5u3yvmiWqhONaStfWPlwZy4NLsvIcTcRM+wHGpLzq2IAFtlsTK
-         EuiQ==
-X-Gm-Message-State: AOAM532ZS1zeMQcadlBzmatBqQAysjPH8CXaalQAxJsEk6x7syO2xdUD
-        iWdEkrGrNQnjjhsHNlXTC28qZXa5bCeJzZdj
-X-Google-Smtp-Source: ABdhPJxTeznG7ssgz77rK45QH0UWDzr+22MRJzQlDRsOMhy7gqN2YgkFcLMkwwTtc7dXq4xaJzXiXw==
-X-Received: by 2002:a1c:4c10:: with SMTP id z16mr11517821wmf.134.1621433658304;
-        Wed, 19 May 2021 07:14:18 -0700 (PDT)
-Received: from localhost.localdomain ([85.255.235.154])
-        by smtp.gmail.com with ESMTPSA id z3sm6233569wrq.42.2021.05.19.07.14.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 May 2021 07:14:17 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     io-uring@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Horst Schirmeier <horst.schirmeier@tu-dortmund.de>,
-        "Franz-B . Tuneke" <franz-bernhard.tuneke@tu-dortmund.de>,
-        Christian Dietrich <stettberger@dokucode.de>
-Subject: [PATCH 23/23] io_uring: enable bpf reqs to wait for CQs
-Date:   Wed, 19 May 2021 15:13:34 +0100
-Message-Id: <a3d5ac5539a8d9f0423fea051a038e8bbfe10c99.1621424513.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <cover.1621424513.git.asml.silence@gmail.com>
-References: <cover.1621424513.git.asml.silence@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2+/4m4rfJ/qusBu6xKLeqSfoq/WhFXeBjZFbets1dms=;
+        b=WaLULTpxYmQiF0ylfNTgbfuAaZjAd7Qkj5FPB04+KsvjHEuv5yIxYIlx8L96Z3wMrk
+         ZZ+J6KOIRHCyouDSPFNEV7Gy0NVN5gSqX5cfy9MoFZ4FO7Zk65Xmbyti0489d1FVY+vk
+         t6Pul0D5QrORlxrBh6FNtzLuJEPOtz3bApFKVklFc3mjJPok+OqhuoUCCdrkQLE5BObu
+         mxEvrpxQ6FKJND8+lKtkf5osPQG4b/SMZhCbcocXrkBJ7IV/iAGmagQOZPEfLIbMlm17
+         Mb6uVvkehuVjwS2sHkVkpTd6diVGAnMjrnVwRdJweyX6OeandM3lS1Pcr23Sr0hEjdSv
+         zPcQ==
+X-Gm-Message-State: AOAM532awI2gZeoLvI2BA6MNnLjpYWctfnp4WMfpHpz1W66MbryiNZZJ
+        kQ/id20HSNpUGxgm5Vde3ZgnogcMqeHdwCdx4o/u
+X-Google-Smtp-Source: ABdhPJweTp1Zx0DSC45lRP2AIkDyyygfjOr7HW1yUjrFHA4wGjuIWy4HGyTLZRX5S/SFeMSmMrf9Vm79x2hCKHCyc3E=
+X-Received: by 2002:aa7:c349:: with SMTP id j9mr15031390edr.135.1621437526510;
+ Wed, 19 May 2021 08:18:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210519113058.1979817-1-memxor@gmail.com>
+In-Reply-To: <20210519113058.1979817-1-memxor@gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 19 May 2021 11:18:35 -0400
+Message-ID: <CAHC9VhS=PDxx=MzZnGGNLwo-o5Og-HGZe84=+BBtBCZgaGSn4A@mail.gmail.com>
+Subject: Re: [PATCH 0/2] Create io_uring fd with ephemeral inode
+To:     Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Cc:     io-uring@vger.kernel.org, Pavel Emelyanov <xemul@openvz.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Daniel Colascione <dancol@google.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Add experimental support for bpf requests waiting for a number of CQEs
-to in a specified CQ.
+On Wed, May 19, 2021 at 7:37 AM Kumar Kartikeya Dwivedi
+<memxor@gmail.com> wrote:
+>
+> This set converts io_uring to use secure anon_inodes (with a newly allocated
+> non-S_PRIVATE inode) for each individual instance. In addition to allowing LSM
+> modules to enforce policy using the inode context, it also enables
+> checkpoint/restore usecases by allowing mapping the VMA to the open fd in a
+> task. Offset is already available to determine rings mapped per region, so this
+> was the only missing piece in establishing region <-> io_uring instance mapping.
+>
+> LSM tie up has been left out of this set for now.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c                 | 80 +++++++++++++++++++++++++++++++++--
- include/uapi/linux/io_uring.h |  2 +
- 2 files changed, 79 insertions(+), 3 deletions(-)
+This brings to light something I have been trying to resolve for a
+little while now, but I have been finding it difficult to find the
+necessary time due to competing priorities at work and in my personal
+time.  While the patches in this patchset are a necessary dependency,
+there are other issues which remain unresolved but which are now
+public (although the problems were not buried very far in the first
+place).  Further complicating things on my end is that the system with
+my current work-in-progress patchset was taken offline two days ago
+and my office is under renovations :/
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 805c10be7ea4..cf02389747b5 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -687,6 +687,12 @@ struct io_bpf {
- 	struct bpf_prog			*prog;
- };
- 
-+struct io_async_bpf {
-+	struct wait_queue_entry		wqe;
-+	unsigned int 			wait_nr;
-+	unsigned int 			wait_idx;
-+};
-+
- struct io_completion {
- 	struct file			*file;
- 	struct list_head		list;
-@@ -1050,7 +1056,9 @@ static const struct io_op_def io_op_defs[] = {
- 	},
- 	[IORING_OP_RENAMEAT] = {},
- 	[IORING_OP_UNLINKAT] = {},
--	[IORING_OP_BPF] = {},
-+	[IORING_OP_BPF] = {
-+		.async_size		= sizeof(struct io_async_bpf),
-+	},
- };
- 
- static bool io_disarm_next(struct io_kiocb *req);
-@@ -9148,6 +9156,7 @@ static void io_uring_try_cancel_requests(struct io_ring_ctx *ctx,
- 			}
- 		}
- 
-+		wake_up_all(&ctx->wait);
- 		ret |= io_cancel_defer_files(ctx, task, files);
- 		ret |= io_poll_remove_all(ctx, task, files);
- 		ret |= io_kill_timeouts(ctx, task, files);
-@@ -10492,6 +10501,10 @@ static bool io_bpf_is_valid_access(int off, int size,
- 	switch (off) {
- 	case offsetof(struct io_uring_bpf_ctx, user_data):
- 		return size == sizeof_field(struct io_uring_bpf_ctx, user_data);
-+	case offsetof(struct io_uring_bpf_ctx, wait_nr):
-+		return size == sizeof_field(struct io_uring_bpf_ctx, wait_nr);
-+	case offsetof(struct io_uring_bpf_ctx, wait_idx):
-+		return size == sizeof_field(struct io_uring_bpf_ctx, wait_idx);
- 	}
- 	return false;
- }
-@@ -10503,6 +10516,60 @@ const struct bpf_verifier_ops bpf_io_uring_verifier_ops = {
- 	.is_valid_access	= io_bpf_is_valid_access,
- };
- 
-+static inline bool io_bpf_need_wake(struct io_async_bpf *abpf)
-+{
-+	struct io_kiocb *req = abpf->wqe.private;
-+	struct io_ring_ctx *ctx = req->ctx;
-+
-+	if (unlikely(percpu_ref_is_dying(&ctx->refs)) ||
-+		     atomic_read(&req->task->io_uring->in_idle))
-+		return true;
-+	return __io_cqring_events(&ctx->cqs[abpf->wait_idx]) >= abpf->wait_nr;
-+}
-+
-+static int io_bpf_wait_func(struct wait_queue_entry *wqe, unsigned mode,
-+			       int sync, void *key)
-+{
-+	struct io_async_bpf *abpf = container_of(wqe, struct io_async_bpf, wqe);
-+	bool wake = io_bpf_need_wake(abpf);
-+
-+	if (wake) {
-+		list_del_init_careful(&wqe->entry);
-+		req_ref_get(wqe->private);
-+		io_queue_async_work(wqe->private);
-+	}
-+	return wake;
-+}
-+
-+static int io_bpf_wait_cq_async(struct io_kiocb *req, unsigned int nr,
-+				unsigned int idx)
-+{
-+	struct io_ring_ctx *ctx = req->ctx;
-+	struct wait_queue_head *wq;
-+	struct wait_queue_entry *wqe;
-+	struct io_async_bpf *abpf;
-+
-+	if (unlikely(idx >= ctx->cq_nr))
-+		return -EINVAL;
-+	if (!req->async_data && io_alloc_async_data(req))
-+		return -ENOMEM;
-+
-+	abpf = req->async_data;
-+	abpf->wait_nr = nr;
-+	abpf->wait_idx = idx;
-+	wqe = &abpf->wqe;
-+	init_waitqueue_func_entry(wqe, io_bpf_wait_func);
-+	wqe->private = req;
-+	wq = &ctx->wait;
-+
-+	spin_lock_irq(&wq->lock);
-+	__add_wait_queue(wq, wqe);
-+	smp_mb();
-+	io_bpf_wait_func(wqe, 0, 0, NULL);
-+	spin_unlock_irq(&wq->lock);
-+	return 0;
-+}
-+
- static void io_bpf_run(struct io_kiocb *req, unsigned int issue_flags)
- {
- 	struct io_ring_ctx *ctx = req->ctx;
-@@ -10512,8 +10579,8 @@ static void io_bpf_run(struct io_kiocb *req, unsigned int issue_flags)
- 
- 	lockdep_assert_held(&req->ctx->uring_lock);
- 
--	if (unlikely(percpu_ref_is_dying(&ctx->refs) ||
--		     atomic_read(&req->task->io_uring->in_idle)))
-+	if (unlikely(percpu_ref_is_dying(&ctx->refs)) ||
-+		     atomic_read(&req->task->io_uring->in_idle))
- 		goto done;
- 
- 	memset(&bpf_ctx.u, 0, sizeof(bpf_ctx.u));
-@@ -10531,6 +10598,13 @@ static void io_bpf_run(struct io_kiocb *req, unsigned int issue_flags)
- 	}
- 	io_submit_state_end(&ctx->submit_state, ctx);
- 	ret = 0;
-+
-+	if (bpf_ctx.u.wait_nr) {
-+		ret = io_bpf_wait_cq_async(req, bpf_ctx.u.wait_nr,
-+					   bpf_ctx.u.wait_idx);
-+		if (!ret)
-+			return;
-+	}
- done:
- 	__io_req_complete(req, issue_flags, ret, 0);
- }
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index d7b1713bcfb0..95c04af3afd4 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -405,6 +405,8 @@ struct io_uring_getevents_arg {
- 
- struct io_uring_bpf_ctx {
- 	__u64	user_data;
-+	__u32	wait_nr;
-+	__u32	wait_idx;
- };
- 
- #endif
+Give me a day or two to get the patches off that system and I'll post
+them here and we can start the process of kicking around solutions
+that work for everyone.
+
 -- 
-2.31.1
-
+paul moore
+www.paul-moore.com

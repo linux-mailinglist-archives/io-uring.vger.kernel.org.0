@@ -2,112 +2,150 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EDFEE389B62
-	for <lists+io-uring@lfdr.de>; Thu, 20 May 2021 04:33:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC436389C5C
+	for <lists+io-uring@lfdr.de>; Thu, 20 May 2021 06:13:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230006AbhETCe1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 19 May 2021 22:34:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36050 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229978AbhETCeY (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 19 May 2021 22:34:24 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 264E1C061760
-        for <io-uring@vger.kernel.org>; Wed, 19 May 2021 19:29:58 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id t3so17566606edc.7
-        for <io-uring@vger.kernel.org>; Wed, 19 May 2021 19:29:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HMvb0n4LbT0TuR0D9FQ2CMeCBbUPAKGZCz3Dr44PaW0=;
-        b=Txx4en7He1hssPu2O0K85osEJQZOh7gSdD0fTc0HK9bfCb4tHcSPL5Vzmbo+HxZeG7
-         URkI9280Aidu0068F+2W+uFM9mZJXhAmzADK/uBcrE4inPGAc6xCDE//RUM4fSma2JL2
-         TRZ3uDScXtitVVNjSxFcVatkWzABu9gj6SfwwD2f67V+Dm8GZUa+l5YckeU5nhyJ4LDW
-         rYQftnJ6n7XnGyTKVTt1+fpEwwiijkrkn6b7tJMrxKLyhKQyO3zTkFDHL+S0P2J00drS
-         3mztBgaPdlwObdd5gZ9XoIDvAiDsAhG5whNcEk1SVLmzj+sbrBkIA3ERcR9ut7kG5eBC
-         aNAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HMvb0n4LbT0TuR0D9FQ2CMeCBbUPAKGZCz3Dr44PaW0=;
-        b=uH1XiIXqk2dQSiSPnWIGoy0R2mjsyE/958XcnsHgbmW2hBp/tq4sdKEtcs3Zv7sZwH
-         wLa4jJJzeipub30S0mnn00UaOV7DrdJLoWIAkehKpE5VSUCQSH1BuRs8AkL4ntVWtxhm
-         sfVcZqYzo4QyGv7OFTw9bTICECrHPOO+hQZW3c3IFB6YWTqAn5ojv7z7J21wnI263vJE
-         CqzRhDMEKcvE4Prk2FsX3JoTzcftGLbc4yPdZa5e3o9La4NcSLAbvGSK8glddfsTg3yx
-         svlRjvADx97xMPSrDGUsACe4s+q+MsC9pWUqEf4u2EzKPeCPhiSACWh9y7w/iteQQtUT
-         P33w==
-X-Gm-Message-State: AOAM531KJMocAfjPin7nDSRB6ro7HT88ErrukOveDt1VW1iWJG4D5bm9
-        iMTIrP8r/Tl17znoSNmPGTqjPE9YOqjrDsElhm7d
-X-Google-Smtp-Source: ABdhPJyoLkr8GyC3B4QaWLzLx+0i5610F7svY2rfiE3HwXPDEKHBBbrmg3LGiwaDCUWU9nCiE/UURZPi4UjfuiE0tBE=
-X-Received: by 2002:aa7:de9a:: with SMTP id j26mr2395605edv.269.1621477796545;
- Wed, 19 May 2021 19:29:56 -0700 (PDT)
+        id S229498AbhETEOn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 20 May 2021 00:14:43 -0400
+Received: from cloud48395.mywhc.ca ([173.209.37.211]:48442 "EHLO
+        cloud48395.mywhc.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229436AbhETEOn (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 20 May 2021 00:14:43 -0400
+Received: from modemcable064.203-130-66.mc.videotron.ca ([66.130.203.64]:45864 helo=[192.168.1.177])
+        by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <olivier@trillion01.com>)
+        id 1lja3l-0007Hw-2N; Thu, 20 May 2021 00:13:21 -0400
+Message-ID: <b360ed542526da0a510988ce30545f429a7da000.camel@trillion01.com>
+Subject: Re: [PATCH] io_thread/x86: don't reset 'cs', 'ss', 'ds' and 'es'
+ registers for io_threads
+From:   Olivier Langlois <olivier@trillion01.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Stefan Metzmacher <metze@samba.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        io-uring <io-uring@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>
+Date:   Thu, 20 May 2021 00:13:19 -0400
+In-Reply-To: <3df541c3-728c-c63d-eaeb-a4c382e01f0b@kernel.dk>
+References: <8735v3ex3h.ffs@nanos.tec.linutronix.de>
+         <3C41339D-29A2-4AB1-958F-19DB0A92D8D7@amacapital.net>
+         <CAHk-=wh0KoEZXPYMGkfkeVEerSCEF1AiCZSvz9TRrx=Kj74D+Q@mail.gmail.com>
+         <CALCETrV9bCenqzzaW6Ra18tCvNP-my09decTjmLDVZZAQxR6VA@mail.gmail.com>
+         <CAHk-=wgo6XEz3VQ9ntqzWLR3-hm1YXrXUz4_heDs4wcLe9NYvA@mail.gmail.com>
+         <d26e3a82-8a2c-7354-d36b-cac945c208c7@kernel.dk>
+         <CALCETrWmhquicE2C=G2Hmwfj4VNypXVxY-K3CWOkyMe9Edv88A@mail.gmail.com>
+         <CAHk-=wgqK0qUskrzeWXmChErEm32UiOaUmynWdyrjAwNzkDKaw@mail.gmail.com>
+         <8735v3jujv.ffs@nanos.tec.linutronix.de>
+         <CAHk-=wi4Dyg_Z70J_hJbtFLPQDG+Zx3dP2jB5QrOdZC6W6j4Gw@mail.gmail.com>
+         <12710fda-1732-ee55-9ac1-0df9882aa71b@samba.org>
+         <CAHk-=wiR7c-UHh_3Rj-EU8=AbURKchnMFJWW7=5EH=qEUDT8wg@mail.gmail.com>
+         <59ea3b5a-d7b3-b62e-cc83-1f32a83c4ac2@kernel.dk>
+         <17471c9fec18765449ef3a5a4cddc23561b97f52.camel@trillion01.com>
+         <CAHk-=whoJCocFsQ7+Sqq=dkuzHE+RXxvRdd4ZvyYqnsKBqsKAA@mail.gmail.com>
+         <3df541c3-728c-c63d-eaeb-a4c382e01f0b@kernel.dk>
+Organization: Trillion01 Inc
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.40.1 
 MIME-Version: 1.0
-References: <20210519113058.1979817-1-memxor@gmail.com> <20210519113058.1979817-2-memxor@gmail.com>
- <CAHC9VhTBcCJ1TfvB-HbzrByroeqfFE-SF_REik9PDSdqmJbuYA@mail.gmail.com> <20210519230710.k3hzomsr27onevhf@apollo>
-In-Reply-To: <20210519230710.k3hzomsr27onevhf@apollo>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 19 May 2021 22:29:45 -0400
-Message-ID: <CAHC9VhSV8Y=kR2NH8AYzZ550DhpXn2ccepq1NO=z34aLC4DhsA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] fs: anon_inodes: export anon_inode_getfile_secure helper
-To:     Kumar Kartikeya Dwivedi <memxor@gmail.com>
-Cc:     io-uring@vger.kernel.org, Pavel Emelyanov <xemul@openvz.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        Eric Biggers <ebiggers@google.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - trillion01.com
+X-Get-Message-Sender-Via: cloud48395.mywhc.ca: authenticated_id: olivier@trillion01.com
+X-Authenticated-Sender: cloud48395.mywhc.ca: olivier@trillion01.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, May 19, 2021 at 7:07 PM Kumar Kartikeya Dwivedi
-<memxor@gmail.com> wrote:
-> On Wed, May 19, 2021 at 08:52:51PM IST, Paul Moore wrote:
-> > On Wed, May 19, 2021 at 7:37 AM Kumar Kartikeya Dwivedi
-> > <memxor@gmail.com> wrote:
-> > >
-> > > This is the non-fd installing analogue of anon_inode_getfd_secure. In
-> > > addition to allowing LSMs to attach policy to the distinct inode, this
-> > > is also needed for checkpoint restore of an io_uring instance where a
-> > > mapped region needs to mapped back to the io_uring fd by CRIU. This is
-> > > currently not possible as all anon_inodes share a single inode.
-> > >
-> > > Signed-off-by: Kumar Kartikeya Dwivedi <memxor@gmail.com>
-> > > ---
-> > >  fs/anon_inodes.c            | 9 +++++++++
-> > >  include/linux/anon_inodes.h | 4 ++++
-> > >  2 files changed, 13 insertions(+)
-> >
-> > [NOTE: dropping dancol@google as that email is bouncy]
-> >
-> > > diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
-> > > index a280156138ed..37032786b211 100644
-> > > --- a/fs/anon_inodes.c
-> > > +++ b/fs/anon_inodes.c
-> > > @@ -148,6 +148,15 @@ struct file *anon_inode_getfile(const char *name,
-> > >  }
-> > >  EXPORT_SYMBOL_GPL(anon_inode_getfile);
-> >
-> > This function should have a comment block at the top similar to
-> > anon_inode_getfile(); in fact you can likely copy-n-paste the bulk of
-> > it to use as a start.
-> >
-> > If you don't want to bother respinning, I've got this exact patch
-> > (+comments) in my patchset that I'll post later and I'm happy to
-> > give/share credit if that is important to you.
-> >
->
-> That'd be great; no credit is fine :). Please CC me when you post it.
+Hi Jens,
 
-Will do.  I dug out my system which had the patches and I'm working on
-forward porting them to v5.13-rc2; if I don't have them cleaned up
-enough for posting by Thursday, I'll make sure they are at least RFC
-ready by Friday.
+On Wed, 2021-05-12 at 14:55 -0600, Jens Axboe wrote:
+> 
+> > Jens, have you played with core-dumping when there are active
+> > io_uring
+> > threads? There's a test-program in that github issue report..
+> 
+> Yes, I also did that again after the report, and did so again right now
+> just to verify. I'm not seeing any issues with coredumps being
+> generated
+> if the app crashes, or if I send it SIGILL, for example... I also just
+> now tried Olivier's test case, and it seems to dump just fine for me.
+> 
+> I then tried backing out the patch from Stefan, and it works fine with
+> that reverted too. So a bit puzzled as to what is going on here...
+> 
+> Anyway, I'll check in on that github thread and see if we can narrow
+> this down.
+> 
+I know that my test case isn't conclusive. It is a failed attempt to
+capture what my program is doing.
 
--- 
-paul moore
-www.paul-moore.com
+The priority of investigating my core dump issue has substantially
+dropped last week because I did solve my primary issue (A buffer leak
+in the provided buffers to io_uring during disconnection). My program
+did run for days but it did crash morning without any core dump again.
+It is a very frustrating situation because it would probably be a bug
+trivial to diagnostic and fix but without the core, the logs are opaque
+and they just don't give no clue about why the program did crash.
+
+A key characteristic of my program, it is that it generates at least 1
+io-worker thread per io_uring instance.
+
+Oddly enough, I am having a hard time recreating a test case that will
+generate io-worker threads.
+
+My first attempt was with the github issue test-case. I have kept
+tweaking it and I know that I will find the right sequence to get io-
+worker threads spawned.
+
+I suspect that once you meet that condition, it might be sufficient to
+trigger the core dump generation problem.
+
+I have also tried to run benchmark io_uring with
+https://github.com/frevib/io_uring-echo-server/blob/io-uring-feat-fast-poll/benchmarks/benchmarks.md
+(If you give it a try, make sure you erase its private out-of-date
+liburing copy before compiling it...)
+This didn't generate any io-worker thread neither.
+
+In a nutshell here is what my program does for most of its 85-86
+sockets:
+1. create TCP socket
+2. Set O_NONBLOCK to it
+3. Call connect()
+4. Use IORING_OP_POLL_ADD with POLLOUT to be notified when the
+connection completes
+5. Once connection is completed, clear the socket O_NONBLOCK flag, use
+IORING_OP_WRITE to send a request
+6. Submit a IORING_OP_READ with IOSQE_BUFFER_SELECT to read server
+reply asynchronously.
+
+Here are 2 more notes about the sequence:
+a) If you wonder about the flip-flop about blocking and non-nblocking,
+it is because I have adapated existing code to use io_uring. To
+minimize the required code change, I left untouched the non-blocking
+connection code.
+b) If I add IOSQE_ASYNC to the IORING_OP_READ, io_uring will generate a
+lot of io-worker threads. I mean a lot... You can see here:
+https://github.com/axboe/liburing/issues/349
+
+So what I am currently doing is to tweak my test-case to emulate as
+much as possible the described sequence to have some io-worker threads
+spawn and then force a core dump to validate that it is the io-worker
+thread presence that is causing the core dump generation issue (or
+not!)
+
+Quick question to the devs: Is there any example program bundled with
+liburing that is creating some io-workers thread in a sure way?
+
+Greetings,
+Olivier
+
+

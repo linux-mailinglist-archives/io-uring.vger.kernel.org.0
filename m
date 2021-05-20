@@ -2,150 +2,135 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BC436389C5C
-	for <lists+io-uring@lfdr.de>; Thu, 20 May 2021 06:13:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E9F338A9F7
+	for <lists+io-uring@lfdr.de>; Thu, 20 May 2021 13:07:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229498AbhETEOn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 20 May 2021 00:14:43 -0400
-Received: from cloud48395.mywhc.ca ([173.209.37.211]:48442 "EHLO
-        cloud48395.mywhc.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229436AbhETEOn (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 20 May 2021 00:14:43 -0400
-Received: from modemcable064.203-130-66.mc.videotron.ca ([66.130.203.64]:45864 helo=[192.168.1.177])
-        by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <olivier@trillion01.com>)
-        id 1lja3l-0007Hw-2N; Thu, 20 May 2021 00:13:21 -0400
-Message-ID: <b360ed542526da0a510988ce30545f429a7da000.camel@trillion01.com>
-Subject: Re: [PATCH] io_thread/x86: don't reset 'cs', 'ss', 'ds' and 'es'
- registers for io_threads
-From:   Olivier Langlois <olivier@trillion01.com>
-To:     Jens Axboe <axboe@kernel.dk>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Stefan Metzmacher <metze@samba.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>
-Date:   Thu, 20 May 2021 00:13:19 -0400
-In-Reply-To: <3df541c3-728c-c63d-eaeb-a4c382e01f0b@kernel.dk>
-References: <8735v3ex3h.ffs@nanos.tec.linutronix.de>
-         <3C41339D-29A2-4AB1-958F-19DB0A92D8D7@amacapital.net>
-         <CAHk-=wh0KoEZXPYMGkfkeVEerSCEF1AiCZSvz9TRrx=Kj74D+Q@mail.gmail.com>
-         <CALCETrV9bCenqzzaW6Ra18tCvNP-my09decTjmLDVZZAQxR6VA@mail.gmail.com>
-         <CAHk-=wgo6XEz3VQ9ntqzWLR3-hm1YXrXUz4_heDs4wcLe9NYvA@mail.gmail.com>
-         <d26e3a82-8a2c-7354-d36b-cac945c208c7@kernel.dk>
-         <CALCETrWmhquicE2C=G2Hmwfj4VNypXVxY-K3CWOkyMe9Edv88A@mail.gmail.com>
-         <CAHk-=wgqK0qUskrzeWXmChErEm32UiOaUmynWdyrjAwNzkDKaw@mail.gmail.com>
-         <8735v3jujv.ffs@nanos.tec.linutronix.de>
-         <CAHk-=wi4Dyg_Z70J_hJbtFLPQDG+Zx3dP2jB5QrOdZC6W6j4Gw@mail.gmail.com>
-         <12710fda-1732-ee55-9ac1-0df9882aa71b@samba.org>
-         <CAHk-=wiR7c-UHh_3Rj-EU8=AbURKchnMFJWW7=5EH=qEUDT8wg@mail.gmail.com>
-         <59ea3b5a-d7b3-b62e-cc83-1f32a83c4ac2@kernel.dk>
-         <17471c9fec18765449ef3a5a4cddc23561b97f52.camel@trillion01.com>
-         <CAHk-=whoJCocFsQ7+Sqq=dkuzHE+RXxvRdd4ZvyYqnsKBqsKAA@mail.gmail.com>
-         <3df541c3-728c-c63d-eaeb-a4c382e01f0b@kernel.dk>
-Organization: Trillion01 Inc
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.40.1 
+        id S239392AbhETLIK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 20 May 2021 07:08:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37188 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239401AbhETLGG (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 20 May 2021 07:06:06 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C2CFC0612F3;
+        Thu, 20 May 2021 02:58:15 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id h3-20020a05600c3503b0290176f13c7715so4831135wmq.5;
+        Thu, 20 May 2021 02:58:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=to:cc:references:from:subject:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=VSSStV1UVW9GUULFLbeRmm9wy52EiHMU0utlA/8pnvE=;
+        b=JY2ZSVUWiwcKXQ8VUM4s6Y3HI2Ap+urjh71RlhmLq2jwlRVqBrIM6xYVqrJ5mRpqra
+         ync2ycExhxsHg7qzUjjq5ufVaQ78lN6ZOtubNzY5v/hhZOSRcFobXKJoHntIE3+36P+9
+         8hneODynDFY0zI7ps+cGp8sJbw1M4wMG1fK0bvSL3rTf03w0kezyD9cn0hEL10GKJC4d
+         8tu5VvhGheh7pUCKSoMFjiz7GvWMt6Lk4Jfjv31j/Aq5teZMUZuUhY26Z98M41I/L5q8
+         vkFTUwGDliR6wy8VOIeWeMbyzjSnq359mhF+1HkyH+obQ9wxp/Z8D0cr8RshMkCTpBKW
+         hunw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=VSSStV1UVW9GUULFLbeRmm9wy52EiHMU0utlA/8pnvE=;
+        b=kfdcgnpPO6ifp63oFHmwmWEj9vak+UbhOkm1q0MWnXnYKzQAs51ggnVeU1mjfS8SmK
+         NWbU/FheeDTnvKRDWplkASlv0VZPYGyUzYIgW8l9okXFLnQFtkQGl7xuReNT5qv+KFof
+         8dxybcIY7+2QfCKHN16yumRKtKQZzs92WFsBLoFJRd4YsCCZqJ9tAwFF1wtcw7gwt1iC
+         07JuJ8t9e72o6pxnwmjUXIEtSxTMiDs3V/TmaaPCswiNFz3T1o8FNZH7tzciwLDhI3HJ
+         xN0DCtcZ5mBuo6xob7kZ4JgC3mGcHQNQU17z8+YRIQRroML5+Dq9jGrBnB9DrRCsS7fh
+         H2sQ==
+X-Gm-Message-State: AOAM532dmo057kM5J6wYDgqsaDxWn8rNjKblVnO5kP7oeCxqNOcVIYi6
+        tn+6CC8Hd3NgviNup54J+VY=
+X-Google-Smtp-Source: ABdhPJzP8kx3ScHOA9Pi7EFe9kLW2SonhDbJXpzAM/zltPv+hDcrDwtwWVokCY64iOMP4L5vne6BNA==
+X-Received: by 2002:a1c:4601:: with SMTP id t1mr2789609wma.27.1621504693981;
+        Thu, 20 May 2021 02:58:13 -0700 (PDT)
+Received: from ?IPv6:2620:10d:c096:310::2810? ([2620:10d:c093:600::2:130f])
+        by smtp.gmail.com with ESMTPSA id x10sm2561652wrt.65.2021.05.20.02.58.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 May 2021 02:58:13 -0700 (PDT)
+To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc:     io-uring@vger.kernel.org, Networking <netdev@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>,
+        Horst Schirmeier <horst.schirmeier@tu-dortmund.de>,
+        "Franz-B . Tuneke" <franz-bernhard.tuneke@tu-dortmund.de>,
+        Christian Dietrich <stettberger@dokucode.de>
+References: <cover.1621424513.git.asml.silence@gmail.com>
+ <94134844a6f4be2e0da2c518cb0e2e9ebb1d71b0.1621424513.git.asml.silence@gmail.com>
+ <CAEf4BzZU_QySZFHA1J0jr5Fi+gOFFKzTyxrvCUt1_Gn2H6hxLA@mail.gmail.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Subject: Re: [PATCH 18/23] libbpf: support io_uring
+Message-ID: <d86035d9-66f0-de37-42ef-8eaa4d849651@gmail.com>
+Date:   Thu, 20 May 2021 10:58:03 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - trillion01.com
-X-Get-Message-Sender-Via: cloud48395.mywhc.ca: authenticated_id: olivier@trillion01.com
-X-Authenticated-Sender: cloud48395.mywhc.ca: olivier@trillion01.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+In-Reply-To: <CAEf4BzZU_QySZFHA1J0jr5Fi+gOFFKzTyxrvCUt1_Gn2H6hxLA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Jens,
-
-On Wed, 2021-05-12 at 14:55 -0600, Jens Axboe wrote:
+On 5/19/21 6:38 PM, Andrii Nakryiko wrote:
+> On Wed, May 19, 2021 at 7:14 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
+>>
+>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+>> ---
+>>  tools/lib/bpf/libbpf.c | 7 +++++++
+>>  1 file changed, 7 insertions(+)
+>>
+>> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+>> index 4181d178ee7b..de5d1508f58e 100644
+>> --- a/tools/lib/bpf/libbpf.c
+>> +++ b/tools/lib/bpf/libbpf.c
+>> @@ -13,6 +13,10 @@
+>>  #ifndef _GNU_SOURCE
+>>  #define _GNU_SOURCE
+>>  #endif
+>> +
+>> +/* hack, use local headers instead of system-wide */
+>> +#include "../../../include/uapi/linux/bpf.h"
+>> +
 > 
-> > Jens, have you played with core-dumping when there are active
-> > io_uring
-> > threads? There's a test-program in that github issue report..
+> libbpf is already using the latest UAPI headers, so you don't need
+> this hack. You just haven't synced include/uapi/linux/bpf.h into
+> tools/include/uapi/linux/bpf.h
+
+It's more convenient to keep it local to me while RFC, surely will
+drop it later.
+
+btw, I had a problem with find_sec_def() successfully matching
+"iouring.s" string with "iouring", because section_defs[i].len
+doesn't include final \0 and so does a sort of prefix comparison.
+That's why "iouring/". Can we fix it? Are compatibility concerns?
+
 > 
-> Yes, I also did that again after the report, and did so again right now
-> just to verify. I'm not seeing any issues with coredumps being
-> generated
-> if the app crashes, or if I send it SIGILL, for example... I also just
-> now tried Olivier's test case, and it seems to dump just fine for me.
-> 
-> I then tried backing out the patch from Stefan, and it works fine with
-> that reverted too. So a bit puzzled as to what is going on here...
-> 
-> Anyway, I'll check in on that github thread and see if we can narrow
-> this down.
-> 
-I know that my test case isn't conclusive. It is a failed attempt to
-capture what my program is doing.
+>>  #include <stdlib.h>
+>>  #include <stdio.h>
+>>  #include <stdarg.h>
+>> @@ -8630,6 +8634,9 @@ static const struct bpf_sec_def section_defs[] = {
+>>         BPF_PROG_SEC("struct_ops",              BPF_PROG_TYPE_STRUCT_OPS),
+>>         BPF_EAPROG_SEC("sk_lookup/",            BPF_PROG_TYPE_SK_LOOKUP,
+>>                                                 BPF_SK_LOOKUP),
+>> +       SEC_DEF("iouring/",                     IOURING),
+>> +       SEC_DEF("iouring.s/",                   IOURING,
+>> +               .is_sleepable = true),
+>>  };
+>>
+>>  #undef BPF_PROG_SEC_IMPL
+>> --
+>> 2.31.1
+>>
 
-The priority of investigating my core dump issue has substantially
-dropped last week because I did solve my primary issue (A buffer leak
-in the provided buffers to io_uring during disconnection). My program
-did run for days but it did crash morning without any core dump again.
-It is a very frustrating situation because it would probably be a bug
-trivial to diagnostic and fix but without the core, the logs are opaque
-and they just don't give no clue about why the program did crash.
-
-A key characteristic of my program, it is that it generates at least 1
-io-worker thread per io_uring instance.
-
-Oddly enough, I am having a hard time recreating a test case that will
-generate io-worker threads.
-
-My first attempt was with the github issue test-case. I have kept
-tweaking it and I know that I will find the right sequence to get io-
-worker threads spawned.
-
-I suspect that once you meet that condition, it might be sufficient to
-trigger the core dump generation problem.
-
-I have also tried to run benchmark io_uring with
-https://github.com/frevib/io_uring-echo-server/blob/io-uring-feat-fast-poll/benchmarks/benchmarks.md
-(If you give it a try, make sure you erase its private out-of-date
-liburing copy before compiling it...)
-This didn't generate any io-worker thread neither.
-
-In a nutshell here is what my program does for most of its 85-86
-sockets:
-1. create TCP socket
-2. Set O_NONBLOCK to it
-3. Call connect()
-4. Use IORING_OP_POLL_ADD with POLLOUT to be notified when the
-connection completes
-5. Once connection is completed, clear the socket O_NONBLOCK flag, use
-IORING_OP_WRITE to send a request
-6. Submit a IORING_OP_READ with IOSQE_BUFFER_SELECT to read server
-reply asynchronously.
-
-Here are 2 more notes about the sequence:
-a) If you wonder about the flip-flop about blocking and non-nblocking,
-it is because I have adapated existing code to use io_uring. To
-minimize the required code change, I left untouched the non-blocking
-connection code.
-b) If I add IOSQE_ASYNC to the IORING_OP_READ, io_uring will generate a
-lot of io-worker threads. I mean a lot... You can see here:
-https://github.com/axboe/liburing/issues/349
-
-So what I am currently doing is to tweak my test-case to emulate as
-much as possible the described sequence to have some io-worker threads
-spawn and then force a core dump to validate that it is the io-worker
-thread presence that is causing the core dump generation issue (or
-not!)
-
-Quick question to the devs: Is there any example program bundled with
-liburing that is creating some io-workers thread in a sure way?
-
-Greetings,
-Olivier
-
-
+-- 
+Pavel Begunkov

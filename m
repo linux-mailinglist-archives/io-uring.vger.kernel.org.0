@@ -2,164 +2,138 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D020338D043
-	for <lists+io-uring@lfdr.de>; Fri, 21 May 2021 23:50:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EE7138D28B
+	for <lists+io-uring@lfdr.de>; Sat, 22 May 2021 02:23:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229935AbhEUVwD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 21 May 2021 17:52:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57124 "EHLO
+        id S230190AbhEVAZN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 21 May 2021 20:25:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229917AbhEUVwD (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 21 May 2021 17:52:03 -0400
-Received: from mail-qk1-x732.google.com (mail-qk1-x732.google.com [IPv6:2607:f8b0:4864:20::732])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B7FEC0613ED
-        for <io-uring@vger.kernel.org>; Fri, 21 May 2021 14:50:39 -0700 (PDT)
-Received: by mail-qk1-x732.google.com with SMTP id 82so9932162qki.8
-        for <io-uring@vger.kernel.org>; Fri, 21 May 2021 14:50:39 -0700 (PDT)
+        with ESMTP id S230268AbhEVAZF (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 21 May 2021 20:25:05 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B000C061357;
+        Fri, 21 May 2021 17:22:48 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id a4so22625861wrr.2;
+        Fri, 21 May 2021 17:22:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:date:message-id:in-reply-to:references:user-agent
-         :mime-version:content-transfer-encoding;
-        bh=yVODgsBH3pwJySxgTtmB98vfatsbGIZ28oW0IWdkpT0=;
-        b=y0fBY74DDWd7J2Q4LAZ8Tc+S4IeIm0ggxMFDvuLxRMwxE4pBi5YQBOJb0yVHgNCjw/
-         6nXTDhdi237ivx9OpFxTaSt/2w0iOl5KaPuinDGmWlVHyOd7eh+AjdQCE6TfppiXA1qw
-         LiqA51F2Iji/7K4YBZqYJ6Jp3NMKsLAP/zlozfNFomva6gAUX0B3D0Rj7BviOlZga5fz
-         qRdiUDzGr928A7t5cuzs8jxkLCfqqLd8UOFcH0J8HKrsYx4tgSDOcPII0hN8iO4TXTrm
-         Vdoi2lzlO1NwBXvypm8t69RMAW+j40GzHN4PFkD789xwDPx0IIrJSlbaKk8KCBY7Iodj
-         VKKQ==
+        d=gmail.com; s=20161025;
+        h=to:references:from:subject:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=gyzVl8OaygknyiQ92wI9NqUUnUzVTtSj7pAG6enmPyo=;
+        b=h9+5dlZVZNErqj/VlQoU6FFADlMgqz1rcXrf+FRcGqRuWu6/+GSmFfJGzQ6UjZPasQ
+         EI6OuFqiQZQgzqfNxjJJgx9yfPugxzr+7ry7XjEXAbqF6Nyt+oaUmo+pvs6sA7HNk3le
+         v+j+HoV7anBhT0OQjfS1we4WTMQq6BnhMNAI3o6DZCNCS9uiYHUAhLYIkJroa2TsH1U5
+         a1NB/CPiMyK/jA/IW1lsqCHSGOfzD0zibwaictf/lHaPY64rUPpK4kfZTMVIFzXlFra1
+         JKxjgsoecROHhoTykwAdiHkJmmVd62kS24ZeLbepeB/r75wypmXI5iVKgliCKPIz5RWC
+         NCxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:date:message-id:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=yVODgsBH3pwJySxgTtmB98vfatsbGIZ28oW0IWdkpT0=;
-        b=NOavSPqnaPy4eVqB5XlG+fDm9hl/lueTQkdRYV0Hq7F8pZix7Qfwynni2ZU/EXJB3e
-         maASd4xLHe2sRY5JpFhQunJ3x6vc7y9RoOZyb6Bftr/9w0F0CPu0JJIP7Z8QH9FvPw9O
-         Lf1diFN5UllGB7muw9A4EThwnqK8ZjLvyQW18etCi26CXBPdiSr5g30hXVSlOHD5iG9t
-         8AknYQDnahRCkDyzdHLw6Mm85HhLg1mHf/VERfG8Z3ZwLdMMKRQMQaH9tyElUfG1FsCO
-         7PCCP7jld71CLA4w2ZdlcU6E4RJDXAP7w+BMFD26e2BuwWc6yzrVV/JFtKuRBVyEQSTy
-         ovEw==
-X-Gm-Message-State: AOAM5337gHdTd48Gl6K+5dorlNubIVLV8RsMXhqL3zLUz+c9qdDxGi59
-        e8iv/VI53o/WDlcDdyJB1pa8
-X-Google-Smtp-Source: ABdhPJy8CbcdNgRZ+79GQ7zlutlj5Jo5vuvLZxS0af1cMkIKs15miDkHS/LPNWRaK6XS5ozPHjj0Fg==
-X-Received: by 2002:a37:ac0d:: with SMTP id e13mr11837998qkm.426.1621633838636;
-        Fri, 21 May 2021 14:50:38 -0700 (PDT)
-Received: from localhost (pool-96-237-52-188.bstnma.fios.verizon.net. [96.237.52.188])
-        by smtp.gmail.com with ESMTPSA id h8sm4914383qtp.46.2021.05.21.14.50.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 May 2021 14:50:38 -0700 (PDT)
-Subject: [RFC PATCH 9/9] Smack: Brutalist io_uring support with debug
-From:   Paul Moore <paul@paul-moore.com>
-To:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        h=x-gm-message-state:to:references:from:subject:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=gyzVl8OaygknyiQ92wI9NqUUnUzVTtSj7pAG6enmPyo=;
+        b=ahQJiUHRlDNSEUKiILnJvFip3Q1S2c2GYqVQtJh89eKGIF7f1IeInzwEqRoEP8mhjj
+         iz0Q14V8BmeTvIjFQn7TfwtvWYASq86hIg+IvPnG/+Sl86yjtnxS5T2jwcr4GuHurpqJ
+         3W2QAHFfLtpG9HVsnspIPMrbxRRab6MvOQh9sdFNeTxFPhxcSQ7BxmkhPvwF2jUftkUJ
+         fZCcHmycTgfw0fmk9RYS9VcVOLlql0+Aur/xM16ZJSYM7boxUJk6kDNwwalZ/dy4kTeq
+         yBc2w82DYMG1TsPRqrdyb2AKr0f08X89dCnWxBYCDCdBo1J70Wx/tqUA7lZmVK/YXCxy
+         5FaQ==
+X-Gm-Message-State: AOAM530xMyuQRO0KBo/LFIiKXl4DNght7sWAcUBIHeFULlRgTlx/7/5R
+        26vGJ1kZ7PG9toDPRkXsqHM=
+X-Google-Smtp-Source: ABdhPJxaXbjmt4xOHYAJ+WucB6UB7YwedwnqpF4Vvt+zZvoVOd6AMuq4GF3A5xjCoLHvNNbU9LIObw==
+X-Received: by 2002:adf:a519:: with SMTP id i25mr11858230wrb.312.1621642966773;
+        Fri, 21 May 2021 17:22:46 -0700 (PDT)
+Received: from [192.168.8.197] ([85.255.236.182])
+        by smtp.gmail.com with ESMTPSA id s199sm1032010wme.43.2021.05.21.17.22.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 May 2021 17:22:46 -0700 (PDT)
+To:     Paul Moore <paul@paul-moore.com>,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
         linux-audit@redhat.com, io-uring@vger.kernel.org,
         linux-fsdevel@vger.kernel.org,
         Kumar Kartikeya Dwivedi <memxor@gmail.com>,
         Jens Axboe <axboe@kernel.dk>,
         Alexander Viro <viro@zeniv.linux.org.uk>
-Date:   Fri, 21 May 2021 17:50:37 -0400
-Message-ID: <162163383761.8379.7421085717625472402.stgit@sifl>
-In-Reply-To: <162163367115.8379.8459012634106035341.stgit@sifl>
 References: <162163367115.8379.8459012634106035341.stgit@sifl>
-User-Agent: StGit/1.1
+ <162163379461.8379.9691291608621179559.stgit@sifl>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Subject: Re: [RFC PATCH 2/9] audit,io_uring,io-wq: add some basic audit
+ support to io_uring
+Message-ID: <f07bd213-6656-7516-9099-c6ecf4174519@gmail.com>
+Date:   Sat, 22 May 2021 01:22:39 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <162163379461.8379.9691291608621179559.stgit@sifl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Casey Schaufler <casey@schaufler-ca.com>
+On 5/21/21 10:49 PM, Paul Moore wrote:
+> WARNING - This is a work in progress and should not be merged
+> anywhere important.  It is almost surely not complete, and while it
+> probably compiles it likely hasn't been booted and will do terrible
+> things.  You have been warned.
+> 
+> This patch adds basic auditing to io_uring operations, regardless of
+> their context.  This is accomplished by allocating audit_context
+> structures for the io-wq worker and io_uring SQPOLL kernel threads
+> as well as explicitly auditing the io_uring operations in
+> io_issue_sqe().  The io_uring operations are audited using a new
+> AUDIT_URINGOP record, an example is shown below:
+> 
+>   % <TODO - insert AUDIT_URINGOP record example>
+> 
+> Thanks to Richard Guy Briggs for review and feedback.
+> 
+> Signed-off-by: Paul Moore <paul@paul-moore.com>
+> ---
+[...]
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index e481ac8a757a..e9941d1ad8fd 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -78,6 +78,7 @@
+>  #include <linux/task_work.h>
+>  #include <linux/pagemap.h>
+>  #include <linux/io_uring.h>
+> +#include <linux/audit.h>
+>  
+>  #define CREATE_TRACE_POINTS
+>  #include <trace/events/io_uring.h>
+> @@ -6105,6 +6106,9 @@ static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags)
+>  	if (req->work.creds && req->work.creds != current_cred())
+>  		creds = override_creds(req->work.creds);
+>  
+> +	if (req->opcode < IORING_OP_LAST)
 
-Add Smack privilege checks for io_uring. Use CAP_MAC_OVERRIDE
-for the override_creds case and CAP_MAC_ADMIN for creating a
-polling thread. These choices are based on conjecture regarding
-the intent of the surrounding code.
+always true at this point
 
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-Signed-off-by: Paul Moore <paul@paul-moore.com>
----
- security/smack/smack_lsm.c |   64 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 64 insertions(+)
+> +		audit_uring_entry(req->opcode);
 
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 223a6da0e6dc..f6423c0096e9 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -4691,6 +4691,66 @@ static int smack_dentry_create_files_as(struct dentry *dentry, int mode,
- 	return 0;
- }
- 
-+#ifdef CONFIG_IO_URING
-+/**
-+ * smack_uring_override_creds - Is io_uring cred override allowed?
-+ * @new: the target creds
-+ *
-+ * Check to see if the current task is allowed to override it's credentials
-+ * to service an io_uring operation.
-+ */
-+int smack_uring_override_creds(const struct cred *new)
-+{
-+	struct task_smack *tsp = smack_cred(current_cred());
-+	struct task_smack *nsp = smack_cred(new);
-+
-+#if 1
-+	if (tsp->smk_task == nsp->smk_task)
-+		pr_info("%s: Smack matches %s\n", __func__,
-+			tsp->smk_task->smk_known);
-+	else
-+		pr_info("%s: Smack override check %s to %s\n", __func__,
-+			tsp->smk_task->smk_known, nsp->smk_task->smk_known);
-+#endif
-+	/*
-+	 * Allow the degenerate case where the new Smack value is
-+	 * the same as the current Smack value.
-+	 */
-+	if (tsp->smk_task == nsp->smk_task)
-+		return 0;
-+
-+#if 1
-+	pr_info("%s: Smack sqpoll %s\n", __func__,
-+		smack_privileged_cred(CAP_MAC_OVERRIDE, current_cred()) ?
-+		"ok by Smack" : "disallowed (No CAP_MAC_OVERRIDE)");
-+#endif
-+	if (smack_privileged_cred(CAP_MAC_OVERRIDE, current_cred()))
-+		return 0;
-+
-+	return -EPERM;
-+}
-+
-+/**
-+ * smack_uring_sqpoll - check if a io_uring polling thread can be created
-+ *
-+ * Check to see if the current task is allowed to create a new io_uring
-+ * kernel polling thread.
-+ */
-+int smack_uring_sqpoll(void)
-+{
-+#if 1
-+	pr_info("%s: Smack new ring %s\n", __func__,
-+		smack_privileged_cred(CAP_MAC_ADMIN, current_cred()) ?
-+		"ok by Smack" : "disallowed (No CAP_MAC_ADMIN)");
-+#endif
-+	if (smack_privileged_cred(CAP_MAC_ADMIN, current_cred()))
-+		return 0;
-+
-+	return -EPERM;
-+}
-+
-+#endif /* CONFIG_IO_URING */
-+
- struct lsm_blob_sizes smack_blob_sizes __lsm_ro_after_init = {
- 	.lbs_cred = sizeof(struct task_smack),
- 	.lbs_file = sizeof(struct smack_known *),
-@@ -4843,6 +4903,10 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(inode_copy_up, smack_inode_copy_up),
- 	LSM_HOOK_INIT(inode_copy_up_xattr, smack_inode_copy_up_xattr),
- 	LSM_HOOK_INIT(dentry_create_files_as, smack_dentry_create_files_as),
-+#ifdef CONFIG_IO_URING
-+	LSM_HOOK_INIT(uring_override_creds, smack_uring_override_creds),
-+	LSM_HOOK_INIT(uring_sqpoll, smack_uring_sqpoll),
-+#endif
- };
- 
- 
+So, it adds two if's with memory loads (i.e. current->audit_context)
+per request in one of the hottest functions here... No way, nack
 
+Maybe, if it's dynamically compiled into like kprobes if it's
+_really_ used.
+
+> +
+>  	switch (req->opcode) {
+>  	case IORING_OP_NOP:
+>  		ret = io_nop(req, issue_flags);
+> @@ -6211,6 +6215,9 @@ static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags)
+>  		break;
+>  	}
+>  
+> +	if (req->opcode < IORING_OP_LAST)
+> +		audit_uring_exit(!ret, ret);
+> +
+>  	if (creds)
+>  		revert_creds(creds);
+
+-- 
+Pavel Begunkov

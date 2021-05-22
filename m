@@ -2,113 +2,81 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AE3038D2B5
-	for <lists+io-uring@lfdr.de>; Sat, 22 May 2021 02:55:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9197038D2E4
+	for <lists+io-uring@lfdr.de>; Sat, 22 May 2021 04:07:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230285AbhEVA5K (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 21 May 2021 20:57:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41984 "EHLO
+        id S230448AbhEVCIT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 21 May 2021 22:08:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230280AbhEVA5J (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 21 May 2021 20:57:09 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0DDBC061574;
-        Fri, 21 May 2021 17:55:45 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id d11so22595077wrw.8;
-        Fri, 21 May 2021 17:55:45 -0700 (PDT)
+        with ESMTP id S230407AbhEVCIT (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 21 May 2021 22:08:19 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46EE9C06138A
+        for <io-uring@vger.kernel.org>; Fri, 21 May 2021 19:06:54 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id gb17so15036578ejc.8
+        for <io-uring@vger.kernel.org>; Fri, 21 May 2021 19:06:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=i/GOtIqm3vBucvrsX3tS6msGOS9XSleUkpRlxKUqD2g=;
-        b=M+Mi6AB2pb+oOt0WQZWG30i2xOFUcV0gt4INvkS0RZW/tsw37tCS40ko24eykPiKbo
-         tjRSxQMBeQ7eZYoIq1fEOju+LyWtqXjp5LljBbZZKYiJbthZidGrV0ignzsyEw8Fr4Rh
-         4YTvZnxvQVNBFV+LjElzvR6b+kmGymWvu5MWd1bGh1ZllheUHBDxd69PpNZcJuncE19I
-         xe+v+1afcJxQ51XGBi6kA+lorFbtu8qrKfVuF0fyZuRZf3my3o+vTdu1FBm99gkmNh4K
-         yV1XRSr/M5bJwo2T44M6nRVC63ayWp5GYNXy+HL/jOdWIUiUqcd1exH+PPyM+6t9CZU5
-         rhDA==
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=enh1CO1fRJ/3s4nFuYfV9slAcR71xCie3kXiqBTbpWg=;
+        b=DCGJ5Nilo9/AGG1ArRxCjRgl6Ds9yTKWnR6U59uXzOZmtwiUQ5494CMZyReO55uwFC
+         bWQGlDqLRp/uFHm5zG6la0tMj+mGyzU7/vMvuDBbNIXjksEXwzlAE5G1hmTvER3/Jo1R
+         YevoCUqNHBiF6AzfOPz9cWHKzkxXERNFSCqZX0G2NyH1AsaUTr7VCU16+FNGRhBapnhO
+         z+Vlj89N0pKTqThOiXfuC8DqDIO7oFc89t651Zng0mhBQGHlIVNyJva1qSub9eoR34fF
+         Qv0FYzdvvK38zcP1XpSvJfH+a4AowNlrh2wC6JfqExuFDqBBSuwRE2Hl+MMhteqYRHq9
+         VYuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=i/GOtIqm3vBucvrsX3tS6msGOS9XSleUkpRlxKUqD2g=;
-        b=mcW3GmebeQgAhSdz0E1whDLvEtsuLI40tasNXn6ZG4tHQhXuPf8teSQTIEANHrA+oH
-         szVsWPo1P0On4KnXmiXuvA/uzuKXTKqsiwKUKmbjQ+pbdCUJEQtVzp+77SenzwLiBfnT
-         DTOR960iUEyunzE+MdUzD8SU0iQh8uHcxVpbmfclWUJx22lnlsC4WU9x4uvqRXfsEkGg
-         WZT9HdzlweM5bko2SlK6LsTFfTqbGVv0u61hMCDNAtN7jdY1pO75eh1wUJOVHVQ+bwef
-         YHl0rrSZPp4Dgo6oJL+DOMR/Aaq/5+ssJBw6YtgSGzuucZr3Yj5ktYuYKx6/podPexxH
-         zo8A==
-X-Gm-Message-State: AOAM531mYD5y7C/l58p62tJ+/nV+wVUOS/9XKJnKNQ1+q2IviODufnJl
-        hHhTJvr0jWm2vmZ8XN9VEKw=
-X-Google-Smtp-Source: ABdhPJxlUx6PN+TeZgFX8NVmu3QEZaU92AaeCE17BO1Qek84diFfFougBMPiD4riu61hf0jGbah7fw==
-X-Received: by 2002:a05:6000:244:: with SMTP id m4mr11884612wrz.225.1621644944518;
-        Fri, 21 May 2021 17:55:44 -0700 (PDT)
-Received: from [192.168.8.197] ([85.255.236.182])
-        by smtp.gmail.com with ESMTPSA id a123sm1047247wmd.2.2021.05.21.17.55.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 May 2021 17:55:43 -0700 (PDT)
-Subject: =?UTF-8?B?UmU6IOWbnuWkjTogW3N5emJvdF0gS0FTQU46IHVzZS1hZnRlci1mcmVl?=
- =?UTF-8?Q?_Read_in_io=5fworker=5fhandle=5fwork?=
-To:     "Zhang, Qiang" <Qiang.Zhang@windriver.com>,
-        syzbot <syzbot+6cb11ade52aa17095297@syzkaller.appspotmail.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>
-References: <0000000000008224bf05c2a8a78b@google.com>
- <DM6PR11MB42024E7A188486B8850905D6FF299@DM6PR11MB4202.namprd11.prod.outlook.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <b6a339b4-e25c-1466-3db4-f96739365ca6@gmail.com>
-Date:   Sat, 22 May 2021 01:55:37 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=enh1CO1fRJ/3s4nFuYfV9slAcR71xCie3kXiqBTbpWg=;
+        b=SPEtCB3n9HbwTAoZ3aAnr6WdBEJthOfSCsPEfghDYHjOAaII6gVKQNqN5Etngch9ez
+         nrvMD+QJtJJ2lUNBNKG8HIRkuGnwFhOiB3cIjSDp8q7WcmrDXT4yMtwjZww3QZQqUDF0
+         RKNLsz76UIp4KuelfVIvvD8g+7s/CcnzoDu6ZZhS9fb7VuA/bc02JE2JKbwv0gkHn1Zc
+         YFXjydEGJ3mGWJiXBBU0NsHMKSLhsShudA3YomGfnOtYjfm+vagSmPTcmBaG6OXYLP5G
+         0KifWC/WYi6Xd+5WLXeVxtB6hLB48b6x1Piq7DplKPw6pBAj3HYwiockUnqb5VXjgYy8
+         psMQ==
+X-Gm-Message-State: AOAM533sWN9rJt2uhq+H0LiVYtYIUFgUuNLMCLeDrtQ6pr96HfYVAshF
+        BnD3SX43qXVXKx2QnxhYyGx5D1wau9yDMgbMCSl3
+X-Google-Smtp-Source: ABdhPJwAdi1Bw98L2/qGMo17Mi+Nh8QFY/8nuxWxu+5qFeaSxXKZgxnhJ2PPUK/Xid00W60zEIsVCCAHK9qd/G6j0x4=
+X-Received: by 2002:a17:907:1749:: with SMTP id lf9mr13285225ejc.178.1621649212774;
+ Fri, 21 May 2021 19:06:52 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <DM6PR11MB42024E7A188486B8850905D6FF299@DM6PR11MB4202.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <162163367115.8379.8459012634106035341.stgit@sifl> <f67213bf-8f41-ce06-b3b2-adf1ab2a3c5c@i-love.sakura.ne.jp>
+In-Reply-To: <f67213bf-8f41-ce06-b3b2-adf1ab2a3c5c@i-love.sakura.ne.jp>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 21 May 2021 22:06:41 -0400
+Message-ID: <CAHC9VhRG9jD3JPbf==Bo0B+cyMG8mrQnM=RyoxenqxqePdRdsw@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/9] Add LSM access controls and auditing to io_uring
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     linux-security-module@vger.kernel.org, linux-audit@redhat.com,
+        io-uring@vger.kernel.org, selinux@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/21/21 9:45 AM, Zhang, Qiang wrote:
-[...]
-> It looks like 
-> thread iou-wrk-28796 in io-wq(A)  access wqe in the wait queue(data->hash->wait),  but this wqe  has been free due to the destruction of another io-wq(B).
-> 
-> Should we after wait for all iou-wrk thread exit in the io-wq，  remove wqe from the waiting queue (data->hash->wait).   prevent some one  wqe  belonging to this io-wq , may be still existing in the (data->hash->wait)queue before releasing. 
+On Fri, May 21, 2021 at 8:53 PM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+> On 2021/05/22 6:49, Paul Moore wrote:
+> > I've provided the SELinux
+> > implementation, Casey has been nice enough to provide a Smack patch,
+> > and John is working on an AppArmor patch as I write this.  I've
+> > mentioned this work to the other LSM maintainers that I believe might
+> > be affected but I have not heard back from anyone else at this point.
+>
+> I don't think any change is required for TOMOYO, for TOMOYO does not
+> use "struct cred"->security where [RFC PATCH 8/9] and [RFC PATCH 9/9]
+> are addressing, and TOMOYO does not call kernel/audit*.c functions.
 
-The guess looks reasonable, it's likely a problem.
-Not sure about the diff, it seems racy but I need to
-take a closer look to say for sure
-
-
-> look forward to your opinion.
-> 
-> --- a/fs/io-wq.c
-> +++ b/fs/io-wq.c
-> @@ -1003,13 +1003,17 @@ static void io_wq_exit_workers(struct io_wq *wq)
->                 struct io_wqe *wqe = wq->wqes[node];
->  
->                 io_wq_for_each_worker(wqe, io_wq_worker_wake, NULL);
-> -               spin_lock_irq(&wq->hash->wait.lock);
-> -               list_del_init(&wq->wqes[node]->wait.entry);
-> -               spin_unlock_irq(&wq->hash->wait.lock);
->         }
->         rcu_read_unlock();
->         io_worker_ref_put(wq);
->         wait_for_completion(&wq->worker_done);
-> +       for_each_node(node) {
-> +               struct io_wqe *wqe = wq->wqes[node];
-> +
-> +               spin_lock_irq(&wq->hash->wait.lock);
-> +               list_del_init(&wq->wqes[node]->wait.entry);
-> +               spin_unlock_irq(&wq->hash->wait.lock);
-> +       }
->         put_task_struct(wq->task);
->         wq->task = NULL;
->  }
+Good to know, thank you for checking.
 
 -- 
-Pavel Begunkov
+paul moore
+www.paul-moore.com

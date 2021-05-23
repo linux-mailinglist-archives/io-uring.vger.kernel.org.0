@@ -2,78 +2,77 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B78B338DBDB
-	for <lists+io-uring@lfdr.de>; Sun, 23 May 2021 18:20:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6ECFF38DBF3
+	for <lists+io-uring@lfdr.de>; Sun, 23 May 2021 18:40:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231835AbhEWQVt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 23 May 2021 12:21:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48830 "EHLO
+        id S231829AbhEWQmX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 23 May 2021 12:42:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53318 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231818AbhEWQVs (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 23 May 2021 12:21:48 -0400
-Received: from out1.migadu.com (out1.migadu.com [IPv6:2001:41d0:2:863f::])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C94B5C061574
-        for <io-uring@vger.kernel.org>; Sun, 23 May 2021 09:20:19 -0700 (PDT)
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cmpwn.com; s=key1;
-        t=1621786816;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=EnzDhDn76D2l7zwUFMcgAQTB5GhGZnfvqm1QXn6n14k=;
-        b=k6b9N+bzLgsMPuwVqx37GuYNbsdEYVb993jiOV/329MjnmkSmJjjI9sEJJ8qEvh7AzI2Mv
-        xEPRENm5yStZhcCRlsHtP4uh5D5dJ3Cek1K9S7IhTZ54zVHRZKUnuAzg43HvCOBY8TmUdQ
-        sK/LbenT3Sgf8FFLRVc8e/uuxeUE2LmP/0jUa7l3tolegTtMZALlGC6jo0MmAbgfwNeOhb
-        Xj07fB/uOub5C5WTRzfWk0I88iWDvOar68K4h8CyVD4XQlNqUWYkaoezQB0qXS0Ln/5dzw
-        fK+xX8hi3epmfCOiG25gZHN3xlh3UpfS2YZ+tunnZCaCi8tanNKRLIfhvN6ZXQ==
-From:   Drew DeVault <sir@cmpwn.com>
-To:     io-uring@vger.kernel.org
-Cc:     Drew DeVault <sir@cmpwn.com>, Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Subject: [PATCH] io_uring_enter(2): clarify OP_READ and OP_WRITE
-Date:   Sun, 23 May 2021 12:20:12 -0400
-Message-Id: <20210523162012.10052-1-sir@cmpwn.com>
+        with ESMTP id S231815AbhEWQmW (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 23 May 2021 12:42:22 -0400
+Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 650E8C061574
+        for <io-uring@vger.kernel.org>; Sun, 23 May 2021 09:40:55 -0700 (PDT)
+Received: by mail-pf1-x433.google.com with SMTP id q25so803995pfn.1
+        for <io-uring@vger.kernel.org>; Sun, 23 May 2021 09:40:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=KOyMvExjnlM9sNp7VXjD9yQI194mX6S08Oxf3waUeHQ=;
+        b=wJy+KMmJNW9tonQIOoJx92nsPOOKvdeoTJopqzk2UWgXfFkEojzT+Ull0d5dlGd6PM
+         JzreXRRtL8zSXNwfpTs59u84WWA5CMqykO9QohsAmCQi4jLm1a7YBnzq9gj0P1JFc1m8
+         1A+EwAw6RpFQp8n/KSXxXVtpgHGVE8Wv7LLiL/X6rP9NHcbZ/7/Ez3qMpr/aJ6AToSYX
+         DMUij5zSVICu5xsdswjZI26F81QHaFktVaaFwkelGX9/SyiG6fOyvlUn5+Jtl3JtO2iq
+         wJVjGWhhu/fs5EaJvDVW7VbNZZ5PYz3pYX5qxYG1zClnkN42xJtOUxT/fhm1oACBBSow
+         6fEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=KOyMvExjnlM9sNp7VXjD9yQI194mX6S08Oxf3waUeHQ=;
+        b=WESVpHBMDUDDcLri6dYuBuLz43XevcBi3s8LB0HQbXIJRnpivsA9y7lPmVcjvX3PEO
+         QG7q/KBTfY4kDIbfcZpL50AqIrLw+JHUw/AGJW+rsIHh6S6El9/eetEJfilJTp25VPiZ
+         wV7wZrns06f7U54aeUabQMos1RuQucg+ziH5Uwh8+XYDvImlKpqjCPLCdKQ7lMY1KH5K
+         FjQbDEwk+3OkmHXhvXTLYy98gLmpPpvvnqofjxUMYi3sCMxr5oeALhxFdVYl8ozcdZ84
+         8wqDSpKo3/uQofRAvHtuJqMoLOTRVCMG6rqGSMHFewtY9cws0Ud9ebvWe4BfABdnLMw/
+         dKWA==
+X-Gm-Message-State: AOAM531UeTD0JnsiroFq3jRg8EM6yON1e/i7TmX7Qe1+vCQ2QhCw3+9o
+        FmwajXJbMJ1Izkn3r2nlwE4bQg==
+X-Google-Smtp-Source: ABdhPJzhzSyZeUngq9caWEE60Cd87ZIC0aND9k3x6LfSfriVLonFs+4Iz6nPt4qilBuhp6tbtS3C0A==
+X-Received: by 2002:a63:5511:: with SMTP id j17mr9523659pgb.191.1621788054905;
+        Sun, 23 May 2021 09:40:54 -0700 (PDT)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id 23sm9831384pgv.90.2021.05.23.09.40.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 23 May 2021 09:40:54 -0700 (PDT)
+Subject: Re: [PATCH] io_uring_enter(2): clarify OP_READ and OP_WRITE
+To:     Drew DeVault <sir@cmpwn.com>, io-uring@vger.kernel.org
+Cc:     Pavel Begunkov <asml.silence@gmail.com>
+References: <20210523162012.10052-1-sir@cmpwn.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <e7142141-9598-81bd-6d4e-e965e8a30d55@kernel.dk>
+Date:   Sun, 23 May 2021 10:41:00 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
-X-Migadu-Auth-User: sir@cmpwn.com
+In-Reply-To: <20210523162012.10052-1-sir@cmpwn.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-These do not advance the internal file offset, making them behave more
-like pread/pwrite than read/write.
----
- man/io_uring_enter.2 | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+On 5/23/21 10:20 AM, Drew DeVault wrote:
+> These do not advance the internal file offset, making them behave more
+> like pread/pwrite than read/write.
 
-diff --git a/man/io_uring_enter.2 b/man/io_uring_enter.2
-index f898ffd..81044c1 100644
---- a/man/io_uring_enter.2
-+++ b/man/io_uring_enter.2
-@@ -576,16 +576,18 @@ for the general description of the related system call. Available since 5.6.
- .TP
- .B IORING_OP_WRITE
- Issue the equivalent of a
--.BR read(2)
-+.BR pread(2)
- or
--.BR write(2)
-+.BR pwrite(2)
- system call.
- .I fd
- is the file descriptor to be operated on,
- .I addr
--contains the buffer in question, and
-+contains the buffer in question,
- .I len
--contains the length of the IO operation. These are non-vectored versions of the
-+contains the length of the IO operation, and
-+.I offs
-+contains the read or write offset. These are non-vectored versions of the
- .B IORING_OP_READV
- and
- .B IORING_OP_WRITEV
+They do, if -1 is used as the offset. Care to update the patch and include
+that clarification?
+
 -- 
-2.31.1
+Jens Axboe
 

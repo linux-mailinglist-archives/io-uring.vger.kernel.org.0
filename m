@@ -2,48 +2,84 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A77338DBF4
-	for <lists+io-uring@lfdr.de>; Sun, 23 May 2021 18:44:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 849F238DBF7
+	for <lists+io-uring@lfdr.de>; Sun, 23 May 2021 18:44:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231841AbhEWQqC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 23 May 2021 12:46:02 -0400
-Received: from out0.migadu.com ([94.23.1.103]:60604 "EHLO out0.migadu.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231818AbhEWQqC (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Sun, 23 May 2021 12:46:02 -0400
-MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cmpwn.com; s=key1;
-        t=1621788272;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=m+x4y6HjL2V5EaDS5G/wgu438ZQy0+K0wUarzL7E+Bg=;
-        b=kqn4JzbVANR478k87xbBJD8Ko7InDuHGx1W9nOJc4mrkrhMFSgjjD1lcH7lysQB4CwamE1
-        J4R96bp4IyIsb8T2//1LQH5o6LzNxxQt185ic6oddcSv8hgFgWchBaINz6wxJ/HXKqgTWx
-        iLGsMvvrqmRXJqxkgIlclk+d5KBdRzy+faRzEiGBavbWEYKFZvprQfg2NVB+7yJ8wDaPcM
-        LH1gjWtXMeADepuRAu4eZF+Y61jbUIV6uIVlFKr1YrNsxElo/XkAL922eBvh+kaQdmh8RX
-        KqO5RLVvcweAXWqWu25/9dZXoiECOUM6qYy2ORRrGhGPSGbbRnrCGqk+8PetuA==
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date:   Sun, 23 May 2021 12:44:31 -0400
-Message-Id: <CBKRYME7X23G.1ECMG1DI27KNE@taiga>
-Subject: Re: [PATCH] io_uring_enter(2): clarify OP_READ and OP_WRITE
+        id S231815AbhEWQqK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 23 May 2021 12:46:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54146 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231893AbhEWQqJ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 23 May 2021 12:46:09 -0400
+Received: from out1.migadu.com (out1.migadu.com [IPv6:2001:41d0:2:863f::])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A96EAC061574
+        for <io-uring@vger.kernel.org>; Sun, 23 May 2021 09:44:42 -0700 (PDT)
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   "Drew DeVault" <sir@cmpwn.com>
-To:     "Jens Axboe" <axboe@kernel.dk>, <io-uring@vger.kernel.org>
-Cc:     "Pavel Begunkov" <asml.silence@gmail.com>
-References: <20210523162012.10052-1-sir@cmpwn.com>
- <e7142141-9598-81bd-6d4e-e965e8a30d55@kernel.dk>
-In-Reply-To: <e7142141-9598-81bd-6d4e-e965e8a30d55@kernel.dk>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cmpwn.com; s=key1;
+        t=1621788281;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=v6lC3iUOG2oAgqRzTpk4B/Ko8qBoWV1R/FXI8SIMAPM=;
+        b=0BQmUwXFhNWZXm4/2hWrl07+Snb0nsBbveb6FXabPBL4eQfjzlM9N15K61F4fLB22NMhPd
+        /GofJo/lI2gqMxcb+IVQsAMTtgqBgQvZfUfsZgKgGDMRngTuIDyifShC53s8MYJTYXayZY
+        ABkarqIAKOy1PxAyw96xYU0YVnIc0QLT8RxyQgwuo4MNHwBmNavCA+7kANOTSAIRPoRyhq
+        ssF73xB/wZP+H8dIlrHF3fVQs7aNbwMXjnsao8V844lLczA9B/PSol7ycRzh9TSEN5R3Nv
+        4ORcmQk6RRXCJOv8T5axKGwus/Emt8wRkA70ul8h9Ert7ULRa3I0LUCjGrl7OQ==
+From:   Drew DeVault <sir@cmpwn.com>
+To:     io-uring@vger.kernel.org
+Cc:     Drew DeVault <sir@cmpwn.com>, "Jens Axboe" <axboe@kernel.dk>,
+        "Pavel Begunkov" <asml.silence@gmail.com>
+Subject: [PATCH v2] io_uring_enter(2): clarify OP_READ and OP_WRITE
+Date:   Sun, 23 May 2021 12:44:37 -0400
+Message-Id: <20210523164437.22784-1-sir@cmpwn.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 X-Migadu-Auth-User: sir@cmpwn.com
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Sun May 23, 2021 at 12:41 PM EDT, Jens Axboe wrote:
-> They do, if -1 is used as the offset. Care to update the patch and
-> include that clarification?
+These do not advance the internal file offset unless the offset is set
+to -1, making them behave more like pread/pwrite than read/write.
+---
+ man/io_uring_enter.2 | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
-Certainly.
+diff --git a/man/io_uring_enter.2 b/man/io_uring_enter.2
+index f898ffd..5b498e5 100644
+--- a/man/io_uring_enter.2
++++ b/man/io_uring_enter.2
+@@ -576,16 +576,24 @@ for the general description of the related system call. Available since 5.6.
+ .TP
+ .B IORING_OP_WRITE
+ Issue the equivalent of a
+-.BR read(2)
++.BR pread(2)
+ or
+-.BR write(2)
++.BR pwrite(2)
+ system call.
+ .I fd
+ is the file descriptor to be operated on,
+ .I addr
+-contains the buffer in question, and
++contains the buffer in question,
+ .I len
+-contains the length of the IO operation. These are non-vectored versions of the
++contains the length of the IO operation, and
++.I offs
++contains the read or write offset. If
++.I offs
++is set to -1, the offset will use (and advance) the file position, like the
++.BR read(2)
++and
++.BR write(2)
++system calls. These are non-vectored versions of the
+ .B IORING_OP_READV
+ and
+ .B IORING_OP_WRITEV
+-- 
+2.31.1
+

@@ -2,70 +2,72 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A7CCA38DCCD
-	for <lists+io-uring@lfdr.de>; Sun, 23 May 2021 22:07:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6165638DCD2
+	for <lists+io-uring@lfdr.de>; Sun, 23 May 2021 22:26:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231896AbhEWUJO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 23 May 2021 16:09:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41658 "EHLO
+        id S231939AbhEWU17 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 23 May 2021 16:27:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231893AbhEWUJO (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 23 May 2021 16:09:14 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E533C061574;
-        Sun, 23 May 2021 13:07:46 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id n2so26429677wrm.0;
-        Sun, 23 May 2021 13:07:46 -0700 (PDT)
+        with ESMTP id S231933AbhEWU16 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 23 May 2021 16:27:58 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9558CC061574;
+        Sun, 23 May 2021 13:26:31 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id n17-20020a7bc5d10000b0290169edfadac9so430293wmk.1;
+        Sun, 23 May 2021 13:26:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:from:to:references:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=tggQNXprZ2KXMcjjAudcZ47jW995L9WF7pjIIOpjVVo=;
-        b=gYzxcdGGsjSXGl3H4eyLnY/jFZHQqFtP44csh7My3pbTf+k8L0bIkRF89rL64E1TT8
-         YYbIF3Dg38u55WdN2r/4JauWsDN0wlV1THrFf1nVt9B5Lyp/zT0RiiSFIFL16Qpvi22B
-         VIiTrsMQFiqqXW0bfpQzp1aqpoWyPtKYsIRtMktAcjhbaNPEHwX+pQsvstqLaZqVPBFJ
-         ubWRlh+5JId3DhqPY/Ru+zq+/Wb971KmOq931y5OrTn45miCVW7JYE3OYl5ByKIvQ+dn
-         f34Fg82nus3l/J5oKKz2OwkqF7JZyYkjcZosUCLB6M5Ol9h40jF9hIvel6zOTLuewCgT
-         zAEQ==
+        h=to:cc:references:from:subject:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=PygufLx+GftT6TS2etBhgc6+uuLN9BWMi/zqgHpQvsY=;
+        b=esrTniYlKVIz1qwncB0fA1f6EoaGdXdv9Byf2wrzoXpJoI8ojdqkT7UMYtQ9tQdySr
+         dSSenwaL0uFN0kSScz4CSe6aF58av5EQOYX0crNgBe7TucIZqRPeRPClZzCZd7yi8vWW
+         O8nk+31pXBR9ihIKwxvRsCSxf62JDvRBeSK/GiTZ2dw/RpQpabwMEsy6xgjhQ8CbfoP5
+         QLmJcJBTT4BYTPrUanoQCVObQvlzPbKoVnKLRz+H90+AnrvDsodYtO/tWjJExz5Adju5
+         /lQx48WoVzuaUsfWYwEcjGsVXZwjY1oR64OEuEmYacUMdOdrwAbXifj7z1hl61xv6RDW
+         +kLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:references:message-id:date
+        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=tggQNXprZ2KXMcjjAudcZ47jW995L9WF7pjIIOpjVVo=;
-        b=Z5KNvJBJ4AKpJgYhZetJk4H8wBAYJp7/2jZDsaK9otdM1x8AKCCYqImKaK3N1yks7v
-         G+HgysQGClxvylwaHPZ5bDH1paJHQA8IDMrNIMwLD7cS166lbDUfb62L8eyf9QVW+mRv
-         oDBB8Fiev+UBdQnT67UDtfOjM5KAxcSuZX4cSoVNJ7mvECXq4EltP6I4MCSJQhKokQrr
-         aEKa7YlhRbuwLVD+TsWF4no9TOiTUY1m+0LvHSjSVL5o3PUlaYjnveCBSBrIZ2/M0Rwp
-         QUecYkRp8UMHFVbvRbLu3EeLnineGdfh7xLtw3Ph9PGyriMCtqx0vGxBKfVFmcZ5mSbZ
-         X3cg==
-X-Gm-Message-State: AOAM531AOq7wLMSn9Hdq2dFFFhUvoduLEQsrIWs+NtCInBGMqzN8eeED
-        b4/Goyv4Ajepop/lHTZwNB4=
-X-Google-Smtp-Source: ABdhPJwzyOyx7608ZpbnjUcBc/K1/AGGqdEBZd5IQAv6YBdI2hQSpPj5aRF8fSG9NdjVcV0rITRqdA==
-X-Received: by 2002:a05:6000:118c:: with SMTP id g12mr18727886wrx.320.1621800464833;
-        Sun, 23 May 2021 13:07:44 -0700 (PDT)
+        bh=PygufLx+GftT6TS2etBhgc6+uuLN9BWMi/zqgHpQvsY=;
+        b=gLXj6Ac2l8Z0G8Ix7wJnc9AgD1h16l/ooQAG8LPDBLhJRKDmTde+2jT9rWquNdmVn3
+         Md7APd2kH4SdX6St8WqxD7yMXx9Iten6ufr0VHC0WGQkIyW5Ak8f8C/uoMhZzmaR2tiB
+         6JItb7srFisF6oH6TE6C7ItzXHlE/OdaVqhaw3IEYSOHnGDQu757ijliAYkJ2JSsU2xn
+         uzHPjXOKYNo0Ze9KarabMK5jOFoIqx0ksVb8ZB3eby68thNsFxg8Ca0W+8cEWMduPzWi
+         /4EBFZBbJnzbXuwgOftwH1hB7GwDjzgecb4o8aXEi+yc+eu1LziUfp1TvNfE/Dpeviem
+         txuA==
+X-Gm-Message-State: AOAM530hZhyBzj4zpbyxDDarbQ2COhHDISIQ/FtVtmVQ8RfG+EpucDLj
+        GXs5F+cF11eqJSCVw6prF00F51Z0/rE0jefX
+X-Google-Smtp-Source: ABdhPJwHSQNM+a1cD2dybYGpeqrMJbBTrEBwBzdhWHyWUNWiVsmNBtsEauiH5obSA1GKRpi7NeXYOw==
+X-Received: by 2002:a1c:4b13:: with SMTP id y19mr17332089wma.102.1621801590115;
+        Sun, 23 May 2021 13:26:30 -0700 (PDT)
 Received: from [192.168.8.197] ([185.69.145.65])
-        by smtp.gmail.com with ESMTPSA id r17sm5889582wmh.25.2021.05.23.13.07.43
+        by smtp.gmail.com with ESMTPSA id 11sm5855772wmo.24.2021.05.23.13.26.29
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 23 May 2021 13:07:44 -0700 (PDT)
-Subject: =?UTF-8?B?UmU6IOWbnuWkjTogW3N5emJvdF0gS0FTQU46IHVzZS1hZnRlci1mcmVl?=
- =?UTF-8?Q?_Read_in_io=5fworker=5fhandle=5fwork?=
+        Sun, 23 May 2021 13:26:29 -0700 (PDT)
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+References: <162163367115.8379.8459012634106035341.stgit@sifl>
+ <162163379461.8379.9691291608621179559.stgit@sifl>
+ <f07bd213-6656-7516-9099-c6ecf4174519@gmail.com>
+ <CAHC9VhRjzWxweB8d8fypUx11CX6tRBnxSWbXH+5qM1virE509A@mail.gmail.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     "Zhang, Qiang" <Qiang.Zhang@windriver.com>,
-        syzbot <syzbot+6cb11ade52aa17095297@syzkaller.appspotmail.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>
-References: <0000000000008224bf05c2a8a78b@google.com>
- <DM6PR11MB42024E7A188486B8850905D6FF299@DM6PR11MB4202.namprd11.prod.outlook.com>
- <b6a339b4-e25c-1466-3db4-f96739365ca6@gmail.com>
-Message-ID: <7243f420-58c5-60e4-6c8f-c16a90766c0c@gmail.com>
-Date:   Sun, 23 May 2021 21:07:36 +0100
+Subject: Re: [RFC PATCH 2/9] audit,io_uring,io-wq: add some basic audit
+ support to io_uring
+Message-ID: <162219f9-7844-0c78-388f-9b5c06557d06@gmail.com>
+Date:   Sun, 23 May 2021 21:26:22 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.1
 MIME-Version: 1.0
-In-Reply-To: <b6a339b4-e25c-1466-3db4-f96739365ca6@gmail.com>
+In-Reply-To: <CAHC9VhRjzWxweB8d8fypUx11CX6tRBnxSWbXH+5qM1virE509A@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -73,47 +75,62 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/22/21 1:55 AM, Pavel Begunkov wrote:
-> On 5/21/21 9:45 AM, Zhang, Qiang wrote:
-> [...]
->> It looks like 
->> thread iou-wrk-28796 in io-wq(A)  access wqe in the wait queue(data->hash->wait),  but this wqe  has been free due to the destruction of another io-wq(B).
+On 5/22/21 3:36 AM, Paul Moore wrote:
+> On Fri, May 21, 2021 at 8:22 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
+>> On 5/21/21 10:49 PM, Paul Moore wrote:
+[...]
+>>>
+>>> +     if (req->opcode < IORING_OP_LAST)
 >>
->> Should we after wait for all iou-wrk thread exit in the io-wq，  remove wqe from the waiting queue (data->hash->wait).   prevent some one  wqe  belonging to this io-wq , may be still existing in the (data->hash->wait)queue before releasing. 
+>> always true at this point
 > 
-> The guess looks reasonable, it's likely a problem.
-> Not sure about the diff, it seems racy but I need to
-> take a closer look to say for sure
+> I placed the opcode check before the audit call because the switch
+> statement below which handles the operation dispatching has a 'ret =
+> -EINVAL' for the default case, implying that there are some paths
+> where an invalid opcode could be passed into the function.  Obviously
+> if that is not the case and you can guarantee that req->opcode will
+> always be valid we can easily drop the check prior to the audit call.
 
-It looks sensible, please send a patch
+It is always true at this point, would be completely broken
+otherwise
 
-
->> look forward to your opinion.
+>>> +             audit_uring_entry(req->opcode);
 >>
->> --- a/fs/io-wq.c
->> +++ b/fs/io-wq.c
->> @@ -1003,13 +1003,17 @@ static void io_wq_exit_workers(struct io_wq *wq)
->>                 struct io_wqe *wqe = wq->wqes[node];
->>  
->>                 io_wq_for_each_worker(wqe, io_wq_worker_wake, NULL);
->> -               spin_lock_irq(&wq->hash->wait.lock);
->> -               list_del_init(&wq->wqes[node]->wait.entry);
->> -               spin_unlock_irq(&wq->hash->wait.lock);
->>         }
->>         rcu_read_unlock();
->>         io_worker_ref_put(wq);
->>         wait_for_completion(&wq->worker_done);
->> +       for_each_node(node) {
->> +               struct io_wqe *wqe = wq->wqes[node];
->> +
->> +               spin_lock_irq(&wq->hash->wait.lock);
->> +               list_del_init(&wq->wqes[node]->wait.entry);
->> +               spin_unlock_irq(&wq->hash->wait.lock);
->> +       }
->>         put_task_struct(wq->task);
->>         wq->task = NULL;
->>  }
+>> So, it adds two if's with memory loads (i.e. current->audit_context)
+>> per request in one of the hottest functions here... No way, nack
+>>
+>> Maybe, if it's dynamically compiled into like kprobes if it's
+>> _really_ used.
 > 
+> I'm open to suggestions on how to tweak the io_uring/audit
+> integration, if you don't like what I've proposed in this patchset,
+> lets try to come up with a solution that is more palatable.  If you
+> were going to add audit support for these io_uring operations, how
+> would you propose we do it?  Not being able to properly audit io_uring
+> operations is going to be a significant issue for a chunk of users, if
+> it isn't already, we need to work to find a solution to this problem.
+
+Who knows. First of all, seems CONFIG_AUDIT is enabled by default
+for many popular distributions, so I assume that is not compiled out.
+
+What are use cases for audit? Always running I guess? Putting aside
+compatibility problems, it sounds that with the amount of overhead
+it adds there is no much profit in using io_uring in the first place.
+Is that so?
+
+__audit_uring_exit()
+-> audit_filter_syscall()
+  -> for (audit_list) if (...) audit_filter_rules()
+    -> ...
+-> audit_filter_inodes()
+  -> ...
+
+> Unfortunately I don't think dynamically inserting audit calls is
+> something that would meet the needs of the audit community (I fear it
+> would run afoul of the various security certifications), and it
+> definitely isn't something that we support at present.
+
+I see
 
 -- 
 Pavel Begunkov

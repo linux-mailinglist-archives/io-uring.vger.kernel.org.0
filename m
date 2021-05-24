@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 65D2038F67F
-	for <lists+io-uring@lfdr.de>; Tue, 25 May 2021 01:51:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 400F738F680
+	for <lists+io-uring@lfdr.de>; Tue, 25 May 2021 01:51:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229547AbhEXXxF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        id S229750AbhEXXxF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
         Mon, 24 May 2021 19:53:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46962 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229668AbhEXXxE (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 24 May 2021 19:53:04 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32554C061574
+        with ESMTP id S229668AbhEXXxF (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 24 May 2021 19:53:05 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 002ABC06138A
         for <io-uring@vger.kernel.org>; Mon, 24 May 2021 16:51:35 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id n2so30288345wrm.0
+Received: by mail-wm1-x32b.google.com with SMTP id h3so2960676wmq.3
         for <io-uring@vger.kernel.org>; Mon, 24 May 2021 16:51:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=6vzEUeT+BXJ0e75iIdUD3uAUfU3IbOqFiPlZqRC4R7k=;
-        b=SO4ZKbhxmjWgFXekAE4Cc9JU+VsvGfEcz7W9i+L5VTAnD4w0I+NiZeZueq/og1sTAW
-         6E6zrdTpx+JwUkHp5Rlhnwt1yMgUuoe0Hly7EzHohct7WMmY24+QARTFWvPhYCyMtJOu
-         3OgyHk0HnaMK5eJ/QO0C8Zq/M8UN9dIzz4Gj6SZ9ljuZAfO5RvG5C9NnIlEV6jAOeNYj
-         EYzHiLARRfrR4fBh5hyXOScJVAd8qo1Ck+2gwMBov9qKCdZLQv7/pNnyM6Uo5DYGmGwS
-         yiTZwGKYchUN2DrZ2nikBd7AZQShGRzSKeQVzEJvn/1mkknAOfo2VTmvJgxIMqD5UGi/
-         J4dw==
+        bh=i0G4W628X7owgeHUreL3p9W7dk2G7WvdEdFqkEl81QQ=;
+        b=XXlk0N28D6bhqSolsOx79zfILJnNLsesPNJKxA0t136LBTB7zVw3Bphio12jljwSXP
+         0LIOraDyhf+a2xsXyjc2zdYkuz6Ts3v7Tt/aq68J7lKgQEkJLCa6rUVl3L1grbA5LoQP
+         zoqWH+Mk8Ck6KJRpHJNLgkAiAM/rvZ52OAQ7uOJ6UU5mwe3n/09QhpTdcUk/+rErW+rx
+         Pvmbw7g2Pw+bJZ/XyaEPGSn7yhSuRBgLb6weBMJmbAFzSk/Neon14ULwUW4BSdCk+D3a
+         0YCDOwqp7LhutI5fxMdT2WywsFd673nQHFr9RYS7MyXCehUe3KFJsTvlppT+PkUfVQAq
+         mdew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=6vzEUeT+BXJ0e75iIdUD3uAUfU3IbOqFiPlZqRC4R7k=;
-        b=NVGsr9BDLufOmg4T/xW8FKNF64O0X0erBMnyavpbJexo56t6VORiBI1TUeMrGiQaTC
-         oEuuaPR+F0XWYKC6mS7R+YfNZqQYR2AqqCEeM0XzV0I2ubbBmL7XEFUxgPxYwmWuQC+H
-         6OeRrqJKQ+S2OnWvAGE/SWUdpKXh02HvKo4NVf9+kFopaBRfc1q+gi4u4SHl1FNPGEeO
-         C2BtUs99kQQMVAQL35g88ztrUL9Z6uxGQSPp9bSt7+II4wowzrGqPmYZUJq2IDMdhGXa
-         Hi6Vz5wqL3XdSBNZBRonxlO5+W89tM12RAVlFhAZzJ5J3/NNf6FE5QovB52Eernz0E/e
-         z+XQ==
-X-Gm-Message-State: AOAM533HUTVdHvKbARWQ2o3awauuTMFVWlzkfJ79p2F8I/ZqjNlv2VLq
-        xwuOcYOFdDQTbyGnLOT7WrVe1r6DBvbWA2Gu
-X-Google-Smtp-Source: ABdhPJzLrGUs0H17jvvjigPT5I0wIzbQXo1uwWaaf1P8CJyMz7qMv2ua3e3AK0T6dqAmtGtdLld1KA==
-X-Received: by 2002:adf:ef0a:: with SMTP id e10mr20670280wro.146.1621900293859;
-        Mon, 24 May 2021 16:51:33 -0700 (PDT)
+        bh=i0G4W628X7owgeHUreL3p9W7dk2G7WvdEdFqkEl81QQ=;
+        b=psiQnKWGTKodivXvzRkNO70SGRD9iUmQm6pKgmzgZe+X2UK6Ok41KMecGvuJGAuSzZ
+         upAV/oZzKP2QJRVV1top8JD6ifUMe5hDwjLeDNjNWNV50upiq2djZ9sVesUORgWsY02G
+         4orU0D4Hib+ZErvEaZCjTQIjUVA0QUb/QzHMYtJbncUydOhsyS/T+dU+KIoAudW0liPl
+         oiVgJuk3iCb35Fp7rafpGVZAsaHeMllG5PorFojoj+PONI1/Vsgh8n9dwEvdxCI4YvK0
+         Sx/dVdLwhTpFWQysQDm266KNkagT9y9NuPYHKP1TYiITOOBQtTjOJJI83NRdXAroYPuG
+         gssg==
+X-Gm-Message-State: AOAM530PL24dnpLSHPtUMaAAYxnexMljnpaiAAUx9ZDa7pHza8eFdoeF
+        TJobx+uR7j8x2VeVnPQDDuRPjI4lP5EO2jiF
+X-Google-Smtp-Source: ABdhPJzZ8GEEcsRA+oo9UPEbjyL6wwlEsoDbxdbUrCJxaSYlBs0hPxMlkiEBy32ww6Fz9N2jRvLW7g==
+X-Received: by 2002:a1c:7c0e:: with SMTP id x14mr1141455wmc.41.1621900294689;
+        Mon, 24 May 2021 16:51:34 -0700 (PDT)
 Received: from localhost.localdomain ([85.255.235.116])
-        by smtp.gmail.com with ESMTPSA id f7sm8961069wmq.30.2021.05.24.16.51.33
+        by smtp.gmail.com with ESMTPSA id f7sm8961069wmq.30.2021.05.24.16.51.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 May 2021 16:51:33 -0700 (PDT)
+        Mon, 24 May 2021 16:51:34 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 06/13] io-wq: don't repeat IO_WQ_BIT_EXIT check by worker
-Date:   Tue, 25 May 2021 00:51:05 +0100
-Message-Id: <757c0c39f1233e9db3b351d754308e8d62096913.1621899872.git.asml.silence@gmail.com>
+Subject: [PATCH 07/13] io-wq: simplify worker exiting
+Date:   Tue, 25 May 2021 00:51:06 +0100
+Message-Id: <36a443771b9be95a8b67e3fc1353d8f52bb90194.1621899872.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <cover.1621899872.git.asml.silence@gmail.com>
 References: <cover.1621899872.git.asml.silence@gmail.com>
@@ -61,29 +61,31 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-io_wqe_worker()'s main loop does check IO_WQ_BIT_EXIT flag, so no need
-for a second test_bit at the end as it will immediately jump to the
-first check afterwards.
+io_worker_handle_work() already takes care of the empty list case and
+releases spinlock, so get rid of ugly conditional unlocking and
+unconditionally call handle_work()
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io-wq.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/io-wq.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
 diff --git a/fs/io-wq.c b/fs/io-wq.c
-index 712eb062f822..27a9ebbbf68e 100644
+index 27a9ebbbf68e..c57dd50d24d9 100644
 --- a/fs/io-wq.c
 +++ b/fs/io-wq.c
-@@ -560,8 +560,7 @@ static int io_wqe_worker(void *data)
- 		if (ret)
- 			continue;
- 		/* timed out, exit unless we're the fixed worker */
--		if (test_bit(IO_WQ_BIT_EXIT, &wq->state) ||
--		    !(worker->flags & IO_WORKER_F_FIXED))
-+		if (!(worker->flags & IO_WORKER_F_FIXED))
- 			break;
+@@ -566,10 +566,7 @@ static int io_wqe_worker(void *data)
+ 
+ 	if (test_bit(IO_WQ_BIT_EXIT, &wq->state)) {
+ 		raw_spin_lock_irq(&wqe->lock);
+-		if (!wq_list_empty(&wqe->work_list))
+-			io_worker_handle_work(worker);
+-		else
+-			raw_spin_unlock_irq(&wqe->lock);
++		io_worker_handle_work(worker);
  	}
  
+ 	io_worker_exit(worker);
 -- 
 2.31.1
 

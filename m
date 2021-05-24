@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A27B438F683
-	for <lists+io-uring@lfdr.de>; Tue, 25 May 2021 01:51:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9478E38F686
+	for <lists+io-uring@lfdr.de>; Tue, 25 May 2021 01:51:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229668AbhEXXxJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 24 May 2021 19:53:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46998 "EHLO
+        id S229819AbhEXXxK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 24 May 2021 19:53:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229819AbhEXXxI (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 24 May 2021 19:53:08 -0400
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D40DC061756
-        for <io-uring@vger.kernel.org>; Mon, 24 May 2021 16:51:38 -0700 (PDT)
-Received: by mail-wm1-x332.google.com with SMTP id s5-20020a7bc0c50000b0290147d0c21c51so11794454wmh.4
-        for <io-uring@vger.kernel.org>; Mon, 24 May 2021 16:51:38 -0700 (PDT)
+        with ESMTP id S229826AbhEXXxJ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 24 May 2021 19:53:09 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62136C061574
+        for <io-uring@vger.kernel.org>; Mon, 24 May 2021 16:51:39 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id o127so15712109wmo.4
+        for <io-uring@vger.kernel.org>; Mon, 24 May 2021 16:51:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=yeZsi4TxT000m1LB2kZ2UznvbTaqIT8LLfRfR5xxQeU=;
-        b=WkRjx+vgmyER7X+C0GIKFHe6Dxq/I0Lic/e9BoyCgTibxaUaiPoLJ7r0E4hSzqJspy
-         MfX+9ODJT6NOQ7E3iJP6IT8C++kx52OWQgDbfdj4BL1vWgbH+JsR9JtEGcS8AHkTGEAm
-         XGTd83Jbvn/0mh+unvYSKER01NIMQsCdNaOv/c+aeCV9aw7lQ3cGn0MpR/2swlQ73iJM
-         Ke4OfIGrX0VPhCaWEi/xBcHXzzKHa2QiAeEqo6LIWrn82uuPM1x/lHv6/pusGLmW8ixD
-         Rn5rUietnIt+YsOY6LMcB08ihpOS1aqkdkfG6GNQn1WEGqSLpukZPG7vGj2LU99ulm1s
-         VWNA==
+        bh=xRzaKX1RUL6tEmowyiLD+2a29fLgUE0iA5aeO/c17VM=;
+        b=XLTJmghCHLJONyWMujCc21lSf4rlt6isLoOf/uoBRwjBn4MQC2JKVY1iRWqbpfBCS9
+         xF3Xl1aJ/MswaPYEMapLF0al/4d1ZVDJbbfjR5NsmgylOmcBlMbpmT8eH4jaTfgW7iqc
+         MpbY8P7mxWe0VBgEOMnXGNaNjUWBdmrmPgusfj9gxPCwCY2EskDTQiYqvinZ817EQMlk
+         yaxC/2IFS38b+e5vvtH2XAcZui/EzpVGcbIq0Twt8zaKkK2QPHLnjRsmO1szrT5A9qfM
+         sgi2u+mbVs9nz7no9EAj+eqUT/8uYC/IREsInlKY87rHlnqBOO2F1FHTDx4LBIWdZZyH
+         ZkcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=yeZsi4TxT000m1LB2kZ2UznvbTaqIT8LLfRfR5xxQeU=;
-        b=aiZE6R5eTrdEXaZ+D5ebESHy5uuStD8FV5gG7cspEhVPJcDklzsszZvhyc9uptXfKi
-         uhWBkMIoZKs8jsU7Tl2GgoRfytVRpgWwmx0+vekEXa/YU40vcGrSW7Hpu4pz62wFe9uD
-         W+8lVpjNxoMeVEF3XE83gLLx/v8ug6h94ISnGTbYNzM9I5U1Iysd36H/27yI7zgykYf/
-         2MfgcUNkR0zj9wPcpZ0vzFr4jIq8GYkG/Gb6cbPLRA/Gyw5vN2Nmz/hL0IKvaDwOTDwr
-         SU6M0VVwQ7nup4S5alu+w65uysF3Yrm+nI+kStcCWpBvcIn5oYUwJ/AeEaYSVpqeI4lQ
-         rhCA==
-X-Gm-Message-State: AOAM531lMA71ap5AvX46IKFKWdYYzL1Kc4C/UZ1pX9tttuIoYzdA9Sc1
-        nDlcBgTzg6s4zwDTHWH/IM4=
-X-Google-Smtp-Source: ABdhPJxzBOL+cnsT4J4gYyUftLkJYsfZgUYLTtIjTYOiMSYg4aOHmKBNbA5Tlsh7k0hdTtE44P3LjQ==
-X-Received: by 2002:a7b:cbc4:: with SMTP id n4mr1182524wmi.153.1621900297053;
-        Mon, 24 May 2021 16:51:37 -0700 (PDT)
+        bh=xRzaKX1RUL6tEmowyiLD+2a29fLgUE0iA5aeO/c17VM=;
+        b=mcN1tYyasop1L60V31rO/PLrzf7rRSdA7Uj2mRR5X6doO54u9IBieL5srPhHGWwfbw
+         vlcaT49WY3rYWEZhJtVp0MSpkYlQMeOsppRcINDSO1Bz37qnlvT66LVyZ4sw50wKzHVP
+         NOw9F30WPr05XTPNLt3skNy4U79chXnIOZcjOfmooTmCGkhrU2O3lFfLUfA4J2QSmBMW
+         GbG09PQV4dqG5ifYsIWGvcMEJqVe2+n2bdalCyTWH3eyHN01UTbWs9ctWRfgBG9FlcIG
+         VSXfhV4ZuA23qeiZE+DrWmXW01ouyyaxhu3hHX1a5LqduDN+DCzY6zxnokbDpS3OvF8S
+         cQcA==
+X-Gm-Message-State: AOAM5302yOeUBkVmKbHf2SGv6zwZ0votjUDQ+n0cq1L6jXLOiU9//ph7
+        V8Km9rMfPmZAPrpkmlXXqO4=
+X-Google-Smtp-Source: ABdhPJzowdAgnzkiUDD8n+Y6/Dju5lDlOaJgAaFaOsLUnBFVvcuj+fuGRJ9E5xcTb6yx5TYgON30RQ==
+X-Received: by 2002:a1c:6143:: with SMTP id v64mr21507146wmb.22.1621900298013;
+        Mon, 24 May 2021 16:51:38 -0700 (PDT)
 Received: from localhost.localdomain ([85.255.235.116])
-        by smtp.gmail.com with ESMTPSA id f7sm8961069wmq.30.2021.05.24.16.51.36
+        by smtp.gmail.com with ESMTPSA id f7sm8961069wmq.30.2021.05.24.16.51.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 May 2021 16:51:36 -0700 (PDT)
+        Mon, 24 May 2021 16:51:37 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 10/13] io_uring: add helpers for 2 level table alloc
-Date:   Tue, 25 May 2021 00:51:09 +0100
-Message-Id: <5290fc671b3f5db3ff2a20e2242dd39eba01ec1d.1621899872.git.asml.silence@gmail.com>
+Subject: [PATCH 11/13] io_uring: don't vmalloc rsrc tags
+Date:   Tue, 25 May 2021 00:51:10 +0100
+Message-Id: <ab5b8b328a51f899e11dc01d414b9243e593724a.1621899872.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <cover.1621899872.git.asml.silence@gmail.com>
 References: <cover.1621899872.git.asml.silence@gmail.com>
@@ -61,115 +61,154 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Some parts like fixed file table use 2 level tables, factor out helpers
-for allocating/deallocating them as more users are to come.
+We don't really need vmalloc for keeping tags, it's not a hot path and
+is there out of convenience, so replace it with two level tables to not
+litter kernel virtual memory mappings.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 73 ++++++++++++++++++++++++++++++---------------------
- 1 file changed, 43 insertions(+), 30 deletions(-)
+ fs/io_uring.c | 52 +++++++++++++++++++++++++++++++++++----------------
+ 1 file changed, 36 insertions(+), 16 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 40b70c34c1b2..1cc2d16637ff 100644
+index 1cc2d16637ff..2b2d70a58a87 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -7054,14 +7054,36 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
- 	return READ_ONCE(rings->cq.head) == READ_ONCE(rings->cq.tail) ? ret : 0;
+@@ -100,6 +100,10 @@
+ #define IORING_MAX_RESTRICTIONS	(IORING_RESTRICTION_LAST + \
+ 				 IORING_REGISTER_LAST + IORING_OP_LAST)
+ 
++#define IO_RSRC_TAG_TABLE_SHIFT	9
++#define IO_RSRC_TAG_TABLE_MAX	(1U << IO_RSRC_TAG_TABLE_SHIFT)
++#define IO_RSRC_TAG_TABLE_MASK	(IO_RSRC_TAG_TABLE_MAX - 1)
++
+ #define IORING_MAX_REG_BUFFERS	(1U << 14)
+ 
+ #define SQE_VALID_FLAGS	(IOSQE_FIXED_FILE|IOSQE_IO_DRAIN|IOSQE_IO_LINK|	\
+@@ -243,7 +247,8 @@ typedef void (rsrc_put_fn)(struct io_ring_ctx *ctx, struct io_rsrc_put *prsrc);
+ struct io_rsrc_data {
+ 	struct io_ring_ctx		*ctx;
+ 
+-	u64				*tags;
++	u64				**tags;
++	unsigned int			nr;
+ 	rsrc_put_fn			*do_put;
+ 	atomic_t			refs;
+ 	struct completion		done;
+@@ -7172,9 +7177,20 @@ static int io_rsrc_ref_quiesce(struct io_rsrc_data *data, struct io_ring_ctx *ct
+ 	return ret;
  }
  
--static void io_free_file_tables(struct io_file_table *table, unsigned nr_files)
-+static void io_free_page_table(void **table, size_t size)
- {
--	unsigned i, nr_tables = DIV_ROUND_UP(nr_files, IORING_MAX_FILES_TABLE);
-+	unsigned i, nr_tables = DIV_ROUND_UP(size, PAGE_SIZE);
- 
- 	for (i = 0; i < nr_tables; i++)
--		kfree(table->files[i]);
--	kfree(table->files);
--	table->files = NULL;
-+		kfree(table[i]);
-+	kfree(table);
++static u64 *io_get_tag_slot(struct io_rsrc_data *data, unsigned int idx)
++{
++	unsigned int off = idx & IO_RSRC_TAG_TABLE_MASK;
++	unsigned int table_idx = idx >> IO_RSRC_TAG_TABLE_SHIFT;
++
++	return &data->tags[table_idx][off];
 +}
 +
-+static void **io_alloc_page_table(size_t size)
-+{
-+	unsigned i, nr_tables = DIV_ROUND_UP(size, PAGE_SIZE);
-+	size_t init_size = size;
-+	void **table;
+ static void io_rsrc_data_free(struct io_rsrc_data *data)
+ {
+-	kvfree(data->tags);
++	size_t size = data->nr * sizeof(data->tags[0][0]);
 +
-+	table = kcalloc(nr_tables, sizeof(*table), GFP_KERNEL);
-+	if (!table)
-+		return NULL;
-+
-+	for (i = 0; i < nr_tables; i++) {
-+		unsigned int this_size = min(size, PAGE_SIZE);
-+
-+		table[i] = kzalloc(this_size, GFP_KERNEL);
-+		if (!table[i]) {
-+			io_free_page_table(table, init_size);
-+			return NULL;
-+		}
-+		size -= this_size;
-+	}
-+	return table;
++	if (data->tags)
++		io_free_page_table((void **)data->tags, size);
+ 	kfree(data);
  }
  
- static inline void io_rsrc_ref_lock(struct io_ring_ctx *ctx)
-@@ -7190,6 +7212,22 @@ static int io_rsrc_data_alloc(struct io_ring_ctx *ctx, rsrc_put_fn *do_put,
+@@ -7183,33 +7199,37 @@ static int io_rsrc_data_alloc(struct io_ring_ctx *ctx, rsrc_put_fn *do_put,
+ 			      struct io_rsrc_data **pdata)
+ {
+ 	struct io_rsrc_data *data;
++	int ret = -ENOMEM;
+ 	unsigned i;
+ 
+ 	data = kzalloc(sizeof(*data), GFP_KERNEL);
+ 	if (!data)
+ 		return -ENOMEM;
+-
+-	data->tags = kvcalloc(nr, sizeof(*data->tags), GFP_KERNEL);
++	data->tags = (u64 **)io_alloc_page_table(nr * sizeof(data->tags[0][0]));
+ 	if (!data->tags) {
+ 		kfree(data);
+ 		return -ENOMEM;
+ 	}
++
++	data->nr = nr;
++	data->ctx = ctx;
++	data->do_put = do_put;
+ 	if (utags) {
++		ret = -EFAULT;
+ 		for (i = 0; i < nr; i++) {
+-			if (copy_from_user(&data->tags[i], &utags[i],
+-					   sizeof(data->tags[i]))) {
+-				io_rsrc_data_free(data);
+-				return -EFAULT;
+-			}
++			if (copy_from_user(io_get_tag_slot(data, i), &utags[i],
++					   sizeof(data->tags[i])))
++				goto fail;
+ 		}
+ 	}
+ 
+ 	atomic_set(&data->refs, 1);
+-	data->ctx = ctx;
+-	data->do_put = do_put;
+ 	init_completion(&data->done);
+ 	*pdata = data;
  	return 0;
++fail:
++	io_rsrc_data_free(data);
++	return ret;
  }
  
-+static bool io_alloc_file_tables(struct io_file_table *table, unsigned nr_files)
-+{
-+	size_t size = nr_files * sizeof(struct io_fixed_file);
-+
-+	table->files = (struct io_fixed_file **)io_alloc_page_table(size);
-+	return !!table->files;
-+}
-+
-+static void io_free_file_tables(struct io_file_table *table, unsigned nr_files)
-+{
-+	size_t size = nr_files * sizeof(struct io_fixed_file);
-+
-+	io_free_page_table((void **)table->files, size);
-+	table->files = NULL;
-+}
-+
- static void __io_sqe_files_unregister(struct io_ring_ctx *ctx)
- {
- #if defined(CONFIG_UNIX)
-@@ -7451,31 +7489,6 @@ static int io_sqe_files_scm(struct io_ring_ctx *ctx)
- }
- #endif
+ static bool io_alloc_file_tables(struct io_file_table *table, unsigned nr_files)
+@@ -7678,7 +7698,7 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
+ 		/* allow sparse sets */
+ 		if (fd == -1) {
+ 			ret = -EINVAL;
+-			if (unlikely(ctx->file_data->tags[i]))
++			if (unlikely(*io_get_tag_slot(ctx->file_data, i)))
+ 				goto out_fput;
+ 			continue;
+ 		}
+@@ -7776,7 +7796,7 @@ static int io_queue_rsrc_removal(struct io_rsrc_data *data, unsigned idx,
+ 	if (!prsrc)
+ 		return -ENOMEM;
  
--static bool io_alloc_file_tables(struct io_file_table *table, unsigned nr_files)
--{
--	unsigned i, nr_tables = DIV_ROUND_UP(nr_files, IORING_MAX_FILES_TABLE);
--
--	table->files = kcalloc(nr_tables, sizeof(*table->files), GFP_KERNEL);
--	if (!table->files)
--		return false;
--
--	for (i = 0; i < nr_tables; i++) {
--		unsigned int this_files = min(nr_files, IORING_MAX_FILES_TABLE);
--
--		table->files[i] = kcalloc(this_files, sizeof(*table->files[i]),
--					GFP_KERNEL);
--		if (!table->files[i])
--			break;
--		nr_files -= this_files;
--	}
--
--	if (i == nr_tables)
--		return true;
--
--	io_free_file_tables(table, nr_tables * IORING_MAX_FILES_TABLE);
--	return false;
--}
--
- static void io_rsrc_file_put(struct io_ring_ctx *ctx, struct io_rsrc_put *prsrc)
- {
- 	struct file *file = prsrc->file;
+-	prsrc->tag = data->tags[idx];
++	prsrc->tag = *io_get_tag_slot(data, idx);
+ 	prsrc->rsrc = rsrc;
+ 	list_add(&prsrc->list, &node->rsrc_list);
+ 	return 0;
+@@ -7846,7 +7866,7 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+ 				err = -EBADF;
+ 				break;
+ 			}
+-			data->tags[up->offset + done] = tag;
++			*io_get_tag_slot(data, up->offset + done) = tag;
+ 			io_fixed_file_set(file_slot, file);
+ 			err = io_sqe_file_register(ctx, file, i);
+ 			if (err) {
+@@ -8429,7 +8449,7 @@ static int io_sqe_buffers_register(struct io_ring_ctx *ctx, void __user *arg,
+ 		ret = io_buffer_validate(&iov);
+ 		if (ret)
+ 			break;
+-		if (!iov.iov_base && data->tags[i]) {
++		if (!iov.iov_base && *io_get_tag_slot(data, i)) {
+ 			ret = -EINVAL;
+ 			break;
+ 		}
+@@ -8502,7 +8522,7 @@ static int __io_sqe_buffers_update(struct io_ring_ctx *ctx,
+ 		}
+ 
+ 		ctx->user_bufs[i] = imu;
+-		ctx->buf_data->tags[offset] = tag;
++		*io_get_tag_slot(ctx->buf_data, offset) = tag;
+ 	}
+ 
+ 	if (needs_switch)
 -- 
 2.31.1
 

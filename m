@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 01FF438F684
+	by mail.lfdr.de (Postfix) with ESMTP id 4D10D38F685
 	for <lists+io-uring@lfdr.de>; Tue, 25 May 2021 01:51:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229798AbhEXXxK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 24 May 2021 19:53:10 -0400
+        id S229896AbhEXXxL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 24 May 2021 19:53:11 -0400
 Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229819AbhEXXxJ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 24 May 2021 19:53:09 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D452C06138A
-        for <io-uring@vger.kernel.org>; Mon, 24 May 2021 16:51:40 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id u5-20020a7bc0450000b02901480e40338bso733074wmc.1
-        for <io-uring@vger.kernel.org>; Mon, 24 May 2021 16:51:40 -0700 (PDT)
+        with ESMTP id S229894AbhEXXxK (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 24 May 2021 19:53:10 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16C83C061756
+        for <io-uring@vger.kernel.org>; Mon, 24 May 2021 16:51:41 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id j14so28430259wrq.5
+        for <io-uring@vger.kernel.org>; Mon, 24 May 2021 16:51:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=klUJPrKjXipoTc2jn0OCW7ocxfKxOS9Q/bwu2HA5+Y0=;
-        b=bBgt19vJhS2LAQboMMkYrXrqGE7vKnqaLzV2Imi5Mj9aDilGIYWNopdu72Zihyh9vi
-         +/st9D7eXy/gWfW/0BYk4C7C0UnZRzqPWsXnNrxjv38oHvoupn0VhWVGRnT7MBeyI9B6
-         Sj8YyMtU+JIXMS1Q/XvfAQ1Jh7y2t20GxZCsdy03riEY3xs/Ve3Xt1xb/QCRKLLmpV1D
-         SgnwcBC+1NF836F8wAhZtLdSsfbqnoiL4QYeYuhbCRgx+vYOjtFbSK3qMVsUOFrZwEV4
-         o6+4IhMbtulcUAV2XRNaUMBkhTeNQIycBKsmVfsDgM4+gtXyef8m4ZFvm6v9nFd65kte
-         U2aA==
+        bh=+XahhMGWoSLUIX+I8/2d3ZNVHVtS/HdcC/LzyH03Vak=;
+        b=h797+t3hJHk76NRl50FBBOgf9m+LW1q1z2WFxwuzYiyvagMtTNA6vbOjAkvdjw3lQ9
+         MYe1F3dMYCkK8BUchxqY3L1QGSj4kqZypms/vlswunJlgfiPl54SJTHGY1VuWqS6x0RA
+         ZXXRRULbPsScseCLqAHfuHF0O49ewYpHu8Ds6BWcRoBUY+Vh13WqRsNaAhNchGLDUzkc
+         gg6KNLH4EebTcOES2Zg71tHZSzeYW3b0x0xowAU0mogfJLx1TOM/FJaTjBcF7ppzDDI9
+         poRmbD5bVU8QeWoaBvHuXvxjUdaxcUN/Hk4Iz3vNbMDH/yEInnnprEtUOLQ2O77cnaug
+         tx7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=klUJPrKjXipoTc2jn0OCW7ocxfKxOS9Q/bwu2HA5+Y0=;
-        b=kFy2PJl7dloldsBkJo0nUtt/cduu6dGJPDbGMZYfPAUnwyIrbfXs+Yv3uRDSfGFBnB
-         Z8vCozX4qdRpr4WoloKqkwUhYIUz5etcxqM8O0KvkrCxTg+KVzRhQIj7yGr9ydZho6eW
-         GDle0eCljQmA5nUXyl+u2c442ivTq2/qSz65mx/WVz1It3CcFvYjwmY4euyzD+eIV7wa
-         3VfkkjqtrfnSPT9wFC/3mrHDYeEoWnkdFwbC4bH4shnwDjOaHdR6JkXkGxe1H9oqUjMb
-         5/uqohpZhIShq801+g/bgPoE+gstEhgwrYq260LG4TE/6F1PmOWOn5KMIkWptHjkF4ve
-         J+dA==
-X-Gm-Message-State: AOAM532V/08LkoZaLoTKoSDFMU1gmzk1cJwpDhDAMLBDvKtWjLhRc0Ze
-        bOdS3PMzuuIlZPrSLaKMOwQ=
-X-Google-Smtp-Source: ABdhPJyHSYGN3v+TZx+4saRUqau0RWyE0OL/JPUlLpGyG+Q63aD/Cmxd1lLoU2XPRkdUEUztqdhwhg==
-X-Received: by 2002:a05:600c:4f15:: with SMTP id l21mr21188704wmq.37.1621900298784;
-        Mon, 24 May 2021 16:51:38 -0700 (PDT)
+        bh=+XahhMGWoSLUIX+I8/2d3ZNVHVtS/HdcC/LzyH03Vak=;
+        b=m0UP12iYTcp9SvZLoAKGq5RAH5cAfXE4MShjzjf4RGHswbTwuOoMdEoM9SJQfa/HLk
+         LOQcqEj8nr2pAgRZMrBLCUaqX85nMHvlizS5ZSrA2DYNVJp0Rja9o4gJai+4VICYcleK
+         qnAn6+zJXuQlomfAXvXfheJndvEqn7I+vXKD4x0CnWl4YrR1D8lQiFaq2SBxQiZWc2/A
+         F9+oD8LL+uwn//oYnR28Z6sJDnqISqblLZRqByrgI7uNLzebwekdeIph1pXSiE3C5yaC
+         P9+mY0i1RTKquFnNqg0j3927KS0xLegGRa2/bM6rIrVsAvgmS4KprURW499E78TgLmOZ
+         z3JQ==
+X-Gm-Message-State: AOAM5335x2EO93kj9W7+FMm1G++YGD9L5IYOUw/b4+Kiq2YfEOybQXSK
+        GMEIQTplcI4GQwDvejWD5is=
+X-Google-Smtp-Source: ABdhPJx6e/1wYFCs4ssCWEObaWsnA0oNPXQUmgF5Nkl/0x8iGP1ntNj568UFtK4gyevxx/autzs1+w==
+X-Received: by 2002:a5d:4b08:: with SMTP id v8mr24620293wrq.122.1621900299765;
+        Mon, 24 May 2021 16:51:39 -0700 (PDT)
 Received: from localhost.localdomain ([85.255.235.116])
         by smtp.gmail.com with ESMTPSA id f7sm8961069wmq.30.2021.05.24.16.51.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 May 2021 16:51:38 -0700 (PDT)
+        Mon, 24 May 2021 16:51:39 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 12/13] io_uring: cache task struct refs
-Date:   Tue, 25 May 2021 00:51:11 +0100
-Message-Id: <d124d2af721af9d9d5fa7c187cdee9431b7fe831.1621899872.git.asml.silence@gmail.com>
+Subject: [PATCH 13/13] io_uring: unify SQPOLL and user task cancellations
+Date:   Tue, 25 May 2021 00:51:12 +0100
+Message-Id: <00d85dbdd0f7bf5b80bed15c82ec551689f9851c.1621899872.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <cover.1621899872.git.asml.silence@gmail.com>
 References: <cover.1621899872.git.asml.silence@gmail.com>
@@ -61,145 +61,163 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-tctx in submission part is always synchronised because is executed from
-the task's context, so we can batch allocate tctx/task references and
-store them across syscall boundaries. It avoids enough of operations,
-including an atomic for getting task ref and a percpu_counter_add()
-function call, which still fallback to spinlock for large batching
-cases (around >=32). Should be good for SQPOLL submitting in small
-portions and coming at some moment bpf submissions.
+Merge io_uring_cancel_sqpoll() and __io_uring_cancel() as it's easier to
+have a conditional ctx traverse inside than keeping them in sync.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 37 ++++++++++++++++++++++++++++---------
- 1 file changed, 28 insertions(+), 9 deletions(-)
+ fs/io_uring.c | 89 +++++++++++++++++----------------------------------
+ 1 file changed, 30 insertions(+), 59 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 2b2d70a58a87..a95d55a0f9be 100644
+index a95d55a0f9be..7db6aaf31080 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -110,6 +110,8 @@
- 				IOSQE_IO_HARDLINK | IOSQE_ASYNC | \
- 				IOSQE_BUFFER_SELECT)
+@@ -1036,7 +1036,7 @@ static void io_uring_del_tctx_node(unsigned long index);
+ static void io_uring_try_cancel_requests(struct io_ring_ctx *ctx,
+ 					 struct task_struct *task,
+ 					 bool cancel_all);
+-static void io_uring_cancel_sqpoll(struct io_sq_data *sqd);
++static void io_uring_cancel_generic(bool cancel_all, struct io_sq_data *sqd);
+ static struct io_rsrc_node *io_rsrc_node_alloc(struct io_ring_ctx *ctx);
  
-+#define IO_TCTX_REFS_CACHE_NR	(1U << 10)
-+
- struct io_uring {
- 	u32 head ____cacheline_aligned_in_smp;
- 	u32 tail ____cacheline_aligned_in_smp;
-@@ -472,6 +474,7 @@ struct io_ring_ctx {
+ static bool io_cqring_fill_event(struct io_ring_ctx *ctx, u64 user_data,
+@@ -6921,7 +6921,7 @@ static int io_sq_thread(void *data)
+ 		timeout = jiffies + sqd->sq_thread_idle;
+ 	}
  
- struct io_uring_task {
- 	/* submission side */
-+	int			cached_refs;
- 	struct xarray		xa;
- 	struct wait_queue_head	wait;
- 	const struct io_ring_ctx *last;
-@@ -6702,16 +6705,23 @@ static const struct io_uring_sqe *io_get_sqe(struct io_ring_ctx *ctx)
+-	io_uring_cancel_sqpoll(sqd);
++	io_uring_cancel_generic(true, sqd);
+ 	sqd->thread = NULL;
+ 	list_for_each_entry(ctx, &sqd->ctx_list, sqd_list)
+ 		io_ring_set_wakeup_flag(ctx);
+@@ -9089,21 +9089,6 @@ static s64 tctx_inflight(struct io_uring_task *tctx, bool tracked)
+ 	return percpu_counter_sum(&tctx->inflight);
+ }
  
- static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr)
- {
-+	struct io_uring_task *tctx;
- 	int submitted = 0;
- 
- 	/* make sure SQ entry isn't read before tail */
- 	nr = min3(nr, ctx->sq_entries, io_sqring_entries(ctx));
+-static void io_uring_try_cancel(bool cancel_all)
+-{
+-	struct io_uring_task *tctx = current->io_uring;
+-	struct io_tctx_node *node;
+-	unsigned long index;
 -
- 	if (!percpu_ref_tryget_many(&ctx->refs, nr))
- 		return -EAGAIN;
- 
--	percpu_counter_add(&current->io_uring->inflight, nr);
--	refcount_add(nr, &current->usage);
-+	tctx = current->io_uring;
-+	tctx->cached_refs -= nr;
-+	if (unlikely(tctx->cached_refs < 0)) {
-+		unsigned int refill = -tctx->cached_refs + IO_TCTX_REFS_CACHE_NR;
-+
-+		percpu_counter_add(&tctx->inflight, refill);
-+		refcount_add(refill, &current->usage);
-+		tctx->cached_refs += refill;
-+	}
- 	io_submit_state_start(&ctx->submit_state, nr);
- 
- 	while (submitted < nr) {
-@@ -6737,12 +6747,10 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr)
- 
- 	if (unlikely(submitted != nr)) {
- 		int ref_used = (submitted == -EAGAIN) ? 0 : submitted;
--		struct io_uring_task *tctx = current->io_uring;
- 		int unused = nr - ref_used;
- 
-+		current->io_uring->cached_refs += unused;
- 		percpu_ref_put_many(&ctx->refs, unused);
--		percpu_counter_sub(&tctx->inflight, unused);
--		put_task_struct_many(current, unused);
- 	}
- 
- 	io_submit_state_end(&ctx->submit_state, ctx);
-@@ -7924,7 +7932,7 @@ static int io_uring_alloc_task_context(struct task_struct *task,
- 	struct io_uring_task *tctx;
- 	int ret;
- 
--	tctx = kmalloc(sizeof(*tctx), GFP_KERNEL);
-+	tctx = kzalloc(sizeof(*tctx), GFP_KERNEL);
- 	if (unlikely(!tctx))
- 		return -ENOMEM;
- 
-@@ -7944,13 +7952,11 @@ static int io_uring_alloc_task_context(struct task_struct *task,
- 
- 	xa_init(&tctx->xa);
- 	init_waitqueue_head(&tctx->wait);
--	tctx->last = NULL;
- 	atomic_set(&tctx->in_idle, 0);
- 	atomic_set(&tctx->inflight_tracked, 0);
- 	task->io_uring = tctx;
- 	spin_lock_init(&tctx->task_lock);
- 	INIT_WQ_LIST(&tctx->task_list);
--	tctx->task_state = 0;
- 	init_task_work(&tctx->task_work, tctx_task_work);
- 	return 0;
- }
-@@ -7961,6 +7967,7 @@ void __io_uring_free(struct task_struct *tsk)
- 
- 	WARN_ON_ONCE(!xa_empty(&tctx->xa));
- 	WARN_ON_ONCE(tctx->io_wq);
-+	WARN_ON_ONCE(tctx->cached_refs);
- 
- 	percpu_counter_destroy(&tctx->inflight);
- 	kfree(tctx);
-@@ -9097,6 +9104,16 @@ static void io_uring_try_cancel(bool cancel_all)
- 	}
- }
- 
-+static void io_uring_drop_tctx_refs(struct task_struct *task)
-+{
-+	struct io_uring_task *tctx = task->io_uring;
-+	unsigned int refs = tctx->cached_refs;
-+
-+	tctx->cached_refs = 0;
-+	percpu_counter_sub(&tctx->inflight, refs);
-+	put_task_struct_many(task, refs);
-+}
-+
- /* should only be called by SQPOLL task */
- static void io_uring_cancel_sqpoll(struct io_sq_data *sqd)
+-	xa_for_each(&tctx->xa, index, node) {
+-		struct io_ring_ctx *ctx = node->ctx;
+-
+-		/* sqpoll task will cancel all its requests */
+-		if (!ctx->sq_data)
+-			io_uring_try_cancel_requests(ctx, current, cancel_all);
+-	}
+-}
+-
+ static void io_uring_drop_tctx_refs(struct task_struct *task)
  {
-@@ -9112,6 +9129,7 @@ static void io_uring_cancel_sqpoll(struct io_sq_data *sqd)
+ 	struct io_uring_task *tctx = task->io_uring;
+@@ -9114,69 +9099,50 @@ static void io_uring_drop_tctx_refs(struct task_struct *task)
+ 	put_task_struct_many(task, refs);
+ }
  
- 	WARN_ON_ONCE(!sqd || sqd->thread != current);
+-/* should only be called by SQPOLL task */
+-static void io_uring_cancel_sqpoll(struct io_sq_data *sqd)
++/*
++ * Find any io_uring ctx that this task has registered or done IO on, and cancel
++ * requests. @sqd should be not-null IIF it's an SQPOLL thread cancellation.
++ */
++static void io_uring_cancel_generic(bool cancel_all, struct io_sq_data *sqd)
+ {
+ 	struct io_uring_task *tctx = current->io_uring;
+ 	struct io_ring_ctx *ctx;
+ 	s64 inflight;
+ 	DEFINE_WAIT(wait);
  
-+	io_uring_drop_tctx_refs(current);
- 	atomic_inc(&tctx->in_idle);
- 	do {
- 		/* read completions before cancelations */
-@@ -9149,6 +9167,7 @@ void __io_uring_cancel(struct files_struct *files)
++	WARN_ON_ONCE(sqd && sqd->thread != current);
++
+ 	if (!current->io_uring)
+ 		return;
+ 	if (tctx->io_wq)
  		io_wq_exit_start(tctx->io_wq);
  
- 	/* make sure overflow events are dropped */
-+	io_uring_drop_tctx_refs(current);
+-	WARN_ON_ONCE(!sqd || sqd->thread != current);
+-
+ 	io_uring_drop_tctx_refs(current);
  	atomic_inc(&tctx->in_idle);
  	do {
  		/* read completions before cancelations */
+-		inflight = tctx_inflight(tctx, false);
++		inflight = tctx_inflight(tctx, !cancel_all);
+ 		if (!inflight)
+ 			break;
+-		list_for_each_entry(ctx, &sqd->ctx_list, sqd_list)
+-			io_uring_try_cancel_requests(ctx, current, true);
+ 
+-		prepare_to_wait(&tctx->wait, &wait, TASK_UNINTERRUPTIBLE);
+-		/*
+-		 * If we've seen completions, retry without waiting. This
+-		 * avoids a race where a completion comes in before we did
+-		 * prepare_to_wait().
+-		 */
+-		if (inflight == tctx_inflight(tctx, false))
+-			schedule();
+-		finish_wait(&tctx->wait, &wait);
+-	} while (1);
+-	atomic_dec(&tctx->in_idle);
+-}
++		if (!sqd) {
++			struct io_tctx_node *node;
++			unsigned long index;
+ 
+-/*
+- * Find any io_uring fd that this task has registered or done IO on, and cancel
+- * requests.
+- */
+-void __io_uring_cancel(struct files_struct *files)
+-{
+-	struct io_uring_task *tctx = current->io_uring;
+-	DEFINE_WAIT(wait);
+-	s64 inflight;
+-	bool cancel_all = !files;
+-
+-	if (tctx->io_wq)
+-		io_wq_exit_start(tctx->io_wq);
++			xa_for_each(&tctx->xa, index, node) {
++				/* sqpoll task will cancel all its requests */
++				if (node->ctx->sq_data)
++					continue;
++				io_uring_try_cancel_requests(node->ctx, current,
++							     cancel_all);
++			}
++		} else {
++			list_for_each_entry(ctx, &sqd->ctx_list, sqd_list)
++				io_uring_try_cancel_requests(ctx, current,
++							     cancel_all);
++		}
+ 
+-	/* make sure overflow events are dropped */
+-	io_uring_drop_tctx_refs(current);
+-	atomic_inc(&tctx->in_idle);
+-	do {
+-		/* read completions before cancelations */
+-		inflight = tctx_inflight(tctx, !cancel_all);
+-		if (!inflight)
+-			break;
+-		io_uring_try_cancel(cancel_all);
+ 		prepare_to_wait(&tctx->wait, &wait, TASK_UNINTERRUPTIBLE);
+-
+ 		/*
+ 		 * If we've seen completions, retry without waiting. This
+ 		 * avoids a race where a completion comes in before we did
+@@ -9195,6 +9161,11 @@ void __io_uring_cancel(struct files_struct *files)
+ 	}
+ }
+ 
++void __io_uring_cancel(struct files_struct *files)
++{
++	io_uring_cancel_generic(!files, NULL);
++}
++
+ static void *io_uring_validate_mmap_request(struct file *file,
+ 					    loff_t pgoff, size_t sz)
+ {
 -- 
 2.31.1
 

@@ -2,52 +2,54 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FFDE38E3C5
-	for <lists+io-uring@lfdr.de>; Mon, 24 May 2021 12:16:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADB0738E3CE
+	for <lists+io-uring@lfdr.de>; Mon, 24 May 2021 12:19:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232565AbhEXKSU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 24 May 2021 06:18:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59514 "EHLO
+        id S232513AbhEXKUd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 24 May 2021 06:20:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232433AbhEXKSS (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 24 May 2021 06:18:18 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18EC5C061574;
-        Mon, 24 May 2021 03:16:50 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id s5-20020a7bc0c50000b0290147d0c21c51so10687793wmh.4;
-        Mon, 24 May 2021 03:16:50 -0700 (PDT)
+        with ESMTP id S232511AbhEXKUc (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 24 May 2021 06:20:32 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D0B3C061574;
+        Mon, 24 May 2021 03:19:04 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id f20-20020a05600c4e94b0290181f6edda88so4223084wmq.2;
+        Mon, 24 May 2021 03:19:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:cc:references:from:subject:message-id:date:user-agent
+        h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=WfBOKQ6YfV+bOowYEXO7+f3CsFRgD5WWO3dsN5dpEOA=;
-        b=klv60MjN+fwjuGj07Oe1a1FBFwom+y11oHA9u8AmIvqi/yHZ3BA4/2hlERzyNO4X3h
-         tvKNlGXyPd6v3yJdeCKr7V5Zh219UTedJm8tHVHWpe3w3dRfqoGJRgivw/6hnBzHvtCl
-         ZB5Fzn0JrEwiewM7aTTv2vMruFUe6z3QFSOLzFDDPeqAmA9/JePmaa+9i8vzxeJGVO/U
-         4Jv1e6gpqD1j4qevVcuWYHOAfjanCugwinMhUnUvZ2fZvt+pLjQkb/uIKRWZ1qZ3s3HA
-         9k5qWGgim8v+bWiwntFNhAVMzSZxI/scHNpk58RFkCJNF9FMyzah7nG6k/qfXSpXJ4Qg
-         ARfg==
+        bh=VnjZn5/nKzc6q673Td0aqLSIzRDB2omX+z2Bmi3TRsc=;
+        b=GHGFlMc/JUXf4L0zKi1D4G7C0Ipa7Hpofg4xWnxA5FYX2niIXoD1+45dQ8n9Igb93G
+         luyZOhsvf5U/Tj1MtZNWLJZ5BVabjEJ/rLPlpzxp0fcJBnQDso6xnt4AOSXq0lrmCD5T
+         oiBfYAiM8bmdUp9n/ZNwiAdS+zAWa+FjFfeI6Gp5YQ/9m48VIhduy6lIdHG1oiTbp3P5
+         27Yp/ZY3/asOWLk6VVY8s2TAWGIegtIruHoEixGArt6psyF6fc8Pw+1iGDlZj6ZS/PjC
+         Vmm7Rc3tWUfU2ARLtHHJbLx5Bh0oFPUrfbv2CyEdIWeMJK8wbLZmwGOlYWkHbQaSDIBX
+         06Zw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=WfBOKQ6YfV+bOowYEXO7+f3CsFRgD5WWO3dsN5dpEOA=;
-        b=lAvi/2H59O8/eDsxL9aY2VVy0JSBDDaI6aOXEgHRlqWIhMcwhYWWSoMlVnfsp6O9w5
-         dC1KxrScZud1/txVchZzQXSjZgeuLAp+K1H5y+OKrXSapqG4fyaPvffXs0RkzcTaSYk8
-         O18hDrtHTcVCbQvr+3sUSl/kcRmXJLT9fBh+Kf6t+CFUTd+GJFVvyoXfcnAhwhYRI0iq
-         o+k77h7p2z0gxQhbtFtJLYG+hLnAqfZEqz6zrcLfue8b44G3imGSEjyfwmRNSsqr9P6b
-         CtXjyBcWE2okI3CrfILoLj2ZS344nQLlB9GpOPKm/2TcfN/LJwPhg4bwgFixAyWmOo3X
-         gX1Q==
-X-Gm-Message-State: AOAM532k7vaC2+MBjAAvR23w7jgmai6F4rj116dRfcW+HF+A36NBbt4p
-        S7DcLZw2hb407cMelyRkZksm5ZDJ9CVGjsV9
-X-Google-Smtp-Source: ABdhPJwzII2tqi6N/G+iQOywgxJe+pYSyHz1kQRpSXVxmuFc8UPDui3BPcDOWm+uIu+rVNUIPjUjOw==
-X-Received: by 2002:a7b:c20b:: with SMTP id x11mr19266903wmi.150.1621851408551;
-        Mon, 24 May 2021 03:16:48 -0700 (PDT)
+        bh=VnjZn5/nKzc6q673Td0aqLSIzRDB2omX+z2Bmi3TRsc=;
+        b=gU1n8fiA2F/2mmedNME6wiyyZSeJguhv5qBGTSlpOURYVuA6ovmUDRP89CRXwiJNIK
+         DOyUthISeFaQL0BiQV/GGWYuqnFar8soUz3ZUY4/QA1FvkpvKksaBNlyAxSmbc7RKUXm
+         ltsRRvdnI2zPMiCVTNr4Mj+FdWikH/7XwzH4pUul/8gliPvN9fQglRgvxj2EgZVy0Eqz
+         /5VZs+U2+b8z3BBcG+7F0XN0Gn+bm1x/0/ro5LhLqTtgxu3wolTApoxpx6qkxASIJWTM
+         Q9XIlg8Dr3Ui8PkLC0nvOXilrp402yhh1ANSC/5eSwInofmYM09APmjs8vp4SEQDUMqG
+         fIEQ==
+X-Gm-Message-State: AOAM530Q2KUbgVZ6xJ6ihUGSDstXhQsDLKtBEz4A97bbKppeuSm0DlB2
+        /2p//737UzgFOy5gKpcyGbBpPSps4d+CDr/j
+X-Google-Smtp-Source: ABdhPJzwVsC2AFdDFgjvgf86nH7odhYUhf2InB1KrGcSM/3SBVwbz4bulsn2gXx5o2COUZrJeWNWLA==
+X-Received: by 2002:a1c:14e:: with SMTP id 75mr2135146wmb.89.1621851542400;
+        Mon, 24 May 2021 03:19:02 -0700 (PDT)
 Received: from ?IPv6:2620:10d:c096:310::2090? ([2620:10d:c093:600::2:2b02])
-        by smtp.gmail.com with ESMTPSA id c4sm11932896wrx.77.2021.05.24.03.16.47
+        by smtp.gmail.com with ESMTPSA id x2sm7248430wmj.3.2021.05.24.03.19.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 May 2021 03:16:48 -0700 (PDT)
+        Mon, 24 May 2021 03:19:02 -0700 (PDT)
+Subject: =?UTF-8?B?UmU6IOWbnuWkjTogW1BBVENIXSBpby13cTogRml4IFVBRiB3aGVuIHdh?=
+ =?UTF-8?Q?keup_wqe_in_hash_waitqueue?=
 To:     "Zhang, Qiang" <Qiang.Zhang@windriver.com>,
         Hillf Danton <hdanton@sina.com>,
         "axboe@kernel.dk" <axboe@kernel.dk>
@@ -59,59 +61,33 @@ References: <20210524071844.24085-1-qiang.zhang@windriver.com>
  <20210524082536.2032-1-hdanton@sina.com>
  <DM6PR11MB4202B442C4C27740B6EE2D64FF269@DM6PR11MB4202.namprd11.prod.outlook.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-Subject: =?UTF-8?B?UmU6IOWbnuWkjTogW1BBVENIXSBpby13cTogRml4IFVBRiB3aGVuIHdh?=
- =?UTF-8?Q?keup_wqe_in_hash_waitqueue?=
-Message-ID: <916ad789-c996-258f-d3b7-b41d749618d8@gmail.com>
-Date:   Mon, 24 May 2021 11:16:40 +0100
+Message-ID: <900206b7-cf22-8248-1130-89c8f9d5539b@gmail.com>
+Date:   Mon, 24 May 2021 11:18:54 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.1
 MIME-Version: 1.0
 In-Reply-To: <DM6PR11MB4202B442C4C27740B6EE2D64FF269@DM6PR11MB4202.namprd11.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 On 5/24/21 10:19 AM, Zhang, Qiang wrote:
-[...]
->> Scratch scalp one inch off to work out how this is a cure given a) uaf makes
->> no sense without free and b) how io workers could survive
->> wait_for_completion(&wq->worker_done).
+> On Mon, 24 May 2021 15:18:44 +0800
+>> From: Zqiang <qiang.zhang@windriver.com>
 >>
->> If they could OTOH then this is not the pill for the leak in worker_refs.
-> 
-> Hello Pavel Begunkov, Hillf Danton
-> 
-> Sorry there is a problem with the calltrace described in my message. Please ignore this modification 
+>> The syzbot report a UAF when iou-wrk accessing wqe of the hash
+>> waitqueue. in the case of sharing a hash waitqueue between two
+>> io-wq, when one of the io-wq is destroyed, all iou-wrk in this
+>> io-wq are awakened, all wqe belonging to this io-wq are removed
+>> from hash waitqueue, after that, all iou-wrk belonging to this
+>> io-wq begin running, suppose following scenarios, wqe[0] and wqe[1]
+>> belong to this io-wq, and these work has same hash value.
 
-Haven't looked at the trace and description, but I do think
-there is a problem it solves.
+Zhang, btw check your mail encoding, should some plain unicode
 
-1) io_wait_on_hash() -> __add_wait_queue(&hash->wait, &wqe->wait);
-2) (note: wqe is a worker) wqe's workers exit dropping refs
-3) refs are zero, free io-wq
-4) @hash is shared, so other task/wq does wake_up(&wq->hash->wait);
-5) it wakes freed wqe
-
-step 4) is a bit more trickier than that, tl;dr;
-wq3:worker1 	| locks bit1
-wq1:worker2 	| waits bit1
-wq2:worker1 	| waits bit1
-wq1:worker3 	| waits bit1
-
-wq3:worker1	| drop  bit1
-wq1:worker2	| locks bit1
-wq1:worker2	| completes all wq1 bit1 work items
-wq1:worker2	| drop  bit1, exit and free io-wq
-
-wq2:worker1	| locks bit1
-wq1 		| free complete
-wq2:worker1	| drops bit1
-wq1:worker3 	| waked up, even though freed
-
-Can be simplified, don't want to waste time on that
 
 -- 
 Pavel Begunkov

@@ -2,222 +2,179 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D10D38F685
-	for <lists+io-uring@lfdr.de>; Tue, 25 May 2021 01:51:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3228738F7CE
+	for <lists+io-uring@lfdr.de>; Tue, 25 May 2021 04:01:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229896AbhEXXxL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 24 May 2021 19:53:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47006 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229894AbhEXXxK (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 24 May 2021 19:53:10 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16C83C061756
-        for <io-uring@vger.kernel.org>; Mon, 24 May 2021 16:51:41 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id j14so28430259wrq.5
-        for <io-uring@vger.kernel.org>; Mon, 24 May 2021 16:51:41 -0700 (PDT)
+        id S229976AbhEYCDB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 24 May 2021 22:03:01 -0400
+Received: from mx0a-0064b401.pphosted.com ([205.220.166.238]:7418 "EHLO
+        mx0a-0064b401.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229550AbhEYCDB (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 24 May 2021 22:03:01 -0400
+Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
+        by mx0a-0064b401.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 14P1xqVl006812;
+        Mon, 24 May 2021 19:01:20 -0700
+Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2171.outbound.protection.outlook.com [104.47.56.171])
+        by mx0a-0064b401.pphosted.com with ESMTP id 38rmkbr3mw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 24 May 2021 19:01:20 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=mfKo51hHxUI5WtzQV9wEY1lnbqYSsIo/tXAd7fc+6SzkqUGX17xGPb8XOx2bHNxFS6JGGGPu0ZiHqm2W5jW2dqIz4bNSxOHs4ZH+57URwF3czwNfdQ17FnLOf/kJ9HUVmeHCx3jUaxtKaCO5sSJ953MnTM/MF4OutPnVXGokAdA+mWdr9P4cnD7l1WKnSLfgqQZpl4VprXvBHXhxl4NKZEBneAJwb0l5WJjO350zBlFvaD3sXnkQ3O52PqRuZHQneh9JT6vLtMQzA7svKeVKMPVlGMP/u7vAjCtDSzCauek4SPR38aw5//vHL4NEZX5nu/yDKLieKHqs40uPzZ+ioA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rMcgJAY2xVkQo8fnJjp3FOojH4yyaxnAL/kjXpKW2kc=;
+ b=S3Do61FDq8+ts6/3tnQoiOwLZKFsqpZrIIamxi8lgGXMDR89AdrOb7+xPYhefH+++jJjH3nAzu1VyEt86Cs+T5e+piYzY1qLQ+kBwCcCR2tWwmvTk3zuzzvb4XlyG0ly5kr2hTTB+YLzGk4aIJfm8esEyVNBg6YNUIVWEH6IGlyhgEEVO6/Qs4A5IW+Jo51AVhzYKte0VSHNVxTdnoFKgfXyXdBnBvoDw8n3Rn88VBuOanA0U2SnTQ23ebZIb7Y7AeOcrEn5kAlkVVf5N4BjkEDU/YWHx7bpWFFwYc0xCkhALnBGPTZ6JT69Rj8iWhSMdBPTe8nzlXP5z8V8wW3lgQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=windriver.com; dmarc=pass action=none
+ header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=+XahhMGWoSLUIX+I8/2d3ZNVHVtS/HdcC/LzyH03Vak=;
-        b=h797+t3hJHk76NRl50FBBOgf9m+LW1q1z2WFxwuzYiyvagMtTNA6vbOjAkvdjw3lQ9
-         MYe1F3dMYCkK8BUchxqY3L1QGSj4kqZypms/vlswunJlgfiPl54SJTHGY1VuWqS6x0RA
-         ZXXRRULbPsScseCLqAHfuHF0O49ewYpHu8Ds6BWcRoBUY+Vh13WqRsNaAhNchGLDUzkc
-         gg6KNLH4EebTcOES2Zg71tHZSzeYW3b0x0xowAU0mogfJLx1TOM/FJaTjBcF7ppzDDI9
-         poRmbD5bVU8QeWoaBvHuXvxjUdaxcUN/Hk4Iz3vNbMDH/yEInnnprEtUOLQ2O77cnaug
-         tx7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=+XahhMGWoSLUIX+I8/2d3ZNVHVtS/HdcC/LzyH03Vak=;
-        b=m0UP12iYTcp9SvZLoAKGq5RAH5cAfXE4MShjzjf4RGHswbTwuOoMdEoM9SJQfa/HLk
-         LOQcqEj8nr2pAgRZMrBLCUaqX85nMHvlizS5ZSrA2DYNVJp0Rja9o4gJai+4VICYcleK
-         qnAn6+zJXuQlomfAXvXfheJndvEqn7I+vXKD4x0CnWl4YrR1D8lQiFaq2SBxQiZWc2/A
-         F9+oD8LL+uwn//oYnR28Z6sJDnqISqblLZRqByrgI7uNLzebwekdeIph1pXSiE3C5yaC
-         P9+mY0i1RTKquFnNqg0j3927KS0xLegGRa2/bM6rIrVsAvgmS4KprURW499E78TgLmOZ
-         z3JQ==
-X-Gm-Message-State: AOAM5335x2EO93kj9W7+FMm1G++YGD9L5IYOUw/b4+Kiq2YfEOybQXSK
-        GMEIQTplcI4GQwDvejWD5is=
-X-Google-Smtp-Source: ABdhPJx6e/1wYFCs4ssCWEObaWsnA0oNPXQUmgF5Nkl/0x8iGP1ntNj568UFtK4gyevxx/autzs1+w==
-X-Received: by 2002:a5d:4b08:: with SMTP id v8mr24620293wrq.122.1621900299765;
-        Mon, 24 May 2021 16:51:39 -0700 (PDT)
-Received: from localhost.localdomain ([85.255.235.116])
-        by smtp.gmail.com with ESMTPSA id f7sm8961069wmq.30.2021.05.24.16.51.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 May 2021 16:51:39 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 13/13] io_uring: unify SQPOLL and user task cancellations
-Date:   Tue, 25 May 2021 00:51:12 +0100
-Message-Id: <00d85dbdd0f7bf5b80bed15c82ec551689f9851c.1621899872.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <cover.1621899872.git.asml.silence@gmail.com>
-References: <cover.1621899872.git.asml.silence@gmail.com>
+ d=windriversystems.onmicrosoft.com;
+ s=selector2-windriversystems-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rMcgJAY2xVkQo8fnJjp3FOojH4yyaxnAL/kjXpKW2kc=;
+ b=nqVMZeY0/bsnWp27X18nAHPUyUHtKqv830C0qrOeHetqHar7yIJzQlwKZmwapIViKHos3yfwOo3WfK9JOBvckivPU0I4rJv8DWVs2znGjqBNGXcKCPVtN/SZbiAqsLUVqHooCg5kJTHPAmID6Qrs5kTuhJBLpPJEHu35Frp+/rk=
+Received: from DM6PR11MB4202.namprd11.prod.outlook.com (2603:10b6:5:1df::16)
+ by DM5PR1101MB2108.namprd11.prod.outlook.com (2603:10b6:4:53::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4150.27; Tue, 25 May
+ 2021 02:01:18 +0000
+Received: from DM6PR11MB4202.namprd11.prod.outlook.com
+ ([fe80::3590:5f5:9e9e:ed18]) by DM6PR11MB4202.namprd11.prod.outlook.com
+ ([fe80::3590:5f5:9e9e:ed18%7]) with mapi id 15.20.4150.027; Tue, 25 May 2021
+ 02:01:18 +0000
+From:   "Zhang, Qiang" <Qiang.Zhang@windriver.com>
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Hillf Danton <hdanton@sina.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>
+CC:     "syzbot+6cb11ade52aa17095297@syzkaller.appspotmail.com" 
+        <syzbot+6cb11ade52aa17095297@syzkaller.appspotmail.com>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: =?gb2312?B?u9i4tDogu9i4tDogW1BBVENIXSBpby13cTogRml4IFVBRiB3aGVuIHdha2V1?=
+ =?gb2312?Q?p_wqe_in_hash_waitqueue?=
+Thread-Topic: =?gb2312?B?u9i4tDogW1BBVENIXSBpby13cTogRml4IFVBRiB3aGVuIHdha2V1cCB3cWUg?=
+ =?gb2312?Q?in_hash_waitqueue?=
+Thread-Index: AQHXUG0DVlNQX3He7UO9rugYN/DIOKryS+MAgAANvFKAABFMAIABABUr
+Date:   Tue, 25 May 2021 02:01:17 +0000
+Message-ID: <DM6PR11MB4202561CE9ECD5B7F8DD74AFFF259@DM6PR11MB4202.namprd11.prod.outlook.com>
+References: <20210524071844.24085-1-qiang.zhang@windriver.com>
+ <20210524082536.2032-1-hdanton@sina.com>
+ <DM6PR11MB4202B442C4C27740B6EE2D64FF269@DM6PR11MB4202.namprd11.prod.outlook.com>,<916ad789-c996-258f-d3b7-b41d749618d8@gmail.com>
+In-Reply-To: <916ad789-c996-258f-d3b7-b41d749618d8@gmail.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: gmail.com; dkim=none (message not signed)
+ header.d=none;gmail.com; dmarc=none action=none header.from=windriver.com;
+x-originating-ip: [60.247.85.82]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: adfbc61c-6f46-40e7-79be-08d91f20fc3d
+x-ms-traffictypediagnostic: DM5PR1101MB2108:
+x-microsoft-antispam-prvs: <DM5PR1101MB2108A8CF47C80700049A0A62FF259@DM5PR1101MB2108.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8273;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 4Wv/VynpLOoMKc85ihnRkrAVVPnxHc/3tm6Jw5D5Y/OxjPtH+D5k06W10LOnX/QrH0DiKiz1SIcCBp619V2gH+T5i3PD5FQ3tbjM9f2us2YcLgzHR8mvOsyQVcc9XF29iXG/5teSgXH++crxieNghxeHL2otbm/yPzq5HIlrL0ENrYOSJvv/5D13PEssSfTNr3ni+mub48XZs9/5g3b3WcSYBkWD9dzh2rCiROdulVI1jq6vqGd0K66qT7y2BS2W63dmrdXPtr9mt8eKpVpUR6HxPSNuxgVpIXIaEYVLxLf4TZvOzP4zUwm9ikcaOmHKc5OuCGMAIPm9eT7RyfRV4eP08i79RE98RC9pD4EfWiiAy7Bx8rMzRs606ldbuolZq2jrPhBCIkbEjmFjI1WOkJNXTmLcrm9i1dkregu+nRbf0RAJumy22b5AUOl7Buc2kEM9FxTQFS0YHAbYZYf2qvYCV6TrMvuofW8rsDsRY+ajTQHhr7au7zQ7izfntpGitSWEi/oL8TqzPTFHfgOcVdVWKhxm+oKzHieWfX5YY7MdkFPphZzRj9iVN8rreNM/fs6lbHevIfnTHB/dHJf0RA==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR11MB4202.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(396003)(376002)(346002)(39840400004)(136003)(55016002)(2906002)(7696005)(8936002)(52536014)(224303003)(76116006)(122000001)(26005)(83380400001)(6506007)(5660300002)(53546011)(66946007)(54906003)(110136005)(38100700002)(71200400001)(66476007)(316002)(33656002)(4326008)(86362001)(186003)(66446008)(66556008)(478600001)(64756008)(9686003);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata: =?gb2312?B?L253SnpzaThpcGdnWXE2V1p2cUFGQXNLdUZPZjdaVXhzdXdzL3JESytoc0Jx?=
+ =?gb2312?B?RUgyMXNGUFJaaFl4WkE2UnhUUTJneGljTkRhamRYS3BZeERwOTE0T0JWVHBV?=
+ =?gb2312?B?UGlDYUJRRFFJVkNOTldET0g4ZzFrVkxXcVNGNVlmOEs2NDdnN2ttUmt5OEk5?=
+ =?gb2312?B?ZGFHR01aVVJSZG5QSDZIMG1JeklBUG5lL25IQ2lpWlM3bUhScE9Tbk5iZXZ3?=
+ =?gb2312?B?VmxzUnR3OElBdEFSbHd3UFJKd0VDMHVlZ2ZKdndKU2liYWErd1Fpa29SV0RI?=
+ =?gb2312?B?c1crSE1NKzd5SzhtdEYyNWlkZVlKSE5CdXVQK2Z2a0FBVlgvbDZUY0ZhSDhP?=
+ =?gb2312?B?R096Mmh3eVFpbEk5RUpEZG1xZVN1dGQySlM5TGlSaFZqNlhUWHFxSEYzMkZ6?=
+ =?gb2312?B?cjRmeWVIdldyL3d0eXRxNWR4KytXakF2amNRMTgrelVsejdQVnBZK3Y4djl4?=
+ =?gb2312?B?VG10dVMvYVRlR3dnQVJRYjJOVGppVWk2cmwwYk5wNXhjQmNVck5oWVpkVUxr?=
+ =?gb2312?B?MlBvbzdQQkljM3p2cnlFemxla09uamh4Y002L2x2cnFOWWRCbzYrQTBDSG1r?=
+ =?gb2312?B?OWhPam9FS1NVQ0hKVEFkYnhvcGx6R0R0bzF2V282Z0RGbTM5ZjlCcGNjb3Nr?=
+ =?gb2312?B?SXc3REJyNDdJNGV5YndQZW9POWg5MHJqY2hkOHFSdm1sTEJ0cmVkMmhtTlhj?=
+ =?gb2312?B?cGZlU2VuWDdMRm9kZzlReXZNQS9mT3JYS3ViWFFkY2l5MHNEeUdrQUxvdDl2?=
+ =?gb2312?B?NWd1emJlK2h6bVdxRmtGbkhpWldlM3kvNGU4WmlJdkhSKzNtaVA1UDU4bS94?=
+ =?gb2312?B?NVpzNnM4N0hFMDJwNVJiQXJoOTREbU5WZ1FQYmx0MW54Q1Eya2Y3eEZLKzQ4?=
+ =?gb2312?B?MElxazZYbS9Oczd2aXE2bXRaM2l4K1loRU9LQjlkS00zWGlvclRiWW1tc2NU?=
+ =?gb2312?B?a3hDNEg5MlhoN1FlY1h1Kytrb0YvczQ5Zy9sR1ViNkVHeHBEUDJmZjZDRlpU?=
+ =?gb2312?B?bTVYMEdYU3pJaTNLTzROK1pSSE9PdEt0eEN2d1J2Q21DcUNpS3VMcWJiOTla?=
+ =?gb2312?B?SVdpNncycCtERTVCSGF5WHBpZjYrUUMvUlJLU2p4ek9OZkFMNVdFY0xHVE0v?=
+ =?gb2312?B?ZTNqSHRMTFF3YzVOVE1BWmpvVnF3K0ZJV0gwQXdWZldUM1gzdUhrdUJxNnc1?=
+ =?gb2312?B?a3JUT3BFeXJWYVVQTkNrd1N3VnZLeDFpSUhxSlRyT3BwMW5MbjUxQThMd3I5?=
+ =?gb2312?B?VThDOFNVYlcyd1RBaS8wMU9kMEIyeDIvTXg3M2hudXY0cGRxdmIyT3ZBZUdJ?=
+ =?gb2312?B?YytMbXVwOXdZOENlMkhwNHN4UHZNOWhteE1YY3ZGNHNEc2FQM1V2V1orM1FK?=
+ =?gb2312?B?cXIzL1FjaGVuRFNjRzVjemtNejVLNTlhd0NVZUxHek9CZU9jdlhDYlRsQzdE?=
+ =?gb2312?B?eW4wNEVDam9lTW1wOHdnSE5lc2o4b1VDQXdqVTFqY0tWVXZXSVIyNTRzS3h0?=
+ =?gb2312?B?SDBhcGdTWDJ1a2NtRkN5NHdWYU1WbklMVnRsNHUxb1VWakZxY3d2UDZ5SXpl?=
+ =?gb2312?B?SXBNR1pPTzdaYTZyTklMSGJIMXFSVGdpM05wSzhPaW51MWpWVEVJcTFHemQy?=
+ =?gb2312?B?QTFLdlA4S0tmT09GQkVMVmJvQ1NldW1xdlJzQWVZb2cyd1ZjcCtrSDQ4U3cx?=
+ =?gb2312?B?SWd5VHlyUWVVNUhEcWFDMXlqQXpuamN1S0JzUjJPTEdNazJmSHk2dEo5ZVhp?=
+ =?gb2312?Q?l+uA0GfOsFNIA9YoZo=3D?=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: windriver.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR11MB4202.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: adfbc61c-6f46-40e7-79be-08d91f20fc3d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 May 2021 02:01:17.8529
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: rkj0FkFiOhN0on8IBBeqfLkEX5sLCgnnh1YNnM2gez9nyj4p8f67YkGepJzqBhS5DBwavBLq2FOCcTIYJDyqDCdkWLRArIkrm5Te9DdvOj0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR1101MB2108
+X-Proofpoint-ORIG-GUID: sproU1LL2ugAigxXrbOx-cnuOAnJZE7D
+X-Proofpoint-GUID: sproU1LL2ugAigxXrbOx-cnuOAnJZE7D
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
+ definitions=2021-05-24_11:2021-05-24,2021-05-24 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=998
+ mlxscore=0 malwarescore=0 bulkscore=0 impostorscore=0 clxscore=1015
+ lowpriorityscore=0 adultscore=0 priorityscore=1501 spamscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104190000 definitions=main-2105250011
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Merge io_uring_cancel_sqpoll() and __io_uring_cancel() as it's easier to
-have a conditional ctx traverse inside than keeping them in sync.
-
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 89 +++++++++++++++++----------------------------------
- 1 file changed, 30 insertions(+), 59 deletions(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index a95d55a0f9be..7db6aaf31080 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1036,7 +1036,7 @@ static void io_uring_del_tctx_node(unsigned long index);
- static void io_uring_try_cancel_requests(struct io_ring_ctx *ctx,
- 					 struct task_struct *task,
- 					 bool cancel_all);
--static void io_uring_cancel_sqpoll(struct io_sq_data *sqd);
-+static void io_uring_cancel_generic(bool cancel_all, struct io_sq_data *sqd);
- static struct io_rsrc_node *io_rsrc_node_alloc(struct io_ring_ctx *ctx);
- 
- static bool io_cqring_fill_event(struct io_ring_ctx *ctx, u64 user_data,
-@@ -6921,7 +6921,7 @@ static int io_sq_thread(void *data)
- 		timeout = jiffies + sqd->sq_thread_idle;
- 	}
- 
--	io_uring_cancel_sqpoll(sqd);
-+	io_uring_cancel_generic(true, sqd);
- 	sqd->thread = NULL;
- 	list_for_each_entry(ctx, &sqd->ctx_list, sqd_list)
- 		io_ring_set_wakeup_flag(ctx);
-@@ -9089,21 +9089,6 @@ static s64 tctx_inflight(struct io_uring_task *tctx, bool tracked)
- 	return percpu_counter_sum(&tctx->inflight);
- }
- 
--static void io_uring_try_cancel(bool cancel_all)
--{
--	struct io_uring_task *tctx = current->io_uring;
--	struct io_tctx_node *node;
--	unsigned long index;
--
--	xa_for_each(&tctx->xa, index, node) {
--		struct io_ring_ctx *ctx = node->ctx;
--
--		/* sqpoll task will cancel all its requests */
--		if (!ctx->sq_data)
--			io_uring_try_cancel_requests(ctx, current, cancel_all);
--	}
--}
--
- static void io_uring_drop_tctx_refs(struct task_struct *task)
- {
- 	struct io_uring_task *tctx = task->io_uring;
-@@ -9114,69 +9099,50 @@ static void io_uring_drop_tctx_refs(struct task_struct *task)
- 	put_task_struct_many(task, refs);
- }
- 
--/* should only be called by SQPOLL task */
--static void io_uring_cancel_sqpoll(struct io_sq_data *sqd)
-+/*
-+ * Find any io_uring ctx that this task has registered or done IO on, and cancel
-+ * requests. @sqd should be not-null IIF it's an SQPOLL thread cancellation.
-+ */
-+static void io_uring_cancel_generic(bool cancel_all, struct io_sq_data *sqd)
- {
- 	struct io_uring_task *tctx = current->io_uring;
- 	struct io_ring_ctx *ctx;
- 	s64 inflight;
- 	DEFINE_WAIT(wait);
- 
-+	WARN_ON_ONCE(sqd && sqd->thread != current);
-+
- 	if (!current->io_uring)
- 		return;
- 	if (tctx->io_wq)
- 		io_wq_exit_start(tctx->io_wq);
- 
--	WARN_ON_ONCE(!sqd || sqd->thread != current);
--
- 	io_uring_drop_tctx_refs(current);
- 	atomic_inc(&tctx->in_idle);
- 	do {
- 		/* read completions before cancelations */
--		inflight = tctx_inflight(tctx, false);
-+		inflight = tctx_inflight(tctx, !cancel_all);
- 		if (!inflight)
- 			break;
--		list_for_each_entry(ctx, &sqd->ctx_list, sqd_list)
--			io_uring_try_cancel_requests(ctx, current, true);
- 
--		prepare_to_wait(&tctx->wait, &wait, TASK_UNINTERRUPTIBLE);
--		/*
--		 * If we've seen completions, retry without waiting. This
--		 * avoids a race where a completion comes in before we did
--		 * prepare_to_wait().
--		 */
--		if (inflight == tctx_inflight(tctx, false))
--			schedule();
--		finish_wait(&tctx->wait, &wait);
--	} while (1);
--	atomic_dec(&tctx->in_idle);
--}
-+		if (!sqd) {
-+			struct io_tctx_node *node;
-+			unsigned long index;
- 
--/*
-- * Find any io_uring fd that this task has registered or done IO on, and cancel
-- * requests.
-- */
--void __io_uring_cancel(struct files_struct *files)
--{
--	struct io_uring_task *tctx = current->io_uring;
--	DEFINE_WAIT(wait);
--	s64 inflight;
--	bool cancel_all = !files;
--
--	if (tctx->io_wq)
--		io_wq_exit_start(tctx->io_wq);
-+			xa_for_each(&tctx->xa, index, node) {
-+				/* sqpoll task will cancel all its requests */
-+				if (node->ctx->sq_data)
-+					continue;
-+				io_uring_try_cancel_requests(node->ctx, current,
-+							     cancel_all);
-+			}
-+		} else {
-+			list_for_each_entry(ctx, &sqd->ctx_list, sqd_list)
-+				io_uring_try_cancel_requests(ctx, current,
-+							     cancel_all);
-+		}
- 
--	/* make sure overflow events are dropped */
--	io_uring_drop_tctx_refs(current);
--	atomic_inc(&tctx->in_idle);
--	do {
--		/* read completions before cancelations */
--		inflight = tctx_inflight(tctx, !cancel_all);
--		if (!inflight)
--			break;
--		io_uring_try_cancel(cancel_all);
- 		prepare_to_wait(&tctx->wait, &wait, TASK_UNINTERRUPTIBLE);
--
- 		/*
- 		 * If we've seen completions, retry without waiting. This
- 		 * avoids a race where a completion comes in before we did
-@@ -9195,6 +9161,11 @@ void __io_uring_cancel(struct files_struct *files)
- 	}
- }
- 
-+void __io_uring_cancel(struct files_struct *files)
-+{
-+	io_uring_cancel_generic(!files, NULL);
-+}
-+
- static void *io_uring_validate_mmap_request(struct file *file,
- 					    loff_t pgoff, size_t sz)
- {
--- 
-2.31.1
-
+CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCreivP7IyzogUGF2ZWwg
+QmVndW5rb3YgPGFzbWwuc2lsZW5jZUBnbWFpbC5jb20+Creiy83KsbzkOiAyMDIxxOo11MIyNMjV
+IDE4OjE2CsrVvP7IyzogWmhhbmcsIFFpYW5nOyBIaWxsZiBEYW50b247IGF4Ym9lQGtlcm5lbC5k
+awqzrcvNOiBzeXpib3QrNmNiMTFhZGU1MmFhMTcwOTUyOTdAc3l6a2FsbGVyLmFwcHNwb3RtYWls
+LmNvbTsgaW8tdXJpbmdAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwu
+b3JnCtb3zOI6IFJlOiC72Li0OiBbUEFUQ0hdIGlvLXdxOiBGaXggVUFGIHdoZW4gd2FrZXVwIHdx
+ZSBpbiBoYXNoIHdhaXRxdWV1ZQoKW1BsZWFzZSBub3RlOiBUaGlzIGUtbWFpbCBpcyBmcm9tIGFu
+IEVYVEVSTkFMIGUtbWFpbCBhZGRyZXNzXQoKT24gNS8yNC8yMSAxMDoxOSBBTSwgWmhhbmcsIFFp
+YW5nIHdyb3RlOgpbLi4uXQo+PiBTY3JhdGNoIHNjYWxwIG9uZSBpbmNoIG9mZiB0byB3b3JrIG91
+dCBob3cgdGhpcyBpcyBhIGN1cmUgZ2l2ZW4gYSkgdWFmIG1ha2VzCj4+IG5vIHNlbnNlIHdpdGhv
+dXQgZnJlZSBhbmQgYikgaG93IGlvIHdvcmtlcnMgY291bGQgc3Vydml2ZQo+PiB3YWl0X2Zvcl9j
+b21wbGV0aW9uKCZ3cS0+d29ya2VyX2RvbmUpLgo+Pgo+PiBJZiB0aGV5IGNvdWxkIE9UT0ggdGhl
+biB0aGlzIGlzIG5vdCB0aGUgcGlsbCBmb3IgdGhlIGxlYWsgaW4gd29ya2VyX3JlZnMuCj4KPiBI
+ZWxsbyBQYXZlbCBCZWd1bmtvdiwgSGlsbGYgRGFudG9uCj4KPiBTb3JyeSB0aGVyZSBpcyBhIHBy
+b2JsZW0gd2l0aCB0aGUgY2FsbHRyYWNlIGRlc2NyaWJlZCBpbiBteSBtZXNzYWdlLiBQbGVhc2Ug
+aWdub3JlIHRoaXMgbW9kaWZpY2F0aW9uCj4KPkhhdmVuJ3QgbG9va2VkIGF0IHRoZSB0cmFjZSBh
+bmQgZGVzY3JpcHRpb24sIGJ1dCBJIGRvIHRoaW5rCj50aGVyZSBpcyBhIHByb2JsZW0gaXQgc29s
+dmVzLgo+Cj4xKSBpb193YWl0X29uX2hhc2goKSAtPiBfX2FkZF93YWl0X3F1ZXVlKCZoYXNoLT53
+YWl0LCAmd3FlLT53YWl0KTsKPjIpIChub3RlOiB3cWUgaXMgYSB3b3JrZXIpIHdxZSdzIHdvcmtl
+cnMgZXhpdCBkcm9wcGluZyByZWZzCj4zKSByZWZzIGFyZSB6ZXJvLCBmcmVlIGlvLXdxCj40KSBA
+aGFzaCBpcyBzaGFyZWQsIHNvIG90aGVyIHRhc2svd3EgZG9lcyB3YWtlX3VwKCZ3cS0+aGFzaC0+
+d2FpdCk7Cj41KSBpdCB3YWtlcyBmcmVlZCB3cWUKPgo+c3RlcCA0KSBpcyBhIGJpdCBtb3JlIHRy
+aWNraWVyIHRoYW4gdGhhdCwgdGw7ZHI7Cj53cTM6d29ya2VyMSAgICAgfCBsb2NrcyBiaXQxCj53
+cTE6d29ya2VyMiAgICAgfCB3YWl0cyBiaXQxCj53cTI6d29ya2VyMSAgICAgfCB3YWl0cyBiaXQx
+Cj53cTE6d29ya2VyMyAgICAgfCB3YWl0cyBiaXQxCj4KPndxMzp3b3JrZXIxICAgICB8IGRyb3Ag
+IGJpdDEKPndxMTp3b3JrZXIyICAgICB8IGxvY2tzIGJpdDEKPndxMTp3b3JrZXIyICAgICB8IGNv
+bXBsZXRlcyBhbGwgd3ExIGJpdDEgd29yayBpdGVtcwo+d3ExOndvcmtlcjIgICAgIHwgZHJvcCAg
+Yml0MSwgZXhpdCBhbmQgZnJlZSBpby13cQo+Cj53cTI6d29ya2VyMSAgICAgfCBsb2NrcyBiaXQx
+Cj53cTEgICAgICAgICAgICAgfCBmcmVlIGNvbXBsZXRlCj53cTI6d29ya2VyMSAgICAgfCBkcm9w
+cyBiaXQxCj53cTE6d29ya2VyMyAgICAgfCB3YWtlZCB1cCwgZXZlbiB0aG91Z2ggZnJlZWQKPgo+
+Q2FuIGJlIHNpbXBsaWZpZWQsIGRvbid0IHdhbnQgdG8gd2FzdGUgdGltZSBvbiB0aGF0CgpUaGFu
+a3MgUGF2ZWwKCllvdXIgZGVzY3JpcHRpb24gaXMgYmV0dGVyLiAgSSBoYXZlIGFub3RoZXIgcXVl
+c3Rpb246IHVuZGVyIHdoYXQgY2lyY3Vtc3RhbmNlcyB3aWxsIHRocmVlIGlvLXdxKHdxMSwgd3Ey
+LCB3cTMpIGJlIGNyZWF0ZWQgdG8gc2hhcmUgdGhpcyBAaGFzaD8KClRoaXMga2luZCBvZiBwcm9i
+bGVtIGFsc28gb2NjdXJzIGJldHdlZW4gdHdvIGlvLXdxKHdxMSwgd3EyKS4gSXMgdGhlIGZvbGxv
+d2luZyBkZXNjcmlwdGlvbiBPS6O/Cgp3cTE6d29ya2VyMiAgICAgfCBsb2NrcyBiaXQxCndxMjp3
+b3JrZXIxICAgICB8IHdhaXRzIGJpdDEKd3ExOndvcmtlcjMgICAgIHwgd2FpdHMgYml0MQoKd3Ex
+OndvcmtlcjIgICAgIHwgY29tcGxldGVzIGFsbCB3cTEgYml0MSB3b3JrIGl0ZW1zCndxMTp3b3Jr
+ZXIyICAgICB8IGRyb3AgIGJpdDEsIGV4aXQgYW5kIGZyZWUgaW8td3EKCndxMjp3b3JrZXIxICAg
+ICB8IGxvY2tzIGJpdDEKd3ExICAgICAgICAgICAgICAgICAgICAgICB8IGZyZWUgY29tcGxldGUK
+d3EyOndvcmtlcjEgICAgIHwgZHJvcHMgYml0MQp3cTE6d29ya2VyMyAgICAgfCB3YWtlZCB1cCwg
+ZXZlbiB0aG91Z2ggZnJlZWQKClpoYW5nCj4KPi0tCj5QYXZlbCBCZWd1bmtvdgo=

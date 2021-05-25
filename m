@@ -2,353 +2,217 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E902E38FCF0
-	for <lists+io-uring@lfdr.de>; Tue, 25 May 2021 10:34:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE1B5390457
+	for <lists+io-uring@lfdr.de>; Tue, 25 May 2021 16:53:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232441AbhEYIgC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 25 May 2021 04:36:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50914 "EHLO
+        id S234136AbhEYOzJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 25 May 2021 10:55:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231520AbhEYIfi (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 25 May 2021 04:35:38 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CBB0C061756;
-        Tue, 25 May 2021 01:34:08 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id j14so29460149wrq.5;
-        Tue, 25 May 2021 01:34:08 -0700 (PDT)
+        with ESMTP id S232939AbhEYOzJ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 25 May 2021 10:55:09 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74DE8C061574
+        for <io-uring@vger.kernel.org>; Tue, 25 May 2021 07:53:38 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id lg14so47750311ejb.9
+        for <io-uring@vger.kernel.org>; Tue, 25 May 2021 07:53:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:references:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=yB+zoRlKCk8j3auS7VsQpWqtLfJxlp5ry37bHYIRo8U=;
-        b=RpFLWvQ9BziI2frBFD2AoWlHzz99mChtE+EoPuQsrNWWWyQv2Z4FDJT697dU0asJWh
-         NH1xAi+awI7oEdDM950GaDGccP2p2OUYNGMKbxcoKx0hcHeu/TZTE5LYknsMBwD3ELXM
-         2+sxvpE9ietgCTr9J0OY5m3E+v7mZ5gpcsRaDgC42mb1YTcbR3HTWA4SJIs3CySYyEEq
-         Yb9/+t7WyHNujvs1AZEVt74L8IRQnmLpwSlwTzn6OmeX3fk9/h7hHcdb15HxqTIRqVbL
-         p1Jj7vDNrF9plFVLkywUheGeGIaqXkUgtRNcLmIv4d2ZADdWTz13kIrZDQtmQ5ie4DJg
-         Uzzg==
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Nu/GHBpjSZqFLQJdrv2WofUEakGX52odyE7jVmGTpWQ=;
+        b=c9QvKR2OT26IxxSxa+atw/d+xpWLPFbnoeKFXH3K8Mvfcxt8tUMbT+2tqs8VSSKs7F
+         TSSS7PHKhLLCrHf99UhSXPd9mlJvVBoOz41qNw86HnB+nMjXTB6gRyYXVLA8I9Ycs5a7
+         ynoYKi/4jkHvqrGSY9M5+xwm9F+P7f2XMOomNXrBQ+F4j3Uz58OKkfEDB+6Yl4nZbd7q
+         RNsaWvawcuTrVPiIN/N7KdKK7GnkySLs/LpDurc67rCdJQDjs2RlVJQEy/QIrMYlM3OB
+         Gx7QXYRlryExwLR3xXf/5rsLQvDO6CkT/FlSE1YDGXPKcS3VmEcNc1wGgrzntFqzwH70
+         ZoAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=yB+zoRlKCk8j3auS7VsQpWqtLfJxlp5ry37bHYIRo8U=;
-        b=uBuug6ADqu5kluAH/mRrU5WNGD9lnzL+AY9BhDoDwcpfWg3sBzE5mRabg6vb14Rj2h
-         gPEdIvRoST7SEwkmZtFDDqnGhYx4lpd0icVPHE1EgvOUt9BmPs92QgEOHebiF9u6rBc/
-         zIOAwa5l0qeulYMIL7zOsOsRqu8FzNxl+W1DL7EDqEQkS6193jTM9qKzd9GXJinl4ma3
-         Imr98m0zPAupoCSRrWiZrJAfeBaQnCyJ476pAzxoTK5b2ZF0vfsJl3REmRAir/fH2BiR
-         MxH8KKZLCXzy1YRewzAU38ynKvdaODjYTW9iJLAFVITjAilzQriWZN5Y9xfM2Zz+J7hM
-         gu+A==
-X-Gm-Message-State: AOAM530Vt5lEbgbSMN8BgUv3pg2cpjLUQi4dWh8cW0lqaXmbjCyNbEmA
-        JldWPXrg3QPImSjagmvS68rWWbWUdTDSvoNu
-X-Google-Smtp-Source: ABdhPJxtoLKmI+dnOEkZmFEsswEcFVSXKdZ5v10rCQDRF6OKolIlPrZfi7mqdMBcLmvLZXgK2GMe2A==
-X-Received: by 2002:a5d:4b04:: with SMTP id v4mr26311919wrq.92.1621931646725;
-        Tue, 25 May 2021 01:34:06 -0700 (PDT)
-Received: from [192.168.8.197] ([85.255.235.116])
-        by smtp.gmail.com with ESMTPSA id k6sm1909620wmi.42.2021.05.25.01.34.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 May 2021 01:34:06 -0700 (PDT)
-Subject: Re: [PATCH] io_uring: Add to traces the req pointer when available
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Olivier Langlois <olivier@trillion01.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <60ac946e.1c69fb81.5efc2.65deSMTPIN_ADDED_MISSING@mx.google.com>
- <439a2ab8-765d-9a77-5dfd-dde2bd6884c4@gmail.com>
-Message-ID: <2236ed83-81fd-cd87-8bdb-d3173060cc7c@gmail.com>
-Date:   Tue, 25 May 2021 09:33:58 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Nu/GHBpjSZqFLQJdrv2WofUEakGX52odyE7jVmGTpWQ=;
+        b=n8wBl5L2ENdCDKi0gba3csnK26TiBRYR6iEWj0N0oFSzKu7S22SZg+cMhWS0O+8NC1
+         wjFRfpc6+LJ01jwEykgMIwIB5JUZj6bW8FRQpsASDEFC8arghXwLP7j7Cfbz7/0LD3mr
+         bIf+jcBuygh6CWEgxOhQnfbYfTMnyJJM0mbSFXhOi6+J8/glHzfkbJB8YlpFhtHcoPDA
+         ALfDe48msCPUFM9uppE7VtqwHemGiPq3jQiXtaBjzDpIYcnGN6t9Q2VA2CaewBOP0jrb
+         7Kwgka99hBTbRftugstgCG5F3BU4tuMoZKJ0S7vxTZteAhPp5UVsRaBi2kXDooWZXhWt
+         /M9w==
+X-Gm-Message-State: AOAM531UPsaTPm4SLiANi1rb0tEaglElLaiiwUSzn4fqn4NtT6luJGen
+        AxTFxaV6yKl0/BFmbQP19IsIx0ZVQBfDQcgHCNx5
+X-Google-Smtp-Source: ABdhPJwkXErdYWtLRoRdThvmdvfiliPdTp4bhmfacT9ChcVlEWEvajLzbaqcInOamF9r7J4ax4pk/cUClWjqd9xalWw=
+X-Received: by 2002:a17:907:10d8:: with SMTP id rv24mr28861448ejb.542.1621954416913;
+ Tue, 25 May 2021 07:53:36 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <439a2ab8-765d-9a77-5dfd-dde2bd6884c4@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <162163367115.8379.8459012634106035341.stgit@sifl>
+ <162163379461.8379.9691291608621179559.stgit@sifl> <f07bd213-6656-7516-9099-c6ecf4174519@gmail.com>
+ <CAHC9VhRjzWxweB8d8fypUx11CX6tRBnxSWbXH+5qM1virE509A@mail.gmail.com>
+ <162219f9-7844-0c78-388f-9b5c06557d06@gmail.com> <CAHC9VhSJuddB+6GPS1+mgcuKahrR3UZA=1iO8obFzfRE7_E0gA@mail.gmail.com>
+ <e701511f-520d-4a94-9931-d218b14a80fe@gmail.com>
+In-Reply-To: <e701511f-520d-4a94-9931-d218b14a80fe@gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 25 May 2021 10:53:25 -0400
+Message-ID: <CAHC9VhTS_Yt0PzG_WjsgUA04inHa=N8+OjWju9waefP==Di39A@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/9] audit,io_uring,io-wq: add some basic audit
+ support to io_uring
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/25/21 9:21 AM, Pavel Begunkov wrote:
-> On 5/25/21 6:54 AM, Olivier Langlois wrote:
->> The req pointer uniquely identify a specific request.
->> Having it in traces can provide valuable insights that is not possible
->> to have if the calling process is reusing the same user_data value.
-> 
-> How about hashing kernel pointers per discussed? Even if it's better
-> to have it done by tracing or something as you mentioned, there is no
-> such a thing at the moment, so should be done by hand.
+On Tue, May 25, 2021 at 4:27 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
+> On 5/24/21 8:59 PM, Paul Moore wrote:
+> > On Sun, May 23, 2021 at 4:26 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
+> >> On 5/22/21 3:36 AM, Paul Moore wrote:
+> >>> On Fri, May 21, 2021 at 8:22 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
+> >>>> On 5/21/21 10:49 PM, Paul Moore wrote:
+> >> [...]
+> >>>>>
+> >>>>> +     if (req->opcode < IORING_OP_LAST)
+> >>>>
+> >>>> always true at this point
+> >>>
+> >>> I placed the opcode check before the audit call because the switch
+> >>> statement below which handles the operation dispatching has a 'ret =
+> >>> -EINVAL' for the default case, implying that there are some paths
+> >>> where an invalid opcode could be passed into the function.  Obviously
+> >>> if that is not the case and you can guarantee that req->opcode will
+> >>> always be valid we can easily drop the check prior to the audit call.
+> >>
+> >> It is always true at this point, would be completely broken
+> >> otherwise
+> >
+> > Understood, I was just pointing out an oddity in the code.  I just
+> > dropped the checks from my local tree, you'll see it in the next draft
+> > of the patchset.
+> >
+> >>>> So, it adds two if's with memory loads (i.e. current->audit_context)
+> >>>> per request in one of the hottest functions here... No way, nack
+> >>>>
+> >>>> Maybe, if it's dynamically compiled into like kprobes if it's
+> >>>> _really_ used.
+> >>>
+> >>> I'm open to suggestions on how to tweak the io_uring/audit
+> >>> integration, if you don't like what I've proposed in this patchset,
+> >>> lets try to come up with a solution that is more palatable.  If you
+> >>> were going to add audit support for these io_uring operations, how
+> >>> would you propose we do it?  Not being able to properly audit io_uring
+> >>> operations is going to be a significant issue for a chunk of users, if
+> >>> it isn't already, we need to work to find a solution to this problem.
+> >>
+> >> Who knows. First of all, seems CONFIG_AUDIT is enabled by default
+> >> for many popular distributions, so I assume that is not compiled out.
+> >>
+> >> What are use cases for audit? Always running I guess?
+> >
+> > Audit has been around for quite some time now, and it's goal is to
+> > provide a mechanism for logging "security relevant" information in
+> > such a way that it meets the needs of various security certification
+> > efforts.  Traditional Linux event logging, e.g. syslog and the like,
+> > does not meet these requirements and changing them would likely affect
+> > the usability for those who are not required to be compliant with
+> > these security certifications.  The Linux audit subsystem allows Linux
+> > to be used in places it couldn't be used otherwise (or rather makes it
+> > a *lot* easier).
+> >
+> > That said, audit is not for everyone, and we have build time and
+> > runtime options to help make life easier.  Beyond simply disabling
+> > audit at compile time a number of Linux distributions effectively
+> > shortcut audit at runtime by adding a "never" rule to the audit
+> > filter, for example:
+> >
+> >  % auditctl -a task,never
+> >
+> >> Putting aside compatibility problems, it sounds that with the amount of overhead
+> >> it adds there is no much profit in using io_uring in the first place.
+> >> Is that so?
+> >
+> > Well, if audit alone erased all of the io_uring advantages we should
+> > just rip io_uring out of the kernel and people can just disable audit
+> > instead ;)
+>
+> Hah, if we add a simple idle "feature" like
+>
+> for (i=0;i<1000000;i+) {;}
+>
+> and it would destroy all the performance, let's throw useless
+> Linux kernel then!
+>
+> If seriously, it's more of an open question to me, how much overhead
+> it adds if enabled (with typical filters/options/etc).
 
-Or do you mean that it's already the case? Can anyone
-confirm if so?
+I am very hesitant to define a "typical" audit configuration as it
+really is dependent on the user's security requirements as well as the
+particular solution/environment.  Any configuration I pick will be
+"wrong" for a lot of audit users :)
 
-> Btw, I'd incline you to split it in two patches, a cleanup and one
-> adding req, because it's unreadable and hides the real change
-> 
->> ---
->>  fs/io_uring.c                   |  8 +--
->>  include/trace/events/io_uring.h | 95 ++++++++++++++++++++++-----------
->>  2 files changed, 67 insertions(+), 36 deletions(-)
->>
->> diff --git a/fs/io_uring.c b/fs/io_uring.c
->> index 5f82954004f6..496588ca984c 100644
->> --- a/fs/io_uring.c
->> +++ b/fs/io_uring.c
->> @@ -5059,7 +5059,7 @@ static void io_async_task_func(struct callback_head *cb)
->>  	struct async_poll *apoll = req->apoll;
->>  	struct io_ring_ctx *ctx = req->ctx;
->>  
->> -	trace_io_uring_task_run(req->ctx, req->opcode, req->user_data);
->> +	trace_io_uring_task_run(req->ctx, req, req->opcode, req->user_data);
->>  
->>  	if (io_poll_rewait(req, &apoll->poll)) {
->>  		spin_unlock_irq(&ctx->completion_lock);
->> @@ -5192,8 +5192,8 @@ static bool io_arm_poll_handler(struct io_kiocb *req)
->>  		return false;
->>  	}
->>  	spin_unlock_irq(&ctx->completion_lock);
->> -	trace_io_uring_poll_arm(ctx, req->opcode, req->user_data, mask,
->> -					apoll->poll.events);
->> +	trace_io_uring_poll_arm(ctx, req, req->opcode, req->user_data,
->> +				mask, apoll->poll.events);
->>  	return true;
->>  }
->>  
->> @@ -6578,7 +6578,7 @@ static int io_submit_sqe(struct io_ring_ctx *ctx, struct io_kiocb *req,
->>  		goto fail_req;
->>  
->>  	/* don't need @sqe from now on */
->> -	trace_io_uring_submit_sqe(ctx, req->opcode, req->user_data,
->> +	trace_io_uring_submit_sqe(ctx, req, req->opcode, req->user_data,
->>  				true, ctx->flags & IORING_SETUP_SQPOLL);
->>  
->>  	/*
->> diff --git a/include/trace/events/io_uring.h b/include/trace/events/io_uring.h
->> index abb8b24744fd..12861e98c08d 100644
->> --- a/include/trace/events/io_uring.h
->> +++ b/include/trace/events/io_uring.h
->> @@ -129,7 +129,7 @@ TRACE_EVENT(io_uring_file_get,
->>   *
->>   * @ctx:	pointer to a ring context structure
->>   * @hashed:	type of workqueue, hashed or normal
->> - * @req:	pointer to a submitted request
->> + * @req:	pointer to a queued request
->>   * @work:	pointer to a submitted io_wq_work
->>   *
->>   * Allows to trace asynchronous work submission.
->> @@ -142,9 +142,9 @@ TRACE_EVENT(io_uring_queue_async_work,
->>  	TP_ARGS(ctx, rw, req, work, flags),
->>  
->>  	TP_STRUCT__entry (
->> -		__field(  void *,				ctx		)
->> -		__field(  int,					rw		)
->> -		__field(  void *,				req		)
->> +		__field(  void *,			ctx	)
->> +		__field(  int,				rw	)
->> +		__field(  void *,			req	)
->>  		__field(  struct io_wq_work *,		work	)
->>  		__field(  unsigned int,			flags	)
->>  	),
->> @@ -196,10 +196,10 @@ TRACE_EVENT(io_uring_defer,
->>  
->>  /**
->>   * io_uring_link - called before the io_uring request added into link_list of
->> - * 				   another request
->> + *		   another request
->>   *
->> - * @ctx:			pointer to a ring context structure
->> - * @req:			pointer to a linked request
->> + * @ctx:		pointer to a ring context structure
->> + * @req:		pointer to a linked request
->>   * @target_req:		pointer to a previous request, that would contain @req
->>   *
->>   * Allows to track linked requests, to understand dependencies between requests
->> @@ -212,8 +212,8 @@ TRACE_EVENT(io_uring_link,
->>  	TP_ARGS(ctx, req, target_req),
->>  
->>  	TP_STRUCT__entry (
->> -		__field(  void *,	ctx			)
->> -		__field(  void *,	req			)
->> +		__field(  void *,	ctx		)
->> +		__field(  void *,	req		)
->>  		__field(  void *,	target_req	)
->>  	),
->>  
->> @@ -244,7 +244,7 @@ TRACE_EVENT(io_uring_cqring_wait,
->>  	TP_ARGS(ctx, min_events),
->>  
->>  	TP_STRUCT__entry (
->> -		__field(  void *,	ctx			)
->> +		__field(  void *,	ctx		)
->>  		__field(  int,		min_events	)
->>  	),
->>  
->> @@ -272,7 +272,7 @@ TRACE_EVENT(io_uring_fail_link,
->>  	TP_ARGS(req, link),
->>  
->>  	TP_STRUCT__entry (
->> -		__field(  void *,	req		)
->> +		__field(  void *,	req	)
->>  		__field(  void *,	link	)
->>  	),
->>  
->> @@ -314,15 +314,15 @@ TRACE_EVENT(io_uring_complete,
->>  	),
->>  
->>  	TP_printk("ring %p, user_data 0x%llx, result %ld, cflags %x",
->> -			  __entry->ctx, (unsigned long long)__entry->user_data,
->> -			  __entry->res, __entry->cflags)
->> +		   __entry->ctx, (unsigned long long)__entry->user_data,
->> +		   __entry->res, __entry->cflags)
->>  );
->>  
->> -
->>  /**
->>   * io_uring_submit_sqe - called before submitting one SQE
->>   *
->>   * @ctx:		pointer to a ring context structure
->> + * @req:		pointer to a submitted request
->>   * @opcode:		opcode of request
->>   * @user_data:		user data associated with the request
->>   * @force_nonblock:	whether a context blocking or not
->> @@ -333,13 +333,14 @@ TRACE_EVENT(io_uring_complete,
->>   */
->>  TRACE_EVENT(io_uring_submit_sqe,
->>  
->> -	TP_PROTO(void *ctx, u8 opcode, u64 user_data, bool force_nonblock,
->> -		 bool sq_thread),
->> +	TP_PROTO(void *ctx, void *req, u8 opcode, u64 user_data,
->> +		 bool force_nonblock, bool sq_thread),
->>  
->> -	TP_ARGS(ctx, opcode, user_data, force_nonblock, sq_thread),
->> +	TP_ARGS(ctx, req, opcode, user_data, force_nonblock, sq_thread),
->>  
->>  	TP_STRUCT__entry (
->>  		__field(  void *,	ctx		)
->> +		__field(  void *,	req		)
->>  		__field(  u8,		opcode		)
->>  		__field(  u64,		user_data	)
->>  		__field(  bool,		force_nonblock	)
->> @@ -348,26 +349,42 @@ TRACE_EVENT(io_uring_submit_sqe,
->>  
->>  	TP_fast_assign(
->>  		__entry->ctx		= ctx;
->> +		__entry->req		= req;
->>  		__entry->opcode		= opcode;
->>  		__entry->user_data	= user_data;
->>  		__entry->force_nonblock	= force_nonblock;
->>  		__entry->sq_thread	= sq_thread;
->>  	),
->>  
->> -	TP_printk("ring %p, op %d, data 0x%llx, non block %d, sq_thread %d",
->> -			  __entry->ctx, __entry->opcode,
->> -			  (unsigned long long) __entry->user_data,
->> -			  __entry->force_nonblock, __entry->sq_thread)
->> +	TP_printk("ring %p, req %p, op %d, data 0x%llx, non block %d, "
->> +		  "sq_thread %d",  __entry->ctx, __entry->req,
->> +		  __entry->opcode, (unsigned long long)__entry->user_data,
->> +		  __entry->force_nonblock, __entry->sq_thread)
->>  );
->>  
->> +/*
->> + * io_uring_poll_arm - called after arming a poll wait if successful
->> + *
->> + * @ctx:		pointer to a ring context structure
->> + * @req:		pointer to the armed request
->> + * @opcode:		opcode of request
->> + * @user_data:		user data associated with the request
->> + * @mask:		request poll events mask
->> + * @events:		registered events of interest
->> + *
->> + * Allows to track which fds are waiting for and what are the events of
->> + * interest.
->> + */
->>  TRACE_EVENT(io_uring_poll_arm,
->>  
->> -	TP_PROTO(void *ctx, u8 opcode, u64 user_data, int mask, int events),
->> +	TP_PROTO(void *ctx, void *req, u8 opcode, u64 user_data,
->> +		 int mask, int events),
->>  
->> -	TP_ARGS(ctx, opcode, user_data, mask, events),
->> +	TP_ARGS(ctx, req, opcode, user_data, events, fd),
->>  
->>  	TP_STRUCT__entry (
->>  		__field(  void *,	ctx		)
->> +		__field(  void *,	req		)
->>  		__field(  u8,		opcode		)
->>  		__field(  u64,		user_data	)
->>  		__field(  int,		mask		)
->> @@ -376,16 +393,17 @@ TRACE_EVENT(io_uring_poll_arm,
->>  
->>  	TP_fast_assign(
->>  		__entry->ctx		= ctx;
->> +		__entry->req		= req;
->>  		__entry->opcode		= opcode;
->>  		__entry->user_data	= user_data;
->>  		__entry->mask		= mask;
->>  		__entry->events		= events;
->>  	),
->>  
->> -	TP_printk("ring %p, op %d, data 0x%llx, mask 0x%x, events 0x%x",
->> -			  __entry->ctx, __entry->opcode,
->> -			  (unsigned long long) __entry->user_data,
->> -			  __entry->mask, __entry->events)
->> +	TP_printk("ring %p, req %p, op %d, data 0x%llx, mask 0x%x, events 0x%x",
->> +		  __entry->ctx, __entry->req, __entry->opcode,
->> +		  (unsigned long long) __entry->user_data,
->> +		  __entry->mask, __entry->events)
->>  );
->>  
->>  TRACE_EVENT(io_uring_poll_wake,
->> @@ -440,27 +458,40 @@ TRACE_EVENT(io_uring_task_add,
->>  			  __entry->mask)
->>  );
->>  
->> +/*
->> + * io_uring_task_run - called when task_work_run() executes the poll events
->> + *                     notification callbacks
->> + *
->> + * @ctx:		pointer to a ring context structure
->> + * @req:		pointer to the armed request
->> + * @opcode:		opcode of request
->> + * @user_data:		user data associated with the request
->> + *
->> + * Allows to track when notified poll events are processed
->> + */
->>  TRACE_EVENT(io_uring_task_run,
->>  
->> -	TP_PROTO(void *ctx, u8 opcode, u64 user_data),
->> +	TP_PROTO(void *ctx, void *req, u8 opcode, u64 user_data),
->>  
->> -	TP_ARGS(ctx, opcode, user_data),
->> +	TP_ARGS(ctx, req, opcode, user_data),
->>  
->>  	TP_STRUCT__entry (
->>  		__field(  void *,	ctx		)
->> +		__field(  void *,	req		)
->>  		__field(  u8,		opcode		)
->>  		__field(  u64,		user_data	)
->>  	),
->>  
->>  	TP_fast_assign(
->>  		__entry->ctx		= ctx;
->> +		__entry->req		= req;
->>  		__entry->opcode		= opcode;
->>  		__entry->user_data	= user_data;
->>  	),
->>  
->> -	TP_printk("ring %p, op %d, data 0x%llx",
->> -			  __entry->ctx, __entry->opcode,
->> -			  (unsigned long long) __entry->user_data)
->> +	TP_printk("ring %p, req %p, op %d, data 0x%llx",
->> +		  __entry->ctx, __entry->req, __entry->opcode,
->> +		  (unsigned long long) __entry->user_data)
->>  );
->>  
->>  #endif /* _TRACE_IO_URING_H */
->>
-> 
+As I see it, users will likely find themselves in one of three
+performance buckets:
+
+* io_uring enabled, CONFIG_AUDIT=n
+
+For those who are already trying to get that last 1% of performance
+from their kernel and are willing to give up most everything else to
+get it this is the obvious choice.  Needless to say there should not
+be any audit related impact in this case (especially since we've
+removed that req->opcode checks prior to the audit calls).
+
+* io_uring enabled, CONFIG_AUDIT=y, audit "task,never" runtime config
+
+[side note: I made some tweaks to audit_uring_entry() to move the
+audit_enabled check there so we no longer need to call into
+__audit_uring_entry() in this fastpath case.  Similarly
+audit_uring_exit() now does an audit_dummy_context() check instead of
+simply checking audit_context(), this should avoid calling into
+__audit_uring_exit() when the io_uring op is not being audited.]
+
+I'm guessing that most distro users will fall into this bucket.  Here
+the task's audit_context should always be NULL, both in the syscall
+context and sqpoll context, so io_uring would call into the inline
+audit_uring_entry() function and return without calling into
+__audit_uring_entry() (see the "side note" above).  The
+audit_uring_exit() call would behave in a similar manner.
+
+* io_uring enabled, CONFIG_AUDIT=y, some sort of runtime audit config
+
+For obvious reasons this case has the most performance impact and as
+mentioned above it can vary quite a bit.  In my opinion this is the
+least important bucket from a performance perspective as the user
+clearly has a need for the security information that audit provides
+and enabling that functionality in io_uring is critical to allowing
+the user to take advantage of io_uring.  The performance of io_uring
+is impacted, but it should still be more performant than synchronous
+I/O and it allows the user to run their existing io_uring
+applications/code-paths.
+
+> Btw, do you really need two hooks -- before and right after
+> execution?
+
+Yes, the entry/before hook does the setup for the io_uring op (very
+similar to a syscall entry point) and the exit/after hook is what does
+the audit record generation based on what took place during the
+io_uring operation.
+
+> > I believe there are people who would like to use io_uring and are also
+> > required to use a kernel with audit, either due to the need to run a
+> > distribution kernel or the need to capture security information in the
+> > audit stream.  I'm hoping that we can find a solution for these users;
+> > if we don't we are asking this group to choose either io_uring or
+> > audit, and that is something I would like to avoid.
+
+I'm leaving this old paragraph here because I really think this is
+important to the discussion.  If we can't find a solution here we
+would need to make io_uring and audit mutually exclusive and I don't
+think that is in the best interests of the users, and would surely
+create a headache for the distros.
 
 -- 
-Pavel Begunkov
+paul moore
+www.paul-moore.com

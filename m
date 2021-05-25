@@ -2,79 +2,99 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 117D7390BC9
-	for <lists+io-uring@lfdr.de>; Tue, 25 May 2021 23:48:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA574390C2C
+	for <lists+io-uring@lfdr.de>; Wed, 26 May 2021 00:28:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231377AbhEYVu2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 25 May 2021 17:50:28 -0400
-Received: from cloud48395.mywhc.ca ([173.209.37.211]:55776 "EHLO
-        cloud48395.mywhc.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229610AbhEYVu2 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 25 May 2021 17:50:28 -0400
-Received: from modemcable064.203-130-66.mc.videotron.ca ([66.130.203.64]:52988 helo=[192.168.1.179])
-        by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <olivier@trillion01.com>)
-        id 1llev2-0003aX-85; Tue, 25 May 2021 17:48:56 -0400
-Message-ID: <6133244fb6181420b27694abdfe3f42d43df8868.camel@trillion01.com>
+        id S231134AbhEYW3x (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 25 May 2021 18:29:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42836 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230313AbhEYW3x (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 25 May 2021 18:29:53 -0400
+Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B78AC061574
+        for <io-uring@vger.kernel.org>; Tue, 25 May 2021 15:28:23 -0700 (PDT)
+Received: by mail-pj1-x1033.google.com with SMTP id m8-20020a17090a4148b029015fc5d36343so70753pjg.1
+        for <io-uring@vger.kernel.org>; Tue, 25 May 2021 15:28:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=x9qwPWMfCgzIMftuDjXnPzMh23kCj3dHIBBRGTms0Jo=;
+        b=ZOOEBB7z57v74LWT0rNZOfqmfFcW5pA9QsVwvpzDGZbRTGYlmZoOgndvUubtpxN5NC
+         pKV0T9ERitQWLHphZ1GgAZR1F5TyjDY2Tqschi0+V6EW9FpRqADKpsovbbGC8TVHsx4J
+         NYOuO/JMdahwN7crgpiIjeuTRgZkoY2nLJEQH5KiESfwEDWK7TysKdTEEFJfV7xyC1eT
+         VRJcb7VPI+X+I3CjTKt+fpj7vHEZmrU5oGu5VvGEXvQyDjt2N25IIYt7AH7Ukp3eHtAF
+         LSpc4ZPk7wRGGRFbVWcxoQPA9INK0wQipRnc+vvS+E/z9zsWFddk/5gVPVXqvWh93M/I
+         NqQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=x9qwPWMfCgzIMftuDjXnPzMh23kCj3dHIBBRGTms0Jo=;
+        b=kVh/CsV4I3a1ewZV8064ArZ69MXLxjFrI9XxFiiOnZgDbijPumJQcMPSEk5Erjxie6
+         LPQH7XcIrxF4NArCvNFX07ILeTI/KWfLLOUFLMNO21OyGk50pFgIyc8R59mR7J02QoeM
+         /+5isanHjg3OBfSrRUPRC9qB+msad5LeDKwZhoBXPiniWdDlMhjFCmkUeUwyKtLs2seu
+         txxti+cF7GuChCpUa57eXTTjulI+KlISfp9SFywML1qoNpYktv/AxR3cv1SeOmseO9N4
+         pqXSyZeK3U0X5EAG0e/8lnq9PoNDFBChyt8bf9nhQ93p0j689H6FdFUc+uc3W2ltt4nZ
+         ph/A==
+X-Gm-Message-State: AOAM530uz5gmWX2huOnTxUqUE9LPRVAzHRlA1g2DojUyzP25HH2f1fLL
+        q2cV8/qXNSZVpTbYspQNr5mNlQ==
+X-Google-Smtp-Source: ABdhPJyZvGUX1TrZ3jandii3/ind0Kb0sNnZcjf1q2lvaVZKJ+PwnwV1j+PSVr6J61G7cCYME+YScw==
+X-Received: by 2002:a17:90a:fe02:: with SMTP id ck2mr32982813pjb.173.1621981702443;
+        Tue, 25 May 2021 15:28:22 -0700 (PDT)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id w19sm13591843pfu.215.2021.05.25.15.28.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 May 2021 15:28:21 -0700 (PDT)
 Subject: Re: [PATCH] io_uring: Add to traces the req pointer when available
-From:   Olivier Langlois <olivier@trillion01.com>
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
+To:     Olivier Langlois <olivier@trillion01.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
         Steven Rostedt <rostedt@goodmis.org>,
         Ingo Molnar <mingo@redhat.com>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Date:   Tue, 25 May 2021 17:48:55 -0400
-In-Reply-To: <af1a868ed91466312786f11913cf06118139838e.camel@trillion01.com>
 References: <60ac946e.1c69fb81.5efc2.65deSMTPIN_ADDED_MISSING@mx.google.com>
-         <439a2ab8-765d-9a77-5dfd-dde2bd6884c4@gmail.com>
-         <2236ed83-81fd-cd87-8bdb-d3173060cc7c@gmail.com>
-         <af1a868ed91466312786f11913cf06118139838e.camel@trillion01.com>
-Organization: Trillion01 Inc
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.40.1 
+ <439a2ab8-765d-9a77-5dfd-dde2bd6884c4@gmail.com>
+ <2236ed83-81fd-cd87-8bdb-d3173060cc7c@gmail.com>
+ <af1a868ed91466312786f11913cf06118139838e.camel@trillion01.com>
+ <6133244fb6181420b27694abdfe3f42d43df8868.camel@trillion01.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <5fb15014-94ba-e0ca-fa13-f9e898824185@kernel.dk>
+Date:   Tue, 25 May 2021 16:28:20 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <6133244fb6181420b27694abdfe3f42d43df8868.camel@trillion01.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - trillion01.com
-X-Get-Message-Sender-Via: cloud48395.mywhc.ca: authenticated_id: olivier@trillion01.com
-X-Authenticated-Sender: cloud48395.mywhc.ca: olivier@trillion01.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, 2021-05-25 at 17:26 -0400, Olivier Langlois wrote:
-> but the pointers should be hashed by trace.
+On 5/25/21 3:48 PM, Olivier Langlois wrote:
+> On Tue, 2021-05-25 at 17:26 -0400, Olivier Langlois wrote:
+>> but the pointers should be hashed by trace.
+>>
+>> That would be nice if someone more knowledgeable about the tracing
+>> system could jump in and comment about the hash-ptr option and tell
+>> when it is applied and when it is not...
 > 
-> That would be nice if someone more knowledgeable about the tracing
-> system could jump in and comment about the hash-ptr option and tell
-> when it is applied and when it is not...
+> My concern about hashing pointers directly in the io_uring code
+> directly. It is that by doing so will make it impossible for a
+> sufficiently priviledged user to get the raw pointer values without
+> reverting back the pointer hashing stuff.
+> 
+> that would not be the right way to address the security concern if the
+> tracing subsystem already hash them by default and is configurable to
+> display raw pointers if desired.
+> 
+> My issue is that I haven't been able to see hashed pointers output from
+> trace.
 
-My concern about hashing pointers directly in the io_uring code
-directly. It is that by doing so will make it impossible for a
-sufficiently priviledged user to get the raw pointer values without
-reverting back the pointer hashing stuff.
+Just a quick guess, but does it rely on using %p to print the pointers?
 
-that would not be the right way to address the security concern if the
-tracing subsystem already hash them by default and is configurable to
-display raw pointers if desired.
-
-My issue is that I haven't been able to see hashed pointers output from
-trace.
-
-The only way that I know to get the traces is with 'sudo perf' and I
-have never seen hashed pointers with it.
-
-but the code is there... If you grep 'TRACE_ITER_HASH_PTR' in
-kernel/trace/trace.c
-
-I just haven't spent days in studying the tracing code to figure out
-how it all works...
-
+-- 
+Jens Axboe
 

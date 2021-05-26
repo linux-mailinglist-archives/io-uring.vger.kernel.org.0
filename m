@@ -2,203 +2,216 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C1C1391C58
-	for <lists+io-uring@lfdr.de>; Wed, 26 May 2021 17:48:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2DCF391C62
+	for <lists+io-uring@lfdr.de>; Wed, 26 May 2021 17:49:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232913AbhEZPuF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 26 May 2021 11:50:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51696 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232537AbhEZPuE (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 26 May 2021 11:50:04 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3277FC061756
-        for <io-uring@vger.kernel.org>; Wed, 26 May 2021 08:48:33 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id p7so1622314wru.10
-        for <io-uring@vger.kernel.org>; Wed, 26 May 2021 08:48:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=AJlJtE+DcBi/nhivS6YkzfvI7+oHOLvXmx4kv+E3z0Q=;
-        b=LBuO9OllQMi8cZdKRO/Sm166x8VhQmc+KxFaNjCD4IB6c8EL+oGdA4EKYxTM6DDzpM
-         wLvnEgUraa3CERVCbMPrjO9EY5ogKdtAbzcfpu1VYjZ+eRHvyAY7mVUYf/K0DELo5XWg
-         gZWsywJnCkFr+SRvnSuTi3uy+HC3rs0MKqMucbTiSEzgPm15NwrHzoDIAvUQaFUl2uw+
-         9P0PRz31Sr1TUh2Th5F8rTEcyKVtKlhwtl9fBVf5yQVSaekAv48dAmpQ9p8DAjXpYnr2
-         u8z780011KGczGBHDDzts9aKCf+AFMUHFbimG1vdvR5dhYz6UXjy9Def0wwsmphuItEY
-         hlIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=AJlJtE+DcBi/nhivS6YkzfvI7+oHOLvXmx4kv+E3z0Q=;
-        b=qAYiM0ZeA5zhKhXc+u9127beIFnQNeWsG3Os89MuLh+JjIpRro+H9xF4XKj89Fcu62
-         8+r//EwBnRBsGqOymdefLcOaOQ7PcWTC222eaVe82Sk8LCJwlv0OZTLI5b8WIR+9ozFQ
-         Z9Rv3fBlcw1d6RxyObiBaZNLhmsluHG4rHnz08bJN9FvdUSEyXA7/evMQmaVySLMj+fT
-         wIUVQgJUuzByoTGx8LLbxRQ1q7LYvVxsWZr128lxLzisK0pMGCyvKDvdB6H/ubeOtsTQ
-         e9oGG/ziqNoH22+U8wWqg5lQQ+OFbWUUFOjx1mFwsXqZh10ljfir6CtPUxauoonCsyDV
-         dqGg==
-X-Gm-Message-State: AOAM5308JmKR49f3K6YEQWEYBL/ao4rXQIL60jIOIhPLTu/hScAx2t9/
-        ZHDN8CVaRifIx9kBkbg3VwV5wQ==
-X-Google-Smtp-Source: ABdhPJyUbwoLhyK7yQwIET2Oq/4zS0iDbghfVLrEvXT41mym0th5uT8Q3vT8h0SPMCDE/Fxceb97CA==
-X-Received: by 2002:a5d:44cb:: with SMTP id z11mr34326700wrr.159.1622044111630;
-        Wed, 26 May 2021 08:48:31 -0700 (PDT)
-Received: from elver.google.com ([2a00:79e0:15:13:74ba:ff42:8494:7f35])
-        by smtp.gmail.com with ESMTPSA id z9sm15109503wmi.17.2021.05.26.08.48.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 May 2021 08:48:30 -0700 (PDT)
-Date:   Wed, 26 May 2021 17:48:25 +0200
-From:   Marco Elver <elver@google.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk
-Cc:     syzbot <syzbot+73554e2258b7b8bf0bbf@syzkaller.appspotmail.com>,
-        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, dvyukov@google.com
-Subject: Re: [syzbot] KCSAN: data-race in __io_uring_cancel /
- io_uring_try_cancel_requests
-Message-ID: <YK5tyZNAFc8dh6ke@elver.google.com>
-References: <000000000000fa9f7005c33d83b9@google.com>
+        id S234613AbhEZPv3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 26 May 2021 11:51:29 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:55371 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234664AbhEZPvP (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 26 May 2021 11:51:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1622044168;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=r1Ej9c3HqF4N34dLokWBDDDLrsUjOS1R2qnUxM+2GaA=;
+        b=VMhFHGBF1oLVpsFcJ1cAJMwFwl663bVg9OK1ZO2bg1Fzt1SEiQ1CUi5Nc9TkbnXK6iZJgL
+        JkS9/c30ZGQk95l4ue62YInZhrcE4F0LMiK7is51cWRe7nQkqr/+rtCO7vOPLNE2m5f7vP
+        g1m9TJOd350wJ5MmT4TtlhktEXh9bqE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-270-8ehnYgxmNmaY3t-x9HlAHw-1; Wed, 26 May 2021 11:49:18 -0400
+X-MC-Unique: 8ehnYgxmNmaY3t-x9HlAHw-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 15355188E3C1;
+        Wed, 26 May 2021 15:49:17 +0000 (UTC)
+Received: from madcap2.tricolour.ca (unknown [10.3.128.13])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id CE0AC90BE;
+        Wed, 26 May 2021 15:49:07 +0000 (UTC)
+Date:   Wed, 26 May 2021 11:49:05 -0400
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Stefan Metzmacher <metze@samba.org>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, selinux@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [RFC PATCH 2/9] audit,io_uring,io-wq: add some basic audit
+ support to io_uring
+Message-ID: <20210526154905.GJ447005@madcap2.tricolour.ca>
+References: <162163379461.8379.9691291608621179559.stgit@sifl>
+ <f07bd213-6656-7516-9099-c6ecf4174519@gmail.com>
+ <CAHC9VhRjzWxweB8d8fypUx11CX6tRBnxSWbXH+5qM1virE509A@mail.gmail.com>
+ <162219f9-7844-0c78-388f-9b5c06557d06@gmail.com>
+ <CAHC9VhSJuddB+6GPS1+mgcuKahrR3UZA=1iO8obFzfRE7_E0gA@mail.gmail.com>
+ <8943629d-3c69-3529-ca79-d7f8e2c60c16@kernel.dk>
+ <CAHC9VhTYBsh4JHhqV0Uyz=H5cEYQw48xOo=CUdXV0gDvyifPOQ@mail.gmail.com>
+ <0a668302-b170-31ce-1651-ddf45f63d02a@gmail.com>
+ <CAHC9VhTAvcB0A2dpv1Xn7sa+Kh1n+e-dJr_8wSSRaxS4D0f9Sw@mail.gmail.com>
+ <18823c99-7d65-0e6f-d508-a487f1b4b9e7@samba.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <000000000000fa9f7005c33d83b9@google.com>
-User-Agent: Mutt/2.0.5 (2021-01-21)
+In-Reply-To: <18823c99-7d65-0e6f-d508-a487f1b4b9e7@samba.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, May 26, 2021 at 08:44AM -0700, syzbot wrote:
-> Hello,
+On 2021-05-26 17:17, Stefan Metzmacher wrote:
 > 
-> syzbot found the following issue on:
+> Am 26.05.21 um 16:38 schrieb Paul Moore:
+> > On Wed, May 26, 2021 at 6:19 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
+> >> On 5/26/21 3:04 AM, Paul Moore wrote:
+> >>> On Tue, May 25, 2021 at 9:11 PM Jens Axboe <axboe@kernel.dk> wrote:
+> >>>> On 5/24/21 1:59 PM, Paul Moore wrote:
+> >>>>> That said, audit is not for everyone, and we have build time and
+> >>>>> runtime options to help make life easier.  Beyond simply disabling
+> >>>>> audit at compile time a number of Linux distributions effectively
+> >>>>> shortcut audit at runtime by adding a "never" rule to the audit
+> >>>>> filter, for example:
+> >>>>>
+> >>>>>  % auditctl -a task,never
+> >>>>
+> >>>> As has been brought up, the issue we're facing is that distros have
+> >>>> CONFIG_AUDIT=y and hence the above is the best real world case outside
+> >>>> of people doing custom kernels. My question would then be how much
+> >>>> overhead the above will add, considering it's an entry/exit call per op.
+> >>>> If auditctl is turned off, what is the expectation in turns of overhead?
+> >>>
+> >>> I commented on that case in my last email to Pavel, but I'll try to go
+> >>> over it again in a little more detail.
+> >>>
+> >>> As we discussed earlier in this thread, we can skip the req->opcode
+> >>> check before both the _entry and _exit calls, so we are left with just
+> >>> the bare audit calls in the io_uring code.  As the _entry and _exit
+> >>> functions are small, I've copied them and their supporting functions
+> >>> below and I'll try to explain what would happen in CONFIG_AUDIT=y,
+> >>> "task,never" case.
+> >>>
+> >>> +  static inline struct audit_context *audit_context(void)
+> >>> +  {
+> >>> +    return current->audit_context;
+> >>> +  }
+> >>>
+> >>> +  static inline bool audit_dummy_context(void)
+> >>> +  {
+> >>> +    void *p = audit_context();
+> >>> +    return !p || *(int *)p;
+> >>> +  }
+> >>>
+> >>> +  static inline void audit_uring_entry(u8 op)
+> >>> +  {
+> >>> +    if (unlikely(audit_enabled && audit_context()))
+> >>> +      __audit_uring_entry(op);
+> >>> +  }
+> >>
+> >> I'd rather agree that it's my cycle-picking. The case I care about
+> >> is CONFIG_AUDIT=y (because everybody enable it), and io_uring
+> >> tracing _not_ enabled at runtime. If enabled let them suffer
+> >> the overhead, it will probably dip down the performance
+> >>
+> >> So, for the case I care about it's two of
+> >>
+> >> if (unlikely(audit_enabled && current->audit_context))
+> >>
+> >> in the hot path. load-test-jump + current, so it will
+> >> be around 7x2 instructions. We can throw away audit_enabled
+> >> as you say systemd already enables it, that will give
+> >> 4x2 instructions including 2 conditional jumps.
+> > 
+> > We've basically got it down to the equivalent of two
+> > "current->audit_context != NULL" checks in the case where audit is
+> > built into the kernel but disabled at runtime, e.g. CONFIG_AUDIT=y and
+> > "task,never".  I'm at a loss for how we can lower the overhead any
+> > further, but I'm open to suggestions.
+> > 
+> >> That's not great at all. And that's why I brought up
+> >> the question about need of pre and post hooks and whether
+> >> can be combined. Would be just 4 instructions and that is
+> >> ok (ish).
+> > 
+> > As discussed previously in this thread that isn't really an option
+> > from an audit perspective.
+> > 
+> >>> We would need to check with the current security requirements (there
+> >>> are distro people on the linux-audit list that keep track of that
+> >>> stuff), but looking at the opcodes right now my gut feeling is that
+> >>> most of the opcodes would be considered "security relevant" so
+> >>> selective auditing might not be that useful in practice.  It would
+> >>> definitely clutter the code and increase the chances that new opcodes
+> >>> would not be properly audited when they are merged.
+> >>
+> >> I'm curious, why it's enabled by many distros by default? Are there
+> >> use cases they use?
+> > 
+> > We've already talked about certain users and environments where audit
+> > is an important requirement, e.g. public sector, health care,
+> > financial institutions, etc.; without audit Linux wouldn't be an
+> > option for these users, at least not without heavy modification,
+> > out-of-tree/ISV patches, etc.  I currently don't have any direct ties
+> > to any distros, "Enterprise" or otherwise, but in the past it has been
+> > my experience that distros much prefer to have a single kernel build
+> > to address the needs of all their users.  In the few cases I have seen
+> > where a second kernel build is supported it is usually for hardware
+> > enablement.  I'm sure there are other cases too, I just haven't seen
+> > them personally; the big distros definitely seem to have a strong
+> > desire to limit the number of supported kernel configs/builds.
+> > 
+> >> Tempting to add AUDIT_IOURING=default N, but won't work I guess
+> > 
+> > One of the nice things about audit is that it can give you a history
+> > of what a user did on a system, which is very important for a number
+> > of use cases.  If we selectively disable audit for certain subsystems
+> > we create a blind spot in the audit log, and in the case of io_uring
+> > this can be a very serious blind spot.  I fear that if we can't come
+> > to some agreement here we will need to make io_uring and audit
+> > mutually exclusive at build time which would be awful; forcing many
+> > distros to either make a hard choice or carry out-of-tree patches.
 > 
-> HEAD commit:    a050a6d2 Merge tag 'perf-tools-fixes-for-v5.13-2021-05-24'..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=13205087d00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3bcc8a6b51ef8094
-> dashboard link: https://syzkaller.appspot.com/bug?extid=73554e2258b7b8bf0bbf
-> compiler:       Debian clang version 11.0.1-2
-[...]
-> write to 0xffff88811d8df330 of 8 bytes by task 3709 on cpu 1:
->  io_uring_clean_tctx fs/io_uring.c:9042 [inline]
->  __io_uring_cancel+0x261/0x3b0 fs/io_uring.c:9136
->  io_uring_files_cancel include/linux/io_uring.h:16 [inline]
->  do_exit+0x185/0x1560 kernel/exit.c:781
->  do_group_exit+0xce/0x1a0 kernel/exit.c:923
->  get_signal+0xfc3/0x1610 kernel/signal.c:2835
->  arch_do_signal_or_restart+0x2a/0x220 arch/x86/kernel/signal.c:789
->  handle_signal_work kernel/entry/common.c:147 [inline]
->  exit_to_user_mode_loop kernel/entry/common.c:171 [inline]
->  exit_to_user_mode_prepare+0x109/0x190 kernel/entry/common.c:208
->  __syscall_exit_to_user_mode_work kernel/entry/common.c:290 [inline]
->  syscall_exit_to_user_mode+0x20/0x40 kernel/entry/common.c:301
->  do_syscall_64+0x56/0x90 arch/x86/entry/common.c:57
->  entry_SYSCALL_64_after_hwframe+0x44/0xae
+> I'm wondering why it's not enough to have the native auditing just to happen.
+
+The audit context needs to be set up for each event.  This happens in
+audit_syslog_entry and audit_syslog_exit.
+
+> E.g. all (I have checked RECVMSG,SENDMSG,SEND and CONNECT) socket related io_uring opcodes
+> already go via security_socket_{recvmsg,sendmsg,connect}()
 > 
-> read to 0xffff88811d8df330 of 8 bytes by task 6412 on cpu 0:
->  io_uring_try_cancel_iowq fs/io_uring.c:8911 [inline]
->  io_uring_try_cancel_requests+0x1ce/0x8e0 fs/io_uring.c:8933
->  io_ring_exit_work+0x7c/0x1110 fs/io_uring.c:8736
->  process_one_work+0x3e9/0x8f0 kernel/workqueue.c:2276
->  worker_thread+0x636/0xae0 kernel/workqueue.c:2422
->  kthread+0x1d0/0x1f0 kernel/kthread.c:313
->  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+> IORING_OP_OPENAT* goes via do_filp_open() which is in common with the open[at[2]]() syscalls
+> and should also trigger audit_inode() and security_file_open().
 
-I wasn't entirely sure if io_wq is guaranteed to remain live in this
-case in io_uring_try_cancel_iowq(), but the comment there suggests it
-does. In that case, I think the below patch would explain the situation
-better and also propose a fix.
+These are extra hooks to grab operation-specific (syscall) parameters.
 
-Thoughts?
+> So why is there anything special needed for io_uring (now that the native worker threads are used)?
 
-Thanks,
--- Marco
+Because syscall has been bypassed by a memory-mapped work queue.
 
------- >8 ------
+> Is there really any io_uring opcode that bypasses the security checks the corresponding native syscall
+> would do? If so, I think that should just be fixed...
 
-From: Marco Elver <elver@google.com>
-Date: Wed, 26 May 2021 16:56:37 +0200
-Subject: [PATCH] io_uring: fix data race to avoid potential NULL-deref
+This is by design to speed it up.  This is what Paul's iouring entry and
+exit hooks do.
 
-Commit ba5ef6dc8a82 ("io_uring: fortify tctx/io_wq cleanup") introduced
-setting tctx->io_wq to NULL a bit earlier. This has caused KCSAN to
-detect a data race between between accesses to tctx->io_wq:
+> Additional LSM based restrictions could be hooked into the io_check_restriction() path
+> and setup at io_uring_setup() or early io_uring_register() time.
+> 
+> What do you think?
+> 
+> metze
 
-  write to 0xffff88811d8df330 of 8 bytes by task 3709 on cpu 1:
-   io_uring_clean_tctx                  fs/io_uring.c:9042 [inline]
-   __io_uring_cancel                    fs/io_uring.c:9136
-   io_uring_files_cancel                include/linux/io_uring.h:16 [inline]
-   do_exit                              kernel/exit.c:781
-   do_group_exit                        kernel/exit.c:923
-   get_signal                           kernel/signal.c:2835
-   arch_do_signal_or_restart            arch/x86/kernel/signal.c:789
-   handle_signal_work                   kernel/entry/common.c:147 [inline]
-   exit_to_user_mode_loop               kernel/entry/common.c:171 [inline]
-   ...
-  read to 0xffff88811d8df330 of 8 bytes by task 6412 on cpu 0:
-   io_uring_try_cancel_iowq             fs/io_uring.c:8911 [inline]
-   io_uring_try_cancel_requests         fs/io_uring.c:8933
-   io_ring_exit_work                    fs/io_uring.c:8736
-   process_one_work                     kernel/workqueue.c:2276
-   ...
+- RGB
 
-With the config used, KCSAN only reports data races with value changes:
-this implies that in the case here we also know that tctx->io_wq was
-non-NULL. Therefore, depending on interleaving, we may end up with:
-
-              [CPU 0]                 |        [CPU 1]
-  io_uring_try_cancel_iowq()          | io_uring_clean_tctx()
-    if (!tctx->io_wq) // false        |   ...
-    ...                               |   tctx->io_wq = NULL
-    io_wq_cancel_cb(tctx->io_wq, ...) |   ...
-      -> NULL-deref                   |
-
-Note: It is likely that thus far we've gotten lucky and the compiler
-optimizes the double-read into a single read into a register -- but this
-is never guaranteed, and can easily change with a different config!
-
-Fix the data race by atomically accessing tctx->io_wq. Of course, this
-assumes that a valid io_wq remains alive for the duration of
-io_uring_try_cancel_iowq(), which should be the case per comment there.
-
-Reported-by: syzbot+bf2b3d0435b9b728946c@syzkaller.appspotmail.com
-Signed-off-by: Marco Elver <elver@google.com>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 5f82954004f6..c7e27b464cb6 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -8903,12 +8903,16 @@ static bool io_uring_try_cancel_iowq(struct io_ring_ctx *ctx)
- 	mutex_lock(&ctx->uring_lock);
- 	list_for_each_entry(node, &ctx->tctx_list, ctx_node) {
- 		struct io_uring_task *tctx = node->task->io_uring;
-+		struct io_wq *io_wq;
- 
-+		if (!tctx)
-+			continue;
- 		/*
- 		 * io_wq will stay alive while we hold uring_lock, because it's
- 		 * killed after ctx nodes, which requires to take the lock.
- 		 */
--		if (!tctx || !tctx->io_wq)
-+		io_wq = READ_ONCE(tctx->io_wq);
-+		if (!io_wq)
- 			continue;
- 		cret = io_wq_cancel_cb(tctx->io_wq, io_cancel_ctx_cb, ctx, true);
- 		ret |= (cret != IO_WQ_CANCEL_NOTFOUND);
-@@ -9039,7 +9043,7 @@ static void io_uring_clean_tctx(struct io_uring_task *tctx)
- 	struct io_tctx_node *node;
- 	unsigned long index;
- 
--	tctx->io_wq = NULL;
-+	WRITE_ONCE(tctx->io_wq, NULL);
- 	xa_for_each(&tctx->xa, index, node)
- 		io_uring_del_task_file(index);
- 	if (wq)
--- 
-2.31.1.818.g46aad6cb9e-goog
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
 

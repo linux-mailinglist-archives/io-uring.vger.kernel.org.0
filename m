@@ -2,84 +2,116 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E7667391D11
-	for <lists+io-uring@lfdr.de>; Wed, 26 May 2021 18:33:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 451CE391D28
+	for <lists+io-uring@lfdr.de>; Wed, 26 May 2021 18:36:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234348AbhEZQen (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 26 May 2021 12:34:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33582 "EHLO
+        id S235070AbhEZQiS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 26 May 2021 12:38:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232891AbhEZQen (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 26 May 2021 12:34:43 -0400
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2187C061574;
-        Wed, 26 May 2021 09:33:10 -0700 (PDT)
-Received: by mail-wm1-x331.google.com with SMTP id s5-20020a7bc0c50000b0290147d0c21c51so871157wmh.4;
-        Wed, 26 May 2021 09:33:10 -0700 (PDT)
+        with ESMTP id S234982AbhEZQiR (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 26 May 2021 12:38:17 -0400
+Received: from mail-ot1-x32c.google.com (mail-ot1-x32c.google.com [IPv6:2607:f8b0:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B5F5C061756
+        for <io-uring@vger.kernel.org>; Wed, 26 May 2021 09:36:46 -0700 (PDT)
+Received: by mail-ot1-x32c.google.com with SMTP id h24-20020a9d64180000b029036edcf8f9a6so1585735otl.3
+        for <io-uring@vger.kernel.org>; Wed, 26 May 2021 09:36:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=TeMQf0+FO4ym4hfoS0vMKgOKCQ0f25mg9GpSl0nXAx4=;
-        b=NdfZIzmtg8AV9+i2/ZJK84FGl8KxAq0sI1zLGz+4QEDHdH/oXgYZT++64Yd8rp3o+d
-         VwUOfzwurhFS0+d1ch1f+ywU6E2R4RUXYRiiVHNc7VojKfFK2y3L1Du4YFQ5OwkxiRf+
-         4pfyiBuVLY+iqWEJLFa5OHhCv6AaXqdOUsPtf9IMRasoSR5KIBu0wAW9zUe0a+6IjCq5
-         AV8o6OlOWYV/UHXWqZGtROmSMaGf3HReLO6788GyMaREGx3BOjU+UpqpjGIrTIU6pSUs
-         FPinedH1n7Y2yCToiSO5qn2w5JryTquq14oSvc/fFY6JLhflG/dHotyQWzpLhAFe2rlm
-         Ocmw==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PqiiB2G3pVfVu3uT5QnRvz4iGCt2i0rxruRa8X05O5A=;
+        b=AIMczX2yp7RTipMdxkCl+Y/HpljemIuaEY6JBpbtxDIFufKjOkMt7Az9akxHPBlRrF
+         tv5THCfwxaArndbv36+qeYJ3AL4CuIfPs4SpXW6HFTPsWpSZCq+Xd/x5z2u/IADP7pX8
+         E9I3kby1gka6PAXCHMleSaOk/lvn2+P9ORVzEqG9R8/UZcIVIHPUaEvMqWSrTaJ5GsyH
+         lt1r2/k17Ht/VrZL0Q68620TUD2FAbpa3Rknm6sKc4oLYymxiC09tCQ7L5hG8hoF4587
+         s7Gmr92x1Dra8L0a4mbvdlwqufQN4FUkY3L+Mbr67iuZhwDdYI7ZkKQcTZ5rPXOws5jd
+         hz2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=TeMQf0+FO4ym4hfoS0vMKgOKCQ0f25mg9GpSl0nXAx4=;
-        b=VzkAmoucHbigO8YnTw9auC5d3fd2vV9QQkSXwqixy/b0QJ+0icD5vBY4wTfzrK8+81
-         6KN0b7E+pf6RYGbEvIz7sPh47TZLOigrEiDHsYmIV2sUNaXsXUKNIUtqx5h0Q1/NAp6t
-         ayo6jyoiKe3T/gD/49FTMvSjFge/AngfAVQw1yz/X2GZVWADPfPgigUlwTZSzOfdJUjs
-         x1YC/5vjo4zRjCr1GNinMT/vY/GxjE+YLwKX+OSfdFB6/wysywx1TSHwbXEN4Ru0Qd0M
-         OOw7rMIL7WO9L6LopCgMGOzisLv0JWxT1Q37ty0CmJ/VpWfoZ7u3h96YrN7zwFUw87HZ
-         mzQQ==
-X-Gm-Message-State: AOAM533801VnEPpytjIrFxluMHm+q72aS4+/LlQlH/iW239UZim8wkQh
-        Pli3nes31D+g+wbRnCQ+/Ps=
-X-Google-Smtp-Source: ABdhPJzH1UUmSHD3autQYEOj6mow+MtyrkyCZhDR0bW/18RPdCcwOCe89bcJO50YxIDQ6JflKGuj+g==
-X-Received: by 2002:a7b:c770:: with SMTP id x16mr3522670wmk.126.1622046789472;
-        Wed, 26 May 2021 09:33:09 -0700 (PDT)
-Received: from [192.168.8.197] ([85.255.236.10])
-        by smtp.gmail.com with ESMTPSA id s2sm5661727wmc.21.2021.05.26.09.33.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 May 2021 09:33:09 -0700 (PDT)
-Subject: Re: [syzbot] KCSAN: data-race in __io_uring_cancel /
- io_uring_try_cancel_requests
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Marco Elver <elver@google.com>, axboe@kernel.dk
-Cc:     syzbot <syzbot+73554e2258b7b8bf0bbf@syzkaller.appspotmail.com>,
-        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, dvyukov@google.com
-References: <000000000000fa9f7005c33d83b9@google.com>
- <YK5tyZNAFc8dh6ke@elver.google.com> <YK5uygiCGlmgQLKE@elver.google.com>
- <b5cff8b6-bd9c-9cbe-4f5f-52552d19ca48@gmail.com>
-Message-ID: <0b33f17e-9105-aad0-5d32-c3ed54a00da4@gmail.com>
-Date:   Wed, 26 May 2021 17:33:00 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PqiiB2G3pVfVu3uT5QnRvz4iGCt2i0rxruRa8X05O5A=;
+        b=FZZu5bm+DvW2TxI6EfXa5X4ZDTd719wABE0scoGSLjM/uaxvBRe7hMeTZG4jjVehzr
+         cPbnDDPsmUDUH3uZLI6YwdF9Dh2s/VQS0uSzQnIaABKyOX1JoSTmQaOfpUcnf+PW7vkj
+         89RmpcKXT9TvpDDCGFHCW3HZBUErI376m/K/UCi+J1j79PZGknP0gQwoRvdkNkicmXZU
+         TsKtmS3PLn/82Y8ci3F6TI1N6fj4KPnNkRaC33deK6dwU1dFDrFXActmA7H7Rn0HgcLE
+         dtfIG3DsYaJ4pmCePyswaEuelYxJJoThGy1cXcoTPuZQVx3XmDAG3r/N9D9hxAeFq8Nl
+         ZqnA==
+X-Gm-Message-State: AOAM533ZJzDo203G8AQpwED++Oy6wPfA4Lhkyn1c0u0hXfpkXVmRUYha
+        zT8htcHcRZYblz4YeNXcgTPEt+ZNlL5mFdSU0Z09Jg==
+X-Google-Smtp-Source: ABdhPJwRU8B/LoV6InTDOFtujtBx8Z2ldAmR4Mgo+9YcsIWTisl/DZn4f3BLX3/kcqduXoKFe7dWHTs2QFoxBLf51Jg=
+X-Received: by 2002:a05:6830:3154:: with SMTP id c20mr3125482ots.233.1622047005273;
+ Wed, 26 May 2021 09:36:45 -0700 (PDT)
 MIME-Version: 1.0
+References: <000000000000fa9f7005c33d83b9@google.com> <YK5tyZNAFc8dh6ke@elver.google.com>
+ <YK5uygiCGlmgQLKE@elver.google.com> <b5cff8b6-bd9c-9cbe-4f5f-52552d19ca48@gmail.com>
 In-Reply-To: <b5cff8b6-bd9c-9cbe-4f5f-52552d19ca48@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+From:   Marco Elver <elver@google.com>
+Date:   Wed, 26 May 2021 18:36:33 +0200
+Message-ID: <CANpmjNP1CKuoK82HCRYpDxDrvy4DgN9yVknfsxHSwfojx5Ttug@mail.gmail.com>
+Subject: Re: [syzbot] KCSAN: data-race in __io_uring_cancel / io_uring_try_cancel_requests
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        syzbot <syzbot+73554e2258b7b8bf0bbf@syzkaller.appspotmail.com>,
+        io-uring@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Dmitry Vyukov <dvyukov@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/26/21 5:29 PM, Pavel Begunkov wrote:
+On Wed, 26 May 2021 at 18:29, Pavel Begunkov <asml.silence@gmail.com> wrote:
 > On 5/26/21 4:52 PM, Marco Elver wrote:
->> Due to some moving around of code, the patch lost the actual fix (using
->> atomically read io_wq) -- so here it is again ... hopefully as intended.
->> :-)
-> 
-> "fortify" damn it...
+> > Due to some moving around of code, the patch lost the actual fix (using
+> > atomically read io_wq) -- so here it is again ... hopefully as intended.
+> > :-)
+>
+> "fortify" damn it... It was synchronised with &ctx->uring_lock
+> before, see io_uring_try_cancel_iowq() and io_uring_del_tctx_node(),
+> so should not clear before *del_tctx_node()
 
-fwiw, it's a reference to my own commit that came after -rc
+Ah, so if I understand right, the property stated by the comment in
+io_uring_try_cancel_iowq() was broken, and your patch below would fix
+that, right?
 
--- 
-Pavel Begunkov
+> The fix should just move it after this sync point. Will you send
+> it out as a patch?
+
+Do you mean your move of write to io_wq goes on top of the patch I
+proposed? (If so, please also leave your Signed-of-by so I can squash
+it.)
+
+So if I understand right, we do in fact have 2 problems:
+1. the data race as I noted in my patch, and
+2. the fact that io_wq does not live long enough.
+
+Did I get it right?
+
+Thanks,
+-- Marco
+
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 7db6aaf31080..b76ba26b4c6c 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -9075,11 +9075,12 @@ static void io_uring_clean_tctx(struct io_uring_task *tctx)
+>         struct io_tctx_node *node;
+>         unsigned long index;
+>
+> -       tctx->io_wq = NULL;
+>         xa_for_each(&tctx->xa, index, node)
+>                 io_uring_del_tctx_node(index);
+> -       if (wq)
+> +       if (wq) {
+> +               tctx->io_wq = NULL;
+>                 io_wq_put_and_exit(wq);
+> +       }
+>  }
+>
+>  static s64 tctx_inflight(struct io_uring_task *tctx, bool tracked)
+>
+>
+> --
+> Pavel Begunkov

@@ -2,70 +2,74 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EA574390C2C
-	for <lists+io-uring@lfdr.de>; Wed, 26 May 2021 00:28:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E90B4390DD1
+	for <lists+io-uring@lfdr.de>; Wed, 26 May 2021 03:11:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231134AbhEYW3x (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 25 May 2021 18:29:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42836 "EHLO
+        id S232617AbhEZBMf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 25 May 2021 21:12:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50690 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230313AbhEYW3x (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 25 May 2021 18:29:53 -0400
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B78AC061574
-        for <io-uring@vger.kernel.org>; Tue, 25 May 2021 15:28:23 -0700 (PDT)
-Received: by mail-pj1-x1033.google.com with SMTP id m8-20020a17090a4148b029015fc5d36343so70753pjg.1
-        for <io-uring@vger.kernel.org>; Tue, 25 May 2021 15:28:23 -0700 (PDT)
+        with ESMTP id S231877AbhEZBMe (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 25 May 2021 21:12:34 -0400
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B583C06175F
+        for <io-uring@vger.kernel.org>; Tue, 25 May 2021 18:11:04 -0700 (PDT)
+Received: by mail-pl1-x633.google.com with SMTP id a7so8593377plh.3
+        for <io-uring@vger.kernel.org>; Tue, 25 May 2021 18:11:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=x9qwPWMfCgzIMftuDjXnPzMh23kCj3dHIBBRGTms0Jo=;
-        b=ZOOEBB7z57v74LWT0rNZOfqmfFcW5pA9QsVwvpzDGZbRTGYlmZoOgndvUubtpxN5NC
-         pKV0T9ERitQWLHphZ1GgAZR1F5TyjDY2Tqschi0+V6EW9FpRqADKpsovbbGC8TVHsx4J
-         NYOuO/JMdahwN7crgpiIjeuTRgZkoY2nLJEQH5KiESfwEDWK7TysKdTEEFJfV7xyC1eT
-         VRJcb7VPI+X+I3CjTKt+fpj7vHEZmrU5oGu5VvGEXvQyDjt2N25IIYt7AH7Ukp3eHtAF
-         LSpc4ZPk7wRGGRFbVWcxoQPA9INK0wQipRnc+vvS+E/z9zsWFddk/5gVPVXqvWh93M/I
-         NqQA==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=n1vqEZBGLprA2KRsF5CbYK+jjEOh+Oi6OXwMO+wvSVI=;
+        b=WuYZFf9pPBvFYy2KVJ+JeTztCg54+n2ulU+NAv5b3DeK97olpQ+DI0bkxtj4PEUS/r
+         cJ5ieoM4B4W6rvdU8Jn6ugqpgujukUkcDf4uIlxiJpsYGwScXb9sCO7uQdmwMlkUR+gQ
+         D9f21SnXgMXicqtWAihqgwM8R4JlW1GJM67Z9B99qnP4exZtkg0qPunTxBWSslQhoF52
+         Gn37vsVBCOExHCikYoDlP2qCU4u+Gp9NA1OGTxKdqf2wZ+y+tv98ulwRY9n/B4MLCLho
+         9OrmQva35tNquiDhuw4FNI0JAA3jFs2bFKQpP2vuEYxdeAAPrxD1SAB3QoCnBrECtruk
+         vdDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=x9qwPWMfCgzIMftuDjXnPzMh23kCj3dHIBBRGTms0Jo=;
-        b=kVh/CsV4I3a1ewZV8064ArZ69MXLxjFrI9XxFiiOnZgDbijPumJQcMPSEk5Erjxie6
-         LPQH7XcIrxF4NArCvNFX07ILeTI/KWfLLOUFLMNO21OyGk50pFgIyc8R59mR7J02QoeM
-         /+5isanHjg3OBfSrRUPRC9qB+msad5LeDKwZhoBXPiniWdDlMhjFCmkUeUwyKtLs2seu
-         txxti+cF7GuChCpUa57eXTTjulI+KlISfp9SFywML1qoNpYktv/AxR3cv1SeOmseO9N4
-         pqXSyZeK3U0X5EAG0e/8lnq9PoNDFBChyt8bf9nhQ93p0j689H6FdFUc+uc3W2ltt4nZ
-         ph/A==
-X-Gm-Message-State: AOAM530uz5gmWX2huOnTxUqUE9LPRVAzHRlA1g2DojUyzP25HH2f1fLL
-        q2cV8/qXNSZVpTbYspQNr5mNlQ==
-X-Google-Smtp-Source: ABdhPJyZvGUX1TrZ3jandii3/ind0Kb0sNnZcjf1q2lvaVZKJ+PwnwV1j+PSVr6J61G7cCYME+YScw==
-X-Received: by 2002:a17:90a:fe02:: with SMTP id ck2mr32982813pjb.173.1621981702443;
-        Tue, 25 May 2021 15:28:22 -0700 (PDT)
+        bh=n1vqEZBGLprA2KRsF5CbYK+jjEOh+Oi6OXwMO+wvSVI=;
+        b=RU4S7TA+gdWHrOwwLs75k0d59aDf9QuTI5C2OV50f27aCLmhB+tly0NaFZ4FoIwJue
+         sQbbEmaGSxbbktD8yeEu3xas8Vm5NL7vPdsmb/bmm4A+WxLI3HcqpNKUiFErL6ePuPzt
+         kHY826N7Vh2M7JTIf+QVHpuA6USMSb5nRxipEZpzKrmVCuTgzFMFuSsHtHmpCGGrL9Wp
+         zhfEu8sBLkp/JNC0YOf09OjyowCXhSyplZbjFSjJmW4TXaVf7MM0HSSOuTqMcC7sa8pH
+         6gy0Mng6azCRT8EikfWP0OHm6gMmRHQD7eaBkKvj1FMbpnuqdiEtDc356JsQ32N2AbZu
+         osgQ==
+X-Gm-Message-State: AOAM5311ZfJhPZjFkkR0lctEXG0uF8LpWC2H67dKzqK79XndC0VUxq2b
+        5BGli6sQRe1z3Vwiuz4RZzuypA==
+X-Google-Smtp-Source: ABdhPJzTq1BXr13mX/eHChxkke6tkaDYa/yW1HITGoscwaWg16pQb3fNkCRib6Tb05YzZyjvZz4LUQ==
+X-Received: by 2002:a17:90b:1b4f:: with SMTP id nv15mr1202085pjb.56.1621991463564;
+        Tue, 25 May 2021 18:11:03 -0700 (PDT)
 Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id w19sm13591843pfu.215.2021.05.25.15.28.21
+        by smtp.gmail.com with ESMTPSA id m1sm15068322pfb.14.2021.05.25.18.11.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 May 2021 15:28:21 -0700 (PDT)
-Subject: Re: [PATCH] io_uring: Add to traces the req pointer when available
-To:     Olivier Langlois <olivier@trillion01.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <60ac946e.1c69fb81.5efc2.65deSMTPIN_ADDED_MISSING@mx.google.com>
- <439a2ab8-765d-9a77-5dfd-dde2bd6884c4@gmail.com>
- <2236ed83-81fd-cd87-8bdb-d3173060cc7c@gmail.com>
- <af1a868ed91466312786f11913cf06118139838e.camel@trillion01.com>
- <6133244fb6181420b27694abdfe3f42d43df8868.camel@trillion01.com>
+        Tue, 25 May 2021 18:11:03 -0700 (PDT)
+Subject: Re: [RFC PATCH 2/9] audit,io_uring,io-wq: add some basic audit
+ support to io_uring
+To:     Paul Moore <paul@paul-moore.com>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+References: <162163367115.8379.8459012634106035341.stgit@sifl>
+ <162163379461.8379.9691291608621179559.stgit@sifl>
+ <f07bd213-6656-7516-9099-c6ecf4174519@gmail.com>
+ <CAHC9VhRjzWxweB8d8fypUx11CX6tRBnxSWbXH+5qM1virE509A@mail.gmail.com>
+ <162219f9-7844-0c78-388f-9b5c06557d06@gmail.com>
+ <CAHC9VhSJuddB+6GPS1+mgcuKahrR3UZA=1iO8obFzfRE7_E0gA@mail.gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <5fb15014-94ba-e0ca-fa13-f9e898824185@kernel.dk>
-Date:   Tue, 25 May 2021 16:28:20 -0600
+Message-ID: <8943629d-3c69-3529-ca79-d7f8e2c60c16@kernel.dk>
+Date:   Tue, 25 May 2021 19:11:01 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <6133244fb6181420b27694abdfe3f42d43df8868.camel@trillion01.com>
+In-Reply-To: <CAHC9VhSJuddB+6GPS1+mgcuKahrR3UZA=1iO8obFzfRE7_E0gA@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -73,27 +77,32 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/25/21 3:48 PM, Olivier Langlois wrote:
-> On Tue, 2021-05-25 at 17:26 -0400, Olivier Langlois wrote:
->> but the pointers should be hashed by trace.
->>
->> That would be nice if someone more knowledgeable about the tracing
->> system could jump in and comment about the hash-ptr option and tell
->> when it is applied and when it is not...
+On 5/24/21 1:59 PM, Paul Moore wrote:
+> That said, audit is not for everyone, and we have build time and
+> runtime options to help make life easier.  Beyond simply disabling
+> audit at compile time a number of Linux distributions effectively
+> shortcut audit at runtime by adding a "never" rule to the audit
+> filter, for example:
 > 
-> My concern about hashing pointers directly in the io_uring code
-> directly. It is that by doing so will make it impossible for a
-> sufficiently priviledged user to get the raw pointer values without
-> reverting back the pointer hashing stuff.
-> 
-> that would not be the right way to address the security concern if the
-> tracing subsystem already hash them by default and is configurable to
-> display raw pointers if desired.
-> 
-> My issue is that I haven't been able to see hashed pointers output from
-> trace.
+>  % auditctl -a task,never
 
-Just a quick guess, but does it rely on using %p to print the pointers?
+As has been brought up, the issue we're facing is that distros have
+CONFIG_AUDIT=y and hence the above is the best real world case outside
+of people doing custom kernels. My question would then be how much
+overhead the above will add, considering it's an entry/exit call per op.
+If auditctl is turned off, what is the expectation in turns of overhead?
+
+My gut feeling tells me it's likely going to be too much. Keep in mind
+that we're sometimes doing millions of operations per second, per core.
+
+aio never had any audit logging as far as I can tell. I think it'd make
+a lot more sense to selectively enable audit logging only for opcodes
+that we care about. File open/create/unlink/mkdir etc, that kind of
+thing. File level operations that people would care about logging. Would
+they care about logging a buffer registration or a polled read from a
+device/file? I highly doubt it, and we don't do that for alternative
+methods either. Doesn't really make sense for a lot of the other
+operations, imho.
 
 -- 
 Jens Axboe

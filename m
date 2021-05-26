@@ -2,152 +2,103 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F459392180
-	for <lists+io-uring@lfdr.de>; Wed, 26 May 2021 22:31:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1761392199
+	for <lists+io-uring@lfdr.de>; Wed, 26 May 2021 22:45:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231968AbhEZUdH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 26 May 2021 16:33:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59666 "EHLO
+        id S233383AbhEZUrW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 26 May 2021 16:47:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231911AbhEZUdG (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 26 May 2021 16:33:06 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D88FFC061574;
-        Wed, 26 May 2021 13:31:30 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id r12so2466809wrp.1;
-        Wed, 26 May 2021 13:31:30 -0700 (PDT)
+        with ESMTP id S232324AbhEZUrV (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 26 May 2021 16:47:21 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 380BBC061760
+        for <io-uring@vger.kernel.org>; Wed, 26 May 2021 13:45:49 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id s22so4531674ejv.12
+        for <io-uring@vger.kernel.org>; Wed, 26 May 2021 13:45:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:references:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=cjX8sees6Hr6nm/jvfGu7kvMMVE0uao6tIcZ4xenbrs=;
-        b=bpx9cKfSC4PRUxTewR7k4PbQekER2MvLpiW07SGz+TL0+kGeoLQKwL7aDvVpUQ+EDV
-         DmObvHwfPJERo3u99jEHOM4SL0S9sUJkgYNdjVkowqNPCdKIXtskbQaEBl5CPZmYWDy3
-         wuvdL4Ue3CnKKlIUxDIp1SpET9nrOAMmlLwjd/raxN0GODMhrl0QSVB6YBn/OGmi2Vsd
-         0fZVRz2R1rtbGVp5K9QLdQDpxDsX5wpbtG++4Z1o14JvC6njskYsxFaOwqD217ByNglH
-         Ny9Lt/LP7336CneF+p0PaEfvJrnkxwy3kz2+CGNW469CjUZZfUeAz1FnPCNy7RXvwQCW
-         5YPw==
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5hZCAUoXKrRadFb+irPhIRNvSXLD3efh4ids+GIhWFs=;
+        b=nfVoX9KAdt7r7/foZ9VUfr+6B2RB3P+vNbWffWRDMtH3ewh4p/A6WYnqQh5ph9o1ue
+         6kkuFTas+P+LKDp1/e4pj0M59SPIfmSm6YcnB3iUOwBY5cs32OMJHePg4mZCpskhdqfJ
+         fIYCHHyfSpJj6IgN7OIzrFYlKPjYW3UtIxoV93hflXID48f9jidwBRepPFXui4ocXJ5K
+         Uvelq/osd8B67DZsrfguILWWp1vlsSDCkNhQ1tFCPijAlVeALSef8HQaRGvDKA5zjI4F
+         vZYgPWAKtL4J4p5FBDZbEv4BkvEKl3PJBqMbmJp7qUjUzjWuVW5MEArxwg02ldyLGQwd
+         zNtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:references:subject:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=cjX8sees6Hr6nm/jvfGu7kvMMVE0uao6tIcZ4xenbrs=;
-        b=SPb6qtcqDQocdkXmQHndaFKhFFWwvDAe0sUxJwGc/ViRIrqtzTolj4M4wE4+vlH3r2
-         Vf1P8S6WkRl+wWV1/6fw6dccjwwNOSofXTfCuTNEQXHFLmi0XBm0/Qzdd0bgHNsFBazN
-         HsziFanIeDO6N3YLAfu7eiUCxOMJZrWbKVv3CuW/sEP4cT1XZbmr3rFqYGYGlUsHJhzc
-         kRlRSWq58sDezn/5Xw9GmjNrP9zYW+tgUI23ui5sdg1pabFrCQWj7TmizYDchKTj9szy
-         4aSu1HIyw/CvUcszhabbECUtLkzS8zxKVpVgiZXqeOi3pR4L4Fva0M+CespZMSPCEvE2
-         8BoQ==
-X-Gm-Message-State: AOAM5330FoViiCj1MOCIxEwIkUw7eSZRJaR4kLaYLAlLnQ1oz/Fjf0xk
-        RVGqo3325HHwYtb7Epj7UOc=
-X-Google-Smtp-Source: ABdhPJy2e885zIwfZiu/bsp6LU3fuEXb9ew4HbB7SB6aBjc49+OHlS/71524ZRiLVxVpUJptfztp/A==
-X-Received: by 2002:a05:6000:104a:: with SMTP id c10mr34780464wrx.45.1622061089518;
-        Wed, 26 May 2021 13:31:29 -0700 (PDT)
-Received: from [192.168.8.197] ([85.255.236.10])
-        by smtp.gmail.com with ESMTPSA id y20sm8795463wmi.0.2021.05.26.13.31.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 May 2021 13:31:28 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Marco Elver <elver@google.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        syzbot <syzbot+73554e2258b7b8bf0bbf@syzkaller.appspotmail.com>,
-        io-uring@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Dmitry Vyukov <dvyukov@google.com>
-References: <000000000000fa9f7005c33d83b9@google.com>
- <YK5tyZNAFc8dh6ke@elver.google.com> <YK5uygiCGlmgQLKE@elver.google.com>
- <b5cff8b6-bd9c-9cbe-4f5f-52552d19ca48@gmail.com>
- <CANpmjNP1CKuoK82HCRYpDxDrvy4DgN9yVknfsxHSwfojx5Ttug@mail.gmail.com>
-Subject: Re: [syzbot] KCSAN: data-race in __io_uring_cancel /
- io_uring_try_cancel_requests
-Message-ID: <5cf2250a-c580-4dbf-5997-e987c7b71086@gmail.com>
-Date:   Wed, 26 May 2021 21:31:20 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5hZCAUoXKrRadFb+irPhIRNvSXLD3efh4ids+GIhWFs=;
+        b=UHOpuYgGys4yd95hTUnaHni6K58DA4MAmJMMaxRZidz0Av+VB7yuHV9JIjBvla5AAT
+         IGFoZA3dBi+LVv8o32pP0KJScaZzY1NrHx0wH58GV+av75PgvLjThUFD+4/LblUqwNQo
+         t0D2IhaPDN+Nm8FAYdTira9A6O3hDPPACvduTrVTCmaLEKEy9BzDA3K51QGsifN/D5i5
+         HCy+5++QI86LFThd+x4+e4zbhTItYekZicn69MY0pUK39cZGzCEbnIcNV3tXyos1aWPF
+         4nAfCsTnmh+uDpLw4qz2ZZSDgQzMnqbDvFXLBwdNvCwrT3Eb6WUYNSghTYYRe5BApbfn
+         x+bA==
+X-Gm-Message-State: AOAM531WQ4aedtci5tKitROV6FzeguaUjHt+10blEqZCF9rHBh4VC/mA
+        OJY7/B2Xo380wtipcUCZfnVAG9Hf/vVm7eN9nre6
+X-Google-Smtp-Source: ABdhPJz6iVOIuh44Mmqdysb7jNsGhoP9gYEuVrlzxw4kHHE84xFgHtv1QtgrqYjZoQKXQGBkRyDa8YES+ONshv3QTv8=
+X-Received: by 2002:a17:906:840c:: with SMTP id n12mr149899ejx.431.1622061947628;
+ Wed, 26 May 2021 13:45:47 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CANpmjNP1CKuoK82HCRYpDxDrvy4DgN9yVknfsxHSwfojx5Ttug@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <162163367115.8379.8459012634106035341.stgit@sifl>
+ <162163382536.8379.3124023175473604584.stgit@sifl> <00bede98-1bea-e3bc-b0a6-f038dc75c08d@samba.org>
+In-Reply-To: <00bede98-1bea-e3bc-b0a6-f038dc75c08d@samba.org>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 26 May 2021 16:45:36 -0400
+Message-ID: <CAHC9VhRSsRj6e0LmSqGfWk3cEvfC1c6CyN2EZeYL0vB_5Nz7CA@mail.gmail.com>
+Subject: Re: [RFC PATCH 7/9] lsm,io_uring: add LSM hooks to io_uring
+To:     Stefan Metzmacher <metze@samba.org>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/26/21 5:36 PM, Marco Elver wrote:
-> On Wed, 26 May 2021 at 18:29, Pavel Begunkov <asml.silence@gmail.com> wrote:
->> On 5/26/21 4:52 PM, Marco Elver wrote:
->>> Due to some moving around of code, the patch lost the actual fix (using
->>> atomically read io_wq) -- so here it is again ... hopefully as intended.
->>> :-)
->>
->> "fortify" damn it... It was synchronised with &ctx->uring_lock
->> before, see io_uring_try_cancel_iowq() and io_uring_del_tctx_node(),
->> so should not clear before *del_tctx_node()
-> 
-> Ah, so if I understand right, the property stated by the comment in
-> io_uring_try_cancel_iowq() was broken, and your patch below would fix
-> that, right?
+On Wed, May 26, 2021 at 10:48 AM Stefan Metzmacher <metze@samba.org> wrote:
+>
+> Hi Paul,
 
-"io_uring: fortify tctx/io_wq cleanup" broke it and the diff
-should fix it.
+Hi Stefan.
 
->> The fix should just move it after this sync point. Will you send
->> it out as a patch?
-> 
-> Do you mean your move of write to io_wq goes on top of the patch I
-> proposed? (If so, please also leave your Signed-of-by so I can squash
-> it.)
+> >  #define CREATE_TRACE_POINTS
+> >  #include <trace/events/io_uring.h>
+> > @@ -6537,6 +6538,11 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
+> >               if (!req->work.creds)
+> >                       return -EINVAL;
+> >               get_cred(req->work.creds);
+> > +             ret = security_uring_override_creds(req->work.creds);
+> > +             if (ret) {
+> > +                     put_cred(req->work.creds);
+> > +                     return ret;
+> > +             }
+>
+> Why are you calling this per requests, shouldn't this be done in
+> io_register_personality()?
 
-No, only my diff, but you hinted on what has happened, so I would
-prefer you to take care of patching. If you want of course.
+Generally speaking it is more interesting to see when user alice tries
+to impersonate bob and not when bob registers his ID as available to
+use by others.  We could always add a LSM hook to control when bob
+registers his ID, but I think the impersonation is the critical code
+path.
 
-To be entirely fair, assuming that aligned ptr
-reads can't be torn, I don't see any _real_ problem. But surely
-the report is very helpful and the current state is too wonky, so
-should be patched.
+However, if I'm misunderstanding how this works in io_uring please correct me.
 
-TL;DR;
-The synchronisation goes as this: it's usually used by the owner
-task, and the owner task deletes it, so is mostly naturally
-synchronised. An exception is a worker (not only) that accesses
-it for cancellation purpose, but it uses it only under ->uring_lock,
-so if removal is also taking the lock it should be fine. see
-io_uring_del_tctx_node() locking.
-
-> 
-> So if I understand right, we do in fact have 2 problems:
-> 1. the data race as I noted in my patch, and
-
-Yes, and it deals with it
-
-> 2. the fact that io_wq does not live long enough.
-
-Nope, io_wq outlives them fine. 
-
-> Did I get it right?
-> 
->> diff --git a/fs/io_uring.c b/fs/io_uring.c
->> index 7db6aaf31080..b76ba26b4c6c 100644
->> --- a/fs/io_uring.c
->> +++ b/fs/io_uring.c
->> @@ -9075,11 +9075,12 @@ static void io_uring_clean_tctx(struct io_uring_task *tctx)
->>         struct io_tctx_node *node;
->>         unsigned long index;
->>
->> -       tctx->io_wq = NULL;
->>         xa_for_each(&tctx->xa, index, node)
->>                 io_uring_del_tctx_node(index);
->> -       if (wq)
->> +       if (wq) {
->> +               tctx->io_wq = NULL;
->>                 io_wq_put_and_exit(wq);
->> +       }
->>  }
->>
->>  static s64 tctx_inflight(struct io_uring_task *tctx, bool tracked)
+> I'm also not sure if this really gains anything as io_register_personality()
+> only captures the value of get_current_cred(), so the process already has changed to
+> the credentials (at least once for the io_uring_register(IORING_REGISTER_PERSONALITY)
+> call).
+>
+> metze
 
 -- 
-Pavel Begunkov
-
-
+paul moore
+www.paul-moore.com

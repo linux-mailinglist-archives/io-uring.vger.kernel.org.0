@@ -2,66 +2,66 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F83739389B
-	for <lists+io-uring@lfdr.de>; Fri, 28 May 2021 00:14:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A41F3938A7
+	for <lists+io-uring@lfdr.de>; Fri, 28 May 2021 00:18:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235854AbhE0WQE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 27 May 2021 18:16:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40878 "EHLO
+        id S236083AbhE0WUM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 27 May 2021 18:20:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233563AbhE0WQE (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 27 May 2021 18:16:04 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F768C061574
-        for <io-uring@vger.kernel.org>; Thu, 27 May 2021 15:14:30 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id n2so1397823wrm.0
-        for <io-uring@vger.kernel.org>; Thu, 27 May 2021 15:14:30 -0700 (PDT)
+        with ESMTP id S236024AbhE0WUK (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 27 May 2021 18:20:10 -0400
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0367FC061574
+        for <io-uring@vger.kernel.org>; Thu, 27 May 2021 15:18:36 -0700 (PDT)
+Received: by mail-wr1-x430.google.com with SMTP id p7so1307205wru.10
+        for <io-uring@vger.kernel.org>; Thu, 27 May 2021 15:18:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=QpMa8N1CrsMoLXhCnjyLgiknkW1ExK55E/epiU8fJ2Y=;
-        b=Vy+39f3FWYHvpT7rwfsnXe7HlMMaS8f5zAYNMmNb0wMmfkysZWnJDeFAnk9jItzcBR
-         QQGAWoE89BTeY5IuEkJjtv8RhtEXCc7UL7iRMIeepk7uY4M8A16UdnUrRisv62fDlVJJ
-         w4szsnoe6Q6iyRilCmjKklj4fCCZZBknIx/zvqdm8AFYnxxqOEhxT+57lu4RNFklUIBQ
-         fIeMwqDAVby2LASPjMdYtqtwssDKwUuu0s2auSQREZjEqoBq84Qi1AazpBjT1GtK8Ol2
-         zMHQf6GQrIVMfDyyRViKvju2Yyajqd9f9Q1DiF2TJY200wBfmP/P8cOnclDnNVs4EMm+
-         a/aQ==
+        bh=TIRIowBxLrLeOVctaY4W7AyAAHic2j3+szZoMY9q70o=;
+        b=sv8PnCb/4VZ3ISzuAsUCAMipEdtIGx1bVRNjkQcVYgqzL0hzTweN3LwwOv60XSIqG3
+         qhOoiMLPHwh1vWaW6DexZZ4at4gP4ORQVrk80AT6N+gy3uNymt13sAp9pgIL6hSYVb6F
+         auSDPb2FI4zBi0lTpPElZWg0Z2hLR4SYv+XFGqMlTsjn7RfU5umzojaUSRXtfuOHWqXn
+         UEEoY74YlAvmM1WdXknNxhh4a6i3D/BkQJHsoqMTDpikUOsDE9rhWN7g/DMIabDSPLJx
+         WWO6lBKpdNpiDZ7yCDLjEv2V8Oak7VCVgWOAnjo2vXIWdR2UoTo3DeWYUYTMUAPcVykP
+         YeNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=QpMa8N1CrsMoLXhCnjyLgiknkW1ExK55E/epiU8fJ2Y=;
-        b=LhmiOVN18ZuPJVQkSH9kUJraDRDU+I+bnu+Hx6oqBcGh4VZiCeTYTUh0g74Pd2bcJX
-         gN2vAO7QahquTQY90xd/KPBcxrfDzpf9WCAng5ZaALmsHoTieo9qrtmlY9kVxXu/dfYM
-         uzlz4CdWbbL0fzPq/aGykVKXxbCoFlW76QOQA0hDB9fVKYCqVeVqf1O5vpTuHIoJqhCi
-         uyrlNWdbOZvKhi7JhkXDE+k7TUdA3PMyTV+tKMFHIPlR+fHJKn0HC4aAn6xqR+Fpex+L
-         hN9MC0FQdKU5hmTXHhOhpex6Z46Wd09XZdoEf3ZM0NUEfkv4+p+W4ZcCEroYISWXLfMk
-         8Lxw==
-X-Gm-Message-State: AOAM533PNJBf4/w6JFocCaJkp9upuo1Yo5gmehfh6xqqIGUh2217knns
-        dzpsCSBf0Y6hWLhu4W1sgavIv848Pg+zmGOc
-X-Google-Smtp-Source: ABdhPJzooGmfmZdv9tCoFMg3pDttjnLtuv1MphUTgqmAAEG1kywSq+JVLg2j+ireClzoipkWUBck4w==
-X-Received: by 2002:a05:6000:551:: with SMTP id b17mr5426750wrf.32.1622153668609;
-        Thu, 27 May 2021 15:14:28 -0700 (PDT)
+        bh=TIRIowBxLrLeOVctaY4W7AyAAHic2j3+szZoMY9q70o=;
+        b=WkhApAuT7U53zOdb1ZRBgEoCZHzMKS4869WcGdCWggopR2DKHuZNdDNEc3C+xtEnQF
+         bSt0Z4l1pmN5iZOmI7SuiBNTh1H9H/qNABRj8rld73qlOEU08MjKYslOshirqeBnXW30
+         5zWwL9iuIl5Io2ST55ZgfJuOJYcY9SjeYWLMzhqilMXzmw6pHfF5CK2pRWtp8/HBi3G6
+         MxBcXOtz/WwbGTGYLqWfMl0BkXZyX9H5KkoT+9LD7DBCWBf9Ad+UWnswSI0S8GWGIw7R
+         GNoUxTwFX0cjSc3ykUNMoeZhGYVgWoZXFRi5fqbxUwLGgZzQkAPubU25PHeRTV6Byupu
+         nrew==
+X-Gm-Message-State: AOAM531Ld2+Dk9Fn1A/IsIET1MRrWR66sG9gPmtK1W2Lyv8p+iLfJEsH
+        VVzA4lNv02j1/9Y6VnqB5u6A3F5vFyzm6Dt2
+X-Google-Smtp-Source: ABdhPJwNFoBUWEl+mV0kXFnMse3+2q03LYgaPoHBe7hieQgAPd6vID30wkdfBlPc67ghDVdpOtjwNw==
+X-Received: by 2002:adf:ee44:: with SMTP id w4mr5233945wro.415.1622153914312;
+        Thu, 27 May 2021 15:18:34 -0700 (PDT)
 Received: from [192.168.8.197] ([148.252.129.19])
-        by smtp.gmail.com with ESMTPSA id o129sm12339686wmo.22.2021.05.27.15.14.27
+        by smtp.gmail.com with ESMTPSA id m7sm5621916wrv.35.2021.05.27.15.18.32
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 May 2021 15:14:28 -0700 (PDT)
-Subject: Re: [PATCH 10/13] io_uring: add helpers for 2 level table alloc
+        Thu, 27 May 2021 15:18:33 -0700 (PDT)
+Subject: Re: [PATCH 05/13] io-wq: replace goto while
 To:     Noah Goldstein <goldstein.w.n@gmail.com>
 Cc:     Jens Axboe <axboe@kernel.dk>,
         "open list:IO_URING" <io-uring@vger.kernel.org>
 References: <cover.1621899872.git.asml.silence@gmail.com>
- <5290fc671b3f5db3ff2a20e2242dd39eba01ec1d.1621899872.git.asml.silence@gmail.com>
- <CAFUsyfL-QOT8tRUNz6Ch5i4pFoB=wMxFemk5CSfWdLHCeRMq5A@mail.gmail.com>
+ <031ec5e0189daa5b21bf89117bdf30b1889c3f72.1621899872.git.asml.silence@gmail.com>
+ <CAFUsyf+9f=w5WTZ65rMmYMOuSz7xLQ81rzAgEK=uG_a7gF_FWw@mail.gmail.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <a4298a99-4cd7-d204-bec9-b38cc14386e9@gmail.com>
-Date:   Thu, 27 May 2021 23:14:20 +0100
+Message-ID: <7999405c-49fe-1d24-580f-a647ad77d3c4@gmail.com>
+Date:   Thu, 27 May 2021 23:18:25 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.1
 MIME-Version: 1.0
-In-Reply-To: <CAFUsyfL-QOT8tRUNz6Ch5i4pFoB=wMxFemk5CSfWdLHCeRMq5A@mail.gmail.com>
+In-Reply-To: <CAFUsyf+9f=w5WTZ65rMmYMOuSz7xLQ81rzAgEK=uG_a7gF_FWw@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -69,63 +69,52 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/27/21 10:43 PM, Noah Goldstein wrote:
+On 5/27/21 10:48 PM, Noah Goldstein wrote:
 > On Mon, May 24, 2021 at 7:51 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
->> -static void io_free_file_tables(struct io_file_table *table, unsigned nr_files)
->> +static void io_free_page_table(void **table, size_t size)
->>  {
->> -       unsigned i, nr_tables = DIV_ROUND_UP(nr_files, IORING_MAX_FILES_TABLE);
->> +       unsigned i, nr_tables = DIV_ROUND_UP(size, PAGE_SIZE);
 >>
->>         for (i = 0; i < nr_tables; i++)
->> -               kfree(table->files[i]);
->> -       kfree(table->files);
->> -       table->files = NULL;
->> +               kfree(table[i]);
->> +       kfree(table);
->> +}
->> +
->> +static void **io_alloc_page_table(size_t size)
->> +{
->> +       unsigned i, nr_tables = DIV_ROUND_UP(size, PAGE_SIZE);
->> +       size_t init_size = size;
->> +       void **table;
->> +
->> +       table = kcalloc(nr_tables, sizeof(*table), GFP_KERNEL);
->> +       if (!table)
->> +               return NULL;
->> +
->> +       for (i = 0; i < nr_tables; i++) {
->> +               unsigned int this_size = min(size, PAGE_SIZE);
->> +
->> +               table[i] = kzalloc(this_size, GFP_KERNEL);
->> +               if (!table[i]) {
->> +                       io_free_page_table(table, init_size);
->> +                       return NULL;
-> Unless zalloc returns non-NULL for size == 0, you are guranteed to do
-> this for size <= PAGE_SIZE * (nr_tables - 1).  Possibly worth calculating early?
+>> If for/while is simple enough it's more prefered over goto with labels
+>> as the former one is more explicit and easier to read. So, replace a
+>> trivial goto-based loop in io_wqe_worker() with a while.
+>>
+>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+>> ---
+>>  fs/io-wq.c | 9 +++++----
+>>  1 file changed, 5 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/fs/io-wq.c b/fs/io-wq.c
+>> index a0e43d1b94af..712eb062f822 100644
+>> --- a/fs/io-wq.c
+>> +++ b/fs/io-wq.c
+>> @@ -538,12 +538,13 @@ static int io_wqe_worker(void *data)
+>>                 long ret;
+>>
+>>                 set_current_state(TASK_INTERRUPTIBLE);
+>> -loop:
+>> -               raw_spin_lock_irq(&wqe->lock);
+>> -               if (io_wqe_run_queue(wqe)) {
+>> +               while (1) {
+>> +                       raw_spin_lock_irq(&wqe->lock);
+> Can acquiring the spinlock be hoisted from the loop?
 
-Far from being a fast path, so would rather keep it simpler
-and cleaner
+lock();
+while(1) { ... }
+unlock();
 
-> 
-> If you calculate early you could then make the loop:
-> 
-> for (i = 0; i < nr_tables - 1; i++) {
->     table[i] = kzalloc(PAGE_SIZE, GFP_KERNEL);
->     if (!table[i]) {
->         io_free_page_table(table, init_size);
->         return NULL;
->     }
-> }
-> 
-> table[i] = kzalloc(size - (nr_tables - 1) * PAGE_SIZE, GFP_KERNEL);
->     if (!table[i]) {
->         io_free_page_table(table, init_size);
->         return NULL;
->     }
-> 
-> Which is almost certainly faster.
+If this, then no. If taken inside io_worker_handle_work(),
+maybe, but not with this commit.
+
+>> +                       if (!io_wqe_run_queue(wqe))
+>> +                               break;
+>>                         io_worker_handle_work(worker);
+>> -                       goto loop;
+>>                 }
+>> +
+>>                 __io_worker_idle(wqe, worker);
+>>                 raw_spin_unlock_irq(&wqe->lock);
+>>                 if (io_flush_signals())
+>> --
+>> 2.31.1
+>>
 
 -- 
 Pavel Begunkov

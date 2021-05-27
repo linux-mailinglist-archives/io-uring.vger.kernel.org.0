@@ -2,76 +2,195 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 680473935EF
-	for <lists+io-uring@lfdr.de>; Thu, 27 May 2021 21:05:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F105E393816
+	for <lists+io-uring@lfdr.de>; Thu, 27 May 2021 23:43:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233218AbhE0THa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 27 May 2021 15:07:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55048 "EHLO
+        id S234725AbhE0VpN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 27 May 2021 17:45:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229846AbhE0TH3 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 27 May 2021 15:07:29 -0400
-Received: from mail-oi1-x231.google.com (mail-oi1-x231.google.com [IPv6:2607:f8b0:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20DBCC061574
-        for <io-uring@vger.kernel.org>; Thu, 27 May 2021 12:05:55 -0700 (PDT)
-Received: by mail-oi1-x231.google.com with SMTP id c196so1783929oib.9
-        for <io-uring@vger.kernel.org>; Thu, 27 May 2021 12:05:55 -0700 (PDT)
+        with ESMTP id S234696AbhE0VpN (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 27 May 2021 17:45:13 -0400
+Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE0F8C061574
+        for <io-uring@vger.kernel.org>; Thu, 27 May 2021 14:43:38 -0700 (PDT)
+Received: by mail-pj1-x1032.google.com with SMTP id f8so1330052pjh.0
+        for <io-uring@vger.kernel.org>; Thu, 27 May 2021 14:43:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=AtePo78USGjM3CkiUbWSbKFiAWNBQCSE9nyEjfs9ZzE=;
-        b=xH55kIN4Bp0gX8TZO0BC2hCTEs0TwNhQpNkMAPoWkx3LOHYlBThouaFz0ui8me5JSe
-         EQjCQZjWrpdOVy0K/hgF58boHGs2dukkpaL9FyipttxPAoF8EHS3NR47zxGtpB29oLjt
-         rpSCGHexZABwAm+AgRITloXSUtRSWC44029vjSGZinsDZnsF2bcdl9oGu3CLuOqtWGV0
-         +G8PV3jr3XgIlEMglJVxJOyIx9k8pXvSN23qDevd4O5DvSuKEPaelZmmKOTXsdiywFV6
-         GAJNs/6ApLGe+fTy232YllQvyRRd6XL8VTZQMpfxFV1arFcZTwNRgvuAHTRyZh/xD7Lq
-         I4sQ==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=V2Kx9CWiwh36E+i8wyJDGVe9Kt7xTL6Zg4r3FJ09PlU=;
+        b=oqdHHcKUVq3XePWEpQJwuK+P3jMOSe8no1vQH4xiH8loU50tSfaiPi0H+uOJc1VgDq
+         4HwvBurZwLU4WIdK083zcDLvTfn0Rwlr02Tjp+zT5UZywMMop+Wv44T4M1CznXyZDBeT
+         LHf8B847v2lSosaIlWNQJ5kLA1NvIC5MDlhKz5ZU+kThkReLSyGfkjv2tI3XDMjIkcl4
+         Ygnit3MIgEMkmY6x73DR/7ziHpvJ/Y/Ow5rmk386QIQ18cPyU8uNg7+YuC6jWJEoNrHA
+         WmRCdq+MD1qmwSuk8VeH9h/eHq/7b9or5dui9XyEOkE7oJmi6NMc3TOJ96NsPHADhPr+
+         ijDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=AtePo78USGjM3CkiUbWSbKFiAWNBQCSE9nyEjfs9ZzE=;
-        b=qdy6EZt5O5NDPbqmeO0pZmsDLDG0Ic6bAa92sfu1EebzuIDWRuWD40hqoEBshMb4d+
-         bwqtGaHU849DmeZwYDG+RBPSVpNECwuX1T1SUeejXzcYjIqdvmNY1ue+4/8X3SOE6hRu
-         ZtLoA20SI2ky1Ww3C4VLzL7KaEVCo3YHAgqulq6ZVWWFI1z7qDWR58sm3E73MxGAUTfR
-         Kln7oWmyoEx6creZVFtCJrM3AkVMIh529shrhZJ0HowKENe+kTqzdTwAzsxPF0PkitNw
-         iRqhm1hLPsDH0wW4KbKS+omkexNsxYa7QdBP1w0mHIYvMHDscGGjHl7IpNC7g//Vtwj9
-         nBwA==
-X-Gm-Message-State: AOAM530u5W4W/FnBGMVUMZvLubw5OAHjbnwT8NhbzZxHVOVmD+/RgaKt
-        b2nDD7h50G7eGJmEpztmtMQ6Ww==
-X-Google-Smtp-Source: ABdhPJw74TAHk12Ebfje3xrFsvihvIMgNNrUWvm/E876tscEm+bJh4jGYMpXsgMW0ZqaK8sGimPEIA==
-X-Received: by 2002:a05:6808:9b0:: with SMTP id e16mr6894040oig.152.1622142354485;
-        Thu, 27 May 2021 12:05:54 -0700 (PDT)
-Received: from [192.168.1.30] ([207.135.233.147])
-        by smtp.gmail.com with ESMTPSA id r7sm607721oom.46.2021.05.27.12.05.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 May 2021 12:05:54 -0700 (PDT)
-Subject: Re: [PATCH v2] io_uring_enter(2): clarify OP_READ and OP_WRITE
-To:     Drew DeVault <sir@cmpwn.com>, io-uring@vger.kernel.org
-Cc:     Pavel Begunkov <asml.silence@gmail.com>
-References: <20210523164437.22784-1-sir@cmpwn.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <43af392a-9a01-ecee-25cd-54072e0633b4@kernel.dk>
-Date:   Thu, 27 May 2021 13:05:53 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=V2Kx9CWiwh36E+i8wyJDGVe9Kt7xTL6Zg4r3FJ09PlU=;
+        b=hM4fHWFiFmHZUdr4TSArZoWu7NcZWNPi+T78WRXDz2qZhi4f2fPwBn7CMcsKozhj0A
+         sQkahtGEx9lulC/gg97jot9DIcOMi3hQJhxo5I3hhLELQWkbB1c36/RldLUID8N5mHGz
+         pjyqjweAXW/yiD+I7zCnblS+8Ski1WeDJHFnYF1uWFjlz+4pV4b/hbecq+FH9cVq4tXn
+         hjWOkqOuGo4ByQrRcXnKybxLGF3UQYBX7gYo7+K/EOg1BwZ4zAAJThv1yfiXY1NyHKmo
+         8KBvd1Id5PoMZMwzWqXd3h3Sxpd9arcuMcsmElvri6Gg0arP+Ig1Z2pdjzPW1fB+b1Aw
+         vapQ==
+X-Gm-Message-State: AOAM5304P8PuMrpOECE9MHqJszs4mslmyzbRDqXJunJv7hEhvmaMamQx
+        KAostsawPRxHUxVrYKLeWDaRYE5pALqkfHP9Vfrc7ef+40i51Q==
+X-Google-Smtp-Source: ABdhPJw1lBlrSy2H2q7aCnEdFMf++M8ZKxiW+UUpWJEyfAZRYm9PLGGyYn0O91dlQj8ykHUJJ6Z1zVzVNr6A0Yf5Ths=
+X-Received: by 2002:a17:902:7b85:b029:fb:c187:2bed with SMTP id
+ w5-20020a1709027b85b02900fbc1872bedmr4971867pll.67.1622151818267; Thu, 27 May
+ 2021 14:43:38 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20210523164437.22784-1-sir@cmpwn.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <cover.1621899872.git.asml.silence@gmail.com> <5290fc671b3f5db3ff2a20e2242dd39eba01ec1d.1621899872.git.asml.silence@gmail.com>
+In-Reply-To: <5290fc671b3f5db3ff2a20e2242dd39eba01ec1d.1621899872.git.asml.silence@gmail.com>
+From:   Noah Goldstein <goldstein.w.n@gmail.com>
+Date:   Thu, 27 May 2021 17:43:27 -0400
+Message-ID: <CAFUsyfL-QOT8tRUNz6Ch5i4pFoB=wMxFemk5CSfWdLHCeRMq5A@mail.gmail.com>
+Subject: Re: [PATCH 10/13] io_uring: add helpers for 2 level table alloc
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        "open list:IO_URING" <io-uring@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/23/21 10:44 AM, Drew DeVault wrote:
-> These do not advance the internal file offset unless the offset is set
-> to -1, making them behave more like pread/pwrite than read/write.
+On Mon, May 24, 2021 at 7:51 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
+>
+> Some parts like fixed file table use 2 level tables, factor out helpers
+> for allocating/deallocating them as more users are to come.
+>
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> ---
+>  fs/io_uring.c | 73 ++++++++++++++++++++++++++++++---------------------
+>  1 file changed, 43 insertions(+), 30 deletions(-)
+>
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 40b70c34c1b2..1cc2d16637ff 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -7054,14 +7054,36 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
+>         return READ_ONCE(rings->cq.head) == READ_ONCE(rings->cq.tail) ? ret : 0;
+>  }
+>
+> -static void io_free_file_tables(struct io_file_table *table, unsigned nr_files)
+> +static void io_free_page_table(void **table, size_t size)
+>  {
+> -       unsigned i, nr_tables = DIV_ROUND_UP(nr_files, IORING_MAX_FILES_TABLE);
+> +       unsigned i, nr_tables = DIV_ROUND_UP(size, PAGE_SIZE);
+>
+>         for (i = 0; i < nr_tables; i++)
+> -               kfree(table->files[i]);
+> -       kfree(table->files);
+> -       table->files = NULL;
+> +               kfree(table[i]);
+> +       kfree(table);
+> +}
+> +
+> +static void **io_alloc_page_table(size_t size)
+> +{
+> +       unsigned i, nr_tables = DIV_ROUND_UP(size, PAGE_SIZE);
+> +       size_t init_size = size;
+> +       void **table;
+> +
+> +       table = kcalloc(nr_tables, sizeof(*table), GFP_KERNEL);
+> +       if (!table)
+> +               return NULL;
+> +
+> +       for (i = 0; i < nr_tables; i++) {
+> +               unsigned int this_size = min(size, PAGE_SIZE);
+> +
+> +               table[i] = kzalloc(this_size, GFP_KERNEL);
+> +               if (!table[i]) {
+> +                       io_free_page_table(table, init_size);
+> +                       return NULL;
+Unless zalloc returns non-NULL for size == 0, you are guranteed to do
+this for size <= PAGE_SIZE * (nr_tables - 1).  Possibly worth calculating early?
 
-Applied, thanks.
+If you calculate early you could then make the loop:
 
--- 
-Jens Axboe
+for (i = 0; i < nr_tables - 1; i++) {
+    table[i] = kzalloc(PAGE_SIZE, GFP_KERNEL);
+    if (!table[i]) {
+        io_free_page_table(table, init_size);
+        return NULL;
+    }
+}
 
+table[i] = kzalloc(size - (nr_tables - 1) * PAGE_SIZE, GFP_KERNEL);
+    if (!table[i]) {
+        io_free_page_table(table, init_size);
+        return NULL;
+    }
+
+Which is almost certainly faster.
+
+> +               }
+> +               size -= this_size;
+> +       }
+> +       return table;
+>  }
+>
+>  static inline void io_rsrc_ref_lock(struct io_ring_ctx *ctx)
+> @@ -7190,6 +7212,22 @@ static int io_rsrc_data_alloc(struct io_ring_ctx *ctx, rsrc_put_fn *do_put,
+>         return 0;
+>  }
+>
+> +static bool io_alloc_file_tables(struct io_file_table *table, unsigned nr_files)
+> +{
+> +       size_t size = nr_files * sizeof(struct io_fixed_file);
+> +
+> +       table->files = (struct io_fixed_file **)io_alloc_page_table(size);
+> +       return !!table->files;
+> +}
+> +
+> +static void io_free_file_tables(struct io_file_table *table, unsigned nr_files)
+> +{
+> +       size_t size = nr_files * sizeof(struct io_fixed_file);
+> +
+> +       io_free_page_table((void **)table->files, size);
+> +       table->files = NULL;
+> +}
+> +
+>  static void __io_sqe_files_unregister(struct io_ring_ctx *ctx)
+>  {
+>  #if defined(CONFIG_UNIX)
+> @@ -7451,31 +7489,6 @@ static int io_sqe_files_scm(struct io_ring_ctx *ctx)
+>  }
+>  #endif
+>
+> -static bool io_alloc_file_tables(struct io_file_table *table, unsigned nr_files)
+> -{
+> -       unsigned i, nr_tables = DIV_ROUND_UP(nr_files, IORING_MAX_FILES_TABLE);
+> -
+> -       table->files = kcalloc(nr_tables, sizeof(*table->files), GFP_KERNEL);
+> -       if (!table->files)
+> -               return false;
+> -
+> -       for (i = 0; i < nr_tables; i++) {
+> -               unsigned int this_files = min(nr_files, IORING_MAX_FILES_TABLE);
+> -
+> -               table->files[i] = kcalloc(this_files, sizeof(*table->files[i]),
+> -                                       GFP_KERNEL);
+> -               if (!table->files[i])
+> -                       break;
+> -               nr_files -= this_files;
+> -       }
+> -
+> -       if (i == nr_tables)
+> -               return true;
+> -
+> -       io_free_file_tables(table, nr_tables * IORING_MAX_FILES_TABLE);
+> -       return false;
+> -}
+> -
+>  static void io_rsrc_file_put(struct io_ring_ctx *ctx, struct io_rsrc_put *prsrc)
+>  {
+>         struct file *file = prsrc->file;
+> --
+> 2.31.1
+>

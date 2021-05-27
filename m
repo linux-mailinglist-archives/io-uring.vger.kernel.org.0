@@ -2,135 +2,148 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C91D392AB2
-	for <lists+io-uring@lfdr.de>; Thu, 27 May 2021 11:26:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C188392AD5
+	for <lists+io-uring@lfdr.de>; Thu, 27 May 2021 11:32:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235754AbhE0J1r (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 27 May 2021 05:27:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35342 "EHLO
+        id S235794AbhE0JeP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 27 May 2021 05:34:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235720AbhE0J1p (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 27 May 2021 05:27:45 -0400
-Received: from mail-ed1-x549.google.com (mail-ed1-x549.google.com [IPv6:2a00:1450:4864:20::549])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7186C061574
-        for <io-uring@vger.kernel.org>; Thu, 27 May 2021 02:26:12 -0700 (PDT)
-Received: by mail-ed1-x549.google.com with SMTP id d8-20020a0564020008b0290387d38e3ce0so22970edu.1
-        for <io-uring@vger.kernel.org>; Thu, 27 May 2021 02:26:12 -0700 (PDT)
+        with ESMTP id S235810AbhE0JeP (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 27 May 2021 05:34:15 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C016C061760
+        for <io-uring@vger.kernel.org>; Thu, 27 May 2021 02:32:42 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id n2so4069953wrm.0
+        for <io-uring@vger.kernel.org>; Thu, 27 May 2021 02:32:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=tpMhr1a1ucqmSn8aEv/I+3Jaj5nsK3OJYJ5e/mt9yGY=;
-        b=Q/vJeL9sXW+UWiU6U9hHz5sKys3i1VhTtuYfdmDOH6LWAJv59c7xS+WCzSmCqg2YYY
-         oWgTSehjunfrSUIU9EvVXy+QBtMvEcc54tDlaraHYWHHR+Ub0ShwT0O+odW2IfZFZH+X
-         LsaLOuJk+QZtLb07YaaF+ZpjF1d9LWfPowMGmtkeUXB+BwxP9oxHvBU7DyANkveEESI9
-         xEYfQFccuWJOV3H/lLV33lDC/8VOP9eON2h8UK+IWLIPgIh/1O3QSpmNGGwF9LfW2rNo
-         FLvtC/+C6Ks0XV5ljtiUfzZaPd5jgzusKowd/LtQU5mxdEdSBbshbyxdmiQSJcZxJGfQ
-         GOAQ==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=WUOW0aYMYacTttJcw/Wumsyv7jlobDPzPKJRlWNJDUo=;
+        b=Fts2SzA7NlCiuPjoPjAYz0zx8cr0BkxmM+vJOFkwElZMHyM96QfAfWgc3HTPRIM2QC
+         C49jhHv2WAQz67scRFNGP9YEJt2Wc1WsuKrRbguWnhIPUWcEySLHMNKLG8Qawz2O6fTC
+         fhLIoYwzBm25hTiWmUcFAxFCAi/rEKqFpTrPXs/BPgYDY/I1EOKRPJigzLc7HC5rCadX
+         Dyow/rpWI3yLED1KeOsd9j3O8UADvwzpJjPcKg1BZwGjOYRp5iPhzJAs3E10eAQA5JgF
+         pK2hVMDl6ma5AgA+JG9R2AYtZUyAM5Whr2ippvA1hHysyKmDsVk3vJE8gf/yBr1SLsIG
+         DjPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=tpMhr1a1ucqmSn8aEv/I+3Jaj5nsK3OJYJ5e/mt9yGY=;
-        b=ZaWr/oDEiHrSN6mI+OiTn+eJGDEwt9ZAecgjnJSU3ppZLi28aG9nNc3g7RCtZhot9R
-         LNtWaAg3rwjv92Ov6kEwIVH25C42lyf4jK2G9qa38+C7cm3KR8YTITSmksknwXYEBhwT
-         lNgI5KITzVLpiLG+ghm6YEYaYAnEzI5MdGuprhb2NFhwTs4JRr7r2eho6+bWV/PK0iE4
-         cA/vsHwbjXi16tZ2V9Ri6jUxfGcJ4tj0VM7uc2IYj9310tVCBhpM3CkM2merguDtizuF
-         K6puuTgZ4k82oY3oc2RVcDwzvM+1+D+inTQahCuBclOiiZBHY1+6UJ7VsaFpDsykStM4
-         XHbA==
-X-Gm-Message-State: AOAM530+0ivmS+FpCRlLmEZP9pfqOgNk9oeoaMdadQCdav+/bGh2KJRy
-        w091uHT+PlWnZEQrytud64S8IE1m8Q==
-X-Google-Smtp-Source: ABdhPJwS22Uj3FevXMnn8SahWbj0DRGcRuuq40bhjwiCfiDB3avakTHDTJL97/K5kl0wbB02hTCVF50nhg==
-X-Received: from elver.muc.corp.google.com ([2a00:79e0:15:13:74ba:ff42:8494:7f35])
- (user=elver job=sendgmr) by 2002:a05:6402:1c97:: with SMTP id
- cy23mr3063078edb.213.1622107570950; Thu, 27 May 2021 02:26:10 -0700 (PDT)
-Date:   Thu, 27 May 2021 11:25:48 +0200
-Message-Id: <20210527092547.2656514-1-elver@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.31.1.818.g46aad6cb9e-goog
-Subject: [PATCH] io_uring: fix data race to avoid potential NULL-deref
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=WUOW0aYMYacTttJcw/Wumsyv7jlobDPzPKJRlWNJDUo=;
+        b=i9vXa2Bw2HCYVKtpSXehlN7X7TGZk9llvW4PFEakE3BTQk4x51rBch3BKBEnPxnj7Y
+         Y6EZVZOxVlmVq7Z/9zY8qUfRcliV7wCH3yJV1GlBl+q+eNM0oRmyOwSuAouaPwxw7ImC
+         p9QmohAlc5Rs2Q1n7TsCIqlDLXQVKXE3MR7JV8pd10lPgGhFV4HeyPhFC3t8w3lBhVuE
+         uIDfdBnK/oktBOLMXDpbLosKeoryZ8MJuH4hWoA9pqkO9/3pb6AUTjMZaL7eFTiN+hyB
+         tJ7GuCSQK0CrCz41Pe7mB/chk10m/IuSsVbZC0AHV/YpY1Fpda2kvkA45JxSZ5TNwS69
+         dHmA==
+X-Gm-Message-State: AOAM530/OeokV5hHpEi+M2+yoXx40GSRtk7KOJpH/VluFNc64yxv6Pav
+        u7m3GfazHhgoQM+QcsuqMLnEQQ==
+X-Google-Smtp-Source: ABdhPJwsj+iam2ha503lEq0q3f2HZtIBTocjpt2H8N3qkS5YcOaGp/53yu6T35+G43Z0XoJA+yu7mg==
+X-Received: by 2002:adf:f5c5:: with SMTP id k5mr2256885wrp.81.1622107960640;
+        Thu, 27 May 2021 02:32:40 -0700 (PDT)
+Received: from elver.google.com ([2a00:79e0:15:13:74ba:ff42:8494:7f35])
+        by smtp.gmail.com with ESMTPSA id m6sm11820746wml.3.2021.05.27.02.32.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 May 2021 02:32:39 -0700 (PDT)
+Date:   Thu, 27 May 2021 11:32:34 +0200
 From:   Marco Elver <elver@google.com>
-To:     elver@google.com, axboe@kernel.dk, asml.silence@gmail.com,
-        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     kasan-dev@googlegroups.com, dvyukov@google.com,
-        syzbot+bf2b3d0435b9b728946c@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        syzbot <syzbot+73554e2258b7b8bf0bbf@syzkaller.appspotmail.com>,
+        io-uring@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Dmitry Vyukov <dvyukov@google.com>
+Subject: Re: [syzbot] KCSAN: data-race in __io_uring_cancel /
+ io_uring_try_cancel_requests
+Message-ID: <YK9nMgamPsr9YsoY@elver.google.com>
+References: <000000000000fa9f7005c33d83b9@google.com>
+ <YK5tyZNAFc8dh6ke@elver.google.com>
+ <YK5uygiCGlmgQLKE@elver.google.com>
+ <b5cff8b6-bd9c-9cbe-4f5f-52552d19ca48@gmail.com>
+ <CANpmjNP1CKuoK82HCRYpDxDrvy4DgN9yVknfsxHSwfojx5Ttug@mail.gmail.com>
+ <5cf2250a-c580-4dbf-5997-e987c7b71086@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5cf2250a-c580-4dbf-5997-e987c7b71086@gmail.com>
+User-Agent: Mutt/2.0.5 (2021-01-21)
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Commit ba5ef6dc8a82 ("io_uring: fortify tctx/io_wq cleanup") introduced
-setting tctx->io_wq to NULL a bit earlier. This has caused KCSAN to
-detect a data race between accesses to tctx->io_wq:
+On Wed, May 26, 2021 at 09:31PM +0100, Pavel Begunkov wrote:
+> On 5/26/21 5:36 PM, Marco Elver wrote:
+> > On Wed, 26 May 2021 at 18:29, Pavel Begunkov <asml.silence@gmail.com> wrote:
+> >> On 5/26/21 4:52 PM, Marco Elver wrote:
+> >>> Due to some moving around of code, the patch lost the actual fix (using
+> >>> atomically read io_wq) -- so here it is again ... hopefully as intended.
+> >>> :-)
+> >>
+> >> "fortify" damn it... It was synchronised with &ctx->uring_lock
+> >> before, see io_uring_try_cancel_iowq() and io_uring_del_tctx_node(),
+> >> so should not clear before *del_tctx_node()
+> > 
+> > Ah, so if I understand right, the property stated by the comment in
+> > io_uring_try_cancel_iowq() was broken, and your patch below would fix
+> > that, right?
+> 
+> "io_uring: fortify tctx/io_wq cleanup" broke it and the diff
+> should fix it.
+> 
+> >> The fix should just move it after this sync point. Will you send
+> >> it out as a patch?
+> > 
+> > Do you mean your move of write to io_wq goes on top of the patch I
+> > proposed? (If so, please also leave your Signed-of-by so I can squash
+> > it.)
+> 
+> No, only my diff, but you hinted on what has happened, so I would
+> prefer you to take care of patching. If you want of course.
+> 
+> To be entirely fair, assuming that aligned ptr
+> reads can't be torn, I don't see any _real_ problem. But surely
+> the report is very helpful and the current state is too wonky, so
+> should be patched.
 
-  write to 0xffff88811d8df330 of 8 bytes by task 3709 on cpu 1:
-   io_uring_clean_tctx                  fs/io_uring.c:9042 [inline]
-   __io_uring_cancel                    fs/io_uring.c:9136
-   io_uring_files_cancel                include/linux/io_uring.h:16 [inline]
-   do_exit                              kernel/exit.c:781
-   do_group_exit                        kernel/exit.c:923
-   get_signal                           kernel/signal.c:2835
-   arch_do_signal_or_restart            arch/x86/kernel/signal.c:789
-   handle_signal_work                   kernel/entry/common.c:147 [inline]
-   exit_to_user_mode_loop               kernel/entry/common.c:171 [inline]
-   ...
-  read to 0xffff88811d8df330 of 8 bytes by task 6412 on cpu 0:
-   io_uring_try_cancel_iowq             fs/io_uring.c:8911 [inline]
-   io_uring_try_cancel_requests         fs/io_uring.c:8933
-   io_ring_exit_work                    fs/io_uring.c:8736
-   process_one_work                     kernel/workqueue.c:2276
-   ...
+In the current version, it is a problem if we end up with a double-read,
+as it is in the current C code. The compiler might of course optimize
+it into 1 read into a register.
 
-With the config used, KCSAN only reports data races with value changes:
-this implies that in the case here we also know that tctx->io_wq was
-non-NULL. Therefore, depending on interleaving, we may end up with:
+Tangent: I avoid reasoning in terms of compiler optimizations where
+I can. :-) It's is a slippery slope if the code in question isn't
+tolerant to data races by design (examples are stats counting, or other
+heuristics -- in the case here that's certainly not the case).
+Therefore, my wish is that we really ought to resolve as many data races
+as we can (+ mark intentional ones appropriately). Also, so that we're
+left with only the interesting cases like in the case here.  (More
+background if you're interested: https://lwn.net/Articles/816850/)
 
-              [CPU 0]                 |        [CPU 1]
-  io_uring_try_cancel_iowq()          | io_uring_clean_tctx()
-    if (!tctx->io_wq) // false        |   ...
-    ...                               |   tctx->io_wq = NULL
-    io_wq_cancel_cb(tctx->io_wq, ...) |   ...
-      -> NULL-deref                   |
+The problem here, however, has a nicer resolution as you suggested.
 
-Note: It is likely that thus far we've gotten lucky and the compiler
-optimizes the double-read into a single read into a register -- but this
-is never guaranteed, and can easily change with a different config!
+> TL;DR;
+> The synchronisation goes as this: it's usually used by the owner
+> task, and the owner task deletes it, so is mostly naturally
+> synchronised. An exception is a worker (not only) that accesses
+> it for cancellation purpose, but it uses it only under ->uring_lock,
+> so if removal is also taking the lock it should be fine. see
+> io_uring_del_tctx_node() locking.
 
-Fix the data race by restoring the previous behaviour, where both
-setting io_wq to NULL and put of the wq are _serialized_ after
-concurrent io_uring_try_cancel_iowq() via acquisition of the uring_lock
-and removal of the node in io_uring_del_task_file().
+Did you mean io_uring_del_task_file()? There is no
+io_uring_del_tctx_node().
 
-Fixes: ba5ef6dc8a82 ("io_uring: fortify tctx/io_wq cleanup")
-Suggested-by: Pavel Begunkov <asml.silence@gmail.com>
-Reported-by: syzbot+bf2b3d0435b9b728946c@syzkaller.appspotmail.com
-Signed-off-by: Marco Elver <elver@google.com>
-Cc: Jens Axboe <axboe@kernel.dk>
----
- fs/io_uring.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+> > So if I understand right, we do in fact have 2 problems:
+> > 1. the data race as I noted in my patch, and
+> 
+> Yes, and it deals with it
+> 
+> > 2. the fact that io_wq does not live long enough.
+> 
+> Nope, io_wq outlives them fine. 
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 5f82954004f6..08830b954fbf 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -9039,11 +9039,16 @@ static void io_uring_clean_tctx(struct io_uring_task *tctx)
- 	struct io_tctx_node *node;
- 	unsigned long index;
- 
--	tctx->io_wq = NULL;
- 	xa_for_each(&tctx->xa, index, node)
- 		io_uring_del_task_file(index);
--	if (wq)
-+	if (wq) {
-+		/*
-+		 * Must be after io_uring_del_task_file() (removes nodes under
-+		 * uring_lock) to avoid race with io_uring_try_cancel_iowq().
-+		 */
-+		tctx->io_wq = NULL;
- 		io_wq_put_and_exit(wq);
-+	}
- }
- 
- static s64 tctx_inflight(struct io_uring_task *tctx, bool tracked)
--- 
-2.31.1.818.g46aad6cb9e-goog
+I've sent:
+https://lkml.kernel.org/r/20210527092547.2656514-1-elver@google.com
 
+Thanks,
+-- Marco

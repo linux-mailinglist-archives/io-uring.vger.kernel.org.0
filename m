@@ -2,65 +2,64 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 48BCA393000
-	for <lists+io-uring@lfdr.de>; Thu, 27 May 2021 15:45:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CB38393008
+	for <lists+io-uring@lfdr.de>; Thu, 27 May 2021 15:46:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236531AbhE0Nqr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 27 May 2021 09:46:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38704 "EHLO
+        id S236535AbhE0NsS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 27 May 2021 09:48:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39072 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236508AbhE0Nqq (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 27 May 2021 09:46:46 -0400
-Received: from mail-ot1-x32a.google.com (mail-ot1-x32a.google.com [IPv6:2607:f8b0:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C58AAC061760
-        for <io-uring@vger.kernel.org>; Thu, 27 May 2021 06:45:12 -0700 (PDT)
-Received: by mail-ot1-x32a.google.com with SMTP id 36-20020a9d0ba70000b02902e0a0a8fe36so230413oth.8
-        for <io-uring@vger.kernel.org>; Thu, 27 May 2021 06:45:12 -0700 (PDT)
+        with ESMTP id S236335AbhE0NsR (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 27 May 2021 09:48:17 -0400
+Received: from mail-ot1-x331.google.com (mail-ot1-x331.google.com [IPv6:2607:f8b0:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7674C061574
+        for <io-uring@vger.kernel.org>; Thu, 27 May 2021 06:46:43 -0700 (PDT)
+Received: by mail-ot1-x331.google.com with SMTP id r26-20020a056830121ab02902a5ff1c9b81so221815otp.11
+        for <io-uring@vger.kernel.org>; Thu, 27 May 2021 06:46:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=zZ100OgAiDnND5MKuUNcSvGRwi3n6jrkgirwTZqtvBg=;
-        b=gbRqGxktvRNDpJhHKBHPOtxsKvnuredhB0CuEaHskvQPCL4yOMgC/+b8pSgZvHjKcv
-         TSvopIpxiSz656gT8XKPsawPiFgQT1pB24j0G2sWXB/+rX2QPFYFfqVX0CHnfRCeOuXS
-         zcWEmfkEkbZIF1eCbUOP1YoyJMn2cWmOM7ss947ScWLEV1HhOm5k9ZLjW0YKM3RHe0o4
-         tWeE9sdJfy1eRKLaGFK33oqxubYRgT9KO72CfBCumS5aEk/Q9oQBBRDXwiU0hoorXb4V
-         XTLPambzK+pC7h+XA3ENBaNgQmX1vYKH4Xn5sunS70WiPx/F0RMZu9SokTyxnLLRLiuW
-         /2eg==
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=/XKLXUdZgb1RxrjyfkAzYf1QNJ7nzXzU4iF7iH+4PNw=;
+        b=iTj6Wwz4CGf+MDRw1wd8DSDTpYPytbaRtbdap32xpWB50FP+X0wmHA3GTpwaqruL0K
+         I2+aDZxQ3fKfFl3r8861J5RSolK7InK0h3ZnoFfwZ2ejX4I66gNkW1Dv/l8PoPjIs9Ys
+         nsjzLQdqovv28/IyTDYlZBpFJHHYNnMBojiaTYb503zXCHGPN+2n2TFyOO223ixJSx3o
+         Q+m6c4rKlaYcH3I1vyhDOmTkMpSnw1C8jINniQZPFnQuVOUYNZl5EKdWGGBTQp02XNYe
+         jzj4B72Gbka8vvcaBu/sJXdaelJh/cjm6dSEbcnsL6UQYjGvJNYfOoZfIZ8xuMKuEFO1
+         eSFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=zZ100OgAiDnND5MKuUNcSvGRwi3n6jrkgirwTZqtvBg=;
-        b=EQAfs5gsNt4wyD1xM6+eXPOKK+qhCPV0NleZAGhuRm8RHp3exavkuW43LzO0k0eHh7
-         t2+/HuR6I0b629uoz7EqDQYCk9udUE5kL5lRvF1zEMmYmSXl+jcLNPao8V16NeP2n6H3
-         6b0Bu3Xrb9thzlLqYMJIdjXwy2tLDUhZeY15tQZ5TeHc0wFKAJgxozNCVWqsEyFRw+kG
-         6Nxqw4384ki7BScchIp04mnsEFPpRrdYcanqe083zBUBv7+R1i9N15rOukRg1Nl+CHwu
-         T9VDkmt99GQ7v6ek0RRUB4+7HDeCEg44hgO8HVrcvfiFRUEP7Jqkr8TmfbMWPT5xMWYa
-         2+1w==
-X-Gm-Message-State: AOAM530m4s2JKV8J2zb39l9N9XwxJtg2h+Ytnh2Rh9Grxz5vrG1+G+3t
-        l5OZjV9o879JS8X9emC0Cl7TmQ==
-X-Google-Smtp-Source: ABdhPJyyLtLz5hfiXO/rEMDie6ChH/diU9MrpmMhfVfQCaiuWDOoGL9lOGKSQ/S5a+SVLws/3OXrwA==
-X-Received: by 2002:a9d:5c08:: with SMTP id o8mr2856752otk.261.1622123111562;
-        Thu, 27 May 2021 06:45:11 -0700 (PDT)
+        bh=/XKLXUdZgb1RxrjyfkAzYf1QNJ7nzXzU4iF7iH+4PNw=;
+        b=UDQMQbni8HgrbPDkFeJqQF2Qd0iCsTuVKZzQKHmHqiL+v13981YARAidJzV7jEHI/B
+         kQPQ8KkqXbWhvNF922MLATPTb8U8V/JxbhacoP00PBy4j4sQLmKQ6bBk11LZSSnH8NC6
+         8Nz/h5NA+fybH9s9EPxmLDSDo8GhpFCy/s+EpzwDtjiUlkA51L5Mc+3AXOJmBLFAfMCr
+         VlXduCGcdxwo4NvRUR7R75EPOpcXWbZN3x2RPk5IyXPxr2jirr/QghGjCOiT0Wwo3704
+         He8MHpt97Oh8jRS2mqCRgPzehMHEoT3sN32qpemqqsWQu6cMunTcIZQ8QTL3tXSekaQf
+         DayQ==
+X-Gm-Message-State: AOAM530Q1n5OLkJRR3xifx+KAmxeRbkwYYfUnaHA7yEXcAz6ZnhdTl7f
+        4tXGSXjI4pCZt3S/ROX/6ZO9vw==
+X-Google-Smtp-Source: ABdhPJyuWwjuzcrzHQxBxvpsmU4sMzLkkCHgtooxoD0sv7tq7ERllNF06ycsrJ+To0Kys29HW1rcWQ==
+X-Received: by 2002:a9d:624a:: with SMTP id i10mr2807749otk.7.1622123203011;
+        Thu, 27 May 2021 06:46:43 -0700 (PDT)
 Received: from [192.168.1.30] ([207.135.233.147])
-        by smtp.gmail.com with ESMTPSA id k18sm515360otj.42.2021.05.27.06.45.10
+        by smtp.gmail.com with ESMTPSA id o13sm487170ote.32.2021.05.27.06.46.42
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 May 2021 06:45:11 -0700 (PDT)
-Subject: Re: [PATCH] io_uring: fix data race to avoid potential NULL-deref
-To:     Marco Elver <elver@google.com>, asml.silence@gmail.com,
+        Thu, 27 May 2021 06:46:42 -0700 (PDT)
+Subject: Re: [PATCH] io_uring: handle signals before letting io-worker exit
+To:     Olivier Langlois <olivier@trillion01.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
         io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     kasan-dev@googlegroups.com, dvyukov@google.com,
-        syzbot+bf2b3d0435b9b728946c@syzkaller.appspotmail.com
-References: <20210527092547.2656514-1-elver@google.com>
+References: <60ae94d1.1c69fb81.94f7a.2a35SMTPIN_ADDED_MISSING@mx.google.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <893559c1-4510-3f7d-7c7f-82eb2468a5d5@kernel.dk>
-Date:   Thu, 27 May 2021 07:45:13 -0600
+Message-ID: <3d1bd9e2-b711-0aac-628e-89b95ff8dbc3@kernel.dk>
+Date:   Thu, 27 May 2021 07:46:44 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20210527092547.2656514-1-elver@google.com>
+In-Reply-To: <60ae94d1.1c69fb81.94f7a.2a35SMTPIN_ADDED_MISSING@mx.google.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -68,50 +67,69 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/27/21 3:25 AM, Marco Elver wrote:
-> Commit ba5ef6dc8a82 ("io_uring: fortify tctx/io_wq cleanup") introduced
-> setting tctx->io_wq to NULL a bit earlier. This has caused KCSAN to
-> detect a data race between accesses to tctx->io_wq:
+On 5/26/21 12:21 PM, Olivier Langlois wrote:
+> This is required for proper core dump generation.
 > 
->   write to 0xffff88811d8df330 of 8 bytes by task 3709 on cpu 1:
->    io_uring_clean_tctx                  fs/io_uring.c:9042 [inline]
->    __io_uring_cancel                    fs/io_uring.c:9136
->    io_uring_files_cancel                include/linux/io_uring.h:16 [inline]
->    do_exit                              kernel/exit.c:781
->    do_group_exit                        kernel/exit.c:923
->    get_signal                           kernel/signal.c:2835
->    arch_do_signal_or_restart            arch/x86/kernel/signal.c:789
->    handle_signal_work                   kernel/entry/common.c:147 [inline]
->    exit_to_user_mode_loop               kernel/entry/common.c:171 [inline]
->    ...
->   read to 0xffff88811d8df330 of 8 bytes by task 6412 on cpu 0:
->    io_uring_try_cancel_iowq             fs/io_uring.c:8911 [inline]
->    io_uring_try_cancel_requests         fs/io_uring.c:8933
->    io_ring_exit_work                    fs/io_uring.c:8736
->    process_one_work                     kernel/workqueue.c:2276
->    ...
+> Because signals are normally serviced before resuming userspace and an
+> io_worker thread will never resume userspace, it needs to explicitly
+> call the signal servicing functions.
 > 
-> With the config used, KCSAN only reports data races with value changes:
-> this implies that in the case here we also know that tctx->io_wq was
-> non-NULL. Therefore, depending on interleaving, we may end up with:
+> Also, notice that it is possible to exit from the io_wqe_worker()
+> function main loop while having a pending signal such as when
+> the IO_WQ_BIT_EXIT bit is set.
 > 
->               [CPU 0]                 |        [CPU 1]
->   io_uring_try_cancel_iowq()          | io_uring_clean_tctx()
->     if (!tctx->io_wq) // false        |   ...
->     ...                               |   tctx->io_wq = NULL
->     io_wq_cancel_cb(tctx->io_wq, ...) |   ...
->       -> NULL-deref                   |
+> It is crucial to service any pending signal before calling do_exit()
+> Proper coredump generation is relying on PF_SIGNALED to be set.
 > 
-> Note: It is likely that thus far we've gotten lucky and the compiler
-> optimizes the double-read into a single read into a register -- but this
-> is never guaranteed, and can easily change with a different config!
+> More specifically, exit_mm() is using this flag to wait for the
+> core dump completion before releasing its memory descriptor.
 > 
-> Fix the data race by restoring the previous behaviour, where both
-> setting io_wq to NULL and put of the wq are _serialized_ after
-> concurrent io_uring_try_cancel_iowq() via acquisition of the uring_lock
-> and removal of the node in io_uring_del_task_file().
+> Signed-off-by: Olivier Langlois <olivier@trillion01.com>
+> ---
+>  fs/io-wq.c | 22 ++++++++++++++++++++--
+>  1 file changed, 20 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/io-wq.c b/fs/io-wq.c
+> index 5361a9b4b47b..b76c61e9aff2 100644
+> --- a/fs/io-wq.c
+> +++ b/fs/io-wq.c
+> @@ -9,8 +9,6 @@
+>  #include <linux/init.h>
+>  #include <linux/errno.h>
+>  #include <linux/sched/signal.h>
+> -#include <linux/mm.h>
+> -#include <linux/sched/mm.h>
+>  #include <linux/percpu.h>
+>  #include <linux/slab.h>
+>  #include <linux/rculist_nulls.h>
+> @@ -193,6 +191,26 @@ static void io_worker_exit(struct io_worker *worker)
+>  
+>  	kfree_rcu(worker, rcu);
+>  	io_worker_ref_put(wqe->wq);
+> +	/*
+> +	 * Because signals are normally serviced before resuming userspace and an
+> +	 * io_worker thread will never resume userspace, it needs to explicitly
+> +	 * call the signal servicing functions.
+> +	 *
+> +	 * Also notice that it is possible to exit from the io_wqe_worker()
+> +	 * function main loop while having a pending signal such as when
+> +	 * the IO_WQ_BIT_EXIT bit is set.
+> +	 *
+> +	 * It is crucial to service any pending signal before calling do_exit()
+> +	 * Proper coredump generation is relying on PF_SIGNALED to be set.
+> +	 *
+> +	 * More specifically, exit_mm() is using this flag to wait for the
+> +	 * core dump completion before releasing its memory descriptor.
+> +	 */
+> +	if (signal_pending(current)) {
+> +		struct ksignal ksig;
+> +
+> +		get_signal(&ksig);
+> +	}
+>  	do_exit(0);
+>  }
 
-Applied, thanks.
+Do we need the same thing in fs/io_uring.c:io_sq_thread()?
 
 -- 
 Jens Axboe

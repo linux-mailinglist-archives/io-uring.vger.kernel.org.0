@@ -2,89 +2,105 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6030E394BD0
-	for <lists+io-uring@lfdr.de>; Sat, 29 May 2021 13:01:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 435DB394BD1
+	for <lists+io-uring@lfdr.de>; Sat, 29 May 2021 13:03:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229666AbhE2LDO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 29 May 2021 07:03:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47604 "EHLO
+        id S229686AbhE2LE7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 29 May 2021 07:04:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47980 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229652AbhE2LDO (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 29 May 2021 07:03:14 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AACFFC061574
-        for <io-uring@vger.kernel.org>; Sat, 29 May 2021 04:01:36 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id s5-20020a7bc0c50000b0290147d0c21c51so3728227wmh.4
-        for <io-uring@vger.kernel.org>; Sat, 29 May 2021 04:01:36 -0700 (PDT)
+        with ESMTP id S229652AbhE2LE7 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 29 May 2021 07:04:59 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDA6DC061574;
+        Sat, 29 May 2021 04:03:22 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id q5so5753076wrs.4;
+        Sat, 29 May 2021 04:03:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=NOrenTYzDvcIPdldpQAo/f+S+ZXAzoBgkkBobSxFS6s=;
-        b=V2MKlh0c7bvZKYmngvyqhJXUtaDqrBW8ngdCnoyZfug9E68iw0QJtU2ArFwJhKxA+m
-         BrHSkzuss93+DbBoHhgtnn82Vym61ewOtxYJqqdEqAFiBhsNj95rjtnC1lb18ox7826v
-         n98FDTFTWHc2RJJPd9m4pkZWyx21Ld/9/Eoc29vcOB2Bn7kQDpCvs0840FQyh+yGt5+N
-         dRYQGrqniyaiuPiC/HTeEplhSsV9MFEPsiApzZvsP1wKhqdNZg9JbiKAGhpW6NpRcXgp
-         MHRf9vBd+LsyKD59Hu0iY/sl6KhEZKrAJZmLgRRwrvwDdtTJMmfhTSdWp3BbfUVBbCbO
-         sMDw==
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=8hrWgEWGLESgRyLhrq1kkN9qRLSKJH0aHYooCga+EvM=;
+        b=FABmk0NO0U/9T42PPCAEXPKSV65ksYxTkJG3Y618vdYr/JSDavQKQ8Bd9olM2VsxYW
+         WLduO+QnE+m1VjMkOkAzBzY2H+AUz547aja+sFzgHLRg/rFvT1gmuYWlVyi4QxIYAndh
+         oR9TTXNTvEFJZrnvoEVNWofPiBA16ZUqErJUHQ7qmKLvtWw5q2UWgtrvgdDcqiyzby0q
+         4JBpvA5WiBSSuMUoCJeJ10F8IM/2lMpIc++SojcbvJc3Nqg63r1sBTJAGRyso+Tb7CKf
+         qI/qR414wSOeIPBNLikC5oqZf55in1QWHOljtiRMwR3FLSeUgKHC1u+mErsAsJa2y1Pn
+         NETA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=NOrenTYzDvcIPdldpQAo/f+S+ZXAzoBgkkBobSxFS6s=;
-        b=cVMjgs1KFxrRqosqM2Y76xbxzHiTarjqGFB8IhxCNSyxdWjK47B9fYh8jlIuA55Gi8
-         O+nOQKfA9PyZlHzytkq0gRj/nBv38poI8LPWrk85kJ5aJIAO8xfwRF+X/wO2g0V1wNBm
-         OTo7DUd9fbuPyRKtVyHab+830QXO3Da22NXMb4/Qj6+DJGPkas+7wRq1lmAfkKZo36ju
-         ICT9k3puFTQKZyScvb1OJ6yUj+8k0JrDpEowVHJbzzCoBpMW9r8JPmA7kFmm3qHXt/cB
-         S8CNBmkGXQieO1q9x4N3NJ3NWPZnj0eC3riLi3h5cufbSnHwmPOnQb+hU9QiAo008o2l
-         T0QA==
-X-Gm-Message-State: AOAM532LDQGd1Hy67FY3oaK4ItYviWezGKKwzcNnCJbfIVsZ+XLfvq3c
-        DqcHP3SQ1zDx9OCOA3lk64JIIFC/N0c=
-X-Google-Smtp-Source: ABdhPJw79UmHsvww7hiTRAdXE2nDYC3BcX4U8r3DJ4T32noFBlGQ08Qv2uXG8Cj7Q9PHMm+h1fqFRA==
-X-Received: by 2002:a1c:6782:: with SMTP id b124mr17144349wmc.159.1622286095374;
-        Sat, 29 May 2021 04:01:35 -0700 (PDT)
-Received: from localhost.localdomain ([148.252.129.19])
-        by smtp.gmail.com with ESMTPSA id 89sm5055409wri.94.2021.05.29.04.01.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 29 May 2021 04:01:34 -0700 (PDT)
+        bh=8hrWgEWGLESgRyLhrq1kkN9qRLSKJH0aHYooCga+EvM=;
+        b=GVMvsHbmEJdM+Ssc2+d4zzLtR9thTe9BeKWvHMPAtOHHRx2aD9X0wmziQXC0+Ywg50
+         2cCbjYmcxLr+tem9/6GqlU3qrUXcn/CzARo5dffiawV6LGN3eIHshSBUVHNs9YVCwrLz
+         BhjrGRhFtMzeBd19U5NaWB9IsqpSi1Bd7v2t0PWNhLqXfI5Aq5QH5tY8lTTQm/g3vui+
+         sxUfN8afsHHRiEmRSVlSGTZdx5kOxioFUG/3kV2MTln76YqjUJWZmnSvsCHtaaQWGNgY
+         PgIMnZle0OmpFhOa1qyeJlzAw3sgfp8m2ZXDFi1X0QvNsAQNMcTWOHc14uK4FAuW1Bdq
+         ET3w==
+X-Gm-Message-State: AOAM5309f/isdtzRB10/JQjZvC98BGVDJnfLeIgJNvFXk1jksTFhftFu
+        AmX6OLjv0YRAiCf7Q+uBLY3yMDFSRaM=
+X-Google-Smtp-Source: ABdhPJwkwTgaw8M4PrxMoiO+bK0lAyQcv+nob2zc3EkNAmWsf4kVe5ls5LIOMNx99uGV64XvHfPY0Q==
+X-Received: by 2002:adf:fc11:: with SMTP id i17mr8514948wrr.374.1622286201214;
+        Sat, 29 May 2021 04:03:21 -0700 (PDT)
+Received: from [192.168.8.197] ([148.252.129.19])
+        by smtp.gmail.com with ESMTPSA id x7sm272599wre.8.2021.05.29.04.03.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 29 May 2021 04:03:20 -0700 (PDT)
+Subject: Re: Memory uninitialized after "io_uring: keep table of pointers to
+ ubufs"
+To:     Andres Freund <andres@anarazel.de>, Jens Axboe <axboe@kernel.dk>,
+        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210529003350.m3bqhb3rnug7yby7@alap3.anarazel.de>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc:     Andres Freund <andres@anarazel.de>
-Subject: [PATCH 5.13] io_uring: fix misaccounting fix buf pinned pages
-Date:   Sat, 29 May 2021 12:01:02 +0100
-Message-Id: <438a6f46739ae5e05d9c75a0c8fa235320ff367c.1622285901.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.31.1
+Message-ID: <d2c5b250-5a0f-5de5-061f-38257216389d@gmail.com>
+Date:   Sat, 29 May 2021 12:03:12 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210529003350.m3bqhb3rnug7yby7@alap3.anarazel.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-As Andres reports "... io_sqe_buffer_register() doesn't initialize imu.
-io_buffer_account_pin() does imu->acct_pages++, before calling
-io_account_mem(ctx, imu->acct_pages).", leading to evevntual -ENOMEM.
+On 5/29/21 1:33 AM, Andres Freund wrote:
+> Hi,
+> 
+> I started to see buffer registration randomly failing with ENOMEM on
+> 5.13. Registering buffer or two often succeeds, but more than that
+> rarely. Running the same program as root succeeds - but the user has a high
+> rlimit.
+> 
+> The issue is that io_sqe_buffer_register() doesn't initialize
+> imu. io_buffer_account_pin() does imu->acct_pages++, before calling
+> io_account_mem(ctx, imu->acct_pages);
+> 
+> Which means that a random amount of memory is being accounted for. On the first
+> few allocations this sometimes fails to fail because the memory is zero, but
+> after a bit of reuse...
 
-Initialise the field.
+Makes sense, thanks for digging in. I've just sent a patch, would
+be great if you can test it or send your own.
 
-Reported-by: Andres Freund <andres@anarazel.de>
-Fixes: 41edf1a5ec967 ("io_uring: keep table of pointers to ubufs")
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 903458afd56c..42380ed563c4 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -8228,6 +8228,7 @@ static int io_buffer_account_pin(struct io_ring_ctx *ctx, struct page **pages,
- {
- 	int i, ret;
- 
-+	imu->acct_pages = 0;
- 	for (i = 0; i < nr_pages; i++) {
- 		if (!PageCompound(pages[i])) {
- 			imu->acct_pages++;
+> It only doesn't fail as root because the rlimit doesn't apply.
+> 
+> This is caused by
+> 
+> commit 41edf1a5ec967bf4bddedb83c48e02dfea8315b4
+> Author: Pavel Begunkov <asml.silence@gmail.com>
+> Date:   2021-04-25 14:32:23 +0100
+> 
+>     io_uring: keep table of pointers to ubufs
+> 
+> Greetings,
+> 
+> Andres Freund
+> 
+
 -- 
-2.31.1
-
+Pavel Begunkov

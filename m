@@ -2,51 +2,51 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C1A763975E3
-	for <lists+io-uring@lfdr.de>; Tue,  1 Jun 2021 16:58:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D0803975E5
+	for <lists+io-uring@lfdr.de>; Tue,  1 Jun 2021 16:59:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234371AbhFAPAg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 1 Jun 2021 11:00:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32978 "EHLO
+        id S234397AbhFAPAi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 1 Jun 2021 11:00:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234364AbhFAPAf (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 1 Jun 2021 11:00:35 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94FD8C06174A;
-        Tue,  1 Jun 2021 07:58:52 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id n4so14699011wrw.3;
-        Tue, 01 Jun 2021 07:58:52 -0700 (PDT)
+        with ESMTP id S234384AbhFAPAg (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 1 Jun 2021 11:00:36 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19ADCC061574;
+        Tue,  1 Jun 2021 07:58:54 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id l2so7209597wrw.6;
+        Tue, 01 Jun 2021 07:58:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=LMV82XQ2WTYEkk7h3J6fMG0vSDs2Xa027BUtgb0mwIc=;
-        b=fDHEjnEwM0qvEI3ETHSYQXGd9irEfSv7KDVZKufkTEzBq5URngtiqEvM+cKuGS2XVH
-         9+sgt9X63W+5irfiwFZ+QGwGftsZMbjKKvganlUNhzlcwHuOJt3iP23u5xgCF76iJZzT
-         e/Z7UlaG97Msyi5lg1GUYCjMWkWhRHd2WEZrqDAZxd09IJ93rNe7vy3+mqF39CJ7nDhL
-         pSmFFTbizpJrWoD+F7jpMAIk5/OzLZ8n7l0RmgzGHU0Jeau8I8kIIF7zCOIrp4sNrzoP
-         xbeLbGoEOe2Mc9gE/I5CeQKc/SAwLd5lqzsmZtmxFc9qd1c8MigLLmiO/xP4dYJYfz1e
-         m/gw==
+        bh=8aZF279l5sMd1KIDSXbVbrhslN7qg7ZkVtQa3TiO424=;
+        b=AdV2MBsgEc6or7WEa1Z3y/nBsF12MeU5capy2vAd/HcPavf1yLV/bEGPfoJ1r1XPEL
+         Yu/LFXaewmJLrL406Jq1sGfovROJuQDAcgzTpAUPcnkoOqVwn40Zzw9kHibp+RH4H9sg
+         EMsv19I5dVLT3wNXMkoAjVJCKnAN4yqtsGGMoTKHsyJhGX3A/WZu42SRS9vHKW3AMvlS
+         /D7yhIvyzdIpu++CzVWWwbqfbCyLlHinUfIXsxztsUdqF3idGlzBGZMGgIrpW0P/a7b/
+         zRKLE/LOHc5awDVcZCYNoRs7IvYxQAF86zO9p5z/rDXzZtTJ4eq8C9fWTbCWXNjU/n5s
+         zMNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=LMV82XQ2WTYEkk7h3J6fMG0vSDs2Xa027BUtgb0mwIc=;
-        b=Uzrj4PJc4rPIhvD1UjOnDlWDXhnFsTV2WsH3uv+WZvgmIBr0VRwfCFsnDLIm3jGGmf
-         8WVMHdZQ47vQV7FbbaG0mZDzEoZNTZ7L3WraD3tC+E1rQa3wP8b9+APom6vSRUzh5agf
-         ZpX6dld4NkbrsLcedfxhdi6Hgwjc7tv+jZap8BOQoDEr0RiD8BwrFJUCzV9Q7lRhF+Fd
-         MZdUaWhC6Jkw0hZtQc16G9tSt5r1+tjajwbd9wqfqEyBi/l8XZxz5N/c3QoIPuPSLKkZ
-         SJ+suevyOwKnpMFq+co+6rhYmgeiddmgMGWPb87Re++x7R6ImLRYFz+iTK3RoEdtPmpV
-         gDTw==
-X-Gm-Message-State: AOAM5333lxFL8YHi1jLjuPNvHJNcvPYWfn4JjAUwb50TXrsHmDTZtEMP
-        Z+9UG9BtmGpxNnJ7rB2Wg0uUoi7mPKZ/rg==
-X-Google-Smtp-Source: ABdhPJzNnU/hqFoN9pQen6NJZpayOLXNpG6MdWnmakMDCzftRslEQAnjJCBptVyITuw4Vc2Y2Upubg==
-X-Received: by 2002:a5d:4ac2:: with SMTP id y2mr8366068wrs.316.1622559531019;
-        Tue, 01 Jun 2021 07:58:51 -0700 (PDT)
+        bh=8aZF279l5sMd1KIDSXbVbrhslN7qg7ZkVtQa3TiO424=;
+        b=S45xDwvJ0eg4mQE0ceb82ZHqagKyt7SPvUp4NRPDAP9Q6lGogQl9A86peAjQoHG31Y
+         gv3PZsN3N+q6KvIU8klFHcq13GO8l1Pd5dHLOIpjUTaen7yJqNlp2RQ5AAmpN0Y2CWHF
+         L4RrScNPmFyvHpqcI//X9va+eXW8Z+91rk9ZDQAWqJpbpV31To/GbNgXjhWWDszszPEp
+         vCiPRAF/S6LtsRtoWrwlE8YnEzD1kpBvmAboxoWuBMc1rU1ommMl5ArIAZWDCDECxQ4/
+         xmtzKGMiAzcIY6vU5gsbbFhIWvG5elzQvFAGfXtGcx3EQrl+JuaDT/vb9NxQgxP8I1xp
+         +UIw==
+X-Gm-Message-State: AOAM530WDLaOOuDfWE7BKy5gUHZvbkaDT8ihyI6Zmr58nwARVV8KzGLg
+        5U3EqgR/CZfAT8fVZT+XJXXbjkNcAoS6yg==
+X-Google-Smtp-Source: ABdhPJxw6PPQwjzRnOnDqsKwOeIQ+0YJMihfTUoCxCA6WhwGViMcNyHDmxrzX6DVHecDZIyrnjONsA==
+X-Received: by 2002:adf:f98f:: with SMTP id f15mr28901735wrr.4.1622559532358;
+        Tue, 01 Jun 2021 07:58:52 -0700 (PDT)
 Received: from localhost.localdomain ([85.255.237.139])
-        by smtp.gmail.com with ESMTPSA id b4sm10697061wmj.42.2021.06.01.07.58.49
+        by smtp.gmail.com with ESMTPSA id b4sm10697061wmj.42.2021.06.01.07.58.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Jun 2021 07:58:50 -0700 (PDT)
+        Tue, 01 Jun 2021 07:58:51 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, Andres Freund <andres@anarazel.de>,
@@ -56,9 +56,9 @@ Cc:     Jens Axboe <axboe@kernel.dk>, Andres Freund <andres@anarazel.de>,
         Darren Hart <dvhart@infradead.org>,
         Davidlohr Bueso <dave@stgolabs.net>,
         linux-kernel@vger.kernel.org
-Subject: [RFC 1/4] futex: add op wake for a single key
-Date:   Tue,  1 Jun 2021 15:58:26 +0100
-Message-Id: <2fded39d933cb51f0992fd51416ddef5f0e81493.1622558659.git.asml.silence@gmail.com>
+Subject: [RFC 2/4] io_uring: frame out futex op
+Date:   Tue,  1 Jun 2021 15:58:27 +0100
+Message-Id: <e0ccad0912374500dcd8df410ce684ddd10a7e96.1622558659.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <cover.1622558659.git.asml.silence@gmail.com>
 References: <cover.1622558659.git.asml.silence@gmail.com>
@@ -68,132 +68,132 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Add a new futex wake function futex_wake_op_single(), which works
-similar to futex_wake_op() but only for a single futex address as it
-takes too many arguments. Also export it and other functions that will
-be used by io_uring.
+Add userspace futex request definitions and draft some internal
+functions.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- include/linux/futex.h | 15 ++++++++++
- kernel/futex.c        | 64 +++++++++++++++++++++++++++++++++++++++++--
- 2 files changed, 77 insertions(+), 2 deletions(-)
+ fs/io_uring.c                 | 23 +++++++++++++++++++++++
+ include/uapi/linux/io_uring.h |  9 +++++++++
+ 2 files changed, 32 insertions(+)
 
-diff --git a/include/linux/futex.h b/include/linux/futex.h
-index b70df27d7e85..04d500ae5983 100644
---- a/include/linux/futex.h
-+++ b/include/linux/futex.h
-@@ -77,6 +77,10 @@ void futex_exec_release(struct task_struct *tsk);
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index fc9325472e8d..2c6b14a3a4f6 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -77,6 +77,7 @@
+ #include <linux/splice.h>
+ #include <linux/task_work.h>
+ #include <linux/pagemap.h>
++#include <linux/futex.h>
+ #include <linux/io_uring.h>
  
- long do_futex(u32 __user *uaddr, int op, u32 val, ktime_t *timeout,
- 	      u32 __user *uaddr2, u32 val2, u32 val3);
-+int futex_wake_op_single(u32 __user *uaddr, int nr_wake, unsigned int op,
-+			 bool shared, bool try);
-+int futex_wait(u32 __user *uaddr, unsigned int flags, u32 val,
-+	       ktime_t *abs_time, u32 bitset);
- #else
- static inline void futex_init_task(struct task_struct *tsk) { }
- static inline void futex_exit_recursive(struct task_struct *tsk) { }
-@@ -88,6 +92,17 @@ static inline long do_futex(u32 __user *uaddr, int op, u32 val,
+ #define CREATE_TRACE_POINTS
+@@ -665,6 +666,10 @@ struct io_unlink {
+ 	struct filename			*filename;
+ };
+ 
++struct io_futex {
++	struct file			*file;
++};
++
+ struct io_completion {
+ 	struct file			*file;
+ 	struct list_head		list;
+@@ -809,6 +814,7 @@ struct io_kiocb {
+ 		struct io_shutdown	shutdown;
+ 		struct io_rename	rename;
+ 		struct io_unlink	unlink;
++		struct io_futex		futex;
+ 		/* use only after cleaning per-op data, see io_clean_op() */
+ 		struct io_completion	compl;
+ 	};
+@@ -1021,6 +1027,7 @@ static const struct io_op_def io_op_defs[] = {
+ 	},
+ 	[IORING_OP_RENAMEAT] = {},
+ 	[IORING_OP_UNLINKAT] = {},
++	[IORING_OP_FUTEX] = {},
+ };
+ 
+ static bool io_disarm_next(struct io_kiocb *req);
+@@ -5865,6 +5872,16 @@ static int io_files_update(struct io_kiocb *req, unsigned int issue_flags)
+ 	return 0;
+ }
+ 
++static int io_futex_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
++{
++	return -EINVAL;
++}
++
++static int io_futex(struct io_kiocb *req, unsigned int issue_flags)
++{
++	return -EINVAL;
++}
++
+ static int io_req_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
  {
- 	return -EINVAL;
- }
-+static inline int futex_wake_op_single(u32 __user *uaddr, int nr_wake,
-+				       unsigned int op, bool shared, bool try)
-+{
-+	return -EINVAL;
-+}
-+static inline int futex_wait(u32 __user *uaddr, unsigned int flags, u32 val,
-+			     ktime_t *abs_time, u32 bitset)
-+{
-+	return -EINVAL;
-+}
-+
- #endif
- 
- #endif
-diff --git a/kernel/futex.c b/kernel/futex.c
-index 4938a00bc785..75dc600062a4 100644
---- a/kernel/futex.c
-+++ b/kernel/futex.c
-@@ -1681,6 +1681,66 @@ static int futex_atomic_op_inuser(unsigned int encoded_op, u32 __user *uaddr)
+ 	switch (req->opcode) {
+@@ -5936,6 +5953,8 @@ static int io_req_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 		return io_renameat_prep(req, sqe);
+ 	case IORING_OP_UNLINKAT:
+ 		return io_unlinkat_prep(req, sqe);
++	case IORING_OP_FUTEX:
++		return io_futex_prep(req, sqe);
  	}
- }
  
-+int futex_wake_op_single(u32 __user *uaddr, int nr_wake, unsigned int op,
-+			 bool shared, bool try)
-+{
-+	union futex_key key;
-+	struct futex_hash_bucket *hb;
-+	struct futex_q *this, *next;
-+	int ret, op_ret;
-+	DEFINE_WAKE_Q(wake_q);
+ 	printk_once(KERN_WARNING "io_uring: unhandled opcode %d\n",
+@@ -6203,6 +6222,9 @@ static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags)
+ 	case IORING_OP_UNLINKAT:
+ 		ret = io_unlinkat(req, issue_flags);
+ 		break;
++	case IORING_OP_FUTEX:
++		ret = io_futex(req, issue_flags);
++		break;
+ 	default:
+ 		ret = -EINVAL;
+ 		break;
+@@ -10158,6 +10180,7 @@ static int __init io_uring_init(void)
+ 	BUILD_BUG_SQE_ELEM(28, __u32,  statx_flags);
+ 	BUILD_BUG_SQE_ELEM(28, __u32,  fadvise_advice);
+ 	BUILD_BUG_SQE_ELEM(28, __u32,  splice_flags);
++	BUILD_BUG_SQE_ELEM(28, __u32,  futex_flags);
+ 	BUILD_BUG_SQE_ELEM(32, __u64,  user_data);
+ 	BUILD_BUG_SQE_ELEM(40, __u16,  buf_index);
+ 	BUILD_BUG_SQE_ELEM(42, __u16,  personality);
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index e1ae46683301..6a1af5bb2ddf 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -44,6 +44,7 @@ struct io_uring_sqe {
+ 		__u32		splice_flags;
+ 		__u32		rename_flags;
+ 		__u32		unlink_flags;
++		__u32		futex_flags;
+ 	};
+ 	__u64	user_data;	/* data to be passed back at completion time */
+ 	union {
+@@ -137,6 +138,7 @@ enum {
+ 	IORING_OP_SHUTDOWN,
+ 	IORING_OP_RENAMEAT,
+ 	IORING_OP_UNLINKAT,
++	IORING_OP_FUTEX,
+ 
+ 	/* this goes last, obviously */
+ 	IORING_OP_LAST,
+@@ -174,6 +176,13 @@ enum {
+ #define IORING_POLL_UPDATE_EVENTS	(1U << 1)
+ #define IORING_POLL_UPDATE_USER_DATA	(1U << 2)
+ 
++enum {
++	IORING_FUTEX_WAKE_OP = 0,
 +
-+retry:
-+	ret = get_futex_key(uaddr, shared, &key, FUTEX_WRITE);
-+	if (unlikely(ret != 0))
-+		return ret;
-+	hb = hash_futex(&key);
-+retry_private:
-+	spin_lock(&hb->lock);
-+	op_ret = futex_atomic_op_inuser(op, uaddr);
-+	if (unlikely(op_ret < 0)) {
-+		spin_unlock(&hb->lock);
++	IORING_FUTEX_LAST,
++};
 +
-+		if (!IS_ENABLED(CONFIG_MMU) ||
-+		    unlikely(op_ret != -EFAULT && op_ret != -EAGAIN)) {
-+			/*
-+			 * we don't get EFAULT from MMU faults if we don't have
-+			 * an MMU, but we might get them from range checking
-+			 */
-+			ret = op_ret;
-+			return ret;
-+		}
-+		if (try)
-+			return -EAGAIN;
-+
-+		if (op_ret == -EFAULT) {
-+			ret = fault_in_user_writeable(uaddr);
-+			if (ret)
-+				return ret;
-+		}
-+		cond_resched();
-+		if (shared)
-+			goto retry;
-+		goto retry_private;
-+	}
-+	if (op_ret) {
-+		plist_for_each_entry_safe(this, next, &hb->chain, list) {
-+			if (match_futex(&this->key, &key)) {
-+				if (this->pi_state || this->rt_waiter) {
-+					ret = -EINVAL;
-+					break;
-+				}
-+				mark_wake_futex(&wake_q, this);
-+				if (++ret >= nr_wake)
-+					break;
-+			}
-+		}
-+	}
-+	spin_unlock(&hb->lock);
-+	wake_up_q(&wake_q);
-+	return ret;
-+}
 +
  /*
-  * Wake up all waiters hashed on the physical page that is mapped
-  * to this virtual address:
-@@ -2680,8 +2740,8 @@ static int futex_wait_setup(u32 __user *uaddr, u32 val, unsigned int flags,
- 	return ret;
- }
- 
--static int futex_wait(u32 __user *uaddr, unsigned int flags, u32 val,
--		      ktime_t *abs_time, u32 bitset)
-+int futex_wait(u32 __user *uaddr, unsigned int flags, u32 val,
-+	       ktime_t *abs_time, u32 bitset)
- {
- 	struct hrtimer_sleeper timeout, *to;
- 	struct restart_block *restart;
+  * IO completion data structure (Completion Queue Entry)
+  */
 -- 
 2.31.1
 

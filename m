@@ -2,182 +2,234 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EB6EA397BEA
-	for <lists+io-uring@lfdr.de>; Tue,  1 Jun 2021 23:53:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 310A0397E2C
+	for <lists+io-uring@lfdr.de>; Wed,  2 Jun 2021 03:40:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234833AbhFAVyo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 1 Jun 2021 17:54:44 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:35590 "EHLO
-        galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234782AbhFAVyo (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 1 Jun 2021 17:54:44 -0400
-From:   Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1622584381;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=WXbXuXynML1A3nvGjqb7EvteJijHOA+zjmWZjkRgOq8=;
-        b=I4umCnWahun+4xGy14HUk2QAjgXuyS7QSTz2u6Bh4h9KmxrGXdpn9ES7GC3WFODGBfPut6
-        raayGHARGsEmU6YKSBKVCOnwbnlBReoVLkDIMB0CqosO3JqafVmLq5BNMoF30D2U+jZvUj
-        uLsw4VXeCuZl1uh/b6gGZHxivaIUEgd11BpPJ024EPaVO0DFcUq6q6MxL0PwsXcEM0+3OX
-        eVujAPVqM/S1YIAIT/Y6D6jsPo+f/tMLK4SLrW5CpypYIZPjEQSjy+pLCBDY+vPlejTom8
-        pf0w0GAW6oXLdAdeUv1RIhqXlwo2BVCAF+8hgLazGXQ9N0PZ0qJ26HI6zri5mg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1622584381;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=WXbXuXynML1A3nvGjqb7EvteJijHOA+zjmWZjkRgOq8=;
-        b=qes7/41xS/GVCI+4k4eVj+vnPesW/cySPA2KtxdhSM8WQXVZB2cXJcYLwqJu5gjKsCZBeF
-        cs+Kl/ugUHRH+yDQ==
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc:     Andres Freund <andres@anarazel.de>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC 4/4] io_uring: implement futex wait
-In-Reply-To: <5ab4c8bd-3e82-e87b-1ae8-3b32ced72009@gmail.com>
-References: <cover.1622558659.git.asml.silence@gmail.com> <e91af9d8f8d6e376635005fd111e9fe7a1c50fea.1622558659.git.asml.silence@gmail.com> <bd824ec8-48af-b554-67a1-7ce20fcf608c@kernel.dk> <409a624c-de75-0ee5-b65f-ee09fff34809@gmail.com> <bdc55fcd-b172-def4-4788-8bf808ccf6d6@kernel.dk> <5ab4c8bd-3e82-e87b-1ae8-3b32ced72009@gmail.com>
-Date:   Tue, 01 Jun 2021 23:53:00 +0200
-Message-ID: <87sg211ccj.ffs@nanos.tec.linutronix.de>
+        id S230162AbhFBBl7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 1 Jun 2021 21:41:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35012 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230156AbhFBBl6 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 1 Jun 2021 21:41:58 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1E27C06175F
+        for <io-uring@vger.kernel.org>; Tue,  1 Jun 2021 18:40:15 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id jt22so1340699ejb.7
+        for <io-uring@vger.kernel.org>; Tue, 01 Jun 2021 18:40:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7+6GengPTpnBNKRiprYjAxUmTuo80Mwv0XF47zfhAB0=;
+        b=eHaMWPqA67Ms9cMf+MpCDlqXpy7gUU+QZLG79G7lMeuxyBVPP6W+UzN3hICWjKjiBJ
+         44peCH0PgM1siFi8Gc4aqT8FiLU/ehdSIKr0nBCH1uOLEJoZzDBKL2/MsPttMhJSGqeL
+         heKa7CKjkZvPwSBHdRp7V8pLoZ3NIKPFNnJLrybRmV83gMVHIMG9st6DySEqrhg+/2nr
+         Nt1dcVVMckoCjW6RMFbLosyOhYo5n1uhlUEhS/qG6jVenahGHkyqBFBNFyuZH/lDrEXZ
+         Ufysh0UsjrPKikT6wQB8O9OUwbdDrkFBQIdmhfg06tut+RW2/WDitMIf6tve/CvEgA2O
+         1jbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7+6GengPTpnBNKRiprYjAxUmTuo80Mwv0XF47zfhAB0=;
+        b=rz3sJsbjMYqw13Qw1kMDChIcDVGfehFhXrzSwvNsBP04JKTCKSKxKbzqSW3BToSPJa
+         ESl5z12qhzsTMnnJx8W8V+4SbBQl4tVPcRSD49N9eVChcaxPDV1g6Weu0H4DH1iEOhmE
+         k5DLnxchEMHTe/PDKsaP1aeHJUOO7T3+zO5BISgYqIout51jS4AzHXx+NGU9V9q9RSUS
+         msR4UjHaJqMGeJKWRdthwSq/+sxKD2LvFD9DFT/WFS27Ph7cu+D02mYJYX9ZzpdICyp5
+         g+nP99GoA9F7hF/Z1VsVdcUrxnGRVM05tGijjGR4gSR1gc7gUCnRogLx+i/7bfTllH9j
+         pplQ==
+X-Gm-Message-State: AOAM532246Qbl9Jv84BjLFpv9ypK7L04eD7zzcvK+3pAOMrl3Vn2nTbQ
+        hufPXSjkPua6ChNhph3I2M0Z+ZDUxmnTE+Pjx6X6
+X-Google-Smtp-Source: ABdhPJzKGdNVsjgTej2xcBpuoKPd2C3Oqdgb3f4h5vrwkEShRjjAx36JJyUkFtyB1rEm/0O5DJTEmL545Nl/g7Jerlg=
+X-Received: by 2002:a17:906:2c54:: with SMTP id f20mr14631744ejh.91.1622598014322;
+ Tue, 01 Jun 2021 18:40:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <162163367115.8379.8459012634106035341.stgit@sifl>
+ <162163380685.8379.17381053199011043757.stgit@sifl> <20210528223544.GL447005@madcap2.tricolour.ca>
+ <CAHC9VhTr_hw_RBPf5yGD16j-qV2tbjjPJkimMNNQZBHtrJDbuQ@mail.gmail.com> <20210531134408.GL2268484@madcap2.tricolour.ca>
+In-Reply-To: <20210531134408.GL2268484@madcap2.tricolour.ca>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 1 Jun 2021 21:40:03 -0400
+Message-ID: <CAHC9VhSFNNE7AGGA20fDk201VLvzr5HB60VEqqq5qt9yGTH4mg@mail.gmail.com>
+Subject: Re: [RFC PATCH 4/9] audit: add filtering for io_uring records
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Pavel, Jens,
+On Mon, May 31, 2021 at 9:44 AM Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2021-05-30 11:26, Paul Moore wrote:
+> > On Fri, May 28, 2021 at 6:36 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > On 2021-05-21 17:50, Paul Moore wrote:
 
-On Tue, Jun 01 2021 at 17:29, Pavel Begunkov wrote:
-> On 6/1/21 5:01 PM, Jens Axboe wrote:
->>> Yes, that would be preferable, but looks futexes don't use
->>> waitqueues but some manual enqueuing into a plist_node, see
->>> futex_wait_queue_me() or mark_wake_futex().
->>> Did I miss it somewhere?
->> 
->> Yes, we'd need to augment that with a callback. I do think that's going
->
-> Yeah, that was the first idea, but it's also more intrusive for the
-> futex codebase. Can be piled on top for next revision of patches.
->
-> A question to futex maintainers, how much resistance to merging
-> something like that I may expect?
-
-Adding a waitqueue like callback or the proposed thing?
-
-TBH. Neither one has a charm.
-
-1) The proposed solution: I can't figure out from the changelogs or the
-   cover letter what kind of problems it solves and what the exact
-   semantics are. If you ever consider to submit futex patches, may I
-   recommend to study Documentation/process and get some inspiration
-   from git-log?
-
-   What are the lifetime rules, what's the interaction with regular
-   futexes, what's the interaction with robust list ....? Without
-   interaction with regular futexes such a functionality does not make
-   any sense at all.
-
-   Also once we'd open that can of worms where is this going to end and
-   where can we draw the line? This is going to be a bottomless pit
-   because I don't believe for a split second that this simple interface
-   is going to be sufficient.
-
-   Aside of that we are definitely _not_ going to expose any of the
-   internal functions simply because they evade any sanity check which
-   happens at the syscall wrappers and I have zero interest to deal with
-   the fallout of unfiltered input which comes via io-uring interfaces
-   or try to keep those up to date when the core filtering changes.
-
-2) Adding a waitqueue like callback is daft.
-
-   a) Lifetime rules
-
-      See mark_wake_futex().
-
-   b) Locking
-
-      The wakeup mechanism is designed to avoid hb->lock contention as much
-      as possible. The dequeue/mark for wakeup happens under hb->lock
-      and the actual wakeup happens after dropping hb->lock.
-
-      This is not going to change. It's not even debatable.
-
-      Aside of that this is optimized for minimal hb->lock hold time in
-      general.
-
-   So the only way to do that would be to invoke the callback from
-   mark_wake_futex() _before_ invalidating futex_q and the callback plus
-   the argument(s) would have to be stored in futex_q.
-
-   Where does this information come from? Which context would invoke the
-   wait with callback and callback arguments? User space, io-uring state
-   machine or what?
-
-   Aside of the extra storage (on stack) and yet more undefined life
-   time rules and no semantics for error cases etc., that also would
-   enforce that the callback is invoked with hb->lock held. IOW, it's
-   making the hb->lock held time larger, which is exactly what the
-   existing code tries to avoid by all means.
-
-But what would that solve?
-
-I can't tell because the provided information is absolutely useless
-for anyone not familiar with your great idea:
-   
-  "Add futex wait requests, those always go through io-wq for
-   simplicity."
-      
-What am I supposed to read out of this? Doing it elsewhere would be
-more complex? Really useful information.
-
-And I can't tell either what Jens means here:
-
-  "Not a huge fan of that, I think this should tap into the waitqueue
-   instead and just rely on the wakeup callback to trigger the
-   event. That would be a lot more efficient than punting to io-wq, both
-   in terms of latency on trigger, but also for efficiency if the app is
-   waiting on a lot of futexes."
-
-and here:
-
-  "Yes, we'd need to augment that with a callback. I do think that's
-   going to be necessary, I don't see the io-wq solution working well
-   outside of the most basic of use cases. And even for that, it won't
-   be particularly efficient for single waits."
-
-All of these quotes are useless word salad without context and worse
-without the minimal understanding how futexes work.
-
-So can you folks please sit down and write up a coherent description of:
-
- 1) The problem you are trying to solve
-
- 2) How this futex functionality should be integrated into io-uring
-    including the contexts which invoke it.
-
- 3) Interaction with regular sys_futex() operations.
-
- 4) Lifetime and locking rules.
-
-Unless that materializes any futex related changes are not even going to
-be reviewed.
-
-I did not even try to review this stuff, I just tried to make sense out
-of it, but while skimming it, it was inevitable to spot this gem:
-
- +int futex_wake_op_single(u32 __user *uaddr, int nr_wake, unsigned int op,
- +			 bool shared, bool try);
 ...
- +		ret = futex_wake_op_single(f->uaddr, f->nr_wake, f->wake_op_arg,
- +					   !(f->flags & IORING_FUTEX_SHARED),
- +					   nonblock);
 
-You surely made your point that this is well thought out.
+> > > > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> > > > index d8aa2c690bf9..4f6ab34020fb 100644
+> > > > --- a/kernel/auditsc.c
+> > > > +++ b/kernel/auditsc.c
+> > > > @@ -799,6 +799,35 @@ static int audit_in_mask(const struct audit_krule *rule, unsigned long val)
+> > > >       return rule->mask[word] & bit;
+> > > >  }
+> > > >
+> > > > +/**
+> > > > + * audit_filter_uring - apply filters to an io_uring operation
+> > > > + * @tsk: associated task
+> > > > + * @ctx: audit context
+> > > > + */
+> > > > +static void audit_filter_uring(struct task_struct *tsk,
+> > > > +                            struct audit_context *ctx)
+> > > > +{
+> > > > +     struct audit_entry *e;
+> > > > +     enum audit_state state;
+> > > > +
+> > > > +     if (auditd_test_task(tsk))
+> > > > +             return;
+> > >
+> > > Is this necessary?  auditd and auditctl don't (intentionally) use any
+> > > io_uring functionality.  Is it possible it might inadvertantly use some
+> > > by virtue of libc or other library calls now or in the future?
+> >
+> > I think the better question is what harm does it do?  Yes, I'm not
+> > aware of an auditd implementation that currently makes use of
+> > io_uring, but it is also not inconceivable some future implementation
+> > might want to make use of it and given the disjoint nature of kernel
+> > and userspace development I don't want the kernel to block such
+> > developments.  However, if you can think of a reason why having this
+> > check here is bad I'm listening (note: we are already in the slow path
+> > here so having the additional check isn't an issue as far as I'm
+> > concerned).
+> >
+> > As a reminder, auditd_test_task() only returns true/1 if the task is
+> > registered with the audit subsystem as an auditd connection, an
+> > auditctl process should not cause this function to return true.
+>
+> My main concern was overhead, since the whole goal of io_uring is speed.
 
-Thanks,
+At the point where this test takes place we are already in the audit
+slow path as far as io_uring is concerned.  I understand your concern,
+but the advantage of being able to effectively use io_uring in the
+future makes this worth keeping in my opinion.
 
-        tglx
+> The chances that audit does use this functionality in the future suggest
+> to me that it is best to leave this check in.
+
+Sounds like we are in agreement.  We'll keep it for now.
+
+> > > > +     rcu_read_lock();
+> > > > +     list_for_each_entry_rcu(e, &audit_filter_list[AUDIT_FILTER_URING_EXIT],
+> > > > +                             list) {
+> > > > +             if (audit_in_mask(&e->rule, ctx->uring_op) &&
+> > >
+> > > While this seems like the most obvious approach given the parallels
+> > > between syscalls and io_uring operations, as coded here it won't work
+> > > due to the different mappings of syscall numbers and io_uring
+> > > operations unless we re-use the auditctl -S field with raw io_uring
+> > > operation numbers in the place of syscall numbers.  This should have
+> > > been obvious to me when I first looked at this patch.  It became obvious
+> > > when I started looking at the userspace auditctl.c.
+> >
+> > FWIW, my intention was to treat io_uring opcodes exactly like we treat
+> > syscall numbers.  Yes, this would potentially be an issue if we wanted
+> > to combine syscalls and io_uring opcodes into one filter, but why
+> > would we ever want to do that?  Combining the two into one filter not
+> > only makes the filter lists longer than needed (we will always know if
+> > we are filtering on a syscall or io_uring op) and complicates the
+> > filter rule processing.
+> >
+> > Or is there a problem with this that I'm missing?
+>
+> No, I think you have a good understanding of it.  I'm asking hard
+> questions to avoid missing something important.  If we can reuse the
+> syscall infrastructure for this then that is extremely helpful (if not
+> lazy, which isn't necessarily a bad thing).  It does mean that the
+> io_uring op dictionary will need to live in userspace audit the way it
+> is currently implemented ....
+
+Which I currently believe is the right thing to do.
+
+> > > The easy first step would be to use something like this:
+> > >         auditctl -a uring,always -S 18,28 -F key=uring_open
+> > > to monitor file open commands only.  The same is not yet possible for
+> > > the perm field, but there are so few io_uring ops at this point compared
+> > > with syscalls that it might be manageable.  The arch is irrelevant since
+> > > io_uring operation numbers are identical across all hardware as far as I
+> > > can tell.  Most of the rest of the fields should make sense if they do
+> > > for a syscall rule.
+> >
+> > I've never been a fan of audit's "perm" filtering; I've always felt
+> > there were better ways to handle that so I'm not overly upset that we
+> > are skipping that functionality with this initial support.  If it
+> > becomes a problem in the future we can always add that support at a
+> > later date.
+>
+> Ok, I don't see a pressing need to add it initially, but should add a
+> check to block that field from being used to avoid the confusion of
+> unpredictable behaviour should someone try to add a perm filter to a
+> io_uring filter.  That should be done protectively in the kernel and
+> proactively in userspace.
+
+Sure, that's reasonable.
+
+> > > Here's a sample of userspace code to support this
+> > > patch:
+> > >         https://github.com/rgbriggs/audit-userspace/commit/a77baa1651b7ad841a220eb962d4cc92bc07dc96
+> > >         https://github.com/linux-audit/audit-userspace/compare/master...rgbriggs:ghau-iouring-filtering.v1.0
+> >
+> > Great, thank you.  I haven't grabbed a copy yet for testing, but I will.
+>
+> I've added a perm filter block as an additional patch in userspace and
+> updated the tree so that first commit is no longer the top of tree but
+> the branch name is current.
+>
+> I'll add a kernel perm filter check.
+>
+> I just noticed some list checking that is missing in tree and watch in
+> your patch.
+>
+> Suggested fixup patches to follow...
+
+I see them, thank you, comments will follow over there.  Although to
+be honest I'm mostly focusing on the testing right now while we wait
+to hear back from Jens on what he is willing to accept regarding audit
+calls in io_issue_sqe().  If we can't do the _entry()/_exit() calls
+then this work is pretty much dead and we just have to deal with it in
+Kconfig.  I might make one last, clean patchset and put it in a branch
+for the distros that want to carry the patchset, but it isn't clear to
+me that it is something I would want to maintain long term.  Long
+running out of tree patches are generally A Bad Idea.
+
+> > > If we abuse the syscall infrastructure at first, we'd need a transition
+> > > plan to coordinate user and kernel switchover to seperate mechanisms for
+> > > the two to work together if the need should arise to have both syscall
+> > > and uring filters in the same rule.
+> >
+> > See my comments above, I don't currently see why we would ever want
+> > syscall and io_uring filtering to happen in the same rule.  Please
+> > speak up if you can think of a reason why this would either be needed,
+> > or desirable for some reason.
+>
+> I think they can be seperate rules for now.  Either a syscall rule
+> catching all io_uring ops can be added, or an io_uring rule can be added
+> to catch specific ops.  The scenario I was thinking of was catching
+> syscalls of specific io_uring ops.
+
+Perhaps I'm misunderstand you, but that scenario really shouldn't
+exist.  The io_uring ops function independently of syscalls; you can
+*submit* io_uring ops via io_uring_enter(), but they are not
+guaranteed to be dispatched synchronously (obviously), and given the
+cred shenanigans that can happen with io_uring there is no guarantee
+the filters would even be applicable.
+
+It isn't an issue of "can" the filters be separate, they *have* to be separate.
+
+-- 
+paul moore
+www.paul-moore.com

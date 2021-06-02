@@ -2,132 +2,109 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 44C1A398F31
-	for <lists+io-uring@lfdr.de>; Wed,  2 Jun 2021 17:46:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91F04399188
+	for <lists+io-uring@lfdr.de>; Wed,  2 Jun 2021 19:22:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232246AbhFBPsg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 2 Jun 2021 11:48:36 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:22568 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232079AbhFBPsg (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 2 Jun 2021 11:48:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1622648812;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=VHIsflmb9bo7+7z4ppg/I+v72fjIcbK96I8VFOpCXh8=;
-        b=XH9OmckizezjF4RAMxVaEPAx7hYSaRmk4E3/BgXyJseVdXapbaRLGGKfdZms+S4+wtDQBR
-        MY4pKs3O20pxf1OuXbQTTrpoKXUiWvIUH97iu+A/M36oLj/SWvQ0ehf/NG9JWOqEpQFmod
-        rkPSpVZUo5l0aRy0cZQZGQonyw+alxI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-537--p8Xm_ZOMI6igpusBMRAAg-1; Wed, 02 Jun 2021 11:46:51 -0400
-X-MC-Unique: -p8Xm_ZOMI6igpusBMRAAg-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D1AFB180E46D;
-        Wed,  2 Jun 2021 15:46:49 +0000 (UTC)
-Received: from madcap2.tricolour.ca (unknown [10.3.128.13])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E9CCA100238C;
-        Wed,  2 Jun 2021 15:46:40 +0000 (UTC)
-Date:   Wed, 2 Jun 2021 11:46:38 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     Paul Moore <paul@paul-moore.com>, Jens Axboe <axboe@kernel.dk>,
-        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-audit@redhat.com, Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [RFC PATCH 2/9] audit,io_uring,io-wq: add some basic audit
- support to io_uring
-Message-ID: <20210602154638.GA3711857@madcap2.tricolour.ca>
-References: <CAHC9VhTYBsh4JHhqV0Uyz=H5cEYQw48xOo=CUdXV0gDvyifPOQ@mail.gmail.com>
- <9e69e4b6-2b87-a688-d604-c7f70be894f5@kernel.dk>
- <3bef7c8a-ee70-d91d-74db-367ad0137d00@kernel.dk>
- <fa7bf4a5-5975-3e8c-99b4-c8d54c57da10@kernel.dk>
- <a7669e4a-e7a7-7e94-f6ce-fa48311f7175@kernel.dk>
- <CAHC9VhSKPzADh=qcPp7r7ZVD2cpr2m8kQsui43LAwPr-9BNaxQ@mail.gmail.com>
- <b20f0373-d597-eb0e-5af3-6dcd8c6ba0dc@kernel.dk>
- <CAHC9VhRZEwtsxjhpZM1DXGNJ9yL59B7T_p2B60oLmC_YxCrOiw@mail.gmail.com>
- <CAHC9VhSK9PQdxvXuCA2NMC3UUEU=imCz_n7TbWgKj2xB2T=fOQ@mail.gmail.com>
- <94e50554-f71a-50ab-c468-418863d2b46f@gmail.com>
+        id S231621AbhFBRYA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 2 Jun 2021 13:24:00 -0400
+Received: from mail-ed1-f43.google.com ([209.85.208.43]:39823 "EHLO
+        mail-ed1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231524AbhFBRXs (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 2 Jun 2021 13:23:48 -0400
+Received: by mail-ed1-f43.google.com with SMTP id dj8so3851639edb.6
+        for <io-uring@vger.kernel.org>; Wed, 02 Jun 2021 10:22:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Gy9Q7B0FuTlWBXK6WYBPF7wGYJPXhU3skgW7sND1F44=;
+        b=2H6a3268Y8rIPosDNohIqk8IO4fbbcCe2MxIvAL4DAsXs6XhnZ+s2taAuHxEbLD7Ov
+         t133LXlJlBYPTa33YGOOt+vzxQ1o/dMjZYLPPIqrpAjXwrVE6mLIVT4ZYQBVLgNbdaCf
+         BsefM2xqagD9LSZgrWFxp7/Hh835cv3sPwekKc5aQaBFBTkYa7fT7wQ2QLV5JnijVMfk
+         k0akN1PfRPwFSvnLNhE7y7AY2mKUkogVXBEVTMysu7ybCcaPMtaX+1hJWuGPELNXzqpF
+         Ts3beQjlQuLWfZXEsxcBbuJhsvA+q66yDxSnC+ExOz2OKeENKoZNrWd7yK/TwmHmIie+
+         Z6Tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Gy9Q7B0FuTlWBXK6WYBPF7wGYJPXhU3skgW7sND1F44=;
+        b=nOsP7cODCwpR7ZUv9HixKcJmL+VMH7NaoC9NoO5ni7jxygnquQyAfq5Skn0aPwzMyu
+         s4IUbcjaAgUxn/Wt2p60oP1joED6vKsbBc9iEqaRyzqUZ9iHnrS7AweDH2dlDV654s2C
+         hs6S9bIi6HqYLQ0t4LYRUiuw4xxoi9q3ilPIuWPQHD3LgFM5mPnCsmciddovXM6gm1rP
+         2dI/0SRtAeh3q8scZnyUiIuI7o+zwTvQtX/uKCxOVWEzEtsOSmtPMIbWgAKaq8mtDLUN
+         LocEFvLRuFnNTsWZI/womSb5BB//KLy+L46PY3Svpl8Kfl8JKcVUwcquvP2UhPz6UsVC
+         uUiQ==
+X-Gm-Message-State: AOAM530W8o5Dzw//QSOp2M37HObvFmqpcwt/p6jDsF5HCShB/+mrOgLh
+        Ux4u4jz2LaBSgpxAgoOKHXGXlLli+2cdZnmmOnze
+X-Google-Smtp-Source: ABdhPJzZAlpK8lC7eFoF6MjrjKot1TrFwp5krb6NmggDDvvweCN+qMzgsiPBBTtWKnkHrJm4FoBpqVHcr9KK0G5n+FI=
+X-Received: by 2002:a05:6402:158e:: with SMTP id c14mr25945297edv.128.1622654463808;
+ Wed, 02 Jun 2021 10:21:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <94e50554-f71a-50ab-c468-418863d2b46f@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+References: <162163367115.8379.8459012634106035341.stgit@sifl>
+ <162163380685.8379.17381053199011043757.stgit@sifl> <20210528223544.GL447005@madcap2.tricolour.ca>
+ <CAHC9VhTr_hw_RBPf5yGD16j-qV2tbjjPJkimMNNQZBHtrJDbuQ@mail.gmail.com>
+ <20210531134408.GL2268484@madcap2.tricolour.ca> <CAHC9VhSFNNE7AGGA20fDk201VLvzr5HB60VEqqq5qt9yGTH4mg@mail.gmail.com>
+ <20210602153757.GQ2268484@madcap2.tricolour.ca>
+In-Reply-To: <20210602153757.GQ2268484@madcap2.tricolour.ca>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 2 Jun 2021 13:20:52 -0400
+Message-ID: <CAHC9VhSU16XG1SL_Nx1rXvakT=Lr4cFAc29bSsRzXEf-T=scvg@mail.gmail.com>
+Subject: Re: [RFC PATCH 4/9] audit: add filtering for io_uring records
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2021-06-02 09:26, Pavel Begunkov wrote:
-> On 5/28/21 5:02 PM, Paul Moore wrote:
-> > On Wed, May 26, 2021 at 4:19 PM Paul Moore <paul@paul-moore.com> wrote:
-> >> ... If we moved the _entry
-> >> and _exit calls into the individual operation case blocks (quick
-> >> openat example below) so that only certain operations were able to be
-> >> audited would that be acceptable assuming the high frequency ops were
-> >> untouched?  My initial gut feeling was that this would involve >50% of
-> >> the ops, but Steve Grubb seems to think it would be less; it may be
-> >> time to look at that a bit more seriously, but if it gets a NACK
-> >> regardless it isn't worth the time - thoughts?
-> >>
-> >>   case IORING_OP_OPENAT:
-> >>     audit_uring_entry(req->opcode);
-> >>     ret = io_openat(req, issue_flags);
-> >>     audit_uring_exit(!ret, ret);
-> >>     break;
-> > 
-> > I wanted to pose this question again in case it was lost in the
-> > thread, I suspect this may be the last option before we have to "fix"
-> > things at the Kconfig level.  I definitely don't want to have to go
-> > that route, and I suspect most everyone on this thread feels the same,
-> > so I'm hopeful we can find a solution that is begrudgingly acceptable
-> > to both groups.
-> 
-> May work for me, but have to ask how many, and what is the
-> criteria? I'd think anything opening a file or manipulating fs:
-> 
-> IORING_OP_ACCEPT, IORING_OP_CONNECT, IORING_OP_OPENAT[2],
-> IORING_OP_RENAMEAT, IORING_OP_UNLINKAT, IORING_OP_SHUTDOWN,
-> IORING_OP_FILES_UPDATE
-> + coming mkdirat and others.
-> 
-> IORING_OP_CLOSE? IORING_OP_SEND IORING_OP_RECV?
-> 
-> What about?
-> IORING_OP_FSYNC, IORING_OP_SYNC_FILE_RANGE,
-> IORING_OP_FALLOCATE, IORING_OP_STATX,
-> IORING_OP_FADVISE, IORING_OP_MADVISE,
-> IORING_OP_EPOLL_CTL
-> 
-> 
-> Another question, io_uring may exercise asynchronous paths,
-> i.e. io_issue_sqe() returns before requests completes.
-> Shouldn't be the case for open/etc at the moment, but was that
-> considered?
+On Wed, Jun 2, 2021 at 11:38 AM Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2021-06-01 21:40, Paul Moore wrote:
+> > On Mon, May 31, 2021 at 9:44 AM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > On 2021-05-30 11:26, Paul Moore wrote:
+> > > > On Fri, May 28, 2021 at 6:36 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > > > On 2021-05-21 17:50, Paul Moore wrote:
+> > > > > If we abuse the syscall infrastructure at first, we'd need a transition
+> > > > > plan to coordinate user and kernel switchover to seperate mechanisms for
+> > > > > the two to work together if the need should arise to have both syscall
+> > > > > and uring filters in the same rule.
+> > > >
+> > > > See my comments above, I don't currently see why we would ever want
+> > > > syscall and io_uring filtering to happen in the same rule.  Please
+> > > > speak up if you can think of a reason why this would either be needed,
+> > > > or desirable for some reason.
+> > >
+> > > I think they can be seperate rules for now.  Either a syscall rule
+> > > catching all io_uring ops can be added, or an io_uring rule can be added
+> > > to catch specific ops.  The scenario I was thinking of was catching
+> > > syscalls of specific io_uring ops.
+> >
+> > Perhaps I'm misunderstand you, but that scenario really shouldn't
+> > exist.  The io_uring ops function independently of syscalls; you can
+> > *submit* io_uring ops via io_uring_enter(), but they are not
+> > guaranteed to be dispatched synchronously (obviously), and given the
+> > cred shenanigans that can happen with io_uring there is no guarantee
+> > the filters would even be applicable.
+>
+> That wasn't my understanding.  There are a number of io_uring calls
+> starting with at least open that are currently synchronous (but may
+> become async in future) that we may want to single out which would be a
+> specific io_uring syscall with a specific io_uring opcode.  I guess
+> that particular situation would be caught by the io_uring opcode
+> triggering an event that includes SYSCALL and URINGOP records.
 
-This would be why audit needs to monitor a thread until it wraps up, to
-wait for the result code.  My understanding is that both sync and async
-parts of an op would be monitored.
+The only io_uring syscalls are io_uring_setup(2), io_uring_enter(2),
+etc., the stuff that is dispatched in io_issue_sqe() are the io_uring
+ops/opcodes/whatever.  They *look* like syscalls but they are not and
+we have to treat them differently.
 
-> I don't see it happening, but would prefer to keep it open
-> async reimplementation in a distant future. Does audit sleep?
+> > It isn't an issue of "can" the filters be separate, they *have* to be separate.
 
-Some parts do, some parts don't depending on what they are interacting
-with in the kernel.  It can be made to not sleep if needed.
-
-> Pavel Begunkov
-
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
-
+-- 
+paul moore
+www.paul-moore.com

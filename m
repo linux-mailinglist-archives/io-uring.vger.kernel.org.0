@@ -2,244 +2,107 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4077E3986EA
-	for <lists+io-uring@lfdr.de>; Wed,  2 Jun 2021 12:49:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA806398ECF
+	for <lists+io-uring@lfdr.de>; Wed,  2 Jun 2021 17:38:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231952AbhFBKuo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 2 Jun 2021 06:50:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44762 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230321AbhFBKtu (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 2 Jun 2021 06:49:50 -0400
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2929CC061763
-        for <io-uring@vger.kernel.org>; Wed,  2 Jun 2021 03:48:01 -0700 (PDT)
-Received: by mail-wm1-x331.google.com with SMTP id h12-20020a05600c350cb029019fae7a26cdso1372541wmq.5
-        for <io-uring@vger.kernel.org>; Wed, 02 Jun 2021 03:48:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:references:from:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=48OcPMCgzRaV4Hvf2hUEiH5aAfW3sJxFOm4K9wlET9E=;
-        b=KuNzUhiWdKjqf0oZolZRhBVSn/MivnmN1yif6JYWmBn2RCMRE0zJwp9GnHz7FewA6w
-         ZcKfHaVQ65xqO4KAlX9/lcgPOtpXR2U9IRD3KssDII5BX6l+UO6V+Xaf+pnuQBgqlM/K
-         oTdSSRoflDEnDZIykGSB+UyivFnIfh1gLpSJktDhK9wA812Db46aqno7JvLjA9CcFLzN
-         Pngdg81xy38r1DIl1UrUcg/eG8gb0PdAy2tLsNfAB+9XdZOND1Mn42SchsRTBH/hU4kN
-         I8gJeYpf43+gwCP46ONuFIwoTjFm4/JMfVKlUxJzF764TdrJ0Tp9dObMgrILw684i5OG
-         IZrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=48OcPMCgzRaV4Hvf2hUEiH5aAfW3sJxFOm4K9wlET9E=;
-        b=LiNbr1paE2F3ieSGQat8rs9ZLEH1BSb0dn+XM0cIxpgfGk9YX1nyN8XlxfCg8/O1e2
-         os7i6aDNVHHUo1J+KQLHO+JwNNwgHo8fV8WdMDeiOjg+FBB2DO5+Aqolm7lQRfiHarcd
-         rLUWolUXj70DiD8mWsd6/PxcliYMiNHbf7JvDPEWzHZacwccN2T7QQ+J2ibRl5ElIJX5
-         zyl6w12ErIc0ZYumQu6CsMRIo8xrh/sGyg7nUIZDhUS6Q3XPhPeScOeLeI5muKtcL//W
-         ATAuaQURef8hr0NJzGkjhZnwYZ5AahjZwBnCBeSYkFy5/ITpyed6mlQ/GEwgrdWUpl7x
-         JMZg==
-X-Gm-Message-State: AOAM533re8YoYCQ+w+SNfw3BcobLDrtemwkodd8XvxStbiTpchZ17N3/
-        Z4PQUPvw4JwLuXPsXCOtfxE=
-X-Google-Smtp-Source: ABdhPJysv3XIbEYHStWFwg1Xhy/PKQoTqzcPIC4oEJl9bE+XbAsRfCDefZW2ZvxID3r4sx1DNaO/lQ==
-X-Received: by 2002:a05:600c:4657:: with SMTP id n23mr4634790wmo.47.1622630879762;
-        Wed, 02 Jun 2021 03:47:59 -0700 (PDT)
-Received: from ?IPv6:2620:10d:c096:310::2410? ([2620:10d:c092:600::2:f0d])
-        by smtp.gmail.com with ESMTPSA id v8sm7028408wrc.29.2021.06.02.03.47.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Jun 2021 03:47:59 -0700 (PDT)
-To:     Christian Dietrich <stettberger@dokucode.de>,
-        io-uring <io-uring@vger.kernel.org>
-Cc:     Horst Schirmeier <horst.schirmeier@tu-dortmund.de>,
-        "Franz-B. Tuneke" <franz-bernhard.tuneke@tu-dortmund.de>
-References: <s7bsg4slmn3.fsf@dokucode.de>
- <9b3a8815-9a47-7895-0f4d-820609c15e9b@gmail.com>
- <s7btuo6wi7l.fsf@dokucode.de>
- <4a553a51-50ff-e986-acf0-da9e266d97cd@gmail.com>
- <s7bmttssyl4.fsf@dokucode.de>
- <f1e5d6cf-08a9-9110-071f-e89b09837e37@gmail.com>
- <s7bv985te4l.fsf@dokucode.de>
- <46229c8c-7e9d-9232-1e97-d1716dfc3056@gmail.com>
- <s7bpmy5pcc3.fsf@dokucode.de> <s7bbl9pp39g.fsf@dokucode.de>
- <c45d633e-1278-1dcb-0d59-f0886abc3e60@gmail.com>
- <s7beeec8ah0.fsf@dokucode.de>
- <fd68fd2d-3816-e326-8016-b9d5c5c429ed@gmail.com>
- <s7bv97ey87m.fsf@dokucode.de>
- <0468c1d5-9d0a-f8c0-618c-4a40b4677099@gmail.com>
- <s7bsg2hwitp.fsf@dokucode.de>
- <e11cd3e6-b1be-2098-732a-2987a5a9f842@gmail.com>
- <s7b1r9sfn1k.fsf@dokucode.de>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Subject: Re: [RFC] Programming model for io_uring + eBPF
-Message-ID: <49df117c-dcbd-9b91-e181-e5b2757ae6aa@gmail.com>
-Date:   Wed, 2 Jun 2021 11:47:50 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        id S230479AbhFBPkB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 2 Jun 2021 11:40:01 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:35521 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231617AbhFBPj5 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 2 Jun 2021 11:39:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1622648293;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=OoDYbRr379F6FTuv88EzuNEkheMz0XG6rFrrTSsT7nk=;
+        b=gRGXLElDwmv8Se0NFCpD5M3wQNlROFgbJu4q77BF1aGe0CJpDnPTZeFFRGrlB1W3Sc7nSZ
+        pgLqliRmWxR+Sktlxls4Zwf0Pv3t26bympZ8i6dkUcVsWaydxucnywWW6oTL+F7O25xdM0
+        31zvL3bIXJ+c9Uw0JW2cD17JAi4EMfw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-51-AvKItOf-O5GpYddClO36OQ-1; Wed, 02 Jun 2021 11:38:10 -0400
+X-MC-Unique: AvKItOf-O5GpYddClO36OQ-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 740BC6D251;
+        Wed,  2 Jun 2021 15:38:08 +0000 (UTC)
+Received: from madcap2.tricolour.ca (unknown [10.3.128.13])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4F61860938;
+        Wed,  2 Jun 2021 15:38:00 +0000 (UTC)
+Date:   Wed, 2 Jun 2021 11:37:57 -0400
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [RFC PATCH 4/9] audit: add filtering for io_uring records
+Message-ID: <20210602153757.GQ2268484@madcap2.tricolour.ca>
+References: <162163367115.8379.8459012634106035341.stgit@sifl>
+ <162163380685.8379.17381053199011043757.stgit@sifl>
+ <20210528223544.GL447005@madcap2.tricolour.ca>
+ <CAHC9VhTr_hw_RBPf5yGD16j-qV2tbjjPJkimMNNQZBHtrJDbuQ@mail.gmail.com>
+ <20210531134408.GL2268484@madcap2.tricolour.ca>
+ <CAHC9VhSFNNE7AGGA20fDk201VLvzr5HB60VEqqq5qt9yGTH4mg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <s7b1r9sfn1k.fsf@dokucode.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhSFNNE7AGGA20fDk201VLvzr5HB60VEqqq5qt9yGTH4mg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/27/21 12:12 PM, Christian Dietrich wrote:
-> Pavel Begunkov <asml.silence@gmail.com> [21. May 2021]:
+On 2021-06-01 21:40, Paul Moore wrote:
+> On Mon, May 31, 2021 at 9:44 AM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > On 2021-05-30 11:26, Paul Moore wrote:
+> > > On Fri, May 28, 2021 at 6:36 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > > On 2021-05-21 17:50, Paul Moore wrote:
+> > > > If we abuse the syscall infrastructure at first, we'd need a transition
+> > > > plan to coordinate user and kernel switchover to seperate mechanisms for
+> > > > the two to work together if the need should arise to have both syscall
+> > > > and uring filters in the same rule.
+> > >
+> > > See my comments above, I don't currently see why we would ever want
+> > > syscall and io_uring filtering to happen in the same rule.  Please
+> > > speak up if you can think of a reason why this would either be needed,
+> > > or desirable for some reason.
+> >
+> > I think they can be seperate rules for now.  Either a syscall rule
+> > catching all io_uring ops can be added, or an io_uring rule can be added
+> > to catch specific ops.  The scenario I was thinking of was catching
+> > syscalls of specific io_uring ops.
 > 
->>> The problem that I see is that eBPF in io_uring breaks this fine
->>> synchronization as eBPF SQE submission and userspace SQE submission can
->>> run in parallel.
->>
->> It definitely won't be a part of ABI, but they actually do serialise
->> at the moment.
-> 
-> They serialize because they are executed by the same worker thread,
-> right?
+> Perhaps I'm misunderstand you, but that scenario really shouldn't
+> exist.  The io_uring ops function independently of syscalls; you can
+> *submit* io_uring ops via io_uring_enter(), but they are not
+> guaranteed to be dispatched synchronously (obviously), and given the
+> cred shenanigans that can happen with io_uring there is no guarantee
+> the filters would even be applicable.
 
-No, because all submissions are currently under ctx->uring_lock mutex
-and also executed in the submitting task context (no io-wq). I hope to
-get rid of the second restriction, i.e. prior upstreaming, and maybe
-do something about the first one in far future if there will be a need.
+That wasn't my understanding.  There are a number of io_uring calls
+starting with at least open that are currently synchronous (but may
+become async in future) that we may want to single out which would be a
+specific io_uring syscall with a specific io_uring opcode.  I guess
+that particular situation would be caught by the io_uring opcode
+triggering an event that includes SYSCALL and URINGOP records.
 
-> Perhaps that is the solution to my synchronization problem. If/when
-> io_uring supports more than one eBPF executioners, we should make the
-> number of executors configurable at setup time. Thereby, the user can
-> implicitly manage serialization of eBPF execution.
+> It isn't an issue of "can" the filters be separate, they *have* to be separate.
 
-I wouldn't keep it a part of ABI, but may be good enough for
-experiments. So, it'll be UB and may break unless we figure
-something out.
+> paul moore
 
-... actually it sounds like a sane idea to do lock grabbing lazy,
-i.e. only if it actually submits requests. That may make sense if
-you control several requests by BPF, e.g. keeping QD + batching.
+- RGB
 
->>> But going back to my original wish: I wanted to ensure that I can
->>> serialize eBPF-SQEs such that I'm sure that they do not run in parallel.
->>> My idea was to use synchronization groups as a generalization of
->>> SQE linking in order to make it also useful for others (not only for eBPF).
->>
->> So, let's dissect it a bit more, why do you need serialising as
->> such? What use case you have in mind, and let's see if it's indeed
->> can't be implemented efficiently with what we have.
-> 
-> What I want to do is to manipulate (read-calculate-update) user memory
-> from eBPF without the need to synchronize between eBPF invocations.
-> 
-> As eBPF invocations have a run-to-completion semantic, it feels bad to
-> use lock-based synchronization. Besides waiting for user-memory to be
-> swapped in, they will be usually short and plug together results and
-> newly emitted CQEs.
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
 
-swapping can't be done under spinlocks, that's a reason why userspace
-read/write are available only to sleepable BPF.
-
-btw, I was thinking about adding atomic ops with userspace memory.
-I can code an easy solution, but may have too much of additional
-overhead. Same situation with normal load/stores being slow
-mentioned below.
-
-> 
->> To recap: BPFs don't share SQ with userspace at all, and may have
->> separate CQs to reap events from. You may post an event and it's
->> wait synchronised, so may act as a message-based synchronisation,
->> see test3 in the recently posted v2 for example. I'll also be
->> adding futex support (bpf + separate requests), it might
->> play handy for some users.
-> 
-> I'm sure that it is possible to use those mechanisms for synchronizing,
-> but I assume that explicit synchronization (locks, passing tokens
-> around) is more expensive than sequenzializing requests (implicit
-> synchronization) before starting to execute them.
-
-As you know it depends on work/synchronisation ratio, but I'm also
-concerned about scalability. Consider same argument applied to
-sequenzializing normal user threads (e.g. pthreads). Not quite
-of the same extent but shows the idea.
-
-> But probably, we need some benchmarks to see what performs better.
-
-Would be great to have some in any case. Userspace read/write
-may be slow. It can be solved (if a problem) but would require
-work to be done on the BPF kernel side
-
->>> My reasoning being not doing this serialization in userspace is that I
->>> want to use the SQPOLL mode and execute long chains of
->>> IO/computation-SQEs without leaving the kernelspace.
->>
->> btw, "in userspace" is now more vague as it can be done by BPF
->> as well. For some use cases I'd expect BPF acting as a reactor,
->> e.g. on completion of previous CQEs and submitting new requests
->> in response, and so keeping it entirely in kernel space until
->> it have anything to tell to the userspace, e.g. by posting
->> into the main CQ.
-> 
-> Yes, exactly that is my motivation. But I also think that it is a useful
-> pattern to have many eBPF callbacks pending (e.g. one for each
-> connection).
-
-Good case. One more moment is how much generality such cases need.
-E.g. there are some data structures in BPF, don't remember names
-but like perf buffers or perf rings.
-
-> 
-> With one pending invocation per connection, synchronization with a fixed
-> number of additional CQEs might be problematic: For example, for a
-> per-connection barrier synchronization with the CQ-reap approach, one
-> needs one CQ for each connection.
-> 
->>> The problem that I had when thinking about the implementation is that
->>> IO_LINK semantic works in the wrong direction: Link the next SQE,
->>> whenever it comes to this SQE. If it would be the other way around
->>> ("Link this SQE to the previous one") it would be much easier as the
->>> cost would only arise if we actually request linking. But compatibility..
->>
->> Stack vs queue style linking? If I understand what you mean right, that's
->> because this is how SQ is parsed and so that's the most efficient way.
-> 
-> No, I did not want to argue about the ordering within the link chain,
-> but with the semantic of link flag. I though that it might have been
-> beneficial to let the flag indicate that the SQE should be linked to the
-> previous one. However, after thinking this through in more detail I now
-> believe that it does not make any difference for the submission path.
-> 
-> 
->>> Ok, but what happens if the last SQE in an io_submit_sqes() call
->>> requests linking? Is it envisioned that the first SQE that comes with
->>> the next io_submit_sqes() is linked to that one?
->>
->> No, it doesn't leave submission boundary (e.g. a single syscall).
->> In theory may be left there _not_ submitted, but don't see much
->> profit in it.
->>
->>> If this is not supported, what happens if I use the SQPOLL mode where
->>>   the poller thread can partition my submitted SQEs at an arbitrary
->>>   point into multiple io_submit_sqes() calls?
->>
->> It's not arbitrary, submission is atomic in nature, first you fill
->> SQEs in memory but they are not visible to SQPOLL in a meanwhile,
->> and then you "commit" them by overwriting SQ tail pointer.
->>
->> Not a great exception for that is shared SQPOLL task, but it
->> just waits someone to take care of the case.
->>
->> if (cap_entries && to_submit > 8)
->> 	to_submit = 8;
->>
->>> If this is supported, link.head has to point to the last submitted SQE after
->>>   the first io_submit_sqes()-call. Isn't then appending SQEs in the
->>>   second io_submit_sqes()-call racy with the completion side. (With the
->>>   same problems that I tried to solve?
->>
->> Exactly why it's not supported
-> 
-> Thank you for this detailed explanation. I now understand the design
-> decision with the SQE linking much better and why delayed linking of
-> SQEs introduces linking between completion and submission side that is
-> undesirable.
-
-You're welcome, hope we'll get API into shape in no time
-
--- 
-Pavel Begunkov

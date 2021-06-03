@@ -2,59 +2,69 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EB72839AAB4
-	for <lists+io-uring@lfdr.de>; Thu,  3 Jun 2021 21:10:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35B6339AC63
+	for <lists+io-uring@lfdr.de>; Thu,  3 Jun 2021 23:11:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229881AbhFCTLc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 3 Jun 2021 15:11:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58604 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229697AbhFCTLb (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Thu, 3 Jun 2021 15:11:31 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id C2B47613F8;
-        Thu,  3 Jun 2021 19:09:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1622747386;
-        bh=2TgE7FDx8ljPbYbeuKrDIkkB1ryJrQFLYht/UhbAjAM=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=GZleejCsxmnZdVjXfU06TDpHSvQw5LMKNu3zodZIsNbtzpcU3k9uFuCycD97RqK//
-         UIu/aiDfNE0ZRa9tR8z+MO8WRO19RF6t0ozEnp+3RLBSBtBolNp1FyRpOUIgfKZyZx
-         RzVi6Q47gU+jCQWjgfxUupcU5gkAJDw5s4GFnLOCo0vynVzSorhyiTyQkou40Ybf1i
-         3hwY1S4ba6OxTowdx7fIB42/FCN7Lsze1mRSZ+iRjnmawPweNS3Zmd5m5yte1W3UD8
-         iZgoK5zVXPU+cLuQx3KPE8PptSuer+9DbLFoS/r6/R+sfeFCjCRxxQ0B+YQgR6PIaC
-         k5GGgWzHp0KnA==
-Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id BA05560A6F;
-        Thu,  3 Jun 2021 19:09:46 +0000 (UTC)
-Subject: Re: [GIT PULL] io_uring fix for 5.13-rc5
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <5a3c06eb-eb89-bc0a-7d89-b6c8420bffce@kernel.dk>
-References: <5a3c06eb-eb89-bc0a-7d89-b6c8420bffce@kernel.dk>
-X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
-X-PR-Tracked-Message-Id: <5a3c06eb-eb89-bc0a-7d89-b6c8420bffce@kernel.dk>
-X-PR-Tracked-Remote: git://git.kernel.dk/linux-block.git tags/io_uring-5.13-2021-06-03
-X-PR-Tracked-Commit-Id: 216e5835966a709bb87a4d94a7343dd90ab0bd64
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: ec955023967cf9d8669c0bf62fc13aeea002ef9e
-Message-Id: <162274738675.14300.985502301022224880.pr-tracker-bot@kernel.org>
-Date:   Thu, 03 Jun 2021 19:09:46 +0000
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        io-uring <io-uring@vger.kernel.org>
+        id S229620AbhFCVNX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 3 Jun 2021 17:13:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47714 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229656AbhFCVNW (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 3 Jun 2021 17:13:22 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8E3FC06174A;
+        Thu,  3 Jun 2021 14:11:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=hASCP7pHqQqG24knh1Q6TwkoGipOWGOlEtraDIcDlxw=; b=SagGSlPLKjwrJvb8ARgvCI2j2K
+        vPfqJl2bG8KJ+57doGN3bnQ26kMdnBMCqa5iZYGIW2i8C76HBzivKKZ7xzlADrf5Xpz1yy/y30JfW
+        Wz1Bdt03VWe8T19Bq9LKsUmlg3zM8IeM5R2YUS+fVMDo0wEjkRxq8sf6r8qeqTL8UIQFXfDzCCngP
+        64Qnnfs/8SVv1cIP50FN4GwQEiWbuTf3xCQQC9do8rcOKXownancib17qfyd1lEdYWof+CrafvrLd
+        LpCFIxi9k/h4/YHaSBOTA+INlfpMl5sOZZRuCP2VYNUZZF5/IMmuNbB3Y6tjwL+5O9zK5j4cQQxCy
+        p9Xf9epw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
+        by casper.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
+        id 1loubV-00CYoK-PX; Thu, 03 Jun 2021 21:10:39 +0000
+Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
+        id C64A0986EEC; Thu,  3 Jun 2021 23:10:12 +0200 (CEST)
+Date:   Thu, 3 Jun 2021 23:10:12 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Andres Freund <andres@anarazel.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC 4/4] io_uring: implement futex wait
+Message-ID: <20210603211012.GA68208@worktop.programming.kicks-ass.net>
+References: <cover.1622558659.git.asml.silence@gmail.com>
+ <e91af9d8f8d6e376635005fd111e9fe7a1c50fea.1622558659.git.asml.silence@gmail.com>
+ <bd824ec8-48af-b554-67a1-7ce20fcf608c@kernel.dk>
+ <409a624c-de75-0ee5-b65f-ee09fff34809@gmail.com>
+ <bdc55fcd-b172-def4-4788-8bf808ccf6d6@kernel.dk>
+ <5ab4c8bd-3e82-e87b-1ae8-3b32ced72009@gmail.com>
+ <87sg211ccj.ffs@nanos.tec.linutronix.de>
+ <20210603190338.gfykgkc7ac2akvdt@alap3.anarazel.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210603190338.gfykgkc7ac2akvdt@alap3.anarazel.de>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The pull request you sent on Thu, 3 Jun 2021 10:45:00 -0600:
+On Thu, Jun 03, 2021 at 12:03:38PM -0700, Andres Freund wrote:
+> On 2021-06-01 23:53:00 +0200, Thomas Gleixner wrote:
+> > You surely made your point that this is well thought out.
+> 
+> Really impressed with your effort to generously interpret the first
+> version of a proof of concept patch that explicitly was aimed at getting
+> feedback on the basic design and the different use cases.
 
-> git://git.kernel.dk/linux-block.git tags/io_uring-5.13-2021-06-03
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/ec955023967cf9d8669c0bf62fc13aeea002ef9e
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+You *completely* failed to describe any. I'm with tglx; I see no reason
+to even look at the patches. If you don't have a problem, you don't need
+a solution.

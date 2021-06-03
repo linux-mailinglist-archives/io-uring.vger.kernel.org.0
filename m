@@ -2,103 +2,141 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D10439A9D7
-	for <lists+io-uring@lfdr.de>; Thu,  3 Jun 2021 20:13:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C55A39AA98
+	for <lists+io-uring@lfdr.de>; Thu,  3 Jun 2021 20:59:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229640AbhFCSPj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 3 Jun 2021 14:15:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36690 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229576AbhFCSPj (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 3 Jun 2021 14:15:39 -0400
-Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DEC3C06174A
-        for <io-uring@vger.kernel.org>; Thu,  3 Jun 2021 11:13:54 -0700 (PDT)
-Received: by mail-io1-xd30.google.com with SMTP id k16so7275988ios.10
-        for <io-uring@vger.kernel.org>; Thu, 03 Jun 2021 11:13:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=LrMYcjq05VyJxkL18sDV7DXDJoHHmPTPpPGO0QVG5ws=;
-        b=sleU7SFV30zMQkS002evJmEErV/7Q8rP5+rKIXSi5P5X1GVAv9dkWqnFKKC7c38xTs
-         fU+msYzfQ4THH5kjw70SVcaiqj0GykE9UDNFUxsR+Oc2yA2zjpjV8HCeQ/oBTKg41n0t
-         pCr8PwDjnAZZ3eHScEhe2KKCK6Ujmbx+1RcPzN2N8UzF7/uqbaXMzpDyiuH7X8ueg6dl
-         1iNSh1vGLo8pk68HX3Nu4xmJAhWlfLoChXUW46C/ld/0RBSCEx3sB6cNUX4wyFEOE27V
-         xx/HFophmhK4/LPmdcV/WZfErMG+LtGGi2PbZGTC0AXWLQc5FsypAilyTGQSWEoykFSH
-         Vr3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=LrMYcjq05VyJxkL18sDV7DXDJoHHmPTPpPGO0QVG5ws=;
-        b=nD4q4sUH6QxLnzJETF7PA1mmKQHE6HUB6hzemwyJqPNHrUx9M3TytHeYIJuhBHfOVS
-         VUCr6DZUXrtiJz1ekkTv9K59U+SRGtMXEQI+dNDpFshNxo5wlq9m53fmbInvI3rq39LE
-         m/GHJCi3q4lKECGOJMHMFApCM6tkDpn67Q013vouzzbni6hocp0093MFHg4+pWF3IFbe
-         iziHclKmVoKYsqG2e/o4UAJQVwk3f8tvmoUVQZYpbJxSGIiYqauXkuCdG/ZmQMxwXfCG
-         puWL/joHvObkkblpqakTW86F03TGFTsMAgt7PrM4ZOfJLPAiBx3Ik3RZKq4S2kVkUkeq
-         a1eQ==
-X-Gm-Message-State: AOAM530FXZYonqeYTTp2HBvwDqh2lO52po4aI3BgJCenWYWPITHpr474
-        tdEdpcrZRMBe7Hbt0IS6oaBKqMtEMTUmPuzd
-X-Google-Smtp-Source: ABdhPJwMkO/dtY0/zseCyhwuB5uDMbGLutwMXu9Ca6DDUw+Rk/lHEdxnbjdJcFoLwQfJ+wckLJfkLg==
-X-Received: by 2002:a05:6638:1482:: with SMTP id j2mr260876jak.63.1622744033395;
-        Thu, 03 Jun 2021 11:13:53 -0700 (PDT)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id z2sm1901101ioe.26.2021.06.03.11.13.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Jun 2021 11:13:52 -0700 (PDT)
-Subject: Re: Memory uninitialized after "io_uring: keep table of pointers to
- ubufs"
-To:     Andres Freund <andres@anarazel.de>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210529003350.m3bqhb3rnug7yby7@alap3.anarazel.de>
- <d2c5b250-5a0f-5de5-061f-38257216389d@gmail.com>
- <20210603180612.uchkn5qqa3j7rpgd@alap3.anarazel.de>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <89f8e80f-839b-34bc-612b-d0176050bc7d@kernel.dk>
-Date:   Thu, 3 Jun 2021 12:13:52 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S229629AbhFCTBc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 3 Jun 2021 15:01:32 -0400
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:40191 "EHLO
+        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229576AbhFCTBc (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 3 Jun 2021 15:01:32 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id D174E5C0056;
+        Thu,  3 Jun 2021 14:59:46 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute4.internal (MEProxy); Thu, 03 Jun 2021 14:59:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
+        date:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to:from; s=fm1; bh=1HhH0nGpEofBMD6mVIRlFI
+        +fgZCZWFL3gEjf84ZKlKM=; b=PLxp/ZK6P3puogga2z7T88SLMK5XAGmBoxfAA2
+        ZNrIRVwMmNxtc6MitszLU8BZwc/lTgqWGFKeT1/VSkQOV1Tw5DY7EhnHo1axTeSb
+        FTBVDF6rnhFOuj4JRIJAXXiFN2tYYekodHgLqRFH0xHEL5Kvyjw3zmxT4i4W5ZsE
+        CnNm6XEAi9Kge7xD11VOKwml6iu1YQrdXovgvaXNSBXECBsZCK2QjiOVH/s/jPPJ
+        /EBbmgBhtj+VYRMzPf15wzGOvO6srjVTLDL2oOhiXY306OnaIdBLE8Rew10Qs+Mu
+        gWDvwVBVNok5Ow5v37Ta1uouvWN44ZpPFX3677NUoWjTBgkQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=1HhH0n
+        GpEofBMD6mVIRlFI+fgZCZWFL3gEjf84ZKlKM=; b=BXECjmeyA/5BTs5G79EV9E
+        Afkp2S/ZaD415CyImVnr7P69xjykxGDXNTakYKrLWFbrBKO22xtaZDTiNBwLQaLx
+        SkuBje6TmI3H/G30Muxr4+OOcKVj4mf/IHJkMZlsV8Xm5Lz9x+ie2NtSTZ9DrPet
+        hQ5nyDtS8felCLpl0ryC81TIWnTwHpM67AVgWOpifNAGIYjQG+5w+Q9xgBSntnYQ
+        iA3UbsCi8Ali0U4MRFxh1vtyITmrAgIZplX5CHFzZqj9k8LDJwKoHBHkjgiennQX
+        hpqHnS8jwq+yCcbqdGVm7CXbc9H6m82VZ5LyevS8Y0xKKFEP6C9Pm5njNAPPewBw
+        ==
+X-ME-Sender: <xms:oSa5YHnCSU-QEoW89XaSjt5bgWMA7D6-z2OgEVxWteGLmBPpE-plcQ>
+    <xme:oSa5YK2fooSex2kXuCNK3UJ2kUh1VgqLtzBFKNnzrGwUoN0SmMPcKTBpg4XxYZ2Lg
+    PMn8JQ8zLr-qtb8Zw>
+X-ME-Received: <xmr:oSa5YNrCj8VuBfwKvWVXwvFI-BBxDJ3qigC6DFL9jiWtQDtwnakNUmOEl_KW8txpE7rhERiS3H4ftmplcEljPXM44zPzYo9_irS9Iu_vzC79A14EBpmAV7fnCdTw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrvdelledgudeftdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffvffukfhfgggtuggjhfesthdtredttddtvdenucfhrhhomheptehnughr
+    vghsucfhrhgvuhhnugcuoegrnhgurhgvshesrghnrghrrgiivghlrdguvgeqnecuggftrf
+    grthhtvghrnhepkeelheeguedvhfffgeegkefgteeuueelffdvvddtieevgeejkeejgfek
+    teevvddtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    eprghnughrvghssegrnhgrrhgriigvlhdruggv
+X-ME-Proxy: <xmx:oSa5YPk-ITmcGc24u3SDOFRTFFMtH2eGDe6GmYyOsGCpWSGeL4G94Q>
+    <xmx:oSa5YF1Ki2lP1aBaeqsV98ph8hv6nNCQWpDXGZ8AS4mGn7UdW05fVQ>
+    <xmx:oSa5YOvTwMmOZYhXynmh4FAQsgi7JmCc7bgD_phxfQGMfjR0ulAwZw>
+    <xmx:oia5YClvVx8vg0zpbZUqm_uyxHlfq54lSHHTZpd7rh9Cssgzh98Weg>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 3 Jun 2021 14:59:45 -0400 (EDT)
+Date:   Thu, 3 Jun 2021 11:59:43 -0700
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC 0/4] futex request support
+Message-ID: <20210603185943.eeav4sfkrxyuhytp@alap3.anarazel.de>
+CFrom:  Andres Freund <andres@anarazel.de>
+References: <cover.1622558659.git.asml.silence@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20210603180612.uchkn5qqa3j7rpgd@alap3.anarazel.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1622558659.git.asml.silence@gmail.com>
+From:   Andres Freund <andres@anarazel.de>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/3/21 12:06 PM, Andres Freund wrote:
-> Hi,
-> 
-> On 2021-05-29 12:03:12 +0100, Pavel Begunkov wrote:
->> On 5/29/21 1:33 AM, Andres Freund wrote:
->>> Hi,
->>>
->>> I started to see buffer registration randomly failing with ENOMEM on
->>> 5.13. Registering buffer or two often succeeds, but more than that
->>> rarely. Running the same program as root succeeds - but the user has a high
->>> rlimit.
->>>
->>> The issue is that io_sqe_buffer_register() doesn't initialize
->>> imu. io_buffer_account_pin() does imu->acct_pages++, before calling
->>> io_account_mem(ctx, imu->acct_pages);
->>>
->>> Which means that a random amount of memory is being accounted for. On the first
->>> few allocations this sometimes fails to fail because the memory is zero, but
->>> after a bit of reuse...
->>
->> Makes sense, thanks for digging in. I've just sent a patch, would
->> be great if you can test it or send your own.
-> 
-> Sorry for the slow response, I'm off this week. I did just get around to
-> test and unsurprisingly: The patch does fix the issue.
+Hi,
 
-OK good, thanks for confirming, I did ship it out earlier today so
-should be in the next -rc.
+On 2021-06-01 15:58:25 +0100, Pavel Begunkov wrote:
+> Should be interesting for a bunch of people, so we should first
+> outline API and capabilities it should give. As I almost never
+> had to deal with futexes myself, would especially love to hear
+> use case, what might be lacking and other blind spots.
 
--- 
-Jens Axboe
+I did chat with Jens about how useful futex support would be in io_uring, so I
+should outline our / my needs. I'm off work this week though, so I don't think
+I'll have much time to experiment.
 
+For postgres's AIO support (which I am working on) there are two, largely
+independent, use-cases for desiring futex support in io_uring.
+
+The first is the ability to wait for locks (queued r/w locks, blocking
+implemented via futexes) and IO at the same time, within one task. Quickly and
+efficiently processing IO completions can improve whole-system latency and
+throughput substantially in some cases (journalling, indexes and other
+high-contention areas - which often have a low queue depth). This is true
+*especially* when there also is lock contention, which tends to make efficient
+IO scheduling harder.
+
+The second use case is the ability to efficiently wait in several tasks for
+one IO to be processed. The prototypical example here is group commit/journal
+flush, where each task can only continue once the journal flush has
+completed. Typically one of waiters has to do a small amount of work with the
+completion (updating a few shared memory variables) before the other waiters
+can be released. It is hard to implement this efficiently and race-free with
+io_uring right now without adding locking around *waiting* on the completion
+side (instead of just consumption of completions). One cannot just wait on the
+io_uring, because of a) the obvious race that another process could reap all
+completions between check and wait b) there is no good way to wake up other
+waiters once the userspace portion of IO completion is through.
+
+
+All answers for postgres:
+
+> 1) Do we need PI?
+
+Not right now.
+
+Not related to io_uring: I do wish there were a lower overhead (and lower
+guarantees) version of PI futexes. Not for correctness reasons, but
+performance. Granting the waiter's timeslice to the lock holder would improve
+common contention scenarios with more runnable tasks than cores.
+
+
+> 2) Do we need requeue? Anything else?
+
+I can see requeue being useful, but I haven't thought it through fully.
+
+Do the wake/wait ops as you have them right now support bitsets?
+
+
+> 3) How hot waits are? May be done fully async avoiding io-wq, but
+> apparently requires more changes in futex code.
+
+The waits can be quite hot, most prominently on low latency storage, but not
+just.
+
+Greetings,
+
+Andres Freund

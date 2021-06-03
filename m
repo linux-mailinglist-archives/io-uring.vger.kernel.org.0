@@ -2,141 +2,88 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C55A39AA98
-	for <lists+io-uring@lfdr.de>; Thu,  3 Jun 2021 20:59:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D13739AAA1
+	for <lists+io-uring@lfdr.de>; Thu,  3 Jun 2021 21:03:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229629AbhFCTBc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 3 Jun 2021 15:01:32 -0400
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:40191 "EHLO
+        id S229719AbhFCTF2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 3 Jun 2021 15:05:28 -0400
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:57431 "EHLO
         out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229576AbhFCTBc (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 3 Jun 2021 15:01:32 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id D174E5C0056;
-        Thu,  3 Jun 2021 14:59:46 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Thu, 03 Jun 2021 14:59:46 -0400
+        by vger.kernel.org with ESMTP id S229576AbhFCTF0 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 3 Jun 2021 15:05:26 -0400
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id 0EDDD5C01B2;
+        Thu,  3 Jun 2021 15:03:41 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Thu, 03 Jun 2021 15:03:41 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
-        date:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to:from; s=fm1; bh=1HhH0nGpEofBMD6mVIRlFI
-        +fgZCZWFL3gEjf84ZKlKM=; b=PLxp/ZK6P3puogga2z7T88SLMK5XAGmBoxfAA2
-        ZNrIRVwMmNxtc6MitszLU8BZwc/lTgqWGFKeT1/VSkQOV1Tw5DY7EhnHo1axTeSb
-        FTBVDF6rnhFOuj4JRIJAXXiFN2tYYekodHgLqRFH0xHEL5Kvyjw3zmxT4i4W5ZsE
-        CnNm6XEAi9Kge7xD11VOKwml6iu1YQrdXovgvaXNSBXECBsZCK2QjiOVH/s/jPPJ
-        /EBbmgBhtj+VYRMzPf15wzGOvO6srjVTLDL2oOhiXY306OnaIdBLE8Rew10Qs+Mu
-        gWDvwVBVNok5Ow5v37Ta1uouvWN44ZpPFX3677NUoWjTBgkQ==
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm1; bh=i85yA63Hrpapc8XvmqBhkPew63p
+        noUlzHiEl9Tj5xH4=; b=R2VsRxEmcPP9SiXDiwUNTvFUz2CZlwdItv96yx+/YaL
+        l6ZMUhgpVpeYCmLaoR5JK8G94pa5KhIju75m/yWnKJfL+TIsOhGjIknGFfXEUzYZ
+        PudkgZ/ajaceIrg/d2okNNsnF2chVWwTMFRgFLLZ9JAM6EXZ/bxS1wW6y0CHbu2h
+        NxStF62/Yu3PAJ5gmylv1RksyBNzcwH9lCfszACCt5KXLB+dbMpHVZ2DK6Xo+P9/
+        ytGhdpoRDz/NjY63jh3tNCG2nOMLk71ePoZJ3JIvf8KNpXUc1kVZ+Arx15c+M99x
+        Bzu1Eb70NRFTKjD88TvoHWhIkwelzzO4rOgBqqeNduQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-type:date:from:in-reply-to
         :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=1HhH0n
-        GpEofBMD6mVIRlFI+fgZCZWFL3gEjf84ZKlKM=; b=BXECjmeyA/5BTs5G79EV9E
-        Afkp2S/ZaD415CyImVnr7P69xjykxGDXNTakYKrLWFbrBKO22xtaZDTiNBwLQaLx
-        SkuBje6TmI3H/G30Muxr4+OOcKVj4mf/IHJkMZlsV8Xm5Lz9x+ie2NtSTZ9DrPet
-        hQ5nyDtS8felCLpl0ryC81TIWnTwHpM67AVgWOpifNAGIYjQG+5w+Q9xgBSntnYQ
-        iA3UbsCi8Ali0U4MRFxh1vtyITmrAgIZplX5CHFzZqj9k8LDJwKoHBHkjgiennQX
-        hpqHnS8jwq+yCcbqdGVm7CXbc9H6m82VZ5LyevS8Y0xKKFEP6C9Pm5njNAPPewBw
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=i85yA6
+        3Hrpapc8XvmqBhkPew63pnoUlzHiEl9Tj5xH4=; b=S/gB/ekYPaxAWdhcDgbNCA
+        79YEGmeVhIfVtX0DVWrkFJCEtkynv2eRFByX9pIlfXJMTwCMLJ9o34K2oVG+aofE
+        1w7ngeS/gwzd5yVXkjI5AMeNyhn6pr/SRupmWsDqMC9psvBOkj8pV0W8WDHqPUyU
+        qP0pvIrDv+j17OUxd1+BRZJVhpYfGeRiwOj3xltvNddtI930jC7j2ysIxzzrHMzn
+        dQMxd7vSIVWR/4jJUZQJdjC+c31pYs049RjgOYopElLZqWYAIwordXVm/wss3myl
+        /O8xWL/s21TOpWrrklaw9qNWfxDr075vHqisFgID44AkNI05H3Y3xGzoSWgMGX9g
         ==
-X-ME-Sender: <xms:oSa5YHnCSU-QEoW89XaSjt5bgWMA7D6-z2OgEVxWteGLmBPpE-plcQ>
-    <xme:oSa5YK2fooSex2kXuCNK3UJ2kUh1VgqLtzBFKNnzrGwUoN0SmMPcKTBpg4XxYZ2Lg
-    PMn8JQ8zLr-qtb8Zw>
-X-ME-Received: <xmr:oSa5YNrCj8VuBfwKvWVXwvFI-BBxDJ3qigC6DFL9jiWtQDtwnakNUmOEl_KW8txpE7rhERiS3H4ftmplcEljPXM44zPzYo9_irS9Iu_vzC79A14EBpmAV7fnCdTw>
+X-ME-Sender: <xms:jCe5YNFaf8DCymtlKS6doxUCxkyP-qSZfsK69AmiPm6BKBbGQnxOHg>
+    <xme:jCe5YCWNc6DweONlxyMXlMnsgltqyJ-Mequhb-Ipe9It7QWWTJUPtx7HpTBgHuW-O
+    5Rajr19zZ4RjLksNA>
+X-ME-Received: <xmr:jCe5YPKufk2LFFCg_RWtaFy3kjeGlF-IpulQ74nJV5gN7XTI8NLcIzSE1Pj4Ykjn5BE5phqw_DP1Xh4Xb74w8UIIisJIkRupCCZPvKccaHjpHM5uOZN-8W-VBTw3>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrvdelledgudeftdcutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
     necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffvffukfhfgggtuggjhfesthdtredttddtvdenucfhrhhomheptehnughr
+    enucfjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomheptehnughr
     vghsucfhrhgvuhhnugcuoegrnhgurhgvshesrghnrghrrgiivghlrdguvgeqnecuggftrf
-    grthhtvghrnhepkeelheeguedvhfffgeegkefgteeuueelffdvvddtieevgeejkeejgfek
-    teevvddtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    grthhtvghrnhepudekhfekleeugeevteehleffffejgeelueduleeffeeutdelffeujeff
+    hfeuffdunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
     eprghnughrvghssegrnhgrrhgriigvlhdruggv
-X-ME-Proxy: <xmx:oSa5YPk-ITmcGc24u3SDOFRTFFMtH2eGDe6GmYyOsGCpWSGeL4G94Q>
-    <xmx:oSa5YF1Ki2lP1aBaeqsV98ph8hv6nNCQWpDXGZ8AS4mGn7UdW05fVQ>
-    <xmx:oSa5YOvTwMmOZYhXynmh4FAQsgi7JmCc7bgD_phxfQGMfjR0ulAwZw>
-    <xmx:oia5YClvVx8vg0zpbZUqm_uyxHlfq54lSHHTZpd7rh9Cssgzh98Weg>
+X-ME-Proxy: <xmx:jCe5YDFVGThhiLHb65EDXfUWCv9W6XSwcykTaz06JtxTFbLvqQXpOA>
+    <xmx:jCe5YDUQw-gKUcpyQmw2BLH6S7ODhUzmDcgIvFHmuwVxY3yYeUq8CQ>
+    <xmx:jCe5YOMgYMMAa7xu9xqs21euUoeiFx2qv9A0Fb94FI9R8w5XrDa7Dw>
+    <xmx:jSe5YKGqnmt7mk3u_4pKgzQLRcuOWuvZ604vAhF3rlUbmx5ZmYUsmQ>
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 3 Jun 2021 14:59:45 -0400 (EDT)
-Date:   Thu, 3 Jun 2021 11:59:43 -0700
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Thomas Gleixner <tglx@linutronix.de>,
+ 3 Jun 2021 15:03:39 -0400 (EDT)
+Date:   Thu, 3 Jun 2021 12:03:38 -0700
+From:   Andres Freund <andres@anarazel.de>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
         Ingo Molnar <mingo@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Darren Hart <dvhart@infradead.org>,
         Davidlohr Bueso <dave@stgolabs.net>,
         linux-kernel@vger.kernel.org
-Subject: Re: [RFC 0/4] futex request support
-Message-ID: <20210603185943.eeav4sfkrxyuhytp@alap3.anarazel.de>
-CFrom:  Andres Freund <andres@anarazel.de>
+Subject: Re: [RFC 4/4] io_uring: implement futex wait
+Message-ID: <20210603190338.gfykgkc7ac2akvdt@alap3.anarazel.de>
 References: <cover.1622558659.git.asml.silence@gmail.com>
+ <e91af9d8f8d6e376635005fd111e9fe7a1c50fea.1622558659.git.asml.silence@gmail.com>
+ <bd824ec8-48af-b554-67a1-7ce20fcf608c@kernel.dk>
+ <409a624c-de75-0ee5-b65f-ee09fff34809@gmail.com>
+ <bdc55fcd-b172-def4-4788-8bf808ccf6d6@kernel.dk>
+ <5ab4c8bd-3e82-e87b-1ae8-3b32ced72009@gmail.com>
+ <87sg211ccj.ffs@nanos.tec.linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1622558659.git.asml.silence@gmail.com>
-From:   Andres Freund <andres@anarazel.de>
+In-Reply-To: <87sg211ccj.ffs@nanos.tec.linutronix.de>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi,
+On 2021-06-01 23:53:00 +0200, Thomas Gleixner wrote:
+> You surely made your point that this is well thought out.
 
-On 2021-06-01 15:58:25 +0100, Pavel Begunkov wrote:
-> Should be interesting for a bunch of people, so we should first
-> outline API and capabilities it should give. As I almost never
-> had to deal with futexes myself, would especially love to hear
-> use case, what might be lacking and other blind spots.
-
-I did chat with Jens about how useful futex support would be in io_uring, so I
-should outline our / my needs. I'm off work this week though, so I don't think
-I'll have much time to experiment.
-
-For postgres's AIO support (which I am working on) there are two, largely
-independent, use-cases for desiring futex support in io_uring.
-
-The first is the ability to wait for locks (queued r/w locks, blocking
-implemented via futexes) and IO at the same time, within one task. Quickly and
-efficiently processing IO completions can improve whole-system latency and
-throughput substantially in some cases (journalling, indexes and other
-high-contention areas - which often have a low queue depth). This is true
-*especially* when there also is lock contention, which tends to make efficient
-IO scheduling harder.
-
-The second use case is the ability to efficiently wait in several tasks for
-one IO to be processed. The prototypical example here is group commit/journal
-flush, where each task can only continue once the journal flush has
-completed. Typically one of waiters has to do a small amount of work with the
-completion (updating a few shared memory variables) before the other waiters
-can be released. It is hard to implement this efficiently and race-free with
-io_uring right now without adding locking around *waiting* on the completion
-side (instead of just consumption of completions). One cannot just wait on the
-io_uring, because of a) the obvious race that another process could reap all
-completions between check and wait b) there is no good way to wake up other
-waiters once the userspace portion of IO completion is through.
-
-
-All answers for postgres:
-
-> 1) Do we need PI?
-
-Not right now.
-
-Not related to io_uring: I do wish there were a lower overhead (and lower
-guarantees) version of PI futexes. Not for correctness reasons, but
-performance. Granting the waiter's timeslice to the lock holder would improve
-common contention scenarios with more runnable tasks than cores.
-
-
-> 2) Do we need requeue? Anything else?
-
-I can see requeue being useful, but I haven't thought it through fully.
-
-Do the wake/wait ops as you have them right now support bitsets?
-
-
-> 3) How hot waits are? May be done fully async avoiding io-wq, but
-> apparently requires more changes in futex code.
-
-The waits can be quite hot, most prominently on low latency storage, but not
-just.
-
-Greetings,
-
-Andres Freund
+Really impressed with your effort to generously interpret the first
+version of a proof of concept patch that explicitly was aimed at getting
+feedback on the basic design and the different use cases.

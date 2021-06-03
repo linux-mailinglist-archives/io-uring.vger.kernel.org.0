@@ -2,105 +2,86 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FC163999FF
-	for <lists+io-uring@lfdr.de>; Thu,  3 Jun 2021 07:30:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16DA8399A00
+	for <lists+io-uring@lfdr.de>; Thu,  3 Jun 2021 07:30:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229617AbhFCFcR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 3 Jun 2021 01:32:17 -0400
-Received: from mail-ed1-f46.google.com ([209.85.208.46]:41472 "EHLO
-        mail-ed1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229695AbhFCFcR (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 3 Jun 2021 01:32:17 -0400
-Received: by mail-ed1-f46.google.com with SMTP id g18so3642503edq.8
-        for <io-uring@vger.kernel.org>; Wed, 02 Jun 2021 22:30:21 -0700 (PDT)
+        id S229695AbhFCFcU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 3 Jun 2021 01:32:20 -0400
+Received: from mail-ej1-f42.google.com ([209.85.218.42]:33369 "EHLO
+        mail-ej1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229663AbhFCFcU (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 3 Jun 2021 01:32:20 -0400
+Received: by mail-ej1-f42.google.com with SMTP id g20so7414542ejt.0
+        for <io-uring@vger.kernel.org>; Wed, 02 Jun 2021 22:30:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=0m90Pi2fsbiv7eIsA7PUIUpZ33Nb37UJWkVj3kI8hZM=;
-        b=BWavu0gXZqEiF7uL1QXXKTBqmXnkBlakt9+LXlwHGibiA9fuzGxPoQ9VHWW8IWgWSc
-         bNfIxJ8QaT2UGvn4nKqCw9gsFaoiptIXxswkdkZYHphmDg4nVOs+FIgaCMnh4Mr6/WFR
-         42TnrAKWjCw2KAGqmtkS2Ouqea6uYhGUXH2RwERv/VNHyQYKdDBYvdiXfwp8/TQSSH3v
-         E88u3yKkDLkzPr+NJXoHwsCYCY/ZNZwcu3hXH/h3m6+p8Xn7sscCH6fnWGrqIQucTgmB
-         R5xydGJq5pFdkUYCSclJLrQB3l5KJuuuukiWRcbN2CUdjllJ8Fk6n+fHRb7JUd84r7tn
-         l0rQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=qUYH92bLLZMcczeVhqxSJDZB6B+nB7isQp+/JnDgiKo=;
+        b=u+xpdzf2Y8Wl66Mm5LD5ihsc6BQamUYej3BJxFVBq6raj0TzoHtBMUTF69L4gaXFOG
+         0ouWGoVaAveeY3euqHlBj6DR3oOI7LVbk5y1hn3hSanFELr8UBkjx1nEgM6VazspXFhx
+         GxZqAzem9w5mHFw+U35zqL0M4dcEms6cv3GWpEJ+9Vfg+fLEN0mWwGZ9LBiDUIfJscPX
+         J4tCeYsA8cdDafV2BEXDdm+BmyO4RtazomyBS9nhs17aZvztTA1QowUFtFd2jjZ3+xV2
+         FkTpIauZfErX6val0PUX1f5uoaJym9Yj5J+lcyj1vnX2TQgeculChaq/i1pJFlT8vajl
+         /vTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=0m90Pi2fsbiv7eIsA7PUIUpZ33Nb37UJWkVj3kI8hZM=;
-        b=anHEac9f0j+ZPNlSAx4UfBYrSOJC0bkTAyH4Wh/KGxhcJXlluwUBZowCrHE1Ij26gu
-         vJ5i7+4Q6vMJBEmo6dbCZhA/cpvudcPZrlxjahyIgbUGX4fsqdYrJJO3a8TENlRjbYSN
-         0E3ahLUQDiJU63uYj9oPZzp8R91FsSou2RdN95xLuM0LcLkqzDdTXIdq8X5RWnIgMpch
-         eqsPl94ELH0rwAAlY09GMwT4X8yVLZ7JAKUZNLczrqv+8YH+UmZLVZj5brl+of4Vh5er
-         Ax2LgOH7FL5RfKaflj70EA0Dt92H7ashLvKlR3ZzQztlb+x4UxvkQR/TyWc5lKD6e8sj
-         dDCA==
-X-Gm-Message-State: AOAM530FRHulgSxjAO55nZgaOwqAjXbiD+CejQ7XX9L5zo6RXcPFGYoi
-        1tFO3q01rtrv8UtFA4l051I=
-X-Google-Smtp-Source: ABdhPJwjKVu5jTe7AZ9hoaeEm2i7Lgws1cFxLhwNjcdY1KVJMsmE5ggm+zZSloAw+a94y25XyOIEow==
-X-Received: by 2002:a05:6402:1d38:: with SMTP id dh24mr7823656edb.18.1622698160872;
-        Wed, 02 Jun 2021 22:29:20 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=qUYH92bLLZMcczeVhqxSJDZB6B+nB7isQp+/JnDgiKo=;
+        b=oxj/GbpR3aI9sNs7DX8q9uRaCXKhkYa1AdNg5cAuifSvtDbzQ2WMQLvOEcZl7TVw3f
+         xd8vhsIkgmgHZT24aodfgqsn1Nl/RXz1JLFQjy+sFwJbuUUTlbAPE2Ufex1+alUdff7+
+         nOdSspnst42M8LQcJlY6B4kehgsuf+yfMXST/SOr3zxzc9C6Kk01pGbkdePPBEea+7gM
+         f5nb+hGL6xZ48FiFrDqEv8PozxPNeTOke/BVblqhMjH3/cxGP9tBd67Yk99RFjc2S0g+
+         nLLmP0Q9PWv8tl4USOOIXyST7+TBeVZMbfZekQNmx1VwMLETFIbxiwzjL7eQPraS6nWf
+         mbpA==
+X-Gm-Message-State: AOAM531oPgyLalRBn13NHd70kV6Oiz1n2aTQQay/ZHfykXm9pND8GqE2
+        3EXHXvejuLjkGjIhpzh10y8=
+X-Google-Smtp-Source: ABdhPJwblpAu9LbxuIIZVj287HLOpVajVM1lD+3NX5ItY+4Jc/9jdL9TgUBii6zgkSxm+ISnYdwVIg==
+X-Received: by 2002:a17:906:8041:: with SMTP id x1mr15345628ejw.81.1622698162149;
+        Wed, 02 Jun 2021 22:29:22 -0700 (PDT)
 Received: from carbon.v ([108.61.166.58])
-        by smtp.googlemail.com with ESMTPSA id hr23sm943291ejc.101.2021.06.02.22.29.19
+        by smtp.googlemail.com with ESMTPSA id hr23sm943291ejc.101.2021.06.02.22.29.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jun 2021 22:29:20 -0700 (PDT)
+        Wed, 02 Jun 2021 22:29:21 -0700 (PDT)
 From:   Dmitry Kadashev <dkadashev@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
         Dmitry Kadashev <dkadashev@gmail.com>
-Subject: [PATCH liburing v2 00/11] add mkdir, [sym]linkat, mknodat support
-Date:   Thu,  3 Jun 2021 12:28:55 +0700
-Message-Id: <20210603052906.2616489-1-dkadashev@gmail.com>
+Subject: [PATCH liburing v2 01/11] liburing.h: add mkdirat prep helper
+Date:   Thu,  3 Jun 2021 12:28:56 +0700
+Message-Id: <20210603052906.2616489-2-dkadashev@gmail.com>
 X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210603052906.2616489-1-dkadashev@gmail.com>
+References: <20210603052906.2616489-1-dkadashev@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This started as an attempt to add mkdir support to io_uring, but in the
-end more ops were added. Heavily based on a series that added unlinkat
-support (commit: 44db0f437a2b ("io_uring.h: add renameat and unlinkat
-opcodes") and a couple of subsequent ones).
+Signed-off-by: Dmitry Kadashev <dkadashev@gmail.com>
+---
+ src/include/liburing.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-The kernel side of the change:
-https://lore.kernel.org/io-uring/20210603051836.2614535-1-dkadashev@gmail.com/T/
-
-1-2 adds mkdirat support (the opcode is already there) and test
-3-5 adds symlinkat support and test
-6-8 adds linkat support and test
-9-11 adds mknodat support and test
-
-v2:
-- add symlinkat, linkat, mknodat
-
-Dmitry Kadashev (11):
-  liburing.h: add mkdirat prep helper
-  Add mkdirat test case
-  io_uring.h: add symlinkat opcode
-  liburing.h: add symlinkat prep helper
-  Add symlinkat test case
-  io_uring.h: add linkat opcode
-  liburing.h: add linkat prep helper
-  Add linkat test case
-  io_uring.h: add mknodat opcode
-  liburing.h: add mknodat prep helper
-  Add mknod test case
-
- .gitignore                      |   4 +
- src/include/liburing.h          |  29 ++++++
- src/include/liburing/io_uring.h |   5 ++
- test/Makefile                   |   8 ++
- test/hardlink.c                 | 133 +++++++++++++++++++++++++++
- test/mkdir.c                    | 105 ++++++++++++++++++++++
- test/mknod.c                    | 155 ++++++++++++++++++++++++++++++++
- test/symlink.c                  | 113 +++++++++++++++++++++++
- 8 files changed, 552 insertions(+)
- create mode 100644 test/hardlink.c
- create mode 100644 test/mkdir.c
- create mode 100644 test/mknod.c
- create mode 100644 test/symlink.c
-
+diff --git a/src/include/liburing.h b/src/include/liburing.h
+index d3f8f91..b7f3bea 100644
+--- a/src/include/liburing.h
++++ b/src/include/liburing.h
+@@ -548,6 +548,12 @@ static inline void io_uring_prep_sync_file_range(struct io_uring_sqe *sqe,
+ 	sqe->sync_range_flags = flags;
+ }
+ 
++static inline void io_uring_prep_mkdirat(struct io_uring_sqe *sqe, int dfd,
++					const char *path, mode_t mode)
++{
++	io_uring_prep_rw(IORING_OP_MKDIRAT, sqe, dfd, path, mode, 0);
++}
++
+ /*
+  * Returns number of unconsumed (if SQPOLL) or unsubmitted entries exist in
+  * the SQ ring
 -- 
 2.30.2
 

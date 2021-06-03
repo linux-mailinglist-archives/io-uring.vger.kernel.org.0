@@ -2,101 +2,103 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 12B6839A9C2
-	for <lists+io-uring@lfdr.de>; Thu,  3 Jun 2021 20:06:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D10439A9D7
+	for <lists+io-uring@lfdr.de>; Thu,  3 Jun 2021 20:13:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230104AbhFCSIA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 3 Jun 2021 14:08:00 -0400
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:48499 "EHLO
-        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229850AbhFCSIA (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 3 Jun 2021 14:08:00 -0400
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 937CC5C0072;
-        Thu,  3 Jun 2021 14:06:14 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Thu, 03 Jun 2021 14:06:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=L7JL5l0QHtqSsOPix17Y5ib8Syw
-        C0opDRoDXdkot+QY=; b=fnJjmEBz2x+tbWb1S1R9JTR5zOjX6A02txQWKMzz7gL
-        kmdrh+hUUZKNMNExbJF5KlmSLzlUy3UhgUVkB7HaIZ2GsowHTUyE8dYF99CyUc0C
-        b0KeFg+HmDt7yq3ADcvYn+uzva+E2aW9YhUgklFjTLVVAklOo5duuT1xZu+0wjyW
-        EtnzOuUwyX9KzdbGZyPURi3pke2y5K9p8wmpvegCiymO26C78OQ/byzS+XD8uQkD
-        bnqguVTejqpF1gooU0Nj4FENRd0FStEWLp2MdU73qq/DWqiC5zcOlM2XGnnjRWGV
-        NZv/OHTeCB4QV6A9DrBjb6q47xiAzatkPCqTYCEW+kg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=L7JL5l
-        0QHtqSsOPix17Y5ib8SywC0opDRoDXdkot+QY=; b=HXkckYBehCeHod1L6gETOT
-        rNR82hjv9NHeB1BYmLpKA7CzP3Z6W8qqwD6fm51OLKFjiEavyd7Vdx43t59YZb+V
-        SY4uZmN4VVDTkLZ3oRiZsAuyMkqepa0/033eLcJ46Br/MbnKtkfCBweiJxxZsRVC
-        gOmNkcXykBHrOEP0DRd0A3SIAv6x/wupk8/pxNAk7kul3YYRQFcE2mXXi8Jgow75
-        Zoy8NK4a7EEnaSGEi3zaRHmRXD5nxW9wy1fUiVal+8tQz324onnEluPcQTSJkg++
-        e6FFo8idEKyWpd1mBa6YwtxT5shx/z7vKWty2vSJv/OHYU0/un4wE+Nwc2Ekp7fw
-        ==
-X-ME-Sender: <xms:Fhq5YNHuXLPzQ6bYXvS-3_Zw8PqDAOTgPGklvwxU1g5Gwh6hXa7lRA>
-    <xme:Fhq5YCWRw4vo7yfXTnNCBHsYqO0Y7BkD_pYnY9PpBCOxsb1C4H-1ZXo8CWxpzWAm6
-    O_JldZ0t9RyhlHyEg>
-X-ME-Received: <xmr:Fhq5YPJiKBL8DOEVoP_Wjhp65OcaMaqMYkbmCJ5Hw2BVKNOaGUDaBG47OcDQuBNWtoaUQlvinaM0sjnIPPw6RruRz7ZMbw9amQDMSmJHJxUou0oCMJu2iG8bmwWA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrvdelledguddukecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomheptehnughr
-    vghsucfhrhgvuhhnugcuoegrnhgurhgvshesrghnrghrrgiivghlrdguvgeqnecuggftrf
-    grthhtvghrnhepudekhfekleeugeevteehleffffejgeelueduleeffeeutdelffeujeff
-    hfeuffdunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    eprghnughrvghssegrnhgrrhgriigvlhdruggv
-X-ME-Proxy: <xmx:Fhq5YDH5ElxUR4veE4hNWbal5ZUjZi5vXSaP8AAKrpHmpI1o5-QVAw>
-    <xmx:Fhq5YDXkZbMVDaW8HN6ljMZZ4FnY3o28snWBbZ4f9rutZWE9O8ol5A>
-    <xmx:Fhq5YONkLMXMwX6gMfxe0CQLYY6456nbVhBSLVmNaVz_RF4PP_mKMA>
-    <xmx:Fhq5YAhjUwwMcC6_jbouEwP1SqlODGs-DNv03QWOqJzSj3B9TX3YWg>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 3 Jun 2021 14:06:13 -0400 (EDT)
-Date:   Thu, 3 Jun 2021 11:06:12 -0700
-From:   Andres Freund <andres@anarazel.de>
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+        id S229640AbhFCSPj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 3 Jun 2021 14:15:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36690 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229576AbhFCSPj (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 3 Jun 2021 14:15:39 -0400
+Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DEC3C06174A
+        for <io-uring@vger.kernel.org>; Thu,  3 Jun 2021 11:13:54 -0700 (PDT)
+Received: by mail-io1-xd30.google.com with SMTP id k16so7275988ios.10
+        for <io-uring@vger.kernel.org>; Thu, 03 Jun 2021 11:13:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=LrMYcjq05VyJxkL18sDV7DXDJoHHmPTPpPGO0QVG5ws=;
+        b=sleU7SFV30zMQkS002evJmEErV/7Q8rP5+rKIXSi5P5X1GVAv9dkWqnFKKC7c38xTs
+         fU+msYzfQ4THH5kjw70SVcaiqj0GykE9UDNFUxsR+Oc2yA2zjpjV8HCeQ/oBTKg41n0t
+         pCr8PwDjnAZZ3eHScEhe2KKCK6Ujmbx+1RcPzN2N8UzF7/uqbaXMzpDyiuH7X8ueg6dl
+         1iNSh1vGLo8pk68HX3Nu4xmJAhWlfLoChXUW46C/ld/0RBSCEx3sB6cNUX4wyFEOE27V
+         xx/HFophmhK4/LPmdcV/WZfErMG+LtGGi2PbZGTC0AXWLQc5FsypAilyTGQSWEoykFSH
+         Vr3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=LrMYcjq05VyJxkL18sDV7DXDJoHHmPTPpPGO0QVG5ws=;
+        b=nD4q4sUH6QxLnzJETF7PA1mmKQHE6HUB6hzemwyJqPNHrUx9M3TytHeYIJuhBHfOVS
+         VUCr6DZUXrtiJz1ekkTv9K59U+SRGtMXEQI+dNDpFshNxo5wlq9m53fmbInvI3rq39LE
+         m/GHJCi3q4lKECGOJMHMFApCM6tkDpn67Q013vouzzbni6hocp0093MFHg4+pWF3IFbe
+         iziHclKmVoKYsqG2e/o4UAJQVwk3f8tvmoUVQZYpbJxSGIiYqauXkuCdG/ZmQMxwXfCG
+         puWL/joHvObkkblpqakTW86F03TGFTsMAgt7PrM4ZOfJLPAiBx3Ik3RZKq4S2kVkUkeq
+         a1eQ==
+X-Gm-Message-State: AOAM530FXZYonqeYTTp2HBvwDqh2lO52po4aI3BgJCenWYWPITHpr474
+        tdEdpcrZRMBe7Hbt0IS6oaBKqMtEMTUmPuzd
+X-Google-Smtp-Source: ABdhPJwMkO/dtY0/zseCyhwuB5uDMbGLutwMXu9Ca6DDUw+Rk/lHEdxnbjdJcFoLwQfJ+wckLJfkLg==
+X-Received: by 2002:a05:6638:1482:: with SMTP id j2mr260876jak.63.1622744033395;
+        Thu, 03 Jun 2021 11:13:53 -0700 (PDT)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id z2sm1901101ioe.26.2021.06.03.11.13.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Jun 2021 11:13:52 -0700 (PDT)
 Subject: Re: Memory uninitialized after "io_uring: keep table of pointers to
  ubufs"
-Message-ID: <20210603180612.uchkn5qqa3j7rpgd@alap3.anarazel.de>
+To:     Andres Freund <andres@anarazel.de>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20210529003350.m3bqhb3rnug7yby7@alap3.anarazel.de>
  <d2c5b250-5a0f-5de5-061f-38257216389d@gmail.com>
+ <20210603180612.uchkn5qqa3j7rpgd@alap3.anarazel.de>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <89f8e80f-839b-34bc-612b-d0176050bc7d@kernel.dk>
+Date:   Thu, 3 Jun 2021 12:13:52 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d2c5b250-5a0f-5de5-061f-38257216389d@gmail.com>
+In-Reply-To: <20210603180612.uchkn5qqa3j7rpgd@alap3.anarazel.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi,
-
-On 2021-05-29 12:03:12 +0100, Pavel Begunkov wrote:
-> On 5/29/21 1:33 AM, Andres Freund wrote:
-> > Hi,
-> > 
-> > I started to see buffer registration randomly failing with ENOMEM on
-> > 5.13. Registering buffer or two often succeeds, but more than that
-> > rarely. Running the same program as root succeeds - but the user has a high
-> > rlimit.
-> > 
-> > The issue is that io_sqe_buffer_register() doesn't initialize
-> > imu. io_buffer_account_pin() does imu->acct_pages++, before calling
-> > io_account_mem(ctx, imu->acct_pages);
-> > 
-> > Which means that a random amount of memory is being accounted for. On the first
-> > few allocations this sometimes fails to fail because the memory is zero, but
-> > after a bit of reuse...
+On 6/3/21 12:06 PM, Andres Freund wrote:
+> Hi,
 > 
-> Makes sense, thanks for digging in. I've just sent a patch, would
-> be great if you can test it or send your own.
+> On 2021-05-29 12:03:12 +0100, Pavel Begunkov wrote:
+>> On 5/29/21 1:33 AM, Andres Freund wrote:
+>>> Hi,
+>>>
+>>> I started to see buffer registration randomly failing with ENOMEM on
+>>> 5.13. Registering buffer or two often succeeds, but more than that
+>>> rarely. Running the same program as root succeeds - but the user has a high
+>>> rlimit.
+>>>
+>>> The issue is that io_sqe_buffer_register() doesn't initialize
+>>> imu. io_buffer_account_pin() does imu->acct_pages++, before calling
+>>> io_account_mem(ctx, imu->acct_pages);
+>>>
+>>> Which means that a random amount of memory is being accounted for. On the first
+>>> few allocations this sometimes fails to fail because the memory is zero, but
+>>> after a bit of reuse...
+>>
+>> Makes sense, thanks for digging in. I've just sent a patch, would
+>> be great if you can test it or send your own.
+> 
+> Sorry for the slow response, I'm off this week. I did just get around to
+> test and unsurprisingly: The patch does fix the issue.
 
-Sorry for the slow response, I'm off this week. I did just get around to
-test and unsurprisingly: The patch does fix the issue.
+OK good, thanks for confirming, I did ship it out earlier today so
+should be in the next -rc.
 
-Greetings,
+-- 
+Jens Axboe
 
-Andres Freund

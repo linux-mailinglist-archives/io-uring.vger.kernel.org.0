@@ -2,55 +2,55 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BE86D399A05
-	for <lists+io-uring@lfdr.de>; Thu,  3 Jun 2021 07:30:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 58B4D399A07
+	for <lists+io-uring@lfdr.de>; Thu,  3 Jun 2021 07:30:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229790AbhFCFc2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 3 Jun 2021 01:32:28 -0400
-Received: from mail-ej1-f52.google.com ([209.85.218.52]:47003 "EHLO
-        mail-ej1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229663AbhFCFc2 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 3 Jun 2021 01:32:28 -0400
-Received: by mail-ej1-f52.google.com with SMTP id b9so7272049ejc.13
-        for <io-uring@vger.kernel.org>; Wed, 02 Jun 2021 22:30:32 -0700 (PDT)
+        id S229718AbhFCFcb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 3 Jun 2021 01:32:31 -0400
+Received: from mail-ed1-f52.google.com ([209.85.208.52]:41497 "EHLO
+        mail-ed1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229791AbhFCFcb (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 3 Jun 2021 01:32:31 -0400
+Received: by mail-ed1-f52.google.com with SMTP id g18so3642956edq.8
+        for <io-uring@vger.kernel.org>; Wed, 02 Jun 2021 22:30:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=XwVy3Qz9VPC6MJGsOtNOJ4guTRMS3voj6OLvs1FhaxU=;
-        b=esBNqGgwl6OELmRVh5cjRdy0i+fRMEGgpFOUGCGFQ8iam2Ng500uxcHJghQ6P86uTE
-         guGRaqMsgDJfNaNSHkNXQaPK6vcdD2zwPUzrKW86IYiYr/aRZaJYPd/cswEyXLLzwOZG
-         uDbpJa+DoFVJDM+oozlD2SgJvz4Cmpy+RJrg5aJGcOftxuFzvvm0oFrKnTbk4C7fjBrg
-         DGILhD1/6HKyqdU7FdRLi6v7BJedpsMJDd6aLyGu0si9qPUio2WCKK+bFPzy4O+NLdDT
-         xICgm25UQDc8MYl6qhyUjXnnpSiACkpWZa7agW12RRQPQxMITChMo6/7z/QGoF1NUAwe
-         55kA==
+        bh=8zpHJmKsAzKzcTUEmLn8QUg49fDq/X/mkXl2iRO9pl8=;
+        b=s7bF4fn54mWR/VgS0hGIjf82DpNqK5dZnsRFlsf0IM7wlD1924Vp/IPzT/ID/XGREu
+         CdheOERKAuXxkaBft8bqHkdD1+ts4nr0EGqFqioYsx/89uJ6UYsZiWHGrLgyQfEnD0cv
+         MXSg1fMblK4hFoPrLaAfzqp0O99d21Pi4Mn5sUHYZsdjuggYFQTHyLXMUOO1urWT0FIM
+         HX0qYdH9wxWSOayJts5vQExzxKyBPswewYIEM8F0uE5cx6IQGMoHXxO5rELr2QL1R+RT
+         AMY0pJE2v/Cu3x/rE07Vk+7O5ImL15UMpuKCfQz/rsN1nBnnXs+Nzix7s9M8WfdFkpAA
+         JQuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=XwVy3Qz9VPC6MJGsOtNOJ4guTRMS3voj6OLvs1FhaxU=;
-        b=Em3B0gL+t+5St/Uddpewfntshj4sxC8Ff2ZDvQZe8i1I60GxIS5MVrMgdtNPVwgwes
-         VKswnUP/e0BWQxh2ccZVGz75c6hvBCnQb3lSKDmyot8nxeoZ7IIzMvH2sV4GMURNmcP4
-         U8O8/GHa8E6te8v5HcQhTuoXGY6iwJey7gGIbA2NIK6+dYVwj+E+GsoRwLNo6A00VbNp
-         vdTpXyd6LaG7djiAMSzF04QBhI0eUtIvmQ/5wI4tEFSKKLfXmIU6A6sAaCQ7mSpCNfyc
-         z13mH+/CcftR59FbnM2lMEn1thQ47C+L371y39qmxUQUeduASDKHIgdU1GfC/fShfOog
-         mjYg==
-X-Gm-Message-State: AOAM532NZ27ZuvhJDpzBE34xHF8TztwNpangos4PuDTi/eXw4TZ0wuEr
-        YnmjfWBRzoBc37FqGu312Zo=
-X-Google-Smtp-Source: ABdhPJwYoH6rTXxaiTsvNCKJTR7U3OdCpKviipiP6DDTxw83GcPv0nF4xA96AKPUExrLr4ioLJAIlQ==
-X-Received: by 2002:a17:906:4e06:: with SMTP id z6mr28079969eju.34.1622698172318;
-        Wed, 02 Jun 2021 22:29:32 -0700 (PDT)
+        bh=8zpHJmKsAzKzcTUEmLn8QUg49fDq/X/mkXl2iRO9pl8=;
+        b=VsqVGtBhM8xqlTU5a8Nikr2hTUookzgdm8nMG3TtNdvq548ZLFfiZW9Di05rzfna8V
+         9Yt9bHsOCOLvq3dx9L2QMi2FEVRmstJkRnKDBkoQ/wxmU+cHd54RBTv/oLtK2d/K3EA9
+         bKsnLcWZJa2RVUzLj4UwaiiynrGGwrcrPb/pivdt/kRj4oz5dUVWz6ltGzIxDn2nAov6
+         3KY0B3krkTIcwHwRSDfMC2HZ0EFhn3vSjAsouHYM0IOvDXLPafQbVWU8GxYwkblA5viF
+         FpJRzo80FJZgPaSJOc9EIJTZiLjJ+vpRidhRtj+WtfsH9fAEirjcgdBta+PmEWbE3idC
+         z/rA==
+X-Gm-Message-State: AOAM5333yvWveIxoXZKhirmkgdPE44zUWk7fWnxXOGKGyIuOYa+kLbQy
+        c1Ju9ug1MDN35BV1xf0nRmE=
+X-Google-Smtp-Source: ABdhPJzaasonZ5thcv3fBQcRjyuzpJ64ZNtSO3VxNnN7YwEj5Elga+NgMv/eie+ycuPWJz4GUyhkpA==
+X-Received: by 2002:a05:6402:2791:: with SMTP id b17mr360751ede.44.1622698173537;
+        Wed, 02 Jun 2021 22:29:33 -0700 (PDT)
 Received: from carbon.v ([108.61.166.58])
-        by smtp.googlemail.com with ESMTPSA id hr23sm943291ejc.101.2021.06.02.22.29.31
+        by smtp.googlemail.com with ESMTPSA id hr23sm943291ejc.101.2021.06.02.22.29.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jun 2021 22:29:32 -0700 (PDT)
+        Wed, 02 Jun 2021 22:29:33 -0700 (PDT)
 From:   Dmitry Kadashev <dkadashev@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
         Dmitry Kadashev <dkadashev@gmail.com>
-Subject: [PATCH liburing v2 09/11] io_uring.h: add mknodat opcode
-Date:   Thu,  3 Jun 2021 12:29:04 +0700
-Message-Id: <20210603052906.2616489-10-dkadashev@gmail.com>
+Subject: [PATCH liburing v2 10/11] liburing.h: add mknodat prep helper
+Date:   Thu,  3 Jun 2021 12:29:05 +0700
+Message-Id: <20210603052906.2616489-11-dkadashev@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210603052906.2616489-1-dkadashev@gmail.com>
 References: <20210603052906.2616489-1-dkadashev@gmail.com>
@@ -62,29 +62,27 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 Signed-off-by: Dmitry Kadashev <dkadashev@gmail.com>
 ---
- src/include/liburing/io_uring.h | 2 ++
- 1 file changed, 2 insertions(+)
+ src/include/liburing.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/src/include/liburing/io_uring.h b/src/include/liburing/io_uring.h
-index a5e48e7..46cd2fc 100644
---- a/src/include/liburing/io_uring.h
-+++ b/src/include/liburing/io_uring.h
-@@ -49,6 +49,7 @@ struct io_uring_sqe {
- 		__u32		rename_flags;
- 		__u32		unlink_flags;
- 		__u32		hardlink_flags;
-+		__u32		mknod_dev;
- 	};
- 	__u64	user_data;	/* data to be passed back at completion time */
- 	union {
-@@ -145,6 +146,7 @@ enum {
- 	IORING_OP_MKDIRAT,
- 	IORING_OP_SYMLINKAT,
- 	IORING_OP_LINKAT,
-+	IORING_OP_MKNODAT,
+diff --git a/src/include/liburing.h b/src/include/liburing.h
+index 51dc602..c6ef0e8 100644
+--- a/src/include/liburing.h
++++ b/src/include/liburing.h
+@@ -570,6 +570,13 @@ static inline void io_uring_prep_linkat(struct io_uring_sqe *sqe, int olddfd,
+ 	sqe->hardlink_flags = flags;
+ }
  
- 	/* this goes last, obviously */
- 	IORING_OP_LAST,
++static inline void io_uring_prep_mknodat(struct io_uring_sqe *sqe, int dfd,
++					const char *pathname, mode_t mode, dev_t dev)
++{
++	io_uring_prep_rw(IORING_OP_MKNODAT, sqe, dfd, pathname, mode, 0);
++	sqe->mknod_dev = dev;
++}
++
+ /*
+  * Returns number of unconsumed (if SQPOLL) or unsubmitted entries exist in
+  * the SQ ring
 -- 
 2.30.2
 

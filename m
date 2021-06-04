@@ -2,155 +2,85 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AEDC639BBD8
-	for <lists+io-uring@lfdr.de>; Fri,  4 Jun 2021 17:27:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F317139BD75
+	for <lists+io-uring@lfdr.de>; Fri,  4 Jun 2021 18:44:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231204AbhFDP3c (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 4 Jun 2021 11:29:32 -0400
-Received: from mail-ej1-f43.google.com ([209.85.218.43]:35464 "EHLO
-        mail-ej1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230002AbhFDP3c (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 4 Jun 2021 11:29:32 -0400
-Received: by mail-ej1-f43.google.com with SMTP id h24so15148130ejy.2;
-        Fri, 04 Jun 2021 08:27:32 -0700 (PDT)
+        id S229854AbhFDQp7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 4 Jun 2021 12:45:59 -0400
+Received: from mail-wm1-f44.google.com ([209.85.128.44]:50829 "EHLO
+        mail-wm1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229690AbhFDQp7 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 4 Jun 2021 12:45:59 -0400
+Received: by mail-wm1-f44.google.com with SMTP id f20so1532726wmg.0
+        for <io-uring@vger.kernel.org>; Fri, 04 Jun 2021 09:43:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:references:from:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=7NyVlw+9K3FCCA2uSnrwkKBb8HWv+UokBAr++IGfKhM=;
-        b=s23oVB5rPIhGFMyr1LyWqg7VxA8HL8EXKsYpTHJLuS4X6y9Vrb7wI62S0KFSWxnHBf
-         dT5GTpmpcIaqkKEUc/E9il76pbzxzwljOa8MrSIXZeaBoR6SFVr2pzQsdwCd6DWC73vW
-         p+otwlyKxble5KWISQe7WFkYBXg0h/V2J7M0OiR1GB9XoEo7NrAAN4dEENjkehjXCC3q
-         MxcB9472C8G9ghk2w4rxyh3/ybOdPduXmoPiB8uI5YeXr34MPa+TvKi7B89YZ+ncibtK
-         ltuASF2UMkwGU0OQ3B+oTrbOHOq4EtYy06degtU0J2IpWz2heYb2HRKBIVYXJL0yFPT6
-         vqiA==
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bkBNx6CDCDug1216WbBvCHNO3z3k0uzKIx7Lyd/dMUk=;
+        b=QnWXAwxqftxBN5G3P0eytpuh1koyN5NIuWZD0EjlOmJ8CwoSbrx47fLH9GKk3cYxEJ
+         wnx1zunVoelHxzcD7ooVRa1wReAhoXHUtv6/oaF84ZsFE8Yg4cLCsWVYD5M5KD2hQMi/
+         amLmiCR7G1KfqBFzEbi+dKv0q1bjSBFl9kUtjlvaqLXuyHKSsiuiPql0oL7FNMSG+leh
+         mAhm4hSJ8vgmE/FCKB8w89tSzgRHUWU24BhNeM0iEFKQjIfIMOukFYkY1AkqanGvjGHN
+         u6upIrTttgDK1nO/J/+YSGVMwKydGLoTJmHUg3KMnG5RQMSxKCgJE+GNdEmui6TMNb8C
+         Tcaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=7NyVlw+9K3FCCA2uSnrwkKBb8HWv+UokBAr++IGfKhM=;
-        b=KIDXYuus3dnZxgKfA61WAc8POHcXhD1b4fiEu/P3GlbHoqYin8cAAyby0XjvdrYDbI
-         AO5doYFdUmzht/ZOnJf9ajO5XP4jIgZdt5Y3uIarAjC85hTn5LC46MHjB+snQ3wD/yqJ
-         C/C+xH75uO6gUtlQHvwxxs3gNDk8M7Rxt+SjWe47Xb9eYwA/ZhtvJwrsItvb6NXLeJFV
-         MWEoAcuPw+whFx86TzX/TyimnyorPGtjvY4p0Fsb8JjmwYYI+46HgamLF8gHIb81eYOp
-         GwLZbNuOLf1H/sPXhitARPZIkE8Nual/h69xrQ6hIzjzxly5sDmatn8WUFA1T1+EEztS
-         uaOQ==
-X-Gm-Message-State: AOAM530p5a2favn6/LG2OxSwszsApD4NKsrsCcVQgYl0pEQgz8foRlXy
-        QhO2mjNLEkaksSgnCvxdouwYMI7w9RDlAHEb
-X-Google-Smtp-Source: ABdhPJxhbgjPO19SxBBdwFn1xHwfvCgfMF+F5nkBG4btosn6hicrMJb2fxbOmZ3Vou71B5Zr1xGT5w==
-X-Received: by 2002:a17:906:17c4:: with SMTP id u4mr4768007eje.481.1622820391430;
-        Fri, 04 Jun 2021 08:26:31 -0700 (PDT)
-Received: from ?IPv6:2620:10d:c096:310::2410? ([2620:10d:c093:600::2:b808])
-        by smtp.gmail.com with ESMTPSA id de19sm3480486edb.70.2021.06.04.08.26.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Jun 2021 08:26:31 -0700 (PDT)
-To:     Andres Freund <andres@anarazel.de>
-Cc:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        linux-kernel@vger.kernel.org
-References: <cover.1622558659.git.asml.silence@gmail.com>
- <20210603185943.eeav4sfkrxyuhytp@alap3.anarazel.de>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Subject: Re: [RFC 0/4] futex request support
-Message-ID: <3b365e09-2524-77b4-472b-d03aea4130c0@gmail.com>
-Date:   Fri, 4 Jun 2021 16:26:21 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        bh=bkBNx6CDCDug1216WbBvCHNO3z3k0uzKIx7Lyd/dMUk=;
+        b=nJEocBBUOmJiDAZwunfQud6LZTBsscXf/NGCYHb/m7a2EyA2yvy34cpha1k4grwdTq
+         ikYVGObcVpmly7eT2zTp9uyHFXPNu7VPWHA2fK9v77KKpKmyNe4U9Bf/C2JCMlEntI0M
+         wanlz2uo43eqROY573in0cI5sm19kxPkdq2sCpazrVxfMu8Dgp5tjq5rRwv/Fxjm+M2x
+         AJu6T1BY04Hv4Mh/cPz0lZyZFnQwm8sPG35gak3yMm9witrxzrWp3zZP81t3IjpKyIF2
+         0uO9gnnFKIYuFguHygdz0YL0VVPD4gEnko+q3B6QzzmEFUvtW5WrY0659Z5SN4TcmnMi
+         Pj1g==
+X-Gm-Message-State: AOAM5301/tKqn5hw0x4IAuJmzXo+kBNCpEYNX0lyOMn6d9p/KVIbwAO3
+        UmDVLcKcL1bhlGiJkN0+xkBe4A==
+X-Google-Smtp-Source: ABdhPJzhUDiMzdE25g7rnhzQyTIyOEOiCrZBu8aUm5OCjgLLlyigN+uz9OY4t/M+Kb8+84P2eqV7qw==
+X-Received: by 2002:a05:600c:2054:: with SMTP id p20mr4217278wmg.175.1622824977481;
+        Fri, 04 Jun 2021 09:42:57 -0700 (PDT)
+Received: from localhost ([91.110.139.87])
+        by smtp.gmail.com with ESMTPSA id k16sm5998458wmr.42.2021.06.04.09.42.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Jun 2021 09:42:57 -0700 (PDT)
+From:   Fam Zheng <fam.zheng@bytedance.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring@vger.kernel.org, fam.zheng@bytedance.com, fam@euphon.net
+Subject: [PATCH] io_uring: Fix comment of io_get_sqe
+Date:   Fri,  4 Jun 2021 17:42:56 +0100
+Message-Id: <20210604164256.12242-1-fam.zheng@bytedance.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-In-Reply-To: <20210603185943.eeav4sfkrxyuhytp@alap3.anarazel.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/3/21 7:59 PM, Andres Freund wrote:
-> Hi,
-> 
-> On 2021-06-01 15:58:25 +0100, Pavel Begunkov wrote:
->> Should be interesting for a bunch of people, so we should first
->> outline API and capabilities it should give. As I almost never
->> had to deal with futexes myself, would especially love to hear
->> use case, what might be lacking and other blind spots.
-> 
-> I did chat with Jens about how useful futex support would be in io_uring, so I
-> should outline our / my needs. I'm off work this week though, so I don't think
-> I'll have much time to experiment.
-> 
-> For postgres's AIO support (which I am working on) there are two, largely
-> independent, use-cases for desiring futex support in io_uring.
-> 
-> The first is the ability to wait for locks (queued r/w locks, blocking
-> implemented via futexes) and IO at the same time, within one task. Quickly and
-> efficiently processing IO completions can improve whole-system latency and
-> throughput substantially in some cases (journalling, indexes and other
-> high-contention areas - which often have a low queue depth). This is true
-> *especially* when there also is lock contention, which tends to make efficient
-> IO scheduling harder.
+The sqe_ptr argument has been gone since 709b302faddf (io_uring:
+simplify io_get_sqring, 2020-04-08), made the return value of the
+function. Update the comment accordingly.
 
-Can you give a quick pointer to futex uses in the postgres code or
-where they are? Can't find in master but want to see what types of
-futex operations are used and how.
+Signed-off-by: Fam Zheng <fam.zheng@bytedance.com>
+---
+ fs/io_uring.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> The second use case is the ability to efficiently wait in several tasks for
-> one IO to be processed. The prototypical example here is group commit/journal
-> flush, where each task can only continue once the journal flush has
-> completed. Typically one of waiters has to do a small amount of work with the
-> completion (updating a few shared memory variables) before the other waiters
-> can be released. It is hard to implement this efficiently and race-free with
-> io_uring right now without adding locking around *waiting* on the completion
-> side (instead of just consumption of completions). One cannot just wait on the
-> io_uring, because of a) the obvious race that another process could reap all
-> completions between check and wait b) there is no good way to wake up other
-> waiters once the userspace portion of IO completion is through.
-
-IIRC, the idea is to have a link "I/O -> fut_wake(master_task or nr=1)",
-and then after getting some work done the woken task does wake(nr=all),
-presumably via sys_futex or io_uring. Is that right?
-
-As with this option userspace can't modify the memory on which futex
-sits, the wake in the patchset allows to do an atomic add similarly
-to FUTEX_WAKE_OP. However, I still have general concerns if that's
-a flexible enough way.
-
-When io_uring-BPF is added it can be offloaded to BPF programs
-probably together with "updating a few shared memory variables",
-but these are just thoughts for the future.
-
-> All answers for postgres:
-> 
->> 1) Do we need PI?
-> 
-> Not right now.
-> 
-> Not related to io_uring: I do wish there were a lower overhead (and lower
-> guarantees) version of PI futexes. Not for correctness reasons, but
-> performance. Granting the waiter's timeslice to the lock holder would improve
-> common contention scenarios with more runnable tasks than cores.
-> 
-> 
->> 2) Do we need requeue? Anything else?
-> 
-> I can see requeue being useful, but I haven't thought it through fully.
-> 
-> Do the wake/wait ops as you have them right now support bitsets?
-
-No, but trivial to add
-
->> 3) How hot waits are? May be done fully async avoiding io-wq, but
->> apparently requires more changes in futex code.
-> 
-> The waits can be quite hot, most prominently on low latency storage, but not
-> just.
-
-Thanks Andres, that clears it up. The next step would be to verify
-that FUTEX_WAKE_OP-style waking is enough.
-
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 903458afd56c..bb3685ba335d 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -6670,7 +6670,7 @@ static void io_commit_sqring(struct io_ring_ctx *ctx)
+ }
+ 
+ /*
+- * Fetch an sqe, if one is available. Note that sqe_ptr will point to memory
++ * Fetch an sqe, if one is available. Note this returns a pointer to memory
+  * that is mapped by userspace. This means that care needs to be taken to
+  * ensure that reads are stable, as we cannot rely on userspace always
+  * being a good citizen. If members of the sqe are validated and then later
 -- 
-Pavel Begunkov
+2.31.1
+

@@ -2,104 +2,98 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 22FE239B896
-	for <lists+io-uring@lfdr.de>; Fri,  4 Jun 2021 13:58:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1160E39BACA
+	for <lists+io-uring@lfdr.de>; Fri,  4 Jun 2021 16:17:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230158AbhFDMA0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 4 Jun 2021 08:00:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42804 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230050AbhFDMAZ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 4 Jun 2021 08:00:25 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BC71C06174A;
-        Fri,  4 Jun 2021 04:58:39 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id ci15so14048460ejc.10;
-        Fri, 04 Jun 2021 04:58:39 -0700 (PDT)
+        id S230124AbhFDOTK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 4 Jun 2021 10:19:10 -0400
+Received: from mail-ej1-f41.google.com ([209.85.218.41]:42889 "EHLO
+        mail-ej1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230122AbhFDOTJ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 4 Jun 2021 10:19:09 -0400
+Received: by mail-ej1-f41.google.com with SMTP id k25so9258945eja.9;
+        Fri, 04 Jun 2021 07:17:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:cc:references:from:subject:message-id:date:user-agent
+        h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=1Fe/Z05xnT6BVBzZXbmdjpF8j14Qb2X3kcylmlP9s+Q=;
-        b=upH2hIZYKlzGo8WteDWe1N5VTdxdzid7tno4FMRUvgbVLRjueopoHTxo8BnzYHsCkx
-         OWH5FMp2rGp4RP9WLuaDkHCmjGRkkde3hANXa0Tid7DY/Zciq9e2bZ2M/gbpAl1uG4ET
-         y5ikLI8YRbQaPFS/zpqs+e92xmwibq/8mXRK6q9XPQmHOTryc8Fy+AuwjdHwK8dXlbD+
-         ii+zoDgdZdZ+V5Od3MDD/RGizsvkiPKmckq9SUa0rYLtgWdZtf6NI582GanVarodVfgT
-         V2QKjwu3tNOJ9uAZ9NprCAIX0pLpC2zF1cS4j96xkboaN0zhYbL+UT5rIgLhfVdfrtRd
-         tlAw==
+        bh=BxgumMgzhDjL0lr/zHcx8CCLu0Hsz3srHrbkQdXC+6I=;
+        b=NAv/5WhdpFGP4ZJKd43WO/ifv2dibJLXgz5PRhZYn2UUQqAlDCwtFLNrXpgtLjorHv
+         EH3cQrvWWte34yAdoroXGbxoHWv0737cY90bA9Lu8HZB9+WQ8Tw9ezElSc8kOd6XPCbV
+         irA7V1kESizVdiZn2lONPgXgOa3lXcBFiDVl2OddaMt2ZuonFu2hF9zKqqo8cckI8KDG
+         6HZjHr3EuNaqGBzulYV87xq0gdKr1Vd9Fm1j4AbQ1WtXlLPMS2e+O/44SaZ3YnIuu2oL
+         LIZdWxPLOJLQw2PO/jmNDxRbHnKhibhzBnqQ2/RrizwbOOOQ0XAd3iQtE95AXktpw69b
+         vBkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=1Fe/Z05xnT6BVBzZXbmdjpF8j14Qb2X3kcylmlP9s+Q=;
-        b=uebx0nARO3WxegwAtthT4yCmCjfvcAkvZxE41/mLjIx3PmZRCfNtTeFqiQ3ZIVFi5x
-         jNzxjaP6fr6nr9rJ9rj7Ki6Ylt4kE0ELP8lMDkHey4FuKIV3TlMnhiqfE6+J4jAgwvsD
-         PStNucvLFyvgaQj1vDDGzqv+nane7kYUa/P+PDbt4oyxtCa7tVvx9uWNyf5PllGdrM91
-         +m8MCtftvZPODGjfWb38P2+ZQl7U8xkyQjqnn37DMsO9zrpGu2T2VdTy0Ooyf8MBviLU
-         XKtdYZ0esJ1HayOrhE6Xk60/pDk55YC2Cyu+95umuVXK4udjIdog+Uvoel8ivgPLKwIo
-         me5g==
-X-Gm-Message-State: AOAM530nTBX1jhtCfb4IpAHJSe5eeViJAWO1/Ug+eXjKjubABDiYZIxl
-        vi/Cbu5b7p02LIUNA33XTEelTTcOlGNhmRUn
-X-Google-Smtp-Source: ABdhPJxlXWybseV7Sq6ZkmQqWIVLAAB+K7aA7L1pVfKSrtl7v6M60jozZe+oAz6kBAvzuq1kGm16Jw==
-X-Received: by 2002:a17:906:4e06:: with SMTP id z6mr3957363eju.34.1622807914396;
-        Fri, 04 Jun 2021 04:58:34 -0700 (PDT)
+        bh=BxgumMgzhDjL0lr/zHcx8CCLu0Hsz3srHrbkQdXC+6I=;
+        b=ZjlmPhBh2GzFakV5ADqOs155EdP+E0Q9Vk3LoELwLRvPP64ahJWmvdUQDN4pGd7qLR
+         pP3QaIjARUVgxthaL+FunBaF1jpql2zmMRDueYuBckKdQatNJXFnYWAjpkCNa4MsoLUl
+         4xDXMmlk2yZVJUSFaAnPF/tkhqvQlKC8p95gy+yqg6fVI3uQhooGJrI8p+rSOadgQCH7
+         2VrJLYLLKWN0As/qOKeRtgmnkJI0VdeInl66IymgzOy5mTa9/QNtFxAVZ0XZDvQuGRdn
+         am26b+kUHcC4tDL/ytO+edlY6shZxtCTcmy4mT4agTbki8o2lidLcNdBJhWMyvWJS/zK
+         ZijQ==
+X-Gm-Message-State: AOAM533FSxIST0yy54pfXcUOxgWrOBhMQOyMry3YytaPuqlSgVvrB1Wx
+        j5B3xNdJb/D/pfyGgRsqoJmEmXPmDS42SwD/
+X-Google-Smtp-Source: ABdhPJzzXXd13cbkvg/19J8P9IENnt57vEjvQSmDx8Wp+JUBknE+hONtbS65kbKgwgLjP9GTy0j4/Q==
+X-Received: by 2002:a17:906:4089:: with SMTP id u9mr4373948ejj.478.1622816182529;
+        Fri, 04 Jun 2021 07:16:22 -0700 (PDT)
 Received: from ?IPv6:2620:10d:c096:310::2410? ([2620:10d:c093:600::2:b808])
-        by smtp.gmail.com with ESMTPSA id i5sm3122648edt.11.2021.06.04.04.58.33
+        by smtp.gmail.com with ESMTPSA id e22sm3354036edv.57.2021.06.04.07.16.21
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Jun 2021 04:58:34 -0700 (PDT)
-To:     Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>,
-        io-uring@vger.kernel.org
-Cc:     Andres Freund <andres@anarazel.de>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
+        Fri, 04 Jun 2021 07:16:22 -0700 (PDT)
+Subject: Re: Memory uninitialized after "io_uring: keep table of pointers to
+ ubufs"
+To:     Andres Freund <andres@anarazel.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <cover.1622558659.git.asml.silence@gmail.com>
- <e91af9d8f8d6e376635005fd111e9fe7a1c50fea.1622558659.git.asml.silence@gmail.com>
- <bd824ec8-48af-b554-67a1-7ce20fcf608c@kernel.dk>
- <409a624c-de75-0ee5-b65f-ee09fff34809@gmail.com>
- <bdc55fcd-b172-def4-4788-8bf808ccf6d6@kernel.dk>
- <5ab4c8bd-3e82-e87b-1ae8-3b32ced72009@gmail.com>
- <87sg211ccj.ffs@nanos.tec.linutronix.de>
- <30bdf12c-6287-4c13-920c-bb5cc6ac02bf@gmail.com>
- <87k0nayojy.ffs@nanos.tec.linutronix.de>
+References: <20210529003350.m3bqhb3rnug7yby7@alap3.anarazel.de>
+ <d2c5b250-5a0f-5de5-061f-38257216389d@gmail.com>
+ <20210603180612.uchkn5qqa3j7rpgd@alap3.anarazel.de>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-Subject: Re: [RFC 4/4] io_uring: implement futex wait
-Message-ID: <aba00834-2e1c-f8cf-e2ab-f13303eac562@gmail.com>
-Date:   Fri, 4 Jun 2021 12:58:24 +0100
+Message-ID: <9fa5c0f2-ff28-3775-9f4e-6a1cec06f151@gmail.com>
+Date:   Fri, 4 Jun 2021 15:16:12 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.1
 MIME-Version: 1.0
-In-Reply-To: <87k0nayojy.ffs@nanos.tec.linutronix.de>
+In-Reply-To: <20210603180612.uchkn5qqa3j7rpgd@alap3.anarazel.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/4/21 10:19 AM, Thomas Gleixner wrote:
-> Pavel,
+On 6/3/21 7:06 PM, Andres Freund wrote:
+> Hi,
 > 
-> On Thu, Jun 03 2021 at 11:31, Pavel Begunkov wrote:
->> On 6/1/21 10:53 PM, Thomas Gleixner wrote:
->>> 1) The proposed solution: I can't figure out from the changelogs or the
->>>    cover letter what kind of problems it solves and what the exact
->>>    semantics are. If you ever consider to submit futex patches, may I
->>>    recommend to study Documentation/process and get some inspiration
->>>    from git-log?
+> On 2021-05-29 12:03:12 +0100, Pavel Begunkov wrote:
+>> On 5/29/21 1:33 AM, Andres Freund wrote:
+>>> Hi,
+>>>
+>>> I started to see buffer registration randomly failing with ENOMEM on
+>>> 5.13. Registering buffer or two often succeeds, but more than that
+>>> rarely. Running the same program as root succeeds - but the user has a high
+>>> rlimit.
+>>>
+>>> The issue is that io_sqe_buffer_register() doesn't initialize
+>>> imu. io_buffer_account_pin() does imu->acct_pages++, before calling
+>>> io_account_mem(ctx, imu->acct_pages);
+>>>
+>>> Which means that a random amount of memory is being accounted for. On the first
+>>> few allocations this sometimes fails to fail because the memory is zero, but
+>>> after a bit of reuse...
 >>
->> I'm sorry you're incapable of grasping ideas quick, but may we
->> stop this stupid galling and switch to a more productive way of
->> speaking?
+>> Makes sense, thanks for digging in. I've just sent a patch, would
+>> be great if you can test it or send your own.
 > 
-> which you just achieved by telling me I'm too stupid to understand your
-> brilliant idea. Great start for a productive discussion. Try again.
+> Sorry for the slow response, I'm off this week. I did just get around to
+> test and unsurprisingly: The patch does fix the issue.
 
-Exactly why there was "we". I have my share of annoyance, which I would
-readily put aside if that saves me time. And that's the suggestion
-made
+Yep, since you already narrowed it down. Thanks for testing
 
 -- 
 Pavel Begunkov

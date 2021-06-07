@@ -2,142 +2,168 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C83739E5A0
-	for <lists+io-uring@lfdr.de>; Mon,  7 Jun 2021 19:38:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3902F39E6E2
+	for <lists+io-uring@lfdr.de>; Mon,  7 Jun 2021 20:51:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230314AbhFGRkt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 7 Jun 2021 13:40:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39138 "EHLO
+        id S230494AbhFGSxg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 7 Jun 2021 14:53:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55200 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229997AbhFGRks (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 7 Jun 2021 13:40:48 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75E5DC061766;
-        Mon,  7 Jun 2021 10:38:46 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id k25so22542771eja.9;
-        Mon, 07 Jun 2021 10:38:46 -0700 (PDT)
+        with ESMTP id S230426AbhFGSxg (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 7 Jun 2021 14:53:36 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F59AC061766
+        for <io-uring@vger.kernel.org>; Mon,  7 Jun 2021 11:51:32 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id k25so22886531eja.9
+        for <io-uring@vger.kernel.org>; Mon, 07 Jun 2021 11:51:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:references:from:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=odod/aL580usFoCrQ2ZIpR8f8KNjq0Ei0avyia9Sm5U=;
-        b=btDts6FyI+dIQ7q2H4EKchwLevR6PmKqB9yrQtP4JEoPCxNeikQzMRWuoVBr09DLq+
-         wK36KEtgglgUjflNdkOlcmRTOTlISWuhbWSzGN1MZwcVdll7bQa2/DofYyB0H7iph/Nc
-         erYUYoLUk/9eCD+J3M9XpJSReTpMR+2WbY2Q7QW7gNaCPeWh5VR0SZoMMUr6On+krq5E
-         HstA9K/iZc5t0rx9coL1SgRqmxlG5oWbBv+WPBh7SkN6uH5cWpZv+2wuPXJ3p0klN8hd
-         5ojXthNK6TADGmBNMucCTeY9EYt7ccrEYXgISF60drqxtbyPZ2g+c57WRx+fB7HYY0YW
-         jD9g==
+        d=nametag.social; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ScXrC8JzROe4oik0nKr4Zt97X1eNIvPR3vNcHFbWFVw=;
+        b=zNYJK3b0Nb8HpGi/aABY5z2iapsdx7yAQtFWXWDFPJbKUfJQRiCc4K3VvQzVgBNVV7
+         WmcbojERHJ6iCdEs9d2RqP7whPvdiFbmY/hEO9hD7unbLU1FJCZjPcn0fa3AXh17EJvt
+         n1bDhfDzsCeih8kV5nUptWol/9UYaSzIPzwsjT6P4otB7wjamQ/cdTSrNoBOxdMm2TCw
+         nzGkMLQXg75dYNSIbXaUv9J7X2nnp+CO2+Xss/4obDx7I5daox9uJ0pE142qL5X+MKzy
+         svxWHQMtvw3F2N1yxMEHFRXR17tTdive8JPi5xi9sSzu7+c5DTerRO422bt36YGuJTMy
+         v2Qg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=odod/aL580usFoCrQ2ZIpR8f8KNjq0Ei0avyia9Sm5U=;
-        b=lflnWAL8YgkUfXZgU1i1kVWheRwiledZso+HLtDPSCxuwNMrP1AG9ppxBLoREFMkDy
-         Yg8cIexVFRw8gNFPaf9jjm7Qxc/hNUL5ZU5GM6DdVn9TJkRb4o2mohERjZfBrlHmqti7
-         m1ebSZ32Oq69sVBRkMiDLlTxKCRetS0ZqsgkAnjbJT5oc6VWwWi8wFGoXcH5Yp+WnIjC
-         ircva32lawfYz2xMmzfWNRgsYWZV4gMjzB3Sg0QkvyHYSRVGRXXqeX9KYQLOTR1FaxtA
-         KxUbZ56P6+EOr99jYQiMvPsMVoqRC6MhT+4mBycBFpimEBw4dAC7RU+SeyAVhHs/8OwV
-         0STA==
-X-Gm-Message-State: AOAM532bBC/OCvIEAAZbhpyhfa7A0T24ftRhKqIsFVxOCvkqdeViWIB8
-        rEKgHN/drscIyI3ELsbtbjQPF7+I6QiKlmlW
-X-Google-Smtp-Source: ABdhPJx0ZnhReR/1jiqP8yhgnrq7/Ghvsm+fhz4+W9eiJN6bvdX6MLhEwTsJ9Pi7s1DVhaCLdDOFzQ==
-X-Received: by 2002:a17:906:cc14:: with SMTP id ml20mr19631965ejb.515.1623087524928;
-        Mon, 07 Jun 2021 10:38:44 -0700 (PDT)
-Received: from ?IPv6:2620:10d:c096:310::2410? ([2620:10d:c092:600::2:f766])
-        by smtp.gmail.com with ESMTPSA id y10sm1730308edc.66.2021.06.07.10.38.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Jun 2021 10:38:44 -0700 (PDT)
-To:     "Zhang, Qiang" <Qiang.Zhang@windriver.com>,
-        Hillf Danton <hdanton@sina.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>
-Cc:     "syzbot+6cb11ade52aa17095297@syzkaller.appspotmail.com" 
-        <syzbot+6cb11ade52aa17095297@syzkaller.appspotmail.com>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20210524071844.24085-1-qiang.zhang@windriver.com>
- <20210524082536.2032-1-hdanton@sina.com>
- <DM6PR11MB4202B442C4C27740B6EE2D64FF269@DM6PR11MB4202.namprd11.prod.outlook.com>
- <916ad789-c996-258f-d3b7-b41d749618d8@gmail.com>
- <DM6PR11MB4202561CE9ECD5B7F8DD74AFFF259@DM6PR11MB4202.namprd11.prod.outlook.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Subject: =?UTF-8?B?UmU6IOWbnuWkjTog5Zue5aSNOiBbUEFUQ0hdIGlvLXdxOiBGaXggVUFG?=
- =?UTF-8?Q?_when_wakeup_wqe_in_hash_waitqueue?=
-Message-ID: <9af68623-57e4-cef0-bb61-347207fb0c45@gmail.com>
-Date:   Mon, 7 Jun 2021 18:38:34 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ScXrC8JzROe4oik0nKr4Zt97X1eNIvPR3vNcHFbWFVw=;
+        b=Iwb20/7FC2kTY8pxu1jpR3MlrFjPGPm/r5tCPlGUdYqze9g6TCNqRKiY+peJw/WFvq
+         04WHjGl0xnA5zPIfkV4KuN+ugiU/kVRA1eB3Wc0Ed2iqoHjE/IT9/WRGjooOdH757jbJ
+         J7kr23cUxTj5By0U9H5GElYSpO8tNm/uLUXRPY5RKjtQwC9YWHhPLZcHO7rfCPa1Abs8
+         9H4zwRLEPss+IfCjo6QHP5r+DFrZSnwrr4mBz9X41GKuaYYY/pCgwRlXJgk5hmhVrWfm
+         wN9lTL1yrT7r7GJ0v+Y15KiJXtdef3aPx/a3gRycTWj4+PR0XmwzvW3/qB3t4WaasjHd
+         TX5A==
+X-Gm-Message-State: AOAM5328DCOD9+B3FMdaSHztP0q3ditIgkv2PrePsloZZn6TeB2tSOcv
+        RHqJ+d8NreF+k7ERvO9FN37UTjXtUXB4xuXWOJfsxA==
+X-Google-Smtp-Source: ABdhPJzGcWFGWbIbsY89L7lxhJBfNHplKZCa8ow1UNqgMe/NUtgdE/5lRdP7v1aSFE5Cm6Z9w/5qLJg6WT/lTXHQNYY=
+X-Received: by 2002:a17:906:c010:: with SMTP id e16mr19541841ejz.214.1623091890615;
+ Mon, 07 Jun 2021 11:51:30 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <DM6PR11MB4202561CE9ECD5B7F8DD74AFFF259@DM6PR11MB4202.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <23168ac0-0f05-3cd7-90dc-08855dd275b2@gmail.com>
+In-Reply-To: <23168ac0-0f05-3cd7-90dc-08855dd275b2@gmail.com>
+From:   Victor Stewart <v@nametag.social>
+Date:   Mon, 7 Jun 2021 14:51:19 -0400
+Message-ID: <CAM1kxwjHrf74u5OLB=acP2fBy+cPG4NNxa-51O35caY4VKdkkg@mail.gmail.com>
+Subject: Re: io_uring: BPF controlled I/O
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     io-uring <io-uring@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        lsf-pc@lists.linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/25/21 3:01 AM, Zhang, Qiang wrote:
-[...]
->> Haven't looked at the trace and description, but I do think
->> there is a problem it solves.
->>
->> 1) io_wait_on_hash() -> __add_wait_queue(&hash->wait, &wqe->wait);
->> 2) (note: wqe is a worker) wqe's workers exit dropping refs
->> 3) refs are zero, free io-wq
->> 4) @hash is shared, so other task/wq does wake_up(&wq->hash->wait);
->> 5) it wakes freed wqe
->>
->> step 4) is a bit more trickier than that, tl;dr;
->> wq3:worker1     | locks bit1
->> wq1:worker2     | waits bit1
->> wq2:worker1     | waits bit1
->> wq1:worker3     | waits bit1
->>
->> wq3:worker1     | drop  bit1
->> wq1:worker2     | locks bit1
->> wq1:worker2     | completes all wq1 bit1 work items
->> wq1:worker2     | drop  bit1, exit and free io-wq
->>
->> wq2:worker1     | locks bit1
->> wq1             | free complete
->> wq2:worker1     | drops bit1
->> wq1:worker3     | waked up, even though freed
->>
->> Can be simplified, don't want to waste time on that
-> 
-> Thanks Pavel
-> 
-> Your description is better.  I have another question: under what circumstances will three io-wq(wq1, wq2, wq3) be created to share this @hash?
+On Sat, Jun 5, 2021 at 5:09 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
+>
+> One of the core ideas behind io_uring is passing requests via memory
+> shared b/w the userspace and the kernel, a.k.a. queues or rings. That
+> serves a purpose of reducing number of context switches or bypassing
+> them, but the userspace is responsible for controlling the flow,
+> reaping and processing completions (a.k.a. Completion Queue Entry, CQE),
+> and submitting new requests, adding extra context switches even if there
+> is not much work to do. A simple illustration is read(open()), where
+> io_uring is unable to propagate the returned fd to the read, with more
+> cases piling up.
+>
+> The big picture idea stays the same since last year, to give out some
+> of this control to BPF, allow it to check results of completed requests,
+> manipulate memory if needed and submit new requests. Apart from being
+> just a glue between two requests, it might even offer more flexibility
+> like keeping a QD, doing reduce/broadcast and so on.
+>
+> The prototype [1,2] is in a good shape but some work need to be done.
+> However, the main concern is getting an understanding what features and
+> functionality have to be added to be flexible enough. Various toy
+> examples can be found at [3] ([1] includes an overview of cases).
+>
+> Discussion points:
+> - Use cases, feature requests, benchmarking
 
-Oops, missed the email. It's created by io_uring, and passed to
-io-wq, which is per-task and created on demand by io_uring.
+hi Pavel,
 
-Can be achieved by a snippet just below, where threads
-haven't had io_uring instances before.
+coincidentally i'm tossing around in my mind at the moment an idea for
+offloading
+the PING/PONG of a QUIC server/client into the kernel via eBPF.
 
-thread1: ring = create_io_uring();
-thread2: submit_sqes(ring);
-thread3: submit_sqes(ring);
+problem being, being that QUIC is userspace run transport and that NAT-ed UDP
+mappings can't be expected to stay open longer than 30 seconds, QUIC
+applications
+bare a large cost of context switching wake-up to conduct connection lifetime
+maintenance... especially when managing a large number of mostly idle long lived
+connections. so offloading this maintenance service into the kernel
+would be a great
+efficiency boon.
 
-> 
-> This kind of problem also occurs between two io-wq(wq1, wq2). Is the following description OK？
+the main impediment is that access to the kernel crypto libraries
+isn't currently possible
+from eBPF. that said, connection wide crypto offload into the NIC is a
+frequently mentioned
+subject in QUIC circles, so one could argue better to allocate the
+time to NIC crypto offload
+and then simply conduct this PING/PONG offload in plain text.
 
-Yep, and I feel like there are cases simpler (and
-more likely) than the one I described.
+CQEs would provide a great way for the offloaded service to be able to
+wake up the
+application when it's input is required.
 
-> 
-> wq1:worker2     | locks bit1
-> wq2:worker1     | waits bit1
-> wq1:worker3     | waits bit1
-> 
-> wq1:worker2     | completes all wq1 bit1 work items
-> wq1:worker2     | drop  bit1, exit and free io-wq
-> 
-> wq2:worker1     | locks bit1
-> wq1                       | free complete
-> wq2:worker1     | drops bit1
-> wq1:worker3     | waked up, even though freed
+anyway food for thought.
 
+Victor
 
--- 
-Pavel Begunkov
+> - Userspace programming model, code reuse (e.g. liburing)
+> - BPF-BPF and userspace-BPF synchronisation. There is
+>   CQE based notification approach and plans (see design
+>   notes), however need to discuss what else might be
+>   needed.
+> - Do we need more contexts passed apart from user_data?
+>   e.g. specifying a BPF map/array/etc fd io_uring requests?
+> - Userspace atomics and efficiency of userspace reads/writes. If
+>   proved to be not performant enough there are potential ways to take
+>   on it, e.g. inlining, having it in BPF ISA, and pre-verifying
+>   userspace pointers.
+>
+> [1] https://lore.kernel.org/io-uring/a83f147b-ea9d-e693-a2e9-c6ce16659749@gmail.com/T/#m31d0a2ac6e2213f912a200f5e8d88bd74f81406b
+> [2] https://github.com/isilence/linux/tree/ebpf_v2
+> [3] https://github.com/isilence/liburing/tree/ebpf_v2/examples/bpf
+>
+>
+> -----------------------------------------------------------------------
+> Design notes:
+>
+> Instead of basing it on hooks it adds support of a new type of io_uring
+> requests as it gives a better control and let's to reuse internal
+> infrastructure. These requests run a new type of io_uring BPF programs
+> wired with a bunch of new helpers for submitting requests and dealing
+> with CQEs, are allowed to read/write userspace memory in virtue of a
+> recently added sleepable BPF feature. and also provided with a token
+> (generic io_uring token, aka user_data, specified at submission and
+> returned in an CQE), which may be used to pass a userspace pointer used
+> as a context.
+>
+> Besides running BPF programs, they are able to request waiting.
+> Currently it supports CQ waiting for a number of completions, but others
+> might be added and/or needed, e.g. futex and/or requeueing the current
+> BPF request onto an io_uring request/link being submitted. That hides
+> the overhead of creating BPF requests by keeping them alive and
+> invoking multiple times.
+>
+> Another big chunk solved is figuring out a good way of feeding CQEs
+> (potentially many) to a BPF program. The current approach
+> is to enable multiple completion queues (CQ), and specify for each
+> request to which one steer its CQE, so all the synchronisation
+> is in control of the userspace. For instance, there may be a separate
+> CQ per each in-flight BPF request, and they can work with their own
+> queues and send an CQE to the main CQ so notifying the userspace.
+> It also opens up a notification-like sync through CQE posting to
+> neighbours' CQs.
+>
+>
+> --
+> Pavel Begunkov

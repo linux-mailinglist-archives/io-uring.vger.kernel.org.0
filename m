@@ -2,109 +2,166 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 41DB039F5F4
-	for <lists+io-uring@lfdr.de>; Tue,  8 Jun 2021 14:02:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA69C39F728
+	for <lists+io-uring@lfdr.de>; Tue,  8 Jun 2021 14:55:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232134AbhFHMEZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 8 Jun 2021 08:04:25 -0400
-Received: from mail-qk1-f180.google.com ([209.85.222.180]:37693 "EHLO
-        mail-qk1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232054AbhFHMEY (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 8 Jun 2021 08:04:24 -0400
-Received: by mail-qk1-f180.google.com with SMTP id i67so19826218qkc.4
-        for <io-uring@vger.kernel.org>; Tue, 08 Jun 2021 05:02:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=7GrlCKInRHwinOrKZ1wqy6YkpdctxLsTgU+gfy4jB+o=;
-        b=CGoheWvkuPtRqaZ+7Tf129L50H3/R+jhpu7NCmpmE2SHWpJvx5RZPy1MhDH70Wa8bG
-         HiG9gBkZhiNGRbUgQMMb4D5SMZN/j5SkCQU81eJo7UefWL5gv5D2+oPcVZfJwXOLkXj9
-         AmD02ecSa9st3Am/8RQr/0KEDNSzLy9bL16x6YWmW2sCEOQRFeTgA8NUScQIwSD43xE8
-         MAMDAMS2iwQW4mIyyrH9IztufHeNYf5Vf1jzuN0g9VZ+1czLk9zF4tFlFZpexrjhoUHF
-         Wu70sN8NpAe7fO7LMTEv6GRaO7sowvV47wPVIK0VzR5/211Gqj+hJmAw7cciA0Kydam2
-         XXLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=7GrlCKInRHwinOrKZ1wqy6YkpdctxLsTgU+gfy4jB+o=;
-        b=sZdX9qGlupuvCr0R9ssK471qmVf5LRoAT2H0ZD03oz7oWxIcnCOXowBFgvANW5YGKs
-         3v6RSlE6qT3HnC1uG9fJQiOp1riaHX7iTp0AvslL8XLLb1iAeLajdYyGgudb4hYIxzvn
-         uTBZmLwEI8qVo0Bh0gqBTJ77iiTT87VII2edFyqAACNRq9XioQvZVOIw5pp4KJL9BEsc
-         EDYPlwfrZezJNvSOArIdy1ClT6QRh2mYF3qmNlVpg3m2FpbWtC4stIRsoNU3lJGPp0ur
-         nnYi1u9vTYieDFQBxvR/rasB69ougo9v/ndRFq+t2GOZkvW1F6LaaBUuRqgzcOsOni/G
-         ExDQ==
-X-Gm-Message-State: AOAM530iisUZ1L0/14zQyuMkkZBl604+bPPJsNFDrTcvJ1ryDWLVD6ax
-        3lSzOCof6oAVzIANHyJwsB7pVDSJbju5Km6nbdjyQQ==
-X-Google-Smtp-Source: ABdhPJzvRW//gdtd/Udm84t39KhHzId6doN3FQoptO5rzUO537RabS36u7WFCQWo2VkmaiqOZJMqylfEKxiGQkJD60Q=
-X-Received: by 2002:a37:9d93:: with SMTP id g141mr21071495qke.350.1623153691261;
- Tue, 08 Jun 2021 05:01:31 -0700 (PDT)
+        id S232714AbhFHM5P (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 8 Jun 2021 08:57:15 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:36486 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232644AbhFHM5P (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 8 Jun 2021 08:57:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1623156922;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=x+SsMma3Ar3rP8pZze2lcFu2xVDJbqONiUJxA3GUBLM=;
+        b=Myb86yrKqksN3EwWRcC67JpzBLu0ntKkiNYRnu9b8hYcOFTZJ4yMR2qOgCmj5yeovWYZyW
+        +pzJPuTd2rQHerlF3BfQd/uM903Q0yhQ0GbK1GwrcDff8kI2dY4qGZnhFRJHK+J/YJfvSU
+        41iGzoOCDBXO4Tu26vh2DPWg/G2m73M=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-544-THXSXa15OuConKqzS8b_Kw-1; Tue, 08 Jun 2021 08:55:20 -0400
+X-MC-Unique: THXSXa15OuConKqzS8b_Kw-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 05E07107ACC7;
+        Tue,  8 Jun 2021 12:55:19 +0000 (UTC)
+Received: from madcap2.tricolour.ca (unknown [10.3.128.13])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D7DCC5C1D5;
+        Tue,  8 Jun 2021 12:55:07 +0000 (UTC)
+Date:   Tue, 8 Jun 2021 08:55:05 -0400
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, selinux@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH 1/2] audit: add filtering for io_uring records, addendum
+Message-ID: <20210608125504.GA2268484@madcap2.tricolour.ca>
+References: <CAHC9VhTr_hw_RBPf5yGD16j-qV2tbjjPJkimMNNQZBHtrJDbuQ@mail.gmail.com>
+ <3a2903574a4d03f73230047866112b2dad9b4a9e.1622467740.git.rgb@redhat.com>
+ <CAHC9VhRa9dvCfPf5WHKYofrvQrGff7Lh+H4HMAhi_z3nK_rtoA@mail.gmail.com>
 MIME-Version: 1.0
-References: <0000000000000bdfa905c3f6720f@google.com> <b9cb6dc4-3dfe-de60-a933-1f423301b3ca@linux.alibaba.com>
-In-Reply-To: <b9cb6dc4-3dfe-de60-a933-1f423301b3ca@linux.alibaba.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Tue, 8 Jun 2021 14:01:19 +0200
-Message-ID: <CACT4Y+az0ZsTRyj+FjA08ZjpoesoxSde+1vxn-WQnTgXM1rPGQ@mail.gmail.com>
-Subject: Re: [syzbot] WARNING in io_wqe_enqueue
-To:     Hao Xu <haoxu@linux.alibaba.com>
-Cc:     syzbot <syzbot+ea2f1484cffe5109dc10@syzkaller.appspotmail.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhRa9dvCfPf5WHKYofrvQrGff7Lh+H4HMAhi_z3nK_rtoA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Jun 8, 2021 at 11:47 AM Hao Xu <haoxu@linux.alibaba.com> wrote:
->
-> =E5=9C=A8 2021/6/5 =E4=B8=8A=E5=8D=884:22, syzbot =E5=86=99=E9=81=93:
-> > syzbot has bisected this issue to:
+On 2021-06-07 19:15, Paul Moore wrote:
+> On Mon, May 31, 2021 at 9:45 AM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > The commit ("audit: add filtering for io_uring records") added support for
+> > filtering io_uring operations.
 > >
-> > commit 24369c2e3bb06d8c4e71fd6ceaf4f8a01ae79b7c
-> > Author: Pavel Begunkov <asml.silence@gmail.com>
-> > Date:   Tue Jan 28 00:15:48 2020 +0000
+> > Add checks to the audit io_uring filtering code for directory and path watches,
+> > and to keep the list counts consistent.
 > >
-> >      io_uring: add io-wq workqueue sharing
-> >
-> > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D17934777=
-d00000
-> > start commit:   f88cd3fb Merge tag 'vfio-v5.13-rc5' of git://github.com=
-/aw..
-> > git tree:       upstream
-> > final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D14534777=
-d00000
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D10534777d00=
-000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D82d85e75046=
-e5e64
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=3Dea2f1484cffe5=
-109dc10
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D16d5772fd=
-00000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D10525947d00=
-000
-> >
-> > Reported-by: syzbot+ea2f1484cffe5109dc10@syzkaller.appspotmail.com
-> > Fixes: 24369c2e3bb0 ("io_uring: add io-wq workqueue sharing")
-> >
-> > For information about bisection process see: https://goo.gl/tpsmEJ#bise=
-ction
-> >
-> This is not a bug, the repro program first set RLIMIT_NPROC to 0, then
-> submits an unbound work whcih raises a warning of
-> WARN_ON_ONCE(!acct->max_workers). Since unbound->max_workers is
-> task_rlimit(current, RLIMIT_NPROC), so it is expected.
+> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > ---
+> >  kernel/audit_tree.c  | 3 ++-
+> >  kernel/audit_watch.c | 3 ++-
+> >  kernel/auditfilter.c | 7 +++++--
+> >  3 files changed, 9 insertions(+), 4 deletions(-)
+> 
+> Thanks for pointing these omissions out in the original patch.  When a
+> patch has obvious problems generally people just provide feedback and
+> the patch author incorporates the fixes; this helps ensure we don't
+> merge known broken patches, helping preserve `git bisect`.
+> 
+> Do you mind if I incorporate these suggestions, and the one in patch
+> 2/2, into the filtering patch in the original RFC patchset?  I'll add
+> a 'thank you' comment in the commit description as I did to the other
+> patch where you provided feedback.  I feel that is the proper way to
+> handle this.
 
-Hi Hao,
+I should have been more explicit.  The intent was to have the fixes
+incorporated directly into your patches since they aren't committed in
+any public tree yet, exactly for bisect reasons.  I didn't add a
+"fixes:" tag because it had no public commit hash, but could/should have
+instead made a note about it or even used the "fixup:" subject tag.
+Posting using the thread as the "in-reply-to:" for this patchset was the
+simplest and clearest way to demonstrate the intent and check they were
+correct and I was too lazy to add a cover letter explaining that.  There
+is also a Co-developed-by: tag that could be used if you feel that is
+appropriate, now that you mention it, but that appears to imply a much
+stronger equal contribution.
 
-Then this is a mis-use of WARN_ON. If this check is intended for end
-users, it needs to use pr_err (also print understandable message and
-no stack trace which is most likely not useful for end users):
-https://elixir.bootlin.com/linux/v5.13-rc5/source/include/asm-generic/bug.h=
-#L71
+> > diff --git a/kernel/audit_tree.c b/kernel/audit_tree.c
+> > index 6c91902f4f45..2be285c2f069 100644
+> > --- a/kernel/audit_tree.c
+> > +++ b/kernel/audit_tree.c
+> > @@ -727,7 +727,8 @@ int audit_make_tree(struct audit_krule *rule, char *pathname, u32 op)
+> >  {
+> >
+> >         if (pathname[0] != '/' ||
+> > -           rule->listnr != AUDIT_FILTER_EXIT ||
+> > +           (rule->listnr != AUDIT_FILTER_EXIT &&
+> > +            rule->listnr != AUDIT_FILTER_URING_EXIT) ||
+> >             op != Audit_equal ||
+> >             rule->inode_f || rule->watch || rule->tree)
+> >                 return -EINVAL;
+> > diff --git a/kernel/audit_watch.c b/kernel/audit_watch.c
+> > index 2acf7ca49154..698b62b4a2ec 100644
+> > --- a/kernel/audit_watch.c
+> > +++ b/kernel/audit_watch.c
+> > @@ -183,7 +183,8 @@ int audit_to_watch(struct audit_krule *krule, char *path, int len, u32 op)
+> >                 return -EOPNOTSUPP;
+> >
+> >         if (path[0] != '/' || path[len-1] == '/' ||
+> > -           krule->listnr != AUDIT_FILTER_EXIT ||
+> > +           (krule->listnr != AUDIT_FILTER_EXIT &&
+> > +            krule->listnr != AUDIT_FILTER_URING_EXIT) ||
+> >             op != Audit_equal ||
+> >             krule->inode_f || krule->watch || krule->tree)
+> >                 return -EINVAL;
+> > diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
+> > index c21119c00504..bcdedfd1088c 100644
+> > --- a/kernel/auditfilter.c
+> > +++ b/kernel/auditfilter.c
+> > @@ -153,7 +153,8 @@ char *audit_unpack_string(void **bufp, size_t *remain, size_t len)
+> >  static inline int audit_to_inode(struct audit_krule *krule,
+> >                                  struct audit_field *f)
+> >  {
+> > -       if (krule->listnr != AUDIT_FILTER_EXIT ||
+> > +       if ((krule->listnr != AUDIT_FILTER_EXIT &&
+> > +            krule->listnr != AUDIT_FILTER_URING_EXIT) ||
+> >             krule->inode_f || krule->watch || krule->tree ||
+> >             (f->op != Audit_equal && f->op != Audit_not_equal))
+> >                 return -EINVAL;
+> > @@ -250,6 +251,7 @@ static inline struct audit_entry *audit_to_entry_common(struct audit_rule_data *
+> >                 pr_err("AUDIT_FILTER_ENTRY is deprecated\n");
+> >                 goto exit_err;
+> >         case AUDIT_FILTER_EXIT:
+> > +       case AUDIT_FILTER_URING_EXIT:
+> >         case AUDIT_FILTER_TASK:
+> >  #endif
+> >         case AUDIT_FILTER_USER:
+> > @@ -982,7 +984,8 @@ static inline int audit_add_rule(struct audit_entry *entry)
+> >         }
+> >
+> >         entry->rule.prio = ~0ULL;
+> > -       if (entry->rule.listnr == AUDIT_FILTER_EXIT) {
+> > +       if (entry->rule.listnr == AUDIT_FILTER_EXIT ||
+> > +           entry->rule.listnr == AUDIT_FILTER_URING_EXIT) {
+> >                 if (entry->rule.flags & AUDIT_FILTER_PREPEND)
+> >                         entry->rule.prio = ++prio_high;
+> >                 else
+> 
+> paul moore
+
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
+

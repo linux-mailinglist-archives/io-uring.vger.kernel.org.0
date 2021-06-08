@@ -2,166 +2,169 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BA69C39F728
-	for <lists+io-uring@lfdr.de>; Tue,  8 Jun 2021 14:55:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB0C139FE13
+	for <lists+io-uring@lfdr.de>; Tue,  8 Jun 2021 19:44:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232714AbhFHM5P (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 8 Jun 2021 08:57:15 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:36486 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232644AbhFHM5P (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 8 Jun 2021 08:57:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1623156922;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=x+SsMma3Ar3rP8pZze2lcFu2xVDJbqONiUJxA3GUBLM=;
-        b=Myb86yrKqksN3EwWRcC67JpzBLu0ntKkiNYRnu9b8hYcOFTZJ4yMR2qOgCmj5yeovWYZyW
-        +pzJPuTd2rQHerlF3BfQd/uM903Q0yhQ0GbK1GwrcDff8kI2dY4qGZnhFRJHK+J/YJfvSU
-        41iGzoOCDBXO4Tu26vh2DPWg/G2m73M=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-544-THXSXa15OuConKqzS8b_Kw-1; Tue, 08 Jun 2021 08:55:20 -0400
-X-MC-Unique: THXSXa15OuConKqzS8b_Kw-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 05E07107ACC7;
-        Tue,  8 Jun 2021 12:55:19 +0000 (UTC)
-Received: from madcap2.tricolour.ca (unknown [10.3.128.13])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D7DCC5C1D5;
-        Tue,  8 Jun 2021 12:55:07 +0000 (UTC)
-Date:   Tue, 8 Jun 2021 08:55:05 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH 1/2] audit: add filtering for io_uring records, addendum
-Message-ID: <20210608125504.GA2268484@madcap2.tricolour.ca>
-References: <CAHC9VhTr_hw_RBPf5yGD16j-qV2tbjjPJkimMNNQZBHtrJDbuQ@mail.gmail.com>
- <3a2903574a4d03f73230047866112b2dad9b4a9e.1622467740.git.rgb@redhat.com>
- <CAHC9VhRa9dvCfPf5WHKYofrvQrGff7Lh+H4HMAhi_z3nK_rtoA@mail.gmail.com>
+        id S233928AbhFHRqD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 8 Jun 2021 13:46:03 -0400
+Received: from cloud48395.mywhc.ca ([173.209.37.211]:58646 "EHLO
+        cloud48395.mywhc.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233910AbhFHRp5 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 8 Jun 2021 13:45:57 -0400
+Received: from modemcable064.203-130-66.mc.videotron.ca ([66.130.203.64]:51936 helo=[192.168.1.179])
+        by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <olivier@trillion01.com>)
+        id 1lqfle-00048X-95; Tue, 08 Jun 2021 13:43:58 -0400
+Message-ID: <9d07e2bb220ba4aa3a407a88cdd5c59f1f8eaf4b.camel@trillion01.com>
+Subject: Re: [PATCH] signal: Set PF_SIGNALED flag for io workers during a
+ group exit
+From:   Olivier Langlois <olivier@trillion01.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Oleg Nesterov <oleg@redhat.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Marco Elver <elver@google.com>,
+        Peter Collingbourne <pcc@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
+        io-uring@vger.kernel.org
+Date:   Tue, 08 Jun 2021 13:43:54 -0400
+In-Reply-To: <8735ttggm4.fsf@disp2133>
+References: <E1lqLo6-00ENqW-TB@mx03.mta.xmission.com>
+         <8735ttggm4.fsf@disp2133>
+Organization: Trillion01 Inc
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.40.2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhRa9dvCfPf5WHKYofrvQrGff7Lh+H4HMAhi_z3nK_rtoA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - trillion01.com
+X-Get-Message-Sender-Via: cloud48395.mywhc.ca: authenticated_id: olivier@trillion01.com
+X-Authenticated-Sender: cloud48395.mywhc.ca: olivier@trillion01.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2021-06-07 19:15, Paul Moore wrote:
-> On Mon, May 31, 2021 at 9:45 AM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > The commit ("audit: add filtering for io_uring records") added support for
-> > filtering io_uring operations.
-> >
-> > Add checks to the audit io_uring filtering code for directory and path watches,
-> > and to keep the list counts consistent.
-> >
-> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > ---
-> >  kernel/audit_tree.c  | 3 ++-
-> >  kernel/audit_watch.c | 3 ++-
-> >  kernel/auditfilter.c | 7 +++++--
-> >  3 files changed, 9 insertions(+), 4 deletions(-)
+On Mon, 2021-06-07 at 22:49 -0500, Eric W. Biederman wrote:
+> We added the check just a little while ago.  I am surprised it shows up
+> in any book.  What is the Bovett & Cesati book?
+
+It is an O'Reilly book named 'Understanding the Linux Kernel'. It is
+quite old (2005) and covers kernel 2.6 but surprisingly it did age very
+well and it is still very useful today.
+
+For instance, the discussed feature about exit_mm() sync mecanism, when
+the book has been published, the struct core_state was not existing and
+its members were straight into mm_struct.
+
+I would think that beside this detail, not much has changed since then
+in the general concepts... 
 > 
-> Thanks for pointing these omissions out in the original patch.  When a
-> patch has obvious problems generally people just provide feedback and
-> the patch author incorporates the fixes; this helps ensure we don't
-> merge known broken patches, helping preserve `git bisect`.
+> The flag PF_SIGNALED today is set in exactly one place, and that
+> is in get_signal.  The meaning of PF_SIGNALED is that do_group_exit
+> was called from get_signal.  AKA your task was killed by a signal.
 > 
-> Do you mind if I incorporate these suggestions, and the one in patch
-> 2/2, into the filtering patch in the original RFC patchset?  I'll add
-> a 'thank you' comment in the commit description as I did to the other
-> patch where you provided feedback.  I feel that is the proper way to
-> handle this.
-
-I should have been more explicit.  The intent was to have the fixes
-incorporated directly into your patches since they aren't committed in
-any public tree yet, exactly for bisect reasons.  I didn't add a
-"fixes:" tag because it had no public commit hash, but could/should have
-instead made a note about it or even used the "fixup:" subject tag.
-Posting using the thread as the "in-reply-to:" for this patchset was the
-simplest and clearest way to demonstrate the intent and check they were
-correct and I was too lazy to add a cover letter explaining that.  There
-is also a Co-developed-by: tag that could be used if you feel that is
-appropriate, now that you mention it, but that appears to imply a much
-stronger equal contribution.
-
-> > diff --git a/kernel/audit_tree.c b/kernel/audit_tree.c
-> > index 6c91902f4f45..2be285c2f069 100644
-> > --- a/kernel/audit_tree.c
-> > +++ b/kernel/audit_tree.c
-> > @@ -727,7 +727,8 @@ int audit_make_tree(struct audit_krule *rule, char *pathname, u32 op)
-> >  {
-> >
-> >         if (pathname[0] != '/' ||
-> > -           rule->listnr != AUDIT_FILTER_EXIT ||
-> > +           (rule->listnr != AUDIT_FILTER_EXIT &&
-> > +            rule->listnr != AUDIT_FILTER_URING_EXIT) ||
-> >             op != Audit_equal ||
-> >             rule->inode_f || rule->watch || rule->tree)
-> >                 return -EINVAL;
-> > diff --git a/kernel/audit_watch.c b/kernel/audit_watch.c
-> > index 2acf7ca49154..698b62b4a2ec 100644
-> > --- a/kernel/audit_watch.c
-> > +++ b/kernel/audit_watch.c
-> > @@ -183,7 +183,8 @@ int audit_to_watch(struct audit_krule *krule, char *path, int len, u32 op)
-> >                 return -EOPNOTSUPP;
-> >
-> >         if (path[0] != '/' || path[len-1] == '/' ||
-> > -           krule->listnr != AUDIT_FILTER_EXIT ||
-> > +           (krule->listnr != AUDIT_FILTER_EXIT &&
-> > +            krule->listnr != AUDIT_FILTER_URING_EXIT) ||
-> >             op != Audit_equal ||
-> >             krule->inode_f || krule->watch || krule->tree)
-> >                 return -EINVAL;
-> > diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
-> > index c21119c00504..bcdedfd1088c 100644
-> > --- a/kernel/auditfilter.c
-> > +++ b/kernel/auditfilter.c
-> > @@ -153,7 +153,8 @@ char *audit_unpack_string(void **bufp, size_t *remain, size_t len)
-> >  static inline int audit_to_inode(struct audit_krule *krule,
-> >                                  struct audit_field *f)
-> >  {
-> > -       if (krule->listnr != AUDIT_FILTER_EXIT ||
-> > +       if ((krule->listnr != AUDIT_FILTER_EXIT &&
-> > +            krule->listnr != AUDIT_FILTER_URING_EXIT) ||
-> >             krule->inode_f || krule->watch || krule->tree ||
-> >             (f->op != Audit_equal && f->op != Audit_not_equal))
-> >                 return -EINVAL;
-> > @@ -250,6 +251,7 @@ static inline struct audit_entry *audit_to_entry_common(struct audit_rule_data *
-> >                 pr_err("AUDIT_FILTER_ENTRY is deprecated\n");
-> >                 goto exit_err;
-> >         case AUDIT_FILTER_EXIT:
-> > +       case AUDIT_FILTER_URING_EXIT:
-> >         case AUDIT_FILTER_TASK:
-> >  #endif
-> >         case AUDIT_FILTER_USER:
-> > @@ -982,7 +984,8 @@ static inline int audit_add_rule(struct audit_entry *entry)
-> >         }
-> >
-> >         entry->rule.prio = ~0ULL;
-> > -       if (entry->rule.listnr == AUDIT_FILTER_EXIT) {
-> > +       if (entry->rule.listnr == AUDIT_FILTER_EXIT ||
-> > +           entry->rule.listnr == AUDIT_FILTER_URING_EXIT) {
-> >                 if (entry->rule.flags & AUDIT_FILTER_PREPEND)
-> >                         entry->rule.prio = ++prio_high;
-> >                 else
+> The check in exit_mm() that tests PF_SIGNALED is empirically testing
+> to see if all of the necessary state is saved on the kernel stack.
+> That state is the state accessed by fs/binfmt_elf.c:fill_note_info.
 > 
-> paul moore
+> The very good description from the original change can be found in
+> the commit 123cbec460db ("signal: Remove the helper
+> signal_group_exit").
 
-- RGB
+thx for sharing the link. Help to improve my kernel understanding is
+always very appreciated. However, I am clueless about where to look to
+retrieve it:
+$ git show 123cbec460db --
+fatal: bad revision '123cbec460db'
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+is it supposed to be found in the master branch or this a commit prior
+2005?
+
+> 
+> For alpha it is has the assembly function do_switch_stack been called
+> before your code path was called in the kernel.
+> 
+> Since io_uring does not have a userspace  I don't know if testing
+> for PF_SIGNALED is at all meaningful to detect values saved on the
+> stack.
+> 
+> I suspect io_uring is simply broken on architectures that need
+> extra state saved on the stack, but I haven't looked yet.
+> 
+> 
+> > So I am not sure if the synchronizatin MUST be applied to io_workers
+> > or not but the proposed patch is making sure that it is applied in
+> > all cases if it is needed.
+> 
+> That patch is definitely wrong.  If anything the check in exit_mm
+> should be updated.
+
+with your explanation, if the only purpose of the synchronization is to
+make sure that the task stack register is pointing on its kernel stack
+to be able to dump its user hardware context, it is not needed for io-
+worker tasks since they never exit the kernel.
+
+I think that this is the confirmation that I wanted to get from the
+patch code review because this point wasn't 100% clear to me (and I was
+having issues getting a core dump generated properly when using
+io_uring. I found the culprit of that issue. This isn't the problem
+described in this patch but I thought that the current problem despite
+not being the one responsible for my coredump issue could still have
+some merit).
+
+the doubt was coming from the fact that io-worker tasks are almost
+userspace tasks except that they never escape the kernel and the
+observation that it is the first type of task that could theoritically
+exit from a group_exit without having their PF_SIGNALED bit set.
+> 
+> Can you share which code paths in io_uring exit with a
+> fatal_signal_pending and don't bother to call get_signal?
+
+Yes. One was provided as part of the description of this patch:
+io_wqe_worker() (fs/io-wq.c)
+
+and
+io_sq_thread() (fs/io_uring.c)
+is another example
+
+and possibly all the other future threads created with
+create_io_thread() will share the same pattern.
+
+They all enter an while loop and contain 1 or many other break points
+beside getting a signal.
+
+imho, it is quite exceptional situation but it could happen that those
+threads exit with a pending signal.
+
+Before 5.13, when io-wq had a second type of io thread (io-mgr), there
+was a real chance of that happening by a race condition between the io-
+mgr setting the wq state bit IO_WQ_BIT_EXIT upon receiving a SIGKILL
+and its io-workers threads exiting their while loop.
+
+
+but with io-mgr removal in 5.13, this risk is now gone...
+
+I have first offered a patch to io_uring to call get_signal() one last
+time before exiting:
+https://lore.kernel.org/io-uring/6b67bd40815f779059f7f3d3ad22f638789452b1.camel@trillion01.com/T/#t
+
+but discussing with Jens made me realize that it wasn't the right place
+to do this because:
+1. Interrupts aren't disabled and the task can be preemted even after
+this last get_signal() call.
+2. If that is something needed, it was the bad place to do it because
+you would have to repeat it for all the current existing io_threads and
+the future ones too.
+
+but again, after your explanations, this might not be required at all
+after all...
+
+Greetings,
 

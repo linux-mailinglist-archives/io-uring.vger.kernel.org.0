@@ -2,59 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B7A5B3A18DD
-	for <lists+io-uring@lfdr.de>; Wed,  9 Jun 2021 17:13:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE8603A18E0
+	for <lists+io-uring@lfdr.de>; Wed,  9 Jun 2021 17:13:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239021AbhFIPPH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 9 Jun 2021 11:15:07 -0400
-Received: from mail-pl1-f181.google.com ([209.85.214.181]:41743 "EHLO
-        mail-pl1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239024AbhFIPPE (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 9 Jun 2021 11:15:04 -0400
-Received: by mail-pl1-f181.google.com with SMTP id e1so1271879plh.8
-        for <io-uring@vger.kernel.org>; Wed, 09 Jun 2021 08:12:58 -0700 (PDT)
+        id S233353AbhFIPPf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 9 Jun 2021 11:15:35 -0400
+Received: from mail-pj1-f50.google.com ([209.85.216.50]:43949 "EHLO
+        mail-pj1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229770AbhFIPPd (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 9 Jun 2021 11:15:33 -0400
+Received: by mail-pj1-f50.google.com with SMTP id x21-20020a17090aa395b029016e25313bfcso1571312pjp.2
+        for <io-uring@vger.kernel.org>; Wed, 09 Jun 2021 08:13:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:references:from:message-id:date:user-agent:mime-version
          :in-reply-to:content-language:content-transfer-encoding;
-        bh=swSSpRapk0bk6e5DCL7L3P+PAWoEFuxXvuvR+mMpZlw=;
-        b=pCYwzbYeqaLV3t61kJ1n+T99+mJD8OgtsYz3c00V7ZidBuKXQnEJ/XqGG6Icw1EP3e
-         uetV1q3lTY+z9TsfSJm4iaP74+pUt/4Ci809WO7X0e0MoDgBiKmwqQaaoIc1d0UmHAIC
-         +SKWRpFtQ7u6Tn1NHV4fanyFNhXTA4P3aeyWYUfodVJ+TlI9YBqDa0UVBmo0Rsz9+S62
-         pLp2GKexRC8KAHcDP96AOH4l3nq5vBrfAMUmNWBrn0ZIpcFmIh08uhvHogESq+l9bswu
-         ryyrdTdWTtIalpXgQkJ0PLBeqU/3XuGZ2Bq9q3MXxovkVlxf4qBAvgGlAce6USt8nGIq
-         jSZA==
+        bh=KUrs+4C5j1c/PibGjBDNj2MaVm/jI92djHTblcyVV5c=;
+        b=WSTtA1urxHsID6ZW2tdYbZf2iVEr9XEwggWl2mLYSJBW/T2icQHj5uBPppFHsWIEGA
+         xd1IDGG7KLtljfgCMzc8rnk3UCZit3naN3kRYQ/KS/gaxDHrG71nsZlEDZdFMOG9f/+f
+         wfbShtd5p6ok0nUMvOrMyqz+563CNmYJlKz7qU5SYS3T026sGpGU9hG+825fFiHOBEs8
+         rDQ/vM9baYNC3TDTnVrojI8l7b6ItNPFqEAyDZ66+REnFm1W3p8YJnor9RshG5XluyEC
+         yyM5XpcHltZqAFnFkWjT49RTxTG/0Rs+K9o2Q+4lOaKOyPD+sRjLi6tG7IalbevAEi+K
+         M2ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=swSSpRapk0bk6e5DCL7L3P+PAWoEFuxXvuvR+mMpZlw=;
-        b=B+Ym3Z/XfcvJMTTrL94T53EtGF8tIThGDzzt5+VkaqZbhl5OqKfTT1l64hwCdv7B86
-         8B+dXOHFxchukXs4vmv4olSUm79NnTTEduBeK8uTo5V7CSLAfJeGnapCPkI+zpcB38k2
-         8wgpucF0sfyvxHETkTFApkHK3y2KclmyzsNh9pDD7wZ48rZ3j9vnOw9YD7YydfBc4YET
-         kCua8r7jKvZhImUSz65Y5mlcKs3WnEhQANTN9uJ+XzofmGyTXWcGdEQ2nceSGgtOFC26
-         v7d3ITvd9CPRj9vx4AMSxSBzb+/wB6ZJDaBCSboPj6eCKJWMwaSsl/CzpmlXiqJzNdlX
-         sSBA==
-X-Gm-Message-State: AOAM531g7wj918BjYH+Kyr4PBtfx8JnkgaMMmdFqJ9yYJjp3yKEWfihz
-        uIMEzaNlFN3rYaa++XGEOfRCXuQaH3tHcQ==
-X-Google-Smtp-Source: ABdhPJyrJY+9EGa0RQVo1D6GEf4v+j+NQ5F84lftmxcTspY0RrLfhcoJmy3kgxck2sIzglK2LuIdQw==
-X-Received: by 2002:a17:90a:f193:: with SMTP id bv19mr11313329pjb.86.1623251518388;
-        Wed, 09 Jun 2021 08:11:58 -0700 (PDT)
+        bh=KUrs+4C5j1c/PibGjBDNj2MaVm/jI92djHTblcyVV5c=;
+        b=Qq37DTbvNNKg59ddjBhKVp9lzT6Pt63rYbN3qSl8xqXp93sq/vUpbLK/YS1puMW0Gf
+         hbS3c7W9ISfQ8Fj5SqPRmaveJyex7dDFY4/txYFhhC7PSHJkYz8JCTMyA6M3UuTJbeWS
+         kpO5NRLUSFo37Lt4LaEQl4JsrrmGXln5BzB4vmgEuCv5oKU4BBmg8wTPUjcj61p53IqF
+         yw/Pg8DEHUtUh3zMQp32ODES4olEaLsXyOvz/EcZW7gL7GWBNDENiLK5p9GZ0fGqGK3y
+         PoCGTkZCDaj0o51HBAOrRBe0uK6+XJxrC9towrGONZjFBTBun2wSCdjrder9Gr1rNtop
+         rSAA==
+X-Gm-Message-State: AOAM532qa4ihD1T3nP0IMTfFqGNp571T94SK2oFUb0Jgh5OI+52IIowb
+        sm/U/S0BRdiKL3nwrK1OOhhjUA+BeP7gNA==
+X-Google-Smtp-Source: ABdhPJy0+14qvVRnblJj637ognh42krr4H5Du0Jsgl/9AXK3LzjVy3pQ+yA6ttk9Wd+2/S7FHt7HPA==
+X-Received: by 2002:a17:902:bc46:b029:106:c097:88bd with SMTP id t6-20020a170902bc46b0290106c09788bdmr5393463plz.81.1623251545413;
+        Wed, 09 Jun 2021 08:12:25 -0700 (PDT)
 Received: from [192.168.4.41] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id z24sm14448067pfk.149.2021.06.09.08.11.57
+        by smtp.gmail.com with ESMTPSA id e2sm153513pgh.5.2021.06.09.08.12.24
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Jun 2021 08:11:58 -0700 (PDT)
-Subject: Re: [PATCH liburing 1/1] tests: test shmem buffer registration
+        Wed, 09 Jun 2021 08:12:25 -0700 (PDT)
+Subject: Re: [RFC] io_uring: enable shmem/memfd memory registration
 To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <c0bebfd100d860fb055af8edf7e56b8838e92719.1623245732.git.asml.silence@gmail.com>
+References: <52247e3ec36eec9d6af17424937c8d20c497926e.1623248265.git.asml.silence@gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <04734e7e-4f7e-c1f7-6c4a-f8e63fbc695e@kernel.dk>
-Date:   Wed, 9 Jun 2021 09:12:00 -0600
+Message-ID: <355210c4-7b2c-8445-b8af-da40aed2af26@kernel.dk>
+Date:   Wed, 9 Jun 2021 09:12:27 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <c0bebfd100d860fb055af8edf7e56b8838e92719.1623245732.git.asml.silence@gmail.com>
+In-Reply-To: <52247e3ec36eec9d6af17424937c8d20c497926e.1623248265.git.asml.silence@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -62,11 +62,12 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/9/21 8:27 AM, Pavel Begunkov wrote:
-> Add a simple test registering a chunk of memfd (shmem) memory and doing
-> some I/O with it.
+On 6/9/21 8:26 AM, Pavel Begunkov wrote:
+> Relax buffer registration restictions, which filters out file backed
+> memory, and allow shmem/memfd as they have normal anonymous pages
+> underneath.
 
-Applied, thanks.
+I think this is fine, we really only care about file backed.
 
 -- 
 Jens Axboe

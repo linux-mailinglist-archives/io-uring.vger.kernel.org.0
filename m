@@ -2,100 +2,82 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E6D33A136B
-	for <lists+io-uring@lfdr.de>; Wed,  9 Jun 2021 13:49:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F9A23A14AF
+	for <lists+io-uring@lfdr.de>; Wed,  9 Jun 2021 14:42:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239535AbhFILux (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 9 Jun 2021 07:50:53 -0400
-Received: from mail-ed1-f51.google.com ([209.85.208.51]:47099 "EHLO
-        mail-ed1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239485AbhFILuF (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 9 Jun 2021 07:50:05 -0400
-Received: by mail-ed1-f51.google.com with SMTP id r11so28260039edt.13
-        for <io-uring@vger.kernel.org>; Wed, 09 Jun 2021 04:48:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=GJ8mdQKDK9pjvBSIfUUsoLM94xFGvd6gz+K9BFJCB5E=;
-        b=DIjDqQabiwbXg4B6dGmkM847y+vKDuMvwjJBON9dQ0jbaqpOkumoITTFnaXz0c/L/k
-         ayepR6YtJ6pIH6upSdZYIaOeXLgCmGRjS1+QP9RfXDWJTo+BJPLwnzhjj4h64+Zrd7jE
-         hdgRhw2mmCW5ZW+cHdIP8/DfX9kbTcX9Gg74YdZs/gWIqlc6TiSJ5vUjkLhQvyxsgZVF
-         187SU0RMKFhm2gipzkqZACjLhRPAMqAwfp51OEQYDCSe2eOmURe8v4mB210SOPVIi+y1
-         kR8MS+yIVCZoOi3lRbYr/n5wXIfzjcQimpTLNho739Q16t7Zv/zjLyIY/DtQP8GRMcdH
-         qIKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=GJ8mdQKDK9pjvBSIfUUsoLM94xFGvd6gz+K9BFJCB5E=;
-        b=O1gskR7QGw0Htzuuls2pDjedpQrUiJAi0N2rxIL1TcB5Xk5RPpxQdNVzsMWRaLUcEW
-         K0ZTEW+Cjs0DxUjCQp5wgbSVb7BFBBPOKl/stOEfvrg4aERL+9IxWFUBnE2lHLUuoEus
-         OpEjVm2Vi9Zhj47jYhoNGvIp+xXcb6Zb19ClyxVElgGv0WDlryv3oEe4clXOkvKFRPqq
-         MSo2ExwFkseHcP21kz2HMJ+XraoC0lWGxx9ouHVsDdjKJZL2eZkUAuRE+iVE34cHQNkY
-         6Ao90UO2tK5tvNvr66K/SQdFzFGdYc2it+18Hn0kkYB47AEBAmJ+FOLFkbdSSQUBlXer
-         7z7A==
-X-Gm-Message-State: AOAM532AydepAvssUo27kR6GUcN00ChrSexOvRrkzG7nWU5l5VYfY2sS
-        SECE/7Aqdy4dAxch/P6m70g=
-X-Google-Smtp-Source: ABdhPJyPKA8uvyvYFtyVzqF0a39XXER+K65XxA9Ya+viPHVnEjgS1kgbFcVPFqNINJJvUMZDKz2UuQ==
-X-Received: by 2002:a05:6402:152:: with SMTP id s18mr29560854edu.221.1623239230141;
-        Wed, 09 Jun 2021 04:47:10 -0700 (PDT)
-Received: from agony.thefacebook.com ([2620:10d:c092:600::2:c753])
-        by smtp.gmail.com with ESMTPSA id h9sm1049762edt.18.2021.06.09.04.47.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jun 2021 04:47:09 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH liburing 1/1] tests: update reg-buf limits testing
-Date:   Wed,  9 Jun 2021 12:46:54 +0100
-Message-Id: <947234e13ba32fdc9b8ce45f679d78b9d08cb46a.1623239194.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.31.1
+        id S229770AbhFIMoP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 9 Jun 2021 08:44:15 -0400
+Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:57771 "EHLO
+        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234450AbhFIMoK (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 9 Jun 2021 08:44:10 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R651e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0UbsYWuF_1623242533;
+Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UbsYWuF_1623242533)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 09 Jun 2021 20:42:14 +0800
+Subject: Re: [PATCH] io_uring: fix blocking inline submission
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <d60270856b8a4560a639ef5f76e55eb563633599.1623236455.git.asml.silence@gmail.com>
+From:   Hao Xu <haoxu@linux.alibaba.com>
+Message-ID: <d8033ef5-f22e-10a7-d836-0e66455327cf@linux.alibaba.com>
+Date:   Wed, 9 Jun 2021 20:42:13 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.10.1
 MIME-Version: 1.0
+In-Reply-To: <d60270856b8a4560a639ef5f76e55eb563633599.1623236455.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-We now allow more fixed buffers to be registered, update tests from the
-previous UIO_MAXIOV limit to something that will definitely fail.
-
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- test/io_uring_register.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
-
-diff --git a/test/io_uring_register.c b/test/io_uring_register.c
-index 7bcb036..1d0981b 100644
---- a/test/io_uring_register.c
-+++ b/test/io_uring_register.c
-@@ -280,12 +280,16 @@ int
- test_iovec_nr(int fd)
- {
- 	int i, ret, status = 0;
--	unsigned int nr = UIO_MAXIOV + 1;
-+	unsigned int nr = 1000000;
- 	struct iovec *iovs;
- 	void *buf;
- 
-+	iovs = malloc(nr * sizeof(struct iovec));
-+	if (!iovs) {
-+		fprintf(stdout, "can't allocate iovecs, skip\n");
-+		return 0;
-+	}
- 	buf = t_malloc(pagesize);
--	iovs = t_malloc(nr * sizeof(struct iovec));
- 
- 	for (i = 0; i < nr; i++) {
- 		iovs[i].iov_base = buf;
-@@ -295,7 +299,7 @@ test_iovec_nr(int fd)
- 	status |= expect_fail(fd, IORING_REGISTER_BUFFERS, iovs, nr, EINVAL);
- 
- 	/* reduce to UIO_MAXIOV */
--	nr--;
-+	nr = UIO_MAXIOV;
- 	printf("io_uring_register(%d, %u, %p, %u)\n",
- 	       fd, IORING_REGISTER_BUFFERS, iovs, nr);
- 	ret = __sys_io_uring_register(fd, IORING_REGISTER_BUFFERS, iovs, nr);
--- 
-2.31.1
+在 2021/6/9 下午7:07, Pavel Begunkov 写道:
+> There is a complaint against sys_io_uring_enter() blocking if it submits
+> stdin reads. The problem is in __io_file_supports_async(), which
+> sees that it's a cdev and allows it to be processed inline.
+> 
+> Punt char devices using generic rules of io_file_supports_async(),
+> including checking for presence of *_iter() versions of rw callbacks.
+> Apparently, it will affect most of cdevs with some exceptions like
+> null and zero devices.
+> 
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> ---
+> 
+> "...For now, just ensure that anything potentially problematic is done
+> inline". I believe this part is outdated, but what use cases we miss?
+> Anything that we care about?
+> 
+> IMHO the best option is to do like in this patch and add
+> (read,write)_iter(), to places we care about.
+> 
+> /dev/[u]random, consoles, any else?
+> 
+This reminds me another thing, once I did nowait read on a brd(block
+ramdisk), I saw a 10%~30% regression after __io_file_supports_async()
+added. brd is bio based device (block layer doesn't support nowait IO
+for this kind of device), so theoretically it makes sense to punt it to
+iowq threads in advance in __io_file_supports_async(), but actually
+what originally happen is: IOCB_NOWAIT is not delivered to block
+layer(REQ_NOWAIT) and then the IO request is executed inline (It seems
+brd device won't block). This finally makes 'check it in advance'
+slower..
+>   fs/io_uring.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 42380ed563c4..44d1859f0dfb 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -2616,7 +2616,7 @@ static bool __io_file_supports_async(struct file *file, int rw)
+>   			return true;
+>   		return false;
+>   	}
+> -	if (S_ISCHR(mode) || S_ISSOCK(mode))
+> +	if (S_ISSOCK(mode))
+>   		return true;
+>   	if (S_ISREG(mode)) {
+>   		if (IS_ENABLED(CONFIG_BLOCK) &&
+> 
 

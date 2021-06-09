@@ -2,82 +2,82 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F9A23A14AF
-	for <lists+io-uring@lfdr.de>; Wed,  9 Jun 2021 14:42:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D34033A173A
+	for <lists+io-uring@lfdr.de>; Wed,  9 Jun 2021 16:28:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229770AbhFIMoP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 9 Jun 2021 08:44:15 -0400
-Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:57771 "EHLO
-        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234450AbhFIMoK (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 9 Jun 2021 08:44:10 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R651e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0UbsYWuF_1623242533;
-Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UbsYWuF_1623242533)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 09 Jun 2021 20:42:14 +0800
-Subject: Re: [PATCH] io_uring: fix blocking inline submission
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-References: <d60270856b8a4560a639ef5f76e55eb563633599.1623236455.git.asml.silence@gmail.com>
-From:   Hao Xu <haoxu@linux.alibaba.com>
-Message-ID: <d8033ef5-f22e-10a7-d836-0e66455327cf@linux.alibaba.com>
-Date:   Wed, 9 Jun 2021 20:42:13 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.10.1
+        id S233707AbhFIOaU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 9 Jun 2021 10:30:20 -0400
+Received: from mail-ej1-f51.google.com ([209.85.218.51]:37584 "EHLO
+        mail-ej1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233188AbhFIOaT (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 9 Jun 2021 10:30:19 -0400
+Received: by mail-ej1-f51.google.com with SMTP id ce15so38778403ejb.4
+        for <io-uring@vger.kernel.org>; Wed, 09 Jun 2021 07:28:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SmMICuNhQ4Mhd2qjrL79cgMbG0RxftKr3rFtutkQDaI=;
+        b=XT68xaOYuKh9UocNI1kWtxywxJqcghi/FgpFBc8+6e5TrLBUDqnY/whkycgrulSCRF
+         DONmiNX/U7vllBU/Eg5a0vTPoFdmHNTjieP97ovBOgeFCi6mbQEgOT6bDfHYXmxQyZGT
+         M/qw/UJWLyBrs1fj5i2Fp6x2Kx0b8r6QtUndbjKhPUvOuXRokQkuFDGO6Tz/ubYqvJBL
+         JrXoaUP39EumBpDlj6pJIAg8WM+tUKuQeXZmPt7BZGidk0dUP2P7DoozJ61jB7/AKQZd
+         zJa56KKcfkyU24tNa6aXSKzjADGz9sv3D+89Y9mcbmJawjW3Ym/qsxyXzdpT1n1dvwFq
+         bj+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SmMICuNhQ4Mhd2qjrL79cgMbG0RxftKr3rFtutkQDaI=;
+        b=ESpEbhu227DKX+tTGsHrTUHw6D3nxxDnVFUcP1V4+zRJLIYhcLFw7LXhpcBApiUsas
+         95p4ETWfuKESYgeXJyCvsz4WTzXr5IqB4XUGTWqGtl2t5bPq9ANqG310ehXCRJae1JQV
+         R55LB5ytRoPJlvZbnID3XQgKsureqOd85XksMpV/nILa2QMW7G/g/CiNNm21r52/7jb4
+         JLNC5qrxvRCZlu99k6eTyIEun3QM6QDUTkiipn65ujjUbUU0u+Z0JHO9Od3wLGUxncEk
+         S5VPxx6JsASln5J1zSDyBT2UWdJcopr5GuqVa4pmSOcs3TpgiP0JMH8pmwHuu/73dO4b
+         Gx0Q==
+X-Gm-Message-State: AOAM530gJa85oOWKq83ulvpYn93hlHZCmk/51g6jErAPN+zzZsUgCBn2
+        +7CjaK0fKHGvbUz0NsxIY3E=
+X-Google-Smtp-Source: ABdhPJwMlZW1qPOX/ue0/AJekvvxh+HywEjXVMVlmllX1r0pWmWLA67WZfgJdHQryc38hJ4EiTN3GQ==
+X-Received: by 2002:a17:906:4e95:: with SMTP id v21mr150339eju.434.1623248830862;
+        Wed, 09 Jun 2021 07:27:10 -0700 (PDT)
+Received: from agony.thefacebook.com ([2620:10d:c093:600::2:c2f])
+        by smtp.gmail.com with ESMTPSA id me11sm1194554ejb.93.2021.06.09.07.27.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Jun 2021 07:27:10 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [RFC] io_uring: enable shmem/memfd memory registration
+Date:   Wed,  9 Jun 2021 15:26:54 +0100
+Message-Id: <52247e3ec36eec9d6af17424937c8d20c497926e.1623248265.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-In-Reply-To: <d60270856b8a4560a639ef5f76e55eb563633599.1623236455.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-在 2021/6/9 下午7:07, Pavel Begunkov 写道:
-> There is a complaint against sys_io_uring_enter() blocking if it submits
-> stdin reads. The problem is in __io_file_supports_async(), which
-> sees that it's a cdev and allows it to be processed inline.
-> 
-> Punt char devices using generic rules of io_file_supports_async(),
-> including checking for presence of *_iter() versions of rw callbacks.
-> Apparently, it will affect most of cdevs with some exceptions like
-> null and zero devices.
-> 
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> ---
-> 
-> "...For now, just ensure that anything potentially problematic is done
-> inline". I believe this part is outdated, but what use cases we miss?
-> Anything that we care about?
-> 
-> IMHO the best option is to do like in this patch and add
-> (read,write)_iter(), to places we care about.
-> 
-> /dev/[u]random, consoles, any else?
-> 
-This reminds me another thing, once I did nowait read on a brd(block
-ramdisk), I saw a 10%~30% regression after __io_file_supports_async()
-added. brd is bio based device (block layer doesn't support nowait IO
-for this kind of device), so theoretically it makes sense to punt it to
-iowq threads in advance in __io_file_supports_async(), but actually
-what originally happen is: IOCB_NOWAIT is not delivered to block
-layer(REQ_NOWAIT) and then the IO request is executed inline (It seems
-brd device won't block). This finally makes 'check it in advance'
-slower..
->   fs/io_uring.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 42380ed563c4..44d1859f0dfb 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -2616,7 +2616,7 @@ static bool __io_file_supports_async(struct file *file, int rw)
->   			return true;
->   		return false;
->   	}
-> -	if (S_ISCHR(mode) || S_ISSOCK(mode))
-> +	if (S_ISSOCK(mode))
->   		return true;
->   	if (S_ISREG(mode)) {
->   		if (IS_ENABLED(CONFIG_BLOCK) &&
-> 
+Relax buffer registration restictions, which filters out file backed
+memory, and allow shmem/memfd as they have normal anonymous pages
+underneath.
+
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ fs/io_uring.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 44d1859f0dfb..e980695707ec 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -8300,6 +8300,8 @@ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, struct iovec *iov,
+ 		for (i = 0; i < nr_pages; i++) {
+ 			struct vm_area_struct *vma = vmas[i];
+ 
++			if (vma_is_shmem(vma))
++				continue;
+ 			if (vma->vm_file &&
+ 			    !is_file_hugepages(vma->vm_file)) {
+ 				ret = -EOPNOTSUPP;
+-- 
+2.31.1
 

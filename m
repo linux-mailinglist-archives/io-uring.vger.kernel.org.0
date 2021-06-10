@@ -2,109 +2,105 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 412303A3418
-	for <lists+io-uring@lfdr.de>; Thu, 10 Jun 2021 21:33:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6E5F3A344D
+	for <lists+io-uring@lfdr.de>; Thu, 10 Jun 2021 21:51:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230406AbhFJTfP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 10 Jun 2021 15:35:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57052 "EHLO
+        id S229963AbhFJTxJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 10 Jun 2021 15:53:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230130AbhFJTfO (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 10 Jun 2021 15:35:14 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D529C061574;
-        Thu, 10 Jun 2021 12:33:04 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id l2so3535085wrw.6;
-        Thu, 10 Jun 2021 12:33:04 -0700 (PDT)
+        with ESMTP id S230035AbhFJTxI (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 10 Jun 2021 15:53:08 -0400
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28FCFC0617A6
+        for <io-uring@vger.kernel.org>; Thu, 10 Jun 2021 12:51:11 -0700 (PDT)
+Received: by mail-lf1-x136.google.com with SMTP id p7so5053909lfg.4
+        for <io-uring@vger.kernel.org>; Thu, 10 Jun 2021 12:51:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:references:from:subject:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=5E8cF5VBKpyrJ6DOOtaoDCcGr87nYIq7F2vf6J9aNA8=;
-        b=XLlVKTvyCCtFD2F+pDbVMG7on+fgYxcR2PRrrKD+ku1LJwcflhX7OKW9NGx9zrIqZT
-         xI4lGLOse3e98Vv25UW2k14zHdxeKlOTIBJ2I17UR+2F4STPzuDTinoBiuGVtbsks4Qf
-         xj2jXy+j4rvUrTndTyOy7ElIljlPYTA4B43R3matHiEuey66M37yrefb8WDo7FLq5miK
-         hmMkb+/TCIM1S4AnCgiMTyV7DMeOJuipAGtkIjCUQSuWIvAgg7BquAeqskbR3I2bmzL1
-         adlUiJcUs7lAsrbJqsA+GCf0XXPpj8s4ujkAY7xfJHRPXXTqLGOj2aHfOh+r9n6xU1YX
-         Lh7w==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=R7gUGOzETMzYFAG4seIz29zubSDkdiXjPsIc9hK01xE=;
+        b=aBsNBHP0NpRBvB46PeLY9+arShvd1498r3GSD0O2n4SRYflDcL42dQNQtcGknUePat
+         3nywBCNe6xd+GcU1Vx9TJ6128jk5YFNdIWWwxAVHawjXXU8e4kV4pi9X+M42A+gU72FM
+         jdWC7EmtUd4URMrXwAJ1eo4czRMFqiB5EI9nc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:references:from:subject:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=5E8cF5VBKpyrJ6DOOtaoDCcGr87nYIq7F2vf6J9aNA8=;
-        b=twKQmsWoXJNZKyvmcac7Yq5jB5zXowVEQlQPAo7XsfAvwxhYWpmvzgHgGPVVjAgc7+
-         tE3jql16o0c8FydW9xJ0/BxZYaqm/bFZimyoJ5b2kCYEi4Dzhg4AHiAT1ewxruBOUO8V
-         hqQiLm0ZEPaCWPJoZYjdiLeBgPPCz2fIsCwoKZVvXF4LMFvoA5+7H/kZUmsmdpiclBz1
-         rzvt1l/i84QXsAbw0UtqQmUSvpFFZLUd40p6qi5VT/J1hnXTwzdn9c+YUZyK/Pl+bXcl
-         jPO6avkKbhrsHMgQlCqDcNe9q2kbAsHKEoVOJGnTHsyRVWoddDztPSQ8WCHZbhzV1NdK
-         +i7g==
-X-Gm-Message-State: AOAM531Ssg+HEAiGe670k/rL9B7VPCHOJXCCfAdDtcAPpDVhu0FnSx3V
-        CGqtXggw/Qsx91KUrzU+BTzr9Y5+WqB5yQ==
-X-Google-Smtp-Source: ABdhPJxhYzEarNnwgTB1VN9Iwqor7i/fxslED2U9Q5D0bDWiaZ5kmUNHtfibpDCcntg9Oj3kOzYzgw==
-X-Received: by 2002:a5d:6747:: with SMTP id l7mr99257wrw.220.1623353582764;
-        Thu, 10 Jun 2021 12:33:02 -0700 (PDT)
-Received: from [192.168.8.197] ([148.252.133.95])
-        by smtp.gmail.com with ESMTPSA id o9sm4178660wri.68.2021.06.10.12.33.01
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=R7gUGOzETMzYFAG4seIz29zubSDkdiXjPsIc9hK01xE=;
+        b=M6DertvGom0hfmgQ0j14D17VIRbf6dMQy3G8yYsGGQCpY26Zt8WHUrolAjDT7sOus5
+         2T2FGuHTF2k+CxiIqsSLvNsdxtU80RLLHmUyC/NzHX65a43/cKUZtJRq8dxFlmEbuO07
+         oCgnjDSkFIvjt7m84VgBF0Qvv6/d2m6NeuQay0zHO/SsozQmFZHpdi2BN82GpyRVOjZg
+         lLys5tVReWpNP8LyAWqsLIi8DQwdc5GoStsf+Aw+oO6upsUEMnOunloW+XteEL+4xEJg
+         PQLxFzt5XkZrI1IMVpTL9qM4t9uClQaSl4wBPVd9tFBWxo8/nc4N+cgUi9otStuRP1XB
+         mVqg==
+X-Gm-Message-State: AOAM5327pHgk9eSu+zl8ZfAnDMDqXkgYqbTa0suiUNfKEmZscGuFzRcz
+        /lfsHV6vWUry5G9NYxpGczE+2U5nBKwd5jB+Xk0=
+X-Google-Smtp-Source: ABdhPJxF/nm2CjqG4e+xh8YXLjWALkXhI3mI2dHe0J2TqxImyV30NDty/dRmy/pJgTOvgyO4MWiWGg==
+X-Received: by 2002:a05:6512:3d8f:: with SMTP id k15mr304366lfv.362.1623354667071;
+        Thu, 10 Jun 2021 12:51:07 -0700 (PDT)
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
+        by smtp.gmail.com with ESMTPSA id y7sm431896ljp.69.2021.06.10.12.51.04
+        for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Jun 2021 12:33:02 -0700 (PDT)
-To:     Olivier Langlois <olivier@trillion01.com>,
-        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <60c13bec.1c69fb81.73967.f06dSMTPIN_ADDED_MISSING@mx.google.com>
- <84e42313-d738-fb19-c398-08a4ed0e0d9c@gmail.com>
- <4b5644bff43e072a98a19d7a5ca36bb5e11497ec.camel@trillion01.com>
- <a7d6f2fd-b59e-e6fa-475a-23962d45b6fa@gmail.com>
- <9938f22a0bb09f344fa5c9c5c1b91f0d12e7566f.camel@trillion01.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Subject: Re: [PATCH] io_uring: reduce latency by reissueing the operation
-Message-ID: <a12e218a-518d-1dac-5e8c-d9784c9850b0@gmail.com>
-Date:   Thu, 10 Jun 2021 20:32:51 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        Thu, 10 Jun 2021 12:51:04 -0700 (PDT)
+Received: by mail-lf1-f43.google.com with SMTP id r198so5014758lff.11
+        for <io-uring@vger.kernel.org>; Thu, 10 Jun 2021 12:51:04 -0700 (PDT)
+X-Received: by 2002:a05:6512:3f82:: with SMTP id x2mr266721lfa.421.1623354664442;
+ Thu, 10 Jun 2021 12:51:04 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <9938f22a0bb09f344fa5c9c5c1b91f0d12e7566f.camel@trillion01.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <192c9697e379bf084636a8213108be6c3b948d0b.camel@trillion01.com>
+ <9692dbb420eef43a9775f425cb8f6f33c9ba2db9.camel@trillion01.com>
+ <87h7i694ij.fsf_-_@disp2133> <CAHk-=wjC7GmCHTkoz2_CkgSc_Cgy19qwSQgJGXz+v2f=KT3UOw@mail.gmail.com>
+ <198e912402486f66214146d4eabad8cb3f010a8e.camel@trillion01.com>
+ <87eeda7nqe.fsf@disp2133> <b8434a8987672ab16f9fb755c1fc4d51e0f4004a.camel@trillion01.com>
+ <87pmwt6biw.fsf@disp2133> <87czst5yxh.fsf_-_@disp2133> <CAHk-=wiax83WoS0p5nWvPhU_O+hcjXwv6q3DXV8Ejb62BfynhQ@mail.gmail.com>
+ <87y2bh4jg5.fsf@disp2133>
+In-Reply-To: <87y2bh4jg5.fsf@disp2133>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 10 Jun 2021 12:50:48 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjPiEaXjUp6PTcLZFjT8RrYX+ExtD-RY3NjFWDN7mKLbw@mail.gmail.com>
+Message-ID: <CAHk-=wjPiEaXjUp6PTcLZFjT8RrYX+ExtD-RY3NjFWDN7mKLbw@mail.gmail.com>
+Subject: Re: [CFT}[PATCH] coredump: Limit what can interrupt coredumps
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Olivier Langlois <olivier@trillion01.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        io-uring <io-uring@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>,
+        "Pavel Begunkov>" <asml.silence@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/10/21 6:56 PM, Olivier Langlois wrote:
-> On Thu, 2021-06-10 at 16:51 +0100, Pavel Begunkov wrote:
->> Right, but it still stalls other requests and IIRC there are people
->> not liking the syscall already taking too long. Consider
->> io_req_task_queue(), adds more overhead but will delay execution
->> to the syscall exit.
->>
->> In any case, would be great to have numbers, e.g. to see if
->> io_req_task_queue() is good enough, how often your problem
->> takes places and how much it gives us.
->>
-> I will get you more more data later but I did run a fast test that
-> lasted 81 seconds with a single TCP connection.
-> 
-> The # of times that the sqe got reissued is 57.
-> 
-> I'll intrumentalize a bit the code to answer the following questions:
-> 
-> 1. What is the ratio of reissued read sqe/total read sqe
-> 2. Average exec time of __io_queue_sqe() for a read sqe when data is
-> already available vs avg exec time when sqe is reissued
-> 3. average exec time when the sqe is pushed to async when it could have
-> been reissued.
-> 
-> With that info, I think that we will be in better position to evaluate
-> whether or not the patch is good or not.
-> 
-> Can you think of other numbers that would be useful to know to evaluate
-> the patch performance?
+On Thu, Jun 10, 2021 at 12:18 PM Eric W. Biederman
+<ebiederm@xmission.com> wrote:
+>
+> I just didn't want those two lines hiding any other issues we might
+> have in the coredumps.
+>
+> That is probably better development thinking than minimal fix thinking.
 
-If throughput + latency (avg + several nines) are better (or any
-other measurable improvement), it's a good enough argument to me,
-but not sure what test case you're looking at. Single threaded?
-Does it saturate your CPU?
+Well, I think we should first do the minimal targeted fix (the part in
+fs/coredump.c).
 
--- 
-Pavel Begunkov
+Then we should look at whether we could do cleanups as a result of that fix.
+
+And I suspect the cleanups might bigger than the two-liner removal.
+The whole SIGNAL_GROUP_COREDUMP flag was introduced for this issue,
+
+See commit 403bad72b67d ("coredump: only SIGKILL should interrupt the
+coredumping task") which introduced this all.
+
+Now, we have since grown other users of SIGNAL_GROUP_COREDUMP - OOM
+hanmdling and the clear_child_tid thing in mm_release(). So maybe we
+should keep SIGNAL_GROUP_COREDUMP around.
+
+So maybe only those two lines end up being the ones to remove, but I'd
+really like to think of it as a separate thing from the fix itself.
+
+                Linus

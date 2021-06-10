@@ -2,187 +2,95 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 580013A27D6
-	for <lists+io-uring@lfdr.de>; Thu, 10 Jun 2021 11:10:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3D093A2852
+	for <lists+io-uring@lfdr.de>; Thu, 10 Jun 2021 11:34:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230087AbhFJJL7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 10 Jun 2021 05:11:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59436 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229914AbhFJJL7 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 10 Jun 2021 05:11:59 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08A70C061574;
-        Thu, 10 Jun 2021 02:09:47 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id m18so1398255wrv.2;
-        Thu, 10 Jun 2021 02:09:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=aA3qNpdrQMqkukZT9c2cYMIlRMYPN4cXLvEY+pr6FGE=;
-        b=mlnXzW0JDlw/F9ohxso+1nE1ibYnYhrOGRPE1df+XW8avkT5qXymLsKUaTvsrjtKeH
-         KX9KhlnLx0fQ4uRmqGTgkzclsmTyGptiW061DpN8wnA122ySA9u4YRIgyzW22HFI9lLo
-         LIGgICl8bViq0QG4qX5+nV1BpSYtvM0V/Q9u9lUY3FA/61FWI8jIxHLhC6GgyH2vWnfX
-         Rdk7z11eNncrigDnaA0yma7pISLLAiSD/nAnVEhkxmYm9X9xhAA+TotFVjyRSvCvuBWy
-         T0BgaIz2VwmiyUaIJ8kTXBGtMTMrz1448VNUM3nv3E8xYxOscygD0uoYLWLHt5qd4Drj
-         xHDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=aA3qNpdrQMqkukZT9c2cYMIlRMYPN4cXLvEY+pr6FGE=;
-        b=nZOPpWBCpDThWaA8vyLSz2xnSdX1O8NlXjDWogEBrqOw45zgnREx3yOEWgkZuWuurU
-         gZ7L3afomofH6WPEKWoJq5Qclq4jWYovny1A+sMt3TCMRN5JzTmpWrbWv2xhccefg4CM
-         zG28eU7HE6PVNN2jzeLniV/VXLfUc8wk/EV9C9NFIpF+v7tDT+ixXTHbkzJfSIWitmNl
-         9RTbEadzdlXm0I+xfsg4xqmK/pyjrxdXbJO8nEgvxCG465rbtpvxXipUVGH9ZtiWIoAe
-         StYfaa56fH9D+GXldlauzqN7KIp1IB5Gp+DHbLTNIUdR9whPIwE/TcDsnVKa7NsDsWZ4
-         JqpA==
-X-Gm-Message-State: AOAM530bnSHszlgGXjKXpSv8C7RNHfn7nklT37u9M67vuSWN6LFkIX7/
-        tQtfP0PxDwkLlclNP9JbEZA=
-X-Google-Smtp-Source: ABdhPJxqrRuVI+dreFR9Ia4t+/Q60mfSF2kuvuRz1tIIMoka/FZFX+Q52Yl0pQNepm0ykiPHCoLIZQ==
-X-Received: by 2002:adf:fdcd:: with SMTP id i13mr4268863wrs.307.1623316185636;
-        Thu, 10 Jun 2021 02:09:45 -0700 (PDT)
-Received: from [192.168.8.197] ([148.252.133.95])
-        by smtp.gmail.com with ESMTPSA id n7sm8151882wmq.37.2021.06.10.02.09.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Jun 2021 02:09:44 -0700 (PDT)
-Subject: Re: io_uring: BPF controlled I/O
-To:     Victor Stewart <v@nametag.social>
-Cc:     io-uring <io-uring@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        lsf-pc@lists.linux-foundation.org
-References: <23168ac0-0f05-3cd7-90dc-08855dd275b2@gmail.com>
- <CAM1kxwjHrf74u5OLB=acP2fBy+cPG4NNxa-51O35caY4VKdkkg@mail.gmail.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <7a7d32eb-69fb-93ef-4092-c4da926dd416@gmail.com>
-Date:   Thu, 10 Jun 2021 10:09:33 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        id S229937AbhFJJgp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 10 Jun 2021 05:36:45 -0400
+Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:58681 "EHLO
+        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229770AbhFJJgp (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 10 Jun 2021 05:36:45 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UbxfygL_1623317686;
+Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UbxfygL_1623317686)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 10 Jun 2021 17:34:47 +0800
+Subject: Re: [PATCH] io_uring: use io_poll_get_double in io_poll_double_wake
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
+References: <1623314716-55024-1-git-send-email-haoxu@linux.alibaba.com>
+ <3e3894ee-398d-02ba-c72c-f40ef121a724@gmail.com>
+From:   Hao Xu <haoxu@linux.alibaba.com>
+Message-ID: <39813659-469e-19d0-03ca-90fd551aa98e@linux.alibaba.com>
+Date:   Thu, 10 Jun 2021 17:34:46 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.10.1
 MIME-Version: 1.0
-In-Reply-To: <CAM1kxwjHrf74u5OLB=acP2fBy+cPG4NNxa-51O35caY4VKdkkg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <3e3894ee-398d-02ba-c72c-f40ef121a724@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/7/21 7:51 PM, Victor Stewart wrote:
-> On Sat, Jun 5, 2021 at 5:09 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
+在 2021/6/10 下午4:59, Pavel Begunkov 写道:
+> On 6/10/21 9:45 AM, Hao Xu wrote:
+>> Correct wrong use of io_poll_get_single in io_poll_double_wake, which
+>> I think is a slip-up.
+> 
+> Not really. It removes both poll entries
+Yea, I see. I misunderstood the code..
+> 
+> 
+>> [   55.204528] WARNING: CPU: 0 PID: 2660 at fs/io_uring.c:1512 io_poll_double_wake+0x1d6/0x1f0
+>> [   55.204546] Modules linked in:
+>> [   55.204560] CPU: 0 PID: 2660 Comm: a.out Not tainted 5.13.0-rc3+ #1
+>> [   55.204575] RIP: 0010:io_poll_double_wake+0x1d6/0x1f0
+>> [   55.204584] Code: ff 48 89 eb e9 8b fe ff ff e8 c6 68 d3 ff 49 c7 44 24 08 00 00 00 00 48 8b 7b 08 e8 e4 7b 9d 00 e9 5d ff ff ff e8 aa 68 d3 ff <0f> 0b e9 76 ff ff ff e8 9e 68 d3 ff 0f 0b e9 59 ff ff ff 0f 1f 80
+>> [   55.204592] RSP: 0018:ffffc90003c73cc8 EFLAGS: 00010093
+>> [   55.204599] RAX: 0000000000000000 RBX: ffff88810fcf6500 RCX: 0000000000000000
+>> [   55.204604] RDX: ffff88810d38b500 RSI: ffffffff814d3dd6 RDI: ffff88810ff5fd60
+>> [   55.204610] RBP: ffff88810fcf6500 R08: ffff88810d38bf38 R09: 00000000fffffffe
+>> [   55.204615] R10: 00000000e2886200 R11: 000000005dbbc615 R12: ffff88810d068658
+>> [   55.204620] R13: 0000000000000000 R14: 0000000000000001 R15: 0000000040000000
+>> [   55.204625] FS:  00007f84d6170700(0000) GS:ffff88813bc00000(0000) knlGS:0000000000000000
+>> [   55.204635] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> [   55.204640] CR2: 00007f84d616fef8 CR3: 000000010ffd2006 CR4: 00000000001706f0
+>> [   55.204646] Call Trace:
+>> [   55.204656]  __wake_up_common+0x9f/0x1b0
+>> [   55.204674]  __wake_up_common_lock+0x7a/0xc0
+>> [   55.204694]  tty_ldisc_lock+0x44/0x80
+>> [   55.204705]  tty_ldisc_hangup+0xe3/0x240
+>> [   55.204719]  __tty_hangup+0x26b/0x360
+>> [   55.204736]  tty_ioctl+0x6be/0xb20
+>> [   55.204747]  ? do_vfs_ioctl+0x1af/0xaa0
+>> [   55.204757]  ? __fget_files+0x15a/0x260
+>> [   55.204774]  ? tty_vhangup+0x20/0x20
+>> [   55.204787]  __x64_sys_ioctl+0xbb/0x100
+>> [   55.204801]  do_syscall_64+0x36/0x70
+>> [   55.204813]  entry_SYSCALL_64_after_hwframe+0x44/0xae
 >>
->> One of the core ideas behind io_uring is passing requests via memory
->> shared b/w the userspace and the kernel, a.k.a. queues or rings. That
->> serves a purpose of reducing number of context switches or bypassing
->> them, but the userspace is responsible for controlling the flow,
->> reaping and processing completions (a.k.a. Completion Queue Entry, CQE),
->> and submitting new requests, adding extra context switches even if there
->> is not much work to do. A simple illustration is read(open()), where
->> io_uring is unable to propagate the returned fd to the read, with more
->> cases piling up.
+>> Reported-by: Abaci <abaci@linux.alibaba.com>
+>> Fixes: d4e7cd36a90e ("io_uring: sanitize double poll handling")
+>> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
+>> ---
+>>   fs/io_uring.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
 >>
->> The big picture idea stays the same since last year, to give out some
->> of this control to BPF, allow it to check results of completed requests,
->> manipulate memory if needed and submit new requests. Apart from being
->> just a glue between two requests, it might even offer more flexibility
->> like keeping a QD, doing reduce/broadcast and so on.
+>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>> index b2cc1e76d660..2be2db156094 100644
+>> --- a/fs/io_uring.c
+>> +++ b/fs/io_uring.c
+>> @@ -4950,7 +4950,7 @@ static int io_poll_double_wake(struct wait_queue_entry *wait, unsigned mode,
+>>   			       int sync, void *key)
+>>   {
+>>   	struct io_kiocb *req = wait->private;
+>> -	struct io_poll_iocb *poll = io_poll_get_single(req);
+>> +	struct io_poll_iocb *poll = io_poll_get_double(req);
+>>   	__poll_t mask = key_to_poll(key);
+>>   
+>>   	/* for instances that support it check for an event match first: */
 >>
->> The prototype [1,2] is in a good shape but some work need to be done.
->> However, the main concern is getting an understanding what features and
->> functionality have to be added to be flexible enough. Various toy
->> examples can be found at [3] ([1] includes an overview of cases).
->>
->> Discussion points:
->> - Use cases, feature requests, benchmarking
 > 
-> hi Pavel,
-> 
-> coincidentally i'm tossing around in my mind at the moment an idea for
-> offloading
-> the PING/PONG of a QUIC server/client into the kernel via eBPF.
-> 
-> problem being, being that QUIC is userspace run transport and that NAT-ed UDP
-> mappings can't be expected to stay open longer than 30 seconds, QUIC
-> applications
-> bare a large cost of context switching wake-up to conduct connection lifetime
-> maintenance... especially when managing a large number of mostly idle long lived
-> connections. so offloading this maintenance service into the kernel
-> would be a great
-> efficiency boon.
-> 
-> the main impediment is that access to the kernel crypto libraries
-> isn't currently possible
-> from eBPF. that said, connection wide crypto offload into the NIC is a
-> frequently mentioned
-> subject in QUIC circles, so one could argue better to allocate the
-> time to NIC crypto offload
-> and then simply conduct this PING/PONG offload in plain text.
-> 
-> CQEs would provide a great way for the offloaded service to be able to
-> wake up the
-> application when it's input is required.
 
-Interesting, want to try out the idea? All pointers are here
-and/or in the patchset's cv, but if anything is not clear,
-inconvenient, lacks needed functionality, etc. let me know
-
-
-> anyway food for thought.
-> 
-> Victor
-> 
->> - Userspace programming model, code reuse (e.g. liburing)
->> - BPF-BPF and userspace-BPF synchronisation. There is
->>   CQE based notification approach and plans (see design
->>   notes), however need to discuss what else might be
->>   needed.
->> - Do we need more contexts passed apart from user_data?
->>   e.g. specifying a BPF map/array/etc fd io_uring requests?
->> - Userspace atomics and efficiency of userspace reads/writes. If
->>   proved to be not performant enough there are potential ways to take
->>   on it, e.g. inlining, having it in BPF ISA, and pre-verifying
->>   userspace pointers.
->>
->> [1] https://lore.kernel.org/io-uring/a83f147b-ea9d-e693-a2e9-c6ce16659749@gmail.com/T/#m31d0a2ac6e2213f912a200f5e8d88bd74f81406b
->> [2] https://github.com/isilence/linux/tree/ebpf_v2
->> [3] https://github.com/isilence/liburing/tree/ebpf_v2/examples/bpf
->>
->>
->> -----------------------------------------------------------------------
->> Design notes:
->>
->> Instead of basing it on hooks it adds support of a new type of io_uring
->> requests as it gives a better control and let's to reuse internal
->> infrastructure. These requests run a new type of io_uring BPF programs
->> wired with a bunch of new helpers for submitting requests and dealing
->> with CQEs, are allowed to read/write userspace memory in virtue of a
->> recently added sleepable BPF feature. and also provided with a token
->> (generic io_uring token, aka user_data, specified at submission and
->> returned in an CQE), which may be used to pass a userspace pointer used
->> as a context.
->>
->> Besides running BPF programs, they are able to request waiting.
->> Currently it supports CQ waiting for a number of completions, but others
->> might be added and/or needed, e.g. futex and/or requeueing the current
->> BPF request onto an io_uring request/link being submitted. That hides
->> the overhead of creating BPF requests by keeping them alive and
->> invoking multiple times.
->>
->> Another big chunk solved is figuring out a good way of feeding CQEs
->> (potentially many) to a BPF program. The current approach
->> is to enable multiple completion queues (CQ), and specify for each
->> request to which one steer its CQE, so all the synchronisation
->> is in control of the userspace. For instance, there may be a separate
->> CQ per each in-flight BPF request, and they can work with their own
->> queues and send an CQE to the main CQ so notifying the userspace.
->> It also opens up a notification-like sync through CQE posting to
->> neighbours' CQs.
->>
->>
->> --
->> Pavel Begunkov
-
--- 
-Pavel Begunkov

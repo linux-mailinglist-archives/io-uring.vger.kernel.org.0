@@ -2,301 +2,119 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C5393A2F85
-	for <lists+io-uring@lfdr.de>; Thu, 10 Jun 2021 17:40:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1DB23A2FDA
+	for <lists+io-uring@lfdr.de>; Thu, 10 Jun 2021 17:52:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230366AbhFJPmW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 10 Jun 2021 11:42:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33324 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231709AbhFJPmS (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 10 Jun 2021 11:42:18 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99F7EC061760
-        for <io-uring@vger.kernel.org>; Thu, 10 Jun 2021 08:40:20 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id y7so2839768wrh.7
-        for <io-uring@vger.kernel.org>; Thu, 10 Jun 2021 08:40:20 -0700 (PDT)
+        id S231751AbhFJPyl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 10 Jun 2021 11:54:41 -0400
+Received: from mail-wm1-f52.google.com ([209.85.128.52]:42538 "EHLO
+        mail-wm1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231356AbhFJPyk (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 10 Jun 2021 11:54:40 -0400
+Received: by mail-wm1-f52.google.com with SMTP id l7-20020a05600c1d07b02901b0e2ebd6deso6734018wms.1;
+        Thu, 10 Jun 2021 08:52:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=1BDuWe5T6z3uIAktRT5S2dQa7E5vZCy8cZsctCrOzBI=;
-        b=K8Kf7vrRSIQ9gN1r3odgEhEVQvFi40xy1JUVfbJmCoCt4GFgf/Q6sE6RVeobfAPH2D
-         +YsG1i0ScqoqSEODI6H7HbDz6OeRusAsTTc7OTVWr/ddb2ydWwV+VgPacZuJF5r925Fw
-         UJ/uxiTcMUlCUW70ST+R+qlceRRAD9IJ8EwC7AdnREsTi3ZiogPjiab08mziI34MzUrI
-         nFeM9612jkfTFuGAa9WGlWJtGmDqSXjosrnKNBhuxywqTjDQ56Gbmcat77s998KlwY7r
-         3E4AeNV5E2LgAL2fBKMZlYiLEn6E+xIXxaNky6nyfXPyvTFHrYIKAo7yKp5s6SF/C65o
-         bIyQ==
+        h=to:references:from:subject:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=BDfPnO3+j04xZi8QCwuObMJ/ZEkxbsqWl6e/Hz/TDI4=;
+        b=koROQkRSCDnRqTw32O5pYKu84xihdvkCbeB1GdEz+REMyZamWAV8V6nE76eIhTqhnd
+         YIce0+0cEu/Afkzzzn6+yZaVFgMbkCU9JBJlj6Qfd4jAa1RiTW0dBSANq/V4gJmfwcRX
+         X6Ono2ykyBnIKEpgHkVpYl1BUaSJFCA5+nPUbgfkk9SDu5QC6bOmPupRB9XPtW8JHS19
+         b1Rju0Dnw2FXcRAnWonLhaWkBF0qV8ohRCW5IRLWJlPMhTCownl91m8xGtZGS5ir8pPe
+         wfTHRcAYB2u5PoecCdoCxe5/TngqglLXdn4MBxpQME8ReN2qhp9EB2Ge1GvuNQua64pl
+         ffEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+        h=x-gm-message-state:to:references:from:subject:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=1BDuWe5T6z3uIAktRT5S2dQa7E5vZCy8cZsctCrOzBI=;
-        b=mayEt1l8s0pdIz8jTunMRdzfmeEAzQg6D84BoyIm/m8xhOa426KAl76wxCwCISLxF7
-         uuuDM3asLNb6yMW3czKXavjxeKaHuxuKlmilNckUyFXWcE2Tkoe4lcSAhXIzDv3IUbhx
-         vGt+9Cq/3Lam8QiWKepUK+KGnZhaaOd/TAaVv0j7HFrZ88toqRBEs89sbja+zhbqQ3tx
-         5iWJemZJ1a2KOiZzF010u4tmXAg+tnFMTrXhzWIV2WiCRyy8pDRleoxJTtH6S0qsvMzW
-         HqvPPM3rhYSr3eYJxDcKCQkB1igIWDMlmP12P4no19Qw2ThqyJe0Tyau/RqcNXa22ceD
-         19HQ==
-X-Gm-Message-State: AOAM531icGH8mIO9DJvf9ob/zJOBqEfqyQKC1nGZ07IikuMsGXc9Vvpb
-        FldyQXWCzLUyEoA6RfKxkNvV2SXh19VDP2JM
-X-Google-Smtp-Source: ABdhPJzi6V34M2O4tscKpo5nsSE9rfUk+WyMzPWZwbY36YmT1YUQVA7UT91p95+W6HzRgpkLFR6W7Q==
-X-Received: by 2002:a5d:5986:: with SMTP id n6mr6178005wri.60.1623339619214;
-        Thu, 10 Jun 2021 08:40:19 -0700 (PDT)
-Received: from localhost.localdomain ([148.252.133.95])
-        by smtp.gmail.com with ESMTPSA id e16sm4023694wrw.49.2021.06.10.08.40.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jun 2021 08:40:18 -0700 (PDT)
+        bh=BDfPnO3+j04xZi8QCwuObMJ/ZEkxbsqWl6e/Hz/TDI4=;
+        b=DSd+FSE4HfKRgTeiIJZ8SiX8J8LWdRuEzZgG+t9og1ISMGKy82bWuPzdSzaiA7xsjD
+         EKfnxof/QJN1IGTGel8W8Ocxep3hmcXeqn3Vce04GjGOGXG9LfbNKvmCxNHRpJhVrSFB
+         yJfc/vjrz9uf/jj/C1joILFyNBShqntMNJAMLqGPb94r6oeOGOIt1oW/AwSs89L3yaA0
+         m4clpiBxPlcq6lrUDqimQe6VnZNS555w/d9zlIpuuoyoekmVqpMs8o/pJHz7qLVlrbkG
+         gsQ0S97yh3cHhIw4o6uedRUKCHaD3+NYCfwn4YFG8oq5A05ALAOS4M/+cIjR/2zFGC9k
+         BlwQ==
+X-Gm-Message-State: AOAM530wybnGosCiVt+9hxdWoZSVKpCxx2IMvsnURO2tdyNIJ18yW4RQ
+        hl5FU7+7g4rTH9GgcEthDvNXtpZGJ1fXSA==
+X-Google-Smtp-Source: ABdhPJx98lHvYGVe+aYdGGSMYKtK1TmBd2gU9mSpTe/DldviGgat7HullXhrKtmeC9hzunYwYkvxtA==
+X-Received: by 2002:a7b:c417:: with SMTP id k23mr15413341wmi.71.1623340291252;
+        Thu, 10 Jun 2021 08:51:31 -0700 (PDT)
+Received: from [192.168.8.197] ([148.252.133.95])
+        by smtp.gmail.com with ESMTPSA id w13sm4366985wrc.31.2021.06.10.08.51.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Jun 2021 08:51:30 -0700 (PDT)
+To:     Olivier Langlois <olivier@trillion01.com>,
+        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <60c13bec.1c69fb81.73967.f06dSMTPIN_ADDED_MISSING@mx.google.com>
+ <84e42313-d738-fb19-c398-08a4ed0e0d9c@gmail.com>
+ <4b5644bff43e072a98a19d7a5ca36bb5e11497ec.camel@trillion01.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH liburing 1/1] update rsrc register/update ABI and tests
-Date:   Thu, 10 Jun 2021 16:40:01 +0100
-Message-Id: <7542c3d9d0a5fb926c9d8d83ae02f553c6874b97.1623339582.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.31.1
+Subject: Re: [PATCH] io_uring: reduce latency by reissueing the operation
+Message-ID: <a7d6f2fd-b59e-e6fa-475a-23962d45b6fa@gmail.com>
+Date:   Thu, 10 Jun 2021 16:51:19 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
+In-Reply-To: <4b5644bff43e072a98a19d7a5ca36bb5e11497ec.camel@trillion01.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-There is an ABI change for not yet released buffer/files
-registration/update tagging/etc. support. Update the bits.
+On 6/10/21 4:38 PM, Olivier Langlois wrote:
+> On Thu, 2021-06-10 at 10:03 +0100, Pavel Begunkov wrote:
+>> On 6/9/21 11:08 PM, Olivier Langlois wrote:
+>>> It is quite frequent that when an operation fails and returns
+>>> EAGAIN,
+>>> the data becomes available between that failure and the call to
+>>> vfs_poll() done by io_arm_poll_handler().
+>>>
+>>> Detecting the situation and reissuing the operation is much faster
+>>> than going ahead and push the operation to the io-wq.
+>>
+>> The poll stuff is not perfect and definitely can be improved,
+>> but there are drawbacks, with this one fairness may suffer
+>> with higher submit batching and make lat worse for all
+>> but one request.
+>>
+>> I'll get to it and another poll related email later,
+>> probably next week.
+>>
+> Hi Pavel,
+> 
+> I am looking forward to see the improved solution that you succeed
+> coming up with.
+> 
+> However, I want to bring 1 detail to your attention in case that it
+> went unnoticed.
+> 
+> If io_arm_poll_handler() returns false because vfs_poll() returns a non
+> zero value, reissuing the sqe will be attempted at most only 1 time
+> because req->flags will have REQ_F_POLLED and on the second time
+> io_arm_poll_handler() will be called, it will immediately return false.
+> 
+> With this detail in mind, I honestly did not think that this would make
+> the function unfair for the other requests in a batch submission
+> compared to the cost of pushing the request to io-wq that possibly
+> includes an io worker thread creation.
+> 
+> Does this detail can change your verdict?
+> If not, I would really be interested to know more about your fairness
+> concern.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- src/include/liburing/io_uring.h | 20 +++++++-------
- test/rsrc_tags.c                | 46 ++++++++++++++++++++-------------
- 2 files changed, 38 insertions(+), 28 deletions(-)
+Right, but it still stalls other requests and IIRC there are people
+not liking the syscall already taking too long. Consider
+io_req_task_queue(), adds more overhead but will delay execution
+to the syscall exit.
 
-diff --git a/src/include/liburing/io_uring.h b/src/include/liburing/io_uring.h
-index 5a3cb90..4c5685d 100644
---- a/src/include/liburing/io_uring.h
-+++ b/src/include/liburing/io_uring.h
-@@ -141,7 +141,6 @@ enum {
- 	IORING_OP_SHUTDOWN,
- 	IORING_OP_RENAMEAT,
- 	IORING_OP_UNLINKAT,
--	IORING_OP_MKDIRAT,
- 
- 	/* this goes last, obviously */
- 	IORING_OP_LAST,
-@@ -285,6 +284,7 @@ struct io_uring_params {
- #define IORING_FEAT_SQPOLL_NONFIXED	(1U << 7)
- #define IORING_FEAT_EXT_ARG		(1U << 8)
- #define IORING_FEAT_NATIVE_WORKERS	(1U << 9)
-+#define IORING_FEAT_RSRC_TAGS		(1U << 10)
- 
- /*
-  * io_uring_register(2) opcodes and arguments
-@@ -303,8 +303,12 @@ enum {
- 	IORING_UNREGISTER_PERSONALITY		= 10,
- 	IORING_REGISTER_RESTRICTIONS		= 11,
- 	IORING_REGISTER_ENABLE_RINGS		= 12,
--	IORING_REGISTER_RSRC			= 13,
--	IORING_REGISTER_RSRC_UPDATE		= 14,
-+
-+	/* extended with tagging */
-+	IORING_REGISTER_FILES2			= 13,
-+	IORING_REGISTER_FILES_UPDATE2		= 14,
-+	IORING_REGISTER_BUFFERS2		= 15,
-+	IORING_REGISTER_BUFFERS_UPDATE		= 16,
- 
- 	/* this goes last */
- 	IORING_REGISTER_LAST
-@@ -317,14 +321,10 @@ struct io_uring_files_update {
- 	__aligned_u64 /* __s32 * */ fds;
- };
- 
--enum {
--	IORING_RSRC_FILE		= 0,
--	IORING_RSRC_BUFFER		= 1,
--};
--
- struct io_uring_rsrc_register {
--	__u32 type;
- 	__u32 nr;
-+	__u32 resv;
-+	__u64 resv2;
- 	__aligned_u64 data;
- 	__aligned_u64 tags;
- };
-@@ -340,8 +340,8 @@ struct io_uring_rsrc_update2 {
- 	__u32 resv;
- 	__aligned_u64 data;
- 	__aligned_u64 tags;
--	__u32 type;
- 	__u32 nr;
-+	__u32 resv2;
- };
- 
- /* Skip updating fd indexes set to this value in the fd table */
-diff --git a/test/rsrc_tags.c b/test/rsrc_tags.c
-index 7192873..2b4890b 100644
---- a/test/rsrc_tags.c
-+++ b/test/rsrc_tags.c
-@@ -17,6 +17,11 @@
- 
- static int pipes[2];
- 
-+enum {
-+	TEST_IORING_RSRC_FILE		= 0,
-+	TEST_IORING_RSRC_BUFFER		= 1,
-+};
-+
- static bool check_cq_empty(struct io_uring *ring)
- {
- 	struct io_uring_cqe *cqe = NULL;
-@@ -31,15 +36,18 @@ static int register_rsrc(struct io_uring *ring, int type, int nr,
- 			  const void *arg, const __u64 *tags)
- {
- 	struct io_uring_rsrc_register reg;
--	int ret;
-+	int ret, reg_type;
- 
- 	memset(&reg, 0, sizeof(reg));
--	reg.type = type;
- 	reg.nr = nr;
- 	reg.data = (__u64)arg;
- 	reg.tags = (__u64)tags;
- 
--	ret = __sys_io_uring_register(ring->ring_fd, IORING_REGISTER_RSRC,
-+	reg_type = IORING_REGISTER_FILES2;
-+	if (type != TEST_IORING_RSRC_FILE)
-+		reg_type = IORING_REGISTER_BUFFERS2;
-+
-+	ret = __sys_io_uring_register(ring->ring_fd, reg_type,
- 					&reg, sizeof(reg));
- 	return ret ? -errno : 0;
- }
-@@ -48,16 +56,18 @@ static int update_rsrc(struct io_uring *ring, int type, int nr, int off,
- 			const void *arg, const __u64 *tags)
- {
- 	struct io_uring_rsrc_update2 up;
--	int ret;
-+	int ret, up_type;
- 
- 	memset(&up, 0, sizeof(up));
- 	up.offset = off;
- 	up.data = (__u64)arg;
- 	up.tags = (__u64)tags;
--	up.type = type;
- 	up.nr = nr;
- 
--	ret = __sys_io_uring_register(ring->ring_fd, IORING_REGISTER_RSRC_UPDATE,
-+	up_type = IORING_REGISTER_FILES_UPDATE2;
-+	if (type != TEST_IORING_RSRC_FILE)
-+		up_type = IORING_REGISTER_BUFFERS_UPDATE;
-+	ret = __sys_io_uring_register(ring->ring_fd, up_type,
- 				      &up, sizeof(up));
- 	return ret < 0 ? -errno : ret;
- }
-@@ -73,7 +83,7 @@ static bool has_rsrc_update(void)
- 	if (ret)
- 		return false;
- 
--	ret = register_rsrc(&ring, IORING_RSRC_BUFFER, 1, &vec, NULL);
-+	ret = register_rsrc(&ring, TEST_IORING_RSRC_BUFFER, 1, &vec, NULL);
- 	io_uring_queue_exit(&ring);
- 	return ret != -EINVAL;
- }
-@@ -148,7 +158,7 @@ static int test_buffers_update(void)
- 		tags[i] = i + 1;
- 	}
- 
--	ret = test_tags_generic(nr, IORING_RSRC_BUFFER, vecs, 0);
-+	ret = test_tags_generic(nr, TEST_IORING_RSRC_BUFFER, vecs, 0);
- 	if (ret)
- 		return 1;
- 
-@@ -161,7 +171,7 @@ static int test_buffers_update(void)
- 		perror("pipe");
- 		return 1;
- 	}
--	ret = register_rsrc(&ring, IORING_RSRC_BUFFER, nr, vecs, tags);
-+	ret = register_rsrc(&ring, TEST_IORING_RSRC_BUFFER, nr, vecs, tags);
- 	if (ret) {
- 		fprintf(stderr, "rsrc register failed %i\n", ret);
- 		return 1;
-@@ -180,7 +190,7 @@ static int test_buffers_update(void)
- 	assert(ret == -EAGAIN);
- 
- 	vecs[buf_idx].iov_base = tmp_buf2;
--	ret = update_rsrc(&ring, IORING_RSRC_BUFFER, 1, buf_idx,
-+	ret = update_rsrc(&ring, TEST_IORING_RSRC_BUFFER, 1, buf_idx,
- 			  &vecs[buf_idx], &tags[buf_idx]);
- 	if (ret != 1) {
- 		fprintf(stderr, "rsrc update failed %i %i\n", ret, errno);
-@@ -226,7 +236,7 @@ static int test_buffers_empty_buffers(void)
- 		return 1;
- 	}
- 
--	ret = register_rsrc(&ring, IORING_RSRC_BUFFER, nr, vecs, NULL);
-+	ret = register_rsrc(&ring, TEST_IORING_RSRC_BUFFER, nr, vecs, NULL);
- 	if (ret) {
- 		fprintf(stderr, "rsrc register failed %i\n", ret);
- 		return 1;
-@@ -235,7 +245,7 @@ static int test_buffers_empty_buffers(void)
- 	/* empty to buffer */
- 	vecs[1].iov_base = tmp_buf;
- 	vecs[1].iov_len = 10;
--	ret = update_rsrc(&ring, IORING_RSRC_BUFFER, 1, 1, &vecs[1], NULL);
-+	ret = update_rsrc(&ring, TEST_IORING_RSRC_BUFFER, 1, 1, &vecs[1], NULL);
- 	if (ret != 1) {
- 		fprintf(stderr, "rsrc update failed %i %i\n", ret, errno);
- 		return 1;
-@@ -244,14 +254,14 @@ static int test_buffers_empty_buffers(void)
- 	/* buffer to empty */
- 	vecs[0].iov_base = 0;
- 	vecs[0].iov_len = 0;
--	ret = update_rsrc(&ring, IORING_RSRC_BUFFER, 1, 0, &vecs[0], NULL);
-+	ret = update_rsrc(&ring, TEST_IORING_RSRC_BUFFER, 1, 0, &vecs[0], NULL);
- 	if (ret != 1) {
- 		fprintf(stderr, "rsrc update failed %i %i\n", ret, errno);
- 		return 1;
- 	}
- 
- 	/* zero to zero is ok */
--	ret = update_rsrc(&ring, IORING_RSRC_BUFFER, 1, 2, &vecs[2], NULL);
-+	ret = update_rsrc(&ring, TEST_IORING_RSRC_BUFFER, 1, 2, &vecs[2], NULL);
- 	if (ret != 1) {
- 		fprintf(stderr, "rsrc update failed %i %i\n", ret, errno);
- 		return 1;
-@@ -260,7 +270,7 @@ static int test_buffers_empty_buffers(void)
- 	/* empty buf with non-zero len fails */
- 	vecs[3].iov_base = 0;
- 	vecs[3].iov_len = 1;
--	ret = update_rsrc(&ring, IORING_RSRC_BUFFER, 1, 3, &vecs[3], NULL);
-+	ret = update_rsrc(&ring, TEST_IORING_RSRC_BUFFER, 1, 3, &vecs[3], NULL);
- 	if (ret >= 0) {
- 		fprintf(stderr, "rsrc update failed %i %i\n", ret, errno);
- 		return 1;
-@@ -312,7 +322,7 @@ static int test_files(int ring_flags)
- 		tags[i] = i + 1;
- 	}
- 
--	ret = test_tags_generic(nr, IORING_RSRC_FILE, files, ring_flags);
-+	ret = test_tags_generic(nr, TEST_IORING_RSRC_FILE, files, ring_flags);
- 	if (ret)
- 		return 1;
- 
-@@ -321,7 +331,7 @@ static int test_files(int ring_flags)
- 		printf("ring setup failed\n");
- 		return 1;
- 	}
--	ret = register_rsrc(&ring, IORING_RSRC_FILE, nr, files, tags);
-+	ret = register_rsrc(&ring, TEST_IORING_RSRC_FILE, nr, files, tags);
- 	if (ret) {
- 		fprintf(stderr, "rsrc register failed %i\n", ret);
- 		return 1;
-@@ -343,7 +353,7 @@ static int test_files(int ring_flags)
- 	/* non-zero tag with remove update is disallowed */
- 	tag = 1;
- 	fd = -1;
--	ret = update_rsrc(&ring, IORING_RSRC_FILE, 1, off + 1, &fd, &tag);
-+	ret = update_rsrc(&ring, TEST_IORING_RSRC_FILE, 1, off + 1, &fd, &tag);
- 	assert(ret);
- 
- 	io_uring_queue_exit(&ring);
+In any case, would be great to have numbers, e.g. to see if
+io_req_task_queue() is good enough, how often your problem
+takes places and how much it gives us.
+
 -- 
-2.31.1
-
+Pavel Begunkov

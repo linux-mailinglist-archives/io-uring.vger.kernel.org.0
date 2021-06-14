@@ -2,59 +2,78 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 234153A503D
-	for <lists+io-uring@lfdr.de>; Sat, 12 Jun 2021 21:09:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5820F3A5B32
+	for <lists+io-uring@lfdr.de>; Mon, 14 Jun 2021 02:46:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231555AbhFLTLu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 12 Jun 2021 15:11:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42756 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231532AbhFLTLs (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Sat, 12 Jun 2021 15:11:48 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id BA9C561001;
-        Sat, 12 Jun 2021 19:09:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1623524988;
-        bh=+C/ydNkuGTpsBaL5aM3iX+eDuWeFW3YOYP06SZ5Wljc=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=q7+8/7Q5N/FQnFed23sqZdrY63WoZKKjBNv2u/GieczJpmernyrYBuvoptJ/Tt7Mr
-         kG5ArOuTWuOgRyD/QHMCsasvZ35ph8xmfAcxDq5H52S9mL3pm4PwphVKd9R0nEiaPj
-         TGXynKjWMv2MKDuB+rM7wXQJizkwSNlx3TLT+64IZ0RxyifOEeh9umhCTaIPUJGC8E
-         qWGNEvJvwlhkUz0nTTQzcvol0cnbXJCSf4gZPJPiuqKj2HzWdgNODbVG7N1DU6lOUi
-         R+hLH19SulQ/ldWhxxs806XYIXsiTBcz0Q47WEP8u6UjdfxRlXvItJqwPJjtRvNBMj
-         6unHYIeeN78iA==
-Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id B5470609E4;
-        Sat, 12 Jun 2021 19:09:48 +0000 (UTC)
-Subject: Re: [GIT PULL] io_uring fixes for 5.13-rc6
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <8a4e5d77-0b4c-cbd4-6ffa-eeff83ed16af@kernel.dk>
-References: <8a4e5d77-0b4c-cbd4-6ffa-eeff83ed16af@kernel.dk>
-X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
-X-PR-Tracked-Message-Id: <8a4e5d77-0b4c-cbd4-6ffa-eeff83ed16af@kernel.dk>
-X-PR-Tracked-Remote: git://git.kernel.dk/linux-block.git tags/io_uring-5.13-2021-06-12
-X-PR-Tracked-Commit-Id: 9690557e22d63f13534fd167d293ac8ed8b104f9
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: b2568eeb961c1bb79ada9c2b90f65f625054adaf
-Message-Id: <162352498873.5734.3164697279230501079.pr-tracker-bot@kernel.org>
-Date:   Sat, 12 Jun 2021 19:09:48 +0000
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        io-uring <io-uring@vger.kernel.org>
+        id S232212AbhFNAs0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 13 Jun 2021 20:48:26 -0400
+Received: from mail-wm1-f46.google.com ([209.85.128.46]:44646 "EHLO
+        mail-wm1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232076AbhFNAsZ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 13 Jun 2021 20:48:25 -0400
+Received: by mail-wm1-f46.google.com with SMTP id m41-20020a05600c3b29b02901b9e5d74f02so8657851wms.3
+        for <io-uring@vger.kernel.org>; Sun, 13 Jun 2021 17:46:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=+/rYhODSJTC4K2IaiLVXC5hW9isPcpghouqIulOBF38=;
+        b=ndISWlqOHYAAuD2pXhn6EZGDRNDAXW+tggmncEYrJFmMEe7F+oCHkIJgOxsJVXbFsJ
+         aFxixFniEbFSeMm8OKF9PmsHZUGdIEJiWzcArAMFWIqK4ui9mXImpP4768Z/FvFnOSuE
+         BKtxeaCxO/48lgjPdsZcRhWfFk390fw7A3SBBFCF+fGzOa8+HkL5KkNPv3mz0/XxrBS9
+         Zkdaggj9H3MwMAxEgelNuYsjexeZA0QIZIncKQXbIN+/ClpXTkegU25402e/6Huvqcqs
+         PMeXfES1OVHfGiiWWzT2wvwuae7ZzS+cFVPk1iwmvxtxUDOU7cVgSeoua7xJSZ+tZ7+m
+         mJaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=+/rYhODSJTC4K2IaiLVXC5hW9isPcpghouqIulOBF38=;
+        b=uVrNUjMQOU+3IVUM3S8EQ1L+h4vtj6Rk5i+3OURK/S7V4LUcGKGNJOGXhz1ItVISqx
+         dL5m++40GaqQtGlIaDOLdptky7VvqpqMpr2z5mYg5wE/BiocVuKOsO/d04FGO6+AM5Bn
+         OcJiD8Vm4bzecjSwIpl4FN3Kkx7yt9vo5ZMMpeQbdLNHXsSlBgyrmorxrqyU+czUAmah
+         bsIgISWG22mwy6RcUcC+5Q33au4PNoPRb4S4nprwTQWVFhr7AIGjVzlYB9aeX8fqvp8M
+         A5w2Y36/8D2x26cCc8fyGZUShj1aRbARX3Oqrh0d5jSMGlCT9s4jBQinV53RPMqwQymP
+         0zIA==
+X-Gm-Message-State: AOAM532Bg91dKFwOqGq85NVM3XPKzRCbNH+03mK2uIofuHx7TRrYBWRt
+        Sf0FPLTMmKL9U57Ona8Dn809kn7x4DtXSQ==
+X-Google-Smtp-Source: ABdhPJyDF9c1H2K1FOkOV6iHHXUCAhIfHnni+18vJEnpnk+hjWf9ri068neSFTBVvk3r/7EyMbwJjg==
+X-Received: by 2002:a1c:f60f:: with SMTP id w15mr29878681wmc.5.1623631514620;
+        Sun, 13 Jun 2021 17:45:14 -0700 (PDT)
+Received: from [192.168.8.197] ([85.255.237.119])
+        by smtp.gmail.com with ESMTPSA id m37sm10931642wms.46.2021.06.13.17.45.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 13 Jun 2021 17:45:14 -0700 (PDT)
+Subject: Re: [RFC] io_uring: enable shmem/memfd memory registration
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <52247e3ec36eec9d6af17424937c8d20c497926e.1623248265.git.asml.silence@gmail.com>
+ <355210c4-7b2c-8445-b8af-da40aed2af26@kernel.dk>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Message-ID: <bf49b46b-2e5a-06e8-0563-294fdfd30fff@gmail.com>
+Date:   Mon, 14 Jun 2021 01:45:03 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
+MIME-Version: 1.0
+In-Reply-To: <355210c4-7b2c-8445-b8af-da40aed2af26@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The pull request you sent on Sat, 12 Jun 2021 09:13:30 -0600:
+On 6/9/21 4:12 PM, Jens Axboe wrote:
+> On 6/9/21 8:26 AM, Pavel Begunkov wrote:
+>> Relax buffer registration restictions, which filters out file backed
+>> memory, and allow shmem/memfd as they have normal anonymous pages
+>> underneath.
+> 
+> I think this is fine, we really only care about file backed.
 
-> git://git.kernel.dk/linux-block.git tags/io_uring-5.13-2021-06-12
+Jens, can you append a tag?
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/b2568eeb961c1bb79ada9c2b90f65f625054adaf
-
-Thank you!
+Reported-by: Mahdi Rakhshandehroo <mahdi.rakhshandehroo@gmail.com>
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Pavel Begunkov

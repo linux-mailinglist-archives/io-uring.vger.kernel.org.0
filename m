@@ -2,93 +2,132 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E41633A5B5C
+	by mail.lfdr.de (Postfix) with ESMTP id B135C3A5B5B
 	for <lists+io-uring@lfdr.de>; Mon, 14 Jun 2021 03:36:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232230AbhFNBi7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        id S232076AbhFNBi7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
         Sun, 13 Jun 2021 21:38:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57114 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232076AbhFNBi6 (ORCPT
+        with ESMTP id S232269AbhFNBi6 (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Sun, 13 Jun 2021 21:38:58 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6489C061766
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52C64C061574
         for <io-uring@vger.kernel.org>; Sun, 13 Jun 2021 18:36:46 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id m3so5900275wms.4
+Received: by mail-wm1-x331.google.com with SMTP id b145-20020a1c80970000b029019c8c824054so11848488wmd.5
         for <io-uring@vger.kernel.org>; Sun, 13 Jun 2021 18:36:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
+        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=Ak44WWtrgS/GJdU6bJvo5n5G1GQMzZdMWsm+R+t831I=;
-        b=ZTjaZKO95dxzANAJSYOrKON5/9QQqZE9PvlrziGPDKYhvArNP3o39or1aHeIBdH2ZP
-         PFo24BkWxeRluS+wL9o9oPEXfHwX4zjAw/DSAO9wAClnRnJkMuIbsn/eWCR8XCPopZ6W
-         Hw9oFFt5EF+pPDjVxMb1XT6tz5F6HigUfaxRveVwTj9Euv4QDlZhujpKjWaRARDeTNek
-         OI6F4T6cv1QhZkkK8nn4L9jwidZBUto8HTVUnxtVkqf2QJ9hLC8SWcSPaIIg4LDLSsnW
-         YMJExFK7JmMrVYzN0EGTQ0sb8NqjZyqJ5hayqE9bR9XqS7THHd9B7XDqToYL9fpCdNkj
-         Vygw==
+        bh=rWVbMxWyymLy321d2DxnFWpmxGEFqrTiR1ltRfTYo8U=;
+        b=fx1Zt9ijLNnlkGcWXyiuNE/Uv1A+b+CqUM70MmNxPk6GV7hUrXenBSdE4oYExuZ+rY
+         P2ZOtI0fmqYWcaXCvDo96PACq5NX62c8e8bcZ62PjtA7RkHbsJu0Aydojtn05KxpBlcL
+         rL2axPK6i0zK5BGNzQVwXDo1CIgRGFmm6PsWcKczoFbVyAKRRk6lZ98HRPNi4/5WaxU9
+         qkdF4eSVqNGAe9F88IStGV3qJ6CWIYYDnbaIK4BFSoEgIG7R6EVa0eic2nadOuNgbkow
+         NPMHKG6WMajxGi+A+rNB+PlQUiVThQnxZDkxYLzq7KG90pcO0ua0mrPIQdoDN9xx0d6t
+         j/Sg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Ak44WWtrgS/GJdU6bJvo5n5G1GQMzZdMWsm+R+t831I=;
-        b=EUJyhCX2akxm7iatTgvYgYJgL6MgSRrzUOBtyy++T+HbTl6FNgFZMAJwXvOyVTaoBq
-         Ahyd6i8atjs4fLiv30KnJ9oy8pIh1azlm2rI5mH7j8VXekfR9ofNclJVthOmpDHYchKa
-         tQRtl4pFZJemRUtiWQVH1fV3PzFB5yUaVHYQh6aJn6P0tDSDmv+LAEMH6s8SKgmNMHfP
-         b5aK8WKsPIuxfc9iPSqJmYBs2dyzlHd+yP0m92h+szn+2Ni+rbHVmptQRmqohIBhi3aX
-         VStNVJBRzlaRjJPn1PXKh1Hml68sy6fRwku71C4gyWIZw43dZsq0+h4xLrlDkBDMqgCz
-         AWsg==
-X-Gm-Message-State: AOAM530ts2NP36nGzFxZo+7GtpGxCaht54x1Pd492nEjCclU2czC8Dwq
-        SkFNYryNlJAgtt0SY4wAhWZljOXk721EOg==
-X-Google-Smtp-Source: ABdhPJyzpYccHW2ZcOEFjOultPkUDbHqmmSuQzp1KAWj3GFzyM9n8oSY6untPZQ/t8t/9/6gogqNDw==
-X-Received: by 2002:a05:600c:2054:: with SMTP id p20mr13768580wmg.175.1623634603676;
-        Sun, 13 Jun 2021 18:36:43 -0700 (PDT)
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=rWVbMxWyymLy321d2DxnFWpmxGEFqrTiR1ltRfTYo8U=;
+        b=O35g5cBOudgOSncN6C2JRez7LHP0SU74QqeYODGXVjb6QIUNwnwUWHfNHFwQtb87zo
+         pAP3XVBn7YD8n9HwsmoeJERO7soGgOBkQ4BkUnBdR3758HvfxhPbtYFcO98ti7bsaDnf
+         /IFX4zDmT9XhVl7jAOW3Ut9Pp/99DR4kVcPAzmTbp9tiJxYfNToRagJORjILhe5iw/YA
+         y5mB3+1NE8TFBJRN/tBi1SaJoIr0onjNVhGxtjhQeobkS9T/MfT5fnWOTNzFURxAfNpL
+         30m2HAJWFAYSOt+uAuoHRq3kDSnD2DJ+lTMyYYRnACDP2aN/ryRPdMCaELO4WyOeozvC
+         5cCg==
+X-Gm-Message-State: AOAM533d+RzPtGL7qega+wSERGDHOdmYzYrMogMbjmzjcENRuy6dWOmw
+        ihxvnAqlp1jOgLMYD3j/LTbwuRtQU0Jmxg==
+X-Google-Smtp-Source: ABdhPJwoEfhhAXRJrkTqCK3RGkm+iuyKrORbjRN3krdCAn5MDEhM3/lQpNgjkSYt/TcqJNQRpF0eWw==
+X-Received: by 2002:a1c:e343:: with SMTP id a64mr13998269wmh.114.1623634604898;
+        Sun, 13 Jun 2021 18:36:44 -0700 (PDT)
 Received: from localhost.localdomain ([85.255.237.119])
-        by smtp.gmail.com with ESMTPSA id a9sm6795291wrv.37.2021.06.13.18.36.42
+        by smtp.gmail.com with ESMTPSA id a9sm6795291wrv.37.2021.06.13.18.36.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Jun 2021 18:36:43 -0700 (PDT)
+        Sun, 13 Jun 2021 18:36:44 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH v2 for-next 00/13] resend of for-next cleanups
-Date:   Mon, 14 Jun 2021 02:36:11 +0100
-Message-Id: <cover.1623634181.git.asml.silence@gmail.com>
+Subject: [PATCH 01/13] io-wq: embed wqe ptr array into struct io_wq
+Date:   Mon, 14 Jun 2021 02:36:12 +0100
+Message-Id: <1482c6a001923bbed662dc38a8a580fb08b1ed8c.1623634181.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.31.1
+In-Reply-To: <cover.1623634181.git.asml.silence@gmail.com>
+References: <cover.1623634181.git.asml.silence@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The series is based on the 5.14 branch with fixes from 5.13 that are
-missing applied on top:
+io-wq keeps an array of pointers to struct io_wqe, allocate this array
+as a part of struct io-wq, it's easier to code and saves an extra
+indirection for nearly each io-wq call.
 
-216e5835966a io_uring: fix misaccounting fix buf pinned pages
-b16ef427adf3 io_uring: fix data race to avoid potential NULL-deref
-3743c1723bfc io-wq: Fix UAF when wakeup wqe in hash waitqueue
-17a91051fe63 io_uring/io-wq: close io-wq full-stop gap
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ fs/io-wq.c | 15 ++++-----------
+ 1 file changed, 4 insertions(+), 11 deletions(-)
 
-v2: rebase
-    droped one not important patch
-
-Pavel Begunkov (13):
-  io-wq: embed wqe ptr array into struct io_wq
-  io-wq: remove unused io-wq refcounting
-  io_uring: refactor io_iopoll_req_issued
-  io_uring: rename function *task_file
-  io-wq: don't repeat IO_WQ_BIT_EXIT check by worker
-  io-wq: simplify worker exiting
-  io_uring: hide rsrc tag copy into generic helpers
-  io_uring: remove rsrc put work irq save/restore
-  io_uring: add helpers for 2 level table alloc
-  io_uring: don't vmalloc rsrc tags
-  io_uring: cache task struct refs
-  io_uring: unify SQPOLL and user task cancellations
-  io_uring: inline io_iter_do_read()
-
- fs/io-wq.c    |  29 +----
- fs/io_uring.c | 349 ++++++++++++++++++++++++++------------------------
- 2 files changed, 191 insertions(+), 187 deletions(-)
-
+diff --git a/fs/io-wq.c b/fs/io-wq.c
+index b3e8624a37d0..1ca98fc7d52b 100644
+--- a/fs/io-wq.c
++++ b/fs/io-wq.c
+@@ -102,7 +102,6 @@ struct io_wqe {
+  * Per io_wq state
+   */
+ struct io_wq {
+-	struct io_wqe **wqes;
+ 	unsigned long state;
+ 
+ 	free_work_fn *free_work;
+@@ -118,6 +117,8 @@ struct io_wq {
+ 	struct hlist_node cpuhp_node;
+ 
+ 	struct task_struct *task;
++
++	struct io_wqe *wqes[];
+ };
+ 
+ static enum cpuhp_state io_wq_online;
+@@ -907,17 +908,12 @@ struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data)
+ 	if (WARN_ON_ONCE(!data->free_work || !data->do_work))
+ 		return ERR_PTR(-EINVAL);
+ 
+-	wq = kzalloc(sizeof(*wq), GFP_KERNEL);
++	wq = kzalloc(struct_size(wq, wqes, nr_node_ids), GFP_KERNEL);
+ 	if (!wq)
+ 		return ERR_PTR(-ENOMEM);
+-
+-	wq->wqes = kcalloc(nr_node_ids, sizeof(struct io_wqe *), GFP_KERNEL);
+-	if (!wq->wqes)
+-		goto err_wq;
+-
+ 	ret = cpuhp_state_add_instance_nocalls(io_wq_online, &wq->cpuhp_node);
+ 	if (ret)
+-		goto err_wqes;
++		goto err_wq;
+ 
+ 	refcount_inc(&data->hash->refs);
+ 	wq->hash = data->hash;
+@@ -962,8 +958,6 @@ struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data)
+ 	cpuhp_state_remove_instance_nocalls(io_wq_online, &wq->cpuhp_node);
+ 	for_each_node(node)
+ 		kfree(wq->wqes[node]);
+-err_wqes:
+-	kfree(wq->wqes);
+ err_wq:
+ 	kfree(wq);
+ 	return ERR_PTR(ret);
+@@ -1036,7 +1030,6 @@ static void io_wq_destroy(struct io_wq *wq)
+ 		kfree(wqe);
+ 	}
+ 	io_wq_put_hash(wq->hash);
+-	kfree(wq->wqes);
+ 	kfree(wq);
+ }
+ 
 -- 
 2.31.1
 

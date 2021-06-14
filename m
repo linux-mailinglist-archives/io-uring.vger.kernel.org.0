@@ -2,106 +2,81 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 766D33A68BC
-	for <lists+io-uring@lfdr.de>; Mon, 14 Jun 2021 16:10:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E12D3A68ED
+	for <lists+io-uring@lfdr.de>; Mon, 14 Jun 2021 16:25:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233831AbhFNOMp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 14 Jun 2021 10:12:45 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:24040 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232745AbhFNOMp (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 14 Jun 2021 10:12:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1623679841;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=5VrGrghkNvFrliY5Q4Xm/jGj5MiDa9nv/G4jvjsxRj0=;
-        b=gqjxYoG6bfPwx9u6hcUxHmZUGrwhCwovKi1jy+Jf1msb1igFqH0fi4p3WEWbLOMj7QvPUs
-        0NAOVcBqvIHGkZ4eUeuoloZYz11ILtwO4tMs75bRDXhAsTnLw80l9jBF7+wSu+sczzWzLh
-        zw3lV/9pHEdGKw3O2k1x4IKUf0xFgcc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-336-ZJLCkTrfMUCtFHKrFfLamQ-1; Mon, 14 Jun 2021 10:10:37 -0400
-X-MC-Unique: ZJLCkTrfMUCtFHKrFfLamQ-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 683AECC628;
-        Mon, 14 Jun 2021 14:10:36 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.40.192.47])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 2A7005D6A8;
-        Mon, 14 Jun 2021 14:10:33 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Mon, 14 Jun 2021 16:10:36 +0200 (CEST)
-Date:   Mon, 14 Jun 2021 16:10:33 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Olivier Langlois <olivier@trillion01.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>,
-        "Pavel Begunkov>" <asml.silence@gmail.com>
-Subject: Re: [PATCH] coredump: Limit what can interrupt coredumps
-Message-ID: <20210614141032.GA13677@redhat.com>
-References: <CAHk-=wjC7GmCHTkoz2_CkgSc_Cgy19qwSQgJGXz+v2f=KT3UOw@mail.gmail.com>
- <198e912402486f66214146d4eabad8cb3f010a8e.camel@trillion01.com>
- <87eeda7nqe.fsf@disp2133>
- <b8434a8987672ab16f9fb755c1fc4d51e0f4004a.camel@trillion01.com>
- <87pmwt6biw.fsf@disp2133>
- <87czst5yxh.fsf_-_@disp2133>
- <CAHk-=wiax83WoS0p5nWvPhU_O+hcjXwv6q3DXV8Ejb62BfynhQ@mail.gmail.com>
- <87y2bh4jg5.fsf@disp2133>
- <CAHk-=wjPiEaXjUp6PTcLZFjT8RrYX+ExtD-RY3NjFWDN7mKLbw@mail.gmail.com>
- <87sg1p4h0g.fsf_-_@disp2133>
+        id S234504AbhFNO1X (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 14 Jun 2021 10:27:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55342 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234440AbhFNO1W (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 14 Jun 2021 10:27:22 -0400
+Received: from mail-ot1-x334.google.com (mail-ot1-x334.google.com [IPv6:2607:f8b0:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF99FC061574
+        for <io-uring@vger.kernel.org>; Mon, 14 Jun 2021 07:25:06 -0700 (PDT)
+Received: by mail-ot1-x334.google.com with SMTP id j11-20020a9d738b0000b02903ea3c02ded8so10981051otk.5
+        for <io-uring@vger.kernel.org>; Mon, 14 Jun 2021 07:25:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=PHG7jQrzu29pRx3seYxeoSOpsqFbB7y6QPyUfOzVL1k=;
+        b=CcVJ25zaLfWk5VLonMJOt2dF1dJMtzoJW9MFC4bxnCGJrGQgv/wZiw3aKK//e9WLfw
+         PtklG02KYKICdE24NX33PAUqS3loNF5O4zbCmzXFIWsZ20S5ewT0ug8Jx0U2Nzl7Tx8B
+         tABkHT0vEQYwEWOg4Yn2gzvt74WcBXhMzXZCzoeM7Yf0KQ3RhEh8jnbKxpK/eE026nAc
+         C+YDrQA2JkU16KO/xKYw7GBF0LrauGSgdkE/kXVH7aIfoLuW4Kvur5kVmibgP8wTNjCZ
+         ckRh6GuIP7MoldNq/mKfi9eYEQOFlsxASLxvFlGAQw4VX86/UIOyfzMf5G3WxmF8Ol2p
+         Js5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=PHG7jQrzu29pRx3seYxeoSOpsqFbB7y6QPyUfOzVL1k=;
+        b=Od4s/lV0Hfdlno/Uc3piEQNjpiIiL7FuOKvpOS3+LUpC2dImzp4H1FLJ8pPcfSq6oi
+         i0FNi/Ogl9mPkZNEryTXeL9mXCVxXjfmazecbkAKbOSHbXLSu6kg+vdqy/cMLiujC4Gk
+         a2xQpg6Wx71Y73qQEbXDzaMPwmuEz4bp3iBU3orQ5H7EK9nz0nxRmBwP6iVh2k3ARQs+
+         eRHLCXvJgIsIaBsToyQpr/+3som+/OQxLO59qceawOYZJzIuTyZlaEjbWIjXBl7mYuQZ
+         ucM3T0Xm9h0DnAorniYlXRqIIF8ZnZVx8+okInZmh23k7EVrQDTtm7de2M9r636QnlzJ
+         PQOg==
+X-Gm-Message-State: AOAM530a9k2TUIH9ehL+ijmI1LsBLGI3e3gdxZaJxgTG3NdXC5PPjIfF
+        nJs7OGh3iPHS273Vlkg1W/3EzGlHGl5KAA==
+X-Google-Smtp-Source: ABdhPJxx4OVSMazBZECnLphhBPL1lDLbOFka51RCpY98cRIl2sVdOVM1MZE7rJSfM0reRaZtzlBixQ==
+X-Received: by 2002:a05:6830:33ef:: with SMTP id i15mr13743505otu.311.1623680705938;
+        Mon, 14 Jun 2021 07:25:05 -0700 (PDT)
+Received: from [192.168.1.134] ([198.8.77.61])
+        by smtp.gmail.com with ESMTPSA id j3sm2959178oii.46.2021.06.14.07.25.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Jun 2021 07:25:05 -0700 (PDT)
+Subject: Re: [PATCH v2 for-next 00/13] resend of for-next cleanups
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <cover.1623634181.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <d0798c89-3dbb-35e9-323e-d55c422bfc0c@kernel.dk>
+Date:   Mon, 14 Jun 2021 08:25:04 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87sg1p4h0g.fsf_-_@disp2133>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+In-Reply-To: <cover.1623634181.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Eric, et al, sorry for delay, I didn't read emails several days.
+On 6/13/21 7:36 PM, Pavel Begunkov wrote:
+> The series is based on the 5.14 branch with fixes from 5.13 that are
+> missing applied on top:
+> 
+> 216e5835966a io_uring: fix misaccounting fix buf pinned pages
+> b16ef427adf3 io_uring: fix data race to avoid potential NULL-deref
+> 3743c1723bfc io-wq: Fix UAF when wakeup wqe in hash waitqueue
+> 17a91051fe63 io_uring/io-wq: close io-wq full-stop gap
 
-On 06/10, Eric W. Biederman wrote:
->
-> v2: Don't remove the now unnecessary code in prepare_signal.
+With the API change, I rebased the 5.14 branch and applied this on
+top.
 
-No, that code is still needed. Otherwise any fatal signal will be
-turned into SIGKILL.
-
-> --- a/fs/coredump.c
-> +++ b/fs/coredump.c
-> @@ -519,7 +519,7 @@ static bool dump_interrupted(void)
->  	 * but then we need to teach dump_write() to restart and clear
->  	 * TIF_SIGPENDING.
->  	 */
-> -	return signal_pending(current);
-> +	return fatal_signal_pending(current) || freezing(current);
->  }
-
-
-Well yes, this is what the comment says.
-
-But note that there is another reason why dump_interrupted() returns true
-if signal_pending(), it assumes thagt __dump_emit()->__kernel_write() may
-fail anyway if signal_pending() is true. Say, pipe_write(), or iirc nfs,
-perhaps something else...
-
-That is why zap_threads() clears TIF_SIGPENDING. Perhaps it should clear
-TIF_NOTIFY_SIGNAL as well and we should change io-uring to not abuse the
-dumping threads?
-
-Or perhaps we should change __dump_emit() to clear signal_pending() and
-restart __kernel_write() if it fails or returns a short write.
-
-Otherwise the change above doesn't look like a full fix to me.
-
-Oleg.
+-- 
+Jens Axboe
 

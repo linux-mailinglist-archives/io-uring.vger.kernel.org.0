@@ -2,56 +2,53 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 04DB53A5B5E
-	for <lists+io-uring@lfdr.de>; Mon, 14 Jun 2021 03:37:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C0D83A5B66
+	for <lists+io-uring@lfdr.de>; Mon, 14 Jun 2021 03:38:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232287AbhFNBjH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 13 Jun 2021 21:39:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57132 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232286AbhFNBjG (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 13 Jun 2021 21:39:06 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2732AC0617AF
-        for <io-uring@vger.kernel.org>; Sun, 13 Jun 2021 18:36:50 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id z8so12614269wrp.12
-        for <io-uring@vger.kernel.org>; Sun, 13 Jun 2021 18:36:50 -0700 (PDT)
+        id S232300AbhFNBkH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 13 Jun 2021 21:40:07 -0400
+Received: from mail-wr1-f44.google.com ([209.85.221.44]:36588 "EHLO
+        mail-wr1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232302AbhFNBkG (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 13 Jun 2021 21:40:06 -0400
+Received: by mail-wr1-f44.google.com with SMTP id n7so6462367wri.3
+        for <io-uring@vger.kernel.org>; Sun, 13 Jun 2021 18:37:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=LF9osU2bL9wpML7vfDWO48G7emok74LqYRZOkN+lh7c=;
-        b=gABv6zWA1vgOaXh7qUu89ip4j7ozAvoj0F7i6u5ZtNr8OqQIs7jh1pZQqHUfttGqlT
-         EGHsPeFdtrTt/jykhdbXJ/3LW4ruxJHt1ehOmSuCkyUBcEOBwWK/vBO3ajtMAgpvOULO
-         K5fclW4MuyFjB33Xd1uA4CYw7jFrgV5q0HVKXLv9r3G58FG6L1PQn6YaiQIJxklLfTBl
-         qs4HoX6KIazbVSFQQ762UPdCeNijYWZdxEe0xrzzf5y7V+kz3BHWBwoofTygVNqSwk6N
-         52a+qPmoNOa8KkrABzBWIVbI4GBHDLKC2LmYtFAdbw2DnFRs8938t7rcgbUle+7ozR4i
-         fGsA==
+        bh=ztRJARExWokzTuJETAZmQkm5xNoyJYYYWZzOL9dLec0=;
+        b=B1KAQ7F9liGnPxjkk212m5cPPaLQ7/bFBxnkeoM39x2x66qRYoT8Yhqc7jG0/6x8Xu
+         F+EpfL8ivrHioAIKcfm3CzcLXfEO0J5lQizXL9Gc3vZ4pk/RfzNmL4tXx1eXo/df/Z5e
+         JcUlzZ5OW19MlU76g06kK/lL463bDGQBiAbzau6jdg2L24lrcSI/HxQ/I3eAd9W0CmBE
+         MZxD7lw6ZQk/7WUMHDWRhJNxFyRFJfvIvrVGsLsQwviEdr8MLlBEXcpFAMOvUKGMMVsK
+         Y5DItPRY98FJQlQwzlu3X+x5G8+YeAgC2uK1TdS4gZBtNN1rLhB/XqKL9SYFLdl8qnzA
+         1/Mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=LF9osU2bL9wpML7vfDWO48G7emok74LqYRZOkN+lh7c=;
-        b=pzZrnMhtVRkrtdLABgDdnPqM77QbGg3w/14EZO+FKeCVUrA4uVB8DgV2aUkqPYGM3E
-         tnlpHrHoUiK4EY6gTTfqCA1MG3WqntMiRaNIpgcTYZr8/Td8dkWIfti7futLVx8ZqHir
-         63Nb4KgLUOwMlzp3l8KuqgIdRiyY+uggoFYym8sLHNqGz7AvYmSGreF8V583yVlfyH9T
-         XWVlgsZ5LVV1o7IgkqOt6qupHzIvkoE+QK2QMPBxBq7O1s5O4GAo7KVQ60X94oWYQ4VV
-         fhE+qG29GhNoY6myF+ivvGFpZrPehnI20RLt64L0J/4FZ2CUHfPNktTieWL2FNPa3hc5
-         HFLg==
-X-Gm-Message-State: AOAM53152xjC+AKHegiR0zqWXIyBVNP9XAGk9Ot+jjNr+1oXVPuYV7ZY
-        u0WzUVJ2gWL1Dn8tYQdAJcQ=
-X-Google-Smtp-Source: ABdhPJxo4GrTecu1fFouA6xIV3d1hRzjOurSErvR+hKYT/wp46/L+YTH3Dd3KDPspl6BP7qCBZ9z5Q==
-X-Received: by 2002:adf:cd8d:: with SMTP id q13mr11282161wrj.78.1623634607935;
-        Sun, 13 Jun 2021 18:36:47 -0700 (PDT)
+        bh=ztRJARExWokzTuJETAZmQkm5xNoyJYYYWZzOL9dLec0=;
+        b=ihJKeQNScoMbzOIsu9XhF0YEhzgt2LV3g32OZZ3QtneK2WmSXQoX9fEuIs13DRZTIS
+         NmoCSeOsHzvf3R3+/TSaWmRTdP6Yf6m8NJ/hAPJUXKzixjIBMobujlLwNGXfsR3W4cMV
+         ZYYyC9u+zXiV4HrvTWM9XAehoMbZq26oc5TegQEzVZR3qo5mTOofObbo7bSdGzEiqzx0
+         wPru3ddxx7TPCS0YYAQtHLpFteSJqfj0JTEfFUGBeXnKtXyHZ9st5UbfAA5Sjyz0XJWB
+         48sWirmVhyabUZ5YgtOH8yWifNVDU4TJWwFPI1tefgAFYncL1BZACrIYYhwjH2qlsSd1
+         Ymfw==
+X-Gm-Message-State: AOAM530E896xhMPOU0wF2XW5o3I/HVIYntdiOtvm1RUXa9rofVwcmxC4
+        9bhmQe3D7jKC7wQghK83gwE=
+X-Google-Smtp-Source: ABdhPJxT6KyV6wpNFF2+524q3lwcxCqyhIcQoTVnOtO9XfAjoi+3W1bA+jhvkCmILkFIrEkYEF8cXA==
+X-Received: by 2002:a5d:4e12:: with SMTP id p18mr14766021wrt.105.1623634608904;
+        Sun, 13 Jun 2021 18:36:48 -0700 (PDT)
 Received: from localhost.localdomain ([85.255.237.119])
-        by smtp.gmail.com with ESMTPSA id a9sm6795291wrv.37.2021.06.13.18.36.46
+        by smtp.gmail.com with ESMTPSA id a9sm6795291wrv.37.2021.06.13.18.36.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Jun 2021 18:36:47 -0700 (PDT)
+        Sun, 13 Jun 2021 18:36:48 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 04/13] io_uring: rename function *task_file
-Date:   Mon, 14 Jun 2021 02:36:15 +0100
-Message-Id: <e2fbce42932154c2631ce58ffbffaa232afe18d5.1623634181.git.asml.silence@gmail.com>
+Subject: [PATCH 05/13] io-wq: don't repeat IO_WQ_BIT_EXIT check by worker
+Date:   Mon, 14 Jun 2021 02:36:16 +0100
+Message-Id: <d6af4a51c86523a527fb5417c9fbc775c4b26497.1623634181.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <cover.1623634181.git.asml.silence@gmail.com>
 References: <cover.1623634181.git.asml.silence@gmail.com>
@@ -61,96 +58,29 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-What at some moment was references to struct file used to control
-lifetimes of task/ctx is now just internal tctx structures/nodes,
-so rename outdated *task_file() routines into something more sensible.
+io_wqe_worker()'s main loop does check IO_WQ_BIT_EXIT flag, so no need
+for a second test_bit at the end as it will immediately jump to the
+first check afterwards.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ fs/io-wq.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 8fbb48c1ac7a..cea3d0f5dad5 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1024,7 +1024,7 @@ static const struct io_op_def io_op_defs[] = {
- };
- 
- static bool io_disarm_next(struct io_kiocb *req);
--static void io_uring_del_task_file(unsigned long index);
-+static void io_uring_del_tctx_node(unsigned long index);
- static void io_uring_try_cancel_requests(struct io_ring_ctx *ctx,
- 					 struct task_struct *task,
- 					 bool cancel_all);
-@@ -8709,7 +8709,7 @@ static void io_tctx_exit_cb(struct callback_head *cb)
- 	 * node. It'll be removed by the end of cancellation, just ignore it.
- 	 */
- 	if (!atomic_read(&tctx->in_idle))
--		io_uring_del_task_file((unsigned long)work->ctx);
-+		io_uring_del_tctx_node((unsigned long)work->ctx);
- 	complete(&work->completion);
- }
- 
-@@ -8962,7 +8962,7 @@ static void io_uring_try_cancel_requests(struct io_ring_ctx *ctx,
+diff --git a/fs/io-wq.c b/fs/io-wq.c
+index f058ea0bcae8..8c13e23d4a8a 100644
+--- a/fs/io-wq.c
++++ b/fs/io-wq.c
+@@ -559,8 +559,7 @@ static int io_wqe_worker(void *data)
+ 		if (ret)
+ 			continue;
+ 		/* timed out, exit unless we're the fixed worker */
+-		if (test_bit(IO_WQ_BIT_EXIT, &wq->state) ||
+-		    !(worker->flags & IO_WORKER_F_FIXED))
++		if (!(worker->flags & IO_WORKER_F_FIXED))
+ 			break;
  	}
- }
  
--static int __io_uring_add_task_file(struct io_ring_ctx *ctx)
-+static int __io_uring_add_tctx_node(struct io_ring_ctx *ctx)
- {
- 	struct io_uring_task *tctx = current->io_uring;
- 	struct io_tctx_node *node;
-@@ -8999,19 +8999,19 @@ static int __io_uring_add_task_file(struct io_ring_ctx *ctx)
- /*
-  * Note that this task has used io_uring. We use it for cancelation purposes.
-  */
--static inline int io_uring_add_task_file(struct io_ring_ctx *ctx)
-+static inline int io_uring_add_tctx_node(struct io_ring_ctx *ctx)
- {
- 	struct io_uring_task *tctx = current->io_uring;
- 
- 	if (likely(tctx && tctx->last == ctx))
- 		return 0;
--	return __io_uring_add_task_file(ctx);
-+	return __io_uring_add_tctx_node(ctx);
- }
- 
- /*
-  * Remove this io_uring_file -> task mapping.
-  */
--static void io_uring_del_task_file(unsigned long index)
-+static void io_uring_del_tctx_node(unsigned long index)
- {
- 	struct io_uring_task *tctx = current->io_uring;
- 	struct io_tctx_node *node;
-@@ -9041,7 +9041,7 @@ static void io_uring_clean_tctx(struct io_uring_task *tctx)
- 	unsigned long index;
- 
- 	xa_for_each(&tctx->xa, index, node)
--		io_uring_del_task_file(index);
-+		io_uring_del_tctx_node(index);
- 	if (wq) {
- 		/*
- 		 * Must be after io_uring_del_task_file() (removes nodes under
-@@ -9325,7 +9325,7 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
- 		}
- 		submitted = to_submit;
- 	} else if (to_submit) {
--		ret = io_uring_add_task_file(ctx);
-+		ret = io_uring_add_tctx_node(ctx);
- 		if (unlikely(ret))
- 			goto out;
- 		mutex_lock(&ctx->uring_lock);
-@@ -9535,7 +9535,7 @@ static int io_uring_install_fd(struct io_ring_ctx *ctx, struct file *file)
- 	if (fd < 0)
- 		return fd;
- 
--	ret = io_uring_add_task_file(ctx);
-+	ret = io_uring_add_tctx_node(ctx);
- 	if (ret) {
- 		put_unused_fd(fd);
- 		return ret;
 -- 
 2.31.1
 

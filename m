@@ -2,53 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D2A43A5B62
-	for <lists+io-uring@lfdr.de>; Mon, 14 Jun 2021 03:37:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04DB53A5B5E
+	for <lists+io-uring@lfdr.de>; Mon, 14 Jun 2021 03:37:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232273AbhFNBkA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 13 Jun 2021 21:40:00 -0400
-Received: from mail-wm1-f41.google.com ([209.85.128.41]:45006 "EHLO
-        mail-wm1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232286AbhFNBkA (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 13 Jun 2021 21:40:00 -0400
-Received: by mail-wm1-f41.google.com with SMTP id m41-20020a05600c3b29b02901b9e5d74f02so8697597wms.3
-        for <io-uring@vger.kernel.org>; Sun, 13 Jun 2021 18:37:47 -0700 (PDT)
+        id S232287AbhFNBjH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 13 Jun 2021 21:39:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57132 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232286AbhFNBjG (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 13 Jun 2021 21:39:06 -0400
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2732AC0617AF
+        for <io-uring@vger.kernel.org>; Sun, 13 Jun 2021 18:36:50 -0700 (PDT)
+Received: by mail-wr1-x430.google.com with SMTP id z8so12614269wrp.12
+        for <io-uring@vger.kernel.org>; Sun, 13 Jun 2021 18:36:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=/9Om2s4dnvIqafpA9xWzUVzv7LJgVZBSbBDx0TNmf6w=;
-        b=qV1u6gdhI6iwPoQuAzd8h10BoT8ls64zoQp6eVZwpT0xZFExeIswqTizuuJyV7GStZ
-         YRNDyRfULAfhSeXQYjv9Go6TLRGK7DyL7GcWjbhUbPo2e5+DspRmKD+G4tOAFSL6ZFYb
-         S18TtljkpuAgpcQOO8UzuY1Sm+EE+EQy2RwNi7ODieEGpzN6MAzynCgGBBZsSbr6BTI3
-         RlLECjmIbwmt2TfxvEE4d7VcZ/2v+iCS5C/tHqiyOzmRD/PS5wbjOeMre+a3mmMDdY7e
-         qOiEMatZnkup72oyIKBquB8hog9aDB7dV1YqzYqPGPRvbe5MioahPn3JKf3x8NBwNlOb
-         0KvQ==
+        bh=LF9osU2bL9wpML7vfDWO48G7emok74LqYRZOkN+lh7c=;
+        b=gABv6zWA1vgOaXh7qUu89ip4j7ozAvoj0F7i6u5ZtNr8OqQIs7jh1pZQqHUfttGqlT
+         EGHsPeFdtrTt/jykhdbXJ/3LW4ruxJHt1ehOmSuCkyUBcEOBwWK/vBO3ajtMAgpvOULO
+         K5fclW4MuyFjB33Xd1uA4CYw7jFrgV5q0HVKXLv9r3G58FG6L1PQn6YaiQIJxklLfTBl
+         qs4HoX6KIazbVSFQQ762UPdCeNijYWZdxEe0xrzzf5y7V+kz3BHWBwoofTygVNqSwk6N
+         52a+qPmoNOa8KkrABzBWIVbI4GBHDLKC2LmYtFAdbw2DnFRs8938t7rcgbUle+7ozR4i
+         fGsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=/9Om2s4dnvIqafpA9xWzUVzv7LJgVZBSbBDx0TNmf6w=;
-        b=KJaABGkL2v27GlWwSmnuUPtAk3JCJO/NiPVt4Y8dXfxRmnbHcdhf4JUxXVU3/uLVcZ
-         tkBemgmLE0GQTUB+r6i7s0mWpXRAdosItr5hDRrvnT+bJeA5SsSNFLU2R/K+qGP74vq8
-         B85BIaA6mTYOdFkjgcds0bnNe/pjeCYtNqjLrB0Kg1IxGmRXsbQO0VypRWlzOGzM7Afr
-         vxQkSrQvqPigLRVPS17lawTUhaSV5gn/g01AuDadtmUrFrNA1MytXR1+7Ncy/wbUMQ8Y
-         pF4848r7keg/c8EyfMtkoTvabuhUPIBxlv25YkSIA79kXF6poi6LQ7cp+JfA18SBgPu7
-         xYNg==
-X-Gm-Message-State: AOAM533R/h6vsG6CS0oiO4xIQTQC0lpXVhiW4lAGmx1lfFJup9o1XpBZ
-        oMlpy6D4FdOT+fsHd3IICdA=
-X-Google-Smtp-Source: ABdhPJz35NggHwE2C/tuuOZ5WOPf9u/AMV2VHojA5jsQdbO8rJmxW8lwCHH2DJnC5zMGqruMctKF3g==
-X-Received: by 2002:a05:600c:4282:: with SMTP id v2mr29691520wmc.18.1623634606813;
-        Sun, 13 Jun 2021 18:36:46 -0700 (PDT)
+        bh=LF9osU2bL9wpML7vfDWO48G7emok74LqYRZOkN+lh7c=;
+        b=pzZrnMhtVRkrtdLABgDdnPqM77QbGg3w/14EZO+FKeCVUrA4uVB8DgV2aUkqPYGM3E
+         tnlpHrHoUiK4EY6gTTfqCA1MG3WqntMiRaNIpgcTYZr8/Td8dkWIfti7futLVx8ZqHir
+         63Nb4KgLUOwMlzp3l8KuqgIdRiyY+uggoFYym8sLHNqGz7AvYmSGreF8V583yVlfyH9T
+         XWVlgsZ5LVV1o7IgkqOt6qupHzIvkoE+QK2QMPBxBq7O1s5O4GAo7KVQ60X94oWYQ4VV
+         fhE+qG29GhNoY6myF+ivvGFpZrPehnI20RLt64L0J/4FZ2CUHfPNktTieWL2FNPa3hc5
+         HFLg==
+X-Gm-Message-State: AOAM53152xjC+AKHegiR0zqWXIyBVNP9XAGk9Ot+jjNr+1oXVPuYV7ZY
+        u0WzUVJ2gWL1Dn8tYQdAJcQ=
+X-Google-Smtp-Source: ABdhPJxo4GrTecu1fFouA6xIV3d1hRzjOurSErvR+hKYT/wp46/L+YTH3Dd3KDPspl6BP7qCBZ9z5Q==
+X-Received: by 2002:adf:cd8d:: with SMTP id q13mr11282161wrj.78.1623634607935;
+        Sun, 13 Jun 2021 18:36:47 -0700 (PDT)
 Received: from localhost.localdomain ([85.255.237.119])
         by smtp.gmail.com with ESMTPSA id a9sm6795291wrv.37.2021.06.13.18.36.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Jun 2021 18:36:46 -0700 (PDT)
+        Sun, 13 Jun 2021 18:36:47 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 03/13] io_uring: refactor io_iopoll_req_issued
-Date:   Mon, 14 Jun 2021 02:36:14 +0100
-Message-Id: <1513bfde4f0c835be25ac69a82737ab0668d7665.1623634181.git.asml.silence@gmail.com>
+Subject: [PATCH 04/13] io_uring: rename function *task_file
+Date:   Mon, 14 Jun 2021 02:36:15 +0100
+Message-Id: <e2fbce42932154c2631ce58ffbffaa232afe18d5.1623634181.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <cover.1623634181.git.asml.silence@gmail.com>
 References: <cover.1623634181.git.asml.silence@gmail.com>
@@ -58,88 +61,96 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-A simple refactoring of io_iopoll_req_issued(), move in_async inside so
-we don't pass it around and save on double checking it.
+What at some moment was references to struct file used to control
+lifetimes of task/ctx is now just internal tctx structures/nodes,
+so rename outdated *task_file() routines into something more sensible.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 44 +++++++++++++++++++++-----------------------
- 1 file changed, 21 insertions(+), 23 deletions(-)
+ fs/io_uring.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 485f1f055db3..8fbb48c1ac7a 100644
+index 8fbb48c1ac7a..cea3d0f5dad5 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -2520,9 +2520,14 @@ static void io_complete_rw_iopoll(struct kiocb *kiocb, long res, long res2)
-  * find it from a io_do_iopoll() thread before the issuer is done
-  * accessing the kiocb cookie.
-  */
--static void io_iopoll_req_issued(struct io_kiocb *req, bool in_async)
-+static void io_iopoll_req_issued(struct io_kiocb *req)
+@@ -1024,7 +1024,7 @@ static const struct io_op_def io_op_defs[] = {
+ };
+ 
+ static bool io_disarm_next(struct io_kiocb *req);
+-static void io_uring_del_task_file(unsigned long index);
++static void io_uring_del_tctx_node(unsigned long index);
+ static void io_uring_try_cancel_requests(struct io_ring_ctx *ctx,
+ 					 struct task_struct *task,
+ 					 bool cancel_all);
+@@ -8709,7 +8709,7 @@ static void io_tctx_exit_cb(struct callback_head *cb)
+ 	 * node. It'll be removed by the end of cancellation, just ignore it.
+ 	 */
+ 	if (!atomic_read(&tctx->in_idle))
+-		io_uring_del_task_file((unsigned long)work->ctx);
++		io_uring_del_tctx_node((unsigned long)work->ctx);
+ 	complete(&work->completion);
+ }
+ 
+@@ -8962,7 +8962,7 @@ static void io_uring_try_cancel_requests(struct io_ring_ctx *ctx,
+ 	}
+ }
+ 
+-static int __io_uring_add_task_file(struct io_ring_ctx *ctx)
++static int __io_uring_add_tctx_node(struct io_ring_ctx *ctx)
  {
- 	struct io_ring_ctx *ctx = req->ctx;
-+	const bool in_async = io_wq_current_is_worker();
-+
-+	/* workqueue context doesn't hold uring_lock, grab it now */
-+	if (unlikely(in_async))
-+		mutex_lock(&ctx->uring_lock);
+ 	struct io_uring_task *tctx = current->io_uring;
+ 	struct io_tctx_node *node;
+@@ -8999,19 +8999,19 @@ static int __io_uring_add_task_file(struct io_ring_ctx *ctx)
+ /*
+  * Note that this task has used io_uring. We use it for cancelation purposes.
+  */
+-static inline int io_uring_add_task_file(struct io_ring_ctx *ctx)
++static inline int io_uring_add_tctx_node(struct io_ring_ctx *ctx)
+ {
+ 	struct io_uring_task *tctx = current->io_uring;
  
- 	/*
- 	 * Track whether we have multiple files in our lists. This will impact
-@@ -2549,14 +2554,19 @@ static void io_iopoll_req_issued(struct io_kiocb *req, bool in_async)
- 	else
- 		list_add_tail(&req->inflight_entry, &ctx->iopoll_list);
- 
--	/*
--	 * If IORING_SETUP_SQPOLL is enabled, sqes are either handled in sq thread
--	 * task context or in io worker task context. If current task context is
--	 * sq thread, we don't need to check whether should wake up sq thread.
--	 */
--	if (in_async && (ctx->flags & IORING_SETUP_SQPOLL) &&
--	    wq_has_sleeper(&ctx->sq_data->wait))
--		wake_up(&ctx->sq_data->wait);
-+	if (unlikely(in_async)) {
-+		/*
-+		 * If IORING_SETUP_SQPOLL is enabled, sqes are either handle
-+		 * in sq thread task context or in io worker task context. If
-+		 * current task context is sq thread, we don't need to check
-+		 * whether should wake up sq thread.
-+		 */
-+		if ((ctx->flags & IORING_SETUP_SQPOLL) &&
-+		    wq_has_sleeper(&ctx->sq_data->wait))
-+			wake_up(&ctx->sq_data->wait);
-+
-+		mutex_unlock(&ctx->uring_lock);
-+	}
+ 	if (likely(tctx && tctx->last == ctx))
+ 		return 0;
+-	return __io_uring_add_task_file(ctx);
++	return __io_uring_add_tctx_node(ctx);
  }
  
- static inline void io_state_file_put(struct io_submit_state *state)
-@@ -6210,23 +6220,11 @@ static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags)
+ /*
+  * Remove this io_uring_file -> task mapping.
+  */
+-static void io_uring_del_task_file(unsigned long index)
++static void io_uring_del_tctx_node(unsigned long index)
+ {
+ 	struct io_uring_task *tctx = current->io_uring;
+ 	struct io_tctx_node *node;
+@@ -9041,7 +9041,7 @@ static void io_uring_clean_tctx(struct io_uring_task *tctx)
+ 	unsigned long index;
  
- 	if (creds)
- 		revert_creds(creds);
--
- 	if (ret)
+ 	xa_for_each(&tctx->xa, index, node)
+-		io_uring_del_task_file(index);
++		io_uring_del_tctx_node(index);
+ 	if (wq) {
+ 		/*
+ 		 * Must be after io_uring_del_task_file() (removes nodes under
+@@ -9325,7 +9325,7 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
+ 		}
+ 		submitted = to_submit;
+ 	} else if (to_submit) {
+-		ret = io_uring_add_task_file(ctx);
++		ret = io_uring_add_tctx_node(ctx);
+ 		if (unlikely(ret))
+ 			goto out;
+ 		mutex_lock(&ctx->uring_lock);
+@@ -9535,7 +9535,7 @@ static int io_uring_install_fd(struct io_ring_ctx *ctx, struct file *file)
+ 	if (fd < 0)
+ 		return fd;
+ 
+-	ret = io_uring_add_task_file(ctx);
++	ret = io_uring_add_tctx_node(ctx);
+ 	if (ret) {
+ 		put_unused_fd(fd);
  		return ret;
--
- 	/* If the op doesn't have a file, we're not polling for it */
--	if ((ctx->flags & IORING_SETUP_IOPOLL) && req->file) {
--		const bool in_async = io_wq_current_is_worker();
--
--		/* workqueue context doesn't hold uring_lock, grab it now */
--		if (in_async)
--			mutex_lock(&ctx->uring_lock);
--
--		io_iopoll_req_issued(req, in_async);
--
--		if (in_async)
--			mutex_unlock(&ctx->uring_lock);
--	}
-+	if ((ctx->flags & IORING_SETUP_IOPOLL) && req->file)
-+		io_iopoll_req_issued(req);
- 
- 	return 0;
- }
 -- 
 2.31.1
 

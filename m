@@ -2,84 +2,81 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1590A3A5B61
-	for <lists+io-uring@lfdr.de>; Mon, 14 Jun 2021 03:37:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF2A43A5DF2
+	for <lists+io-uring@lfdr.de>; Mon, 14 Jun 2021 09:54:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232298AbhFNBkA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 13 Jun 2021 21:40:00 -0400
-Received: from mail-wr1-f45.google.com ([209.85.221.45]:33682 "EHLO
-        mail-wr1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232273AbhFNBj7 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 13 Jun 2021 21:39:59 -0400
-Received: by mail-wr1-f45.google.com with SMTP id a20so12651416wrc.0
-        for <io-uring@vger.kernel.org>; Sun, 13 Jun 2021 18:37:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=pptAvDXZoGUvE2BDKf3NcQTo8Rs0U3XwGkuJz5fhiok=;
-        b=azd80NxSk4ulYA9bMnu3j1n9Cl3dV1buqyzys91rEgKBTov/lp3KyWEGvsSUSxVzKF
-         r9EWQHWDN3cuRu5r0yH803pVKi33Y2pOKNH9eEiylUEqsZL39ckWCaLvugdbs2t3X07M
-         NFLTPxvuPdIuIxt+L5mnkkpPbHmAr/S8MWjXd2MhOlnrbx+sBN9DgYkZmjGX07x7nAPx
-         a3o8dy9bq5H6tbiklB/N8dA8cpVoZ2GjGl0Ag9O3FkURbqhLxi7H6jkeSjxctTBFImua
-         jGY2Spe3V8Wico+XR2TCWj47FTfuaAUi5IEH75KvAwmnCxlpstdDFknduyY2sc9+gqsM
-         FvEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=pptAvDXZoGUvE2BDKf3NcQTo8Rs0U3XwGkuJz5fhiok=;
-        b=T7UtoWSC0wutF689tx23srxAsqm3nwbUpQi4AxfHcxeioUEFF7b/9HNROeiVJP94d5
-         dPvHoq6bMJ/QkbBU7ZJwv9mQ2qORIXI0LtARfnfc3wuyPfJpFQKvZc2JouWDx9LkdC9t
-         facQ4KLCn6OXgLx6Wm9IsZXe43JA5qbMQgnEKLsf8xqBUQHmRqiyjrjRlo2l+9pBjjvC
-         foOoi4EGQrM1rBhvOexTg5CjwH7CMZeV4QnUTx1eIK/btHAOoOxP81PU5XshjOBciBuf
-         M9GzByVm4mmyuixHTIj5rmi/A9fUdjAN+QYZ4++agzTvKdHLlK/cUXtSMoRrSWvCK4tO
-         LGyQ==
-X-Gm-Message-State: AOAM5318vRSP5F//DKhjFNNqNzS0x35zqgGDhKeezTrwV6amv5OM3+xm
-        ZwpWt1/+oh9OD/vbCYWJ9DQ=
-X-Google-Smtp-Source: ABdhPJxtWcV+Eh0Bqp1Taq020apkltbXY8rdyYtIorqUjkUlRKzKE0aWOae98CRdVViXcFfs65/W1g==
-X-Received: by 2002:adf:e68a:: with SMTP id r10mr16047844wrm.326.1623634617161;
-        Sun, 13 Jun 2021 18:36:57 -0700 (PDT)
-Received: from localhost.localdomain ([85.255.237.119])
-        by smtp.gmail.com with ESMTPSA id a9sm6795291wrv.37.2021.06.13.18.36.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Jun 2021 18:36:56 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 13/13] io_uring: inline io_iter_do_read()
-Date:   Mon, 14 Jun 2021 02:36:24 +0100
-Message-Id: <25a26dae7660da73fbc2244b361b397ef43d3caf.1623634182.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <cover.1623634181.git.asml.silence@gmail.com>
-References: <cover.1623634181.git.asml.silence@gmail.com>
+        id S232552AbhFNH4I (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 14 Jun 2021 03:56:08 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:49808 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232536AbhFNH4G (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 14 Jun 2021 03:56:06 -0400
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mtapsc-1-JvShZJ_LMNqZy9EC7CzP_Q-1; Mon, 14 Jun 2021 08:54:01 +0100
+X-MC-Unique: JvShZJ_LMNqZy9EC7CzP_Q-1
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Mon, 14 Jun
+ 2021 08:54:00 +0100
+Received: from AcuMS.Aculab.com ([fe80::994c:f5c2:35d6:9b65]) by
+ AcuMS.aculab.com ([fe80::994c:f5c2:35d6:9b65%12]) with mapi id
+ 15.00.1497.018; Mon, 14 Jun 2021 08:54:00 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Victor Stewart' <v@nametag.social>,
+        Pavel Begunkov <asml.silence@gmail.com>
+CC:     io-uring <io-uring@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        "lsf-pc@lists.linux-foundation.org" 
+        <lsf-pc@lists.linux-foundation.org>
+Subject: RE: io_uring: BPF controlled I/O
+Thread-Topic: io_uring: BPF controlled I/O
+Thread-Index: AQHXW85OPTAHTIrwlU6lTLNP07tyDqsTLD+g
+Date:   Mon, 14 Jun 2021 07:54:00 +0000
+Message-ID: <2d4e188665c5425296f2da0e96c744af@AcuMS.aculab.com>
+References: <23168ac0-0f05-3cd7-90dc-08855dd275b2@gmail.com>
+ <CAM1kxwjHrf74u5OLB=acP2fBy+cPG4NNxa-51O35caY4VKdkkg@mail.gmail.com>
+In-Reply-To: <CAM1kxwjHrf74u5OLB=acP2fBy+cPG4NNxa-51O35caY4VKdkkg@mail.gmail.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-There are only two calls in source code of io_iter_do_read(), the
-function is small and pretty hot though is failed to get inlined.
-Makr it as inline.
-
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 23644179edd4..9c6e1d7dd5b1 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -3248,7 +3248,7 @@ static bool io_rw_should_retry(struct io_kiocb *req)
- 	return true;
- }
- 
--static int io_iter_do_read(struct io_kiocb *req, struct iov_iter *iter)
-+static inline int io_iter_do_read(struct io_kiocb *req, struct iov_iter *iter)
- {
- 	if (req->file->f_op->read_iter)
- 		return call_read_iter(req->file, &req->rw.kiocb, iter);
--- 
-2.31.1
+RnJvbTogVmljdG9yIFN0ZXdhcnQNCj4gU2VudDogMDcgSnVuZSAyMDIxIDE5OjUxDQouLi4NCj4g
+Y29pbmNpZGVudGFsbHkgaSdtIHRvc3NpbmcgYXJvdW5kIGluIG15IG1pbmQgYXQgdGhlIG1vbWVu
+dCBhbiBpZGVhIGZvcg0KPiBvZmZsb2FkaW5nDQo+IHRoZSBQSU5HL1BPTkcgb2YgYSBRVUlDIHNl
+cnZlci9jbGllbnQgaW50byB0aGUga2VybmVsIHZpYSBlQlBGLg0KPiANCj4gcHJvYmxlbSBiZWlu
+ZywgYmVpbmcgdGhhdCBRVUlDIGlzIHVzZXJzcGFjZSBydW4gdHJhbnNwb3J0IGFuZCB0aGF0IE5B
+VC1lZCBVRFANCj4gbWFwcGluZ3MgY2FuJ3QgYmUgZXhwZWN0ZWQgdG8gc3RheSBvcGVuIGxvbmdl
+ciB0aGFuIDMwIHNlY29uZHMsIFFVSUMNCj4gYXBwbGljYXRpb25zDQo+IGJhcmUgYSBsYXJnZSBj
+b3N0IG9mIGNvbnRleHQgc3dpdGNoaW5nIHdha2UtdXAgdG8gY29uZHVjdCBjb25uZWN0aW9uIGxp
+ZmV0aW1lDQo+IG1haW50ZW5hbmNlLi4uIGVzcGVjaWFsbHkgd2hlbiBtYW5hZ2luZyBhIGxhcmdl
+IG51bWJlciBvZiBtb3N0bHkgaWRsZSBsb25nIGxpdmVkDQo+IGNvbm5lY3Rpb25zLiBzbyBvZmZs
+b2FkaW5nIHRoaXMgbWFpbnRlbmFuY2Ugc2VydmljZSBpbnRvIHRoZSBrZXJuZWwNCj4gd291bGQg
+YmUgYSBncmVhdA0KPiBlZmZpY2llbmN5IGJvb24uDQo+IA0KPiB0aGUgbWFpbiBpbXBlZGltZW50
+IGlzIHRoYXQgYWNjZXNzIHRvIHRoZSBrZXJuZWwgY3J5cHRvIGxpYnJhcmllcw0KPiBpc24ndCBj
+dXJyZW50bHkgcG9zc2libGUNCj4gZnJvbSBlQlBGLiB0aGF0IHNhaWQsIGNvbm5lY3Rpb24gd2lk
+ZSBjcnlwdG8gb2ZmbG9hZCBpbnRvIHRoZSBOSUMgaXMgYQ0KPiBmcmVxdWVudGx5IG1lbnRpb25l
+ZA0KPiBzdWJqZWN0IGluIFFVSUMgY2lyY2xlcywgc28gb25lIGNvdWxkIGFyZ3VlIGJldHRlciB0
+byBhbGxvY2F0ZSB0aGUNCj4gdGltZSB0byBOSUMgY3J5cHRvIG9mZmxvYWQNCj4gYW5kIHRoZW4g
+c2ltcGx5IGNvbmR1Y3QgdGhpcyBQSU5HL1BPTkcgb2ZmbG9hZCBpbiBwbGFpbiB0ZXh0Lg0KDQpI
+bW1tbS4uLiBhIGdvb2QgZXhhbXBsZSBvZiBob3cgbm90IHRvIHR5cGUgZW1haWxzLg0KDQpUaG91
+Z2h0LCBkb2VzIHRoZSBVRFAgdHggbmVlZGVkIHRvIGtlZXAgdGhlIE5BVCB0YWJsZXMgYWN0aXZl
+DQpuZWVkIHRvIGJlIGVuY3J5cHRlZD8NCkEgc2luZ2xlIGJ5dGUgVURQIHBhY2tldCB3b3VsZCBk
+byB0aGUgdHJpY2suDQpZb3UganVzdCBuZWVkIHNvbWV0aGluZyB0aGUgcmVtb3RlIHN5c3RlbSBp
+cyBkZXNpZ25lZCB0byBpZ25vcmUuDQoNCglEYXZpZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJlc3Mg
+TGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFybSwgTWlsdG9uIEtleW5lcywgTUsxIDFQ
+VCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAoV2FsZXMpDQo=
 

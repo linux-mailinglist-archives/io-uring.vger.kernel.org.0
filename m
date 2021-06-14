@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D6AE3A721A
-	for <lists+io-uring@lfdr.de>; Tue, 15 Jun 2021 00:38:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1BD23A7222
+	for <lists+io-uring@lfdr.de>; Tue, 15 Jun 2021 00:38:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229536AbhFNWkH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 14 Jun 2021 18:40:07 -0400
+        id S231224AbhFNWkY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 14 Jun 2021 18:40:24 -0400
 Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229499AbhFNWkH (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 14 Jun 2021 18:40:07 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57480C061280
-        for <io-uring@vger.kernel.org>; Mon, 14 Jun 2021 15:38:03 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id f16-20020a05600c1550b02901b00c1be4abso418847wmg.2
-        for <io-uring@vger.kernel.org>; Mon, 14 Jun 2021 15:38:03 -0700 (PDT)
+        with ESMTP id S231187AbhFNWkY (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 14 Jun 2021 18:40:24 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FCAAC061283
+        for <io-uring@vger.kernel.org>; Mon, 14 Jun 2021 15:38:04 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id m3so7747316wms.4
+        for <io-uring@vger.kernel.org>; Mon, 14 Jun 2021 15:38:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=Q+ALlRQ3cLlJbd7kUCty8YCwLRUJOFIVamGJyeuYrYc=;
-        b=Of2ZJ9Y+9LcLVmlEBe8zzPL0F5N9Hp7PHqx2hZ3n3ia6++CqiZJrH8OlLcnkPGQhwg
-         hpFyJbY2siltDjl8mBK9cYiW4tjHq9jdT2KfeX3ijAHkjavwb+dVPz7tAXV9GiKiVogH
-         F/lzzZ/wPSkb4KSmHfalNrnf+ZGoh23zcEwfTKsrxOEu3F+RJTdXt54g4cN3O4WF0Bj9
-         gbsyJLf5ZPShWOFAH1BdawWByMon/sQP+Av5LTTclrq0AhchhsMguzS8FbuI3Sz81Rwe
-         GD5oFWTpR0YiE3rqrvPn2n8QxnUrpzruecPgUi4b6wPDBBXAJAONK+FSQokUJA9/D538
-         tjwA==
+        bh=Ddeb3OlEKvkyzqagKcJjLKsqhw7qY7PVCZwGX7F6Gh4=;
+        b=d9xrf9Wm10Th9GLi0kwqgqF5csv2XRiffEy2YwXJZ7FQNXWGjI6hsB5s+9Ti7Yjrh4
+         iN7jCFY1xrVrx7rLTY70fnx9FHvbgYMusba9YEUqlFVDfHEMxEy9jMkNfDcYhX4/NoN2
+         LoxNSTqUCEeNjxC65x5x8oeen7ZanL3G/AqDYFBqTlo1ydNZssYR7l9hQMu1N09jKGOE
+         BBj+WpEg+h2Mpa0kyNpHIZEWO38V/azGb/EdsTwp4hJn1lWgz1AzZwev9QshOeDkFX+i
+         CcflfUxi7/ONsRMOtkU1DpPx5vpamohVDg8zWnTYsu0zudG0jLjMv47SCNVvbXdi5QFx
+         AZqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Q+ALlRQ3cLlJbd7kUCty8YCwLRUJOFIVamGJyeuYrYc=;
-        b=pLFK4Z6N065Hq8/MhplIE8CskvUWYTkqeWIqKMe+lLnjAmdIcQD5K0TM5EUiXQdv9B
-         spT20gYCOwxD407BhnFgvm+Vug5TyPE7VLzc+bR3YWNuOvqYb0wZZ0sy9ZbW5+J6Del/
-         26omoLhSX7gkgmPSwv8H5IWwMWFc4yqwPdtocgSbQPJeJbBOZvCcf7MMYbnmfZ0nPqeR
-         p/8IXUywzcAprBcfkYs2EDffsHJwyCbxuvWOca10myQtyjatqFcXOf2vt+cpVWEor881
-         QkZV8uLs8kQBCfwn+Bo0SNJRYko2Q/ihUZX9OZWeNsQth/6OVJ3efkH3cIyQSBlCM8Sf
-         NFoQ==
-X-Gm-Message-State: AOAM530KuM2YGekpQhA2yD8yn4VuApG9u5XjXPWj74BRSfHjrzv9zK5k
-        MuA8tEPax84mi9wZNr9SGcE=
-X-Google-Smtp-Source: ABdhPJwknroTjW/vdSWJY8TCYCfWTYjZLbPSNhSg+02oB2kZ//gaSWtB9CtuPte48NaB4Jerw485RA==
-X-Received: by 2002:a05:600c:2dd0:: with SMTP id e16mr18981858wmh.180.1623710281981;
-        Mon, 14 Jun 2021 15:38:01 -0700 (PDT)
+        bh=Ddeb3OlEKvkyzqagKcJjLKsqhw7qY7PVCZwGX7F6Gh4=;
+        b=P9KDKEOSl3AqlCNPZqEFRDqv++swWel22hPkY2+e5l2ACGygPFHl2D7EoPHxvpN5Xw
+         efP2iI7/oEnRasLdrgX2pfTg2iK0lgNWq9RWvEs0mtAqiMoqAJ7cjewI7xh6dPvIN03R
+         w7AFvCqeInyI0a2MQlPzloHYqONLSflnopj6Vw55IRa794MNWpNjBcQhFwJpMkSS7Jp2
+         90iHklGefzkyYoG/qgUHTgCdSA4n3cNbn6B6xkdSdeOwvvKTJlBI7PibpWZjHY4Fz6+Z
+         CIVem8E/g2wDQVxQ3br2SSBkOaSrTxYB2l7loEJt//cEjgTA0yg+T6uFsGjnw4JRWPzC
+         DHTA==
+X-Gm-Message-State: AOAM531Eonxuw8zFoLF37h6PR7butEBYRF2107cPIff0qjs6Thl76Clo
+        HP6Njy3/GRC5GukQvphtbrM=
+X-Google-Smtp-Source: ABdhPJwbkX2c9BaqRTWHbFnmM0AUAVomtcsToUIfbcFrwvbzwNVERGrExLqZZhO7WlTsSveDOhSFdw==
+X-Received: by 2002:a1c:3dc2:: with SMTP id k185mr1485760wma.15.1623710282981;
+        Mon, 14 Jun 2021 15:38:02 -0700 (PDT)
 Received: from localhost.localdomain ([148.252.132.209])
-        by smtp.gmail.com with ESMTPSA id x3sm621074wmj.30.2021.06.14.15.38.01
+        by smtp.gmail.com with ESMTPSA id x3sm621074wmj.30.2021.06.14.15.38.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jun 2021 15:38:01 -0700 (PDT)
+        Mon, 14 Jun 2021 15:38:02 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 11/12] io_uring: refactor io_req_defer()
-Date:   Mon, 14 Jun 2021 23:37:30 +0100
-Message-Id: <4f17dd56e7fbe52d1866f8acd8efe3284d2bebcb.1623709150.git.asml.silence@gmail.com>
+Subject: [PATCH 12/12] io_uring: optimise non-drain path
+Date:   Mon, 14 Jun 2021 23:37:31 +0100
+Message-Id: <98d2fff8c4da5144bb0d08499f591d4768128ea3.1623709150.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <cover.1623709150.git.asml.silence@gmail.com>
 References: <cover.1623709150.git.asml.silence@gmail.com>
@@ -61,104 +61,150 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Rename io_req_defer() into io_drain_req() and refactor it uncoupling it
-from io_queue_sqe() error handling and preparing for coming
-optimisations. Also, prioritise non IOSQE_ASYNC path.
+Replace drain checks with one-way flag set upon seeing the first
+IOSQE_IO_DRAIN request. There are several places where it cuts cycles
+well:
+
+1) It's much faster than the fast check with two
+conditions in io_drain_req() including pretty complex
+list_empty_careful().
+
+2) We can mark io_queue_sqe() inline now, that's a huge win.
+
+3) It replaces timeout and drain checks in io_commit_cqring() with a
+single flags test. Also great not touching ->defer_list there without a
+reason so limiting cache bouncing.
+
+It adds a small amount of overhead to drain path, but it's negligible.
+The main nuisance is that once it meets any DRAIN request in io_uring
+instance lifetime it will _always_ go through a slower path, so
+drain-less and offset-mode timeout less applications are preferable.
+The overhead in that case would be not big, but it's worth to bear in
+mind.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 39 +++++++++++++++++++--------------------
- 1 file changed, 19 insertions(+), 20 deletions(-)
+ fs/io_uring.c | 57 +++++++++++++++++++++++++++------------------------
+ 1 file changed, 30 insertions(+), 27 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 1b6cfc6b79c5..29b705201ca3 100644
+index 29b705201ca3..5828ffdbea82 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -5998,7 +5998,7 @@ static u32 io_get_sequence(struct io_kiocb *req)
- 	return ctx->cached_sq_head - nr_reqs;
+@@ -352,6 +352,7 @@ struct io_ring_ctx {
+ 		unsigned int		eventfd_async: 1;
+ 		unsigned int		restricted: 1;
+ 		unsigned int		off_timeout_used: 1;
++		unsigned int		drain_used: 1;
+ 	} ____cacheline_aligned_in_smp;
+ 
+ 	/* submission data */
+@@ -1299,9 +1300,9 @@ static void io_kill_timeout(struct io_kiocb *req, int status)
+ 	}
  }
  
--static int io_req_defer(struct io_kiocb *req)
-+static bool io_drain_req(struct io_kiocb *req)
+-static void __io_queue_deferred(struct io_ring_ctx *ctx)
++static void io_queue_deferred(struct io_ring_ctx *ctx)
  {
- 	struct io_ring_ctx *ctx = req->ctx;
- 	struct io_defer_entry *de;
-@@ -6008,27 +6008,29 @@ static int io_req_defer(struct io_kiocb *req)
- 	/* Still need defer if there is pending req in defer list. */
- 	if (likely(list_empty_careful(&ctx->defer_list) &&
- 		!(req->flags & REQ_F_IO_DRAIN)))
--		return 0;
-+		return false;
+-	do {
++	while (!list_empty(&ctx->defer_list)) {
+ 		struct io_defer_entry *de = list_first_entry(&ctx->defer_list,
+ 						struct io_defer_entry, list);
  
- 	seq = io_get_sequence(req);
- 	/* Still a chance to pass the sequence check */
- 	if (!req_need_defer(req, seq) && list_empty_careful(&ctx->defer_list))
--		return 0;
-+		return false;
- 
- 	ret = io_req_prep_async(req);
- 	if (ret)
- 		return ret;
- 	io_prep_async_link(req);
- 	de = kmalloc(sizeof(*de), GFP_KERNEL);
--	if (!de)
--		return -ENOMEM;
-+	if (!de) {
-+		io_req_complete_failed(req, ret);
-+		return true;
-+	}
- 
- 	spin_lock_irq(&ctx->completion_lock);
- 	if (!req_need_defer(req, seq) && list_empty(&ctx->defer_list)) {
- 		spin_unlock_irq(&ctx->completion_lock);
+@@ -1310,17 +1311,12 @@ static void __io_queue_deferred(struct io_ring_ctx *ctx)
+ 		list_del_init(&de->list);
+ 		io_req_task_queue(de->req);
  		kfree(de);
- 		io_queue_async_work(req);
--		return -EIOCBQUEUED;
-+		return true;
- 	}
- 
- 	trace_io_uring_defer(ctx, req, req->user_data);
-@@ -6036,7 +6038,7 @@ static int io_req_defer(struct io_kiocb *req)
- 	de->seq = seq;
- 	list_add_tail(&de->list, &ctx->defer_list);
- 	spin_unlock_irq(&ctx->completion_lock);
--	return -EIOCBQUEUED;
-+	return true;
+-	} while (!list_empty(&ctx->defer_list));
++	}
  }
  
- static void io_clean_op(struct io_kiocb *req)
-@@ -6447,21 +6449,18 @@ static void __io_queue_sqe(struct io_kiocb *req)
- 
- static void io_queue_sqe(struct io_kiocb *req)
+ static void io_flush_timeouts(struct io_ring_ctx *ctx)
  {
--	int ret;
-+	if (io_drain_req(req))
-+		return;
+-	u32 seq;
+-
+-	if (likely(!ctx->off_timeout_used))
+-		return;
+-
+-	seq = ctx->cached_cq_tail - atomic_read(&ctx->cq_timeouts);
++	u32 seq = ctx->cached_cq_tail - atomic_read(&ctx->cq_timeouts);
  
--	ret = io_req_defer(req);
--	if (ret) {
--		if (ret != -EIOCBQUEUED) {
--fail_req:
--			io_req_complete_failed(req, ret);
--		}
--	} else if (req->flags & REQ_F_FORCE_ASYNC) {
--		ret = io_req_prep_async(req);
--		if (unlikely(ret))
--			goto fail_req;
--		io_queue_async_work(req);
--	} else {
-+	if (likely(!(req->flags & REQ_F_FORCE_ASYNC))) {
- 		__io_queue_sqe(req);
-+	} else {
-+		int ret = io_req_prep_async(req);
-+
-+		if (unlikely(ret))
-+			io_req_complete_failed(req, ret);
-+		else
-+			io_queue_async_work(req);
- 	}
+ 	while (!list_empty(&ctx->timeout_list)) {
+ 		u32 events_needed, events_got;
+@@ -1350,13 +1346,14 @@ static void io_flush_timeouts(struct io_ring_ctx *ctx)
+ 
+ static void io_commit_cqring(struct io_ring_ctx *ctx)
+ {
+-	io_flush_timeouts(ctx);
+-
++	if (unlikely(ctx->off_timeout_used || ctx->drain_used)) {
++		if (ctx->off_timeout_used)
++			io_flush_timeouts(ctx);
++		if (ctx->drain_used)
++			io_queue_deferred(ctx);
++	}
+ 	/* order cqe stores with ring update */
+ 	smp_store_release(&ctx->rings->cq.tail, ctx->cached_cq_tail);
+-
+-	if (unlikely(!list_empty(&ctx->defer_list)))
+-		__io_queue_deferred(ctx);
  }
  
+ static inline bool io_sqring_full(struct io_ring_ctx *ctx)
+@@ -6447,9 +6444,9 @@ static void __io_queue_sqe(struct io_kiocb *req)
+ 		io_queue_linked_timeout(linked_timeout);
+ }
+ 
+-static void io_queue_sqe(struct io_kiocb *req)
++static inline void io_queue_sqe(struct io_kiocb *req)
+ {
+-	if (io_drain_req(req))
++	if (unlikely(req->ctx->drain_used) && io_drain_req(req))
+ 		return;
+ 
+ 	if (likely(!(req->flags & REQ_F_FORCE_ASYNC))) {
+@@ -6573,6 +6570,23 @@ static int io_submit_sqe(struct io_ring_ctx *ctx, struct io_kiocb *req,
+ 		io_req_complete_failed(req, ret);
+ 		return ret;
+ 	}
++
++	if (unlikely(req->flags & REQ_F_IO_DRAIN)) {
++		ctx->drain_used = true;
++
++		/*
++		 * Taking sequential execution of a link, draining both sides
++		 * of the link also fullfils IOSQE_IO_DRAIN semantics for all
++		 * requests in the link. So, it drains the head and the
++		 * next after the link request. The last one is done via
++		 * drain_next flag to persist the effect across calls.
++		 */
++		if (link->head) {
++			link->head->flags |= REQ_F_IO_DRAIN;
++			ctx->drain_next = 1;
++		}
++	}
++
+ 	ret = io_req_prep(req, sqe);
+ 	if (unlikely(ret))
+ 		goto fail_req;
+@@ -6591,17 +6605,6 @@ static int io_submit_sqe(struct io_ring_ctx *ctx, struct io_kiocb *req,
+ 	if (link->head) {
+ 		struct io_kiocb *head = link->head;
+ 
+-		/*
+-		 * Taking sequential execution of a link, draining both sides
+-		 * of the link also fullfils IOSQE_IO_DRAIN semantics for all
+-		 * requests in the link. So, it drains the head and the
+-		 * next after the link request. The last one is done via
+-		 * drain_next flag to persist the effect across calls.
+-		 */
+-		if (req->flags & REQ_F_IO_DRAIN) {
+-			head->flags |= REQ_F_IO_DRAIN;
+-			ctx->drain_next = 1;
+-		}
+ 		ret = io_req_prep_async(req);
+ 		if (unlikely(ret))
+ 			goto fail_req;
 -- 
 2.31.1
 

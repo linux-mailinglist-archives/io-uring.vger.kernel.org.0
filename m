@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 338BB3A7219
-	for <lists+io-uring@lfdr.de>; Tue, 15 Jun 2021 00:38:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3BEF3A7221
+	for <lists+io-uring@lfdr.de>; Tue, 15 Jun 2021 00:38:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230084AbhFNWkF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 14 Jun 2021 18:40:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50916 "EHLO
+        id S230261AbhFNWkW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 14 Jun 2021 18:40:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230230AbhFNWkE (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 14 Jun 2021 18:40:04 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43FCCC0613A4
-        for <io-uring@vger.kernel.org>; Mon, 14 Jun 2021 15:38:01 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id l9so12982223wms.1
-        for <io-uring@vger.kernel.org>; Mon, 14 Jun 2021 15:38:01 -0700 (PDT)
+        with ESMTP id S231187AbhFNWkW (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 14 Jun 2021 18:40:22 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4148AC0613A4
+        for <io-uring@vger.kernel.org>; Mon, 14 Jun 2021 15:38:02 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id t4-20020a1c77040000b029019d22d84ebdso406724wmi.3
+        for <io-uring@vger.kernel.org>; Mon, 14 Jun 2021 15:38:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=l8IXZMyUdGNPFcM+jvf71NPDHlynJvqRh+RePPa4mpU=;
-        b=kzbaxjN6fMrHNgPZ3GWWpxvzOlnHlSEjkG8grAX+ef6zGyitWBMA5LN2co+Ey61rEe
-         kn6HBMxT2Owf+wUM2RLnr14Gkccl9OzoXmbZEKlRjv0LySWdykpwI5fjNd9RFMsSHuzy
-         2JV/7y4JzLeTTGm0RCvpD5pQuM+6NAWAx+O1DlYU6SZ6N1qlwGiPyQ5Q/5wda7eDWuz8
-         YjquWbmvbCEUL4rmi8xkN+M9hijDq84jS/i8EH5PYtQ2WpRA1BaDV70mbQy59H38ktxq
-         vKLrS+058qNmVFzoZnqgixqhBcvC53wliFalQHBjzc1Z/Dn0+HYCrEclyfrO1o2sj3eX
-         Xmmg==
+        bh=BiqBzGuRv/KawRjuVbj3aLZOGLkOJAksbtO2Vr1j8Ac=;
+        b=CxDMRXKvXoCAGwQR3Jg5dYM1zE2UhM5Mg7tXxYua5YNuDc+y1ZNBdUEWwzSyYsPDeg
+         lty0BlV010KdK9syPd1m6U6WZMUquaNaC4bU2PuXhqIZBFb0SuCz365CX4Co/A1mAh3l
+         aqXnwJ60zJfncDlRImcEoRATDaXupT9o2aLXP5z3oyY2lza32peJH1vJJZMO5fK4VlhH
+         KNvr0MOfIDlI9kGM4I/U+u5dusvinL6vcXn+NI9u7jvrbSLCgfgEd1aS67dyecaV3HnR
+         BCC5ee8e/IRzeSD0+5LniFLCFxtVDuAT4k2w4Ak5Wt1lNpUd5CDNK18mJ2JBwQ78nHMa
+         8UgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=l8IXZMyUdGNPFcM+jvf71NPDHlynJvqRh+RePPa4mpU=;
-        b=NC4vAy1uT6j9OCR1mSqb8vDkBJB5xcMjVgDj8/bHowEFz8bt/acX+2r+kvVsaGggz0
-         iQESz2duS1vjHl+nf1w6j2Rul2ZTnv3SQwD+6jOVG1BRnWs/eabQbdHOm7bT28DfovJu
-         QM823QndryexGfUoOh32k7l6oSAHnle6iWlWxncKVj8GHV/BusuOMHXOaBxtTrgD82Md
-         2hBGDLzSOGpPwR4mzDg9bpREWhpm6lhI0yxygvfl+2u27pK3S5jyfaV6GPnLtbEviyTt
-         s9UDBVmt0unz84jdvI2R3EEOXjQzOpMr6BmMiD1NdNopuzVTpbinIzpxh3NYZ0fdKXCE
-         ghuA==
-X-Gm-Message-State: AOAM530Ec2pVUE3+oImdrUFNITNAR8dUOUucIT7nFzyZcAH9a9QBP6Su
-        BENOW+sHGDpBVsJEuEISjAw=
-X-Google-Smtp-Source: ABdhPJwX0vzQ7LZHTHQCPSWrqh1/2W/Ocel51pfpmzDf4GU0qZKWXvrtkFYQFqG1whB6alfC1N8+/w==
-X-Received: by 2002:a1c:7402:: with SMTP id p2mr1487443wmc.88.1623710279948;
-        Mon, 14 Jun 2021 15:37:59 -0700 (PDT)
+        bh=BiqBzGuRv/KawRjuVbj3aLZOGLkOJAksbtO2Vr1j8Ac=;
+        b=p12sZcaeifeonzHjpVWpIFVXzizB8sk2e633fTYOSh3mshMfgh86aMpA3mW40dJptI
+         tLO3j3YSx6Ttu399XcaJ1E8ZCgsN34wChtIMOdJSeiyTOHtrxqMiSdD4M1T1kvxEud6A
+         r+QwB8QfiAtrjzN/LFLf7btpMS04roolklMPC3dKhjt+jcTK2BFc5cOkmJwMPd2sLshe
+         SSJccgtvQ0TUlXKoYEAcc3PqqmfkWD6N+e33uNFslBI3GfvDAccOP5mvptkPZsBk63KH
+         Ih0WTz11AVt3cl1lLnZBy0Wp5gRwVoODqc43j+UD8pU0h8kHoRanty1Smpxn6zv3BjHq
+         calg==
+X-Gm-Message-State: AOAM5324/u5achjhVtVOmTtbNDUzwb+CTwzoZhfGVbf4FjyiF1cc0AEJ
+        TAg97nAqgTxe+e4krZCoorc=
+X-Google-Smtp-Source: ABdhPJy/fLYUHvkOjMJEmVL+oFuBDKoUtKsTJc3QZr1ZltEFBWJpo/bC4+mDoFNpuSN2Dt1xmtW02A==
+X-Received: by 2002:a1c:2015:: with SMTP id g21mr1483667wmg.87.1623710280924;
+        Mon, 14 Jun 2021 15:38:00 -0700 (PDT)
 Received: from localhost.localdomain ([148.252.132.209])
-        by smtp.gmail.com with ESMTPSA id x3sm621074wmj.30.2021.06.14.15.37.59
+        by smtp.gmail.com with ESMTPSA id x3sm621074wmj.30.2021.06.14.15.38.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jun 2021 15:37:59 -0700 (PDT)
+        Mon, 14 Jun 2021 15:38:00 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 09/12] io_uring: wait heads renaming
-Date:   Mon, 14 Jun 2021 23:37:28 +0100
-Message-Id: <47b97a097780c86c67b20b6ccc4e077523dce682.1623709150.git.asml.silence@gmail.com>
+Subject: [PATCH 10/12] io_uring: move uring_lock location
+Date:   Mon, 14 Jun 2021 23:37:29 +0100
+Message-Id: <dea5e845caee4c98aa0922b46d713154d81f7bd8.1623709150.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <cover.1623709150.git.asml.silence@gmail.com>
 References: <cover.1623709150.git.asml.silence@gmail.com>
@@ -61,113 +61,62 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-We use several wait_queue_head's for different purposes, but namings are
-confusing. First rename ctx->cq_wait into ctx->poll_wait, because this
-one is used for polling an io_uring instance. Then rename ctx->wait into
-ctx->cq_wait, which is responsible for CQE waiting.
+->uring_lock is prevalently used for submission, even though it protects
+many other things like iopoll, registeration, selected bufs, and more.
+And it's placed together with ->cq_wait poked on completion and CQ
+waiting sides. Move them apart, ->uring_lock goes to the submission
+data, and cq_wait to completion related chunk. The last one requires
+some reshuffling so everything needed by io_cqring_ev_posted*() is in
+one cacheline.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 30 +++++++++++++++---------------
- 1 file changed, 15 insertions(+), 15 deletions(-)
+ fs/io_uring.c | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 65d51e2d5c15..e9bf26fbf65d 100644
+index e9bf26fbf65d..1b6cfc6b79c5 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -394,7 +394,7 @@ struct io_ring_ctx {
+@@ -356,6 +356,8 @@ struct io_ring_ctx {
+ 
+ 	/* submission data */
+ 	struct {
++		struct mutex		uring_lock;
++
+ 		/*
+ 		 * Ring buffer of indices into array of io_uring_sqe, which is
+ 		 * mmapped by the application using the IORING_OFF_SQES offset.
+@@ -392,11 +394,6 @@ struct io_ring_ctx {
+ 		unsigned		sq_thread_idle;
+ 	} ____cacheline_aligned_in_smp;
+ 
+-	struct {
+-		struct mutex		uring_lock;
+-		wait_queue_head_t	cq_wait;
+-	} ____cacheline_aligned_in_smp;
+-
+ 	/* IRQ completion list, under ->completion_lock */
+ 	struct list_head	locked_free_list;
+ 	unsigned int		locked_free_nr;
+@@ -412,12 +409,13 @@ struct io_ring_ctx {
+ 	struct {
+ 		unsigned		cached_cq_tail;
+ 		unsigned		cq_entries;
+-		atomic_t		cq_timeouts;
+-		unsigned		cq_last_tm_flush;
+-		unsigned		cq_extra;
++		struct eventfd_ctx	*cq_ev_fd;
+ 		struct wait_queue_head	poll_wait;
++		struct wait_queue_head	cq_wait;
++		unsigned		cq_extra;
++		atomic_t		cq_timeouts;
+ 		struct fasync_struct	*cq_fasync;
+-		struct eventfd_ctx	*cq_ev_fd;
++		unsigned		cq_last_tm_flush;
+ 	} ____cacheline_aligned_in_smp;
  
  	struct {
- 		struct mutex		uring_lock;
--		wait_queue_head_t	wait;
-+		wait_queue_head_t	cq_wait;
- 	} ____cacheline_aligned_in_smp;
- 
- 	/* IRQ completion list, under ->completion_lock */
-@@ -415,7 +415,7 @@ struct io_ring_ctx {
- 		atomic_t		cq_timeouts;
- 		unsigned		cq_last_tm_flush;
- 		unsigned		cq_extra;
--		struct wait_queue_head	cq_wait;
-+		struct wait_queue_head	poll_wait;
- 		struct fasync_struct	*cq_fasync;
- 		struct eventfd_ctx	*cq_ev_fd;
- 	} ____cacheline_aligned_in_smp;
-@@ -1178,13 +1178,13 @@ static struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
- 	ctx->flags = p->flags;
- 	init_waitqueue_head(&ctx->sqo_sq_wait);
- 	INIT_LIST_HEAD(&ctx->sqd_list);
--	init_waitqueue_head(&ctx->cq_wait);
-+	init_waitqueue_head(&ctx->poll_wait);
- 	INIT_LIST_HEAD(&ctx->cq_overflow_list);
- 	init_completion(&ctx->ref_comp);
- 	xa_init_flags(&ctx->io_buffers, XA_FLAGS_ALLOC1);
- 	xa_init_flags(&ctx->personalities, XA_FLAGS_ALLOC1);
- 	mutex_init(&ctx->uring_lock);
--	init_waitqueue_head(&ctx->wait);
-+	init_waitqueue_head(&ctx->cq_wait);
- 	spin_lock_init(&ctx->completion_lock);
- 	INIT_LIST_HEAD(&ctx->iopoll_list);
- 	INIT_LIST_HEAD(&ctx->defer_list);
-@@ -1404,14 +1404,14 @@ static void io_cqring_ev_posted(struct io_ring_ctx *ctx)
- 	/* see waitqueue_active() comment */
- 	smp_mb();
- 
--	if (waitqueue_active(&ctx->wait))
--		wake_up(&ctx->wait);
-+	if (waitqueue_active(&ctx->cq_wait))
-+		wake_up(&ctx->cq_wait);
- 	if (ctx->sq_data && waitqueue_active(&ctx->sq_data->wait))
- 		wake_up(&ctx->sq_data->wait);
- 	if (io_should_trigger_evfd(ctx))
- 		eventfd_signal(ctx->cq_ev_fd, 1);
--	if (waitqueue_active(&ctx->cq_wait)) {
--		wake_up_interruptible(&ctx->cq_wait);
-+	if (waitqueue_active(&ctx->poll_wait)) {
-+		wake_up_interruptible(&ctx->poll_wait);
- 		kill_fasync(&ctx->cq_fasync, SIGIO, POLL_IN);
- 	}
- }
-@@ -1422,13 +1422,13 @@ static void io_cqring_ev_posted_iopoll(struct io_ring_ctx *ctx)
- 	smp_mb();
- 
- 	if (ctx->flags & IORING_SETUP_SQPOLL) {
--		if (waitqueue_active(&ctx->wait))
--			wake_up(&ctx->wait);
-+		if (waitqueue_active(&ctx->cq_wait))
-+			wake_up(&ctx->cq_wait);
- 	}
- 	if (io_should_trigger_evfd(ctx))
- 		eventfd_signal(ctx->cq_ev_fd, 1);
--	if (waitqueue_active(&ctx->cq_wait)) {
--		wake_up_interruptible(&ctx->cq_wait);
-+	if (waitqueue_active(&ctx->poll_wait)) {
-+		wake_up_interruptible(&ctx->poll_wait);
- 		kill_fasync(&ctx->cq_fasync, SIGIO, POLL_IN);
- 	}
- }
-@@ -7056,10 +7056,10 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
- 			ret = -EBUSY;
- 			break;
- 		}
--		prepare_to_wait_exclusive(&ctx->wait, &iowq.wq,
-+		prepare_to_wait_exclusive(&ctx->cq_wait, &iowq.wq,
- 						TASK_INTERRUPTIBLE);
- 		ret = io_cqring_wait_schedule(ctx, &iowq, &timeout);
--		finish_wait(&ctx->wait, &iowq.wq);
-+		finish_wait(&ctx->cq_wait, &iowq.wq);
- 		cond_resched();
- 	} while (ret > 0);
- 
-@@ -8678,7 +8678,7 @@ static __poll_t io_uring_poll(struct file *file, poll_table *wait)
- 	struct io_ring_ctx *ctx = file->private_data;
- 	__poll_t mask = 0;
- 
--	poll_wait(file, &ctx->cq_wait, wait);
-+	poll_wait(file, &ctx->poll_wait, wait);
- 	/*
- 	 * synchronizes with barrier from wq_has_sleeper call in
- 	 * io_commit_cqring
 -- 
 2.31.1
 

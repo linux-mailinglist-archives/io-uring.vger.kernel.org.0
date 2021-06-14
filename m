@@ -2,56 +2,53 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4415A3A5B5A
-	for <lists+io-uring@lfdr.de>; Mon, 14 Jun 2021 03:36:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D2A43A5B62
+	for <lists+io-uring@lfdr.de>; Mon, 14 Jun 2021 03:37:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232279AbhFNBi6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 13 Jun 2021 21:38:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57120 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232230AbhFNBi6 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 13 Jun 2021 21:38:58 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D519C061767
-        for <io-uring@vger.kernel.org>; Sun, 13 Jun 2021 18:36:47 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id a20so12651122wrc.0
-        for <io-uring@vger.kernel.org>; Sun, 13 Jun 2021 18:36:47 -0700 (PDT)
+        id S232273AbhFNBkA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 13 Jun 2021 21:40:00 -0400
+Received: from mail-wm1-f41.google.com ([209.85.128.41]:45006 "EHLO
+        mail-wm1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232286AbhFNBkA (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 13 Jun 2021 21:40:00 -0400
+Received: by mail-wm1-f41.google.com with SMTP id m41-20020a05600c3b29b02901b9e5d74f02so8697597wms.3
+        for <io-uring@vger.kernel.org>; Sun, 13 Jun 2021 18:37:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=gnE4iMn5O7WEqGGm2Cpxsf3iD+XKIjbR6rfDYDEVwcQ=;
-        b=O+hO4t92ldZpP4PmGv9CwsamT8bi12fPo+bpDqtHTukk4TyKetoaV2Zo4SlP/oEubt
-         7ziXzvK4Tufu5v1gDQN0tG8dqAUC+o/+5Y7OgIHo1uXZbhUtRE/3giy9Exjqb98YmQW/
-         WJLuzQY31OwyIimKy5unAwqRLfXmkqUpznWH+uHyCuGPDp0FY+IEZlRH7dKmprLV3via
-         QJydLlTrCYA33ETrevedyoj0rIR/moL8Wa8QQYPDC67m0jBqybDRBxWv/uK4ewLuxaFY
-         V0aCvXu7gDHJPKYv3XLF1LyZsvDAc7uISghgnlRa57LSbjImwwN1eXY9Lymo2HA4wuK8
-         TYjA==
+        bh=/9Om2s4dnvIqafpA9xWzUVzv7LJgVZBSbBDx0TNmf6w=;
+        b=qV1u6gdhI6iwPoQuAzd8h10BoT8ls64zoQp6eVZwpT0xZFExeIswqTizuuJyV7GStZ
+         YRNDyRfULAfhSeXQYjv9Go6TLRGK7DyL7GcWjbhUbPo2e5+DspRmKD+G4tOAFSL6ZFYb
+         S18TtljkpuAgpcQOO8UzuY1Sm+EE+EQy2RwNi7ODieEGpzN6MAzynCgGBBZsSbr6BTI3
+         RlLECjmIbwmt2TfxvEE4d7VcZ/2v+iCS5C/tHqiyOzmRD/PS5wbjOeMre+a3mmMDdY7e
+         qOiEMatZnkup72oyIKBquB8hog9aDB7dV1YqzYqPGPRvbe5MioahPn3JKf3x8NBwNlOb
+         0KvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=gnE4iMn5O7WEqGGm2Cpxsf3iD+XKIjbR6rfDYDEVwcQ=;
-        b=mlq4cPCJJ0QK+/NUDMJeKnisg8zPVUsXGEFS+lWCRIw53i8tLRDerYiTiyiS34OKOW
-         YkPDeMVDaPXL9cJfTW82F5LZE/y5M9NJlZZ4QmZp+C5TOv3GAcFvsVrsCxjCYQZFhSx8
-         2W3Q/CBp7yaNVrBdJJIru7UBEBFLF2dndEi/v0s94qhvQnoMCKYoEogYYFBht2mvjigO
-         JprAhAkMsW1aLZDAf/LilJ7mGSjU0srJj8sswlxmec3AKPE/iMbMCms/0gH1Znu9l9sL
-         V8NHn0ZqqFrE7hMyzRZAyYkvA+W2ohJ7q6j8eni43+AvljqKQdG6M+48VY4MWnwcejmq
-         cJOw==
-X-Gm-Message-State: AOAM533c6YpY71Bj+AVApyHHgyLDTleVCm4MSuQ6vaCC8SSN6AAr+rpD
-        0gutz5mF7XgUAKx9YGNDezc=
-X-Google-Smtp-Source: ABdhPJzRagXrbo4519kr2JM4Cb5lhaYFa5uwy1Dsr7z15dhAVVS+tJ/yDXVGPjjtlRUzyCAcpISPkQ==
-X-Received: by 2002:adf:c18a:: with SMTP id x10mr15916797wre.193.1623634605914;
-        Sun, 13 Jun 2021 18:36:45 -0700 (PDT)
+        bh=/9Om2s4dnvIqafpA9xWzUVzv7LJgVZBSbBDx0TNmf6w=;
+        b=KJaABGkL2v27GlWwSmnuUPtAk3JCJO/NiPVt4Y8dXfxRmnbHcdhf4JUxXVU3/uLVcZ
+         tkBemgmLE0GQTUB+r6i7s0mWpXRAdosItr5hDRrvnT+bJeA5SsSNFLU2R/K+qGP74vq8
+         B85BIaA6mTYOdFkjgcds0bnNe/pjeCYtNqjLrB0Kg1IxGmRXsbQO0VypRWlzOGzM7Afr
+         vxQkSrQvqPigLRVPS17lawTUhaSV5gn/g01AuDadtmUrFrNA1MytXR1+7Ncy/wbUMQ8Y
+         pF4848r7keg/c8EyfMtkoTvabuhUPIBxlv25YkSIA79kXF6poi6LQ7cp+JfA18SBgPu7
+         xYNg==
+X-Gm-Message-State: AOAM533R/h6vsG6CS0oiO4xIQTQC0lpXVhiW4lAGmx1lfFJup9o1XpBZ
+        oMlpy6D4FdOT+fsHd3IICdA=
+X-Google-Smtp-Source: ABdhPJz35NggHwE2C/tuuOZ5WOPf9u/AMV2VHojA5jsQdbO8rJmxW8lwCHH2DJnC5zMGqruMctKF3g==
+X-Received: by 2002:a05:600c:4282:: with SMTP id v2mr29691520wmc.18.1623634606813;
+        Sun, 13 Jun 2021 18:36:46 -0700 (PDT)
 Received: from localhost.localdomain ([85.255.237.119])
-        by smtp.gmail.com with ESMTPSA id a9sm6795291wrv.37.2021.06.13.18.36.45
+        by smtp.gmail.com with ESMTPSA id a9sm6795291wrv.37.2021.06.13.18.36.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Jun 2021 18:36:45 -0700 (PDT)
+        Sun, 13 Jun 2021 18:36:46 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 02/13] io-wq: remove unused io-wq refcounting
-Date:   Mon, 14 Jun 2021 02:36:13 +0100
-Message-Id: <401007393528ea7c102360e69a29b64498e15db2.1623634181.git.asml.silence@gmail.com>
+Subject: [PATCH 03/13] io_uring: refactor io_iopoll_req_issued
+Date:   Mon, 14 Jun 2021 02:36:14 +0100
+Message-Id: <1513bfde4f0c835be25ac69a82737ab0668d7665.1623634181.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <cover.1623634181.git.asml.silence@gmail.com>
 References: <cover.1623634181.git.asml.silence@gmail.com>
@@ -61,45 +58,88 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-iowq->refs is initialised to one and killed on exit, so it's not used
-and we can kill it.
+A simple refactoring of io_iopoll_req_issued(), move in_async inside so
+we don't pass it around and save on double checking it.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io-wq.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ fs/io_uring.c | 44 +++++++++++++++++++++-----------------------
+ 1 file changed, 21 insertions(+), 23 deletions(-)
 
-diff --git a/fs/io-wq.c b/fs/io-wq.c
-index 1ca98fc7d52b..f058ea0bcae8 100644
---- a/fs/io-wq.c
-+++ b/fs/io-wq.c
-@@ -109,8 +109,6 @@ struct io_wq {
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 485f1f055db3..8fbb48c1ac7a 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -2520,9 +2520,14 @@ static void io_complete_rw_iopoll(struct kiocb *kiocb, long res, long res2)
+  * find it from a io_do_iopoll() thread before the issuer is done
+  * accessing the kiocb cookie.
+  */
+-static void io_iopoll_req_issued(struct io_kiocb *req, bool in_async)
++static void io_iopoll_req_issued(struct io_kiocb *req)
+ {
+ 	struct io_ring_ctx *ctx = req->ctx;
++	const bool in_async = io_wq_current_is_worker();
++
++	/* workqueue context doesn't hold uring_lock, grab it now */
++	if (unlikely(in_async))
++		mutex_lock(&ctx->uring_lock);
  
- 	struct io_wq_hash *hash;
+ 	/*
+ 	 * Track whether we have multiple files in our lists. This will impact
+@@ -2549,14 +2554,19 @@ static void io_iopoll_req_issued(struct io_kiocb *req, bool in_async)
+ 	else
+ 		list_add_tail(&req->inflight_entry, &ctx->iopoll_list);
  
--	refcount_t refs;
--
- 	atomic_t worker_refs;
- 	struct completion worker_done;
- 
-@@ -949,7 +947,6 @@ struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data)
- 	}
- 
- 	wq->task = get_task_struct(data->task);
--	refcount_set(&wq->refs, 1);
- 	atomic_set(&wq->worker_refs, 1);
- 	init_completion(&wq->worker_done);
- 	return wq;
-@@ -1038,8 +1035,7 @@ void io_wq_put_and_exit(struct io_wq *wq)
- 	WARN_ON_ONCE(!test_bit(IO_WQ_BIT_EXIT, &wq->state));
- 
- 	io_wq_exit_workers(wq);
--	if (refcount_dec_and_test(&wq->refs))
--		io_wq_destroy(wq);
-+	io_wq_destroy(wq);
+-	/*
+-	 * If IORING_SETUP_SQPOLL is enabled, sqes are either handled in sq thread
+-	 * task context or in io worker task context. If current task context is
+-	 * sq thread, we don't need to check whether should wake up sq thread.
+-	 */
+-	if (in_async && (ctx->flags & IORING_SETUP_SQPOLL) &&
+-	    wq_has_sleeper(&ctx->sq_data->wait))
+-		wake_up(&ctx->sq_data->wait);
++	if (unlikely(in_async)) {
++		/*
++		 * If IORING_SETUP_SQPOLL is enabled, sqes are either handle
++		 * in sq thread task context or in io worker task context. If
++		 * current task context is sq thread, we don't need to check
++		 * whether should wake up sq thread.
++		 */
++		if ((ctx->flags & IORING_SETUP_SQPOLL) &&
++		    wq_has_sleeper(&ctx->sq_data->wait))
++			wake_up(&ctx->sq_data->wait);
++
++		mutex_unlock(&ctx->uring_lock);
++	}
  }
  
- static bool io_wq_worker_affinity(struct io_worker *worker, void *data)
+ static inline void io_state_file_put(struct io_submit_state *state)
+@@ -6210,23 +6220,11 @@ static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags)
+ 
+ 	if (creds)
+ 		revert_creds(creds);
+-
+ 	if (ret)
+ 		return ret;
+-
+ 	/* If the op doesn't have a file, we're not polling for it */
+-	if ((ctx->flags & IORING_SETUP_IOPOLL) && req->file) {
+-		const bool in_async = io_wq_current_is_worker();
+-
+-		/* workqueue context doesn't hold uring_lock, grab it now */
+-		if (in_async)
+-			mutex_lock(&ctx->uring_lock);
+-
+-		io_iopoll_req_issued(req, in_async);
+-
+-		if (in_async)
+-			mutex_unlock(&ctx->uring_lock);
+-	}
++	if ((ctx->flags & IORING_SETUP_IOPOLL) && req->file)
++		io_iopoll_req_issued(req);
+ 
+ 	return 0;
+ }
 -- 
 2.31.1
 

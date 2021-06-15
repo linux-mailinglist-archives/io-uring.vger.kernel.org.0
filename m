@@ -2,280 +2,160 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1144F3A7B30
-	for <lists+io-uring@lfdr.de>; Tue, 15 Jun 2021 11:51:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE3353A7B58
+	for <lists+io-uring@lfdr.de>; Tue, 15 Jun 2021 12:01:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231220AbhFOJxh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 15 Jun 2021 05:53:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59162 "EHLO
+        id S231393AbhFOKDr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 15 Jun 2021 06:03:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231262AbhFOJxg (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 15 Jun 2021 05:53:36 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7ECEDC061574;
-        Tue, 15 Jun 2021 02:51:31 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id l9so13759436wms.1;
-        Tue, 15 Jun 2021 02:51:31 -0700 (PDT)
+        with ESMTP id S231439AbhFOKDm (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 15 Jun 2021 06:03:42 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CCCAC061574;
+        Tue, 15 Jun 2021 03:01:32 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id f16-20020a05600c1550b02901b00c1be4abso1343046wmg.2;
+        Tue, 15 Jun 2021 03:01:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
+        h=to:references:from:subject:message-id:date:user-agent:mime-version
          :in-reply-to:content-language:content-transfer-encoding;
-        bh=DnmfZ3n4eX1Wg3BuVF/d3+9xjT/C4zfRFtfM4dIGrSY=;
-        b=svHoH1uCzQYfAPGxQQX1bYeSIITKNc6pQZkfp+jR6/8wCbqj5HiskFvKjJBzq9Q3ys
-         uEAwcQo1O8t16tuvoSUy6kADn0hLdQZKFITzqYJOVmwGh9UZtz4cKOWU9jXPKXV611iq
-         Inr0KvOL0lsw+AhszVrc5UzW8N2io1VLbvMMCgye5hOL7Z88dAwbNdUSQHpQTQX9uWn9
-         zCPty7Go9Ajub46i+HG3q1KGaghO5Ov8aL10fwAoVSWGHESucFXJkq3b7h9jDpYX5Zk2
-         70a291Y8jtpgK4yJysV+JRFHGar2DMcJZ0vwcD71OmFd9CrD7fIvjCxFYSLpX2BHH7w6
-         nBJg==
+        bh=6m2622jH6xxUBqqW7CQu925QgNn7I6YBkLdVIXOmSOk=;
+        b=kWzBnPerdDME4nff5nC4aP50OIa/17pFnPzgC4+LOTFo6y+XyVXyFrkAdVNtcb517V
+         gN3RU0+gPjwuAfVKbrY68WRvDqcGCx7CxLF54Zna5XUzRTMjbXNd7wZ/SY9zktecm8JW
+         yT3C4R3B8MIaxdXmXxvYmqnbWc2F1QXy297XuroOCeZ/E1hYMj+nDRC0FV7DlqFHDuRM
+         Dv6rHyz+YxkPJnq6cRadxV0D5QJOo4+lvX0ZDn6RvvXxHjKoVIrB/ocXrNcWVTHwv9NH
+         Tnrj9G04nW30tajrJK4njmEDaF/N69cfrF/QhNcADUkqLflOxXXzPl2laV5ANExMkfFf
+         Ct1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
+        h=x-gm-message-state:to:references:from:subject:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=DnmfZ3n4eX1Wg3BuVF/d3+9xjT/C4zfRFtfM4dIGrSY=;
-        b=mTHYktoiDfywJeIl5yWh4lYZ/c/IhBBKilp8wmoTVg88q0Go+wUcrf5MwBGBt+NoBq
-         vyxMr5g1B6/RY1/RGcxrrN0OOrBTqJ15A6u1ZnswzYoF/NIlk1dVT6R/3A63y+rshA+C
-         f5sk5TG2mSf88dmolJcD9qnkjr/Kanby7TCDIlxWSwAJSmn8XyZJgIrEN/q2it0qRcXf
-         xU7dheZW+1eq3yR3RUR4Xky9ETmI0xXYjLqcSEDPIFrVc5wqLDprZelgQlXQ2vGK4zYu
-         hf1wfFB1LdnIUDPzP/Oya8+S4DMyIh0GKVxE9BQ46rX2Jko6BX29MNSEwdDGedFi8ueE
-         pvwA==
-X-Gm-Message-State: AOAM532S3b6EWM5XLD5U/NtCeeKyoDtOtB9/MDKUTvkKsIPXCy6+y9Ht
-        QPVNunCaWTVcWI33fW1LgUpKA7qA1M3B/FZr
-X-Google-Smtp-Source: ABdhPJya6rIBR2V495XZJ8wEcsE5c2RPDrCCY7UgFJmZaQFOk21jB0x+gDDJL/c9XVHff4qMpfLhqw==
-X-Received: by 2002:a05:600c:2194:: with SMTP id e20mr4161272wme.138.1623750689989;
-        Tue, 15 Jun 2021 02:51:29 -0700 (PDT)
+        bh=6m2622jH6xxUBqqW7CQu925QgNn7I6YBkLdVIXOmSOk=;
+        b=a8n9rn4tPqP5TGWZYCfmYd9RxuBBBOIGw+fiunIMrnE4g5I7j/Iq4YxV4rPac9hydG
+         M4HdhcAUMrIkj0nH85mscnn586yunvpa8kUEselgb2tupk6Y3jafWWV7SSa88zXC0JkY
+         Lg3heZNu6XeRvojLEkqoM4ZS8pxr+UbtV43HVoSpYX2cVbaGlRmcGuwGt4biZjoePTcN
+         3FrvAoZeK2QTk3iEPHXYdNGubhcl2ANsaOU8dZSsr9EM0NHbt60EtfxjdwQq1Qq4vAqf
+         2PAb6wXOmREQuvSRiEvZ4hs4AaAYhH7wqe+m5oCfPpvhfax5nHBn7XGwO1ArljdHq0x1
+         1rJw==
+X-Gm-Message-State: AOAM5307sXGL4ibaiIIv3CGtla/jeSLo8GrtHfeO91p/JMEdwd/e30JH
+        QRXrrDunI/NUQXTQZltqqeA3XTKb13GmHTZu
+X-Google-Smtp-Source: ABdhPJx1Q1EkRg1RqLbBc92fgSmR/QPjpjk4+H6BdPAFtshEb5sy1Ggzn7bgpDmwmYDUAbVXLe5DQQ==
+X-Received: by 2002:a1c:f613:: with SMTP id w19mr4087753wmc.136.1623751290861;
+        Tue, 15 Jun 2021 03:01:30 -0700 (PDT)
 Received: from [192.168.8.197] ([148.252.132.209])
-        by smtp.gmail.com with ESMTPSA id z10sm12696369wmp.39.2021.06.15.02.51.28
+        by smtp.gmail.com with ESMTPSA id 73sm19402122wrk.17.2021.06.15.03.01.29
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Jun 2021 02:51:29 -0700 (PDT)
-Subject: Re: [PATCH v2 1/3] io_uring: Add to traces the req pointer when
- available
+        Tue, 15 Jun 2021 03:01:30 -0700 (PDT)
 To:     Olivier Langlois <olivier@trillion01.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>, io-uring@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <60be7e1b.1c69fb81.a0c4.205aSMTPIN_ADDED_MISSING@mx.google.com>
+References: <60c83c12.1c69fb81.e3bea.0806SMTPIN_ADDED_MISSING@mx.google.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <5f5e1353-6248-0e4a-ddd3-8eb0b1ba7f5c@gmail.com>
-Date:   Tue, 15 Jun 2021 10:51:16 +0100
+Subject: Re: [PATCH] io_uring: store back buffer in case of failure
+Message-ID: <93256513-08d8-5b15-aa98-c1e83af60b54@gmail.com>
+Date:   Tue, 15 Jun 2021 11:01:18 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.1
 MIME-Version: 1.0
-In-Reply-To: <60be7e1b.1c69fb81.a0c4.205aSMTPIN_ADDED_MISSING@mx.google.com>
+In-Reply-To: <60c83c12.1c69fb81.e3bea.0806SMTPIN_ADDED_MISSING@mx.google.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/31/21 7:36 AM, Olivier Langlois wrote:
-> The req pointer uniquely identify a specific request.
-> Having it in traces can provide valuable insights that is not possible
-> to have if the calling process is reusing the same user_data value.
-
-Patchset are usually accompanied with a cover letter. Also, there is
-something wrong as b4 refuses to find the patch. Anyway...
-
-Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
-
+On 6/11/21 8:46 PM, Olivier Langlois wrote:
+> the man page says the following:
+> 
+>     If succesful, the resulting CQE will have IORING_CQE_F_BUFFER set
+> in the flags part of the struct, and the upper IORING_CQE_BUFFER_SHIFT
+> bits will contain the ID of the selected buffers.
+> 
+> in order to respect this contract, the buffer is stored back in case of
+> an error. There are several reasons to do that:
+> 
+> 1. doing otherwise is counter-intuitive and error-prone (I cannot think
+> of a single example of a syscall failing and still require the user to
+> free the allocated resources). Especially when the documention
+> explicitly mention that this is the behavior to expect.
+> 
+> 2. it is inefficient because the buffer is unneeded since there is no
+> data to transfer back to the user and the buffer will need to be
+> returned back to io_uring to avoid a leak.
+> 
 > Signed-off-by: Olivier Langlois <olivier@trillion01.com>
 > ---
->  fs/io_uring.c                   | 11 ++---
->  include/trace/events/io_uring.h | 71 ++++++++++++++++++++++++---------
->  2 files changed, 59 insertions(+), 23 deletions(-)
+>  fs/io_uring.c | 97 +++++++++++++++++++++++++++++++++------------------
+>  1 file changed, 64 insertions(+), 33 deletions(-)
 > 
 > diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 903458afd56c..0737b0e76b91 100644
+> index 42380ed563c4..502d7cd81a8c 100644
 > --- a/fs/io_uring.c
 > +++ b/fs/io_uring.c
-> @@ -5059,7 +5059,7 @@ static void io_async_task_func(struct callback_head *cb)
->  	struct async_poll *apoll = req->apoll;
->  	struct io_ring_ctx *ctx = req->ctx;
+[...]
+> +static unsigned int io_put_kbuf(struct io_kiocb *req, struct io_buffer *kbuf,
+> +				u16 bgid, long res, unsigned int issue_flags)
+>  {
+>  	unsigned int cflags;
+> +	struct io_ring_ctx *ctx = req->ctx;
+> +	struct io_buffer *head;
+> +	bool force_nonblock = issue_flags & IO_URING_F_NONBLOCK;
 >  
-> -	trace_io_uring_task_run(req->ctx, req->opcode, req->user_data);
-> +	trace_io_uring_task_run(req->ctx, req, req->opcode, req->user_data);
->  
->  	if (io_poll_rewait(req, &apoll->poll)) {
->  		spin_unlock_irq(&ctx->completion_lock);
-> @@ -5192,8 +5192,8 @@ static bool io_arm_poll_handler(struct io_kiocb *req)
->  		return false;
->  	}
->  	spin_unlock_irq(&ctx->completion_lock);
-> -	trace_io_uring_poll_arm(ctx, req->opcode, req->user_data, mask,
-> -					apoll->poll.events);
-> +	trace_io_uring_poll_arm(ctx, req, req->opcode, req->user_data,
-> +				mask, apoll->poll.events);
->  	return true;
+>  	cflags = kbuf->bid << IORING_CQE_BUFFER_SHIFT;
+>  	cflags |= IORING_CQE_F_BUFFER;
+>  	req->flags &= ~REQ_F_BUFFER_SELECTED;
+> -	kfree(kbuf);
+> +
+> +	/*
+> +	 * Theoritically, res == 0 could be included as well but that would
+> +	 * break the contract established in the man page saying that
+> +	 * a buffer is returned if the operation is successful.
+> +	 */
+> +	if (unlikely(res < 0)) {
+> +		io_ring_submit_lock(ctx, !force_nonblock);
+
+io_complete_rw() is called from an IRQ context, so it can't sleep/wait.
+
+> +
+> +		lockdep_assert_held(&ctx->uring_lock);
+> +
+> +		head = xa_load(&ctx->io_buffers, bgid);
+> +		if (head) {
+> +			list_add_tail(&kbuf->list, &head->list);
+> +			cflags = 0;
+> +		} else {
+> +			INIT_LIST_HEAD(&kbuf->list);
+> +			if (!xa_insert(&ctx->io_buffers, bgid, kbuf, GFP_KERNEL))
+> +				cflags = 0;
+> +		}
+> +		io_ring_submit_unlock(ctx, !force_nonblock);
+> +	}
+> +	if (cflags)
+> +		kfree(kbuf);
+>  	return cflags;
 >  }
 >  
-> @@ -6578,8 +6578,9 @@ static int io_submit_sqe(struct io_ring_ctx *ctx, struct io_kiocb *req,
->  		goto fail_req;
->  
->  	/* don't need @sqe from now on */
-> -	trace_io_uring_submit_sqe(ctx, req->opcode, req->user_data,
-> -				true, ctx->flags & IORING_SETUP_SQPOLL);
-> +	trace_io_uring_submit_sqe(ctx, req, req->opcode, req->user_data,
-> +				  req->flags, true,
-> +				  ctx->flags & IORING_SETUP_SQPOLL);
->  
->  	/*
->  	 * If we already have a head request, queue this one for async
-> diff --git a/include/trace/events/io_uring.h b/include/trace/events/io_uring.h
-> index abb8b24744fd..12addad1f837 100644
-> --- a/include/trace/events/io_uring.h
-> +++ b/include/trace/events/io_uring.h
-> @@ -323,8 +323,10 @@ TRACE_EVENT(io_uring_complete,
->   * io_uring_submit_sqe - called before submitting one SQE
->   *
->   * @ctx:		pointer to a ring context structure
-> + * @req:		pointer to a submitted request
->   * @opcode:		opcode of request
->   * @user_data:		user data associated with the request
-> + * @flags		request flags
->   * @force_nonblock:	whether a context blocking or not
->   * @sq_thread:		true if sq_thread has submitted this SQE
->   *
-> @@ -333,41 +335,60 @@ TRACE_EVENT(io_uring_complete,
->   */
->  TRACE_EVENT(io_uring_submit_sqe,
->  
-> -	TP_PROTO(void *ctx, u8 opcode, u64 user_data, bool force_nonblock,
-> -		 bool sq_thread),
-> +	TP_PROTO(void *ctx, void *req, u8 opcode, u64 user_data, u32 flags,
-> +		 bool force_nonblock, bool sq_thread),
->  
-> -	TP_ARGS(ctx, opcode, user_data, force_nonblock, sq_thread),
-> +	TP_ARGS(ctx, req, opcode, user_data, flags, force_nonblock, sq_thread),
->  
->  	TP_STRUCT__entry (
->  		__field(  void *,	ctx		)
-> +		__field(  void *,	req		)
->  		__field(  u8,		opcode		)
->  		__field(  u64,		user_data	)
-> +		__field(  u32,		flags		)
->  		__field(  bool,		force_nonblock	)
->  		__field(  bool,		sq_thread	)
->  	),
->  
->  	TP_fast_assign(
->  		__entry->ctx		= ctx;
-> +		__entry->req		= req;
->  		__entry->opcode		= opcode;
->  		__entry->user_data	= user_data;
-> +		__entry->flags		= flags;
->  		__entry->force_nonblock	= force_nonblock;
->  		__entry->sq_thread	= sq_thread;
->  	),
->  
-> -	TP_printk("ring %p, op %d, data 0x%llx, non block %d, sq_thread %d",
-> -			  __entry->ctx, __entry->opcode,
-> -			  (unsigned long long) __entry->user_data,
-> -			  __entry->force_nonblock, __entry->sq_thread)
-> +	TP_printk("ring %p, req %p, op %d, data 0x%llx, flags %u, "
-> +		  "non block %d, sq_thread %d", __entry->ctx, __entry->req,
-> +		  __entry->opcode, (unsigned long long)__entry->user_data,
-> +		  __entry->flags, __entry->force_nonblock, __entry->sq_thread)
->  );
->  
-> +/*
-> + * io_uring_poll_arm - called after arming a poll wait if successful
-> + *
-> + * @ctx:		pointer to a ring context structure
-> + * @req:		pointer to the armed request
-> + * @opcode:		opcode of request
-> + * @user_data:		user data associated with the request
-> + * @mask:		request poll events mask
-> + * @events:		registered events of interest
-> + *
-> + * Allows to track which fds are waiting for and what are the events of
-> + * interest.
-> + */
->  TRACE_EVENT(io_uring_poll_arm,
->  
-> -	TP_PROTO(void *ctx, u8 opcode, u64 user_data, int mask, int events),
-> +	TP_PROTO(void *ctx, void *req, u8 opcode, u64 user_data,
-> +		 int mask, int events),
->  
-> -	TP_ARGS(ctx, opcode, user_data, mask, events),
-> +	TP_ARGS(ctx, req, opcode, user_data, mask, events),
->  
->  	TP_STRUCT__entry (
->  		__field(  void *,	ctx		)
-> +		__field(  void *,	req		)
->  		__field(  u8,		opcode		)
->  		__field(  u64,		user_data	)
->  		__field(  int,		mask		)
-> @@ -376,16 +397,17 @@ TRACE_EVENT(io_uring_poll_arm,
->  
->  	TP_fast_assign(
->  		__entry->ctx		= ctx;
-> +		__entry->req		= req;
->  		__entry->opcode		= opcode;
->  		__entry->user_data	= user_data;
->  		__entry->mask		= mask;
->  		__entry->events		= events;
->  	),
->  
-> -	TP_printk("ring %p, op %d, data 0x%llx, mask 0x%x, events 0x%x",
-> -			  __entry->ctx, __entry->opcode,
-> -			  (unsigned long long) __entry->user_data,
-> -			  __entry->mask, __entry->events)
-> +	TP_printk("ring %p, req %p, op %d, data 0x%llx, mask 0x%x, events 0x%x",
-> +		  __entry->ctx, __entry->req, __entry->opcode,
-> +		  (unsigned long long) __entry->user_data,
-> +		  __entry->mask, __entry->events)
->  );
->  
->  TRACE_EVENT(io_uring_poll_wake,
-> @@ -440,27 +462,40 @@ TRACE_EVENT(io_uring_task_add,
->  			  __entry->mask)
->  );
->  
-> +/*
-> + * io_uring_task_run - called when task_work_run() executes the poll events
-> + *                     notification callbacks
-> + *
-> + * @ctx:		pointer to a ring context structure
-> + * @req:		pointer to the armed request
-> + * @opcode:		opcode of request
-> + * @user_data:		user data associated with the request
-> + *
-> + * Allows to track when notified poll events are processed
-> + */
->  TRACE_EVENT(io_uring_task_run,
->  
-> -	TP_PROTO(void *ctx, u8 opcode, u64 user_data),
-> +	TP_PROTO(void *ctx, void *req, u8 opcode, u64 user_data),
->  
-> -	TP_ARGS(ctx, opcode, user_data),
-> +	TP_ARGS(ctx, req, opcode, user_data),
->  
->  	TP_STRUCT__entry (
->  		__field(  void *,	ctx		)
-> +		__field(  void *,	req		)
->  		__field(  u8,		opcode		)
->  		__field(  u64,		user_data	)
->  	),
->  
->  	TP_fast_assign(
->  		__entry->ctx		= ctx;
-> +		__entry->req		= req;
->  		__entry->opcode		= opcode;
->  		__entry->user_data	= user_data;
->  	),
->  
-> -	TP_printk("ring %p, op %d, data 0x%llx",
-> -			  __entry->ctx, __entry->opcode,
-> -			  (unsigned long long) __entry->user_data)
-> +	TP_printk("ring %p, req %p, op %d, data 0x%llx",
-> +		  __entry->ctx, __entry->req, __entry->opcode,
-> +		  (unsigned long long) __entry->user_data)
->  );
->  
->  #endif /* _TRACE_IO_URING_H */
-> 
+[...]
+> -static inline void io_rw_done(struct kiocb *kiocb, ssize_t ret)
+> +static inline void io_rw_done(struct kiocb *kiocb, ssize_t ret,
+> +			      unsigned int issue_flags)
+>  {
+>  	switch (ret) {
+>  	case -EIOCBQUEUED:
+> @@ -2728,7 +2775,7 @@ static inline void io_rw_done(struct kiocb *kiocb, ssize_t ret)
+>  		ret = -EINTR;
+>  		fallthrough;
+>  	default:
+> -		kiocb->ki_complete(kiocb, ret, 0);
+> +		kiocb->ki_complete(kiocb, ret, issue_flags);
+
+Don't remember what the second argument of .ki_complete is for,
+but it definitely should not be used for issue_flags. E.g. because
+we get two different meanings for it depending on a context --
+either a result from the block layer or issue_flags.
 
 -- 
 Pavel Begunkov

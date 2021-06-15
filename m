@@ -2,68 +2,65 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E91483A8B60
-	for <lists+io-uring@lfdr.de>; Tue, 15 Jun 2021 23:50:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30DC13A8B69
+	for <lists+io-uring@lfdr.de>; Tue, 15 Jun 2021 23:51:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230298AbhFOVwh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 15 Jun 2021 17:52:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54900 "EHLO
+        id S231354AbhFOVxh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 15 Jun 2021 17:53:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55154 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229898AbhFOVwg (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 15 Jun 2021 17:52:36 -0400
-Received: from mail-oo1-xc2e.google.com (mail-oo1-xc2e.google.com [IPv6:2607:f8b0:4864:20::c2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB39FC061574
-        for <io-uring@vger.kernel.org>; Tue, 15 Jun 2021 14:50:31 -0700 (PDT)
-Received: by mail-oo1-xc2e.google.com with SMTP id i8-20020a4aa1080000b0290201edd785e7so163361ool.1
-        for <io-uring@vger.kernel.org>; Tue, 15 Jun 2021 14:50:31 -0700 (PDT)
+        with ESMTP id S230425AbhFOVxh (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 15 Jun 2021 17:53:37 -0400
+Received: from mail-ot1-x32d.google.com (mail-ot1-x32d.google.com [IPv6:2607:f8b0:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E544C061574
+        for <io-uring@vger.kernel.org>; Tue, 15 Jun 2021 14:51:32 -0700 (PDT)
+Received: by mail-ot1-x32d.google.com with SMTP id q5-20020a9d66450000b02903f18d65089fso385372otm.11
+        for <io-uring@vger.kernel.org>; Tue, 15 Jun 2021 14:51:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:references:from:message-id:date:user-agent:mime-version
          :in-reply-to:content-language:content-transfer-encoding;
-        bh=VjVUDE45YcB13x3lqnLE37CRRkJRaS0DAF/jKxUqNJ0=;
-        b=f3c4QkRRN1rPClwcatS6ahHYdeL4QsGOjHAYozqJCYgeiYnlsk7wNVblLEkp9oT0y+
-         D3SCZoqjuIRPbUfNnPyMPXlcqbPk6S5tpT39FJ/OwH37FeFhD0cqsXmu7joApcJNIzrs
-         RsyI0iCkdOjB6GNFw5ETHoy0nNoLo1PDVXI3FE9+eN0IRu/aEPr6RMdVaAVpZclshJUP
-         YxdpxOjvaKHq0wYNBCt829lRQt30WiBVkl7SHhdeJ40AGHgmLF6l5hE787DykSqXy2cQ
-         Z24522T0yJuHZ9q6UCuYZzFf8WIEN2OS4otA9cid2cdKqiqACCInfTbog3qgFBy2tqSj
-         bErQ==
+        bh=ItJk9Ghv8yIkGYbLPfxSoCvBmnCbXTpV0jG4iHLpYy4=;
+        b=IIrYpJa1hivGRct/dLtO++4CKQg5+Kk1ellVgLIkdWDt4YtQukExWRcZZSo7v7u4IW
+         84qPpddurdeZIvw1faFGdBcvUk6oQDV4cV7QqlY61SMjXTxRU0epWuSkUAYiOXgdgXgE
+         9pB7Wjk5l4UK5Xwr5NhtZ4/WaWllm8EUUMzubjmoXyV4XpPcetX6+7giaLMHZ+MKyGK8
+         FvAOCn7Qphuy38voaBNlCDtTS3oh7iI2vVH4LuZaN1UedpZWeMnzCUgvHr24B3zm6TxM
+         0BPvb7v8nzsZnAA5QB9RK3hSDzr9iJgV9ocqDipql9WGL4XbJoxNoHv2x0bq+mN8nOk5
+         lgEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=VjVUDE45YcB13x3lqnLE37CRRkJRaS0DAF/jKxUqNJ0=;
-        b=kaa1gE5bF6Vd9GoW6agqKv9Gi/c9mhTRFZz5Ri1vWmr4ZUcUMHpwi8Xp5N8Tw7bio3
-         K2Xjcig00UphAe0C5rV418qRiHr3t/PkQiatZnSk7e6l9t18TdMu9KNkgkgLuqLvDqBg
-         8WPm4kxvOqO5ncSZh3m61HzV2iGQyp8ZUns8O3o8TUhT2S/Rd2DHymCeyKtiJz0S9KIU
-         Xm/C4fTVm0+hbQKYCq8RGQxVG/abgz7yFBqJugTlaHGMnGM72hC45ZZnyqIqBwqEeB/b
-         Z8kq70vIXDXw62YFrHn+EsShhKdniIdZdK06yvYdShlCNmhj7FGkjx3RsBPrq7sVQ1Yw
-         GrLA==
-X-Gm-Message-State: AOAM530UJjXaMTlAe+0cwP2MEmNFD8Q21/MWBcBktiSzSh44VtyFzi4v
-        Qy1PVgNFH0SYS5YbMXR9DP+tlA==
-X-Google-Smtp-Source: ABdhPJzrrDhUduWQRSmbGUiuNv5PDxIJys0Vu+3cVi8sxub54zf7YHRejioPq7SE10Wazk2WrfpBEQ==
-X-Received: by 2002:a4a:55c1:: with SMTP id e184mr1082080oob.74.1623793831032;
-        Tue, 15 Jun 2021 14:50:31 -0700 (PDT)
+        bh=ItJk9Ghv8yIkGYbLPfxSoCvBmnCbXTpV0jG4iHLpYy4=;
+        b=UqIXDrGu5g92Clk10FhLMITZFif7+lDn6SR9+kXDs6S7HTYkmuqXMREWIT9HMiAU2x
+         rvJCL2UwNIzNpcg192MvVDn8qH9r3Y9vbnpVUXuX7rU8g3/JKAUtVuZD/5F4muFQ00K0
+         0uYwajxg8KMq/gwGJz4Zong6XkkQRLcsZ5xwL16HByBoQZE9B1yvdmr33fFmlFbql4Rm
+         PyjY4WVAltKV7MC+Lb+V5BK3lc25EkTakwChQ6/OokadX5npEx36eVD7QV4kltXCJlk5
+         5QjFIUV7O7PLx/P7q2QtVHMN6A04uscytdtHl1RkXtTnjxft5MaR2cmJZyPzp2tBRONY
+         yzSg==
+X-Gm-Message-State: AOAM533YCmoUa0As1pStdfIdqLb2qOiq4BmXZU3FhgpodEkrEuISpzsV
+        m/6CpERd3f5R9S8eYNJXRIBc4Q==
+X-Google-Smtp-Source: ABdhPJw/JMvl2ceUXyIaVlgQVpTb/hJ0k9r80GjS13z6Cz0jpk+1XV6b3uTTZhk31n/DqEJzHzm0gQ==
+X-Received: by 2002:a05:6830:93:: with SMTP id a19mr1100081oto.17.1623793891829;
+        Tue, 15 Jun 2021 14:51:31 -0700 (PDT)
 Received: from [192.168.1.134] ([198.8.77.61])
-        by smtp.gmail.com with ESMTPSA id x35sm59041otr.7.2021.06.15.14.50.29
+        by smtp.gmail.com with ESMTPSA id s187sm36343oig.6.2021.06.15.14.51.30
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Jun 2021 14:50:30 -0700 (PDT)
-Subject: Re: [PATCH v2 2/3] io_uring: minor clean up in trace events
- definition
+        Tue, 15 Jun 2021 14:51:31 -0700 (PDT)
+Subject: Re: [PATCH] io_uring: store back buffer in case of failure
 To:     Pavel Begunkov <asml.silence@gmail.com>,
         Olivier Langlois <olivier@trillion01.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <60be7e31.1c69fb81.a8bfb.2e54SMTPIN_ADDED_MISSING@mx.google.com>
- <2752dcc1-9e56-ba31-54ea-d2363ecb6c93@gmail.com>
+        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <60c83c12.1c69fb81.e3bea.0806SMTPIN_ADDED_MISSING@mx.google.com>
+ <93256513-08d8-5b15-aa98-c1e83af60b54@gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <def5421f-a3ae-12fd-87a2-6e584f753127@kernel.dk>
-Date:   Tue, 15 Jun 2021 15:50:29 -0600
+Message-ID: <b5b37477-985e-54da-fc34-4de389112365@kernel.dk>
+Date:   Tue, 15 Jun 2021 15:51:30 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <2752dcc1-9e56-ba31-54ea-d2363ecb6c93@gmail.com>
+In-Reply-To: <93256513-08d8-5b15-aa98-c1e83af60b54@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -71,21 +68,7 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/15/21 3:48 AM, Pavel Begunkov wrote:
-> On 5/31/21 7:54 AM, Olivier Langlois wrote:
->> Fix tabulation to make nice columns
-> 
-> Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
-
-I don't have any of the original 1-3 patches, and don't see them on the
-list either. I'd love to apply for 5.14, but...
-
-Olivier, are you getting any errors sending these out? Usually I'd expect
-them in my inbox as well outside of the list, but they don't seem to have
-arrived there either.
-
-In any case, please resend. As Pavel mentioned, a cover letter is always
-a good idea for a series of more than one patch.
+Ditto for this one, don't see it in my email nor on the list.
 
 -- 
 Jens Axboe

@@ -2,67 +2,64 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B46653A9AA5
-	for <lists+io-uring@lfdr.de>; Wed, 16 Jun 2021 14:42:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9F633A9AF6
+	for <lists+io-uring@lfdr.de>; Wed, 16 Jun 2021 14:48:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232685AbhFPMof (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 16 Jun 2021 08:44:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57226 "EHLO
+        id S232864AbhFPMvA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 16 Jun 2021 08:51:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232452AbhFPMof (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 16 Jun 2021 08:44:35 -0400
-Received: from mail-oi1-x233.google.com (mail-oi1-x233.google.com [IPv6:2607:f8b0:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EE2AC061574
-        for <io-uring@vger.kernel.org>; Wed, 16 Jun 2021 05:42:28 -0700 (PDT)
-Received: by mail-oi1-x233.google.com with SMTP id s23so2355434oiw.9
-        for <io-uring@vger.kernel.org>; Wed, 16 Jun 2021 05:42:28 -0700 (PDT)
+        with ESMTP id S232421AbhFPMu7 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 16 Jun 2021 08:50:59 -0400
+Received: from mail-ot1-x331.google.com (mail-ot1-x331.google.com [IPv6:2607:f8b0:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E734C061574
+        for <io-uring@vger.kernel.org>; Wed, 16 Jun 2021 05:48:54 -0700 (PDT)
+Received: by mail-ot1-x331.google.com with SMTP id w23-20020a9d5a970000b02903d0ef989477so2311689oth.9
+        for <io-uring@vger.kernel.org>; Wed, 16 Jun 2021 05:48:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:references:from:message-id:date:user-agent:mime-version
          :in-reply-to:content-language:content-transfer-encoding;
-        bh=Ov+6TdsxyPnAE/go4uKPTaq+xRfN+cq8OJH2b808SUw=;
-        b=A4oVgkatl9TNacrtfcviixMIg2w3VwMxysVzP8wO7DgKtO8kcNFJX8iThUl71Pj5+Z
-         3FyfOa+NpST8Bbq830FAWTicGvNDSSQIr5FJ5RbNjguoMRDYSj1u9xIduzXox8fWtWdP
-         wbUPt5mb/NTcEoRBIbgC0k/PGxqrE6BNWXKdRBJbHL6SE2HKKFUwvjzYZliCXNoUs4Ij
-         xik+ZCmuKFLBVAztg2AW6jtV/q96CWj8FxZjOCnQsmJrfuTWPaT9f6eYe5//QCyK/AzC
-         sSyJBWcuBh7uAzJaV7nUzMosYHwxK7Xb1AZU5i/LztwJbMVE7SLO5DrR3TnBdZ9MELNR
-         wlUA==
+        bh=6HpoBlmpJ233t0Q6yG7oBMakkTPLqj6mc2Rb8mKRkQY=;
+        b=IdkaaxAZAcwnbtDiscGZuZ1UEpjaIF4Vp5j2wQvhfhbCMOBIfkAKzT276rxgbwK3Az
+         iXxK/r3JsPCsOy/rAR83WEIMzIfJcBKF6f66ez3MtL6djsOl+UQf8EXeoYBgO3b9dVuJ
+         Sdody38CRrLU5TDxE2WlM3RF8tha3MSQAvk/8Ki7WTSqjp3jICePqn+0bCbYoVmWGhx0
+         t+vSPLwNnao8U0XiopWhONbo0xoJbbhzIQ5ljwb2cHmeAGOK/x9oOuLzvGqjx+7adScL
+         HVQwP2PZq1UnAEwME3in4ViXbCJw30vIuZq+MKe8vSBNmbxHHyYXrqwj4n2udvnb8y0j
+         azSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=Ov+6TdsxyPnAE/go4uKPTaq+xRfN+cq8OJH2b808SUw=;
-        b=EETBcvuRsOVae1SpgACuwpt1eYGf9HU8M0BpitM+MTLexlruGm4k+UfUP5+X7uIb+Z
-         h7UOlvuADFEeR5SORE/1QSldu9z7/zI/Yln3rxZckTIRAdbaW4CdAbXee9GQtKW2mT8T
-         ySKo8TtzxpzfUJhph/Hkrl7LPJ0FgUL53yqKUrQmcb5pxSHvr+p5JSQHpm1BydQbGzpk
-         3l+xzXWd6PN7JRdxlZjMZCNSyorhGBlKLZg1TU/Pfp5h58oKYj+kgpZDuVZxgNi68mz0
-         KsVq3v4lVYAMGVM1lB/z/sR+avrR44eZsyimb2wULbt58uekdkuUlh+qIafXh11cV/CI
-         aMxA==
-X-Gm-Message-State: AOAM531niDa53vVjaUfxZKyE4Bcgn516Mh6IgJog5JXexy59RrcjpDGm
-        eHHT3igIS1pDcqYMFmf389FQPA==
-X-Google-Smtp-Source: ABdhPJwiM+LHbbFVezc5+6rmRihd65l8/VxGA9/ZTVL1axeq2pa1ZbpelZlJkgoFpT3TgG1fjW56gA==
-X-Received: by 2002:a05:6808:1482:: with SMTP id e2mr3455908oiw.150.1623847347463;
-        Wed, 16 Jun 2021 05:42:27 -0700 (PDT)
+        bh=6HpoBlmpJ233t0Q6yG7oBMakkTPLqj6mc2Rb8mKRkQY=;
+        b=ukGFG+Y5eTF9WIpLIROQzMwjSvEU9WEvp+FiqlpD24w5bTC0l/rdcDqZkwKPHfH7PF
+         RhaSFkfDj2MYQ3TW5HfW19moorTPlSG0RCpsnumxaFLwrTWEJEMn/2LuPxnYsZGJE26d
+         vxPxIBt4nwYOeFHoa7uCIRr/hm2DtNsuqG8Rjp4Y6YmRwYYcuRKhMYrcrYDufgeLwzya
+         5+WWqG4KpIB1RGPssFG5jJfIR4fIwd0+tsTJFfa4cD5Y5gPEUWumCzZcqz+39znfxMCF
+         ueCbg/igl7b1Vc9M/HFirNr2oBtqkkpz9LqvBF4TBt++2kNyB6PPDUpNEn0ItJnQu/qb
+         cVMg==
+X-Gm-Message-State: AOAM532dbqrw/L2Lc9aMtx1YY/ouN1kF+DSMjmTu32epgwyyvLl7cAyY
+        a9pHRJ3qO+0yNdoQ7+lrQcLUhQ==
+X-Google-Smtp-Source: ABdhPJxYpo/0EKi1vrLFU/GC3g7eh7t7hAFYcywIIDTCmJEeQ63H+5o3IDuR7o3+4BT/Xs2DxCHG+g==
+X-Received: by 2002:a9d:6d8c:: with SMTP id x12mr3920896otp.121.1623847733413;
+        Wed, 16 Jun 2021 05:48:53 -0700 (PDT)
 Received: from [192.168.1.134] ([198.8.77.61])
-        by smtp.gmail.com with ESMTPSA id e10sm501276otr.5.2021.06.16.05.42.26
+        by smtp.gmail.com with ESMTPSA id u10sm498207otj.75.2021.06.16.05.48.52
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Jun 2021 05:42:27 -0700 (PDT)
-Subject: Re: [PATCH v2 1/3] io_uring: Add to traces the req pointer when
- available
+        Wed, 16 Jun 2021 05:48:53 -0700 (PDT)
+Subject: Re: [PATCH] io_uring: reduce latency by reissueing the operation
 To:     Olivier Langlois <olivier@trillion01.com>,
         Pavel Begunkov <asml.silence@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <60be7e1b.1c69fb81.986e4.c6b5SMTPIN_ADDED_MISSING@mx.google.com>
+        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <60c13bec.1c69fb81.f2c1e.6444SMTPIN_ADDED_MISSING@mx.google.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <7e219aa8-a7b0-a15b-531b-f8926d6d7f3c@kernel.dk>
-Date:   Wed, 16 Jun 2021 06:42:25 -0600
+Message-ID: <ff0aab90-9aef-4ec6-f00f-89d4ffa21ef6@kernel.dk>
+Date:   Wed, 16 Jun 2021 06:48:52 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <60be7e1b.1c69fb81.986e4.c6b5SMTPIN_ADDED_MISSING@mx.google.com>
+In-Reply-To: <60c13bec.1c69fb81.f2c1e.6444SMTPIN_ADDED_MISSING@mx.google.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -70,12 +67,21 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/31/21 12:36 AM, Olivier Langlois wrote:
-> The req pointer uniquely identify a specific request.
-> Having it in traces can provide valuable insights that is not possible
-> to have if the calling process is reusing the same user_data value.
+On 6/9/21 4:08 PM, Olivier Langlois wrote:
+> It is quite frequent that when an operation fails and returns EAGAIN,
+> the data becomes available between that failure and the call to
+> vfs_poll() done by io_arm_poll_handler().
+> 
+> Detecting the situation and reissuing the operation is much faster
+> than going ahead and push the operation to the io-wq.
 
-Applied 1-3, thanks.
+I think this is obviously the right thing to do, but I'm not too crazy
+about the 'ret' pointer passed in. We could either add a proper return
+type instead of the bool and use that, or put the poll-or-queue-async
+into a helper that then only needs a bool return, and use that return
+value for whether to re-issue or not.
+
+Care to send an updated variant?
 
 -- 
 Jens Axboe

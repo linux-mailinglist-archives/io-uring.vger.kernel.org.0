@@ -2,64 +2,70 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B9F633A9AF6
-	for <lists+io-uring@lfdr.de>; Wed, 16 Jun 2021 14:48:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45CDE3A9AFF
+	for <lists+io-uring@lfdr.de>; Wed, 16 Jun 2021 14:49:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232864AbhFPMvA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 16 Jun 2021 08:51:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58776 "EHLO
+        id S232452AbhFPMvu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 16 Jun 2021 08:51:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58980 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232421AbhFPMu7 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 16 Jun 2021 08:50:59 -0400
-Received: from mail-ot1-x331.google.com (mail-ot1-x331.google.com [IPv6:2607:f8b0:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E734C061574
-        for <io-uring@vger.kernel.org>; Wed, 16 Jun 2021 05:48:54 -0700 (PDT)
-Received: by mail-ot1-x331.google.com with SMTP id w23-20020a9d5a970000b02903d0ef989477so2311689oth.9
-        for <io-uring@vger.kernel.org>; Wed, 16 Jun 2021 05:48:54 -0700 (PDT)
+        with ESMTP id S232403AbhFPMvt (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 16 Jun 2021 08:51:49 -0400
+Received: from mail-ot1-x32b.google.com (mail-ot1-x32b.google.com [IPv6:2607:f8b0:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71C70C061574
+        for <io-uring@vger.kernel.org>; Wed, 16 Jun 2021 05:49:43 -0700 (PDT)
+Received: by mail-ot1-x32b.google.com with SMTP id 6-20020a9d07860000b02903e83bf8f8fcso2305097oto.12
+        for <io-uring@vger.kernel.org>; Wed, 16 Jun 2021 05:49:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=6HpoBlmpJ233t0Q6yG7oBMakkTPLqj6mc2Rb8mKRkQY=;
-        b=IdkaaxAZAcwnbtDiscGZuZ1UEpjaIF4Vp5j2wQvhfhbCMOBIfkAKzT276rxgbwK3Az
-         iXxK/r3JsPCsOy/rAR83WEIMzIfJcBKF6f66ez3MtL6djsOl+UQf8EXeoYBgO3b9dVuJ
-         Sdody38CRrLU5TDxE2WlM3RF8tha3MSQAvk/8Ki7WTSqjp3jICePqn+0bCbYoVmWGhx0
-         t+vSPLwNnao8U0XiopWhONbo0xoJbbhzIQ5ljwb2cHmeAGOK/x9oOuLzvGqjx+7adScL
-         HVQwP2PZq1UnAEwME3in4ViXbCJw30vIuZq+MKe8vSBNmbxHHyYXrqwj4n2udvnb8y0j
-         azSA==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Va4Nl2rJYF3YxYC7oWVUUM15Gct77l0IG+f6Vil+tY8=;
+        b=OW1FQzh75836pfg5U5mJ/d2RFm9YUg+WaZjqHp7wG5AO+ahMkEz0v4B9nTMbFQrpYL
+         nVdsPnA+Zfy1JkoOjcvFJLldJ2n3LZ8jPnPX4UsknC2QRD1e1/FwKCQRLBJJo/NwZcYG
+         OxNnt0cIi0HCYaJ6IlFu2+VZQQDxZmINpHzV/LGonGlUc3bgsKc1Nb7B8FBTDCxAlUgl
+         MzF0t0e7X1ZhIdLd9K41RtvdD+mW+2FXoGwKJX1DgQjUciGRzZaMNhZkVzr9jqSXfjGQ
+         ZKbzp/LKIi5Zpors9nv8fUth7n4xk2vIIeppsE/ByA8zUtZ/P5GKehdSlh6F+EA8HEox
+         P8Iw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=6HpoBlmpJ233t0Q6yG7oBMakkTPLqj6mc2Rb8mKRkQY=;
-        b=ukGFG+Y5eTF9WIpLIROQzMwjSvEU9WEvp+FiqlpD24w5bTC0l/rdcDqZkwKPHfH7PF
-         RhaSFkfDj2MYQ3TW5HfW19moorTPlSG0RCpsnumxaFLwrTWEJEMn/2LuPxnYsZGJE26d
-         vxPxIBt4nwYOeFHoa7uCIRr/hm2DtNsuqG8Rjp4Y6YmRwYYcuRKhMYrcrYDufgeLwzya
-         5+WWqG4KpIB1RGPssFG5jJfIR4fIwd0+tsTJFfa4cD5Y5gPEUWumCzZcqz+39znfxMCF
-         ueCbg/igl7b1Vc9M/HFirNr2oBtqkkpz9LqvBF4TBt++2kNyB6PPDUpNEn0ItJnQu/qb
-         cVMg==
-X-Gm-Message-State: AOAM532dbqrw/L2Lc9aMtx1YY/ouN1kF+DSMjmTu32epgwyyvLl7cAyY
-        a9pHRJ3qO+0yNdoQ7+lrQcLUhQ==
-X-Google-Smtp-Source: ABdhPJxYpo/0EKi1vrLFU/GC3g7eh7t7hAFYcywIIDTCmJEeQ63H+5o3IDuR7o3+4BT/Xs2DxCHG+g==
-X-Received: by 2002:a9d:6d8c:: with SMTP id x12mr3920896otp.121.1623847733413;
-        Wed, 16 Jun 2021 05:48:53 -0700 (PDT)
+        bh=Va4Nl2rJYF3YxYC7oWVUUM15Gct77l0IG+f6Vil+tY8=;
+        b=RD0qHTOXCLI2ud4zKrmzCsenH1kPvp2xvhMWaOntfkpPvkO10G8En13DTqAkGIb0hP
+         mXRz1GTMWUCLSVdGb0G8G227j5w5i5nXSC5J9GvG22jDBsl013bKy0JGbb6PLG1dU7Kc
+         ksxmfbfGslVJkMKS8vHspzFgHYFjnDr8QoKn2UtnHq99LNetxrLxhISbBjXtn1IzfU5N
+         Q9yRewKeXvxCaF8rGANTEVNUAZutSzyuEuXZ1b3JS/nOg1/fqMRUd2+yKJLmoVbpZueN
+         M3MVj9zFfb9oT6cPXrLwhmjOervaZu3as6AOBL1ueNsnQwEXNwkE1y6k2Ex1tQNgC/T2
+         vP0g==
+X-Gm-Message-State: AOAM530+uwmrY7dB70i9Hs0d5+Khyr/d1jzNcTDzahTopywGdZECB1wD
+        SO0dWlwEnHKkzReW7axvIWIQIQ==
+X-Google-Smtp-Source: ABdhPJzlZaK+Xm1b+p8yMBgWg6NvqcijeMq9pFwW0LOdbdksRDFSK+dJc2B9UVn/CTGormhHghvOoQ==
+X-Received: by 2002:a9d:5d14:: with SMTP id b20mr3978235oti.307.1623847782759;
+        Wed, 16 Jun 2021 05:49:42 -0700 (PDT)
 Received: from [192.168.1.134] ([198.8.77.61])
-        by smtp.gmail.com with ESMTPSA id u10sm498207otj.75.2021.06.16.05.48.52
+        by smtp.gmail.com with ESMTPSA id l19sm447632oou.2.2021.06.16.05.49.41
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Jun 2021 05:48:53 -0700 (PDT)
-Subject: Re: [PATCH] io_uring: reduce latency by reissueing the operation
-To:     Olivier Langlois <olivier@trillion01.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <60c13bec.1c69fb81.f2c1e.6444SMTPIN_ADDED_MISSING@mx.google.com>
+        Wed, 16 Jun 2021 05:49:42 -0700 (PDT)
+Subject: Re: [PATCH v2 2/3] io_uring: minor clean up in trace events
+ definition
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        Olivier Langlois <olivier@trillion01.com>,
+        Ingo Molnar <mingo@redhat.com>, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <60be7e31.1c69fb81.a8bfb.2e54SMTPIN_ADDED_MISSING@mx.google.com>
+ <2752dcc1-9e56-ba31-54ea-d2363ecb6c93@gmail.com>
+ <def5421f-a3ae-12fd-87a2-6e584f753127@kernel.dk>
+ <20210615193532.6d7916d4@gandalf.local.home>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <ff0aab90-9aef-4ec6-f00f-89d4ffa21ef6@kernel.dk>
-Date:   Wed, 16 Jun 2021 06:48:52 -0600
+Message-ID: <2ba15b09-2228-9a2a-3ac3-c471dd3fc912@kernel.dk>
+Date:   Wed, 16 Jun 2021 06:49:41 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <60c13bec.1c69fb81.f2c1e.6444SMTPIN_ADDED_MISSING@mx.google.com>
+In-Reply-To: <20210615193532.6d7916d4@gandalf.local.home>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -67,21 +73,35 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/9/21 4:08 PM, Olivier Langlois wrote:
-> It is quite frequent that when an operation fails and returns EAGAIN,
-> the data becomes available between that failure and the call to
-> vfs_poll() done by io_arm_poll_handler().
+On 6/15/21 5:35 PM, Steven Rostedt wrote:
+> On Tue, 15 Jun 2021 15:50:29 -0600
+> Jens Axboe <axboe@kernel.dk> wrote:
 > 
-> Detecting the situation and reissuing the operation is much faster
-> than going ahead and push the operation to the io-wq.
+>> On 6/15/21 3:48 AM, Pavel Begunkov wrote:
+>>> On 5/31/21 7:54 AM, Olivier Langlois wrote:  
+>>>> Fix tabulation to make nice columns  
+>>>
+>>> Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>  
+>>
+>> I don't have any of the original 1-3 patches, and don't see them on the
+>> list either. I'd love to apply for 5.14, but...
+>>
+>> Olivier, are you getting any errors sending these out? Usually I'd expect
+>> them in my inbox as well outside of the list, but they don't seem to have
+>> arrived there either.
+>>
+>> In any case, please resend. As Pavel mentioned, a cover letter is always
+>> a good idea for a series of more than one patch.
+>>
+> 
+> I found them in my inbox, but for some reason, none of them have a
+> Message-id tag, which explains why the replies don't follow them nor can
+> you find them in any mailing list.
 
-I think this is obviously the right thing to do, but I'm not too crazy
-about the 'ret' pointer passed in. We could either add a proper return
-type instead of the bool and use that, or put the poll-or-queue-async
-into a helper that then only needs a bool return, and use that return
-value for whether to re-issue or not.
-
-Care to send an updated variant?
+Indeed, that is what is causing the situation, and I do have them here.
+Olivier, you definitely want to fix your mail setup. It confuses both
+MUAs, but it also actively prevents using the regular tooling to pull
+these patches off lore for example.
 
 -- 
 Jens Axboe

@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D26713ABA63
+	by mail.lfdr.de (Postfix) with ESMTP id 661753ABA62
 	for <lists+io-uring@lfdr.de>; Thu, 17 Jun 2021 19:14:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232041AbhFQRQw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        id S232079AbhFQRQw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
         Thu, 17 Jun 2021 13:16:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45374 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232068AbhFQRQw (ORCPT
+        with ESMTP id S232041AbhFQRQw (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Thu, 17 Jun 2021 13:16:52 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CAD1C061574
-        for <io-uring@vger.kernel.org>; Thu, 17 Jun 2021 10:14:43 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id t4-20020a1c77040000b029019d22d84ebdso6866837wmi.3
-        for <io-uring@vger.kernel.org>; Thu, 17 Jun 2021 10:14:43 -0700 (PDT)
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FB0CC06175F
+        for <io-uring@vger.kernel.org>; Thu, 17 Jun 2021 10:14:44 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id c84so3894961wme.5
+        for <io-uring@vger.kernel.org>; Thu, 17 Jun 2021 10:14:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=fPm1VhHHAkUf+D3WOzN5r9jite12Z64GIFUeEdXWDdw=;
-        b=Yi5OqMBe7siIAVBdIbsoPlTuEh28rfiww0PwVFLFFJlEeYXbT28GdT8cacTBooVvD5
-         Gc7dZeCi+GlhiWhiwGtMFNJv4s47riVnVuP/ixNl0XbByCbBTU1uQqW7aud7/XHv+n7m
-         27jyk1ZPxEO/92irbtEgepSA+ClCisSnD9l3WKIh18o7NAdx5AH9Bo5CVw3LxzGVmjjg
-         c9h/4wPdYcslLvxk+nAZzO6u6GHLEaRzoaD7CQiT+mfuoNyjenQE2/25JXtUZ1cs6WdU
-         hgKmXhSEOBOKXh8wEsDw4XuwDW8rP5mOy0edV0Tx4GDxJMjsL35pnBn78iEyulz1JZ7+
-         6t8Q==
+        bh=ILuax7lV370NTQfwMHhlkPTxBiuXT196yG6iGKDaQJk=;
+        b=vOtKmRU7ffULnVC0LZI7UFLTvKgI8EYa1qsQcaqJIUtfV0z+Ce71YwoMKkQzZYZLEB
+         UkbWIlAjCh62fiiiv+cVlLDTDDpS7uPr78xdAHvUQwmsJKP4/u9IKrUwkl5kKA3PvgDi
+         9wkff4PA+d48rT5QKe9lfhxw5LVQrmLEUJSIHPMDgwwpylwNAOQYQ46tE9vFLC96XhhP
+         yVJbUGSGKLqhx1WMrbP072Boq5rSz4JJs3RIJ8sIF1Li2XQpFvrllrKHGqSQQdlX2/Ph
+         58UpjvMt/p0WFAqrOTm1MNUCCayuTk2HqZerJzmBHYgFp1Ro8GAMe7Febw+y2iGdlpLy
+         yVZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=fPm1VhHHAkUf+D3WOzN5r9jite12Z64GIFUeEdXWDdw=;
-        b=fxMqcrXnVVAk50v3DwYBbmnzSH4vGM3te9davvIjkz+6Op+9zvNocY0wDcwMBsck/o
-         VMbU0G/t97DEOuqqdVkHNJrN0yopnjZ2XIbVGgMYSH/Rggk8hd4LupoAFONNe/BbviCP
-         BLQpwEBn/kim/u3QFrXeLiv2QMusnC+siJdgUlh9J8NbU5xvoJ/GkwavgMhh8zZJ+Jax
-         Ryl+3p1+fnlkIK34aZ9hePpLBOqLpRLfV8FTd4e2gKnkQRd7dl91d0J+pSFRcuLHcYtn
-         PeEsw341CL/CgIG//cdBcPyuXMNOpHwSdpe9HVpvNbTsnsCxP5osa4Do7LBaBQKhMBwv
-         8nxw==
-X-Gm-Message-State: AOAM532a680thfs7PEK6KGcI2XKGwQR8d0o/9LzLfY5lASfAywXk8J1V
-        C740EjkxvNQlEBJssl8IF9f+2VMSVTTwSw==
-X-Google-Smtp-Source: ABdhPJx0ZgK1sElWYuEboFp0JtJV17RpZ+G2DHgQLDXa48VNf6Q4WMdMUtLQu9p0a+ThlHCa2D9biQ==
-X-Received: by 2002:a1c:5fc1:: with SMTP id t184mr6437027wmb.148.1623950082066;
+        bh=ILuax7lV370NTQfwMHhlkPTxBiuXT196yG6iGKDaQJk=;
+        b=pfxkmDzr51Khy2om2FrrYodztFzShicWqKp3feXnIwlXrqNGVYRDFgo1bPJi2aGFPF
+         kbHysvtidqP7Aq9rO5kgFtYAQhhaF726AN7c64Ns0dPcWYYzHBbJPZWaiJTjUGRmbAQ0
+         rBgr4ViFJa6+FQFrAKImcHpMUpUsHUJKbgy1NZYVCVOGmpMzEwuuzNsuCy6va4y7pre3
+         /O+5x11nnHUE3cRS2vMl4l6hQ5WVws+dCUhRuwR2RAah2XtkCBXM3+ux/QE3FsXMhov/
+         hY70gnqNHgfqKpn1SrA2lgtuG3O/Q/+AOHXV0Tc/gOxjcqIK9KTNQDcOpRSBmFUmraRU
+         dqwg==
+X-Gm-Message-State: AOAM5327IHGwqpWrgH10QCsYORsQhEMA3tOl6dv/d0ZUV5ozRFkAY7NU
+        SNda45NrEMt21jeU4lYaFsk=
+X-Google-Smtp-Source: ABdhPJxIaji77d9WD2pmC2Lv04MVLAFhvER07cMvKhteX6o03UK0GYkB/KG+No22DUHZq6i/Agj2fw==
+X-Received: by 2002:a05:600c:3658:: with SMTP id y24mr6255046wmq.6.1623950082939;
         Thu, 17 Jun 2021 10:14:42 -0700 (PDT)
 Received: from localhost.localdomain ([148.252.132.93])
-        by smtp.gmail.com with ESMTPSA id g17sm6208033wrp.61.2021.06.17.10.14.41
+        by smtp.gmail.com with ESMTPSA id g17sm6208033wrp.61.2021.06.17.10.14.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Jun 2021 10:14:41 -0700 (PDT)
+        Thu, 17 Jun 2021 10:14:42 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 09/12] io_uring: optimise task_work submit flushing
-Date:   Thu, 17 Jun 2021 18:14:07 +0100
-Message-Id: <3cac83934e4fbce520ff8025c3524398b3ae0270.1623949695.git.asml.silence@gmail.com>
+Subject: [PATCH 10/12] io_uring: refactor tctx task_work list splicing
+Date:   Thu, 17 Jun 2021 18:14:08 +0100
+Message-Id: <d076c83fedb8253baf43acb23b8fafd7c5da1714.1623949695.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <cover.1623949695.git.asml.silence@gmail.com>
 References: <cover.1623949695.git.asml.silence@gmail.com>
@@ -61,53 +61,51 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-tctx_task_work() tries to fetch a next batch of requests, but before it
-would flush completions from the previous batch that may be sub-optimal.
-E.g. io_req_task_queue() executes a head of the link where all the
-linked may be enqueued through the same io_req_task_queue(). And there
-are more cases for that.
+We don't need a full copy of tctx->task_list in tctx_task_work(), but
+only a first one, so just assign node directly.
 
-Do the flushing at the end, so it can cache completions of several waves
-of a single tctx_task_work(), and do the flush at the very end.
+Taking into account that task_works are run in a context of a task,
+it's very unlikely to first see non-empty tctx->task_list and then
+splice it empty, can only happen with task_work cancellations that is
+not-normal slow path anyway. Hence, get rid of the check in the end,
+it's there not for validity but "performance" purposes.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fs/io_uring.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index d8bc4f82efd1..f31f00c6e829 100644
+index f31f00c6e829..31afe25596d7 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -1890,13 +1890,13 @@ static void ctx_flush_and_put(struct io_ring_ctx *ctx)
- 
- static void tctx_task_work(struct callback_head *cb)
- {
-+	struct io_ring_ctx *ctx = NULL;
- 	struct io_uring_task *tctx = container_of(cb, struct io_uring_task,
- 						  task_work);
- 
+@@ -1897,15 +1897,13 @@ static void tctx_task_work(struct callback_head *cb)
  	clear_bit(0, &tctx->task_state);
  
  	while (!wq_list_empty(&tctx->task_list)) {
--		struct io_ring_ctx *ctx = NULL;
- 		struct io_wq_work_list list;
+-		struct io_wq_work_list list;
  		struct io_wq_work_node *node;
  
-@@ -1920,11 +1920,12 @@ static void tctx_task_work(struct callback_head *cb)
+ 		spin_lock_irq(&tctx->task_lock);
+-		list = tctx->task_list;
++		node = tctx->task_list.first;
+ 		INIT_WQ_LIST(&tctx->task_list);
+ 		spin_unlock_irq(&tctx->task_lock);
+ 
+-		node = list.first;
+ 		while (node) {
+ 			struct io_wq_work_node *next = node->next;
+ 			struct io_kiocb *req = container_of(node, struct io_kiocb,
+@@ -1919,9 +1917,6 @@ static void tctx_task_work(struct callback_head *cb)
+ 			req->task_work.func(&req->task_work);
  			node = next;
  		}
- 
--		ctx_flush_and_put(ctx);
- 		if (!list.first)
- 			break;
+-
+-		if (!list.first)
+-			break;
  		cond_resched();
  	}
-+
-+	ctx_flush_and_put(ctx);
- }
  
- static int io_req_task_work_add(struct io_kiocb *req)
 -- 
 2.31.1
 

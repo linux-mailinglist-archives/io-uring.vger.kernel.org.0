@@ -2,104 +2,88 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EA1A23ABA13
-	for <lists+io-uring@lfdr.de>; Thu, 17 Jun 2021 18:56:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B4AE3ABA59
+	for <lists+io-uring@lfdr.de>; Thu, 17 Jun 2021 19:14:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231148AbhFQQ7D (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 17 Jun 2021 12:59:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41226 "EHLO
+        id S231617AbhFQRQm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 17 Jun 2021 13:16:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229891AbhFQQ7D (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 17 Jun 2021 12:59:03 -0400
-Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BC0FC06175F
-        for <io-uring@vger.kernel.org>; Thu, 17 Jun 2021 09:56:55 -0700 (PDT)
-Received: by mail-il1-x12d.google.com with SMTP id b14so5964287ilq.7
-        for <io-uring@vger.kernel.org>; Thu, 17 Jun 2021 09:56:55 -0700 (PDT)
+        with ESMTP id S230457AbhFQRQl (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 17 Jun 2021 13:16:41 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6CDDC061574
+        for <io-uring@vger.kernel.org>; Thu, 17 Jun 2021 10:14:33 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id f16-20020a05600c1550b02901b00c1be4abso6881764wmg.2
+        for <io-uring@vger.kernel.org>; Thu, 17 Jun 2021 10:14:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:references:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=kneleO/C/1wJdRhD70UTQB0QxB1Ynnx3aL11L5hJxPA=;
-        b=MQutW8hqt89oYRL5tGG4lo6BHipr+3HtQcqexNEoyKtO04vMZlJR0Xc141WPyuF/mj
-         DibhttlvQ81Xd6m/s2Z0uvagCROYp5F9X9buy39oXMiI+dGMisLmv4AxFFC/DEUMDgqL
-         kGTGY5O43DAFemft+Mt0O/m7oikQd7XqV8V6IOQJfG51yDlLThBZ073Nwj95qJHtgJSv
-         pAP4hVar/DCooHskr4YvDc+7G/clRcDkATWyWmIULwPqsT95tLTM3W2p+tRHwKlPHmkl
-         86YX/tKHWFg2G9wQQvFMsOVDp7bhoT1lS8U01v9SvoVXkAIF1HB59jypoFTRHxsWxgSH
-         YM5Q==
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Zbp/Dld44JaBO1R2DDZV0iKjQqTwEF0wtaWB3tGJ7jU=;
+        b=LTp0mclbHwt/Wpg1kcuWZwE/x2EN1EsMHrqHTrRDP42WOLL+LVayka4HYANKJZeusK
+         01kRq4NU4/Cxh9AtY8Itq70rChhP0oXR5h8NY5jSDwnJfE3l7AD2IkiLajWsak9OY0dV
+         IBz2uNZQ4eN6o86aTCyw3V4sDwhKyJpeTj0GqbR3cYDP4ugoqXmoQecD2O7Zp1wcI1eN
+         bjmJqQwW69N1vR0odiEFdJPj6YgYtAvIRo278nM/GhaglTxfCABLlOZQpSotWCZzN8P2
+         HWfdb4rvslG9GiJYnmODziXpXtL8+KuPv125nmSB5/E2d/Hqlf1ZnblX20H6My1oNrZL
+         lRxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=kneleO/C/1wJdRhD70UTQB0QxB1Ynnx3aL11L5hJxPA=;
-        b=ckUD0WXx4WAbj+214L3AwWSoABU+JrCsF/nQaclY3+kcDeFzhZXWNC8XAJNcqUEbkx
-         xyLRHWOCqTJbJxhey3wnzZXfzexd+gAh9x8HANOgjZaKMjvNdg4QkxhKtlKX7+9VUfFN
-         d4HthqLyEX3oCBwL98dzBuqyu6EMpkQmuYVRaeqGepYDvwXUNuaE1E6Q1KX2yPc/gAbL
-         rNEkuZhQVAxhWvCMJBUov/VuZpUBTlhRkUQuMhsIBizvsqAbDzd0oltyTBq7yx7y9tTb
-         bpIv2MI9XxWZB2PJ53utXCpeKtkooBWn0U+bfsAx8Y0kQaX8zfEQ4dvaefmShvvEqKar
-         JjJQ==
-X-Gm-Message-State: AOAM5303sTHWu0PPajUwb44r22MwIAP43az2OvZbp1ZEPY9fwGcE7dfW
-        jrwGT322QVPuSh3kPbPPId44Eu/BGQ0eE4Ou
-X-Google-Smtp-Source: ABdhPJwoui+axVMpoPLMHMB8CBma5vhU+Sv/gLXEQyhNcj5UK2UtFO645wCk+ZuwQLsWqdSYgCUipw==
-X-Received: by 2002:a05:6e02:1a45:: with SMTP id u5mr4247755ilv.242.1623949014355;
-        Thu, 17 Jun 2021 09:56:54 -0700 (PDT)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id d12sm2913876ilr.38.2021.06.17.09.56.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Jun 2021 09:56:54 -0700 (PDT)
-Subject: Re: [Bug] fio hang when running multiple job io_uring/hipri over nvme
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Ming Lei <ming.lei@redhat.com>, linux-kernel@vger.kernel.org,
-        io-uring@vger.kernel.org
-References: <CAFj5m9+ckHjfMVW_O20NBAPvnauPdABa8edPy--dSEf=XdhYRA@mail.gmail.com>
- <6691cf72-3a26-a1bb-228d-ddec8391620f@kernel.dk>
-Message-ID: <1b56a4f7-ce56-ee32-67d5-0fcd5dc6c0cb@kernel.dk>
-Date:   Thu, 17 Jun 2021 10:56:53 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        bh=Zbp/Dld44JaBO1R2DDZV0iKjQqTwEF0wtaWB3tGJ7jU=;
+        b=Dvv41y4TRLtMBRPZgTAMhv+NstolABVsG67Z/pGysOD4M8pvAceaKl7dSwcLqYG3tJ
+         lOYtc3Y7Q/JFg847begjij9MMaly/DuoQPPfubgkPPNbz60O6lPHiPR+ngDVmXxiosW4
+         byQLbFZnhsMqf/Zy2vo6KvCQaWjTxQ2i2pvNPHZFfQZN9gsV0Sm7kvu6GXHt+Uue81bi
+         zfw9+DAHf+nB8nFISCCJ2Vz3ejIWUIBstCwnhj/NpNZOLWSb15R31ykPljVVnIu+UMGt
+         oQMoumJ88w+RucUVxxnbLBWzqIh4A1T+vNdOAs/v6woCwaiKCYR8c/IK4pygeq4qk8CB
+         sssA==
+X-Gm-Message-State: AOAM531Z9bwAFQmYElISt888s4aLuxnjT2NVCxBOYPM4xLx/JSZqSzm4
+        dkH+CxPpYt2q7MaJfGtLjcYFHlqgsguraQ==
+X-Google-Smtp-Source: ABdhPJxOk0jXizPkaZ7v8H+7LEhoDuH1mFpDCNbsd8vr6oXunv2FpYojBKISx6N5Rilwev5kD7fDqw==
+X-Received: by 2002:a7b:c394:: with SMTP id s20mr6480647wmj.24.1623950072463;
+        Thu, 17 Jun 2021 10:14:32 -0700 (PDT)
+Received: from localhost.localdomain ([148.252.132.93])
+        by smtp.gmail.com with ESMTPSA id g17sm6208033wrp.61.2021.06.17.10.14.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Jun 2021 10:14:31 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [PATCH for-next 00/12] another round of 5.14 optimisations
+Date:   Thu, 17 Jun 2021 18:13:58 +0100
+Message-Id: <cover.1623949695.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-In-Reply-To: <6691cf72-3a26-a1bb-228d-ddec8391620f@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/17/21 10:48 AM, Jens Axboe wrote:
-> On 6/17/21 5:17 AM, Ming Lei wrote:
->> Hello,
->>
->> fio hangs when running the test[1], and doesn't observe this issue
->> when running a
->> such single job test.
->>
->> v5.12 is good, both v5.13-rc3 and the latest v5.13-rc6 are bad.
->>
->>
->> [1] fio test script and log
->> + fio --bs=4k --ioengine=io_uring --fixedbufs --registerfiles --hipri
->> --iodepth=64 --iodepth_batch_submit=16
->> --iodepth_batch_complete_min=16 --filename=/dev/nvme0n1 --direct=1
->> --runtime=20 --numjobs=4 --rw=randread
->> --name=test --group_reporting
->>
->> test: (g=0): rw=randread, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T)
->> 4096B-4096B, ioengine=io_uring, iodepth=64
->> ...
->> fio-3.25
->> Starting 4 processes
->> fio: filehash.c:64: __lookup_file_hash: Assertion `f->fd != -1' failed.
->> fio: pid=1122, got signal=6
->> ^Cbs: 3 (f=0): [f(1),r(1),K(1),r(1)][63.6%][eta 00m:20s]
-> 
-> Funky, would it be possible to bisect this? I'll see if I can reproduce.
+1-7 are random patches.
 
-Actually, this looks like a fio bug, that assert is a bit too trigger
-happy. Current -git should work, please test and see if things work.
-I believe it's just kernel timing that causes this, not a kernel issue.
+8-12 are optimisations for running req-backed task works. For task_work
+and/or linking heavy use cases, also should make io_req_task_work_add()
+called from inside of tctx_task_work() much lighter.
+
+Pavel Begunkov (12):
+  io_uring: fix false WARN_ONCE
+  io_uring: refactor io_submit_flush_completions()
+  io_uring: move creds from io-wq work to io_kiocb
+  io_uring: track request creds with a flag
+  io_uring: simplify iovec freeing in io_clean_op()
+  io_uring: clean all flags in io_clean_op() at once
+  io_uring: refactor io_get_sequence()
+  io_uring: inline __tctx_task_work()
+  io_uring: optimise task_work submit flushing
+  io_uring: refactor tctx task_work list splicing
+  io_uring: don't resched with empty task_list
+  io_uring: improve in tctx_task_work() resubmission
+
+ fs/io-wq.c    |   5 +-
+ fs/io-wq.h    |   1 -
+ fs/io_uring.c | 134 +++++++++++++++++++++++++-------------------------
+ 3 files changed, 71 insertions(+), 69 deletions(-)
 
 -- 
-Jens Axboe
+2.31.1
 

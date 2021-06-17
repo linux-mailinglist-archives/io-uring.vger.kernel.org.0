@@ -2,83 +2,72 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 92CC93AB259
-	for <lists+io-uring@lfdr.de>; Thu, 17 Jun 2021 13:17:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E16813AB9BC
+	for <lists+io-uring@lfdr.de>; Thu, 17 Jun 2021 18:30:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232486AbhFQLTp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 17 Jun 2021 07:19:45 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:49797 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229868AbhFQLTn (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 17 Jun 2021 07:19:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1623928655;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:content-type:content-type;
-        bh=ut8mBDS/J21Tbda7DvgLRQmHjd21yKq2MA4wJcOqS9o=;
-        b=Z8sawRvR6sourkTADP3v3/t8emCFzXabCYGjF4TjCO8wAn0bR9XJZ9/52896PmjZ0pTTF3
-        5A6g9Iq69Efj9EVeNvjnorqX2/7eFj6UgMUmv2Q+3WDdSsQ83jDuKNS/HXYaT15aYT0kmN
-        RHcSWv4SNv0uDdfFcSeDpzQqofw0jD4=
-Received: from mail-yb1-f200.google.com (mail-yb1-f200.google.com
- [209.85.219.200]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-494-6KoV-szjPIi9rJJ3-BX-DA-1; Thu, 17 Jun 2021 07:17:34 -0400
-X-MC-Unique: 6KoV-szjPIi9rJJ3-BX-DA-1
-Received: by mail-yb1-f200.google.com with SMTP id l132-20020a25258a0000b029054fc079d46eso5366831ybl.20
-        for <io-uring@vger.kernel.org>; Thu, 17 Jun 2021 04:17:34 -0700 (PDT)
+        id S231630AbhFQQcI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 17 Jun 2021 12:32:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35272 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232841AbhFQQb4 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 17 Jun 2021 12:31:56 -0400
+Received: from mail-il1-x134.google.com (mail-il1-x134.google.com [IPv6:2607:f8b0:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4D82C061574
+        for <io-uring@vger.kernel.org>; Thu, 17 Jun 2021 09:29:47 -0700 (PDT)
+Received: by mail-il1-x134.google.com with SMTP id i12so5853105ila.13
+        for <io-uring@vger.kernel.org>; Thu, 17 Jun 2021 09:29:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kbuRQxrtHS6GQ1BP/HG4wNbGvyIaKVlpxlEeJ0jbSTc=;
+        b=jj+3oARFhLligUnuhr/O+nZSWTYfW4Z3Wy/Y8KVKaX0rIioVJjsruAVhadPw2uhvet
+         utKVwviNBpFJi1oXw+Sg+y9enzYfPuR/ius8xBt4h6DXfFmQgyhxWUxD/yGC0Nue3/8U
+         B24gvxBKDYJ3Q15cfZD2PaJyzPH/rRhJrsdmh7CpvCL785IgHMvx7kjPqtluLI+0QqJL
+         WlcJLVzfntEnlI6wTw0rUjjsTXjastuq6zaJS0JMrbsziL4S5P6FwQn8iB/sPfMdezba
+         7zV92fw1l4XWYLGt3VA1ieUdQk6zsuLLDInSqUqP3OdrXWjzX/6HzNRlbVRuIXY6DjsV
+         hIDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=ut8mBDS/J21Tbda7DvgLRQmHjd21yKq2MA4wJcOqS9o=;
-        b=uOYnr8ONVvZNN5dQQY1v4AS+0QsIVQa58M2HTJU7CusYASEtHKVO5sumF7cvg4tWSP
-         6Gc0OOhuH5tHOjt+xC7IRBD+xaPY93JfhWyFlF2pvP8M1UI4bld7GmRTQ35d+VM+nl/+
-         xqdfqegVMw2yflGQFYV76o5SGcNsg1rXBh8wauYY1kf2jC4HpFS4VRygGWpaWP0pLt/x
-         KI/1wks5QQgeEQekqEFWyJm4pnPnVnNe1Kw+gybzdIgwg9gYwHr8UmKRp2YzZxSSwaAX
-         YeYYdVkLDGGEBcYhjUY9WM+ndQ7U1eSwr691DS7szFNKC/BvJbw2GZY0x9BFIXF0Njtq
-         Y6cA==
-X-Gm-Message-State: AOAM532F2uHUggySH9ZJ9PalLL93UR60A1cQXVbmcJi6GYlp4HCK3QCA
-        rzTknPAFqP5avXZ+UdLtl/CO83tC05VEgic9wUwPy/1tktxpr1WKek9Xd1QOAPSVU1Vlzm2Cw5P
-        Tz4DlKmoiVzqDayDbERah+G4cav0ekxw3o4M=
-X-Received: by 2002:a25:354:: with SMTP id 81mr5383488ybd.134.1623928654040;
-        Thu, 17 Jun 2021 04:17:34 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxzNxOVXVniR7azNK6QqojUcyleUy/9jraJw0k8tqORFUUqHsc6saxsCzJhpnNSwV7cjxwNOBzaz9bZRMiMM7E=
-X-Received: by 2002:a25:354:: with SMTP id 81mr5383471ybd.134.1623928653895;
- Thu, 17 Jun 2021 04:17:33 -0700 (PDT)
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kbuRQxrtHS6GQ1BP/HG4wNbGvyIaKVlpxlEeJ0jbSTc=;
+        b=IisAEP6SwLsXxdAgJHnkRDOQCJnDI/rYR1rUB1VNHmy4qnxlQWfHWgaXu0/B2ksTjM
+         fxFe1ipaEbhHoMFBKmfx6j3WdUWJv1kCPeRq9TrTPaqxoEh33qfgXerheOcfGXGqU+Pj
+         hsdfcignmSLuEXX8fHBZHsu8MexpMfCtCInFv11fZz0Y3W/8F0wOeT+4OR/4GX2Zk1PF
+         +g2ZtIb79IUmKmDy+u8Zn94J1e/zaW4DnXGCGK3gmkdSu6rs9f7G0jzj6YyvWy4bwPOB
+         ZrVQVH6mRlvY2yXUqb8+2oyiabCQQUNHbtV0npYK476VRmwp0Qfosy3JjT4XNr31fmUE
+         e/Mw==
+X-Gm-Message-State: AOAM533xsQGVfvr4hIci10gu1fQ8izX6M3xfDRFzBbzjHl94JXb25UVa
+        iBFLJw65YMpS5+pHVSUBuzpTI2Jk0DmuXn93
+X-Google-Smtp-Source: ABdhPJwzMhMypIgKR2BeSY2pIX8uziTrOPAtRfo3VJAqnX7Iig5IV/h1G5R6R4tEwHqh09ECixrfsg==
+X-Received: by 2002:a92:c5d2:: with SMTP id s18mr4238728ilt.127.1623947386641;
+        Thu, 17 Jun 2021 09:29:46 -0700 (PDT)
+Received: from p1.localdomain ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id b9sm2856359ilj.33.2021.06.17.09.29.46
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Jun 2021 09:29:46 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     io-uring@vger.kernel.org
+Subject: [PATCHSET 0/2] Allow io-wq user configurable CPU masks
+Date:   Thu, 17 Jun 2021 10:29:42 -0600
+Message-Id: <20210617162944.524917-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-From:   Ming Lei <ming.lei@redhat.com>
-Date:   Thu, 17 Jun 2021 19:17:23 +0800
-Message-ID: <CAFj5m9+ckHjfMVW_O20NBAPvnauPdABa8edPy--dSEf=XdhYRA@mail.gmail.com>
-Subject: [Bug] fio hang when running multiple job io_uring/hipri over nvme
-To:     linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
+Hi,
 
-fio hangs when running the test[1], and doesn't observe this issue
-when running a
-such single job test.
+This adds IORING_REGISTER_IOWQ_AFF that allows an application to
+specificy CPU affinities for any IO threads that may get created to
+service requests. Explanation in patch 2, patch 1 is just a prep patch
+that makes this easier to accomplish.
 
-v5.12 is good, both v5.13-rc3 and the latest v5.13-rc6 are bad.
+-- 
+Jens Axboe
 
-
-[1] fio test script and log
-+ fio --bs=4k --ioengine=io_uring --fixedbufs --registerfiles --hipri
---iodepth=64 --iodepth_batch_submit=16
---iodepth_batch_complete_min=16 --filename=/dev/nvme0n1 --direct=1
---runtime=20 --numjobs=4 --rw=randread
---name=test --group_reporting
-
-test: (g=0): rw=randread, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T)
-4096B-4096B, ioengine=io_uring, iodepth=64
-...
-fio-3.25
-Starting 4 processes
-fio: filehash.c:64: __lookup_file_hash: Assertion `f->fd != -1' failed.
-fio: pid=1122, got signal=6
-^Cbs: 3 (f=0): [f(1),r(1),K(1),r(1)][63.6%][eta 00m:20s]
-
-Thanks,
 

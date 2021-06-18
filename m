@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8015F3AD5F9
+	by mail.lfdr.de (Postfix) with ESMTP id 401C33AD5F8
 	for <lists+io-uring@lfdr.de>; Sat, 19 Jun 2021 01:32:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235025AbhFRXeu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 18 Jun 2021 19:34:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55240 "EHLO
+        id S234637AbhFRXev (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 18 Jun 2021 19:34:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55246 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234637AbhFRXeu (ORCPT
+        with ESMTP id S234509AbhFRXeu (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Fri, 18 Jun 2021 19:34:50 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E24D7C06175F
-        for <io-uring@vger.kernel.org>; Fri, 18 Jun 2021 16:32:39 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id n7so12467233wri.3
-        for <io-uring@vger.kernel.org>; Fri, 18 Jun 2021 16:32:39 -0700 (PDT)
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA810C061574
+        for <io-uring@vger.kernel.org>; Fri, 18 Jun 2021 16:32:40 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id u5-20020a7bc0450000b02901480e40338bso7263697wmc.1
+        for <io-uring@vger.kernel.org>; Fri, 18 Jun 2021 16:32:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=v2yQYj3K5U8cQ4y7f6KFOielPUSEgA/Yenne6pvQEOk=;
-        b=DzFVfRVDSuMm7QHrltanc6v5dvZjwj0EMmdtKLSaj+MOly0/Q6G38S4zBnuqMczPMq
-         nqNKkG6B1LoGgR1ior0lyyk+TQuy6bv7g0h5BuMEH1o17YUqJ8Gj9RJv2qx/9Kwu9AFo
-         OP0+i75axwoCIgMqhXBesVL/VDmWfcx2AjBQ4EsWjLJbiZSA/dNagmrpWLUlQ2x28I0A
-         IhN8fB4vFtw7LYA3kjzqH+Sx5UGe4ATLhkuVvlBrFx2D7AA/+CKS4n+JpHBjDS7hPk98
-         oZYPBE8UlVDXfkK5AkredOrzeN+5qv0tGoDBNajLSMxMXGoDX85vCMuGStY/o6/EPs8i
-         hJIQ==
+        bh=cn0g3QO5TGXbEX7L1hdWWqIJra1pf0Ee731+XCYnLGI=;
+        b=cF3MrTdK/tvkcmmEi0Cz0vmJuSp/TNGSqaKqSTer7vP0kkGYbooH2r4m2U8g0ZDI5O
+         KgoYcgPmH5NTVrLMUZs/9n1ydiruZcWwpwafmhW1xSKrmE5RwnFPUE1gskqLWIB23/H6
+         4KwTOaHi2BpBVRJW4hgpbmjnTVMXcnC55DgrKthVf6Q30/z7tCKVTDm3ryWehtqKnpe5
+         Fl3h/9rw0m7W1MefZ3rVE6wxruKutbiT2Ge/5yKPKxTgC1ReVD3CVey/nI8E5blR5JyL
+         6mnyjPJpRlaOsoMJJ3T2MOMDWLMhf37MnsVBt47H8NHd6p3eLLURNpbdq6QHcRVLrsiW
+         Gtjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=v2yQYj3K5U8cQ4y7f6KFOielPUSEgA/Yenne6pvQEOk=;
-        b=U+38tQ3xnsFZejNJb/Zy1S6exx5kbhrGi9q29fTN3nJlJOeQeleAD8s3AcMb3Z0MjS
-         eNL7oXplVzW5q2PHM/yaa1SXqh0ywtZOekSY+9rMBbnRLruk2XtYHEf8PGKdM3hIZsSc
-         HQa13dI+015qXpLzRMhLYLRPJNBORL8944FQ0y7ZY3OPRSJVmEB3smeTDQia6Q/YwWXp
-         PGpUmR7Hlhno/EIyw5tdh0HujUmHnZDUex4/oCTgXGvpq6URdHjIXoED9Vkr8m11LQBE
-         gYvVTwdS5q1fKJREXU83ip/HXZMoS064zA4C/8DtMRqMWE2UHE7nZ9KIEAlimo0+Orb/
-         tuoQ==
-X-Gm-Message-State: AOAM53280dvtSxPe2TqxO2IGQfw98jYEpthGAs4/8rYtQ+XZUyx+zFL6
-        Kw1o2VdKi7d76vkbwHJN1/4=
-X-Google-Smtp-Source: ABdhPJzoPpioYKRjEWwaJiH80Bi2y3FjqiMtsbVXvA9CDAKo9LjL+w0wW500yEh16/J2zprtlw8j6A==
-X-Received: by 2002:a5d:4983:: with SMTP id r3mr10612284wrq.184.1624059158557;
-        Fri, 18 Jun 2021 16:32:38 -0700 (PDT)
+        bh=cn0g3QO5TGXbEX7L1hdWWqIJra1pf0Ee731+XCYnLGI=;
+        b=WIi4ol81cMDHUQqor1DtnY87ldH8y4aixQW+J+ZclMyATwo4cOVmI9dZ/xWtnz/4Sv
+         OahwATECLQyEymCjZ6CZzS46ay9PEfRH5DxROuGWk0y+4xUcCGCfQfICHCxbH6y4L2b5
+         ZkKRyIWiJ+EoU1tvnxvOMMTeACNHTPB/grvUr3KRYs4Na4sIafE1QTUEURRlWDbSbBLW
+         MNYpTF8hXTYT+TzVmouaqJXkDPIJ8R2cCsghcloheTYWr1MjfSrzrknrGdLAtdqEAva7
+         UZlF3Xm5xp9jWalqLuMWwilb2Gqx6wjACXacuDcrhqH3nUI4SDa4VHQG9kym9wdyWM88
+         yh2w==
+X-Gm-Message-State: AOAM5322xq6OXklUMczBU1y1mzi1wJ9JvOj415wKVp3vu01gaL8RsMSm
+        zWyIfzAfy3Mfjtuh34C1cKibZBpJ1KZ86g==
+X-Google-Smtp-Source: ABdhPJzwP1aJrbOjpehn4RtAW2XuyTPLna1gvD5Zs6OebaAZw6jirLKx/vPbnS/6nVOI6SUiNt2iww==
+X-Received: by 2002:a05:600c:88a:: with SMTP id l10mr13927385wmp.7.1624059159365;
+        Fri, 18 Jun 2021 16:32:39 -0700 (PDT)
 Received: from localhost.localdomain ([185.69.145.72])
-        by smtp.gmail.com with ESMTPSA id o20sm11765774wms.3.2021.06.18.16.32.37
+        by smtp.gmail.com with ESMTPSA id o20sm11765774wms.3.2021.06.18.16.32.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Jun 2021 16:32:38 -0700 (PDT)
+        Fri, 18 Jun 2021 16:32:39 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 1/2] io_uring: use kvmalloc for fixed files
-Date:   Sat, 19 Jun 2021 00:32:16 +0100
-Message-Id: <6cb62be31eb68274fb043d4eadc28454d64e28da.1624058853.git.asml.silence@gmail.com>
+Subject: [PATCH 2/2] io_uring: inline fixed part of io_file_get()
+Date:   Sat, 19 Jun 2021 00:32:17 +0100
+Message-Id: <21325f0526f63649c85301fdf960d870db09b1c9.1624058853.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <cover.1624058853.git.asml.silence@gmail.com>
 References: <cover.1624058853.git.asml.silence@gmail.com>
@@ -61,112 +61,125 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Currenlty we hand code two-level tables for storing registered files,
-pointers that requires more memory loads and a bunch of bit logic in the
-hot path.
+Optimise io_file_get() with registered files, which is in a hot path,
+by inlining parts of the function. Saves a function call, and
+inefficiencies of passing arguments, e.g. evaluating
+(sqe_flags & IOSQE_FIXED_FILE).
 
-I expect for most cases it would be enough for applications to allocate
-a small enough amount of fixed files, that would fit into a couple of
-contiguous pages (512 entries per page of x64, 1024 for 2 pages). So, in
-most cases I'd expect kvmalloc to be able to allocate contiguous memory
-with no drawbacks but performance improvement.
-
-If it can't (depends, around >=8 pages?), it will do vmalloc, so the
-outcome is not clear, whether it's better to have 2 memory loads plus a
-bunch of instructions or a TLB assisted virtual memory lookup.
-
-Considering that we limit it to 64 pages max, and it should benefit
-without disadvantages most of the users, it's the right thing to have.
+Note that there was enough of instructions generated by two-level table
+dereference to impede inlining, but it's now slim enough.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 33 ++++++++++-----------------------
- 1 file changed, 10 insertions(+), 23 deletions(-)
+ fs/io_uring.c | 65 ++++++++++++++++++++++++++++++---------------------
+ 1 file changed, 39 insertions(+), 26 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 3dfd52813bb6..2fd54a21ed8b 100644
+index 2fd54a21ed8b..b966c65da23a 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -90,13 +90,8 @@
- #define IORING_MAX_ENTRIES	32768
- #define IORING_MAX_CQ_ENTRIES	(2 * IORING_MAX_ENTRIES)
+@@ -1053,7 +1053,8 @@ static int __io_register_rsrc_update(struct io_ring_ctx *ctx, unsigned type,
+ 				     struct io_uring_rsrc_update2 *up,
+ 				     unsigned nr_args);
+ static void io_clean_op(struct io_kiocb *req);
+-static struct file *io_file_get(struct io_submit_state *state,
++static struct file *io_file_get(struct io_ring_ctx *ctx,
++				struct io_submit_state *state,
+ 				struct io_kiocb *req, int fd, bool fixed);
+ static void __io_queue_sqe(struct io_kiocb *req);
+ static void io_rsrc_put_work(struct work_struct *work);
+@@ -3602,7 +3603,8 @@ static int __io_splice_prep(struct io_kiocb *req,
+ 	if (unlikely(sp->flags & ~valid_flags))
+ 		return -EINVAL;
  
--/*
-- * Shift of 9 is 512 entries, or exactly one page on 64-bit archs
-- */
--#define IORING_FILE_TABLE_SHIFT	9
--#define IORING_MAX_FILES_TABLE	(1U << IORING_FILE_TABLE_SHIFT)
--#define IORING_FILE_TABLE_MASK	(IORING_MAX_FILES_TABLE - 1)
--#define IORING_MAX_FIXED_FILES	(64 * IORING_MAX_FILES_TABLE)
-+/* 512 entries per page on 64-bit archs, 64 pages max */
-+#define IORING_MAX_FIXED_FILES	(1U << 15)
- #define IORING_MAX_RESTRICTIONS	(IORING_RESTRICTION_LAST + \
- 				 IORING_REGISTER_LAST + IORING_OP_LAST)
- 
-@@ -233,8 +228,7 @@ struct io_rsrc_put {
- };
- 
- struct io_file_table {
--	/* two level table */
--	struct io_fixed_file **files;
-+	struct io_fixed_file *files;
- };
- 
- struct io_rsrc_node {
-@@ -6320,12 +6314,9 @@ static void io_wq_submit_work(struct io_wq_work *work)
- #define FFS_MASK		~(FFS_ASYNC_READ|FFS_ASYNC_WRITE|FFS_ISREG)
- 
- static inline struct io_fixed_file *io_fixed_file_slot(struct io_file_table *table,
--						      unsigned i)
-+						       unsigned i)
- {
--	struct io_fixed_file *table_l2;
--
--	table_l2 = table->files[i >> IORING_FILE_TABLE_SHIFT];
--	return &table_l2[i & IORING_FILE_TABLE_MASK];
-+	return &table->files[i];
+-	sp->file_in = io_file_get(NULL, req, READ_ONCE(sqe->splice_fd_in),
++	sp->file_in = io_file_get(req->ctx, NULL, req,
++				  READ_ONCE(sqe->splice_fd_in),
+ 				  (sp->flags & SPLICE_F_FD_IN_FIXED));
+ 	if (!sp->file_in)
+ 		return -EBADF;
+@@ -6340,36 +6342,48 @@ static void io_fixed_file_set(struct io_fixed_file *file_slot, struct file *file
+ 	file_slot->file_ptr = file_ptr;
  }
  
- static inline struct file *io_file_from_index(struct io_ring_ctx *ctx,
-@@ -7255,17 +7246,13 @@ static int io_rsrc_data_alloc(struct io_ring_ctx *ctx, rsrc_put_fn *do_put,
- 
- static bool io_alloc_file_tables(struct io_file_table *table, unsigned nr_files)
+-static struct file *io_file_get(struct io_submit_state *state,
+-				struct io_kiocb *req, int fd, bool fixed)
++static inline struct file *io_file_get_fixed(struct io_ring_ctx *ctx,
++					     struct io_kiocb *req, int fd)
  {
--	size_t size = nr_files * sizeof(struct io_fixed_file);
--
--	table->files = (struct io_fixed_file **)io_alloc_page_table(size);
-+	table->files = kvcalloc(nr_files, sizeof(table->files[0]), GFP_KERNEL);
- 	return !!table->files;
+-	struct io_ring_ctx *ctx = req->ctx;
+ 	struct file *file;
++	unsigned long file_ptr;
+ 
+-	if (fixed) {
+-		unsigned long file_ptr;
++	if (unlikely((unsigned int)fd >= ctx->nr_user_files))
++		return NULL;
++	fd = array_index_nospec(fd, ctx->nr_user_files);
++	file_ptr = io_fixed_file_slot(&ctx->file_table, fd)->file_ptr;
++	file = (struct file *) (file_ptr & FFS_MASK);
++	file_ptr &= ~FFS_MASK;
++	/* mask in overlapping REQ_F and FFS bits */
++	req->flags |= (file_ptr << REQ_F_ASYNC_READ_BIT);
++	io_req_set_rsrc_node(req);
++	return file;
++}
+ 
+-		if (unlikely((unsigned int)fd >= ctx->nr_user_files))
+-			return NULL;
+-		fd = array_index_nospec(fd, ctx->nr_user_files);
+-		file_ptr = io_fixed_file_slot(&ctx->file_table, fd)->file_ptr;
+-		file = (struct file *) (file_ptr & FFS_MASK);
+-		file_ptr &= ~FFS_MASK;
+-		/* mask in overlapping REQ_F and FFS bits */
+-		req->flags |= (file_ptr << REQ_F_ASYNC_READ_BIT);
+-		io_req_set_rsrc_node(req);
+-	} else {
+-		trace_io_uring_file_get(ctx, fd);
+-		file = __io_file_get(state, fd);
++static struct file *io_file_get_normal(struct io_ring_ctx *ctx,
++				       struct io_submit_state *state,
++				       struct io_kiocb *req, int fd)
++{
++	struct file *file = __io_file_get(state, fd);
+ 
+-		/* we don't allow fixed io_uring files */
+-		if (file && unlikely(file->f_op == &io_uring_fops))
+-			io_req_track_inflight(req);
+-	}
++	trace_io_uring_file_get(ctx, fd);
+ 
++	/* we don't allow fixed io_uring files */
++	if (file && unlikely(file->f_op == &io_uring_fops))
++		io_req_track_inflight(req);
+ 	return file;
  }
  
--static void io_free_file_tables(struct io_file_table *table, unsigned nr_files)
-+static void io_free_file_tables(struct io_file_table *table)
++static inline struct file *io_file_get(struct io_ring_ctx *ctx,
++				       struct io_submit_state *state,
++				       struct io_kiocb *req, int fd, bool fixed)
++{
++	if (fixed)
++		return io_file_get_fixed(ctx, req, fd);
++	else
++		return io_file_get_normal(ctx, state, req, fd);
++}
++
+ static enum hrtimer_restart io_link_timeout_fn(struct hrtimer *timer)
  {
--	size_t size = nr_files * sizeof(struct io_fixed_file);
--
--	io_free_page_table((void **)table->files, size);
-+	kvfree(table->files);
- 	table->files = NULL;
- }
- 
-@@ -7290,7 +7277,7 @@ static void __io_sqe_files_unregister(struct io_ring_ctx *ctx)
- 			fput(file);
+ 	struct io_timeout_data *data = container_of(timer,
+@@ -6561,9 +6575,8 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
  	}
- #endif
--	io_free_file_tables(&ctx->file_table, ctx->nr_user_files);
-+	io_free_file_tables(&ctx->file_table);
- 	io_rsrc_data_free(ctx->file_data);
- 	ctx->file_data = NULL;
- 	ctx->nr_user_files = 0;
-@@ -7757,7 +7744,7 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
- 		if (file)
- 			fput(file);
+ 
+ 	if (io_op_defs[req->opcode].needs_file) {
+-		bool fixed = req->flags & REQ_F_FIXED_FILE;
+-
+-		req->file = io_file_get(state, req, READ_ONCE(sqe->fd), fixed);
++		req->file = io_file_get(ctx, state, req, READ_ONCE(sqe->fd),
++					(sqe_flags & IOSQE_FIXED_FILE));
+ 		if (unlikely(!req->file))
+ 			ret = -EBADF;
  	}
--	io_free_file_tables(&ctx->file_table, nr_args);
-+	io_free_file_tables(&ctx->file_table);
- 	ctx->nr_user_files = 0;
- out_free:
- 	io_rsrc_data_free(ctx->file_data);
 -- 
 2.31.1
 

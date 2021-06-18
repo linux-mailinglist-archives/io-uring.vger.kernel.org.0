@@ -2,65 +2,68 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BF8F3ACF3B
-	for <lists+io-uring@lfdr.de>; Fri, 18 Jun 2021 17:36:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38E123AD01A
+	for <lists+io-uring@lfdr.de>; Fri, 18 Jun 2021 18:11:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233320AbhFRPiL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 18 Jun 2021 11:38:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60598 "EHLO
+        id S235799AbhFRQNL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 18 Jun 2021 12:13:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229768AbhFRPiL (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 18 Jun 2021 11:38:11 -0400
-Received: from mail-ot1-x334.google.com (mail-ot1-x334.google.com [IPv6:2607:f8b0:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A11EC061574
-        for <io-uring@vger.kernel.org>; Fri, 18 Jun 2021 08:36:01 -0700 (PDT)
-Received: by mail-ot1-x334.google.com with SMTP id h24-20020a9d64180000b029036edcf8f9a6so10092127otl.3
-        for <io-uring@vger.kernel.org>; Fri, 18 Jun 2021 08:36:01 -0700 (PDT)
+        with ESMTP id S232384AbhFRQNL (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 18 Jun 2021 12:13:11 -0400
+Received: from mail-oo1-xc2b.google.com (mail-oo1-xc2b.google.com [IPv6:2607:f8b0:4864:20::c2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0B00C061574
+        for <io-uring@vger.kernel.org>; Fri, 18 Jun 2021 09:11:01 -0700 (PDT)
+Received: by mail-oo1-xc2b.google.com with SMTP id z14-20020a4a984e0000b029024a8c622149so2569013ooi.10
+        for <io-uring@vger.kernel.org>; Fri, 18 Jun 2021 09:11:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=2+uHXabS73QwtqxQYP0XOp93mYe6wHNsZFiV4xN0b0w=;
-        b=O2MNp178Cwc6NJ+HH/VwbbPSQicoP2fiYtO2xiUx/bU0c9UX0cR5FjBENhE5h4XHJk
-         ltZany56tbJO9S+1OulYjFXCki+oLnHISStimrQcc5HidfWd4RsmTi9UjIBo2i3+xDKm
-         RXzFIvxnntPyXFyyjcMlbZ0s4UvEbH7O5iIuB6HGROay0AuPuKrLiRzG1muuyeH13GXY
-         WztFsZ55SjDJz+WLkMn+7RXXzAnJ/omqDaSBiN5uF8jNbF36qhrZtDHd3Y2XTFoxKIOT
-         1k1yvl0HUMjHSYYFkl16ROigW050P6at/SWdn6fdI811M1o2twt0hi4YbM/V+PBn2A2J
-         dYiA==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=vhESHB2fuprKm8qQn68AEA+GxbpLEhL/mzYCL3E+vDM=;
+        b=R37sfzViltwUXr/gzNQ0xemD+gyVroAIGks6VP6ctNDVs4ruFihGex61iVk2bhg2Gk
+         vcMshC6lM5nqrIbr0RhAQ/Cj7+4oKmybgiOfqWHq2hMpyzpRRPY2pt2G5qOyFLv/kT1P
+         vPJ82s675u49TEW9hLbpy3fms+eDEaiDbQy6IXA0AoCDs+8R/1FWKKpadESxvd8FsTyd
+         5xmWKyw+H6345GVLPM2eiqproimUAfDS0LaEHu0x1wVIcTLWkOhXkqfLDY70qg3Ri8mU
+         LK0rSZRD+5nD0Ny2uoc4mziR7jqqFj1wL7Daq/MlcFKrBcFkicWoL+y4vGRHwR2uJE0i
+         jDXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=2+uHXabS73QwtqxQYP0XOp93mYe6wHNsZFiV4xN0b0w=;
-        b=MP8oFeiYn+20jFu4+us7FkUUK+XZKDrCDGtSa0/FzVKiscWi3VTrNmqHziBTxaPsLj
-         wjPNPNZ6bOKPzLmlrOtF8j4nkZ/IrFxNHEhKGE7uT39Ye2Hrx7HvTEYRxbXxf4dbSQoN
-         r4AKzgPiQqRqojVkV6BNHBxwC1u9k64m3L/e+TXWmkIJBp7xe0ZL2TNSsSYd+4yMcDUy
-         5KV2QUkynvrInmX9bswFPQyd4JgrAZWlQzyr3UQK3IY01Q9z9JJi4FrJlQALQylt7PXb
-         Tyi4YdpVG5LDEXh26GhqB0+qQ7ZNt7Yo2B7LE6B+xTkWPz3HR2XhqZzy8CYGL0VXNSoy
-         T3WQ==
-X-Gm-Message-State: AOAM5322gU3N47o7Rpq7lUQquFuDxotwFm2xJFtcgRJBfgVjRiKd7jHo
-        XwRdzhAM/BFNBfXXRL8zdDti8gElB91DLg==
-X-Google-Smtp-Source: ABdhPJzAPPgBeP+wbvWE/WNltxl4+mYYwJnSFJBX+rBIdAXfRx2c3bkV71k7aPHDRZWeOHpyTxeEOQ==
-X-Received: by 2002:a05:6830:1387:: with SMTP id d7mr10431922otq.61.1624030559208;
-        Fri, 18 Jun 2021 08:35:59 -0700 (PDT)
+        bh=vhESHB2fuprKm8qQn68AEA+GxbpLEhL/mzYCL3E+vDM=;
+        b=hbHq56H3IqwZqUibfe9ZKAGZVyfIcZ9WBd1PJSlH/y96buqQaJFmc06vi2Zh6WotsB
+         hOeulrT+L/JeCkU/2tejpFS5TiEezWBVA45w/KjDS2j72gsazxFjXaVpMQEpGztWLiVf
+         EaIVMps8ZgSRyn+JVlMg4GZMfL6zRAYzeF4JyKrrjP+xvEirblgDFdnYsEiX+LdvBxJS
+         55duhsgujy6yz4Le9Wwbm5GukGcc4a/uShYbML8d9hJPMlIGVVLESkgTygCAuXe+v+so
+         EF1aynrI7CQdPSX8zcnMhcQpGkQhL1dx6+S5mS6AxIA1jBIm9sZtSSwB8ZDndaQ/xPVR
+         R/ag==
+X-Gm-Message-State: AOAM530eUp2tfU5p1Auq3soBIG+peHSzFOfND4lIw3qR/E2tnj8rUpl6
+        hjN/jyMSUzLVjsT8Sv64bl3AfZU7nTh0rw==
+X-Google-Smtp-Source: ABdhPJzenWHbYw70J0zk1/iySUjenjhRryHqwnndVtlVqnOhDMDQESlZnKUG7ZN2df+M160N9ZJhNQ==
+X-Received: by 2002:a4a:d312:: with SMTP id g18mr4693350oos.7.1624032660987;
+        Fri, 18 Jun 2021 09:11:00 -0700 (PDT)
 Received: from [192.168.1.134] ([198.8.77.61])
-        by smtp.gmail.com with ESMTPSA id l28sm2039959otd.66.2021.06.18.08.35.58
+        by smtp.gmail.com with ESMTPSA id t63sm1825354oih.31.2021.06.18.09.11.00
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Jun 2021 08:35:58 -0700 (PDT)
-Subject: Re: [PATCH 12/12] io_uring: improve in tctx_task_work() resubmission
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <cover.1623949695.git.asml.silence@gmail.com>
- <1ef72cdac7022adf0cd7ce4bfe3bb5c82a62eb93.1623949695.git.asml.silence@gmail.com>
- <c8a55ff7-6e90-c6df-1f68-3ed1a58da6c5@kernel.dk>
- <507b0fa2-da08-fc77-5a2f-414040740655@gmail.com>
+        Fri, 18 Jun 2021 09:11:00 -0700 (PDT)
+Subject: Re: [PATCH v5 00/10] io_uring: add mkdir, [sym]linkat and mknodat
+ support
+To:     Dmitry Kadashev <dkadashev@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        linux-fsdevel@vger.kernel.org, io-uring <io-uring@vger.kernel.org>
+References: <20210603051836.2614535-1-dkadashev@gmail.com>
+ <CAOKbgA69B=nnNOaHH239vegj5_dRd=9Y-AcQBCD3viLxcH=LiQ@mail.gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <9c575464-03db-45a7-d69f-85e08f1d9387@kernel.dk>
-Date:   Fri, 18 Jun 2021 09:35:57 -0600
+Message-ID: <2c4d5933-965e-29b5-0c76-3f2e5f518fe8@kernel.dk>
+Date:   Fri, 18 Jun 2021 10:10:59 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <507b0fa2-da08-fc77-5a2f-414040740655@gmail.com>
+In-Reply-To: <CAOKbgA69B=nnNOaHH239vegj5_dRd=9Y-AcQBCD3viLxcH=LiQ@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -68,35 +71,24 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/18/21 9:33 AM, Pavel Begunkov wrote:
-> On 6/18/21 4:23 PM, Jens Axboe wrote:
->> On 6/17/21 11:14 AM, Pavel Begunkov wrote:
->>> If task_state is cleared, io_req_task_work_add() will go the slow path
->>> adding a task_work, setting the task_state, waking up the task and so
->>> on. Not to mention it's expensive. tctx_task_work() first clears the
->>> state and then executes all the work items queued, so if any of them
->>> resubmits or adds new task_work items, it would unnecessarily go through
->>> the slow path of io_req_task_work_add().
->>>
->>> Let's clear the ->task_state at the end. We still have to check
->>> ->task_list for emptiness afterward to synchronise with
->>> io_req_task_work_add(), do that, and set the state back if we're going
->>> to retry, because clearing not-ours task_state on the next iteration
->>> would be buggy.
+On 6/18/21 12:24 AM, Dmitry Kadashev wrote:
+> On Thu, Jun 3, 2021 at 12:18 PM Dmitry Kadashev <dkadashev@gmail.com> wrote:
 >>
->> Are we not re-introducing the problem fixed by 1d5f360dd1a3c by swapping
->> these around?
+>> This started out as an attempt to add mkdirat support to io_uring which
+>> is heavily based on renameat() / unlinkat() support.
+>>
+>> During the review process more operations were added (linkat, symlinkat,
+>> mknodat) mainly to keep things uniform internally (in namei.c), and
+>> with things changed in namei.c adding support for these operations to
+>> io_uring is trivial, so that was done too. See
+>> https://lore.kernel.org/io-uring/20210514145259.wtl4xcsp52woi6ab@wittgenstein/
 > 
-> if (wq_list_empty(&tctx->task_list)) {
-> 	clear_bit(0, &tctx->task_state);
-> 	if (wq_list_empty(&tctx->task_list))
-> 		break;
-> 	... // goto repeat
-> }
+> Ping. Jens, are we waiting for the audit change to be merged before this
+> can go in?
 
-Yeah ok, that should do it.
+Not necessarily, as that should go in for 5.14 anyway.
 
-I've applied the series, thanks.
+Al, are you OK with the generic changes?
 
 -- 
 Jens Axboe

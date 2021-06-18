@@ -2,90 +2,77 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 166653ABF0D
-	for <lists+io-uring@lfdr.de>; Fri, 18 Jun 2021 00:39:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABC553AC3CC
+	for <lists+io-uring@lfdr.de>; Fri, 18 Jun 2021 08:24:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232477AbhFQWmF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 17 Jun 2021 18:42:05 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:60326 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231558AbhFQWmF (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 17 Jun 2021 18:42:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1623969596;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=emxWcjkIG4L80S5gttO8GBQmev22i+AiArghauOxLZY=;
-        b=gIyYlCqcw0d7BVpT77zfXZkmTdnNEkNIjXpMx96e6tN6HCvCwskhqg4PjZn2/oBIh3bQLi
-        8ggt7T2yXLmHfXNoSG9zpMJA4lENHEvegFinUGiv6VGIkESM5HDJFLExFZ2Eis1kO4jBVV
-        1zHEWr9wSly7/L35FP1RDhz8BakA2f0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-383-fNcSeow_P0-LqGG7H2l9dw-1; Thu, 17 Jun 2021 18:39:55 -0400
-X-MC-Unique: fNcSeow_P0-LqGG7H2l9dw-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 29447801B14;
-        Thu, 17 Jun 2021 22:39:54 +0000 (UTC)
-Received: from T590 (ovpn-12-22.pek2.redhat.com [10.72.12.22])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C841B1F6;
-        Thu, 17 Jun 2021 22:39:48 +0000 (UTC)
-Date:   Fri, 18 Jun 2021 06:39:43 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: [Bug] fio hang when running multiple job io_uring/hipri over nvme
-Message-ID: <YMvPL/WhRsFfMIfi@T590>
-References: <CAFj5m9+ckHjfMVW_O20NBAPvnauPdABa8edPy--dSEf=XdhYRA@mail.gmail.com>
- <6691cf72-3a26-a1bb-228d-ddec8391620f@kernel.dk>
- <1b56a4f7-ce56-ee32-67d5-0fcd5dc6c0cb@kernel.dk>
+        id S229816AbhFRG07 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 18 Jun 2021 02:26:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49006 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229768AbhFRG06 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 18 Jun 2021 02:26:58 -0400
+Received: from mail-qk1-x72b.google.com (mail-qk1-x72b.google.com [IPv6:2607:f8b0:4864:20::72b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A48B4C061574;
+        Thu, 17 Jun 2021 23:24:48 -0700 (PDT)
+Received: by mail-qk1-x72b.google.com with SMTP id g142so8363940qke.4;
+        Thu, 17 Jun 2021 23:24:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZDqba+HMo2hjH8VMNmzNS2XYGWojB7LznAwCzaKmjNA=;
+        b=U/v18vCMsQ63p8R8w0WJY9noBW6IndVG/EBdHCCS8NtKGIw+3oOkGNds39312yJ+AL
+         l2y345byLylhgy3L9iTmHmqWvQnl7iotcShqLVtlixsj+9TrUamaEl6yuXZ49gulYwys
+         KdokcyvQguVwnsn8Tr36uxk+mCC1pvSASA+HS+lz8Iw3K5Ff+wEk2EugaG0/QBge2ZD4
+         EvLrUpLMgaxLkXex3JNd4gNkjdY2EIGaOPsDVmsfvfnXV/f2T9YmaVFerOhD5PsxxDvs
+         c/Pww4pVzLlyosL58ny9sy9wchRw6K2IRTacUbZ7xAmnkbhruR0Rmd8s8r/EWTtQ03vn
+         T9Jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZDqba+HMo2hjH8VMNmzNS2XYGWojB7LznAwCzaKmjNA=;
+        b=dzVeUnGXOaTc2QXes1ejRuny1444XJj2nfDTVsJotoaZ/CY5hz1mGbhi6ZdQ1NKz6q
+         gvhIUMBTv9lNKGRzopUROO8x757Z0WFpkgTVH613OSMj6qm8WxzD0F/IWiXR786GB2T9
+         h6EtxaZJNIXkXmO35O4LEE/KAPVQBuJyX59Z/Yc15mR01ztcupNH+Io6QIOj0c63rYL8
+         KLj18eG9iHJgQcZbp8NIn8aksntm8uF5ZqQfLDCdh3pmBWJUPfLikEadb6qA4cbm++Uo
+         kH44905zIePa7jJsZqDuiKZziuydWx7ynolwJZCV6jdB90cSF3bsoDrAEYwRq5cHtyuP
+         x1tw==
+X-Gm-Message-State: AOAM530bbxMlxutit+8xbWg2AYb9xElC+98OkBFDyrEsxWHDHBzzgm8N
+        nBa37vuVRF4pkHq/rPHzZEZcMZNyqp4fWHZv4gDs4K6dJF6XXQ==
+X-Google-Smtp-Source: ABdhPJx95q0CiJtPFE8oKhtUprF0W2IOD/6djMLJAgeig1lTFp7t7s/w4I1tO06yGzU2KdR57UXqaXmz8UoGrt+i/LI=
+X-Received: by 2002:a25:4d04:: with SMTP id a4mr10863333ybb.311.1623997487912;
+ Thu, 17 Jun 2021 23:24:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1b56a4f7-ce56-ee32-67d5-0fcd5dc6c0cb@kernel.dk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+References: <20210603051836.2614535-1-dkadashev@gmail.com>
+In-Reply-To: <20210603051836.2614535-1-dkadashev@gmail.com>
+From:   Dmitry Kadashev <dkadashev@gmail.com>
+Date:   Fri, 18 Jun 2021 13:24:37 +0700
+Message-ID: <CAOKbgA69B=nnNOaHH239vegj5_dRd=9Y-AcQBCD3viLxcH=LiQ@mail.gmail.com>
+Subject: Re: [PATCH v5 00/10] io_uring: add mkdir, [sym]linkat and mknodat support
+To:     Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        linux-fsdevel@vger.kernel.org, io-uring <io-uring@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Jun 17, 2021 at 10:56:53AM -0600, Jens Axboe wrote:
-> On 6/17/21 10:48 AM, Jens Axboe wrote:
-> > On 6/17/21 5:17 AM, Ming Lei wrote:
-> >> Hello,
-> >>
-> >> fio hangs when running the test[1], and doesn't observe this issue
-> >> when running a
-> >> such single job test.
-> >>
-> >> v5.12 is good, both v5.13-rc3 and the latest v5.13-rc6 are bad.
-> >>
-> >>
-> >> [1] fio test script and log
-> >> + fio --bs=4k --ioengine=io_uring --fixedbufs --registerfiles --hipri
-> >> --iodepth=64 --iodepth_batch_submit=16
-> >> --iodepth_batch_complete_min=16 --filename=/dev/nvme0n1 --direct=1
-> >> --runtime=20 --numjobs=4 --rw=randread
-> >> --name=test --group_reporting
-> >>
-> >> test: (g=0): rw=randread, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T)
-> >> 4096B-4096B, ioengine=io_uring, iodepth=64
-> >> ...
-> >> fio-3.25
-> >> Starting 4 processes
-> >> fio: filehash.c:64: __lookup_file_hash: Assertion `f->fd != -1' failed.
-> >> fio: pid=1122, got signal=6
-> >> ^Cbs: 3 (f=0): [f(1),r(1),K(1),r(1)][63.6%][eta 00m:20s]
-> > 
-> > Funky, would it be possible to bisect this? I'll see if I can reproduce.
-> 
-> Actually, this looks like a fio bug, that assert is a bit too trigger
-> happy. Current -git should work, please test and see if things work.
-> I believe it's just kernel timing that causes this, not a kernel issue.
+On Thu, Jun 3, 2021 at 12:18 PM Dmitry Kadashev <dkadashev@gmail.com> wrote:
+>
+> This started out as an attempt to add mkdirat support to io_uring which
+> is heavily based on renameat() / unlinkat() support.
+>
+> During the review process more operations were added (linkat, symlinkat,
+> mknodat) mainly to keep things uniform internally (in namei.c), and
+> with things changed in namei.c adding support for these operations to
+> io_uring is trivial, so that was done too. See
+> https://lore.kernel.org/io-uring/20210514145259.wtl4xcsp52woi6ab@wittgenstein/
 
-Yeah, current -git does work, thanks the fix!
+Ping. Jens, are we waiting for the audit change to be merged before this
+can go in?
 
 -- 
-Ming
-
+Dmitry Kadashev

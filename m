@@ -2,157 +2,129 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B9EE03AD2A7
-	for <lists+io-uring@lfdr.de>; Fri, 18 Jun 2021 21:19:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 685C33AD356
+	for <lists+io-uring@lfdr.de>; Fri, 18 Jun 2021 22:05:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234373AbhFRTV5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 18 Jun 2021 15:21:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54728 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232433AbhFRTV5 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 18 Jun 2021 15:21:57 -0400
-Received: from mail-oi1-x230.google.com (mail-oi1-x230.google.com [IPv6:2607:f8b0:4864:20::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28B86C061574
-        for <io-uring@vger.kernel.org>; Fri, 18 Jun 2021 12:19:47 -0700 (PDT)
-Received: by mail-oi1-x230.google.com with SMTP id q10so11650112oij.5
-        for <io-uring@vger.kernel.org>; Fri, 18 Jun 2021 12:19:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=AsWJrnxl1rXNFkUCAk/hY4ul7jqtEdp6/T5bk6nJeFI=;
-        b=bcePLH3XAb91ft8OJfbp2GIht4wUd8DQbEFkiniqWiuGtRksdWRNdrnWsnvDlKImwb
-         pXB4UsdqNsEGCkTpy1g4Hj7pDn5xVpZ/LZ3OodcmY58aSglr9q2Bc8c0Bn71xURNkdfT
-         dHDo3zkrZuSE+pGX2s0NBK1bMsVlnEP2Zx1FS9mOcFMEEBPt/wbLu6/qe8VADh3fjbpG
-         ha/VilWig6KyO+UjsSdjt5H85G71K6D/O6hbrPDPmqo/esjE/EHSKRmgnpcwy6/WOVqJ
-         xmZaCI/6GNmOHQYfsVAKWj1CY6tDhyBUlopY2f1b28UiUj3qq5KLBnnOTc2DF87Rr5lT
-         DsRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=AsWJrnxl1rXNFkUCAk/hY4ul7jqtEdp6/T5bk6nJeFI=;
-        b=C6oIoYXrVpK90jFQZyhVpoq1edmg7rgty/KRsRnW1QuV/yoQsm3VXT01IJRabzrReL
-         rmaCxJfQptJL25Q72jRWDJjgoJ4AZx3xyLmi8vrYUoTrm3AFK9/JvcuoXiE4/yuqgUar
-         W05QVrZKYS+SNlNRav0U0Ur6Lw+Utfd+9zf/D+PvCMotPkSztj5VHtLUpQ7IgH+jcAsy
-         vTx9G/ZL5+Lz0AvsD5BTrOOobCQpXgMwBNBZSCYF98gu/75jJjpJiRoJVp+XoIzzDr3W
-         GRaetcW48Vntj8Fv5fFMy4MhPoa8B94Xlu9iVa52b1K+z4assYz1R8G5888QFR+1H/HO
-         u8TA==
-X-Gm-Message-State: AOAM533LJ8stswj2F+t+aKI06sodz/bFIYvyGkc9tyGWbci+IfJFHWpd
-        722akCmfN2lRq16ggJ5w3keClNvYu5kMiA==
-X-Google-Smtp-Source: ABdhPJwxlu5j7LW8ZEWROq70kqXjNn00NMseX2bN5YNm/XV44cIjdRCoFzR87khFqOFFMLlYT7YfGg==
-X-Received: by 2002:a05:6808:13c5:: with SMTP id d5mr7194060oiw.164.1624043985905;
-        Fri, 18 Jun 2021 12:19:45 -0700 (PDT)
-Received: from p1.localdomain ([207.135.233.147])
-        by smtp.gmail.com with ESMTPSA id u15sm1981732ooq.24.2021.06.18.12.19.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Jun 2021 12:19:45 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org
-Cc:     samuel@codeotaku.com, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring: add IOSQE_IGNORE_NONBLOCK flag
-Date:   Fri, 18 Jun 2021 13:19:40 -0600
-Message-Id: <20210618191940.68303-2-axboe@kernel.dk>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20210618191940.68303-1-axboe@kernel.dk>
-References: <20210618191940.68303-1-axboe@kernel.dk>
+        id S230338AbhFRUHu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 18 Jun 2021 16:07:50 -0400
+Received: from cloud48395.mywhc.ca ([173.209.37.211]:55278 "EHLO
+        cloud48395.mywhc.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229768AbhFRUHu (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 18 Jun 2021 16:07:50 -0400
+Received: from modemcable064.203-130-66.mc.videotron.ca ([66.130.203.64]:33072 helo=[192.168.1.179])
+        by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <olivier@trillion01.com>)
+        id 1luKkD-0008K1-VF; Fri, 18 Jun 2021 16:05:38 -0400
+Message-ID: <b8327afcd3ba1d9a2d2def40343efb2e79c489b7.camel@trillion01.com>
+Subject: Re: [PATCH] coredump: Limit what can interrupt coredumps
+From:   Olivier Langlois <olivier@trillion01.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Oleg Nesterov <oleg@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        io-uring <io-uring@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>,
+        "Pavel Begunkov>" <asml.silence@gmail.com>
+Date:   Fri, 18 Jun 2021 16:05:36 -0400
+In-Reply-To: <87v96dd1gz.fsf@disp2133>
+References: <CAHk-=wjC7GmCHTkoz2_CkgSc_Cgy19qwSQgJGXz+v2f=KT3UOw@mail.gmail.com>
+         <198e912402486f66214146d4eabad8cb3f010a8e.camel@trillion01.com>
+         <87eeda7nqe.fsf@disp2133>
+         <b8434a8987672ab16f9fb755c1fc4d51e0f4004a.camel@trillion01.com>
+         <87pmwt6biw.fsf@disp2133> <87czst5yxh.fsf_-_@disp2133>
+         <CAHk-=wiax83WoS0p5nWvPhU_O+hcjXwv6q3DXV8Ejb62BfynhQ@mail.gmail.com>
+         <87y2bh4jg5.fsf@disp2133>
+         <CAHk-=wjPiEaXjUp6PTcLZFjT8RrYX+ExtD-RY3NjFWDN7mKLbw@mail.gmail.com>
+         <87sg1p4h0g.fsf_-_@disp2133> <20210614141032.GA13677@redhat.com>
+         <87pmwmn5m0.fsf@disp2133>
+         <4163ed48afbcb1c288b366fe2745205cd66bea3d.camel@trillion01.com>
+         <87v96dd1gz.fsf@disp2133>
+Organization: Trillion01 Inc
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.40.2 
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - trillion01.com
+X-Get-Message-Sender-Via: cloud48395.mywhc.ca: authenticated_id: olivier@trillion01.com
+X-Authenticated-Sender: cloud48395.mywhc.ca: olivier@trillion01.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-If a file has O_NONBLOCK set, then io_uring will not arm poll and wait
-for data/space if none is available. Instead, -EAGAIN is returned if
-an IO attempt is made on the file descriptor.
+On Wed, 2021-06-16 at 15:00 -0500, Eric W. Biederman wrote:
+> Olivier Langlois <olivier@trillion01.com> writes:
+> 
+> > I redid my test but this time instead of dumping directly into a
+> > file,
+> > I did let the coredump be piped to the systemd coredump module and
+> > the
+> > coredump generation isn't working as expected when piping.
+> > 
+> > So your code review conclusions are correct.
+> 
+> Thank you for confirming that.
+> 
+> Do you know how your test program is using io_uring?
+> 
+> I have been trying to put the pieces together on what io_uring is
+> doing
+> that stops the coredump.  The fact that it takes a little while
+> before
+> it kills the coredump is a little puzzling.  The code looks like all
+> of
+> the io_uring operations should have been canceled before the coredump
+> starts.
+> 
+> 
+With a very simple setup, I guess that this could easily be
+reproducible. Make a TCP connection with a server that is streaming
+non-stop data and enter a loop where you keep initiating async
+OP_IOURING_READ operations on your TCP fd.
 
-For library use cases, the library may not be in full control of the
-file descriptor, and hence cannot modify file flags through fcntl(2).
-Or even if it can, it'd be inefficient and require 3 system calls to
-check, set, and re-set.
+Once you have that, manually sending a SIG_SEGV is a sure fire way to
+stumble into the problem. This is how I am testing the patches.
 
-IOSQE_IGNORE_NONBLOCK provides a way to tell io_uring to ignore O_NONBLOCK
-and arm poll to wait for data/space instead, just like we would have if
-O_NONBLOCK wasn't set on the file descriptor.
+IRL, it is possible to call io_uring_enter() to submit operations and
+return from the syscall without waiting on all events to have
+completed. Once the process is back in userspace, if it stumble into a
+bug that triggers a coredump, any remaining pending I/O operations can
+set TIF_SIGNAL_NOTIFY while the coredump is generated.
 
-Suggested-by: Samuel Williams <samuel@codeotaku.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- fs/io_uring.c                 | 11 ++++++++---
- include/uapi/linux/io_uring.h |  3 +++
- 2 files changed, 11 insertions(+), 3 deletions(-)
+I have read the part of your previous email where you share the result
+of your ongoing investigation. I didn't comment as the definitive
+references in io_uring matters are Jens and Pavel but I am going to
+share my opinion on the matter.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index fc8637f591a6..2d42273bb50f 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -108,7 +108,7 @@
- 
- #define SQE_VALID_FLAGS	(IOSQE_FIXED_FILE|IOSQE_IO_DRAIN|IOSQE_IO_LINK|	\
- 				IOSQE_IO_HARDLINK | IOSQE_ASYNC | \
--				IOSQE_BUFFER_SELECT)
-+				IOSQE_BUFFER_SELECT | IOSQE_IGNORE_NONBLOCK)
- #define IO_REQ_CLEAN_FLAGS (REQ_F_BUFFER_SELECTED | REQ_F_NEED_CLEANUP | \
- 				REQ_F_POLLED | REQ_F_INFLIGHT | REQ_F_CREDS)
- 
-@@ -706,6 +706,7 @@ enum {
- 	REQ_F_HARDLINK_BIT	= IOSQE_IO_HARDLINK_BIT,
- 	REQ_F_FORCE_ASYNC_BIT	= IOSQE_ASYNC_BIT,
- 	REQ_F_BUFFER_SELECT_BIT	= IOSQE_BUFFER_SELECT_BIT,
-+	REQ_F_IGNORE_NONBLOCK_BIT	= IOSQE_IGNORE_NONBLOCK_BIT,
- 
- 	/* first byte is taken by user flags, shift it to not overlap */
- 	REQ_F_FAIL_BIT		= 8,
-@@ -743,6 +744,8 @@ enum {
- 	REQ_F_FORCE_ASYNC	= BIT(REQ_F_FORCE_ASYNC_BIT),
- 	/* IOSQE_BUFFER_SELECT */
- 	REQ_F_BUFFER_SELECT	= BIT(REQ_F_BUFFER_SELECT_BIT),
-+	/* IOSQE_IGNORE_NONBLOCK */
-+	REQ_F_IGNORE_NONBLOCK	= BIT(REQ_F_IGNORE_NONBLOCK_BIT),
- 
- 	/* fail rest of links */
- 	REQ_F_FAIL		= BIT(REQ_F_FAIL_BIT),
-@@ -2686,7 +2689,8 @@ static int io_prep_rw(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 		return ret;
- 
- 	/* don't allow async punt for O_NONBLOCK or RWF_NOWAIT */
--	if ((kiocb->ki_flags & IOCB_NOWAIT) || (file->f_flags & O_NONBLOCK))
-+	if ((kiocb->ki_flags & IOCB_NOWAIT) ||
-+	    ((file->f_flags & O_NONBLOCK) && !(req->flags & REQ_F_IGNORE_NONBLOCK)))
- 		req->flags |= REQ_F_NOWAIT;
- 
- 	ioprio = READ_ONCE(sqe->ioprio);
-@@ -4709,7 +4713,8 @@ static int io_accept(struct io_kiocb *req, unsigned int issue_flags)
- 	unsigned int file_flags = force_nonblock ? O_NONBLOCK : 0;
- 	int ret;
- 
--	if (req->file->f_flags & O_NONBLOCK)
-+	if ((req->file->f_flags & O_NONBLOCK) &&
-+	    !(req->flags & REQ_F_IGNORE_NONBLOCK))
- 		req->flags |= REQ_F_NOWAIT;
- 
- 	ret = __sys_accept4_file(req->file, file_flags, accept->addr,
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index f1f9ac114b51..582eee6e898b 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -70,6 +70,7 @@ enum {
- 	IOSQE_IO_HARDLINK_BIT,
- 	IOSQE_ASYNC_BIT,
- 	IOSQE_BUFFER_SELECT_BIT,
-+	IOSQE_IGNORE_NONBLOCK_BIT,
- };
- 
- /*
-@@ -87,6 +88,8 @@ enum {
- #define IOSQE_ASYNC		(1U << IOSQE_ASYNC_BIT)
- /* select buffer from sqe->buf_group */
- #define IOSQE_BUFFER_SELECT	(1U << IOSQE_BUFFER_SELECT_BIT)
-+/* ignore if file has O_NONBLOCK set */
-+#define IOSQE_IGNORE_NONBLOCK	(1U << IOSQE_IGNORE_NONBLOCK_BIT)
- 
- /*
-  * io_uring_setup() flags
--- 
-2.32.0
+I think that you did put the finger on the code cleaning up the
+io_uring instance in regards to pending operations. It seems to be
+io_uring_release() which is probably called from exit_files() which
+happens to be after the call to exit_mm().
+
+At first, I did entertain the idea of considering if it could be
+possible to duplicate some of the operations performed by
+io_uring_release() related to the infamous TIF_SIGNAL_NOTIFY setting
+into io_uring_files_cancel() which is called before exit_mm().
+
+but the idea is useless as it is not the other threads of the group
+that are causing the TIF_SIGNAL_NOTIFY problem. It is the thread
+calling do_coredump() which is done by the signal handing code even
+before that thread enters do_exit() and start to be cleaned up. That
+thread when it enters do_coredump() is still fully loaded and
+operational in terms of io_uring functionality.
+
+I guess that this io_uring cancel all pending operations hook would
+have to be called from do_coredump or from get_signal() but if it is
+the way to go, I feel that this is a change major enough that wouldn't
+dare going there without the blessing of the maintainers in cause....
+
 

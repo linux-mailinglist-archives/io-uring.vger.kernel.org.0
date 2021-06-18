@@ -2,131 +2,269 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 41A313AD4DD
-	for <lists+io-uring@lfdr.de>; Sat, 19 Jun 2021 00:10:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3D8C3AD55D
+	for <lists+io-uring@lfdr.de>; Sat, 19 Jun 2021 00:45:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234868AbhFRWMz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 18 Jun 2021 18:12:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37018 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234864AbhFRWMx (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 18 Jun 2021 18:12:53 -0400
-Received: from mail-ot1-x32b.google.com (mail-ot1-x32b.google.com [IPv6:2607:f8b0:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 092DCC061574
-        for <io-uring@vger.kernel.org>; Fri, 18 Jun 2021 15:10:44 -0700 (PDT)
-Received: by mail-ot1-x32b.google.com with SMTP id f3-20020a0568301c23b029044ce5da4794so4553447ote.11
-        for <io-uring@vger.kernel.org>; Fri, 18 Jun 2021 15:10:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=AZb8uKvkEgm8dhG2qepKF8wvoUFP0ljSN2L0f1SY2m8=;
-        b=1t4Ok03E4oXkhnKLA2PZNFYEZNWzxa4AMZNf9dLGIVhYKAiBza0WUzew/W6n73Jbq8
-         0voRybQBArILqgUwH0HtMHvcJTaQ7/6xptT/jrK/4AaAFBOF/QoQYuS1LmeD+H+trxPg
-         /zhRz9DjqHd8SVQ54U+0Pm1r8BHbzkETaPMO67LuX2yaAsN+cJziN/24CdKFt2aQ/+Yv
-         JO5oXNJIAlhqZkzX7UspmJKLJqqqNxS2hvEqymrqpKumXnnyoOwpwFnyQG3FM+8a2bhX
-         xdrXvSouttvG/zSue5Zzl7r8sFTxzL2LAODK/ChX4IrZmJ01AIOpyNKQrEI/sIE1rQ6Q
-         Az2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=AZb8uKvkEgm8dhG2qepKF8wvoUFP0ljSN2L0f1SY2m8=;
-        b=ptNRvQmgWn0TdHr2tE5XWSqLqOzTQ4nKe6dIkfARgiWfz2Z/X/xLAe5kJJWJ8sp5j3
-         T3DzAYFegEMv1WO7tamak2OWqQB1sr4PXcZlU772al/2LM8KDpO77Up5g7n+dIAj5ADl
-         eQYRMCwJzC+wBhMzXN9a3yD3rbITPSE8gxuy8s95/xWqfrn3g+RfiwWyEbFg3a7nkggd
-         GRCf0ikCnWLsa078pHoswKa4DbArJk0DtzWHg4MAkSdWNMsBAOUxFJAJfnEjbzSe3b+a
-         WJtupSRffSNtQQz3kaiVAn4DXvOtaHgB+rT6Hs0MPryglLlx0PTRyJl5CkZlFuCTlGyd
-         W3dQ==
-X-Gm-Message-State: AOAM530IGHZh7+HF3ZiHeeraJMwxcDULdHnFL0+yub8w9Rif2jEmkQ42
-        zFAk/nsgeW0J27m3JIZJRCNwCUrOcEC1gA==
-X-Google-Smtp-Source: ABdhPJzy5k5YOIve1TP8aGeDQct4gS+mTsL2z/o0o9nGpgyIQMi29yY1daNs1kieD+k0sKuskkkDPQ==
-X-Received: by 2002:a9d:2f61:: with SMTP id h88mr9379405otb.190.1624054243202;
-        Fri, 18 Jun 2021 15:10:43 -0700 (PDT)
-Received: from p1.localdomain ([207.135.233.147])
-        by smtp.gmail.com with ESMTPSA id w2sm654921oon.18.2021.06.18.15.10.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Jun 2021 15:10:42 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org
-Cc:     samuel@codeotaku.com, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring: add IORING_SETUP_IGNORE_ONONBLOCK flag
-Date:   Fri, 18 Jun 2021 16:10:40 -0600
-Message-Id: <20210618221040.91075-2-axboe@kernel.dk>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20210618221040.91075-1-axboe@kernel.dk>
-References: <20210618221040.91075-1-axboe@kernel.dk>
+        id S234252AbhFRWru (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 18 Jun 2021 18:47:50 -0400
+Received: from cloud48395.mywhc.ca ([173.209.37.211]:43936 "EHLO
+        cloud48395.mywhc.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233160AbhFRWru (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 18 Jun 2021 18:47:50 -0400
+Received: from modemcable064.203-130-66.mc.videotron.ca ([66.130.203.64]:33090 helo=[192.168.1.179])
+        by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <olivier@trillion01.com>)
+        id 1luNF5-0005uC-MD; Fri, 18 Jun 2021 18:45:39 -0400
+Message-ID: <f511d34b1a1ae5f76c9c4ba1ab87bbf15046a588.camel@trillion01.com>
+Subject: Re: [PATCH] io_uring: reduce latency by reissueing the operation
+From:   Olivier Langlois <olivier@trillion01.com>
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Fri, 18 Jun 2021 18:45:39 -0400
+In-Reply-To: <7d9a481b-ae8c-873e-5c61-ab0a57243905@gmail.com>
+References: <60c13bec.1c69fb81.73967.f06dSMTPIN_ADDED_MISSING@mx.google.com>
+         <84e42313-d738-fb19-c398-08a4ed0e0d9c@gmail.com>
+         <4b5644bff43e072a98a19d7a5ca36bb5e11497ec.camel@trillion01.com>
+         <a7d6f2fd-b59e-e6fa-475a-23962d45b6fa@gmail.com>
+         <9938f22a0bb09f344fa5c9c5c1b91f0d12e7566f.camel@trillion01.com>
+         <a12e218a-518d-1dac-5e8c-d9784c9850b0@gmail.com>
+         <b0a8c92cffb3dc1b48b081e5e19b016fee4c6511.camel@trillion01.com>
+         <7d9a481b-ae8c-873e-5c61-ab0a57243905@gmail.com>
+Organization: Trillion01 Inc
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.40.2 
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - trillion01.com
+X-Get-Message-Sender-Via: cloud48395.mywhc.ca: authenticated_id: olivier@trillion01.com
+X-Authenticated-Sender: cloud48395.mywhc.ca: olivier@trillion01.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-If a file has O_NONBLOCK set, then io_uring will not arm poll and wait
-for data/space if none is available. Instead, -EAGAIN is returned if
-an IO attempt is made on the file descriptor.
+On Thu, 2021-06-17 at 19:10 +0100, Pavel Begunkov wrote:
+> > 
+> > For the patch performance testing I did use the simplest config:
+> > Single thread, 1 TCP connection, no sqpoll.
+> 
+> Queue depth (QD) 1, right?
 
-For library use cases, the library may not be in full control of the
-file descriptor, and hence cannot modify file flags through fcntl(2).
-Or even if it can, it'd be inefficient and require 3 system calls to
-check, set, and re-set.
+Since my io_uring usage is wrapped into a library and some parameters
+are fixed and adjusted to be able to handle the largest use-case
+scenario, QD was set to 256 for that test.
 
-If a ring is setup with IORING_SETUP_IGNORE_ONONBLOCK, that tells io_uring
-to ignore O_NONBLOCK and arm poll to wait for data/space instead, just
-like we would have if O_NONBLOCK wasn't set on the file descriptor.
+There is also few accessory fds such as 2 eventfd that are polled to
+interrupt the framework event loop but in practice they were silent
+during the whole testing period.
 
-Suggested-by: Samuel Williams <samuel@codeotaku.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- fs/io_uring.c                 | 8 +++++---
- include/uapi/linux/io_uring.h | 1 +
- 2 files changed, 6 insertions(+), 3 deletions(-)
+but no big batch submission for sure. At most maybe 2 sqes per
+submission.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index fc8637f591a6..214b8cd297cf 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -2686,7 +2686,8 @@ static int io_prep_rw(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 		return ret;
- 
- 	/* don't allow async punt for O_NONBLOCK or RWF_NOWAIT */
--	if ((kiocb->ki_flags & IOCB_NOWAIT) || (file->f_flags & O_NONBLOCK))
-+	if ((kiocb->ki_flags & IOCB_NOWAIT) ||
-+	    ((file->f_flags & O_NONBLOCK) && !(ctx->flags & IORING_SETUP_IGNORE_ONONBLOCK)))
- 		req->flags |= REQ_F_NOWAIT;
- 
- 	ioprio = READ_ONCE(sqe->ioprio);
-@@ -4709,7 +4710,8 @@ static int io_accept(struct io_kiocb *req, unsigned int issue_flags)
- 	unsigned int file_flags = force_nonblock ? O_NONBLOCK : 0;
- 	int ret;
- 
--	if (req->file->f_flags & O_NONBLOCK)
-+	if ((req->file->f_flags & O_NONBLOCK) &&
-+	    !(req->ctx->flags & IORING_SETUP_IGNORE_ONONBLOCK))
- 		req->flags |= REQ_F_NOWAIT;
- 
- 	ret = __sys_accept4_file(req->file, file_flags, accept->addr,
-@@ -9755,7 +9757,7 @@ static long io_uring_setup(u32 entries, struct io_uring_params __user *params)
- 	if (p.flags & ~(IORING_SETUP_IOPOLL | IORING_SETUP_SQPOLL |
- 			IORING_SETUP_SQ_AFF | IORING_SETUP_CQSIZE |
- 			IORING_SETUP_CLAMP | IORING_SETUP_ATTACH_WQ |
--			IORING_SETUP_R_DISABLED))
-+			IORING_SETUP_R_DISABLED | IORING_SETUP_IGNORE_ONONBLOCK))
- 		return -EINVAL;
- 
- 	return  io_uring_create(entries, &p, params);
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index f1f9ac114b51..972fa742119b 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -98,6 +98,7 @@ enum {
- #define IORING_SETUP_CLAMP	(1U << 4)	/* clamp SQ/CQ ring sizes */
- #define IORING_SETUP_ATTACH_WQ	(1U << 5)	/* attach to existing wq */
- #define IORING_SETUP_R_DISABLED	(1U << 6)	/* start with ring disabled */
-+#define IORING_SETUP_IGNORE_ONONBLOCK	(1U << 7)	/* ignore O_NONBLOCK */
- 
- enum {
- 	IORING_OP_NOP,
--- 
-2.32.0
+1 to provide back the buffer and the other to reinsert the read
+operation.
+
+> 
+> > To process an incoming 5Mbps stream, it takes about 5% of the CPU.
+> 
+> I see, under utilised, and so your main concern is latency
+> here.
+
+YES! That is my main concern. That is THE reason why you now have me as
+a io_uring power user.
+
+My app was previously using epoll through libev. The idea to eliminate
+all those syscalls did attract me.
+> 
+> > 
+> > Here is the testing methodology:
+> > add 2 fields in  struct io_rw:
+> >     u64             startTs;
+> >     u8              readType;
+> > 
+> > startTs is set with ktime_get_raw_fast_ns() in io_read_prep()
+> > 
+> > readType is set to:
+> > 0: data ready
+> > 1: use fast poll (we ignore those)
+> > 2: reissue
+> > 3: async
+> > 
+> > readType is used to know what type of measurement it is at the
+> > recording point.
+> > 
+> > end time is measured at 3 recording point:
+> > 1. In __io_queue_sqe() when io_issue_sqe() returns 0
+> > 2. In __io_queue_sqe() after io_queue_async_work() call
+> > 3. In io_wq_submit_work() after the while loop.
+> > 
+> > So I took 4 measurements.
+> > 
+> > 1. The time it takes to process a read request when data is already
+> > available
+> > 2. The time it takes to process by calling twice io_issue_sqe()
+> > after
+> > vfs_poll() indicated that data was available
+> > 3. The time it takes to execute io_queue_async_work()
+> > 4. The time it takes to complete a read request asynchronously
+> > 
+> > Before presenting the results, I want to mention that 2.25% of the
+> > total number of my read requests ends up in the situation where the
+> > read() syscall did return EAGAIN but data became available by the
+> > time
+> > vfs_poll gets called.
+> > 
+> > My expectations were that reissuing a sqe could be on par or a bit
+> > more
+> > expensive than placing it on io-wq for async processing and that
+> > would
+> > put the patch in some gray zone with pros and cons in terms of
+> > performance.
+> > 
+> > The reality is instead super nice (numbers in nSec):
+> > 
+> > ready data (baseline)
+> > avg     3657.94182918628
+> > min     580
+> > max     20098
+> > stddev  1213.15975908162
+> >         
+> > reissue completion
+> > average 7882.67567567568
+> > min     2316
+> > max     28811
+> > stddev  1982.79172973284
+> >         
+> > insert io-wq time       
+> > average 8983.82276995305
+> > min     3324
+> > max     87816
+> > stddev  2551.60056552038
+> >         
+> > async time completion
+> > average 24670.4758861127
+> > min     10758
+> > max     102612
+> > stddev  3483.92416873804
+> > 
+> > Conclusion:
+> > On average reissuing the sqe with the patch code is 1.1uSec faster
+> > and
+> > in the worse case scenario 59uSec faster than placing the request
+> > on
+> > io-wq
+> > 
+> > On average completion time by reissuing the sqe with the patch code
+> > is
+> > 16.79uSec faster and in the worse case scenario 73.8uSec faster
+> > than
+> > async completion.
+> 
+> Hah, you took it fundamentally. I'm trying to get it, correct me
+> I am mistaken.
+> 
+> 1) it's avg completion for those 2.5%, not for all requests
+
+Correct. Otherwise the executed path is identical to what it was prior
+to the patch.
+> 
+> 2) Do they return equivalent number of bytes? And what the
+> read/recv size (e.g. buffer size)?
+
+Nothing escape your eagle vision attention Pavel...
+
+I set my read size to an arbitrarilly big size (20KB) just to be sure
+that I should, most of the time, never end up with partial reads and
+perform more syscalls that I could get away with big enough buffer
+size.
+
+TBH, I didn't pay that much attention to this detail. out of my head, I
+would say that the average size is all over the place. It can go from
+150 Bytes up to 15KB but I would think that the average must be between
+1-2 MTU (around 2500 bytes).
+
+That being said, the average read size must spread equally to the
+packets going to the regular path vs those of take the new shortcut, so
+I believe that the conclusion should still hold despite not having
+considered this aspect in the test.
+> 
+> Because in theory can be that during a somewhat small delay for
+> punting to io-wq, more data had arrived and so async completion
+> pulls more data that takes more time. In that case the time
+> difference should also account the difference in amount of
+> data that it reads.
+
+Good point. This did not even occur to me to consider this aspect but
+how many more packets would the network stack had the time to receive
+in an extra 16uSec period? (I am not on one of those crazy Fiber optic
+200Gbps Mellanox card....) 1,2,3,4? We aren't talking multiple extra
+MBs to copy here...
+> 
+> 3) Curious, why read but not recv as you're working with sockets
+
+I have learn network programming with the classic Stevens book. As far
+as I remember from what I have learned in the book, it is that the only
+benefit of recv() over read() is if you need to specify one of the
+funky flags that recv() allow you to provide to it, read() doesn't give
+access to that functionality.
+
+If there is a performance benefit to use recv() over read() for tcp
+fds, that is something I am not aware of and if you confirm me that it
+is the case, that would be very easy for me to change my read calls for
+recv() ones...
+
+Now that you ask the question, maybe read() is implemented with recv()
+but AFAIK, the native network functions are sendmsg and recvmsg so
+neither read() or recv() would have an edge over the other in that
+department, AFAIK...
+
+while we are talking about read() vs recv(), I am curious too about
+something, while working on my other patch (store back buffer in case
+of failure), I did notice that buffer address and bid weren't stored in
+the same fields.
+
+io_put_recv_kbuf() vs io_put_rw_kbuf()
+
+I didn't figure out why those values weren't stored in the same
+io_kiocb fields for recv operations...
+
+Why is that?
+> 
+> 4) Did you do any userspace measurements. And a question to
+> everyone in general, do we have any good net benchmarking tool
+> that works with io_uring? Like netperf? Hopefully spitting
+> out latency distribution.
+
+No, I haven't.
+> 
+> 
+> Also, not particularly about reissue stuff, but a note to myself:
+> 59us is much, so I wonder where the overhead comes from.
+> Definitely not the iowq queueing (i.e. putting into a list).
+> - waking a worker?
+> - creating a new worker? Do we manage workers sanely? e.g.
+>   don't keep them constantly recreated and dying back.
+> - scheduling a worker?
+
+creating a new worker is for sure not free but I would remove that
+cause from the suspect list as in my scenario, it was a one-shot event.
+First measurement was even not significantly higher than all the other
+measurements.
+> 
+> Olivier, for how long did you run the test? >1 min?
+
+much more than 1 minute. I would say something between 20-25 minutes.
+
+I wanted a big enough sample size for those 2.5% special path events so
+that the conclusion could be statistically significant.
+
+
 

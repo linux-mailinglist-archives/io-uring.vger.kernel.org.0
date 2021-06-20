@@ -2,124 +2,130 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E53D53AE097
-	for <lists+io-uring@lfdr.de>; Sun, 20 Jun 2021 23:11:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 651893AE0B0
+	for <lists+io-uring@lfdr.de>; Sun, 20 Jun 2021 23:31:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230071AbhFTVOE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 20 Jun 2021 17:14:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54650 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230051AbhFTVOE (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 20 Jun 2021 17:14:04 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26FE5C061574;
-        Sun, 20 Jun 2021 14:11:50 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id i94so17279612wri.4;
-        Sun, 20 Jun 2021 14:11:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=qnbmwhCwEPzlpvNArWXCmoxqYl+pNWN2Fxh/pQooKJg=;
-        b=KDWc8Gwsf5lMFjvxHo5sU4GPXOW20Fxqe9/00DfT7dOkwSb4dlN+3asqe/RgQyP7Vd
-         tC7gAz4Xaqzp/OmpCX5tm7HojpLJnDke8gD73ID5F29Jhp/TvS/5yRnMfAOaHD879iH4
-         9iLB8Lm8j1jglTiVFrhQOdeojHE+ru1wIrIAcec3LxYDeCS1UFiGhmIpLdgHbMUNy35Q
-         EpYmw5fQ76hijyz4Jh0cUP9r83CJ0nsOWbmh1NNJKf/pGUmYkAl6g4NfpCMtC+H8ukP5
-         fRYUig4oUSeTRAZnYUDh9YyAa43vBc1rlKPD8q4DC6bkdiB0u7P+o2JkYRbOc/f7pnyo
-         yQ1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=qnbmwhCwEPzlpvNArWXCmoxqYl+pNWN2Fxh/pQooKJg=;
-        b=jCalJwB6mChqAmuJPJ7/XGKsKCM7Q4FeRBPB3DZN73/ZwM/j4ExOG6VSN4vruppoMj
-         n9epSIYPUhPqkdW0sN4Nf8oGHHcfxELOEGGtJswlZZUhzotsVK7Ecw6NSz+bsxNE5IQB
-         r7AXqD7dASL6Mdrs5WXEQ1ccFdx7zpz7Y88/VHhZn5LxkMgwFUVtPOlp9ZxHZ17C1sPC
-         7/Xy5nQRUDZkfpOF9nckFHSRnR3vgs4L5reNfsttEZcXjr64TmlUcvcD5InPO0gBpcCd
-         9ze+QImjYJLOJf5MMA4ddy8zrBcqJXBYiG8ocMSol2hM2js62N/9Zs43Mp1MLnu5vdqc
-         9dhQ==
-X-Gm-Message-State: AOAM532XFYvvhONVG/w60AcKmVF+tvTH55yz8NaaW+PRS/U4bSlbdI+P
-        X1BfuUGkTBKkodOo1iqlJvVJdF3xNuWCfg==
-X-Google-Smtp-Source: ABdhPJyzbU4C7XYQlhTq7lDgpu9lFYQ2HjoOnabQl0oeFnwF2AF49DSvkTMM8F2ybsN9hTGbTyUxPQ==
-X-Received: by 2002:adf:d1e4:: with SMTP id g4mr24714273wrd.405.1624223508507;
-        Sun, 20 Jun 2021 14:11:48 -0700 (PDT)
-Received: from [192.168.8.197] ([148.252.132.93])
-        by smtp.gmail.com with ESMTPSA id e17sm17180727wre.79.2021.06.20.14.11.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 20 Jun 2021 14:11:48 -0700 (PDT)
-Subject: Re: [PATCH v2] io_uring: reduce latency by reissueing the operation
-To:     Olivier Langlois <olivier@trillion01.com>,
+        id S230051AbhFTVdr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 20 Jun 2021 17:33:47 -0400
+Received: from cloud48395.mywhc.ca ([173.209.37.211]:59674 "EHLO
+        cloud48395.mywhc.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229875AbhFTVdq (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 20 Jun 2021 17:33:46 -0400
+Received: from modemcable064.203-130-66.mc.videotron.ca ([66.130.203.64]:33270 helo=[192.168.1.179])
+        by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <olivier@trillion01.com>)
+        id 1lv52S-0001l9-7c; Sun, 20 Jun 2021 17:31:32 -0400
+Message-ID: <be356f5f0e951a3b5a76b9369ed7715393e12a15.camel@trillion01.com>
+Subject: Re: [PATCH] io_uring: reduce latency by reissueing the operation
+From:   Olivier Langlois <olivier@trillion01.com>
+To:     Pavel Begunkov <asml.silence@gmail.com>,
         Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <e4614f9442d971016f47d69fbcba226f758377a8.1624215754.git.olivier@trillion01.com>
- <61668060-6401-ccc0-06e8-29d6320b720a@gmail.com>
- <86a768ba44d3d2009c313bd2b7ddf25e2a3f4b5e.camel@trillion01.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <e003861d-f702-24e5-5292-b18d207481d7@gmail.com>
-Date:   Sun, 20 Jun 2021 22:11:34 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+Date:   Sun, 20 Jun 2021 17:31:31 -0400
+In-Reply-To: <bc6d5e7b-fc63-827f-078b-b3423da0e5f7@gmail.com>
+References: <60c13bec.1c69fb81.73967.f06dSMTPIN_ADDED_MISSING@mx.google.com>
+         <84e42313-d738-fb19-c398-08a4ed0e0d9c@gmail.com>
+         <4b5644bff43e072a98a19d7a5ca36bb5e11497ec.camel@trillion01.com>
+         <a7d6f2fd-b59e-e6fa-475a-23962d45b6fa@gmail.com>
+         <9938f22a0bb09f344fa5c9c5c1b91f0d12e7566f.camel@trillion01.com>
+         <a12e218a-518d-1dac-5e8c-d9784c9850b0@gmail.com>
+         <b0a8c92cffb3dc1b48b081e5e19b016fee4c6511.camel@trillion01.com>
+         <7d9a481b-ae8c-873e-5c61-ab0a57243905@gmail.com>
+         <f511d34b1a1ae5f76c9c4ba1ab87bbf15046a588.camel@trillion01.com>
+         <bc6d5e7b-fc63-827f-078b-b3423da0e5f7@gmail.com>
+Organization: Trillion01 Inc
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.40.2 
 MIME-Version: 1.0
-In-Reply-To: <86a768ba44d3d2009c313bd2b7ddf25e2a3f4b5e.camel@trillion01.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - trillion01.com
+X-Get-Message-Sender-Via: cloud48395.mywhc.ca: authenticated_id: olivier@trillion01.com
+X-Authenticated-Sender: cloud48395.mywhc.ca: olivier@trillion01.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/20/21 10:05 PM, Olivier Langlois wrote:
-> On Sun, 2021-06-20 at 20:56 +0100, Pavel Begunkov wrote:
->> On 6/20/21 8:05 PM, Olivier Langlois wrote:
->>>
->>>  
->>> -static bool io_arm_poll_handler(struct io_kiocb *req)
->>> +#define IO_ARM_POLL_OK    0
->>> +#define IO_ARM_POLL_ERR   1
->>> +#define IO_ARM_POLL_READY 2
->>
->> Please add a new line here. Can even be moved somewhere
->> to the top, but it's a matter of taste.
+On Sun, 2021-06-20 at 21:55 +0100, Pavel Begunkov wrote:
+> On 6/18/21 11:45 PM, Olivier Langlois wrote:
+> > 
 > 
-> If you let me decide, I prefer to let them close to where they are
-> used. There is so much data definitions in the heading section that I
-> feel like putting very minor implementation details to it might
-> overwhelm newcomers instead of helping them to grasp the big picture.
+> For io_uring part, e.g. recv is slimmer than recvmsg, doesn't
+> need to copy extra.
 > 
-> but I will add an extra space as you request
+> Read can be more expensive on the io_uring side because it
+> may copy/alloc extra stuff. Plus additional logic on the
+> io_read() part for generality.
+> 
+> But don't expect it to be much of a difference, but never
+> tested.
 
-btw, it doesn't apply cleanly for me, conflicts
-with your trace changes. Can you check that you're
-on an up-to-date revision? I.e.
+That is super interesting. The way that I see it after getting your
+explanations it is that in the worse case scenario, there won't be any
+difference but in the best case, I could see a small speed gain.
 
-https://git.kernel.dk/cgit/linux-block/log/?h=for-5.14/io_uring
+I made the switch yesterday evening. One of the metric that I monitor
+the most is my system reaction time from incoming packets.
 
->>
->> Also, how about to rename it to apoll? io_uring internal
->> rw/send/recv polling is often abbreviated as such around
->> io_uring.c
->> IO_APOLL_OK and so on.
+I will let you know if switching to recv() is beneficial in that
+regard.
 > 
-> no problem. I will.
->>
->>> +static int io_arm_poll_handler(struct io_kiocb *req)
->>>  {
->>>         const struct io_op_def *def = &io_op_defs[req->opcode];
->>>         struct io_ring_ctx *ctx = req->ctx;
->>> @@ -5153,22 +5156,22 @@ static bool io_arm_poll_handler(struct
->>> io_kiocb *req)
->>>         int rw;
->>>  
->>>         if (!req->file || !file_can_poll(req->file))
->>> -               return false;
->>> +               return IO_ARM_POLL_ERR;
->>
->> It's not really an error. Maybe IO_APOLL_ABORTED or so?
+> > 
 > 
-> Ok.
+> > > Also, not particularly about reissue stuff, but a note to myself:
+> > > 59us is much, so I wonder where the overhead comes from.
+> > > Definitely not the iowq queueing (i.e. putting into a list).
+> > > - waking a worker?
+> > > - creating a new worker? Do we manage workers sanely? e.g.
+> > > � don't keep them constantly recreated and dying back.
+> > > - scheduling a worker?
+> > 
+> > creating a new worker is for sure not free but I would remove that
+> > cause from the suspect list as in my scenario, it was a one-shot
+> > event.
 > 
-> 
+> Not sure what you mean, but speculating, io-wq may have not
+> optimal policy for recycling worker threads leading to
+> recreating/removing more than needed. Depends on bugs, use
+> cases and so on.
 
--- 
-Pavel Begunkov
+Since that I absolutely don't use the async workers feature I was
+obsessed about the fact that I was seeing a io worker created. This is
+root of why I ended up writing the patch.
+
+My understanding of how io worker life scope are managed, it is that
+one remains present once created.
+
+In my scenario, once that single persistent io worker thread is
+created, no others are ever created. So this is a one shot cost. I was
+prepared to eliminate the first measurement to be as fair as possible
+and not pollute the async performance result with a one time only
+thread creation cost but to my surprise... The thread creation cost was
+not visible in the first measurement time...
+
+From that, maybe this is an erroneous shortcut, I do not feel that
+thread creation is the bottleneck.
+> 
+> > First measurement was even not significantly higher than all the
+> > other
+> > measurements.
+> 
+> You get a huge max for io-wq case. Obviously nothing can be
+> said just because of max. We'd need latency distribution
+> and probably longer runs, but I'm still curious where it's
+> coming from. Just keeping an eye in general
+
+Maybe it is scheduling...
+
+I'll keep this mystery in the back of my mind in case that I would end
+up with a way to find out where the time is spend...
+
+> > 
+

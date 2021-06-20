@@ -2,184 +2,139 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 401C33AD5F8
-	for <lists+io-uring@lfdr.de>; Sat, 19 Jun 2021 01:32:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7717A3ADFD5
+	for <lists+io-uring@lfdr.de>; Sun, 20 Jun 2021 21:05:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234637AbhFRXev (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 18 Jun 2021 19:34:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55246 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234509AbhFRXeu (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 18 Jun 2021 19:34:50 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA810C061574
-        for <io-uring@vger.kernel.org>; Fri, 18 Jun 2021 16:32:40 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id u5-20020a7bc0450000b02901480e40338bso7263697wmc.1
-        for <io-uring@vger.kernel.org>; Fri, 18 Jun 2021 16:32:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=cn0g3QO5TGXbEX7L1hdWWqIJra1pf0Ee731+XCYnLGI=;
-        b=cF3MrTdK/tvkcmmEi0Cz0vmJuSp/TNGSqaKqSTer7vP0kkGYbooH2r4m2U8g0ZDI5O
-         KgoYcgPmH5NTVrLMUZs/9n1ydiruZcWwpwafmhW1xSKrmE5RwnFPUE1gskqLWIB23/H6
-         4KwTOaHi2BpBVRJW4hgpbmjnTVMXcnC55DgrKthVf6Q30/z7tCKVTDm3ryWehtqKnpe5
-         Fl3h/9rw0m7W1MefZ3rVE6wxruKutbiT2Ge/5yKPKxTgC1ReVD3CVey/nI8E5blR5JyL
-         6mnyjPJpRlaOsoMJJ3T2MOMDWLMhf37MnsVBt47H8NHd6p3eLLURNpbdq6QHcRVLrsiW
-         Gtjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=cn0g3QO5TGXbEX7L1hdWWqIJra1pf0Ee731+XCYnLGI=;
-        b=WIi4ol81cMDHUQqor1DtnY87ldH8y4aixQW+J+ZclMyATwo4cOVmI9dZ/xWtnz/4Sv
-         OahwATECLQyEymCjZ6CZzS46ay9PEfRH5DxROuGWk0y+4xUcCGCfQfICHCxbH6y4L2b5
-         ZkKRyIWiJ+EoU1tvnxvOMMTeACNHTPB/grvUr3KRYs4Na4sIafE1QTUEURRlWDbSbBLW
-         MNYpTF8hXTYT+TzVmouaqJXkDPIJ8R2cCsghcloheTYWr1MjfSrzrknrGdLAtdqEAva7
-         UZlF3Xm5xp9jWalqLuMWwilb2Gqx6wjACXacuDcrhqH3nUI4SDa4VHQG9kym9wdyWM88
-         yh2w==
-X-Gm-Message-State: AOAM5322xq6OXklUMczBU1y1mzi1wJ9JvOj415wKVp3vu01gaL8RsMSm
-        zWyIfzAfy3Mfjtuh34C1cKibZBpJ1KZ86g==
-X-Google-Smtp-Source: ABdhPJzwP1aJrbOjpehn4RtAW2XuyTPLna1gvD5Zs6OebaAZw6jirLKx/vPbnS/6nVOI6SUiNt2iww==
-X-Received: by 2002:a05:600c:88a:: with SMTP id l10mr13927385wmp.7.1624059159365;
-        Fri, 18 Jun 2021 16:32:39 -0700 (PDT)
-Received: from localhost.localdomain ([185.69.145.72])
-        by smtp.gmail.com with ESMTPSA id o20sm11765774wms.3.2021.06.18.16.32.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Jun 2021 16:32:39 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 2/2] io_uring: inline fixed part of io_file_get()
-Date:   Sat, 19 Jun 2021 00:32:17 +0100
-Message-Id: <21325f0526f63649c85301fdf960d870db09b1c9.1624058853.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <cover.1624058853.git.asml.silence@gmail.com>
-References: <cover.1624058853.git.asml.silence@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S229887AbhFTTH3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 20 Jun 2021 15:07:29 -0400
+Received: from cloud48395.mywhc.ca ([173.209.37.211]:60986 "EHLO
+        cloud48395.mywhc.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229877AbhFTTH3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 20 Jun 2021 15:07:29 -0400
+Received: from modemcable064.203-130-66.mc.videotron.ca ([66.130.203.64]:53240 helo=localhost)
+        by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <olivier@trillion01.com>)
+        id 1lv2kt-0004Eq-BU; Sun, 20 Jun 2021 15:05:15 -0400
+Date:   Sun, 20 Jun 2021 15:05:14 -0400
+From:   Olivier Langlois <olivier@trillion01.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Olivier Langlois <olivier@trillion01.com>
+Message-Id: <e4614f9442d971016f47d69fbcba226f758377a8.1624215754.git.olivier@trillion01.com>
+Subject: [PATCH v2] io_uring: reduce latency by reissueing the operation
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - trillion01.com
+X-Get-Message-Sender-Via: cloud48395.mywhc.ca: authenticated_id: olivier@trillion01.com
+X-Authenticated-Sender: cloud48395.mywhc.ca: olivier@trillion01.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Optimise io_file_get() with registered files, which is in a hot path,
-by inlining parts of the function. Saves a function call, and
-inefficiencies of passing arguments, e.g. evaluating
-(sqe_flags & IOSQE_FIXED_FILE).
+It is quite frequent that when an operation fails and returns EAGAIN,
+the data becomes available between that failure and the call to
+vfs_poll() done by io_arm_poll_handler().
 
-Note that there was enough of instructions generated by two-level table
-dereference to impede inlining, but it's now slim enough.
+Detecting the situation and reissuing the operation is much faster
+than going ahead and push the operation to the io-wq.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+Signed-off-by: Olivier Langlois <olivier@trillion01.com>
 ---
- fs/io_uring.c | 65 ++++++++++++++++++++++++++++++---------------------
- 1 file changed, 39 insertions(+), 26 deletions(-)
+ fs/io_uring.c | 26 +++++++++++++++++---------
+ 1 file changed, 17 insertions(+), 9 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 2fd54a21ed8b..b966c65da23a 100644
+index fa8794c61af7..6e037304429a 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -1053,7 +1053,8 @@ static int __io_register_rsrc_update(struct io_ring_ctx *ctx, unsigned type,
- 				     struct io_uring_rsrc_update2 *up,
- 				     unsigned nr_args);
- static void io_clean_op(struct io_kiocb *req);
--static struct file *io_file_get(struct io_submit_state *state,
-+static struct file *io_file_get(struct io_ring_ctx *ctx,
-+				struct io_submit_state *state,
- 				struct io_kiocb *req, int fd, bool fixed);
- static void __io_queue_sqe(struct io_kiocb *req);
- static void io_rsrc_put_work(struct work_struct *work);
-@@ -3602,7 +3603,8 @@ static int __io_splice_prep(struct io_kiocb *req,
- 	if (unlikely(sp->flags & ~valid_flags))
- 		return -EINVAL;
- 
--	sp->file_in = io_file_get(NULL, req, READ_ONCE(sqe->splice_fd_in),
-+	sp->file_in = io_file_get(req->ctx, NULL, req,
-+				  READ_ONCE(sqe->splice_fd_in),
- 				  (sp->flags & SPLICE_F_FD_IN_FIXED));
- 	if (!sp->file_in)
- 		return -EBADF;
-@@ -6340,36 +6342,48 @@ static void io_fixed_file_set(struct io_fixed_file *file_slot, struct file *file
- 	file_slot->file_ptr = file_ptr;
+@@ -5143,7 +5143,10 @@ static __poll_t __io_arm_poll_handler(struct io_kiocb *req,
+ 	return mask;
  }
  
--static struct file *io_file_get(struct io_submit_state *state,
--				struct io_kiocb *req, int fd, bool fixed)
-+static inline struct file *io_file_get_fixed(struct io_ring_ctx *ctx,
-+					     struct io_kiocb *req, int fd)
+-static bool io_arm_poll_handler(struct io_kiocb *req)
++#define IO_ARM_POLL_OK    0
++#define IO_ARM_POLL_ERR   1
++#define IO_ARM_POLL_READY 2
++static int io_arm_poll_handler(struct io_kiocb *req)
  {
--	struct io_ring_ctx *ctx = req->ctx;
- 	struct file *file;
-+	unsigned long file_ptr;
+ 	const struct io_op_def *def = &io_op_defs[req->opcode];
+ 	struct io_ring_ctx *ctx = req->ctx;
+@@ -5153,22 +5156,22 @@ static bool io_arm_poll_handler(struct io_kiocb *req)
+ 	int rw;
  
--	if (fixed) {
--		unsigned long file_ptr;
-+	if (unlikely((unsigned int)fd >= ctx->nr_user_files))
-+		return NULL;
-+	fd = array_index_nospec(fd, ctx->nr_user_files);
-+	file_ptr = io_fixed_file_slot(&ctx->file_table, fd)->file_ptr;
-+	file = (struct file *) (file_ptr & FFS_MASK);
-+	file_ptr &= ~FFS_MASK;
-+	/* mask in overlapping REQ_F and FFS bits */
-+	req->flags |= (file_ptr << REQ_F_ASYNC_READ_BIT);
-+	io_req_set_rsrc_node(req);
-+	return file;
-+}
+ 	if (!req->file || !file_can_poll(req->file))
+-		return false;
++		return IO_ARM_POLL_ERR;
+ 	if (req->flags & REQ_F_POLLED)
+-		return false;
++		return IO_ARM_POLL_ERR;
+ 	if (def->pollin)
+ 		rw = READ;
+ 	else if (def->pollout)
+ 		rw = WRITE;
+ 	else
+-		return false;
++		return IO_ARM_POLL_ERR;
+ 	/* if we can't nonblock try, then no point in arming a poll handler */
+ 	if (!io_file_supports_async(req, rw))
+-		return false;
++		return IO_ARM_POLL_ERR;
  
--		if (unlikely((unsigned int)fd >= ctx->nr_user_files))
--			return NULL;
--		fd = array_index_nospec(fd, ctx->nr_user_files);
--		file_ptr = io_fixed_file_slot(&ctx->file_table, fd)->file_ptr;
--		file = (struct file *) (file_ptr & FFS_MASK);
--		file_ptr &= ~FFS_MASK;
--		/* mask in overlapping REQ_F and FFS bits */
--		req->flags |= (file_ptr << REQ_F_ASYNC_READ_BIT);
--		io_req_set_rsrc_node(req);
--	} else {
--		trace_io_uring_file_get(ctx, fd);
--		file = __io_file_get(state, fd);
-+static struct file *io_file_get_normal(struct io_ring_ctx *ctx,
-+				       struct io_submit_state *state,
-+				       struct io_kiocb *req, int fd)
-+{
-+	struct file *file = __io_file_get(state, fd);
+ 	apoll = kmalloc(sizeof(*apoll), GFP_ATOMIC);
+ 	if (unlikely(!apoll))
+-		return false;
++		return IO_ARM_POLL_ERR;
+ 	apoll->double_poll = NULL;
  
--		/* we don't allow fixed io_uring files */
--		if (file && unlikely(file->f_op == &io_uring_fops))
--			io_req_track_inflight(req);
--	}
-+	trace_io_uring_file_get(ctx, fd);
- 
-+	/* we don't allow fixed io_uring files */
-+	if (file && unlikely(file->f_op == &io_uring_fops))
-+		io_req_track_inflight(req);
- 	return file;
+ 	req->flags |= REQ_F_POLLED;
+@@ -5194,12 +5197,12 @@ static bool io_arm_poll_handler(struct io_kiocb *req)
+ 	if (ret || ipt.error) {
+ 		io_poll_remove_double(req);
+ 		spin_unlock_irq(&ctx->completion_lock);
+-		return false;
++		return ret?IO_ARM_POLL_READY:IO_ARM_POLL_ERR;
+ 	}
+ 	spin_unlock_irq(&ctx->completion_lock);
+ 	trace_io_uring_poll_arm(ctx, req->opcode, req->user_data, mask,
+ 					apoll->poll.events);
+-	return true;
++	return IO_ARM_POLL_OK;
  }
  
-+static inline struct file *io_file_get(struct io_ring_ctx *ctx,
-+				       struct io_submit_state *state,
-+				       struct io_kiocb *req, int fd, bool fixed)
-+{
-+	if (fixed)
-+		return io_file_get_fixed(ctx, req, fd);
-+	else
-+		return io_file_get_normal(ctx, state, req, fd);
-+}
-+
- static enum hrtimer_restart io_link_timeout_fn(struct hrtimer *timer)
- {
- 	struct io_timeout_data *data = container_of(timer,
-@@ -6561,9 +6575,8 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
- 	}
+ static bool __io_poll_remove_one(struct io_kiocb *req,
+@@ -6416,6 +6419,7 @@ static void __io_queue_sqe(struct io_kiocb *req)
+ 	struct io_kiocb *linked_timeout = io_prep_linked_timeout(req);
+ 	int ret;
  
- 	if (io_op_defs[req->opcode].needs_file) {
--		bool fixed = req->flags & REQ_F_FIXED_FILE;
--
--		req->file = io_file_get(state, req, READ_ONCE(sqe->fd), fixed);
-+		req->file = io_file_get(ctx, state, req, READ_ONCE(sqe->fd),
-+					(sqe_flags & IOSQE_FIXED_FILE));
- 		if (unlikely(!req->file))
- 			ret = -EBADF;
- 	}
++issue_sqe:
+ 	ret = io_issue_sqe(req, IO_URING_F_NONBLOCK|IO_URING_F_COMPLETE_DEFER);
+ 
+ 	/*
+@@ -6435,12 +6439,16 @@ static void __io_queue_sqe(struct io_kiocb *req)
+ 			io_put_req(req);
+ 		}
+ 	} else if (ret == -EAGAIN && !(req->flags & REQ_F_NOWAIT)) {
+-		if (!io_arm_poll_handler(req)) {
++		switch (io_arm_poll_handler(req)) {
++		case IO_ARM_POLL_READY:
++			goto issue_sqe;
++		case IO_ARM_POLL_ERR:
+ 			/*
+ 			 * Queued up for async execution, worker will release
+ 			 * submit reference when the iocb is actually submitted.
+ 			 */
+ 			io_queue_async_work(req);
++			break;
+ 		}
+ 	} else {
+ 		io_req_complete_failed(req, ret);
 -- 
-2.31.1
+2.32.0
 

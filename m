@@ -2,101 +2,144 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 497EC3AED00
-	for <lists+io-uring@lfdr.de>; Mon, 21 Jun 2021 18:03:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21A923AF603
+	for <lists+io-uring@lfdr.de>; Mon, 21 Jun 2021 21:22:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229890AbhFUQFl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 21 Jun 2021 12:05:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52136 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229719AbhFUQFl (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 21 Jun 2021 12:05:41 -0400
-Received: from mail-il1-x134.google.com (mail-il1-x134.google.com [IPv6:2607:f8b0:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87B99C061574
-        for <io-uring@vger.kernel.org>; Mon, 21 Jun 2021 09:03:26 -0700 (PDT)
-Received: by mail-il1-x134.google.com with SMTP id h3so15751664ilc.9
-        for <io-uring@vger.kernel.org>; Mon, 21 Jun 2021 09:03:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=eVXRLvzbSMXRfDwdm7VIC+cZ6QdFXq4T0AzqI7GGzAs=;
-        b=H+oXpGUARAhVSBoZL2MY8geozptZKKKELgGSVRYNYAvANNFsmktyHvvPOJ6CZuroJM
-         olIg2/8ItnwTp2yz6p41I5Mt9gepjty8919y2hc7DLc1tk3Pr5vaGgEvPpMlSqIqsL27
-         93aOdH+pMQYKyvb25oXwAzHM8ROWwlAxKZXYkM2iUzoLg5TlfuNJ1oKv7hiUjeRKBYEf
-         dEBnlm1kfAvcc71YL+gFBKSf0S/QFAOw/U/r1mYJRgthg3c7l5G39/nZvEcRalWw1J3K
-         sxeBCfr2P3Q2E9VtUApMXVSdB8LbdkcuAiUQuKiNK2xPdPCgaYgZUy6ko7aTTLkDwpvv
-         CjOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=eVXRLvzbSMXRfDwdm7VIC+cZ6QdFXq4T0AzqI7GGzAs=;
-        b=XFJaigRLwINC+JcG44nOvwnhMax0TA9sK2H+fHuqTv8YtTgCelwCxEllPT8U2KqpFo
-         doS85jwhBkp9Jt0sueHPoXMmy2WQNhoFyIHmB+D8QKeSF3nl+BqsOihG/L0wkNTdoExA
-         ERX/7b0xZds0cpCe0IYg3zysFSVK6Y1ujphgglFTKkGy2iCDd0VulSY6dcezVAXV1o8H
-         KQV1gWmm7/I9mXIEGraQQ4oVuUagKEQlE+b6hooseHmy1nW4IvTDxTF99dsuZZjGvywc
-         10nvTDK1A8KhFO7d4cKwOr5WltZ7PEVQkBtFZ2iOkblC+V1XzKIqOp7xcjFQvYdoRNcD
-         fsDA==
-X-Gm-Message-State: AOAM532KBMrptnxQaJKMoWfr5BJWZm/L9N1kaDGEaJBKZUBQcDxtWr8b
-        OU11aht5E+Dnvm8sl+uyXMd8xA==
-X-Google-Smtp-Source: ABdhPJwkP8nWk8bySuW3V1xOJ9Rw1HPGvtS6zVwX0bYU4AwIlBDFQLHelmARWU7WL3I5cxJKVsRnfQ==
-X-Received: by 2002:a92:364f:: with SMTP id d15mr19206928ilf.26.1624291403552;
-        Mon, 21 Jun 2021 09:03:23 -0700 (PDT)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id r6sm9796755ioh.27.2021.06.21.09.03.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Jun 2021 09:03:22 -0700 (PDT)
-Subject: Re: [PATCH v2] io_uring: reduce latency by reissueing the operation
-To:     Olivier Langlois <olivier@trillion01.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
+        id S230229AbhFUTYc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 21 Jun 2021 15:24:32 -0400
+Received: from cloud48395.mywhc.ca ([173.209.37.211]:46960 "EHLO
+        cloud48395.mywhc.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230061AbhFUTYb (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 21 Jun 2021 15:24:31 -0400
+Received: from [173.237.58.148] (port=33322 helo=localhost)
+        by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <olivier@trillion01.com>)
+        id 1lvPUt-0006Dz-Lh; Mon, 21 Jun 2021 15:22:15 -0400
+Date:   Mon, 21 Jun 2021 12:22:13 -0700
+Message-Id: <4deda7761d61c189f4e2581828f852c8a1acb723.1624303174.git.olivier@trillion01.com>
+From:   Olivier Langlois <olivier@trillion01.com>
+To:     Jens Axboe <axboe@kernel.dk>,
         Pavel Begunkov <asml.silence@gmail.com>,
         io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <e4614f9442d971016f47d69fbcba226f758377a8.1624215754.git.olivier@trillion01.com>
- <c5394ace-d003-df18-c816-2592fc40bf08@infradead.org>
- <b0c5175177af0bfd216d45da361e114870f07aad.camel@trillion01.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <766a96fa-1c90-ec3d-abab-16cacdedb44e@kernel.dk>
-Date:   Mon, 21 Jun 2021 10:03:22 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <b0c5175177af0bfd216d45da361e114870f07aad.camel@trillion01.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Cc:     Olivier Langlois <olivier@trillion01.com>
+Subject: [PATCH v3] io_uring: reduce latency by reissueing the operation
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - trillion01.com
+X-Get-Message-Sender-Via: cloud48395.mywhc.ca: authenticated_id: olivier@trillion01.com
+X-Authenticated-Sender: cloud48395.mywhc.ca: olivier@trillion01.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/20/21 1:28 PM, Olivier Langlois wrote:
-> On Sun, 2021-06-20 at 12:07 -0700, Randy Dunlap wrote:
->> On 6/20/21 12:05 PM, Olivier Langlois wrote:
->>> -               return false;
->>> +               return ret?IO_ARM_POLL_READY:IO_ARM_POLL_ERR;
->>
->> Hi,
->> Please make that return expression more readable.
->>
->>
-> How exactly?
-> 
-> by adding spaces?
-> Changing the define names??
+It is quite frequent that when an operation fails and returns EAGAIN,
+the data becomes available between that failure and the call to
+vfs_poll() done by io_arm_poll_handler().
 
-Not super important, but I greatly prefer:
+Detecting the situation and reissuing the operation is much faster
+than going ahead and push the operation to the io-wq.
 
-	if (ret)
-		return IO_ARM_POLL_READY;
-	return IO_ARM_POLL_ERR;
+Signed-off-by: Olivier Langlois <olivier@trillion01.com>
+---
+ fs/io_uring.c | 31 ++++++++++++++++++++++---------
+ 1 file changed, 22 insertions(+), 9 deletions(-)
 
-as that's a lot more readable to me. This is orthogonal to the currently
-missing spaces, of course.
-
-For the defines, an enum would be preferable too. And place it near where
-it's used.
-
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index fc8637f591a6..5efa67c2f974 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -5152,7 +5152,13 @@ static __poll_t __io_arm_poll_handler(struct io_kiocb *req,
+ 	return mask;
+ }
+ 
+-static bool io_arm_poll_handler(struct io_kiocb *req)
++enum {
++	IO_APOLL_OK,
++	IO_APOLL_ABORTED,
++	IO_APOLL_READY
++};
++
++static int io_arm_poll_handler(struct io_kiocb *req)
+ {
+ 	const struct io_op_def *def = &io_op_defs[req->opcode];
+ 	struct io_ring_ctx *ctx = req->ctx;
+@@ -5162,22 +5168,22 @@ static bool io_arm_poll_handler(struct io_kiocb *req)
+ 	int rw;
+ 
+ 	if (!req->file || !file_can_poll(req->file))
+-		return false;
++		return IO_APOLL_ABORTED;
+ 	if (req->flags & REQ_F_POLLED)
+-		return false;
++		return IO_APOLL_ABORTED;
+ 	if (def->pollin)
+ 		rw = READ;
+ 	else if (def->pollout)
+ 		rw = WRITE;
+ 	else
+-		return false;
++		return IO_APOLL_ABORTED;
+ 	/* if we can't nonblock try, then no point in arming a poll handler */
+ 	if (!io_file_supports_async(req, rw))
+-		return false;
++		return IO_APOLL_ABORTED;
+ 
+ 	apoll = kmalloc(sizeof(*apoll), GFP_ATOMIC);
+ 	if (unlikely(!apoll))
+-		return false;
++		return IO_APOLL_ABORTED;
+ 	apoll->double_poll = NULL;
+ 
+ 	req->flags |= REQ_F_POLLED;
+@@ -5203,12 +5209,14 @@ static bool io_arm_poll_handler(struct io_kiocb *req)
+ 	if (ret || ipt.error) {
+ 		io_poll_remove_double(req);
+ 		spin_unlock_irq(&ctx->completion_lock);
+-		return false;
++		if (ret)
++			return IO_APOLL_READY;
++		return IO_APOLL_ABORTED;
+ 	}
+ 	spin_unlock_irq(&ctx->completion_lock);
+ 	trace_io_uring_poll_arm(ctx, req, req->opcode, req->user_data,
+ 				mask, apoll->poll.events);
+-	return true;
++	return IO_APOLL_OK;
+ }
+ 
+ static bool __io_poll_remove_one(struct io_kiocb *req,
+@@ -6437,6 +6445,7 @@ static void __io_queue_sqe(struct io_kiocb *req)
+ 	struct io_kiocb *linked_timeout = io_prep_linked_timeout(req);
+ 	int ret;
+ 
++issue_sqe:
+ 	ret = io_issue_sqe(req, IO_URING_F_NONBLOCK|IO_URING_F_COMPLETE_DEFER);
+ 
+ 	/*
+@@ -6456,12 +6465,16 @@ static void __io_queue_sqe(struct io_kiocb *req)
+ 			io_put_req(req);
+ 		}
+ 	} else if (ret == -EAGAIN && !(req->flags & REQ_F_NOWAIT)) {
+-		if (!io_arm_poll_handler(req)) {
++		switch (io_arm_poll_handler(req)) {
++		case IO_APOLL_READY:
++			goto issue_sqe;
++		case IO_APOLL_ABORTED:
+ 			/*
+ 			 * Queued up for async execution, worker will release
+ 			 * submit reference when the iocb is actually submitted.
+ 			 */
+ 			io_queue_async_work(req);
++			break;
+ 		}
+ 	} else {
+ 		io_req_complete_failed(req, ret);
 -- 
-Jens Axboe
+2.32.0
 

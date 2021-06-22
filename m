@@ -2,66 +2,66 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 98C893AF6E4
-	for <lists+io-uring@lfdr.de>; Mon, 21 Jun 2021 22:41:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBC503AFED7
+	for <lists+io-uring@lfdr.de>; Tue, 22 Jun 2021 10:12:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230329AbhFUUnb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 21 Jun 2021 16:43:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58306 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230206AbhFUUna (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 21 Jun 2021 16:43:30 -0400
-Received: from mail-qk1-x72b.google.com (mail-qk1-x72b.google.com [IPv6:2607:f8b0:4864:20::72b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2879C061574
-        for <io-uring@vger.kernel.org>; Mon, 21 Jun 2021 13:41:15 -0700 (PDT)
-Received: by mail-qk1-x72b.google.com with SMTP id j62so33864367qke.10
-        for <io-uring@vger.kernel.org>; Mon, 21 Jun 2021 13:41:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=xLGoQIPZIFDXjr1i49vy3wnndvak3AtM/1fURFoYTto=;
-        b=q+U2C/eTdoIuCw3PYGvjpd7G73LGErX/VwjmKC2ueS0sW7ON0RxuOrVjuFlnoOFXQ5
-         7hoI83xu/v6t9krteByHH2TcTAqsB4pMkyQEFdinslXaA+wTLw+8t2u1NijIhEOCFqyn
-         iXpPkyY7MKoJEpm4dtSDAOkAK8Mn3e1lIFUlVap1K5rsQqFTP+wMRvMB4MSlcHgyOjqa
-         siU5l1o288wj1a5TU8DDTsvu18JMeqpe4wmE5RBCLV7HLKlh1hqLczCCwah2TjZKHvTI
-         8CtJAFjgHI2cnRU+yw6UQ6PssLUkiGF/cjczhMkXdmqq/BtRaxT7edxAXheU8CjpWFyA
-         4SkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=xLGoQIPZIFDXjr1i49vy3wnndvak3AtM/1fURFoYTto=;
-        b=LealN9H76EVIjATd2+bld+yXyItbVbDqW+ULCipoJBgWYdoXjPGOdiT/T65reO3GUM
-         CJPXg7+GbztHhZqgmIj727iz06sN3RFh9JS7eXaqH6Pw5UoKbW+cbcG4JPLpRExtSid6
-         kb78/809dbuYouu4M5vwVxG7Ic0D6GFsAaH1cBHb3pZTTrCkJzjxgoQ8uEDn9xD59TXA
-         DuZf0w/qvt1m/oWl1mz5ADkp0HDSdRhomICtFqqFrKmPkdcaeORoNG1ladgXEzMrqCoM
-         va9nMWztOQb9KyAXQ6vAzRTSrQLuWEkykBbRqMAjcJt2/03PibrU5+sT/O6MT16t8mFT
-         PyUQ==
-X-Gm-Message-State: AOAM531Nf7HL7D7CwGKAbUk/PDopgUbtapcjeH3kxJjL655yYHI03xZV
-        DyQ9EJi+4qmiskAdzBCfCejXPWWT9fu+XmUQ6xI=
-X-Google-Smtp-Source: ABdhPJwi0Y1enjy/zAC2NSInN5g3PiFfq3mGodNR1T7qMxLYiIQhsSpnpB7xZguQIL3UA/8yUm5DJoKK9oONWLYpVKU=
-X-Received: by 2002:a25:af06:: with SMTP id a6mr21902ybh.326.1624308074824;
- Mon, 21 Jun 2021 13:41:14 -0700 (PDT)
+        id S230251AbhFVIPB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 22 Jun 2021 04:15:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43040 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230123AbhFVIPA (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Tue, 22 Jun 2021 04:15:00 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 5769F61289;
+        Tue, 22 Jun 2021 08:12:43 +0000 (UTC)
+Date:   Tue, 22 Jun 2021 10:12:40 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Dmitry Kadashev <dkadashev@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        linux-fsdevel@vger.kernel.org, io-uring <io-uring@vger.kernel.org>
+Subject: Re: [PATCH v5 00/10] io_uring: add mkdir, [sym]linkat and mknodat
+ support
+Message-ID: <20210622081240.c7tzq7e7gt3y3u7j@wittgenstein>
+References: <20210603051836.2614535-1-dkadashev@gmail.com>
+ <CAOKbgA69B=nnNOaHH239vegj5_dRd=9Y-AcQBCD3viLxcH=LiQ@mail.gmail.com>
+ <2c4d5933-965e-29b5-0c76-3f2e5f518fe8@kernel.dk>
+ <a459abe3-b051-ea60-d8d9-412562a255d5@kernel.dk>
 MIME-Version: 1.0
-Received: by 2002:a05:7010:534d:b029:be:60e5:92 with HTTP; Mon, 21 Jun 2021
- 13:41:14 -0700 (PDT)
-Reply-To: Bill.Chantal.Lawrence20@europe.com
-From:   "Mrs. bill Chantal" <friendsdfgtyh@gmail.com>
-Date:   Mon, 21 Jun 2021 20:41:14 +0000
-Message-ID: <CAH+ONnVhK1KjQVp8jJR-Q5c+RU-1g3GiDwT_VO1Gx8RXBv3NRg@mail.gmail.com>
-Subject: FROM THE BOARD OF SANTANDER BANK
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <a459abe3-b051-ea60-d8d9-412562a255d5@kernel.dk>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Dear Friend
+On Mon, Jun 21, 2021 at 09:21:23AM -0600, Jens Axboe wrote:
+> On 6/18/21 10:10 AM, Jens Axboe wrote:
+> > On 6/18/21 12:24 AM, Dmitry Kadashev wrote:
+> >> On Thu, Jun 3, 2021 at 12:18 PM Dmitry Kadashev <dkadashev@gmail.com> wrote:
+> >>>
+> >>> This started out as an attempt to add mkdirat support to io_uring which
+> >>> is heavily based on renameat() / unlinkat() support.
+> >>>
+> >>> During the review process more operations were added (linkat, symlinkat,
+> >>> mknodat) mainly to keep things uniform internally (in namei.c), and
+> >>> with things changed in namei.c adding support for these operations to
+> >>> io_uring is trivial, so that was done too. See
+> >>> https://lore.kernel.org/io-uring/20210514145259.wtl4xcsp52woi6ab@wittgenstein/
+> >>
+> >> Ping. Jens, are we waiting for the audit change to be merged before this
+> >> can go in?
+> > 
+> > Not necessarily, as that should go in for 5.14 anyway.
+> > 
+> > Al, are you OK with the generic changes?
+> 
+> I have tentatively queued this up.
 
-You have been compensated with the sum of 4.4 million dollars in this
-united nation the payment will be Issue into atm visa card and send to
-you from the Santander bank we need your address passport and your
-whatsapp number.
-Thanks
+Hey Dmitry,
+hey Jens,
 
-Mrs. bill Chantal
+The additional op codes and suggested rework is partially on me. So I
+should share the blame in case this gets a NAK:
+
+Acked-by: Christian Brauner <christian.brauner@ubuntu.com>

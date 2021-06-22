@@ -2,67 +2,67 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EFD13B0351
-	for <lists+io-uring@lfdr.de>; Tue, 22 Jun 2021 13:52:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 778863B036C
+	for <lists+io-uring@lfdr.de>; Tue, 22 Jun 2021 13:56:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230136AbhFVLzC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 22 Jun 2021 07:55:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37122 "EHLO
+        id S230505AbhFVL6z (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 22 Jun 2021 07:58:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229912AbhFVLzB (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 22 Jun 2021 07:55:01 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20D90C061574;
-        Tue, 22 Jun 2021 04:52:46 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id gt18so34048980ejc.11;
-        Tue, 22 Jun 2021 04:52:46 -0700 (PDT)
+        with ESMTP id S229912AbhFVL6y (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 22 Jun 2021 07:58:54 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBA5FC06175F;
+        Tue, 22 Jun 2021 04:56:37 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id i24so12558784edx.4;
+        Tue, 22 Jun 2021 04:56:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=6OZa1byb9iZvn3cj/IkiXzxAJUgvAqP9J54khDjMBTw=;
-        b=cPuw8O9RikzEVjj6EHsqFy9M80R4sPY4ALRf5JX0RtHyBqdytdv9KdVEvh6MEDnMtJ
-         UJogQ4iFKgehHyxjclvnvp9qP2lsTSIp6OXVqE8Obw8v5NNNRVcgHcZHBLysoJTCUWiA
-         8qJq/qjN4TE17idrXc/Cyg85og8Dk7W0lzH82ecAEJu0xKILEuNQlPi38Poj7Wi1qmGT
-         Zbc3pnVI7aK1ivV2gNhueLeVy0sR4a56JTI4j2M3WA30pmgQl9vNgshQiF3qcuO5D8ym
-         KMfchth9bAQ/oA+TLsPprR5vtyeCpBL0M2k97oqx1KpB/TMNWvTjmY+u3m5yZNOMOuSJ
-         zCcw==
+        bh=T3PfNNJJcxPWydMzLgZkOIEQksb69trjaw03tCoGz3o=;
+        b=sVi4Hh8m5uCrv4ow6Pmey21aCYYOWogWvQw/oHJb3BGhHdgbiFNbM3VpL0fXsre2X0
+         ElEnY+3lwG5MC62endYvtYjKd9+lSV2SvJdNcJnfrAoRXJfCTXUb73Gz8h1I8LzuyR3V
+         +MULrk8cX+EDt9GvjJPyF0WA4B1zjLuKjNhkjl6+SyC7O6T/YGOJMDUuOapGyxr0szzL
+         rN8pAeeeZCIWPjiHBGG1nsaf2uSID0hrQaS+uQeEoqy9AxrNLcciQiWAyyUXit88RT+6
+         ONlao1CpwNctShXp8qQLLpHIPsUhW/+pW1w6gJ3FmUuxoNmiJr6K08uR5wRCW9J0CPV5
+         1hIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=6OZa1byb9iZvn3cj/IkiXzxAJUgvAqP9J54khDjMBTw=;
-        b=oQACGFxpsgJRojRdsnhhVH/iuHpPXwDZ4Wf50SzOesguiXzyZp1iKgBT388GCP2fu/
-         Y6YRxIiHl8HbkS/pZYuUZJiDhDmDVCHoyPNxKw8NtN7o4e0Ueme1JX88icUejJxxkNTe
-         6IDEQN1XSAjTNM/OfU+2VVB8dz871PQYGsZ6bUICEGxgdelqGZZ4oz/X9qN9aVzbjpFb
-         RN40pRBppuFLsr36gah6y7Rz91W6/APkBNTPrDIVHWQhD378b0cE6K9zBRhepRS4+x8R
-         bunU41UyC0I3Xv+ZeU2e5HfdCb6inOhL7VskJvm2L8/dTKpa0pulrPXs0ppaNVIzF+Ir
-         ji6g==
-X-Gm-Message-State: AOAM5339ih/Ph8MLU08ru9E8KLEMQnYcpEfNN6GCMUIruLsDI+bbn0ON
-        +X8TbsgNCTE/AJRYFl0mmE9bPujYUlq28p/A
-X-Google-Smtp-Source: ABdhPJxZlfOPZBndhubqsE3msDFniiIYA7kC8lEExzCPz2eQDs5TyWPdI9YEAbgtD4lRRTSkDHx/bA==
-X-Received: by 2002:a17:907:3f06:: with SMTP id hq6mr3427659ejc.130.1624362764538;
-        Tue, 22 Jun 2021 04:52:44 -0700 (PDT)
+        bh=T3PfNNJJcxPWydMzLgZkOIEQksb69trjaw03tCoGz3o=;
+        b=Kqiw5BIrsLlMndcDu/1SHZhRv1wmxTp86saz0Ei3PiyOmqMugmxiJOS1a44icTzodD
+         6qYAGMbgBta0098X8v4BRJsfjVYT0AHGitmsXmnO5+ZNmS7XjBN1yRdbWr3K3ubmi7Qn
+         YE0Mqbk0zeDVyFV0nqIvBLquLJGpAXm9pZ7hQD37wizZnONXg5Q0Cw/OpF4DnhSL95Kg
+         +U5ZNL3bET6l6dtUfk8TpSNg1UQoR9zHn3pYhfcb42nU97DgahF+ADek2vdvsZsLlnvI
+         ecMQ4/yP+4KQIyRIBtpCiIu8sDU6f8lWX/6oYW3HDOU21hOVde39MA9++1iIkgginXMH
+         XLaA==
+X-Gm-Message-State: AOAM533UqMLeX/dGZ3WGPM5F+XNRQp6N9e9aQ/qTnd1+Po4BeN6/wZtK
+        wqMvEqZ2j85JFDDlElvBKmubDPp0SHEoJ7kB
+X-Google-Smtp-Source: ABdhPJyVX+TksQK0JYxD9ipGvaD0kSrT7yed/r6+6VUcYpfWv0NdvZPFkEkUrZgIA8mHDV9FBCi9IQ==
+X-Received: by 2002:a05:6402:40c3:: with SMTP id z3mr4359696edb.187.1624362996282;
+        Tue, 22 Jun 2021 04:56:36 -0700 (PDT)
 Received: from ?IPv6:2620:10d:c096:310::2410? ([2620:10d:c093:600::2:c503])
-        by smtp.gmail.com with ESMTPSA id ar27sm4413901ejc.48.2021.06.22.04.52.43
+        by smtp.gmail.com with ESMTPSA id g12sm8967558edb.80.2021.06.22.04.56.35
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Jun 2021 04:52:44 -0700 (PDT)
-Subject: Re: [PATCH v5 10/10] io_uring: add support for IORING_OP_MKNODAT
+        Tue, 22 Jun 2021 04:56:35 -0700 (PDT)
+Subject: Re: [PATCH v5 00/10] io_uring: add mkdir, [sym]linkat and mknodat
+ support
 To:     Dmitry Kadashev <dkadashev@gmail.com>,
         Jens Axboe <axboe@kernel.dk>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <christian.brauner@ubuntu.com>
 Cc:     linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
 References: <20210603051836.2614535-1-dkadashev@gmail.com>
- <20210603051836.2614535-11-dkadashev@gmail.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <1a3812fe-1e57-a2ad-dc19-9658c0cf613b@gmail.com>
-Date:   Tue, 22 Jun 2021 12:52:29 +0100
+Message-ID: <ee7307f5-75f3-60d7-836e-830c701fe0e5@gmail.com>
+Date:   Tue, 22 Jun 2021 12:56:22 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.1
 MIME-Version: 1.0
-In-Reply-To: <20210603051836.2614535-11-dkadashev@gmail.com>
+In-Reply-To: <20210603051836.2614535-1-dkadashev@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -71,57 +71,73 @@ List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 On 6/3/21 6:18 AM, Dmitry Kadashev wrote:
-> IORING_OP_MKNODAT behaves like mknodat(2) and takes the same flags and
-> arguments.
+> This started out as an attempt to add mkdirat support to io_uring which
+> is heavily based on renameat() / unlinkat() support.
 > 
-> Suggested-by: Christian Brauner <christian.brauner@ubuntu.com>
-> Link: https://lore.kernel.org/io-uring/20210514145259.wtl4xcsp52woi6ab@wittgenstein/
-> Signed-off-by: Dmitry Kadashev <dkadashev@gmail.com>
-> ---
->  fs/internal.h                 |  2 ++
->  fs/io_uring.c                 | 56 +++++++++++++++++++++++++++++++++++
->  fs/namei.c                    |  2 +-
->  include/uapi/linux/io_uring.h |  2 ++
->  4 files changed, 61 insertions(+), 1 deletion(-)
+> During the review process more operations were added (linkat, symlinkat,
+> mknodat) mainly to keep things uniform internally (in namei.c), and
+> with things changed in namei.c adding support for these operations to
+> io_uring is trivial, so that was done too. See
+> https://lore.kernel.org/io-uring/20210514145259.wtl4xcsp52woi6ab@wittgenstein/
+
+io_uring part looks good in general, just small comments. However, I
+believe we should respin it, because there should be build problems
+in the middle.
+
+
+> The first patch is preparation with no functional changes, makes
+> do_mkdirat accept struct filename pointer rather than the user string.
 > 
-> diff --git a/fs/internal.h b/fs/internal.h
-> index 15a7d210cc67..c6fb9974006f 100644
-
-[...]
-
->  static bool io_disarm_next(struct io_kiocb *req);
-> @@ -3687,6 +3697,44 @@ static int io_linkat(struct io_kiocb *req, int issue_flags)
->  	io_req_complete(req, ret);
->  	return 0;
->  }
-> +static int io_mknodat_prep(struct io_kiocb *req,
-> +			    const struct io_uring_sqe *sqe)
-> +{
-> +	struct io_mknod *mkn = &req->mknod;
-> +	const char __user *fname;
-> +
-> +	if (unlikely(req->flags & REQ_F_FIXED_FILE))
-> +		return -EBADF;
-
-IOPOLL won't support it, and the check is missing.
-Probably for other opcodes as well.
-
-if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
-	return -EINVAL;
-
-> +
-> +	mkn->dfd = READ_ONCE(sqe->fd);
-> +	mkn->mode = READ_ONCE(sqe->len);
-> +	fname = u64_to_user_ptr(READ_ONCE(sqe->addr));
-> +	mkn->dev = READ_ONCE(sqe->mknod_dev);
-> +
-> +	mkn->filename = getname(fname);
-> +	if (IS_ERR(mkn->filename))
-> +		return PTR_ERR(mkn->filename);
-> +
-> +	req->flags |= REQ_F_NEED_CLEANUP;
-> +	return 0;
-> +}
+> The second one leverages that to implement mkdirat in io_uring.
+> 
+> 3-6 just convert other similar do_* functions in namei.c to accept
+> struct filename, for uniformity with do_mkdirat, do_renameat and
+> do_unlinkat. No functional changes there.
+> 
+> 7 changes do_* helpers in namei.c to return ints rather than some of
+> them returning ints and some longs.
+> 
+> 8-10 add symlinkat, linkat and mknodat support to io_uring
+> (correspondingly).
+> 
+> Based on for-5.14/io_uring.
+> 
+> v5:
+> - rebase
+> - add symlinkat, linkat and mknodat support to io_uring
+> 
+> v4:
+> - update do_mknodat, do_symlinkat and do_linkat to accept struct
+>   filename for uniformity with do_mkdirat, do_renameat and do_unlinkat;
+> 
+> v3:
+> - rebase;
+> 
+> v2:
+> - do not mess with struct filename's refcount in do_mkdirat, instead add
+>   and use __filename_create() that does not drop the name on success;
+> 
+> 
+> Dmitry Kadashev (10):
+>   fs: make do_mkdirat() take struct filename
+>   io_uring: add support for IORING_OP_MKDIRAT
+>   fs: make do_mknodat() take struct filename
+>   fs: make do_symlinkat() take struct filename
+>   namei: add getname_uflags()
+>   fs: make do_linkat() take struct filename
+>   fs: update do_*() helpers to return ints
+>   io_uring: add support for IORING_OP_SYMLINKAT
+>   io_uring: add support for IORING_OP_LINKAT
+>   io_uring: add support for IORING_OP_MKNODAT
+> 
+>  fs/exec.c                     |   8 +-
+>  fs/internal.h                 |  10 +-
+>  fs/io_uring.c                 | 240 ++++++++++++++++++++++++++++++++++
+>  fs/namei.c                    | 137 ++++++++++++-------
+>  include/linux/fs.h            |   1 +
+>  include/uapi/linux/io_uring.h |   6 +
+>  6 files changed, 349 insertions(+), 53 deletions(-)
+> 
 
 -- 
 Pavel Begunkov

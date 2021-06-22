@@ -2,67 +2,64 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 020D13B0B9B
-	for <lists+io-uring@lfdr.de>; Tue, 22 Jun 2021 19:41:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CEDC13B0BE6
+	for <lists+io-uring@lfdr.de>; Tue, 22 Jun 2021 19:55:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231549AbhFVRnz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 22 Jun 2021 13:43:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33794 "EHLO
+        id S230338AbhFVR5X (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 22 Jun 2021 13:57:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230338AbhFVRnz (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 22 Jun 2021 13:43:55 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23BC3C061574;
-        Tue, 22 Jun 2021 10:41:39 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id i5so7373193eds.1;
-        Tue, 22 Jun 2021 10:41:39 -0700 (PDT)
+        with ESMTP id S229501AbhFVR5W (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 22 Jun 2021 13:57:22 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 225FCC061574;
+        Tue, 22 Jun 2021 10:55:05 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id nd37so35891332ejc.3;
+        Tue, 22 Jun 2021 10:55:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=UZm3fHNnA/YCIzOCFqws+e7g1P6uWRfgyjBhMsINiF4=;
-        b=a7kgV+FhOcVlDtZnBY+0ze0EdBEwy7CDFOo+Tth0movMxxXydikvKaz2Sqou7sNRdZ
-         TPcau192f8geibSen7HJpcj89XnphvRH6vN/VieD/aDSx8QYekfatCInLvT7NFPP9ayI
-         J6Fzl6l/Z58FdplEJWNqoYQbViTli7eRjnpJMEYDJydLFBYp+vzCov4iM/G43MOiLxiU
-         eAO4Itya631Y/tUUOZJcHQDbtVkoBvFa1DXQWEDHALsHeyPqNkyn6RxqHwwe2mPyIN+P
-         M+D+keG1fULYCUHNzJxfYpSjpccVFQyCDYN7xMyeoZ7JGI30Fiy8+c5s/MzsbagPocf5
-         JKSg==
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=KSXjx7PRiNt3XduVl93AmUJtxfhvnhuoaCB1HZWKmnc=;
+        b=Bidbwj3CGzT5t2FWODJvbz2Y8P1Rupv5wK/arJZzZo9pgBxdFp53tchPoJ6GK3OgBC
+         nyrcJGpuKeKNo9+t6HM0hLuPTyvBsafFwXIX6OkbcJwmRf3m7aKVDfDb8NVAxLQwt7Tq
+         5gF+E0AFoJ9dVuzE6AGwQxjxBw0QdD779zz+T5ZhKLUhaD2FJljhY6tcQrhgo4gu/pUL
+         AJDOPnL3rCvP8ja4ic2tkY127pXYlEIR+dxRqJfmVx4FzlExW8k/qhHcFVYfL1Z1iR3G
+         8NqsVaI1ViliSE6//WBsmcupoBlmDj1HhvM+7HfXGUC4DQh422nG+pltVGaOYkmU8TT/
+         vB+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=UZm3fHNnA/YCIzOCFqws+e7g1P6uWRfgyjBhMsINiF4=;
-        b=bJNuOfcmFnQzG34LjnXsg/5HN4UtcC3Bd7HeXhi8DoTLBJ0caISlDPVXru03wzvaZq
-         ekb6oKnRyKZG6fEw/zwCaFGBIqpvqQVjUMXCfgsF7JRTG854xJeFHY5OyFdfbNr6hkKl
-         N6ml+Wv2U4aqtJJRPmoVGPXIi3JCrcATluTJ5BfNUwjmRBPZtBMzswFiwlahZazyYvRI
-         FyKepkd8qJSpguiovWL0XVjbJAG1Up6orsx3ZgO92LpL7yeRw9kiF6pwdZEB6ZZz82HC
-         vuo3iU4tamwvq+nBNQeHYjW1R3S2VZ2+zNUMXtlZ0uGFOSH05FF9v1DoaaexKvr9RYZJ
-         eLIw==
-X-Gm-Message-State: AOAM533FltsAJsKNeLfK88T5DVVryi9Ih3Gr911eu4uSzjxS80GbCMQb
-        shxZDKAjKwk5J8d/Hi3WOi+CuKmMnQbdlWdq
-X-Google-Smtp-Source: ABdhPJwG/04D68AaD6ZeYMr5w5z+ohc/LpyEO1ZuYV5gnJOTo+hvxUkTnZogd4DQ6ywRROHx6Cplrg==
-X-Received: by 2002:a05:6402:b6a:: with SMTP id cb10mr6685479edb.275.1624383697447;
-        Tue, 22 Jun 2021 10:41:37 -0700 (PDT)
-Received: from ?IPv6:2620:10d:c096:310::2410? ([2620:10d:c092:600::2:e69])
-        by smtp.gmail.com with ESMTPSA id w1sm81911edr.62.2021.06.22.10.41.36
+        bh=KSXjx7PRiNt3XduVl93AmUJtxfhvnhuoaCB1HZWKmnc=;
+        b=m+DDkU+mCd38foSEGOXpK3E6hw2EftpF87cdIwEihSMW0VSi+I4BQFv+wPkyqmvkh3
+         NjB7LNdgBbpt1t8GomyHEIo4pamWuHxBpj0wVyR1YqtQZ5lYts3+gcAy8WEjJ2Ajm8pO
+         Iv7NxeIo2iLVbqMCw1iPRnwokc0p/sDJZvLp56XzKr/ZsoCB3ZYkryhKTzF0dr+QqXqe
+         Le4fPwCtOApKRriwBEdDc3Tuj+3H0sJXnhfVbo64eL+eeaNLFxtkQD//SPE8/feDtCvI
+         wH+C2MB8ZL2cDWws8Ikol1qOaWARSZTeMlVeNRCBA8wf2A3G7uRYZKSrmxPM38atnlxA
+         R1MQ==
+X-Gm-Message-State: AOAM531rkt9/IGxEHpuAOzJs7xQ8Ix9t/EHDRYyYMPj+VvT5HKvH1HJo
+        kbhhNkyZPU7XRqPvcfJNUeWtoXgWKwcfg37w
+X-Google-Smtp-Source: ABdhPJwquXT4sEhi2ldQxEu0urYrUs6HA3bcnq+Dd4KHDJkSLjr+dDdF19cqg3fylWYudAW8ZugFhg==
+X-Received: by 2002:a17:907:d03:: with SMTP id gn3mr5378466ejc.516.1624384499159;
+        Tue, 22 Jun 2021 10:54:59 -0700 (PDT)
+Received: from ?IPv6:2620:10d:c096:310::2410? ([2620:10d:c093:600::2:9d6e])
+        by smtp.gmail.com with ESMTPSA id w2sm6283394ejn.118.2021.06.22.10.54.58
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Jun 2021 10:41:37 -0700 (PDT)
-Subject: Re: [PATCH v5 02/10] io_uring: add support for IORING_OP_MKDIRAT
-To:     Dmitry Kadashev <dkadashev@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
-References: <20210603051836.2614535-1-dkadashev@gmail.com>
- <20210603051836.2614535-3-dkadashev@gmail.com>
+        Tue, 22 Jun 2021 10:54:58 -0700 (PDT)
+Subject: Re: [PATCH v4] io_uring: reduce latency by reissueing the operation
+To:     Olivier Langlois <olivier@trillion01.com>,
+        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <9e8441419bb1b8f3c3fcc607b2713efecdef2136.1624364038.git.olivier@trillion01.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <f45781a8-234e-af92-e73d-a6453bd24f16@gmail.com>
-Date:   Tue, 22 Jun 2021 18:41:23 +0100
+Message-ID: <678deb93-c4a5-5a14-9687-9e44f0f00b5a@gmail.com>
+Date:   Tue, 22 Jun 2021 18:54:45 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.1
 MIME-Version: 1.0
-In-Reply-To: <20210603051836.2614535-3-dkadashev@gmail.com>
+In-Reply-To: <9e8441419bb1b8f3c3fcc607b2713efecdef2136.1624364038.git.olivier@trillion01.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -70,155 +67,103 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/3/21 6:18 AM, Dmitry Kadashev wrote:
-> IORING_OP_MKDIRAT behaves like mkdirat(2) and takes the same flags
-> and arguments.
-
-Jens, a fold-in er discussed, and it will get you
-a conflict at 8/10
-
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 4b215e0f8dd8..c0e469ebd22d 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -3589,7 +3589,7 @@ static int io_mkdirat(struct io_kiocb *req, int issue_flags)
- 
- 	req->flags &= ~REQ_F_NEED_CLEANUP;
- 	if (ret < 0)
--		req_set_fail_links(req);
-+		req_set_fail(req);
- 	io_req_complete(req, ret);
- 	return 0;
- }
-
-
-> Signed-off-by: Dmitry Kadashev <dkadashev@gmail.com>
+On 6/22/21 1:17 PM, Olivier Langlois wrote:
+> It is quite frequent that when an operation fails and returns EAGAIN,
+> the data becomes available between that failure and the call to
+> vfs_poll() done by io_arm_poll_handler().
+> 
+> Detecting the situation and reissuing the operation is much faster
+> than going ahead and push the operation to the io-wq.
+> 
+> Performance improvement testing has been performed with:
+> Single thread, 1 TCP connection receiving a 5 Mbps stream, no sqpoll.
+> 
+> 4 measurements have been taken:
+> 1. The time it takes to process a read request when data is already available
+> 2. The time it takes to process by calling twice io_issue_sqe() after vfs_poll() indicated that data was available
+> 3. The time it takes to execute io_queue_async_work()
+> 4. The time it takes to complete a read request asynchronously
+> 
+> 2.25% of all the read operations did use the new path.
+> 
+> ready data (baseline)
+> avg	3657.94182918628
+> min	580
+> max	20098
+> stddev	1213.15975908162
+> 
+> reissue	completion
+> average	7882.67567567568
+> min	2316
+> max	28811
+> stddev	1982.79172973284
+> 
+> insert io-wq time
+> average	8983.82276995305
+> min	3324
+> max	87816
+> stddev	2551.60056552038
+> 
+> async time completion
+> average	24670.4758861127
+> min	10758
+> max	102612
+> stddev	3483.92416873804
+> 
+> Conclusion:
+> On average reissuing the sqe with the patch code is 1.1uSec faster and
+> in the worse case scenario 59uSec faster than placing the request on
+> io-wq
+> 
+> On average completion time by reissuing the sqe with the patch code is
+> 16.79uSec faster and in the worse case scenario 73.8uSec faster than
+> async completion.
+> 
+> Signed-off-by: Olivier Langlois <olivier@trillion01.com>
 > ---
->  fs/io_uring.c                 | 55 +++++++++++++++++++++++++++++++++++
->  include/uapi/linux/io_uring.h |  1 +
->  2 files changed, 56 insertions(+)
+>  fs/io_uring.c | 31 ++++++++++++++++++++++---------
+>  1 file changed, 22 insertions(+), 9 deletions(-)
 > 
 > diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index a1ca6badff36..8ab4eb559520 100644
+> index fc8637f591a6..5efa67c2f974 100644
 > --- a/fs/io_uring.c
 > +++ b/fs/io_uring.c
-> @@ -665,6 +665,13 @@ struct io_unlink {
->  	struct filename			*filename;
->  };
+
+[...]
+
+>  static bool __io_poll_remove_one(struct io_kiocb *req,
+> @@ -6437,6 +6445,7 @@ static void __io_queue_sqe(struct io_kiocb *req)
+>  	struct io_kiocb *linked_timeout = io_prep_linked_timeout(req);
+>  	int ret;
 >  
-> +struct io_mkdir {
-> +	struct file			*file;
-> +	int				dfd;
-> +	umode_t				mode;
-> +	struct filename			*filename;
-> +};
-> +
->  struct io_completion {
->  	struct file			*file;
->  	struct list_head		list;
-> @@ -809,6 +816,7 @@ struct io_kiocb {
->  		struct io_shutdown	shutdown;
->  		struct io_rename	rename;
->  		struct io_unlink	unlink;
-> +		struct io_mkdir		mkdir;
->  		/* use only after cleaning per-op data, see io_clean_op() */
->  		struct io_completion	compl;
->  	};
-> @@ -1021,6 +1029,7 @@ static const struct io_op_def io_op_defs[] = {
->  	},
->  	[IORING_OP_RENAMEAT] = {},
->  	[IORING_OP_UNLINKAT] = {},
-> +	[IORING_OP_MKDIRAT] = {},
->  };
+> +issue_sqe:
+>  	ret = io_issue_sqe(req, IO_URING_F_NONBLOCK|IO_URING_F_COMPLETE_DEFER);
 >  
->  static bool io_disarm_next(struct io_kiocb *req);
-> @@ -3530,6 +3539,44 @@ static int io_unlinkat(struct io_kiocb *req, unsigned int issue_flags)
->  	return 0;
->  }
->  
-> +static int io_mkdirat_prep(struct io_kiocb *req,
-> +			    const struct io_uring_sqe *sqe)
-> +{
-> +	struct io_mkdir *mkd = &req->mkdir;
-> +	const char __user *fname;
-> +
-> +	if (unlikely(req->flags & REQ_F_FIXED_FILE))
-> +		return -EBADF;
-> +
-> +	mkd->dfd = READ_ONCE(sqe->fd);
-> +	mkd->mode = READ_ONCE(sqe->len);
-> +
-> +	fname = u64_to_user_ptr(READ_ONCE(sqe->addr));
-> +	mkd->filename = getname(fname);
-> +	if (IS_ERR(mkd->filename))
-> +		return PTR_ERR(mkd->filename);
-> +
-> +	req->flags |= REQ_F_NEED_CLEANUP;
-> +	return 0;
-> +}
-> +
-> +static int io_mkdirat(struct io_kiocb *req, int issue_flags)
-> +{
-> +	struct io_mkdir *mkd = &req->mkdir;
-> +	int ret;
-> +
-> +	if (issue_flags & IO_URING_F_NONBLOCK)
-> +		return -EAGAIN;
-> +
-> +	ret = do_mkdirat(mkd->dfd, mkd->filename, mkd->mode);
-> +
-> +	req->flags &= ~REQ_F_NEED_CLEANUP;
-> +	if (ret < 0)
-> +		req_set_fail_links(req);
-> +	io_req_complete(req, ret);
-> +	return 0;
-> +}
-> +
->  static int io_shutdown_prep(struct io_kiocb *req,
->  			    const struct io_uring_sqe *sqe)
->  {
-> @@ -5936,6 +5983,8 @@ static int io_req_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
->  		return io_renameat_prep(req, sqe);
->  	case IORING_OP_UNLINKAT:
->  		return io_unlinkat_prep(req, sqe);
-> +	case IORING_OP_MKDIRAT:
-> +		return io_mkdirat_prep(req, sqe);
->  	}
->  
->  	printk_once(KERN_WARNING "io_uring: unhandled opcode %d\n",
-> @@ -6077,6 +6126,9 @@ static void io_clean_op(struct io_kiocb *req)
->  		case IORING_OP_UNLINKAT:
->  			putname(req->unlink.filename);
->  			break;
-> +		case IORING_OP_MKDIRAT:
-> +			putname(req->mkdir.filename);
-> +			break;
+>  	/*
+> @@ -6456,12 +6465,16 @@ static void __io_queue_sqe(struct io_kiocb *req)
+>  			io_put_req(req);
 >  		}
->  		req->flags &= ~REQ_F_NEED_CLEANUP;
->  	}
-> @@ -6203,6 +6255,9 @@ static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags)
->  	case IORING_OP_UNLINKAT:
->  		ret = io_unlinkat(req, issue_flags);
->  		break;
-> +	case IORING_OP_MKDIRAT:
-> +		ret = io_mkdirat(req, issue_flags);
-> +		break;
->  	default:
->  		ret = -EINVAL;
->  		break;
-> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-> index e1ae46683301..bf9d720d371f 100644
-> --- a/include/uapi/linux/io_uring.h
-> +++ b/include/uapi/linux/io_uring.h
-> @@ -137,6 +137,7 @@ enum {
->  	IORING_OP_SHUTDOWN,
->  	IORING_OP_RENAMEAT,
->  	IORING_OP_UNLINKAT,
-> +	IORING_OP_MKDIRAT,
->  
->  	/* this goes last, obviously */
->  	IORING_OP_LAST,
+>  	} else if (ret == -EAGAIN && !(req->flags & REQ_F_NOWAIT)) {
+> -		if (!io_arm_poll_handler(req)) {
+> +		switch (io_arm_poll_handler(req)) {
+> +		case IO_APOLL_READY:
+> +			goto issue_sqe;
+> +		case IO_APOLL_ABORTED:
+>  			/*
+>  			 * Queued up for async execution, worker will release
+>  			 * submit reference when the iocb is actually submitted.
+>  			 */
+>  			io_queue_async_work(req);
+> +			break;
+
+Hmm, why there is a new break here? It will miscount @linked_timeout
+if you do that. Every io_prep_linked_timeout() should be matched with
+io_queue_linked_timeout().
+
+
+>  		}
+>  	} else {
+>  		io_req_complete_failed(req, ret);
 > 
 
 -- 

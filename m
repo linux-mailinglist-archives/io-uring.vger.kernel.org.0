@@ -2,188 +2,94 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F3683B0416
-	for <lists+io-uring@lfdr.de>; Tue, 22 Jun 2021 14:17:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB0413B0B61
+	for <lists+io-uring@lfdr.de>; Tue, 22 Jun 2021 19:26:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231158AbhFVMT5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 22 Jun 2021 08:19:57 -0400
-Received: from cloud48395.mywhc.ca ([173.209.37.211]:34348 "EHLO
-        cloud48395.mywhc.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230422AbhFVMT5 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 22 Jun 2021 08:19:57 -0400
-Received: from [173.237.58.148] (port=33324 helo=localhost)
-        by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <olivier@trillion01.com>)
-        id 1lvfLY-0003l2-O3; Tue, 22 Jun 2021 08:17:40 -0400
-Date:   Tue, 22 Jun 2021 05:17:39 -0700
-From:   Olivier Langlois <olivier@trillion01.com>
-To:     Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Olivier Langlois <olivier@trillion01.com>
-Message-Id: <9e8441419bb1b8f3c3fcc607b2713efecdef2136.1624364038.git.olivier@trillion01.com>
-Subject: [PATCH v4] io_uring: reduce latency by reissueing the operation
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - trillion01.com
-X-Get-Message-Sender-Via: cloud48395.mywhc.ca: authenticated_id: olivier@trillion01.com
-X-Authenticated-Sender: cloud48395.mywhc.ca: olivier@trillion01.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+        id S231834AbhFVR2e (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 22 Jun 2021 13:28:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58522 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231733AbhFVR2d (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 22 Jun 2021 13:28:33 -0400
+Received: from mail-oi1-x22f.google.com (mail-oi1-x22f.google.com [IPv6:2607:f8b0:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F249AC061756
+        for <io-uring@vger.kernel.org>; Tue, 22 Jun 2021 10:26:16 -0700 (PDT)
+Received: by mail-oi1-x22f.google.com with SMTP id s23so152120oiw.9
+        for <io-uring@vger.kernel.org>; Tue, 22 Jun 2021 10:26:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=elxsH/V73yYqCWqS2NOO7QN3MUfSajbvLee8JFsoAJU=;
+        b=T1x1ijq1vk3siASE/EC8P3H54tqb3xyzmmDUSheWu+ZavppEtnCtJa/OLb/aUjxhuX
+         RUucWnndjb+q5Qfj1Aa1fq0lL0IufARJ4xTwPi82Q/dZih9ZD7U8hvX5gsTorcKlPkH+
+         cyfHdvoHaAXsFBAdvH5lp/oeltJb8YtZChuJaqawFg5okXBsAgJyKyZ8YQXB4hHYCs4I
+         6mxxDsOb+xidFhp/vMHjsxOu0767gfKPIjyAG/7Jp3ersjAlTWr/n+k2MyZMYB4m/Wgi
+         2rVCjm0DKXckv7XJz9FC6YM1okTIuKqeG3F3P5MnBGvFoXYTp7CP9/TxujHCZWL7eRWQ
+         KolA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=elxsH/V73yYqCWqS2NOO7QN3MUfSajbvLee8JFsoAJU=;
+        b=oTxYT4ios92cW90ItKRTLpDKpKlroD+hrZHwsTOFmCX9Or/AAc2Jq/5R5Y8uF8+gKc
+         QViQm41KvlPta8ob0ZBGgYm+pBOA0E02AiuVCh6uwZn6/3HAmytl7SNevgLWi9HlXnN5
+         gHp/2I+pbGg/Zq5LRVtS9bo8uOsaQ3boBaQSSbiY3oYFrZz3PIQosmjpOaXa+PDc8KjN
+         lgu92gHnF9HdACceAUVWA5w1dkFdE0BkyrWbQCGfSk8AwA4P/GDIWVyAzY7Fs1lxN+K+
+         VFkprR8n8Oot/hMoIHFuRfOez+rJgJGubbJIE8+d6bGRDWEp1NZ1Dxb3kf4W5zqCSsBa
+         MhoQ==
+X-Gm-Message-State: AOAM5315hMUmFzW1YfdKW7kgpnupv58QRu4Vp/AIu6syxROdnYTp5vWw
+        n/vESa1oIgU5TrTdAg3aGRELkgcURvxROg==
+X-Google-Smtp-Source: ABdhPJxPcWLIgrt0O2t/d4zMfv1dixHInDNRYdmQMZbvCV84iA5lb70N59OqBhK12UxygHoh72fKcg==
+X-Received: by 2002:aca:4b13:: with SMTP id y19mr3961380oia.108.1624382776146;
+        Tue, 22 Jun 2021 10:26:16 -0700 (PDT)
+Received: from [192.168.1.30] ([207.135.233.147])
+        by smtp.gmail.com with ESMTPSA id o25sm655928ood.20.2021.06.22.10.26.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Jun 2021 10:26:15 -0700 (PDT)
+Subject: Re: [PATCH v5 00/10] io_uring: add mkdir, [sym]linkat and mknodat
+ support
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Dmitry Kadashev <dkadashev@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
+References: <20210603051836.2614535-1-dkadashev@gmail.com>
+ <ee7307f5-75f3-60d7-836e-830c701fe0e5@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <0441443f-3f90-2d6c-20aa-92dc95a3f733@kernel.dk>
+Date:   Tue, 22 Jun 2021 11:26:14 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <ee7307f5-75f3-60d7-836e-830c701fe0e5@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-It is quite frequent that when an operation fails and returns EAGAIN,
-the data becomes available between that failure and the call to
-vfs_poll() done by io_arm_poll_handler().
+On 6/22/21 5:56 AM, Pavel Begunkov wrote:
+> On 6/3/21 6:18 AM, Dmitry Kadashev wrote:
+>> This started out as an attempt to add mkdirat support to io_uring which
+>> is heavily based on renameat() / unlinkat() support.
+>>
+>> During the review process more operations were added (linkat, symlinkat,
+>> mknodat) mainly to keep things uniform internally (in namei.c), and
+>> with things changed in namei.c adding support for these operations to
+>> io_uring is trivial, so that was done too. See
+>> https://lore.kernel.org/io-uring/20210514145259.wtl4xcsp52woi6ab@wittgenstein/
+> 
+> io_uring part looks good in general, just small comments. However, I
+> believe we should respin it, because there should be build problems
+> in the middle.
 
-Detecting the situation and reissuing the operation is much faster
-than going ahead and push the operation to the io-wq.
+I can drop it, if Dmitry wants to respin. I do think that we could
+easily drop mknodat and not really lose anything there, better to
+reserve the op for something a bit more useful.
 
-Performance improvement testing has been performed with:
-Single thread, 1 TCP connection receiving a 5 Mbps stream, no sqpoll.
-
-4 measurements have been taken:
-1. The time it takes to process a read request when data is already available
-2. The time it takes to process by calling twice io_issue_sqe() after vfs_poll() indicated that data was available
-3. The time it takes to execute io_queue_async_work()
-4. The time it takes to complete a read request asynchronously
-
-2.25% of all the read operations did use the new path.
-
-ready data (baseline)
-avg	3657.94182918628
-min	580
-max	20098
-stddev	1213.15975908162
-
-reissue	completion
-average	7882.67567567568
-min	2316
-max	28811
-stddev	1982.79172973284
-
-insert io-wq time
-average	8983.82276995305
-min	3324
-max	87816
-stddev	2551.60056552038
-
-async time completion
-average	24670.4758861127
-min	10758
-max	102612
-stddev	3483.92416873804
-
-Conclusion:
-On average reissuing the sqe with the patch code is 1.1uSec faster and
-in the worse case scenario 59uSec faster than placing the request on
-io-wq
-
-On average completion time by reissuing the sqe with the patch code is
-16.79uSec faster and in the worse case scenario 73.8uSec faster than
-async completion.
-
-Signed-off-by: Olivier Langlois <olivier@trillion01.com>
----
- fs/io_uring.c | 31 ++++++++++++++++++++++---------
- 1 file changed, 22 insertions(+), 9 deletions(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index fc8637f591a6..5efa67c2f974 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -5152,7 +5152,13 @@ static __poll_t __io_arm_poll_handler(struct io_kiocb *req,
- 	return mask;
- }
- 
--static bool io_arm_poll_handler(struct io_kiocb *req)
-+enum {
-+	IO_APOLL_OK,
-+	IO_APOLL_ABORTED,
-+	IO_APOLL_READY
-+};
-+
-+static int io_arm_poll_handler(struct io_kiocb *req)
- {
- 	const struct io_op_def *def = &io_op_defs[req->opcode];
- 	struct io_ring_ctx *ctx = req->ctx;
-@@ -5162,22 +5168,22 @@ static bool io_arm_poll_handler(struct io_kiocb *req)
- 	int rw;
- 
- 	if (!req->file || !file_can_poll(req->file))
--		return false;
-+		return IO_APOLL_ABORTED;
- 	if (req->flags & REQ_F_POLLED)
--		return false;
-+		return IO_APOLL_ABORTED;
- 	if (def->pollin)
- 		rw = READ;
- 	else if (def->pollout)
- 		rw = WRITE;
- 	else
--		return false;
-+		return IO_APOLL_ABORTED;
- 	/* if we can't nonblock try, then no point in arming a poll handler */
- 	if (!io_file_supports_async(req, rw))
--		return false;
-+		return IO_APOLL_ABORTED;
- 
- 	apoll = kmalloc(sizeof(*apoll), GFP_ATOMIC);
- 	if (unlikely(!apoll))
--		return false;
-+		return IO_APOLL_ABORTED;
- 	apoll->double_poll = NULL;
- 
- 	req->flags |= REQ_F_POLLED;
-@@ -5203,12 +5209,14 @@ static bool io_arm_poll_handler(struct io_kiocb *req)
- 	if (ret || ipt.error) {
- 		io_poll_remove_double(req);
- 		spin_unlock_irq(&ctx->completion_lock);
--		return false;
-+		if (ret)
-+			return IO_APOLL_READY;
-+		return IO_APOLL_ABORTED;
- 	}
- 	spin_unlock_irq(&ctx->completion_lock);
- 	trace_io_uring_poll_arm(ctx, req, req->opcode, req->user_data,
- 				mask, apoll->poll.events);
--	return true;
-+	return IO_APOLL_OK;
- }
- 
- static bool __io_poll_remove_one(struct io_kiocb *req,
-@@ -6437,6 +6445,7 @@ static void __io_queue_sqe(struct io_kiocb *req)
- 	struct io_kiocb *linked_timeout = io_prep_linked_timeout(req);
- 	int ret;
- 
-+issue_sqe:
- 	ret = io_issue_sqe(req, IO_URING_F_NONBLOCK|IO_URING_F_COMPLETE_DEFER);
- 
- 	/*
-@@ -6456,12 +6465,16 @@ static void __io_queue_sqe(struct io_kiocb *req)
- 			io_put_req(req);
- 		}
- 	} else if (ret == -EAGAIN && !(req->flags & REQ_F_NOWAIT)) {
--		if (!io_arm_poll_handler(req)) {
-+		switch (io_arm_poll_handler(req)) {
-+		case IO_APOLL_READY:
-+			goto issue_sqe;
-+		case IO_APOLL_ABORTED:
- 			/*
- 			 * Queued up for async execution, worker will release
- 			 * submit reference when the iocb is actually submitted.
- 			 */
- 			io_queue_async_work(req);
-+			break;
- 		}
- 	} else {
- 		io_req_complete_failed(req, ret);
 -- 
-2.32.0
+Jens Axboe
 

@@ -2,30 +2,36 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 26D683B0D25
-	for <lists+io-uring@lfdr.de>; Tue, 22 Jun 2021 20:45:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28DEC3B0D3B
+	for <lists+io-uring@lfdr.de>; Tue, 22 Jun 2021 20:53:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230146AbhFVSr5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 22 Jun 2021 14:47:57 -0400
-Received: from cloud48395.mywhc.ca ([173.209.37.211]:51454 "EHLO
+        id S232582AbhFVSzp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 22 Jun 2021 14:55:45 -0400
+Received: from cloud48395.mywhc.ca ([173.209.37.211]:35734 "EHLO
         cloud48395.mywhc.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232021AbhFVSrz (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 22 Jun 2021 14:47:55 -0400
-Received: from [173.237.58.148] (port=33330 helo=localhost)
+        with ESMTP id S230338AbhFVSzo (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 22 Jun 2021 14:55:44 -0400
+Received: from modemcable064.203-130-66.mc.videotron.ca ([66.130.203.64]:33440 helo=[192.168.1.179])
         by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94.2)
         (envelope-from <olivier@trillion01.com>)
-        id 1lvlOu-0002UE-Si; Tue, 22 Jun 2021 14:45:33 -0400
-Date:   Tue, 22 Jun 2021 11:45:31 -0700
+        id 1lvlWZ-0002m9-QI; Tue, 22 Jun 2021 14:53:27 -0400
+Message-ID: <b056b26aec5abad8e4e06aae84bd9a5bfe5f43da.camel@trillion01.com>
+Subject: Re: [PATCH 1/2] io_uring: Fix race condition when sqp thread goes
+ to sleep
 From:   Olivier Langlois <olivier@trillion01.com>
 To:     Jens Axboe <axboe@kernel.dk>,
         Pavel Begunkov <asml.silence@gmail.com>,
         io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Olivier Langlois <olivier@trillion01.com>
-Message-Id: <c05f957a5b5675a0b401e211065e08255014232c.1624387080.git.olivier@trillion01.com>
-In-Reply-To: <cover.1624387080.git.olivier@trillion01.com>
+Date:   Tue, 22 Jun 2021 14:53:27 -0400
+In-Reply-To: <67c806d0bcf2e096c1b0c7e87bd5926c37231b87.1624387080.git.olivier@trillion01.com>
 References: <cover.1624387080.git.olivier@trillion01.com>
-Subject: [PATCH 2/2] io_uring: Create define to modify a SQPOLL parameter
+         <67c806d0bcf2e096c1b0c7e87bd5926c37231b87.1624387080.git.olivier@trillion01.com>
+Organization: Trillion01 Inc
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.40.2 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
 X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
 X-AntiAbuse: Original Domain - vger.kernel.org
@@ -40,41 +46,15 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The magic number used to cap the number of entries extracted from an
-io_uring instance SQ before moving to the other instances is an
-interesting parameter to experiment with.
+On Tue, 2021-06-22 at 11:45 -0700, Olivier Langlois wrote:
+> If an asynchronous completion happens before the task is preparing
+> itself to wait and set its state to TASK_INTERRUPTABLE, the
+> completion
+> will not wake up the sqp thread.
+> 
+I have just noticed that I made a typo in the description. I will send
+a v2 of that patch.
 
-A define has been created to make it easy to change its value from a
-single location.
+Sorry about that. I was too excited to share my discovery...
 
-Signed-off-by: Olivier Langlois <olivier@trillion01.com>
----
- fs/io_uring.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 02f789e07d4c..3f271bd7726b 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -89,6 +89,7 @@
- 
- #define IORING_MAX_ENTRIES	32768
- #define IORING_MAX_CQ_ENTRIES	(2 * IORING_MAX_ENTRIES)
-+#define IORING_SQPOLL_CAP_ENTRIES_VALUE 8
- 
- /*
-  * Shift of 9 is 512 entries, or exactly one page on 64-bit archs
-@@ -6797,8 +6798,8 @@ static int __io_sq_thread(struct io_ring_ctx *ctx, bool cap_entries)
- 
- 	to_submit = io_sqring_entries(ctx);
- 	/* if we're handling multiple rings, cap submit size for fairness */
--	if (cap_entries && to_submit > 8)
--		to_submit = 8;
-+	if (cap_entries && to_submit > IORING_SQPOLL_CAP_ENTRIES_VALUE)
-+		to_submit = IORING_SQPOLL_CAP_ENTRIES_VALUE;
- 
- 	if (!list_empty(&ctx->iopoll_list) || to_submit) {
- 		unsigned nr_events = 0;
--- 
-2.32.0
 

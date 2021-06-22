@@ -2,66 +2,67 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 79B303B0EF2
-	for <lists+io-uring@lfdr.de>; Tue, 22 Jun 2021 22:45:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 67B963B0EFC
+	for <lists+io-uring@lfdr.de>; Tue, 22 Jun 2021 22:51:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229625AbhFVUre (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 22 Jun 2021 16:47:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47312 "EHLO
+        id S229629AbhFVUyA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 22 Jun 2021 16:54:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48700 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229567AbhFVUre (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 22 Jun 2021 16:47:34 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC509C061574;
-        Tue, 22 Jun 2021 13:45:16 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id n7so158680wri.3;
-        Tue, 22 Jun 2021 13:45:16 -0700 (PDT)
+        with ESMTP id S229501AbhFVUx7 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 22 Jun 2021 16:53:59 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85184C061574;
+        Tue, 22 Jun 2021 13:51:43 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id m18so179263wrv.2;
+        Tue, 22 Jun 2021 13:51:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=to:references:from:subject:message-id:date:user-agent:mime-version
          :in-reply-to:content-language:content-transfer-encoding;
-        bh=oJKHAUVoWMvgZKaBkUowP7jbYxwJkBTpJAJrtLjjKQk=;
-        b=p7yWCBJM6f2Q0GP/YKsRi5+XPpTdu9Aa3H9rDSEH+e5NQ4y5//2txanDgqHnlQ4wmc
-         Sw3Oe+OvmniZmYA0/hxMGuNvzpgKg/S7jbflsKvqfIBnc7vcQLWZ2ehaaxKvrqiXAFu9
-         s4KCBxGZ9ZyjMZbwO09Fq2Ohw0u76FKuySaAuRrp/BTRmGYTpzINuSoxsglzpJbUnl4j
-         Jk8lHexWtj4iauR+TJ3i2bA1dUSggAlhObx6VxZpE2AF+IUw9htYbPGvJNtC+t/Nh5ji
-         Tm1SBNqLCh84eRpxWQXzvMpwaa6QJ3+gxKoRq8PsbFKHAIvmCq8raRrxLMcnkoVcZbB6
-         AHIQ==
+        bh=DgOLw28e+RF+tP0cv3IOtjcn7zPRzgkIPJom+SKiGLI=;
+        b=PB/2RHjRbZ0ATGIzOOKkLzEQqvqfI6ZXKQRR6ucewyFed+jCitpouOO6XZhaMUf18g
+         IlCXJs64GBPoOp1Ov1gtGMQw+rkxIhGsiOb5WVy7wYJBKtDgGu6bl2TGFBN0cC3m0duj
+         cZfIDTRidRFsXJnSQjHCOcZIeGLY0QGSFQAP3mjwi0ZbTBRKaQX7WYa3VV9938vmfd+T
+         3cfpu8yHFiQlmlYUvul+JJOX4ush4Q/PGqu3qrK5Oqk7cHOWul09A3IyhgT7rsUmx/JO
+         qZVltQVxGY1AdnNUkyQYReeYel9W6/zpUGQiGDX+KeJ0fz6xIjGGIyZDvtwp7d9yDSPZ
+         dqMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:to:references:from:subject:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=oJKHAUVoWMvgZKaBkUowP7jbYxwJkBTpJAJrtLjjKQk=;
-        b=tbn9ImiQn/O8frlGyl1xD935GUOD/fIJpXNtnrgRwlKJinAvZyYKGZOKOtJZZ7VWw6
-         09Fs/NvyUJ5FQLMQo7ZawE6dSXnxqkUk8u7/VC5FYYrV0byUrwYzTKtRSo6dN1CQ0mUN
-         aIUhbWodMkoDKVZc+tIfeanKBSbP4EzYny5sSayP8gaHgL2FR1sWAUDUtu5c9m3MUS0f
-         htqwIOLaPA7dqR5Is32bthw8AOoXraKwj8IZBizK6kbJ3NN9RVtREReNuSZLwXtDXxVa
-         TlJiJ89F8Yu0CwvKxlwiKGtCBw9gPtNki3GjctkDM/PZvkEwg/jgE56UD73qCM4TmZ8J
-         3mxw==
-X-Gm-Message-State: AOAM530+c6WrDem8kGpw//H5Yj7pvlms/Agkp3DwriZDaeMlmdv5GIT7
-        vWwUG51GtDgVV4YkSr3QGTZgpBCty2rIqhZe
-X-Google-Smtp-Source: ABdhPJx7gGPhZp0ZFB4BT3yFnG0FJiIgsXQ7ziAi8azQqZtOpNdfEvrwjGNXp7Eeh2Fow047Z1+gdA==
-X-Received: by 2002:a05:6000:1c1:: with SMTP id t1mr7151808wrx.282.1624394715000;
-        Tue, 22 Jun 2021 13:45:15 -0700 (PDT)
+        bh=DgOLw28e+RF+tP0cv3IOtjcn7zPRzgkIPJom+SKiGLI=;
+        b=nixCZhSUn+2D+jaIoKhAKsDurNdf1zOd39qY6CHG6XEypKQO1h8mgJ+I9Q1+hhX+n8
+         8GVslz18QNsO2LoKWB9apDbMfPPz9fb9uElV/W0YVFWLv6iwUrcQBAG2PAYHajvX8KdT
+         CcvrS2yRGzAa+Wqj3CJs01EeTD3Xu3IKSp1tLR2QXhzsZsZzSCkEZh8Cb1M85OmgM5yG
+         xNFZodDGzN+KRoM6r9DOsCIqjFgk28UglgexHVu5TpvdgEQGniRDpNOkxc/q7ydWDhNA
+         1Zi1OcP/eQPFf2OspMP8vP2yrrYPYkk8pgJqfgrW24tWEEB05yTCFHbpN3/y8cY4PH7y
+         jPlg==
+X-Gm-Message-State: AOAM533vdXbXhTWNPnFrQU00S1JKwOCWmuuZtm8sShZOE7F6Tla6eBJS
+        RzCOh/EyILiQCk4r+phoIcPjfSxeQSuT2n37
+X-Google-Smtp-Source: ABdhPJxhpytYem6NUvri3WoqqTfba47IEEXW9a6EEzKXzPyGwJfwXaKP0jj8O8OJCkkphXe3bOELzA==
+X-Received: by 2002:a5d:4904:: with SMTP id x4mr7075961wrq.202.1624395102003;
+        Tue, 22 Jun 2021 13:51:42 -0700 (PDT)
 Received: from [192.168.8.197] ([148.252.132.93])
-        by smtp.gmail.com with ESMTPSA id q19sm3394293wmc.44.2021.06.22.13.45.14
+        by smtp.gmail.com with ESMTPSA id e15sm461965wrm.60.2021.06.22.13.51.41
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Jun 2021 13:45:14 -0700 (PDT)
+        Tue, 22 Jun 2021 13:51:41 -0700 (PDT)
 To:     Olivier Langlois <olivier@trillion01.com>,
         Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <67c806d0bcf2e096c1b0c7e87bd5926c37231b87.1624387080.git.olivier@trillion01.com>
- <60d23218.1c69fb81.79e86.f345SMTPIN_ADDED_MISSING@mx.google.com>
+References: <9e8441419bb1b8f3c3fcc607b2713efecdef2136.1624364038.git.olivier@trillion01.com>
+ <678deb93-c4a5-5a14-9687-9e44f0f00b5a@gmail.com>
+ <7c47078a-9e2d-badf-a47d-1ca78e1a3253@gmail.com>
+ <32495917a028e9c70b75357029a87ca593378dde.camel@trillion01.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-Subject: Re: [PATCH 1/2 v2] io_uring: Fix race condition when sqp thread goes
- to sleep
-Message-ID: <dcc24da6-33d6-ce71-8c87-f0ef4e7f8006@gmail.com>
-Date:   Tue, 22 Jun 2021 21:45:00 +0100
+Subject: Re: [PATCH v4] io_uring: reduce latency by reissueing the operation
+Message-ID: <1a6a8eba-96e3-0afb-0357-3ac3b08cba36@gmail.com>
+Date:   Tue, 22 Jun 2021 21:51:28 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.1
 MIME-Version: 1.0
-In-Reply-To: <60d23218.1c69fb81.79e86.f345SMTPIN_ADDED_MISSING@mx.google.com>
+In-Reply-To: <32495917a028e9c70b75357029a87ca593378dde.camel@trillion01.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -69,41 +70,70 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/22/21 7:55 PM, Olivier Langlois wrote:
-> If an asynchronous completion happens before the task is preparing
-> itself to wait and set its state to TASK_INTERRUPTIBLE, the completion
-> will not wake up the sqp thread.
+On 6/22/21 8:05 PM, Olivier Langlois wrote:
+> On Tue, 2021-06-22 at 19:01 +0100, Pavel Begunkov wrote:
+>> On 6/22/21 6:54 PM, Pavel Begunkov wrote:
+>>> On 6/22/21 1:17 PM, Olivier Langlois wrote:
+>>>>
+>>>
+>>>>  static bool __io_poll_remove_one(struct io_kiocb *req,
+>>>> @@ -6437,6 +6445,7 @@ static void __io_queue_sqe(struct io_kiocb
+>>>> *req)
+>>>>         struct io_kiocb *linked_timeout =
+>>>> io_prep_linked_timeout(req);
+>>>>         int ret;
+>>>>  
+>>>> +issue_sqe:
+>>>>         ret = io_issue_sqe(req,
+>>>> IO_URING_F_NONBLOCK|IO_URING_F_COMPLETE_DEFER);
+>>>>  
+>>>>         /*
+>>>> @@ -6456,12 +6465,16 @@ static void __io_queue_sqe(struct
+>>>> io_kiocb *req)
+>>>>                         io_put_req(req);
+>>>>                 }
+>>>>         } else if (ret == -EAGAIN && !(req->flags &
+>>>> REQ_F_NOWAIT)) {
+>>>> -               if (!io_arm_poll_handler(req)) {
+>>>> +               switch (io_arm_poll_handler(req)) {
+>>>> +               case IO_APOLL_READY:
+>>>> +                       goto issue_sqe;
+>>>> +               case IO_APOLL_ABORTED:
+>>>>                         /*
+>>>>                          * Queued up for async execution, worker
+>>>> will release
+>>>>                          * submit reference when the iocb is
+>>>> actually submitted.
+>>>>                          */
+>>>>                         io_queue_async_work(req);
+>>>> +                       break;
+>>>
+>>> Hmm, why there is a new break here? It will miscount
+>>> @linked_timeout
+>>> if you do that. Every io_prep_linked_timeout() should be matched
+>>> with
+>>> io_queue_linked_timeout().
+>>
+>> Never mind, I said some nonsense and apparently need some coffee
 > 
-> Signed-off-by: Olivier Langlois <olivier@trillion01.com>
-> ---
->  fs/io_uring.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> but this is a pertinant question, imho. I guess that you could get away
+
+It appeared to me that it doesn't go down to the end of the function
+but returns or so, that's the nonsense part.
+
+> without it since it is the last case of the switch statement... I am
+> not sure what kernel coding standard says about that.
+
+breaks are preferable, and falling through should be explicitly
+marked with fallthrough;
+ 
+> However, I can tell you that there was also a break statement at the
+> end of the case for IO_APOLL_READY and checkpatch.pl did complain about
+> it saying that it was useless since it was following a goto statement.
+> Therefore, I did remove that one.
 > 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index fc8637f591a6..02f789e07d4c 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -6902,7 +6902,7 @@ static int io_sq_thread(void *data)
->  		}
->  
->  		prepare_to_wait(&sqd->wait, &wait, TASK_INTERRUPTIBLE);
-> -		if (!io_sqd_events_pending(sqd)) {
-> +		if (!io_sqd_events_pending(sqd) && !current->task_works) {
-
-Agree that it should be here, but we also lack a good enough
-task_work_run() around, and that may send the task burn CPU
-for a while in some cases. Let's do
-
-if (!io_sqd_events_pending(sqd) && !io_run_task_work())
-   ...
-
-fwiw, no need to worry about TASK_INTERRUPTIBLE as
-io_run_task_work() sets it to TASK_RUNNING.
-
->  			needs_sched = true;
->  			list_for_each_entry(ctx, &sqd->ctx_list, sqd_list) {
->  				io_ring_set_wakeup_flag(ctx);
-> 
+> checkpatch.pl did remain silent about the other remaining break. Hence
+> this is why I left it there.
 
 -- 
 Pavel Begunkov

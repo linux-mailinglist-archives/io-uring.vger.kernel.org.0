@@ -2,55 +2,55 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 873DF3B1374
-	for <lists+io-uring@lfdr.de>; Wed, 23 Jun 2021 07:50:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 412203B13BB
+	for <lists+io-uring@lfdr.de>; Wed, 23 Jun 2021 08:09:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230031AbhFWFxJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 23 Jun 2021 01:53:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54994 "EHLO
+        id S229665AbhFWGMG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 23 Jun 2021 02:12:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59254 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230030AbhFWFxI (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 23 Jun 2021 01:53:08 -0400
-Received: from mail-qk1-x736.google.com (mail-qk1-x736.google.com [IPv6:2607:f8b0:4864:20::736])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AACEAC061760;
-        Tue, 22 Jun 2021 22:50:50 -0700 (PDT)
-Received: by mail-qk1-x736.google.com with SMTP id j184so2284338qkd.6;
-        Tue, 22 Jun 2021 22:50:50 -0700 (PDT)
+        with ESMTP id S229660AbhFWGMF (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 23 Jun 2021 02:12:05 -0400
+Received: from mail-qk1-x72a.google.com (mail-qk1-x72a.google.com [IPv6:2607:f8b0:4864:20::72a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D98AC061574;
+        Tue, 22 Jun 2021 23:09:48 -0700 (PDT)
+Received: by mail-qk1-x72a.google.com with SMTP id g4so2438784qkl.1;
+        Tue, 22 Jun 2021 23:09:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Db9qL5zTy0vsw0mjnrEBmE6Fe+DWbh68J6ElSvEbrrU=;
-        b=ZXXoeKVebL472OQjgKRoVEHKKlWImzt2vhsobsy1f7UPobKcKKrCj1LFjffAvN0usu
-         U0402v0CjGco9Lcxk+JrIWYN501JdtZChlbovp78iUK7FAvaSNS9913tiI5KuaHr0L57
-         Azj/w2W/iu2KqzgxVI/1OA08uTu9Jvunxi6dFNC/jYtEdynMKmtvCOXHq0OxZA6WoDFm
-         8APYCPWRgay0Odyn/ik8z6/iEWYiKiVpCImbp/FOs6OfFQCrVBjq+d+5EvQCzCkbjh9k
-         ZTrV8o/FFU/DGk/C1W6mZVMUgpznnrwQUgYL9wdRCVJZisrllaREJaPcIxLe2PRqGEEh
-         miQg==
+        bh=YRY58gbIUIlCY/rSeJH8+ECPvoOOlIlyVFcl07+b0VE=;
+        b=oAl+gHuPuyxhk0ycCrQAeSI+2LOuzcsXDEaVsaAHf1DKs90x4McVLecNeVjAMnt9DL
+         56PproESoucKHYIfpIMJB0UzpX1P7OJyPGAsMADJwOfOV+M1AcbLnGn7uEHnSVV5FdCC
+         DfywV+8b0i14KdYV1m3kzTe5lwcaAjnUPlg27U+Yc+3df5Wmy+5+li7Sb5JYCCf6n5rQ
+         cdCvoKqw7DM2ekek2TDxuFGjF4bnqwl5LirmJMKYoz/3EHTg7cXi0pmA/XiAa8xfHJyy
+         JkeGvMx8FlOwwyVKBIm2rXDmddsuefAIlJlJwuMa4rsECnTsu0JySj3xmkqPpTV7xFHt
+         U+kA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Db9qL5zTy0vsw0mjnrEBmE6Fe+DWbh68J6ElSvEbrrU=;
-        b=M40VIuytTQ5iKxoGqtjBL961tck706cIOOZfQW962oSOjd0VWQZcADyjLi9k39LVv1
-         fFcHtSK6cR0NWFVj9FS4nh9JU0jckGGaopPgZXtZf0ADvYATVbQGe6+0Ou/k+n9JT/oC
-         lZDhOO96E8a6iJcj6oi+PRPqIGKS5lrOc/tnNuQf0jIQhMfjRaKIBKZsoV68xNj8jxq2
-         jdAgaj11zUojLD78tFw7opcTpjDPT8RhGwBXkw0vjRcS68ZsZeHrc4puWnAfYXd3Dlr/
-         ZNyNAfBkFuM++UAyM7UGNvg/fYkkPr/+kv3yCwka6cVu0EC/M+zAmSEQn6dgj3cjUk8E
-         vDQw==
-X-Gm-Message-State: AOAM533FCfur/3vIOczRA80uqoGc+1t6fR7KlC+udnFW5r7YhD0OF72h
-        Qjd9Dnl6cdfRv798j6WicHSb3a6EviqPfVxMLFU=
-X-Google-Smtp-Source: ABdhPJzA1PxPe+tOzutMwgPur5Wei4yiGjyczfxCn/IQJSOTIEncYIcACovNKdEQysqpD5wIXpyRzqaN3XjGG+MNQpE=
-X-Received: by 2002:a25:dfd0:: with SMTP id w199mr9969829ybg.337.1624427449954;
- Tue, 22 Jun 2021 22:50:49 -0700 (PDT)
+        bh=YRY58gbIUIlCY/rSeJH8+ECPvoOOlIlyVFcl07+b0VE=;
+        b=mXAEH7WP7tHNqgswn9cf2tU7YjEImVJNqHFvFhKc7rfJKFde+roPmTFyejvfNyhj3U
+         aFZWM++tTGTQ7vmlFf7ct5HBjvNkDIgkSLmPP2mRxHnVfXgoQ7DB15RUpRP/BFBOZu1K
+         HwgHzGiKIyiTF3sP2U3E4dcL7LHEzZIWbFlnJe6wZZw+GCwkk7AfbX/8qD2An+t629om
+         jnqP91Wv/sG8csjaSrl0hZ1vvT4Tb2wkVCu/q1fq/Fl0/aAi9XklKeQOQLjJiR4Z60m8
+         tZIz2i7yo4/So6bPpSga4Fq/mITdNvTklRtcyeQKmVtxFYshc/R6rHDS2ZZ/k0iEd0t3
+         CsSg==
+X-Gm-Message-State: AOAM532dp4HNkOelKn9rTgTkYT98+Zt6CyCp2REIDqLE0LFbygI740mH
+        Gx+D3VZsqhaXz4THTrWF4sRaN+WRGfkEJdBygJA=
+X-Google-Smtp-Source: ABdhPJx153FvDFQv9ts7odmVICh/Wp24UD3HKCV3iA4vi8zsKjxYyXYLvJ8CEwpXyGbQgtTDo70et6+3AOlxcE9Wwps=
+X-Received: by 2002:a5b:ac1:: with SMTP id a1mr10464021ybr.289.1624428587786;
+ Tue, 22 Jun 2021 23:09:47 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210603051836.2614535-1-dkadashev@gmail.com> <20210603051836.2614535-3-dkadashev@gmail.com>
- <f45781a8-234e-af92-e73d-a6453bd24f16@gmail.com>
-In-Reply-To: <f45781a8-234e-af92-e73d-a6453bd24f16@gmail.com>
+References: <20210603051836.2614535-1-dkadashev@gmail.com> <20210603051836.2614535-10-dkadashev@gmail.com>
+ <77b4b24f-b905-ed36-b70e-657f08de7fd1@gmail.com>
+In-Reply-To: <77b4b24f-b905-ed36-b70e-657f08de7fd1@gmail.com>
 From:   Dmitry Kadashev <dkadashev@gmail.com>
-Date:   Wed, 23 Jun 2021 12:50:39 +0700
-Message-ID: <CAOKbgA7VuG9JqgrGeSD_N7GTZBnocSnWCpGrcrodxWPq7+k47g@mail.gmail.com>
-Subject: Re: [PATCH v5 02/10] io_uring: add support for IORING_OP_MKDIRAT
+Date:   Wed, 23 Jun 2021 13:09:36 +0700
+Message-ID: <CAOKbgA71puEF4Te+svaRD1MRYEpkQOLigq5xQu85Ch4rDO7_Rw@mail.gmail.com>
+Subject: Re: [PATCH v5 09/10] io_uring: add support for IORING_OP_LINKAT
 To:     Pavel Begunkov <asml.silence@gmail.com>
 Cc:     Jens Axboe <axboe@kernel.dk>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -61,16 +61,64 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Jun 23, 2021 at 12:41 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
+On Tue, Jun 22, 2021 at 6:48 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
 >
 > On 6/3/21 6:18 AM, Dmitry Kadashev wrote:
-> > IORING_OP_MKDIRAT behaves like mkdirat(2) and takes the same flags
-> > and arguments.
+> > IORING_OP_LINKAT behaves like linkat(2) and takes the same flags and
+> > arguments.
+> >
+> > In some internal places 'hardlink' is used instead of 'link' to avoid
+> > confusion with the SQE links. Name 'link' conflicts with the existing
+> > 'link' member of io_kiocb.
+> >
+> > Suggested-by: Christian Brauner <christian.brauner@ubuntu.com>
+> > Link: https://lore.kernel.org/io-uring/20210514145259.wtl4xcsp52woi6ab@wittgenstein/
+> > Signed-off-by: Dmitry Kadashev <dkadashev@gmail.com>
+> > ---
+> >  fs/internal.h                 |  2 ++
+> >  fs/io_uring.c                 | 67 +++++++++++++++++++++++++++++++++++
+> >  fs/namei.c                    |  2 +-
+> >  include/uapi/linux/io_uring.h |  2 ++
+> >  4 files changed, 72 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/fs/internal.h b/fs/internal.h
+> > index 3b3954214385..15a7d210cc67 100644
+> > --- a/fs/internal.h
+> > +++ b/fs/internal.h
 >
-> Jens, a fold-in er discussed, and it will get you
-> a conflict at 8/10
+> [...]
+> > +
+> > +static int io_linkat(struct io_kiocb *req, int issue_flags)
+> > +{
+> > +     struct io_hardlink *lnk = &req->hardlink;
+> > +     int ret;
+> > +
+> > +     if (issue_flags & IO_URING_F_NONBLOCK)
+> > +             return -EAGAIN;
+> > +
+> > +     ret = do_linkat(lnk->old_dfd, lnk->oldpath, lnk->new_dfd,
+> > +                             lnk->newpath, lnk->flags);
+>
+> I'm curious, what's difference b/w SYMLINK and just LINK that
+> one doesn't use old_dfd and another does?
 
-Thanks, Pavel
+Symlink's content does not have to exist, it's pretty much an arbitrary string.
+E.g. try `ln -s http://example.com/ foo` :)
+
+> Can it be supported/wished by someone in the future?
+
+I don't really know. I guess it could be imagined that someone wants to try and
+resolve the full target name against some dfd. But to me the whole idea looks
+inherently problematic. Accepting the old dfd feels like the path is going to
+be resolved, and historically it is not the case, and we'd need a special dfd
+value to mean "do not resolve", and AT_FDCWD won't work for this (since it
+means "resolve against the CWD", not "do not resolve").
+
+> In that case I'd rather reserve and verify a field for old_dfd for both, even
+> if one won't really support it for now.
+
+If I understand you correctly, at this point you mean just checking that
+old_dfd is not set (i.e. == -1)? I'll add a check.
 
 -- 
 Dmitry Kadashev

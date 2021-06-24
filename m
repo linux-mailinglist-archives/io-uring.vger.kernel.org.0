@@ -2,51 +2,51 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D02F3B2D84
-	for <lists+io-uring@lfdr.de>; Thu, 24 Jun 2021 13:15:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F2263B2D86
+	for <lists+io-uring@lfdr.de>; Thu, 24 Jun 2021 13:15:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232438AbhFXLRf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 24 Jun 2021 07:17:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56248 "EHLO
+        id S232421AbhFXLRg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 24 Jun 2021 07:17:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232421AbhFXLRb (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Jun 2021 07:17:31 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F3EAC061574;
-        Thu, 24 Jun 2021 04:15:12 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id d16so9615011lfn.3;
-        Thu, 24 Jun 2021 04:15:12 -0700 (PDT)
+        with ESMTP id S232338AbhFXLRd (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Jun 2021 07:17:33 -0400
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15C3BC061756;
+        Thu, 24 Jun 2021 04:15:14 -0700 (PDT)
+Received: by mail-lj1-x234.google.com with SMTP id f13so7208440ljp.10;
+        Thu, 24 Jun 2021 04:15:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=L2KbzsLRkfXUNVSPy7TFTX4HqFkjy2iFgmcesZmodrg=;
-        b=BSGo4b7VCQS1gF53MLnCET69aQIZx2s3Pw33dnaeODLCV63de/FDNU7zavQgHvO+5v
-         hEdq9PbHtSknuEQMI/8AYjPcY81bUMkDiG4B2MQb30ETS3uDK3XgUdVBytuQDdAwhFf6
-         59ydi3e9d6Zt4soPiQ1fyrDVIDZL8Au7fFkwtNxHlVJAq3P/jyfGGybQXm9ladnWUPFq
-         v10DWKn8Ldm09D0L/LcsuYjvOlsH+rBPKWsZ2FVfbq37hVCmFwm9Y5GvgC/6k+KIOgoF
-         IUGGzNHHFSQj+MZpx0o9pE1cnW5NRWxh7O2TBLUJjfn48/QOdGk8DUoqlFkk6QK4ruI5
-         57Ew==
+        bh=cjY5NIv8T/UjPF6/khgDh63aie+4OSg4ezXbryOnIVo=;
+        b=iPq9xrKb0sRL7Yr9n1OmNxiPLN2GfT6ZyRhYwm7ARhlN0/DRkMHt2sFM7RGXlgBmCV
+         IMFjahnn5wtgJUJI47fapqOkiwwIjs4A9WEJ6fG6zbw0TWz6faa7a7bonY5Hvlsv5GR/
+         h0QzJ85j9RBHBPEY/bKHGnMq4gL+WdMZa0qY4g5eRaVCH60XEJCCUF0vp5AmMt+HpTm7
+         8mFcQbensaJuqiymZ32luFOi7inXI6IW23lUhUPqFgTabKGovtPwlyaiy7W3fGQrGtXM
+         LmKtKpxjgM+dLRRuKjBDkqrFbnfxDYWxv9GeF5YyesWUq+4B8xHMJoYJNK+wEMpdvr2N
+         2/Iw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=L2KbzsLRkfXUNVSPy7TFTX4HqFkjy2iFgmcesZmodrg=;
-        b=SGNun0SbG7OnCF5Ax9slR/t7dZUcGCa3CQ1fdyUP+It0aiIKF4798FR+yDMhkx2PIQ
-         90/IUM9Nsv3SCgurqnZM0NmSAe5X8tqsu3b1OXQRSdzALR7NMvuSBX7G7I4JC5FP/spV
-         qQ+r3LrQnh+9cM5rEPqNsuo8F2dCMyipiwjV/uAfvqgOCcvV+VUQOrmwiBS4nIUSRnV4
-         UPHxewEs7BV11IXXLL1R53yHD3JFpPTgLNYmSbjwakdTrezrv6lfmhq58WMb83Dh0DXN
-         lsQlHkO3cP85zscnokeRzwc6ubhOsKyWRRI3S6jHO+IKh/0QHcQ1FDhLPZYJtBMcjZTB
-         h/zg==
-X-Gm-Message-State: AOAM532tJKxIpFZXdycez0J3fdp5cDWQosUpxN6MiBfYH7clsEHbKuUq
-        Vc+nEM5Jw995qBtdrn2cFWw=
-X-Google-Smtp-Source: ABdhPJxrjV8b5v3JrHUurMP5IS4mnUdZN3dELmfIr2Xm31ltf7lYeL7ggZMu1SUHkEJHjgjA1cBFHw==
-X-Received: by 2002:a05:6512:169f:: with SMTP id bu31mr3484958lfb.486.1624533311049;
-        Thu, 24 Jun 2021 04:15:11 -0700 (PDT)
+        bh=cjY5NIv8T/UjPF6/khgDh63aie+4OSg4ezXbryOnIVo=;
+        b=KhMOIi2uA3U6a5QQbi0CWWw8WchlRwQKGijqhbpzzKtjJpYG1puh+wHsZCQmqIY8x+
+         Zz60CUzDvDDK4wDkN5xHFJLdAW9cVt9USSxdBxkfjgHVGXYHGWpuYET8+Rh4iqq3XWAi
+         2YDgoYLHIZowBXCIFdQ2JgHQWpxd3pGElZOmT8mCwdkNv9FHiv6sTL6lwEtkMJOduLHR
+         NOsE+lMa94bnLpGlL3U91vv977Glg5vlTeSvbXXmlUbWR1A2D+nJ/fIqEvlLddMxt8Nm
+         Rm2ZqylYnBOhV+aBzkLTDUghzUEkO53hPDNp3uTULkLmew2QfGZainaNfaox+AJUOmRh
+         30Cw==
+X-Gm-Message-State: AOAM530UrvsmsoCVuBDUvaovMFZQowc1ZBuK6QghZlBP4REOGMwkHSc2
+        6VDrN3BhCWVV7OQ1MwUrCiU=
+X-Google-Smtp-Source: ABdhPJxku+acLC+qRFUlPCKbuqqKavPd77Hh1oluLVaX7b7XEZQu2t7SgzsHbaqTBdNQSbvIdp+1vA==
+X-Received: by 2002:a2e:8941:: with SMTP id b1mr3566449ljk.284.1624533312471;
+        Thu, 24 Jun 2021 04:15:12 -0700 (PDT)
 Received: from carbon.v ([94.143.149.146])
-        by smtp.googlemail.com with ESMTPSA id q21sm195293lfp.233.2021.06.24.04.15.09
+        by smtp.googlemail.com with ESMTPSA id q21sm195293lfp.233.2021.06.24.04.15.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jun 2021 04:15:10 -0700 (PDT)
+        Thu, 24 Jun 2021 04:15:11 -0700 (PDT)
 From:   Dmitry Kadashev <dkadashev@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -54,9 +54,9 @@ To:     Jens Axboe <axboe@kernel.dk>,
 Cc:     Pavel Begunkov <asml.silence@gmail.com>,
         linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
         Dmitry Kadashev <dkadashev@gmail.com>
-Subject: [PATCH v6 4/9] fs: make do_symlinkat() take struct filename
-Date:   Thu, 24 Jun 2021 18:14:47 +0700
-Message-Id: <20210624111452.658342-5-dkadashev@gmail.com>
+Subject: [PATCH v6 5/9] namei: add getname_uflags()
+Date:   Thu, 24 Jun 2021 18:14:48 +0700
+Message-Id: <20210624111452.658342-6-dkadashev@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210624111452.658342-1-dkadashev@gmail.com>
 References: <20210624111452.658342-1-dkadashev@gmail.com>
@@ -66,84 +66,82 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Pass in the struct filename pointers instead of the user string, for
-uniformity with the recently converted do_mkdnodat(), do_unlinkat(),
-do_renameat(), do_mkdirat().
+There are a couple of places where we already open-code the (flags &
+AT_EMPTY_PATH) check and io_uring will likely add another one in the
+future.  Let's just add a simple helper getname_uflags() that handles
+this directly and use it.
 
 Cc: Al Viro <viro@zeniv.linux.org.uk>
 Cc: Christian Brauner <christian.brauner@ubuntu.com>
-Link: https://lore.kernel.org/io-uring/20210330071700.kpjoyp5zlni7uejm@wittgenstein/
+Link: https://lore.kernel.org/io-uring/20210415100815.edrn4a7cy26wkowe@wittgenstein/
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 Signed-off-by: Dmitry Kadashev <dkadashev@gmail.com>
 Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
- fs/namei.c | 28 ++++++++++++++++------------
- 1 file changed, 16 insertions(+), 12 deletions(-)
+ fs/exec.c          | 8 ++------
+ fs/namei.c         | 8 ++++++++
+ include/linux/fs.h | 1 +
+ 3 files changed, 11 insertions(+), 6 deletions(-)
 
+diff --git a/fs/exec.c b/fs/exec.c
+index 18594f11c31f..df33ecaf2111 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -2069,10 +2069,8 @@ SYSCALL_DEFINE5(execveat,
+ 		const char __user *const __user *, envp,
+ 		int, flags)
+ {
+-	int lookup_flags = (flags & AT_EMPTY_PATH) ? LOOKUP_EMPTY : 0;
+-
+ 	return do_execveat(fd,
+-			   getname_flags(filename, lookup_flags, NULL),
++			   getname_uflags(filename, flags),
+ 			   argv, envp, flags);
+ }
+ 
+@@ -2090,10 +2088,8 @@ COMPAT_SYSCALL_DEFINE5(execveat, int, fd,
+ 		       const compat_uptr_t __user *, envp,
+ 		       int,  flags)
+ {
+-	int lookup_flags = (flags & AT_EMPTY_PATH) ? LOOKUP_EMPTY : 0;
+-
+ 	return compat_do_execveat(fd,
+-				  getname_flags(filename, lookup_flags, NULL),
++				  getname_uflags(filename, flags),
+ 				  argv, envp, flags);
+ }
+ #endif
 diff --git a/fs/namei.c b/fs/namei.c
-index 9fc981e28788..76572d703e82 100644
+index 76572d703e82..010455938826 100644
 --- a/fs/namei.c
 +++ b/fs/namei.c
-@@ -4189,23 +4189,23 @@ int vfs_symlink(struct user_namespace *mnt_userns, struct inode *dir,
+@@ -203,6 +203,14 @@ getname_flags(const char __user *filename, int flags, int *empty)
+ 	return result;
  }
- EXPORT_SYMBOL(vfs_symlink);
  
--static long do_symlinkat(const char __user *oldname, int newdfd,
--		  const char __user *newname)
-+static long do_symlinkat(struct filename *from, int newdfd,
-+		  struct filename *to)
++struct filename *
++getname_uflags(const char __user *filename, int uflags)
++{
++	int flags = (uflags & AT_EMPTY_PATH) ? LOOKUP_EMPTY : 0;
++
++	return getname_flags(filename, flags, NULL);
++}
++
+ struct filename *
+ getname(const char __user * filename)
  {
- 	int error;
--	struct filename *from;
- 	struct dentry *dentry;
- 	struct path path;
- 	unsigned int lookup_flags = 0;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index c3c88fdb9b2a..5885a68d2c12 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2781,6 +2781,7 @@ static inline struct file *file_clone_open(struct file *file)
+ extern int filp_close(struct file *, fl_owner_t id);
  
--	from = getname(oldname);
--	if (IS_ERR(from))
--		return PTR_ERR(from);
-+	if (IS_ERR(from)) {
-+		error = PTR_ERR(from);
-+		goto out_putboth;
-+	}
- retry:
--	dentry = user_path_create(newdfd, newname, &path, lookup_flags);
-+	dentry = __filename_create(newdfd, to, &path, lookup_flags);
- 	error = PTR_ERR(dentry);
- 	if (IS_ERR(dentry))
--		goto out_putname;
-+		goto out_putfrom;
- 
- 	error = security_path_symlink(&path, dentry, from->name);
- 	if (!error) {
-@@ -4220,20 +4220,24 @@ static long do_symlinkat(const char __user *oldname, int newdfd,
- 		lookup_flags |= LOOKUP_REVAL;
- 		goto retry;
- 	}
--out_putname:
--	putname(from);
-+out_putboth:
-+	if (!IS_ERR(to))
-+		putname(to);
-+out_putfrom:
-+	if (!IS_ERR(from))
-+		putname(from);
- 	return error;
- }
- 
- SYSCALL_DEFINE3(symlinkat, const char __user *, oldname,
- 		int, newdfd, const char __user *, newname)
- {
--	return do_symlinkat(oldname, newdfd, newname);
-+	return do_symlinkat(getname(oldname), newdfd, getname(newname));
- }
- 
- SYSCALL_DEFINE2(symlink, const char __user *, oldname, const char __user *, newname)
- {
--	return do_symlinkat(oldname, AT_FDCWD, newname);
-+	return do_symlinkat(getname(oldname), AT_FDCWD, getname(newname));
- }
- 
- /**
+ extern struct filename *getname_flags(const char __user *, int, int *);
++extern struct filename *getname_uflags(const char __user *, int);
+ extern struct filename *getname(const char __user *);
+ extern struct filename *getname_kernel(const char *);
+ extern void putname(struct filename *name);
 -- 
 2.30.2
 

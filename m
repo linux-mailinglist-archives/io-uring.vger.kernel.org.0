@@ -2,119 +2,181 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F25893B251D
-	for <lists+io-uring@lfdr.de>; Thu, 24 Jun 2021 04:37:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB4D53B2B4F
+	for <lists+io-uring@lfdr.de>; Thu, 24 Jun 2021 11:24:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229926AbhFXCkJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 23 Jun 2021 22:40:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53158 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229822AbhFXCkJ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 23 Jun 2021 22:40:09 -0400
-Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E839AC061756
-        for <io-uring@vger.kernel.org>; Wed, 23 Jun 2021 19:37:50 -0700 (PDT)
-Received: by mail-io1-xd2d.google.com with SMTP id b14so5980593iow.13
-        for <io-uring@vger.kernel.org>; Wed, 23 Jun 2021 19:37:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=nkwuDvE+HR2k4/KA2XLAmTJEvEnMjQTVG6B2OziO2Io=;
-        b=XYpvJ2kG8oTbE/NQ+W5zRpVdMNFnE9aGmKRIzIsx0+HZK+yLW97TXDBlRvQYDPkGZx
-         ygIhePJcvphFPv5PmOb1tqXA6s6fvRsm8hPq8Fi0udnVb2sCJyMDdDTJmeHpxRazdc17
-         bP1WP2oqFR2mXAPBFnabeg9q8dBK0g5/m+V6Ashpzq5YXm8Z7DrNa5QHXP4WPtKGlj89
-         l23tNhbl5Q3fbCYu8d+TRZ4N+DS5cSst5XNf+XaJNEOXrjLTikbfNG3o+f6ht4UxZCQS
-         XvO3LsKVg3yvllfWEXtgbYB95/ehcTx0lnwKvGwVYnphpYDb/z+ugEwmb41VAfBqz23p
-         Szcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=nkwuDvE+HR2k4/KA2XLAmTJEvEnMjQTVG6B2OziO2Io=;
-        b=tv49ERd6P+0wkmDrdtpeMKBhmk9aOgqBflsU9cznR7AY6wSyssVvL0APAk3I8Y0fmS
-         ue0fI4hdNFEEWJJbIhVGhEAzZHTNMxq84XXFbOFwhA5ZIynzzYlfQhkCTlj/tin1uRaP
-         z2I1BJZ+uKW+t3j5FvZtreFnQl3GIk7ABiyjKRoOnWSrzYJhSOSlsS2tooN19eWHnORS
-         zZV526xjeOWon8Ds7EcAwRUsPKA9uS+I26eE38VGvBwNdm0pUyeP3pPDcgzE6iCf4JPE
-         Rbl7rPsrPZHi1djX5FSmpRxWwe+tUU6X+XU4qEkUGohNkwsmSduvh+ul0HXDvlph6AaA
-         6/vg==
-X-Gm-Message-State: AOAM530mrwWVeLLe5haEp8BBqDbunKNdeXK2Bh4+VNojYHCnrbxI6XY0
-        Ozn9haB8JFYspDAXRfrW7EZN6w3+GSttRw==
-X-Google-Smtp-Source: ABdhPJyO1eFukgzlGGvAx8TjDVAbRx/xdCMSa3OgKVGIW3+Fs/vRyc+C9yDlWjbanO8eI+DMviQd+A==
-X-Received: by 2002:a05:6602:140e:: with SMTP id t14mr2195622iov.42.1624502270199;
-        Wed, 23 Jun 2021 19:37:50 -0700 (PDT)
-Received: from [192.168.1.134] ([198.8.77.61])
-        by smtp.gmail.com with ESMTPSA id t10sm940681ilq.88.2021.06.23.19.37.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Jun 2021 19:37:49 -0700 (PDT)
-Subject: Re: [PATCH v5 00/10] io_uring: add mkdir, [sym]linkat and mknodat
- support
-To:     Dmitry Kadashev <dkadashev@gmail.com>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        linux-fsdevel@vger.kernel.org, io-uring <io-uring@vger.kernel.org>
-References: <20210603051836.2614535-1-dkadashev@gmail.com>
- <ee7307f5-75f3-60d7-836e-830c701fe0e5@gmail.com>
- <0441443f-3f90-2d6c-20aa-92dc95a3f733@kernel.dk>
- <b41a9e48-e986-538e-4c21-0e2ad44ccb41@gmail.com>
- <53863cb2-8d58-27a1-a6a4-be41f6f5c606@kernel.dk>
- <CAOKbgA4POGxPdB02NsCac4p6MtC97q6M3pT09_FWWj41Uf3K2A@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <43b17e64-4c56-93d3-1724-2673d5b639f3@kernel.dk>
-Date:   Wed, 23 Jun 2021 20:37:47 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S230274AbhFXJ0r (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 24 Jun 2021 05:26:47 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:38178 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230039AbhFXJ0r (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Jun 2021 05:26:47 -0400
+Received: from imap.suse.de (imap-alt.suse-dmz.suse.de [192.168.254.47])
+        (using TLSv1.2 with cipher ECDHE-ECDSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id D48A421923;
+        Thu, 24 Jun 2021 09:24:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1624526667; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=il0/cwUtgiAD5jaqXCBVRaOIoH20XDAXjZdXMAfwrnc=;
+        b=dd1FQ/2wfsim+6JwpUX45Tb9p//E/WE/Q0+MjqRzmuzpoAKsuu3vXUya+UtVP4Uuf6XfHb
+        BvoYaA7fHO12kEWQryNc9LefuchyIsXMd2Wc35+P4DP+CCGeyMDGUrKlJJ3ow++sXsb0Wn
+        gcqBctD+00RqOSydTV2iWxQjtiTbWx4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1624526667;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=il0/cwUtgiAD5jaqXCBVRaOIoH20XDAXjZdXMAfwrnc=;
+        b=gv37xlS3BOOpuz7rxWbWXF1RGJiwzMQCRuFsmp6f4csPSmIGr4NOIK2/sPnqjCcsjJQrS3
+        ZWTM3cu9CM3U+nBQ==
+Received: from imap3-int (imap-alt.suse-dmz.suse.de [192.168.254.47])
+        by imap.suse.de (Postfix) with ESMTP id C2C7A11A97;
+        Thu, 24 Jun 2021 09:24:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1624526667; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=il0/cwUtgiAD5jaqXCBVRaOIoH20XDAXjZdXMAfwrnc=;
+        b=dd1FQ/2wfsim+6JwpUX45Tb9p//E/WE/Q0+MjqRzmuzpoAKsuu3vXUya+UtVP4Uuf6XfHb
+        BvoYaA7fHO12kEWQryNc9LefuchyIsXMd2Wc35+P4DP+CCGeyMDGUrKlJJ3ow++sXsb0Wn
+        gcqBctD+00RqOSydTV2iWxQjtiTbWx4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1624526667;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=il0/cwUtgiAD5jaqXCBVRaOIoH20XDAXjZdXMAfwrnc=;
+        b=gv37xlS3BOOpuz7rxWbWXF1RGJiwzMQCRuFsmp6f4csPSmIGr4NOIK2/sPnqjCcsjJQrS3
+        ZWTM3cu9CM3U+nBQ==
+Received: from director2.suse.de ([192.168.254.72])
+        by imap3-int with ESMTPSA
+        id TT5WL0tP1GBSQAAALh3uQQ
+        (envelope-from <hare@suse.de>); Thu, 24 Jun 2021 09:24:27 +0000
+Subject: Re: [LSF/MM/BPF Topic] Towards more useful nvme-passthrough
+To:     Kanchan Joshi <joshi.k@samsung.com>,
+        lsf-pc@lists.linux-foundation.org, linux-nvme@lists.infradead.org,
+        io-uring@vger.kernel.org, linux-block@vger.kernel.org,
+        Doug Gilbert <dgilbert@interlog.com>
+Cc:     axboe@kernel.dk, hch@lst.de, kbusch@kernel.org, javier@javigon.com,
+        anuj20.g@samsung.com, joshiiitr@gmail.com
+References: <CGME20210609105347epcas5p42ab916655fca311157a38d54f79f95e7@epcas5p4.samsung.com>
+ <20210609105050.127009-1-joshi.k@samsung.com>
+From:   Hannes Reinecke <hare@suse.de>
+Message-ID: <d9e6e3cc-fedb-eb45-7a3e-5df24e67455b@suse.de>
+Date:   Thu, 24 Jun 2021 11:24:27 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.1
 MIME-Version: 1.0
-In-Reply-To: <CAOKbgA4POGxPdB02NsCac4p6MtC97q6M3pT09_FWWj41Uf3K2A@mail.gmail.com>
+In-Reply-To: <20210609105050.127009-1-joshi.k@samsung.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/22/21 11:49 PM, Dmitry Kadashev wrote:
-> On Wed, Jun 23, 2021 at 12:32 AM Jens Axboe <axboe@kernel.dk> wrote:
->>
->> On 6/22/21 11:28 AM, Pavel Begunkov wrote:
->>> On 6/22/21 6:26 PM, Jens Axboe wrote:
->>>> On 6/22/21 5:56 AM, Pavel Begunkov wrote:
->>>>> On 6/3/21 6:18 AM, Dmitry Kadashev wrote:
->>>>>> This started out as an attempt to add mkdirat support to io_uring which
->>>>>> is heavily based on renameat() / unlinkat() support.
->>>>>>
->>>>>> During the review process more operations were added (linkat, symlinkat,
->>>>>> mknodat) mainly to keep things uniform internally (in namei.c), and
->>>>>> with things changed in namei.c adding support for these operations to
->>>>>> io_uring is trivial, so that was done too. See
->>>>>> https://lore.kernel.org/io-uring/20210514145259.wtl4xcsp52woi6ab@wittgenstein/
->>>>>
->>>>> io_uring part looks good in general, just small comments. However, I
->>>>> believe we should respin it, because there should be build problems
->>>>> in the middle.
->>>>
->>>> I can drop it, if Dmitry wants to respin. I do think that we could
->>>> easily drop mknodat and not really lose anything there, better to
->>>> reserve the op for something a bit more useful.
->>>
->>> I can try it and send a fold in, if you want.
->>> Other changes may be on top
->>
->> Sure that works too, will rebase in any case, and I'd like to add
->> Christian's ack as well. I'll just re-apply with the fold-ins.
+On 6/9/21 12:50 PM, Kanchan Joshi wrote:
+> Background & objectives:
+> ------------------------
 > 
-> Jens, it seems that during this rebase you've accidentally squashed the
-> "fs: update do_*() helpers to return ints" and
-> "io_uring: add support for IORING_OP_SYMLINKAT" commits, so there is only the
-> former one in your tree, but it actually adds the SYMLINKAT opcode to io uring
-> (in addition to changing the helpers return types).
+> The NVMe passthrough interface
+> 
+> Good part: allows new device-features to be usable (at least in raw
+> form) without having to build block-generic cmds, in-kernel users,
+> emulations and file-generic user-interfaces - all this take some time to
+> evolve.
+> 
+> Bad part: passthrough interface has remain tied to synchronous ioctl,
+> which is a blocker for performance-centric usage scenarios. User-space
+> can take the pain of implementing async-over-sync on its own but it does
+> not make much sense in a world that already has io_uring.
+> 
+> Passthrough is lean in the sense it cuts through layers of abstractions
+> and reaches to NVMe fast. One of the objective here is to build a
+> scalable pass-through that can be readily used to play with new/emerging
+> NVMe features.  Another is to surpass/match existing raw/direct block
+> I/O performance with this new in-kernel path.
+> 
+> Recent developments:
+> --------------------
+> - NVMe now has a per-namespace char interface that remains available/usable
+>   even for unsupported features and for new command-sets [1].
+> 
+> - Jens has proposed async-ioctl like facility 'uring_cmd' in io_uring. This
+>   introduces new possibilities (beyond storage); async-passthrough is one of
+> those. Last posted version is V4 [2].
+> 
+> - I have posted work on async nvme passthrough over block-dev [3]. Posted work
+>   is in V4 (in sync with the infra of [2]).
+> 
+> Early performance numbers:
+> --------------------------
+> fio, randread, 4k bs, 1 job
+> Kiops, with varying QD:
+> 
+> QD      Sync-PT         io_uring        Async-PT
+> 1         10.8            10.6            10.6
+> 2         10.9            24.5            24
+> 4         10.6            45              46
+> 8         10.9            90              89
+> 16        11.0            169             170
+> 32        10.6            308             307
+> 64        10.8            503             506
+> 128       10.9            592             596
+> 
+> Further steps/discussion points:
+> --------------------------------
+> 1.Async-passthrough over nvme char-dev
+> It is in a shape to receive feedback, but I am not sure if community
+> would like to take a look at that before settling on uring-cmd infra.
+> 
+> 2.Once above gets in shape, bring other perf-centric features of io_uring to
+> this path -
+> A. SQPoll and register-file: already functional.
+> B. Passthrough polling: This can be enabled for block and looks feasible for
+> char-interface as well.  Keith recently posted enabling polling for user
+> pass-through [4]
+> C. Pre-mapped buffers: Early thought is to let the buffers registered by
+> io_uring, and add a new passthrough ioctl/uring_cmd in driver which does
+> everything that passthrough does except pinning/unpinning the pages.
+> 
+> 3. Are there more things in the "io_uring->nvme->[block-layer]->nvme" path
+> which can be optimized.
+> 
+> Ideally I'd like to cover good deal of ground before Dec. But there seems
+> plenty of possibilities on this path.  Discussion would help in how best to
+> move forward, and cement the ideas.
+> 
+> [1] https://lore.kernel.org/linux-nvme/20210421074504.57750-1-minwoo.im.dev@gmail.com/
+> [2] https://lore.kernel.org/linux-nvme/20210317221027.366780-1-axboe@kernel.dk/
+> [3] https://lore.kernel.org/linux-nvme/20210325170540.59619-1-joshi.k@samsung.com/
+> [4] https://lore.kernel.org/linux-block/20210517171443.GB2709391@dhcp-10-100-145-180.wdc.com/#t
+> 
+I do like the idea.
 
-Man, I wonder what happened there. I'll just drop the series, so when you
-resend this one (hopefully soon if it's for 5.14...), just make it
-against the current branch.
+What I would like to see is to make the ioring_cmd infrastructure
+generally available, such that we can port the SCSI sg asynchronous
+interface over to this.
+Doug Gilbert has been fighting a lone battle to improve the sg
+asynchronous interface, as the current one is deemed a security hazard.
+But in the absence of a generic interface he had to design his own
+ioctls, with all the expected pushback.
+Plus there are only so many people who care about sg internals :-(
 
+Being able to use ioring_cmd would be a neat way out of this.
+
+Cheers,
+
+Hannes
 -- 
-Jens Axboe
-
+Dr. Hannes Reinecke		           Kernel Storage Architect
+hare@suse.de			                  +49 911 74053 688
+SUSE Software Solutions Germany GmbH, Maxfeldstr. 5, 90409 Nürnberg
+HRB 36809 (AG Nürnberg), GF: Felix Imendörffer

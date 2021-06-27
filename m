@@ -2,144 +2,108 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 169253B501B
-	for <lists+io-uring@lfdr.de>; Sat, 26 Jun 2021 22:41:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C1F93B5546
+	for <lists+io-uring@lfdr.de>; Sun, 27 Jun 2021 23:37:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230318AbhFZUnm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 26 Jun 2021 16:43:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56956 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230107AbhFZUnl (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 26 Jun 2021 16:43:41 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC785C061768
-        for <io-uring@vger.kernel.org>; Sat, 26 Jun 2021 13:41:18 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id g198so551875wme.5
-        for <io-uring@vger.kernel.org>; Sat, 26 Jun 2021 13:41:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=PaASvh3y9JlSyLGvKCCki+DJXGFXlgFHhMGmRHuBsHY=;
-        b=LPZmO1ySaRM+4cTM0mQvvfLi8dEJKzvQWItBIGJXQypL7a3F4cqz31m1Kg8uuCMeLL
-         y+OCMwFrOFoYgYdvlP+Hmb6SO0gIJbhgfOJalmcJ+9uY23lQmtwgaQhi6jskC1wGSXVh
-         fgVXxMEdwzYuHM53BsPSJyh4jRL9DtQiymABMst7f0ZvwjE1q7K+hG+Mk+NQEeQTglOE
-         mSX7mxcCKU9AY5jYpSL3/R8HlXsUp9ITcaI4ZWLAK5OlyH2PzWiuzFcu0cZ27kH6Qxq4
-         biiBO5R2jX1onTe/JLJfVIA0xHlhDzQ6YkElzgc7pwgZjCJMhlNkwZJmcHdB1jbm7RV/
-         UyVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=PaASvh3y9JlSyLGvKCCki+DJXGFXlgFHhMGmRHuBsHY=;
-        b=HHOP4nRaO8fAEgggPSRKCuCZMaC48JF0Wc69k/Fxe6EE1n0BSP92EUbgTN9+u9AWhu
-         uVYt8z3paC/x8vVhb2LwNINkDpz/WII0X3nhVuIKqNvBF2yfe3lzeWes43ZAJT2/IqLc
-         kjzpi9FKIN0Dvn4kzWUPs0oXw2EL968GiT5jtgjo5bdx6syhgu8Yye8JfM4yat5Yc+IJ
-         JYqmJLguFr+05eABsvp7Ga9pYZ6pEZ5NT5wNpQ1jdyoq3iajakvppCLu+p+cp+UcYrR0
-         FSnMOgF1zgJEWg/scsoqtElDM0kX90HSoz8ZYAD44GL9pw7ghmskXwHfAABhH1RTsyIE
-         aafw==
-X-Gm-Message-State: AOAM530a9mRhL+agppCVzJdfIKsT+U5Mu3vCfqazStpAp4Ng4J85amNK
-        7Wnb9leT45k5hu2PnKnc6EQ=
-X-Google-Smtp-Source: ABdhPJxCyl5b4FudK7bHLDrTg32Hj/PTFpHDh1tZsbPCfC6NHx1wFXRsfvtoRBlPEMOn85vqFp3UpQ==
-X-Received: by 2002:a05:600c:2184:: with SMTP id e4mr17749240wme.40.1624740076739;
-        Sat, 26 Jun 2021 13:41:16 -0700 (PDT)
-Received: from localhost.localdomain ([148.252.129.84])
-        by smtp.gmail.com with ESMTPSA id b9sm11272613wrh.81.2021.06.26.13.41.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Jun 2021 13:41:16 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 6/6] io_uring: pre-initialise some of req fields
-Date:   Sat, 26 Jun 2021 21:40:49 +0100
-Message-Id: <892ba0e71309bba9fe9e0142472330bbf9d8f05d.1624739600.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <cover.1624739600.git.asml.silence@gmail.com>
-References: <cover.1624739600.git.asml.silence@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S231683AbhF0VkC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 27 Jun 2021 17:40:02 -0400
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:41535 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231676AbhF0VkC (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 27 Jun 2021 17:40:02 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UdpdEhf_1624829850;
+Received: from e18g09479.et15sqa.tbsite.net(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UdpdEhf_1624829850)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 28 Jun 2021 05:37:36 +0800
+From:   Hao Xu <haoxu@linux.alibaba.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>
+Subject: [PATCH] io_uring: spin in iopoll() only when reqs are in a single queue
+Date:   Mon, 28 Jun 2021 05:37:30 +0800
+Message-Id: <1624829850-38536-1-git-send-email-haoxu@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Most of requests are allocated from an internal cache, so it's waste of
-time fully initialising them every time. Instead, let's pre-init some of
-the fields we can during initial allocation (e.g. kmalloc(), see
-io_alloc_req()) and keep them valid on request recycling. There are four
-of them in this patch:
+We currently spin in iopoll() when requests to be iopolled are for
+same file(device), while one device may have multiple hardware queues.
+given an example:
 
-->ctx is always stays the same
-->link is NULL on free, it's an invariant
-->result is not even needed to init, just a precaution
-->async_data we now clean in io_dismantle_req() as it's likely to
-   never be allocated.
+hw_queue_0     |    hw_queue_1
+req(30us)           req(10us)
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+If we first spin on iopolling for the hw_queue_0. the avg latency would
+be (30us + 30us) / 2 = 30us. While if we do round robin, the avg
+latency would be (30us + 10us) / 2 = 20us since we reap the request in
+hw_queue_1 in time. So it's better to do spinning only when requests
+are in same hardware queue.
+
+Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
 ---
- fs/io_uring.c | 24 ++++++++++++++++++------
- 1 file changed, 18 insertions(+), 6 deletions(-)
+
+I writed a test case fot it, the test logic is what I memtioned in
+this thread:
+https://lore.kernel.org/io-uring/4c341c96-8d66-eae3-ba4a-e1655ee463a8@linux.alibaba.com/
+One thread for heavy IO, one for fast IO, and another to iopoll.
+All of them bind to different cpu and the two cpus for submittion are
+bound to different hardware queues. The thing is that requests are
+always completed before reaping IO, so fops->iopoll() is not entered.
+I've tested this patch for normal situations, as fast as before.
+
+ fs/io_uring.c | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 873cfd4a8761..6cfbf72340ab 100644
+index 23c51786708b..2eb290f68aa3 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -1740,7 +1740,7 @@ static struct io_kiocb *io_alloc_req(struct io_ring_ctx *ctx)
+@@ -434,7 +434,7 @@ struct io_ring_ctx {
+ 		struct list_head	iopoll_list;
+ 		struct hlist_head	*cancel_hash;
+ 		unsigned		cancel_hash_bits;
+-		bool			poll_multi_file;
++		bool			poll_multi_queue;
+ 	} ____cacheline_aligned_in_smp;
  
- 	if (!state->free_reqs) {
- 		gfp_t gfp = GFP_KERNEL | __GFP_NOWARN;
--		int ret;
-+		int ret, i;
+ 	struct io_restriction		restrictions;
+@@ -2333,7 +2333,7 @@ static int io_do_iopoll(struct io_ring_ctx *ctx, unsigned int *nr_events,
+ 	 * Only spin for completions if we don't have multiple devices hanging
+ 	 * off our complete list, and we're under the requested amount.
+ 	 */
+-	spin = !ctx->poll_multi_file && *nr_events < min;
++	spin = !ctx->poll_multi_queue && *nr_events < min;
  
- 		if (io_flush_cached_reqs(ctx))
- 			goto got_req;
-@@ -1758,6 +1758,20 @@ static struct io_kiocb *io_alloc_req(struct io_ring_ctx *ctx)
- 				return NULL;
- 			ret = 1;
- 		}
+ 	ret = 0;
+ 	list_for_each_entry_safe(req, tmp, &ctx->iopoll_list, inflight_entry) {
+@@ -2572,14 +2572,22 @@ static void io_iopoll_req_issued(struct io_kiocb *req)
+ 	 * different devices.
+ 	 */
+ 	if (list_empty(&ctx->iopoll_list)) {
+-		ctx->poll_multi_file = false;
+-	} else if (!ctx->poll_multi_file) {
++		ctx->poll_multi_queue = false;
++	} else if (!ctx->poll_multi_queue) {
+ 		struct io_kiocb *list_req;
++		unsigned int queue_num0, queue_num1;
+ 
+ 		list_req = list_first_entry(&ctx->iopoll_list, struct io_kiocb,
+ 						inflight_entry);
+-		if (list_req->file != req->file)
+-			ctx->poll_multi_file = true;
 +
-+		/*
-+		 * Don't initialise the fields below on every allocation, but
-+		 * do that in advance and keep valid on free.
-+		 */
-+		for (i = 0; i < ret; i++) {
-+			struct io_kiocb *req = state->reqs[i];
-+
-+			req->ctx = ctx;
-+			req->link = NULL;
-+			req->async_data = NULL;
-+			/* not necessary, but safer to zero */
-+			req->result = 0;
++		if (list_req->file != req->file) {
++			ctx->poll_multi_queue = true;
++		} else {
++			queue_num0 = blk_qc_t_to_queue_num(list_req->rw.kiocb.ki_cookie);
++			queue_num1 = blk_qc_t_to_queue_num(req->rw.kiocb.ki_cookie);
++			if (queue_num0 != queue_num1)
++				ctx->poll_multi_queue = true;
 +		}
- 		state->free_reqs = ret;
  	}
- got_req:
-@@ -1781,8 +1795,10 @@ static void io_dismantle_req(struct io_kiocb *req)
- 		io_put_file(req->file);
- 	if (req->fixed_rsrc_refs)
- 		percpu_ref_put(req->fixed_rsrc_refs);
--	if (req->async_data)
-+	if (req->async_data) {
- 		kfree(req->async_data);
-+		req->async_data = NULL;
-+	}
- }
  
- /* must to be called somewhat shortly after putting a request */
-@@ -6730,15 +6746,11 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
- 	/* same numerical values with corresponding REQ_F_*, safe to copy */
- 	req->flags = sqe_flags = READ_ONCE(sqe->flags);
- 	req->user_data = READ_ONCE(sqe->user_data);
--	req->async_data = NULL;
- 	req->file = NULL;
--	req->ctx = ctx;
--	req->link = NULL;
- 	req->fixed_rsrc_refs = NULL;
- 	/* one is dropped after submission, the other at completion */
- 	atomic_set(&req->refs, 2);
- 	req->task = current;
--	req->result = 0;
- 
- 	/* enforce forwards compatibility on users */
- 	if (unlikely(sqe_flags & ~SQE_VALID_FLAGS))
+ 	/*
 -- 
-2.32.0
+1.8.3.1
 

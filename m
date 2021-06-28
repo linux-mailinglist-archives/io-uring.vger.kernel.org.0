@@ -2,96 +2,116 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 132F73B593A
-	for <lists+io-uring@lfdr.de>; Mon, 28 Jun 2021 08:43:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92A8C3B5A60
+	for <lists+io-uring@lfdr.de>; Mon, 28 Jun 2021 10:17:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230148AbhF1Gp0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 28 Jun 2021 02:45:26 -0400
-Received: from cloud48395.mywhc.ca ([173.209.37.211]:44328 "EHLO
-        cloud48395.mywhc.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230134AbhF1Gp0 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 28 Jun 2021 02:45:26 -0400
-Received: from modemcable064.203-130-66.mc.videotron.ca ([66.130.203.64]:33996 helo=[192.168.1.179])
-        by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <olivier@trillion01.com>)
-        id 1lxkyy-0002pP-Bf; Mon, 28 Jun 2021 02:43:00 -0400
-Message-ID: <f51af209b1a7fc17d8416f32f18368e1835ac2e6.camel@trillion01.com>
-Subject: Re: [PATCH v4] io_uring: reduce latency by reissueing the operation
-From:   Olivier Langlois <olivier@trillion01.com>
-To:     David Laight <David.Laight@ACULAB.COM>,
-        'Jens Axboe' <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date:   Mon, 28 Jun 2021 02:42:59 -0400
-In-Reply-To: <c85e28df251d4c66a511dc157b795b13@AcuMS.aculab.com>
-References: <9e8441419bb1b8f3c3fcc607b2713efecdef2136.1624364038.git.olivier@trillion01.com>
-         <16c91f57-9b6f-8837-94af-f096d697f5fb@kernel.dk>
-         <c85e28df251d4c66a511dc157b795b13@AcuMS.aculab.com>
-Organization: Trillion01 Inc
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.40.2 
+        id S231698AbhF1IUG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 28 Jun 2021 04:20:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37760 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232214AbhF1IUF (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 28 Jun 2021 04:20:05 -0400
+Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFAC4C061574;
+        Mon, 28 Jun 2021 01:17:39 -0700 (PDT)
+Received: by mail-yb1-xb2e.google.com with SMTP id s129so17173956ybf.3;
+        Mon, 28 Jun 2021 01:17:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Yo16IDYfLCJaIiPuLbVJvnGRWIBfolcZOU6h46YyfGQ=;
+        b=esqPMpYcn0FwzcmXMosCraGTbDEEtgLS3Kk+5b3jhRRx2E8yr/l75lhI6XpWf4ufgK
+         PfgX4m5s1L5weoQl07lN9AeIAyUICIR1bYTXPi7mVzpXSyHFg3hoaVYl249/0Y+zpxwe
+         iSre8nHXQBPTxqU7Ti78iu8TaSEZHIvahJEVbpF1GqXODZItqJK/cEHAHTEqOAYs15dG
+         t+v4kW2M8HViSFfjx9ygh0CkbWlBTU/82w3lrmbTt27/S2jcAtXMndiSYDimrYipTSV1
+         Uewsw3dkhHrTUXuvdbXh2FlVanPKHuwCUhyOY2JVhu5LebAYQD1XeO+iYq5M9Lunefi0
+         Zhzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Yo16IDYfLCJaIiPuLbVJvnGRWIBfolcZOU6h46YyfGQ=;
+        b=Q7uZs9Jgjc5YInhkq+NXCzl5fWhy01v6ZfftIxfk8WbvOfyscIjadNeKEZbHhIpN6J
+         3B48r/O+zKMhlz3JCHYBT4M6J1Y0JyUbOqw0F4NSr4H3mFbCGSHEbHXPkxuP7KYyz5n2
+         dFvacvXvgrQkvaWxN4Chl77qze4rBbY8eA17gXgfgWjmfEe50TMJGu1S8qN8SsRzVd3S
+         SQ1jkMMUUZdalIM2NrTjapHfoBU7ciFenflgaLnighQxKHW7hSXBvFpa20JyI+Cl21bZ
+         hxpYJqjaGf0KlVZecstttUI7BELEV3I0R+s5Fxy9oydDj1phTWwPUS1bzNFEM2f/JS9N
+         QO0Q==
+X-Gm-Message-State: AOAM5329cZ8OziO1KLMYKC0A/JGDILFtf6A/H7jY6rxZicwRFwXi31CF
+        N43Iy4tM3nTMkj0fr5fGbzZhWMPtcPYo509Qboc=
+X-Google-Smtp-Source: ABdhPJy2+pxpN9SEIxsnEteIg8UurGygQQUGqTkh4l0imOxBda4al3rNY941xvLqKsPc1C9NqmZDEf0L68RKy74Dbmg=
+X-Received: by 2002:a5b:ac1:: with SMTP id a1mr32397929ybr.289.1624868259191;
+ Mon, 28 Jun 2021 01:17:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - trillion01.com
-X-Get-Message-Sender-Via: cloud48395.mywhc.ca: authenticated_id: olivier@trillion01.com
-X-Authenticated-Sender: cloud48395.mywhc.ca: olivier@trillion01.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+References: <20210603051836.2614535-1-dkadashev@gmail.com> <20210603051836.2614535-3-dkadashev@gmail.com>
+ <c079182e-7118-825e-84e5-13227a3b19b9@gmail.com> <4c0344d8-6725-84a6-b0a8-271587d7e604@gmail.com>
+ <CAOKbgA4ZwzUxyRxWrF7iC2sNVnEwXXAmrxVSsSxBMQRe2OyYVQ@mail.gmail.com>
+ <15a9d84b-61df-e2af-0c79-75b54d4bae8f@gmail.com> <CAOKbgA4DCGANRGfsHw0SqmyRr4A4gYfwZ6WFXpOFdf_bE2b+Yw@mail.gmail.com>
+ <b6ae2481-3607-d9f8-b543-bb922b726b3a@gmail.com>
+In-Reply-To: <b6ae2481-3607-d9f8-b543-bb922b726b3a@gmail.com>
+From:   Dmitry Kadashev <dkadashev@gmail.com>
+Date:   Mon, 28 Jun 2021 15:17:28 +0700
+Message-ID: <CAOKbgA6va=89pLayQgC20QvPeTE0Tp-+TmgJLKy+O2KKw8dUBg@mail.gmail.com>
+Subject: Re: [PATCH v5 02/10] io_uring: add support for IORING_OP_MKDIRAT
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        linux-fsdevel@vger.kernel.org, io-uring <io-uring@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, 2021-06-25 at 08:15 +0000, David Laight wrote:
-> From: Jens Axboe
-> > Sent: 25 June 2021 01:45
-> > 
-> > On 6/22/21 6:17 AM, Olivier Langlois wrote:
-> > > It is quite frequent that when an operation fails and returns
-> > > EAGAIN,
-> > > the data becomes available between that failure and the call to
-> > > vfs_poll() done by io_arm_poll_handler().
-> > > 
-> > > Detecting the situation and reissuing the operation is much
-> > > faster
-> > > than going ahead and push the operation to the io-wq.
-> > > 
-> > > Performance improvement testing has been performed with:
-> > > Single thread, 1 TCP connection receiving a 5 Mbps stream, no
-> > > sqpoll.
-> > > 
-> > > 4 measurements have been taken:
-> > > 1. The time it takes to process a read request when data is
-> > > already available
-> > > 2. The time it takes to process by calling twice io_issue_sqe()
-> > > after vfs_poll() indicated that data
-> > was available
-> > > 3. The time it takes to execute io_queue_async_work()
-> > > 4. The time it takes to complete a read request asynchronously
-> > > 
-> > > 2.25% of all the read operations did use the new path.
-> 
-> How much slower is it when the data to complete the read isn't
-> available?
-> 
-> I suspect there are different workflows where that is almost
-> always true.
-> 
-David,
+On Thu, Jun 24, 2021 at 7:22 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
+>
+> On 6/24/21 12:11 PM, Dmitry Kadashev wrote:
+> > On Wed, Jun 23, 2021 at 6:54 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
+> >>
+> >> On 6/23/21 7:41 AM, Dmitry Kadashev wrote:
+> >>> I'd imagine READ_ONCE is to be used in those checks though, isn't it? Some of
+> >>> the existing checks like this lack it too btw. I suppose I can fix those in a
+> >>> separate commit if that makes sense.
+> >>
+> >> When we really use a field there should be a READ_ONCE(),
+> >> but I wouldn't care about those we check for compatibility
+> >> reasons, but that's only my opinion.
+> >
+> > I'm not sure how the compatibility check reads are special. The code is
+> > either correct or not. If a compatibility check has correctness problems
+> > then it's pretty much as bad as any other part of the code having such
+> > problems, no?
+>
+> If it reads and verifies a values first, e.g. index into some internal
+> array, and then compiler plays a joke and reloads it, we might be
+> absolutely screwed expecting 'segfaults', kernel data leakages and all
+> the fun stuff.
+>
+> If that's a compatibility check, whether it's loaded earlier or later,
+> or whatever, it's not a big deal, the userspace can in any case change
+> the memory at any moment it wishes, even tightly around the moment
+> we're reading it.
 
-in the case that the data to complete isn't available, the request will
-be processed exactly as it was before the patch.
+Sorry for the slow reply, I have to balance this with my actual job that
+is not directly related to the kernel development :)
 
-Ideally through io_uring fast polling feature. If not possible because
-arming the poll has been aborted, the request will be punted to the io-
-wq.
+I'm no kernel concurrency expert (actually I'm not any kind of kernel
+expert), but my understanding is READ_ONCE does not just mean "do not
+read more than once", but rather "read exactly once" (and more than
+that), and if it's not applied then the compiler is within its rights to
+optimize the read out, so the compatibility check can effectively be
+disabled.
 
-Greetings,
+I don't think it's likely to happen, but "bad things do not happen in
+practice" and "it is technically correct" are two different things :)
 
+FWIW I'm not arguing it has to be changed, I just want to understand
+things better (and if it helps to spot a bug at some point then great).
+So if my reasoning is wrong then please point out where. And if it's
+just the simplicity / clarity of the code that is the goal here and any
+negative effects are considered to be unlikely then it's OK, I can
+understand that.
 
+-- 
+Dmitry Kadashev

@@ -2,63 +2,66 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B7D1A3B8A1B
-	for <lists+io-uring@lfdr.de>; Wed, 30 Jun 2021 23:28:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B88843B8A24
+	for <lists+io-uring@lfdr.de>; Wed, 30 Jun 2021 23:39:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229774AbhF3Vah (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 30 Jun 2021 17:30:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35228 "EHLO
+        id S231704AbhF3Vla (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 30 Jun 2021 17:41:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229705AbhF3Vag (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 30 Jun 2021 17:30:36 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39A8FC061756
-        for <io-uring@vger.kernel.org>; Wed, 30 Jun 2021 14:28:06 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id r3so3067775wmq.1
-        for <io-uring@vger.kernel.org>; Wed, 30 Jun 2021 14:28:06 -0700 (PDT)
+        with ESMTP id S229705AbhF3Vl3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 30 Jun 2021 17:41:29 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 307C4C061756
+        for <io-uring@vger.kernel.org>; Wed, 30 Jun 2021 14:38:59 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id l18-20020a1ced120000b029014c1adff1edso5425047wmh.4
+        for <io-uring@vger.kernel.org>; Wed, 30 Jun 2021 14:38:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:references:from:message-id:date:user-agent:mime-version
          :in-reply-to:content-language:content-transfer-encoding;
-        bh=67hfy1zhsvk4jGHuE+q2Rmxz/iZlvD4KuJdTlTnJ5yY=;
-        b=HANOiQlW9mM8ppwmgxxp2R1s4ZJdzSAV97vBSlgPx+M8hXQj8YI3EK7iEDOx+V9rTC
-         EM9ZpdyOngPJT9duYdMIEDltNYJ+SdA+8kbErHMgAJQnYPf6xCTCKOFt2AUtm8DtKmWK
-         sDR6BVKIg8UJ/qUG08CwT8FqsISDYMjs58Ms8WtTUITEPxAARgnFcqa+F6IG9kT/IbtY
-         J/NBa2MTT1JK3yEfpFz10aReveb8GA3XRUHeVIn/lc2nLKiyfE9werk5oicS4DqhGppz
-         CyKjnipB3aJveAroWx1k4uuK3i7rIBYhNMqp6H8OJYTwHeex6O+HSo07paSIu6Dp/dzB
-         83Sg==
+        bh=BhoYBYlR4YwGpZD9z6mlMPSaw63MqblQQtMK367Ndc0=;
+        b=rHHAJatCHnMvQfPEbrkMkn2YhRaS6FqmVh8cnBSWHby0HQqhkpdV6aXT/6Mc4O3Kbd
+         DJlvvJfEdbdZBZLKzT6pMrOY1GI8vnQMfqN7JhWseO7TEene8NGR9zW//YstLB8NnjUS
+         d2tTN0wgs52f+OPgGEiuGa64nvGOL/YIWuo3MM8PZaZUmssc/ihuEPSLVc4cOfGwDByV
+         MzFxjqGucJXMv49CmPe/Iw1YhVdSWS+mF6j5MgABHSIDBZ0wP2AAzOK1n+WuVAkWdfsS
+         yl1MWpNfyN/57mDeufVoXQtD+2+vcJo81/dOYUkgLgcu4yaOnJOMZ66uO7CDYDDKyBJl
+         7gXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=67hfy1zhsvk4jGHuE+q2Rmxz/iZlvD4KuJdTlTnJ5yY=;
-        b=p2Ctgsb4QeC+aeDy7gH24gw/grDLFfDb2E4YaR5tuCo4pCw49FbAksRATIXRHFBRlt
-         B15dVvk5JUuqbrHH4IfuXQIv3GxFjsVf8jgMgTzAUkXfLH2xHKJIfjq33K2vz1eGk1nW
-         TnvpEcCPmxCYczeqKLqXT4imo+wVXQB/1hkMDj2f5cCFrET0MRjLI0HjHxlsjRjtnLwk
-         QKMyLCxkgMqUmUPF0PUIldgry2GCJMeaP2P+ZOVzDDCUemP2E14BX3TcLX4X1aTEXR+9
-         h39CcgFWmDiHnu0WD/mZWL6w4aH6z6rN0bSk0MoxPXLQh4NtIk8LPCugU2/cC2clkye3
-         AHag==
-X-Gm-Message-State: AOAM530HGS8rX3dT9dEG3vYGjvaA/UXUcYhVQgnr5SrSgN9nPZfh/2UX
-        axvu8zr9T9yL0wPJ0ou6aWjzCmpBGh9vxSyv
-X-Google-Smtp-Source: ABdhPJwbdBWP28OW2jgdI+rYnRdBapIwys1r0NloTfEEaLfG4+V3C78GgE9iT6e4PE83gJNFVpn6RQ==
-X-Received: by 2002:a7b:c5d8:: with SMTP id n24mr33291111wmk.51.1625088484642;
-        Wed, 30 Jun 2021 14:28:04 -0700 (PDT)
+        bh=BhoYBYlR4YwGpZD9z6mlMPSaw63MqblQQtMK367Ndc0=;
+        b=GGUkhLX0fQNZY1owZU5EdvPIrdaOfV6Lj7rCTayj6mcC9X0UocauWFCcwrJusZWo/F
+         RUxb7SdbRK4xgH/GI47mrxw4uLogA4i5va8U5lACMO6HgU9diZ028qRr5AlVDcxf52Y2
+         zbQnpfKuet0WZAaRk5UfklSrr+SFtxGRYqMZUU99WqkwDkqBi68ozI/cq7MlgIJ/PuwG
+         SnYDd1EtzPJL4tIoC7L0EtwaRxhXsqThC92C2mthpk5VI8KMLMw15vdfRNc0iBjKGAqF
+         l43eOUBoIwi+gHxZ0G5WescZHWN3zkej95wv/l06PFX05OecYsFLLmnGcoHLfx1Lj+yZ
+         EgFw==
+X-Gm-Message-State: AOAM531zqmTueqPRJquab6VNyZPhs1FOp8GCsZ8Zz2yNUPNOmbp9X9AM
+        PvZJaJqRgBtUWLu0gZRdkfw72Zp7ecphnZbB
+X-Google-Smtp-Source: ABdhPJySKTN5/3aKcZ29F1UJWZH0apRJmRsil91tHR35mKUDafV9PVklhpDdw0nW5/XY7x+W6ecoJg==
+X-Received: by 2002:a7b:cd0d:: with SMTP id f13mr6490820wmj.89.1625089137686;
+        Wed, 30 Jun 2021 14:38:57 -0700 (PDT)
 Received: from [192.168.8.197] ([85.255.233.185])
-        by smtp.gmail.com with ESMTPSA id l16sm7877023wmj.47.2021.06.30.14.28.03
+        by smtp.gmail.com with ESMTPSA id c12sm22713980wrw.46.2021.06.30.14.38.56
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Jun 2021 14:28:04 -0700 (PDT)
-Subject: Re: [Bug] io_uring_register_files_update broken
-To:     Victor Stewart <v@nametag.social>,
-        io-uring <io-uring@vger.kernel.org>
-References: <CAM1kxwgU2V0RsE+77mRUg+mr6WL5PJpbFKh4FrEGOnfzZ5vZ3A@mail.gmail.com>
+        Wed, 30 Jun 2021 14:38:56 -0700 (PDT)
+Subject: Re: [PATCH 3/3] io_uring: tweak io_req_task_work_add
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <cover.1625086418.git.asml.silence@gmail.com>
+ <24b575ea075ae923992e9ce86b61e8b51629fd29.1625086418.git.asml.silence@gmail.com>
+ <70c425a8-73dd-e15a-5a10-8ea640cdc7cd@kernel.dk>
+ <d7f587b1-67bb-fc67-1174-91d2c8706b42@gmail.com>
+ <e1b32d88-5801-b280-25ed-9902cfaa5092@kernel.dk>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <89a4bff4-958b-d1c0-8dc3-01aface97011@gmail.com>
-Date:   Wed, 30 Jun 2021 22:27:47 +0100
+Message-ID: <dc8576f5-9187-c897-d2d5-04f61d54408d@gmail.com>
+Date:   Wed, 30 Jun 2021 22:38:40 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.11.0
 MIME-Version: 1.0
-In-Reply-To: <CAM1kxwgU2V0RsE+77mRUg+mr6WL5PJpbFKh4FrEGOnfzZ5vZ3A@mail.gmail.com>
+In-Reply-To: <e1b32d88-5801-b280-25ed-9902cfaa5092@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -66,74 +69,40 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/30/21 10:14 PM, Victor Stewart wrote:
-> i'm fairly confident there is something broken with
-> io_uring_register_files_update,
-> especially the offset parameter.
+On 6/30/21 10:22 PM, Jens Axboe wrote:
+> On 6/30/21 3:19 PM, Pavel Begunkov wrote:
+>> On 6/30/21 10:17 PM, Jens Axboe wrote:
+>>> On 6/30/21 2:54 PM, Pavel Begunkov wrote:
+>>>> Whenever possible we don't want to fallback a request. task_work_add()
+>>>> will be fine if the task is exiting, so don't check for PF_EXITING,
+>>>> there is anyway only a relatively small gap between setting the flag
+>>>> and doing the final task_work_run().
+>>>>
+>>>> Also add likely for the hot path.
+>>>
+>>> I'm not a huge fan of likely/unlikely, and in particular constructs like:
+>>>
+>>>> -	if (test_bit(0, &tctx->task_state) ||
+>>>> +	if (likely(test_bit(0, &tctx->task_state)) ||
+>>>>  	    test_and_set_bit(0, &tctx->task_state))
+>>>>  		return 0;
+>>>
+>>> where the state is combined. In any case, it should be a separate
+>>> change. If there's an "Also" paragraph in a patch, then that's also
+>>> usually a good clue that that particular change should've been
+>>> separate :-)
+>>
+>> Not sure what's wrong with likely above, but how about drop
+>> this one then?
 > 
-> when trying to update a single fd, and getting a successful result of
-> 1, proceeding
-> operations with IOSQE_FIXED_FILE fail with -9. but if i update all of
-> the fds with
-> then my recv operations succeed, but close still fails with -9.
-> 
-> on Clear LInux 5.12.13-1050.native
+> Yep I did - we can do the exiting change separately, the commit message
 
-Thanks for letting know, I'll take a look
+I think 1-2 is good enough for 5.14, I'll just send it for-next
 
- 
-> here's a diff for liburing send_recv test, to demonstrate this.
-> 
-> diff --git a/test/send_recv.c b/test/send_recv.c
-> index 19adbdd..492b591 100644
-> --- a/test/send_recv.c
-> +++ b/test/send_recv.c
-> @@ -27,6 +27,8 @@ static char str[] = "This is a test of send and recv
-> over io_uring!";
->  #      define io_uring_prep_recv io_uring_prep_read
->  #endif
-> 
-> +static int *fds;
-> +
->  static int recv_prep(struct io_uring *ring, struct iovec *iov, int *sock,
->                      int registerfiles)
->  {
-> @@ -54,17 +56,28 @@ static int recv_prep(struct io_uring *ring, struct
-> iovec *iov, int *sock,
->                 goto err;
->         }
-> 
-> +       fds = malloc(100 * sizeof(int));
-> +       memset(fds, 0xff, sizeof(int) * 100);
-> +
->         if (registerfiles) {
-> -               ret = io_uring_register_files(ring, &sockfd, 1);
-> +               ret = io_uring_register_files(ring, fds, 100);
->                 if (ret) {
->                         fprintf(stderr, "file reg failed\n");
->                         goto err;
->                 }
-> -               use_fd = 0;
-> -       } else {
-> -               use_fd = sockfd;
-> +
-> +               fds[sockfd] = sockfd;
-> +               int result = io_uring_register_files_update(ring,
-> sockfd, fds, 1);
-> +
-> +               if (result != 1)
-> +               {
-> +                       fprintf(stderr, "file update failed\n");
-> +                       goto err;
-> +               }
->         }
-> 
-> +       use_fd = sockfd;
-> +
->         sqe = io_uring_get_sqe(ring);
->         io_uring_prep_recv(sqe, use_fd, iov->iov_base, iov->iov_len, 0);
->         if (registerfiles)
-> 
+> just needs to be clarified a bit on why it's ok to do now. And that
+
+It should have been ok to do before those 2 patches, but
+haven't tracked where it lost actuality.
 
 -- 
 Pavel Begunkov

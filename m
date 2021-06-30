@@ -2,54 +2,54 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B0D363B8A47
-	for <lists+io-uring@lfdr.de>; Wed, 30 Jun 2021 23:57:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6D233B8A4F
+	for <lists+io-uring@lfdr.de>; Thu,  1 Jul 2021 00:04:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232066AbhF3WAV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 30 Jun 2021 18:00:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41730 "EHLO
+        id S232584AbhF3WHN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 30 Jun 2021 18:07:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43222 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232042AbhF3WAV (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 30 Jun 2021 18:00:21 -0400
-Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3693C061756
-        for <io-uring@vger.kernel.org>; Wed, 30 Jun 2021 14:57:50 -0700 (PDT)
-Received: by mail-io1-xd34.google.com with SMTP id i189so4998562ioa.8
-        for <io-uring@vger.kernel.org>; Wed, 30 Jun 2021 14:57:50 -0700 (PDT)
+        with ESMTP id S231984AbhF3WHN (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 30 Jun 2021 18:07:13 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D34DC061756
+        for <io-uring@vger.kernel.org>; Wed, 30 Jun 2021 15:04:43 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id i94so5481733wri.4
+        for <io-uring@vger.kernel.org>; Wed, 30 Jun 2021 15:04:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        d=gmail.com; s=20161025;
         h=subject:to:references:from:message-id:date:user-agent:mime-version
          :in-reply-to:content-language:content-transfer-encoding;
-        bh=wgAbRJN2aN89fO6A9blI78xO1ID5bHijlVohAhMW79E=;
-        b=cofOYFpEJ5CAGXiPF3q7i8Tw6Wxs6JdOk5To+ER//FC5cO+X7wLIcD9nnGc5iZTnFe
-         ZOhaikXVnjPTciotJCcMlZOlArcnZPtLVE1mynANH6jkKnre5wpxTaxuMiYlFMHINze9
-         MLMAN/rj2O1BUYC5IpMyyLJKms7KUxvWU1BgxiT60X3PgpYklVKTLks9RY1d8xeFg2yQ
-         8JDQH22v8+3RVvYKW1QyZWcnRvLzAIiTlV7xktjylEZsOyvqWoLWPqGHMZNu3OhF2s/X
-         B8qU9rcdXPfjcpbG7DJ6ZsMzl8zFJ81WVBkn2whULhGijA4AE1Fvl7UuT6/RPqAxWKIg
-         VHcQ==
+        bh=Rqkb4Fuzr8dhUua5iGAO4RLoWMVxLLOXSW00dvLA/tY=;
+        b=Bi9gaijdQD8LqHIPEsy4UTThmr7/Byis9LB+I3mS9xIz/XvLn1AsItLYArKYSjQ1zf
+         bfxufg3JdbFve6On89kejE3dN7tqsA4MyIzV+OU1OsE2iKn+bqa2ITeAlkIBe3Mz9DUQ
+         7+qfJuj9g2U3RSgPUSYB8kCRIAJHbDoeVcDEoCBcJZ9MLFIoKpTUqXTDL9odcTQTv9JK
+         n5pHXs3I1XljAUQ5udziob/OQ1fKAyk9H91QT73Xn0SJG7ed7A+/FUkHLIBSTAnLicnb
+         3XO/e6iVH8qR+Am3SVWBAR1XVV2enSylrChYUtfLXY8KYZtgJUsuh8hqzNTQR8QPbHS1
+         D9mQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=wgAbRJN2aN89fO6A9blI78xO1ID5bHijlVohAhMW79E=;
-        b=C9Qkgwhq1+xYrIfOqqbvlOZmgl5RYz1Zj/SIz5e39PpuikCCLXE28gfzY6Z+/GWcfB
-         W55XGhh+D3Vi5ippBtw+75bBNnVMmIuDYcVRnMV47zMehK8i0jIpVDohK+GKkyKbTFVf
-         0Y60bWSxp/deVBpreZDwkYYK/0TFva/lmWvnTHO3C9O2Q+uL3V5gWs+J/NvF/jUeDI5Q
-         9s2IPDeA5CPf+FUPbkyL/Nuh2LrynyAHtkPPkv8zvDFX5UKCcuVoQbyIDPwtO2jH8dGM
-         1nC2aha7CAjjuUp4Xy6hSJxfaILPg5yBlAVSFT3GPuYNtFeS6Ce/FfiPHU5RzuYLUm+F
-         xz0A==
-X-Gm-Message-State: AOAM532fEYb/3uNsTdSAt3Qd5m8xteBUJhTA1Hiv1mI7rHKYulpZAVwG
-        9EhxSbE7qdrjxJAjWuL1PBufK+MCzuHRHg==
-X-Google-Smtp-Source: ABdhPJwAjw5b19MOK7ZlsPznfhOFRNWRcgOnJQC0BybmJTYSuIoCu69FC4+MrwcooP3hfyNsyyt7iQ==
-X-Received: by 2002:a02:94af:: with SMTP id x44mr10620038jah.79.1625090269751;
-        Wed, 30 Jun 2021 14:57:49 -0700 (PDT)
-Received: from [192.168.1.134] ([198.8.77.61])
-        by smtp.gmail.com with ESMTPSA id x8sm12761115ila.36.2021.06.30.14.57.49
+        bh=Rqkb4Fuzr8dhUua5iGAO4RLoWMVxLLOXSW00dvLA/tY=;
+        b=kOhvp0dbk0+EpwbsfBc10vazF/GoSQque9oBzVez7ZXjdDuPboN4fIWFGrge39ouNT
+         YWChTJeMFHgCLJKnjHX5Tm9PgnJ1wYcq/2eaYkSTvkzfHaF+OveKj/Tu5kRhKcGeGYDM
+         TJNR+/ZAU0WIiReLu1YwN5SFtQViL7sk5NgEelHczksuMZzyg3Z9S+ximeb18M+Jv5vN
+         ypMqUmqsb/QSc/htfnTg48qqHsdRdvowORmC9Os06xGvO8ABjZsZ0KeER+pp+8zwDoT6
+         m4Kh+RY1M323yFyGyfmPeGcNRkhPCZ2Fvmu9X6MZbMSTvOTyN032UUbbJ2WX3d8KtdbY
+         puuQ==
+X-Gm-Message-State: AOAM531wEOpvhf0nyAkb15ABCkem4x5E2UJiYZplI4VbkGIuHdd60fKn
+        kZ6KMYxXqxaHTdPVzBChTGkTDSv9DDtOn9xV
+X-Google-Smtp-Source: ABdhPJxBpXBw+9k+gUq96Zqt/giNmNGDRTs7hHab5TE4Rt1bDxxOET8Yk31RvPkFA2Z4y9gvHV75lA==
+X-Received: by 2002:a5d:4492:: with SMTP id j18mr1269646wrq.151.1625090681713;
+        Wed, 30 Jun 2021 15:04:41 -0700 (PDT)
+Received: from [192.168.8.197] ([85.255.233.185])
+        by smtp.gmail.com with ESMTPSA id a4sm15363238wru.55.2021.06.30.15.04.41
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Jun 2021 14:57:49 -0700 (PDT)
+        Wed, 30 Jun 2021 15:04:41 -0700 (PDT)
 Subject: Re: [PATCH 3/3] io_uring: tweak io_req_task_work_add
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
 References: <cover.1625086418.git.asml.silence@gmail.com>
  <24b575ea075ae923992e9ce86b61e8b51629fd29.1625086418.git.asml.silence@gmail.com>
  <70c425a8-73dd-e15a-5a10-8ea640cdc7cd@kernel.dk>
@@ -57,14 +57,14 @@ References: <cover.1625086418.git.asml.silence@gmail.com>
  <e1b32d88-5801-b280-25ed-9902cfaa5092@kernel.dk>
  <dc8576f5-9187-c897-d2d5-04f61d54408d@gmail.com>
  <cf74754e-b120-fb71-098b-13d1eeb9428f@kernel.dk>
- <7197a75d-566b-b182-4f46-98617c00c480@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <8a4eabff-c279-0ae5-b316-454a16de6a04@kernel.dk>
-Date:   Wed, 30 Jun 2021 15:57:48 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ <d4adfec3-8e08-3445-ce63-5ed71ae967c3@kernel.dk>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Message-ID: <72ae0561-fe00-3c26-ee5b-5410fec08b31@gmail.com>
+Date:   Wed, 30 Jun 2021 23:04:25 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-In-Reply-To: <7197a75d-566b-b182-4f46-98617c00c480@gmail.com>
+In-Reply-To: <d4adfec3-8e08-3445-ce63-5ed71ae967c3@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -72,8 +72,8 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/30/21 3:57 PM, Pavel Begunkov wrote:
-> On 6/30/21 10:45 PM, Jens Axboe wrote:
+On 6/30/21 10:56 PM, Jens Axboe wrote:
+> On 6/30/21 3:45 PM, Jens Axboe wrote:
 >> On 6/30/21 3:38 PM, Pavel Begunkov wrote:
 >>> On 6/30/21 10:22 PM, Jens Axboe wrote:
 >>>> On 6/30/21 3:19 PM, Pavel Begunkov wrote:
@@ -113,17 +113,13 @@ On 6/30/21 3:57 PM, Pavel Begunkov wrote:
 >> Right, I was thinking it was related to the swapping of the signal
 >> exit and task work run ordering. But didn't look that far yet...
 > 
-> commit 6200b0ae4ea28a4bfd8eb434e33e6201b7a6a282
-> Author: Jens Axboe <axboe@kernel.dk>
-> Date:   Sun Sep 13 14:38:30 2020 -0600
-> 
->     io_uring: don't run task work on an exiting task
-> 
-> Came from there, times where there still was io_uring_flush()
-> and no from do_exit() cancellations
+> BTW, in usual testing, even just the one hunk removing the exit check
+> seems to result in quite a lot of memory leaks running
+> test/poll-mshot-update. So something is funky with the patch.
 
-Ah yes, that makes sense.
+Oh, have no idea why yet. Apparently, I commented out
+the test as it was always failing, and forgot to return
+it back... Will take a note
 
 -- 
-Jens Axboe
-
+Pavel Begunkov

@@ -2,62 +2,64 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F3AC3B8A14
-	for <lists+io-uring@lfdr.de>; Wed, 30 Jun 2021 23:18:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34F963B8A15
+	for <lists+io-uring@lfdr.de>; Wed, 30 Jun 2021 23:20:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233859AbhF3VVP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 30 Jun 2021 17:21:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33226 "EHLO
+        id S233799AbhF3VWg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 30 Jun 2021 17:22:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33528 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233799AbhF3VVP (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 30 Jun 2021 17:21:15 -0400
-Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31E21C061756
-        for <io-uring@vger.kernel.org>; Wed, 30 Jun 2021 14:18:45 -0700 (PDT)
-Received: by mail-io1-xd2b.google.com with SMTP id i189so4885706ioa.8
-        for <io-uring@vger.kernel.org>; Wed, 30 Jun 2021 14:18:45 -0700 (PDT)
+        with ESMTP id S229774AbhF3VWg (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 30 Jun 2021 17:22:36 -0400
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9552BC061756
+        for <io-uring@vger.kernel.org>; Wed, 30 Jun 2021 14:20:05 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id p10-20020a05600c430ab02901df57d735f7so5403664wme.3
+        for <io-uring@vger.kernel.org>; Wed, 30 Jun 2021 14:20:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        d=gmail.com; s=20161025;
         h=subject:to:references:from:message-id:date:user-agent:mime-version
          :in-reply-to:content-language:content-transfer-encoding;
-        bh=AeG31Vp1XyiSS7mZSPqEneE5estaaJkzU46Bfe6TY9A=;
-        b=h8wbtSmGiousEsROsQsdWVsGuJUco8g9ZaAd+AtHzRR5KhFkk7mR00CsdqQFLzB6OE
-         j6elhhCJMu3xTCiTJ5BqZvVhxLtBrLpJaedmPZQWjQtl28nNn6g8AGiQarmQKftSgn3U
-         hAV/Jgk5kbRVEBPq34slDctVSk/DqPSXWN2vhZ2alOUWpL69CrJMRimkIjDTrx4ExnkX
-         NVdSFIR3vwJXLYy0hsG4VRt7CPJAfF/hUG/LXYiGicVztlCO4BSPQ3G870LPk0uXC2Vm
-         d4ulIFd743j9lbfVohFC2ItNFESLJ2mSmbu3BNxp7HafIzIhY2BOFSwry+eZhZOuGdJc
-         cY/A==
+        bh=2a2+UPWPscNfwHHGfujCkxvCiBZOZxPdETae7h6hg20=;
+        b=LFYV0cJujqkOuQ20pCLB5j3JkLqOKdMoKzviTiFvQqdRvQvJK/EOIGtK/134t3I+sV
+         TUDASFk+vYMYKEeQcy7N2YY6QNDlUYJ4baNkBAmYrMsbJGoYjwe5shpqItql6IIRFIGB
+         /KtL5kJWTdZPqUSsCj48ntRr+WkZ/h2imsGtsNut74lBQROHa7RL4eav5N7G1kec1dSL
+         c23YyhP17Fn9PSAIk7dTNpUR1W5gtccImKShH0+/ULv4hwj8Yyn+dsQ4VC5mB8iMERp3
+         f2vnYn4QbLucLXt1dM5pabzW+F1JTnRM3CizJ3uebNTuh2vO7jg8V+zjUMjlZgQzkHBN
+         zcaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=AeG31Vp1XyiSS7mZSPqEneE5estaaJkzU46Bfe6TY9A=;
-        b=ne0XyNn1DBPynFPdD3gbYKx3PS5BovfpGczzD+9Ndk8iJSMnP8IHDCDBBQ+cRDS6bN
-         +6Fssj3iEYsuhCnnhmLLmHBmM9we0j522A4GeQ1cCS/1g5c1/J4WyLn8Ys/vU1IWY493
-         ag09Ir6nYkXWVuGppKErwKK2FdidY3CaFjyApucL5aGHZIKDhSnm5wz4kRErvK7qVFcW
-         RhbOav2RIeQiS7fFD+2dKfANfSHW6mhUX5AakP4DGoSBHV4aK2C/4dgnU2s0dOF6UnXn
-         QlH8hPZ42iFyPyu9R1iYzQ50PfvbJbAPTzLmTsJ0CRhsmLbVLX+raBUr2L6ByqMzmdr+
-         IVPg==
-X-Gm-Message-State: AOAM532pYvu34xllbAP4++Zb+17YFDPzeURzC2GPoOsnawGWuuEWo3h2
-        DzjaGyOt1Fbvl1ngTKQCM4ee791fXcOIsQ==
-X-Google-Smtp-Source: ABdhPJyVJfPTvBA+eafBfaBv+Yn6AIiWWX3S+Mv8h/+27e91pe3fG3VwRfy+nSIcb1136tugdu2cIQ==
-X-Received: by 2002:a5d:85c1:: with SMTP id e1mr9107301ios.18.1625087924436;
-        Wed, 30 Jun 2021 14:18:44 -0700 (PDT)
-Received: from [192.168.1.134] ([198.8.77.61])
-        by smtp.gmail.com with ESMTPSA id g1sm3012645ile.35.2021.06.30.14.18.43
+        bh=2a2+UPWPscNfwHHGfujCkxvCiBZOZxPdETae7h6hg20=;
+        b=ixpS3IlZOAid71286YDPX9x/AUBicqppg33369/bklMA7IiI8UcGeXSpu7ABB64sTM
+         rF3PNdv2fl/cjbEA7xMIEsYIDoC2iB+xZ3xSt9f4qAwaHu+O5AQGsiO5rwLM25DZrcZ0
+         xn9NxbcIRtD7hUkpCDW/qykLcmnc2hxTNCFq94PpGqHcZ9QQtir3nNpapxK+2hw/6kjK
+         xH+VNqNwjKC19sQoW+6MMkur2XIS9W1qmi+SMtT2icKaMLwqX/7fKYuNHd40H9fE3S9N
+         EufOIsVYJ1OqBbxMZDgZUECoUbx7Rl0RQ/bFzSU4OkerjUUfqmnSk2R+eS61InrHFJg2
+         nZ7Q==
+X-Gm-Message-State: AOAM530w1WbqQB4r8/DOFHOlZ+bCpmcuu+GB4ircynzoxOdM2VCVrO8H
+        Qqregg0YxXcsB35iEx8axfKZZRbDYAwHvtT+
+X-Google-Smtp-Source: ABdhPJy7H25qqd83xY0Js72jfGUeVkLKqCATIO42eqSSXimI/aEZhIkqhbaOXzkmYKUju+3goxFNHQ==
+X-Received: by 2002:a1c:4c14:: with SMTP id z20mr12495725wmf.146.1625088004105;
+        Wed, 30 Jun 2021 14:20:04 -0700 (PDT)
+Received: from [192.168.8.197] ([85.255.233.185])
+        by smtp.gmail.com with ESMTPSA id n12sm14712113wrs.12.2021.06.30.14.20.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Jun 2021 14:18:44 -0700 (PDT)
-Subject: Re: [PATCH 5.14 0/3] fallback fix and task_work cleanup
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+        Wed, 30 Jun 2021 14:20:03 -0700 (PDT)
+Subject: Re: [PATCH 3/3] io_uring: tweak io_req_task_work_add
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
 References: <cover.1625086418.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <d9368ce8-954e-794a-ec77-0cf6f38a884a@kernel.dk>
-Date:   Wed, 30 Jun 2021 15:18:43 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ <24b575ea075ae923992e9ce86b61e8b51629fd29.1625086418.git.asml.silence@gmail.com>
+ <70c425a8-73dd-e15a-5a10-8ea640cdc7cd@kernel.dk>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Message-ID: <d7f587b1-67bb-fc67-1174-91d2c8706b42@gmail.com>
+Date:   Wed, 30 Jun 2021 22:19:47 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-In-Reply-To: <cover.1625086418.git.asml.silence@gmail.com>
+In-Reply-To: <70c425a8-73dd-e15a-5a10-8ea640cdc7cd@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -65,21 +67,29 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/30/21 2:54 PM, Pavel Begunkov wrote:
-> Haven't see the bug in 1/3 in the wild, but should be possible, and so
-> I'd like it for 5.14. Should it be stable? Perhaps, others may go 5.14
-> as well.
+On 6/30/21 10:17 PM, Jens Axboe wrote:
+> On 6/30/21 2:54 PM, Pavel Begunkov wrote:
+>> Whenever possible we don't want to fallback a request. task_work_add()
+>> will be fine if the task is exiting, so don't check for PF_EXITING,
+>> there is anyway only a relatively small gap between setting the flag
+>> and doing the final task_work_run().
+>>
+>> Also add likely for the hot path.
 > 
-> Pavel Begunkov (3):
->   io_uring: fix stuck fallback reqs
->   io_uring: simplify task_work func
->   io_uring: tweak io_req_task_work_add
+> I'm not a huge fan of likely/unlikely, and in particular constructs like:
 > 
->  fs/io_uring.c | 131 +++++++++++++++++---------------------------------
->  1 file changed, 45 insertions(+), 86 deletions(-)
+>> -	if (test_bit(0, &tctx->task_state) ||
+>> +	if (likely(test_bit(0, &tctx->task_state)) ||
+>>  	    test_and_set_bit(0, &tctx->task_state))
+>>  		return 0;
+> 
+> where the state is combined. In any case, it should be a separate
+> change. If there's an "Also" paragraph in a patch, then that's also
+> usually a good clue that that particular change should've been
+> separate :-)
 
-Applied 1-2, thanks.
+Not sure what's wrong with likely above, but how about drop
+this one then?
 
 -- 
-Jens Axboe
-
+Pavel Begunkov

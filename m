@@ -2,230 +2,143 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BBB183B7980
-	for <lists+io-uring@lfdr.de>; Tue, 29 Jun 2021 22:43:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 422293B7F48
+	for <lists+io-uring@lfdr.de>; Wed, 30 Jun 2021 10:47:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235534AbhF2Up7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 29 Jun 2021 16:45:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44922 "EHLO
+        id S233462AbhF3Itt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 30 Jun 2021 04:49:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234054AbhF2Up7 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 29 Jun 2021 16:45:59 -0400
-Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A6CCC061760
-        for <io-uring@vger.kernel.org>; Tue, 29 Jun 2021 13:43:31 -0700 (PDT)
-Received: by mail-io1-xd34.google.com with SMTP id a6so431913ioe.0
-        for <io-uring@vger.kernel.org>; Tue, 29 Jun 2021 13:43:31 -0700 (PDT)
+        with ESMTP id S233340AbhF3Itt (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 30 Jun 2021 04:49:49 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76189C061756
+        for <io-uring@vger.kernel.org>; Wed, 30 Jun 2021 01:47:19 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id hz1so2971061ejc.1
+        for <io-uring@vger.kernel.org>; Wed, 30 Jun 2021 01:47:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=to:cc:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=T3Nr1gmSopsyb/Xl8iGjxyFV34gbuvdUsatD3zeSa40=;
-        b=FRySpK0Q8qVtrcnYqUAjzhvsYVdqmSOkZCMZDPfO2WFFZzynHOgMzs7JFTpSCp4cMJ
-         9AUcGqwVZx1QR6iT2N4aXNpyGZlgxK4dWLpu5JREHyGH38jyO1lKDz4rB0wK1cJhrqjY
-         /+sT7q4fOsoY2GoyDpSUtNrvHnwUzXKEYZ4BOgcKyny9zMaFqGHpEQZsfW9w40A2pcC+
-         nxMnEdG0myVJkb2Lex0nqPS2KOsRWq1gMj1bMCJxsOJ9IVkhBQ4xb258HaGPV1vXXC+A
-         HCYL4yJHCt/SVFrKRGLMgSeFTgoIEOnB+ybogt/V/3Qp0sw49zvilXoBD9+USD33+WgV
-         POrQ==
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=GqpO+K3m6JQW3IWFjAEC6Rw1Dw45MStJqLAuboNmGY8=;
+        b=q9Ntn7EXoxPUmRd6faFIK9hQ1F0BbEKS1h/a+nlOu+pzQB5Ed1Q9N/R2R5HP6pSfdZ
+         L+KYPObu5iyycWNW+HUh44yHxnXQVa36jOkpMN5mJCwUqd3jX/okBhZnS2MtQPTWPE+/
+         rzllKFgHpp9jNcmqr4+KOM6l8bPs72iSZq0aS5ZHppG81U7F1QuSWH+LaCF78Pcfp68I
+         PyHsRNngw+lLq8IgC/lAAq/AXqGI6O1+7LLkgp2LXL5s58xwcf6Yd5bK4RHzP/Xese5O
+         lNEgBrqdWTb0S+GU88uuB9lL2DqVmqbCrJWOMj+RNhOScwk03DmZXAOomEsGhT56je3p
+         5YCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=T3Nr1gmSopsyb/Xl8iGjxyFV34gbuvdUsatD3zeSa40=;
-        b=rxdELiy0KHatlld+mkNbynmO9QE7u1D3r7Qk2S5NX3VOgNk3iVQT68diuW18VM1cGw
-         spUaXUwNix7YBFps3BbLsTu5woe3xIoBZePTkjneYELNpMYO86RLldn1B7M1L1bTx/Ht
-         E+YdhowNHDGki+pKaPS8lZQ0fgEp3CgA3GJh6DgnEZnQjfxtlAbQRxuhQRZTUbCB4bD1
-         JEOvpVNWVOG6vqgx6lfTO7x5eXruYMAcbdxYm3YPN/kM3NCnClsSbFlOhQoB4g+VVtVv
-         Ja1jzVhsQ38t/PCoI9UMSm4mJyS4J0pT1c2As18D7YiuhZ1C6pUtRP0IAtvksWIcfXd/
-         24lg==
-X-Gm-Message-State: AOAM533zfcWpjw0h9gTGApILBWgIc99rk8N/xFkU3foQqMz2Y63YCUvZ
-        QN6cFfqk6TQgkjPyB8FdR7vZtWEvJYBWCw==
-X-Google-Smtp-Source: ABdhPJz1gIy2gEsv7joVt2zigu3B9a7Q9ZdK1fH9cY5R2CKCEqhQOFakT93i4Io3jzD94g91jvgG/g==
-X-Received: by 2002:a02:818c:: with SMTP id n12mr3743357jag.2.1624999410636;
-        Tue, 29 Jun 2021 13:43:30 -0700 (PDT)
-Received: from [192.168.1.134] ([198.8.77.61])
-        by smtp.gmail.com with ESMTPSA id n8sm8320813ioj.13.2021.06.29.13.43.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Jun 2021 13:43:30 -0700 (PDT)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     io-uring <io-uring@vger.kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] io_uring updates for 5.14-rc1
-Message-ID: <c9a79f27-02e9-b0d6-78ae-2e777eed8fe0@kernel.dk>
-Date:   Tue, 29 Jun 2021 14:43:29 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=GqpO+K3m6JQW3IWFjAEC6Rw1Dw45MStJqLAuboNmGY8=;
+        b=JJW++lrStWDp1WAXxwdk1lRfEsT6PabrflofDCQVQO0b+oHeud8QHeEbOhUMQsBIP1
+         PxTYj7/OnMuHEfm84axS8h44dOzk3OcMNYsjYum9cgXuwvYaJhLGrV3DPhAexSZIx7vE
+         Nlr/NVHBIVb+dA0uudnPiQp7h7az73fgVA8HJxvm0NfSvH1Q93soM9EuC3gK2oCOBgK5
+         EjOfqF71623adE+0C2xKl9Pd1EeWg6yzIprnJIWFl6+6eE/bfZJ3XhyLQozscPMExFWg
+         Ssc7UFrbQxUlZB7DfcJsK5jah8kYalxmpJR8ZAcQRG+tIJ0DGSg0Y/b/mk0YOT3Ggg1D
+         JYcA==
+X-Gm-Message-State: AOAM530I6w4W4XwO1rDbPsl9SAO72JR6OSjqZcKeY1SbJMV8UI/hlll0
+        NhsAb2hMiQcxbO9mZoVOVP549TUYTIECFW40MX8=
+X-Google-Smtp-Source: ABdhPJySG0/J7u1X8vOwGGnPWfJLdjG/E3OjLUnKyAP12upVjnJAd4sUN/o1cgzsqOwhG7ao0ZPsZvxQ+I0EC5WSgL4=
+X-Received: by 2002:a17:906:3407:: with SMTP id c7mr9973560ejb.212.1625042837149;
+ Wed, 30 Jun 2021 01:47:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+From:   Juhyung Park <qkrwngud825@gmail.com>
+Date:   Wed, 30 Jun 2021 17:47:06 +0900
+Message-ID: <CAD14+f2Nmu_XNjE8SM+jzfaNZfzyFowN3Cf8Lgw36FT+gqqPAg@mail.gmail.com>
+Subject: Possible io_uring regression with QEMU on Ubuntu's kernel
+To:     Kamal Mostafa <kamal@canonical.com>,
+        Stefan Bader <stefan.bader@canonical.com>,
+        io-uring <io-uring@vger.kernel.org>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Stefano Garzarella <sgarzare@redhat.com>, qemu-devel@nongnu.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Linus,
+Hi everyone.
 
-This pull request contains the io_uring updates for the 5.14-rc1 merge
-window. In detail:
+With the latest Ubuntu 20.04's HWE kernel 5.8.0-59, I'm noticing some
+weirdness when using QEMU/libvirt with the following storage
+configuration:
 
-- Support for mkdirat, symlinkat, and linkat for io_uring (Dmitry)
+<disk type="block" device="disk">
+  <driver name="qemu" type="raw" cache="none" io="io_uring"
+discard="unmap" detect_zeroes="unmap"/>
+  <source dev="/dev/disk/by-id/md-uuid-df271a1e:9dfb7edb:8dc4fbb8:c43e652f-part1"
+index="1"/>
+  <backingStore/>
+  <target dev="vda" bus="virtio"/>
+  <alias name="virtio-disk0"/>
+  <address type="pci" domain="0x0000" bus="0x07" slot="0x00" function="0x0"/>
+</disk>
 
-- Multi-queue iopoll improvement (Fam)
+QEMU version is 5.2+dfsg-9ubuntu3 and libvirt version is 7.0.0-2ubuntu2.
 
-- Allow configurable io-wq CPU masks (me)
+The guest VM is unable to handle I/O properly with io_uring, and
+nuking io="io_uring" fixes the issue.
+On one machine (EPYC 7742), the partition table cannot be read and on
+another (Ryzen 9 3950X), ext4 detects weirdness with journaling and
+ultimately remounts the guest disk to R/O:
 
-- renameat/linkat tightening (me)
+[    2.712321] virtio_blk virtio5: [vda] 3906519775 512-byte logical
+blocks (2.00 TB/1.82 TiB)
+[    2.714054] vda: detected capacity change from 0 to 2000138124800
+[    2.963671] blk_update_request: I/O error, dev vda, sector 0 op
+0x0:(READ) flags 0x0 phys_seg 1 prio class 0
+[    2.964909] Buffer I/O error on dev vda, logical block 0, async page read
+[    2.966021] blk_update_request: I/O error, dev vda, sector 1 op
+0x0:(READ) flags 0x0 phys_seg 1 prio class 0
+[    2.967177] Buffer I/O error on dev vda, logical block 1, async page read
+[    2.968330] blk_update_request: I/O error, dev vda, sector 2 op
+0x0:(READ) flags 0x0 phys_seg 1 prio class 0
+[    2.969504] Buffer I/O error on dev vda, logical block 2, async page read
+[    2.970767] blk_update_request: I/O error, dev vda, sector 3 op
+0x0:(READ) flags 0x0 phys_seg 1 prio class 0
+[    2.971624] Buffer I/O error on dev vda, logical block 3, async page read
+[    2.972170] blk_update_request: I/O error, dev vda, sector 4 op
+0x0:(READ) flags 0x0 phys_seg 1 prio class 0
+[    2.972728] Buffer I/O error on dev vda, logical block 4, async page read
+[    2.973308] blk_update_request: I/O error, dev vda, sector 5 op
+0x0:(READ) flags 0x0 phys_seg 1 prio class 0
+[    2.973920] Buffer I/O error on dev vda, logical block 5, async page read
+[    2.974496] blk_update_request: I/O error, dev vda, sector 6 op
+0x0:(READ) flags 0x0 phys_seg 1 prio class 0
+[    2.975093] Buffer I/O error on dev vda, logical block 6, async page read
+[    2.975685] blk_update_request: I/O error, dev vda, sector 7 op
+0x0:(READ) flags 0x0 phys_seg 1 prio class 0
+[    2.976295] Buffer I/O error on dev vda, logical block 7, async page read
+[    2.980074] blk_update_request: I/O error, dev vda, sector 0 op
+0x0:(READ) flags 0x0 phys_seg 1 prio class 0
+[    2.981104] Buffer I/O error on dev vda, logical block 0, async page read
+[    2.981786] blk_update_request: I/O error, dev vda, sector 1 op
+0x0:(READ) flags 0x0 phys_seg 1 prio class 0
+[    2.982083] ixgbe 0000:06:00.0: Multiqueue Enabled: Rx Queue count
+= 63, Tx Queue count = 63 XDP Queue count = 0
+[    2.982442] Buffer I/O error on dev vda, logical block 1, async page read
+[    2.983642] ldm_validate_partition_table(): Disk read failed.
 
-- poll re-arm improvement (Olivier)
+Kernel 5.8.0-55 is fine, and the only io_uring-related change between
+5.8.0-55 and 5.8.0-59 is the commit 4b982bd0f383 ("io_uring: don't
+mark S_ISBLK async work as unbounded").
 
-- SQPOLL race fix (Olivier)
+The weird thing is that this commit was first introduced with v5.12,
+but neither the mainline v5.12.0 or v5.13.0 is affected by this issue.
 
-- Cancelation unification (Pavel)
+I guess one of these commits following the backported commit from
+v5.12 fixes the issue, but that's just a guess. It might be another
+earlier commit:
+c7d95613c7d6 io_uring: fix early sqd_list removal sqpoll hangs
+9728463737db io_uring: fix rw req completion
+6ad7f2332e84 io_uring: clear F_REISSUE right after getting it
+e82ad4853948 io_uring: fix !CONFIG_BLOCK compilation failure
+230d50d448ac io_uring: move reissue into regular IO path
+07204f21577a io_uring: fix EIOCBQUEUED iter revert
+696ee88a7c50 io_uring/io-wq: protect against sprintf overflow
 
-- SQPOLL cleanups (Pavel)
+It would be much appreciated if Jens could give pointers to Canonical
+developers on how to fix the issue, and hopefully a suggestion to
+prevent this from happening again.
 
-- Enable file backed buffers for shmem/memfd (Pavel)
-
-- A ton of cleanups and performance improvements (Pavel)
-
-- Followup and misc fixes (Colin, Fam, Hao, Olivier)
-
-Please pull!
-
-
-The following changes since commit 009c9aa5be652675a06d5211e1640e02bbb1c33d:
-
-  Linux 5.13-rc6 (2021-06-13 14:43:10 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.dk/linux-block.git tags/for-5.14/io_uring-2021-06-29
-
-for you to fetch changes up to bdfe4dc5bfddf8f3b4080ac4a11a4c5843cbe928:
-
-  io_uring: code clean for kiocb_done() (2021-06-27 16:22:42 -0600)
-
-----------------------------------------------------------------
-for-5.14/io_uring-2021-06-29
-
-----------------------------------------------------------------
-Colin Ian King (2):
-      io_uring: Fix incorrect sizeof operator for copy_from_user call
-      io-wq: remove redundant initialization of variable ret
-
-Dmitry Kadashev (9):
-      fs: make do_mkdirat() take struct filename
-      io_uring: add support for IORING_OP_MKDIRAT
-      fs: make do_mknodat() take struct filename
-      fs: make do_symlinkat() take struct filename
-      namei: add getname_uflags()
-      fs: make do_linkat() take struct filename
-      fs: update do_*() helpers to return ints
-      io_uring: add support for IORING_OP_SYMLINKAT
-      io_uring: add support for IORING_OP_LINKAT
-
-Fam Zheng (1):
-      io_uring: Fix comment of io_get_sqe
-
-Hao Xu (2):
-      io_uring: spin in iopoll() only when reqs are in a single queue
-      io_uring: code clean for kiocb_done()
-
-Jens Axboe (4):
-      io-wq: use private CPU mask
-      io_uring: allow user configurable IO thread CPU affinity
-      io_uring: add IOPOLL and reserved field checks to IORING_OP_RENAMEAT
-      io_uring: add IOPOLL and reserved field checks to IORING_OP_UNLINKAT
-
-Olivier Langlois (6):
-      io_uring: Add to traces the req pointer when available
-      io_uring: minor clean up in trace events definition
-      io-wq: remove header files not needed anymore
-      io_uring: Fix race condition when sqp thread goes to sleep
-      io_uring: Create define to modify a SQPOLL parameter
-      io_uring: reduce latency by reissueing the operation
-
-Pavel Begunkov (68):
-      io_uring: improve sqpoll event/state handling
-      io_uring: improve sq_thread waiting check
-      io_uring: remove unused park_task_work
-      io_uring: simplify waking sqo_sq_wait
-      io_uring: get rid of files in exit cancel
-      io_uring: make fail flag not link specific
-      io_uring: shuffle rarely used ctx fields
-      io_uring: better locality for rsrc fields
-      io_uring: remove dependency on ring->sq/cq_entries
-      io_uring: deduce cq_mask from cq_entries
-      io_uring: kill cached_cq_overflow
-      io_uring: rename io_get_cqring
-      io_uring: don't bounce submit_state cachelines
-      io_uring: enable shmem/memfd memory registration
-      io_uring: fix blocking inline submission
-      io-wq: embed wqe ptr array into struct io_wq
-      io-wq: remove unused io-wq refcounting
-      io_uring: refactor io_iopoll_req_issued
-      io_uring: rename function *task_file
-      io-wq: don't repeat IO_WQ_BIT_EXIT check by worker
-      io-wq: simplify worker exiting
-      io_uring: hide rsrc tag copy into generic helpers
-      io_uring: remove rsrc put work irq save/restore
-      io_uring: add helpers for 2 level table alloc
-      io_uring: don't vmalloc rsrc tags
-      io_uring: cache task struct refs
-      io_uring: unify SQPOLL and user task cancellations
-      io_uring: inline io_iter_do_read()
-      io_uring: keep SQ pointers in a single cacheline
-      io_uring: move ctx->flags from SQ cacheline
-      io_uring: shuffle more fields into SQ ctx section
-      io_uring: refactor io_get_sqe()
-      io_uring: don't cache number of dropped SQEs
-      io_uring: optimise completion timeout flushing
-      io_uring: small io_submit_sqe() optimisation
-      io_uring: clean up check_overflow flag
-      io_uring: wait heads renaming
-      io_uring: move uring_lock location
-      io_uring: refactor io_req_defer()
-      io_uring: optimise non-drain path
-      io_uring: fix min types mismatch in table alloc
-      io_uring: switch !DRAIN fast path when possible
-      io_uring: shove more drain bits out of hot path
-      io_uring: optimise io_commit_cqring()
-      io_uring: fix false WARN_ONCE
-      io_uring: refactor io_submit_flush_completions()
-      io_uring: move creds from io-wq work to io_kiocb
-      io_uring: track request creds with a flag
-      io_uring: simplify iovec freeing in io_clean_op()
-      io_uring: clean all flags in io_clean_op() at once
-      io_uring: refactor io_get_sequence()
-      io_uring: inline __tctx_task_work()
-      io_uring: optimise task_work submit flushing
-      io_uring: refactor tctx task_work list splicing
-      io_uring: don't resched with empty task_list
-      io_uring: improve in tctx_task_work() resubmission
-      io_uring: don't change sqpoll creds if not needed
-      io_uring: refactor io_sq_thread()
-      io_uring: fix code style problems
-      io_uring: update sqe layout build checks
-      io_uring: simplify struct io_uring_sqe layout
-      io_uring: refactor io_openat2()
-      io_uring: refactor io_arm_poll_handler()
-      io_uring: mainstream sqpoll task_work running
-      io_uring: remove not needed PF_EXITING check
-      io_uring: optimise hot path restricted checks
-      io_uring: refactor io_submit_flush_completions
-      io_uring: pre-initialise some of req fields
-
- fs/exec.c                       |    8 +-
- fs/internal.h                   |    8 +-
- fs/io-wq.c                      |  103 ++-
- fs/io-wq.h                      |    3 +-
- fs/io_uring.c                   | 1524 +++++++++++++++++++++++----------------
- fs/namei.c                      |  137 ++--
- include/linux/fs.h              |    1 +
- include/trace/events/io_uring.h |  106 ++-
- include/uapi/linux/io_uring.h   |   32 +-
- 9 files changed, 1177 insertions(+), 745 deletions(-)
-
--- 
-Jens Axboe
-
+Thanks,
+Regards

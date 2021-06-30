@@ -2,85 +2,98 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 94DBC3B89A4
-	for <lists+io-uring@lfdr.de>; Wed, 30 Jun 2021 22:19:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC0D93B89A9
+	for <lists+io-uring@lfdr.de>; Wed, 30 Jun 2021 22:22:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233942AbhF3UVa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 30 Jun 2021 16:21:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48394 "EHLO
+        id S234982AbhF3UYd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 30 Jun 2021 16:24:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233847AbhF3UVa (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 30 Jun 2021 16:21:30 -0400
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 056DFC061756
-        for <io-uring@vger.kernel.org>; Wed, 30 Jun 2021 13:19:00 -0700 (PDT)
-Received: by mail-lf1-x133.google.com with SMTP id bu19so7412726lfb.9
-        for <io-uring@vger.kernel.org>; Wed, 30 Jun 2021 13:18:59 -0700 (PDT)
+        with ESMTP id S234888AbhF3UY1 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 30 Jun 2021 16:24:27 -0400
+Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A003C061756
+        for <io-uring@vger.kernel.org>; Wed, 30 Jun 2021 13:21:57 -0700 (PDT)
+Received: by mail-io1-xd34.google.com with SMTP id g5so1134795iox.11
+        for <io-uring@vger.kernel.org>; Wed, 30 Jun 2021 13:21:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8uHCeNsWSpVWECrUi4Y/xqmo8wXTCMTkmLJbaCr3ZP4=;
-        b=c+9SisOgxve77SCTD8wDP1XQlimGlwrqbzIth0TQ9nUGQ13OnSr5DTJ9SBwNyXtoSM
-         WkGJ8uBAgc3dTuKsqSCZugu0zXrw/GhWX/xoXxqob1qrzhZgezaWUENc0axWV4ze+YP7
-         TTgT0SyjbqYxKuNnzmAtp8k5ZVZx1H/PW1wic=
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=3Z4+OkN6FlBIjlpyyrT+0IF+5jz/Pi/fm32YjnWSb6g=;
+        b=Ghf4etGAJtySqxh/3scoTY0v1aCMerzeRpn2JRJ9gRxGOPMZ1lvYditCh5vM+p8MAk
+         TK57ynI6Lt4iwCGSUzysoCUw39HfPKicuTSwMkkExkntAOtSlzeeH7TvUSMbyHkUdDuO
+         kiSgDOmcenXQ3YjK34O4kwZ9hg/dDq9bchR+BZKnemBP8rK7s/AtAfWc+soaoklMWQa3
+         +WsoE3mru3ISUAGggQzbzPBx3NH+B8uROhaEDyJUIwn63n7TiiboI5vqnmLRHWYWCEaA
+         C5SOxbkc0/67/wTfutGGOTldQQzCs4fS73B+qJYGT620utMGNirzDr70pH1K/jzXjYOe
+         6wYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8uHCeNsWSpVWECrUi4Y/xqmo8wXTCMTkmLJbaCr3ZP4=;
-        b=fRDYH38DPtwEFAEvt/o5YVQS060sdtLe4H6G64mUKa/KqumHIg15N7yQSBo+Iq84Sf
-         X8T8YHnZJuYTGyCtj6+g1KEBmMtDYR2sOhgC4or0u0kQIND8M7rvpWaHimRRau0z9yUo
-         T2WqYGnV6Dw9oXyCjGK6OWRJropPg8Xvx8Ff9D66tCX+IWtoEktxrOZHY4+KWjxnJ7Ex
-         +upXjCG510VAnOUramP8pylwm5EdS6EqNgVEcp/N4xRHHVFVkHLCjoMVeF0wHSPduBg+
-         v2NoNwJy8DPvUxC7UsZy0aQnIOFHV2wR8Asn6FYFHHo0Im5b3gEzVxyU8tDp+tp/mkdF
-         6JEg==
-X-Gm-Message-State: AOAM532m0WmncLWJ7bRy4XVFplWPR1tx3MyCsG952q/rE9wwLcAqnEfT
-        b9D4Ps6asOh+XoN3GKeMPEQRp4cW+9cGcVxsiWQ=
-X-Google-Smtp-Source: ABdhPJyMxeKRoYy2DMgnpfhSpVb4EEwXCl47SzuuXyEaYtUQjRqon93hos8HBDcXiEbjcxFJ8ARIhg==
-X-Received: by 2002:a19:f505:: with SMTP id j5mr29375355lfb.126.1625084338054;
-        Wed, 30 Jun 2021 13:18:58 -0700 (PDT)
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
-        by smtp.gmail.com with ESMTPSA id q66sm2361988ljb.83.2021.06.30.13.18.57
-        for <io-uring@vger.kernel.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=3Z4+OkN6FlBIjlpyyrT+0IF+5jz/Pi/fm32YjnWSb6g=;
+        b=enRjArfglPHiwkOgZUH31lz2izf+b+NrtU4swzosxRQIOaouSXf5vLuGkfYRnWxcEw
+         U2wm9ey0qRLATL2KqaRmouNIQQ2LOoVP6FJsE+/D04igr5M+CZtm7WNmOpjYUzChblzi
+         KxaHQmHeuxWx0W+LADapI+Uafouc3fx9APYdJIQZhxNQo5LqFZVAA21dc53F4VwW1/sW
+         PVVvvqSXRrl7hfXvhiJmuwlmPRAuXJcQD6BMCX2PmMbKCAbasu4+YmI2S0hmft0VIRNN
+         WWVtnMfrsy9kwCEhJ211uOM8EHpRipKvcvpscNFz/amKNcohl7Ah0X0cip4YSFuF6A8S
+         ft+g==
+X-Gm-Message-State: AOAM532rfw8rg+5+0l+Zx+BQu/nWdXWwdkbUmj7+EH1kdwPyrbhPoRdx
+        f6BEB8FdbNvMNN0qX0oM1DD/siadnreYqw==
+X-Google-Smtp-Source: ABdhPJzpSLLAAE2CPOLgdVfI1n0qbbnd5v8VS4O8Ao+NZVEd6KulztPuHrxnxPspPAiuwY25+/Dnjw==
+X-Received: by 2002:a05:6602:1243:: with SMTP id o3mr9224116iou.13.1625084516006;
+        Wed, 30 Jun 2021 13:21:56 -0700 (PDT)
+Received: from [192.168.1.134] ([198.8.77.61])
+        by smtp.gmail.com with ESMTPSA id y3sm8672899ioy.46.2021.06.30.13.21.55
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Jun 2021 13:18:57 -0700 (PDT)
-Received: by mail-lj1-f172.google.com with SMTP id c11so5036353ljd.6
-        for <io-uring@vger.kernel.org>; Wed, 30 Jun 2021 13:18:57 -0700 (PDT)
-X-Received: by 2002:a2e:9c58:: with SMTP id t24mr8974575ljj.411.1625084337277;
- Wed, 30 Jun 2021 13:18:57 -0700 (PDT)
-MIME-Version: 1.0
-References: <c9a79f27-02e9-b0d6-78ae-2e777eed8fe0@kernel.dk>
- <CAHk-=wgCac9hBsYzKMpHk0EbLgQaXR=OUAjHaBtaY+G8A9KhFg@mail.gmail.com> <00f21ea0-2f38-f554-63e9-ef07e806a0cd@kernel.dk>
-In-Reply-To: <00f21ea0-2f38-f554-63e9-ef07e806a0cd@kernel.dk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 30 Jun 2021 13:18:41 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wi9TATc=n-zrGfkEPcr7+wXx8PHe7z9-TeOmJPbisss+Q@mail.gmail.com>
-Message-ID: <CAHk-=wi9TATc=n-zrGfkEPcr7+wXx8PHe7z9-TeOmJPbisss+Q@mail.gmail.com>
+        Wed, 30 Jun 2021 13:21:55 -0700 (PDT)
 Subject: Re: [GIT PULL] io_uring updates for 5.14-rc1
-To:     Jens Axboe <axboe@kernel.dk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         Dmitry Kadashev <dkadashev@gmail.com>,
         io-uring <io-uring@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+References: <c9a79f27-02e9-b0d6-78ae-2e777eed8fe0@kernel.dk>
+ <CAHk-=wgCac9hBsYzKMpHk0EbLgQaXR=OUAjHaBtaY+G8A9KhFg@mail.gmail.com>
+ <00f21ea0-2f38-f554-63e9-ef07e806a0cd@kernel.dk>
+ <CAHk-=wi9TATc=n-zrGfkEPcr7+wXx8PHe7z9-TeOmJPbisss+Q@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <ed4ab723-0c4d-2f44-7819-182527c98174@kernel.dk>
+Date:   Wed, 30 Jun 2021 14:21:54 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <CAHk-=wi9TATc=n-zrGfkEPcr7+wXx8PHe7z9-TeOmJPbisss+Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Jun 30, 2021 at 1:14 PM Jens Axboe <axboe@kernel.dk> wrote:
->
-> I think you're being very unfair here, last release was pretty
-> uneventful, and of course 5.12 was a bit too exciting with the
-> thread changes, but that was both expected and a necessary evil.
+On 6/30/21 2:18 PM, Linus Torvalds wrote:
+> On Wed, Jun 30, 2021 at 1:14 PM Jens Axboe <axboe@kernel.dk> wrote:
+>>
+>> I think you're being very unfair here, last release was pretty
+>> uneventful, and of course 5.12 was a bit too exciting with the
+>> thread changes, but that was both expected and a necessary evil.
+> 
+> The last one may have been uneventful, but I really want to keep it
+> that way.
 
-The last one may have been uneventful, but I really want to keep it that way.
+We certainly share that goal.
 
-And the threading changes were an improvement overall, but they were
-by no means the first time io_uring was flaky and had issues. It has
-caused a _lot_ of churn over the years.
+> And the threading changes were an improvement overall, but they were
+> by no means the first time io_uring was flaky and had issues. It has
+> caused a _lot_ of churn over the years.
 
-And I refuse to have that churn now affect fs/namei.c
+In some ways that was almost inevitable with treading new waters, but
+I'm hopeful that we're way beyond the hump on that.
 
-This had better be done right, or not at all.
+I totally agree that it should not be disruptive to core code, and
+I'm definitely fine rejecting those bits to avoid having that be the
+case. We'll get it sorted.
 
-                 Linus
+-- 
+Jens Axboe
+

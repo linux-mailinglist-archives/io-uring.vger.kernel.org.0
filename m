@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 16DB13B89EB
-	for <lists+io-uring@lfdr.de>; Wed, 30 Jun 2021 22:54:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EC0C3B89ED
+	for <lists+io-uring@lfdr.de>; Wed, 30 Jun 2021 22:54:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233710AbhF3U47 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 30 Jun 2021 16:56:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56184 "EHLO
+        id S233832AbhF3U5B (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 30 Jun 2021 16:57:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229700AbhF3U46 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 30 Jun 2021 16:56:58 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 494C2C0617A8
-        for <io-uring@vger.kernel.org>; Wed, 30 Jun 2021 13:54:29 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id q18-20020a1ce9120000b02901f259f3a250so2573696wmc.2
-        for <io-uring@vger.kernel.org>; Wed, 30 Jun 2021 13:54:29 -0700 (PDT)
+        with ESMTP id S233735AbhF3U5A (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 30 Jun 2021 16:57:00 -0400
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 299CCC061756
+        for <io-uring@vger.kernel.org>; Wed, 30 Jun 2021 13:54:30 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id q18-20020a1ce9120000b02901f259f3a250so2573715wmc.2
+        for <io-uring@vger.kernel.org>; Wed, 30 Jun 2021 13:54:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=0p0meUSwF/Oxw6Zt+qddmm/HxkjzzLrP0pkugqwTm+E=;
-        b=PeN7rNSKBUePrs79fCL5mBk9swWKsf7W7r7EobIk3KUH1nv66TvdfkAQo3jy3s3jpI
-         bmzkLaHM+cqVr6CK++Ft4JCl9GaUNhz+i+jtmEMFNVhHnjkJpwAFNwCqU6LXtot/n0LI
-         q9UuK+b2xUshmTREQbwmxR/45N8uvfU1OuMSlurC6YORqkMb5vcLIkSuVGv/1Wq11vqe
-         iWunU5Zs/O853CTXD+MaNl7XP0ZKonRpjbvrCDzxcSlz33ZV7zPtVxVCOqQgx7Dr9RY2
-         PRWL0N6JG8Y1R9nvbNn2fdO+dPYek2wCNSX6VlpixaQ0f1jsO5tr7Cg9j5maCWcBLTX5
-         CvMg==
+        bh=GyPexbeAjkPl9uXJcvBhLjLvKtBfedTLtrLLPvZOGDM=;
+        b=VTjt6hYFL7T24wINVSvvB1q3hrW9ceGB0zAptEUp6jm98zJG+56NvVovy99MheHb+g
+         SHfBHfZ0AS69jdTrgqkoQAMLbKef4fZ2Y6CsBSJGHY2mHJCNpKzk0lc2Fxy6jbCysVpE
+         aGShBh8xTyVyHmXNOqqs6rfrFKR6569TLw/8wg2vuBFbIt1qR51wuPPdhZ+tyZnezE0K
+         rV49BMnCsQ2A0cKFU9tonA38HsYPIPicFMXBWb8V5ON5hliChRCKBzwNV9W4yxk897Nv
+         QyAXoieOHyS33G6zYnOtSubzv8HqFB5UyZbvqP2x4YZpOtEohyLTOyJ5iksRbKdMnomX
+         1LGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=0p0meUSwF/Oxw6Zt+qddmm/HxkjzzLrP0pkugqwTm+E=;
-        b=OqY7neGJ+gaYsmUzLC2LLHyF++NnPtmJ5mLUScgUmKSrG+A8SutI4KpFNc108Jr2HX
-         wHvfuA7GKUTLkngHZiSfdGhRC/xtGn+1rLPsq+92hM8rd+9YqUcukxm4qs+Fou9u7rZX
-         BLl5YUPPzxlVYCNQgP30xdinVos+tGdR7eWkJxd5hhH+kaTXHcuFdE5OF8SElLRRnafv
-         ar8psMX19h+aVxw2NKPzx/FMnrWPJLrOoH2bpwxKVzaw+ltWD6LJAkL+bq937t0R4Bz7
-         U/uyml2SJO0m1YQdTMUzhUSgIup6AeZuazXKvb+9P+TV0dseQqdiYBMtOmwCC9C54m89
-         f2TA==
-X-Gm-Message-State: AOAM531YQcLryLJb3lJWYaicYYKg4IbsXf2gcKwhRYgkQAl/hxD5PhHl
-        n30zmSvcCvlr3PhJopRYHHM=
-X-Google-Smtp-Source: ABdhPJzDHwj4vXCDhOV5p+ixCGHRQAQNNU19bhNMGNEUmYizce4blimlR1824q5SCDiDwuQ7ROyXhQ==
-X-Received: by 2002:a05:600c:40ca:: with SMTP id m10mr38997093wmh.105.1625086467945;
-        Wed, 30 Jun 2021 13:54:27 -0700 (PDT)
+        bh=GyPexbeAjkPl9uXJcvBhLjLvKtBfedTLtrLLPvZOGDM=;
+        b=iFgObDCCEeJV9ZKwkKOVmHXzoa11ddXZWjFEJYpGsJ4c6GYIu9tz/vw7CudKzykhKI
+         t+imwhMZHaoQwwPOP/FwkrjSptA2ElzTvLYutCxJzcEERUGI3QLZlInyoUNVRKKCSqSS
+         kpClR1ECnmm8OTcaThACOc/Zn8+heTf77s0r2bWjqoGa9UqSg36sHVnQsvgudTjnAxi1
+         yW8Aelg65kXobvkMIjhCK+4TzhiRr15QIjYlZwJ78RHJ2vhPmhaJufgrjVB/moXUf4yL
+         O5Yx9584ieqkxtheQndexk3MWjqUQNwMHmgdAjDyro82R3pfwrbK+pZNQDSTnIsUImUQ
+         J6MA==
+X-Gm-Message-State: AOAM53316isl/kWtN/sMe2bL8maDMyGUqjxGPv8r/welOJkWWi8WPqT2
+        wM0UEXkWJhLk013jr/MiyLU=
+X-Google-Smtp-Source: ABdhPJzbZOcL2aNbc51UN6soW5gRS98O3Ptt+VCjr0eNs2h2tIdbruHp6qYPTKZsP0GjIJzJO56KEQ==
+X-Received: by 2002:a7b:cc8d:: with SMTP id p13mr8404719wma.33.1625086468769;
+        Wed, 30 Jun 2021 13:54:28 -0700 (PDT)
 Received: from localhost.localdomain ([85.255.237.26])
-        by smtp.gmail.com with ESMTPSA id p2sm22099087wro.16.2021.06.30.13.54.27
+        by smtp.gmail.com with ESMTPSA id p2sm22099087wro.16.2021.06.30.13.54.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Jun 2021 13:54:27 -0700 (PDT)
+        Wed, 30 Jun 2021 13:54:28 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 1/3] io_uring: fix stuck fallback reqs
-Date:   Wed, 30 Jun 2021 21:54:03 +0100
-Message-Id: <52213538759af2d500ca2060160620c406bb83d1.1625086418.git.asml.silence@gmail.com>
+Subject: [PATCH 2/3] io_uring: simplify task_work func
+Date:   Wed, 30 Jun 2021 21:54:04 +0100
+Message-Id: <294aa4eddbae929348273186a4945efa243f1aa9.1625086418.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <cover.1625086418.git.asml.silence@gmail.com>
 References: <cover.1625086418.git.asml.silence@gmail.com>
@@ -61,147 +61,227 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-When task_work_add() fails, we use ->exit_task_work to queue the work.
-That will be run only in the cancellation path, which happens either
-when the ctx is dying or one of tasks with inflight requests is exiting
-or executing. There is a good chance that such a request would just get
-stuck in the list potentially hodling a file, all io_uring rsrc
-recycling or some other resources. Nothing terrible, it'll go away at
-some point, but we don't want to lock them up for longer than needed.
+Since we don't really use req->task_work anymore, get rid of it together
+with the nasty ->func aliasing between ->io_task_work and ->task_work,
+and hide ->fallback_node inside of io_task_work.
 
-Replace that hand made ->exit_task_work with delayed_work + llist
-inspired by fput_many().
+Also, as task_work is gone now, replace the callback type from
+task_work_func_t to a function taking io_kiocb to avoid casting and
+simplify code.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 61 +++++++++++++++++----------------------------------
- 1 file changed, 20 insertions(+), 41 deletions(-)
+ fs/io_uring.c | 72 ++++++++++++++++++++-------------------------------
+ 1 file changed, 28 insertions(+), 44 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 92f85d4385a2..08ca835629ce 100644
+index 08ca835629ce..5fab427305e3 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -465,7 +465,8 @@ struct io_ring_ctx {
- 		struct mm_struct		*mm_account;
+@@ -808,9 +808,14 @@ struct async_poll {
+ 	struct io_poll_iocb	*double_poll;
+ };
  
- 		/* ctx exit and cancelation */
--		struct callback_head		*exit_task_work;
-+		struct llist_head		fallback_llist;
-+		struct delayed_work		fallback_work;
- 		struct work_struct		exit_work;
- 		struct list_head		tctx_list;
- 		struct completion		ref_comp;
-@@ -885,6 +886,8 @@ struct io_kiocb {
++typedef void (*io_req_tw_func_t)(struct io_kiocb *req);
++
+ struct io_task_work {
+-	struct io_wq_work_node	node;
+-	task_work_func_t	func;
++	union {
++		struct io_wq_work_node	node;
++		struct llist_node	fallback_node;
++	};
++	io_req_tw_func_t		func;
+ };
+ 
+ enum {
+@@ -876,18 +881,13 @@ struct io_kiocb {
+ 
+ 	/* used with ctx->iopoll_list with reads/writes */
+ 	struct list_head		inflight_entry;
+-	union {
+-		struct io_task_work	io_task_work;
+-		struct callback_head	task_work;
+-	};
++	struct io_task_work		io_task_work;
+ 	/* for polled requests, i.e. IORING_OP_POLL_ADD and async armed poll */
+ 	struct hlist_node		hash_node;
+ 	struct async_poll		*apoll;
  	struct io_wq_work		work;
  	const struct cred		*creds;
  
-+	struct llist_node		fallback_node;
-+
+-	struct llist_node		fallback_node;
+-
  	/* store used ubuf, so we can prevent reloading */
  	struct io_mapped_ubuf		*imu;
  };
-@@ -1100,6 +1103,8 @@ static void io_submit_flush_completions(struct io_ring_ctx *ctx);
- static bool io_poll_remove_waitqs(struct io_kiocb *req);
- static int io_req_prep_async(struct io_kiocb *req);
- 
-+static void io_fallback_req_func(struct work_struct *unused);
-+
- static struct kmem_cache *req_cachep;
- 
- static const struct file_operations io_uring_fops;
-@@ -1231,6 +1236,7 @@ static struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
- 	INIT_LIST_HEAD(&ctx->tctx_list);
- 	INIT_LIST_HEAD(&ctx->submit_state.comp.free_list);
- 	INIT_LIST_HEAD(&ctx->locked_free_list);
-+	INIT_DELAYED_WORK(&ctx->fallback_work, io_fallback_req_func);
- 	return ctx;
- err:
- 	kfree(ctx->dummy_ubuf);
-@@ -2028,44 +2034,12 @@ static int io_req_task_work_add(struct io_kiocb *req)
- 	return ret;
+@@ -1964,7 +1964,7 @@ static void tctx_task_work(struct callback_head *cb)
+ 				ctx = req->ctx;
+ 				percpu_ref_get(&ctx->refs);
+ 			}
+-			req->task_work.func(&req->task_work);
++			req->io_task_work.func(req);
+ 			node = next;
+ 		}
+ 		if (wq_list_empty(&tctx->task_list)) {
+@@ -2035,16 +2035,16 @@ static int io_req_task_work_add(struct io_kiocb *req)
  }
  
--static bool io_run_task_work_head(struct callback_head **work_head)
--{
--	struct callback_head *work, *next;
--	bool executed = false;
--
--	do {
--		work = xchg(work_head, NULL);
--		if (!work)
--			break;
--
--		do {
--			next = work->next;
--			work->func(work);
--			work = next;
--			cond_resched();
--		} while (work);
--		executed = true;
--	} while (1);
--
--	return executed;
--}
--
--static void io_task_work_add_head(struct callback_head **work_head,
--				  struct callback_head *task_work)
--{
--	struct callback_head *head;
--
--	do {
--		head = READ_ONCE(*work_head);
--		task_work->next = head;
--	} while (cmpxchg(work_head, head, task_work) != head);
--}
--
  static void io_req_task_work_add_fallback(struct io_kiocb *req,
- 					  task_work_func_t cb)
+-					  task_work_func_t cb)
++					  io_req_tw_func_t cb)
  {
- 	init_task_work(&req->task_work, cb);
--	io_task_work_add_head(&req->ctx->exit_task_work, &req->task_work);
-+	if (llist_add(&req->fallback_node, &req->ctx->fallback_llist))
-+		schedule_delayed_work(&req->ctx->fallback_work, 1);
+-	init_task_work(&req->task_work, cb);
+-	if (llist_add(&req->fallback_node, &req->ctx->fallback_llist))
++	req->io_task_work.func = cb;
++	if (llist_add(&req->io_task_work.fallback_node,
++		      &req->ctx->fallback_llist))
+ 		schedule_delayed_work(&req->ctx->fallback_work, 1);
  }
  
- static void io_req_task_cancel(struct callback_head *cb)
-@@ -2514,6 +2488,17 @@ static bool io_rw_should_reissue(struct io_kiocb *req)
- }
- #endif
- 
-+static void io_fallback_req_func(struct work_struct *work)
-+{
-+	struct io_ring_ctx *ctx = container_of(work, struct io_ring_ctx,
-+						fallback_work.work);
-+	struct llist_node *node = llist_del_all(&ctx->fallback_llist);
-+	struct io_kiocb *req, *tmp;
-+
-+	llist_for_each_entry_safe(req, tmp, node, fallback_node)
-+		req->task_work.func(&req->task_work);
-+}
-+
- static void __io_complete_rw(struct io_kiocb *req, long res, long res2,
- 			     unsigned int issue_flags)
+-static void io_req_task_cancel(struct callback_head *cb)
++static void io_req_task_cancel(struct io_kiocb *req)
  {
-@@ -8956,11 +8941,6 @@ static int io_unregister_personality(struct io_ring_ctx *ctx, unsigned id)
- 	return -EINVAL;
+-	struct io_kiocb *req = container_of(cb, struct io_kiocb, task_work);
+ 	struct io_ring_ctx *ctx = req->ctx;
+ 
+ 	/* ctx is guaranteed to stay alive while we hold uring_lock */
+@@ -2053,7 +2053,7 @@ static void io_req_task_cancel(struct callback_head *cb)
+ 	mutex_unlock(&ctx->uring_lock);
  }
  
--static inline bool io_run_ctx_fallback(struct io_ring_ctx *ctx)
+-static void __io_req_task_submit(struct io_kiocb *req)
++static void io_req_task_submit(struct io_kiocb *req)
+ {
+ 	struct io_ring_ctx *ctx = req->ctx;
+ 
+@@ -2066,17 +2066,10 @@ static void __io_req_task_submit(struct io_kiocb *req)
+ 	mutex_unlock(&ctx->uring_lock);
+ }
+ 
+-static void io_req_task_submit(struct callback_head *cb)
 -{
--	return io_run_task_work_head(&ctx->exit_task_work);
+-	struct io_kiocb *req = container_of(cb, struct io_kiocb, task_work);
+-
+-	__io_req_task_submit(req);
 -}
 -
- struct io_tctx_exit {
- 	struct callback_head		task_work;
- 	struct completion		completion;
-@@ -9225,7 +9205,6 @@ static void io_uring_try_cancel_requests(struct io_ring_ctx *ctx,
- 		ret |= io_kill_timeouts(ctx, task, cancel_all);
- 		if (task)
- 			ret |= io_run_task_work();
--		ret |= io_run_ctx_fallback(ctx);
- 		if (!ret)
- 			break;
- 		cond_resched();
+ static void io_req_task_queue_fail(struct io_kiocb *req, int ret)
+ {
+ 	req->result = ret;
+-	req->task_work.func = io_req_task_cancel;
++	req->io_task_work.func = io_req_task_cancel;
+ 
+ 	if (unlikely(io_req_task_work_add(req)))
+ 		io_req_task_work_add_fallback(req, io_req_task_cancel);
+@@ -2084,7 +2077,7 @@ static void io_req_task_queue_fail(struct io_kiocb *req, int ret)
+ 
+ static void io_req_task_queue(struct io_kiocb *req)
+ {
+-	req->task_work.func = io_req_task_submit;
++	req->io_task_work.func = io_req_task_submit;
+ 
+ 	if (unlikely(io_req_task_work_add(req)))
+ 		io_req_task_queue_fail(req, -ECANCELED);
+@@ -2198,18 +2191,11 @@ static inline void io_put_req(struct io_kiocb *req)
+ 		io_free_req(req);
+ }
+ 
+-static void io_put_req_deferred_cb(struct callback_head *cb)
+-{
+-	struct io_kiocb *req = container_of(cb, struct io_kiocb, task_work);
+-
+-	io_free_req(req);
+-}
+-
+ static void io_free_req_deferred(struct io_kiocb *req)
+ {
+-	req->task_work.func = io_put_req_deferred_cb;
++	req->io_task_work.func = io_free_req;
+ 	if (unlikely(io_req_task_work_add(req)))
+-		io_req_task_work_add_fallback(req, io_put_req_deferred_cb);
++		io_req_task_work_add_fallback(req, io_free_req);
+ }
+ 
+ static inline void io_put_req_deferred(struct io_kiocb *req, int refs)
+@@ -2495,8 +2481,8 @@ static void io_fallback_req_func(struct work_struct *work)
+ 	struct llist_node *node = llist_del_all(&ctx->fallback_llist);
+ 	struct io_kiocb *req, *tmp;
+ 
+-	llist_for_each_entry_safe(req, tmp, node, fallback_node)
+-		req->task_work.func(&req->task_work);
++	llist_for_each_entry_safe(req, tmp, node, io_task_work.fallback_node)
++		req->io_task_work.func(req);
+ }
+ 
+ static void __io_complete_rw(struct io_kiocb *req, long res, long res2,
+@@ -4998,7 +4984,7 @@ struct io_poll_table {
+ };
+ 
+ static int __io_async_wake(struct io_kiocb *req, struct io_poll_iocb *poll,
+-			   __poll_t mask, task_work_func_t func)
++			   __poll_t mask, io_req_tw_func_t func)
+ {
+ 	int ret;
+ 
+@@ -5011,7 +4997,7 @@ static int __io_async_wake(struct io_kiocb *req, struct io_poll_iocb *poll,
+ 	list_del_init(&poll->wait.entry);
+ 
+ 	req->result = mask;
+-	req->task_work.func = func;
++	req->io_task_work.func = func;
+ 
+ 	/*
+ 	 * If this fails, then the task is exiting. When a task exits, the
+@@ -5108,9 +5094,8 @@ static bool io_poll_complete(struct io_kiocb *req, __poll_t mask)
+ 	return !(flags & IORING_CQE_F_MORE);
+ }
+ 
+-static void io_poll_task_func(struct callback_head *cb)
++static void io_poll_task_func(struct io_kiocb *req)
+ {
+-	struct io_kiocb *req = container_of(cb, struct io_kiocb, task_work);
+ 	struct io_ring_ctx *ctx = req->ctx;
+ 	struct io_kiocb *nxt;
+ 
+@@ -5132,7 +5117,7 @@ static void io_poll_task_func(struct callback_head *cb)
+ 		if (done) {
+ 			nxt = io_put_req_find_next(req);
+ 			if (nxt)
+-				__io_req_task_submit(nxt);
++				io_req_task_submit(nxt);
+ 		}
+ 	}
+ }
+@@ -5241,9 +5226,8 @@ static void io_async_queue_proc(struct file *file, struct wait_queue_head *head,
+ 	__io_queue_proc(&apoll->poll, pt, head, &apoll->double_poll);
+ }
+ 
+-static void io_async_task_func(struct callback_head *cb)
++static void io_async_task_func(struct io_kiocb *req)
+ {
+-	struct io_kiocb *req = container_of(cb, struct io_kiocb, task_work);
+ 	struct async_poll *apoll = req->apoll;
+ 	struct io_ring_ctx *ctx = req->ctx;
+ 
+@@ -5259,7 +5243,7 @@ static void io_async_task_func(struct callback_head *cb)
+ 	spin_unlock_irq(&ctx->completion_lock);
+ 
+ 	if (!READ_ONCE(apoll->poll.canceled))
+-		__io_req_task_submit(req);
++		io_req_task_submit(req);
+ 	else
+ 		io_req_complete_failed(req, -ECANCELED);
+ }
+@@ -9006,7 +8990,7 @@ static void io_ring_exit_work(struct work_struct *work)
+ 	/*
+ 	 * Some may use context even when all refs and requests have been put,
+ 	 * and they are free to do so while still holding uring_lock or
+-	 * completion_lock, see __io_req_task_submit(). Apart from other work,
++	 * completion_lock, see io_req_task_submit(). Apart from other work,
+ 	 * this lock/unlock section also waits them to finish.
+ 	 */
+ 	mutex_lock(&ctx->uring_lock);
 -- 
 2.32.0
 

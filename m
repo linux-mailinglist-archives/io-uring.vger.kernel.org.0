@@ -2,215 +2,150 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 07F5A3B93DB
-	for <lists+io-uring@lfdr.de>; Thu,  1 Jul 2021 17:24:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 841533B9440
+	for <lists+io-uring@lfdr.de>; Thu,  1 Jul 2021 17:47:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233264AbhGAP1Q (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 1 Jul 2021 11:27:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45616 "EHLO
+        id S233846AbhGAPt0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 1 Jul 2021 11:49:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50688 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232817AbhGAP1Q (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 1 Jul 2021 11:27:16 -0400
-Received: from mail-oi1-x229.google.com (mail-oi1-x229.google.com [IPv6:2607:f8b0:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11B2FC061762
-        for <io-uring@vger.kernel.org>; Thu,  1 Jul 2021 08:24:46 -0700 (PDT)
-Received: by mail-oi1-x229.google.com with SMTP id 22so7652713oix.10
-        for <io-uring@vger.kernel.org>; Thu, 01 Jul 2021 08:24:46 -0700 (PDT)
+        with ESMTP id S233702AbhGAPt0 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 1 Jul 2021 11:49:26 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D28C6C061762
+        for <io-uring@vger.kernel.org>; Thu,  1 Jul 2021 08:46:55 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id l24so9062981edr.11
+        for <io-uring@vger.kernel.org>; Thu, 01 Jul 2021 08:46:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=from:subject:to:cc:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=qWaJJE5+MU4VkiWNfPKUoOfBbLRWtxFhVowk7Rfi0Bw=;
-        b=VGMV8LxtffbMOHvCn0kVy9cwfovIO1t/YgKjpOvK3gmX3bUsE/q6W0vQ/Qja+0JheR
-         LXh35IbqtfI2KrZhMmttuaCFJPtmE7oCnRVEmePNXN1o6d1aX7Vc6OqXvQd8F/8FiO75
-         VXlnBMlLvsy+74tvMd1iziCXl5AkGWMoYGsZK9m/y1k3VICebCzgiXO4gj1j/1vV66JL
-         T+lFckacdNCaPu3h/xjJIOfZ/FQIfFPAyXx4ay+8FFzHl9ikefaBQ1BSCHte48rBHx/M
-         99tG87T54PP4uL2rQQlS/4l81uMWv6WZN+BGbZXc1KB1oGEDSSZoXVNkV499iU42C0DW
-         PVMQ==
+        d=nametag.social; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Oedd2vERiW1FEwOPeX/VtER+5Q4+xm9mSufMWyyMB4w=;
+        b=mOKhF7UTcuif0aKOa+ZrYx6jRr1LqkT+qYMTS3CVhpK+yHLm7FUTd4P2HN4FTCC2R1
+         jLLqFmABUBSRMp/K/jjm1jffnmpZJars6EWa5S9qCAx0HQyyTSxUFJACv17z2PuCyDiT
+         pOu3D/roFSEzan9JB7zHiFZJ/QvHL4tgsVRa0UBAnXxYU459C7Aa2qV32oXB3pfBCTcr
+         FYj+fdWSObC4RqTzAJjGL9iJIXpdJxdb0rTZquhX//YSETjjcu8px8g3BsYTHaYgQdPZ
+         O3z+coeCMAmjCC3b400S94oR5CEz8qYXkJy8uryvmGOwZdvqUNKSOyWT8trTxh+rg3xk
+         QL4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=qWaJJE5+MU4VkiWNfPKUoOfBbLRWtxFhVowk7Rfi0Bw=;
-        b=TOZ1dIE+xUMw/2YzJj/KBDE8P0s5UsOS2Y8ht5G2nl1wPv7etAZC/FDH4wSy3e4nF7
-         Z6I9PeBnA4RDr/h48xiVmUwrDIsyRU7Iza8gxkbZIHLQzO2bvZ1UgiCaSYfE0FKGkiLa
-         G0cTdRy2LFDOronSZQSdgKMd6q24sM5D3VmaHw1OmYeBBUwofzYP8sq9xrvNkKm5yvKW
-         6bQWnY2tdXCA+dmj56YC+NPg5INub/YeHSio/ue7SXw8P09ViwNdjdco2FwClpGpafG+
-         9MzgA5j/Iul8LIDBsLlmHjKBhQE4nFA+N2JdSziVxM1XJxSFuoQeuHsK/wCph9XrENLu
-         uAAQ==
-X-Gm-Message-State: AOAM532DFI5Aqccuq6q1HcG9tb2dprJ6hQ9Kcoodxtth0G9Ya85itu3h
-        NGHQ18O/M+kTuwCJUrDt3b/QbxwYjAfPXg==
-X-Google-Smtp-Source: ABdhPJx3/TlZ7wMHGT6hxnJHojVzhdmrCjvHFk4w//XyxZauQDG9T/cFcLPOYimLh6PUMz14SJd2pw==
-X-Received: by 2002:aca:6207:: with SMTP id w7mr1419459oib.177.1625153085176;
-        Thu, 01 Jul 2021 08:24:45 -0700 (PDT)
-Received: from [192.168.1.30] ([207.135.233.147])
-        by smtp.gmail.com with ESMTPSA id e29sm45537oiy.53.2021.07.01.08.24.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Jul 2021 08:24:44 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] io_uring updates for 5.14-rc1
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     io-uring <io-uring@vger.kernel.org>
-Message-ID: <54ce324e-ef03-4f00-ab95-95e3e047f4b0@kernel.dk>
-Date:   Thu, 1 Jul 2021 09:24:44 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Oedd2vERiW1FEwOPeX/VtER+5Q4+xm9mSufMWyyMB4w=;
+        b=UY6FgRRWNlmDw8R4+erm62dXuJzcbl6cqLu0E12tIBtVcjbcBB/m8Yk9nOfJPPXOOQ
+         6M9BVd/MkT8FtW+KSWPbjRqSmKCb+YTulYrwQKM2mdyyI49kkcRQ0KRqZRODqdp03SK2
+         TmdmTSwgDyPdPDs/vl2Ni9sSbjWf+2C4pA2BGB8GQlV4jmQdeBGfQ867Ou/I1ry7Erbl
+         6gUWn2DWTHHeRotmgmHeXd56b0N6QfYTmgB1CqGJt7EjvJ8lh/i5GaazaW1ouIS6wHNe
+         EbuPzPh3TXanhPIZ8g9TTRUP5YK5zR+YtF75PNcjgUNlltAJImeivby2+BQ9pmAH/EGM
+         8N6g==
+X-Gm-Message-State: AOAM532N3YmvC0amMLmYySgTvd0pVxdBOPps868dF5eZF9YOpG5YEsbf
+        psDzk0LpuOr6USnhJeeVGKs56NXB/QkJ9/9ZAtMxcQ==
+X-Google-Smtp-Source: ABdhPJxbHKIzBXvn9k+HWJF4vAaEwSHQMpwYysnmMp63qx07A2+Ytg4pkW7k/Euz4S2Uuw/5I4aWu+H3sySOWHxWCfA=
+X-Received: by 2002:a05:6402:524d:: with SMTP id t13mr604375edd.303.1625154414489;
+ Thu, 01 Jul 2021 08:46:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <CAM1kxwgU2V0RsE+77mRUg+mr6WL5PJpbFKh4FrEGOnfzZ5vZ3A@mail.gmail.com>
+ <5201d747-121d-4e5e-d2a6-9442a5e4c534@gmail.com>
+In-Reply-To: <5201d747-121d-4e5e-d2a6-9442a5e4c534@gmail.com>
+From:   Victor Stewart <v@nametag.social>
+Date:   Thu, 1 Jul 2021 16:46:41 +0100
+Message-ID: <CAM1kxwgEZ1bPMGgJixqQPVm4AP84xwYU8zrPOohvGp9nCQPpZg@mail.gmail.com>
+Subject: Re: [Bug] io_uring_register_files_update broken
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     io-uring <io-uring@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Linus,
+On Thu, Jul 1, 2021 at 3:51 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
+>
+> On 6/30/21 10:14 PM, Victor Stewart wrote:
+> > i'm fairly confident there is something broken with
+> > io_uring_register_files_update,
+> > especially the offset parameter.
+> >
+> > when trying to update a single fd, and getting a successful result of
+> > 1, proceeding
+> > operations with IOSQE_FIXED_FILE fail with -9. but if i update all of
+> > the fds with
+> > then my recv operations succeed, but close still fails with -9.
+> >
+> > on Clear LInux 5.12.13-1050.native
+> >
+> > here's a diff for liburing send_recv test, to demonstrate this.
+> >
+> > diff --git a/test/send_recv.c b/test/send_recv.c
+> > index 19adbdd..492b591 100644
+> > --- a/test/send_recv.c
+> > +++ b/test/send_recv.c
+> > @@ -27,6 +27,8 @@ static char str[] = "This is a test of send and recv
+> > over io_uring!";
+> >  #      define io_uring_prep_recv io_uring_prep_read
+> >  #endif
+> >
+> > +static int *fds;
+> > +
+> >  static int recv_prep(struct io_uring *ring, struct iovec *iov, int *sock,
+> >                      int registerfiles)
+> >  {
+> > @@ -54,17 +56,28 @@ static int recv_prep(struct io_uring *ring, struct
+> > iovec *iov, int *sock,
+> >                 goto err;
+> >         }
+> >
+> > +       fds = malloc(100 * sizeof(int));
+> > +       memset(fds, 0xff, sizeof(int) * 100);
+> > +
+> >         if (registerfiles) {
+> > -               ret = io_uring_register_files(ring, &sockfd, 1);
+> > +               ret = io_uring_register_files(ring, fds, 100);
+> >                 if (ret) {
+> >                         fprintf(stderr, "file reg failed\n");
+> >                         goto err;
+> >                 }
+> > -               use_fd = 0;
+> > -       } else {
+> > -               use_fd = sockfd;
+> > +
+> > +               fds[sockfd] = sockfd;
+> > +               int result = io_uring_register_files_update(ring,
+> > sockfd, fds, 1);
+>
+> s/fds/&fds[sockfd]/
+>
+> Does it help? io_uring_register_files_update() doesn't
+> apply offset parameter to the array, it's used only as
+> an internal index.
 
-This pull request contains the io_uring updates for the 5.14-rc1 merge
-window. Identical to the pull request sent the other day, just with the
-vfs changes dropped, and hence the io_uring mkdirat, symlinkat, and
-linkat removed as well.
+i see yes, it works it like this!
 
-- Multi-queue iopoll improvement (Fam)
+io_uring_register_files_update(&ring, fd, &(socketfds[fd]), 1);
+io_uring_register_files_update(&ring, fd, &(socketfds[fd] = -1), 1);
 
-- Allow configurable io-wq CPU masks (me)
+and this behavior is clear upon a closer reading of...
+https://github.com/axboe/liburing/blob/11f6d56302c177a96d7eb1df86995939a4feb736/test/file-register.c#L80
 
-- renameat/linkat tightening (me)
+i guess it's sometimes ambiguous whether int* is requesting an array
+or an actual pointer to a single int.
 
-- poll re-arm improvement (Olivier)
+all good now.
 
-- SQPOLL race fix (Olivier)
-
-- Cancelation unification (Pavel)
-
-- SQPOLL cleanups (Pavel)
-
-- Enable file backed buffers for shmem/memfd (Pavel)
-
-- A ton of cleanups and performance improvements (Pavel)
-
-- Followup and misc fixes (Colin, Fam, Hao, Olivier)
-
-Please pull!
-
-
-The following changes since commit 009c9aa5be652675a06d5211e1640e02bbb1c33d:
-
-  Linux 5.13-rc6 (2021-06-13 14:43:10 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.dk/linux-block.git tags/for-5.14/io_uring-2021-06-30
-
-for you to fetch changes up to e149bd742b2db6a63fc078b1ea6843dc9b22678d:
-
-  io_uring: code clean for kiocb_done() (2021-06-30 14:15:40 -0600)
-
-----------------------------------------------------------------
-for-5.14/io_uring-2021-06-30
-
-----------------------------------------------------------------
-Colin Ian King (2):
-      io_uring: Fix incorrect sizeof operator for copy_from_user call
-      io-wq: remove redundant initialization of variable ret
-
-Fam Zheng (1):
-      io_uring: Fix comment of io_get_sqe
-
-Hao Xu (2):
-      io_uring: spin in iopoll() only when reqs are in a single queue
-      io_uring: code clean for kiocb_done()
-
-Jens Axboe (4):
-      io-wq: use private CPU mask
-      io_uring: allow user configurable IO thread CPU affinity
-      io_uring: add IOPOLL and reserved field checks to IORING_OP_RENAMEAT
-      io_uring: add IOPOLL and reserved field checks to IORING_OP_UNLINKAT
-
-Olivier Langlois (6):
-      io_uring: Add to traces the req pointer when available
-      io_uring: minor clean up in trace events definition
-      io-wq: remove header files not needed anymore
-      io_uring: Fix race condition when sqp thread goes to sleep
-      io_uring: Create define to modify a SQPOLL parameter
-      io_uring: reduce latency by reissueing the operation
-
-Pavel Begunkov (68):
-      io_uring: improve sqpoll event/state handling
-      io_uring: improve sq_thread waiting check
-      io_uring: remove unused park_task_work
-      io_uring: simplify waking sqo_sq_wait
-      io_uring: get rid of files in exit cancel
-      io_uring: make fail flag not link specific
-      io_uring: shuffle rarely used ctx fields
-      io_uring: better locality for rsrc fields
-      io_uring: remove dependency on ring->sq/cq_entries
-      io_uring: deduce cq_mask from cq_entries
-      io_uring: kill cached_cq_overflow
-      io_uring: rename io_get_cqring
-      io_uring: don't bounce submit_state cachelines
-      io_uring: enable shmem/memfd memory registration
-      io_uring: fix blocking inline submission
-      io-wq: embed wqe ptr array into struct io_wq
-      io-wq: remove unused io-wq refcounting
-      io_uring: refactor io_iopoll_req_issued
-      io_uring: rename function *task_file
-      io-wq: don't repeat IO_WQ_BIT_EXIT check by worker
-      io-wq: simplify worker exiting
-      io_uring: hide rsrc tag copy into generic helpers
-      io_uring: remove rsrc put work irq save/restore
-      io_uring: add helpers for 2 level table alloc
-      io_uring: don't vmalloc rsrc tags
-      io_uring: cache task struct refs
-      io_uring: unify SQPOLL and user task cancellations
-      io_uring: inline io_iter_do_read()
-      io_uring: keep SQ pointers in a single cacheline
-      io_uring: move ctx->flags from SQ cacheline
-      io_uring: shuffle more fields into SQ ctx section
-      io_uring: refactor io_get_sqe()
-      io_uring: don't cache number of dropped SQEs
-      io_uring: optimise completion timeout flushing
-      io_uring: small io_submit_sqe() optimisation
-      io_uring: clean up check_overflow flag
-      io_uring: wait heads renaming
-      io_uring: move uring_lock location
-      io_uring: refactor io_req_defer()
-      io_uring: optimise non-drain path
-      io_uring: fix min types mismatch in table alloc
-      io_uring: switch !DRAIN fast path when possible
-      io_uring: shove more drain bits out of hot path
-      io_uring: optimise io_commit_cqring()
-      io_uring: fix false WARN_ONCE
-      io_uring: refactor io_submit_flush_completions()
-      io_uring: move creds from io-wq work to io_kiocb
-      io_uring: track request creds with a flag
-      io_uring: simplify iovec freeing in io_clean_op()
-      io_uring: clean all flags in io_clean_op() at once
-      io_uring: refactor io_get_sequence()
-      io_uring: inline __tctx_task_work()
-      io_uring: optimise task_work submit flushing
-      io_uring: refactor tctx task_work list splicing
-      io_uring: don't resched with empty task_list
-      io_uring: improve in tctx_task_work() resubmission
-      io_uring: don't change sqpoll creds if not needed
-      io_uring: refactor io_sq_thread()
-      io_uring: fix code style problems
-      io_uring: update sqe layout build checks
-      io_uring: simplify struct io_uring_sqe layout
-      io_uring: refactor io_openat2()
-      io_uring: refactor io_arm_poll_handler()
-      io_uring: mainstream sqpoll task_work running
-      io_uring: remove not needed PF_EXITING check
-      io_uring: optimise hot path restricted checks
-      io_uring: refactor io_submit_flush_completions
-      io_uring: pre-initialise some of req fields
-
- fs/io-wq.c                      |  103 ++-
- fs/io-wq.h                      |    3 +-
- fs/io_uring.c                   | 1324 +++++++++++++++++++++------------------
- include/trace/events/io_uring.h |  106 ++--
- include/uapi/linux/io_uring.h   |   28 +-
- 5 files changed, 874 insertions(+), 690 deletions(-)
-
--- 
-Jens Axboe
-
+>
+> > +
+> > +               if (result != 1)
+> > +               {
+> > +                       fprintf(stderr, "file update failed\n");
+> > +                       goto err;
+> > +               }
+> >         }
+> >
+> > +       use_fd = sockfd;
+> > +
+> >         sqe = io_uring_get_sqe(ring);
+> >         io_uring_prep_recv(sqe, use_fd, iov->iov_base, iov->iov_len, 0);
+> >         if (registerfiles)
+> >
+>
+> --
+> Pavel Begunkov

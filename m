@@ -2,135 +2,233 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 73B1E3B8AA3
-	for <lists+io-uring@lfdr.de>; Thu,  1 Jul 2021 00:53:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E94873B9197
+	for <lists+io-uring@lfdr.de>; Thu,  1 Jul 2021 14:26:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232469AbhF3Wzu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 30 Jun 2021 18:55:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53842 "EHLO
+        id S236412AbhGAM3A (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 1 Jul 2021 08:29:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34062 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232397AbhF3Wzt (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 30 Jun 2021 18:55:49 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1DEEC061756
-        for <io-uring@vger.kernel.org>; Wed, 30 Jun 2021 15:53:19 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id f14so5225370wrs.6
-        for <io-uring@vger.kernel.org>; Wed, 30 Jun 2021 15:53:19 -0700 (PDT)
+        with ESMTP id S236425AbhGAM27 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 1 Jul 2021 08:28:59 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2F54C0617AE
+        for <io-uring@vger.kernel.org>; Thu,  1 Jul 2021 05:26:28 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id u6so7974728wrs.5
+        for <io-uring@vger.kernel.org>; Thu, 01 Jul 2021 05:26:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=CVFUJSP5IlqHLYlewLwPbePYY8TCZgmuDrZ1ewUfaLs=;
-        b=vQCQZMdhvP3beQJz73aTysTMHaxQ3aU/HIXQwe2H+x246V3UXHyCq9halxNDwlAdzT
-         FUJ3S6f6hTNsA9RJPEskwhlZRCm774GjYX1IdMdfIqIiANxqhsUbQ4ycuymWoTVL0jhy
-         qfkw+MYo+SQ9guCX2x5foUhUdnhLRNC+XZt+DZAValE+1CiLVySWlrYIEsCddKuMRzFO
-         9q2C1q8mqH20AlRF0wwxBLjtDs1B7GPVhxMm1xwL1xxyUywIblRYsjcBlEY5hvx+RiYT
-         hkaKELrVvRp99mJOk1GVa/15v7uOPOQLnKp3+xou45DFoRlOTUEpv1NpMWRPs4uCbn/A
-         xisw==
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3Zj+aPb7GVc9+UxpKKUrEewy9eDGvBwr0vosBMcRPx8=;
+        b=K0Oim2OfJSWIfSjpx25MZzM6LmUBy6kDg/TreXXnaVHWj9v1KTLbypMTvGwuO/nh6L
+         5vChdxYPXMD0goGdGNKfx1IU6zOd1g0J0gjIORPYvGxUzXhtMskj33KRgclPHejA2Jh+
+         5h0+Z6ww1Pqj43ezyt9rVsxQ5g7cu+o2x5mXzNGnVctKISAjCK0pnIL8igWDXz7dSUcx
+         +1zZfT3cxOK7JeT3OyhKlgeUU6LtWpeKa90KegaKz7wl36oebE3GKwgwYJi6sGY3ctRs
+         SKDvBDUqChn32dUEe64h6Hv+NttMKiZZi/5Y+L1Nw6Tx48XLZTBBU+fwq40igdyyy+QE
+         Uf0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=CVFUJSP5IlqHLYlewLwPbePYY8TCZgmuDrZ1ewUfaLs=;
-        b=BBYwSbC+9345ioFeJ9/32mw9OMIq+aF8SIho4sT9YWajK8+XvxXp+aOS43QuUAc+k5
-         LhNY2pl4NcrmeD6YJs5ArnFRFXhl4Z8RKtFpMt696dKiP5Dm/dKY+np8SfS4SwrljonB
-         1qzCHqKCV7av2S+VHScpsXW83fwmRn4lTtUWNVczNmIe1Tl/oQ+8HkrKRiRTvXJuoFaA
-         I/hFVZZLdtlU/B2SvRKOOjTPud7SRbsNgfXnh8y28Zyw8GKX9pjRX/eRaTTjnyApgZ68
-         4eAB+nmQ8J1qaq2Kdf7ZaPb6LM/+YYkP9XYcimaAjZ7f4FZoQZ/Fyf9qhCvn0pZDoA4J
-         Ck0g==
-X-Gm-Message-State: AOAM533tgLqN/4N40u7YXR3vwppDf6t8kfDQlyKKtOSkMsbAsFz4KyBL
-        oj0Tp/kh+a6QActZu5FZuBDpQPXXIsxbHq9Y
-X-Google-Smtp-Source: ABdhPJx1TSat+im10pvIF/X8ixYdWNmDqR0xzvZa79l62peCq+zC5TdUzzVB/eHcmyrFWKCQQlLxNg==
-X-Received: by 2002:a05:6000:1b0e:: with SMTP id f14mr20739850wrz.335.1625093598075;
-        Wed, 30 Jun 2021 15:53:18 -0700 (PDT)
-Received: from [192.168.8.197] ([85.255.233.185])
-        by smtp.gmail.com with ESMTPSA id t17sm21306345wmi.47.2021.06.30.15.53.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Jun 2021 15:53:17 -0700 (PDT)
-Subject: Re: [PATCH 3/3] io_uring: tweak io_req_task_work_add
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-References: <cover.1625086418.git.asml.silence@gmail.com>
- <24b575ea075ae923992e9ce86b61e8b51629fd29.1625086418.git.asml.silence@gmail.com>
- <70c425a8-73dd-e15a-5a10-8ea640cdc7cd@kernel.dk>
- <d7f587b1-67bb-fc67-1174-91d2c8706b42@gmail.com>
- <e1b32d88-5801-b280-25ed-9902cfaa5092@kernel.dk>
- <dc8576f5-9187-c897-d2d5-04f61d54408d@gmail.com>
- <cf74754e-b120-fb71-098b-13d1eeb9428f@kernel.dk>
- <d4adfec3-8e08-3445-ce63-5ed71ae967c3@kernel.dk>
- <d94f850f-3394-9a16-dd9a-614575f87c01@gmail.com>
- <81f57250-d41d-423c-1c1c-ef275ddb5da4@kernel.dk>
+        bh=3Zj+aPb7GVc9+UxpKKUrEewy9eDGvBwr0vosBMcRPx8=;
+        b=LfzvoV38VXxwiLX7sPKV7DRQAknlFGPGIPLCcUeJPCSjgiZ5Ya7WY1+FX9vmEJmk6O
+         Fm/9J2o0++4o279LRVL+PQlRp8taHuIDMET+znqHzIkqylwMihX7C5cF2U/bTYJdQi95
+         QETp7lVqgOoagkcRu/9fWFvopPBwD4KfnzM15YzXFe5de/cZPQlMowhShLwV7i7Yv5V8
+         RtJI5msVbfYUmG4RBtw1ITXUdwTqJ/IY6d0jO4+R6669HhZJIY+2EfsfVZwuxH5MQir7
+         ttsDs+Wt5rwwv+QUSyFlL8PhccGJ84WEO2mmMIiZlYPty9MZMLzVYd28DvOIt7Zm4DPv
+         ghRQ==
+X-Gm-Message-State: AOAM5324vK0XMTLYwI76jUnFjaLyxkErDYN1LHUPtMxdijDO4i82a4Yg
+        z7hns0IwjpatkmjpdusBtbFpKJ8j2dIO3KFM
+X-Google-Smtp-Source: ABdhPJw13PkFAEG/ZFSiLbZHWy/Lg1kjRmL+dvTNUhrd3ChUq87D83QOwLC2i1WIJIGXlmH9T95Z1Q==
+X-Received: by 2002:adf:a446:: with SMTP id e6mr28346793wra.187.1625142387497;
+        Thu, 01 Jul 2021 05:26:27 -0700 (PDT)
+Received: from localhost.localdomain ([85.255.233.185])
+        by smtp.gmail.com with ESMTPSA id c10sm16550002wmb.40.2021.07.01.05.26.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Jul 2021 05:26:27 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <1927a5f6-d467-2b50-ef4f-ad1542c83fdb@gmail.com>
-Date:   Wed, 30 Jun 2021 23:53:01 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [PATCH 1/1] io_uring: fix exiting io_req_task_work_add leaks
+Date:   Thu,  1 Jul 2021 13:26:05 +0100
+Message-Id: <060002f19f1fdbd130ba24aef818ea4d3080819b.1625142209.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-In-Reply-To: <81f57250-d41d-423c-1c1c-ef275ddb5da4@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/30/21 11:11 PM, Jens Axboe wrote:
-> On 6/30/21 4:10 PM, Pavel Begunkov wrote:
->> On 6/30/21 10:56 PM, Jens Axboe wrote:
->>> On 6/30/21 3:45 PM, Jens Axboe wrote:
->>>> On 6/30/21 3:38 PM, Pavel Begunkov wrote:
->>>>> On 6/30/21 10:22 PM, Jens Axboe wrote:
->>>>>> On 6/30/21 3:19 PM, Pavel Begunkov wrote:
->>>>>>> On 6/30/21 10:17 PM, Jens Axboe wrote:
->>>>>>>> On 6/30/21 2:54 PM, Pavel Begunkov wrote:
->>>>>>>>> Whenever possible we don't want to fallback a request. task_work_add()
->>>>>>>>> will be fine if the task is exiting, so don't check for PF_EXITING,
->>>>>>>>> there is anyway only a relatively small gap between setting the flag
->>>>>>>>> and doing the final task_work_run().
->>>>>>>>>
->>>>>>>>> Also add likely for the hot path.
->>>>>>>>
->>>>>>>> I'm not a huge fan of likely/unlikely, and in particular constructs like:
->>>>>>>>
->>>>>>>>> -	if (test_bit(0, &tctx->task_state) ||
->>>>>>>>> +	if (likely(test_bit(0, &tctx->task_state)) ||
->>>>>>>>>  	    test_and_set_bit(0, &tctx->task_state))
->>>>>>>>>  		return 0;
->>>>>>>>
->>>>>>>> where the state is combined. In any case, it should be a separate
->>>>>>>> change. If there's an "Also" paragraph in a patch, then that's also
->>>>>>>> usually a good clue that that particular change should've been
->>>>>>>> separate :-)
->>>>>>>
->>>>>>> Not sure what's wrong with likely above, but how about drop
->>>>>>> this one then?
->>>>>>
->>>>>> Yep I did - we can do the exiting change separately, the commit message
->>>>>
->>>>> I think 1-2 is good enough for 5.14, I'll just send it for-next
->>>>>
->>>>>> just needs to be clarified a bit on why it's ok to do now. And that
->>>>>
->>>>> It should have been ok to do before those 2 patches, but
->>>>> haven't tracked where it lost actuality.
->>>>
->>>> Right, I was thinking it was related to the swapping of the signal
->>>> exit and task work run ordering. But didn't look that far yet...
->>>
->>> BTW, in usual testing, even just the one hunk removing the exit check
->>> seems to result in quite a lot of memory leaks running
->>> test/poll-mshot-update. So something is funky with the patch.
->>
->> I guess you're positive that patches 1-2 have nothing to do
->> with that. Right?
-> 
-> I double checked, and seems fine with those two alone. Ran the test
-> twice, saw massive amounts of leaks with patches 1-3, and none with
-> patches 1-2 only.
+If one entered io_req_task_work_add() not seeing PF_EXITING, it will set
+a ->task_state bit and try task_work_add(), which may fail by that
+moment. If that happens the function would try to cancel the request.
 
-I think there is a problem with the failing path of
-io_req_task_work_add(), the removing back part. Will send a patch
-tomorrow, but not able to test.
+However, in a meanwhile there might come other io_req_task_work_add()
+callers, which will see the bit set and leave their requests in the
+list, which will never be executed.
 
+Don't propagate an error, but clear the bit first and then fallback
+all requests that we can splice from the list. The callback functions
+have to be able to deal with PF_EXITING, so poll and apoll was modified
+via changing io_poll_rewait().
+
+Reported-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+
+Jens, can you try if it helps with the leak you meantioned? I can't
+see it. As with previous, would need to remove the PF_EXITING check,
+and should be in theory safe to do.
+
+ fs/io_uring.c | 70 ++++++++++++++++++---------------------------------
+ 1 file changed, 24 insertions(+), 46 deletions(-)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 5b840bb1e8ec..881856088990 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -1952,17 +1952,13 @@ static void tctx_task_work(struct callback_head *cb)
+ 	ctx_flush_and_put(ctx);
+ }
+ 
+-static int io_req_task_work_add(struct io_kiocb *req)
++static void io_req_task_work_add(struct io_kiocb *req)
+ {
+ 	struct task_struct *tsk = req->task;
+ 	struct io_uring_task *tctx = tsk->io_uring;
+ 	enum task_work_notify_mode notify;
+-	struct io_wq_work_node *node, *prev;
++	struct io_wq_work_node *node;
+ 	unsigned long flags;
+-	int ret = 0;
+-
+-	if (unlikely(tsk->flags & PF_EXITING))
+-		return -ESRCH;
+ 
+ 	WARN_ON_ONCE(!tctx);
+ 
+@@ -1973,7 +1969,9 @@ static int io_req_task_work_add(struct io_kiocb *req)
+ 	/* task_work already pending, we're done */
+ 	if (test_bit(0, &tctx->task_state) ||
+ 	    test_and_set_bit(0, &tctx->task_state))
+-		return 0;
++		return;
++	if (unlikely(tsk->flags & PF_EXITING))
++		goto fail;
+ 
+ 	/*
+ 	 * SQPOLL kernel thread doesn't need notification, just a wakeup. For
+@@ -1982,36 +1980,24 @@ static int io_req_task_work_add(struct io_kiocb *req)
+ 	 * will do the job.
+ 	 */
+ 	notify = (req->ctx->flags & IORING_SETUP_SQPOLL) ? TWA_NONE : TWA_SIGNAL;
+-
+ 	if (!task_work_add(tsk, &tctx->task_work, notify)) {
+ 		wake_up_process(tsk);
+-		return 0;
++		return;
+ 	}
+-
+-	/*
+-	 * Slow path - we failed, find and delete work. if the work is not
+-	 * in the list, it got run and we're fine.
+-	 */
++fail:
++	clear_bit(0, &tctx->task_state);
+ 	spin_lock_irqsave(&tctx->task_lock, flags);
+-	wq_list_for_each(node, prev, &tctx->task_list) {
+-		if (&req->io_task_work.node == node) {
+-			wq_list_del(&tctx->task_list, node, prev);
+-			ret = 1;
+-			break;
+-		}
+-	}
++	node = tctx->task_list.first;
++	INIT_WQ_LIST(&tctx->task_list);
+ 	spin_unlock_irqrestore(&tctx->task_lock, flags);
+-	clear_bit(0, &tctx->task_state);
+-	return ret;
+-}
+ 
+-static void io_req_task_work_add_fallback(struct io_kiocb *req,
+-					  io_req_tw_func_t cb)
+-{
+-	req->io_task_work.func = cb;
+-	if (llist_add(&req->io_task_work.fallback_node,
+-		      &req->ctx->fallback_llist))
+-		schedule_delayed_work(&req->ctx->fallback_work, 1);
++	while (node) {
++		req = container_of(node, struct io_kiocb, io_task_work.node);
++		node = node->next;
++		if (llist_add(&req->io_task_work.fallback_node,
++			      &req->ctx->fallback_llist))
++			schedule_delayed_work(&req->ctx->fallback_work, 1);
++	}
+ }
+ 
+ static void io_req_task_cancel(struct io_kiocb *req)
+@@ -2041,17 +2027,13 @@ static void io_req_task_queue_fail(struct io_kiocb *req, int ret)
+ {
+ 	req->result = ret;
+ 	req->io_task_work.func = io_req_task_cancel;
+-
+-	if (unlikely(io_req_task_work_add(req)))
+-		io_req_task_work_add_fallback(req, io_req_task_cancel);
++	io_req_task_work_add(req);
+ }
+ 
+ static void io_req_task_queue(struct io_kiocb *req)
+ {
+ 	req->io_task_work.func = io_req_task_submit;
+-
+-	if (unlikely(io_req_task_work_add(req)))
+-		io_req_task_queue_fail(req, -ECANCELED);
++	io_req_task_work_add(req);
+ }
+ 
+ static inline void io_queue_next(struct io_kiocb *req)
+@@ -2165,8 +2147,7 @@ static inline void io_put_req(struct io_kiocb *req)
+ static void io_free_req_deferred(struct io_kiocb *req)
+ {
+ 	req->io_task_work.func = io_free_req;
+-	if (unlikely(io_req_task_work_add(req)))
+-		io_req_task_work_add_fallback(req, io_free_req);
++	io_req_task_work_add(req);
+ }
+ 
+ static inline void io_put_req_deferred(struct io_kiocb *req, int refs)
+@@ -4823,8 +4804,6 @@ struct io_poll_table {
+ static int __io_async_wake(struct io_kiocb *req, struct io_poll_iocb *poll,
+ 			   __poll_t mask, io_req_tw_func_t func)
+ {
+-	int ret;
+-
+ 	/* for instances that support it check for an event match first: */
+ 	if (mask && !(mask & poll->events))
+ 		return 0;
+@@ -4842,11 +4821,7 @@ static int __io_async_wake(struct io_kiocb *req, struct io_poll_iocb *poll,
+ 	 * of executing it. We can't safely execute it anyway, as we may not
+ 	 * have the needed state needed for it anyway.
+ 	 */
+-	ret = io_req_task_work_add(req);
+-	if (unlikely(ret)) {
+-		WRITE_ONCE(poll->canceled, true);
+-		io_req_task_work_add_fallback(req, func);
+-	}
++	io_req_task_work_add(req);
+ 	return 1;
+ }
+ 
+@@ -4855,6 +4830,9 @@ static bool io_poll_rewait(struct io_kiocb *req, struct io_poll_iocb *poll)
+ {
+ 	struct io_ring_ctx *ctx = req->ctx;
+ 
++	if (unlikely(req->task->flags & PF_EXITING))
++		WRITE_ONCE(poll->canceled, true);
++
+ 	if (!req->result && !READ_ONCE(poll->canceled)) {
+ 		struct poll_table_struct pt = { ._key = poll->events };
+ 
 -- 
-Pavel Begunkov
+2.32.0
+

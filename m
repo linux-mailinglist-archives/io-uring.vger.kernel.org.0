@@ -2,63 +2,63 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E0193B936A
-	for <lists+io-uring@lfdr.de>; Thu,  1 Jul 2021 16:34:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2B783B9392
+	for <lists+io-uring@lfdr.de>; Thu,  1 Jul 2021 16:51:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232126AbhGAOhH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 1 Jul 2021 10:37:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34450 "EHLO
+        id S232301AbhGAOxs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 1 Jul 2021 10:53:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229978AbhGAOhG (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 1 Jul 2021 10:37:06 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B949C061762
-        for <io-uring@vger.kernel.org>; Thu,  1 Jul 2021 07:34:35 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id u6so8523962wrs.5
-        for <io-uring@vger.kernel.org>; Thu, 01 Jul 2021 07:34:35 -0700 (PDT)
+        with ESMTP id S230100AbhGAOxr (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 1 Jul 2021 10:53:47 -0400
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CDC5C061762
+        for <io-uring@vger.kernel.org>; Thu,  1 Jul 2021 07:51:16 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id q18-20020a1ce9120000b02901f259f3a250so4281814wmc.2
+        for <io-uring@vger.kernel.org>; Thu, 01 Jul 2021 07:51:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:references:from:message-id:date:user-agent:mime-version
          :in-reply-to:content-language:content-transfer-encoding;
-        bh=XrMdFEIurwJlTTAe5BECHb4Xq03uWO2g6LN6QKIv+7k=;
-        b=PtnoObVSmjhPJJp82svvetT90yIEgWxTZ3QQwfME7hhLXBpf1nTqbGfLffqEUw1jKQ
-         s6f7PEEJwk2ZcTbHhA0jKDWh2N2dZJN41RHOAywoMCFcU9M7GSDOqEhDXhiZtx1IV8ye
-         LZy95HxX18KhVPn6bnF6IWQLB9xOFkU792yqreL+IJqTNyAgdEM6ZxwJuAJktdgREix3
-         NEnP6FzZAjQKqsqpXEj8z0UfAj7MBcqCk6NOfGPkSXZ0IbQ1azxVzIZ5uWPoRzD0s9h8
-         cXWChf/Y9Hxk34lrIVuSaedsITEjHoJuoDR3zbOEjpqXp0TsbaqhgOG/VqIny0UcJHDt
-         1Xmw==
+        bh=ItFhC24hLDvLHiPenRlNV6xonWQ1SMJB9u0EsLSiMbE=;
+        b=PVGNPjSWtPd6a8WieFgcy0HiqytsWLwfkJMFXhQdeDXNPnyeGIEMQmquKrqea30SzM
+         5TUIu/dqdvJDQRcecZ7YRUi36LJh45qgi1P3QfivOQaJCG97Q/J/dgkUtyxsZCfqPiQj
+         yIJ0Yw+5dBMLSzNyHVo5AkZqNGcL9oFp3tPFTMersmqPB6RU4kfz94TsJbiHImyE8kdb
+         SA19AciXPHlaNlO6nivX/b4x3rNqXHsxOiAum5nD9vMBKzLgzaZhwP65/5gDbe3wTwhW
+         wtfba3a10n1SA9X3nn3VuQjWyUVasJzfLGTk45qGXtFqUAP+dguo12rrg3HCgCAIUZN7
+         qAbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=XrMdFEIurwJlTTAe5BECHb4Xq03uWO2g6LN6QKIv+7k=;
-        b=R37iEv61jv6Jng9nTJ6wKbx+IqdSCbVmyJTemiZow8nMkCH+Sz2XdD57y/4S/A1aaI
-         63hb0BBxlEFZSDTwVHnipNhhjRFmlyPjKNF+wu7ceXnJd/rN30r+TOxAQzdSYO90egbF
-         IAJsPQ+k17THnkx+kl62+l56jCuvYAS7Vw5+MQ6WVoq2nzE3AN3gonl1MnsoGWvFu3u2
-         Tm+VdrOaUJM1ROaDrxsux/wU3YdCj8az5swERqdRipww3N8+HF5MPyjgHwiD4xgaQVKR
-         tNzd/EnyAVwbWEg4LLM5ns8t+KQilxsyrXvrF4hwN6PLfrjGDR2QsI+Pzp6zP0iYSiof
-         PKVA==
-X-Gm-Message-State: AOAM532R3EByrj+qsGfH/WwAboLoGnjYCJH+FJNJUKwD4BOPtH/nGj9n
-        qW4u34Ct7Q/E730s4lvNPvsq4fKBtn79A1a4
-X-Google-Smtp-Source: ABdhPJx1P2LcxqytPPblkoSu6KXuR0oCtC2vSBR+zIROcD4bIEqCnbR8CkQX1/4HEcLFTTB4GGYVrw==
-X-Received: by 2002:a05:6000:120e:: with SMTP id e14mr26691771wrx.139.1625150073681;
-        Thu, 01 Jul 2021 07:34:33 -0700 (PDT)
+        bh=ItFhC24hLDvLHiPenRlNV6xonWQ1SMJB9u0EsLSiMbE=;
+        b=QtqFHUKXBmvf7dUuEXW2dS39kfNqF/j0DKAcVZBpcCLBHta6ocFtVQi6xrvjdCPn0S
+         kw41htdZbaDOgn49bVlxpb8HgYut7eyM9ldC2eOH82ptmfSojOmycMIdJK2Mq1bQ4NEF
+         L4aUdT/cLpaDZVsKLBb9pxcB3UCXMenHnyVKaEudzezzoY33DPy3rvkGX8psI4J0rfYF
+         OG/fUWLILdjJMqpJSfr5ThppsplQ2UYTM6FpvGNQ86+Igmo+RUgH5IDtk5XTYIDvJSKd
+         rpX/mVBdYQQ1GEFJwcEHDY5IPRGXaozEV6JkYRcE5On6OQ7XndpBWfyl4PXj0EY3vHaw
+         y8ag==
+X-Gm-Message-State: AOAM531Hxf53/ALy+EdVx25fKdYeUn0Ptb4XFh0pJZfWNvoeGfY2upXq
+        2D80hraKpObsYz7iyNgTx6PBTX4TXc3E72zC
+X-Google-Smtp-Source: ABdhPJw0LEWNVbgzDohg7MuS28G10FN81DT6NEZfbDOC98yN3h6WbX8fHrfwPncNfhDyKYAW02kiIQ==
+X-Received: by 2002:a7b:c8c1:: with SMTP id f1mr77434wml.135.1625151074735;
+        Thu, 01 Jul 2021 07:51:14 -0700 (PDT)
 Received: from [192.168.8.197] ([85.255.233.185])
-        by smtp.gmail.com with ESMTPSA id r10sm132869wrq.17.2021.07.01.07.34.32
+        by smtp.gmail.com with ESMTPSA id n20sm209187wmk.12.2021.07.01.07.51.14
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Jul 2021 07:34:33 -0700 (PDT)
-Subject: Re: [PATCH 1/1] io_uring: fix exiting io_req_task_work_add leaks
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-References: <060002f19f1fdbd130ba24aef818ea4d3080819b.1625142209.git.asml.silence@gmail.com>
- <c5284516-def2-eb21-e95d-96aeda167c97@kernel.dk>
+        Thu, 01 Jul 2021 07:51:14 -0700 (PDT)
+Subject: Re: [Bug] io_uring_register_files_update broken
+To:     Victor Stewart <v@nametag.social>,
+        io-uring <io-uring@vger.kernel.org>
+References: <CAM1kxwgU2V0RsE+77mRUg+mr6WL5PJpbFKh4FrEGOnfzZ5vZ3A@mail.gmail.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <8b459433-fd7b-d823-932b-175585f1b73e@gmail.com>
-Date:   Thu, 1 Jul 2021 15:34:17 +0100
+Message-ID: <5201d747-121d-4e5e-d2a6-9442a5e4c534@gmail.com>
+Date:   Thu, 1 Jul 2021 15:50:58 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.11.0
 MIME-Version: 1.0
-In-Reply-To: <c5284516-def2-eb21-e95d-96aeda167c97@kernel.dk>
+In-Reply-To: <CAM1kxwgU2V0RsE+77mRUg+mr6WL5PJpbFKh4FrEGOnfzZ5vZ3A@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -66,35 +66,78 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/1/21 2:45 PM, Jens Axboe wrote:
-> On 7/1/21 6:26 AM, Pavel Begunkov wrote:
->> If one entered io_req_task_work_add() not seeing PF_EXITING, it will set
->> a ->task_state bit and try task_work_add(), which may fail by that
->> moment. If that happens the function would try to cancel the request.
->>
->> However, in a meanwhile there might come other io_req_task_work_add()
->> callers, which will see the bit set and leave their requests in the
->> list, which will never be executed.
->>
->> Don't propagate an error, but clear the bit first and then fallback
->> all requests that we can splice from the list. The callback functions
->> have to be able to deal with PF_EXITING, so poll and apoll was modified
->> via changing io_poll_rewait().
->>
->> Reported-by: Jens Axboe <axboe@kernel.dk>
->> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
->> ---
->>
->> Jens, can you try if it helps with the leak you meantioned? I can't
->> see it. As with previous, would need to remove the PF_EXITING check,
->> and should be in theory safe to do.
+On 6/30/21 10:14 PM, Victor Stewart wrote:
+> i'm fairly confident there is something broken with
+> io_uring_register_files_update,
+> especially the offset parameter.
 > 
-> Probably misunderstanding you here, but you already killed the one that
-> patch 3 remove. In any case, I tested this on top of 1+2, and I don't
+> when trying to update a single fd, and getting a successful result of
+> 1, proceeding
+> operations with IOSQE_FIXED_FILE fail with -9. but if i update all of
+> the fds with
+> then my recv operations succeed, but close still fails with -9.
+> 
+> on Clear LInux 5.12.13-1050.native
+> 
+> here's a diff for liburing send_recv test, to demonstrate this.
+> 
+> diff --git a/test/send_recv.c b/test/send_recv.c
+> index 19adbdd..492b591 100644
+> --- a/test/send_recv.c
+> +++ b/test/send_recv.c
+> @@ -27,6 +27,8 @@ static char str[] = "This is a test of send and recv
+> over io_uring!";
+>  #      define io_uring_prep_recv io_uring_prep_read
+>  #endif
+> 
+> +static int *fds;
+> +
+>  static int recv_prep(struct io_uring *ring, struct iovec *iov, int *sock,
+>                      int registerfiles)
+>  {
+> @@ -54,17 +56,28 @@ static int recv_prep(struct io_uring *ring, struct
+> iovec *iov, int *sock,
+>                 goto err;
+>         }
+> 
+> +       fds = malloc(100 * sizeof(int));
+> +       memset(fds, 0xff, sizeof(int) * 100);
+> +
+>         if (registerfiles) {
+> -               ret = io_uring_register_files(ring, &sockfd, 1);
+> +               ret = io_uring_register_files(ring, fds, 100);
+>                 if (ret) {
+>                         fprintf(stderr, "file reg failed\n");
+>                         goto err;
+>                 }
+> -               use_fd = 0;
+> -       } else {
+> -               use_fd = sockfd;
+> +
+> +               fds[sockfd] = sockfd;
+> +               int result = io_uring_register_files_update(ring,
+> sockfd, fds, 1);
 
-fwiw, it doesn't remove that check, just moved it a bit.
+s/fds/&fds[sockfd]/
 
-> see any leaks at that point.
+Does it help? io_uring_register_files_update() doesn't
+apply offset parameter to the array, it's used only as
+an internal index. 
+
+> +
+> +               if (result != 1)
+> +               {
+> +                       fprintf(stderr, "file update failed\n");
+> +                       goto err;
+> +               }
+>         }
+> 
+> +       use_fd = sockfd;
+> +
+>         sqe = io_uring_get_sqe(ring);
+>         io_uring_prep_recv(sqe, use_fd, iov->iov_base, iov->iov_len, 0);
+>         if (registerfiles)
+> 
 
 -- 
 Pavel Begunkov

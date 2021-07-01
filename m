@@ -2,150 +2,214 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 841533B9440
-	for <lists+io-uring@lfdr.de>; Thu,  1 Jul 2021 17:47:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93B713B9609
+	for <lists+io-uring@lfdr.de>; Thu,  1 Jul 2021 20:16:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233846AbhGAPt0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 1 Jul 2021 11:49:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50688 "EHLO
+        id S232376AbhGASSp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 1 Jul 2021 14:18:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56158 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233702AbhGAPt0 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 1 Jul 2021 11:49:26 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D28C6C061762
-        for <io-uring@vger.kernel.org>; Thu,  1 Jul 2021 08:46:55 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id l24so9062981edr.11
-        for <io-uring@vger.kernel.org>; Thu, 01 Jul 2021 08:46:55 -0700 (PDT)
+        with ESMTP id S229844AbhGASSp (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 1 Jul 2021 14:18:45 -0400
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7D86C061762
+        for <io-uring@vger.kernel.org>; Thu,  1 Jul 2021 11:16:13 -0700 (PDT)
+Received: by mail-ed1-x52c.google.com with SMTP id w13so9776029edc.0
+        for <io-uring@vger.kernel.org>; Thu, 01 Jul 2021 11:16:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=nametag.social; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Oedd2vERiW1FEwOPeX/VtER+5Q4+xm9mSufMWyyMB4w=;
-        b=mOKhF7UTcuif0aKOa+ZrYx6jRr1LqkT+qYMTS3CVhpK+yHLm7FUTd4P2HN4FTCC2R1
-         jLLqFmABUBSRMp/K/jjm1jffnmpZJars6EWa5S9qCAx0HQyyTSxUFJACv17z2PuCyDiT
-         pOu3D/roFSEzan9JB7zHiFZJ/QvHL4tgsVRa0UBAnXxYU459C7Aa2qV32oXB3pfBCTcr
-         FYj+fdWSObC4RqTzAJjGL9iJIXpdJxdb0rTZquhX//YSETjjcu8px8g3BsYTHaYgQdPZ
-         O3z+coeCMAmjCC3b400S94oR5CEz8qYXkJy8uryvmGOwZdvqUNKSOyWT8trTxh+rg3xk
-         QL4w==
+         :cc:content-transfer-encoding;
+        bh=8lu+cEfvMzXlQ1wgcZvxaMZWS1W+IfZvHbCoMgrm2n8=;
+        b=jAwUgGTGR5FGOviuOIlA6AUkWChquEg4EOgiUYb9eubBVc/5vITRWo7LTFMxo23IUX
+         TXwHBmvvneCRFGTEY4gpJrVlpJYT8dJcizYabFA6pnCrw/q36mk4e3q8m125F7rmZHwO
+         iC5PjEJHxqCdB4SuAfaO3lPRRV4mV5UKtN/HzjExDXLrAC3a5DDG1lfDB0VG9bUHUoAf
+         xm2049o8VR/YIOXLYSVE21dKg7Ht47TOFwKouALXeyrJL2lctAI8/cZ2k2BAtVTqQyfB
+         6hTe0WrbB1K3n2AqViGSt2GvQUiytjN5axEUgjoAJITQTVNFldlJki0wyiCXAfhEUffn
+         jBcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Oedd2vERiW1FEwOPeX/VtER+5Q4+xm9mSufMWyyMB4w=;
-        b=UY6FgRRWNlmDw8R4+erm62dXuJzcbl6cqLu0E12tIBtVcjbcBB/m8Yk9nOfJPPXOOQ
-         6M9BVd/MkT8FtW+KSWPbjRqSmKCb+YTulYrwQKM2mdyyI49kkcRQ0KRqZRODqdp03SK2
-         TmdmTSwgDyPdPDs/vl2Ni9sSbjWf+2C4pA2BGB8GQlV4jmQdeBGfQ867Ou/I1ry7Erbl
-         6gUWn2DWTHHeRotmgmHeXd56b0N6QfYTmgB1CqGJt7EjvJ8lh/i5GaazaW1ouIS6wHNe
-         EbuPzPh3TXanhPIZ8g9TTRUP5YK5zR+YtF75PNcjgUNlltAJImeivby2+BQ9pmAH/EGM
-         8N6g==
-X-Gm-Message-State: AOAM532N3YmvC0amMLmYySgTvd0pVxdBOPps868dF5eZF9YOpG5YEsbf
-        psDzk0LpuOr6USnhJeeVGKs56NXB/QkJ9/9ZAtMxcQ==
-X-Google-Smtp-Source: ABdhPJxbHKIzBXvn9k+HWJF4vAaEwSHQMpwYysnmMp63qx07A2+Ytg4pkW7k/Euz4S2Uuw/5I4aWu+H3sySOWHxWCfA=
-X-Received: by 2002:a05:6402:524d:: with SMTP id t13mr604375edd.303.1625154414489;
- Thu, 01 Jul 2021 08:46:54 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=8lu+cEfvMzXlQ1wgcZvxaMZWS1W+IfZvHbCoMgrm2n8=;
+        b=UO2g1CteYkRJ8rbvuH2YauRrRPoGIdi8sW/glgTzV+7ZySnhOWD+YM8yrYadcXNaZw
+         MFzwbPxkmVa3HYsie0QtgpDtmIMEhN0A8yNdWLyuxwD/1X21cUERV9CQ08ZinWOpjuyF
+         STXCKELgqOclNHwAXJOVMyCrXxtdCrCVxOGP6bDc7nPyR4IZ+EjgD2OobhedukQjSAMV
+         qJjJrMUv3IpL94ZzKemps+eirmBmENM7lgOCl1rXhk0is7Ov1RwZT/rO0GU7TGvzbf+c
+         e9gYsL4R0vH5OVwYBRBDVesPOmrC0WnZ3kvvLVF+XJl3kVXzy9S4rezjUrgaUkxOXODu
+         nemw==
+X-Gm-Message-State: AOAM532DJLT3fi2UaTvIV8O0R0isF6vDuWlG8G006bah/SZ3BHlSEauZ
+        NHYL1tVe1O+mj02TNr4Hfz4CbU5vtRkSMoJbDnk=
+X-Google-Smtp-Source: ABdhPJyjceZ1SeqxCRGlQmML4g7wgYKb/ZLkgOIEjjiwtzt2kIv6ah9K/lJJodk5OVYATN6kMSshEVDch6Km//5iM3Y=
+X-Received: by 2002:a05:6402:5248:: with SMTP id t8mr1608945edd.110.1625163372308;
+ Thu, 01 Jul 2021 11:16:12 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAM1kxwgU2V0RsE+77mRUg+mr6WL5PJpbFKh4FrEGOnfzZ5vZ3A@mail.gmail.com>
- <5201d747-121d-4e5e-d2a6-9442a5e4c534@gmail.com>
-In-Reply-To: <5201d747-121d-4e5e-d2a6-9442a5e4c534@gmail.com>
-From:   Victor Stewart <v@nametag.social>
-Date:   Thu, 1 Jul 2021 16:46:41 +0100
-Message-ID: <CAM1kxwgEZ1bPMGgJixqQPVm4AP84xwYU8zrPOohvGp9nCQPpZg@mail.gmail.com>
-Subject: Re: [Bug] io_uring_register_files_update broken
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     io-uring <io-uring@vger.kernel.org>
+References: <CAD14+f2Nmu_XNjE8SM+jzfaNZfzyFowN3Cf8Lgw36FT+gqqPAg@mail.gmail.com>
+ <CAEO-eVO_hEvGzoUdoExs67ybfQC0WgpwOLbg3n9fc+R4JfikZQ@mail.gmail.com>
+In-Reply-To: <CAEO-eVO_hEvGzoUdoExs67ybfQC0WgpwOLbg3n9fc+R4JfikZQ@mail.gmail.com>
+From:   Juhyung Park <qkrwngud825@gmail.com>
+Date:   Fri, 2 Jul 2021 03:16:01 +0900
+Message-ID: <CAD14+f077PmD7ymmnoi6kCqeEviUO2xPecCxVxT+-4PukFARpg@mail.gmail.com>
+Subject: Re: Possible io_uring regression with QEMU on Ubuntu's kernel
+To:     Kamal Mostafa <kamal@canonical.com>
+Cc:     Stefan Bader <stefan.bader@canonical.com>,
+        io-uring <io-uring@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        qemu-devel@nongnu.org,
+        Ubuntu Kernel Team <kernel-team@lists.ubuntu.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Jul 1, 2021 at 3:51 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
+Hi Kamal.
+
+Thanks for the timely response.
+We currently worked around the issue by installing linux-generic-hwe-20.04-=
+edge.
+
+I've just installed the new build that you provided but I'm afraid the
+same issue persists.
+
+I've double-checked that the kernel is installed properly:
+root@datai-ampere:~# uname -a
+Linux datai-ampere 5.8.0-59-generic #66~20.04.1+uringrevert0 SMP Thu
+Jul 1 16:50:12 UTC 2021 x86_64 x86_64 x86_64 GNU/Linux
+root@datai-ampere:~# cat /proc/version
+Linux version 5.8.0-59-generic (ubuntu@ip-10-0-33-11) (gcc (Ubuntu
+9.3.0-17ubuntu1~20.04) 9.3.0, GNU ld (GNU Binutils for Ubuntu) 2.34)
+#66~20.04.1+uringrevert0 SMP Thu Jul 1 16:50:12 UTC 2021
+
+The guest VM is still unable to read /dev/vda's partition table with
+READ errors.
+
+Is the commit reverted properly?
+If it is, I'm afraid that it might be something else, hmm..
+
+I'm still certain that it's a regression from 5.8.0-55 to 5.8.0-59.
+
+Thanks.
+
+On Fri, Jul 2, 2021 at 2:50 AM Kamal Mostafa <kamal@canonical.com> wrote:
 >
-> On 6/30/21 10:14 PM, Victor Stewart wrote:
-> > i'm fairly confident there is something broken with
-> > io_uring_register_files_update,
-> > especially the offset parameter.
-> >
-> > when trying to update a single fd, and getting a successful result of
-> > 1, proceeding
-> > operations with IOSQE_FIXED_FILE fail with -9. but if i update all of
-> > the fds with
-> > then my recv operations succeed, but close still fails with -9.
-> >
-> > on Clear LInux 5.12.13-1050.native
-> >
-> > here's a diff for liburing send_recv test, to demonstrate this.
-> >
-> > diff --git a/test/send_recv.c b/test/send_recv.c
-> > index 19adbdd..492b591 100644
-> > --- a/test/send_recv.c
-> > +++ b/test/send_recv.c
-> > @@ -27,6 +27,8 @@ static char str[] = "This is a test of send and recv
-> > over io_uring!";
-> >  #      define io_uring_prep_recv io_uring_prep_read
-> >  #endif
-> >
-> > +static int *fds;
-> > +
-> >  static int recv_prep(struct io_uring *ring, struct iovec *iov, int *sock,
-> >                      int registerfiles)
-> >  {
-> > @@ -54,17 +56,28 @@ static int recv_prep(struct io_uring *ring, struct
-> > iovec *iov, int *sock,
-> >                 goto err;
-> >         }
-> >
-> > +       fds = malloc(100 * sizeof(int));
-> > +       memset(fds, 0xff, sizeof(int) * 100);
-> > +
-> >         if (registerfiles) {
-> > -               ret = io_uring_register_files(ring, &sockfd, 1);
-> > +               ret = io_uring_register_files(ring, fds, 100);
-> >                 if (ret) {
-> >                         fprintf(stderr, "file reg failed\n");
-> >                         goto err;
-> >                 }
-> > -               use_fd = 0;
-> > -       } else {
-> > -               use_fd = sockfd;
-> > +
-> > +               fds[sockfd] = sockfd;
-> > +               int result = io_uring_register_files_update(ring,
-> > sockfd, fds, 1);
+> Hi-
 >
-> s/fds/&fds[sockfd]/
+> Thanks very much for reporting this.  We picked up that patch ("io_uring:=
+ don't mark S_ISBLK async work as unbounded") for our Ubuntu v5.8 kernel fr=
+om linux-stable/v5.10.31.  Since it's not clear that it's appropriate for v=
+5.8 (or even v5.10-stable?) we'll revert it from Ubuntu v5.8 if you can con=
+firm that actually fixes the problem.
 >
-> Does it help? io_uring_register_files_update() doesn't
-> apply offset parameter to the array, it's used only as
-> an internal index.
-
-i see yes, it works it like this!
-
-io_uring_register_files_update(&ring, fd, &(socketfds[fd]), 1);
-io_uring_register_files_update(&ring, fd, &(socketfds[fd] = -1), 1);
-
-and this behavior is clear upon a closer reading of...
-https://github.com/axboe/liburing/blob/11f6d56302c177a96d7eb1df86995939a4feb736/test/file-register.c#L80
-
-i guess it's sometimes ambiguous whether int* is requesting an array
-or an actual pointer to a single int.
-
-all good now.
-
+> Here's a test build of that (5.8.0-59 with that commit reverted).  The fu=
+ll set of packages is provided, but you probably only actually need to inst=
+all the linux-image and linux-modules[-extra] deb's. We'll stand by for you=
+r results:
+> https://kernel.ubuntu.com/~kamal/uringrevert0/
 >
-> > +
-> > +               if (result != 1)
-> > +               {
-> > +                       fprintf(stderr, "file update failed\n");
-> > +                       goto err;
-> > +               }
-> >         }
-> >
-> > +       use_fd = sockfd;
-> > +
-> >         sqe = io_uring_get_sqe(ring);
-> >         io_uring_prep_recv(sqe, use_fd, iov->iov_base, iov->iov_len, 0);
-> >         if (registerfiles)
-> >
+> Thanks again,
 >
-> --
-> Pavel Begunkov
+>  -Kamal Mostafa (Canonical Kernel Team)
+>
+> On Wed, Jun 30, 2021 at 1:47 AM Juhyung Park <qkrwngud825@gmail.com> wrot=
+e:
+>>
+>> Hi everyone.
+>>
+>> With the latest Ubuntu 20.04's HWE kernel 5.8.0-59, I'm noticing some
+>> weirdness when using QEMU/libvirt with the following storage
+>> configuration:
+>>
+>> <disk type=3D"block" device=3D"disk">
+>>   <driver name=3D"qemu" type=3D"raw" cache=3D"none" io=3D"io_uring"
+>> discard=3D"unmap" detect_zeroes=3D"unmap"/>
+>>   <source dev=3D"/dev/disk/by-id/md-uuid-df271a1e:9dfb7edb:8dc4fbb8:c43e=
+652f-part1"
+>> index=3D"1"/>
+>>   <backingStore/>
+>>   <target dev=3D"vda" bus=3D"virtio"/>
+>>   <alias name=3D"virtio-disk0"/>
+>>   <address type=3D"pci" domain=3D"0x0000" bus=3D"0x07" slot=3D"0x00" fun=
+ction=3D"0x0"/>
+>> </disk>
+>>
+>> QEMU version is 5.2+dfsg-9ubuntu3 and libvirt version is 7.0.0-2ubuntu2.
+>>
+>> The guest VM is unable to handle I/O properly with io_uring, and
+>> nuking io=3D"io_uring" fixes the issue.
+>> On one machine (EPYC 7742), the partition table cannot be read and on
+>> another (Ryzen 9 3950X), ext4 detects weirdness with journaling and
+>> ultimately remounts the guest disk to R/O:
+>>
+>> [    2.712321] virtio_blk virtio5: [vda] 3906519775 512-byte logical
+>> blocks (2.00 TB/1.82 TiB)
+>> [    2.714054] vda: detected capacity change from 0 to 2000138124800
+>> [    2.963671] blk_update_request: I/O error, dev vda, sector 0 op
+>> 0x0:(READ) flags 0x0 phys_seg 1 prio class 0
+>> [    2.964909] Buffer I/O error on dev vda, logical block 0, async page =
+read
+>> [    2.966021] blk_update_request: I/O error, dev vda, sector 1 op
+>> 0x0:(READ) flags 0x0 phys_seg 1 prio class 0
+>> [    2.967177] Buffer I/O error on dev vda, logical block 1, async page =
+read
+>> [    2.968330] blk_update_request: I/O error, dev vda, sector 2 op
+>> 0x0:(READ) flags 0x0 phys_seg 1 prio class 0
+>> [    2.969504] Buffer I/O error on dev vda, logical block 2, async page =
+read
+>> [    2.970767] blk_update_request: I/O error, dev vda, sector 3 op
+>> 0x0:(READ) flags 0x0 phys_seg 1 prio class 0
+>> [    2.971624] Buffer I/O error on dev vda, logical block 3, async page =
+read
+>> [    2.972170] blk_update_request: I/O error, dev vda, sector 4 op
+>> 0x0:(READ) flags 0x0 phys_seg 1 prio class 0
+>> [    2.972728] Buffer I/O error on dev vda, logical block 4, async page =
+read
+>> [    2.973308] blk_update_request: I/O error, dev vda, sector 5 op
+>> 0x0:(READ) flags 0x0 phys_seg 1 prio class 0
+>> [    2.973920] Buffer I/O error on dev vda, logical block 5, async page =
+read
+>> [    2.974496] blk_update_request: I/O error, dev vda, sector 6 op
+>> 0x0:(READ) flags 0x0 phys_seg 1 prio class 0
+>> [    2.975093] Buffer I/O error on dev vda, logical block 6, async page =
+read
+>> [    2.975685] blk_update_request: I/O error, dev vda, sector 7 op
+>> 0x0:(READ) flags 0x0 phys_seg 1 prio class 0
+>> [    2.976295] Buffer I/O error on dev vda, logical block 7, async page =
+read
+>> [    2.980074] blk_update_request: I/O error, dev vda, sector 0 op
+>> 0x0:(READ) flags 0x0 phys_seg 1 prio class 0
+>> [    2.981104] Buffer I/O error on dev vda, logical block 0, async page =
+read
+>> [    2.981786] blk_update_request: I/O error, dev vda, sector 1 op
+>> 0x0:(READ) flags 0x0 phys_seg 1 prio class 0
+>> [    2.982083] ixgbe 0000:06:00.0: Multiqueue Enabled: Rx Queue count
+>> =3D 63, Tx Queue count =3D 63 XDP Queue count =3D 0
+>> [    2.982442] Buffer I/O error on dev vda, logical block 1, async page =
+read
+>> [    2.983642] ldm_validate_partition_table(): Disk read failed.
+>>
+>> Kernel 5.8.0-55 is fine, and the only io_uring-related change between
+>> 5.8.0-55 and 5.8.0-59 is the commit 4b982bd0f383 ("io_uring: don't
+>> mark S_ISBLK async work as unbounded").
+>>
+>> The weird thing is that this commit was first introduced with v5.12,
+>> but neither the mainline v5.12.0 or v5.13.0 is affected by this issue.
+>>
+>> I guess one of these commits following the backported commit from
+>> v5.12 fixes the issue, but that's just a guess. It might be another
+>> earlier commit:
+>> c7d95613c7d6 io_uring: fix early sqd_list removal sqpoll hangs
+>> 9728463737db io_uring: fix rw req completion
+>> 6ad7f2332e84 io_uring: clear F_REISSUE right after getting it
+>> e82ad4853948 io_uring: fix !CONFIG_BLOCK compilation failure
+>> 230d50d448ac io_uring: move reissue into regular IO path
+>> 07204f21577a io_uring: fix EIOCBQUEUED iter revert
+>> 696ee88a7c50 io_uring/io-wq: protect against sprintf overflow
+>>
+>> It would be much appreciated if Jens could give pointers to Canonical
+>> developers on how to fix the issue, and hopefully a suggestion to
+>> prevent this from happening again.
+>>
+>> Thanks,
+>> Regards

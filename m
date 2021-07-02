@@ -2,118 +2,153 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B71D3B99FF
-	for <lists+io-uring@lfdr.de>; Fri,  2 Jul 2021 02:21:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FDFF3B9FD4
+	for <lists+io-uring@lfdr.de>; Fri,  2 Jul 2021 13:32:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234378AbhGBAXt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 1 Jul 2021 20:23:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52052 "EHLO
+        id S231145AbhGBLeo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 2 Jul 2021 07:34:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234195AbhGBAXs (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 1 Jul 2021 20:23:48 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FE67C061762
-        for <io-uring@vger.kernel.org>; Thu,  1 Jul 2021 17:21:17 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id f14so9972948wrs.6
-        for <io-uring@vger.kernel.org>; Thu, 01 Jul 2021 17:21:17 -0700 (PDT)
+        with ESMTP id S231848AbhGBLeo (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 2 Jul 2021 07:34:44 -0400
+Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03FECC061762
+        for <io-uring@vger.kernel.org>; Fri,  2 Jul 2021 04:32:12 -0700 (PDT)
+Received: by mail-yb1-xb33.google.com with SMTP id r135so15970636ybc.0
+        for <io-uring@vger.kernel.org>; Fri, 02 Jul 2021 04:32:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=+r0DGofD4RFh4dSbuksrz26j1WqvdYPlFStvxjY2b/M=;
-        b=Mshumi2qeNBsOsyHofCe53+iiuaexAMAbZjySmxjbsZWB194apGoday5jYcK0DVr8l
-         z15EpB6vUs3XBtsmJaioeCJcXX5M1IjX4j72C6R3YRsoJWD3HlpoUUbn3t9pyuOLpXb3
-         MsLkm7MXV63LN5xdpM3NsM88xsJn4wVTil+9IGXJuYXLpN8W9ywXWywSKN8R688+hvQ6
-         D6rM0ofyT2VsH9hm6E4bBihq9UcHc0EFq9fea4uWL+j+omtCYOVgwL57jvWOw+3Mxutc
-         eoCuIFBE58VOPaZrptUK8xU9EpJ6XRDBSrpmDe/Blcyd9SJbc323CtvDSLuEEix+uPYs
-         iyTw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/hQuHtA8W3ADxj2Z0wk50gSPlfWO37Io8es3CMLf8/I=;
+        b=q6V62JojdN99zppDX2A0S4dXDIjfi/Chu3Xv6L9iw9CpFQ4DCGxkNE5b/D8I2HuP3w
+         /ppgZvTs7Qc0pHKKLnfTka9LbTcGFA6OPWL/gxFp26Sfwx0OhhXXbL+B/zgEL20FhcwH
+         zx5UMC6liNY103+CqKSwD/jGabs/4SViXiivVWyKUk+rIshjtJI5F154itzKVrqc7cpr
+         /cqEPGUGC0nPjmLG50StB/XalNCwsBxmr44N/2hXxzuhn4ptJ9RegsCuDRuR24qng+hd
+         Avk+5gSXWlwpkvS87EYwwWoICR0n1WWUyoGtIW5KlhEIupw64QCyRCX4Cfxz2YZWudTa
+         JCCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=+r0DGofD4RFh4dSbuksrz26j1WqvdYPlFStvxjY2b/M=;
-        b=tIRbKD5fXjpf9qbQNW4Uu0cGsUkAZv9s5zlBoFNOAU4pLO2/jiJzxZeXGbGmD+m/Dg
-         s1ZBIohEuqhaTWtMyGxf2h25la21XtMdBbH38J8npLjUIF6yVDPryv/njMFrZXdL2osA
-         NqfaWENW9RW3HzSh7YYG6rOoMKT8IjYgHW8oi8cITsFDM6ZdE1ohylqjqUhBVwKNiyNQ
-         04Ioy/jcpg4ZCx/KmKVGQRHErEHrSMj6zg4y4xIRqcdfzJFswMSDY6LQ1oTJ++mW2Urx
-         zk8vPhWBl0XN6nxwgkENW4aZk6Bnd4A3SNTxD8qzciYYDB3YO+o2dpM0K8DbobhN72f0
-         NvMg==
-X-Gm-Message-State: AOAM532MCf+qZ/AtRlKaN+JqtoL0XJcD/IWzD/1D+aJmOgzX/OuFOOvI
-        uSCSmjPVWQtcqXA7+Z3On+HedepbY2m2ww==
-X-Google-Smtp-Source: ABdhPJxzr0yxgQDFTp4XEaVsddNPDW/oeWrSpLCvJgfduZI3z62zUZeuoQivfv+8E3irWtxdwJoVHg==
-X-Received: by 2002:adf:8b4d:: with SMTP id v13mr2408854wra.223.1625185275825;
-        Thu, 01 Jul 2021 17:21:15 -0700 (PDT)
-Received: from [192.168.8.197] ([85.255.233.176])
-        by smtp.gmail.com with ESMTPSA id w8sm1380169wre.70.2021.07.01.17.21.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Jul 2021 17:21:15 -0700 (PDT)
-Subject: Re: [Bug] io_uring_register_files_update broken
-To:     Victor Stewart <v@nametag.social>
-Cc:     io-uring <io-uring@vger.kernel.org>
-References: <CAM1kxwgU2V0RsE+77mRUg+mr6WL5PJpbFKh4FrEGOnfzZ5vZ3A@mail.gmail.com>
- <5201d747-121d-4e5e-d2a6-9442a5e4c534@gmail.com>
- <CAM1kxwgEZ1bPMGgJixqQPVm4AP84xwYU8zrPOohvGp9nCQPpZg@mail.gmail.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <2a66d0f3-e3a9-49ad-e098-e0782cf464b4@gmail.com>
-Date:   Fri, 2 Jul 2021 01:20:58 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/hQuHtA8W3ADxj2Z0wk50gSPlfWO37Io8es3CMLf8/I=;
+        b=H6pETiwK8Yi+cyR5ABe+dwmT8RedCPF9Ih6mzI14+GpbId4xL0qsgNxuW63ilIT3kD
+         K7yP/nyyKRIkLz8sxz3iSS4p4oAy47qe9hx70SNYTHdjUrbsnbWdmJ57mCezbHgCoTOj
+         Dgtx+MtwG4KEhnPgTBr5O8YAGLIazXs7Lr9h8laY+mQoz4KWS5xE7cYp9pa65kMKFB/X
+         /OT1HwN72axFPlC/6vQcu5XJu2xzFmnW46Pbw8PftQgIac7YVM6lqcCQ4dAt6qx8TsPM
+         XT3MMrq8+fhFq9/ov1RjUt+KJCVuk/7qFNtHn8R53vastXTAZkcmVo+k/LO1g0ZQgj2N
+         /feQ==
+X-Gm-Message-State: AOAM530heJ3peB/1dan7XROFkE8tLhrH0dJGcRLxmwCejJl/qNxa3oOV
+        FZq42Q4cG8m6mRnuUERI66bRJJHPeYwkrXuvPI8=
+X-Google-Smtp-Source: ABdhPJy83rR6VdDLFkEWxI/uRrcoOz/Oh9/qevxJEv6zuSI2PMsWrpm5pjyCl9NEAHl82pAikX9AkhPMumjb2fNaMnM=
+X-Received: by 2002:a25:9bc4:: with SMTP id w4mr5668971ybo.168.1625225531304;
+ Fri, 02 Jul 2021 04:32:11 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAM1kxwgEZ1bPMGgJixqQPVm4AP84xwYU8zrPOohvGp9nCQPpZg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <c9a79f27-02e9-b0d6-78ae-2e777eed8fe0@kernel.dk> <CAHk-=wgCac9hBsYzKMpHk0EbLgQaXR=OUAjHaBtaY+G8A9KhFg@mail.gmail.com>
+In-Reply-To: <CAHk-=wgCac9hBsYzKMpHk0EbLgQaXR=OUAjHaBtaY+G8A9KhFg@mail.gmail.com>
+From:   Dmitry Kadashev <dkadashev@gmail.com>
+Date:   Fri, 2 Jul 2021 18:32:00 +0700
+Message-ID: <CAOKbgA5iixR+QCuYyzb2UBQGVddQtp0ERKZrKHbrsyWug2yYbQ@mail.gmail.com>
+Subject: Re: [GIT PULL] io_uring updates for 5.14-rc1
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
+        io-uring <io-uring@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/1/21 4:46 PM, Victor Stewart wrote:
-> On Thu, Jul 1, 2021 at 3:51 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
-[...]
->>> sockfd, fds, 1);
->>
->> s/fds/&fds[sockfd]/
->>
->> Does it help? io_uring_register_files_update() doesn't
->> apply offset parameter to the array, it's used only as
->> an internal index.
-> 
-> i see yes, it works it like this!
-> 
-> io_uring_register_files_update(&ring, fd, &(socketfds[fd]), 1);
-> io_uring_register_files_update(&ring, fd, &(socketfds[fd] = -1), 1);
-> 
-> and this behavior is clear upon a closer reading of...
-> https://github.com/axboe/liburing/blob/11f6d56302c177a96d7eb1df86995939a4feb736/test/file-register.c#L80
-> 
-> i guess it's sometimes ambiguous whether int* is requesting an array
-> or an actual pointer to a single int.
+On Thu, Jul 1, 2021 at 3:06 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Tue, Jun 29, 2021 at 1:43 PM Jens Axboe <axboe@kernel.dk> wrote:
+> >
+> > - Support for mkdirat, symlinkat, and linkat for io_uring (Dmitry)
+>
+> I pulled this, and then I unpulled it again.
 
-It's an array, just element 0 is registered as a registered
-file with index @off, element 1 as a reg-file with index
-@(off+1) and so on.
+First of all, I totally agree that parts of it are ugly. And I'm happy
+to work on improving it with some guidance. But it's been sort of hard
+getting feedback on the namei part of things (Christian Brauner was very
+supportive though), and in cases where I was not sure what's the best
+way to do something I just went with the "pick the least ugly way I can
+see at the moment and collect the feedback" approach. And yes, in some
+cases "least ugly" is still very ugly.
 
-> all good now.
-> 
->>
->>> +
->>> +               if (result != 1)
->>> +               {
->>> +                       fprintf(stderr, "file update failed\n");
->>> +                       goto err;
->>> +               }
->>>         }
->>>
->>> +       use_fd = sockfd;
->>> +
->>>         sqe = io_uring_get_sqe(ring);
->>>         io_uring_prep_recv(sqe, use_fd, iov->iov_base, iov->iov_len, 0);
->>>         if (registerfiles)
->>>
->>
->> --
->> Pavel Begunkov
+Part of the issue is I'm very new to the kernel code, I've seen the
+unlinkat / renameat changes and thought that surely I can do the same
+for mkdirat. It turned out to be much larger and not just about mkdirat
+in the end.
+
+> I hate how makes the rules for when "putname()" is called completely
+> arbitrary and very confusing.
+
+In my opinion, this is because of the "consume the name on error, but
+not on success" logic in __filename_create / __filename_lookup. This
+behavior was in fact suggested by Al back in January:
+https://lore.kernel.org/io-uring/20210201150042.GQ740243@zeniv-ca/
+
+And it works reasonably well when there is just one struct filename
+passed in. But when there are two the state potentially becomes very
+confusing: we might end up with cases like the second filename was
+freed, but the first was not (which is basically where the hacks below
+live).
+
+> It ends up with multiple cases of something like
+>
+>         error = -ENOENT;
+>         goto out_putnames;
+>
+> that didn't exist before.
+
+Before it was just "return -ENOENT". But now there are two filenames
+passed in that the function is responsible for freeing. I'm not sure how
+this can be avoided.
+
+> And worse still ends up being that unbelievably ugly hack with
+>
+>         // On error `new` is freed by __filename_create, prevent extra freeing
+>         // below
+>         new = ERR_PTR(error);
+>         goto out_putpath;
+>
+> that ends up intentionally undoing one of the putnames because the
+> name has already been used.
+
+Yes, this is ugly, and teaching putname to deal with NULLs would mean we
+could just set it to NULL here, but we can't just set it to NULL when it
+was used, see below.
+
+> And none of the commits have acks by Al. I realize that he can
+> sometimes be a bit unresponsive, but this is just *UGLY*. And we've
+> had too many io_uring issues for me to just say "I'm sure it's fine".
+>
+> I can see a few ways to at least de-uglify things:
+>
+>  - Maybe we can make putname() just do nothing for IS_ERR_OR_NULL() names.
+>
+>    We have that kind of rules for a number of path walking things,
+> where passing in an error pointer is fine. Things like
+> link_path_walk() or filename_lookup() act that way very much by
+> design, exactly to make it easy to handle error conditions.
+
+This sounds great to me, will make some paths much cleaner. But will
+help with "new = ERR_PTR(error);" only partially (by using NULL instead
+of ERR_PTR(error)).
+
+>  - callers of __filename_create() and similar thar eat the name (and
+> return a dentry or whatever) could then set the name to NULL, not as
+> part of the error handling, but unconditionally as a "it's been used".
+
+The problem is we have to keep the filenames around for retries on
+ESTALE. It's not consumed by __filename_create() on success. So it's not
+as simple as setting the name to NULL after calling __filename_create().
+If it was not for ESTALE it'd be possible just to use filename_create()
+that consumes the name passed to it unconditionally and it'd make the
+logic much simpler indeed.
+
+I'll do my best to improve things, but if there are any suggestions
+they'd be appreciated.
 
 -- 
-Pavel Begunkov
+Dmitry Kadashev

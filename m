@@ -2,104 +2,68 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D37E83BA93A
-	for <lists+io-uring@lfdr.de>; Sat,  3 Jul 2021 17:27:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56A463BAC94
+	for <lists+io-uring@lfdr.de>; Sun,  4 Jul 2021 11:51:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229753AbhGCP3g (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 3 Jul 2021 11:29:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57524 "EHLO
+        id S229535AbhGDJxn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 4 Jul 2021 05:53:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229598AbhGCP3g (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 3 Jul 2021 11:29:36 -0400
-Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CF5DC061762
-        for <io-uring@vger.kernel.org>; Sat,  3 Jul 2021 08:27:02 -0700 (PDT)
-Received: by mail-yb1-xb2b.google.com with SMTP id m9so21450234ybo.5
-        for <io-uring@vger.kernel.org>; Sat, 03 Jul 2021 08:27:02 -0700 (PDT)
+        with ESMTP id S229510AbhGDJxm (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 4 Jul 2021 05:53:42 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 999B6C061762
+        for <io-uring@vger.kernel.org>; Sun,  4 Jul 2021 02:51:06 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id w13so19770648edc.0
+        for <io-uring@vger.kernel.org>; Sun, 04 Jul 2021 02:51:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wzJEYxskqIOfF8aqxVK/KXSw7Uwopec39DS3Bre09aM=;
-        b=e6DGhfsG8L1DOLEEy8W3DMrvxFu30810a7S/Io+rqqX1o4OfqdzhTXPP3IEAu22TBa
-         gKoRzcZXZPtekHmg86MOhgpbSLLxRMYaERyp5rMRsKMlzAQ93GgIquyt0rJBcO70Hdpd
-         +mkSdIRts4pD/InEjLcDWPCuBi9tHK5BpPu4ySmvqpNFjZFzAabVJSJYLcJyOxGCr6Rh
-         EiIrxeOGtiGLSUtsfDH3pvauznI6l8PqE+TYLQd530nx9jZbd1VJQR57sB499qzA9t/u
-         wS1Zw+PQfGTQXv3ZBu52uJM2gS6bv0kQILv/bZVSI59b+9LH9RGRBsfdiF/yP3UZhcFE
-         HB2w==
+        d=degennaro-me.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=z4MMvc9fY3jzKX8HfymbV44/glwUcjlquBIRwUvX59s=;
+        b=FBaA4Rsyci6gIbw/GO688F3RSbaetyka83AOYWZBInLO1xE138KMUKcXrPwBgWOGsU
+         9BkqyZFOMOKsJOaaXZg0EDacTmoShdAm1btUV0XSRCFDJbBBGVVEqAr7iSX/iz11Ts0d
+         Be1lkxDh3aKQoHegyHAGS9rMvA4bPnenufyFL5K6X75HI1Di+WDFfuEC4MPmXnDnc1Yu
+         RQ+f1YL7zEwlEbMhQNaJK0HX1JUM+vgsg7O1oKd7dNG/JDIyYcqGbwo4pGn06oTafiQo
+         G1zr4stvMH3et0utkh78fXY5CPK07Gm2oHQRwXyncSyJhAGRq4Snbr1AQKj78oPfYfGT
+         kbrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wzJEYxskqIOfF8aqxVK/KXSw7Uwopec39DS3Bre09aM=;
-        b=MbTLMjEwTuVhKKCbdJzb8ediSk22cPE30axpiAY6g5CXDUV3lsgg2i7FOroE6I/YX2
-         XwP6cW+9lLs4cyP7Cy+mDbGS/9QCf6e+xOa7Y0yrMkLs1IPon+oYjOJ/f0n8qaR+iUIb
-         Pp0ySX/SLnQ/NvMBxmoM0ub8XUAR7iKLguepWb4bGMh2+ycYqmOdRH3Lj/9Z2k5ydHn5
-         41NMkAOcDYuRbdxsese7WJOok19PEu3NGM0SCQ4MskWexCHP+ZVNOLv6q1uG5gIXth42
-         FLPlf+BwvBZuSzjfqL6F6XJsT52yK2wqtfqqrSthskcGC1lN1SKlLVLOb6eceY0rUW/N
-         /Ddw==
-X-Gm-Message-State: AOAM5338SijE8ORyxAt4x2HNALxvd+6q0hX8vZqye78bCzEzGTp+EW61
-        zxe+6XBufAeslkKDFD6xsdqSE57FJlGIxSR/TgA=
-X-Google-Smtp-Source: ABdhPJxzTLVHmjNF0HNdXhkC3tyAl/fkMzK/CrSQGhkCd9jC42A1RMJFijxBU086FIOBp5j6ayJAVvsKX3MnnpClu9Q=
-X-Received: by 2002:a5b:405:: with SMTP id m5mr6059044ybp.311.1625326021423;
- Sat, 03 Jul 2021 08:27:01 -0700 (PDT)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=z4MMvc9fY3jzKX8HfymbV44/glwUcjlquBIRwUvX59s=;
+        b=G9CwaXZh6XJ/6x9T2vZDgCEfnIyjWdwvqCgIArLg4Evcnwc6QAd42YtM7UtGF9xPMr
+         Nf2BI4C2664qGuSKwXWwA5UNa0YpYUJx8lYP0PDdryeN8lTcXsKM6kxDmPKGGIOBwkvb
+         /8i5AIFvbkySsuBDaAE3/00Fj9N0XbPxK4uxfen3BqC3rjqKDe5YU25VTum4cC7zxILt
+         yxVck9Pic6xje+pZ438xSWY+GGS+PimxtTeTZhL3z1x6lrL2fbOJd2jAoLaUbXmM/wh9
+         xaY51SF6OW6V0Y2i2SzChKmD7NElEJC7Th/TnXn8FEFtyA0+DhN/AMhnN8eexqlSpYMt
+         q3JQ==
+X-Gm-Message-State: AOAM53360fDmMchcA0Ik1uF9h2ZvLwiPi/fGpN5CaG8PRxWl8IM5yLB/
+        Du2tZ4LZkaQGhQbw5LR52wIoLwejbr8EVkS5h4QLwdplTc9XD7wt
+X-Google-Smtp-Source: ABdhPJxIv9CZssidldWRrhi2ulrOw4Z8IX+5ljPLjIfW7tPzDI6xsMGA6YSD39i7rS1n8+qaNd5TvMwmWQ0p+JwNf30=
+X-Received: by 2002:aa7:c1da:: with SMTP id d26mr9550510edp.278.1625392265068;
+ Sun, 04 Jul 2021 02:51:05 -0700 (PDT)
 MIME-Version: 1.0
-References: <c9a79f27-02e9-b0d6-78ae-2e777eed8fe0@kernel.dk>
- <CAHk-=wgCac9hBsYzKMpHk0EbLgQaXR=OUAjHaBtaY+G8A9KhFg@mail.gmail.com>
- <CAOKbgA5iixR+QCuYyzb2UBQGVddQtp0ERKZrKHbrsyWug2yYbQ@mail.gmail.com> <CAHk-=wgye_GuQ5cBFC=UOPHkd0o8-Nrau7GNZHTZVuGO2tincw@mail.gmail.com>
-In-Reply-To: <CAHk-=wgye_GuQ5cBFC=UOPHkd0o8-Nrau7GNZHTZVuGO2tincw@mail.gmail.com>
-From:   Dmitry Kadashev <dkadashev@gmail.com>
-Date:   Sat, 3 Jul 2021 22:26:50 +0700
-Message-ID: <CAOKbgA6x-qPK4jTmH4AO_GPy=tTRw1uMuD7wyiVFM7q0WQ5WbQ@mail.gmail.com>
-Subject: Re: [GIT PULL] io_uring updates for 5.14-rc1
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
-        io-uring <io-uring@vger.kernel.org>
+From:   Mauro De Gennaro <mauro@degennaro.me>
+Date:   Sun, 4 Jul 2021 11:50:54 +0200
+Message-ID: <CAGxp_yhoUAAvbttOaRvWx3EsmPKZVumFZQz2uQGUPGhuN8AiVQ@mail.gmail.com>
+Subject: io_uring/recvmsg using io_provide_buffers causes kernel NULL pointer
+ dereference bug
+To:     io-uring@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Sat, Jul 3, 2021 at 1:33 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> I wonder if the semantics couldn't be that __filename_create() never
-> eats the name, and filename_create() keeps the old semantics?
+Hi,
 
-This is how I originally thought it is going to be, but Al suggested
-that it eats the name on the failure. Now that I spent slightly
-more time with it I *suspect* the reason (or a part of it) is making it
-keep the name on failure would require A LOT of changes, since a lot of
-functions that __filename_create() calls eat the name on failure.
+First time reporting what seems to be a kernel bug, so I apologise if
+I am not supposed to send bug reports to this mailing list as well.
+The report was filed at Bugzilla:
 
-How about we change the functions (__filename_create(),
-__filename_lookup()) to do what filename_parentat() does since
-5c31b6cedb675 ("namei: saner calling conventions for
-filename_parentat()"), namely return struct filename *.
+https://bugzilla.kernel.org/show_bug.cgi?id=213639
 
-The nice thing here is we end up having the functions working the same
-way, so it's much easier to reason about. In particular, all of the
-functions seem to be expected to consume struct filename that was passed
-to it. And it is going to be the same with these two new ones instead of
-introducing a class of functions that do not do that.
+It happens on 5.11 and I haven't tested the code yet on newer kernels.
 
-The not-so-nice thing is for __filename_create we'd have to move struct
-dentry to args. But as far as I can see there are quite a few "out" args
-anyway, and struct path is an "out" arg already. So maybe it's not a big
-deal. Maybe it is. Comments are welcome.
+Thank you.
 
-The code in question then will look like this:
-
-    old = __filename_lookup(olddfd, old, how, &old_path, NULL);
-    if (IS_ERR(old))
-        goto out_putnames;
-
-    new = __filename_create(newdfd, new, &new_path, &new_dentry,
-                    (how & LOOKUP_REVAL));
-    if (IS_ERR(new))
-        goto out_putpath;
-
-Thoughts?
-
--- 
-Dmitry Kadashev
+Best,
+Mauro

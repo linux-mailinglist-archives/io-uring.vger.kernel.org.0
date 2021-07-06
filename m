@@ -2,39 +2,39 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CDCC3BCF46
-	for <lists+io-uring@lfdr.de>; Tue,  6 Jul 2021 13:28:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D9773BD0D6
+	for <lists+io-uring@lfdr.de>; Tue,  6 Jul 2021 13:35:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234598AbhGFL21 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 6 Jul 2021 07:28:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55966 "EHLO mail.kernel.org"
+        id S234933AbhGFLhH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 6 Jul 2021 07:37:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47622 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233027AbhGFLTy (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Tue, 6 Jul 2021 07:19:54 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id E9C1A61CA2;
-        Tue,  6 Jul 2021 11:16:58 +0000 (UTC)
+        id S236712AbhGFLfi (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Tue, 6 Jul 2021 07:35:38 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 8688161E04;
+        Tue,  6 Jul 2021 11:24:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625570219;
-        bh=QUvN+qREW2qmUAiRphV02G9Yj2oxJVfc6d6/h1ouvag=;
+        s=k20201202; t=1625570645;
+        bh=Ry1aG034I40ds9gCDxFiOmtRE8P3ZjPlXbEhpRWYn94=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HlJgvmk6dOzBfsOf2Vvn2Vmneb6HWxe+jYDmDXScCOKTXRshLaEIUTmo3xfclrYhH
-         fCi0wj1Fh4StH3IJf0YblgWpu+pRrBqfcoi2PSOO7NzrIMElMBSH1kdsimj83MwnM4
-         nGFRkdKQ0Im9qCz/gSEu7fvx/isQo4/pSAYmOpwVq7PGxQk+eHrQChkd4UJQq/CVE/
-         f4f7G6u96YVMeOG8zk43EgNje5ikxDX2L/9XLibhWHA7BwEnzecxTp1YPXM9abu67M
-         yEvRdvSZJ9jqdIMDIEwUzbGODUf5W39WV548MQ4eTg40AWszcKMlzYuAooutxpCOyi
-         19xcwxDPX0Qmg==
+        b=ZlTseCKFdRzzlDxHj4VbS6f+eskRyhZInTtZY2nBiwF++bmYDmDKnpasjyCzHaVId
+         IXJG1cU8sEBEJHy7cCwla52BGwcBkQgIX9wcoZCl5xyv13pHIABtz/40SNZIQmuSl0
+         I1nBm2D7YN4nZXlwP1Wz+2X/h3uXpjtnfpQbi5tGcWcoHFcJdtAbyQG5EMSx2nzJwg
+         9IcYqNx17XxLunr5lzfSkw6LxBKoC4ldwLwYgjfT1M2aTRcJ1GeXFwsR9zKFRy8jaM
+         0S/KB9j+u+p99v1w9q+AinWKQhdZjMjCtbpj9cTZmke1lfBD34v/OD/2j83HzjujuP
+         1LIT8WI96GH8g==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Pavel Begunkov <asml.silence@gmail.com>,
         syzbot+ea2f1484cffe5109dc10@syzkaller.appspotmail.com,
         Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
         io-uring@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.13 127/189] io_uring: fix false WARN_ONCE
-Date:   Tue,  6 Jul 2021 07:13:07 -0400
-Message-Id: <20210706111409.2058071-127-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.10 094/137] io_uring: fix false WARN_ONCE
+Date:   Tue,  6 Jul 2021 07:21:20 -0400
+Message-Id: <20210706112203.2062605-94-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210706111409.2058071-1-sashal@kernel.org>
-References: <20210706111409.2058071-1-sashal@kernel.org>
+In-Reply-To: <20210706112203.2062605-1-sashal@kernel.org>
+References: <20210706112203.2062605-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -63,10 +63,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/fs/io-wq.c b/fs/io-wq.c
-index b3e8624a37d0..60f58efdb5f4 100644
+index f72d53848dcb..8bb17b6d4de3 100644
 --- a/fs/io-wq.c
 +++ b/fs/io-wq.c
-@@ -241,7 +241,8 @@ static void io_wqe_wake_worker(struct io_wqe *wqe, struct io_wqe_acct *acct)
+@@ -299,7 +299,8 @@ static void io_wqe_wake_worker(struct io_wqe *wqe, struct io_wqe_acct *acct)
  	 * Most likely an attempt to queue unbounded work on an io_wq that
  	 * wasn't setup with any unbounded workers.
  	 */
@@ -76,7 +76,7 @@ index b3e8624a37d0..60f58efdb5f4 100644
  
  	rcu_read_lock();
  	ret = io_wqe_activate_free_worker(wqe);
-@@ -906,6 +907,8 @@ struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data)
+@@ -1085,6 +1086,8 @@ struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data)
  
  	if (WARN_ON_ONCE(!data->free_work || !data->do_work))
  		return ERR_PTR(-EINVAL);

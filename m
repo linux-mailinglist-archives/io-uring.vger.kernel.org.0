@@ -2,260 +2,88 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E30853BD727
-	for <lists+io-uring@lfdr.de>; Tue,  6 Jul 2021 14:50:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB4453BDA76
+	for <lists+io-uring@lfdr.de>; Tue,  6 Jul 2021 17:46:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235596AbhGFMwm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 6 Jul 2021 08:52:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35870 "EHLO
+        id S231773AbhGFPsy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 6 Jul 2021 11:48:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49440 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241836AbhGFMwN (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 6 Jul 2021 08:52:13 -0400
-Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA02EC061760;
-        Tue,  6 Jul 2021 05:49:33 -0700 (PDT)
-Received: by mail-lj1-x231.google.com with SMTP id b40so9158808ljf.12;
-        Tue, 06 Jul 2021 05:49:33 -0700 (PDT)
+        with ESMTP id S231631AbhGFPsy (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 6 Jul 2021 11:48:54 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5484C061574
+        for <io-uring@vger.kernel.org>; Tue,  6 Jul 2021 08:46:15 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id bg14so34864851ejb.9
+        for <io-uring@vger.kernel.org>; Tue, 06 Jul 2021 08:46:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=gJq2iRTwHGrfYDqYL7yzYFbXyEbtL7aWF6AFG6qJkmM=;
-        b=u/KpHxWOeVMb9ymxDIWlZff+1dnE91bMiUZB+giivR0IZAWcowsj1FrfVUlT2QEoNS
-         xHQY3CUYTYUcIEscxdlrZ0MKl4muZ1y0tZCt1nITf2oeb87uVvOmlkmskXHbE/B1Xpx9
-         HDHtFx5sNQbwVkJ3m3cXnCJbRcJ1y1JROgi9Tbu2Hl89XGtCQWrTwIYoBzRVEt77SXg2
-         1fEa+GOae914uJ0qqF8wCrdw1PQ2vQY1q0KP3RKKA34sjDFB1i45OJbgtqhbDF8AIGtY
-         dNp3kbImNT7GoGbPNPYVwcmO/b3tj2ldeB8qDfPmU/Zhk7bb1Yx6ZZEnV+crkMPysuTX
-         FDoQ==
+        d=minter-ltd.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=IkF7egv9BNNazamO+7yGIWy4rZpf81YvXaC6+IMPkWQ=;
+        b=1R94P96FVn4xMWvszAr/gXxnRoy22MyJBoxBnGsTItngHOK1n8jQYe21f2rMur+BSx
+         yoeldFZGYGE54Ods4AaUgbKZFz3TLKXmNTuAzy4Dx2iujbuCZwMUEihdNEW7f/HTdac+
+         hZW3qu/FOMpn1ywYJBD2Yqqafb3Zngl6RQK4pXXtyi1iKOqP6OkCpxdEBKYoiBV9JXb/
+         PnoyzpIbxo+9zR8x8hy8x6xjPiKeJg/0vpIZxYdfdvC1dYokDEtEtDQZuh0Xdo7aLUfC
+         AloDIiMEYaaz37rEsQha3Juva/wRQTZBFJpx8I4l6npDJJu+fODR2YjA9e0NxiBqfZJf
+         oe8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=gJq2iRTwHGrfYDqYL7yzYFbXyEbtL7aWF6AFG6qJkmM=;
-        b=HJdQta7oUvd5VGiNRax+N+rwpcDVBhknf0jkiPGn90qZZ/Tg4WRGmn8js09c3e6sH2
-         Y5Q41ysLHwL9InyK50KuW6nTC8YhiejuhfH4XoYTbyGUr24G/67i7v/x7SGag0j3Orq6
-         qnSwdsDOahmsQkaxcTJ8al5NHk+72vfXZyiUDuSZoVQBVdnVwO4ZiJEv5Je/7mTfKiIU
-         JcMDH6SxGvFYBKGR+pg2ZjqpAtBRuhP+dv7mN8mO+I2H6GE0km85R91DqsqpPem0G6wI
-         NJER3/9q/O5MhHkPIE/2DaW7yhM/yPubtW0xwPZaZavRVdhoII1sQ+TN7ekJL5HojO8m
-         V12g==
-X-Gm-Message-State: AOAM532v4oI/O23wHi3WGfoFtM8lkpX7OEuYF0ZsoVqi4MSssDLEZu/1
-        0VS3uyV7VXH+9ToNwf0jwys=
-X-Google-Smtp-Source: ABdhPJyfaqlQ2gRvLlXcTzEcltO5/3XD2JQtdTCWyONqCZFhG22PpOjkgkcz0aCdfoFikKKto/iSsg==
-X-Received: by 2002:a2e:9e8e:: with SMTP id f14mr15154861ljk.468.1625575772041;
-        Tue, 06 Jul 2021 05:49:32 -0700 (PDT)
-Received: from carbon.v ([94.143.149.146])
-        by smtp.googlemail.com with ESMTPSA id r18sm139519ljc.120.2021.07.06.05.49.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Jul 2021 05:49:31 -0700 (PDT)
-From:   Dmitry Kadashev <dkadashev@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        Dmitry Kadashev <dkadashev@gmail.com>
-Subject: [PATCH v7 10/10] io_uring: add support for IORING_OP_LINKAT
-Date:   Tue,  6 Jul 2021 19:49:01 +0700
-Message-Id: <20210706124901.1360377-11-dkadashev@gmail.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210706124901.1360377-1-dkadashev@gmail.com>
-References: <20210706124901.1360377-1-dkadashev@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=IkF7egv9BNNazamO+7yGIWy4rZpf81YvXaC6+IMPkWQ=;
+        b=Qp/sotTmjZvNcScqzzJ7SH/G+o1ZVJio1ERyfPS6zh9AFrGTNVXd7H3PFCJilKGTEZ
+         kjXqKm6CHvrLdTTGJ/wF8rl7RatHTsj5Jf31eoZ7QvIiw7Uv4Qp3wuxLMGPBaIJSIjYc
+         0QtFlTZofVje+SDNsiUqf0xX/t1x6qCCGLkVF9qMMr6GWHJhkg08nAPzhTfVroyqLpPE
+         xyJXpqV1YgAeUivkVemrHhY/FGGTmtIiefIObHVGEZHW475ngd3LErZpxBO8wMyVPbSP
+         eS9VBR+Q8Qdfba0p0HC9Z1mVMpaU0hGKay+KMFgVowY4R4koCwJqWg2fKjMBvkzzRtpd
+         x2iA==
+X-Gm-Message-State: AOAM530bUBskrLgS1+TLAsKFlUvQcDXjA+0h4zBRtEXAVaLvFXRMvdRv
+        3t7RY6Nb+p9gPdydvwhMG0btp9NYc70Qbc6/ODqdNB/vaOpCh5bGkRk=
+X-Google-Smtp-Source: ABdhPJy9n5tNOR59riPxGtPDo9xYpgKpwqmpuCtKiiJWiz0AgD8OL22s/+8GP2rzwf45NSN9S4y5htIXPQdTBuEazf0=
+X-Received: by 2002:a17:906:2306:: with SMTP id l6mr18902672eja.362.1625586373344;
+ Tue, 06 Jul 2021 08:46:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CAGxp_yhoUAAvbttOaRvWx3EsmPKZVumFZQz2uQGUPGhuN8AiVQ@mail.gmail.com>
+ <d322265e-4863-4087-8f74-ae5d2d668980@gmail.com>
+In-Reply-To: <d322265e-4863-4087-8f74-ae5d2d668980@gmail.com>
+From:   Mauro De Gennaro <mauro@minter.ltd>
+Date:   Tue, 6 Jul 2021 17:46:02 +0200
+Message-ID: <CAGxp_yjChwCTcHa6PqM9-KEo5efann9brxW5+5gB_8YhooMCLQ@mail.gmail.com>
+Subject: Re: io_uring/recvmsg using io_provide_buffers causes kernel NULL
+ pointer dereference bug
+To:     io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-IORING_OP_LINKAT behaves like linkat(2) and takes the same flags and
-arguments.
+Great, thank you. Something I forgot to mention on the Bugzilla ticket
+is that recvmsg() always returns the same provided buffer id even if
+this buffer is being currently used in user space and hasn't been
+returned to the kernel. For example, if you provide 100 buffers (ids 0
+- 99) and never return them back to the kernel after each recvmsg
+call, then further calls to recvmsg() will keep returning buffer id 99
+until the kernel runs out of buffers. I suspect the kernel null
+pointer dereference bug might be related to this behaviour as well.
 
-In some internal places 'hardlink' is used instead of 'link' to avoid
-confusion with the SQE links. Name 'link' conflicts with the existing
-'link' member of io_kiocb.
+Thanks again.
 
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Suggested-by: Christian Brauner <christian.brauner@ubuntu.com>
-Link: https://lore.kernel.org/io-uring/20210514145259.wtl4xcsp52woi6ab@wittgenstein/
-Signed-off-by: Dmitry Kadashev <dkadashev@gmail.com>
-Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
----
- fs/internal.h                 |  2 +
- fs/io_uring.c                 | 71 +++++++++++++++++++++++++++++++++++
- fs/namei.c                    |  2 +-
- include/uapi/linux/io_uring.h |  2 +
- 4 files changed, 76 insertions(+), 1 deletion(-)
 
-diff --git a/fs/internal.h b/fs/internal.h
-index 3b3954214385..15a7d210cc67 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -79,6 +79,8 @@ int do_renameat2(int olddfd, struct filename *oldname, int newdfd,
- 		 struct filename *newname, unsigned int flags);
- int do_mkdirat(int dfd, struct filename *name, umode_t mode);
- int do_symlinkat(struct filename *from, int newdfd, struct filename *to);
-+int do_linkat(int olddfd, struct filename *old, int newdfd,
-+			struct filename *new, int flags);
- 
- /*
-  * namespace.c
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index a0f681ec25bb..d18ca8afd1fb 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -688,6 +688,15 @@ struct io_symlink {
- 	struct filename			*newpath;
- };
- 
-+struct io_hardlink {
-+	struct file			*file;
-+	int				old_dfd;
-+	int				new_dfd;
-+	struct filename			*oldpath;
-+	struct filename			*newpath;
-+	int				flags;
-+};
-+
- struct io_completion {
- 	struct file			*file;
- 	struct list_head		list;
-@@ -847,6 +856,7 @@ struct io_kiocb {
- 		struct io_unlink	unlink;
- 		struct io_mkdir		mkdir;
- 		struct io_symlink	symlink;
-+		struct io_hardlink	hardlink;
- 		/* use only after cleaning per-op data, see io_clean_op() */
- 		struct io_completion	compl;
- 	};
-@@ -1060,6 +1070,7 @@ static const struct io_op_def io_op_defs[] = {
- 	[IORING_OP_UNLINKAT] = {},
- 	[IORING_OP_MKDIRAT] = {},
- 	[IORING_OP_SYMLINKAT] = {},
-+	[IORING_OP_LINKAT] = {},
- };
- 
- static bool io_disarm_next(struct io_kiocb *req);
-@@ -3653,6 +3664,57 @@ static int io_symlinkat(struct io_kiocb *req, int issue_flags)
- 	return 0;
- }
- 
-+static int io_linkat_prep(struct io_kiocb *req,
-+			    const struct io_uring_sqe *sqe)
-+{
-+	struct io_hardlink *lnk = &req->hardlink;
-+	const char __user *oldf, *newf;
-+
-+	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
-+		return -EINVAL;
-+	if (sqe->ioprio || sqe->rw_flags || sqe->buf_index)
-+		return -EINVAL;
-+	if (unlikely(req->flags & REQ_F_FIXED_FILE))
-+		return -EBADF;
-+
-+	lnk->old_dfd = READ_ONCE(sqe->fd);
-+	lnk->new_dfd = READ_ONCE(sqe->len);
-+	oldf = u64_to_user_ptr(READ_ONCE(sqe->addr));
-+	newf = u64_to_user_ptr(READ_ONCE(sqe->addr2));
-+	lnk->flags = READ_ONCE(sqe->hardlink_flags);
-+
-+	lnk->oldpath = getname(oldf);
-+	if (IS_ERR(lnk->oldpath))
-+		return PTR_ERR(lnk->oldpath);
-+
-+	lnk->newpath = getname(newf);
-+	if (IS_ERR(lnk->newpath)) {
-+		putname(lnk->oldpath);
-+		return PTR_ERR(lnk->newpath);
-+	}
-+
-+	req->flags |= REQ_F_NEED_CLEANUP;
-+	return 0;
-+}
-+
-+static int io_linkat(struct io_kiocb *req, int issue_flags)
-+{
-+	struct io_hardlink *lnk = &req->hardlink;
-+	int ret;
-+
-+	if (issue_flags & IO_URING_F_NONBLOCK)
-+		return -EAGAIN;
-+
-+	ret = do_linkat(lnk->old_dfd, lnk->oldpath, lnk->new_dfd,
-+				lnk->newpath, lnk->flags);
-+
-+	req->flags &= ~REQ_F_NEED_CLEANUP;
-+	if (ret < 0)
-+		req_set_fail(req);
-+	io_req_complete(req, ret);
-+	return 0;
-+}
-+
- static int io_shutdown_prep(struct io_kiocb *req,
- 			    const struct io_uring_sqe *sqe)
- {
-@@ -6065,6 +6127,8 @@ static int io_req_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 		return io_mkdirat_prep(req, sqe);
- 	case IORING_OP_SYMLINKAT:
- 		return io_symlinkat_prep(req, sqe);
-+	case IORING_OP_LINKAT:
-+		return io_linkat_prep(req, sqe);
- 	}
- 
- 	printk_once(KERN_WARNING "io_uring: unhandled opcode %d\n",
-@@ -6233,6 +6297,10 @@ static void io_clean_op(struct io_kiocb *req)
- 			putname(req->symlink.oldpath);
- 			putname(req->symlink.newpath);
- 			break;
-+		case IORING_OP_LINKAT:
-+			putname(req->hardlink.oldpath);
-+			putname(req->hardlink.newpath);
-+			break;
- 		}
- 	}
- 	if ((req->flags & REQ_F_POLLED) && req->apoll) {
-@@ -6367,6 +6435,9 @@ static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags)
- 	case IORING_OP_SYMLINKAT:
- 		ret = io_symlinkat(req, issue_flags);
- 		break;
-+	case IORING_OP_LINKAT:
-+		ret = io_linkat(req, issue_flags);
-+		break;
- 	default:
- 		ret = -EINVAL;
- 		break;
-diff --git a/fs/namei.c b/fs/namei.c
-index 3cf8f5e3b155..99d315462c42 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -4356,7 +4356,7 @@ EXPORT_SYMBOL(vfs_link);
-  * with linux 2.0, and to avoid hard-linking to directories
-  * and other special files.  --ADM
-  */
--static int do_linkat(int olddfd, struct filename *old, int newdfd,
-+int do_linkat(int olddfd, struct filename *old, int newdfd,
- 	      struct filename *new, int flags)
- {
- 	struct user_namespace *mnt_userns;
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 61fd347ab176..10eb38d2864f 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -44,6 +44,7 @@ struct io_uring_sqe {
- 		__u32		splice_flags;
- 		__u32		rename_flags;
- 		__u32		unlink_flags;
-+		__u32		hardlink_flags;
- 	};
- 	__u64	user_data;	/* data to be passed back at completion time */
- 	/* pack this to avoid bogus arm OABI complaints */
-@@ -135,6 +136,7 @@ enum {
- 	IORING_OP_UNLINKAT,
- 	IORING_OP_MKDIRAT,
- 	IORING_OP_SYMLINKAT,
-+	IORING_OP_LINKAT,
- 
- 	/* this goes last, obviously */
- 	IORING_OP_LAST,
--- 
-2.30.2
-
+On Tue, Jul 6, 2021 at 12:47 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
+>
+> On 7/4/21 10:50 AM, Mauro De Gennaro wrote:
+> > Hi,
+> >
+> > First time reporting what seems to be a kernel bug, so I apologise if
+> > I am not supposed to send bug reports to this mailing list as well.
+> > The report was filed at Bugzilla:
+>
+> That's exactly the right place to report, not everyone monitor
+> bugzilla, if any at all. Thanks for letting know
+>
+> > https://bugzilla.kernel.org/show_bug.cgi?id=213639
+> >
+> > It happens on 5.11 and I haven't tested the code yet on newer kernels.
+>
+> --
+> Pavel Begunkov

@@ -2,51 +2,51 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 364863BD715
-	for <lists+io-uring@lfdr.de>; Tue,  6 Jul 2021 14:49:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E99B3BD716
+	for <lists+io-uring@lfdr.de>; Tue,  6 Jul 2021 14:49:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238775AbhGFMwR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 6 Jul 2021 08:52:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35780 "EHLO
+        id S238796AbhGFMwT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 6 Jul 2021 08:52:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241502AbhGFMwC (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 6 Jul 2021 08:52:02 -0400
-Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1EC1C061768;
-        Tue,  6 Jul 2021 05:49:22 -0700 (PDT)
-Received: by mail-lj1-x22a.google.com with SMTP id q4so28930708ljp.13;
-        Tue, 06 Jul 2021 05:49:22 -0700 (PDT)
+        with ESMTP id S237916AbhGFMwD (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 6 Jul 2021 08:52:03 -0400
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCCA8C061574;
+        Tue,  6 Jul 2021 05:49:23 -0700 (PDT)
+Received: by mail-lf1-x12b.google.com with SMTP id p16so10641902lfc.5;
+        Tue, 06 Jul 2021 05:49:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=gokPHawoPLTY7lmBlEah/J0yiKgx3oWjxOPrR9t5IgU=;
-        b=MqXgNCdr+kZhNTjqZVDlKAKMa5+TLT1szNdAUkPLEYxYyZtS3gAYcEAwZltk3fYFEq
-         2McJqPRqeIesDJ2dXRFY01pR1wN/Jaw3PLESKqWg6G5QxHJ7+mQ6545auM1B05JFfa9Z
-         5vqhvCSxVfI5bW3bQhlmiN1exmN9yUL4BtI8tcseUa/0GwV+5arBoeq2aBrZulODf44i
-         LHp8lznVyi24hLRnp5jgzUzdcEBXkEhQVJLRXC568gNy0fRurERZzyp9u9VcOM89wu6K
-         XTcL/CTOAisoSJxgXs9zaGQhcrG9Pq7/V0qiEkrlOieIbpSLm8e5TciPZGgNaS04Bak1
-         eQdQ==
+        bh=S98nHxfTo5m/JgcsnAfUg1Ygblw/JMoWygfYueM6Umc=;
+        b=MrXt27BmxMOQBKAlAqT0zPGmdNfqPvSARxppy+4+IDTnT737+TBI8mmTKOAWvd2VIT
+         lyuD3a9ZiBQnJTzeAMmlE2lTO7s/u6+t0x13vce5CBOjD7Hy9C/CkKT2EIwxQKoAWujr
+         MSyY4jyHhNitVW02QLh9F8+s5hN7dN7dM1ylVty1RgeYtcxMUOTyduFGxXEniIznS6sM
+         226v8JHygEY4FvMMlG1VMpciuEekaliWdd4hzlmRAyGY3Pu0CF8rF8qVvlme7808T4zF
+         WYqQ4FaV0dT+GU8njVx0PcLF+IVLvqOpiSUTXZ4HOJJReD4luPo5wpkE46N8QNnr4M8N
+         t8VA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=gokPHawoPLTY7lmBlEah/J0yiKgx3oWjxOPrR9t5IgU=;
-        b=jqo7Rks1X3oPqZpbOMVl0nStAczvXNJud4O/8CFteqWMVk23Wguxi/kxrdqd9RnJy7
-         VKoMTy6rWHiD4ZS//seB/JT0pUKWP7SAmViOW4LYp8rOtYQhYOHwedpwIg0xUezGEFyk
-         xf1VytTXRLiqewbU87LB/mtFyuinI3BGCZAd9cGzkL/ckkpi/Yxra6E6L7HjzlN0qGFl
-         FadkqFwuAqD5CqpC4FrJAxzKzndQdnl2//HymcFbDMejiTZxDe+qg8Fvo7ihWIuSH4iO
-         DrqIIn297OCMyuj9tarq+WQooJrqI759q3kAg1fbNKNaqjUy1DmR/zAoryfOZ9G1JTFF
-         NvRg==
-X-Gm-Message-State: AOAM532O0uvFgjW0fU+aUos0f4HtqGTDyllTIYLgZUAsiIzSTNf4G7yd
-        1vdEWBvEO4nYKcFeq7RW9jY=
-X-Google-Smtp-Source: ABdhPJzqe5nGomo9mScYt++JBnJqdZzufy5Q2ROyfA97txyzBIGWS7LsGImyN1qS1V4cTzRMvZqluQ==
-X-Received: by 2002:a2e:a30b:: with SMTP id l11mr14723382lje.453.1625575761106;
-        Tue, 06 Jul 2021 05:49:21 -0700 (PDT)
+        bh=S98nHxfTo5m/JgcsnAfUg1Ygblw/JMoWygfYueM6Umc=;
+        b=PxHQIujmy5MNZAOvdSpgqWgEVGuJsnadtjZdgAKYSLbuhYys8GCkfOiXJJDpA+L3Tu
+         BYOiMC8qIHIh/Y++NJ/Fxt3a5S+3g332u8HoEtXEnqF4etHyAklwzmubeH2oiJKb/N3W
+         yPrSHe5MX2iOo+2jv8VjEs3COyFjNiIMmYakio83hceWMlDLSMzxtWLq9UaoglnpC+G2
+         SyNk7JKunCfulouEDUgjMT7Z5De1QuAtBQKJBvF6IU+5GmmU+tZSxbOEBLSxW2dn462x
+         favBtyOV1e3Xl4UT+VVCO+P81LRfUMQ0H+P2U/N6KNxkKR67ZDSoS5mA4WegwBhNal8Y
+         EJcg==
+X-Gm-Message-State: AOAM532bkHXoZmFjSLWSW8A/Yasdj/NLBmpwzMFkZgCNm3neEmJvDPaT
+        3hKgTUzqDJSO3PuVH6ksMrE=
+X-Google-Smtp-Source: ABdhPJyqG6uE+oEJyNDPBOCXGOTQ7BN8D38K+NuQ9VGC1Pm5BilcmCzmxNNPsWg8GOthftIjx4hjww==
+X-Received: by 2002:a05:6512:3582:: with SMTP id m2mr15569530lfr.532.1625575762313;
+        Tue, 06 Jul 2021 05:49:22 -0700 (PDT)
 Received: from carbon.v ([94.143.149.146])
-        by smtp.googlemail.com with ESMTPSA id r18sm139519ljc.120.2021.07.06.05.49.19
+        by smtp.googlemail.com with ESMTPSA id r18sm139519ljc.120.2021.07.06.05.49.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Jul 2021 05:49:20 -0700 (PDT)
+        Tue, 06 Jul 2021 05:49:21 -0700 (PDT)
 From:   Dmitry Kadashev <dkadashev@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -55,9 +55,9 @@ To:     Jens Axboe <axboe@kernel.dk>,
 Cc:     Pavel Begunkov <asml.silence@gmail.com>,
         linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
         Dmitry Kadashev <dkadashev@gmail.com>
-Subject: [PATCH v7 01/10] namei: ignore ERR/NULL names in putname()
-Date:   Tue,  6 Jul 2021 19:48:52 +0700
-Message-Id: <20210706124901.1360377-2-dkadashev@gmail.com>
+Subject: [PATCH v7 02/10] fs: make do_mkdirat() take struct filename
+Date:   Tue,  6 Jul 2021 19:48:53 +0700
+Message-Id: <20210706124901.1360377-3-dkadashev@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210706124901.1360377-1-dkadashev@gmail.com>
 References: <20210706124901.1360377-1-dkadashev@gmail.com>
@@ -67,50 +67,110 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Supporting ERR/NULL names in putname() makes callers code cleaner, and
-is what some other path walking functions already support for the same
-reason.
+Pass in the struct filename pointers instead of the user string, and
+update the three callers to do the same. This is heavily based on
+commit dbea8d345177 ("fs: make do_renameat2() take struct filename").
 
-This also removes a few existing IS_ERR checks before putname().
+This behaves like do_unlinkat() and do_renameat2().
 
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/io-uring/CAHk-=wgCac9hBsYzKMpHk0EbLgQaXR=OUAjHaBtaY+G8A9KhFg@mail.gmail.com/
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <christian.brauner@ubuntu.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Dmitry Kadashev <dkadashev@gmail.com>
+Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
- fs/namei.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ fs/internal.h |  1 +
+ fs/namei.c    | 22 ++++++++++++++++------
+ 2 files changed, 17 insertions(+), 6 deletions(-)
 
+diff --git a/fs/internal.h b/fs/internal.h
+index 6aeae7ef3380..848e165ef0f1 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -77,6 +77,7 @@ long do_unlinkat(int dfd, struct filename *name);
+ int may_linkat(struct user_namespace *mnt_userns, struct path *link);
+ int do_renameat2(int olddfd, struct filename *oldname, int newdfd,
+ 		 struct filename *newname, unsigned int flags);
++long do_mkdirat(int dfd, struct filename *name, umode_t mode);
+ 
+ /*
+  * namespace.c
 diff --git a/fs/namei.c b/fs/namei.c
-index 79b0ff9b151e..70caf4ef1134 100644
+index 70caf4ef1134..8bc65fd357ad 100644
 --- a/fs/namei.c
 +++ b/fs/namei.c
-@@ -247,6 +247,9 @@ getname_kernel(const char * filename)
+@@ -3559,7 +3559,7 @@ struct file *do_file_open_root(struct dentry *dentry, struct vfsmount *mnt,
+ 	return file;
+ }
  
- void putname(struct filename *name)
+-static struct dentry *filename_create(int dfd, struct filename *name,
++static struct dentry *__filename_create(int dfd, struct filename *name,
+ 				struct path *path, unsigned int lookup_flags)
  {
-+	if (IS_ERR_OR_NULL(name))
-+		return;
-+
- 	BUG_ON(name->refcnt <= 0);
+ 	struct dentry *dentry = ERR_PTR(-EEXIST);
+@@ -3615,7 +3615,6 @@ static struct dentry *filename_create(int dfd, struct filename *name,
+ 		error = err2;
+ 		goto fail;
+ 	}
+-	putname(name);
+ 	return dentry;
+ fail:
+ 	dput(dentry);
+@@ -3630,6 +3629,16 @@ static struct dentry *filename_create(int dfd, struct filename *name,
+ 	return dentry;
+ }
  
- 	if (--name->refcnt > 0)
-@@ -4718,11 +4721,9 @@ int do_renameat2(int olddfd, struct filename *from, int newdfd,
++static inline struct dentry *filename_create(int dfd, struct filename *name,
++				struct path *path, unsigned int lookup_flags)
++{
++	struct dentry *res = __filename_create(dfd, name, path, lookup_flags);
++
++	if (!IS_ERR(res))
++		putname(name);
++	return res;
++}
++
+ struct dentry *kern_path_create(int dfd, const char *pathname,
+ 				struct path *path, unsigned int lookup_flags)
+ {
+@@ -3820,7 +3829,7 @@ int vfs_mkdir(struct user_namespace *mnt_userns, struct inode *dir,
+ }
+ EXPORT_SYMBOL(vfs_mkdir);
+ 
+-static long do_mkdirat(int dfd, const char __user *pathname, umode_t mode)
++long do_mkdirat(int dfd, struct filename *name, umode_t mode)
+ {
+ 	struct dentry *dentry;
+ 	struct path path;
+@@ -3828,7 +3837,7 @@ static long do_mkdirat(int dfd, const char __user *pathname, umode_t mode)
+ 	unsigned int lookup_flags = LOOKUP_DIRECTORY;
+ 
+ retry:
+-	dentry = user_path_create(dfd, pathname, &path, lookup_flags);
++	dentry = __filename_create(dfd, name, &path, lookup_flags);
+ 	if (IS_ERR(dentry))
+ 		return PTR_ERR(dentry);
+ 
+@@ -3846,17 +3855,18 @@ static long do_mkdirat(int dfd, const char __user *pathname, umode_t mode)
+ 		lookup_flags |= LOOKUP_REVAL;
  		goto retry;
  	}
- put_both:
--	if (!IS_ERR(from))
--		putname(from);
-+	putname(from);
- put_new:
--	if (!IS_ERR(to))
--		putname(to);
-+	putname(to);
++	putname(name);
  	return error;
  }
  
+ SYSCALL_DEFINE3(mkdirat, int, dfd, const char __user *, pathname, umode_t, mode)
+ {
+-	return do_mkdirat(dfd, pathname, mode);
++	return do_mkdirat(dfd, getname(pathname), mode);
+ }
+ 
+ SYSCALL_DEFINE2(mkdir, const char __user *, pathname, umode_t, mode)
+ {
+-	return do_mkdirat(AT_FDCWD, pathname, mode);
++	return do_mkdirat(AT_FDCWD, getname(pathname), mode);
+ }
+ 
+ /**
 -- 
 2.30.2
 

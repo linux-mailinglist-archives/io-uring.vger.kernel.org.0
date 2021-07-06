@@ -2,83 +2,89 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 48EC13BCABC
-	for <lists+io-uring@lfdr.de>; Tue,  6 Jul 2021 12:48:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CDCC3BCF46
+	for <lists+io-uring@lfdr.de>; Tue,  6 Jul 2021 13:28:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231440AbhGFKue (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 6 Jul 2021 06:50:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36896 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231479AbhGFKue (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 6 Jul 2021 06:50:34 -0400
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06FD7C061574
-        for <io-uring@vger.kernel.org>; Tue,  6 Jul 2021 03:47:55 -0700 (PDT)
-Received: by mail-wm1-x32f.google.com with SMTP id u5-20020a7bc0450000b02901480e40338bso1316657wmc.1
-        for <io-uring@vger.kernel.org>; Tue, 06 Jul 2021 03:47:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=DrcfBgCy5eU+jlTHU6d0ql1RjdttZKSJEs7psjeFvt4=;
-        b=k6Q5ugX3aj815JO0tpGwswTllxCpr3fIl9BcW1ecFto4MKfSEmrNZN4b+ed88OFVN9
-         oFleC7z3oosnFlQESa3oEl9WqUDy60IEn+Jn51vOAEWaHwiONK2b2pah53g2IhtBFzzV
-         E59CGTrkeeN6SDQf9s/+OWyb/yYNbNRy1iIK9hlyYO9IAMDLglhBs3sQ2o0bjkWfd2B0
-         bIe8sIa4BW0TXKkl2OfSA8Rq7+OixhGuu1oz7kl8RCgSCSp76Q140QT1P4letnWTjkJz
-         Z45KVC5HjzkmT7smA+ZnCq/ZvSP8bhhax8ziu3ljYQFlh9InepAVdZzQEjZH6W6JZoiB
-         RcNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=DrcfBgCy5eU+jlTHU6d0ql1RjdttZKSJEs7psjeFvt4=;
-        b=JvpAuwx8Ty581xt69UkIfpG3kSWKNRfgstsad/0u7qzw0mnpU5ruLUXMP9rQgIqP1r
-         nqDyMDp/OASe5NdcDuFLk63uQJ++nru7N3UOVKdfPGJy4PLsYdNnmkqZIBYUVccmp0m7
-         XaD51/lQKAH6ExSS0i4OEIBCWXS+qAEzxST3AkvsqVsFhh/l9yxloMgNkDNxNxDahHw3
-         Vii4c3WU8mK8zuENZw7hHYXy3PUoQ2BnAn2dREol4ng4HVAEFTcN8/jR/7FBKUx9Sn7i
-         12iQpF2q0PMVBc3AllvVacvjAomI10/o71Uzhm8glliYuDALcUgpn2OEje2QyndC6Z1n
-         L9Zg==
-X-Gm-Message-State: AOAM533rXad0bKBu4wXRrrbpUgF9JuLlSaxNfhI5Gpg1mdQuMSCX3n37
-        RBU+gh2l47o64EnthXByDxXc8q2WMmRNJQ==
-X-Google-Smtp-Source: ABdhPJxuBijcG6TlErMkhufAzOfx2jMFWo84V6R9WEwiR0KRnqBkuIO5DF23rwCP5aMs+9j04E+6WA==
-X-Received: by 2002:a1c:5407:: with SMTP id i7mr3986892wmb.57.1625568473494;
-        Tue, 06 Jul 2021 03:47:53 -0700 (PDT)
-Received: from [192.168.8.197] ([185.69.144.13])
-        by smtp.gmail.com with ESMTPSA id l7sm15403291wry.0.2021.07.06.03.47.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Jul 2021 03:47:52 -0700 (PDT)
-Subject: Re: io_uring/recvmsg using io_provide_buffers causes kernel NULL
- pointer dereference bug
-To:     Mauro De Gennaro <mauro@degennaro.me>, io-uring@vger.kernel.org
-References: <CAGxp_yhoUAAvbttOaRvWx3EsmPKZVumFZQz2uQGUPGhuN8AiVQ@mail.gmail.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <d322265e-4863-4087-8f74-ae5d2d668980@gmail.com>
-Date:   Tue, 6 Jul 2021 11:47:35 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        id S234598AbhGFL21 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 6 Jul 2021 07:28:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55966 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233027AbhGFLTy (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Tue, 6 Jul 2021 07:19:54 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id E9C1A61CA2;
+        Tue,  6 Jul 2021 11:16:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1625570219;
+        bh=QUvN+qREW2qmUAiRphV02G9Yj2oxJVfc6d6/h1ouvag=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=HlJgvmk6dOzBfsOf2Vvn2Vmneb6HWxe+jYDmDXScCOKTXRshLaEIUTmo3xfclrYhH
+         fCi0wj1Fh4StH3IJf0YblgWpu+pRrBqfcoi2PSOO7NzrIMElMBSH1kdsimj83MwnM4
+         nGFRkdKQ0Im9qCz/gSEu7fvx/isQo4/pSAYmOpwVq7PGxQk+eHrQChkd4UJQq/CVE/
+         f4f7G6u96YVMeOG8zk43EgNje5ikxDX2L/9XLibhWHA7BwEnzecxTp1YPXM9abu67M
+         yEvRdvSZJ9jqdIMDIEwUzbGODUf5W39WV548MQ4eTg40AWszcKMlzYuAooutxpCOyi
+         19xcwxDPX0Qmg==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        syzbot+ea2f1484cffe5109dc10@syzkaller.appspotmail.com,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
+        io-uring@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.13 127/189] io_uring: fix false WARN_ONCE
+Date:   Tue,  6 Jul 2021 07:13:07 -0400
+Message-Id: <20210706111409.2058071-127-sashal@kernel.org>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210706111409.2058071-1-sashal@kernel.org>
+References: <20210706111409.2058071-1-sashal@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAGxp_yhoUAAvbttOaRvWx3EsmPKZVumFZQz2uQGUPGhuN8AiVQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/4/21 10:50 AM, Mauro De Gennaro wrote:
-> Hi,
-> 
-> First time reporting what seems to be a kernel bug, so I apologise if
-> I am not supposed to send bug reports to this mailing list as well.
-> The report was filed at Bugzilla:
+From: Pavel Begunkov <asml.silence@gmail.com>
 
-That's exactly the right place to report, not everyone monitor
-bugzilla, if any at all. Thanks for letting know
+[ Upstream commit e6ab8991c5d0b0deae0961dc22c0edd1dee328f5 ]
 
-> https://bugzilla.kernel.org/show_bug.cgi?id=213639
-> 
-> It happens on 5.11 and I haven't tested the code yet on newer kernels.
+WARNING: CPU: 1 PID: 11749 at fs/io-wq.c:244 io_wqe_wake_worker fs/io-wq.c:244 [inline]
+WARNING: CPU: 1 PID: 11749 at fs/io-wq.c:244 io_wqe_enqueue+0x7f6/0x910 fs/io-wq.c:751
 
+A WARN_ON_ONCE() in io_wqe_wake_worker() can be triggered by a valid
+userspace setup. Replace it with pr_warn.
+
+Reported-by: syzbot+ea2f1484cffe5109dc10@syzkaller.appspotmail.com
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+Link: https://lore.kernel.org/r/f7ede342c3342c4c26668f5168e2993e38bbd99c.1623949695.git.asml.silence@gmail.com
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/io-wq.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/fs/io-wq.c b/fs/io-wq.c
+index b3e8624a37d0..60f58efdb5f4 100644
+--- a/fs/io-wq.c
++++ b/fs/io-wq.c
+@@ -241,7 +241,8 @@ static void io_wqe_wake_worker(struct io_wqe *wqe, struct io_wqe_acct *acct)
+ 	 * Most likely an attempt to queue unbounded work on an io_wq that
+ 	 * wasn't setup with any unbounded workers.
+ 	 */
+-	WARN_ON_ONCE(!acct->max_workers);
++	if (unlikely(!acct->max_workers))
++		pr_warn_once("io-wq is not configured for unbound workers");
+ 
+ 	rcu_read_lock();
+ 	ret = io_wqe_activate_free_worker(wqe);
+@@ -906,6 +907,8 @@ struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data)
+ 
+ 	if (WARN_ON_ONCE(!data->free_work || !data->do_work))
+ 		return ERR_PTR(-EINVAL);
++	if (WARN_ON_ONCE(!bounded))
++		return ERR_PTR(-EINVAL);
+ 
+ 	wq = kzalloc(sizeof(*wq), GFP_KERNEL);
+ 	if (!wq)
 -- 
-Pavel Begunkov
+2.30.2
+

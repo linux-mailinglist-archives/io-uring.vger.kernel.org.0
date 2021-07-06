@@ -2,89 +2,104 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A5CD3BD3B3
-	for <lists+io-uring@lfdr.de>; Tue,  6 Jul 2021 14:02:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D87F3BD68E
+	for <lists+io-uring@lfdr.de>; Tue,  6 Jul 2021 14:34:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235708AbhGFLhG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 6 Jul 2021 07:37:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42564 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235270AbhGFL3u (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Tue, 6 Jul 2021 07:29:50 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3720E61D99;
-        Tue,  6 Jul 2021 11:20:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625570448;
-        bh=TRgNq0RCv+xZeGNXwvsLOUrnCmvhW5krvQzCnNyScIA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IGgWzBpnji4Vl28goX3ToslZM1+8+TXjzQxIWv9EPSO56XOv5EyalxQ66P0nIa85a
-         yfWHjvz9wBwi+iJ/lVGGLOb99uom9rP6AadO4AdK+6QO04gAknzTF+n5Ys9s44qGNq
-         n+72HCqVBbaTl31oAzYpUTI8dtrLb/WvoyxQJurxCOKNLXp01jkDmuPCzX5IizSmRP
-         Y1dEWyhHVz2U0ZwO7uPwkGNn/vfkbvGd+jyJLu076l/AtxcKIpX53jVEg5T3CYcakg
-         Tddc//H9ky/zkN0PHVoegnRfMuuDRe11F/yafhdi636+9lqwRIF7ZXjYsZ7tjqtDz3
-         whjlioa6VcdRA==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        syzbot+ea2f1484cffe5109dc10@syzkaller.appspotmail.com,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        io-uring@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.12 106/160] io_uring: fix false WARN_ONCE
-Date:   Tue,  6 Jul 2021 07:17:32 -0400
-Message-Id: <20210706111827.2060499-106-sashal@kernel.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210706111827.2060499-1-sashal@kernel.org>
-References: <20210706111827.2060499-1-sashal@kernel.org>
+        id S234181AbhGFMhb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 6 Jul 2021 08:37:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54990 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S245468AbhGFMMy (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 6 Jul 2021 08:12:54 -0400
+Received: from mail-yb1-xb34.google.com (mail-yb1-xb34.google.com [IPv6:2607:f8b0:4864:20::b34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AE20C028B9F
+        for <io-uring@vger.kernel.org>; Tue,  6 Jul 2021 05:06:33 -0700 (PDT)
+Received: by mail-yb1-xb34.google.com with SMTP id g19so33865443ybe.11
+        for <io-uring@vger.kernel.org>; Tue, 06 Jul 2021 05:06:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kIdakPlH/b7B5xIsNT5JW5s+u8yFDPEEw4kN7jHTAOI=;
+        b=Ic7glmFver3L7VIUQfAr3Zb8PqvhZZJjNTHRLZTbOJK6CddBy8qzEQa/bwL8bLSfvL
+         Kzns+hhOBlC2bB5/W8DQHX52slOhZPGxSMNuUkEhLEFnMaBxBwN2mSKsDkdCwhHwAxd9
+         mAB6j/ZmKr9UF/q4MD97QsvNbvyNLiNaB9hwrQLPc4TwluJoKgpXoOs5jKopSEtW0TQa
+         cldLJ0cQTUTRDiW3U5BOsvEF/QoE3Xr2Pq5hYEMogor4qqHRAXUgGr3l3DAu1utRzKtI
+         z6/9Nao6C/ovtPdMySl7Tt13jxPYsTi/MpfbqLmyuIPiOvaIkFme4Csr2GNn8OY6hgHr
+         D61Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kIdakPlH/b7B5xIsNT5JW5s+u8yFDPEEw4kN7jHTAOI=;
+        b=uTl0JNRKRNSv5htyrP/yR2Vo+d+bRZWqtPyilbKTG7tQ7FDoz5PrX4sjjjzb4XRLg0
+         Wipp4jlKtipGBLFc+p5sy4CtwEZgCku18MLyCEfEhQZqiXyyEDCOqLJ0yYK87R1KpQPF
+         RqdIfca4LSDEXtG8Qm4w8ZYjtgbRn+IXZuBNrv23S0ylZ46pti7Me3G8Lre3Tr5ikUKE
+         uN7H9g+JC6ql1wtJNCOM8iRWSBZD/tqoKaY9WdH9Qzqqo7zLcjKsXeGF+shrpVv//nOo
+         Dw5D/Z+9YlnI3nn3B3FDHfuhr1TxXHco7ej29J7/LrHtnT1zTjNV4Q3wZe7ulNXnQU6E
+         623w==
+X-Gm-Message-State: AOAM532CPtd+OW/F0V3fA33ZwbfQcXWwk0qdopg+1xHLe27ILIVspBWm
+        N3KW5QPGnD5+aHPeLt0j9jdrZesmkgCNU4pCoEA=
+X-Google-Smtp-Source: ABdhPJwwXhZbOwN1WYGCgf0K7pKcO9n9Lce5S3U7VzJmNCYF3rr2lXaf3qxCn3ENBP+B/QPoWKZw9h6Gh/W3UKtcU+M=
+X-Received: by 2002:a25:dc4d:: with SMTP id y74mr25992601ybe.289.1625573192594;
+ Tue, 06 Jul 2021 05:06:32 -0700 (PDT)
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+References: <c9a79f27-02e9-b0d6-78ae-2e777eed8fe0@kernel.dk>
+ <CAHk-=wgCac9hBsYzKMpHk0EbLgQaXR=OUAjHaBtaY+G8A9KhFg@mail.gmail.com>
+ <CAOKbgA5iixR+QCuYyzb2UBQGVddQtp0ERKZrKHbrsyWug2yYbQ@mail.gmail.com>
+ <CAHk-=wgye_GuQ5cBFC=UOPHkd0o8-Nrau7GNZHTZVuGO2tincw@mail.gmail.com>
+ <CAOKbgA6x-qPK4jTmH4AO_GPy=tTRw1uMuD7wyiVFM7q0WQ5WbQ@mail.gmail.com> <CAHk-=wgjvUoOtggcVb7HRAhy2=LfG1+oKrjg5MZh+bSrKDzyAA@mail.gmail.com>
+In-Reply-To: <CAHk-=wgjvUoOtggcVb7HRAhy2=LfG1+oKrjg5MZh+bSrKDzyAA@mail.gmail.com>
+From:   Dmitry Kadashev <dkadashev@gmail.com>
+Date:   Tue, 6 Jul 2021 19:06:21 +0700
+Message-ID: <CAOKbgA69m7_KbSS-pnEshd9Bp3JEz2QVTOkQ6u--zs5vZobArg@mail.gmail.com>
+Subject: Re: [GIT PULL] io_uring updates for 5.14-rc1
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
+        io-uring <io-uring@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Pavel Begunkov <asml.silence@gmail.com>
+On Tue, Jul 6, 2021 at 4:40 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> [ back looking at this from doing other merge window stuff ]
+>
+> On Sat, Jul 3, 2021 at 8:27 AM Dmitry Kadashev <dkadashev@gmail.com> wrote:
+> >
+> > This is how I originally thought it is going to be, but Al suggested
+> > that it eats the name on the failure. Now that I spent slightly
+> > more time with it I *suspect* the reason (or a part of it) is making it
+> > keep the name on failure would require A LOT of changes, since a lot of
+> > functions that __filename_create() calls eat the name on failure.
+>
+> Ok.
+>
+> Let's try to keep the changes minimal and simple.
+>
+> Your original approach with __filename_create() looks reasonable, if
+> we then just clean up the end result by making putname() ok with an
+> error pointer.
+>
+> The odd conditional putname() calls were the main issue that made me
+> go "this is just very ugly and confusing"
+>
+> How do the patches end up looking with just that cleanup (and some
+> clarifying comment about the very odd "out_putpath" case it had?)
 
-[ Upstream commit e6ab8991c5d0b0deae0961dc22c0edd1dee328f5 ]
+OK, I'll send v7 of the series soon and will CC you.
 
-WARNING: CPU: 1 PID: 11749 at fs/io-wq.c:244 io_wqe_wake_worker fs/io-wq.c:244 [inline]
-WARNING: CPU: 1 PID: 11749 at fs/io-wq.c:244 io_wqe_enqueue+0x7f6/0x910 fs/io-wq.c:751
+Also, I've looked at the code again, and I think making
+__filename_create() and friends not consume the name (even on error) is
+not that much of extra work (but some existing code like
+filename_parentat() has to be adjusted, so it's still not completely
+trivial). I'll try to do that and will send RFC on top of this series,
+so if it turns out to look better / be easier to reason about we can
+just switch to that (in another release probably).
 
-A WARN_ON_ONCE() in io_wqe_wake_worker() can be triggered by a valid
-userspace setup. Replace it with pr_warn.
+Thank you for your help, Linus!
 
-Reported-by: syzbot+ea2f1484cffe5109dc10@syzkaller.appspotmail.com
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-Link: https://lore.kernel.org/r/f7ede342c3342c4c26668f5168e2993e38bbd99c.1623949695.git.asml.silence@gmail.com
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/io-wq.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/fs/io-wq.c b/fs/io-wq.c
-index 4eba531bea5a..b836737f96f3 100644
---- a/fs/io-wq.c
-+++ b/fs/io-wq.c
-@@ -243,7 +243,8 @@ static void io_wqe_wake_worker(struct io_wqe *wqe, struct io_wqe_acct *acct)
- 	 * Most likely an attempt to queue unbounded work on an io_wq that
- 	 * wasn't setup with any unbounded workers.
- 	 */
--	WARN_ON_ONCE(!acct->max_workers);
-+	if (unlikely(!acct->max_workers))
-+		pr_warn_once("io-wq is not configured for unbound workers");
- 
- 	rcu_read_lock();
- 	ret = io_wqe_activate_free_worker(wqe);
-@@ -991,6 +992,8 @@ struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data)
- 
- 	if (WARN_ON_ONCE(!data->free_work || !data->do_work))
- 		return ERR_PTR(-EINVAL);
-+	if (WARN_ON_ONCE(!bounded))
-+		return ERR_PTR(-EINVAL);
- 
- 	wq = kzalloc(sizeof(*wq), GFP_KERNEL);
- 	if (!wq)
--- 
-2.30.2
-
+--
+Dmitry Kadashev

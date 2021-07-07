@@ -2,140 +2,159 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DCECA3BE744
-	for <lists+io-uring@lfdr.de>; Wed,  7 Jul 2021 13:42:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5DCB3BE7D8
+	for <lists+io-uring@lfdr.de>; Wed,  7 Jul 2021 14:28:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231466AbhGGLnG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 7 Jul 2021 07:43:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58986 "EHLO
+        id S231539AbhGGMak (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 7 Jul 2021 08:30:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231438AbhGGLnB (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 7 Jul 2021 07:43:01 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BBEFC061574;
-        Wed,  7 Jul 2021 04:40:20 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id t6so2667467wrm.9;
-        Wed, 07 Jul 2021 04:40:20 -0700 (PDT)
+        with ESMTP id S231534AbhGGMaj (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 7 Jul 2021 08:30:39 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7ECCC061574;
+        Wed,  7 Jul 2021 05:27:59 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id hc16so2941082ejc.12;
+        Wed, 07 Jul 2021 05:27:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=SjCPjtxsD7x8AhV/ce/R0ldaWbBbErIon5fucvDcAwE=;
-        b=ueaVWLeB2tT5vn1d5Ycrggbk01HiU0EeCp6+WRfAFR7CbfGVsoNdg5qMI2/xxukzdt
-         taZcicT/jA6fWn5me8Q3RODQyvPB3Mdiv3umhpbQ42sTlzvVJaPkBs56xJ1ESCKrAAMO
-         b2++HLpJaEv4hflgKY8Z9YUp6QVZWXys6qssFIF6d1o/u8i3lH20zcEboBWc8MnVfSLa
-         XBYx1KC50Zq0JeZic+F1OiVzv5eX6TkDNluBBz/VDavmu7XHDr4I63klnQ2D/JCmzzlS
-         VTdsvhjMdCC6UQPEyirHcKuTlU9xXN7WHO/D5dM0fFxbxKL7f+qoEV8V//+wT0rmwQgw
-         EKaQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1kDvFhpMOkdIH+U7Ir83URtQHny6rvk2ucDvPOWjy/E=;
+        b=d2bRY7+WmbhMsVgjPsySTZxoNtiRS6SW6+D9VwBw3RytgdrQJsbo//nvDglcNZnKgM
+         LWrIWlVkG2TfIfPuwB+RMbxh+MI+Binne/HlPRCTKp5+xlj0+ji6HEBioNrbC2Vjfcsc
+         tkRwFiqVa8r1U54uTYplJ0ujQMkOU/lBS3gE74QvsC6iLIOoxel8qxkGeqtoSYS3cBBA
+         VSF/qM6cbDaNAPx/7ER1PuYG3UKck3GqQ05Z0QtIzTP7oduijJdnMY7ZJ4XLuv/3mt3F
+         W6KobnSD0W5kqeLkLNkiF+LmBEaPyw6XU5eUGt84K0vTg+eBQ6s8C4B4goEVloTvORzy
+         BJXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=SjCPjtxsD7x8AhV/ce/R0ldaWbBbErIon5fucvDcAwE=;
-        b=qrmrxnHNeJPv9hRF5ziS4rh1g9e+FrKIdr8gIZBM8Xf//G49zUi9y4cdiKJxzoI5X9
-         0GO0027K0E0aciq9mmGZnZs7XTi2xT6RTHz6QOTlnvyQXFcJBFJg5D7tLNmnDetXpyaQ
-         IT6bBKkvp9bFe9Z0V2XUyBADsgrXlQA8mx2YU9o0WQfWGW/U+uVZVt/RXVGi1t/eQCpa
-         kFPNxVZzLxtMY7vEZ00p5cHZVt4OVPt4XtKVZjwXLFhNbsmox3OHRRjjOR/eKBEn/mUn
-         ydXZqVLTwZ2DBurb+yr0AobJjmUKfypEGa0lgBsV8wL20LVQcLTyNVTHAM2QwdC38lLi
-         Qxlg==
-X-Gm-Message-State: AOAM531ZTLNoOLmzwF4RlDT8N+sRS2cT7X/2KXz6/JhKLM/Q10ojlJtM
-        csHdSDBVmt6T4VDIDZKYPjU=
-X-Google-Smtp-Source: ABdhPJw5kfrSS+ALXPvamQOvU6udjvmtDg48XjGbJbXG1PnD7ThQuRncHqaYXRdUk4VU2ZO3yKwJqQ==
-X-Received: by 2002:a5d:4001:: with SMTP id n1mr27826764wrp.159.1625658019235;
-        Wed, 07 Jul 2021 04:40:19 -0700 (PDT)
-Received: from localhost.localdomain ([85.255.234.206])
-        by smtp.gmail.com with ESMTPSA id p9sm18415790wmm.17.2021.07.07.04.40.18
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1kDvFhpMOkdIH+U7Ir83URtQHny6rvk2ucDvPOWjy/E=;
+        b=npPy3yJHr+kOKrvXmdY5Lc5JptKW5xrS6wa51PkxflQqUEXnqH/o+7JEHFuIfuHomO
+         oap7VHLGrJg2Zw5efy7Ir2OkNib/D35QpUTUFm0GDDLBrRawvOeBogTSLKKT0LuHHnvY
+         EGhbRZiR8ZR64YLj2zA+nVvjNhqucnW80x9tvYRgPVDuXlFQLiKt7sCgVzmK4SDXUmtQ
+         urnQsXL/R/Zl9wGbpqMCkWUgEhRktNvVF41ACtGSxEZe6akM4VxVx7px0deXBz3wX/wH
+         3jjoHkvu/xhJ1CNnvk+qTzRszYdCMNTbbhh3Oo/fDFWhtI3wEEzbUg23zfxyFc1cAINS
+         biow==
+X-Gm-Message-State: AOAM532GTlMNFZRzlCfdkjcDnGe2HJREBD3Ccrmdbxd+mwEZutQQz5oa
+        mXjNGuxlKdHgctLELmjov0s=
+X-Google-Smtp-Source: ABdhPJwoPkOixqrTO2wL4zg1wJ93bKc/gzgdqDTGXyb+WjfbL0G8sSAH+RCVvhDNnmwIuBBlI2n/PA==
+X-Received: by 2002:a17:906:4e4f:: with SMTP id g15mr23997189ejw.217.1625660878208;
+        Wed, 07 Jul 2021 05:27:58 -0700 (PDT)
+Received: from carbon.v ([108.61.166.58])
+        by smtp.googlemail.com with ESMTPSA id ze15sm7019821ejb.79.2021.07.07.05.27.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Jul 2021 04:40:18 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc:     "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [PATCH 4/4] io_uring: accept directly into fixed file table
-Date:   Wed,  7 Jul 2021 12:39:46 +0100
-Message-Id: <1a57d821f6f3c35aef26316febe70e16f39f7c7d.1625657451.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <cover.1625657451.git.asml.silence@gmail.com>
-References: <cover.1625657451.git.asml.silence@gmail.com>
+        Wed, 07 Jul 2021 05:27:57 -0700 (PDT)
+From:   Dmitry Kadashev <dkadashev@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+        Dmitry Kadashev <dkadashev@gmail.com>
+Subject: [PATCH v8 00/11] io_uring: add mkdir and [sym]linkat support
+Date:   Wed,  7 Jul 2021 19:27:36 +0700
+Message-Id: <20210707122747.3292388-1-dkadashev@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-As done with open opcodes, allow accept to skip installing fd into
-processes' file tables and put it directly into io_uring's fixed file
-table. Same restrictions and design as for open.
+This started out as an attempt to add mkdirat support to io_uring which
+is heavily based on renameat() / unlinkat() support.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 21 +++++++++++++++------
- 1 file changed, 15 insertions(+), 6 deletions(-)
+During the review process more operations were added (linkat, symlinkat,
+mknodat) mainly to keep things uniform internally (in namei.c), and
+with things changed in namei.c adding support for these operations to
+io_uring is trivial, so that was done too (except for mknodat). See
+https://lore.kernel.org/io-uring/20210514145259.wtl4xcsp52woi6ab@wittgenstein/
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index fd0dcee251b0..f7db43bf7dad 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -4675,14 +4675,17 @@ static int io_accept_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 
- 	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
- 		return -EINVAL;
--	if (sqe->ioprio || sqe->len || sqe->buf_index)
-+	if (sqe->ioprio || sqe->len)
- 		return -EINVAL;
- 
- 	accept->addr = u64_to_user_ptr(READ_ONCE(sqe->addr));
- 	accept->addr_len = u64_to_user_ptr(READ_ONCE(sqe->addr2));
- 	accept->flags = READ_ONCE(sqe->accept_flags);
- 	accept->nofile = rlimit(RLIMIT_NOFILE);
-+	req->buf_index = READ_ONCE(sqe->file_index);
- 
-+	if (req->buf_index && (accept->flags & SOCK_CLOEXEC))
-+		return -EINVAL;
- 	if (accept->flags & ~(SOCK_CLOEXEC | SOCK_NONBLOCK))
- 		return -EINVAL;
- 	if (SOCK_NONBLOCK != O_NONBLOCK && (accept->flags & SOCK_NONBLOCK))
-@@ -4695,28 +4698,34 @@ static int io_accept(struct io_kiocb *req, unsigned int issue_flags)
- 	struct io_accept *accept = &req->accept;
- 	bool force_nonblock = issue_flags & IO_URING_F_NONBLOCK;
- 	unsigned int file_flags = force_nonblock ? O_NONBLOCK : 0;
-+	bool fixed = !!req->buf_index;
- 	struct file *file;
- 	int ret, fd;
- 
- 	if (req->file->f_flags & O_NONBLOCK)
- 		req->flags |= REQ_F_NOWAIT;
- 
--	fd = __get_unused_fd_flags(accept->flags, accept->nofile);
--	if (unlikely(fd < 0))
--		return fd;
--
-+	if (!fixed) {
-+		fd = __get_unused_fd_flags(accept->flags, accept->nofile);
-+		if (unlikely(fd < 0))
-+			return fd;
-+	}
- 	file = do_accept(req->file, file_flags, accept->addr, accept->addr_len,
- 			 accept->flags);
- 	if (IS_ERR(file)) {
-+		if (!fixed)
-+			put_unused_fd(fd);
- 		ret = PTR_ERR(file);
- 		if (ret == -EAGAIN && force_nonblock)
- 			return -EAGAIN;
- 		if (ret == -ERESTARTSYS)
- 			ret = -EINTR;
- 		req_set_fail(req);
--	} else {
-+	} else if (!fixed) {
- 		fd_install(fd, file);
- 		ret = fd;
-+	} else {
-+		ret = io_install_fixed_file(req, file, issue_flags);
- 	}
- 	__io_req_complete(req, issue_flags, ret, 0);
- 	return 0;
+The first patch makes putname() ignore IS_ERR_OR_NULL names and converts
+a couple of places where the check was already implemented in the
+callers. No functional changes.
+
+The second one splits filename_lookup() that used to consume the passed
+struct filename * on error but not on the success (returning it) into
+two: filename_lookup(), that always consumes the name and
+__filename_lookup() that never does. This is a preparation change to
+enable the subsequent changes to filename_create and filename_lookup. No
+functional changes.
+
+The third patch is preparation with no functional changes, makes
+do_mkdirat accept struct filename pointer rather than the user string.
+
+The fourth one leverages that to implement mkdirat in io_uring.
+
+5-8 just convert other similar do_* functions in namei.c to accept
+struct filename, for uniformity with do_mkdirat, do_renameat and
+do_unlinkat. No functional changes there.
+
+9 changes do_* helpers in namei.c to return ints rather than some of
+them returning ints and some longs.
+
+10-11 add symlinkat and linkat support to io_uring correspondingly.
+
+Based on for-5.14/io_uring.
+
+v8:
+- update filename_parentat() calling conventions to be uniform with the
+  ones followed by (changed in subsequent patches) filename_create()
+  and filename_lookup()
+
+v7:
+- rebase
+- make putname() ignore IS_ERR_OR_NULL names, remove conditional calls
+  to it from the callers
+
+v6:
+
+- rebase
+- add safety checks for IOPOLL mode
+- add safety checks for unused sqe parts
+- drop mknodat support from io_uring as requested by Jens
+- add Christian's Acked-by
+
+v5:
+- rebase
+- add symlinkat, linkat and mknodat support to io_uring
+
+v4:
+- update do_mknodat, do_symlinkat and do_linkat to accept struct
+  filename for uniformity with do_mkdirat, do_renameat and do_unlinkat;
+
+v3:
+- rebase;
+
+v2:
+- do not mess with struct filename's refcount in do_mkdirat, instead add
+  and use __filename_create() that does not drop the name on success;
+
+Dmitry Kadashev (11):
+  namei: ignore ERR/NULL names in putname()
+  namei: change filename_parentat() calling conventions
+  fs: make do_mkdirat() take struct filename
+  io_uring: add support for IORING_OP_MKDIRAT
+  fs: make do_mknodat() take struct filename
+  fs: make do_symlinkat() take struct filename
+  namei: add getname_uflags()
+  fs: make do_linkat() take struct filename
+  fs: update do_*() helpers to return ints
+  io_uring: add support for IORING_OP_SYMLINKAT
+  io_uring: add support for IORING_OP_LINKAT
+
+ fs/exec.c                     |   8 +-
+ fs/internal.h                 |   8 +-
+ fs/io_uring.c                 | 196 ++++++++++++++++++++++++++++
+ fs/namei.c                    | 239 +++++++++++++++++++---------------
+ include/linux/fs.h            |   1 +
+ include/uapi/linux/io_uring.h |   4 +
+ 6 files changed, 346 insertions(+), 110 deletions(-)
+
 -- 
-2.32.0
+2.30.2
 

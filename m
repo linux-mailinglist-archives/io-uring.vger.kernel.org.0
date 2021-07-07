@@ -2,80 +2,88 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F9023BE80B
-	for <lists+io-uring@lfdr.de>; Wed,  7 Jul 2021 14:34:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39C423BE886
+	for <lists+io-uring@lfdr.de>; Wed,  7 Jul 2021 15:07:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231546AbhGGMhD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 7 Jul 2021 08:37:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42576 "EHLO
+        id S231590AbhGGNKL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 7 Jul 2021 09:10:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231784AbhGGMg4 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 7 Jul 2021 08:36:56 -0400
-Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15F68C061764;
-        Wed,  7 Jul 2021 05:32:17 -0700 (PDT)
-Received: by mail-yb1-xb2b.google.com with SMTP id o139so2848430ybg.9;
-        Wed, 07 Jul 2021 05:32:17 -0700 (PDT)
+        with ESMTP id S231533AbhGGNKK (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 7 Jul 2021 09:10:10 -0400
+Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C572C06175F
+        for <io-uring@vger.kernel.org>; Wed,  7 Jul 2021 06:07:30 -0700 (PDT)
+Received: by mail-io1-xd2a.google.com with SMTP id h6so3281268iok.6
+        for <io-uring@vger.kernel.org>; Wed, 07 Jul 2021 06:07:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7tTKmnnet7oGt+w9hkyfqp5x9oq9EgqvN8NAdJCFxts=;
-        b=U1FWskDoot3FhiMATVLfs9uec9poosQPlKgS4r4Tsdr04V1we2XX2p//xlh0zqyEjb
-         PDRslAvt5d9MgdOuc/qmSvYa5omrOpXEFKbF7dVG0Tbao09t9NLtmSQT4gOIDkpq9SoD
-         J247tzfTEJ2YBTf1zmPjmMwRWXmDkWMN5npBKNZrhNSlpYezpqocPsnzmWqBnh3l9Rbi
-         gPbjEvPLFPgpkVlM0qMrG0sQA5GMjk7K7K6hfrL2xUzYLCiI7I+bWOa+EXwlmXhRlK+E
-         s4q+rPVLZ3G5XNHf046BQdl1LxA4a3s0XboB+FMMxGCXUJL63ksFA7tpriAqHIOhdFZU
-         aHPg==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=P+p8MlTL+Ugums2wbllEtPvV46qbJoRofLeQP5kxHz8=;
+        b=RBCF38Z9BoIserbyrC2TIsU2UE0NmC2IMtmcDMWweo1/VZHNzkNynCJ6a/aTwq7D1A
+         86wGe/YtWI8g/kLI08XlN/BxFvFg7OTNWsi08T5jN1OtvJv3BHfiEjd1MlMt3vIGfeMJ
+         QX/GJ1vGnCVesF/Yxlk3KFjyX0HkdqGFDY3HC4ifgaUYvZNAiIDnjCpPNSIbs6mvHCQk
+         TxMeqtR+OWObrDfkxK4YvAiqsufT/9sBPWH8mzJJQMVZgUZY4HaWy5RgY+VTDTDyNuRh
+         qZXpZ588E23ITPB60cJFLgVsHXTSe5pUtedACOZpMf63hOcBb8wRsoIpBr9Cmc6zWOIt
+         NbJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7tTKmnnet7oGt+w9hkyfqp5x9oq9EgqvN8NAdJCFxts=;
-        b=lK/J4yR3omANGVei30pCfJ9HMUf5ozyF/Rjs7IvZGVJr1elOcadXoNZZfE9Kjh5/5d
-         6wOVlKwmN51lqBrhIM9IvxzWKQSkVfY/ooYlvWF7KI/VveW4JHV0BjfsMNKpIwaio9K0
-         XmbfSzUB7QhCdyYbP2qteglwd6MvudLCZCXYnH7qldQkT5o0+YByGr/oThvfGCiuYtCD
-         AFfYHs9a3xG0kUQXBZ9+3e9+hP1d63ugPAgAoc7ZNvqKylQt1U/Jx490xvQcni2tlEcG
-         BDYicIdYOtCvHX8l0DAxNEA+9UTZXOWyF5T55GvDm2jg+mS5MAnFjDAbbxip63kF20yu
-         romQ==
-X-Gm-Message-State: AOAM5323RW4C89m5CU+7l8zSmQQGyZoyD/8WseqMrXJQGZ3riNj7rtnx
-        BZ+T0Bs3yAoS9IO1yOIWmfxM2qA1bDKeZvmpPlZncuq58gBLZBqk
-X-Google-Smtp-Source: ABdhPJw2xJb0gRP2jvpIA9IQQWpGZJ9okPDfRhhCYuC1YJmjT/3zfgaav+Tq2DNZ4HceTpzmFIO/P5JpYGfgVpkqhv8=
-X-Received: by 2002:a25:6c0a:: with SMTP id h10mr30251015ybc.167.1625661137067;
- Wed, 07 Jul 2021 05:32:17 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=P+p8MlTL+Ugums2wbllEtPvV46qbJoRofLeQP5kxHz8=;
+        b=OaB7jbPpCaVIxN65Pk3poi9l3afn6SPmSb5nqjfFVMaIrxrkoqZ5poPCTDu2oV4p0w
+         cYj+hNAMczUGnqw1/sKGmuHrPB+oNfZlDZ9toBEDAjwqARtOli40zUqjB2c4Jxeg9Ma2
+         SR4K9Y5rdY1x/AIi7Lx0m7VumKnEL3GvQRJ17FXVxLpHvwzXTQltNRJMw15iL1PxYsrE
+         Zrn32774thlqiDXPqbjCe/wbx9Gs3p4plVasrkLy+eJ2nd7p8ld1hfAJsd+t5onV+Kl9
+         lIid1oyE9pSSjzbEIvpZg1yQL6FFCZVIzJpSvsdT+D9FHpVQ9upTMH9logPOjFMyNq0t
+         pJMg==
+X-Gm-Message-State: AOAM532R3xxf1Ip+5xuaJzVEF3xKkeyDEgl1o6amAASsi6catqC8oiRq
+        DXDB8qPKHabZHPEUgt6WJzQFVw==
+X-Google-Smtp-Source: ABdhPJwQrf13ubadfe5m9Byloeyk5PEWe2nQLXJo8nOhxYt22e5MGCQqWrUAJuTIBVz6gl5pYt8zZg==
+X-Received: by 2002:a6b:760e:: with SMTP id g14mr19857660iom.119.1625663249772;
+        Wed, 07 Jul 2021 06:07:29 -0700 (PDT)
+Received: from [192.168.1.134] ([198.8.77.61])
+        by smtp.gmail.com with ESMTPSA id m13sm10321697ila.80.2021.07.07.06.07.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 Jul 2021 06:07:29 -0700 (PDT)
+Subject: Re: [RFC 0/4] open/accept directly into io_uring fixed file table
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, Josh Triplett <josh@joshtriplett.org>
+References: <cover.1625657451.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <48bd91bc-ba1a-1e69-03a1-3d6f913f96c3@kernel.dk>
+Date:   Wed, 7 Jul 2021 07:07:52 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <20210707122747.3292388-1-dkadashev@gmail.com>
-In-Reply-To: <20210707122747.3292388-1-dkadashev@gmail.com>
-From:   Dmitry Kadashev <dkadashev@gmail.com>
-Date:   Wed, 7 Jul 2021 19:32:06 +0700
-Message-ID: <CAOKbgA6gpdS97=f3A_=eJKDzmR-wHTJwQR+U0WR95PqSF=2b9w@mail.gmail.com>
-Subject: Re: [PATCH v8 00/11] io_uring: add mkdir and [sym]linkat support
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        linux-fsdevel@vger.kernel.org, io-uring <io-uring@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <cover.1625657451.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Jul 7, 2021 at 7:27 PM Dmitry Kadashev <dkadashev@gmail.com> wrote:
->
-> This started out as an attempt to add mkdirat support to io_uring which
-> is heavily based on renameat() / unlinkat() support.
->
-> During the review process more operations were added (linkat, symlinkat,
-> mknodat) mainly to keep things uniform internally (in namei.c), and
-> with things changed in namei.c adding support for these operations to
-> io_uring is trivial, so that was done too (except for mknodat). See
-> https://lore.kernel.org/io-uring/20210514145259.wtl4xcsp52woi6ab@wittgenstein/
+On 7/7/21 5:39 AM, Pavel Begunkov wrote:
+> Implement an old idea allowing open/accept io_uring requests to register
+> a newly created file as a io_uring's fixed file instead of placing it
+> into a task's file table. The switching is encoded in io_uring's SQEs
+> by setting sqe->buf_index/file_index, so restricted to 2^16-1. Don't
+> think we need more, but may be a good idea to scrap u32 somewhere
+> instead.
+> 
+> From the net side only needs a function doing __sys_accept4_file()
+> but not installing fd, see 2/4.
+> 
+> Only RFC for now, the new functionality is tested only for open yet.
+> I hope we can remember the author of the idea to add attribution.
 
-Christian, I've kept your Acked-by on the old commits, since changes
-there are pretty minimal (conditional putname()s are unconditional now,
-and with __filename_* functions not consuming their args now some goto
-labels changed). Hope that was the right thing to do.
+Pretty sure the original suggester of this as Josh, CC'ed.
 
 -- 
-Dmitry Kadashev
+Jens Axboe
+

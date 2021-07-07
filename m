@@ -2,61 +2,61 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 69C4F3BF029
-	for <lists+io-uring@lfdr.de>; Wed,  7 Jul 2021 21:20:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95A793BF032
+	for <lists+io-uring@lfdr.de>; Wed,  7 Jul 2021 21:22:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231294AbhGGTXe (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 7 Jul 2021 15:23:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50212 "EHLO
+        id S231181AbhGGTZH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 7 Jul 2021 15:25:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50554 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231267AbhGGTXe (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 7 Jul 2021 15:23:34 -0400
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 799FFC061574
-        for <io-uring@vger.kernel.org>; Wed,  7 Jul 2021 12:20:52 -0700 (PDT)
-Received: by mail-lf1-x133.google.com with SMTP id q18so6909864lfc.7
-        for <io-uring@vger.kernel.org>; Wed, 07 Jul 2021 12:20:52 -0700 (PDT)
+        with ESMTP id S229519AbhGGTZG (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 7 Jul 2021 15:25:06 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FB56C06175F
+        for <io-uring@vger.kernel.org>; Wed,  7 Jul 2021 12:22:25 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id r26so6945196lfp.2
+        for <io-uring@vger.kernel.org>; Wed, 07 Jul 2021 12:22:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=k8sDU1/P1VfuXLXpThIjZK/DKEV3AqnPVmmR6a675sk=;
-        b=TL3sOyEcBGu1gEpKYo3+YknZH1bXDiNOt8fLGOSrT7gcTtSYNk2qCAnG4tAmZPO/MZ
-         ovzdPXiGVpQUPqvsFEPn66dyk30aOncHb4Jrnhp7MeMmSqHA4sxSIL7b+8LjltgRpdPe
-         TdMKVIiIcmlOMLpzKnkw3pfqOHII/epJxAPHE=
+        bh=QWz6j7aQDicZF+8YuVqNXjaVMSD+f6gQ3hDARWuwoZw=;
+        b=Vo43/qNbhMYCKn8reADLJoDDeEmatxkzxuMGmzH36T18+UunKRPkZXhu7Onj0iGd1m
+         DyhjmfsKcNwvaEw9wj0bn5veD9VgTj37YFXTnQRqjNu+7E0+d/h1IdSaFWgJo+WXaxPt
+         n9iKdaXWHIyihVRQYNxdY2/my8u598J8vlEng=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=k8sDU1/P1VfuXLXpThIjZK/DKEV3AqnPVmmR6a675sk=;
-        b=Sxz49JooMlPTNX4k/PwKwHKQnvVUtcXcv8VSuDkfT7N0Rv9/bkHfcCsXqhUkdZAJlh
-         iv1caoARJLZae3cGOohrDI8cfqnaCt0D5mzS929F6Y0My7y6kQFFJVGXdfzkiJYqkQkc
-         krW2BzmAvPJLmCrUTUy+stvL2Afyf7y1YIhq7GkwNm7xlvfuBdBwmONua/zA0hESd4eU
-         lEjwQ3FXlHINjdCVsSRCAzmX2l4qWWG8E8CllEV0z3XLzllqY71XeZYulvSyYaeKb84V
-         ASlXoNhL3fmSQ5oQAvEl7guGLTTNdpaGvvi2s9IeHdt76IdnejJ/X3Wi352BB+uqGJ5J
-         HgSw==
-X-Gm-Message-State: AOAM531ZfaTv0xH3Nfcwcq78UxqHl0n6Gwbe3YwNrLUr6PmWfO6GUnpW
-        HlHsqtEvsPyhi6aMxZBO3Bf+Qi9UzXvrL+STCoc=
-X-Google-Smtp-Source: ABdhPJxEqPRohLBBykeuh6Zrfb12QvmR5yZGUg2WjubuIl/EFBetZXSYaRICW/joRTVuc5CM1rPftg==
-X-Received: by 2002:a05:6512:694:: with SMTP id t20mr21129530lfe.344.1625685650620;
-        Wed, 07 Jul 2021 12:20:50 -0700 (PDT)
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
-        by smtp.gmail.com with ESMTPSA id w24sm1777890lfa.143.2021.07.07.12.20.49
+        bh=QWz6j7aQDicZF+8YuVqNXjaVMSD+f6gQ3hDARWuwoZw=;
+        b=KW3YRkcrwqLu/rv6+xv70wXMMHNdjfRCzZ7QeYE1FmRkLxda35obphFwTVNtyRE17i
+         pCYy8YHmrisU2hmPnqRxzbjRDjye9a7YCVVwWxo4w7/L2zZzGd+Jg0iZYjnT1apeAdiT
+         +ajBJoTzvUPZWEA955FPtFLnnX8QP2Nm99llUqIF+9wfZTFj8sRMthFuiLG8Jbg9y24B
+         jkLN0hJIw+g7wHX4XHREeKBMTC1pw+R9CZ1JZfrfNyuDRUqNaM1dFtxy0JeXX/65R/Dh
+         LMAHHrCMRQpOJXBIDno4Ylq9jT5xufEyCDmhPNcMqybvCtzlh7vxRDUxF5aFlOkp9a6y
+         ZsDA==
+X-Gm-Message-State: AOAM5336X/TQVXBMdxTl8uJa4G/01Sk9JB9a88+8ldUjgYltty15i3cl
+        GU4fUhg8g7RABJQcqWs6tt1lhhTGw2+m34jNIo4=
+X-Google-Smtp-Source: ABdhPJzaNJpmwbmLiUDTaU37gIH3Zq4b295s9IDlYiPPVfDOV8qilROgYhWM5Z/zP2x2k4/+FHAk1w==
+X-Received: by 2002:ac2:4211:: with SMTP id y17mr19272771lfh.607.1625685742962;
+        Wed, 07 Jul 2021 12:22:22 -0700 (PDT)
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
+        by smtp.gmail.com with ESMTPSA id t13sm95112ljo.12.2021.07.07.12.22.22
         for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Jul 2021 12:20:50 -0700 (PDT)
-Received: by mail-lf1-f54.google.com with SMTP id t17so7014748lfq.0
-        for <io-uring@vger.kernel.org>; Wed, 07 Jul 2021 12:20:49 -0700 (PDT)
-X-Received: by 2002:a2e:a48c:: with SMTP id h12mr7794800lji.61.1625685649700;
- Wed, 07 Jul 2021 12:20:49 -0700 (PDT)
+        Wed, 07 Jul 2021 12:22:22 -0700 (PDT)
+Received: by mail-lf1-f46.google.com with SMTP id u18so6905601lff.9
+        for <io-uring@vger.kernel.org>; Wed, 07 Jul 2021 12:22:22 -0700 (PDT)
+X-Received: by 2002:a2e:50b:: with SMTP id 11mr21108241ljf.220.1625685742103;
+ Wed, 07 Jul 2021 12:22:22 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210707122747.3292388-1-dkadashev@gmail.com> <20210707122747.3292388-4-dkadashev@gmail.com>
-In-Reply-To: <20210707122747.3292388-4-dkadashev@gmail.com>
+References: <20210707122747.3292388-1-dkadashev@gmail.com> <20210707122747.3292388-6-dkadashev@gmail.com>
+In-Reply-To: <20210707122747.3292388-6-dkadashev@gmail.com>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 7 Jul 2021 12:20:33 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wijsw1QSsQHFu_6dEoZEr_zvT7++WJWohcuEkLqqXBGrQ@mail.gmail.com>
-Message-ID: <CAHk-=wijsw1QSsQHFu_6dEoZEr_zvT7++WJWohcuEkLqqXBGrQ@mail.gmail.com>
-Subject: Re: [PATCH v8 03/11] fs: make do_mkdirat() take struct filename
+Date:   Wed, 7 Jul 2021 12:22:06 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiG+sN+2zSoAOggKCGue2kOJvw3rQySvQXsZstRQFTN+g@mail.gmail.com>
+Message-ID: <CAHk-=wiG+sN+2zSoAOggKCGue2kOJvw3rQySvQXsZstRQFTN+g@mail.gmail.com>
+Subject: Re: [PATCH v8 05/11] fs: make do_mknodat() take struct filename
 To:     Dmitry Kadashev <dkadashev@gmail.com>
 Cc:     Jens Axboe <axboe@kernel.dk>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -71,17 +71,12 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 On Wed, Jul 7, 2021 at 5:28 AM Dmitry Kadashev <dkadashev@gmail.com> wrote:
 >
-> Pass in the struct filename pointers instead of the user string, and
-> update the three callers to do the same. This is heavily based on
-> commit dbea8d345177 ("fs: make do_renameat2() take struct filename").
->
-> This behaves like do_unlinkat() and do_renameat2().
+> Pass in the struct filename pointers instead of the user string, for
+> uniformity with the recently converted do_unlinkat(), do_renameat(),
+> do_mkdirat().
 
-.. and now I like this version too. And that do_mkdirat() could have
-the same pattern with a "mkdirat_helper()" and avoiding the "goto
-retry" and "goto out_putname" things, and be more understandable that
-way.
+Yup. And the uniformity continues with that "we could avoid the goto
+retry/out1 with a mknodat_helper() function for the inner meat of the
+function.
 
-Again, that could - and maybe should - be a separate cleanup.
-
-             Linus
+               Linus

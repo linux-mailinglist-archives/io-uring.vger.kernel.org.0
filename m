@@ -2,51 +2,51 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FB2F3BE7E2
+	by mail.lfdr.de (Postfix) with ESMTP id D6CE83BE7E4
 	for <lists+io-uring@lfdr.de>; Wed,  7 Jul 2021 14:28:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231634AbhGGMax (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 7 Jul 2021 08:30:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41416 "EHLO
+        id S231654AbhGGMay (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 7 Jul 2021 08:30:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231600AbhGGMat (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 7 Jul 2021 08:30:49 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F20AEC061574;
-        Wed,  7 Jul 2021 05:28:07 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id v20so2952196eji.10;
-        Wed, 07 Jul 2021 05:28:07 -0700 (PDT)
+        with ESMTP id S231614AbhGGMav (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 7 Jul 2021 08:30:51 -0400
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9A94C06175F;
+        Wed,  7 Jul 2021 05:28:09 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id l24so3105181edr.11;
+        Wed, 07 Jul 2021 05:28:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ldQ7yGS4aEvHdrCjdrJwmRjCzLuQxIXl0hNYPBTwz2Q=;
-        b=Ri5Bpwad+zlp9Z+l1hjneI54yDTzOVjTRro1+7EstTjdfHq7b3NtctF/n5dfX4SsbG
-         jnoRTxmxt/V4fRUpPXtPoKU2UBLUx49gjZmO9WkAld9bbY/3ynbmgo4mZm4wzheftNqt
-         /Uiklv5cQwYHcDIy3jSFYlnIbzQ56cYCgrkWPEOtKHM//hsOP7iWjJDdvf3o++HSu3B8
-         fYJsyjW/yJ1OzIXAHucPGww9s2HdA6LCDzLnw3YpLjMmTK0mTPHOskPpQVug4QYZklkN
-         mKYkG9+jgL65D+xYm4IREePGZ9Q3eal6nMBN2GZy+rDDihkkFQX5DoGgC2fEZQRj1302
-         dH+A==
+        bh=7wVETDFdeZlwqopZKc4dLFFstHCEoM9cJ3/d5EEJtEs=;
+        b=o26a/sN73pzd68//3tLy/fcfbxaxMhSLVEvBySUFIn6BBtndAjWyO20rq1GmAKSzbd
+         cGR7UEzWDskDjOOt8lFu7Lb+X6CsKQ3IyHafu4RKe55x268UBpXoEkEvW87Z4vFgL25c
+         i6BPrxWTf0RXBjzoNgtWNS23hYfCxxBznDK5dbC9HBW0ZXl817OXDnpasIt4XCGRT9tg
+         37vZDBRsOvExb0DHj42j2EvlgBDYFp081FYKkkZ/h/ZwKoHma/0AlE1f3QZsW2Oz6yRU
+         vO6jy46RYkqygTniFnRousld4jAm+g/aaMwimt5iHMqw2Hm2tCaxW3D9r31pWYjtGV8d
+         f1VA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ldQ7yGS4aEvHdrCjdrJwmRjCzLuQxIXl0hNYPBTwz2Q=;
-        b=jlgHQV/K7i30LTveKXtgQpypYxNrcGpU6zAg9y6toAdUhmrsExUQpeyb/Nb/D3Lyr0
-         knL71tpdU797a0q5M4VWbl/8nGVV81yRMlNt4hf6WubtO+1Os9r7Ge0R7JQoM2kUWBLa
-         Hzq3+ohlO1zHrg1vvkIomCxFQtuqEtL3tg09zCzlJimXM+oJ4ipPPvL3o6UaFmTUe8qL
-         Qxy+vbl6nMM+UiDySh2jxZFVKqDcVKyq3f3Kjmr5/5apOFc+2jSg1JWgKYpSR+lFxcuJ
-         kBnFX0Jn9z/fsMnlvc9yP6nVvMy91sY7XiIfvdUf40zEiDH6VZp5MZgFZGoKtPVOqIGs
-         qiKQ==
-X-Gm-Message-State: AOAM531to0HK66MlXIsGf4a0G1MK/86ktKH47ef3hLO3kdSetrE3tjaQ
-        qf5tu3EQ9oJgyu3dVUPrvEk=
-X-Google-Smtp-Source: ABdhPJzHGPXxH0KlQZcnraA2FCmvGiT0o4BbrJLg5boVjz0QVx/QrR/a4AW2yn0o5Uk9dPpFPmVs0g==
-X-Received: by 2002:a17:906:fa05:: with SMTP id lo5mr24162834ejb.272.1625660886669;
-        Wed, 07 Jul 2021 05:28:06 -0700 (PDT)
+        bh=7wVETDFdeZlwqopZKc4dLFFstHCEoM9cJ3/d5EEJtEs=;
+        b=KybiftMKgLAwZzocgKdkRqsrMGtkTsFeOOMk9RimPlD3XXAt5EgmI5J56KKFEbwwIM
+         ezzxMKKl655PqpFPPDluJtWoAVuMb4Ix0h9M/AWnmLSo+hMFdMNQZKiNueyWHTrHbm7y
+         bfID5WjB4M9bO6LK35LRbhn923f+Fb4Ci/m3qiUsdtfdCpKPnWh8KUSCemvhHO+oYl1k
+         XGa9F2ESG+jJFQb8191x3V6lzNf18tjo86UKcYlXjR4QOh8THUjU8fXlK74qyEkPDnw8
+         A2H03pGyQ5kW8mMxXQCAt+54gFF6DsYg6nrbV3W37p7H1TPnsvGWWDFL+rw15dBawn/j
+         ziJA==
+X-Gm-Message-State: AOAM5310nhCTjwI7ld02Pe/lObsgyQNMNADbA0jzRWOPdAO2TeVs7rLK
+        UM7bnjiHicjH9wkGV17g2Oo=
+X-Google-Smtp-Source: ABdhPJwChZRJB+gJm+mp5dEg4wM/N5zLrtv86l5Cs2ufFxmBXdS3uHO77psCbzOlD/nlCSc6foNH8Q==
+X-Received: by 2002:a05:6402:448:: with SMTP id p8mr28965001edw.60.1625660888354;
+        Wed, 07 Jul 2021 05:28:08 -0700 (PDT)
 Received: from carbon.v ([108.61.166.58])
-        by smtp.googlemail.com with ESMTPSA id ze15sm7019821ejb.79.2021.07.07.05.28.05
+        by smtp.googlemail.com with ESMTPSA id ze15sm7019821ejb.79.2021.07.07.05.28.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Jul 2021 05:28:06 -0700 (PDT)
+        Wed, 07 Jul 2021 05:28:08 -0700 (PDT)
 From:   Dmitry Kadashev <dkadashev@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -55,9 +55,9 @@ To:     Jens Axboe <axboe@kernel.dk>,
 Cc:     Pavel Begunkov <asml.silence@gmail.com>,
         linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
         Dmitry Kadashev <dkadashev@gmail.com>
-Subject: [PATCH v8 05/11] fs: make do_mknodat() take struct filename
-Date:   Wed,  7 Jul 2021 19:27:41 +0700
-Message-Id: <20210707122747.3292388-6-dkadashev@gmail.com>
+Subject: [PATCH v8 06/11] fs: make do_symlinkat() take struct filename
+Date:   Wed,  7 Jul 2021 19:27:42 +0700
+Message-Id: <20210707122747.3292388-7-dkadashev@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210707122747.3292388-1-dkadashev@gmail.com>
 References: <20210707122747.3292388-1-dkadashev@gmail.com>
@@ -68,8 +68,8 @@ List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 Pass in the struct filename pointers instead of the user string, for
-uniformity with the recently converted do_unlinkat(), do_renameat(),
-do_mkdirat().
+uniformity with the recently converted do_mkdnodat(), do_unlinkat(),
+do_renameat(), do_mkdirat().
 
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Al Viro <viro@zeniv.linux.org.uk>
@@ -78,72 +78,67 @@ Link: https://lore.kernel.org/io-uring/20210330071700.kpjoyp5zlni7uejm@wittgenst
 Signed-off-by: Dmitry Kadashev <dkadashev@gmail.com>
 Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
- fs/namei.c | 19 +++++++++++--------
- 1 file changed, 11 insertions(+), 8 deletions(-)
+ fs/namei.c | 23 ++++++++++++-----------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
 
 diff --git a/fs/namei.c b/fs/namei.c
-index 54d5f19ee1ce..0bc8ff637934 100644
+index 0bc8ff637934..add984e4bfd0 100644
 --- a/fs/namei.c
 +++ b/fs/namei.c
-@@ -3729,7 +3729,7 @@ static int may_mknod(umode_t mode)
- 	}
+@@ -4197,23 +4197,23 @@ int vfs_symlink(struct user_namespace *mnt_userns, struct inode *dir,
  }
+ EXPORT_SYMBOL(vfs_symlink);
  
--static long do_mknodat(int dfd, const char __user *filename, umode_t mode,
-+static long do_mknodat(int dfd, struct filename *name, umode_t mode,
- 		unsigned int dev)
+-static long do_symlinkat(const char __user *oldname, int newdfd,
+-		  const char __user *newname)
++static long do_symlinkat(struct filename *from, int newdfd,
++		  struct filename *to)
  {
- 	struct user_namespace *mnt_userns;
-@@ -3740,17 +3740,18 @@ static long do_mknodat(int dfd, const char __user *filename, umode_t mode,
+ 	int error;
+-	struct filename *from;
+ 	struct dentry *dentry;
+ 	struct path path;
+ 	unsigned int lookup_flags = 0;
  
- 	error = may_mknod(mode);
- 	if (error)
--		return error;
-+		goto out1;
+-	from = getname(oldname);
+-	if (IS_ERR(from))
+-		return PTR_ERR(from);
++	if (IS_ERR(from)) {
++		error = PTR_ERR(from);
++		goto out_putnames;
++	}
  retry:
--	dentry = user_path_create(dfd, filename, &path, lookup_flags);
-+	dentry = __filename_create(dfd, name, &path, lookup_flags);
-+	error = PTR_ERR(dentry);
+-	dentry = user_path_create(newdfd, newname, &path, lookup_flags);
++	dentry = __filename_create(newdfd, to, &path, lookup_flags);
+ 	error = PTR_ERR(dentry);
  	if (IS_ERR(dentry))
--		return PTR_ERR(dentry);
-+		goto out1;
+-		goto out_putname;
++		goto out_putnames;
  
- 	if (!IS_POSIXACL(path.dentry->d_inode))
- 		mode &= ~current_umask();
- 	error = security_path_mknod(&path, dentry, mode, dev);
- 	if (error)
--		goto out;
-+		goto out2;
- 
- 	mnt_userns = mnt_user_ns(path.mnt);
- 	switch (mode & S_IFMT) {
-@@ -3769,24 +3770,26 @@ static long do_mknodat(int dfd, const char __user *filename, umode_t mode,
- 					  dentry, mode, 0);
- 			break;
- 	}
--out:
-+out2:
- 	done_path_create(&path, dentry);
- 	if (retry_estale(error, lookup_flags)) {
+ 	error = security_path_symlink(&path, dentry, from->name);
+ 	if (!error) {
+@@ -4228,7 +4228,8 @@ static long do_symlinkat(const char __user *oldname, int newdfd,
  		lookup_flags |= LOOKUP_REVAL;
  		goto retry;
  	}
-+out1:
-+	putname(name);
+-out_putname:
++out_putnames:
++	putname(to);
+ 	putname(from);
  	return error;
  }
- 
- SYSCALL_DEFINE4(mknodat, int, dfd, const char __user *, filename, umode_t, mode,
- 		unsigned int, dev)
+@@ -4236,12 +4237,12 @@ static long do_symlinkat(const char __user *oldname, int newdfd,
+ SYSCALL_DEFINE3(symlinkat, const char __user *, oldname,
+ 		int, newdfd, const char __user *, newname)
  {
--	return do_mknodat(dfd, filename, mode, dev);
-+	return do_mknodat(dfd, getname(filename), mode, dev);
+-	return do_symlinkat(oldname, newdfd, newname);
++	return do_symlinkat(getname(oldname), newdfd, getname(newname));
  }
  
- SYSCALL_DEFINE3(mknod, const char __user *, filename, umode_t, mode, unsigned, dev)
+ SYSCALL_DEFINE2(symlink, const char __user *, oldname, const char __user *, newname)
  {
--	return do_mknodat(AT_FDCWD, filename, mode, dev);
-+	return do_mknodat(AT_FDCWD, getname(filename), mode, dev);
+-	return do_symlinkat(oldname, AT_FDCWD, newname);
++	return do_symlinkat(getname(oldname), AT_FDCWD, getname(newname));
  }
  
  /**

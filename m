@@ -2,86 +2,76 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6328D3BEEA2
-	for <lists+io-uring@lfdr.de>; Wed,  7 Jul 2021 20:24:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C90553BEFE0
+	for <lists+io-uring@lfdr.de>; Wed,  7 Jul 2021 20:53:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231469AbhGGS1b (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 7 Jul 2021 14:27:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37264 "EHLO
+        id S229953AbhGGS4X (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 7 Jul 2021 14:56:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44064 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231406AbhGGS1b (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 7 Jul 2021 14:27:31 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70D7BC061760
-        for <io-uring@vger.kernel.org>; Wed,  7 Jul 2021 11:24:50 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id h18-20020a05600c3512b029020e4ceb9588so4984140wmq.5
-        for <io-uring@vger.kernel.org>; Wed, 07 Jul 2021 11:24:50 -0700 (PDT)
+        with ESMTP id S229829AbhGGS4X (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 7 Jul 2021 14:56:23 -0400
+Received: from mail-il1-x136.google.com (mail-il1-x136.google.com [IPv6:2607:f8b0:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C46B3C061574
+        for <io-uring@vger.kernel.org>; Wed,  7 Jul 2021 11:53:42 -0700 (PDT)
+Received: by mail-il1-x136.google.com with SMTP id j12so3973558ils.5
+        for <io-uring@vger.kernel.org>; Wed, 07 Jul 2021 11:53:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=+HYX85l9YOSXM0enYLzYwDeNAUAO5v7uBwqFqgIsPbM=;
-        b=tZ9u3hVBHKbjpm0bVLyW9RDtddu3pSEJn245H+O1rdQXGBDvf2AncEET7/E7AavLO7
-         mT7j886r5EbWoa/RoH5u2lgQQTfZ6vsz5t4qurTh1+iX9c44Dv/UnLAuLrWkh5H11afv
-         2KNhhPvD3gfxeuYSwmNNX8QKx7dc24A9lJrCKSUrLeZQNHXL8q7kK3Ottir62/Lq1b3a
-         eIyGE2adh26lhQ5wPm7VXVC7eHF+04ONI01HCaY8g/bgAimo6GdKGk52SLUd0Wp8oKMq
-         f5OywFy1oIc3im7bzoX9yPxzLMxN0hFx/O9eOxLP6ioRuGLbdHBJrBRx+AQ0CtfS4MS0
-         uuHA==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=mu2+qa0U43gTAe+HguC61ti7EkwAcWUZSC75ohi6WJo=;
+        b=r/j7GskvyGdQhOGgz9eEJq3kkKuRg0TIsucOSbqebeag/8P46pN2ygOvmOXZWCEygS
+         eS3dZV4EVcPvKOpMjsB0GKCsgDKLhM39dzBz/Ozxmhyz26EcWQQD8a6F90zUVR468lz9
+         L1FhxMS3X+Y7pyvKuMm2p1iFnSt1XPY4nOj61vWbSS6tJqAAh686NNEnAuWV51OMkqSB
+         Q2fH8YbI2NDHY/t9pXsPVF03qSogpHwg+oCp4Hq5RjNZ1V1UJWrVV0N5ytmKpfltj2qt
+         z3nsqnsPgfRGpJtVLNXCQho7NyuieAlxfrHUjXdYQlqjl+DRubpDhAjUKQC4pjPswjIr
+         xOIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=+HYX85l9YOSXM0enYLzYwDeNAUAO5v7uBwqFqgIsPbM=;
-        b=ksAbGekfBh1h6eaE5d6O2/PRkjGbAf+pwImUmCaefNdLxvPirIgLBntrsl79RzU7h4
-         WxopdYFZlFtKwKbLczgmdJOQzTgMNEmr8vik7wMe78K520D9vFoHIVQ3Xy77iEUPjTFd
-         maaIobfD+8PVXYrXAowKaMPP7ewv5Bb9bLDYk5ciTPSYTg3ogxBvicRg7ia03hV4AX3v
-         vKiPQNpsWzccImQHG1id4qwo6kJumwEcoWEn93nT+r1wBGvidablutwygDQ8F4fDLRSt
-         bbcA0OL3eQGCxlbiY1b+nSbd+dqknxU73/hCscBRBfK/+h+mplaUKHhlysCDDCsz6M2T
-         xN+g==
-X-Gm-Message-State: AOAM531rubTeZmUVAQvD0id219JF9EXdlMbPRnqfLhDrJhOqS6fU7a+n
-        3CHIheKQB+KKLfps2IeUJjw=
-X-Google-Smtp-Source: ABdhPJzUJxcInBrm6etQJmAlvidSRoTE6CH55gw7FJ37+NwZ3JIOa1fALfu7VfqqtHwXA9RZzTfuCA==
-X-Received: by 2002:a7b:c218:: with SMTP id x24mr385385wmi.177.1625682289127;
-        Wed, 07 Jul 2021 11:24:49 -0700 (PDT)
-Received: from localhost.localdomain ([85.255.234.206])
-        by smtp.gmail.com with ESMTPSA id l2sm19490405wms.20.2021.07.07.11.24.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Jul 2021 11:24:48 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 1/1] io_uring: fix drain alloc fail return code
-Date:   Wed,  7 Jul 2021 19:24:24 +0100
-Message-Id: <e068110ac4293e0c56cfc4d280d0f22b9303ec08.1625682153.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.32.0
+        bh=mu2+qa0U43gTAe+HguC61ti7EkwAcWUZSC75ohi6WJo=;
+        b=W2svljunPl8XntpjNZ4uA8NNiybDhPrYSpXn8/pkbAq5b4iCrivQeejeErsU/AjVBC
+         BPqYTvoDijJiVkivUo/wxfCTB4F1zLkLbj4q+cez6Le7J1zj0M6THJ0Gf2Cjeei52RnA
+         vKNR8gBEwYKo9JCZVSpoJkPz311844wCxYleaPFNbsHtZleU04BwfB9pRMl4zvRra4Xh
+         jysyVrtfc1lxYQ7f6qUhtaqUtyPr4ghM8SXo7JX5Jii1KZKtD2Idv7MBoXYU48oC6U0g
+         qFnShe6viROGfP2Ggs9dw8pO8P2yMwnucMxPgzx7XaxCFLeNurLqFKSXmxuAnSIbfebw
+         idBw==
+X-Gm-Message-State: AOAM533CqR8q5vgk5xJnKbHgC5y5zeThZS+T+9/9V4e5xrUxtjTCssEO
+        w35xfh/iudidYaTyZ8pdDJd2Lr60FTAtQQ==
+X-Google-Smtp-Source: ABdhPJwinYU9frV5hHUay2Tq1j0q1LES/bmy5q0VWoCD+yBq//ZHPaplzlsk1gviibb7XQQGoIAdDg==
+X-Received: by 2002:a92:6d03:: with SMTP id i3mr19270704ilc.66.1625684022094;
+        Wed, 07 Jul 2021 11:53:42 -0700 (PDT)
+Received: from [192.168.1.134] ([198.8.77.61])
+        by smtp.gmail.com with ESMTPSA id q6sm10759578ilt.41.2021.07.07.11.53.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 Jul 2021 11:53:41 -0700 (PDT)
+Subject: Re: [PATCH 1/1] io_uring: fix drain alloc fail return code
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <e068110ac4293e0c56cfc4d280d0f22b9303ec08.1625682153.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <78a2f89e-dcd8-8da0-bc0f-5259407276e5@kernel.dk>
+Date:   Wed, 7 Jul 2021 12:54:06 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <e068110ac4293e0c56cfc4d280d0f22b9303ec08.1625682153.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-After a recent change io_drain_req() started to fail requests with
-result=0 in case of allocation failure, where it should be and have
-been -ENOMEM.
+On 7/7/21 12:24 PM, Pavel Begunkov wrote:
+> After a recent change io_drain_req() started to fail requests with
+> result=0 in case of allocation failure, where it should be and have
+> been -ENOMEM.
 
-Fixes: 76cc33d79175a ("io_uring: refactor io_req_defer()")
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Oops - good catch, applied.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 881856088990..8f2a66903f5a 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -6019,7 +6019,7 @@ static bool io_drain_req(struct io_kiocb *req)
- 	io_prep_async_link(req);
- 	de = kmalloc(sizeof(*de), GFP_KERNEL);
- 	if (!de) {
--		io_req_complete_failed(req, ret);
-+		io_req_complete_failed(req, -ENOMEM);
- 		return true;
- 	}
- 
 -- 
-2.32.0
+Jens Axboe
 

@@ -2,90 +2,103 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 46AAC3BE98C
-	for <lists+io-uring@lfdr.de>; Wed,  7 Jul 2021 16:16:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 214253BEA36
+	for <lists+io-uring@lfdr.de>; Wed,  7 Jul 2021 17:01:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231639AbhGGOTa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 7 Jul 2021 10:19:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37718 "EHLO
+        id S232211AbhGGPEc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 7 Jul 2021 11:04:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231718AbhGGOTa (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 7 Jul 2021 10:19:30 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0D78C061574
-        for <io-uring@vger.kernel.org>; Wed,  7 Jul 2021 07:16:48 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id d2so3321703wrn.0
-        for <io-uring@vger.kernel.org>; Wed, 07 Jul 2021 07:16:48 -0700 (PDT)
+        with ESMTP id S232196AbhGGPEb (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 7 Jul 2021 11:04:31 -0400
+Received: from mail-ot1-x330.google.com (mail-ot1-x330.google.com [IPv6:2607:f8b0:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04AB3C061574
+        for <io-uring@vger.kernel.org>; Wed,  7 Jul 2021 08:01:50 -0700 (PDT)
+Received: by mail-ot1-x330.google.com with SMTP id t24-20020a9d7f980000b029046f4a1a5ec4so2518588otp.1
+        for <io-uring@vger.kernel.org>; Wed, 07 Jul 2021 08:01:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:references:from:subject:message-id:date:user-agent
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=FfJ1vxhfNVZqu07P7NnULJh86Bf/KV4lG0lRsRID+l4=;
-        b=WOXUTmDy87JSHUkp+esFIxeuHCg7tf74c8lU7RlyShcb/YSL+d5nBGykegYTiI5PtV
-         M6SycCckhpsJbVAERJSH/2lDDf98QsRWDny2RFZo/x3Pz7ZTfApBvtLCk0T6E5Ww4ROS
-         xC2nsFzxhAdBjh76kBDjjnMVJqe96qEe0PaOtUAZTjNLIGvkew+QdnQgSO6pkP97VZNZ
-         4Erl+iB4j7U9NJfUd2+8CzFqFeQ772KO642/kX0Ds+C/uq6aRNP1QJpmCI4LwhCxCLNp
-         3qNuYT3EuAGKaIbuN4e09N/Veste9kQgbQAmjqJtUUFH9SRKyIZlKtyHvwpMnhib2rgx
-         R7MA==
+        bh=6t9MlTexAyqffAg1sXAEFN6t/hS/f3lKajvWWPkbehQ=;
+        b=Ez1SiPN5bqU4qzH6upAlgggEoo8Hr9uxj7FQGe/wNrdpxKUq8JpDMyiDsFaPSLktpg
+         VAquJ5jcFIarB9IRYrdiWXMqTUPe90Z1BEa+mgKVkdW1pi2Q0S4LRruKdd5qfdOfI9GP
+         nkzGAMOJl29PQBuLua3OzmUDHKvqvZrnwa3jQ1iGaM/FH8GYJ0b4eSzZaJT4z/A02tPZ
+         AC9jBSBnplNjZ7Ml2MA435x95eyYkpIjMxuR9iG/q+AaG9t7Da3AMPodw2pRCOElEdDt
+         GYkqnLkwK2560F6vvSUP8vBOPZbE2x2e9E3T3L1GyPqIoBJ5IIoOf/g0e1SFjwtvb6k5
+         NV1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=FfJ1vxhfNVZqu07P7NnULJh86Bf/KV4lG0lRsRID+l4=;
-        b=VSojWS6TBrkUzh+t5r7E2e51UXLe5hqlkUggRKJdik8ojpZVvWLzQXa2cm2oHy+zUM
-         LKb3/gwkXvd1sXG1h3wH+QDLGLav+sDuUtEHSlumCw/I5/w0RPC4WYTt5StyoaFEYF/z
-         KFjcXeN7z8m8Oeq7Tzr0jX3cthIxJeiHruuEGyqAAE7kTSn5eL9rGSODeTTwrbOB3O4P
-         WqyhSswf3QAVqp5tomDA6rOJTBBzRmdc/KSZKXbdOOnqsRJyLbDCaYqydQG+4cMQZY7t
-         wqlL0aNDsgQoaBQSSE5xD5f91l2GFBNUVSAibSMHbPErRmQ2SCYR0JO80Bv9Gq3e5osW
-         ks+w==
-X-Gm-Message-State: AOAM532nhRYy6d/RBMSyeGusSck/Sy7cK107uIVEaZKAcnlMpusxTQyp
-        QuP+lAVm9GLbrAhcI0e5H+s=
-X-Google-Smtp-Source: ABdhPJyvJriJ6KqxZPe+hWzzeUS8N4+OoBEqgXcIVfsusp/bfUKzZPhPgcjShJ6qN5eZtPaEW0n4gg==
-X-Received: by 2002:a05:6000:11cf:: with SMTP id i15mr8568334wrx.212.1625667407417;
-        Wed, 07 Jul 2021 07:16:47 -0700 (PDT)
-Received: from [192.168.8.197] ([85.255.234.206])
-        by smtp.gmail.com with ESMTPSA id q7sm17542323wmq.33.2021.07.07.07.16.46
+        bh=6t9MlTexAyqffAg1sXAEFN6t/hS/f3lKajvWWPkbehQ=;
+        b=ADJQjuKtl9ZA0FOpHjKW/yyNfItpGOagKlxAckTPn6GSW/70QnmQQ1RljYa7FIVgJY
+         R7JANpvoeGWpRgcI/C87BTDCNd6TA8mdXt8esYPqPTZsNxV7is0+OG/zm/IyEmOpL9KT
+         eF2MBWbkezn1GXLpMTi51YLdLAJsyNPcpZlVkhXzIu9nv+IoSZPDRIrcRpKsHJO4VOtt
+         bvP0Q6T5dyvJwEt65JjazguENDhKmXqBraxDK6vioyJCBfQoZA9dNZRAHgisMzukdUL+
+         xoV1ynhN5NRcxNbXfEhCrwTkk0My3XAa/lE5ZgHUB7fgRW+T8yZzTCKTwcWjWxO9mq8l
+         V/Qg==
+X-Gm-Message-State: AOAM532Sb7AOb/rnaXI4uqf48xiuL2ZBT79PCzZs4OPDAiqoNheYfPdh
+        encwmFaL9nO5TDtFCIKZwlaXNEYAIi4W1Q==
+X-Google-Smtp-Source: ABdhPJzjgs126XXFA6BcUwdBhC1gy+5Aw7zbW0VPPx4XILs/RxgDSqtfj5vlx1MaRjNUcz32PPHM9A==
+X-Received: by 2002:a9d:6a93:: with SMTP id l19mr19292821otq.223.1625670108830;
+        Wed, 07 Jul 2021 08:01:48 -0700 (PDT)
+Received: from [192.168.1.170] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id v12sm191478otq.13.2021.07.07.08.01.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Jul 2021 07:16:47 -0700 (PDT)
-To:     Hao Xu <haoxu@linux.alibaba.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <6a7ceb04-3503-7300-8089-86c106a95e96@linux.alibaba.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Subject: Re: Question about sendfile
-Message-ID: <4831bcfd-ce4a-c386-c5b2-a1417a23c500@gmail.com>
-Date:   Wed, 7 Jul 2021 15:16:29 +0100
+        Wed, 07 Jul 2021 08:01:48 -0700 (PDT)
+Subject: Re: [RFC 0/4] open/accept directly into io_uring fixed file table
+To:     Stefan Metzmacher <metze@samba.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring@vger.kernel.org
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, Josh Triplett <josh@joshtriplett.org>
+References: <cover.1625657451.git.asml.silence@gmail.com>
+ <48bd91bc-ba1a-1e69-03a1-3d6f913f96c3@kernel.dk>
+ <4accdfa5-36fc-7de8-f4b2-7609b6f9d8ee@samba.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <6db18003-bb72-daf7-f5e6-20f9e128ada3@kernel.dk>
+Date:   Wed, 7 Jul 2021 09:01:47 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.11.0
 MIME-Version: 1.0
-In-Reply-To: <6a7ceb04-3503-7300-8089-86c106a95e96@linux.alibaba.com>
+In-Reply-To: <4accdfa5-36fc-7de8-f4b2-7609b6f9d8ee@samba.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/3/21 11:47 AM, Hao Xu wrote:
-> Hi Pavel,
-> I found this mail about sendfile in the maillist, may I ask why it's not
-> good to have one pipe each for a io-wq thread.
-> https://lore.kernel.org/io-uring/94dbbb15-4751-d03c-01fd-d25a0fe98e25@gmail.com/
+On 7/7/21 7:59 AM, Stefan Metzmacher wrote:
+> Am 07.07.21 um 15:07 schrieb Jens Axboe:
+>> On 7/7/21 5:39 AM, Pavel Begunkov wrote:
+>>> Implement an old idea allowing open/accept io_uring requests to register
+>>> a newly created file as a io_uring's fixed file instead of placing it
+>>> into a task's file table. The switching is encoded in io_uring's SQEs
+>>> by setting sqe->buf_index/file_index, so restricted to 2^16-1. Don't
+>>> think we need more, but may be a good idea to scrap u32 somewhere
+>>> instead.
+>>>
+>>> From the net side only needs a function doing __sys_accept4_file()
+>>> but not installing fd, see 2/4.
+>>>
+>>> Only RFC for now, the new functionality is tested only for open yet.
+>>> I hope we can remember the author of the idea to add attribution.
+>>
+>> Pretty sure the original suggester of this as Josh, CC'ed.
+> 
+> I also requested it for open :-)
 
-IIRC, it's one page allocated for each such task, which is bearable but
-don't like yet another chunk of uncontrollable implicit state. If there
-not a bunch of active workers, IFAIK there is no way to force them to
-drop their pipes.
+Indeed! I honestly forget the details, as some of it is implementation
+detail. I think Josh was the first to suggest a private fd table could
+be used, but that's mostly implementation detail as the point was to be
+able to know which fd would be assigned.
 
-I also don't remember the restrictions on the sendfile and what's with
-the eternal question of "what to do if the write part of sendfile has
-failed".   
-
-Though, workers are now much more alike to user threads, so there
-should be less of concern. And even though my gut feeling don't like
-them, it may actually be useful. Do you have a good use case where
-explicit pipes don't work well? 
+But I think we're all in agreement here, it's a nifty feature :-)
 
 -- 
-Pavel Begunkov
+Jens Axboe
+

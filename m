@@ -2,99 +2,94 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B6293BFA59
-	for <lists+io-uring@lfdr.de>; Thu,  8 Jul 2021 14:37:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B292E3C193A
+	for <lists+io-uring@lfdr.de>; Thu,  8 Jul 2021 20:34:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230210AbhGHMkO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 8 Jul 2021 08:40:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52136 "EHLO
+        id S229497AbhGHShT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 8 Jul 2021 14:37:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229901AbhGHMkO (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Jul 2021 08:40:14 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1502C061574
-        for <io-uring@vger.kernel.org>; Thu,  8 Jul 2021 05:37:32 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id a13so7323556wrf.10
-        for <io-uring@vger.kernel.org>; Thu, 08 Jul 2021 05:37:32 -0700 (PDT)
+        with ESMTP id S229469AbhGHShT (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Jul 2021 14:37:19 -0400
+Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0961FC06175F
+        for <io-uring@vger.kernel.org>; Thu,  8 Jul 2021 11:34:37 -0700 (PDT)
+Received: by mail-lj1-x22f.google.com with SMTP id s18so3928954ljg.7
+        for <io-uring@vger.kernel.org>; Thu, 08 Jul 2021 11:34:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ekdDJEUKNVHxvifSvNZBZXJSwUwzbgfn4Dhgt8QTVYc=;
-        b=BYAd5m+d3AchsmkNJu10mdmTTbHe3IFITb7t2FQVqRpRrLGiZ5T6M4/lVg6jwRCOFr
-         TSKPIUhHL/Uo+AghxYR4RK7UWI0cjNo49hImLrwRki8SV7uTvdPhZB3bgxxOWxTMkRJk
-         wmBoPp2ACEvPV2Ooi87CrSOC8hDKgyF2ESJn0zjNEupOMIxnBn/xc/Af9F+TUvo5KeTm
-         tyjeBSLKMNsdCaCT21HaKn0haEZ5eRysqFJVzNPLoHB0ChfwYcN3mlXhEyqxXd3A9be5
-         sSqZQOgcfCSHJQPFvRFN8Z9O+u9QdBVz5s0/ckl0yWk2pn4i0LJZVcES0rZ190jX3Rcs
-         mlCg==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=o2ASoGiHcKvlol6jVeSQSpIyIFc5g3r9dX0y3Fr3Zgc=;
+        b=gE2ilK7h886+WToRooDIY8/bXblwfYQrTzKDQ7q/OgvAeCfHMqkjTTJqCH3ejPJm9X
+         IRyUa6pi3KuJLLlpYE7CrnIdEa8Ih/7GxWt55xPvATc2Wbe5muIqzEsr+kDxql3PxIO/
+         9esjBbLtbdr2ajX5MQM608F7ujW97xtnU0uec=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ekdDJEUKNVHxvifSvNZBZXJSwUwzbgfn4Dhgt8QTVYc=;
-        b=YF98oOubyUw7HgJBzVEvJYkzhZSOX2GrzZNpCp10gO5Upj3eTgHF+izbAfD531KUK0
-         ixed95wDVPp/BJg8J9mhnqsFyfcbGZDUSRXsqE2NupLNP7TbSLoSA7Y16r1UH462JyXb
-         gqMplqz3hW2dxviDFhfMEf2MKuZVamMRQgeYfYH5fg4ezRynXRQBeUnteAUfX9+C9FLk
-         /VtIElin6txDVEVnhwRFzCfNkmpIeF8EOxjd2iIbVIO24SIChIcB+jpToRikp9dhTsht
-         HmkCSMnmjKUcjPGMwMiqaJztBMH8gTSvMejv4favkXqaKbndf5fNx+N+EwXeOlq8HaW+
-         2RHg==
-X-Gm-Message-State: AOAM532zF2O+Ye6AhZX0Bo6LuOEFZIw1wdQpt7qVe9cAuCm5xi9Khysx
-        lJPoMCiAcL6fItXCvScgKSBYMrINav21Cg==
-X-Google-Smtp-Source: ABdhPJyejbgZQ0Jo8gCeRwLAUEXLG1JwA146eGUMd76O6yUSwr4uWoNs1k/PQPf7eF+nnANu9PMTUQ==
-X-Received: by 2002:adf:f8c5:: with SMTP id f5mr34013114wrq.420.1625747851471;
-        Thu, 08 Jul 2021 05:37:31 -0700 (PDT)
-Received: from localhost.localdomain ([85.255.234.213])
-        by smtp.gmail.com with ESMTPSA id n8sm2078949wrt.95.2021.07.08.05.37.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Jul 2021 05:37:31 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 1/1] io_uring: mitigate unlikely iopoll lag
-Date:   Thu,  8 Jul 2021 13:37:06 +0100
-Message-Id: <66ef932cc66a34e3771bbae04b2953a8058e9d05.1625747741.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.32.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=o2ASoGiHcKvlol6jVeSQSpIyIFc5g3r9dX0y3Fr3Zgc=;
+        b=g4UmYOeud+XO2ntUqyIYgHLbTzy551Y0hdhQMADPzSwbxk1pYNVlAtCFKRCzJ6rOMY
+         q7tGvgMmxpHwkUh5bTB1NWOvBOk2BTBQa9ofspyHIbDXSEgFAxQNLSCyXA2dS0C1bHaZ
+         pST7Isa+EJsueNjkqL6mIg1enp+4FgnuH96f05J4zRgVpZAVi5LHpwW0LE8YjKzFm/sO
+         YmwaBXITLmlAQvDMBaKNZZhKyfJaHKKZI2U2A5OZ2gOIKuc3PCtpYCamZSxixSHPE4Xc
+         Y7lRKqVrLFoNwcj0CXjwyMnMNojUREJdpdhDH96PP71xPVGRc+SxhPimpIYksTGysFVI
+         eS8A==
+X-Gm-Message-State: AOAM532jEphpUCgM9vupI0IDlPkbUHecBsiCURLtZeFUUM9LpDi79oxP
+        pRS1fxcjM1Es3xfdEJB0uc6z+FsWqT66Umo3QcY=
+X-Google-Smtp-Source: ABdhPJx2cLkOAntJr5i1Lx81GLOZmQ7RWTeG27fsswDj+UCeq8Sxy8jlZkQvzZHiWSOLdoo4EMvwSw==
+X-Received: by 2002:a2e:8248:: with SMTP id j8mr25161928ljh.300.1625769274251;
+        Thu, 08 Jul 2021 11:34:34 -0700 (PDT)
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
+        by smtp.gmail.com with ESMTPSA id m4sm264645lfp.15.2021.07.08.11.34.33
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 08 Jul 2021 11:34:33 -0700 (PDT)
+Received: by mail-lj1-f178.google.com with SMTP id r16so3916643ljk.9
+        for <io-uring@vger.kernel.org>; Thu, 08 Jul 2021 11:34:33 -0700 (PDT)
+X-Received: by 2002:a2e:9c58:: with SMTP id t24mr24720298ljj.411.1625769273393;
+ Thu, 08 Jul 2021 11:34:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210708063447.3556403-1-dkadashev@gmail.com>
+In-Reply-To: <20210708063447.3556403-1-dkadashev@gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 8 Jul 2021 11:34:17 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjMFZ98ERV7V5u6R4FbYi3vRRf8_Uev493qeYCa1vqV3Q@mail.gmail.com>
+Message-ID: <CAHk-=wjMFZ98ERV7V5u6R4FbYi3vRRf8_Uev493qeYCa1vqV3Q@mail.gmail.com>
+Subject: Re: [PATCH v9 00/11] io_uring: add mkdir and [sym]linkat support
+To:     Dmitry Kadashev <dkadashev@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        io-uring <io-uring@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-We have requests like IORING_OP_FILES_UPDATE that don't go through
-->iopoll_list but get completed in place under ->uring_lock, and so
-after dropping the lock io_iopoll_check() should expect that some CQEs
-might have get completed in a meanwhile.
+On Wed, Jul 7, 2021 at 11:35 PM Dmitry Kadashev <dkadashev@gmail.com> wrote:
+>
+> v9:
+> - reorder commits to keep io_uring ones nicely grouped at the end
+> - change 'fs:' to 'namei:' in related commit subjects, since this is
+>   what seems to be usually used in such cases
 
-Currently such events won't be accounted in @nr_events, and the loop
-will continue to poll even if there is enough of CQEs. It shouldn't be a
-problem as it's not likely to happen and so, but not nice either. Just
-return earlier in this case, it should be enough.
+Ok, ack from me on this series, and as far as I'm concerned it can go
+through the io_uring branch.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Al, please holler if you have any concerns.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 8f2a66903f5a..7167c61c6d1b 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -2356,11 +2356,15 @@ static int io_iopoll_check(struct io_ring_ctx *ctx, long min)
- 		 * very same mutex.
- 		 */
- 		if (list_empty(&ctx->iopoll_list)) {
-+			u32 tail = ctx->cached_cq_tail;
-+
- 			mutex_unlock(&ctx->uring_lock);
- 			io_run_task_work();
- 			mutex_lock(&ctx->uring_lock);
- 
--			if (list_empty(&ctx->iopoll_list))
-+			/* some requests don't go through iopoll_list */
-+			if (tail != ctx->cached_cq_tail ||
-+			    list_empty(&ctx->iopoll_list))
- 				break;
- 		}
- 		ret = io_do_iopoll(ctx, &nr_events, min);
--- 
-2.32.0
+I do see a few cleanups - the ones I've already mentioned to try to
+remove some of the goto spaghetti, and I think we end up with just two
+users of filename_create(), and we might just make those convert to
+the new world order, and get rid of the __filename_create() vs
+filename_creat() distinction.
 
+But those cleanups might as well be left for later, so I don't think
+that needs to hold the series up.
+
+Al - one last chance to speak up..
+
+           Linus

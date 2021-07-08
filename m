@@ -2,51 +2,51 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EE243BF5A9
+	by mail.lfdr.de (Postfix) with ESMTP id 125303BF5A5
 	for <lists+io-uring@lfdr.de>; Thu,  8 Jul 2021 08:35:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230429AbhGHGiG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 8 Jul 2021 02:38:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56204 "EHLO
+        id S230439AbhGHGiI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 8 Jul 2021 02:38:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230414AbhGHGiD (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Jul 2021 02:38:03 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5233AC061574;
-        Wed,  7 Jul 2021 23:35:22 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id s15so6835308edt.13;
-        Wed, 07 Jul 2021 23:35:22 -0700 (PDT)
+        with ESMTP id S230405AbhGHGiF (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Jul 2021 02:38:05 -0400
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A4E8C061574;
+        Wed,  7 Jul 2021 23:35:24 -0700 (PDT)
+Received: by mail-ed1-x52e.google.com with SMTP id l2so6929423edt.1;
+        Wed, 07 Jul 2021 23:35:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=dJEfPWt8A2cpdRy8a2TP12zWmZnjHsnti/CgfmiTAVs=;
-        b=SO0Te5a8vrpaBfywmtjzyQIA0pLAVyiPDCyUowoT4pFvyW200rWllfAJWK2aWR5Y7r
-         pzhLGsm0Gu/ul24NOxtZ1WjO1LsPXFVMsvTOm9zram+HErnv60MzDQg8yFCsEBvYE1sy
-         Mm+4Gf9NwnbWhmv9CGMYpNcv1MxMb+AiSt35VP7dHu8OGA5vnep8b71NFUTAyuzseQm4
-         i/8Jp9SYopOULk+B62CR+yPJ7MLDSV7j+xufJDVMUV5n6YvATqcZW5LhF1eJFxX1bUiE
-         Cs27M3e4a0F833wj/ml93sc2gjGM5N1wMkUQIotC/+d3my6PdwkvSf1m0+PXGcQQYpDG
-         UGTw==
+        bh=9/0TTPk6QlPnPGwUZocYubZLcVhXXsqyK1OSZQGMszw=;
+        b=pCfOkRHo0Qq9coTSwfnzi5NI71tLqxevuPrmaZCQ8zFdkYX+McOe0hdgEhS+dXY9ne
+         Yq6L8G/Z1zsMIDdNHLTMr+VN8oNj+ByR5kSBBE/HEjQX7S99SSBdAa37xAKtd8YQNgtT
+         bgl9cEDhuEp8V9add7PnsPXxvLp9TVMCB3VkYNKspS1Aw6WIseAkB2rUiJi1xhlVaq9s
+         Q/RrG1j/ufFU4Tgz5lb0X5Cvj53vOsFHABgCTF4VeYsvWopnQL7+NbU3EdObEqjWW2ME
+         1KsqDpP4YNwFatX/0ydIKL5+jdWuw/MTOELS56CFPrLxYemXgMplQwEM1XRkaa5forl1
+         ZN0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=dJEfPWt8A2cpdRy8a2TP12zWmZnjHsnti/CgfmiTAVs=;
-        b=cH3V9Ph+ACMG652FEY1ucHEjgzFws/zZb3qnlzYTtoZTisZKI1NLnZDQA7dWq2z770
-         wqUYLyT0jPjMcysNjkYc8/6KZMlUiL+EJ+FO2IE/Dv8s8WdU+BDHFrN20pBLewo+L74+
-         3dqWvH2vcI1XyQbIJXm1UYHgcwA3PmMfkzw1eVNw2E8BBZxHuNyGynPZYPxWa3tKcBM6
-         6BfR6p09ltz5DjBu2j1lsnBRtOXwzaZhxwxR35Z0MCB1YsZ3vRABWb3N/84foiePberg
-         duwit2qAdOKfVOhOzMFItRKf2Ue6M4amAIfXCtzdlWlNBeIOVMsfzaVWT9YPapX2D3RF
-         3BFg==
-X-Gm-Message-State: AOAM530h26hp3KpWMxiPxskp07p+L95Wf7mUfuH2YK+k21/ogjJNs362
-        sIxp1YP3W70VQ4gyRR0BxmY=
-X-Google-Smtp-Source: ABdhPJw0JkxMjbzYjej4sc4nz+6XYoB4Q9B+xqFXXNqlXCVriFBheAHVuB982W9NnjKTqzFbRQrVzg==
-X-Received: by 2002:a05:6402:1688:: with SMTP id a8mr34097761edv.4.1625726121018;
-        Wed, 07 Jul 2021 23:35:21 -0700 (PDT)
+        bh=9/0TTPk6QlPnPGwUZocYubZLcVhXXsqyK1OSZQGMszw=;
+        b=MtcjpWWtc+mpP2+YLCEWjiSr8lNCJPDyyVyxfX3X8jvFGqMlarLY7idsdmzw0/K9jc
+         SDVJhDo1RBr9W1L+z92KWyfMzmH1m3REoNBLnMv4BymrpQmllrE+7A4Bv1ZSEJ38BARx
+         QUHoh6JXZddagfzgh7f9L6CldYZw1mLwaiNzQ4zvGsbESo1QJf1hTuf2sj0H447rXuNe
+         Ri/eXMBxIO3Xf1mbJpA1Sx3iFL0tbrE4SfUYs05u/zBrvTn5JOD94lc9LYgcryC/Utb8
+         NKvDFqEQuKjBxtnKk0RZGGHeGPoPpt4vuZ+cjW/DiXZAqV9IXThknTTV80N7UoRn7Gsd
+         THNg==
+X-Gm-Message-State: AOAM533jCL/gFRu2DKzw4Z7CRxZhXdZnL0sWvyc7Tnk9hJyqi3wYGs/r
+        FGt10LNaOFr0VtKdmWUlZqM=
+X-Google-Smtp-Source: ABdhPJw2Q61DmuCUKztHlWGygJftYGW+XirLPSf3xaw9D/Ek4e7Joxhl9Exjt7gcWmcXf8y83Wv+VA==
+X-Received: by 2002:a05:6402:1cbc:: with SMTP id cz28mr36681560edb.246.1625726122712;
+        Wed, 07 Jul 2021 23:35:22 -0700 (PDT)
 Received: from carbon.v ([108.61.166.58])
-        by smtp.googlemail.com with ESMTPSA id u21sm410260eja.59.2021.07.07.23.35.19
+        by smtp.googlemail.com with ESMTPSA id u21sm410260eja.59.2021.07.07.23.35.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Jul 2021 23:35:20 -0700 (PDT)
+        Wed, 07 Jul 2021 23:35:22 -0700 (PDT)
 From:   Dmitry Kadashev <dkadashev@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -55,9 +55,9 @@ To:     Jens Axboe <axboe@kernel.dk>,
 Cc:     Pavel Begunkov <asml.silence@gmail.com>,
         linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
         Dmitry Kadashev <dkadashev@gmail.com>
-Subject: [PATCH v9 08/11] namei: update do_*() helpers to return ints
-Date:   Thu,  8 Jul 2021 13:34:44 +0700
-Message-Id: <20210708063447.3556403-9-dkadashev@gmail.com>
+Subject: [PATCH v9 09/11] io_uring: add support for IORING_OP_MKDIRAT
+Date:   Thu,  8 Jul 2021 13:34:45 +0700
+Message-Id: <20210708063447.3556403-10-dkadashev@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210708063447.3556403-1-dkadashev@gmail.com>
 References: <20210708063447.3556403-1-dkadashev@gmail.com>
@@ -67,95 +67,141 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Update the following to return int rather than long, for uniformity with
-the rest of the do_* helpers in namei.c:
-
-* do_rmdir()
-* do_unlinkat()
-* do_mkdirat()
-* do_mknodat()
-* do_symlinkat()
+IORING_OP_MKDIRAT behaves like mkdirat(2) and takes the same flags
+and arguments.
 
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <christian.brauner@ubuntu.com>
-Link: https://lore.kernel.org/io-uring/20210514143202.dmzfcgz5hnauy7ze@wittgenstein/
 Signed-off-by: Dmitry Kadashev <dkadashev@gmail.com>
 Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
- fs/internal.h |  6 +++---
- fs/namei.c    | 10 +++++-----
- 2 files changed, 8 insertions(+), 8 deletions(-)
+ fs/io_uring.c                 | 59 +++++++++++++++++++++++++++++++++++
+ include/uapi/linux/io_uring.h |  1 +
+ 2 files changed, 60 insertions(+)
 
-diff --git a/fs/internal.h b/fs/internal.h
-index 848e165ef0f1..207a455e32d3 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -72,12 +72,12 @@ extern int filename_lookup(int dfd, struct filename *name, unsigned flags,
- 			   struct path *path, struct path *root);
- extern int vfs_path_lookup(struct dentry *, struct vfsmount *,
- 			   const char *, unsigned int, struct path *);
--long do_rmdir(int dfd, struct filename *name);
--long do_unlinkat(int dfd, struct filename *name);
-+int do_rmdir(int dfd, struct filename *name);
-+int do_unlinkat(int dfd, struct filename *name);
- int may_linkat(struct user_namespace *mnt_userns, struct path *link);
- int do_renameat2(int olddfd, struct filename *oldname, int newdfd,
- 		 struct filename *newname, unsigned int flags);
--long do_mkdirat(int dfd, struct filename *name, umode_t mode);
-+int do_mkdirat(int dfd, struct filename *name, umode_t mode);
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 5b840bb1e8ec..42d54f9bbbb2 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -674,6 +674,13 @@ struct io_unlink {
+ 	struct filename			*filename;
+ };
  
- /*
-  * namespace.c
-diff --git a/fs/namei.c b/fs/namei.c
-index c4e13bd8652f..d06aeaf5da00 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3745,7 +3745,7 @@ static int may_mknod(umode_t mode)
++struct io_mkdir {
++	struct file			*file;
++	int				dfd;
++	umode_t				mode;
++	struct filename			*filename;
++};
++
+ struct io_completion {
+ 	struct file			*file;
+ 	struct list_head		list;
+@@ -831,6 +838,7 @@ struct io_kiocb {
+ 		struct io_shutdown	shutdown;
+ 		struct io_rename	rename;
+ 		struct io_unlink	unlink;
++		struct io_mkdir		mkdir;
+ 		/* use only after cleaning per-op data, see io_clean_op() */
+ 		struct io_completion	compl;
+ 	};
+@@ -1042,6 +1050,7 @@ static const struct io_op_def io_op_defs[] = {
+ 	},
+ 	[IORING_OP_RENAMEAT] = {},
+ 	[IORING_OP_UNLINKAT] = {},
++	[IORING_OP_MKDIRAT] = {},
+ };
+ 
+ static bool io_disarm_next(struct io_kiocb *req);
+@@ -3545,6 +3554,48 @@ static int io_unlinkat(struct io_kiocb *req, unsigned int issue_flags)
+ 	return 0;
+ }
+ 
++static int io_mkdirat_prep(struct io_kiocb *req,
++			    const struct io_uring_sqe *sqe)
++{
++	struct io_mkdir *mkd = &req->mkdir;
++	const char __user *fname;
++
++	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
++		return -EINVAL;
++	if (sqe->ioprio || sqe->off || sqe->rw_flags || sqe->buf_index)
++		return -EINVAL;
++	if (unlikely(req->flags & REQ_F_FIXED_FILE))
++		return -EBADF;
++
++	mkd->dfd = READ_ONCE(sqe->fd);
++	mkd->mode = READ_ONCE(sqe->len);
++
++	fname = u64_to_user_ptr(READ_ONCE(sqe->addr));
++	mkd->filename = getname(fname);
++	if (IS_ERR(mkd->filename))
++		return PTR_ERR(mkd->filename);
++
++	req->flags |= REQ_F_NEED_CLEANUP;
++	return 0;
++}
++
++static int io_mkdirat(struct io_kiocb *req, int issue_flags)
++{
++	struct io_mkdir *mkd = &req->mkdir;
++	int ret;
++
++	if (issue_flags & IO_URING_F_NONBLOCK)
++		return -EAGAIN;
++
++	ret = do_mkdirat(mkd->dfd, mkd->filename, mkd->mode);
++
++	req->flags &= ~REQ_F_NEED_CLEANUP;
++	if (ret < 0)
++		req_set_fail(req);
++	io_req_complete(req, ret);
++	return 0;
++}
++
+ static int io_shutdown_prep(struct io_kiocb *req,
+ 			    const struct io_uring_sqe *sqe)
+ {
+@@ -5953,6 +6004,8 @@ static int io_req_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 		return io_renameat_prep(req, sqe);
+ 	case IORING_OP_UNLINKAT:
+ 		return io_unlinkat_prep(req, sqe);
++	case IORING_OP_MKDIRAT:
++		return io_mkdirat_prep(req, sqe);
  	}
- }
  
--static long do_mknodat(int dfd, struct filename *name, umode_t mode,
-+static int do_mknodat(int dfd, struct filename *name, umode_t mode,
- 		unsigned int dev)
- {
- 	struct user_namespace *mnt_userns;
-@@ -3850,7 +3850,7 @@ int vfs_mkdir(struct user_namespace *mnt_userns, struct inode *dir,
- }
- EXPORT_SYMBOL(vfs_mkdir);
+ 	printk_once(KERN_WARNING "io_uring: unhandled opcode %d\n",
+@@ -6114,6 +6167,9 @@ static void io_clean_op(struct io_kiocb *req)
+ 		case IORING_OP_UNLINKAT:
+ 			putname(req->unlink.filename);
+ 			break;
++		case IORING_OP_MKDIRAT:
++			putname(req->mkdir.filename);
++			break;
+ 		}
+ 	}
+ 	if ((req->flags & REQ_F_POLLED) && req->apoll) {
+@@ -6242,6 +6298,9 @@ static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags)
+ 	case IORING_OP_UNLINKAT:
+ 		ret = io_unlinkat(req, issue_flags);
+ 		break;
++	case IORING_OP_MKDIRAT:
++		ret = io_mkdirat(req, issue_flags);
++		break;
+ 	default:
+ 		ret = -EINVAL;
+ 		break;
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index 79126d5cd289..a926407c230e 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -133,6 +133,7 @@ enum {
+ 	IORING_OP_SHUTDOWN,
+ 	IORING_OP_RENAMEAT,
+ 	IORING_OP_UNLINKAT,
++	IORING_OP_MKDIRAT,
  
--long do_mkdirat(int dfd, struct filename *name, umode_t mode)
-+int do_mkdirat(int dfd, struct filename *name, umode_t mode)
- {
- 	struct dentry *dentry;
- 	struct path path;
-@@ -3947,7 +3947,7 @@ int vfs_rmdir(struct user_namespace *mnt_userns, struct inode *dir,
- }
- EXPORT_SYMBOL(vfs_rmdir);
- 
--long do_rmdir(int dfd, struct filename *name)
-+int do_rmdir(int dfd, struct filename *name)
- {
- 	struct user_namespace *mnt_userns;
- 	int error;
-@@ -4085,7 +4085,7 @@ EXPORT_SYMBOL(vfs_unlink);
-  * writeout happening, and we don't want to prevent access to the directory
-  * while waiting on the I/O.
-  */
--long do_unlinkat(int dfd, struct filename *name)
-+int do_unlinkat(int dfd, struct filename *name)
- {
- 	int error;
- 	struct dentry *dentry;
-@@ -4213,7 +4213,7 @@ int vfs_symlink(struct user_namespace *mnt_userns, struct inode *dir,
- }
- EXPORT_SYMBOL(vfs_symlink);
- 
--static long do_symlinkat(struct filename *from, int newdfd,
-+static int do_symlinkat(struct filename *from, int newdfd,
- 		  struct filename *to)
- {
- 	int error;
+ 	/* this goes last, obviously */
+ 	IORING_OP_LAST,
 -- 
 2.30.2
 

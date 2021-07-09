@@ -2,62 +2,43 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E8613C1A58
-	for <lists+io-uring@lfdr.de>; Thu,  8 Jul 2021 22:08:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DBC83C233D
+	for <lists+io-uring@lfdr.de>; Fri,  9 Jul 2021 14:04:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230239AbhGHULG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 8 Jul 2021 16:11:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40556 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229866AbhGHULG (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Jul 2021 16:11:06 -0400
-Received: from mail-il1-x12b.google.com (mail-il1-x12b.google.com [IPv6:2607:f8b0:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60F42C061574
-        for <io-uring@vger.kernel.org>; Thu,  8 Jul 2021 13:08:24 -0700 (PDT)
-Received: by mail-il1-x12b.google.com with SMTP id o10so7909654ils.6
-        for <io-uring@vger.kernel.org>; Thu, 08 Jul 2021 13:08:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=6FkDSNFGNMeFYmrvvMe5tq7VcxOG+PPNZb1/TLh30gE=;
-        b=DwZL+I+P616pzgwqO8kJfV/ajeuCPK7JYDUHWFDR85EYlgGTlRThHhsPfVgnykU/JB
-         ZdWES2WcI+plXonBUgXQTz0VH82AYiN5HTkP20URANoVjEbn9FSvq8HHK5j897WP1JWf
-         1lgeDJ2K3MvK25WJAgga7FhZ4zfgY9a2WwQBNGlD2uveksrkBhpMbA/OK7t1JFmXXVg0
-         zp5Hw95HaW5qnlQxXsPqcJQEPUaceI6clwyh12PE9wnP0xUJqmFGL9s2Ntj54LzFLk6s
-         P+Zb/+dIaV7hbwEBR/rOe2cXCyRWiDsmJG/IOiGUtke8+e8XxPTDoomvXNRmPh2f+Egx
-         qfWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=6FkDSNFGNMeFYmrvvMe5tq7VcxOG+PPNZb1/TLh30gE=;
-        b=kgyjcmioXZBxVkfuK1pmmoM4vtLT0hw2b0BzgkneCbTONpeNU9DXj4f2WO2BaqLMZM
-         ech0rqMaiMA+jNHrRWfqhrFQAakFqko2HCWuEuqe2gG84+sYzGUeOSNwAEZhcgjUVm7i
-         G6TYi2tymy7k3rM3ucgwDQKC6pn9vsI5EP5g2JbuF1ZN70g4jhUlQYKkOGN18pmuDZgS
-         LI8efsMwE2hAA9JVyvIP5bKxVzgrLTr+XWodnZhRX//aQKriGGZPdkjeObrzs231dN3M
-         UDh8KSC7fCxTBTq1bQ/Z5k+kPW0XOLfau8EOmDSEy04kGFNoMLwbo+rPsrBXW7HG06ak
-         2UeA==
-X-Gm-Message-State: AOAM530urc/YwfcFOjpfl/a4pP/AYqvRp4/U/zvgrv1heB/q9uIfBvOV
-        ZdNE6nSCNGU+hhrwfM9o+e+DeUPlLe3QSw==
-X-Google-Smtp-Source: ABdhPJxNg0dW9SFtYGVNO3ie8Dub0c527zchSTpN+Aq8FOlqOw++/yuuoA63vHXJT9w9psvky5hhbQ==
-X-Received: by 2002:a92:a80e:: with SMTP id o14mr23697910ilh.81.1625774903635;
-        Thu, 08 Jul 2021 13:08:23 -0700 (PDT)
-Received: from [192.168.1.134] ([198.8.77.61])
-        by smtp.gmail.com with ESMTPSA id x11sm1648761ilc.40.2021.07.08.13.08.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Jul 2021 13:08:23 -0700 (PDT)
-Subject: Re: [PATCH 1/1] io_uring: mitigate unlikely iopoll lag
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <66ef932cc66a34e3771bbae04b2953a8058e9d05.1625747741.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <6cbc6992-9b81-0221-dc20-bc9bf40fdaa4@kernel.dk>
-Date:   Thu, 8 Jul 2021 14:08:13 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S230230AbhGIMH1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 9 Jul 2021 08:07:27 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:34508
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230209AbhGIMH1 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 9 Jul 2021 08:07:27 -0400
+X-Greylist: delayed 561 seconds by postgrey-1.27 at vger.kernel.org; Fri, 09 Jul 2021 08:07:26 EDT
+Received: from [10.172.193.212] (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 13005401BE;
+        Fri,  9 Jul 2021 11:55:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1625831717;
+        bh=WQJt/rujabpC6j6jCpmi7LAcFfdIBX8ppv3eoy0WW0U=;
+        h=To:From:Subject:Message-ID:Date:MIME-Version:Content-Type;
+        b=UPrNulqI6eXqI24HT0Y3q3LuJdP9oM+FMFbPZEB+XM0sPIGjI6PqEWfTibzJXMNPt
+         CRvh4MMwRxasGkQMloASW+Uv75M+mZyZ1dZks6XnrjWpLIXr90Rc/rNVaxKmJ0LkKT
+         72cQclYQ5qnUo4kCOpoEMmDaLWE51v4KSH1+uH/TQx2YHh2hl90gjEDMwTRGuSIafo
+         k80io4WXl6fckGBGdJpTcM2gvRldXlZiuYS7znddixjIO8gW8vz3XMvyzfu+hZ3Fv+
+         +dI55UKA8+iw7utUf9SOOUBhzuHfStpB7hMpRpjGrNGxY8Dl0tih09IYLBYyKcM7Pz
+         qour85fGZETyw==
+To:     Jens Axboe <axboe@kernel.dk>
+From:   Colin Ian King <colin.king@canonical.com>
+Subject: potential null pointer deference (or maybe invalid null check) in
+ io_uring io_poll_remove_double()
+Cc:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Message-ID: <fe70c532-e2a7-3722-58a1-0fa4e5c5ff2c@canonical.com>
+Date:   Fri, 9 Jul 2021 12:55:16 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-In-Reply-To: <66ef932cc66a34e3771bbae04b2953a8058e9d05.1625747741.git.asml.silence@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -65,19 +46,50 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/8/21 6:37 AM, Pavel Begunkov wrote:
-> We have requests like IORING_OP_FILES_UPDATE that don't go through
-> ->iopoll_list but get completed in place under ->uring_lock, and so
-> after dropping the lock io_iopoll_check() should expect that some CQEs
-> might have get completed in a meanwhile.
-> 
-> Currently such events won't be accounted in @nr_events, and the loop
-> will continue to poll even if there is enough of CQEs. It shouldn't be a
-> problem as it's not likely to happen and so, but not nice either. Just
-> return earlier in this case, it should be enough.
+Hi Jens,
 
-Applied, thanks.
+I was triaging some outstanding Coverity static analysis warnings and
+found a potential issue in the following commit:
 
--- 
-Jens Axboe
+commit 807abcb0883439af5ead73f3308310453b97b624
+Author: Jens Axboe <axboe@kernel.dk>
+Date:   Fri Jul 17 17:09:27 2020 -0600
 
+    io_uring: ensure double poll additions work with both request types
+
+The analysis from Coverity is as follows:
+
+4962 static int io_poll_double_wake(struct wait_queue_entry *wait,
+unsigned mode,
+4963                               int sync, void *key)
+4964 {
+4965        struct io_kiocb *req = wait->private;
+4966        struct io_poll_iocb *poll = io_poll_get_single(req);
+4967        __poll_t mask = key_to_poll(key);
+4968
+4969        /* for instances that support it check for an event match
+first: */
+
+    deref_ptr: Directly dereferencing pointer poll.
+
+4970        if (mask && !(mask & poll->events))
+4971                return 0;
+4972        if (!(poll->events & EPOLLONESHOT))
+4973                return poll->wait.func(&poll->wait, mode, sync, key);
+4974
+4975        list_del_init(&wait->entry);
+4976
+
+  Dereference before null check (REVERSE_INULL)
+  check_after_deref: Null-checking poll suggests that it may be null,
+but it has already been dereferenced on all paths leading to the check.
+
+4977        if (poll && poll->head) {
+4978                bool done;
+
+pointer poll is being dereferenced on line 4970, however, on line 4977
+it is being null checked. Either the null check is redundant (because it
+can never be null) or it needs to be performed before the poll->events
+read on line 4970.
+
+Colin

@@ -2,111 +2,113 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EA243C3530
-	for <lists+io-uring@lfdr.de>; Sat, 10 Jul 2021 17:36:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 606C63C3C46
+	for <lists+io-uring@lfdr.de>; Sun, 11 Jul 2021 14:24:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231276AbhGJPjF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 10 Jul 2021 11:39:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54166 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230325AbhGJPjF (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 10 Jul 2021 11:39:05 -0400
-Received: from mail-il1-x12c.google.com (mail-il1-x12c.google.com [IPv6:2607:f8b0:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51B42C0613DD
-        for <io-uring@vger.kernel.org>; Sat, 10 Jul 2021 08:36:20 -0700 (PDT)
-Received: by mail-il1-x12c.google.com with SMTP id j12so14056114ils.5
-        for <io-uring@vger.kernel.org>; Sat, 10 Jul 2021 08:36:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=b7Lc1iLrx/e154sCsDjQpLM5Z3Sx/iaS2CEzB5/sIwc=;
-        b=AIIrBrQMOtV6H/nAXgyrzzDb2C4zzA/FQj027dw7kPAyaRF3guq7SeKjDW9ljxsose
-         XSRt8LotQCLTzTKXVLoMQlk4lrOtkKfrJn2SuL8tMuzLC5b/CzYxzXaVo+HFsRPL/tsS
-         tWUJ6IZRVDGMvjA5yDnYJMgX+4D3XSut+TE2TWoy+utcdWExb2NOOVJvd8JpAe+FpkgX
-         hJfYt1+hSRwgVb0g1/gyNwyAxeZIDEYZLbKh/cAT7FrjKfTG55DcgLv3ORs69mwkkTmL
-         HR+TKlog0nZq/36S+dc7aba8RlEijAxxjgOm4rouXGK+BdAno377MHcBYs4ueXz/gv/6
-         KVYw==
+        id S229688AbhGKM1E (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 11 Jul 2021 08:27:04 -0400
+Received: from mail-il1-f200.google.com ([209.85.166.200]:42894 "EHLO
+        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232822AbhGKM1E (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 11 Jul 2021 08:27:04 -0400
+Received: by mail-il1-f200.google.com with SMTP id d17-20020a9236110000b02901cf25fcfdcdso9856461ila.9
+        for <io-uring@vger.kernel.org>; Sun, 11 Jul 2021 05:24:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=b7Lc1iLrx/e154sCsDjQpLM5Z3Sx/iaS2CEzB5/sIwc=;
-        b=rI4ihh5/hj3BmFNCPSNV12VkHqDU/tuSxdq3fnLfX8nQ4hyRPWBl9rfiMvzMV/TDgN
-         ijpMdkQn7LJm2V69+amOf9yc2eQGEKtPS6FADA71BYqlJUL4RQVkEOoP2RmIjxM5S2le
-         1vvxE77ye9gVQS6TO3bTdLf75QHh7fzub880G2RtGvTcyVuSZMx3vOx1osTwJSWJV2Vk
-         HyjJ71YmOL0ySck06sO9cyt/QZ3ioKxC8k0zx+e3z9uBw1YcSTKBl7ForsbPvO9MyxKV
-         QGvai1u//vysWMjgpH1viOBVHApZQR6S/nlXtmpqzpBgd6BO4HN5gEZ41qLvD0W6pB8G
-         uzsA==
-X-Gm-Message-State: AOAM533L6POseyI9pQVBBlrONrAAtFwlav54YPZGukw71YqeycOpHg2g
-        K9sIiSnyX/ynrVdoCFcb0izzrg9yqvQQPw==
-X-Google-Smtp-Source: ABdhPJwjqZXTvvBcpEeS0B9cFY7BrIpUWiHQg0dn9NmFI6WiS4RKt4PD54RGmEAVLJZSiZ4IN+HLzw==
-X-Received: by 2002:a92:c150:: with SMTP id b16mr4749449ilh.54.1625931379533;
-        Sat, 10 Jul 2021 08:36:19 -0700 (PDT)
-Received: from [192.168.1.134] ([198.8.77.61])
-        by smtp.gmail.com with ESMTPSA id i7sm4566789ilb.67.2021.07.10.08.36.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 10 Jul 2021 08:36:19 -0700 (PDT)
-Subject: Re: [PATCH 5.14] io_uring: use right task for exiting checks
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     io-uring <io-uring@vger.kernel.org>
-References: <cb413c715bed0bc9c98b169059ea9c8a2c770715.1625881431.git.asml.silence@gmail.com>
- <7b465849-f046-530f-42a2-8e42d54bdca7@kernel.dk>
- <211e5eb7-7af0-0e15-5a03-4b1fd4958875@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <bb26d9cc-9d82-a82e-3fd1-03f3fec48a8a@kernel.dk>
-Date:   Sat, 10 Jul 2021 09:36:21 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=CLbGI7UkfbxLcnvn5/PVcxj3iqrwRfUbR/u6hvGyPHw=;
+        b=Z7VxUY0gWE5uNupGon9MGXxNzPbqOe/U6YXStp1iy9ykmP28elxCVufj8w0SGr4L7z
+         UCK8VfbcXp1qvbsJXb3cSFSYXVCxPY5r/RbszkstrR9thGBSCgQTs2pekMjyCbrSJWj0
+         NUyc08wnm+V4PfF87fXHQh9P1HH7+eSUE+KMuWWtHGXUGAT937mNeb9mb2VjGARMWbSx
+         COwo3OGIeUfOrTA/PlUcglaTLCOmyyiYQYzeTVylJLVkVws4b30XrcMoTXA2HxA3H+EW
+         MfF8ATYHXWu+XGzPX7+QUbZHoZcEj6QxJdWwElpdogWiRoG08QuNA+yKHN8keaYE9aFb
+         JE7A==
+X-Gm-Message-State: AOAM530x/4rUnvz7hKBl63RIkZe28ClKy2oZfwdf+U83RJxDIln8Mem+
+        o2Amic+DHZkMzx3DvI7FD3vUvrP1irw85poip4/3E50iYbKE
+X-Google-Smtp-Source: ABdhPJzrfCNPWGCQUPqweJmxs97VxuJWg+ZMI5qRCs0PQmwsKbFm7S4uojcjSkgxprgoaafagHn8KMEpOyrswojgMznGXL+9EPHH
 MIME-Version: 1.0
-In-Reply-To: <211e5eb7-7af0-0e15-5a03-4b1fd4958875@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a02:380b:: with SMTP id b11mr4836839jaa.83.1626006256570;
+ Sun, 11 Jul 2021 05:24:16 -0700 (PDT)
+Date:   Sun, 11 Jul 2021 05:24:16 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000053572d05c6d81503@google.com>
+Subject: [syzbot] INFO: task hung in io_uring_cancel_generic
+From:   syzbot <syzbot+ba6fcd859210f4e9e109@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/10/21 8:07 AM, Pavel Begunkov wrote:
-> On 7/10/21 2:40 PM, Jens Axboe wrote:
->> On Fri, Jul 9, 2021 at 7:46 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
->>> When we use delayed_work for fallback execution of requests, current
->>> will be not of the submitter task, and so checks in io_req_task_submit()
->>> may not behave as expected. Currently, it leaves inline completions not
->>> flushed, so making io_ring_exit_work() to hang. Use the submitter task
->>> for all those checks.
->>>
->>> Cc: stable@vger.kernel.org
->>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
->>> ---
->>>  fs/io_uring.c | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/fs/io_uring.c b/fs/io_uring.c
->>> index 7167c61c6d1b..770fdcd7d3e4 100644
->>> --- a/fs/io_uring.c
->>> +++ b/fs/io_uring.c
->>> @@ -2016,7 +2016,7 @@ static void io_req_task_submit(struct io_kiocb *req)
->>>
->>>         /* ctx stays valid until unlock, even if we drop all ours ctx->refs */
->>>         mutex_lock(&ctx->uring_lock);
->>> -       if (!(current->flags & PF_EXITING) && !current->in_execve)
->>> +       if (!(req->task->flags & PF_EXITING) && !req->task->in_execve)
->>>                 __io_queue_sqe(req);
->>>         else
->>>                 io_req_complete_failed(req, -EFAULT);
->>
->> I don't think that ->in_execve check is useful anymore now that we don't
->> have weak references to the files table, so it should probably just go
->> away.
-> 
-> Had such a thought but from the premise that on exec we wait / cancel
-> all requests. But I'd rather to leave it to a separate commit for-next,
-> don't you think so?
+Hello,
 
-Yes, probably best left for for-next. I'll apply this one as-is, thanks.
+syzbot found the following issue on:
 
--- 
-Jens Axboe
+HEAD commit:    3dbdb38e Merge branch 'for-5.14' of git://git.kernel.org/p..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14cd9efbd00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a1fcf15a09815757
+dashboard link: https://syzkaller.appspot.com/bug?extid=ba6fcd859210f4e9e109
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13bbf280300000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1111ec9c300000
 
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+ba6fcd859210f4e9e109@syzkaller.appspotmail.com
+
+INFO: task syz-executor015:8439 blocked for more than 143 seconds.
+      Tainted: G        W         5.13.0-syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor015 state:D stack:28184 pid: 8439 ppid:  8438 flags:0x00000004
+Call Trace:
+ context_switch kernel/sched/core.c:4683 [inline]
+ __schedule+0x934/0x2710 kernel/sched/core.c:5940
+ schedule+0xd3/0x270 kernel/sched/core.c:6019
+ io_uring_cancel_generic+0x54d/0x890 fs/io_uring.c:9203
+ io_uring_files_cancel include/linux/io_uring.h:16 [inline]
+ do_exit+0x28b/0x2a50 kernel/exit.c:780
+ do_group_exit+0x125/0x310 kernel/exit.c:922
+ __do_sys_exit_group kernel/exit.c:933 [inline]
+ __se_sys_exit_group kernel/exit.c:931 [inline]
+ __x64_sys_exit_group+0x3a/0x50 kernel/exit.c:931
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x43eac9
+RSP: 002b:00007ffc2d1b6378 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 00000000004b02f0 RCX: 000000000043eac9
+RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffffffffffc0 R09: 00000000f0ffffff
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000004b02f0
+R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000001
+INFO: lockdep is turned off.
+NMI backtrace for cpu 0
+CPU: 0 PID: 1650 Comm: khungtaskd Tainted: G        W         5.13.0-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:79 [inline]
+ dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:96
+ nmi_cpu_backtrace.cold+0x44/0xd7 lib/nmi_backtrace.c:105
+ nmi_trigger_cpumask_backtrace+0x1b3/0x230 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:146 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:209 [inline]
+ watchdog+0xd4b/0xfb0 kernel/hung_task.c:294
+ kthread+0x3e5/0x4d0 kernel/kthread.c:319
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1 skipped: idling at native_safe_halt arch/x86/include/asm/irqflags.h:51 [inline]
+NMI backtrace for cpu 1 skipped: idling at arch_safe_halt arch/x86/include/asm/irqflags.h:89 [inline]
+NMI backtrace for cpu 1 skipped: idling at acpi_safe_halt drivers/acpi/processor_idle.c:109 [inline]
+NMI backtrace for cpu 1 skipped: idling at acpi_idle_do_entry+0x1c6/0x250 drivers/acpi/processor_idle.c:553
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches

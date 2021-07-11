@@ -2,315 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CA50A3C3F8D
-	for <lists+io-uring@lfdr.de>; Sun, 11 Jul 2021 23:44:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B6483C3F97
+	for <lists+io-uring@lfdr.de>; Mon, 12 Jul 2021 00:05:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229758AbhGKVrJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 11 Jul 2021 17:47:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52416 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229544AbhGKVrI (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 11 Jul 2021 17:47:08 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3E7BC0613DD;
-        Sun, 11 Jul 2021 14:44:19 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id g8-20020a1c9d080000b02901f13dd1672aso8852909wme.0;
-        Sun, 11 Jul 2021 14:44:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:references:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=TxxvBjfuuYQC4J6UclF2Z9w/I0tESXhDqxfmPKDNnao=;
-        b=aSxifWl21zp6U++jjc8pBnZXQ49ijoYiRUWv48EFfLnxS3UhxYVlQCwTqR2XCPbNZT
-         4htBMDfxsCjh6POq1DkmQfF14fuHn82Zjun4/YvmvfJbBHc4x1uWz3y5Wms/L1PNEApM
-         FgL7c4SRTx3kpzGU6Cfcd7qHaXPDRgS5cAjIDeR3bt9nZQ6UnU3f6rMl3xua3kgCk385
-         YQ3/kJN/Yy/SJM2Ksqf4HxDBgPmbvtgAYP9S5hsxX9zyiTfg3Lxw1zx8kSvGCeA+HiJ0
-         8lJ2uMTR61W+d/+8/po7tZP4DJVt9sKtW1hDJ6VFAPLopJjK4gGcw5HtovqltcFxaiBy
-         raxw==
+        id S229812AbhGKWH4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 11 Jul 2021 18:07:56 -0400
+Received: from mail-io1-f71.google.com ([209.85.166.71]:56166 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229665AbhGKWHz (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 11 Jul 2021 18:07:55 -0400
+Received: by mail-io1-f71.google.com with SMTP id i13-20020a5d88cd0000b02904e5ab8bdc6cso10284967iol.22
+        for <io-uring@vger.kernel.org>; Sun, 11 Jul 2021 15:05:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=TxxvBjfuuYQC4J6UclF2Z9w/I0tESXhDqxfmPKDNnao=;
-        b=YEf6Q3KyKzdD6rPrzjcHugWilkUHcwINOYcN2wKnZZZYRU7b2awlTYfVUvEO+rLzCa
-         K0lx3UEeFJcSuZMqe3JdYw0GwvsuqANoTLYgZHUJqgvmqDwcjs8nKxM6byYaURltfEsh
-         c+NSeTWng9mCkpOX7TtfjbfetVN775Su6naOKKuWJx4DEgEhux90OE/fMIKHfmjv/zVu
-         uUC4CyhwiEQaVJjCR1xllXSjIldwGuRo7/rkRzWA2ypz+yMILV1+1JwIxGir0n0Ph2Rh
-         97R2gKWF6MEcw3ys3jAv8o2uktd97vIcbnHnW/SljMDBuMbNwORgH9JLm2Qxk0lCoNF4
-         EtUA==
-X-Gm-Message-State: AOAM531wMJqHIzjLX/mNlutl9fmYgLRiTOXRiTbdLRxXMNooJAKqh/dZ
-        LYhnDU3gPW2Rm6F3Khka+p0=
-X-Google-Smtp-Source: ABdhPJwCyLya8Y6xbWTxarsFdB7gRNAO64fjoTZketyrVhupzQknPR7evVXDRRn9/FgfI4qBhWh8zw==
-X-Received: by 2002:a1c:1b87:: with SMTP id b129mr52765642wmb.189.1626039858521;
-        Sun, 11 Jul 2021 14:44:18 -0700 (PDT)
-Received: from [192.168.8.197] ([85.255.233.168])
-        by smtp.gmail.com with ESMTPSA id n41sm17241425wms.26.2021.07.11.14.44.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 11 Jul 2021 14:44:18 -0700 (PDT)
-Subject: Re: [syzbot] INFO: task hung in io_uring_cancel_generic
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     syzbot <syzbot+ba6fcd859210f4e9e109@syzkaller.appspotmail.com>,
-        axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <0000000000003f0feb05c6daa326@google.com>
- <abb0b94a-1bfb-1fe4-06fc-daed6c0112b6@gmail.com>
-Message-ID: <f58dd424-b33b-ebaf-b38c-235bd42b643f@gmail.com>
-Date:   Sun, 11 Jul 2021 22:43:58 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=MLkBS3KT/C1xWdnQv4mpgem4i/D3ft2NwGzrdexe+l4=;
+        b=rRi1lBlfbZY/h2d/BaXPO1Sqrpf6aoc1HyaZMwzjyWtWAm6nXIW1tLdeat3VLAYGrc
+         uw+2/Mrxsdg238PqeQ6umO0xaAITrk+kSIJQbrqlLuWa+J8Kck2//RxvC4slilWKBxW2
+         YHo3NOZQvjx2pc4g6b0jy3i2NzLFFHoohxSpgLqkMF0XvOCk7Cgs2ARAMj6/EiKE5Nkw
+         Imuu/iZG9fUN9yMZZCVYG3m3GS/MTMRT1ASQqgk9xP3xL4ekLmPrE+lds8c9qEez4qtJ
+         sga64KIQQpquDvQEFW8pvmXC/fPtDqhgj0TRVaSwHVoi5BFHctl5sk1tbHIiN0f/Lb3r
+         eW3A==
+X-Gm-Message-State: AOAM532EhTqtSMN2K2uZSXE3FVds51iYdBpB7YYU8Cdd3ygXwdTpFzQA
+        HyezydHfd8DN9Gd8tXj2h6TgmhkLs56bfLFSD+3ZyN8nmQxC
+X-Google-Smtp-Source: ABdhPJxQEaFbT8ZPZ5vkDb06CFAtXVfmVLqYpkYhIJ+dgydxAHWEByp1j5TtQDHamkf8o2ezJNsadfWZyoW8JNFdcM3zJRUQhGhW
 MIME-Version: 1.0
-In-Reply-To: <abb0b94a-1bfb-1fe4-06fc-daed6c0112b6@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a5d:9958:: with SMTP id v24mr36817517ios.4.1626041108475;
+ Sun, 11 Jul 2021 15:05:08 -0700 (PDT)
+Date:   Sun, 11 Jul 2021 15:05:08 -0700
+In-Reply-To: <f58dd424-b33b-ebaf-b38c-235bd42b643f@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a9315305c6e032ee@google.com>
+Subject: Re: [syzbot] INFO: task hung in io_uring_cancel_generic
+From:   syzbot <syzbot+ba6fcd859210f4e9e109@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/11/21 9:20 PM, Pavel Begunkov wrote:
-> On 7/11/21 4:27 PM, syzbot wrote:
->> Hello,
->>
->> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
->> INFO: task hung in io_uring_cancel_generic
-> 
-> I think I see what it is. To not duplicate efforts...
+Hello,
 
-#syz test: https://github.com/isilence/linux.git drain_fix_syztest
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
+Reported-and-tested-by: syzbot+ba6fcd859210f4e9e109@syzkaller.appspotmail.com
 
->>
->> INFO: task syz-executor.5:10156 blocked for more than 143 seconds.
->>       Tainted: G        W         5.13.0-syzkaller #0
->> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
->> task:syz-executor.5  state:D stack:27976 pid:10156 ppid:  8832 flags:0x00004004
->> Call Trace:
->>  context_switch kernel/sched/core.c:4683 [inline]
->>  __schedule+0x934/0x2710 kernel/sched/core.c:5940
->>  schedule+0xd3/0x270 kernel/sched/core.c:6019
->>  io_uring_cancel_generic+0x54d/0x890 fs/io_uring.c:9148
->>  io_uring_files_cancel include/linux/io_uring.h:16 [inline]
->>  do_exit+0x28b/0x2a50 kernel/exit.c:780
->>  do_group_exit+0x125/0x310 kernel/exit.c:922
->>  get_signal+0x47f/0x2150 kernel/signal.c:2796
->>  arch_do_signal_or_restart+0x2a9/0x1eb0 arch/x86/kernel/signal.c:789
->>  handle_signal_work kernel/entry/common.c:148 [inline]
->>  exit_to_user_mode_loop kernel/entry/common.c:172 [inline]
->>  exit_to_user_mode_prepare+0x17d/0x290 kernel/entry/common.c:209
->>  __syscall_exit_to_user_mode_work kernel/entry/common.c:291 [inline]
->>  syscall_exit_to_user_mode+0x19/0x60 kernel/entry/common.c:302
->>  do_syscall_64+0x42/0xb0 arch/x86/entry/common.c:86
->>  entry_SYSCALL_64_after_hwframe+0x44/0xae
->> RIP: 0033:0x4665d9
->> RSP: 002b:00007fc32f0d4218 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
->> RAX: fffffffffffffe00 RBX: 000000000056bf88 RCX: 00000000004665d9
->> RDX: 0000000000000000 RSI: 0000000000000080 RDI: 000000000056bf88
->> RBP: 000000000056bf80 R08: 0000000000000000 R09: 0000000000000000
->> R10: 0000000000000000 R11: 0000000000000246 R12: 000000000056bf8c
->> R13: 00007ffee94563df R14: 00007fc32f0d4300 R15: 0000000000022000
->> INFO: task syz-executor.2:10228 blocked for more than 143 seconds.
->>       Tainted: G        W         5.13.0-syzkaller #0
->> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
->> task:syz-executor.2  state:D stack:29192 pid:10228 ppid:  8825 flags:0x00004004
->> Call Trace:
->>  context_switch kernel/sched/core.c:4683 [inline]
->>  __schedule+0x934/0x2710 kernel/sched/core.c:5940
->>  schedule+0xd3/0x270 kernel/sched/core.c:6019
->>  io_uring_cancel_generic+0x54d/0x890 fs/io_uring.c:9148
->>  io_uring_files_cancel include/linux/io_uring.h:16 [inline]
->>  do_exit+0x28b/0x2a50 kernel/exit.c:780
->>  do_group_exit+0x125/0x310 kernel/exit.c:922
->>  get_signal+0x47f/0x2150 kernel/signal.c:2796
->>  arch_do_signal_or_restart+0x2a9/0x1eb0 arch/x86/kernel/signal.c:789
->>  handle_signal_work kernel/entry/common.c:148 [inline]
->>  exit_to_user_mode_loop kernel/entry/common.c:172 [inline]
->>  exit_to_user_mode_prepare+0x17d/0x290 kernel/entry/common.c:209
->>  __syscall_exit_to_user_mode_work kernel/entry/common.c:291 [inline]
->>  syscall_exit_to_user_mode+0x19/0x60 kernel/entry/common.c:302
->>  do_syscall_64+0x42/0xb0 arch/x86/entry/common.c:86
->>  entry_SYSCALL_64_after_hwframe+0x44/0xae
->> RIP: 0033:0x4665d9
->> RSP: 002b:00007f48eed2e218 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
->> RAX: 0000000000000000 RBX: 000000000056bf88 RCX: 00000000004665d9
->> RDX: 0000000000000000 RSI: 0000000000000080 RDI: 000000000056bf88
->> RBP: 000000000056bf80 R08: 0000000000000000 R09: 0000000000000000
->> R10: 0000000000000000 R11: 0000000000000246 R12: 000000000056bf8c
->> R13: 00007ffc352d975f R14: 00007f48eed2e300 R15: 0000000000022000
->> INFO: task syz-executor.3:10229 blocked for more than 143 seconds.
->>       Tainted: G        W         5.13.0-syzkaller #0
->> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
->> task:syz-executor.3  state:D stack:27976 pid:10229 ppid:  8828 flags:0x00004004
->> Call Trace:
->>  context_switch kernel/sched/core.c:4683 [inline]
->>  __schedule+0x934/0x2710 kernel/sched/core.c:5940
->>  schedule+0xd3/0x270 kernel/sched/core.c:6019
->>  io_uring_cancel_generic+0x54d/0x890 fs/io_uring.c:9148
->>  io_uring_files_cancel include/linux/io_uring.h:16 [inline]
->>  do_exit+0x28b/0x2a50 kernel/exit.c:780
->>  do_group_exit+0x125/0x310 kernel/exit.c:922
->>  get_signal+0x47f/0x2150 kernel/signal.c:2796
->>  arch_do_signal_or_restart+0x2a9/0x1eb0 arch/x86/kernel/signal.c:789
->>  handle_signal_work kernel/entry/common.c:148 [inline]
->>  exit_to_user_mode_loop kernel/entry/common.c:172 [inline]
->>  exit_to_user_mode_prepare+0x17d/0x290 kernel/entry/common.c:209
->>  __syscall_exit_to_user_mode_work kernel/entry/common.c:291 [inline]
->>  syscall_exit_to_user_mode+0x19/0x60 kernel/entry/common.c:302
->>  do_syscall_64+0x42/0xb0 arch/x86/entry/common.c:86
->>  entry_SYSCALL_64_after_hwframe+0x44/0xae
->> RIP: 0033:0x4665d9
->> RSP: 002b:00007fb1b5eac218 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
->> RAX: 0000000000000000 RBX: 000000000056bf88 RCX: 00000000004665d9
->> RDX: 0000000000000000 RSI: 0000000000000080 RDI: 000000000056bf88
->> RBP: 000000000056bf80 R08: 0000000000000000 R09: 0000000000000000
->> R10: 0000000000000000 R11: 0000000000000246 R12: 000000000056bf8c
->> R13: 00007ffdb651a9bf R14: 00007fb1b5eac300 R15: 0000000000022000
->> INFO: task syz-executor.0:10241 blocked for more than 144 seconds.
->>       Tainted: G        W         5.13.0-syzkaller #0
->> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
->> task:syz-executor.0  state:D stack:27976 pid:10241 ppid:  8830 flags:0x00004004
->> Call Trace:
->>  context_switch kernel/sched/core.c:4683 [inline]
->>  __schedule+0x934/0x2710 kernel/sched/core.c:5940
->>  schedule+0xd3/0x270 kernel/sched/core.c:6019
->>  io_uring_cancel_generic+0x54d/0x890 fs/io_uring.c:9148
->>  io_uring_files_cancel include/linux/io_uring.h:16 [inline]
->>  do_exit+0x28b/0x2a50 kernel/exit.c:780
->>  do_group_exit+0x125/0x310 kernel/exit.c:922
->>  get_signal+0x47f/0x2150 kernel/signal.c:2796
->>  arch_do_signal_or_restart+0x2a9/0x1eb0 arch/x86/kernel/signal.c:789
->>  handle_signal_work kernel/entry/common.c:148 [inline]
->>  exit_to_user_mode_loop kernel/entry/common.c:172 [inline]
->>  exit_to_user_mode_prepare+0x17d/0x290 kernel/entry/common.c:209
->>  __syscall_exit_to_user_mode_work kernel/entry/common.c:291 [inline]
->>  syscall_exit_to_user_mode+0x19/0x60 kernel/entry/common.c:302
->>  do_syscall_64+0x42/0xb0 arch/x86/entry/common.c:86
->>  entry_SYSCALL_64_after_hwframe+0x44/0xae
->> RIP: 0033:0x4665d9
->> RSP: 002b:00007fa3ce68b218 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
->> RAX: 0000000000000000 RBX: 000000000056bf88 RCX: 00000000004665d9
->> RDX: 0000000000000000 RSI: 0000000000000080 RDI: 000000000056bf88
->> RBP: 000000000056bf80 R08: 0000000000000000 R09: 0000000000000000
->> R10: 0000000000000000 R11: 0000000000000246 R12: 000000000056bf8c
->> R13: 00007ffcf35d4ebf R14: 00007fa3ce68b300 R15: 0000000000022000
->> INFO: task syz-executor.1:10247 blocked for more than 144 seconds.
->>       Tainted: G        W         5.13.0-syzkaller #0
->> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
->> task:syz-executor.1  state:D stack:27976 pid:10247 ppid:  8831 flags:0x00004004
->> Call Trace:
->>  context_switch kernel/sched/core.c:4683 [inline]
->>  __schedule+0x934/0x2710 kernel/sched/core.c:5940
->>  schedule+0xd3/0x270 kernel/sched/core.c:6019
->>  io_uring_cancel_generic+0x54d/0x890 fs/io_uring.c:9148
->>  io_uring_files_cancel include/linux/io_uring.h:16 [inline]
->>  do_exit+0x28b/0x2a50 kernel/exit.c:780
->>  do_group_exit+0x125/0x310 kernel/exit.c:922
->>  get_signal+0x47f/0x2150 kernel/signal.c:2796
->>  arch_do_signal_or_restart+0x2a9/0x1eb0 arch/x86/kernel/signal.c:789
->>  handle_signal_work kernel/entry/common.c:148 [inline]
->>  exit_to_user_mode_loop kernel/entry/common.c:172 [inline]
->>  exit_to_user_mode_prepare+0x17d/0x290 kernel/entry/common.c:209
->>  __syscall_exit_to_user_mode_work kernel/entry/common.c:291 [inline]
->>  syscall_exit_to_user_mode+0x19/0x60 kernel/entry/common.c:302
->>  do_syscall_64+0x42/0xb0 arch/x86/entry/common.c:86
->>  entry_SYSCALL_64_after_hwframe+0x44/0xae
->> RIP: 0033:0x4665d9
->> RSP: 002b:00007f7c4a218218 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
->> RAX: 0000000000000000 RBX: 000000000056bf88 RCX: 00000000004665d9
->> RDX: 0000000000000000 RSI: 0000000000000080 RDI: 000000000056bf88
->> RBP: 000000000056bf80 R08: 0000000000000000 R09: 0000000000000000
->> R10: 0000000000000000 R11: 0000000000000246 R12: 000000000056bf8c
->> R13: 00007ffdaa7cc7af R14: 00007f7c4a218300 R15: 0000000000022000
->> INFO: task syz-executor.4:10271 blocked for more than 144 seconds.
->>       Tainted: G        W         5.13.0-syzkaller #0
->> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
->> task:syz-executor.4  state:D stack:27976 pid:10271 ppid:  8827 flags:0x00004004
->> Call Trace:
->>  context_switch kernel/sched/core.c:4683 [inline]
->>  __schedule+0x934/0x2710 kernel/sched/core.c:5940
->>  schedule+0xd3/0x270 kernel/sched/core.c:6019
->>  io_uring_cancel_generic+0x54d/0x890 fs/io_uring.c:9148
->>  io_uring_files_cancel include/linux/io_uring.h:16 [inline]
->>  do_exit+0x28b/0x2a50 kernel/exit.c:780
->>  do_group_exit+0x125/0x310 kernel/exit.c:922
->>  get_signal+0x47f/0x2150 kernel/signal.c:2796
->>  arch_do_signal_or_restart+0x2a9/0x1eb0 arch/x86/kernel/signal.c:789
->>  handle_signal_work kernel/entry/common.c:148 [inline]
->>  exit_to_user_mode_loop kernel/entry/common.c:172 [inline]
->>  exit_to_user_mode_prepare+0x17d/0x290 kernel/entry/common.c:209
->>  __syscall_exit_to_user_mode_work kernel/entry/common.c:291 [inline]
->>  syscall_exit_to_user_mode+0x19/0x60 kernel/entry/common.c:302
->>  do_syscall_64+0x42/0xb0 arch/x86/entry/common.c:86
->>  entry_SYSCALL_64_after_hwframe+0x44/0xae
->> RIP: 0033:0x4665d9
->> RSP: 002b:00007fcb3ff30218 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
->> RAX: 0000000000000000 RBX: 000000000056bf88 RCX: 00000000004665d9
->> RDX: 0000000000000000 RSI: 0000000000000080 RDI: 000000000056bf88
->> RBP: 000000000056bf80 R08: 0000000000000000 R09: 0000000000000000
->> R10: 0000000000000000 R11: 0000000000000246 R12: 000000000056bf8c
->> R13: 00007ffd6fb6745f R14: 00007fcb3ff30300 R15: 0000000000022000
->> INFO: lockdep is turned off.
->> NMI backtrace for cpu 1
->> CPU: 1 PID: 1635 Comm: khungtaskd Tainted: G        W         5.13.0-syzkaller #0
->> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
->> Call Trace:
->>  __dump_stack lib/dump_stack.c:79 [inline]
->>  dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:96
->>  nmi_cpu_backtrace.cold+0x44/0xd7 lib/nmi_backtrace.c:105
->>  nmi_trigger_cpumask_backtrace+0x1b3/0x230 lib/nmi_backtrace.c:62
->>  trigger_all_cpu_backtrace include/linux/nmi.h:146 [inline]
->>  check_hung_uninterruptible_tasks kernel/hung_task.c:209 [inline]
->>  watchdog+0xd4b/0xfb0 kernel/hung_task.c:294
->>  kthread+0x3e5/0x4d0 kernel/kthread.c:319
->>  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295
->> Sending NMI from CPU 1 to CPUs 0:
->> NMI backtrace for cpu 0
->> CPU: 0 PID: 8 Comm: kworker/0:2 Tainted: G        W         5.13.0-syzkaller #0
->> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
->> Workqueue: events_power_efficient toggle_allocation_gate
->> RIP: 0010:__kasan_check_read+0x4/0x10 mm/kasan/shadow.c:31
->> Code: 24 07 48 85 db 0f 85 f6 0d 26 07 48 83 c4 60 5b 5d 41 5c 41 5d c3 c3 e9 f6 0e 26 07 cc cc cc cc cc cc cc cc cc cc 48 8b 0c 24 <89> f6 31 d2 e9 03 f9 ff ff 0f 1f 00 48 8b 0c 24 89 f6 ba 01 00 00
->> RSP: 0018:ffffc90000cd79a8 EFLAGS: 00000046
->> RAX: 0000000000000001 RBX: ffff888140158660 RCX: ffffffff81347c5f
->> RDX: ffffed102802b0cd RSI: 0000000000000008 RDI: ffffffff8baa4870
->> RBP: ffffffff8baa4460 R08: 0000000000000001 R09: ffff888140158667
->> R10: ffffed102802b0cc R11: 000000000000003f R12: ffff888140158000
->> R13: ffffffff8baa4870 R14: ffff888140158660 R15: ffffffff8baa4400
->> FS:  0000000000000000(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
->> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> CR2: 00007f089e135020 CR3: 000000013fe38000 CR4: 0000000000350ef0
->> Call Trace:
->>  instrument_atomic_read include/linux/instrumented.h:71 [inline]
->>  atomic64_read include/asm-generic/atomic-instrumented.h:605 [inline]
->>  switch_mm_irqs_off+0x1df/0x9b0 arch/x86/mm/tlb.c:556
->>  unuse_temporary_mm arch/x86/kernel/alternative.c:763 [inline]
->>  __text_poke+0x541/0x8c0 arch/x86/kernel/alternative.c:859
->>  text_poke_bp_batch+0x3d7/0x560 arch/x86/kernel/alternative.c:1178
->>  text_poke_flush arch/x86/kernel/alternative.c:1268 [inline]
->>  text_poke_flush arch/x86/kernel/alternative.c:1265 [inline]
->>  text_poke_finish+0x16/0x30 arch/x86/kernel/alternative.c:1275
->>  arch_jump_label_transform_apply+0x13/0x20 arch/x86/kernel/jump_label.c:145
->>  jump_label_update+0x1d5/0x430 kernel/jump_label.c:827
->>  static_key_enable_cpuslocked+0x1b1/0x260 kernel/jump_label.c:177
->>  static_key_enable+0x16/0x20 kernel/jump_label.c:190
->>  toggle_allocation_gate mm/kfence/core.c:623 [inline]
->>  toggle_allocation_gate+0x100/0x390 mm/kfence/core.c:615
->>  process_one_work+0x98d/0x1630 kernel/workqueue.c:2276
->>  worker_thread+0x658/0x11f0 kernel/workqueue.c:2422
->>  kthread+0x3e5/0x4d0 kernel/kthread.c:319
->>  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295
->>
->>
->> Tested on:
->>
->> commit:         dfa01077 io_uring: use right task for exiting checks
->> git tree:       git://git.kernel.dk/linux-block io_uring-5.14-test
->> console output: https://syzkaller.appspot.com/x/log.txt?x=13b501e2300000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=c650d78cfe48974c
->> dashboard link: https://syzkaller.appspot.com/bug?extid=ba6fcd859210f4e9e109
->> compiler:       
->>
-> 
+Tested on:
 
--- 
-Pavel Begunkov
+commit:         66af6ccf io_uring: fix io_drain_req()
+git tree:       https://github.com/isilence/linux.git drain_fix_syztest
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c650d78cfe48974c
+dashboard link: https://syzkaller.appspot.com/bug?extid=ba6fcd859210f4e9e109
+compiler:       
+
+Note: testing is done by a robot and is best-effort only.

@@ -2,51 +2,51 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 12B553C5C45
+	by mail.lfdr.de (Postfix) with ESMTP id A3E763C5C47
 	for <lists+io-uring@lfdr.de>; Mon, 12 Jul 2021 14:37:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233620AbhGLMkB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 12 Jul 2021 08:40:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58920 "EHLO
+        id S233121AbhGLMkE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 12 Jul 2021 08:40:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233121AbhGLMkB (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 12 Jul 2021 08:40:01 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20D4BC0613DD;
-        Mon, 12 Jul 2021 05:37:12 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id l1so5972260edr.11;
-        Mon, 12 Jul 2021 05:37:12 -0700 (PDT)
+        with ESMTP id S233646AbhGLMkC (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 12 Jul 2021 08:40:02 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EAFDC0613E5;
+        Mon, 12 Jul 2021 05:37:13 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id h8so14469979eds.4;
+        Mon, 12 Jul 2021 05:37:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=POUCrEBD/TS9KiXC0fMr2MMYnoW6MCo3pMbLe1dBMpc=;
-        b=qjqbr5ZiHswustla15nUrvIQrCskMlPDP8iGD9fRCZsyuo6URIpLOG3q6onEf3XesA
-         BiYJQ+zCrkl+xn41JQJSaUpqgX7hbz64wDvhw2xLO6sBda5iBgkBMc7qxcyRPirDM0J6
-         LozmeIqJlew02uK8OaWHGMSPYsGuZPcTxYPd36gnkP3JmzXnvhkTsvgeAnMitpYX4bCg
-         cH1O/3fp250Jc5+CpCPDkWVgZFqDTt+td4dQsu/qRHVNq4naoJV2HsBLzdBXFYuowjLx
-         ohycCOYpw5iQmScUfRCQer34cwaDAzUqD6JSA76NJjcrOTHNhzvSfYD5DKc+ttmN8k/a
-         BXZA==
+        bh=vC58AVc/NhhJOKA7Yh7SWfXysIpU3vPsScegx0pCGWE=;
+        b=Fa4zFPsc02vUDf2immYT4UvzykeRlQPbUmcP1tV+ScpfUGt/om6n03HULkRXIJWceZ
+         9AHe4hZjIsxGYfGCAL4ktMP7BXr1T1t4xNTcprB+WSRkZIgJSmiCElVfdKZRUuNeSP6v
+         PxDSX+IK2EMRhXfOKGk61Eevm63cODg0izoNZNf1Xy/J21DIkTiA4lhOpNkSGSMernwD
+         In1+nimmCB1hzkkv/ejz2K5KOPxUo7LHFhjbtns3PvFQQLzB5KHa0bnQHbGZSP0RRb/g
+         b4VxSACp++mSj6AQZTgPgveAwFAUOYl9WhqbQxf3HjMh+oBGfPPbRadJ7yETkmOTXIBL
+         TZzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=POUCrEBD/TS9KiXC0fMr2MMYnoW6MCo3pMbLe1dBMpc=;
-        b=DcshNvYiP/OJ4P8JJB3FXQ3HEUZ6roPoOafy3PIE8W9vImyD08tp59giQE2nHQEfUj
-         o/U850O9XrZ1naACU0viwQkrOA3qoITujzGlo5dVT2I/qRpSvmsio5nSU0DeAgbEOoHs
-         XSMz4DSu7/cC9spGAcGCxQx4esW00D+HQmrkwviDjbFNJc4X/GL8BBS7V+iLqyoN6lSK
-         U5H+by2fuu0JoCEcXM3+2+WrCclRnjCtS5MbYP9+qvDTn0JgBb3I7CIaQ64/OoU2dRPJ
-         I69BGiakfr86mii7pMRc0diMYWTT1unW/Dywp23lv2z59pN8LAhrXQ0BRNWkx/1btmHb
-         +hVg==
-X-Gm-Message-State: AOAM531OUpmIw1SKSmA5VKNq4wjQ2oMKEKqdCDIlZUqAuI3jVOaytIl4
-        y5H83jFjGm2Mh50MoEzGi90=
-X-Google-Smtp-Source: ABdhPJymm0K3Yv0iCLeA+Tcu4gayWochFrAXdf42pJ48RSle2TVYD9iKCbWDoDRI2oaxreVKHtZ0ng==
-X-Received: by 2002:a05:6402:35d4:: with SMTP id z20mr67195786edc.138.1626093430761;
-        Mon, 12 Jul 2021 05:37:10 -0700 (PDT)
+        bh=vC58AVc/NhhJOKA7Yh7SWfXysIpU3vPsScegx0pCGWE=;
+        b=pO9d/9hfm35WgoI14Wilr9N7JRjtMeJHwzq1Rs4cs3oMPcUBqfQ7w3uIyda67OM2/H
+         x9U0kgMlrRDdVKfw/AUTmAMwv1o0Vw7yMQW6iuz8cB6q2jJ1MjeMz7omoSnSbgU3jcja
+         szZvDNVvOm5XrxqKaTZ+f0JxDpNmFOx+DPc+UBqUmnsnprubDArAkcxIoMIG9/UOwEUx
+         wmnmzLWsL6BuCVukgiU9PIP7TFXvGtVspiJzCezGY5yt/DpiC1HWc4TQ5ReBJyjbxPY0
+         /Hbe+/oij5ADFbuAM2jsKwAbx88v9YUcQGIzmOSMncuggpqKU1KCrfOuCx2TrabWOu6D
+         a0Ow==
+X-Gm-Message-State: AOAM533i9nhzArNVFDiqH0YVK5QYeNvap9+Sq4YroP5mmVk0z7aWachj
+        xVFQBuBIa7ZOCjPaVCHsmVE=
+X-Google-Smtp-Source: ABdhPJykeKPq8P2k1oF92zViTVtPyvhg3xF5BegK2w0ma7J5GPUD1NxDsAiy1uR/t3CZz4uUlJ69cw==
+X-Received: by 2002:aa7:d746:: with SMTP id a6mr12033450eds.296.1626093432339;
+        Mon, 12 Jul 2021 05:37:12 -0700 (PDT)
 Received: from carbon.v ([108.61.166.58])
-        by smtp.googlemail.com with ESMTPSA id y7sm6785216edc.86.2021.07.12.05.37.09
+        by smtp.googlemail.com with ESMTPSA id y7sm6785216edc.86.2021.07.12.05.37.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jul 2021 05:37:10 -0700 (PDT)
+        Mon, 12 Jul 2021 05:37:12 -0700 (PDT)
 From:   Dmitry Kadashev <dkadashev@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -54,9 +54,9 @@ To:     Jens Axboe <axboe@kernel.dk>,
         Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
         Dmitry Kadashev <dkadashev@gmail.com>
-Subject: [PATCH  2/7] namei: clean up do_unlinkat retry logic
-Date:   Mon, 12 Jul 2021 19:36:44 +0700
-Message-Id: <20210712123649.1102392-3-dkadashev@gmail.com>
+Subject: [PATCH  3/7] namei: clean up do_mkdirat retry logic
+Date:   Mon, 12 Jul 2021 19:36:45 +0700
+Message-Id: <20210712123649.1102392-4-dkadashev@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210712123649.1102392-1-dkadashev@gmail.com>
 References: <20210712123649.1102392-1-dkadashev@gmail.com>
@@ -73,102 +73,62 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Al Viro <viro@zeniv.linux.org.uk>
 Cc: Christian Brauner <christian.brauner@ubuntu.com>
 Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/io-uring/CAHk-=wh=cpt_tQCirzFZRPawRpbuFTZ2MxNpXiyUF+eBXF=+sw@mail.gmail.com/
+Link: https://lore.kernel.org/io-uring/CAHk-=wijsw1QSsQHFu_6dEoZEr_zvT7++WJWohcuEkLqqXBGrQ@mail.gmail.com/
 Signed-off-by: Dmitry Kadashev <dkadashev@gmail.com>
 ---
- fs/namei.c | 39 ++++++++++++++++++++++-----------------
- 1 file changed, 22 insertions(+), 17 deletions(-)
+ fs/namei.c | 22 +++++++++++++++-------
+ 1 file changed, 15 insertions(+), 7 deletions(-)
 
 diff --git a/fs/namei.c b/fs/namei.c
-index ae6cde7dc91e..bb18b1adfea5 100644
+index bb18b1adfea5..b9762e2cf3b9 100644
 --- a/fs/namei.c
 +++ b/fs/namei.c
-@@ -4091,7 +4091,8 @@ EXPORT_SYMBOL(vfs_unlink);
-  * writeout happening, and we don't want to prevent access to the directory
-  * while waiting on the I/O.
-  */
--int do_unlinkat(int dfd, struct filename *name)
-+static int unlinkat_helper(int dfd, struct filename *name,
-+			   unsigned int lookup_flags)
+@@ -3850,18 +3850,16 @@ int vfs_mkdir(struct user_namespace *mnt_userns, struct inode *dir,
+ }
+ EXPORT_SYMBOL(vfs_mkdir);
+ 
+-int do_mkdirat(int dfd, struct filename *name, umode_t mode)
++static int mkdirat_helper(int dfd, struct filename *name, umode_t mode,
++			  unsigned int lookup_flags)
  {
- 	int error;
  	struct dentry *dentry;
-@@ -4100,19 +4101,18 @@ int do_unlinkat(int dfd, struct filename *name)
- 	int type;
- 	struct inode *inode = NULL;
- 	struct inode *delegated_inode = NULL;
--	unsigned int lookup_flags = 0;
+ 	struct path path;
+ 	int error;
+-	unsigned int lookup_flags = LOOKUP_DIRECTORY;
+ 
 -retry:
+ 	dentry = __filename_create(dfd, name, &path, lookup_flags);
+-	error = PTR_ERR(dentry);
+ 	if (IS_ERR(dentry))
+-		goto out_putname;
++		return PTR_ERR(dentry);
+ 
+ 	if (!IS_POSIXACL(path.dentry->d_inode))
+ 		mode &= ~current_umask();
+@@ -3873,11 +3871,21 @@ int do_mkdirat(int dfd, struct filename *name, umode_t mode)
+ 				  mode);
+ 	}
+ 	done_path_create(&path, dentry);
 +
- 	error = __filename_parentat(dfd, name, lookup_flags, &path, &last, &type);
- 	if (error)
--		goto exit1;
-+		return error;
- 
- 	error = -EISDIR;
- 	if (type != LAST_NORM)
--		goto exit2;
-+		goto exit1;
- 
- 	error = mnt_want_write(path.mnt);
- 	if (error)
--		goto exit2;
-+		goto exit1;
- retry_deleg:
- 	inode_lock_nested(path.dentry->d_inode, I_MUTEX_PARENT);
- 	dentry = __lookup_hash(&last, path.dentry, lookup_flags);
-@@ -4129,11 +4129,11 @@ int do_unlinkat(int dfd, struct filename *name)
- 		ihold(inode);
- 		error = security_path_unlink(&path, dentry);
- 		if (error)
--			goto exit3;
-+			goto exit2;
- 		mnt_userns = mnt_user_ns(path.mnt);
- 		error = vfs_unlink(mnt_userns, path.dentry->d_inode, dentry,
- 				   &delegated_inode);
--exit3:
-+exit2:
- 		dput(dentry);
- 	}
- 	inode_unlock(path.dentry->d_inode);
-@@ -4146,15 +4146,8 @@ int do_unlinkat(int dfd, struct filename *name)
- 			goto retry_deleg;
- 	}
- 	mnt_drop_write(path.mnt);
--exit2:
--	path_put(&path);
--	if (retry_estale(error, lookup_flags)) {
--		lookup_flags |= LOOKUP_REVAL;
--		inode = NULL;
--		goto retry;
--	}
- exit1:
--	putname(name);
-+	path_put(&path);
- 	return error;
- 
- slashes:
-@@ -4164,7 +4157,19 @@ int do_unlinkat(int dfd, struct filename *name)
- 		error = -EISDIR;
- 	else
- 		error = -ENOTDIR;
--	goto exit3;
-+	goto exit2;
++	return error;
 +}
 +
-+int do_unlinkat(int dfd, struct filename *name)
++int do_mkdirat(int dfd, struct filename *name, umode_t mode)
 +{
++	unsigned int lookup_flags = LOOKUP_DIRECTORY;
 +	int error;
 +
-+	error = unlinkat_helper(dfd, name, 0);
-+	if (retry_estale(error, 0))
-+		error = unlinkat_helper(dfd, name, LOOKUP_REVAL);
++	error = mkdirat_helper(dfd, name, mode, lookup_flags);
+ 	if (retry_estale(error, lookup_flags)) {
+ 		lookup_flags |= LOOKUP_REVAL;
+-		goto retry;
++		error = mkdirat_helper(dfd, name, mode, lookup_flags);
+ 	}
+-out_putname:
 +
-+	putname(name);
-+	return error;
+ 	putname(name);
+ 	return error;
  }
- 
- SYSCALL_DEFINE3(unlinkat, int, dfd, const char __user *, pathname, int, flag)
 -- 
 2.30.2
 

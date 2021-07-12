@@ -2,56 +2,98 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 74EEA3C5B7D
-	for <lists+io-uring@lfdr.de>; Mon, 12 Jul 2021 13:44:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B253B3C5C41
+	for <lists+io-uring@lfdr.de>; Mon, 12 Jul 2021 14:37:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230214AbhGLLha (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 12 Jul 2021 07:37:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44766 "EHLO
+        id S233542AbhGLMj6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 12 Jul 2021 08:39:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58906 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229644AbhGLLha (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 12 Jul 2021 07:37:30 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5DCBC0613DD;
-        Mon, 12 Jul 2021 04:34:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Nyp5QtyWvgSaxX6QcYvHcVd8PYTJFQ9djhzXeIBYfvk=; b=Q0MJVrgX1K/L21RKm04jXk5ehp
-        7Mco119wFA9kHR2lVhC23RoT0AMqrr9VIxszWDKBxGFIZuYrxr1OBwN1HsQTXiPJBtP96uOK0WKvb
-        GRdtvM503qLkIItvYkTORx9iI9qdDxBNVKKCNToOv9UeJc2o0TlqX0zdbzbBZr1YRT5vw0GY1+oSo
-        fgDmcVsjQ0OqU6teaRsVHt3+qqlFkmjmro0SgRp4FwlAvEve90LSAW5owp2rbu7ajJtuYdNIiTmoM
-        2Tjq+tYRF2zLFz51Df2U3dnwaqqRTgs+t1k+wjPP074qDuvZGM+Er0v4PARodzTWwM7H2klLH2406
-        5+JfWJQA==;
-Received: from hch by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m2uCd-00HYHN-IS; Mon, 12 Jul 2021 11:34:28 +0000
-Date:   Mon, 12 Jul 2021 12:34:23 +0100
-From:   Christoph Hellwig <hch@infradead.org>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-aio@kvack.org
-Subject: Re: [PATCH 1/2] mm/readahead: Add gfp_flags to ractl
-Message-ID: <YOwov+dVx5RxIyFw@infradead.org>
-References: <20210711150927.3898403-1-willy@infradead.org>
- <20210711150927.3898403-2-willy@infradead.org>
+        with ESMTP id S233121AbhGLMj5 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 12 Jul 2021 08:39:57 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE2F1C0613DD;
+        Mon, 12 Jul 2021 05:37:08 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id i20so34280809ejw.4;
+        Mon, 12 Jul 2021 05:37:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=c5iYjnhuOSvPsy5T4IiVkvk1EDH0D2rMauXYbVIBFd0=;
+        b=bzd0vTKiN3xegMxG97DnMuDRHnikfGRib4kzVx9tyGhR2RLcomfNY4SEmK218x0Suw
+         7ujpWhDzcGuqDY7jGev1nkNOyXQ+prKD+CGNUHfHpbPu0QZtZfyfcyc2S62GM957Vc+w
+         EiFSFFRbmYIP0m1GJnjifmGb8tjz/7ZdOzt0FCRfIm3aH6doPcCQTbMJzlDqhmCLVrnn
+         G+uZOe/hr6BBhko9Hb+MLkg/XqJMk1iZPJdUoOu51aBDJJUGiupNR3dJy+J9w90qScsP
+         U50kzd8H2eDP9T3fxrBY76SSYRF4XuuEOHpK2F4GmbCpcE7qv+FtsEiKcVLYkogZTr+a
+         lqrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=c5iYjnhuOSvPsy5T4IiVkvk1EDH0D2rMauXYbVIBFd0=;
+        b=VgbutmgMbKehjyVxBNfvv+mv9989hvTZn/XGPm91knteziLm1sGOlLjHWbMSLU6RUv
+         AJs9WCF1LvdXtn0AleqPrGpz1dTH/vaM63D3IhGZpH9VG+wkay3oXES6HlDeJctMuWaZ
+         icCdRaI6pf2Q9sHsLC108Nhq5PI4oBw58fVqGUfbLR/QHT6IFU3L1Lp7rYbL8gmvLqpH
+         qvY1Z1IfmGrmc1cncyH+RLeZyd1F/7eZ8u5zSKkpzxbWotZgsYHG3CmDvWREinPCsxy7
+         soAQ7OFSIrAiJ5yB8LoTNdBzO9rqoWrqXoPfb8OmF2zHlpZlgTsiieq0Dd/b8ONz18h3
+         Okow==
+X-Gm-Message-State: AOAM532H9SSe3/8XLoSNjMho31ddzvGravPpZEOEgIcQrv23XXIICBLv
+        2O9NJ3hTxosZDIvcZUotpE8=
+X-Google-Smtp-Source: ABdhPJxUJt5aqytrAONF2ONicGDl5FRCMHPajn4YlG9oWoqYRKW9YxMqZ/xJTNbaItoX0G5cAq+fKA==
+X-Received: by 2002:a17:906:d1d1:: with SMTP id bs17mr52232917ejb.492.1626093427479;
+        Mon, 12 Jul 2021 05:37:07 -0700 (PDT)
+Received: from carbon.v ([108.61.166.58])
+        by smtp.googlemail.com with ESMTPSA id y7sm6785216edc.86.2021.07.12.05.37.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Jul 2021 05:37:06 -0700 (PDT)
+From:   Dmitry Kadashev <dkadashev@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+        Dmitry Kadashev <dkadashev@gmail.com>
+Subject: [PATCH  0/7] namei: clean up retry logic in various do_* functions
+Date:   Mon, 12 Jul 2021 19:36:42 +0700
+Message-Id: <20210712123649.1102392-1-dkadashev@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210711150927.3898403-2-willy@infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Sun, Jul 11, 2021 at 04:09:26PM +0100, Matthew Wilcox (Oracle) wrote:
-> It is currently possible for an I/O request that specifies IOCB_NOWAIT
-> to sleep waiting for I/O to complete in order to allocate pages for
-> readahead.  In order to fix that, we need the caller to be able to
-> specify the GFP flags to use for memory allocation in the rest of the
-> readahead path.
+Suggested by Linus in https://lore.kernel.org/io-uring/CAHk-=wh=cpt_tQCirzFZRPawRpbuFTZ2MxNpXiyUF+eBXF=+sw@mail.gmail.com/
 
-The file systems also need to respect it for their bio or private
-data allocation.  And be able to cope with failure, which they currently
-don't have to for sleeping bio allocations.
+This patchset does all the do_* functions one by one. The idea is to
+move the main logic to a helper function and handle stale retries /
+struct filename cleanups outside, which makes the logic easier to
+follow.
+
+There is one minor change in the behavior: filename_lookup() /
+filename_parentat() / filename_create() do their own retries on ESTALE
+(regardless of flags), and previously they were exempt from retries in
+the do_* functions (but they *were* called on retry - it's just the
+return code wasn't checked for ESTALE). And now the retry is done on
+the upper level, and so technically it could be called a behavior
+change. Hopefully it's an edge case where an additional check does not
+matter.
+
+On top of https://lore.kernel.org/io-uring/20210708063447.3556403-1-dkadashev@gmail.com/
+
+Dmitry Kadashev (7):
+  namei: clean up do_rmdir retry logic
+  namei: clean up do_unlinkat retry logic
+  namei: clean up do_mkdirat retry logic
+  namei: clean up do_mknodat retry logic
+  namei: clean up do_symlinkat retry logic
+  namei: clean up do_linkat retry logic
+  namei: clean up do_renameat retry logic
+
+ fs/namei.c | 283 ++++++++++++++++++++++++++++++-----------------------
+ 1 file changed, 163 insertions(+), 120 deletions(-)
+
+-- 
+2.30.2
+

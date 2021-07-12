@@ -2,95 +2,109 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DF2D23C4113
-	for <lists+io-uring@lfdr.de>; Mon, 12 Jul 2021 03:44:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5F963C5A1A
+	for <lists+io-uring@lfdr.de>; Mon, 12 Jul 2021 13:03:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232575AbhGLBqs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 11 Jul 2021 21:46:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48476 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232569AbhGLBqs (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 11 Jul 2021 21:46:48 -0400
-Received: from mail-il1-x131.google.com (mail-il1-x131.google.com [IPv6:2607:f8b0:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8D15C0613DD
-        for <io-uring@vger.kernel.org>; Sun, 11 Jul 2021 18:43:59 -0700 (PDT)
-Received: by mail-il1-x131.google.com with SMTP id o10so17792354ils.6
-        for <io-uring@vger.kernel.org>; Sun, 11 Jul 2021 18:43:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=RTuDL6SVYCLI423vVccxizGVyS3rt2KIcAV15XDzGzI=;
-        b=Iy8gHot3nMTszekx8HnQtH7Fk2icBirqlwxpvVx7UYeOpMxIEGYDRWAuD+2NaE3can
-         rdmJFl6LPl96vBiUQExYVaha3L1/RTPQdJwRBOkVgwjac3v6ZHPLBzs0qHpZ0BT5F7Ja
-         qCBobAy4u3jVyNYEln4WJ6fYBH7UGzkjZ6PpvJqe9scP7ZLVX5HXqD3h39W0zr6Z+m3B
-         kjx4FetoDtwALrU4q5a9abnZduhJvXMDbPPyWkE7lkJuiCEWVOyFREdWJHKGmNNI/xiu
-         T/ncI7Pk4UhCWzCe4kDFuJqcN2GzzztaF4WDBVd1v3QjUv8L/ophJzqlbCZxNlAhN8vs
-         Qjfg==
+        id S1379889AbhGLJbN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 12 Jul 2021 05:31:13 -0400
+Received: from mail-io1-f71.google.com ([209.85.166.71]:41923 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1379869AbhGLJbG (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 12 Jul 2021 05:31:06 -0400
+Received: by mail-io1-f71.google.com with SMTP id b13-20020a056602330db02905101d652a35so11412558ioz.8
+        for <io-uring@vger.kernel.org>; Mon, 12 Jul 2021 02:28:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=RTuDL6SVYCLI423vVccxizGVyS3rt2KIcAV15XDzGzI=;
-        b=Ar5p0rMe4Z90+IYG/LbwiBOA531+kLn3nRCZzRiUlShv0T1PCpdlQAQbC/kYdIq8ZR
-         Y1EIVG/3qSUXGNCsGYwJSHYIEimy5tTA5H9mrqj7KSz+enNe7MXGIwgr5aqR8ecRMimy
-         TxiAMSxc5RrVA/igttR9tZJ3F0XMlQ3vWBs4EiPUon3naNbE0BO+FtbH0qk6wu+eHphC
-         Nwp3b1Jy+bZ6BfE4PUao3TOunZAnDCSd77g4d1SIPEGx1l6hkofHpyrGV8Zbkii1teVQ
-         nK9EgFTwIciNvvpEdaVdQrkSdpGmEGiXCPlJiRluJXIHrmx+NPUEtvANFQZagkDhwVo/
-         sG+w==
-X-Gm-Message-State: AOAM533e58glYbGj5nkh7qHeyzuG3NrEFhjF7lgD0hijOetRf19Jcjes
-        zR8wTuA2phBzK+RH9xf9v8QA1xUzZvEplA==
-X-Google-Smtp-Source: ABdhPJxSo6fiS2R0gzDEECzHhrjn/3TAJv4OPfzafzxwq3RYA5hFlUIGf6ylmSyNjZdQKyu21ePNoQ==
-X-Received: by 2002:a92:c8c3:: with SMTP id c3mr19234399ilq.153.1626054239327;
-        Sun, 11 Jul 2021 18:43:59 -0700 (PDT)
-Received: from [192.168.1.134] ([198.8.77.61])
-        by smtp.gmail.com with ESMTPSA id z6sm1110473ilz.54.2021.07.11.18.43.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 11 Jul 2021 18:43:58 -0700 (PDT)
-Subject: Re: [PATCH 0/2] Close a hole where IOCB_NOWAIT reads could sleep
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     io-uring@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-aio@kvack.org
-References: <20210711150927.3898403-1-willy@infradead.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <a3d0f8da-ffb4-25a3-07a1-79987ce788c5@kernel.dk>
-Date:   Sun, 11 Jul 2021 19:44:07 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=RqEuL8434mkrR62CcVotYB74q2KSRIID0fO56L4zDhw=;
+        b=pu1NTzdAEBLsfAligWgzwqroWDBmrgzmarBLSjUMCBAwP4ED9qCoLCUGohGQgl6LPW
+         ImaZjGTmpNaykGm+OMxQ9XL8eMWatpv96kfiKytjIIRh23DiJ1sUq2q1MoA4IoZRjRhi
+         2MfOqIP7WlxrZ9U1FwqF+8zWueEfWiUWsgVpwZgDrRn6SrAoZczV1Rxn5AsndLtpspB7
+         kV4DZP+/wU459mXdx9ZgKHjSL+32t3v9xLVf6pBxBsMo/mYHlKEGgpF9oxeiyUQ2cYsz
+         EvUtF5IkkWZEkXVDR5CMTog8xi+DzeY0HVYygfEdJOz7un8ggsxl/xmj9Lc2xUecWSfQ
+         JSew==
+X-Gm-Message-State: AOAM530ZKmGoO8ylOEg2+422jqseRR8zvjtouS5nj9jN7cy9x5DxjEt0
+        ZCtYePw/Ap5vPKYGgd3DcLERZYzjsErTryPa0+w6/34gC47G
+X-Google-Smtp-Source: ABdhPJxYCtcbgCqEfRSlWV44wvQRTMpOBo4rvqW47TCzvOkoh35x56g7oOGFpGjzNwZX9WFCUal/e4XtYpIX7Z4Oq2lhCpU5KPd+
 MIME-Version: 1.0
-In-Reply-To: <20210711150927.3898403-1-willy@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6602:146:: with SMTP id v6mr38780269iot.5.1626082097781;
+ Mon, 12 Jul 2021 02:28:17 -0700 (PDT)
+Date:   Mon, 12 Jul 2021 02:28:17 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d0615505c6e9bd7f@google.com>
+Subject: [syzbot] kernel BUG in io_queue_async_work
+From:   syzbot <syzbot+d50e4f20cfad4510ec22@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/11/21 9:09 AM, Matthew Wilcox (Oracle) wrote:
-> I noticed a theoretical case where an IOCB_NOWAIT read could sleep:
-> 
-> filemap_get_pages
->   filemap_get_read_batch
->   page_cache_sync_readahead
->     page_cache_sync_ra
->       ondemand_readahead
->         do_page_cache_ra
->         page_cache_ra_unbounded
->           gfp_t gfp_mask = readahead_gfp_mask(mapping);
->           memalloc_nofs_save()
->           __page_cache_alloc(gfp_mask);
-> 
-> We're in a nofs context, so we're not going to start new IO, but we might
-> wait for writeback to complete.  We generally don't want to sleep for IO,
-> particularly not for IO that isn't related to us.
-> 
-> Jens, can you run this through your test rig and see if it makes any
-> practical difference?
+Hello,
 
-You bet, I'll see if I can trigger this condition and verify we're no
-longer blocking on writeback. Thanks for hacking this up.
+syzbot found the following issue on:
 
--- 
-Jens Axboe
+HEAD commit:    e2f74b13 Add linux-next specific files for 20210708
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=14fc6fb4300000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=59e1e3bbc3afca75
+dashboard link: https://syzkaller.appspot.com/bug?extid=d50e4f20cfad4510ec22
 
+Unfortunately, I don't have any reproducer for this issue yet.
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d50e4f20cfad4510ec22@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+kernel BUG at fs/io_uring.c:1293!
+invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 18789 Comm: kworker/0:10 Not tainted 5.13.0-next-20210708-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Workqueue: events io_fallback_req_func
+RIP: 0010:io_queue_async_work+0x539/0x5f0 fs/io_uring.c:1293
+Code: 89 be 89 00 00 00 48 c7 c7 00 8a 9a 89 c6 05 28 5f 77 0b 01 e8 be e9 06 07 e9 6e ff ff ff e8 be 1e 95 ff 0f 0b e8 b7 1e 95 ff <0f> 0b e8 b0 1e 95 ff 0f 0b e9 1a fd ff ff e8 d4 2f db ff e9 47 fb
+RSP: 0018:ffffc900032efba8 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: ffff88802840c800 RCX: 0000000000000000
+RDX: ffff888082e09c80 RSI: ffffffff81e07d49 RDI: ffff8880224da498
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000043736500
+R10: ffffffff81e222ff R11: 0000000000000000 R12: ffff8880782e78c0
+R13: 0000000000000019 R14: ffff88802840c8b0 R15: ffff8880782e7918
+FS:  0000000000000000(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffe2796bd8c CR3: 000000000b68e000 CR4: 00000000001506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ __io_queue_sqe+0x913/0xf10 fs/io_uring.c:6444
+ io_req_task_submit+0x100/0x120 fs/io_uring.c:2020
+ io_fallback_req_func+0x81/0xb0 fs/io_uring.c:2437
+ process_one_work+0x98d/0x1630 kernel/workqueue.c:2276
+ worker_thread+0x658/0x11f0 kernel/workqueue.c:2422
+ kthread+0x3e5/0x4d0 kernel/kthread.c:319
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295
+Modules linked in:
+---[ end trace 4d51acadba583174 ]---
+RIP: 0010:io_queue_async_work+0x539/0x5f0 fs/io_uring.c:1293
+Code: 89 be 89 00 00 00 48 c7 c7 00 8a 9a 89 c6 05 28 5f 77 0b 01 e8 be e9 06 07 e9 6e ff ff ff e8 be 1e 95 ff 0f 0b e8 b7 1e 95 ff <0f> 0b e8 b0 1e 95 ff 0f 0b e9 1a fd ff ff e8 d4 2f db ff e9 47 fb
+RSP: 0018:ffffc900032efba8 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: ffff88802840c800 RCX: 0000000000000000
+RDX: ffff888082e09c80 RSI: ffffffff81e07d49 RDI: ffff8880224da498
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000043736500
+R10: ffffffff81e222ff R11: 0000000000000000 R12: ffff8880782e78c0
+R13: 0000000000000019 R14: ffff88802840c8b0 R15: ffff8880782e7918
+FS:  0000000000000000(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f3dee45e000 CR3: 000000002dd4e000 CR4: 00000000001506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.

@@ -2,125 +2,147 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 339743C5CE3
-	for <lists+io-uring@lfdr.de>; Mon, 12 Jul 2021 15:02:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7BD33C5D05
+	for <lists+io-uring@lfdr.de>; Mon, 12 Jul 2021 15:14:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234226AbhGLNDS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 12 Jul 2021 09:03:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36064 "EHLO
+        id S230214AbhGLNRR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 12 Jul 2021 09:17:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233807AbhGLNDR (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 12 Jul 2021 09:03:17 -0400
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89AC7C0613DD;
-        Mon, 12 Jul 2021 06:00:29 -0700 (PDT)
-Received: by mail-wm1-x32f.google.com with SMTP id l18-20020a1ced120000b029014c1adff1edso14390996wmh.4;
-        Mon, 12 Jul 2021 06:00:29 -0700 (PDT)
+        with ESMTP id S229479AbhGLNRQ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 12 Jul 2021 09:17:16 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94F1BC0613DD;
+        Mon, 12 Jul 2021 06:14:27 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id w13so11390447wmc.3;
+        Mon, 12 Jul 2021 06:14:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:references:from:subject:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=PgvnSqoEi8Bhyc4rxrR+Sp00RAeQczQRheeViCZ5sH0=;
-        b=oDTMIBmiSrELCTHUmLhbGXm1N2nCGK7RED4Z60m9ykYKxYobROmbLqK2wVABKcYwih
-         sVfRtk/F1vO3dKBu5p8JzR5bE/AtW7u89G5E0OAEfjlU/Pj8BTwBwc9soHI56+wYH/FO
-         1ztKkdjHplfr7IrIQzZLvZRTYc4f0wYPLRvsgNDiFAakzRrp/VnuA+loMj48D+MmHLFy
-         KOo5zHciYqt6KdzUwm3lIYdQ8MYs5e4kugDEIYc9JPxojQ8+EPrDV7m4RBY1gvpNLMT2
-         3430Rb1n6tLg8zzUl+bqr2W2q3yus2jDkr3p4IVvItX7E4GMj8/Sta2GD7gPLFEzeU4e
-         SPng==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=3fEtIjBDPY2EjbWooFxk2PV3R4iK8JzyCJ370we96T0=;
+        b=Wb8/539HhtBGisYRa2W1Xot1Yl3hVDzKygKDuAmfhGEFB3nWe982hDy5bSoNIbxkPx
+         u3BJTtxVqk+ss3yb2zkS1fPVjvfmw0FD/7egxQy/jF/38vOIsE7U/Mmc7dAhHd24uksP
+         EhY3BFF+DG6E8G5FKfBPhNKfcZ+U26m+7nQ2WEtr/fxtBJcBcLrj+3asyAUy5DCyW2bZ
+         XdY1rlSGwGlCTHJ+Aw3n+sONa5ys/qK5CEWvUJuRhv+zpfPQMPmKZeQFE4/Ygzziolki
+         /nP9b3BznEN2nPpUKvOv15mFWLeDO3cKZKnZOlkoKHtK7GngTl0+b8uw4ls9EP+JHfFU
+         lE+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:references:from:subject:message-id:date
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=PgvnSqoEi8Bhyc4rxrR+Sp00RAeQczQRheeViCZ5sH0=;
-        b=Rwvdk+whDhRTkbZsLzOwpViM8QbLN3RAr8Kbe/sSVDAbb+kzrOJqSbfM0Z5tWlhHO7
-         amO7StFbztdKDWCz4iSv3mZR9lttAgMT6F/Ey/QUKDk92IbIXsP/pZRZSZ8AE8LA1xc/
-         aGLT6tdnu7Tjt4cCR02v3hKxEf2+8XUzNbsisUEPruvumVYK1dfsYSpayt9fv0AkYnea
-         ja1Xi4H+eWLkQ32+pB/BZiUAOTYsPvu9wPQFngbnKszisxfzkDtO9jIpZ2lY/Pv7ciAM
-         G606l5gv0W/tL+1BkxooF/TRqwP7+e0euzJosmaZZphZKZJrKxW9QO5BWYwLESeR/vmL
-         sgzA==
-X-Gm-Message-State: AOAM530xwaCvJFz/i50+60f1juE49AN6yqOo5UrNXKw7tK1/JcdInlVz
-        HrpGqUVkmhZG2LLTcI17L0c=
-X-Google-Smtp-Source: ABdhPJweAY5MR6hZ1diCHpNZouJ+Cq8l33LrMJ+ITJyr7uqCHUyuZi2Ke8VJBueUDIvgLiOPli+GSg==
-X-Received: by 2002:a1c:7ec3:: with SMTP id z186mr54805538wmc.83.1626094828075;
-        Mon, 12 Jul 2021 06:00:28 -0700 (PDT)
+        bh=3fEtIjBDPY2EjbWooFxk2PV3R4iK8JzyCJ370we96T0=;
+        b=fqypgzJwZvOtPv8e3zi4bMZj9LZYfSNceY01As8qxEIyO2qKbZ82FlPqOPey0E4sTC
+         pxCPEGFj1IZuew7q5+uTWc6NjknF1GMhfJUlww4dwZvhtXIgCHrbl1Z1Rb3exgT2d9rO
+         YaNPahM2QmNIAgQcP4arqnJspW9xvZDS3UpQc+l8cFgpxR0tQvSED1FAUwWfibs73Fzx
+         KHlMdwx/OUXkiB6FMGqO18Mdh9AnlJcaN92atyfEzJVo+TRQWyHOjS6eXnJSLDmJ+ev4
+         PWyvzNkKC3sWDvPX94UV8YUOl8VHiwmFCroBnpn0BuBFraN1n+r90I2mZwF7AbKruKtQ
+         7m8g==
+X-Gm-Message-State: AOAM531cnOxf+/Qn1EzCP8Vkj7KLVR8nchTMJqZJFmYGssspUIlqKX1j
+        pVVDdVt4yA6fufZhrmcRyeIUCNjvP2w=
+X-Google-Smtp-Source: ABdhPJwYle9kapxe77XLkIBgriJCfmI1wbba++qp7w624EJJHvy0Z0+Y8htQe0EE0rL+MTVgSwsBAw==
+X-Received: by 2002:a7b:ca43:: with SMTP id m3mr55004396wml.74.1626095666078;
+        Mon, 12 Jul 2021 06:14:26 -0700 (PDT)
 Received: from [192.168.8.197] ([85.255.233.168])
-        by smtp.gmail.com with ESMTPSA id b9sm17013840wrh.81.2021.07.12.06.00.27
+        by smtp.gmail.com with ESMTPSA id g7sm1328033wmq.22.2021.07.12.06.14.25
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 Jul 2021 06:00:27 -0700 (PDT)
-To:     syzbot <syzbot+d50e4f20cfad4510ec22@syzkaller.appspotmail.com>,
-        axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <000000000000d0615505c6e9bd7f@google.com>
+        Mon, 12 Jul 2021 06:14:25 -0700 (PDT)
+Subject: Re: [PATCH v5 02/10] io_uring: add support for IORING_OP_MKDIRAT
+To:     Dmitry Kadashev <dkadashev@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        io-uring <io-uring@vger.kernel.org>
+References: <20210603051836.2614535-1-dkadashev@gmail.com>
+ <20210603051836.2614535-3-dkadashev@gmail.com>
+ <c079182e-7118-825e-84e5-13227a3b19b9@gmail.com>
+ <4c0344d8-6725-84a6-b0a8-271587d7e604@gmail.com>
+ <CAOKbgA4ZwzUxyRxWrF7iC2sNVnEwXXAmrxVSsSxBMQRe2OyYVQ@mail.gmail.com>
+ <15a9d84b-61df-e2af-0c79-75b54d4bae8f@gmail.com>
+ <CAOKbgA4DCGANRGfsHw0SqmyRr4A4gYfwZ6WFXpOFdf_bE2b+Yw@mail.gmail.com>
+ <b6ae2481-3607-d9f8-b543-bb922b726b3a@gmail.com>
+ <CAOKbgA6va=89pLayQgC20QvPeTE0Tp-+TmgJLKy+O2KKw8dUBg@mail.gmail.com>
+ <5a6e1315-4034-0494-878a-a417e8294519@gmail.com>
+ <CAOKbgA4XirCKFxC8EzURBJsEVXRmVTeqza0Rf5PW=ifB2H80_A@mail.gmail.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-Subject: Re: [syzbot] kernel BUG in io_queue_async_work
-Message-ID: <34411b70-e29f-3631-a81c-df20c2964211@gmail.com>
-Date:   Mon, 12 Jul 2021 14:00:07 +0100
+Message-ID: <4a0bad22-8072-41d1-0f72-dc3afb6a91db@gmail.com>
+Date:   Mon, 12 Jul 2021 14:14:05 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.11.0
 MIME-Version: 1.0
-In-Reply-To: <000000000000d0615505c6e9bd7f@google.com>
+In-Reply-To: <CAOKbgA4XirCKFxC8EzURBJsEVXRmVTeqza0Rf5PW=ifB2H80_A@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/12/21 10:28 AM, syzbot wrote:
-> Hello,
+On 7/12/21 1:44 PM, Dmitry Kadashev wrote:
+> On Wed, Jul 7, 2021 at 9:06 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
+>> On 6/28/21 9:17 AM, Dmitry Kadashev wrote:
+>>> On Thu, Jun 24, 2021 at 7:22 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
+>>>> On 6/24/21 12:11 PM, Dmitry Kadashev wrote:
+>>>>> On Wed, Jun 23, 2021 at 6:54 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
+>>>>>> On 6/23/21 7:41 AM, Dmitry Kadashev wrote:
+>>>>>>> I'd imagine READ_ONCE is to be used in those checks though, isn't it? Some of
+>>>>>>> the existing checks like this lack it too btw. I suppose I can fix those in a
+>>>>>>> separate commit if that makes sense.
+>>>>>>
+>>>>>> When we really use a field there should be a READ_ONCE(),
+>>>>>> but I wouldn't care about those we check for compatibility
+>>>>>> reasons, but that's only my opinion.
+>>>>>
+>>>>> I'm not sure how the compatibility check reads are special. The code is
+>>>>> either correct or not. If a compatibility check has correctness problems
+>>>>> then it's pretty much as bad as any other part of the code having such
+>>>>> problems, no?
+>>>>
+>>>> If it reads and verifies a values first, e.g. index into some internal
+>>>> array, and then compiler plays a joke and reloads it, we might be
+>>>> absolutely screwed expecting 'segfaults', kernel data leakages and all
+>>>> the fun stuff.
+>>>>
+>>>> If that's a compatibility check, whether it's loaded earlier or later,
+>>>> or whatever, it's not a big deal, the userspace can in any case change
+>>>> the memory at any moment it wishes, even tightly around the moment
+>>>> we're reading it.
+>>>
+>>> Sorry for the slow reply, I have to balance this with my actual job that
+>>> is not directly related to the kernel development :)
+>>>
+>>> I'm no kernel concurrency expert (actually I'm not any kind of kernel
+>>> expert), but my understanding is READ_ONCE does not just mean "do not
+>>> read more than once", but rather "read exactly once" (and more than
+>>> that), and if it's not applied then the compiler is within its rights to
+>>> optimize the read out, so the compatibility check can effectively be
+>>> disabled.
+>>
+>> Yep, as they say it's about all the "inventive" transformations
+>> compilers can do, double read is just one of those that may turn very
+>> nasty for us.
+>>
+>> One big difference for me is whether it have a potential to crash the
+>> kernel or not, though it's just one side.
 > 
-> syzbot found the following issue on:
+> Ah, that makes sense.
 > 
-> HEAD commit:    e2f74b13 Add linux-next specific files for 20210708
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=14fc6fb4300000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=59e1e3bbc3afca75
-> dashboard link: https://syzkaller.appspot.com/bug?extid=d50e4f20cfad4510ec22
+>> Compilers can't drop the check just because, it first should be proven
+>> to be safe to do, and there are all sorts barriers around and
+>> limitations on how CQEs and SQEs are used, making impossible to alias
+>> memory. E.g. CQEs and SQEs can't be reused in a single syscall, they're
+>> only written and read respectively, and so on. Maybe, the only one I'd
+>> worry about is the call to io_commit_sqring(), i.e. for SQE reads not
+>> happening after it, but we need to take a look whether it's
+>> theoretically possible.
 > 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+d50e4f20cfad4510ec22@syzkaller.appspotmail.com
+> Thanks for the explanation, Pavel!
 
-[...]
-
->  __io_queue_sqe+0x913/0xf10 fs/io_uring.c:6444
-
-Shouldn't have got here from fallback, so very similar to a bug fixed
-by an already sent "io_uring: use right task for exiting checks"
-
->  io_req_task_submit+0x100/0x120 fs/io_uring.c:2020
->  io_fallback_req_func+0x81/0xb0 fs/io_uring.c:2437
->  process_one_work+0x98d/0x1630 kernel/workqueue.c:2276
->  worker_thread+0x658/0x11f0 kernel/workqueue.c:2422
->  kthread+0x3e5/0x4d0 kernel/kthread.c:319
->  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295
-> Modules linked in:
-> ---[ end trace 4d51acadba583174 ]---
-> RIP: 0010:io_queue_async_work+0x539/0x5f0 fs/io_uring.c:1293
-> Code: 89 be 89 00 00 00 48 c7 c7 00 8a 9a 89 c6 05 28 5f 77 0b 01 e8 be e9 06 07 e9 6e ff ff ff e8 be 1e 95 ff 0f 0b e8 b7 1e 95 ff <0f> 0b e8 b0 1e 95 ff 0f 0b e9 1a fd ff ff e8 d4 2f db ff e9 47 fb
-> RSP: 0018:ffffc900032efba8 EFLAGS: 00010293
-> RAX: 0000000000000000 RBX: ffff88802840c800 RCX: 0000000000000000
-> RDX: ffff888082e09c80 RSI: ffffffff81e07d49 RDI: ffff8880224da498
-> RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000043736500
-> R10: ffffffff81e222ff R11: 0000000000000000 R12: ffff8880782e78c0
-> R13: 0000000000000019 R14: ffff88802840c8b0 R15: ffff8880782e7918
-> FS:  0000000000000000(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f3dee45e000 CR3: 000000002dd4e000 CR4: 00000000001506f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> 
+btw, that was for why we were rather reluctant about that. It could
+be a good idea to add READ_ONCE as you mentioned, at least would be
+less confusing. 
 
 -- 
 Pavel Begunkov

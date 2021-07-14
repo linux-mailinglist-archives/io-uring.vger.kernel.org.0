@@ -2,95 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C2973C7561
-	for <lists+io-uring@lfdr.de>; Tue, 13 Jul 2021 18:58:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D86253C7D1B
+	for <lists+io-uring@lfdr.de>; Wed, 14 Jul 2021 05:50:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229500AbhGMRAw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 13 Jul 2021 13:00:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50772 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229478AbhGMRAw (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 13 Jul 2021 13:00:52 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C8F5C0613E9
-        for <io-uring@vger.kernel.org>; Tue, 13 Jul 2021 09:58:01 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id a18so51473151lfs.10
-        for <io-uring@vger.kernel.org>; Tue, 13 Jul 2021 09:58:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Yhm8DTXMwGH3edDwo8fP2AUueUVOXSOluzUis4TeCEM=;
-        b=IouJxuG5ed7uAGJwLWz05WTIl3EyMHKLbOeZ/figWyyseOX1vqRylnWkg9X/sDBjjh
-         6pRMGIxq99s6Lcm7Cc6a1DP+lO+eTYQP1SmjxNrY9YgOxxVm/OGSkQg5LBNWmcbLY/9e
-         lqi5l7xqvWJEepIBLkDtBnHKIIRMeYnt4R2Sg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Yhm8DTXMwGH3edDwo8fP2AUueUVOXSOluzUis4TeCEM=;
-        b=gx25hNGDffHxTt1bQNRHU1rLpx7hGSlrLrtS1Flsq4csJC/tLVS0lJTRCEmS8wUqvi
-         x3e7RE+nFV4pDrtPmhRsW0fD7xqMViJJ406GpokRIdE8xCW4mNVleOX28fU/ZAEfrlfH
-         S02bf5hBaI7HrS6Z6neuBVKt4pHhbM6jfkA07Cxo3u/BDuXxkIKHuNyE4BXzmcmK+cJb
-         KsUh89YLe89J//gzW/g9Esa8hgaS5TOPwI4TRXnW8aKLRkjSXZuzpOfYofgR0vfPY+/c
-         DFctwGFgHdydHCY3QJHRcbhl45g+g2V+2vRONJM1y9YA+s6ZP+G9OrYq/x4Upl7rwmPp
-         pCsg==
-X-Gm-Message-State: AOAM5326vFvUUCA65IG7dRPh2ZZOc21aOSEgo3YodruPyXYotB8FmLmh
-        j7z3iMzb1YVG7XNa4UWT5Nmnk1sQzDLqNew2FC8=
-X-Google-Smtp-Source: ABdhPJz9iviVwK52MkIi5FNvXvZ+RRv/gIHT7QoSAm2cGtZkRPz19o95vCiX6YgnjWwMdK5ATHq9Uw==
-X-Received: by 2002:a05:6512:36d8:: with SMTP id e24mr4364784lfs.8.1626195479406;
-        Tue, 13 Jul 2021 09:57:59 -0700 (PDT)
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com. [209.85.167.47])
-        by smtp.gmail.com with ESMTPSA id f2sm1500850lfa.261.2021.07.13.09.57.58
-        for <io-uring@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Jul 2021 09:57:58 -0700 (PDT)
-Received: by mail-lf1-f47.google.com with SMTP id u13so12265851lfs.11
-        for <io-uring@vger.kernel.org>; Tue, 13 Jul 2021 09:57:58 -0700 (PDT)
-X-Received: by 2002:a05:6512:3f82:: with SMTP id x2mr3985242lfa.421.1626195478340;
- Tue, 13 Jul 2021 09:57:58 -0700 (PDT)
+        id S237725AbhGNDxJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 13 Jul 2021 23:53:09 -0400
+Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:37557 "EHLO
+        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S237655AbhGNDxJ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 13 Jul 2021 23:53:09 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0Ufk6rVH_1626234615;
+Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0Ufk6rVH_1626234615)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 14 Jul 2021 11:50:16 +0800
+Subject: Re: Question about sendfile
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>
+References: <6a7ceb04-3503-7300-8089-86c106a95e96@linux.alibaba.com>
+ <4831bcfd-ce4a-c386-c5b2-a1417a23c500@gmail.com>
+From:   Hao Xu <haoxu@linux.alibaba.com>
+Message-ID: <a76a623f-4ece-1ffe-9e1b-370022b35105@linux.alibaba.com>
+Date:   Wed, 14 Jul 2021 11:50:15 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.10.1
 MIME-Version: 1.0
-References: <20210712123649.1102392-1-dkadashev@gmail.com> <20210712123649.1102392-2-dkadashev@gmail.com>
- <20210713145341.lngtd5g3p6zf5eoo@wittgenstein>
-In-Reply-To: <20210713145341.lngtd5g3p6zf5eoo@wittgenstein>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 13 Jul 2021 09:57:42 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjJeGY0FAs+WLaz-cxjhYcYvF1UXtZVmqoLbZH0jqn0Qg@mail.gmail.com>
-Message-ID: <CAHk-=wjJeGY0FAs+WLaz-cxjhYcYvF1UXtZVmqoLbZH0jqn0Qg@mail.gmail.com>
-Subject: Re: [PATCH 1/7] namei: clean up do_rmdir retry logic
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Dmitry Kadashev <dkadashev@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <4831bcfd-ce4a-c386-c5b2-a1417a23c500@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Jul 13, 2021 at 7:53 AM Christian Brauner
-<christian.brauner@ubuntu.com> wrote:
->
-> Instead of naming all these $something_helper I would follow the
-> underscore naming pattern we usually do, i.e. instead of e.g.
-> rmdir_helper do __rmdir() or __do_rmdir().
+在 2021/7/7 下午10:16, Pavel Begunkov 写道:
+> On 7/3/21 11:47 AM, Hao Xu wrote:
+>> Hi Pavel,
+>> I found this mail about sendfile in the maillist, may I ask why it's not
+>> good to have one pipe each for a io-wq thread.
+>> https://lore.kernel.org/io-uring/94dbbb15-4751-d03c-01fd-d25a0fe98e25@gmail.com/
+> 
+> IIRC, it's one page allocated for each such task, which is bearable but
+> don't like yet another chunk of uncontrollable implicit state. If there
+> not a bunch of active workers, IFAIK there is no way to force them to
+> drop their pipes.
+> 
+> I also don't remember the restrictions on the sendfile and what's with
+> the eternal question of "what to do if the write part of sendfile has
+> failed".
+I haven't dig into it deeply, will do some investigation.
+> 
+> Though, workers are now much more alike to user threads, so there
+> should be less of concern. And even though my gut feeling don't like
+> them, it may actually be useful. Do you have a good use case where
+> explicit pipes don't work well?
+The thing is two linked splice sqes may be cut off in shared sqthread
+case.
+> 
 
-That's certainly a pattern we have, but I don't necessarily love it.
-
-It would be even better if we'd have names that actually explain
-what/why the abstraction exists. In this case, it's the "possibly
-retry due to ESTALE", but I have no idea how to sanely name that.
-Making it "try_rmdir()" or something like that is the best I can come
-up with right now.
-
-On  a similar note, the existing "do_rmdir()" and friends aren't
-wonderful names either, but we expose that name out so changing it is
-probably not worth it. But right now we have "vfs_rmdir()" and
-"do_rmdir()", and they are just different levels of the "rmdir stack",
-without the name really describing where in the stack they are.
-
-Naming is hard, and I don't think the double underscores have been
-wonderful either.
-
-            Linus

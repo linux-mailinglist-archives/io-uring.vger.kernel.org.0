@@ -2,51 +2,51 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EBEA73C9D2B
-	for <lists+io-uring@lfdr.de>; Thu, 15 Jul 2021 12:46:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 842873C9D2D
+	for <lists+io-uring@lfdr.de>; Thu, 15 Jul 2021 12:46:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241656AbhGOKtD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 15 Jul 2021 06:49:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58276 "EHLO
+        id S240405AbhGOKtF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 15 Jul 2021 06:49:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241666AbhGOKtB (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 15 Jul 2021 06:49:01 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B16F1C06175F;
-        Thu, 15 Jul 2021 03:46:08 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id hd33so8498915ejc.9;
-        Thu, 15 Jul 2021 03:46:08 -0700 (PDT)
+        with ESMTP id S241668AbhGOKtD (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 15 Jul 2021 06:49:03 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 378C1C06175F;
+        Thu, 15 Jul 2021 03:46:10 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id qb4so8484261ejc.11;
+        Thu, 15 Jul 2021 03:46:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=YFvz8qx7mcSZDL2EvDSdDLDKIjaZI9QM888C94zIFc8=;
-        b=Dbztf1nwQhEqhAwI69bvytJqvwVkDA6RugBGa5Ak+G0KK6l8rd6jiSXRMXaOvY2iTV
-         sJ5l8fIBdg8zZfuJsFdWUZXloqY8eEMmQiDJWNZTw52wHaQxrf0bpr+Q7REECkcbg+nz
-         ND1OxLXMqbSKjQAz+90NK7c5m7hq+8NYgdmP7A0pzlJAzoDh/4G33eqmpfThFoSr9Y72
-         oIfCxqhQo+AUNQ3IZlfMWss+2gzL0X+DBxmDwMWaVHKJi4pSxkn/4+peef41dcD/XpMG
-         uFZSu7qK2J6c8H5vPcwOS60VraeICpzKGLF037/9R/echpkyPcmx0Qz/ParLBULZ4+xh
-         gObA==
+        bh=/XgiQe0Wv3FtiAdsvVsEc/R5dgx1mVv6tXWWM5MWLsk=;
+        b=juqdp6oXw2gdRl/WZyFBQaK/lOW3x4Jl4/hQ0ahmPlTb5ICOHgvD4KyrK7PClzbQic
+         GQ6AWVGtNBT7r9xrh8HN8mcqamFZCBxTP8xBYU4GgDUmaPe5jMymSl9GuzGIplo7VIjZ
+         ooPpgsV6GA4GSbx+2EhE+Y3YMeiZigoGCcV90vTDT/Wc8W6zPgQN7HonG1txz06NGfR1
+         Nd5n6oAsp2hQRY9t8sTuZid5opd9D7jl5wDH0uC8SkMZBpDXshLI6MiVhDn7dKGPQz5O
+         6ue4xzDvYubgP1HWbPswiCQgMJEEAKjwwRxV4wllerfwEW6Fg9S5a8kYVDvQVz6n8akg
+         +ISA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=YFvz8qx7mcSZDL2EvDSdDLDKIjaZI9QM888C94zIFc8=;
-        b=sftM+dxOgAm2KjLcdEqAQKs3DXvVQjiUCZqytmN9HuO2oHq1nEM6CODkCrbfqHX0Nd
-         GsTX/qvFy98Lrg/xeLbeyf1r5f7FKDX41dgaV0V4j7qwZrBUvOQAXiZu46X4T2YqCwwZ
-         Jn5NBuUoqVoXOQg/oTSXkKRcP9Csl4op5iStHDfDSb4tHW26SMOTiXc/o4W3NL+CDcqt
-         EUCkYOxaPWYDJwQF8IHi0aQgNR8oiuIKMJ3lggPlM3bx3OEde4ssPTyhl5f8VgvVjuSx
-         GsLpJEwEv17avfeBCqCJ9xZvUofA6Q+ESdP8saoq7xAAhpv4TFBtYVXsYcjZ7v8K+qbQ
-         eF2Q==
-X-Gm-Message-State: AOAM531tzhBWwzDRUMtQ9EMZSQWaK8w3uGOq1Ekp1ObMyB/bcpiwJuWQ
-        cS8ymcKtgzIHgRUnKrioAuA=
-X-Google-Smtp-Source: ABdhPJwjCk0ZiATJtOEfaUzzsjhu/lIahfKkJpXrGAd3qnaj6Qr93ylYe8hRlWVu+oYQI8WjKB3I6w==
-X-Received: by 2002:a17:906:7302:: with SMTP id di2mr4782179ejc.409.1626345967293;
-        Thu, 15 Jul 2021 03:46:07 -0700 (PDT)
+        bh=/XgiQe0Wv3FtiAdsvVsEc/R5dgx1mVv6tXWWM5MWLsk=;
+        b=YDDDh08G1Gf+EPUla0y1YP+78YLDEH/WwGPm73VzipLGzjMVfeyRTA4IudJeVa7Efl
+         zLWsYwLD+uetbKTpr4I0VlyxZJJGIDSlv58ZIYYV5ac5UKumIoRP9yzq+JFgXpTVijRD
+         mXXcHJODBiiok35WY+hW2FH7kIL5iqurky6dnQWaI6BTVIhOs2rMeIBv9xcIk0sfYSbu
+         VGlMpDN/s8H6/ot7VDM/RFUwrkRtsUaoxveepQt3zOiMAj6BbqlIP4MKQz5/UtmyPRyT
+         MQIaD9xQ6yBawX6snSL5H9ie80wdNm4fjv6UPWo9+SBa/Wfhn/9n5YDpPz9oA765BFZ/
+         NxCw==
+X-Gm-Message-State: AOAM531T2lxGl+NBrRlrPtGUVp5PemUz94sGT+Q9dFaBmJfiqKOEN+BZ
+        EmWqwYPKWc5XkaeCS794fIM=
+X-Google-Smtp-Source: ABdhPJwq4fu1DOev/CZX+6O1LfB87sWvhqFET0ffqeX+nV47pLnJdjB+OAW1jT6W/vKVpdEdZ79u5A==
+X-Received: by 2002:a17:906:8252:: with SMTP id f18mr4793118ejx.261.1626345968849;
+        Thu, 15 Jul 2021 03:46:08 -0700 (PDT)
 Received: from carbon.v ([108.61.166.58])
-        by smtp.googlemail.com with ESMTPSA id d19sm2231498eds.54.2021.07.15.03.46.05
+        by smtp.googlemail.com with ESMTPSA id d19sm2231498eds.54.2021.07.15.03.46.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Jul 2021 03:46:07 -0700 (PDT)
+        Thu, 15 Jul 2021 03:46:08 -0700 (PDT)
 From:   Dmitry Kadashev <dkadashev@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -54,9 +54,9 @@ To:     Jens Axboe <axboe@kernel.dk>,
         Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
         Dmitry Kadashev <dkadashev@gmail.com>
-Subject: [PATCH v2 13/14] namei: prepare do_renameat2 for refactoring
-Date:   Thu, 15 Jul 2021 17:45:35 +0700
-Message-Id: <20210715104536.3598130-14-dkadashev@gmail.com>
+Subject: [PATCH v2 14/14] namei: clean up do_renameat2 retry logic
+Date:   Thu, 15 Jul 2021 17:45:36 +0700
+Message-Id: <20210715104536.3598130-15-dkadashev@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210715104536.3598130-1-dkadashev@gmail.com>
 References: <20210715104536.3598130-1-dkadashev@gmail.com>
@@ -66,26 +66,8 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This is just a preparation for the move of the main renameat logic to a
-separate function to make the logic easier to follow.  This change
-contains the flow changes so that the actual change to move the main
-logic to a separate function does no change the flow at all.
-
-Changes to the flow here:
-
-1. Flags handling is moved into the retry loop. So it can be moved
-into the function with the main logic. A few extra arithmetic checks
-on a slow path should be OK.
-
-2. Just like the similar patches for rmdir and others a few commits
-before, previously on filename_create() and filename_lookup() error the
-function used to exit immediately, and now it will check the return code
-to see if ESTALE retry is appropriate. Both filename_create() and
-filename_lookup() do their own retries on ESTALE (at least via
-filename_parentat() used inside), but this extra check should be
-completely fine. Invalid flags will now hit `if retry_estale()` as well.
-
-3. unlikely() is added around the ESTALE check;
+No functional changes, just move the main logic to a helper function to
+make the whole thing easier to follow.
 
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Al Viro <viro@zeniv.linux.org.uk>
@@ -95,49 +77,77 @@ Link: https://lore.kernel.org/io-uring/CAHk-=wiG+sN+2zSoAOggKCGue2kOJvw3rQySvQXs
 Link: https://lore.kernel.org/io-uring/CAHk-=wjFd0qn6asio=zg7zUTRmSty_TpAEhnwym1Qb=wFgCKzA@mail.gmail.com/
 Signed-off-by: Dmitry Kadashev <dkadashev@gmail.com>
 ---
- fs/namei.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ fs/namei.c | 34 +++++++++++++++++++++-------------
+ 1 file changed, 21 insertions(+), 13 deletions(-)
 
 diff --git a/fs/namei.c b/fs/namei.c
-index b93e9623eb5d..a75abff5a9a6 100644
+index a75abff5a9a6..dce0e427b95a 100644
 --- a/fs/namei.c
 +++ b/fs/namei.c
-@@ -4654,9 +4654,9 @@ int do_renameat2(int olddfd, struct filename *from, int newdfd,
+@@ -4643,8 +4643,9 @@ int vfs_rename(struct renamedata *rd)
+ }
+ EXPORT_SYMBOL(vfs_rename);
+ 
+-int do_renameat2(int olddfd, struct filename *from, int newdfd,
+-		 struct filename *to, unsigned int flags)
++static int try_renameat(int olddfd, struct filename *from, int newdfd,
++			struct filename *to, unsigned int flags,
++			unsigned int lookup_flags)
+ {
+ 	struct renamedata rd;
+ 	struct dentry *old_dentry, *new_dentry;
+@@ -4653,16 +4654,15 @@ int do_renameat2(int olddfd, struct filename *from, int newdfd,
+ 	struct qstr old_last, new_last;
  	int old_type, new_type;
  	struct inode *delegated_inode = NULL;
- 	unsigned int lookup_flags = 0, target_flags = LOOKUP_RENAME_TARGET;
--	bool should_retry = false;
- 	int error = -EINVAL;
- 
-+retry:
- 	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE | RENAME_WHITEOUT))
- 		goto put_names;
- 
-@@ -4667,7 +4667,6 @@ int do_renameat2(int olddfd, struct filename *from, int newdfd,
- 	if (flags & RENAME_EXCHANGE)
- 		target_flags = 0;
+-	unsigned int lookup_flags = 0, target_flags = LOOKUP_RENAME_TARGET;
+-	int error = -EINVAL;
++	unsigned int target_flags = LOOKUP_RENAME_TARGET;
++	int error;
  
 -retry:
+ 	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE | RENAME_WHITEOUT))
+-		goto put_names;
++		return -EINVAL;
+ 
+ 	if ((flags & (RENAME_NOREPLACE | RENAME_WHITEOUT)) &&
+ 	    (flags & RENAME_EXCHANGE))
+-		goto put_names;
++		return -EINVAL;
+ 
+ 	if (flags & RENAME_EXCHANGE)
+ 		target_flags = 0;
+@@ -4670,7 +4670,7 @@ int do_renameat2(int olddfd, struct filename *from, int newdfd,
  	error = __filename_parentat(olddfd, from, lookup_flags, &old_path,
  					&old_last, &old_type);
  	if (error)
-@@ -4769,17 +4768,14 @@ int do_renameat2(int olddfd, struct filename *from, int newdfd,
- 	}
- 	mnt_drop_write(old_path.mnt);
- exit2:
--	if (retry_estale(error, lookup_flags))
--		should_retry = true;
+-		goto put_names;
++		return error;
+ 
+ 	error = __filename_parentat(newdfd, to, lookup_flags, &new_path, &new_last,
+ 				&new_type);
+@@ -4771,11 +4771,19 @@ int do_renameat2(int olddfd, struct filename *from, int newdfd,
  	path_put(&new_path);
  exit1:
  	path_put(&old_path);
--	if (should_retry) {
--		should_retry = false;
-+put_names:
-+	if (retry_estale(error, lookup_flags)) {
- 		lookup_flags |= LOOKUP_REVAL;
- 		goto retry;
- 	}
 -put_names:
+-	if (retry_estale(error, lookup_flags)) {
+-		lookup_flags |= LOOKUP_REVAL;
+-		goto retry;
+-	}
++	return error;
++}
++
++int do_renameat2(int olddfd, struct filename *from, int newdfd,
++		 struct filename *to, unsigned int flags)
++{
++	int error;
++
++	error = try_renameat(olddfd, from, newdfd, to, flags, 0);
++	if (unlikely(retry_estale(error, 0)))
++		error = try_renameat(olddfd, from, newdfd, to, flags,
++				     LOOKUP_REVAL);
++
  	putname(from);
  	putname(to);
  	return error;

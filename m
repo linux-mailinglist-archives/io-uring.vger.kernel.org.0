@@ -2,108 +2,129 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DFB743CFB64
-	for <lists+io-uring@lfdr.de>; Tue, 20 Jul 2021 15:58:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E9D4B3CFB9B
+	for <lists+io-uring@lfdr.de>; Tue, 20 Jul 2021 16:11:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239341AbhGTNN6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 20 Jul 2021 09:13:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34124 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239046AbhGTNLg (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 20 Jul 2021 09:11:36 -0400
-Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40F99C061574
-        for <io-uring@vger.kernel.org>; Tue, 20 Jul 2021 06:52:11 -0700 (PDT)
-Received: by mail-pg1-x535.google.com with SMTP id o4so17947404pgs.6
-        for <io-uring@vger.kernel.org>; Tue, 20 Jul 2021 06:52:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=mg96Ac5h0FwYX7AHJlirtckZlaLSWupGqp2mVuP86C0=;
-        b=cHDkGdim5v/AoF0Ty4L+Z9X+fUgfhOIu3n+Eps0zUe/Wsmro3Bdh5S8IQFemUeyfwb
-         9bhKF/Xl+kCaIQTQ4LS9+XbkbALVxb4AcAC8bnxyysQsUgOMQKDmxyuQewJqLpcLH7cB
-         DAo2aSJjNPy4waQZNW4b2m0N2H15CUPqP5T3iT8kRhyJW0JUuG/1aQTQeF7lWwHWY0ar
-         c3+eYT9sUUnQcLEw7vRjflG1avQpPrz5lovoLi19QSTZgpqXJP2zieqe5paTmhOPCDPD
-         i+sgaj1U/+jDuAujkqpgqCQYekLn9rncMx1Xi6njlrqJPa0/87OCAysjBPWXTln8bbhM
-         jg/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=mg96Ac5h0FwYX7AHJlirtckZlaLSWupGqp2mVuP86C0=;
-        b=AI42DAuIG51vxh8dwLWUs5jwPd+Y02kCfkFrka89K3N+bwDdYkPe1z3hHvqWCcKIYM
-         MaW1kvmTGznn/gzXdgcZDvAJp1NIwXyE3hz4XagaLe9KnnxhZ/+ZnKvOPAxBzK72LsvR
-         2M6kuISVPG+pj7hG9s0Fg/tFLyxxSNplIsWpzVpGRsimKEPZi+1S5oqrDvGENlu4qGEr
-         zYlNm1/5fLKNCsiDzy2LZAkh8wRoQtU3WFvTPSPcUlQPWqNr17btK5GwvEHbMgRLhXnd
-         vWLmwmDgSQnIJLq94Yjvo6x94vgQUzo148HXN1CWO6Xm2ttNwU17Yipsw9/VVOdj6cC/
-         5dBg==
-X-Gm-Message-State: AOAM533DNiJT15qEESAh5hut+rPIyLqjoKRpCIuCj8TfCfv9rVqIh743
-        WCI18cNvPn0MweCKIwW9g5uhYA==
-X-Google-Smtp-Source: ABdhPJzrJdVaaYE1SPojmpR4DYAxF+il6fg+MjegzvCVsYljtsjxNkJZwM+BhLiAgYgyFR6IjqGqnw==
-X-Received: by 2002:a63:4d61:: with SMTP id n33mr14230339pgl.219.1626789130776;
-        Tue, 20 Jul 2021 06:52:10 -0700 (PDT)
-Received: from [192.168.1.187] ([198.8.77.61])
-        by smtp.gmail.com with ESMTPSA id x6sm28325022pgq.67.2021.07.20.06.52.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 Jul 2021 06:52:10 -0700 (PDT)
-Subject: Re: [PATCH] io_uring: fix memleak in io_init_wq_offload()
-To:     Yang Yingliang <yangyingliang@huawei.com>,
-        linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-Cc:     asml.silence@gmail.com
-References: <20210720083805.3030730-1-yangyingliang@huawei.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <43a58f84-bd43-a644-bc8c-642147b354aa@kernel.dk>
-Date:   Tue, 20 Jul 2021 07:52:09 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S239014AbhGTNWA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 20 Jul 2021 09:22:00 -0400
+Received: from zeniv-ca.linux.org.uk ([142.44.231.140]:36110 "EHLO
+        zeniv-ca.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239597AbhGTNTr (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 20 Jul 2021 09:19:47 -0400
+Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1m5qDv-002KdW-Ld; Tue, 20 Jul 2021 13:55:51 +0000
+Date:   Tue, 20 Jul 2021 13:55:51 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Dmitry Kadashev <dkadashev@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        io-uring <io-uring@vger.kernel.org>
+Subject: Re: [PATCH 05/14] namei: prepare do_mkdirat for refactoring
+Message-ID: <YPbV5wnUNw3SsSfI@zeniv-ca.linux.org.uk>
+References: <20210715103600.3570667-1-dkadashev@gmail.com>
+ <20210715103600.3570667-6-dkadashev@gmail.com>
+ <YPCX5/0NtbEySW9q@zeniv-ca.linux.org.uk>
+ <CAOKbgA79ODk_swv9nsU50ZrRe9Xqv3n9-JOH+H0zyhUF2SYcRw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20210720083805.3030730-1-yangyingliang@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOKbgA79ODk_swv9nsU50ZrRe9Xqv3n9-JOH+H0zyhUF2SYcRw@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/20/21 2:38 AM, Yang Yingliang wrote:
-> I got memory leak report when doing fuzz test:
-> 
-> BUG: memory leak
-> unreferenced object 0xffff888107310a80 (size 96):
-> comm "syz-executor.6", pid 4610, jiffies 4295140240 (age 20.135s)
-> hex dump (first 32 bytes):
-> 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
-> 00 00 00 00 ad 4e ad de ff ff ff ff 00 00 00 00 .....N..........
-> backtrace:
-> [<000000001974933b>] kmalloc include/linux/slab.h:591 [inline]
-> [<000000001974933b>] kzalloc include/linux/slab.h:721 [inline]
-> [<000000001974933b>] io_init_wq_offload fs/io_uring.c:7920 [inline]
-> [<000000001974933b>] io_uring_alloc_task_context+0x466/0x640 fs/io_uring.c:7955
-> [<0000000039d0800d>] __io_uring_add_tctx_node+0x256/0x360 fs/io_uring.c:9016
-> [<000000008482e78c>] io_uring_add_tctx_node fs/io_uring.c:9052 [inline]
-> [<000000008482e78c>] __do_sys_io_uring_enter fs/io_uring.c:9354 [inline]
-> [<000000008482e78c>] __se_sys_io_uring_enter fs/io_uring.c:9301 [inline]
-> [<000000008482e78c>] __x64_sys_io_uring_enter+0xabc/0xc20 fs/io_uring.c:9301
-> [<00000000b875f18f>] do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-> [<00000000b875f18f>] do_syscall_64+0x3b/0x90 arch/x86/entry/common.c:80
-> [<000000006b0a8484>] entry_SYSCALL_64_after_hwframe+0x44/0xae
-> 
-> CPU0                          CPU1
-> io_uring_enter                io_uring_enter
-> io_uring_add_tctx_node        io_uring_add_tctx_node
-> __io_uring_add_tctx_node      __io_uring_add_tctx_node
-> io_uring_alloc_task_context   io_uring_alloc_task_context
-> io_init_wq_offload            io_init_wq_offload
-> hash = kzalloc                hash = kzalloc
-> ctx->hash_map = hash          ctx->hash_map = hash <- one of the hash is leaked
-> 
-> When calling io_uring_enter() in parallel, the 'hash_map' will be leaked, 
-> add uring_lock to protect 'hash_map'.
+On Tue, Jul 20, 2021 at 01:59:29PM +0700, Dmitry Kadashev wrote:
 
-Good catch! Applied, thanks.
+> > This is the wrong way to go.  Really.  Look at it that way - LOOKUP_REVAL
+> > is the final stage of escalation; if we had to go there, there's no
+> > point being optimistic about the last dcache lookup, nevermind trying
+> > to retry the parent pathwalk if we fail with -ESTALE doing it.
+> >
+> > I'm not saying that it's something worth optimizing for; the problem
+> > is different - the logics makes no sense whatsoever that way.  It's
+> > a matter of reader's cycles wasted on "what the fuck are we trying
+> > to do here?", not the CPU cycles wasted on execution.
+> >
+> > While we are at it, it makes no sense for filename_parentat() and its
+> > ilk to go for RCU and normal if it's been given LOOKUP_REVAL - I mean,
+> > look at the sequence of calls in there.  And try to make sense of
+> > it.  Especially of the "OK, RCU attempt told us to sod off and try normal;
+> > here, let's call path_parentat() with LOOKUP_REVAL for flags and if it
+> > says -ESTALE, call it again with exact same arguments" part.
+> >
+> > Seriously, look at that from the point of view of somebody who tries
+> > to make sense of the entire thing
+> 
+> OK, let me try to venture down that "change the way ESTALE retries are
+> done completely" path. The problem here is I'm not familiar with the
+> code enough to be sure the conversion is 1-to-1 (i.e. that we can't get
+> ESTALE from somewhere unexpected), and that retries are open-coded in
+> quite a few places it seems. Anyway, I'll try and dig in and come back
+> with either an RFC patch or some questions. Thanks for the feedback, Al.
 
--- 
-Jens Axboe
+I'd try to look at the primitives that go through RCU/normal/REVAL series.
+They are all in fs/namei.c; filename_lookup(), filename_parentat(),
+do_filp_open() and do_filo_open_root().  The latter pair almost certainly
+is fine as-is.
 
+retry_estale() crap is limited to user_path_at/user_path_at_empty users,
+along with some filename_parentat() ones.
+
+There we follow that series with something that might give us ESTALE,
+and if it does, we want to repeat the whole thing in REVAL mode.
+
+OTOH, there are callers (and fairly similar ones, at that - look at e.g.
+AF_UNIX bind doing mknod) where we don't have that kind of logics.
+
+Question 1: which of those are lacking retry_estale(), even though they
+might arguably need it?  Note that e.g. AF_UNIX bind uses kern_path_create(),
+so we need to look at all callchains leading to those, not just the ones
+in fs/namei.c guts.
+
+If most of those really want retry_estale, we'd be better off if we took
+the REVAL fallback out of filename_lookup() and filename_parentat()
+and turned massaged the users from
+	do rcu/normal/reval lookups
+	if failed, fuck off
+	do other work
+	if it fails with ESTALE
+		do rcu/reval/reval (yes, really)
+		if failed, fuck off
+		do other work
+into
+	do rcu/normal lookups
+	if not failed
+		do other work
+	if something (including initial lookup) failed with ESTALE
+		repeat the entire thing with LOOKUP_REVAL in the mix
+possibly with a helper function involved.
+For the ones that need retry_estale that's a win; for the rest it'd
+be boilerplate (that's basically the ones where "do other work" never
+fails with ESTALE).
+
+Question 2: how are "need retry_estale"/"fine just with ESTALE fallback
+in filename_{lookup,parentat}()" cases are distributed?
+
+If the majority is in "need retry_estale" class, then something similar
+to what's been outlined above would probably be a decent solution.
+
+Otherwise we'll need wrappers equivalent to current behaviour, and that's
+where it can get unpleasant - at which level in call chain do we put
+that wrapper?  Sure, we can add filename_lookup_as_it_fucking_used_to_be().
+Except that it's not called directly by those "don't need retry_estale"
+users, so we'd need to provide such counterparts for them as well ;-/
+
+IOW, we need the call tree for filename_lookup()/filename_parentat(),
+with leaves (originators of call chain) marked with "does that user
+do retry_estale?" (and tracked far back for the answer to depend only
+upon the call site - if an intermediate can come from both kinds
+of places, we need to track back to its callers).
+
+Then we'll be able to see at which levels do we want those "as it used
+to behave" wrappers...
+
+If you want to dig around, that would probably be a reasonable place to
+start.

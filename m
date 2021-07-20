@@ -2,109 +2,110 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B58C3CF4FC
-	for <lists+io-uring@lfdr.de>; Tue, 20 Jul 2021 09:02:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82F033CF633
+	for <lists+io-uring@lfdr.de>; Tue, 20 Jul 2021 10:36:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242791AbhGTGVN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 20 Jul 2021 02:21:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53380 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243168AbhGTGTK (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 20 Jul 2021 02:19:10 -0400
-Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18822C0613DE;
-        Mon, 19 Jul 2021 23:59:41 -0700 (PDT)
-Received: by mail-yb1-xb32.google.com with SMTP id a16so31400385ybt.8;
-        Mon, 19 Jul 2021 23:59:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NTsNlpcS3m1RPAqJpTjt1eD/8FRCX20SGgwdUxbXddg=;
-        b=N3JUWYsA26n1AarVQFBd//NcudAOtfWp23l1xRoCCmj3xSZXNaaFbm6b7CCaBIo6sc
-         yNcJ3FFKEAMUdsAOsYidVLhpCs6ov1jHJrdE8yrboWCdqkNEYeU4H1E5kA9N6fXnJz3B
-         ZRpUw4iKZtStQC3nTXHpmgSZT5IlTXwkPl7cmEs4P7nngG/tZa/DP6IEXZJ5YSxMRIsC
-         e9qMU5XnS2x7nwf77miFvxx3TapfsICICRv4vrKenDd1mAOL4t2VwyeflxlBYl5Bz9qD
-         41ThlSYvSQMfN5JhMi2Q6ef0OAR1ozkSzpypHSN57+0WmC606B9cT0cWkfsTT6VFsB4z
-         s8Ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NTsNlpcS3m1RPAqJpTjt1eD/8FRCX20SGgwdUxbXddg=;
-        b=Kz/VZJn92rjARauCViom59Khnlu6oYU5xKfU9WXBj5iHTVKGKDgslGpWLCIivIcGQy
-         5ywqUwiTvZ0CG2lUYwg1GTs2bIoT0B+HfF64c6SBZwluutUg//BhbzoCTKoL003n3qEd
-         7TRTp0kWYTn9f6Q5yUJdXwgA41mxGcEN6zdeF6xmMRN35RHbq3bggBHX5e+yUu9uO4ib
-         8wxS7fcKSTNDXQQXeyycIWTayF0RXC2AWBJsoI8W0LhTqaLYbiE57YS4MbF1kOn7WGLO
-         RdTfbZNtfhkgqdOqj98+gjEQiOJgtJ7zQxFzNX3MDM8N+wDGU0mbwA0BrbwdypchkGQT
-         lC5g==
-X-Gm-Message-State: AOAM531qCA+SQejv7TuovnVb31fCCQMOJWS3J+C873G1xv1Kywq+VJu2
-        oE7+fR4EMBbK94XNZTz8HLLtuc4wfD24YVFWwQM=
-X-Google-Smtp-Source: ABdhPJzHQWzeaBKjrfpgbPHIjudkJ5oM3rtajfL1cgg+a7Hco293AYL+aukcN4KdbTLu7RfihIYto8kVMWCP/cd7HA0=
-X-Received: by 2002:a25:ab8b:: with SMTP id v11mr37594603ybi.375.1626764380472;
- Mon, 19 Jul 2021 23:59:40 -0700 (PDT)
+        id S231305AbhGTHzb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 20 Jul 2021 03:55:31 -0400
+Received: from szxga03-in.huawei.com ([45.249.212.189]:12279 "EHLO
+        szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234547AbhGTHzB (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 20 Jul 2021 03:55:01 -0400
+Received: from dggemv711-chm.china.huawei.com (unknown [172.30.72.54])
+        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4GTX3d0Qf8z7wDb;
+        Tue, 20 Jul 2021 16:30:53 +0800 (CST)
+Received: from dggpeml500017.china.huawei.com (7.185.36.243) by
+ dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Tue, 20 Jul 2021 16:35:28 +0800
+Received: from huawei.com (10.175.103.91) by dggpeml500017.china.huawei.com
+ (7.185.36.243) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.2; Tue, 20 Jul
+ 2021 16:35:27 +0800
+From:   Yang Yingliang <yangyingliang@huawei.com>
+To:     <linux-kernel@vger.kernel.org>, <io-uring@vger.kernel.org>
+CC:     <axboe@kernel.dk>, <asml.silence@gmail.com>
+Subject: [PATCH] io_uring: fix memleak in io_init_wq_offload()
+Date:   Tue, 20 Jul 2021 16:38:05 +0800
+Message-ID: <20210720083805.3030730-1-yangyingliang@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20210715103600.3570667-1-dkadashev@gmail.com> <20210715103600.3570667-6-dkadashev@gmail.com>
- <YPCX5/0NtbEySW9q@zeniv-ca.linux.org.uk>
-In-Reply-To: <YPCX5/0NtbEySW9q@zeniv-ca.linux.org.uk>
-From:   Dmitry Kadashev <dkadashev@gmail.com>
-Date:   Tue, 20 Jul 2021 13:59:29 +0700
-Message-ID: <CAOKbgA79ODk_swv9nsU50ZrRe9Xqv3n9-JOH+H0zyhUF2SYcRw@mail.gmail.com>
-Subject: Re: [PATCH 05/14] namei: prepare do_mkdirat for refactoring
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.103.91]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpeml500017.china.huawei.com (7.185.36.243)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, Jul 16, 2021 at 3:17 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> On Thu, Jul 15, 2021 at 05:35:51PM +0700, Dmitry Kadashev wrote:
-> > This is just a preparation for the move of the main mkdirat logic to a
-> > separate function to make the logic easier to follow.  This change
-> > contains the flow changes so that the actual change to move the main
-> > logic to a separate function does no change the flow at all.
-> >
-> > Just like the similar patches for rmdir and unlink a few commits before,
-> > there two changes here:
-> >
-> > 1. Previously on filename_create() error the function used to exit
-> > immediately, and now it will check the return code to see if ESTALE
-> > retry is appropriate. The filename_create() does its own retries on
-> > ESTALE (at least via filename_parentat() used inside), but this extra
-> > check should be completely fine.
->
-> This is the wrong way to go.  Really.  Look at it that way - LOOKUP_REVAL
-> is the final stage of escalation; if we had to go there, there's no
-> point being optimistic about the last dcache lookup, nevermind trying
-> to retry the parent pathwalk if we fail with -ESTALE doing it.
->
-> I'm not saying that it's something worth optimizing for; the problem
-> is different - the logics makes no sense whatsoever that way.  It's
-> a matter of reader's cycles wasted on "what the fuck are we trying
-> to do here?", not the CPU cycles wasted on execution.
->
-> While we are at it, it makes no sense for filename_parentat() and its
-> ilk to go for RCU and normal if it's been given LOOKUP_REVAL - I mean,
-> look at the sequence of calls in there.  And try to make sense of
-> it.  Especially of the "OK, RCU attempt told us to sod off and try normal;
-> here, let's call path_parentat() with LOOKUP_REVAL for flags and if it
-> says -ESTALE, call it again with exact same arguments" part.
->
-> Seriously, look at that from the point of view of somebody who tries
-> to make sense of the entire thing
+I got memory leak report when doing fuzz test:
 
-OK, let me try to venture down that "change the way ESTALE retries are
-done completely" path. The problem here is I'm not familiar with the
-code enough to be sure the conversion is 1-to-1 (i.e. that we can't get
-ESTALE from somewhere unexpected), and that retries are open-coded in
-quite a few places it seems. Anyway, I'll try and dig in and come back
-with either an RFC patch or some questions. Thanks for the feedback, Al.
+BUG: memory leak
+unreferenced object 0xffff888107310a80 (size 96):
+comm "syz-executor.6", pid 4610, jiffies 4295140240 (age 20.135s)
+hex dump (first 32 bytes):
+01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+00 00 00 00 ad 4e ad de ff ff ff ff 00 00 00 00 .....N..........
+backtrace:
+[<000000001974933b>] kmalloc include/linux/slab.h:591 [inline]
+[<000000001974933b>] kzalloc include/linux/slab.h:721 [inline]
+[<000000001974933b>] io_init_wq_offload fs/io_uring.c:7920 [inline]
+[<000000001974933b>] io_uring_alloc_task_context+0x466/0x640 fs/io_uring.c:7955
+[<0000000039d0800d>] __io_uring_add_tctx_node+0x256/0x360 fs/io_uring.c:9016
+[<000000008482e78c>] io_uring_add_tctx_node fs/io_uring.c:9052 [inline]
+[<000000008482e78c>] __do_sys_io_uring_enter fs/io_uring.c:9354 [inline]
+[<000000008482e78c>] __se_sys_io_uring_enter fs/io_uring.c:9301 [inline]
+[<000000008482e78c>] __x64_sys_io_uring_enter+0xabc/0xc20 fs/io_uring.c:9301
+[<00000000b875f18f>] do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+[<00000000b875f18f>] do_syscall_64+0x3b/0x90 arch/x86/entry/common.c:80
+[<000000006b0a8484>] entry_SYSCALL_64_after_hwframe+0x44/0xae
 
+CPU0                          CPU1
+io_uring_enter                io_uring_enter
+io_uring_add_tctx_node        io_uring_add_tctx_node
+__io_uring_add_tctx_node      __io_uring_add_tctx_node
+io_uring_alloc_task_context   io_uring_alloc_task_context
+io_init_wq_offload            io_init_wq_offload
+hash = kzalloc                hash = kzalloc
+ctx->hash_map = hash          ctx->hash_map = hash <- one of the hash is leaked
+
+When calling io_uring_enter() in parallel, the 'hash_map' will be leaked, 
+add uring_lock to protect 'hash_map'.
+
+Fixes: e941894eae31 ("io-wq: make buffered file write hashed work map per-ctx")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+---
+ fs/io_uring.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 0cac361bf6b8..63d3a9c2a2a6 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -7899,15 +7899,19 @@ static struct io_wq *io_init_wq_offload(struct io_ring_ctx *ctx,
+ 	struct io_wq_data data;
+ 	unsigned int concurrency;
+ 
++	mutex_lock(&ctx->uring_lock);
+ 	hash = ctx->hash_map;
+ 	if (!hash) {
+ 		hash = kzalloc(sizeof(*hash), GFP_KERNEL);
+-		if (!hash)
++		if (!hash) {
++			mutex_unlock(&ctx->uring_lock);
+ 			return ERR_PTR(-ENOMEM);
++		}
+ 		refcount_set(&hash->refs, 1);
+ 		init_waitqueue_head(&hash->wait);
+ 		ctx->hash_map = hash;
+ 	}
++	mutex_unlock(&ctx->uring_lock);
+ 
+ 	data.hash = hash;
+ 	data.task = task;
 -- 
-Dmitry Kadashev
+2.25.1
+

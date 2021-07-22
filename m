@@ -2,67 +2,61 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CF043D3009
-	for <lists+io-uring@lfdr.de>; Fri, 23 Jul 2021 01:06:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14B453D3014
+	for <lists+io-uring@lfdr.de>; Fri, 23 Jul 2021 01:12:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232270AbhGVWZx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 22 Jul 2021 18:25:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51982 "EHLO
+        id S232425AbhGVWcF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 22 Jul 2021 18:32:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232116AbhGVWZx (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 22 Jul 2021 18:25:53 -0400
-Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E0F4C061757
-        for <io-uring@vger.kernel.org>; Thu, 22 Jul 2021 16:06:27 -0700 (PDT)
-Received: by mail-pl1-x629.google.com with SMTP id e5so1123937pla.6
-        for <io-uring@vger.kernel.org>; Thu, 22 Jul 2021 16:06:27 -0700 (PDT)
+        with ESMTP id S232024AbhGVWcF (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 22 Jul 2021 18:32:05 -0400
+Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4844C061575
+        for <io-uring@vger.kernel.org>; Thu, 22 Jul 2021 16:12:38 -0700 (PDT)
+Received: by mail-pj1-x1031.google.com with SMTP id my10so8221262pjb.1
+        for <io-uring@vger.kernel.org>; Thu, 22 Jul 2021 16:12:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=UX80Zg7G9R6TR4N/QY6RPnMxTLMXDyaEGBPpPaGdslU=;
-        b=Mg272/+koMCLUwqtk4UiQ2FwkocNUANXeoIvbzzl4CKBPyxLKbsI7h96iSHN42yWhE
-         AqWXzmBjDDIzYE6JHKttstrtZgD1/8gbKqUiwPfeEss8H0bH9SYmpXKwTKG26eW6OgSx
-         xFzvlWbogQ3OF8Dyv+VofXyCU5czG3ew0oCq68JlMQEwk1Xy6W9B75Hk/tHqgbBpVaqM
-         iD9Id6jg8IB3PEnArAVcl6xcsO2K5n6FsYmkHkm4/mzRSkFuSc34hy/fbHKDuxWNfm25
-         UrnP0Uktpj/PvnfPcgkMxRmaU1TmEWPX4vOmEDQy18dnPRK1nCZglkz5CNsxOXcXC/fe
-         0XRg==
+        h=to:cc:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=BULifhoaWAiZpy9ex5uBmDt823I9EPRjUd2U8zXjhTk=;
+        b=1j4XqFyFJxoe2O+Oc4DCqnZow6yCJGzX4fEFZ+JYWd0/roxXmrLeGxqliCqDtlo9ib
+         WqVvt01XIqhM0Go4QnzKXDnqx0DTGLuA10vNeBEXKyT4b0l88/1qBHOmmiI9Evkegr1A
+         +dYoZuyjyTJmN4PGQ2lAx1XjQBq39GIfu/1735zii8jpakSJ1UGegq5WI8NU7Ed/TLBk
+         NeQPxb99CUyyXm/ziNmOdrWwYCihD2+2hDPAFjsasv6d1ZgezTc4NpkwfFU4h8QbAzK+
+         C+zIOc3zYTpkp5vuYQojkH4/IhqQwunvdRpZ7drAS2YULtF15coEdlfb+YsmOJNORHWW
+         0uIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=UX80Zg7G9R6TR4N/QY6RPnMxTLMXDyaEGBPpPaGdslU=;
-        b=HgrQhadbAOpfe1NAhcNYvbWC4aAQsQO56/CwVZ0SBee98poWjzgL/eG613hLPoi1jn
-         XFWQSpJOhHCTWBpgl3EtmdkwmG21FUjaWpfCbcEV4cdm1vYGOFnWcyTsXm28wbVbZm9o
-         PD08E+FMugyDKH2A/zkHVR9XbQFxaCdJcE6cAAuyAUYbc+e6cnUlFYpfY19VXdjZ5GH9
-         Fgnca86rBkYxcQJsL8edaUY19fG1tX8pQYQhZIvJtsF8NfBusdnmTmkY0o3u38eBMCxE
-         5+i2gG0mkosXD5oMHlAnJasNt/kDE5uXKxGmo2b8T4H36Lcy+DFcsxZq7BYnYDQzUukf
-         cavw==
-X-Gm-Message-State: AOAM533PqHHk5vLxSkP+isggN/qvubIXe8jbPKzi94mkh+knNl/bHV6v
-        lrIJTLtWDqDpM6RCLDNkjhl69/CkcXVEUVvP
-X-Google-Smtp-Source: ABdhPJwhJXwMjQftVM62LeKSP5qwoSyOVoOFdj8rVQZwshe3ZY0gW+v33Jy7n2UP5XHHU/LRSHQGlA==
-X-Received: by 2002:a63:409:: with SMTP id 9mr2213703pge.132.1626995186236;
-        Thu, 22 Jul 2021 16:06:26 -0700 (PDT)
+        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=BULifhoaWAiZpy9ex5uBmDt823I9EPRjUd2U8zXjhTk=;
+        b=lcQa8YYbcQlYQozm3BKkwyjTVg1pMB2nn8LdbW7j4TQ/9I/YN3uWqahsRgwP/a3SVo
+         A+X0Q93Y0R7opDDdRIIiOcSTjEP4g/qHfhsCV8VCjJoCDddUWKqeu5vw8vvXo+mWzhXQ
+         6qsC0Z2WTE1GcnSTdZ6AakygXzLVGdviht30zET81m5SHyPBzVDATSNqRq/NgGXL0j0c
+         +MekfdYLoWQK0KPPw3Eora7fJwQdf0coEqs7NNWCbzgTksfERockd53eUIGXNJqvILub
+         haBGcQD2Nla4BeeluLQR8U9z76X78HSTlo3NYAVovaxD6GzPUFfgkQvEuMOkuvzaLC9w
+         X8pQ==
+X-Gm-Message-State: AOAM531G5PC+MECdXJyFs5CunELlXczgL3zBYc52nVeDAYZRAvjMdvXu
+        KPsIbY4kT1k/d6GQR7QiMUojRg==
+X-Google-Smtp-Source: ABdhPJyPvzuZ58c89XwVvxjKELsPtJho0hyFcxpPi9QfOWdQ8rB7fjt/kqHHzlFm9U4KZnsItnpN9w==
+X-Received: by 2002:a17:90b:1195:: with SMTP id gk21mr1934975pjb.150.1626995558305;
+        Thu, 22 Jul 2021 16:12:38 -0700 (PDT)
 Received: from [192.168.1.187] ([198.8.77.61])
-        by smtp.gmail.com with ESMTPSA id w6sm35661105pgh.56.2021.07.22.16.06.24
+        by smtp.gmail.com with ESMTPSA id o184sm35636770pga.18.2021.07.22.16.12.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Jul 2021 16:06:25 -0700 (PDT)
-Subject: Re: [PATCH 3/3] io_uring: refactor io_sq_offload_create()
-To:     Al Viro <viro@zeniv.linux.org.uk>,
+        Thu, 22 Jul 2021 16:12:37 -0700 (PDT)
+To:     io-uring <io-uring@vger.kernel.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         Pavel Begunkov <asml.silence@gmail.com>
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <cover.1618916549.git.asml.silence@gmail.com>
- <939776f90de8d2cdd0414e1baa29c8ec0926b561.1618916549.git.asml.silence@gmail.com>
- <YPnqM0fY3nM5RdRI@zeniv-ca.linux.org.uk>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <57758edf-d064-d37e-e544-e0c72299823d@kernel.dk>
-Date:   Thu, 22 Jul 2021 17:06:24 -0600
+Subject: [PATCH] io_uring: fix early fdput() of file
+Message-ID: <da4a7435-c50b-5a0a-0e4b-9d35dc7d719a@kernel.dk>
+Date:   Thu, 22 Jul 2021 17:12:36 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <YPnqM0fY3nM5RdRI@zeniv-ca.linux.org.uk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -70,58 +64,38 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/22/21 3:59 PM, Al Viro wrote:
-> On Tue, Apr 20, 2021 at 12:03:33PM +0100, Pavel Begunkov wrote:
->> Just a bit of code tossing in io_sq_offload_create(), so it looks a bit
->> better. No functional changes.
-> 
-> Does a use-after-free count as a functional change?
-> 
->>  		f = fdget(p->wq_fd);
-> 
-> Descriptor table is shared with another thread, grabbed a reference to file.
-> Refcount is 2 (1 from descriptor table, 1 held by us)
-> 
->>  		if (!f.file)
->>  			return -ENXIO;
-> 
-> Nope, not NULL.
-> 
->> -		if (f.file->f_op != &io_uring_fops) {
->> -			fdput(f);
->> -			return -EINVAL;
->> -		}
->>  		fdput(f);
-> 
-> Decrement refcount, get preempted away.  f.file->f_count is 1 now.
-> 
-> Another thread: close() on the same descriptor.  Final reference to
-> struct file (from descriptor table) is gone, file closed, memory freed.
-> 
-> Regain CPU...
-> 
->> +		if (f.file->f_op != &io_uring_fops)
->> +			return -EINVAL;
-> 
-> ... and dereference an already freed structure.
-> 
-> What scares me here is that you are playing with bloody fundamental
-> objects, without understanding even the basics regarding their
-> handling ;-/
+A previous commit shuffled some code around, and inadvertently used
+struct file after fdput() had been called on it. As we can't touch
+the file post fdput() dropping our reference, move the fdput() to
+after that has been done.
 
-Let's calm down here, no need to resort to hyperbole. It looks like an
-honest mistake to me, and I should have caught that in review. You don't
-even need to understand file structure life times to realize that:
+Cc: Pavel Begunkov <asml.silence@gmail.com>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/io-uring/YPnqM0fY3nM5RdRI@zeniv-ca.linux.org.uk/
+Fixes: f2a48dd09b8e ("io_uring: refactor io_sq_offload_create()")
+Reported-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-	put(shared_struct);
-	if (shared_struct->foo)
-		...
+---
 
-is a bad idea. Which Pavel obviously does.
-
-But yes, that is not great and obviously a bug, and we'll of course get
-it fixed up asap.
-
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index fe3d948658ad..f2fe4eca150b 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -7991,9 +7991,11 @@ static int io_sq_offload_create(struct io_ring_ctx *ctx,
+ 		f = fdget(p->wq_fd);
+ 		if (!f.file)
+ 			return -ENXIO;
+-		fdput(f);
+-		if (f.file->f_op != &io_uring_fops)
++		if (f.file->f_op != &io_uring_fops) {
++			fdput(f);
+ 			return -EINVAL;
++		}
++		fdput(f);
+ 	}
+ 	if (ctx->flags & IORING_SETUP_SQPOLL) {
+ 		struct task_struct *tsk;
 -- 
 Jens Axboe
 

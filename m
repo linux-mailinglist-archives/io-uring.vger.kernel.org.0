@@ -2,52 +2,52 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EC8B3D3EE9
-	for <lists+io-uring@lfdr.de>; Fri, 23 Jul 2021 19:36:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 092423D4003
+	for <lists+io-uring@lfdr.de>; Fri, 23 Jul 2021 19:56:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231305AbhGWQ4A (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 23 Jul 2021 12:56:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50642 "EHLO
+        id S229459AbhGWRQA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 23 Jul 2021 13:16:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229686AbhGWQz7 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 23 Jul 2021 12:55:59 -0400
-Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EE55C061575
-        for <io-uring@vger.kernel.org>; Fri, 23 Jul 2021 10:36:33 -0700 (PDT)
-Received: by mail-io1-xd30.google.com with SMTP id m13so3460840iol.7
-        for <io-uring@vger.kernel.org>; Fri, 23 Jul 2021 10:36:33 -0700 (PDT)
+        with ESMTP id S229455AbhGWRP6 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 23 Jul 2021 13:15:58 -0400
+Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9759C061575
+        for <io-uring@vger.kernel.org>; Fri, 23 Jul 2021 10:56:30 -0700 (PDT)
+Received: by mail-io1-xd2b.google.com with SMTP id l18so3487697ioh.11
+        for <io-uring@vger.kernel.org>; Fri, 23 Jul 2021 10:56:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:from:to:cc:references:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=dUwxjEO6jp47Rz2JEQjvKi+qFhqfV3bJEfO0Rigrqe8=;
-        b=m5lXE98mJ1kVuFljZ9hFbkn1S7yLGd0kvhu3A6dZPL0Pcl0m2AKWx4mBQ9fLP91c5l
-         94MMjSaJ21QKUw7chZSIQDwbyr9RefYJHqXZ6eJ9WTHhX/Y8xMfCnNiZHe8rMdk1TA8A
-         yBItfOpZTF0zfaxGEMOSgUGeZNbtfSUs89M8hQmUvnY635zPfc0tz7FZGbIMDinlcZaV
-         F2gubBMSLcjXin5f4gyFpvvpabihpBOZx96lhqmCp/mHsC6dQkaDRGnnKPDZf61/dowN
-         QfjXB2j4kdE2wlvwHTzNUJUInJEX1ChXNa5lvnwk7n8XRs4uXVbvmguK5ImrHgMnjdXK
-         AyLQ==
+        bh=34Pe8bE5xOlRF7EDsbVPuwXSX7BdV/HHwwshey5X0LI=;
+        b=dipRY5xyLdP1f8LknS9Od4DmvOwbQa07ypsTB9w65eaCSLiCnYa+haJ2mog+hfH3GA
+         FseGzkUW3BUmqVu+2Rc8IBueaQgpTTZUHbQcSXD79ig6vy82tPQyFCmXNxtAZPUMXhZY
+         A3C4+yq42KxL6/0PPsScsQ2+wmqe8LKr9yb3CqBliSzbEDjJXGSeww7rK41XbHdJThlI
+         awgAK5fllqbNJ7nSxKPMQG1UZLYWNpokz3f1/90vo7uNrygJP7HJaUBuYYlmVtgxlp3m
+         Cs61fwc2aik/eMbMYZFjo9b0nZ3B8aLsk/aYS1izgS3JNhOcUGJirSNQDNHAAkJBqW35
+         tSrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:from:to:cc:references:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=dUwxjEO6jp47Rz2JEQjvKi+qFhqfV3bJEfO0Rigrqe8=;
-        b=ZvDOcM8ulBfXfgRkkNf571Bu6yxXRQJnIN+z+gNZuoasULCqujBvsQHK+vWNKVurGH
-         UeJNlky/aTMJ0DuWFlGXRwz4mz28C76b/LmKVL56s9ZdV9yqTbbhtVaY+aOYc6smVa9X
-         rs0e4IzyoWyKd8UPfm/s4sDeEtEoqtZAdmngl/kiNY3rhDOKaSKE+5bHepDFt4QdwQsG
-         G+uSDxqRCRk7Z4+xYmw732wJg0XCFkFWby2B7SUrxSFYSM+697Pmisdg21rYBntcbx5Z
-         3voSwPGY5uIeyb2vU0cLCc8xv4YsiMgaociD//7g5MmPzEhWKvMMQ3pgntwzi3FOL4g7
-         GRhg==
-X-Gm-Message-State: AOAM532ncXhha5h9DStsgw68/3rCOKzKrPhOVDHhJINdTsdEkkHlWYh9
-        pVvB2b2tB5qVidd/LToo3jY+8w==
-X-Google-Smtp-Source: ABdhPJz92FO6x1+kfUTpbgotTdFxhjXK67vWFylh+q1fNBgGNRgJf0U1hFfjbcZTNBizIxjzcAQvkg==
-X-Received: by 2002:a05:6638:2111:: with SMTP id n17mr4993668jaj.76.1627061792384;
-        Fri, 23 Jul 2021 10:36:32 -0700 (PDT)
+        bh=34Pe8bE5xOlRF7EDsbVPuwXSX7BdV/HHwwshey5X0LI=;
+        b=GsBNijRaaTVw7JwHmJclkBvXQoPDemCB7lq1XENgsnSSEXwRkTgLvP2tXD5ii+OBBz
+         p+znQCpl8VGk2n6V/KYc9cmToZQjp9YTHyeiW+nieKJ3qd2itq5+FFUqIoltkEEGYUts
+         UWIb2DDR+OZv1TZfMyP6dDdWayrS4nygJxUT41vUd/bZ7Rq6hkW07+DUeEOi7pswMSXH
+         ZuLG88iWGH86rQpJn53i2sFkMTtNuwtpBipq6k8ACq3l1gyKYSYHob9rowwesGtMAVce
+         zuZWSGrosKbnwTHsDy7c4C9Z+YDc6AmLtVGfo1IFLvUilRghWCgsi8f+0stNmsdLk39Y
+         GOoA==
+X-Gm-Message-State: AOAM530BePxX8k1RxUBd0Ief5/G0N7ZpALEQTPiQnVXgw5HLyRKu8WWK
+        OIXxCerPooWcBgJW0Z0DpgOXZA==
+X-Google-Smtp-Source: ABdhPJyZy16aCwI60W9wTLWaKjkJKsgJKGBbmJE8eTV6oTc0hCA5+KuW9Mfvl1ISD2b/2cLZsqgKAg==
+X-Received: by 2002:a05:6602:2099:: with SMTP id a25mr4829293ioa.143.1627062990069;
+        Fri, 23 Jul 2021 10:56:30 -0700 (PDT)
 Received: from [192.168.1.10] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id x11sm3681181ilu.3.2021.07.23.10.36.31
+        by smtp.gmail.com with ESMTPSA id k21sm18819166ios.0.2021.07.23.10.56.29
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 Jul 2021 10:36:32 -0700 (PDT)
+        Fri, 23 Jul 2021 10:56:29 -0700 (PDT)
 Subject: Re: [PATCH 3/3] io_uring: refactor io_sq_offload_create()
 From:   Jens Axboe <axboe@kernel.dk>
 To:     Al Viro <viro@zeniv.linux.org.uk>
@@ -64,12 +64,13 @@ References: <cover.1618916549.git.asml.silence@gmail.com>
  <8fb39022-ba21-2c1f-3df5-29be002014d8@kernel.dk>
  <YPr4OaHv0iv0KTOc@zeniv-ca.linux.org.uk>
  <c09589ed-4ae9-c3c5-ec91-ba28b8f01424@kernel.dk>
-Message-ID: <591b4a1e-606a-898c-7470-b5a1be621047@kernel.dk>
-Date:   Fri, 23 Jul 2021 11:36:31 -0600
+ <591b4a1e-606a-898c-7470-b5a1be621047@kernel.dk>
+Message-ID: <640bdb4e-f4d9-a5b8-5b7f-5265b39c8044@kernel.dk>
+Date:   Fri, 23 Jul 2021 11:56:29 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <c09589ed-4ae9-c3c5-ec91-ba28b8f01424@kernel.dk>
+In-Reply-To: <591b4a1e-606a-898c-7470-b5a1be621047@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -77,16 +78,21 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/23/21 11:32 AM, Jens Axboe wrote:
-> Outside of that, we're not submitting off release, only killing anything
-> pending. The only odd case there is iopoll, but that doesn't resubmit
-> here.
+On 7/23/21 11:36 AM, Jens Axboe wrote:
+> On 7/23/21 11:32 AM, Jens Axboe wrote:
+>> Outside of that, we're not submitting off release, only killing anything
+>> pending. The only odd case there is iopoll, but that doesn't resubmit
+>> here.
+> 
+> OK perhaps I'm wrong on this one - if we have a pending iopoll request,
+> and we run into the rare case of needing resubmit, we are doing that off
+> the release path and that should not happen. Hence it could potentially
+> happen for iosched and/or low queue depth devices, if you are using a
+> ring for pure polling. I'll patch that up.
 
-OK perhaps I'm wrong on this one - if we have a pending iopoll request,
-and we run into the rare case of needing resubmit, we are doing that off
-the release path and that should not happen. Hence it could potentially
-happen for iosched and/or low queue depth devices, if you are using a
-ring for pure polling. I'll patch that up.
+Will send out two patches for this. Note that I don't see this being a
+real issue, as we explicitly gave the ring fd to another task, and being
+that this is purely for read/write, it would result in -EFAULT anyway.
 
 -- 
 Jens Axboe

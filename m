@@ -2,38 +2,33 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FF693D315C
-	for <lists+io-uring@lfdr.de>; Fri, 23 Jul 2021 03:41:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E55E3D31DA
+	for <lists+io-uring@lfdr.de>; Fri, 23 Jul 2021 04:33:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232892AbhGWBBC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 22 Jul 2021 21:01:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57344 "EHLO mail.kernel.org"
+        id S233288AbhGWBws (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 22 Jul 2021 21:52:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40166 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230318AbhGWBBC (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Thu, 22 Jul 2021 21:01:02 -0400
+        id S233166AbhGWBws (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Thu, 22 Jul 2021 21:52:48 -0400
 Received: from rorschach.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 11B8060E9A;
-        Fri, 23 Jul 2021 01:41:35 +0000 (UTC)
-Date:   Thu, 22 Jul 2021 21:41:34 -0400
+        by mail.kernel.org (Postfix) with ESMTPSA id D3D6260EB2;
+        Fri, 23 Jul 2021 02:33:21 +0000 (UTC)
+Date:   Thu, 22 Jul 2021 22:33:20 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Stefan Metzmacher <metze@samba.org>
-Cc:     Ingo Molnar <mingo@redhat.com>, linux-trace-devel@vger.kernel.org,
+To:     LKML <linux-kernel@vger.kernel.org>,
+        Linux Trace Devel <linux-trace-devel@vger.kernel.org>
+Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stefan Metzmacher <metze@samba.org>,
         io-uring <io-uring@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: sched_waking vs. set_event_pid crash (Re: Tracing busy
- processes/threads freezes/stalls the whole machine)
-Message-ID: <20210722214134.11bc2a6d@rorschach.local.home>
-In-Reply-To: <4ebea8f0-58c9-e571-fd30-0ce4f6f09c70@samba.org>
-References: <293cfb1d-8a53-21e1-83c1-cdb6e2f32c65@samba.org>
-        <20210504092404.6b12aba4@gandalf.local.home>
-        <f590b26d-c027-cc5a-bcbd-1dc734f72e7e@samba.org>
-        <20210504093550.5719d4bd@gandalf.local.home>
-        <f351bdfa-5223-e457-0396-a24ffa09d6b5@samba.org>
-        <8bb757fb-a83b-0ed5-5247-8273be3925c5@samba.org>
-        <90c806a0-8a2f-1257-7337-6761100217c9@samba.org>
-        <4ebea8f0-58c9-e571-fd30-0ce4f6f09c70@samba.org>
+        Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH] tracepoints: Update static_call before tp_funcs when adding
+ a tracepoint
+Message-ID: <20210722223320.53900ddc@rorschach.local.home>
 X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -42,36 +37,104 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, 23 Jul 2021 00:43:13 +0200
-Stefan Metzmacher <metze@samba.org> wrote:
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-> Hi Steve,
+Because of the significant overhead that retpolines pose on indirect
+calls, the tracepoint code was updated to use the new "static_calls" that
+can modify the running code to directly call a function instead of using
+an indirect caller, and this function can be changed at runtime.
 
-Hi Stefan,
+In the tracepoint code that calls all the registered callbacks that are
+attached to a tracepoint, the following is done:
 
-> 
-> After some days of training:
-> https://training.linuxfoundation.org/training/linux-kernel-debugging-and-security/
-> I was able to get much closer to the problem :-)
-> 
-> In order to reproduce it and get reliable kexec crash dumps,
-> I needed to give the VM at least 3 cores.
-> 
-> While running './io-uring_cp-forever link-cp.c file' (from:
-> https://github.com/metze-samba/liburing/commits/io_uring-cp-forever )
-> in one window, the following simple sequence triggered the problem in most cases:
-> 
-> echo 1 > /sys/kernel/tracing/events/sched/sched_waking/enable
-> echo 1 > /sys/kernel/tracing/set_event_pid
+	it_func_ptr = rcu_dereference_raw((&__tracepoint_##name)->funcs);
+	if (it_func_ptr) {
+		__data = (it_func_ptr)->data;
+		static_call(tp_func_##name)(__data, args);
+	}
 
-I was able to reproduce it with running hackbench in a while loop and
-in another terminal, executing the above two lines.
+If there's just a single callback, the static_call is updated to just call
+that callback directly. Once another handler is added, then the static
+caller is updated to call the iterator, that simply loops over all the
+funcs in the array and calls each of the callbacks like the old method
+using indirect calling.
 
-I think I found the bug. Can you test this patch?
+The issue was discovered with a race between updating the funcs array and
+updating the static_call. The funcs array was updated first and then the
+static_call was updated. This is not an issue as long as the first element
+in the old array is the same as the first element in the new array. But
+that assumption is incorrect, because callbacks also have a priority
+field, and if there's a callback added that has a higher priority than the
+callback on the old array, then it will become the first callback in the
+new array. This means that it is possible to call the old callback with
+the new callback data element, which can cause a kernel panic.
 
-Thanks,
+	static_call = callback1()
+	funcs[] = {callback1,data1};
+	callback2 has higher priority than callback1
 
--- Steve
+	CPU 1				CPU 2
+	-----				-----
+
+   new_funcs = {callback2,data2},
+               {callback1,data1}
+
+   rcu_assign_pointer(tp->funcs, new_funcs);
+
+  /*
+   * Now tp->funcs has the new array
+   * but the static_call still calls callback1
+   */
+
+				it_func_ptr = tp->funcs [ new_funcs ]
+				data = it_func_ptr->data [ data2 ]
+				static_call(callback1, data);
+
+				/* Now callback1 is called with
+				 * callback2's data */
+
+				[ KERNEL PANIC ]
+
+   update_static_call(iterator);
+
+To prevent this from happening, always switch the static_call to the
+iterator before assigning the tp->funcs to the new array. The iterator will
+always properly match the callback with its data.
+
+To trigger this bug:
+
+  In one terminal:
+
+    while :; do hackbench 50; done
+
+  In another terminal
+
+    echo 1 > /sys/kernel/tracing/events/sched/sched_waking/enable
+    while :; do
+        echo 1 > /sys/kernel/tracing/set_event_pid;
+        sleep 0.5
+        echo 0 > /sys/kernel/tracing/set_event_pid;
+        sleep 0.5
+   done
+
+And it doesn't take long to crash. This is because the set_event_pid adds
+a callback to the sched_waking tracepoint with a high priority, which will
+be called before the sched_waking trace event callback is called.
+
+Note, the removal to a single callback updates the array first, before
+changing the static_call to single callback, which is the proper order as
+the first element in the array is the same as what the static_call is
+being changed to.
+
+Link: https://lore.kernel.org/io-uring/4ebea8f0-58c9-e571-fd30-0ce4f6f09c70@samba.org/
+
+Cc: stable@vger.kernel.org
+Fixes: d25e37d89dd2f ("tracepoint: Optimize using static_call()")
+Reported-by: Stefan Metzmacher <metze@samba.org>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+ kernel/tracepoint.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
 index 976bf8ce8039..fc32821f8240 100644
@@ -87,3 +150,6 @@ index 976bf8ce8039..fc32821f8240 100644
  	static_key_enable(&tp->key);
  
  	release_probes(old);
+-- 
+2.31.1
+

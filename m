@@ -2,68 +2,111 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D2673D443A
-	for <lists+io-uring@lfdr.de>; Sat, 24 Jul 2021 03:38:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BF593D44FD
+	for <lists+io-uring@lfdr.de>; Sat, 24 Jul 2021 06:48:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233398AbhGXA5y (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 23 Jul 2021 20:57:54 -0400
-Received: from zeniv-ca.linux.org.uk ([142.44.231.140]:52902 "EHLO
-        zeniv-ca.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233366AbhGXA5y (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 23 Jul 2021 20:57:54 -0400
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m76WA-003LRe-8C; Sat, 24 Jul 2021 01:31:54 +0000
-Date:   Sat, 24 Jul 2021 01:31:54 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH 3/3] io_uring: refactor io_sq_offload_create()
-Message-ID: <YPttinG3AaygvUeR@zeniv-ca.linux.org.uk>
-References: <a85df247-137f-721c-6056-a5c340eed90e@kernel.dk>
- <YPoI+GYrgZgWN/dW@zeniv-ca.linux.org.uk>
- <8fb39022-ba21-2c1f-3df5-29be002014d8@kernel.dk>
- <YPr4OaHv0iv0KTOc@zeniv-ca.linux.org.uk>
- <c09589ed-4ae9-c3c5-ec91-ba28b8f01424@kernel.dk>
- <591b4a1e-606a-898c-7470-b5a1be621047@kernel.dk>
- <640bdb4e-f4d9-a5b8-5b7f-5265b39c8044@kernel.dk>
- <YPsR2FgShiiYA2do@zeniv-ca.linux.org.uk>
- <YPskZS1uLctRWz/f@zeniv-ca.linux.org.uk>
- <YPtUiLg7n8I+dpCT@casper.infradead.org>
+        id S229586AbhGXEIF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 24 Jul 2021 00:08:05 -0400
+Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:41146 "EHLO
+        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229550AbhGXEID (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 24 Jul 2021 00:08:03 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UgmABnm_1627102113;
+Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UgmABnm_1627102113)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Sat, 24 Jul 2021 12:48:34 +0800
+Subject: Re: [PATCH io_uring-5.14 v2] io_uring: remove double poll wait entry
+ for pure poll
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
+References: <20210723092227.137526-1-haoxu@linux.alibaba.com>
+ <c628d5bc-ee34-bf43-c7bc-5b52cf983cb1@gmail.com>
+From:   Hao Xu <haoxu@linux.alibaba.com>
+Message-ID: <824dcbe0-34da-a075-12eb-ce7529f3e3f7@linux.alibaba.com>
+Date:   Sat, 24 Jul 2021 12:48:33 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.10.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YPtUiLg7n8I+dpCT@casper.infradead.org>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <c628d5bc-ee34-bf43-c7bc-5b52cf983cb1@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Sat, Jul 24, 2021 at 12:45:12AM +0100, Matthew Wilcox wrote:
-> On Fri, Jul 23, 2021 at 08:19:49PM +0000, Al Viro wrote:
-> > To elaborate: ->release() instance may not assume anything about current->mm,
-> > or assume anything about current, for that matter.  It is entirely possible
-> > to arrange its execution in context of a process that is not yours and had not
-> > consent to doing that.  In particular, it's a hard bug to have _any_ visible
-> > effects depending upon the memory mappings, memory contents or the contents of
-> > descriptor table of the process in question.
+在 2021/7/23 下午10:31, Pavel Begunkov 写道:
+> On 7/23/21 10:22 AM, Hao Xu wrote:
+>> For pure poll requests, we should remove the double poll wait entry.
+>> And io_poll_remove_double() is good enough for it compared with
+>> io_poll_remove_waitqs().
 > 
-> Hmm.  Could we add a poison_current() function?  Something like ...
-> 
-> static inline void call_release(struct file *file, struct inode *inode)
-> {
-> 	void *tmp = poison_current();
-> 	if (file->f_op->release)
-> 		file->f_op->release(inode, file);
-> 	restore_current(tmp);
-> }
-> 
-> Should be straightforward for asm-generic/current.h and for x86 too.
-> Probably have to disable preemption?  Maybe interrupts too?  Not sure
-> what's kept in current these days that an interrupt handler might
-> rely on being able to access temporarily.
+> 5.14 in the subject hints me that it's a fix. Is it?
+> Can you add what it fixes or expand on why it's better?
+Hi Pavel, I found that for poll_add() requests, it doesn't remove the
+double poll wait entry when it's done, neither after vfs_poll() or in
+the poll completion handler. The patch is mainly to fix it.
 
-->release() might grab a mutex, for example.  Scheduler is going to be unhappy
-if it runs into somebody playing silly buggers with current...
+> 
+> 
+>> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
+>> ---
+>>
+>> v1-->v2
+>>    delete redundant io_poll_remove_double()
+>>
+>>   fs/io_uring.c | 5 ++---
+>>   1 file changed, 2 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>> index f2fe4eca150b..c5fe8b9e26b4 100644
+>> --- a/fs/io_uring.c
+>> +++ b/fs/io_uring.c
+>> @@ -4903,7 +4903,6 @@ static bool io_poll_complete(struct io_kiocb *req, __poll_t mask)
+>>   	if (req->poll.events & EPOLLONESHOT)
+>>   		flags = 0;
+>>   	if (!io_cqring_fill_event(ctx, req->user_data, error, flags)) {
+>> -		io_poll_remove_waitqs(req);
+Currently I only see it does that with io_poll_remove_waitqs() when
+cqring overflow and then ocqe allocation failed. Using
+io_poll_remove_waitqs() here is not very suitable since (1) it calls
+__io_poll_remove_one() which set poll->cancelled = true, why do we set
+poll->cancelled and poll->done to true at the same time though I think
+that doesn't cause any problem. (2) it does
+list_del_init(&poll->wait.entry) and hash_del(&req->hash_node) which
+has been already done.
+Correct me if I'm wrong since I may misunderstand the code.
+
+Regards,
+Hao
+>>   		req->poll.done = true;
+>>   		flags = 0;
+>>   	}
+>> @@ -4926,6 +4925,7 @@ static void io_poll_task_func(struct io_kiocb *req)
+>>   
+>>   		done = io_poll_complete(req, req->result);
+>>   		if (done) {
+>> +			io_poll_remove_double(req);
+>>   			hash_del(&req->hash_node);
+>>   		} else {
+>>   			req->result = 0;
+>> @@ -5113,7 +5113,7 @@ static __poll_t __io_arm_poll_handler(struct io_kiocb *req,
+>>   		ipt->error = -EINVAL;
+>>   
+>>   	spin_lock_irq(&ctx->completion_lock);
+>> -	if (ipt->error)
+>> +	if (ipt->error || (mask && (poll->events & EPOLLONESHOT)))
+>>   		io_poll_remove_double(req);
+>>   	if (likely(poll->head)) {
+>>   		spin_lock(&poll->head->lock);
+>> @@ -5185,7 +5185,6 @@ static int io_arm_poll_handler(struct io_kiocb *req)
+>>   	ret = __io_arm_poll_handler(req, &apoll->poll, &ipt, mask,
+>>   					io_async_wake);
+>>   	if (ret || ipt.error) {
+>> -		io_poll_remove_double(req);
+>>   		spin_unlock_irq(&ctx->completion_lock);
+>>   		if (ret)
+>>   			return IO_APOLL_READY;
+>>
+> 
+

@@ -2,70 +2,78 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C35643D4924
-	for <lists+io-uring@lfdr.de>; Sat, 24 Jul 2021 20:22:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E13913D492E
+	for <lists+io-uring@lfdr.de>; Sat, 24 Jul 2021 20:31:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229672AbhGXRmG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 24 Jul 2021 13:42:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38564 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229530AbhGXRmG (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 24 Jul 2021 13:42:06 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EE6EC061575;
-        Sat, 24 Jul 2021 11:22:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=q16vN20drSq73+cubZqjYZ5dEuIK62CsrBgg1E6PqNM=; b=nU5tZaJmbBavWe3djLe4y6QjBr
-        0WfdGlp6eIQUFg3oPsY4KheMlablb9VIsounTAr2YIiz0JhWNyPlKpAo20JCdFFQeNcmjI2Mxwyfi
-        n3iGrFaETZUevA8aWdLDbrpolOMPAweiZG6bR+ToVXRwHh4HZiIkMNEMM5VhKB2ZZf9MtWexh+HrM
-        6mK9CbUJY/V+MCWUmWje3GcPMJ5F9nmfA9exxhrep/pqNYF9wa7DQXhJec2rLyUouPBMjo2V8yxm1
-        Ss6sz1HJmhNJ6tg9Uz664bk2TVezn9Y894GQeIzdZY7Dsl9ayIfEBgZDq2xy5z76TheI/1jkExD8w
-        X7CfsP3A==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m7MI0-00CSZF-OC; Sat, 24 Jul 2021 18:22:26 +0000
-Date:   Sat, 24 Jul 2021 19:22:20 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-aio@kvack.org
-Subject: Re: [PATCH 0/2] Close a hole where IOCB_NOWAIT reads could sleep
-Message-ID: <YPxaXE0mf26aqy/O@casper.infradead.org>
-References: <20210711150927.3898403-1-willy@infradead.org>
- <a3d0f8da-ffb4-25a3-07a1-79987ce788c5@kernel.dk>
+        id S229655AbhGXRvK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 24 Jul 2021 13:51:10 -0400
+Received: from ste-pvt-msa1.bahnhof.se ([213.80.101.70]:58488 "EHLO
+        ste-pvt-msa1.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229530AbhGXRvJ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 24 Jul 2021 13:51:09 -0400
+X-Greylist: delayed 482 seconds by postgrey-1.27 at vger.kernel.org; Sat, 24 Jul 2021 13:51:09 EDT
+Received: from localhost (localhost [127.0.0.1])
+        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTP id 708C03F5AD;
+        Sat, 24 Jul 2021 20:23:38 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at bahnhof.se
+X-Spam-Flag: NO
+X-Spam-Score: -1.969
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.969 tagged_above=-999 required=6.31
+        tests=[BAYES_00=-1.9, NICE_REPLY_A=-0.07, URIBL_BLOCKED=0.001]
+        autolearn=ham autolearn_force=no
+Received: from ste-pvt-msa1.bahnhof.se ([127.0.0.1])
+        by localhost (ste-pvt-msa1.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id LOuImE9sXgre; Sat, 24 Jul 2021 20:23:37 +0200 (CEST)
+Received: by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTPA id 1EC623F524;
+        Sat, 24 Jul 2021 20:23:36 +0200 (CEST)
+Received: from [192.168.0.10] (port=59916)
+        by tnonline.net with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
+        (Exim 4.94.2)
+        (envelope-from <forza@tnonline.net>)
+        id 1m7MJE-000A1j-Ad; Sat, 24 Jul 2021 20:23:36 +0200
+From:   Forza <forza@tnonline.net>
+Subject: Re: Stack trace with Samba VFS io_uring and large transfers
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <c6bd5987-e9ae-cd02-49d0-1b3ac1ef65b1@tnonline.net>
+ <83566716-691f-ca91-295b-6d8aaafa50d2@kernel.dk>
+Message-ID: <49c893e9-8468-f326-9404-d23ed5a4b89f@tnonline.net>
+Date:   Sat, 24 Jul 2021 20:23:36 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a3d0f8da-ffb4-25a3-07a1-79987ce788c5@kernel.dk>
+In-Reply-To: <83566716-691f-ca91-295b-6d8aaafa50d2@kernel.dk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Sun, Jul 11, 2021 at 07:44:07PM -0600, Jens Axboe wrote:
-> On 7/11/21 9:09 AM, Matthew Wilcox (Oracle) wrote:
-> > I noticed a theoretical case where an IOCB_NOWAIT read could sleep:
-> > 
-> > filemap_get_pages
-> >   filemap_get_read_batch
-> >   page_cache_sync_readahead
-> >     page_cache_sync_ra
-> >       ondemand_readahead
-> >         do_page_cache_ra
-> >         page_cache_ra_unbounded
-> >           gfp_t gfp_mask = readahead_gfp_mask(mapping);
-> >           memalloc_nofs_save()
-> >           __page_cache_alloc(gfp_mask);
-> > 
-> > We're in a nofs context, so we're not going to start new IO, but we might
-> > wait for writeback to complete.  We generally don't want to sleep for IO,
-> > particularly not for IO that isn't related to us.
-> > 
-> > Jens, can you run this through your test rig and see if it makes any
-> > practical difference?
-> 
-> You bet, I'll see if I can trigger this condition and verify we're no
-> longer blocking on writeback. Thanks for hacking this up.
+Hi!
 
-Did you have any success yet?
+On 2021-07-24 19:04, Jens Axboe wrote:
+> I'll see if I can reproduce this. I'm assuming samba is using buffered
+> IO, and it looks like it's reading in chunks of 1MB. Hopefully it's
+> possible to reproduce without samba with a windows client, as I don't
+> have any of those. If synthetic reproducing fails, I can try samba
+> with a Linux client.
+
+I attached the logs from both a Windows 10 client and a Linux client 
+(kernel 5.11.0).
+
+https://paste.tnonline.net/files/r4yebSzlGEVD_linux-client.txt
+
+   smbd_smb2_read: fnum 2641229669, file 
+media/vm/libvirt/images/Mint_Cinnamon.img, length=4194304 
+offset=736100352 read=4194304
+[2021/07/24 17:26:09.120779,  3] 
+../../source3/smbd/smb2_read.c:415(smb2_read_complete)
+   smbd_smb2_read: fnum 2641229669, file 
+media/vm/libvirt/images/Mint_Cinnamon.img, length=4194304 
+offset=740294656 read=4194304
+[2021/07/24 17:26:09.226593,  3] 
+../../source3/smbd/smb2_read.c:415(smb2_read_complete)
+   smbd_smb2_read: fnum 2641229669, file 
+media/vm/libvirt/images/Mint_Cinnamon.img, length=4194304 
+offset=748683264 read=4194304

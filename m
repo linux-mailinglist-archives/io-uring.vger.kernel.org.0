@@ -2,59 +2,68 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BF2F53D49C5
-	for <lists+io-uring@lfdr.de>; Sat, 24 Jul 2021 22:16:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C31C63D4F36
+	for <lists+io-uring@lfdr.de>; Sun, 25 Jul 2021 19:44:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229845AbhGXTgM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 24 Jul 2021 15:36:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52704 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229831AbhGXTgL (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Sat, 24 Jul 2021 15:36:11 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 8A81B60E96;
-        Sat, 24 Jul 2021 20:16:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627157802;
-        bh=Sq6F1C3al9FYXrBvC3Rswh1vuHi9eCcYBnsvuQRsJ9I=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=jBtuZhrnu7VF6tF4LNxSpSr8vq6TNJOJ4bKReu4u+zhffPY4vFssaMwT3qkv+4Wp7
-         3zScD/kuWpWSq1cXzDd+/PDv2hvleuDdPLiVbAQeVOJPLDAMzl8/Q7RGb7Z9SWye3N
-         EwNdNaRbGJf26NaqmXVY0EpabPdRJc8PFgp3kr2Ov3IbmPpW8a56X3FuEy1zGsKU/A
-         6HOwx0Dnjh9aEpgMU/EbIBrZQ8qREmytgRLsMRcfb+mda4qDLBIkYVh/wuQvGQP0zJ
-         j+haIeYTPaf/xAypQ20aHfWEI/IgL6KxpFA8lYhrXEKySgsU3BCjMGoORaHbiomubz
-         hcAQRoVrf1sTg==
-Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id 851B660A08;
-        Sat, 24 Jul 2021 20:16:42 +0000 (UTC)
-Subject: Re: [GIT PULL] io_uring fixes for 5.14-rc3
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <06134f44-1dc8-e5c3-4697-84401b9d7c8f@kernel.dk>
-References: <06134f44-1dc8-e5c3-4697-84401b9d7c8f@kernel.dk>
-X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
-X-PR-Tracked-Message-Id: <06134f44-1dc8-e5c3-4697-84401b9d7c8f@kernel.dk>
-X-PR-Tracked-Remote: git://git.kernel.dk/linux-block.git tags/io_uring-5.14-2021-07-24
-X-PR-Tracked-Commit-Id: 991468dcf198bb87f24da330676724a704912b47
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 0ee818c393dce98340bff2b08573d4d2d8650eb7
-Message-Id: <162715780253.1145.1685693956428003093.pr-tracker-bot@kernel.org>
-Date:   Sat, 24 Jul 2021 20:16:42 +0000
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        io-uring <io-uring@vger.kernel.org>
+        id S231189AbhGYREL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 25 Jul 2021 13:04:11 -0400
+Received: from cloud48395.mywhc.ca ([173.209.37.211]:41268 "EHLO
+        cloud48395.mywhc.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229689AbhGYREL (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 25 Jul 2021 13:04:11 -0400
+Received: from [173.237.58.148] (port=51036 helo=localhost)
+        by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <olivier@trillion01.com>)
+        id 1m7iB5-0004MM-GM; Sun, 25 Jul 2021 13:44:39 -0400
+Message-Id: <82a82077d8b02166482df754b1abb7c3fbc3c560.1627189961.git.olivier@trillion01.com>
+From:   Olivier Langlois <olivier@trillion01.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, gregkh@linuxfoundation.org
+Date:   Sat, 24 Jul 2021 22:07:59 -0700
+Subject: [PATCH io_uring backport to 5.13.y] io_uring: Fix race condition
+ when sqp thread goes to sleep
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - trillion01.com
+X-Get-Message-Sender-Via: cloud48395.mywhc.ca: authenticated_id: olivier@trillion01.com
+X-Authenticated-Sender: cloud48395.mywhc.ca: olivier@trillion01.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The pull request you sent on Sat, 24 Jul 2021 09:53:15 -0600:
+[ Upstream commit 997135017716 ("io_uring: Fix race condition when sqp thread goes to sleep") ]
 
-> git://git.kernel.dk/linux-block.git tags/io_uring-5.14-2021-07-24
+If an asynchronous completion happens before the task is preparing
+itself to wait and set its state to TASK_INTERRUPTIBLE, the completion
+will not wake up the sqp thread.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/0ee818c393dce98340bff2b08573d4d2d8650eb7
+Signed-off-by: Olivier Langlois <olivier@trillion01.com>
+---
+ fs/io_uring.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Thank you!
-
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index eeea6b8c8bee..a7f1cbd7be9a 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -6876,7 +6876,8 @@ static int io_sq_thread(void *data)
+ 		}
+ 
+ 		prepare_to_wait(&sqd->wait, &wait, TASK_INTERRUPTIBLE);
+-		if (!test_bit(IO_SQ_THREAD_SHOULD_PARK, &sqd->state)) {
++		if (!test_bit(IO_SQ_THREAD_SHOULD_PARK, &sqd->state) &&
++		    !io_run_task_work()) {
+ 			list_for_each_entry(ctx, &sqd->ctx_list, sqd_list)
+ 				io_ring_set_wakeup_flag(ctx);
+ 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.32.0
+

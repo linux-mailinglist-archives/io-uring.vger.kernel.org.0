@@ -2,127 +2,157 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 303BF3D5BE7
-	for <lists+io-uring@lfdr.de>; Mon, 26 Jul 2021 16:40:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 324E43D5E48
+	for <lists+io-uring@lfdr.de>; Mon, 26 Jul 2021 17:47:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234733AbhGZN7a (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 26 Jul 2021 09:59:30 -0400
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:50348 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233206AbhGZN7Z (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 26 Jul 2021 09:59:25 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01424;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0Uh4Jw3J_1627310392;
-Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0Uh4Jw3J_1627310392)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 26 Jul 2021 22:39:52 +0800
-Subject: Re: [PATCH io_uring-5.14 v2] io_uring: remove double poll wait entry
- for pure poll
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <20210723092227.137526-1-haoxu@linux.alibaba.com>
- <c628d5bc-ee34-bf43-c7bc-5b52cf983cb1@gmail.com>
- <824dcbe0-34da-a075-12eb-ce7529f3e3f7@linux.alibaba.com>
- <28ce8b3d-e9d2-2fed-e73c-fb09913eea78@gmail.com>
-From:   Hao Xu <haoxu@linux.alibaba.com>
-Message-ID: <a5321436-9ba5-5f07-6081-4567f9469631@linux.alibaba.com>
-Date:   Mon, 26 Jul 2021 22:39:51 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.10.2
+        id S236291AbhGZPGr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 26 Jul 2021 11:06:47 -0400
+Received: from mail.efficios.com ([167.114.26.124]:36870 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236181AbhGZPGO (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 26 Jul 2021 11:06:14 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.efficios.com (Postfix) with ESMTP id 7213B30774D;
+        Mon, 26 Jul 2021 11:46:42 -0400 (EDT)
+Received: from mail.efficios.com ([127.0.0.1])
+        by localhost (mail03.efficios.com [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id rVkDnI2Le0ic; Mon, 26 Jul 2021 11:46:42 -0400 (EDT)
+Received: from localhost (localhost [127.0.0.1])
+        by mail.efficios.com (Postfix) with ESMTP id EC6453074C5;
+        Mon, 26 Jul 2021 11:46:41 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com EC6453074C5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1627314401;
+        bh=/cSIhdNpE9d/IJCbJVUKTogV0kkL1SnL8c9M41psFoo=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=eAFKB1MNv2tLnxWSxSEPcWMAWMF6Hn/lDqleDT/0HaWt/KarN0OZmBsoC0+x+adEl
+         vQineGCzchUEo/De/T4OhQqIvgilIbFuc/oKJhHmuME4217/OjM8I9otQfCHQXhnb7
+         mHMGPiOqT656D/T6LzN+U0s1PhITUMOFCX8EEhh2/KFFuvFuCGlDqg6nyiuRK2EzMS
+         fv7Wir6gIwfwcE8cyEH6GF19a20qpLgXTqnENpazy34xQeQ3EwCuF1AvJTpJMAEdgv
+         PVn+68gDM4HXOV/m+9mr0zPywI0ZJYwxCz+y7RRz00uu1USBAzTwRSKDyyJe+5RFoA
+         N/RhnaTJaE4Tg==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([127.0.0.1])
+        by localhost (mail03.efficios.com [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id TSyN0HN6ElYE; Mon, 26 Jul 2021 11:46:41 -0400 (EDT)
+Received: from mail03.efficios.com (mail03.efficios.com [167.114.26.124])
+        by mail.efficios.com (Postfix) with ESMTP id DADC6307746;
+        Mon, 26 Jul 2021 11:46:41 -0400 (EDT)
+Date:   Mon, 26 Jul 2021 11:46:41 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-trace-devel <linux-trace-devel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stefan Metzmacher <metze@samba.org>,
+        io-uring <io-uring@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Message-ID: <715282075.6481.1627314401745.JavaMail.zimbra@efficios.com>
+In-Reply-To: <20210722223320.53900ddc@rorschach.local.home>
+References: <20210722223320.53900ddc@rorschach.local.home>
+Subject: Re: [PATCH] tracepoints: Update static_call before tp_funcs when
+ adding a tracepoint
 MIME-Version: 1.0
-In-Reply-To: <28ce8b3d-e9d2-2fed-e73c-fb09913eea78@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.26.124]
+X-Mailer: Zimbra 8.8.15_GA_4059 (ZimbraWebClient - FF90 (Linux)/8.8.15_GA_4059)
+Thread-Topic: tracepoints: Update static_call before tp_funcs when adding a tracepoint
+Thread-Index: xLspdzF/fBstI2n/Tvg2L32lUgayvQ==
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-在 2021/7/26 下午8:40, Pavel Begunkov 写道:
-> On 7/24/21 5:48 AM, Hao Xu wrote:
->> 在 2021/7/23 下午10:31, Pavel Begunkov 写道:
->>> On 7/23/21 10:22 AM, Hao Xu wrote:
->>>> For pure poll requests, we should remove the double poll wait entry.
->>>> And io_poll_remove_double() is good enough for it compared with
->>>> io_poll_remove_waitqs().
->>>
->>> 5.14 in the subject hints me that it's a fix. Is it?
->>> Can you add what it fixes or expand on why it's better?
->> Hi Pavel, I found that for poll_add() requests, it doesn't remove the
->> double poll wait entry when it's done, neither after vfs_poll() or in
->> the poll completion handler. The patch is mainly to fix it.
+----- On Jul 22, 2021, at 10:33 PM, rostedt rostedt@goodmis.org wrote:
+
+> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 > 
-> Ok, sounds good. Please resend with updated description, and
-> let's add some tags.
+> Because of the significant overhead that retpolines pose on indirect
+> calls, the tracepoint code was updated to use the new "static_calls" that
+> can modify the running code to directly call a function instead of using
+> an indirect caller, and this function can be changed at runtime.
 > 
-> Fixes: 88e41cf928a6 ("io_uring: add multishot mode for IORING_OP_POLL_ADD")
-> Cc: stable@vger.kernel.org # 5.13+
+> In the tracepoint code that calls all the registered callbacks that are
+> attached to a tracepoint, the following is done:
 > 
-> Also, I'd prefer the commit title to make more clear that it's a
-> fix. E.g. "io_uring: fix poll requests leaking second poll entries".
+>	it_func_ptr = rcu_dereference_raw((&__tracepoint_##name)->funcs);
+>	if (it_func_ptr) {
+>		__data = (it_func_ptr)->data;
+>		static_call(tp_func_##name)(__data, args);
+>	}
 > 
-> Btw, seems it should fix hangs in ./poll-mshot-update
-Sure，I'll send v3 soon, sorry for my unprofessionalism..
+> If there's just a single callback, the static_call is updated to just call
+> that callback directly. Once another handler is added, then the static
+> caller is updated to call the iterator, that simply loops over all the
+> funcs in the array and calls each of the callbacks like the old method
+> using indirect calling.
 > 
-> 
->>>
->>>> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
->>>> ---
->>>>
->>>> v1-->v2
->>>>     delete redundant io_poll_remove_double()
->>>>
->>>>    fs/io_uring.c | 5 ++---
->>>>    1 file changed, 2 insertions(+), 3 deletions(-)
->>>>
->>>> diff --git a/fs/io_uring.c b/fs/io_uring.c
->>>> index f2fe4eca150b..c5fe8b9e26b4 100644
->>>> --- a/fs/io_uring.c
->>>> +++ b/fs/io_uring.c
->>>> @@ -4903,7 +4903,6 @@ static bool io_poll_complete(struct io_kiocb *req, __poll_t mask)
->>>>        if (req->poll.events & EPOLLONESHOT)
->>>>            flags = 0;
->>>>        if (!io_cqring_fill_event(ctx, req->user_data, error, flags)) {
->>>> -        io_poll_remove_waitqs(req);
->> Currently I only see it does that with io_poll_remove_waitqs() when
->> cqring overflow and then ocqe allocation failed. Using
->> io_poll_remove_waitqs() here is not very suitable since (1) it calls
->> __io_poll_remove_one() which set poll->cancelled = true, why do we set
->> poll->cancelled and poll->done to true at the same time though I think
->> that doesn't cause any problem. (2) it does
->> list_del_init(&poll->wait.entry) and hash_del(&req->hash_node) which
->> has been already done.
->> Correct me if I'm wrong since I may misunderstand the code.
->>
->> Regards,
->> Hao
->>>>            req->poll.done = true;
->>>>            flags = 0;
->>>>        }
->>>> @@ -4926,6 +4925,7 @@ static void io_poll_task_func(struct io_kiocb *req)
->>>>              done = io_poll_complete(req, req->result);
->>>>            if (done) {
->>>> +            io_poll_remove_double(req);
->>>>                hash_del(&req->hash_node);
->>>>            } else {
->>>>                req->result = 0;
->>>> @@ -5113,7 +5113,7 @@ static __poll_t __io_arm_poll_handler(struct io_kiocb *req,
->>>>            ipt->error = -EINVAL;
->>>>          spin_lock_irq(&ctx->completion_lock);
->>>> -    if (ipt->error)
->>>> +    if (ipt->error || (mask && (poll->events & EPOLLONESHOT)))
->>>>            io_poll_remove_double(req);
->>>>        if (likely(poll->head)) {
->>>>            spin_lock(&poll->head->lock);
->>>> @@ -5185,7 +5185,6 @@ static int io_arm_poll_handler(struct io_kiocb *req)
->>>>        ret = __io_arm_poll_handler(req, &apoll->poll, &ipt, mask,
->>>>                        io_async_wake);
->>>>        if (ret || ipt.error) {
->>>> -        io_poll_remove_double(req);
->>>>            spin_unlock_irq(&ctx->completion_lock);
->>>>            if (ret)
->>>>                return IO_APOLL_READY;
->>>>
->>>
->>
+> The issue was discovered with a race between updating the funcs array and
+> updating the static_call. The funcs array was updated first and then the
+> static_call was updated. This is not an issue as long as the first element
+> in the old array is the same as the first element in the new array. But
+> that assumption is incorrect, because callbacks also have a priority
+> field, and if there's a callback added that has a higher priority than the
+> callback on the old array, then it will become the first callback in the
+> new array. This means that it is possible to call the old callback with
+> the new callback data element, which can cause a kernel panic.
 > 
 
+[...]
+
+Looking into the various transitions, I suspect the issue runs much deeper than
+this.
+
+The sequence of transitions (number of probes) I'm considering is:
+
+0->1
+1->2
+2->1
+1->0
+0->1
+1->2
+
+I come to three conclusions:
+
+Where we have:
+
+tracepoint_remove_func()
+
+                tracepoint_update_call(tp, tp_funcs,
+                                       tp_funcs[0].func != old[0].func);
+
+We should be comparing .data rather than .func, because the same callback
+can be registered twice with different data, and what we care about here
+is that the data of array element 0 is unchanged to skip rcu sync.
+
+My second conclusion is that it's odd that transition 1->0 leaves the
+prior function call in place even after it's been removed. When we go
+back to 0->1, that function call may still be called even though the
+function is not there anymore. And there is no RCU synchronization on
+these transitions, so those are all possible scenarios.
+
+My third conclusion is that we'd need synchronize RCU whenever tp_funcs[0].data
+changes for transitions 1->2, 2->1, and 1->2 because the priorities don't guarantee
+that the first callback stays in the first position, and we also need to rcu sync
+unconditionally on transition 1->0. We currently only have sync RCU on transition
+from 2->1 when tp_funcs[0].func changes, which is bogus in many ways.
+
+Basically, transitions from the iterator to a specific function should be handled
+with care (making sure the tp_funcs array is updated and rcu-sync is done), except
+in the specific case where the prior tp->funcs was NULL, which skips the function
+call. And unless there is a rcu-sync between the state transitions, we need to consider
+all prior states as additional original state as well. Therefore, in a 1->0->1
+transition sequence, it's very much possible that the old function ends up observing
+the new callback's data unless we add some rcu sync in between.
+
+Thoughts ?
+
+Thanks,
+
+Mathieu
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com

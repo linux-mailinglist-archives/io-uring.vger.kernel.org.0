@@ -2,106 +2,135 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 645073D64DB
-	for <lists+io-uring@lfdr.de>; Mon, 26 Jul 2021 18:54:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78C6E3D64FA
+	for <lists+io-uring@lfdr.de>; Mon, 26 Jul 2021 18:59:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235323AbhGZQJa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 26 Jul 2021 12:09:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60970 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239945AbhGZQIJ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 26 Jul 2021 12:08:09 -0400
-Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B44BC061368
-        for <io-uring@vger.kernel.org>; Mon, 26 Jul 2021 09:47:48 -0700 (PDT)
-Received: by mail-pj1-x1035.google.com with SMTP id ds11-20020a17090b08cbb0290172f971883bso20638956pjb.1
-        for <io-uring@vger.kernel.org>; Mon, 26 Jul 2021 09:47:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=to:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=Sf4Xafp+lX6vFFxFsIXBCIyw6FJyTnjlP/mUd36o/K0=;
-        b=0PlG3RdOOy/yUhtxqsbeo3vl/cfy2RCdr8lggCznLjXpP/XrzMCpTZ7cAQHck212PH
-         VfAZq4lOK7nS9G0FWxTqWnBmODcsGGxGHzDX8mf+U3P8AP4z2PWfm4f94CHUtqU919Eu
-         yA8qKyuXNOwa9jPtuJLNA9QXhfjIMrMSR8WlbYiN5oKn8l1Q/3HsQpo6zxbOnyjw/erC
-         XCVb4++lZl4EouCkf4bcXCxKrS2WkD91mvLTuSPZSojUuFUAPnGR0P4mjjasP4sG+K9t
-         /Y3qlZ6gxsCMwfPRMwnx98stB0tTk3tF8s5NFdgszjFstDC/MYm3goUFQabUaXTdIPO9
-         gCEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=Sf4Xafp+lX6vFFxFsIXBCIyw6FJyTnjlP/mUd36o/K0=;
-        b=ZIp9ZhDnYOKYzc4e8wfjqU9H/HZvKzxJB2/vYbbbhdYg+9OKYyc4IW9fxAaG/pnZ3S
-         5j05iuLcn5OAG67nsfaz/D2V+8o1RKDjV2ad/XVMoZLkjr5oTfHZ/WcLCCERJq+bJN+j
-         fwNnIkZw2Z6T8mOzKZWiMSiV/aq3Or1dS72vYWwZ2qTnSm/UuOJtYk4f1UgT+RyTQYcD
-         bpGUBBB2Xf30JMPomnteslqFXCpAPmyE4MSq6m8HVyrR1KzZsA9eF9A/asPlxJgmtj7u
-         Kk8QKnNYh7hB/zKPPQ3v0H/7HDFxmiayZsE1hk9kF2WA7W7jCCdqyb0/qrU2rRjo1o29
-         giKw==
-X-Gm-Message-State: AOAM532d/u59wrdlq0AXKwIwaY2gGBEyRZ3WMrVVqxC4btSNt8FEzIO3
-        j+rL/vbVzceKPxk3XNt7sRtCTTjzvWzapwo6
-X-Google-Smtp-Source: ABdhPJwbVEfRcnmSLX3INDvcGbcCrPZhJnC7x8HMjhw/NUBBJDe/kLW6qhGcUu+6azidtGrhcOqE4w==
-X-Received: by 2002:a17:902:8f95:b029:12b:7e4b:f191 with SMTP id z21-20020a1709028f95b029012b7e4bf191mr15314996plo.63.1627318067559;
-        Mon, 26 Jul 2021 09:47:47 -0700 (PDT)
-Received: from [192.168.1.187] ([198.8.77.61])
-        by smtp.gmail.com with ESMTPSA id e2sm229942pgh.5.2021.07.26.09.47.46
-        for <io-uring@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Jul 2021 09:47:47 -0700 (PDT)
-To:     io-uring <io-uring@vger.kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring: fix race in unified task_work running
-Message-ID: <aedc3a6f-4f92-b8b8-31ea-e6d7202a0b74@kernel.dk>
-Date:   Mon, 26 Jul 2021 10:47:45 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S233591AbhGZQSJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 26 Jul 2021 12:18:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50240 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S241919AbhGZQQr (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Mon, 26 Jul 2021 12:16:47 -0400
+Received: from oasis.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8994260F5D;
+        Mon, 26 Jul 2021 16:56:11 +0000 (UTC)
+Date:   Mon, 26 Jul 2021 12:56:04 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-trace-devel <linux-trace-devel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stefan Metzmacher <metze@samba.org>,
+        io-uring <io-uring@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH] tracepoints: Update static_call before tp_funcs when
+ adding a tracepoint
+Message-ID: <20210726125604.55bb6655@oasis.local.home>
+In-Reply-To: <715282075.6481.1627314401745.JavaMail.zimbra@efficios.com>
+References: <20210722223320.53900ddc@rorschach.local.home>
+        <715282075.6481.1627314401745.JavaMail.zimbra@efficios.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-We use a bit to manage if we need to add the shared task_work, but
-a list + lock for the pending work. Before aborting a current run
-of the task_work we check if the list is empty, but we do so without
-grabbing the lock that protects it. This can lead to races where
-we think we have nothing left to run, where in practice we could be
-racing with a task adding new work to the list. If we do hit that
-race condition, we could be left with work items that need processing,
-but the shared task_work is not active.
+On Mon, 26 Jul 2021 11:46:41 -0400 (EDT)
+Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+> 
+> [...]
+> 
+> Looking into the various transitions, I suspect the issue runs much deeper than
+> this.
+> 
+> The sequence of transitions (number of probes) I'm considering is:
+> 
+> 0->1
+> 1->2
+> 2->1
+> 1->0
+> 0->1
+> 1->2
+> 
+> I come to three conclusions:
+> 
+> Where we have:
+> 
+> tracepoint_remove_func()
+> 
+>                 tracepoint_update_call(tp, tp_funcs,
+>                                        tp_funcs[0].func != old[0].func);
+> 
+> We should be comparing .data rather than .func, because the same callback
+> can be registered twice with different data, and what we care about here
+> is that the data of array element 0 is unchanged to skip rcu sync.
 
-Ensure that we grab the lock before checking if the list is empty,
-so we know if it's safe to exit the run or not.
+I guess we could do that, as you are right, we are worried about
+passing the wrong data to the wrong function. If the function is the
+same, at least it wont crash the kernel as the function can handle that
+data. But, it could miss the callback that is staying while calling the
+one that is going instead.
 
-Link: https://lore.kernel.org/io-uring/c6bd5987-e9ae-cd02-49d0-1b3ac1ef65b1@tnonline.net/
-Cc: stable@vger.kernel.org # 5.11+
-Reported-by: Forza <forza@tnonline.net>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Unlikely to happen, but in theory it is enough to fix.
 
----
+> 
+> My second conclusion is that it's odd that transition 1->0 leaves the
+> prior function call in place even after it's been removed. When we go
+> back to 0->1, that function call may still be called even though the
+> function is not there anymore. And there is no RCU synchronization on
+> these transitions, so those are all possible scenarios.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index c4d2b320cdd4..a4331deb0427 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1959,9 +1959,13 @@ static void tctx_task_work(struct callback_head *cb)
- 			node = next;
- 		}
- 		if (wq_list_empty(&tctx->task_list)) {
-+			spin_lock_irq(&tctx->task_lock);
- 			clear_bit(0, &tctx->task_state);
--			if (wq_list_empty(&tctx->task_list))
-+			if (wq_list_empty(&tctx->task_list)) {
-+				spin_unlock_irq(&tctx->task_lock);
- 				break;
-+			}
-+			spin_unlock_irq(&tctx->task_lock);
- 			/* another tctx_task_work() is enqueued, yield */
- 			if (test_and_set_bit(0, &tctx->task_state))
- 				break;
+How so? When doing this transition we have:
 
--- 
-Jens Axboe
+	tracepoint_update_call(tp, tp_funcs, false);
+	rcu_assign_pointer(tp->funcs, tp_funcs);
+	static_key_enable(&tp->key);
+
+Where that tracepoint_update_call() will reinstall the iterator, and
+that's a full memory barrier. It even sends IPIs to all other CPUs to
+make sure all CPUs are synchronized before continuing.
+
+By the time we get to static_key_enable(), there will not be any CPUs
+that see the old function. And the process of updating a static_key
+also does the same kind of synchronization.
+
+> 
+> My third conclusion is that we'd need synchronize RCU whenever tp_funcs[0].data
+> changes for transitions 1->2, 2->1, and 1->2 because the priorities don't guarantee
+> that the first callback stays in the first position, and we also need to rcu sync
+> unconditionally on transition 1->0. We currently only have sync RCU on transition
+> from 2->1 when tp_funcs[0].func changes, which is bogus in many ways.
+
+Going from 1 to 2, there's no issue. We switch to the iterator, which
+is the old method anyway. It looks directly at the array and matches
+the data with the func for each element of that array, and the data
+read initially (before calling the iterator) is ignored.
+
+> 
+> Basically, transitions from the iterator to a specific function should be handled
+> with care (making sure the tp_funcs array is updated and rcu-sync is done), except
+> in the specific case where the prior tp->funcs was NULL, which skips the function
+> call. And unless there is a rcu-sync between the state transitions, we need to consider
+> all prior states as additional original state as well. Therefore, in a 1->0->1
+> transition sequence, it's very much possible that the old function ends up observing
+> the new callback's data unless we add some rcu sync in between.
+
+I disagree with the last part, as I explained above.
+
+But I do agree that comparing data is probably the better check.
+
+-- Steve
+
+> 
+> Thoughts ?
+> 
+> Thanks,
+> 
+> Mathieu
+> 
 

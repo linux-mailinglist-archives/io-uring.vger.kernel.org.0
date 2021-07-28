@@ -2,84 +2,93 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B25433D8AB3
-	for <lists+io-uring@lfdr.de>; Wed, 28 Jul 2021 11:35:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C65C3D8ACE
+	for <lists+io-uring@lfdr.de>; Wed, 28 Jul 2021 11:39:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235384AbhG1Jfc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 28 Jul 2021 05:35:32 -0400
-Received: from proxmox-new.maurer-it.com ([94.136.29.106]:11082 "EHLO
-        proxmox-new.maurer-it.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231256AbhG1Jfc (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 28 Jul 2021 05:35:32 -0400
-X-Greylist: delayed 515 seconds by postgrey-1.27 at vger.kernel.org; Wed, 28 Jul 2021 05:35:31 EDT
-Received: from proxmox-new.maurer-it.com (localhost.localdomain [127.0.0.1])
-        by proxmox-new.maurer-it.com (Proxmox) with ESMTP id B905640F58;
-        Wed, 28 Jul 2021 11:26:54 +0200 (CEST)
-Subject: Re: [PATCH 2/2] io_uring: don't block level reissue off completion
- path
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc:     stable@vger.kernel.org
-References: <20210727165811.284510-1-axboe@kernel.dk>
- <20210727165811.284510-3-axboe@kernel.dk>
-From:   Fabian Ebner <f.ebner@proxmox.com>
-Message-ID: <70b7b7b2-c6d5-8088-ee76-c1ffc53ac2a3@proxmox.com>
-Date:   Wed, 28 Jul 2021 11:26:48 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+        id S234989AbhG1JjJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 28 Jul 2021 05:39:09 -0400
+Received: from ste-pvt-msa2.bahnhof.se ([213.80.101.71]:11690 "EHLO
+        ste-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235659AbhG1JjF (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 28 Jul 2021 05:39:05 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTP id 2F2FD3F64D;
+        Wed, 28 Jul 2021 11:39:03 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at bahnhof.se
+X-Spam-Flag: NO
+X-Spam-Score: -2.99
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.99 tagged_above=-999 required=6.31
+        tests=[BAYES_00=-1.9, NICE_REPLY_A=-1.091, URIBL_BLOCKED=0.001]
+        autolearn=ham autolearn_force=no
+Received: from ste-pvt-msa2.bahnhof.se ([127.0.0.1])
+        by localhost (ste-ftg-msa2.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id Gmxp4NXcSx4z; Wed, 28 Jul 2021 11:39:02 +0200 (CEST)
+Received: by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTPA id 208923F623;
+        Wed, 28 Jul 2021 11:39:01 +0200 (CEST)
+Received: from [192.168.0.10] (port=63846)
+        by tnonline.net with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
+        (Exim 4.94.2)
+        (envelope-from <forza@tnonline.net>)
+        id 1m8g1k-000Auu-OJ; Wed, 28 Jul 2021 11:39:00 +0200
+From:   Forza <forza@tnonline.net>
+Subject: Re: Stack trace with Samba VFS io_uring and large transfers
+To:     Stefan Metzmacher <metze@samba.org>, Jens Axboe <axboe@kernel.dk>,
+        io-uring@vger.kernel.org
+References: <c6bd5987-e9ae-cd02-49d0-1b3ac1ef65b1@tnonline.net>
+ <83566716-691f-ca91-295b-6d8aaafa50d2@kernel.dk>
+ <49c893e9-8468-f326-9404-d23ed5a4b89f@tnonline.net>
+ <74609547-b920-364b-db3b-ffb8ca7ab173@kernel.dk>
+ <4848096b-7fc8-ba06-1238-849372d3851e@tnonline.net>
+ <1e437b44-3917-3ea2-3231-f147b6a30ece@samba.org>
+Message-ID: <de44675f-472f-76ff-406d-546f02dce844@tnonline.net>
+Date:   Wed, 28 Jul 2021 11:39:02 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
  Thunderbird/78.12.0
 MIME-Version: 1.0
-In-Reply-To: <20210727165811.284510-3-axboe@kernel.dk>
+In-Reply-To: <1e437b44-3917-3ea2-3231-f147b6a30ece@samba.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Am 27.07.21 um 18:58 schrieb Jens Axboe:
-> Some setups, like SCSI, can throw spurious -EAGAIN off the softirq
-> completion path. Normally we expect this to happen inline as part
-> of submission, but apparently SCSI has a weird corner case where it
-> can happen as part of normal completions.
-> 
-> This should be solved by having the -EAGAIN bubble back up the stack
-> as part of submission, but previous attempts at this failed and we're
-> not just quite there yet. Instead we currently use REQ_F_REISSUE to
-> handle this case.
-> 
-> For now, catch it in io_rw_should_reissue() and prevent a reissue
-> from a bogus path.
-> 
-> Cc: stable@vger.kernel.org
-> Reported-by: Fabian Ebner <f.ebner@proxmox.com>
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> ---
->   fs/io_uring.c | 6 ++++++
->   1 file changed, 6 insertions(+)
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 6ba101cd4661..83f67d33bf67 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -2447,6 +2447,12 @@ static bool io_rw_should_reissue(struct io_kiocb *req)
->   	 */
->   	if (percpu_ref_is_dying(&ctx->refs))
->   		return false;
-> +	/*
-> +	 * Play it safe and assume not safe to re-import and reissue if we're
-> +	 * not in the original thread group (or in task context).
-> +	 */
-> +	if (!same_thread_group(req->task, current) || !in_task())
-> +		return false;
->   	return true;
->   }
->   #else
-> 
 
-Hi,
 
-thank you for the fix! This does indeed prevent the panic (with 5.11.22) 
-and hang (with 5.13.3) with my problematic workload.
+On 2021-07-28 02:16, Stefan Metzmacher wrote:
+>> I am using Btrfs.
+>>
+>> My testing was done by exporting the share with
+>>
+>>    vfs objects = io_uring
+>>    vfs objects = btrfs, io_uring
+>>
+>> Same results in both cases. Exporting with "vfs objects = btrfs" (no io_uring) works as expected.
+> I don't think it makes a difference for the current problem, but I guess you want the following order instead:
+> 
+> vfs objects = io_uring, btrfs
+> 
+> metze
 
-Best Regards,
-Fabian
+I haven't tested that combination. However the docs mention that 
+io_uring must be last VFS object loaded.
 
+https://www.samba.org/samba/docs/4.12/man-html/vfs_io_uring.8.html
+
+"The io_uring VFS module enables asynchronous pread, pwrite and fsync 
+using the io_uring infrastructure of Linux (>= 5.1). This provides much 
+less overhead compared to the usage of the pthreadpool for async io.
+
+This module SHOULD be listed last in any module stack as it requires 
+real kernel file descriptors."
+
+The manpage for vfs_btrfs mentions that btrfs is stackable and in their 
+example they have btrfs loaded before vfs_shadow_copy.
+
+https://www.samba.org/samba/docs/4.12/man-html/vfs_btrfs.8.html
+
+What would be the implication of having io_uring before the btrfs module?
+
+Regards
+Forza

@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A60FD3DA71A
-	for <lists+io-uring@lfdr.de>; Thu, 29 Jul 2021 17:06:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12D9D3DA71B
+	for <lists+io-uring@lfdr.de>; Thu, 29 Jul 2021 17:06:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237655AbhG2PGj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 29 Jul 2021 11:06:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42454 "EHLO
+        id S237761AbhG2PGk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 29 Jul 2021 11:06:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237703AbhG2PGj (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 29 Jul 2021 11:06:39 -0400
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F65DC061765
-        for <io-uring@vger.kernel.org>; Thu, 29 Jul 2021 08:06:35 -0700 (PDT)
-Received: by mail-wm1-x32f.google.com with SMTP id m20-20020a05600c4f54b029024e75a15716so4269062wmq.2
+        with ESMTP id S237703AbhG2PGk (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 29 Jul 2021 11:06:40 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06C26C0613C1
+        for <io-uring@vger.kernel.org>; Thu, 29 Jul 2021 08:06:36 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id q3so7414997wrx.0
         for <io-uring@vger.kernel.org>; Thu, 29 Jul 2021 08:06:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=50Gv/IuERoGx4qq2IxVMxfipCk8jqUvvG+rt9czHmuM=;
-        b=iLtn68nVvSx+FQ24JI9hOBFujXpB5SgimUAVB8cSn2uMk7L/4na3/MhZ0FH5ElEQBn
-         9QVPJAiF30Mb6JSgViAcxsA/3rPPHeS6zil4FuD28Rosb86i1WEBeKv09f/DJbR6SS8+
-         aOQ37jYwVBO+KJzo1rSvVnN0YmJ7zf9yfxBPrOZql0quizBpHzaOqL1rWRWtC01Nlrdf
-         j+5LEV7gRdpxod7vKFmeo8SPk6JSXOaUh3/iwJ1+VnKiun4/AjKNJKo/Fu20SL1Mjgdw
-         MbA9LHWP6UG12UkXoz7VYbZMaS0zFqseAG7wCCj/sWIPbRuURU4ePTasVfZYLfem2RI7
-         Q2VQ==
+        bh=yjwrP1S10568AYbSqJZ/+jtdTCly/B80QgvudqI3kVk=;
+        b=Yvzly+QPoV/SJxuLFvCAcxnamr3IOU5jp/6d9SSmbrNZxaGHYNBI4IWiS0AlWcsai/
+         uEPvMRFR8yFFF1oKw9J5eQ3S3iIYq8pJPLICgRF2HYWHM+lR87WSSj21EqTzIDe03M7O
+         6+JLsKOf3ugT+o4SRk9uYfBTm4h1s/TIu0ZY5LCFTID1K8kyGK3E0owIugOl1+yPQKBU
+         RRSlF3Ql2lNNqEkm9jhSRncPorSKMn3xU1DPVSHMnmYBkk2L9ZKx+z7lCnuKGvRn8QO2
+         WMnPiix3xZtCfhVBnfsiO+fqa1GebRWe6yof0jMOS6jkjVLjZHRSTGyh7VkAgU+9wcPg
+         eQvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=50Gv/IuERoGx4qq2IxVMxfipCk8jqUvvG+rt9czHmuM=;
-        b=b53Pg26I4sVbO4a1hOGGsAdFKpW3X370pmYi8IXwe42WVXrgcZaWlPEJ7i+5wuW38p
-         KFWJfzo7NAQTOby1AHxaqfzIX4ParxlShFzmp2CYxiReezC4Ufa9XXN2quzll0/zTpj5
-         fc7FAvkpYJTrEp45ft2gVJGkneCEv40Q+RmGIHcpgbgHf9JB3zBx8WlhyL87hxWyEE26
-         j0HyfUzd8uSuejp4vPLT9L6aZ/e8kSh5HITlCFEEXwmUkUGcWdSNcLKER2y7qneJlL6+
-         h/4uMG1ByU55fqnQ2KT35WxcFYIYn3hvIF0PiQ9POAKZJNsMtscn1dGyPkhJd+Cp3WkL
-         LMPQ==
-X-Gm-Message-State: AOAM531mUdesMuFm0V0L96JDITU8Wk3iemLPSnDBbA8WRxPY96fgUW5x
-        /dPs6Ee1kTjLTcG4K4JJZxzf9E/zFwM=
-X-Google-Smtp-Source: ABdhPJymaGfIv3JJhspZZjkwTRAp8GmHVi+TY8nxMX3YyNJqWHqcLq4Z+fXhsd3wmNJ/7L/gMT6hoA==
-X-Received: by 2002:a7b:c083:: with SMTP id r3mr5227125wmh.97.1627571193800;
-        Thu, 29 Jul 2021 08:06:33 -0700 (PDT)
+        bh=yjwrP1S10568AYbSqJZ/+jtdTCly/B80QgvudqI3kVk=;
+        b=J+eVcIDtZ7tV8PezVgaRmehrhNhvxl03650wz6/FxY7qFuHn/p8g8W4WU3T5Mfi51V
+         5GW2IAG3061mo3ky5Vuh1F8pWt1vqMvjEe9Yp3RKTROgE7lrSqNi/S+zioFVmmiEDjz2
+         mRfjpUMK9njgZTfqQdo0j8AdNw+gppOBLjgoKQFchF3AXBng/gIheWgs6iT6EefyX7tD
+         PAh2d9Etp/eFahT7+rJfX0BuqtJR819MO5AlCRyWHJ68FH7hz7KSYL85hXoOW6ppXMck
+         K12a1OF/XPWR6Ya65mcabOHNQrB7JT7DXu9bpm605EzEuYn0nTkva9nCQ2w2B8Jx1Rfe
+         l0bQ==
+X-Gm-Message-State: AOAM530bPyRFdFSqOPLUL6GuJCPW2ZxwGuhQkoS3798rnZjReXVZykGL
+        SpvoxXsJGMhgbovjYePlb0Q=
+X-Google-Smtp-Source: ABdhPJz+5afG5apm5YU0fwiTd2Z37kY4kltY7tZOyjOA9KwuKj+dnuiYgbFXZ8DcN1D5yHErjHp/0A==
+X-Received: by 2002:a5d:59ab:: with SMTP id p11mr4281067wrr.238.1627571194588;
+        Thu, 29 Jul 2021 08:06:34 -0700 (PDT)
 Received: from localhost.localdomain ([148.252.128.141])
         by smtp.gmail.com with ESMTPSA id e6sm4764577wrg.18.2021.07.29.08.06.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Jul 2021 08:06:33 -0700 (PDT)
+        Thu, 29 Jul 2021 08:06:34 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 12/23] io_uring: improve ctx hang handling
-Date:   Thu, 29 Jul 2021 16:05:39 +0100
-Message-Id: <2d9c504aa9ec1a3cad16e58b08403a781ae49468.1627570633.git.asml.silence@gmail.com>
+Subject: [PATCH 13/23] io_uring: kill unused IO_IOPOLL_BATCH
+Date:   Thu, 29 Jul 2021 16:05:40 +0100
+Message-Id: <84898bbf4f8678f45d1390add280b750cc256aba.1627570633.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <cover.1627570633.git.asml.silence@gmail.com>
 References: <cover.1627570633.git.asml.silence@gmail.com>
@@ -61,42 +61,25 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-If io_ring_exit_work() can't get it done in 5 minutes, something is
-going very wrong, don't keep spinning at HZ / 20 rate, it doesn't help
-and it may take much of CPU time if there is a lot of workers stuck as
-such.
+IO_IOPOLL_BATCH is not used, delete it.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ fs/io_uring.c | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 2ee5ba115cfc..ce56b2952042 100644
+index ce56b2952042..7066b5f84091 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -8789,6 +8789,7 @@ static void io_ring_exit_work(struct work_struct *work)
- {
- 	struct io_ring_ctx *ctx = container_of(work, struct io_ring_ctx, exit_work);
- 	unsigned long timeout = jiffies + HZ * 60 * 5;
-+	unsigned long interval = HZ / 20;
- 	struct io_tctx_exit exit;
- 	struct io_tctx_node *node;
- 	int ret;
-@@ -8813,8 +8814,11 @@ static void io_ring_exit_work(struct work_struct *work)
- 			io_sq_thread_unpark(sqd);
- 		}
+@@ -300,7 +300,6 @@ struct io_sq_data {
+ 	struct completion	exited;
+ };
  
--		WARN_ON_ONCE(time_after(jiffies, timeout));
--	} while (!wait_for_completion_timeout(&ctx->ref_comp, HZ/20));
-+		if (WARN_ON_ONCE(time_after(jiffies, timeout))) {
-+			/* there is little hope left, don't run it too often */
-+			interval = HZ * 60;
-+		}
-+	} while (!wait_for_completion_timeout(&ctx->ref_comp, interval));
- 
- 	init_completion(&exit.completion);
- 	init_task_work(&exit.task_work, io_tctx_exit_cb);
+-#define IO_IOPOLL_BATCH			8
+ #define IO_COMPL_BATCH			32
+ #define IO_REQ_CACHE_SIZE		32
+ #define IO_REQ_ALLOC_BATCH		8
 -- 
 2.32.0
 

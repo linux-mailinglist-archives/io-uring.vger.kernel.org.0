@@ -2,95 +2,108 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0471E3DA9A7
-	for <lists+io-uring@lfdr.de>; Thu, 29 Jul 2021 19:05:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EF3D3DBBE6
+	for <lists+io-uring@lfdr.de>; Fri, 30 Jul 2021 17:16:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229620AbhG2RFJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 29 Jul 2021 13:05:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60452 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229598AbhG2RFJ (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Thu, 29 Jul 2021 13:05:09 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id BCD4D608FB;
-        Thu, 29 Jul 2021 17:05:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627578306;
-        bh=tanSVsx7ADuqXEdPw5RRp50ATY4l6T4Qv7QD92oqXLo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=G5eTbInk043l3QZy/X/+tmctZYvHGT3qTR5XSteSRIaKfI2AQODu3rY6oA3FMzM7Q
-         zRF5kmbDdfDMw+ar3NaYpPLtGIK/wThWBCjD7bfR/ESusGVnvXm8wI8I5rRT1ej0cV
-         Ns/H9JaeoasP4XDZan1W5qEBUmCcaq/k/7d7eQQ74WHgFWa2rffb7M9ibQX5/CgUJO
-         8O2PY4gtNOwFSDPIP4h+wT2PtClcmlyoP12QYx2fb5Cg6sy0904/PprcErfLFJadtp
-         dnj12WjA2RydGW8CXR9WlH2mTWnKdzIwxoEreLGGPyg9/f71ee2+94Oon/Z2WQd/Ph
-         U8rWEfscQq+cA==
-Date:   Thu, 29 Jul 2021 13:05:04 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Yang Yingliang <yangyingliang@huawei.com>, viro@zeniv.linux.org.uk,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     stable@vger.kernel.org, gregkh@linuxfoundation.org, axboe@kernel.dk
-Subject: Re: [PATCH 5.10] io_uring: fix null-ptr-deref in
- io_sq_offload_start()
-Message-ID: <YQLfwGSq+BRFTUzu@sashalap>
-References: <20210729142338.1085951-1-yangyingliang@huawei.com>
+        id S239596AbhG3PQl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 30 Jul 2021 11:16:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53688 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239248AbhG3PQl (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 30 Jul 2021 11:16:41 -0400
+Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC9F8C06175F
+        for <io-uring@vger.kernel.org>; Fri, 30 Jul 2021 08:16:36 -0700 (PDT)
+Received: by mail-pl1-x629.google.com with SMTP id t21so11407249plr.13
+        for <io-uring@vger.kernel.org>; Fri, 30 Jul 2021 08:16:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=from:subject:to:cc:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=XR752PBeFjEe0CFMSvnIL9yf0c4EYiEOH4m66imDEUg=;
+        b=ednQRNwtJhDynZ4VArof04PYD8i9OP9zl7RdKrKcFIbb/1k1QjkKCRm28QE4+4r6B5
+         OBbzznn9yEmmTLhm+P47fNMThGykaPB20NiPSqYi50GmUNoknBhmKp2YBbmz8dWNdjMN
+         KOkxLRjDzZxwCdx6EIB7f6Yj9/p3hY9vaN4FhraVwG2wfJxTuDZcAa9m33/mumHT08gJ
+         18/+Pm77dOi8sR4nWuD6bT+meFH9d9blPqQY/8mn0eLwswKcFkRKINyspMKM7vc6aBpu
+         J9vZM6X5e4mkjPDVqE0m790ghW7LWqRca++nIiyScq38pPc0PKdbGTvTrdas1KwfWmrX
+         XpRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=XR752PBeFjEe0CFMSvnIL9yf0c4EYiEOH4m66imDEUg=;
+        b=e00t0ZixPLqSoF9MSBlSrHzySG71EOTbiAwm851e0qgftpmAC2w0WgUh9rk8War1NM
+         a8j8AK+yAxpsiQeZvzqpYMD6sVTpX2eYCWKQX6VmpyidbLXLfxai0g7HS4aYBgzyu/N/
+         o+TMbi0hzhjKWKo15pgibcxXQnPA05X8V9AFy9LzDukrFzHYl91kMtzFo5/3eWeYS1u3
+         g7moP2ZcaurZ1SBxIzIpZB7oZAuWwG9j5F91YFfRndwn1qT3OintW8bUcn+3TD6oNiJ+
+         EdGx9+Wu6L5Q3E2LD5SpIAYobjn6Bb6wlK0+mEURHxWci1EP+j3rA3OK+JZAYX3D8zD2
+         6F5w==
+X-Gm-Message-State: AOAM530+kxCvqkf+2IVr2oCrYKrpbd6LPP68mMbfLI1cryIDheUWT+5a
+        WEuE86oVCMbXXz902IBQ60jC9M1djDOHxAT+
+X-Google-Smtp-Source: ABdhPJzPEaePBJCYcB68cI0N2d2kaOrxiZkj3/Zc2kDIOYHyhIaNQcZHUZ27aJ2YsYNKZ8XoJ7qgHQ==
+X-Received: by 2002:a17:90a:cb83:: with SMTP id a3mr3658643pju.138.1627658195927;
+        Fri, 30 Jul 2021 08:16:35 -0700 (PDT)
+Received: from [192.168.1.116] ([198.8.77.61])
+        by smtp.gmail.com with ESMTPSA id j3sm2734141pfc.10.2021.07.30.08.16.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 Jul 2021 08:16:35 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring fixes for 5.14-rc
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     io-uring <io-uring@vger.kernel.org>
+Message-ID: <8f298e55-c978-a5b4-82fe-084ea2246fe3@kernel.dk>
+Date:   Fri, 30 Jul 2021 09:16:33 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20210729142338.1085951-1-yangyingliang@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Jul 29, 2021 at 10:23:38PM +0800, Yang Yingliang wrote:
->I met a null-ptr-deref when doing fault-inject test:
->
->[   65.441626][ T8299] general protection fault, probably for non-canonical address 0xdffffc0000000029: 0000 [#1] PREEMPT SMP KASAN
->[   65.443219][ T8299] KASAN: null-ptr-deref in range [0x0000000000000148-0x000000000000014f]
->[   65.444331][ T8299] CPU: 2 PID: 8299 Comm: test Not tainted 5.10.49+ #499
->[   65.445277][ T8299] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubuntu1.1 04/01/2014
->[   65.446614][ T8299] RIP: 0010:io_disable_sqo_submit+0x124/0x260
->[   65.447554][ T8299] Code: 7b 40 89 ee e8 2d b9 9a ff 85 ed 74 40 e8 04 b8 9a ff 49 8d be 48 01 00 00 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 22 01 00 00 49 8b ae 48 01 00 00 48 85 ed 74 0d
->[   65.450860][ T8299] RSP: 0018:ffffc9000122fd70 EFLAGS: 00010202
->[   65.451826][ T8299] RAX: dffffc0000000000 RBX: ffff88801b11f000 RCX: ffffffff81d5d783
->[   65.453166][ T8299] RDX: 0000000000000029 RSI: ffffffff81d5d78c RDI: 0000000000000148
->[   65.454606][ T8299] RBP: 0000000000000002 R08: ffff88810168c280 R09: ffffed1003623e79
->[   65.456063][ T8299] R10: ffffc9000122fd70 R11: ffffed1003623e78 R12: ffff88801b11f040
->[   65.457542][ T8299] R13: ffff88801b11f3c0 R14: 0000000000000000 R15: 000000000000001a
->[   65.458910][ T8299] FS:  00007ffb602e3500(0000) GS:ffff888064100000(0000) knlGS:0000000000000000
->[   65.460533][ T8299] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->[   65.461736][ T8299] CR2: 00007ffb5fe7eb24 CR3: 000000010a619000 CR4: 0000000000750ee0
->[   65.463146][ T8299] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->[   65.464618][ T8299] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->[   65.466052][ T8299] PKRU: 55555554
->[   65.466708][ T8299] Call Trace:
->[   65.467304][ T8299]  io_uring_setup+0x2041/0x3ac0
->[   65.468169][ T8299]  ? io_iopoll_check+0x500/0x500
->[   65.469123][ T8299]  ? syscall_enter_from_user_mode+0x1c/0x50
->[   65.470241][ T8299]  do_syscall_64+0x2d/0x70
->[   65.471028][ T8299]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
->[   65.472099][ T8299] RIP: 0033:0x7ffb5fdec839
->[   65.472925][ T8299] Code: 00 f3 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 1f f6 2c 00 f7 d8 64 89 01 48
->[   65.476465][ T8299] RSP: 002b:00007ffc33539ef8 EFLAGS: 00000206 ORIG_RAX: 00000000000001a9
->[   65.478026][ T8299] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007ffb5fdec839
->[   65.479503][ T8299] RDX: 0000000020ffd000 RSI: 0000000020000080 RDI: 0000000000100001
->[   65.480927][ T8299] RBP: 00007ffc33539f70 R08: 0000000000000000 R09: 0000000000000000
->[   65.482416][ T8299] R10: 0000000000000000 R11: 0000000000000206 R12: 0000555e85531320
->[   65.483845][ T8299] R13: 00007ffc3353a0a0 R14: 0000000000000000 R15: 0000000000000000
->[   65.485331][ T8299] Modules linked in:
->[   65.486000][ T8299] Dumping ftrace buffer:
->[   65.486772][ T8299]    (ftrace buffer empty)
->[   65.487595][ T8299] ---[ end trace a9a5fad3ebb303b7 ]---
->
->If io_allocate_scq_urings() fails in io_uring_create(), 'ctx->sq_data'
->is not set yet, when calling io_sq_offload_start() in io_disable_sqo_submit()
->in error path, it will lead a null-ptr-deref.
->
->The io_disable_sqo_submit() has been removed in mainline by commit
->70aacfe66136 ("io_uring: kill sqo_dead and sqo submission halting"),
->so the bug has been eliminated in mainline, it's a fix only for stable-5.10.
+Hi Linus,
 
-I've added the rest of the io uring folks to this thread. Please do so
-in the future using scripts/get_maintainer.pl.
+- A fix for block backed reissue (me)
+
+- Reissue context hardening (me)
+
+- Async link locking fix (Pavel)
+
+Please pull!
+
+
+The following changes since commit 991468dcf198bb87f24da330676724a704912b47:
+
+  io_uring: explicitly catch any illegal async queue attempt (2021-07-23 16:44:51 -0600)
+
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux-block.git tags/io_uring-5.14-2021-07-30
+
+for you to fetch changes up to a890d01e4ee016978776e45340e521b3bbbdf41f:
+
+  io_uring: fix poll requests leaking second poll entries (2021-07-28 07:24:57 -0600)
+
+----------------------------------------------------------------
+io_uring-5.14-2021-07-30
+
+----------------------------------------------------------------
+Hao Xu (1):
+      io_uring: fix poll requests leaking second poll entries
+
+Jens Axboe (3):
+      io_uring: fix race in unified task_work running
+      io_uring: always reissue from task_work context
+      io_uring: don't block level reissue off completion path
+
+Pavel Begunkov (1):
+      io_uring: fix io_prep_async_link locking
+
+ fs/io_uring.c | 40 ++++++++++++++++++++++++++++++++--------
+ 1 file changed, 32 insertions(+), 8 deletions(-)
 
 -- 
-Thanks,
-Sasha
+Jens Axboe
+

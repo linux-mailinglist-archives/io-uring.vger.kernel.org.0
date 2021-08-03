@@ -2,121 +2,117 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BCED3DEEF7
-	for <lists+io-uring@lfdr.de>; Tue,  3 Aug 2021 15:19:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5BD83DEEFF
+	for <lists+io-uring@lfdr.de>; Tue,  3 Aug 2021 15:22:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236467AbhHCNTa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 3 Aug 2021 09:19:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41054 "EHLO
+        id S236232AbhHCNWp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 3 Aug 2021 09:22:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41760 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236372AbhHCNT0 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 3 Aug 2021 09:19:26 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9DA4C061757;
-        Tue,  3 Aug 2021 06:19:15 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id l11-20020a7bcf0b0000b0290253545c2997so2116538wmg.4;
-        Tue, 03 Aug 2021 06:19:15 -0700 (PDT)
+        with ESMTP id S236185AbhHCNW2 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 3 Aug 2021 09:22:28 -0400
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A21CFC06175F
+        for <io-uring@vger.kernel.org>; Tue,  3 Aug 2021 06:22:14 -0700 (PDT)
+Received: by mail-pj1-x102d.google.com with SMTP id q17-20020a17090a2e11b02901757deaf2c8so4691885pjd.0
+        for <io-uring@vger.kernel.org>; Tue, 03 Aug 2021 06:22:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:references:subject:message-id:date:user-agent
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=4bTL95jDgra7LC9A5D9r1ZcZc4mY/FmKMB407SmhfYM=;
-        b=gKaHlsmBzLnKCGD7KDdkTxaJGT4/d7MCE4LAGHMRHJ5yyonNdfF09ofRlESE/Q3u87
-         txgOn5WyXypBSvWi1ChGO2ryDIczIj5D95m8zF+PViXJz0FDs6qOPUCB4YuusHmzysca
-         vVAQeZ5LCWnAbsyQUItlw1NUfU4JT9Q9mMEMQdqyPBOPz/cYztCp00fmuL/CaD4ZEFzp
-         /BsZfV/S6b7IguHXgvE/pqsfVeS+hfWevMKLR4PkombpbWV/TtoVy+7trnRScRZa5pis
-         Tz9JOo3B8rZhzNN1uKbM5ZiVFKNHJOgLxm39/ylgh/k/dBCaYVeN7cgtSGZaQyfZJffC
-         4zAQ==
+        bh=Ip1ffG0kWxlF47p1RnVHZvZP5Ea9dA29IpexBerj1jc=;
+        b=WEUy2RbBZdEU5sW+bsJWwUaJwBjWepfcQI1r9gpdrT1KFXGKOv/UsTfbeYgy61oHtv
+         lPPjsDE3wgdTBQp41tRGORrwj3DrwG5NBpcl2vpANSQ0GzAbj8Ib9bGaK1kwo48+6ja6
+         ZN2YJuFBC/A4SbvhuLA9ZZzvMZY0rv2lu8vHRJwGikDk/Wbyt929Dy+1Ro0+CDu+B9SV
+         hZ7Idk5ERu6bUjAw2NltRkS+LsDBbqKlKbN4kevaiqOFpTGERdOwLtx5nV9uSHZIwbI8
+         0pzusRY46dMCYNiNdyTf2pe+cBzXN6dqabKaVHj1wD0nBf2pH+DEMGuZ2LwubIMux6iO
+         1VrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:references:subject:message-id:date
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=4bTL95jDgra7LC9A5D9r1ZcZc4mY/FmKMB407SmhfYM=;
-        b=tHmqwEiHJ6VwBQXDse138Ng9bGZK/n+0ne8cOApVH0vJmFSiFbmO6NMgU7uz4HID3C
-         BVGDHBvYiWTA7vBXHkmeoPttygnyqQMo0soPvw0GGvOEafdz4urs8dMU8YjA7K2uary/
-         1Nwz/AiYNMZGswsqIMD8mL+Xod6XUM3TIVslnt78CBGb/shaH/7mfNO5S9NUCg3edUIz
-         p+BNVgsDKzqqVO+mR0WOt1/fqsQhqMlvlClpPsMRVkT9Irrhr52rv81SX3GQsaBX/zRV
-         tGELwOgHQ1kS0+rXzu9TCNVFp/Kykj17wtutfEuesJRwuYikgq/Mk3wvvGMtCAy7gDEU
-         Denw==
-X-Gm-Message-State: AOAM530S5zwL8EQLOmd17EghxE4FWRAEi1x5Ou2cgHSiW/kzFt1jVNW7
-        h4q3gRJASRAqvhuyLWaFQ1YrBY+BGZ4=
-X-Google-Smtp-Source: ABdhPJyUVnbCvP0mqsqQ4xEJKu5fmjhfDS9rk7EfgqGR8yMdVCkyq54EDsQd0VmpkWIt/CqRh6svTQ==
-X-Received: by 2002:a05:600c:3b9b:: with SMTP id n27mr4411307wms.188.1627996754347;
-        Tue, 03 Aug 2021 06:19:14 -0700 (PDT)
-Received: from [192.168.8.197] ([185.69.145.39])
-        by smtp.gmail.com with ESMTPSA id a2sm14498423wrn.95.2021.08.03.06.19.13
+        bh=Ip1ffG0kWxlF47p1RnVHZvZP5Ea9dA29IpexBerj1jc=;
+        b=bmUtdSVDFh7WPXPxva/jSHPkDije8vto7K5xryyLCfdSzMdcDba2/kCbv0Aset1fsM
+         4xE37DNjiRxXJok1Y8kiHmE7UDVh0x7eDggQY6y1Ko1ipQIGJE8bzIwXKjsMbQwM9IgP
+         1DpVSczeZmBnsO0rpKNCg+TOvtg3ty0A8+Ntc2zGtcnTjAe+yghvfs8Z2jkIDXi7I83f
+         trlIU4JAUz6jwGKjiH0MU88AKAiI2rm26Sj38HYD11iE15yjNeBaW9jkjqdqXLEtk9rw
+         28fUgUkuU2iG4vGJ+b1BBbiiDl/vnU0E44vx2t0XKO86bPafkpbMb/maph4Hnrx+VuOz
+         Ewpg==
+X-Gm-Message-State: AOAM531LT+g+IedvT2G6qc5BOyQBjF2uILOFAB3iiqYC6n3+XHPYLgb6
+        g5WYm2dZwe6DdMgPbP9D44Ls+4Qhs0nc9sVI
+X-Google-Smtp-Source: ABdhPJxxsDoRAQFENuyXxeBcI4Urgj6bp/ZrOP0Y4gSLZwdjwteiwoTPkDoekO9i048R3tQMvSB9Uw==
+X-Received: by 2002:a63:2c01:: with SMTP id s1mr219889pgs.357.1627996933895;
+        Tue, 03 Aug 2021 06:22:13 -0700 (PDT)
+Received: from [192.168.1.116] ([198.8.77.61])
+        by smtp.gmail.com with ESMTPSA id a20sm14848559pfv.101.2021.08.03.06.22.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Aug 2021 06:19:13 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <CADVatmOf+ZfxXA=LBSUqDZApZG3K1Q8GV2N5CR5KgrJLqTGsfg@mail.gmail.com>
- <f38b93f3-4cdb-1f9b-bd81-51d32275555e@gmail.com>
- <4c339bea-87ff-cb41-732f-05fc5aff18fa@gmail.com>
- <CADVatmPwM-2oma2mCXnQViKK5DfZ2GS5FLmteEDYwOEOK-mjMg@mail.gmail.com>
- <8db71657-bd61-6b1f-035f-9a69221e7cb3@gmail.com>
- <CADVatmPPnAWyOmyqT3iggeO_hOuPpALF5hqAqbQkrdvCPB5UaQ@mail.gmail.com>
- <98f8ec51-9d84-0e74-4c1c-a463f2d69d9d@gmail.com>
-Subject: Re: KASAN: stack-out-of-bounds in iov_iter_revert
-Message-ID: <245f52f4-8b27-6477-2012-78e42398167d@gmail.com>
-Date:   Tue, 3 Aug 2021 14:18:47 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+        Tue, 03 Aug 2021 06:22:13 -0700 (PDT)
+Subject: Re: Race between io_wqe_worker() and io_wqe_wake_worker()
+To:     Nadav Amit <nadav.amit@gmail.com>
+Cc:     io-uring@vger.kernel.org
+References: <BFF746C0-FEDE-4646-A253-3021C57C26C9@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <5bc88410-6423-2554-340d-ef83f1ba9844@kernel.dk>
+Date:   Tue, 3 Aug 2021 07:22:11 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <98f8ec51-9d84-0e74-4c1c-a463f2d69d9d@gmail.com>
+In-Reply-To: <BFF746C0-FEDE-4646-A253-3021C57C26C9@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/3/21 11:34 AM, Pavel Begunkov wrote:
-> On 8/3/21 8:47 AM, Sudip Mukherjee wrote:
->> On Mon, Aug 2, 2021 at 12:55 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
->>> On 8/1/21 9:28 PM, Sudip Mukherjee wrote:
->>>> On Sun, Aug 1, 2021 at 9:52 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
->>>>> On 8/1/21 1:10 AM, Pavel Begunkov wrote:
->>>>>> On 7/31/21 7:21 PM, Sudip Mukherjee wrote:
->>>>>>> Hi Jens, Pavel,
->>>>>>>
->>>>>>> We had been running syzkaller on v5.10.y and a "KASAN:
->>>>>>> stack-out-of-bounds in iov_iter_revert" was being reported on it. I
->>>>>>> got some time to check that today and have managed to get a syzkaller
->>>>>>> reproducer. I dont have a C reproducer which I can share but I can use
->>>>>>> the syz-reproducer to reproduce this with v5.14-rc3 and also with
->>>>>>> next-20210730.
->>>>>>
->>>>>> Can you try out the diff below? Not a full-fledged fix, but need to
->>>>>> check a hunch.
->>>>>>
->>>>>> If that's important, I was using this branch:
->>>>>> git://git.kernel.dk/linux-block io_uring-5.14
->>>>>
->>>>> Or better this one, just in case it ooopses on warnings.
->>>>
->>>> I tested this one on top of "git://git.kernel.dk/linux-block
->>>> io_uring-5.14" and the issue was still seen, but after the BUG trace I
->>>> got lots of "truncated wr" message. The trace is:
->>>
->>> That's interesting, thanks
->>> Can you share the syz reproducer?
->>
->> Unfortunately I dont have a C reproducer, but this is the reproducer
->> for syzkaller:
+On 8/2/21 7:05 PM, Nadav Amit wrote:
+> Hello Jens,
 > 
-> Thanks. Maybe I'm not perfectly familiar with syz, but were there
-> any options? Like threaded, collide, etc.?
+> I encountered an issue, which appears to be a race between
+> io_wqe_worker() and io_wqe_wake_worker(). I am not sure how to address
+> this issue and whether I am missing something, since this seems to
+> occur in a common scenario. Your feedback (or fix ;-)) would be
+> appreciated.
+> 
+> I run on 5.13 a workload that issues multiple async read operations
+> that should run concurrently. Some read operations can not complete
+> for unbounded time (e.g., read from a pipe that is never written to).
+> The problem is that occasionally another read operation that should
+> complete gets stuck. My understanding, based on debugging and the code
+> is that the following race (or similar) occurs:
+> 
+> 
+>   cpu0					cpu1
+>   ----					----
+> 					io_wqe_worker()
+> 					 schedule_timeout()
+> 					 // timed out
+>   io_wqe_enqueue()
+>    io_wqe_wake_worker()
+>     // work_flags & IO_WQ_WORK_CONCURRENT
+>     io_wqe_activate_free_worker()
+> 					 io_worker_exit()
+> 
+> 
+> Basically, io_wqe_wake_worker() can find a worker, but this worker is
+> about to exit and is not going to process further work. Once the
+> worker exits, the concurrency level decreases and async work might be
+> blocked by another work. I had a look at 5.14, but did not see
+> anything that might address this issue.
+> 
+> Am I missing something?
+> 
+> If not, all my ideas for a solution are either complicated (track
+> required concurrency-level) or relaxed (span another worker on
+> io_worker_exit if work_list of unbounded work is not empty).
+> 
+> As said, feedback would be appreciated.
 
-Never mind, reproduced the issue.
-
-fwiw, I was too optimistic with u16 in the diff, but if
-replaced with size_t, it solves the out-of-bounds bug,
-but it has another issue.
-
-In any case, need to patch it up, thanks
+You are right that there's definitely a race here between checking the
+freelist and finding a worker, but that worker is already exiting. Let
+me mull over this a bit, I'll post something for you to try later today.
 
 -- 
-Pavel Begunkov
+Jens Axboe
+

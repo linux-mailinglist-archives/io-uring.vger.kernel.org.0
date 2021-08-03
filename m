@@ -2,115 +2,157 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 51DF93DF0DF
-	for <lists+io-uring@lfdr.de>; Tue,  3 Aug 2021 16:57:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8874C3DF3E0
+	for <lists+io-uring@lfdr.de>; Tue,  3 Aug 2021 19:25:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235486AbhHCO53 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 3 Aug 2021 10:57:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37092 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234206AbhHCO53 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 3 Aug 2021 10:57:29 -0400
-Received: from mail-yb1-xb2d.google.com (mail-yb1-xb2d.google.com [IPv6:2607:f8b0:4864:20::b2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 648E9C061757;
-        Tue,  3 Aug 2021 07:57:17 -0700 (PDT)
-Received: by mail-yb1-xb2d.google.com with SMTP id a93so16123872ybi.1;
-        Tue, 03 Aug 2021 07:57:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9IoTpQSoFN8X9feSI035kPuC1yq++XFdeyD5Oq4YGKU=;
-        b=tfU660ceP9Cw9lVo5xVG4iqGiQldb5dnzTWtjqNPtgZ59X5oh/8gmpazWSHzOiYRHs
-         4YPnjMgkpVunHrAZj+hd+fqCPVyGNFqT0oCt795YrACgmSxgu7d2SsSCoiz5H/HbBXEa
-         mqZIagubbvvRpG3QhQXy0PMZY6fgAOnaqFt8i/z3YQYs2xdVnB0UrMpHzt8eEXUTQ8Jy
-         IhiPfdb2rJirBFo3vDdH0lSO8nIfPqbZ6b7Sla5JZJoptP17RzqoLk+SAxwkBAkDZUv2
-         Eb5RaXl6wj3rGr4Aso8br/GioipTt1kKzLXHTiaVcGeCymdzYPCCGKZS3ODB2xRkE9po
-         2z6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9IoTpQSoFN8X9feSI035kPuC1yq++XFdeyD5Oq4YGKU=;
-        b=A9HkzsNA0qaOIJmdkSEaZOXtZv6M0/M6vet31cUOszRXtgWciCVqfqaJUq9OMRmst3
-         trFHwDGWHJYzGDOJ5lDQkZszIcSmxQQY8KD3NnPxl1AskeVluuAUN8rKW+nKW1/oeFhV
-         MeH/Xv88CU62/xCPSH4Lo6jMrfG9tXZ3K+CDA2gl3a1SI4+NqGPOv409GWqw0HOs7tXL
-         RgBIa5hxyXlvE2P46mAF9kpFTNvqbjUTYtqv6nXL4eySlSUsueo4bmxPfPB505CE2lHM
-         tOTAFsfxWWZrXQUVV4w2qF9X71JUxj333Uq+KdmsBY1b2sim/mj0Gv9oWA3UgyGGXWZe
-         Hcmg==
-X-Gm-Message-State: AOAM530IkRVeX4ikxTc8omYbH9gfs3Bfr5uYv+PRmR3R9eM3k/tfRrUp
-        337zDgsuvQSEtBLeiXcfUMJeLVBzksx++P7zh90=
-X-Google-Smtp-Source: ABdhPJzznB420tcQq5+eEEI7CtIXVisjpepyS5Oyo434ofvSlrzRcz+2mrznrUI0oge3JgIa+IQmUWB6vwiOZr23O58=
-X-Received: by 2002:a25:1546:: with SMTP id 67mr29005241ybv.331.1628002636674;
- Tue, 03 Aug 2021 07:57:16 -0700 (PDT)
+        id S238178AbhHCRZv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 3 Aug 2021 13:25:51 -0400
+Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:4649 "EHLO
+        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S238069AbhHCRZu (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 3 Aug 2021 13:25:50 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0UhtjYqf_1628011537;
+Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UhtjYqf_1628011537)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 04 Aug 2021 01:25:37 +0800
+Subject: Re: Race between io_wqe_worker() and io_wqe_wake_worker()
+To:     Jens Axboe <axboe@kernel.dk>, Nadav Amit <nadav.amit@gmail.com>
+Cc:     io-uring@vger.kernel.org
+References: <BFF746C0-FEDE-4646-A253-3021C57C26C9@gmail.com>
+ <5bc88410-6423-2554-340d-ef83f1ba9844@kernel.dk>
+ <c6ef9d6c-3127-090f-88a2-a1ffd432bbef@kernel.dk>
+From:   Hao Xu <haoxu@linux.alibaba.com>
+Message-ID: <12e58686-bffe-ba42-d7a3-20d35b26eaf7@linux.alibaba.com>
+Date:   Wed, 4 Aug 2021 01:25:37 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.10.2
 MIME-Version: 1.0
-References: <CADVatmOf+ZfxXA=LBSUqDZApZG3K1Q8GV2N5CR5KgrJLqTGsfg@mail.gmail.com>
- <f38b93f3-4cdb-1f9b-bd81-51d32275555e@gmail.com> <4c339bea-87ff-cb41-732f-05fc5aff18fa@gmail.com>
- <CADVatmPwM-2oma2mCXnQViKK5DfZ2GS5FLmteEDYwOEOK-mjMg@mail.gmail.com>
- <8db71657-bd61-6b1f-035f-9a69221e7cb3@gmail.com> <CADVatmPPnAWyOmyqT3iggeO_hOuPpALF5hqAqbQkrdvCPB5UaQ@mail.gmail.com>
- <98f8ec51-9d84-0e74-4c1c-a463f2d69d9d@gmail.com>
-In-Reply-To: <98f8ec51-9d84-0e74-4c1c-a463f2d69d9d@gmail.com>
-From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Date:   Tue, 3 Aug 2021 15:56:40 +0100
-Message-ID: <CADVatmPB79srVmtudV+r5dZKtRoo8ZHZ62r0uqQLFTH-1yi+7Q@mail.gmail.com>
-Subject: Re: KASAN: stack-out-of-bounds in iov_iter_revert
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <c6ef9d6c-3127-090f-88a2-a1ffd432bbef@kernel.dk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Aug 3, 2021 at 11:34 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
->
-> On 8/3/21 8:47 AM, Sudip Mukherjee wrote:
-> > On Mon, Aug 2, 2021 at 12:55 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
-> >>
-> >> On 8/1/21 9:28 PM, Sudip Mukherjee wrote:
-> >>> Hi Pavel,
-> >>>
-> >>> On Sun, Aug 1, 2021 at 9:52 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
-> >>>>
-> >>>> On 8/1/21 1:10 AM, Pavel Begunkov wrote:
-> >>>>> On 7/31/21 7:21 PM, Sudip Mukherjee wrote:
-> >>>>>> Hi Jens, Pavel,
-> >>>>>>
-> >>>>>> We had been running syzkaller on v5.10.y and a "KASAN:
-> >>>>>> stack-out-of-bounds in iov_iter_revert" was being reported on it. I
-> >>>>>> got some time to check that today and have managed to get a syzkaller
-> >>>>>> reproducer. I dont have a C reproducer which I can share but I can use
-> >>>>>> the syz-reproducer to reproduce this with v5.14-rc3 and also with
-> >>>>>> next-20210730.
-> >>>>>
-> >>>>> Can you try out the diff below? Not a full-fledged fix, but need to
-> >>>>> check a hunch.
-> >>>>>
-> >>>>> If that's important, I was using this branch:
-> >>>>> git://git.kernel.dk/linux-block io_uring-5.14
-> >>>>
-> >>>> Or better this one, just in case it ooopses on warnings.
-> >>>
-> >>> I tested this one on top of "git://git.kernel.dk/linux-block
-> >>> io_uring-5.14" and the issue was still seen, but after the BUG trace I
-> >>> got lots of "truncated wr" message. The trace is:
-> >>
-> >> That's interesting, thanks
-> >> Can you share the syz reproducer?
-> >
-> > Unfortunately I dont have a C reproducer, but this is the reproducer
-> > for syzkaller:
->
-> Thanks. Maybe I'm not perfectly familiar with syz, but were there
-> any options? Like threaded, collide, etc.?
+在 2021/8/3 下午10:37, Jens Axboe 写道:
+> On 8/3/21 7:22 AM, Jens Axboe wrote:
+>> On 8/2/21 7:05 PM, Nadav Amit wrote:
+>>> Hello Jens,
+>>>
+>>> I encountered an issue, which appears to be a race between
+>>> io_wqe_worker() and io_wqe_wake_worker(). I am not sure how to address
+>>> this issue and whether I am missing something, since this seems to
+>>> occur in a common scenario. Your feedback (or fix ;-)) would be
+>>> appreciated.
+>>>
+>>> I run on 5.13 a workload that issues multiple async read operations
+>>> that should run concurrently. Some read operations can not complete
+>>> for unbounded time (e.g., read from a pipe that is never written to).
+>>> The problem is that occasionally another read operation that should
+>>> complete gets stuck. My understanding, based on debugging and the code
+>>> is that the following race (or similar) occurs:
+>>>
+>>>
+>>>    cpu0					cpu1
+>>>    ----					----
+>>> 					io_wqe_worker()
+>>> 					 schedule_timeout()
+>>> 					 // timed out
+>>>    io_wqe_enqueue()
+>>>     io_wqe_wake_worker()
+>>>      // work_flags & IO_WQ_WORK_CONCURRENT
+>>>      io_wqe_activate_free_worker()
+>>> 					 io_worker_exit()
+>>>
+>>>
+>>> Basically, io_wqe_wake_worker() can find a worker, but this worker is
+>>> about to exit and is not going to process further work. Once the
+>>> worker exits, the concurrency level decreases and async work might be
+>>> blocked by another work. I had a look at 5.14, but did not see
+>>> anything that might address this issue.
+>>>
+>>> Am I missing something?
+>>>
+>>> If not, all my ideas for a solution are either complicated (track
+>>> required concurrency-level) or relaxed (span another worker on
+>>> io_worker_exit if work_list of unbounded work is not empty).
+>>>
+>>> As said, feedback would be appreciated.
+>>
+>> You are right that there's definitely a race here between checking the
+>> freelist and finding a worker, but that worker is already exiting. Let
+>> me mull over this a bit, I'll post something for you to try later today.
+> 
+> Can you try something like this? Just consider it a first tester, need
+> to spend a bit more time on it to ensure we fully close the gap.
+> 
+> 
+> diff --git a/fs/io-wq.c b/fs/io-wq.c
+> index cf086b01c6c6..e2da2042ee9e 100644
+> --- a/fs/io-wq.c
+> +++ b/fs/io-wq.c
+> @@ -42,6 +42,7 @@ struct io_worker {
+>   	refcount_t ref;
+>   	unsigned flags;
+>   	struct hlist_nulls_node nulls_node;
+> +	unsigned long exiting;
+>   	struct list_head all_list;
+>   	struct task_struct *task;
+>   	struct io_wqe *wqe;
+> @@ -214,15 +215,20 @@ static bool io_wqe_activate_free_worker(struct io_wqe *wqe)
+>   	struct hlist_nulls_node *n;
+>   	struct io_worker *worker;
+>   
+> -	n = rcu_dereference(hlist_nulls_first_rcu(&wqe->free_list));
+> -	if (is_a_nulls(n))
+> -		return false;
+> -
+> -	worker = hlist_nulls_entry(n, struct io_worker, nulls_node);
+> -	if (io_worker_get(worker)) {
+> -		wake_up_process(worker->task);
+> +	/*
+> +	 * Iterate free_list and see if we can find an idle worker to
+> +	 * activate. If a given worker is on the free_list but in the process
+> +	 * of exiting, keep trying.
+> +	 */
+> +	hlist_nulls_for_each_entry_rcu(worker, n, &wqe->free_list, nulls_node) {
+> +		if (!io_worker_get(worker))
+> +			continue;
+> +		if (!test_bit(0, &worker->exiting)) {
+> +			wake_up_process(worker->task);
+> +			io_worker_release(worker);
+> +			return true;
+> +		}
+>   		io_worker_release(worker);
+> -		return true;
+>   	}
+>   
+>   	return false;
+> @@ -560,8 +566,17 @@ static int io_wqe_worker(void *data)
+>   		if (ret)
+>   			continue;
+>   		/* timed out, exit unless we're the fixed worker */
+> -		if (!(worker->flags & IO_WORKER_F_FIXED))
+> +		if (!(worker->flags & IO_WORKER_F_FIXED)) {
+> +			/*
+> +			 * Someone elevated our refs, which could be trying
+> +			 * to re-activate for work. Loop one more time for
+> +			 * that case.
+> +			 */
+> +			if (refcount_read(&worker->ref) != 1)
+> +				continue;
+> +			set_bit(0, &worker->exiting);
+>   			break;
+> +		}
+>   	}
+>   
+>   	if (test_bit(IO_WQ_BIT_EXIT, &wq->state)) {
+> 
 
-Sorry, my  mistake. I am still learning how syzkaller works. And I
-should have given the link to the report with my mail.
-https://elisa-builder-00.iol.unh.edu/syzkaller/report?id=959057ecd2886ff0c38cc53fa9c8eae46c1d7496
+refcount check may not be enough, we may need another bit worker->in_use
+and:
+     io_wqe_activate_free_worker                io_wqe_worker
 
-And also, I now have a C reproducer also, if that helps.
-
-
--- 
-Regards
-Sudip
+      set_bit(worker->in_use)               set_bit(worker->exiting)
+      !test_bit(worker->exiting)            test_bit(worker->in_use)
+      wake_up(worker)                       goto handle work

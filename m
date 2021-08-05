@@ -2,65 +2,64 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 28F573E16E2
-	for <lists+io-uring@lfdr.de>; Thu,  5 Aug 2021 16:25:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D9533E176D
+	for <lists+io-uring@lfdr.de>; Thu,  5 Aug 2021 16:58:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236413AbhHEO0J (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 5 Aug 2021 10:26:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41040 "EHLO
+        id S233201AbhHEO6k (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 5 Aug 2021 10:58:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48898 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241996AbhHEOYM (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 5 Aug 2021 10:24:12 -0400
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA688C061765
-        for <io-uring@vger.kernel.org>; Thu,  5 Aug 2021 07:23:57 -0700 (PDT)
-Received: by mail-pj1-x102a.google.com with SMTP id s22-20020a17090a1c16b0290177caeba067so15245939pjs.0
-        for <io-uring@vger.kernel.org>; Thu, 05 Aug 2021 07:23:57 -0700 (PDT)
+        with ESMTP id S233329AbhHEO6j (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 5 Aug 2021 10:58:39 -0400
+Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 194E9C061765
+        for <io-uring@vger.kernel.org>; Thu,  5 Aug 2021 07:58:25 -0700 (PDT)
+Received: by mail-pj1-x102f.google.com with SMTP id u21-20020a17090a8915b02901782c36f543so6544367pjn.4
+        for <io-uring@vger.kernel.org>; Thu, 05 Aug 2021 07:58:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=858+JgFEq54p+jEekDQ8e9YcK1VD4v20N1yyQTMouF0=;
-        b=ED9Y6asNk8rbdkrsJdY1LT56f4E/XJOVUiS24yLeu2OtyeYJm9cCKL0Xq0P2097MoQ
-         U8XesZEimy5kwjDe3kUBORrtFlPRxSDtuHBNzvolPaDWcb28DbWgufL1NX4AYSwdLZ1S
-         wUnt+G8wS1QApbNW2Sr+oVxUVA2TjY+8bWAcdA7dY8r/vY7fweROuWbxuJGpM3sop77B
-         8qa0yNR1uW/QkUtGxw6Sznmhl3woRtrA2/9gzRQoN/8NtiEVkDf3LfFvqPWtSpRcpMWM
-         EwA8MwBPXIeiytYQAuweXoMC7afsLFqKTfk/ZeJJA8m8sjiAaMLfilh/8afbRzdW3Ld7
-         s1bA==
+        bh=Ue1VQ1SLekIZ2ciYmKp7aO77mtFyct8IjNrmqz7y94Q=;
+        b=Bv0zuLBNn5SdJLYbNrnqmgPg7u4ITz4a4T0OeMX28F+R1/CFcsr49/Yl2EW/tA/qBR
+         Bl35ls2SjSRRvCA4kBmfUtlbYCirkj9qWN0FyHWDL65xlCrzOf6SqlYeu76RuerGB+Vh
+         CFUtee5xHE0J2BFQ8/WBYk1wzg5gMVE+Ci0zrgLLCM8iNk4Z59ggmMFTT3LFnIFxjiQC
+         M5wgN9dl2esT9+0+C3ZXHqWU5jz4cyeY2SoajuA4jbZok7X0dyeWNF1poLwuHW5f/gLV
+         yWXUbD+n0POmJYyTMZKSkoVuMFBu/stwvkAHTPk30YyssoYPqM39GVHPv91/iGMBSVKo
+         SRdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=858+JgFEq54p+jEekDQ8e9YcK1VD4v20N1yyQTMouF0=;
-        b=Mb+LXA5XIzChx9y55DtZQK6J2HhhuvYUyMxi/CwT/PuG+nZ+AJXYa6bQSNjWW1WhP+
-         GddQlJAq8/ZecMiyL3q7ouIxuG31C0bJ9td+BtDJU6HnYXscSZnql1CXpN9QimlzZwsn
-         6S0C4w9GB2Z80GyQXJKzNmRcwJFl4T7pd04XHjVEQgP/gG4qVCCIOovS3PGl6V1b8SW7
-         eGy6LoEYCoC/NvAfxgv3RALCWo0w+0yffP5ZH8P9WjtQww2mdXJnITNKgr+Y2bzJMBE8
-         pC7sTc5nVSMsJnmE7WTH/HgVZhhofAeRHbV6QE7OcOdYRnvPkNl0Tyk/GJCRzhQ9g5KQ
-         5JkA==
-X-Gm-Message-State: AOAM531kzl+dJCCIG+uZv2IqE2lAXnf96wCSM89iGlJE7s6XJ4jAdcGX
-        tExSKp01rC5ES3cqc8HhxbbZ7Q==
-X-Google-Smtp-Source: ABdhPJzeDHlmidAkeiSnDe0dQ29DXG4azflM/ABpLsgOkqhSjBLoqRLXhr1NiGRmyb/i5EgfvcqW6Q==
-X-Received: by 2002:a17:90b:3e84:: with SMTP id rj4mr5052127pjb.66.1628173437270;
-        Thu, 05 Aug 2021 07:23:57 -0700 (PDT)
+        bh=Ue1VQ1SLekIZ2ciYmKp7aO77mtFyct8IjNrmqz7y94Q=;
+        b=ZvZMWmcz/r9euF5VAVBk5fI6hEsL87wP8dkq0LIEwBLloLdz34hYzZ2Kl+kEQ0tbbk
+         LaFaYZ4XdsGp+fmSKuXy9UA6q/vP/8Pg5ySW1Pz2wiHMrbGQMXqCA7OkGt+H2Nx2jSts
+         in7mVIHvk5A0pyKs6gb8siYhYjZOF1XtfPpzC9KsSLsWDou21iGikgSEWEp0KhDk3qPv
+         xsqSN2sBlsXy19oCaO1EZibuen0KQmk5ifwhIXXw5YCezP0KC+CxbxOAhKjw8ASO4Gb8
+         9Ggm2x48p2GhecE4cFC8CJhLw44yhct6Uwc+KKn1nQnH7UeVqaF4/aSa4bXrnJExF4jW
+         PWPw==
+X-Gm-Message-State: AOAM531ZaT98Z6PJ1jX5DmIGCxw0mdEAa16TvMSFcGxX/rbJWQrosSHM
+        b+YGAQ9HUd8s9BHd4yS53IaEpM9XCHVDKkog
+X-Google-Smtp-Source: ABdhPJzD9SC78isFj45WbAELj8XeIBmwU0iG9/q9yAm6A5Qv0WSzGwPEzDWP8hI0ZbO2tBpY4ZQJuA==
+X-Received: by 2002:a17:90b:4b46:: with SMTP id mi6mr5138016pjb.234.1628175504487;
+        Thu, 05 Aug 2021 07:58:24 -0700 (PDT)
 Received: from [192.168.1.116] ([198.8.77.61])
-        by smtp.gmail.com with ESMTPSA id jz24sm6205224pjb.9.2021.08.05.07.23.56
+        by smtp.gmail.com with ESMTPSA id h24sm7245922pfn.180.2021.08.05.07.58.23
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Aug 2021 07:23:56 -0700 (PDT)
-Subject: Re: [PATCH 1/3] io-wq: clean code of task state setting
+        Thu, 05 Aug 2021 07:58:24 -0700 (PDT)
+Subject: Re: [PATCH 0/3] code clean and nr_worker fixes
 To:     Hao Xu <haoxu@linux.alibaba.com>
 Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
         Joseph Qi <joseph.qi@linux.alibaba.com>
 References: <20210805100538.127891-1-haoxu@linux.alibaba.com>
- <20210805100538.127891-2-haoxu@linux.alibaba.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <cb24ad6d-cbab-a424-db7a-6a5e1f2feb74@kernel.dk>
-Date:   Thu, 5 Aug 2021 08:23:55 -0600
+Message-ID: <e124b236-c72d-ec35-3ed8-61935bd440cc@kernel.dk>
+Date:   Thu, 5 Aug 2021 08:58:22 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20210805100538.127891-2-haoxu@linux.alibaba.com>
+In-Reply-To: <20210805100538.127891-1-haoxu@linux.alibaba.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -69,21 +68,16 @@ List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 On 8/5/21 4:05 AM, Hao Xu wrote:
-> We don't need to set task state to TASK_INTERRUPTIBLE at the beginning
-> of while() in io_wqe_worker(), which causes state resetting to
-> TASK_RUNNING in other place. Move it to above schedule_timeout() and
-> remove redundant task state settings.
+> 
+> Hao Xu (3):
+>   io-wq: clean code of task state setting
+>   io-wq: fix no lock protection of acct->nr_worker
+>   io-wq: fix lack of acct->nr_workers < acct->max_workers judgement
+> 
+>  fs/io-wq.c | 32 ++++++++++++++++++++++----------
+>  1 file changed, 22 insertions(+), 10 deletions(-)
 
-Not sure that is safe - the reason why the state is manipulated is to
-guard from races where we do:
-
-A				B
-if (!work_available)
-				Work inserted
-schedule();
-
-As long as setting the task runnable is part of the work being inserted,
-then the above race is fine, as the schedule() turns into a no-op.
+Applied 2-3, thanks!
 
 -- 
 Jens Axboe

@@ -2,105 +2,97 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EFD493E095B
-	for <lists+io-uring@lfdr.de>; Wed,  4 Aug 2021 22:28:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 013473E111F
+	for <lists+io-uring@lfdr.de>; Thu,  5 Aug 2021 11:17:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239748AbhHDU2t (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 4 Aug 2021 16:28:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52836 "EHLO
+        id S239909AbhHEJSL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 5 Aug 2021 05:18:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55040 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239715AbhHDU2s (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 4 Aug 2021 16:28:48 -0400
-Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA068C0613D5
-        for <io-uring@vger.kernel.org>; Wed,  4 Aug 2021 13:28:34 -0700 (PDT)
-Received: by mail-pj1-x1031.google.com with SMTP id mz5-20020a17090b3785b0290176ecf64922so10507154pjb.3
-        for <io-uring@vger.kernel.org>; Wed, 04 Aug 2021 13:28:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=NU/Nomke/c8+5NesI11I6iS7WzNZOU0IkqvK5YogwZ0=;
-        b=iT5WHsZ+Xo7EfqutBTgFGxQR2YT2dgblbS0Uaf0IRmfld2eJNg4bHlYmRf1sF6UVe/
-         v5NjwEwjHv/6391LV304TJd8DKNk/3PHMW4HIZF1wSeGyNvSqesIGV8Dv8Vw1CC5ccSB
-         yViS9jgedzBfE6bx1mxMsFk76f3dIhcIH3vwDdZH2BoyKzTrw75knCx1gf+6v00fZ3+F
-         QjJhTjJTXvf1BApsGSUumSNHOl6Vb03ZeqwpjulXzmjzKGbeTQ7SMjxgRwHt5bKS8bh7
-         Uf1BzZZcVIjNTpGNQifIxJrcUudR4zp/WS6lX8N6g7RFndjpzR7pApIs2WX6DmNlm+8w
-         syjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=NU/Nomke/c8+5NesI11I6iS7WzNZOU0IkqvK5YogwZ0=;
-        b=T7OCy40eoeUHLWHa3/CesTRe+UVLm+HWMvN7oRlKvSddjVRMhWSUCRf+dZWRHhrfE7
-         R+jmxZlb1gTMgRISkKSZBJtOXJN41rYRQT/MKXpMbAnTD25uOCS+SCQffjC0aJ0G0mZS
-         /JnMzWCjtjxR+FPxHjyg++sEjmP7ENZJ6S+M4B5mdMmYCbp4cAu1QIz3jQ0mzQL0B9WF
-         /lp4MRkM2fWt1wP29J8nP80uxyhBlU4XHm/kxDHXrw3xlAQuwtUNUgW2AIyA80FglAue
-         xIhaeVl9LADpyUR0oXGwkyQLMVllfM0M4yHN8wok5T9qDZr9bGWe9D1XiDNMeW9S5zFC
-         9Uxg==
-X-Gm-Message-State: AOAM533fz1IWxbadNwXX0ZqHXyfj9hfkJh7v/2ViHaWpUzmXMW3Qop/Q
-        /xVNzrYO+dW/wye8rAVNhtc=
-X-Google-Smtp-Source: ABdhPJyrBq/95upHXZA//NwGUNyM6fR9C0pofLoiHXJh19FGMEyOXZklQ3V+qS0tFsm607mAyHhDYA==
-X-Received: by 2002:a17:90a:940d:: with SMTP id r13mr11818583pjo.124.1628108914244;
-        Wed, 04 Aug 2021 13:28:34 -0700 (PDT)
-Received: from smtpclient.apple (c-24-6-216-183.hsd1.ca.comcast.net. [24.6.216.183])
-        by smtp.gmail.com with ESMTPSA id d2sm4626532pgk.57.2021.08.04.13.28.32
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 04 Aug 2021 13:28:33 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 14.0 \(3654.120.0.1.13\))
-Subject: Re: [PATCH v2] io-wq: fix race between worker exiting and activating
- free worker
-From:   Nadav Amit <nadav.amit@gmail.com>
-In-Reply-To: <f4f81bd0-a897-4409-f09a-a768b5a3c6c5@kernel.dk>
-Date:   Wed, 4 Aug 2021 13:28:31 -0700
-Cc:     io-uring <io-uring@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <A23EAB11-FCD2-40BA-AB0E-B721080974AF@gmail.com>
-References: <f4f81bd0-a897-4409-f09a-a768b5a3c6c5@kernel.dk>
+        with ESMTP id S239959AbhHEJSA (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 5 Aug 2021 05:18:00 -0400
+Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 620ACC06179B;
+        Thu,  5 Aug 2021 02:17:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=EjjjkwFYj96sLMR/uhVYLccaIfMeHIDI08Rxwy4jL2w=; b=hK1EDkkWxzKxclE42S1W79/o8j
+        PBm3ooShAlyy7i/pYJEMqlvY367wSVNFyCfsqyPOkKoNL9fbL6jlqSIk6j1oU8Cd31/sNbmZ5Bupr
+        xfu93SXSh+LkheCfwCohWoOwY3tXFlxBiuvpbFIPIx2EL1MnumfN6Ig3USTilLBEXlR2ZJ2fNpWgE
+        ukJ0fIMcMsu6YaIAI+bDmmaSkayD0af6pw7xvT8RAxOOQ47tGwpCeDSkkaK1PjI9ni6pL8WhmwDdI
+        aG3Cn0bNrdjPVY7Xls8kQuYJFnpUWRJpSisHcWCHYvuBqBZeba2wYaE556L4Mmatf7HkiuerNbhH/
+        wzCeRQgw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
+        by desiato.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mBZVW-005yqr-RM; Thu, 05 Aug 2021 09:17:43 +0000
+Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
+        id BB1C19862B0; Thu,  5 Aug 2021 11:17:41 +0200 (CEST)
+Date:   Thu, 5 Aug 2021 11:17:41 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
 To:     Jens Axboe <axboe@kernel.dk>
-X-Mailer: Apple Mail (2.3654.120.0.1.13)
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Daniel Wagner <dwagner@suse.de>
+Subject: Re: [PATCH] io-wq: remove GFP_ATOMIC allocation off schedule out path
+Message-ID: <20210805091741.GB22037@worktop.programming.kicks-ass.net>
+References: <a673a130-e0e4-5aa8-4165-f35d1262fc6a@kernel.dk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a673a130-e0e4-5aa8-4165-f35d1262fc6a@kernel.dk>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-
-> On Aug 4, 2021, at 1:00 PM, Jens Axboe <axboe@kernel.dk> wrote:
->=20
-> Nadav correctly reports that we have a race between a worker exiting,
-> and new work being queued. This can lead to work being queued behind
-> an existing worker that could be sleeping on an event before it can
-> run to completion, and hence introducing potential big latency gaps
-> if we hit this race condition:
->=20
-> cpu0                                    cpu1
-> ----                                    ----
->                                        io_wqe_worker()
->                                        schedule_timeout()
->                                         // timed out
-> io_wqe_enqueue()
-> io_wqe_wake_worker()
-> // work_flags & IO_WQ_WORK_CONCURRENT
-> io_wqe_activate_free_worker()
->                                         io_worker_exit()
->=20
-> Fix this by having the exiting worker go through the normal decrement
-> of a running worker, which will spawn a new one if needed.
->=20
-> The free worker activation is modified to only return success if we
-> were able to find a sleeping worker - if not, we keep looking through
-> the list. If we fail, we create a new worker as per usual.
->=20
-> Cc: stable@vger.kernel.org
-> Link: =
-https://lore.kernel.org/io-uring/BFF746C0-FEDE-4646-A253-3021C57C26C9@gmai=
-l.com/
-> Reported-by: Nadav Amit <nadav.amit@gmail.com>
+On Wed, Aug 04, 2021 at 08:43:43AM -0600, Jens Axboe wrote:
+> Daniel reports that the v5.14-rc4-rt4 kernel throws a BUG when running
+> stress-ng:
+> 
+> | [   90.202543] BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:35
+> | [   90.202549] in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid: 2047, name: iou-wrk-2041
+> | [   90.202555] CPU: 5 PID: 2047 Comm: iou-wrk-2041 Tainted: G        W         5.14.0-rc4-rt4+ #89
+> | [   90.202559] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.14.0-2 04/01/2014
+> | [   90.202561] Call Trace:
+> | [   90.202577]  dump_stack_lvl+0x34/0x44
+> | [   90.202584]  ___might_sleep.cold+0x87/0x94
+> | [   90.202588]  rt_spin_lock+0x19/0x70
+> | [   90.202593]  ___slab_alloc+0xcb/0x7d0
+> | [   90.202598]  ? newidle_balance.constprop.0+0xf5/0x3b0
+> | [   90.202603]  ? dequeue_entity+0xc3/0x290
+> | [   90.202605]  ? io_wqe_dec_running.isra.0+0x98/0xe0
+> | [   90.202610]  ? pick_next_task_fair+0xb9/0x330
+> | [   90.202612]  ? __schedule+0x670/0x1410
+> | [   90.202615]  ? io_wqe_dec_running.isra.0+0x98/0xe0
+> | [   90.202618]  kmem_cache_alloc_trace+0x79/0x1f0
+> | [   90.202621]  io_wqe_dec_running.isra.0+0x98/0xe0
+> | [   90.202625]  io_wq_worker_sleeping+0x37/0x50
+> | [   90.202628]  schedule+0x30/0xd0
+> | [   90.202630]  schedule_timeout+0x8f/0x1a0
+> | [   90.202634]  ? __bpf_trace_tick_stop+0x10/0x10
+> | [   90.202637]  io_wqe_worker+0xfd/0x320
+> | [   90.202641]  ? finish_task_switch.isra.0+0xd3/0x290
+> | [   90.202644]  ? io_worker_handle_work+0x670/0x670
+> | [   90.202646]  ? io_worker_handle_work+0x670/0x670
+> | [   90.202649]  ret_from_fork+0x22/0x30
+> 
+> which is due to the RT kernel not liking a GFP_ATOMIC allocation inside
+> a raw spinlock. Besides that not working on RT, doing any kind of
+> allocation from inside schedule() is kind of nasty and should be avoided
+> if at all possible.
+> 
+> This particular path happens when an io-wq worker goes to sleep, and we
+> need a new worker to handle pending work. We currently allocate a small
+> data item to hold the information we need to create a new worker, but we
+> can instead include this data in the io_worker struct itself and just
+> protect it with a single bit lock. We only really need one per worker
+> anyway, as we will have run pending work between to sleep cycles.
+> 
+> https://lore.kernel.org/lkml/20210804082418.fbibprcwtzyt5qax@beryllium.lan/
+> Reported-by: Daniel Wagner <dwagner@suse.de>
 > Signed-off-by: Jens Axboe <axboe@kernel.dk>
-
-
-Tested-by: Nadav Amit <nadav.amit@gmail.com>
 
 Thanks!
 
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>

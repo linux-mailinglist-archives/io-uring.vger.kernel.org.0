@@ -2,66 +2,63 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 335A63E11ED
-	for <lists+io-uring@lfdr.de>; Thu,  5 Aug 2021 12:05:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D58D33E1200
+	for <lists+io-uring@lfdr.de>; Thu,  5 Aug 2021 12:06:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239963AbhHEKGF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 5 Aug 2021 06:06:05 -0400
-Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:58198 "EHLO
-        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S240017AbhHEKGB (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 5 Aug 2021 06:06:01 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=alimailimapcm10staff010182156082;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0Ui1e.zi_1628157938;
-Received: from e18g09479.et15sqa.tbsite.net(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0Ui1e.zi_1628157938)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 05 Aug 2021 18:05:45 +0800
-From:   Hao Xu <haoxu@linux.alibaba.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>
-Subject: [PATCH 3/3] io-wq: fix lack of acct->nr_workers < acct->max_workers judgement
-Date:   Thu,  5 Aug 2021 18:05:38 +0800
-Message-Id: <20210805100538.127891-4-haoxu@linux.alibaba.com>
-X-Mailer: git-send-email 2.24.4
-In-Reply-To: <20210805100538.127891-1-haoxu@linux.alibaba.com>
-References: <20210805100538.127891-1-haoxu@linux.alibaba.com>
+        id S240199AbhHEKHJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 5 Aug 2021 06:07:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38030 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240196AbhHEKHI (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 5 Aug 2021 06:07:08 -0400
+Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7F96C06179A
+        for <io-uring@vger.kernel.org>; Thu,  5 Aug 2021 03:06:47 -0700 (PDT)
+Received: by mail-yb1-xb33.google.com with SMTP id z5so6396145ybj.2
+        for <io-uring@vger.kernel.org>; Thu, 05 Aug 2021 03:06:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=IXiF0cE8iLdsKXBHXuqgd6kWlwigyuOCyyGf/zSHAKo=;
+        b=TxxkN+TJ855OIuhbyic/34kJBCIWIBE+p1FbIlOWwCuI4nClN1WR8LG5/cXo7RX2za
+         rPIp1sy19FkAg1PL1LAL1s2ltUwJpao2VBEO5l9uwH6CNjGDx4A+gfKK6PWHgQ7koOgw
+         HhJzcHUcUqC+XlKdKfP0ZYt2ZyMQB5eW0CPQfGBx533eIRbsy4hjdJ1FT1ouTbgfG8Ki
+         y0Wzu7ZfVqHioNjlkM/5+SEI1owBnvBrJEXQdkcNIzvBk8OIg1WvPMZAdCdA0E1xTyKB
+         avQGZyIxrxEPz2zwEhwMf/O+KS8LqjpnvrrRhhx4iAohTc+RRERNJeiHgWKFK+G1/qLP
+         7K2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=IXiF0cE8iLdsKXBHXuqgd6kWlwigyuOCyyGf/zSHAKo=;
+        b=hXGIc9QIiXOKuO6m/3oog452ZWygypv+Kl/w8ssXlxgNldL1HFmb2UHsTaWBgNKW5j
+         ZKu6KbLGqPzLiZH8BwVRoYEdG67RH0/PI0QWWDMZEsjsh4CcTyVvsbsqrv7KD3BCjArV
+         rf6KzztyJPdaxsGQjeUKQLfRrHSBlbUH17yBFcVGIwPlG12rw/yOI7LGRLn4PxnlxVBC
+         PdIDKJwCcPFyHYeHGB6+QyetQBvPCDQLQrv7KV65BGEocLTzCbOEO7RDCGSFoKdrNKA9
+         EPEir2r6SC2RVNZKlC9415pfoZUvOCaR4KLJ6WuWz2fyVWjz9ruNPJ4WEvSAZuTkd1Nq
+         xeqg==
+X-Gm-Message-State: AOAM531PULWIKXXq/X+TYvTzYwXECJsV+7aU52XYLMfHcUcTj3jbuAgJ
+        CQJDIt49arUSl5UQL4xFCvCcGnThm5gq3G46imk=
+X-Google-Smtp-Source: ABdhPJx7tVrOX0XSbxGpIaYv6DBVywIlFjaV/U1kSLSuLAXMKfRFomCEboLwIMW2suhajp3gXJ3l6IVEeFne9bYGOnU=
+X-Received: by 2002:a25:bc4c:: with SMTP id d12mr4885638ybk.105.1628158007023;
+ Thu, 05 Aug 2021 03:06:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a05:7010:330b:b029:db:4f3a:6691 with HTTP; Thu, 5 Aug 2021
+ 03:06:46 -0700 (PDT)
+Reply-To: rihabmanyang07@yahoo.com
+From:   Rihab Manyang <diamakaire48@gmail.com>
+Date:   Thu, 5 Aug 2021 11:06:46 +0100
+Message-ID: <CAJq20OkBiv194GeDN_RqDymdCc75yWy7wU_YGD3KAgyNa8S8YQ@mail.gmail.com>
+Subject: Hello
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-There should be this judgement before we create an io-worker
-
-Fixes: 685fe7feedb9 ("io-wq: eliminate the need for a manager thread")
-Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
----
- fs/io-wq.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/fs/io-wq.c b/fs/io-wq.c
-index 88d0ba7be1fb..b7cc31f96fdb 100644
---- a/fs/io-wq.c
-+++ b/fs/io-wq.c
-@@ -276,9 +276,17 @@ static void create_worker_cb(struct callback_head *cb)
- {
- 	struct create_worker_data *cwd;
- 	struct io_wq *wq;
-+	struct io_wqe *wqe;
-+	struct io_wqe_acct *acct;
- 
- 	cwd = container_of(cb, struct create_worker_data, work);
--	wq = cwd->wqe->wq;
-+	wqe = cwd->wqe;
-+	wq = wqe->wq;
-+	acct = &wqe->acct[cwd->index];
-+	raw_spin_lock_irq(&wqe->lock);
-+	if (acct->nr_workers < acct->max_workers)
-+		acct->nr_workers++;
-+	raw_spin_unlock_irq(&wqe->lock);
- 	create_io_worker(wq, cwd->wqe, cwd->index);
- 	kfree(cwd);
- }
 -- 
-2.24.4
 
+Hello,
+
+i am trying to reach you hope this message get to
+you.from Rihab Manyang

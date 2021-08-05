@@ -2,230 +2,194 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 926EE3E1583
-	for <lists+io-uring@lfdr.de>; Thu,  5 Aug 2021 15:16:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 634513E154F
+	for <lists+io-uring@lfdr.de>; Thu,  5 Aug 2021 15:06:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240451AbhHENQd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 5 Aug 2021 09:16:33 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:48362 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240012AbhHENQd (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 5 Aug 2021 09:16:33 -0400
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20210805131617epoutp04bbcc40711c785ed9fd035b8881a84dd6~Ya2w5BWGt1656716567epoutp041
-        for <io-uring@vger.kernel.org>; Thu,  5 Aug 2021 13:16:17 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20210805131617epoutp04bbcc40711c785ed9fd035b8881a84dd6~Ya2w5BWGt1656716567epoutp041
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1628169377;
-        bh=pqp9y1dVjDN6AtVi6Zxi1NLSpdmNb8Vknc/txYyxzo4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IVfc2QKlO2sXoCSvlW3wc69+AK9A0xvBojPVfVReeufp/fAkb3Hdjw03MOHVLW0xY
-         NK1yM//CoD0yE8TdIwZq0kkeNkb7oBterXDilwf7EIEYxRjIFGYZ4220eOutYz0qO4
-         KNbrEBP5ZxaaBI+is3aZyUvOuXLsaMhtMQCumyPk=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20210805131616epcas5p33cf20777dde4cf0e0243e4a7a48e35dd~Ya2wEDKuL1990619906epcas5p3j;
-        Thu,  5 Aug 2021 13:16:16 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.180]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4GgTdT34Gfz4x9Pp; Thu,  5 Aug
-        2021 13:16:13 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        EF.EC.41701.D94EB016; Thu,  5 Aug 2021 22:16:13 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-        20210805125937epcas5p15667b460e28d87bd40400f69005aafe3~YaoNY1t_B0653406534epcas5p1s;
-        Thu,  5 Aug 2021 12:59:37 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20210805125937epsmtrp2f3955560d83af905bb4211110ae4b603~YaoNYDgi32066920669epsmtrp2B;
-        Thu,  5 Aug 2021 12:59:37 +0000 (GMT)
-X-AuditID: b6c32a4b-0abff7000001a2e5-bd-610be49dfc31
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        A4.C5.08394.9B0EB016; Thu,  5 Aug 2021 21:59:37 +0900 (KST)
-Received: from localhost.localdomain (unknown [107.110.206.5]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20210805125935epsmtip161c7aed50a76fa34dacc29e5b02ec6a9~YaoL0-z251080510805epsmtip1C;
-        Thu,  5 Aug 2021 12:59:35 +0000 (GMT)
-From:   Kanchan Joshi <joshi.k@samsung.com>
-To:     axboe@kernel.dk, hch@lst.de, kbusch@kernel.org
-Cc:     io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
-        anuj20.g@samsung.com, javier.gonz@samsung.com, hare@suse.de,
-        Kanchan Joshi <joshi.k@samsung.com>
-Subject: [RFC PATCH 6/6] nvme: enable passthrough with fixed-buffer
-Date:   Thu,  5 Aug 2021 18:25:39 +0530
-Message-Id: <20210805125539.66958-7-joshi.k@samsung.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210805125539.66958-1-joshi.k@samsung.com>
+        id S240184AbhHENHD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 5 Aug 2021 09:07:03 -0400
+Received: from cloud48395.mywhc.ca ([173.209.37.211]:50758 "EHLO
+        cloud48395.mywhc.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240029AbhHENHD (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 5 Aug 2021 09:07:03 -0400
+Received: from modemcable064.203-130-66.mc.videotron.ca ([66.130.203.64]:54410 helo=[192.168.1.179])
+        by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <olivier@trillion01.com>)
+        id 1mBd5D-0006Rn-Dh; Thu, 05 Aug 2021 09:06:47 -0400
+Message-ID: <4d93d0600e4a9590a48d320c5a7dd4c54d66f095.camel@trillion01.com>
+Subject: Re: [PATCH] coredump: Limit what can interrupt coredumps
+From:   Olivier Langlois <olivier@trillion01.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Oleg Nesterov <oleg@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        io-uring <io-uring@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>,
+        "Pavel Begunkov>" <asml.silence@gmail.com>
+Date:   Thu, 05 Aug 2021 09:06:42 -0400
+In-Reply-To: <87pmwmn5m0.fsf@disp2133>
+References: <CAHk-=wjC7GmCHTkoz2_CkgSc_Cgy19qwSQgJGXz+v2f=KT3UOw@mail.gmail.com>
+         <198e912402486f66214146d4eabad8cb3f010a8e.camel@trillion01.com>
+         <87eeda7nqe.fsf@disp2133>
+         <b8434a8987672ab16f9fb755c1fc4d51e0f4004a.camel@trillion01.com>
+         <87pmwt6biw.fsf@disp2133> <87czst5yxh.fsf_-_@disp2133>
+         <CAHk-=wiax83WoS0p5nWvPhU_O+hcjXwv6q3DXV8Ejb62BfynhQ@mail.gmail.com>
+         <87y2bh4jg5.fsf@disp2133>
+         <CAHk-=wjPiEaXjUp6PTcLZFjT8RrYX+ExtD-RY3NjFWDN7mKLbw@mail.gmail.com>
+         <87sg1p4h0g.fsf_-_@disp2133> <20210614141032.GA13677@redhat.com>
+         <87pmwmn5m0.fsf@disp2133>
+Organization: Trillion01 Inc
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.40.3 
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGJsWRmVeSWpSXmKPExsWy7bCmpu7cJ9yJBg+ni1g0TfjLbLH6bj+b
-        xZ5Fk5gsVq4+ymTxrvUci8XjO5/ZLY7+f8tmMenQNUaL+cuesltcmbKI2YHL4/LZUo9NqzrZ
-        PDYvqffYfbOBzaNvyypGj82nqz0+b5ILYI/KtslITUxJLVJIzUvOT8nMS7dV8g6Od443NTMw
-        1DW0tDBXUshLzE21VXLxCdB1y8wBOk5JoSwxpxQoFJBYXKykb2dTlF9akqqQkV9cYquUWpCS
-        U2BSoFecmFtcmpeul5daYmVoYGBkClSYkJ0xeekMxoK58hWN18+wNjA+kexi5OSQEDCROPXp
-        DmsXIxeHkMBuRomvZzYzQjifGCUmbH3BBOF8Y5RY/XEZE0zLlYfT2CESexklLv4+yQzhfGaU
-        +LT5EZDDwcEmoClxYXIpSIOIgJHE/k8nwXYwCyxilNh6/zdYjbCAs8SvBVEgNSwCqhL93/ex
-        gIR5BSwk+qdoQ+ySl5h56Ts7iM0pYCnx+dBeVhCbV0BQ4uTMJywgNjNQTfPW2WAnSAj0ckh8
-        /HWKDaLZReL69z2sELawxKvjW9ghbCmJz+/2QtUUS/y6cxSquYNR4nrDTBaIhL3ExT1/mUAO
-        Ygb6Zf0ufYiwrMTUU+uYIBbzSfT+fgINFF6JHfNgbEWJe5OeQu0Vl3g4YwmU7SHR1P4PGqI9
-        jBKXr/xjncCoMAvJQ7OQPDQLYfUCRuZVjJKpBcW56anFpgXGeanl8FhOzs/dxAhOsFreOxgf
-        Pfigd4iRiYPxEKMEB7OSCG/yYq5EId6UxMqq1KL8+KLSnNTiQ4ymwACfyCwlmpwPTPF5JfGG
-        JpYGJmZmZiaWxmaGSuK87PFfE4QE0hNLUrNTUwtSi2D6mDg4pRqYlqYue7vulKRwrMFcZ5XT
-        aXIVczzzt3CmH5wXuWDzgbfMSnfnyK/8bMo9s+p5iOmznwv7fZkmHog+rqYbzbpFfV4mN3d8
-        qeJhy0qdeyHtU/fIu++u9a1SnnlMosVnxfSOIM75mtaXnzjsWs22/VPidPsHNpEBfYKX3+b9
-        UF3aua9e/cN5rva9MkZaPb/9ZzFUuPhZbpfz616RabY+Q+FpwLwZwqm9qRwxPkc0p/n6rXY/
-        uOD8p1QjdQfB3QoS79NZN7zaovlOYPNWlzittGNRfdkWky++/cr/mIuVu2yR9K1t284LrFgW
-        3DDr+Ymo5qfJgqWbefp3XlJ7X67+abX0h39HrzyJllWpVPv7+vFCJZbijERDLeai4kQAu503
-        zTkEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrJLMWRmVeSWpSXmKPExsWy7bCSnO7OB9yJBqd2K1k0TfjLbLH6bj+b
-        xZ5Fk5gsVq4+ymTxrvUci8XjO5/ZLY7+f8tmMenQNUaL+cuesltcmbKI2YHL4/LZUo9NqzrZ
-        PDYvqffYfbOBzaNvyypGj82nqz0+b5ILYI/isklJzcksSy3St0vgypi8dAZjwVz5isbrZ1gb
-        GJ9IdjFyckgImEhceTiNvYuRi0NIYDejxJpZf1ghEuISzdd+sEPYwhIr/z0Hs4UEPjJKNF4q
-        7GLk4GAT0JS4MLkUJCwiYCax9PAaFpA5zAIrGCV29/1mBKkRFnCW+LUgCqSGRUBVov/7PhaQ
-        MK+AhUT/FG2I6fISMy99B5vOKWAp8fnQXlaQEiGgkplbI0DCvAKCEidnPmEBsZmBypu3zmae
-        wCgwC0lqFpLUAkamVYySqQXFuem5xYYFhnmp5XrFibnFpXnpesn5uZsYwaGvpbmDcfuqD3qH
-        GJk4GA8xSnAwK4nwJi/mShTiTUmsrEotyo8vKs1JLT7EKM3BoiTOe6HrZLyQQHpiSWp2ampB
-        ahFMlomDU6qBKeWGnwN3g5jeTs9uxnkbl65VmnMgRI2/qa9gX5xckfO8+ra60H166S2PNa50
-        9gnWmH74JOIVHdFXaG7RvCM+qK50besDe5ctkzc9TqoUvD31anf2hrxTS06v2pL19oeivC/r
-        /5mCJ9sTgtae2Jr2z65xR0LJpe/ZwqkX5QwFIucGNtlprzb6M/eHQd6Ledcf58jwLykqyA64
-        bZv/w3bbhNpP6tw3roqryjaJecX22GnXZ5h2vg5Ze1JYWf9FmYn5L9ffgkvY1odfF9qtvnqP
-        p56cv93sqDOVZh5zrDND1r16nHi48963cw9qGQ7eXVAQpDOH61ba5kPKV1Nfn5xqfWheaJJB
-        4IIzW6u9ZJyUWIozEg21mIuKEwFunJFH7AIAAA==
-X-CMS-MailID: 20210805125937epcas5p15667b460e28d87bd40400f69005aafe3
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20210805125937epcas5p15667b460e28d87bd40400f69005aafe3
-References: <20210805125539.66958-1-joshi.k@samsung.com>
-        <CGME20210805125937epcas5p15667b460e28d87bd40400f69005aafe3@epcas5p1.samsung.com>
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - trillion01.com
+X-Get-Message-Sender-Via: cloud48395.mywhc.ca: authenticated_id: olivier@trillion01.com
+X-Authenticated-Sender: cloud48395.mywhc.ca: olivier@trillion01.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Add two new variants of passthrough ioctls
-(NVMe_IOCTL_IO/IO64_CMD_FIXED) to carry out passthrough command with
-pre-mapped buffers.
+On Tue, 2021-06-15 at 17:08 -0500, Eric W. Biederman wrote:
+> Oleg Nesterov <oleg@redhat.com> writes:
+> 
+> > > --- a/fs/coredump.c
+> > > +++ b/fs/coredump.c
+> > > @@ -519,7 +519,7 @@ static bool dump_interrupted(void)
+> > >          * but then we need to teach dump_write() to restart and
+> > > clear
+> > >          * TIF_SIGPENDING.
+> > >          */
+> > > -       return signal_pending(current);
+> > > +       return fatal_signal_pending(current) || freezing(current);
+> > >  }
+> > 
+> > 
+> > Well yes, this is what the comment says.
+> > 
+> > But note that there is another reason why dump_interrupted() returns
+> > true
+> > if signal_pending(), it assumes thagt __dump_emit()->__kernel_write()
+> > may
+> > fail anyway if signal_pending() is true. Say, pipe_write(), or iirc
+> > nfs,
+> > perhaps something else...
+> > 
+> > That is why zap_threads() clears TIF_SIGPENDING. Perhaps it should
+> > clear
+> > TIF_NOTIFY_SIGNAL as well and we should change io-uring to not abuse
+> > the
+> > dumping threads?
+> > 
+> > Or perhaps we should change __dump_emit() to clear signal_pending()
+> > and
+> > restart __kernel_write() if it fails or returns a short write.
+> > 
+> > Otherwise the change above doesn't look like a full fix to me.
+> 
+> Agreed.  The coredump to a pipe will still be short.  That needs
+> something additional.
+> 
+> The problem Olivier Langlois <olivier@trillion01.com> reported was
+> core dumps coming up short because TIF_NOTIFY_SIGNAL was being
+> set during a core dump.
+> 
+> We can see this with pipe_write returning -ERESTARTSYS
+> on a full pipe if signal_pending which includes TIF_NOTIFY_SIGNAL
+> is true.
+> 
+> Looking further if the thread that is core dumping initiated
+> any io_uring work then io_ring_exit_work will use task_work_add
+> to request that thread clean up it's io_uring state.
+> 
+> Perhaps we can put a big comment in dump_emit and if we
+> get back -ERESTARTSYS run tracework_notify_signal.  I am not
+> seeing any locks held at that point in the coredump, so it
+> should be safe.  The coredump is run inside of file_start_write
+> which is the only potential complication.
+> 
+> 
+> 
+> The code flow is complicated but it looks like the entire
+> point of the exercise is to call io_uring_del_task_file
+> on the originating thread.  I suppose that keeps the
+> locking of the xarray in io_uring_task simple.
+> 
+> 
+> Hmm.   All of this comes from io_uring_release.
+> How do we get to io_uring_release?  The coredump should
+> be catching everything in exit_mm before exit_files?
+> 
+> Confused and hopeful someone can explain to me what is going on,
+> and perhaps simplify it.
+> 
+> Eric
 
-Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
-Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
----
- drivers/nvme/host/ioctl.c       | 68 ++++++++++++++++++++++++++++++++-
- include/uapi/linux/nvme_ioctl.h |  2 +
- 2 files changed, 68 insertions(+), 2 deletions(-)
+Hi all,
 
-diff --git a/drivers/nvme/host/ioctl.c b/drivers/nvme/host/ioctl.c
-index 2730c5dfdf78..d336e34aac41 100644
---- a/drivers/nvme/host/ioctl.c
-+++ b/drivers/nvme/host/ioctl.c
-@@ -139,6 +139,64 @@ static void *nvme_add_user_metadata(struct bio *bio, void __user *ubuf,
- out:
- 	return ERR_PTR(ret);
- }
-+static inline bool nvme_is_fixedb_passthru(struct io_uring_cmd *ioucmd)
-+{
-+	struct block_uring_cmd *bcmd;
-+
-+	if (!ioucmd)
-+		return false;
-+	bcmd = (struct block_uring_cmd *)&ioucmd->pdu;
-+	if (bcmd && ((bcmd->ioctl_cmd == NVME_IOCTL_IO_CMD_FIXED) ||
-+				(bcmd->ioctl_cmd == NVME_IOCTL_IO64_CMD_FIXED)))
-+		return true;
-+	return false;
-+}
-+/*
-+ * Unlike blk_rq_map_user () this is only for fixed-buffer async passthrough.
-+ * And hopefully faster as well.
-+ */
-+int nvme_rq_map_user_fixedb(struct request_queue *q, struct request *rq,
-+		     void __user *ubuf, unsigned long len, gfp_t gfp_mask,
-+		     struct io_uring_cmd *ioucmd)
-+{
-+	struct iov_iter iter;
-+	size_t iter_count, nr_segs;
-+	struct bio *bio;
-+	int ret;
-+
-+	/*
-+	 * Talk to io_uring to obtain BVEC iterator for the buffer.
-+	 * And use that iterator to form bio/request.
-+	 */
-+	ret = io_uring_cmd_import_fixed(ubuf, len, rq_data_dir(rq), &iter,
-+			ioucmd);
-+	if (unlikely(ret < 0))
-+		return ret;
-+	iter_count = iov_iter_count(&iter);
-+	nr_segs = iter.nr_segs;
-+
-+	if (!iter_count || (iter_count >> 9) > queue_max_hw_sectors(q))
-+		return -EINVAL;
-+	if (nr_segs > queue_max_segments(q))
-+		return -EINVAL;
-+	/* no iovecs to alloc, as we already have a BVEC iterator */
-+	bio = bio_kmalloc(gfp_mask, 0);
-+	if (!bio)
-+		return -ENOMEM;
-+
-+	bio->bi_opf |= req_op(rq);
-+	ret = bio_iov_iter_get_pages(bio, &iter);
-+	if (ret)
-+		goto out_free;
-+
-+	blk_rq_bio_prep(rq, bio, nr_segs);
-+	return 0;
-+
-+out_free:
-+	bio_release_pages(bio, false);
-+	bio_put(bio);
-+	return ret;
-+}
+I didn't forgot about this remaining issue and I have kept thinking
+about it on and off.
+
+I did try the following on 5.12.19:
+
+diff --git a/fs/coredump.c b/fs/coredump.c
+index 07afb5ddb1c4..614fe7a54c1a 100644
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -41,6 +41,7 @@
+ #include <linux/fs.h>
+ #include <linux/path.h>
+ #include <linux/timekeeping.h>
++#include <linux/io_uring.h>
  
- static int nvme_submit_user_cmd(struct request_queue *q,
- 		struct nvme_command *cmd, void __user *ubuffer,
-@@ -163,8 +221,12 @@ static int nvme_submit_user_cmd(struct request_queue *q,
- 	nvme_req(req)->flags |= NVME_REQ_USERCMD;
+ #include <linux/uaccess.h>
+ #include <asm/mmu_context.h>
+@@ -625,6 +626,8 @@ void do_coredump(const kernel_siginfo_t *siginfo)
+ 		need_suid_safe = true;
+ 	}
  
- 	if (ubuffer && bufflen) {
--		ret = blk_rq_map_user(q, req, NULL, ubuffer, bufflen,
--				GFP_KERNEL);
-+		if (likely(!nvme_is_fixedb_passthru(ioucmd)))
-+			ret = blk_rq_map_user(q, req, NULL, ubuffer, bufflen,
-+					GFP_KERNEL);
-+		else
-+			ret = nvme_rq_map_user_fixedb(q, req, ubuffer, bufflen,
-+					GFP_KERNEL, ioucmd);
- 		if (ret)
- 			goto out;
- 		bio = req->bio;
-@@ -480,9 +542,11 @@ static int nvme_ns_async_ioctl(struct nvme_ns *ns, struct io_uring_cmd *ioucmd)
- 
- 	switch (bcmd->ioctl_cmd) {
- 	case NVME_IOCTL_IO_CMD:
-+	case NVME_IOCTL_IO_CMD_FIXED:
- 		ret = nvme_user_cmd(ns->ctrl, ns, argp, ioucmd);
- 		break;
- 	case NVME_IOCTL_IO64_CMD:
-+	case NVME_IOCTL_IO64_CMD_FIXED:
- 		ret = nvme_user_cmd64(ns->ctrl, ns, argp, ioucmd);
- 		break;
- 	default:
-diff --git a/include/uapi/linux/nvme_ioctl.h b/include/uapi/linux/nvme_ioctl.h
-index d99b5a772698..fc05c6024edd 100644
---- a/include/uapi/linux/nvme_ioctl.h
-+++ b/include/uapi/linux/nvme_ioctl.h
-@@ -78,5 +78,7 @@ struct nvme_passthru_cmd64 {
- #define NVME_IOCTL_RESCAN	_IO('N', 0x46)
- #define NVME_IOCTL_ADMIN64_CMD	_IOWR('N', 0x47, struct nvme_passthru_cmd64)
- #define NVME_IOCTL_IO64_CMD	_IOWR('N', 0x48, struct nvme_passthru_cmd64)
-+#define NVME_IOCTL_IO_CMD_FIXED	_IOWR('N', 0x49, struct nvme_passthru_cmd)
-+#define NVME_IOCTL_IO64_CMD_FIXED _IOWR('N', 0x50, struct nvme_passthru_cmd64)
- 
- #endif /* _UAPI_LINUX_NVME_IOCTL_H */
++	io_uring_files_cancel(current->files);
++
+ 	retval = coredump_wait(siginfo->si_signo, &core_state);
+ 	if (retval < 0)
+ 		goto fail_creds;
 -- 
-2.25.1
+2.32.0
+
+with my current understanding, io_uring_files_cancel is supposed to
+cancel everything that might set the TIF_NOTIFY_SIGNAL.
+
+I must report that in my testing with generating a core dump through a
+pipe with the modif above, I still get truncated core dumps.
+
+systemd is having a weird error:
+[ 2577.870742] systemd-coredump[4056]: Failed to get COMM: No such
+process
+
+and nothing is captured
+
+so I have replaced it with a very simple shell:
+$ cat /proc/sys/kernel/core_pattern 
+|/home/lano1106/bin/pipe_core.sh %e %p
+
+~/bin $ cat pipe_core.sh 
+#!/bin/sh
+
+cat > /home/lano1106/core/core.$1.$2
+
+BFD: warning: /home/lano1106/core/core.test.10886 is truncated:
+expected core file size >= 24129536, found: 61440
+
+I conclude from my attempt that maybe io_uring_files_cancel is not 100%
+cleaning everything that it should clean.
+
 

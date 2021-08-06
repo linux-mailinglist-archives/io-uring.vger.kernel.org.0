@@ -2,129 +2,69 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 85CE93E2C7A
-	for <lists+io-uring@lfdr.de>; Fri,  6 Aug 2021 16:27:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BE813E2D7B
+	for <lists+io-uring@lfdr.de>; Fri,  6 Aug 2021 17:21:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238639AbhHFO1j (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 6 Aug 2021 10:27:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58644 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238446AbhHFO1i (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 6 Aug 2021 10:27:38 -0400
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23244C0613CF
-        for <io-uring@vger.kernel.org>; Fri,  6 Aug 2021 07:27:22 -0700 (PDT)
-Received: by mail-pj1-x1033.google.com with SMTP id u21-20020a17090a8915b02901782c36f543so14110350pjn.4
-        for <io-uring@vger.kernel.org>; Fri, 06 Aug 2021 07:27:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=from:subject:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Y0jLyBzMb1NStHjvm1oD8pMgC3m6NvmMcoN2cYom1cA=;
-        b=xQxKViY6R+Q646WAdf7fWmfxfQvbxtLU8J9hecKak5ZnNfqDoH/TWG26aUegL+Crcb
-         Lp00/XlEr+vRJsZ9QHsRbyyumIlNE+Ew12pk2Ld5UNvPGnxqql2WmFIGplqjgNWCC7Dq
-         bFFuspxoU2dQYLUurMZpNJyxoqF7nIeJu/hRlZPnTRilQPmXuEsAjc/06Y00vNkrlj1o
-         HcEHSKta38S4h8pIUYuhz/1J07+Al4zdSZdKUyD8hVqTvegLEgV39TDnC2gEbAyfoFMq
-         ySrjvivTyMRzw1Q2uEIJ+IuCy0fti1+sR335GKD3gj5q1s1SsUjwRtMxZb3Z6Et+PAA4
-         CASQ==
+        id S244153AbhHFPVb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 6 Aug 2021 11:21:31 -0400
+Received: from mail-il1-f199.google.com ([209.85.166.199]:44906 "EHLO
+        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S244128AbhHFPVa (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 6 Aug 2021 11:21:30 -0400
+Received: by mail-il1-f199.google.com with SMTP id m12-20020a056e021c2cb029022262095ea1so4753569ilh.11
+        for <io-uring@vger.kernel.org>; Fri, 06 Aug 2021 08:21:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Y0jLyBzMb1NStHjvm1oD8pMgC3m6NvmMcoN2cYom1cA=;
-        b=Cr7IghHoG+Alk6n33wFIvLszOogSX0FGxNcGruEDQIwgQacg7MgvIELK8i6sfo5eOJ
-         7xAUYo90KPJeI+XjDMwL6SkBBTXGG2lXtjtFAJMiEcNYu8fDlUahbirOw3lLGTvWFR1S
-         2x6EEkGi9PHKaJ8q1xMg11H9E6tvuxOyutMSBVYGyGzEUd8UR8D5Lw3Pr9a3Gq+Tgsj2
-         fV9Nr1oZmVkz/HHaEDov5YI1ZVGhrUd6hsK0y+eQeMaUDum5NgdUvNKxhMY+HrJRsNJv
-         jhlmovXpfpsPt2FDPAaZ4o6wuBcDB+wOwq2u/fBFWQmURQPIeremJ+QaMQlI+WpzzQ9K
-         /uDA==
-X-Gm-Message-State: AOAM531pnoMk/RQN5CP1sbYZ6YQniw4sDOcsLN47rocMo5aapB76emQ0
-        OUZq6owEzloklXvirUGkniZ68aNRSYbY4WLS
-X-Google-Smtp-Source: ABdhPJy5koeG8YAIA0j5BlJf3J1LrOa4OwbVAbDr3CyXMQLQiqKkIEQrjDpSjBYnp2/ZT2KdWtIFHQ==
-X-Received: by 2002:a65:450c:: with SMTP id n12mr950874pgq.316.1628260041667;
-        Fri, 06 Aug 2021 07:27:21 -0700 (PDT)
-Received: from [192.168.1.116] ([198.8.77.61])
-        by smtp.gmail.com with ESMTPSA id 17sm12626706pjd.3.2021.08.06.07.27.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Aug 2021 07:27:21 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH 2/3] io-wq: fix no lock protection of acct->nr_worker
-To:     Hao Xu <haoxu@linux.alibaba.com>
-Cc:     io-uring <io-uring@vger.kernel.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <20210805100538.127891-1-haoxu@linux.alibaba.com>
- <20210805100538.127891-3-haoxu@linux.alibaba.com>
-Message-ID: <cc9e61da-6591-c257-6899-d2afa037b2ad@kernel.dk>
-Date:   Fri, 6 Aug 2021 08:27:19 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=tu7Kevvl3zuTnuTFnD3tZ2U7expM8FEkIre095hhtro=;
+        b=UAW8t3VIDeGSkjdw9cLRNKfCSq8q+g4zyFDqF7/+MLz1uaN0F/V/X7eNLVNIxFCRhK
+         ZwonepSnsVryhnYcuRiQabZlu8UAo7BgQkrcKvlBvz+BKrVmDL/4B+zFKpcOpgxaoRdI
+         GLS+LvLODPT0SiDqDc8yucfGzdPOb+FQLOblz2Mo2CXCdw/ATD7h+41YAr9e2Swm7T9X
+         YA7Vzd3L9SX1eAinysxLyibLddbFxDVjfA93U8+5OciQKQrweBLAYFOESGvQFcFBmKDg
+         yT76ju2kdhNXfBN5jt656rKb9dINKYWedgb7mR8QIPSEHZykTfVVj5e/yCKumW0Y56F8
+         n1Pw==
+X-Gm-Message-State: AOAM531s2r9BUlhtfd5zyc3rso89oDxASqjUhXMbL/g09OtGX/21BIYf
+        uI10EInlsWC8NfgAq9i0mJ4soMXrj6/qm1UCCa3qwUIyze5x
+X-Google-Smtp-Source: ABdhPJzRyaRqX3bqJM1PUFwXIk5cTd4rpXA8+uJtjupvW4ZoQyD7Kk3vsUjzUlKGyNdoAvTiT+iOT7Cnjbsxim5TH68BMhXjdPlN
 MIME-Version: 1.0
-In-Reply-To: <20210805100538.127891-3-haoxu@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6602:2f09:: with SMTP id q9mr1312428iow.196.1628263274697;
+ Fri, 06 Aug 2021 08:21:14 -0700 (PDT)
+Date:   Fri, 06 Aug 2021 08:21:14 -0700
+In-Reply-To: <0000000000005225a605bd97fa64@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000016db0205c8e5967e@google.com>
+Subject: Re: [syzbot] WARNING in io_ring_exit_work
+From:   syzbot <syzbot+00e15cda746c5bc70e24@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk,
+        gregkh@linuxfoundation.org, hdanton@sina.com,
+        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+        rafael@kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Aug 5, 2021 at 4:05 AM Hao Xu <haoxu@linux.alibaba.com> wrote:
->
-> There is an acct->nr_worker visit without lock protection. Think about
-> the case: two callers call io_wqe_wake_worker(), one is the original
-> context and the other one is an io-worker(by calling
-> io_wqe_enqueue(wqe, linked)), on two cpus paralelly, this may cause
-> nr_worker to be larger than max_worker.
-> Let's fix it by adding lock for it, and let's do nr_workers++ before
-> create_io_worker. There may be a edge cause that the first caller fails
-> to create an io-worker, but the second caller doesn't know it and then
-> quit creating io-worker as well:
->
-> say nr_worker = max_worker - 1
->         cpu 0                        cpu 1
->    io_wqe_wake_worker()          io_wqe_wake_worker()
->       nr_worker < max_worker
->       nr_worker++
->       create_io_worker()         nr_worker == max_worker
->          failed                  return
->       return
->
-> But the chance of this case is very slim.
->
-> Fixes: 685fe7feedb9 ("io-wq: eliminate the need for a manager thread")
-> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
-> ---
->  fs/io-wq.c | 17 ++++++++++++-----
->  1 file changed, 12 insertions(+), 5 deletions(-)
->
-> diff --git a/fs/io-wq.c b/fs/io-wq.c
-> index cd4fd4d6268f..88d0ba7be1fb 100644
-> --- a/fs/io-wq.c
-> +++ b/fs/io-wq.c
-> @@ -247,9 +247,14 @@ static void io_wqe_wake_worker(struct io_wqe *wqe, struct io_wqe_acct *acct)
->         ret = io_wqe_activate_free_worker(wqe);
->         rcu_read_unlock();
->
-> -       if (!ret && acct->nr_workers < acct->max_workers) {
-> -               atomic_inc(&acct->nr_running);
-> -               atomic_inc(&wqe->wq->worker_refs);
-> +       if (!ret) {
-> +               raw_spin_lock_irq(&wqe->lock);
-> +               if (acct->nr_workers < acct->max_workers) {
-> +                       atomic_inc(&acct->nr_running);
-> +                       atomic_inc(&wqe->wq->worker_refs);
-> +                       acct->nr_workers++;
-> +               }
-> +               raw_spin_unlock_irq(&wqe->lock);
->                 create_io_worker(wqe->wq, wqe, acct->index);
->         }
->  }
+syzbot has bisected this issue to:
 
-There's a pretty grave bug in this patch, in that you no call
-create_io_worker() unconditionally. This causes obvious problems with
-misaccounting, and stalls that hit the idle timeout...
+commit 6c2450ae55656f6b0370bfd4cb52ec8a4ecd0916
+Author: Pavel Begunkov <asml.silence@gmail.com>
+Date:   Tue Feb 23 12:40:22 2021 +0000
 
--- 
-Jens Axboe
+    io_uring: allocate memory for overflowed CQEs
 
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=138a96e6300000
+start commit:   8d4b477da1a8 Add linux-next specific files for 20210730
+git tree:       linux-next
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=104a96e6300000
+console output: https://syzkaller.appspot.com/x/log.txt?x=178a96e6300000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4adf4987f875c210
+dashboard link: https://syzkaller.appspot.com/bug?extid=00e15cda746c5bc70e24
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15d5cd96300000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1798471e300000
+
+Reported-by: syzbot+00e15cda746c5bc70e24@syzkaller.appspotmail.com
+Fixes: 6c2450ae5565 ("io_uring: allocate memory for overflowed CQEs")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection

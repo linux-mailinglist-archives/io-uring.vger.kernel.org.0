@@ -2,139 +2,170 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D63F93E3AAB
-	for <lists+io-uring@lfdr.de>; Sun,  8 Aug 2021 15:54:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 725143E3BF6
+	for <lists+io-uring@lfdr.de>; Sun,  8 Aug 2021 19:31:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229504AbhHHNzA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 8 Aug 2021 09:55:00 -0400
-Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:41946 "EHLO
-        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229923AbhHHNzA (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 8 Aug 2021 09:55:00 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UiIyDWG_1628430874;
-Received: from e18g09479.et15sqa.tbsite.net(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UiIyDWG_1628430874)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Sun, 08 Aug 2021 21:54:39 +0800
-From:   Hao Xu <haoxu@linux.alibaba.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>
-Subject: [PATCH 2/2] io-wq: fix IO_WORKER_F_FIXED issue in create_io_worker()
-Date:   Sun,  8 Aug 2021 21:54:34 +0800
-Message-Id: <20210808135434.68667-3-haoxu@linux.alibaba.com>
-X-Mailer: git-send-email 2.24.4
-In-Reply-To: <20210808135434.68667-1-haoxu@linux.alibaba.com>
-References: <20210808135434.68667-1-haoxu@linux.alibaba.com>
+        id S230448AbhHHRbz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 8 Aug 2021 13:31:55 -0400
+Received: from mail-sn1anam02on2061.outbound.protection.outlook.com ([40.107.96.61]:10980
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S230201AbhHHRby (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Sun, 8 Aug 2021 13:31:54 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=EQuEBTCH1OPBmPLxuXD6fn5K6KwxjEUSYBaqqPMF0+wkroCih4FPF/BW5T97ZPTIkny7mY65OaAOLdApSLlEt5ynoV9xkKHHuQBx1SXi/f8Btgx5Lm2uSPlYEYv8w2vf1ZSzHIB29rhZx3iPcrrztBdZQC3kmM1MZoQUgycYUQyehxhdP7YZsl3YrjP9Th1JdpT67yYvxJE0kIAswwH+SYHxPV2CsCY8AR4lnZu/ib6XLK/dbkCm0qMXXxAb8oVlQEG8BpoZm1SOh9SCy0OWRVyh142cRQXCtbmDcsowlNIbeFRW6YxMSeB0jxH786oJ5hUST9Xzcmzl3Ujg6KK3Og==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YDwwVtHys/q+bbDpvmh/PVr7w/5MkqhkdQBfFM8ClKU=;
+ b=I3sdwm47qIMCNsWSfZ93w1aTe4kVYAh7P8TRZcreYZur1kcGqb/m8elzoASjvfOB8AIsFD+JZSQXgOLefVm6INqhLnU/BO4COVBhq4UZAeA0CSt0CSc+Jyq7zqYh2bUEQKe/ybCBnp/4ywlS3NRBqnzWB1jnShf4Xkyz2ytftx2st6/NQ+6CEcFlOSEmBEZVl8wtSGfy5RX6iwMemllc/Rq1UUc7zR4dTxhlcNfZsW9N775dqlePzfqVBJIHE/UNd4KHMdbkP6E0N6aS5yOJuUNkcb4RwbsJl1ItEkCFk4fd4Uv+ZIPEAaSvx/GVSyApLZitIeMFn0h12GLajx5ufg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vmware.com; dmarc=pass action=none header.from=vmware.com;
+ dkim=pass header.d=vmware.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YDwwVtHys/q+bbDpvmh/PVr7w/5MkqhkdQBfFM8ClKU=;
+ b=dbSswSgOw5e5XK/R/Zx7oFxKBI1bx6t6V/TA2IoVKUflRBzbkKUw9hlaK03+touPTS+qhP82xDDTKTXhps3AQpeEz/QxYHW6pJvDf4JcOD8Eb6G38YJiorkUgaaVov8Oapqjtzrw43T3p0DRKnjxwzW/O/UkmAOv7G8hF/U/9lg=
+Received: from BY3PR05MB8531.namprd05.prod.outlook.com (2603:10b6:a03:3ce::6)
+ by BYAPR05MB5333.namprd05.prod.outlook.com (2603:10b6:a03:1e::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4415.9; Sun, 8 Aug
+ 2021 17:31:33 +0000
+Received: from BY3PR05MB8531.namprd05.prod.outlook.com
+ ([fe80::c52:f841:f870:86b5]) by BY3PR05MB8531.namprd05.prod.outlook.com
+ ([fe80::c52:f841:f870:86b5%9]) with mapi id 15.20.4415.012; Sun, 8 Aug 2021
+ 17:31:33 +0000
+From:   Nadav Amit <namit@vmware.com>
+To:     Pavel Begunkov <asml.silence@gmail.com>
+CC:     Jens Axboe <axboe@kernel.dk>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] io_uring: clear TIF_NOTIFY_SIGNAL when running task
+ work
+Thread-Topic: [PATCH 1/2] io_uring: clear TIF_NOTIFY_SIGNAL when running task
+ work
+Thread-Index: AQHXjFSzesNuD57xTUuTkIhmri8yNqtp3csA
+Date:   Sun, 8 Aug 2021 17:31:32 +0000
+Message-ID: <40885F33-F35D-49E9-A79F-DB3C35278F73@vmware.com>
+References: <20210808001342.964634-1-namit@vmware.com>
+ <20210808001342.964634-2-namit@vmware.com>
+ <488f005c-fd92-9881-2700-b2eb1adbb78e@gmail.com>
+In-Reply-To: <488f005c-fd92-9881-2700-b2eb1adbb78e@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3654.120.0.1.13)
+authentication-results: gmail.com; dkim=none (message not signed)
+ header.d=none;gmail.com; dmarc=none action=none header.from=vmware.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: fcb3e365-f869-4b18-8d38-08d95a925d88
+x-ms-traffictypediagnostic: BYAPR05MB5333:
+x-microsoft-antispam-prvs: <BYAPR05MB5333958A5CC116B866628C43D0F59@BYAPR05MB5333.namprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:5516;
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 9CaVt3gV6s4hurkwSq6bHqXJ/+3eCnyVuEOJKr9nfDChP4+3cn0xvclufDmzE4axWsEj4Wz7okM60Gnik07AtLEhbSCro0JnBtMdierpDZ/cxVhZ9YMDN5IuGpY1zOdj21OFuT34keoVsPbg2Tj32aNKw+TFbB8m7hYhFMNA2a/7Af+QgKM3e1DduqODfmUvLPGRiHnE7Xj/meBQAFEactpKts5AkFL6elMiqD0wTiaVflq7qVheVzyCFWZwXi1VXEK1WAXouIF2bj8fNDZd9IZZEJ5+p+Epr7z8xgom2T2q71Fo16Hlfn5ewfE+NnwCpuO5IQLTvnKEt4YZEiKmuOUZ9T3sosvYjDchGZZldwGal8x/APvw598sQh7+tKOOKC7CQKqmJlMm1z7pOg57CFHKiMv6Dk5c2oZ3evHxDErz99wbRdHD48TrUJEzr8mhv7UxBzff2Hq02DyhjbZAojdl6gpl2rbkxw7KUa95U00FpdViulGJqJs4iAkgZNDzH7eb7+rdqvO1xRDxcmISWHjHpO1OfZeKbcHaTA3rGsMz2cS7fLXCBymSP/aRga/s4jt1cqM82J+WrCB82pbskcUMHO5Q4qG0AVfq9ihxY+911OfTQwgd5Ygwz0fk2NUo7TFTvn9ybh96A/AXlK9vvMnTlLsPoPfm/n9niE1GzIcwhaCG7z/hAUxvoXvq3SDny0rHbWKoSo7h6IXD42ei80UP9XYHEzqP4x1cKTZnHaA=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY3PR05MB8531.namprd05.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(39860400002)(366004)(396003)(376002)(136003)(346002)(6916009)(2906002)(53546011)(76116006)(8936002)(83380400001)(5660300002)(316002)(122000001)(6486002)(38100700002)(6506007)(54906003)(38070700005)(6512007)(71200400001)(478600001)(2616005)(33656002)(66446008)(86362001)(64756008)(186003)(66946007)(4326008)(66556008)(66476007)(36756003)(26005)(8676002)(45980500001);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?5pefaw6DAIUki76KDqLIpW09Gf0YSSnx3gwVcWm2Yuq3Hh89XD3N4py8NDza?=
+ =?us-ascii?Q?UfhrnIEv+9EKkbPnG7/XZZ/mjZ7qygAEVzaoHlxQhgjxxXHWegNnSUGmFnXq?=
+ =?us-ascii?Q?W80eGU21zxqSZXJj8J8ORKyj3JTXeL0VgwjrUTVxUK/Q8NncB0vL/sggtvBG?=
+ =?us-ascii?Q?YHoweadUrA+ff3BKwn8dPIcH0nZ3cmHCWXKkddGaI0h2XfiOQGzOf+5Zqxrv?=
+ =?us-ascii?Q?c0qq1fexeOHkTk9W5oBvKMExddYFPolrZHyW4/+OGrN+LtSvpcmmNeUChb/M?=
+ =?us-ascii?Q?6i7m/kW6dkwBtLHKZ8MT8y292NFU+s2ClfY82LKQej19qHCzKz2HTj2D/XRI?=
+ =?us-ascii?Q?LJnJW8fv+4O8mu6FEpws1hZRjU17ilEry1PB8USSttkguEJdY94nw0lzquYn?=
+ =?us-ascii?Q?hE95/hUgVaQD76PZql8bzBqCHwKOKY4A+HXBKSAE30mBZjQOmcw/1LwjIy/O?=
+ =?us-ascii?Q?AScUfnQil/y+fjN8ylxLp48C9jSnixYKXDM7l0cKqM7G4wzyBbD5SNc63c4U?=
+ =?us-ascii?Q?CQo7w1VxhAUKSKalLpAT2JDH2na6xv/a//4LYZNLz1Wv2z6Am4wMQa8EZ7E8?=
+ =?us-ascii?Q?ViWeADcrfRSyyPz23jfVH9sltmbKx1+SWw6DJ0i4pSybpnwFt9eVi935pAcF?=
+ =?us-ascii?Q?D8iWjVR/HKaXgN8VHP2DD5CBBSnTYVc5kNGiV/k53301TIrXiVYWuCNygIl5?=
+ =?us-ascii?Q?HFZ8p+PI89h4zRPGdWpCOABAZqjNhzGQmxe+XiM3W3YYmyhAML6pGWwmiwt7?=
+ =?us-ascii?Q?JSvSfmneYhrEynPqosbaPexz2NyBO+DB2F451GTVqdO0vgtvUxU6vHqr9poA?=
+ =?us-ascii?Q?ipUT1LJ9AdI78uFBRymfP2gdF8kgeptnvVVrDzkbFxeW/TuHU7xSWmPpcDhk?=
+ =?us-ascii?Q?+ErSw0LqPoKyzqxEb0oNs1RyGNwazU6GLB6WCJp7FAWJex5fJLKSkP2Yhq52?=
+ =?us-ascii?Q?7tRb9dIw5iSFmuJBuIZTYFj5kRDXkc83GIx+GeTQqTtS1ox8+iKLRVk38ARQ?=
+ =?us-ascii?Q?EpFOtaPIf8ZqPmZ/nLktVYqEhltHO0hM4EHAF1/M9OXbyQs+yvWX3Rqat5yi?=
+ =?us-ascii?Q?p8dnU6pEz8kyxsxsJrO88kO/ft0+oQmEO85codCHNblvN1FIHaWw7ur1aLQe?=
+ =?us-ascii?Q?CHJwEBluQupZwVsqAkBlqgaD5uwanEyHShUsU0KUxJJ+XJ9QVe6cZUnxjJaN?=
+ =?us-ascii?Q?tbL6kwdMb4Axn38uN0sahqqA9uRbdl/Sv7y+RfFVgkEUaYY7odpjGijJxM6+?=
+ =?us-ascii?Q?JoyL4k2/rBsXnQBqKzPQlkMxgxIvdtD/H6IPlpy+AGin0Ste++pPxYfPTMDu?=
+ =?us-ascii?Q?WFXWPP9KQGMqPE6J2sSP/Z4U?=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3CAA6656D5C17042841441AA3771FAC3@namprd05.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: vmware.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BY3PR05MB8531.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fcb3e365-f869-4b18-8d38-08d95a925d88
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Aug 2021 17:31:32.8769
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: +XOKMXvhv3SN98ojjSB13k+ESERuMEHZHG4zCV63BHgB2MxPt2oGkSpr6JUr5/uMcUOtIeyS+gL9VcxYsvTvtQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB5333
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-There may be cases like:
-        A                                 B
-spin_lock(wqe->lock)
-nr_workers is 0
-nr_workers++
-spin_unlock(wqe->lock)
-                                     spin_lock(wqe->lock)
-                                     nr_wokers is 1
-                                     nr_workers++
-                                     spin_unlock(wqe->lock)
-create_io_worker()
-  acct->worker is 1
-                                     create_io_worker()
-                                       acct->worker is 1
 
-There should be one worker marked IO_WORKER_F_FIXED, but no one is.
-Fix this by introduce a new agrument for create_io_worker() to indicate
-if it is the first worker.
 
-Fixes: 3d4e4face9c1 ("io-wq: fix no lock protection of acct->nr_worker")
-Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
----
- fs/io-wq.c | 18 +++++++++++-------
- 1 file changed, 11 insertions(+), 7 deletions(-)
+> On Aug 8, 2021, at 5:55 AM, Pavel Begunkov <asml.silence@gmail.com> wrote=
+:
+>=20
+> On 8/8/21 1:13 AM, Nadav Amit wrote:
+>> From: Nadav Amit <namit@vmware.com>
+>>=20
+>> When using SQPOLL, the submission queue polling thread calls
+>> task_work_run() to run queued work. However, when work is added with
+>> TWA_SIGNAL - as done by io_uring itself - the TIF_NOTIFY_SIGNAL remains
+>=20
+> static int io_req_task_work_add(struct io_kiocb *req)
+> {
+> 	...
+> 	notify =3D (req->ctx->flags & IORING_SETUP_SQPOLL) ? TWA_NONE : TWA_SIGN=
+AL;
+> 	if (!task_work_add(tsk, &tctx->task_work, notify))
+> 	...
+> }
+>=20
+> io_uring doesn't set TIF_NOTIFY_SIGNAL for SQPOLL. But if you see it, I'm
+> rather curious who does.
 
-diff --git a/fs/io-wq.c b/fs/io-wq.c
-index 5536b2a008d1..660625ac02d7 100644
---- a/fs/io-wq.c
-+++ b/fs/io-wq.c
-@@ -129,7 +129,7 @@ struct io_cb_cancel_data {
- 	bool cancel_all;
- };
- 
--static void create_io_worker(struct io_wq *wq, struct io_wqe *wqe, int index);
-+static void create_io_worker(struct io_wq *wq, struct io_wqe *wqe, int index, bool first);
- static void io_wqe_dec_running(struct io_worker *worker);
- 
- static bool io_worker_get(struct io_worker *worker)
-@@ -248,10 +248,12 @@ static void io_wqe_wake_worker(struct io_wqe *wqe, struct io_wqe_acct *acct)
- 	rcu_read_unlock();
- 
- 	if (!ret) {
--		bool do_create = false;
-+		bool do_create = false, first = false;
- 
- 		raw_spin_lock_irq(&wqe->lock);
- 		if (acct->nr_workers < acct->max_workers) {
-+			if (!acct->nr_workers)
-+				first = true;
- 			acct->nr_workers++;
- 			do_create = true;
- 		}
-@@ -259,7 +261,7 @@ static void io_wqe_wake_worker(struct io_wqe *wqe, struct io_wqe_acct *acct)
- 		if (do_create) {
- 			atomic_inc(&acct->nr_running);
- 			atomic_inc(&wqe->wq->worker_refs);
--			create_io_worker(wqe->wq, wqe, acct->index);
-+			create_io_worker(wqe->wq, wqe, acct->index, first);
- 		}
- 	}
- }
-@@ -283,7 +285,7 @@ static void create_worker_cb(struct callback_head *cb)
- 	struct io_wq *wq;
- 	struct io_wqe *wqe;
- 	struct io_wqe_acct *acct;
--	bool do_create = false;
-+	bool do_create = false, first = false;
- 
- 	cwd = container_of(cb, struct create_worker_data, work);
- 	wqe = cwd->wqe;
-@@ -291,12 +293,14 @@ static void create_worker_cb(struct callback_head *cb)
- 	acct = &wqe->acct[cwd->index];
- 	raw_spin_lock_irq(&wqe->lock);
- 	if (acct->nr_workers < acct->max_workers) {
-+		if (!acct->nr_workers)
-+			first = true;
- 		acct->nr_workers++;
- 		do_create = true;
- 	}
- 	raw_spin_unlock_irq(&wqe->lock);
- 	if (do_create) {
--		create_io_worker(wq, cwd->wqe, cwd->index);
-+		create_io_worker(wq, wqe, cwd->index, first);
- 	} else {
- 		atomic_dec(&acct->nr_running);
- 		io_worker_ref_put(wq);
-@@ -638,7 +642,7 @@ void io_wq_worker_sleeping(struct task_struct *tsk)
- 	raw_spin_unlock_irq(&worker->wqe->lock);
- }
- 
--static void create_io_worker(struct io_wq *wq, struct io_wqe *wqe, int index)
-+static void create_io_worker(struct io_wq *wq, struct io_wqe *wqe, int index, bool first)
- {
- 	struct io_wqe_acct *acct = &wqe->acct[index];
- 	struct io_worker *worker;
-@@ -679,7 +683,7 @@ static void create_io_worker(struct io_wq *wq, struct io_wqe *wqe, int index)
- 	worker->flags |= IO_WORKER_F_FREE;
- 	if (index == IO_WQ_ACCT_BOUND)
- 		worker->flags |= IO_WORKER_F_BOUND;
--	if ((acct->nr_workers == 1) && (worker->flags & IO_WORKER_F_BOUND))
-+	if (first && (worker->flags & IO_WORKER_F_BOUND))
- 		worker->flags |= IO_WORKER_F_FIXED;
- 	raw_spin_unlock_irq(&wqe->lock);
- 	wake_up_new_task(tsk);
--- 
-2.24.4
+I was saying io-uring, but I meant io-uring in the wider sense:
+io_queue_worker_create().
+
+Here is a call trace for when TWA_SIGNAL is used. io_queue_worker_create()
+uses TWA_SIGNAL. It is called by io_wqe_dec_running(), and not shown due
+to inlining:
+
+[   70.540761] Call Trace:
+[   70.541352]  dump_stack+0x7d/0x9c
+[   70.541930]  task_work_add.cold+0x9/0x12
+[   70.542591]  io_wqe_dec_running+0xd6/0xf0
+[   70.543259]  io_wq_worker_sleeping+0x3d/0x60
+[   70.544106]  schedule+0xa0/0xc0
+[   70.544673]  userfaultfd_read_iter+0x2c3/0x790
+[   70.545374]  ? wake_up_q+0xa0/0xa0
+[   70.545887]  io_iter_do_read+0x1e/0x40
+[   70.546531]  io_read+0xdc/0x340
+[   70.547148]  ? update_curr+0x72/0x1c0
+[   70.547887]  ? update_load_avg+0x7c/0x600
+[   70.548538]  ? __switch_to_xtra+0x10a/0x500
+[   70.549264]  io_issue_sqe+0xd99/0x1840
+[   70.549887]  ? lock_timer_base+0x72/0xa0
+[   70.550516]  ? try_to_del_timer_sync+0x54/0x80
+[   70.551224]  io_wq_submit_work+0x87/0xb0
+[   70.552001]  io_worker_handle_work+0x2b5/0x4b0
+[   70.552705]  io_wqe_worker+0xd6/0x2f0
+[   70.553364]  ? recalc_sigpending+0x1c/0x50
+[   70.554074]  ? io_worker_handle_work+0x4b0/0x4b0
+[   70.554813]  ret_from_fork+0x22/0x30
+
+Does it answer your question?
 

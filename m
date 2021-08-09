@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B1703E4532
-	for <lists+io-uring@lfdr.de>; Mon,  9 Aug 2021 14:05:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D60DB3E4533
+	for <lists+io-uring@lfdr.de>; Mon,  9 Aug 2021 14:05:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235334AbhHIMF1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 9 Aug 2021 08:05:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40332 "EHLO
+        id S235331AbhHIMF2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 9 Aug 2021 08:05:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40340 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235332AbhHIMF1 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 9 Aug 2021 08:05:27 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA78AC0613D3
-        for <io-uring@vger.kernel.org>; Mon,  9 Aug 2021 05:05:06 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id c9so21050195wri.8
-        for <io-uring@vger.kernel.org>; Mon, 09 Aug 2021 05:05:06 -0700 (PDT)
+        with ESMTP id S235332AbhHIMF2 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 9 Aug 2021 08:05:28 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7EBEC0613D3
+        for <io-uring@vger.kernel.org>; Mon,  9 Aug 2021 05:05:07 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id l18so21115696wrv.5
+        for <io-uring@vger.kernel.org>; Mon, 09 Aug 2021 05:05:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=I+p/cJm4aUDkvyNdc12YvtUC6YHUgVKc2uIuiTzMGMs=;
-        b=fe2HyNQbm9kuEhs2729sp3AeOyW/9XRmATBu2I1hQwqkAtuf9D8k0JUjVVidN84/kg
-         CHmUfBeW9ek9s6lfOOrSiNkYSi3QrlbnroYJKsP1wb01YWXiREs3kX11id/MX99dm7BK
-         Q9juzTnrd0kgwY2UVc2xCXanHWAzOBu4HFfPYLV9taD2+u2AShtogDO2XP5iz4ALBGU6
-         DNIZMYk3xgHcXCAaEkDAutToKTU7dvjHRahk+WYOLRzOi3zQF0uHyQrLWQE4MGQk9Lcq
-         ez4W0BwEaOSdZHdaf1Z5vG+BEhWyv1MSXGDO2H450JR9jM2kp34W5nS/AItw8GYtvRQV
-         6Yag==
+        bh=SNsOWV/mL3WrpyrtHMkRrpZX51tGbvIL0xlYFXDOTLA=;
+        b=Ns/tZwVMEpG5e7v3lxaVNwAhT2tOvXWT9+Xv/bUaJjdMDjDGhMowIpzONFauehH9JL
+         x6Hig2p2LhhZ6G+/lIIP54tqvs3wmCrbo5AKIjmTyVIX3yZmh1JD929qgxr5xnc/ZBP6
+         xwHs7LG9tyHM7I/HiXdbSqM3QZvoWSc4auxQd80J27a//9wiDJK+KjBrnka2XPDGT+ol
+         j21R4vBJ9FV5GSFq4Avh2nCibrfFyerQxpWvVyTG3Fh6nBiKz3NvibROdr2NvsxKAJeB
+         vpzSb/xQHG7wiC9hvgkFDvLe3peDk0V4OavqDfetmO8/lj5TsScPhhUqyZgzaD0ptbly
+         jNwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=I+p/cJm4aUDkvyNdc12YvtUC6YHUgVKc2uIuiTzMGMs=;
-        b=Bc6psXJZ9Casx4HAaEsoFHbKbmgcdZELc79KLAbPKcH5g7yAa0F2AGjWDUvBsCigeU
-         3TX+zrsLO7GlcncHbYc0n0mDmS0meRoi+iUPBrlA2LKIiPKH7AaqXi8vjMUIDvuPHL5S
-         huJ/IErpdbayHLrUQoooseytdHfzo4riwIYcCxbOqBqm8yMO6BlEi8SvXKFgqD29YXLi
-         z7Uch0BtH9gJJbCHTljdnZNcl4yK07dxpPqcgW0ybaT+CLVjs1Fk8Gi4JY9nR/Xmi4DF
-         ohIRVc/tMVFctDkJBnPY/uOITzrlqvikpRoN/Rs82A5PkMHrHg5rNyRJlIolliXg8kO0
-         oQIQ==
-X-Gm-Message-State: AOAM533mFnJxtteH4fbEVr7aJfq2ciA2tn8vzoPcGEtLnjs22udXKbXK
-        V0GdR0Nd2MaZ62KTUJtoYbFNbwBUR6I=
-X-Google-Smtp-Source: ABdhPJx1VqhUJu6wHhHHV5NHRIyxgqotHE32ivHa4X6oF95ipju0ta+hadnDW0VUhZrgjXb89keHYA==
-X-Received: by 2002:adf:ea41:: with SMTP id j1mr24662143wrn.147.1628510705511;
-        Mon, 09 Aug 2021 05:05:05 -0700 (PDT)
+        bh=SNsOWV/mL3WrpyrtHMkRrpZX51tGbvIL0xlYFXDOTLA=;
+        b=bRZhhrOJIZGpbTQbkiC2YsPGWEgMY/GhRz+4RSVoq8J8JMzwHvAtFWjYg1Kke8qR1l
+         13bedwV1qmKI4BPfWzkGpy/h+krhk2oyVluklPOoeaUS67OQDv6aWa/BgTb4o/RiYGAH
+         tmVHHijEbaTwjQruKhUKw4SLW5tCtsaSkTRt2sekP4IoJq3u/DkNrSjEnXxl8WQsUgy5
+         w8bFzMFs6PVIK7IynFwMq7f7iTiv37SzmZN2sc8q9JgD4u2KnCRGoNryocKrG9A5oUVY
+         N/s5xxTuod1hFJPoBobR47J9cYvTVj6S+xdSbRxChjtaYBV5FsYx8cyY86quId6cAUxy
+         C68g==
+X-Gm-Message-State: AOAM531xm7oPv/A3q+ReTP20ugKMAGm5CD83BGj3P2gxkPeXKojVmbqf
+        J8KbrZ7lwXa5pc81tD70tNC7bSJoKVE=
+X-Google-Smtp-Source: ABdhPJxMccoIv3IX41U0T1mLRtdYIHqIgQbusqvUci8Ahw8SGKTl7M057d37rRWuj2dj6McQinYaXQ==
+X-Received: by 2002:a5d:5302:: with SMTP id e2mr11265013wrv.47.1628510706599;
+        Mon, 09 Aug 2021 05:05:06 -0700 (PDT)
 Received: from localhost.localdomain ([85.255.236.119])
-        by smtp.gmail.com with ESMTPSA id g35sm4757062wmp.9.2021.08.09.05.05.04
+        by smtp.gmail.com with ESMTPSA id g35sm4757062wmp.9.2021.08.09.05.05.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Aug 2021 05:05:05 -0700 (PDT)
+        Mon, 09 Aug 2021 05:05:06 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 02/28] io_uring: inline fixed part of io_file_get()
-Date:   Mon,  9 Aug 2021 13:04:02 +0100
-Message-Id: <52115cd6ce28f33bd0923149c0e6cb611084a0b1.1628471125.git.asml.silence@gmail.com>
+Subject: [PATCH 03/28] io_uring: rename io_file_supports_async()
+Date:   Mon,  9 Aug 2021 13:04:03 +0100
+Message-Id: <33d55b5ce43aa1884c637c1957f1e30d30dc3bec.1628471125.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <cover.1628471125.git.asml.silence@gmail.com>
 References: <cover.1628471125.git.asml.silence@gmail.com>
@@ -61,125 +61,117 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Optimise io_file_get() with registered files, which is in a hot path,
-by inlining parts of the function. Saves a function call, and
-inefficiencies of passing arguments, e.g. evaluating
-(sqe_flags & IOSQE_FIXED_FILE).
-
-It couldn't have been done before as compilers were refusing to inline
-it because of the function size.
+io_file_supports_async() checks whether a file supports nowait
+operations, so "async" in the name is misleading. Rename it.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 65 ++++++++++++++++++++++++++++++---------------------
- 1 file changed, 39 insertions(+), 26 deletions(-)
+ fs/io_uring.c | 30 +++++++++++++++---------------
+ 1 file changed, 15 insertions(+), 15 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 5072f84ef99f..900c1a4d6a0a 100644
+index 900c1a4d6a0a..d34bba222039 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -1058,7 +1058,8 @@ static int __io_register_rsrc_update(struct io_ring_ctx *ctx, unsigned type,
- 				     struct io_uring_rsrc_update2 *up,
- 				     unsigned nr_args);
- static void io_clean_op(struct io_kiocb *req);
--static struct file *io_file_get(struct io_submit_state *state,
-+static struct file *io_file_get(struct io_ring_ctx *ctx,
-+				struct io_submit_state *state,
- 				struct io_kiocb *req, int fd, bool fixed);
- static void __io_queue_sqe(struct io_kiocb *req);
- static void io_rsrc_put_work(struct work_struct *work);
-@@ -3622,7 +3623,8 @@ static int __io_splice_prep(struct io_kiocb *req,
- 	if (unlikely(sp->flags & ~valid_flags))
- 		return -EINVAL;
+@@ -718,8 +718,8 @@ enum {
+ 	REQ_F_DONT_REISSUE_BIT,
+ 	REQ_F_CREDS_BIT,
+ 	/* keep async read/write and isreg together and in order */
+-	REQ_F_ASYNC_READ_BIT,
+-	REQ_F_ASYNC_WRITE_BIT,
++	REQ_F_NOWAIT_READ_BIT,
++	REQ_F_NOWAIT_WRITE_BIT,
+ 	REQ_F_ISREG_BIT,
  
--	sp->file_in = io_file_get(NULL, req, READ_ONCE(sqe->splice_fd_in),
-+	sp->file_in = io_file_get(req->ctx, NULL, req,
-+				  READ_ONCE(sqe->splice_fd_in),
- 				  (sp->flags & SPLICE_F_FD_IN_FIXED));
- 	if (!sp->file_in)
- 		return -EBADF;
-@@ -6354,36 +6356,48 @@ static void io_fixed_file_set(struct io_fixed_file *file_slot, struct file *file
- 	file_slot->file_ptr = file_ptr;
+ 	/* not a real bit, just to check we're not overflowing the space */
+@@ -765,9 +765,9 @@ enum {
+ 	/* don't attempt request reissue, see io_rw_reissue() */
+ 	REQ_F_DONT_REISSUE	= BIT(REQ_F_DONT_REISSUE_BIT),
+ 	/* supports async reads */
+-	REQ_F_ASYNC_READ	= BIT(REQ_F_ASYNC_READ_BIT),
++	REQ_F_NOWAIT_READ	= BIT(REQ_F_NOWAIT_READ_BIT),
+ 	/* supports async writes */
+-	REQ_F_ASYNC_WRITE	= BIT(REQ_F_ASYNC_WRITE_BIT),
++	REQ_F_NOWAIT_WRITE	= BIT(REQ_F_NOWAIT_WRITE_BIT),
+ 	/* regular file */
+ 	REQ_F_ISREG		= BIT(REQ_F_ISREG_BIT),
+ 	/* has creds assigned */
+@@ -2628,7 +2628,7 @@ static bool io_bdev_nowait(struct block_device *bdev)
+  * any file. For now, just ensure that anything potentially problematic is done
+  * inline.
+  */
+-static bool __io_file_supports_async(struct file *file, int rw)
++static bool __io_file_supports_nowait(struct file *file, int rw)
+ {
+ 	umode_t mode = file_inode(file)->i_mode;
+ 
+@@ -2661,14 +2661,14 @@ static bool __io_file_supports_async(struct file *file, int rw)
+ 	return file->f_op->write_iter != NULL;
  }
  
--static struct file *io_file_get(struct io_submit_state *state,
--				struct io_kiocb *req, int fd, bool fixed)
-+static inline struct file *io_file_get_fixed(struct io_ring_ctx *ctx,
-+					     struct io_kiocb *req, int fd)
+-static bool io_file_supports_async(struct io_kiocb *req, int rw)
++static bool io_file_supports_nowait(struct io_kiocb *req, int rw)
  {
--	struct io_ring_ctx *ctx = req->ctx;
- 	struct file *file;
-+	unsigned long file_ptr;
+-	if (rw == READ && (req->flags & REQ_F_ASYNC_READ))
++	if (rw == READ && (req->flags & REQ_F_NOWAIT_READ))
+ 		return true;
+-	else if (rw == WRITE && (req->flags & REQ_F_ASYNC_WRITE))
++	else if (rw == WRITE && (req->flags & REQ_F_NOWAIT_WRITE))
+ 		return true;
  
--	if (fixed) {
--		unsigned long file_ptr;
-+	if (unlikely((unsigned int)fd >= ctx->nr_user_files))
-+		return NULL;
-+	fd = array_index_nospec(fd, ctx->nr_user_files);
-+	file_ptr = io_fixed_file_slot(&ctx->file_table, fd)->file_ptr;
-+	file = (struct file *) (file_ptr & FFS_MASK);
-+	file_ptr &= ~FFS_MASK;
-+	/* mask in overlapping REQ_F and FFS bits */
-+	req->flags |= (file_ptr << REQ_F_ASYNC_READ_BIT);
-+	io_req_set_rsrc_node(req);
-+	return file;
-+}
+-	return __io_file_supports_async(req->file, rw);
++	return __io_file_supports_nowait(req->file, rw);
+ }
  
--		if (unlikely((unsigned int)fd >= ctx->nr_user_files))
--			return NULL;
--		fd = array_index_nospec(fd, ctx->nr_user_files);
--		file_ptr = io_fixed_file_slot(&ctx->file_table, fd)->file_ptr;
--		file = (struct file *) (file_ptr & FFS_MASK);
--		file_ptr &= ~FFS_MASK;
--		/* mask in overlapping REQ_F and FFS bits */
--		req->flags |= (file_ptr << REQ_F_ASYNC_READ_BIT);
--		io_req_set_rsrc_node(req);
--	} else {
--		trace_io_uring_file_get(ctx, fd);
--		file = __io_file_get(state, fd);
-+static struct file *io_file_get_normal(struct io_ring_ctx *ctx,
-+				       struct io_submit_state *state,
-+				       struct io_kiocb *req, int fd)
-+{
-+	struct file *file = __io_file_get(state, fd);
+ static int io_prep_rw(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+@@ -3292,7 +3292,7 @@ static int io_read(struct io_kiocb *req, unsigned int issue_flags)
+ 		kiocb->ki_flags |= IOCB_NOWAIT;
  
--		/* we don't allow fixed io_uring files */
--		if (file && unlikely(file->f_op == &io_uring_fops))
--			io_req_track_inflight(req);
--	}
-+	trace_io_uring_file_get(ctx, fd);
+ 	/* If the file doesn't support async, just async punt */
+-	if (force_nonblock && !io_file_supports_async(req, READ)) {
++	if (force_nonblock && !io_file_supports_nowait(req, READ)) {
+ 		ret = io_setup_async_rw(req, iovec, inline_vecs, iter, true);
+ 		return ret ?: -EAGAIN;
+ 	}
+@@ -3399,7 +3399,7 @@ static int io_write(struct io_kiocb *req, unsigned int issue_flags)
+ 		kiocb->ki_flags |= IOCB_NOWAIT;
  
-+	/* we don't allow fixed io_uring files */
-+	if (file && unlikely(file->f_op == &io_uring_fops))
-+		io_req_track_inflight(req);
+ 	/* If the file doesn't support async, just async punt */
+-	if (force_nonblock && !io_file_supports_async(req, WRITE))
++	if (force_nonblock && !io_file_supports_nowait(req, WRITE))
+ 		goto copy_iov;
+ 
+ 	/* file path doesn't support NOWAIT for non-direct_IO */
+@@ -5209,7 +5209,7 @@ static int io_arm_poll_handler(struct io_kiocb *req)
+ 	}
+ 
+ 	/* if we can't nonblock try, then no point in arming a poll handler */
+-	if (!io_file_supports_async(req, rw))
++	if (!io_file_supports_nowait(req, rw))
+ 		return IO_APOLL_ABORTED;
+ 
+ 	apoll = kmalloc(sizeof(*apoll), GFP_ATOMIC);
+@@ -6347,9 +6347,9 @@ static void io_fixed_file_set(struct io_fixed_file *file_slot, struct file *file
+ {
+ 	unsigned long file_ptr = (unsigned long) file;
+ 
+-	if (__io_file_supports_async(file, READ))
++	if (__io_file_supports_nowait(file, READ))
+ 		file_ptr |= FFS_ASYNC_READ;
+-	if (__io_file_supports_async(file, WRITE))
++	if (__io_file_supports_nowait(file, WRITE))
+ 		file_ptr |= FFS_ASYNC_WRITE;
+ 	if (S_ISREG(file_inode(file)->i_mode))
+ 		file_ptr |= FFS_ISREG;
+@@ -6369,7 +6369,7 @@ static inline struct file *io_file_get_fixed(struct io_ring_ctx *ctx,
+ 	file = (struct file *) (file_ptr & FFS_MASK);
+ 	file_ptr &= ~FFS_MASK;
+ 	/* mask in overlapping REQ_F and FFS bits */
+-	req->flags |= (file_ptr << REQ_F_ASYNC_READ_BIT);
++	req->flags |= (file_ptr << REQ_F_NOWAIT_READ_BIT);
+ 	io_req_set_rsrc_node(req);
  	return file;
  }
- 
-+static inline struct file *io_file_get(struct io_ring_ctx *ctx,
-+				       struct io_submit_state *state,
-+				       struct io_kiocb *req, int fd, bool fixed)
-+{
-+	if (fixed)
-+		return io_file_get_fixed(ctx, req, fd);
-+	else
-+		return io_file_get_normal(ctx, state, req, fd);
-+}
-+
- static enum hrtimer_restart io_link_timeout_fn(struct hrtimer *timer)
- {
- 	struct io_timeout_data *data = container_of(timer,
-@@ -6590,9 +6604,8 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
- 	}
- 
- 	if (io_op_defs[req->opcode].needs_file) {
--		bool fixed = req->flags & REQ_F_FIXED_FILE;
--
--		req->file = io_file_get(state, req, READ_ONCE(sqe->fd), fixed);
-+		req->file = io_file_get(ctx, state, req, READ_ONCE(sqe->fd),
-+					(sqe_flags & IOSQE_FIXED_FILE));
- 		if (unlikely(!req->file))
- 			ret = -EBADF;
- 	}
 -- 
 2.32.0
 

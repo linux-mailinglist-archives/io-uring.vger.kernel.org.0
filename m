@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6661F3E4CF0
-	for <lists+io-uring@lfdr.de>; Mon,  9 Aug 2021 21:19:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E40E73E4CEF
+	for <lists+io-uring@lfdr.de>; Mon,  9 Aug 2021 21:19:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235971AbhHITTW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 9 Aug 2021 15:19:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55582 "EHLO
+        id S235961AbhHITTV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 9 Aug 2021 15:19:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235968AbhHITTU (ORCPT
+        with ESMTP id S235971AbhHITTU (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Mon, 9 Aug 2021 15:19:20 -0400
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA80EC061796
-        for <io-uring@vger.kernel.org>; Mon,  9 Aug 2021 12:18:53 -0700 (PDT)
-Received: by mail-wm1-x335.google.com with SMTP id u15so11313466wmj.1
-        for <io-uring@vger.kernel.org>; Mon, 09 Aug 2021 12:18:53 -0700 (PDT)
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E720C0613D3
+        for <io-uring@vger.kernel.org>; Mon,  9 Aug 2021 12:18:54 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id d131-20020a1c1d890000b02902516717f562so755347wmd.3
+        for <io-uring@vger.kernel.org>; Mon, 09 Aug 2021 12:18:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=ee6SZ8mR/zac0b6XUr804HyC7MeWA+5us01c/D4bkAY=;
-        b=AgBbYWoxx0+7OVVX/wpuZeT5FdRnpt/MtmYhZ/3BjAUFJBypriUNVyhGb+4GK1DLXi
-         YQ064WJ37/M2qIMI9mUxBQbkR7nuHxU0lLoGEl5+v0m+3CrP5inPkp2rpqm1waTRL55U
-         Mco4gFgiKMNUq7ajS7uRfZmfrk8gUSY4I7NjUHiU3abDxCSnAK4A4JHakSZuhXH02+3N
-         VjLxEof8eMz8EmwKucacApVbwC7Aw+QjMnGR7QP71GkY2VngKpANngJR6qF5HWh3uxx9
-         XqACOSRRgCCkxHVHeBs5W3FESMbEQGtVqo1ktQqUbxN1/L04oXEwQ/7jU549k8qZi5wr
-         oGZQ==
+        bh=G5CjslbGo+fsfKrgB550iodyM01ID4SmkDMRwUmAbbw=;
+        b=Ncg1PYBmvVLQFLnBpG4I0m5LZm7iAT9xWpKZCSzbIr0rVHJhEBKf5wE91e0GLm+NXA
+         QcfErWTKZlGs1PVEOeIykMuxNLqIQs99UeCN0wzwVnW2HDrR+NzGw4z7uSK2uMo4JpYy
+         e1+NzcqbQmiTC13PVXplgp9s8jOf5Ng0e8fx9fMG5ZQsB28vQQ8F/ED3OYguZOFuaFsC
+         9TgQcoPGgCuzIrbPLdtgTqgyIbAE9CzTmp4puFoJYhAWTIl2evRXrYlbgO30olxoECMg
+         kEnEq12YVgLt2zhWl2alVnquJVkfsUDlU7mbiVBDUWjiZyJfDNM7ondiMSylltdBjLPV
+         hOPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ee6SZ8mR/zac0b6XUr804HyC7MeWA+5us01c/D4bkAY=;
-        b=Fl65CZqCL0BYVkAtDnk4SpY09Dy/pJuos/0Q3kIDIyZGUwmw8nQCgV1Ykln0/O048l
-         /9KUrVxd7KwRng/mtPfwiaV8H0eK1rlPBMdFY5Q3d5ZTr/NMrrkkzoI2wGtzBanCgUYC
-         Cm4GHnpiQ+QJFUdhZOieWBSA8ewG0MY2f3BA6XhzX+acGwrIhjQgai3tti3pnpF4urPx
-         Ozp45xkomVAXM38LpYaAEBiEN9Gg3LtHJiCXnRBt0CHjmE/P8hT1IESxeQBJ8AdJuNds
-         7SU/byEXdgJCql0S8QKPMOCWLLT0M7RGtkSbFKWtQFeFKxVUQa5OwKqbRPDBzTUJKZJn
-         33LQ==
-X-Gm-Message-State: AOAM533AxuddV8z6VFdRNLyYsgQsrQV8ByArN8XSkzpm1PAH1svcJBN2
-        mnNnZTK03dA2lX5vZz94hKw=
-X-Google-Smtp-Source: ABdhPJxOpYaokpTNhWHLVqwPRLpA8iGLUA82tjelFhC/+fgnUgn5tup3/gtEY9JEAAYGSQar0KOiBw==
-X-Received: by 2002:a05:600c:3782:: with SMTP id o2mr630369wmr.137.1628536732386;
-        Mon, 09 Aug 2021 12:18:52 -0700 (PDT)
+        bh=G5CjslbGo+fsfKrgB550iodyM01ID4SmkDMRwUmAbbw=;
+        b=Joo4r2MnI6XZVUNgF5sxT/1aUTmisd8GLctbszWij8uLrtY8+veyuFfhOLScdW/0Js
+         QLRSvJvhsoe+k0Bf5LnqNxuT0bC42JvxLgFNpah+Riydq4bo07Bbm4KCjuPIvBV0orrz
+         ayPgwy5SSnRtYDpffuIxIF9TwkSyVaM63oK2JwGjM7KuiIveGHbud0eQhfFLo/xTVPf8
+         d5GtCS4rrxauiIBIdmSt1EP4/TeHUzJhVZdJuOW8nWGDamlPJyt4gSsjPi4X82y/U98j
+         F63ZO3WS6m5pT1fBlq/81PoC53q14ub25q9op5fUT7P0HU0woQa8+GmqeI+r+iA0gQUH
+         0TcQ==
+X-Gm-Message-State: AOAM5311r/pAsAR2ptGC+XXSg2YZAmeLJWsX/k9XdbEMSMu1Ttkjpbho
+        4kcgKnMtuUhr4XlDPnj26YR09ejo5Zw=
+X-Google-Smtp-Source: ABdhPJxDkTp5ew4keBf1610JHr2OY5ibub1v0jhc1DBOSWEkXpnwOF5mNmZCVXzmizyz1Rg8wAOKew==
+X-Received: by 2002:a05:600c:1c89:: with SMTP id k9mr18361581wms.78.1628536733156;
+        Mon, 09 Aug 2021 12:18:53 -0700 (PDT)
 Received: from localhost.localdomain ([85.255.236.119])
-        by smtp.gmail.com with ESMTPSA id h11sm13283074wrq.64.2021.08.09.12.18.51
+        by smtp.gmail.com with ESMTPSA id h11sm13283074wrq.64.2021.08.09.12.18.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Mon, 09 Aug 2021 12:18:52 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 4/7] io_uring: use inflight_entry instead of compl.list
-Date:   Mon,  9 Aug 2021 20:18:10 +0100
-Message-Id: <e430e79d22d70a190d718831bda7bfed1daf8976.1628536684.git.asml.silence@gmail.com>
+Subject: [PATCH 5/7] io_uring: inline struct io_comp_state
+Date:   Mon,  9 Aug 2021 20:18:11 +0100
+Message-Id: <e55bba77426b399e3a2e54e3c6c267c6a0fc4b57.1628536684.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <cover.1628536684.git.asml.silence@gmail.com>
 References: <cover.1628536684.git.asml.silence@gmail.com>
@@ -61,77 +61,190 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-req->compl.list is used to cache freed requests, and so can't overlap in
-time with req->inflight_entry. So, use inflight_entry to link requests
-and remove compl.list.
+Inline struct io_comp_state into struct io_submit_state. They are
+already coupled tightly, together with mixed responsibilities it
+only brings confusion having them separately.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+ fs/io_uring.c | 61 +++++++++++++++++++++++----------------------------
+ 1 file changed, 27 insertions(+), 34 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 7ad3a1254c59..2cf640dbad4f 100644
+index 2cf640dbad4f..4723eee24882 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -669,7 +669,6 @@ struct io_unlink {
+@@ -298,13 +298,6 @@ struct io_sq_data {
+ #define IO_REQ_CACHE_SIZE		32
+ #define IO_REQ_ALLOC_BATCH		8
  
- struct io_completion {
- 	struct file			*file;
--	struct list_head		list;
- 	u32				cflags;
- };
+-struct io_comp_state {
+-	struct io_kiocb		*reqs[IO_COMPL_BATCH];
+-	unsigned int		nr;
+-	/* inline/task_work completion list, under ->uring_lock */
+-	struct list_head	free_list;
+-};
+-
+ struct io_submit_link {
+ 	struct io_kiocb		*head;
+ 	struct io_kiocb		*last;
+@@ -325,7 +318,10 @@ struct io_submit_state {
+ 	/*
+ 	 * Batch completion logic
+ 	 */
+-	struct io_comp_state	comp;
++	struct io_kiocb		*compl_reqs[IO_COMPL_BATCH];
++	unsigned int		compl_nr;
++	/* inline/task_work completion list, under ->uring_lock */
++	struct list_head	free_list;
  
-@@ -1665,7 +1664,7 @@ static void io_req_complete_post(struct io_kiocb *req, long res,
- 		}
- 		io_dismantle_req(req);
- 		io_put_task(req->task, 1);
--		list_add(&req->compl.list, &ctx->locked_free_list);
-+		list_add(&req->inflight_entry, &ctx->locked_free_list);
- 		ctx->locked_free_nr++;
- 	} else {
- 		if (!percpu_ref_tryget(&ctx->refs))
-@@ -1756,9 +1755,9 @@ static bool io_flush_cached_reqs(struct io_ring_ctx *ctx)
+ 	/*
+ 	 * File reference cache
+@@ -1205,7 +1201,7 @@ static struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
+ 	INIT_DELAYED_WORK(&ctx->rsrc_put_work, io_rsrc_put_work);
+ 	init_llist_head(&ctx->rsrc_put_llist);
+ 	INIT_LIST_HEAD(&ctx->tctx_list);
+-	INIT_LIST_HEAD(&ctx->submit_state.comp.free_list);
++	INIT_LIST_HEAD(&ctx->submit_state.free_list);
+ 	INIT_LIST_HEAD(&ctx->locked_free_list);
+ 	INIT_DELAYED_WORK(&ctx->fallback_work, io_fallback_req_func);
+ 	return ctx;
+@@ -1729,10 +1725,10 @@ static void io_preinit_req(struct io_kiocb *req, struct io_ring_ctx *ctx)
+ }
+ 
+ static void io_flush_cached_locked_reqs(struct io_ring_ctx *ctx,
+-					struct io_comp_state *cs)
++					struct io_submit_state *state)
+ {
+ 	spin_lock_irq(&ctx->completion_lock);
+-	list_splice_init(&ctx->locked_free_list, &cs->free_list);
++	list_splice_init(&ctx->locked_free_list, &state->free_list);
+ 	ctx->locked_free_nr = 0;
+ 	spin_unlock_irq(&ctx->completion_lock);
+ }
+@@ -1741,7 +1737,6 @@ static void io_flush_cached_locked_reqs(struct io_ring_ctx *ctx,
+ static bool io_flush_cached_reqs(struct io_ring_ctx *ctx)
+ {
+ 	struct io_submit_state *state = &ctx->submit_state;
+-	struct io_comp_state *cs = &state->comp;
+ 	int nr;
+ 
+ 	/*
+@@ -1750,11 +1745,11 @@ static bool io_flush_cached_reqs(struct io_ring_ctx *ctx)
+ 	 * side cache.
+ 	 */
+ 	if (READ_ONCE(ctx->locked_free_nr) > IO_COMPL_BATCH)
+-		io_flush_cached_locked_reqs(ctx, cs);
++		io_flush_cached_locked_reqs(ctx, state);
+ 
  	nr = state->free_reqs;
- 	while (!list_empty(&cs->free_list)) {
- 		struct io_kiocb *req = list_first_entry(&cs->free_list,
--						struct io_kiocb, compl.list);
-+					struct io_kiocb, inflight_entry);
+-	while (!list_empty(&cs->free_list)) {
+-		struct io_kiocb *req = list_first_entry(&cs->free_list,
++	while (!list_empty(&state->free_list)) {
++		struct io_kiocb *req = list_first_entry(&state->free_list,
+ 					struct io_kiocb, inflight_entry);
  
--		list_del(&req->compl.list);
-+		list_del(&req->inflight_entry);
- 		state->reqs[nr++] = req;
- 		if (nr == ARRAY_SIZE(state->reqs))
- 			break;
-@@ -1832,7 +1831,7 @@ static void __io_free_req(struct io_kiocb *req)
- 	io_put_task(req->task, 1);
- 
- 	spin_lock_irqsave(&ctx->completion_lock, flags);
--	list_add(&req->compl.list, &ctx->locked_free_list);
-+	list_add(&req->inflight_entry, &ctx->locked_free_list);
- 	ctx->locked_free_nr++;
- 	spin_unlock_irqrestore(&ctx->completion_lock, flags);
- 
-@@ -2139,7 +2138,7 @@ static void io_req_free_batch(struct req_batch *rb, struct io_kiocb *req,
+ 		list_del(&req->inflight_entry);
+@@ -1941,7 +1936,7 @@ static void ctx_flush_and_put(struct io_ring_ctx *ctx)
+ {
+ 	if (!ctx)
+ 		return;
+-	if (ctx->submit_state.comp.nr) {
++	if (ctx->submit_state.compl_nr) {
+ 		mutex_lock(&ctx->uring_lock);
+ 		io_submit_flush_completions(ctx);
+ 		mutex_unlock(&ctx->uring_lock);
+@@ -2138,19 +2133,19 @@ static void io_req_free_batch(struct req_batch *rb, struct io_kiocb *req,
  	if (state->free_reqs != ARRAY_SIZE(state->reqs))
  		state->reqs[state->free_reqs++] = req;
  	else
--		list_add(&req->compl.list, &state->comp.free_list);
-+		list_add(&req->inflight_entry, &state->comp.free_list);
+-		list_add(&req->inflight_entry, &state->comp.free_list);
++		list_add(&req->inflight_entry, &state->free_list);
  }
  
  static void io_submit_flush_completions(struct io_ring_ctx *ctx)
-@@ -8626,8 +8625,8 @@ static void io_req_cache_free(struct list_head *list)
+ 	__must_hold(&req->ctx->uring_lock)
  {
- 	struct io_kiocb *req, *nxt;
+-	struct io_comp_state *cs = &ctx->submit_state.comp;
+-	int i, nr = cs->nr;
++	struct io_submit_state *state = &ctx->submit_state;
++	int i, nr = state->compl_nr;
+ 	struct req_batch rb;
  
--	list_for_each_entry_safe(req, nxt, list, compl.list) {
--		list_del(&req->compl.list);
-+	list_for_each_entry_safe(req, nxt, list, inflight_entry) {
-+		list_del(&req->inflight_entry);
- 		kmem_cache_free(req_cachep, req);
+ 	spin_lock_irq(&ctx->completion_lock);
+ 	for (i = 0; i < nr; i++) {
+-		struct io_kiocb *req = cs->reqs[i];
++		struct io_kiocb *req = state->compl_reqs[i];
+ 
+ 		__io_cqring_fill_event(ctx, req->user_data, req->result,
+ 					req->compl.cflags);
+@@ -2161,7 +2156,7 @@ static void io_submit_flush_completions(struct io_ring_ctx *ctx)
+ 
+ 	io_init_req_batch(&rb);
+ 	for (i = 0; i < nr; i++) {
+-		struct io_kiocb *req = cs->reqs[i];
++		struct io_kiocb *req = state->compl_reqs[i];
+ 
+ 		/* submission and completion refs */
+ 		if (req_ref_sub_and_test(req, 2))
+@@ -2169,7 +2164,7 @@ static void io_submit_flush_completions(struct io_ring_ctx *ctx)
  	}
+ 
+ 	io_req_free_batch_finish(ctx, &rb);
+-	cs->nr = 0;
++	state->compl_nr = 0;
  }
+ 
+ /*
+@@ -6479,10 +6474,10 @@ static void __io_queue_sqe(struct io_kiocb *req)
+ 		/* drop submission reference */
+ 		if (req->flags & REQ_F_COMPLETE_INLINE) {
+ 			struct io_ring_ctx *ctx = req->ctx;
+-			struct io_comp_state *cs = &ctx->submit_state.comp;
++			struct io_submit_state *state = &ctx->submit_state;
+ 
+-			cs->reqs[cs->nr++] = req;
+-			if (cs->nr == ARRAY_SIZE(cs->reqs))
++			state->compl_reqs[state->compl_nr++] = req;
++			if (state->compl_nr == ARRAY_SIZE(state->compl_reqs))
+ 				io_submit_flush_completions(ctx);
+ 		} else {
+ 			io_put_req(req);
+@@ -6685,7 +6680,7 @@ static void io_submit_state_end(struct io_submit_state *state,
+ {
+ 	if (state->link.head)
+ 		io_queue_sqe(state->link.head);
+-	if (state->comp.nr)
++	if (state->compl_nr)
+ 		io_submit_flush_completions(ctx);
+ 	if (state->plug_started)
+ 		blk_finish_plug(&state->plug);
+@@ -8633,19 +8628,17 @@ static void io_req_cache_free(struct list_head *list)
+ 
+ static void io_req_caches_free(struct io_ring_ctx *ctx)
+ {
+-	struct io_submit_state *submit_state = &ctx->submit_state;
+-	struct io_comp_state *cs = &ctx->submit_state.comp;
++	struct io_submit_state *state = &ctx->submit_state;
+ 
+ 	mutex_lock(&ctx->uring_lock);
+ 
+-	if (submit_state->free_reqs) {
+-		kmem_cache_free_bulk(req_cachep, submit_state->free_reqs,
+-				     submit_state->reqs);
+-		submit_state->free_reqs = 0;
++	if (state->free_reqs) {
++		kmem_cache_free_bulk(req_cachep, state->free_reqs, state->reqs);
++		state->free_reqs = 0;
+ 	}
+ 
+-	io_flush_cached_locked_reqs(ctx, cs);
+-	io_req_cache_free(&cs->free_list);
++	io_flush_cached_locked_reqs(ctx, state);
++	io_req_cache_free(&state->free_list);
+ 	mutex_unlock(&ctx->uring_lock);
+ }
+ 
 -- 
 2.32.0
 

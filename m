@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C8553E4548
+	by mail.lfdr.de (Postfix) with ESMTP id DD3443E4549
 	for <lists+io-uring@lfdr.de>; Mon,  9 Aug 2021 14:05:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235362AbhHIMFv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 9 Aug 2021 08:05:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40496 "EHLO
+        id S235358AbhHIMFw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 9 Aug 2021 08:05:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40500 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235358AbhHIMFr (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 9 Aug 2021 08:05:47 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9F90C0613D3
-        for <io-uring@vger.kernel.org>; Mon,  9 Aug 2021 05:05:26 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id k29so8291353wrd.7
-        for <io-uring@vger.kernel.org>; Mon, 09 Aug 2021 05:05:26 -0700 (PDT)
+        with ESMTP id S232963AbhHIMFs (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 9 Aug 2021 08:05:48 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99D95C061798
+        for <io-uring@vger.kernel.org>; Mon,  9 Aug 2021 05:05:27 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id x17so10411407wmc.5
+        for <io-uring@vger.kernel.org>; Mon, 09 Aug 2021 05:05:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=C0MdYWAHPFtQX36fEaJe1N01xX30gaHsdG42C1HnIQQ=;
-        b=gaxpLxAPTNRUz0DFd4hCAHwO6yiEUgFzMHlmxC1smbIq3e6ycQfzhCWH5fR3ztH61P
-         3ujSLivQrYj1hcqwd+6l/8oQS7enDwtYVojsCBKPb7jgAxbZ8qelR8o7a463LCcexOvm
-         10sKuwwN0naEHjZ951CX41R03Jqs4tyGx9qgND5IA4dy7ovLRsshQgEPIZDZXBGZsNL7
-         z7Vi5840lzYPI/RpR3y8qDDp3fqk/CdUuSU6XOH8wJjdYct6+oYcu3F5lNLKN9lOO+iD
-         FDADKaw/g828ejZRPyz3LxIR7hX13DmSsSRNCLMMJN9F4VkzI/7Y4Q79gbwq3Ukxc59V
-         qAfw==
+        bh=Wbq1+hhcolKgYXRxmi78uxwrVslVmGkoWpCMbS+hLfk=;
+        b=hwWWdkfaTK3QJZC3CiTvSDYO5gejEk4fPu04KAnDOhc2iqmyjNSZasv6rIPwSoz/A6
+         zi9svzX6bGEBpqdq1PNXZEN4LRJvVpPaAfeNU8kMSB9ZMskdpw2bSzViqKGy4fZSIREV
+         1wNf+eZ3JSX5Lx51P2fwwSjwNBW5hamJW6rv0pL/BxrnxyfvSZOFkUi6aalSZImNrVXL
+         pc0/OZ6ukCvyk0jnCUcjoEnCy3dAXryF/G7ka/lha/II9MaYQO5EBI9YpUo52kVf5lmE
+         Luc/bAXKxyDK7akVfWqPYQK0zBaZ/2mZS0/OUIfUlMQSooz7uJxVSB8Qms1HVGZaM8sg
+         ptMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=C0MdYWAHPFtQX36fEaJe1N01xX30gaHsdG42C1HnIQQ=;
-        b=LO6z0NijlVArS10Bs9rK4Gcr7su3z0JQK7BUSG7MXPet7gNXvLM9bGZDlKYrg9B/AJ
-         Ne26tuFTocQnJ23EIwC6E92vUpH0hMON0/C9Nz2CSwF8YK2Ga2pNSpwUcv3lkw2pN9R5
-         Dhv5AZOIaTYuNvYU4HfLqVmc5EcP8Q/S1v2pgFZmfWoCM+Q1ye4C6eif7K90fbYgQMND
-         gkzaXSR29xExrSBq44sH0WdpwJ3jCtibPpSoF0orcunzDA7iXQ0jJoS2LsnXHoIy7GFf
-         iiI2pX3mIPN1IoIrw3McXP99im5zfE54G7OFIMBZQu/wPwaZAFS9Ii7yCJEt5uI2yVkl
-         Qulw==
-X-Gm-Message-State: AOAM533GNbXG+jPFs3rdbxXP4auwsvfdvmR0obSZVjzq0y4IsTsbhCkb
-        ljGkQ5rgF40CujyAxLCtLaw=
-X-Google-Smtp-Source: ABdhPJyJ9q75yXIgL5kXdexlf1/QaaO7L+IuKszgNu38zlZWIxwM5Jt7Anym227h3E9p6oXdRNMfPw==
-X-Received: by 2002:adf:b357:: with SMTP id k23mr7602575wrd.94.1628510725592;
-        Mon, 09 Aug 2021 05:05:25 -0700 (PDT)
+        bh=Wbq1+hhcolKgYXRxmi78uxwrVslVmGkoWpCMbS+hLfk=;
+        b=YGHJSSAHu5G+955EtmjK06iAxGRm9TOq9+VoIMRe68nsnxbo8spT/4HoJZMTKP/eS8
+         7X4qwkSmt2nHv8g/qD7h9i/8/jWppQ0E5dq02OEef4TlhGSkV2sZ3cNaiEYCxddsOzDV
+         OLo4gt2tGXx3kGHDxzdZoHgL1IvCnRbEqtzoZapxOkC+sctAeZo/SAny3FPeqKaurC9G
+         Ep63++GVTTvPk2XK+1p5qBanmtzGIvSZ1MDvP4/I7sKTy8MT4ren+1tydiDhc1rDhZOK
+         OVoLyM95YEJnpX8jzN38JGVfwLEbMUgatwiqFqk5x0bhUD9k1+1eHvHukMN1/DjgkdGK
+         VSLw==
+X-Gm-Message-State: AOAM533Ps1FPyfsta/FbJiaPB+Le2iolpGLlSmMpBNUrFsrsmRMObi42
+        AMLSwniuCfDbpIzfpSjg7PU=
+X-Google-Smtp-Source: ABdhPJxfyjiOdC0UlaADNZ4Tjipe6q4aXXGeleH4uBqthTRSoZhvBQaK7ikwsE7ux2A93bI++7Q8UA==
+X-Received: by 2002:a7b:c94c:: with SMTP id i12mr33749562wml.148.1628510726316;
+        Mon, 09 Aug 2021 05:05:26 -0700 (PDT)
 Received: from localhost.localdomain ([85.255.236.119])
-        by smtp.gmail.com with ESMTPSA id g35sm4757062wmp.9.2021.08.09.05.05.24
+        by smtp.gmail.com with ESMTPSA id g35sm4757062wmp.9.2021.08.09.05.05.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Aug 2021 05:05:25 -0700 (PDT)
+        Mon, 09 Aug 2021 05:05:26 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 24/28] io_uring: remove redundant args from cache_free
-Date:   Mon,  9 Aug 2021 13:04:24 +0100
-Message-Id: <605940169772a80dc214cbab331996a6a87e89ef.1628471125.git.asml.silence@gmail.com>
+Subject: [PATCH 25/28] io_uring: use inflight_entry instead of compl.list
+Date:   Mon,  9 Aug 2021 13:04:25 +0100
+Message-Id: <aad647119ec4b4048d5137f24519af1c644758ad.1628471125.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <cover.1628471125.git.asml.silence@gmail.com>
 References: <cover.1628471125.git.asml.silence@gmail.com>
@@ -61,41 +61,77 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-We don't use @tsk argument of io_req_cache_free(), remove it.
+req->compl.list is used to cache freed requests, and so can't overlap in
+time with req->inflight_entry. So, use inflight_entry to link requests
+and remove compl.list.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ fs/io_uring.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index ec1cab2b9a91..92854f62ee21 100644
+index 92854f62ee21..aaddbb4ce4ef 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -8646,13 +8646,11 @@ static void io_destroy_buffers(struct io_ring_ctx *ctx)
- 		__io_remove_buffers(ctx, buf, index, -1U);
+@@ -670,7 +670,6 @@ struct io_unlink {
+ 
+ struct io_completion {
+ 	struct file			*file;
+-	struct list_head		list;
+ 	u32				cflags;
+ };
+ 
+@@ -1678,7 +1677,7 @@ static void io_req_complete_post(struct io_kiocb *req, long res,
+ 		}
+ 		io_dismantle_req(req);
+ 		io_put_task(req->task, 1);
+-		list_add(&req->compl.list, &ctx->locked_free_list);
++		list_add(&req->inflight_entry, &ctx->locked_free_list);
+ 		ctx->locked_free_nr++;
+ 	} else {
+ 		if (!percpu_ref_tryget(&ctx->refs))
+@@ -1769,9 +1768,9 @@ static bool io_flush_cached_reqs(struct io_ring_ctx *ctx)
+ 	nr = state->free_reqs;
+ 	while (!list_empty(&cs->free_list)) {
+ 		struct io_kiocb *req = list_first_entry(&cs->free_list,
+-						struct io_kiocb, compl.list);
++					struct io_kiocb, inflight_entry);
+ 
+-		list_del(&req->compl.list);
++		list_del(&req->inflight_entry);
+ 		state->reqs[nr++] = req;
+ 		if (nr == ARRAY_SIZE(state->reqs))
+ 			break;
+@@ -1841,7 +1840,7 @@ static void __io_free_req(struct io_kiocb *req)
+ 	io_put_task(req->task, 1);
+ 
+ 	spin_lock_irqsave(&ctx->completion_lock, flags);
+-	list_add(&req->compl.list, &ctx->locked_free_list);
++	list_add(&req->inflight_entry, &ctx->locked_free_list);
+ 	ctx->locked_free_nr++;
+ 	spin_unlock_irqrestore(&ctx->completion_lock, flags);
+ 
+@@ -2148,7 +2147,7 @@ static void io_req_free_batch(struct req_batch *rb, struct io_kiocb *req,
+ 	if (state->free_reqs != ARRAY_SIZE(state->reqs))
+ 		state->reqs[state->free_reqs++] = req;
+ 	else
+-		list_add(&req->compl.list, &state->comp.free_list);
++		list_add(&req->inflight_entry, &state->comp.free_list);
  }
  
--static void io_req_cache_free(struct list_head *list, struct task_struct *tsk)
-+static void io_req_cache_free(struct list_head *list)
+ static void io_submit_flush_completions(struct io_ring_ctx *ctx)
+@@ -8650,8 +8649,8 @@ static void io_req_cache_free(struct list_head *list)
  {
  	struct io_kiocb *req, *nxt;
  
- 	list_for_each_entry_safe(req, nxt, list, compl.list) {
--		if (tsk && req->task != tsk)
--			continue;
- 		list_del(&req->compl.list);
+-	list_for_each_entry_safe(req, nxt, list, compl.list) {
+-		list_del(&req->compl.list);
++	list_for_each_entry_safe(req, nxt, list, inflight_entry) {
++		list_del(&req->inflight_entry);
  		kmem_cache_free(req_cachep, req);
  	}
-@@ -8672,7 +8670,7 @@ static void io_req_caches_free(struct io_ring_ctx *ctx)
- 	}
- 
- 	io_flush_cached_locked_reqs(ctx, cs);
--	io_req_cache_free(&cs->free_list, NULL);
-+	io_req_cache_free(&cs->free_list);
- 	mutex_unlock(&ctx->uring_lock);
  }
- 
 -- 
 2.32.0
 

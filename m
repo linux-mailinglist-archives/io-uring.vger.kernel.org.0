@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 873223E453A
-	for <lists+io-uring@lfdr.de>; Mon,  9 Aug 2021 14:05:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45ECA3E453C
+	for <lists+io-uring@lfdr.de>; Mon,  9 Aug 2021 14:05:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235339AbhHIMFg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        id S235338AbhHIMFg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
         Mon, 9 Aug 2021 08:05:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40398 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235338AbhHIMFf (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 9 Aug 2021 08:05:35 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4956C0613D3
-        for <io-uring@vger.kernel.org>; Mon,  9 Aug 2021 05:05:14 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id n12so11034485wrr.2
-        for <io-uring@vger.kernel.org>; Mon, 09 Aug 2021 05:05:14 -0700 (PDT)
+        with ESMTP id S235344AbhHIMFg (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 9 Aug 2021 08:05:36 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD4E6C061796
+        for <io-uring@vger.kernel.org>; Mon,  9 Aug 2021 05:05:15 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id f5so5304889wrm.13
+        for <io-uring@vger.kernel.org>; Mon, 09 Aug 2021 05:05:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=QoSeUIF3CpABLJ2fLJKgJdZ/o4jwmSKvnm+6eiBvd6g=;
-        b=CP1O4k79JmgMv99cQ8EajsSWJodAdtoeMjMQqvCp6QyQ6wS5SzZzor280bJa2HLQmR
-         bLU3EKU/Aa65WNcOWF9dGpRUblFQg3FGIgFk4Uw7a6s9bvM6DKp3udbLL8DvlOkDIVR4
-         dhkAhnSmMDa1JIL+cItalCySyLmUkO8gvHrj2LUNagh2u6u1UGg+7OxLXaXglI7Y2qoa
-         xjEJSK403lRRrmOyuTDksTjzU3/Bbfu5eYTNvG/pcxRADNxPKMkY6AEYzzTHiVwVnI8D
-         eKk7NeX4YL1mmlK9tGHPWfniYAHl+GG7WI8KYdROEz1J4HQDcv5wyytx7M1ZoRun41nv
-         /OQg==
+        bh=XKaossVkwUeIhI9Bc1FJaN2Dz3h1CCVq2L+SYub7w6M=;
+        b=mwgBqR8OZOc6PXS+JEqFHQdKANgq+6M9M4GaSAFSnj0O4Jhgu0SQDNDSEui1REqhbc
+         c1oMB8evsr9DNDfK2qSpAtXefH6z/HeyEbrCFoIWc37J5lV1AC1fqwUAE/h7aAa//IGH
+         MLe1FG0ubpnZJXfgv0mmtxuvUKOmJombVaBhtVQPSzmH+SthkLGvWKhgNaD7v3uZgcoe
+         ZZBRNmhZ+Uxnl+wTMz5hJw0Dq5Uk+Pnh0VwH8KRBqG88WtT4M+zRWvmoGTz2ia6zV4zO
+         R5xur8VleQVMLoXhSVD/SXBw2o6CQUJ9hTd6jnU3p0UNJ+dzplE9AH6UAxBhzyUAo3te
+         4VBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=QoSeUIF3CpABLJ2fLJKgJdZ/o4jwmSKvnm+6eiBvd6g=;
-        b=QVToS/RF6pcnfcfcfpp+xXjJ2TN9WwT/5njaRBgqS05MAhovFPw7yKcWqNo+nm+HAe
-         NoI6mv1o5uLiuchrGIEK724KyIC3/YGt8BP+7xYE9xRC3PVVcPualvPihHGrx4ohXMvh
-         K92VMGb+fn8RrwC54TGh6/7uHPO/BS4539p4310r4WULbh44DfJE3YATucO/rGmGwFto
-         JmxNd3xU7XFAtY/2nke3hFu2AVdZo2bqhW5qtLlKBxLPIgsuSOyE7KcFWJQGCQuyRIu+
-         Gw25v7Irl4Q6QLNI6eolDxDXQnpmWCD7X1NLrJ7fWAGcUwahinuJDpeXn7otUFaylqwS
-         BwQA==
-X-Gm-Message-State: AOAM530q+i7Da/S8wGCBb07uidYncnJFX4z4Jzq+yGiOedvpDw87c7na
-        +OUoLw1RnsRd26vcLp3IPLQ=
-X-Google-Smtp-Source: ABdhPJzM/TM3r1dmZng2G3GPYzRhF0YlM17GgDTVGJZRiCMWOm6XWQs9W/gyczcvV3NPIZbg5SpAhQ==
-X-Received: by 2002:a5d:68cb:: with SMTP id p11mr25068185wrw.364.1628510713634;
-        Mon, 09 Aug 2021 05:05:13 -0700 (PDT)
+        bh=XKaossVkwUeIhI9Bc1FJaN2Dz3h1CCVq2L+SYub7w6M=;
+        b=pMd14ZSf6x5MWKTdngvbI81Lv4Q7LhuJlVujmzDTHYsBz+9amz+NFHk5oMhbGwxySp
+         FJozl9V10ljEnpYCi1/sh0B6+gPRjFW+pFlOBsmiIOT2qJxUJiCr5OeG7gKvwAvwc20M
+         0OBPURnNp494m88WrY/QdFZxz/u92VUaCFJwZRX8d1NlZfLtLnH22+RB3li/b+70TWVH
+         S6AJE7Nmvs50glqYGjA9uScqj64ZPSk6KHa0GLuzLmfBApKs0VMYMV0zaVLRMTkGNfTx
+         d529iklW3GmQ2mVkXQRojPx1CKLhc9z0prsTsHTnoVeWZbFciS13trz+mu84femA1b2y
+         lecg==
+X-Gm-Message-State: AOAM530za1/RyJz98eMQuEEJlzUXzok+C72nX/IqM3vxBilbREAgYHnd
+        hLRiph56d7lR+l6AOOQo5MA=
+X-Google-Smtp-Source: ABdhPJzyyaZDdZR1ttvNtcYSZaV9IqLS6oTimNwAr8SWfGQdXAMJ1uoOTut/DhYLDAKifX+AVxwCBQ==
+X-Received: by 2002:a5d:444e:: with SMTP id x14mr24427772wrr.385.1628510714408;
+        Mon, 09 Aug 2021 05:05:14 -0700 (PDT)
 Received: from localhost.localdomain ([85.255.236.119])
-        by smtp.gmail.com with ESMTPSA id g35sm4757062wmp.9.2021.08.09.05.05.12
+        by smtp.gmail.com with ESMTPSA id g35sm4757062wmp.9.2021.08.09.05.05.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Aug 2021 05:05:13 -0700 (PDT)
+        Mon, 09 Aug 2021 05:05:14 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 11/28] io_uring: optimise io_cqring_wait() hot path
-Date:   Mon,  9 Aug 2021 13:04:11 +0100
-Message-Id: <6f1b81c60b947d165583dc333947869c3d85d037.1628471125.git.asml.silence@gmail.com>
+Subject: [PATCH 12/28] io_uring: extract a helper for ctx quiesce
+Date:   Mon,  9 Aug 2021 13:04:12 +0100
+Message-Id: <0339e0027504176be09237eefa7945bf9a6f153d.1628471125.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <cover.1628471125.git.asml.silence@gmail.com>
 References: <cover.1628471125.git.asml.silence@gmail.com>
@@ -61,53 +61,87 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Turns out we always init struct io_wait_queue in io_cqring_wait(), even
-if it's not used after, i.e. there are already enough of CQEs. And often
-it's exactly what happens, for instance, requests may have been
-completed inline, or in case of io_uring_enter(submit=N, wait=1).
-
-It shows up in my profiler, so optimise it by delaying the struct init.
+Refactor __io_uring_register() by extracting a helper responsible for
+ctx queisce. Looks better and will make it easier to add more
+optimisations.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+ fs/io_uring.c | 53 ++++++++++++++++++++++++++++-----------------------
+ 1 file changed, 29 insertions(+), 24 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 0f49736cd2b4..0fd04d25c520 100644
+index 0fd04d25c520..292dbf10e316 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -7062,15 +7062,7 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
- 			  const sigset_t __user *sig, size_t sigsz,
- 			  struct __kernel_timespec __user *uts)
- {
--	struct io_wait_queue iowq = {
--		.wq = {
--			.private	= current,
--			.func		= io_wake_function,
--			.entry		= LIST_HEAD_INIT(iowq.wq.entry),
--		},
--		.ctx		= ctx,
--		.to_wait	= min_events,
--	};
-+	struct io_wait_queue iowq;
- 	struct io_rings *rings = ctx->rings;
- 	signed long timeout = MAX_SCHEDULE_TIMEOUT;
- 	int ret;
-@@ -7104,7 +7096,13 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
- 		timeout = timespec64_to_jiffies(&ts);
+@@ -10077,6 +10077,33 @@ static bool io_register_op_must_quiesce(int op)
+ 	}
+ }
+ 
++static int io_ctx_quiesce(struct io_ring_ctx *ctx)
++{
++	long ret;
++
++	percpu_ref_kill(&ctx->refs);
++
++	/*
++	 * Drop uring mutex before waiting for references to exit. If another
++	 * thread is currently inside io_uring_enter() it might need to grab the
++	 * uring_lock to make progress. If we hold it here across the drain
++	 * wait, then we can deadlock. It's safe to drop the mutex here, since
++	 * no new references will come in after we've killed the percpu ref.
++	 */
++	mutex_unlock(&ctx->uring_lock);
++	do {
++		ret = wait_for_completion_interruptible(&ctx->ref_comp);
++		if (!ret)
++			break;
++		ret = io_run_task_work_sig();
++	} while (ret >= 0);
++	mutex_lock(&ctx->uring_lock);
++
++	if (ret)
++		io_refs_resurrect(&ctx->refs, &ctx->ref_comp);
++	return ret;
++}
++
+ static int __io_uring_register(struct io_ring_ctx *ctx, unsigned opcode,
+ 			       void __user *arg, unsigned nr_args)
+ 	__releases(ctx->uring_lock)
+@@ -10101,31 +10128,9 @@ static int __io_uring_register(struct io_ring_ctx *ctx, unsigned opcode,
  	}
  
-+	init_waitqueue_func_entry(&iowq.wq, io_wake_function);
-+	iowq.wq.private = current;
-+	INIT_LIST_HEAD(&iowq.wq.entry);
-+	iowq.ctx = ctx;
-+	iowq.to_wait = min_events;
- 	iowq.nr_timeouts = atomic_read(&ctx->cq_timeouts);
-+
- 	trace_io_uring_cqring_wait(ctx, min_events);
- 	do {
- 		/* if we can't even flush overflow, don't wait for more */
+ 	if (io_register_op_must_quiesce(opcode)) {
+-		percpu_ref_kill(&ctx->refs);
+-
+-		/*
+-		 * Drop uring mutex before waiting for references to exit. If
+-		 * another thread is currently inside io_uring_enter() it might
+-		 * need to grab the uring_lock to make progress. If we hold it
+-		 * here across the drain wait, then we can deadlock. It's safe
+-		 * to drop the mutex here, since no new references will come in
+-		 * after we've killed the percpu ref.
+-		 */
+-		mutex_unlock(&ctx->uring_lock);
+-		do {
+-			ret = wait_for_completion_interruptible(&ctx->ref_comp);
+-			if (!ret)
+-				break;
+-			ret = io_run_task_work_sig();
+-			if (ret < 0)
+-				break;
+-		} while (1);
+-		mutex_lock(&ctx->uring_lock);
+-
+-		if (ret) {
+-			io_refs_resurrect(&ctx->refs, &ctx->ref_comp);
++		ret = io_ctx_quiesce(ctx);
++		if (ret)
+ 			return ret;
+-		}
+ 	}
+ 
+ 	switch (opcode) {
 -- 
 2.32.0
 

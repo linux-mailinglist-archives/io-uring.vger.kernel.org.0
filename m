@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EAE823E453F
-	for <lists+io-uring@lfdr.de>; Mon,  9 Aug 2021 14:05:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E7333E4540
+	for <lists+io-uring@lfdr.de>; Mon,  9 Aug 2021 14:05:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235346AbhHIMFj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 9 Aug 2021 08:05:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40430 "EHLO
+        id S235342AbhHIMFk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 9 Aug 2021 08:05:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235344AbhHIMFi (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 9 Aug 2021 08:05:38 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64E03C061798
-        for <io-uring@vger.kernel.org>; Mon,  9 Aug 2021 05:05:18 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id l34-20020a05600c1d22b02902573c214807so14443008wms.2
-        for <io-uring@vger.kernel.org>; Mon, 09 Aug 2021 05:05:18 -0700 (PDT)
+        with ESMTP id S235345AbhHIMFj (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 9 Aug 2021 08:05:39 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C787C0613D3
+        for <io-uring@vger.kernel.org>; Mon,  9 Aug 2021 05:05:19 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id c9so21051406wri.8
+        for <io-uring@vger.kernel.org>; Mon, 09 Aug 2021 05:05:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=ESmiw6an763N3DIXnpThepLwM9LzWPDRHF7nkJutiGk=;
-        b=mhF6P8Mz8CWDCV6yq95lx2db82MqUlCopz4wAPwNrO0qpPjjo2zAZ+geLYhljpbWA/
-         YlqfVaqjjjJR7m7QAvZV/BmLyE9GbYZjlkgtzQ984AN20t6nkX1OxykzuatfiwG07cTk
-         XRpaUghTWq14Mn5DwEEQeM0mpnjvStgIosYmaVvpdJfM0rMFgSOQxOZL1rmccZbGJvPG
-         hyUbY/i3Xyzg+9EtYceZsXJukg1HUMWkB6ed0ImW8KxOlrmGMnVcOm0PDElPgiFhWKEB
-         kZalh0WGwJw3926KMLpyHdcm7zKwGkdNvmbmlEx54d4jGytQ5nxeH1FFOLvHWtp0a6ZH
-         PvdA==
+        bh=We/N7rq0mPGKKbsHqBU553wy6NC/54D2i3K+GAo0kqo=;
+        b=A8W9lJDDZUC55xoppHhsaTyvml1EYdPhiR8MIIsdy4SMES1TFMyW+MXAYXJDB0qIxX
+         kPa4EA3hpUFpOaUq2lszabepZvPGFcJXXOPH+A50PKGO+13ftgK9EkA0/IexMFERzN3r
+         kKjPTQwiqyAM7OAk9MLXNhwUb2jXRt2IKqTvI6THgXiq65haj6WgE/Yi0WCdNrNdnXJQ
+         PiH42SEOil4hfqUf3gmfqUF28BkpltuG4xH0/XeLd3MP4ZThqlPWDFFcOz917539KANr
+         ydo5wpqI19gS/B5xHshx+DrCQjFgbncm8o96c+sogQduqECtwxL29VlGDxVVWcdD2cOn
+         KMFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ESmiw6an763N3DIXnpThepLwM9LzWPDRHF7nkJutiGk=;
-        b=ZcFQrEQUUPjX5urhW3B0gxhn67pmiIgXR9l79N/2UBzEM661kPiSa/iT5cpCZ1+jFT
-         OqGus1rXhJ5r88i/hyz9eaJOT1X3IyfWNuK6/tcHuss72BJ2l6PfO9eorZ/AASttm/iC
-         jZ4qO0OYamcibZvc4Ajz/Yl3VFGvbSGffiITdLiYxGeKEhBI9kEbDRVX2pPa2klVeL0H
-         PeRHZ6kd3utdjCwbBP0jgUVFjiEoB6m3RhU4Qg8ejSLfSgTrejhrnDKbJottYW9q1khQ
-         BeIA6hT7exB7OlxF4sh09HfRDXhWgSPrTe0xM3DsI0v7KCLrqphbiXYI5sIHISbBzvw7
-         7/5A==
-X-Gm-Message-State: AOAM533x67xJL4DPHTMlHBJwBtViLom0sktUprsGYSMusYOvbllV8SHt
-        T6xrZbYgpYCTd2D6/QFmD+4=
-X-Google-Smtp-Source: ABdhPJxVALpPcXxbI+1bkIYEhyUOOvuyLcfdKova1cIQA/aLKZbazOAkf0k2w+14sJeQ5br+Kw3lWA==
-X-Received: by 2002:a7b:c749:: with SMTP id w9mr16413097wmk.98.1628510717070;
+        bh=We/N7rq0mPGKKbsHqBU553wy6NC/54D2i3K+GAo0kqo=;
+        b=QveBIJuzDJdVdB6R6ytxFlvA+nIeja2EXVGphbcCU9BrhlWEZf1YdJWckk7/isoVrN
+         13VoSND+HvmFJbTlXHBSJCEOH03wktEDXokz7FEeG0IziDQUOPArbfr40dpZv5Y+i56G
+         +z8QCtb90atyzhhlmvxo6zcPF3Aa1mmEW+i9Rrc92geO7l3v3aDVxx7VPyC5LC1okXEj
+         ATYmvo+bse13tigqhsx+l6ZDxfBhilorXHmpnpLaAESnlUxlJVdd/zellu9GQyFTbSYP
+         OLIBkvL5WtIyF2vlm9Er4cR2c2jt/EHgzzLtWRcYsC9P6s+7uTwtRxlgKxAazc28K9+M
+         Kshg==
+X-Gm-Message-State: AOAM531+1tU/x1n82pZDl9scCJQNu1YEasO0EQje2VkIWFhkQ/Rs6osu
+        unTdfRSAAnIeIuq85NmlHEM=
+X-Google-Smtp-Source: ABdhPJxXo5uRJdHPzHQ+oCam5HPEc6mbONDj0S9dujHMTWDajN1qdA/JJ7oiqkrPYoGxgyQ3rz5cHw==
+X-Received: by 2002:adf:cd92:: with SMTP id q18mr25033742wrj.18.1628510717827;
         Mon, 09 Aug 2021 05:05:17 -0700 (PDT)
 Received: from localhost.localdomain ([85.255.236.119])
-        by smtp.gmail.com with ESMTPSA id g35sm4757062wmp.9.2021.08.09.05.05.16
+        by smtp.gmail.com with ESMTPSA id g35sm4757062wmp.9.2021.08.09.05.05.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Aug 2021 05:05:16 -0700 (PDT)
+        Mon, 09 Aug 2021 05:05:17 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 15/28] io_uring: inline io_free_req_deferred
-Date:   Mon,  9 Aug 2021 13:04:15 +0100
-Message-Id: <ce04b7180d4eac0d69dd00677b227eefe80c2cc5.1628471125.git.asml.silence@gmail.com>
+Subject: [PATCH 16/28] io_uring: deduplicate open iopoll check
+Date:   Mon,  9 Aug 2021 13:04:16 +0100
+Message-Id: <9a73ce83e4ee60d011180ef177eecef8e87ff2a2.1628471125.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <cover.1628471125.git.asml.silence@gmail.com>
 References: <cover.1628471125.git.asml.silence@gmail.com>
@@ -61,38 +61,51 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Inline io_free_req_deferred(), there is no reason to keep it separated.
+Move IORING_SETUP_IOPOLL check into __io_openat_prep(), so both openat
+and openat2 reuse it.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ fs/io_uring.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 1237e6e87ff2..17ead2a7e899 100644
+index 17ead2a7e899..cbd39ac2e92b 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -2179,16 +2179,12 @@ static inline void io_put_req(struct io_kiocb *req)
- 		io_free_req(req);
- }
+@@ -3790,6 +3790,8 @@ static int __io_openat_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe
+ 	const char __user *fname;
+ 	int ret;
  
--static void io_free_req_deferred(struct io_kiocb *req)
--{
--	req->io_task_work.func = io_free_req;
--	io_req_task_work_add(req);
--}
--
- static inline void io_put_req_deferred(struct io_kiocb *req, int refs)
++	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
++		return -EINVAL;
+ 	if (unlikely(sqe->ioprio || sqe->buf_index))
+ 		return -EINVAL;
+ 	if (unlikely(req->flags & REQ_F_FIXED_FILE))
+@@ -3814,12 +3816,9 @@ static int __io_openat_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe
+ 
+ static int io_openat_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
  {
--	if (req_ref_sub_and_test(req, refs))
--		io_free_req_deferred(req);
-+	if (req_ref_sub_and_test(req, refs)) {
-+		req->io_task_work.func = io_free_req;
-+		io_req_task_work_add(req);
-+	}
- }
+-	u64 flags, mode;
++	u64 mode = READ_ONCE(sqe->len);
++	u64 flags = READ_ONCE(sqe->open_flags);
  
- static unsigned io_cqring_events(struct io_ring_ctx *ctx)
+-	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
+-		return -EINVAL;
+-	mode = READ_ONCE(sqe->len);
+-	flags = READ_ONCE(sqe->open_flags);
+ 	req->open.how = build_open_how(flags, mode);
+ 	return __io_openat_prep(req, sqe);
+ }
+@@ -3830,8 +3829,6 @@ static int io_openat2_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	size_t len;
+ 	int ret;
+ 
+-	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
+-		return -EINVAL;
+ 	how = u64_to_user_ptr(READ_ONCE(sqe->addr2));
+ 	len = READ_ONCE(sqe->len);
+ 	if (len < OPEN_HOW_SIZE_VER0)
 -- 
 2.32.0
 

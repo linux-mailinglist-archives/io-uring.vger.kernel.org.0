@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A9D933E4546
-	for <lists+io-uring@lfdr.de>; Mon,  9 Aug 2021 14:05:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8ADE53E4547
+	for <lists+io-uring@lfdr.de>; Mon,  9 Aug 2021 14:05:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235350AbhHIMFt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 9 Aug 2021 08:05:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40484 "EHLO
+        id S235356AbhHIMFu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 9 Aug 2021 08:05:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235356AbhHIMFp (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 9 Aug 2021 08:05:45 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B8B4C061799
+        with ESMTP id S235329AbhHIMFr (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 9 Aug 2021 08:05:47 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0145C06179A
         for <io-uring@vger.kernel.org>; Mon,  9 Aug 2021 05:05:25 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id i10-20020a05600c354ab029025a0f317abfso14432699wmq.3
-        for <io-uring@vger.kernel.org>; Mon, 09 Aug 2021 05:05:24 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id q11-20020a7bce8b0000b02902e6880d0accso2586580wmj.0
+        for <io-uring@vger.kernel.org>; Mon, 09 Aug 2021 05:05:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=nymrDaShnCXl8oINh93f7kNh91GSKoBUuk/MhldA6tk=;
-        b=JgTf5grrQMMLhOtpqAvVAN1IiJkeGcHoi2Uk7x8qYHyXLMcwJK2AuP3nWZLm72ELNu
-         7m2+8SS8HBhGL0m5T7m3HZN+hnrmmknR/WGs99qaOwObTMCnVxSici+tY9c9CjYgX12e
-         7xcbryPrqay3Nc3DndQzVdKEImBlYj/zWwN2c77Dj1aCMT7bs3BzcD07ZEudhN/K0NWj
-         cSuxC2v3MTnWNOChgnMYzTZrwQKDPi+ntl5uJrzTPc/+YARH2xMkanxfERkQAYPtF5FT
-         RM8yLGzjLBX9dSDU3MJXgT5czgl6VEagGdsjCClS0kljJo7zQYMkHv3ADouB9xZK+9k8
-         Q47g==
+        bh=ZgadrtinuTz61Cq+jiwY0boIBsrpp3K2bUODFG5B4I4=;
+        b=EzDoXwc18Whjq/uyIs3j17iAsYEuSSNVuhRIAuqE36XyDIYmyiQsU79P6JuiWoZIlP
+         d32sRMO8ApR9vqVGdMUAUhMo6L9W8nqIHNk6jz0FRyc6ZqXVlZZX+VaMD2Q5rkT16iw0
+         9WJ0nQy1HRUb+DT1krpC/VFGuw56vnaloCYY0lnUG3TYNmHu9ZXHioQLpXPehy43n8Ls
+         XzxPdxQmEFwqPcTpiGL9jAh/BkRFvuC10t8LAdDUjiG2nzthVFQMY+rXqlnomKR9CnhF
+         rbDIla8b6y3JhZ375UaGznTdpb5DFXvZtBVJPpobSZecL/lhQ/vjr74XFuiTVot23q/B
+         YypA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=nymrDaShnCXl8oINh93f7kNh91GSKoBUuk/MhldA6tk=;
-        b=LAeCgicv0ySneQvLPOO/Ojmb3adNAnaNYJL0Fe7J4VK/x9auanuGGW2ZBudL6SRTZ5
-         IzkLrYgSUrvgfVCLm1JOLg2aQISRABkxMyaiT82Ls+4qZ59SEi9Hi8VPEdbxYpq2ze7P
-         XKIb0tJuC+apFIeVdxN1QwV3/YKKTg+9v7wexUDEsJQQD8wDPSGTemuDVYzUC2kIlb36
-         f46XbzTm4oT1sfY5Dhhsx+Z1FDlmX+u+1mrxReJH10bfWYfWWyjDDCIVQq5Yyh0ZPy7G
-         tLSVQL3xiSjP0JIy8Wa/M+MXf5mL47dkSK0aeZRwt31Isv8ljpZUrYTxX5WQYhPtP1jK
-         DMNQ==
-X-Gm-Message-State: AOAM533nz9PMbxDfZEZJsHgtX99nytIztKAR+lUgVngodLTvhmRW2YfA
-        OzTJBQjNIakL1/txlEk4KKk93MNRuPQ=
-X-Google-Smtp-Source: ABdhPJyQrQdLnFDOxj46Q66mbwKzGwSRo8X4deFiaPpZ2Y5GOehIU7VHl27z53UkIS55AXiQyfANSg==
-X-Received: by 2002:a7b:ce8b:: with SMTP id q11mr10348527wmj.30.1628510723681;
-        Mon, 09 Aug 2021 05:05:23 -0700 (PDT)
+        bh=ZgadrtinuTz61Cq+jiwY0boIBsrpp3K2bUODFG5B4I4=;
+        b=FL+rryGRNRDw5HZOnudRl5jHFIapwEkH3nj0Z4ivJGqbkob3m+1v99wtkbDFCMOk7x
+         /o9X78wrcXexI7+FYnIKKP8mOvRruwFf6rt8NQw5RZg2lHGjeHec7uG9qdjOVu35W0jT
+         PORTpG1oXypN9Y0hNtT9Vv6HYmmE4E3RL6t5gF8SU9fuJHN9Rh3iKhkJMnDX4cwRLNBE
+         JwimBmMxnr+bhNvTr+Vw21f9mh8QEH3g6fjlr/ZlLv9eITA7sgXCh7bk0qhziHFuV3Se
+         KaPc8Ezg33oTuAJAL79TtN2r9CMyk92OeopR9HGWFkBkm9I5VyB4Ur3Wis8hPnABiB26
+         KtAw==
+X-Gm-Message-State: AOAM533FqjInFVnZU3Fnkiui+hKJ6LVMP//ihttBoGZwBfkJZHB4MnlF
+        ex8kIvAU0mvuze1HiX5GuPc=
+X-Google-Smtp-Source: ABdhPJxJi0auAphfPAwUZ1vUrCaAeJLdk+niBQ3JdNoYNS1KVDxqYhRPfiJGr0ox/XHUDXLgT7YjMw==
+X-Received: by 2002:a1c:1bcd:: with SMTP id b196mr16225739wmb.160.1628510724677;
+        Mon, 09 Aug 2021 05:05:24 -0700 (PDT)
 Received: from localhost.localdomain ([85.255.236.119])
-        by smtp.gmail.com with ESMTPSA id g35sm4757062wmp.9.2021.08.09.05.05.22
+        by smtp.gmail.com with ESMTPSA id g35sm4757062wmp.9.2021.08.09.05.05.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Aug 2021 05:05:23 -0700 (PDT)
+        Mon, 09 Aug 2021 05:05:24 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 22/28] io_uring: move io_fallback_req_func()
-Date:   Mon,  9 Aug 2021 13:04:22 +0100
-Message-Id: <10a14fe1f995ca386a9caf88ea3ea354e0a78801.1628471125.git.asml.silence@gmail.com>
+Subject: [PATCH 23/28] io_uring: cache __io_free_req()'d requests
+Date:   Mon,  9 Aug 2021 13:04:23 +0100
+Message-Id: <39d226beb88ec68aef4d639847272aafd6f5ed85.1628471125.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <cover.1628471125.git.asml.silence@gmail.com>
 References: <cover.1628471125.git.asml.silence@gmail.com>
@@ -61,62 +61,37 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Move io_fallback_req_func() to kill yet another forward declaration.
+Don't kfree requests in __io_free_req() but put them back into the
+internal request cache. That makes allocations more sustainable and will
+be used for refcounting optimisations.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 24 +++++++++++-------------
- 1 file changed, 11 insertions(+), 13 deletions(-)
+ fs/io_uring.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 9e359acf2f51..8b07bdb11430 100644
+index 8b07bdb11430..ec1cab2b9a91 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -1074,8 +1074,6 @@ static void io_submit_flush_completions(struct io_ring_ctx *ctx);
- static bool io_poll_remove_waitqs(struct io_kiocb *req);
- static int io_req_prep_async(struct io_kiocb *req);
+@@ -1835,11 +1835,16 @@ static void io_dismantle_req(struct io_kiocb *req)
+ static void __io_free_req(struct io_kiocb *req)
+ {
+ 	struct io_ring_ctx *ctx = req->ctx;
++	unsigned long flags;
  
--static void io_fallback_req_func(struct work_struct *unused);
--
- static struct kmem_cache *req_cachep;
+ 	io_dismantle_req(req);
+ 	io_put_task(req->task, 1);
  
- static const struct file_operations io_uring_fops;
-@@ -1157,6 +1155,17 @@ static inline bool io_is_timeout_noseq(struct io_kiocb *req)
- 	return !req->timeout.off;
+-	kmem_cache_free(req_cachep, req);
++	spin_lock_irqsave(&ctx->completion_lock, flags);
++	list_add(&req->compl.list, &ctx->locked_free_list);
++	ctx->locked_free_nr++;
++	spin_unlock_irqrestore(&ctx->completion_lock, flags);
++
+ 	percpu_ref_put(&ctx->refs);
  }
  
-+static void io_fallback_req_func(struct work_struct *work)
-+{
-+	struct io_ring_ctx *ctx = container_of(work, struct io_ring_ctx,
-+						fallback_work.work);
-+	struct llist_node *node = llist_del_all(&ctx->fallback_llist);
-+	struct io_kiocb *req, *tmp;
-+
-+	llist_for_each_entry_safe(req, tmp, node, io_task_work.fallback_node)
-+		req->io_task_work.func(req);
-+}
-+
- static struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
- {
- 	struct io_ring_ctx *ctx;
-@@ -2476,17 +2485,6 @@ static bool io_rw_should_reissue(struct io_kiocb *req)
- }
- #endif
- 
--static void io_fallback_req_func(struct work_struct *work)
--{
--	struct io_ring_ctx *ctx = container_of(work, struct io_ring_ctx,
--						fallback_work.work);
--	struct llist_node *node = llist_del_all(&ctx->fallback_llist);
--	struct io_kiocb *req, *tmp;
--
--	llist_for_each_entry_safe(req, tmp, node, io_task_work.fallback_node)
--		req->io_task_work.func(req);
--}
--
- static void __io_complete_rw(struct io_kiocb *req, long res, long res2,
- 			     unsigned int issue_flags)
- {
 -- 
 2.32.0
 

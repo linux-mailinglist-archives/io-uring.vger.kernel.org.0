@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 195E83E454B
+	by mail.lfdr.de (Postfix) with ESMTP id 629DD3E454C
 	for <lists+io-uring@lfdr.de>; Mon,  9 Aug 2021 14:05:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235357AbhHIMFy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        id S235359AbhHIMFy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
         Mon, 9 Aug 2021 08:05:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40490 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235359AbhHIMFt (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 9 Aug 2021 08:05:49 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52E1EC06179A
-        for <io-uring@vger.kernel.org>; Mon,  9 Aug 2021 05:05:29 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id n12so11035599wrr.2
-        for <io-uring@vger.kernel.org>; Mon, 09 Aug 2021 05:05:29 -0700 (PDT)
+        with ESMTP id S235329AbhHIMFv (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 9 Aug 2021 08:05:51 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46179C0613D3
+        for <io-uring@vger.kernel.org>; Mon,  9 Aug 2021 05:05:30 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id b128so10421619wmb.4
+        for <io-uring@vger.kernel.org>; Mon, 09 Aug 2021 05:05:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=Wa91wsboRsUNKqsKp6WT/xumVIIOMSBMDBJ84scN+Tw=;
-        b=V4GnREmysEppVv2MSsUO1C25pZpS8TKv5knS9gjZh6CyP1jfQJtV60GQFazZLABXf4
-         XJ88vOMAdT/DCv1gtPr8Y5PRjGVWWRqa7e7gWPANu/oUP2lREiq38efK1lW2EyzfS97K
-         OoDlBBdm1ir5GN1XGx8/6+9i8KByhSrEDMzoHlzHG5xFKFD0wexBLrfp4KdCqFeZT47M
-         OFXcIP9MUDJvI0AezD3Afe5H2V3ehABjlrC1qT7jMayb3zj9ntwKO7HEIJi/g8VAALmZ
-         +5+CYHl/APwmA1nBENm8ps0m/rsldejqqtJor7HItvvh+9yOwuRnUTla+ayeb/p2wXOv
-         IRRg==
+        bh=XOmKk0W8IQcm9ErXNdpy7hpHf296KUrM/k27ihxs/Gs=;
+        b=VlfgJB2eauiOJuZdSHmBX5T0zAwdE36Lb56SeCbRPwuMfapscOZKXWn9dLG4mDwE3t
+         bFQ+PJXMDTIr3MgZQZuTFjI5KP37pCiTN2FnNH68J8FPKPrpGNJ0D6AkJuGPouSEMY+x
+         e7lEZrBuenoYyWKzgJ2PsxaBG2u6dHD34l4Xim3FfYmh7izZd7/biMuPRToBMjlxVT6J
+         FGo+Rygl8a1xFS+T324lZaHvwSz6zNz59FA5LwXtCjA55miDe/eh9BzIrjsEGEi7Eqmz
+         cfRBNrjuZBMWrPH3dbpHN5wQKdYn5QvSki9YboQx4p6/TgMfwZPZgZ8tJHGmahDQzgy6
+         Z/og==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Wa91wsboRsUNKqsKp6WT/xumVIIOMSBMDBJ84scN+Tw=;
-        b=E8g3PC3FiVgOl0G8r5L46p0TE+vC56PWxNQVoadqmZuK4lHFY4tGI/+H3hd6knLv8E
-         HIszJawesvKEp65w8T0qOtLs961ARlhECns49+zPK4b5UqA4j8o1M0yVI38l4+HCsCc4
-         1mSx1ndl2jQh5fsHng8bdJ1WSKun9il4q0Xe4SKjBIf28MgUxZgGuDRUyD+g9WheAyHi
-         8CmHlPnqqGXOwKyrGlgz+fEAj8QMvgmZcs+Vtcuvb9ZqDBYHxJw2fLGQEwZWsz+NYIdX
-         tEeor51195rMv+ADi+ADAakCn6hhuMJ1uehKduSYmXb0aWjxmleWudCi/V/EBjHm0ngZ
-         G1aA==
-X-Gm-Message-State: AOAM533uu1Y8XO3gL8XGXO8kC4SsovNYv6hSEMPFPxo/ZklDOLgd5Oam
-        xVrCam9EppTzRF7hmwEKty8=
-X-Google-Smtp-Source: ABdhPJz5sQH12K4lFa/rHLEelkSD+SfQxKEagaWTJmrBTrjdllvnz/QrmcFn0UU+rWkze/H5h299Lg==
-X-Received: by 2002:adf:f704:: with SMTP id r4mr25232856wrp.389.1628510728027;
+        bh=XOmKk0W8IQcm9ErXNdpy7hpHf296KUrM/k27ihxs/Gs=;
+        b=Vz8UmuDZ1Lb58srr2831hPVOl9nHhez4mAynR6vfze2aaVL+/IZPk4QK98hFbyCc2/
+         a/PNqr0DaFSuVz1mOkTAvTFaaAaPW8T2lfyIJ+kAvP2CqLC/ktWzXUUkAPapkveZYMsQ
+         9TOp0Nq6iwGe9oxIG1fZiIBBV0UemhF50LLpiK6dOnfv2FAPPieuM59u7pi7zjJnomoK
+         SiP1p/5d6UUTgq1ocyJLPWihkT89OznjkgWd98AfEdUY3b6GPRa22j+KrMZmAZ6kOg6Z
+         t2XrpqWPAwXTOrSF0iGPsqZT81aMFs8jFh4D3BzxlebfKG7Yl1L7jQy+p1CfiQTUo6U/
+         2dtA==
+X-Gm-Message-State: AOAM531Xy/lLInw+6BxU4CJpN7DpekDFHALUzvLRj8pyiacTpfZbnewY
+        yFbKGbit9kIc3y+iA3beJT2xzF8sJl0=
+X-Google-Smtp-Source: ABdhPJzG6LD8uqJXbO66BLgMZ2z3ZfhiUayEcuyFn7/D1GpPVcKq0OEilkh+I4BbC0mGHSxV/QiTdw==
+X-Received: by 2002:a1c:9dd5:: with SMTP id g204mr7696872wme.74.1628510728977;
         Mon, 09 Aug 2021 05:05:28 -0700 (PDT)
 Received: from localhost.localdomain ([85.255.236.119])
-        by smtp.gmail.com with ESMTPSA id g35sm4757062wmp.9.2021.08.09.05.05.27
+        by smtp.gmail.com with ESMTPSA id g35sm4757062wmp.9.2021.08.09.05.05.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Aug 2021 05:05:27 -0700 (PDT)
+        Mon, 09 Aug 2021 05:05:28 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 27/28] io_uring: remove extra argument for overflow flush
-Date:   Mon,  9 Aug 2021 13:04:27 +0100
-Message-Id: <5e43f3e926d1a23689534c134409fd412040c3c9.1628471125.git.asml.silence@gmail.com>
+Subject: [PATCH 28/28] io_uring: inline io_poll_remove_waitqs
+Date:   Mon,  9 Aug 2021 13:04:28 +0100
+Message-Id: <48213aa32bacf8fe7091711a1eff0abd184cff3b.1628471125.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <cover.1628471125.git.asml.silence@gmail.com>
 References: <cover.1628471125.git.asml.silence@gmail.com>
@@ -61,63 +61,66 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Unlike __io_cqring_overflow_flush(), nobody does forced flushing with
-io_cqring_overflow_flush(), so removed the argument from it.
+Inline io_poll_remove_waitqs() into its only user and clean it up.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ fs/io_uring.c | 23 ++++++-----------------
+ 1 file changed, 6 insertions(+), 17 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 749c0712d98e..9070b7cbd1c3 100644
+index 9070b7cbd1c3..f6fa635b3ab6 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -1533,7 +1533,7 @@ static bool __io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool force)
- 	return all_flushed;
+@@ -1066,7 +1066,6 @@ static void io_rsrc_put_work(struct work_struct *work);
+ 
+ static void io_req_task_queue(struct io_kiocb *req);
+ static void io_submit_flush_completions(struct io_ring_ctx *ctx);
+-static bool io_poll_remove_waitqs(struct io_kiocb *req);
+ static int io_req_prep_async(struct io_kiocb *req);
+ 
+ static struct kmem_cache *req_cachep;
+@@ -5267,34 +5266,24 @@ static bool __io_poll_remove_one(struct io_kiocb *req,
+ 	return do_complete;
  }
  
--static bool io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool force)
-+static bool io_cqring_overflow_flush(struct io_ring_ctx *ctx)
+-static bool io_poll_remove_waitqs(struct io_kiocb *req)
++static bool io_poll_remove_one(struct io_kiocb *req)
+ 	__must_hold(&req->ctx->completion_lock)
  {
- 	bool ret = true;
++	int refs;
+ 	bool do_complete;
  
-@@ -1541,7 +1541,7 @@ static bool io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool force)
- 		/* iopoll syncs against uring_lock, not completion_lock */
- 		if (ctx->flags & IORING_SETUP_IOPOLL)
- 			mutex_lock(&ctx->uring_lock);
--		ret = __io_cqring_overflow_flush(ctx, force);
-+		ret = __io_cqring_overflow_flush(ctx, false);
- 		if (ctx->flags & IORING_SETUP_IOPOLL)
- 			mutex_unlock(&ctx->uring_lock);
- 	}
-@@ -7075,7 +7075,7 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
- 	int ret;
+ 	io_poll_remove_double(req);
+ 	do_complete = __io_poll_remove_one(req, io_poll_get_single(req), true);
  
- 	do {
--		io_cqring_overflow_flush(ctx, false);
-+		io_cqring_overflow_flush(ctx);
- 		if (io_cqring_events(ctx) >= min_events)
- 			return 0;
- 		if (!io_run_task_work())
-@@ -7113,7 +7113,7 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
- 	trace_io_uring_cqring_wait(ctx, min_events);
- 	do {
- 		/* if we can't even flush overflow, don't wait for more */
--		if (!io_cqring_overflow_flush(ctx, false)) {
-+		if (!io_cqring_overflow_flush(ctx)) {
- 			ret = -EBUSY;
- 			break;
- 		}
-@@ -9388,7 +9388,7 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
- 	 */
- 	ret = 0;
- 	if (ctx->flags & IORING_SETUP_SQPOLL) {
--		io_cqring_overflow_flush(ctx, false);
-+		io_cqring_overflow_flush(ctx);
+-	if (req->opcode != IORING_OP_POLL_ADD && do_complete) {
+-		/* non-poll requests have submit ref still */
+-		req_ref_put(req);
+-	}
+-	return do_complete;
+-}
+-
+-static bool io_poll_remove_one(struct io_kiocb *req)
+-	__must_hold(&req->ctx->completion_lock)
+-{
+-	bool do_complete;
+-
+-	do_complete = io_poll_remove_waitqs(req);
+ 	if (do_complete) {
+ 		io_cqring_fill_event(req->ctx, req->user_data, -ECANCELED, 0);
+ 		io_commit_cqring(req->ctx);
+ 		req_set_fail(req);
+-		io_put_req_deferred(req, 1);
+-	}
  
- 		ret = -EOWNERDEAD;
- 		if (unlikely(ctx->sq_data->thread == NULL))
++		/* non-poll requests have submit ref still */
++		refs = 1 + (req->opcode != IORING_OP_POLL_ADD);
++		io_put_req_deferred(req, refs);
++	}
+ 	return do_complete;
+ }
+ 
 -- 
 2.32.0
 

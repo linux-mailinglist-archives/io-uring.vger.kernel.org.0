@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E4C713E4536
-	for <lists+io-uring@lfdr.de>; Mon,  9 Aug 2021 14:05:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4D223E4537
+	for <lists+io-uring@lfdr.de>; Mon,  9 Aug 2021 14:05:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235341AbhHIMFb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 9 Aug 2021 08:05:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40352 "EHLO
+        id S235340AbhHIMFc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 9 Aug 2021 08:05:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235335AbhHIMFa (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 9 Aug 2021 08:05:30 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50F8DC0613D3
-        for <io-uring@vger.kernel.org>; Mon,  9 Aug 2021 05:05:10 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id q11so2881882wrr.9
-        for <io-uring@vger.kernel.org>; Mon, 09 Aug 2021 05:05:10 -0700 (PDT)
+        with ESMTP id S235338AbhHIMFb (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 9 Aug 2021 08:05:31 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4307EC061798
+        for <io-uring@vger.kernel.org>; Mon,  9 Aug 2021 05:05:11 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id k29so8290248wrd.7
+        for <io-uring@vger.kernel.org>; Mon, 09 Aug 2021 05:05:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=AB3upIntrJ65wiSIy6kov8vqOyn0PMqeWwxCxSDz/0c=;
-        b=ZApCkUpe0kG6N/UwI1vFYdDKIO6QANflH75Vzdamo+3YgXI9xXY167+LLw7x9SfKJK
-         tlOK3QlkR1KnWKaoG7E2fPZ6rZw4V7ZxvwsqxH10XATX9V+9bpCED5tzatC7yZHG9Aor
-         zljvDK1e6o9krSuhMVNplNuHtoLEycP5/RyIU6H/zDX3y4rEd/rlhLPj5KxgSzKlXMbm
-         UzyICCGIk/ulbfC1WAoyq+zfPDWM2uTd5PO7A5txKtU0cCZ/ytOyIZVuXONO53KQ2J3v
-         XPiOzfo1aYESJ1rjDGzAQReRnvrdU2VwEdQ9voTd7XPL2eSWXBd4pzy16cylhcNuXWW1
-         SSfA==
+        bh=gQqHxgFrrYW46Qkmj1aQWq5ER5mnoLq4uIS2O+OthMM=;
+        b=vhJnW1bESexwzVqrHz5zNWbB+HOpm/iOcreTlcDEa83cMca7vG+jf5pQo1U7d7oZzZ
+         ZpNszle9jJKw0havZwR4lcEPv3YdcaxvSM9XeE2MRRJWVeu6vFFJ87fppH3FIt99H7aF
+         pcgCB55weYM0JsA2jW7bVQdjFP68Hb52mkJCEvrCDqOhvoZhkeLQlf4zV7NaNtTpTs8Y
+         v8VxQ9UNwgt+IvINGR0ydajBHj9yRhEhH9P+IhpejHJaLpGx+bbJSKGoP1CNGdfBDIB9
+         XI6ldCK+9bjbYM0X9agBXG/NId2IfIL2oDJl8kVyoBNKHIeB3ptkddCWeeV8fAR2bgsS
+         UvAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=AB3upIntrJ65wiSIy6kov8vqOyn0PMqeWwxCxSDz/0c=;
-        b=tOD3hK978NtZTs3WVkisCbXJkhBPcQtp3R8WNfBX5nXeochms/35yGx82MN5PYrERf
-         xwFzTXx5eK2VAdZAW48cgPu6VxJRHV3mWLSs7VBLOwECepjvP14YkUTE+5uslU/TCDWB
-         NDlRTSHIjRljGjE2lDpQ8lJkUnmvu5BUIkm2j116YSsPaZVIM3DiUK3tkis/fXExY8RE
-         Vnmkh8jhNzK4GObAgGfTxl0y/4wxSzf2cAkKJFBA7L5b6JUAN2CXqSIWaNkF1/goYWHz
-         hvhfl37wOna+nZ1JYLL36woL/kqkFh6XtKhqhIvlU9yiBYxY3OD/IdipD737BswbpnQ4
-         8OKw==
-X-Gm-Message-State: AOAM533mlz4SfNuCCfVlWBvxgVLFK6FH5FYlSXU49vLgigvQbeNlKAdF
-        G262/MDkea7DX5C6eKGVRTI=
-X-Google-Smtp-Source: ABdhPJz+hqzhAlnxmacn6KMW/jQkIzb2y8UTw/Kvtbc12puZtz/GAfK3TRIz4/7kXSQgFUPwrSdu8Q==
-X-Received: by 2002:a5d:6451:: with SMTP id d17mr7559350wrw.154.1628510709038;
+        bh=gQqHxgFrrYW46Qkmj1aQWq5ER5mnoLq4uIS2O+OthMM=;
+        b=DZ+pQyqdvt7Pk/fl7EJ4FwscpG/OCu6q+/Qvv8FXIXxqECY47mjPmHPdm/7ZgrIK49
+         aOV9KTXiw4kDz30uswBwiSIXbXsRBxcZM2QBCw+VNSuSUvvz1bGUc/M9Dy/zBLH/9gqS
+         GT9PbcZWk+eyw8dUv6a6gq0su+e4ya9EFbQ4p17lMzWB1MPSMlMh/pJ80kWrfaMbKq3n
+         TzqLNb+0J1VImshHRpLYPDcpCyuq8PbkMljFwyodPYy6CDX2POnk9g0XiKorBe+4xzZe
+         r5I+I0nYUIsUMdN2DL+5YobkndSQTuRgsW5QDU4QOAz4wMpNErzZzUhxyDcwDcLudZEY
+         B0Eg==
+X-Gm-Message-State: AOAM533RcLJ1VJ0Gp4DCpgvKVOWLz5gJzXqmS9RBOgWMcybwi7Kcz761
+        rRcuehWIf2Tr8OIz0wOZ8v0=
+X-Google-Smtp-Source: ABdhPJw0+7JdoZR2ZbH7trZVYTfrbdW2sY5j7zFbWUzxzewoH/DFlTji/1JmSCFXZMgB188f0ujjUg==
+X-Received: by 2002:adf:f704:: with SMTP id r4mr25230821wrp.389.1628510709976;
         Mon, 09 Aug 2021 05:05:09 -0700 (PDT)
 Received: from localhost.localdomain ([85.255.236.119])
-        by smtp.gmail.com with ESMTPSA id g35sm4757062wmp.9.2021.08.09.05.05.08
+        by smtp.gmail.com with ESMTPSA id g35sm4757062wmp.9.2021.08.09.05.05.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Aug 2021 05:05:08 -0700 (PDT)
+        Mon, 09 Aug 2021 05:05:09 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 06/28] io_uring: remove unnecessary PF_EXITING check
-Date:   Mon,  9 Aug 2021 13:04:06 +0100
-Message-Id: <fc14297e8441cd8f5d1743a2488cf0df09bf48ac.1628471125.git.asml.silence@gmail.com>
+Subject: [PATCH 07/28] io-wq: improve wq_list_add_tail()
+Date:   Mon,  9 Aug 2021 13:04:07 +0100
+Message-Id: <f7e53f0c84c02ed6748c488ed0789b98f8cc6185.1628471125.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <cover.1628471125.git.asml.silence@gmail.com>
 References: <cover.1628471125.git.asml.silence@gmail.com>
@@ -61,38 +61,34 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-We prefer nornal task_works even if it would fail requests inside. Kill
-a PF_EXITING check in io_req_task_work_add(), task_work_add() handles
-well dying tasks, i.e. return error when can't enqueue due to late
-stages of do_exit().
+Prepare nodes that we're going to add before actually linking them, it's
+always safer and costs us nothing.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ fs/io-wq.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 8f18af509afd..ba1df6ae6024 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -2003,8 +2003,6 @@ static void io_req_task_work_add(struct io_kiocb *req)
- 	if (test_bit(0, &tctx->task_state) ||
- 	    test_and_set_bit(0, &tctx->task_state))
- 		return;
--	if (unlikely(tsk->flags & PF_EXITING))
--		goto fail;
- 
- 	/*
- 	 * SQPOLL kernel thread doesn't need notification, just a wakeup. For
-@@ -2017,7 +2015,7 @@ static void io_req_task_work_add(struct io_kiocb *req)
- 		wake_up_process(tsk);
- 		return;
+diff --git a/fs/io-wq.h b/fs/io-wq.h
+index 3999ee58ff26..308af3928424 100644
+--- a/fs/io-wq.h
++++ b/fs/io-wq.h
+@@ -44,6 +44,7 @@ static inline void wq_list_add_after(struct io_wq_work_node *node,
+ static inline void wq_list_add_tail(struct io_wq_work_node *node,
+ 				    struct io_wq_work_list *list)
+ {
++	node->next = NULL;
+ 	if (!list->first) {
+ 		list->last = node;
+ 		WRITE_ONCE(list->first, node);
+@@ -51,7 +52,6 @@ static inline void wq_list_add_tail(struct io_wq_work_node *node,
+ 		list->last->next = node;
+ 		list->last = node;
  	}
--fail:
-+
- 	clear_bit(0, &tctx->task_state);
- 	spin_lock_irqsave(&tctx->task_lock, flags);
- 	node = tctx->task_list.first;
+-	node->next = NULL;
+ }
+ 
+ static inline void wq_list_cut(struct io_wq_work_list *list,
 -- 
 2.32.0
 

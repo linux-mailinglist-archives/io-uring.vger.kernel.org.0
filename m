@@ -2,87 +2,110 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C46523E497F
-	for <lists+io-uring@lfdr.de>; Mon,  9 Aug 2021 18:12:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3422F3E4ADD
+	for <lists+io-uring@lfdr.de>; Mon,  9 Aug 2021 19:30:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229488AbhHIQM7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 9 Aug 2021 12:12:59 -0400
-Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:51074 "EHLO
-        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229456AbhHIQM6 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 9 Aug 2021 12:12:58 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UiWKlej_1628525555;
-Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UiWKlej_1628525555)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 10 Aug 2021 00:12:36 +0800
-Subject: Re: [PATCH 1/2] io-wq: fix bug of creating io-wokers unconditionally
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <20210808135434.68667-1-haoxu@linux.alibaba.com>
- <20210808135434.68667-2-haoxu@linux.alibaba.com>
- <eb56a09e-0c10-2aad-ad94-f84947367f07@kernel.dk>
- <36fa131c-0a86-81de-2a93-265af921c38a@linux.alibaba.com>
- <2df89a6c-edf4-8b1d-85d2-720ee25d816c@kernel.dk>
-From:   Hao Xu <haoxu@linux.alibaba.com>
-Message-ID: <0760b085-0d10-eea2-eedf-76d4047a7084@linux.alibaba.com>
-Date:   Tue, 10 Aug 2021 00:12:35 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.10.2
+        id S234208AbhHIRaq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 9 Aug 2021 13:30:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58672 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233996AbhHIRaq (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 9 Aug 2021 13:30:46 -0400
+Received: from mail-ot1-x32f.google.com (mail-ot1-x32f.google.com [IPv6:2607:f8b0:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99724C0613D3
+        for <io-uring@vger.kernel.org>; Mon,  9 Aug 2021 10:30:25 -0700 (PDT)
+Received: by mail-ot1-x32f.google.com with SMTP id d10-20020a9d4f0a0000b02904f51c5004e3so14462112otl.9
+        for <io-uring@vger.kernel.org>; Mon, 09 Aug 2021 10:30:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=OUTedMHqphNOStWFh1qYuqpiYa1+fz/LuX9qPZZJIC0=;
+        b=N5wq+zcVqLbW3K93soPFkt/eWXWb6T9l/EmhYWNHDIgHJH1G/Z8LFQV1zrXdCyeczU
+         3rTEz26RCyKK+ATFGgpVZONwkjIMdLNx+1ltIQGOPRrXDpHJHCa0hevtYG4t8wEYGT7c
+         +JUKz8coMpX+/1xqBUtx0Xa99msDkHeMvbUUtpLffRYsdqahEB+afcUiftXA4qweqAWO
+         /vxm7KxWObrDB0WLlxlXPjWT5rI9eQYzuuG4Fm4DYOnX+c8tZiHlXnjFemk2DmH41YmO
+         o9lxVN0MquDI9Kp0SJ2P4KIhc6bMTHZbr7jFIjmwJbDyNS3s5Wyo7HrKrSIdQYI+Hx09
+         TSCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=OUTedMHqphNOStWFh1qYuqpiYa1+fz/LuX9qPZZJIC0=;
+        b=E2W4qAOwjsA/DW8Z47flvmBogp75n+pC0Azb2Z/luD4rrEf05VUkKdJIEBSXudHFMv
+         V5lOXIM00DHMpVsoA8REVxNLLHYMSthH0+7XyJxNr3hqRO0iB2LNhx78WGbkCaFbNHrb
+         bxK2nNwkuQc1azl4ycSR1O7vI9w8fatXjWZAs0agm9pLF0cnW+d/V7mpdKnKYSCMg6iB
+         bImu3xPBEeBVHYaqgakobpo3ZnWqO4Dx/KGr3DT1x9tFaIJdbTqoZz2YN/mFmLdX+vYu
+         SareyNUyDeFisEKxI8q96rduzj7kAw7AKdUTX+BUTLqIDHuOlzGRGc8WB1TH///7jXwo
+         sBWA==
+X-Gm-Message-State: AOAM530ibohSzu4229vmKcKVXXoS2d0XmAH6foEdR5w9KekXLXhol8Dz
+        nnUzxXciB+1q2c0URcuaYuX2ld+2D8VPzgCg
+X-Google-Smtp-Source: ABdhPJy+PXA0Xi4sd8LUeiEw0Vwp8IBekOZPfmAflLs9JKgMyqwUpfbUhOSzWM+HiIGwIbphxq4dag==
+X-Received: by 2002:a9d:2782:: with SMTP id c2mr17729366otb.323.1628530224675;
+        Mon, 09 Aug 2021 10:30:24 -0700 (PDT)
+Received: from [192.168.1.30] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id j20sm2864105oos.13.2021.08.09.10.30.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Aug 2021 10:30:24 -0700 (PDT)
+Subject: Re: [PATCH 21/28] io_uring: hide async dadta behind flags
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <cover.1628471125.git.asml.silence@gmail.com>
+ <707ce8945e0247db7a585b5d1c9e8240a22e6708.1628471125.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <4603a964-2812-64ab-8236-ea897f610a83@kernel.dk>
+Date:   Mon, 9 Aug 2021 11:30:23 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <2df89a6c-edf4-8b1d-85d2-720ee25d816c@kernel.dk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <707ce8945e0247db7a585b5d1c9e8240a22e6708.1628471125.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-在 2021/8/9 下午10:18, Jens Axboe 写道:
-> On 8/9/21 8:08 AM, Hao Xu wrote:
->> 在 2021/8/9 下午10:01, Jens Axboe 写道:
->>> On 8/8/21 7:54 AM, Hao Xu wrote:
->>>> The former patch to add check between nr_workers and max_workers has a
->>>> bug, which will cause unconditionally creating io-workers. That's
->>>> because the result of the check doesn't affect the call of
->>>> create_io_worker(), fix it by bringing in a boolean value for it.
->>>>
->>>> Fixes: 21698274da5b ("io-wq: fix lack of acct->nr_workers < acct->max_workers judgement")
->>>> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
->>>> ---
->>>>    fs/io-wq.c | 19 ++++++++++++++-----
->>>>    1 file changed, 14 insertions(+), 5 deletions(-)
->>>>
->>>> diff --git a/fs/io-wq.c b/fs/io-wq.c
->>>> index 12fc19353bb0..5536b2a008d1 100644
->>>> --- a/fs/io-wq.c
->>>> +++ b/fs/io-wq.c
->>>> @@ -252,14 +252,15 @@ static void io_wqe_wake_worker(struct io_wqe *wqe, struct io_wqe_acct *acct)
->>>>    
->>>>    		raw_spin_lock_irq(&wqe->lock);
->>>>    		if (acct->nr_workers < acct->max_workers) {
->>>> -			atomic_inc(&acct->nr_running);
->>>> -			atomic_inc(&wqe->wq->worker_refs);
->>>>    			acct->nr_workers++;
->>>>    			do_create = true;
->>>>    		}
->>>>    		raw_spin_unlock_irq(&wqe->lock);
->>>> -		if (do_create)
->>>> +		if (do_create) {
->>>> +			atomic_inc(&acct->nr_running);
->>>> +			atomic_inc(&wqe->wq->worker_refs);
->>>>    			create_io_worker(wqe->wq, wqe, acct->index);
->>>> +		}
->>>>    	}
->>>
->>> I don't get this hunk - we already know we're creating a worker, what's the
->>> point in moving the incs?
->>>
->> Actually not much difference, I think we don't need to protect
->> nr_running and worker_refs by wqe->lock, so narrow the range of
->> raw_spin_lock_irq - raw_spin_unlock_irq
-> 
-> Agree, we don't need it, but it's not a fix as such. I'd rather defer that
-> one to a separate cleanup for the next release.
-I'll send it later.
-> 
+On 8/9/21 6:04 AM, Pavel Begunkov wrote:
+> Checking flags is a bit faster and can be batched, but the main reason
+> of controlling ->async_data with req->flags but not relying on NULL is
+> that we safely move it now to the end of io_kiocb, where cachelines are
+> rarely loaded, and use that freed space for something more hot like
+> io_mapped_ubuf.
+
+As far as I can tell, this will run into an issue with double poll:
+
+static void io_poll_queue_proc(struct file *file, struct wait_queue_head *head, 
+                                 struct poll_table_struct *p)
+{                                                                               
+	struct io_poll_table *pt = container_of(p, struct io_poll_table, pt);   
+                                                                                  
+	__io_queue_proc(&pt->req->poll, pt, head, (struct io_poll_iocb **) &pt->req->async_data);
+}
+
+where we store the potential extra allocation, if any, in the async_data
+field. That also needs to get freed when we release this request. One
+solution would be to just set REQ_F_ASYNC_DATA before calling
+__io_queue_proc().
+
+> @@ -3141,6 +3150,8 @@ static inline int io_alloc_async_data(struct io_kiocb *req)
+>  {
+>  	WARN_ON_ONCE(!io_op_defs[req->opcode].async_size);
+>  	req->async_data = kmalloc(io_op_defs[req->opcode].async_size, GFP_KERNEL);
+> +	if (req->async_data)
+> +		req->flags |= REQ_F_ASYNC_DATA;
+>  	return req->async_data == NULL;
+>  }
+
+With this change, would be better to simply do:
+
+if (req->async_data) {
+	req->flags |= REQ_F_ASYNC_DATA;
+	return false;
+}
+
+return true;
+
+-- 
+Jens Axboe
 

@@ -2,159 +2,115 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 754F33E50B1
-	for <lists+io-uring@lfdr.de>; Tue, 10 Aug 2021 03:42:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A742A3E50B4
+	for <lists+io-uring@lfdr.de>; Tue, 10 Aug 2021 03:45:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234710AbhHJBnB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 9 Aug 2021 21:43:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57040 "EHLO
+        id S233558AbhHJBpc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 9 Aug 2021 21:45:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232781AbhHJBnB (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 9 Aug 2021 21:43:01 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE2CDC0613D3
-        for <io-uring@vger.kernel.org>; Mon,  9 Aug 2021 18:42:39 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id q10so684486wro.2
-        for <io-uring@vger.kernel.org>; Mon, 09 Aug 2021 18:42:39 -0700 (PDT)
+        with ESMTP id S232781AbhHJBpc (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 9 Aug 2021 21:45:32 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14F0FC0613D3
+        for <io-uring@vger.kernel.org>; Mon,  9 Aug 2021 18:45:11 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id h14so23922448wrx.10
+        for <io-uring@vger.kernel.org>; Mon, 09 Aug 2021 18:45:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:references:from:subject:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=8Eo2MTmPRJGU/+zBB+KZhclCwJtdjc6Qtk1T4B9nPNM=;
-        b=ITvqONp380rL+dKX5Cpb23UIh9hnaLKnjW5Mj1W0aSLOVRnJQMe3IAtdippsUZbdRM
-         Dl5ywwPuGlQxPrRJMaO/BU/YHM3FKwLAijwAzLMr2bP0J09hAzlfScGmwWSpIdrAYmvI
-         EjOQD1oFB3Lp2a0PBkHK7ngdRlbgM8QivYOYUMAPwmmJxruQ7fm/F3FCwTiRsHneoDP4
-         RM1uOTKPqPBjn1/Ts0KlPc83RUu60MDKtAd5yQrrzHDxQDHHcTsLFCn/AM5w5Xc56SAc
-         d6s4XHOgo2R+Vx6rymLvmDk3BtukRR/CgD+VTNoxH3Pihefbcyv2orKTqyoupjefq7Hw
-         Rzxg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SgjenLCxIRHqkXwMm4vzCWybx8UINpO2oTPgSVJaUjQ=;
+        b=W3F8UvOMFUXvmUI61Weml1RwJhgwHPmaS+IqTJ9W2a/T6fKRoRQsI9RvEDPekXdnJs
+         FDbDbg6NxTjqfzhihKM6VXRDHVtjspf4PUPexbTXX+Dua+YnMw4sPViWgSv8McxLKDdD
+         s24Ey7GT/XpPD5rmnUn2ks08KLDteVsOjoxt5AmbiAWExwJxeZ+G42QRdy3NKH/2R90s
+         MJwvvSxAhVsio81spCbg8m2iNgELaw/ZATfAr6WRcGcq+XJQo/mwFc7qsCiX2S1yC5uk
+         z23nOsU/wWGDHropNF1SEangmJp1NRHARp64wO/3I0xr2an6Db22k9AtUwdKK3O/51bu
+         ukRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:references:from:subject:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=8Eo2MTmPRJGU/+zBB+KZhclCwJtdjc6Qtk1T4B9nPNM=;
-        b=kGr8VyERrn+awfOXcWXty6ihGA/SQLmZzL232fq0FGPrndisDxk0hN/pK2QYb3qp99
-         D2WrGWOgtMbenNMiEqXKr4WeW5RICW7gLngfb0k2fCOT+mnovUTdzLRNNG8haFEykais
-         W0OBfmJUBGNnykjy6G/gYDjFikaDVyVd4o+Ua71fKa35wFbsZHWVBM9xe0NPK7x7DeBQ
-         TfbEvEGUxyhU+5Oc5SI2nM6olXq5VrblN1PxzfYhBy02MRlayixj0NpF8VzTdEwfr1g0
-         6obtBLaIiqkvNGwoRWlfNIkDIgS66JJ3NY5xk1fwC5/QqBG3kBcsUfUMcU6BJWXYiTMC
-         7Jyw==
-X-Gm-Message-State: AOAM530P/qPV1WwDdxiwVrt5p8iT48X5Ty2/lQm6Swj8wcvOvRyqarMQ
-        arGeh86oAzSa4cMFje3X80mwdB2GX2Y=
-X-Google-Smtp-Source: ABdhPJxK1adFWhig/nQjwX+CSB/SC2Pi8UcqVQXSZ41fa7QZjI9wT2Ii+d/EOe8KXZjanwJUP7KEgw==
-X-Received: by 2002:adf:cd10:: with SMTP id w16mr28484705wrm.404.1628559758430;
-        Mon, 09 Aug 2021 18:42:38 -0700 (PDT)
-Received: from [192.168.8.197] ([85.255.236.119])
-        by smtp.gmail.com with ESMTPSA id g16sm25808995wro.63.2021.08.09.18.42.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Aug 2021 18:42:38 -0700 (PDT)
-To:     Jens Axboe <axboe@fb.com>, io-uring <io-uring@vger.kernel.org>
-References: <27997f97-68cc-63c3-863b-b0c460bc42c0@fb.com>
+        bh=SgjenLCxIRHqkXwMm4vzCWybx8UINpO2oTPgSVJaUjQ=;
+        b=DmV7vmKRnCOhEJrCP9iLyRdJFob3YYDT+dE2vBpMHhkRVonSqzV+RR2mHUq/w1/TCF
+         NfS36ANq8zQpILNuX9itOuW6jvIbT/n0Ev3kazVKmTLr/06usgvT38kCWpuWGcWQ30U1
+         W8q81hd9v/wB6FeLjh8uYA8m9rykDMg4BcspXeGyZkfE+a32DNXQsI6jO9G0Tvy1TgRz
+         dxGVihN+6FO9gHpPnjxY6evoSEKNcj5nky5zmScfI6sw5G4uJgud9BeaGC5cu+UvLUDE
+         T1VLBG/orxSbu0ncCEw5oe+PvEf/GP8PMTVN2q67wc3trTrWjaZyxcGFsBcXEjb7yKdJ
+         ZcEw==
+X-Gm-Message-State: AOAM533L9DKAC6GE48NuWOiMsJVGGR42LAUFr22LAZw/7+IHanmw69R6
+        SNqRP/BxrS7873p5vH2lHES8EhuA2d4=
+X-Google-Smtp-Source: ABdhPJw+h6Ub2K0mWdGVSN/GyXt9ejE8SgeapIwYUpq2DCPaVSiU2sBRn4+azk5CnDa9qRmYPWTzUA==
+X-Received: by 2002:a5d:5646:: with SMTP id j6mr9597361wrw.314.1628559909720;
+        Mon, 09 Aug 2021 18:45:09 -0700 (PDT)
+Received: from localhost.localdomain ([85.255.236.119])
+        by smtp.gmail.com with ESMTPSA id k1sm21818211wrz.61.2021.08.09.18.45.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Aug 2021 18:45:09 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
-Subject: Re: [PATCH] io_uring: be smarter about waking multiple CQ ring
- waiters
-Message-ID: <d6f7a325-62ef-ec7f-053d-411354d177f2@gmail.com>
-Date:   Tue, 10 Aug 2021 02:42:09 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc:     asml.silence@gmail.com
+Subject: [PATCH 5.14] io_uring: fix ctx-exit io_rsrc_put_work() deadlock
+Date:   Tue, 10 Aug 2021 02:44:23 +0100
+Message-Id: <0130c5c2693468173ec1afab714e0885d2c9c363.1628559783.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-In-Reply-To: <27997f97-68cc-63c3-863b-b0c460bc42c0@fb.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/6/21 9:19 PM, Jens Axboe wrote:
-> Currently we only wake the first waiter, even if we have enough entries
-> posted to satisfy multiple waiters. Improve that situation so that
-> every waiter knows how much the CQ tail has to advance before they can
-> be safely woken up.
-> 
-> With this change, if we have N waiters each asking for 1 event and we get
-> 4 completions, then we wake up 4 waiters. If we have N waiters asking
-> for 2 completions and we get 4 completions, then we wake up the first
-> two. Previously, only the first waiter would've been woken up.
-> 
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> 
-> ---
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index bf548af0426c..04df4fa3c75e 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -1435,11 +1435,13 @@ static inline bool io_should_trigger_evfd(struct io_ring_ctx *ctx)
->  
->  static void io_cqring_ev_posted(struct io_ring_ctx *ctx)
->  {
-> -	/* see waitqueue_active() comment */
-> -	smp_mb();
-> -
-> -	if (waitqueue_active(&ctx->cq_wait))
-> -		wake_up(&ctx->cq_wait);
-> +	/*
-> +	 * wake_up_all() may seem excessive, but io_wake_function() and
-> +	 * io_should_wake() handle the termination of the loop and only
-> +	 * wake as many waiters as we need to.
-> +	 */
-> +	if (wq_has_sleeper(&ctx->cq_wait))
-> +		wake_up_all(&ctx->cq_wait);
->  	if (ctx->sq_data && waitqueue_active(&ctx->sq_data->wait))
->  		wake_up(&ctx->sq_data->wait);
->  	if (io_should_trigger_evfd(ctx))
-> @@ -6968,20 +6970,21 @@ static int io_sq_thread(void *data)
->  struct io_wait_queue {
->  	struct wait_queue_entry wq;
->  	struct io_ring_ctx *ctx;
-> -	unsigned to_wait;
-> +	unsigned cq_tail;
->  	unsigned nr_timeouts;
->  };
->  
->  static inline bool io_should_wake(struct io_wait_queue *iowq)
->  {
->  	struct io_ring_ctx *ctx = iowq->ctx;
-> +	unsigned tail = ctx->cached_cq_tail + atomic_read(&ctx->cq_timeouts);
+__io_rsrc_put_work() might need ->uring_lock, so nobody should wait for
+rsrc nodes holding the mutex. However, that's exactly what
+io_ring_ctx_free() does with io_wait_rsrc_data().
 
-Seems, adding cq_timeouts can be dropped from here and iowq.cq_tail
+Split it into rsrc wait + dealloc, and move the first one out of the
+lock.
 
->  
->  	/*
->  	 * Wake up if we have enough events, or if a timeout occurred since we
->  	 * started waiting. For timeouts, we always want to return to userspace,
->  	 * regardless of event count.
->  	 */
-> -	return io_cqring_events(ctx) >= iowq->to_wait ||
+Cc: stable@vger.kernel.org
+Fixes: b60c8dce33895 ("io_uring: preparation for rsrc tagging")
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ fs/io_uring.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-Don't we miss smp_rmb() previously provided my io_cqring_events()?
-
-> +	return tail >= iowq->cq_tail ||
-
-tails might overflow
-
->  			atomic_read(&ctx->cq_timeouts) != iowq->nr_timeouts;
->  }
->  
-> @@ -7045,7 +7048,6 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
->  			.entry		= LIST_HEAD_INIT(iowq.wq.entry),
->  		},
->  		.ctx		= ctx,
-> -		.to_wait	= min_events,
->  	};
->  	struct io_rings *rings = ctx->rings;
->  	signed long timeout = MAX_SCHEDULE_TIMEOUT;
-> @@ -7081,6 +7083,8 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
->  	}
->  
->  	iowq.nr_timeouts = atomic_read(&ctx->cq_timeouts);
-> +	iowq.cq_tail = READ_ONCE(ctx->rings->cq.head) + min_events +
-> +			iowq.nr_timeouts;
->  	trace_io_uring_cqring_wait(ctx, min_events);
->  	do {
->  		/* if we can't even flush overflow, don't wait for more */
-> 
-
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 331b866b39cf..d59e34e58b14 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -8645,13 +8645,10 @@ static void io_req_caches_free(struct io_ring_ctx *ctx)
+ 	mutex_unlock(&ctx->uring_lock);
+ }
+ 
+-static bool io_wait_rsrc_data(struct io_rsrc_data *data)
++static void io_wait_rsrc_data(struct io_rsrc_data *data)
+ {
+-	if (!data)
+-		return false;
+-	if (!atomic_dec_and_test(&data->refs))
++	if (data && !atomic_dec_and_test(&data->refs))
+ 		wait_for_completion(&data->done);
+-	return true;
+ }
+ 
+ static void io_ring_ctx_free(struct io_ring_ctx *ctx)
+@@ -8663,10 +8660,14 @@ static void io_ring_ctx_free(struct io_ring_ctx *ctx)
+ 		ctx->mm_account = NULL;
+ 	}
+ 
++	/* __io_rsrc_put_work() may need uring_lock to progress, wait w/o it */
++	io_wait_rsrc_data(ctx->buf_data);
++	io_wait_rsrc_data(ctx->file_data);
++
+ 	mutex_lock(&ctx->uring_lock);
+-	if (io_wait_rsrc_data(ctx->buf_data))
++	if (ctx->buf_data)
+ 		__io_sqe_buffers_unregister(ctx);
+-	if (io_wait_rsrc_data(ctx->file_data))
++	if (ctx->file_data)
+ 		__io_sqe_files_unregister(ctx);
+ 	if (ctx->rings)
+ 		__io_cqring_overflow_flush(ctx, true);
 -- 
-Pavel Begunkov
+2.32.0
+

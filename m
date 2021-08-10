@@ -2,129 +2,120 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C07ED3E54AE
-	for <lists+io-uring@lfdr.de>; Tue, 10 Aug 2021 09:57:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AEDC93E5528
+	for <lists+io-uring@lfdr.de>; Tue, 10 Aug 2021 10:28:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236490AbhHJH5w (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 10 Aug 2021 03:57:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56238 "EHLO
+        id S237640AbhHJI21 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 10 Aug 2021 04:28:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236329AbhHJH5v (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 10 Aug 2021 03:57:51 -0400
-Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B81AC0613D3;
-        Tue, 10 Aug 2021 00:57:29 -0700 (PDT)
-From:   Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1628582247;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-        bh=Mza2s0hm1qVtAaBGYnBCXAXHeBZ/4aPM0t6W/sYyXXY=;
-        b=fAmwgxXwWSdLPBh3uuJn2ML24/LvHPO3T7WD8eqWgdqm86EhdBiXpiDMzTfbg4gyVYmV9t
-        vh9Bs0QxAEoEBbAoO9yhEEUJFGuimwV65o5VdA2lRMiiNqz6IDyZ4Tv23K5y7fOM7x3/Ct
-        IHf/TRM/UcUMFTwSP7cgJtZzqqq3EZnseLa/EJn3XzmcV+QdvPVb3+GcepZdhBfkIiGAPq
-        Dh5m3LqGdSpuGlKXtMkGjHPk4pGxVXFD+0eaChe3KqmcMb2BQWwnmmLaqP/pfjMaKtmAlk
-        WYbaP9R5PBOLRZaBORKstvSwpJdvp7VoxwQQGBXZAq2fRlTKQsNC6UO0HnkFgA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1628582247;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-        bh=Mza2s0hm1qVtAaBGYnBCXAXHeBZ/4aPM0t6W/sYyXXY=;
-        b=bY+arYJmjcY7Ut/HTS6dDzHOoQwD9gKOjY1dIbw7L+zRZhJRD5oASp7A/R5Kw5nsJkh8cY
-        xWHoC/BgeHeTJXBA==
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring@vger.kernel.org,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [BUG] io-uring triggered lockdep splat
-Date:   Tue, 10 Aug 2021 09:57:26 +0200
-Message-ID: <87r1f1speh.ffs@tglx>
-MIME-Version: 1.0
-Content-Type: text/plain
+        with ESMTP id S237236AbhHJI20 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 10 Aug 2021 04:28:26 -0400
+Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28F63C0613D3;
+        Tue, 10 Aug 2021 01:28:05 -0700 (PDT)
+Received: by mail-pl1-x632.google.com with SMTP id a5so4278083plh.5;
+        Tue, 10 Aug 2021 01:28:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=HSJnHTb+KtNoZOu+K6uvBKzNTHh865MwVRa5OZlz+SI=;
+        b=ZpkIsEKzP762UvIzvFogLouIJggyiA+RmOPIC3HcxU+YuL/b8ytCX9EzQFik1ULum4
+         frdBgfN9G7Z27bVbv62Ho2+evnVLu0WnZ8nCD5EKG7YKmMScB/lf+PCbXlhOi/qfqY9O
+         KN1jEdR0RQO374w7PWLaIx7ti1GsXcjGHTMrysuTT4aI5rWktGlis7K0R9WafFzXqZ34
+         AJaqwvTWFjdGpxC+bxEWJ1Y+/cHokXqtdhDzOAV5NjV7BodMnaW/FAC95pg3li7hDVnl
+         jvyLnA5qtTJSl3AActcIq2hjxMygyVFPLK3Lcn36t4I6w3ASYmuSCghzqPfSwBzULUw6
+         TTug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=HSJnHTb+KtNoZOu+K6uvBKzNTHh865MwVRa5OZlz+SI=;
+        b=W5k3RFyiq2+t7FalzciX6WPWMnM4ux3MDkfn2kzi/XTECAddoN2mCADSXtTNaTCPMK
+         wdf1Pmpply8cHTngbVI2X4VacWR+YWjBMwmapwhr3Dh8tr1agstb6eTcjGRG5ZVfvc4/
+         rltnBrJzOKn5MPZlZrYd7NoH4WBPIDhdxsL7Apo3zNU+G1uZ5LCwgoR3fQ+30dbXHf1v
+         a7WxHDttxksOjJojnQlx3HTJ8jLEeYb1o1tt3TYKjXApOC0wAm91jLtSYBcU3fEPMhHz
+         EM36y9k0znhgO9ycz4cX9pYG7t6XHw27kSn5n6tq6A9Lg7GlDrI4wyeK4ZzazcdK5dOp
+         7S4w==
+X-Gm-Message-State: AOAM530ooI/r9puhcOh5v/vGkpnyqd+IEfrgzQ7J/iCkzaU4guyS7JyM
+        qEv9XP6e/mXoLiC7hXmG1r1rDs72rEbIyw==
+X-Google-Smtp-Source: ABdhPJy0ybSZxC1IIck/rRE1GSqHiEd1SfjmrT7uy6nlv6STfldQbWMwbpSk38uvGAeTfio6T22dFw==
+X-Received: by 2002:a17:902:ce8f:b029:12c:c4e7:682d with SMTP id f15-20020a170902ce8fb029012cc4e7682dmr24160105plg.58.1628584084422;
+        Tue, 10 Aug 2021 01:28:04 -0700 (PDT)
+Received: from smtpclient.apple (c-24-6-216-183.hsd1.ca.comcast.net. [24.6.216.183])
+        by smtp.gmail.com with ESMTPSA id i24sm23417732pfr.207.2021.08.10.01.28.03
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 10 Aug 2021 01:28:03 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 14.0 \(3654.120.0.1.13\))
+Subject: Re: [PATCH 1/2] io_uring: clear TIF_NOTIFY_SIGNAL when running task
+ work
+From:   Nadav Amit <nadav.amit@gmail.com>
+In-Reply-To: <fdd54421f4d4e825152192e327c838d035352945.camel@trillion01.com>
+Date:   Tue, 10 Aug 2021 01:28:01 -0700
+Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <A4DC14BA-74CA-41DB-BE08-D7B693C11AE0@gmail.com>
+References: <20210808001342.964634-1-namit@vmware.com>
+ <20210808001342.964634-2-namit@vmware.com>
+ <fdd54421f4d4e825152192e327c838d035352945.camel@trillion01.com>
+To:     Olivier Langlois <olivier@trillion01.com>
+X-Mailer: Apple Mail (2.3654.120.0.1.13)
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Jens,
 
-running 'rsrc_tags' from the liburing tests on v5.14-rc5 triggers the
-following lockdep splat:
+> On Aug 9, 2021, at 2:48 PM, Olivier Langlois <olivier@trillion01.com> =
+wrote:
+>=20
+> On Sat, 2021-08-07 at 17:13 -0700, Nadav Amit wrote:
+>> From: Nadav Amit <namit@vmware.com>
+>>=20
+>> When using SQPOLL, the submission queue polling thread calls
+>> task_work_run() to run queued work. However, when work is added with
+>> TWA_SIGNAL - as done by io_uring itself - the TIF_NOTIFY_SIGNAL =
+remains
+>> set afterwards and is never cleared.
+>>=20
+>> Consequently, when the submission queue polling thread checks whether
+>> signal_pending(), it may always find a pending signal, if
+>> task_work_add() was ever called before.
+>>=20
+>> The impact of this bug might be different on different kernel =
+versions.
+>> It appears that on 5.14 it would only cause unnecessary calculation =
+and
+>> prevent the polling thread from sleeping. On 5.13, where the bug was
+>> found, it stops the polling thread from finding newly submitted work.
+>>=20
+>> Instead of task_work_run(), use tracehook_notify_signal() that clears
+>> TIF_NOTIFY_SIGNAL. Test for TIF_NOTIFY_SIGNAL in addition to
+>> current->task_works to avoid a race in which task_works is cleared =
+but
+>> the TIF_NOTIFY_SIGNAL is set.
+>=20
+> thx a lot for this patch!
+>=20
+> This explains what I am seeing here:
+> =
+https://lore.kernel.org/io-uring/4d93d0600e4a9590a48d320c5a7dd4c54d66f095.=
+camel@trillion01.com/
+>=20
+> I was under the impression that task_work_run() was clearing
+> TIF_NOTIFY_SIGNAL.
+>=20
+> your patch made me realize that it does not=E2=80=A6
 
-[  265.866713] ======================================================
-[  265.867585] WARNING: possible circular locking dependency detected
-[  265.868450] 5.14.0-rc5 #69 Tainted: G            E    
-[  265.869174] ------------------------------------------------------
-[  265.870050] kworker/3:1/86 is trying to acquire lock:
-[  265.870759] ffff88812100f0a8 (&ctx->uring_lock){+.+.}-{3:3}, at: io_rsrc_put_work+0x142/0x1b0
-[  265.871957] 
-               but task is already holding lock:
-[  265.872777] ffffc900004a3e70 ((work_completion)(&(&ctx->rsrc_put_work)->work)){+.+.}-{0:0}, at: process_one_work+0x218/0x590
-[  265.874334] 
-               which lock already depends on the new lock.
+Happy it could help.
 
-[  265.875474] 
-               the existing dependency chain (in reverse order) is:
-[  265.876512] 
-               -> #1 ((work_completion)(&(&ctx->rsrc_put_work)->work)){+.+.}-{0:0}:
-[  265.877750]        __flush_work+0x372/0x4f0
-[  265.878343]        io_rsrc_ref_quiesce.part.0.constprop.0+0x35/0xb0
-[  265.879227]        __do_sys_io_uring_register+0x652/0x1080
-[  265.880009]        do_syscall_64+0x3b/0x90
-[  265.880598]        entry_SYSCALL_64_after_hwframe+0x44/0xae
-[  265.881383] 
-               -> #0 (&ctx->uring_lock){+.+.}-{3:3}:
-[  265.882257]        __lock_acquire+0x1130/0x1df0
-[  265.882903]        lock_acquire+0xc8/0x2d0
-[  265.883485]        __mutex_lock+0x88/0x780
-[  265.884067]        io_rsrc_put_work+0x142/0x1b0
-[  265.884713]        process_one_work+0x2a2/0x590
-[  265.885357]        worker_thread+0x55/0x3c0
-[  265.885958]        kthread+0x143/0x160
-[  265.886493]        ret_from_fork+0x22/0x30
-[  265.887079] 
-               other info that might help us debug this:
+Unfortunately, there seems to be yet another issue (unless my code
+somehow caused it). It seems that when SQPOLL is used, there are cases
+in which we get stuck in io_uring_cancel_sqpoll() when tctx_inflight()
+never goes down to zero.
 
-[  265.888206]  Possible unsafe locking scenario:
-
-[  265.889043]        CPU0                    CPU1
-[  265.889687]        ----                    ----
-[  265.890328]   lock((work_completion)(&(&ctx->rsrc_put_work)->work));
-[  265.891211]                                lock(&ctx->uring_lock);
-[  265.892074]                                lock((work_completion)(&(&ctx->rsrc_put_work)->work));
-[  265.893310]   lock(&ctx->uring_lock);
-[  265.893833] 
-                *** DEADLOCK ***
-
-[  265.894660] 2 locks held by kworker/3:1/86:
-[  265.895252]  #0: ffff888100059738 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work+0x218/0x590
-[  265.896561]  #1: ffffc900004a3e70 ((work_completion)(&(&ctx->rsrc_put_work)->work)){+.+.}-{0:0}, at: process_one_work+0x218/0x590
-[  265.898178] 
-               stack backtrace:
-[  265.898789] CPU: 3 PID: 86 Comm: kworker/3:1 Kdump: loaded Tainted: G            E     5.14.0-rc5 #69
-[  265.900072] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.14.0-2 04/01/2014
-[  265.901195] Workqueue: events io_rsrc_put_work
-[  265.901825] Call Trace:
-[  265.902173]  dump_stack_lvl+0x57/0x72
-[  265.902698]  check_noncircular+0xf2/0x110
-[  265.903270]  ? __lock_acquire+0x380/0x1df0
-[  265.903889]  __lock_acquire+0x1130/0x1df0
-[  265.904462]  lock_acquire+0xc8/0x2d0
-[  265.904967]  ? io_rsrc_put_work+0x142/0x1b0
-[  265.905596]  ? lock_is_held_type+0xa5/0x120
-[  265.906193]  __mutex_lock+0x88/0x780
-[  265.906700]  ? io_rsrc_put_work+0x142/0x1b0
-[  265.907286]  ? io_rsrc_put_work+0x142/0x1b0
-[  265.907877]  ? lock_acquire+0xc8/0x2d0
-[  265.908408]  io_rsrc_put_work+0x142/0x1b0
-[  265.908976]  process_one_work+0x2a2/0x590
-[  265.909544]  worker_thread+0x55/0x3c0
-[  265.910061]  ? process_one_work+0x590/0x590
-[  265.910655]  kthread+0x143/0x160
-[  265.911114]  ? set_kthread_struct+0x40/0x40
-[  265.911704]  ret_from_fork+0x22/0x30
-
-Thanks,
-
-        tglx
+Debugging... (while also trying to make some progress with my code)=

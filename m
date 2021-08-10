@@ -2,158 +2,92 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D47B83E7DD7
-	for <lists+io-uring@lfdr.de>; Tue, 10 Aug 2021 18:55:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D915B3E7DEE
+	for <lists+io-uring@lfdr.de>; Tue, 10 Aug 2021 19:04:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229940AbhHJQzd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 10 Aug 2021 12:55:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41884 "EHLO
+        id S229940AbhHJRE2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 10 Aug 2021 13:04:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231260AbhHJQzD (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 10 Aug 2021 12:55:03 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42F89C0613C1
-        for <io-uring@vger.kernel.org>; Tue, 10 Aug 2021 09:54:31 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id h14so27186649wrx.10
-        for <io-uring@vger.kernel.org>; Tue, 10 Aug 2021 09:54:31 -0700 (PDT)
+        with ESMTP id S229474AbhHJRE1 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 10 Aug 2021 13:04:27 -0400
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A51A9C0613C1
+        for <io-uring@vger.kernel.org>; Tue, 10 Aug 2021 10:04:05 -0700 (PDT)
+Received: by mail-pl1-x630.google.com with SMTP id d1so22045312pll.1
+        for <io-uring@vger.kernel.org>; Tue, 10 Aug 2021 10:04:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=CYANbbmqnOZ58/hk5KLfX/AVuT/OaN6W3Tp7UuMGsVk=;
-        b=FGNXY1Fb17nYwm6LfBaQS8bpPnY3elx7pxmAN5reHG9xLDJ8QR4N4S5IX8JGAOV/8N
-         JTCpyRaVYf1R3bexiOS9CTuel81bnCRS9C2c8THBI7s87e3S3eDOiFsXZ0/FqhhjrCeM
-         WC0IBV/KXIjW5Z0ez/dqWp0+6eHQZkm9RLrzp7BBc47VlIdiNpwZuSatzA1sYeCnzI1p
-         rGBd1N1pq8FhTROZ5KilQ1v2dNzLhRwYp1TOrfCJ56nnPqOHqtMtnPX+hSlOPXENAwJi
-         Xzt7l0VBM5B6X5eJEwSzAldIcWTZ+6UOYhNthubVONyI4Q2PR5lUXR/VZb8sIGD8+SyE
-         R6BQ==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=d3SvrZv8EyWAy9JleeSdM4orO0KEmuw7/GUFp+33irw=;
+        b=la2re2e5QKCAwi/ONzwdidJJ2+087V1lgKEsdJbDmqhNlNzql0Jjn3WbHh/mxO4pQ8
+         4sWbKGMCUWPBhakJCjCHdMxb6V2Q6BxoAkLezFD4Oy87uoQHyRs3QSseXPBkptrlisZ9
+         mnEDC5lx4/KU6eGO4VRTRCUPFzuqdz2O4yeTOcrKJe9cqMGXKkleLKi5Yzl5Nh4jjhj7
+         G0np/VHDH+L0DnFMuh04hSEMgIzSSRbky60ekLpXNB0W2Xm2czWKUCP99ZLmsMvUaVpV
+         Hwuk05HG9/miWAiJO+kTyoUWbUwex8Y2XGWTVLYwAkZIK3JZhddcyBJsWdFp9X6qcvfv
+         LseA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=CYANbbmqnOZ58/hk5KLfX/AVuT/OaN6W3Tp7UuMGsVk=;
-        b=ppZdyk7UuX+uUga2jTgO7rmmKwMHMueY69fsWq904j7W5Bbk35vKcTzpk+zRn/MdPD
-         HozdF55Wr/8pgfjzXydtNkAtvHXTrGgo7cEwBU5ePISxi91t0c8nKHO6uEN7Va0dU8Z9
-         2oMANGm8aj2ooM2sasBTv7AS9cTHuz23HO5J4REraEoP1Dj4RGwuwReAPW6Mp/SX/h+E
-         1gK9f3Qaj0cm21ggU/kx3KHNtTMa7XXWmhS9bCyz2w9XzWMJyplxAUMC8Qa8hcoGk9SA
-         qVLcHZR5Nx19NN4TPBq+9zqnnQRVmjBaeRv1k0WffxGq94uExFL8YUkt1yDzRYJoC/X0
-         nxpQ==
-X-Gm-Message-State: AOAM530rEQ5Btt4WUHo7RMFfc9kv/4ADfJfTZ7svU0uDyeRYW3Vihp4K
-        cujd5hJJR/pbLXXaF+nN7hs=
-X-Google-Smtp-Source: ABdhPJy9onBfeCxv8cCJ9H7kJ8nJQlyR0ZAtORlsf/lY0nrSJnbY/i2GeBXRjmmZ641v/AKSNNKtGg==
-X-Received: by 2002:adf:c549:: with SMTP id s9mr32201777wrf.344.1628614469907;
-        Tue, 10 Aug 2021 09:54:29 -0700 (PDT)
-Received: from localhost.localdomain ([148.252.133.97])
-        by smtp.gmail.com with ESMTPSA id d9sm13332259wrw.26.2021.08.10.09.54.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Aug 2021 09:54:29 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 1/1] io_uring: clean up tctx_task_work()
-Date:   Tue, 10 Aug 2021 17:53:55 +0100
-Message-Id: <d0d57262d757b564753c3e0b564a3a79e42095d5.1628614278.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.32.0
+        bh=d3SvrZv8EyWAy9JleeSdM4orO0KEmuw7/GUFp+33irw=;
+        b=mkhWpe0n50PacYhqH6ycNSHUiFnliX6/WE66QBV6qZvmhgeH4wrmSPeKZ68dKCPjW8
+         scBdMeLsPyquL4tsbzB4qBOBDrGmx/IK0RUg39ccn+0EZDtRLRbtdih7bIAEZE+pAwFw
+         cYJGavz+siAXqi34ztmfaioSu56alnaPkdQLj9XxrSkNuZICdQ2xqUhK+l7An3WOtgmE
+         2iyxlss77EqV528CNyf9arQpiAbtrUJieii/fVdFSzRdUuam5cmi45gFzdTMKQbDL/Zq
+         DxrvpuvOOoZ5GxrA2qpaY7E7tGzlbfv201YwbQFcijYqO8yE/CFtXZrgZS6x0gcexxFe
+         2CKA==
+X-Gm-Message-State: AOAM531TtM8U5JQRxGAAm2ZEIrsXowKk0KgtWV7D6hKWg2DcjMt0yNDC
+        Dhp9KZNrAzCFCkPuzw7OOYxVZ9gGv7YJUvvm
+X-Google-Smtp-Source: ABdhPJzx/wYr6KCL5AJUx6+GLCNBXInde3EPLeFbbdM07x2/ASykBmLDiQtidEVY3RXtUctclvnu1w==
+X-Received: by 2002:aa7:9891:0:b029:3c4:dab0:6379 with SMTP id r17-20020aa798910000b02903c4dab06379mr23924752pfl.12.1628615044730;
+        Tue, 10 Aug 2021 10:04:04 -0700 (PDT)
+Received: from [192.168.1.116] ([198.8.77.61])
+        by smtp.gmail.com with ESMTPSA id x26sm24582742pfm.77.2021.08.10.10.04.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Aug 2021 10:04:03 -0700 (PDT)
+Subject: Re: [RFC] io_uring: remove file batch-get optimisation
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <afe7a11e30f64e18785627aa5f49f7ce40cb5311.1628603451.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <be049d43-4774-c79a-8564-82d43fb87766@kernel.dk>
+Date:   Tue, 10 Aug 2021 11:04:01 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <afe7a11e30f64e18785627aa5f49f7ce40cb5311.1628603451.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-After recent fixes, tctx_task_work() always does proper spinlocking
-before looking into ->task_list, so now we don't need atomics for
-->task_state, replace it with non-atomic task_running using the critical
-section.
+On 8/10/21 7:52 AM, Pavel Begunkov wrote:
+> For requests with non-fixed files, instead of grabbing just one
+> reference, we get by the number of left requests, so the following
+> requests using the same file can take it without atomics.
+> 
+> However, it's not all win. If there is one request in the middle
+> not using files or having a fixed file, we'll need to put back the left
+> references. Even worse if an application submits requests dealing with
+> different files, it will do a put for each new request, so doubling the
+> number of atomics needed. Also, even if not used, it's still takes some
+> cycles in the submission path.
+> 
+> If a file used many times, it rather makes sense to pre-register it, if
+> not, we may fall in the described pitfall. So, this optimisation is a
+> matter of use case. Go with the simpliest code-wise way, remove it.
 
-Tide it up, combine two separate block with spinlocking, and always try
-to splice in there, so we do less locking when new requests are arriving
-during the function execution.
+I ran this through the peak testing, not using registered files. Doesn't
+seem to make a real difference here, at least in the quick testing.
+Which would seem to indicate we could safely kill it. But that's also
+the best case for non-registered files, would be curious to see if it
+makes a real difference now for workloads where the file is being
+shared.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 31 +++++++++++++------------------
- 1 file changed, 13 insertions(+), 18 deletions(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 345ec0d44b66..57f7b6311395 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -470,8 +470,8 @@ struct io_uring_task {
- 
- 	spinlock_t		task_lock;
- 	struct io_wq_work_list	task_list;
--	unsigned long		task_state;
- 	struct callback_head	task_work;
-+	bool			task_running;
- };
- 
- /*
-@@ -1954,9 +1954,13 @@ static void tctx_task_work(struct callback_head *cb)
- 		spin_lock_irq(&tctx->task_lock);
- 		node = tctx->task_list.first;
- 		INIT_WQ_LIST(&tctx->task_list);
-+		if (!node)
-+			tctx->task_running = false;
- 		spin_unlock_irq(&tctx->task_lock);
-+		if (!node)
-+			break;
- 
--		while (node) {
-+		do {
- 			struct io_wq_work_node *next = node->next;
- 			struct io_kiocb *req = container_of(node, struct io_kiocb,
- 							    io_task_work.node);
-@@ -1968,19 +1972,8 @@ static void tctx_task_work(struct callback_head *cb)
- 			}
- 			req->io_task_work.func(req);
- 			node = next;
--		}
--		if (wq_list_empty(&tctx->task_list)) {
--			spin_lock_irq(&tctx->task_lock);
--			clear_bit(0, &tctx->task_state);
--			if (wq_list_empty(&tctx->task_list)) {
--				spin_unlock_irq(&tctx->task_lock);
--				break;
--			}
--			spin_unlock_irq(&tctx->task_lock);
--			/* another tctx_task_work() is enqueued, yield */
--			if (test_and_set_bit(0, &tctx->task_state))
--				break;
--		}
-+		} while (node);
-+
- 		cond_resched();
- 	}
- 
-@@ -1994,16 +1987,19 @@ static void io_req_task_work_add(struct io_kiocb *req)
- 	enum task_work_notify_mode notify;
- 	struct io_wq_work_node *node;
- 	unsigned long flags;
-+	bool running;
- 
- 	WARN_ON_ONCE(!tctx);
- 
- 	spin_lock_irqsave(&tctx->task_lock, flags);
- 	wq_list_add_tail(&req->io_task_work.node, &tctx->task_list);
-+	running = tctx->task_running;
-+	if (!running)
-+		tctx->task_running = true;
- 	spin_unlock_irqrestore(&tctx->task_lock, flags);
- 
- 	/* task_work already pending, we're done */
--	if (test_bit(0, &tctx->task_state) ||
--	    test_and_set_bit(0, &tctx->task_state))
-+	if (running)
- 		return;
- 
- 	/*
-@@ -2018,7 +2014,6 @@ static void io_req_task_work_add(struct io_kiocb *req)
- 		return;
- 	}
- 
--	clear_bit(0, &tctx->task_state);
- 	spin_lock_irqsave(&tctx->task_lock, flags);
- 	node = tctx->task_list.first;
- 	INIT_WQ_LIST(&tctx->task_list);
 -- 
-2.32.0
+Jens Axboe
 

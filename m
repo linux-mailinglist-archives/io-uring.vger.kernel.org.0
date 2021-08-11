@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D912F3E98EB
-	for <lists+io-uring@lfdr.de>; Wed, 11 Aug 2021 21:40:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B87D73E98EC
+	for <lists+io-uring@lfdr.de>; Wed, 11 Aug 2021 21:41:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230413AbhHKTlV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 11 Aug 2021 15:41:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45890 "EHLO
+        id S231176AbhHKTlX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 11 Aug 2021 15:41:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45894 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229655AbhHKTlV (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 11 Aug 2021 15:41:21 -0400
-Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95E21C061765
-        for <io-uring@vger.kernel.org>; Wed, 11 Aug 2021 12:40:57 -0700 (PDT)
-Received: by mail-pl1-x629.google.com with SMTP id a20so4124397plm.0
-        for <io-uring@vger.kernel.org>; Wed, 11 Aug 2021 12:40:57 -0700 (PDT)
+        with ESMTP id S229655AbhHKTlW (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 11 Aug 2021 15:41:22 -0400
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 908EDC061765
+        for <io-uring@vger.kernel.org>; Wed, 11 Aug 2021 12:40:58 -0700 (PDT)
+Received: by mail-pj1-x1030.google.com with SMTP id a8so5202786pjk.4
+        for <io-uring@vger.kernel.org>; Wed, 11 Aug 2021 12:40:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=FtlhnhhFqEqRgzWXlG8Kms5M4qcfh4EKRdFIuC+yWaE=;
-        b=bvqplIIctJZb4uuJ9Ywrf9Us9AwRWW/AC0Xj22Mf0gIsK4p70B9drrsLJpfjFNUner
-         7gsoGheUkJWJWlqQWYkmpIe0CsbHsjd2o1s0IWhwnnkdqXOHGdXCA6R51ix3PBUvnIA4
-         17TOlz7X+p0umDLfJrtDJuZFbZJ227oj6xXDjv0ZQ79hUMo6T8vgEqBkivil3+DYEqac
-         cQKoILOFrk+zaJE/OWQI41919Zox53tB6zel+Y92J37gAuzgCy3i96pRayx4BZUYPq7M
-         kft90ZOqoJopuDe5rufT+/p3p8iyV9xzAvbf8K3xdh3ed5SBEfj0DS4db3PEyqp/JT4H
-         ZWkA==
+        bh=l4q9fiTD0vU7+Jt6vsakWJwhSlwvXxDC4B5VGrxgTng=;
+        b=mDFeWbbkU+G6ljmVJApuIlpAGRG+OKb5vJ+zW2pT+wCbblv+0PppSI+Fm/7Cewzcvo
+         M3FBJXSEBee/noWGNlSW6NZfZJRiQJP51HDQYKkvGwXTT/YsJkPmDybPvVr/i6UiCQWd
+         sMEJFtZ7zPeO4Lk4BmMsaPK0UHXDRgzNjxP/v+rWvzret+ZDN1dQCgWqR/xARHvEEIQk
+         IWFUMCzJ9jidQHQ3I0vCJPYrvhRHRHm5Zp6PnD7peCEJre8LmQq+zspzlUcaDxHNg1JK
+         qWBCR7Ps0Z/8nUh+w9LB7zX4GmDOa4JDLnUdu3V8Lz8/ThICRd5YeI6SyHTWX9tKm7sN
+         IvCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=FtlhnhhFqEqRgzWXlG8Kms5M4qcfh4EKRdFIuC+yWaE=;
-        b=Hlw5vHLd2tlOdsOkWnD4xbxMZij29yS3KpdXvfAjL6fd0PFtMmNMy+/uPE6jdI1+nd
-         SHh3bTXFdroiY/bhoapLNwFEx54CgMlz897j32lVCL0mUJf7nwqhPRVs1IB5mxnBf9H4
-         N8gFOPUXV3W6eS8Yxcsvcwrro1r+NEgpLnQYtsrSdwgm9dVcHUT6wIeOMjo5k+W9pH36
-         Oci+YZpxP/skgJMxyO1nXQO2r6kw8cf+3CAEN4hZI/UF3ke+r7VwpY9Q403aWF4Pj1ez
-         rxW3C6jhDxa114uCfz9gjWX8zVwJkE6y7GEEGT7gONtr4R1rF5ycmeEclaRMX6mC+Ups
-         Xefw==
-X-Gm-Message-State: AOAM530T2gQe1wBb/MR3Cez6N81YxKjkTjF/G8jt1XFoK7QFDl7VNSGW
-        trP1ghKw4V/+i4/QHWmznP57KgOwONc0o50v
-X-Google-Smtp-Source: ABdhPJxHGOW5g8lPlsNoY1GSc6/9+hooysD/UU45lM3kpehGln8kNI/B0R+BEWNkGoivkLAXCZvvWA==
-X-Received: by 2002:a17:90a:9511:: with SMTP id t17mr12314685pjo.194.1628710856794;
-        Wed, 11 Aug 2021 12:40:56 -0700 (PDT)
+        bh=l4q9fiTD0vU7+Jt6vsakWJwhSlwvXxDC4B5VGrxgTng=;
+        b=B4219L5BjBU2UBIcRoVZZQudgXti8R+UioVJak43kczpxJiDklZDypfpdWpV1+kgZk
+         oOOvGdLH616iDwT67nTJMb3kV7uxLXwAh4pTHSPrAgEEyiccp//1TuoM1FUIdgP0VKA/
+         fxYx8hiIplHRVV/cei7RQ/tSmm9sJUzliASx8S/wGHts2nJfHtm50e/EF/JckJOGWt2n
+         6nSp7t0N4hGF1mar11KTvXQAz9Fy3amVdYRIIXBQ57cb5LAuzP7ocSsJi/lZtfC8fKUT
+         FSGTjHQ4DqpTIyAHlUOEaE3z8JVVpr9VYu7uu7BAa+YVF2M0c0MCWTBHFGyyvRdfZ6XT
+         4Rqw==
+X-Gm-Message-State: AOAM531l3OgkjkkUt4zHpfDKRz2j7fv50IdsSqmX5DTIgjS7URN/J0Pm
+        20eeTvJivitPYKashv4603ybqJgvPG9YY6UU
+X-Google-Smtp-Source: ABdhPJyh/xDy6HJpdj1e6kzLv96SW/CisTZoP9aik9cigTDjrTf1UTPSs+RQHQ7lhmCKBER2fKzeTg==
+X-Received: by 2002:a63:5908:: with SMTP id n8mr339209pgb.202.1628710857901;
+        Wed, 11 Aug 2021 12:40:57 -0700 (PDT)
 Received: from localhost.localdomain ([66.219.217.159])
         by smtp.gmail.com with ESMTPSA id y2sm336118pfe.146.2021.08.11.12.40.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Aug 2021 12:40:56 -0700 (PDT)
+        Wed, 11 Aug 2021 12:40:57 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 1/4] io_uring: run timeouts from task_work
-Date:   Wed, 11 Aug 2021 13:40:50 -0600
-Message-Id: <20210811194053.767588-2-axboe@kernel.dk>
+Subject: [PATCH 2/4] io_uring: run linked timeouts from task_work
+Date:   Wed, 11 Aug 2021 13:40:51 -0600
+Message-Id: <20210811194053.767588-3-axboe@kernel.dk>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210811194053.767588-1-axboe@kernel.dk>
 References: <20210811194053.767588-1-axboe@kernel.dk>
@@ -65,141 +65,115 @@ X-Mailing-List: io-uring@vger.kernel.org
 This is in preparation to making the completion lock work outside of
 hard/soft IRQ context.
 
-Add a timeout_lock to handle the ordering of timeout completions or
-cancelations with the timeouts actually triggering.
-
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/io_uring.c | 43 +++++++++++++++++++++++++++++++------------
- 1 file changed, 31 insertions(+), 12 deletions(-)
+ fs/io_uring.c | 42 ++++++++++++++++++++++++++++++------------
+ 1 file changed, 30 insertions(+), 12 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index bd3f8529fe6f..06cd7d229501 100644
+index 06cd7d229501..5a5551cfdad2 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -409,6 +409,8 @@ struct io_ring_ctx {
- 	struct {
- 		spinlock_t		completion_lock;
+@@ -538,6 +538,8 @@ struct io_timeout {
+ 	struct list_head		list;
+ 	/* head of the link, used by linked timeouts only */
+ 	struct io_kiocb			*head;
++	/* for linked completions */
++	struct io_kiocb			*prev;
+ };
  
-+		spinlock_t		timeout_lock;
+ struct io_timeout_rem {
+@@ -1841,6 +1843,7 @@ static inline void io_remove_next_linked(struct io_kiocb *req)
+ 
+ static bool io_kill_linked_timeout(struct io_kiocb *req)
+ 	__must_hold(&req->ctx->completion_lock)
++	__must_hold(&req->ctx->timeout_lock)
+ {
+ 	struct io_kiocb *link = req->link;
+ 
+@@ -1885,8 +1888,13 @@ static bool io_disarm_next(struct io_kiocb *req)
+ {
+ 	bool posted = false;
+ 
+-	if (likely(req->flags & REQ_F_LINK_TIMEOUT))
++	if (likely(req->flags & REQ_F_LINK_TIMEOUT)) {
++		struct io_ring_ctx *ctx = req->ctx;
 +
- 		/*
- 		 * ->iopoll_list is protected by the ctx->uring_lock for
- 		 * io_uring instances that don't use IORING_SETUP_SQPOLL.
-@@ -1186,6 +1188,7 @@ static struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
- 	mutex_init(&ctx->uring_lock);
- 	init_waitqueue_head(&ctx->cq_wait);
- 	spin_lock_init(&ctx->completion_lock);
-+	spin_lock_init(&ctx->timeout_lock);
- 	INIT_LIST_HEAD(&ctx->iopoll_list);
- 	INIT_LIST_HEAD(&ctx->defer_list);
- 	INIT_LIST_HEAD(&ctx->timeout_list);
-@@ -5452,6 +5455,20 @@ static int io_poll_update(struct io_kiocb *req, unsigned int issue_flags)
- 	return 0;
++		spin_lock_irq(&ctx->timeout_lock);
+ 		posted = io_kill_linked_timeout(req);
++		spin_unlock_irq(&ctx->timeout_lock);
++	}
+ 	if (unlikely((req->flags & REQ_F_FAIL) &&
+ 		     !(req->flags & REQ_F_HARDLINK))) {
+ 		posted |= (req->link != NULL);
+@@ -6351,6 +6359,20 @@ static inline struct file *io_file_get(struct io_ring_ctx *ctx,
+ 		return io_file_get_normal(ctx, req, fd);
  }
  
-+static void io_req_task_timeout(struct io_kiocb *req)
++static void io_req_task_link_timeout(struct io_kiocb *req)
 +{
++	struct io_kiocb *prev = req->timeout.prev;
 +	struct io_ring_ctx *ctx = req->ctx;
 +
-+	spin_lock_irq(&ctx->completion_lock);
-+	io_cqring_fill_event(ctx, req->user_data, -ETIME, 0);
-+	io_commit_cqring(ctx);
-+	spin_unlock_irq(&ctx->completion_lock);
-+
-+	io_cqring_ev_posted(ctx);
-+	req_set_fail(req);
-+	io_put_req(req);
++	if (prev) {
++		io_async_find_and_cancel(ctx, req, prev->user_data, -ETIME);
++		io_put_req(prev);
++		io_put_req(req);
++	} else {
++		io_req_complete_post(req, -ETIME, 0);
++	}
 +}
 +
- static enum hrtimer_restart io_timeout_fn(struct hrtimer *timer)
+ static enum hrtimer_restart io_link_timeout_fn(struct hrtimer *timer)
  {
  	struct io_timeout_data *data = container_of(timer,
-@@ -5460,24 +5477,20 @@ static enum hrtimer_restart io_timeout_fn(struct hrtimer *timer)
+@@ -6359,7 +6381,7 @@ static enum hrtimer_restart io_link_timeout_fn(struct hrtimer *timer)
  	struct io_ring_ctx *ctx = req->ctx;
  	unsigned long flags;
  
 -	spin_lock_irqsave(&ctx->completion_lock, flags);
 +	spin_lock_irqsave(&ctx->timeout_lock, flags);
- 	list_del_init(&req->timeout.list);
- 	atomic_set(&req->ctx->cq_timeouts,
- 		atomic_read(&req->ctx->cq_timeouts) + 1);
+ 	prev = req->timeout.head;
+ 	req->timeout.head = NULL;
+ 
+@@ -6372,15 +6394,11 @@ static enum hrtimer_restart io_link_timeout_fn(struct hrtimer *timer)
+ 		if (!req_ref_inc_not_zero(prev))
+ 			prev = NULL;
+ 	}
+-	spin_unlock_irqrestore(&ctx->completion_lock, flags);
++	req->timeout.prev = prev;
 +	spin_unlock_irqrestore(&ctx->timeout_lock, flags);
  
--	io_cqring_fill_event(ctx, req->user_data, -ETIME, 0);
--	io_commit_cqring(ctx);
--	spin_unlock_irqrestore(&ctx->completion_lock, flags);
--
--	io_cqring_ev_posted(ctx);
--	req_set_fail(req);
--	io_put_req(req);
-+	req->io_task_work.func = io_req_task_timeout;
+-	if (prev) {
+-		io_async_find_and_cancel(ctx, req, prev->user_data, -ETIME);
+-		io_put_req_deferred(prev, 1);
+-		io_put_req_deferred(req, 1);
+-	} else {
+-		io_req_complete_post(req, -ETIME, 0);
+-	}
++	req->io_task_work.func = io_req_task_link_timeout;
 +	io_req_task_work_add(req);
  	return HRTIMER_NORESTART;
  }
  
- static struct io_kiocb *io_timeout_extract(struct io_ring_ctx *ctx,
- 					   __u64 user_data)
--	__must_hold(&ctx->completion_lock)
-+	__must_hold(&ctx->timeout_lock)
+@@ -6388,7 +6406,7 @@ static void io_queue_linked_timeout(struct io_kiocb *req)
  {
- 	struct io_timeout_data *io;
- 	struct io_kiocb *req;
-@@ -5499,7 +5512,7 @@ static struct io_kiocb *io_timeout_extract(struct io_ring_ctx *ctx,
- }
- 
- static int io_timeout_cancel(struct io_ring_ctx *ctx, __u64 user_data)
--	__must_hold(&ctx->completion_lock)
-+	__must_hold(&ctx->timeout_lock)
- {
- 	struct io_kiocb *req = io_timeout_extract(ctx, user_data);
- 
-@@ -5514,7 +5527,7 @@ static int io_timeout_cancel(struct io_ring_ctx *ctx, __u64 user_data)
- 
- static int io_timeout_update(struct io_ring_ctx *ctx, __u64 user_data,
- 			     struct timespec64 *ts, enum hrtimer_mode mode)
--	__must_hold(&ctx->completion_lock)
-+	__must_hold(&ctx->timeout_lock)
- {
- 	struct io_kiocb *req = io_timeout_extract(ctx, user_data);
- 	struct io_timeout_data *data;
-@@ -5573,13 +5586,15 @@ static int io_timeout_remove(struct io_kiocb *req, unsigned int issue_flags)
  	struct io_ring_ctx *ctx = req->ctx;
- 	int ret;
  
 -	spin_lock_irq(&ctx->completion_lock);
 +	spin_lock_irq(&ctx->timeout_lock);
- 	if (!(req->timeout_rem.flags & IORING_TIMEOUT_UPDATE))
- 		ret = io_timeout_cancel(ctx, tr->addr);
- 	else
- 		ret = io_timeout_update(ctx, tr->addr, &tr->ts,
- 					io_translate_timeout_mode(tr->flags));
+ 	/*
+ 	 * If the back reference is NULL, then our linked request finished
+ 	 * before we got a chance to setup the timer
+@@ -6400,7 +6418,7 @@ static void io_queue_linked_timeout(struct io_kiocb *req)
+ 		hrtimer_start(&data->timer, timespec64_to_ktime(data->ts),
+ 				data->mode);
+ 	}
+-	spin_unlock_irq(&ctx->completion_lock);
 +	spin_unlock_irq(&ctx->timeout_lock);
- 
-+	spin_lock_irq(&ctx->completion_lock);
- 	io_cqring_fill_event(ctx, req->user_data, ret, 0);
- 	io_commit_cqring(ctx);
- 	spin_unlock_irq(&ctx->completion_lock);
-@@ -5727,7 +5742,9 @@ static void io_async_find_and_cancel(struct io_ring_ctx *ctx,
- 	spin_lock_irqsave(&ctx->completion_lock, flags);
- 	if (ret != -ENOENT)
- 		goto done;
-+	spin_lock(&ctx->timeout_lock);
- 	ret = io_timeout_cancel(ctx, sqe_addr);
-+	spin_unlock(&ctx->timeout_lock);
- 	if (ret != -ENOENT)
- 		goto done;
- 	ret = io_poll_cancel(ctx, sqe_addr, false);
-@@ -5769,7 +5786,9 @@ static int io_async_cancel(struct io_kiocb *req, unsigned int issue_flags)
- 	spin_lock_irq(&ctx->completion_lock);
- 	if (ret != -ENOENT)
- 		goto done;
-+	spin_lock(&ctx->timeout_lock);
- 	ret = io_timeout_cancel(ctx, sqe_addr);
-+	spin_unlock(&ctx->timeout_lock);
- 	if (ret != -ENOENT)
- 		goto done;
- 	ret = io_poll_cancel(ctx, sqe_addr, false);
+ 	/* drop submission reference */
+ 	io_put_req(req);
+ }
 -- 
 2.32.0
 

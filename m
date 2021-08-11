@@ -2,58 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A65EC3E98DC
-	for <lists+io-uring@lfdr.de>; Wed, 11 Aug 2021 21:35:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E4253E98DD
+	for <lists+io-uring@lfdr.de>; Wed, 11 Aug 2021 21:35:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229946AbhHKTgH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 11 Aug 2021 15:36:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44668 "EHLO
+        id S231403AbhHKTgI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 11 Aug 2021 15:36:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44674 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231330AbhHKTgE (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 11 Aug 2021 15:36:04 -0400
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F8BEC061798
-        for <io-uring@vger.kernel.org>; Wed, 11 Aug 2021 12:35:40 -0700 (PDT)
-Received: by mail-pj1-x102f.google.com with SMTP id t7-20020a17090a5d87b029017807007f23so11271429pji.5
-        for <io-uring@vger.kernel.org>; Wed, 11 Aug 2021 12:35:40 -0700 (PDT)
+        with ESMTP id S231436AbhHKTgF (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 11 Aug 2021 15:36:05 -0400
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D7BDC0613D3
+        for <io-uring@vger.kernel.org>; Wed, 11 Aug 2021 12:35:41 -0700 (PDT)
+Received: by mail-pj1-x102b.google.com with SMTP id cp15-20020a17090afb8fb029017891959dcbso11315430pjb.2
+        for <io-uring@vger.kernel.org>; Wed, 11 Aug 2021 12:35:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=L7nEJ4dK4R1jH+/WHvia5muthOy9g65ru5z/3wVHRoE=;
-        b=tv9oqAVejrrGokNmOqO0Ms1rxAVj+vm5DTRXkCXDIf4klCeIBkEvJ4v9RTKTYG01WA
-         iaLLB7o99dK5AjUtzEsxBZkzttLdIAjjtSIW+uyTyiwdB41IxGMfkoU4PCSOIHTNA2EK
-         NhbodCJYjx9KFeGQLxfaaPnsGyLRVMVk+hFukuEpiTdpV87HWiUWWzfP/CxKJBCjdiwf
-         IXQFAPHwzhu0JvR12tb3pNmvAhVSq20IdOALpL8AhfCR2ISSGR1Ay5lxUmnwHR83cyec
-         2Reh+xVaziPbWMdEyAskXuFvzgHUUKcOloNiYL1YRE64KKOtZ22KNrazLzaLn9EElkm/
-         Qj4w==
+        bh=3qJ0cLXPwzuYEK5Ou0Wuu6u7LZDeLGYslbPHi5c/pHk=;
+        b=SfbYM3OkBemATUFedu3RcmN2KNt+PrN56St6aEdv1p2MLCaQbOwLIQA7l9X3Fp3/PL
+         VNbtizRGhOpevgv9CFl9hmXh+McvLeafA3DvzphN/LRlEOuLOYpEDVxxfj4fqwICpaWL
+         mFur6X+dISuCkMsVCvHSDO5q7U7nqlJUxDmjs9G068CVZJYIL9c3qvXeRsvt1FYvfm/t
+         OQO43sqweqGWLQD8/M930uAPaGl3xd0fetGWLU9KJcDIxmizS6CWGqaoqkLYUl4Ch6LJ
+         jTGMfGbY2Tn4zdnYOe28+MnGtHSvSDZx/4MseKVbTNkYJ0enGK37QbxyC2ZupUwzx/dZ
+         /tNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=L7nEJ4dK4R1jH+/WHvia5muthOy9g65ru5z/3wVHRoE=;
-        b=JNgUHCk0OvYdBF7yCU0PfU6x/YnqDY3BiTS4c4yJt05/j97mbmcRY/iIa3o1Y/wxRZ
-         OYYPpoS7TI8PcI7RYmM/S4hXRB0zVbjiDn5XW0Vq+r7xZoV9gCpfT6pFTw66KMcRHt+x
-         hV9PcP+9ZbSVgRia9bt9Ktk1nDTUs5RuUxJEd+w2dX3cZi7FhMiPxeVgtdyxrpGmqF+2
-         iHxpV41TLEwBez0/iT+QHuUmNIXz05vluMfJ45v/0/kDVzFa2XnSFUImReoEqz6hWbKh
-         DHqTwMOHqWiOj23DTMIytvOmhHctEt5Qgbod7FZUPpXGhbVQ0udS4yfUV/mAIvSt3r1V
-         gP8w==
-X-Gm-Message-State: AOAM531wrNh+uxzUE/g7SMVsdik5yo/U4G1QkPpzDD5jCgNe6Fb8yPu6
-        p4q9YjBr+YqctDZqbpSlN+lOxB5rG+TI/j7U
-X-Google-Smtp-Source: ABdhPJx7HRsnH9aZkRlFR+my4k725bNl8KLhfQEjijU09X1B1Ld8cYqbDcQuwAYKhjXdKQUPm5m19Q==
-X-Received: by 2002:a17:90a:2c0c:: with SMTP id m12mr153114pjd.107.1628710539670;
-        Wed, 11 Aug 2021 12:35:39 -0700 (PDT)
+        bh=3qJ0cLXPwzuYEK5Ou0Wuu6u7LZDeLGYslbPHi5c/pHk=;
+        b=CO9F0wtzXarSqLQ1HEyFwJtmlNlx229Q1lVt+SdmFk5Rt2y8WZvFfCyrTDk34/Duea
+         zGHS4P3SBfNZMUGq4KXwuQLJQnqUEXP1dJjfhGSql9sfQtFCoZ1rP5qDagLzytT5kAIT
+         UKToJJkEhrDrJNPbEfOHx1Hd66BwqkcvVjeVBrhbI9p4YGId5c9MV7SCXG5lWxfh2Tbn
+         YZpZf1kKZ/wYXPJbPA/X+uSX4EK4KdL/zG4GLNk5dE6ryZXzqEkaPn8SLOZD6QqiwDqi
+         GM1YOtEe2N3Qk8+azw/wsmYwVFZYy0P40PNtMEvwwJOr0XukB9tz7AaMxYyK6Gh9ZgdT
+         ZrOg==
+X-Gm-Message-State: AOAM530WKLqFhM9SKIWO4j0Qswds03ZwDZ7olwyGn/M0VkxFurJgc6kM
+        1I5ghZ+5cVlFoC/DzN85c0mlG0KJSFMzkXRV
+X-Google-Smtp-Source: ABdhPJw+pjLBfJhRyRCDOoT+oXV+bgpnlxCfXS+YcKGx6KPwhG3u9kPWOt3xTeufIVtCKF26mC90rg==
+X-Received: by 2002:a17:90b:f10:: with SMTP id br16mr3171552pjb.65.1628710540759;
+        Wed, 11 Aug 2021 12:35:40 -0700 (PDT)
 Received: from localhost.localdomain ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id u20sm286487pgm.4.2021.08.11.12.35.38
+        by smtp.gmail.com with ESMTPSA id u20sm286487pgm.4.2021.08.11.12.35.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Aug 2021 12:35:39 -0700 (PDT)
+        Wed, 11 Aug 2021 12:35:40 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     linux-block@vger.kernel.org, hch@infradead.org,
         Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 1/6] bio: optimize initialization of a bio
-Date:   Wed, 11 Aug 2021 13:35:28 -0600
-Message-Id: <20210811193533.766613-2-axboe@kernel.dk>
+Subject: [PATCH 2/6] fs: add kiocb alloc cache flag
+Date:   Wed, 11 Aug 2021 13:35:29 -0600
+Message-Id: <20210811193533.766613-3-axboe@kernel.dk>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210811193533.766613-1-axboe@kernel.dk>
 References: <20210811193533.766613-1-axboe@kernel.dk>
@@ -63,63 +63,27 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The memset() used is measurably slower in targeted benchmarks. Get rid
-of it and fill in the bio manually, in a separate helper.
+If this kiocb can safely use the polled bio allocation cache, then this
+flag must be set.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- block/bio.c | 31 ++++++++++++++++++++++++++++++-
- 1 file changed, 30 insertions(+), 1 deletion(-)
+ include/linux/fs.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/block/bio.c b/block/bio.c
-index 1fab762e079b..0b1025899131 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -238,6 +238,35 @@ static void bio_free(struct bio *bio)
- 	}
- }
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 640574294216..0dcc5de779c9 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -319,6 +319,8 @@ enum rw_hint {
+ /* iocb->ki_waitq is valid */
+ #define IOCB_WAITQ		(1 << 19)
+ #define IOCB_NOIO		(1 << 20)
++/* can use bio alloc cache */
++#define IOCB_ALLOC_CACHE	(1 << 21)
  
-+static inline void __bio_init(struct bio *bio)
-+{
-+	bio->bi_next = NULL;
-+	bio->bi_bdev = NULL;
-+	bio->bi_opf = 0;
-+	bio->bi_flags = bio->bi_ioprio = bio->bi_write_hint = 0;
-+	bio->bi_status = 0;
-+	bio->bi_iter.bi_sector = 0;
-+	bio->bi_iter.bi_size = 0;
-+	bio->bi_iter.bi_idx = 0;
-+	bio->bi_iter.bi_bvec_done = 0;
-+	bio->bi_end_io = NULL;
-+	bio->bi_private = NULL;
-+#ifdef CONFIG_BLK_CGROUP
-+	bio->bi_blkg = NULL;
-+	bio->bi_issue.value = 0;
-+#ifdef CONFIG_BLK_CGROUP_IOCOST
-+	bio->bi_iocost_cost = 0;
-+#endif
-+#endif
-+#ifdef CONFIG_BLK_INLINE_ENCRYPTION
-+	bio->bi_crypt_context = NULL;
-+#endif
-+#ifdef CONFIG_BLK_DEV_INTEGRITY
-+	bio->bi_integrity = NULL;
-+#endif
-+	bio->bi_vcnt = 0;
-+}
-+
- /*
-  * Users of this function have their own bio allocation. Subsequently,
-  * they must remember to pair any call to bio_init() with bio_uninit()
-@@ -246,7 +275,7 @@ static void bio_free(struct bio *bio)
- void bio_init(struct bio *bio, struct bio_vec *table,
- 	      unsigned short max_vecs)
- {
--	memset(bio, 0, sizeof(*bio));
-+	__bio_init(bio);
- 	atomic_set(&bio->__bi_remaining, 1);
- 	atomic_set(&bio->__bi_cnt, 1);
- 
+ struct kiocb {
+ 	struct file		*ki_filp;
 -- 
 2.32.0
 

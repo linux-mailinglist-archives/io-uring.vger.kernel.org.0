@@ -2,138 +2,182 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CC2D53E99DC
-	for <lists+io-uring@lfdr.de>; Wed, 11 Aug 2021 22:48:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 890AE3E99DF
+	for <lists+io-uring@lfdr.de>; Wed, 11 Aug 2021 22:48:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229655AbhHKUs1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 11 Aug 2021 16:48:27 -0400
-Received: from cloud48395.mywhc.ca ([173.209.37.211]:47944 "EHLO
-        cloud48395.mywhc.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229589AbhHKUs0 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 11 Aug 2021 16:48:26 -0400
-Received: from modemcable064.203-130-66.mc.videotron.ca ([66.130.203.64]:54440 helo=[192.168.1.179])
-        by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <olivier@trillion01.com>)
-        id 1mDv8q-000667-4E; Wed, 11 Aug 2021 16:48:00 -0400
-Message-ID: <cbfa38bf5536fe37850823c68ea23f6c93dda154.camel@trillion01.com>
-Subject: Re: [PATCH] coredump: Limit what can interrupt coredumps
-From:   Olivier Langlois <olivier@trillion01.com>
-To:     Tony Battersby <tonyb@cybernetics.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Oleg Nesterov <oleg@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+        id S231743AbhHKUsi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 11 Aug 2021 16:48:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33516 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231796AbhHKUsh (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 11 Aug 2021 16:48:37 -0400
+Received: from mail-qk1-x735.google.com (mail-qk1-x735.google.com [IPv6:2607:f8b0:4864:20::735])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2214C0613D3
+        for <io-uring@vger.kernel.org>; Wed, 11 Aug 2021 13:48:13 -0700 (PDT)
+Received: by mail-qk1-x735.google.com with SMTP id y130so3925332qkb.6
+        for <io-uring@vger.kernel.org>; Wed, 11 Aug 2021 13:48:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:date:message-id:user-agent:mime-version
+         :content-transfer-encoding;
+        bh=zBlBSbAuxRUJW1lgOYptxB+0Lua2LslYZABHs/8DQw8=;
+        b=eUl8wgQjb6gGJUCDXI5DKOavtrZkcpwdJMLOEArw3NWOcmgexnHPccbTvRywxHi2VF
+         LZhJPBU7NvwO9SrJ88aTKEAB03QCnDNJyv0Kdl3dBd4Fzi+i+cJ5TX5/GzYCKLyQU6kn
+         m9vVAUDi5C4Cqw7K/ZN13W3ZGBHOlkBOwZ/cu1OI7p7Y8whLOdJiCMrbfxoCXJTUSYrn
+         NTMVuon/k5gDupO3Q2eWAdaeLdf5NE+eV49IiIYmew0R2IZEXTkfBRcN6kk+er+6YV4p
+         zJ0GgFSw3GQNQrVMVI0KIDdyzSmEjomkORiaNnihPL1Ug3UJG4TbANJeRXA3NWLbNm/V
+         aCqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:date:message-id:user-agent
+         :mime-version:content-transfer-encoding;
+        bh=zBlBSbAuxRUJW1lgOYptxB+0Lua2LslYZABHs/8DQw8=;
+        b=MjcbnjJLuChCLlXxjrNkTVV/ViudWFkfigZ75hV3dQWZds/QPu29Z1uUkgLGHEIfkB
+         umrZ6y8WtIyRcnmp0xUcAJN4IY6MGp8XO3gc6wl1kG46/DQC1ujnYNodpIWngsWhHWl5
+         AeEfr//HgOZkjzPYaEtsMpePbaZPWsfMoerpFagm6V+QE4o6A+kD5tapAzfiRacrVcgf
+         K3BM0SW4kpUAjqDpRXkkybQ8sOHsH/ADFQyfc5r+uPYwTdemzi48kfCBlgHdlUBF3wyM
+         Dk/SKbLJzLIE+2UbDhl6XNlHveFYQuAkDeH7ay2Ix77nkBTZt9LOYoStlr/hSb93CH25
+         F+kQ==
+X-Gm-Message-State: AOAM532aII1QeJIe9305bJgk2NX0yPE0cNrV95v+3KkJ8A1hfXdlFiG/
+        v593hOSXQcFSiA4ecYNywd3O
+X-Google-Smtp-Source: ABdhPJydL0ykzGSU3mSv7znsNMhnb+x6axRiQjqG6NUGWFR49FmN7RGZaFHzTlB9WZgH5isKA3x/lQ==
+X-Received: by 2002:a37:b082:: with SMTP id z124mr964004qke.298.1628714892595;
+        Wed, 11 Aug 2021 13:48:12 -0700 (PDT)
+Received: from localhost (pool-96-237-52-188.bstnma.fios.verizon.net. [96.237.52.188])
+        by smtp.gmail.com with ESMTPSA id k1sm159186qkj.21.2021.08.11.13.48.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Aug 2021 13:48:12 -0700 (PDT)
+Subject: [RFC PATCH v2 0/9] Add LSM access controls and auditing to io_uring
+From:   Paul Moore <paul@paul-moore.com>
+To:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
         Jens Axboe <axboe@kernel.dk>,
-        "Pavel Begunkov>" <asml.silence@gmail.com>
-Date:   Wed, 11 Aug 2021 16:47:58 -0400
-In-Reply-To: <8af373ec-9609-35a4-f185-f9bdc63d39b7@cybernetics.com>
-References: <CAHk-=wjC7GmCHTkoz2_CkgSc_Cgy19qwSQgJGXz+v2f=KT3UOw@mail.gmail.com>
-         <198e912402486f66214146d4eabad8cb3f010a8e.camel@trillion01.com>
-         <87eeda7nqe.fsf@disp2133>
-         <b8434a8987672ab16f9fb755c1fc4d51e0f4004a.camel@trillion01.com>
-         <87pmwt6biw.fsf@disp2133> <87czst5yxh.fsf_-_@disp2133>
-         <CAHk-=wiax83WoS0p5nWvPhU_O+hcjXwv6q3DXV8Ejb62BfynhQ@mail.gmail.com>
-         <87y2bh4jg5.fsf@disp2133>
-         <CAHk-=wjPiEaXjUp6PTcLZFjT8RrYX+ExtD-RY3NjFWDN7mKLbw@mail.gmail.com>
-         <87sg1p4h0g.fsf_-_@disp2133> <20210614141032.GA13677@redhat.com>
-         <87pmwmn5m0.fsf@disp2133>
-         <4d93d0600e4a9590a48d320c5a7dd4c54d66f095.camel@trillion01.com>
-         <8af373ec-9609-35a4-f185-f9bdc63d39b7@cybernetics.com>
-Organization: Trillion01 Inc
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.40.3 
+        Pavel Begunkov <asml.silence@gmail.com>
+Date:   Wed, 11 Aug 2021 16:48:11 -0400
+Message-ID: <162871480969.63873.9434591871437326374.stgit@olly>
+User-Agent: StGit/1.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - trillion01.com
-X-Get-Message-Sender-Via: cloud48395.mywhc.ca: authenticated_id: olivier@trillion01.com
-X-Authenticated-Sender: cloud48395.mywhc.ca: olivier@trillion01.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, 2021-08-10 at 17:48 -0400, Tony Battersby wrote:
-> > 
-> I just ran into this problem also - coredumps from an io_uring
-> program
-> to a pipe are truncated.  But I am using kernel 5.10.57, which does
-> NOT
-> have commit 12db8b690010 ("entry: Add support for TIF_NOTIFY_SIGNAL")
-> or
-> commit 06af8679449d ("coredump: Limit what can interrupt
-> coredumps"). 
-> Kernel 5.4 works though, so I bisected the problem to commit
-> f38c7e3abfba ("io_uring: ensure async buffered read-retry is setup
-> properly") in kernel 5.9.  Note that my io_uring program uses only
-> async
-> buffered reads, which may be why this particular commit makes a
-> difference to my program.
-> 
-> My io_uring program is a multi-purpose long-running program with many
-> threads.  Most threads don't use io_uring but a few of them do. 
-> Normally, my core dumps are piped to a program so that they can be
-> compressed before being written to disk, but I can also test writing
-> the
-> core dumps directly to disk.  This is what I have found:
-> 
-> *) Unpatched 5.10.57: if a thread that doesn't use io_uring triggers
-> a
-> coredump, the core file is written correctly, whether it is written
-> to
-> disk or piped to a program, even if another thread is using io_uring
-> at
-> the same time.
-> 
-> *) Unpatched 5.10.57: if a thread that uses io_uring triggers a
-> coredump, the core file is truncated, whether written directly to
-> disk
-> or piped to a program.
-> 
-> *) 5.10.57+backport 06af8679449d: if a thread that uses io_uring
-> triggers a coredump, and the core is written directly to disk, then
-> it
-> is written correctly.
-> 
-> *) 5.10.57+backport 06af8679449d: if a thread that uses io_uring
-> triggers a coredump, and the core is piped to a program, then it is
-> truncated.
-> 
-> *) 5.10.57+revert f38c7e3abfba: core dumps are written correctly,
-> whether written directly to disk or piped to a program.
-> 
-> Tony Battersby
-> Cybernetics
-> 
-Tony,
+Draft #2 of the patchset which brings auditing and proper LSM access
+controls to the io_uring subsystem.  The original patchset was posted
+in late May and can be found via lore using the link below:
 
-this is super interesting details. I'm leaving for few days so I will
-not be able to look into it until I am back but here is my
-interpretation of your findings:
+https://lore.kernel.org/linux-security-module/162163367115.8379.8459012634106035341.stgit@sifl/
 
-f38c7e3abfba makes it more likely that your task ends up in a fd read
-wait queue. Previously the io_uring req queuing was failing and
-returning EAGAIN. Now it ends up using io uring fast poll.
+This draft should incorporate all of the feedback from the original
+posting as well as a few smaller things I noticed while playing
+further with the code.  The big change is of course the selective
+auditing in the io_uring op servicing, but that has already been
+discussed quite a bit in the original thread so I won't go into
+detail here; the important part is that we found a way to move
+forward and this draft captures that.  For those of you looking to
+play with these patches, they are based on Linus' v5.14-rc5 tag and
+on my test system they boot and appear to function without problem;
+they pass the selinux-testsuite and audit-testsuite and I have not
+noticed any regressions in the normal use of the system.  If you want
+to get a copy of these patches straight from git you can use the
+"working-io_uring" branch in the repo below:
 
-When the core dump gets written through a pipe, pipe_write must block
-waiting for some event. If the task gets waken up by the io_uring wait
-queue entry instead, it must somehow make pipe_write fails.
+git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
 
-So the problem must be a mix of TIF_NOTIFY_SIGNAL and the fact that
-io_uring wait queue entries aren't cleaned up while doing the core
-dump.
+Beyond the existing test suite tests mentioned above, I've cobbled
+together some very basic, very crude tests to exercise some of the
+things I care about from a LSM/audit perspective.  These tests are
+pretty awful (I'm not kidding), but they might be helpful for the
+other LSM/audit developers who want to test things:
 
-I have a new modif to try out. I'll hopefully be able to submit a patch
-to fix that once I come back (I cannot do it now or else, I'll never
-leave ;-))
+https://drop.paul-moore.com/90.kUgq
+
+There are currently two tests: 'iouring.2' and 'iouring.3';
+'iouring.1' was lost in a misguided and overzealous 'rm' command.
+The first test is standalone and basically tests the SQPOLL
+functionality while the second tests sharing io_urings across process
+boundaries and the credential/personality sharing mechanism.  The
+console output of both tests isn't particularly useful, the more
+interesting bits are in the audit and LSM specific logs.  The
+'iouring.2' command requires no special arguments to run but the
+'iouring.3' test is split into a "server" and "client"; the server
+should be run without argument:
+
+  % ./iouring.3s
+  >>> server started, pid = 11678
+  >>> memfd created, fd = 3
+  >>> io_uring created; fd = 5, creds = 1
+
+... while the client should be run with two arguments: the first is
+the PID of the server process, the second is the "memfd" fd number:
+
+  % ./iouring.3c 11678 3
+  >>> client started, server_pid = 11678 server_memfd = 3
+  >>> io_urings = 5 (server) / 5 (client)
+  >>> io_uring ops using creds = 1
+  >>> async op result: 36
+  >>> async op result: 36
+  >>> async op result: 36
+  >>> async op result: 36
+  >>> START file contents
+  What is this life if, full of care,
+  we have no time to stand and stare.
+  >>> END file contents
+
+The tests were hacked together from various sources online,
+attribution and links to additional info can be found in the test
+sources, but I expect these tests to die a fiery death in the not
+to distant future as I work to add some proper tests to the SELinux
+and audit test suites.
+
+As I believe these patches should spend a full -rcX cycle in
+linux-next, my current plan is to continue to solicit feedback on
+these patches while they undergo additional testing (next up is
+verification of the audit filter code for io_uring).  Assuming no
+critical issues are found on the mailing lists or during testing, I
+will post a proper patchset later with the idea of merging it into
+selinux/next after the upcoming merge window closes.
+
+Any comments, feedback, etc. are welcome.
+
+---
+
+Casey Schaufler (1):
+      Smack: Brutalist io_uring support with debug
+
+Paul Moore (8):
+      audit: prepare audit_context for use in calling contexts beyond
+             syscalls
+      audit,io_uring,io-wq: add some basic audit support to io_uring
+      audit: dev/test patch to force io_uring auditing
+      audit: add filtering for io_uring records
+      fs: add anon_inode_getfile_secure() similar to
+          anon_inode_getfd_secure()
+      io_uring: convert io_uring to the secure anon inode interface
+      lsm,io_uring: add LSM hooks to io_uring
+      selinux: add support for the io_uring access controls
 
 
+ fs/anon_inodes.c                    |  29 ++
+ fs/io-wq.c                          |   4 +
+ fs/io_uring.c                       |  69 +++-
+ include/linux/anon_inodes.h         |   4 +
+ include/linux/audit.h               |  26 ++
+ include/linux/lsm_hook_defs.h       |   5 +
+ include/linux/lsm_hooks.h           |  13 +
+ include/linux/security.h            |  16 +
+ include/uapi/linux/audit.h          |   4 +-
+ kernel/audit.h                      |   7 +-
+ kernel/audit_tree.c                 |   3 +-
+ kernel/audit_watch.c                |   3 +-
+ kernel/auditfilter.c                |  15 +-
+ kernel/auditsc.c                    | 483 +++++++++++++++++++-----
+ security/security.c                 |  12 +
+ security/selinux/hooks.c            |  34 ++
+ security/selinux/include/classmap.h |   2 +
+ security/smack/smack_lsm.c          |  64 ++++
+ 18 files changed, 678 insertions(+), 115 deletions(-)

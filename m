@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DD27E3E97A5
-	for <lists+io-uring@lfdr.de>; Wed, 11 Aug 2021 20:29:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 076AD3E97A6
+	for <lists+io-uring@lfdr.de>; Wed, 11 Aug 2021 20:29:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230143AbhHKS3g (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 11 Aug 2021 14:29:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57430 "EHLO
+        id S230182AbhHKS3h (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 11 Aug 2021 14:29:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230147AbhHKS3g (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 11 Aug 2021 14:29:36 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AE9AC061765
-        for <io-uring@vger.kernel.org>; Wed, 11 Aug 2021 11:29:12 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id k38-20020a05600c1ca6b029025af5e0f38bso5082699wms.5
-        for <io-uring@vger.kernel.org>; Wed, 11 Aug 2021 11:29:12 -0700 (PDT)
+        with ESMTP id S230147AbhHKS3h (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 11 Aug 2021 14:29:37 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68B65C061765
+        for <io-uring@vger.kernel.org>; Wed, 11 Aug 2021 11:29:13 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id x12so4344948wrr.11
+        for <io-uring@vger.kernel.org>; Wed, 11 Aug 2021 11:29:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=74ouj1ln5E2KdceXQIdCiGETqRMH5e5DUG2usbnprbg=;
-        b=XFRWy087UcWt8JqLx0e7AQ0l7N5byWye6WIgQ7QNPj35z4Q9WQiHkIvYR/W7jB91Tj
-         jsEqq1jj12Pvb9S+ROMUiIycf1eTl57W1QtmYNN5ypabtXxu3svPb8wdj1KXQ8/pMRIy
-         SIuPlL26otezsNKVxOCW9VnRZs0h/25++A8uPwUlgNQuAl4SEgVIQeWXCPJZlhTCaUuJ
-         hNw4/+txbte6aMQuaotlpLE0G9kazZhFL2pieZ5TuIdv74PwOeYY4TVTH/XKk9KrxxRR
-         DKOGWl3TPnViWQm7IcZ/hJ+kDR9Of2V60qhe4YqMM7b74VSLknCLju9oUpfn+QQIhFTm
-         9uPQ==
+        bh=Me5ETaFy2e8ulxN76hpi3bGyOG7/e7KwQ+wt4g9oXfg=;
+        b=rk0fLpYTNcdsi+0jb5gxBG+B2r8CfTkMd/5KgPkfFbmm1ChuI+Td3KmPzQoGhlSXw6
+         R9dwhpMveBq2p0fnmXdqQIgpEaa8XSrARZ1zn1XbMlGQ14Mhu86Zz7R2C6hBb2xfMS9S
+         ylqvfenBVIbyGOS+RQWQ2liO5avLrE01eH9wwgM2bUQV6MxFunrrb/Us45R5TNdjGEGO
+         SHf4ydbTO/XCjYrPVmHAemnNhjlNlWYqii7b6C+PolQWVt1gbI9EcGl8Q36kiULaGNnt
+         xHZkThwTFCJ01PK3b9laFU/TXA9OaF9jcf5xKZKdKjBHddGeqRn6mvAf8rkA2okREej9
+         wzNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=74ouj1ln5E2KdceXQIdCiGETqRMH5e5DUG2usbnprbg=;
-        b=ukXjEMrWN3fLeUF2PsTZIv2jlTcG9NTfZWjQxdcejsa99+kPESdVZUd6hSy/SvQVVa
-         g4JP8WA7mEOLb/TyA1HSbwnDTEVrqjo4Kp/yf2k/ez57BttQRFxqSojILo7Ks0liyJPn
-         I4bCUmHVHqedjr2+kR2YAB2HOZXhmiloMe8hTH5NkpyIyN81X/cH1v10tGI8deHBKiBM
-         cptmVij0RID8b0NBww6xGuWLzS8TvuLtsD4K+p3VjnwALi9N0Rg33jTImVNsjE7hQLoG
-         3IO6JWvbq7R28uGDTfRryOQwx0Y83ULIipfaMjIkfiFJWTUoxkoeldf+wApT89IqP+Jf
-         /opQ==
-X-Gm-Message-State: AOAM5311QY2Wy3xjAk/32Uaes4ee9FSK2akvLoWih/cs8F1lRa6TVmG1
-        jRVfqLv0O3aGLvm9julOcOakTWLB2Wc=
-X-Google-Smtp-Source: ABdhPJzJzxSRL0mOdEEJIFViE0buALkH3Sqvi9Zu0kqZB4SrcTUMz9cArL1L+6AeHJCI+rTN8VNvGA==
-X-Received: by 2002:a1c:7203:: with SMTP id n3mr11668472wmc.45.1628706550960;
-        Wed, 11 Aug 2021 11:29:10 -0700 (PDT)
+        bh=Me5ETaFy2e8ulxN76hpi3bGyOG7/e7KwQ+wt4g9oXfg=;
+        b=uOcBq3Ob2lTEc00dUtzwYu+Fl4opOB0QXjq7PczQyH33OKsRV3sSJ3A7ZmAtCC/Iri
+         rjYghHsqvg8hsWceqTnzhhPbcMBS1IpDnjcYkdZVI3xLYwZDVoEhTa/htydoMIqpX+NN
+         T29oh2b3dhGnAXs0qJTZFYtp6UIz/S3WfbpDtyaMO7Spf4ULtgrX1ETzOhYHQe8WAoZ/
+         +t07QC88OzW3CARpDWd51Y7TgScXDGqSJXJpl+QuwFlLgZFeWdfjkNgzutBfyHfCBCIj
+         pjEg+bc4+mVnxmbWALNr9dwVNRiHzGpgrOyQY085asFJ3HqMb5thtfsjcIU2td3oNwhm
+         v7DQ==
+X-Gm-Message-State: AOAM532GBmCG6f2WfQPrLROEx8UEirFEJhMc9g7S7crJ49lkiJRW8d9n
+        OSjAgfODITGh91m9L7nzQyUbj9Xak/M=
+X-Google-Smtp-Source: ABdhPJz8hFDIQBGA6OI4lWcegAqoElqm/ptSUwZJI0qAEedhXd8WJ0AWvq47T7bAlpSa03niuCx54w==
+X-Received: by 2002:a05:6000:12cf:: with SMTP id l15mr21804177wrx.381.1628706552013;
+        Wed, 11 Aug 2021 11:29:12 -0700 (PDT)
 Received: from localhost.localdomain ([148.252.133.97])
-        by smtp.gmail.com with ESMTPSA id 129sm867wmz.26.2021.08.11.11.29.10
+        by smtp.gmail.com with ESMTPSA id 129sm867wmz.26.2021.08.11.11.29.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Aug 2021 11:29:10 -0700 (PDT)
+        Wed, 11 Aug 2021 11:29:11 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH v2 3/5] io_uring: remove submission references
-Date:   Wed, 11 Aug 2021 19:28:29 +0100
-Message-Id: <6b68f1c763229a590f2a27148aee77767a8d7750.1628705069.git.asml.silence@gmail.com>
+Subject: [PATCH v2 4/5] io_uring: skip request refcounting
+Date:   Wed, 11 Aug 2021 19:28:30 +0100
+Message-Id: <8b204b6c5f6643062270a1913d6d3a7f8f795fd9.1628705069.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <cover.1628705069.git.asml.silence@gmail.com>
 References: <cover.1628705069.git.asml.silence@gmail.com>
@@ -61,175 +61,131 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Requests are by default given with two references, submission and
-completion. Completion references are straightforward, they represent
-request ownership and are put when a request is completed or so.
-Submission references are a bit more trickier. They're needed when
-io_issue_sqe() followed deep into the submission stack (e.g. in fs,
-block, drivers, etc.), request may have given away for concurrent
-execution or already completed, and the code unwinding back to
-io_issue_sqe() may be accessing some pieces of our requests, e.g.
-file or iov.
+As submission references are gone, there is only one initial reference
+left. Instead of actually doing atomic refcounting, add a flag
+indicating whether we're going to take more refs or doing any other sync
+magic. The flag should be set before the request may get used in
+parallel.
 
-Now, we prevent such async/in-depth completions by pushing requests
-through task_work. Punting to io-wq is also done through task_works,
-apart from a couple of cases with a pretty well known context. So,
-there're two cases:
-1) io_issue_sqe() from the task context and protected by ->uring_lock.
-Either requests return back to io_uring or handed to task_work, which
-won't be executed because we're currently controlling that task. So,
-we can be sure that requests are staying alive all the time and we don't
-need submission references to pin them.
-
-2) io_issue_sqe() from io-wq, which doesn't hold the mutex. The role of
-submission reference is played by io-wq reference, which is put by
-io_wq_submit_work(). Hence, it should be fine.
-
-Considering that, we can carefully kill the submission reference.
+Together with the previous patch it saves 2 refcount atomics per request
+for IOPOLL and IRQ completions, and 1 atomic per req for inline
+completions, with some exceptions. In particular, currently, there are
+three cases, when the refcounting have to be enabled:
+- Polling, including apoll. Because double poll entries takes a ref.
+  Might get relaxed in the near future.
+- Link timeouts, enabled for both, the timeout and the request it's
+  bound to, because they work in-parallel and we need to synchronise
+  to cancel one of them on completion.
+- When a request gets in io-wq, because it doesn't hold uring_lock and
+  we need guarantees of submission references.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 37 ++++++++++++++-----------------------
- 1 file changed, 14 insertions(+), 23 deletions(-)
+ fs/io_uring.c | 24 +++++++++++++++++++++++-
+ 1 file changed, 23 insertions(+), 1 deletion(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index f2aa26ba34f7..9529dae2c46e 100644
+index 9529dae2c46e..374e9da26106 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -1699,7 +1699,6 @@ static inline void io_req_complete(struct io_kiocb *req, long res)
- static void io_req_complete_failed(struct io_kiocb *req, long res)
+@@ -710,6 +710,7 @@ enum {
+ 	REQ_F_REISSUE_BIT,
+ 	REQ_F_DONT_REISSUE_BIT,
+ 	REQ_F_CREDS_BIT,
++	REQ_F_REFCOUNT_BIT,
+ 	/* keep async read/write and isreg together and in order */
+ 	REQ_F_NOWAIT_READ_BIT,
+ 	REQ_F_NOWAIT_WRITE_BIT,
+@@ -765,6 +766,8 @@ enum {
+ 	REQ_F_ISREG		= BIT(REQ_F_ISREG_BIT),
+ 	/* has creds assigned */
+ 	REQ_F_CREDS		= BIT(REQ_F_CREDS_BIT),
++	/* skip refcounting if not set */
++	REQ_F_REFCOUNT		= BIT(REQ_F_REFCOUNT_BIT),
+ };
+ 
+ struct async_poll {
+@@ -1087,26 +1090,40 @@ EXPORT_SYMBOL(io_uring_get_socket);
+ 
+ static inline bool req_ref_inc_not_zero(struct io_kiocb *req)
  {
- 	req_set_fail(req);
--	io_put_req(req);
- 	io_req_complete_post(req, res, 0);
++	WARN_ON_ONCE(!(req->flags & REQ_F_REFCOUNT));
+ 	return atomic_inc_not_zero(&req->refs);
  }
  
-@@ -1754,7 +1753,14 @@ static bool io_flush_cached_reqs(struct io_ring_ctx *ctx)
- 	return nr != 0;
- }
- 
-+/*
-+ * A request might get retired back into the request caches even before opcode
-+ * handlers and io_issue_sqe() are done with it, e.g. inline completion path.
-+ * Because of that, io_alloc_req() should be called only under ->uring_lock
-+ * and with extra caution to not get a request that is still worked on.
-+ */
- static struct io_kiocb *io_alloc_req(struct io_ring_ctx *ctx)
-+	__must_hold(&req->ctx->uring_lock)
+ static inline bool req_ref_put_and_test(struct io_kiocb *req)
  {
- 	struct io_submit_state *state = &ctx->submit_state;
- 	gfp_t gfp = GFP_KERNEL | __GFP_NOWARN;
-@@ -1869,8 +1875,6 @@ static void io_fail_links(struct io_kiocb *req)
- 
- 		trace_io_uring_fail_link(req, link);
- 		io_cqring_fill_event(link->ctx, link->user_data, -ECANCELED, 0);
--
--		io_put_req(link);
- 		io_put_req_deferred(link);
- 		link = nxt;
- 	}
-@@ -2151,8 +2155,6 @@ static void io_submit_flush_completions(struct io_ring_ctx *ctx)
- 	for (i = 0; i < nr; i++) {
- 		struct io_kiocb *req = state->compl_reqs[i];
- 
--		/* submission and completion refs */
--		io_put_req(req);
- 		if (req_ref_put_and_test(req))
- 			io_req_free_batch(&rb, req, &ctx->submit_state);
- 	}
-@@ -2257,7 +2259,6 @@ static void io_iopoll_complete(struct io_ring_ctx *ctx, unsigned int *nr_events,
- 		if (READ_ONCE(req->result) == -EAGAIN && resubmit &&
- 		    !(req->flags & REQ_F_DONT_REISSUE)) {
- 			req->iopoll_completed = 0;
--			req_ref_get(req);
- 			io_req_task_queue_reissue(req);
- 			continue;
- 		}
-@@ -2755,7 +2756,6 @@ static void kiocb_done(struct kiocb *kiocb, ssize_t ret,
- 	if (check_reissue && (req->flags & REQ_F_REISSUE)) {
- 		req->flags &= ~REQ_F_REISSUE;
- 		if (io_resubmit_prep(req)) {
--			req_ref_get(req);
- 			io_req_task_queue_reissue(req);
- 		} else {
- 			int cflags = 0;
-@@ -3181,9 +3181,6 @@ static int io_async_buf_func(struct wait_queue_entry *wait, unsigned mode,
- 
- 	req->rw.kiocb.ki_flags &= ~IOCB_WAITQ;
- 	list_del_init(&wait->entry);
--
--	/* submit ref gets dropped, acquire a new one */
--	req_ref_get(req);
- 	io_req_task_queue(req);
- 	return 1;
++	if (likely(!(req->flags & REQ_F_REFCOUNT)))
++		return true;
++
+ 	WARN_ON_ONCE(req_ref_zero_or_close_to_overflow(req));
+ 	return atomic_dec_and_test(&req->refs);
  }
-@@ -5235,10 +5232,6 @@ static bool io_poll_remove_one(struct io_kiocb *req)
- 		io_cqring_fill_event(req->ctx, req->user_data, -ECANCELED, 0);
- 		io_commit_cqring(req->ctx);
- 		req_set_fail(req);
--
--		/* non-poll requests have submit ref still */
--		if (req->opcode != IORING_OP_POLL_ADD)
--			io_put_req(req);
- 		io_put_req_deferred(req);
- 	}
- 	return do_complete;
-@@ -6273,6 +6266,9 @@ static void io_wq_submit_work(struct io_wq_work *work)
+ 
+ static inline void req_ref_put(struct io_kiocb *req)
+ {
++	WARN_ON_ONCE(!(req->flags & REQ_F_REFCOUNT));
+ 	WARN_ON_ONCE(req_ref_put_and_test(req));
+ }
+ 
+ static inline void req_ref_get(struct io_kiocb *req)
+ {
++	WARN_ON_ONCE(!(req->flags & REQ_F_REFCOUNT));
+ 	WARN_ON_ONCE(req_ref_zero_or_close_to_overflow(req));
+ 	atomic_inc(&req->refs);
+ }
+ 
++static inline void io_req_refcount(struct io_kiocb *req)
++{
++	if (!(req->flags & REQ_F_REFCOUNT)) {
++		req->flags |= REQ_F_REFCOUNT;
++		atomic_set(&req->refs, 1);
++	}
++}
++
+ static inline void io_req_set_rsrc_node(struct io_kiocb *req)
+ {
+ 	struct io_ring_ctx *ctx = req->ctx;
+@@ -5185,6 +5202,7 @@ static int io_arm_poll_handler(struct io_kiocb *req)
+ 	req->apoll = apoll;
+ 	req->flags |= REQ_F_POLLED;
+ 	ipt.pt._qproc = io_async_queue_proc;
++	io_req_refcount(req);
+ 
+ 	ret = __io_arm_poll_handler(req, &apoll->poll, &ipt, mask,
+ 					io_async_wake);
+@@ -5375,6 +5393,7 @@ static int io_poll_add_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe
+ 	if (flags & ~IORING_POLL_ADD_MULTI)
+ 		return -EINVAL;
+ 
++	io_req_refcount(req);
+ 	poll->events = io_poll_parse_events(sqe, flags);
+ 	return 0;
+ }
+@@ -6266,6 +6285,7 @@ static void io_wq_submit_work(struct io_wq_work *work)
  	struct io_kiocb *timeout;
  	int ret = 0;
  
-+	/* will be dropped by ->io_free_work() after returning to io-wq */
-+	req_ref_get(req);
-+
- 	timeout = io_prep_linked_timeout(req);
- 	if (timeout)
- 		io_queue_linked_timeout(timeout);
-@@ -6295,11 +6291,8 @@ static void io_wq_submit_work(struct io_wq_work *work)
- 	}
++	io_req_refcount(req);
+ 	/* will be dropped by ->io_free_work() after returning to io-wq */
+ 	req_ref_get(req);
  
- 	/* avoid locking problems by failing it from a clean context */
--	if (ret) {
--		/* io-wq is going to take one down */
--		req_ref_get(req);
-+	if (ret)
- 		io_req_task_queue_fail(req, ret);
--	}
- }
- 
- static inline struct io_fixed_file *io_fixed_file_slot(struct io_file_table *table,
-@@ -6441,6 +6434,8 @@ static struct io_kiocb *io_prep_linked_timeout(struct io_kiocb *req)
- 	    nxt->opcode != IORING_OP_LINK_TIMEOUT)
+@@ -6435,7 +6455,10 @@ static struct io_kiocb *io_prep_linked_timeout(struct io_kiocb *req)
  		return NULL;
  
-+	/* linked timeouts should have two refs once prep'ed */
-+	req_ref_get(nxt);
+ 	/* linked timeouts should have two refs once prep'ed */
++	io_req_refcount(req);
++	io_req_refcount(nxt);
+ 	req_ref_get(nxt);
++
  	nxt->timeout.head = req;
  	nxt->flags |= REQ_F_LTIMEOUT_ACTIVE;
  	req->flags |= REQ_F_LINK_TIMEOUT;
-@@ -6461,7 +6456,6 @@ static void __io_queue_sqe(struct io_kiocb *req)
- 	 * doesn't support non-blocking read/write attempts
- 	 */
- 	if (likely(!ret)) {
--		/* drop submission reference */
- 		if (req->flags & REQ_F_COMPLETE_INLINE) {
- 			struct io_ring_ctx *ctx = req->ctx;
- 			struct io_submit_state *state = &ctx->submit_state;
-@@ -6469,8 +6463,6 @@ static void __io_queue_sqe(struct io_kiocb *req)
- 			state->compl_reqs[state->compl_nr++] = req;
- 			if (state->compl_nr == ARRAY_SIZE(state->compl_reqs))
- 				io_submit_flush_completions(ctx);
--		} else {
--			io_put_req(req);
- 		}
- 	} else if (ret == -EAGAIN && !(req->flags & REQ_F_NOWAIT)) {
- 		switch (io_arm_poll_handler(req)) {
-@@ -6550,8 +6542,7 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
+@@ -6542,7 +6565,6 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
  	req->user_data = READ_ONCE(sqe->user_data);
  	req->file = NULL;
  	req->fixed_rsrc_refs = NULL;
--	/* one is dropped after submission, the other at completion */
--	atomic_set(&req->refs, 2);
-+	atomic_set(&req->refs, 1);
+-	atomic_set(&req->refs, 1);
  	req->task = current;
  
  	/* enforce forwards compatibility on users */

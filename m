@@ -2,99 +2,75 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 908953E98E6
-	for <lists+io-uring@lfdr.de>; Wed, 11 Aug 2021 21:35:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C4D33E98EA
+	for <lists+io-uring@lfdr.de>; Wed, 11 Aug 2021 21:40:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231685AbhHKTgL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 11 Aug 2021 15:36:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44686 "EHLO
+        id S230270AbhHKTlV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 11 Aug 2021 15:41:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231739AbhHKTgJ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 11 Aug 2021 15:36:09 -0400
-Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A4BAC0613D3
-        for <io-uring@vger.kernel.org>; Wed, 11 Aug 2021 12:35:45 -0700 (PDT)
-Received: by mail-pl1-x634.google.com with SMTP id d17so4020097plr.12
-        for <io-uring@vger.kernel.org>; Wed, 11 Aug 2021 12:35:45 -0700 (PDT)
+        with ESMTP id S229655AbhHKTlU (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 11 Aug 2021 15:41:20 -0400
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBCE9C061765
+        for <io-uring@vger.kernel.org>; Wed, 11 Aug 2021 12:40:56 -0700 (PDT)
+Received: by mail-pl1-x633.google.com with SMTP id f3so4075275plg.3
+        for <io-uring@vger.kernel.org>; Wed, 11 Aug 2021 12:40:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=CPHR9+/srqubnx1IylV7gQnOmmOqOlKCpGfW9/b0t68=;
-        b=Gn68Gv0X+76XfYrCArMrLcLPqzknELSJKAuyrHdrGzix21DE/eqSRfrWSFN4SWJaCg
-         +JMXaKuFKpMGx0jUV7s64y8UY/0n+9/3xaN2ZQpxjcDgj7wm/KsXdfFfAZO+F0bfMRKy
-         YDZQcSKvqvXYeTmYdAl9KshM1rtEGzvRC4Ad9QY6QlH9tZCW6qUP/Y0gVNCDlrNOX63g
-         2Q1sUqPz1wd0krTQK5B4gR21aJRh6IFREdrxprE1LuFXzLUVwHpLwymHVOgNn26huGy3
-         M1iqqJ+JlVpZmsyRCYGmV2xRtaG4AyZiElS1T3Ld4n+Q0OBx2nb9arZGaOyAmOwwDYvj
-         exXQ==
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=liF4dEwdnHuNB+WXFNY8M9rnSTmZKQ1FmEujE7LGLZc=;
+        b=x0fJcEbXPI+uT4caAl8yAw7X7iimxLcZ04+85w6yZgqyk0NIuw/T8lHxDN0Zyay7cq
+         sLBUDB10BHMpm+XTyYut2BM2Phns708MjsURQJZH1aKMN4uze0LKQmD0rIBU1gNgFv1B
+         0bNxJnposzasPbtIi4K/Pmh3LYIrhjxU2Pm7uprYNP6THIX9Rx1Uv7Mh7XM9YTwrWK48
+         QRV8y4r3bD/EnqoOZ4Peox8KXDxlk92g5pr34Y/jmewy+iPSAm/i9cNgSYBeGRgrg2Cs
+         yrim6qBeSfGLhN1np0W0fsXNykQZKwO0mDklH22Ku5ndzJ3wjbfwMNxf95BS06dwruFQ
+         2ozg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=CPHR9+/srqubnx1IylV7gQnOmmOqOlKCpGfW9/b0t68=;
-        b=WMEoiiAnWxIWT7WMEjnDP77O+FHB8m6lJgqOZSVKj7CzTKR017wk78euKm5dP/dMc4
-         pXAAAE8FwI31n1GZCr9D8muJ6xJFEPNsfznhRKWROkpKtqHVNpcKsdIcZ/kpy+/49IO0
-         nhsKmuLPnNYFOwH03uh+zb10rJV/Hv4rn0ULUJ6/1DGJhfzLF14FOSZ/iOSc0l0ba6eb
-         tjkHCtE7IyM0hbPGd2vZ9HeU1Vf9sqlNT50W6lajh2JQmlRWfn+snlzNbL8vfNhd84fh
-         PXp7l6N5RqMi/kona1T7YL4ymfrWxO58o57uWuSm1lqBi+crxPcLvjcjU5NEgpjioKy7
-         MTvw==
-X-Gm-Message-State: AOAM532W1sjxRHixye7B1LLd4P1j7JtHfuHIumbMzvcTJFjOO9lczo5U
-        jCAp4GbkNCZAUlb6RqVlXK7bnxG7pKUu8Wm4
-X-Google-Smtp-Source: ABdhPJwtoG2aWyj8p2ouXV0qKbPEkI2k8GUibvKupEVpZmlq5szola+EWrLsdd7T7R6joLqN3r5/lg==
-X-Received: by 2002:a05:6a00:888:b029:3c3:ff1:38e with SMTP id q8-20020a056a000888b02903c30ff1038emr317565pfj.17.1628710544550;
-        Wed, 11 Aug 2021 12:35:44 -0700 (PDT)
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=liF4dEwdnHuNB+WXFNY8M9rnSTmZKQ1FmEujE7LGLZc=;
+        b=KERInygwMa0I/pZwAMeppUqNg3hHTSa52iEsFwXWSCT+WvATKEpgnQv4kSCMm0wgsr
+         wwIQBLw+DXWkNAKXJguPZ2QhSNzier6rjAea0Wm8kLOR7HW+bX1q1fROXA4XyZFZvo9T
+         PWlIHBdRu6sys9/UsLC4uSJwdLG2vArOokgrllHNGrDVqDxHulY8+YVnuGXXjVIFfI9D
+         4cpY2Iib5KRYJduj/PUk+5qJlMEsSE/MpKtQt97900EwE43hRTYsK3WhAY/czsCLsen4
+         X1Kw+uXJYJyi86edQgMQjzayE7YYYMNo2OyTwASQdmLo59E9zjO7zMkr4yYgZh1mRvIy
+         iLTA==
+X-Gm-Message-State: AOAM533SAS4Alk6lxXVWHzCvP1suLgzqHLQFmub+rXI37HNk2tEP/Mzp
+        qOvmVpEDYIIP38JlD7RtbpGsFeApEEulcrt9
+X-Google-Smtp-Source: ABdhPJw4VRUx0OmIXx/P0nukRuQ5SS7xSxyJgzMd2GQRVQXmBkPRt3o7h2Icgjve7ckLBhg2qAjUUQ==
+X-Received: by 2002:aa7:8503:0:b029:3bb:6253:345d with SMTP id v3-20020aa785030000b02903bb6253345dmr375139pfn.35.1628710856013;
+        Wed, 11 Aug 2021 12:40:56 -0700 (PDT)
 Received: from localhost.localdomain ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id u20sm286487pgm.4.2021.08.11.12.35.43
+        by smtp.gmail.com with ESMTPSA id y2sm336118pfe.146.2021.08.11.12.40.55
+        for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Aug 2021 12:35:44 -0700 (PDT)
+        Wed, 11 Aug 2021 12:40:55 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
-Cc:     linux-block@vger.kernel.org, hch@infradead.org,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 6/6] block: enable use of bio allocation cache
-Date:   Wed, 11 Aug 2021 13:35:33 -0600
-Message-Id: <20210811193533.766613-7-axboe@kernel.dk>
+Subject: [PATCHSET 0/4] Remove IRQ safety of completion_lock
+Date:   Wed, 11 Aug 2021 13:40:49 -0600
+Message-Id: <20210811194053.767588-1-axboe@kernel.dk>
 X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20210811193533.766613-1-axboe@kernel.dk>
-References: <20210811193533.766613-1-axboe@kernel.dk>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Initialize the bio_set used for IO with per-cpu bio caching enabled,
-and use the new bio_alloc_kiocb() helper to dip into that cache.
+Hi,
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- fs/block_dev.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Out of all the request types we support, we only really have a few
+that complete from interrupt context. Yet due to those, we end up needing
+to make the completion_lock IRQ safe. If we move those completions
+through our task_work infastructure, then we can get rid of the need
+to have the completion_lock be IRQ safe. That has benefits for all
+users.
 
-diff --git a/fs/block_dev.c b/fs/block_dev.c
-index 9ef4f1fc2cb0..798bb9d8f533 100644
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -385,7 +385,7 @@ static ssize_t __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
- 	    (bdev_logical_block_size(bdev) - 1))
- 		return -EINVAL;
- 
--	bio = bio_alloc_bioset(GFP_KERNEL, nr_pages, &blkdev_dio_pool);
-+	bio = bio_alloc_kiocb(iocb, GFP_KERNEL, nr_pages, &blkdev_dio_pool);
- 
- 	dio = container_of(bio, struct blkdev_dio, bio);
- 	dio->is_sync = is_sync = is_sync_kiocb(iocb);
-@@ -513,7 +513,9 @@ blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- 
- static __init int blkdev_init(void)
- {
--	return bioset_init(&blkdev_dio_pool, 4, offsetof(struct blkdev_dio, bio), BIOSET_NEED_BVECS);
-+	return bioset_init(&blkdev_dio_pool, 4,
-+				offsetof(struct blkdev_dio, bio),
-+				BIOSET_NEED_BVECS|BIOSET_PERCPU_CACHE);
- }
- module_init(blkdev_init);
- 
 -- 
-2.32.0
+Jens Axboe
+
+
 

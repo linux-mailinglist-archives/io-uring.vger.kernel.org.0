@@ -2,155 +2,323 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D4FAE3E89D8
-	for <lists+io-uring@lfdr.de>; Wed, 11 Aug 2021 07:41:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DCF93E8BC8
+	for <lists+io-uring@lfdr.de>; Wed, 11 Aug 2021 10:27:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234153AbhHKFlx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 11 Aug 2021 01:41:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46432 "EHLO
+        id S233167AbhHKI1t (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 11 Aug 2021 04:27:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56024 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234086AbhHKFlr (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 11 Aug 2021 01:41:47 -0400
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1F92C061765;
-        Tue, 10 Aug 2021 22:41:01 -0700 (PDT)
-Received: by mail-pj1-x102d.google.com with SMTP id a8so1638049pjk.4;
-        Tue, 10 Aug 2021 22:41:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=PDAPRfbqp4fZ98UOjrZjCjbxbDFL6OvNQRqjjMYSxcw=;
-        b=gXLhznkg1MxvrIQH7DIRn1pqa7BxmUfyes/6MFhc3ym+nOtRiv9Q7QA6ozHrI1yJaJ
-         5FNddLeUwCb1HnfmpRQjzNncZT/h9RuKlIDe1k6bmsZpAxPpv4W52l9VPepArBUOi9Xx
-         OB/yHhXpaKsCp7qMYK0DMtqZzkF9jok2IBh9xXvkodOkOw9lH69R70gwaQCb04Os/Gjp
-         nLmTgxgQyoHvb2lXSvBTODAsPobQrSvpyNjpRjD3Lud7tV1OHi/KBTPoBINPi+9gy1Ud
-         32NYc03yVofpX6Evq4Nvw/LToXxFpcI9alx7h1WVlfd897K9rsmUxDQp+4GrHefb3hVz
-         VqJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=PDAPRfbqp4fZ98UOjrZjCjbxbDFL6OvNQRqjjMYSxcw=;
-        b=ldsmtPKUU7o5CcMRg7trpahFVK5IdIeO4mOy/RlGRlfEYU0nF3F1bAQA7jww6jG1e0
-         jKCtEtZB/0aProjAEP+ynY7lJZ09t82WUXcWLVxYKuOrtLrJ/WVt4n7lUzk8JMLmlNs/
-         TMpgkYx1NnOFGBTRvNdzZeHL/bc0b0jbKbH4GREp7fM9MhDj9MQL+AWVMKUXrB9wvmFz
-         Zk4TRtMW44VEhendOeRx9TWmFwHQWLZ5AO6ynjd10U6+cRgqwnT5DcljOK3Dl+5wQYK9
-         p5qif5qJyktbjpHJ3skL4vRp0UF+/WoqyhnbpBW1FmkKVZ3D/VqAIJsJ70Ehzgmc/bD8
-         BkGQ==
-X-Gm-Message-State: AOAM532fiN0ABMWoony73jovjGD5uq1ihQOdZOmuhmT8jT+3uyV3T5OQ
-        B11Z5HgNObw+OCt7jWjlvlI=
-X-Google-Smtp-Source: ABdhPJyIYCLHlhXE0eYEnV0QrziIHArVxeEgRjQZ79sa8FUAsW/VGtw/K9Tgkz34UlZlFaRtJ1x6mA==
-X-Received: by 2002:a17:902:7001:b029:12c:4e36:52c5 with SMTP id y1-20020a1709027001b029012c4e3652c5mr2840928plk.9.1628660461178;
-        Tue, 10 Aug 2021 22:41:01 -0700 (PDT)
-Received: from smtpclient.apple (c-24-6-216-183.hsd1.ca.comcast.net. [24.6.216.183])
-        by smtp.gmail.com with ESMTPSA id q12sm4236344pjd.18.2021.08.10.22.40.59
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 10 Aug 2021 22:41:00 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 14.0 \(3654.120.0.1.13\))
-Subject: I/O cancellation in io-uring (was: io_uring: clear TIF_NOTIFY_SIGNAL
- ...) 
-From:   Nadav Amit <nadav.amit@gmail.com>
-In-Reply-To: <1bf56100-e904-65b5-bbb8-fa313d85b01a@kernel.dk>
-Date:   Tue, 10 Aug 2021 22:40:58 -0700
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        Olivier Langlois <olivier@trillion01.com>,
-        io-uring@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <29430B77-37C2-4E65-B279-2590CF825FB3@gmail.com>
-References: <20210808001342.964634-1-namit@vmware.com>
- <20210808001342.964634-2-namit@vmware.com>
- <fdd54421f4d4e825152192e327c838d035352945.camel@trillion01.com>
- <A4DC14BA-74CA-41DB-BE08-D7B693C11AE0@gmail.com>
- <bbd25a42-eac0-a8f9-0e54-3c8c8e9894fd@gmail.com>
- <FD8FD9BD-1E94-4A84-88EB-3A1531BCF556@gmail.com>
- <1bf56100-e904-65b5-bbb8-fa313d85b01a@kernel.dk>
+        with ESMTP id S229679AbhHKI1t (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 11 Aug 2021 04:27:49 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE107C061765;
+        Wed, 11 Aug 2021 01:27:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=wubnmL+nApnyzJ217TdFPpi4zHxmgJ+FqhTaq34wnf4=; b=nzLhiP64XdYzHmD2W1WRi47jvU
+        1I7Zcf92+r1Zg4p/v09md5CxA2Aupq7I5bz0qGcX8Uq/IOMQiJpMf9UmQZLW3qrnfx5V8ykwLdgmI
+        v+LDQa6C1+nLA0Ucibgu2LHxeF9uRf81vOYgcTxS0mFBATY9XlemeVBH0yeIRBVq25rzDkqLg73J1
+        Aqf2JfO3Luho7h9JBy7gxcC7RZJ14JBMcWEjEResmZdqr89PPEvIYpVAZ5oXTH/ylX0p718R5BjAP
+        Vlj6pRrdoxlUrAU4byw0TPRxznTNTpfw/yDaYbM+1/2s2TJFo37QjYkmkX8bAPSNvlpXRMJJze/0h
+        QxIG/eRw==;
+Received: from hch by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mDjZJ-00DA25-Mj; Wed, 11 Aug 2021 08:26:52 +0000
+Date:   Wed, 11 Aug 2021 09:26:33 +0100
+From:   Christoph Hellwig <hch@infradead.org>
 To:     Jens Axboe <axboe@kernel.dk>
-X-Mailer: Apple Mail (2.3654.120.0.1.13)
+Cc:     io-uring@vger.kernel.org, linux-block@vger.kernel.org
+Subject: Re: [PATCHSET v3 0/5] Enable bio recycling for polled IO
+Message-ID: <YROJuSsUX7y236BW@infradead.org>
+References: <20210810163728.265939-1-axboe@kernel.dk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210810163728.265939-1-axboe@kernel.dk>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+I really don't like all the layering violations in here.  What is the
+problem with a simple (optional) percpu cache in the bio_set?  Something
+like the completely untested patch below:
 
-> On Aug 10, 2021, at 7:51 PM, Jens Axboe <axboe@kernel.dk> wrote:
->=20
-> There's no way to cancel file/bdev related IO, and there likely never
-> will be. That's basically the only exception, everything else can get
-> canceled pretty easily. Many things can be written on why that is the
-> case, and they have (myself included), but it boils down to proper
-> hardware support which we'll likely never have as it's not a well =
-tested
-> path. For other kind of async IO, we're either waiting in poll (which =
-is
-> trivially cancellable) or in an async thread (which is also easily
-> cancellable). For DMA+irq driven block storage, we'd need to be able =
-to
-> reliably cancel on the hardware side, to prevent errant DMA after the
-> fact.
->=20
-> None of this is really io_uring specific, io_uring just suffers from =
-the
-> same limitations as others would (or are).
->=20
->> Otherwise they might potentially never complete, as happens in my
->> use-case.
->=20
-> If you see that, that is most certainly a bug. While bdev/reg file IO
-> can't really be canceled, they all have the property that they =
-complete
-> in finite time. Either the IO completes normally in a "short" amount =
-of
-> time, or a timeout will cancel it and complete it in error. There are =
-no
-> unbounded execution times for uncancellable IO.
-
-I understand your point that hardware reads/writes cannot easily be =
-cancelled.
-(well, the buffers can be unmapped from the IOMMU tables, but let's put =
-this
-discussion aside).
-
-Yet the question is whether reads/writes from special files such as =
-pipes,
-eventfd, signalfd, fuse should be cancellable. Obviously, it is always
-possible to issue a blocking read/write from a worker thread. Yet, there =
-are
-inherent overheads that are associated with this design, specifically
-context-switches. While the overhead of a context-switch is not as high =
-as
-portrayed by some, it is still high for low latency use-cases.
-
-There is a potential alternative, however. When a write to a pipe is
-performed, or when an event takes place or signal sent, queued io-uring =
-reads
-can be fulfilled immediately, without a context-switch to a worker. I
-specifically want to fulfill userfaultfd reads and notify userspace on
-page-faults in such manner. I do not have the numbers in front of me, =
-but
-doing so shows considerable performance improvement.
-
-To allow such use-cases, cancellation of the read/write is needed. A =
-read from
-a pipe might never complete if there is no further writes to the pipe.
-Cancellation is not hard to implement for such cases (it's only the mess =
-with
-the existing AIO's ki_cancel() that bothers me, but as you said - it is =
-a
-single use-case).
-
-Admittedly, there are no such use-cases in the kernel today, but =
-arguably,
-this is due to the lack of infrastructure. I see no alternative which is =
-as
-performant as the one I propose here. Using poll+read or any other =
-option
-will have unwarranted overhead. =20
-
-If an RFC might convince you, or some more mainstream use-case such as =
-queued
-pipe reads would convince you, I can work on such in order to try to get
-something like that.
-
+diff --git a/block/bio.c b/block/bio.c
+index 33160007f4e0..edd4a83b96fa 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -25,6 +25,11 @@
+ #include "blk.h"
+ #include "blk-rq-qos.h"
+ 
++struct bio_alloc_cache {
++	struct bio_list		free_list;
++	unsigned int		nr;
++};
++
+ static struct biovec_slab {
+ 	int nr_vecs;
+ 	char *name;
+@@ -239,6 +244,35 @@ static void bio_free(struct bio *bio)
+ 	}
+ }
+ 
++static inline void __bio_init(struct bio *bio)
++{
++	bio->bi_next = NULL;
++	bio->bi_bdev = NULL;
++	bio->bi_opf = 0;
++	bio->bi_flags = bio->bi_ioprio = bio->bi_write_hint = 0;
++	bio->bi_status = 0;
++	bio->bi_iter.bi_sector = 0;
++	bio->bi_iter.bi_size = 0;
++	bio->bi_iter.bi_idx = 0;
++	bio->bi_iter.bi_bvec_done = 0;
++	bio->bi_end_io = NULL;
++	bio->bi_private = NULL;
++#ifdef CONFIG_BLK_CGROUP
++	bio->bi_blkg = NULL;
++	bio->bi_issue.value = 0;
++#ifdef CONFIG_BLK_CGROUP_IOCOST
++	bio->bi_iocost_cost = 0;
++#endif
++#endif
++#ifdef CONFIG_BLK_INLINE_ENCRYPTION
++	bio->bi_crypt_context = NULL;
++#endif
++#ifdef CONFIG_BLK_DEV_INTEGRITY
++	bio->bi_integrity = NULL;
++#endif
++	bio->bi_vcnt = 0;
++}
++
+ /*
+  * Users of this function have their own bio allocation. Subsequently,
+  * they must remember to pair any call to bio_init() with bio_uninit()
+@@ -247,7 +281,7 @@ static void bio_free(struct bio *bio)
+ void bio_init(struct bio *bio, struct bio_vec *table,
+ 	      unsigned short max_vecs)
+ {
+-	memset(bio, 0, sizeof(*bio));
++	__bio_init(bio);
+ 	atomic_set(&bio->__bi_remaining, 1);
+ 	atomic_set(&bio->__bi_cnt, 1);
+ 	bio->bi_cookie = BLK_QC_T_NONE;
+@@ -470,6 +504,31 @@ struct bio *bio_alloc_bioset(gfp_t gfp_mask, unsigned short nr_iovecs,
+ }
+ EXPORT_SYMBOL(bio_alloc_bioset);
+ 
++struct bio *bio_alloc_iocb(struct kiocb *iocb, unsigned short nr_vecs,
++			     struct bio_set *bs)
++{
++	struct bio_alloc_cache *cache = NULL;
++	struct bio *bio;
++
++	if (!(iocb->ki_flags & IOCB_HIPRI) ||
++	    !(iocb->ki_flags & IOCB_NOWAIT) ||
++	    nr_vecs > BIO_INLINE_VECS)
++		return bio_alloc_bioset(GFP_KERNEL, nr_vecs, bs);
++
++	cache = per_cpu_ptr(bs->cache, get_cpu());
++	bio = bio_list_pop(&cache->free_list);
++	if (bio) {
++		bio_init(bio, nr_vecs ? bio->bi_inline_vecs : NULL, nr_vecs);
++		cache->nr--;
++	}
++	put_cpu();
++
++	if (!bio)
++		bio = bio_alloc_bioset(GFP_KERNEL, nr_vecs, bs);
++	bio_set_flag(bio, BIO_CACHEABLE);
++	return bio;
++}
++
+ /**
+  * bio_kmalloc - kmalloc a bio for I/O
+  * @gfp_mask:   the GFP_* mask given to the slab allocator
+@@ -588,6 +647,46 @@ void guard_bio_eod(struct bio *bio)
+ 	bio_truncate(bio, maxsector << 9);
+ }
+ 
++#define ALLOC_CACHE_MAX		512
++#define ALLOC_CACHE_SLACK	 64
++
++static void bio_alloc_cache_prune(struct bio_alloc_cache *cache,
++				  unsigned int nr)
++{
++	struct bio *bio;
++	unsigned int i;
++
++	i = 0;
++	while ((bio = bio_list_pop(&cache->free_list)) != NULL) {
++		cache->nr--;
++		bio_free(bio);
++		if (++i == nr)
++			break;
++	}
++}
++
++#if 0
++// XXX: add a cpu down notifier to call this
++void bio_alloc_cache_destroy(struct bio_alloc_cache *cache)
++{
++	bio_alloc_cache_prune(cache, -1U);
++}
++#endif
++
++static void bio_add_to_cache(struct bio *bio)
++{
++	struct bio_alloc_cache *cache;
++
++	bio_uninit(bio);
++
++	cache = per_cpu_ptr(bio->bi_pool->cache, get_cpu());
++	bio_list_add_head(&cache->free_list, bio);
++	cache->nr++;
++	if (cache->nr > ALLOC_CACHE_MAX + ALLOC_CACHE_SLACK)
++		bio_alloc_cache_prune(cache, ALLOC_CACHE_SLACK);
++	put_cpu();
++}
++
+ /**
+  * bio_put - release a reference to a bio
+  * @bio:   bio to release reference to
+@@ -598,17 +697,16 @@ void guard_bio_eod(struct bio *bio)
+  **/
+ void bio_put(struct bio *bio)
+ {
+-	if (!bio_flagged(bio, BIO_REFFED))
+-		bio_free(bio);
+-	else {
++	if (bio_flagged(bio, BIO_REFFED)) {
+ 		BIO_BUG_ON(!atomic_read(&bio->__bi_cnt));
+-
+-		/*
+-		 * last put frees it
+-		 */
+-		if (atomic_dec_and_test(&bio->__bi_cnt))
+-			bio_free(bio);
++		if (!atomic_dec_and_test(&bio->__bi_cnt))
++			return;
+ 	}
++
++	if (bio_flagged(bio, BIO_CACHEABLE))
++		bio_add_to_cache(bio);
++	else
++		bio_free(bio);
+ }
+ EXPORT_SYMBOL(bio_put);
+ 
+@@ -1487,6 +1585,7 @@ int biovec_init_pool(mempool_t *pool, int pool_entries)
+  */
+ void bioset_exit(struct bio_set *bs)
+ {
++	free_percpu(bs->cache);
+ 	if (bs->rescue_workqueue)
+ 		destroy_workqueue(bs->rescue_workqueue);
+ 	bs->rescue_workqueue = NULL;
+@@ -1548,12 +1647,18 @@ int bioset_init(struct bio_set *bs,
+ 	    biovec_init_pool(&bs->bvec_pool, pool_size))
+ 		goto bad;
+ 
+-	if (!(flags & BIOSET_NEED_RESCUER))
+-		return 0;
+-
+-	bs->rescue_workqueue = alloc_workqueue("bioset", WQ_MEM_RECLAIM, 0);
+-	if (!bs->rescue_workqueue)
+-		goto bad;
++	if (flags & BIOSET_NEED_RESCUER) {
++		bs->rescue_workqueue = alloc_workqueue("bioset", WQ_MEM_RECLAIM,
++						       0);
++		if (!bs->rescue_workqueue)
++			goto bad;
++	}
++	
++	if (flags & BIOSET_PERCPU_CACHE) {
++		bs->cache = alloc_percpu(struct bio_alloc_cache);
++		if (!bs->cache)
++			goto bad;
++	}
+ 
+ 	return 0;
+ bad:
+@@ -1594,7 +1699,8 @@ static int __init init_bio(void)
+ 				SLAB_HWCACHE_ALIGN | SLAB_PANIC, NULL);
+ 	}
+ 
+-	if (bioset_init(&fs_bio_set, BIO_POOL_SIZE, 0, BIOSET_NEED_BVECS))
++	if (bioset_init(&fs_bio_set, BIO_POOL_SIZE, 0,
++			BIOSET_NEED_BVECS | BIOSET_PERCPU_CACHE))
+ 		panic("bio: can't allocate bios\n");
+ 
+ 	if (bioset_integrity_create(&fs_bio_set, BIO_POOL_SIZE))
+diff --git a/fs/block_dev.c b/fs/block_dev.c
+index e95889ff4fba..c67043bfb788 100644
+--- a/fs/block_dev.c
++++ b/fs/block_dev.c
+@@ -376,8 +376,7 @@ static ssize_t __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
+ 	    (bdev_logical_block_size(bdev) - 1))
+ 		return -EINVAL;
+ 
+-	bio = bio_alloc_bioset(GFP_KERNEL, nr_pages, &blkdev_dio_pool);
+-
++	bio = bio_alloc_iocb(iocb, nr_pages, &blkdev_dio_pool);
+ 	dio = container_of(bio, struct blkdev_dio, bio);
+ 	dio->is_sync = is_sync = is_sync_kiocb(iocb);
+ 	if (dio->is_sync) {
+@@ -452,7 +451,7 @@ static ssize_t __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
+ 		}
+ 
+ 		submit_bio(bio);
+-		bio = bio_alloc(GFP_KERNEL, nr_pages);
++		bio = bio_alloc_iocb(iocb, nr_pages, &fs_bio_set);
+ 	}
+ 
+ 	if (!(iocb->ki_flags & IOCB_HIPRI))
+@@ -497,7 +496,9 @@ blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+ 
+ static __init int blkdev_init(void)
+ {
+-	return bioset_init(&blkdev_dio_pool, 4, offsetof(struct blkdev_dio, bio), BIOSET_NEED_BVECS);
++	return bioset_init(&blkdev_dio_pool, 4,
++			   offsetof(struct blkdev_dio, bio),
++			   BIOSET_NEED_BVECS | BIOSET_PERCPU_CACHE);
+ }
+ module_init(blkdev_init);
+ 
+diff --git a/include/linux/bio.h b/include/linux/bio.h
+index 35de19f2ae88..69850bfddf18 100644
+--- a/include/linux/bio.h
++++ b/include/linux/bio.h
+@@ -400,6 +400,7 @@ static inline struct bio *bio_next_split(struct bio *bio, int sectors,
+ enum {
+ 	BIOSET_NEED_BVECS = BIT(0),
+ 	BIOSET_NEED_RESCUER = BIT(1),
++	BIOSET_PERCPU_CACHE = BIT(2),
+ };
+ extern int bioset_init(struct bio_set *, unsigned int, unsigned int, int flags);
+ extern void bioset_exit(struct bio_set *);
+@@ -656,7 +657,7 @@ static inline void bio_inc_remaining(struct bio *bio)
+ struct bio_set {
+ 	struct kmem_cache *bio_slab;
+ 	unsigned int front_pad;
+-
++	struct bio_alloc_cache __percpu *cache;
+ 	mempool_t bio_pool;
+ 	mempool_t bvec_pool;
+ #if defined(CONFIG_BLK_DEV_INTEGRITY)
+diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+index e3a70dd0470b..7a7d9c6b33ee 100644
+--- a/include/linux/blk_types.h
++++ b/include/linux/blk_types.h
+@@ -300,6 +300,7 @@ enum {
+ 	BIO_TRACKED,		/* set if bio goes through the rq_qos path */
+ 	BIO_REMAPPED,
+ 	BIO_ZONE_WRITE_LOCKED,	/* Owns a zoned device zone write lock */
++	BIO_CACHEABLE,		/* can be added to the percpu cache */
+ 	BIO_FLAG_LAST
+ };
+ 

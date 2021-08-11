@@ -2,52 +2,53 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 160023E99FC
-	for <lists+io-uring@lfdr.de>; Wed, 11 Aug 2021 22:49:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 082013E99FD
+	for <lists+io-uring@lfdr.de>; Wed, 11 Aug 2021 22:49:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232013AbhHKUtu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 11 Aug 2021 16:49:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33792 "EHLO
+        id S232066AbhHKUtz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 11 Aug 2021 16:49:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33790 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231743AbhHKUtg (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 11 Aug 2021 16:49:36 -0400
-Received: from mail-qk1-x730.google.com (mail-qk1-x730.google.com [IPv6:2607:f8b0:4864:20::730])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0211C0617A2
-        for <io-uring@vger.kernel.org>; Wed, 11 Aug 2021 13:48:57 -0700 (PDT)
-Received: by mail-qk1-x730.google.com with SMTP id a19so3941839qkg.2
-        for <io-uring@vger.kernel.org>; Wed, 11 Aug 2021 13:48:57 -0700 (PDT)
+        with ESMTP id S232191AbhHKUti (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 11 Aug 2021 16:49:38 -0400
+Received: from mail-qt1-x82e.google.com (mail-qt1-x82e.google.com [IPv6:2607:f8b0:4864:20::82e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1709C0617B9
+        for <io-uring@vger.kernel.org>; Wed, 11 Aug 2021 13:49:03 -0700 (PDT)
+Received: by mail-qt1-x82e.google.com with SMTP id c6so3222339qtv.5
+        for <io-uring@vger.kernel.org>; Wed, 11 Aug 2021 13:49:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=subject:from:to:date:message-id:in-reply-to:references:user-agent
          :mime-version:content-transfer-encoding;
-        bh=LG+JDhuVRM/bBjl1U6QRkbk0MzYARXdx78XozLV6E/I=;
-        b=IDjmV6gU84hRTKs8LZRecfmuw/xBF2xpn7YPzYgkKZqhmfgvm2dGpPUZZka0Kxiyrn
-         vmJAm14Kn7mG8NaZCLHhzLCoZ7wnhdtKVAOukABX/0nvNjnIRdnSQSaim3N5v5edO3/c
-         JxMWq2W8ifQA9VcZmAjybfd8zWaaAxD+WX4fuaUadvAc8syja1Ll/P7cTJSaaSlucScm
-         TEdC/0PmUXEJjrHf9uYZeYj74Xb02SEW49rxYUZX2QIwYl1nDanwzlGqND6QXsqVI73p
-         83SjS0TAWTGK04InlMwQhSp70Yp1As4xRCMaPY+ncfY20BhgZADOKHfqe2gvk3iSFEsE
-         ac1A==
+        bh=aKsKoHqmsZAVF8Rg44lH5t0OfNGgPIxtypJyrDcBmw4=;
+        b=IGSbf/s0ur37Nk3NPxnIck3BCoLugpdPaVsVyr30fmwA9kQWgXlHN0/W9s61/HjV32
+         ap/AcGfdjK7GODb5rGY+xW592XMZYImEigmWW9YalL9/PXLDBZPtGVB7p98MTG32luHp
+         2mCK8gO/ftHVYSiWS8ODZ4MTITXZ7D0S7KhgGqIaqRB6Kqg1U0dvKzHCmh4fap+uBoFO
+         V4VOpBcQ6hzX7/gkU0pR8yAHU0LMzfR/zyhOXZf7wbWke9xZV3ZiGQaaDcWL0/YaPcnn
+         myXuptVBKJeIAPRKJXIafRTsSQff8BZoPDFD27MINouLCa4HwPazChfBGjBAdPEjYRE3
+         83Rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:from:to:date:message-id:in-reply-to
          :references:user-agent:mime-version:content-transfer-encoding;
-        bh=LG+JDhuVRM/bBjl1U6QRkbk0MzYARXdx78XozLV6E/I=;
-        b=JxBe0sClbkxRJT4HmpkORObTdgeytYlCSBcWre7Op/KHrP8+n8YmJeJs2UlA6bjnrS
-         HDPg0cjifyDDkQhdkGjguB5bCHUi4ZtBsKStdekJWwMti3a3nyUWZZk484zF6GLf5yrH
-         o/8I1O4bLqMP93I1kmN/XUYgB7xQhWc/t0EJ0XkftHmoEM4DcZFI9EUw+vSI3GppL43R
-         hNjltIaKi+BjMHPyLCrj7yUvtQSi8uoYt7xNpzuegDbDUmYelqJvOvz4iq4+5yNKum5g
-         kyZqDNau3iQQ8JFWSgDA7w3WqX9VMggeBGbu0QFRYB+pHh4E12hCQNllR8CI9F1eXatI
-         Frxw==
-X-Gm-Message-State: AOAM533h5lD542j5VE2o3whdf1y9iQMJ4etSJX+LeJky4EuY1oeencvr
-        S3faD+ryOYshl7bEifjl4QBl
-X-Google-Smtp-Source: ABdhPJyckSiCbWmaowJ2yBB4oYQ8V93A3pDzqw4XYjPiQnmgq/mx9emZEEwYrVL5iTCdTLdEzNEmHw==
-X-Received: by 2002:a37:5ac7:: with SMTP id o190mr1005459qkb.152.1628714936659;
-        Wed, 11 Aug 2021 13:48:56 -0700 (PDT)
+        bh=aKsKoHqmsZAVF8Rg44lH5t0OfNGgPIxtypJyrDcBmw4=;
+        b=aF1Y4SpAwcjZEHaGBii/C0/fX8OY5bmhrl0ORP5ICaZ9UbU/896kOFC6hOFjW41jA+
+         qi2Fp/2N3GdMFgcXx2tDOjOLSQXqM/B7e7Yacu1UjSUSzHC6X5w6H7ZhFIVCq9Ya8xMW
+         k7ViDCigzjYFfykCQhNNEk1OHlqT3EO6XuH4pkVijucbkPPa/ClDJRSDU9XhV48IvHrF
+         iy/AWhWrcCOF6TtgcEEOWaYuTDMCycSJE4ATtkMt13ReeqQdyIlx/RQYrwcqxfgDLBG4
+         TwXoIh5k06BvYP0melhM9eopD2/Gdq+FEOKUwUrv9WkHRyJPg88DJDCT82x27gCwqO6D
+         uUbQ==
+X-Gm-Message-State: AOAM5320B95bghidtqoLsjkddfHIKBShf/7eKvPOPBxsdEpV4+gdrHe8
+        XV0eStVRKR+GTExRRy7vDBL2
+X-Google-Smtp-Source: ABdhPJwUNiEpaP+PnCDNAxzfQreTvk0/bSRZpum/ItWkECnR696IHTh5PszjLPJX8QmS68QTFRGQhw==
+X-Received: by 2002:ac8:4e33:: with SMTP id d19mr579232qtw.197.1628714942836;
+        Wed, 11 Aug 2021 13:49:02 -0700 (PDT)
 Received: from localhost (pool-96-237-52-188.bstnma.fios.verizon.net. [96.237.52.188])
-        by smtp.gmail.com with ESMTPSA id o63sm193942qkf.4.2021.08.11.13.48.55
+        by smtp.gmail.com with ESMTPSA id h10sm181971qta.74.2021.08.11.13.49.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Aug 2021 13:48:56 -0700 (PDT)
-Subject: [RFC PATCH v2 7/9] lsm,io_uring: add LSM hooks to io_uring
+        Wed, 11 Aug 2021 13:49:02 -0700 (PDT)
+Subject: [RFC PATCH v2 8/9] selinux: add support for the io_uring access
+ controls
 From:   Paul Moore <paul@paul-moore.com>
 To:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
         linux-audit@redhat.com, io-uring@vger.kernel.org,
@@ -55,8 +56,8 @@ To:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
         Kumar Kartikeya Dwivedi <memxor@gmail.com>,
         Jens Axboe <axboe@kernel.dk>,
         Pavel Begunkov <asml.silence@gmail.com>
-Date:   Wed, 11 Aug 2021 16:48:55 -0400
-Message-ID: <162871493537.63873.8470369457688012936.stgit@olly>
+Date:   Wed, 11 Aug 2021 16:49:01 -0400
+Message-ID: <162871494177.63873.3490371261067398163.stgit@olly>
 In-Reply-To: <162871480969.63873.9434591871437326374.stgit@olly>
 References: <162871480969.63873.9434591871437326374.stgit@olly>
 User-Agent: StGit/1.1
@@ -71,189 +72,113 @@ WARNING - This is a work in progress, this patch, including the
 description, may be incomplete or even incorrect.  You have been
 warned.
 
-A full expalantion of io_uring is beyond the scope of this commit
-description, but in summary it is an asynchronous I/O mechanism
-which allows for I/O requests and the resulting data to be queued
-in memory mapped "rings" which are shared between the kernel and
-userspace.  Optionally, io_uring offers the ability for applications
-to spawn kernel threads to dequeue I/O requests from the ring and
-submit the requests in the kernel, helping to minimize the syscall
-overhead.  Rings are accessed in userspace by memory mapping a file
-descriptor provided by the io_uring_setup(2), and can be shared
-between applications as one might do with any open file descriptor.
-Finally, process credentials can be registered with a given ring
-and any process with access to that ring can submit I/O requests
-using any of the registered credentials.
+This patch implements two new io_uring access controls, specifically
+support for controlling the io_uring "personalities" and
+IORING_SETUP_SQPOLL.  Controlling the sharing of io_urings themselves
+is handled via the normal file/inode labeling and sharing mechanisms.
 
-While the io_uring functionality is widely recognized as offering a
-vastly improved, and high performing asynchronous I/O mechanism, its
-ability to allow processes to submit I/O requests with credentials
-other than its own presents a challenge to LSMs.  When a process
-creates a new io_uring ring the ring's credentials are inhertied
-from the calling process; if this ring is shared with another
-process operating with different credentials there is the potential
-to bypass the LSMs security policy.  Similarly, registering
-credentials with a given ring allows any process with access to that
-ring to submit I/O requests with those credentials.
+The io_uring { override_creds } permission restricts which domains
+the subject domain can use to override it's own credentials.
+Granting a domain the io_uring { override_creds } permission allows
+it to impersonate another domain in io_uring operations.
 
-In an effort to allow LSMs to apply security policy to io_uring I/O
-operations, this patch adds two new LSM hooks.  These hooks, in
-conjunction with the LSM anonymous inode support previously
-submitted, allow an LSM to apply access control policy to the
-sharing of io_uring rings as well as any io_uring credential changes
-requested by a process.
+The io_uring { sqpoll } permission restricts which domains can create
+asynchronous io_uring polling threads.  This is important from a
+security perspective as operations queued by this asynchronous thread
+inherit the credentials of the thread creator by default; if an
+io_uring is shared across process/domain boundaries this could result
+in one domain impersonating another.  Controlling the creation of
+sqpoll threads, and the sharing of io_urings across processes, allow
+policy authors to restrict the ability of one domain to impersonate
+another via io_uring.
 
-The new LSM hooks are described below:
+As a quick summary, this patch adds a new object class with two
+permissions:
 
- * int security_uring_override_creds(cred)
-   Controls if the current task, executing an io_uring operation,
-   is allowed to override it's credentials with @cred.  In cases
-   where the current task is a user application, the current
-   credentials will be those of the user application.  In cases
-   where the current task is a kernel thread servicing io_uring
-   requests the current credentials will be those of the io_uring
-   ring (inherited from the process that created the ring).
+ io_uring { override_creds sqpoll }
 
- * int security_uring_sqpoll(void)
-   Controls if the current task is allowed to create an io_uring
-   polling thread (IORING_SETUP_SQPOLL).  Without a SQPOLL thread
-   in the kernel processes must submit I/O requests via
-   io_uring_enter(2) which allows us to compare any requested
-   credential changes against the application making the request.
-   With a SQPOLL thread, we can no longer compare requested
-   credential changes against the application making the request,
-   the comparison is made against the ring's credentials.
+These permissions can be seen in the two simple policy statements
+below:
+
+  allow domA_t domB_t : io_uring { override_creds };
+  allow domA_t self : io_uring { sqpoll };
 
 Signed-off-by: Paul Moore <paul@paul-moore.com>
 
 ---
 v2:
-- no change
+- made the selinux_uring_* funcs static
+- removed the debugging code
 v1:
 - initial draft
 ---
- fs/io_uring.c                 |   10 ++++++++++
- include/linux/lsm_hook_defs.h |    5 +++++
- include/linux/lsm_hooks.h     |   13 +++++++++++++
- include/linux/security.h      |   16 ++++++++++++++++
- security/security.c           |   12 ++++++++++++
- 5 files changed, 56 insertions(+)
+ security/selinux/hooks.c            |   34 ++++++++++++++++++++++++++++++++++
+ security/selinux/include/classmap.h |    2 ++
+ 2 files changed, 36 insertions(+)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index ea396f5fe735..78df778d329b 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -79,6 +79,7 @@
- #include <linux/pagemap.h>
- #include <linux/io_uring.h>
- #include <linux/audit.h>
-+#include <linux/security.h>
- 
- #define CREATE_TRACE_POINTS
- #include <trace/events/io_uring.h>
-@@ -6617,6 +6618,11 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
- 		if (!req->creds)
- 			return -EINVAL;
- 		get_cred(req->creds);
-+		ret = security_uring_override_creds(req->creds);
-+		if (ret) {
-+			put_cred(req->creds);
-+			return ret;
-+		}
- 		req->flags |= REQ_F_CREDS;
- 	}
- 	state = &ctx->submit_state;
-@@ -8080,6 +8086,10 @@ static int io_sq_offload_create(struct io_ring_ctx *ctx,
- 		struct io_sq_data *sqd;
- 		bool attached;
- 
-+		ret = security_uring_sqpoll();
-+		if (ret)
-+			return ret;
-+
- 		sqd = io_get_sq_data(p, &attached);
- 		if (IS_ERR(sqd)) {
- 			ret = PTR_ERR(sqd);
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 2adeea44c0d5..b3c525353769 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -402,3 +402,8 @@ LSM_HOOK(void, LSM_RET_VOID, perf_event_free, struct perf_event *event)
- LSM_HOOK(int, 0, perf_event_read, struct perf_event *event)
- LSM_HOOK(int, 0, perf_event_write, struct perf_event *event)
- #endif /* CONFIG_PERF_EVENTS */
-+
-+#ifdef CONFIG_IO_URING
-+LSM_HOOK(int, 0, uring_override_creds, const struct cred *new)
-+LSM_HOOK(int, 0, uring_sqpoll, void)
-+#endif /* CONFIG_IO_URING */
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 5c4c5c0602cb..0eb0ae95c4c4 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -1557,6 +1557,19 @@
-  * 	Read perf_event security info if allowed.
-  * @perf_event_write:
-  * 	Write perf_event security info if allowed.
-+ *
-+ * Security hooks for io_uring
-+ *
-+ * @uring_override_creds:
-+ *      Check if the current task, executing an io_uring operation, is allowed
-+ *      to override it's credentials with @new.
-+ *
-+ *      @new: the new creds to use
-+ *
-+ * @uring_sqpoll:
-+ *      Check whether the current task is allowed to spawn a io_uring polling
-+ *      thread (IORING_SETUP_SQPOLL).
-+ *
-  */
- union security_list_options {
- 	#define LSM_HOOK(RET, DEFAULT, NAME, ...) RET (*NAME)(__VA_ARGS__);
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 24eda04221e9..3928d80b6f76 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -2037,4 +2037,20 @@ static inline int security_perf_event_write(struct perf_event *event)
- #endif /* CONFIG_SECURITY */
- #endif /* CONFIG_PERF_EVENTS */
- 
-+#ifdef CONFIG_IO_URING
-+#ifdef CONFIG_SECURITY
-+extern int security_uring_override_creds(const struct cred *new);
-+extern int security_uring_sqpoll(void);
-+#else
-+static inline int security_uring_override_creds(const struct cred *new)
-+{
-+	return 0;
-+}
-+static inline int security_uring_sqpoll(void)
-+{
-+	return 0;
-+}
-+#endif /* CONFIG_SECURITY */
-+#endif /* CONFIG_IO_URING */
-+
- #endif /* ! __LINUX_SECURITY_H */
-diff --git a/security/security.c b/security/security.c
-index 09533cbb7221..a54544e61bd1 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -2624,3 +2624,15 @@ int security_perf_event_write(struct perf_event *event)
- 	return call_int_hook(perf_event_write, 0, event);
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index b0032c42333e..1fb0c76deff2 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -7105,6 +7105,35 @@ static int selinux_perf_event_write(struct perf_event *event)
  }
- #endif /* CONFIG_PERF_EVENTS */
-+
+ #endif
+ 
 +#ifdef CONFIG_IO_URING
-+int security_uring_override_creds(const struct cred *new)
++/**
++ * selinux_uring_override_creds - check the requested cred override
++ * @new: the target creds
++ *
++ * Check to see if the current task is allowed to override it's credentials
++ * to service an io_uring operation.
++ */
++static int selinux_uring_override_creds(const struct cred *new)
 +{
-+	return call_int_hook(uring_override_creds, 0, new);
++	return avc_has_perm(&selinux_state, current_sid(), cred_sid(new),
++			    SECCLASS_IO_URING, IO_URING__OVERRIDE_CREDS, NULL);
 +}
 +
-+int security_uring_sqpoll(void)
++/**
++ * selinux_uring_sqpoll - check if a io_uring polling thread can be created
++ *
++ * Check to see if the current task is allowed to create a new io_uring
++ * kernel polling thread.
++ */
++static int selinux_uring_sqpoll(void)
 +{
-+	return call_int_hook(uring_sqpoll, 0);
++	int sid = current_sid();
++
++	return avc_has_perm(&selinux_state, sid, sid,
++			    SECCLASS_IO_URING, IO_URING__SQPOLL, NULL);
 +}
 +#endif /* CONFIG_IO_URING */
++
+ /*
+  * IMPORTANT NOTE: When adding new hooks, please be careful to keep this order:
+  * 1. any hooks that don't belong to (2.) or (3.) below,
+@@ -7343,6 +7372,11 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(perf_event_write, selinux_perf_event_write),
+ #endif
+ 
++#ifdef CONFIG_IO_URING
++	LSM_HOOK_INIT(uring_override_creds, selinux_uring_override_creds),
++	LSM_HOOK_INIT(uring_sqpoll, selinux_uring_sqpoll),
++#endif
++
+ 	LSM_HOOK_INIT(locked_down, selinux_lockdown),
+ 
+ 	/*
+diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
+index 62d19bccf3de..3314ad72279d 100644
+--- a/security/selinux/include/classmap.h
++++ b/security/selinux/include/classmap.h
+@@ -252,6 +252,8 @@ struct security_class_mapping secclass_map[] = {
+ 	  { "integrity", "confidentiality", NULL } },
+ 	{ "anon_inode",
+ 	  { COMMON_FILE_PERMS, NULL } },
++	{ "io_uring",
++	  { "override_creds", "sqpoll", NULL } },
+ 	{ NULL }
+   };
+ 
 

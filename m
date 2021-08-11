@@ -2,58 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 90E213E98E0
-	for <lists+io-uring@lfdr.de>; Wed, 11 Aug 2021 21:35:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF3CE3E98E4
+	for <lists+io-uring@lfdr.de>; Wed, 11 Aug 2021 21:35:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231594AbhHKTgJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 11 Aug 2021 15:36:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44672 "EHLO
+        id S231618AbhHKTgK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 11 Aug 2021 15:36:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231618AbhHKTgH (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 11 Aug 2021 15:36:07 -0400
-Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4BB2C061798
-        for <io-uring@vger.kernel.org>; Wed, 11 Aug 2021 12:35:43 -0700 (PDT)
-Received: by mail-pl1-x629.google.com with SMTP id q2so4017473plr.11
-        for <io-uring@vger.kernel.org>; Wed, 11 Aug 2021 12:35:43 -0700 (PDT)
+        with ESMTP id S231685AbhHKTgI (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 11 Aug 2021 15:36:08 -0400
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C5A9C0613D3
+        for <io-uring@vger.kernel.org>; Wed, 11 Aug 2021 12:35:44 -0700 (PDT)
+Received: by mail-pl1-x630.google.com with SMTP id n12so3380751plf.4
+        for <io-uring@vger.kernel.org>; Wed, 11 Aug 2021 12:35:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=gzAcF0zizY0wVeW39ScMbIL+yu4HjhIlQYH8a7v47yo=;
-        b=UP4vySG67B3mWmew1yhsxprWgt1py2v7fnkkpmlxAWoNyfd6VwiwQHfDuPyJBCAT9y
-         CpW0eU4AV0iEKcg7DA7lLDWAlVS3hCZPLjRJx/hdBaiGn2KKYJ3jMGu5fBeSlT73oeDI
-         4Uro6cMsRsvkQZeamniiMreRLD7wwy1ru1ytSfqrZOnxKmlFsrq+O+0TyHopycKoZOaL
-         JCSihSz+y22bXA/DJ/kRXPF7qkAWYUHfwv9HY4gjILL+NY1Qy7FpKL9Uaa7GShm6n8+R
-         ZzdAY3AMgCLXa3GT/y5g87RcUXs+Onz6aOnsLzBQqwuU/ld5FBkzvCd+V8aGkZGi/XJd
-         1Feg==
+        bh=oEanWYqex9JuH3iGdmfjQ00rfPxW60wGQ1NzD9wjGSo=;
+        b=o2n0uXw2A1dkovhZfrRJwk7J04SXPUMV78vc0FOMnSsnuVtqCj2WcPC/Iqmc7x5FwX
+         oann7w01bIooqFyKR1mliZ2wecJ5eTq9TTgSZtiz9Q7oiyIqPG99Hwfl96nNiaONwI4G
+         A+7KOq2RIGqH3RNu30ppI/lDnVw/TQW6olt0IclIfRXmgnVa1xiESGUfpjTBIhjasuLi
+         wS9nLuibcY/fgmtX3wTgsJ0pwhgHwHqU12cySJgucpQkYJzCIsGyCvwbUtr+ipid3t2t
+         DI0GoM/p4Xh9FibPXdpBn0UIYejaoBS+SFQ7OF2Yzdf01y1fGKM/tlkaQXCB/i2bLI5U
+         XxiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=gzAcF0zizY0wVeW39ScMbIL+yu4HjhIlQYH8a7v47yo=;
-        b=OS9JiWDGzlpcKKCW4wSSGTJ46NjuK2Jq00goVNqzDAySjezwayhiMH+aPDPdalNjms
-         iBMCe4Bh8YDgjkXa+h/lNI4VXVKm76BZ4M0pFHYjzh3OPlin7CHf14HIC1ZjE/iDDdo/
-         PteqBGcJtl3Uj2joiP2JpDc+R4pQ57fvlHcPQD5AL7qdmtItujchDx8FweCgsDEQms2B
-         KxdHpTBBXGKRPHqONwVuTROUblhDW5wa2HbT/tXsS10HJwHV/LUcZ6jGWSmuQlDcZWHK
-         zF+qCauZdMhaEZEYBAi0CPuX/4HV1zED20rv3X0Ia0MOF2aVXweVBfPQfctnT6MQHFmL
-         7tlw==
-X-Gm-Message-State: AOAM533R8R4MhWPTZ+sCed1NCHObugXYM2GWMwybLHt+5DL3tXrhMNAk
-        rGxJ8L/q1bCPmkG3s8qaao5ZgzarN34VVyIj
-X-Google-Smtp-Source: ABdhPJyLozS2daFM9HNJ9WFZc7F7zdNlB81nDYSLw4lvsHkDusDtRKe6nUWUP09eLh+8xl4WDH8wZg==
-X-Received: by 2002:a05:6a00:18a3:b029:3dd:8ade:9b8c with SMTP id x35-20020a056a0018a3b02903dd8ade9b8cmr309666pfh.63.1628710542623;
-        Wed, 11 Aug 2021 12:35:42 -0700 (PDT)
+        bh=oEanWYqex9JuH3iGdmfjQ00rfPxW60wGQ1NzD9wjGSo=;
+        b=omwJWS6GZTKEqFPrROOk2rRVRaW6pBV/2YzkH0JAy+tK31Ydvq0NPtgddugI+sBF1S
+         HTaXxZz5ntvCVtqNAr1WR0h+WZoXdmAYA2uxCzaPw9rZpfmEQBCDX4OJSlfsETsJQeZr
+         RW7CmcxlYLmynsgDOvlG/Vxdkt6uWs+n4Dq/wKZ9N/YaHqb0YND4iUyNhYteg3VVwVwa
+         oOn29oQIIGYqavajEYEj+LrJWwbR5Rvw72VQfe1jdhZiGjdiwX4Anpa+v1eA8mNjiwXV
+         XLsFIUoFYhPdZ+uO7cWP5FASOFiyAZLaqFh7qRikObZCbZBEx5KDivEOt9CMwKuMIA3i
+         3UlQ==
+X-Gm-Message-State: AOAM532LLI3gMZ07FWBKVD9LVxHVfp0Btfz3d2SG8dEoExc88snmJs6E
+        nM3xaiCCSAcYtBFgKY7zKBnPfm7nPDqLgWzF
+X-Google-Smtp-Source: ABdhPJwNzpEpb02gfUBt/Jh6uj4oiG5Hz4tPIqqmCtxgyRm82dQwWXlf5CU0LGyPf3PYJFQf4b8e8w==
+X-Received: by 2002:a05:6a00:1596:b029:3c7:998a:709 with SMTP id u22-20020a056a001596b02903c7998a0709mr399865pfk.68.1628710543569;
+        Wed, 11 Aug 2021 12:35:43 -0700 (PDT)
 Received: from localhost.localdomain ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id u20sm286487pgm.4.2021.08.11.12.35.41
+        by smtp.gmail.com with ESMTPSA id u20sm286487pgm.4.2021.08.11.12.35.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Aug 2021 12:35:42 -0700 (PDT)
+        Wed, 11 Aug 2021 12:35:43 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     linux-block@vger.kernel.org, hch@infradead.org,
         Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4/6] block: clear BIO_PERCPU_CACHE flag if polling isn't supported
-Date:   Wed, 11 Aug 2021 13:35:31 -0600
-Message-Id: <20210811193533.766613-5-axboe@kernel.dk>
+Subject: [PATCH 5/6] io_uring: enable use of bio alloc cache
+Date:   Wed, 11 Aug 2021 13:35:32 -0600
+Message-Id: <20210811193533.766613-6-axboe@kernel.dk>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210811193533.766613-1-axboe@kernel.dk>
 References: <20210811193533.766613-1-axboe@kernel.dk>
@@ -63,32 +63,30 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The bio alloc cache relies on the fact that a polled bio will complete
-in process context, clear the cacheable flag if we disable polling
-for a given bio.
+Mark polled IO as being safe for dipping into the bio allocation
+cache, in case the targeted bio_set has it enabled.
+
+This brings an IOPOLL gen2 Optane QD=128 workload from ~3.0M IOPS to
+~3.3M IOPS.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- block/blk-core.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ fs/io_uring.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/block/blk-core.c b/block/blk-core.c
-index 04477697ee4b..c130206e9961 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -833,8 +833,11 @@ static noinline_for_stack bool submit_bio_checks(struct bio *bio)
- 		}
- 	}
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index bd3f8529fe6f..00da7bdd2b53 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -2667,7 +2667,7 @@ static int io_prep_rw(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 		    !kiocb->ki_filp->f_op->iopoll)
+ 			return -EOPNOTSUPP;
  
--	if (!test_bit(QUEUE_FLAG_POLL, &q->queue_flags))
-+	if (!test_bit(QUEUE_FLAG_POLL, &q->queue_flags)) {
-+		/* can't support alloc cache if we turn off polling */
-+		bio_clear_flag(bio, BIO_PERCPU_CACHE);
- 		bio->bi_opf &= ~REQ_HIPRI;
-+	}
- 
- 	switch (bio_op(bio)) {
- 	case REQ_OP_DISCARD:
+-		kiocb->ki_flags |= IOCB_HIPRI;
++		kiocb->ki_flags |= IOCB_HIPRI | IOCB_ALLOC_CACHE;
+ 		kiocb->ki_complete = io_complete_rw_iopoll;
+ 		req->iopoll_completed = 0;
+ 	} else {
 -- 
 2.32.0
 

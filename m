@@ -2,130 +2,121 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E4BD43EA235
-	for <lists+io-uring@lfdr.de>; Thu, 12 Aug 2021 11:39:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53E8F3EA5D1
+	for <lists+io-uring@lfdr.de>; Thu, 12 Aug 2021 15:43:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234825AbhHLJkW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 12 Aug 2021 05:40:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38174 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234700AbhHLJkU (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 12 Aug 2021 05:40:20 -0400
-X-Greylist: delayed 438 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 12 Aug 2021 02:39:55 PDT
-Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [IPv6:2001:1600:4:17::1908])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA636C0613D5
-        for <io-uring@vger.kernel.org>; Thu, 12 Aug 2021 02:39:55 -0700 (PDT)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4GlhL80mW0zMptvC;
-        Thu, 12 Aug 2021 11:32:32 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4GlhL711hkzlmrry;
-        Thu, 12 Aug 2021 11:32:31 +0200 (CEST)
-Subject: Re: [RFC PATCH v2 5/9] fs: add anon_inode_getfile_secure() similar to
- anon_inode_getfd_secure()
-To:     Paul Moore <paul@paul-moore.com>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>
-References: <162871480969.63873.9434591871437326374.stgit@olly>
- <162871492283.63873.8743976556992924333.stgit@olly>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <1d19ca85-c6f9-7aa5-162a-f9728e0a8ccd@digikod.net>
-Date:   Thu, 12 Aug 2021 11:32:15 +0200
-User-Agent: 
+        id S232482AbhHLNnm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 12 Aug 2021 09:43:42 -0400
+Received: from mail-il1-f199.google.com ([209.85.166.199]:36401 "EHLO
+        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232326AbhHLNnl (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 12 Aug 2021 09:43:41 -0400
+Received: by mail-il1-f199.google.com with SMTP id c20-20020a9294140000b02902141528bc7cso3182699ili.3
+        for <io-uring@vger.kernel.org>; Thu, 12 Aug 2021 06:43:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=cGNJ1xbk5GNRdimlzJb+r5AxJewAsHWKddCCIaqm2a8=;
+        b=rkLU9bBh3wES7dSAjO7Uq6YZG4pIp+LJCYVJIkOHfGsU4BJ5eJnMy/oN9OivQ16FE/
+         C1Od35Zg6M1Q+yKX1mSxnVp74D8IGCdkNLvbufqy1RWNuGh9Ffwag01Am/5hum9BvIP/
+         b24cbI0oXDkf99E0+B4FWo8mSQm/odoi2oudy5lg5FmiLkq+FU843WMETLDvYvQCwkWH
+         +tAC3UJEajCYcykJ6YQV9xl2P4VkwUGH4R7Ag3u2aAYLrolWSWT7dY8AgDzudM/54R1c
+         cF6f9/82FBmrhql5LxBslZi30FHBorGvwAHtPQnZnUV/p+AC+dYU0Mjpm6zfNYmil4pm
+         hDew==
+X-Gm-Message-State: AOAM533/BIqLZ0yT3ZLvk2dA5tqXxYctGmqousWgW+W5WCmpeyP3NjCu
+        Q2bt3ESyK0Czjg3lAK8CaYoILQP4QgcIX5C+ypQQkC7tgnKb
+X-Google-Smtp-Source: ABdhPJyUfYG6OpAHCdWPHWu23lGWRgH9yis8VyXZIwQvLe/s+stmd06Tp6zCppFyNhCjRvztHHvP1g5wSKo5eMiJL7BKPRnGGJrM
 MIME-Version: 1.0
-In-Reply-To: <162871492283.63873.8743976556992924333.stgit@olly>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a6b:f813:: with SMTP id o19mr3027821ioh.49.1628775796433;
+ Thu, 12 Aug 2021 06:43:16 -0700 (PDT)
+Date:   Thu, 12 Aug 2021 06:43:16 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c3e60005c95cea4b@google.com>
+Subject: [syzbot] KASAN: stack-out-of-bounds Read in iov_iter_revert
+From:   syzbot <syzbot+9671693590ef5aad8953@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+Hello,
 
-On 11/08/2021 22:48, Paul Moore wrote:
-> Extending the secure anonymous inode support to other subsystems
-> requires that we have a secure anon_inode_getfile() variant in
-> addition to the existing secure anon_inode_getfd() variant.
-> 
-> Thankfully we can reuse the existing __anon_inode_getfile() function
-> and just wrap it with the proper arguments.
-> 
-> Signed-off-by: Paul Moore <paul@paul-moore.com>
-> 
-> ---
-> v2:
-> - no change
-> v1:
-> - initial draft
-> ---
->  fs/anon_inodes.c            |   29 +++++++++++++++++++++++++++++
->  include/linux/anon_inodes.h |    4 ++++
->  2 files changed, 33 insertions(+)
-> 
-> diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
-> index a280156138ed..e0c3e33c4177 100644
-> --- a/fs/anon_inodes.c
-> +++ b/fs/anon_inodes.c
-> @@ -148,6 +148,35 @@ struct file *anon_inode_getfile(const char *name,
->  }
->  EXPORT_SYMBOL_GPL(anon_inode_getfile);
->  
-> +/**
-> + * anon_inode_getfile_secure - Like anon_inode_getfile(), but creates a new
-> + *                             !S_PRIVATE anon inode rather than reuse the
-> + *                             singleton anon inode and calls the
-> + *                             inode_init_security_anon() LSM hook.  This
-> + *                             allows for both the inode to have its own
-> + *                             security context and for the LSM to enforce
-> + *                             policy on the inode's creation.
-> + *
-> + * @name:    [in]    name of the "class" of the new file
-> + * @fops:    [in]    file operations for the new file
-> + * @priv:    [in]    private data for the new file (will be file's private_data)
-> + * @flags:   [in]    flags
-> + * @context_inode:
-> + *           [in]    the logical relationship with the new inode (optional)
-> + *
-> + * The LSM may use @context_inode in inode_init_security_anon(), but a
-> + * reference to it is not held.  Returns the newly created file* or an error
-> + * pointer.  See the anon_inode_getfile() documentation for more information.
-> + */
-> +struct file *anon_inode_getfile_secure(const char *name,
-> +				       const struct file_operations *fops,
-> +				       void *priv, int flags,
-> +				       const struct inode *context_inode)
-> +{
-> +	return __anon_inode_getfile(name, fops, priv, flags,
-> +				    context_inode, true);
+syzbot found the following issue on:
 
-This is not directly related to this patch but why using the "secure"
-boolean in __anon_inode_getfile() and __anon_inode_getfd() instead of
-checking that context_inode is not NULL? This would simplify the code,
-remove this anon_inode_getfile_secure() wrapper and avoid potential
-inconsistencies.
+HEAD commit:    1746f4db5135 Merge tag 'orphans-v5.14-rc6' of git://git.ke..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=111065fa300000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e3a20bae04b96ccd
+dashboard link: https://syzkaller.appspot.com/bug?extid=9671693590ef5aad8953
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.1
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=119dcaf6300000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=120d216e300000
 
-> +}
-> +
->  static int __anon_inode_getfd(const char *name,
->  			      const struct file_operations *fops,
->  			      void *priv, int flags,
-> diff --git a/include/linux/anon_inodes.h b/include/linux/anon_inodes.h
-> index 71881a2b6f78..5deaddbd7927 100644
-> --- a/include/linux/anon_inodes.h
-> +++ b/include/linux/anon_inodes.h
-> @@ -15,6 +15,10 @@ struct inode;
->  struct file *anon_inode_getfile(const char *name,
->  				const struct file_operations *fops,
->  				void *priv, int flags);
-> +struct file *anon_inode_getfile_secure(const char *name,
-> +				       const struct file_operations *fops,
-> +				       void *priv, int flags,
-> +				       const struct inode *context_inode);
->  int anon_inode_getfd(const char *name, const struct file_operations *fops,
->  		     void *priv, int flags);
->  int anon_inode_getfd_secure(const char *name,
-> 
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+9671693590ef5aad8953@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: stack-out-of-bounds in iov_iter_revert lib/iov_iter.c:1093 [inline]
+BUG: KASAN: stack-out-of-bounds in iov_iter_revert+0x803/0x900 lib/iov_iter.c:1033
+Read of size 8 at addr ffffc9000cf478b0 by task syz-executor673/8439
+
+CPU: 0 PID: 8439 Comm: syz-executor673 Not tainted 5.14.0-rc5-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:105
+ print_address_description.constprop.0.cold+0xf/0x309 mm/kasan/report.c:233
+ __kasan_report mm/kasan/report.c:419 [inline]
+ kasan_report.cold+0x83/0xdf mm/kasan/report.c:436
+ iov_iter_revert lib/iov_iter.c:1093 [inline]
+ iov_iter_revert+0x803/0x900 lib/iov_iter.c:1033
+ io_write+0x57b/0xed0 fs/io_uring.c:3459
+ io_issue_sqe+0x28c/0x6920 fs/io_uring.c:6181
+ __io_queue_sqe+0x1ac/0xf00 fs/io_uring.c:6464
+ io_queue_sqe fs/io_uring.c:6507 [inline]
+ io_submit_sqe fs/io_uring.c:6662 [inline]
+ io_submit_sqes+0x63ea/0x7bc0 fs/io_uring.c:6778
+ __do_sys_io_uring_enter+0xb03/0x1d40 fs/io_uring.c:9389
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x43f8a9
+Code: 28 c3 e8 1a 15 00 00 66 2e 0f 1f 84 00 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffcc6759968 EFLAGS: 00000246 ORIG_RAX: 00000000000001aa
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 000000000043f8a9
+RDX: 0000000000000000 RSI: 00000000000052fe RDI: 0000000000000003
+RBP: 00007ffcc6759988 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffcc6759990
+R13: 0000000000000000 R14: 00000000004ae018 R15: 0000000000400488
+
+
+addr ffffc9000cf478b0 is located in stack of task syz-executor673/8439 at offset 152 in frame:
+ io_write+0x0/0xed0 fs/io_uring.c:3335
+
+this frame has 3 objects:
+ [48, 56) 'iovec'
+ [80, 120) '__iter'
+ [160, 288) 'inline_vecs'
+
+Memory state around the buggy address:
+ ffffc9000cf47780: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffffc9000cf47800: 00 00 00 f1 f1 f1 f1 00 00 00 f2 f2 f2 00 00 00
+>ffffc9000cf47880: 00 00 f2 f2 f2 f2 f2 00 00 00 00 00 00 00 00 00
+                                     ^
+ ffffc9000cf47900: 00 00 00 00 00 00 00 f3 f3 f3 f3 00 00 00 00 00
+ ffffc9000cf47980: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches

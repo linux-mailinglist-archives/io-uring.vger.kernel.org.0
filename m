@@ -2,65 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A91343E9D3E
-	for <lists+io-uring@lfdr.de>; Thu, 12 Aug 2021 06:15:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B013E3E9EFD
+	for <lists+io-uring@lfdr.de>; Thu, 12 Aug 2021 08:55:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229661AbhHLEPn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 12 Aug 2021 00:15:43 -0400
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:41486 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229956AbhHLEPm (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 12 Aug 2021 00:15:42 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01424;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UikT1XN_1628741676;
-Received: from e18g09479.et15sqa.tbsite.net(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UikT1XN_1628741676)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 12 Aug 2021 12:14:46 +0800
-From:   Hao Xu <haoxu@linux.alibaba.com>
+        id S232459AbhHLGz3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 12 Aug 2021 02:55:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56104 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230323AbhHLGz3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 12 Aug 2021 02:55:29 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A006CC061765;
+        Wed, 11 Aug 2021 23:55:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=6LfU+GqQO+88RtfboxgAba8JBTOeXEYqxWLd6CIebTo=; b=fwAHdYwqNWolCxAtsymlWfUwzu
+        RX326i8/F4uelq4wtoXF/JhUnJv/74ZQpCEewebukfZMcFqDJDYOuMKk1BBPjL1/BlKLhTIBU/sGl
+        A2ZwgiBlDUMqniTS6qnJwQhJr3rBYUfo6QoLakpEA19T5odTpVbJ8yOWsawTZ1igxGEWovLRvqI0f
+        8fhB+xpjv4h4DINcndLjI+2BkpVrZ1PX7dFrgvvBRqQ/HtV2YUh2XQfIeubLcyoLoMQkWeXhjNPql
+        b7eFw6/gvGqIyJkIxzg7AFx/nsR88slo9pqWSXJ+UiLB849qAn0a8zY9wWKN9/cpJLgrl8v7ihQCW
+        f+SzEj8A==;
+Received: from [2001:4bb8:184:6215:d7d:1904:40de:694d] (helo=localhost)
+        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mE4ZJ-00EG01-6I; Thu, 12 Aug 2021 06:52:39 +0000
+Date:   Thu, 12 Aug 2021 08:51:56 +0200
+From:   Christoph Hellwig <hch@infradead.org>
 To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>
-Subject: [PATCH 3/3] io_uring: code clean for completion_lock in io_arm_poll_handler()
-Date:   Thu, 12 Aug 2021 12:14:36 +0800
-Message-Id: <20210812041436.101503-4-haoxu@linux.alibaba.com>
-X-Mailer: git-send-email 2.24.4
-In-Reply-To: <20210812041436.101503-1-haoxu@linux.alibaba.com>
-References: <20210812041436.101503-1-haoxu@linux.alibaba.com>
+Cc:     io-uring@vger.kernel.org, linux-block@vger.kernel.org,
+        hch@infradead.org
+Subject: Re: [PATCH 1/6] bio: optimize initialization of a bio
+Message-ID: <YRTFDLv7R4ltlvpa@infradead.org>
+References: <20210811193533.766613-1-axboe@kernel.dk>
+ <20210811193533.766613-2-axboe@kernel.dk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210811193533.766613-2-axboe@kernel.dk>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-We can merge two spin_unlock() operations to one since we removed some
-code not long ago.
+On Wed, Aug 11, 2021 at 01:35:28PM -0600, Jens Axboe wrote:
+> The memset() used is measurably slower in targeted benchmarks. Get rid
+> of it and fill in the bio manually, in a separate helper.
 
-Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
----
- fs/io_uring.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+If you have some numbers if would be great to throw them in here.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index b29774aa1f09..9cbc66b52643 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -5231,13 +5231,10 @@ static int io_arm_poll_handler(struct io_kiocb *req)
- 
- 	ret = __io_arm_poll_handler(req, &apoll->poll, &ipt, mask,
- 					io_async_wake);
--	if (ret || ipt.error) {
--		spin_unlock(&ctx->completion_lock);
--		if (ret)
--			return IO_APOLL_READY;
--		return IO_APOLL_ABORTED;
--	}
--	spin_unlock(&ctx->completion_lock);
-+	spin_unlock_irq(&ctx->completion_lock);
-+	if (ret || ipt.error)
-+		return ret ? IO_APOLL_READY : IO_APOLL_ABORTED;
-+
- 	trace_io_uring_poll_arm(ctx, req, req->opcode, req->user_data,
- 				mask, apoll->poll.events);
- 	return IO_APOLL_OK;
--- 
-2.24.4
+> +static inline void __bio_init(struct bio *bio)
 
+Why is this split from bio_init and what are the criteria where an
+initialization goes?
+
+> +	bio->bi_flags = bio->bi_ioprio = bio->bi_write_hint = 0;
+
+Please keep each initialization on a separate line.

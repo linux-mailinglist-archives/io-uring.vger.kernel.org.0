@@ -2,151 +2,82 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 53D5F3EA6A5
-	for <lists+io-uring@lfdr.de>; Thu, 12 Aug 2021 16:33:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 370443EA6D2
+	for <lists+io-uring@lfdr.de>; Thu, 12 Aug 2021 16:52:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236944AbhHLOd2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 12 Aug 2021 10:33:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49254 "EHLO
+        id S238170AbhHLOwy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 12 Aug 2021 10:52:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238072AbhHLOd1 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 12 Aug 2021 10:33:27 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43179C0617A8
-        for <io-uring@vger.kernel.org>; Thu, 12 Aug 2021 07:33:02 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id go31so11978833ejc.6
-        for <io-uring@vger.kernel.org>; Thu, 12 Aug 2021 07:33:02 -0700 (PDT)
+        with ESMTP id S236114AbhHLOwv (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 12 Aug 2021 10:52:51 -0400
+Received: from mail-oi1-x230.google.com (mail-oi1-x230.google.com [IPv6:2607:f8b0:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 939E9C061756
+        for <io-uring@vger.kernel.org>; Thu, 12 Aug 2021 07:52:26 -0700 (PDT)
+Received: by mail-oi1-x230.google.com with SMTP id u10so10754034oiw.4
+        for <io-uring@vger.kernel.org>; Thu, 12 Aug 2021 07:52:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Tf3TpEvP9E7186InLyyaf92hJ3EmJ36m+RywVZpSgPY=;
-        b=R/MuhpWp9RvhseRjm4R0jGRMhlHQsOmEJE1n2UUz0eGJ/hijPkEUFgXK1gUyCDZsN4
-         GOJMZdHsaYi6ZpN2Qg2ML12TUevHGmF40wJBD3TVT612ErE7duytSyU5zvwCRExQTL8m
-         5gkvg3x8jeY8EFUNS3dfNUKLt31Zot49diHU1ua9oWvrU2f5P1DwegTgSdWXMqoLeTV0
-         FRCueROZZsOmtAmIT9Zm7916s1YUYohTZzvUvjdDlrTLl0iBlkS0K80nyMKP+AVY0sqg
-         n3gQDqdWk7cPkxkXRfkLunbkGT6cAAaTGP3BC7O3rwIQuNWWx9PcPczRmfwKJ+D1U3B0
-         NzOA==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=GDmYv7hJX4PL/KMS0FEdgYmGuDsOaSNUuRLd8J0CAMs=;
+        b=wFKHfwOcKyh7hN0JZhMbxZ97EoW+HAacl/8QbfDgAew5UGwh7NsVCDrPJ4xGVk3jTA
+         djngAUq0ETRJV3jj33OeCX0FJlvn8mjPiDNoUrqGYV+M0R2w1AKIdvagLLDtYDor0054
+         KcvOgzBwMr04BYG8W98u6ChZY4mL7XtCBW/weUL2RpOalxj+wEINM6Z58Pr3zd4l6r0c
+         iLGLeH0dvumdNaFTRoJTAPiKJ4kgMqCCKNoMMNHjj8bzkcz/7AeBPXDLp7zNQG4qz7rA
+         D5xiZ/+c0E6PRmz4oe03hOMgbWLlIRlriua+Z6XH9+/386d/kN9KtRnJjYW8aHqAXMnG
+         kW7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Tf3TpEvP9E7186InLyyaf92hJ3EmJ36m+RywVZpSgPY=;
-        b=YFGW/h8G7/iHUfrffrAqUVLt1HNjZzCoSbP69U7A7ntvLYptTunItKdxuuRFtuMyp2
-         JRXCj1yu05sN6i4f3Xs4EQK0b6DDAIiUbondSrTW3fZe6s2nmXuZe/skxqcYzBZKiQMM
-         miA8L26ST0i7E4qDXwkn27d8Emr0rG3sgnNGiK9Rx8HrGP5HfMvW26telEd66IKLjBdh
-         hyrqKBEO+0/jL0FyRNx6Mj9g74k7slxx5rJAVxmeJ3usu70LXgpC9F6oJrEJ7hXeAyLR
-         r/cwLL7YcnXY+fAPR5I+g1fac4Zw+kG1bceAfX7A2BmemSZJSlLCbI5Jtcnq5+/nE6rh
-         TC6A==
-X-Gm-Message-State: AOAM531lgDZl+BqHtUxNV3dIqpoxnaQRtwS+oFrlf4w7Psmi81WadBjK
-        NoUaeXZGd6PZrSmuiXe4bl5rvpQo7Bb6fHU5+JoVvNmx5zdB4tU=
-X-Google-Smtp-Source: ABdhPJzAG+KxRcFQg5frwrLx7u2ThZW6azkYAv7FMiBSgbLG3jxMShQvp886ILKHc2KwMX5wMmNXVbVHSV9qauldwmg=
-X-Received: by 2002:a17:907:3345:: with SMTP id yr5mr3971377ejb.542.1628778780618;
- Thu, 12 Aug 2021 07:33:00 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=GDmYv7hJX4PL/KMS0FEdgYmGuDsOaSNUuRLd8J0CAMs=;
+        b=SaCeYah08fh3vSLZwdgFaJJcAJjwRuazIJOh+GxezC5o4oRtqU3qljVV2b3BOxOdFx
+         F7m248GgCKEzsDo8bsK56AYLMUMQs8SlOMherz9dAhCyRA2rlUhEF/EOaIPpL4hC/fOS
+         QzvHrQAK1kR4cAETWQ5c4uMSMvwAbvWqsAND7g6Mpi2IVQbpIGoNHUxYi3cBkKpq1Jhw
+         U7KSvJFiBMnym44aJ+G/bY1reVFfI+NDnblnrjZDd/Q1WFi9bfYFjrXzlGIMeSfj+eod
+         tppbx7CTGGba5zgLBPJRdK2tohxuzp3yMeHJxkMi3UoJn3+ZwO33PpPHQWN/AVNZ083Y
+         ig6w==
+X-Gm-Message-State: AOAM530brsQ6Sx7hOrIW75wNSX7+NRfTVn1zYP7TKw1oCLxKJYsJT7L/
+        kGZ9QrY4YLrXMQufWVkb/bxKOA==
+X-Google-Smtp-Source: ABdhPJzE5vOhU6C/TvtIpSKRSYqo6cQuY7IPne7vtwJ+ViOWzZNok5UlQWdhFWdRjpyFfgVo8yIsRg==
+X-Received: by 2002:a05:6808:641:: with SMTP id z1mr12334669oih.108.1628779945982;
+        Thu, 12 Aug 2021 07:52:25 -0700 (PDT)
+Received: from [192.168.1.30] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id h17sm644489otl.74.2021.08.12.07.52.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Aug 2021 07:52:25 -0700 (PDT)
+Subject: Re: [PATCH 6/6] block: enable use of bio allocation cache
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     io-uring@vger.kernel.org, linux-block@vger.kernel.org
+References: <20210811193533.766613-1-axboe@kernel.dk>
+ <20210811193533.766613-7-axboe@kernel.dk> <YRTH5T6R7PMpWaBF@infradead.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <ba6e8ca0-1220-4051-e599-c693465eb6a5@kernel.dk>
+Date:   Thu, 12 Aug 2021 08:52:23 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <162871480969.63873.9434591871437326374.stgit@olly>
- <162871492283.63873.8743976556992924333.stgit@olly> <1d19ca85-c6f9-7aa5-162a-f9728e0a8ccd@digikod.net>
-In-Reply-To: <1d19ca85-c6f9-7aa5-162a-f9728e0a8ccd@digikod.net>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 12 Aug 2021 10:32:49 -0400
-Message-ID: <CAHC9VhRe3cgYuaV7w-BUwj_i=8_uuy3+5-8oA6QVsdXp3JgVtw@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 5/9] fs: add anon_inode_getfile_secure() similar to anon_inode_getfd_secure()
-To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <YRTH5T6R7PMpWaBF@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Aug 12, 2021 at 5:32 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> =
-wrote:
-> On 11/08/2021 22:48, Paul Moore wrote:
-> > Extending the secure anonymous inode support to other subsystems
-> > requires that we have a secure anon_inode_getfile() variant in
-> > addition to the existing secure anon_inode_getfd() variant.
-> >
-> > Thankfully we can reuse the existing __anon_inode_getfile() function
-> > and just wrap it with the proper arguments.
-> >
-> > Signed-off-by: Paul Moore <paul@paul-moore.com>
-> >
-> > ---
-> > v2:
-> > - no change
-> > v1:
-> > - initial draft
-> > ---
-> >  fs/anon_inodes.c            |   29 +++++++++++++++++++++++++++++
-> >  include/linux/anon_inodes.h |    4 ++++
-> >  2 files changed, 33 insertions(+)
-> >
-> > diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
-> > index a280156138ed..e0c3e33c4177 100644
-> > --- a/fs/anon_inodes.c
-> > +++ b/fs/anon_inodes.c
-> > @@ -148,6 +148,35 @@ struct file *anon_inode_getfile(const char *name,
-> >  }
-> >  EXPORT_SYMBOL_GPL(anon_inode_getfile);
-> >
-> > +/**
-> > + * anon_inode_getfile_secure - Like anon_inode_getfile(), but creates =
-a new
-> > + *                             !S_PRIVATE anon inode rather than reuse=
- the
-> > + *                             singleton anon inode and calls the
-> > + *                             inode_init_security_anon() LSM hook.  T=
-his
-> > + *                             allows for both the inode to have its o=
-wn
-> > + *                             security context and for the LSM to enf=
-orce
-> > + *                             policy on the inode's creation.
-> > + *
-> > + * @name:    [in]    name of the "class" of the new file
-> > + * @fops:    [in]    file operations for the new file
-> > + * @priv:    [in]    private data for the new file (will be file's pri=
-vate_data)
-> > + * @flags:   [in]    flags
-> > + * @context_inode:
-> > + *           [in]    the logical relationship with the new inode (opti=
-onal)
-> > + *
-> > + * The LSM may use @context_inode in inode_init_security_anon(), but a
-> > + * reference to it is not held.  Returns the newly created file* or an=
- error
-> > + * pointer.  See the anon_inode_getfile() documentation for more infor=
-mation.
-> > + */
-> > +struct file *anon_inode_getfile_secure(const char *name,
-> > +                                    const struct file_operations *fops=
-,
-> > +                                    void *priv, int flags,
-> > +                                    const struct inode *context_inode)
-> > +{
-> > +     return __anon_inode_getfile(name, fops, priv, flags,
-> > +                                 context_inode, true);
->
-> This is not directly related to this patch but why using the "secure"
-> boolean in __anon_inode_getfile() and __anon_inode_getfd() instead of
-> checking that context_inode is not NULL? This would simplify the code,
-> remove this anon_inode_getfile_secure() wrapper and avoid potential
-> inconsistencies.
+On 8/12/21 1:04 AM, Christoph Hellwig wrote:
+> On Wed, Aug 11, 2021 at 01:35:33PM -0600, Jens Axboe wrote:
+>> Initialize the bio_set used for IO with per-cpu bio caching enabled,
+>> and use the new bio_alloc_kiocb() helper to dip into that cache.
+>>
+>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> 
+> This seems to be pretty much my patch as-is..
 
-The issue is that it is acceptable for the context_inode to be either
-valid or NULL for callers who request the "secure" code path.
+It is, sorry I'll fix the attribution.
 
-Look at the SELinux implementation of the anonymous inode hook in
-selinux_inode_init_security_anon() and you will see that in cases
-where the context_inode is valid we simply inherit the label from the
-given inode, whereas if context_inode is NULL we do a type transition
-using the requesting task and the anonymous inode's "name".
+-- 
+Jens Axboe
 
---=20
-paul moore
-www.paul-moore.com

@@ -2,126 +2,115 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E9EA93EA7D6
-	for <lists+io-uring@lfdr.de>; Thu, 12 Aug 2021 17:42:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B9213EA7C7
+	for <lists+io-uring@lfdr.de>; Thu, 12 Aug 2021 17:41:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238283AbhHLPmd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 12 Aug 2021 11:42:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37188 "EHLO
+        id S238175AbhHLPmS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 12 Aug 2021 11:42:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238309AbhHLPm0 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 12 Aug 2021 11:42:26 -0400
-X-Greylist: delayed 389 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 12 Aug 2021 08:42:01 PDT
-Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [IPv6:2001:1600:3:17::bc09])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CB43C0617AD
-        for <io-uring@vger.kernel.org>; Thu, 12 Aug 2021 08:42:00 -0700 (PDT)
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4GlrNw1RpnzMqK32;
-        Thu, 12 Aug 2021 17:35:28 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4GlrNv22RMzlh8Tf;
-        Thu, 12 Aug 2021 17:35:27 +0200 (CEST)
-Subject: Re: [RFC PATCH v2 5/9] fs: add anon_inode_getfile_secure() similar to
- anon_inode_getfd_secure()
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>
-References: <162871480969.63873.9434591871437326374.stgit@olly>
- <162871492283.63873.8743976556992924333.stgit@olly>
- <1d19ca85-c6f9-7aa5-162a-f9728e0a8ccd@digikod.net>
- <CAHC9VhRe3cgYuaV7w-BUwj_i=8_uuy3+5-8oA6QVsdXp3JgVtw@mail.gmail.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <5daa09d2-c4f8-3c57-5643-93d2df00d503@digikod.net>
-Date:   Thu, 12 Aug 2021 17:35:27 +0200
-User-Agent: 
+        with ESMTP id S238168AbhHLPmR (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 12 Aug 2021 11:42:17 -0400
+Received: from mail-ot1-x335.google.com (mail-ot1-x335.google.com [IPv6:2607:f8b0:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7955C0613D9
+        for <io-uring@vger.kernel.org>; Thu, 12 Aug 2021 08:41:52 -0700 (PDT)
+Received: by mail-ot1-x335.google.com with SMTP id e13-20020a9d63cd0000b02904fa42f9d275so8285925otl.1
+        for <io-uring@vger.kernel.org>; Thu, 12 Aug 2021 08:41:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2s82tmKVU8sl/Qe4wFsHJc+u0KltczDQHVAOHyV1KHA=;
+        b=EvyI0QYzqqVtHvfPjJjjAyUArww/yQnXGepKYknu5bFEGDs/mLvyC6lJBbE7xZY7h+
+         Kd8fziecTlJPRNnCBTzTWBPqXMjX82x/wnQof2ULuOipy3Q8b6AxjqxdGnZQXbZtfSWr
+         EHRgubfFXQrG8Bb4tx49Kh8/CxvcWeuhcTDS/nfuc6NXs41xWev2NTZGOcjh8MJA6u5V
+         0XipNRRAhtBmRDZAcTF+jT83rrCtybFhsmEipPdPZdttb7oNwoggiKIW8jCAcDt+SPrH
+         9pr5GSiN4Cak0cmopjkmB37rkvZ8PIMme0tQyPdjC67RhdBEO7HGM1Ui3vi0CRQnlfYB
+         /3cA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2s82tmKVU8sl/Qe4wFsHJc+u0KltczDQHVAOHyV1KHA=;
+        b=ngNNSDvGMyNPMdIHQBGj9t0O0lXI4Rm3b2cEykuslNt6sIVai97t4Mhqkzn4XAZGa7
+         lYqqrZsXm5BmH2Ok9KgfnEs8ZpZ9/6jvCCGCJ6Ypr7tVzS9PtAti/nytW4Vq+gENehti
+         EaBzB1N//JCv77w7AEKXIw684ZJBnkDZtQHP2MZjR1yCvJAZlVfhxunyThGX/BXEnrBn
+         ac7OLShq9aYIZbnXXtcu01gLGaTJ0XMysMn4zean+uRk7vkxFyrFn5JAhhHDFAyIFQF+
+         Qy6wCVsM1GRTHPt1YQjHO8DpQpiBwuT7G/lhRqkJRORioV1/EYHd3RoozxGCLGBFoh7B
+         uksg==
+X-Gm-Message-State: AOAM530jeqnbxFPuopph4YkvnNeE+UeL/+vHbDt8gNQtFg206xBn4pcF
+        ahfrOp0D6sstJvZj76RsTzUUTQImiFn6UAZ/
+X-Google-Smtp-Source: ABdhPJw5qfTKvc2KfY7vLODdNAZyhiCxNItt1a+NNJaTy//R4Rx9EadYZ7b5ICf2anLEYGTENpdtYQ==
+X-Received: by 2002:a9d:560a:: with SMTP id e10mr3935453oti.219.1628782911898;
+        Thu, 12 Aug 2021 08:41:51 -0700 (PDT)
+Received: from p1.localdomain ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id w16sm690973oih.19.2021.08.12.08.41.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Aug 2021 08:41:51 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     io-uring@vger.kernel.org
+Cc:     linux-block@vger.kernel.org, hch@infradead.org
+Subject: [PATCHSET v5 0/6] Enable bio recycling for polled IO
+Date:   Thu, 12 Aug 2021 09:41:43 -0600
+Message-Id: <20210812154149.1061502-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-In-Reply-To: <CAHC9VhRe3cgYuaV7w-BUwj_i=8_uuy3+5-8oA6QVsdXp3JgVtw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+Hi,
 
-On 12/08/2021 16:32, Paul Moore wrote:
-> On Thu, Aug 12, 2021 at 5:32 AM Mickaël Salaün <mic@digikod.net> wrote:
->> On 11/08/2021 22:48, Paul Moore wrote:
->>> Extending the secure anonymous inode support to other subsystems
->>> requires that we have a secure anon_inode_getfile() variant in
->>> addition to the existing secure anon_inode_getfd() variant.
->>>
->>> Thankfully we can reuse the existing __anon_inode_getfile() function
->>> and just wrap it with the proper arguments.
->>>
->>> Signed-off-by: Paul Moore <paul@paul-moore.com>
->>>
->>> ---
->>> v2:
->>> - no change
->>> v1:
->>> - initial draft
->>> ---
->>>  fs/anon_inodes.c            |   29 +++++++++++++++++++++++++++++
->>>  include/linux/anon_inodes.h |    4 ++++
->>>  2 files changed, 33 insertions(+)
->>>
->>> diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
->>> index a280156138ed..e0c3e33c4177 100644
->>> --- a/fs/anon_inodes.c
->>> +++ b/fs/anon_inodes.c
->>> @@ -148,6 +148,35 @@ struct file *anon_inode_getfile(const char *name,
->>>  }
->>>  EXPORT_SYMBOL_GPL(anon_inode_getfile);
->>>
->>> +/**
->>> + * anon_inode_getfile_secure - Like anon_inode_getfile(), but creates a new
->>> + *                             !S_PRIVATE anon inode rather than reuse the
->>> + *                             singleton anon inode and calls the
->>> + *                             inode_init_security_anon() LSM hook.  This
->>> + *                             allows for both the inode to have its own
->>> + *                             security context and for the LSM to enforce
->>> + *                             policy on the inode's creation.
->>> + *
->>> + * @name:    [in]    name of the "class" of the new file
->>> + * @fops:    [in]    file operations for the new file
->>> + * @priv:    [in]    private data for the new file (will be file's private_data)
->>> + * @flags:   [in]    flags
->>> + * @context_inode:
->>> + *           [in]    the logical relationship with the new inode (optional)
->>> + *
->>> + * The LSM may use @context_inode in inode_init_security_anon(), but a
->>> + * reference to it is not held.  Returns the newly created file* or an error
->>> + * pointer.  See the anon_inode_getfile() documentation for more information.
->>> + */
->>> +struct file *anon_inode_getfile_secure(const char *name,
->>> +                                    const struct file_operations *fops,
->>> +                                    void *priv, int flags,
->>> +                                    const struct inode *context_inode)
->>> +{
->>> +     return __anon_inode_getfile(name, fops, priv, flags,
->>> +                                 context_inode, true);
->>
->> This is not directly related to this patch but why using the "secure"
->> boolean in __anon_inode_getfile() and __anon_inode_getfd() instead of
->> checking that context_inode is not NULL? This would simplify the code,
->> remove this anon_inode_getfile_secure() wrapper and avoid potential
->> inconsistencies.
-> 
-> The issue is that it is acceptable for the context_inode to be either
-> valid or NULL for callers who request the "secure" code path.
-> 
-> Look at the SELinux implementation of the anonymous inode hook in
-> selinux_inode_init_security_anon() and you will see that in cases
-> where the context_inode is valid we simply inherit the label from the
-> given inode, whereas if context_inode is NULL we do a type transition
-> using the requesting task and the anonymous inode's "name".
-> 
+For v4, see posting here:
 
-Indeed.
+https://lore.kernel.org/io-uring/20210811193533.766613-1-axboe@kernel.dk/
 
-Acked-by: Mickaël Salaün <mic@linux.microsoft.com>
+3.5M+ IOPS per core:
+
+axboe@amd ~/g/fio (master)> sudo taskset -c 0 t/io_uring -b512 -d128 -c32 -s32 -p1 -F1 -B1 /dev/nvme3n1
+i 8, argc 9
+Added file /dev/nvme3n1 (submitter 0)
+sq_ring ptr = 0x0x7fdab1a8d000
+sqes ptr    = 0x0x7fdab1a8b000
+cq_ring ptr = 0x0x7fdab1a89000
+polled=1, fixedbufs=1, register_files=1, buffered=0 QD=128, sq_ring=128, cq_ring=256
+submitter=1757
+IOPS=3520608, IOS/call=32/31, inflight=47 (47)
+IOPS=3514432, IOS/call=32/32, inflight=32 (32)
+IOPS=3513440, IOS/call=32/31, inflight=128 (128)
+IOPS=3507616, IOS/call=32/32, inflight=32 (32)
+IOPS=3505984, IOS/call=32/32, inflight=32 (32)
+IOPS=3511328, IOS/call=32/31, inflight=64 (64)
+[snip]
+
+Changes can also be bound in my io_uring-bio-cache.5 branch, and sit
+on top of for-5.15/io_uring.
+
+ block/bio.c                | 164 +++++++++++++++++++++++++++++++++----
+ block/blk-core.c           |   5 +-
+ fs/block_dev.c             |   6 +-
+ fs/io_uring.c              |   2 +-
+ include/linux/bio.h        |  13 +++
+ include/linux/blk_types.h  |   1 +
+ include/linux/cpuhotplug.h |   1 +
+ include/linux/fs.h         |   2 +
+ 8 files changed, 175 insertions(+), 19 deletions(-)
+
+Changes since v4:
+
+- Kill __bio_init() helper
+- Kill __bio_put() helper
+- Cleanup bio_alloc_kiocb()
+- Expand commit messages
+- Various little tweaks
+- Add kerneldoc for bio_alloc_kiocb()
+- Fix attribution on last patch
+- Remove bio.h list manipulation leftovers
+- Move cpuhp_dead notifier to end of bio_set
+- Rebase on for-5.15/io_uring
+
+-- 
+Jens Axboe
+
+

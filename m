@@ -2,106 +2,137 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AA413EBB4D
-	for <lists+io-uring@lfdr.de>; Fri, 13 Aug 2021 19:20:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2176A3EBC56
+	for <lists+io-uring@lfdr.de>; Fri, 13 Aug 2021 21:00:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229640AbhHMRVV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 13 Aug 2021 13:21:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49114 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229603AbhHMRVU (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 13 Aug 2021 13:21:20 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07E1AC061756;
-        Fri, 13 Aug 2021 10:20:52 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id w21-20020a7bc1150000b02902e69ba66ce6so7376072wmi.1;
-        Fri, 13 Aug 2021 10:20:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:references:from:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=IHcHwoO+YvyHAqpESPLSfrO5JSgyr2FJHdd37yi0v1g=;
-        b=jmnNZ8IBrqfqveCnY/74OylQQ1OVLyVgSuiiQ+4pw8p9yz2FMPFKv4aj0ZEcDtCv4+
-         IZ3TM8+5kYW9lhmNbqjpW2MiIoXetHivjSM5D3+ptF1/v8XLbPXAb10ivIscmZsZBhYm
-         3Ynrov3pB0whCJSqHLT70CQqOjOMgBn/FRF2rT4DlHxduoMMzgagjJ9qw4OjqPsXMuV7
-         Uop3AwxRmjdqGwU4SKrr+2Iob7ukF6rjG0SnK9afrjCIv3KA3VoFkcYeLVvLTZ99rvvm
-         UXPEaxTJD19FQSOwK7jLSu2pVYhbf/xo5nm0HHrl/ECVDDnYLBBMnuHTn0mdlDr7jR4a
-         LEUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=IHcHwoO+YvyHAqpESPLSfrO5JSgyr2FJHdd37yi0v1g=;
-        b=GBAaAYkyGDIPr6yWaAFNTJ8tz+LuVKbseWXyyLBfkfNG9xgsOYz7wXWXmV4BtgqlfD
-         YSCMTmPSKtxSXluv4Out7nZKZhH4ovLHMck8dkPPKQTaB7huaRtUEUU85wBc6KAcdGg3
-         nw9gbQmbchH/U6dl/1ekH0IyiI33b7a+EQvNdDYimjck9kAoD8DoBWClkWcgPU64kM8P
-         8YzpCDXp/p/BqhM9F12t2xvFX5EtEUN7u7MiBcq4+ssNR8oGNc4aBFkNEOHjn1JzzPrD
-         eVhGwuUb5dmNXAM5VxaJCP2QPEnBXK2gHJxIFXNGpo8LMWNAKHDnx71SC42yyO6wtDpp
-         9rHw==
-X-Gm-Message-State: AOAM533MB0t/YNEbUi8YvjtrvQO4XOOCzFrnea0Ov32xZVdl25ncrEfe
-        q97npey+32DlGNBdZNysxkE=
-X-Google-Smtp-Source: ABdhPJyO7cQ+riv/1XGihAr8zLgoQGQ53CQe0uL62INja0KU8Je4XsNs1YjMNMJFTpqxQoPOar73AA==
-X-Received: by 2002:a1c:2381:: with SMTP id j123mr33179wmj.68.1628875250690;
-        Fri, 13 Aug 2021 10:20:50 -0700 (PDT)
-Received: from [192.168.8.197] ([148.252.132.210])
-        by smtp.gmail.com with ESMTPSA id i3sm2003543wmb.17.2021.08.13.10.20.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Aug 2021 10:20:50 -0700 (PDT)
-To:     Paul Cercueil <paul@crapouillou.net>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Christoph Hellwig <hch@lst.de>
-Cc:     linux-iio@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Alexandru Ardelean <ardeleanalex@gmail.com>
-References: <2H0SXQ.2KIK2PBVRFWH2@crapouillou.net>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Subject: Re: IIO, dmabuf, io_uring
-Message-ID: <a343b14f-6b7e-e377-9ae0-871e23b70453@gmail.com>
-Date:   Fri, 13 Aug 2021 18:20:19 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+        id S233391AbhHMTBX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 13 Aug 2021 15:01:23 -0400
+Received: from wnew1-smtp.messagingengine.com ([64.147.123.26]:39509 "EHLO
+        wnew1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230440AbhHMTBX (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 13 Aug 2021 15:01:23 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.west.internal (Postfix) with ESMTP id 935342B011D3;
+        Fri, 13 Aug 2021 15:00:52 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Fri, 13 Aug 2021 15:00:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        joshtriplett.org; h=date:from:to:cc:subject:message-id
+        :references:mime-version:content-type:in-reply-to; s=fm1; bh=Oi9
+        pJS/VGWw696eTE+HoTGcxYFI8GqP9wVUUlw1PSOc=; b=fXlJPlutM/+izC+yijH
+        iTEGyqvzLzEsBCwgkXcOhWVudDdiSvID7fBVnK/QeNVMLrDuyGQOuPSxbEZTCPRQ
+        +UrgK6s+MTgFxYrdtADeFOPFvpJaWqZL4hF3rssxiNguhU6m0j5P/jU+zbeQsnXy
+        NjRQqP9k1W2AFhGHUDMQuwVyMQ2tvyVKbH4+P2n2OpcT/Dh5XAgqiVz+irHTZYLW
+        n8k//ViXfvgoYhh5VDIilvGPvBY+xJgWCigVrDtvbUnzUNkWLzT/7nlVV/zqJWtE
+        F0Qwd8kIOoqmNlaaGxj0EWD+rLJqi5AWnLixNsTdk/3oH1Obk5lnnrB1ueyNUddL
+        ILw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=Oi9pJS
+        /VGWw696eTE+HoTGcxYFI8GqP9wVUUlw1PSOc=; b=SoR9Ne5uhZS+goYczaeM41
+        /w0Zk587Z16VWAbDRSBOGYHpzzPpxtX7fRMTi1xYsPbYivG0XBIsAxmYDmcE3i6S
+        Nq8rLHJQ6AEtcl/t99gDjBnvJ5+OboJgU3v4sNAMShvqX3+ANcZEWAkLX2J4+7j4
+        jv/1HfDL4GxDp1dmoem+Y28PATzMD8xeXCGvN7JQkSIhqR9b8rdllmIEaVhy+k1E
+        78s5uJj8i9ZAbiaciDNLtQftUfekf/PeTsBwRDNkelfVR+q1KrOjL/acOXmaFqkr
+        gwbSkBDzw48S/cm2Cq3w1ms0ALJ+Ia11n+b0bgCf/t36DUE6APWljHC/NTa/7nLg
+        ==
+X-ME-Sender: <xms:YsEWYXqUUWgYznRgblPPLLQzppxOE7Z-iX71jpUNfLcNN-FK84PiKw>
+    <xme:YsEWYRrwj6qS7-xqtyfQrvigZE8H-UdgkZjeQvnEnFeB8CqOINKPldPbqiQjHNooA
+    VXlb-6JyRJSB7ELUyM>
+X-ME-Received: <xmr:YsEWYUPvWMwmx0x6w9ginb8mU-6YM4vybFYVUt7bvDJ29muuQXubIaWafO0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrkeehgddufeefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeflohhshhcu
+    vfhrihhplhgvthhtuceojhhoshhhsehjohhshhhtrhhiphhlvghtthdrohhrgheqnecugg
+    ftrfgrthhtvghrnhepgedtgfefgefhveeglefgfeeigeduueehkeektdeuueetgfehffev
+    geeuieetheetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+    homhepjhhoshhhsehjohhshhhtrhhiphhlvghtthdrohhrgh
+X-ME-Proxy: <xmx:YsEWYa59e9m1GzYPKp6KQ0YDCTCyZtZXvG6h_icYa-d-lfX527xUog>
+    <xmx:YsEWYW6bKokVYlL4vjCf_FYtEbIcW261ajTKsFqhGduqMi468D6kkQ>
+    <xmx:YsEWYSieF93-JQ2amW9-P2kyJj0FJg3cCxrxHrnB2rbLTwj7dS7a9g>
+    <xmx:ZMEWYTsMldItVl5TYGTV-Z6VvAs-AWypBBmTJRSGFD4_PPjPmJ3hNQm8GX4>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 13 Aug 2021 15:00:49 -0400 (EDT)
+Date:   Fri, 13 Aug 2021 12:00:48 -0700
+From:   Josh Triplett <josh@joshtriplett.org>
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, Stefan Metzmacher <metze@samba.org>
+Subject: Re: [PATCH v2 0/4] open/accept directly into io_uring fixed file
+ table
+Message-ID: <YRbBYCn29B+kgZcy@localhost>
+References: <cover.1628871893.git.asml.silence@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <2H0SXQ.2KIK2PBVRFWH2@crapouillou.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1628871893.git.asml.silence@gmail.com>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Paul,
+On Fri, Aug 13, 2021 at 05:43:09PM +0100, Pavel Begunkov wrote:
+> Add an optional feature to open/accept directly into io_uring's fixed
+> file table bypassing the normal file table. Same behaviour if as the
+> snippet below, but in one operation:
+> 
+> sqe = prep_[open,accept](...);
+> cqe = submit_and_wait(sqe);
+> // error handling
+> io_uring_register_files_update(uring_idx, (fd = cqe->res));
+> // optionally
+> close((fd = cqe->res));
+> 
+> The idea in pretty old, and was brough up and implemented a year ago
+> by Josh Triplett, though haven't sought the light for some reasons.
 
-On 8/13/21 12:41 PM, Paul Cercueil wrote:
-> Hi,
-> 
-> A few months ago we (ADI) tried to upstream the interface we use with our high-speed ADCs and DACs. It is a system with custom ioctls on the iio device node to dequeue and enqueue buffers (allocated with dma_alloc_coherent), that can then be mmap'd by userspace applications. Anyway, it was ultimately denied entry [1]; this API was okay in ~2014 when it was designed but it feels like re-inventing the wheel in 2021.
-> 
-> Back to the drawing table, and we'd like to design something that we can actually upstream. This high-speed interface looks awfully similar to DMABUF, so we may try to implement a DMABUF interface for IIO, unless someone has a better idea.
-> 
-> Our first usecase is, we want userspace applications to be able to dequeue buffers of samples (from ADCs), and/or enqueue buffers of samples (for DACs), and to be able to manipulate them (mmapped buffers). With a DMABUF interface, I guess the userspace application would dequeue a dma buffer from the driver, mmap it, read/write the data, unmap it, then enqueue it to the IIO driver again so that it can be disposed of. Does that sound sane?
-> 
-> Our second usecase is - and that's where things get tricky - to be able to stream the samples to another computer for processing, over Ethernet or USB. Our typical setup is a high-speed ADC/DAC on a dev board with a FPGA and a weak soft-core or low-power CPU; processing the data in-situ is not an option. Copying the data from one buffer to another is not an option either (way too slow), so we absolutely want zero-copy.
-> 
-> Usual userspace zero-copy techniques (vmsplice+splice, MSG_ZEROCOPY etc) don't really work with mmapped kernel buffers allocated for DMA [2] and/or have a huge overhead, so the way I see it, we would also need DMABUF support in both the Ethernet stack and USB (functionfs) stack. However, as far as I understood, DMABUF is mostly a DRM/V4L2 thing, so I am really not sure we have the right idea here.
-> 
-> And finally, there is the new kid in town, io_uring. I am not very literate about the topic, but it does not seem to be able to handle DMA buffers (yet?). The idea that we could dequeue a buffer of samples from the IIO device and send it over the network in one single syscall is appealing, though.
+Thank you for working to get this over the finish line!
 
-You might be interested to look up zctap, previously a.k.a netgpu.
-
-For io_uring, it's work in progress as well.
-
+> Tested on basic cases, will be sent out as liburing patches later.
 > 
-> Any thoughts? Feedback would be greatly appreciated.
+> A copy paste from 2/2 describing user API and some notes:
 > 
-> Cheers,
-> -Paul
+> The behaviour is controlled by setting sqe->file_index, where 0 implies
+> the old behaviour. If non-zero value is specified, then it will behave
+> as described and place the file into a fixed file slot
+> sqe->file_index - 1. A file table should be already created, the slot
+> should be valid and empty, otherwise the operation will fail.
 > 
-> [1]: https://lore.kernel.org/linux-iio/20210217073638.21681-1-alexandru.ardelean@analog.com/T/#m6b853addb77959c55e078fbb06828db33d4bf3d7
-> [2]: https://newbedev.com/zero-copy-user-space-tcp-send-of-dma-mmap-coherent-mapped-memory
+> Note 1: we can't use IOSQE_FIXED_FILE to switch between modes, because
+> accept takes a file, and it already uses the flag with a different
+> meaning.
+> 
+> Note 2: it's u16, where in theory the limit for fixed file tables might
+> get increased in the future. If would ever happen so, we'll better
+> workaround later, e.g. by making ioprio to represent upper bits 16 bits.
+> The layout for open is tight already enough.
 
--- 
-Pavel Begunkov
+Rather than using sqe->file_index - 1, which feels like an error-prone
+interface, I think it makes sense to use a dedicated flag for this, like
+IOSQE_OPEN_FIXED. That flag could work for any open-like operation,
+including open, accept, and in the future many other operations such as
+memfd_create. (Imagine using a single ring submission to open a memfd,
+write a buffer into it, seal it, send it over a UNIX socket, and then
+close it.)
+
+The only downside is that you'll need to reject that flag in all
+non-open operations. One way to unify that code might be to add a flag
+in io_op_def for open-like operations, and then check in common code for
+the case of non-open-like operations passing IOSQE_OPEN_FIXED.
+
+Also, rather than using a 16-bit index for the fixed file table and
+potentially requiring expansion into a different field in the future,
+what about overlapping it with the nofile field in the open and accept
+requests? If they're not opening a normal file descriptor, they don't
+need nofile. And in the original sqe, you can then overlap it with a
+32-bit field like splice_fd_in.
+
+EEXIST seems like the wrong error-code to use if the index is already in
+use; open can already return EEXIST if you pass O_EXCL. How about EBADF,
+or better yet EBADSLT which is unlikely to be returned for any other
+reason?
+
+- Josh Triplett

@@ -2,102 +2,117 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D51893EBA0F
-	for <lists+io-uring@lfdr.de>; Fri, 13 Aug 2021 18:30:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B27C3EBA3F
+	for <lists+io-uring@lfdr.de>; Fri, 13 Aug 2021 18:44:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236205AbhHMQbT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 13 Aug 2021 12:31:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37162 "EHLO
+        id S234887AbhHMQoS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 13 Aug 2021 12:44:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40248 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229471AbhHMQbS (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 13 Aug 2021 12:31:18 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5121AC061756;
-        Fri, 13 Aug 2021 09:30:51 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id x10so7756244wrt.8;
-        Fri, 13 Aug 2021 09:30:51 -0700 (PDT)
+        with ESMTP id S236205AbhHMQoS (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 13 Aug 2021 12:44:18 -0400
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 388A9C0617AD;
+        Fri, 13 Aug 2021 09:43:51 -0700 (PDT)
+Received: by mail-wr1-x430.google.com with SMTP id x10so7802819wrt.8;
+        Fri, 13 Aug 2021 09:43:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=mVNqgVlbGS9NU0K9x3GBaGLbaZEANL0O54jcZsZxY4Q=;
-        b=JFzmTfa8AXexpsTp8hh2tSNw6pUiED1G4dARYVGFGrikIIO+FWJSlooonZIkTqkWKR
-         xSCe68EwRMQLpCoBSsKDag/wB6qEmIL6ORXr3d1XU/ZOLiuZf4wX4Y14kG9GgJlGw2J6
-         dMDalF9DjxYZ3hz7qZ6IZTbVJWQWRgs+eZcVmT+PqVGqcfeVj4Y6Nvqiq9Cc/ZLNXl+R
-         p7Mkljqo9nK1G3mSzeGwos16NOCfWIK7A3BKf8HZpJGYonWJQWxQ/oykv3j+s72jLvHl
-         S03R+/Y+8G1MXaAxraJ5ELDqqLbuf7UzNzlDMIF+V1Xq7mrxi7hutOnBPUuYsOCAxF2E
-         MxrQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tTtxt0HccECn9JoP7tPP5lmd6vJWaG+/hAvUwgP25po=;
+        b=TbSOfuEXfhis1AmXSoz50XxA+hf3EYvt9WVVOwZWaRE8Gf3MMP+GPGIL1yo8fs3Xfj
+         2j/E3eMiAd+DXmgLCYE89ISuA00lvBy6GN9v3tKvZoXR7t6gbw9btZeRGsKvqrIjBbWl
+         9O1XUY7uFIb5oah61Gunjr6BJ2/CF9s/OWVswEBi29LEZhZlRl4GHeLw3giiT40Th9sF
+         GrfoQ6q3DbbKFQy6VjeD3BWjdxwYNxmoHCwSCEuQAYGwnaA3lzxYdUr+oEPqMNAyDR++
+         2hojKoRM4xNSxj8VPWXr25kbn2dXmBIXQVXb3xdUEF6Av/4jjZh5eUANe1lw1/540JnY
+         fikQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=mVNqgVlbGS9NU0K9x3GBaGLbaZEANL0O54jcZsZxY4Q=;
-        b=UCOp2yy9A8VCkKbqxZzWP/88DrxhfN88x13RJimzWzGN2V1ViIXLx0f1gd1eW+cYz0
-         Ql2spAD3PqxELt+xJevDK8zc9IEr5uWYtJLehBZWapdJ6Fw76Ku6NArLV42TLlylCq2J
-         rj5ZOrEziN8hz8O+kVRDg/exHfspmJrXLt7uZuZOs0zbtO4OHi9r3fgimLlliOIg/mWR
-         SWtZuKGBSkc5QU6yRSBv/LPob6aYFncXLv1+6mLIn7rjQQ/E2df0BAuFaguNu/rf+Sy+
-         HY0wkWwPEGigBi3wP23ZUdruzQGbwhBTBoIJt1LDqfyb28Puf7SwnIq80R0uTfF9vGaX
-         0odw==
-X-Gm-Message-State: AOAM533qYrYcqZZHiJvB+IDAlnz1HTRh/a0kelSlkgDVRt6cow3kcf5m
-        ntt2zrHXpCRkecyFAjzUnqV7nDmu5ww=
-X-Google-Smtp-Source: ABdhPJxcLX55VEQ4CGCSLsQzBVxhqFV4yV95sZgJtD4wlIYGY9ww0s24jBDo6imidOXcbGD2SAacaQ==
-X-Received: by 2002:adf:9084:: with SMTP id i4mr4254314wri.23.1628872249604;
-        Fri, 13 Aug 2021 09:30:49 -0700 (PDT)
-Received: from [192.168.8.197] ([148.252.132.210])
-        by smtp.gmail.com with ESMTPSA id q22sm2045295wmj.32.2021.08.13.09.30.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Aug 2021 09:30:49 -0700 (PDT)
-Subject: Re: [RFC 0/4] open/accept directly into io_uring fixed file table
-To:     Josh Triplett <josh@joshtriplett.org>, Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-References: <cover.1625657451.git.asml.silence@gmail.com>
- <48bd91bc-ba1a-1e69-03a1-3d6f913f96c3@kernel.dk> <YOXCeNs0waut1Jh1@localhost>
+        bh=tTtxt0HccECn9JoP7tPP5lmd6vJWaG+/hAvUwgP25po=;
+        b=RlDLaHVK4j+cQ0FoVn9D549AR9b/ywA6ff/PG9TGWfN+jZW4fkf4ZoVtvMW0M74uxD
+         mhYuV8BywfHi2kFayQYEb4ew0vrzIEQWgaiTEWKGf+jMAPz1iCiTd0tChT+PE69dg1tV
+         6pULr1IUA9OtQu8m0u0XqUd9GWQMtHAjsxJQrBhH/jfod74eBTo0K40IO/MEkrOA8YXb
+         dOPBrOt6Xr/UPsmjwGgSmuYC3PqxrnucofpUSthn3DJUNG2Oh+gjq3hh++8jvIVcd45A
+         R/jQSDca2EYkVs7QH8wZK0kPr/eKbEa51G5pYZ6FLKtyOOw40CAU7xVkOSE+PSuPSvyD
+         gQZw==
+X-Gm-Message-State: AOAM530seqOP0GhKNQYsVzYYt2gwwIbiUkLRKWgUVaqlASHMdVPmQmZu
+        QcdYf+v8YMe21NYXg1GQV6I=
+X-Google-Smtp-Source: ABdhPJyChgJYhTo+p5S189H5duTstjsG7BENGIPd7duv34/mMfqPc3J1u3WlRhmITYV4kROnsMQKkw==
+X-Received: by 2002:a5d:4808:: with SMTP id l8mr4215129wrq.349.1628873029830;
+        Fri, 13 Aug 2021 09:43:49 -0700 (PDT)
+Received: from localhost.localdomain ([148.252.132.210])
+        by smtp.gmail.com with ESMTPSA id s10sm2495829wrv.54.2021.08.13.09.43.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Aug 2021 09:43:49 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <81438f45-ac1d-4244-8d56-dbb44bb6d8b1@gmail.com>
-Date:   Fri, 13 Aug 2021 17:30:19 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        Josh Triplett <josh@joshtriplett.org>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, Stefan Metzmacher <metze@samba.org>
+Subject: [PATCH v2 0/4] open/accept directly into io_uring fixed file table 
+Date:   Fri, 13 Aug 2021 17:43:09 +0100
+Message-Id: <cover.1628871893.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-In-Reply-To: <YOXCeNs0waut1Jh1@localhost>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/7/21 4:04 PM, Josh Triplett wrote:
-> On Wed, Jul 07, 2021 at 07:07:52AM -0600, Jens Axboe wrote:
->> On 7/7/21 5:39 AM, Pavel Begunkov wrote:
->>> Implement an old idea allowing open/accept io_uring requests to register
->>> a newly created file as a io_uring's fixed file instead of placing it
->>> into a task's file table. The switching is encoded in io_uring's SQEs
->>> by setting sqe->buf_index/file_index, so restricted to 2^16-1. Don't
->>> think we need more, but may be a good idea to scrap u32 somewhere
->>> instead.
->>>
->>> From the net side only needs a function doing __sys_accept4_file()
->>> but not installing fd, see 2/4.
->>>
->>> Only RFC for now, the new functionality is tested only for open yet.
->>> I hope we can remember the author of the idea to add attribution.
->>
->> Pretty sure the original suggester of this as Josh, CC'ed.
-> 
-> Thanks for working on this, Pavel!
-> 
-> Original thread at
+Add an optional feature to open/accept directly into io_uring's fixed
+file table bypassing the normal file table. Same behaviour if as the
+snippet below, but in one operation:
 
-Totally was thinking it was only a discussion but not an actual patch,
-and I even did comment on it! Sorry Josh, would have persuaded you to
-finish it, if I remembered that.
+sqe = prep_[open,accept](...);
+cqe = submit_and_wait(sqe);
+// error handling
+io_uring_register_files_update(uring_idx, (fd = cqe->res));
+// optionally
+close((fd = cqe->res));
 
-> https://lore.kernel.org/io-uring/20200715004209.GA334456@localhost/T/ in
-> case that helps.
-> 
+The idea in pretty old, and was brough up and implemented a year ago
+by Josh Triplett, though haven't sought the light for some reasons.
+
+Tested on basic cases, will be sent out as liburing patches later.
+
+A copy paste from 2/2 describing user API and some notes:
+
+The behaviour is controlled by setting sqe->file_index, where 0 implies
+the old behaviour. If non-zero value is specified, then it will behave
+as described and place the file into a fixed file slot
+sqe->file_index - 1. A file table should be already created, the slot
+should be valid and empty, otherwise the operation will fail.
+
+Note 1: we can't use IOSQE_FIXED_FILE to switch between modes, because
+accept takes a file, and it already uses the flag with a different
+meaning.
+
+Note 2: it's u16, where in theory the limit for fixed file tables might
+get increased in the future. If would ever happen so, we'll better
+workaround later, e.g. by making ioprio to represent upper bits 16 bits.
+The layout for open is tight already enough.
+
+since RFC:
+ - added attribution
+ - updated descriptions
+ - rebased
+
+Pavel Begunkov (4):
+  net: add accept helper not installing fd
+  io_uring: openat directly into fixed fd table
+  io_uring: hand code io_accept() fd installing
+  io_uring: accept directly into fixed file table
+
+ fs/io_uring.c                 | 114 +++++++++++++++++++++++++++++-----
+ include/linux/socket.h        |   3 +
+ include/uapi/linux/io_uring.h |   2 +
+ net/socket.c                  |  71 +++++++++++----------
+ 4 files changed, 139 insertions(+), 51 deletions(-)
 
 -- 
-Pavel Begunkov
+2.32.0
+

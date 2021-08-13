@@ -2,137 +2,126 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2176A3EBC56
-	for <lists+io-uring@lfdr.de>; Fri, 13 Aug 2021 21:00:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88FE93EBC5D
+	for <lists+io-uring@lfdr.de>; Fri, 13 Aug 2021 21:02:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233391AbhHMTBX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 13 Aug 2021 15:01:23 -0400
-Received: from wnew1-smtp.messagingengine.com ([64.147.123.26]:39509 "EHLO
-        wnew1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230440AbhHMTBX (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 13 Aug 2021 15:01:23 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.west.internal (Postfix) with ESMTP id 935342B011D3;
-        Fri, 13 Aug 2021 15:00:52 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Fri, 13 Aug 2021 15:00:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        joshtriplett.org; h=date:from:to:cc:subject:message-id
-        :references:mime-version:content-type:in-reply-to; s=fm1; bh=Oi9
-        pJS/VGWw696eTE+HoTGcxYFI8GqP9wVUUlw1PSOc=; b=fXlJPlutM/+izC+yijH
-        iTEGyqvzLzEsBCwgkXcOhWVudDdiSvID7fBVnK/QeNVMLrDuyGQOuPSxbEZTCPRQ
-        +UrgK6s+MTgFxYrdtADeFOPFvpJaWqZL4hF3rssxiNguhU6m0j5P/jU+zbeQsnXy
-        NjRQqP9k1W2AFhGHUDMQuwVyMQ2tvyVKbH4+P2n2OpcT/Dh5XAgqiVz+irHTZYLW
-        n8k//ViXfvgoYhh5VDIilvGPvBY+xJgWCigVrDtvbUnzUNkWLzT/7nlVV/zqJWtE
-        F0Qwd8kIOoqmNlaaGxj0EWD+rLJqi5AWnLixNsTdk/3oH1Obk5lnnrB1ueyNUddL
-        ILw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=Oi9pJS
-        /VGWw696eTE+HoTGcxYFI8GqP9wVUUlw1PSOc=; b=SoR9Ne5uhZS+goYczaeM41
-        /w0Zk587Z16VWAbDRSBOGYHpzzPpxtX7fRMTi1xYsPbYivG0XBIsAxmYDmcE3i6S
-        Nq8rLHJQ6AEtcl/t99gDjBnvJ5+OboJgU3v4sNAMShvqX3+ANcZEWAkLX2J4+7j4
-        jv/1HfDL4GxDp1dmoem+Y28PATzMD8xeXCGvN7JQkSIhqR9b8rdllmIEaVhy+k1E
-        78s5uJj8i9ZAbiaciDNLtQftUfekf/PeTsBwRDNkelfVR+q1KrOjL/acOXmaFqkr
-        gwbSkBDzw48S/cm2Cq3w1ms0ALJ+Ia11n+b0bgCf/t36DUE6APWljHC/NTa/7nLg
-        ==
-X-ME-Sender: <xms:YsEWYXqUUWgYznRgblPPLLQzppxOE7Z-iX71jpUNfLcNN-FK84PiKw>
-    <xme:YsEWYRrwj6qS7-xqtyfQrvigZE8H-UdgkZjeQvnEnFeB8CqOINKPldPbqiQjHNooA
-    VXlb-6JyRJSB7ELUyM>
-X-ME-Received: <xmr:YsEWYUPvWMwmx0x6w9ginb8mU-6YM4vybFYVUt7bvDJ29muuQXubIaWafO0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrkeehgddufeefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeflohhshhcu
-    vfhrihhplhgvthhtuceojhhoshhhsehjohhshhhtrhhiphhlvghtthdrohhrgheqnecugg
-    ftrfgrthhtvghrnhepgedtgfefgefhveeglefgfeeigeduueehkeektdeuueetgfehffev
-    geeuieetheetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
-    homhepjhhoshhhsehjohhshhhtrhhiphhlvghtthdrohhrgh
-X-ME-Proxy: <xmx:YsEWYa59e9m1GzYPKp6KQ0YDCTCyZtZXvG6h_icYa-d-lfX527xUog>
-    <xmx:YsEWYW6bKokVYlL4vjCf_FYtEbIcW261ajTKsFqhGduqMi468D6kkQ>
-    <xmx:YsEWYSieF93-JQ2amW9-P2kyJj0FJg3cCxrxHrnB2rbLTwj7dS7a9g>
-    <xmx:ZMEWYTsMldItVl5TYGTV-Z6VvAs-AWypBBmTJRSGFD4_PPjPmJ3hNQm8GX4>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 13 Aug 2021 15:00:49 -0400 (EDT)
-Date:   Fri, 13 Aug 2021 12:00:48 -0700
-From:   Josh Triplett <josh@joshtriplett.org>
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, Stefan Metzmacher <metze@samba.org>
-Subject: Re: [PATCH v2 0/4] open/accept directly into io_uring fixed file
- table
-Message-ID: <YRbBYCn29B+kgZcy@localhost>
-References: <cover.1628871893.git.asml.silence@gmail.com>
+        id S233046AbhHMTC7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 13 Aug 2021 15:02:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44108 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230440AbhHMTC7 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 13 Aug 2021 15:02:59 -0400
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D4A8C061756
+        for <io-uring@vger.kernel.org>; Fri, 13 Aug 2021 12:02:32 -0700 (PDT)
+Received: by mail-pj1-x102c.google.com with SMTP id cp15-20020a17090afb8fb029017891959dcbso22026466pjb.2
+        for <io-uring@vger.kernel.org>; Fri, 13 Aug 2021 12:02:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=to:cc:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=vy6MTwbbkSTZZwE46I6ZiRyYCFHHqWwDpjlEx38Rltc=;
+        b=lRVAatBwmU3ElgjudxV0xPy0w78n4z2SCVZCX1NoG395kiUxi3DKxS76duTmJx0ypK
+         uIcWoEn/wf1OUhwlGIQXSuDt869XnvCAKjE20L8QBpfp2d1vp0w771Bkq6Nmhg86fUwt
+         xsB7SKtYiXDGFtObC6QcNW1dlz8HRORq29tUb6UW6nxaz6CK9Y21A1B4uzgHTj+ZP9bY
+         /Kt4w1twmGV/KuHT64BTbFZ5wJaH++zFDh9Y/2Sl/AvHLJjSm/o5EydImB6Jxi8BtryL
+         xk/u1/Mx61JOM/EgtgbOQK6YoiVVIVO8z40hwM0VWLe2rlouLwW3qrG2J1cgePsRNf6Z
+         mOhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=vy6MTwbbkSTZZwE46I6ZiRyYCFHHqWwDpjlEx38Rltc=;
+        b=Ex8JHIRQGNmhn8nU32/ZOg5LKqt1s0jyRy2zdZvd2s2g8KQnTAC7jMQhP/qfL5fhmz
+         FpuCCQAzHmAIEOc+impiv/4oycWuckXsisfDRmdfVcz81uOgCR0UsK6ud4HXVc16YVyZ
+         VWF8f9JRRixtyr7m1NLxOomDtmpcnIsd0axrPnZrZsahjyX5vbFBTr2kxrb17DCv2TRh
+         LflfXyGceOpa6opYWgGMaCeIm1nQbJosh2VCgSrw9HmSgMr0OzEYw78i/7Q+5nP0xhIl
+         hRaw93nvQASAkZFvKMONDjuEWCsaajQqZCc5qka0jcJPci1+AZo5TjfbH/EmvpGofPWE
+         UHoA==
+X-Gm-Message-State: AOAM5300xW3vSXkrs3D3ltxpcUWchjGfqxqaujoKgrtBohfBoX7pnP1D
+        PabDCGjg9Bxk15etR820mZsHxu0S80vf0eTs
+X-Google-Smtp-Source: ABdhPJyOfrnyitgRXgwk6Q7ww8pznKU/fgxWpHG4tc5t1bdDf4/CDUd7CCxHGEx3nPwLUbELEpWmig==
+X-Received: by 2002:a62:ea0f:0:b029:319:8eef:5ff1 with SMTP id t15-20020a62ea0f0000b02903198eef5ff1mr3896774pfh.74.1628881351210;
+        Fri, 13 Aug 2021 12:02:31 -0700 (PDT)
+Received: from [192.168.1.116] ([66.219.217.159])
+        by smtp.gmail.com with ESMTPSA id 125sm3258682pfy.17.2021.08.13.12.02.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Aug 2021 12:02:30 -0700 (PDT)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     io-uring <io-uring@vger.kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring fixes for 5.14-rc6
+Message-ID: <9eecad5d-8432-d9c3-770f-b4ae7aac13ec@kernel.dk>
+Date:   Fri, 13 Aug 2021 13:02:29 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1628871893.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, Aug 13, 2021 at 05:43:09PM +0100, Pavel Begunkov wrote:
-> Add an optional feature to open/accept directly into io_uring's fixed
-> file table bypassing the normal file table. Same behaviour if as the
-> snippet below, but in one operation:
-> 
-> sqe = prep_[open,accept](...);
-> cqe = submit_and_wait(sqe);
-> // error handling
-> io_uring_register_files_update(uring_idx, (fd = cqe->res));
-> // optionally
-> close((fd = cqe->res));
-> 
-> The idea in pretty old, and was brough up and implemented a year ago
-> by Josh Triplett, though haven't sought the light for some reasons.
+Hi Linus,
 
-Thank you for working to get this over the finish line!
+A bit bigger than the previous weeks, but mostly just a few stable bound
+fixes. In detail:
 
-> Tested on basic cases, will be sent out as liburing patches later.
-> 
-> A copy paste from 2/2 describing user API and some notes:
-> 
-> The behaviour is controlled by setting sqe->file_index, where 0 implies
-> the old behaviour. If non-zero value is specified, then it will behave
-> as described and place the file into a fixed file slot
-> sqe->file_index - 1. A file table should be already created, the slot
-> should be valid and empty, otherwise the operation will fail.
-> 
-> Note 1: we can't use IOSQE_FIXED_FILE to switch between modes, because
-> accept takes a file, and it already uses the flag with a different
-> meaning.
-> 
-> Note 2: it's u16, where in theory the limit for fixed file tables might
-> get increased in the future. If would ever happen so, we'll better
-> workaround later, e.g. by making ioprio to represent upper bits 16 bits.
-> The layout for open is tight already enough.
+- Followup fixes to patches from last week for io-wq, turns out they
+  weren't complete (Hao)
 
-Rather than using sqe->file_index - 1, which feels like an error-prone
-interface, I think it makes sense to use a dedicated flag for this, like
-IOSQE_OPEN_FIXED. That flag could work for any open-like operation,
-including open, accept, and in the future many other operations such as
-memfd_create. (Imagine using a single ring submission to open a memfd,
-write a buffer into it, seal it, send it over a UNIX socket, and then
-close it.)
+- Two lockdep reported fixes out of the RT camp (me)
 
-The only downside is that you'll need to reject that flag in all
-non-open operations. One way to unify that code might be to add a flag
-in io_op_def for open-like operations, and then check in common code for
-the case of non-open-like operations passing IOSQE_OPEN_FIXED.
+- Sync the io_uring-cp example with liburing, as a few bug fixes never
+  made it to the kernel carried version (me)
 
-Also, rather than using a 16-bit index for the fixed file table and
-potentially requiring expansion into a different field in the future,
-what about overlapping it with the nofile field in the open and accept
-requests? If they're not opening a normal file descriptor, they don't
-need nofile. And in the original sqe, you can then overlap it with a
-32-bit field like splice_fd_in.
+- SQPOLL related TIF_NOTIFY_SIGNAL fix (Nadav)
 
-EEXIST seems like the wrong error-code to use if the index is already in
-use; open can already return EEXIST if you pass O_EXCL. How about EBADF,
-or better yet EBADSLT which is unlikely to be returned for any other
-reason?
+- Use WRITE_ONCE() when writing sq flags (Nadav)
 
-- Josh Triplett
+- io_rsrc_put_work() deadlock fix (Pavel)
+
+Please pull!
+
+
+The following changes since commit 21698274da5b6fc724b005bc7ec3e6b9fbcfaa06:
+
+  io-wq: fix lack of acct->nr_workers < acct->max_workers judgement (2021-08-06 08:28:18 -0600)
+
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux-block.git tags/io_uring-5.14-2021-08-13
+
+for you to fetch changes up to 8f40d0370795313b6f1b1782035919cfc76b159f:
+
+  tools/io_uring/io_uring-cp: sync with liburing example (2021-08-13 08:58:11 -0600)
+
+----------------------------------------------------------------
+io_uring-5.14-2021-08-13
+
+----------------------------------------------------------------
+Hao Xu (2):
+      io-wq: fix bug of creating io-wokers unconditionally
+      io-wq: fix IO_WORKER_F_FIXED issue in create_io_worker()
+
+Jens Axboe (3):
+      io_uring: rsrc ref lock needs to be IRQ safe
+      io_uring: drop ctx->uring_lock before flushing work item
+      tools/io_uring/io_uring-cp: sync with liburing example
+
+Nadav Amit (2):
+      io_uring: clear TIF_NOTIFY_SIGNAL when running task work
+      io_uring: Use WRITE_ONCE() when writing to sq_flags
+
+Pavel Begunkov (1):
+      io_uring: fix ctx-exit io_rsrc_put_work() deadlock
+
+ fs/io-wq.c                   | 26 ++++++++++++++------
+ fs/io_uring.c                | 58 ++++++++++++++++++++++----------------------
+ tools/io_uring/io_uring-cp.c | 31 ++++++++++++++++++++---
+ 3 files changed, 75 insertions(+), 40 deletions(-)
+
+-- 
+Jens Axboe
+

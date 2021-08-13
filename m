@@ -2,126 +2,78 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 88FE93EBC5D
-	for <lists+io-uring@lfdr.de>; Fri, 13 Aug 2021 21:02:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 378C73EBD35
+	for <lists+io-uring@lfdr.de>; Fri, 13 Aug 2021 22:17:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233046AbhHMTC7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 13 Aug 2021 15:02:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44108 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230440AbhHMTC7 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 13 Aug 2021 15:02:59 -0400
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D4A8C061756
-        for <io-uring@vger.kernel.org>; Fri, 13 Aug 2021 12:02:32 -0700 (PDT)
-Received: by mail-pj1-x102c.google.com with SMTP id cp15-20020a17090afb8fb029017891959dcbso22026466pjb.2
-        for <io-uring@vger.kernel.org>; Fri, 13 Aug 2021 12:02:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=to:cc:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=vy6MTwbbkSTZZwE46I6ZiRyYCFHHqWwDpjlEx38Rltc=;
-        b=lRVAatBwmU3ElgjudxV0xPy0w78n4z2SCVZCX1NoG395kiUxi3DKxS76duTmJx0ypK
-         uIcWoEn/wf1OUhwlGIQXSuDt869XnvCAKjE20L8QBpfp2d1vp0w771Bkq6Nmhg86fUwt
-         xsB7SKtYiXDGFtObC6QcNW1dlz8HRORq29tUb6UW6nxaz6CK9Y21A1B4uzgHTj+ZP9bY
-         /Kt4w1twmGV/KuHT64BTbFZ5wJaH++zFDh9Y/2Sl/AvHLJjSm/o5EydImB6Jxi8BtryL
-         xk/u1/Mx61JOM/EgtgbOQK6YoiVVIVO8z40hwM0VWLe2rlouLwW3qrG2J1cgePsRNf6Z
-         mOhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=vy6MTwbbkSTZZwE46I6ZiRyYCFHHqWwDpjlEx38Rltc=;
-        b=Ex8JHIRQGNmhn8nU32/ZOg5LKqt1s0jyRy2zdZvd2s2g8KQnTAC7jMQhP/qfL5fhmz
-         FpuCCQAzHmAIEOc+impiv/4oycWuckXsisfDRmdfVcz81uOgCR0UsK6ud4HXVc16YVyZ
-         VWF8f9JRRixtyr7m1NLxOomDtmpcnIsd0axrPnZrZsahjyX5vbFBTr2kxrb17DCv2TRh
-         LflfXyGceOpa6opYWgGMaCeIm1nQbJosh2VCgSrw9HmSgMr0OzEYw78i/7Q+5nP0xhIl
-         hRaw93nvQASAkZFvKMONDjuEWCsaajQqZCc5qka0jcJPci1+AZo5TjfbH/EmvpGofPWE
-         UHoA==
-X-Gm-Message-State: AOAM5300xW3vSXkrs3D3ltxpcUWchjGfqxqaujoKgrtBohfBoX7pnP1D
-        PabDCGjg9Bxk15etR820mZsHxu0S80vf0eTs
-X-Google-Smtp-Source: ABdhPJyOfrnyitgRXgwk6Q7ww8pznKU/fgxWpHG4tc5t1bdDf4/CDUd7CCxHGEx3nPwLUbELEpWmig==
-X-Received: by 2002:a62:ea0f:0:b029:319:8eef:5ff1 with SMTP id t15-20020a62ea0f0000b02903198eef5ff1mr3896774pfh.74.1628881351210;
-        Fri, 13 Aug 2021 12:02:31 -0700 (PDT)
-Received: from [192.168.1.116] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id 125sm3258682pfy.17.2021.08.13.12.02.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Aug 2021 12:02:30 -0700 (PDT)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     io-uring <io-uring@vger.kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] io_uring fixes for 5.14-rc6
-Message-ID: <9eecad5d-8432-d9c3-770f-b4ae7aac13ec@kernel.dk>
-Date:   Fri, 13 Aug 2021 13:02:29 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S234457AbhHMURw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 13 Aug 2021 16:17:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42158 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234198AbhHMURv (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Fri, 13 Aug 2021 16:17:51 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 5B5F4610CC;
+        Fri, 13 Aug 2021 20:17:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1628885844;
+        bh=BSAHNaF2hq41VI5supF0uF+3EBwFFPHhfcd9ufAOMmM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=MAwG61mOYN7IhRo4JZHLdA0ZCaTjY7dxtcDwP4gVtPQ2m4eO3ZeJF1xPFzBJBacIA
+         /8sRDlI5ULE+UyJGNPtkT+wBX6J1uadgg9dVzNAJB+k4cjrNzFI/xnRO4Kz5vdQxR5
+         cUMGI9U+IbZNcGifM12lQMuirGg+TkM0jH07xUTFh3GzpUhSdqsrTZmt5yQG76ydGr
+         FTTmXs6+TufDl7NxLyzIoAqwmkfYRqfwcuXheWiskKLDao/Rlj9XAJrDDvsL3LWgnQ
+         +gELDoXB+RhTBZLYLaBzEZsiJi8tg4tVh5IOEiFBiCUKkNwhkbpBQCj/+HCX3njaGS
+         71fH6tWIgxZug==
+Date:   Fri, 13 Aug 2021 13:17:22 -0700
+From:   Keith Busch <kbusch@kernel.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, linux-block@vger.kernel.org,
+        hch@infradead.org
+Subject: Re: [PATCH 4/6] block: clear BIO_PERCPU_CACHE flag if polling isn't
+ supported
+Message-ID: <20210813201722.GB2661@dhcp-10-100-145-180.wdc.com>
+References: <20210812154149.1061502-1-axboe@kernel.dk>
+ <20210812154149.1061502-5-axboe@kernel.dk>
+ <20210812173143.GA3138953@dhcp-10-100-145-180.wdc.com>
+ <b60e0031-77b0-fe27-2b52-437ba21babcb@kernel.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b60e0031-77b0-fe27-2b52-437ba21babcb@kernel.dk>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Linus,
+On Thu, Aug 12, 2021 at 11:41:58AM -0600, Jens Axboe wrote:
+> Indeed. Wonder if we should make that a small helper, as any clear of
+> REQ_HIPRI should clear BIO_PERCPU_CACHE as well.
+> 
+> 
+> diff --git a/block/blk-core.c b/block/blk-core.c
+> index 7e852242f4cc..d2722ecd4d9b 100644
+> --- a/block/blk-core.c
+> +++ b/block/blk-core.c
+> @@ -821,11 +821,8 @@ static noinline_for_stack bool submit_bio_checks(struct bio *bio)
+>  		}
+>  	}
+>  
+> -	if (!test_bit(QUEUE_FLAG_POLL, &q->queue_flags)) {
+> -		/* can't support alloc cache if we turn off polling */
+> -		bio_clear_flag(bio, BIO_PERCPU_CACHE);
+> -		bio->bi_opf &= ~REQ_HIPRI;
+> -	}
+> +	if (!test_bit(QUEUE_FLAG_POLL, &q->queue_flags))
+> +		bio_clear_hipri(bio);
 
-A bit bigger than the previous weeks, but mostly just a few stable bound
-fixes. In detail:
+Since BIO_PERCPU_CACHE doesn't work without REQ_HIRPI, should this check
+look more like this?
 
-- Followup fixes to patches from last week for io-wq, turns out they
-  weren't complete (Hao)
+	if (!test_bit(QUEUE_FLAG_POLL, &q->queue_flags))
+		bio->bi_opf &= ~REQ_HIPRI;
+	if (!(bio->bi_opf & REQ_HIPRI))
+		bio_clear_flag(bio, BIO_PERCPU_CACHE);
 
-- Two lockdep reported fixes out of the RT camp (me)
-
-- Sync the io_uring-cp example with liburing, as a few bug fixes never
-  made it to the kernel carried version (me)
-
-- SQPOLL related TIF_NOTIFY_SIGNAL fix (Nadav)
-
-- Use WRITE_ONCE() when writing sq flags (Nadav)
-
-- io_rsrc_put_work() deadlock fix (Pavel)
-
-Please pull!
-
-
-The following changes since commit 21698274da5b6fc724b005bc7ec3e6b9fbcfaa06:
-
-  io-wq: fix lack of acct->nr_workers < acct->max_workers judgement (2021-08-06 08:28:18 -0600)
-
-are available in the Git repository at:
-
-  git://git.kernel.dk/linux-block.git tags/io_uring-5.14-2021-08-13
-
-for you to fetch changes up to 8f40d0370795313b6f1b1782035919cfc76b159f:
-
-  tools/io_uring/io_uring-cp: sync with liburing example (2021-08-13 08:58:11 -0600)
-
-----------------------------------------------------------------
-io_uring-5.14-2021-08-13
-
-----------------------------------------------------------------
-Hao Xu (2):
-      io-wq: fix bug of creating io-wokers unconditionally
-      io-wq: fix IO_WORKER_F_FIXED issue in create_io_worker()
-
-Jens Axboe (3):
-      io_uring: rsrc ref lock needs to be IRQ safe
-      io_uring: drop ctx->uring_lock before flushing work item
-      tools/io_uring/io_uring-cp: sync with liburing example
-
-Nadav Amit (2):
-      io_uring: clear TIF_NOTIFY_SIGNAL when running task work
-      io_uring: Use WRITE_ONCE() when writing to sq_flags
-
-Pavel Begunkov (1):
-      io_uring: fix ctx-exit io_rsrc_put_work() deadlock
-
- fs/io-wq.c                   | 26 ++++++++++++++------
- fs/io_uring.c                | 58 ++++++++++++++++++++++----------------------
- tools/io_uring/io_uring-cp.c | 31 ++++++++++++++++++++---
- 3 files changed, 75 insertions(+), 40 deletions(-)
-
--- 
-Jens Axboe
-
+I realise the only BIO_PERCPU_CACHE user in this series never sets it
+without REQ_HIPRI, but it looks like a problem waiting to happen if
+nothing enforces this pairing: someone could set the CACHE flag on a
+QUEUE_FLAG_POLL enabled queue without setting HIPRI and get the wrong
+bio_put() action.

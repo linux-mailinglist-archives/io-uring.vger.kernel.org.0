@@ -2,92 +2,83 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4776E3EB359
-	for <lists+io-uring@lfdr.de>; Fri, 13 Aug 2021 11:32:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AEF23EB4A7
+	for <lists+io-uring@lfdr.de>; Fri, 13 Aug 2021 13:41:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238980AbhHMJcv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 13 Aug 2021 05:32:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53542 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238954AbhHMJcv (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 13 Aug 2021 05:32:51 -0400
-Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E97EC061756;
-        Fri, 13 Aug 2021 02:32:24 -0700 (PDT)
-Received: by mail-yb1-xb2e.google.com with SMTP id w17so17599923ybl.11;
-        Fri, 13 Aug 2021 02:32:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JpXtCZVKe4NN46MML6gjrpGLey5QNDfpVKJlaCdGXJw=;
-        b=lkKIIH57IpdePfP89WdB5vQLc3fbc2axDpXXA5sLH45KfF9LYzB9fIFPbDu/LJ9W8M
-         VPfP+niLiHw/PWsjBlXAaLHpK+6lGnyfU4FOg8C3kZU0+N4obSsinlJzH+vvA5ZQkbJV
-         JOdyspvuP/YDnkYtvwbkUkVlAXzMsMhsiQPwU3DDoLod0QDYuwpBH+w4YoIN/aGR++Nj
-         aJXrtEVsy8hIW7AbMSETdcNhCi9gwZ854rBMQBe9Z6E0XiZCHw50ABkgzaBnBMYpQnzt
-         7NVOmDN5R223YR8gUOiHRRduJUicpe/r7paXjAQFyzuVCZMymKDwhttWh0xMiCM2hMi5
-         0fMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JpXtCZVKe4NN46MML6gjrpGLey5QNDfpVKJlaCdGXJw=;
-        b=JwQmu98WktUdsZJ0O7joj0/3kdXziJHteeFPvmxqNx68YJmYZ+pbrhUcJof8RqLosk
-         HtwjEYUi0I1FRY8jMd1JKEavhWlkKrsjgswWrMMhl/5kqHErGDJoJffnsR5sQxORN33l
-         BEbiEiNP+WIZszoaOrIBtyVFVAHsJ0DSrCEa/W6krA4ZmtV+IrVVdQRy3P6nduM93TgR
-         u2i9K23MxbE9cN8RXKqRLBbb9Xtq60SVJWShnUWk0fvgUOLKJM1gCFmpkqT8r6F0DFEa
-         85zn68eG/vKxUf9+Y+4emo9CPkL9FX1RnVOGrP0NYeIrctWMRY9Faa7YBQBq4iv+ltmX
-         Pe/w==
-X-Gm-Message-State: AOAM530jlCpeKNZ9xiifuh1Qoq+EuMTb5yFw1WlLR3wawU02QZVmxWKi
-        MFPBlDVK536O4I1L430I6OOHm9d9IvamCus7vO4=
-X-Google-Smtp-Source: ABdhPJwGPon6+zv48FPVKNyTaDfkGv5T3cSOEdkbqF5efnr5qE9DwxyOplhObQFgjipL1k4AehU/o1zqDJcsAFZj+EY=
-X-Received: by 2002:a25:c6d6:: with SMTP id k205mr1700192ybf.168.1628847143896;
- Fri, 13 Aug 2021 02:32:23 -0700 (PDT)
+        id S240046AbhHMLmG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 13 Aug 2021 07:42:06 -0400
+Received: from aposti.net ([89.234.176.197]:46710 "EHLO aposti.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S239938AbhHMLmF (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Fri, 13 Aug 2021 07:42:05 -0400
+Date:   Fri, 13 Aug 2021 13:41:26 +0200
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: IIO, dmabuf, io_uring
+To:     Jonathan Cameron <jic23@kernel.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Christian =?iso-8859-1?b?S/ZuaWc=?= <christian.koenig@amd.com>,
+        Christoph Hellwig <hch@lst.de>
+Cc:     linux-iio@vger.kernel.org, io-uring@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Alexandru Ardelean <ardeleanalex@gmail.com>
+Message-Id: <2H0SXQ.2KIK2PBVRFWH2@crapouillou.net>
 MIME-Version: 1.0
-References: <20210708063447.3556403-1-dkadashev@gmail.com> <CAHk-=wjMFZ98ERV7V5u6R4FbYi3vRRf8_Uev493qeYCa1vqV3Q@mail.gmail.com>
- <cbddca99-d9b1-d545-e2eb-a243ce38270b@kernel.dk>
-In-Reply-To: <cbddca99-d9b1-d545-e2eb-a243ce38270b@kernel.dk>
-From:   Dmitry Kadashev <dkadashev@gmail.com>
-Date:   Fri, 13 Aug 2021 16:32:12 +0700
-Message-ID: <CAOKbgA5jHtR=tLAYS_rs77QppRm37HV1bqSLQEMv8GusQNDrAg@mail.gmail.com>
-Subject: Re: [PATCH v9 00/11] io_uring: add mkdir and [sym]linkat support
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, Jul 9, 2021 at 2:25 AM Jens Axboe <axboe@kernel.dk> wrote:
->
-> On 7/8/21 12:34 PM, Linus Torvalds wrote:
-> > On Wed, Jul 7, 2021 at 11:35 PM Dmitry Kadashev <dkadashev@gmail.com> wrote:
-> >>
-> >> v9:
-> >> - reorder commits to keep io_uring ones nicely grouped at the end
-> >> - change 'fs:' to 'namei:' in related commit subjects, since this is
-> >>   what seems to be usually used in such cases
-> >
-> > Ok, ack from me on this series, and as far as I'm concerned it can go
-> > through the io_uring branch.
->
-> I'll queue it up in a separate branch. I'm assuming we're talking 5.15
-> at this point.
+Hi,
 
-Is this going to be merged into 5.15? I'm still working on the follow-up
-patch (well, right at this moment I'm actually on vacation, but will be
-working on it when I'm back), but hopefully it does not have to be
-merged in the same merge window / version? Especially given the fact
-that Al prefers it to be a bigger refactoring of the ESTALE retries
-rather than just moving bits and pieces to helper functions to simplify
-the flow, see here:
+A few months ago we (ADI) tried to upstream the interface we use with 
+our high-speed ADCs and DACs. It is a system with custom ioctls on the 
+iio device node to dequeue and enqueue buffers (allocated with 
+dma_alloc_coherent), that can then be mmap'd by userspace applications. 
+Anyway, it was ultimately denied entry [1]; this API was okay in ~2014 
+when it was designed but it feels like re-inventing the wheel in 2021.
 
-https://lore.kernel.org/io-uring/20210715103600.3570667-1-dkadashev@gmail.com/
+Back to the drawing table, and we'd like to design something that we 
+can actually upstream. This high-speed interface looks awfully similar 
+to DMABUF, so we may try to implement a DMABUF interface for IIO, 
+unless someone has a better idea.
 
--- 
-Dmitry Kadashev
+Our first usecase is, we want userspace applications to be able to 
+dequeue buffers of samples (from ADCs), and/or enqueue buffers of 
+samples (for DACs), and to be able to manipulate them (mmapped 
+buffers). With a DMABUF interface, I guess the userspace application 
+would dequeue a dma buffer from the driver, mmap it, read/write the 
+data, unmap it, then enqueue it to the IIO driver again so that it can 
+be disposed of. Does that sound sane?
+
+Our second usecase is - and that's where things get tricky - to be able 
+to stream the samples to another computer for processing, over Ethernet 
+or USB. Our typical setup is a high-speed ADC/DAC on a dev board with a 
+FPGA and a weak soft-core or low-power CPU; processing the data in-situ 
+is not an option. Copying the data from one buffer to another is not an 
+option either (way too slow), so we absolutely want zero-copy.
+
+Usual userspace zero-copy techniques (vmsplice+splice, MSG_ZEROCOPY 
+etc) don't really work with mmapped kernel buffers allocated for DMA 
+[2] and/or have a huge overhead, so the way I see it, we would also 
+need DMABUF support in both the Ethernet stack and USB (functionfs) 
+stack. However, as far as I understood, DMABUF is mostly a DRM/V4L2 
+thing, so I am really not sure we have the right idea here.
+
+And finally, there is the new kid in town, io_uring. I am not very 
+literate about the topic, but it does not seem to be able to handle DMA 
+buffers (yet?). The idea that we could dequeue a buffer of samples from 
+the IIO device and send it over the network in one single syscall is 
+appealing, though.
+
+Any thoughts? Feedback would be greatly appreciated.
+
+Cheers,
+-Paul
+
+[1]: 
+https://lore.kernel.org/linux-iio/20210217073638.21681-1-alexandru.ardelean@analog.com/T/#m6b853addb77959c55e078fbb06828db33d4bf3d7
+[2]: 
+https://newbedev.com/zero-copy-user-space-tcp-send-of-dma-mmap-coherent-mapped-memory
+
+

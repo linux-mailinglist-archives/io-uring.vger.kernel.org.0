@@ -2,71 +2,66 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CF91B3EB692
-	for <lists+io-uring@lfdr.de>; Fri, 13 Aug 2021 16:12:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D51893EBA0F
+	for <lists+io-uring@lfdr.de>; Fri, 13 Aug 2021 18:30:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240057AbhHMOMi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 13 Aug 2021 10:12:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60812 "EHLO
+        id S236205AbhHMQbT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 13 Aug 2021 12:31:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239775AbhHMOMh (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 13 Aug 2021 10:12:37 -0400
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B8B8C0617AD
-        for <io-uring@vger.kernel.org>; Fri, 13 Aug 2021 07:12:11 -0700 (PDT)
-Received: by mail-pl1-x636.google.com with SMTP id q2so12116848plr.11
-        for <io-uring@vger.kernel.org>; Fri, 13 Aug 2021 07:12:11 -0700 (PDT)
+        with ESMTP id S229471AbhHMQbS (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 13 Aug 2021 12:31:18 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5121AC061756;
+        Fri, 13 Aug 2021 09:30:51 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id x10so7756244wrt.8;
+        Fri, 13 Aug 2021 09:30:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=sM9iZQWOpgXtCBxdiAH87a4w4pD1Hwf0Q/waRT60trY=;
-        b=L4fbcQ/XtI8L4Dwr6IgeN+D/hs24frS3q4t7H7qlyDb7LBWVIjTli59tuqeZ0bVK+I
-         +m4RqhoDbSfmXaOlRVCvuoUArFRgWaDPl+DlYdW/RnQ1WW8YDGIRBECQrWLsj6vZx2aI
-         yQ9y7XQ+Heop80RAY0Oz0LRfdNPE4f2Bf1fT5V06dbG1vYHHjJFLJ0ztMRKkQX5IFyNo
-         g3rP4zcxGVj0yUQbM38kAvfemHMN5DPL09kdgJK/TB0uNl9GWYc+J9DLEmf87nr2vh/a
-         Y1ehh2KRphTB4BGJeMGwU56uPGPlcNYGPsHNAu9Pb6XPp5klfdTcRvdTlGN3bf1w+ZXC
-         50Ww==
+        bh=mVNqgVlbGS9NU0K9x3GBaGLbaZEANL0O54jcZsZxY4Q=;
+        b=JFzmTfa8AXexpsTp8hh2tSNw6pUiED1G4dARYVGFGrikIIO+FWJSlooonZIkTqkWKR
+         xSCe68EwRMQLpCoBSsKDag/wB6qEmIL6ORXr3d1XU/ZOLiuZf4wX4Y14kG9GgJlGw2J6
+         dMDalF9DjxYZ3hz7qZ6IZTbVJWQWRgs+eZcVmT+PqVGqcfeVj4Y6Nvqiq9Cc/ZLNXl+R
+         p7Mkljqo9nK1G3mSzeGwos16NOCfWIK7A3BKf8HZpJGYonWJQWxQ/oykv3j+s72jLvHl
+         S03R+/Y+8G1MXaAxraJ5ELDqqLbuf7UzNzlDMIF+V1Xq7mrxi7hutOnBPUuYsOCAxF2E
+         MxrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=sM9iZQWOpgXtCBxdiAH87a4w4pD1Hwf0Q/waRT60trY=;
-        b=W/bXnKC2c3Qt6R+nHaLl+Bzo7WN0M/IYzO82CPFGVCjFaBZPrLUkEK109mhdoGAgL3
-         oIDMYRQsO3YT2WBno5ILCPsFSxt2UAk6bAc5ZKU8Kl1qWa0gSmGXKK+pmne45cV3NaIf
-         hOzMf18Tn69jj2lSLPd4YMlNWk1Y+HulQ1eZUmavKd4Rpei8KPZcq+UJl4IedeeQJfMA
-         G5cUKZyyt+bjbpXKMaB534gewrwI/z3+KFd+K3AGenJWWb75W625CdqOj5bWVviSJ2qM
-         Q2hsIkipQWIwmnQuP15bmMGPHeB0lav3KCsxOMdqINpR6y2TdK+ZiK5osgvaZoNn1etz
-         hdoA==
-X-Gm-Message-State: AOAM5310YGy0bK1Km+wQiQJj+sSxuGkRCMLajaH23GpZNw1Kq2jx6Hf4
-        KdiHn93r9Q29kDCuy+k/4jiG/iTmnmIFcnJ6
-X-Google-Smtp-Source: ABdhPJxk/6mubsgRh4KoiPUmDR+lqAmlG7SCS2sNtmMzaLRGB7vL6TfeFPyTxgoPtBChlKsE0Q5Utg==
-X-Received: by 2002:a17:902:e851:b029:12c:9284:8c2b with SMTP id t17-20020a170902e851b029012c92848c2bmr2099685plg.57.1628863930374;
-        Fri, 13 Aug 2021 07:12:10 -0700 (PDT)
-Received: from [192.168.1.116] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id z15sm2982341pgc.13.2021.08.13.07.12.09
+        bh=mVNqgVlbGS9NU0K9x3GBaGLbaZEANL0O54jcZsZxY4Q=;
+        b=UCOp2yy9A8VCkKbqxZzWP/88DrxhfN88x13RJimzWzGN2V1ViIXLx0f1gd1eW+cYz0
+         Ql2spAD3PqxELt+xJevDK8zc9IEr5uWYtJLehBZWapdJ6Fw76Ku6NArLV42TLlylCq2J
+         rj5ZOrEziN8hz8O+kVRDg/exHfspmJrXLt7uZuZOs0zbtO4OHi9r3fgimLlliOIg/mWR
+         SWtZuKGBSkc5QU6yRSBv/LPob6aYFncXLv1+6mLIn7rjQQ/E2df0BAuFaguNu/rf+Sy+
+         HY0wkWwPEGigBi3wP23ZUdruzQGbwhBTBoIJt1LDqfyb28Puf7SwnIq80R0uTfF9vGaX
+         0odw==
+X-Gm-Message-State: AOAM533qYrYcqZZHiJvB+IDAlnz1HTRh/a0kelSlkgDVRt6cow3kcf5m
+        ntt2zrHXpCRkecyFAjzUnqV7nDmu5ww=
+X-Google-Smtp-Source: ABdhPJxcLX55VEQ4CGCSLsQzBVxhqFV4yV95sZgJtD4wlIYGY9ww0s24jBDo6imidOXcbGD2SAacaQ==
+X-Received: by 2002:adf:9084:: with SMTP id i4mr4254314wri.23.1628872249604;
+        Fri, 13 Aug 2021 09:30:49 -0700 (PDT)
+Received: from [192.168.8.197] ([148.252.132.210])
+        by smtp.gmail.com with ESMTPSA id q22sm2045295wmj.32.2021.08.13.09.30.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Aug 2021 07:12:09 -0700 (PDT)
-Subject: Re: [PATCH v9 00/11] io_uring: add mkdir and [sym]linkat support
-To:     Dmitry Kadashev <dkadashev@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>
-References: <20210708063447.3556403-1-dkadashev@gmail.com>
- <CAHk-=wjMFZ98ERV7V5u6R4FbYi3vRRf8_Uev493qeYCa1vqV3Q@mail.gmail.com>
- <cbddca99-d9b1-d545-e2eb-a243ce38270b@kernel.dk>
- <CAOKbgA5jHtR=tLAYS_rs77QppRm37HV1bqSLQEMv8GusQNDrAg@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <506f544a-cb0b-68a2-f107-c77d9f7f34ed@kernel.dk>
-Date:   Fri, 13 Aug 2021 08:12:06 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Fri, 13 Aug 2021 09:30:49 -0700 (PDT)
+Subject: Re: [RFC 0/4] open/accept directly into io_uring fixed file table
+To:     Josh Triplett <josh@joshtriplett.org>, Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org
+References: <cover.1625657451.git.asml.silence@gmail.com>
+ <48bd91bc-ba1a-1e69-03a1-3d6f913f96c3@kernel.dk> <YOXCeNs0waut1Jh1@localhost>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Message-ID: <81438f45-ac1d-4244-8d56-dbb44bb6d8b1@gmail.com>
+Date:   Fri, 13 Aug 2021 17:30:19 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
-In-Reply-To: <CAOKbgA5jHtR=tLAYS_rs77QppRm37HV1bqSLQEMv8GusQNDrAg@mail.gmail.com>
+In-Reply-To: <YOXCeNs0waut1Jh1@localhost>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -74,41 +69,35 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/13/21 3:32 AM, Dmitry Kadashev wrote:
-> On Fri, Jul 9, 2021 at 2:25 AM Jens Axboe <axboe@kernel.dk> wrote:
->>
->> On 7/8/21 12:34 PM, Linus Torvalds wrote:
->>> On Wed, Jul 7, 2021 at 11:35 PM Dmitry Kadashev <dkadashev@gmail.com> wrote:
->>>>
->>>> v9:
->>>> - reorder commits to keep io_uring ones nicely grouped at the end
->>>> - change 'fs:' to 'namei:' in related commit subjects, since this is
->>>>   what seems to be usually used in such cases
+On 7/7/21 4:04 PM, Josh Triplett wrote:
+> On Wed, Jul 07, 2021 at 07:07:52AM -0600, Jens Axboe wrote:
+>> On 7/7/21 5:39 AM, Pavel Begunkov wrote:
+>>> Implement an old idea allowing open/accept io_uring requests to register
+>>> a newly created file as a io_uring's fixed file instead of placing it
+>>> into a task's file table. The switching is encoded in io_uring's SQEs
+>>> by setting sqe->buf_index/file_index, so restricted to 2^16-1. Don't
+>>> think we need more, but may be a good idea to scrap u32 somewhere
+>>> instead.
 >>>
->>> Ok, ack from me on this series, and as far as I'm concerned it can go
->>> through the io_uring branch.
+>>> From the net side only needs a function doing __sys_accept4_file()
+>>> but not installing fd, see 2/4.
+>>>
+>>> Only RFC for now, the new functionality is tested only for open yet.
+>>> I hope we can remember the author of the idea to add attribution.
 >>
->> I'll queue it up in a separate branch. I'm assuming we're talking 5.15
->> at this point.
+>> Pretty sure the original suggester of this as Josh, CC'ed.
 > 
-> Is this going to be merged into 5.15? I'm still working on the follow-up
-> patch (well, right at this moment I'm actually on vacation, but will be
-> working on it when I'm back), but hopefully it does not have to be
-> merged in the same merge window / version? Especially given the fact
-> that Al prefers it to be a bigger refactoring of the ESTALE retries
-> rather than just moving bits and pieces to helper functions to simplify
-> the flow, see here:
+> Thanks for working on this, Pavel!
 > 
-> https://lore.kernel.org/io-uring/20210715103600.3570667-1-dkadashev@gmail.com/
+> Original thread at
 
-I added this to the for-5.15/io_uring-vfs branch:
+Totally was thinking it was only a discussion but not an actual patch,
+and I even did comment on it! Sorry Josh, would have persuaded you to
+finish it, if I remembered that.
 
-https://git.kernel.dk/cgit/linux-block/log/?h=for-5.15/io_uring-vfs
-
-had one namei.c conflict, set_nameidata() taking one more parameter, and
-just a trivial conflict in each io_uring patch at the end. Can you double
-check them?
+> https://lore.kernel.org/io-uring/20200715004209.GA334456@localhost/T/ in
+> case that helps.
+> 
 
 -- 
-Jens Axboe
-
+Pavel Begunkov

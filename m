@@ -2,157 +2,101 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 91D5F3EC3D4
-	for <lists+io-uring@lfdr.de>; Sat, 14 Aug 2021 18:26:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 472973EC4B4
+	for <lists+io-uring@lfdr.de>; Sat, 14 Aug 2021 21:13:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235606AbhHNQ1W (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 14 Aug 2021 12:27:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46150 "EHLO
+        id S229563AbhHNTOM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 14 Aug 2021 15:14:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235567AbhHNQ1V (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 14 Aug 2021 12:27:21 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7395FC0613CF
-        for <io-uring@vger.kernel.org>; Sat, 14 Aug 2021 09:26:52 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id z9so17424048wrh.10
-        for <io-uring@vger.kernel.org>; Sat, 14 Aug 2021 09:26:52 -0700 (PDT)
+        with ESMTP id S229494AbhHNTOM (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 14 Aug 2021 15:14:12 -0400
+Received: from mail-il1-x12f.google.com (mail-il1-x12f.google.com [IPv6:2607:f8b0:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7806EC061764
+        for <io-uring@vger.kernel.org>; Sat, 14 Aug 2021 12:13:43 -0700 (PDT)
+Received: by mail-il1-x12f.google.com with SMTP id k3so14403272ilu.2
+        for <io-uring@vger.kernel.org>; Sat, 14 Aug 2021 12:13:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=5XqMzvzdaoc8eM9dxG0DjOxH1iOdy7kyEQqhjDfuoWw=;
-        b=STMurmla9MAuZJR8q84a5xXUItoZ3rqAcHKwiO2Rbu4gfhW9G6LCwqgZB0DpbdVf3r
-         M+yvGLBXkdPVVYJidpdELBRgAxrD+6sjoNpt/kpMh5f3mBT1foEeJHcWNRvLzvuaZA64
-         eXCANEzIXa106o19+14v+9nfqzPkMwZQM2Jp9BOMFoBVupP6zw1V8EUpyhZeb6QEobgO
-         m7/ZHRY2wN2X4tBeF7Dio827hnaTm4kdatm4xLXfArMGSp3L08X1CWxP/Fpta3d0gW50
-         E+lCe+Snpv7qDVDNp7DQXNEUb+89E7fWoSB0L3izFZFQ4mfTtXN1QaR+UAC/JSZ6ar0h
-         nu/A==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=siAiMvwW65+yIVab3bzBC7hjr2pNDLwN5yjIgHH6bRM=;
+        b=kGbs5nbQeHd++0mmVA1FWB4Pm5DvQ2pcies5VjpByxL9o6Oxotp6UlwUUnl4VLbJrd
+         YawHG2/jmkFSyJDy3zvzxwQNg67vULe+ooY8mKsbMCe8HWSjW914/aDUsGfhTkr5EvPA
+         ch+c0k2wBtenubB1MPOGDX/XQafCm5VjU53bdUX1GD/l4uns1Ar2s4SJ5PIkdfUg3V/y
+         pEjDbctl418TDTHYHOYcirLS8gNtHC+yC/0rjFUcfO2ygMTCzKXcRXPvoUhKy1FuL3vp
+         dx3mu/c+j7H2QfY+03fPfICmWvLMz6oKrABcOyVOt7/FQEr8AmUiWRl5e2nUqTywApTv
+         vlPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=5XqMzvzdaoc8eM9dxG0DjOxH1iOdy7kyEQqhjDfuoWw=;
-        b=jqy9m8XwaNvDXjUhy9rya7NPzM2FxNThlqvZvu3Dt4Mo8NYSZcPLndL7VMCVOmK6Ld
-         Xrsm/GCgBQ/U6KPMyIQ5KqjOP9bzzXlOylJTFvFPb9VIECeKEJhoifHLQ6IiEAI0PvsM
-         JUhV8TLJEVUMVf1nbryx7/6F96yzbCcDYK4qkSfFQHPJ8/PpRh+euh3cF13LTI2ssBfI
-         VeZDS0QGJ1qZk0DAru9yBF/gp9xkktdOGAaM82ykF1FZtd/pFD5fBzTsnKU6qMf/AP6z
-         xhuUUF731gYSjc5DIZ+N95hili5tOwgEpVLn90scw/rnbDiIUlSBchiObFLBztX4Nc8j
-         vgRQ==
-X-Gm-Message-State: AOAM533eeurpqzMDZZqQkODReOehX12rxyc/gCcuKtVHCc4iSfcZqQ+I
-        MH42g3XvEiTmWZ2WH7kLCdA=
-X-Google-Smtp-Source: ABdhPJxpJzbU0MUAg0YvX6BroZ52U9uhlykr9deqIVEflAUIcSLd3+GP6JiQqkWmRyY1GaehgH0nqg==
-X-Received: by 2002:a05:6000:1086:: with SMTP id y6mr9135922wrw.406.1628958411143;
-        Sat, 14 Aug 2021 09:26:51 -0700 (PDT)
-Received: from localhost.localdomain ([148.252.133.97])
-        by smtp.gmail.com with ESMTPSA id m62sm5028263wmm.8.2021.08.14.09.26.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Aug 2021 09:26:50 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 5/5] io_uring: deduplicate cancellations
-Date:   Sat, 14 Aug 2021 17:26:10 +0100
-Message-Id: <bcb51c4a43b17044f10166355f38896e2f3fa982.1628957788.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <cover.1628957788.git.asml.silence@gmail.com>
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=siAiMvwW65+yIVab3bzBC7hjr2pNDLwN5yjIgHH6bRM=;
+        b=bt+hvQRixWVwghz13Bh63DVMLzxZqMJU3wEaq2F2kWP8IssbazXrA0SnucSVQQkx2F
+         waQppZdy/Rjh1ewMqk8mQuQq2sQBqV1eCnkFzLMbpfaV+J2gwfdUWk71U8L3RIWqntxg
+         /y81LiykFaWY0OGaB5NabqEsGNCZJvABx6NeS3S+DSVW/vSS+h3grXQkJ0B+w6+gYcgS
+         Et+9VBRDWsjkPhR3Ipj5M+HxokrdSz31v0qu9RW0SGVemqYG/SaMkfsRJFOWFyok8Xlt
+         xsV9T4UsGkesFYFBl+v9EXfbTwJeJM72xa4/bmW0GABAw2jy2nOI/Q1gMOkwdG9eC2RE
+         r3xw==
+X-Gm-Message-State: AOAM530JDiPiYPF+0aoLM3PhZpqAQTQBrMs8C2ENAmdG4RyJCGuvbuiU
+        vSiAkelE5p/AzApJ6s9xDwoZEc/9LO2M+b6P
+X-Google-Smtp-Source: ABdhPJyIW63biA9s4/Zk0t3/tSbtBUtM4x9te0wHe4ltheYLI6OKCFxgbGkQYynYLRVXLezfOlvqOQ==
+X-Received: by 2002:a05:6e02:13e1:: with SMTP id w1mr446173ilj.116.1628968422726;
+        Sat, 14 Aug 2021 12:13:42 -0700 (PDT)
+Received: from [192.168.1.116] ([66.219.217.159])
+        by smtp.gmail.com with ESMTPSA id m10sm2949085ilg.20.2021.08.14.12.13.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 14 Aug 2021 12:13:42 -0700 (PDT)
+Subject: Re: [PATCH 1/5] io_uring: optimise iowq refcounting
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
 References: <cover.1628957788.git.asml.silence@gmail.com>
+ <3243f06098128ce6587b3fbfdddeb1f63e21f418.1628957788.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <cbd8801a-49b3-f74d-68a7-cb629497aecd@kernel.dk>
+Date:   Sat, 14 Aug 2021 13:13:40 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <3243f06098128ce6587b3fbfdddeb1f63e21f418.1628957788.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-IORING_OP_ASYNC_CANCEL and IORING_OP_LINK_TIMEOUT have enough of
-overlap, so extract a helper for request cancellation and use in both.
-Also, removes some amount of ugliness because of success_ret.
+On 8/14/21 10:26 AM, Pavel Begunkov wrote:
+> If a requests is forwarded into io-wq, there is a good chance it hasn't
+> been refcounted yet and we can save one req_ref_get() by setting the
+> refcount number to the right value directly.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 46 ++++++++++++++++++----------------------------
- 1 file changed, 18 insertions(+), 28 deletions(-)
+Not sure this really matters, but can't hurt either. But...
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index c16d172ca37f..5560620968c9 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -5790,32 +5790,24 @@ static int io_async_cancel_one(struct io_uring_task *tctx, u64 user_data,
- 	return ret;
- }
- 
--static void io_async_find_and_cancel(struct io_ring_ctx *ctx,
--				     struct io_kiocb *req, __u64 sqe_addr,
--				     int success_ret)
-+static int io_try_cancel_userdata(struct io_kiocb *req, u64 sqe_addr)
-+	__acquires(&req->ctx->completion_lock)
- {
-+	struct io_ring_ctx *ctx = req->ctx;
- 	int ret;
- 
-+	WARN_ON_ONCE(req->task != current);
-+
- 	ret = io_async_cancel_one(req->task->io_uring, sqe_addr, ctx);
- 	spin_lock(&ctx->completion_lock);
- 	if (ret != -ENOENT)
--		goto done;
-+		return ret;
- 	spin_lock_irq(&ctx->timeout_lock);
- 	ret = io_timeout_cancel(ctx, sqe_addr);
- 	spin_unlock_irq(&ctx->timeout_lock);
- 	if (ret != -ENOENT)
--		goto done;
--	ret = io_poll_cancel(ctx, sqe_addr, false);
--done:
--	if (!ret)
--		ret = success_ret;
--	io_cqring_fill_event(ctx, req->user_data, ret, 0);
--	io_commit_cqring(ctx);
--	spin_unlock(&ctx->completion_lock);
--	io_cqring_ev_posted(ctx);
--
--	if (ret < 0)
--		req_set_fail(req);
-+		return ret;
-+	return io_poll_cancel(ctx, sqe_addr, false);
- }
- 
- static int io_async_cancel_prep(struct io_kiocb *req,
-@@ -5839,17 +5831,7 @@ static int io_async_cancel(struct io_kiocb *req, unsigned int issue_flags)
- 	struct io_tctx_node *node;
- 	int ret;
- 
--	/* tasks should wait for their io-wq threads, so safe w/o sync */
--	ret = io_async_cancel_one(req->task->io_uring, sqe_addr, ctx);
--	spin_lock(&ctx->completion_lock);
--	if (ret != -ENOENT)
--		goto done;
--	spin_lock_irq(&ctx->timeout_lock);
--	ret = io_timeout_cancel(ctx, sqe_addr);
--	spin_unlock_irq(&ctx->timeout_lock);
--	if (ret != -ENOENT)
--		goto done;
--	ret = io_poll_cancel(ctx, sqe_addr, false);
-+	ret = io_try_cancel_userdata(req, sqe_addr);
- 	if (ret != -ENOENT)
- 		goto done;
- 	spin_unlock(&ctx->completion_lock);
-@@ -6416,9 +6398,17 @@ static void io_req_task_link_timeout(struct io_kiocb *req)
- {
- 	struct io_kiocb *prev = req->timeout.prev;
- 	struct io_ring_ctx *ctx = req->ctx;
-+	int ret;
- 
- 	if (prev) {
--		io_async_find_and_cancel(ctx, req, prev->user_data, -ETIME);
-+		ret = io_try_cancel_userdata(req, prev->user_data);
-+		if (!ret)
-+			ret = -ETIME;
-+		io_cqring_fill_event(ctx, req->user_data, ret, 0);
-+		io_commit_cqring(ctx);
-+		spin_unlock(&ctx->completion_lock);
-+		io_cqring_ev_posted(ctx);
-+
- 		io_put_req(prev);
- 		io_put_req(req);
- 	} else {
+> @@ -1115,14 +1115,19 @@ static inline void req_ref_get(struct io_kiocb *req)
+>  	atomic_inc(&req->refs);
+>  }
+>  
+> -static inline void io_req_refcount(struct io_kiocb *req)
+> +static inline void __io_req_refcount(struct io_kiocb *req, int nr)
+>  {
+>  	if (!(req->flags & REQ_F_REFCOUNT)) {
+>  		req->flags |= REQ_F_REFCOUNT;
+> -		atomic_set(&req->refs, 1);
+> +		atomic_set(&req->refs, nr);
+>  	}
+>  }
+>  
+> +static inline void io_req_refcount(struct io_kiocb *req)
+> +{
+> +	__io_req_refcount(req, 1);
+> +}
+> +
+
+I really think these should be io_req_set_refcount() or something like
+that, making it clear that we're actively setting/manipulating the ref
+count.
+
 -- 
-2.32.0
+Jens Axboe
 

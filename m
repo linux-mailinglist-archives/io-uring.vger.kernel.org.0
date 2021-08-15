@@ -2,172 +2,164 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CF7AB3EC5E7
-	for <lists+io-uring@lfdr.de>; Sun, 15 Aug 2021 01:03:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BFF433EC6DE
+	for <lists+io-uring@lfdr.de>; Sun, 15 Aug 2021 05:31:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233971AbhHNXER (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 14 Aug 2021 19:04:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48820 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233223AbhHNXER (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 14 Aug 2021 19:04:17 -0400
-Received: from mail-il1-x12c.google.com (mail-il1-x12c.google.com [IPv6:2607:f8b0:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18DA8C061764
-        for <io-uring@vger.kernel.org>; Sat, 14 Aug 2021 16:03:47 -0700 (PDT)
-Received: by mail-il1-x12c.google.com with SMTP id y3so14726983ilm.6
-        for <io-uring@vger.kernel.org>; Sat, 14 Aug 2021 16:03:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=qmFkeUHwny/Th4/3e9gJVXZ8p7Kjf4pDQS/FEdz+8YE=;
-        b=kXW9tb0UCZ2N5bGDjQPAvvLu1hM04NlMdl58Yc5hHnWxbLTNABC8DLnuZLyP8kkpz+
-         WjnZyXOM9ffsmeZGLUEl5mp3KWbAwReS7sAIH2Gpos4a9wAeMRA06ErmF/MuYQMLHB7L
-         Z1ud8ayhOxx4MxdkLXxeiL1bruw9kS7vTt+1YOwSZjoTYCUwjNd7lkddkc7WYZYMWK11
-         dNp5DkNmRuoId9uQ4Yz7NYs+MMvMmhGI/gvC5nQ9qj3/NYmmjc7zplg0g5y1JFVBt2lX
-         vgyZMItX9qp4eFQgfSj20PkG8rXNu6bHGdkqbQgUMl5RRnRPH2tLqpUxEnLGPLAhMz1f
-         c3fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=qmFkeUHwny/Th4/3e9gJVXZ8p7Kjf4pDQS/FEdz+8YE=;
-        b=QtUoGlXjz2T97/LUzRyePdUEhdc84BQGBZS62ssofIFRmOsRN6oBIvUMUIi4nSjyo5
-         H3KRNXoB1Ii8TvIqeaa25MejT8OwASq78NM66WWybva48bsKS+CQYXV3AaCrbypex6Of
-         2bZbFNjhatl+xuVig6XqcHU9Xjhi1OVyvTbRNsNS7PgKRZ0O2ptEFIWDYn/zfaatzMjk
-         5n58rjNXW+rSefATouduj1l3z+GQeIajvHKUjaAb9Ko/u2utpdkQMHVYGaFtyVYO4MB0
-         KRY1R5lByD5qAnmdRjfJojQW+JhuDK5pFoj9h7Yj4bewZcLNHf1Ho1A+vPDQkCtzUB+W
-         3tPA==
-X-Gm-Message-State: AOAM530lIvpu+N1QlBHv3lgA9424Ij1fFI8qpyOTuSKVg7Vh2+YcQnoZ
-        gIO3FzpHxy5ItaH6blYaY00gqw==
-X-Google-Smtp-Source: ABdhPJz9JNmQC0uFEVHBIP3yvL3q4yXkIoDBB/M0W13fT7lR0LrtJwhpFT44iJsVz9F098giwQajkw==
-X-Received: by 2002:a92:d7c1:: with SMTP id g1mr6542553ilq.24.1628982227203;
-        Sat, 14 Aug 2021 16:03:47 -0700 (PDT)
-Received: from [192.168.1.116] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id l9sm3054927ilv.31.2021.08.14.16.03.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 14 Aug 2021 16:03:46 -0700 (PDT)
-Subject: Re: [PATCH v2 0/4] open/accept directly into io_uring fixed file
- table
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Josh Triplett <josh@joshtriplett.org>
-Cc:     io-uring@vger.kernel.org, "David S . Miller" <davem@davemloft.net>,
+        id S234528AbhHODbt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 14 Aug 2021 23:31:49 -0400
+Received: from wout5-smtp.messagingengine.com ([64.147.123.21]:40109 "EHLO
+        wout5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233848AbhHODbt (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 14 Aug 2021 23:31:49 -0400
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailout.west.internal (Postfix) with ESMTP id F34C73200495;
+        Sat, 14 Aug 2021 23:31:18 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Sat, 14 Aug 2021 23:31:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        joshtriplett.org; h=date:from:to:cc:subject:message-id
+        :references:mime-version:content-type:in-reply-to; s=fm1; bh=cM4
+        DX2lhZr7xluQil3c+RS5Cm5n79DJ7je3T1iCiJkQ=; b=rsDQe+Kt5YffBNxlowO
+        nPdIbp2mt6q7z8Kj0qwpJ3hVHtSCHvppjapQnBj4YMDKWtEDYbc8qT9STz67G6X1
+        E9c9sHpGvpTMSbWe92Df/Yh9Z3PVXVSgrU6F1zKU548DPTP7l3Mn97MTqFUBwlQH
+        Ye30GF/MuOHy8T72a1+wWVZjtgKwbPmozX2tZajnfoT9/OI5+OehuhzWAhsvbgzr
+        dS+aTxbjg5GDP6Lt1eVf1zIo6Z4h2saeU20V00PtgNg4THaqX9/ryBaeGH1lI8bq
+        jLT7od2he9ZYv2f5uSJDdtcyj1iRw3h3R87rniaMRR3DgwRnU3Rwyx1E65KiHbk1
+        j5A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=cM4DX2
+        lhZr7xluQil3c+RS5Cm5n79DJ7je3T1iCiJkQ=; b=fdXoxvPe1qoqoiClYkXb+2
+        iGqUghOaQf9Q0luhsIzdoPle1k/8JL/OnaPRFRnCk/sjdzQCCHVYyN3BUTImZrw3
+        FJD9DoNETFZzN/pvV7Y1QV57yx5rnEcWdAP42Z1gonjOAjCyXv9EAWNMuEpqL+Ta
+        U7pQFlMc8hk2NGe4xaaws4ysN0/qmp8SnCVnH2cPpHN38GiZwbpctpf9i5BOSde9
+        9yn7Ndxs4xd7LPzAxb0iSvIvx+KZpOQHhtB8QBrssIVUDwvAhBRplUdvjsgDjV9k
+        cCCdEEi5KNRXsxr20ugh5JmDk1HO6RfFJCmqsvc3hR0exS3IF9iIgkI8nqHj90IA
+        ==
+X-ME-Sender: <xms:hYoYYYK93iDeqrESxFkZUXxdJF_u8bbDq3-u4oTZqlpwh2hwFP8q7A>
+    <xme:hYoYYYKY59Su5g5aBreROCPXBv13XQP1plMRkZ3nktbL1I5QfJ_fZ-0eHOxbozeEy
+    dmR6xcAIbe1xcYP_pc>
+X-ME-Received: <xmr:hYoYYYsT2QQFPWDcGAXjExVbnqDchM-gUZcuW-0yHuIkdLjBMJPSVxA91QQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrkeekgdejvdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomheplfhoshhhucfv
+    rhhiphhlvghtthcuoehjohhshhesjhhoshhhthhrihhplhgvthhtrdhorhhgqeenucggtf
+    frrghtthgvrhhnpeegtdfgfeeghfevgeelgfefieegudeuheekkedtueeutefgheffveeg
+    ueeiteehteenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+    hmpehjohhshhesjhhoshhhthhrihhplhgvthhtrdhorhhg
+X-ME-Proxy: <xmx:hYoYYVagA-s4AiMnrysbQfzlwhTWStPsrVqdvb3v4FVOfU2zdlS9kg>
+    <xmx:hYoYYfZMJPJjA6SCh11XqDjpo7Ulszm926KGBNxdm1PxwwscSi7wVA>
+    <xmx:hYoYYRBlSH4ST7xF3nuGTk54e25oA0HZNbVobxD-JSMaDvbxy951mQ>
+    <xmx:hooYYUOHXmB-yHdyjYIBqzK3E9c_Z-60od8X2qrNMACEkV7ZVkoU5g>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 14 Aug 2021 23:31:16 -0400 (EDT)
+Date:   Sat, 14 Aug 2021 20:31:15 -0700
+From:   Josh Triplett <josh@joshtriplett.org>
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        "David S . Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>, linux-kernel@vger.kernel.org,
         netdev@vger.kernel.org, Stefan Metzmacher <metze@samba.org>
+Subject: Re: [PATCH v2 0/4] open/accept directly into io_uring fixed file
+ table
+Message-ID: <YRiKg7tV+8oMtXtg@localhost>
 References: <cover.1628871893.git.asml.silence@gmail.com>
- <YRbBYCn29B+kgZcy@localhost> <bcb6f253-41d6-6e0f-5b4b-ea1e02a105bc@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <5cf40313-d151-9d10-3ebd-967eb2f53b1f@kernel.dk>
-Date:   Sat, 14 Aug 2021 17:03:44 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ <YRbBYCn29B+kgZcy@localhost>
+ <bcb6f253-41d6-6e0f-5b4b-ea1e02a105bc@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <bcb6f253-41d6-6e0f-5b4b-ea1e02a105bc@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/14/21 6:50 AM, Pavel Begunkov wrote:
+On Sat, Aug 14, 2021 at 01:50:24PM +0100, Pavel Begunkov wrote:
 > On 8/13/21 8:00 PM, Josh Triplett wrote:
->> On Fri, Aug 13, 2021 at 05:43:09PM +0100, Pavel Begunkov wrote:
->>> Add an optional feature to open/accept directly into io_uring's fixed
->>> file table bypassing the normal file table. Same behaviour if as the
->>> snippet below, but in one operation:
->>>
->>> sqe = prep_[open,accept](...);
->>> cqe = submit_and_wait(sqe);
->>> // error handling
->>> io_uring_register_files_update(uring_idx, (fd = cqe->res));
->>> // optionally
->>> close((fd = cqe->res));
->>>
->>> The idea in pretty old, and was brough up and implemented a year ago
->>> by Josh Triplett, though haven't sought the light for some reasons.
->>
->> Thank you for working to get this over the finish line!
->>
->>> Tested on basic cases, will be sent out as liburing patches later.
->>>
->>> A copy paste from 2/2 describing user API and some notes:
->>>
->>> The behaviour is controlled by setting sqe->file_index, where 0 implies
->>> the old behaviour. If non-zero value is specified, then it will behave
->>> as described and place the file into a fixed file slot
->>> sqe->file_index - 1. A file table should be already created, the slot
->>> should be valid and empty, otherwise the operation will fail.
->>>
->>> Note 1: we can't use IOSQE_FIXED_FILE to switch between modes, because
->>> accept takes a file, and it already uses the flag with a different
->>> meaning.
->>>
->>> Note 2: it's u16, where in theory the limit for fixed file tables might
->>> get increased in the future. If would ever happen so, we'll better
->>> workaround later, e.g. by making ioprio to represent upper bits 16 bits.
->>> The layout for open is tight already enough.
->>
->> Rather than using sqe->file_index - 1, which feels like an error-prone
->> interface, I think it makes sense to use a dedicated flag for this, like
->> IOSQE_OPEN_FIXED. That flag could work for any open-like operation,
->> including open, accept, and in the future many other operations such as
->> memfd_create. (Imagine using a single ring submission to open a memfd,
->> write a buffer into it, seal it, send it over a UNIX socket, and then
->> close it.)
->>
->> The only downside is that you'll need to reject that flag in all
->> non-open operations. One way to unify that code might be to add a flag
->> in io_op_def for open-like operations, and then check in common code for
->> the case of non-open-like operations passing IOSQE_OPEN_FIXED.
+> > Rather than using sqe->file_index - 1, which feels like an error-prone
+> > interface, I think it makes sense to use a dedicated flag for this, like
+> > IOSQE_OPEN_FIXED. That flag could work for any open-like operation,
+> > including open, accept, and in the future many other operations such as
+> > memfd_create. (Imagine using a single ring submission to open a memfd,
+> > write a buffer into it, seal it, send it over a UNIX socket, and then
+> > close it.)
+> > 
+> > The only downside is that you'll need to reject that flag in all
+> > non-open operations. One way to unify that code might be to add a flag
+> > in io_op_def for open-like operations, and then check in common code for
+> > the case of non-open-like operations passing IOSQE_OPEN_FIXED.
 > 
 > io_uring is really thin, and so I absolutely don't want any extra
 > overhead in the generic path, IOW anything affecting
 > reads/writes/sends/recvs.
-> 
+
+There are already several checks for valid flags in io_init_req. For
+instance:
+        if ((sqe_flags & IOSQE_BUFFER_SELECT) &&
+            !io_op_defs[req->opcode].buffer_select)
+                return -EOPNOTSUPP;
+It'd be trivial to make io_op_defs have a "valid flags" byte, and one
+bitwise op tells you if any invalid flags were passed. *Zero* additional
+overhead for other operations.
+
+Alternatively, since there are so few operations that open a file
+descriptor, you could just add a separate opcode for those few
+operations. That still seems preferable to overloading a 16-bit index
+field for this.
+
+With this new mechanism, I think we're going to want to support more
+than 65535 fixed-file entries. I can easily imagine wanting to handle
+hundreds of thousands of files or sockets this way.
+
 > The other reason is that there are only 2 bits left in sqe->flags,
 > and we may use them for something better, considering that it's
 > only open/accept and not much as this.
-> 
+
+pipe, dup3, socket, socketpair, pidfds (via either pidfd_open or a
+ring-based spawn mechanism), epoll_create, inotify, fanotify, signalfd,
+timerfd, eventfd, memfd_create, userfaultfd, open_tree, fsopen, fsmount,
+memfd_secret.
+
+Of those, I personally would *love* to have at least pipe, socket,
+pidfd, memfd_create, and fsopen/fsmount/open_tree, plus some manner of
+dup-like operation for moving things between the fixed-file table and
+file descriptors.
+
+I think this is valuable and versatile enough to merit a flag. It would
+also be entirely reasonable to create separate operations for these. But
+either way, I don't think this should just be determined by whether a
+16-bit index is non-zero.
+
 > I agree that it feels error-prone, but at least it can be wrapped
 > nicely enough in liburing, e.g.
 > 
 > void io_uring_prep_openat_direct(struct io_uring_sqe *sqe, int dfd,
 > 				 const char *path, int flags,
 > 				 mode_t mode, int slot_idx);
-> 
-> 
->> Also, rather than using a 16-bit index for the fixed file table and
->> potentially requiring expansion into a different field in the future,
->> what about overlapping it with the nofile field in the open and accept
->> requests? If they're not opening a normal file descriptor, they don't
->> need nofile. And in the original sqe, you can then overlap it with a
->> 32-bit field like splice_fd_in.
+
+That wrapper wouldn't be able to handle more than a 16-bit slot index
+though.
+
+> > Also, rather than using a 16-bit index for the fixed file table and
+> > potentially requiring expansion into a different field in the future,
+> > what about overlapping it with the nofile field in the open and accept
+> > requests? If they're not opening a normal file descriptor, they don't
+> > need nofile. And in the original sqe, you can then overlap it with a
+> > 32-bit field like splice_fd_in.
 > 
 > There is no nofile in SQEs, though
 > 
 > req->open.nofile = rlimit(RLIMIT_NOFILE);
 
-What's the plan in terms of limiting the amount of direct descriptors
-(for lack of a better word)? That seems like an important aspect that
-should get sorted out upfront.
+nofile isn't needed for opening into the fixed-file table, so it could
+be omitted in that case, and another field unioned with it. That would
+allow passing a 32-bit fixed-file index into open and accept without
+growing the size of their structures. I think, with this new capability,
+we're going to want a large number of fixed files available.
 
-Do we include the regular file table max_fds count for creating a new
-direct descriptor, and limit to RLIMIT_NOFILE? That would seem logical,
-but then that also implies that the regular file table should include
-the ctx (potentially several) direct descriptors. And the latter is much
-worse.
+In the SQE, you could overlap it with the splice_fd_in field, which
+isn't needed by any calls other than splice.
 
-Maybe we have a way to size the direct table, which will consume entries
-from the same pool that the regular file table does? That would then
-work both ways, and could potentially just be done dynamically similarly
-to how we expand the regular file table when we exceed its current size.
-
-Anyway, just throwing a few ideas out there, with the intent to spark a
-bit of discussion on this topic. I really like the direct descriptors,
-it'll be a lot more efficient for certain use cases.
-
--- 
-Jens Axboe
-
+- Josh Triplett

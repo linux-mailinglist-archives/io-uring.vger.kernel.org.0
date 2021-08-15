@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 946B23EC85F
-	for <lists+io-uring@lfdr.de>; Sun, 15 Aug 2021 11:41:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B124E3EC860
+	for <lists+io-uring@lfdr.de>; Sun, 15 Aug 2021 11:41:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237127AbhHOJlf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 15 Aug 2021 05:41:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46980 "EHLO
+        id S237133AbhHOJlg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 15 Aug 2021 05:41:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232507AbhHOJle (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 15 Aug 2021 05:41:34 -0400
+        with ESMTP id S232507AbhHOJlf (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 15 Aug 2021 05:41:35 -0400
 Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12E3AC061764
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD8C8C061764
         for <io-uring@vger.kernel.org>; Sun, 15 Aug 2021 02:41:05 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id u16so2223548wrn.5
+Received: by mail-wr1-x435.google.com with SMTP id h13so19390360wrp.1
         for <io-uring@vger.kernel.org>; Sun, 15 Aug 2021 02:41:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=JQvFvTilzsXB6UMnXng6zsnfLOtbOCmZMx8zGVQo23Y=;
-        b=flNUkVYJOduQwv3+fA6wbV4Qv+DRwSOI+oOrcifzCXK4Hl/4L3uimdyVTRTnk68Zup
-         qMfTOUgGtYBlusx6MUWk5Z6mOGW1ik9Ue5/sBhkBGFRHjA2rL5tkwu4s2XDnQa5iKmxn
-         nX7//X5b5l042pkBrqPzd0+6v5E7pgFlmn97Lpb+a76+xHZBvt5mzZFfJGV7VYWsS/BM
-         W+SXk5U0xamAbYiI4Tv/VT3xpsSL8IdcG0Tf6Y88RihGTKVdl2fUsK3bEsc1JKgS+AO5
-         s6kDhj03Ua+LCNXSZfsI4/uU/WwbBEan40r3R822smVQMJ8KWvbo6RCwhZfYrwj6u1PB
-         6XPw==
+        bh=O+uFvWlR4lOcQLMxy+BEWzTOXs3QyMA9Pr2S70OOr+E=;
+        b=bl+YDDwe1gLQ3cpYGB22WXKe6QGKuZAxayftcc/wosrQ25EKbZI5aXmdLfaTLzdt4R
+         NcXZMg3QDA2dTA1hi1lCYxk6eEBMODGRPUkfcI048dyw5Bnr/t3dl6WGiN3ZVhbs+z7/
+         W4b4hNeQR/2BU4C1755lAkomV6Bfzx73+dVNW5wKZV8jyY2vr5RVJS3n6YnFTfiu7Yet
+         NDYoYwc5Z8CJfBYAT8BlSbCLH0AnouXwOKmsx66Q23SEtIqksLLLcb7526FatuMUX2dR
+         wyWtDKI6kd9YyqzMk+BxMmvwOO8CdS12lmYezb33eAhpinA/RzZKfiPhn1PrdubJ2WzC
+         mKog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=JQvFvTilzsXB6UMnXng6zsnfLOtbOCmZMx8zGVQo23Y=;
-        b=JTy43dcO/Nvb+IdWbSblW+YboJdAs4d4Wi1OpZdnsVrUTyMfshx5jTB/4Xl6NdQvBq
-         MY7+SMjm+qbPdMvsgzScxpy1Z0yyJJG6a4AnqjQZtNeB2CzrNmD/te79L7EZem7ouuVa
-         9CSHvT8AZrljTuIIQyKEkTkz6p0g2kmBNVGykkAutYFx4+S1oaqyUw+/2p3h5UbWr5xH
-         qNoQArFkfXDT6Z9qquJtiVV3+ur0Up2VjFkD2v2BOmbMzhqiF3U1jhXw0SXhNEpz62aw
-         TiBtdc2aMCMZ9jhDx1PW/w7mayKyJq9lHVeadXXq+y5IDhSaoK5hEp+vU7GMUtpMSJuK
-         U54A==
-X-Gm-Message-State: AOAM532U2xLsaw8xN2DTqG5f+kUhqwmS51C6VzcS69wq52Eeqy+wV8Fb
-        fONI0mkOxvTIoktslOW3vVk=
-X-Google-Smtp-Source: ABdhPJyp1GCD+aADU86BM/sxIRUXZrFgKai4HuPBg8h1MZ3ueAQpEYUzz9isVz+IV1rRRN/yTQrGTg==
-X-Received: by 2002:a5d:4090:: with SMTP id o16mr12205550wrp.176.1629020463631;
-        Sun, 15 Aug 2021 02:41:03 -0700 (PDT)
+        bh=O+uFvWlR4lOcQLMxy+BEWzTOXs3QyMA9Pr2S70OOr+E=;
+        b=tSDijEeR9Vbd30aEj6uGE6qtA0kiDrxswBQx+Zfep4HSR0y0/Pr2p/J5G97UFRdfbL
+         akMnR0XxO1vCz4kWLVYYgkL4Vo/i9LTTXOy8kIWD5lfS0yWjpHviS/Uvkr79tGo6M22c
+         QJxDg0+TovHy71ZLQdxhUsNQCrdlpsfCCbrrYE3d1H0KziJVz0KXLjKLks0Rm/mK8dFa
+         GXbcaeXHAIbdHLEns4KKxrKnoqTcljQHC6zCD4U2iW7Z251YxiIkwDPLJYdIEC9rfMWE
+         4wGGFD1F6i0jfb4Ae4hHaPymTUhrLPtcrxBaUPRJ0GF3y0bQG490Nz1W0cYiKLzmuAha
+         YOxQ==
+X-Gm-Message-State: AOAM533t23T7InTdtKdTlCrd+jlOjMHIcGtTri376KNVbP00BP3kOlxr
+        L3W78FBS8SqO5mr1152IdCw=
+X-Google-Smtp-Source: ABdhPJwBIivf3qe0hA0wcTmj+pKWfNIH5sWS1HurstD7z/faI7Dr6tGKrGZSd9uQFZMaKF3cak863Q==
+X-Received: by 2002:adf:f704:: with SMTP id r4mr12919448wrp.389.1629020464619;
+        Sun, 15 Aug 2021 02:41:04 -0700 (PDT)
 Received: from localhost.localdomain ([148.252.133.97])
-        by smtp.gmail.com with ESMTPSA id t8sm8828815wrx.27.2021.08.15.02.41.02
+        by smtp.gmail.com with ESMTPSA id t8sm8828815wrx.27.2021.08.15.02.41.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Aug 2021 02:41:03 -0700 (PDT)
+        Sun, 15 Aug 2021 02:41:04 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH v2 1/9] io_uring: optimise iowq refcounting
-Date:   Sun, 15 Aug 2021 10:40:18 +0100
-Message-Id: <2d53f4449faaf73b4a4c5de667fc3c176d974860.1628981736.git.asml.silence@gmail.com>
+Subject: [PATCH v2 2/9] io_uring: don't inflight-track linked timeouts
+Date:   Sun, 15 Aug 2021 10:40:19 +0100
+Message-Id: <e1b05cf47cb69df2305efdbee8cf7ba36f46c1a3.1628981736.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <cover.1628981736.git.asml.silence@gmail.com>
 References: <cover.1628981736.git.asml.silence@gmail.com>
@@ -61,85 +61,29 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-If a requests is forwarded into io-wq, there is a good chance it hasn't
-been refcounted yet and we can save one req_ref_get() by setting the
-refcount number to the right value directly.
+Tracking linked timeouts as infligh was needed to make sure that io-wq
+is not destroyed by io_uring_cancel_generic() racing with
+io_async_cancel_one() accessing it. Now, cancellations issued by linked
+timeouts are done in the task context, so it's already synchronised.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 25 ++++++++++++++++---------
- 1 file changed, 16 insertions(+), 9 deletions(-)
+ fs/io_uring.c | 2 --
+ 1 file changed, 2 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 51c4166f68b5..761bfb56ed3b 100644
+index 761bfb56ed3b..fde76d502fff 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -1115,14 +1115,19 @@ static inline void req_ref_get(struct io_kiocb *req)
- 	atomic_inc(&req->refs);
- }
+@@ -5699,8 +5699,6 @@ static int io_timeout_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe,
  
--static inline void io_req_refcount(struct io_kiocb *req)
-+static inline void __io_req_set_refcount(struct io_kiocb *req, int nr)
- {
- 	if (!(req->flags & REQ_F_REFCOUNT)) {
- 		req->flags |= REQ_F_REFCOUNT;
--		atomic_set(&req->refs, 1);
-+		atomic_set(&req->refs, nr);
- 	}
- }
- 
-+static inline void io_req_set_refcount(struct io_kiocb *req)
-+{
-+	__io_req_set_refcount(req, 1);
-+}
-+
- static inline void io_req_set_rsrc_node(struct io_kiocb *req)
- {
- 	struct io_ring_ctx *ctx = req->ctx;
-@@ -1304,8 +1309,8 @@ static struct io_kiocb *__io_prep_linked_timeout(struct io_kiocb *req)
- 		return NULL;
- 
- 	/* linked timeouts should have two refs once prep'ed */
--	io_req_refcount(req);
--	io_req_refcount(nxt);
-+	io_req_set_refcount(req);
-+	io_req_set_refcount(nxt);
- 	req_ref_get(nxt);
- 
- 	nxt->timeout.head = req;
-@@ -5231,7 +5236,7 @@ static int io_arm_poll_handler(struct io_kiocb *req)
- 	req->apoll = apoll;
- 	req->flags |= REQ_F_POLLED;
- 	ipt.pt._qproc = io_async_queue_proc;
--	io_req_refcount(req);
-+	io_req_set_refcount(req);
- 
- 	ret = __io_arm_poll_handler(req, &apoll->poll, &ipt, mask,
- 					io_async_wake);
-@@ -5419,7 +5424,7 @@ static int io_poll_add_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe
- 	if (flags & ~IORING_POLL_ADD_MULTI)
- 		return -EINVAL;
- 
--	io_req_refcount(req);
-+	io_req_set_refcount(req);
- 	poll->events = io_poll_parse_events(sqe, flags);
+ 	data->mode = io_translate_timeout_mode(flags);
+ 	hrtimer_init(&data->timer, CLOCK_MONOTONIC, data->mode);
+-	if (is_timeout_link)
+-		io_req_track_inflight(req);
  	return 0;
  }
-@@ -6311,9 +6316,11 @@ static void io_wq_submit_work(struct io_wq_work *work)
- 	struct io_kiocb *timeout;
- 	int ret = 0;
  
--	io_req_refcount(req);
--	/* will be dropped by ->io_free_work() after returning to io-wq */
--	req_ref_get(req);
-+	/* one will be dropped by ->io_free_work() after returning to io-wq */
-+	if (!(req->flags & REQ_F_REFCOUNT))
-+		__io_req_set_refcount(req, 2);
-+	else
-+		req_ref_get(req);
- 
- 	timeout = io_prep_linked_timeout(req);
- 	if (timeout)
 -- 
 2.32.0
 

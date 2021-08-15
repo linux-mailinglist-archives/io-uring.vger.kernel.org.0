@@ -2,125 +2,193 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A2F243EC86F
-	for <lists+io-uring@lfdr.de>; Sun, 15 Aug 2021 11:44:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71CE23EC8A7
+	for <lists+io-uring@lfdr.de>; Sun, 15 Aug 2021 12:49:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232507AbhHOJpB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 15 Aug 2021 05:45:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47782 "EHLO
+        id S232507AbhHOKtv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 15 Aug 2021 06:49:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33638 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236717AbhHOJpB (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 15 Aug 2021 05:45:01 -0400
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2370CC061764
-        for <io-uring@vger.kernel.org>; Sun, 15 Aug 2021 02:44:31 -0700 (PDT)
-Received: by mail-wm1-x32f.google.com with SMTP id f9-20020a05600c1549b029025b0f5d8c6cso12744212wmg.4
-        for <io-uring@vger.kernel.org>; Sun, 15 Aug 2021 02:44:31 -0700 (PDT)
+        with ESMTP id S231596AbhHOKtu (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 15 Aug 2021 06:49:50 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FAB0C061764;
+        Sun, 15 Aug 2021 03:49:20 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id f10so6610751wml.2;
+        Sun, 15 Aug 2021 03:49:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=UwUv3N1xKdDWmR4oeTkhFDrl1Lp88Sz7VVPCDWCurB4=;
-        b=IAdSZxBVzRxD7fIGN1ez+VrJFBPES9EkMZZGtHBZ8yi5jKTCPQk0QrsCfSRqd2tYfZ
-         Av+78CUPfFugZYa/QLd1oxlmhRYbV+SEtb3bfOaKwrVbPS7qAswTBWRUeBSa102gwjLA
-         HHwGiiCQkTpAeWGU9aNKVauBV8RIMs6mojqaB8ErNvNNM24leRHyVsvhUTFQ9XOSXjeI
-         3GWSJSSE56PuAT7Hsn8UnlyMnHHNj8Q9/YiQ0pztoarY+KuCe3g69531mCW2U+hI+4AO
-         W9Q5Xz9BJ1zsRkFLDrxZrD3ARBwRzfNNsTCXAdVQtElCqvUi4JdFHleEnt+IrWMXSiBk
-         1FIg==
+        h=to:cc:references:from:subject:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=1CxQWhhARjoVMY5/tTuJPwWDah4z0FveG0g5iNjB8ZQ=;
+        b=bG5audem24BHB6wJddbcB8i4yYN5vp0jxn5DudeSNMiK0ig+jWQH/8ARzDeHY5kpC4
+         //YqoAzOo3PE6+1z6+CeH8s312iTsTYPP1xlMmCBo3qRhbKW3gb4ER1ilw6keoj8oGpS
+         GobRke+RbE4lqV5zuiYNhZ1hgVTO1z0dLzFeV5QM/h7XJlXlD+S8w/PcJdBiQk/M+c1V
+         fyUxSYd896YV3XZybODobUN4c0G5SFIvK3UOLMFmG6nNPhjrWo+uyB617FCasbwXQ1T/
+         0/44lCiq0Mk4jhElupRouXgBRH4YsxP2RCxbPy61qzzygIcW9a919jGVXfuI/gkD0lNG
+         q5Ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=UwUv3N1xKdDWmR4oeTkhFDrl1Lp88Sz7VVPCDWCurB4=;
-        b=cNx91Y4K4LcYt7bqkZ1u2SJ/KVeM0o7Ef1isf0n+VX+WsnxCNIPey6zEeS5mCHsr/L
-         Cn/uBnIgEcC7SZaoFAgZnRpeRKcBO9xH6zgGvm91cVHP4ZagWe8hBsMMzl3IENaSeOFE
-         VUwebUYEss+k6jn4ksPvCYbS+vvTEah/KF6HdCVhsLDrgi7eMrrxP8dHyI11erseFxtO
-         hSDXzuUPharHx4LPElq/CH0UHLQbk6UhjmtH4rnVCSGV89y2un3hDE/w295a8Jwx/jT7
-         gkez+Eib9VnDBL7L5yUHvh2nFtzvkWdLyMpwUoGwTqP2OAR+7j54oyWXKvMdO4JjiaNc
-         ffcA==
-X-Gm-Message-State: AOAM530pmwvXkJg62k95O2VoRN7Vn9uO1MYH7tZX5iSyyBwJcGLVdJ9p
-        w6vJ5Bo0q9ENlXNa2NCNn2k=
-X-Google-Smtp-Source: ABdhPJyaeFyttQLv9X892kQIsijML3OmQ9KfdtkFKRizSJVsjuoil4usI1NjHcyjl3arijaF0/zEMA==
-X-Received: by 2002:a05:600c:4e87:: with SMTP id f7mr9422699wmq.42.1629020669799;
-        Sun, 15 Aug 2021 02:44:29 -0700 (PDT)
-Received: from localhost.localdomain ([148.252.133.97])
-        by smtp.gmail.com with ESMTPSA id i21sm7784240wrb.62.2021.08.15.02.44.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Aug 2021 02:44:29 -0700 (PDT)
+        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=1CxQWhhARjoVMY5/tTuJPwWDah4z0FveG0g5iNjB8ZQ=;
+        b=BCv5pkSrYdxR/yiU+o5PfhRt6XiJyzCohnpjmEqEXooEwwvtEme+x2kTueFpAodAgO
+         yTBk7gWV0MO210C3gCXafZ3TM++Diolo+B9gVFYvL92bdpT/gjgfDCpcjNEuN9zSiiS/
+         irM0qYrjUkIiCtWV/lzzZsWwGRaktGQkYq6SoD+Dr7HvQOUGgxDKzRp8NCIUZNKw26U6
+         RErAhd6Cq8t0KCCTcqS5HCbIHKxD3JI0iQTz8ENJnOEqaC42ElCOOuUBPwv/9QoU7MKc
+         A8fA9oQHjt4qqJOeJdHzdVIX54kUIPNhXVHtUzLQt6TdRPs3Jg7jM8eIFJUXqJu09D9E
+         LHRw==
+X-Gm-Message-State: AOAM533rb8a75h/NQtZ/UTr8hXcB2jVsiMxDm1fyIKp7PQhejJPUujO1
+        znDIRQkv75SY4J+rIBbfTlQ=
+X-Google-Smtp-Source: ABdhPJytWviH22yDk6aTFHkCZwAClH3nHUCl1exKXbol4mRzaTyX4je3koyDhCaPySpZ3QgzgSlIeg==
+X-Received: by 2002:a7b:c5c7:: with SMTP id n7mr10801270wmk.5.1629024559014;
+        Sun, 15 Aug 2021 03:49:19 -0700 (PDT)
+Received: from [192.168.8.197] ([148.252.133.97])
+        by smtp.gmail.com with ESMTPSA id x18sm7677487wrw.19.2021.08.15.03.49.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 15 Aug 2021 03:49:18 -0700 (PDT)
+To:     Josh Triplett <josh@joshtriplett.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, Stefan Metzmacher <metze@samba.org>
+References: <cover.1628871893.git.asml.silence@gmail.com>
+ <YRbBYCn29B+kgZcy@localhost> <bcb6f253-41d6-6e0f-5b4b-ea1e02a105bc@gmail.com>
+ <YRiKg7tV+8oMtXtg@localhost>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH liburing 2/2] tests: fail early invalid linked setups
-Date:   Sun, 15 Aug 2021 10:43:52 +0100
-Message-Id: <d2576c13100bacc00467c9ccfaedca1e71117e97.1629020550.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <cover.1629020550.git.asml.silence@gmail.com>
-References: <cover.1629020550.git.asml.silence@gmail.com>
+Subject: Re: [PATCH v2 0/4] open/accept directly into io_uring fixed file
+ table
+Message-ID: <c6c0a1ee-2417-6e9d-4206-77f9498a4401@gmail.com>
+Date:   Sun, 15 Aug 2021 11:48:48 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
+In-Reply-To: <YRiKg7tV+8oMtXtg@localhost>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-We're going to fail links with invalid timeout combinations early. E.g.
-op1 -> link timeout -> link timeout
+On 8/15/21 4:31 AM, Josh Triplett wrote:
+> On Sat, Aug 14, 2021 at 01:50:24PM +0100, Pavel Begunkov wrote:
+>> On 8/13/21 8:00 PM, Josh Triplett wrote:
+>>> Rather than using sqe->file_index - 1, which feels like an error-prone
+>>> interface, I think it makes sense to use a dedicated flag for this, like
+>>> IOSQE_OPEN_FIXED. That flag could work for any open-like operation,
+>>> including open, accept, and in the future many other operations such as
+>>> memfd_create. (Imagine using a single ring submission to open a memfd,
+>>> write a buffer into it, seal it, send it over a UNIX socket, and then
+>>> close it.)
+>>>
+>>> The only downside is that you'll need to reject that flag in all
+>>> non-open operations. One way to unify that code might be to add a flag
+>>> in io_op_def for open-like operations, and then check in common code for
+>>> the case of non-open-like operations passing IOSQE_OPEN_FIXED.
+>>
+>> io_uring is really thin, and so I absolutely don't want any extra
+>> overhead in the generic path, IOW anything affecting
+>> reads/writes/sends/recvs.
+> 
+> There are already several checks for valid flags in io_init_req. For
+> instance:
 
-Update tests to handle it.
+Yes, it's horrible and I don't want to make it any worse.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- test/link-timeout.c | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+>         if ((sqe_flags & IOSQE_BUFFER_SELECT) &&
+>             !io_op_defs[req->opcode].buffer_select)
+>                 return -EOPNOTSUPP;
+> It'd be trivial to make io_op_defs have a "valid flags" byte, and one
+> bitwise op tells you if any invalid flags were passed. *Zero* additional
+> overhead for other operations.
 
-diff --git a/test/link-timeout.c b/test/link-timeout.c
-index 8c3e203..c8c289c 100644
---- a/test/link-timeout.c
-+++ b/test/link-timeout.c
-@@ -63,7 +63,7 @@ static int test_fail_two_link_timeouts(struct io_uring *ring)
- 	struct __kernel_timespec ts;
- 	struct io_uring_cqe *cqe;
- 	struct io_uring_sqe *sqe;
--	int ret, i;
-+	int ret, i, nr_wait;
- 
- 	ts.tv_sec = 1;
- 	ts.tv_nsec = 0;
-@@ -114,12 +114,13 @@ static int test_fail_two_link_timeouts(struct io_uring *ring)
- 	sqe->user_data = 4;
- 
- 	ret = io_uring_submit(ring);
--	if (ret != 4) {
-+	if (ret < 3) {
- 		printf("sqe submit failed: %d\n", ret);
- 		goto err;
- 	}
-+	nr_wait = ret;
- 
--	for (i = 0; i < 4; i++) {
-+	for (i = 0; i < nr_wait; i++) {
- 		ret = io_uring_wait_cqe(ring, &cqe);
- 		if (ret < 0) {
- 			printf("wait completion %d\n", ret);
-@@ -981,14 +982,16 @@ static int test_timeout_link_chain5(struct io_uring *ring)
- 		}
- 		switch (cqe->user_data) {
- 		case 1:
--			if (cqe->res) {
--				fprintf(stderr, "Timeout got %d, wanted -EINVAL\n",
-+		case 2:
-+			if (cqe->res && cqe->res != -ECANCELED) {
-+				fprintf(stderr, "Request got %d, wanted -EINVAL "
-+						"or -ECANCELED\n",
- 						cqe->res);
- 				goto err;
- 			}
- 			break;
--		case 2:
--			if (cqe->res != -ECANCELED) {
-+		case 3:
-+			if (cqe->res != -ECANCELED && cqe->res != -EINVAL) {
- 				fprintf(stderr, "Link timeout got %d, wanted -ECANCELED\n", cqe->res);
- 				goto err;
- 			}
+Good point
+
+> Alternatively, since there are so few operations that open a file
+> descriptor, you could just add a separate opcode for those few
+> operations. That still seems preferable to overloading a 16-bit index
+> field for this.
+
+I don't think so
+
+> With this new mechanism, I think we're going to want to support more
+> than 65535 fixed-file entries. I can easily imagine wanting to handle
+> hundreds of thousands of files or sockets this way.
+
+May be. What I'm curious about is that the feature doesn't really
+change anything in this regard, but seems I haven't heard people
+asking for larger tables.
+
+>> The other reason is that there are only 2 bits left in sqe->flags,
+>> and we may use them for something better, considering that it's
+>> only open/accept and not much as this.
+> 
+> pipe, dup3, socket, socketpair, pidfds (via either pidfd_open or a
+> ring-based spawn mechanism), epoll_create, inotify, fanotify, signalfd,
+> timerfd, eventfd, memfd_create, userfaultfd, open_tree, fsopen, fsmount,
+> memfd_secret.
+
+We could argue for many of those whether they should be in io_uring,
+and whether there are many benefits having them async and so. It would
+have another story if all the ecosystem was io_uring centric, but
+that's speculations.
+
+> Of those, I personally would *love* to have at least pipe, socket,
+> pidfd, memfd_create, and fsopen/fsmount/open_tree, plus some manner of
+> dup-like operation for moving things between the fixed-file table and
+> file descriptors.
+> 
+> I think this is valuable and versatile enough to merit a flag. It would
+> also be entirely reasonable to create separate operations for these. But
+> either way, I don't think this should just be determined by whether a
+> 16-bit index is non-zero.
+> 
+>> I agree that it feels error-prone, but at least it can be wrapped
+>> nicely enough in liburing, e.g.
+>>
+>> void io_uring_prep_openat_direct(struct io_uring_sqe *sqe, int dfd,
+>> 				 const char *path, int flags,
+>> 				 mode_t mode, int slot_idx);
+> 
+> That wrapper wouldn't be able to handle more than a 16-bit slot index
+> though.
+
+It would. Note, the index is "int" there, so if doesn't fit
+into u16, we can fail it. And do conversion if required.
+
+>>> Also, rather than using a 16-bit index for the fixed file table and
+>>> potentially requiring expansion into a different field in the future,
+>>> what about overlapping it with the nofile field in the open and accept
+>>> requests? If they're not opening a normal file descriptor, they don't
+>>> need nofile. And in the original sqe, you can then overlap it with a
+>>> 32-bit field like splice_fd_in.
+>>
+>> There is no nofile in SQEs, though
+>>
+>> req->open.nofile = rlimit(RLIMIT_NOFILE);
+> 
+> nofile isn't needed for opening into the fixed-file table, so it could
+> be omitted in that case, and another field unioned with it.
+
+There is no problem to place it internally. Moreover, it's at the
+moment uniformly placed inside io_kiocb, but with nofile we'd need
+to find the place on per-op basis.
+
+Not like any matters, it's just bike shedding.
+
+> allow passing a 32-bit fixed-file index into open and accept without
+> growing the size of their structures. I think, with this new capability,
+> we're going to want a large number of fixed files available.
+> 
+> In the SQE, you could overlap it with the splice_fd_in field, which
+> isn't needed by any calls other than splice.
+
+But it doesn't mean it won't be used, as happened with pretty every
+other field in SQE. So, it rather depends on what packing is wanted.
+And reusing almost never used ->buf_index (and potentially ->ioprio),
+sounds reasonable.
+
 -- 
-2.32.0
-
+Pavel Begunkov

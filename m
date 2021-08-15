@@ -2,106 +2,86 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F1FB3EC703
-	for <lists+io-uring@lfdr.de>; Sun, 15 Aug 2021 05:42:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C29A3EC85E
+	for <lists+io-uring@lfdr.de>; Sun, 15 Aug 2021 11:41:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235079AbhHODmw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 14 Aug 2021 23:42:52 -0400
-Received: from wout5-smtp.messagingengine.com ([64.147.123.21]:49187 "EHLO
-        wout5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233848AbhHODmv (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 14 Aug 2021 23:42:51 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.west.internal (Postfix) with ESMTP id 8415C320046E;
-        Sat, 14 Aug 2021 23:42:21 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Sat, 14 Aug 2021 23:42:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        joshtriplett.org; h=date:from:to:cc:subject:message-id
-        :references:mime-version:content-type:in-reply-to; s=fm1; bh=fsc
-        QQUiCrfJu2B/FroGWlGgv8rX7vCHNTDmiXT/+3qg=; b=HPv8LWAWIBoYE5/gick
-        zpULfhUf6sx7a1h7vcfHUgp1AgSThKYiQzOu30lYEEcOzBfdHr0fnSSJO1eI+ShK
-        IOY2S8GA5uWCjzzN6Fm3TXcIVOaY/XsKXk0MpxWbJQr+vKCgbnop28IU0dye3V1Q
-        BdB+TfzzOCI8MgQv/P/zA5OLC/N0isk8eWObyLRW23Wzl1067q1efxRMLYQ3fsKi
-        VLrzYLOyDvghyfn/ql0Q5IsUbsjdoUUzSLu1rOWeFCAcNQ/QAQEVa1gtrMvcouWK
-        aOLCXSr/ktBmntQexAZ/ABZT839MvkaAL5aodmmVrXaKKhixhBC4PYBfc8b99ob1
-        eJA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=fscQQU
-        iCrfJu2B/FroGWlGgv8rX7vCHNTDmiXT/+3qg=; b=d+z6GWPiqYOBUwIpYT1EfA
-        RH4GJXsLkVCjT5UzWtYBuB5mjFBddQG51Emp7tRed027+Co8+84j3eOfnByCrh4k
-        opaagkyrbb99WWcfmRb9xHXIkp9mV08voXfJsXDF6uT3p5u6irKQ7QK8x1rXSxqP
-        Eihu0qU5Ja/NG09ZeFMxGosz781ChYQwSQ+Mug9xajxbnRCb9v+ohjujj1prlVc2
-        pAotL1nY7A6DfI4p/oal8QBGV4XsSHxiZWFmUgZCkg62yxBcTQeZeUVZAeCBClQZ
-        sFV/DBrpv31EptWIDhXr51Fb7HffAD1mxR2sEGFU33cJOIJMfwU8OevTE2fEYYig
-        ==
-X-ME-Sender: <xms:G40YYUF4FvkiJFFeg_I5hrmGYAHz4QmNNZm-7Qipk8gZ46H7UtpsyA>
-    <xme:G40YYdW1fcC-33jHu3-S1lRhgPJlRdgCSHPIkVL_PnB4cxtNEVDeXLi1ZhlYdjGu3
-    4jWdvnUU9pZgbkkPgE>
-X-ME-Received: <xmr:G40YYeIhoDRCkO_EcoFaoZp9Xgq5sqhntVKOhCH5IzWNAknxv2YXwDJQFh0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrkeekgdejgecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomheplfhoshhhucfv
-    rhhiphhlvghtthcuoehjohhshhesjhhoshhhthhrihhplhgvthhtrdhorhhgqeenucggtf
-    frrghtthgvrhhnpeegtdfgfeeghfevgeelgfefieegudeuheekkedtueeutefgheffveeg
-    ueeiteehteenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
-    hmpehjohhshhesjhhoshhhthhrihhplhgvthhtrdhorhhg
-X-ME-Proxy: <xmx:G40YYWHl2sPJlA_guR2wf2xBF-0xv6S14MAo5N_HJdPAP1AzPD_BTQ>
-    <xmx:G40YYaWU-N3gGS-BJ4x3RJhuyca4bRn9avBmB12pLKVD6dqRo_TNuw>
-    <xmx:G40YYZMkZncHJS7lVrDrfb4U7GiQdQuLUUUlp0OSP3sAvtvWxLGU4Q>
-    <xmx:HY0YYcJvhvTrtcO6Vz0dxTK721wJE0ScOWeoOWAMs1HKKVk1mSYnIg>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 14 Aug 2021 23:42:18 -0400 (EDT)
-Date:   Sat, 14 Aug 2021 20:42:17 -0700
-From:   Josh Triplett <josh@joshtriplett.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, Stefan Metzmacher <metze@samba.org>
-Subject: Re: [PATCH v2 0/4] open/accept directly into io_uring fixed file
- table
-Message-ID: <YRiNGTL2Dp/7vNzt@localhost>
-References: <cover.1628871893.git.asml.silence@gmail.com>
- <YRbBYCn29B+kgZcy@localhost>
- <bcb6f253-41d6-6e0f-5b4b-ea1e02a105bc@gmail.com>
- <5cf40313-d151-9d10-3ebd-967eb2f53b1f@kernel.dk>
+        id S233413AbhHOJle (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 15 Aug 2021 05:41:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46974 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232507AbhHOJld (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 15 Aug 2021 05:41:33 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2A3BC061764
+        for <io-uring@vger.kernel.org>; Sun, 15 Aug 2021 02:41:03 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id o1-20020a05600c5101b02902e676fe1f04so9812901wms.1
+        for <io-uring@vger.kernel.org>; Sun, 15 Aug 2021 02:41:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wMHDPavswTo5MqTPEHGGALoRaekQpG5onvGK6WFC0Gw=;
+        b=N2WBz19BmFvMcOadSp8N/rzq2hoPShurOBE/3QtmJ5u6ygkVIQ2/f8a2+bmGgBfuUk
+         EFX1AWWuhEl+P/ih+Q5Z+0PgFzskCZX9xtuoB1DqFAB/6m544jzmlyM2l3PeMHZGPZDa
+         o1Rpt6J4UU5pvbaeLQZ089tMEsO3+KqyD2OyhYAoEffxeJFa3yoHI2/XAa6wqL/F4xx6
+         CArYUlzzkQEuwJlnmRIJG34KI56Kw1aE6eiKDsRJNDgEPAlpXR0SWIj1Q6Y6+6/k2F0k
+         Ps9YK4+60iSoyBdkXEPrfnJ83cSl8UKGtUHCVb2XEay76h1j8GizXxr4WVfRGbiThXTe
+         GxSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wMHDPavswTo5MqTPEHGGALoRaekQpG5onvGK6WFC0Gw=;
+        b=gjqUGk9orN050ey+bHWNl3tFuvYJBpw5faUpfm0FQuBzJl8dtAob3yXOG9ahYKvwPD
+         oLuZ2NIlmnjQjx1I0hV/ylHQ6eXO41nWtM4TOq1am0K7AHxBBUSh+IdNT2HTgvJ7mFi2
+         sCF3W1/Pt8lC8ptpVUBRgFMe/9a5CdEOFxRNUvLEcjsgTqR7IQSLFrtyWY4w0fG3DgPq
+         QJZEyeHW460tHnNG/2F0Pu5tZ8NP6H0x5s+DwTGWLoi7Tzhx+1+VWPgEHrw2ahUD6dZQ
+         rDIRFBaPGDZVHdmpc59KJ3kaobbYJidJDm6UrUXwfPC7UkA3dtWE763iZsodU2dRY1Sl
+         AaUw==
+X-Gm-Message-State: AOAM5303qt2iyY8/TwqQ1fqBZYvlxUW0HoMAWjDw/GetEjciodN00yFF
+        08NsQkfTmyThalyrrMm5RQCLmTsWYGc=
+X-Google-Smtp-Source: ABdhPJxn+dHuXTwvrVwmbV2IXCUbxEf8WehfF9Ua9ynink8DBe8rxdZMHrBxVkhlxJRY1pjteVFehg==
+X-Received: by 2002:a05:600c:4a29:: with SMTP id c41mr10215399wmp.86.1629020462524;
+        Sun, 15 Aug 2021 02:41:02 -0700 (PDT)
+Received: from localhost.localdomain ([148.252.133.97])
+        by smtp.gmail.com with ESMTPSA id t8sm8828815wrx.27.2021.08.15.02.41.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 15 Aug 2021 02:41:01 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [PATCH v2 for-next 0/5] 5.15 cleanups and optimisations
+Date:   Sun, 15 Aug 2021 10:40:17 +0100
+Message-Id: <cover.1628981736.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5cf40313-d151-9d10-3ebd-967eb2f53b1f@kernel.dk>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Sat, Aug 14, 2021 at 05:03:44PM -0600, Jens Axboe wrote:
-> What's the plan in terms of limiting the amount of direct descriptors
-> (for lack of a better word)? That seems like an important aspect that
-> should get sorted out upfront.
-[...]
-> Maybe we have a way to size the direct table, which will consume entries
-> from the same pool that the regular file table does? That would then
-> work both ways, and could potentially just be done dynamically similarly
-> to how we expand the regular file table when we exceed its current size.
+Some improvements after killing refcounting, and other cleanups.
+With 2/2 with will be only tracking reqs with 
+file->f_op == &io_uring_fops, which is nice.
 
-I think we'll want a way to size the direct table regardless, so that
-it's pre-allocated and doesn't need to be resized when an index is used.
-Then, we could do one of two equally easy things, depending on what
-policy we want to set:
+6-9 optimise the generic path as well as linked timeouts.
 
-- Deduct the full size of the fixed-file table from the allowed number
-  of files the process can have open. So, if RLIMIT_NOFILE is 1048576,
-  and you pre-allocate 1000000 entries in the fixed-file table, you can
-  have no more than 48576 file descriptors open. Stricter, but
-  potentially problematic: a program *might* expect that it can
-  dup2(some_fd, nofile - 1) successfully.
+v2: s/io_req_refcount/io_req_set_refcount (Jens)
+    6-9 are added
 
-- Use RLIMIT_NOFILE as the maximum size of the fixed-file table. There's
-  precedent for this: we already use RLIMIT_NOFILE as the maximum number
-  of file descriptors you can have in flight over UNIX sockets.
+Pavel Begunkov (9):
+  io_uring: optimise iowq refcounting
+  io_uring: don't inflight-track linked timeouts
+  io_uring: optimise initial ltimeout refcounting
+  io_uring: kill not necessary resubmit switch
+  io_uring: deduplicate cancellation code
+  io_uring: kill REQ_F_LTIMEOUT_ACTIVE
+  io_uring: simplify io_prep_linked_timeout
+  io_uring: cancel not-armed linked touts separately
+  io_uring: optimise io_prep_linked_timeout()
 
-I personally would favor the latter; it seems simple and
-straightforward.
+ fs/io_uring.c | 165 ++++++++++++++++++++++++++++----------------------
+ 1 file changed, 94 insertions(+), 71 deletions(-)
+
+-- 
+2.32.0
+

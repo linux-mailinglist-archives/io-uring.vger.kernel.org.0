@@ -2,46 +2,46 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BFF433EC6DE
-	for <lists+io-uring@lfdr.de>; Sun, 15 Aug 2021 05:31:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F1FB3EC703
+	for <lists+io-uring@lfdr.de>; Sun, 15 Aug 2021 05:42:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234528AbhHODbt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 14 Aug 2021 23:31:49 -0400
-Received: from wout5-smtp.messagingengine.com ([64.147.123.21]:40109 "EHLO
+        id S235079AbhHODmw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 14 Aug 2021 23:42:52 -0400
+Received: from wout5-smtp.messagingengine.com ([64.147.123.21]:49187 "EHLO
         wout5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233848AbhHODbt (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 14 Aug 2021 23:31:49 -0400
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailout.west.internal (Postfix) with ESMTP id F34C73200495;
-        Sat, 14 Aug 2021 23:31:18 -0400 (EDT)
+        by vger.kernel.org with ESMTP id S233848AbhHODmv (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 14 Aug 2021 23:42:51 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.west.internal (Postfix) with ESMTP id 8415C320046E;
+        Sat, 14 Aug 2021 23:42:21 -0400 (EDT)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Sat, 14 Aug 2021 23:31:19 -0400
+  by compute4.internal (MEProxy); Sat, 14 Aug 2021 23:42:22 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         joshtriplett.org; h=date:from:to:cc:subject:message-id
-        :references:mime-version:content-type:in-reply-to; s=fm1; bh=cM4
-        DX2lhZr7xluQil3c+RS5Cm5n79DJ7je3T1iCiJkQ=; b=rsDQe+Kt5YffBNxlowO
-        nPdIbp2mt6q7z8Kj0qwpJ3hVHtSCHvppjapQnBj4YMDKWtEDYbc8qT9STz67G6X1
-        E9c9sHpGvpTMSbWe92Df/Yh9Z3PVXVSgrU6F1zKU548DPTP7l3Mn97MTqFUBwlQH
-        Ye30GF/MuOHy8T72a1+wWVZjtgKwbPmozX2tZajnfoT9/OI5+OehuhzWAhsvbgzr
-        dS+aTxbjg5GDP6Lt1eVf1zIo6Z4h2saeU20V00PtgNg4THaqX9/ryBaeGH1lI8bq
-        jLT7od2he9ZYv2f5uSJDdtcyj1iRw3h3R87rniaMRR3DgwRnU3Rwyx1E65KiHbk1
-        j5A==
+        :references:mime-version:content-type:in-reply-to; s=fm1; bh=fsc
+        QQUiCrfJu2B/FroGWlGgv8rX7vCHNTDmiXT/+3qg=; b=HPv8LWAWIBoYE5/gick
+        zpULfhUf6sx7a1h7vcfHUgp1AgSThKYiQzOu30lYEEcOzBfdHr0fnSSJO1eI+ShK
+        IOY2S8GA5uWCjzzN6Fm3TXcIVOaY/XsKXk0MpxWbJQr+vKCgbnop28IU0dye3V1Q
+        BdB+TfzzOCI8MgQv/P/zA5OLC/N0isk8eWObyLRW23Wzl1067q1efxRMLYQ3fsKi
+        VLrzYLOyDvghyfn/ql0Q5IsUbsjdoUUzSLu1rOWeFCAcNQ/QAQEVa1gtrMvcouWK
+        aOLCXSr/ktBmntQexAZ/ABZT839MvkaAL5aodmmVrXaKKhixhBC4PYBfc8b99ob1
+        eJA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-type:date:from:in-reply-to
         :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=cM4DX2
-        lhZr7xluQil3c+RS5Cm5n79DJ7je3T1iCiJkQ=; b=fdXoxvPe1qoqoiClYkXb+2
-        iGqUghOaQf9Q0luhsIzdoPle1k/8JL/OnaPRFRnCk/sjdzQCCHVYyN3BUTImZrw3
-        FJD9DoNETFZzN/pvV7Y1QV57yx5rnEcWdAP42Z1gonjOAjCyXv9EAWNMuEpqL+Ta
-        U7pQFlMc8hk2NGe4xaaws4ysN0/qmp8SnCVnH2cPpHN38GiZwbpctpf9i5BOSde9
-        9yn7Ndxs4xd7LPzAxb0iSvIvx+KZpOQHhtB8QBrssIVUDwvAhBRplUdvjsgDjV9k
-        cCCdEEi5KNRXsxr20ugh5JmDk1HO6RfFJCmqsvc3hR0exS3IF9iIgkI8nqHj90IA
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=fscQQU
+        iCrfJu2B/FroGWlGgv8rX7vCHNTDmiXT/+3qg=; b=d+z6GWPiqYOBUwIpYT1EfA
+        RH4GJXsLkVCjT5UzWtYBuB5mjFBddQG51Emp7tRed027+Co8+84j3eOfnByCrh4k
+        opaagkyrbb99WWcfmRb9xHXIkp9mV08voXfJsXDF6uT3p5u6irKQ7QK8x1rXSxqP
+        Eihu0qU5Ja/NG09ZeFMxGosz781ChYQwSQ+Mug9xajxbnRCb9v+ohjujj1prlVc2
+        pAotL1nY7A6DfI4p/oal8QBGV4XsSHxiZWFmUgZCkg62yxBcTQeZeUVZAeCBClQZ
+        sFV/DBrpv31EptWIDhXr51Fb7HffAD1mxR2sEGFU33cJOIJMfwU8OevTE2fEYYig
         ==
-X-ME-Sender: <xms:hYoYYYK93iDeqrESxFkZUXxdJF_u8bbDq3-u4oTZqlpwh2hwFP8q7A>
-    <xme:hYoYYYKY59Su5g5aBreROCPXBv13XQP1plMRkZ3nktbL1I5QfJ_fZ-0eHOxbozeEy
-    dmR6xcAIbe1xcYP_pc>
-X-ME-Received: <xmr:hYoYYYsT2QQFPWDcGAXjExVbnqDchM-gUZcuW-0yHuIkdLjBMJPSVxA91QQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrkeekgdejvdcutefuodetggdotefrodftvf
+X-ME-Sender: <xms:G40YYUF4FvkiJFFeg_I5hrmGYAHz4QmNNZm-7Qipk8gZ46H7UtpsyA>
+    <xme:G40YYdW1fcC-33jHu3-S1lRhgPJlRdgCSHPIkVL_PnB4cxtNEVDeXLi1ZhlYdjGu3
+    4jWdvnUU9pZgbkkPgE>
+X-ME-Received: <xmr:G40YYeIhoDRCkO_EcoFaoZp9Xgq5sqhntVKOhCH5IzWNAknxv2YXwDJQFh0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrkeekgdejgecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
     fjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomheplfhoshhhucfv
@@ -49,117 +49,59 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrkeekgdejvdcutefuodetggdote
     frrghtthgvrhhnpeegtdfgfeeghfevgeelgfefieegudeuheekkedtueeutefgheffveeg
     ueeiteehteenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
     hmpehjohhshhesjhhoshhhthhrihhplhgvthhtrdhorhhg
-X-ME-Proxy: <xmx:hYoYYVagA-s4AiMnrysbQfzlwhTWStPsrVqdvb3v4FVOfU2zdlS9kg>
-    <xmx:hYoYYfZMJPJjA6SCh11XqDjpo7Ulszm926KGBNxdm1PxwwscSi7wVA>
-    <xmx:hYoYYRBlSH4ST7xF3nuGTk54e25oA0HZNbVobxD-JSMaDvbxy951mQ>
-    <xmx:hooYYUOHXmB-yHdyjYIBqzK3E9c_Z-60od8X2qrNMACEkV7ZVkoU5g>
+X-ME-Proxy: <xmx:G40YYWHl2sPJlA_guR2wf2xBF-0xv6S14MAo5N_HJdPAP1AzPD_BTQ>
+    <xmx:G40YYaWU-N3gGS-BJ4x3RJhuyca4bRn9avBmB12pLKVD6dqRo_TNuw>
+    <xmx:G40YYZMkZncHJS7lVrDrfb4U7GiQdQuLUUUlp0OSP3sAvtvWxLGU4Q>
+    <xmx:HY0YYcJvhvTrtcO6Vz0dxTK721wJE0ScOWeoOWAMs1HKKVk1mSYnIg>
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 14 Aug 2021 23:31:16 -0400 (EDT)
-Date:   Sat, 14 Aug 2021 20:31:15 -0700
+ 14 Aug 2021 23:42:18 -0400 (EDT)
+Date:   Sat, 14 Aug 2021 20:42:17 -0700
 From:   Josh Triplett <josh@joshtriplett.org>
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
         "David S . Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>, linux-kernel@vger.kernel.org,
         netdev@vger.kernel.org, Stefan Metzmacher <metze@samba.org>
 Subject: Re: [PATCH v2 0/4] open/accept directly into io_uring fixed file
  table
-Message-ID: <YRiKg7tV+8oMtXtg@localhost>
+Message-ID: <YRiNGTL2Dp/7vNzt@localhost>
 References: <cover.1628871893.git.asml.silence@gmail.com>
  <YRbBYCn29B+kgZcy@localhost>
  <bcb6f253-41d6-6e0f-5b4b-ea1e02a105bc@gmail.com>
+ <5cf40313-d151-9d10-3ebd-967eb2f53b1f@kernel.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <bcb6f253-41d6-6e0f-5b4b-ea1e02a105bc@gmail.com>
+In-Reply-To: <5cf40313-d151-9d10-3ebd-967eb2f53b1f@kernel.dk>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Sat, Aug 14, 2021 at 01:50:24PM +0100, Pavel Begunkov wrote:
-> On 8/13/21 8:00 PM, Josh Triplett wrote:
-> > Rather than using sqe->file_index - 1, which feels like an error-prone
-> > interface, I think it makes sense to use a dedicated flag for this, like
-> > IOSQE_OPEN_FIXED. That flag could work for any open-like operation,
-> > including open, accept, and in the future many other operations such as
-> > memfd_create. (Imagine using a single ring submission to open a memfd,
-> > write a buffer into it, seal it, send it over a UNIX socket, and then
-> > close it.)
-> > 
-> > The only downside is that you'll need to reject that flag in all
-> > non-open operations. One way to unify that code might be to add a flag
-> > in io_op_def for open-like operations, and then check in common code for
-> > the case of non-open-like operations passing IOSQE_OPEN_FIXED.
-> 
-> io_uring is really thin, and so I absolutely don't want any extra
-> overhead in the generic path, IOW anything affecting
-> reads/writes/sends/recvs.
+On Sat, Aug 14, 2021 at 05:03:44PM -0600, Jens Axboe wrote:
+> What's the plan in terms of limiting the amount of direct descriptors
+> (for lack of a better word)? That seems like an important aspect that
+> should get sorted out upfront.
+[...]
+> Maybe we have a way to size the direct table, which will consume entries
+> from the same pool that the regular file table does? That would then
+> work both ways, and could potentially just be done dynamically similarly
+> to how we expand the regular file table when we exceed its current size.
 
-There are already several checks for valid flags in io_init_req. For
-instance:
-        if ((sqe_flags & IOSQE_BUFFER_SELECT) &&
-            !io_op_defs[req->opcode].buffer_select)
-                return -EOPNOTSUPP;
-It'd be trivial to make io_op_defs have a "valid flags" byte, and one
-bitwise op tells you if any invalid flags were passed. *Zero* additional
-overhead for other operations.
+I think we'll want a way to size the direct table regardless, so that
+it's pre-allocated and doesn't need to be resized when an index is used.
+Then, we could do one of two equally easy things, depending on what
+policy we want to set:
 
-Alternatively, since there are so few operations that open a file
-descriptor, you could just add a separate opcode for those few
-operations. That still seems preferable to overloading a 16-bit index
-field for this.
+- Deduct the full size of the fixed-file table from the allowed number
+  of files the process can have open. So, if RLIMIT_NOFILE is 1048576,
+  and you pre-allocate 1000000 entries in the fixed-file table, you can
+  have no more than 48576 file descriptors open. Stricter, but
+  potentially problematic: a program *might* expect that it can
+  dup2(some_fd, nofile - 1) successfully.
 
-With this new mechanism, I think we're going to want to support more
-than 65535 fixed-file entries. I can easily imagine wanting to handle
-hundreds of thousands of files or sockets this way.
+- Use RLIMIT_NOFILE as the maximum size of the fixed-file table. There's
+  precedent for this: we already use RLIMIT_NOFILE as the maximum number
+  of file descriptors you can have in flight over UNIX sockets.
 
-> The other reason is that there are only 2 bits left in sqe->flags,
-> and we may use them for something better, considering that it's
-> only open/accept and not much as this.
-
-pipe, dup3, socket, socketpair, pidfds (via either pidfd_open or a
-ring-based spawn mechanism), epoll_create, inotify, fanotify, signalfd,
-timerfd, eventfd, memfd_create, userfaultfd, open_tree, fsopen, fsmount,
-memfd_secret.
-
-Of those, I personally would *love* to have at least pipe, socket,
-pidfd, memfd_create, and fsopen/fsmount/open_tree, plus some manner of
-dup-like operation for moving things between the fixed-file table and
-file descriptors.
-
-I think this is valuable and versatile enough to merit a flag. It would
-also be entirely reasonable to create separate operations for these. But
-either way, I don't think this should just be determined by whether a
-16-bit index is non-zero.
-
-> I agree that it feels error-prone, but at least it can be wrapped
-> nicely enough in liburing, e.g.
-> 
-> void io_uring_prep_openat_direct(struct io_uring_sqe *sqe, int dfd,
-> 				 const char *path, int flags,
-> 				 mode_t mode, int slot_idx);
-
-That wrapper wouldn't be able to handle more than a 16-bit slot index
-though.
-
-> > Also, rather than using a 16-bit index for the fixed file table and
-> > potentially requiring expansion into a different field in the future,
-> > what about overlapping it with the nofile field in the open and accept
-> > requests? If they're not opening a normal file descriptor, they don't
-> > need nofile. And in the original sqe, you can then overlap it with a
-> > 32-bit field like splice_fd_in.
-> 
-> There is no nofile in SQEs, though
-> 
-> req->open.nofile = rlimit(RLIMIT_NOFILE);
-
-nofile isn't needed for opening into the fixed-file table, so it could
-be omitted in that case, and another field unioned with it. That would
-allow passing a 32-bit fixed-file index into open and accept without
-growing the size of their structures. I think, with this new capability,
-we're going to want a large number of fixed files available.
-
-In the SQE, you could overlap it with the splice_fd_in field, which
-isn't needed by any calls other than splice.
-
-- Josh Triplett
+I personally would favor the latter; it seems simple and
+straightforward.

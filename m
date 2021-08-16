@@ -2,188 +2,145 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 14E7E3ED547
-	for <lists+io-uring@lfdr.de>; Mon, 16 Aug 2021 15:11:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D40AD3ED75A
+	for <lists+io-uring@lfdr.de>; Mon, 16 Aug 2021 15:34:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238108AbhHPNKh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 16 Aug 2021 09:10:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45860 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239769AbhHPNKL (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 16 Aug 2021 09:10:11 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D52C8C0363C7;
-        Mon, 16 Aug 2021 06:06:54 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id k29so23513670wrd.7;
-        Mon, 16 Aug 2021 06:06:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=wvgUJiUW1naT+DW3zwINBggYbB2TOutmBqo2wsEseRc=;
-        b=RVvoxPfmnySYBMjI9Cezd0eFLQChKRbGoquGQX5qUMaWQmbVUAuxX47eS8VxSteK2B
-         SlO9hiqXPPNn+f9E57VKNQgofCUnd93kmzOEOHBz7YD7g+3n4MAjTs75vi4SKFSpD0lR
-         gyvE70oDZ3JoCW16C8lV1fOBWBlNG4pKlk6+9kP0qTE7kKoqERZVOzoiHIi+zFNG3Lqt
-         nqgXCNqRHo0G3nrNZBQUnsGfzFdgiaMIuTQKCGLtmV2RXqgFZvj/CvPHuXlQ/fgzFs1p
-         fVROVCa6MY2a42zj3ysZVkHqo01J9OO9rZZouu6hayzG4Tkl+rgjWpr4JTrRvICJ3wA6
-         p10g==
+        id S240993AbhHPNbv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 16 Aug 2021 09:31:51 -0400
+Received: from mail-io1-f69.google.com ([209.85.166.69]:37611 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S241542AbhHPN3t (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 16 Aug 2021 09:29:49 -0400
+Received: by mail-io1-f69.google.com with SMTP id h3-20020a056602008300b005b7c0e23e11so1209207iob.4
+        for <io-uring@vger.kernel.org>; Mon, 16 Aug 2021 06:29:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=wvgUJiUW1naT+DW3zwINBggYbB2TOutmBqo2wsEseRc=;
-        b=QZh0iO8XdrC6nwk8562F1ixCtm/XK3t9MTloLKEAl30ChaQLkERwgpIOXF/owZf6Gd
-         GRUDChiBFXKBnLquQKiRHIE6PZ1GIIgHFLKbzC1sIM7YdtGXY4dZomg2GXGlLcz5msJs
-         xIoaqSb0DuxRCfzg0TsdU9/ba1BeLb36CkpuvRMW/JZ6/12SCT1fIuWr1wyauWCJnYZw
-         4ZAw5ptaUSJ9tgpANlnBTbDLW6wEClS10qaBTMK+p8u6nL+EdoIJ96n25vJ8mqG4RSJH
-         CgCTP6+zA7owdtKQALPN2AUsIrRdMytxyjYO0sHtNpDIQJF0RlUmtITO0d7mD2+vtfrM
-         jzzg==
-X-Gm-Message-State: AOAM530rI7bwUjNZIAXeONiiBwvBkDuFqmvY5SElXAdtxhI/2sOqy28Y
-        FcP8idQRQba9kjZ3e8gu99Q=
-X-Google-Smtp-Source: ABdhPJzKZKjj43V9XRQbHEbi60duXuEN1+dtYpRGC1ZWcSynKPZSLcKV+hwZra34/G6oAiqsZQuscA==
-X-Received: by 2002:a5d:4442:: with SMTP id x2mr18266693wrr.60.1629119213515;
-        Mon, 16 Aug 2021 06:06:53 -0700 (PDT)
-Received: from [192.168.8.197] ([85.255.233.12])
-        by smtp.gmail.com with ESMTPSA id p4sm13354694wrq.81.2021.08.16.06.06.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Aug 2021 06:06:53 -0700 (PDT)
-Subject: Re: [PATCH] coredump: Limit what can interrupt coredumps
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Olivier Langlois <olivier@trillion01.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Tony Battersby <tonyb@cybernetics.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Oleg Nesterov <oleg@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-References: <CAHk-=wjC7GmCHTkoz2_CkgSc_Cgy19qwSQgJGXz+v2f=KT3UOw@mail.gmail.com>
- <198e912402486f66214146d4eabad8cb3f010a8e.camel@trillion01.com>
- <87eeda7nqe.fsf@disp2133>
- <b8434a8987672ab16f9fb755c1fc4d51e0f4004a.camel@trillion01.com>
- <87pmwt6biw.fsf@disp2133> <87czst5yxh.fsf_-_@disp2133>
- <CAHk-=wiax83WoS0p5nWvPhU_O+hcjXwv6q3DXV8Ejb62BfynhQ@mail.gmail.com>
- <87y2bh4jg5.fsf@disp2133>
- <CAHk-=wjPiEaXjUp6PTcLZFjT8RrYX+ExtD-RY3NjFWDN7mKLbw@mail.gmail.com>
- <87sg1p4h0g.fsf_-_@disp2133> <20210614141032.GA13677@redhat.com>
- <87pmwmn5m0.fsf@disp2133>
- <4d93d0600e4a9590a48d320c5a7dd4c54d66f095.camel@trillion01.com>
- <8af373ec-9609-35a4-f185-f9bdc63d39b7@cybernetics.com>
- <9d194813-ecb1-2fe4-70aa-75faf4e144ad@kernel.dk>
- <b36eb4a26b6aff564c6ef850a3508c5b40141d46.camel@trillion01.com>
- <b9f92bf3-77aa-8cdd-6db7-95c86e5a6946@gmail.com>
-Message-ID: <ca4008f6-91f7-7623-7d15-7d5ef5363cd6@gmail.com>
-Date:   Mon, 16 Aug 2021 14:06:22 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=SPj4+myJ8JzhjGfXTTH/Z+OtZy43EqV2wJdhxiY1nKw=;
+        b=Vt1u6BhXwCrHYgwzFS/zyCMnK0u2m3PFtaxBurXfUb6T8EJlGFDV1O5kcF95Fihvy5
+         p/9/BcbqUkbUpI/+wWNnEMnO6GWkeVDTQKOflySEa0PXjeCjPjQXVtmH8XlGQS1iYFty
+         JnSJlR4agLVGqz71MY/cpepu9AmAcNwQp/KwyYbXk5/TDDc9XsjLUxuj5EKAboSmn/Gz
+         HZu336b0A/Vv+qv0aIm0PDgDua03cYyOwi3t6QIlMlrOsf0O6a7N92RSiBRfptfAcq4V
+         gP19WW5ABqv9fDgI3gjUipGnH3DJxd2OiSQPf2FfN1xM7ZFrKkB2yGJyqcGfZxkLRFvy
+         Bm3A==
+X-Gm-Message-State: AOAM532mLomULggL/oIDXNlxvMt2o7aiuedt67g+g96mtr58YCbQxG0C
+        INhlCdWyo2eA68b7tPccDIIAzQoOV9NFMm09+wRmkuGgNB/C
+X-Google-Smtp-Source: ABdhPJzdFf1fUonPWgBMICFHQ9n+A3WIhVwouHe1nI1iOJn6/OQWrzU3ZXPFaBWCxwkT67w9KcFotwb20V+bX6r8Rpt1g/Z81EAI
 MIME-Version: 1.0
-In-Reply-To: <b9f92bf3-77aa-8cdd-6db7-95c86e5a6946@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1a4f:: with SMTP id u15mr11985302ilv.251.1629120557493;
+ Mon, 16 Aug 2021 06:29:17 -0700 (PDT)
+Date:   Mon, 16 Aug 2021 06:29:17 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000020339705c9ad30ee@google.com>
+Subject: [syzbot] general protection fault in __io_queue_sqe
+From:   syzbot <syzbot+2b85e9379c34945fe38f@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/16/21 2:02 PM, Pavel Begunkov wrote:
-> On 8/15/21 9:42 PM, Olivier Langlois wrote:
-> [...]
->> When I have first encountered the issue, the very first thing that I
->> did try was to create a simple test program that would synthetize the
->> problem.
->>
->> After few time consumming failed attempts, I just gave up the idea and
->> simply settle to my prod program that showcase systematically the
->> problem every time that I kill the process with a SEGV signal.
->>
->> In a nutshell, all the program does is to issue read operations with
->> io_uring on a TCP socket on which there is a constant data stream.
->>
->> Now that I have a better understanding of what is going on, I think
->> that one way that could reproduce the problem consistently could be
->> along those lines:
->>
->> 1. Create a pipe
->> 2. fork a child
->> 3. Initiate a read operation on the pipe with io_uring from the child
->> 4. Let the parent kill its child with a core dump generating signal.
->> 5. Write something in the pipe from the parent so that the io_uring
->> read operation completes while the core dump is generated.
->>
->> I guess that I'll end up doing that if I cannot fix the issue with my
->> current setup but here is what I have attempted so far:
->>
->> 1. Call io_uring_files_cancel from do_coredump
->> 2. Same as #1 but also make sure that TIF_NOTIFY_SIGNAL is cleared on
->> returning from io_uring_files_cancel
->>
->> Those attempts didn't work but lurking in the io_uring dev mailing list
->> is starting to pay off. I thought that I did reach the bottom of the
->> rabbit hole in my journey of understanding io_uring but the recent
->> patch set sent by Hao Xu
->>
->> https://lore.kernel.org/io-uring/90fce498-968e-6812-7b6a-fdf8520ea8d9@kernel.dk/T/#t
->>
->> made me realize that I still haven't assimilated all the small io_uring
->> nuances...
->>
->> Here is my feedback. From my casual io_uring code reader point of view,
->> it is not 100% obvious what the difference is between
->> io_uring_files_cancel and io_uring_task_cancel
-> 
-> As you mentioned, io_uring_task_cancel() cancels and waits for all
-> requests submitted by current task, used in exec() and SQPOLL because
-> of potential races.
+Hello,
 
-Apologies for this draft rumbling...
+syzbot found the following issue on:
 
-As you mentioned, io_uring_task_cancel() cancels and waits for all
-requests submitted by current task, used in exec() and SQPOLL because
-of potential races.
+HEAD commit:    b9011c7e671d Add linux-next specific files for 20210816
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=15474781300000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a245d1aa4f055cc1
+dashboard link: https://syzkaller.appspot.com/bug?extid=2b85e9379c34945fe38f
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.1
 
-io_uring_task_cancel() cancels only selected ones, e.g. in 5.15
-will be only requests operating on io_uring, and used during normal
-exit.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Agree that the names may be not too descriptive.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+2b85e9379c34945fe38f@syzkaller.appspotmail.com
 
->>
->> It seems like io_uring_files_cancel is cancelling polls only if they
->> have the REQ_F_INFLIGHT flag set.
->>
->> I have no idea what an inflight request means and why someone would
->> want to call io_uring_files_cancel over io_uring_task_cancel.
->>
->> I guess that if I was to meditate on the question for few hours, I
->> would at some point get some illumination strike me but I believe that
->> it could be a good idea to document in the code those concepts for
->> helping casual readers...
->>
->> Bottomline, I now understand that io_uring_files_cancel does not cancel
->> all the requests. Therefore, without fully understanding what I am
->> doing, I am going to replace my call to io_uring_files_cancel from
->> do_coredump with io_uring_task_cancel and see if this finally fix the
->> issue for good.
->>
->> What I am trying to do is to cancel pending io_uring requests to make
->> sure that TIF_NOTIFY_SIGNAL isn't set while core dump is generated.
->>
->> Maybe another solution would simply be to modify __dump_emit to make it
->> resilient to TIF_NOTIFY_SIGNAL as Eric W. Biederman originally
->> suggested.
->>
->> or maybe do both...
->>
->> Not sure which approach is best. If someone has an opinion, I would be
->> curious to hear it.
->>
->> Greetings,
->>
->>
-> 
+general protection fault, probably for non-canonical address 0xdffffc000000000b: 0000 [#1] PREEMPT SMP KASAN
+KASAN: null-ptr-deref in range [0x0000000000000058-0x000000000000005f]
+CPU: 0 PID: 6232 Comm: syz-executor.1 Not tainted 5.14.0-rc5-next-20210816-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:__io_req_set_refcount fs/io_uring.c:1152 [inline]
+RIP: 0010:__io_prep_linked_timeout fs/io_uring.c:1348 [inline]
+RIP: 0010:io_prep_linked_timeout fs/io_uring.c:1356 [inline]
+RIP: 0010:__io_queue_sqe+0x278/0xeb0 fs/io_uring.c:6708
+Code: 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 07 0c 00 00 48 b8 00 00 00 00 00 fc ff df 4c 8b 65 70 49 8d 7c 24 58 48 89 fa 48 c1 ea 03 <0f> b6 04 02 84 c0 74 08 3c 03 0f 8e 3e 0b 00 00 45 8b 74 24 58 31
+RSP: 0018:ffffc9000a9ffd48 EFLAGS: 00010202
+RAX: dffffc0000000000 RBX: 1ffff9200153ffb0 RCX: ffffc9000ba6a000
+RDX: 000000000000000b RSI: ffffffff81e1bcbf RDI: 0000000000000058
+RBP: ffff888037d15dc0 R08: 0000000000000001 R09: ffff888037d15e1f
+R10: ffffed1006fa2bc3 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000000 R14: ffff888037d15e30 R15: ffff888037d15e30
+FS:  00007fb490054700(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000000 CR3: 00000000388c5000 CR4: 00000000001506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ io_req_task_submit+0xaa/0x120 fs/io_uring.c:2139
+ tctx_task_work+0x106/0x540 fs/io_uring.c:2063
+ task_work_run+0xdd/0x1a0 kernel/task_work.c:164
+ tracehook_notify_signal include/linux/tracehook.h:212 [inline]
+ handle_signal_work kernel/entry/common.c:146 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:172 [inline]
+ exit_to_user_mode_prepare+0x256/0x290 kernel/entry/common.c:209
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:291 [inline]
+ syscall_exit_to_user_mode+0x19/0x60 kernel/entry/common.c:302
+ do_syscall_64+0x42/0xb0 arch/x86/entry/common.c:86
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x4665e9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fb490054188 EFLAGS: 00000246 ORIG_RAX: 00000000000001aa
+RAX: 0000000000000081 RBX: 000000000056bf80 RCX: 00000000004665e9
+RDX: 0000000000000000 RSI: 00000000000045f5 RDI: 0000000000000003
+RBP: 00000000004bfcc4 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 000000000056bf80
+R13: 00007ffe3ce9ca1f R14: 00007fb490054300 R15: 0000000000022000
+Modules linked in:
+---[ end trace 221813d58846ad59 ]---
+RIP: 0010:__io_req_set_refcount fs/io_uring.c:1152 [inline]
+RIP: 0010:__io_prep_linked_timeout fs/io_uring.c:1348 [inline]
+RIP: 0010:io_prep_linked_timeout fs/io_uring.c:1356 [inline]
+RIP: 0010:__io_queue_sqe+0x278/0xeb0 fs/io_uring.c:6708
+Code: 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 07 0c 00 00 48 b8 00 00 00 00 00 fc ff df 4c 8b 65 70 49 8d 7c 24 58 48 89 fa 48 c1 ea 03 <0f> b6 04 02 84 c0 74 08 3c 03 0f 8e 3e 0b 00 00 45 8b 74 24 58 31
+RSP: 0018:ffffc9000a9ffd48 EFLAGS: 00010202
+RAX: dffffc0000000000 RBX: 1ffff9200153ffb0 RCX: ffffc9000ba6a000
+RDX: 000000000000000b RSI: ffffffff81e1bcbf RDI: 0000000000000058
+RBP: ffff888037d15dc0 R08: 0000000000000001 R09: ffff888037d15e1f
+R10: ffffed1006fa2bc3 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000000 R14: ffff888037d15e30 R15: ffff888037d15e30
+FS:  00007fb490054700(0000) GS:ffff8880b9d00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b3213a000 CR3: 00000000388c5000 CR4: 00000000001506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	89 fa                	mov    %edi,%edx
+   2:	48 c1 ea 03          	shr    $0x3,%rdx
+   6:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1)
+   a:	0f 85 07 0c 00 00    	jne    0xc17
+  10:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
+  17:	fc ff df 
+  1a:	4c 8b 65 70          	mov    0x70(%rbp),%r12
+  1e:	49 8d 7c 24 58       	lea    0x58(%r12),%rdi
+  23:	48 89 fa             	mov    %rdi,%rdx
+  26:	48 c1 ea 03          	shr    $0x3,%rdx
+  2a:	0f b6 04 02          	movzbl (%rdx,%rax,1),%eax <-- trapping instruction
+  2e:	84 c0                	test   %al,%al
+  30:	74 08                	je     0x3a
+  32:	3c 03                	cmp    $0x3,%al
+  34:	0f 8e 3e 0b 00 00    	jle    0xb78
+  3a:	45 8b 74 24 58       	mov    0x58(%r12),%r14d
+  3f:	31                   	.byte 0x31
 
--- 
-Pavel Begunkov
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.

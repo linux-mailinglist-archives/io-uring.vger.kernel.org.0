@@ -2,129 +2,106 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BD3123ED10A
-	for <lists+io-uring@lfdr.de>; Mon, 16 Aug 2021 11:27:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F60A3ED1E9
+	for <lists+io-uring@lfdr.de>; Mon, 16 Aug 2021 12:25:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235431AbhHPJ2V convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+io-uring@lfdr.de>); Mon, 16 Aug 2021 05:28:21 -0400
-Received: from aposti.net ([89.234.176.197]:51460 "EHLO aposti.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235190AbhHPJ2V (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Mon, 16 Aug 2021 05:28:21 -0400
-Date:   Mon, 16 Aug 2021 11:27:40 +0200
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: IIO, dmabuf, io_uring
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jonathan Cameron <jic23@kernel.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Christian =?iso-8859-1?b?S/ZuaWc=?= <christian.koenig@amd.com>,
-        linux-iio@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Alexandru Ardelean <ardeleanalex@gmail.com>,
-        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org
-Message-Id: <4AEXXQ.7Z97EUWQOO0Q3@crapouillou.net>
-In-Reply-To: <20210814073019.GC21175@lst.de>
-References: <2H0SXQ.2KIK2PBVRFWH2@crapouillou.net>
-        <20210814073019.GC21175@lst.de>
+        id S235747AbhHPKZc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 16 Aug 2021 06:25:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36058 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235738AbhHPKZb (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 16 Aug 2021 06:25:31 -0400
+Received: from mail-yb1-xb2f.google.com (mail-yb1-xb2f.google.com [IPv6:2607:f8b0:4864:20::b2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34292C061764;
+        Mon, 16 Aug 2021 03:25:00 -0700 (PDT)
+Received: by mail-yb1-xb2f.google.com with SMTP id z5so31825205ybj.2;
+        Mon, 16 Aug 2021 03:25:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=z1ab7tyHPXHTeSGbIK5vAxswtCPScHuYYm9zAByhg3o=;
+        b=f6PdIPZTzkzRz8qrh3emqJEM08E7Gprmj+cfRIsknZuFdb1yM7rqrSNjpMAp8Njscu
+         QS0Dm7ZYCGXU67v09SO043Gdzi2a3WY9VzS412r+rii8M00SNXz/DF+IC3Uc9PjqZGXa
+         yxcmNR01syOLzwwWHR2UjGkYVG8Y8zry47QaA/zH4vXstT7oUQMk634+vfLZA8yodcO+
+         CJCvFkwRSHKnD8ct6pfwRErwGd09GwG6lE8y/5Fznuw2kw9pvJOYGRpjNiYlNwDFMzYR
+         EHnxt5sK3IviB+OmhYQtx53HnIJ7SzMtalSamSBQIZhU0Bhiy7ozGrGZLVfn8sbZK0AY
+         21rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=z1ab7tyHPXHTeSGbIK5vAxswtCPScHuYYm9zAByhg3o=;
+        b=p/aafuyYB4W3KZ0ZxjDtIOA9fjWQZSMJobrd8s09FRdcMMMkpaOgVz4ELS8fOhub8e
+         8J6rScynQX7Jij7fOjXM1CpwicTuOAtXGJgAAs78bXKmgfDYqB5Ck8qte607+MOrh2KT
+         4x7bbErz/xUejkNzIoTfz0FGVM0rE2D/4DMa55pEZ9t5w8OMDFMWLOcTOAPMaMZJXhgz
+         6s5vlEhzBVjDJZKpcRnha+eVKSBZ4+4wacYEoipYmE9eieFdveR9xSaTylbDBJuEi5Qu
+         3x2bQO6RgX3XhSm7ruip9+AYGw7jSg3hZ3yTkwBDkyP6MJIPZboGGgqPLd9ZPTg8iXTo
+         NEog==
+X-Gm-Message-State: AOAM531PYFAQeJqP67E+ppVve5NoD4WIQOIILsQbsTKYu3owIhNj3DtY
+        scOKSZOct3rUaKm4O2HQ3ddCDJrsEgrgN+wTIDg=
+X-Google-Smtp-Source: ABdhPJzF9ef9OrdyRxdi5s3ofIedsrHL9x2RyMAnB5rk/ipNKd2tcMG+2+8S9v9ZiXyhR85l4hbkv3ZEmX2MvuSXbqA=
+X-Received: by 2002:a25:aa45:: with SMTP id s63mr1607329ybi.289.1629109499554;
+ Mon, 16 Aug 2021 03:24:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: 8BIT
+References: <20210708063447.3556403-1-dkadashev@gmail.com> <CAHk-=wjMFZ98ERV7V5u6R4FbYi3vRRf8_Uev493qeYCa1vqV3Q@mail.gmail.com>
+ <cbddca99-d9b1-d545-e2eb-a243ce38270b@kernel.dk> <CAOKbgA5jHtR=tLAYS_rs77QppRm37HV1bqSLQEMv8GusQNDrAg@mail.gmail.com>
+ <506f544a-cb0b-68a2-f107-c77d9f7f34ed@kernel.dk>
+In-Reply-To: <506f544a-cb0b-68a2-f107-c77d9f7f34ed@kernel.dk>
+From:   Dmitry Kadashev <dkadashev@gmail.com>
+Date:   Mon, 16 Aug 2021 17:24:48 +0700
+Message-ID: <CAOKbgA4nYoaM84Gx+bxN3C_ewMa_V6QHbsX0dnmcVZap8GxMVw@mail.gmail.com>
+Subject: Re: [PATCH v9 00/11] io_uring: add mkdir and [sym]linkat support
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        io-uring <io-uring@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Christoph,
+On Fri, Aug 13, 2021 at 9:12 PM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 8/13/21 3:32 AM, Dmitry Kadashev wrote:
+> > On Fri, Jul 9, 2021 at 2:25 AM Jens Axboe <axboe@kernel.dk> wrote:
+> >>
+> >> On 7/8/21 12:34 PM, Linus Torvalds wrote:
+> >>> On Wed, Jul 7, 2021 at 11:35 PM Dmitry Kadashev <dkadashev@gmail.com> wrote:
+> >>>>
+> >>>> v9:
+> >>>> - reorder commits to keep io_uring ones nicely grouped at the end
+> >>>> - change 'fs:' to 'namei:' in related commit subjects, since this is
+> >>>>   what seems to be usually used in such cases
+> >>>
+> >>> Ok, ack from me on this series, and as far as I'm concerned it can go
+> >>> through the io_uring branch.
+> >>
+> >> I'll queue it up in a separate branch. I'm assuming we're talking 5.15
+> >> at this point.
+> >
+> > Is this going to be merged into 5.15? I'm still working on the follow-up
+> > patch (well, right at this moment I'm actually on vacation, but will be
+> > working on it when I'm back), but hopefully it does not have to be
+> > merged in the same merge window / version? Especially given the fact
+> > that Al prefers it to be a bigger refactoring of the ESTALE retries
+> > rather than just moving bits and pieces to helper functions to simplify
+> > the flow, see here:
+> >
+> > https://lore.kernel.org/io-uring/20210715103600.3570667-1-dkadashev@gmail.com/
+>
+> I added this to the for-5.15/io_uring-vfs branch:
+>
+> https://git.kernel.dk/cgit/linux-block/log/?h=for-5.15/io_uring-vfs
+>
+> had one namei.c conflict, set_nameidata() taking one more parameter, and
+> just a trivial conflict in each io_uring patch at the end. Can you double
+> check them?
 
-Le sam., août 14 2021 at 09:30:19 +0200, Christoph Hellwig 
-<hch@lst.de> a écrit :
-> On Fri, Aug 13, 2021 at 01:41:26PM +0200, Paul Cercueil wrote:
->>  Hi,
->> 
->>  A few months ago we (ADI) tried to upstream the interface we use 
->> with our
->>  high-speed ADCs and DACs. It is a system with custom ioctls on the 
->> iio
->>  device node to dequeue and enqueue buffers (allocated with
->>  dma_alloc_coherent), that can then be mmap'd by userspace 
->> applications.
->>  Anyway, it was ultimately denied entry [1]; this API was okay in 
->> ~2014 when
->>  it was designed but it feels like re-inventing the wheel in 2021.
->> 
->>  Back to the drawing table, and we'd like to design something that 
->> we can
->>  actually upstream. This high-speed interface looks awfully similar 
->> to
->>  DMABUF, so we may try to implement a DMABUF interface for IIO, 
->> unless
->>  someone has a better idea.
-> 
-> To me this does sound a lot like a dma buf use case.  The interesting
-> question to me is how to signal arrival of new data, or readyness to
-> consume more data.  I suspect that people that are actually using
-> dmabuf heavily at the moment (dri/media folks) might be able to chime
-> in a little more on that.
+Looks good to me, thanks!
 
-Thanks for the feedback.
-
-I haven't looked too much into how dmabuf works; but IIO device nodes 
-right now have a regular stdio interface, so I believe poll() flags can 
-be used to signal arrival of new data.
-
->>  Our first usecase is, we want userspace applications to be able to 
->> dequeue
->>  buffers of samples (from ADCs), and/or enqueue buffers of samples 
->> (for
->>  DACs), and to be able to manipulate them (mmapped buffers). With a 
->> DMABUF
->>  interface, I guess the userspace application would dequeue a dma 
->> buffer
->>  from the driver, mmap it, read/write the data, unmap it, then 
->> enqueue it to
->>  the IIO driver again so that it can be disposed of. Does that sound 
->> sane?
->> 
->>  Our second usecase is - and that's where things get tricky - to be 
->> able to
->>  stream the samples to another computer for processing, over 
->> Ethernet or
->>  USB. Our typical setup is a high-speed ADC/DAC on a dev board with 
->> a FPGA
->>  and a weak soft-core or low-power CPU; processing the data in-situ 
->> is not
->>  an option. Copying the data from one buffer to another is not an 
->> option
->>  either (way too slow), so we absolutely want zero-copy.
->> 
->>  Usual userspace zero-copy techniques (vmsplice+splice, MSG_ZEROCOPY 
->> etc)
->>  don't really work with mmapped kernel buffers allocated for DMA [2] 
->> and/or
->>  have a huge overhead, so the way I see it, we would also need DMABUF
->>  support in both the Ethernet stack and USB (functionfs) stack. 
->> However, as
->>  far as I understood, DMABUF is mostly a DRM/V4L2 thing, so I am 
->> really not
->>  sure we have the right idea here.
->> 
->>  And finally, there is the new kid in town, io_uring. I am not very 
->> literate
->>  about the topic, but it does not seem to be able to handle DMA 
->> buffers
->>  (yet?). The idea that we could dequeue a buffer of samples from the 
->> IIO
->>  device and send it over the network in one single syscall is 
->> appealing,
->>  though.
-> 
-> Think of io_uring really just as an async syscall layer.  It doesn't
-> replace DMA buffers, but can be used as a different and for some
-> workloads more efficient way to dispatch syscalls.
-
-That was my thought, yes. Thanks.
-
-Cheers,
--Paul
-
-
+-- 
+Dmitry Kadashev

@@ -2,162 +2,91 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 457643ED962
-	for <lists+io-uring@lfdr.de>; Mon, 16 Aug 2021 17:01:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48B263ED9EE
+	for <lists+io-uring@lfdr.de>; Mon, 16 Aug 2021 17:35:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232491AbhHPPCR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 16 Aug 2021 11:02:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44040 "EHLO
+        id S233104AbhHPPfs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 16 Aug 2021 11:35:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232487AbhHPPCQ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 16 Aug 2021 11:02:16 -0400
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEFF2C061796
-        for <io-uring@vger.kernel.org>; Mon, 16 Aug 2021 08:01:44 -0700 (PDT)
-Received: by mail-wm1-x335.google.com with SMTP id f12-20020a05600c4e8c00b002e6bdd6ffe2so9481295wmq.5
-        for <io-uring@vger.kernel.org>; Mon, 16 Aug 2021 08:01:44 -0700 (PDT)
+        with ESMTP id S232822AbhHPPfr (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 16 Aug 2021 11:35:47 -0400
+Received: from mail-ot1-x335.google.com (mail-ot1-x335.google.com [IPv6:2607:f8b0:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C33DC061764
+        for <io-uring@vger.kernel.org>; Mon, 16 Aug 2021 08:35:15 -0700 (PDT)
+Received: by mail-ot1-x335.google.com with SMTP id c19-20020a9d6153000000b0051829acbfc7so6504226otk.9
+        for <io-uring@vger.kernel.org>; Mon, 16 Aug 2021 08:35:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=EIvyFOw8mvTuFM5hQZVVCU0qrPNdbh5I2Bj4X1kA7WQ=;
-        b=gaIEOtqqYuS833blYihl+7Iw8shk8qt6AL+mzGViyi8f8QC+lwDDgt2IPH0q/+dU1H
-         7bt+Sommo3MR9FY/VLoTpOo31XeUdpFogGaA5qZ+DqMM99khdni6FgnfyUVd+TFjIo38
-         JMiVpBCDkbCHGobEnCzL8wiQge+z3+GJsAPmo=
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=izwgpX7oSIIBHk0sYhZRSPI0m7nv9ZWnNviimlv3Gso=;
+        b=vfpaG8itDkP6v04+k6YoH4XGZJLxHWYS9XMAriNKK//2SkDt3NN7yK1kiF1WfB38UN
+         d4zrAaVVkQsDMG0QZjZtQgB9Xb3GgRM8/7fGsQyUR2g5gVveE7FZh0l/S48Ad1yRNKCW
+         lDwIkecxFeEy0MLogCx5z1bedl3y7Vkwhzgl1OfUvPMLdnO7MZjWDbBTLFka0Tcf9bBt
+         lvRz/oJrh2FEV3vcdUcXjy26++zbEPcOAzwWpZ1jKGn5PmBm2Xa5YzlWExU/4z+wSSap
+         GaFGgbrtBGACITtrbzW22viwPxcaM3ykRc2D8strDPLQwOolMlWh+9krFzaq/yRMsRWs
+         3cxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to;
-        bh=EIvyFOw8mvTuFM5hQZVVCU0qrPNdbh5I2Bj4X1kA7WQ=;
-        b=HEU1Jjr+5nhDJ+PlvGE88gBc67HvK6VvQHPrx5mw1laJlc1hLD5zHaWgb/dnYAFgt0
-         TMfXv2FGxOEk8qoBLiBZJ9yCKfO/EI5TOd4uXGBQbhTqaVZclZ2ml9A/ywuFccy0SW7a
-         dXOKn9KstIAOkRpatITGegchqGziM1IVSGilGdS7LwIhoLCCU9tbXRRNhAvBA1P77TSJ
-         Sn1Tz2zfLkfzun1fFhagA6ZVVXfILhM39Uoi4EQzwhd3uyYmegMi11q6dkOxKGF4b4u/
-         aYysHVy4EB5E5TPH5dGLSFV7NWvROMUvlIALsmkqjHScsup5fWEce5Szf1iLG6FtV1xa
-         TETg==
-X-Gm-Message-State: AOAM532P4ip2WB/kEvyylSU3sU6IYhdDCH6nwmCCT9bJmjHpsV2tDszG
-        7ih+MFCnUXJS2vf1B1WebPk8GA==
-X-Google-Smtp-Source: ABdhPJzDF9KrfED8TEN39f2b9tbP/JkFe6bbQZq2+vcczHGvaS+YoEUQW9Mj8qPAjLla1rzX+sS+zA==
-X-Received: by 2002:a1c:9ace:: with SMTP id c197mr15858085wme.170.1629126103289;
-        Mon, 16 Aug 2021 08:01:43 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id y3sm11936525wma.32.2021.08.16.08.01.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Aug 2021 08:01:42 -0700 (PDT)
-Date:   Mon, 16 Aug 2021 17:01:40 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Paul Cercueil <paul@crapouillou.net>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
-        Alexandru Ardelean <ardeleanalex@gmail.com>,
-        io-uring@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
-        linux-media@vger.kernel.org
-Subject: Re: [Linaro-mm-sig] IIO, dmabuf, io_uring
-Message-ID: <YRp91OUTpjpw7rnE@phenom.ffwll.local>
-Mail-Followup-To: Christoph Hellwig <hch@lst.de>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
-        Alexandru Ardelean <ardeleanalex@gmail.com>,
-        io-uring@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
-        linux-media@vger.kernel.org
-References: <2H0SXQ.2KIK2PBVRFWH2@crapouillou.net>
- <20210814073019.GC21175@lst.de>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=izwgpX7oSIIBHk0sYhZRSPI0m7nv9ZWnNviimlv3Gso=;
+        b=DIH+TkmmT3w+EH+05Jif73F+AFe24DSEKupqb870+m7R7F5CjY2SZwYfvIjwzZ0FBu
+         z0PGKcKmP7MRtdblMDn5plclJsYbVEGGA0sQOtDvmxqEC8cRnh/oOOhbn73zBXU5uECf
+         xzyGE0PZNtSrmovE5HB3wLYXHNB5UJqt3yY+nZYIUxWY9gvu1ZAp5rP/p4Nu7nvYeilE
+         aSsMHdfUQUBPXy3JbMPCFtiR6xP3sBonIL3lVOw22DnRNpO6Zth45SqihVFPUtYMA+6u
+         fTxCdy4cd+ar2Q+PCUsBgTAbmqN1ca8Lfft77xT6l1ixxU+EY5sRo7TYM2BLr3Oph5uV
+         b9/g==
+X-Gm-Message-State: AOAM531AEey7Nvi/gue6LfE1rlD5oy2+cR+k5ig2njR7xMaqrCvXzRVv
+        4Md+147BFGWLzEQVGww8pe3sBw==
+X-Google-Smtp-Source: ABdhPJxNBT6VQqF+a/LrmpscGhFK1PmHsr1ZBxcAfX5odX2+MffbpKSANyXAwOgf8nofz4cDBJlACg==
+X-Received: by 2002:a05:6830:1289:: with SMTP id z9mr3770498otp.28.1629128114671;
+        Mon, 16 Aug 2021 08:35:14 -0700 (PDT)
+Received: from [192.168.1.30] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id k13sm2121887oik.40.2021.08.16.08.35.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Aug 2021 08:35:14 -0700 (PDT)
+Subject: Re: [PATCH v2 0/2] iter revert problems
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Cc:     Palash Oswal <oswalpalash@gmail.com>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        syzbot+9671693590ef5aad8953@syzkaller.appspotmail.com
+References: <cover.1628780390.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <221d06f1-7e6b-c48f-57e8-45111c979217@kernel.dk>
+Date:   Mon, 16 Aug 2021 09:35:12 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210814073019.GC21175@lst.de>
-X-Operating-System: Linux phenom 5.10.0-7-amd64 
+In-Reply-To: <cover.1628780390.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Sat, Aug 14, 2021 at 09:30:19AM +0200, Christoph Hellwig wrote:
-> On Fri, Aug 13, 2021 at 01:41:26PM +0200, Paul Cercueil wrote:
-> > Hi,
-> >
-> > A few months ago we (ADI) tried to upstream the interface we use with our 
-> > high-speed ADCs and DACs. It is a system with custom ioctls on the iio 
-> > device node to dequeue and enqueue buffers (allocated with 
-> > dma_alloc_coherent), that can then be mmap'd by userspace applications. 
-> > Anyway, it was ultimately denied entry [1]; this API was okay in ~2014 when 
-> > it was designed but it feels like re-inventing the wheel in 2021.
-> >
-> > Back to the drawing table, and we'd like to design something that we can 
-> > actually upstream. This high-speed interface looks awfully similar to 
-> > DMABUF, so we may try to implement a DMABUF interface for IIO, unless 
-> > someone has a better idea.
+On 8/12/21 2:40 PM, Pavel Begunkov wrote:
+> For the bug description see 2/2. As mentioned there the current problems
+> is because of generic_write_checks(), but there was also a similar case
+> fixed in 5.12, which should have been triggerable by normal
+> write(2)/read(2) and others.
 > 
-> To me this does sound a lot like a dma buf use case.  The interesting
-> question to me is how to signal arrival of new data, or readyness to
-> consume more data.  I suspect that people that are actually using
-> dmabuf heavily at the moment (dri/media folks) might be able to chime
-> in a little more on that.
-
-One option is to just block in userspace (on poll, or an ioctl, or
-whatever) and then latch the next stage in the pipeline. That's what media
-does right now (because the dma-fence proposal never got anywhere).
-
-In drm we use dma_fences to tie up the stages, and the current
-recommendation for uapi is to use the drm_syncobj container (not the
-sync_file container, that was a bit an awkward iteration on that problem).
-With that you can tie together all the pipeline stages within the kernel
-(and at least sometimes directly in hw).
-
-The downside is (well imo it's not a downside, but some people see it as
-hta) that once you use dma-fence dri-devel folks really consider your
-stuff a gpu driver and expect all the gpu driver review/merge criteria to
-be fulfilled. Specifically about the userspace side too:
-
-https://dri.freedesktop.org/docs/drm/gpu/drm-uapi.html#open-source-userspace-requirements
-
-At least one driver is trying to play some very clever games here and
-that's not a solid way to make friends ...
--Daniel
-
+> It may be better to enforce reexpands as a long term solution, but for
+> now this patchset is quickier and easier to backport.
 > 
-> > Our first usecase is, we want userspace applications to be able to dequeue 
-> > buffers of samples (from ADCs), and/or enqueue buffers of samples (for 
-> > DACs), and to be able to manipulate them (mmapped buffers). With a DMABUF 
-> > interface, I guess the userspace application would dequeue a dma buffer 
-> > from the driver, mmap it, read/write the data, unmap it, then enqueue it to 
-> > the IIO driver again so that it can be disposed of. Does that sound sane?
-> >
-> > Our second usecase is - and that's where things get tricky - to be able to 
-> > stream the samples to another computer for processing, over Ethernet or 
-> > USB. Our typical setup is a high-speed ADC/DAC on a dev board with a FPGA 
-> > and a weak soft-core or low-power CPU; processing the data in-situ is not 
-> > an option. Copying the data from one buffer to another is not an option 
-> > either (way too slow), so we absolutely want zero-copy.
-> >
-> > Usual userspace zero-copy techniques (vmsplice+splice, MSG_ZEROCOPY etc) 
-> > don't really work with mmapped kernel buffers allocated for DMA [2] and/or 
-> > have a huge overhead, so the way I see it, we would also need DMABUF 
-> > support in both the Ethernet stack and USB (functionfs) stack. However, as 
-> > far as I understood, DMABUF is mostly a DRM/V4L2 thing, so I am really not 
-> > sure we have the right idea here.
-> >
-> > And finally, there is the new kid in town, io_uring. I am not very literate 
-> > about the topic, but it does not seem to be able to handle DMA buffers 
-> > (yet?). The idea that we could dequeue a buffer of samples from the IIO 
-> > device and send it over the network in one single syscall is appealing, 
-> > though.
-> 
-> Think of io_uring really just as an async syscall layer.  It doesn't
-> replace DMA buffers, but can be used as a different and for some
-> workloads more efficient way to dispatch syscalls.
-> _______________________________________________
-> Linaro-mm-sig mailing list
-> Linaro-mm-sig@lists.linaro.org
-> https://lists.linaro.org/mailman/listinfo/linaro-mm-sig
+> v2: don't fail it has been justly fully reverted
+
+Al, what do you think of this approach? It'll fix the issue, but might be
+cleaner to have iov->truncated actually track the truncated size. That'd
+make it a more complete solution, at the expense of bloat iov_iter which
+this version will not.
 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Jens Axboe
+

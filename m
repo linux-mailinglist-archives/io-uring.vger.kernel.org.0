@@ -2,89 +2,108 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C9683EDBDC
-	for <lists+io-uring@lfdr.de>; Mon, 16 Aug 2021 18:58:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 181833EDCF5
+	for <lists+io-uring@lfdr.de>; Mon, 16 Aug 2021 20:16:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230204AbhHPQ67 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 16 Aug 2021 12:58:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43560 "EHLO
+        id S229790AbhHPSRS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 16 Aug 2021 14:17:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33390 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230344AbhHPQ66 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 16 Aug 2021 12:58:58 -0400
-Received: from mail-ot1-x32e.google.com (mail-ot1-x32e.google.com [IPv6:2607:f8b0:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D726C0613C1
-        for <io-uring@vger.kernel.org>; Mon, 16 Aug 2021 09:58:27 -0700 (PDT)
-Received: by mail-ot1-x32e.google.com with SMTP id v33-20020a0568300921b0290517cd06302dso8939864ott.13
-        for <io-uring@vger.kernel.org>; Mon, 16 Aug 2021 09:58:27 -0700 (PDT)
+        with ESMTP id S229481AbhHPSRR (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 16 Aug 2021 14:17:17 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0AE0C061764
+        for <io-uring@vger.kernel.org>; Mon, 16 Aug 2021 11:16:45 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id h13so24939035wrp.1
+        for <io-uring@vger.kernel.org>; Mon, 16 Aug 2021 11:16:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=wuza2V4hmTuKfvzbG36627WzQn0qRqdK22vz0YzaOMQ=;
-        b=If6INNjQQlstVyNsToExC07skAiVcHNn1VNjezQrDCN8Z2m6/0+cVGuAVAR3wy+2VW
-         w/ubqoSi/GpsiVOSI75KrtOouU6weyhVb7O0dD/KCuZ1NECNG/J2Ifglpayt5ChOiUvG
-         IgeIBStKnnlGLfqItcF2CA8wTaAdCNfKYSAES6wQ1CaaSfFr2XgUx1Ua5UFAX2QVjFU6
-         uFtJoD7bxE24rRtZdLqo6udHx1KRz8jDlEcQ+egDr0EIfmazLD86/sHw4eVTB2SwHLRg
-         a28YCqNoejIc+7e9ame7Seb8buL810EgRPvY5m9Ky5f5yi99eOUxqLaFQsnQNU9rS+/P
-         Ydgw==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=RxMdjisT9UAZNQr8erw9TgBzXrGc1aEjT2RycAgKm24=;
+        b=EnDQWibkFF80a6PlnTT38Xsa9+A0Sz+NDG9nRz+bpyRa9t6m7JNjL9p5k0kulZ08Z1
+         EGNcAgTXtBjhO6ivHAB5Lnjjrf3XsKN+AofZNYkGr0BC8xx+CKGZVfl2t+w0SpPdjUUJ
+         DSjbICNjS4iTYja4zAZ3XUe458E5SBr1bdEsk2vsohHHlqNz30WQ7toH7qQm7cI5WmUP
+         x33Nfu9w+LL1pyWBFeGRj9X6nIUFBl+e5xuyI1vCz9zT09+DzdPMAHMdFZmnN9qNv4ak
+         5XCbXspKp+2VTtdUMsqV6IF345A0zmqYtsRaBDCUdMkm54OiZFWkF8mgvev+joWbSRkf
+         gwhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=wuza2V4hmTuKfvzbG36627WzQn0qRqdK22vz0YzaOMQ=;
-        b=dcML5wSfwCzH3bNqd6IYD8xdhydkQUyt9tEmogcZ9eWgodZEd7cct5mudE+Lb/3mVx
-         FMqHGbxKjA5Ga0B6X2NRXkCDxUekUs+tc06zQPMjsn5wdzg5VqFMb9TE9tvVrwQlNj+n
-         BWU8x3tp8qirVXPZeC3R8MDoI/411QeJW5qoxSBxmdaefxRUXUr11BFMxJiBqpk49H+5
-         KPcqYvgAwfvJK7u/Rzk/k7DocIR3V2L5y8LWJfAXVcZ0lhNMEp6pDCf8Og1y/huQBvxN
-         2ey5KhZtq6ySgiZxORjAMzfCxhFThIB+gksiT2YepwN4NF8knNxdE3vz5FFOsYvC9+Hu
-         ulgg==
-X-Gm-Message-State: AOAM533/oZerq/aRoFEXBMO/y2b2/mu11C5nQtytBl2FlkCWyOvNuXCf
-        IDVBVuOKBfTvV6xPD4GKk1Rb6g==
-X-Google-Smtp-Source: ABdhPJzcPjburKbVsGy+q7iTBFfzAaY+sr/TO33j5hSsArUqkyvEgIisQep+9UUJlwriJCuj+g2Uyg==
-X-Received: by 2002:a05:6830:19:: with SMTP id c25mr13733466otp.176.1629133106475;
-        Mon, 16 Aug 2021 09:58:26 -0700 (PDT)
-Received: from [192.168.1.30] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id 31sm2293375oti.63.2021.08.16.09.58.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Aug 2021 09:58:26 -0700 (PDT)
-Subject: Re: [PATCH] io_uring: consider cgroup setting when binding sqpoll cpu
-To:     Hao Xu <haoxu@linux.alibaba.com>
-Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <20210815151049.182340-1-haoxu@linux.alibaba.com>
- <9d0a001a-bdab-9399-d8c3-19191785d3c7@kernel.dk>
- <0c3195be-7109-861f-ff05-a4f804380e1c@linux.alibaba.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <ecf0f64c-c303-01de-a7e5-12a162e5302e@kernel.dk>
-Date:   Mon, 16 Aug 2021 10:58:25 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        bh=RxMdjisT9UAZNQr8erw9TgBzXrGc1aEjT2RycAgKm24=;
+        b=EF/1r1LtOHk9DfxM+SUQof2s0ishTtMhnUXzQhr84jmf36o4PxklzhwRcj3yN5dFEB
+         MkJI+4H+BfX9NMaT6QDQMIHsc2YwG4hbtk3rIO4tNoRDzOs9EsnvAqy/nuxz8rGF4GZc
+         tzFsHhlfWGtzq2Dcp09iaR8dynZv5ztV+uLoZk9tmdzta/zAjxnc+CvWoFkH/5rNxl88
+         9NyGppP97nPXBUNXAtUem2H5ZopYkSeNYQYqVhUs2PUJKMJ0OPH4gYf5qp58i+e2w8ZV
+         Vw32SGFK+VbCkaKdF59qXjnA1bcMyBG0+H6jiE64Z/O/qbtJu/Oe2LvlPQ9opWSlhL+F
+         cA+g==
+X-Gm-Message-State: AOAM532nFOGD8SBLU/o+u6SmebYqNQLZLm3EGqlbwHFCDcZWvB+KClXu
+        V0I6k68MiKqghc0C4K7bqRLVyio85/g=
+X-Google-Smtp-Source: ABdhPJztjJTE+tjW+yLcG+1UGH3bQJ6VZ/+gA/FqG4M8GKURMuU6B+209y4V2uorRrq4y2WC7kES/g==
+X-Received: by 2002:a5d:4b01:: with SMTP id v1mr19418655wrq.377.1629137804350;
+        Mon, 16 Aug 2021 11:16:44 -0700 (PDT)
+Received: from localhost.localdomain ([85.255.233.12])
+        by smtp.gmail.com with ESMTPSA id b20sm254779wmj.48.2021.08.16.11.16.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Aug 2021 11:16:43 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc:     syzbot+2b85e9379c34945fe38f@syzkaller.appspotmail.com
+Subject: [PATCH 5.15] io_uring: don't forget to clear REQ_F_ARM_LTIMEOUT
+Date:   Mon, 16 Aug 2021 19:16:08 +0100
+Message-Id: <614f650abdd5fee97aa5a6a87028a2c47d2a6c94.1629137586.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-In-Reply-To: <0c3195be-7109-861f-ff05-a4f804380e1c@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/16/21 12:04 AM, Hao Xu wrote:
-> 在 2021/8/15 下午11:19, Jens Axboe 写道:
->> On 8/15/21 9:10 AM, Hao Xu wrote:
->>> Since sqthread is userspace like thread now, it should respect cgroup
->>> setting, thus we should consider current allowed cpuset when doing
->>> cpu binding for sqthread.
->>
->> This seems a bit convoluted for what it needs to do. Surely we can just
->> test sqd->sq_cpu directly in the task_cs()?
-> I didn't know task_cs() before, it seems to be a static function, which
-> is called by cpuset_cpus_allowed(), and this one is exposed.
+Even though it should be safe to poke into req->link after
+io_issue_sqe() in terms of races, it may end up retiring a request, e.g.
+when someone calls io_req_complete(). It'll be placed into an internal
+request cache, so the memory would be valid with other guarantees, but
+the request will be actually dismantled and with requests linked removed
+and enqueued.
 
-But it'd be a much saner to add a helper for this rather than add all
-of that boiler plate code to io_uring just to check for whether or not
-a CPU is set in a mask.
+Hence, don't forget to remove REQ_F_ARM_LTIMEOUT after a linked timeout
+got disarmed, otherwise following io_prep_linked_timeout() will expect
+req->link to be not-zero and so fault.
 
+Fixes: 19bfc9a0d26c5 ("io_uring: optimise io_prep_linked_timeout()")
+Reported-by: syzbot+2b85e9379c34945fe38f@syzkaller.appspotmail.com
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+
+Not sure whether it fixes the syzbot report, but hopefully it'll
+find a repro soon.
+
+ fs/io_uring.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 17d0125c331a..29e3ec6e9dbf 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -1311,6 +1311,9 @@ static inline void io_unprep_linked_timeout(struct io_kiocb *req)
+ 
+ static struct io_kiocb *__io_prep_linked_timeout(struct io_kiocb *req)
+ {
++	if (WARN_ON_ONCE(!req->link))
++		return NULL;
++
+ 	req->flags &= ~REQ_F_ARM_LTIMEOUT;
+ 	req->flags |= REQ_F_LINK_TIMEOUT;
+ 
+@@ -1935,6 +1938,7 @@ static bool io_disarm_next(struct io_kiocb *req)
+ 	if (req->flags & REQ_F_ARM_LTIMEOUT) {
+ 		struct io_kiocb *link = req->link;
+ 
++		req->flags &= ~REQ_F_ARM_LTIMEOUT;
+ 		if (link && link->opcode == IORING_OP_LINK_TIMEOUT) {
+ 			io_remove_next_linked(req);
+ 			io_cqring_fill_event(link->ctx, link->user_data,
 -- 
-Jens Axboe
+2.32.0
 

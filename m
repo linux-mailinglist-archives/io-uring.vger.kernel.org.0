@@ -2,145 +2,162 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D40AD3ED75A
-	for <lists+io-uring@lfdr.de>; Mon, 16 Aug 2021 15:34:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 457643ED962
+	for <lists+io-uring@lfdr.de>; Mon, 16 Aug 2021 17:01:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240993AbhHPNbv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 16 Aug 2021 09:31:51 -0400
-Received: from mail-io1-f69.google.com ([209.85.166.69]:37611 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241542AbhHPN3t (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 16 Aug 2021 09:29:49 -0400
-Received: by mail-io1-f69.google.com with SMTP id h3-20020a056602008300b005b7c0e23e11so1209207iob.4
-        for <io-uring@vger.kernel.org>; Mon, 16 Aug 2021 06:29:17 -0700 (PDT)
+        id S232491AbhHPPCR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 16 Aug 2021 11:02:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44040 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232487AbhHPPCQ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 16 Aug 2021 11:02:16 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEFF2C061796
+        for <io-uring@vger.kernel.org>; Mon, 16 Aug 2021 08:01:44 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id f12-20020a05600c4e8c00b002e6bdd6ffe2so9481295wmq.5
+        for <io-uring@vger.kernel.org>; Mon, 16 Aug 2021 08:01:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=EIvyFOw8mvTuFM5hQZVVCU0qrPNdbh5I2Bj4X1kA7WQ=;
+        b=gaIEOtqqYuS833blYihl+7Iw8shk8qt6AL+mzGViyi8f8QC+lwDDgt2IPH0q/+dU1H
+         7bt+Sommo3MR9FY/VLoTpOo31XeUdpFogGaA5qZ+DqMM99khdni6FgnfyUVd+TFjIo38
+         JMiVpBCDkbCHGobEnCzL8wiQge+z3+GJsAPmo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=SPj4+myJ8JzhjGfXTTH/Z+OtZy43EqV2wJdhxiY1nKw=;
-        b=Vt1u6BhXwCrHYgwzFS/zyCMnK0u2m3PFtaxBurXfUb6T8EJlGFDV1O5kcF95Fihvy5
-         p/9/BcbqUkbUpI/+wWNnEMnO6GWkeVDTQKOflySEa0PXjeCjPjQXVtmH8XlGQS1iYFty
-         JnSJlR4agLVGqz71MY/cpepu9AmAcNwQp/KwyYbXk5/TDDc9XsjLUxuj5EKAboSmn/Gz
-         HZu336b0A/Vv+qv0aIm0PDgDua03cYyOwi3t6QIlMlrOsf0O6a7N92RSiBRfptfAcq4V
-         gP19WW5ABqv9fDgI3gjUipGnH3DJxd2OiSQPf2FfN1xM7ZFrKkB2yGJyqcGfZxkLRFvy
-         Bm3A==
-X-Gm-Message-State: AOAM532mLomULggL/oIDXNlxvMt2o7aiuedt67g+g96mtr58YCbQxG0C
-        INhlCdWyo2eA68b7tPccDIIAzQoOV9NFMm09+wRmkuGgNB/C
-X-Google-Smtp-Source: ABdhPJzdFf1fUonPWgBMICFHQ9n+A3WIhVwouHe1nI1iOJn6/OQWrzU3ZXPFaBWCxwkT67w9KcFotwb20V+bX6r8Rpt1g/Z81EAI
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to;
+        bh=EIvyFOw8mvTuFM5hQZVVCU0qrPNdbh5I2Bj4X1kA7WQ=;
+        b=HEU1Jjr+5nhDJ+PlvGE88gBc67HvK6VvQHPrx5mw1laJlc1hLD5zHaWgb/dnYAFgt0
+         TMfXv2FGxOEk8qoBLiBZJ9yCKfO/EI5TOd4uXGBQbhTqaVZclZ2ml9A/ywuFccy0SW7a
+         dXOKn9KstIAOkRpatITGegchqGziM1IVSGilGdS7LwIhoLCCU9tbXRRNhAvBA1P77TSJ
+         Sn1Tz2zfLkfzun1fFhagA6ZVVXfILhM39Uoi4EQzwhd3uyYmegMi11q6dkOxKGF4b4u/
+         aYysHVy4EB5E5TPH5dGLSFV7NWvROMUvlIALsmkqjHScsup5fWEce5Szf1iLG6FtV1xa
+         TETg==
+X-Gm-Message-State: AOAM532P4ip2WB/kEvyylSU3sU6IYhdDCH6nwmCCT9bJmjHpsV2tDszG
+        7ih+MFCnUXJS2vf1B1WebPk8GA==
+X-Google-Smtp-Source: ABdhPJzDF9KrfED8TEN39f2b9tbP/JkFe6bbQZq2+vcczHGvaS+YoEUQW9Mj8qPAjLla1rzX+sS+zA==
+X-Received: by 2002:a1c:9ace:: with SMTP id c197mr15858085wme.170.1629126103289;
+        Mon, 16 Aug 2021 08:01:43 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id y3sm11936525wma.32.2021.08.16.08.01.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Aug 2021 08:01:42 -0700 (PDT)
+Date:   Mon, 16 Aug 2021 17:01:40 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Paul Cercueil <paul@crapouillou.net>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+        Alexandru Ardelean <ardeleanalex@gmail.com>,
+        io-uring@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
+        linux-media@vger.kernel.org
+Subject: Re: [Linaro-mm-sig] IIO, dmabuf, io_uring
+Message-ID: <YRp91OUTpjpw7rnE@phenom.ffwll.local>
+Mail-Followup-To: Christoph Hellwig <hch@lst.de>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+        Alexandru Ardelean <ardeleanalex@gmail.com>,
+        io-uring@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
+        linux-media@vger.kernel.org
+References: <2H0SXQ.2KIK2PBVRFWH2@crapouillou.net>
+ <20210814073019.GC21175@lst.de>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a4f:: with SMTP id u15mr11985302ilv.251.1629120557493;
- Mon, 16 Aug 2021 06:29:17 -0700 (PDT)
-Date:   Mon, 16 Aug 2021 06:29:17 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000020339705c9ad30ee@google.com>
-Subject: [syzbot] general protection fault in __io_queue_sqe
-From:   syzbot <syzbot+2b85e9379c34945fe38f@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210814073019.GC21175@lst.de>
+X-Operating-System: Linux phenom 5.10.0-7-amd64 
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
+On Sat, Aug 14, 2021 at 09:30:19AM +0200, Christoph Hellwig wrote:
+> On Fri, Aug 13, 2021 at 01:41:26PM +0200, Paul Cercueil wrote:
+> > Hi,
+> >
+> > A few months ago we (ADI) tried to upstream the interface we use with our 
+> > high-speed ADCs and DACs. It is a system with custom ioctls on the iio 
+> > device node to dequeue and enqueue buffers (allocated with 
+> > dma_alloc_coherent), that can then be mmap'd by userspace applications. 
+> > Anyway, it was ultimately denied entry [1]; this API was okay in ~2014 when 
+> > it was designed but it feels like re-inventing the wheel in 2021.
+> >
+> > Back to the drawing table, and we'd like to design something that we can 
+> > actually upstream. This high-speed interface looks awfully similar to 
+> > DMABUF, so we may try to implement a DMABUF interface for IIO, unless 
+> > someone has a better idea.
+> 
+> To me this does sound a lot like a dma buf use case.  The interesting
+> question to me is how to signal arrival of new data, or readyness to
+> consume more data.  I suspect that people that are actually using
+> dmabuf heavily at the moment (dri/media folks) might be able to chime
+> in a little more on that.
 
-syzbot found the following issue on:
+One option is to just block in userspace (on poll, or an ioctl, or
+whatever) and then latch the next stage in the pipeline. That's what media
+does right now (because the dma-fence proposal never got anywhere).
 
-HEAD commit:    b9011c7e671d Add linux-next specific files for 20210816
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=15474781300000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a245d1aa4f055cc1
-dashboard link: https://syzkaller.appspot.com/bug?extid=2b85e9379c34945fe38f
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.1
+In drm we use dma_fences to tie up the stages, and the current
+recommendation for uapi is to use the drm_syncobj container (not the
+sync_file container, that was a bit an awkward iteration on that problem).
+With that you can tie together all the pipeline stages within the kernel
+(and at least sometimes directly in hw).
 
-Unfortunately, I don't have any reproducer for this issue yet.
+The downside is (well imo it's not a downside, but some people see it as
+hta) that once you use dma-fence dri-devel folks really consider your
+stuff a gpu driver and expect all the gpu driver review/merge criteria to
+be fulfilled. Specifically about the userspace side too:
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+2b85e9379c34945fe38f@syzkaller.appspotmail.com
+https://dri.freedesktop.org/docs/drm/gpu/drm-uapi.html#open-source-userspace-requirements
 
-general protection fault, probably for non-canonical address 0xdffffc000000000b: 0000 [#1] PREEMPT SMP KASAN
-KASAN: null-ptr-deref in range [0x0000000000000058-0x000000000000005f]
-CPU: 0 PID: 6232 Comm: syz-executor.1 Not tainted 5.14.0-rc5-next-20210816-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:__io_req_set_refcount fs/io_uring.c:1152 [inline]
-RIP: 0010:__io_prep_linked_timeout fs/io_uring.c:1348 [inline]
-RIP: 0010:io_prep_linked_timeout fs/io_uring.c:1356 [inline]
-RIP: 0010:__io_queue_sqe+0x278/0xeb0 fs/io_uring.c:6708
-Code: 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 07 0c 00 00 48 b8 00 00 00 00 00 fc ff df 4c 8b 65 70 49 8d 7c 24 58 48 89 fa 48 c1 ea 03 <0f> b6 04 02 84 c0 74 08 3c 03 0f 8e 3e 0b 00 00 45 8b 74 24 58 31
-RSP: 0018:ffffc9000a9ffd48 EFLAGS: 00010202
-RAX: dffffc0000000000 RBX: 1ffff9200153ffb0 RCX: ffffc9000ba6a000
-RDX: 000000000000000b RSI: ffffffff81e1bcbf RDI: 0000000000000058
-RBP: ffff888037d15dc0 R08: 0000000000000001 R09: ffff888037d15e1f
-R10: ffffed1006fa2bc3 R11: 0000000000000000 R12: 0000000000000000
-R13: 0000000000000000 R14: ffff888037d15e30 R15: ffff888037d15e30
-FS:  00007fb490054700(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000000 CR3: 00000000388c5000 CR4: 00000000001506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- io_req_task_submit+0xaa/0x120 fs/io_uring.c:2139
- tctx_task_work+0x106/0x540 fs/io_uring.c:2063
- task_work_run+0xdd/0x1a0 kernel/task_work.c:164
- tracehook_notify_signal include/linux/tracehook.h:212 [inline]
- handle_signal_work kernel/entry/common.c:146 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:172 [inline]
- exit_to_user_mode_prepare+0x256/0x290 kernel/entry/common.c:209
- __syscall_exit_to_user_mode_work kernel/entry/common.c:291 [inline]
- syscall_exit_to_user_mode+0x19/0x60 kernel/entry/common.c:302
- do_syscall_64+0x42/0xb0 arch/x86/entry/common.c:86
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-RIP: 0033:0x4665e9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fb490054188 EFLAGS: 00000246 ORIG_RAX: 00000000000001aa
-RAX: 0000000000000081 RBX: 000000000056bf80 RCX: 00000000004665e9
-RDX: 0000000000000000 RSI: 00000000000045f5 RDI: 0000000000000003
-RBP: 00000000004bfcc4 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 000000000056bf80
-R13: 00007ffe3ce9ca1f R14: 00007fb490054300 R15: 0000000000022000
-Modules linked in:
----[ end trace 221813d58846ad59 ]---
-RIP: 0010:__io_req_set_refcount fs/io_uring.c:1152 [inline]
-RIP: 0010:__io_prep_linked_timeout fs/io_uring.c:1348 [inline]
-RIP: 0010:io_prep_linked_timeout fs/io_uring.c:1356 [inline]
-RIP: 0010:__io_queue_sqe+0x278/0xeb0 fs/io_uring.c:6708
-Code: 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 07 0c 00 00 48 b8 00 00 00 00 00 fc ff df 4c 8b 65 70 49 8d 7c 24 58 48 89 fa 48 c1 ea 03 <0f> b6 04 02 84 c0 74 08 3c 03 0f 8e 3e 0b 00 00 45 8b 74 24 58 31
-RSP: 0018:ffffc9000a9ffd48 EFLAGS: 00010202
-RAX: dffffc0000000000 RBX: 1ffff9200153ffb0 RCX: ffffc9000ba6a000
-RDX: 000000000000000b RSI: ffffffff81e1bcbf RDI: 0000000000000058
-RBP: ffff888037d15dc0 R08: 0000000000000001 R09: ffff888037d15e1f
-R10: ffffed1006fa2bc3 R11: 0000000000000000 R12: 0000000000000000
-R13: 0000000000000000 R14: ffff888037d15e30 R15: ffff888037d15e30
-FS:  00007fb490054700(0000) GS:ffff8880b9d00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b3213a000 CR3: 00000000388c5000 CR4: 00000000001506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	89 fa                	mov    %edi,%edx
-   2:	48 c1 ea 03          	shr    $0x3,%rdx
-   6:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1)
-   a:	0f 85 07 0c 00 00    	jne    0xc17
-  10:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
-  17:	fc ff df 
-  1a:	4c 8b 65 70          	mov    0x70(%rbp),%r12
-  1e:	49 8d 7c 24 58       	lea    0x58(%r12),%rdi
-  23:	48 89 fa             	mov    %rdi,%rdx
-  26:	48 c1 ea 03          	shr    $0x3,%rdx
-  2a:	0f b6 04 02          	movzbl (%rdx,%rax,1),%eax <-- trapping instruction
-  2e:	84 c0                	test   %al,%al
-  30:	74 08                	je     0x3a
-  32:	3c 03                	cmp    $0x3,%al
-  34:	0f 8e 3e 0b 00 00    	jle    0xb78
-  3a:	45 8b 74 24 58       	mov    0x58(%r12),%r14d
-  3f:	31                   	.byte 0x31
+At least one driver is trying to play some very clever games here and
+that's not a solid way to make friends ...
+-Daniel
 
+> 
+> > Our first usecase is, we want userspace applications to be able to dequeue 
+> > buffers of samples (from ADCs), and/or enqueue buffers of samples (for 
+> > DACs), and to be able to manipulate them (mmapped buffers). With a DMABUF 
+> > interface, I guess the userspace application would dequeue a dma buffer 
+> > from the driver, mmap it, read/write the data, unmap it, then enqueue it to 
+> > the IIO driver again so that it can be disposed of. Does that sound sane?
+> >
+> > Our second usecase is - and that's where things get tricky - to be able to 
+> > stream the samples to another computer for processing, over Ethernet or 
+> > USB. Our typical setup is a high-speed ADC/DAC on a dev board with a FPGA 
+> > and a weak soft-core or low-power CPU; processing the data in-situ is not 
+> > an option. Copying the data from one buffer to another is not an option 
+> > either (way too slow), so we absolutely want zero-copy.
+> >
+> > Usual userspace zero-copy techniques (vmsplice+splice, MSG_ZEROCOPY etc) 
+> > don't really work with mmapped kernel buffers allocated for DMA [2] and/or 
+> > have a huge overhead, so the way I see it, we would also need DMABUF 
+> > support in both the Ethernet stack and USB (functionfs) stack. However, as 
+> > far as I understood, DMABUF is mostly a DRM/V4L2 thing, so I am really not 
+> > sure we have the right idea here.
+> >
+> > And finally, there is the new kid in town, io_uring. I am not very literate 
+> > about the topic, but it does not seem to be able to handle DMA buffers 
+> > (yet?). The idea that we could dequeue a buffer of samples from the IIO 
+> > device and send it over the network in one single syscall is appealing, 
+> > though.
+> 
+> Think of io_uring really just as an async syscall layer.  It doesn't
+> replace DMA buffers, but can be used as a different and for some
+> workloads more efficient way to dispatch syscalls.
+> _______________________________________________
+> Linaro-mm-sig mailing list
+> Linaro-mm-sig@lists.linaro.org
+> https://lists.linaro.org/mailman/listinfo/linaro-mm-sig
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch

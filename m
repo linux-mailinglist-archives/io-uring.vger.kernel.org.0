@@ -2,39 +2,39 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D76EF3EE532
-	for <lists+io-uring@lfdr.de>; Tue, 17 Aug 2021 05:50:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10C423EE84A
+	for <lists+io-uring@lfdr.de>; Tue, 17 Aug 2021 10:19:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233764AbhHQDum (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 16 Aug 2021 23:50:42 -0400
-Received: from mail-io1-f69.google.com ([209.85.166.69]:39813 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233506AbhHQDum (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 16 Aug 2021 23:50:42 -0400
-Received: by mail-io1-f69.google.com with SMTP id u22-20020a5d9f560000b02905058dc6c376so10451886iot.6
-        for <io-uring@vger.kernel.org>; Mon, 16 Aug 2021 20:50:09 -0700 (PDT)
+        id S235089AbhHQITz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 17 Aug 2021 04:19:55 -0400
+Received: from mail-il1-f200.google.com ([209.85.166.200]:49812 "EHLO
+        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234959AbhHQITp (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 17 Aug 2021 04:19:45 -0400
+Received: by mail-il1-f200.google.com with SMTP id a15-20020a92444f000000b0022473393120so3933748ilm.16
+        for <io-uring@vger.kernel.org>; Tue, 17 Aug 2021 01:19:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
          :from:to;
-        bh=Fmzbu0SFDXh2Dg+PWBp1e31sM7UnYc4n5FDt0nlapDM=;
-        b=T4EEeNB76LTZYnOwBWoB+fVyPjltaY7XsTWooQ5h8xfj3Lkl6fsNOQht7sfAlNcgAj
-         pywqI0YeMDONwzIHDzf6wRALOtgQHEug0QMeuddLpVoSxFsWh5CMLIdRhTMMhYPJLiXf
-         9llF+enwS16L0eMbG3tKGfiehD7A8/MXOIa4EWmsfG8VZboLpyJsk4Mi/E/NtwxVxg7S
-         /Z1V3sEbhQf4QailvXZV3DbWS+9+12vuyl4fm80W3o0v3UNkhZ9VENKmjMWwgcw9y/Nq
-         YNhjxii9b0XIXM7SxMZqRvEj8C8iSmP4kVm7y0oOc2EzufKLic1sI7CEvkYf2CaKzAeD
-         y15w==
-X-Gm-Message-State: AOAM532aK/EiTa5PgD4AkuaXX6tg0sp4NvDj6vo/Ut9oK+SsxdK292lN
-        /WdQyxbKEk4ndcZvkO3oM3zodDUwIe25arbYxSUpPXYhakEB
-X-Google-Smtp-Source: ABdhPJzFKLbgYkO4NO4IB3wMusTphhf8Fr7ByRK/bLbrWWNTuOexjXInxkN1IaI1LHp/wtuVHitVRLYN5+PbAgk9W4HftEBBUtwO
+        bh=v7Suw8Wuf/OUCzg/q1QAF/HIhF+USLUXdeQ4IT6YwQU=;
+        b=oJBXM/uc0RQVK95Ed23OXAq9/C3s7AW5yveJ0nhIfGd2dgQVbWCXsRwrQPx/7vUN5G
+         7dCEYikcZH6RoHArEhg+o261c5mK4iAT50LnjIfPrUB5kmkDEfnNEi3vglA5mtd77R9f
+         2dF7yLvYO7jhJf73JFjtjW1+aKc6GZQZJZO/5QOsWaE+Bp7+mDUi3gmllORleGU+fEX+
+         U1hTgEHbG7v+Qqi+dyVJQtev+UWKwv+eOqGYLosYSLst1p7duTNuccw/0LGkYR4+yAc/
+         GQla6AuJH2kRFelRD5aOMQSb2ygF54bugsW5aI7lyCdYseN9OM8qykromvmciUuYRTXm
+         adXA==
+X-Gm-Message-State: AOAM532Nnmk8dMW9hmA7vzdE1OVOe/obeHbqzWD9nfEi9p9a2DI3+4Oz
+        o7XR9JtcPXzSO+ZuFc/ViVSICTusyJfoSVtqxrqUjlD+9PkB
+X-Google-Smtp-Source: ABdhPJx0yFNciOMcqB4BPAMWZWuOFnOun69pnpvkeraaKxBZjdZQSIVasmHZrwPztaBxc0fYb6tcdTbqwo3MH47lhjd3oBGqHBBD
 MIME-Version: 1.0
-X-Received: by 2002:a02:a619:: with SMTP id c25mr1115878jam.1.1629172209472;
- Mon, 16 Aug 2021 20:50:09 -0700 (PDT)
-Date:   Mon, 16 Aug 2021 20:50:09 -0700
-In-Reply-To: <d13c4e6b-b935-c517-f90d-d8201861800f@kernel.dk>
+X-Received: by 2002:a92:cb4b:: with SMTP id f11mr1569466ilq.189.1629188352582;
+ Tue, 17 Aug 2021 01:19:12 -0700 (PDT)
+Date:   Tue, 17 Aug 2021 01:19:12 -0700
+In-Reply-To: <00000000000020339705c9ad30ee@google.com>
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d2d86305c9b936e4@google.com>
+Message-ID: <00000000000007299005c9bcf9e9@google.com>
 Subject: Re: [syzbot] general protection fault in __io_queue_sqe
 From:   syzbot <syzbot+2b85e9379c34945fe38f@syzkaller.appspotmail.com>
 To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
@@ -44,18 +44,25 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
+syzbot has bisected this issue to:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+commit 483fc4e30869f8bd1693aca9cffddb21fb303b32
+Author: Pavel Begunkov <asml.silence@gmail.com>
+Date:   Sun Aug 15 09:40:26 2021 +0000
 
-Reported-and-tested-by: syzbot+2b85e9379c34945fe38f@syzkaller.appspotmail.com
+    io_uring: optimise io_prep_linked_timeout()
 
-Tested on:
-
-commit:         16a390b4 Merge branch 'for-5.15/io_uring' into for-next
-git tree:       git://git.kernel.dk/linux-block
-kernel config:  https://syzkaller.appspot.com/x/.config?x=605725d47562aa78
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16fada7e300000
+start commit:   b9011c7e671d Add linux-next specific files for 20210816
+git tree:       linux-next
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=15fada7e300000
+console output: https://syzkaller.appspot.com/x/log.txt?x=11fada7e300000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a245d1aa4f055cc1
 dashboard link: https://syzkaller.appspot.com/bug?extid=2b85e9379c34945fe38f
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.1
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17479216300000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=147f0111300000
 
-Note: testing is done by a robot and is best-effort only.
+Reported-by: syzbot+2b85e9379c34945fe38f@syzkaller.appspotmail.com
+Fixes: 483fc4e30869 ("io_uring: optimise io_prep_linked_timeout()")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection

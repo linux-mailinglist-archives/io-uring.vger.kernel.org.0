@@ -2,67 +2,96 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 10C423EE84A
-	for <lists+io-uring@lfdr.de>; Tue, 17 Aug 2021 10:19:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F418F3EE9F6
+	for <lists+io-uring@lfdr.de>; Tue, 17 Aug 2021 11:33:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235089AbhHQITz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 17 Aug 2021 04:19:55 -0400
-Received: from mail-il1-f200.google.com ([209.85.166.200]:49812 "EHLO
-        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234959AbhHQITp (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 17 Aug 2021 04:19:45 -0400
-Received: by mail-il1-f200.google.com with SMTP id a15-20020a92444f000000b0022473393120so3933748ilm.16
-        for <io-uring@vger.kernel.org>; Tue, 17 Aug 2021 01:19:12 -0700 (PDT)
+        id S234859AbhHQJeJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 17 Aug 2021 05:34:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44690 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235005AbhHQJeJ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 17 Aug 2021 05:34:09 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29DD8C061764;
+        Tue, 17 Aug 2021 02:33:36 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id w21-20020a7bc1150000b02902e69ba66ce6so1689418wmi.1;
+        Tue, 17 Aug 2021 02:33:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=to:cc:references:from:subject:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=iRnPw75pIfAeUsFqijtuEEG0yjtu25CSmo0vBZOgYeg=;
+        b=sFOaC6ZrYaUezaiuEOmtghXAaz36dJduJ+84EIUbJoJtIWqifZUNK8fzk/vqjkzBq0
+         1sq4nEVCPo3X7y6aQADD3WnPRRX+syU9JMXY/Azi3ZMfw2wi02mDcfUSryiN+FPc3CKT
+         Q7zWShFzESyI6Mrsxz898qAtYA2VgdnnODSMyx4TkgYwPj+AiStTEw9p+zHRm/oCbrfP
+         n6UyoVGID22cBgx7XDGArr3JKuygYVfp/4r3PgAzTbsRNydacJqmJmwL7MpwRhLHtHjF
+         6Ul92p/LlK7pCs/ZQq+67XrkEmHmvhAgyRoSUia6GV6qH0zEZJQ0PJJmBCG/wXcy+AA3
+         OREw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=v7Suw8Wuf/OUCzg/q1QAF/HIhF+USLUXdeQ4IT6YwQU=;
-        b=oJBXM/uc0RQVK95Ed23OXAq9/C3s7AW5yveJ0nhIfGd2dgQVbWCXsRwrQPx/7vUN5G
-         7dCEYikcZH6RoHArEhg+o261c5mK4iAT50LnjIfPrUB5kmkDEfnNEi3vglA5mtd77R9f
-         2dF7yLvYO7jhJf73JFjtjW1+aKc6GZQZJZO/5QOsWaE+Bp7+mDUi3gmllORleGU+fEX+
-         U1hTgEHbG7v+Qqi+dyVJQtev+UWKwv+eOqGYLosYSLst1p7duTNuccw/0LGkYR4+yAc/
-         GQla6AuJH2kRFelRD5aOMQSb2ygF54bugsW5aI7lyCdYseN9OM8qykromvmciUuYRTXm
-         adXA==
-X-Gm-Message-State: AOAM532Nnmk8dMW9hmA7vzdE1OVOe/obeHbqzWD9nfEi9p9a2DI3+4Oz
-        o7XR9JtcPXzSO+ZuFc/ViVSICTusyJfoSVtqxrqUjlD+9PkB
-X-Google-Smtp-Source: ABdhPJx0yFNciOMcqB4BPAMWZWuOFnOun69pnpvkeraaKxBZjdZQSIVasmHZrwPztaBxc0fYb6tcdTbqwo3MH47lhjd3oBGqHBBD
+        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=iRnPw75pIfAeUsFqijtuEEG0yjtu25CSmo0vBZOgYeg=;
+        b=Er/OGikEDTE2sCZ91Mw/YajdLJ1/eEB7JgLLbyqj56Mm5RAvNSeNZblDJvWk+0ZYB0
+         uBCUDC215uNb/RtSNwbx3QA/CKWRDilICAI4PEmMsncMp8ehv2USixYNy3GNof3Q7JtW
+         v2wvG42HWDWnh10nxUWCd43sXdevzosT7bM4TER29VGE2/pVxuNy+YLFwTXxyGmPHFtI
+         KCKpKrJL/ZWWin4Ay6o/aJbzRsoGBGVs/ePNqcvby5uvO6ltykU2t5lM4YuR52pGOAXI
+         0DkDPMBX/tC6nyiC3KZeUbZyxlAU6dJ/ih0of4MDVWiBuTRK1tYuHq4A1T4mvYe0k1n2
+         xq0g==
+X-Gm-Message-State: AOAM530ri8VHo4S60YMMFj7FrFN5FEZ4IPaYH328NbEG+sXTKSTS17aO
+        h7elyRAZFHnmK6vCpVOI5barUZQ2jZA=
+X-Google-Smtp-Source: ABdhPJyHAiUHvwGKu1jZ/kKDWjRpLUuWkvsCMUJdc7c5eaOnVNIVQyHtu/BQr6QyictO5jTFgA4qyg==
+X-Received: by 2002:a05:600c:4e87:: with SMTP id f7mr2283057wmq.121.1629192814642;
+        Tue, 17 Aug 2021 02:33:34 -0700 (PDT)
+Received: from [192.168.8.197] ([85.255.233.12])
+        by smtp.gmail.com with ESMTPSA id x18sm1718578wrw.19.2021.08.17.02.33.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Aug 2021 02:33:34 -0700 (PDT)
+To:     Stefan Metzmacher <metze@samba.org>, Jens Axboe <axboe@kernel.dk>,
+        io-uring@vger.kernel.org, Josh Triplett <josh@joshtriplett.org>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org
+References: <cover.1628871893.git.asml.silence@gmail.com>
+ <17841c48-093e-af1c-c7c9-aa00859eb1b9@samba.org>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Subject: Re: [PATCH v2 0/4] open/accept directly into io_uring fixed file
+ table
+Message-ID: <78e2d63a-5d3a-6334-8177-11646d4ec261@gmail.com>
+Date:   Tue, 17 Aug 2021 10:33:03 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
-X-Received: by 2002:a92:cb4b:: with SMTP id f11mr1569466ilq.189.1629188352582;
- Tue, 17 Aug 2021 01:19:12 -0700 (PDT)
-Date:   Tue, 17 Aug 2021 01:19:12 -0700
-In-Reply-To: <00000000000020339705c9ad30ee@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000007299005c9bcf9e9@google.com>
-Subject: Re: [syzbot] general protection fault in __io_queue_sqe
-From:   syzbot <syzbot+2b85e9379c34945fe38f@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <17841c48-093e-af1c-c7c9-aa00859eb1b9@samba.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-syzbot has bisected this issue to:
+On 8/16/21 4:45 PM, Stefan Metzmacher wrote:
+> Hi Pavel,
+> 
+>> The behaviour is controlled by setting sqe->file_index, where 0 implies
+>> the old behaviour. If non-zero value is specified, then it will behave
+>> as described and place the file into a fixed file slot
+>> sqe->file_index - 1. A file table should be already created, the slot
+>> should be valid and empty, otherwise the operation will fail.
+>>
+>> Note 1: we can't use IOSQE_FIXED_FILE to switch between modes, because
+>> accept takes a file, and it already uses the flag with a different
+>> meaning.
+> 
+> Would it be hard to support IOSQE_FIXED_FILE for the dirfd of openat*, renameat, unlinkat, statx?
+> (And mkdirat, linkat, symlinkat when they arrive)
+> renameat and linkat might be trickier as they take two dirfds, but it
+> would make the feature more complete and useful.
 
-commit 483fc4e30869f8bd1693aca9cffddb21fb303b32
-Author: Pavel Begunkov <asml.silence@gmail.com>
-Date:   Sun Aug 15 09:40:26 2021 +0000
+Good idea. There is nothing blocking on the io_uring side, but
+the fs part may get ugly, e.g. too intrusive. We definitely need
+to take a look
 
-    io_uring: optimise io_prep_linked_timeout()
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16fada7e300000
-start commit:   b9011c7e671d Add linux-next specific files for 20210816
-git tree:       linux-next
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=15fada7e300000
-console output: https://syzkaller.appspot.com/x/log.txt?x=11fada7e300000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a245d1aa4f055cc1
-dashboard link: https://syzkaller.appspot.com/bug?extid=2b85e9379c34945fe38f
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17479216300000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=147f0111300000
-
-Reported-by: syzbot+2b85e9379c34945fe38f@syzkaller.appspotmail.com
-Fixes: 483fc4e30869 ("io_uring: optimise io_prep_linked_timeout()")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+-- 
+Pavel Begunkov

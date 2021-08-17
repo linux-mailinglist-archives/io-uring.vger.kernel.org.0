@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D0353EF2A6
+	by mail.lfdr.de (Postfix) with ESMTP id C5BC63EF2A7
 	for <lists+io-uring@lfdr.de>; Tue, 17 Aug 2021 21:29:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232942AbhHQT3Z (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 17 Aug 2021 15:29:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40726 "EHLO
+        id S233110AbhHQT30 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 17 Aug 2021 15:29:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40734 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231644AbhHQT3Y (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 17 Aug 2021 15:29:24 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FFF7C061764
-        for <io-uring@vger.kernel.org>; Tue, 17 Aug 2021 12:28:51 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id f10so38983wml.2
+        with ESMTP id S231644AbhHQT3Z (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 17 Aug 2021 15:29:25 -0400
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 118FFC061764
+        for <io-uring@vger.kernel.org>; Tue, 17 Aug 2021 12:28:52 -0700 (PDT)
+Received: by mail-wr1-x430.google.com with SMTP id k8so11244269wrn.3
         for <io-uring@vger.kernel.org>; Tue, 17 Aug 2021 12:28:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=CwRhFPMnQLcJ3g6vU7SHlD67VAA3AK2Pip3m/MbVKkY=;
-        b=ViU/c6IZXWPwUAQaLSntj3opCw7pl6Y0by1Iqws/ZlT7Q8sLERHoeMhT/LABVc/0+G
-         WhwvC1gCK7B2WDodwSI0xtrjsODfkuQGUpC91ixZzQgethRLFJrZ4P+USBj7KCKutJPg
-         4maKqNpjNJ/4xcqUFYCGEaaR9x48Ybgh2b2h7IzkVcXrTErmg9/8NTXdY4MTLhDNQ0+V
-         SjpniLA1yvVXkdoq+CxzrORI9njj+eLoTTYst9AEYj3GOTxIjOJXUhlWZ+8/eDunwndc
-         QcHniq7EVeHXMgxJOfbcGSxw4HoihTzD6vRm/R9rLAGMy5wQzYJq2qHBQHbetUwvQHM1
-         jV6g==
+        bh=yHh3U/1FHj7cuQuVSSCqv+8dTelYwLO04Yq72u9vtlQ=;
+        b=YToaJ8wNzgwulbSDE/pC3F8Q6wKc8UwC7TD71KGlc8HKIo9G/gPDeymdQ3HUXJFYCK
+         YVkDNKU1TKQRdXIao9q15F9xgSbNrpxBxP7ZVCYMK4RFsW7iAgoq+xwNrSQaORpraSs3
+         aewitUOPz9ReNVWaMbqdWjmNL57enIFJuhOWYvpEQl+bU/do6sIETTHc6CEsb3iYQZ64
+         V9LI6QVT6xnihID3tqDq4pZvU4wviCKHQpd045r0kXvBlWRghN84NpmB5ydY6ytdEwDM
+         ihrlAazSwgJXw82aZoVNEGweWpLQIrkvwEzQaRFLnH2+2xiy/tx19kusw4azFsqRwNgf
+         EnMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=CwRhFPMnQLcJ3g6vU7SHlD67VAA3AK2Pip3m/MbVKkY=;
-        b=LD6nVpGPWptL8kMzXzN1vxNB0iiqfZdgx3bulHKFyNFe2Q7OyUVbYSvGNwVTaxh4qs
-         aiIRGzk9dyiFAU79oFG1f4l3wJFNcsYU/QvFzO5BPGVJ1lMVVvFflHVHD2RstfT8pXB2
-         wo4DqaFZZTNmg1q0fFCHWAHqm4b1JQtvk1H5ZMOxOWjb8jJzS6PhZmDHIgRRRA6dMFTh
-         G7h+mB1vv+1sDWZakXl4PuBXgAIksXxlDSatxeZLRwqrXewoQEETuPiTAD/aBKIGN8Rt
-         HXq2aSDK7d54GCrBtq/BmigUbWbi6nWgXpWTopOm6DeUeZp3sahsBeK15KIOhfbUSb3T
-         h8Vg==
-X-Gm-Message-State: AOAM532qhKqpXFsJgOtPQCe8rxZyWb+9xN/SLunPKkd65zOli5cajB2g
-        sooF50BEdGjCJHQWD18HaECMoeCXb94=
-X-Google-Smtp-Source: ABdhPJwvfoeHfKFNNo+37ZNksKnCv/op6NBqm4dAaP/UmPwX7fD9xLydSGzJ4nXMqdAWxGJqoiskag==
-X-Received: by 2002:a1c:7402:: with SMTP id p2mr596133wmc.111.1629228529951;
-        Tue, 17 Aug 2021 12:28:49 -0700 (PDT)
+        bh=yHh3U/1FHj7cuQuVSSCqv+8dTelYwLO04Yq72u9vtlQ=;
+        b=LCl9ZUkdfSIac+OWBiQ2/sK07cKOrhGkuiI5YCpClArqsp+1YggIwCtEOkj37lwxYl
+         9YBY7iyA2NEhB+CgYCwC7M3AxhLlFyOPA2VNLxpVIBGCZK7eoWhsuqsjYoyPJxmT5uy0
+         F5/aUgJUFKO0BKCjndN8jU95hfMaOwhH9cIqnt4UlwiXyva2SHpEVB6svJVkoTl90W34
+         r0W4nlSDWd/89SLfsHNbbjrZempv8wqonWsY0RjuYc1o+iwPOCrH8YEtVI4xs6tICTbz
+         lhfNSkVo4pZbhM0OP1946E89UtZz2s5wQyxkZ9/HCSeYQrX/kgmPk70UrwDEjYa/5RX/
+         VT0g==
+X-Gm-Message-State: AOAM533dNaY3QAMAvPfzW8dPmVGCuO8GloXkQxhdYfEStytPNgsBGdmc
+        iq6y14SVLa2Hfeq+K1EoW8w=
+X-Google-Smtp-Source: ABdhPJz3SME1E4aWd5DPOKXjR+maMpENdVJpwfjoFtTDFX+KrZpxY2ro1eGAQgjGI2OuyFSfcntyqA==
+X-Received: by 2002:adf:a2c4:: with SMTP id t4mr6137411wra.258.1629228530774;
+        Tue, 17 Aug 2021 12:28:50 -0700 (PDT)
 Received: from localhost.localdomain ([85.255.233.12])
-        by smtp.gmail.com with ESMTPSA id e6sm3120388wme.6.2021.08.17.12.28.49
+        by smtp.gmail.com with ESMTPSA id e6sm3120388wme.6.2021.08.17.12.28.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Aug 2021 12:28:49 -0700 (PDT)
+        Tue, 17 Aug 2021 12:28:50 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 2/4] io_uring: reuse io_req_complete_post()
-Date:   Tue, 17 Aug 2021 20:28:09 +0100
-Message-Id: <2c83463458a613f9d870e5147eb134da2aa70779.1629228203.git.asml.silence@gmail.com>
+Subject: [PATCH 3/4] io_uring: improve tctx_task_work() ctx referencing
+Date:   Tue, 17 Aug 2021 20:28:10 +0100
+Message-Id: <8494d5bac9e30dba7928d33b18f4d0ddeb9899ce.1629228203.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <cover.1629228203.git.asml.silence@gmail.com>
 References: <cover.1629228203.git.asml.silence@gmail.com>
@@ -61,134 +61,44 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-We have io_req_complete_post() to post a CQE and put the request. It
-takes care of all synchronisation and is more concise and efficent, so
-replace all hancoded occurrences of
-"lock; post CQE; unlock; + put_req()" with io_req_complete_post().
+io_uring processed by tctx_task_work() can't get freed until the
+function returns. The reason is that io_ring_exit_work() executes a
+task_work after all references are put, where the task works
+execution is naturally serialised. Remove extra ctx pinning.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 48 +++++++++++-------------------------------------
- 1 file changed, 11 insertions(+), 37 deletions(-)
+ fs/io_uring.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 29e3ec6e9dbf..719d62b6e3d5 100644
+index 719d62b6e3d5..202517860c83 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -5521,16 +5521,8 @@ static int io_poll_update(struct io_kiocb *req, unsigned int issue_flags)
- 
- static void io_req_task_timeout(struct io_kiocb *req)
- {
--	struct io_ring_ctx *ctx = req->ctx;
--
--	spin_lock(&ctx->completion_lock);
--	io_cqring_fill_event(ctx, req->user_data, -ETIME, 0);
--	io_commit_cqring(ctx);
--	spin_unlock(&ctx->completion_lock);
--
--	io_cqring_ev_posted(ctx);
- 	req_set_fail(req);
--	io_put_req(req);
-+	io_req_complete_post(req, -ETIME, 0);
- }
- 
- static enum hrtimer_restart io_timeout_fn(struct hrtimer *timer)
-@@ -5658,14 +5650,9 @@ static int io_timeout_remove(struct io_kiocb *req, unsigned int issue_flags)
- 					io_translate_timeout_mode(tr->flags));
- 	spin_unlock_irq(&ctx->timeout_lock);
- 
--	spin_lock(&ctx->completion_lock);
--	io_cqring_fill_event(ctx, req->user_data, ret, 0);
--	io_commit_cqring(ctx);
--	spin_unlock(&ctx->completion_lock);
--	io_cqring_ev_posted(ctx);
- 	if (ret < 0)
- 		req_set_fail(req);
--	io_put_req(req);
-+	io_req_complete_post(req, ret, 0);
- 	return 0;
- }
- 
-@@ -5805,7 +5792,6 @@ static int io_async_cancel_one(struct io_uring_task *tctx, u64 user_data,
- }
- 
- static int io_try_cancel_userdata(struct io_kiocb *req, u64 sqe_addr)
--	__acquires(&req->ctx->completion_lock)
- {
- 	struct io_ring_ctx *ctx = req->ctx;
- 	int ret;
-@@ -5813,15 +5799,19 @@ static int io_try_cancel_userdata(struct io_kiocb *req, u64 sqe_addr)
- 	WARN_ON_ONCE(req->task != current);
- 
- 	ret = io_async_cancel_one(req->task->io_uring, sqe_addr, ctx);
--	spin_lock(&ctx->completion_lock);
- 	if (ret != -ENOENT)
- 		return ret;
-+
-+	spin_lock(&ctx->completion_lock);
- 	spin_lock_irq(&ctx->timeout_lock);
- 	ret = io_timeout_cancel(ctx, sqe_addr);
- 	spin_unlock_irq(&ctx->timeout_lock);
- 	if (ret != -ENOENT)
--		return ret;
--	return io_poll_cancel(ctx, sqe_addr, false);
-+		goto out;
-+	ret = io_poll_cancel(ctx, sqe_addr, false);
-+out:
-+	spin_unlock(&ctx->completion_lock);
-+	return ret;
- }
- 
- static int io_async_cancel_prep(struct io_kiocb *req,
-@@ -5848,7 +5838,6 @@ static int io_async_cancel(struct io_kiocb *req, unsigned int issue_flags)
- 	ret = io_try_cancel_userdata(req, sqe_addr);
- 	if (ret != -ENOENT)
- 		goto done;
--	spin_unlock(&ctx->completion_lock);
- 
- 	/* slow path, try all io-wq's */
- 	io_ring_submit_lock(ctx, !(issue_flags & IO_URING_F_NONBLOCK));
-@@ -5861,17 +5850,10 @@ static int io_async_cancel(struct io_kiocb *req, unsigned int issue_flags)
- 			break;
+@@ -2004,9 +2004,14 @@ static void ctx_flush_and_put(struct io_ring_ctx *ctx)
+ 		io_submit_flush_completions(ctx);
+ 		mutex_unlock(&ctx->uring_lock);
  	}
- 	io_ring_submit_unlock(ctx, !(issue_flags & IO_URING_F_NONBLOCK));
--
--	spin_lock(&ctx->completion_lock);
- done:
--	io_cqring_fill_event(ctx, req->user_data, ret, 0);
--	io_commit_cqring(ctx);
--	spin_unlock(&ctx->completion_lock);
--	io_cqring_ev_posted(ctx);
--
- 	if (ret < 0)
- 		req_set_fail(req);
--	io_put_req(req);
-+	io_req_complete_post(req, ret, 0);
- 	return 0;
+-	percpu_ref_put(&ctx->refs);
  }
  
-@@ -6411,20 +6393,12 @@ static inline struct file *io_file_get(struct io_ring_ctx *ctx,
- static void io_req_task_link_timeout(struct io_kiocb *req)
++/*
++ * All the ctxs we operate on here will stay alive until the function returns.
++ * That's because initially they're refcounted by the requests, and after
++ * io_ring_exit_work() synchronises with the current task by injecting and
++ * waiting for a task_work, which can't be executed until it returns.
++ */
+ static void tctx_task_work(struct callback_head *cb)
  {
- 	struct io_kiocb *prev = req->timeout.prev;
--	struct io_ring_ctx *ctx = req->ctx;
- 	int ret;
- 
- 	if (prev) {
- 		ret = io_try_cancel_userdata(req, prev->user_data);
--		if (!ret)
--			ret = -ETIME;
--		io_cqring_fill_event(ctx, req->user_data, ret, 0);
--		io_commit_cqring(ctx);
--		spin_unlock(&ctx->completion_lock);
--		io_cqring_ev_posted(ctx);
--
-+		io_req_complete_post(req, ret ?: -ETIME, 0);
- 		io_put_req(prev);
--		io_put_req(req);
- 	} else {
- 		io_req_complete_post(req, -ETIME, 0);
- 	}
+ 	struct io_ring_ctx *ctx = NULL;
+@@ -2033,7 +2038,6 @@ static void tctx_task_work(struct callback_head *cb)
+ 			if (req->ctx != ctx) {
+ 				ctx_flush_and_put(ctx);
+ 				ctx = req->ctx;
+-				percpu_ref_get(&ctx->refs);
+ 			}
+ 			req->io_task_work.func(req);
+ 			node = next;
 -- 
 2.32.0
 

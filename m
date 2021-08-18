@@ -2,62 +2,65 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 77B473F0491
-	for <lists+io-uring@lfdr.de>; Wed, 18 Aug 2021 15:26:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77FED3F04CE
+	for <lists+io-uring@lfdr.de>; Wed, 18 Aug 2021 15:29:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236365AbhHRN0d (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 18 Aug 2021 09:26:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35234 "EHLO
+        id S237870AbhHRN31 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 18 Aug 2021 09:29:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233722AbhHRN0d (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 18 Aug 2021 09:26:33 -0400
-Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96F5CC061764
-        for <io-uring@vger.kernel.org>; Wed, 18 Aug 2021 06:25:58 -0700 (PDT)
-Received: by mail-pg1-x52b.google.com with SMTP id x4so2224405pgh.1
-        for <io-uring@vger.kernel.org>; Wed, 18 Aug 2021 06:25:58 -0700 (PDT)
+        with ESMTP id S239148AbhHRN3V (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 18 Aug 2021 09:29:21 -0400
+Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C20A8C061A06
+        for <io-uring@vger.kernel.org>; Wed, 18 Aug 2021 06:27:41 -0700 (PDT)
+Received: by mail-pf1-x429.google.com with SMTP id g14so2130122pfm.1
+        for <io-uring@vger.kernel.org>; Wed, 18 Aug 2021 06:27:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=qnkVcwdzdoQ7ElvLpgt+X+JMwwMev/3CrKKq7Vk2u2Y=;
-        b=erAmwvoIuwo7aTCcYNrGn1hatfhXA8CM/WcSPbwsyJcbbj+z/kZ0UPJbo+WYNGJ6KB
-         sTW6oqxscjs6NZccvOHCYrWAxyiI4yWk3xPfvHACMhrquBqvN8DPaCfYc+igZwxMX8ru
-         mwAb/GackNykr6oo3mkhTDpT6isPSecuCBhs2PEbAJIwJOFigWqg6j9wvlwce5nmbiVt
-         nyxEvXU2MbY07znCZqg/AGxBWggT/axW07Q2duAE8EHF495J6qqsgLLAg0dk4f2926r7
-         2DdGX2n0nYF6D5Lssxbj9DLByRTYmH67zNVqRsv4Vc4cwmixkCFjdvwpEli5E5YxrUj5
-         VMUg==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=WPh0AUDeFGPoIS6JNbGxTuKAKhuF7QPahclxV98pNsU=;
+        b=ZH5nQ67OU+nVj0iFcEM+GHfntaf0PqWTGaBAwvONWjDtM2XBbgfAAoCYtLDyFHO91p
+         F9PBu3Hxz1Ym8V/mUqjkb00GlURI9uojs/Kcz0HTq5BlzLhTxKfMDPyyP7ZM/DmK0jie
+         MRaw9cBAWP8lNzk9++8+0pWtrBgohcXjOE9uiG9qpgDZehUpDtEm/NI6GAx8QyLQtB+p
+         bPqZubbtBixBSHMGeGbLTFJDHwFLZnJY4haUeF3UgTz2fv0K8OIruH5IyIZZopv5yEN/
+         m9+NUZc1uIQiSbHTNpMbuC/lDwONnCiYwNKmt5h4yg2+ixPoVdGMUO+82um2lYDJWlUU
+         nDYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=qnkVcwdzdoQ7ElvLpgt+X+JMwwMev/3CrKKq7Vk2u2Y=;
-        b=Ulwopw3ifoCMUlNXyzCON2O/2EBMLqrp6ocs8DLBf+MSAxxmwcWyaSy6MsKvY1lrDN
-         pmaQw9wn9ncuJ2FkpNKtHQ5w0//+/A/W1kvSoO3DkjZkuD7uo7cYIC1hH2taJXA5hOY5
-         7fTReHklPHVa8iSQCO5kx36rtHUIqQsFWTlpJnqFYjNrqPLjS0FzLYnSeiH0YrZrnj6F
-         j8Wa2BKyrS3I6zPmteZrR2iDn6hX8yxuBfYky4pM808zgxRzi6HUgqd5ZGjg3pzIDK9L
-         GuZe+askjOCixOh5s9GsKbTcAG3b9qP23fVu49/3I6t813ztDMh/UUnRDavi6IFGD99D
-         elbQ==
-X-Gm-Message-State: AOAM5315Yr2L1JSs7YR/FKV2FE0/XF9jNmDvSOcMvXm1QkPb1GrKb3hy
-        d5gq06z3sMuw/lJFICvV9V9p5aStTof5ZKGL
-X-Google-Smtp-Source: ABdhPJxsVvH9Aa0JomGjF2x7bbIhzOC8c57lsirMlmKzmF17QKQONXmRO0XfPsAWBRbb/4CpdkzOZQ==
-X-Received: by 2002:aa7:88d6:0:b0:3e1:4732:e8e3 with SMTP id k22-20020aa788d6000000b003e14732e8e3mr9365944pff.14.1629293157909;
-        Wed, 18 Aug 2021 06:25:57 -0700 (PDT)
+        bh=WPh0AUDeFGPoIS6JNbGxTuKAKhuF7QPahclxV98pNsU=;
+        b=f/iztu9Tub9hlaOVA+w0Oq4+vlwlD60iTQAi9eDzHLg61V7eZoalP9hanFTmjec2r9
+         Mysmr7eMsUXwrTI00lLFOud/1btz6AD5V0Fm2fA5xN/KXlx/EXwSPvAl+RskOIiEmjqQ
+         bUwBIEDzuuW6B242+xrNcl9jqkBzn+JJSaJAcyxrTNmaFrKBt2JnxiDmr4ZLYYOM7fpE
+         FF9c09IHn0rzaQJkewqnfzHoR4AQ4aaWuxjFp3F0pcI+3zrGCBq00bvkOuSySpZZe8OF
+         31/f5qouDDuHw1zArjwxp4k5POvNQNyER7s6uwiMtZNdkw00m3R0tsqdW1hpI9ntULgm
+         iXYw==
+X-Gm-Message-State: AOAM532S+RgiYHXUgdn9pIUq/1/jDuJAF3zwxnm2bmJi6CQeOAO7CCnX
+        g4nVMnzCTSfctpGEu3ExjgvZ3g==
+X-Google-Smtp-Source: ABdhPJzNGBxq39ewC1qXMPPT8LFdL03pyHtF/lhQNVTnE3wGuIBG2VsZuuuACys+SSPA0jWA54YChA==
+X-Received: by 2002:a63:8ac2:: with SMTP id y185mr8870529pgd.179.1629293261235;
+        Wed, 18 Aug 2021 06:27:41 -0700 (PDT)
 Received: from [192.168.1.116] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id w130sm6414586pfd.118.2021.08.18.06.25.57
+        by smtp.gmail.com with ESMTPSA id j17sm6720005pfn.148.2021.08.18.06.27.40
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Aug 2021 06:25:57 -0700 (PDT)
-Subject: Re: [PATCH for-next] io_uring: fix io_timeout_remove locking
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <d6f03d653a4d7bf693ef6f39b6a426b6d97fd96f.1629280204.git.asml.silence@gmail.com>
+        Wed, 18 Aug 2021 06:27:40 -0700 (PDT)
+Subject: Re: [PATCH for-5.15] io-wq: move nr_running and worker_refs out of
+ wqe->lock protection
+To:     Hao Xu <haoxu@linux.alibaba.com>
+Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>
+References: <20210810125554.99229-1-haoxu@linux.alibaba.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <d53e65aa-17a6-745c-e885-a6ba381f4efe@kernel.dk>
-Date:   Wed, 18 Aug 2021 07:25:56 -0600
+Message-ID: <2cbb13f3-4ec2-8bd4-9cfd-0fee25954a3c@kernel.dk>
+Date:   Wed, 18 Aug 2021 07:27:39 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <d6f03d653a4d7bf693ef6f39b6a426b6d97fd96f.1629280204.git.asml.silence@gmail.com>
+In-Reply-To: <20210810125554.99229-1-haoxu@linux.alibaba.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -65,9 +68,9 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/18/21 3:50 AM, Pavel Begunkov wrote:
-> io_timeout_cancel() posts CQEs so needs ->completion_lock to be held,
-> so grab it in io_timeout_remove().
+On 8/10/21 6:55 AM, Hao Xu wrote:
+> We don't need to protect nr_running and worker_refs by wqe->lock, so
+> narrow the range of raw_spin_lock_irq - raw_spin_unlock_irq
 
 Applied, thanks.
 

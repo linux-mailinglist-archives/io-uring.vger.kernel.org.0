@@ -2,62 +2,62 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CFA233F1D4F
-	for <lists+io-uring@lfdr.de>; Thu, 19 Aug 2021 17:49:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B14113F1D55
+	for <lists+io-uring@lfdr.de>; Thu, 19 Aug 2021 17:53:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238776AbhHSPu3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 19 Aug 2021 11:50:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34598 "EHLO
+        id S240168AbhHSPyX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 19 Aug 2021 11:54:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35484 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238755AbhHSPu2 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 19 Aug 2021 11:50:28 -0400
-Received: from mail-oo1-xc2e.google.com (mail-oo1-xc2e.google.com [IPv6:2607:f8b0:4864:20::c2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5313FC061575
-        for <io-uring@vger.kernel.org>; Thu, 19 Aug 2021 08:49:52 -0700 (PDT)
-Received: by mail-oo1-xc2e.google.com with SMTP id w2-20020a4a9e420000b02902859adadf0fso1968273ook.1
-        for <io-uring@vger.kernel.org>; Thu, 19 Aug 2021 08:49:52 -0700 (PDT)
+        with ESMTP id S232895AbhHSPyX (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 19 Aug 2021 11:54:23 -0400
+Received: from mail-oo1-xc29.google.com (mail-oo1-xc29.google.com [IPv6:2607:f8b0:4864:20::c29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24806C061575
+        for <io-uring@vger.kernel.org>; Thu, 19 Aug 2021 08:53:47 -0700 (PDT)
+Received: by mail-oo1-xc29.google.com with SMTP id s21-20020a4ae5550000b02902667598672bso1955105oot.12
+        for <io-uring@vger.kernel.org>; Thu, 19 Aug 2021 08:53:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:references:from:message-id:date:user-agent:mime-version
          :in-reply-to:content-language:content-transfer-encoding;
-        bh=GM3qKZo/wzcLg70zQqJjHAuK0IA74OkAb6xTcq3BwDA=;
-        b=CzBcg4+pth/Iuc82bJrvIx2Df7JxAKWLGR/4eJ5TFyesib1e5RuHRnGIOmPFfD8434
-         ImVGJN7gsbhzZGgGSyJh5poYlKpTN/980BQTbNF6jif+7TZG9/48dMAfSt0qm9y+qCMW
-         IlgW2OPycahppZXYkWKkV/nBKmLKZlEyJEDXmW4LS9Yi5V2qdKR6g+R0JrlEMAbOaDHA
-         PPUGrgaBPImJeNy67vamT4o8oQHUFw3VDBA/O06n30UW5DTlH96pEE2lOKLbf3FD00Al
-         1+I3z4D89DcC+hIRudZ/VJS6HNncUfnWmp0N1KnmKT1cU1NQocjYtBC0jbMVFY2+OAZZ
-         DHpw==
+        bh=N/R+1lKBGedFLZ3aYV0746BHm05ZFMdXPvfJpzQxAJM=;
+        b=dYGfffv5TBGAkd9ZypVE5T/L3xwoZ2J1uA+0WEHKJy4ejOLSEk9eXyxESHvWL7eGpQ
+         C0L0Db0XxFAiIDESvHHbG53Vsxl6koQ47t80Faan8GTx6FkYYcK6NNpmLC7zkRrhQuUS
+         AMre7yhNpV7LqKKK8iYSCFYfBxeq3JnWMIFJgmOZz8EXT6pZbsnpDnMwK/2j01GndpyH
+         9cN2S7AokoD3BZ8V+8uvWsCSs0M7uDJUDlsdAT0tAS84DS2WjmlMgLmEZASGcM02dKjP
+         hzA8XCm1mk0LfHb6z27Uwhhot7DV9WhU16sT46TBIVmz/Q2SFCUNNx6wqUAP/oY0FHPB
+         zr5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=GM3qKZo/wzcLg70zQqJjHAuK0IA74OkAb6xTcq3BwDA=;
-        b=naCwSh5P3DgEkE3khIwklFGFeN54wl/urxfgElT2ImvtPiZMMTu/D47b5hmiBUI2IO
-         WxSCZ7VyUN+LS57I1OrSvagQuORaIwEjxC4VfA9UHf9mP713FSb3MVxewfF4Sk+xpZDB
-         Ci7pxTcGYYRSpHGdOlWp7EbuIohTxDsOM6x2MkBkAMcFma8hGqjSsGsXpZ5/CB+Y3V7H
-         mQ7oII7r4sAFDAdK2O5h5UiGh+0nJ7gZh32XVEAxHSoPMtJUReeL82ZnOsPIEVX7Kqh6
-         hIZULgUnK0fzc3X2jJP8q8i+t843DnWqJqPZ+WG0sX0Z1aiJWGHzHUSmEqH2Tso97fDZ
-         /NDA==
-X-Gm-Message-State: AOAM5324HBG5u2LeYnklsIXt4c4Ehn49rVYp08cyvGmPNKGw//pht8O5
-        H3mm2HbuPL1l5YTcwSyc3aYTbr7rui1Zz1l+
-X-Google-Smtp-Source: ABdhPJyH0hrKAJ3DM1ppaOkpeCgT9xwRPqU+GSD4mVE0THD8VazGnty/BU3zEgXs4RoltfhpTr7pEA==
-X-Received: by 2002:a4a:a2c5:: with SMTP id r5mr12053251ool.66.1629388191594;
-        Thu, 19 Aug 2021 08:49:51 -0700 (PDT)
+        bh=N/R+1lKBGedFLZ3aYV0746BHm05ZFMdXPvfJpzQxAJM=;
+        b=VFtE/yPJCcufgFvyQdeXiQ5mV+3xlCS9GuX+ZcvmcjOfntWifNeFKXk1PGcxPUK0M+
+         VV51y+IXP5GZT1ordMXzVj+arGdmum8kseBFgA3z+h/oud4EXrtKJgtr+7mFRj3uf7Yf
+         BhJTHrxiMBEybfEnynzpfv0Qf5sKWE5xdIAQ+SsmCI+e8kSNZt0kqPWy2H3U9JocSxq7
+         LdKXi4TskyYW/cQ0BhmYgNZNKJQ7zhGs3HQ1XXDlzC7DLvk8R/xzlDpK3wC9uQoCQGgG
+         iY5vBKvyP2Bgydc5DrNHk4/paMpS2x1p2Ty3vUI2U1YRjE0QO3J4RS17DJzraiZb23GX
+         XpzQ==
+X-Gm-Message-State: AOAM531Bate6db/BlKrpXnXHDQf2cngyLPPTPH4XKmd/zoNHe5SDgG5z
+        IlKAQ0HEMcsTJQnLEV5IfkrtTVWESqHsbBhL
+X-Google-Smtp-Source: ABdhPJx00rvmrxC3iaeTBtjmBIFzxSoD6bXrU6kdqvos+jsMBuLlEzW2gTKyR48N1Hbf6UdwoNJcSA==
+X-Received: by 2002:a4a:45cc:: with SMTP id y195mr12071178ooa.52.1629388426281;
+        Thu, 19 Aug 2021 08:53:46 -0700 (PDT)
 Received: from [192.168.1.30] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id y5sm760559otu.27.2021.08.19.08.49.51
+        by smtp.gmail.com with ESMTPSA id 4sm719398oil.38.2021.08.19.08.53.45
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Aug 2021 08:49:51 -0700 (PDT)
-Subject: Re: [PATCH for-next 0/2] tw handlers cleanups
+        Thu, 19 Aug 2021 08:53:45 -0700 (PDT)
+Subject: Re: [PATCH 0/3] tw mutex & IRQ rw completion batching
 To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <cover.1629374041.git.asml.silence@gmail.com>
+References: <cover.1629286357.git.asml.silence@gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <cecd264c-0ab7-c41d-6951-f3bce7951685@kernel.dk>
-Date:   Thu, 19 Aug 2021 09:49:50 -0600
+Message-ID: <018a6c73-7327-bbba-86f2-057711755487@kernel.dk>
+Date:   Thu, 19 Aug 2021 09:53:45 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <cover.1629374041.git.asml.silence@gmail.com>
+In-Reply-To: <cover.1629286357.git.asml.silence@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -65,17 +65,29 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/19/21 5:56 AM, Pavel Begunkov wrote:
-> Two simple patches cleaning task_work handlers.
+On 8/18/21 5:42 AM, Pavel Begunkov wrote:
+> In essence, it's about two features. The first one is implemented by
+> 1-2 and saves ->uring_lock lock/unlock in a single call of
+> tctx_task_work(). Should be useful for links, apolls and BPF requests
+> at some moment.
 > 
-> Pavel Begunkov (2):
->   io_uring: remove mutex in io_req_task_cancel()
->   io_uring: dedup tw-based request failing
+> The second feature (3/3) is batching freeing and completing of
+> IRQ-based read/write requests.
 > 
->  fs/io_uring.c | 14 +-------------
->  1 file changed, 1 insertion(+), 13 deletions(-)
+> Haven't got numbers yet, but just throwing it for public discussion.
 
-Applied, thanks.
+I ran some numbers and it looks good to me, it's a nice boost for the
+IRQ completions. It's funny how the initial move to task_work for IRQ
+completions took a small hit, but there's so many optimizations that it
+unlocks that it's already better than before.
+
+I'd like to apply 1/3 for now, but it depends on both master and
+for-5.15/io_uring. Hence I think it'd be better to defer that one until
+after the initial batch has gone in.
+
+For the batched locking, the principle is sound and measures out to be a
+nice win. But I have a hard time getting over the passed lock state, I
+do wonder if there's a cleaner way to accomplish this...
 
 -- 
 Jens Axboe

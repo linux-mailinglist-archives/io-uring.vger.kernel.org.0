@@ -2,65 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 091953F1C68
-	for <lists+io-uring@lfdr.de>; Thu, 19 Aug 2021 17:15:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 494EF3F1D42
+	for <lists+io-uring@lfdr.de>; Thu, 19 Aug 2021 17:48:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238643AbhHSPPp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 19 Aug 2021 11:15:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54230 "EHLO
+        id S238776AbhHSPtY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 19 Aug 2021 11:49:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238587AbhHSPPo (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 19 Aug 2021 11:15:44 -0400
-Received: from mail-oi1-x22d.google.com (mail-oi1-x22d.google.com [IPv6:2607:f8b0:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4954C061756
-        for <io-uring@vger.kernel.org>; Thu, 19 Aug 2021 08:15:08 -0700 (PDT)
-Received: by mail-oi1-x22d.google.com with SMTP id u10so8975615oiw.4
-        for <io-uring@vger.kernel.org>; Thu, 19 Aug 2021 08:15:08 -0700 (PDT)
+        with ESMTP id S240603AbhHSPtK (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 19 Aug 2021 11:49:10 -0400
+Received: from mail-oi1-x233.google.com (mail-oi1-x233.google.com [IPv6:2607:f8b0:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FA6FC06175F
+        for <io-uring@vger.kernel.org>; Thu, 19 Aug 2021 08:48:34 -0700 (PDT)
+Received: by mail-oi1-x233.google.com with SMTP id w6so9061792oiv.11
+        for <io-uring@vger.kernel.org>; Thu, 19 Aug 2021 08:48:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=tdmg6TTFQ/Ot8jb2adMxctxRWhiV2wL5JMi4BPla+4U=;
-        b=1hSpz+5yXZtubJfQF4N8v8tl9W6NAL9aZbfe3iuPM2KeMIj7l6Lrv3Tabidov2rVhE
-         TXrEngwakqnbSTvW45CugI7t97zP9MfIPVgr5cAHN9SsNdMKYShcLoztva5RjvvFoUj4
-         wtCNA+vqDbN/8FzZkr9J7+Os1SIdNCGISHeGQd4tn+dX/qGmF8PiSCu3fkGNZfY0M+/O
-         kVwSYwsFIhRyYxBeeQnl6nJ3l7fFFwk9KqRwb4dRpAz6RB09RFZsjBzoHZJ+hXZPbqDx
-         RjH6DtKd4vlowRWSW12iS8G3y80SA/kDpXlcSnYew/FaNfFRXwETpefQWZwPf4UcFTLF
-         vP3A==
+        h=to:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=1IHhVtJKvwGU6Cdpyd2gAPERgP8wHposKfvliwJcMUs=;
+        b=VlvPAcuO1J+eKDfzykyEAIgitAovEPzJfn0M06DJYo96hV/trskC1LNN4OaoccGG/v
+         N5Gp0U/UyRIeEkAZ5OBgxvcfd0A2PpALiRwkjsAQzOAzcykJ/T6cMGq1Wa9Admupja5o
+         AY68iioVLofUPAksSzXbeKG4Ql1xyg8ab/GaXl2kUDuYjS/5LK1WNhdKRjMeq29pVXiP
+         V0aAfZ6AK4vfulEFh0vlPNIcKuJxf+WFzrWzEwXFZR4EZivyffBt5Z+F3BdRSdVTSats
+         Onh3cddBQy58Cfo3aodHPPBFfhiUZzOzs6WtZGuolLI6KkYMp+COoMYZ7RvAMOJuGQ1W
+         GhFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=tdmg6TTFQ/Ot8jb2adMxctxRWhiV2wL5JMi4BPla+4U=;
-        b=ictnMENLOwXBhR36b6ZmS1HoT7K3217zmg+14+cXbeI4p297/PzfeJqAW8WazcAlDH
-         VI3XUQ3rv/nFoBxI7FALYzRiO78B4n4icPhrTxzsjHCeK+pyauuMCeGgRtpmnv1eGZd2
-         b5gPh4Xb3HlM5ZkgoTPcX0FWVdPinP8FZ4nviAL4EvEpaaptFNN8hUHQq4c/mF7j3jQK
-         PQ/vIGKLeOdOJm8vvJV8zDzzfQYXFQMZUHYW1ljeGdT54512dtZSq3zFcw+tTrUA7wx8
-         q0QlIYQ3Whqh6TaPAr9KXcEr/HugGGuMIAiO1+UC2oLiJw2p8lFyI7HfV3qSDoj74MOt
-         NWHA==
-X-Gm-Message-State: AOAM531VI4NP82Cw7BiM8/nDeCd5GQbko+aebSSbRimPhPwcEYssunjh
-        QgOZXJdHb1VsRFfw/B+KSOBM3Lghw9TsvUWt
-X-Google-Smtp-Source: ABdhPJyaieB8cT5A/g8uvMeiUBogH2EI0ASLSoldGHgceQUcAcMvDfxgQy6B6md0yraoPqLXxmUq2w==
-X-Received: by 2002:a05:6808:cd:: with SMTP id t13mr2919899oic.111.1629386107801;
-        Thu, 19 Aug 2021 08:15:07 -0700 (PDT)
+        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=1IHhVtJKvwGU6Cdpyd2gAPERgP8wHposKfvliwJcMUs=;
+        b=BueRpPaFCBpLiYC/hYw6IuyWZ0OM4gHVCHBKfh0Mih/9mhF9f2ySJxzLbZQ97lBAZ5
+         JvHYni/2cqnx6ffMdIQQkNa2Rn4gzgeO4Yyvyo6gVu/Ssp4jwy0uS5fsNL8WGSiPmH7n
+         nwpJyhPFVooyScHnDO7bIZmhL+UH70lmNbI/LkS9hWhvNaYXgmUL49Pg9QY3vy9sPQYC
+         iwHcwZ6I/o19i57uzupkrysUly+rNiYi8VfIJ2QcUq4MEkpyH20sEDXj7J27wDQSpV7k
+         qLUmGe8o3XXW+Qy22NTtCIluDKhexSUROOW/ChLKqOIoNo6mWYzlyvjQbDnAq5+CYSA0
+         1MjA==
+X-Gm-Message-State: AOAM533uJV25EvQUj5UrMDX2ST0etCy6O2BVjXZ4fm3l8Z3KYg9Yoe/F
+        iIB+94kl6BBSfrd4mpFMKEqYYPPSvV2IhAvX
+X-Google-Smtp-Source: ABdhPJwc/T8FcjUxU9MRG+4knVohcYDqUt6fLpMtCwTE8a5YmNGKzWoM968+Hho2fWbrJzWkWutw3Q==
+X-Received: by 2002:aca:bd8b:: with SMTP id n133mr3152339oif.75.1629388113383;
+        Thu, 19 Aug 2021 08:48:33 -0700 (PDT)
 Received: from [192.168.1.30] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id l13sm299001otp.29.2021.08.19.08.15.07
+        by smtp.gmail.com with ESMTPSA id i19sm689098ooe.44.2021.08.19.08.48.32
+        for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Aug 2021 08:15:07 -0700 (PDT)
-Subject: Re: [PATCH RFC] Enable bio cache for IRQ driven IO from io_uring
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>
-References: <3bff2a83-cab2-27b6-6e67-bdae04440458@kernel.dk>
- <20210819090150.GA11498@lst.de>
+        Thu, 19 Aug 2021 08:48:33 -0700 (PDT)
+To:     io-uring <io-uring@vger.kernel.org>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <6ed3237b-573d-029a-4cc2-0b6cbc22e32a@kernel.dk>
-Date:   Thu, 19 Aug 2021 09:15:06 -0600
+Subject: [PATCH] io_uring: remove PF_EXITING checking in io_poll_rewait()
+Message-ID: <0d53b4d3-b388-bd82-05a6-d4815aafff49@kernel.dk>
+Date:   Thu, 19 Aug 2021 09:48:32 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20210819090150.GA11498@lst.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -68,38 +63,46 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/19/21 3:01 AM, Christoph Hellwig wrote:
-> On Wed, Aug 18, 2021 at 10:54:45AM -0600, Jens Axboe wrote:
->> We previously enabled this for O_DIRECT polled IO, however io_uring
->> completes all IO from task context these days, so it can be enabled for
->> that path too. This requires moving the bio_put() from IRQ context, and
->> this can be accomplished by passing the ownership back to the issuer.
->>
->> Use kiocb->private for that, which should be (as far as I can tell) free
->> once we get to the completion side of things. Add a IOCB_PUT_CACHE flag
->> to tell the issuer that we passed back the ownership, then the issuer
->> can put the bio from a safe context.
->>
->> Like the polled IO ditto, this is good for a 10% performance increase.
->>
->> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->>
->> ---
->>
->> Just hacked this up and tested it, Works For Me. Would welcome input on
->> alternative methods here, if anyone has good suggestions.
-> 
-> 10% performance improvement looks really nice, but I don't think we can
-> just hardcode assumptions about bios in iomap->private.  The easiest
-> would be to call back into the file systems for the freeing, but that
-> would add an indirect call.
+We have two checks of task->flags & PF_EXITING left:
 
-That's why it's an RFC - while it's not the prettiest, the ->ki_complete
-assigner is also the one that sets IOCB_ALLOC_CACHE, and hence it's not
-that hard to verify that it does IOCB_PUT_CACHE correctly too. That
-said, I would prefer a better way of passing the bio back. There are
-other optimizations that could be done if we do that. But I have no good
-ideas on how to do the passing differently right now.
+1) In io_req_task_submit(), which is called in task_work and hence always
+   in the context of the original task. That means that
+   req->task == current, and hence checking ->flags is totally fine.
+
+2) In io_poll_rewait(), where we need to stop re-arming poll to prevent
+   it interfering with cancelation. Here, req->task is not necessarily
+   current, and hence the check is racy. Use the ctx refs state instead
+   to check if we need to cancel this request or not.
+
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+
+---
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 30edc329d803..ffce959c2370 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -2114,6 +2114,7 @@ static void io_req_task_submit(struct io_kiocb *req)
+ 
+ 	/* ctx stays valid until unlock, even if we drop all ours ctx->refs */
+ 	mutex_lock(&ctx->uring_lock);
++	/* req->task == current here, checking PF_EXITING is safe */
+ 	if (likely(!(req->task->flags & PF_EXITING)))
+ 		__io_queue_sqe(req);
+ 	else
+@@ -4895,7 +4896,11 @@ static bool io_poll_rewait(struct io_kiocb *req, struct io_poll_iocb *poll)
+ {
+ 	struct io_ring_ctx *ctx = req->ctx;
+ 
+-	if (unlikely(req->task->flags & PF_EXITING))
++	/*
++	 * Pairs with spin_unlock() in percpu_ref_kill()
++	 */
++	smp_rmb();
++	if (unlikely(percpu_ref_is_dying(&ctx->refs)))
+ 		WRITE_ONCE(poll->canceled, true);
+ 
+ 	if (!req->result && !READ_ONCE(poll->canceled)) {
 
 -- 
 Jens Axboe

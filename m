@@ -2,69 +2,79 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A6F333F2935
-	for <lists+io-uring@lfdr.de>; Fri, 20 Aug 2021 11:32:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5832B3F294C
+	for <lists+io-uring@lfdr.de>; Fri, 20 Aug 2021 11:37:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233976AbhHTJdI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 20 Aug 2021 05:33:08 -0400
-Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:50143 "EHLO
-        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233148AbhHTJdH (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 20 Aug 2021 05:33:07 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R311e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0UkJoTSQ_1629451948;
-Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UkJoTSQ_1629451948)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 20 Aug 2021 17:32:29 +0800
-Subject: Re: [PATCH 1/3] io_uring: flush completions for fallbacks
-From:   Hao Xu <haoxu@linux.alibaba.com>
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-References: <cover.1629286357.git.asml.silence@gmail.com>
- <8b941516921f72e1a64d58932d671736892d7fff.1629286357.git.asml.silence@gmail.com>
- <a02fcefe-3a55-51fb-9184-6a49596226cf@linux.alibaba.com>
-Message-ID: <02c3a528-c628-631b-487f-24a989cf1d3d@linux.alibaba.com>
-Date:   Fri, 20 Aug 2021 17:32:28 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.12.0
+        id S233976AbhHTJh4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 20 Aug 2021 05:37:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51770 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236783AbhHTJhx (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 20 Aug 2021 05:37:53 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BB42C061575
+        for <io-uring@vger.kernel.org>; Fri, 20 Aug 2021 02:37:16 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id f13-20020a1c6a0d000000b002e6fd0b0b3fso7011273wmc.3
+        for <io-uring@vger.kernel.org>; Fri, 20 Aug 2021 02:37:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4cczGF+stmml1fk77Dmn64t7T4N9y6xg8DyjR/GayjU=;
+        b=UsfbjDdAnrxOgJZylTzRVsIR6Fk9QkCiws25fW2FhUQIhS9rLwKYUtpCX/B8zOLcS4
+         +u6A6PD/oCZuaRytoz52OF1JSQAUsyEpUV9WYROasLAQwOqCJbQpAD9qL5nONkgbs+ZY
+         X6s5fsIv4F2uGdf57J3cGiYz30bO8A+o0A2mVKSYC6Eb1lv9++UijPiHXxaODGNV5QQP
+         X3qa6acjSlLJV6GZE9BZrHcJ1luLjd9eLv20UmFzFmduITG1t1h4EUhbOzlgp1d3TUgo
+         wgb0SoZj6vusUB1FLJ0BgNbkJEFFP8F8+htBWLl3BmzcKzoUOpDdX2ngAujoZKKQztfG
+         jTHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4cczGF+stmml1fk77Dmn64t7T4N9y6xg8DyjR/GayjU=;
+        b=pUyoDjkRA/Em7ZM5GXO/YHjcdby1JwWL+e5UrCgrcRtGT4Q0msP1vTzjbA+E7LAvrl
+         SqHMN78jxvtdinK7kuFVQ86ED8ElOsNiUkuzvJtgzjszEJzThJ/P/oL7bqsHEJvwO/1p
+         nK0Kr67DTJGVrme6UmPZzjffcXzWip5sKv1AjGrwFhkrWFxSg/dMcrIVj76kcp2ND7DZ
+         f6Rs9nd8OJ+4CZSXRUYNlqjpzI8D/1HdcSffG5lUEYJG4tiLqONk94f1YwBT2p9xlsDG
+         ooDFotauDuKUZwBlBENPXL1EmtikSOQkJfkAY8kAFSdDYS0ue+dp28yxnCYZ8d6ozhHd
+         3+dQ==
+X-Gm-Message-State: AOAM531+3ls1SS8gUYaengDR4olpWJZEL9rAFavKdMNdRVYrf0/z9PBC
+        YhH8+udI3A2WTCdduyuGaVM=
+X-Google-Smtp-Source: ABdhPJzjgiin8eQr0+tLRWH4GTpuKvozdshUD99wNHGjSJ2HUpA3Pfyy/UqaU0gi74IvRHSF7AOmVQ==
+X-Received: by 2002:a1c:e912:: with SMTP id q18mr2945749wmc.21.1629452234824;
+        Fri, 20 Aug 2021 02:37:14 -0700 (PDT)
+Received: from localhost.localdomain ([85.255.233.190])
+        by smtp.gmail.com with ESMTPSA id z7sm9693402wmi.4.2021.08.20.02.37.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Aug 2021 02:37:14 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [PATCH 0/3] changes around fixed rsrc
+Date:   Fri, 20 Aug 2021 10:36:34 +0100
+Message-Id: <cover.1629451684.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-In-Reply-To: <a02fcefe-3a55-51fb-9184-6a49596226cf@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-在 2021/8/20 下午5:21, Hao Xu 写道:
-> 在 2021/8/18 下午7:42, Pavel Begunkov 写道:
->> io_fallback_req_func() doesn't expect anyone creating inline
->> completions, and no one currently does that. Teach the function to flush
->> completions preparing for further changes.
->>
->> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
->> ---
->>   fs/io_uring.c | 5 +++++
->>   1 file changed, 5 insertions(+)
->>
->> diff --git a/fs/io_uring.c b/fs/io_uring.c
->> index 3da9f1374612..ba087f395507 100644
->> --- a/fs/io_uring.c
->> +++ b/fs/io_uring.c
->> @@ -1197,6 +1197,11 @@ static void io_fallback_req_func(struct 
->> work_struct *work)
->>       percpu_ref_get(&ctx->refs);
->>       llist_for_each_entry_safe(req, tmp, node, 
->> io_task_work.fallback_node)
->>           req->io_task_work.func(req);
->> +
->> +    mutex_lock(&ctx->uring_lock);
->> +    if (ctx->submit_state.compl_nr)
->> +        io_submit_flush_completions(ctx);
->> +    mutex_unlock(&ctx->uring_lock);
-> why do we protect io_submit_flush_completions() with uring_lock,
-> regarding that it is called in original context. Btw, why not
-I mean it is in original context before this patch..
-> use ctx_flush_and_put()
->>       percpu_ref_put(&ctx->refs);
->>   }
->>
+1-2 put some limits on the fixed file tables sizes, files and
+buffers.
+
+3/3 adds compatibility checks for ->splice_fd_in, for all requests
+buy rw and some others, see the patch message.
+
+All based on 5.15 and merked stable, looks to me as the best way.
+
+Pavel Begunkov (3):
+  io_uring: limit fixed table size by RLIMIT_NOFILE
+  io_uring: place fixed tables under memcg limits
+  io_uring: add ->splice_fd_in checks
+
+ fs/io_uring.c | 61 ++++++++++++++++++++++++++++++---------------------
+ 1 file changed, 36 insertions(+), 25 deletions(-)
+
+-- 
+2.32.0
 

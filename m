@@ -2,280 +2,110 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F28C13F2951
-	for <lists+io-uring@lfdr.de>; Fri, 20 Aug 2021 11:37:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E94B13F297B
+	for <lists+io-uring@lfdr.de>; Fri, 20 Aug 2021 11:49:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236800AbhHTJh6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 20 Aug 2021 05:37:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51792 "EHLO
+        id S236946AbhHTJub (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 20 Aug 2021 05:50:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54782 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235001AbhHTJh4 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 20 Aug 2021 05:37:56 -0400
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AB14C06175F;
-        Fri, 20 Aug 2021 02:37:19 -0700 (PDT)
-Received: by mail-wm1-x32f.google.com with SMTP id a201-20020a1c7fd2000000b002e6d33447f9so6800059wmd.0;
-        Fri, 20 Aug 2021 02:37:19 -0700 (PDT)
+        with ESMTP id S234846AbhHTJub (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 20 Aug 2021 05:50:31 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A78ADC061575
+        for <io-uring@vger.kernel.org>; Fri, 20 Aug 2021 02:49:53 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id r7so13432020wrs.0
+        for <io-uring@vger.kernel.org>; Fri, 20 Aug 2021 02:49:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=YNdmspjQNKvQ3/BEsgbzYrQjaM81DVuQiWbPbn6PEY0=;
-        b=OfJ8ioMl4zYg12c7B/Oud3gXpdCdXFrYf2UrxZzGjGtzOIbjTlU4l1Hm1jrVlCDplm
-         dmbhJoXS0a5zCxakJz7+g6wxadghLrdanfxPmPmxZc7NjCDxTguHPuqTVkr03gH1Yz8/
-         8GWbmVqjzulLb0VI3PJI+SOBu1MDWiX9cDxBWSvcpPWsmmC3JKNonzq9hwhmui2csazY
-         B4xFxUheCKXBMOnJIopk+9B/vm7MXLlf1aPhGIitxlq1eishpQrIT5ZwOzoTeBDuJFRn
-         zyQR2AC59BndCshEV/7aEbAl59WMwwT8+2k4OQaw+t7HZPa25O1bCYdIlgBm31q3yJvU
-         rCQg==
+        h=to:references:from:subject:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=KiZtxUyHldT+i9prJUf5PEONb4U7wnOVQmoq1Kx38KU=;
+        b=YY+obbZZsRPTrwjH7hJeg/0hwudGqg+3fb20cQwwe02UMvv7tIAbeipN+jZm5Rvtn1
+         +6NoO0tej1DURY6cvzIBNA8zkcPo1DUqCgU9Nz7oW08X5NnHBLaIhkH/nC+HCmUKIwt4
+         aY/wRgJg1Jsx0EL53nH01WEQk7NLWqHR/sSO1laFmSLZWCtHidjpq1HUrJhSN+UDdQY7
+         ZWMtwMoB7uEWuupNCg35nfit12M+dlMMHysFFeBUwA1b+5ww2dTQKPA/yZ4suJXeQCVN
+         ZmGp+Ax2DaN1W1FH8dEejE5qsNmdr0plEPanhYQqJ8m0Ec5MTdajfOXBY9hV5Zd7qT6c
+         iJ/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=YNdmspjQNKvQ3/BEsgbzYrQjaM81DVuQiWbPbn6PEY0=;
-        b=ph0NNu/IFUjIzM5qJHEoJxwCKEZAoTJNLd9ZjlL9iib71Ps5tnf3FcV7M8g2sfIM6P
-         WRh1GuT0/aZwA0Hp9W0DXNuWgISRsX/tQS2ZN1GIsFBYTbazLBa8a2ORGDPtjtjdIYnA
-         YwQystfbUiL/tQrV6RzYVnrVj5XGYSRP3tpEjBUCVr+KwkFsXNfInQTy0POvdnqFId8A
-         eASSbV5XnCVOiG1fNN+Gw8NSFrnEnwmv6xgiY+dkpoBgB/3jD+xAHQbhxG0kHoDCqoCZ
-         t8OOKxK/fmo6VztlvrDP4FSJQ3E9Q7lndWbl729jl2S665/M2zV6qlALxRPzwxVn31i7
-         0aAg==
-X-Gm-Message-State: AOAM531ndIB1x0yPF1cypWh15DaKscPHE5b+CfPRgXxqsL8vLvQMxDNq
-        i5ABdWoGwKk7XKRXCr0GcGM=
-X-Google-Smtp-Source: ABdhPJxxq3aYI2pHbVrcNdG+1YtrEFl1usHXVpIHrxUfPPe38SUF3oW9z5naxJH0m/iFYuiTNQR3Kw==
-X-Received: by 2002:a1c:21c5:: with SMTP id h188mr2880796wmh.28.1629452237706;
-        Fri, 20 Aug 2021 02:37:17 -0700 (PDT)
-Received: from localhost.localdomain ([85.255.233.190])
-        by smtp.gmail.com with ESMTPSA id z7sm9693402wmi.4.2021.08.20.02.37.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Aug 2021 02:37:17 -0700 (PDT)
+        h=x-gm-message-state:to:references:from:subject:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=KiZtxUyHldT+i9prJUf5PEONb4U7wnOVQmoq1Kx38KU=;
+        b=G2yW5jpg81ew+X82H2bdmlRlSrvZEEbMFTLf4U3CMAnd5a8n6V1JwJ9pZPWFn0AXLz
+         9yCeXdefLmwO4aqJ44L9i+ZdZ5eHLv4DQNMzUlgnnUf+aveUaJjkAvMd/f18xMpwAQgS
+         eV2sfREZvsNdUsfwpRV+wNS27KYOWxLSK2/Gar1m/CgDq84DB4T8qjkVdVisjCHxL63n
+         6F/0VeoyIWrzGsNlrL1nT7ADzp25QQ9XFQk5NTRfbPwUJtxrcrSgpNKdMEfsj8sRmRUt
+         QGgNPYSVl0N/DHniOr1EOyEObmH0mEkorqtvWvLzbZdexQ84dF0qwoxYM++pvBOCVb9X
+         j13w==
+X-Gm-Message-State: AOAM530zZdE6Nt0Hdq3+Fxi78HukksNEIcRoGcy/UBHlGC89r7PJwAUm
+        aLc8E+Hgu9cYnUUcT/FS0GYBGg+Wg/k=
+X-Google-Smtp-Source: ABdhPJwn+K7Gad4DS8cuVShUBnUomu8SBgAjA3Icho9pAQ1MRk9T1NWxq2ax3O/qwmueigPjDgVY5Q==
+X-Received: by 2002:adf:dd4d:: with SMTP id u13mr8571231wrm.324.1629452992146;
+        Fri, 20 Aug 2021 02:49:52 -0700 (PDT)
+Received: from [192.168.8.197] ([85.255.233.190])
+        by smtp.gmail.com with ESMTPSA id z6sm4844848wmp.1.2021.08.20.02.49.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 20 Aug 2021 02:49:51 -0700 (PDT)
+To:     Hao Xu <haoxu@linux.alibaba.com>, Jens Axboe <axboe@kernel.dk>,
+        io-uring@vger.kernel.org
+References: <cover.1629286357.git.asml.silence@gmail.com>
+ <8b941516921f72e1a64d58932d671736892d7fff.1629286357.git.asml.silence@gmail.com>
+ <a02fcefe-3a55-51fb-9184-6a49596226cf@linux.alibaba.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc:     stable@vger.kernel.org
-Subject: [PATCH 3/3] io_uring: add ->splice_fd_in checks
-Date:   Fri, 20 Aug 2021 10:36:37 +0100
-Message-Id: <f44bc2acd6777d932de3d71a5692235b5b2b7397.1629451684.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <cover.1629451684.git.asml.silence@gmail.com>
-References: <cover.1629451684.git.asml.silence@gmail.com>
+Subject: Re: [PATCH 1/3] io_uring: flush completions for fallbacks
+Message-ID: <0fcdffe3-024d-2f0f-78f1-938594f68995@gmail.com>
+Date:   Fri, 20 Aug 2021 10:49:21 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
+In-Reply-To: <a02fcefe-3a55-51fb-9184-6a49596226cf@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-->splice_fd_in is used only by splice/tee, but no other request checks
-it for validity. Add the check for most of request types excluding
-reads/writes/sends/recvs, we don't want overhead for them and can leave
-them be as is until the field is actually used.
+On 8/20/21 10:21 AM, Hao Xu wrote:
+> 在 2021/8/18 下午7:42, Pavel Begunkov 写道:
+>> io_fallback_req_func() doesn't expect anyone creating inline
+>> completions, and no one currently does that. Teach the function to flush
+>> completions preparing for further changes.
+>>
+>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+>> ---
+>>   fs/io_uring.c | 5 +++++
+>>   1 file changed, 5 insertions(+)
+>>
+>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>> index 3da9f1374612..ba087f395507 100644
+>> --- a/fs/io_uring.c
+>> +++ b/fs/io_uring.c
+>> @@ -1197,6 +1197,11 @@ static void io_fallback_req_func(struct work_struct *work)
+>>       percpu_ref_get(&ctx->refs);
+>>       llist_for_each_entry_safe(req, tmp, node, io_task_work.fallback_node)
+>>           req->io_task_work.func(req);
+>> +
+>> +    mutex_lock(&ctx->uring_lock);
+>> +    if (ctx->submit_state.compl_nr)
+>> +        io_submit_flush_completions(ctx);
+>> +    mutex_unlock(&ctx->uring_lock);
+> why do we protect io_submit_flush_completions() with uring_lock,
+> regarding that it is called in original context. Btw, why not
+> use ctx_flush_and_put()
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 52 +++++++++++++++++++++++++++++----------------------
- 1 file changed, 30 insertions(+), 22 deletions(-)
+The fallback thing is called from a workqueue not the submitter task
+context. See delayed_work and so.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 976fc0509e4b..ff1a8c4e2881 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -3502,7 +3502,7 @@ static int io_renameat_prep(struct io_kiocb *req,
- 
- 	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
- 		return -EINVAL;
--	if (sqe->ioprio || sqe->buf_index)
-+	if (sqe->ioprio || sqe->buf_index || sqe->splice_fd_in)
- 		return -EINVAL;
- 	if (unlikely(req->flags & REQ_F_FIXED_FILE))
- 		return -EBADF;
-@@ -3553,7 +3553,8 @@ static int io_unlinkat_prep(struct io_kiocb *req,
- 
- 	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
- 		return -EINVAL;
--	if (sqe->ioprio || sqe->off || sqe->len || sqe->buf_index)
-+	if (sqe->ioprio || sqe->off || sqe->len || sqe->buf_index ||
-+	    sqe->splice_fd_in)
- 		return -EINVAL;
- 	if (unlikely(req->flags & REQ_F_FIXED_FILE))
- 		return -EBADF;
-@@ -3599,8 +3600,8 @@ static int io_shutdown_prep(struct io_kiocb *req,
- #if defined(CONFIG_NET)
- 	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
- 		return -EINVAL;
--	if (sqe->ioprio || sqe->off || sqe->addr || sqe->rw_flags ||
--	    sqe->buf_index)
-+	if (unlikely(sqe->ioprio || sqe->off || sqe->addr || sqe->rw_flags ||
-+		     sqe->buf_index || sqe->splice_fd_in))
- 		return -EINVAL;
- 
- 	req->shutdown.how = READ_ONCE(sqe->len);
-@@ -3748,7 +3749,8 @@ static int io_fsync_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 
- 	if (unlikely(ctx->flags & IORING_SETUP_IOPOLL))
- 		return -EINVAL;
--	if (unlikely(sqe->addr || sqe->ioprio || sqe->buf_index))
-+	if (unlikely(sqe->addr || sqe->ioprio || sqe->buf_index ||
-+		     sqe->splice_fd_in))
- 		return -EINVAL;
- 
- 	req->sync.flags = READ_ONCE(sqe->fsync_flags);
-@@ -3781,7 +3783,8 @@ static int io_fsync(struct io_kiocb *req, unsigned int issue_flags)
- static int io_fallocate_prep(struct io_kiocb *req,
- 			     const struct io_uring_sqe *sqe)
- {
--	if (sqe->ioprio || sqe->buf_index || sqe->rw_flags)
-+	if (sqe->ioprio || sqe->buf_index || sqe->rw_flags ||
-+	    sqe->splice_fd_in)
- 		return -EINVAL;
- 	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
- 		return -EINVAL;
-@@ -3814,7 +3817,7 @@ static int __io_openat_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe
- 
- 	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
- 		return -EINVAL;
--	if (unlikely(sqe->ioprio || sqe->buf_index))
-+	if (unlikely(sqe->ioprio || sqe->buf_index || sqe->splice_fd_in))
- 		return -EINVAL;
- 	if (unlikely(req->flags & REQ_F_FIXED_FILE))
- 		return -EBADF;
-@@ -3933,7 +3936,8 @@ static int io_remove_buffers_prep(struct io_kiocb *req,
- 	struct io_provide_buf *p = &req->pbuf;
- 	u64 tmp;
- 
--	if (sqe->ioprio || sqe->rw_flags || sqe->addr || sqe->len || sqe->off)
-+	if (sqe->ioprio || sqe->rw_flags || sqe->addr || sqe->len || sqe->off ||
-+	    sqe->splice_fd_in)
- 		return -EINVAL;
- 
- 	tmp = READ_ONCE(sqe->fd);
-@@ -4004,7 +4008,7 @@ static int io_provide_buffers_prep(struct io_kiocb *req,
- 	struct io_provide_buf *p = &req->pbuf;
- 	u64 tmp;
- 
--	if (sqe->ioprio || sqe->rw_flags)
-+	if (sqe->ioprio || sqe->rw_flags || sqe->splice_fd_in)
- 		return -EINVAL;
- 
- 	tmp = READ_ONCE(sqe->fd);
-@@ -4091,7 +4095,7 @@ static int io_epoll_ctl_prep(struct io_kiocb *req,
- 			     const struct io_uring_sqe *sqe)
- {
- #if defined(CONFIG_EPOLL)
--	if (sqe->ioprio || sqe->buf_index)
-+	if (sqe->ioprio || sqe->buf_index || sqe->splice_fd_in)
- 		return -EINVAL;
- 	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
- 		return -EINVAL;
-@@ -4137,7 +4141,7 @@ static int io_epoll_ctl(struct io_kiocb *req, unsigned int issue_flags)
- static int io_madvise_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- {
- #if defined(CONFIG_ADVISE_SYSCALLS) && defined(CONFIG_MMU)
--	if (sqe->ioprio || sqe->buf_index || sqe->off)
-+	if (sqe->ioprio || sqe->buf_index || sqe->off || sqe->splice_fd_in)
- 		return -EINVAL;
- 	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
- 		return -EINVAL;
-@@ -4172,7 +4176,7 @@ static int io_madvise(struct io_kiocb *req, unsigned int issue_flags)
- 
- static int io_fadvise_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- {
--	if (sqe->ioprio || sqe->buf_index || sqe->addr)
-+	if (sqe->ioprio || sqe->buf_index || sqe->addr || sqe->splice_fd_in)
- 		return -EINVAL;
- 	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
- 		return -EINVAL;
-@@ -4210,7 +4214,7 @@ static int io_statx_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- {
- 	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
- 		return -EINVAL;
--	if (sqe->ioprio || sqe->buf_index)
-+	if (sqe->ioprio || sqe->buf_index || sqe->splice_fd_in)
- 		return -EINVAL;
- 	if (req->flags & REQ_F_FIXED_FILE)
- 		return -EBADF;
-@@ -4246,7 +4250,7 @@ static int io_close_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
- 		return -EINVAL;
- 	if (sqe->ioprio || sqe->off || sqe->addr || sqe->len ||
--	    sqe->rw_flags || sqe->buf_index)
-+	    sqe->rw_flags || sqe->buf_index || sqe->splice_fd_in)
- 		return -EINVAL;
- 	if (req->flags & REQ_F_FIXED_FILE)
- 		return -EBADF;
-@@ -4307,7 +4311,8 @@ static int io_sfr_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 
- 	if (unlikely(ctx->flags & IORING_SETUP_IOPOLL))
- 		return -EINVAL;
--	if (unlikely(sqe->addr || sqe->ioprio || sqe->buf_index))
-+	if (unlikely(sqe->addr || sqe->ioprio || sqe->buf_index ||
-+		     sqe->splice_fd_in))
- 		return -EINVAL;
- 
- 	req->sync.off = READ_ONCE(sqe->off);
-@@ -4734,7 +4739,7 @@ static int io_accept_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 
- 	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
- 		return -EINVAL;
--	if (sqe->ioprio || sqe->len || sqe->buf_index)
-+	if (sqe->ioprio || sqe->len || sqe->buf_index || sqe->splice_fd_in)
- 		return -EINVAL;
- 
- 	accept->addr = u64_to_user_ptr(READ_ONCE(sqe->addr));
-@@ -4782,7 +4787,8 @@ static int io_connect_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 
- 	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
- 		return -EINVAL;
--	if (sqe->ioprio || sqe->len || sqe->buf_index || sqe->rw_flags)
-+	if (sqe->ioprio || sqe->len || sqe->buf_index || sqe->rw_flags ||
-+	    sqe->splice_fd_in)
- 		return -EINVAL;
- 
- 	conn->addr = u64_to_user_ptr(READ_ONCE(sqe->addr));
-@@ -5377,7 +5383,7 @@ static int io_poll_update_prep(struct io_kiocb *req,
- 
- 	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
- 		return -EINVAL;
--	if (sqe->ioprio || sqe->buf_index)
-+	if (sqe->ioprio || sqe->buf_index || sqe->splice_fd_in)
- 		return -EINVAL;
- 	flags = READ_ONCE(sqe->len);
- 	if (flags & ~(IORING_POLL_UPDATE_EVENTS | IORING_POLL_UPDATE_USER_DATA |
-@@ -5616,7 +5622,7 @@ static int io_timeout_remove_prep(struct io_kiocb *req,
- 		return -EINVAL;
- 	if (unlikely(req->flags & (REQ_F_FIXED_FILE | REQ_F_BUFFER_SELECT)))
- 		return -EINVAL;
--	if (sqe->ioprio || sqe->buf_index || sqe->len)
-+	if (sqe->ioprio || sqe->buf_index || sqe->len || sqe->splice_fd_in)
- 		return -EINVAL;
- 
- 	tr->addr = READ_ONCE(sqe->addr);
-@@ -5677,7 +5683,8 @@ static int io_timeout_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 
- 	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
- 		return -EINVAL;
--	if (sqe->ioprio || sqe->buf_index || sqe->len != 1)
-+	if (sqe->ioprio || sqe->buf_index || sqe->len != 1 ||
-+	    sqe->splice_fd_in)
- 		return -EINVAL;
- 	if (off && is_timeout_link)
- 		return -EINVAL;
-@@ -5833,7 +5840,8 @@ static int io_async_cancel_prep(struct io_kiocb *req,
- 		return -EINVAL;
- 	if (unlikely(req->flags & (REQ_F_FIXED_FILE | REQ_F_BUFFER_SELECT)))
- 		return -EINVAL;
--	if (sqe->ioprio || sqe->off || sqe->len || sqe->cancel_flags)
-+	if (sqe->ioprio || sqe->off || sqe->len || sqe->cancel_flags ||
-+	    sqe->splice_fd_in)
- 		return -EINVAL;
- 
- 	req->cancel.addr = READ_ONCE(sqe->addr);
-@@ -5874,7 +5882,7 @@ static int io_rsrc_update_prep(struct io_kiocb *req,
- {
- 	if (unlikely(req->flags & (REQ_F_FIXED_FILE | REQ_F_BUFFER_SELECT)))
- 		return -EINVAL;
--	if (sqe->ioprio || sqe->rw_flags)
-+	if (sqe->ioprio || sqe->rw_flags || sqe->splice_fd_in)
- 		return -EINVAL;
- 
- 	req->rsrc_update.offset = READ_ONCE(sqe->off);
+Regarding locking, it touches struct io_submit_state, and it's protected by
+->uring_lock. In particular we're interested in ->reqs and ->free_list.
+FWIW, there is refurbishment going on around submit state, so if proves
+useful the locking may change in coming months.
+
+ctx_flush_and_put() could have been used, but simpler to hand code it
+and avoid the (always messy) conditional ref grabbing and locking.
+
 -- 
-2.32.0
-
+Pavel Begunkov

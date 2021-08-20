@@ -2,77 +2,65 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BEA193F22A0
-	for <lists+io-uring@lfdr.de>; Fri, 20 Aug 2021 00:00:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A4C53F2909
+	for <lists+io-uring@lfdr.de>; Fri, 20 Aug 2021 11:21:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231184AbhHSWBd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 19 Aug 2021 18:01:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35660 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229605AbhHSWBc (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 19 Aug 2021 18:01:32 -0400
-Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A1EEC061575
-        for <io-uring@vger.kernel.org>; Thu, 19 Aug 2021 15:00:55 -0700 (PDT)
-Received: by mail-io1-xd33.google.com with SMTP id a15so9669320iot.2
-        for <io-uring@vger.kernel.org>; Thu, 19 Aug 2021 15:00:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=from:subject:to:references:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=SQo1wXnkLDWWUWbQQC/fmTTQJqPFB+qA/13Y1NnTOgQ=;
-        b=BtzPYn0zKd+3qobRMsc0WoGqAtuOcsiey7nmOnlZucIIO/AYEEuYUhCIXMnUY33jJ4
-         KJmWoD8iOIHt/9NeKMcPrMYO3dgwJf9dbaRzYuikdStYm8Dur2P08+QUYmgRm5doKYwx
-         Bt18r0MwV96HMkifN5xok1tDRF5hy7oDjcPLcVvk31Fk58otUuXbqN562yi1OfAeQDni
-         bbz8Y62SfDxe1bJqJ9d62OrkUKdAAXFXcOcW06fLvTxA2H5MziP5QAHvMDB+v7PrfdMZ
-         vtv/ysBlkRStqY87UzbdHJvaELA9nqoRBrARxdI46bwvRZE5R7A3J+NdSMZu/+ZjYhPA
-         eqNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=SQo1wXnkLDWWUWbQQC/fmTTQJqPFB+qA/13Y1NnTOgQ=;
-        b=ckrcGnTJR34G9/dhCFkQEbkykcgyOvTSkgxbqaFMRgkUXGpdJ1lxckx9bYXbVa/7Cw
-         Mst7liFOxCOWKP3lY3qXK3EO/h8sKeailjicA91jni2pRkHzzjsQo4pD3nHof+hmpizo
-         4zNQOIFwF04ew2tz3QH3zGq3QtyU9t8EpVR9nKut/4AHKusuvP5GMHNWMyYMlCN7Piwy
-         N/S1fZ4WkMohvK2EitJUOrhHj9j7QdKaDI+cI9VCq5HRE42mKQ6KNmR0sE+4zIBcWBCZ
-         CCkTRt4WzdAo6OQqXZ04h7+UaOSd/bC3fhKU4CApVpnuf3RnHFjjsYeR2oLWdzE7nYO6
-         DBbA==
-X-Gm-Message-State: AOAM531eA+kfE0dn2TCktodr81Ko0R4poFZoVBQ0cIh1RK5fp5ACBbj2
-        yHNK9x1Tv9RuOEkL4WDJ1TPPQ86The7Sc7gX
-X-Google-Smtp-Source: ABdhPJyP5BFmknlVRDimVNmvI08KXFQQjBXO/w8y0wICM6XQxEGxZgzgZ2n0fEpxdys5Xrq3Bz2Y5g==
-X-Received: by 2002:a02:5107:: with SMTP id s7mr14920430jaa.65.1629410455110;
-        Thu, 19 Aug 2021 15:00:55 -0700 (PDT)
-Received: from [192.168.1.116] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id u14sm2446030iol.24.2021.08.19.15.00.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Aug 2021 15:00:54 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH for-next] io_uring: extend task put optimisations
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <824a7cbd745ddeee4a0f3ff85c558a24fd005872.1629302453.git.asml.silence@gmail.com>
-Message-ID: <f92723d1-a6a3-93e0-26f1-027819a1030a@kernel.dk>
-Date:   Thu, 19 Aug 2021 16:00:54 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S232773AbhHTJWP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 20 Aug 2021 05:22:15 -0400
+Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:55022 "EHLO
+        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232380AbhHTJWP (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 20 Aug 2021 05:22:15 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0UkJN2Zf_1629451295;
+Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UkJN2Zf_1629451295)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 20 Aug 2021 17:21:36 +0800
+Subject: Re: [PATCH 1/3] io_uring: flush completions for fallbacks
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <cover.1629286357.git.asml.silence@gmail.com>
+ <8b941516921f72e1a64d58932d671736892d7fff.1629286357.git.asml.silence@gmail.com>
+From:   Hao Xu <haoxu@linux.alibaba.com>
+Message-ID: <a02fcefe-3a55-51fb-9184-6a49596226cf@linux.alibaba.com>
+Date:   Fri, 20 Aug 2021 17:21:34 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.12.0
 MIME-Version: 1.0
-In-Reply-To: <824a7cbd745ddeee4a0f3ff85c558a24fd005872.1629302453.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <8b941516921f72e1a64d58932d671736892d7fff.1629286357.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/18/21 10:01 AM, Pavel Begunkov wrote:
-> Now with IRQ completions done via IRQ, almost all requests freeing
-> are done from the context of submitter task, so it makes sense to
-> extend task_put optimisation from io_req_free_batch_finish() to cover
-> all the cases including task_work by moving it into io_put_task().
-
-Applied, thanks.
-
--- 
-Jens Axboe
+在 2021/8/18 下午7:42, Pavel Begunkov 写道:
+> io_fallback_req_func() doesn't expect anyone creating inline
+> completions, and no one currently does that. Teach the function to flush
+> completions preparing for further changes.
+> 
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> ---
+>   fs/io_uring.c | 5 +++++
+>   1 file changed, 5 insertions(+)
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 3da9f1374612..ba087f395507 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -1197,6 +1197,11 @@ static void io_fallback_req_func(struct work_struct *work)
+>   	percpu_ref_get(&ctx->refs);
+>   	llist_for_each_entry_safe(req, tmp, node, io_task_work.fallback_node)
+>   		req->io_task_work.func(req);
+> +
+> +	mutex_lock(&ctx->uring_lock);
+> +	if (ctx->submit_state.compl_nr)
+> +		io_submit_flush_completions(ctx);
+> +	mutex_unlock(&ctx->uring_lock);
+why do we protect io_submit_flush_completions() with uring_lock,
+regarding that it is called in original context. Btw, why not
+use ctx_flush_and_put()
+>   	percpu_ref_put(&ctx->refs);
+>   }
+>   
+> 
 

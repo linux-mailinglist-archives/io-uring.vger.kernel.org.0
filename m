@@ -2,59 +2,110 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CA3F03F3B20
-	for <lists+io-uring@lfdr.de>; Sat, 21 Aug 2021 17:16:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 556603F3B3C
+	for <lists+io-uring@lfdr.de>; Sat, 21 Aug 2021 17:53:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232132AbhHUPQy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 21 Aug 2021 11:16:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49490 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230259AbhHUPQy (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Sat, 21 Aug 2021 11:16:54 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 0D43361209;
-        Sat, 21 Aug 2021 15:16:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1629558975;
-        bh=AgXg0rU/Dwq0LF9jfq54BewVU5cLCCZePScBkX1j3Og=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=LomqB3nk++B2Cdoa0Hj7mMQjcCPCLI0bCHNJ7WMTJH1bZWYJSZGRWK0Qm2O20DWWa
-         UB0UAvHBMbGGEGsTjueHhW+7H1Wi00bVvJQc1+cCKVgf0khGuBX6uEfLYhjhpvAsqE
-         QFJeL/tS5qBg9XPIgjPpH0On7dK2WM+kvHRam9qNuDmvfAIHEa0mMRQNRxhSRIZMW5
-         w2Fro9LNZE/1fcgFFplHPSlITbIvYrGN5ntpW9knoQnxBai7MimnGmcD6LI6WC3d8u
-         DF7+ZxJUo9kC5Xsi0LVYqLZ03TsAjxB1CN9HHdlOI6+vI2x9p6eeiGj2pAEjYZJBvP
-         1jiwcI3k1jhBQ==
-Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id 0807160A6B;
-        Sat, 21 Aug 2021 15:16:15 +0000 (UTC)
-Subject: Re: [GIT PULL] io_uring fixes for 5.14-rc7
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <9029c179-a0cc-db86-e2e5-4aa234278ee2@kernel.dk>
-References: <9029c179-a0cc-db86-e2e5-4aa234278ee2@kernel.dk>
-X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
-X-PR-Tracked-Message-Id: <9029c179-a0cc-db86-e2e5-4aa234278ee2@kernel.dk>
-X-PR-Tracked-Remote: git://git.kernel.dk/linux-block.git tags/io_uring-5.14-2021-08-20
-X-PR-Tracked-Commit-Id: a30f895ad3239f45012e860d4f94c1a388b36d14
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 1e6907d58cf03fc808009681b8ef178affbf96aa
-Message-Id: <162955897502.29440.4606306023011693692.pr-tracker-bot@kernel.org>
-Date:   Sat, 21 Aug 2021 15:16:15 +0000
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        io-uring <io-uring@vger.kernel.org>
+        id S232855AbhHUPyC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 21 Aug 2021 11:54:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35158 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232533AbhHUPyA (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 21 Aug 2021 11:54:00 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CD70C061575;
+        Sat, 21 Aug 2021 08:53:20 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id v10so7511362wrd.4;
+        Sat, 21 Aug 2021 08:53:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3no8bjlTC7qG2fVZz3i3VTGfYtIjxhSSicUhax0MRz4=;
+        b=qbIgQsGJ4NKkBTRex/r3TPba7U5y7NqF18rCVNREbYIa2mEKAoUP/isyAVxDQpDbVa
+         etlzoccomTsu/ipCqEU6rDxNfz09bEjpqmK1esD0sgSPWJ54KAlvrxV5tI7P4ts/lXv7
+         fWNGMFMQn+JN9PhpPHfn3F9rbPyjLwIFYwR5YssPdPmDqlGr6Pj0HzJ0l3WZTuQtUj9e
+         Ab//0/uTBy1H53kg13PjCEB+joyueLTgxmokA0Eu+i3Wv33JtaTUH/sdVOeu0YurKLY6
+         5IUahl2BZeu182mNeG68741Ahc+7sgcushXRQDxhASDLwFqc43UTJ2QOd306SnrQOVEu
+         FVqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3no8bjlTC7qG2fVZz3i3VTGfYtIjxhSSicUhax0MRz4=;
+        b=mWh/P5rNOA4RhQFTJqt1sOW9sfSjqLaYS+tRilVKZdTMTQZ8Uq0NqyF21tDuqPiseN
+         GBrkSa4+hyYO6+yhl3bawadfdU4vY4WAUTRAEzy1LJ4CB5RALi749y/ZsY2Yej6/nb2n
+         +1WUhftEFWTQo/5GkjBb8hMDDxRoqVlcnxWjc8NAB5/sz4EbYx4I+0Kf/e64bJO97o0W
+         wmRPfiKDkEy6j4txWJQjbJGYjZkdBTIvXvfp6OxqkoBlcf+dIS2whsP1dyBDSySkoNqt
+         C0tUXRGhvBhgODReMs+OOEmpLJ6ER+alKcRjVAgGdM/ijwmZ1mbZfJ7PZZnI8YGi+8je
+         AMRQ==
+X-Gm-Message-State: AOAM533kpW3JR27D7vtwtDJ1WgJSWRBlv26kY7V7TL5HZlU54JmiRPPu
+        /2XtyLT+2k5TzJIuN3PJQ28=
+X-Google-Smtp-Source: ABdhPJwtv94+OnpvcNSQQUev8ESWsIq+ajwCOY8LzcCeq0TWgSjaPuIsSbBFLYzD4A8cbPcPhhtNAQ==
+X-Received: by 2002:a05:6000:1091:: with SMTP id y17mr4418460wrw.202.1629561199016;
+        Sat, 21 Aug 2021 08:53:19 -0700 (PDT)
+Received: from localhost.localdomain ([85.255.233.174])
+        by smtp.gmail.com with ESMTPSA id e3sm9479554wro.15.2021.08.21.08.53.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 21 Aug 2021 08:53:18 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        Josh Triplett <josh@joshtriplett.org>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, Stefan Metzmacher <metze@samba.org>
+Subject: [PATCH v3 0/4] open/accept directly into io_uring fixed file table 
+Date:   Sat, 21 Aug 2021 16:52:36 +0100
+Message-Id: <cover.1629559905.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.32.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The pull request you sent on Fri, 20 Aug 2021 20:54:22 -0600:
+Add an optional feature to open/accept directly into io_uring's fixed
+file table bypassing the normal file table. Same behaviour if as the
+snippet below, but in one operation:
 
-> git://git.kernel.dk/linux-block.git tags/io_uring-5.14-2021-08-20
+sqe = prep_[open,accept](...);
+cqe = submit_and_wait(sqe);
+io_uring_register_files_update(uring_idx, (fd = cqe->res));
+close((fd = cqe->res));
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/1e6907d58cf03fc808009681b8ef178affbf96aa
+The idea in pretty old, and was brough up and implemented a year ago
+by Josh Triplett, though haven't sought the light for some reasons.
 
-Thank you!
+The behaviour is controlled by setting sqe->file_index, where 0 implies
+the old behaviour. If non-zero value is specified, then it will behave
+as described and place the file into a fixed file slot
+sqe->file_index - 1. A file table should be already created, the slot
+should be valid and empty, otherwise the operation will fail.
+
+we can't use IOSQE_FIXED_FILE to switch between modes, because accept
+takes a file, and it already uses the flag with a different meaning.
+
+since RFC:
+ - added attribution
+ - updated descriptions
+ - rebased
+
+since v1:
+ - EBADF if slot is already used (Josh Triplett)
+ - alias index with splice_fd_in (Josh Triplett)
+ - fix a bound check bug
+
+Pavel Begunkov (4):
+  net: add accept helper not installing fd
+  io_uring: openat directly into fixed fd table
+  io_uring: hand code io_accept() fd installing
+  io_uring: accept directly into fixed file table
+
+ fs/io_uring.c                 | 129 +++++++++++++++++++++++++++++-----
+ include/linux/socket.h        |   3 +
+ include/uapi/linux/io_uring.h |   5 +-
+ net/socket.c                  |  71 ++++++++++---------
+ 4 files changed, 157 insertions(+), 51 deletions(-)
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.32.0
+

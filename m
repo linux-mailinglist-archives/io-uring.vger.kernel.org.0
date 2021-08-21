@@ -2,68 +2,63 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F26D3F3AF8
-	for <lists+io-uring@lfdr.de>; Sat, 21 Aug 2021 16:25:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 836553F3AFC
+	for <lists+io-uring@lfdr.de>; Sat, 21 Aug 2021 16:25:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231485AbhHUOZl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 21 Aug 2021 10:25:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44264 "EHLO
+        id S231485AbhHUO0c (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 21 Aug 2021 10:26:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230167AbhHUOZl (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 21 Aug 2021 10:25:41 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C94B3C061575;
-        Sat, 21 Aug 2021 07:25:01 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id q10so18555737wro.2;
-        Sat, 21 Aug 2021 07:25:01 -0700 (PDT)
+        with ESMTP id S230167AbhHUO0b (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 21 Aug 2021 10:26:31 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D52FC061575
+        for <io-uring@vger.kernel.org>; Sat, 21 Aug 2021 07:25:52 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id a201-20020a1c7fd2000000b002e6d33447f9so8547717wmd.0
+        for <io-uring@vger.kernel.org>; Sat, 21 Aug 2021 07:25:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=DLjK+TCmc9BqCXwaEVOpZUxm3tmZlEUADQgsTwUiIcI=;
-        b=OJeChMwKcJlTC5d0x5snzvzdVMSpJoOK2q615NGGJ0aMH7Kd/MGw87rj5cdBGDKzp3
-         rD8gJ3cmdoOYufntUhAIhe45CoEgxaDNApEk4nusNQhGgbqPs7l/txQaiPLiPSrbBo+7
-         5lgKXbUSlaw2TeUu2E5HjoPEOxmieMJc/0OOBALoCGiJMUAAgz9vhBVWCFXUcigM4ZsT
-         WjeedD03pgZgxWD73XeIQLgZLS+vfz374a2DS/D93oZL/zzvif/xAcqkz7BevMRXbSN5
-         /u1fRoaU4VLWS2SRWIt8X2ActZ+zqtiuECDskpmVdCatIDfTky+lQhBziILXDR60VoZ+
-         whnQ==
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=QHpCZ0y7qMUC6V5MALaqb4pxEBGVOdtWoAoIhwiqnX4=;
+        b=Qwo6IkfPyKiYvVnRlYxRKY3VK5iUFSZmmGgzDZ4eCLGt2IcYYMLUoX6CJVFGXltccd
+         65YUkXNqAmmcPpeZl8y1tzhS82iSsM/4zyOQuE/P8Evu2uxwxhnhURavv92U+P6TnX9r
+         j4JEQYPMcaVxthYlOUCQt43s4+KqUAlymbfZxJHuO7md6Gh+Ri4SNiAgZGphsLQetv37
+         oSwhIsWPHTC25Ldbl3Up1T/1UUucHLYcCl08wHp/rrU9lnMiMODIZugUeqmH9tYK6u2/
+         UHyFbvXhdONUAITOdJ0fqncimAnrpQC7bsZb9ehxHtqnIQrvGFwPW+KTgFPduVUpPZLX
+         37YA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=DLjK+TCmc9BqCXwaEVOpZUxm3tmZlEUADQgsTwUiIcI=;
-        b=UxqILvYdyZxVIlRqy/Fi4jLXYs9ZXMLwlJdwmgIX4vyI8jsw5aEmvcyOt86rNMQQf/
-         q2asaATZzhVgSDCKiTiREGONCsT3Fjyys+p3KhIzBZqq0bv/+Ro4KUzaJ2KU7yL28Hj8
-         t8O2ugdvLOdo6gwKZcwqmFgwYoRcLMzfJ/W++MB7Dr/O9RmLueqmL0J8rdTOD8ybJHIH
-         zzmbUWh+BIyXAwK0wghNDm4l77SiPMOJufKyZsja7VPKxaI0MHS537nShPfYK60xU5qg
-         +ZrIOXHQZKHhgOMP/QoX+pyUMZu8sog0Tr6SSBOzxb+i9UP+KE+zf+J28O2E/bYormK5
-         V0eQ==
-X-Gm-Message-State: AOAM530w0nCRYIIsrBIJn7GjPVqSLRPSJwt91Wmf2JYoohrPysfrNbYT
-        CO1vDsxZtE2eT3Ia9PrfJMk=
-X-Google-Smtp-Source: ABdhPJygVgV/uwI57UhxLV4Uz/WhIThhKyoYc1v8ClxzcHcR0ljxE+3ObuhgwGftO+Jpl45ySaQ6ww==
-X-Received: by 2002:adf:e5c5:: with SMTP id a5mr4143703wrn.120.1629555900469;
-        Sat, 21 Aug 2021 07:25:00 -0700 (PDT)
+        bh=QHpCZ0y7qMUC6V5MALaqb4pxEBGVOdtWoAoIhwiqnX4=;
+        b=cFW0R8H2In6HPNLa2c9JocGtCjLJXFtpCihz15Pcv4Hmj1+VZkgJqziQPzOOYBm1yA
+         CnJcLtV9iwhNe0z1CYHr4jbWd45TT2I/XWN8gptn996CQWuqFWGIiXGC7izkCqZqLm1V
+         cElD63FW3NaH0VIg8y4K5RJ7eXFnO0CQZMe4/U9RO0oKELAkyePo1ZQsJ71JQiihJkpR
+         rvmEglONcYDQUpZJgows2Xjolt8gKYGCZ0Xj36jP+BY6oLOySb9+Nt7EZ+v2t0QEE782
+         z22qcff1tLvTx1mBE19Sl24vLRVSBKjEyvyugpBXCTj1ORjqOsSLSax1s/mdko3jXApx
+         o5Ww==
+X-Gm-Message-State: AOAM5335V0PVc2PL2P8m2LPLSTslLV1saEP+x3nu+VezGqwm0dv9K4WU
+        PKvCmwAEMgK37bc6AwjSyQFCDuLLTWA=
+X-Google-Smtp-Source: ABdhPJz5kKWoDR/YKYx0CU521b8SDyzsdNOgJ2FUV7e2mF6Nbab4U8v+DqgR9WWXDDSCJj9VLPqP4g==
+X-Received: by 2002:a05:600c:3ba9:: with SMTP id n41mr8301103wms.111.1629555950595;
+        Sat, 21 Aug 2021 07:25:50 -0700 (PDT)
 Received: from [192.168.8.197] ([85.255.233.174])
-        by smtp.gmail.com with ESMTPSA id c2sm9237747wrs.60.2021.08.21.07.24.59
+        by smtp.gmail.com with ESMTPSA id l2sm8967967wrx.2.2021.08.21.07.25.49
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 21 Aug 2021 07:25:00 -0700 (PDT)
-Subject: Re: [PATCH v2 0/2] iter revert problems
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Cc:     Palash Oswal <oswalpalash@gmail.com>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        syzbot+9671693590ef5aad8953@syzkaller.appspotmail.com
-References: <cover.1628780390.git.asml.silence@gmail.com>
+        Sat, 21 Aug 2021 07:25:50 -0700 (PDT)
+Subject: Re: [PATCH 0/3] changes around fixed rsrc
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <cover.1629451684.git.asml.silence@gmail.com>
+ <1929aac2-14ca-789e-fe6f-faebd858abb4@kernel.dk>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <3eaf5365-586d-700b-0277-e0889bfeb05d@gmail.com>
-Date:   Sat, 21 Aug 2021 15:24:28 +0100
+Message-ID: <8c0d4023-6b6b-8216-bdbe-d680a893cbc4@gmail.com>
+Date:   Sat, 21 Aug 2021 15:25:19 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.12.0
 MIME-Version: 1.0
-In-Reply-To: <cover.1628780390.git.asml.silence@gmail.com>
+In-Reply-To: <1929aac2-14ca-789e-fe6f-faebd858abb4@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -71,28 +66,28 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/12/21 9:40 PM, Pavel Begunkov wrote:
-> For the bug description see 2/2. As mentioned there the current problems
-> is because of generic_write_checks(), but there was also a similar case
-> fixed in 5.12, which should have been triggerable by normal
-> write(2)/read(2) and others.
+On 8/21/21 2:18 PM, Jens Axboe wrote:
+> On 8/20/21 3:36 AM, Pavel Begunkov wrote:
+>> 1-2 put some limits on the fixed file tables sizes, files and
+>> buffers.
+>>
+>> 3/3 adds compatibility checks for ->splice_fd_in, for all requests
+>> buy rw and some others, see the patch message.
+>>
+>> All based on 5.15 and merked stable, looks to me as the best way.
+>>
+>> Pavel Begunkov (3):
+>>   io_uring: limit fixed table size by RLIMIT_NOFILE
+>>   io_uring: place fixed tables under memcg limits
+>>   io_uring: add ->splice_fd_in checks
+>>
+>>  fs/io_uring.c | 61 ++++++++++++++++++++++++++++++---------------------
+>>  1 file changed, 36 insertions(+), 25 deletions(-)
 > 
-> It may be better to enforce reexpands as a long term solution, but for
-> now this patchset is quickier and easier to backport.
+> Applied - especially 3/3 will be a bit of a stable pain. Nothing difficult,
+> just needs attention for each version...
 
-We need to do something with this, hopefully soon.
-
-
-> v2: don't fail it has been justly fully reverted
-> 
-> Pavel Begunkov (2):
->   iov_iter: mark truncated iters
->   io_uring: don't retry with truncated iter
-> 
->  fs/io_uring.c       | 16 ++++++++++++++++
->  include/linux/uio.h |  5 ++++-
->  2 files changed, 20 insertions(+), 1 deletion(-)
-> 
+Yep. Thanks, Jens
 
 -- 
 Pavel Begunkov

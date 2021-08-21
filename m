@@ -2,462 +2,116 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 982EB3F3B48
-	for <lists+io-uring@lfdr.de>; Sat, 21 Aug 2021 17:54:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07ED53F3B7B
+	for <lists+io-uring@lfdr.de>; Sat, 21 Aug 2021 18:47:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232133AbhHUPzM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 21 Aug 2021 11:55:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35502 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231690AbhHUPzM (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 21 Aug 2021 11:55:12 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9836C061575
-        for <io-uring@vger.kernel.org>; Sat, 21 Aug 2021 08:54:32 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id h13so18792437wrp.1
-        for <io-uring@vger.kernel.org>; Sat, 21 Aug 2021 08:54:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=yGWty/PQoMaIx7vt2Q6QfZkV9HCQJfMgUtOhZYx9FMc=;
-        b=D9kxxZhZVomcpW1sg15gZg9JPaiO1edNKyF2Isn2mwRcBU4AGsyQqhXlNfyxQsnkL3
-         mv13CyNCITO2vlz77zYAW3H76li8ZMnD4tWO2lx6HZcE7rsHzyups/e1MKoY/5KSKe2S
-         2twi0eBk0hd4iHKhN7/UWnrnhXAzvbSOBT4ML8vqwsyWRD3E8N1hhUKracLm1CIW6lfw
-         7gvOaIZZXSEQnS4EP8x0uF47+L8cUQodRGXuD2PRCxwEREp7Z+IoLXGQVeZPJ0SaAvU0
-         xCMUp6oBGQMvsvB648SUQQzz3ZkX9FcjdzAYlubTy3HkKKIDlYJcSUZ1l7v9DajCRBFW
-         Jxlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=yGWty/PQoMaIx7vt2Q6QfZkV9HCQJfMgUtOhZYx9FMc=;
-        b=DO3O1KzhtwKKkifDW/Out9FyNEC+W3l9grhaeslsvvu1OQI1xinalrsstFwivs/NoJ
-         FWYS7uEX59uhOJ4xRg3OdMNkNKsncenHUraXnuxYOwI7p5XUDnnUWDztZqOikhYTL1Q1
-         3yeYlEJdiH4ufDFa7HC3HCp+NgZ5FDoRL9LzET29FjTF54+t4O0Z+Fx7qj46hyjMB1J6
-         99kpQdBO2Tr2Oa2sCYnMbVzdlNSk7E9HfKVfJ6BLfz1ZcPsm/LZ27qrOhZDCptBcG8Ue
-         GvNgEydgtNDc6LQfYVm9nHc9NhMAgoJObLcJ/M9qay1MxbnUT7Gn0g4Ca/lbQnaDuAPg
-         KCSw==
-X-Gm-Message-State: AOAM5327XHGg9tfpEGx87xFRKUSzeLI/voZxufA7I6amPdSPaK/B1/fy
-        IIALyrLTSZYKlwkMRt1/iwF2GCETD1U=
-X-Google-Smtp-Source: ABdhPJwvooIkCRAe6kWLDibOEtTmWvoZ9fQ4aGAQI+a9QAIC6mPcaEvVJbaCt2+g2H8mL9btivusLw==
-X-Received: by 2002:adf:8169:: with SMTP id 96mr2822462wrm.207.1629561271404;
-        Sat, 21 Aug 2021 08:54:31 -0700 (PDT)
-Received: from localhost.localdomain ([85.255.233.174])
-        by smtp.gmail.com with ESMTPSA id s13sm13451959wmc.47.2021.08.21.08.54.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 21 Aug 2021 08:54:31 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        Josh Triplett <josh@joshtriplett.org>
-Subject: [PATCH liburing 1/1] tests: test open/accept directly into fixed table
-Date:   Sat, 21 Aug 2021 16:53:53 +0100
-Message-Id: <e4326cd1629f9f3c5db3aee7cd976d99df18aff9.1629560358.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.32.0
+        id S229617AbhHUQsI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 21 Aug 2021 12:48:08 -0400
+Received: from cloud48395.mywhc.ca ([173.209.37.211]:54514 "EHLO
+        cloud48395.mywhc.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229550AbhHUQsI (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 21 Aug 2021 12:48:08 -0400
+Received: from modemcable064.203-130-66.mc.videotron.ca ([66.130.203.64]:43192 helo=[192.168.1.179])
+        by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <olivier@trillion01.com>)
+        id 1mHU9V-0006l1-GN; Sat, 21 Aug 2021 12:47:25 -0400
+Message-ID: <9dfb14c1a9ab686df0eeea553b39246bc5b51ede.camel@trillion01.com>
+Subject: Re: [PATCH] coredump: Limit what can interrupt coredumps
+From:   Olivier Langlois <olivier@trillion01.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Tony Battersby <tonyb@cybernetics.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Oleg Nesterov <oleg@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        io-uring <io-uring@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Pavel Begunkov>" <asml.silence@gmail.com>
+Date:   Sat, 21 Aug 2021 12:47:23 -0400
+In-Reply-To: <70526737949ab3ad2d8fc551531d286e0f3d88f4.camel@trillion01.com>
+References: <CAHk-=wjC7GmCHTkoz2_CkgSc_Cgy19qwSQgJGXz+v2f=KT3UOw@mail.gmail.com>
+         <87eeda7nqe.fsf@disp2133>
+         <b8434a8987672ab16f9fb755c1fc4d51e0f4004a.camel@trillion01.com>
+         <87pmwt6biw.fsf@disp2133> <87czst5yxh.fsf_-_@disp2133>
+         <CAHk-=wiax83WoS0p5nWvPhU_O+hcjXwv6q3DXV8Ejb62BfynhQ@mail.gmail.com>
+         <87y2bh4jg5.fsf@disp2133>
+         <CAHk-=wjPiEaXjUp6PTcLZFjT8RrYX+ExtD-RY3NjFWDN7mKLbw@mail.gmail.com>
+         <87sg1p4h0g.fsf_-_@disp2133> <20210614141032.GA13677@redhat.com>
+         <87pmwmn5m0.fsf@disp2133>
+         <4d93d0600e4a9590a48d320c5a7dd4c54d66f095.camel@trillion01.com>
+         <8af373ec-9609-35a4-f185-f9bdc63d39b7@cybernetics.com>
+         <9d194813-ecb1-2fe4-70aa-75faf4e144ad@kernel.dk>
+         <b36eb4a26b6aff564c6ef850a3508c5b40141d46.camel@trillion01.com>
+         <0bc38b13-5a7e-8620-6dce-18731f15467e@kernel.dk>
+         <24c795c6-4ec4-518e-bf9b-860207eee8c7@kernel.dk>
+         <05c0cadc-029e-78af-795d-e09cf3e80087@cybernetics.com>
+         <b5ab8ca0-cef5-c9b7-e47f-21c0d395f82e@kernel.dk>
+         <84640f18-79ee-d8e4-5204-41a2c2330ed8@kernel.dk>
+         <c4578bef-a21a-2435-e75a-d11d13d42923@kernel.dk>
+         <70526737949ab3ad2d8fc551531d286e0f3d88f4.camel@trillion01.com>
+Organization: Trillion01 Inc
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.40.4 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - trillion01.com
+X-Get-Message-Sender-Via: cloud48395.mywhc.ca: authenticated_id: olivier@trillion01.com
+X-Authenticated-Sender: cloud48395.mywhc.ca: olivier@trillion01.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Test a new feature allowing to open/accept directly into io_uring's
-fixed table bypassing normal fdtable.
+On Sat, 2021-08-21 at 06:08 -0400, Olivier Langlois wrote:
+> On Tue, 2021-08-17 at 20:57 -0600, Jens Axboe wrote:
+> > 
+> > Olivier, I sent a 5.10 version for Nathan, any chance you can test
+> > this
+> > one for the current kernels? Basically this one should work for
+> > 5.11+,
+> > and the later 5.10 version is just for 5.10. I'm going to send it
+> > out
+> > separately for review.
+> > 
+> > I do think this is the right solution, barring a tweak maybe on
+> > testing
+> > notify == TWA_SIGNAL first before digging into the task struct. But
+> > the
+> > principle is sound, and it'll work for other users of TWA_SIGNAL as
+> > well. None right now as far as I can tell, but the live patching is
+> > switching to TIF_NOTIFY_SIGNAL as well which will also cause issues
+> > with
+> > coredumps potentially.
+> > 
+> Ok, I am going to give it a shot. This solution is probably superior
+> to
+> the previous attempt as it does not inject io_uring dependency into
+> the
+> coredump module.
+> 
+> The small extra change that I alluded to in my previous reply will
+> still be relevant even if we go with your patch...
+> 
+> I'll come back soon with your patch testing result and my small extra
+> change that I keep teasing about.
+> 
+> Greetings,
+> 
+Jens,
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- test/accept.c  |  74 ++++++++++++++++++------
- test/openat2.c | 152 ++++++++++++++++++++++++++++++++++++++++++++++---
- 2 files changed, 199 insertions(+), 27 deletions(-)
+your patch doesn't compile with 5.12+. AFAIK, the reason is that
+JOBCTL_TASK_WORK is gone.
 
-diff --git a/test/accept.c b/test/accept.c
-index f096f8a..41caa48 100644
---- a/test/accept.c
-+++ b/test/accept.c
-@@ -39,9 +39,10 @@ static void queue_send(struct io_uring *ring, int fd)
- 
- 	sqe = io_uring_get_sqe(ring);
- 	io_uring_prep_writev(sqe, fd, &d->iov, 1, 0);
-+	sqe->user_data = 1;
- }
- 
--static void queue_recv(struct io_uring *ring, int fd)
-+static void queue_recv(struct io_uring *ring, int fd, bool fixed)
- {
- 	struct io_uring_sqe *sqe;
- 	struct data *d;
-@@ -52,16 +53,21 @@ static void queue_recv(struct io_uring *ring, int fd)
- 
- 	sqe = io_uring_get_sqe(ring);
- 	io_uring_prep_readv(sqe, fd, &d->iov, 1, 0);
-+	sqe->user_data = 2;
-+	if (fixed)
-+		sqe->flags |= IOSQE_FIXED_FILE;
- }
- 
--static int accept_conn(struct io_uring *ring, int fd)
-+static int accept_conn(struct io_uring *ring, int fd, bool fixed)
- {
- 	struct io_uring_sqe *sqe;
- 	struct io_uring_cqe *cqe;
--	int ret;
-+	int ret, fixed_idx = 0;
- 
- 	sqe = io_uring_get_sqe(ring);
- 	io_uring_prep_accept(sqe, fd, NULL, NULL, 0);
-+	if (fixed)
-+		sqe->splice_fd_in = fixed_idx + 1;
- 
- 	ret = io_uring_submit(ring);
- 	assert(ret != -1);
-@@ -70,6 +76,15 @@ static int accept_conn(struct io_uring *ring, int fd)
- 	assert(!ret);
- 	ret = cqe->res;
- 	io_uring_cqe_seen(ring, cqe);
-+
-+	if (fixed) {
-+		if (ret > 0) {
-+			close(ret);
-+			return -EINVAL;
-+		} else if (!ret) {
-+			ret = fixed_idx;
-+		}
-+	}
- 	return ret;
- }
- 
-@@ -102,15 +117,12 @@ static int start_accept_listen(struct sockaddr_in *addr, int port_off)
- 	return fd;
- }
- 
--static int test(struct io_uring *ring, int accept_should_error)
-+static int test(struct io_uring *ring, int accept_should_error, bool fixed)
- {
- 	struct io_uring_cqe *cqe;
- 	struct sockaddr_in addr;
--	uint32_t head;
--	uint32_t count = 0;
--	int done = 0;
--	int p_fd[2];
--        int ret;
-+	uint32_t head, count = 0;
-+	int ret, p_fd[2], done = 0;
- 
- 	int32_t val, recv_s0 = start_accept_listen(&addr, 0);
- 
-@@ -137,11 +149,14 @@ static int test(struct io_uring *ring, int accept_should_error)
- 	ret = fcntl(p_fd[1], F_SETFL, flags);
- 	assert(ret != -1);
- 
--	p_fd[0] = accept_conn(ring, recv_s0);
-+	p_fd[0] = accept_conn(ring, recv_s0, fixed);
- 	if (p_fd[0] == -EINVAL) {
- 		if (accept_should_error)
- 			goto out;
--		fprintf(stdout, "Accept not supported, skipping\n");
-+		if (fixed)
-+			fprintf(stdout, "Fixed accept not supported, skipping\n");
-+		else
-+			fprintf(stdout, "Accept not supported, skipping\n");
- 		no_accept = 1;
- 		goto out;
- 	} else if (p_fd[0] < 0) {
-@@ -153,7 +168,7 @@ static int test(struct io_uring *ring, int accept_should_error)
- 	}
- 
- 	queue_send(ring, p_fd[1]);
--	queue_recv(ring, p_fd[0]);
-+	queue_recv(ring, p_fd[0], fixed);
- 
- 	ret = io_uring_submit_and_wait(ring, 2);
- 	assert(ret != -1);
-@@ -161,7 +176,8 @@ static int test(struct io_uring *ring, int accept_should_error)
- 	while (count < 2) {
- 		io_uring_for_each_cqe(ring, head, cqe) {
- 			if (cqe->res < 0) {
--				fprintf(stderr, "Got cqe res %d\n", cqe->res);
-+				fprintf(stderr, "Got cqe res %d, user_data %i\n",
-+						cqe->res, (int)cqe->user_data);
- 				done = 1;
- 				break;
- 			}
-@@ -176,12 +192,14 @@ static int test(struct io_uring *ring, int accept_should_error)
- 	}
- 
- out:
--	close(p_fd[0]);
-+	if (!fixed)
-+		close(p_fd[0]);
- 	close(p_fd[1]);
- 	close(recv_s0);
- 	return 0;
- err:
--	close(p_fd[0]);
-+	if (!fixed)
-+		close(p_fd[0]);
- 	close(p_fd[1]);
- 	close(recv_s0);
- 	return 1;
-@@ -302,7 +320,7 @@ static int test_accept_cancel(unsigned usecs)
- 	sqe = io_uring_get_sqe(&m_io_uring);
- 	io_uring_prep_accept(sqe, fd, NULL, NULL, 0);
- 	sqe->user_data = 1;
--        ret = io_uring_submit(&m_io_uring);
-+	ret = io_uring_submit(&m_io_uring);
- 	assert(ret == 1);
- 
- 	if (usecs)
-@@ -355,7 +373,21 @@ static int test_accept(void)
- 
- 	ret = io_uring_queue_init(32, &m_io_uring, 0);
- 	assert(ret >= 0);
--	ret = test(&m_io_uring, 0);
-+	ret = test(&m_io_uring, 0, false);
-+	io_uring_queue_exit(&m_io_uring);
-+	return ret;
-+}
-+
-+static int test_accept_fixed(void)
-+{
-+	struct io_uring m_io_uring;
-+	int ret, fd = -1;
-+
-+	ret = io_uring_queue_init(32, &m_io_uring, 0);
-+	assert(ret >= 0);
-+	ret = io_uring_register_files(&m_io_uring, &fd, 1);
-+	assert(ret == 0);
-+	ret = test(&m_io_uring, 0, true);
- 	io_uring_queue_exit(&m_io_uring);
- 	return ret;
- }
-@@ -377,7 +409,7 @@ static int test_accept_sqpoll(void)
- 	if (p.features & IORING_FEAT_SQPOLL_NONFIXED)
- 		should_fail = 0;
- 
--	ret = test(&m_io_uring, should_fail);
-+	ret = test(&m_io_uring, should_fail, false);
- 	io_uring_queue_exit(&m_io_uring);
- 	return ret;
- }
-@@ -397,6 +429,12 @@ int main(int argc, char *argv[])
- 	if (no_accept)
- 		return 0;
- 
-+	ret = test_accept_fixed();
-+	if (ret) {
-+		fprintf(stderr, "test_accept_fixed failed\n");
-+		return ret;
-+	}
-+
- 	ret = test_accept_sqpoll();
- 	if (ret) {
- 		fprintf(stderr, "test_accept_sqpoll failed\n");
-diff --git a/test/openat2.c b/test/openat2.c
-index 65f81b1..8964208 100644
---- a/test/openat2.c
-+++ b/test/openat2.c
-@@ -13,7 +13,8 @@
- #include "helpers.h"
- #include "liburing.h"
- 
--static int test_openat2(struct io_uring *ring, const char *path, int dfd)
-+static int test_openat2(struct io_uring *ring, const char *path, int dfd,
-+			int fixed_slot)
- {
- 	struct io_uring_cqe *cqe;
- 	struct io_uring_sqe *sqe;
-@@ -23,30 +24,151 @@ static int test_openat2(struct io_uring *ring, const char *path, int dfd)
- 	sqe = io_uring_get_sqe(ring);
- 	if (!sqe) {
- 		fprintf(stderr, "get sqe failed\n");
--		goto err;
-+		return -1;
- 	}
- 	memset(&how, 0, sizeof(how));
--	how.flags = O_RDONLY;
-+	how.flags = O_RDWR;
- 	io_uring_prep_openat2(sqe, dfd, path, &how);
-+	sqe->splice_fd_in = fixed_slot;
- 
- 	ret = io_uring_submit(ring);
- 	if (ret <= 0) {
- 		fprintf(stderr, "sqe submit failed: %d\n", ret);
--		goto err;
-+		return -1;
- 	}
- 
- 	ret = io_uring_wait_cqe(ring, &cqe);
- 	if (ret < 0) {
- 		fprintf(stderr, "wait completion %d\n", ret);
--		goto err;
-+		return -1;
- 	}
- 	ret = cqe->res;
- 	io_uring_cqe_seen(ring, cqe);
-+
-+	if (fixed_slot && ret > 0) {
-+		close(ret);
-+		return -EINVAL;
-+	}
- 	return ret;
--err:
--	return -1;
- }
- 
-+static int test_open_fixed(const char *path, int dfd)
-+{
-+	struct io_uring_cqe *cqe;
-+	struct io_uring_sqe *sqe;
-+	struct io_uring ring;
-+	const char pattern = 0xac;
-+	char buffer[] = { 0, 0 };
-+	int i, ret, fd = -1;
-+
-+	ret = io_uring_queue_init(8, &ring, 0);
-+	if (ret) {
-+		fprintf(stderr, "ring setup failed\n");
-+		return -1;
-+	}
-+	ret = io_uring_register_files(&ring, &fd, 1);
-+	if (ret) {
-+		fprintf(stderr, "%s: register ret=%d\n", __FUNCTION__, ret);
-+		return -1;
-+	}
-+
-+	ret = test_openat2(&ring, path, dfd, 1);
-+	if (ret == -EINVAL) {
-+		printf("fixed open isn't supported\n");
-+		return 1;
-+	} else if (ret) {
-+		fprintf(stderr, "direct open failed %d\n", ret);
-+		return -1;
-+	}
-+
-+	sqe = io_uring_get_sqe(&ring);
-+	io_uring_prep_write(sqe, 0, &pattern, 1, 0);
-+	sqe->user_data = 1;
-+	sqe->flags |= IOSQE_FIXED_FILE | IOSQE_IO_LINK;
-+
-+	sqe = io_uring_get_sqe(&ring);
-+	io_uring_prep_read(sqe, 0, buffer, 1, 0);
-+	sqe->user_data = 2;
-+	sqe->flags |= IOSQE_FIXED_FILE;
-+
-+	ret = io_uring_submit(&ring);
-+	if (ret != 2) {
-+		fprintf(stderr, "%s: got %d, wanted 2\n", __FUNCTION__, ret);
-+		return -1;
-+	}
-+
-+	for (i = 0; i < 2; i++) {
-+		ret = io_uring_wait_cqe(&ring, &cqe);
-+		if (ret < 0) {
-+			fprintf(stderr, "wait completion %d\n", ret);
-+			return -1;
-+		}
-+		if (cqe->res != 1) {
-+			fprintf(stderr, "unexpectetd ret %d\n", cqe->res);
-+			return -1;
-+		}
-+		io_uring_cqe_seen(&ring, cqe);
-+	}
-+	if (memcmp(&pattern, buffer, 1) != 0) {
-+		fprintf(stderr, "buf validation failed\n");
-+		return -1;
-+	}
-+
-+	ret = test_openat2(&ring, path, dfd, 1);
-+	if (ret != -EBADF) {
-+		fprintf(stderr, "bogus double register %d\n", ret);
-+		return -1;
-+	}
-+	io_uring_queue_exit(&ring);
-+	return 0;
-+}
-+
-+static int test_open_fixed_fail(const char *path, int dfd)
-+{
-+	struct io_uring ring;
-+	int ret, fd = -1;
-+
-+	ret = io_uring_queue_init(8, &ring, 0);
-+	if (ret) {
-+		fprintf(stderr, "ring setup failed\n");
-+		return -1;
-+	}
-+
-+	ret = test_openat2(&ring, path, dfd, 1);
-+	if (ret != -ENXIO) {
-+		fprintf(stderr, "install into not existing table, %i\n", ret);
-+		return 1;
-+	}
-+
-+	ret = io_uring_register_files(&ring, &fd, 1);
-+	if (ret) {
-+		fprintf(stderr, "%s: register ret=%d\n", __FUNCTION__, ret);
-+		return -1;
-+	}
-+
-+	ret = test_openat2(&ring, path, dfd, 2);
-+	if (ret != -EINVAL) {
-+		fprintf(stderr, "install out of bounds, %i\n", ret);
-+		return 1;
-+	}
-+
-+	ret = test_openat2(&ring, path, dfd, (1u << 16));
-+	if (ret != -EINVAL) {
-+		fprintf(stderr, "install out of bounds or u16 overflow, %i\n", ret);
-+		return 1;
-+	}
-+
-+	ret = test_openat2(&ring, path, dfd, (1u << 16) + 1);
-+	if (ret != -EINVAL) {
-+		fprintf(stderr, "install out of bounds or u16 overflow, %i\n", ret);
-+		return 1;
-+	}
-+
-+	io_uring_queue_exit(&ring);
-+	return 0;
-+}
-+
-+
- int main(int argc, char *argv[])
- {
- 	struct io_uring ring;
-@@ -74,7 +196,7 @@ int main(int argc, char *argv[])
- 	if (do_unlink)
- 		t_create_file(path_rel, 4096);
- 
--	ret = test_openat2(&ring, path, -1);
-+	ret = test_openat2(&ring, path, -1, 0);
- 	if (ret < 0) {
- 		if (ret == -EINVAL) {
- 			fprintf(stdout, "openat2 not supported, skipping\n");
-@@ -84,12 +206,24 @@ int main(int argc, char *argv[])
- 		goto err;
- 	}
- 
--	ret = test_openat2(&ring, path_rel, AT_FDCWD);
-+	ret = test_openat2(&ring, path_rel, AT_FDCWD, 0);
- 	if (ret < 0) {
- 		fprintf(stderr, "test_openat2 relative failed: %d\n", ret);
- 		goto err;
- 	}
- 
-+	ret = test_open_fixed(path, -1);
-+	if (ret > 0)
-+		goto done;
-+	if (ret) {
-+		fprintf(stderr, "test_open_fixed failed\n");
-+		goto err;
-+	}
-+	ret = test_open_fixed_fail(path, -1);
-+	if (ret) {
-+		fprintf(stderr, "test_open_fixed_fail failed\n");
-+		goto err;
-+	}
- done:
- 	unlink(path);
- 	if (do_unlink)
--- 
-2.32.0
+Wouldn't just a call to tracehook_notify_signal from do_coredump be
+enough and backward compatible with every possible stable branches?
+
+Greetings,
 

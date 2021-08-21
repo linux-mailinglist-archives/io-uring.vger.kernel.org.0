@@ -2,76 +2,96 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DDE23F3B0E
-	for <lists+io-uring@lfdr.de>; Sat, 21 Aug 2021 16:35:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 546E43F3B1C
+	for <lists+io-uring@lfdr.de>; Sat, 21 Aug 2021 17:08:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230233AbhHUOgM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 21 Aug 2021 10:36:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46598 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230167AbhHUOgL (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 21 Aug 2021 10:36:11 -0400
-Received: from mail-il1-x131.google.com (mail-il1-x131.google.com [IPv6:2607:f8b0:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E47EC061575
-        for <io-uring@vger.kernel.org>; Sat, 21 Aug 2021 07:35:32 -0700 (PDT)
-Received: by mail-il1-x131.google.com with SMTP id v2so12503471ilg.12
-        for <io-uring@vger.kernel.org>; Sat, 21 Aug 2021 07:35:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=2gyfelHB2aycuBn/t6hqC/gI/6Upj5TjBBj9SZ+Nz80=;
-        b=bLwJBN8pGSDiBwqy8oLXvMSINghiv+MCHhx3M+7B8Vsy8QN36cHtaolRqWtAMfkNYU
-         ASEVosAjsCW1qqXba7rjbHKp1gJIhzpBUuL692jkNR2u8UzAFp4qEzTbCHdQYoSo9hN8
-         Edj67AeMcXLGDvYHGoOGp23QHrkP2RiLmtRqC6W71BXqCKR/GzmpeAMLaJCg1uUYFolS
-         irF8EC8P6XxmEWuWO+ligJB9ScS3dWYb5MzXclbDFAmLNq3zjraY2JncoZXx1pr1CiRi
-         +r1Mr7V5WRjhtWTwSEzOxr3eVZXLliUspjQj73CbHtiwXc06NI00uW6I9ngELlqwl5DM
-         o29g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=2gyfelHB2aycuBn/t6hqC/gI/6Upj5TjBBj9SZ+Nz80=;
-        b=V2pBMXEJ2qQzuIkAIaeVZegJ+G4z66l5FRbZSz2RMDVxx9brSZK+tMI3Og4XOVrYFS
-         2gh5jnVjA6cuDfRCTKudpUMd+G3i0srxMM/tet3iiZ/YaBT74JHeQ1AXjWhneXQJWMBs
-         udX67/pYmtGzE0T6a+/waBFv12mhYWirLslCrvIT1T0tjrhHJM2LCvh4Z0yBFE+sGcG1
-         IMMud8lwHUI3DV1/P79/aL+bJaA7Zy88DgxiyqHNbgw5lh81z8IMsweJD/i4+paV9m6/
-         3WlvffUVshz1grO1hEkJNSlOiTIrGOd2yPUpOMtJbTR/xIA7mMyY138LLLSgc6BouR/C
-         Js4Q==
-X-Gm-Message-State: AOAM532M6FGHahgpY61hty8wZVB0hDDn5u4CUmRs03puGS67GTgG55lH
-        EXE5+sSg3gZF7eyEIwGj8E01QK0cfq44oXlw
-X-Google-Smtp-Source: ABdhPJylOpsWQfhGOOeZAeWDB6n15MoqCQF2hARA6s6ZI0DPNJEdO6yzC71ExrCIYYBoeLEtx55xYw==
-X-Received: by 2002:a05:6e02:f44:: with SMTP id y4mr17413006ilj.257.1629556531433;
-        Sat, 21 Aug 2021 07:35:31 -0700 (PDT)
-Received: from [192.168.1.116] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id v14sm5181943ilh.54.2021.08.21.07.35.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 21 Aug 2021 07:35:31 -0700 (PDT)
-Subject: Re: [PATCH liburing] tests: fix test_cancel_req_across_fork
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <956be84e623dda6f7fbd0e0b0840a8dff22e6f45.1629555705.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <9c2304d4-01ab-adb8-7f57-3b3c82b52b6b@kernel.dk>
-Date:   Sat, 21 Aug 2021 08:35:30 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S231491AbhHUPIt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 21 Aug 2021 11:08:49 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:49674 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230259AbhHUPIt (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 21 Aug 2021 11:08:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1629558488;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=eaFIdkBVLb/Y085I8a/rndyDjBOtoqkC6jmue5Wa1yI=;
+        b=WcB3pYFAzODTHXIg9tVadC9WrMc8bmwJ28Cuh1TaZ71uI/6V1ZYhXw5HGn3l68DZtYYFjT
+        Ad1LXWM1/OoMN3Nl9ACbbgtiacdzHPxtWNpQAMnuNxR/VtsqXOEOAlMYIFfS06sBK1+IhE
+        U8AHbSHX21Y49V0Bhq2g8KDVVEX2/18=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-305-gYpi6mW_OMSf9M2z3MGETw-1; Sat, 21 Aug 2021 11:08:04 -0400
+X-MC-Unique: gYpi6mW_OMSf9M2z3MGETw-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 86C50107ACF5;
+        Sat, 21 Aug 2021 15:08:03 +0000 (UTC)
+Received: from localhost (ovpn-8-19.pek2.redhat.com [10.72.8.19])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E27625D6B1;
+        Sat, 21 Aug 2021 15:07:58 +0000 (UTC)
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc:     Ming Lei <ming.lei@redhat.com>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Subject: [PATCH] io_uring: retry in case of short read on block device
+Date:   Sat, 21 Aug 2021 23:07:51 +0800
+Message-Id: <20210821150751.1290434-1-ming.lei@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <956be84e623dda6f7fbd0e0b0840a8dff22e6f45.1629555705.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/21/21 8:22 AM, Pavel Begunkov wrote:
-> Rarely, the request we're trying to cancel may not yet got picked by
-> a worker, and so the cancel request returns 0 instead of -EALREADY, and
-> it's a valid output we should consider.
+In case of buffered reading from block device, when short read happens,
+we should retry to read more, otherwise the IO will be completed
+partially, for example, the following fio expects to read 2MB, but it
+can only read 1M or less bytes:
 
-Agree, applied.
+    fio --name=onessd --filename=/dev/nvme0n1 --filesize=2M \
+	--rw=randread --bs=2M --direct=0 --overwrite=0 --numjobs=1 \
+	--iodepth=1 --time_based=0 --runtime=2 --ioengine=io_uring \
+	--registerfiles --fixedbufs --gtod_reduce=1 --group_reporting
 
+Fix the issue by allowing short read retry for block device, which sets
+FMODE_BUF_RASYNC really.
+
+Fixes: 9a173346bd9e ("io_uring: fix short read retries for non-reg files")
+Cc: Pavel Begunkov <asml.silence@gmail.com>
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+---
+ fs/io_uring.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index bf548af0426c..bbcd1a9e75e5 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -3268,6 +3268,12 @@ static inline int io_iter_do_read(struct io_kiocb *req, struct iov_iter *iter)
+ 		return -EINVAL;
+ }
+ 
++static bool need_read_all(struct io_kiocb *req)
++{
++	return req->flags & REQ_F_ISREG ||
++		S_ISBLK(file_inode(req->file)->i_mode);
++}
++
+ static int io_read(struct io_kiocb *req, unsigned int issue_flags)
+ {
+ 	struct iovec inline_vecs[UIO_FASTIOV], *iovec = inline_vecs;
+@@ -3322,7 +3328,7 @@ static int io_read(struct io_kiocb *req, unsigned int issue_flags)
+ 	} else if (ret == -EIOCBQUEUED) {
+ 		goto out_free;
+ 	} else if (ret <= 0 || ret == io_size || !force_nonblock ||
+-		   (req->flags & REQ_F_NOWAIT) || !(req->flags & REQ_F_ISREG)) {
++		   (req->flags & REQ_F_NOWAIT) || !need_read_all(req)) {
+ 		/* read all, failed, already did sync or don't want to retry */
+ 		goto done;
+ 	}
 -- 
-Jens Axboe
+2.31.1
 

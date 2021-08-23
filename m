@@ -2,60 +2,47 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E6E0E3F42A5
-	for <lists+io-uring@lfdr.de>; Mon, 23 Aug 2021 02:44:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96A7B3F43D7
+	for <lists+io-uring@lfdr.de>; Mon, 23 Aug 2021 05:25:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229746AbhHWAoq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 22 Aug 2021 20:44:46 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:54268 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230174AbhHWAop (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 22 Aug 2021 20:44:45 -0400
-Received: by mail-io1-f70.google.com with SMTP id n189-20020a6b8bc6000000b005b92c64b625so7532364iod.20
-        for <io-uring@vger.kernel.org>; Sun, 22 Aug 2021 17:44:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=Uwxvn5atNhE0NIH/RYoJlbaLRjbzmMnZlC4pPIKHaCg=;
-        b=r+EIsFF3RekNwHFc8GlgD26nd9w2gnWIAhANEnNVccgYGcAloAD/IDFKokC1q1BoqT
-         ZiB0JpdweB2vqMooMXd2KH7IC7NmXzu1xsCysYg4wiV+sR0mWBIk/DmePCzAyGGwtBqW
-         FiLfRY/o+L3cdUS9JnfL53GSF0IOoxxnk9pRj2wT2Sr4yNO2PFRPbfACqOP0dBGpzqVu
-         iTLhOYxpQHl9vFTzmk8Otv+r3DKVJSC/UAHvYIUTUwvsYdizau+ZnkqFDMDZNco9WOrC
-         t8OrzcSd7VKVNR3z1OVBc51pwDHbswXo93ZbRPYPZ1pwC6iOAiUPvxHk8QNnh9ussUX3
-         anrg==
-X-Gm-Message-State: AOAM531MHrO/t2LYUjGaoGv71ZXVDS3wvV9LYsfR3w2v1WrnTIP/JdRg
-        sedTY9HL0LqdDV+s8O1VAiR5nRrdWKt0L0kzDdfTAqnVnXEQ
-X-Google-Smtp-Source: ABdhPJzRzRs/Duz0wgM23JTziNfzEd6x9/41lSnGWLMkUw4RlM/yKekx0NVzSt7Y6yEF9dPTYoeP0ODdMtKxgxe5AaTww1CkJUtS
+        id S231549AbhHWD0C (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 22 Aug 2021 23:26:02 -0400
+Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:43814 "EHLO
+        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230474AbhHWDZ6 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 22 Aug 2021 23:25:58 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UlAN5vv_1629689106;
+Received: from e18g09479.et15sqa.tbsite.net(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UlAN5vv_1629689106)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 23 Aug 2021 11:25:14 +0800
+From:   Hao Xu <haoxu@linux.alibaba.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>
+Subject: [PATCH for-5.15 v2 0/2] fix failed linkchain code logic
+Date:   Mon, 23 Aug 2021 11:25:04 +0800
+Message-Id: <20210823032506.34857-1-haoxu@linux.alibaba.com>
+X-Mailer: git-send-email 2.24.4
 MIME-Version: 1.0
-X-Received: by 2002:a02:2a88:: with SMTP id w130mr27207095jaw.60.1629679443921;
- Sun, 22 Aug 2021 17:44:03 -0700 (PDT)
-Date:   Sun, 22 Aug 2021 17:44:03 -0700
-In-Reply-To: <6e5f874d-ac61-9556-8d7e-575ec7d9682a@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005a4e8105ca2f509c@google.com>
-Subject: Re: [syzbot] KASAN: stack-out-of-bounds Read in iov_iter_revert
-From:   syzbot <syzbot+9671693590ef5aad8953@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
+the first patch is code clean.
+the second is the main one, which refactors linkchain failure path to
+fix a problem, detail in the commit message.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+v1-->v2
+ - update patch with Pavel's suggestion.
 
-Reported-and-tested-by: syzbot+9671693590ef5aad8953@syzkaller.appspotmail.com
+Hao Xu (2):
+  io_uring: remove redundant req_set_fail()
+  io_uring: fix failed linkchain code logic
 
-Tested on:
+ fs/io_uring.c | 60 +++++++++++++++++++++++++++++++++++++--------------
+ 1 file changed, 44 insertions(+), 16 deletions(-)
 
-commit:         b917c794 io_uring: fix revert truncated vecs
-git tree:       https://github.com/isilence/linux.git syztest_trunc2
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4aa932b5eaeee9ef
-dashboard link: https://syzkaller.appspot.com/bug?extid=9671693590ef5aad8953
-compiler:       Debian clang version 11.0.1-2, GNU ld (GNU Binutils for Debian) 2.35.1
+-- 
+2.24.4
 
-Note: testing is done by a robot and is best-effort only.

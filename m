@@ -2,92 +2,126 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 074AC3F4AA6
-	for <lists+io-uring@lfdr.de>; Mon, 23 Aug 2021 14:28:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 526613F4AAF
+	for <lists+io-uring@lfdr.de>; Mon, 23 Aug 2021 14:31:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237017AbhHWM3Q (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 23 Aug 2021 08:29:16 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:57323 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233755AbhHWM3P (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 23 Aug 2021 08:29:15 -0400
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-59-E63N1zkDM0uJNVkDIPANeg-1; Mon, 23 Aug 2021 13:28:31 +0100
-X-MC-Unique: E63N1zkDM0uJNVkDIPANeg-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) with Microsoft SMTP
- Server (TLS) id 15.0.1497.23; Mon, 23 Aug 2021 13:28:30 +0100
-Received: from AcuMS.Aculab.com ([fe80::994c:f5c2:35d6:9b65]) by
- AcuMS.aculab.com ([fe80::994c:f5c2:35d6:9b65%12]) with mapi id
- 15.00.1497.023; Mon, 23 Aug 2021 13:28:30 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Jens Axboe' <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
-        "Pavel Begunkov" <asml.silence@gmail.com>
-CC:     "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Palash Oswal <oswalpalash@gmail.com>,
-        "Sudip Mukherjee" <sudipm.mukherjee@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "syzbot+9671693590ef5aad8953@syzkaller.appspotmail.com" 
-        <syzbot+9671693590ef5aad8953@syzkaller.appspotmail.com>
-Subject: RE: [PATCH v2 0/2] iter revert problems
-Thread-Topic: [PATCH v2 0/2] iter revert problems
-Thread-Index: AQHXluI3nOSi+NKXRk6vP8lbPLAAUauBBWNA
-Date:   Mon, 23 Aug 2021 12:28:30 +0000
-Message-ID: <f1ccbea939f54b779004d1da51a70160@AcuMS.aculab.com>
-References: <cover.1628780390.git.asml.silence@gmail.com>
- <3eaf5365-586d-700b-0277-e0889bfeb05d@gmail.com>
- <YSF9UFyLGZQeKbLt@zeniv-ca.linux.org.uk>
- <120e5aac-e056-1158-505b-fda41f1c99a5@kernel.dk>
-In-Reply-To: <120e5aac-e056-1158-505b-fda41f1c99a5@kernel.dk>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        id S236910AbhHWMcF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 23 Aug 2021 08:32:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59510 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233755AbhHWMcF (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 23 Aug 2021 08:32:05 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6A2AC061575
+        for <io-uring@vger.kernel.org>; Mon, 23 Aug 2021 05:31:22 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id z9so25972547wrh.10
+        for <io-uring@vger.kernel.org>; Mon, 23 Aug 2021 05:31:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9P1rCgDHTh4Snmzq/a5R0nG5KY4lDtFc0Bb1Vkmh10c=;
+        b=p5zaoQ/Vf7Ao8Kge6M4MEzhK3C0R+we2XZuX3CltXZJ9NxepVKx3SDPDzsprjdEJ7u
+         ydedE3gWGMcPC1o6yRRDIH7eMe4tN1Ka4gS6Cq51r7AndenM2EZWz34LhMXj71NV5Dk1
+         7VlHvoyllQX0YfAb+nRwgh9EA13R95g0Xc/54BMh1f3d91tn5uwcAcJd2slzNB5twLdq
+         iHyZvsuyUItnGrhauJEeg7XeY+O20MOg+AphGP91bUTRlLy5NdrWoTaXLkGEaYBy4715
+         a7rWX2rd8VWAsZfjmXtC4XLQ5Bokiugf/I8S6RU2wwJBOMV08UG/Wfhvj5frR2Q1TGFl
+         vmig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9P1rCgDHTh4Snmzq/a5R0nG5KY4lDtFc0Bb1Vkmh10c=;
+        b=Dm5rDIuEE9XYVvudi3ukOsmAo0F9J2yVKlv0d6sMYap9/COpRxTrxptqslnfbe1mfZ
+         fw7xnvDvJqQTZmSFOP04idIij9dSRSU7mX5iowB3p7srFLSO6gSM2RgzqG7w+SXupIHn
+         zXjpfPL4UJBdZpghzTYP6hXxoMXo0azI6HOHnD5eLLOaldqpfsrJQAh0lHBe3/2j+dOR
+         PLJop4w9xiZ8mYw2cVrMs3wc+hSmQ10+2oni6QJ2W4NAFuHZQPlIlQLjSCKFdADX6wzb
+         Hb3rt8XDuLbLWVfiH99UddHcmRSmuP9zoTwaGm4iKzHxAARhYkcKWdudOHzsgrLvreeb
+         +z3g==
+X-Gm-Message-State: AOAM532XPCsiHm0gOJisFQ0RGNFG9npzGkzsFRmZ0lqjJ4esU4hpeAzO
+        j8RPk0gWfvQuaaUJa7zDtls=
+X-Google-Smtp-Source: ABdhPJz7Tl/R94Q2asOm68i+KeRidjDGB9r/DtMXy7hx4b57LCdBeYUdj6GuJLZAuo5oB04OBzU0GQ==
+X-Received: by 2002:a05:6000:1805:: with SMTP id m5mr13188957wrh.265.1629721881537;
+        Mon, 23 Aug 2021 05:31:21 -0700 (PDT)
+Received: from localhost.localdomain ([85.255.233.176])
+        by smtp.gmail.com with ESMTPSA id n13sm12942556wmc.18.2021.08.23.05.31.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Aug 2021 05:31:21 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc:     asml.silence@gmail.com,
+        syzbot+b0c9d1588ae92866515f@syzkaller.appspotmail.com
+Subject: [PATCH] io_uring: fix io_try_cancel_userdata race for iowq
+Date:   Mon, 23 Aug 2021 13:30:44 +0100
+Message-Id: <dfdd37a80cfa9ffd3e59538929c99cdd55d8699e.1629721757.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-RnJvbTogSmVucyBBeGJvZQ0KPiBTZW50OiAyMiBBdWd1c3QgMjAyMSAwMDoxNA0KPiANCj4gT24g
-OC8yMS8yMSA0OjI1IFBNLCBBbCBWaXJvIHdyb3RlOg0KPiA+IE9uIFNhdCwgQXVnIDIxLCAyMDIx
-IGF0IDAzOjI0OjI4UE0gKzAxMDAsIFBhdmVsIEJlZ3Vua292IHdyb3RlOg0KPiA+PiBPbiA4LzEy
-LzIxIDk6NDAgUE0sIFBhdmVsIEJlZ3Vua292IHdyb3RlOg0KPiA+Pj4gRm9yIHRoZSBidWcgZGVz
-Y3JpcHRpb24gc2VlIDIvMi4gQXMgbWVudGlvbmVkIHRoZXJlIHRoZSBjdXJyZW50IHByb2JsZW1z
-DQo+ID4+PiBpcyBiZWNhdXNlIG9mIGdlbmVyaWNfd3JpdGVfY2hlY2tzKCksIGJ1dCB0aGVyZSB3
-YXMgYWxzbyBhIHNpbWlsYXIgY2FzZQ0KPiA+Pj4gZml4ZWQgaW4gNS4xMiwgd2hpY2ggc2hvdWxk
-IGhhdmUgYmVlbiB0cmlnZ2VyYWJsZSBieSBub3JtYWwNCj4gPj4+IHdyaXRlKDIpL3JlYWQoMikg
-YW5kIG90aGVycy4NCj4gPj4+DQo+ID4+PiBJdCBtYXkgYmUgYmV0dGVyIHRvIGVuZm9yY2UgcmVl
-eHBhbmRzIGFzIGEgbG9uZyB0ZXJtIHNvbHV0aW9uLCBidXQgZm9yDQo+ID4+PiBub3cgdGhpcyBw
-YXRjaHNldCBpcyBxdWlja2llciBhbmQgZWFzaWVyIHRvIGJhY2twb3J0Lg0KPiA+Pg0KPiA+PiBX
-ZSBuZWVkIHRvIGRvIHNvbWV0aGluZyB3aXRoIHRoaXMsIGhvcGVmdWxseSBzb29uLg0KPiA+DQo+
-ID4gSSBzdGlsbCBkb24ndCBsaWtlIHRoYXQgYXBwcm9hY2ggOy0vICBJZiBhbnl0aGluZywgSSB3
-b3VsZCByYXRoZXIgZG8NCj4gPiBzb21ldGhpbmcgbGlrZSB0aGlzLCBhbmQgdG8gaGVsbCB3aXRo
-IG9uZSBleHRyYSB3b3JkIG9uIHN0YWNrIGluDQo+ID4gc2V2ZXJhbCBmdW5jdGlvbnM7IGF0IGxl
-YXN0IHRoYXQgd2F5IHRoZSBzZW1hbnRpY3MgaXMgZWFzeSB0byBkZXNjcmliZS4NCj4gDQo+IFBh
-dmVsIHN1Z2dlc3RlZCB0aGlzIHZlcnkgYXBwcm9hY2ggaW5pdGlhbGx5IGFzIHdlbGwgd2hlbiB3
-ZSBkaXNjdXNzZWQNCj4gaXQsIGFuZCBpZiB5b3UncmUgZmluZSB3aXRoIHRoZSBleHRyYSBzaXpl
-X3QsIGl0IGlzIGJ5IGZhciB0aGUgYmVzdCB3YXkNCj4gdG8gZ2V0IHRoaXMgZG9uZSBhbmQgbm90
-IGhhdmUgYSB3b25reS9mcmFnaWxlIEFQSS4NCg0KQWxsICh3ZWxsIG1heWJlIGFsbW9zdCBhbGwp
-IHRoZSB1c2VycyBvZiBpb3ZfaXRlciBoYXZlIHRoZQ0Kc2hvcnQgaW92W10gY2FjaGUgYW5kIHRo
-ZSBwb2ludGVyIHRvIHRoZSBiaWcgaW92W10gdG8ga2ZyZWUoKQ0KYWxsb2NhdGVkIHRvZ2V0aGVy
-IHdpdGggdGhlIGlvdl9pdGVyIHN0cnVjdHVyZSBpdHNlbGYuDQpUaGVzZSBhcmUgYWxtb3N0IGFs
-d2F5cyBvbiBzdGFjay4NCg0KUHV0dGluZyB0aGUgd2hvbGUgbG90IHRvZ2V0aGVyIGluIGEgc2lu
-Z2xlIHN0cnVjdHVyZSB3b3VsZA0KbWFrZSB0aGUgY2FsbCBzZXF1ZW5jZXMgYSBsb3QgbGVzcyBj
-b21wbGV4IGFuZCB3b3VsZG4ndCB1c2UNCmFueSBtb3JlIHN0YWNrL2RhdGEgaXMgYWxtb3N0IGFs
-bCB0aGUgY2FzZXMuDQoNCkl0IHdvdWxkIGFsc28gbWVhbiB0aGF0IHRoZSAnaXRlcicgY29kZSBj
-b3VsZCBhbHdheXMgaGF2ZSBhIHBvaW50ZXINCnRvIHRoZSBiYXNlIG9mIHRoZSBvcmlnaW5hbCBp
-b3ZbXSBsaXN0Lg0KVGhlIGxhY2sgb2Ygd2hpY2ggaXMgcHJvYmFibHkgbWFrZXMgdGhlICdyZXZl
-cnQnIGNvZGUgaGFyZD8NCg0KCURhdmlkDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lk
-ZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0K
-UmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
+WARNING: CPU: 1 PID: 5870 at fs/io_uring.c:5975 io_try_cancel_userdata+0x30f/0x540 fs/io_uring.c:5975
+CPU: 0 PID: 5870 Comm: iou-wrk-5860 Not tainted 5.14.0-rc6-next-20210820-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:io_try_cancel_userdata+0x30f/0x540 fs/io_uring.c:5975
+Call Trace:
+ io_async_cancel fs/io_uring.c:6014 [inline]
+ io_issue_sqe+0x22d5/0x65a0 fs/io_uring.c:6407
+ io_wq_submit_work+0x1dc/0x300 fs/io_uring.c:6511
+ io_worker_handle_work+0xa45/0x1840 fs/io-wq.c:533
+ io_wqe_worker+0x2cc/0xbb0 fs/io-wq.c:582
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295
+
+io_try_cancel_userdata() can be called from io_async_cancel() executing
+in the io-wq context, so the warning fires, which is there to alert
+anyone accessing task->io_uring->io_wq in a racy way. However,
+io_wq_put_and_exit() always first waits for all threads to complete,
+so the only detail left is to zero tctx->io_wq after the context is
+removed.
+
+note: one little assumption is that when IO_WQ_WORK_CANCEL, the executor
+won't touch ->io_wq, because io_wq_destroy() might cancel left pending
+requests in such a way.
+
+Cc: stable@vger.kernel.org
+Reported-by: syzbot+b0c9d1588ae92866515f@syzkaller.appspotmail.com
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ fs/io_uring.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index d9534c72dc4b..027afe2f55d4 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -5804,7 +5804,7 @@ static int io_try_cancel_userdata(struct io_kiocb *req, u64 sqe_addr)
+ 	struct io_ring_ctx *ctx = req->ctx;
+ 	int ret;
+ 
+-	WARN_ON_ONCE(req->task != current);
++	WARN_ON_ONCE(!io_wq_current_is_worker() && req->task != current);
+ 
+ 	ret = io_async_cancel_one(req->task->io_uring, sqe_addr, ctx);
+ 	if (ret != -ENOENT)
+@@ -6309,6 +6309,7 @@ static void io_wq_submit_work(struct io_wq_work *work)
+ 	if (timeout)
+ 		io_queue_linked_timeout(timeout);
+ 
++	/* either cancelled or io-wq is dying, so don't touch tctx->iowq */
+ 	if (work->flags & IO_WQ_WORK_CANCEL)
+ 		ret = -ECANCELED;
+ 
+@@ -9124,8 +9125,8 @@ static void io_uring_clean_tctx(struct io_uring_task *tctx)
+ 		 * Must be after io_uring_del_task_file() (removes nodes under
+ 		 * uring_lock) to avoid race with io_uring_try_cancel_iowq().
+ 		 */
+-		tctx->io_wq = NULL;
+ 		io_wq_put_and_exit(wq);
++		tctx->io_wq = NULL;
+ 	}
+ }
+ 
+-- 
+2.32.0
 

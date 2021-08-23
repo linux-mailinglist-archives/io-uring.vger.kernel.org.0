@@ -2,175 +2,92 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E0F7A3F43D9
-	for <lists+io-uring@lfdr.de>; Mon, 23 Aug 2021 05:25:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E9833F4740
+	for <lists+io-uring@lfdr.de>; Mon, 23 Aug 2021 11:17:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231172AbhHWD0D (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 22 Aug 2021 23:26:03 -0400
-Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:54440 "EHLO
-        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231440AbhHWDZ6 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 22 Aug 2021 23:25:58 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UlAN5vv_1629689106;
-Received: from e18g09479.et15sqa.tbsite.net(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UlAN5vv_1629689106)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 23 Aug 2021 11:25:15 +0800
-From:   Hao Xu <haoxu@linux.alibaba.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>
-Subject: [PATCH 2/2] io_uring: fix failed linkchain code logic
-Date:   Mon, 23 Aug 2021 11:25:06 +0800
-Message-Id: <20210823032506.34857-3-haoxu@linux.alibaba.com>
-X-Mailer: git-send-email 2.24.4
-In-Reply-To: <20210823032506.34857-1-haoxu@linux.alibaba.com>
-References: <20210823032506.34857-1-haoxu@linux.alibaba.com>
+        id S229726AbhHWJSB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 23 Aug 2021 05:18:01 -0400
+Received: from mail-io1-f69.google.com ([209.85.166.69]:48730 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235791AbhHWJSB (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 23 Aug 2021 05:18:01 -0400
+Received: by mail-io1-f69.google.com with SMTP id d12-20020a6b680c000000b005b86e36a1f4so9650883ioc.15
+        for <io-uring@vger.kernel.org>; Mon, 23 Aug 2021 02:17:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=sYOMm1BeExwLMpG9wV0sSmPzlu1bC8ry9xId7Ih8E+k=;
+        b=ShunJ2m5mjabGsfC8u/s4uGiKfQes5IgGQx6DnJuTihBc+1DXfRoCUKw6ifRFnOLIv
+         uCetaL4/ww1B3XhkEJ9X/1jEdl4u2bwU/lHILX2kCqXXz7uPfP9CAKzNsjizzAKmPQzS
+         ELfQOrmWe8LaQ4+Xj852eO7ZksVL8KSy3lr4BOezOW5/hXykuFISW3ICnyAesbZAvprZ
+         cQdLzauVdf0eJmbh72zfSv2egPyWZYLKmZjfkj6TrBRyyLgZe1dOInCLFMoR1KM0QsX4
+         ocW3nMAyQHTuoEkZXEn12lIIviYSDxTPDkrQmWzCCOdC8RhLbu+9rp2Shxs7HLn6ELQo
+         IrOA==
+X-Gm-Message-State: AOAM532nViWWm4t12BatBVBeh+MGsLEECqTKq7je5HJRLtjmBUzvSiXn
+        qtiRzu4Tb2+RPITh2qjXYiDVC5GTl3No6gxtYcU32miZt4W1
+X-Google-Smtp-Source: ABdhPJxRzhgfJEVGs4FC30PGotc+vZiWb1ZStPH9YMIv6v5ow+fBugiaVuOY2Ytv6rOLvdqFkZjj4zuQSMdJ8FYVyPMU8Eo7SAVR
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a02:a490:: with SMTP id d16mr29818895jam.42.1629710238709;
+ Mon, 23 Aug 2021 02:17:18 -0700 (PDT)
+Date:   Mon, 23 Aug 2021 02:17:18 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000dd79fc05ca367b9d@google.com>
+Subject: [syzbot] WARNING in io_try_cancel_userdata
+From:   syzbot <syzbot+b0c9d1588ae92866515f@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Given a linkchain like this:
-req0(link_flag)-->req1(link_flag)-->...-->reqn(no link_flag)
+Hello,
 
-There is a problem:
- - if some intermediate linked req like req1 's submittion fails, reqs
-   after it won't be cancelled.
+syzbot found the following issue on:
 
-   - sqpoll disabled: maybe it's ok since users can get the error info
-     of req1 and stop submitting the following sqes.
+HEAD commit:    86ed57fd8c93 Add linux-next specific files for 20210820
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1565bd55300000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f64eccb415bd479d
+dashboard link: https://syzkaller.appspot.com/bug?extid=b0c9d1588ae92866515f
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.1
 
-   - sqpoll enabled: definitely a problem, the following sqes will be
-     submitted in the next round.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-The solution is to refactor the code logic to:
- - if a linked req's submittion fails, just mark it and the head(if it
-   exists) as REQ_F_FAIL. Leverage req->result to indicate whether it
-   is failed or cancelled.
- - submit or fail the whole chain when we come to the end of it.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+b0c9d1588ae92866515f@syzkaller.appspotmail.com
 
-Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
+WARNING: CPU: 1 PID: 5870 at fs/io_uring.c:5975 io_try_cancel_userdata+0x30f/0x540 fs/io_uring.c:5975
+Modules linked in:
+CPU: 0 PID: 5870 Comm: iou-wrk-5860 Not tainted 5.14.0-rc6-next-20210820-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:io_try_cancel_userdata+0x30f/0x540 fs/io_uring.c:5975
+Code: 07 e8 e5 9d 95 ff 48 8b 7c 24 08 e8 ab 02 58 07 e9 6f fe ff ff e8 d1 9d 95 ff 41 bf 8e ff ff ff e9 5f fe ff ff e8 c1 9d 95 ff <0f> 0b 48 b8 00 00 00 00 00 fc ff df 4c 89 fa 48 c1 ea 03 80 3c 02
+RSP: 0018:ffffc900055f7a88 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: ffff888181aa83c0 RCX: 0000000000000000
+RDX: ffff88803fb88000 RSI: ffffffff81e0dacf RDI: ffff888181aa8410
+RBP: ffff88803fb88000 R08: ffffffff899ad660 R09: ffffffff81e23c44
+R10: 0000000000000027 R11: 000000000000000e R12: 1ffff92000abef53
+R13: 0000000000000000 R14: ffff8880b34d0000 R15: ffff888181aa8420
+FS:  00007f7a08d50700(0000) GS:ffff8880b9d00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b2c72e000 CR3: 0000000168b9b000 CR4: 00000000001506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000600
+Call Trace:
+ io_async_cancel fs/io_uring.c:6014 [inline]
+ io_issue_sqe+0x22d5/0x65a0 fs/io_uring.c:6407
+ io_wq_submit_work+0x1dc/0x300 fs/io_uring.c:6511
+ io_worker_handle_work+0xa45/0x1840 fs/io-wq.c:533
+ io_wqe_worker+0x2cc/0xbb0 fs/io-wq.c:582
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295
+
+
 ---
- fs/io_uring.c | 61 +++++++++++++++++++++++++++++++++++++--------------
- 1 file changed, 45 insertions(+), 16 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 44b1b2b58e6a..9ae8f2a5c584 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1776,8 +1776,6 @@ static void io_preinit_req(struct io_kiocb *req, struct io_ring_ctx *ctx)
- 	req->ctx = ctx;
- 	req->link = NULL;
- 	req->async_data = NULL;
--	/* not necessary, but safer to zero */
--	req->result = 0;
- }
- 
- static void io_flush_cached_locked_reqs(struct io_ring_ctx *ctx,
-@@ -1931,11 +1929,16 @@ static void io_fail_links(struct io_kiocb *req)
- 
- 	req->link = NULL;
- 	while (link) {
-+		long res = -ECANCELED;
-+
-+		if (link->flags & REQ_F_FAIL)
-+			res = link->result;
-+
- 		nxt = link->link;
- 		link->link = NULL;
- 
- 		trace_io_uring_fail_link(req, link);
--		io_cqring_fill_event(link->ctx, link->user_data, -ECANCELED, 0);
-+		io_cqring_fill_event(link->ctx, link->user_data, res, 0);
- 		io_put_req_deferred(link);
- 		link = nxt;
- 	}
-@@ -6527,8 +6530,12 @@ static inline void io_queue_sqe(struct io_kiocb *req)
- 	if (unlikely(req->ctx->drain_active) && io_drain_req(req))
- 		return;
- 
--	if (likely(!(req->flags & REQ_F_FORCE_ASYNC))) {
-+	if (likely(!(req->flags & (REQ_F_FORCE_ASYNC | REQ_F_FAIL)))) {
- 		__io_queue_sqe(req);
-+	} else if (req->flags & REQ_F_FAIL) {
-+		long res = req->result ? : -ECANCELED;
-+
-+		io_req_complete_failed(req, res);
- 	} else {
- 		int ret = io_req_prep_async(req);
- 
-@@ -6637,19 +6644,25 @@ static int io_submit_sqe(struct io_ring_ctx *ctx, struct io_kiocb *req,
- 	ret = io_init_req(ctx, req, sqe);
- 	if (unlikely(ret)) {
- fail_req:
-+		/* fail even hard links since we don't submit */
- 		if (link->head) {
--			/* fail even hard links since we don't submit */
--			io_req_complete_failed(link->head, -ECANCELED);
--			link->head = NULL;
-+			req_set_fail(link->head);
-+		} else if (!(req->flags & (REQ_F_LINK | REQ_F_HARDLINK))) {
-+			/*
-+			 * the current req is a normal req, we should return
-+			 * error and thus break the submittion loop.
-+			 */
-+			io_req_complete_failed(req, ret);
-+			return ret;
- 		}
--		io_req_complete_failed(req, ret);
--		return ret;
-+		req_set_fail(req);
-+		req->result = ret;
-+	} else {
-+		ret = io_req_prep(req, sqe);
-+		if (unlikely(ret))
-+			goto fail_req;
- 	}
- 
--	ret = io_req_prep(req, sqe);
--	if (unlikely(ret))
--		goto fail_req;
--
- 	/* don't need @sqe from now on */
- 	trace_io_uring_submit_sqe(ctx, req, req->opcode, req->user_data,
- 				  req->flags, true,
-@@ -6665,9 +6678,14 @@ static int io_submit_sqe(struct io_ring_ctx *ctx, struct io_kiocb *req,
- 	if (link->head) {
- 		struct io_kiocb *head = link->head;
- 
--		ret = io_req_prep_async(req);
--		if (unlikely(ret))
--			goto fail_req;
-+		if (!(req->flags & REQ_F_FAIL)) {
-+			ret = io_req_prep_async(req);
-+			if (unlikely(ret)) {
-+				req->result = ret;
-+				req_set_fail(req);
-+				req_set_fail(link->head);
-+			}
-+		}
- 		trace_io_uring_link(ctx, req, head);
- 		link->last->link = req;
- 		link->last = req;
-@@ -6681,6 +6699,17 @@ static int io_submit_sqe(struct io_ring_ctx *ctx, struct io_kiocb *req,
- 		if (req->flags & (REQ_F_LINK | REQ_F_HARDLINK)) {
- 			link->head = req;
- 			link->last = req;
-+			/*
-+			 * we can judge a link req is failed or cancelled by if
-+			 * REQ_F_FAIL is set, but the head is an exception since
-+			 * it may be set REQ_F_FAIL because of other req's failure
-+			 * so let's leverage req->result to distinguish if a head
-+			 * is set REQ_F_FAIL because of its failure or other req's
-+			 * failure so that we can set the correct ret code for it.
-+			 * init result here to avoid affecting the normal path.
-+			 */
-+			if (!(req->flags & REQ_F_FAIL))
-+				req->result = 0;
- 		} else {
- 			io_queue_sqe(req);
- 		}
--- 
-2.24.4
-
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.

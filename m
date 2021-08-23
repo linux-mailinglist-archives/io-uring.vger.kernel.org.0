@@ -2,145 +2,85 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 097B93F5163
-	for <lists+io-uring@lfdr.de>; Mon, 23 Aug 2021 21:40:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F3D83F533E
+	for <lists+io-uring@lfdr.de>; Tue, 24 Aug 2021 00:14:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231377AbhHWTlI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 23 Aug 2021 15:41:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45912 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229558AbhHWTlI (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 23 Aug 2021 15:41:08 -0400
-Received: from mail-io1-xd2f.google.com (mail-io1-xd2f.google.com [IPv6:2607:f8b0:4864:20::d2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DB9FC06175F
-        for <io-uring@vger.kernel.org>; Mon, 23 Aug 2021 12:40:25 -0700 (PDT)
-Received: by mail-io1-xd2f.google.com with SMTP id b7so23295920iob.4
-        for <io-uring@vger.kernel.org>; Mon, 23 Aug 2021 12:40:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=G2SVrRZIMROI4YKSe8URoaTR5hujeuHBAdNdertfjAY=;
-        b=jUZSALcG3mLl6AOLb1PW9RpHd2KcfwHBVgIbXUjskJnzFkLhE9BKrSkqvNfpmQa2BR
-         ZwjzjfkQVesicqYFrQuMSoU4kfRqh1r0gACPUQ8Mb6aOTDXbLPAGefDSEtgLuLsQNw8b
-         FbCAOZM8P7jdyq2QuUu+fJ2ZA2nNr9kX0V/7f+0u+n+Z3JMqrqi0HJ0PbshmR6ba4IP8
-         in9WBcZgbZ2ZQELA6ARDJyPsYEYt2mjt7afKHtCWwDWUHqs1uT16i5F0VHvGhgzf9xdY
-         V7GRWCN9rPlTzxST5KWKTa6QfEe4zYycJs1BlwrTCAGsrrRsRcz6m4jco72sy6vhXWgr
-         /VVw==
+        id S233057AbhHWWPJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 23 Aug 2021 18:15:09 -0400
+Received: from mail-il1-f198.google.com ([209.85.166.198]:54271 "EHLO
+        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233041AbhHWWPI (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 23 Aug 2021 18:15:08 -0400
+Received: by mail-il1-f198.google.com with SMTP id c4-20020a056e020cc4b02902242bd90889so10604480ilj.20
+        for <io-uring@vger.kernel.org>; Mon, 23 Aug 2021 15:14:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=G2SVrRZIMROI4YKSe8URoaTR5hujeuHBAdNdertfjAY=;
-        b=GE4K6/0kh4gEp7kLeYbDmfg4NjjcCa1HjQ0z5bS/f6RoJC9t774gmiQyROhYYkdzp1
-         5zRrpYu+an77ny9tTYZVR7OeBIBfRwm4wRZW2MPtFBkfQtASzhw7HAa9TK3Qp7O8ww2Q
-         WdQ48fq+gY0yy0xoILAywxXqp3xdc4b6vjEKZXa0XQgiIpGDSW5kAsV7devEyAO5I9OG
-         qrcS7t3s3JaIewMPhoeUqN9XXgZdoAdugggR/ym3qEh2aOl0tmNcIxv5UhlZ3S0B8F8a
-         CDz4yu2scgo+N4dCV4MVsKDEpWoW18Te6i+AS+FY1afSm5b1vSkirdzt3tZ/ZgB+2drl
-         +9zQ==
-X-Gm-Message-State: AOAM531D+G2L/xl4xUoA6ApGZkLP97QCfp1KCWydADKi/K9/NL5OA8Jb
-        9JzwjjLzekVt9bFa76KK24q3ww==
-X-Google-Smtp-Source: ABdhPJwFFXxnZV6gOaCl5BdXkE0E7H1K58ErMFvT604/1u73jAT0AGDgnDM8d8OVs2fI5djeTS9rYA==
-X-Received: by 2002:a6b:6603:: with SMTP id a3mr28813047ioc.68.1629747624592;
-        Mon, 23 Aug 2021 12:40:24 -0700 (PDT)
-Received: from [192.168.1.116] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id p7sm8627226iln.70.2021.08.23.12.40.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Aug 2021 12:40:24 -0700 (PDT)
-Subject: Re: [PATCH v3 0/4] open/accept directly into io_uring fixed file
- table
-To:     Josh Triplett <josh@joshtriplett.org>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, Stefan Metzmacher <metze@samba.org>
-References: <cover.1629559905.git.asml.silence@gmail.com>
- <7fa72eec-9222-60eb-9ec6-e4b6efbfc5fb@kernel.dk> <YSPzab+g8ee84bX7@localhost>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <59494bda-f804-4185-dd7d-4827b14bae61@kernel.dk>
-Date:   Mon, 23 Aug 2021 13:40:22 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=SijtErviYrCHOwNGj36E6qhULs4xNwl8A7hm7GnvXvE=;
+        b=Gv9eTrKglxXPBRRlD/+zSZOmpb/17U+Q0kl5300x8dQHZP/4Vo7pJvH4zf3Mmw6zQv
+         JTqrPBaec8AFZQrCLU5E75spMXbozyTyteHacY30O67d5nStzYohwhGvajdpRsADx/9V
+         tTJleVhDval52Dr45a94N7i14HpvUoDb6KQgznQX+8/u4IT/xDRftP87A6c5ea1kRK+8
+         F58gHUTnPM36vPnecitBDxodKv3efVcv9bzuRP5DYN8hNBPpKAcm/a4HHZTbn1wRFnry
+         oS5qXlNM57uEfwWW93xd6sQGMTa1riL4FXhRIBXJf9gTiHWZgMhSaqxRNKUYb7pV5WG7
+         w48w==
+X-Gm-Message-State: AOAM5334g+G7Xqwnn1HOw3Vg8lXBNqsAV+oekDLFZ+FuHiETcqBHVoLL
+        kVOSTHOJZU4nh7Z7jBcVofP28evzpzQmgpq50I7CX44UIWE5
+X-Google-Smtp-Source: ABdhPJzgIU95H75Qye1pqMQAP+Qs42AogeQcfFBEzerm+aKBHu7KDlqp8xbCLvNExijDvof70hSQkbOmc+hUY0qJ2uNkXpSLv9b5
 MIME-Version: 1.0
-In-Reply-To: <YSPzab+g8ee84bX7@localhost>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a6b:e712:: with SMTP id b18mr28344115ioh.186.1629756865099;
+ Mon, 23 Aug 2021 15:14:25 -0700 (PDT)
+Date:   Mon, 23 Aug 2021 15:14:25 -0700
+In-Reply-To: <000000000000dd79fc05ca367b9d@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000003bb1805ca4157a5@google.com>
+Subject: Re: [syzbot] WARNING in io_try_cancel_userdata
+From:   syzbot <syzbot+b0c9d1588ae92866515f@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, hdanton@sina.com,
+        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/23/21 1:13 PM, Josh Triplett wrote:
-> On Sat, Aug 21, 2021 at 08:18:12PM -0600, Jens Axboe wrote:
->> On 8/21/21 9:52 AM, Pavel Begunkov wrote:
->>> Add an optional feature to open/accept directly into io_uring's fixed
->>> file table bypassing the normal file table. Same behaviour if as the
->>> snippet below, but in one operation:
->>>
->>> sqe = prep_[open,accept](...);
->>> cqe = submit_and_wait(sqe);
->>> io_uring_register_files_update(uring_idx, (fd = cqe->res));
->>> close((fd = cqe->res));
->>>
->>> The idea in pretty old, and was brough up and implemented a year ago
->>> by Josh Triplett, though haven't sought the light for some reasons.
->>>
->>> The behaviour is controlled by setting sqe->file_index, where 0 implies
->>> the old behaviour. If non-zero value is specified, then it will behave
->>> as described and place the file into a fixed file slot
->>> sqe->file_index - 1. A file table should be already created, the slot
->>> should be valid and empty, otherwise the operation will fail.
->>>
->>> we can't use IOSQE_FIXED_FILE to switch between modes, because accept
->>> takes a file, and it already uses the flag with a different meaning.
->>>
->>> since RFC:
->>>  - added attribution
->>>  - updated descriptions
->>>  - rebased
->>>
->>> since v1:
->>>  - EBADF if slot is already used (Josh Triplett)
->>>  - alias index with splice_fd_in (Josh Triplett)
->>>  - fix a bound check bug
->>
->> With the prep series, this looks good to me now. Josh, what do you
->> think?
-> 
-> I would still like to see this using a union with the `nofile` field in
-> io_open and io_accept, rather than overloading the 16-bit buf_index
-> field. That would avoid truncating to 16 bits, and make less work for
-> expansion to more than 16 bits of fixed file indexes.
-> 
-> (I'd also like that to actually use a union, rather than overloading the
-> meaning of buf_index/nofile.)
+syzbot has found a reproducer for the following issue on:
 
-Agree, and in fact there's room in the open and accept command parts, so
-we can just make it a separate entry there instead of using ->buf_index.
-Then just pass in the index to io_install_fixed_file() instead of having
-it pull it from req->buf_index.
+HEAD commit:    46debfec12b4 Add linux-next specific files for 20210823
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=12f00c39300000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=49609005dc034be7
+dashboard link: https://syzkaller.appspot.com/bug?extid=b0c9d1588ae92866515f
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.1
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15830bee300000
 
-> I personally still feel that using non-zero to signify index-plus-one is
-> both error-prone and not as future-compatible. I think we could do
-> better with no additional overhead. But I think the final call on that
-> interface is up to you, Jens. Do you think it'd be worth spending a flag
-> bit or using a different opcode, to get a cleaner interface? If you
-> don't, then I'd be fine with seeing this go in with just the io_open and
-> io_accept change.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+b0c9d1588ae92866515f@syzkaller.appspotmail.com
 
-I'd be inclined to go the extra opcode route instead, as the flag only
-really would make sense to requests that instantiate file descriptors.
-For this particular case, we'd need 3 new opcodes for
-openat/openat2/accept, which is probably a worthwhile expenditure.
-
-Pavel, what do you think? Switch to using a different opcode for the new
-requests, and just grab some space in io_open and io_accept for the fd
-and pass it in to install.
-
-I do think that'd end up being less hackish and easier to grok for a
-user.
-
--- 
-Jens Axboe
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 7008 at fs/io_uring.c:6082 io_try_cancel_userdata+0x30d/0x540 fs/io_uring.c:6082
+Modules linked in:
+CPU: 0 PID: 7008 Comm: iou-wrk-7007 Not tainted 5.14.0-rc7-next-20210823-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:io_try_cancel_userdata+0x30d/0x540 fs/io_uring.c:6082
+Code: 52 07 e8 66 67 95 ff 48 8b 3c 24 e8 ad 67 52 07 e9 71 fe ff ff e8 53 67 95 ff 41 bf 8e ff ff ff e9 61 fe ff ff e8 43 67 95 ff <0f> 0b 48 b8 00 00 00 00 00 fc ff df 4c 89 fa 48 c1 ea 03 80 3c 02
+RSP: 0018:ffffc90003fefac0 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: ffff88801d064c80 RCX: 0000000000000000
+RDX: ffff88801ea75580 RSI: ffffffff81e078fd RDI: ffff88801d064cd0
+RBP: ffff88801ea75580 R08: ffffffff899adde0 R09: ffffffff81e1e4e4
+R10: 0000000000000027 R11: 000000000000000e R12: 1ffff920007fdf59
+R13: 0000000000012345 R14: ffff888146628000 R15: ffff88801d064ce0
+FS:  00007f0c5b7d6700(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffc3bfd8720 CR3: 0000000070d9c000 CR4: 00000000001506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ io_async_cancel fs/io_uring.c:6122 [inline]
+ io_issue_sqe+0x22d5/0x67b0 fs/io_uring.c:6515
+ io_wq_submit_work+0x1d4/0x300 fs/io_uring.c:6619
+ io_worker_handle_work+0x1584/0x1810 fs/io-wq.c:533
+ io_wqe_worker+0x9cd/0xbb0 fs/io-wq.c:606
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295
 

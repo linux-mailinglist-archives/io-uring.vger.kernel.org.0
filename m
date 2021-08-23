@@ -2,175 +2,133 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 535923F4950
-	for <lists+io-uring@lfdr.de>; Mon, 23 Aug 2021 13:03:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6B583F4987
+	for <lists+io-uring@lfdr.de>; Mon, 23 Aug 2021 13:17:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234878AbhHWLDc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 23 Aug 2021 07:03:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38608 "EHLO
+        id S236347AbhHWLST (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 23 Aug 2021 07:18:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234865AbhHWLDb (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 23 Aug 2021 07:03:31 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D534AC061575
-        for <io-uring@vger.kernel.org>; Mon, 23 Aug 2021 04:02:48 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id u15so10241707wmj.1
-        for <io-uring@vger.kernel.org>; Mon, 23 Aug 2021 04:02:48 -0700 (PDT)
+        with ESMTP id S235077AbhHWLST (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 23 Aug 2021 07:18:19 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8DBCC061575
+        for <io-uring@vger.kernel.org>; Mon, 23 Aug 2021 04:17:36 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id f5so25665232wrm.13
+        for <io-uring@vger.kernel.org>; Mon, 23 Aug 2021 04:17:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:cc:references:from:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=uKYnu/DLXz9S7MebCTHbOwaQytZqOWiu67+hgD32v60=;
-        b=YZoTFvuho2kGdrZneWrW2SnbxC3xxikiatyVf7CoI/YpfFfzl/UMJ7cFDLbYN0uMQj
-         ss036gLKCzSVWeq0l740B7T36sj82NRQlqS1Xa7GbrsaALw99WkUsHiJjCQcOtr7pWlJ
-         emoKhSi6aFp4asYGVuAyzcIXU9+MpTeFDblZc2miwPjZH3QxVtZF2YV4Q0YXKdxDOCD9
-         UCOxFYKhuxMAPo9WZn/tLIDHSES56AHhFi9QtBnnorVUqY+xskiVUtZV26d/LjkX9GJZ
-         kDnlLaO56xru8rTGKRzGzSiWEbCkDvygEecWYhno+PUCVUSgzWD1m7qdIq07YpKlvA0P
-         yhhQ==
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6nmvnxgjdb/POH/JG2a/FNStbF9ujZHJNEV63j7T/nA=;
+        b=Gc91liKwv+UcWK51rOz+xL1xPNS9cvf6no8YM2d1S/zNxrJXTtA08e3VI9asxQmB1X
+         MW930Y9Jvu3e6A/JXLTCKqMdMzWbrNsqt8iwFIVFnVqed6mJa+0GYl9gMwgs5LjLxajN
+         VXCRW80QVxSd8r7DZFnd7fSTg6NH9uWVr8Q3uLtCIOBZObHhhdoN/3orz2DTl4P2mhOy
+         MRgTbIA6lY2/NgsULnzoTjtZjQ8nl2dly2e3Vl6G3ksPFBu4LeNHEojSdTgxeANR9tzk
+         jdoTWtgz4aenwKYqz2WJQJhHQo9SskXNwKHEBdTal3p58TsAkR19C9KPqI9m1S2yIzyl
+         H8tw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=uKYnu/DLXz9S7MebCTHbOwaQytZqOWiu67+hgD32v60=;
-        b=R7SMI/N86DmbhNs7vkdZ/O+zhrbUt0wbbJjctgjUTjWS+ljxQNj2LiG64Ts7a5e8Eq
-         1oeSXIHlBA/hOByeCMq8mNAStKaH4lVRGxcgZiiuFsLQw7gQEN7pqVm/9VtKYd58gZLl
-         fEMbT92wFxk++rx2gdSjkYB8ScZVvRRRKdKGaBJ1p8WjQCN/uAgwcheM1+na7iA5bib5
-         Q/CQ8CbB0OlsANUoJlFfngdkPSPlW5Xmb10YX7rAK3RvsyqDA5ALa8VEDqCxXjV8YGK7
-         Vro/CSb++yRL4fdnL3z07ReOKzu/6BwAvhXVJreAOQ5PvQQNjaxuk2D1dfduJGdWKrtK
-         DnSA==
-X-Gm-Message-State: AOAM530ndVCjBgPHRtzKf4WvTFFKsXPQ07BEyNbf0Qzf6vlKrixNMbOu
-        EHvR/bUui/xp249u5wV2VO4rqfjf2tU=
-X-Google-Smtp-Source: ABdhPJwQIvfSuhD3clNeLlFBG0ovVXaBPDlFilte8nefztLim/xCzad3mZvgRkudovPJ1tDDWPFqLQ==
-X-Received: by 2002:a05:600c:1ca7:: with SMTP id k39mr15797487wms.162.1629716567224;
-        Mon, 23 Aug 2021 04:02:47 -0700 (PDT)
-Received: from [192.168.8.197] ([85.255.233.176])
-        by smtp.gmail.com with ESMTPSA id i14sm12681713wmq.40.2021.08.23.04.02.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Aug 2021 04:02:46 -0700 (PDT)
-To:     Hao Xu <haoxu@linux.alibaba.com>, Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <20210823032506.34857-1-haoxu@linux.alibaba.com>
- <20210823032506.34857-3-haoxu@linux.alibaba.com>
+        bh=6nmvnxgjdb/POH/JG2a/FNStbF9ujZHJNEV63j7T/nA=;
+        b=Jcr0XRJ3UZlzRnztpskQxFLuzQ8DV3z4TkUhIgmWYr1gZX5UascBn5aZct1MMHPU/j
+         2IfKKpwiOrxifC3Bu1WQ94h1o5vQAjxvRcV1z5KLRSSZABsDNoB5Q3witMGI+IBk9+5M
+         D4U66zw1iG8IDCUg+T0SxER5R6dvAz6aYErjuRWEo+zcewjRscPT8kQtbbHdRlaD4mun
+         7olHaNw5aofJ5hdE2kXKXputhoie+g4ByDHqxNMwuiUcaTkb33wWQwAI6TvzZhBy/W4I
+         24rTvvnLGeEZkw9cVG+M1S1DCThkt55UocVwEmwdDPiT+NRAWMzV50Zm6razVl3SYLkD
+         axUw==
+X-Gm-Message-State: AOAM532/EOCwbZcXt2iABlZs1Jffi6dXT0NAnXWQTakOw8huYoFtsXMF
+        Cbm0pgFObZwzvmiGqsxz/mA=
+X-Google-Smtp-Source: ABdhPJyvfLlVOmwgVYiTSSb7tHcPvqE33S6nCXit1SVgaQNdmhz2AyDf+SQjGuSBkIl32TYsYTJtkg==
+X-Received: by 2002:a5d:65cd:: with SMTP id e13mr12955523wrw.368.1629717455401;
+        Mon, 23 Aug 2021 04:17:35 -0700 (PDT)
+Received: from localhost.localdomain ([85.255.233.176])
+        by smtp.gmail.com with ESMTPSA id w18sm15718107wrg.68.2021.08.23.04.17.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Aug 2021 04:17:34 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
-Subject: Re: [PATCH 2/2] io_uring: fix failed linkchain code logic
-Message-ID: <7a680e7a-801e-4515-e67c-a3849c581d02@gmail.com>
-Date:   Mon, 23 Aug 2021 12:02:15 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [PATCH liburing] tests: add IOSQE_ASYNC cancel testing
+Date:   Mon, 23 Aug 2021 12:16:56 +0100
+Message-Id: <b5dada6cba71207dd8b282a805714a4fe8db2258.1629717388.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-In-Reply-To: <20210823032506.34857-3-haoxu@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/23/21 4:25 AM, Hao Xu wrote:
-> Given a linkchain like this:
-> req0(link_flag)-->req1(link_flag)-->...-->reqn(no link_flag)
-> 
-> There is a problem:
->  - if some intermediate linked req like req1 's submittion fails, reqs
->    after it won't be cancelled.
-> 
->    - sqpoll disabled: maybe it's ok since users can get the error info
->      of req1 and stop submitting the following sqes.
-> 
->    - sqpoll enabled: definitely a problem, the following sqes will be
->      submitted in the next round.
-> 
-> The solution is to refactor the code logic to:
->  - if a linked req's submittion fails, just mark it and the head(if it
->    exists) as REQ_F_FAIL. Leverage req->result to indicate whether it
->    is failed or cancelled.
->  - submit or fail the whole chain when we come to the end of it.
+We miss tests for IORING_OP_ASYNC_CANCEL requests issued with
+IOSQE_ASYNC, so add it.
 
-This looks good to me, a couple of comments below.
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ test/io-cancel.c | 21 +++++++++++++--------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
 
-
-> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
-> ---
->  fs/io_uring.c | 61 +++++++++++++++++++++++++++++++++++++--------------
->  1 file changed, 45 insertions(+), 16 deletions(-)
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 44b1b2b58e6a..9ae8f2a5c584 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -1776,8 +1776,6 @@ static void io_preinit_req(struct io_kiocb *req, struct io_ring_ctx *ctx)
->  	req->ctx = ctx;
->  	req->link = NULL;
->  	req->async_data = NULL;
-> -	/* not necessary, but safer to zero */
-> -	req->result = 0;
-
-Please leave it. I'm afraid of leaking stack to userspace because
-->result juggling looks prone to errors. And preinit is pretty cold
-anyway.
-
-[...]
-
->  
-> @@ -6637,19 +6644,25 @@ static int io_submit_sqe(struct io_ring_ctx *ctx, struct io_kiocb *req,
->  	ret = io_init_req(ctx, req, sqe);
->  	if (unlikely(ret)) {
->  fail_req:
-> +		/* fail even hard links since we don't submit */
->  		if (link->head) {
-> -			/* fail even hard links since we don't submit */
-> -			io_req_complete_failed(link->head, -ECANCELED);
-> -			link->head = NULL;
-> +			req_set_fail(link->head);
-
-I think it will be more reliable if we set head->result here, ...
-
-if (!(link->head->flags & FAIL))
-	link->head->result = -ECANCELED;
-
-> -		ret = io_req_prep_async(req);
-> -		if (unlikely(ret))
-> -			goto fail_req;
-> +		if (!(req->flags & REQ_F_FAIL)) {
-> +			ret = io_req_prep_async(req);
-> +			if (unlikely(ret)) {
-> +				req->result = ret;
-> +				req_set_fail(req);
-> +				req_set_fail(link->head);
-
-... and here (a helper?), ...
-
-> +			}
-> +		}
->  		trace_io_uring_link(ctx, req, head);
->  		link->last->link = req;
->  		link->last = req;
-> @@ -6681,6 +6699,17 @@ static int io_submit_sqe(struct io_ring_ctx *ctx, struct io_kiocb *req,
->  		if (req->flags & (REQ_F_LINK | REQ_F_HARDLINK)) {
->  			link->head = req;
->  			link->last = req;
-> +			/*
-> +			 * we can judge a link req is failed or cancelled by if
-> +			 * REQ_F_FAIL is set, but the head is an exception since
-> +			 * it may be set REQ_F_FAIL because of other req's failure
-> +			 * so let's leverage req->result to distinguish if a head
-> +			 * is set REQ_F_FAIL because of its failure or other req's
-> +			 * failure so that we can set the correct ret code for it.
-> +			 * init result here to avoid affecting the normal path.
-> +			 */
-> +			if (!(req->flags & REQ_F_FAIL))
-> +				req->result = 0;
-
-... instead of delaying to this point. Just IMHO, it's easier to look
-after the code when it's set on the spot, i.e. may be easy to screw/forget
-something while changing bits around.
-
-
->  		} else {
->  			io_queue_sqe(req);
->  		}
-> 
-
+diff --git a/test/io-cancel.c b/test/io-cancel.c
+index a4cc361..63d2f7d 100644
+--- a/test/io-cancel.c
++++ b/test/io-cancel.c
+@@ -115,7 +115,7 @@ static int do_io(struct io_uring *ring, int fd, int do_write)
+ 	return 0;
+ }
+ 
+-static int start_cancel(struct io_uring *ring, int do_partial)
++static int start_cancel(struct io_uring *ring, int do_partial, int async_cancel)
+ {
+ 	struct io_uring_sqe *sqe;
+ 	int i, ret, submitted = 0;
+@@ -129,6 +129,8 @@ static int start_cancel(struct io_uring *ring, int do_partial)
+ 			goto err;
+ 		}
+ 		io_uring_prep_cancel(sqe, (void *) (unsigned long) i + 1, 0);
++		if (async_cancel)
++			sqe->flags |= IOSQE_ASYNC;
+ 		sqe->user_data = 0;
+ 		submitted++;
+ 	}
+@@ -148,7 +150,8 @@ err:
+  * the submitted IO. This is done to verify that cancelling one piece of IO doesn't
+  * impact others.
+  */
+-static int test_io_cancel(const char *file, int do_write, int do_partial)
++static int test_io_cancel(const char *file, int do_write, int do_partial,
++			  int async_cancel)
+ {
+ 	struct io_uring ring;
+ 	struct timeval start_tv;
+@@ -179,7 +182,7 @@ static int test_io_cancel(const char *file, int do_write, int do_partial)
+ 		goto err;
+ 	/* sleep for 1/3 of the total time, to allow some to start/complete */
+ 	usleep(usecs / 3);
+-	if (start_cancel(&ring, do_partial))
++	if (start_cancel(&ring, do_partial, async_cancel))
+ 		goto err;
+ 	to_wait = BUFFERS;
+ 	if (do_partial)
+@@ -512,13 +515,15 @@ int main(int argc, char *argv[])
+ 
+ 	vecs = t_create_buffers(BUFFERS, BS);
+ 
+-	for (i = 0; i < 4; i++) {
+-		int v1 = (i & 1) != 0;
+-		int v2 = (i & 2) != 0;
++	for (i = 0; i < 8; i++) {
++		int write = (i & 1) != 0;
++		int partial = (i & 2) != 0;
++		int async = (i & 4) != 0;
+ 
+-		ret = test_io_cancel(".basic-rw", v1, v2);
++		ret = test_io_cancel(".basic-rw", write, partial, async);
+ 		if (ret) {
+-			fprintf(stderr, "test_io_cancel %d %d failed\n", v1, v2);
++			fprintf(stderr, "test_io_cancel %d %d %d failed\n",
++				write, partial, async);
+ 			goto err;
+ 		}
+ 	}
 -- 
-Pavel Begunkov
+2.32.0
+

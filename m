@@ -2,92 +2,90 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E9833F4740
-	for <lists+io-uring@lfdr.de>; Mon, 23 Aug 2021 11:17:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2F673F4882
+	for <lists+io-uring@lfdr.de>; Mon, 23 Aug 2021 12:19:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229726AbhHWJSB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 23 Aug 2021 05:18:01 -0400
-Received: from mail-io1-f69.google.com ([209.85.166.69]:48730 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235791AbhHWJSB (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 23 Aug 2021 05:18:01 -0400
-Received: by mail-io1-f69.google.com with SMTP id d12-20020a6b680c000000b005b86e36a1f4so9650883ioc.15
-        for <io-uring@vger.kernel.org>; Mon, 23 Aug 2021 02:17:18 -0700 (PDT)
+        id S233150AbhHWKUH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 23 Aug 2021 06:20:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56506 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232421AbhHWKUG (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 23 Aug 2021 06:20:06 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66C36C061575;
+        Mon, 23 Aug 2021 03:19:24 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id h13so25539008wrp.1;
+        Mon, 23 Aug 2021 03:19:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=K6yDnLSIpYXYrIIISakMJ/pbasH+mpQMUOZLV1Lnsw4=;
+        b=lj74Y5KPbqoe4ZwuOwXT8BOYIaKVexQv88j394iBmoyUjC9FRzDDJOuhly4WsEedI+
+         KAWQtKN5wvb7kKJO160V9YfVHt9CTBc/KoBxtDbpHSytBFby5ejcjE0osDWpCyRoWMpc
+         MBHyu9fPRo+XtXWl1dSatYLGZ8RMF62QjgVMHrIStqHUWDrnlX0VvCi1uhNDGAzQyabZ
+         yjok/IUOg51xwAfaCi2MrWPwLgkAW5jHVYBRBiNQDIHmvyKNNrQnPjAicbUGUv9B5Ytl
+         /O6xg3K2WsIFrMfgWFpYgauxc5EAQMiarGGE3539miFGNSJwKi17i+xPrsOePrXteTa9
+         NwjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=sYOMm1BeExwLMpG9wV0sSmPzlu1bC8ry9xId7Ih8E+k=;
-        b=ShunJ2m5mjabGsfC8u/s4uGiKfQes5IgGQx6DnJuTihBc+1DXfRoCUKw6ifRFnOLIv
-         uCetaL4/ww1B3XhkEJ9X/1jEdl4u2bwU/lHILX2kCqXXz7uPfP9CAKzNsjizzAKmPQzS
-         ELfQOrmWe8LaQ4+Xj852eO7ZksVL8KSy3lr4BOezOW5/hXykuFISW3ICnyAesbZAvprZ
-         cQdLzauVdf0eJmbh72zfSv2egPyWZYLKmZjfkj6TrBRyyLgZe1dOInCLFMoR1KM0QsX4
-         ocW3nMAyQHTuoEkZXEn12lIIviYSDxTPDkrQmWzCCOdC8RhLbu+9rp2Shxs7HLn6ELQo
-         IrOA==
-X-Gm-Message-State: AOAM532nViWWm4t12BatBVBeh+MGsLEECqTKq7je5HJRLtjmBUzvSiXn
-        qtiRzu4Tb2+RPITh2qjXYiDVC5GTl3No6gxtYcU32miZt4W1
-X-Google-Smtp-Source: ABdhPJxRzhgfJEVGs4FC30PGotc+vZiWb1ZStPH9YMIv6v5ow+fBugiaVuOY2Ytv6rOLvdqFkZjj4zuQSMdJ8FYVyPMU8Eo7SAVR
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=K6yDnLSIpYXYrIIISakMJ/pbasH+mpQMUOZLV1Lnsw4=;
+        b=qMXaHs2HVM1arWV1NCQ+bxI0VQdz/ileuAXOXJwzfL5OmYIF2iK9vWclwti6scyo2l
+         fODejdTlqwzb7dhomdTUzvCNG5GOlZSHCBdOMF2UqiuAuYiAAPSSxoja9+uWosDqjQXx
+         Ej4zFo6uyB2GjJbtF2LTE7goubJCYH/ITU31+nI66KEL7LZfjcpcP7O2PY2Z2lKgQV+1
+         Hs07jNLePGQaaA45TZnt2aQzoTjFDu0njzgNXBWTx+TxPQ7tN6+927rZoZXz2rbGnzGk
+         GPvHcoFonL6q7R0U4cBzYS/0169+dQGe6WboG3/AnNOPicGaR8KA2Ccv2aEHXI60EZs4
+         o3dw==
+X-Gm-Message-State: AOAM533/es4TR+8GRHg+9fLaHGRX/4PqA32mpbjK/e7Gooy1x2XNF29E
+        5XuOW0PV/gz+dn7PQyWZ1vczHMApDfU=
+X-Google-Smtp-Source: ABdhPJz/L/7oncDFkyPzeeWSFNXLVjyTvyHDF/36ZcCWRetpjq2tVim8ZAvEdEStRXznQl66jA0+NQ==
+X-Received: by 2002:adf:ab0e:: with SMTP id q14mr12875791wrc.171.1629713963063;
+        Mon, 23 Aug 2021 03:19:23 -0700 (PDT)
+Received: from localhost.localdomain ([85.255.233.176])
+        by smtp.gmail.com with ESMTPSA id l18sm20539922wmc.30.2021.08.23.03.19.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Aug 2021 03:19:22 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Cc:     Palash Oswal <oswalpalash@gmail.com>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        syzbot+9671693590ef5aad8953@syzkaller.appspotmail.com,
+        asml.silence@gmail.com
+Subject: [PATCH v3 0/2] iter revert problems
+Date:   Mon, 23 Aug 2021 11:18:43 +0100
+Message-Id: <cover.1629713020.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-X-Received: by 2002:a02:a490:: with SMTP id d16mr29818895jam.42.1629710238709;
- Mon, 23 Aug 2021 02:17:18 -0700 (PDT)
-Date:   Mon, 23 Aug 2021 02:17:18 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000dd79fc05ca367b9d@google.com>
-Subject: [syzbot] WARNING in io_try_cancel_userdata
-From:   syzbot <syzbot+b0c9d1588ae92866515f@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
+iov_iter_revert() doesn't go well with iov_iter_truncate() in all
+cases, see 2/2 for the bug description. As mentioned there the current
+problems is because of generic_write_checks(), but there was also a
+similar case fixed in 5.12, which should have been triggerable by normal
+write(2)/read(2) and others.
 
-syzbot found the following issue on:
+It may be better to enforce reexpands as a long term solution, but for
+now this patchset is quickier and easier to backport.
 
-HEAD commit:    86ed57fd8c93 Add linux-next specific files for 20210820
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1565bd55300000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f64eccb415bd479d
-dashboard link: https://syzkaller.appspot.com/bug?extid=b0c9d1588ae92866515f
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.1
+v2: don't fail if it was justly fully reverted
+v3: use truncated size + reexapand based approach
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Pavel Begunkov (2):
+  iov_iter: track truncated size
+  io_uring: reexpand under-reexpanded iters
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b0c9d1588ae92866515f@syzkaller.appspotmail.com
+ fs/io_uring.c       | 2 ++
+ include/linux/uio.h | 6 +++++-
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
-WARNING: CPU: 1 PID: 5870 at fs/io_uring.c:5975 io_try_cancel_userdata+0x30f/0x540 fs/io_uring.c:5975
-Modules linked in:
-CPU: 0 PID: 5870 Comm: iou-wrk-5860 Not tainted 5.14.0-rc6-next-20210820-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:io_try_cancel_userdata+0x30f/0x540 fs/io_uring.c:5975
-Code: 07 e8 e5 9d 95 ff 48 8b 7c 24 08 e8 ab 02 58 07 e9 6f fe ff ff e8 d1 9d 95 ff 41 bf 8e ff ff ff e9 5f fe ff ff e8 c1 9d 95 ff <0f> 0b 48 b8 00 00 00 00 00 fc ff df 4c 89 fa 48 c1 ea 03 80 3c 02
-RSP: 0018:ffffc900055f7a88 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: ffff888181aa83c0 RCX: 0000000000000000
-RDX: ffff88803fb88000 RSI: ffffffff81e0dacf RDI: ffff888181aa8410
-RBP: ffff88803fb88000 R08: ffffffff899ad660 R09: ffffffff81e23c44
-R10: 0000000000000027 R11: 000000000000000e R12: 1ffff92000abef53
-R13: 0000000000000000 R14: ffff8880b34d0000 R15: ffff888181aa8420
-FS:  00007f7a08d50700(0000) GS:ffff8880b9d00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b2c72e000 CR3: 0000000168b9b000 CR4: 00000000001506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000600
-Call Trace:
- io_async_cancel fs/io_uring.c:6014 [inline]
- io_issue_sqe+0x22d5/0x65a0 fs/io_uring.c:6407
- io_wq_submit_work+0x1dc/0x300 fs/io_uring.c:6511
- io_worker_handle_work+0xa45/0x1840 fs/io-wq.c:533
- io_wqe_worker+0x2cc/0xbb0 fs/io-wq.c:582
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295
+-- 
+2.32.0
 
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.

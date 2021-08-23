@@ -2,133 +2,127 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B6B583F4987
-	for <lists+io-uring@lfdr.de>; Mon, 23 Aug 2021 13:17:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E829C3F49EA
+	for <lists+io-uring@lfdr.de>; Mon, 23 Aug 2021 13:37:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236347AbhHWLST (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 23 Aug 2021 07:18:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42084 "EHLO
+        id S236526AbhHWLhg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 23 Aug 2021 07:37:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46664 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235077AbhHWLST (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 23 Aug 2021 07:18:19 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8DBCC061575
-        for <io-uring@vger.kernel.org>; Mon, 23 Aug 2021 04:17:36 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id f5so25665232wrm.13
-        for <io-uring@vger.kernel.org>; Mon, 23 Aug 2021 04:17:36 -0700 (PDT)
+        with ESMTP id S236623AbhHWLhe (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 23 Aug 2021 07:37:34 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06EAEC0611C2;
+        Mon, 23 Aug 2021 04:36:39 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id g135so1025027wme.5;
+        Mon, 23 Aug 2021 04:36:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=6nmvnxgjdb/POH/JG2a/FNStbF9ujZHJNEV63j7T/nA=;
-        b=Gc91liKwv+UcWK51rOz+xL1xPNS9cvf6no8YM2d1S/zNxrJXTtA08e3VI9asxQmB1X
-         MW930Y9Jvu3e6A/JXLTCKqMdMzWbrNsqt8iwFIVFnVqed6mJa+0GYl9gMwgs5LjLxajN
-         VXCRW80QVxSd8r7DZFnd7fSTg6NH9uWVr8Q3uLtCIOBZObHhhdoN/3orz2DTl4P2mhOy
-         MRgTbIA6lY2/NgsULnzoTjtZjQ8nl2dly2e3Vl6G3ksPFBu4LeNHEojSdTgxeANR9tzk
-         jdoTWtgz4aenwKYqz2WJQJhHQo9SskXNwKHEBdTal3p58TsAkR19C9KPqI9m1S2yIzyl
-         H8tw==
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=q/+BtTfaussj3pnFQMFQKjGG14QLE4MIEje0Y1Rob/g=;
+        b=ZckAnTPI8lekky2wkcRR7yKflDP+H3kUkiq0EYMOVtqdL1Rg5dg+Shymqd6f6/2Ntn
+         2xQYnFPFqwovuYSjPOUPLZLVcx2eELxItovPtcmvYmaCTMazO1TEQLGQReDq6oRTlk90
+         eS3LfOw35mtcXi7iLhc+fstqGwCkhAFefC1DdXsJFt64ZdikkXAP88kPCE7gnyr72qgG
+         lLDY4bzeVl+tJ4/ki2fDCZU6rc9llqiXVecpDL3jeLnZcrjtTeDN5PTQhWVbWBr1iLLh
+         BUjxY7bJoalTReTMnM9sJDSLHM/2yqiN8uZTEBMP4PHmnFH7y9kMl5iPdpgidqpuJCYb
+         yH6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=6nmvnxgjdb/POH/JG2a/FNStbF9ujZHJNEV63j7T/nA=;
-        b=Jcr0XRJ3UZlzRnztpskQxFLuzQ8DV3z4TkUhIgmWYr1gZX5UascBn5aZct1MMHPU/j
-         2IfKKpwiOrxifC3Bu1WQ94h1o5vQAjxvRcV1z5KLRSSZABsDNoB5Q3witMGI+IBk9+5M
-         D4U66zw1iG8IDCUg+T0SxER5R6dvAz6aYErjuRWEo+zcewjRscPT8kQtbbHdRlaD4mun
-         7olHaNw5aofJ5hdE2kXKXputhoie+g4ByDHqxNMwuiUcaTkb33wWQwAI6TvzZhBy/W4I
-         24rTvvnLGeEZkw9cVG+M1S1DCThkt55UocVwEmwdDPiT+NRAWMzV50Zm6razVl3SYLkD
-         axUw==
-X-Gm-Message-State: AOAM532/EOCwbZcXt2iABlZs1Jffi6dXT0NAnXWQTakOw8huYoFtsXMF
-        Cbm0pgFObZwzvmiGqsxz/mA=
-X-Google-Smtp-Source: ABdhPJyvfLlVOmwgVYiTSSb7tHcPvqE33S6nCXit1SVgaQNdmhz2AyDf+SQjGuSBkIl32TYsYTJtkg==
-X-Received: by 2002:a5d:65cd:: with SMTP id e13mr12955523wrw.368.1629717455401;
-        Mon, 23 Aug 2021 04:17:35 -0700 (PDT)
-Received: from localhost.localdomain ([85.255.233.176])
-        by smtp.gmail.com with ESMTPSA id w18sm15718107wrg.68.2021.08.23.04.17.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Aug 2021 04:17:34 -0700 (PDT)
+        bh=q/+BtTfaussj3pnFQMFQKjGG14QLE4MIEje0Y1Rob/g=;
+        b=Q1mofXDxU2v7fYRCgmFowk+8kbov/z+giOVwDmkfQX/w7BqTQAQKylsjrwFHvBYWzz
+         rjLa/IYAYymdAbnSl2YppwYxTVS5N/bQmXEAma3C+Dfge0dbPIFDugotJJ3c6XQF6Dxs
+         roVKUy5MHUKxCjP/73dqPnu7ZKjBwfHWmHOZlGhESt/GdkGKQf3ZdGO83/fQCRRfTBPX
+         jhY18ARwvfaR9wP7JK/e8BC/c2f8HIDx44B2bvhhAwbCibk/g0llx7cBhjef25r4h//L
+         cQuNUpR6YrWCvVz6zPwhn4MCebjtr4YpvzquN9l7e4rMAYlJgVnHBSBFi5+193OqWUJ3
+         kHVQ==
+X-Gm-Message-State: AOAM531z911VRoRfs5DoNV2mJaLfMpfyycuqIvd7+JjodXTE42iMpE3t
+        //SsUCtdhcPLRo5ehSjlrYscJe/dkwo=
+X-Google-Smtp-Source: ABdhPJyE6D5Cqd3vP0lUzvOavUpGm6KuzXuUckHGAnKz9P7lwxzXRaCWDLwG/jS2+1AZ8U+UogKpmQ==
+X-Received: by 2002:a7b:cc0a:: with SMTP id f10mr16037427wmh.32.1629718597644;
+        Mon, 23 Aug 2021 04:36:37 -0700 (PDT)
+Received: from [192.168.8.197] ([85.255.233.176])
+        by smtp.gmail.com with ESMTPSA id h6sm14608363wmq.5.2021.08.23.04.36.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Aug 2021 04:36:37 -0700 (PDT)
+Subject: Re: [syzbot] WARNING in io_try_cancel_userdata
+To:     syzbot <syzbot+b0c9d1588ae92866515f@syzkaller.appspotmail.com>,
+        axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <000000000000dd79fc05ca367b9d@google.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH liburing] tests: add IOSQE_ASYNC cancel testing
-Date:   Mon, 23 Aug 2021 12:16:56 +0100
-Message-Id: <b5dada6cba71207dd8b282a805714a4fe8db2258.1629717388.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.32.0
+Message-ID: <c6ff4faf-bb08-d61a-8054-16b9010545eb@gmail.com>
+Date:   Mon, 23 Aug 2021 12:36:06 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <000000000000dd79fc05ca367b9d@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-We miss tests for IORING_OP_ASYNC_CANCEL requests issued with
-IOSQE_ASYNC, so add it.
+On 8/23/21 10:17 AM, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    86ed57fd8c93 Add linux-next specific files for 20210820
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1565bd55300000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=f64eccb415bd479d
+> dashboard link: https://syzkaller.appspot.com/bug?extid=b0c9d1588ae92866515f
+> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.1
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+b0c9d1588ae92866515f@syzkaller.appspotmail.com
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- test/io-cancel.c | 21 +++++++++++++--------
- 1 file changed, 13 insertions(+), 8 deletions(-)
+false positive, will delete the warning with explanation
 
-diff --git a/test/io-cancel.c b/test/io-cancel.c
-index a4cc361..63d2f7d 100644
---- a/test/io-cancel.c
-+++ b/test/io-cancel.c
-@@ -115,7 +115,7 @@ static int do_io(struct io_uring *ring, int fd, int do_write)
- 	return 0;
- }
- 
--static int start_cancel(struct io_uring *ring, int do_partial)
-+static int start_cancel(struct io_uring *ring, int do_partial, int async_cancel)
- {
- 	struct io_uring_sqe *sqe;
- 	int i, ret, submitted = 0;
-@@ -129,6 +129,8 @@ static int start_cancel(struct io_uring *ring, int do_partial)
- 			goto err;
- 		}
- 		io_uring_prep_cancel(sqe, (void *) (unsigned long) i + 1, 0);
-+		if (async_cancel)
-+			sqe->flags |= IOSQE_ASYNC;
- 		sqe->user_data = 0;
- 		submitted++;
- 	}
-@@ -148,7 +150,8 @@ err:
-  * the submitted IO. This is done to verify that cancelling one piece of IO doesn't
-  * impact others.
-  */
--static int test_io_cancel(const char *file, int do_write, int do_partial)
-+static int test_io_cancel(const char *file, int do_write, int do_partial,
-+			  int async_cancel)
- {
- 	struct io_uring ring;
- 	struct timeval start_tv;
-@@ -179,7 +182,7 @@ static int test_io_cancel(const char *file, int do_write, int do_partial)
- 		goto err;
- 	/* sleep for 1/3 of the total time, to allow some to start/complete */
- 	usleep(usecs / 3);
--	if (start_cancel(&ring, do_partial))
-+	if (start_cancel(&ring, do_partial, async_cancel))
- 		goto err;
- 	to_wait = BUFFERS;
- 	if (do_partial)
-@@ -512,13 +515,15 @@ int main(int argc, char *argv[])
- 
- 	vecs = t_create_buffers(BUFFERS, BS);
- 
--	for (i = 0; i < 4; i++) {
--		int v1 = (i & 1) != 0;
--		int v2 = (i & 2) != 0;
-+	for (i = 0; i < 8; i++) {
-+		int write = (i & 1) != 0;
-+		int partial = (i & 2) != 0;
-+		int async = (i & 4) != 0;
- 
--		ret = test_io_cancel(".basic-rw", v1, v2);
-+		ret = test_io_cancel(".basic-rw", write, partial, async);
- 		if (ret) {
--			fprintf(stderr, "test_io_cancel %d %d failed\n", v1, v2);
-+			fprintf(stderr, "test_io_cancel %d %d %d failed\n",
-+				write, partial, async);
- 			goto err;
- 		}
- 	}
+p.s. easily reproducible, we'll add a test covering cancel from io-wq 
+
+> 
+> WARNING: CPU: 1 PID: 5870 at fs/io_uring.c:5975 io_try_cancel_userdata+0x30f/0x540 fs/io_uring.c:5975
+> Modules linked in:
+> CPU: 0 PID: 5870 Comm: iou-wrk-5860 Not tainted 5.14.0-rc6-next-20210820-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> RIP: 0010:io_try_cancel_userdata+0x30f/0x540 fs/io_uring.c:5975
+> Code: 07 e8 e5 9d 95 ff 48 8b 7c 24 08 e8 ab 02 58 07 e9 6f fe ff ff e8 d1 9d 95 ff 41 bf 8e ff ff ff e9 5f fe ff ff e8 c1 9d 95 ff <0f> 0b 48 b8 00 00 00 00 00 fc ff df 4c 89 fa 48 c1 ea 03 80 3c 02
+> RSP: 0018:ffffc900055f7a88 EFLAGS: 00010293
+> RAX: 0000000000000000 RBX: ffff888181aa83c0 RCX: 0000000000000000
+> RDX: ffff88803fb88000 RSI: ffffffff81e0dacf RDI: ffff888181aa8410
+> RBP: ffff88803fb88000 R08: ffffffff899ad660 R09: ffffffff81e23c44
+> R10: 0000000000000027 R11: 000000000000000e R12: 1ffff92000abef53
+> R13: 0000000000000000 R14: ffff8880b34d0000 R15: ffff888181aa8420
+> FS:  00007f7a08d50700(0000) GS:ffff8880b9d00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000001b2c72e000 CR3: 0000000168b9b000 CR4: 00000000001506e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000600
+> Call Trace:
+>  io_async_cancel fs/io_uring.c:6014 [inline]
+>  io_issue_sqe+0x22d5/0x65a0 fs/io_uring.c:6407
+>  io_wq_submit_work+0x1dc/0x300 fs/io_uring.c:6511
+>  io_worker_handle_work+0xa45/0x1840 fs/io-wq.c:533
+>  io_wqe_worker+0x2cc/0xbb0 fs/io-wq.c:582
+>  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+
 -- 
-2.32.0
-
+Pavel Begunkov

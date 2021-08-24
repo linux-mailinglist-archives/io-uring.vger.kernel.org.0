@@ -2,124 +2,79 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B6A063F6883
-	for <lists+io-uring@lfdr.de>; Tue, 24 Aug 2021 19:58:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55E2A3F68BE
+	for <lists+io-uring@lfdr.de>; Tue, 24 Aug 2021 20:04:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239978AbhHXR7k (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 24 Aug 2021 13:59:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41864 "EHLO
+        id S234486AbhHXSFe (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 24 Aug 2021 14:05:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43390 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240564AbhHXR7c (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 24 Aug 2021 13:59:32 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AECCEC0DFC4E
-        for <io-uring@vger.kernel.org>; Tue, 24 Aug 2021 10:39:27 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id k8so32481292wrn.3
-        for <io-uring@vger.kernel.org>; Tue, 24 Aug 2021 10:39:27 -0700 (PDT)
+        with ESMTP id S233145AbhHXSFe (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 24 Aug 2021 14:05:34 -0400
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBFEAC061764
+        for <io-uring@vger.kernel.org>; Tue, 24 Aug 2021 11:04:49 -0700 (PDT)
+Received: by mail-pl1-x630.google.com with SMTP id j2so8301482pll.1
+        for <io-uring@vger.kernel.org>; Tue, 24 Aug 2021 11:04:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=AoA7EkEeK108R+FQtA9oToMKAZvEoSNs7bMpsvocxYA=;
-        b=aeOlS7MhIOJCYue1XQZ/USE7TrelTPK6X4FZeTYu5J0OhrqrLKdDrOvAx+7qxSaL4A
-         G22RaIZ/h8Jm9m3h42iRAatRK/0QMB+4QwrR+Sv5rCCSWbjZeP6lNThyh45RnF2sUeuP
-         H1U132zs/Doosmc0LxYBG4GoFeUwOm6SrrAyQuq5Va+VHK6CE8QXjVjTcW2Rwf7ve9/P
-         HsCalwnRK/7FW4vP1Jf2TtcQJ+XBoIiQTn4dQCDJs5BbPXm7TnifR4gVG1fwp28+1VDw
-         kg/XV9dxSbYJkIIZTaRDeB8NNB9FRD/vIr5SD3mrNvpOCFSghAC+QZ1NfNZ6LRODrDSt
-         bvcA==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=hQDEKkSoig9y1CBEukh9Rw6DjHiQ4iqC1GEfn4iqR10=;
+        b=ZK9qe23EuhPHRNUt0dTds0ajePU7QgL1ZVQQFP9jeMX216wnjsYX/Q2pMs0llKbZV3
+         p5AtxFdwS7PovI8PcgvQ5nI7d9049JRsdFWo33Ds+Nr9BKi4iOvFgWWniTvm13k6v/MN
+         G/i6U/7fK/f0SAa017kubNf5bQH7f2Ci0nmlyWZYjALYAaBcjeBYno1rjzPezy14boD7
+         0Qd3gNWyns8OyrzAGA0pgi0ViT8R6eR1XOpUrJd6Gnz5YRxddHbfOIO3yiN87XpMLWiF
+         czrvm9kpVq6ijG0z0MWVwHU/e7VgWNdd1XSMXoJwTyetu7sObVYku8KwLtFgje1aByku
+         KCvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=AoA7EkEeK108R+FQtA9oToMKAZvEoSNs7bMpsvocxYA=;
-        b=mCks7/qa0AH7VWYTBg3iSyJh52hV1RUAhyUMgiA/4lLxFAGxy9ucLKXF8xUpo0SoGO
-         M9sp0W1bDseowW2VfpD3MSJV8n0hyJKMmd4KfVMHzf5uZALz1xxBElHjcdVEhIzQjg1j
-         ALBAh+X4mi5mcnM7TCNGDJJPBvDUKTZcyqtVWM7j7XRI3df2zKBBIdNLW6o9lqrLoC+N
-         CJYefEMq5ShrFdIlLKn/CzslMxYqs8GViNA5G3AIoZb/Wm2NPxXjDTEYCdilt5PD7V6D
-         /eL+mhMlkceyIZwmWJsywMNanNDXGRB0cWBLTo7yNfs66KIam8ilAwkZehIlMBxis1AF
-         w+Ew==
-X-Gm-Message-State: AOAM531tGBKeQwsEZxzItl31zmJx12NyHNdl6+xVgDQmR4KR7/sbIX/z
-        f2c1i+UIN1S1mwk6XftvqTmL5GhzpSU=
-X-Google-Smtp-Source: ABdhPJz1zJiLM2yWhsEKLNLdpzwM2WfCcu0LL3U6qhR2gDrrDPsWlSSZL0EACNScMXGmEBj2Fc5G6A==
-X-Received: by 2002:a5d:6d86:: with SMTP id l6mr1359149wrs.158.1629826766326;
-        Tue, 24 Aug 2021 10:39:26 -0700 (PDT)
-Received: from localhost.localdomain ([85.255.232.113])
-        by smtp.gmail.com with ESMTPSA id z6sm2853471wmp.1.2021.08.24.10.39.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Aug 2021 10:39:25 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH liburing 1/1] tests: fix poll-mshot-update
-Date:   Tue, 24 Aug 2021 18:38:47 +0100
-Message-Id: <7e588f712ec61e0ddc619ce016d1c3b9445716e1.1629826707.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.32.0
+        bh=hQDEKkSoig9y1CBEukh9Rw6DjHiQ4iqC1GEfn4iqR10=;
+        b=mO6VkhbtYSGHk3Ei8OCu6dYb17dfCz+WRPwM6IXSDTsIl/7dFg6js9yuESzCWbB2z5
+         5VrBSM2h9ARklpTGo6h1gAQnzyTsM0Z1nKuW/BmH0FOFoA4vI457Kh0T1uJvbv5PVU3o
+         fUIAeglrCyaoblNRvppMxVD1z1eUDOJC1MQ1oNk2fwiGKIrIsC1ASZPh+yCoq+pIEcP1
+         kt+U7ApPpVvC8W7KsGx44wa5wmagy8702wRzro+DtP5FWjW8KDUNAxWsucltcsh0w/Fn
+         rfwo2Iytsfg5Uq3RZJ4Ml++ZxEZ3tCwUkDk5abjFDCqYy/QQPFPI1y0TsFPfhl1VwXwy
+         vJDg==
+X-Gm-Message-State: AOAM533ik6ee5zzS/CgGNqnae+P0Mk59TGY6Dxgesl7DYovMuUjzqra7
+        lWHqKUPUttVti3utEzjybf4O50B1wmlOyNXc
+X-Google-Smtp-Source: ABdhPJygfX8O9JIjNplH2bScimea8qI7xs8WiR2ThVMvfMPzD34oBpgG3DeMwwI+7lI8wD2cETLB1A==
+X-Received: by 2002:a17:902:b102:b0:134:a329:c2f8 with SMTP id q2-20020a170902b10200b00134a329c2f8mr9610509plr.71.1629828289080;
+        Tue, 24 Aug 2021 11:04:49 -0700 (PDT)
+Received: from ?IPv6:2600:380:4960:2a4d:1b63:8a6c:25bc:6edc? ([2600:380:4960:2a4d:1b63:8a6c:25bc:6edc])
+        by smtp.gmail.com with ESMTPSA id h21sm3505805pgg.8.2021.08.24.11.04.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Aug 2021 11:04:48 -0700 (PDT)
+Subject: Re: [PATCH liburing 1/1] tests: fix poll-mshot-update
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <7e588f712ec61e0ddc619ce016d1c3b9445716e1.1629826707.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <5565df54-2711-f732-2818-c8158f235e33@kernel.dk>
+Date:   Tue, 24 Aug 2021 12:04:46 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <7e588f712ec61e0ddc619ce016d1c3b9445716e1.1629826707.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-poll-mshot-update constantly hangs. Apparently, the reason is
-reap_polls() clearing ->triggered flags racing with trigger_polls()
-setting them. So, reinit the flags only after joining the thread.
+On 8/24/21 11:38 AM, Pavel Begunkov wrote:
+> poll-mshot-update constantly hangs. Apparently, the reason is
+> reap_polls() clearing ->triggered flags racing with trigger_polls()
+> setting them. So, reinit the flags only after joining the thread.
+> 
+> Also, replace magic constants with proper identificators, e.g.
+> 1 -> IORING_POLL_ADD_MULTI.
 
-Also, replace magic constants with proper identificators, e.g.
-1 -> IORING_POLL_ADD_MULTI.
+Good catch!
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- test/poll-mshot-update.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/test/poll-mshot-update.c b/test/poll-mshot-update.c
-index a3e4951..6bf4679 100644
---- a/test/poll-mshot-update.c
-+++ b/test/poll-mshot-update.c
-@@ -71,7 +71,7 @@ static int arm_poll(struct io_uring *ring, int off)
- 	}
- 
- 	io_uring_prep_poll_add(sqe, p[off].fd[0], POLLIN);
--	sqe->len = 1;
-+	sqe->len = IORING_POLL_ADD_MULTI;
- 	sqe->user_data = off;
- 	return 0;
- }
-@@ -88,7 +88,7 @@ static int reap_polls(struct io_uring *ring)
- 		sqe = io_uring_get_sqe(ring);
- 		/* update event */
- 		io_uring_prep_poll_update(sqe, (void *)(unsigned long)i, NULL,
--					  POLLIN, 2);
-+					  POLLIN, IORING_POLL_UPDATE_EVENTS);
- 		sqe->user_data = 0x12345678;
- 	}
- 
-@@ -107,7 +107,6 @@ static int reap_polls(struct io_uring *ring)
- 		off = cqe->user_data;
- 		if (off == 0x12345678)
- 			goto seen;
--		p[off].triggered = 0;
- 		ret = read(p[off].fd[0], &c, 1);
- 		if (ret != 1) {
- 			if (ret == -1 && errno == EAGAIN)
-@@ -195,7 +194,7 @@ int main(int argc, char *argv[])
- 	struct io_uring_params params = { };
- 	struct rlimit rlim;
- 	pthread_t thread;
--	int i, ret;
-+	int i, j, ret;
- 
- 	if (argc > 1)
- 		return 0;
-@@ -256,6 +255,9 @@ int main(int argc, char *argv[])
- 		if (ret)
- 			goto err;
- 		pthread_join(thread, NULL);
-+
-+		for (j = 0; j < NFILES; j++)
-+			p[j].triggered = 0;
- 	}
- 
- 	io_uring_queue_exit(&ring);
 -- 
-2.32.0
+Jens Axboe
 

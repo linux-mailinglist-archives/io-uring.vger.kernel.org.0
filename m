@@ -2,62 +2,62 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AEA233F5FE3
-	for <lists+io-uring@lfdr.de>; Tue, 24 Aug 2021 16:08:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EBC1D3F5FE6
+	for <lists+io-uring@lfdr.de>; Tue, 24 Aug 2021 16:09:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237520AbhHXOIi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 24 Aug 2021 10:08:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44240 "EHLO
+        id S234695AbhHXOKQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 24 Aug 2021 10:10:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44594 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235997AbhHXOIi (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 24 Aug 2021 10:08:38 -0400
+        with ESMTP id S232311AbhHXOKP (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 24 Aug 2021 10:10:15 -0400
 Received: from mail-io1-xd2f.google.com (mail-io1-xd2f.google.com [IPv6:2607:f8b0:4864:20::d2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3584C061757
-        for <io-uring@vger.kernel.org>; Tue, 24 Aug 2021 07:07:53 -0700 (PDT)
-Received: by mail-io1-xd2f.google.com with SMTP id g9so26503742ioq.11
-        for <io-uring@vger.kernel.org>; Tue, 24 Aug 2021 07:07:53 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3011C061757
+        for <io-uring@vger.kernel.org>; Tue, 24 Aug 2021 07:09:31 -0700 (PDT)
+Received: by mail-io1-xd2f.google.com with SMTP id b10so14445152ioq.9
+        for <io-uring@vger.kernel.org>; Tue, 24 Aug 2021 07:09:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:references:from:message-id:date:user-agent:mime-version
          :in-reply-to:content-language:content-transfer-encoding;
-        bh=8VfY5kJYuhhOCjE0zEJRWCnVRM8u7tiJ1Wa689Nowho=;
-        b=mQ7e74ied2BPSDGQNQF3nNJD4OpgdcAAm3WnGTgDxTHNifKKXTYDgW51zqRqHxrkIV
-         oJUXD5N9l5y71PTtLTBJKLgHn8e9W4BmhHdKl1dT3Cq9gpSwGw2L83sjlWmfiYmTXrq0
-         07t7Ga9bW6jfqBQHtjlUS3RimaWnuGZ1A+JYS1uBBIO21qO002IJT5BblyK7QyQkn8Ra
-         x16YrB7GB8kynhOSgwJv+q+d+Wqj0AvgQ4XG3gm88ROgt+igqwjH5GOv3wcw2BA78pVq
-         sBzcUrVadtMPtUwXGkDyPXQu7HgvaJgeDDN9AhQPHQUg9IFEB8e1sPpf6fW9jweDm6b0
-         Wq4w==
+        bh=cQrJuIRKeEn8GzKsg94QD++Pb2Sz6DzsJ4nAcwMi8d4=;
+        b=Er1s/GIkuYu8C+X+93dcTVtFqT2CjvQmHYqN+20wpKutjeDN1BZIM7svdxjhj3iejK
+         Tos2oegCBUC4GQIkllcOBUQxZBrWrH2d8B39R97D7311iQ0OViQmd5goL8PqWNqsUvkk
+         GicoV65DtfBJ5U2jJRzWG07nMH3S6VLddqDIDYhq/qEA/+faf/hPFPB+l4gc1amEBgZo
+         6OxVfyo3mqKG1M6DpgcuLPQ6E/sZbGHLK24nkaWuWrfob1SJoKMDTC9LqZLVSCOc9KW4
+         GV3OkalVKmt2FxaAK4L25ZJd2LKG79680DQx4zs82f6NDueshbIfVM945y5klMx1SFwm
+         5yoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=8VfY5kJYuhhOCjE0zEJRWCnVRM8u7tiJ1Wa689Nowho=;
-        b=XyBO7a6OsSuRhDijmaPVUgX+KZ3iyjXiu7xFKKJzPPAUdnnkPlyk755tpZNFd7QrIN
-         9ZEvYeh2veaQ0aZdaV0OKchxxjAPGxxxzAwlkefQ6C+1t0NTzjy2tbWrfvIeA+AIPM3f
-         787ex0UtHlvKXFRhyurYVBudbouMRDg8wUKSE6CDWGgELoo/NVl3RKdb4I8bN7WiESlt
-         w8eMYdwwE7oNngCNuUiXUgf+d8aWQibjyZSymaLL/F5sliciSskO6CR6WcMvgTdviIu5
-         Y1locVESRXzNLpEAPwgAdr6LEEpj38TeyvpWzPB8u+vYqPfwT9BJGMW7goXcnfqVDEYK
-         lonA==
-X-Gm-Message-State: AOAM532zr+Jr0Mf/vZcAxNDuTIfA8xJteBL1Q2p62sDLmmq7CzH60ozI
-        PrdWm2ooUvI2I5QJA9vq7ZotXFm79U28oA==
-X-Google-Smtp-Source: ABdhPJxDmisaknuKIkEQtNuWxMTuVp9l1mnIXVI30KNhx3KI9nR8UTROxSnRnzDhJ5CP8C18e7NsHQ==
-X-Received: by 2002:a05:6638:aca:: with SMTP id m10mr13506775jab.22.1629814073202;
-        Tue, 24 Aug 2021 07:07:53 -0700 (PDT)
+        bh=cQrJuIRKeEn8GzKsg94QD++Pb2Sz6DzsJ4nAcwMi8d4=;
+        b=jRarlnOZtRynIqm9IWHVcT7mnPyWM59NGo6esTVbD2BskZmhU8w7cfWp++prZbCu10
+         EUKQzSyb6F2+GnSQGtS4tTHmg5qXcYYQD+ssQ2vkDOdM+YFayhyf3O+Qd6OC9y3NNrak
+         hJjEgwuIIjoBseRzeWo2TMpHyil+iASYwqQly3zBK1OSgf9Wp0YbN2XMuYzs+UzlJt4H
+         NHw75Hqpbs8PB4VnkTqKBcrtSGPPWg/cDQThAlUlaIIhpUWoDrmaaCEJJdhwi2AzWKjM
+         XLjuIpJI0nFKsTenAGLPR8Y2cyO43bp2CsZZi4ncLwueYhbK9PqLFLLzhiJWcbJ+qa0N
+         hHsg==
+X-Gm-Message-State: AOAM5311zKwMsiYxHrkxl2NY2yVQNtE4DdiHrpOQb1LJWvtTVm9DsRV7
+        qBwxgCWVLcMiwWQ3gNBqTFrgaKvybJGl8Q==
+X-Google-Smtp-Source: ABdhPJyip8gHc1rtXVUT6XmNGbzUkngefbz7oEfZxZgOA+tMG6X3YJH9AWrRpIt1YjEAmN7k3NbmAQ==
+X-Received: by 2002:a5d:8506:: with SMTP id q6mr31066387ion.53.1629814171203;
+        Tue, 24 Aug 2021 07:09:31 -0700 (PDT)
 Received: from [192.168.1.116] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id m18sm9935485ilj.61.2021.08.24.07.07.52
+        by smtp.gmail.com with ESMTPSA id q10sm10272175ion.3.2021.08.24.07.09.30
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Aug 2021 07:07:52 -0700 (PDT)
-Subject: Re: [PATCH liburing 0/2] non-root fixes
+        Tue, 24 Aug 2021 07:09:30 -0700 (PDT)
+Subject: Re: [PATCH liburing 0/2] non-privileged tests
 To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <cover.1629813328.git.asml.silence@gmail.com>
+References: <cover.1629805109.git.asml.silence@gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <69054979-1df3-8850-986b-41bfee38a0c4@kernel.dk>
-Date:   Tue, 24 Aug 2021 08:07:51 -0600
+Message-ID: <51f1eb51-7ea9-e20c-7a91-7cc8197bb0f0@kernel.dk>
+Date:   Tue, 24 Aug 2021 08:09:29 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <cover.1629813328.git.asml.silence@gmail.com>
+In-Reply-To: <cover.1629805109.git.asml.silence@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -65,18 +65,16 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/24/21 7:57 AM, Pavel Begunkov wrote:
-> 1/1 fixes non-root rw tests, and 2/2 makes yet another
-> test case to handle non-root users.
+On 8/24/21 5:39 AM, Pavel Begunkov wrote:
+> Two more fixes making it work (partially) with non-privileged users.
 > 
 > Pavel Begunkov (2):
->   tests: rw: don't exit ring when init failed
->   tests: non-root io_uring_register
+>   tests: non-privileged defer test
+>   tests: non-privileged io_uring_enter
 > 
->  test/io_uring_register.c | 8 +++++---
->  test/iopoll.c            | 3 +--
->  test/read-write.c        | 4 +---
->  3 files changed, 7 insertions(+), 8 deletions(-)
+>  test/defer.c          | 39 +++++++++++++++++++--------------------
+>  test/io_uring_enter.c |  3 +++
+>  2 files changed, 22 insertions(+), 20 deletions(-)
 
 Applied, thanks.
 

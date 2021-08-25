@@ -2,54 +2,74 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BD7F3F7478
-	for <lists+io-uring@lfdr.de>; Wed, 25 Aug 2021 13:40:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 902A13F7502
+	for <lists+io-uring@lfdr.de>; Wed, 25 Aug 2021 14:23:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240109AbhHYLk5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 25 Aug 2021 07:40:57 -0400
-Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:40129 "EHLO
-        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239971AbhHYLkz (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 25 Aug 2021 07:40:55 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UloPzj-_1629891603;
-Received: from e18g09479.et15sqa.tbsite.net(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UloPzj-_1629891603)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 25 Aug 2021 19:40:09 +0800
-From:   Hao Xu <haoxu@linux.alibaba.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>
-Subject: [PATCH] io_uring: don't free request to slab
-Date:   Wed, 25 Aug 2021 19:40:03 +0800
-Message-Id: <20210825114003.231641-1-haoxu@linux.alibaba.com>
-X-Mailer: git-send-email 2.24.4
+        id S240751AbhHYMY0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 25 Aug 2021 08:24:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39950 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240593AbhHYMY0 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 25 Aug 2021 08:24:26 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9CC3C061757
+        for <io-uring@vger.kernel.org>; Wed, 25 Aug 2021 05:23:40 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id k20-20020a05600c0b5400b002e87ad6956eso2779956wmr.1
+        for <io-uring@vger.kernel.org>; Wed, 25 Aug 2021 05:23:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=RUz/EKxjddMnednMk3X//QOjermnX9+9kOBlpEvXtUw=;
+        b=iWpLyUOXT+m3y3GNGMc2hRvY3KETbx18m2TGpIvTMO5X7bVBTHsIhwlZ1/WOpVHOqe
+         zmiWwDkXGALOnalEVKNwouwzeqReF/4uwi2IkbkYA51DuvWBwqb1BRb98l2+jn2mlrtY
+         8C5xXTAUVNztvZDGR53auEkIghEIqdbkcR2j6ZmeMzsTr98tU50g5TYbZqSZtW1Z41pP
+         cvgA9zkT9g2myTZJV4XWd3iVSi9h+TE4Q2KSAsZyDhdtcYNd+iXEMRV23KzYQ0Ue7trV
+         76DqtH84F+eLAb022I9X0etP7iFvQG+SKqsh1BEka2rYT3VWgTS6ukh0AOCjpMKlJL8j
+         YUug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=RUz/EKxjddMnednMk3X//QOjermnX9+9kOBlpEvXtUw=;
+        b=Nd+IX34tpPlr7D/r/wDixAV9ITd4+baDyzOuHqwCd19TaT4wTntWRLS8GVgnw0KNns
+         AAYeTw5ZKzZU4Tf8CWZIbNxjEW1mScrwY5O8VauEhhI4/VuuWTJ3MVIX7AhFp4ujAl5w
+         2s9VjeW4XwIpOQt+o+pVURw1qQWD5j34ySCOCEUlx7ztACEQfEMuSZKM8k60cH8rpEC4
+         ca8E4ti0uCX5uCP69mrdKfbbmNea4yhg3v+Fm2lWRCHCval6JhBnVDcummmbwJo4x9yT
+         b7OfhmXha+SWHuoeOhYdiEAUbSBoPb3speR5ib+nQi0Y2MYiykgDmETQ6RbnBSi2kihZ
+         sDww==
+X-Gm-Message-State: AOAM5305NNLA1kuD6K01LaUxf5FrBQenvKYW5YRzqUFRa7U3sfVU5uSy
+        4EISjKXxVd+stP02BwAj2eSkuxTQDfY=
+X-Google-Smtp-Source: ABdhPJxhkLvoo1Trs7ZRjwg0+fbTRqOROsyVglhhcE+IW8XZ1eq+ivc5GikKc2Sq8+b8KQOKQ1/9KA==
+X-Received: by 2002:a05:600c:510a:: with SMTP id o10mr9109235wms.84.1629894219364;
+        Wed, 25 Aug 2021 05:23:39 -0700 (PDT)
+Received: from localhost.localdomain ([85.255.232.117])
+        by smtp.gmail.com with ESMTPSA id l12sm5226199wms.24.2021.08.25.05.23.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Aug 2021 05:23:38 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [PATCH liburing 0/2] liburing.h helpers cleanup
+Date:   Wed, 25 Aug 2021 13:23:00 +0100
+Message-Id: <cover.1629893954.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-It's not neccessary to free the request back to slab when we fail to
-get sqe, just update state->free_reqs pointer.
+Add a helper for preparing multishot poll requests + a poll mask
+conversion cleanup.
 
-Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
----
- fs/io_uring.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Pavel Begunkov (2):
+  liburing.h: add a multipoll helper
+  liburing.h: dedup poll mask conversion
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 74b606990d7e..ce66a9ce2b43 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -6899,7 +6899,7 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr)
- 		}
- 		sqe = io_get_sqe(ctx);
- 		if (unlikely(!sqe)) {
--			kmem_cache_free(req_cachep, req);
-+			ctx->submit_state.free_reqs++;
- 			break;
- 		}
- 		/* will complete beyond this point, count as submitted */
+ src/include/liburing.h   | 25 +++++++++++++++++--------
+ test/poll-mshot-update.c |  3 +--
+ 2 files changed, 18 insertions(+), 10 deletions(-)
+
 -- 
-2.24.4
+2.32.0
 

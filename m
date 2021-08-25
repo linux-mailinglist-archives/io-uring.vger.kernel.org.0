@@ -2,94 +2,101 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DF6543F798D
-	for <lists+io-uring@lfdr.de>; Wed, 25 Aug 2021 17:58:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3E1A3F79BC
+	for <lists+io-uring@lfdr.de>; Wed, 25 Aug 2021 18:03:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240495AbhHYP73 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 25 Aug 2021 11:59:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33846 "EHLO
+        id S229837AbhHYQEW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 25 Aug 2021 12:04:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241186AbhHYP73 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 25 Aug 2021 11:59:29 -0400
-Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E000C061757
-        for <io-uring@vger.kernel.org>; Wed, 25 Aug 2021 08:58:43 -0700 (PDT)
-Received: by mail-io1-xd29.google.com with SMTP id z1so31543493ioh.7
-        for <io-uring@vger.kernel.org>; Wed, 25 Aug 2021 08:58:43 -0700 (PDT)
+        with ESMTP id S241960AbhHYQES (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 25 Aug 2021 12:04:18 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E81EC0612AF
+        for <io-uring@vger.kernel.org>; Wed, 25 Aug 2021 09:02:36 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id v20-20020a1cf714000000b002e71f4d2026so3904142wmh.1
+        for <io-uring@vger.kernel.org>; Wed, 25 Aug 2021 09:02:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
+        d=gmail.com; s=20161025;
+        h=to:cc:references:from:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=rb0jVycOgCUK9nIqqezN9iYmJXrjmc8PZcfYC0vnLCE=;
-        b=iF4cEpuk0yAJflXM4upNk9L6r2i0aKzc0FAjrYKHYj6nFltUKE4NB0oqm6/uIQnQh8
-         1yNVV8X0H4pWotSh4N0fLAQHH3eoXcY3QbDECC3uH9g4BAelt03kwY2kRpCI+s9E2K5p
-         /dEFYgd6qaC8947rt1H0AaJ8PlcilcUyAPQgx1y90E5rmzGqLzEsiOtm4cMRfpU9ptD4
-         pscrfosQGis/wB36Mqn5m2Z7fk7IxA3aPcnvKjzsat++q0UiQZii5scMHts12teWbq+V
-         KR4ouefCvZSBPkFP+0bT1hybAeZcAoZUlit3e0cs01k+nGgw8b7XaDjMey8SBmbZNLx4
-         5Mtg==
+        bh=8kx61jP4tjaTLN6VdLuRy0F0z68dQ7IMKGpmpu5DG7c=;
+        b=KZ8fImdZH7mxoLEBWLPeqozE5uaZhObYYjtUtsJ9y02hnmbZkSV93p2cXflg9aSzvY
+         6o1PXGURsUN48bbQwBEBNZuKsbLNvLVPY9gQpEgqWyP5/RdBC2dto7ZYZ1mY3PlGFDJY
+         U8V88mvBqxTufMb4d8cW1JJHLcnylOkcChhCeQadOk87v8B8LIAs1hkS0fYvr1XE1fKR
+         RKnS2Sb/hnXKbSmLcxDNemPPcdbglU25Pjqb/m9y4D+x1bBVfHYlWUZrtoMouqqwRmcK
+         m2zLyc4F1ZCu5gbA32E/Bj9prPFd9BWqohuXHrCcCwuhE18gynq/+2mOCAMeYzqqduLk
+         w8uw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=rb0jVycOgCUK9nIqqezN9iYmJXrjmc8PZcfYC0vnLCE=;
-        b=uCDuGL7kXhDwhnnZ2IbypW1e4wA04HY1pE5S3AA6htDEv5Cl0dovGMqXZhmjUK6rJo
-         kBszE0/S5tKrBalpI8aLlRXIfNfu9IR92cmoLpt7KGxh+inIDaSVJKbDUXi3RYCtvtyJ
-         nCLyTfI07VHK8/pLvwwVu3Zb0punaWh6WLAF1mECDe1GCVKhpxTCOao3QYyYQ/IdnOSJ
-         Q28qu1dKz+olLOUc4o8BGnuHypSPX8HPEGSeq3txTp2R6eSXl47sBt01dU/R6nPIBLfL
-         PK0cDtFyUGzPf4oBeIY7xOw8MIMNSiRwCa3qqpXONkaHFnoQYrLoc85GoLSEgQsC0Mn5
-         aFUQ==
-X-Gm-Message-State: AOAM530LsEbm67OEHDQSMbGPcitwhrX0VuLF50pU+RCXubJ5kOnuOEGZ
-        o6GUCd7dgCW05dYI13E8uoyOfTRMhzK3rQ==
-X-Google-Smtp-Source: ABdhPJxTrmPYKXYCn0hrF/PrIr1QQ/hSsNuwkp0L8Ge3o17qIpg0/TxwKizy4kQgu535U5rXpCCw6g==
-X-Received: by 2002:a02:7312:: with SMTP id y18mr39920213jab.129.1629907121466;
-        Wed, 25 Aug 2021 08:58:41 -0700 (PDT)
-Received: from [192.168.1.30] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id s7sm63518ioc.42.2021.08.25.08.58.40
+        bh=8kx61jP4tjaTLN6VdLuRy0F0z68dQ7IMKGpmpu5DG7c=;
+        b=BUM15eZC+210Td8ce7Ag6ezGIfLfFKPYwDC7g7pP5bNpWuClTn5MnVGnFNXy223COT
+         G3yUcZNl7n3SBJ/6SNcGmc9ujeKk5lgbgYC1C4fOscl3LJx6dx7zbLsYGvcRyvUE23z1
+         JEu1OIHx4T+268/h/RJ8yhNsinLO8lqa9zUORQSN8limunArrIYVZf46eqvXSA0ksDzX
+         IepEWmzX8UT1i7xiC+aRLk3l6R6APIc+sLWFtTnL/6G8Lqsj2VzgJf/YG+2jvbwVD4sf
+         WCq+OIejQbo+9rjhMnZw0jXWUBJX3Yg3FRpDTXN1NPQnKuaSPQePGe00gi1i6yTrS4CL
+         L1pw==
+X-Gm-Message-State: AOAM532rKaOFTAin7l3ZQPjLefsDzmRwbbws07DSOvcCYRtU2apsu8uQ
+        9Ih1SGWnJE6nEIo++7zu72o=
+X-Google-Smtp-Source: ABdhPJz7e/t4QlDbKgZwP1PLg4GdHUfPTw6qwbslu6/aFE/sFoRjDsOJdjUtMyA6d4B9zKujU+jMpg==
+X-Received: by 2002:a7b:c8ca:: with SMTP id f10mr10057281wml.140.1629907354931;
+        Wed, 25 Aug 2021 09:02:34 -0700 (PDT)
+Received: from [192.168.8.197] ([85.255.232.117])
+        by smtp.gmail.com with ESMTPSA id f7sm5741142wmh.20.2021.08.25.09.02.34
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Aug 2021 08:58:41 -0700 (PDT)
-Subject: Re: [RFC 0/2] io_task_work optimization
-To:     Hao Xu <haoxu@linux.alibaba.com>
-Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <20210823183648.163361-1-haoxu@linux.alibaba.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <503f1587-f7d9-13a9-a509-f9623d8748e9@kernel.dk>
-Date:   Wed, 25 Aug 2021 09:58:40 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Wed, 25 Aug 2021 09:02:34 -0700 (PDT)
+To:     Hao Xu <haoxu@linux.alibaba.com>, Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
+References: <20210825114003.231641-1-haoxu@linux.alibaba.com>
+ <03767556-ac49-b550-6e73-3b00b3b66753@gmail.com>
+ <2157392c-5bdc-c5bd-cce9-c9c8ac1fe165@linux.alibaba.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Subject: Re: [PATCH] io_uring: don't free request to slab
+Message-ID: <78403925-6da0-7059-484e-cfdd5c2c500f@gmail.com>
+Date:   Wed, 25 Aug 2021 17:02:03 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
-In-Reply-To: <20210823183648.163361-1-haoxu@linux.alibaba.com>
+In-Reply-To: <2157392c-5bdc-c5bd-cce9-c9c8ac1fe165@linux.alibaba.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/23/21 12:36 PM, Hao Xu wrote:
-> running task_work may not be a big bottleneck now, but it's never worse
-> to make it move forward a little bit.
-> I'm trying to construct tests to prove it is better in some cases where
-> it should be theoretically.
-> Currently only prove it is not worse by running fio tests(sometimes a
-> little bit better). So just put it here for comments and suggestion.
+On 8/25/21 4:38 PM, Hao Xu wrote:
+> 在 2021/8/25 下午9:28, Pavel Begunkov 写道:
+>> On 8/25/21 12:40 PM, Hao Xu wrote:
+>>> It's not neccessary to free the request back to slab when we fail to
+>>> get sqe, just update state->free_reqs pointer.
+>>
+>> It's a bit hackish because depends on the request being drawn
+>> from the array in a particular way. How about returning it
+> It seems a req is always allocated from state->reqs, so it should be
+> ok? I actually didn't understand 'hackish' here, do you mean
+> io_submit_sqes() shouldn't move state->free_reqs which is req caches'
+> internal implementation?
 
-I think this is interesting, particularly for areas where we have a mix
-of task_work uses because obviously it won't really matter if the
-task_work being run is homogeneous.
+I mean it uses implicit knowledge of how io_alloc_req() works, which
+may and actually will change. It's just always too easy to forget
+about that little one-off thing while changing another chunk.
 
-That said, would be nice to have some numbers associated with it. We
-have a few classes of types of task_work:
+To give an example, if one decides to remake it and first serve
+requests from state->free_list and only when it's empty look into
+state->reqs, it's too easy to forget opening a pretty severe
+vulnerability.
 
-1) Work completes really fast, we want to just do those first
-2) Work is pretty fast, like async buffered read copy
-3) Work is more expensive, might require a full retry of the operation
+If there is not much profit from it comparing to the risks, I'd
+personally prefer to go with a safer way.  
 
-Might make sense to make this classification explicit. Problem is, with
-any kind of scheduling like that, you risk introducing latency bubbles
-because the prio1 list grows really fast, for example.
+
+>> into state->free_list. That thing is as cold as it can get,
+>> only buggy apps can hit it.
+>>
 
 -- 
-Jens Axboe
-
+Pavel Begunkov

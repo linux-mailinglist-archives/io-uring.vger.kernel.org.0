@@ -2,100 +2,77 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F03B3F862D
-	for <lists+io-uring@lfdr.de>; Thu, 26 Aug 2021 13:13:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A8443F8A48
+	for <lists+io-uring@lfdr.de>; Thu, 26 Aug 2021 16:41:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240612AbhHZLOm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 26 Aug 2021 07:14:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41966 "EHLO
+        id S242852AbhHZOmE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 26 Aug 2021 10:42:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34656 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233961AbhHZLOl (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 26 Aug 2021 07:14:41 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7378CC061757
-        for <io-uring@vger.kernel.org>; Thu, 26 Aug 2021 04:13:54 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id q11so4402013wrr.9
-        for <io-uring@vger.kernel.org>; Thu, 26 Aug 2021 04:13:54 -0700 (PDT)
+        with ESMTP id S229832AbhHZOmE (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 26 Aug 2021 10:42:04 -0400
+Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4838C0613C1
+        for <io-uring@vger.kernel.org>; Thu, 26 Aug 2021 07:41:16 -0700 (PDT)
+Received: by mail-io1-xd32.google.com with SMTP id a21so4055280ioq.6
+        for <io-uring@vger.kernel.org>; Thu, 26 Aug 2021 07:41:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=onRyYqPrllyKmtmwDRZBDhN4phd09Hrl13/rSNztNOE=;
-        b=cWOuQJsE1nIVT2KWKOLWfXiuosQCjEzWcZR8FtUi12HuJVLFVfolXWQJIQRW1rwdvz
-         MG8jrAc2CbTcYNlYO+Bw2Q2ySRyEQKyvTYABcYF1qhlFks56f/zAHBu3Z1NNhJuL07Tb
-         x5rh2VEQlNKR1pp0cWIMhugbn7o9HrtE9MYOiNUn4fKhRgpl02+9G+eEKdNWerP+xIix
-         ufegHtUpqA6FydZCcczeEUYhMukBwYrJOAgY7hMkPN9sMcJ0LHwjT4ApXjPPs0kORBGA
-         2QUvAhIxRTwsPltmCKpjTPypNksGPIoCxVhZWBSg5RaV+p4xmbvGKxRrpZdCwlfd1A1h
-         qIow==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=HKG7oHXbkw9fh+XNTL7j0xwuGqGIdaztPjxo/ZkPxdg=;
+        b=GFEtdQKcWG2hq27mANMQLkPgsbGWgB6NX4EVawUx9iRCWuTqgSDqeh5vQoP1YpbBZ7
+         4QfDYH41x+oXDNEUznBSL1C4wKCJnPXq8nlyOnm7wKEBDVzjPd4R4TLHs3DNvYbhf84y
+         7ZIQ5jxVhe0zBBsShuUqRngos7EBcUKNfBDG3DdzHceYCedOnrWNzfmj4DXu35kwxQRt
+         0rWe5RNbCIMsrDT0Zi3rSdA95Saf2LlosEm2WpEU91wO/3ERKGWb2RalJUbcVtUrJaJ2
+         FRJeVX3CT7NQ0JmZ9xOIsMUm5bO5f4+BZPZeEXCZEQZTOQpdJD4jJ5ddGc/KEWLLBSJD
+         Nbrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=onRyYqPrllyKmtmwDRZBDhN4phd09Hrl13/rSNztNOE=;
-        b=GfpsRs9W+TV6RehcrNvexyFIIjYI4GqKN+uPVxjHWFY3pieImBUGxjNhTuT0//1kBN
-         mSusBgBuAVxoAdOIYJ2i+ToIx0OqrFo9bj0DAHsM1bMVP1eZJXZD07n4QCnI2RQMTE4r
-         EpRtlkjo8Q/u1G3wHUf7HXKXU0brqV5xAoWPiJwgVXXZeMA383MJwLOPi34LW5CqBCjG
-         hfUKUxXr1/RkKI9vkhYdDH0jsXJEqfv/qda8MvlvpmCpEaxvZ4SWPaQKRGqA7BNlpTHN
-         oSyMctB6ijOvYVuS7F2+r8MgXVkrY9lrZFQA0aD2kcMXIhEzdcG6KZ9QdR1jtIsAf4V7
-         PJ5Q==
-X-Gm-Message-State: AOAM53288AexU1BjaumSkuXwshH33A76EcxXOGtJRxcGqI0g1DRXJ3I9
-        Kcqxr9N95f2Eh8j//qV1Nzshm+gMaT0=
-X-Google-Smtp-Source: ABdhPJxBzUlr6pm5Fb8IWdBuKy3sUU4vUMgLwhgn4vMzy25h0OmIf0FrkBMTkI7mQwPFCB1HJm5m2g==
-X-Received: by 2002:a05:6000:259:: with SMTP id m25mr3335455wrz.53.1629976433016;
-        Thu, 26 Aug 2021 04:13:53 -0700 (PDT)
-Received: from localhost.localdomain ([148.252.128.64])
-        by smtp.gmail.com with ESMTPSA id o8sm2223039wmp.42.2021.08.26.04.13.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Aug 2021 04:13:52 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH liburing 1/1] io_uring: update buffer update feature testing
-Date:   Thu, 26 Aug 2021 12:13:16 +0100
-Message-Id: <de5fd2626bd4eabd0eec3eb8310888b4eb1a2539.1629976377.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.32.0
+        bh=HKG7oHXbkw9fh+XNTL7j0xwuGqGIdaztPjxo/ZkPxdg=;
+        b=XJTGMXQUJjippdHLAT1uPrrWu95urIVQHzZG3eaPhkr4p0nt4BmidNpax5tD5QBoSW
+         Ka/m5HHUPD+3D2TXVqnBy7jZrNw9uYxi54g1ffMJm2q/oiEwiPRq6QC3Akh/kmzTJudB
+         9cbUQ2zFC/SyXYmTI7HzHkcg/6niWcPo3I7g5kYMKy+Jwllm4qGD7dG7v6S9tYlUFZDE
+         6ElUli5vAsz1oyf/eYbQjpuTwAPTwiKFoIfPjzLq20yRRRz1pdWpUU81r4LlkPwqoSdA
+         LuoqbHXLgTonOgSRZ+Ad75VvuTdLtsOb7Qb6z0b8N/TxbkffTynQJECIlRRb+ytk5pHK
+         ZiiA==
+X-Gm-Message-State: AOAM530coOnsDIw7oCjFwVoZiOqNPyOBVRVFRyA8G4teW4hZK1u0o2kp
+        9Ns0k40N+eUhCXzvLxm5ve6Avl5Lg65M9Q==
+X-Google-Smtp-Source: ABdhPJw455fjR2HvpYmQadDG9dWalYyn9Lw+Lq9qjIfFTiOclaUF3Wtt2elTOjFZbIe5lS3Dy7KNXQ==
+X-Received: by 2002:a5d:9d01:: with SMTP id j1mr3344354ioj.27.1629988876000;
+        Thu, 26 Aug 2021 07:41:16 -0700 (PDT)
+Received: from [192.168.1.30] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id e14sm1836516ilr.62.2021.08.26.07.41.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Aug 2021 07:41:15 -0700 (PDT)
+Subject: Re: [PATCH liburing 1/1] io_uring: update buffer update feature
+ testing
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <de5fd2626bd4eabd0eec3eb8310888b4eb1a2539.1629976377.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <32e289c7-58a4-70d6-d091-9ef253c6d316@kernel.dk>
+Date:   Thu, 26 Aug 2021 08:41:13 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <de5fd2626bd4eabd0eec3eb8310888b4eb1a2539.1629976377.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-IORING_FEAT_RSRC_TAGS came late, and it's the best way to check if a
-ring supports resource (i.e. buffer or file) tagging and dynamic buffer
-updates.
+On 8/26/21 5:13 AM, Pavel Begunkov wrote:
+> IORING_FEAT_RSRC_TAGS came late, and it's the best way to check if a
+> ring supports resource (i.e. buffer or file) tagging and dynamic buffer
+> updates.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- test/rsrc_tags.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Applied, thanks.
 
-diff --git a/test/rsrc_tags.c b/test/rsrc_tags.c
-index 337fbb8..a82ba21 100644
---- a/test/rsrc_tags.c
-+++ b/test/rsrc_tags.c
-@@ -75,17 +75,17 @@ static int update_rsrc(struct io_uring *ring, int type, int nr, int off,
- static bool has_rsrc_update(void)
- {
- 	struct io_uring ring;
--	char buf[1024];
--	struct iovec vec = {.iov_base = buf, .iov_len = sizeof(buf), };
- 	int ret;
- 
- 	ret = io_uring_queue_init(1, &ring, 0);
--	if (ret)
--		return false;
-+	if (ret) {
-+		fprintf(stderr, "io_uring_queue_init() failed, %d\n", ret);
-+		exit(1);
-+	}
- 
--	ret = register_rsrc(&ring, TEST_IORING_RSRC_BUFFER, 1, &vec, NULL);
-+	ret = ring.features & IORING_FEAT_RSRC_TAGS;
- 	io_uring_queue_exit(&ring);
--	return ret != -EINVAL;
-+	return ret;
- }
- 
- static int test_tags_generic(int nr, int type, void *rsrc, int ring_flags)
 -- 
-2.32.0
+Jens Axboe
 

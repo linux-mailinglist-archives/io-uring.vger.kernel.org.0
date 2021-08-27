@@ -2,76 +2,235 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B61293F9E92
-	for <lists+io-uring@lfdr.de>; Fri, 27 Aug 2021 20:12:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E28E53F9F20
+	for <lists+io-uring@lfdr.de>; Fri, 27 Aug 2021 20:47:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229670AbhH0SMw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 27 Aug 2021 14:12:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44116 "EHLO
+        id S230188AbhH0Src (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 27 Aug 2021 14:47:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52082 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229669AbhH0SMv (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 27 Aug 2021 14:12:51 -0400
-Received: from mail-il1-x130.google.com (mail-il1-x130.google.com [IPv6:2607:f8b0:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC8B3C061757
-        for <io-uring@vger.kernel.org>; Fri, 27 Aug 2021 11:12:02 -0700 (PDT)
-Received: by mail-il1-x130.google.com with SMTP id j15so7885868ila.1
-        for <io-uring@vger.kernel.org>; Fri, 27 Aug 2021 11:12:02 -0700 (PDT)
+        with ESMTP id S229882AbhH0Src (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 27 Aug 2021 14:47:32 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5CCDC061757
+        for <io-uring@vger.kernel.org>; Fri, 27 Aug 2021 11:46:42 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id v10so11862234wrd.4
+        for <io-uring@vger.kernel.org>; Fri, 27 Aug 2021 11:46:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=8c5wo0R7xTCIvOsDcZKfKFq0xxoUQfLY99AI1gLIqZ8=;
-        b=07xpfPCeK5E+jGaLyVQUbT35WfeBCKG6N8Nkw1niBFLAnAsGZYsVkx3UiJJLDFT4dt
-         aEW5P+RWPMCqwYs2fu/h4wYwefslFNAp714IJc4LoosmoVNenPD+gIA7qIADkwa0X5YX
-         r+f/LrXSChWaiEgzPK64HaHH6X6pHNDZ7zoo6s/IMpJ2ZzeGbb8KekkekuuPeO8+c+yC
-         CfEgM83Xxyw0biQ+g/qszO7EUD2B7AK31zHOG80HS9IdbmXJT11FUZ74LNVPqVmyjHUu
-         Ns2luuf86UfbalUfny1k7YReCojJVmBclVH7gGb/9BzCQMGgsTXMpfWBtEDPIsOj+Jze
-         Fqdg==
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JoZbE44HF3QHteArenmYuH3qsX5rj1IVSgV5NSkYXUE=;
+        b=CxYX98UFy0vPn5zthTVjmuZYix3klQXjPAcDSVJUN3jbktnCvabyKRJBIiqkH0sq4v
+         pbbv9ch9jDD1Yz4iTjDwr0efykSm06jHH9A4Zs00tHijZp8dwbIn05LPluLgV0Ufp7/+
+         EbrhJ7O2cAadLIKAGf9BeKpG/aKdav/dn5gQgPBCZ3xr+4tJUIEgAKCSGGbh636NUzX6
+         aftHBZ3DwiIg4Hyz+FqmXGGZ71tmuUGk9XyZc6YGFovXe/ukym7Dq4jHSxyOVRd6qyZJ
+         hkGfLxQO7B7nv+eVlFHDJ7rDZwpbvZgoXovkVjRbe6CsjUWegsP2eIiNfhUhrNYYkXJh
+         irQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=8c5wo0R7xTCIvOsDcZKfKFq0xxoUQfLY99AI1gLIqZ8=;
-        b=oNlHZNvhyqU4D3TJTEi73iTfF8EmFV8WffTUUrwvOUydScCIjj//ZVbcLf3NkIBDKj
-         soWCfRQGxX/CM8j3A2cMIojZKegv6fLn24LObCBcSKktynba5LRPy057LkWqtQ3TbUkC
-         749TuhSX5NjGjzck7s+2aZzXwKld4ewQk4CxuLO3rGCNaQsgqtDHvb1Uz6d+jcSpldj0
-         VHPJgOQo0ts5adOduZp5Kh9Jzcg0wx49hDpYt3yNjJytxllGyW9YcH7Qipks3ZgZwgLe
-         aUMGOgoY9KUe8KvHahwWUZq8RMJRGcvCGFsvfzvY26WXknrv2a3/zxfIeaYQOEjcQR/l
-         SAdg==
-X-Gm-Message-State: AOAM532152MHq0wKKyDlszZpCXMnhZ0uX/SvZy6TNQ454vYzqg1N0HLp
-        oaT1SDWH9eiEYN+Fbz0etqsAjG7W9bgsGQ==
-X-Google-Smtp-Source: ABdhPJzJjOG2T6qoXMBoxnwm5ayp99Uzb6hA7EfKTLg6qTDQLqIHUD2KtabRtbhPDSWOAMY308mHhQ==
-X-Received: by 2002:a92:da11:: with SMTP id z17mr7525875ilm.176.1630087921923;
-        Fri, 27 Aug 2021 11:12:01 -0700 (PDT)
-Received: from [192.168.1.30] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id h25sm3408771ila.78.2021.08.27.11.12.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Aug 2021 11:12:01 -0700 (PDT)
-Subject: Re: [PATCH liburing] tests: file create/unlink cleanup
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <abbcfa9fa56fde7e740a2c887afef74a779bf36f.1630082134.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <4328a2dd-a29f-eed7-af37-4ba2532658d3@kernel.dk>
-Date:   Fri, 27 Aug 2021 12:12:00 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        bh=JoZbE44HF3QHteArenmYuH3qsX5rj1IVSgV5NSkYXUE=;
+        b=KJqryVIYt9b0eH+zH3TUAXjlwS44J5GniGqHb7AvxV0bT3f9Wq5ydAmbCpeTTUBCm+
+         wJajH6vI5la9guNxRJLhtYjf3hrDJtUuHSLBafnmNJmGeqT3xE8kGA7U8o2uwVWRhb9U
+         W9cEXbSp2dRKUcnYfDJYNMwSqxhygAZt+svs7PWp37i4yl5Ne7ZtM97AQaQqGVDoDJOY
+         BtmliA5yLvXsExHp3kZxYFhpkkSjKVnhQiSwylS+JhAbrumnTh82sGms5v4nZd5l2aZR
+         HXgWDkoAQ2Nf9zRJqlLpYWiqTnbfPfujoP+YCCTRiqEOPcJpZEyITdyZjv3imd9FxZRs
+         ISjA==
+X-Gm-Message-State: AOAM533qBM8W79VyKYO1yNUdDBmG4y/Olj05bSiQlWQROzihHyZCl/Xs
+        7aSzhz9UDEZLzYhY80PPHYtZ9c+2+wA=
+X-Google-Smtp-Source: ABdhPJy6ZQeRbapdq1ncXjiPkm86CzEVc3nubKEASNlQ0VU0z8Kdg3yRXmH619fp+QMigjPcg8FsmA==
+X-Received: by 2002:adf:9f51:: with SMTP id f17mr10243613wrg.301.1630090001474;
+        Fri, 27 Aug 2021 11:46:41 -0700 (PDT)
+Received: from localhost.localdomain ([148.252.128.94])
+        by smtp.gmail.com with ESMTPSA id z19sm7189674wrg.28.2021.08.27.11.46.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Aug 2021 11:46:40 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [PATCH liburing] register: add tagging and buf update helpers
+Date:   Fri, 27 Aug 2021 19:46:03 +0100
+Message-Id: <f4f19901c6f925e103dea32be252763ba8a4d2d3.1630089830.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.33.0
 MIME-Version: 1.0
-In-Reply-To: <abbcfa9fa56fde7e740a2c887afef74a779bf36f.1630082134.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/27/21 10:38 AM, Pavel Begunkov wrote:
-> Unlink earlier if possible right after getting an fd, so tests don't
-> leave files when exited abnormally. Also, improve test file naming in a
-> couple of cases.
+Add heplers for rsrc (buffers, files) updates and registration with
+tags.
 
-Applied, thanks.
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
 
+tested by:
+1) using with rsrc_tags test
+2) expressing previous helpers with new ones + tags=NULL
+
+ src/include/liburing.h | 20 ++++++++++++
+ src/register.c         | 72 ++++++++++++++++++++++++++++++++++++++++++
+ test/rsrc_tags.c       |  8 +++++
+ 3 files changed, 100 insertions(+)
+
+diff --git a/src/include/liburing.h b/src/include/liburing.h
+index 9b38d23..7b364ce 100644
+--- a/src/include/liburing.h
++++ b/src/include/liburing.h
+@@ -125,9 +125,29 @@ extern struct io_uring_sqe *io_uring_get_sqe(struct io_uring *ring);
+ extern int io_uring_register_buffers(struct io_uring *ring,
+ 					const struct iovec *iovecs,
+ 					unsigned nr_iovecs);
++extern int io_uring_register_buffers_tags(struct io_uring *ring,
++					  const struct iovec *iovecs,
++					  const __u64 *tags,
++					  unsigned nr);
++extern int io_uring_register_buffers_update_tag(struct io_uring *ring,
++						unsigned off,
++						const struct iovec *iovecs,
++						const __u64 *tags,
++						unsigned nr);
+ extern int io_uring_unregister_buffers(struct io_uring *ring);
++
+ extern int io_uring_register_files(struct io_uring *ring, const int *files,
+ 					unsigned nr_files);
++extern int io_uring_register_files_tags(struct io_uring *ring,
++					const int *files,
++					const __u64 *tags,
++					unsigned nr);
++extern int io_uring_register_files_update_tag(struct io_uring *ring,
++					      unsigned off,
++					      const int *files,
++					      const __u64 *tags,
++					      unsigned nr_files);
++
+ extern int io_uring_unregister_files(struct io_uring *ring);
+ extern int io_uring_register_files_update(struct io_uring *ring, unsigned off,
+ 					int *files, unsigned nr_files);
+diff --git a/src/register.c b/src/register.c
+index 994aaff..b29011a 100644
+--- a/src/register.c
++++ b/src/register.c
+@@ -14,6 +14,42 @@
+ 
+ #include "syscall.h"
+ 
++int io_uring_register_buffers_update_tag(struct io_uring *ring, unsigned off,
++					 const struct iovec *iovecs,
++					 const __u64 *tags,
++					 unsigned nr)
++{
++	struct io_uring_rsrc_update2 up = {
++		.offset	= off,
++		.data = (unsigned long)iovecs,
++		.tags = (unsigned long)tags,
++		.nr = nr,
++	};
++	int ret;
++
++	ret = __sys_io_uring_register(ring->ring_fd,
++				      IORING_REGISTER_BUFFERS_UPDATE,
++				      &up, sizeof(up));
++	return ret < 0 ? -errno : ret;
++}
++
++int io_uring_register_buffers_tags(struct io_uring *ring,
++				   const struct iovec *iovecs,
++				   const __u64 *tags,
++				   unsigned nr)
++{
++	struct io_uring_rsrc_register reg = {
++		.nr = nr,
++		.data = (unsigned long)iovecs,
++		.tags = (unsigned long)tags,
++	};
++	int ret;
++
++	ret = __sys_io_uring_register(ring->ring_fd, IORING_REGISTER_BUFFERS2,
++				      &reg, sizeof(reg));
++	return ret < 0 ? -errno : ret;
++}
++
+ int io_uring_register_buffers(struct io_uring *ring, const struct iovec *iovecs,
+ 			      unsigned nr_iovecs)
+ {
+@@ -39,6 +75,24 @@ int io_uring_unregister_buffers(struct io_uring *ring)
+ 	return 0;
+ }
+ 
++int io_uring_register_files_update_tag(struct io_uring *ring, unsigned off,
++					const int *files, const __u64 *tags,
++					unsigned nr_files)
++{
++	struct io_uring_rsrc_update2 up = {
++		.offset	= off,
++		.data = (unsigned long)files,
++		.tags = (unsigned long)tags,
++		.nr = nr_files,
++	};
++	int ret;
++
++	ret = __sys_io_uring_register(ring->ring_fd,
++					IORING_REGISTER_FILES_UPDATE2,
++					&up, sizeof(up));
++	return ret < 0 ? -errno : ret;
++}
++
+ /*
+  * Register an update for an existing file set. The updates will start at
+  * 'off' in the original array, and 'nr_files' is the number of files we'll
+@@ -64,6 +118,24 @@ int io_uring_register_files_update(struct io_uring *ring, unsigned off,
+ 	return ret;
+ }
+ 
++
++int io_uring_register_files_tags(struct io_uring *ring,
++				 const int *files, const __u64 *tags,
++				 unsigned nr)
++{
++	struct io_uring_rsrc_register reg;
++	int ret;
++
++	memset(&reg, 0, sizeof(reg));
++	reg.nr = nr;
++	reg.data = (unsigned long)files;
++	reg.tags = (unsigned long)tags;
++
++	ret = __sys_io_uring_register(ring->ring_fd, IORING_REGISTER_FILES2,
++				      &reg, sizeof(reg));
++	return ret < 0 ? -errno : ret;
++}
++
+ int io_uring_register_files(struct io_uring *ring, const int *files,
+ 			      unsigned nr_files)
+ {
+diff --git a/test/rsrc_tags.c b/test/rsrc_tags.c
+index 337fbb8..57b47f7 100644
+--- a/test/rsrc_tags.c
++++ b/test/rsrc_tags.c
+@@ -32,6 +32,10 @@ static bool check_cq_empty(struct io_uring *ring)
+ 	return ret == -EAGAIN;
+ }
+ 
++/*
++ * There are io_uring_register_buffers_tags() and other wrappers,
++ * but they may change, so hand-code to specifically test this ABI.
++ */
+ static int register_rsrc(struct io_uring *ring, int type, int nr,
+ 			  const void *arg, const __u64 *tags)
+ {
+@@ -52,6 +56,10 @@ static int register_rsrc(struct io_uring *ring, int type, int nr,
+ 	return ret ? -errno : 0;
+ }
+ 
++/*
++ * There are io_uring_register_buffers_update_tag() and other wrappers,
++ * but they may change, so hand-code to specifically test this ABI.
++ */
+ static int update_rsrc(struct io_uring *ring, int type, int nr, int off,
+ 			const void *arg, const __u64 *tags)
+ {
 -- 
-Jens Axboe
+2.33.0
 

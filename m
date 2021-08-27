@@ -2,108 +2,142 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 00F903FA01F
-	for <lists+io-uring@lfdr.de>; Fri, 27 Aug 2021 21:49:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28D963FA1BB
+	for <lists+io-uring@lfdr.de>; Sat, 28 Aug 2021 01:13:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231202AbhH0Tu0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 27 Aug 2021 15:50:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38396 "EHLO
+        id S232376AbhH0XOD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 27 Aug 2021 19:14:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229821AbhH0Tu0 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 27 Aug 2021 15:50:26 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94B46C0613D9
-        for <io-uring@vger.kernel.org>; Fri, 27 Aug 2021 12:49:36 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id x11so16314081ejv.0
-        for <io-uring@vger.kernel.org>; Fri, 27 Aug 2021 12:49:36 -0700 (PDT)
+        with ESMTP id S232252AbhH0XOD (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 27 Aug 2021 19:14:03 -0400
+Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D531C0613D9
+        for <io-uring@vger.kernel.org>; Fri, 27 Aug 2021 16:13:13 -0700 (PDT)
+Received: by mail-io1-xd33.google.com with SMTP id e186so10689351iof.12
+        for <io-uring@vger.kernel.org>; Fri, 27 Aug 2021 16:13:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MarwsWWGC0vgeYe2TT0Bknreciph81Y5zQko1bbo3dg=;
-        b=VDp9L1aSEtB6Ja57TrDn9eWLnenyIwAPGW7I3DZLgoSo3HZ0yIzE269UHR381x5vj1
-         ysj2a3K4xBRAtql47MJkvyqD3biO5iHkTxq7LUxf8A7YxN2DAdkNqD3E0FwgSb+YvXNs
-         ge+kQcRBgUBgUxfo9Q/xTcK9QPgqQYaRBeGPxqZ83AwOcZXP0AOoTClsQ1FEe1Yl1ctC
-         VLfSCOhfKOcbp/nG0AlQCx7+XHBM0dihc955Q6L1ITt6cPmsqG6jKyITvbaDxCYaXjNm
-         QqLm8lse9PxFEpOgXgN88LgyE3rCEyQCUhUCK6eKot8KK/v9AKpN5zjuwgExd7flJ/iJ
-         nMsA==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=to:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=EQeVfmSOOtE2NZXBBtS8MSrNbcRgKd2O9W8e6heWCEE=;
+        b=M+sgx394mjNHP+p13/adPD240RStXcIrBGn1PjbOWdCLCar/G70nQNU7rVWeuGrWSM
+         cicMzhD4qcWfMQyZ3sDeL1LLreWM9f1VHXG9udWSLGQaOhe9N3HYwNBa/UB+bYRwajbp
+         VvB0cf4GawpfcMDqCrVMxwIcryG+iGOBvqH+pHX6SDOtdZ8tFW/slnLPqLwf/Vw2KQqN
+         8MvH0YbVwZDvgq3PIBgoco5yRQyDhKsM1LsU66pXJIh9gMrh+icFsS4tdCcQ6jbjrsYA
+         jTYd6KDNlE8PJZD4xTs8hrdSA0gDam5xqIio42aJMysQ/5yN+VB9RWN/03XcDt6ZfDA+
+         crnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MarwsWWGC0vgeYe2TT0Bknreciph81Y5zQko1bbo3dg=;
-        b=ktNCOr37EPacDTop9KUaQZJcqqlYX5SZ/D3/mXKns48Ad0EBrgFYszxhFyfBsmTMsJ
-         U9kZsfy6Ku8f3i8HQK+HIymQvR6DtWEiUVTEqZSycgyF4sU9FrWs7ohbWN+WluB1En3J
-         7RkQcJ3Ym+/YwteiC9wGlXkABMyiV88H+fF1dmpKcWiKZSJ4Mb35BL0HjKVsZmABAy2/
-         dtPlzDeUJPBuhwjcHBo496vnCaPZK7qikO3pxsiNRW7O7suaE9fVSmlEkWcTfcEu+HYN
-         hSoT2narrKsS1BpARaafOUcKWpGeM0ULxx2kfFz9t5/zD7U6r5gagH02GHosfycdjzLl
-         Ygfg==
-X-Gm-Message-State: AOAM5335IEjPk4KkEEkaKldVKxzfyfvmIa+NsJAzDEw7q2YCVMT3d6Sx
-        2OwElEiglG0S7k8aBc4hbGuewmLZ5UmhX6WJVwh0
-X-Google-Smtp-Source: ABdhPJx8Cuhrg3SXaR2CWgIvHRns6qh4/y+RRqlTaCS2oPMgn9tWv4WqNnZLocutZJdvMikV0ssmc2A4ucAVfrKNtmY=
-X-Received: by 2002:a17:907:2a85:: with SMTP id fl5mr510228ejc.91.1630093774900;
- Fri, 27 Aug 2021 12:49:34 -0700 (PDT)
+        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=EQeVfmSOOtE2NZXBBtS8MSrNbcRgKd2O9W8e6heWCEE=;
+        b=FWq5EeKnU/PiEZaVPGvj50aOP1z6fUE7+fDuNZfSbVliya5cEdDb4p7Zu/J3rdr2U+
+         JWt/8b0C/YTdEJQlJgYiezFwCz+Cs5iWHL9lEeu8jFNLVeAY+vzjfcWsAhxJi0FAechU
+         ejtfMKaMLYndJfgPmkxxAnL6XmuChzydTLrarO/GS+chfCRGM+PxBdQSI28+KbTjPTXB
+         /r4BaGW2wx2Mxv8FFs1q6DdBlw/fIk6Ehmyo3qMcYMpZkrhFfHm3emEl5IYc7Z4o0J/H
+         fAuy3T3mC/nD4zAUQO8KLsn28yXTemP1ZU8km7LfnhFA4h3ZxgYmLkixz9DASq+W+SSt
+         FEuQ==
+X-Gm-Message-State: AOAM532g4CxiD/yU4moeRB3PVFSkupmVqH+7pAod5KmAQl7Z0VVLPf9x
+        5R5Hm3h6Mgcpg0hkLWDK7H2+qM9IF+dPiQ==
+X-Google-Smtp-Source: ABdhPJzA11f8nbG6wW7jiyGqhzyboKlz3RoQjzYFZTDB5LyAmtx7rxC3QzKgGcdoQFX3YpIhtaEXZw==
+X-Received: by 2002:a02:c768:: with SMTP id k8mr9997612jao.71.1630105992643;
+        Fri, 27 Aug 2021 16:13:12 -0700 (PDT)
+Received: from [192.168.1.116] ([66.219.217.159])
+        by smtp.gmail.com with ESMTPSA id u16sm3920196iob.41.2021.08.27.16.13.12
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 27 Aug 2021 16:13:12 -0700 (PDT)
+To:     io-uring <io-uring@vger.kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring: support CLOCK_BOOTTIME for timeouts
+Message-ID: <94d4ac48-7fa8-3195-99d6-986a6b5e3712@kernel.dk>
+Date:   Fri, 27 Aug 2021 17:13:11 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <162871480969.63873.9434591871437326374.stgit@olly>
- <20210824205724.GB490529@madcap2.tricolour.ca> <20210826011639.GE490529@madcap2.tricolour.ca>
- <CAHC9VhSADQsudmD52hP8GQWWR4+=sJ7mvNkh9xDXuahS+iERVA@mail.gmail.com>
- <20210826163230.GF490529@madcap2.tricolour.ca> <CAHC9VhTkZ-tUdrFjhc2k1supzW1QJpY-15pf08mw6=ynU9yY5g@mail.gmail.com>
- <20210827133559.GG490529@madcap2.tricolour.ca>
-In-Reply-To: <20210827133559.GG490529@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 27 Aug 2021 15:49:24 -0400
-Message-ID: <CAHC9VhRqSO6+MVX+LYBWHqwzd3QYgbSz3Gd8E756J0QNEmmHdQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 0/9] Add LSM access controls and auditing to io_uring
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, Aug 27, 2021 at 9:36 AM Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2021-08-26 15:14, Paul Moore wrote:
-> > On Thu, Aug 26, 2021 at 12:32 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > I'm getting:
-> > >         # ./iouring.2
-> > >         Kernel thread io_uring-sq is not running.
-> > >         Unable to setup io_uring: Permission denied
-> > >
-> > >         # ./iouring.3s
-> > >         >>> server started, pid = 2082
-> > >         >>> memfd created, fd = 3
-> > >         io_uring_queue_init: Permission denied
-> > >
-> > > I have CONFIG_IO_URING=y set, what else is needed?
-> >
-> > I'm not sure how you tried to run those tests, but try running as root
-> > and with SELinux in permissive mode.
->
-> Ok, they ran, including iouring.4.  iouring.2 claimed twice: "Kernel
-> thread io_uring-sq is not running." and I didn't get any URING records
-> with ausearch.  I don't know if any of this is expected.
+Certain use cases want to use CLOCK_BOOTTIME rather than CLOCK_MONOTONIC,
+as it doesn't stop updating over suspend. Apart from that, they should
+behave the same.
 
-Now that I've written iouring.4, I would skip the others; while
-helpful at the time, they are pretty crap.
+Add an IORING_TIMEOUT_BOOTTIME flag that allows timeouts and linked
+timeouts to use CLOCK_BOOTTIME instead.
 
-I have no idea what kernel you are running, but I'm going to assume
-you've applied the v2 patches (if not, you obviously need to do that
-<g>).  Beyond that you may need to set a filter for the
-io_uring_enter() syscall to force the issue; theoretically your audit
-userspace patches should allow a uring op specifically to be filtered
-but I haven't had a chance to try that yet so either the kernel or
-userspace portion could be broken.
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-At this point if you are running into problems you'll probably need to
-spend some time debugging them, as I think you're the only person who
-has tested your audit userspace patches at this point (and the only
-one who has access to your latest bits).
+---
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 0f827fbe8e6c..39c8631e4d10 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -508,6 +508,7 @@ struct io_timeout_data {
+ 	struct hrtimer			timer;
+ 	struct timespec64		ts;
+ 	enum hrtimer_mode		mode;
++	u32				flags;
+ };
+ 
+ struct io_accept {
+@@ -5725,7 +5726,10 @@ static int io_timeout_update(struct io_ring_ctx *ctx, __u64 user_data,
+ 	req->timeout.off = 0; /* noseq */
+ 	data = req->async_data;
+ 	list_add_tail(&req->timeout.list, &ctx->timeout_list);
+-	hrtimer_init(&data->timer, CLOCK_MONOTONIC, mode);
++	if (data->flags & IORING_TIMEOUT_BOOTTIME)
++		hrtimer_init(&data->timer, CLOCK_BOOTTIME, mode);
++	else
++		hrtimer_init(&data->timer, CLOCK_MONOTONIC, mode);
+ 	data->timer.function = io_timeout_fn;
+ 	hrtimer_start(&data->timer, timespec64_to_ktime(*ts), mode);
+ 	return 0;
+@@ -5807,7 +5811,7 @@ static int io_timeout_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+ 	if (off && is_timeout_link)
+ 		return -EINVAL;
+ 	flags = READ_ONCE(sqe->timeout_flags);
+-	if (flags & ~IORING_TIMEOUT_ABS)
++	if (flags & ~(IORING_TIMEOUT_ABS | IORING_TIMEOUT_BOOTTIME))
+ 		return -EINVAL;
+ 
+ 	req->timeout.off = off;
+@@ -5819,12 +5823,16 @@ static int io_timeout_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+ 
+ 	data = req->async_data;
+ 	data->req = req;
++	data->flags = flags;
+ 
+ 	if (get_timespec64(&data->ts, u64_to_user_ptr(sqe->addr)))
+ 		return -EFAULT;
+ 
+ 	data->mode = io_translate_timeout_mode(flags);
+-	hrtimer_init(&data->timer, CLOCK_MONOTONIC, data->mode);
++	if (flags & IORING_TIMEOUT_BOOTTIME)
++		hrtimer_init(&data->timer, CLOCK_BOOTTIME, data->mode);
++	else
++		hrtimer_init(&data->timer, CLOCK_MONOTONIC, data->mode);
+ 
+ 	if (is_timeout_link) {
+ 		struct io_submit_link *link = &req->ctx->submit_state.link;
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index bb6845e14629..18a4ffd2bbb3 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -151,6 +151,7 @@ enum {
+  */
+ #define IORING_TIMEOUT_ABS	(1U << 0)
+ #define IORING_TIMEOUT_UPDATE	(1U << 1)
++#define IORING_TIMEOUT_BOOTTIME	(1U << 2)
+ 
+ /*
+  * sqe->splice_flags
 
 -- 
-paul moore
-www.paul-moore.com
+Jens Axboe
+

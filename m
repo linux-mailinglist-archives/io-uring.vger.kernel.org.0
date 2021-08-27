@@ -2,84 +2,97 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B2923F8E84
-	for <lists+io-uring@lfdr.de>; Thu, 26 Aug 2021 21:14:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07F5B3F9216
+	for <lists+io-uring@lfdr.de>; Fri, 27 Aug 2021 03:46:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243426AbhHZTPD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 26 Aug 2021 15:15:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41512 "EHLO
+        id S243938AbhH0BlU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 26 Aug 2021 21:41:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43686 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243419AbhHZTPC (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 26 Aug 2021 15:15:02 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60997C061757
-        for <io-uring@vger.kernel.org>; Thu, 26 Aug 2021 12:14:14 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id n11so6188867edv.11
-        for <io-uring@vger.kernel.org>; Thu, 26 Aug 2021 12:14:14 -0700 (PDT)
+        with ESMTP id S243923AbhH0BlT (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 26 Aug 2021 21:41:19 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AAAFC061757
+        for <io-uring@vger.kernel.org>; Thu, 26 Aug 2021 18:40:31 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id x11so10516233ejv.0
+        for <io-uring@vger.kernel.org>; Thu, 26 Aug 2021 18:40:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rx0FUZ0y/4cX/RB/wrUdWs+Xu2SixTxkAb51quz7jo8=;
-        b=gnWwUt3JdlTv8VP9sot3kjTMSbk6xwqrxgCgHZylW8hKKqckrTGkz0muKu4CBOEHn7
-         wG6JLCceDpcYIpIo5EF/oBtz+SiHUfn/Qa909EqNs0kW2jo1foPRy+rCIamGkla+QT9S
-         6ZM1JxJVo1tT6oeX8u3OUOeJJ6zaEf9Q28JJhmMaDgCglfm2bOtEn5qjrgtqpVaucGdZ
-         LI267o4R1RTs5O4tS2zWmwEQpTA9ZAmgRK5EU/B9I4xcBeINEDvGPQMGe0vPsT70C/HL
-         OVy77vIjlo6NdxsB4/rJ5nTmgISGdu1vTD12Avv/kDgks2NHFxXy86bmK5+2Y3hrWB1F
-         irSw==
+        d=nametag.social; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=5l6dY2NSfDTkTi5u2ZAKaNv+XU1y8Ly6QGKk5ZWSkiM=;
+        b=oQkGWFb67E9R3i7EN1ekhE2qGzNQPgN2ZMRA5O3fSqswSJEoquF8Wf6wY3mpP21lAX
+         Jp54vKamAAilcUbGLXZug0FnxNLTAhYscfnRXAQBBMTd3vjOKxXF2jzaNdzGUVrpd/Yh
+         BGmZDCVU7N3v9f6sQM9qp9F7jIoIDl8xVi4GtURxvQ8+xBzNyORshe0W1UaiNlK+f1fe
+         lGcHDPLyQwRMP61aMgu2NwjXHFBoe5EIni15fIkqXsAmtJ1sXao3zQGqlq41b/o8z/55
+         mHoFgfRQhs+o9S4FMoVI+nu/PXOaUQLiR/ok6xsVw2c0mVmewJ4f8NdybsaOLViNmc7T
+         yopA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rx0FUZ0y/4cX/RB/wrUdWs+Xu2SixTxkAb51quz7jo8=;
-        b=CUKQES4G43n3BbS4fzMG1LJibg6W19ehAbm/7tdTZ94tG6w77xaoA22OyruaKd+vYQ
-         oEzNPTy2SNukIj2Bi0KpsDHAWixXVmI5sIPDw/qRpdS13gV+Zw96hKVl4ep5rwKWOL3L
-         rtFb6qawNQvUA9Gka66No1dFMGsdGR7kLZ2FsQIUBF9rhsnsPP2U4Ta02nI/izyRLC/d
-         0EBYL0HE1N88+6RBZfsIJuVemXh74NOMitClXsMerjySqdEykMn972abrgnqSNZXe3ZD
-         /C4BTyI1MqS/fE90Fnykhc+5TnfwHeBVpMFHtkvIXHvKmqQoNRJjhMyoj0RbfgwgSrwF
-         oPPA==
-X-Gm-Message-State: AOAM530XjRjK8Pp1jTt235Bv96nSKptQFC/da8Cg7rJdsI2/OzFvKXu2
-        Ue82Bc5JAoq4JWvv6GvRb9Js6y6oeMNTJx0snRr3
-X-Google-Smtp-Source: ABdhPJwW5wBqVh+ZTgsyTSWJmX+Kmrj84VmvqS9Yc/10HktwgbbDnwLo41tBgtnkP5vc5wtH1HUiC5RxqSWTlGMKY1E=
-X-Received: by 2002:aa7:d9d2:: with SMTP id v18mr5927880eds.128.1630005252910;
- Thu, 26 Aug 2021 12:14:12 -0700 (PDT)
+         :message-id:subject:to;
+        bh=5l6dY2NSfDTkTi5u2ZAKaNv+XU1y8Ly6QGKk5ZWSkiM=;
+        b=j44R8w7nkJufjHAsR0SgrBcqdvcKVLPkXrxTxOsEVDKZVI2OlNzVZcCnNmTNWlIiR2
+         7/m6REnSAWU9NyYdLmGFfavSWWKK3we/hYDELUXINlEYE0ykraNQUwK1vhq31SQPLDay
+         vCr4f3PpMeaFMi5zn7UU6E2yStQoGxQJXNtqwNcvcybjn7ql78OI8nD/Uj1d61dTb9+N
+         6AonH6GYnSqmGcX/Ft47q3kD3FRdRmeELdy3BVaOF4naOFWONj6Vkaci/G4qEHWVTvSV
+         pO8ogIC+fCBMR+tK8DDAXs0oN65bTS/elPNr7GRhd2Mlf6TXFzTg7S223PWh3VTDrnpu
+         8TWg==
+X-Gm-Message-State: AOAM531EBFz8PFdCvOWr3p2/SGdMAd/3To+jerdegjbafU4K6VqO3iUD
+        QemYlQ3L8xVBd83ms6DVT1jQgh7GY2Rd3MuDrEp3woSqaLrCQcj+LAU=
+X-Google-Smtp-Source: ABdhPJyvblCKgK/JGp+S/6mQ0mbmXxZBalkG/NpZw/z76CYs2Cz8QjuUYpY/ZfISNYbYY0nvUWydw9KiIy6JIhx1M88=
+X-Received: by 2002:a17:906:ac1:: with SMTP id z1mr7229977ejf.261.1630028429976;
+ Thu, 26 Aug 2021 18:40:29 -0700 (PDT)
 MIME-Version: 1.0
-References: <162871480969.63873.9434591871437326374.stgit@olly>
- <20210824205724.GB490529@madcap2.tricolour.ca> <20210826011639.GE490529@madcap2.tricolour.ca>
- <CAHC9VhSADQsudmD52hP8GQWWR4+=sJ7mvNkh9xDXuahS+iERVA@mail.gmail.com> <20210826163230.GF490529@madcap2.tricolour.ca>
-In-Reply-To: <20210826163230.GF490529@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 26 Aug 2021 15:14:02 -0400
-Message-ID: <CAHC9VhTkZ-tUdrFjhc2k1supzW1QJpY-15pf08mw6=ynU9yY5g@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 0/9] Add LSM access controls and auditing to io_uring
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>
+References: <CAM1kxwhHOt1Ni==4Qr6c+qGzQQ2R9SQR4COkG2MXn_SUzEG-cg@mail.gmail.com>
+ <CAM1kxwi83=Q1Br46=_3DH46Ep2XoxbRX5hOVwFs7ze87Osx_eg@mail.gmail.com>
+In-Reply-To: <CAM1kxwi83=Q1Br46=_3DH46Ep2XoxbRX5hOVwFs7ze87Osx_eg@mail.gmail.com>
+From:   Victor Stewart <v@nametag.social>
+Date:   Fri, 27 Aug 2021 02:40:19 +0100
+Message-ID: <CAM1kxwiAF3tmF8PxVf6KPV+Qsg_180sFvebxos5ySmU=TqxgmA@mail.gmail.com>
+Subject: Re: io_uring_prep_timeout_update on linked timeouts
+To:     io-uring <io-uring@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Aug 26, 2021 at 12:32 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> I'm getting:
->         # ./iouring.2
->         Kernel thread io_uring-sq is not running.
->         Unable to setup io_uring: Permission denied
+On Wed, Aug 25, 2021 at 2:27 AM Victor Stewart <v@nametag.social> wrote:
 >
->         # ./iouring.3s
->         >>> server started, pid = 2082
->         >>> memfd created, fd = 3
->         io_uring_queue_init: Permission denied
+> On Tue, Aug 24, 2021 at 11:43 PM Victor Stewart <v@nametag.social> wrote:
+> >
+> > we're able to update timeouts with io_uring_prep_timeout_update
+> > without having to cancel
+> > and resubmit, has it ever been considered adding this ability to
+> > linked timeouts?
 >
-> I have CONFIG_IO_URING=y set, what else is needed?
+> whoops turns out this does work. just tested it.
 
-I'm not sure how you tried to run those tests, but try running as root
-and with SELinux in permissive mode.
+doesn't work actually. missed that because of a bit of misdirection.
+returns -ENOENT.
 
--- 
-paul moore
-www.paul-moore.com
+the problem with the current way of cancelling then resubmitting
+a new a timeout linked op (let's use poll here) is you have 3 situations:
+
+1) the poll triggers and you get some positive value. all good.
+
+2) the linked timeout triggers and cancels the poll, so the poll
+operation returns -ECANCELED.
+
+3) you cancel the existing poll op, and submit a new one with
+the updated linked timeout. now the original poll op returns
+-ECANCELED.
+
+so solely from looking at the return value of the poll op in 2) and 3)
+there is no way to disambiguate them. of course the linked timeout
+operation result will allow you to do so, but you'd have to persist state
+across cqe processings. you can also track the cancellations and know
+to skip the explicitly cancelled ops' cqes (which is what i chose).
+
+there's also the problem of efficiency. you can imagine in a QUIC
+server where you're constantly updating that poll timeout in response
+to idle timeout and ACK scheduling, this extra work mounts.
+
+so i think the ability to update linked timeouts via
+io_uring_prep_timeout_update would be fantastic.
+
+V

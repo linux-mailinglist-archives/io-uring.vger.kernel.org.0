@@ -2,76 +2,93 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F43C3F9A2E
-	for <lists+io-uring@lfdr.de>; Fri, 27 Aug 2021 15:32:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FE3C3F9A56
+	for <lists+io-uring@lfdr.de>; Fri, 27 Aug 2021 15:37:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245136AbhH0NbC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 27 Aug 2021 09:31:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35308 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231964AbhH0NbB (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 27 Aug 2021 09:31:01 -0400
-Received: from mail-il1-x132.google.com (mail-il1-x132.google.com [IPv6:2607:f8b0:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 111D9C061757
-        for <io-uring@vger.kernel.org>; Fri, 27 Aug 2021 06:30:13 -0700 (PDT)
-Received: by mail-il1-x132.google.com with SMTP id u7so6996895ilk.7
-        for <io-uring@vger.kernel.org>; Fri, 27 Aug 2021 06:30:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=Req7gVy4BK3ILjNZUVYwwMfG4vXQNVcKU8txntD16CI=;
-        b=zMiRciMddeYLak8ito/MsmyGJ5+F9+obwHPMxB8vhH23rbt2DOpP0lnMTTb7ZQtNat
-         Ppo4YN9d38RjDzKpTR4igFetJwLO8RhrRdQVcQEqKF6pIRXtbmc7rdVG4Gvns0fSnD5w
-         GkfEdlMqeyYML3FIkNZgdZ0qwynLpWOFP31GHsRAE4LrpCeIN5JlQX1nthZSjhlkSjE7
-         SC/gs0cl76GBLCqsgtbfK+2HLpdVJgp3QapxHj4P+wfTmB8LhbZV8DMwhDgVtXjkw9GA
-         g4KeON3+UeY8Ay2w2QrigBjSjnhpJoZuDNeNMN0vWR6CutIhjfsI3+Um1ktT+zvRna6W
-         V3bg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Req7gVy4BK3ILjNZUVYwwMfG4vXQNVcKU8txntD16CI=;
-        b=IbK1Ix/DDyF9ZViU0mxEkseQ2iwG3ATFRUzaUBKBGbxpabLfS0eP4Df5DYdYR0lEO5
-         /sT2Cll6EkKOzu5RyK+uQNlA01RvBldwktUh8g8wZ7FDwe8Eu0rLGMHSYig3vhoJY2zX
-         y+MLE2bpwachTO+IwgVHY+pelHH0oJntqxfLifUsqyKES9/Shr9+fKlDZbfc3IPE8/IG
-         vAHcMs+2ZsjaRx0vJoxd4rupAfpQpq/8iJ18FsiWaxf8Ftt2Qxp/uosIYM3Zn+LeyGV/
-         jpFQ4zpoVLgiNR9iL6IvZoIEEBpYipZNx4MQJUFLZaRHNyoNllIBq0KlxPWZ40+81Wy3
-         qYqQ==
-X-Gm-Message-State: AOAM5328FeC7p5ASz4iu6EZkbXBe1USc7tbUFCWQUh4A6LI0ATSuZ4Lg
-        A7qtqMaMctZIvKK/lk5z5pLae/32sZ36vw==
-X-Google-Smtp-Source: ABdhPJyFuLjjX8Po9o3yzkfXu7o2u9iLIQLG6emzy5W7/6Bef+VH+EIM/GRSCvDtPoeVLrrh4Fda0g==
-X-Received: by 2002:a05:6e02:1526:: with SMTP id i6mr6390652ilu.74.1630071011699;
-        Fri, 27 Aug 2021 06:30:11 -0700 (PDT)
-Received: from [192.168.1.30] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id n11sm3441029ilq.21.2021.08.27.06.30.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Aug 2021 06:30:11 -0700 (PDT)
-Subject: Re: [PATCH for-next] io_uring: add task-refs-get helper
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <d9114d037f1c195897aa13f38a496078eca2afdb.1630023531.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <0d4db19a-99e0-41f4-3809-0c48e68cfdb5@kernel.dk>
-Date:   Fri, 27 Aug 2021 07:30:08 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S232603AbhH0NhE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 27 Aug 2021 09:37:04 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:46127 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232417AbhH0NhD (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 27 Aug 2021 09:37:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1630071374;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=/NIYyavBh8XnOVQ6CtLDeu7aH39KozHfLZib7zDJx5I=;
+        b=ZbGngYsvRCvRP1wWmmr+1DGgZerdvd4RG/PchQI3zP9seNJBmeWtkjfUR1tBDxG7O3MVdi
+        LyFIHGUkbW3hR2hb/GEG3W6fVXWF9c6SzAwdajD4awmVU7qTjE0Q9IDdTxFYj6gsf8y7m8
+        gaS4Agr1Lau3ONJ2/XeIBipzkS8I8Hc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-151-kuszwh0aNLGhF1LuDxAjYg-1; Fri, 27 Aug 2021 09:36:11 -0400
+X-MC-Unique: kuszwh0aNLGhF1LuDxAjYg-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E63E8190B2A3;
+        Fri, 27 Aug 2021 13:36:09 +0000 (UTC)
+Received: from madcap2.tricolour.ca (unknown [10.3.128.14])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 54051604CC;
+        Fri, 27 Aug 2021 13:36:02 +0000 (UTC)
+Date:   Fri, 27 Aug 2021 09:35:59 -0400
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Subject: Re: [RFC PATCH v2 0/9] Add LSM access controls and auditing to
+ io_uring
+Message-ID: <20210827133559.GG490529@madcap2.tricolour.ca>
+References: <162871480969.63873.9434591871437326374.stgit@olly>
+ <20210824205724.GB490529@madcap2.tricolour.ca>
+ <20210826011639.GE490529@madcap2.tricolour.ca>
+ <CAHC9VhSADQsudmD52hP8GQWWR4+=sJ7mvNkh9xDXuahS+iERVA@mail.gmail.com>
+ <20210826163230.GF490529@madcap2.tricolour.ca>
+ <CAHC9VhTkZ-tUdrFjhc2k1supzW1QJpY-15pf08mw6=ynU9yY5g@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <d9114d037f1c195897aa13f38a496078eca2afdb.1630023531.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhTkZ-tUdrFjhc2k1supzW1QJpY-15pf08mw6=ynU9yY5g@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/27/21 4:55 AM, Pavel Begunkov wrote:
-> As we have a more complicating task referencing, which apart from normal
-> task references includes taking tctx->inflight and caching all that, it
-> would be a good idea to have all that isolated in helpers.
+On 2021-08-26 15:14, Paul Moore wrote:
+> On Thu, Aug 26, 2021 at 12:32 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > I'm getting:
+> >         # ./iouring.2
+> >         Kernel thread io_uring-sq is not running.
+> >         Unable to setup io_uring: Permission denied
+> >
+> >         # ./iouring.3s
+> >         >>> server started, pid = 2082
+> >         >>> memfd created, fd = 3
+> >         io_uring_queue_init: Permission denied
+> >
+> > I have CONFIG_IO_URING=y set, what else is needed?
+> 
+> I'm not sure how you tried to run those tests, but try running as root
+> and with SELinux in permissive mode.
 
-Applied, thanks.
+Ok, they ran, including iouring.4.  iouring.2 claimed twice: "Kernel
+thread io_uring-sq is not running." and I didn't get any URING records
+with ausearch.  I don't know if any of this is expected.
 
--- 
-Jens Axboe
+> paul moore
+
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
 

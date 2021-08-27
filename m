@@ -2,168 +2,128 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3229B3F97A2
-	for <lists+io-uring@lfdr.de>; Fri, 27 Aug 2021 11:49:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 779F83F9850
+	for <lists+io-uring@lfdr.de>; Fri, 27 Aug 2021 12:55:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245054AbhH0Jro (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 27 Aug 2021 05:47:44 -0400
-Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:48515 "EHLO
-        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S245120AbhH0JrR (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 27 Aug 2021 05:47:17 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R391e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UmFsqUh_1630057569;
-Received: from e18g09479.et15sqa.tbsite.net(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UmFsqUh_1630057569)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 27 Aug 2021 17:46:27 +0800
-From:   Hao Xu <haoxu@linux.alibaba.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>
-Subject: [PATCH 2/2] io_uring: fix failed linkchain code logic
-Date:   Fri, 27 Aug 2021 17:46:09 +0800
-Message-Id: <20210827094609.36052-3-haoxu@linux.alibaba.com>
-X-Mailer: git-send-email 2.24.4
-In-Reply-To: <20210827094609.36052-1-haoxu@linux.alibaba.com>
-References: <20210827094609.36052-1-haoxu@linux.alibaba.com>
+        id S244836AbhH0K4b (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 27 Aug 2021 06:56:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57086 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S244780AbhH0K4a (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 27 Aug 2021 06:56:30 -0400
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B848BC061757
+        for <io-uring@vger.kernel.org>; Fri, 27 Aug 2021 03:55:41 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id d26so9849246wrc.0
+        for <io-uring@vger.kernel.org>; Fri, 27 Aug 2021 03:55:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=01DvQr2cEuWNtb7tmK1WB9oVTzT3UJVtJBO5WH57Xf4=;
+        b=nt3tVYntRh5K6byQmMHNI5MLbwf+LgCGKsaG1w7N2ZMkZFTDkJ8xiZVmp7uZIe3IzV
+         ZbaqEAktRUNs4j7cxgGT17OI82qo8TWnhBOgfT3CV3vvY6zb116/6zWq+ch4ZWQYP2o3
+         SR0eItpFRzD2RJYxDddbu3zbfP0rm6HgdLrGcwnNu0IBwoo0UxYHRtRZMQtUdA2NISm3
+         raNeS5yZEGEiiyVJDzeTLxxKJM/o3a250v5MXU9M8S6SGrvQ9hC4g+1IaTJZITJwhEx5
+         58uvCIIxzpm6+7AJ19bLwGzaJEkvbDh53g3bLB497dlJwBFdoiPG+rSSIzVGbxFHYAU1
+         lzuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=01DvQr2cEuWNtb7tmK1WB9oVTzT3UJVtJBO5WH57Xf4=;
+        b=mT77OZgdssMLCsfGcACK3ov9R23laNeAaqOETiuu1PZJv6atHLxra/2qDJlxv/PBuB
+         bGL0lGJJdsgJGYr1jnv59JhIJpb3X3OcMkdd0d2hvHBRXpaV5kplwWgQLT0aBePyAuie
+         WrMVIYNscE7uSfOK3FYMKnLDDGtQhgEibgG2nEarIK3yxeRj7WcMMW5u5HCGSheJFb35
+         kfDCZ6G6yIc7xEsLFsE+iDtsI9irnI3rjEBsmRXeeC8+cDxo8b0e8YoGwAIHAu4h+7Q0
+         DlRMpkrscHkhLNtLchnaEWspU/39QR41H/VPnjTt4o2J41bk1/80KzebAsKgv143qMsz
+         wFjQ==
+X-Gm-Message-State: AOAM531Mlkj9PiHbeGG894twcw0UqS6Xyo8gFE506ZSQmQK30YTkEl2E
+        vNGwzUPMcOdwrVw8RBEinLVfVHo9YHo=
+X-Google-Smtp-Source: ABdhPJx/UXyhPt3+CbL1K8RCSakPjPx0MWO3i2HQ5NFNyhSokK1uL5Z2ssB1mssewN+qf9ZtGESL9w==
+X-Received: by 2002:adf:f7ce:: with SMTP id a14mr9491161wrq.174.1630061740340;
+        Fri, 27 Aug 2021 03:55:40 -0700 (PDT)
+Received: from localhost.localdomain ([148.252.128.94])
+        by smtp.gmail.com with ESMTPSA id d9sm7468556wrb.36.2021.08.27.03.55.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Aug 2021 03:55:39 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [PATCH for-next] io_uring: add task-refs-get helper
+Date:   Fri, 27 Aug 2021 11:55:01 +0100
+Message-Id: <d9114d037f1c195897aa13f38a496078eca2afdb.1630023531.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.33.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Given a linkchain like this:
-req0(link_flag)-->req1(link_flag)-->...-->reqn(no link_flag)
+As we have a more complicating task referencing, which apart from normal
+task references includes taking tctx->inflight and caching all that, it
+would be a good idea to have all that isolated in helpers.
 
-There is a problem:
- - if some intermediate linked req like req1 's submittion fails, reqs
-   after it won't be cancelled.
-
-   - sqpoll disabled: maybe it's ok since users can get the error info
-     of req1 and stop submitting the following sqes.
-
-   - sqpoll enabled: definitely a problem, the following sqes will be
-     submitted in the next round.
-
-The solution is to refactor the code logic to:
- - if a linked req's submittion fails, just mark it and the head(if it
-   exists) as REQ_F_FAIL. Leverage req->result to indicate whether it
-   is failed or cancelled.
- - submit or fail the whole chain when we come to the end of it.
-
-Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 61 +++++++++++++++++++++++++++++++++++++++------------
- 1 file changed, 47 insertions(+), 14 deletions(-)
+ fs/io_uring.c | 30 +++++++++++++++++++-----------
+ 1 file changed, 19 insertions(+), 11 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 3598319b1340..4c83ec227d85 100644
+index 6112318a770c..af575053257d 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -1175,6 +1175,12 @@ static inline void req_set_fail(struct io_kiocb *req)
- 	req->flags |= REQ_F_FAIL;
+@@ -1663,6 +1663,24 @@ static inline void io_put_task(struct task_struct *task, int nr)
+ 	}
  }
  
-+static inline void req_fail_link_node(struct io_kiocb *req, int res)
++static void io_task_refs_refill(struct io_uring_task *tctx)
 +{
-+	req_set_fail(req);
-+	req->result = res;
++	unsigned int refill = -tctx->cached_refs + IO_TCTX_REFS_CACHE_NR;
++
++	percpu_counter_add(&tctx->inflight, refill);
++	refcount_add(refill, &current->usage);
++	tctx->cached_refs += refill;
 +}
 +
- static void io_ring_ctx_ref_free(struct percpu_ref *ref)
++static inline void io_get_task_refs(int nr)
++{
++	struct io_uring_task *tctx = current->io_uring;
++
++	tctx->cached_refs -= nr;
++	if (unlikely(tctx->cached_refs < 0))
++		io_task_refs_refill(tctx);
++}
++
+ static bool io_cqring_event_overflow(struct io_ring_ctx *ctx, u64 user_data,
+ 				     long res, unsigned int cflags)
  {
- 	struct io_ring_ctx *ctx = container_of(ref, struct io_ring_ctx, refs);
-@@ -1931,11 +1937,16 @@ static void io_fail_links(struct io_kiocb *req)
+@@ -6854,25 +6872,15 @@ static const struct io_uring_sqe *io_get_sqe(struct io_ring_ctx *ctx)
+ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr)
+ 	__must_hold(&ctx->uring_lock)
+ {
+-	struct io_uring_task *tctx;
+ 	int submitted = 0;
  
- 	req->link = NULL;
- 	while (link) {
-+		long res = -ECANCELED;
-+
-+		if (link->flags & REQ_F_FAIL)
-+			res = link->result;
-+
- 		nxt = link->link;
- 		link->link = NULL;
+ 	/* make sure SQ entry isn't read before tail */
+ 	nr = min3(nr, ctx->sq_entries, io_sqring_entries(ctx));
+ 	if (!percpu_ref_tryget_many(&ctx->refs, nr))
+ 		return -EAGAIN;
++	io_get_task_refs(nr);
  
- 		trace_io_uring_fail_link(req, link);
--		io_cqring_fill_event(link->ctx, link->user_data, -ECANCELED, 0);
-+		io_cqring_fill_event(link->ctx, link->user_data, res, 0);
- 		io_put_req_deferred(link);
- 		link = nxt;
- 	}
-@@ -6519,8 +6530,10 @@ static inline void io_queue_sqe(struct io_kiocb *req)
- 	if (unlikely(req->ctx->drain_active) && io_drain_req(req))
- 		return;
- 
--	if (likely(!(req->flags & REQ_F_FORCE_ASYNC))) {
-+	if (likely(!(req->flags & (REQ_F_FORCE_ASYNC | REQ_F_FAIL)))) {
- 		__io_queue_sqe(req);
-+	} else if (req->flags & REQ_F_FAIL) {
-+		io_req_complete_failed(req, req->result);
- 	} else {
- 		int ret = io_req_prep_async(req);
- 
-@@ -6629,19 +6642,34 @@ static int io_submit_sqe(struct io_ring_ctx *ctx, struct io_kiocb *req,
- 	ret = io_init_req(ctx, req, sqe);
- 	if (unlikely(ret)) {
- fail_req:
-+		/* fail even hard links since we don't submit */
- 		if (link->head) {
--			/* fail even hard links since we don't submit */
--			io_req_complete_failed(link->head, -ECANCELED);
--			link->head = NULL;
-+			/*
-+			 * we can judge a link req is failed or cancelled by if
-+			 * REQ_F_FAIL is set, but the head is an exception since
-+			 * it may be set REQ_F_FAIL because of other req's failure
-+			 * so let's leverage req->result to distinguish if a head
-+			 * is set REQ_F_FAIL because of its failure or other req's
-+			 * failure so that we can set the correct ret code for it.
-+			 * init result here to avoid affecting the normal path.
-+			 */
-+			if (!(link->head->flags & REQ_F_FAIL))
-+				req_fail_link_node(link->head, -ECANCELED);
-+		} else if (!(req->flags & (REQ_F_LINK | REQ_F_HARDLINK))) {
-+			/*
-+			 * the current req is a normal req, we should return
-+			 * error and thus break the submittion loop.
-+			 */
-+			io_req_complete_failed(req, ret);
-+			return ret;
- 		}
--		io_req_complete_failed(req, ret);
--		return ret;
-+		req_fail_link_node(req, ret);
-+	} else {
-+		ret = io_req_prep(req, sqe);
-+		if (unlikely(ret))
-+			goto fail_req;
- 	}
- 
--	ret = io_req_prep(req, sqe);
--	if (unlikely(ret))
--		goto fail_req;
+-	tctx = current->io_uring;
+-	tctx->cached_refs -= nr;
+-	if (unlikely(tctx->cached_refs < 0)) {
+-		unsigned int refill = -tctx->cached_refs + IO_TCTX_REFS_CACHE_NR;
 -
- 	/* don't need @sqe from now on */
- 	trace_io_uring_submit_sqe(ctx, req, req->opcode, req->user_data,
- 				  req->flags, true,
-@@ -6657,9 +6685,14 @@ static int io_submit_sqe(struct io_ring_ctx *ctx, struct io_kiocb *req,
- 	if (link->head) {
- 		struct io_kiocb *head = link->head;
- 
--		ret = io_req_prep_async(req);
--		if (unlikely(ret))
--			goto fail_req;
-+		if (!(req->flags & REQ_F_FAIL)) {
-+			ret = io_req_prep_async(req);
-+			if (unlikely(ret)) {
-+				req_fail_link_node(req, ret);
-+				if (!(head->flags & REQ_F_FAIL))
-+					req_fail_link_node(head, -ECANCELED);
-+			}
-+		}
- 		trace_io_uring_link(ctx, req, head);
- 		link->last->link = req;
- 		link->last = req;
+-		percpu_counter_add(&tctx->inflight, refill);
+-		refcount_add(refill, &current->usage);
+-		tctx->cached_refs += refill;
+-	}
+ 	io_submit_state_start(&ctx->submit_state, nr);
+-
+ 	while (submitted < nr) {
+ 		const struct io_uring_sqe *sqe;
+ 		struct io_kiocb *req;
 -- 
-2.24.4
+2.33.0
 

@@ -2,93 +2,154 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FE3C3F9A56
-	for <lists+io-uring@lfdr.de>; Fri, 27 Aug 2021 15:37:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0E273F9AAF
+	for <lists+io-uring@lfdr.de>; Fri, 27 Aug 2021 16:13:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232603AbhH0NhE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 27 Aug 2021 09:37:04 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:46127 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232417AbhH0NhD (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 27 Aug 2021 09:37:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1630071374;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=/NIYyavBh8XnOVQ6CtLDeu7aH39KozHfLZib7zDJx5I=;
-        b=ZbGngYsvRCvRP1wWmmr+1DGgZerdvd4RG/PchQI3zP9seNJBmeWtkjfUR1tBDxG7O3MVdi
-        LyFIHGUkbW3hR2hb/GEG3W6fVXWF9c6SzAwdajD4awmVU7qTjE0Q9IDdTxFYj6gsf8y7m8
-        gaS4Agr1Lau3ONJ2/XeIBipzkS8I8Hc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-151-kuszwh0aNLGhF1LuDxAjYg-1; Fri, 27 Aug 2021 09:36:11 -0400
-X-MC-Unique: kuszwh0aNLGhF1LuDxAjYg-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E63E8190B2A3;
-        Fri, 27 Aug 2021 13:36:09 +0000 (UTC)
-Received: from madcap2.tricolour.ca (unknown [10.3.128.14])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 54051604CC;
-        Fri, 27 Aug 2021 13:36:02 +0000 (UTC)
-Date:   Fri, 27 Aug 2021 09:35:59 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
+        id S232477AbhH0OON (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 27 Aug 2021 10:14:13 -0400
+Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:40106 "EHLO
+        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232449AbhH0OON (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 27 Aug 2021 10:14:13 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0UmHXWXs_1630073595;
+Received: from e18g09479.et15sqa.tbsite.net(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UmHXWXs_1630073595)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 27 Aug 2021 22:13:21 +0800
+From:   Hao Xu <haoxu@linux.alibaba.com>
+To:     Jens Axboe <axboe@kernel.dk>, Zefan Li <lizefan.x@bytedance.com>,
+        Tejun Heo <tj@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
         Pavel Begunkov <asml.silence@gmail.com>
-Subject: Re: [RFC PATCH v2 0/9] Add LSM access controls and auditing to
- io_uring
-Message-ID: <20210827133559.GG490529@madcap2.tricolour.ca>
-References: <162871480969.63873.9434591871437326374.stgit@olly>
- <20210824205724.GB490529@madcap2.tricolour.ca>
- <20210826011639.GE490529@madcap2.tricolour.ca>
- <CAHC9VhSADQsudmD52hP8GQWWR4+=sJ7mvNkh9xDXuahS+iERVA@mail.gmail.com>
- <20210826163230.GF490529@madcap2.tricolour.ca>
- <CAHC9VhTkZ-tUdrFjhc2k1supzW1QJpY-15pf08mw6=ynU9yY5g@mail.gmail.com>
+Cc:     io-uring@vger.kernel.org, cgroups@vger.kernel.org,
+        Joseph Qi <joseph.qi@linux.alibaba.com>
+Subject: [PATCH for-5.15 v2] io_uring: consider cgroup setting when binding sqpoll cpu
+Date:   Fri, 27 Aug 2021 22:13:15 +0800
+Message-Id: <20210827141315.235974-1-haoxu@linux.alibaba.com>
+X-Mailer: git-send-email 2.24.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhTkZ-tUdrFjhc2k1supzW1QJpY-15pf08mw6=ynU9yY5g@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2021-08-26 15:14, Paul Moore wrote:
-> On Thu, Aug 26, 2021 at 12:32 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > I'm getting:
-> >         # ./iouring.2
-> >         Kernel thread io_uring-sq is not running.
-> >         Unable to setup io_uring: Permission denied
-> >
-> >         # ./iouring.3s
-> >         >>> server started, pid = 2082
-> >         >>> memfd created, fd = 3
-> >         io_uring_queue_init: Permission denied
-> >
-> > I have CONFIG_IO_URING=y set, what else is needed?
-> 
-> I'm not sure how you tried to run those tests, but try running as root
-> and with SELinux in permissive mode.
+Since sqthread is userspace like thread now, it should respect cgroup
+setting, thus we should consider current allowed cpuset when doing
+cpu binding for sqthread.
 
-Ok, they ran, including iouring.4.  iouring.2 claimed twice: "Kernel
-thread io_uring-sq is not running." and I didn't get any URING records
-with ausearch.  I don't know if any of this is expected.
+Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
+---
 
-> paul moore
+v1-->v2
+ - add a helper in cpuset.c so that we can directly leverage task_cs()
+ - remove v1 code which we don't need now
 
-- RGB
+ fs/io_uring.c          | 21 ++++++++++++++++-----
+ include/linux/cpuset.h |  7 +++++++
+ kernel/cgroup/cpuset.c | 11 +++++++++++
+ 3 files changed, 34 insertions(+), 5 deletions(-)
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index be3c3aea6398..a0f54c545158 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -79,6 +79,7 @@
+ #include <linux/pagemap.h>
+ #include <linux/io_uring.h>
+ #include <linux/tracehook.h>
++#include <linux/cpuset.h>
+ 
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/io_uring.h>
+@@ -7000,6 +7001,16 @@ static bool io_sqd_handle_event(struct io_sq_data *sqd)
+ 	return did_sig || test_bit(IO_SQ_THREAD_SHOULD_STOP, &sqd->state);
+ }
+ 
++static int io_sq_bind_cpu(int cpu)
++{
++	if (!test_cpu_in_current_cpuset(cpu))
++		pr_warn("sqthread %d: bound cpu not allowed\n", current->pid);
++	else
++		set_cpus_allowed_ptr(current, cpumask_of(cpu));
++
++	return 0;
++}
++
+ static int io_sq_thread(void *data)
+ {
+ 	struct io_sq_data *sqd = data;
+@@ -7010,11 +7021,9 @@ static int io_sq_thread(void *data)
+ 
+ 	snprintf(buf, sizeof(buf), "iou-sqp-%d", sqd->task_pid);
+ 	set_task_comm(current, buf);
+-
+ 	if (sqd->sq_cpu != -1)
+-		set_cpus_allowed_ptr(current, cpumask_of(sqd->sq_cpu));
+-	else
+-		set_cpus_allowed_ptr(current, cpu_online_mask);
++		io_sq_bind_cpu(sqd->sq_cpu);
++
+ 	current->flags |= PF_NO_SETAFFINITY;
+ 
+ 	mutex_lock(&sqd->lock);
+@@ -8208,8 +8217,10 @@ static int io_sq_offload_create(struct io_ring_ctx *ctx,
+ 			int cpu = p->sq_thread_cpu;
+ 
+ 			ret = -EINVAL;
+-			if (cpu >= nr_cpu_ids || !cpu_online(cpu))
++			if (cpu >= nr_cpu_ids || !cpu_online(cpu) ||
++			    !test_cpu_in_current_cpuset(cpu))
+ 				goto err_sqpoll;
++
+ 			sqd->sq_cpu = cpu;
+ 		} else {
+ 			sqd->sq_cpu = -1;
+diff --git a/include/linux/cpuset.h b/include/linux/cpuset.h
+index 04c20de66afc..fad77c91bc1f 100644
+--- a/include/linux/cpuset.h
++++ b/include/linux/cpuset.h
+@@ -116,6 +116,8 @@ static inline int cpuset_do_slab_mem_spread(void)
+ 
+ extern bool current_cpuset_is_being_rebound(void);
+ 
++extern bool test_cpu_in_current_cpuset(int cpu);
++
+ extern void rebuild_sched_domains(void);
+ 
+ extern void cpuset_print_current_mems_allowed(void);
+@@ -257,6 +259,11 @@ static inline bool current_cpuset_is_being_rebound(void)
+ 	return false;
+ }
+ 
++static inline bool test_cpu_in_current_cpuset(int cpu)
++{
++	return false;
++}
++
+ static inline void rebuild_sched_domains(void)
+ {
+ 	partition_sched_domains(1, NULL, NULL);
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index adb5190c4429..a63c27e9430e 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -1849,6 +1849,17 @@ bool current_cpuset_is_being_rebound(void)
+ 	return ret;
+ }
+ 
++bool test_cpu_in_current_cpuset(int cpu)
++{
++	bool ret;
++
++	rcu_read_lock();
++	ret = cpumask_test_cpu(cpu, task_cs(current)->effective_cpus);
++	rcu_read_unlock();
++
++	return ret;
++}
++
+ static int update_relax_domain_level(struct cpuset *cs, s64 val)
+ {
+ #ifdef CONFIG_SMP
+-- 
+2.24.4
 

@@ -2,60 +2,65 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BC04C3FA33C
-	for <lists+io-uring@lfdr.de>; Sat, 28 Aug 2021 04:40:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FD4A3FA356
+	for <lists+io-uring@lfdr.de>; Sat, 28 Aug 2021 05:22:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233045AbhH1Cl3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 27 Aug 2021 22:41:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45640 "EHLO
+        id S233117AbhH1DXR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 27 Aug 2021 23:23:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232953AbhH1Cl2 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 27 Aug 2021 22:41:28 -0400
-Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B973C0613D9
-        for <io-uring@vger.kernel.org>; Fri, 27 Aug 2021 19:40:39 -0700 (PDT)
-Received: by mail-io1-xd2e.google.com with SMTP id z1so11410597ioh.7
-        for <io-uring@vger.kernel.org>; Fri, 27 Aug 2021 19:40:38 -0700 (PDT)
+        with ESMTP id S233101AbhH1DXR (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 27 Aug 2021 23:23:17 -0400
+Received: from mail-il1-x129.google.com (mail-il1-x129.google.com [IPv6:2607:f8b0:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D36CC0613D9
+        for <io-uring@vger.kernel.org>; Fri, 27 Aug 2021 20:22:27 -0700 (PDT)
+Received: by mail-il1-x129.google.com with SMTP id g8so9246018ilc.5
+        for <io-uring@vger.kernel.org>; Fri, 27 Aug 2021 20:22:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=to:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=yYlPxjVUioLQnIZj5l9hSJKhVcYoEAaZyvA0rEe+lrs=;
-        b=oED1Q6ugJiI/YBLkcmaAQ+fzZ5VhSFtvopfZEbbecGttt52Bm2gdlOHqhxPyqe9BJt
-         G4B2wryCdSJ6XLEbD49NCuuvGCdlCiDE6C3c3yGS+nys2nqhBgQ+rq/hG3lWecUaNryg
-         N6T840eDF7+8aN1hwPVJwpsk3cHhhjSvsxiqVScCgRDFBdSyudIqvIGTkAeD90P0Jl8x
-         w5gahMxPXSnYYWGvmkhR1XNQqd0PxVTlhKGuJZkvdqCnnm7HRiF2MPGyvhIXOP4xgeVk
-         xbAHxpz/OIum8EVc4oGjTiyiOjCXk0cn7emIYTIFC6rqqSrzN6alF6fW3laGoZnPe8Xq
-         wuUw==
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=7vgw1Fd/PKlbVC0KWuXV201EVHOviDvwtaEIjPxzsmc=;
+        b=0feEplWcolUTuumVgBLseSg3SrF1L5/lJyYvZ4MSxFAO+CPBECe1clt5LFch9FJp1h
+         CyOMV79ah2MmyJ1zrE3fR65fMTxc5+G753g+p/ojnRJ5dX3tXL/QWXcP0F9WV9WpyTa+
+         1knw4h1WvwDxABGn3G08HFJcPuIS/uh3D0Oc+IJ36nDr06iw2GYIO7ntzYGJ/ezceoB0
+         i+zCglCukgoRyMYgoTQ4CoNGcAfxxttVRVpjU2QtdS1Wvho26aoyXZzqZbueZnt2CDat
+         Zc2cO5pZVI1hmHOdteLftNp2I55+amaF/sFw+DIbIcsvjNdrLIolfQ1p2sEoVoYbx8nT
+         fcOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=yYlPxjVUioLQnIZj5l9hSJKhVcYoEAaZyvA0rEe+lrs=;
-        b=YDyh5gms/yrvl6sFPxWmD9I271AXBrnk66Rs2/ytgN9/Li0GvMtWz5dP1f4QkYdrYU
-         0LZl0FETMUMKXhOkXT7e6+xFdEYdnteBGQWyGVfIDth4JiUII3WziUvA00bzIw4gctwa
-         ojxe7k6s1YxlkLrajdmBRwARyFwWOOR4Z2PkwX3wNhonk7sxPpiNkxpGXfK3wbLTWEua
-         MWAddiozmcwMzMiJNkUrcuPkaqOeMkKkHNU+0XbMhjTN++hec22hAJvQGr4yKjC9MA4E
-         DKDa7/zj7/EvlSIvyXYt5DGjACrMw28NrU6DN7SPSoQUbLAq4qMM25Vf4k/fXU7v/FCV
-         y1fg==
-X-Gm-Message-State: AOAM533AUTda2S8FDRAFy+HoEL+VAsmewdEkCA7Hp13FUlFnO5LiZrKR
-        +zYqRHc+Z5u0YY2F39uVoYb1B0yPq4Z9rQ==
-X-Google-Smtp-Source: ABdhPJxX/vrgwDtnct4gcN0dNidjrWMK41kbrtQJf/x7lgPoxP2kNsMMRuIbwH6DVL+/F0dEXyYv2Q==
-X-Received: by 2002:a02:5bc5:: with SMTP id g188mr10983449jab.136.1630118438076;
-        Fri, 27 Aug 2021 19:40:38 -0700 (PDT)
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=7vgw1Fd/PKlbVC0KWuXV201EVHOviDvwtaEIjPxzsmc=;
+        b=Ja74Nmy+sESQAKupSRFZVZ43fMgkz83+Y+0hhVUtIRxpDxjIbSvsM2AX0UPKBwEykF
+         88LjVqNuJ7xP7elfhdW61Tz8okVGdjxC58hq9vqfGsyl7DemrhdYFm0SaT3RozHz/1gb
+         WWOjTOX2gu3+kSpwlJS3KZfZ0ojaMmBB4QWaeMXnxcz2uAS+nRP8nO83VCNXCKw7rXlw
+         84f9AhQFvm2dOGXLRYOu9vM7mjS16dqJ0eB2H+aY2vWwMQls7V7RzxIHbxeXN7dNTS2L
+         6nfyuZEAT/5NWpY1PihM8Ea/Jmn2b0bNbTZRi4wWUTXNUzXxwzwJnm5aT0o9JkYsqwv5
+         KONQ==
+X-Gm-Message-State: AOAM530SoVmGLTSKwrcb+22OOWmTSiVMPCSxiYZBWnF9go+A46MjITJt
+        paEWQ2OONHBbmyb6ccI2WrV9JCZMOk7hSg==
+X-Google-Smtp-Source: ABdhPJx0ozC5IubSpIrJKUyrE4jdVOvpPWtbAZ5hri3Aj+JkZXStFGeaqVeP4mkHmOU47im+b3Ky/Q==
+X-Received: by 2002:a05:6e02:2184:: with SMTP id j4mr8860759ila.30.1630120946479;
+        Fri, 27 Aug 2021 20:22:26 -0700 (PDT)
 Received: from [192.168.1.116] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id i6sm4196520ilb.30.2021.08.27.19.40.37
-        for <io-uring@vger.kernel.org>
+        by smtp.gmail.com with ESMTPSA id r18sm4459355ioa.13.2021.08.27.20.22.25
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Aug 2021 19:40:37 -0700 (PDT)
-To:     io-uring <io-uring@vger.kernel.org>
+        Fri, 27 Aug 2021 20:22:26 -0700 (PDT)
+Subject: Re: io_uring_prep_timeout_update on linked timeouts
+To:     Victor Stewart <v@nametag.social>,
+        io-uring <io-uring@vger.kernel.org>
+References: <CAM1kxwhHOt1Ni==4Qr6c+qGzQQ2R9SQR4COkG2MXn_SUzEG-cg@mail.gmail.com>
+ <CAM1kxwi83=Q1Br46=_3DH46Ep2XoxbRX5hOVwFs7ze87Osx_eg@mail.gmail.com>
+ <CAM1kxwiAF3tmF8PxVf6KPV+Qsg_180sFvebxos5ySmU=TqxgmA@mail.gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH v2] io_uring: support CLOCK_BOOTTIME/REALTIME for timeouts
-Message-ID: <0e110ae2-f744-df44-e017-bf603f481348@kernel.dk>
-Date:   Fri, 27 Aug 2021 20:40:36 -0600
+Message-ID: <1b3865bd-f381-04f3-6e54-779fe6b43946@kernel.dk>
+Date:   Fri, 27 Aug 2021 21:22:25 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <CAM1kxwiAF3tmF8PxVf6KPV+Qsg_180sFvebxos5ySmU=TqxgmA@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -63,112 +68,52 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Certain use cases want to use CLOCK_BOOTTIME or CLOCK_REALTIME rather than
-CLOCK_MONOTONIC, instead of the default CLOCK_MONOTONIC.
+On 8/26/21 7:40 PM, Victor Stewart wrote:
+> On Wed, Aug 25, 2021 at 2:27 AM Victor Stewart <v@nametag.social> wrote:
+>>
+>> On Tue, Aug 24, 2021 at 11:43 PM Victor Stewart <v@nametag.social> wrote:
+>>>
+>>> we're able to update timeouts with io_uring_prep_timeout_update
+>>> without having to cancel
+>>> and resubmit, has it ever been considered adding this ability to
+>>> linked timeouts?
+>>
+>> whoops turns out this does work. just tested it.
+> 
+> doesn't work actually. missed that because of a bit of misdirection.
+> returns -ENOENT.
+> 
+> the problem with the current way of cancelling then resubmitting
+> a new a timeout linked op (let's use poll here) is you have 3 situations:
+> 
+> 1) the poll triggers and you get some positive value. all good.
+> 
+> 2) the linked timeout triggers and cancels the poll, so the poll
+> operation returns -ECANCELED.
+> 
+> 3) you cancel the existing poll op, and submit a new one with
+> the updated linked timeout. now the original poll op returns
+> -ECANCELED.
+> 
+> so solely from looking at the return value of the poll op in 2) and 3)
+> there is no way to disambiguate them. of course the linked timeout
+> operation result will allow you to do so, but you'd have to persist state
+> across cqe processings. you can also track the cancellations and know
+> to skip the explicitly cancelled ops' cqes (which is what i chose).
+> 
+> there's also the problem of efficiency. you can imagine in a QUIC
+> server where you're constantly updating that poll timeout in response
+> to idle timeout and ACK scheduling, this extra work mounts.
+> 
+> so i think the ability to update linked timeouts via
+> io_uring_prep_timeout_update would be fantastic.
 
-Add an IORING_TIMEOUT_BOOTTIME and IORING_TIMEOUT_REALTIME flag that
-allows timeouts and linked timeouts to use the selected clock source.
+Hmm, I'll need to dig a bit, but whether it's a linked timeout or not
+should not matter. It's a timeout, it's queued and updated the same way.
+And we even check this in some of the liburing tests.
 
-Only one clock source may be selected, and we -EINVAL the request if more
-than one is given. If neither BOOTIME nor REALTIME are selected, the
-previous default of MONOTONIC is used.
-
-Link: https://github.com/axboe/liburing/issues/369
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-
----
-
-There are valid reasons for using realtime as well, so update us to
-allow either one to be selected. Outside of these two I don't think any
-are interesting. I would suggest that the next flag added for timeouts
-moved forward a few spots, just to keep the timeout mask consecutive
-just in case. Easy to handle.
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 0f827fbe8e6c..bf6551ea2c00 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -508,6 +508,7 @@ struct io_timeout_data {
- 	struct hrtimer			timer;
- 	struct timespec64		ts;
- 	enum hrtimer_mode		mode;
-+	u32				flags;
- };
- 
- struct io_accept {
-@@ -5712,6 +5713,22 @@ static int io_timeout_cancel(struct io_ring_ctx *ctx, __u64 user_data)
- 	return 0;
- }
- 
-+static clockid_t io_timeout_get_clock(struct io_timeout_data *data)
-+{
-+	switch (data->flags & IORING_TIMEOUT_CLOCK_MASK) {
-+	case IORING_TIMEOUT_BOOTTIME:
-+		return CLOCK_BOOTTIME;
-+	case IORING_TIMEOUT_REALTIME:
-+		return CLOCK_REALTIME;
-+	default:
-+		/* can't happen, vetted at prep time */
-+		WARN_ON_ONCE(1);
-+		fallthrough;
-+	case 0:
-+		return CLOCK_MONOTONIC;
-+	}
-+}
-+
- static int io_timeout_update(struct io_ring_ctx *ctx, __u64 user_data,
- 			     struct timespec64 *ts, enum hrtimer_mode mode)
- 	__must_hold(&ctx->timeout_lock)
-@@ -5725,7 +5742,7 @@ static int io_timeout_update(struct io_ring_ctx *ctx, __u64 user_data,
- 	req->timeout.off = 0; /* noseq */
- 	data = req->async_data;
- 	list_add_tail(&req->timeout.list, &ctx->timeout_list);
--	hrtimer_init(&data->timer, CLOCK_MONOTONIC, mode);
-+	hrtimer_init(&data->timer, io_timeout_get_clock(data), mode);
- 	data->timer.function = io_timeout_fn;
- 	hrtimer_start(&data->timer, timespec64_to_ktime(*ts), mode);
- 	return 0;
-@@ -5807,7 +5824,10 @@ static int io_timeout_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 	if (off && is_timeout_link)
- 		return -EINVAL;
- 	flags = READ_ONCE(sqe->timeout_flags);
--	if (flags & ~IORING_TIMEOUT_ABS)
-+	if (flags & ~(IORING_TIMEOUT_ABS | IORING_TIMEOUT_CLOCK_MASK))
-+		return -EINVAL;
-+	/* more than one clock specified is invalid, obviously */
-+	if (hweight32(flags & IORING_TIMEOUT_CLOCK_MASK) > 1)
- 		return -EINVAL;
- 
- 	req->timeout.off = off;
-@@ -5819,12 +5839,13 @@ static int io_timeout_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 
- 	data = req->async_data;
- 	data->req = req;
-+	data->flags = flags;
- 
- 	if (get_timespec64(&data->ts, u64_to_user_ptr(sqe->addr)))
- 		return -EFAULT;
- 
- 	data->mode = io_translate_timeout_mode(flags);
--	hrtimer_init(&data->timer, CLOCK_MONOTONIC, data->mode);
-+	hrtimer_init(&data->timer, io_timeout_get_clock(data), data->mode);
- 
- 	if (is_timeout_link) {
- 		struct io_submit_link *link = &req->ctx->submit_state.link;
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index bb6845e14629..4ea0b46e3da0 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -151,6 +151,9 @@ enum {
-  */
- #define IORING_TIMEOUT_ABS	(1U << 0)
- #define IORING_TIMEOUT_UPDATE	(1U << 1)
-+#define IORING_TIMEOUT_BOOTTIME	(1U << 2)
-+#define IORING_TIMEOUT_REALTIME	(1U << 3)
-+#define IORING_TIMEOUT_CLOCK_MASK	(IORING_TIMEOUT_BOOTTIME | IORING_TIMEOUT_REALTIME)
- 
- /*
-  * sqe->splice_flags
+Do you have a test case that doesn't work for you? Always easier to
+reason about a test case.
 
 -- 
 Jens Axboe

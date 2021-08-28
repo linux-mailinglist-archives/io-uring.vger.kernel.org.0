@@ -2,119 +2,102 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FD4A3FA356
-	for <lists+io-uring@lfdr.de>; Sat, 28 Aug 2021 05:22:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC1DF3FA434
+	for <lists+io-uring@lfdr.de>; Sat, 28 Aug 2021 09:13:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233117AbhH1DXR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 27 Aug 2021 23:23:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54742 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233101AbhH1DXR (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 27 Aug 2021 23:23:17 -0400
-Received: from mail-il1-x129.google.com (mail-il1-x129.google.com [IPv6:2607:f8b0:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D36CC0613D9
-        for <io-uring@vger.kernel.org>; Fri, 27 Aug 2021 20:22:27 -0700 (PDT)
-Received: by mail-il1-x129.google.com with SMTP id g8so9246018ilc.5
-        for <io-uring@vger.kernel.org>; Fri, 27 Aug 2021 20:22:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=7vgw1Fd/PKlbVC0KWuXV201EVHOviDvwtaEIjPxzsmc=;
-        b=0feEplWcolUTuumVgBLseSg3SrF1L5/lJyYvZ4MSxFAO+CPBECe1clt5LFch9FJp1h
-         CyOMV79ah2MmyJ1zrE3fR65fMTxc5+G753g+p/ojnRJ5dX3tXL/QWXcP0F9WV9WpyTa+
-         1knw4h1WvwDxABGn3G08HFJcPuIS/uh3D0Oc+IJ36nDr06iw2GYIO7ntzYGJ/ezceoB0
-         i+zCglCukgoRyMYgoTQ4CoNGcAfxxttVRVpjU2QtdS1Wvho26aoyXZzqZbueZnt2CDat
-         Zc2cO5pZVI1hmHOdteLftNp2I55+amaF/sFw+DIbIcsvjNdrLIolfQ1p2sEoVoYbx8nT
-         fcOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=7vgw1Fd/PKlbVC0KWuXV201EVHOviDvwtaEIjPxzsmc=;
-        b=Ja74Nmy+sESQAKupSRFZVZ43fMgkz83+Y+0hhVUtIRxpDxjIbSvsM2AX0UPKBwEykF
-         88LjVqNuJ7xP7elfhdW61Tz8okVGdjxC58hq9vqfGsyl7DemrhdYFm0SaT3RozHz/1gb
-         WWOjTOX2gu3+kSpwlJS3KZfZ0ojaMmBB4QWaeMXnxcz2uAS+nRP8nO83VCNXCKw7rXlw
-         84f9AhQFvm2dOGXLRYOu9vM7mjS16dqJ0eB2H+aY2vWwMQls7V7RzxIHbxeXN7dNTS2L
-         6nfyuZEAT/5NWpY1PihM8Ea/Jmn2b0bNbTZRi4wWUTXNUzXxwzwJnm5aT0o9JkYsqwv5
-         KONQ==
-X-Gm-Message-State: AOAM530SoVmGLTSKwrcb+22OOWmTSiVMPCSxiYZBWnF9go+A46MjITJt
-        paEWQ2OONHBbmyb6ccI2WrV9JCZMOk7hSg==
-X-Google-Smtp-Source: ABdhPJx0ozC5IubSpIrJKUyrE4jdVOvpPWtbAZ5hri3Aj+JkZXStFGeaqVeP4mkHmOU47im+b3Ky/Q==
-X-Received: by 2002:a05:6e02:2184:: with SMTP id j4mr8860759ila.30.1630120946479;
-        Fri, 27 Aug 2021 20:22:26 -0700 (PDT)
-Received: from [192.168.1.116] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id r18sm4459355ioa.13.2021.08.27.20.22.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Aug 2021 20:22:26 -0700 (PDT)
-Subject: Re: io_uring_prep_timeout_update on linked timeouts
-To:     Victor Stewart <v@nametag.social>,
-        io-uring <io-uring@vger.kernel.org>
-References: <CAM1kxwhHOt1Ni==4Qr6c+qGzQQ2R9SQR4COkG2MXn_SUzEG-cg@mail.gmail.com>
- <CAM1kxwi83=Q1Br46=_3DH46Ep2XoxbRX5hOVwFs7ze87Osx_eg@mail.gmail.com>
- <CAM1kxwiAF3tmF8PxVf6KPV+Qsg_180sFvebxos5ySmU=TqxgmA@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <1b3865bd-f381-04f3-6e54-779fe6b43946@kernel.dk>
-Date:   Fri, 27 Aug 2021 21:22:25 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S233399AbhH1HLf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 28 Aug 2021 03:11:35 -0400
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:36402 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233348AbhH1HLf (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 28 Aug 2021 03:11:35 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0UmKo.Gp_1630134642;
+Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UmKo.Gp_1630134642)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Sat, 28 Aug 2021 15:10:43 +0800
+Subject: Re: [PATCH for-5.15 v2] io_uring: consider cgroup setting when
+ binding sqpoll cpu
+To:     Jens Axboe <axboe@kernel.dk>, Zefan Li <lizefan.x@bytedance.com>,
+        Tejun Heo <tj@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Cc:     io-uring@vger.kernel.org, cgroups@vger.kernel.org,
+        Joseph Qi <joseph.qi@linux.alibaba.com>
+References: <20210827141315.235974-1-haoxu@linux.alibaba.com>
+ <0988b0dc-232f-80cd-c984-2364c0dee69f@kernel.dk>
+ <592ba01a-a128-f781-d920-2b480f91c451@linux.alibaba.com>
+ <d413acfe-333a-9b7d-aba8-6e99db376fd6@linux.alibaba.com>
+ <9028a8de-a290-a955-1eac-43bec6e8702d@kernel.dk>
+From:   Hao Xu <haoxu@linux.alibaba.com>
+Message-ID: <33f674a7-8332-7dd6-6694-e5e9e5a5884f@linux.alibaba.com>
+Date:   Sat, 28 Aug 2021 15:10:42 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.12.0
 MIME-Version: 1.0
-In-Reply-To: <CAM1kxwiAF3tmF8PxVf6KPV+Qsg_180sFvebxos5ySmU=TqxgmA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <9028a8de-a290-a955-1eac-43bec6e8702d@kernel.dk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/26/21 7:40 PM, Victor Stewart wrote:
-> On Wed, Aug 25, 2021 at 2:27 AM Victor Stewart <v@nametag.social> wrote:
->>
->> On Tue, Aug 24, 2021 at 11:43 PM Victor Stewart <v@nametag.social> wrote:
->>>
->>> we're able to update timeouts with io_uring_prep_timeout_update
->>> without having to cancel
->>> and resubmit, has it ever been considered adding this ability to
->>> linked timeouts?
->>
->> whoops turns out this does work. just tested it.
+在 2021/8/28 上午1:09, Jens Axboe 写道:
+> On 8/27/21 11:03 AM, Hao Xu wrote:
+>> 在 2021/8/28 上午12:57, Hao Xu 写道:
+>>> 在 2021/8/27 下午10:18, Jens Axboe 写道:
+>>>> On 8/27/21 8:13 AM, Hao Xu wrote:
+>>>>> Since sqthread is userspace like thread now, it should respect cgroup
+>>>>> setting, thus we should consider current allowed cpuset when doing
+>>>>> cpu binding for sqthread.
+>>>>
+>>>> In general, this looks way better than v1. Just a few minor comments
+>>>> below.
+>>>>
+>>>>> @@ -7000,6 +7001,16 @@ static bool io_sqd_handle_event(struct
+>>>>> io_sq_data *sqd)
+>>>>>        return did_sig || test_bit(IO_SQ_THREAD_SHOULD_STOP, &sqd->state);
+>>>>>    }
+>>>>> +static int io_sq_bind_cpu(int cpu)
+>>>>> +{
+>>>>> +    if (!test_cpu_in_current_cpuset(cpu))
+>>>>> +        pr_warn("sqthread %d: bound cpu not allowed\n", current->pid);
+>>>>> +    else
+>>>>> +        set_cpus_allowed_ptr(current, cpumask_of(cpu));
+>>>>> +
+>>>>> +    return 0;
+>>>>> +}
+>>>>
+>>>> This should not be triggerable, unless the set changes between creation
+>>>> and the thread being created. Hence maybe the warn is fine. I'd probably
+>>>> prefer terminating the thread at that point, which would result in an
+>>>> -EOWNERDEAD return when someone attempts to wake the thread.
+>>>>
+>>>> Which is probably OK, as we really should not hit this path.
+>>> Actually I think cpuset change offen happen in container environment(
+>>> at leaset in my practice), eg. by resource monitor and balancer. So I
+>>> did this check to make sure we are still maintain sq_cpu logic at that
+>>> time as possible as we can. Though the problem is still there during
+>>> sqthread running time(the cpuset can change at anytime, which changes
+>>> the cpumask of sqthread)
+>> And because the cpumask of sqthread may be changed by the cgroup cpuset
+>> change at any time, so here I just print a warnning rather than
+>> terminating sqthread due to this 'normal thing'..
 > 
-> doesn't work actually. missed that because of a bit of misdirection.
-> returns -ENOENT.
-> 
-> the problem with the current way of cancelling then resubmitting
-> a new a timeout linked op (let's use poll here) is you have 3 situations:
-> 
-> 1) the poll triggers and you get some positive value. all good.
-> 
-> 2) the linked timeout triggers and cancels the poll, so the poll
-> operation returns -ECANCELED.
-> 
-> 3) you cancel the existing poll op, and submit a new one with
-> the updated linked timeout. now the original poll op returns
-> -ECANCELED.
-> 
-> so solely from looking at the return value of the poll op in 2) and 3)
-> there is no way to disambiguate them. of course the linked timeout
-> operation result will allow you to do so, but you'd have to persist state
-> across cqe processings. you can also track the cancellations and know
-> to skip the explicitly cancelled ops' cqes (which is what i chose).
-> 
-> there's also the problem of efficiency. you can imagine in a QUIC
-> server where you're constantly updating that poll timeout in response
-> to idle timeout and ACK scheduling, this extra work mounts.
-> 
-> so i think the ability to update linked timeouts via
-> io_uring_prep_timeout_update would be fantastic.
+> Do we even want the warning then? If it's an expected thing, seems very
+> annoying to warn about it.Hmm, there are several things:
+1) cpuset change may happen several times a day on some environment, so
+it doesn't make sense to exit
+2) there won't be big chance that the cpuset change happen between
+sqthread creation and waken up. So there probably won't be many
+warnning.
+3) Though we can warn about cpuset change in case 2), but we cannot warn
+at the sqthread running time (when it's in while loop) when cpuset
+change. And I don't think we should do cpu check and re-binding from
+time to time in sqthread. Good thing is users can get this info in
+userspace on their own.
+So maybe you're right, we should remove this warnning since it doesn't
+raise up just for 2), not for all cases, and users can get to know the
+situation by taskset command. Jens, What do you think?
 
-Hmm, I'll need to dig a bit, but whether it's a linked timeout or not
-should not matter. It's a timeout, it's queued and updated the same way.
-And we even check this in some of the liburing tests.
-
-Do you have a test case that doesn't work for you? Always easier to
-reason about a test case.
-
--- 
-Jens Axboe
+> 
 

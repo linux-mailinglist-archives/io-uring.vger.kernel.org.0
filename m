@@ -2,70 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 039833FA840
-	for <lists+io-uring@lfdr.de>; Sun, 29 Aug 2021 04:40:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 196C23FAC1B
+	for <lists+io-uring@lfdr.de>; Sun, 29 Aug 2021 16:06:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233358AbhH2ClE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 28 Aug 2021 22:41:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49260 "EHLO
+        id S233711AbhH2OHR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 29 Aug 2021 10:07:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230334AbhH2ClD (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 28 Aug 2021 22:41:03 -0400
-Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AF84C061756
-        for <io-uring@vger.kernel.org>; Sat, 28 Aug 2021 19:40:12 -0700 (PDT)
-Received: by mail-io1-xd32.google.com with SMTP id b200so14656243iof.13
-        for <io-uring@vger.kernel.org>; Sat, 28 Aug 2021 19:40:12 -0700 (PDT)
+        with ESMTP id S229463AbhH2OHQ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 29 Aug 2021 10:07:16 -0400
+Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8439C061575
+        for <io-uring@vger.kernel.org>; Sun, 29 Aug 2021 07:06:24 -0700 (PDT)
+Received: by mail-io1-xd2b.google.com with SMTP id a13so15966206iol.5
+        for <io-uring@vger.kernel.org>; Sun, 29 Aug 2021 07:06:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=VVQ58wWCFWo+ENnSsbpVVZbqE1o12xtzPrRpid8JViA=;
-        b=VhjjouVnGgRmCJ4LOwUCgTiMeTrdSBB45Q9aZXgLHOvGg4n/jm0PX706Aq+dfxEg15
-         9zgX3QU+WKrxoPUfP+Q4AP7mp3mY1P7YSAhyKUK5gIgmPTRpbM4P5ByFdcnm+NF05X8/
-         8zlA5Amk8sXubEOjODfFRB+cU8OEpYGtAjiPff9wi8xrQ2gUFmDWdphB7qw7uOWt/bso
-         JBqvsbD4Bzg6jYCEUWJqFu6SdY8XRtimdUj5FxP98KKU831avjAX7DEm8Ya8yfIzpf1y
-         /YzBCXJFEQuRLTOo36aWVaZkrUXILUqMnhbgCRED+YwjzRbN2Wqjxs2gVWbenYyJu9lH
-         7zaA==
+        h=to:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=xdT/3Qm2CHXrsALJlJ53Pz+5MSOn3ezbdyKN0mbzcIk=;
+        b=QO7Fzm/IloiyyMdBPHyvAHFFC2I23CrR7eQ4gheV3pEVQT7b07/PiA7dDbAftfMJxy
+         Jt8Z6A9F19Jp2azuT72Otx3rhy0YPA2a7hjOaYoTKNry2TeCPyJLnd0yRjaJO1z5Lg7s
+         p6kymNXx00Z+qCFNXu6w68t+eLeJK3XZuW3OSGWsWkJeTX5Wz+rPhRZqgYgXBsDbNZ3b
+         2ffAIt05uWmTRh1ftMxWEHrbOOzoeEWzbLf9AUfyzltIEFDEedcTrd66Jw5IPHTYtvl3
+         ptACX9U11v9RAfukpnznGBwXAcI54ynIwXmHDURpvbZ3a3bWcrwJk8OK9Yv30VevtCZj
+         Cyog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=VVQ58wWCFWo+ENnSsbpVVZbqE1o12xtzPrRpid8JViA=;
-        b=jifhUnmQhLA3acURKxwqLw+UiZppfRfEKe2i6kQthwAICSjF3EBLERQtTeEgOn+gIP
-         YBN9++Es+ErzwoZeyvNipNY+AT0EQGFi7l3qxXasH4fpc/Kc334dR5Tw4W5CuXogCyvh
-         Kyfxo6gkp1tqHDNQe1nIBAam6EVp7dsKwhcCzZpVHf2yDVyvNAB9qQzIcJcYH4Z76EQW
-         YE6BWKizLI16BChfHWb3mQFrMpYAJ2DvRtYJ82grHbVNNk0hVlCxLzqQE0dI4MSUCDir
-         kh5LRoD8INNi+Yvig/Fj65hzITOisc1W+HQukJfbAvc9EXOm8h4vODhoet45Qqe3kIxb
-         PBRg==
-X-Gm-Message-State: AOAM532rTDlC2chIqixsGzvHqCbn5N1ItsYpKLoKBPzi4IXQdrlkivQL
-        VygJjrhn2Pfguc41NmRLiNqdSZIkLM/xvg==
-X-Google-Smtp-Source: ABdhPJxSX/yu0Okk5XB7WHgn4EMFcRUY3MY7KL0ND/zDridrtw857zRTKQ29+Hzqigl9Tbz+zHAY+A==
-X-Received: by 2002:a02:664e:: with SMTP id l14mr14721244jaf.56.1630204811437;
-        Sat, 28 Aug 2021 19:40:11 -0700 (PDT)
+        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=xdT/3Qm2CHXrsALJlJ53Pz+5MSOn3ezbdyKN0mbzcIk=;
+        b=IJT96ijX6CznO0V6voeC639+f48v0ZHHUtbjuR4KOsklTNvEuFzUgqE0hzjjJB23kX
+         XXuOdhviYsypuJqj/35uMsbnanL3cVmVz9uJC4iHxSSUaDv2P40Li9obDXLILv6ACxwh
+         +8+ouQPcW16LIZLdMs6WnUKKfbT50Q2xgPDGH1lPHrJoz1V5vbLmH/9cDpmlsxNHgC1f
+         k4UVgL0uKs+gSQds5ycOzw7X6eDSfOAyMuJF6YnY/AlqxELlaM0oLKEazMbTvhoVqIQB
+         pgX+Pe3mIoe7GKabxkcD3IvMS4NMjbNZoU7fFPfjLKO7x4QxkK5jEvTLpw2kBYA30pU7
+         bVig==
+X-Gm-Message-State: AOAM533IUBQJun+r4fXD9wLHBCnnxn7RXi9ymPZb6i883qH33C3QaB7+
+        iNY2GXvukmH5YiW9iShMKHB4PpAa+v0PLA==
+X-Google-Smtp-Source: ABdhPJzpAsKgTtkIAtxsF7nihegC+dVKHkURLSMH5StoZB+J1DsUWd54X7lG8C7fMmTWievDxDBKVw==
+X-Received: by 2002:a02:9608:: with SMTP id c8mr3070842jai.133.1630245983649;
+        Sun, 29 Aug 2021 07:06:23 -0700 (PDT)
 Received: from [192.168.1.116] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id g8sm5930103ild.31.2021.08.28.19.40.10
+        by smtp.gmail.com with ESMTPSA id i14sm6481775iog.47.2021.08.29.07.06.23
+        for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 28 Aug 2021 19:40:11 -0700 (PDT)
-Subject: Re: io_uring_prep_timeout_update on linked timeouts
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Victor Stewart <v@nametag.social>,
-        io-uring <io-uring@vger.kernel.org>
-References: <CAM1kxwhHOt1Ni==4Qr6c+qGzQQ2R9SQR4COkG2MXn_SUzEG-cg@mail.gmail.com>
- <CAM1kxwi83=Q1Br46=_3DH46Ep2XoxbRX5hOVwFs7ze87Osx_eg@mail.gmail.com>
- <CAM1kxwiAF3tmF8PxVf6KPV+Qsg_180sFvebxos5ySmU=TqxgmA@mail.gmail.com>
- <1b3865bd-f381-04f3-6e54-779fe6b43946@kernel.dk>
- <04e3c4ab-4e78-805c-bc4f-f9c6d7e85ec1@gmail.com>
- <b53e6d69-9591-607b-c391-bf5fed23c1af@kernel.dk>
- <ebf4753c-dbe4-f6b5-e79c-39cc9a608beb@gmail.com>
+        Sun, 29 Aug 2021 07:06:23 -0700 (PDT)
+To:     io-uring <io-uring@vger.kernel.org>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <66bf3640-a396-28cf-0b0d-8f3a9622ce2b@kernel.dk>
-Date:   Sat, 28 Aug 2021 20:40:09 -0600
+Subject: [PATCH v2] io-wq: provide a way to limit max number of workers
+Message-ID: <6619adf5-2f85-e21d-d8f2-6e5088a28e83@kernel.dk>
+Date:   Sun, 29 Aug 2021 08:06:22 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <ebf4753c-dbe4-f6b5-e79c-39cc9a608beb@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -73,75 +63,165 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/28/21 3:38 PM, Pavel Begunkov wrote:
-> On 8/28/21 2:43 PM, Jens Axboe wrote:
->> On 8/28/21 7:39 AM, Pavel Begunkov wrote:
->>> On 8/28/21 4:22 AM, Jens Axboe wrote:
->>>> On 8/26/21 7:40 PM, Victor Stewart wrote:
->>>>> On Wed, Aug 25, 2021 at 2:27 AM Victor Stewart <v@nametag.social> wrote:
->>>>>>
->>>>>> On Tue, Aug 24, 2021 at 11:43 PM Victor Stewart <v@nametag.social> wrote:
->>>>>>>
->>>>>>> we're able to update timeouts with io_uring_prep_timeout_update
->>>>>>> without having to cancel
->>>>>>> and resubmit, has it ever been considered adding this ability to
->>>>>>> linked timeouts?
->>>>>>
->>>>>> whoops turns out this does work. just tested it.
->>>>>
->>>>> doesn't work actually. missed that because of a bit of misdirection.
->>>>> returns -ENOENT.
->>>>>
->>>>> the problem with the current way of cancelling then resubmitting
->>>>> a new a timeout linked op (let's use poll here) is you have 3 situations:
->>>>>
->>>>> 1) the poll triggers and you get some positive value. all good.
->>>>>
->>>>> 2) the linked timeout triggers and cancels the poll, so the poll
->>>>> operation returns -ECANCELED.
->>>>>
->>>>> 3) you cancel the existing poll op, and submit a new one with
->>>>> the updated linked timeout. now the original poll op returns
->>>>> -ECANCELED.
->>>>>
->>>>> so solely from looking at the return value of the poll op in 2) and 3)
->>>>> there is no way to disambiguate them. of course the linked timeout
->>>>> operation result will allow you to do so, but you'd have to persist state
->>>>> across cqe processings. you can also track the cancellations and know
->>>>> to skip the explicitly cancelled ops' cqes (which is what i chose).
->>>>>
->>>>> there's also the problem of efficiency. you can imagine in a QUIC
->>>>> server where you're constantly updating that poll timeout in response
->>>>> to idle timeout and ACK scheduling, this extra work mounts.
->>>>>
->>>>> so i think the ability to update linked timeouts via
->>>>> io_uring_prep_timeout_update would be fantastic.
->>>>
->>>> Hmm, I'll need to dig a bit, but whether it's a linked timeout or not
->>>> should not matter. It's a timeout, it's queued and updated the same way.
->>>> And we even check this in some of the liburing tests.
->>>
->>> We don't keep linked timeouts in ->timeout_list, so it's not
->>> supported and has never been. Should be doable, but we need
->>> to be careful synchronising with the link's head.
->>
->> Yeah shoot you are right, I guess that explains the ENOENT. Would be
->> nice to add, though. Synchronization should not be that different from
->> dealing with regular timeouts.
-> 
-> _Not tested_, but something like below should do. will get it
-> done properly later, but even better if we already have a test
-> case. Victor?
+io-wq divides work into two categories:
 
-FWIW, I wrote a simple test case for it, and it seemed to work fine.
-Nothing fancy, just a piped read that would never finish with a linked
-timeout (1s), submit, then submit a ltimeout update that changes it to
-2s instead. Test runs and update completes first with res == 0 as
-expected, and 2s later the ltimeout completes with -EALREADY (because
-the piped read went async) and the piped read gets canceled.
+1) Work that completes in a bounded time, like reading from a regular file
+   or a block device. This type of work is limited based on the size of
+   the SQ ring.
 
-That seems to be as expected, and didn't trigger anything odd.
+2) Work that may never complete, we call this unbounded work. The amount
+   of workers here is just limited by RLIMIT_NPROC.
 
+For various uses cases, it's handy to have the kernel limit the maximum
+amount of pending workers for both categories. Provide a way to do with
+with a new IORING_REGISTER_IOWQ_MAX_WORKERS operation.
+
+IORING_REGISTER_IOWQ_MAX_WORKERS takes an array of two integers and sets
+the max worker count to what is being passed in for each category. The
+old values are returned into that same array. If 0 is being passed in for
+either category, it simply returns the current value.
+
+The value is capped at RLIMIT_NPROC. This actually isn't that important
+as it's more of a hint, if we're exceeding the value then our attempt
+to fork a new worker will fail. This happens naturally already if more
+than one node is in the system, as these values are per-node internally
+for io-wq.
+
+Reported-by: Johannes Lundberg <johalun0@gmail.com>
+Link: https://github.com/axboe/liburing/issues/420
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+
+---
+
+v2: allow setting/getting both types of workers. It'd be silly to
+have to add bounded workers later, and there are already cases where
+it makes sense to change that value as well. The current max for
+bounded work is just a function of number of CPUs and SQ ring size,
+which is a good default but doesn't cover all cases.
+
+diff --git a/fs/io-wq.c b/fs/io-wq.c
+index 8da9bb103916..4b5fc621ab39 100644
+--- a/fs/io-wq.c
++++ b/fs/io-wq.c
+@@ -1152,6 +1152,35 @@ int io_wq_cpu_affinity(struct io_wq *wq, cpumask_var_t mask)
+ 	return 0;
+ }
+ 
++/*
++ * Set max number of workers, returns old value. If new_count is 0,
++ * then just return the old value.
++ */
++int io_wq_max_workers(struct io_wq *wq, int *new_count)
++{
++	int i, node, prev = 0;
++
++	for (i = 0; i < 2; i++) {
++		if (new_count[i] > task_rlimit(current, RLIMIT_NPROC))
++			new_count[i] = task_rlimit(current, RLIMIT_NPROC);
++	}
++
++	rcu_read_lock();
++	for_each_node(node) {
++		struct io_wqe_acct *acct;
++
++		for (i = 0; i < 2; i++) {
++			acct = &wq->wqes[node]->acct[i];
++			prev = max_t(int, acct->max_workers, prev);
++			if (new_count[i])
++				acct->max_workers = new_count[i];
++			new_count[i] = prev;
++		}
++	}
++	rcu_read_unlock();
++	return 0;
++}
++
+ static __init int io_wq_init(void)
+ {
+ 	int ret;
+diff --git a/fs/io-wq.h b/fs/io-wq.h
+index 308af3928424..bf5c4c533760 100644
+--- a/fs/io-wq.h
++++ b/fs/io-wq.h
+@@ -128,6 +128,7 @@ void io_wq_enqueue(struct io_wq *wq, struct io_wq_work *work);
+ void io_wq_hash_work(struct io_wq_work *work, void *val);
+ 
+ int io_wq_cpu_affinity(struct io_wq *wq, cpumask_var_t mask);
++int io_wq_max_workers(struct io_wq *wq, int *new_count);
+ 
+ static inline bool io_wq_is_hashed(struct io_wq_work *work)
+ {
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 53326449d685..edbda88142f9 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -10233,6 +10233,31 @@ static int io_unregister_iowq_aff(struct io_ring_ctx *ctx)
+ 	return io_wq_cpu_affinity(tctx->io_wq, NULL);
+ }
+ 
++static int io_register_iowq_max_workers(struct io_ring_ctx *ctx,
++					void __user *arg)
++{
++	struct io_uring_task *tctx = current->io_uring;
++	__u32 new_count[2];
++	int i, ret;
++
++	if (!tctx || !tctx->io_wq)
++		return -EINVAL;
++	if (copy_from_user(new_count, arg, sizeof(new_count)))
++		return -EFAULT;
++	for (i = 0; i < ARRAY_SIZE(new_count); i++)
++		if (new_count[i] > INT_MAX)
++			return -EINVAL;
++
++	ret = io_wq_max_workers(tctx->io_wq, new_count);
++	if (ret)
++		return ret;
++
++	if (copy_to_user(arg, new_count, sizeof(new_count)))
++		return -EFAULT;
++
++	return 0;
++}
++
+ static bool io_register_op_must_quiesce(int op)
+ {
+ 	switch (op) {
+@@ -10250,6 +10275,7 @@ static bool io_register_op_must_quiesce(int op)
+ 	case IORING_REGISTER_BUFFERS_UPDATE:
+ 	case IORING_REGISTER_IOWQ_AFF:
+ 	case IORING_UNREGISTER_IOWQ_AFF:
++	case IORING_REGISTER_IOWQ_MAX_WORKERS:
+ 		return false;
+ 	default:
+ 		return true;
+@@ -10406,6 +10432,12 @@ static int __io_uring_register(struct io_ring_ctx *ctx, unsigned opcode,
+ 			break;
+ 		ret = io_unregister_iowq_aff(ctx);
+ 		break;
++	case IORING_REGISTER_IOWQ_MAX_WORKERS:
++		ret = -EINVAL;
++		if (!arg || nr_args != 2)
++			break;
++		ret = io_register_iowq_max_workers(ctx, arg);
++		break;
+ 	default:
+ 		ret = -EINVAL;
+ 		break;
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index 45a4f2373694..64fe809c4e36 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -309,6 +309,9 @@ enum {
+ 	IORING_REGISTER_IOWQ_AFF		= 17,
+ 	IORING_UNREGISTER_IOWQ_AFF		= 18,
+ 
++	/* set/get max number of workers */
++	IORING_REGISTER_IOWQ_MAX_WORKERS	= 19,
++
+ 	/* this goes last */
+ 	IORING_REGISTER_LAST
+ };
 -- 
 Jens Axboe
 

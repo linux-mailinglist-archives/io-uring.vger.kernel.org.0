@@ -2,175 +2,178 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D39C73FBB61
-	for <lists+io-uring@lfdr.de>; Mon, 30 Aug 2021 20:03:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 293103FBCD9
+	for <lists+io-uring@lfdr.de>; Mon, 30 Aug 2021 21:22:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238440AbhH3SEL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 30 Aug 2021 14:04:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42812 "EHLO
+        id S233704AbhH3TXq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 30 Aug 2021 15:23:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238335AbhH3SEH (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 30 Aug 2021 14:04:07 -0400
-Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2F51C061575
-        for <io-uring@vger.kernel.org>; Mon, 30 Aug 2021 11:03:13 -0700 (PDT)
-Received: by mail-io1-xd34.google.com with SMTP id m11so12704053ioo.6
-        for <io-uring@vger.kernel.org>; Mon, 30 Aug 2021 11:03:13 -0700 (PDT)
+        with ESMTP id S233500AbhH3TXl (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 30 Aug 2021 15:23:41 -0400
+Received: from mail-ot1-x32c.google.com (mail-ot1-x32c.google.com [IPv6:2607:f8b0:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8577CC0613D9
+        for <io-uring@vger.kernel.org>; Mon, 30 Aug 2021 12:22:47 -0700 (PDT)
+Received: by mail-ot1-x32c.google.com with SMTP id 107-20020a9d0bf4000000b0051b8be1192fso9557812oth.7
+        for <io-uring@vger.kernel.org>; Mon, 30 Aug 2021 12:22:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=to:cc:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=l7CIamEdtq2mCiMSUK//3jVKMcyqAOrvF0FjTsDM3Rc=;
-        b=ssDJBl+YNn0V62bx4CHnEQT4Se7prx+1KTyhIckhMiLARjhAmH0M08XhbVy4htrvNb
-         z4N5/Roq2zN3Uri2QekYU962dWDnuPtiABSIeb2hx05B/trVEtZypkvjvtlsZPkYlYd7
-         1CWFvD/Z0dqEhwzmbnFyFKBwTL5SDgAUR67Mz64/XZZU6BEQ9hP+uR3vDQoDFuC5sdfO
-         mYDLYEW/miqiT0uZXz5enk/PxPD6B6h8wPEEyxwTxBTJedmtV3ywQk5ouaczY5BSFAXA
-         V1SLhefIoXWTBaVHP+KFqXtcbohp0EE36HCJIyaINt9VHxz+FoEqWQcm8VpoVVOOhKR9
-         Fy7Q==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rJKnuuFCd5awKtbgLO6rUtFjGmCb0A0Nsttc7G/tr2E=;
+        b=pPL3/DNYCxboctG6Wsloy2QPWQ4/dxzuXrSwx38sGQwSZnnHfpi+p6VbPhfoqKjssL
+         LhRbhNb6721xU3oOaxC3r9j/WbXZle6iG+RSeGdbnMxY0PvdseSpF/CxWQMcl6NYAGoq
+         bJL6btZq8B6yOWwJY2c0qeImbjuAni4R2zywEXVHmXXuePP2miwH1W/nRZUzto/9h1fv
+         /ZnI7LiRRXSiILpAgR1stvBJt6wsVOpzGeitcKdji+s9t00eesSHU38XriChB1Q44gT9
+         RA2h2krqH8g9QADTau6p7Zavtqn2srM+6QbuYFYKNzC8DxMFfDDgJYgAUj4GcGjIYCe+
+         nMLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=l7CIamEdtq2mCiMSUK//3jVKMcyqAOrvF0FjTsDM3Rc=;
-        b=L80D/ooL8j6HYeK0z8MF6xmyz4+zY2LWgcLLZ9Dm57aJgSw1Yh9cF88wHOwQRTxQh4
-         F0Py4SCu1k+mXyuUvKPsQD7RipzRImLfHh18x9Id5bCsKO7CK9dB0/KaIBqvq1n5b+tW
-         iDqt3Gc7XuWVb+oPz2pSzp0AZken3ScUXf2uZj9Xe8AjW2H+Ru+i7wn6vPTcuGn/WjHz
-         qezuF/eQlKX0t6Okm5HYe3dET5rQND2WVGhlel1gI5lPO6Ljpw3XRhtcSH7ypSIebLk0
-         RLEUn/9wBhgKmJMg80nHk0FJDoBFvZa5pZyTqfP3IfeuLYTDCC1bq+g7D2THQL8q2M3e
-         cuEw==
-X-Gm-Message-State: AOAM533yXCZ0kYIbu8sqFCrNzgdfQC1u92/jv3MtSFEe3sMJT8/IBnNe
-        F2+AHVSQDVD/PTooQFtkEQOhEf+lGsAtOw==
-X-Google-Smtp-Source: ABdhPJw0FUq69EPIojsDbX/yvMJS0p+eqt+dfxp7NB52w/id/X8T4L6Lw7rCX4JkL3VK/pnYYbiaHQ==
-X-Received: by 2002:a6b:b883:: with SMTP id i125mr18634806iof.144.1630346592956;
-        Mon, 30 Aug 2021 11:03:12 -0700 (PDT)
-Received: from [192.168.1.30] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id g14sm8648473ila.28.2021.08.30.11.03.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Aug 2021 11:03:12 -0700 (PDT)
-To:     io-uring <io-uring@vger.kernel.org>
-Cc:     Andres Freund <andres@anarazel.de>
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io-wq: fix race between adding work and activating a free
- worker
-Message-ID: <a6150a72-f7ec-acf3-2420-154c80ec0fa8@kernel.dk>
-Date:   Mon, 30 Aug 2021 12:03:12 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rJKnuuFCd5awKtbgLO6rUtFjGmCb0A0Nsttc7G/tr2E=;
+        b=MEWsLEwjegdaGPZgqvPlUIaxUPutIbf/ArrFuWEYLL01p4YSeRqUojkRF0j9tTq09p
+         RGk4LfsbXh/Gzfm3zp4hF860arymTYHKREYYA+HmfV1m/sUJWD+ki/Ze+QvLJ0mXxNs1
+         z326YrEKwsMeylPLNafD3XqAyHzc0P7VNvGq9jTfKwUDK7TSCSlWd5te1Ac8ANgUtALk
+         7LGepcr67lnphphp8uRq6USP1rpVwAg2BiJoDT4wpEnl9t4n7mjHzoReGXzT8L3qSCWm
+         VR8hKc3R7GF6dp1yMWlHDt5mdnalJGZF/k7hOUlDgMCzmj3K1scgaX6yrBkXX5Xt1NtZ
+         R7Sw==
+X-Gm-Message-State: AOAM531BfpBbfsd3twJRX8U6Q13f8gUWp/NFbtUYMwuYLwaYwrQsv6mI
+        F5fY9mxuAeJhiVtmZbeCghRw+xPxD6a4V7H3Nyyg0g==
+X-Google-Smtp-Source: ABdhPJzqiUlmRzEF2xz9OpH5XCE0y9WV/7tue2/CzkPeL1qph/JCSKwrc6+lWdCWrwfRXEiiqPbr6U0BOES2NAR1zOs=
+X-Received: by 2002:a9d:450b:: with SMTP id w11mr20646252ote.254.1630351366100;
+ Mon, 30 Aug 2021 12:22:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <00000000000011360d05cacbb622@google.com>
+In-Reply-To: <00000000000011360d05cacbb622@google.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Mon, 30 Aug 2021 21:22:34 +0200
+Message-ID: <CACT4Y+a9gTY4Mr=UsGiNGL7oXDc5dtV6-WXf2fC_vP5dDdGXRQ@mail.gmail.com>
+Subject: Re: [syzbot] general protection fault in sock_from_file
+To:     syzbot <syzbot+f9704d1878e290eddf73@syzkaller.appspotmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring@vger.kernel.org
+Cc:     andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
+        daniel@iogearbox.net, davem@davemloft.net,
+        john.fastabend@gmail.com, kafai@fb.com, kpsingh@kernel.org,
+        kuba@kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, songliubraving@fb.com,
+        syzkaller-bugs@googlegroups.com, yhs@fb.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The attempt to find and activate a free worker for new work is currently
-combined with creating a new one if we don't find one, but that opens
-io-wq up to a race where the worker that is found and activated can
-put itself to sleep without knowing that it has been selected to perform
-this new work.
+On Mon, 30 Aug 2021 at 21:19, syzbot
+<syzbot+f9704d1878e290eddf73@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    93717cde744f Add linux-next specific files for 20210830
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=15b851fe300000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=c643ef5289990dd1
+> dashboard link: https://syzkaller.appspot.com/bug?extid=f9704d1878e290eddf73
+> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.1
+>
+> Unfortunately, I don't have any reproducer for this issue yet.
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+f9704d1878e290eddf73@syzkaller.appspotmail.com
 
-Fix this by moving the activation into where we add the new work item,
-then we can retain it within the wqe->lock scope and elimiate the race
-with the worker itself checking inside the lock, but sleeping outside of
-it.
++io_uring maintainers as this looks io_uring-related
 
-Cc: stable@vger.kernel.org
-Reported-by: Andres Freund <andres@anarazel.de>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-
----
-
-The previously posted fix for a race when adding new work was fine, but
-there's another gap here that is actually bigger. This one passes my
-synthetic testing (limit max workers to 1, do buffered writes to a
-file).
-
-diff --git a/fs/io-wq.c b/fs/io-wq.c
-index cd9bd095fb1b..709cbe8191af 100644
---- a/fs/io-wq.c
-+++ b/fs/io-wq.c
-@@ -236,9 +236,9 @@ static bool io_wqe_activate_free_worker(struct io_wqe *wqe)
-  * We need a worker. If we find a free one, we're good. If not, and we're
-  * below the max number of workers, create one.
-  */
--static void io_wqe_wake_worker(struct io_wqe *wqe, struct io_wqe_acct *acct)
-+static void io_wqe_create_worker(struct io_wqe *wqe, struct io_wqe_acct *acct)
- {
--	bool ret;
-+	bool do_create = false, first = false;
- 
- 	/*
- 	 * Most likely an attempt to queue unbounded work on an io_wq that
-@@ -247,26 +247,18 @@ static void io_wqe_wake_worker(struct io_wqe *wqe, struct io_wqe_acct *acct)
- 	if (unlikely(!acct->max_workers))
- 		pr_warn_once("io-wq is not configured for unbound workers");
- 
--	rcu_read_lock();
--	ret = io_wqe_activate_free_worker(wqe);
--	rcu_read_unlock();
--
--	if (!ret) {
--		bool do_create = false, first = false;
--
--		raw_spin_lock(&wqe->lock);
--		if (acct->nr_workers < acct->max_workers) {
--			if (!acct->nr_workers)
--				first = true;
--			acct->nr_workers++;
--			do_create = true;
--		}
--		raw_spin_unlock(&wqe->lock);
--		if (do_create) {
--			atomic_inc(&acct->nr_running);
--			atomic_inc(&wqe->wq->worker_refs);
--			create_io_worker(wqe->wq, wqe, acct->index, first);
--		}
-+	raw_spin_lock(&wqe->lock);
-+	if (acct->nr_workers < acct->max_workers) {
-+		if (!acct->nr_workers)
-+			first = true;
-+		acct->nr_workers++;
-+		do_create = true;
-+	}
-+	raw_spin_unlock(&wqe->lock);
-+	if (do_create) {
-+		atomic_inc(&acct->nr_running);
-+		atomic_inc(&wqe->wq->worker_refs);
-+		create_io_worker(wqe->wq, wqe, acct->index, first);
- 	}
- }
- 
-@@ -794,7 +786,7 @@ static void io_wqe_insert_work(struct io_wqe *wqe, struct io_wq_work *work)
- static void io_wqe_enqueue(struct io_wqe *wqe, struct io_wq_work *work)
- {
- 	struct io_wqe_acct *acct = io_work_get_acct(wqe, work);
--	bool do_wake;
-+	bool do_create;
- 
- 	/*
- 	 * If io-wq is exiting for this task, or if the request has explicitly
-@@ -809,12 +801,15 @@ static void io_wqe_enqueue(struct io_wqe *wqe, struct io_wq_work *work)
- 	raw_spin_lock(&wqe->lock);
- 	io_wqe_insert_work(wqe, work);
- 	wqe->flags &= ~IO_WQE_FLAG_STALLED;
--	do_wake = (work->flags & IO_WQ_WORK_CONCURRENT) ||
--			!atomic_read(&acct->nr_running);
-+
-+	rcu_read_lock();
-+	do_create = !io_wqe_activate_free_worker(wqe);
-+	rcu_read_unlock();
-+
- 	raw_spin_unlock(&wqe->lock);
- 
--	if (do_wake)
--		io_wqe_wake_worker(wqe, acct);
-+	if (do_create)
-+		io_wqe_create_worker(wqe, acct);
- }
- 
- void io_wq_enqueue(struct io_wq *wq, struct io_wq_work *work)
-
--- 
-Jens Axboe
-
+> general protection fault, probably for non-canonical address 0xdffffc0000000005: 0000 [#1] PREEMPT SMP KASAN
+> KASAN: null-ptr-deref in range [0x0000000000000028-0x000000000000002f]
+> CPU: 1 PID: 6072 Comm: syz-executor.0 Not tainted 5.14.0-next-20210830-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> RIP: 0010:sock_from_file+0x20/0x90 net/socket.c:505
+> Code: f5 ff ff ff c3 0f 1f 44 00 00 41 54 53 48 89 fb e8 85 e9 62 fa 48 8d 7b 28 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 75 4f 45 31 e4 48 81 7b 28 80 f1 8a 8a 74 0c e8 58 e9
+> RSP: 0018:ffffc9000a2df8e8 EFLAGS: 00010206
+> RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffc90002f91000
+> RDX: 0000000000000005 RSI: ffffffff8713203b RDI: 0000000000000028
+> RBP: ffff8880983c2c80 R08: ffffffff899aee40 R09: ffffffff81e21978
+> R10: 0000000000000027 R11: 0000000000000009 R12: dffffc0000000000
+> R13: 1ffff11013078599 R14: 0000000000000003 R15: ffff8880983c2c80
+> FS:  00007fe7b0454700(0000) GS:ffff8880b9d00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00005591dffa5180 CR3: 00000000974cb000 CR4: 00000000001506e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  io_sendmsg+0x98/0x640 fs/io_uring.c:4681
+>  io_issue_sqe+0x14de/0x6ba0 fs/io_uring.c:6578
+>  __io_queue_sqe+0x90/0xb50 fs/io_uring.c:6864
+>  io_req_task_submit+0xbf/0x1b0 fs/io_uring.c:2218
+>  tctx_task_work+0x166/0x610 fs/io_uring.c:2143
+>  task_work_run+0xdd/0x1a0 kernel/task_work.c:164
+>  tracehook_notify_signal include/linux/tracehook.h:212 [inline]
+>  handle_signal_work kernel/entry/common.c:146 [inline]
+>  exit_to_user_mode_loop kernel/entry/common.c:172 [inline]
+>  exit_to_user_mode_prepare+0x256/0x290 kernel/entry/common.c:209
+>  __syscall_exit_to_user_mode_work kernel/entry/common.c:291 [inline]
+>  syscall_exit_to_user_mode+0x19/0x60 kernel/entry/common.c:302
+>  do_syscall_64+0x42/0xb0 arch/x86/entry/common.c:86
+>  entry_SYSCALL_64_after_hwframe+0x44/0xae
+> RIP: 0033:0x4665f9
+> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007fe7b0454188 EFLAGS: 00000246 ORIG_RAX: 00000000000001aa
+> RAX: 0000000000001000 RBX: 000000000056bf80 RCX: 00000000004665f9
+> RDX: 0000000000000000 RSI: 000000000000688c RDI: 0000000000000003
+> RBP: 00000000004bfcc4 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 000000000056bf80
+> R13: 00007fffeee6585f R14: 00007fe7b0454300 R15: 0000000000022000
+> Modules linked in:
+> ---[ end trace 6f9e359dd487b8fa ]---
+> RIP: 0010:sock_from_file+0x20/0x90 net/socket.c:505
+> Code: f5 ff ff ff c3 0f 1f 44 00 00 41 54 53 48 89 fb e8 85 e9 62 fa 48 8d 7b 28 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 75 4f 45 31 e4 48 81 7b 28 80 f1 8a 8a 74 0c e8 58 e9
+> RSP: 0018:ffffc9000a2df8e8 EFLAGS: 00010206
+> RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffc90002f91000
+> RDX: 0000000000000005 RSI: ffffffff8713203b RDI: 0000000000000028
+> RBP: ffff8880983c2c80 R08: ffffffff899aee40 R09: ffffffff81e21978
+> R10: 0000000000000027 R11: 0000000000000009 R12: dffffc0000000000
+> R13: 1ffff11013078599 R14: 0000000000000003 R15: ffff8880983c2c80
+> FS:  00007fe7b0454700(0000) GS:ffff8880b9d00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007fb81002c710 CR3: 00000000974cb000 CR4: 00000000001506e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> ----------------
+> Code disassembly (best guess), 3 bytes skipped:
+>    0:   ff c3                   inc    %ebx
+>    2:   0f 1f 44 00 00          nopl   0x0(%rax,%rax,1)
+>    7:   41 54                   push   %r12
+>    9:   53                      push   %rbx
+>    a:   48 89 fb                mov    %rdi,%rbx
+>    d:   e8 85 e9 62 fa          callq  0xfa62e997
+>   12:   48 8d 7b 28             lea    0x28(%rbx),%rdi
+>   16:   48 b8 00 00 00 00 00    movabs $0xdffffc0000000000,%rax
+>   1d:   fc ff df
+>   20:   48 89 fa                mov    %rdi,%rdx
+>   23:   48 c1 ea 03             shr    $0x3,%rdx
+> * 27:   80 3c 02 00             cmpb   $0x0,(%rdx,%rax,1) <-- trapping instruction
+>   2b:   75 4f                   jne    0x7c
+>   2d:   45 31 e4                xor    %r12d,%r12d
+>   30:   48 81 7b 28 80 f1 8a    cmpq   $0xffffffff8a8af180,0x28(%rbx)
+>   37:   8a
+>   38:   74 0c                   je     0x46
+>   3a:   e8                      .byte 0xe8
+>   3b:   58                      pop    %rax
+>   3c:   e9                      .byte 0xe9
+>
+>
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>
+> --
+> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/00000000000011360d05cacbb622%40google.com.

@@ -2,106 +2,125 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 164763FC7F6
-	for <lists+io-uring@lfdr.de>; Tue, 31 Aug 2021 15:13:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5421F3FCA4E
+	for <lists+io-uring@lfdr.de>; Tue, 31 Aug 2021 16:45:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233575AbhHaNOs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 31 Aug 2021 09:14:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47490 "EHLO
+        id S238833AbhHaOqJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 31 Aug 2021 10:46:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230175AbhHaNOs (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 31 Aug 2021 09:14:48 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D846DC061760
-        for <io-uring@vger.kernel.org>; Tue, 31 Aug 2021 06:13:52 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id o39-20020a05600c512700b002e74638b567so2529053wms.2
-        for <io-uring@vger.kernel.org>; Tue, 31 Aug 2021 06:13:52 -0700 (PDT)
+        with ESMTP id S238745AbhHaOp2 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 31 Aug 2021 10:45:28 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 917AFC0612A5
+        for <io-uring@vger.kernel.org>; Tue, 31 Aug 2021 07:44:17 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id g22so27194486edy.12
+        for <io-uring@vger.kernel.org>; Tue, 31 Aug 2021 07:44:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Upgzhm0KaDTOG77AZfdtOs5gu+3bdbvWcYwySiIoiI0=;
-        b=Y+3C9L34PrZrv4bpN/U8LS2yWbCuxGUDswg5pJNcnS0m7pZhxQIKtvH3i8bIFVhS4N
-         +pdI+m9F1DnX5eu/WhVDF9aoMZelrEI4wAFVQICvdYHLF0+AGU5u/F+UOF/qDm7SHv04
-         z6O+7aNQNiR8k7bAX9nGv+kGW/12v4glIfiJrifVhG1O03tIdmneBwExcSGmbVAiXTsD
-         UIBC74FkDbnAZWHKw9clzbBgPI6pezR/rwgE7XaFK8zP2UwUCC9HVJWfLwsRghdQ0E+1
-         hfNEbPd5egXC1mJZSoaf/vUGu9rW10p4jJZeKzxRxg+uNgTOAknUD531z/agOQ2PA3Su
-         DczQ==
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZgczlerqsLLyl2VhT0frihVj435uIvC1cuXaGZGKBOI=;
+        b=vZnH7ZNB8UX++P9uCn5rQiuS1KJDPUjiSAvxsYaqrGtgX4eBg7GHDhggOyskZpJCNJ
+         l54tySrGWs+VGlp2ibgfUetYZO5z9JWmsqcqQAbA4fNx6dgMzZ4yGFUi42SXqCROzi3g
+         FS9XZXeeyeyvrgx57qZFe/82GbC4fNokogIHI8XnksgwLntZT9VJnnqkWrKuW75Cnvsf
+         +7e1G9kohqRq+nrQHuIAj87Tghsw3vDATIqBceH6jYq1aOqfVXsPdLVX3WaBcQK3GN4p
+         c6550BzBTBRy+H9PqzgSx+/D8kyYY8+KbY3RT+uhXQYjsXUqt063Wwk7D37opRPywhBH
+         PkzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Upgzhm0KaDTOG77AZfdtOs5gu+3bdbvWcYwySiIoiI0=;
-        b=cq5NdIgAKUE0S9XEo9ze9S8PpTV2HE+QcyQe+ap+CUWzx4mLoydGFVEAqhPYGD31eu
-         cMao08gL/ymRhDper0nKbo1Ogb7h0IPEev0VITDFOoc4ZSIWdD12ZLRu9Sl6ii/5SHTS
-         FMnHxdjW/YVJWfE0ovxrFPTMhJhV4mADhU5l/XzcNkR+y/ZjA3a81WXakuIK3BeWwcq8
-         hhsDHQqAWaDnHO1rk5XL/uNVsEgaTsEwVLCNLR5NWcPQg7ijH/k2/D3imRzqyZuGmeKc
-         z1arvOCBj22uhuMQnvK6UjkmN6fEAFg7aMn3wI0AJCgU+jGvQHZFQdZQydcDpOjGQYtA
-         5P0g==
-X-Gm-Message-State: AOAM530ESCT+4qWIUl/odi6Scm2YHfbWmJadTDIfmPqVK3+zt4zSw1nC
-        /66fnR0d6yLhDP3qiEFJJvDgIFnoCDk=
-X-Google-Smtp-Source: ABdhPJx07HFWKnrgJtoV3SizfhLvpIoPYiRDD7TnTWGtfLEFc9bAzH8zv4RHTcaZMOykks54t2drmw==
-X-Received: by 2002:a05:600c:3543:: with SMTP id i3mr4331176wmq.2.1630415631513;
-        Tue, 31 Aug 2021 06:13:51 -0700 (PDT)
-Received: from localhost.localdomain ([148.252.133.138])
-        by smtp.gmail.com with ESMTPSA id t14sm18246586wrw.59.2021.08.31.06.13.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Aug 2021 06:13:51 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc:     Hao Xu <haoxu@linux.alibaba.com>
-Subject: [PATCH v2 2/2] io_uring: don't submit half-prepared drain request
-Date:   Tue, 31 Aug 2021 14:13:11 +0100
-Message-Id: <e411eb9924d47a131b1e200b26b675df0c2b7627.1630415423.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <cover.1630415423.git.asml.silence@gmail.com>
-References: <cover.1630415423.git.asml.silence@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZgczlerqsLLyl2VhT0frihVj435uIvC1cuXaGZGKBOI=;
+        b=Wi7tYFfaqzw2JxVjcitqOAAJE9nddj2Su85BCF5FjzLY1ENQb+1+PA7zdTn6MOMdJk
+         2uNol1pDY936wYLt7UOov7msODgh7b+xoisIZVzR/Ykg0ZN8mOOZ+JYr2EiIbe5+TLNs
+         v73Qj9Pvz/fvCqZAhIWp1uqvm2cR4tr10lsm2pf++/2fIJkLEoenFssyRTQEroGIQMdf
+         qo11ICcrxsL9WqSR4lXXCAoLUA2tbJnaViG1cfiIXUECLYTOkmyCUBMzpryzMLYdzdkA
+         SL7luhFSVo3CKRVot8sq2szgiuuPKliw9iXLGwMILi356Y8fhplL8TMsllnzVloPrH+O
+         feVQ==
+X-Gm-Message-State: AOAM533g0dEoLRxY2KjX7htd68lqtwAAkn4VG5pzDw1iBHmLDglRU1yg
+        IgvBmJ7HOjGris3H2CapD6HhwS0lCmAyCsw5eB8W
+X-Google-Smtp-Source: ABdhPJxbttl+pKPJFUUvqGQMjsVPM20zpWUvXsGRTjRdvPPkDxQWNi7BI9HiCjmjrGOfcCWQfO3dlyXR34/S8Enb9H4=
+X-Received: by 2002:a50:ed09:: with SMTP id j9mr29852978eds.164.1630421056093;
+ Tue, 31 Aug 2021 07:44:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <162871480969.63873.9434591871437326374.stgit@olly> <162871494794.63873.18299137802334845525.stgit@olly>
+In-Reply-To: <162871494794.63873.18299137802334845525.stgit@olly>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 31 Aug 2021 10:44:05 -0400
+Message-ID: <CAHC9VhSPW0R=AQGCaz9HNO5mXmCtscto-7O=9Af9B_EuCa5W=A@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 9/9] Smack: Brutalist io_uring support with debug
+To:     casey@schaufler-ca.com
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-[ 3784.910888] BUG: kernel NULL pointer dereference, address: 0000000000000020
-[ 3784.910904] RIP: 0010:__io_file_supports_nowait+0x5/0xc0
-[ 3784.910926] Call Trace:
-[ 3784.910928]  ? io_read+0x17c/0x480
-[ 3784.910945]  io_issue_sqe+0xcb/0x1840
-[ 3784.910953]  __io_queue_sqe+0x44/0x300
-[ 3784.910959]  io_req_task_submit+0x27/0x70
-[ 3784.910962]  tctx_task_work+0xeb/0x1d0
-[ 3784.910966]  task_work_run+0x61/0xa0
-[ 3784.910968]  io_run_task_work_sig+0x53/0xa0
-[ 3784.910975]  __x64_sys_io_uring_enter+0x22/0x30
-[ 3784.910977]  do_syscall_64+0x3d/0x90
-[ 3784.910981]  entry_SYSCALL_64_after_hwframe+0x44/0xae
+On Wed, Aug 11, 2021 at 4:49 PM Paul Moore <paul@paul-moore.com> wrote:
+>
+> From: Casey Schaufler <casey@schaufler-ca.com>
+>
+> Add Smack privilege checks for io_uring. Use CAP_MAC_OVERRIDE
+> for the override_creds case and CAP_MAC_ADMIN for creating a
+> polling thread. These choices are based on conjecture regarding
+> the intent of the surrounding code.
+>
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> [PM: make the smack_uring_* funcs static]
+> Signed-off-by: Paul Moore <paul@paul-moore.com>
+>
+> ---
+> v2:
+> - made the smack_uring_* funcs static
+> v1:
+> - initial draft
+> ---
+>  security/smack/smack_lsm.c |   64 ++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 64 insertions(+)
+>
+> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> index 223a6da0e6dc..7fb094098f38 100644
+> --- a/security/smack/smack_lsm.c
+> +++ b/security/smack/smack_lsm.c
+> @@ -4691,6 +4691,66 @@ static int smack_dentry_create_files_as(struct dentry *dentry, int mode,
+>         return 0;
+>  }
+>
+> +#ifdef CONFIG_IO_URING
+> +/**
+> + * smack_uring_override_creds - Is io_uring cred override allowed?
+> + * @new: the target creds
+> + *
+> + * Check to see if the current task is allowed to override it's credentials
+> + * to service an io_uring operation.
+> + */
+> +static int smack_uring_override_creds(const struct cred *new)
+> +{
+> +       struct task_smack *tsp = smack_cred(current_cred());
+> +       struct task_smack *nsp = smack_cred(new);
+> +
+> +#if 1
+> +       if (tsp->smk_task == nsp->smk_task)
+> +               pr_info("%s: Smack matches %s\n", __func__,
+> +                       tsp->smk_task->smk_known);
+> +       else
+> +               pr_info("%s: Smack override check %s to %s\n", __func__,
+> +                       tsp->smk_task->smk_known, nsp->smk_task->smk_known);
+> +#endif
 
-io_drain_req() goes before checks for REQ_F_FAIL, which protect us from
-submitting under-prepared request (e.g. failed in io_init_req(). Fail
-such drained requests as well.
+Casey, with the idea of posting a v3 towards the end of the merge
+window next week, without the RFC tag and with the intention of
+merging it into -next during the first/second week of the -rcX phase,
+do you have any objections to me removing the debug code (#if 1 ...
+#endif) from your patch?  Did you have any other changes?
 
-Fixes: a8295b982c46d ("io_uring: fix failed linkchain code logic")
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 5 +++++
- 1 file changed, 5 insertions(+)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 6e07456d9842..2514adced460 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -6232,6 +6232,11 @@ static bool io_drain_req(struct io_kiocb *req)
- 	int ret;
- 	u32 seq;
- 
-+	if (req->flags & REQ_F_FAIL) {
-+		io_req_complete_fail_submit(req);
-+		return true;
-+	}
-+
- 	/*
- 	 * If we need to drain a request in the middle of a link, drain the
- 	 * head request and the next request/link after the current link.
--- 
-2.33.0
-
+--
+paul moore
+www.paul-moore.com

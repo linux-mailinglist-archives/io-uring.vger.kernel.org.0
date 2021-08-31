@@ -2,266 +2,148 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B9513FCB0A
-	for <lists+io-uring@lfdr.de>; Tue, 31 Aug 2021 17:50:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C6523FCB34
+	for <lists+io-uring@lfdr.de>; Tue, 31 Aug 2021 18:08:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238853AbhHaPvW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 31 Aug 2021 11:51:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56736 "EHLO
+        id S233018AbhHaQJC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 31 Aug 2021 12:09:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232770AbhHaPvV (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 31 Aug 2021 11:51:21 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5E9CC061575
-        for <io-uring@vger.kernel.org>; Tue, 31 Aug 2021 08:50:25 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id c129-20020a1c35870000b02902e6b6135279so2969704wma.0
-        for <io-uring@vger.kernel.org>; Tue, 31 Aug 2021 08:50:25 -0700 (PDT)
+        with ESMTP id S232770AbhHaQJB (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 31 Aug 2021 12:09:01 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0ECDFC061575
+        for <io-uring@vger.kernel.org>; Tue, 31 Aug 2021 09:08:06 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id m9so4180741wrb.1
+        for <io-uring@vger.kernel.org>; Tue, 31 Aug 2021 09:08:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=AGypVFFRxrSIAxIWonyDUOoulqUjEbXnkjTlBeFM1gg=;
-        b=QonzukMALkTeZIM4ge3u+WfNF8svdgLPg5JOkoV7D3LJ7swR0iDTZ0AS+fuJ1jN3qX
-         mIKtlghg/jq5aZmwyzopcydbt3y8plpgoGvdA4nIog2LfJG1nqWg1LbO3iCVSIzQ88jb
-         6pN9buBDFyvQXTN37NRmN1lrEJ2DYO/U4xCffF/13JhODRPBXQnhvv5RD+M3cy68UHss
-         AuLZb7sCXX/QRJ4XJV34nQBrR0Pvxi//k1q+i1Yn97KaqF4S+qUR0Zu16pkxjXaayo71
-         0oqDyE35NKXf3A30+MNO2JeNs1lOk396CA5z6tkeAYPM0YM7PhX/t/bzAFuoHqLH1pWb
-         3GdA==
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=lHQiqchgHj21YXOsp0OboW+rLSskwTeEw16T3bL1XSU=;
+        b=bCzNROTR4Tehv5RsZK8v0UlA2NETxq5EYqr569xLJ2nCeDtG7nEfg+3vpwV6QuDjX9
+         ljB+5cPqSKCkvjcEHOWssBbAHgW/tUBtw1pUVQTiECvivbGz0PZTMtYDGx2YhHRa/dCF
+         YPj3mvby1M06L+dSwND5pdIEYYyUpyU6MWAHAL2IGfYFoxtyKyggVo1+OOZC+jVOaJkU
+         VdB5Le3TKfnnS/GQc7ftjZH2S06bYSwKYsIcRXwfulhG/tREbnfR4ixdDubIdtL8qa2O
+         JaHN6I+Pro7A4r5sLa+Tk7Fn3osCbBfjw/E1J2qHH2nUTEFosz9EeB3MNxi8FbUXF2om
+         V1qA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=AGypVFFRxrSIAxIWonyDUOoulqUjEbXnkjTlBeFM1gg=;
-        b=Tqs8tDEzipJ95bbkdjD4rBCSBBahXbgNIQpbJ2l2A/DEJqhp+wYVHpXlUX/irOLpA7
-         7Dw53riIERiDb8JxjsUj9Iu0KbTWXAqz6ApMlM5zogO957lCUN+pDI/xHGdg94Tc2q+/
-         CZsxgMWUMNa9b19gVYyQR81SLXrJDmkuCTAP8FLVKwaI3KWklbqz7bhGkaLD3OD1c+KK
-         pm2WzvuFdqw2eXlNFgFcN7e/YVTjrebRHaZgRo+rKeRHLcgusjWYVnItmOs24+Rl5cMi
-         WXuBD+AwO7+TkiaJVN+yqCCUk0xEFflPELGjWx8V1nzFPs5ZPq/6DMBjxd3uCOPIQWkX
-         /AiA==
-X-Gm-Message-State: AOAM533jadPvxHWL0QGivS0giRsVoVqXixCCnZF1eNmzj4/y+24VrX2j
-        jR4RXGyEtfHmPz/aS9zxyFU=
-X-Google-Smtp-Source: ABdhPJxNM3s4OvzxCZSoHMk3LO1CKZVChnvEZSVjScsYrJ2fgRYM8KJj2qJtGwUh45+Re80GCbzL7w==
-X-Received: by 2002:a1c:7d06:: with SMTP id y6mr5016349wmc.7.1630425024483;
-        Tue, 31 Aug 2021 08:50:24 -0700 (PDT)
-Received: from localhost.localdomain ([148.252.133.138])
-        by smtp.gmail.com with ESMTPSA id d145sm2751786wmd.3.2021.08.31.08.50.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Aug 2021 08:50:23 -0700 (PDT)
+        bh=lHQiqchgHj21YXOsp0OboW+rLSskwTeEw16T3bL1XSU=;
+        b=Nd5wmwvUnyQL80we04rWHRkfcqNK6I9c9sFbsGBu1o15TtWkM9TsgmvY1BkV8xXSr6
+         W4rueQD2M0+33Lk/6wqS8qQpYjH6lEfQRR3GgQuTDg4jF8m8Yeh73m2XzpG2m6Zkl0RR
+         kEY/oaaAOV466kxwQyi8fi3dkBi4JOQA+x5tWKvXNVXXZggliNUABhAPvGzXYIimbL+o
+         BMWrlnuK7UF/3bDeQ/4/ItYvxcv54siNk4QkKU2vvfV7dr8ge2JA0QN3v0FupfdrF5P8
+         9x6AxBz7xnE6pBRr0ozQ5oYXNGkPdpub/Kkz1HN+0CQFuvonl5wCcU7/sD4ZHfPzi+F7
+         kmog==
+X-Gm-Message-State: AOAM533iharXLAku3TnFRkaXeXqsyh8Rt/Tf2sWYQSOV+DTPqKhmcY4B
+        08rSeZlNgZgkemm4ajxjB6VxUyPXrd0=
+X-Google-Smtp-Source: ABdhPJwdz7qZIucXvd03sPpAxHFBD8eiaXsF49HbyIOzlKSiQt0Dt16GAj4RuMlTrP0W0p0t13PgEg==
+X-Received: by 2002:adf:e101:: with SMTP id t1mr32381297wrz.215.1630426084421;
+        Tue, 31 Aug 2021 09:08:04 -0700 (PDT)
+Received: from [192.168.8.197] ([148.252.133.138])
+        by smtp.gmail.com with ESMTPSA id k4sm18897580wrm.74.2021.08.31.09.08.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 31 Aug 2021 09:08:04 -0700 (PDT)
+Subject: Re: io_uring_prep_timeout_update on linked timeouts
+To:     Jens Axboe <axboe@kernel.dk>, Victor Stewart <v@nametag.social>,
+        io-uring <io-uring@vger.kernel.org>
+References: <CAM1kxwhHOt1Ni==4Qr6c+qGzQQ2R9SQR4COkG2MXn_SUzEG-cg@mail.gmail.com>
+ <CAM1kxwi83=Q1Br46=_3DH46Ep2XoxbRX5hOVwFs7ze87Osx_eg@mail.gmail.com>
+ <CAM1kxwiAF3tmF8PxVf6KPV+Qsg_180sFvebxos5ySmU=TqxgmA@mail.gmail.com>
+ <1b3865bd-f381-04f3-6e54-779fe6b43946@kernel.dk>
+ <04e3c4ab-4e78-805c-bc4f-f9c6d7e85ec1@gmail.com>
+ <b53e6d69-9591-607b-c391-bf5fed23c1af@kernel.dk>
+ <ebf4753c-dbe4-f6b5-e79c-39cc9a608beb@gmail.com>
+ <66bf3640-a396-28cf-0b0d-8f3a9622ce2b@kernel.dk>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc:     Hao Xu <haoxu@linux.alibaba.com>
-Subject: [PATCH liburing v2] tests: test early-submit link fails
-Date:   Tue, 31 Aug 2021 16:49:46 +0100
-Message-Id: <3e02f382b64e7d09c8226ee02be130e4b75d890e.1630424932.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.33.0
+Message-ID: <33030b85-fcec-181f-5244-198b86a8e1d4@gmail.com>
+Date:   Tue, 31 Aug 2021 17:07:32 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <66bf3640-a396-28cf-0b0d-8f3a9622ce2b@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Add a whole bunch of tests for when linked requests fail early during
-submission.
+On 8/29/21 3:40 AM, Jens Axboe wrote:
+> On 8/28/21 3:38 PM, Pavel Begunkov wrote:
+>> On 8/28/21 2:43 PM, Jens Axboe wrote:
+>>> On 8/28/21 7:39 AM, Pavel Begunkov wrote:
+>>>> On 8/28/21 4:22 AM, Jens Axboe wrote:
+>>>>> On 8/26/21 7:40 PM, Victor Stewart wrote:
+>>>>>> On Wed, Aug 25, 2021 at 2:27 AM Victor Stewart <v@nametag.social> wrote:
+>>>>>>>
+>>>>>>> On Tue, Aug 24, 2021 at 11:43 PM Victor Stewart <v@nametag.social> wrote:
+>>>>>>>>
+>>>>>>>> we're able to update timeouts with io_uring_prep_timeout_update
+>>>>>>>> without having to cancel
+>>>>>>>> and resubmit, has it ever been considered adding this ability to
+>>>>>>>> linked timeouts?
+>>>>>>>
+>>>>>>> whoops turns out this does work. just tested it.
+>>>>>>
+>>>>>> doesn't work actually. missed that because of a bit of misdirection.
+>>>>>> returns -ENOENT.
+>>>>>>
+>>>>>> the problem with the current way of cancelling then resubmitting
+>>>>>> a new a timeout linked op (let's use poll here) is you have 3 situations:
+>>>>>>
+>>>>>> 1) the poll triggers and you get some positive value. all good.
+>>>>>>
+>>>>>> 2) the linked timeout triggers and cancels the poll, so the poll
+>>>>>> operation returns -ECANCELED.
+>>>>>>
+>>>>>> 3) you cancel the existing poll op, and submit a new one with
+>>>>>> the updated linked timeout. now the original poll op returns
+>>>>>> -ECANCELED.
+>>>>>>
+>>>>>> so solely from looking at the return value of the poll op in 2) and 3)
+>>>>>> there is no way to disambiguate them. of course the linked timeout
+>>>>>> operation result will allow you to do so, but you'd have to persist state
+>>>>>> across cqe processings. you can also track the cancellations and know
+>>>>>> to skip the explicitly cancelled ops' cqes (which is what i chose).
+>>>>>>
+>>>>>> there's also the problem of efficiency. you can imagine in a QUIC
+>>>>>> server where you're constantly updating that poll timeout in response
+>>>>>> to idle timeout and ACK scheduling, this extra work mounts.
+>>>>>>
+>>>>>> so i think the ability to update linked timeouts via
+>>>>>> io_uring_prep_timeout_update would be fantastic.
+>>>>>
+>>>>> Hmm, I'll need to dig a bit, but whether it's a linked timeout or not
+>>>>> should not matter. It's a timeout, it's queued and updated the same way.
+>>>>> And we even check this in some of the liburing tests.
+>>>>
+>>>> We don't keep linked timeouts in ->timeout_list, so it's not
+>>>> supported and has never been. Should be doable, but we need
+>>>> to be careful synchronising with the link's head.
+>>>
+>>> Yeah shoot you are right, I guess that explains the ENOENT. Would be
+>>> nice to add, though. Synchronization should not be that different from
+>>> dealing with regular timeouts.
+>>
+>> _Not tested_, but something like below should do. will get it
+>> done properly later, but even better if we already have a test
+>> case. Victor?
+> 
+> FWIW, I wrote a simple test case for it, and it seemed to work fine.
+> Nothing fancy, just a piped read that would never finish with a linked
+> timeout (1s), submit, then submit a ltimeout update that changes it to
+> 2s instead. Test runs and update completes first with res == 0 as
+> expected, and 2s later the ltimeout completes with -EALREADY (because
+> the piped read went async) and the piped read gets canceled.
+> 
+> That seems to be as expected, and didn't trigger anything odd.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
+Perfect. Thanks, Jens
 
-v2: correct io_uring_submit() ret checks with !drain
-
- .gitignore              |   1 +
- test/Makefile           |   2 +
- test/submit-link-fail.c | 150 ++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 153 insertions(+)
- create mode 100644 test/submit-link-fail.c
-
-diff --git a/.gitignore b/.gitignore
-index 3d67ef9..df0f740 100644
---- a/.gitignore
-+++ b/.gitignore
-@@ -128,6 +128,7 @@
- /test/rw_merge_test
- /test/sqpoll-cancel-hang
- /test/testfile
-+/test/submit-link-fail
- /test/*.dmesg
- 
- config-host.h
-diff --git a/test/Makefile b/test/Makefile
-index d392b95..775e3bb 100644
---- a/test/Makefile
-+++ b/test/Makefile
-@@ -123,6 +123,7 @@ test_targets += \
- 	sq-space_left \
- 	stdout \
- 	submit-reuse \
-+	submit-link-fail \
- 	symlink \
- 	teardowns \
- 	thread-exit \
-@@ -264,6 +265,7 @@ test_srcs := \
- 	statx.c \
- 	stdout.c \
- 	submit-reuse.c \
-+	submit-link-fail.c \
- 	symlink.c \
- 	teardowns.c \
- 	thread-exit.c \
-diff --git a/test/submit-link-fail.c b/test/submit-link-fail.c
-new file mode 100644
-index 0000000..b79aa7c
---- /dev/null
-+++ b/test/submit-link-fail.c
-@@ -0,0 +1,150 @@
-+/* SPDX-License-Identifier: MIT */
-+/*
-+ * Description: tests linked requests failing during submission
-+ */
-+#include <errno.h>
-+#include <stdio.h>
-+#include <unistd.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <fcntl.h>
-+#include <assert.h>
-+
-+#include "liburing.h"
-+
-+#define DRAIN_USER_DATA 42
-+
-+static int test_underprep_fail(bool hardlink, bool drain, bool link_last,
-+			       int link_size, int fail_idx)
-+{
-+	const int invalid_fd = 42;
-+	int link_flags = IOSQE_IO_LINK;
-+	int total_submit = link_size;
-+	struct io_uring ring;
-+	struct io_uring_sqe *sqe;
-+	struct io_uring_cqe *cqe;
-+	char buffer[1];
-+	int i, ret, fds[2];
-+
-+	if (drain)
-+		link_flags |= IOSQE_IO_DRAIN;
-+	if (hardlink)
-+		link_flags |= IOSQE_IO_HARDLINK;
-+
-+	assert(fail_idx < link_size);
-+	assert(link_size < 40);
-+
-+	/* create a new ring as it leaves it dirty */
-+	ret = io_uring_queue_init(8, &ring, 0);
-+	if (ret) {
-+		printf("ring setup failed\n");
-+		return -1;
-+	}
-+	if (pipe(fds)) {
-+		perror("pipe");
-+		return -1;
-+	}
-+
-+	if (drain) {
-+		/* clog drain, so following reqs sent to draining */
-+		sqe = io_uring_get_sqe(&ring);
-+		io_uring_prep_read(sqe, fds[0], buffer, sizeof(buffer), 0);
-+		sqe->user_data = DRAIN_USER_DATA;
-+		sqe->flags |= IOSQE_IO_DRAIN;
-+		total_submit++;
-+	}
-+
-+	for (i = 0; i < link_size; i++) {
-+		sqe = io_uring_get_sqe(&ring);
-+		if (i == fail_idx)
-+			io_uring_prep_read(sqe, invalid_fd, buffer, 1, 0);
-+		else
-+			io_uring_prep_nop(sqe);
-+
-+		if (i != link_size - 1 || !link_last)
-+			sqe->flags |= link_flags;
-+		sqe->user_data = i;
-+	}
-+
-+	ret = io_uring_submit(&ring);
-+	if (ret != total_submit) {
-+		/* Old behaviour, failed early and under-submitted */
-+		if (ret == fail_idx + 1 + drain)
-+			goto out;
-+		fprintf(stderr, "submit failed: %d\n", ret);
-+		return -1;
-+	}
-+
-+	if (drain) {
-+		/* unclog drain */
-+		write(fds[1], buffer, sizeof(buffer));
-+	}
-+
-+	for (i = 0; i < total_submit; i++) {
-+		ret = io_uring_wait_cqe(&ring, &cqe);
-+		if (ret) {
-+			fprintf(stderr, "wait_cqe=%d\n", ret);
-+			return 1;
-+		}
-+
-+		ret = cqe->res;
-+		if (cqe->user_data == DRAIN_USER_DATA) {
-+			if (ret != 1) {
-+				fprintf(stderr, "drain failed %d\n", ret);
-+				return 1;
-+			}
-+		} else if (cqe->user_data == fail_idx) {
-+			if (ret == 0 || ret == -ECANCELED) {
-+				fprintf(stderr, "half-prep req unexpected return %d\n", ret);
-+				return 1;
-+			}
-+		} else {
-+			if (ret != -ECANCELED) {
-+				fprintf(stderr, "cancel failed %d, ud %d\n", ret, (int)cqe->user_data);
-+				return 1;
-+			}
-+		}
-+		io_uring_cqe_seen(&ring, cqe);
-+	}
-+out:
-+	close(fds[0]);
-+	close(fds[1]);
-+	io_uring_queue_exit(&ring);
-+	return 0;
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	int ret, link_size, fail_idx, i;
-+
-+	if (argc > 1)
-+		return 0;
-+
-+	/*
-+	 * hardlink, size=3, fail_idx=1, drain=false -- kernel fault
-+	 * link, size=3, fail_idx=0, drain=true -- kernel fault
-+	 * link, size=3, fail_idx=1, drain=true -- invalid cqe->res
-+	 */
-+	for (link_size = 0; link_size < 3; link_size++) {
-+		for (fail_idx = 0; fail_idx < link_size; fail_idx++) {
-+			for (i = 0; i < 8; i++) {
-+				bool hardlink = (i & 1) != 0;
-+				bool drain = (i & 2) != 0;
-+				bool link_last = (i & 4) != 0;
-+
-+				ret = test_underprep_fail(hardlink, drain, link_last,
-+							  link_size, fail_idx);
-+				if (!ret)
-+					continue;
-+
-+				fprintf(stderr, "failed %d, hard %d, drain %d,"
-+						"link_last %d, size %d, idx %d\n",
-+						ret, hardlink, drain, link_last,
-+						link_size, fail_idx);
-+				return 1;
-+			}
-+		}
-+	}
-+
-+	return 0;
-+}
 -- 
-2.33.0
-
+Pavel Begunkov

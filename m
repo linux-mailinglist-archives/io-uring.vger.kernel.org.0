@@ -2,265 +2,81 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C795F3FCD80
-	for <lists+io-uring@lfdr.de>; Tue, 31 Aug 2021 21:21:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF5683FCDFC
+	for <lists+io-uring@lfdr.de>; Tue, 31 Aug 2021 22:02:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239988AbhHaTGz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 31 Aug 2021 15:06:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45534 "EHLO
+        id S240921AbhHaTjz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 31 Aug 2021 15:39:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53346 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239852AbhHaTGy (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 31 Aug 2021 15:06:54 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D2A6C061575
-        for <io-uring@vger.kernel.org>; Tue, 31 Aug 2021 12:05:59 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id q11so684765wrr.9
-        for <io-uring@vger.kernel.org>; Tue, 31 Aug 2021 12:05:58 -0700 (PDT)
+        with ESMTP id S240905AbhHaTjz (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 31 Aug 2021 15:39:55 -0400
+Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACF45C061575
+        for <io-uring@vger.kernel.org>; Tue, 31 Aug 2021 12:38:59 -0700 (PDT)
+Received: by mail-io1-xd34.google.com with SMTP id b200so272049iof.13
+        for <io-uring@vger.kernel.org>; Tue, 31 Aug 2021 12:38:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Y7z6asOEB+V7nZVlFjPNfz+N0Tn05raHKoG2+B44c50=;
-        b=p8lWo1zpkw3xqSJZJoY77lT2Y37GS3HIfoOYbSMaTV9GGMgsBiIw3B1WzdoQUW0Zt+
-         s37P3zU2EZu1CGRntJCWE8BqS65WRfVb3Uqkql9k6mlQ+GPIZ1S2DNmo8A+bEbrOvX83
-         XdF0+J3sn1JytC4UrXC4qrc8lLuwpgubinv2xTotgSSnR9Hnyg8ATRALa9S/m/S2iKeV
-         888MWazpxF4jW9dfrPNt4uw22q5eMQURfRfHEu+V9LBUm0OyEDyv7cMAmLLSjyvov3wY
-         ika04+/8ZUpxi2EOF5ulswmR7UosCscHzk5N2+p0aa87GNOfpYou/eY8oqJ/o58NoOul
-         TidA==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=EVR4v+PXjebuwtlj3GJMm0eofWTjdgfryY264x5dvp0=;
+        b=lahEAUToUr02rh0XRiZ6BcMnXnB5eyUeDcW72U+nH6ZFTS/CavVAyr6e5TGNWYFs7/
+         fSb9kDMV4zsq8mL6p/JEW2a4M89Ek/cGpwVm9LDTMVep74XzjRMh4pbkWFuGzrWL5WEr
+         cK0VSwbgKq9vtw7CfG97lC2/tyWlzS3rZnyTa9s7dfxQiZoC7cEWYb6DMublxLuKisVm
+         tn2NyYqldhbVO+1ICqQLfinK/yJAta12HFMltCCbwI0o5dxBFkrybScHbX8hKJ0UYg9+
+         wYtlhrzZv+XFvirG13rulQdhTSeZdfYAuRteIHL6ZnqhQfJtz6G2vL5jGmYI/v2I3MgY
+         yXVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=Y7z6asOEB+V7nZVlFjPNfz+N0Tn05raHKoG2+B44c50=;
-        b=Ltg1OY1ZUl4oN3H33hddCu0FEqRDDSzgWVFmBvYZCdCPbouPPCCsjEiz3U4G1COB+b
-         kjyL018DaekWJu/ukAGzCS1FuC2iPsFKA4+bvtotvMQ9rNJO2wSfYojB7L4FZprc/LRs
-         2TREcFx0Sp//7OFhhZX5ECJmkvhK+1OW9BOBAFEfTAmOYoCeo549GcwJqYYsZJvbGVv9
-         36O/auY88cHmoUexvdTPM/roF92XjuPFMBxcE6nDopM9bD7NundzEVAwUKmzu0hnhX5S
-         zyy0fnyyBT8SsyQQtt3x6jznlqFldeso1v3cgxkC+nTRCwW2XZt7bd1mZmE1c0NG/D99
-         2L3A==
-X-Gm-Message-State: AOAM530Yi5r6pbM6BWtwBViHXmsGTfjf8140rITu3/4lAHRNFsa7mFQ/
-        FxczuOl3HuNT8ouh5umwa40BWozqf+4=
-X-Google-Smtp-Source: ABdhPJzn5iYIIvgm1domQHcgXo9v530Yj3DJbxTRtK3MxK+MnKbVr6ssgI59A1sqH1MoWYciXNymXg==
-X-Received: by 2002:a05:6000:1627:: with SMTP id v7mr12686726wrb.195.1630436757611;
-        Tue, 31 Aug 2021 12:05:57 -0700 (PDT)
-Received: from localhost.localdomain ([148.252.133.138])
-        by smtp.gmail.com with ESMTPSA id s7sm19256727wra.75.2021.08.31.12.05.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Aug 2021 12:05:57 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH liburing v2] man: document new register/update API
-Date:   Tue, 31 Aug 2021 20:05:19 +0100
-Message-Id: <f456c80bb8795eb7b8c3db8279206d94ce148587.1630436406.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.33.0
+        bh=EVR4v+PXjebuwtlj3GJMm0eofWTjdgfryY264x5dvp0=;
+        b=X5mugKORKi2iatqzZCfucHjXWn0fuIDso81KT3alBbiw4G7YRstGWLX4eE+m2HvOtK
+         9hIFjKiN2aglScyngLl1feH0yGovy906mB/Y4G7VNsq4fi29avU6HZgjQ/9cglQyF/Mj
+         DT9iafo6DZY7i4+ASHr6tOEcbKNAcDUz7mKQ6FYbK+tQf/yAOGI0/fosejGBNW3IY61Y
+         nCHYkiEPKF4WeoJ2JjiAD9GZVY4VNktqubslAs00cISAiWDkoTKn1Tc9ERqviFVnq1YY
+         CIOz9rb0/A5ftijRxhxyuv1plDodKiQat6g4C7jGn5FxJVSj0wKh8UV51o2PeNsID4/8
+         oCZw==
+X-Gm-Message-State: AOAM533FtletoZieJEgfMbibCXCL07ondMNTdeYXqZZXoGxZ+DZCQ3PW
+        KhWmvXsnsexnA/DZ/muY1G/zsXl4l/xNfg==
+X-Google-Smtp-Source: ABdhPJyMHF6pYRWH8+taj8iN2f7VNvxBVSypwYAVL3LEJo9bh9UOXtM/AVXm/eR/uz97hzNakYUGtQ==
+X-Received: by 2002:a5e:a813:: with SMTP id c19mr24129114ioa.199.1630438738660;
+        Tue, 31 Aug 2021 12:38:58 -0700 (PDT)
+Received: from [192.168.1.30] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id h9sm10722448ioz.30.2021.08.31.12.38.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 31 Aug 2021 12:38:58 -0700 (PDT)
+Subject: Re: [PATCH liburing v2] man: document new register/update API
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <f456c80bb8795eb7b8c3db8279206d94ce148587.1630436406.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <5b59ddc1-143d-2855-5dbc-8648fdb9f6fe@kernel.dk>
+Date:   Tue, 31 Aug 2021 13:38:57 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <f456c80bb8795eb7b8c3db8279206d94ce148587.1630436406.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Document
-- IORING_REGISTER_FILES2
-- IORING_REGISTER_FILES_UPDATE2,
-- IORING_REGISTER_BUFFERS2
-- IORING_REGISTER_BUFFERS_UPDATE,
+On 8/31/21 1:05 PM, Pavel Begunkov wrote:
+> Document
+> - IORING_REGISTER_FILES2
+> - IORING_REGISTER_FILES_UPDATE2,
+> - IORING_REGISTER_BUFFERS2
+> - IORING_REGISTER_BUFFERS_UPDATE,
+> 
+> And add a couple of words on registered resources (buffers, files)
+> tagging.
 
-And add a couple of words on registered resources (buffers, files)
-tagging.
+Great, thanks! I made a few minor edits while applying.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
-
-v2: bunch of small changes (Jens)
-    fix incorrect struct names 
-
-
- man/io_uring_register.2 | 151 +++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 150 insertions(+), 1 deletion(-)
-
-diff --git a/man/io_uring_register.2 b/man/io_uring_register.2
-index a17e411..1a348d1 100644
---- a/man/io_uring_register.2
-+++ b/man/io_uring_register.2
-@@ -95,6 +95,99 @@ wait for those to finish before proceeding.
- An application need not unregister buffers explicitly before shutting
- down the io_uring instance. Available since 5.1.
- 
-+.TP
-+.B IORING_REGISTER_BUFFERS2
-+Register buffers for I/O. Similar to
-+.B IORING_REGISTER_BUFFERS
-+but aims to have a more extensible ABI.
-+
-+.I arg
-+points to a
-+.I struct io_uring_rsrc_register,
-+and
-+.I nr_args
-+should be set to the number of bytes in the structure.
-+
-+.PP
-+.in +8n
-+.EX
-+struct io_uring_rsrc_register {
-+    __u32 nr;
-+    __u32 resv;
-+    __u64 resv2;
-+    __aligned_u64 data;
-+    __aligned_u64 tags;
-+};
-+
-+.EE
-+.in
-+.PP
-+
-+.in +8n
-+
-+The
-+.I data
-+field contains a pointer to a
-+.I struct iovec
-+array of
-+.I nr
-+entries.
-+The
-+.I tags
-+field should either be 0, then tagging is disabled, or point to an array
-+of
-+.I nr
-+"tags" (unsigned 64 bit integers). If a tag is zero, then tagging for this
-+particular resource (a buffer in this case) is disabled. Otherwise, after the
-+resource had been unregistered and it's not anymore used, a CQE will be
-+posted with
-+.I user_data
-+set to the specified tag and all other fields zeroed.
-+
-+Note that resource updates, e.g.
-+.B IORING_REGISTER_BUFFERS_UPDATE,
-+don't necessarily deallocate resources by the time it returns, but they might
-+be held alive until all requests using it complete.
-+
-+Available since 5.13.
-+
-+.TP
-+.B IORING_REGISTER_BUFFERS_UPDATE
-+Updates registered buffers with new ones, either turning a sparse entry into
-+a real one, or replacing an existing entry.
-+
-+.I arg
-+must contain a pointer to a struct io_uring_rsrc_update2, which contains
-+an offset on which to start the update, and an array of
-+.I struct iovec.
-+.I tags
-+points to an array of tags.
-+.I nr
-+must contain the number of descriptors in the passed in arrays.
-+See
-+.B IORING_REGISTER_BUFFERS2
-+for the resource tagging description.
-+
-+.PP
-+.in +8n
-+.EX
-+
-+struct io_uring_rsrc_update2 {
-+    __u32 offset;
-+    __u32 resv;
-+    __aligned_u64 data;
-+    __aligned_u64 tags;
-+    __u32 nr;
-+    __u32 resv2;
-+};
-+.EE
-+.in
-+.PP
-+
-+.in +8n
-+
-+Available since 5.13.
-+
- .TP
- .B IORING_UNREGISTER_BUFFERS
- This operation takes no argument, and
-@@ -138,6 +231,37 @@ Files are automatically unregistered when the io_uring instance is
- torn down. An application need only unregister if it wishes to
- register a new set of fds. Available since 5.1.
- 
-+.TP
-+.B IORING_REGISTER_FILES2
-+Register files for I/O. similar to
-+.B IORING_REGISTER_FILES.
-+
-+.I arg
-+points to a
-+.I struct io_uring_rsrc_register,
-+and
-+.I nr_args
-+should be set to the number of bytes in the structure.
-+
-+The
-+.I data
-+field contains a pointer to an array of
-+.I nr
-+file descriptors (signed 32 bit integers).
-+.I tags
-+field should either be 0 or or point to an array of
-+.I nr
-+"tags" (unsigned 64 bit integers). See
-+.B IORING_REGISTER_BUFFERS2
-+for more info on resource tagging.
-+
-+Note that resource updates, e.g.
-+.B IORING_REGISTER_FILES_UPDATE,
-+don't necessarily deallocate resources, but might hold it until all
-+requests using it complete.
-+
-+Available since 5.13.
-+
- .TP
- .B IORING_REGISTER_FILES_UPDATE
- This operation replaces existing files in the registered file set with new
-@@ -146,7 +270,9 @@ real one, removing an existing entry (new one is set to -1), or replacing
- an existing entry with a new existing entry.
- 
- .I arg
--must contain a pointer to a struct io_uring_files_update, which contains
-+must contain a pointer to a
-+.I struct io_uring_files_update,
-+which contains
- an offset on which to start the update, and an array of file descriptors to
- use for the update.
- .I nr_args
-@@ -158,6 +284,29 @@ File descriptors can be skipped if they are set to
- Skipping an fd will not touch the file associated with the previous
- fd at that index. Available since 5.12.
- 
-+.TP
-+.B IORING_REGISTER_FILES_UPDATE2
-+Similar to IORING_REGISTER_FILES_UPDATE, replaces existing files in the
-+registered file set with new ones, either turning a sparse entry (one where
-+fd is equal to -1) into a real one, removing an existing entry (new one is
-+set to -1), or replacing an existing entry with a new existing entry.
-+
-+.I arg
-+must contain a pointer to a
-+.I struct io_uring_rsrc_update2,
-+which contains
-+an offset on which to start the update, and an array of file descriptors to
-+use for the update stored in
-+.I data.
-+.I tags
-+points to an array of tags.
-+.I nr
-+must contain the number of descriptors in the passed in arrays.
-+See
-+.B IORING_REGISTER_BUFFERS2
-+for the resource tagging description.
-+
-+Available since 5.13.
- 
- .TP
- .B IORING_UNREGISTER_FILES
 -- 
-2.33.0
+Jens Axboe
 

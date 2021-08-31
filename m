@@ -2,132 +2,103 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 818393FCE0C
-	for <lists+io-uring@lfdr.de>; Tue, 31 Aug 2021 22:02:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C11A73FCE22
+	for <lists+io-uring@lfdr.de>; Tue, 31 Aug 2021 22:04:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241008AbhHaTxr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 31 Aug 2021 15:53:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56430 "EHLO
+        id S233641AbhHaUFF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 31 Aug 2021 16:05:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59028 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240991AbhHaTxm (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 31 Aug 2021 15:53:42 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41F4BC061575
-        for <io-uring@vger.kernel.org>; Tue, 31 Aug 2021 12:52:46 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id t15so901190wrg.7
-        for <io-uring@vger.kernel.org>; Tue, 31 Aug 2021 12:52:46 -0700 (PDT)
+        with ESMTP id S240532AbhHaUE7 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 31 Aug 2021 16:04:59 -0400
+Received: from mail-il1-x136.google.com (mail-il1-x136.google.com [IPv6:2607:f8b0:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC8B4C061575
+        for <io-uring@vger.kernel.org>; Tue, 31 Aug 2021 13:04:03 -0700 (PDT)
+Received: by mail-il1-x136.google.com with SMTP id i13so482159ilm.4
+        for <io-uring@vger.kernel.org>; Tue, 31 Aug 2021 13:04:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=XDA/hWBAQl6OkJn8Cv/Gtp+vk6WVer1NbJyzbBroQgU=;
-        b=Gu+lZhuCk/UMMD/WwimWXjUDlARsKvaI+llNX9YY37H5oKK/r9x87r+rj4B8XA2vLM
-         Vg4JxGq/sKVyNf4WGk1U24YBfRh5k1Y1zIh+WnLE8PtHAeSATeFDRMKreniQaHptJSjH
-         rk54k+rRzLziWm6lRS8yBrdBwQDcQyHWADRdyloHQIqbGXPGvhAd8V5+bcMXab7yuL4s
-         DKu3tYqWdIh4dv+I7Rbni+C22cr3kt5sJLlaWd5j3ZogOoy2/eauQrbMmWj14iMEKMV5
-         TsapYqVfEQvEiYhJSjvi10D6ud5tA/Po1/brsMV0XmEuYd3o1pCWNwrkHn9vcItzQJ6z
-         7h5w==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=fOnmtR2ApV++9WH/erdVockbUtTw1uw8PSHhe/rtbtM=;
+        b=PgYFhq5EcsauOmzvYVN4l75HlNk0qGL6jQqcUy1bfAA0T+HcWQIQxca6OuMzS0G93f
+         8OMkr0U0thkwF+CTI3ZsRubiiUe8wXz+/ZkpPgk5n20KTRmQSqVF2h0Omlb/GGdzIYGy
+         VZyFPv0akRlqMbmEKtwV6DS3f+TSlhMIIBBu961+hJkPX1/45N0AQ/IG2Evy1mOr3gLT
+         l8TeP68VEQlM9KkGFvcpttojsSRXcZXq0MXEAkh0gm3mRff5/hQGp7YxGaYWEVdPPcx0
+         WTDJ22E3PMTmACdqNjReV+HgXYMHNjtextjvmHui3Q14CQqF2/lRfWSmulkRJfYLFGGx
+         Pncg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=XDA/hWBAQl6OkJn8Cv/Gtp+vk6WVer1NbJyzbBroQgU=;
-        b=WDSKokjBJiKUtyetQp9KTS4brEwlKWXLr/jgFtMxd9mlOBzPH5lf1hrcFU0SRqPm58
-         8c2k9iYh10TXBkhtaJZa0UvBfzn7IQSmam/VuX3prgTEt10UIs5A8TGDjHQLoiTkUI/r
-         LKIf1tygGtsGFzKOgqvfLrJ9gmmjcfAzJUTSRub8tYORy74B0lfw2I/LZeG6sT4hhujy
-         pY0JIFfQB1tShWqpv5N5yepRDZkq5CZXHcYEhvvdRb3aRnZ8YMkMyeC6HGV6glgSiCH/
-         puq+02jejto29I3gGPm176e4NfGcbSSnepod5mHEbi5UclRUza0aKnTMVv19ITpZJ05D
-         Jm6A==
-X-Gm-Message-State: AOAM531PNtJI9k6R7gN7VsI3eAi9RnS1H5D/hoTb1uqUipKGkWbRbdVl
-        6kRUXo0ydtnrDSvFnA1ajBw=
-X-Google-Smtp-Source: ABdhPJwuyD2EY3Ni066/1qaqL6fsABaJVpwnOJNRC7aWdSDf6tQ8ODv1rqQNL+k1ikmFAXLKNCFuDw==
-X-Received: by 2002:a5d:4410:: with SMTP id z16mr33780669wrq.110.1630439564709;
-        Tue, 31 Aug 2021 12:52:44 -0700 (PDT)
-Received: from localhost.localdomain ([148.252.133.138])
-        by smtp.gmail.com with ESMTPSA id l21sm3235143wmh.31.2021.08.31.12.52.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Aug 2021 12:52:44 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH liburing] man/io_uring_enter.2: add notes about direct open/accept
-Date:   Tue, 31 Aug 2021 20:52:07 +0100
-Message-Id: <e4b7c0f9b585307ac542470c535ef54e419157e0.1630439510.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.33.0
+        bh=fOnmtR2ApV++9WH/erdVockbUtTw1uw8PSHhe/rtbtM=;
+        b=PSDhNsVJIZXQG28k7I9M64dvxTU/5CZVTvZKmbmiryCIrEEurseuupWDv/DZTQSnWI
+         8k1eYiXnKGAeZOiPcQqxfjOMmTkbOjsU4WDmQHUOWdbsRqQo0HW0TT/HaWYxEf5XVpo7
+         ZxCpx5RCs7e8bq5WEvMoiNoi6OwNafqrPXkEOJx76i61kM/V105Gd9s1ZamR0MnoOJ76
+         VXsZmDyhxKF4cR61YWkq0bTAGrlWqGbCiDVXWoogX6vX6CTpVHcFX3SolrWjhdltQlH8
+         JuIu+rbOUwHwD2MpxLYQuTGv6RuAYFVudw4Go5XnNEKvbdwL9dZnv3Jb9igqnTUC6gjz
+         phpQ==
+X-Gm-Message-State: AOAM532T34qfmV9f6q9hWO+C2qbq1jkSaG+e8ilmzeKp2/ZvxNi5WPSO
+        4ZPrBI3NKVU4upt37j/AWn/1FNytjICMag==
+X-Google-Smtp-Source: ABdhPJyPr5bKzB74s6YqJHwIIi7p61aRXz48ssra8I2UdzoR0DY0oVhs4WBAVCtjmjW2anl+Bv0Hqw==
+X-Received: by 2002:a05:6e02:1354:: with SMTP id k20mr20570333ilr.133.1630440242954;
+        Tue, 31 Aug 2021 13:04:02 -0700 (PDT)
+Received: from [192.168.1.30] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id x12sm10455817ill.6.2021.08.31.13.04.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 31 Aug 2021 13:04:02 -0700 (PDT)
+Subject: Re: [PATCH liburing] man/io_uring_enter.2: add notes about direct
+ open/accept
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <e4b7c0f9b585307ac542470c535ef54e419157e0.1630439510.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <8f82a074-1597-1796-2e26-da3abe722806@kernel.dk>
+Date:   Tue, 31 Aug 2021 14:04:02 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <e4b7c0f9b585307ac542470c535ef54e419157e0.1630439510.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Add a few lines describing openat/openat2/accept bypassing normal file
-tables and installing files right into the fixed file table.
+On 8/31/21 1:52 PM, Pavel Begunkov wrote:
+> Add a few lines describing openat/openat2/accept bypassing normal file
+> tables and installing files right into the fixed file table.
+> 
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> ---
+>  man/io_uring_enter.2 | 36 ++++++++++++++++++++++++++++++++++++
+>  1 file changed, 36 insertions(+)
+> 
+> diff --git a/man/io_uring_enter.2 b/man/io_uring_enter.2
+> index 9ccedef..52a5e13 100644
+> --- a/man/io_uring_enter.2
+> +++ b/man/io_uring_enter.2
+> @@ -511,6 +511,18 @@ field. See also
+>  .BR accept4(2)
+>  for the general description of the related system call. Available since 5.5.
+>  
+> +If the
+> +.I file_index
+> +field is set to a non-negative number, the file won't be installed into the
+> +normal file table as usual but will be placed into the fixed file table at index
+> +.I file_index - 1.
+> +In this case, instead of returning a file descriptor, the result will contain
+> +0 on success or an error. If there is already a file registered at this index,
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- man/io_uring_enter.2 | 36 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+I don't think non-negative is correct, it has to be set to a positive
+number. non-negative would include 0, which isn't correct.
 
-diff --git a/man/io_uring_enter.2 b/man/io_uring_enter.2
-index 9ccedef..52a5e13 100644
---- a/man/io_uring_enter.2
-+++ b/man/io_uring_enter.2
-@@ -511,6 +511,18 @@ field. See also
- .BR accept4(2)
- for the general description of the related system call. Available since 5.5.
- 
-+If the
-+.I file_index
-+field is set to a non-negative number, the file won't be installed into the
-+normal file table as usual but will be placed into the fixed file table at index
-+.I file_index - 1.
-+In this case, instead of returning a file descriptor, the result will contain
-+0 on success or an error. If there is already a file registered at this index,
-+the request will fail with
-+.B -EBADF.
-+
-+Available since 5.15.
-+
- .TP
- .B IORING_OP_ASYNC_CANCEL
- Attempt to cancel an already issued request.
-@@ -634,6 +646,18 @@ is access mode of the file. See also
- .BR openat(2)
- for the general description of the related system call. Available since 5.6.
- 
-+If the
-+.I file_index
-+field is set to a non-negative number, the file won't be installed into the
-+normal file table as usual but will be placed into the fixed file table at index
-+.I file_index - 1.
-+In this case, instead of returning a file descriptor, the result will contain
-+0 on success or an error. If there is already a file registered at this index,
-+the request will fail with
-+.B -EBADF.
-+
-+Available since 5.15.
-+
- .TP
- .B IORING_OP_OPENAT2
- Issue the equivalent of a
-@@ -654,6 +678,18 @@ should be set to the address of the open_how structure. See also
- .BR openat2(2)
- for the general description of the related system call. Available since 5.6.
- 
-+If the
-+.I file_index
-+field is set to a non-negative number, the file won't be installed into the
-+normal file table as usual but will be placed into the fixed file table at index
-+.I file_index - 1.
-+In this case, instead of returning a file descriptor, the result will contain
-+0 on success or an error. If there is already a file registered at this index,
-+the request will fail with
-+.B -EBADF.
-+
-+Available since 5.15.
-+
- .TP
- .B IORING_OP_CLOSE
- Issue the equivalent of a
+Should also include a note on if these types of file are used, they
+won't work in anything but io_uring. That's obvious to us, but should be
+noted that they then only live within the realm of the ring itself, not
+the system as a whole.
+
 -- 
-2.33.0
+Jens Axboe
 

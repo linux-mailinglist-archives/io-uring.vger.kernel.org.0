@@ -2,78 +2,160 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 969883FC6A9
-	for <lists+io-uring@lfdr.de>; Tue, 31 Aug 2021 14:05:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFDB63FC6C2
+	for <lists+io-uring@lfdr.de>; Tue, 31 Aug 2021 14:06:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229677AbhHaLh6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 31 Aug 2021 07:37:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52652 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229566AbhHaLh5 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 31 Aug 2021 07:37:57 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB09CC061575
-        for <io-uring@vger.kernel.org>; Tue, 31 Aug 2021 04:37:02 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id i6so26327903edu.1
-        for <io-uring@vger.kernel.org>; Tue, 31 Aug 2021 04:37:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=nametag.social; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9OCPHe7ClxwtxqoiLfKVCkiKybH0LSGLvKLPx7M4lDQ=;
-        b=SIXg87yzQLddbUvnO0hB7HhCeYoKoyjA29zt7SZ04QOMHYJEfD2w1ihzyrROELm4bE
-         jYcT+rUQBlAoy8yBLKL91sOtx6j6/aHX7EHlGHFTAfgFcLhqyq6KDlj16Wnq8X/J9AEF
-         shuyahb9QY9snZe61devCwNKUnKzkBo6Spb6HDqTI9CpqynF/6YfCOvEacX9hwYne8+t
-         SzxFomhvMwuSpCn54xi2CEEfCTNEJUD/lDT2SuSLzzN5/It3hvvQJf6KHJ4F3XhrUq1J
-         AS9Kx8OfGuAsfFofoVafe3K24eLotXrAFKzUY6zIqTG1iAaGGoe92n5dQN7+4l11wLNf
-         LIpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9OCPHe7ClxwtxqoiLfKVCkiKybH0LSGLvKLPx7M4lDQ=;
-        b=KAVFT41mBU2LeMWbXnBXX3cIgglOp9E+QPeeLINesRt/ftTkaVtd/HoLDoPh02i1b/
-         aT5OGF4dSrhlI+/6En/dgbfW40SlbAQ+oYG4O3zTV4ZvH52+msU1LSHFrCuCi7xcETPg
-         fIHArPH3K+cipDBYKulpEy7R1BGSyfi8BPj0Qj5HM7sw+rIea/f3j5MTunvEVKd4m2zO
-         gG65/Exj8uMYJN6rSwaduFAxKzK6WzORF0EWbPa2k/8JNsPp1lz8siXBlfb+DqOxmY43
-         WOLJlV96zQi8EUBXH3G4/FTKdxh8defNg+HtVIaV5nIVYrEZePqgjGpdog4tgxAHfiuV
-         wbiA==
-X-Gm-Message-State: AOAM533d6VDVrghYPkDp7TegVlU2gN2IEjnnVSmGzm52QmJ1WAwVlgzU
-        473fFoFyWphPVlUjEFFN+i0k+FNq+UrS4IabPw7u4WNNeSY88mWo
-X-Google-Smtp-Source: ABdhPJzmkxtwkAX/JdomnD6Q/cXL7tamy0C1ja7CxFBA2RBOqAhSR0rmOfKSjNhIVJvQ3Aj2pPpp3UmRReh1r111/8k=
-X-Received: by 2002:a05:6402:d6f:: with SMTP id ec47mr28832396edb.95.1630409821055;
- Tue, 31 Aug 2021 04:37:01 -0700 (PDT)
+        id S241515AbhHaLtH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 31 Aug 2021 07:49:07 -0400
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:33786 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230382AbhHaLtG (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 31 Aug 2021 07:49:06 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R571e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=19;SR=0;TI=SMTPD_---0UmlN6Dj_1630410487;
+Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UmlN6Dj_1630410487)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 31 Aug 2021 19:48:08 +0800
+Subject: Re: [syzbot] general protection fault in sock_from_file
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        syzbot <syzbot+f9704d1878e290eddf73@syzkaller.appspotmail.com>,
+        andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
+        daniel@iogearbox.net, davem@davemloft.net, dvyukov@google.com,
+        io-uring@vger.kernel.org, john.fastabend@gmail.com, kafai@fb.com,
+        kpsingh@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, songliubraving@fb.com,
+        syzkaller-bugs@googlegroups.com, yhs@fb.com
+References: <00000000000059117905cacce99e@google.com>
+ <7949b7a0-fec1-34a7-aaf5-cbe07c6127ed@kernel.dk>
+ <d881d3fa-4df5-1862-bc2b-9420649ba3c8@linux.alibaba.com>
+ <407ce02f-7a0a-4eb2-b242-188fc605012c@gmail.com>
+ <6df81737-38d8-4c91-358a-79bc5d5f9074@linux.alibaba.com>
+ <fb5821b5-3bb2-4c1a-acdb-816e639cb210@gmail.com>
+From:   Hao Xu <haoxu@linux.alibaba.com>
+Message-ID: <6a0ac681-3741-373c-6001-20af97aa5ea8@linux.alibaba.com>
+Date:   Tue, 31 Aug 2021 19:48:07 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.13.0
 MIME-Version: 1.0
-References: <CAM1kxwhHOt1Ni==4Qr6c+qGzQQ2R9SQR4COkG2MXn_SUzEG-cg@mail.gmail.com>
- <CAM1kxwi83=Q1Br46=_3DH46Ep2XoxbRX5hOVwFs7ze87Osx_eg@mail.gmail.com>
- <CAM1kxwiAF3tmF8PxVf6KPV+Qsg_180sFvebxos5ySmU=TqxgmA@mail.gmail.com>
- <1b3865bd-f381-04f3-6e54-779fe6b43946@kernel.dk> <04e3c4ab-4e78-805c-bc4f-f9c6d7e85ec1@gmail.com>
- <b53e6d69-9591-607b-c391-bf5fed23c1af@kernel.dk> <ebf4753c-dbe4-f6b5-e79c-39cc9a608beb@gmail.com>
- <66bf3640-a396-28cf-0b0d-8f3a9622ce2b@kernel.dk>
-In-Reply-To: <66bf3640-a396-28cf-0b0d-8f3a9622ce2b@kernel.dk>
-From:   Victor Stewart <v@nametag.social>
-Date:   Tue, 31 Aug 2021 12:36:50 +0100
-Message-ID: <CAM1kxwgKJYUN=-CGT02oK+gxk_u60DchEAykoSYLbHRXfOz0Yg@mail.gmail.com>
-Subject: Re: io_uring_prep_timeout_update on linked timeouts
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring <io-uring@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <fb5821b5-3bb2-4c1a-acdb-816e639cb210@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-> > _Not tested_, but something like below should do. will get it
-> > done properly later, but even better if we already have a test
-> > case. Victor?
+在 2021/8/31 下午7:26, Pavel Begunkov 写道:
+> On 8/31/21 12:05 PM, Hao Xu wrote:
+>> 在 2021/8/31 下午5:42, Pavel Begunkov 写道:
+>>> On 8/31/21 10:19 AM, Hao Xu wrote:
+>>>> 在 2021/8/31 上午10:14, Jens Axboe 写道:
+>>>>> On 8/30/21 2:45 PM, syzbot wrote:
+>>>>>> syzbot has found a reproducer for the following issue on:
+>>>>>>
+>>>>>> HEAD commit:    93717cde744f Add linux-next specific files for 20210830
+>>>>>> git tree:       linux-next
+>>>>>> console output: https://syzkaller.appspot.com/x/log.txt?x=15200fad300000
+>>>>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=c643ef5289990dd1
+>>>>>> dashboard link: https://syzkaller.appspot.com/bug?extid=f9704d1878e290eddf73
+>>>>>> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.1
+>>>>>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=111f5f9d300000
+>>>>>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1651a415300000
+>>>>>>
+>>>>>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+>>>>>> Reported-by: syzbot+f9704d1878e290eddf73@syzkaller.appspotmail.com
+>>>>>>
+>>>>>> general protection fault, probably for non-canonical address 0xdffffc0000000005: 0000 [#1] PREEMPT SMP KASAN
+>>>>>> KASAN: null-ptr-deref in range [0x0000000000000028-0x000000000000002f]
+>>>>>> CPU: 0 PID: 6548 Comm: syz-executor433 Not tainted 5.14.0-next-20210830-syzkaller #0
+>>>>>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+>>>>>> RIP: 0010:sock_from_file+0x20/0x90 net/socket.c:505
+>>>>>> Code: f5 ff ff ff c3 0f 1f 44 00 00 41 54 53 48 89 fb e8 85 e9 62 fa 48 8d 7b 28 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 75 4f 45 31 e4 48 81 7b 28 80 f1 8a 8a 74 0c e8 58 e9
+>>>>>> RSP: 0018:ffffc90002caf8e8 EFLAGS: 00010206
+>>>>>> RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000000
+>>>>>> RDX: 0000000000000005 RSI: ffffffff8713203b RDI: 0000000000000028
+>>>>>> RBP: ffff888019fc0780 R08: ffffffff899aee40 R09: ffffffff81e21978
+>>>>>> R10: 0000000000000027 R11: 0000000000000009 R12: dffffc0000000000
+>>>>>> R13: 1ffff110033f80f9 R14: 0000000000000003 R15: ffff888019fc0780
+>>>>>> FS:  00000000013b5300(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
+>>>>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>>>> CR2: 00000000004ae0f0 CR3: 000000001d355000 CR4: 00000000001506f0
+>>>>>> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>>>>>> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>>>>>> Call Trace:
+>>>>>>     io_sendmsg+0x98/0x640 fs/io_uring.c:4681
+>>>>>>     io_issue_sqe+0x14de/0x6ba0 fs/io_uring.c:6578
+>>>>>>     __io_queue_sqe+0x90/0xb50 fs/io_uring.c:6864
+>>>>>>     io_req_task_submit+0xbf/0x1b0 fs/io_uring.c:2218
+>>>>>>     tctx_task_work+0x166/0x610 fs/io_uring.c:2143
+>>>>>>     task_work_run+0xdd/0x1a0 kernel/task_work.c:164
+>>>>>>     tracehook_notify_signal include/linux/tracehook.h:212 [inline]
+>>>>>>     handle_signal_work kernel/entry/common.c:146 [inline]
+>>>>>>     exit_to_user_mode_loop kernel/entry/common.c:172 [inline]
+>>>>>>     exit_to_user_mode_prepare+0x256/0x290 kernel/entry/common.c:209
+>>>>>>     __syscall_exit_to_user_mode_work kernel/entry/common.c:291 [inline]
+>>>>>>     syscall_exit_to_user_mode+0x19/0x60 kernel/entry/common.c:302
+>>>>>>     do_syscall_64+0x42/0xb0 arch/x86/entry/common.c:86
+>>>>>>     entry_SYSCALL_64_after_hwframe+0x44/0xae
+>>>>>> RIP: 0033:0x43fd49
+>>>>>
+>>>>> Hao, this is due to:
+>>>>>
+>>>>> commit a8295b982c46d4a7c259a4cdd58a2681929068a9
+>>>>> Author: Hao Xu <haoxu@linux.alibaba.com>
+>>>>> Date:   Fri Aug 27 17:46:09 2021 +0800
+>>>>>
+>>>>>        io_uring: fix failed linkchain code logic
+>>>>>
+>>>>> which causes some weirdly super long chains from that single sqe.
+>>>>> Can you take a look, please?
+>>>> Sure, I'm working on this.
+>>>
+>>> Ah, saw it after sending a patch. It's nothing too curious, just
+>>> a small error in logic. More interesting that we don't have a
+>>> test case covering it, we should definitely add something.
+>>>
+>> Saw your patch after coding my fix..😂
+>> Since my email client doesn't receive your patch(only saw it in
+>> webpage https://lore.kernel.org/), I put my comment here:
+> 
+> Hmm, does it happen often? I'll CC you
+Uncommon, somestimes there is delay.
+> 
+> 
+>>>   fs/io_uring.c | 2 ++
+>>>   1 file changed, 2 insertions(+)
+>>>
+>>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>>> index 473a977c7979..a531c7324ea8 100644
+>>> --- a/fs/io_uring.c
+>>> +++ b/fs/io_uring.c
+>>> @@ -6717,6 +6717,8 @@ static inline void io_queue_sqe(struct io_kiocb *req)
+>>>       if (likely(!(req->flags & (REQ_F_FORCE_ASYNC | REQ_F_FAIL)))) {
+>>>           __io_queue_sqe(req);
+>>>       } else if (req->flags & REQ_F_FAIL) {
+>>> +        /* fail all, we don't submit */
+>>> +        req->flags &= ~REQ_F_HARDLINK;
+>> maybe set REQ_F_LINK here?
+> 
+> if (unlikely((req->flags & REQ_F_FAIL) &&
+> 	     !(req->flags & REQ_F_HARDLINK))) {
+> 	posted |= (req->link != NULL);
+> 	io_fail_links(req);
+> }
+> 
+> The problem is hardlink, normal will be failed. But there is indeed
+> a problem with both patches,
+> 
+> if (req->flags & (REQ_F_LINK | REQ_F_HARDLINK))
+> 	// kill linked
+Yeah, if we don't have REQ_F_LINK, io_req_complete_post() won't go to
+the disarm branch
+> 
+> Will resend with some tests on top
+> 
+> 
+>>>           io_req_complete_failed(req, req->result);
+>>>       } else {
+>>>           int ret = io_req_prep_async(req);
+> 
 
-sorry been traveling! i can extract out a simple test today...
-
-> FWIW, I wrote a simple test case for it, and it seemed to work fine.
-> Nothing fancy, just a piped read that would never finish with a linked
-> timeout (1s), submit, then submit a ltimeout update that changes it to
-> 2s instead. Test runs and update completes first with res == 0 as
-> expected, and 2s later the ltimeout completes with -EALREADY (because
-> the piped read went async) and the piped read gets canceled.
-
-...unless?

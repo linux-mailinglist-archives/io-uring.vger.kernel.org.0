@@ -2,61 +2,83 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1ECD93FF3F0
-	for <lists+io-uring@lfdr.de>; Thu,  2 Sep 2021 21:14:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C2343FF41B
+	for <lists+io-uring@lfdr.de>; Thu,  2 Sep 2021 21:25:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347284AbhIBTPH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 2 Sep 2021 15:15:07 -0400
-Received: from mail-io1-f69.google.com ([209.85.166.69]:38578 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347292AbhIBTPG (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 2 Sep 2021 15:15:06 -0400
-Received: by mail-io1-f69.google.com with SMTP id n8-20020a6b7708000000b005bd491bdb6aso2110104iom.5
-        for <io-uring@vger.kernel.org>; Thu, 02 Sep 2021 12:14:08 -0700 (PDT)
+        id S243832AbhIBT0Y (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 2 Sep 2021 15:26:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33066 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S243515AbhIBT0X (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 2 Sep 2021 15:26:23 -0400
+Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3668C061575
+        for <io-uring@vger.kernel.org>; Thu,  2 Sep 2021 12:25:24 -0700 (PDT)
+Received: by mail-io1-xd31.google.com with SMTP id y18so3960088ioc.1
+        for <io-uring@vger.kernel.org>; Thu, 02 Sep 2021 12:25:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QJYsBL5vu9C9t+jIacYLConDE1fyqhDqj93H4V7TFLM=;
+        b=ch5yBMWfvYMze1YYU013eeYZNb2ql2ogg96KXO+RbRY21NRSbISD1BgoHX192Qrb8n
+         5uTRWmZ2b6LUTRJbiFUhnshSBc8P6nBHigomYrq+u33KUMpCHZg5cMakXkXEzoQuOAtI
+         oMJ0rwRE1XCdjuIAOEa9G6yKvNvqCL/ugDlPlhrwnxMHwP9vHTxYjdNVmeD08OW3CvFE
+         guDxMFXQz4jIb8zgXUE1kM7aRnWOfMeHuarHLqQdMxDoxFn2OOOuNC9QBVtxP1dTitrH
+         0VkDtYeIskEOeFVs1p8YBQuXEK/UsjDnIXAFTR3KTC4zyuWPQXTBei3PaBo3jsNS/Rxk
+         4Myg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=lHEO6j/wPdM6LnGvV1Hipd6kqZE+sNmD8+mgNJqLZk4=;
-        b=KoqgtHWBvQ+dkXNDMl9iOnUbWcSsKTWVX5q1wlgZ/K8AKzt09OxUBqOg6dw2k0+h33
-         AniZ0IohTX0rpbHeJtW4YpBuWKBuq6xg7iQVFEEzUHCB6lqVtT9WTatrXj0bqlp9O2Lj
-         ti9s6+a6wvOuW5NylD6Vs1oOBUwmuN4el7cHQzzLlQuAHMXOi8hBJ533rgXOAb+Tje5C
-         +q0tWlZrwBUeSvPrsEBriMW5Nbh5dMk3frF0fsApLXsp9A+SkDFF4sGJTDiVydUZkuI8
-         fteMsInI7FUQKEHLl/2vURCTQBAjQJHF6bpN4belNH4y3UCIRHDcysDmGHx9kX3BJxRE
-         D/HQ==
-X-Gm-Message-State: AOAM533TH1iKCJXiD9BXWKGzN3uizh5QnXZPu0vAYv9rekSI2i4jNWir
-        zhhc1Jj1hHhDb1nnei6v4Onp6uGkv6dDyRd17LCesZyFi5l9
-X-Google-Smtp-Source: ABdhPJxGjsrbI8ElYwmjAQu37MqywmihHOSkKWTcxafm3fLR8bAPLCN7f1Pvixq3+gIaNHWyY2Iqq74GTuldPLMjoJGTthAcFGl2
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QJYsBL5vu9C9t+jIacYLConDE1fyqhDqj93H4V7TFLM=;
+        b=PrOzWl/nHJc44tvIzbuc7OjaO5aFKj7YrJeV1ZXWFQ3SoQdR7EYGZ6GZ6Eb7E3EQmP
+         bu1/zOrivEL0WphYxKrl/B7cOvDxmMVFmuaxuupyeJmxQBmspDwfPTF8xuRNhnIrbubY
+         6pQRTdXqYMChuRRiGzQPn/AmkdiZPvaDVjYWQiZdqzH7Dj1Kz3Y4Al70IDU1Yo+509R1
+         6NML+hpnXRw5ztef80YwoIDOMHu6xrMta9LCC2t1p8AoLOMk8VKVhVBNY4omjk5t7wPn
+         Vk+0dRno75Q+Ixz5LhpCM0sc0enEBUYWzL7NwTTvMww59gRY1PxL8ChA+bPu6RJMOnpM
+         c+RQ==
+X-Gm-Message-State: AOAM530rUyTWspDlfBeNxSQvYnV9Z/GQm/mjzXBkg+zHAiZzQxZi2FaI
+        pJhtACPc5t0i4pdbVzAVLiGe6/nFT04RqQ==
+X-Google-Smtp-Source: ABdhPJxRqrTM0Uuod8qyu26O8GpgoQy6gVoSXJhva3U8iY06JBHWc+C404ksQrhh5zIhsapDFwatgw==
+X-Received: by 2002:a02:878e:: with SMTP id t14mr4220693jai.4.1630610724198;
+        Thu, 02 Sep 2021 12:25:24 -0700 (PDT)
+Received: from p1.localdomain ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id g12sm1399406iok.32.2021.09.02.12.25.22
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Sep 2021 12:25:23 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     io-uring@vger.kernel.org
+Subject: [PATCHSET 0/5] io-wq fixes
+Date:   Thu,  2 Sep 2021 13:25:15 -0600
+Message-Id: <20210902192520.326283-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.33.0
 MIME-Version: 1.0
-X-Received: by 2002:a6b:fb03:: with SMTP id h3mr4014831iog.198.1630610047629;
- Thu, 02 Sep 2021 12:14:07 -0700 (PDT)
-Date:   Thu, 02 Sep 2021 12:14:07 -0700
-In-Reply-To: <3d956ccb-8f2d-e3aa-eee3-254185314915@kernel.dk>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a7fb9d05cb07fc90@google.com>
-Subject: Re: [syzbot] general protection fault in io_issue_sqe
-From:   syzbot <syzbot+de67aa0cf1053e405871@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, haoxu@linux.alibaba.com,
-        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
+Hi,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Got a report on io-wq stalls, and it turned into quite the rabbit hole
+of fixes. There are two main things fixed by this series:
 
-Reported-and-tested-by: syzbot+de67aa0cf1053e405871@syzkaller.appspotmail.com
+1) Single ring that has a lot of bounded vs unbounded traffic. The fix
+   is mainly just splitting the bounded and unbounded lists, so that we
+   never stall bounded unnecessarily. There are further cleanups possible
+   on top of this, but that should be deferred to 5.16.
 
-Tested on:
+2) Workloads that have io-wq work and rely heavily on signaling to
+   communicate between processes/threads. This can interfere with worker
+   creation, and this is particularly troublesome if it just happens to
+   occur with the first worker creation.
 
-commit:         dbce491b io_uring: prolong tctx_task_work() with flush..
-git tree:       git://git.kernel.dk/linux-block for-5.15/io_uring
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fa8e68781da309a
-dashboard link: https://syzkaller.appspot.com/bug?extid=de67aa0cf1053e405871
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.1
+In general, harden the worker creation and ensure we handle failures in
+terms of allocations and worker creations.
 
-Note: testing is done by a robot and is best-effort only.
+-- 
+Jens Axboe
+
+

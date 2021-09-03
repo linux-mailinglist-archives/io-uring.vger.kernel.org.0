@@ -2,100 +2,82 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D23FC3FFF90
-	for <lists+io-uring@lfdr.de>; Fri,  3 Sep 2021 14:08:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9EEF3FFFA3
+	for <lists+io-uring@lfdr.de>; Fri,  3 Sep 2021 14:16:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348265AbhICMJZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 3 Sep 2021 08:09:25 -0400
-Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:46403 "EHLO
-        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1349348AbhICMJZ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 3 Sep 2021 08:09:25 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=alimailimapcm10staff010182156082;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0Un6fZJJ_1630670901;
-Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0Un6fZJJ_1630670901)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 03 Sep 2021 20:08:22 +0800
-Subject: Re: [PATCH 1/6] io_uring: enhance flush completion logic
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <20210903110049.132958-1-haoxu@linux.alibaba.com>
- <20210903110049.132958-2-haoxu@linux.alibaba.com>
- <fd529494-96d4-bc91-8e0c-0adf731b9052@gmail.com>
-From:   Hao Xu <haoxu@linux.alibaba.com>
-Message-ID: <302430f6-f83e-4096-448e-9d35f8f4303e@linux.alibaba.com>
-Date:   Fri, 3 Sep 2021 20:08:21 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.13.0
+        id S1348767AbhICMR5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 3 Sep 2021 08:17:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36518 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235165AbhICMR4 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 3 Sep 2021 08:17:56 -0400
+Received: from mail-il1-x131.google.com (mail-il1-x131.google.com [IPv6:2607:f8b0:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D68C3C061575
+        for <io-uring@vger.kernel.org>; Fri,  3 Sep 2021 05:16:56 -0700 (PDT)
+Received: by mail-il1-x131.google.com with SMTP id b4so4990814ilr.11
+        for <io-uring@vger.kernel.org>; Fri, 03 Sep 2021 05:16:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=09TsPIb4fXxY2VJx6kdGXIqWorLQ2YYQZCBibzSAYxI=;
+        b=p1Sk/HqyZvS2/jQ16k+A7jzv5x5BnKiB/RxQegu2rH8Ld7j57FDdequtGt21jUW68/
+         cuXINnFJsylSpRWjnRELUe+nZ8ANYCoTSF1kOYtUdXYCn/C/znxsaqt7oK0qFNlDJNPE
+         XiaVaY4SvPTuk0/KwmryQz/hahFjlfh/RXsn0yLdvwn/r3RpWy6N2zyQ2fw4N7esGclw
+         m5JJzZ/G3um+Izf6Wert7LUbilXZpPx7nKemuYG9EvJI5Fbq3WVaOO+xA3kZxbC4x5fr
+         DRSL7v7NeMftcUxL1XqvKV0pCsOFaeiRdbORvzwe/uY2GxNkzTG9dpAjQVfoH3nKJ8B5
+         51dA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=09TsPIb4fXxY2VJx6kdGXIqWorLQ2YYQZCBibzSAYxI=;
+        b=PW54WdRGciufJoPWzN5CFmqP3336oZQ/k/FcT7ZHejaa92lSXUT+kRc5R2gyoxJ9lh
+         J0mbAZqCqvJcdWyas2xIMLhPyx+Q+wmvoPqz6bMRnOwC2s+/szz9qPho5O7OcAh5UfJ8
+         B1d2bKOE2ekDUKz43Amkq2CiuuOfd4mUTcX2UtJ2YbRhZccQ1kQ2maORRCuOOeoXevFt
+         Ygbe3GPaziByU26tKaKyCahXZ8HZQJypCfGAFGyOZ471+opZbfUyKal1Nd/wHQXqX2Bj
+         5M0Ebo5cB4C8THWryAN3AMNH4my+DjjlllspENNTXI7FU9WEd/7NTQd1fKsW6x8cFCwo
+         uKUw==
+X-Gm-Message-State: AOAM53065UEV8tBHk5iNvKQRwCTJPJTqri7ZTocQgNYYzw0Mk7a9dd9i
+        Bc4eLJOe8IMpLoPFVApyFA/JV41mKW2/NQ==
+X-Google-Smtp-Source: ABdhPJzhrMWpgAMLYtf5fDP9/i+XboM6XjtDoWIc9/UebbNznBIVEADHycSo0YpoUxqaMuDE1qurIg==
+X-Received: by 2002:a05:6e02:524:: with SMTP id h4mr2321673ils.203.1630671416183;
+        Fri, 03 Sep 2021 05:16:56 -0700 (PDT)
+Received: from [192.168.1.116] ([66.219.217.159])
+        by smtp.gmail.com with ESMTPSA id z6sm2532738ilp.9.2021.09.03.05.16.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 03 Sep 2021 05:16:55 -0700 (PDT)
+Subject: Re: [PATCH][next] io_uring: Fix a read of ununitialized pointer tctx
+To:     Colin King <colin.king@canonical.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210903113535.11257-1-colin.king@canonical.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <5e5e1bb9-c5d3-d668-8a61-f70538ef92df@kernel.dk>
+Date:   Fri, 3 Sep 2021 06:16:53 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <fd529494-96d4-bc91-8e0c-0adf731b9052@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210903113535.11257-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-在 2021/9/3 下午7:42, Pavel Begunkov 写道:
-> On 9/3/21 12:00 PM, Hao Xu wrote:
->> Though currently refcount of a req is always one when we flush inline
+On 9/3/21 5:35 AM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> It can be refcounted and != 1. E.g. poll requests, or consider
-It seems poll requests don't leverage comp cache, do I miss anything?
-> that tw also flushes, and you may have a read that goes to apoll
-> and then get tw resubmitted from io_async_task_func(). And other
-when it goes to apoll, (say no double wait entry) ref is 1, then read
-completes inline and then the only ref is droped by flush.
-> cases.
-> 
->> completions, but still a chance there will be exception in the future.
->> Enhance the flush logic to make sure we maintain compl_nr correctly.
-> 
-> See below
-> 
->>
->> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
->> ---
->>
->> we need to either removing the if check to claim clearly that the req's
->> refcount is 1 or adding this patch's logic.
->>
->>   fs/io_uring.c | 6 ++++--
->>   1 file changed, 4 insertions(+), 2 deletions(-)
->>
->> diff --git a/fs/io_uring.c b/fs/io_uring.c
->> index 2bde732a1183..c48d43207f57 100644
->> --- a/fs/io_uring.c
->> +++ b/fs/io_uring.c
->> @@ -2291,7 +2291,7 @@ static void io_submit_flush_completions(struct io_ring_ctx *ctx)
->>   	__must_hold(&ctx->uring_lock)
->>   {
->>   	struct io_submit_state *state = &ctx->submit_state;
->> -	int i, nr = state->compl_nr;
->> +	int i, nr = state->compl_nr, remain = 0;
->>   	struct req_batch rb;
->>   
->>   	spin_lock(&ctx->completion_lock);
->> @@ -2311,10 +2311,12 @@ static void io_submit_flush_completions(struct io_ring_ctx *ctx)
->>   
->>   		if (req_ref_put_and_test(req))
->>   			io_req_free_batch(&rb, req, &ctx->submit_state);
->> +		else
->> +			state->compl_reqs[remain++] = state->compl_reqs[i];
-> 
-> Our ref is dropped, and something else holds another reference. That
-> "something else" is responsible to free the request once it put the last
-> reference. This chunk would make the following io_submit_flush_completions()
-> to underflow refcount and double free.
-True, I see. Thanks Pavel.
-> 
->>   	}
->>   
->>   	io_req_free_batch_finish(ctx, &rb);
->> -	state->compl_nr = 0;
->> +	state->compl_nr = remain;
->>   }
->>   
->>   /*
->>
-> 
+> In the unlikely case where ctx->flags & IORING_SETUP_SQPOLL is true
+> and sqd is NULL the pointer tctx is not assigned a valid value and
+> can contain a garbage value when it is dereferenced. Fix this by
+> initializing it to NULL.
+
+Doh - thanks, I folded this one in.
+
+-- 
+Jens Axboe
 

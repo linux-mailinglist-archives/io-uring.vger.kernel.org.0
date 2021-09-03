@@ -2,113 +2,115 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7864440034C
-	for <lists+io-uring@lfdr.de>; Fri,  3 Sep 2021 18:29:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EE7940069B
+	for <lists+io-uring@lfdr.de>; Fri,  3 Sep 2021 22:28:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235628AbhICQam (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 3 Sep 2021 12:30:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38294 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235689AbhICQal (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 3 Sep 2021 12:30:41 -0400
-Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D167AC061575
-        for <io-uring@vger.kernel.org>; Fri,  3 Sep 2021 09:29:41 -0700 (PDT)
-Received: by mail-io1-xd30.google.com with SMTP id a15so7446281iot.2
-        for <io-uring@vger.kernel.org>; Fri, 03 Sep 2021 09:29:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=PZfaEwu8D+jLZ61I63uRdheLlU6BCC4tBWJbMjhqJtc=;
-        b=oPnjr5P44PWJYg+azMGmAQXkpxEXeRXyDovi06EPMSyvxUDWUSNY3wuMtlBZIRTRcg
-         WuQorL5+63JFivCvYkycfSXBWFhRb6b4gFW7JeYaAIpt0Zcm4Nl3jmJIABwD+O9t3Tmu
-         K9jwjx4YYbA9QsK4ZW8wa0WJbPQ6gFspbYUSJLzeqJEPRjU7iOIDyVBl9Vin+88wR0ca
-         nHLOebmB4J0hbDq1UwbFMIolpNT3B2q3DyiCGBUTRxY70khX6s1t5pFvwbqxGNCUFacz
-         tzWhrNfNtrFKh6vTjPHljqBSMpgOHD/28DSyHViLBNf4/d94bfeRowR/UQkqPYMnQhS0
-         WNFw==
+        id S1350523AbhICU3X (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 3 Sep 2021 16:29:23 -0400
+Received: from mail-il1-f198.google.com ([209.85.166.198]:41801 "EHLO
+        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1350334AbhICU3X (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 3 Sep 2021 16:29:23 -0400
+Received: by mail-il1-f198.google.com with SMTP id l4-20020a92d8c40000b02902242b6ea4b3so158207ilo.8
+        for <io-uring@vger.kernel.org>; Fri, 03 Sep 2021 13:28:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=PZfaEwu8D+jLZ61I63uRdheLlU6BCC4tBWJbMjhqJtc=;
-        b=bcTljdCqeOwdiieMmjbL5G09DeFl4mdDbtQ/BKrDxjqyXe50RiFp6K9P/e6GuH62qN
-         kFi5M7nCcSTd4ynmnkBapfq0cKjWJbtLF9I00+F95CFt+OiSeK4RYcTa0Qcjl3Luv+N3
-         ad0NeMrhrhdGVCwIywqrycNgsMtHTTN7bdWYAmmOzA7KHGbb8vyv9dbbd1vN6qdX5BGC
-         6W7yLgsGZ+Jhd3NIEgvV6H26clyd+Zc+56dEcBu0i3vgj23p+8ijkeYy5TGzc7WIhffG
-         Wu/d2n5Cr2qQNNrXW4Dq9otE/ZoK1PhNHd6iFLzG+3err9QpvEwt4B8zZKusSOInCdPS
-         BB2w==
-X-Gm-Message-State: AOAM532WZGSdHCIDrFcIl424mwl106VAlZcTaEy9zLgeS61XCAY0fDLz
-        JoydlANFjlRfBwLKjO+G1DiWlgeJViW7aQ==
-X-Google-Smtp-Source: ABdhPJzPioct3Iy3lXPfpaoLDtF+5MRq+BN2MsstuQniN70PbNDpJM/M01hwDMCGJrU1a7ex7PTUzg==
-X-Received: by 2002:a02:664e:: with SMTP id l14mr3306470jaf.56.1630686581207;
-        Fri, 03 Sep 2021 09:29:41 -0700 (PDT)
-Received: from [192.168.1.30] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id d14sm3244027iod.18.2021.09.03.09.29.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 03 Sep 2021 09:29:40 -0700 (PDT)
-Subject: Re: [PATCH 6/6] io_uring: enable multishot mode for accept
-To:     Hao Xu <haoxu@linux.alibaba.com>
-Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <20210903110049.132958-1-haoxu@linux.alibaba.com>
- <20210903110049.132958-7-haoxu@linux.alibaba.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <e52f36e3-0b24-9b0c-96ac-f2eadca179af@kernel.dk>
-Date:   Fri, 3 Sep 2021 10:29:40 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=e0G8oDxHDZq3PXhMJnp9n7DKn5qv2ZYzqyKdQ4nnIDI=;
+        b=TdqKd4Q/Zk83QrkdZHF0zddnvvYzlyf6pksGwFtx+w3M5/1jP94yYlkdMweacJ6CSX
+         G46CBW2LKJ6XYx88Mx9Yg9MCzWly+oYC4S6YXTwd3LC34r4mgZYVmp32Jpkj8MbMQj/f
+         GqOKQ9Ky8mI1ZnBQRJCCgnNMu9A7inNbsAjvQgFsFQa55DnZ9v4Emnk1gAjucp+wQtJY
+         GVKAgb9OAWZ1JpQpLFaEZwKeGOXMyNvNbOgdh9YgjJXVocCzIldDsS7o0qKK3Y4GdkTT
+         0e+JHmm6M6kVBATpY1OZVBrZIj9MT957dRThb1q5wFwiZSNP8BDNi1VHgrnY64oYDpJk
+         oWpw==
+X-Gm-Message-State: AOAM5320jBGqNK84co8utsJARilwJJALucyMs1C76GH7umuNU9D5zb8w
+        HLHNaUy4suHxtkJN/pBKcwxGOHB71LYY0ZNouObkWo3FTKTp
+X-Google-Smtp-Source: ABdhPJwzC9vEcHrX60n3V8OZXRBboFSFbDwrhsCSmUAguBGEsttW+FHrcijlB8gXul2pjHUP8oFWJrmbC2+i6RBYWFR6FN6wqYto
 MIME-Version: 1.0
-In-Reply-To: <20210903110049.132958-7-haoxu@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1a6b:: with SMTP id w11mr520338ilv.69.1630700902893;
+ Fri, 03 Sep 2021 13:28:22 -0700 (PDT)
+Date:   Fri, 03 Sep 2021 13:28:22 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000000d4da305cb1d2467@google.com>
+Subject: [syzbot] BUG: unable to handle kernel NULL pointer dereference in kiocb_done
+From:   syzbot <syzbot+726f2ce6dbbf2ad8d133@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/3/21 5:00 AM, Hao Xu wrote:
-> Update io_accept_prep() to enable multishot mode for accept operation.
-> 
-> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
-> ---
->  fs/io_uring.c | 14 ++++++++++++--
->  1 file changed, 12 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index eb81d37dce78..34612646ae3c 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -4861,6 +4861,7 @@ static int io_recv(struct io_kiocb *req, unsigned int issue_flags)
->  static int io_accept_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
->  {
->  	struct io_accept *accept = &req->accept;
-> +	bool is_multishot;
->  
->  	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
->  		return -EINVAL;
-> @@ -4872,14 +4873,23 @@ static int io_accept_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
->  	accept->flags = READ_ONCE(sqe->accept_flags);
->  	accept->nofile = rlimit(RLIMIT_NOFILE);
->  
-> +	is_multishot = accept->flags & IORING_ACCEPT_MULTISHOT;
-> +	if (is_multishot && (req->flags & REQ_F_FORCE_ASYNC))
-> +		return -EINVAL;
+Hello,
 
-I like the idea itself as I think it makes a lot of sense to just have
-an accept sitting there and generating multiple CQEs, but I'm a bit
-puzzled by how you pass it in. accept->flags is the accept4(2) flags,
-which can currently be:
+syzbot found the following issue on:
 
-SOCK_NONBLOCK
-SOCK_CLOEXEC
+HEAD commit:    4ac6d90867a4 Merge tag 'docs-5.15' of git://git.lwn.net/li..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13a275f5300000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3c3a5498e99259cf
+dashboard link: https://syzkaller.appspot.com/bug?extid=726f2ce6dbbf2ad8d133
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.1
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=124a3b49300000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=142e610b300000
 
-While there's not any overlap here, that is mostly by chance I think. A
-cleaner separation is needed here, what happens if some other accept4(2)
-flag is enabled and it just happens to be the same as
-IORING_ACCEPT_MULTISHOT?
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+726f2ce6dbbf2ad8d133@syzkaller.appspotmail.com
 
--- 
-Jens Axboe
+BUG: kernel NULL pointer dereference, address: 0000000000000000
+#PF: supervisor instruction fetch in kernel mode
+#PF: error_code(0x0010) - not-present page
+PGD 26f41067 P4D 26f41067 PUD 17c87067 PMD 0 
+Oops: 0010 [#1] PREEMPT SMP KASAN
+CPU: 1 PID: 8473 Comm: iou-wrk-8424 Not tainted 5.14.0-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:0x0
+Code: Unable to access opcode bytes at RIP 0xffffffffffffffd6.
+RSP: 0018:ffffc900016af910 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff888036b6c000
+RBP: ffff888036b6c000 R08: 0000000000000000 R09: ffff8880191787d7
+R10: ffffffff81e263e4 R11: 0000000000000000 R12: 0000000000000000
+R13: ffff888036b6c058 R14: ffff888036b6c040 R15: 0000000000000000
+FS:  0000000002442400(0000) GS:ffff8880b9d00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffffffffffd6 CR3: 000000001d9bc000 CR4: 00000000001506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ io_rw_done fs/io_uring.c:2905 [inline]
+ kiocb_done+0x1b3/0x980 fs/io_uring.c:2929
+ io_read+0x3d3/0x1140 fs/io_uring.c:3503
+ io_issue_sqe+0x209/0x6ba0 fs/io_uring.c:6558
+ io_wq_submit_work+0x1d4/0x300 fs/io_uring.c:6707
+ io_worker_handle_work+0xcb1/0x1950 fs/io-wq.c:560
+ io_wqe_worker+0x2cc/0xbb0 fs/io-wq.c:609
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295
+Modules linked in:
+CR2: 0000000000000000
+---[ end trace f60cb53b8a968c33 ]---
+RIP: 0010:0x0
+Code: Unable to access opcode bytes at RIP 0xffffffffffffffd6.
+RSP: 0018:ffffc900016af910 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff888036b6c000
+RBP: ffff888036b6c000 R08: 0000000000000000 R09: ffff8880191787d7
+R10: ffffffff81e263e4 R11: 0000000000000000 R12: 0000000000000000
+R13: ffff888036b6c058 R14: ffff888036b6c040 R15: 0000000000000000
+FS:  0000000002442400(0000) GS:ffff8880b9d00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffffffffffd6 CR3: 000000001d9bc000 CR4: 00000000001506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches

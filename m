@@ -2,112 +2,74 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9026140012D
-	for <lists+io-uring@lfdr.de>; Fri,  3 Sep 2021 16:24:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 880D6400167
+	for <lists+io-uring@lfdr.de>; Fri,  3 Sep 2021 16:44:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235544AbhICOZn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 3 Sep 2021 10:25:43 -0400
-Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:60710 "EHLO
-        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233092AbhICOZm (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 3 Sep 2021 10:25:42 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0Un6qXJe_1630679081;
-Received: from localhost(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0Un6qXJe_1630679081)
+        id S1349113AbhICOpC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 3 Sep 2021 10:45:02 -0400
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:50565 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1349502AbhICOpC (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 3 Sep 2021 10:45:02 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0Un6xNvp_1630680239;
+Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0Un6xNvp_1630680239)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 03 Sep 2021 22:24:41 +0800
-From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-To:     io-uring@vger.kernel.org
-Cc:     axboe@kernel.dk, asml.silence@gmail.com,
-        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-Subject: [PATCH v2] io_uring: fix possible poll event lost in multi shot mode
-Date:   Fri,  3 Sep 2021 22:24:36 +0800
-Message-Id: <20210903142436.5767-1-xiaoguang.wang@linux.alibaba.com>
-X-Mailer: git-send-email 2.17.2
+          Fri, 03 Sep 2021 22:43:59 +0800
+Subject: Re: [PATCH v4 0/2] refactor sqthread cpu binding logic
+To:     =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, Zefan Li <lizefan.x@bytedance.com>,
+        Tejun Heo <tj@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring@vger.kernel.org, cgroups@vger.kernel.org,
+        Joseph Qi <joseph.qi@linux.alibaba.com>
+References: <20210901124322.164238-1-haoxu@linux.alibaba.com>
+ <20210902164808.GA10014@blackbody.suse.cz>
+From:   Hao Xu <haoxu@linux.alibaba.com>
+Message-ID: <b78d63d1-1cd8-a6d0-c26e-3d6c270abbb4@linux.alibaba.com>
+Date:   Fri, 3 Sep 2021 22:43:59 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.13.0
+MIME-Version: 1.0
+In-Reply-To: <20210902164808.GA10014@blackbody.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-IIUC, IORING_POLL_ADD_MULTI is similar to epoll's edge-triggered mode,
-that means once one pure poll request returns one event(cqe), we'll
-need to read or write continually until EAGAIN is returned, then I think
-there is a possible poll event lost race in multi shot mode:
-
-t1  poll request add |                         |
-t2                   |                         |
-t3  event happens    |                         |
-t4  task work add    |                         |
-t5                   | task work run           |
-t6                   |   commit one cqe        |
-t7                   |                         | user app handles cqe
-t8                   |   new event happen      |
-t9                   |   add back to waitqueue |
-t10                  |
-
-After t6 but before t9, if new event happens, there'll be no wakeup
-operation, and if user app has picked up this cqe in t7, read or write
-until EAGAIN is returned. In t8, new event happens and will be lost,
-though this race window maybe small.
-
-To fix this possible race, add poll request back to waitqueue before
-committing cqe.
-
-Fixes: 88e41cf928a6 ("io_uring: add multishot mode for IORING_OP_POLL_ADD")
-Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
----
- fs/io_uring.c | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 2bde732a1183..27608bad2276 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -5098,7 +5098,7 @@ static void io_poll_remove_double(struct io_kiocb *req)
- 	}
- }
- 
--static bool io_poll_complete(struct io_kiocb *req, __poll_t mask)
-+static bool __io_poll_complete(struct io_kiocb *req, __poll_t mask)
- 	__must_hold(&req->ctx->completion_lock)
- {
- 	struct io_ring_ctx *ctx = req->ctx;
-@@ -5120,10 +5120,19 @@ static bool io_poll_complete(struct io_kiocb *req, __poll_t mask)
- 	if (flags & IORING_CQE_F_MORE)
- 		ctx->cq_extra++;
- 
--	io_commit_cqring(ctx);
- 	return !(flags & IORING_CQE_F_MORE);
- }
- 
-+static inline bool io_poll_complete(struct io_kiocb *req, __poll_t mask)
-+	__must_hold(&req->ctx->completion_lock)
-+{
-+	bool done;
-+
-+	done = __io_poll_complete(req, mask);
-+	io_commit_cqring(req->ctx);
-+	return done;
-+}
-+
- static void io_poll_task_func(struct io_kiocb *req, bool *locked)
- {
- 	struct io_ring_ctx *ctx = req->ctx;
-@@ -5134,7 +5143,7 @@ static void io_poll_task_func(struct io_kiocb *req, bool *locked)
- 	} else {
- 		bool done;
- 
--		done = io_poll_complete(req, req->result);
-+		done = __io_poll_complete(req, req->result);
- 		if (done) {
- 			io_poll_remove_double(req);
- 			hash_del(&req->hash_node);
-@@ -5142,6 +5151,7 @@ static void io_poll_task_func(struct io_kiocb *req, bool *locked)
- 			req->result = 0;
- 			add_wait_queue(req->poll.head, &req->poll.wait);
- 		}
-+		io_commit_cqring(ctx);
- 		spin_unlock(&ctx->completion_lock);
- 		io_cqring_ev_posted(ctx);
- 
--- 
-2.14.4.44.g2045bb6
+在 2021/9/3 上午12:48, Michal Koutný 写道:
+> Hello Hao.
+> 
+> On Wed, Sep 01, 2021 at 08:43:20PM +0800, Hao Xu <haoxu@linux.alibaba.com> wrote:
+>> This patchset is to enhance sqthread cpu binding logic, we didn't
+>> consider cgroup setting before. In container environment, theoretically
+>> sqthread is in its container's task group, it shouldn't occupy cpu out
+>> of its container.
+> 
+> I see in the discussions that there's struggle to make
+> set_cpus_allowed_ptr() do what's intended under the given constraints.
+> 
+> IIUC, set_cpus_allowed_ptr() is conventionally used for kernel threads
+> [1]. But does the sqthread fall into this category? You want to have it
+> _directly_ associated with a container and its cgroups. It looks to me
+sqthread is in it's creator's task group, so it is like a userspace
+thread from this perspective. When it comes to container environemt
+sqthread naturely belongs to a container which also contains its creator
+And it has same cgroup setting with it's creator by default.
+> more like a userspace thread (from this perspective, not literally). Or
+> is there a different intention?
+> 
+> It seems to me that reusing the sched_setaffinity() (with all its
+> checks and race pains/solutions) would be a more universal approach.
+> (I don't mean calling sched_setaffinity() directly, some parts would
+> need to be factored separately to this end.) WDYT?
+> 
+> 
+> Regards,
+> Michal
+> 
+> [1] Not only spending their life in kernel but providing some
+> delocalized kernel service.
+> 
 

@@ -2,127 +2,121 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E073A400069
-	for <lists+io-uring@lfdr.de>; Fri,  3 Sep 2021 15:22:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0835C4000A3
+	for <lists+io-uring@lfdr.de>; Fri,  3 Sep 2021 15:38:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235424AbhICNXq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 3 Sep 2021 09:23:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51596 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235336AbhICNXq (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 3 Sep 2021 09:23:46 -0400
-Received: from mail-oi1-x22b.google.com (mail-oi1-x22b.google.com [IPv6:2607:f8b0:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22527C061757
-        for <io-uring@vger.kernel.org>; Fri,  3 Sep 2021 06:22:46 -0700 (PDT)
-Received: by mail-oi1-x22b.google.com with SMTP id h133so6853184oib.7
-        for <io-uring@vger.kernel.org>; Fri, 03 Sep 2021 06:22:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=eifdlyqu+X2AkFTQqzT7URWcBfDozXTp5Zq5B6ROOEk=;
-        b=UCumTx2n9euOYcN6ulEovT8dJO9FRw/UTSL7J4YE/iYpglqd/EY66sHMJC6LH6sO56
-         kBUo0UXKK5laJXGA/SZO91TqwPkwnAalKwiTm/1IwIg0DSO6wl9nsHu6YJgFz2FgTzwV
-         NTFC7BYL5TgMYLtXo6lww/ZGeqqRGgW16oNmaYgRq5luVj7tWPAfB2p+6vvX53mY2iay
-         oedJNF1iI28bYzXR/oYSSnIbJeM5yFoa5pPjtSmiu9wB527Juqa8DNuN5IkBef+O8LAl
-         g1o1Mi7DFs2UJrE4Cu0Sr14gUnxGnizvpkp2ujGtqcbF/HrvO2EiZFOmIJxO9MXxUKTq
-         4mxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=eifdlyqu+X2AkFTQqzT7URWcBfDozXTp5Zq5B6ROOEk=;
-        b=hIKM+zJqXAnnXInQWLBqU4iHm4S6pcA0Rf/HEQCqURbzxd2Yxb50PmMWTEgqwh5okR
-         sG1TNdBuBeGPZkppLFWKuw0kpaowoCI6HSB/VkbfD+NBHHppSz4dPZW+L6RfANlQTYOX
-         h9tcEHUNe42BF1uNPLBtiMK2lBvjyxMkCXr/atAqPzpkhMK7MyLV8KiuJmezDiftKqDB
-         8dfJj+KbCXscmtK5rOhVHXoZXXrxHXzK17sMtH2fAXehfupBRwdVgEe2i7UEy3fHD5Yo
-         GJwkJg/YxygJZCb30Imi2D07ZC/2d0G6COObLeb0O9BmhM1/FSq3XC2C71nkHCVB7muH
-         +Nmg==
-X-Gm-Message-State: AOAM531ZjPFqVJt1Ytvq4dFooXoMUJq4NYOGSeoG/MWG9Hu2Y4eftYC6
-        lAnHvAg1tDdAmvr4Hle1nhRiwJiufivsn6tfzOk=
-X-Google-Smtp-Source: ABdhPJzzFwwwr1EJNAlGjuiUAv1ozGJZswN7Ru7t/8c8k7EkOB/56sepjq35lea/4KQnkcYd/ppkymsRjJdRYt6bKh4=
-X-Received: by 2002:a05:6808:1394:: with SMTP id c20mr1563134oiw.64.1630675364832;
- Fri, 03 Sep 2021 06:22:44 -0700 (PDT)
+        id S235766AbhICNj4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 3 Sep 2021 09:39:56 -0400
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:60248 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235786AbhICNjz (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 3 Sep 2021 09:39:55 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0Un6qQ3i_1630676333;
+Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0Un6qQ3i_1630676333)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 03 Sep 2021 21:38:54 +0800
+Subject: Re: [PATCH 1/6] io_uring: enhance flush completion logic
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
+References: <20210903110049.132958-1-haoxu@linux.alibaba.com>
+ <20210903110049.132958-2-haoxu@linux.alibaba.com>
+ <fd529494-96d4-bc91-8e0c-0adf731b9052@gmail.com>
+ <302430f6-f83e-4096-448e-9d35f8f4303e@linux.alibaba.com>
+ <5dd28d14-24b5-e2dc-aa55-a68cb5d9f4e8@gmail.com>
+From:   Hao Xu <haoxu@linux.alibaba.com>
+Message-ID: <53d4f2b4-b0eb-fa4a-9659-794c2c363a7f@linux.alibaba.com>
+Date:   Fri, 3 Sep 2021 21:38:53 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.13.0
 MIME-Version: 1.0
-Received: by 2002:ac9:5cc6:0:0:0:0:0 with HTTP; Fri, 3 Sep 2021 06:22:44 -0700 (PDT)
-Reply-To: ubabankofficeorg77@gmail.com
-From:   POST OFFICE <postofficetogo2@gmail.com>
-Date:   Fri, 3 Sep 2021 13:22:44 +0000
-Message-ID: <CAMPPJo0PwZLgVSWhpmqvnWesjf7+wxd5OjZqkuho1UduYG6fpQ@mail.gmail.com>
-Subject: =?UTF-8?Q?Laba_diena_d=C4=81rgais?=
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <5dd28d14-24b5-e2dc-aa55-a68cb5d9f4e8@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-God=C4=81tais kungs / kundze
+在 2021/9/3 下午8:27, Pavel Begunkov 写道:
+> On 9/3/21 1:08 PM, Hao Xu wrote:
+>> 在 2021/9/3 下午7:42, Pavel Begunkov 写道:
+>>> On 9/3/21 12:00 PM, Hao Xu wrote:
+>>>> Though currently refcount of a req is always one when we flush inline
+>>>
+>>> It can be refcounted and != 1. E.g. poll requests, or consider
+>> It seems poll requests don't leverage comp cache, do I miss anything?
+> 
+> Hmm, looks so. Not great that it doesn't, but probably it's because
+> of trying to submit next reqs right in io_poll_task_func().
+> 
+> I'll be pushing for some changes around tw, with it should be easy
+> to hook poll completion batching with no drawbacks. Would be great
+> if you will be willing to take a shot on it.
+Sure, I'll take a look.
+> 
+>>> that tw also flushes, and you may have a read that goes to apoll
+>>> and then get tw resubmitted from io_async_task_func(). And other
+>> when it goes to apoll, (say no double wait entry) ref is 1, then read
+>> completes inline and then the only ref is droped by flush.
+> 
+> Yep, but some might have double entry. It also will have elevated
+double entry should be fine.
+> refs if there was a linked timeout. Another case is io-wq, which
+Haven't dig into linked timeout yet.
+> takes a reference, and if iowq doesn't put it for a while (e.g. got
+> rescheduled) but requests goes to tw (resubmit, poll, whatever)
+> you have the same picture.
+Gotcha, thanks.
+> 
+>>> cases.
+>>>
+>>>> completions, but still a chance there will be exception in the future.
+>>>> Enhance the flush logic to make sure we maintain compl_nr correctly.
+>>>
+>>> See below
+>>>
+>>>>
+>>>> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
+>>>> ---
+>>>>
+>>>> we need to either removing the if check to claim clearly that the req's
+>>>> refcount is 1 or adding this patch's logic.
+>>>>
+>>>>    fs/io_uring.c | 6 ++++--
+>>>>    1 file changed, 4 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>>>> index 2bde732a1183..c48d43207f57 100644
+>>>> --- a/fs/io_uring.c
+>>>> +++ b/fs/io_uring.c
+>>>> @@ -2291,7 +2291,7 @@ static void io_submit_flush_completions(struct io_ring_ctx *ctx)
+>>>>        __must_hold(&ctx->uring_lock)
+>>>>    {
+>>>>        struct io_submit_state *state = &ctx->submit_state;
+>>>> -    int i, nr = state->compl_nr;
+>>>> +    int i, nr = state->compl_nr, remain = 0;
+>>>>        struct req_batch rb;
+>>>>          spin_lock(&ctx->completion_lock);
+>>>> @@ -2311,10 +2311,12 @@ static void io_submit_flush_completions(struct io_ring_ctx *ctx)
+>>>>              if (req_ref_put_and_test(req))
+>>>>                io_req_free_batch(&rb, req, &ctx->submit_state);
+>>>> +        else
+>>>> +            state->compl_reqs[remain++] = state->compl_reqs[i];
+>>>
+>>> Our ref is dropped, and something else holds another reference. That
+>>> "something else" is responsible to free the request once it put the last
+>>> reference. This chunk would make the following io_submit_flush_completions()
+>>> to underflow refcount and double free.
+>> True, I see. Thanks Pavel.
+>>>
+>>>>        }
+>>>>          io_req_free_batch_finish(ctx, &rb);
+>>>> -    state->compl_nr = 0;
+>>>> +    state->compl_nr = remain;
+>>>>    }
+>>>>      /*
+>>>>
+>>>
+>>
+> 
 
-M=C4=93s sazin=C4=81mies ar jums saist=C4=ABb=C4=81 ar j=C5=ABsu nepiepras=
-=C4=ABtajiem ASV dol=C4=81ru
-(3,7 miljonu ASV dol=C4=81ru) kompens=C4=81cijas l=C4=ABdzek=C4=BCiem, ko m=
-=C5=ABsu biroj=C4=81
-noguld=C4=ABja Ecowas organiz=C4=81cija, un uzdeva mums nos=C5=ABt=C4=ABt j=
-ums naudu,
-izmantojot ATM VISA CARD VAI Money-Gram ONLINE p=C4=81rskait=C4=ABjumu maks=
-=C4=81jumu
-sist=C4=93mu. viegli piepras=C4=ABt savu naudu. J=C5=ABs esat nor=C4=81d=C4=
-=ABjis m=C5=ABsu =C4=80rvalstu
-maks=C4=81jumu p=C4=81rvedumu vien=C4=ABbai =C4=80frikas Apvienot=C4=81 ban=
-ka Lome Togo
-izsniegt jums kred=C4=ABtkarti. VISA debets, kur (3,7 miljoni USD) tiks
-norakst=C4=ABts no j=C5=ABsu fonda, lai turpin=C4=81tu iz=C5=86emt savu fon=
-du.
-
-Inform=C4=93jam j=C5=ABs, ka j=C5=ABsu kop=C4=93jie l=C4=ABdzek=C4=BCi 3,7 =
-miljonu ASV dol=C4=81ru apm=C4=93r=C4=81
-ir iepl=C4=81noti izmaks=C4=81t jums, izmantojot ATM VISA CARD. Un =C5=A1od=
-ien m=C4=93s
-j=C5=ABs inform=C4=93jam, ka j=C5=ABsu fonds ir ieskait=C4=ABts VISA kart=
-=C4=93 UBA Bank un ir
-gatavs ar=C4=AB pieg=C4=81dei, tagad sazinieties ar UBA bankas sekret=C4=81=
-ru, vi=C5=86a
-v=C4=81rds ir Dr. KENNEDY UZOKA.
-
-Apvienot=C4=81s =C4=80frikas bankas r=C4=ABkot=C4=81jdirektors
-
-Bankas vietne: http://www.ubagroup.com
-
-VISA ATM UBA KARTES NODA=C4=BBA (UBA grupa (@UBAGroup)
-
-Nos=C5=ABtiet t=C4=81l=C4=81k nor=C4=81d=C4=ABto inform=C4=81ciju par j=C5=
-=ABsu kredit=C4=93t=C4=81s ATM VISA
-kartes pieg=C4=81di uz j=C5=ABsu adresi:
-
-a) J=C5=ABsu pilns v=C4=81rds: =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D
-
-b) J=C5=ABsu izcelsmes valsts: =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-c) J=C5=ABsu m=C4=81jas adrese: =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-d) J=C5=ABsu t=C4=81lru=C5=86a numurs: =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-e) J=C5=ABsu nodarbo=C5=A1an=C4=81s: =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D
-
-Inform=C4=93jam, ka esam nosl=C4=93gu=C5=A1i visus nepiecie=C5=A1amos pas=
-=C4=81kumus saist=C4=ABb=C4=81
-ar j=C5=ABsu maks=C4=81jumu, un j=C5=ABsu ATM VISA CARD ir gatava jums nos=
-=C5=ABt=C4=ABt,
-tikl=C4=ABdz sazin=C4=81sieties ar mums, nor=C4=81dot t=C4=81l=C4=81k snieg=
-to inform=C4=81ciju.
-
-Kontaktpersona: Vivian Francis kundze
-
-Kontaktpersonas e -pasts: (ubabankofficeorg77@gmail.com)
-
-T=C4=81d=C4=93=C4=BC, lai izvair=C4=ABtos no nevajadz=C4=ABgas kav=C4=93=C5=
-=A1an=C4=81s, jums p=C4=93c iesp=C4=93jas
-=C4=81tr=C4=81k j=C4=81nos=C5=ABta Joseph Gloria ikuku kungam nepiecie=C5=
-=A1am=C4=81 inform=C4=81cija.
-
-Pateikties
-
-Joseph Gloria ikuku (SVF) (601) ier=C4=93dnis

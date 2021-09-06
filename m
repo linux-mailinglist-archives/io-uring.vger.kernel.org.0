@@ -2,108 +2,159 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BDBD8401D8F
-	for <lists+io-uring@lfdr.de>; Mon,  6 Sep 2021 17:23:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16DEE401DA3
+	for <lists+io-uring@lfdr.de>; Mon,  6 Sep 2021 17:32:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243028AbhIFPYT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 6 Sep 2021 11:24:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45000 "EHLO
+        id S231751AbhIFPdl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 6 Sep 2021 11:33:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233929AbhIFPYT (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 6 Sep 2021 11:24:19 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33A1AC061575
-        for <io-uring@vger.kernel.org>; Mon,  6 Sep 2021 08:23:14 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id d6so9728104wrc.11
-        for <io-uring@vger.kernel.org>; Mon, 06 Sep 2021 08:23:14 -0700 (PDT)
+        with ESMTP id S233929AbhIFPdl (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 6 Sep 2021 11:33:41 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 134F5C061575
+        for <io-uring@vger.kernel.org>; Mon,  6 Sep 2021 08:32:36 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id g135so4865546wme.5
+        for <io-uring@vger.kernel.org>; Mon, 06 Sep 2021 08:32:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
+        h=to:cc:references:from:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=a0eu3hPCqTxl2HIZHRdIbOrCbpU03oTcOI40P++LMpY=;
-        b=mX3VGBCe3WIjvqc3zy0nhM95qGMkq4xUL0Vaymg0EF12GcLoguVeuZyzuYJBS3MhYX
-         JPsbTWEeE7liTzQuw5saSBQHQyqg4y+WSfy9Dzqq9dEYeCBcaIFNHBUPDMo326U0QiEU
-         whv3V3aIzwESDhOMixgdAb+1E4Zfrr4kUeMl9VerT3A7A+3ISBxdJGaoYhu2wlLkaL0Q
-         vIdWiWOqgS0mFHnUR6BjzFri4EPXiBitlAHm7TPcQO2pgrFVQB3irDTn1lCK7IlAMLWV
-         uHg4v7KcA1DDTqai7CNUUGWyDYn/Sawo2a7coigmahQ2RwN6E07FTtI91FP8CIPj9DRK
-         KMnQ==
+        bh=4DuIOQxH0Sf64MumXBEm1V9tgRig1Lv2JcqSMOmoGgg=;
+        b=ZDGStvwK2OJwBcGBKDHY2gTRgC5mL8GdWqMCgU3G5KnkR/bqDibw/rNhM6lVwyLOaS
+         9qujyOm3Yg8MnJ1HrrGsLgu6y4vJgfMyI0WE5kUPmmno5TrkXpqkrwqb0Ml8Nym2AH9/
+         EeYK1fS310peLlMx1hYoBEhWuI5spcQdehD8USe6CGvA63HzdeBGsBTf7m3+mJtNkuEq
+         XSpPYAbUnuakV3QRrw/dJVdypjq5/r4MDFX7y9dzM3u9HuUzVgDlRxO18BiWcozvhswq
+         fl0Nza2u8CwSaX4/sNyioRhNrGnGm9nZDUBms1o4JyLXjMw5YxNPUA9w/yI2qHXorr6W
+         yJ6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=a0eu3hPCqTxl2HIZHRdIbOrCbpU03oTcOI40P++LMpY=;
-        b=VOOaLIYyQyyJl720BsT3y9mhHMfpqoTRwkgIbbs9JvDuJSAjLqCKNhJyEXKAuyneuA
-         MF/wGLf6QPlb40we2WULiPMMI5o4G7bkREuPMKc+flhllb8xSogM/qtzkxm1Nb7OWCP4
-         kedEr6lMBiRszvqVOe7CFnCzmfCGjPsTNyAgTJ78M1+nta6m/Po/W/MgUoUgFS7xHTTK
-         NPSJ2zW8SYjWMIW0HtjHs9WZpwSKArnotsA6SIX1uG7WBgz3VnKW3iBp21ErZcCUpXuF
-         yofRt2XK8zYS94mrP6ChEE4DtzDWiO5v175Gr6awG4fj1aXhFJ5zXTLkr4SuQH+Omsf+
-         ceKQ==
-X-Gm-Message-State: AOAM530S6vZnFGcDihctEcIaoOKba/202x4+MAOAX274tsRm4eeF/ug6
-        jxluD0NJkOP18lBAvNsXFWBfZpp2D9Q=
-X-Google-Smtp-Source: ABdhPJy8RPOqP0W2fCmCJqLFRd41TqRPHmxnoaJb0EO57nrxWxgORaMyWmcJrYV3Kt96pyXz7AaNAw==
-X-Received: by 2002:a5d:504f:: with SMTP id h15mr14323367wrt.69.1630941792711;
-        Mon, 06 Sep 2021 08:23:12 -0700 (PDT)
+        bh=4DuIOQxH0Sf64MumXBEm1V9tgRig1Lv2JcqSMOmoGgg=;
+        b=nTvAKbXl1Z9EfwIuvUW2IsRNbS2IQHClrqdQvZm0hJC6cthbX1CMk6IeptgHJ7EDCH
+         jcMLcM1JC1c0Y0VPRSNcWnZTSkeItGxNYMihLkCpWBnralgeauMCA5lfN9l2DeFHLbHA
+         q70Z2b+u1V7ywec9dM1hh8jsNodv7ZpohYv4rB2adSHYitbFau2qLy8poN+Y8ASLF6h9
+         K9Uxb2g8TWYOsJVK2yIc/m5om56XPzcXTssj3Dv9YR/Ohc8ZjQhdBkQq+X1XfGNI/nft
+         Zb/DwSTvuAxHod++KpC3gQ4RAAhWgPsId5DOVVELNNTJtdNGkJVzKfjScEd1hOYiis60
+         VcKQ==
+X-Gm-Message-State: AOAM530Lb1WrkXw3c4uJB9AogEwRxE3tHJzJkQbsFkqfNXBMg5t/VZss
+        HoUsbqMCria2GWTDE3BDZXJCwfp71VM=
+X-Google-Smtp-Source: ABdhPJzKH6mU0p2xzCyO86H7OAVyUMDS72SFNLbtfEuHdh3w+73tNLvO4kPEOn8OKgIOKVRXc/jSEg==
+X-Received: by 2002:a1c:ed0a:: with SMTP id l10mr12313748wmh.140.1630942354630;
+        Mon, 06 Sep 2021 08:32:34 -0700 (PDT)
 Received: from [192.168.8.197] ([148.252.133.4])
-        by smtp.gmail.com with ESMTPSA id p3sm8025300wrx.82.2021.09.06.08.23.11
+        by smtp.gmail.com with ESMTPSA id c13sm8225541wru.73.2021.09.06.08.32.33
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Sep 2021 08:23:12 -0700 (PDT)
-Subject: Re: [PATCH] io_uring: fix bug of wrong BUILD_BUG_ON check
+        Mon, 06 Sep 2021 08:32:34 -0700 (PDT)
 To:     Hao Xu <haoxu@linux.alibaba.com>, Jens Axboe <axboe@kernel.dk>
 Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <20210906151208.206851-1-haoxu@linux.alibaba.com>
+References: <20210903110049.132958-1-haoxu@linux.alibaba.com>
+ <20210903110049.132958-7-haoxu@linux.alibaba.com>
+ <e52f36e3-0b24-9b0c-96ac-f2eadca179af@kernel.dk>
+ <95387504-3986-77df-7cb4-d136dd4be1ec@linux.alibaba.com>
+ <c61bfb5a-036d-43be-e896-239b1c8ca1c3@kernel.dk>
+ <701e50f5-2444-5b56-749b-1c1affc26ce9@gmail.com>
+ <f332dbc6-5304-9676-ffc1-008e153d667b@kernel.dk>
+ <c8298d9a-bef8-8128-ada6-b2edfabad292@linux.alibaba.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <f3857fde-7b3d-3d4f-9248-18a5387b8f79@gmail.com>
-Date:   Mon, 6 Sep 2021 16:22:39 +0100
+Subject: Re: [PATCH 6/6] io_uring: enable multishot mode for accept
+Message-ID: <be69610d-a615-c826-b376-298a617bc2f0@gmail.com>
+Date:   Mon, 6 Sep 2021 16:32:01 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.13.0
 MIME-Version: 1.0
-In-Reply-To: <20210906151208.206851-1-haoxu@linux.alibaba.com>
+In-Reply-To: <c8298d9a-bef8-8128-ada6-b2edfabad292@linux.alibaba.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/6/21 4:12 PM, Hao Xu wrote:
-> Some check should be large than not equal or large than.
-> 
-> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
-> ---
->  fs/io_uring.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 2bde732a1183..3a833037af43 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -10637,13 +10637,13 @@ static int __init io_uring_init(void)
->  		     sizeof(struct io_uring_rsrc_update2));
->  
->  	/* ->buf_index is u16 */
-> -	BUILD_BUG_ON(IORING_MAX_REG_BUFFERS >= (1u << 16));
-> +	BUILD_BUG_ON(IORING_MAX_REG_BUFFERS > (1u << 16));
->  
->  	/* should fit into one byte */
-> -	BUILD_BUG_ON(SQE_VALID_FLAGS >= (1 << 8));
-> +	BUILD_BUG_ON(SQE_VALID_FLAGS > (1 << 8));
+On 9/6/21 1:35 PM, Hao Xu wrote:
+> 在 2021/9/6 上午3:44, Jens Axboe 写道:
+>> On 9/4/21 4:46 PM, Pavel Begunkov wrote:
+>>> On 9/4/21 7:40 PM, Jens Axboe wrote:
+>>>> On 9/4/21 9:34 AM, Hao Xu wrote:
+>>>>> 在 2021/9/4 上午12:29, Jens Axboe 写道:
+>>>>>> On 9/3/21 5:00 AM, Hao Xu wrote:
+>>>>>>> Update io_accept_prep() to enable multishot mode for accept operation.
+>>>>>>>
+>>>>>>> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
+>>>>>>> ---
+>>>>>>>    fs/io_uring.c | 14 ++++++++++++--
+>>>>>>>    1 file changed, 12 insertions(+), 2 deletions(-)
+>>>>>>>
+>>>>>>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>>>>>>> index eb81d37dce78..34612646ae3c 100644
+>>>>>>> --- a/fs/io_uring.c
+>>>>>>> +++ b/fs/io_uring.c
+>>>>>>> @@ -4861,6 +4861,7 @@ static int io_recv(struct io_kiocb *req, unsigned int issue_flags)
+>>>>>>>    static int io_accept_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>>>>>>>    {
+>>>>>>>        struct io_accept *accept = &req->accept;
+>>>>>>> +    bool is_multishot;
+>>>>>>>           if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
+>>>>>>>            return -EINVAL;
+>>>>>>> @@ -4872,14 +4873,23 @@ static int io_accept_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>>>>>>>        accept->flags = READ_ONCE(sqe->accept_flags);
+>>>>>>>        accept->nofile = rlimit(RLIMIT_NOFILE);
+>>>>>>>    +    is_multishot = accept->flags & IORING_ACCEPT_MULTISHOT;
+>>>>>>> +    if (is_multishot && (req->flags & REQ_F_FORCE_ASYNC))
+>>>>>>> +        return -EINVAL;
+>>>>>>
+>>>>>> I like the idea itself as I think it makes a lot of sense to just have
+>>>>>> an accept sitting there and generating multiple CQEs, but I'm a bit
+>>>>>> puzzled by how you pass it in. accept->flags is the accept4(2) flags,
+>>>>>> which can currently be:
+>>>>>>
+>>>>>> SOCK_NONBLOCK
+>>>>>> SOCK_CLOEXEC
+>>>>>>
+>>>>>> While there's not any overlap here, that is mostly by chance I think. A
+>>>>>> cleaner separation is needed here, what happens if some other accept4(2)
+>>>>>> flag is enabled and it just happens to be the same as
+>>>>>> IORING_ACCEPT_MULTISHOT?
+>>>>> Make sense, how about a new IOSQE flag, I saw not many
+>>>>> entries left there.
+>>>>
+>>>> Not quite sure what the best approach would be... The mshot flag only
+>>>> makes sense for a few request types, so a bit of a shame to have to
+>>>> waste an IOSQE flag on it. Especially when the flags otherwise passed in
+>>>> are so sparse, there's plenty of bits there.
+>>>>
+>>>> Hence while it may not be the prettiest, perhaps using accept->flags is
+>>>> ok and we just need some careful code to ensure that we never have any
+>>>> overlap.
+>>>
+>>> Or we can alias with some of the almost-never-used fields like
+>>> ->ioprio or ->buf_index.
+>>
+>> It's not a bad idea, as long as we can safely use flags from eg ioprio
+>> for cases where ioprio would never be used. In that sense it's probably
+>> safer than using buf_index.
+>>
+>> The alternative is, as has been brougt up before, adding a flags2 and
+>> reserving the last flag in ->flags to say "there are flags in flags2".
+>> Not exactly super pretty either, but we'll need to extend them at some
+>> point.
+> I'm going to do it in this way, there is another thing we have to do:
+> extend req->flags too, since flags we already used > 32 if we add
+> sqe->ext_flags
 
-0xff = 255 is the largest number fitting in u8,
-1<<8 = 256.
+We still have 2 bits left, and IIRC you wanted to take only 1 of them.
+We don't need extending it at the moment, it sounded to me like a plan
+for the future. No extra trouble for now
 
-let SQE_VALID_FLAGS = 256,
-(256 > (1<<8)) == (256 > 256) == false,  even though it can't
-be represented by u8.
+Anyway, I can't think of many requests working in this mode, and I think
+sqe_flags should be taken only for features applicable to all (~most) of
+requests. Maybe we'd better to fit it individually into accept in the
+end? Sounds more plausible tbh
 
-
->  	BUILD_BUG_ON(ARRAY_SIZE(io_op_defs) != IORING_OP_LAST);
-> -	BUILD_BUG_ON(__REQ_F_LAST_BIT >= 8 * sizeof(int));
-> +	BUILD_BUG_ON(__REQ_F_LAST_BIT > 8 * sizeof(int));
->  
->  	req_cachep = KMEM_CACHE(io_kiocb, SLAB_HWCACHE_ALIGN | SLAB_PANIC |
->  				SLAB_ACCOUNT);
-> 
+p.s. yes, there is IOSQE_BUFFER_SELECT, but I don't think that was the
+best solution, but in any case it's history.
 
 -- 
 Pavel Begunkov

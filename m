@@ -2,144 +2,247 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 46599401169
-	for <lists+io-uring@lfdr.de>; Sun,  5 Sep 2021 21:47:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A29C4012BC
+	for <lists+io-uring@lfdr.de>; Mon,  6 Sep 2021 03:22:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232397AbhIETp4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 5 Sep 2021 15:45:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34866 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230024AbhIETp4 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 5 Sep 2021 15:45:56 -0400
-Received: from mail-pg1-x52e.google.com (mail-pg1-x52e.google.com [IPv6:2607:f8b0:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24B8EC061575
-        for <io-uring@vger.kernel.org>; Sun,  5 Sep 2021 12:44:53 -0700 (PDT)
-Received: by mail-pg1-x52e.google.com with SMTP id n18so4542761pgm.12
-        for <io-uring@vger.kernel.org>; Sun, 05 Sep 2021 12:44:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=dfRHVFqB2C2Y8VLvrzuyykwZQ1yNxAFKQDDFuNABMHU=;
-        b=DayioVgQEMqAdDq+t9ZSL2uxKn6KsvA582FqEoMVhdyijRR3UU3z+i4/M8fJZTF2yi
-         FA6ckP9RA8TcsSSInqHMCQ64m8hrzfFtgdt8y4Ax1maWXlNE2YbFKlUa4DDkblU0tWCN
-         /kZc4c++5N2LKqQDiLiOosSNpO0n5rhCw6I9xBFr4TJ0kwmuxEGfZhiCqT1r6KWaHJp/
-         eM2UsewXYtIbXxaH42wgGYD7CFqwp5evI747GkHAhTkSnSrLZYuedzjJfLKj5oRWXDRY
-         qf/BdghMBxFwUCKhvN2yFFFIcluxSULwSJJ6rqcAwvv8BdHmFqOhnFWHJFOB7sRzGmw2
-         FGVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=dfRHVFqB2C2Y8VLvrzuyykwZQ1yNxAFKQDDFuNABMHU=;
-        b=huu1WvLq8LJ+iIqZliravFa6f9tN5wrLgfV6aEkE8kIF13B3LgLEDwwy064chdRY9p
-         smrZ2kr1Rou/MW1QI79Sj/dykCzntY6minSYdT/NykYdpTyBNRUpeQqfiNhCC6+obIZP
-         RvBsuFwazf1b8zHQ6ThtxHjdwgIT/NsVjV3rr66yWRwhq9QL0g8i2gmM0rpA3SOIfs5T
-         hRFS4JFlwzQf9m+3RUsyIPef8uU/50Emt50Y29WJlVM0yPgb+mmANcd2/0zHc6ZN5iHy
-         kmAfMH8JRXu/KhUE+3ChV/jFkPbnLcVpSSHUNtUs48CujwaqvVJqIlRd9nL1SaQ6vWPw
-         jDOA==
-X-Gm-Message-State: AOAM531XDmSussONm1YWOAmgJeQQABBqwmQ43A/fSuGqOyEEiQkhiqm5
-        NXgrKq4KPaIwJCWFnpMufvMVfA==
-X-Google-Smtp-Source: ABdhPJwml47P3SRxfab79SRlpWJOWUXv8DMiW6qG8w7ZougT0zndVy2rYJ0mMDtrePQLpNwJdDclpw==
-X-Received: by 2002:a05:6a00:1a03:b0:414:5c97:777a with SMTP id g3-20020a056a001a0300b004145c97777amr6124736pfv.58.1630871092505;
-        Sun, 05 Sep 2021 12:44:52 -0700 (PDT)
-Received: from [192.168.4.41] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id y11sm5281321pfl.198.2021.09.05.12.44.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 05 Sep 2021 12:44:52 -0700 (PDT)
-Subject: Re: [PATCH 6/6] io_uring: enable multishot mode for accept
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Hao Xu <haoxu@linux.alibaba.com>
-Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <20210903110049.132958-1-haoxu@linux.alibaba.com>
- <20210903110049.132958-7-haoxu@linux.alibaba.com>
- <e52f36e3-0b24-9b0c-96ac-f2eadca179af@kernel.dk>
- <95387504-3986-77df-7cb4-d136dd4be1ec@linux.alibaba.com>
- <c61bfb5a-036d-43be-e896-239b1c8ca1c3@kernel.dk>
- <701e50f5-2444-5b56-749b-1c1affc26ce9@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <f332dbc6-5304-9676-ffc1-008e153d667b@kernel.dk>
-Date:   Sun, 5 Sep 2021 13:44:50 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S239216AbhIFBWI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 5 Sep 2021 21:22:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38612 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S238971AbhIFBVq (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Sun, 5 Sep 2021 21:21:46 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 1BC33610C8;
+        Mon,  6 Sep 2021 01:20:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1630891243;
+        bh=zer8h7C3K3dyF82nvXtNP81OaA4zrCRJbFaH/pOCLEo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=rGF5H22WW2sHz6AsQRIixbNK/E2fLaamKsNvx7u34Er0T7arFvSbS3zo76OKuOyiW
+         a1OLNdDGQQB+6DPQ/3R66XM1S6CXFr0bxhpigFyiy5hoCiM0BMsBNs67iVsN+ZTZDT
+         KRg3i5eiMESWCQ0LrX+hijThm5lOFj3NrtLS1vyOZuPW5DCm2RwhKeAaRxMvvQOB2i
+         lPI0TpTfAyVjolCc7CPZCeSSHML3GwWsFwjT6xx3CZkFy1PUzligu7ogsrWstUWGvu
+         Saa8+mwxCGO8Ec0j+eYRZ6JO+6nHuoc7DwvGzgociWYkB8SwzkG535oYIPqhR2CVHy
+         Ss6oGA5L819rQ==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>, Daniel Wagner <dwagner@suse.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sasha Levin <sashal@kernel.org>, io-uring@vger.kernel.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.14 41/47] io-wq: remove GFP_ATOMIC allocation off schedule out path
+Date:   Sun,  5 Sep 2021 21:19:45 -0400
+Message-Id: <20210906011951.928679-41-sashal@kernel.org>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210906011951.928679-1-sashal@kernel.org>
+References: <20210906011951.928679-1-sashal@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <701e50f5-2444-5b56-749b-1c1affc26ce9@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/4/21 4:46 PM, Pavel Begunkov wrote:
-> On 9/4/21 7:40 PM, Jens Axboe wrote:
->> On 9/4/21 9:34 AM, Hao Xu wrote:
->>> 在 2021/9/4 上午12:29, Jens Axboe 写道:
->>>> On 9/3/21 5:00 AM, Hao Xu wrote:
->>>>> Update io_accept_prep() to enable multishot mode for accept operation.
->>>>>
->>>>> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
->>>>> ---
->>>>>   fs/io_uring.c | 14 ++++++++++++--
->>>>>   1 file changed, 12 insertions(+), 2 deletions(-)
->>>>>
->>>>> diff --git a/fs/io_uring.c b/fs/io_uring.c
->>>>> index eb81d37dce78..34612646ae3c 100644
->>>>> --- a/fs/io_uring.c
->>>>> +++ b/fs/io_uring.c
->>>>> @@ -4861,6 +4861,7 @@ static int io_recv(struct io_kiocb *req, unsigned int issue_flags)
->>>>>   static int io_accept_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
->>>>>   {
->>>>>   	struct io_accept *accept = &req->accept;
->>>>> +	bool is_multishot;
->>>>>   
->>>>>   	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
->>>>>   		return -EINVAL;
->>>>> @@ -4872,14 +4873,23 @@ static int io_accept_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
->>>>>   	accept->flags = READ_ONCE(sqe->accept_flags);
->>>>>   	accept->nofile = rlimit(RLIMIT_NOFILE);
->>>>>   
->>>>> +	is_multishot = accept->flags & IORING_ACCEPT_MULTISHOT;
->>>>> +	if (is_multishot && (req->flags & REQ_F_FORCE_ASYNC))
->>>>> +		return -EINVAL;
->>>>
->>>> I like the idea itself as I think it makes a lot of sense to just have
->>>> an accept sitting there and generating multiple CQEs, but I'm a bit
->>>> puzzled by how you pass it in. accept->flags is the accept4(2) flags,
->>>> which can currently be:
->>>>
->>>> SOCK_NONBLOCK
->>>> SOCK_CLOEXEC
->>>>
->>>> While there's not any overlap here, that is mostly by chance I think. A
->>>> cleaner separation is needed here, what happens if some other accept4(2)
->>>> flag is enabled and it just happens to be the same as
->>>> IORING_ACCEPT_MULTISHOT?
->>> Make sense, how about a new IOSQE flag, I saw not many
->>> entries left there.
->>
->> Not quite sure what the best approach would be... The mshot flag only
->> makes sense for a few request types, so a bit of a shame to have to
->> waste an IOSQE flag on it. Especially when the flags otherwise passed in
->> are so sparse, there's plenty of bits there.
->>
->> Hence while it may not be the prettiest, perhaps using accept->flags is
->> ok and we just need some careful code to ensure that we never have any
->> overlap.
-> 
-> Or we can alias with some of the almost-never-used fields like
-> ->ioprio or ->buf_index.
+From: Jens Axboe <axboe@kernel.dk>
 
-It's not a bad idea, as long as we can safely use flags from eg ioprio
-for cases where ioprio would never be used. In that sense it's probably
-safer than using buf_index.
+[ Upstream commit d3e9f732c415cf22faa33d6f195e291ad82dc92e ]
 
-The alternative is, as has been brougt up before, adding a flags2 and
-reserving the last flag in ->flags to say "there are flags in flags2".
-Not exactly super pretty either, but we'll need to extend them at some
-point.
+Daniel reports that the v5.14-rc4-rt4 kernel throws a BUG when running
+stress-ng:
 
+| [   90.202543] BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:35
+| [   90.202549] in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid: 2047, name: iou-wrk-2041
+| [   90.202555] CPU: 5 PID: 2047 Comm: iou-wrk-2041 Tainted: G        W         5.14.0-rc4-rt4+ #89
+| [   90.202559] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.14.0-2 04/01/2014
+| [   90.202561] Call Trace:
+| [   90.202577]  dump_stack_lvl+0x34/0x44
+| [   90.202584]  ___might_sleep.cold+0x87/0x94
+| [   90.202588]  rt_spin_lock+0x19/0x70
+| [   90.202593]  ___slab_alloc+0xcb/0x7d0
+| [   90.202598]  ? newidle_balance.constprop.0+0xf5/0x3b0
+| [   90.202603]  ? dequeue_entity+0xc3/0x290
+| [   90.202605]  ? io_wqe_dec_running.isra.0+0x98/0xe0
+| [   90.202610]  ? pick_next_task_fair+0xb9/0x330
+| [   90.202612]  ? __schedule+0x670/0x1410
+| [   90.202615]  ? io_wqe_dec_running.isra.0+0x98/0xe0
+| [   90.202618]  kmem_cache_alloc_trace+0x79/0x1f0
+| [   90.202621]  io_wqe_dec_running.isra.0+0x98/0xe0
+| [   90.202625]  io_wq_worker_sleeping+0x37/0x50
+| [   90.202628]  schedule+0x30/0xd0
+| [   90.202630]  schedule_timeout+0x8f/0x1a0
+| [   90.202634]  ? __bpf_trace_tick_stop+0x10/0x10
+| [   90.202637]  io_wqe_worker+0xfd/0x320
+| [   90.202641]  ? finish_task_switch.isra.0+0xd3/0x290
+| [   90.202644]  ? io_worker_handle_work+0x670/0x670
+| [   90.202646]  ? io_worker_handle_work+0x670/0x670
+| [   90.202649]  ret_from_fork+0x22/0x30
+
+which is due to the RT kernel not liking a GFP_ATOMIC allocation inside
+a raw spinlock. Besides that not working on RT, doing any kind of
+allocation from inside schedule() is kind of nasty and should be avoided
+if at all possible.
+
+This particular path happens when an io-wq worker goes to sleep, and we
+need a new worker to handle pending work. We currently allocate a small
+data item to hold the information we need to create a new worker, but we
+can instead include this data in the io_worker struct itself and just
+protect it with a single bit lock. We only really need one per worker
+anyway, as we will have run pending work between to sleep cycles.
+
+https://lore.kernel.org/lkml/20210804082418.fbibprcwtzyt5qax@beryllium.lan/
+Reported-by: Daniel Wagner <dwagner@suse.de>
+Tested-by: Daniel Wagner <dwagner@suse.de>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/io-wq.c | 72 ++++++++++++++++++++++++++++++------------------------
+ 1 file changed, 40 insertions(+), 32 deletions(-)
+
+diff --git a/fs/io-wq.c b/fs/io-wq.c
+index 7d2ed8c7dd31..4ce83bb48021 100644
+--- a/fs/io-wq.c
++++ b/fs/io-wq.c
+@@ -51,6 +51,10 @@ struct io_worker {
+ 
+ 	struct completion ref_done;
+ 
++	unsigned long create_state;
++	struct callback_head create_work;
++	int create_index;
++
+ 	struct rcu_head rcu;
+ };
+ 
+@@ -272,24 +276,18 @@ static void io_wqe_inc_running(struct io_worker *worker)
+ 	atomic_inc(&acct->nr_running);
+ }
+ 
+-struct create_worker_data {
+-	struct callback_head work;
+-	struct io_wqe *wqe;
+-	int index;
+-};
+-
+ static void create_worker_cb(struct callback_head *cb)
+ {
+-	struct create_worker_data *cwd;
++	struct io_worker *worker;
+ 	struct io_wq *wq;
+ 	struct io_wqe *wqe;
+ 	struct io_wqe_acct *acct;
+ 	bool do_create = false, first = false;
+ 
+-	cwd = container_of(cb, struct create_worker_data, work);
+-	wqe = cwd->wqe;
++	worker = container_of(cb, struct io_worker, create_work);
++	wqe = worker->wqe;
+ 	wq = wqe->wq;
+-	acct = &wqe->acct[cwd->index];
++	acct = &wqe->acct[worker->create_index];
+ 	raw_spin_lock_irq(&wqe->lock);
+ 	if (acct->nr_workers < acct->max_workers) {
+ 		if (!acct->nr_workers)
+@@ -299,33 +297,42 @@ static void create_worker_cb(struct callback_head *cb)
+ 	}
+ 	raw_spin_unlock_irq(&wqe->lock);
+ 	if (do_create) {
+-		create_io_worker(wq, wqe, cwd->index, first);
++		create_io_worker(wq, wqe, worker->create_index, first);
+ 	} else {
+ 		atomic_dec(&acct->nr_running);
+ 		io_worker_ref_put(wq);
+ 	}
+-	kfree(cwd);
++	clear_bit_unlock(0, &worker->create_state);
++	io_worker_release(worker);
+ }
+ 
+-static void io_queue_worker_create(struct io_wqe *wqe, struct io_wqe_acct *acct)
++static void io_queue_worker_create(struct io_wqe *wqe, struct io_worker *worker,
++				   struct io_wqe_acct *acct)
+ {
+-	struct create_worker_data *cwd;
+ 	struct io_wq *wq = wqe->wq;
+ 
+ 	/* raced with exit, just ignore create call */
+ 	if (test_bit(IO_WQ_BIT_EXIT, &wq->state))
+ 		goto fail;
++	if (!io_worker_get(worker))
++		goto fail;
++	/*
++	 * create_state manages ownership of create_work/index. We should
++	 * only need one entry per worker, as the worker going to sleep
++	 * will trigger the condition, and waking will clear it once it
++	 * runs the task_work.
++	 */
++	if (test_bit(0, &worker->create_state) ||
++	    test_and_set_bit_lock(0, &worker->create_state))
++		goto fail_release;
+ 
+-	cwd = kmalloc(sizeof(*cwd), GFP_ATOMIC);
+-	if (cwd) {
+-		init_task_work(&cwd->work, create_worker_cb);
+-		cwd->wqe = wqe;
+-		cwd->index = acct->index;
+-		if (!task_work_add(wq->task, &cwd->work, TWA_SIGNAL))
+-			return;
+-
+-		kfree(cwd);
+-	}
++	init_task_work(&worker->create_work, create_worker_cb);
++	worker->create_index = acct->index;
++	if (!task_work_add(wq->task, &worker->create_work, TWA_SIGNAL))
++		return;
++	clear_bit_unlock(0, &worker->create_state);
++fail_release:
++	io_worker_release(worker);
+ fail:
+ 	atomic_dec(&acct->nr_running);
+ 	io_worker_ref_put(wq);
+@@ -343,7 +350,7 @@ static void io_wqe_dec_running(struct io_worker *worker)
+ 	if (atomic_dec_and_test(&acct->nr_running) && io_wqe_run_queue(wqe)) {
+ 		atomic_inc(&acct->nr_running);
+ 		atomic_inc(&wqe->wq->worker_refs);
+-		io_queue_worker_create(wqe, acct);
++		io_queue_worker_create(wqe, worker, acct);
+ 	}
+ }
+ 
+@@ -1004,12 +1011,12 @@ struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data)
+ 
+ static bool io_task_work_match(struct callback_head *cb, void *data)
+ {
+-	struct create_worker_data *cwd;
++	struct io_worker *worker;
+ 
+ 	if (cb->func != create_worker_cb)
+ 		return false;
+-	cwd = container_of(cb, struct create_worker_data, work);
+-	return cwd->wqe->wq == data;
++	worker = container_of(cb, struct io_worker, create_work);
++	return worker->wqe->wq == data;
+ }
+ 
+ void io_wq_exit_start(struct io_wq *wq)
+@@ -1026,12 +1033,13 @@ static void io_wq_exit_workers(struct io_wq *wq)
+ 		return;
+ 
+ 	while ((cb = task_work_cancel_match(wq->task, io_task_work_match, wq)) != NULL) {
+-		struct create_worker_data *cwd;
++		struct io_worker *worker;
+ 
+-		cwd = container_of(cb, struct create_worker_data, work);
+-		atomic_dec(&cwd->wqe->acct[cwd->index].nr_running);
++		worker = container_of(cb, struct io_worker, create_work);
++		atomic_dec(&worker->wqe->acct[worker->create_index].nr_running);
+ 		io_worker_ref_put(wq);
+-		kfree(cwd);
++		clear_bit_unlock(0, &worker->create_state);
++		io_worker_release(worker);
+ 	}
+ 
+ 	rcu_read_lock();
 -- 
-Jens Axboe
+2.30.2
 

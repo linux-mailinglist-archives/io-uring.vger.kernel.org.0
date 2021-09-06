@@ -2,59 +2,111 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B49B9401F18
-	for <lists+io-uring@lfdr.de>; Mon,  6 Sep 2021 19:15:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FA72401F47
+	for <lists+io-uring@lfdr.de>; Mon,  6 Sep 2021 19:41:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243884AbhIFRQ2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 6 Sep 2021 13:16:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37622 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S238271AbhIFRQ2 (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Mon, 6 Sep 2021 13:16:28 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 33D8560FBF;
-        Mon,  6 Sep 2021 17:15:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1630948523;
-        bh=TIMNer2SmsDSdQ1zdOLW0dHbJQ/gMPENzX0/OsMnm1k=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=Wt22ZHjiUZE6zXAYfqwWe+LIvnfo7w4AyAfdeM5SapCRNb/JuhVkBXf2APyiFwz/x
-         lvMLlCK7nCAKsM9S47f4YdRJST5ngP7mslFqoDtWwfk8oWCUuKftrQEb5Ls87XnMct
-         IwFDdYEjfmYUvDmywKxcJfKkuvslXk4QEogz3dyV64D+lDTv80xOTBQ+wWIrbnB1lq
-         awLmjkiM4scSDmE4EiwJtuOv00NOdJtqhkfxuJxqtqhgJ4nMgRDp1icXadqGb14Uw7
-         e9EZOQB+3hWUpTmZgkbkVFx7IHyD8fBd4yJZVExAHvzvjIm5PAgIBnVlIZdtYGP+FY
-         LZ6KXsLNueKAg==
-Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id 2D5DB609B9;
-        Mon,  6 Sep 2021 17:15:23 +0000 (UTC)
-Subject: Re: [GIT PULL] Followup io_uring fixes for 5.15-rc1
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <625ed118-a5f0-781b-fb98-b555899f2732@kernel.dk>
-References: <625ed118-a5f0-781b-fb98-b555899f2732@kernel.dk>
-X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
-X-PR-Tracked-Message-Id: <625ed118-a5f0-781b-fb98-b555899f2732@kernel.dk>
-X-PR-Tracked-Remote: git://git.kernel.dk/linux-block.git tags/for-5.15/io_uring-2021-09-04
-X-PR-Tracked-Commit-Id: 2fc2a7a62eb58650e71b4550cf6fa6cc0a75b2d2
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 60f8fbaa954452104a1914e21c5cc109f7bf276a
-Message-Id: <163094852317.9377.9525996405421913198.pr-tracker-bot@kernel.org>
-Date:   Mon, 06 Sep 2021 17:15:23 +0000
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        io-uring <io-uring@vger.kernel.org>
+        id S244167AbhIFRmE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 6 Sep 2021 13:42:04 -0400
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:48832 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S244010AbhIFRmD (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 6 Sep 2021 13:42:03 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01424;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UnW7BEi_1630950057;
+Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UnW7BEi_1630950057)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 07 Sep 2021 01:40:57 +0800
+Subject: Re: [PATCH 4/6] io_uring: let fast poll support multishot
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
+References: <20210903110049.132958-1-haoxu@linux.alibaba.com>
+ <20210903110049.132958-5-haoxu@linux.alibaba.com>
+ <b3ea4817-98d9-def8-d75e-9758ca7d1c33@gmail.com>
+From:   Hao Xu <haoxu@linux.alibaba.com>
+Message-ID: <8f3046d9-d678-f755-e7af-a0e5040699ca@linux.alibaba.com>
+Date:   Tue, 7 Sep 2021 01:40:57 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.13.0
+MIME-Version: 1.0
+In-Reply-To: <b3ea4817-98d9-def8-d75e-9758ca7d1c33@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The pull request you sent on Sun, 5 Sep 2021 12:51:12 -0600:
+在 2021/9/6 下午11:56, Pavel Begunkov 写道:
+> On 9/3/21 12:00 PM, Hao Xu wrote:
+>> For operations like accept, multishot is a useful feature, since we can
+>> reduce a number of accept sqe. Let's integrate it to fast poll, it may
+>> be good for other operations in the future.
+> 
+> __io_arm_poll_handler()         |
+>    -> vfs_poll()                 |
+>                                  | io_async_task_func() // post CQE
+>                                  | ...
+>                                  | do_apoll_rewait();
+>    -> continues after vfs_poll(),|
+>       removing poll->head of     |
+>       the second poll attempt.   |
+> 
+> 
+Sorry.. a little bit confused by this case, would you mind explain a bit
+more..is the right part a system-workqueue context? and is
+do_apoll_rewait() io_poll_rewait() function?
+> One of the reasons for forbidding multiple apoll's is that it
+> might be racy. I haven't looked into this implementation, but
+> we should check if there will be problems from that.
+> 
+> FWIW, putting aside this patchset, the poll/apoll is not in
+> the best shape and can use some refactoring.
+> 
+> 
+>> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
+>> ---
+>>   fs/io_uring.c | 15 ++++++++++++---
+>>   1 file changed, 12 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>> index d6df60c4cdb9..dae7044e0c24 100644
+>> --- a/fs/io_uring.c
+>> +++ b/fs/io_uring.c
+>> @@ -5277,8 +5277,15 @@ static void io_async_task_func(struct io_kiocb *req, bool *locked)
+>>   		return;
+>>   	}
+>>   
+>> -	hash_del(&req->hash_node);
+>> -	io_poll_remove_double(req);
+>> +	if (READ_ONCE(apoll->poll.canceled))
+>> +		apoll->poll.events |= EPOLLONESHOT;
+>> +	if (apoll->poll.events & EPOLLONESHOT) {
+>> +		hash_del(&req->hash_node);
+>> +		io_poll_remove_double(req);
+>> +	} else {
+>> +		add_wait_queue(apoll->poll.head, &apoll->poll.wait);
+>> +	}
+>> +
+>>   	spin_unlock(&ctx->completion_lock);
+>>   
+>>   	if (!READ_ONCE(apoll->poll.canceled))
+>> @@ -5366,7 +5373,7 @@ static int io_arm_poll_handler(struct io_kiocb *req)
+>>   	struct io_ring_ctx *ctx = req->ctx;
+>>   	struct async_poll *apoll;
+>>   	struct io_poll_table ipt;
+>> -	__poll_t ret, mask = EPOLLONESHOT | POLLERR | POLLPRI;
+>> +	__poll_t ret, mask = POLLERR | POLLPRI;
+>>   	int rw;
+>>   
+>>   	if (!req->file || !file_can_poll(req->file))
+>> @@ -5388,6 +5395,8 @@ static int io_arm_poll_handler(struct io_kiocb *req)
+>>   		rw = WRITE;
+>>   		mask |= POLLOUT | POLLWRNORM;
+>>   	}
+>> +	if (!(req->flags & REQ_F_APOLL_MULTISHOT))
+>> +		mask |= EPOLLONESHOT;
+>>   
+>>   	/* if we can't nonblock try, then no point in arming a poll handler */
+>>   	if (!io_file_supports_nowait(req, rw))
+>>
+> 
 
-> git://git.kernel.dk/linux-block.git tags/for-5.15/io_uring-2021-09-04
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/60f8fbaa954452104a1914e21c5cc109f7bf276a
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html

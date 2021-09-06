@@ -2,220 +2,139 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E777A401DAF
-	for <lists+io-uring@lfdr.de>; Mon,  6 Sep 2021 17:35:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC499401DE2
+	for <lists+io-uring@lfdr.de>; Mon,  6 Sep 2021 17:57:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242495AbhIFPgu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 6 Sep 2021 11:36:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47770 "EHLO
+        id S243542AbhIFP6K (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 6 Sep 2021 11:58:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233979AbhIFPgu (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 6 Sep 2021 11:36:50 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 755ACC061575
-        for <io-uring@vger.kernel.org>; Mon,  6 Sep 2021 08:35:45 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id q11so10406291wrr.9
-        for <io-uring@vger.kernel.org>; Mon, 06 Sep 2021 08:35:45 -0700 (PDT)
+        with ESMTP id S231591AbhIFP6J (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 6 Sep 2021 11:58:09 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A74EC061575
+        for <io-uring@vger.kernel.org>; Mon,  6 Sep 2021 08:57:04 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id i6so10513026wrv.2
+        for <io-uring@vger.kernel.org>; Mon, 06 Sep 2021 08:57:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=subject:from:to:cc:references:message-id:date:user-agent
+        h=to:cc:references:from:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=VTbCfTRZu3G9rHxl2HquRQKnrQMgBK/OBJLDaEqYi2I=;
-        b=WQsodxoZkJFHCV7lhOVEKOtBwgVL/OSok0rO3OowIOHlYlgD9SMkq/CzCp5YZOgAOb
-         XYhxrPMrVpPGN2/gK0ax7bpCS52DQhSxczzR9umBaKxB0YCYD6NtDElln/G8ZJcaA3gb
-         q/HwQRQnvaTtIdX9YfizrETYxOf/++Khv+94M9NjDzTLKH4SlSwPxKNf9q94OIpfnJ5R
-         qS5ztLtsnDGTSM85b8eHHBPhvxvcPMzlp3epKtGyAtlN/w2KMvnMt9NqGWyyfSZkr/vN
-         bfF72s0OdHr6wuz8wLqCsPSTaj7CL3uBTeEvlE6fxpJhk5JejUOrEzt2+hKYujGZY93F
-         72CQ==
+        bh=pgyrLlMnQZ+O22RVx7ecH7laHegZPTWxrJzxqIDUuTY=;
+        b=mCvGfcdnAHTrjIKLoD5mrunMFQpkuBjb8f06hy1fS+djv+0QCED6eJFujH/2es9qxU
+         rxc9CsU62mQ08/cexl/DPUCSe9QEh9gSfC5vXfqI0HJ5pxtQ7AXKhldoSplLTCIxdKWf
+         6hala8iG2faskcvPKBxxC3LzKC1E5XkZXWECoMJDiQflKK0IeCc2NRhMzcqQzLCh0I6T
+         dGdx/QG6yRrAKysv8HVOHzQ0kPpeIjmdsS0o2VxTnoHnGgYySNm7WRUUigDcBKI4u2vs
+         vNwBYq2dtvy809urU5e1qyw1bNCuUF9sNLmT8Bc5l4cZqMq9rTHQz70ql05riF870PKi
+         HicA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=VTbCfTRZu3G9rHxl2HquRQKnrQMgBK/OBJLDaEqYi2I=;
-        b=ukarouwhREGvhm610o+lD/NmFYUHVQI/4rZgQIqEBKqS66/NJwQUErwYsYK3bvKkrK
-         MTnWKXbX7iCzC+LwvGEA5pMCMEW4L96cFkegGTqdC62c/nAKgUGxy+aXy/5PMkUow5OM
-         jN3rlTjp8jWc+G7tTQi1/yHz4sYZD3yWDoacBhyhb2Rciv8w6PJZBNf2QyQM+TiPJ79c
-         tQLhVfam1YmvoFGzRWKEQOqAbFfyx5H/Q1Qtem7gR+m8FI4zr0f5g5gqTkep1DVClbIw
-         TfElYiRexVuwW08fZnEFY0aOt10NqyL0lsU2sgWVso5mUO9ZVyA6E6gZIX9kvZey9Mms
-         xftg==
-X-Gm-Message-State: AOAM531MdkTRCyN7aowlDRBFAFgtt0xKxPwux7O/IIrjEGRQTPoCaAve
-        J05kd5PNPDFR80CDA0IoRLisOEZmdPg=
-X-Google-Smtp-Source: ABdhPJxTFgaeY/Wc8KVNn8A4NOefsEOaYJVeNJDbEVahKhyfgfXXAs75y0iLR8IDfRVapF3WlPvByQ==
-X-Received: by 2002:a5d:438a:: with SMTP id i10mr14321780wrq.285.1630942543984;
-        Mon, 06 Sep 2021 08:35:43 -0700 (PDT)
+        bh=pgyrLlMnQZ+O22RVx7ecH7laHegZPTWxrJzxqIDUuTY=;
+        b=bflNJiocKeQg3pYNuThH92griiawBGqMlV0oNyPA0PMtnRYoPcdIFC8+de2B56EfxA
+         3RU1iTKX0wiIuKG0yU3S6dmFb3V8KQNWpAoFpef2YT+ZPiZ7HuojWF5lO9ZPytE5Ycbs
+         6FHUAib/aVQ8xwwtOF9M/FRa8R5WXRRhvN3Op7ODt/JSV4oGyDTVu8kDY5mQs5Q+HVEf
+         6XzuEM4eCTqIr5NSL7jahfC1XvqLupGINC4rkB07jk5BXddXC0ljDCDJieRI5ekRoAVY
+         dBNVoRj5Cd0fLWDF4abfcMVOwf1WF4IUaj/YIyq3ES2VDvF4KnQWMzYEOl2eIuMbEHPX
+         K1Nw==
+X-Gm-Message-State: AOAM532iSyxcjXM1s9Bc/5X834KZeTLPYs3iY3rq0qjawrEGr+/zt7HK
+        ppGJdFz1OqbGHidYj/J56uI=
+X-Google-Smtp-Source: ABdhPJwRJ8M+iyDHy1m+BkKqEs9peEEMT/hFQLxHNpsI7Kzc+b36nSvcmgzNvnvAZGqoUUJNSB8xEQ==
+X-Received: by 2002:adf:f0c7:: with SMTP id x7mr13202207wro.42.1630943823142;
+        Mon, 06 Sep 2021 08:57:03 -0700 (PDT)
 Received: from [192.168.8.197] ([148.252.133.4])
-        by smtp.gmail.com with ESMTPSA id z17sm8452361wrh.66.2021.09.06.08.35.19
+        by smtp.gmail.com with ESMTPSA id z5sm1836739wmf.33.2021.09.06.08.57.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Sep 2021 08:35:30 -0700 (PDT)
-Subject: Re: [PATCH 5/6] io_uring: implement multishot mode for accept
-From:   Pavel Begunkov <asml.silence@gmail.com>
+        Mon, 06 Sep 2021 08:57:02 -0700 (PDT)
 To:     Hao Xu <haoxu@linux.alibaba.com>, Jens Axboe <axboe@kernel.dk>
 Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
 References: <20210903110049.132958-1-haoxu@linux.alibaba.com>
- <20210903110049.132958-6-haoxu@linux.alibaba.com>
- <3070a597-3326-5cac-253e-e2b58eebd3a2@gmail.com>
- <64734f7c-aaee-7ac7-752e-2d81a475d3d8@gmail.com>
-Message-ID: <9406066e-bfd7-4491-576f-873f4396f10d@gmail.com>
-Date:   Mon, 6 Sep 2021 16:34:43 +0100
+ <20210903110049.132958-5-haoxu@linux.alibaba.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Subject: Re: [PATCH 4/6] io_uring: let fast poll support multishot
+Message-ID: <b3ea4817-98d9-def8-d75e-9758ca7d1c33@gmail.com>
+Date:   Mon, 6 Sep 2021 16:56:29 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.13.0
 MIME-Version: 1.0
-In-Reply-To: <64734f7c-aaee-7ac7-752e-2d81a475d3d8@gmail.com>
+In-Reply-To: <20210903110049.132958-5-haoxu@linux.alibaba.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/4/21 11:40 PM, Pavel Begunkov wrote:
-> On 9/4/21 11:39 PM, Pavel Begunkov wrote:
->> On 9/3/21 12:00 PM, Hao Xu wrote:
->>> Refactor io_accept() to support multishot mode.
->>
->> Multishot with the fixed/direct mode sounds weird (considering that
->> the slot index is specified by userspace), let's forbid them.
->>
->> io_accept_prep() {
->> 	if (accept->file_slot && (flags & MULTISHOT))
->> 		return -EINVAL;
->> 	...
->> }
+On 9/3/21 12:00 PM, Hao Xu wrote:
+> For operations like accept, multishot is a useful feature, since we can
+> reduce a number of accept sqe. Let's integrate it to fast poll, it may
+> be good for other operations in the future.
+
+__io_arm_poll_handler()         |
+  -> vfs_poll()                 |
+                                | io_async_task_func() // post CQE
+                                | ...
+                                | do_apoll_rewait();
+  -> continues after vfs_poll(),|
+     removing poll->head of     |
+     the second poll attempt.   |
+
+
+One of the reasons for forbidding multiple apoll's is that it
+might be racy. I haven't looked into this implementation, but
+we should check if there will be problems from that.
+
+FWIW, putting aside this patchset, the poll/apoll is not in
+the best shape and can use some refactoring.
+
+
+> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
+> ---
+>  fs/io_uring.c | 15 ++++++++++++---
+>  1 file changed, 12 insertions(+), 3 deletions(-)
 > 
-> Ah, never mind, it's already there in 6/6
-
-btw, I think it would be less confusing if 5/6 and 6/6 are combined
-into a single patch. But it's a matter of taste, I guess
-
->>
->>> theoretical analysis:
->>>   1) when connections come in fast
->>>     - singleshot:
->>>               add accept sqe(userpsace) --> accept inline
->>>                               ^                 |
->>>                               |-----------------|
->>>     - multishot:
->>>              add accept sqe(userspace) --> accept inline
->>>                                               ^     |
->>>                                               |--*--|
->>>
->>>     we do accept repeatedly in * place until get EAGAIN
->>>
->>>   2) when connections come in at a low pressure
->>>     similar thing like 1), we reduce a lot of userspace-kernel context
->>>     switch and useless vfs_poll()
->>>
->>> tests:
->>> Did some tests, which goes in this way:
->>>
->>>   server    client(multiple)
->>>   accept    connect
->>>   read      write
->>>   write     read
->>>   close     close
->>>
->>> Basically, raise up a number of clients(on same machine with server) to
->>> connect to the server, and then write some data to it, the server will
->>> write those data back to the client after it receives them, and then
->>> close the connection after write return. Then the client will read the
->>> data and then close the connection. Here I test 10000 clients connect
->>> one server, data size 128 bytes. And each client has a go routine for
->>> it, so they come to the server in short time.
->>> test 20 times before/after this patchset, time spent:(unit cycle, which
->>> is the return value of clock())
->>> before:
->>>   1930136+1940725+1907981+1947601+1923812+1928226+1911087+1905897+1941075
->>>   +1934374+1906614+1912504+1949110+1908790+1909951+1941672+1969525+1934984
->>>   +1934226+1914385)/20.0 = 1927633.75
->>> after:
->>>   1858905+1917104+1895455+1963963+1892706+1889208+1874175+1904753+1874112
->>>   +1874985+1882706+1884642+1864694+1906508+1916150+1924250+1869060+1889506
->>>   +1871324+1940803)/20.0 = 1894750.45
->>>
->>> (1927633.75 - 1894750.45) / 1927633.75 = 1.65%
->>>
->>> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
->>> ---
->>>
->>> not sure if we should cancel it when io_cqring_fill_event() reurn false
->>>
->>>  fs/io_uring.c | 34 +++++++++++++++++++++++++++++-----
->>>  1 file changed, 29 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/fs/io_uring.c b/fs/io_uring.c
->>> index dae7044e0c24..eb81d37dce78 100644
->>> --- a/fs/io_uring.c
->>> +++ b/fs/io_uring.c
->>> @@ -4885,16 +4885,18 @@ static int io_accept_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
->>>  
->>>  static int io_accept(struct io_kiocb *req, unsigned int issue_flags)
->>>  {
->>> +	struct io_ring_ctx *ctx = req->ctx;
->>>  	struct io_accept *accept = &req->accept;
->>>  	bool force_nonblock = issue_flags & IO_URING_F_NONBLOCK;
->>>  	unsigned int file_flags = force_nonblock ? O_NONBLOCK : 0;
->>>  	bool fixed = !!accept->file_slot;
->>>  	struct file *file;
->>> -	int ret, fd;
->>> +	int ret, ret2 = 0, fd;
->>>  
->>>  	if (req->file->f_flags & O_NONBLOCK)
->>>  		req->flags |= REQ_F_NOWAIT;
->>>  
->>> +retry:
->>>  	if (!fixed) {
->>>  		fd = __get_unused_fd_flags(accept->flags, accept->nofile);
->>>  		if (unlikely(fd < 0))
->>> @@ -4906,20 +4908,42 @@ static int io_accept(struct io_kiocb *req, unsigned int issue_flags)
->>>  		if (!fixed)
->>>  			put_unused_fd(fd);
->>>  		ret = PTR_ERR(file);
->>> -		if (ret == -EAGAIN && force_nonblock)
->>> -			return -EAGAIN;
->>> +		if (ret == -EAGAIN && force_nonblock) {
->>> +			if ((req->flags & (REQ_F_APOLL_MULTISHOT | REQ_F_POLLED)) ==
->>> +			    (REQ_F_APOLL_MULTISHOT | REQ_F_POLLED))
->>> +				ret = 0;
->>> +			return ret;
->>> +		}
->>>  		if (ret == -ERESTARTSYS)
->>>  			ret = -EINTR;
->>>  		req_set_fail(req);
->>>  	} else if (!fixed) {
->>>  		fd_install(fd, file);
->>>  		ret = fd;
->>> +		/*
->>> +		 * if it's in multishot mode, let's return -EAGAIN to make it go
->>> +		 * into fast poll path
->>> +		 */
->>> +		if ((req->flags & REQ_F_APOLL_MULTISHOT) && force_nonblock &&
->>> +		   !(req->flags & REQ_F_POLLED))
->>> +			ret2 = -EAGAIN;
->>>  	} else {
->>>  		ret = io_install_fixed_file(req, file, issue_flags,
->>>  					    accept->file_slot - 1);
->>>  	}
->>> -	__io_req_complete(req, issue_flags, ret, 0);
->>> -	return 0;
->>> +
->>> +	if (req->flags & REQ_F_APOLL_MULTISHOT) {
->>> +		spin_lock(&ctx->completion_lock);
->>> +		if (io_cqring_fill_event(ctx, req->user_data, ret, 0)) {
->>> +			io_commit_cqring(ctx);
->>> +			ctx->cq_extra++;
->>> +		}
->>> +		spin_unlock(&ctx->completion_lock);
->>> +		goto retry;
->>> +	} else {
->>> +		__io_req_complete(req, issue_flags, ret, 0);
->>> +	}
->>> +	return ret2;
->>>  }
->>>  
->>>  static int io_connect_prep_async(struct io_kiocb *req)
->>>
->>
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index d6df60c4cdb9..dae7044e0c24 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -5277,8 +5277,15 @@ static void io_async_task_func(struct io_kiocb *req, bool *locked)
+>  		return;
+>  	}
+>  
+> -	hash_del(&req->hash_node);
+> -	io_poll_remove_double(req);
+> +	if (READ_ONCE(apoll->poll.canceled))
+> +		apoll->poll.events |= EPOLLONESHOT;
+> +	if (apoll->poll.events & EPOLLONESHOT) {
+> +		hash_del(&req->hash_node);
+> +		io_poll_remove_double(req);
+> +	} else {
+> +		add_wait_queue(apoll->poll.head, &apoll->poll.wait);
+> +	}
+> +
+>  	spin_unlock(&ctx->completion_lock);
+>  
+>  	if (!READ_ONCE(apoll->poll.canceled))
+> @@ -5366,7 +5373,7 @@ static int io_arm_poll_handler(struct io_kiocb *req)
+>  	struct io_ring_ctx *ctx = req->ctx;
+>  	struct async_poll *apoll;
+>  	struct io_poll_table ipt;
+> -	__poll_t ret, mask = EPOLLONESHOT | POLLERR | POLLPRI;
+> +	__poll_t ret, mask = POLLERR | POLLPRI;
+>  	int rw;
+>  
+>  	if (!req->file || !file_can_poll(req->file))
+> @@ -5388,6 +5395,8 @@ static int io_arm_poll_handler(struct io_kiocb *req)
+>  		rw = WRITE;
+>  		mask |= POLLOUT | POLLWRNORM;
+>  	}
+> +	if (!(req->flags & REQ_F_APOLL_MULTISHOT))
+> +		mask |= EPOLLONESHOT;
+>  
+>  	/* if we can't nonblock try, then no point in arming a poll handler */
+>  	if (!io_file_supports_nowait(req, rw))
 > 
 
 -- 

@@ -2,79 +2,106 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D1B0402D1F
-	for <lists+io-uring@lfdr.de>; Tue,  7 Sep 2021 18:49:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F03F402D3D
+	for <lists+io-uring@lfdr.de>; Tue,  7 Sep 2021 18:54:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345076AbhIGQth (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 7 Sep 2021 12:49:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47316 "EHLO
+        id S1344982AbhIGQzv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 7 Sep 2021 12:55:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48898 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345327AbhIGQt1 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 7 Sep 2021 12:49:27 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13E7CC061575
-        for <io-uring@vger.kernel.org>; Tue,  7 Sep 2021 09:48:21 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id q11so15426602wrr.9
-        for <io-uring@vger.kernel.org>; Tue, 07 Sep 2021 09:48:21 -0700 (PDT)
+        with ESMTP id S234571AbhIGQzv (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 7 Sep 2021 12:55:51 -0400
+Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2B65C061575;
+        Tue,  7 Sep 2021 09:54:44 -0700 (PDT)
+Received: by mail-pf1-x432.google.com with SMTP id f65so5064972pfb.10;
+        Tue, 07 Sep 2021 09:54:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LEtLeeGoFT8WbYTgRN3HPOn8m+iO600FeLjofpTTVKc=;
-        b=kFT+bZHs4/bwXFPsPozvGaiFNmOrEdGI2lwaizqHt0g4Tc7o+nFSxLVT2xn9csBjSg
-         742ZBjU2sTYGnkO6G0ljNyVsV6HkzmR+BDlpZNvd59EfLo8sg0mSH+Ub9LGBlAOxvnrH
-         SBm+yqcd7cZL17QAnpr0ISvX4AN1hJUHzzt2aQRioSLCzFZvC7xue7Dy6HOfIIlil5wk
-         so0FE9HkowHkw2QTNNNENEzrJ7DRCMWbET1gGq+iNAQJfbnYwRjb0djbapWz65kOHi78
-         svEz+mMHh6AQaPXyrSlPkxY9Vq4ITsWg905bf8ItHn9erSQuTqJYq9fRzerr+GprSRAf
-         LfuA==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=7X+MAD+O4i6lx7LuI7hH2on7g8eQNGgU/wJ36NpdYh4=;
+        b=eubzwKVVC4VzgcIyTRLt0pLO0CCnZWAqROHlGfIrLGLWAWPaAY7wEQANFU9gvN95Qe
+         +TOfD7/ccTYy+P00LLTJhWiJEa6BwfYgmPrrKECC5dS/vWSv30uJpL8oAQE4J2kM6B5q
+         yxFR37qDVhzUg/OrwyaRADeaW5QiTucbod20aglj3guXezrQML+P6UJAc/3AsDO6LWRC
+         cgtdRKlH8zoxr2XXhyl9p1k9vyODaGdEhhB8Ey5p6RQ1eTziKxQgcLkjMGT/l1g92HsS
+         00FJ7AZANZADEmq2sKjR4xKRVbWuYS72GmV36DO2FYswoL9oeTTNIFs070pXCwdbk2lD
+         ++EA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LEtLeeGoFT8WbYTgRN3HPOn8m+iO600FeLjofpTTVKc=;
-        b=fFODcQKsf3ujRzHlz/nu7lWXuOO8Uy8F0JaaGDMw4cqkSfT08Co/R83yOy4TeT50rp
-         AgymvSSLGBizWFlcxXX+k53UenPSH2UgxExJ6HcEYNof7ldrugkxGcqdeNobN+68wYOP
-         mS9od6BGBePIXtXVZHUimu4ZTVEXJYLWPX/V06uZfBDXGssmOC3lUWJpHQvpRIj+5Rof
-         lNsr3yrDizIZJbx0e1KRJ3XjjvjN9NMiGD3Yr6y8tNwnkSUV8V2iNIQ/wpskZxHnLmfk
-         I5gBvGwlvpoZ+8+VeyrT18eBjI7F+sEeRaJqtisV2ziuJQ53ghmeqhoGPTHQaQ6vaOrc
-         DNhw==
-X-Gm-Message-State: AOAM530+wxSF1lZBHPzXNwqLbBUhn9wQB2h+EMDZ19vluN5OgQyBjjlr
-        etJCVSP6UrZhtKbv0A2XJHuS8r+ZxztzagvqfLI=
-X-Google-Smtp-Source: ABdhPJx5l+2h9vRLIxgDpts+tXpc6KsZin2C4O26GsUgSORJMvpJyhdwVoRA3G6HU0hoJPjCWLZax6gg9IApUdatgiA=
-X-Received: by 2002:adf:90cc:: with SMTP id i70mr19815231wri.408.1631033299617;
- Tue, 07 Sep 2021 09:48:19 -0700 (PDT)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=7X+MAD+O4i6lx7LuI7hH2on7g8eQNGgU/wJ36NpdYh4=;
+        b=JqCQBNPJKgKR+cfyO8Ca5dLfUu9Tmwdv/SECIDe/VYfTz5COyY3V+7AsCSC8oPbezL
+         9aJmR+s11vWyTF6F1Zri1zaXoRtAtPzLpjW1p/9bvGNvmcAJzOriSssdFakyt7+lykTR
+         uSCM4J3vRS+uM+Asu0HRfK17AN+eZcon8oR/Enj+VyUCKvUcRSxwbHMik62/sKTomDVZ
+         VgSZY0F/xQpd6kNAKHkJE3bHOtJwWeGfk4JxFX4dQ8+CicEysYxxEqVy/8qM0CF/R0E1
+         8VDaRxn19eI4V6cfDUCM+qxLpLg6z1AgCSJeEzBLnF2e/ahtQuSYy3AVBkMXVNWvs95V
+         bwhA==
+X-Gm-Message-State: AOAM531XFt7uRtBQFlbtOF2uEsUu43C32sy0GJjoT02uxsvmNV7Ui1kO
+        aviltJtSrgi+W+iO03U2ZCRpCSLeHmY=
+X-Google-Smtp-Source: ABdhPJx4ILtH1Nn3AA8DM/7Ij5iNIm7H/i7jcwyo5BKZeSR60Ctoaal5gRh+e6HPAfvfkeUdsLXfmA==
+X-Received: by 2002:a05:6a00:882:b0:416:3ddd:afae with SMTP id q2-20020a056a00088200b004163dddafaemr2409333pfj.72.1631033684164;
+        Tue, 07 Sep 2021 09:54:44 -0700 (PDT)
+Received: from localhost (2603-800c-1a02-1bae-e24f-43ff-fee6-449f.res6.spectrum.com. [2603:800c:1a02:1bae:e24f:43ff:fee6:449f])
+        by smtp.gmail.com with ESMTPSA id u2sm2963486pjv.10.2021.09.07.09.54.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Sep 2021 09:54:43 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date:   Tue, 7 Sep 2021 06:54:42 -1000
+From:   Tejun Heo <tj@kernel.org>
+To:     Hao Xu <haoxu@linux.alibaba.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, Zefan Li <lizefan.x@bytedance.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring@vger.kernel.org, cgroups@vger.kernel.org,
+        Joseph Qi <joseph.qi@linux.alibaba.com>
+Subject: Re: [PATCH 2/2] io_uring: consider cgroup setting when binding
+ sqpoll cpu
+Message-ID: <YTeZUnshr+mgf5GS@slm.duckdns.org>
+References: <20210901124322.164238-1-haoxu@linux.alibaba.com>
+ <20210901124322.164238-3-haoxu@linux.alibaba.com>
+ <YS+tPq1eiQLx4P3M@slm.duckdns.org>
+ <c49d9b26-1c74-316a-c933-e6964695a286@linux.alibaba.com>
 MIME-Version: 1.0
-References: <20210805125539.66958-1-joshi.k@samsung.com> <CGME20210805125937epcas5p15667b460e28d87bd40400f69005aafe3@epcas5p1.samsung.com>
- <20210805125539.66958-7-joshi.k@samsung.com> <20210907075055.GE29874@lst.de>
-In-Reply-To: <20210907075055.GE29874@lst.de>
-From:   Kanchan Joshi <joshiiitr@gmail.com>
-Date:   Tue, 7 Sep 2021 22:17:53 +0530
-Message-ID: <CA+1E3rJsrBjpS8mNTg3jk2VWDCZ54OsbB4LC8zZaVeaN0dr2dA@mail.gmail.com>
-Subject: Re: [RFC PATCH 6/6] nvme: enable passthrough with fixed-buffer
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Kanchan Joshi <joshi.k@samsung.com>, Jens Axboe <axboe@kernel.dk>,
-        Keith Busch <kbusch@kernel.org>, io-uring@vger.kernel.org,
-        linux-nvme@lists.infradead.org, anuj20.g@samsung.com,
-        Javier Gonzalez <javier.gonz@samsung.com>, hare@suse.de
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c49d9b26-1c74-316a-c933-e6964695a286@linux.alibaba.com>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Sep 7, 2021 at 1:21 PM Christoph Hellwig <hch@lst.de> wrote:
->
-> > +/*
-> > + * Unlike blk_rq_map_user () this is only for fixed-buffer async passthrough.
-> > + * And hopefully faster as well.
-> > + */
->
-> This belongs into io_uring.c.  And that hopeful comment needs to be
-> validated and removed.
+Hello,
 
-I'll do away with that comment. But sorry, what part do you think
-should rather move to io_uring. Is that for the whole helper
-"nvme_rq_map_user_fixed"?
+On Fri, Sep 03, 2021 at 11:04:07PM +0800, Hao Xu wrote:
+> > Would it make sense to just test whether set_cpus_allowed_ptr() succeeded
+> > afterwards?
+> Do you mean: if (sqd->sq_cpu != -1 && !set_cpus_allowed_ptr(current,
+> cpumask_of(sqd->sq_cpu)))
+> 
+> I'm not familiar with set_cpus_allowed_ptr(), you mean it contains the
+> similar logic of test_cpu_in_current_cpuset?
 
+It's kinda muddy unfortunately. I think it rejects if the target cpu is
+offline but accept and ignores if the cpu is excluded by cpuset.
+
+> This is a bit beyond of my knowledge, so you mean if the cpu back
+> online, the task will automatically schedule to this cpu? if it's true,
+> I think the code logic here is fine.
+>
+> > offline and online. If the operation takes place while the cpu happens to be
+> > offline, the operation fails.
+> It's ok that it fails, we leave the option of retry to users themselves.
+
+I think the first thing to do is defining the desired behavior, hopefully in
+a consistent manner, rather than letting it be defined by implementation.
+e.g. If the desired behavior is the per-cpu helper failing, then it should
+probably exit when the target cpu isn't available for whatever reason. If
+the desired behavior is best effort when cpu goes away (ie. ignore
+affinity), the creation likely shouldn't fail when the target cpu is
+unavailable but can become available in the future.
+
+Thanks.
 
 -- 
-Kanchan
+tejun

@@ -2,101 +2,112 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FA5B402C16
-	for <lists+io-uring@lfdr.de>; Tue,  7 Sep 2021 17:44:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 603D0402CC5
+	for <lists+io-uring@lfdr.de>; Tue,  7 Sep 2021 18:21:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345325AbhIGPpK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 7 Sep 2021 11:45:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60486 "EHLO
+        id S234466AbhIGQWF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 7 Sep 2021 12:22:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235162AbhIGPpK (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 7 Sep 2021 11:45:10 -0400
-Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4DDFC061575
-        for <io-uring@vger.kernel.org>; Tue,  7 Sep 2021 08:44:03 -0700 (PDT)
-Received: by mail-il1-x133.google.com with SMTP id b4so10481182ilr.11
-        for <io-uring@vger.kernel.org>; Tue, 07 Sep 2021 08:44:03 -0700 (PDT)
+        with ESMTP id S235635AbhIGQWB (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 7 Sep 2021 12:22:01 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3E43C061575
+        for <io-uring@vger.kernel.org>; Tue,  7 Sep 2021 09:20:54 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id u9so15281697wrg.8
+        for <io-uring@vger.kernel.org>; Tue, 07 Sep 2021 09:20:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Z2yv1Gdemc/IZaLbpwK0cETDQmdaSuoMHc1tJKTVp4M=;
-        b=dnfl21splvd5wknASWpMylanLJsB5q0m0YIrV0YbfAvTZwgCeYWREH4Tt9VmoDDGvp
-         2g3JkeCdYtXUTPlnF4NSBY73SIZHvvuyH841x8vpjQ8emj8wfK3SNKWut4jg/75yoO5m
-         fAPCIiVuSBiFJOTuNm0hAN7+9TYm9HkX0yXb6SFv8RERVLy4YUOdtkA+MA9J1YBg8cae
-         +ve2NPO/KwVYZbIoBFzOhaM4Xg8W1Vib67qyQ6j0JBk4TF3HJMY1Jl03RfBiWU7PLWLS
-         8DedXJJ+5ztMRzNnitkGvfJNFYJt8THCCq2+nOqcxBXLvMqUwDKGRvL+JLTr9gElCvWZ
-         +wuQ==
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6dgSwN7ol1yXriQkyjgfHQ3T2Kfo7tblWaLh+5UXwxg=;
+        b=X5WYcDpkqGQPAh9CId/yfG8xEJmJO3X3RGiG6IY1rS9FuAN0VbAsH3HyvFcUoId70v
+         nbHJFz4qdfJn1Jr44Cl5hFVssy598QRAmsSAkDFsyPxxwEx7QZcsvsedbAwHPFK00UDe
+         BxyAR1F0zsxu01v16fxGcvJFAb3/7xopXJ9yE3OGMLP/94F4CVVx90cdhcUQ4UN5UF/V
+         ED3hUjOIwiifS6u6K/d2e4djZqixqToSqKJo+olUIAxB5PifgHhrOeQvc8Tm6ipO3vZk
+         VI3SCShSkluHI/zh/FvoAljl91Ef5oUblMPvGPZRa1KP3tAn2DnI2Q5au9RFW4No1HO4
+         8c8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Z2yv1Gdemc/IZaLbpwK0cETDQmdaSuoMHc1tJKTVp4M=;
-        b=tomStd7Sn6TrB6hw4C8RvHYIX9QQdlrt5cv5FhV4f/TQuVfzVbElYthMwZZB8RY5uM
-         OIGq0IuvpyrNZbpVHqp2hPoFeNfWtC9+llry1nYWw0tuUVHa4ikK6daXI/BfAtQgS6Kx
-         M3oWXEcjb1TGgOJtnmUqcXrFCrb598wUEmjYDI87YiWD1mRI1dCsdMKDc1wd/sPrAGQp
-         i7YHvrxaORjeUTECUUfC9MSnVjT9noO+4p+Xlvq0k58Ntq7M6fbrdNFYBVkKq3F77Hly
-         OIaBWyFmF6CGnHrcvONQ6cxcIDsrRGgMlQgeExX8ISxFU5JnM7QOXfzUG2/gzBbLhH+V
-         tA0w==
-X-Gm-Message-State: AOAM531BgBCKbp2YeOw4TFZ9gbbTVsnA8262Cq/0B3DcVThaqRf9NCV4
-        EXaFvWbTjizoiHM/X+PD9is4HPwW+VOdEw==
-X-Google-Smtp-Source: ABdhPJzpgwncu1ouVc0XmnftV8RdVk8ATpmlKikhiOiKhad8wY5GseCGdvoJ0UEx3z6k7B6Nrxu1sA==
-X-Received: by 2002:a92:d752:: with SMTP id e18mr13027105ilq.254.1631029443247;
-        Tue, 07 Sep 2021 08:44:03 -0700 (PDT)
-Received: from [192.168.1.30] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id c5sm6455780ilk.48.2021.09.07.08.44.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Sep 2021 08:44:02 -0700 (PDT)
-Subject: Re: [PATCH] io_uring: check file_slot early when accept use fix_file
- mode
-To:     Hao Xu <haoxu@linux.alibaba.com>
-Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <20210907151653.18501-1-haoxu@linux.alibaba.com>
- <3ca81c51-87fb-2f1d-f3f7-92abafdd5cca@kernel.dk>
- <1cff2f6f-d979-f667-180f-b09d548aa640@linux.alibaba.com>
- <bce206fe-46d9-7c84-c18c-68ef6210aa35@kernel.dk>
- <4b31782a-dab8-3479-4f79-20d9dfed730e@linux.alibaba.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <3616d177-effe-d567-9bb7-1d7ef62e8aed@kernel.dk>
-Date:   Tue, 7 Sep 2021 09:44:02 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6dgSwN7ol1yXriQkyjgfHQ3T2Kfo7tblWaLh+5UXwxg=;
+        b=oDS7IIoBt1kXX/9i/OO2AmWs1Y/6ZAYzlqXzIULyUKpTRRl5E7BlO8/p9MOVd8Ga64
+         D4ygySb7Grb+eZ2oz/6fcpYiFoLqdOI/32YrEPkBb/ULCd6N4eDBaueBwcvRVzw3dRV1
+         niIr155LrtEx8snXRKmIhStrdH5PnvSjUfDnmTpRIE6ILzuJc8Yhykv+A7yzTbLtpZV2
+         VxH8yWFo1fXHgivHN9xtDX0Tzck9KCM3Jiz6++PIFbTUqBBaZSeio/AjwO5FHtxZLG9k
+         rOYlE5+aNiSKuBIFYJkNhSY+BTEJ5h/IkxC3oHiuZBSQ4PlivFIkkvdXgiuR09ZrLi7q
+         slyg==
+X-Gm-Message-State: AOAM530Vfti3ikV4lcSx3Aou2Fok8DXPqFR/oy5AeJ6L+PmQIv8klATf
+        pQGQG2E1J6TqxwRjqP8iFlOUeORDv2a9ATYu1rM=
+X-Google-Smtp-Source: ABdhPJz2Qdte2dyhhO1EukEOIbrssiN0u5LnGHUVgbrNalxMZa6+bagqPRFD9/v3Z55vP+hfw9NTi/5oUzNKOndmWro=
+X-Received: by 2002:adf:9e49:: with SMTP id v9mr19926094wre.39.1631031653345;
+ Tue, 07 Sep 2021 09:20:53 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <4b31782a-dab8-3479-4f79-20d9dfed730e@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20210805125539.66958-1-joshi.k@samsung.com> <CGME20210805125923epcas5p10e6c1b95475440be68f58244d5a3cb9a@epcas5p1.samsung.com>
+ <20210805125539.66958-3-joshi.k@samsung.com> <20210907074650.GB29874@lst.de>
+In-Reply-To: <20210907074650.GB29874@lst.de>
+From:   Kanchan Joshi <joshiiitr@gmail.com>
+Date:   Tue, 7 Sep 2021 21:50:27 +0530
+Message-ID: <CA+1E3rJAav=4abJXs8fO49aiMNPqjv6dD7HBfhB+JQrNbaX3=A@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/6] nvme: wire-up support for async-passthru on char-device.
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Kanchan Joshi <joshi.k@samsung.com>, Jens Axboe <axboe@kernel.dk>,
+        Keith Busch <kbusch@kernel.org>, io-uring@vger.kernel.org,
+        linux-nvme@lists.infradead.org, anuj20.g@samsung.com,
+        Javier Gonzalez <javier.gonz@samsung.com>, hare@suse.de
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/7/21 9:42 AM, Hao Xu wrote:
-> 在 2021/9/7 下午11:37, Jens Axboe 写道:
->> On 9/7/21 9:32 AM, Hao Xu wrote:
->>> 在 2021/9/7 下午11:24, Jens Axboe 写道:
->>>> On 9/7/21 9:16 AM, Hao Xu wrote:
->>>>> check file_slot early in io_accept_prep() to avoid wasted effort in
->>>>> failure cases.
->>>>
->>>> It's generally better to just let the failure cases deal with it instead
->>>> of having checks in multiple places. This is a failure path, so we don't
->>>> care about making it fail early. Optimizations should be for the hot path,
->>>> which is not a malformed sqe.
->>> I have a question here: if we do do_accept() and but fail in
->>> io_install_fixed_file(), do we lose the conn_fd return by do_accept()
->>> forever?
->>
->> We do. The file is put and everything, so we're not leaking anything.
->> But the actual connection is lost as the accept request failed.
-> Does that cause any problem, since from client's perspective, connection
-> is builded, and there is no way for the server to close it.
+On Tue, Sep 7, 2021 at 1:17 PM Christoph Hellwig <hch@lst.de> wrote:
+>
+> Looking at this in isolation:
+>
+>  - no need to also implement the legacy non-64 passthrough interface
+>  - no need to overlay the block_uring_cmd structure as that makes a
+>    complete mess
+>
+> Below is an untested patch to fix that up a bit.
 
-Maybe? But it's a program error, it's asking to accept a connection at a
-slot which is invalid. It kind of gets to keep the pieces in that
-particular case.
+Thanks for taking a look and cleaning that up. Looks a lot better.
 
+> A few other notes:
+>
+>  - I suspect the ioctl_cmd really should move into the core using_cmd
+>    infrastructure
+
+Yes, that seems possible by creating that field outside by combining
+"op" and "unused" below.
++struct io_uring_cmd {
++ struct file *file;
++ __u16 op;
++ __u16 unused;
++ __u32 len;
++ __u64 pdu[5]; /* 40 bytes available inline for free use */
++};
+
+>  - please stick to the naming of the file operation instead of using
+>    something different.  That being said async_ioctl seems better
+>    fitting than uring_cmd
+
+Got it.
+
+>  - that whole mix of user space interface and internal data in the
+>    ->pdu field is a mess.  What is the problem with deferring the
+>    request freeing into the user context, which would clean up
+>    quite a bit of that, especially if io_uring_cmd grows a private
+>    field.
+
+That mix isn't great but the attempt was to save the allocation.
+And I was not very sure if it'd be fine to defer freeing the request
+until task-work fires up.
+Even if we take that route, we would still need a place to store bio
+pointer (hopefully meta pointer can be extracted out of bio).
+Do you see it differently?
+
+
+Thanks,
 -- 
-Jens Axboe
-
+Kanchan

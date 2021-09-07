@@ -2,88 +2,92 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 864FF402EF3
-	for <lists+io-uring@lfdr.de>; Tue,  7 Sep 2021 21:28:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F498402EFA
+	for <lists+io-uring@lfdr.de>; Tue,  7 Sep 2021 21:30:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240940AbhIGTaB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 7 Sep 2021 15:30:01 -0400
-Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:40862 "EHLO
-        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229574AbhIGT36 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 7 Sep 2021 15:29:58 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R471e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0Uncl1PM_1631042928;
-Received: from 30.30.107.109(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0Uncl1PM_1631042928)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 08 Sep 2021 03:28:49 +0800
-Subject: Re: [PATCH 2/2] io_uring: consider cgroup setting when binding sqpoll
- cpu
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, Zefan Li <lizefan.x@bytedance.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring@vger.kernel.org, cgroups@vger.kernel.org,
-        Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <20210901124322.164238-1-haoxu@linux.alibaba.com>
- <20210901124322.164238-3-haoxu@linux.alibaba.com>
- <YS+tPq1eiQLx4P3M@slm.duckdns.org>
- <c49d9b26-1c74-316a-c933-e6964695a286@linux.alibaba.com>
- <YTeZUnshr+mgf5GS@slm.duckdns.org>
-From:   Hao Xu <haoxu@linux.alibaba.com>
-Message-ID: <f7ae868d-0997-8e94-53a3-a5d6513f7447@linux.alibaba.com>
-Date:   Wed, 8 Sep 2021 03:28:48 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.13.0
+        id S245599AbhIGTbp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 7 Sep 2021 15:31:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56326 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233374AbhIGTbp (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 7 Sep 2021 15:31:45 -0400
+Received: from mail-il1-x12c.google.com (mail-il1-x12c.google.com [IPv6:2607:f8b0:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9ACB5C061575
+        for <io-uring@vger.kernel.org>; Tue,  7 Sep 2021 12:30:38 -0700 (PDT)
+Received: by mail-il1-x12c.google.com with SMTP id j15so246127ila.1
+        for <io-uring@vger.kernel.org>; Tue, 07 Sep 2021 12:30:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=v0NXlxBTeEi3do2hDI3EUhz1rB97bKcDUu5e3uBm2y4=;
+        b=CnN0grQMu2KtAdQbiFJTNYhIJ+Ziwuj3At2l8swhKX5m486ypX6krJngp/DyJcJ4Mq
+         tSI/oCUhkRH0imlZqZ85/uQjS5zYVDO9b1hF6A0L2kUoMOyUzu5zB+6ttwQgszU95HuB
+         2isjazjLBht+UNImG/0JdH2z/tVd/wttyKJOW3M3ulCWlTZ1oAeHk6SYUds0Zu17rbqi
+         qV/wQ70K7Qqw5hJZWVZ0vwSrtG9hwfArhhzDBhBhU2eWu2nenTiVHPjD/99HK1IJaRAv
+         tyAlo6FPwzxNwbMK0Mx6jLBc4jNm926+isFNTn7+5xfWFwyObMtiHJQFMiUO5HVM5QwF
+         GKEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=v0NXlxBTeEi3do2hDI3EUhz1rB97bKcDUu5e3uBm2y4=;
+        b=UcCT7v1hjq+wLM6jACseg5THstzvGno2YKfEvWcKSGHsu2V61eqIBms1zscUB5H+wl
+         qMcYKVfB1kLBi4a8NlJd4RrceKil35UTxjgRfhUHc7kiE9ZV1pGS3OMvi0VZBEUM73pt
+         ev3kGx3fXuBkII49wRZSqur7+8fBgnz6f0zZd4xV6rqKHDVsLKWu7AyVhgz7SK6d3kxG
+         WV3n7Pvzrpv2cKcsEqbyTiv2d4JVGR97kcjY+YKytAcNj7aH5cl+rroZ4eH+OxWIFn6l
+         FgzdNb9+nhW6eG7/31mx/UDQJ0NoIc11VSrStYY0q/bPqz2C0YGZ6/yFES9RyZggq0CY
+         U8Yg==
+X-Gm-Message-State: AOAM533NVTKgBM9vfBfbRIg2XOeYp1zPcgROMCHfw6dPSYecL6/nkIoZ
+        4GNJiz7l1Gi9Y9kCqDJ9gzDAPKD/an/84w==
+X-Google-Smtp-Source: ABdhPJzbZ3DLMj14zw45tQBSXU9Qh7mT+TBcc4oI/+U2vT+tNOF2giUK60tTjS8fJRB0skLQSgy/0Q==
+X-Received: by 2002:a92:d3cf:: with SMTP id c15mr13493524ilh.131.1631043037904;
+        Tue, 07 Sep 2021 12:30:37 -0700 (PDT)
+Received: from [192.168.1.30] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id r18sm6260ilo.38.2021.09.07.12.30.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 Sep 2021 12:30:37 -0700 (PDT)
+Subject: Re: INFO: task hung in io_uring_cancel_generic
+To:     Hao Sun <sunhao.th@gmail.com>, io-uring@vger.kernel.org
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        linux-kernel@vger.kernel.org
+References: <CACkBjsbs2tahJMC_TBZhQUBQiFYhLo-CW+kyzNxyUqgs5NCaXA@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <df072429-3f45-4d9d-c81d-73174aaf2e7d@kernel.dk>
+Date:   Tue, 7 Sep 2021 13:30:36 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <YTeZUnshr+mgf5GS@slm.duckdns.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACkBjsbs2tahJMC_TBZhQUBQiFYhLo-CW+kyzNxyUqgs5NCaXA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-在 2021/9/8 上午12:54, Tejun Heo 写道:
+On 9/7/21 5:50 AM, Hao Sun wrote:
 > Hello,
 > 
-> On Fri, Sep 03, 2021 at 11:04:07PM +0800, Hao Xu wrote:
->>> Would it make sense to just test whether set_cpus_allowed_ptr() succeeded
->>> afterwards?
->> Do you mean: if (sqd->sq_cpu != -1 && !set_cpus_allowed_ptr(current,
->> cpumask_of(sqd->sq_cpu)))
->>
->> I'm not familiar with set_cpus_allowed_ptr(), you mean it contains the
->> similar logic of test_cpu_in_current_cpuset?
+> When using Healer to fuzz the latest Linux kernel, the following crash
+> was triggered.
 > 
-> It's kinda muddy unfortunately. I think it rejects if the target cpu is
-> offline but accept and ignores if the cpu is excluded by cpuset.
+> HEAD commit: 7d2a07b76933 Linux 5.14
+> git tree: upstream
+> console output:
+> https://drive.google.com/file/d/1c8uRooM0TwJiTIwEviOCB4RC-hhOgGHR/view?usp=sharing
+> kernel config: https://drive.google.com/file/d/1XD9WYDViQLSXN7RGwH8AGGDvP9JvOghx/view?usp=sharing
+> Similar report:
+> https://groups.google.com/u/1/g/syzkaller-bugs/c/FvdcTiJIGtY/m/PcXkoenUAAAJ
 > 
->> This is a bit beyond of my knowledge, so you mean if the cpu back
->> online, the task will automatically schedule to this cpu? if it's true,
->> I think the code logic here is fine.
->>
->>> offline and online. If the operation takes place while the cpu happens to be
->>> offline, the operation fails.
->> It's ok that it fails, we leave the option of retry to users themselves.
-> 
-> I think the first thing to do is defining the desired behavior, hopefully in
-> a consistent manner, rather than letting it be defined by implementation.
-> e.g. If the desired behavior is the per-cpu helper failing, then it should
-> probably exit when the target cpu isn't available for whatever reason. If
-> the desired behavior is best effort when cpu goes away (ie. ignore
-Hmm, I see. First I think we should move the set_cpus_allowed_ptr() to
-sqthread creation place not when it is running(not sure why it is
-currently at the beginning of sqthred itself), then we can have
-consistent behaviour.(if we do the check at sqthread's running time,
-then no matter we kill it or still allow it to run when cpu_online
-check fails, it's hard to let users know the result of their cpu binding
-since users don't know the exact time when sqthread waken up and begin
-to run, so that they can check their cpu binding result).
-Second, I think users' cpu binding is a kind of 'advice', not 'command'.
-So no matter cpu_online check succeeds or fails, we still let sqthread
-run, meanwhile return the cpu binding result to the userspace.
-Anyway, I'd like to know Jens' thoughts on this.
-> affinity), the creation likely shouldn't fail when the target cpu is
-> unavailable but can become available in the future.
-> 
-> Thanks.
-> 
+> Sorry, I don't have a reproducer for this crash, hope the symbolized
+> report can help.
+> If you fix this issue, please add the following tag to the commit:
+> Reported-by: Hao Sun <sunhao.th@gmail.com>
+
+Would be great with a reproducer for this one, though...
+
+-- 
+Jens Axboe
 

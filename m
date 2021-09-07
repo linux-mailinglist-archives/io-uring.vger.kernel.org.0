@@ -2,64 +2,65 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F498402EFA
-	for <lists+io-uring@lfdr.de>; Tue,  7 Sep 2021 21:30:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE200403051
+	for <lists+io-uring@lfdr.de>; Tue,  7 Sep 2021 23:32:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245599AbhIGTbp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 7 Sep 2021 15:31:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56326 "EHLO
+        id S244484AbhIGVdG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 7 Sep 2021 17:33:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233374AbhIGTbp (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 7 Sep 2021 15:31:45 -0400
-Received: from mail-il1-x12c.google.com (mail-il1-x12c.google.com [IPv6:2607:f8b0:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9ACB5C061575
-        for <io-uring@vger.kernel.org>; Tue,  7 Sep 2021 12:30:38 -0700 (PDT)
-Received: by mail-il1-x12c.google.com with SMTP id j15so246127ila.1
-        for <io-uring@vger.kernel.org>; Tue, 07 Sep 2021 12:30:38 -0700 (PDT)
+        with ESMTP id S243883AbhIGVdG (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 7 Sep 2021 17:33:06 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21846C061575;
+        Tue,  7 Sep 2021 14:31:59 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id g74so122748wmg.5;
+        Tue, 07 Sep 2021 14:31:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        d=gmail.com; s=20210112;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=v0NXlxBTeEi3do2hDI3EUhz1rB97bKcDUu5e3uBm2y4=;
-        b=CnN0grQMu2KtAdQbiFJTNYhIJ+Ziwuj3At2l8swhKX5m486ypX6krJngp/DyJcJ4Mq
-         tSI/oCUhkRH0imlZqZ85/uQjS5zYVDO9b1hF6A0L2kUoMOyUzu5zB+6ttwQgszU95HuB
-         2isjazjLBht+UNImG/0JdH2z/tVd/wttyKJOW3M3ulCWlTZ1oAeHk6SYUds0Zu17rbqi
-         qV/wQ70K7Qqw5hJZWVZ0vwSrtG9hwfArhhzDBhBhU2eWu2nenTiVHPjD/99HK1IJaRAv
-         tyAlo6FPwzxNwbMK0Mx6jLBc4jNm926+isFNTn7+5xfWFwyObMtiHJQFMiUO5HVM5QwF
-         GKEA==
+        bh=COYD3Y2szh6y3ZHhT8fAtKXqXu8FfFvWcnTthORBujE=;
+        b=TFAxO5xCZsHjvRS0yp2WjIxYvGrg7uAYl0mOgc3A7X8gNi7Q4TiQDnCdXjnKtfghtv
+         s1MX3b5TRFXc538t+BuwczseNHifwfgZaW9wKBaOfdiNRsAhZmMNvAMwTH5/nHNCpnaK
+         s3YwMRhXp2FN3LlhkDxMhGj0Hf8w4Pw6tnly7FmyzI1+HvUARrVQweVmP6oPrdmSV952
+         jrTGGQICW21Vg4/XSrwKoeqPQ91cF/qtLJ5LoJq74iarEyrIZz0ftqf5bNwib+X31nlO
+         vxo4Des3OE5nTVYos4KsRkEWi14pdo7vl0i0E79+QranFcd8+fNZqloQQC1dyBkK+qSr
+         BSJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=v0NXlxBTeEi3do2hDI3EUhz1rB97bKcDUu5e3uBm2y4=;
-        b=UcCT7v1hjq+wLM6jACseg5THstzvGno2YKfEvWcKSGHsu2V61eqIBms1zscUB5H+wl
-         qMcYKVfB1kLBi4a8NlJd4RrceKil35UTxjgRfhUHc7kiE9ZV1pGS3OMvi0VZBEUM73pt
-         ev3kGx3fXuBkII49wRZSqur7+8fBgnz6f0zZd4xV6rqKHDVsLKWu7AyVhgz7SK6d3kxG
-         WV3n7Pvzrpv2cKcsEqbyTiv2d4JVGR97kcjY+YKytAcNj7aH5cl+rroZ4eH+OxWIFn6l
-         FgzdNb9+nhW6eG7/31mx/UDQJ0NoIc11VSrStYY0q/bPqz2C0YGZ6/yFES9RyZggq0CY
-         U8Yg==
-X-Gm-Message-State: AOAM533NVTKgBM9vfBfbRIg2XOeYp1zPcgROMCHfw6dPSYecL6/nkIoZ
-        4GNJiz7l1Gi9Y9kCqDJ9gzDAPKD/an/84w==
-X-Google-Smtp-Source: ABdhPJzbZ3DLMj14zw45tQBSXU9Qh7mT+TBcc4oI/+U2vT+tNOF2giUK60tTjS8fJRB0skLQSgy/0Q==
-X-Received: by 2002:a92:d3cf:: with SMTP id c15mr13493524ilh.131.1631043037904;
-        Tue, 07 Sep 2021 12:30:37 -0700 (PDT)
-Received: from [192.168.1.30] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id r18sm6260ilo.38.2021.09.07.12.30.36
+        bh=COYD3Y2szh6y3ZHhT8fAtKXqXu8FfFvWcnTthORBujE=;
+        b=JSdY6DazJUpDUlumb/XyIHhPY13HQKRSTfGGPEeMZB0RrSI3wAwPJnhz80ukO4Jt4L
+         dm6Ni5vVTTNhBx9LU/SNx8PCpA/Cwd/JdGA9NiXJYQ3wQfjC/CP1yiHrirmKRcdxCBh7
+         BVYqt8pDOomUyvlNyj2UTpdlJYCp/74D72fEywpmx6K7ugSnTlWpCJNhcIRj4MatmlJo
+         oWwWOuMaN6lixOPGO+S0sgf5I7/wta8qo/JB9BHwVF7miOsLnSTu3FheCau/F90kF9ap
+         momRUZIU+0TRA9X2v2mW42zp15cdFgCK64x+piIg+kQkPmYkHkEwavG9NU4xDfLcBzm0
+         TR6A==
+X-Gm-Message-State: AOAM5301ywfXtvZ6aNSUS6zJC+dLxmQs8OWHfV6wu7bt6CE8CcUd6R6d
+        fIPUN8kSSxVVUFptAhulNajhhmG9GgE=
+X-Google-Smtp-Source: ABdhPJwDqUMv5YBewE9mkew9rVXf7rHEcXPhAUnrfp8Q9uDepKaiTnyy5a0uCnOEfoNpt8ZyW6dVcA==
+X-Received: by 2002:a1c:28b:: with SMTP id 133mr256358wmc.138.1631050317396;
+        Tue, 07 Sep 2021 14:31:57 -0700 (PDT)
+Received: from [192.168.8.197] ([185.69.144.232])
+        by smtp.gmail.com with ESMTPSA id s15sm173102wrb.22.2021.09.07.14.31.56
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Sep 2021 12:30:37 -0700 (PDT)
+        Tue, 07 Sep 2021 14:31:56 -0700 (PDT)
 Subject: Re: INFO: task hung in io_uring_cancel_generic
-To:     Hao Sun <sunhao.th@gmail.com>, io-uring@vger.kernel.org
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        linux-kernel@vger.kernel.org
+To:     Jens Axboe <axboe@kernel.dk>, Hao Sun <sunhao.th@gmail.com>,
+        io-uring@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org
 References: <CACkBjsbs2tahJMC_TBZhQUBQiFYhLo-CW+kyzNxyUqgs5NCaXA@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <df072429-3f45-4d9d-c81d-73174aaf2e7d@kernel.dk>
-Date:   Tue, 7 Sep 2021 13:30:36 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ <df072429-3f45-4d9d-c81d-73174aaf2e7d@kernel.dk>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Message-ID: <e5ac817b-bc96-bea6-aadb-89d3c201446d@gmail.com>
+Date:   Tue, 7 Sep 2021 22:31:23 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-In-Reply-To: <CACkBjsbs2tahJMC_TBZhQUBQiFYhLo-CW+kyzNxyUqgs5NCaXA@mail.gmail.com>
+In-Reply-To: <df072429-3f45-4d9d-c81d-73174aaf2e7d@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -67,27 +68,31 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/7/21 5:50 AM, Hao Sun wrote:
-> Hello,
+On 9/7/21 8:30 PM, Jens Axboe wrote:
+> On 9/7/21 5:50 AM, Hao Sun wrote:
+>> Hello,
+>>
+>> When using Healer to fuzz the latest Linux kernel, the following crash
+>> was triggered.
+>>
+>> HEAD commit: 7d2a07b76933 Linux 5.14
+>> git tree: upstream
+>> console output:
+>> https://drive.google.com/file/d/1c8uRooM0TwJiTIwEviOCB4RC-hhOgGHR/view?usp=sharing
+>> kernel config: https://drive.google.com/file/d/1XD9WYDViQLSXN7RGwH8AGGDvP9JvOghx/view?usp=sharing
+>> Similar report:
+>> https://groups.google.com/u/1/g/syzkaller-bugs/c/FvdcTiJIGtY/m/PcXkoenUAAAJ
+>>
+>> Sorry, I don't have a reproducer for this crash, hope the symbolized
+>> report can help.
+>> If you fix this issue, please add the following tag to the commit:
+>> Reported-by: Hao Sun <sunhao.th@gmail.com>
 > 
-> When using Healer to fuzz the latest Linux kernel, the following crash
-> was triggered.
-> 
-> HEAD commit: 7d2a07b76933 Linux 5.14
-> git tree: upstream
-> console output:
-> https://drive.google.com/file/d/1c8uRooM0TwJiTIwEviOCB4RC-hhOgGHR/view?usp=sharing
-> kernel config: https://drive.google.com/file/d/1XD9WYDViQLSXN7RGwH8AGGDvP9JvOghx/view?usp=sharing
-> Similar report:
-> https://groups.google.com/u/1/g/syzkaller-bugs/c/FvdcTiJIGtY/m/PcXkoenUAAAJ
-> 
-> Sorry, I don't have a reproducer for this crash, hope the symbolized
-> report can help.
-> If you fix this issue, please add the following tag to the commit:
-> Reported-by: Hao Sun <sunhao.th@gmail.com>
+> Would be great with a reproducer for this one, though...
 
-Would be great with a reproducer for this one, though...
+And syzbot usually sends an execution log with all syz programs
+it run, which may be helpful. Any chance you have anything similar
+left?
 
 -- 
-Jens Axboe
-
+Pavel Begunkov

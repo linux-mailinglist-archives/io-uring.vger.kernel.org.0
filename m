@@ -2,118 +2,122 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 97EEC403A2C
-	for <lists+io-uring@lfdr.de>; Wed,  8 Sep 2021 14:57:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AB41403A57
+	for <lists+io-uring@lfdr.de>; Wed,  8 Sep 2021 15:09:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348596AbhIHM6T (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 8 Sep 2021 08:58:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38780 "EHLO
+        id S231898AbhIHNJk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 8 Sep 2021 09:09:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41362 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230315AbhIHM6T (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 8 Sep 2021 08:58:19 -0400
-Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6943FC061757
-        for <io-uring@vger.kernel.org>; Wed,  8 Sep 2021 05:57:11 -0700 (PDT)
-Received: by mail-io1-xd34.google.com with SMTP id m11so3064511ioo.6
-        for <io-uring@vger.kernel.org>; Wed, 08 Sep 2021 05:57:11 -0700 (PDT)
+        with ESMTP id S230315AbhIHNJk (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 8 Sep 2021 09:09:40 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20761C061575;
+        Wed,  8 Sep 2021 06:08:32 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id g16so3240900wrb.3;
+        Wed, 08 Sep 2021 06:08:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
+        d=gmail.com; s=20210112;
+        h=to:cc:references:from:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=zlLFuLsEO1KhZNssRCS/UqTZg9l4RR8M7d6mRWooPJ4=;
-        b=G0FHI0+TbbRym4y4+FpomxJpim8aM6oaGQSYxUKq6AquZsZZW6DfcsNzMn+u8r4ldU
-         5IAUlb3DyATiXAF8QoKR1+0o+aY7sAsVkATOEWoUWpmYA2G5FWjqtPHjO0Dz+KvWEr2T
-         /nIZktS6I07pz07e4edqEPxLX19xceagumZwlrDIKT+28mQONHnRhHnj+v2ORcUvXNGs
-         xTo/m/cab+IwGF4JTygQd5DliXqll7koMjWA71qgqmiJ9BuTQTvwwz+VRMADmK1QDqkM
-         3qfp+UPqmc7P9QU7bMPP+Nrx9zP3iHk9Zn91mn+XwstiL5r2oAHje2ejZhX9Ax6EjHIx
-         2B6A==
+        bh=3uYnuOkkfJU/vk1srrupoxrNfOGEY71iLIHcsDVDOOU=;
+        b=KWZh3Jf8taY5em2Vt6nTI/zEj9a6U/n38hQc+QnnNWbmMdrprQ+OnHmw4hW4bGMLOd
+         ptCugFIu+mFhIxMpyWEeluXFjL5pyrh/SUaPwvglsZwTLD6C5t/R8hId1RiGsZ0eO2s9
+         7Zf6uZGCYodq2cAWAWnE8wwomTkFX1sZYDwBCjq8AonClRm39ca5qSPqhW3WSv+LidFn
+         XeSjl/XP0+zyOKuS3Tc+xY5YfU3OGqsftFZgw+NX9Yv/Oc9jGhfuohW71IxiAthywtO2
+         ekVD69b6iSWY2YBDRpYcaF8+M4hgG7i1PfllqlgYdTiAvBZeq2vG1eqscC/vtHGnHDPB
+         NAtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=zlLFuLsEO1KhZNssRCS/UqTZg9l4RR8M7d6mRWooPJ4=;
-        b=uIcEvm5Xw1KI4HqJMPJTf6cdTn+Da7Rm1rbU2gMMPTBKN/3w0LWxeCMsaQ2lHRUDPo
-         lqN1+fnmqXm5NrnYaIhfugvzpHwx4CI4O0lXLecmsFVbGtTmcmoqoF18qFU9yzmeIjLl
-         biu7xVirx+J7OV0MYHih1/4VZevbGI5RD/6WK32/lvu8BNeM/oKQChb1EToRnx4GKw/o
-         8kLeAbUR3YZbSjFEHdfPILilSdEgfuVETWCWq81WkTMhxbUJ7MMf866LbZqY/L6ADWhk
-         HabuUBD0XIdBEZfgLCqMf2wD6LwHMjr6LDftCUdqtnzZtjYCc1Vkn17hp709NE5yzEo5
-         fqFg==
-X-Gm-Message-State: AOAM530sHIcQPWPl/0+G/r9/rCZqmgcfQimG465o94SX+jJL7b15yfGj
-        JEUGWXRglS9FckMGuUS4tgFQkGuZbV2Diw==
-X-Google-Smtp-Source: ABdhPJyHcxRG0FJw36LQTyj78jm4G+FYy1D3he1BNpgGkdRo2a2edYPyKBfl4gr344behPEVDezdNg==
-X-Received: by 2002:a6b:2b97:: with SMTP id r145mr3108904ior.193.1631105830552;
-        Wed, 08 Sep 2021 05:57:10 -0700 (PDT)
-Received: from [192.168.1.116] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id a25sm1062821ioq.46.2021.09.08.05.57.09
+        bh=3uYnuOkkfJU/vk1srrupoxrNfOGEY71iLIHcsDVDOOU=;
+        b=rDE3VAkf8PKimyekBCAwgNRSpwo1RANTj9FDsGVotZ8Koh1vSSyvTeEAgj7Ma6CbYH
+         YTCSRjTY2hlS/C/iu/GBk1t5o8cYrV3jUwKLuPcgikBG/ZoQ93G4q4qOD/pNL21o8IJ/
+         236pSeG/llyer8ocGdOvaDnFigOewrUXBcpQTd4o6RG3SegW9IFEARHVJOxpmUWpR6+3
+         H38lhoaGMntTMg0+wT/Zjlm3idFKBjUD3VYwjtmlkGDVc39fXeLL8/kRucPvLaQCH3R3
+         RspGtegrjCUYymb3kqOt6h198tmJ5S2uYWaFwKRMOKeLDRQ6/3XkZ7mUlrJ7gIgetIsW
+         a1WA==
+X-Gm-Message-State: AOAM530smhysjRIYJCrfJgRbZAUnahF3WedRnE15ap3h9y6uE9XLr4hB
+        V60CykP9st+JDiDOf4iyPzAiC2pLPOo=
+X-Google-Smtp-Source: ABdhPJz01hfQCjqMW4sPZxOh4/lc/yfpA0UeXNhBjw/F/0xv7MxzFxUfSCfpkJGt/pyK9raBBRyH2w==
+X-Received: by 2002:adf:f101:: with SMTP id r1mr3875490wro.355.1631106510486;
+        Wed, 08 Sep 2021 06:08:30 -0700 (PDT)
+Received: from [192.168.8.197] ([185.69.144.232])
+        by smtp.gmail.com with ESMTPSA id h15sm2104778wrc.19.2021.09.08.06.08.29
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Sep 2021 05:57:10 -0700 (PDT)
-Subject: Re: [PATCH] /dev/mem: nowait zero/null ops
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
+        Wed, 08 Sep 2021 06:08:30 -0700 (PDT)
+To:     Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org
 Cc:     io-uring@vger.kernel.org
 References: <16c78d25f507b571df7eb852a571141a0fdc73fd.1631095567.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <ed21a6b0-be32-e00a-98c3-f25759a44071@kernel.dk>
-Date:   Wed, 8 Sep 2021 06:57:09 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ <ed21a6b0-be32-e00a-98c3-f25759a44071@kernel.dk>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Subject: Re: [PATCH] /dev/mem: nowait zero/null ops
+Message-ID: <654d5c75-72fa-bfab-dc14-fa923a2a815a@gmail.com>
+Date:   Wed, 8 Sep 2021 14:07:57 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-In-Reply-To: <16c78d25f507b571df7eb852a571141a0fdc73fd.1631095567.git.asml.silence@gmail.com>
+In-Reply-To: <ed21a6b0-be32-e00a-98c3-f25759a44071@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/8/21 4:06 AM, Pavel Begunkov wrote:
-> Make read_iter_zero() to honor IOCB_NOWAIT, so /dev/zero can be
-> advertised as FMODE_NOWAIT. This helps subsystems like io_uring to use
-> it more effectively. Set FMODE_NOWAIT for /dev/null as well, it never
-> waits and therefore trivially meets the criteria.
+On 9/8/21 1:57 PM, Jens Axboe wrote:
+> On 9/8/21 4:06 AM, Pavel Begunkov wrote:
+>> Make read_iter_zero() to honor IOCB_NOWAIT, so /dev/zero can be
+>> advertised as FMODE_NOWAIT. This helps subsystems like io_uring to use
+>> it more effectively. Set FMODE_NOWAIT for /dev/null as well, it never
+>> waits and therefore trivially meets the criteria.
+>>
+>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+>> ---
+>>  drivers/char/mem.c | 6 ++++--
+>>  1 file changed, 4 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/char/mem.c b/drivers/char/mem.c
+>> index 1c596b5cdb27..531f144d7132 100644
+>> --- a/drivers/char/mem.c
+>> +++ b/drivers/char/mem.c
+>> @@ -495,6 +495,8 @@ static ssize_t read_iter_zero(struct kiocb *iocb, struct iov_iter *iter)
+>>  		written += n;
+>>  		if (signal_pending(current))
+>>  			return written ? written : -ERESTARTSYS;
+>> +		if (iocb->ki_flags & IOCB_NOWAIT)
+>> +			return written ? written : -EAGAIN;
+>>  		cond_resched();
+>>  	}
 > 
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> ---
->  drivers/char/mem.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+> I don't think this part is needed.
+
+It can be clearing gigabytes in one go. Won't it be too much of a
+delay when nowait is expected?
+ 
+>>  	return written;
+>> @@ -696,11 +698,11 @@ static const struct memdev {
+>>  #ifdef CONFIG_DEVMEM
+>>  	 [DEVMEM_MINOR] = { "mem", 0, &mem_fops, FMODE_UNSIGNED_OFFSET },
+>>  #endif
+>> -	 [3] = { "null", 0666, &null_fops, 0 },
+>> +	 [3] = { "null", 0666, &null_fops, FMODE_NOWAIT },
+>>  #ifdef CONFIG_DEVPORT
+>>  	 [4] = { "port", 0, &port_fops, 0 },
+>>  #endif
+>> -	 [5] = { "zero", 0666, &zero_fops, 0 },
+>> +	 [5] = { "zero", 0666, &zero_fops, FMODE_NOWAIT },
+>>  	 [7] = { "full", 0666, &full_fops, 0 },
+>>  	 [8] = { "random", 0666, &random_fops, 0 },
+>>  	 [9] = { "urandom", 0666, &urandom_fops, 0 },
+>>
 > 
-> diff --git a/drivers/char/mem.c b/drivers/char/mem.c
-> index 1c596b5cdb27..531f144d7132 100644
-> --- a/drivers/char/mem.c
-> +++ b/drivers/char/mem.c
-> @@ -495,6 +495,8 @@ static ssize_t read_iter_zero(struct kiocb *iocb, struct iov_iter *iter)
->  		written += n;
->  		if (signal_pending(current))
->  			return written ? written : -ERESTARTSYS;
-> +		if (iocb->ki_flags & IOCB_NOWAIT)
-> +			return written ? written : -EAGAIN;
->  		cond_resched();
->  	}
-
-I don't think this part is needed.
-
->  	return written;
-> @@ -696,11 +698,11 @@ static const struct memdev {
->  #ifdef CONFIG_DEVMEM
->  	 [DEVMEM_MINOR] = { "mem", 0, &mem_fops, FMODE_UNSIGNED_OFFSET },
->  #endif
-> -	 [3] = { "null", 0666, &null_fops, 0 },
-> +	 [3] = { "null", 0666, &null_fops, FMODE_NOWAIT },
->  #ifdef CONFIG_DEVPORT
->  	 [4] = { "port", 0, &port_fops, 0 },
->  #endif
-> -	 [5] = { "zero", 0666, &zero_fops, 0 },
-> +	 [5] = { "zero", 0666, &zero_fops, FMODE_NOWAIT },
->  	 [7] = { "full", 0666, &full_fops, 0 },
->  	 [8] = { "random", 0666, &random_fops, 0 },
->  	 [9] = { "urandom", 0666, &urandom_fops, 0 },
+> This looks fine.
 > 
-
-This looks fine.
 
 -- 
-Jens Axboe
-
+Pavel Begunkov

@@ -2,157 +2,97 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B9DA40396A
-	for <lists+io-uring@lfdr.de>; Wed,  8 Sep 2021 14:03:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D64804039F4
+	for <lists+io-uring@lfdr.de>; Wed,  8 Sep 2021 14:34:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349209AbhIHMEr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 8 Sep 2021 08:04:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54814 "EHLO
+        id S236060AbhIHMfp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 8 Sep 2021 08:35:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234758AbhIHMEq (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 8 Sep 2021 08:04:46 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CAF8C061575
-        for <io-uring@vger.kernel.org>; Wed,  8 Sep 2021 05:03:39 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id g16so2932882wrb.3
-        for <io-uring@vger.kernel.org>; Wed, 08 Sep 2021 05:03:38 -0700 (PDT)
+        with ESMTP id S234005AbhIHMfo (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 8 Sep 2021 08:35:44 -0400
+Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58CC8C061575
+        for <io-uring@vger.kernel.org>; Wed,  8 Sep 2021 05:34:37 -0700 (PDT)
+Received: by mail-io1-xd2a.google.com with SMTP id g9so2941381ioq.11
+        for <io-uring@vger.kernel.org>; Wed, 08 Sep 2021 05:34:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=to:cc:references:from:subject:message-id:date:user-agent
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=LRbktXegaJKSVRL9d31bRmsbZtAVR7sG+N4HNv5kDj8=;
-        b=Jlm8SIakVD8LToT05m3/YZH8zv55e4wUJZ/+qqNoMg5pf93S5ZIJE9ixmHa71F96dV
-         a3u6xDtv0ZhrPIUjCFiNPEHhS88SNaF7+z7dmJ82emP/PAJhYG6EtMLKIgdZkF3YR83t
-         bsjJv/Y1V3jDv+deETyRZ0nehFOqr9ud2272l5WoePUU39a1LeCSUJUl73NrcgPvhiTc
-         Meh8XJf4WE0S74mWNAbkyVMywwpiR3WuAlTeRJVsFPK49Usm2RAgV3zPXO5fXM7irhaR
-         iGGS/kBlK2mwQALh5fuq019P9NUS5JkFJLDoUJTRpqsY9G+dBNcsCZTFMet+lvy1vQDd
-         v96g==
+        bh=gjlBaNGKVlbVhDCNUk2JDMe9wx2NO2QVKH1Sf+7SF7k=;
+        b=03h8g+HATiSMM8RtTAOvVXLRCat6G8nDan0Wkr76O9crOBstec6a9j9cTI3I2Mwmvz
+         qNYfXdsuY9wBJXQL2UFDrVcYuuMWgKP8ndrnXbjtXoV4ofe4atqay6u/cUT9PBn7hKZr
+         WoLhuNuCXlJrgRsdoRopm/dPx6Pm4U20hDNXZr0vMKnq3eLNzIcxwZBGRHRjga1vyhp8
+         j0AfLtZkzJQ6wdcL98v09opNroGmJ1lTNw7JbvU07IqPK2vU9dFybBU3SsE1bY0oyVwJ
+         D4nGb32F+LPhmSo73EBh3jcAeTMnVqVyY9b6cSOV4Eo8hrXUzZZ2GwE6PPXoAJVGzL1b
+         0Vng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=LRbktXegaJKSVRL9d31bRmsbZtAVR7sG+N4HNv5kDj8=;
-        b=SN5wv3uhpNDejZ9BqNencAvgcSAqoCX+vdfqTNE7IoHZn5xWzvasCh/nNtThIMTFp9
-         SfUdNWLcqPKhgBOofzEd82E5q1m5+9xmHfJIouAZqRbw047M/olfihtBfU2uno861+1P
-         ix/Gydvm9m4rvCCHNEI0tsZ6k5CuxGYPcPbDhi0WM4I4swee86QDyausFhEXax6cQiEg
-         trfCf9hRqmWCjmAsU0AphnDQjp5Gix1xOh3Qxu+O8KvF4wo/8XzNdPTWTqn09MToQFjs
-         7bCfObMbj3D+Wd9QOH12dLvHF27p5eWwcGh3Op2ar845eiLIfl5AgJTAFFg3ZCtILQeD
-         YQEA==
-X-Gm-Message-State: AOAM530E7k2ImWQh1L3lWAPTn/xjSmkF2NTLW/FgVWyfTuKLTwS/ETc+
-        RjpMdN7fhl1JU1ASQSUHKzQ=
-X-Google-Smtp-Source: ABdhPJyI8F3rGb8nTooXUgovxYUQJtzwjyKhvLm6/c5YgauQ5mUcFWFg8BbRjjVR2gF7j6iDqCdCUw==
-X-Received: by 2002:adf:80eb:: with SMTP id 98mr3702455wrl.348.1631102617493;
-        Wed, 08 Sep 2021 05:03:37 -0700 (PDT)
-Received: from [192.168.8.197] ([185.69.144.232])
-        by smtp.gmail.com with ESMTPSA id z1sm1854376wmi.34.2021.09.08.05.03.36
+        bh=gjlBaNGKVlbVhDCNUk2JDMe9wx2NO2QVKH1Sf+7SF7k=;
+        b=ZKmcw7QCvNuPEBNgZpsCJV9Vxe4Vx3/7nY98GAmhKWcvLGnt+zZAG88a+YMmtZWThI
+         2XRcpUygTETVsJBAvmgyYh90H9I6XckL+ocU+ClKjZPVirIrdXjH3f6wnoqEYADuGmFb
+         s6BmTAESkCVWirkrlqmLAbsu07mgYHj2sUX7Ml4ZE/JI39GwIRlCunWSf6egVt9lnqTl
+         t97RwVeXd1pndTrhsDEXUF3U2zq2J/23yfqNE/P6k0D3tCNjOvbwdO75ifHWMD6dnHx2
+         OdtuV+wq29mAqzMoCMPooBbXLKFnF3dVz2wTQ6ojLu4EjqxZi+x2xWTdlxD6OQlkMQ51
+         vFnQ==
+X-Gm-Message-State: AOAM530IwwPtUY9nMOgeg2yJ0FV9NANnkgHtn+1thTVaTxZUhonbBXoB
+        xNUzTNQjQjCZNfU496746rkcOA==
+X-Google-Smtp-Source: ABdhPJzZtLYIPK5bU6IdXAl9fsXF3+88KgQ1q8y0ILXUmrCk3nbCAe9BUPiYzAJt3V4OQPkodHpbiQ==
+X-Received: by 2002:a6b:7710:: with SMTP id n16mr3047253iom.101.1631104476736;
+        Wed, 08 Sep 2021 05:34:36 -0700 (PDT)
+Received: from [192.168.1.116] ([66.219.217.159])
+        by smtp.gmail.com with ESMTPSA id f3sm968149ilu.85.2021.09.08.05.34.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Sep 2021 05:03:37 -0700 (PDT)
-To:     Hao Xu <haoxu@linux.alibaba.com>, Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <20210903110049.132958-1-haoxu@linux.alibaba.com>
- <20210903110049.132958-5-haoxu@linux.alibaba.com>
- <9a8efd19-a320-29a4-7132-7b5ae5b994ff@gmail.com>
- <8c052e2a-0ee6-7dac-1169-9d395d2ecad8@linux.alibaba.com>
- <2ba9fdb5-6d60-21f5-3e20-bc1687c9509f@linux.alibaba.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Subject: Re: [PATCH 4/6] io_uring: let fast poll support multishot
-Message-ID: <a73331f7-11ce-1a67-c312-c20553338682@gmail.com>
-Date:   Wed, 8 Sep 2021 13:03:04 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        Wed, 08 Sep 2021 05:34:36 -0700 (PDT)
+Subject: Re: [PATCH] io-wq: fix cancellation on create-worker failure
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+Cc:     Hao Sun <sunhao.th@gmail.com>
+References: <93b9de0fcf657affab0acfd675d4abcd273ee863.1631092071.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <8462bdb5-a323-2eb2-ef1c-4e10ac7876dc@kernel.dk>
+Date:   Wed, 8 Sep 2021 06:34:34 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <2ba9fdb5-6d60-21f5-3e20-bc1687c9509f@linux.alibaba.com>
+In-Reply-To: <93b9de0fcf657affab0acfd675d4abcd273ee863.1631092071.git.asml.silence@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/8/21 12:21 PM, Hao Xu wrote:
-> 在 2021/9/7 下午2:48, Hao Xu 写道:
->> 在 2021/9/7 上午3:04, Pavel Begunkov 写道:
->>> On 9/3/21 12:00 PM, Hao Xu wrote:
->>>> For operations like accept, multishot is a useful feature, since we can
->>>> reduce a number of accept sqe. Let's integrate it to fast poll, it may
->>>> be good for other operations in the future.
->>>>
->>>> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
->>>> ---
->>>>   fs/io_uring.c | 15 ++++++++++++---
->>>>   1 file changed, 12 insertions(+), 3 deletions(-)
->>>>
->>>> diff --git a/fs/io_uring.c b/fs/io_uring.c
->>>> index d6df60c4cdb9..dae7044e0c24 100644
->>>> --- a/fs/io_uring.c
->>>> +++ b/fs/io_uring.c
->>>> @@ -5277,8 +5277,15 @@ static void io_async_task_func(struct io_kiocb *req, bool *locked)
->>>>           return;
->>>>       }
->>>> -    hash_del(&req->hash_node);
->>>> -    io_poll_remove_double(req);
->>>> +    if (READ_ONCE(apoll->poll.canceled))
->>>> +        apoll->poll.events |= EPOLLONESHOT;
->>>> +    if (apoll->poll.events & EPOLLONESHOT) {
->>>> +        hash_del(&req->hash_node);
->>>> +        io_poll_remove_double(req);
->>>> +    } else {
->>>> +        add_wait_queue(apoll->poll.head, &apoll->poll.wait);
->>>
->>> It looks like it does both io_req_task_submit() and adding back
->>> to the wq, so io_issue_sqe() may be called in parallel with
->>> io_async_task_func(). If so, there will be tons of all kind of
->>> races.
->> IMHO, io_async_task_func() is called in original context one by
->> one(except PF_EXITING is set, it is also called in system-wq), so
->> shouldn't be parallel case there.
-> ping...
-
-fwiw, the case we're talking about:
-
-CPU0                            | CPU1
-io_async_task_func()            |
--> add_wait_queue();            |
--> io_req_task_submit();        |
-               /* no tw run happened in between */
-                                | io_async_task_func()
-                                | --> io_req_task_submit()
-
-We called io_req_task_submit() twice without running tw in-between,
-both of the calls use the same req->io_task_work.node field in the
-request for accounting, and so the second call will screw
-tctx->task_list and not only by not considering that
-req->io_task_work.node is already taken/enqueued.
-
-io_req_task_work_add() {
-        wq_list_add_tail(&req->io_task_work.node, &tctx->task_list);
-}
-
->>>
->>>> +    }
->>>> +
->>>>       spin_unlock(&ctx->completion_lock);
->>>>       if (!READ_ONCE(apoll->poll.canceled))
->>>> @@ -5366,7 +5373,7 @@ static int io_arm_poll_handler(struct io_kiocb *req)
->>>>       struct io_ring_ctx *ctx = req->ctx;
->>>>       struct async_poll *apoll;
->>>>       struct io_poll_table ipt;
->>>> -    __poll_t ret, mask = EPOLLONESHOT | POLLERR | POLLPRI;
->>>> +    __poll_t ret, mask = POLLERR | POLLPRI;
->>>>       int rw;
->>>>       if (!req->file || !file_can_poll(req->file))
->>>> @@ -5388,6 +5395,8 @@ static int io_arm_poll_handler(struct io_kiocb *req)
->>>>           rw = WRITE;
->>>>           mask |= POLLOUT | POLLWRNORM;
->>>>       }
->>>> +    if (!(req->flags & REQ_F_APOLL_MULTISHOT))
->>>> +        mask |= EPOLLONESHOT;
->>>>       /* if we can't nonblock try, then no point in arming a poll handler */
->>>>       if (!io_file_supports_nowait(req, rw))
->>>>
->>>
+On 9/8/21 3:09 AM, Pavel Begunkov wrote:
+> WARNING: CPU: 0 PID: 10392 at fs/io_uring.c:1151 req_ref_put_and_test
+> fs/io_uring.c:1151 [inline]
+> WARNING: CPU: 0 PID: 10392 at fs/io_uring.c:1151 req_ref_put_and_test
+> fs/io_uring.c:1146 [inline]
+> WARNING: CPU: 0 PID: 10392 at fs/io_uring.c:1151
+> io_req_complete_post+0xf5b/0x1190 fs/io_uring.c:1794
+> Modules linked in:
+> Call Trace:
+>  tctx_task_work+0x1e5/0x570 fs/io_uring.c:2158
+>  task_work_run+0xe0/0x1a0 kernel/task_work.c:164
+>  tracehook_notify_signal include/linux/tracehook.h:212 [inline]
+>  handle_signal_work kernel/entry/common.c:146 [inline]
+>  exit_to_user_mode_loop kernel/entry/common.c:172 [inline]
+>  exit_to_user_mode_prepare+0x232/0x2a0 kernel/entry/common.c:209
+>  __syscall_exit_to_user_mode_work kernel/entry/common.c:291 [inline]
+>  syscall_exit_to_user_mode+0x19/0x60 kernel/entry/common.c:302
+>  do_syscall_64+0x42/0xb0 arch/x86/entry/common.c:86
+>  entry_SYSCALL_64_after_hwframe+0x44/0xae
 > 
+> When io_wqe_enqueue() -> io_wqe_create_worker() fails, we can't just
+> call io_run_cancel() to clean up the request, it's already enqueued via
+> io_wqe_insert_work() and will be executed either by some other worker
+> during cancellation (e.g. in io_wq_put_and_exit()).
+
+Oops yes, that looks better. Thanks, applied.
 
 -- 
-Pavel Begunkov
+Jens Axboe
+

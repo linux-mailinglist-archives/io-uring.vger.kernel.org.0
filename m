@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 41B03403CAF
-	for <lists+io-uring@lfdr.de>; Wed,  8 Sep 2021 17:41:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B6F3403CB0
+	for <lists+io-uring@lfdr.de>; Wed,  8 Sep 2021 17:41:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347271AbhIHPmp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 8 Sep 2021 11:42:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48360 "EHLO
+        id S1349596AbhIHPmq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 8 Sep 2021 11:42:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
         with ESMTP id S240206AbhIHPmp (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Wed, 8 Sep 2021 11:42:45 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECDEAC061575
-        for <io-uring@vger.kernel.org>; Wed,  8 Sep 2021 08:41:36 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id v10so3981591wrd.4
-        for <io-uring@vger.kernel.org>; Wed, 08 Sep 2021 08:41:36 -0700 (PDT)
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E715C061575
+        for <io-uring@vger.kernel.org>; Wed,  8 Sep 2021 08:41:37 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id z9-20020a7bc149000000b002e8861aff59so2006865wmi.0
+        for <io-uring@vger.kernel.org>; Wed, 08 Sep 2021 08:41:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=FxQB238f0njCAJlkYapN8u/Z14rPHCNAXGmoNjBn9Yw=;
-        b=fHbtRfQLVesvO1mtgu08nb789JD1me/E8n7h36FrJ8U2/g8M60u5f1f2K2W56gUpT5
-         d5YrX21Pa3nWAUNvGYrqrO4fm9I5hhEuOk0fEDtOun5n1RgR1Lw4r5VCLRmORIflRBPZ
-         9B5jbFE1r+YLhAy7XE8WvT/pDUpXKmWTv8OjzgPLHiZoG3biilyV55JkzYcXpZF+mLGK
-         FIEyut/rFqPl17Tz28guEe9k++fLQqRfQsRTzA5hvEhFx8TE1BgqB2rNkTIXgs47YYk1
-         chlk1Mve2hlDAcLqfEi0G+lsqMlSXGKrnM450jIeBsZPD3ysp/gsiWzdr5lZZrUDoOo1
-         fSDQ==
+        bh=r86w1Mr31sYxDQFvzTVRu+TtvwAd5tN9op6porDzEnI=;
+        b=VTDL3yh/NrxZbe16JvKqQulRYCfxvDv5vSRCqT8SCwFtRwlXtU0bhLAWHUbaP1RNTd
+         Z27sVy81bNDpq4y+7P5gdKwdlE5JRAwbpTHgYQDi0KssnU5gBt+H4i9lIRMHnOUL3KmP
+         VFPlS9alqP/9WPiv81V2+UxFu05hKpu+Ny+TR+4EqD1mQRuy+v3V+7uIthx44UMhLBTd
+         bd3ITC8mS2vNs/vt59gSzarV76GnWzK5kNrLS+E6WhoUv9a+knWDFngRN7e7fSqW5QRD
+         oyvFRknvQoFgfVBTVPljk1yAH9xXFiU+HhPnaRL2w2hRh672+ENwE/eHUpSUQTH5OmAE
+         WnWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=FxQB238f0njCAJlkYapN8u/Z14rPHCNAXGmoNjBn9Yw=;
-        b=XEQbkOG0iSFO1vuOpYV3Hr5yvm02sPPda7/94zNRPkVZGkX74e7sV2y3zmrn4VsLQB
-         GgnK8gtKuq1FiIGFCq+2ivdscR0qVt7ozi/ZN+pHQa8KntapGAY4vAiUvnX977Okwdyh
-         DMOKGQ2SsaeLGsbOQVfege4ybHLqN2CDChd2sm9X3ySjq4+Y5mv6gyd4dpQ8wLvZ6vrd
-         z/yrpF76YnK899eMl3rXdncAGkjMK8x8V3EKamuCBMVHCpIWF4yz1+ce5Z4KpdnTpQDa
-         wMjS61whN48Kr0YZnROfgOdhnSH1QgXzJ+473VygGjrM5h9Wfn9HC60ki2sapRYZasoL
-         y0TQ==
-X-Gm-Message-State: AOAM532LX2D/R5e9Dj1c8606fm9skX2Nh4R0s7eZa7g20xWIMminuJ+M
-        88Vm23xUzHl0jTsQz3nduuzktcSt180=
-X-Google-Smtp-Source: ABdhPJx/Etk0HXXKqMuwpyd0h1xJyriFpDBgwxTecVlfZh8307npH597Wn+QNVfl0fzGnnmTVadSog==
-X-Received: by 2002:adf:eb02:: with SMTP id s2mr4961729wrn.294.1631115695587;
-        Wed, 08 Sep 2021 08:41:35 -0700 (PDT)
+        bh=r86w1Mr31sYxDQFvzTVRu+TtvwAd5tN9op6porDzEnI=;
+        b=fiWele8jx+oLQdMAQHJtWvmcOKMZ5EOps4FKJ1F0QslvA9qpuv0WQAgyg35m1WOsS/
+         Y5q6iVvkhG0fR32skjT6vAAhak2F2XOpSnlen1Sa7qFXNRafzU7RMYxs/Xx0MebzF3Dc
+         e6RgY/3dp4t1gBb9QF586s4bIZYNc+/0ULt9gy1yspATdOZpPRqjn5QHv7LcYwRi+Jhk
+         bsyumhg2F/u3mFug882DmCPxFFZNGAu//OpUv1VGHk0UdTs3BsughJg4mh1RVSl/nG+t
+         ocng5u3TACiPagR/2KCIMDVLPRvLXpZFGjE0A/SIK9GFHoIrnnX00vZ0n8ubNWnU+osQ
+         A6VA==
+X-Gm-Message-State: AOAM532JKTURjLhdT17P1cdzWqEuN/06uE/juOVNumD/I/FV0JprLyqZ
+        FLtXiqmcn0EndmXxZa6nQ5weZtbPHyU=
+X-Google-Smtp-Source: ABdhPJx4Pw9IJL4UMwbzUHiio51YbxyeVfWU4y9pB/p3rglwpyPfnfCQPiRy1r9/uWxUVmZl7wUQVQ==
+X-Received: by 2002:a1c:a9d2:: with SMTP id s201mr4339661wme.81.1631115696316;
+        Wed, 08 Sep 2021 08:41:36 -0700 (PDT)
 Received: from localhost.localdomain ([185.69.144.232])
-        by smtp.gmail.com with ESMTPSA id s10sm2580979wrg.42.2021.09.08.08.41.34
+        by smtp.gmail.com with ESMTPSA id s10sm2580979wrg.42.2021.09.08.08.41.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Sep 2021 08:41:35 -0700 (PDT)
+        Wed, 08 Sep 2021 08:41:36 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 3/5] io_uring: inline linked part of io_req_find_next
-Date:   Wed,  8 Sep 2021 16:40:51 +0100
-Message-Id: <4126d13f23d0e91b39b3558e16bd86cafa7fcef2.1631115443.git.asml.silence@gmail.com>
+Subject: [PATCH 4/5] io_uring: dedup CQE flushing non-empty checks
+Date:   Wed,  8 Sep 2021 16:40:52 +0100
+Message-Id: <d7ff8cef5da1b38e8ea648f5aad9a315ddfc7b57.1631115443.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <cover.1631115443.git.asml.silence@gmail.com>
 References: <cover.1631115443.git.asml.silence@gmail.com>
@@ -61,79 +61,90 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Inline part of __io_req_find_next() that returns a request but doesn't
-need io_disarm_next(). It's just two places, but makes links a bit
-faster.
+We don't do io_submit_flush_completions() when there is no requests
+enqueued, and every single caller checks for it. Hide that check into
+the function not forgetting about inlining. That will make it much
+easier for changing the empty check condition in the future.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 39 +++++++++++++++++++--------------------
- 1 file changed, 19 insertions(+), 20 deletions(-)
+ fs/io_uring.c | 21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 1dc21f7ec666..45e9cd1af97a 100644
+index 45e9cd1af97a..3d911f8808bf 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -2073,40 +2073,39 @@ static bool io_disarm_next(struct io_kiocb *req)
- 	return posted;
+@@ -1094,7 +1094,7 @@ static void __io_queue_sqe(struct io_kiocb *req);
+ static void io_rsrc_put_work(struct work_struct *work);
+ 
+ static void io_req_task_queue(struct io_kiocb *req);
+-static void io_submit_flush_completions(struct io_ring_ctx *ctx);
++static void __io_submit_flush_completions(struct io_ring_ctx *ctx);
+ static int io_req_prep_async(struct io_kiocb *req);
+ 
+ static int io_install_fixed_file(struct io_kiocb *req, struct file *file,
+@@ -1164,6 +1164,12 @@ static inline void req_ref_get(struct io_kiocb *req)
+ 	atomic_inc(&req->refs);
  }
  
--static struct io_kiocb *__io_req_find_next(struct io_kiocb *req)
-+static void __io_req_find_next_prep(struct io_kiocb *req)
++static inline void io_submit_flush_completions(struct io_ring_ctx *ctx)
 +{
-+	struct io_ring_ctx *ctx = req->ctx;
-+	bool posted;
-+
-+	spin_lock(&ctx->completion_lock);
-+	posted = io_disarm_next(req);
-+	if (posted)
-+		io_commit_cqring(req->ctx);
-+	spin_unlock(&ctx->completion_lock);
-+	if (posted)
-+		io_cqring_ev_posted(ctx);
++	if (ctx->submit_state.compl_nr)
++		__io_submit_flush_completions(ctx);
 +}
 +
-+static inline struct io_kiocb *io_req_find_next(struct io_kiocb *req)
+ static inline void __io_req_set_refcount(struct io_kiocb *req, int nr)
  {
- 	struct io_kiocb *nxt;
+ 	if (!(req->flags & REQ_F_REFCOUNT)) {
+@@ -1252,8 +1258,7 @@ static void io_fallback_req_func(struct work_struct *work)
+ 		req->io_task_work.func(req, &locked);
  
-+	if (likely(!(req->flags & (REQ_F_LINK|REQ_F_HARDLINK))))
-+		return NULL;
- 	/*
- 	 * If LINK is set, we have dependent requests in this chain. If we
- 	 * didn't fail this request, queue the first one up, moving any other
- 	 * dependencies to the next request. In case of failure, fail the rest
- 	 * of the chain.
- 	 */
--	if (req->flags & IO_DISARM_MASK) {
--		struct io_ring_ctx *ctx = req->ctx;
--		bool posted;
--
--		spin_lock(&ctx->completion_lock);
--		posted = io_disarm_next(req);
--		if (posted)
--			io_commit_cqring(req->ctx);
--		spin_unlock(&ctx->completion_lock);
--		if (posted)
--			io_cqring_ev_posted(ctx);
--	}
-+	if (unlikely(req->flags & IO_DISARM_MASK))
-+		__io_req_find_next_prep(req);
- 	nxt = req->link;
- 	req->link = NULL;
- 	return nxt;
+ 	if (locked) {
+-		if (ctx->submit_state.compl_nr)
+-			io_submit_flush_completions(ctx);
++		io_submit_flush_completions(ctx);
+ 		mutex_unlock(&ctx->uring_lock);
+ 	}
+ 	percpu_ref_put(&ctx->refs);
+@@ -2111,8 +2116,7 @@ static void ctx_flush_and_put(struct io_ring_ctx *ctx, bool *locked)
+ 	if (!ctx)
+ 		return;
+ 	if (*locked) {
+-		if (ctx->submit_state.compl_nr)
+-			io_submit_flush_completions(ctx);
++		io_submit_flush_completions(ctx);
+ 		mutex_unlock(&ctx->uring_lock);
+ 		*locked = false;
+ 	}
+@@ -2129,7 +2133,7 @@ static void tctx_task_work(struct callback_head *cb)
+ 	while (1) {
+ 		struct io_wq_work_node *node;
+ 
+-		if (!tctx->task_list.first && locked && ctx->submit_state.compl_nr)
++		if (!tctx->task_list.first && locked)
+ 			io_submit_flush_completions(ctx);
+ 
+ 		spin_lock_irq(&tctx->task_lock);
+@@ -2314,7 +2318,7 @@ static void io_req_free_batch(struct req_batch *rb, struct io_kiocb *req,
+ 		list_add(&req->inflight_entry, &state->free_list);
  }
  
--static inline struct io_kiocb *io_req_find_next(struct io_kiocb *req)
--{
--	if (likely(!(req->flags & (REQ_F_LINK|REQ_F_HARDLINK))))
--		return NULL;
--	return __io_req_find_next(req);
--}
--
- static void ctx_flush_and_put(struct io_ring_ctx *ctx, bool *locked)
+-static void io_submit_flush_completions(struct io_ring_ctx *ctx)
++static void __io_submit_flush_completions(struct io_ring_ctx *ctx)
+ 	__must_hold(&ctx->uring_lock)
  {
- 	if (!ctx)
+ 	struct io_submit_state *state = &ctx->submit_state;
+@@ -7135,8 +7139,7 @@ static void io_submit_state_end(struct io_submit_state *state,
+ {
+ 	if (state->link.head)
+ 		io_queue_sqe(state->link.head);
+-	if (state->compl_nr)
+-		io_submit_flush_completions(ctx);
++	io_submit_flush_completions(ctx);
+ 	if (state->plug_started)
+ 		blk_finish_plug(&state->plug);
+ }
 -- 
 2.33.0
 

@@ -2,43 +2,44 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 81477403DC7
-	for <lists+io-uring@lfdr.de>; Wed,  8 Sep 2021 18:45:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DE31403DF2
+	for <lists+io-uring@lfdr.de>; Wed,  8 Sep 2021 18:52:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346619AbhIHQqf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 8 Sep 2021 12:46:35 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:53294 "EHLO
+        id S1350090AbhIHQxd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 8 Sep 2021 12:53:33 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:53344 "EHLO
         galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349992AbhIHQqc (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 8 Sep 2021 12:46:32 -0400
+        with ESMTP id S1350124AbhIHQxd (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 8 Sep 2021 12:53:33 -0400
 From:   Thomas Gleixner <tglx@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1631119524;
+        s=2020; t=1631119942;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:content-type:content-type:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=xK7tnDBt7Mv35ZlbOM5hzY0NbTi3hoQEG+jDHcstiBU=;
-        b=Z3VvjVBqWpYprjI90RYCkIn1Ut7i7OHzPVKd+y8vxDr6xD4IBqNJy5oAbYe3DrFzvg7cQm
-        iCNFjb3WSt2JKTB5wWDD683aMlqm+HouAl/mSqKIj4dtb4NEg1KJFKeiB9MKcIEbc+ACkz
-        FZ+kNeeMMRp6Tf9U8M9G/PWS8lHJap/xUuWl7Mfv4NRZ+one5dcqwlaGu50luOcvAooIhD
-        9k3149NL/g8Y5/Nv+jw22Q0yiyLADTbAAXEL0ui/TqbgTBWxh+SkRFERilFeZnsXsrpal9
-        uzu+TayGQZCJlIe5FBCw8DVK//Os/6a8nuDxLhV7zXJGJgH0bD3QAPjb2BLpyA==
+        bh=/5EPtDVyVzLxT15E52HQdw1eywPvZepjY6+SF1Ogzgk=;
+        b=WcxcTwoxmq9agcrizLqac1Q7keJK6SWp57fGmeZoww4UbvCpmrxsWYuFabmTnQTvbGXObg
+        t4FqAm0Nc+cpw+LR+DzWY3eyVXkhE2Tk7ixphk5KlqUkDAu1AQqoalewrI3HgWLE+0XIbf
+        jei+lZftAL4SpdTpS8MewmZRmCvir6uvUvGIe6t6dUT64Y5+97UcTzkEKiT0LjzCNhoEhv
+        c8H018SrOc2VEs1dTTIblipMsoaSxN8yJNJw/1XC15TEZva3Q8fJBlcyDDCC98nY3Ulc9s
+        ZH2oEnI0gdHbuL4SahZmsJvWuws3eQ17bs0hHj0DA657Vc7Nlpci/FXdaSCcyQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1631119524;
+        s=2020e; t=1631119942;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:content-type:content-type:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=xK7tnDBt7Mv35ZlbOM5hzY0NbTi3hoQEG+jDHcstiBU=;
-        b=yDRBvFNBZ0NS5+a+rKB5Q0alY89xKXFQ5/iX3zJaSeYqm9x+72fYs96R+mn4yLU9JwHnz9
-        J0HSq3jvgV/QCBDA==
-To:     syzbot <syzbot+b935db3fe409625cca1b@syzkaller.appspotmail.com>,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
-Subject: Re: [syzbot] general protection fault in hrtimer_start_range_ns
-In-Reply-To: <0000000000009eeadd05cb511b60@google.com>
-References: <0000000000009eeadd05cb511b60@google.com>
-Date:   Wed, 08 Sep 2021 18:45:23 +0200
-Message-ID: <875yvbf23g.ffs@tglx>
+        bh=/5EPtDVyVzLxT15E52HQdw1eywPvZepjY6+SF1Ogzgk=;
+        b=2B6VKByQz39IlDUUv9z+gQtL86BeNWs2/Kih5bpCIwBAbv+6FHdwkG98ljTzogQdWrBG8Q
+        DcC6W3q36IZ2biDQ==
+To:     syzbot <syzbot+89ee54915f0135ac38e0@syzkaller.appspotmail.com>,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: Re: [syzbot] BUG: unable to handle kernel paging request in
+ timerqueue_del
+In-Reply-To: <0000000000009b05a305cb511b76@google.com>
+References: <0000000000009b05a305cb511b76@google.com>
+Date:   Wed, 08 Sep 2021 18:52:22 +0200
+Message-ID: <8735qff1rt.ffs@tglx>
 MIME-Version: 1.0
 Content-Type: text/plain
 Precedence: bulk
@@ -46,91 +47,132 @@ List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 On Mon, Sep 06 2021 at 03:28, syzbot wrote:
-> syzbot found the following issue on:
->
-> HEAD commit:    835d31d319d9 Merge tag 'media/v5.15-1' of git://git.kernel..
+> HEAD commit:    b91db6a0b52e Merge tag 'for-5.15/io_uring-vfs-2021-08-30' ..
 > git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=14489886300000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=d793523866f2daea
-> dashboard link: https://syzkaller.appspot.com/bug?extid=b935db3fe409625cca1b
-> compiler:       Debian clang version 11.0.1-2, GNU ld (GNU Binutils for Debian) 2.35.1
+> console output: https://syzkaller.appspot.com/x/log.txt?x=12a993fe300000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=210537ff2ddcc232
+> dashboard link: https://syzkaller.appspot.com/bug?extid=89ee54915f0135ac38e0
+> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.1
+> userspace arch: i386
 >
 > Unfortunately, I don't have any reproducer for this issue yet.
 >
 > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+b935db3fe409625cca1b@syzkaller.appspotmail.com
+> Reported-by: syzbot+89ee54915f0135ac38e0@syzkaller.appspotmail.com
 >
-> general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN
-> KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-> CPU: 0 PID: 12936 Comm: iou-sqp-12929 Not tainted 5.14.0-syzkaller #0
+> BUG: unable to handle page fault for address: ffffc9001bdbfd88
+> #PF: supervisor read access in kernel mode
+> #PF: error_code(0x0000) - not-present page
+> PGD 10800067 P4D 10800067 PUD 109ba067 PMD 136067 PTE 0
+> Oops: 0000 [#1] PREEMPT SMP KASAN
+> CPU: 0 PID: 19707 Comm: syz-executor.1 Not tainted 5.14.0-syzkaller #0
 > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> RIP: 0010:lock_hrtimer_base kernel/time/hrtimer.c:173 [inline]
+>
+> RIP: 0010:__rb_change_child include/linux/rbtree_augmented.h:173 [inline]
+> RIP: 0010:__rb_erase_augmented include/linux/rbtree_augmented.h:216 [inline]
+> RIP: 0010:rb_erase+0x5f6/0x1210 lib/rbtree.c:443
 
-That's almost certainly deferencing hrtimer->base and as that is NULL this looks
-like a not initialized hrtimer.
+So the RB tree is corrupted. In the previous report io_uring clearly was
+using an uninitialized timer and in the console output of this one are
+clearly io uring commands. Obviously I can't tell for sure, but there is
+a pattern here.
 
-Jens?
-
-> RIP: 0010:hrtimer_start_range_ns+0xc9/0x1ae0 kernel/time/hrtimer.c:1296
-> Code: 89 9c 24 88 00 00 00 42 80 3c 33 00 74 08 48 89 ef e8 7b 34 5b 00 4c 8b 6d 00 4d 39 fd 0f 84 95 00 00 00 4d 89 ef 49 c1 ef 03 <43> 80 3c 37 00 74 08 4c 89 ef e8 58 34 5b 00 49 8b 7d 00 e8 6f 19
-> RSP: 0018:ffffc900097af170 EFLAGS: 00010046
-> RAX: ffff888016d49508 RBX: 1ffff11002da92a7 RCX: ffff888027371c80
-> RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000001
-> RBP: ffff888016d49538 R08: ffffffff816fb4b5 R09: 0000000000000003
-> R10: fffff520012f5e2d R11: 0000000000000004 R12: 0000000000000000
-> R13: 0000000000000000 R14: dffffc0000000000 R15: 0000000000000000
-> FS:  00007f7386f28700(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000000000 CR3: 000000002b5e4000 CR4: 00000000001526f0
+> Code: e3 fc 0f 84 0c 01 00 00 48 8d 7b 10 48 89 dd 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 84 0a 00 00 <4c> 3b 6b 10 0f 84 37 02 00 00 48 8d 7b 08 48 b8 00 00 00 00 00 fc
+> RSP: 0018:ffffc90000007d88 EFLAGS: 00010046
+> RAX: dffffc0000000000 RBX: ffffc9001bdbfd78 RCX: 0000000000000000
+> RDX: 1ffff920037b7fb1 RSI: ffff8880b9c424d0 RDI: ffffc9001bdbfd88
+> RBP: ffffc9001bdbfd78 R08: ffffc9001bdbfd79 R09: 0000000000000001
+> R10: ffffffff83f38fdc R11: 0000000000000000 R12: ffffc9001bdbfd79
+> R13: ffffc9000256fd78 R14: ffffc9001aa2fd78 R15: ffff8880b9c424d0
+> FS:  0000000000000000(0000) GS:ffff8880b9c00000(0063) knlGS:00000000f55b7b40
+> CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+> CR2: ffffc9001bdbfd88 CR3: 000000008b5d9000 CR4: 00000000001506f0
 > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
 > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 > Call Trace:
->  hrtimer_start include/linux/hrtimer.h:418 [inline]
->  io_timeout fs/io_uring.c:6120 [inline]
->  io_issue_sqe+0x53d3/0x9280 fs/io_uring.c:6590
->  __io_queue_sqe+0xe3/0x1000 fs/io_uring.c:6864
->  tctx_task_work+0x2ad/0x560 fs/io_uring.c:2143
->  task_work_run+0x146/0x1c0 kernel/task_work.c:164
->  tracehook_notify_signal include/linux/tracehook.h:212 [inline]
->  io_run_task_work+0x110/0x140 fs/io_uring.c:2403
->  io_sq_thread+0xb5e/0x1220 fs/io_uring.c:7337
->  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295
+>  <IRQ>
+>  rb_erase_cached include/linux/rbtree.h:126 [inline]
+>  timerqueue_del+0x7f/0x140 lib/timerqueue.c:57
+>  __remove_hrtimer+0xa1/0x2a0 kernel/time/hrtimer.c:1116
+>  __run_hrtimer kernel/time/hrtimer.c:1665 [inline]
+>  __hrtimer_run_queues+0x4ea/0xe50 kernel/time/hrtimer.c:1749
+>  hrtimer_interrupt+0x31c/0x790 kernel/time/hrtimer.c:1811
+>  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1086 [inline]
+>  __sysvec_apic_timer_interrupt+0x146/0x530 arch/x86/kernel/apic/apic.c:1103
+>  sysvec_apic_timer_interrupt+0x8e/0xc0 arch/x86/kernel/apic/apic.c:1097
+>  </IRQ>
+>  asm_sysvec_apic_timer_interrupt+0x12/0x20 arch/x86/include/asm/idtentry.h:638
+> RIP: 0010:__sanitizer_cov_trace_const_cmp4+0xc/0x70 kernel/kcov.c:283
+> Code: 00 00 00 48 89 7c 30 e8 48 89 4c 30 f0 4c 89 54 d8 20 48 89 10 5b c3 0f 1f 80 00 00 00 00 41 89 f8 bf 03 00 00 00 4c 8b 14 24 <89> f1 65 48 8b 34 25 40 f0 01 00 e8 54 f0 ff ff 84 c0 74 4b 48 8b
+> RSP: 0018:ffffc90019797440 EFLAGS: 00000246
+> RAX: 0000000000000000 RBX: ffff8880001373e4 RCX: 0000000000000000
+> RDX: 0000000000000003 RSI: 0000000000000004 RDI: 0000000000000003
+> RBP: ffff8881407c547c R08: 0000000000000000 R09: ffffffff840a6804
+> R10: ffffffff840a69c5 R11: 0000000000000008 R12: 0000000000000004
+> R13: 0000000000000047 R14: ffff8880001373e0 R15: dffffc0000000000
+>  fast_imageblit drivers/video/fbdev/core/cfbimgblt.c:258 [inline]
+>  cfb_imageblit+0x655/0x1240 drivers/video/fbdev/core/cfbimgblt.c:300
+>  vga_imageblit_expand drivers/video/fbdev/vga16fb.c:1207 [inline]
+>  vga16fb_imageblit+0x681/0x2200 drivers/video/fbdev/vga16fb.c:1260
+>  bit_putcs_unaligned drivers/video/fbdev/core/bitblit.c:139 [inline]
+>  bit_putcs+0x6e1/0xd20 drivers/video/fbdev/core/bitblit.c:188
+>  fbcon_putcs+0x35a/0x450 drivers/video/fbdev/core/fbcon.c:1296
+>  do_update_region+0x399/0x630 drivers/tty/vt/vt.c:676
+>  redraw_screen+0x61f/0x740 drivers/tty/vt/vt.c:1035
+>  vc_do_resize+0xe6f/0x1100 drivers/tty/vt/vt.c:1325
+>  fbcon_modechanged+0x393/0x6d0 drivers/video/fbdev/core/fbcon.c:2640
+>  fbcon_update_vcs+0x3a/0x50 drivers/video/fbdev/core/fbcon.c:2696
+>  do_fb_ioctl+0x62e/0x690 drivers/video/fbdev/core/fbmem.c:1108
+>  fb_compat_ioctl+0x17e/0x610 drivers/video/fbdev/core/fbmem.c:1307
+>  __do_compat_sys_ioctl+0x1c7/0x290 fs/ioctl.c:964
+>  do_syscall_32_irqs_on arch/x86/entry/common.c:112 [inline]
+>  __do_fast_syscall_32+0x65/0xf0 arch/x86/entry/common.c:178
+>  do_fast_syscall_32+0x2f/0x70 arch/x86/entry/common.c:203
+>  entry_SYSENTER_compat_after_hwframe+0x4d/0x5c
+> RIP: 0023:0xf7fbd549
+> Code: 03 74 c0 01 10 05 03 74 b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
+> RSP: 002b:00000000f55b75fc EFLAGS: 00000296 ORIG_RAX: 0000000000000036
+> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000004601
+> RDX: 0000000020000280 RSI: 0000000000000000 RDI: 0000000000000000
+> RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+> R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
 > Modules linked in:
-> ---[ end trace 841fafb7511d53d3 ]---
-> RIP: 0010:lock_hrtimer_base kernel/time/hrtimer.c:173 [inline]
-> RIP: 0010:hrtimer_start_range_ns+0xc9/0x1ae0 kernel/time/hrtimer.c:1296
-> Code: 89 9c 24 88 00 00 00 42 80 3c 33 00 74 08 48 89 ef e8 7b 34 5b 00 4c 8b 6d 00 4d 39 fd 0f 84 95 00 00 00 4d 89 ef 49 c1 ef 03 <43> 80 3c 37 00 74 08 4c 89 ef e8 58 34 5b 00 49 8b 7d 00 e8 6f 19
-> RSP: 0018:ffffc900097af170 EFLAGS: 00010046
-> RAX: ffff888016d49508 RBX: 1ffff11002da92a7 RCX: ffff888027371c80
-> RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000001
-> RBP: ffff888016d49538 R08: ffffffff816fb4b5 R09: 0000000000000003
-> R10: fffff520012f5e2d R11: 0000000000000004 R12: 0000000000000000
-> R13: 0000000000000000 R14: dffffc0000000000 R15: 0000000000000000
-> FS:  00007f7386f28700(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000000000 CR3: 000000002b5e4000 CR4: 00000000001526f0
+> CR2: ffffc9001bdbfd88
+> ---[ end trace 573584e01bd36498 ]---
+> RIP: 0010:__rb_change_child include/linux/rbtree_augmented.h:173 [inline]
+> RIP: 0010:__rb_erase_augmented include/linux/rbtree_augmented.h:216 [inline]
+> RIP: 0010:rb_erase+0x5f6/0x1210 lib/rbtree.c:443
+> Code: e3 fc 0f 84 0c 01 00 00 48 8d 7b 10 48 89 dd 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 84 0a 00 00 <4c> 3b 6b 10 0f 84 37 02 00 00 48 8d 7b 08 48 b8 00 00 00 00 00 fc
+> RSP: 0018:ffffc90000007d88 EFLAGS: 00010046
+> RAX: dffffc0000000000 RBX: ffffc9001bdbfd78 RCX: 0000000000000000
+> RDX: 1ffff920037b7fb1 RSI: ffff8880b9c424d0 RDI: ffffc9001bdbfd88
+> RBP: ffffc9001bdbfd78 R08: ffffc9001bdbfd79 R09: 0000000000000001
+> R10: ffffffff83f38fdc R11: 0000000000000000 R12: ffffc9001bdbfd79
+> R13: ffffc9000256fd78 R14: ffffc9001aa2fd78 R15: ffff8880b9c424d0
+> FS:  0000000000000000(0000) GS:ffff8880b9c00000(0063) knlGS:00000000f55b7b40
+> CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+> CR2: ffffc9001bdbfd88 CR3: 000000008b5d9000 CR4: 00000000001506f0
 > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
 > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 > ----------------
 > Code disassembly (best guess):
->    0:	89 9c 24 88 00 00 00 	mov    %ebx,0x88(%rsp)
->    7:	42 80 3c 33 00       	cmpb   $0x0,(%rbx,%r14,1)
->    c:	74 08                	je     0x16
->    e:	48 89 ef             	mov    %rbp,%rdi
->   11:	e8 7b 34 5b 00       	callq  0x5b3491
->   16:	4c 8b 6d 00          	mov    0x0(%rbp),%r13
->   1a:	4d 39 fd             	cmp    %r15,%r13
->   1d:	0f 84 95 00 00 00    	je     0xb8
->   23:	4d 89 ef             	mov    %r13,%r15
->   26:	49 c1 ef 03          	shr    $0x3,%r15
-> * 2a:	43 80 3c 37 00       	cmpb   $0x0,(%r15,%r14,1) <-- trapping instruction
->   2f:	74 08                	je     0x39
->   31:	4c 89 ef             	mov    %r13,%rdi
->   34:	e8 58 34 5b 00       	callq  0x5b3491
->   39:	49 8b 7d 00          	mov    0x0(%r13),%rdi
->   3d:	e8                   	.byte 0xe8
->   3e:	6f                   	outsl  %ds:(%rsi),(%dx)
->   3f:	19                   	.byte 0x19
+>    0:	e3 fc                	jrcxz  0xfffffffe
+>    2:	0f 84 0c 01 00 00    	je     0x114
+>    8:	48 8d 7b 10          	lea    0x10(%rbx),%rdi
+>    c:	48 89 dd             	mov    %rbx,%rbp
+>    f:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
+>   16:	fc ff df
+>   19:	48 89 fa             	mov    %rdi,%rdx
+>   1c:	48 c1 ea 03          	shr    $0x3,%rdx
+>   20:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1)
+>   24:	0f 85 84 0a 00 00    	jne    0xaae
+> * 2a:	4c 3b 6b 10          	cmp    0x10(%rbx),%r13 <-- trapping instruction
+>   2e:	0f 84 37 02 00 00    	je     0x26b
+>   34:	48 8d 7b 08          	lea    0x8(%rbx),%rdi
+>   38:	48                   	rex.W
+>   39:	b8 00 00 00 00       	mov    $0x0,%eax
+>   3e:	00 fc                	add    %bh,%ah
 >
 >
 > ---

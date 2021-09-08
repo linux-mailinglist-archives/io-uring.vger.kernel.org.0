@@ -2,106 +2,82 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E500403206
-	for <lists+io-uring@lfdr.de>; Wed,  8 Sep 2021 03:02:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF274403420
+	for <lists+io-uring@lfdr.de>; Wed,  8 Sep 2021 08:15:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245379AbhIHBDS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 7 Sep 2021 21:03:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46644 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239456AbhIHBDS (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 7 Sep 2021 21:03:18 -0400
-Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5268FC061575;
-        Tue,  7 Sep 2021 18:02:11 -0700 (PDT)
-Received: by mail-pf1-x42a.google.com with SMTP id x19so595211pfu.4;
-        Tue, 07 Sep 2021 18:02:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=pDeJ+ImvfyUW8iRlMB1BgxblOKPWqeMm95cLvzOnvLQ=;
-        b=X/n2fvENXtyKuD++HXWb8VUFHFoAs5QEokF3VnxEYtdady9Xp6TQ8TKvDSPtyKP4pX
-         nShX4IDjohovCGYJgJXX4G111NAtZePcHicljk6XZJ3Gw1ZAxEwopM3xuh09aj11yXUr
-         eYeCWZuAGleDVa0JADpvKKpmQcTFX8+WiAG9Tr0uTgrsCVi5b6Wtr0mlbHXHZvc72vja
-         j7tPwe9VguwDbIubzSy1e02RX8KgRXduUom1blOeufFgkrAfSf4ob3Wu4ag1y65HxFMd
-         Kgpw4foJoFWsNVQrXCX84R8nCuR/zdcru5mhdL6oM/r90QnPFVTqU7P/zpcxidlraCQ2
-         36aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=pDeJ+ImvfyUW8iRlMB1BgxblOKPWqeMm95cLvzOnvLQ=;
-        b=E5vykfKL4eoU3Sh94gF2U7WwDNSqVAwGzuno87oIJy5r0SmmmDUAUt7FOt/+2XkHyp
-         QpU5xTrUqvmhGDuASRkLQOrKyV77ksG/PFjRBkwu37rudhWem9BOtq77N4+iue0WfmlL
-         OUxelY+plWBkDFYNSeZqhECbHGexTY2TD7tXR0qyAbjHsKHqwHwkT4XM0zzE08qcIWlW
-         dYHPrakPR6uY6h/IK2iZlVMpr6tNZ+X9U2zmUxsdg4lLop48CyRLixKtd/+GXvWRmgkB
-         16xAE6NNuAHi9gLKQ/evKcO/EQ6wieKonFnbxLeHMRe9GG0nfJEshPgFzoKMViznIoy9
-         dp8Q==
-X-Gm-Message-State: AOAM530+CdI2hr9OI7F4bAHQSEdJ0zVXYLc2c89fTaHIuWnuI0f97qG+
-        8hpLsHTVUOP4LXqrR0sPbIO6POfNFAEr9PxIF/lzwxVDGZY3
-X-Google-Smtp-Source: ABdhPJwmw06Fb9TYgniH+bteM3MybbaR402maa6CcEWxUJBRAciFkOoef/R9o/rKKbY4Vhe2xe3bKf4wSPtLMj/vYX8=
-X-Received: by 2002:a62:920b:0:b0:3ec:7912:82be with SMTP id
- o11-20020a62920b000000b003ec791282bemr1146623pfd.34.1631062930707; Tue, 07
- Sep 2021 18:02:10 -0700 (PDT)
+        id S1347663AbhIHGQm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 8 Sep 2021 02:16:42 -0400
+Received: from verein.lst.de ([213.95.11.211]:38046 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232146AbhIHGQm (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Wed, 8 Sep 2021 02:16:42 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id C1A8D67373; Wed,  8 Sep 2021 08:15:30 +0200 (CEST)
+Date:   Wed, 8 Sep 2021 08:15:30 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Kanchan Joshi <joshiiitr@gmail.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Kanchan Joshi <joshi.k@samsung.com>,
+        Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>,
+        io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
+        anuj20.g@samsung.com, Javier Gonzalez <javier.gonz@samsung.com>,
+        hare@suse.de
+Subject: Re: [RFC PATCH 2/6] nvme: wire-up support for async-passthru on
+ char-device.
+Message-ID: <20210908061530.GA28505@lst.de>
+References: <20210805125539.66958-1-joshi.k@samsung.com> <CGME20210805125923epcas5p10e6c1b95475440be68f58244d5a3cb9a@epcas5p1.samsung.com> <20210805125539.66958-3-joshi.k@samsung.com> <20210907074650.GB29874@lst.de> <CA+1E3rJAav=4abJXs8fO49aiMNPqjv6dD7HBfhB+JQrNbaX3=A@mail.gmail.com>
 MIME-Version: 1.0
-References: <CACkBjsbs2tahJMC_TBZhQUBQiFYhLo-CW+kyzNxyUqgs5NCaXA@mail.gmail.com>
- <df072429-3f45-4d9d-c81d-73174aaf2e7d@kernel.dk> <e5ac817b-bc96-bea6-aadb-89d3c201446d@gmail.com>
-In-Reply-To: <e5ac817b-bc96-bea6-aadb-89d3c201446d@gmail.com>
-From:   Hao Sun <sunhao.th@gmail.com>
-Date:   Wed, 8 Sep 2021 09:01:59 +0800
-Message-ID: <CACkBjsZLyNbMwyoZc8T9ggq+R6-0aBFPCRB54jzAOF8f2QCH0Q@mail.gmail.com>
-Subject: Re: INFO: task hung in io_uring_cancel_generic
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+1E3rJAav=4abJXs8fO49aiMNPqjv6dD7HBfhB+JQrNbaX3=A@mail.gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Pavel Begunkov <asml.silence@gmail.com> =E4=BA=8E2021=E5=B9=B49=E6=9C=888=
-=E6=97=A5=E5=91=A8=E4=B8=89 =E4=B8=8A=E5=8D=885:31=E5=86=99=E9=81=93=EF=BC=
-=9A
->
-> On 9/7/21 8:30 PM, Jens Axboe wrote:
-> > On 9/7/21 5:50 AM, Hao Sun wrote:
-> >> Hello,
-> >>
-> >> When using Healer to fuzz the latest Linux kernel, the following crash
-> >> was triggered.
-> >>
-> >> HEAD commit: 7d2a07b76933 Linux 5.14
-> >> git tree: upstream
-> >> console output:
-> >> https://drive.google.com/file/d/1c8uRooM0TwJiTIwEviOCB4RC-hhOgGHR/view=
-?usp=3Dsharing
-> >> kernel config: https://drive.google.com/file/d/1XD9WYDViQLSXN7RGwH8AGG=
-DvP9JvOghx/view?usp=3Dsharing
-> >> Similar report:
-> >> https://groups.google.com/u/1/g/syzkaller-bugs/c/FvdcTiJIGtY/m/PcXkoen=
-UAAAJ
-> >>
-> >> Sorry, I don't have a reproducer for this crash, hope the symbolized
-> >> report can help.
-> >> If you fix this issue, please add the following tag to the commit:
-> >> Reported-by: Hao Sun <sunhao.th@gmail.com>
+On Tue, Sep 07, 2021 at 09:50:27PM +0530, Kanchan Joshi wrote:
+> > A few other notes:
 > >
-> > Would be great with a reproducer for this one, though...
->
-> And syzbot usually sends an execution log with all syz programs
-> it run, which may be helpful. Any chance you have anything similar
-> left?
->
+> >  - I suspect the ioctl_cmd really should move into the core using_cmd
+> >    infrastructure
+> 
+> Yes, that seems possible by creating that field outside by combining
+> "op" and "unused" below.
+> +struct io_uring_cmd {
+> + struct file *file;
+> + __u16 op;
+> + __u16 unused;
+> + __u32 len;
+> + __u64 pdu[5]; /* 40 bytes available inline for free use */
+> +};
 
-Yes, found it[1]. Here is an execution history with latest 1024
-executed progs before crash saved.
-Hope it can help. I'll also follow this crash closely, see if Healer
-can find a reproducer and send it to you once it found.
+Two different issues here:
 
-[1] https://drive.google.com/file/d/14k8qOFeyKPD4HsqOpIjud3b9jsxFSo-u/view?=
-usp=3Dsharing
+ - the idea of having a two layer indirection with op and a cmd doesn't
+   really make much sense
+ - if we want to avoid conflicts using 32-bit probably makes sense
 
-> --
-> Pavel Begunkov
+So I'd turn op and unused into a single cmd field, use the ioctl encoding
+macros for it (but preferably pick different numbers than the existing
+ioctls).
+
+> >  - that whole mix of user space interface and internal data in the
+> >    ->pdu field is a mess.  What is the problem with deferring the
+> >    request freeing into the user context, which would clean up
+> >    quite a bit of that, especially if io_uring_cmd grows a private
+> >    field.
+> 
+> That mix isn't great but the attempt was to save the allocation.
+> And I was not very sure if it'd be fine to defer freeing the request
+> until task-work fires up.
+
+What would be the problem with the delaying?
+
+> Even if we take that route, we would still need a place to store bio
+> pointer (hopefully meta pointer can be extracted out of bio).
+> Do you see it differently?
+
+We don't need the bio pointer at all.  The old passthrough code needed
+it when we still used block layer bonuce buffering for it.  But that
+bounce buffering for passthrough commands got removed a while ago,
+and even before nvme never used it.

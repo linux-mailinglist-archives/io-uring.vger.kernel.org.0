@@ -2,76 +2,77 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BF994058F6
-	for <lists+io-uring@lfdr.de>; Thu,  9 Sep 2021 16:25:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D7D984058FC
+	for <lists+io-uring@lfdr.de>; Thu,  9 Sep 2021 16:26:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245192AbhIIOZ5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 9 Sep 2021 10:25:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43002 "EHLO
+        id S235225AbhIIO1p (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 9 Sep 2021 10:27:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43070 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344697AbhIIOZv (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 9 Sep 2021 10:25:51 -0400
-Received: from mail-io1-xd35.google.com (mail-io1-xd35.google.com [IPv6:2607:f8b0:4864:20::d35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1A99C120D7C
-        for <io-uring@vger.kernel.org>; Thu,  9 Sep 2021 05:58:16 -0700 (PDT)
-Received: by mail-io1-xd35.google.com with SMTP id g9so2113333ioq.11
-        for <io-uring@vger.kernel.org>; Thu, 09 Sep 2021 05:58:16 -0700 (PDT)
+        with ESMTP id S239329AbhIIO1j (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 9 Sep 2021 10:27:39 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 292C5C05BD2F
+        for <io-uring@vger.kernel.org>; Thu,  9 Sep 2021 06:07:50 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id d6so2469114wrc.11
+        for <io-uring@vger.kernel.org>; Thu, 09 Sep 2021 06:07:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=xtXEmCkgLjj2ICcn/5G5ZZlK2SnZW1IcakfDyVuInEA=;
-        b=hB6xV2U22F35EshU9H4Y6s6DCeylbHAC/VYNgUqb5P03tlfg8suiMyms6Ulz+KWw7o
-         PGzgv8eA5+p9RnyJctVqWIv2Xyf++kBehqOOaYe34EIRSDjYzfjAwYE3HiYVyhQ9rHGU
-         boS/wzrrgtIefOtlhcfW/UrPgIZFc0qHYbxhFQF1HmcbKBGk5vTqPQBtLqHXV0Pd45IC
-         niqe22DM+7zzFfTjKljcBcDwdfJq1boitMqFKRGjL+tVpI8xaH8VYiHRnMcbSrt3Fj7g
-         ALLEfHozSHiTTSc6fvxJNa/e/ifhwub0NnAkAsAT1DcOUWiLPQW+vaBKX8V1oNghIb+5
-         90cg==
+        d=gmail.com; s=20210112;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Fyju7fF+vKO2gKTxiqW07o8ZFTUFwhsAjlYNj8NJHts=;
+        b=a7fkPVbew2+u/fUwU9DtPuPel7OtBxu11kmXzzAxdJ4kh1wIHlZiPk1dL/sM5+pW19
+         AJdW+FcTC9/dIJ0cXrXQRv34X1tHwfxWkQ4TbbRLpAgRPp+OV4lcpX61M4l6OcDTaMdg
+         DbFbj+3i+tPRJ2xKfIr6lEYZDYtrNTBImz5cFU2xqfv4BX6SFvauOz27Jwerf6YKbucf
+         cARJ56KXqv9tHDB9I0IWAot38Yavdzd6G6FbE9sO+CnLNb/P+lGkhLlLD7WkqVf0uQBI
+         xqDjz6F44gcphM2Q+653TqDApD9X44erWd0vmTqi5iR2PiH+CVTM7t8nM4v24BGS9hEm
+         NXYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=xtXEmCkgLjj2ICcn/5G5ZZlK2SnZW1IcakfDyVuInEA=;
-        b=4UnyGflc+eq4WnMuwctKEOa6PQu1WJOG/lUFGg8ZprpiCW0GpqJ1iWpAkHkNMcRdjg
-         KyKCwY+EVH2YTKN5qM8eh6fhKyS/4jEkmXYsVswrcYd/bY3JqOzcqCkwiqqJh3HbuXiE
-         KV6yoOoOAcVF/EKzs5mCqtuRYpILP763izy/6Z99dNPmu4yDqiYjt4dINDhibPakm3N1
-         qU/4tUHdSD6DfijUJLN2Tb6ifRPutyaGHG5puJxVf9r2KDr0VXLJ/TvwP2Lx5T6MynYR
-         yolw9F/DBaRiDhIfwR6AaNCZzD+tpKiSWNnOdV7SktBFf6XwcS64zO9QgFcM0WznbquA
-         HKaw==
-X-Gm-Message-State: AOAM531tihYHO52/fjHyL2613K1Fb8TDqz+U7JdLPxoBt1qActstl0GG
-        +mPFsO68mOLYv98L1NJKYKJD8g==
-X-Google-Smtp-Source: ABdhPJyC9BpbGwDqu0GxL7mOtDLS4R168asvGRVWOhfSos1bWN9ugSXqhGImveQTNEcWGV/AFqBQZg==
-X-Received: by 2002:a6b:905:: with SMTP id t5mr2566323ioi.209.1631192296197;
-        Thu, 09 Sep 2021 05:58:16 -0700 (PDT)
-Received: from [192.168.1.116] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id a4sm837736ioe.19.2021.09.09.05.58.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Sep 2021 05:58:15 -0700 (PDT)
-Subject: Re: [PATCH -next] io-wq: Fix memory leak in create_io_worker
-To:     Bixuan Cui <cuibixuan@huawei.com>, linux-kernel@vger.kernel.org,
-        io-uring@vger.kernel.org
-Cc:     asml.silence@gmail.com, john.wanghui@huawei.com
-References: <20210909084919.29644-1-cuibixuan@huawei.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <2a63f105-c2a9-7c57-3101-ba7779cccb6d@kernel.dk>
-Date:   Thu, 9 Sep 2021 06:58:14 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        bh=Fyju7fF+vKO2gKTxiqW07o8ZFTUFwhsAjlYNj8NJHts=;
+        b=nXS6Q+1nKHIde7sPL5FlOExpAYZCW9RgNgvvAVKecEIjDLqLTCMSvAcpMmsx3aDudu
+         ZYHXtd5fAq+JwammQyvsn/uyMFrgkmXUobB6LLspm/agXxky9PZn9Oa9APCr+geVD51N
+         3oQ9yel+6Y2i7dNDKVTJiEZ4D6+FR83FWP+HQe2jAGfUe7WpLWmfZaWBxV10XXZ7h69L
+         NRvt5bj6pKXqaB1NgLuUsGn7xWkD0qqf41c1GqYJmwtAkF8lNy5r7DntQRfu0kw6eif3
+         9m0LKLjQtxdKkvzE8VSP4dnlGOF7xvf92UDcvLLaxXjwMinSI/4Lr29N7dQ5c9quWIGl
+         KXlA==
+X-Gm-Message-State: AOAM532KS8D19/ginKKp5O3izjBRYS6eyHQWWtNJiv5SQw+qtIPtOuF+
+        XWajtYdp7aQFTQI5mDvw4Q0=
+X-Google-Smtp-Source: ABdhPJzVLX9feCtpqmDzKFs2+onAas86Lilw/HyG1wGVmdk6BjOo1X1Lou5ihOq9piTL+gk+hLclug==
+X-Received: by 2002:adf:d193:: with SMTP id v19mr3517524wrc.377.1631192868700;
+        Thu, 09 Sep 2021 06:07:48 -0700 (PDT)
+Received: from localhost.localdomain ([85.255.235.167])
+        by smtp.gmail.com with ESMTPSA id w20sm1762096wrg.1.2021.09.09.06.07.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Sep 2021 06:07:48 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [PATCH liburing 0/2] exec + timeout cancellation
+Date:   Thu,  9 Sep 2021 14:07:07 +0100
+Message-Id: <cover.1631192734.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.33.0
 MIME-Version: 1.0
-In-Reply-To: <20210909084919.29644-1-cuibixuan@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/9/21 2:49 AM, Bixuan Cui wrote:
-> If io_should_retry_thread is false, free the worker before goto fails.
+Add some infra to test exec(), hopefully we will get more
+tests using it. And also add a timeout test, which uses exec.
 
-This one is incomplete, see other postings.
+Pavel Begunkov (2):
+  tests: add no-op executable for exec
+  tests: test timeout cancellation fails links
+
+ .gitignore         |  1 +
+ test/Makefile      |  2 ++
+ test/exec-target.c |  4 +++
+ test/timeout.c     | 84 ++++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 91 insertions(+)
+ create mode 100644 test/exec-target.c
 
 -- 
-Jens Axboe
+2.33.0
 

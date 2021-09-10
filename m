@@ -2,64 +2,65 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DB76C406B53
-	for <lists+io-uring@lfdr.de>; Fri, 10 Sep 2021 14:22:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FA0A406B5D
+	for <lists+io-uring@lfdr.de>; Fri, 10 Sep 2021 14:26:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233025AbhIJMYD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 10 Sep 2021 08:24:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56904 "EHLO
+        id S233035AbhIJM1r (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 10 Sep 2021 08:27:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233020AbhIJMYD (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 10 Sep 2021 08:24:03 -0400
-Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3B73C061756
-        for <io-uring@vger.kernel.org>; Fri, 10 Sep 2021 05:22:52 -0700 (PDT)
-Received: by mail-io1-xd31.google.com with SMTP id f6so2088514iox.0
-        for <io-uring@vger.kernel.org>; Fri, 10 Sep 2021 05:22:52 -0700 (PDT)
+        with ESMTP id S232876AbhIJM1r (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 10 Sep 2021 08:27:47 -0400
+Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5641EC061574
+        for <io-uring@vger.kernel.org>; Fri, 10 Sep 2021 05:26:36 -0700 (PDT)
+Received: by mail-io1-xd29.google.com with SMTP id a15so2051658iot.2
+        for <io-uring@vger.kernel.org>; Fri, 10 Sep 2021 05:26:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=pyFl/0K9PYicWHb+3HWhezULSnmmE6ZLIwp8H683T8A=;
-        b=EAwPAuVuvC7q2/1+ejxZqCgZkhQZIQ1RLqZcTU33QBiVpfcdEyMOe1RyxMRD4Jrheq
-         Hy7A5NiEfgcCgm3hMiL6d3p7gMa3o8Lm9phn53vFOCAlOf1nsvRPMdLS3jn1krqfA/1D
-         gIhMTiVbC0+aZMVgh9eGFYYHi16wbRDu5AnDGa7c2nxSkreYj7+JfuPAJA7ZCNPu1wDa
-         hx4W8jLIrGK0bT9Kkh37rN5PfP44RHkmIt2o35puvSE2mrWatUeMRcBVD7HiKkqoQtss
-         +TlfDCal9RAFpkjCKtq5hyX2aELeyrR+a3QdXTFn0EHXTYeZTlNbcENzockgzrIiY1X5
-         H0FA==
+        bh=PZiF+LBzYrosUA4eeunMHOCR8oTyafy44KB/Usk+Pco=;
+        b=1HN+br7mrTHqAK2dTkEGagDLi6yO6T340Px7atAshHKc0pzTaJPeoOl/3smc4Smkxl
+         wUpBS2TIfminfvKjW8e8KxZBNLVlYPre1TEFw1lfhHimzeYZGJwR2+fJuxG1MnyVeJVT
+         OgJkiXVlSXHpSVLi0O+4tj6p7CY3c7LJ33XG2c7drxEUjd4GLKg52zNZAeG9hLySc7J1
+         wJZizxTQJz3/aWwfZDFnq4JV4B7bgOOvgTiwNZkASl6Kg5/OKfEVb82N7wm8AV9cN3AT
+         0A1UBtkLguC5amua0f3J/6oB4wTDZNch3h3IhYeiF98Lg3IoTPJkUtV1bFP9F/6lNf4D
+         rVeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=pyFl/0K9PYicWHb+3HWhezULSnmmE6ZLIwp8H683T8A=;
-        b=VzW3w32J4l2IOV0c0AMuETTGDiD2ToBEgNSGtA8OcoECnzdUIzsAdnfpm/A6JAnE5G
-         NW6KTt3PBIWOqM1lXHE2BN0t1gYKO+EsGeKYENTlBxaUYHz4zgomYn+XAAXTXQBQ5HUu
-         J4hsHqNn2qajwV/rAemZjh+6skL/WHbJrSuS+TsxviGsyPDIXahA7+gGcGiVyGbRpUAn
-         uDdQPn81IYsvfxjxcWU3HS4uMjCx6mWM53SFX6IlvXXwQZ48DRhZuLgSUrUyjrbcpLJd
-         Kvl/ZNsLBvWkqKK3Ki0g3bghz2oDkvL+6Lw2xKRALTxVNKvffF46lErpJUrWJCjwMVny
-         GbXw==
-X-Gm-Message-State: AOAM532BZcH8xIpXoW7Z1qEvqJBfX2KXxpWDx7SxZ/8fflNkAv3eSaCM
-        GGrvBRvqac86OVKCGyLgrQ6tEg==
-X-Google-Smtp-Source: ABdhPJzqPSVKanrARM7SyxnvfhdXia3qUhDfR5icYQCEYe3ZLo+l0iLbFbZKUuzotnxcAQS7zi4bzg==
-X-Received: by 2002:a6b:e905:: with SMTP id u5mr6634060iof.116.1631276571903;
-        Fri, 10 Sep 2021 05:22:51 -0700 (PDT)
+        bh=PZiF+LBzYrosUA4eeunMHOCR8oTyafy44KB/Usk+Pco=;
+        b=mcdoY0Aqs7HI/wRaAmWzJfqw1BdekfV9ZLzsH+Rj+sp+7/NYEUrRIrQwxbOIUpksKO
+         zyUoRUS/oyzoj9v2MXyTE8NRBYOkHCOveKZpp+gU93Biy2LcQ3wTaiC5aiYoMWNLU6XJ
+         wF+lnjQswGPK4B8V0C53PaQXs9ZIJsGx5Ih/JvdgI4KV3HKk5UD5usrOf13XXv1KEVKF
+         seIIxUo636TnFzfl7g/0w/k8OVKs3n6M0yzqiHjBw9wSi/t+TfbZkY4sW0KPJEiLlBnO
+         j7TtUycTWCJ6qKQfzXsFh/Kark84XpIzd8y8kZnAsh1jbOrICPEFEuCBVkGDlpPlzH3O
+         nLAg==
+X-Gm-Message-State: AOAM531iU2bW8PFT1kmaLfGDWZEdgj3gXCxX1ckEDAyZD6xpD8x9SHXZ
+        lNIRQ3f3w8F2hsivWiyXewYjXA==
+X-Google-Smtp-Source: ABdhPJzG52fq+pmlpqZ5NWphR0lp3joefOPhY64YCXWl6vjjIYdadak8fHjDlDQR7HBi1iyLio/8cw==
+X-Received: by 2002:a5d:914b:: with SMTP id y11mr6955081ioq.6.1631276795687;
+        Fri, 10 Sep 2021 05:26:35 -0700 (PDT)
 Received: from [192.168.1.116] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id p19sm2379669ilj.58.2021.09.10.05.22.51
+        by smtp.gmail.com with ESMTPSA id c25sm2404250iom.9.2021.09.10.05.26.34
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Sep 2021 05:22:51 -0700 (PDT)
-Subject: Re: [PATCH -next v2] io-wq: Fix memory leak in create_io_worker
-To:     Bixuan Cui <cuibixuan@huawei.com>, linux-kernel@vger.kernel.org,
-        io-uring@vger.kernel.org
-Cc:     asml.silence@gmail.com, john.wanghui@huawei.com
-References: <20210910072910.43319-1-cuibixuan@huawei.com>
+        Fri, 10 Sep 2021 05:26:34 -0700 (PDT)
+Subject: Re: [PATCH v2] io_uring: fix bug of wrong BUILD_BUG_ON check of
+ __REQ_F_LAST_BIT
+To:     Hao Xu <haoxu@linux.alibaba.com>
+Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>
+References: <20210907032243.114190-1-haoxu@linux.alibaba.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <813cb232-df7e-bdc4-5e89-9bf5c5be75c1@kernel.dk>
-Date:   Fri, 10 Sep 2021 06:22:50 -0600
+Message-ID: <d1e8cf46-7a12-a93a-47a4-ce68609dfc1a@kernel.dk>
+Date:   Fri, 10 Sep 2021 06:26:33 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20210910072910.43319-1-cuibixuan@huawei.com>
+In-Reply-To: <20210907032243.114190-1-haoxu@linux.alibaba.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -67,43 +68,11 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/10/21 1:29 AM, Bixuan Cui wrote:
-> Kmemleak tool detected a memory leak.
-> 
-> ====================
-> unreferenced object 0xffff888126fcd6c0 (size 192):
->   comm "syz-executor.1", pid 11934, jiffies 4294983026 (age 15.690s)
->   hex dump (first 32 bytes):
->     01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->   backtrace:
->     [<ffffffff81632c91>] kmalloc_node include/linux/slab.h:609 [inline]
->     [<ffffffff81632c91>] kzalloc_node include/linux/slab.h:732 [inline]
->     [<ffffffff81632c91>] create_io_worker+0x41/0x1e0 fs/io-wq.c:739
->     [<ffffffff8163311e>] io_wqe_create_worker fs/io-wq.c:267 [inline]
->     [<ffffffff8163311e>] io_wqe_enqueue+0x1fe/0x330 fs/io-wq.c:866
->     [<ffffffff81620b64>] io_queue_async_work+0xc4/0x200 fs/io_uring.c:1473
->     [<ffffffff8162c59c>] __io_queue_sqe+0x34c/0x510 fs/io_uring.c:6933
->     [<ffffffff8162c7ab>] io_req_task_submit+0x4b/0xa0 fs/io_uring.c:2233
->     [<ffffffff8162cb48>] io_async_task_func+0x108/0x1c0 fs/io_uring.c:5462
->     [<ffffffff816259e3>] tctx_task_work+0x1b3/0x3a0 fs/io_uring.c:2158
->     [<ffffffff81269b43>] task_work_run+0x73/0xb0 kernel/task_work.c:164
->     [<ffffffff812dcdd1>] tracehook_notify_signal include/linux/tracehook.h:212 [inline]
->     [<ffffffff812dcdd1>] handle_signal_work kernel/entry/common.c:146 [inline]
->     [<ffffffff812dcdd1>] exit_to_user_mode_loop kernel/entry/common.c:172 [inline]
->     [<ffffffff812dcdd1>] exit_to_user_mode_prepare+0x151/0x180 kernel/entry/common.c:209
->     [<ffffffff843ff25d>] __syscall_exit_to_user_mode_work kernel/entry/common.c:291 [inline]
->     [<ffffffff843ff25d>] syscall_exit_to_user_mode+0x1d/0x40 kernel/entry/common.c:302
->     [<ffffffff843fa4a2>] do_syscall_64+0x42/0xb0 arch/x86/entry/common.c:86
->     [<ffffffff84600068>] entry_SYSCALL_64_after_hwframe+0x44/0xae
-> ====================
-> 
-> If io_should_retry_thread is false in create_io_worker() and
-> io_queue_worker_create is false in io_workqueue_create(), free the worker.
+On 9/6/21 9:22 PM, Hao Xu wrote:
+> Build check of __REQ_F_LAST_BIT should be large than not equal or large
+> than.
 
-A fix for this was already merged:
-
-https://git.kernel.dk/cgit/linux-block/commit/?h=io_uring-5.15&id=66e70be722886e4f134350212baa13f217e39e42
+Thanks, applied with a bit of commit message massaging.
 
 -- 
 Jens Axboe

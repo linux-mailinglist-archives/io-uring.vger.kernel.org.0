@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6045F40763A
-	for <lists+io-uring@lfdr.de>; Sat, 11 Sep 2021 13:12:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 673B740763B
+	for <lists+io-uring@lfdr.de>; Sat, 11 Sep 2021 13:12:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232239AbhIKLNx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 11 Sep 2021 07:13:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48648 "EHLO
+        id S233243AbhIKLN4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 11 Sep 2021 07:13:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48654 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
         with ESMTP id S230249AbhIKLNx (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Sat, 11 Sep 2021 07:13:53 -0400
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2FBBC061574
-        for <io-uring@vger.kernel.org>; Sat, 11 Sep 2021 04:12:40 -0700 (PDT)
-Received: by mail-wm1-x332.google.com with SMTP id i3so2971421wmq.3
-        for <io-uring@vger.kernel.org>; Sat, 11 Sep 2021 04:12:40 -0700 (PDT)
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6260AC061574
+        for <io-uring@vger.kernel.org>; Sat, 11 Sep 2021 04:12:41 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id l7-20020a1c2507000000b002e6be5d86b3so3095720wml.3
+        for <io-uring@vger.kernel.org>; Sat, 11 Sep 2021 04:12:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=4VLpTG0ZVENOMUBsiF1DWd/wgkV9BVasFPU16qCzV34=;
-        b=IiTEvgWyyq1FM/LjOcelTCka9rgcVvqBk1+HxCz6qDdMnQ7QjibIAWEgklHq+VxkEo
-         c/o2enkOLzVKJ+AqkLyA6rV+4sF16jZkmL913PqlYHzv3GWlT2VG++WofoozNllYJ6ZB
-         PLX9jpsm+pXu406mlGP07GTjDED4VsEUi6zCtiJvrLbSQLdH5HSOuVeFS4DpfZoBXWAw
-         wYviULyoHL6vR7PwPOgWOSYL5k6U12CC8yCPCumIpZL9s9FOmerTBY+k3PauPcm681A1
-         idJwbl8943xzZ8YhLCxIQ3zivdEwgnprYSTKksBGjcAwMcWPz2lnfiixi2Y5DWxrj9f5
-         fd6g==
+        bh=RWrgBMgGkAOQi0TLR84rIkrfXsgYnZ8CBYSNWCOR7OQ=;
+        b=EBEo0d+WFFn7mGFIVScEvZK8utU5CZN4cq+UKfuGue5L95P5sBgeOl/Qxnx8vF81CW
+         4iwkS3Rfdh/XTa7uDh9M4mchAQ41cetyyMyhWX4Wq0+5K222xv5T1UotVq/3numNTmaW
+         oWkMS5WeVrF6K1+7H8lFHcQKueEp0aVnIYLDRKWHfbKIYHZ9B8KYKJBplohLmq5cvR9T
+         AXQQQ7wl0EjcpqmQ5pcL0SelcpGxgskU4T6fUyDPW07+WvQTp7tMQyhhTC3Ep35HQU57
+         0auMZ9yyrEokeHHwyu04Tp6AupStnDUKpd2oFVpJ28bnyQg9FR4vflitabyR1eAvsw7s
+         emeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=4VLpTG0ZVENOMUBsiF1DWd/wgkV9BVasFPU16qCzV34=;
-        b=RfF22MqXW0au2BbmKCuu8m0BS03T66qz+hu7IeLPtVkpeeRSYwV83tLp2teX2Vfd7d
-         4w+6fVEB7UiFlPtg8VAvyGixrVRnr3Vp+qhYAhjCnuHqUuo1raqn+vVk2qeaftYleB9q
-         95bONK0Uf+P6FracsBPnmOV++pM/E3dPygbrqXPhetFJ8bL89UX5ehDN1Dt8uHjkBrtM
-         bx/0ZyBatG7akSxozPFZYRv67peOBP4Qb/psGK2ggIjlVlbcrxmYeXqId0CF6V7WlesL
-         btxpbGY6nGMtHKtxAInyESsFDLyDEWpGin3AEFGLjuXdZp2X9ymkRDHX5gjxN75ovoA8
-         Zt2Q==
-X-Gm-Message-State: AOAM532GxpipFDtM73OEh3r5y4rOC5l1mexkFO0cxbeYwzVbfT3yOe8y
-        lPVLN9IbLYrr1x4yEuWjg4iQ5v+Y5d8=
-X-Google-Smtp-Source: ABdhPJxi94E1Xp9GN73ZvkpI4SHys5H3tBcNeOGPMN4kBC0K/Plk8uSOJ9PhtpAAPWGWMLaWG7MbbA==
-X-Received: by 2002:a1c:4384:: with SMTP id q126mr2287631wma.155.1631358759253;
-        Sat, 11 Sep 2021 04:12:39 -0700 (PDT)
+        bh=RWrgBMgGkAOQi0TLR84rIkrfXsgYnZ8CBYSNWCOR7OQ=;
+        b=mra3u+3H1n/36qij3V5B8da44wrrBdM3ktjl1U6Tetd1Z5tJaI50VKgwRAgvm4lI2N
+         lM/tuVBZ+M8fpUv3U//xUnWNXtelKkgN5bkJGoZn+EOjASvwI1UWuAwhtcGTf+xlpCC1
+         o5xvpXgPBv1pMSytZ2jr7H4NlSYzQiikSM3/Tr0Cn5U++Zz1edioU2ff2zEYq2gD4OhJ
+         27+c+2gzL2ykGP5m0hxnYTveiosyPO1IZapgUCnyrcpW4lXPvUxIbuOqP+8U+MHRGI+t
+         ijMY4hElifHu26wsqVyzvEEtxz1ihMw1gFgqIUVOwTC8cpFote0yGYXCg6gtwrvUGk9e
+         H3SA==
+X-Gm-Message-State: AOAM531Hq4AWdPWI+EURD3UdO9OIDmQDxACA+OlEQLNgBdIendXoSMYj
+        g2Ku6O21KB/sTbWJpH6JtOGy/6xY0ic=
+X-Google-Smtp-Source: ABdhPJzs3CcRIQycmx8xQ034hglF8SqNcLIShtElz/ukuLpCF/D8YNsHjduBzyE8XmJ+OwPY92/Esg==
+X-Received: by 2002:a05:600c:2250:: with SMTP id a16mr2307062wmm.72.1631358760063;
+        Sat, 11 Sep 2021 04:12:40 -0700 (PDT)
 Received: from localhost.localdomain ([85.255.236.175])
-        by smtp.gmail.com with ESMTPSA id x11sm1335470wmk.21.2021.09.11.04.12.38
+        by smtp.gmail.com with ESMTPSA id x11sm1335470wmk.21.2021.09.11.04.12.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 Sep 2021 04:12:38 -0700 (PDT)
+        Sat, 11 Sep 2021 04:12:39 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH liburing v2 1/2] tests: add no-op executable for exec
-Date:   Sat, 11 Sep 2021 12:11:55 +0100
-Message-Id: <ed97597635e67d750bff377bdf68d03e1eb022e5.1631358658.git.asml.silence@gmail.com>
+Subject: [PATCH liburing v2 2/2] tests: test timeout cancellation fails links
+Date:   Sat, 11 Sep 2021 12:11:56 +0100
+Message-Id: <e9acec809a3d86cab22601fe87c963c4ffac61e6.1631358658.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <cover.1631358658.git.asml.silence@gmail.com>
 References: <cover.1631358658.git.asml.silence@gmail.com>
@@ -61,60 +61,123 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-There are differences between close and exec from io_uring perspective,
-so we want to test exec as well. For that we need a program doing
-nothing to exec into.
+Test that we appropriately fail linked requests when we cancel a
+normal timeout.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- .gitignore         | 1 +
- test/Makefile      | 2 ++
- test/exec-target.c | 4 ++++
- 3 files changed, 7 insertions(+)
- create mode 100644 test/exec-target.c
+ test/timeout.c | 84 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 84 insertions(+)
 
-diff --git a/.gitignore b/.gitignore
-index df0f740..0213bfa 100644
---- a/.gitignore
-+++ b/.gitignore
-@@ -129,6 +129,7 @@
- /test/sqpoll-cancel-hang
- /test/testfile
- /test/submit-link-fail
-+/test/exec-target
- /test/*.dmesg
+diff --git a/test/timeout.c b/test/timeout.c
+index d2e4930..cef6846 100644
+--- a/test/timeout.c
++++ b/test/timeout.c
+@@ -10,6 +10,8 @@
+ #include <string.h>
+ #include <fcntl.h>
+ #include <sys/time.h>
++#include <sys/wait.h>
++#include <sys/types.h>
  
- config-host.h
-diff --git a/test/Makefile b/test/Makefile
-index 2313fcc..54ee730 100644
---- a/test/Makefile
-+++ b/test/Makefile
-@@ -135,6 +135,7 @@ test_targets += \
- 	wakeup-hang \
- 	sendmsg_fs_cve \
- 	rsrc_tags \
-+	exec-target \
- 	# EOL
+ #include "liburing.h"
+ #include "../src/syscall.h"
+@@ -1171,6 +1173,82 @@ err:
+ 	return 1;
+ }
  
- all_targets += $(test_targets)
-@@ -276,6 +277,7 @@ test_srcs := \
- 	wakeup-hang.c \
- 	sendmsg_fs_cve.c \
- 	rsrc_tags.c \
-+	exec-target.c \
- 	# EOL
- 
- test_objs := $(patsubst %.c,%.ol,$(patsubst %.cc,%.ol,$(test_srcs)))
-diff --git a/test/exec-target.c b/test/exec-target.c
-new file mode 100644
-index 0000000..50bc2c9
---- /dev/null
-+++ b/test/exec-target.c
-@@ -0,0 +1,4 @@
-+int main(int argc, char *argv[])
++static int test_timeout_link_cancel(void)
 +{
++	struct io_uring ring;
++	struct io_uring_cqe *cqe;
++	pid_t p;
++	int ret, i, wstatus;
++
++	ret = io_uring_queue_init(8, &ring, 0);
++	if (ret) {
++		fprintf(stderr, "ring create failed: %d\n", ret);
++		return 1;
++	}
++
++	p = fork();
++	if (p == -1) {
++		fprintf(stderr, "fork() failed\n");
++		return 1;
++	}
++
++	if (p == 0) {
++		struct io_uring_sqe *sqe;
++		struct __kernel_timespec ts;
++		const char *prog_path = "./exec-target";
++
++		msec_to_ts(&ts, 10000);
++		sqe = io_uring_get_sqe(&ring);
++		io_uring_prep_timeout(sqe, &ts, 0, 0);
++		sqe->flags |= IOSQE_IO_LINK;
++		sqe->user_data = 0;
++
++		sqe = io_uring_get_sqe(&ring);
++		io_uring_prep_nop(sqe);
++		sqe->user_data = 1;
++
++		ret = io_uring_submit(&ring);
++		if (ret != 2) {
++			fprintf(stderr, "%s: got %d, wanted 1\n", __FUNCTION__, ret);
++			exit(1);
++		}
++
++		/* trigger full cancellation */
++		ret = execl(prog_path, prog_path, NULL);
++		if (ret) {
++			fprintf(stderr, "exec failed %i\n", errno);
++			exit(1);
++		}
++		exit(0);
++	}
++
++	if (waitpid(p, &wstatus, 0) == (pid_t)-1) {
++		perror("waitpid()");
++		return 1;
++	}
++	if (!WIFEXITED(wstatus) || WEXITSTATUS(wstatus)) {
++		fprintf(stderr, "child failed %i\n", WEXITSTATUS(wstatus));
++		return 1;
++	}
++
++	for (i = 0; i < 2; ++i) {
++		ret = io_uring_wait_cqe(&ring, &cqe);
++		if (ret) {
++			fprintf(stderr, "wait_cqe=%d\n", ret);
++			return 1;
++		}
++		if (cqe->res != -ECANCELED) {
++			fprintf(stderr, "invalid result, user_data: %i res: %i\n",
++					(int)cqe->user_data, cqe->res);
++			return 1;
++		}
++		io_uring_cqe_seen(&ring, cqe);
++	}
++
++	io_uring_queue_exit(&ring);
 +	return 0;
 +}
++
+ int main(int argc, char *argv[])
+ {
+ 	struct io_uring ring, sqpoll_ring;
+@@ -1348,6 +1426,12 @@ int main(int argc, char *argv[])
+ 		return ret;
+ 	}
+ 
++	ret = test_timeout_link_cancel();
++	if (ret) {
++		fprintf(stderr, "test_timeout_link_cancel failed\n");
++		return ret;
++	}
++
+ 	if (sqpoll)
+ 		io_uring_queue_exit(&sqpoll_ring);
+ 	return 0;
 -- 
 2.33.0
 

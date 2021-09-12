@@ -2,77 +2,112 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 87D87407F3B
-	for <lists+io-uring@lfdr.de>; Sun, 12 Sep 2021 20:19:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A7F1407F5C
+	for <lists+io-uring@lfdr.de>; Sun, 12 Sep 2021 20:22:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234105AbhILSUR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 12 Sep 2021 14:20:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57766 "EHLO
+        id S229726AbhILSXN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 12 Sep 2021 14:23:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234185AbhILSUQ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 12 Sep 2021 14:20:16 -0400
-Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2862AC061574
-        for <io-uring@vger.kernel.org>; Sun, 12 Sep 2021 11:19:01 -0700 (PDT)
-Received: by mail-io1-xd31.google.com with SMTP id y18so9205465ioc.1
-        for <io-uring@vger.kernel.org>; Sun, 12 Sep 2021 11:19:01 -0700 (PDT)
+        with ESMTP id S229653AbhILSXN (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 12 Sep 2021 14:23:13 -0400
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8549C061574;
+        Sun, 12 Sep 2021 11:21:58 -0700 (PDT)
+Received: by mail-pj1-x102d.google.com with SMTP id j1so4734015pjv.3;
+        Sun, 12 Sep 2021 11:21:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=NvoMELoof2pgZdJvdv3xLpz+7xC1NVchy/vxcYS67jw=;
-        b=lqTsjEhukaZpAAGc3jf0CWtg/3FVonYfC9Ud+jjgRgBC08jvoCGCF4eec90jlEgJgs
-         /PiXM1ScN2WaDBM/Tp53ji+E24wnzxvpKaPjKtA1wZEOn6N2bB36QwggH3MqY7ps3ZDr
-         hz6erHi1tgE+m3iG0F6qkHqhnXXsZxEsRZ8ejkzj5Kq1RJwnWTbJOZpgx5WyLvLf4s50
-         9N/tDUUf77F9dkW3kl8BtHSnvoOzbCvcO5U+qv6jNAf3bQuBU85MdznT6hIUNw2nGzkw
-         p2loAB3yPzwABXZWd0WW/ZJEEk5ftnbHV4q1Wf2a/PTUkh/T+fhJ5skzcWMxKS74SFkZ
-         5XdA==
+        d=gmail.com; s=20210112;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=U/bs3PjkeGfYHulbf2M0xJeDzF6gbg27groVLIx4AqE=;
+        b=m/t9Q7Ur2ewBwZZQPT2N75BnjIdMGQ8nTSJi99bX/jC3psPHN7FqYu6TeyAQvf46uc
+         fKPxBwsJR4KslfxF3mUv1rQCfhLpdKddifYnsiaTmaIOxksj8bTYLVKoRNjGL6iN0NqL
+         csNQz3F1TXAL7PlpNWSYIpoQdSsjethutrl8ibWiEDCybrH6zkT4K2bTCH7lqpwmmpEc
+         w0SYBsA6tUCmocXPMs4VkgZchnxCTZDN3RovkMkVMYQW8F3cMd32Sm//SH7LO5tUBJ+s
+         14N/r4M3M3285atq+/tWsWAcNfCC4kjbJK9mZstborrOa8bLbGFHE5vfTLUXmUtW4aeG
+         9/8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=NvoMELoof2pgZdJvdv3xLpz+7xC1NVchy/vxcYS67jw=;
-        b=piWKSiePY4H2idAdiY5ECA1a84zp8s9NUmtZ/i5eNMHz2AfBRRYWW2E0MaFACxgJoM
-         /kQlqlv2Q3BeVnIAwXPzD8SFg63SVHkaY7rWk1FCPQ9WfRLr/U3ATt3FJgHL8REsBv7m
-         LKawrV2sVg9XhA6BW1lwKpxqOxxhrB5JvJ9t49fCR3GeokrzNqAUo3u0hYLOaBPP2INe
-         3IdJix06LWVFgIadDg3Sg3CtgX5A7CSBST6rC7GIcqikpdKsAHett07uWA6xF5fmhvCW
-         k3c1bq2ztfKRrWO2S7lOiBSbVwlQh/axvo47fyBmjyI75RTajge6IOEQM3ffoO9r3NLn
-         LeGQ==
-X-Gm-Message-State: AOAM532/wX3YitMlzjqt6WgdCaSODJE16qY0q7f7o0wvnRA1vyMT8ZIg
-        /VeT6Y6jMWUwNjTNo7YdCk83X76GdlbIzA==
-X-Google-Smtp-Source: ABdhPJyfSa3IjH6X3+/eAqqXjZG9qAnJ1L9t4aEtaPqBcyFlgVu6uFp34FttR1hD2dT3DBffz5AlAA==
-X-Received: by 2002:a05:6638:2690:: with SMTP id o16mr6512672jat.65.1631470740571;
-        Sun, 12 Sep 2021 11:19:00 -0700 (PDT)
-Received: from [192.168.1.116] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id m26sm3086112ioj.54.2021.09.12.11.18.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 12 Sep 2021 11:19:00 -0700 (PDT)
-Subject: Re: [PATCH 2/4] io-wq: code clean of io_wqe_create_worker()
-To:     Hao Xu <haoxu@linux.alibaba.com>
-Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <20210911194052.28063-1-haoxu@linux.alibaba.com>
- <20210911194052.28063-3-haoxu@linux.alibaba.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <47404d12-888a-f8cd-2d75-e38b1c5b490e@kernel.dk>
-Date:   Sun, 12 Sep 2021 12:18:59 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <20210911194052.28063-3-haoxu@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=U/bs3PjkeGfYHulbf2M0xJeDzF6gbg27groVLIx4AqE=;
+        b=nBpNPtW5Kjbw0NrLXHlT2Bzq+A91nhKsidXbTeJUD6o2NtoOYUPiY+LnknT/jVVUhR
+         lT22L/nJ1YthyjRubZLS6sEKAZ6LbsDA4OYpo/1vnetEFNb6FjRl+AzF6s9XWDeO8ZGX
+         +E2pkQK6m6u4TznWnfJ1ROYcgmeoLwdRU7s0lwTUiw+blEJTVlSCRFti0F1zXTEkMGcz
+         7rShOX8K5IwQ/5suuCMvyPG3XZdpOiohTXiKu731lxvzuns03ulFiecVfgWrMqdVvsMi
+         9wmyvbTRIxbzKt+WLH9k/+yerEYtKFwxUS5BuznifFQznr1GWyOvMMofxY/S2A6boAJD
+         RLew==
+X-Gm-Message-State: AOAM532iofMMXnMxTxuwPtlmnh9phxwEwCDkgZEnaKpg1cQXKlGFbq7D
+        AYfL+mwS8ECXm+PIdaSAX9bSs4y3C0Zr0g==
+X-Google-Smtp-Source: ABdhPJw7kv3Fm9M50+pru6ljc1jr9D/If3Icki7HhjSweHuqf/6b+EhAJujVRCVJN2WTngfxfCeBdA==
+X-Received: by 2002:a17:90a:8c8b:: with SMTP id b11mr8627118pjo.14.1631470918049;
+        Sun, 12 Sep 2021 11:21:58 -0700 (PDT)
+Received: from smtpclient.apple (c-24-6-216-183.hsd1.ca.comcast.net. [24.6.216.183])
+        by smtp.gmail.com with ESMTPSA id g2sm4625419pfr.35.2021.09.12.11.21.56
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 12 Sep 2021 11:21:57 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 14.0 \(3654.120.0.1.13\))
+Subject: Re: io-uring: KASAN failure, presumably
+From:   Nadav Amit <nadav.amit@gmail.com>
+In-Reply-To: <859829f3-ecd0-0c01-21d4-28c17382aa52@kernel.dk>
+Date:   Sun, 12 Sep 2021 11:21:55 -0700
+Cc:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <C5C0EB71-B05E-4FE6-871D-900231F8454B@gmail.com>
+References: <2C3AECED-1915-4080-B143-5BA4D76FB5CD@gmail.com>
+ <859829f3-ecd0-0c01-21d4-28c17382aa52@kernel.dk>
+To:     Jens Axboe <axboe@kernel.dk>
+X-Mailer: Apple Mail (2.3654.120.0.1.13)
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/11/21 1:40 PM, Hao Xu wrote:
-> Remove do_create to save a local variable.
 
-This one looks good, it's easier to follow as well. Applied.
 
--- 
-Jens Axboe
+> On Sep 12, 2021, at 11:15 AM, Jens Axboe <axboe@kernel.dk> wrote:
+>=20
+> On 9/11/21 8:34 PM, Nadav Amit wrote:
+>> Hello Jens (& Pavel),
+>>=20
+>> I hope you are having a nice weekend. I ran into a KASAN failure in =
+io-uring
+>> which I think is not "my fault".
+>>=20
+>> The failure does not happen very infrequently, so my analysis is =
+based on
+>> reading the code. IIUC the failure, then I do not understand the code =
+well
+>> enough, as to say I do not understand how it was supposed to work. I =
+would
+>> appreciate your feedback.
+>>=20
+>> The failure happens on my own custom kernel (do not try to correlate =
+the line
+>> numbers). The gist of the splat is:
+>=20
+> I think this is specific to your use case, but I also think that we
+> should narrow the scope for this type of REQ_F_REISSUE trigger. It
+> really should only happen on bdev backed regular files, where we =
+cannot
+> easily pass back congestion. For that case, the completion for this is
+> called while we're in ->write_iter() for example, and hence there is =
+no
+> race here.
+>=20
+> I'll ponder this a bit=E2=80=A6
 
+I see what you are saying. The assumption is that write_iter() is =
+setting
+REQ_F_REISSUE, which is not the case in my use-case. Perhaps EAGAIN is
+anyhow not the right return value (in my case). I am not sure any other
+=E2=80=9Cinvalid" use-case exists, but some documentation/assertion(?) =
+can help.
+
+I changed the return error-codes and check that the issue is not
+triggered again.
+
+Thanks, as usual, for the quick response.=

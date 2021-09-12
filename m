@@ -2,224 +2,118 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 63575407F61
-	for <lists+io-uring@lfdr.de>; Sun, 12 Sep 2021 20:24:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 895B8407F62
+	for <lists+io-uring@lfdr.de>; Sun, 12 Sep 2021 20:24:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232959AbhILSZj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 12 Sep 2021 14:25:39 -0400
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:55929 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229653AbhILSZj (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 12 Sep 2021 14:25:39 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R211e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0Uo5AOS3_1631471057;
-Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0Uo5AOS3_1631471057)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 13 Sep 2021 02:24:18 +0800
-Subject: Re: [PATCH 1/3] io_uring: clean cqe filling functions
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-References: <cover.1631367587.git.asml.silence@gmail.com>
- <c1c50ac6b6badf319006f580715b8da6438e8e23.1631367587.git.asml.silence@gmail.com>
-Cc:     Joseph Qi <joseph.qi@linux.alibaba.com>
-From:   Hao Xu <haoxu@linux.alibaba.com>
-Message-ID: <3099ae18-5e15-eb7d-b9b8-ddd1217f1a04@linux.alibaba.com>
-Date:   Mon, 13 Sep 2021 02:24:17 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.13.0
+        id S234478AbhILSZt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 12 Sep 2021 14:25:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59074 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229653AbhILSZs (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 12 Sep 2021 14:25:48 -0400
+Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E9B1C061574
+        for <io-uring@vger.kernel.org>; Sun, 12 Sep 2021 11:24:34 -0700 (PDT)
+Received: by mail-io1-xd33.google.com with SMTP id a13so9178079iol.5
+        for <io-uring@vger.kernel.org>; Sun, 12 Sep 2021 11:24:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=2w+/prwDeG2WH857IIDqwMy+qCgr43LHjyGYvs8ptTQ=;
+        b=F5F4HecrCA4j2VA5tJRuvZaQA9I+pA8YYxJAYUbbSnjwoyKhlM5B5lzay/JXAOruSy
+         B+ToeZnJFBH1O8RvKK5dE4F8c+9oHax7NkAymalGwTP+wJln/nrZOv63WzHGOxDH4Cde
+         C2ZVvhIY5ZF90/4wjZ2opfxpEeRwSIQUXkhz/F4vWMSWXnAQ/Jy5anE3+mwmEVXeisU0
+         YH+wf7B2VAB/EJLD3xQa2ILG9JkhKXZwulya0+MiMihfIJCDfrAeRny9+tJ9Geyv3iM9
+         wGhSt39awtjKOmwLPobigAA/Ez1FbHtNBNfsHZrKMUikufLvrA2Wu+hiLtMNdL/4+2DN
+         nt5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=2w+/prwDeG2WH857IIDqwMy+qCgr43LHjyGYvs8ptTQ=;
+        b=bCNlBLAnRIPW/eKKG4oNqAvA/kgU4quKMfNv5DDh/wiHbFAJ2L1mtyNPUBO7tZJudj
+         PdOfGhw0BHjweT+UbCr5URJfzYZjBL9ZveNAPpnudJ9JB1s9WSF3r+6Vxx7GFI1HIOLG
+         Xsi6WdioejIYc/JBpMNBqgsyGCOg9rSASEHBVFS4Jyy6pFRpAcQCOSc5O7e3rwyTRlnn
+         fEH65BxHzBbcy/dqds4Von7DSzj7WIb7Q93gzQufIaL1hwZL/Vhswsy/gaRynEXRFFmg
+         kAotXet6MVSH2+RJgHZpVXeW/lINRyefvOlsXK+8HXRyrtI5Rx9+5rws3uGObnPz3E4x
+         tNjA==
+X-Gm-Message-State: AOAM5302DENvmJSD51frI6KBzH9K8Nftvw/HKvPR3KnLGXNVdz9vfK3k
+        hj9V12Gkn6Xt3PkjmngpPJlhsA==
+X-Google-Smtp-Source: ABdhPJz0gLtIsdd0dWKBayLxB5pzr3BzCqrJXFrVvvi232K82jx0GWTxUxUBw58Y1Z0zNrwzotIdvw==
+X-Received: by 2002:a02:7813:: with SMTP id p19mr3710156jac.38.1631471073438;
+        Sun, 12 Sep 2021 11:24:33 -0700 (PDT)
+Received: from [192.168.1.116] ([66.219.217.159])
+        by smtp.gmail.com with ESMTPSA id p11sm1088093ilh.38.2021.09.12.11.24.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 12 Sep 2021 11:24:33 -0700 (PDT)
+Subject: Re: io-uring: KASAN failure, presumably
+To:     Nadav Amit <nadav.amit@gmail.com>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <2C3AECED-1915-4080-B143-5BA4D76FB5CD@gmail.com>
+ <859829f3-ecd0-0c01-21d4-28c17382aa52@kernel.dk>
+ <C5C0EB71-B05E-4FE6-871D-900231F8454B@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <3c55f383-7574-8519-067d-cdf1a84ee95c@kernel.dk>
+Date:   Sun, 12 Sep 2021 12:24:31 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <c1c50ac6b6badf319006f580715b8da6438e8e23.1631367587.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <C5C0EB71-B05E-4FE6-871D-900231F8454B@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-在 2021/9/11 下午9:52, Pavel Begunkov 写道:
-> Split io_cqring_fill_event() into a couple of more targeted functions.
-> The first on is io_fill_cqe_aux() for completions that are not
-> associated with request completions and doing the ->cq_extra accounting.
-> Examples are additional CQEs from multishot poll and rsrc notifications.
+On 9/12/21 12:21 PM, Nadav Amit wrote:
 > 
-> The second is io_fill_cqe_req(), should be called when it's a normal
-> request completion. Nothing more to it at the moment, will be used in
-> later patches.
 > 
-> The last one is inlined __io_fill_cqe() for a finer grained control,
-> should be used with caution and in hottest places.
+>> On Sep 12, 2021, at 11:15 AM, Jens Axboe <axboe@kernel.dk> wrote:
+>>
+>> On 9/11/21 8:34 PM, Nadav Amit wrote:
+>>> Hello Jens (& Pavel),
+>>>
+>>> I hope you are having a nice weekend. I ran into a KASAN failure in io-uring
+>>> which I think is not "my fault".
+>>>
+>>> The failure does not happen very infrequently, so my analysis is based on
+>>> reading the code. IIUC the failure, then I do not understand the code well
+>>> enough, as to say I do not understand how it was supposed to work. I would
+>>> appreciate your feedback.
+>>>
+>>> The failure happens on my own custom kernel (do not try to correlate the line
+>>> numbers). The gist of the splat is:
+>>
+>> I think this is specific to your use case, but I also think that we
+>> should narrow the scope for this type of REQ_F_REISSUE trigger. It
+>> really should only happen on bdev backed regular files, where we cannot
+>> easily pass back congestion. For that case, the completion for this is
+>> called while we're in ->write_iter() for example, and hence there is no
+>> race here.
+>>
+>> I'll ponder this a bit…
 > 
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> ---
->   fs/io_uring.c | 58 ++++++++++++++++++++++++++-------------------------
->   1 file changed, 30 insertions(+), 28 deletions(-)
+> I see what you are saying. The assumption is that write_iter() is setting
+> REQ_F_REISSUE, which is not the case in my use-case. 
+
+Yes exactly, and hence why I think we need to tighten this check to only
+be for bdev backed files.
+
+> Perhaps EAGAIN is
+> anyhow not the right return value (in my case). I am not sure any other
+> “invalid" use-case exists, but some documentation/assertion(?) can help.
 > 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index e6ccdae189b0..1703130ae8df 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -1078,8 +1078,8 @@ static void io_uring_try_cancel_requests(struct io_ring_ctx *ctx,
->   					 bool cancel_all);
->   static void io_uring_cancel_generic(bool cancel_all, struct io_sq_data *sqd);
->   
-> -static bool io_cqring_fill_event(struct io_ring_ctx *ctx, u64 user_data,
-> -				 long res, unsigned int cflags);
-> +static void io_fill_cqe_req(struct io_kiocb *req, long res, unsigned int cflags);
-> +
->   static void io_put_req(struct io_kiocb *req);
->   static void io_put_req_deferred(struct io_kiocb *req);
->   static void io_dismantle_req(struct io_kiocb *req);
-> @@ -1491,7 +1491,7 @@ static void io_kill_timeout(struct io_kiocb *req, int status)
->   		atomic_set(&req->ctx->cq_timeouts,
->   			atomic_read(&req->ctx->cq_timeouts) + 1);
->   		list_del_init(&req->timeout.list);
-> -		io_cqring_fill_event(req->ctx, req->user_data, status, 0);
-> +		io_fill_cqe_req(req, status, 0);
->   		io_put_req_deferred(req);
->   	}
->   }
-> @@ -1760,8 +1760,8 @@ static bool io_cqring_event_overflow(struct io_ring_ctx *ctx, u64 user_data,
->   	return true;
->   }
->   
-> -static inline bool __io_cqring_fill_event(struct io_ring_ctx *ctx, u64 user_data,
-> -					  long res, unsigned int cflags)
-> +static inline bool __io_fill_cqe(struct io_ring_ctx *ctx, u64 user_data,
-> +				 long res, unsigned int cflags)
->   {
->   	struct io_uring_cqe *cqe;
->   
-> @@ -1782,11 +1782,17 @@ static inline bool __io_cqring_fill_event(struct io_ring_ctx *ctx, u64 user_data
->   	return io_cqring_event_overflow(ctx, user_data, res, cflags);
->   }
->   
-> -/* not as hot to bloat with inlining */
-> -static noinline bool io_cqring_fill_event(struct io_ring_ctx *ctx, u64 user_data,
-> -					  long res, unsigned int cflags)
-> +static noinline void io_fill_cqe_req(struct io_kiocb *req, long res,
-> +				     unsigned int cflags)
-> +{
-> +	__io_fill_cqe(req->ctx, req->user_data, res, cflags);
-> +}
-> +
-> +static noinline bool io_fill_cqe_aux(struct io_ring_ctx *ctx, u64 user_data,
-> +				     long res, unsigned int cflags)
->   {
-> -	return __io_cqring_fill_event(ctx, user_data, res, cflags);
-> +	ctx->cq_extra++;
-> +	return __io_fill_cqe(ctx, user_data, res, cflags);
->   }
->   
->   static void io_req_complete_post(struct io_kiocb *req, long res,
-> @@ -1795,7 +1801,7 @@ static void io_req_complete_post(struct io_kiocb *req, long res,
->   	struct io_ring_ctx *ctx = req->ctx;
->   
->   	spin_lock(&ctx->completion_lock);
-> -	__io_cqring_fill_event(ctx, req->user_data, res, cflags);
-> +	__io_fill_cqe(ctx, req->user_data, res, cflags);
->   	/*
->   	 * If we're the last reference to this request, add to our locked
->   	 * free_list cache.
-> @@ -2021,8 +2027,7 @@ static bool io_kill_linked_timeout(struct io_kiocb *req)
->   		link->timeout.head = NULL;
->   		if (hrtimer_try_to_cancel(&io->timer) != -1) {
->   			list_del(&link->timeout.list);
-> -			io_cqring_fill_event(link->ctx, link->user_data,
-> -					     -ECANCELED, 0);
-> +			io_fill_cqe_req(link, -ECANCELED, 0);
->   			io_put_req_deferred(link);
->   			return true;
->   		}
-> @@ -2046,7 +2051,7 @@ static void io_fail_links(struct io_kiocb *req)
->   		link->link = NULL;
->   
->   		trace_io_uring_fail_link(req, link);
-> -		io_cqring_fill_event(link->ctx, link->user_data, res, 0);
-> +		io_fill_cqe_req(link, res, 0);
->   		io_put_req_deferred(link);
->   		link = nxt;
->   	}
-> @@ -2063,8 +2068,7 @@ static bool io_disarm_next(struct io_kiocb *req)
->   		req->flags &= ~REQ_F_ARM_LTIMEOUT;
->   		if (link && link->opcode == IORING_OP_LINK_TIMEOUT) {
->   			io_remove_next_linked(req);
-> -			io_cqring_fill_event(link->ctx, link->user_data,
-> -					     -ECANCELED, 0);
-> +			io_fill_cqe_req(link, -ECANCELED, 0);
->   			io_put_req_deferred(link);
->   			posted = true;
->   		}
-> @@ -2335,8 +2339,8 @@ static void __io_submit_flush_completions(struct io_ring_ctx *ctx)
->   	for (i = 0; i < nr; i++) {
->   		struct io_kiocb *req = state->compl_reqs[i];
->   
-> -		__io_cqring_fill_event(ctx, req->user_data, req->result,
-> -					req->compl.cflags);
-> +		__io_fill_cqe(ctx, req->user_data, req->result,
-> +			      req->compl.cflags);
->   	}
->   	io_commit_cqring(ctx);
->   	spin_unlock(&ctx->completion_lock);
-> @@ -2454,8 +2458,8 @@ static void io_iopoll_complete(struct io_ring_ctx *ctx, unsigned int *nr_events,
->   			continue;
->   		}
->   
-> -		__io_cqring_fill_event(ctx, req->user_data, req->result,
-> -					io_put_rw_kbuf(req));
-> +		__io_fill_cqe(ctx, req->user_data, req->result,
-> +			      io_put_rw_kbuf(req));
->   		(*nr_events)++;
->   
->   		if (req_ref_put_and_test(req))
-> @@ -5293,13 +5297,12 @@ static bool __io_poll_complete(struct io_kiocb *req, __poll_t mask)
->   	}
->   	if (req->poll.events & EPOLLONESHOT)
->   		flags = 0;
-> -	if (!io_cqring_fill_event(ctx, req->user_data, error, flags)) {
-> +	if (!(flags & IORING_CQE_F_MORE)) {
-> +		io_fill_cqe_req(req, error, flags);
-We should check the return value of io_fill_cqe_req() and do
-req->poll.done = true if the return value is false, which means ocqe
-allocation failed. Though I think the current poll.done logic itself
-is not right.(I've changed it in another patch)
-> +	} else if (!io_fill_cqe_aux(ctx, req->user_data, error, flags)) {
->   		req->poll.done = true;
->   		flags = 0;
->   	}
-> -	if (flags & IORING_CQE_F_MORE)
-> -		ctx->cq_extra++;
-> -
->   	return !(flags & IORING_CQE_F_MORE);
->   }
->   
-> @@ -5627,9 +5630,9 @@ static bool io_poll_remove_one(struct io_kiocb *req)
->   	do_complete = __io_poll_remove_one(req, io_poll_get_single(req), true);
->   
->   	if (do_complete) {
-> -		io_cqring_fill_event(req->ctx, req->user_data, -ECANCELED, 0);
-> -		io_commit_cqring(req->ctx);
->   		req_set_fail(req);
-> +		io_fill_cqe_req(req, -ECANCELED, 0);
-> +		io_commit_cqring(req->ctx);
->   		io_put_req_deferred(req);
->   	}
->   	return do_complete;
-> @@ -5924,7 +5927,7 @@ static int io_timeout_cancel(struct io_ring_ctx *ctx, __u64 user_data)
->   		return PTR_ERR(req);
->   
->   	req_set_fail(req);
-> -	io_cqring_fill_event(ctx, req->user_data, -ECANCELED, 0);
-> +	io_fill_cqe_req(req, -ECANCELED, 0);
->   	io_put_req_deferred(req);
->   	return 0;
->   }
-> @@ -8122,8 +8125,7 @@ static void __io_rsrc_put_work(struct io_rsrc_node *ref_node)
->   
->   			io_ring_submit_lock(ctx, lock_ring);
->   			spin_lock(&ctx->completion_lock);
-> -			io_cqring_fill_event(ctx, prsrc->tag, 0, 0);
-> -			ctx->cq_extra++;
-> +			io_fill_cqe_aux(ctx, prsrc->tag, 0, 0);
->   			io_commit_cqring(ctx);
->   			spin_unlock(&ctx->completion_lock);
->   			io_cqring_ev_posted(ctx);
+> I changed the return error-codes and check that the issue is not
+> triggered again.
 > 
+> Thanks, as usual, for the quick response.
+
+OK good, thanks for confirming!
+
+-- 
+Jens Axboe
 

@@ -2,111 +2,253 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 431BE4084CB
-	for <lists+io-uring@lfdr.de>; Mon, 13 Sep 2021 08:37:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D33A40860B
+	for <lists+io-uring@lfdr.de>; Mon, 13 Sep 2021 10:04:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237377AbhIMGih (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 13 Sep 2021 02:38:37 -0400
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:53629 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S237412AbhIMGif (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 13 Sep 2021 02:38:35 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R211e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0Uo7Sptr_1631515038;
-Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0Uo7Sptr_1631515038)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 13 Sep 2021 14:37:19 +0800
-Subject: Re: [PATCH 1/4] io-wq: tweak return value of io_wqe_create_worker()
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <20210911194052.28063-1-haoxu@linux.alibaba.com>
- <20210911194052.28063-2-haoxu@linux.alibaba.com>
- <9c01cd26-a569-7a99-964a-9436c8baa57f@kernel.dk>
- <1175a5b4-5c95-ff84-22cd-355590946e87@linux.alibaba.com>
- <06e27618-8b47-f926-5c7e-5346423006ea@kernel.dk>
-From:   Hao Xu <haoxu@linux.alibaba.com>
-Message-ID: <d75cf9ee-e9ae-e32b-b92c-8e12c2977b8f@linux.alibaba.com>
-Date:   Mon, 13 Sep 2021 14:37:18 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.13.0
+        id S237725AbhIMIFu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 13 Sep 2021 04:05:50 -0400
+Received: from mail-io1-f69.google.com ([209.85.166.69]:52816 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237713AbhIMIFr (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 13 Sep 2021 04:05:47 -0400
+Received: by mail-io1-f69.google.com with SMTP id e18-20020a6b7312000000b005be766a70dbso13322518ioh.19
+        for <io-uring@vger.kernel.org>; Mon, 13 Sep 2021 01:04:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=PjwXxTwlsEf2JX6e7/eNYgkSX09JO8xcTqxRo9lighc=;
+        b=VRgr6YAO55v4b4K8UdT5mIzJDxE+IvAJ4tEUXy0KWgeTOqK8gzbSqB1z4esNwJPQ3f
+         WR02P2V1vntU4hzIDNoDRMtOusxdKFkvD9J54DlhcbT7O/uU7jRGVRqdFGF9eeFUU7u5
+         zDifWGu9R0WHrjZKQV9YosOUAQX8LJmQ3Y5n8cvSjcxzj7/sv9VJiGvuCboELwa48cFx
+         Wg81RoUdxYfdlhiE6DmznTaJd7143w2Ex4diwktKPCVDNBVx8LhLhxLwzWZZue8dxw2G
+         RUCfW8U9txm7fmIcNnkvpYEylQ4g0Vxe0NjW28OS0brK1lm/EBuwCO8f9U/YMhMgWJNB
+         QXkA==
+X-Gm-Message-State: AOAM532/bQ+jCk69UJ8uRTi5tY3Zj6AleDfeSg1zvnXrfJpq1814ncQe
+        rZttsEyQBJ8uPMy2wMdrVEthlGjH8CjC9odm2a1AnKxsuNbK
+X-Google-Smtp-Source: ABdhPJxk/RaDiv0svCfqTaljcJw1liNNEy6x4BPZK+g0g545XlGcP0Wi2MSKVftDZIc4Ile4osYs6Kc3MZBxlVecCZmJIP23TA+4
 MIME-Version: 1.0
-In-Reply-To: <06e27618-8b47-f926-5c7e-5346423006ea@kernel.dk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a92:6904:: with SMTP id e4mr7164478ilc.311.1631520272300;
+ Mon, 13 Sep 2021 01:04:32 -0700 (PDT)
+Date:   Mon, 13 Sep 2021 01:04:32 -0700
+In-Reply-To: <0000000000004fe6b105cb84cf1e@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000463eb205cbdbea58@google.com>
+Subject: Re: [syzbot] memory leak in create_io_worker
+From:   syzbot <syzbot+65454c239241d3d647da@syzkaller.appspotmail.com>
+To:     Qiang.Zhang@windriver.com, asml.silence@gmail.com, axboe@kernel.dk,
+        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-在 2021/9/13 上午5:34, Jens Axboe 写道:
-> On 9/12/21 1:02 PM, Hao Xu wrote:
->> 在 2021/9/13 上午2:10, Jens Axboe 写道:
->>> On 9/11/21 1:40 PM, Hao Xu wrote:
->>>> The return value of io_wqe_create_worker() should be false if we cannot
->>>> create a new worker according to the name of this function.
->>>>
->>>> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
->>>> ---
->>>>    fs/io-wq.c | 2 +-
->>>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/fs/io-wq.c b/fs/io-wq.c
->>>> index 382efca4812b..1b102494e970 100644
->>>> --- a/fs/io-wq.c
->>>> +++ b/fs/io-wq.c
->>>> @@ -267,7 +267,7 @@ static bool io_wqe_create_worker(struct io_wqe *wqe, struct io_wqe_acct *acct)
->>>>    		return create_io_worker(wqe->wq, wqe, acct->index);
->>>>    	}
->>>>    
->>>> -	return true;
->>>> +	return false;
->>>>    }
->>>
->>> I think this is just a bit confusing. It's not an error case, we just
->>> didn't need to create a worker. So don't return failure, or the caller
->>> will think that we failed while we did not.
->> hmm, I think it is an error case----'we failed to create a new worker
->> since nr_worker == max_worker'. nr_worker == max_worker doesn't mean
->> 'no need', we may meet situation describled in 4/4: max_worker is 1,
-> 
-> But that's not an error case in the sense of "uh oh, we need to handle
-> this as an error". If we're at the max worker count, the work simply has
-> to wait for another work to be done and process it.
-> 
->> currently 1 worker is running, and we return true here:
->>
->>             did_create = io_wqe_create_worker(wqe, acct);
->>
->>                //*******nr_workers changes******//
->>
->>             if (unlikely(!did_create)) {
->>                     raw_spin_lock(&wqe->lock);
->>                     /* fatal condition, failed to create the first worker */
->>                     if (!acct->nr_workers) {
->>                             raw_spin_unlock(&wqe->lock);
->>                             goto run_cancel;
->>                     }
->>                     raw_spin_unlock(&wqe->lock);
->>             }
->>
->> we will miss the next check, but we have to do the check, since
->> number of workers may decrease to 0 in //******// place.
-> 
-> If that happens, then the work that we have inserted has already been
-> run. Otherwise how else could we have dropped to zero workers?
-> 
-Sorry, I see. I forgot the fix moved the place of nr_workers...
-There is no problems now. Thanks for explanation, Jens.
+syzbot has found a reproducer for the following issue on:
 
-  io_wqe_enqueue                   worker1
-                                no work there and timeout
-                                nr_workers--(after fix)
-                                unlock(wqe->lock)
-  ->insert work
+HEAD commit:    f306b90c69ce Merge tag 'smp-urgent-2021-09-12' of git://gi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14bc2715300000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bb1c2ff5ae428ca6
+dashboard link: https://syzkaller.appspot.com/bug?extid=65454c239241d3d647da
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.1
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=171d8963300000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15b9ccdd300000
 
-  ->io_wqe_create_worker
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+65454c239241d3d647da@syzkaller.appspotmail.com
 
-                                ->io_worker_exit
-                                  ->nr_workers--(before fix)
+BUG: memory leak
+unreferenced object 0xffff88811953fa80 (size 192):
+  comm "syz-executor248", pid 6847, jiffies 4294979550 (age 31.120s)
+  hex dump (first 32 bytes):
+    01 00 00 00 08 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<ffffffff8162fbb1>] kmalloc_node include/linux/slab.h:609 [inline]
+    [<ffffffff8162fbb1>] kzalloc_node include/linux/slab.h:732 [inline]
+    [<ffffffff8162fbb1>] create_io_worker+0x41/0x1f0 fs/io-wq.c:741
+    [<ffffffff81630067>] io_wqe_create_worker fs/io-wq.c:267 [inline]
+    [<ffffffff81630067>] io_wqe_enqueue+0x217/0x3a0 fs/io-wq.c:873
+    [<ffffffff8161e3a4>] io_queue_async_work+0xc4/0x200 fs/io_uring.c:1473
+    [<ffffffff8162944c>] __io_queue_sqe+0x34c/0x510 fs/io_uring.c:6940
+    [<ffffffff8162a6e6>] io_queue_sqe fs/io_uring.c:6958 [inline]
+    [<ffffffff8162a6e6>] io_submit_sqe fs/io_uring.c:7134 [inline]
+    [<ffffffff8162a6e6>] io_submit_sqes+0xc36/0x2ec0 fs/io_uring.c:7240
+    [<ffffffff8162cf6f>] __do_sys_io_uring_enter+0x5ff/0xf80 fs/io_uring.c:9882
+    [<ffffffff843faa25>] do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+    [<ffffffff843faa25>] do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+    [<ffffffff84600068>] entry_SYSCALL_64_after_hwframe+0x44/0xae
 
+BUG: memory leak
+unreferenced object 0xffff88811953fa80 (size 192):
+  comm "syz-executor248", pid 6847, jiffies 4294979550 (age 31.180s)
+  hex dump (first 32 bytes):
+    01 00 00 00 08 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<ffffffff8162fbb1>] kmalloc_node include/linux/slab.h:609 [inline]
+    [<ffffffff8162fbb1>] kzalloc_node include/linux/slab.h:732 [inline]
+    [<ffffffff8162fbb1>] create_io_worker+0x41/0x1f0 fs/io-wq.c:741
+    [<ffffffff81630067>] io_wqe_create_worker fs/io-wq.c:267 [inline]
+    [<ffffffff81630067>] io_wqe_enqueue+0x217/0x3a0 fs/io-wq.c:873
+    [<ffffffff8161e3a4>] io_queue_async_work+0xc4/0x200 fs/io_uring.c:1473
+    [<ffffffff8162944c>] __io_queue_sqe+0x34c/0x510 fs/io_uring.c:6940
+    [<ffffffff8162a6e6>] io_queue_sqe fs/io_uring.c:6958 [inline]
+    [<ffffffff8162a6e6>] io_submit_sqe fs/io_uring.c:7134 [inline]
+    [<ffffffff8162a6e6>] io_submit_sqes+0xc36/0x2ec0 fs/io_uring.c:7240
+    [<ffffffff8162cf6f>] __do_sys_io_uring_enter+0x5ff/0xf80 fs/io_uring.c:9882
+    [<ffffffff843faa25>] do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+    [<ffffffff843faa25>] do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+    [<ffffffff84600068>] entry_SYSCALL_64_after_hwframe+0x44/0xae
 
+BUG: memory leak
+unreferenced object 0xffff88811953fa80 (size 192):
+  comm "syz-executor248", pid 6847, jiffies 4294979550 (age 31.230s)
+  hex dump (first 32 bytes):
+    01 00 00 00 08 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<ffffffff8162fbb1>] kmalloc_node include/linux/slab.h:609 [inline]
+    [<ffffffff8162fbb1>] kzalloc_node include/linux/slab.h:732 [inline]
+    [<ffffffff8162fbb1>] create_io_worker+0x41/0x1f0 fs/io-wq.c:741
+    [<ffffffff81630067>] io_wqe_create_worker fs/io-wq.c:267 [inline]
+    [<ffffffff81630067>] io_wqe_enqueue+0x217/0x3a0 fs/io-wq.c:873
+    [<ffffffff8161e3a4>] io_queue_async_work+0xc4/0x200 fs/io_uring.c:1473
+    [<ffffffff8162944c>] __io_queue_sqe+0x34c/0x510 fs/io_uring.c:6940
+    [<ffffffff8162a6e6>] io_queue_sqe fs/io_uring.c:6958 [inline]
+    [<ffffffff8162a6e6>] io_submit_sqe fs/io_uring.c:7134 [inline]
+    [<ffffffff8162a6e6>] io_submit_sqes+0xc36/0x2ec0 fs/io_uring.c:7240
+    [<ffffffff8162cf6f>] __do_sys_io_uring_enter+0x5ff/0xf80 fs/io_uring.c:9882
+    [<ffffffff843faa25>] do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+    [<ffffffff843faa25>] do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+    [<ffffffff84600068>] entry_SYSCALL_64_after_hwframe+0x44/0xae
+
+BUG: memory leak
+unreferenced object 0xffff88811953fa80 (size 192):
+  comm "syz-executor248", pid 6847, jiffies 4294979550 (age 31.290s)
+  hex dump (first 32 bytes):
+    01 00 00 00 08 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<ffffffff8162fbb1>] kmalloc_node include/linux/slab.h:609 [inline]
+    [<ffffffff8162fbb1>] kzalloc_node include/linux/slab.h:732 [inline]
+    [<ffffffff8162fbb1>] create_io_worker+0x41/0x1f0 fs/io-wq.c:741
+    [<ffffffff81630067>] io_wqe_create_worker fs/io-wq.c:267 [inline]
+    [<ffffffff81630067>] io_wqe_enqueue+0x217/0x3a0 fs/io-wq.c:873
+    [<ffffffff8161e3a4>] io_queue_async_work+0xc4/0x200 fs/io_uring.c:1473
+    [<ffffffff8162944c>] __io_queue_sqe+0x34c/0x510 fs/io_uring.c:6940
+    [<ffffffff8162a6e6>] io_queue_sqe fs/io_uring.c:6958 [inline]
+    [<ffffffff8162a6e6>] io_submit_sqe fs/io_uring.c:7134 [inline]
+    [<ffffffff8162a6e6>] io_submit_sqes+0xc36/0x2ec0 fs/io_uring.c:7240
+    [<ffffffff8162cf6f>] __do_sys_io_uring_enter+0x5ff/0xf80 fs/io_uring.c:9882
+    [<ffffffff843faa25>] do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+    [<ffffffff843faa25>] do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+    [<ffffffff84600068>] entry_SYSCALL_64_after_hwframe+0x44/0xae
+
+BUG: memory leak
+unreferenced object 0xffff88811953fa80 (size 192):
+  comm "syz-executor248", pid 6847, jiffies 4294979550 (age 31.340s)
+  hex dump (first 32 bytes):
+    01 00 00 00 08 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<ffffffff8162fbb1>] kmalloc_node include/linux/slab.h:609 [inline]
+    [<ffffffff8162fbb1>] kzalloc_node include/linux/slab.h:732 [inline]
+    [<ffffffff8162fbb1>] create_io_worker+0x41/0x1f0 fs/io-wq.c:741
+    [<ffffffff81630067>] io_wqe_create_worker fs/io-wq.c:267 [inline]
+    [<ffffffff81630067>] io_wqe_enqueue+0x217/0x3a0 fs/io-wq.c:873
+    [<ffffffff8161e3a4>] io_queue_async_work+0xc4/0x200 fs/io_uring.c:1473
+    [<ffffffff8162944c>] __io_queue_sqe+0x34c/0x510 fs/io_uring.c:6940
+    [<ffffffff8162a6e6>] io_queue_sqe fs/io_uring.c:6958 [inline]
+    [<ffffffff8162a6e6>] io_submit_sqe fs/io_uring.c:7134 [inline]
+    [<ffffffff8162a6e6>] io_submit_sqes+0xc36/0x2ec0 fs/io_uring.c:7240
+    [<ffffffff8162cf6f>] __do_sys_io_uring_enter+0x5ff/0xf80 fs/io_uring.c:9882
+    [<ffffffff843faa25>] do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+    [<ffffffff843faa25>] do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+    [<ffffffff84600068>] entry_SYSCALL_64_after_hwframe+0x44/0xae
+
+BUG: memory leak
+unreferenced object 0xffff88811953fa80 (size 192):
+  comm "syz-executor248", pid 6847, jiffies 4294979550 (age 31.400s)
+  hex dump (first 32 bytes):
+    01 00 00 00 08 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<ffffffff8162fbb1>] kmalloc_node include/linux/slab.h:609 [inline]
+    [<ffffffff8162fbb1>] kzalloc_node include/linux/slab.h:732 [inline]
+    [<ffffffff8162fbb1>] create_io_worker+0x41/0x1f0 fs/io-wq.c:741
+    [<ffffffff81630067>] io_wqe_create_worker fs/io-wq.c:267 [inline]
+    [<ffffffff81630067>] io_wqe_enqueue+0x217/0x3a0 fs/io-wq.c:873
+    [<ffffffff8161e3a4>] io_queue_async_work+0xc4/0x200 fs/io_uring.c:1473
+    [<ffffffff8162944c>] __io_queue_sqe+0x34c/0x510 fs/io_uring.c:6940
+    [<ffffffff8162a6e6>] io_queue_sqe fs/io_uring.c:6958 [inline]
+    [<ffffffff8162a6e6>] io_submit_sqe fs/io_uring.c:7134 [inline]
+    [<ffffffff8162a6e6>] io_submit_sqes+0xc36/0x2ec0 fs/io_uring.c:7240
+    [<ffffffff8162cf6f>] __do_sys_io_uring_enter+0x5ff/0xf80 fs/io_uring.c:9882
+    [<ffffffff843faa25>] do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+    [<ffffffff843faa25>] do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+    [<ffffffff84600068>] entry_SYSCALL_64_after_hwframe+0x44/0xae
+
+BUG: memory leak
+unreferenced object 0xffff88811953fa80 (size 192):
+  comm "syz-executor248", pid 6847, jiffies 4294979550 (age 31.450s)
+  hex dump (first 32 bytes):
+    01 00 00 00 08 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<ffffffff8162fbb1>] kmalloc_node include/linux/slab.h:609 [inline]
+    [<ffffffff8162fbb1>] kzalloc_node include/linux/slab.h:732 [inline]
+    [<ffffffff8162fbb1>] create_io_worker+0x41/0x1f0 fs/io-wq.c:741
+    [<ffffffff81630067>] io_wqe_create_worker fs/io-wq.c:267 [inline]
+    [<ffffffff81630067>] io_wqe_enqueue+0x217/0x3a0 fs/io-wq.c:873
+    [<ffffffff8161e3a4>] io_queue_async_work+0xc4/0x200 fs/io_uring.c:1473
+    [<ffffffff8162944c>] __io_queue_sqe+0x34c/0x510 fs/io_uring.c:6940
+    [<ffffffff8162a6e6>] io_queue_sqe fs/io_uring.c:6958 [inline]
+    [<ffffffff8162a6e6>] io_submit_sqe fs/io_uring.c:7134 [inline]
+    [<ffffffff8162a6e6>] io_submit_sqes+0xc36/0x2ec0 fs/io_uring.c:7240
+    [<ffffffff8162cf6f>] __do_sys_io_uring_enter+0x5ff/0xf80 fs/io_uring.c:9882
+    [<ffffffff843faa25>] do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+    [<ffffffff843faa25>] do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+    [<ffffffff84600068>] entry_SYSCALL_64_after_hwframe+0x44/0xae
+
+BUG: memory leak
+unreferenced object 0xffff88811953fa80 (size 192):
+  comm "syz-executor248", pid 6847, jiffies 4294979550 (age 31.500s)
+  hex dump (first 32 bytes):
+    01 00 00 00 08 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<ffffffff8162fbb1>] kmalloc_node include/linux/slab.h:609 [inline]
+    [<ffffffff8162fbb1>] kzalloc_node include/linux/slab.h:732 [inline]
+    [<ffffffff8162fbb1>] create_io_worker+0x41/0x1f0 fs/io-wq.c:741
+    [<ffffffff81630067>] io_wqe_create_worker fs/io-wq.c:267 [inline]
+    [<ffffffff81630067>] io_wqe_enqueue+0x217/0x3a0 fs/io-wq.c:873
+    [<ffffffff8161e3a4>] io_queue_async_work+0xc4/0x200 fs/io_uring.c:1473
+    [<ffffffff8162944c>] __io_queue_sqe+0x34c/0x510 fs/io_uring.c:6940
+    [<ffffffff8162a6e6>] io_queue_sqe fs/io_uring.c:6958 [inline]
+    [<ffffffff8162a6e6>] io_submit_sqe fs/io_uring.c:7134 [inline]
+    [<ffffffff8162a6e6>] io_submit_sqes+0xc36/0x2ec0 fs/io_uring.c:7240
+    [<ffffffff8162cf6f>] __do_sys_io_uring_enter+0x5ff/0xf80 fs/io_uring.c:9882
+    [<ffffffff843faa25>] do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+    [<ffffffff843faa25>] do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+    [<ffffffff84600068>] entry_SYSCALL_64_after_hwframe+0x44/0xae
+
+write to /proc/sys/kernel/hung_task_check_interval_secs failed: No such file or directory
+write to /proc/sys/kernel/softlockup_all_cpu_backtrace failed: No such file or directory
+write to /proc/sys/kernel/hung_task_check_interval_secs failed: No such file or directory
+write to /proc/sys/kernel/softlockup_all_cpu_backtrace failed: No such file or directory
+write to /proc/sys/kernel/hung_task_check_interval_secs failed: No such file or directory
+write to /proc/sys/kernel/softlockup_all_cpu_backtrace failed: No such file or directory
+write to /proc/sys/kernel/hung_task_check_interval_secs failed: No such file or directory
+write to /proc/sys/kernel/softlockup_all_cpu_backtrace failed: No such file or directory
+write to /proc/sys/kernel/hung_task_check_interval_secs failed: No such file or directory
+write to /proc/sys/kernel/softlockup_all_cpu_backtrace failed: No such file or directory
+write to /proc/sys/kernel/hung_task_check_interval_secs failed: No such file or directory
+write to /proc/sys/kernel/softlockup_all_cpu_backtrace failed: No such file or directory
+write to /proc/sys/kernel/hung_task_check_interval_secs failed: No such file or directory
+write to /proc/sys/kernel/softlockup_all_cpu_backtrace failed: No such file or directory
+write to /proc/sys/kernel/hung_task_check_interval_secs failed: No such file or directory
+write to /proc/sys/kernel/softlockup_all_cpu_backtrace failed: No such file or directory
 

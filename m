@@ -2,111 +2,128 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C526340893F
-	for <lists+io-uring@lfdr.de>; Mon, 13 Sep 2021 12:41:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C3BE408C18
+	for <lists+io-uring@lfdr.de>; Mon, 13 Sep 2021 15:09:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239025AbhIMKmb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 13 Sep 2021 06:42:31 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:32004 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239010AbhIMKm1 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 13 Sep 2021 06:42:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1631529671;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-        bh=ryXldKXp5w2qrYfIRmnB0eY0iF5R48B4/QR1QYkEKSY=;
-        b=VxQX6YpcjDnX51BIoHb/X9YfyquUzGcTBx/r26leC8AVnCDUqIhhlDhsC3GZMja2TWXBWH
-        eiVijYC2n4PFElrb3B+rEQV0OtJj4EZnjN1IA+Exul+vq4c3QIqHPfT44XyBQXVnx51YbE
-        bfZxVrha82XvUlFTx+KK+2YPmuWlcI0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-39-iyDlqZ8AMlGLjVZRSDBeBA-1; Mon, 13 Sep 2021 06:41:08 -0400
-X-MC-Unique: iyDlqZ8AMlGLjVZRSDBeBA-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A43C480292A;
-        Mon, 13 Sep 2021 10:41:06 +0000 (UTC)
-Received: from asgard.redhat.com (unknown [10.36.110.5])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id CB9311036B24;
-        Mon, 13 Sep 2021 10:41:04 +0000 (UTC)
-Date:   Mon, 13 Sep 2021 12:41:01 +0200
-From:   Eugene Syromiatnikov <esyr@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Dmitry V. Levin" <ldv@strace.io>, linux-api@vger.kernel.org
-Subject: [PATCH v2] io-wq: expose IO_WQ_ACCT_* enumeration items to UAPI
-Message-ID: <20210913104101.GA29616@asgard.redhat.com>
+        id S238205AbhIMNK1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 13 Sep 2021 09:10:27 -0400
+Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:57095 "EHLO
+        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229726AbhIMNKU (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 13 Sep 2021 09:10:20 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R731e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UoFcs8C_1631538534;
+Received: from e18g09479.et15sqa.tbsite.net(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UoFcs8C_1631538534)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 13 Sep 2021 21:09:02 +0800
+From:   Hao Xu <haoxu@linux.alibaba.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>
+Subject: [PATCH] io_uring: add more uring info to fdinfo for debug
+Date:   Mon, 13 Sep 2021 21:08:54 +0800
+Message-Id: <20210913130854.38542-1-haoxu@linux.alibaba.com>
+X-Mailer: git-send-email 2.24.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-These are used to index elements in the argument
-of IORING_REGISTER_IOWQ_MAX_WORKERS io_uring_register command,
-so they are to be exposed in UAPI.
+Developers may need some uring info to help themselves debug and address
+issues, these info includes sqring/cqring head/tail and the detail
+sqe/cqe info, which is very useful when it stucks.
 
-Complements: 2e480058ddc21ec5 ("io-wq: provide a way to limit max number of workers")
-Signed-off-by: Eugene Syromiatnikov <esyr@redhat.com>
+Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
 ---
-v2:
- - IO_WQ_ACCT_NR is no longer exposed directly in UAPI, per Jens Axboe's
-   suggestion.
+ fs/io_uring.c | 59 +++++++++++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 55 insertions(+), 4 deletions(-)
 
-v1: https://lore.kernel.org/lkml/20210912122411.GA27679@asgard.redhat.com/
----
- fs/io-wq.c                    | 5 ++---
- include/uapi/linux/io_uring.h | 8 ++++++++
- 2 files changed, 10 insertions(+), 3 deletions(-)
-
-diff --git a/fs/io-wq.c b/fs/io-wq.c
-index 6c55362..eb5162d 100644
---- a/fs/io-wq.c
-+++ b/fs/io-wq.c
-@@ -14,6 +14,7 @@
- #include <linux/rculist_nulls.h>
- #include <linux/cpu.h>
- #include <linux/tracehook.h>
-+#include <uapi/linux/io_uring.h>
- 
- #include "io-wq.h"
- 
-@@ -78,9 +79,7 @@ struct io_wqe_acct {
- };
- 
- enum {
--	IO_WQ_ACCT_BOUND,
--	IO_WQ_ACCT_UNBOUND,
--	IO_WQ_ACCT_NR,
-+	IO_WQ_ACCT_NR = __IO_WQ_ACCT_MAX
- };
- 
- /*
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 59ef351..dae1841 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -324,6 +324,14 @@ enum {
- 	IORING_REGISTER_LAST
- };
- 
-+/* io-wq worker limit categories */
-+enum {
-+	IO_WQ_ACCT_BOUND,
-+	IO_WQ_ACCT_UNBOUND,
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index f795ad281038..ac048592a3e8 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -9950,8 +9950,48 @@ static int io_uring_show_cred(struct seq_file *m, unsigned int id,
+ static void __io_uring_show_fdinfo(struct io_ring_ctx *ctx, struct seq_file *m)
+ {
+ 	struct io_sq_data *sq = NULL;
++	struct io_overflow_cqe *ocqe;
++	struct io_rings *r = ctx->rings;
++	unsigned int sq_mask = ctx->sq_entries - 1, cq_mask = ctx->cq_entries - 1;
++	unsigned int cached_sq_head = ctx->cached_sq_head;
++	unsigned int cached_cq_tail = ctx->cached_cq_tail;
++	unsigned int sq_head = READ_ONCE(r->sq.head);
++	unsigned int sq_tail = READ_ONCE(r->sq.tail);
++	unsigned int cq_head = READ_ONCE(r->cq.head);
++	unsigned int cq_tail = READ_ONCE(r->cq.tail);
+ 	bool has_lock;
+-	int i;
++	unsigned int i;
 +
-+	__IO_WQ_ACCT_MAX /* Non-UAPI */
-+};
++	/*
++	 * we may get imprecise sqe and cqe info if uring is actively running
++	 * since we get cached_sq_head and cached_cq_tail without uring_lock
++	 * and sq_tail and cq_head are changed by userspace. But it's ok since
++	 * we usually use these info when it is stuck.
++	 */
++	seq_printf(m, "SqHead:\t%u\n", sq_head & sq_mask);
++	seq_printf(m, "SqTail:\t%u\n", sq_tail & sq_mask);
++	seq_printf(m, "CachedSqHead:\t%u\n", cached_sq_head & sq_mask);
++	seq_printf(m, "CqHead:\t%u\n", cq_head & cq_mask);
++	seq_printf(m, "CqTail:\t%u\n", cq_tail & cq_mask);
++	seq_printf(m, "CachedCqTail:\t%u\n", cached_cq_tail & cq_mask);
++	seq_printf(m, "SQEs:\t%u\n", sq_tail - cached_sq_head);
++	for (i = cached_sq_head; i < sq_tail; i++) {
++		unsigned int sq_idx = READ_ONCE(ctx->sq_array[i & sq_mask]);
 +
- /* deprecated, see struct io_uring_rsrc_update */
- struct io_uring_files_update {
- 	__u32 offset;
++		if (likely(sq_idx <= sq_mask)) {
++			struct io_uring_sqe *sqe = &ctx->sq_sqes[sq_idx];
++
++			seq_printf(m, "%5u: opcode:%d, fd:%d, flags:%x, user_data:%llu\n",
++				   sq_idx, sqe->opcode, sqe->fd, sqe->flags, sqe->user_data);
++		}
++	}
++	seq_printf(m, "CQEs:\t%u\n", cached_cq_tail - cq_head);
++	for (i = cq_head; i < cached_cq_tail; i++) {
++		struct io_uring_cqe *cqe = &r->cqes[i & cq_mask];
++
++		seq_printf(m, "%5u: user_data:%llu, res:%d, flag:%x\n",
++			   i & cq_mask, cqe->user_data, cqe->res, cqe->flags);
++	}
+ 
+ 	/*
+ 	 * Avoid ABBA deadlock between the seq lock and the io_uring mutex,
+@@ -9993,7 +10033,10 @@ static void __io_uring_show_fdinfo(struct io_ring_ctx *ctx, struct seq_file *m)
+ 		xa_for_each(&ctx->personalities, index, cred)
+ 			io_uring_show_cred(m, index, cred);
+ 	}
+-	seq_printf(m, "PollList:\n");
++	if (has_lock)
++		mutex_unlock(&ctx->uring_lock);
++
++	seq_puts(m, "PollList:\n");
+ 	spin_lock(&ctx->completion_lock);
+ 	for (i = 0; i < (1U << ctx->cancel_hash_bits); i++) {
+ 		struct hlist_head *list = &ctx->cancel_hash[i];
+@@ -10003,9 +10046,17 @@ static void __io_uring_show_fdinfo(struct io_ring_ctx *ctx, struct seq_file *m)
+ 			seq_printf(m, "  op=%d, task_works=%d\n", req->opcode,
+ 					req->task->task_works != NULL);
+ 	}
++
++	seq_puts(m, "CqOverflowList:\n");
++	list_for_each_entry(ocqe, &ctx->cq_overflow_list, list) {
++		struct io_uring_cqe *cqe = &ocqe->cqe;
++
++		seq_printf(m, "  user_data=%llu, res=%d, flags=%x\n",
++			   cqe->user_data, cqe->res, cqe->flags);
++
++	}
++
+ 	spin_unlock(&ctx->completion_lock);
+-	if (has_lock)
+-		mutex_unlock(&ctx->uring_lock);
+ }
+ 
+ static void io_uring_show_fdinfo(struct seq_file *m, struct file *f)
 -- 
-2.1.4
+2.24.4
 

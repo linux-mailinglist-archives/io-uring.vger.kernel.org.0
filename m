@@ -2,118 +2,61 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B838240A18D
-	for <lists+io-uring@lfdr.de>; Tue, 14 Sep 2021 01:23:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB3F640A24B
+	for <lists+io-uring@lfdr.de>; Tue, 14 Sep 2021 03:04:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241499AbhIMXYj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 13 Sep 2021 19:24:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56324 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241102AbhIMXYi (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 13 Sep 2021 19:24:38 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EDBDC061760
-        for <io-uring@vger.kernel.org>; Mon, 13 Sep 2021 16:23:22 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id i7so8329112lfr.13
-        for <io-uring@vger.kernel.org>; Mon, 13 Sep 2021 16:23:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IJIDYZgKiygSSxYRNkxoNXbd0kWV7FZNitdhXxha1Po=;
-        b=Y1Aryd99OOGEmuqWogyRK+T349nSzQP6P4/UX3uS7PMAcEJFbHvBDRIf5LR1Egenh2
-         ol4VSWTmzAXA6COOrx71hc46fMhwRwKDuLow4/bqyzig2RHEELJ8juuZ9jYdMexSWcaU
-         yGMwb0q80yIvlcaZCiZIihGOMNRtw3Xa4sDAE=
+        id S236896AbhINBFZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 13 Sep 2021 21:05:25 -0400
+Received: from mail-io1-f69.google.com ([209.85.166.69]:46863 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236719AbhINBFY (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 13 Sep 2021 21:05:24 -0400
+Received: by mail-io1-f69.google.com with SMTP id s6-20020a5ec646000000b005b7f88ffdd3so15202298ioo.13
+        for <io-uring@vger.kernel.org>; Mon, 13 Sep 2021 18:04:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IJIDYZgKiygSSxYRNkxoNXbd0kWV7FZNitdhXxha1Po=;
-        b=YTFKuEqMPBd37Px4zIccRj23LNw68JICbPM7/yuD02+InBMmIitfWBVwrxh709S8Dy
-         KwuHfQYEmVaoxysqkJ1xPiljUB6oKKfcwXZmLzQ5wysfu9zhrcvcT5ud+aeBcoAu9O+j
-         5IB9s5kuwKErgbwU+Rc9PIQUWpwQHyKUtW442qVQpdoR7tQPD9cJMqwx28Onevxp5KVp
-         QUPk7g7GCjolPYMuvpZJRdMn+evhLyEjo0CBPvdFf2Kd4NsZAJyJhpNB5/VN5ZqKRBKP
-         whXFWhCDn199fidxvBXK7dnOiYzw+EfgxTzIxqA01r1yAVKKEtnsIXOosTR/2XscxU9n
-         o6/A==
-X-Gm-Message-State: AOAM533XR9oCz/o5RmIbpbFhGWvuLgi8Hbc+Gc27YbHVh5ThxgfKD1qz
-        JlPErsK/+NfEBf/iM2pFw/3F545L4ym2qkARSlA=
-X-Google-Smtp-Source: ABdhPJyLoACSPc174lve7aaFgsAu2Q8VR4OxbjG2Tg/XcHGbFu8zpwmV6JfCTfZQh6Z+vDnRwQWlvg==
-X-Received: by 2002:a05:6512:689:: with SMTP id t9mr11019416lfe.359.1631575400420;
-        Mon, 13 Sep 2021 16:23:20 -0700 (PDT)
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
-        by smtp.gmail.com with ESMTPSA id h3sm98279lfu.3.2021.09.13.16.23.19
-        for <io-uring@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Sep 2021 16:23:20 -0700 (PDT)
-Received: by mail-lj1-f174.google.com with SMTP id r3so20208561ljc.4
-        for <io-uring@vger.kernel.org>; Mon, 13 Sep 2021 16:23:19 -0700 (PDT)
-X-Received: by 2002:a2e:96c7:: with SMTP id d7mr12780196ljj.191.1631575399749;
- Mon, 13 Sep 2021 16:23:19 -0700 (PDT)
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=lkuAH26yQOlGfKXblDYiAOWW8Flrjdt2FI+BYcMEb54=;
+        b=QZ31PFnX2BjHUWnQEusPNqCPVQcWIR8R5f6bqIbrp0tlPHEmpNBvI1G53W1xrNbrPP
+         xFhvU+vGi7oBJfGn3I1sK2YbY43B8fBecY7iA/BrehnO54Vb1BcSEPacD6yYol27h4qP
+         GXWclJ8IjXrDw5M8SLnT7vsuu9rAWeEoDoH7Qi4o7FEXsZDfyZxxfXxG75ij5twRKVto
+         UYre5naCrxdgVy8T9uOxQ9hEGaB0xHx4DUQja6EsJLAUF7lj74+/QN0wNNKQnuu+DQTZ
+         XlsZ/rvw2PdnbwDLeDrfUFnK8vDL2HTSVKA2EpL8LobKIfQMkkcOok4bLEiAOzg2FJ49
+         RP6g==
+X-Gm-Message-State: AOAM5323k30WDqZYUWkhAyvRbiTFBYzGeDAIxNJ3cxKxp0poTPHP6w0z
+        DkuTSZs5nTO/FjBOR/TBTLbsIOvffELrfUb9p1MTDS/D7a/h
+X-Google-Smtp-Source: ABdhPJxnMCzs9SaZqkSRrEgYOeXV7AsHgsGgbPXcL7CkduBMcsrSHeR0/8S3Lqjt096iy0RNiUzERIAUlcC1IXMPzHhlgR3GG4T8
 MIME-Version: 1.0
-References: <20210910182536.685100-1-axboe@kernel.dk> <8a278aa1-81ed-72e0-dec7-b83997e5d801@kernel.dk>
-In-Reply-To: <8a278aa1-81ed-72e0-dec7-b83997e5d801@kernel.dk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 13 Sep 2021 16:23:03 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wj3Lu=mJ8L7iE0RQXGZVdoSMz6rnPmrWoVNJhTaObOqkA@mail.gmail.com>
-Message-ID: <CAHk-=wj3Lu=mJ8L7iE0RQXGZVdoSMz6rnPmrWoVNJhTaObOqkA@mail.gmail.com>
-Subject: Re: [PATCHSET 0/3] Add ability to save/restore iov_iter state
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring <io-uring@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
+X-Received: by 2002:a6b:b88a:: with SMTP id i132mr11300524iof.215.1631581448021;
+ Mon, 13 Sep 2021 18:04:08 -0700 (PDT)
+Date:   Mon, 13 Sep 2021 18:04:08 -0700
+In-Reply-To: <8428f733-ae95-f57b-8d42-6c7a279f4d84@kernel.dk>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a1b11505cbea28c2@google.com>
+Subject: Re: [syzbot] general protection fault in io_uring_register
+From:   syzbot <syzbot+337de45f13a4fd54d708@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
+        johalun0@gmail.com, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, Sep 13, 2021 at 3:43 PM Jens Axboe <axboe@kernel.dk> wrote:
->
-> Al, Linus, are you OK with this? I think we should get this in for 5.15.
-> I didn't resend the whole series, just a v2 of patch 1/3 to fix that bvec
-> vs iovec issue. Let me know if you want the while thing resent.
+Hello,
 
-So I'm ok with the iov_iter side, but the io_uring side seems still
-positively buggy, and very confused.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-It also messes with the state in bad ways and has internal knowledge.
-And some of it looks completely bogus.
+Reported-and-tested-by: syzbot+337de45f13a4fd54d708@syzkaller.appspotmail.com
 
-For example, I see
+Tested on:
 
-        state->count -= ret;
-        rw->bytes_done += ret;
+commit:         7981f41e io_uring: pin SQPOLL data before unlocking ri..
+git tree:       git://git.kernel.dk/linux-block io_uring-5.15
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6d93fe4341f98704
+dashboard link: https://syzkaller.appspot.com/bug?extid=337de45f13a4fd54d708
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
 
-and I go "that's BS". There's no way it's ok to start messing with the
-byte count inside the state like that. That just means that the state
-is now no longer the saved state, and it's some random garbage.
-
-I also think that the "bytes_done += ret" is a big hint there: any
-time you restore the iovec state, you should then forward it by
-"bytes_done". But that's not what the code does.
-
-Instead, it will now restore the iovec styate with the *wrong* number
-of bytes remaining, but will start from the beginning of the iovec.
-
-So I think the fs/io_uring.c use of this state buffer is completely wrong.
-
-What *may* be the right thing to do is to
-
- (a) not mess with state->count
-
- (b) when you restore the state you always use
-
-        iov_iter_restore(iter, state, bytes_done);
-
-to actually restore the *correct* state.
-
-Because modifying the iovec save state like that cannot be right, and
-if it's right it's still too ugly and fragile for words. That save
-state should be treated as a snapshot, not as a random buffer that you
-can make arbitrary changes to.
-
-See what I'm saying?
-
-I'd like Al to take a look at the io_uring.c usage too, since this was
-just my reaction from looking at that diff a bit more.
-
-           Linus
+Note: testing is done by a robot and is best-effort only.

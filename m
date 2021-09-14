@@ -2,142 +2,120 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7896940A3D4
-	for <lists+io-uring@lfdr.de>; Tue, 14 Sep 2021 04:49:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DDF140A40E
+	for <lists+io-uring@lfdr.de>; Tue, 14 Sep 2021 05:01:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237372AbhINCvM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 13 Sep 2021 22:51:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45704 "EHLO
+        id S237372AbhINDCa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 13 Sep 2021 23:02:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236171AbhINCvL (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 13 Sep 2021 22:51:11 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FCD6C061760
-        for <io-uring@vger.kernel.org>; Mon, 13 Sep 2021 19:49:54 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id kt8so25414820ejb.13
-        for <io-uring@vger.kernel.org>; Mon, 13 Sep 2021 19:49:54 -0700 (PDT)
+        with ESMTP id S237213AbhINDCa (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 13 Sep 2021 23:02:30 -0400
+Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3ECBC061574;
+        Mon, 13 Sep 2021 20:01:13 -0700 (PDT)
+Received: by mail-pg1-x532.google.com with SMTP id k24so11327548pgh.8;
+        Mon, 13 Sep 2021 20:01:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=aejjrEwv9A+FPcsJO+PLrw1/sXo77HGUim4vKB8A0UY=;
-        b=f+aGIr1i9uDO9K2p3Pu+ECfDcPuuEdkom0IueHSLkWgzWN/4++KG2va0YU7i7xb/FZ
-         2n3dbwoLE/H7PPFkICccW4GZ/JxkPhxPAxwMVN6IdDd69JL6GG8xtXbPuqd4ECfZvhdK
-         fGUqXN5q7SL0XuYkOR8oG6P96kfn71E3YSeYGAyRRjOr/PIPEQMoNmEBTRjHTers9coM
-         +7RYZ17mTqOyIG5y8IefVcKuuqCmrmzybehWchOYiBH3rAum9ISaZ7jEGI2pm14upzp4
-         y+O2tuYuEnUvkXcqHO1qbkVdAqhncNExwskSLHJ9QmQVRJ1SlV3cYLjXsgAkCdT8AYqO
-         LdVg==
+         :cc:content-transfer-encoding;
+        bh=DsCe+BZFESkDZsqe6u7iZYz+EpftXxtavi4h72VzJL0=;
+        b=VnhszOGJWKfWQf+O+OGEpQ1hmHGptjgf9GZCa88torTr+PLjyUoOSD5z2fKqOK+4/B
+         ZSu4hk5lKgKvx8ric1377rvyrZnEZAl2JQvlWYdwlcr8DA9rFIPzcNIxtt0GFAYrPnyA
+         Qf0fNGNSMSPYKIbUTYbCszYvQak+CKNWuRrtg665fqQxZzmei0Tpe1rtZxLAkYMUizXg
+         68V8QQJe8mfsPsHz/3o6Lu7+9r4AE+CH49ki2sXDa09osFn5damngbMiHKK0fBHKJ3dD
+         rl8oEJWW9unmoIZkxWv2g9qROeqgRzZRpaps+pQ6WPe0rbKCDY0cXaBNZDOszURs8gCF
+         NTgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aejjrEwv9A+FPcsJO+PLrw1/sXo77HGUim4vKB8A0UY=;
-        b=4XGgaKHnev5vo0jeTuBsjdWUI2hO3tQm2zfp/CrNMpfKEA8+/TZL8FCtlYGmAtftyW
-         TjmMEWmJ8/eShjSblfcPdE6mixSc0wLoamdstyNL5s4IM8asaHIlCzABLQ0z1FEM185p
-         43P171uxYgUJKYUHNDfsa9gP2/ZlKndFxtSgCUWfv5MupaRN6dzxbJhhXhtk19lFKcMs
-         KvXd6ht3HHnJeQgkF9rqnXVqMIE7m7S4lnkubPneU00V5g2aZEnJ1NGBXxy5XCl7rNBb
-         huLKLOXndYX1yVF3HQQvlcni3zsnepKzGNeyekX/81nOG6q65uCngcwIWbonuVrzcCRY
-         ZgPQ==
-X-Gm-Message-State: AOAM533XJDP7FCZWUT8t8PTDDYN85IlGIrAekZnUw+T0Al8B6gt7ycbt
-        RmafYmqFiGElfmqxVO6Y5ctNoI9imkVWsW1vPomkwvMKOA==
-X-Google-Smtp-Source: ABdhPJzGREiUiVKzvVPxM9sqNoXunURxF1kR0zzzJ//z122o5jvF5bA9S3XPoctVm87ri6rJSWdH2ONVnszgf1oYmh0=
-X-Received: by 2002:a17:906:6011:: with SMTP id o17mr15793102ejj.157.1631587791643;
- Mon, 13 Sep 2021 19:49:51 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=DsCe+BZFESkDZsqe6u7iZYz+EpftXxtavi4h72VzJL0=;
+        b=AyFAOF/2yBidcc/jNDqoN5CuzVBb5OOOjhH8uePopkAzx6CXrv92uV3kvTxvZfPQC2
+         LQY/V0TaH12E9sdEePcEKqwHBd07gJknw71tdlQBud2lXoaW1le4fWfq2q8K5HQ7tl3K
+         4166cDFPfqJsm0ODXR/YUYB6ERhz3z1FIJj/gskD+W9v+8hHD5SKEEFA59BVnEDI+zsm
+         097neu6hUM+ScxV52v5A5ORsc5llDdRYLnrnwB8GcATWSPnW3N5UjeVS1J269Rl9bhkA
+         BYSwQ9C+uIZyEQKGOL30yDxDxNob19JnPom65GYq3sd75VJ+7NCC2TMahpKVcps3Exff
+         Vmqg==
+X-Gm-Message-State: AOAM530fM/k+P+f7hQFr2kCZ8UkXd30miCc8ZJxR2l2k2KqPiwbbYqfE
+        KhDlsBj87RScLNrq236AK9+5aOeSvx2M7o4x1g==
+X-Google-Smtp-Source: ABdhPJzqV2Mb1jqk9XIRMDrDzBl3o2KWNgVs9r4EafBsHrqUtaSwvYdUqcPtToLOnV1C3sAxFLcqdLaw7BV7NRq65Bo=
+X-Received: by 2002:a05:6a00:2449:b0:43c:4a5e:55a6 with SMTP id
+ d9-20020a056a00244900b0043c4a5e55a6mr2581819pfj.43.1631588473158; Mon, 13 Sep
+ 2021 20:01:13 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210824205724.GB490529@madcap2.tricolour.ca> <20210826011639.GE490529@madcap2.tricolour.ca>
- <CAHC9VhSADQsudmD52hP8GQWWR4+=sJ7mvNkh9xDXuahS+iERVA@mail.gmail.com>
- <20210826163230.GF490529@madcap2.tricolour.ca> <CAHC9VhTkZ-tUdrFjhc2k1supzW1QJpY-15pf08mw6=ynU9yY5g@mail.gmail.com>
- <20210827133559.GG490529@madcap2.tricolour.ca> <CAHC9VhRqSO6+MVX+LYBWHqwzd3QYgbSz3Gd8E756J0QNEmmHdQ@mail.gmail.com>
- <20210828150356.GH490529@madcap2.tricolour.ca> <CAHC9VhRgc_Fhi4c6L__butuW7cmSFJxTMxb+BBn6P-8Yt0ck_w@mail.gmail.com>
- <CAHC9VhQD8hKekqosjGgWPxZFqS=EFy-_kQL5zAo1sg0MU=6n5A@mail.gmail.com>
- <20210910005858.GL490529@madcap2.tricolour.ca> <CAHC9VhSRJYW7oRq6iLCH_UYukeFfE0pEJ_wBLdr1mw2QGUPh-Q@mail.gmail.com>
- <CAHC9VhTrimTds_miuyRhhHjoG_Fhmk2vH7G3hKeeFWO3BdLpKw@mail.gmail.com>
-In-Reply-To: <CAHC9VhTrimTds_miuyRhhHjoG_Fhmk2vH7G3hKeeFWO3BdLpKw@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 13 Sep 2021 22:49:40 -0400
-Message-ID: <CAHC9VhTUKsijBVV-a3eHajYyOFYLQPWTTqxJ812NnB3_Y=UMeQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 0/9] Add LSM access controls and auditing to io_uring
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     sgrubb@redhat.com, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, linux-audit@redhat.com,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>
+References: <CACkBjsbs2tahJMC_TBZhQUBQiFYhLo-CW+kyzNxyUqgs5NCaXA@mail.gmail.com>
+ <df072429-3f45-4d9d-c81d-73174aaf2e7d@kernel.dk> <e5ac817b-bc96-bea6-aadb-89d3c201446d@gmail.com>
+ <CACkBjsZLyNbMwyoZc8T9ggq+R6-0aBFPCRB54jzAOF8f2QCH0Q@mail.gmail.com>
+ <CACkBjsaGTkxsrBW+HNsgR0Pj7kbbrK-F5E4hp3CJJjYf3ASimQ@mail.gmail.com>
+ <ce4db530-3e7c-1a90-f271-42d471b098ed@gmail.com> <CACkBjsYvCPQ2PpryOT5rHNTg5AuFpzOYip4UNjh40HwW2+XbsA@mail.gmail.com>
+ <7faa04f8-cd98-7d8a-2e54-e84e1fe742f7@gmail.com>
+In-Reply-To: <7faa04f8-cd98-7d8a-2e54-e84e1fe742f7@gmail.com>
+From:   Hao Sun <sunhao.th@gmail.com>
+Date:   Tue, 14 Sep 2021 11:01:02 +0800
+Message-ID: <CACkBjsZE4=ErfsT7z=MDfCKEsafZ23BG-uCST1bT_HT_3NSMLA@mail.gmail.com>
+Subject: Re: INFO: task hung in io_uring_cancel_generic
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, Sep 13, 2021 at 9:50 PM Paul Moore <paul@paul-moore.com> wrote:
-> On Mon, Sep 13, 2021 at 3:23 PM Paul Moore <paul@paul-moore.com> wrote:
-> > On Thu, Sep 9, 2021 at 8:59 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > On 2021-09-01 15:21, Paul Moore wrote:
-> > > > On Sun, Aug 29, 2021 at 11:18 AM Paul Moore <paul@paul-moore.com> wrote:
-> > > > > On Sat, Aug 28, 2021 at 11:04 AM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > > > > I did set a syscall filter for
-> > > > > >         -a exit,always -F arch=b64 -S io_uring_enter,io_uring_setup,io_uring_register -F key=iouringsyscall
-> > > > > > and that yielded some records with a couple of orphans that surprised me
-> > > > > > a bit.
-> > > > >
-> > > > > Without looking too closely at the log you sent, you can expect URING
-> > > > > records without an associated SYSCALL record when the uring op is
-> > > > > being processed in the io-wq or sqpoll context.  In the io-wq case the
-> > > > > processing is happening after the thread finished the syscall but
-> > > > > before the execution context returns to userspace and in the case of
-> > > > > sqpoll the processing is handled by a separate kernel thread with no
-> > > > > association to a process thread.
-> > > >
-> > > > I spent some time this morning/afternoon playing with the io_uring
-> > > > audit filtering capability and with your audit userspace
-> > > > ghau-iouring-filtering.v1.0 branch it appears to work correctly.  Yes,
-> > > > the userspace tooling isn't quite 100% yet (e.g. `auditctl -l` doesn't
-> > > > map the io_uring ops correctly), but I know you mentioned you have a
-> > > > number of fixes/improvements still as a work-in-progress there so I'm
-> > > > not too concerned.  The important part is that the kernel pieces look
-> > > > to be working correctly.
-> > >
-> > > Ok, I have squashed and pushed the audit userspace support for iouring:
-> > >         https://github.com/rgbriggs/audit-userspace/commit/e8bd8d2ea8adcaa758024cb9b8fa93895ae35eea
-> > >         https://github.com/linux-audit/audit-userspace/compare/master...rgbriggs:ghak-iouring-filtering.v2.1
-> > > There are test rpms for f35 here:
-> > >         http://people.redhat.com/~rbriggs/ghak-iouring/git-e8bd8d2-fc35/
-> > >
-> > > userspace v2 changelog:
-> > > - check for watch before adding perm
-> > > - update manpage to include filesystem filter
-> > > - update support for the uring filter list: doc, -U op, op names
-> > > - add support for the AUDIT_URINGOP record type
-> > > - add uringop support to ausearch
-> > > - add uringop support to aureport
-> > > - lots of bug fixes
-> > >
-> > > "auditctl -a uring,always -S ..." will now throw an error and require
-> > > "-U" instead.
+Pavel Begunkov <asml.silence@gmail.com> =E4=BA=8E2021=E5=B9=B49=E6=9C=8813=
+=E6=97=A5=E5=91=A8=E4=B8=80 =E4=B8=8B=E5=8D=884:30=E5=86=99=E9=81=93=EF=BC=
+=9A
+>
+> On 9/13/21 3:26 AM, Hao Sun wrote:
+> > Hi
 > >
-> > Thanks Richard.
+> > Healer found a C reproducer for this crash ("INFO: task hung in
+> > io_ring_exit_work").
 > >
-> > FYI, I rebased the io_uring/LSM/audit patchset on top of v5.15-rc1
-> > today and tested both with your v1.0 and with your v2.1 branch and the
-> > various combinations seemed to work just fine (of course the v2.1
-> > userspace branch was more polished, less warts, etc.).  I'm going to
-> > go over the patch set one more time to make sure everything is still
-> > looking good, write up an updated cover letter, and post a v3 revision
-> > later tonight with the hope of merging it into -next later this week.
+> > HEAD commit: 4b93c544e90e-thunderbolt: test: split up test cases
+> > git tree: upstream
+> > console output:
+> > https://drive.google.com/file/d/1NswMU2yMRTc8-EqbZcVvcJejV92cuZIk/view?=
+usp=3Dsharing
+> > kernel config: https://drive.google.com/file/d/1c0u2EeRDhRO-ZCxr9MP2VvA=
+tJd6kfg-p/view?usp=3Dsharing
+> > C reproducer: https://drive.google.com/file/d/170wk5_T8mYDaAtDcrdVi2UU9=
+_dW1894s/view?usp=3Dsharing
+> > Syzlang reproducer:
+> > https://drive.google.com/file/d/1eo-jAS9lncm4i-1kaCBkexrjpQHXboBq/view?=
+usp=3Dsharing
+> >
+> > If you fix this issue, please add the following tag to the commit:
+> > Reported-by: Hao Sun <sunhao.th@gmail.com>
 >
-> Best laid plans of mice and men ...
+> I don't see the repro using io_uring at all. Can it be because of
+> the delay before the warning shows itself? 120 secs, this appeared
+> after 143.
 >
-> It turns out the LSM hook macros are full of warnings-now-errors that
-> should likely be resolved before sending anything LSM related to
-> Linus.  I'll post v3 once I fix this, which may not be until tomorrow.
->
-> (To be clear, the warnings/errors aren't new to this patchset, I'm
-> likely just the first person to notice them.)
 
-Actually, scratch that ... I'm thinking that might just be an oddity
-of the Intel 0day test robot building for the xtensa arch.  I'll post
-the v3 patchset tonight.
+I think the crash was most likely fixed. Here is what I've done.
+First, I re-run the whole execution history
+(https://drive.google.com/file/d/1NswMU2yMRTc8-EqbZcVvcJejV92cuZIk/view?usp=
+=3Dsharing)
+with `syz-repro` on  latest kernel (6880fa6c5660 Linux 5.15-rc1). The
+kernel did not crash at all.
+Then, I re-run the history on the original version of the kernel
+(4b93c544e90e-thunderbolt: test: split up test cases). It crashed and
+task hang happened but with a different location
+("io_wq_submit_work").
+Since `syz-repro` is smart enough and will give prog enough timeout to
+be executed when the crash type is `Hang` (see
+https://github.com/google/syzkaller/blob/master/pkg/repro/repro.go#L98),
+the delay before a warning can be handled properly.
 
--- 
-paul moore
-www.paul-moore.com
+However, I'll still keep track of this crash since it was still not
+reproduced yet.
+
+> [...]
+
+>
+> --
+> Pavel Begunkov

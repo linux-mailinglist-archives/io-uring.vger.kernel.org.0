@@ -2,148 +2,150 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 276E940B838
-	for <lists+io-uring@lfdr.de>; Tue, 14 Sep 2021 21:37:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CAAA440BBAD
+	for <lists+io-uring@lfdr.de>; Wed, 15 Sep 2021 00:35:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232716AbhINTir (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 14 Sep 2021 15:38:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55308 "EHLO
+        id S235825AbhINWgp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 14 Sep 2021 18:36:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232496AbhINTir (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 14 Sep 2021 15:38:47 -0400
-Received: from mail-il1-x132.google.com (mail-il1-x132.google.com [IPv6:2607:f8b0:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 893F2C061762
-        for <io-uring@vger.kernel.org>; Tue, 14 Sep 2021 12:37:29 -0700 (PDT)
-Received: by mail-il1-x132.google.com with SMTP id b6so353803ilv.0
-        for <io-uring@vger.kernel.org>; Tue, 14 Sep 2021 12:37:29 -0700 (PDT)
+        with ESMTP id S235464AbhINWg3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 14 Sep 2021 18:36:29 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 403DFC0613D9
+        for <io-uring@vger.kernel.org>; Tue, 14 Sep 2021 15:35:11 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id d21so643860wra.12
+        for <io-uring@vger.kernel.org>; Tue, 14 Sep 2021 15:35:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=AHaD45tpXhY3cAJWkx8UAo5BfY2ep0mljpAehjK+qGI=;
-        b=SJnU0hXQxSIp4tRyqhlrSD+Vd4qc4sfB/TtW619ax2br6XynKuLnLR7VFMNr2JaOIQ
-         gR/JFVHg+G/qOrKrZ7BQldMhCs7L/zD4YkhTdkJgRmXBuxG4QN8RRqxK8zNXp7Pcrtky
-         uybtK4AwABvC991fm0S9rdEbzNIn1ed/GeyefIu/Cuhe2sy6N2ssUU6GhvSXmy24ry6r
-         jpnDOkUJ3mw5zucwcXfhRmQFzDKpU5g1F3CBGz8dtEpt3eb0462qcMkmiuRyNh+Ag5QD
-         Z5MKJ5VJZh8A1FVTdQmd8YXmWIRfxp0gDl6+6Hy5XqXlm+Ir2NBDLSP749iWMVKlvLOE
-         oFXQ==
+        d=gmail.com; s=20210112;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=HZo/ZeJp31CR43d/9BybAMPl+IS1ufGUfYdoyLTDmEQ=;
+        b=Ar63n343SICx+HhhXTLTqEgBRqNf7QbSKibQvZJXA5EYtHs06XqR4khT9C7AcW0ibM
+         j5OBAlhITm/lxd3mBeniY47vntqtPwUskk3Jr8w588SO77x6kFE/1OldogIAkmSX4nYI
+         Mev5W42eu6F6Ss2I+sVzwLBO0NvP9lRM2jJOJ1VjXM2WRrxrdRiCm0URbh0rpsJFPne9
+         clmKdOrD9zVx9UwF0v2VbNk3G/eo5fNweAFYf4nZlkYISG7eVbGFBHCwINaKaVPotLdd
+         8F8lTxcZd+jH0R3JKeVGb5gfieQmJjeBRdQCnsrkA8Wr4i7g89hjuGKrQpCpeJ3Pc0ff
+         L99g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=AHaD45tpXhY3cAJWkx8UAo5BfY2ep0mljpAehjK+qGI=;
-        b=UnPjupxhfCSaN8D82O5I+3iCB5YAJHvSfJmiDzciurboHrGt0neGSq2jhk4BqlcS4O
-         t9sxqrIyoLAYf+j5l4/2Y9JBtn7YUJccagDbF1Wn6mbPMF2w2dX6+VGJbKMKTu7NP4yy
-         sD97VJUR8vAQJmGREUP71qCL2s4NCcguUSileSgd2/N4lamzoETg8/TG08bAg95JhWFx
-         7CrHNrN7GnkW9tXqHLPQTm5Ld42d/emCwVoF1aQu61WFF6JQJu7iwp3ksx/SJoKLasF7
-         xWqnnxp/ll9s1HlgGjOU1TjJODX5ZmGt9D15hextLExt7kUo3bFHE4U2bw78ZaXt49Yt
-         6A6w==
-X-Gm-Message-State: AOAM532KxAMMzSxh3K9FuVrIp6WyA40D7pRPDSDgSe7Z+Ciklqqcr2Sw
-        K8No9QOb7E7fFEsAATA32ITM4Q==
-X-Google-Smtp-Source: ABdhPJz1wdVfCbLt9JCsYqzWuwQYqKBa1mHikabT2SNfvPmOl3utJtSPCxizok4BnuWPeKtUihgyjg==
-X-Received: by 2002:a92:ce48:: with SMTP id a8mr7372875ilr.115.1631648248879;
-        Tue, 14 Sep 2021 12:37:28 -0700 (PDT)
-Received: from [192.168.1.30] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id c1sm6417140iot.44.2021.09.14.12.37.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Sep 2021 12:37:28 -0700 (PDT)
-Subject: Re: [PATCH 2/3] io_uring: use iov_iter state save/restore helpers
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     io-uring <io-uring@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-References: <20210914141750.261568-1-axboe@kernel.dk>
- <20210914141750.261568-3-axboe@kernel.dk>
- <CAHk-=wh6mGm0b7AnKNRzDO07nrdpCrvHtUQ=afTH6pZ2JiBpeQ@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <5659d7ba-e198-9df0-c6f8-bd6511bf44a0@kernel.dk>
-Date:   Tue, 14 Sep 2021 13:37:27 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        bh=HZo/ZeJp31CR43d/9BybAMPl+IS1ufGUfYdoyLTDmEQ=;
+        b=xLCM6/rP51qmiDar9/nTGKFQTViwiN6uQYFBpoL7g+PbvtjHzWTeSrbq8Go8gL7l42
+         L/3Lo9ijGC2aWx1qjwjqjaWMGRVRLkmM3F4Xb0bCvMyNv2wG/hOdKRn/SNtUa/o7wsJK
+         fobM/oWpCZnrPvv0EGa+V6TIqgYFbkRT/2ZDI7qLEbqgyMKqopjTiF7Tr+x4CJq2Fh09
+         TJYxd1BnIQvffWCvNLmcHAf22rQ2i6Y9Ulb36Yj6YiLBfDyNgxehs3kPK4MR70GjAdMc
+         LEW/7ebp4S+wH0z1Jmzg7jiUMfwEHUkbITJsppueXOLzz85quqS3/9x8kJC0ErKfy9bn
+         SPJQ==
+X-Gm-Message-State: AOAM533B3lVs7QnJBc5a2P/4/larCVld884k3BMMBHmgwtc8o+L8JFCu
+        F9fwVjL9H8wl0uc3/1AKo+EmMpzZHM0=
+X-Google-Smtp-Source: ABdhPJwvC+Dny91DpKBb3ryAr199yEOktM3fbhvpL2NnM/YAsyxLSFOXnLTksNyDln7rnS2WVWjTmQ==
+X-Received: by 2002:a5d:4b0b:: with SMTP id v11mr1478081wrq.359.1631658909694;
+        Tue, 14 Sep 2021 15:35:09 -0700 (PDT)
+Received: from localhost.localdomain ([185.69.144.239])
+        by smtp.gmail.com with ESMTPSA id m4sm2505665wml.28.2021.09.14.15.35.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Sep 2021 15:35:09 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [PATCH] io_uring: move iopoll reissue into regular IO path
+Date:   Tue, 14 Sep 2021 23:34:25 +0100
+Message-Id: <09c645bdf78117a5933490aff0eea10c4f1ceb0a.1631658805.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.33.0
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=wh6mGm0b7AnKNRzDO07nrdpCrvHtUQ=afTH6pZ2JiBpeQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/14/21 12:45 PM, Linus Torvalds wrote:
-> On Tue, Sep 14, 2021 at 7:18 AM Jens Axboe <axboe@kernel.dk> wrote:
->>
->>
->> +       iov_iter_restore(iter, state);
->> +
-> ...
->>                 rw->bytes_done += ret;
->> +               iov_iter_advance(iter, ret);
->> +               if (!iov_iter_count(iter))
->> +                       break;
->> +               iov_iter_save_state(iter, state);
-> 
-> Ok, so now you keep iovb_iter and the state always in sync by just
-> always resetting the iter back and then walking it forward explicitly
-> - and re-saving the state.
-> 
-> That seems safe, if potentially unnecessarily expensive.
+230d50d448acb ("io_uring: move reissue into regular IO path")
+made non-IOPOLL I/O to not retry from ki_complete handler. Follow it
+steps and do the same for IOPOLL. Same problems, same implementation,
+same -EAGAIN assumptions.
 
-Right, it's not ideal if it's a big range of IO, then it'll definitely
-be noticeable. But not too worried about it, at least not for now...
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
 
-> I guess re-walking lots of iovec entries is actually very unlikely in
-> practice, so maybe this "stupid brute-force" model is the right one.
+Needs more testing and with NVMe. It's on top of io_uring-5.15 for now,
+we'll be rebased on whatever is needed after we're happy with everything
 
-Not sure what the alternative is here. We could do something similar to
-__io_import_fixed() as we're only dealing with iter types where we can
-do that, but probably best left as a later optimization if it's deemed
-necessary.
+ fs/io_uring.c | 23 +++++------------------
+ 1 file changed, 5 insertions(+), 18 deletions(-)
 
-> I do find the odd "use __state vs rw->state" to be very confusing,
-> though. Particularly in io_read(), where you do this:
-> 
-> +       iov_iter_restore(iter, state);
-> +
->         ret2 = io_setup_async_rw(req, iovec, inline_vecs, iter, true);
->         if (ret2)
->                 return ret2;
-> 
->         iovec = NULL;
->         rw = req->async_data;
-> -       /* now use our persistent iterator, if we aren't already */
-> -       iter = &rw->iter;
-> +       /* now use our persistent iterator and state, if we aren't already */
-> +       if (iter != &rw->iter) {
-> +               iter = &rw->iter;
-> +               state = &rw->iter_state;
-> +       }
-> 
->         do {
-> -               io_size -= ret;
->                 rw->bytes_done += ret;
-> +               iov_iter_advance(iter, ret);
-> +               if (!iov_iter_count(iter))
-> +                       break;
-> +               iov_iter_save_state(iter, state);
-> 
-> 
-> Note how it first does that iov_iter_restore() on iter/state, buit
-> then it *replaces&* the iter/state pointers, and then it does
-> iov_iter_advance() on the replacement ones.
-
-We restore the iter so it's the same as before we did the read_iter
-call, and then setup a consistent copy of the iov/iter in case we need
-to punt this request for retry. rw->iter should have the same state as
-iter at this point, and since rw->iter is the copy we'll use going
-forward, we're advancing that one in case ret > 0.
-
-The other case is that no persistent state is needed, and then iter
-remains the same.
-
-I'll take a second look at this part and see if I can make it a bit more
-straight forward, or at least comment it properly.
-
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index f6fae01c039c..7fb5f2acd274 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -736,7 +736,6 @@ enum {
+ 	REQ_F_BUFFER_SELECTED_BIT,
+ 	REQ_F_COMPLETE_INLINE_BIT,
+ 	REQ_F_REISSUE_BIT,
+-	REQ_F_DONT_REISSUE_BIT,
+ 	REQ_F_CREDS_BIT,
+ 	REQ_F_REFCOUNT_BIT,
+ 	REQ_F_ARM_LTIMEOUT_BIT,
+@@ -783,8 +782,6 @@ enum {
+ 	REQ_F_COMPLETE_INLINE	= BIT(REQ_F_COMPLETE_INLINE_BIT),
+ 	/* caller should reissue async */
+ 	REQ_F_REISSUE		= BIT(REQ_F_REISSUE_BIT),
+-	/* don't attempt request reissue, see io_rw_reissue() */
+-	REQ_F_DONT_REISSUE	= BIT(REQ_F_DONT_REISSUE_BIT),
+ 	/* supports async reads */
+ 	REQ_F_NOWAIT_READ	= BIT(REQ_F_NOWAIT_READ_BIT),
+ 	/* supports async writes */
+@@ -2428,14 +2425,6 @@ static void io_iopoll_complete(struct io_ring_ctx *ctx, unsigned int *nr_events,
+ 	while (!list_empty(done)) {
+ 		req = list_first_entry(done, struct io_kiocb, inflight_entry);
+ 		list_del(&req->inflight_entry);
+-
+-		if (READ_ONCE(req->result) == -EAGAIN &&
+-		    !(req->flags & REQ_F_DONT_REISSUE)) {
+-			req->iopoll_completed = 0;
+-			io_req_task_queue_reissue(req);
+-			continue;
+-		}
+-
+ 		__io_fill_cqe(ctx, req->user_data, req->result,
+ 			      io_put_rw_kbuf(req));
+ 		(*nr_events)++;
+@@ -2699,10 +2688,9 @@ static void io_complete_rw_iopoll(struct kiocb *kiocb, long res, long res2)
+ 	if (kiocb->ki_flags & IOCB_WRITE)
+ 		kiocb_end_write(req);
+ 	if (unlikely(res != req->result)) {
+-		if (!(res == -EAGAIN && io_rw_should_reissue(req) &&
+-		    io_resubmit_prep(req))) {
+-			req_set_fail(req);
+-			req->flags |= REQ_F_DONT_REISSUE;
++		if (res == -EAGAIN && io_rw_should_reissue(req)) {
++			req->flags |= REQ_F_REISSUE;
++			return;
+ 		}
+ 	}
+ 
+@@ -2916,7 +2904,6 @@ static void kiocb_done(struct kiocb *kiocb, ssize_t ret,
+ {
+ 	struct io_kiocb *req = container_of(kiocb, struct io_kiocb, rw.kiocb);
+ 	struct io_async_rw *io = req->async_data;
+-	bool check_reissue = kiocb->ki_complete == io_complete_rw;
+ 
+ 	/* add previously done IO, if any */
+ 	if (io && io->bytes_done > 0) {
+@@ -2928,12 +2915,12 @@ static void kiocb_done(struct kiocb *kiocb, ssize_t ret,
+ 
+ 	if (req->flags & REQ_F_CUR_POS)
+ 		req->file->f_pos = kiocb->ki_pos;
+-	if (ret >= 0 && check_reissue)
++	if (ret >= 0 && (kiocb->ki_complete == io_complete_rw))
+ 		__io_complete_rw(req, ret, 0, issue_flags);
+ 	else
+ 		io_rw_done(kiocb, ret);
+ 
+-	if (check_reissue && (req->flags & REQ_F_REISSUE)) {
++	if (req->flags & REQ_F_REISSUE) {
+ 		req->flags &= ~REQ_F_REISSUE;
+ 		if (io_resubmit_prep(req)) {
+ 			io_req_task_queue_reissue(req);
 -- 
-Jens Axboe
+2.33.0
 

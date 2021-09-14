@@ -2,83 +2,203 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ED4F940B2C4
-	for <lists+io-uring@lfdr.de>; Tue, 14 Sep 2021 17:14:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 573D540B2EE
+	for <lists+io-uring@lfdr.de>; Tue, 14 Sep 2021 17:21:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234046AbhINPPg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 14 Sep 2021 11:15:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48910 "EHLO
+        id S234013AbhINPWc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 14 Sep 2021 11:22:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234013AbhINPPg (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 14 Sep 2021 11:15:36 -0400
-Received: from mail-il1-x12e.google.com (mail-il1-x12e.google.com [IPv6:2607:f8b0:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28677C061574
-        for <io-uring@vger.kernel.org>; Tue, 14 Sep 2021 08:14:19 -0700 (PDT)
-Received: by mail-il1-x12e.google.com with SMTP id b15so13952083ils.10
-        for <io-uring@vger.kernel.org>; Tue, 14 Sep 2021 08:14:19 -0700 (PDT)
+        with ESMTP id S233987AbhINPWc (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 14 Sep 2021 11:22:32 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4287C061574
+        for <io-uring@vger.kernel.org>; Tue, 14 Sep 2021 08:21:14 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id n27so29786344eja.5
+        for <io-uring@vger.kernel.org>; Tue, 14 Sep 2021 08:21:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=6f6HxR3BPfdHdUlWHpviXptAtwE5sJzs4ppblom14aM=;
-        b=gS9wDNVaP4nsC+3B6pUM7VYhrlhIkhnTDm7PPxKMRXtR5P1ZfFMzJmkOROEPfsx4hi
-         HU8xyej3bFowa4GTkKN6h0nfsZa1IZh1WgeHJ6c9AmYwsAxKqnMVOQY7h/K4kZftKlGF
-         9UrBudNdREOGu4rWNugOzKNl3KHwYULkefxEyel7JZSxLF4Uj+qXTQiWI9bEcqZDyt1H
-         4JDAkEztL4wyymImZwz/DesHoLeBfsj2St4zmVOZXFP7MeyL+46CqlA4cLW5IKxWRfzZ
-         efWrWpT5WilSEVeU6kguaFtVjF8klsR486JhpPQhtebcZoenkJxhOxxBHocm/cWjemIB
-         qqHw==
+        d=gmail.com; s=20210112;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mbo3lC/qag1NmdOqhE3rVtxIwQ/Vuz1lWeRNT4bf0j4=;
+        b=j9xhnREQPcB/VPmlO7B8rhJzCBHMWcTAq+FVQHH4hGXNHfGifgIh4OV103fZQywMjH
+         7L550MTPgw9ieoMR29ROEEtzGVsoDQAckQzCOg+rUNOlqqeRFNvraCncPt7hESQggErk
+         r4AZS37951AARMPp5o02P4hIv6pHBw6sNCchSfqYoujapUOvh/kvTlsfAfcZ3z1uppOR
+         dxseP/ah4I9/Sb25eCq0bsCCwRm41jzyRaRE26MHejElpehiOwvC7OJk1FmcpE/W/LzW
+         Ir+cfVceHVuOQpfnfW95g8hETmW3asyHuztNUG4ags566m9WRMoAZaxANBp/NG7pBS6n
+         F+nw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=6f6HxR3BPfdHdUlWHpviXptAtwE5sJzs4ppblom14aM=;
-        b=ys6ny1qva4qNsK5KxuCaIxzDC1PTDH2ZqyKrbGCL7e8bM4TH6NCV2LQqbz/JBwBWQ7
-         kyXVPn+kawDEzvFHwo8KRbSBQcmiepTLE1/PF9dyC+TmhLKEBKfmZkithv0JLO1qxDk6
-         3TYY98Mxu7c1WYLGUxkbq3YWuBCsvcoRL5TtOWuR6xt+oONR0DNzWQebCKPwFdAA7eLR
-         25FGzWcvKZAYiVXConIEFtnhCWWmRpT5BNPz0omqnKAnSIl1+vHk2tMJaWERoIah1NZ/
-         DPG+ibMxm2Xz47yPAHsyGczXFo034XenEyJHY1TBLEiP83vbIP6SW9c+sNp7GCTaMT8c
-         gYjg==
-X-Gm-Message-State: AOAM533Muxgg3WMFWdC5y0AxbYMj5B9SBYk/LQH2m1GNuiMh/LZla1f/
-        WrS8FMQ3/KdbC0v/7Mtw+ZsCZJD2EV+aBOhDYUY=
-X-Google-Smtp-Source: ABdhPJxlUdZLLOqgDzhkpychqFqVuo+mAwEijsVojn+WU65SqWdCKF6ic+02wBO+nsZ+BKN17hjsGg==
-X-Received: by 2002:a92:c8c7:: with SMTP id c7mr10097631ilq.62.1631632458465;
-        Tue, 14 Sep 2021 08:14:18 -0700 (PDT)
-Received: from [192.168.1.30] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id v1sm6720515ile.83.2021.09.14.08.14.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Sep 2021 08:14:18 -0700 (PDT)
-Subject: Re: [PATCH v2 5.15] io_uring: auto-removal for direct open/accept
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-Cc:     "Franz-B . Tuneke" <franz-bernhard.tuneke@tu-dortmund.de>
-References: <c896f14ea46b0eaa6c09d93149e665c2c37979b4.1631632300.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <de129f22-1a44-8ddf-ec42-fa6fba85d7fe@kernel.dk>
-Date:   Tue, 14 Sep 2021 09:14:17 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        bh=mbo3lC/qag1NmdOqhE3rVtxIwQ/Vuz1lWeRNT4bf0j4=;
+        b=zWZbrvIZwU/v1uxoYyPzztqG3QuC3d0GCp7mcN8hUxSt2QNoFkj5VRyijgeKlDqfks
+         JoDNlx58blEMOQf9UJ9midiuMzAvsYjoXe2Mg2e8YO6VQYSr2HcYgBX0hvhYIhnCYno9
+         VHWc6Pnaxel+rfeGjwQCMFzFhqZvaB0Xam8hNOtdXbRROyEF1v9YdW/Dw6oenk5dlknR
+         1WMbzWbRdDLxHH7x2E+VqyMGAjAXushAM79API8dwqG2SYZK+cSh3WQ3veheLHHA23TU
+         S1MWNaaa5pLj63sJTLzsyRAGS+8pAPFD3XVyoxJQPgSoNtPcuK64gZG+p0C2PsKMwvf6
+         5BQA==
+X-Gm-Message-State: AOAM530hNsP/sM7duI5wk12hE8sovDnmZGYpl9rzTx9jFkM+rE1O3d+z
+        GCM2L3/RuhF4XqtHDeLShKeEOZsqfbo=
+X-Google-Smtp-Source: ABdhPJx192uufmfaEAG7KU3Nbzm9kT7RU6hyZ63mN4Y2nfD70nppVJpY65jP/eoKr3+oIdoHlB4dDA==
+X-Received: by 2002:a17:907:33ce:: with SMTP id zk14mr5746048ejb.84.1631632873182;
+        Tue, 14 Sep 2021 08:21:13 -0700 (PDT)
+Received: from localhost.localdomain ([85.255.232.220])
+        by smtp.gmail.com with ESMTPSA id by26sm3634958edb.69.2021.09.14.08.21.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Sep 2021 08:21:12 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [PATCH liburing 1/1] tests: test open into taken fixed slot
+Date:   Tue, 14 Sep 2021 16:20:31 +0100
+Message-Id: <d87d67a95dc816556e3e38440bf34163fba3861f.1631632805.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.33.0
 MIME-Version: 1.0
-In-Reply-To: <c896f14ea46b0eaa6c09d93149e665c2c37979b4.1631632300.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/14/21 9:12 AM, Pavel Begunkov wrote:
-> It might be inconvenient that direct open/accept deviates from the
-> update semantics and fails if the slot is taken instead of removing a
-> file sitting there. Implement this auto-removal.
-> 
-> Note that removal might need to allocate and so may fail. However, if an
-> empty slot is specified, it's guaraneed to not fail on the fd
-> installation side for valid userspace programs. It's needed for users
-> who can't tolerate such failures, e.g. accept where the other end
-> never retries.
+Add a test case verifying opening into an already teaken fixed file
+slot.
 
-Can you submit a liburing test case for this too?
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ test/openat2.c | 84 +++++++++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 76 insertions(+), 8 deletions(-)
 
+diff --git a/test/openat2.c b/test/openat2.c
+index 7838c05..379c61e 100644
+--- a/test/openat2.c
++++ b/test/openat2.c
+@@ -9,6 +9,7 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <fcntl.h>
++#include <sys/uio.h>
+ 
+ #include "helpers.h"
+ #include "liburing.h"
+@@ -117,11 +118,6 @@ static int test_open_fixed(const char *path, int dfd)
+ 		return -1;
+ 	}
+ 
+-	ret = test_openat2(&ring, path, dfd, true, 0);
+-	if (ret != -EBADF) {
+-		fprintf(stderr, "bogus double register %d\n", ret);
+-		return -1;
+-	}
+ 	io_uring_queue_exit(&ring);
+ 	return 0;
+ }
+@@ -152,25 +148,90 @@ static int test_open_fixed_fail(const char *path, int dfd)
+ 	ret = test_openat2(&ring, path, dfd, true, 1);
+ 	if (ret != -EINVAL) {
+ 		fprintf(stderr, "install out of bounds, %i\n", ret);
+-		return 1;
++		return -1;
+ 	}
+ 
+ 	ret = test_openat2(&ring, path, dfd, true, (1u << 16));
+ 	if (ret != -EINVAL) {
+ 		fprintf(stderr, "install out of bounds or u16 overflow, %i\n", ret);
+-		return 1;
++		return -1;
+ 	}
+ 
+ 	ret = test_openat2(&ring, path, dfd, true, (1u << 16) + 1);
+ 	if (ret != -EINVAL) {
+ 		fprintf(stderr, "install out of bounds or u16 overflow, %i\n", ret);
+-		return 1;
++		return -1;
+ 	}
+ 
+ 	io_uring_queue_exit(&ring);
+ 	return 0;
+ }
+ 
++static int test_direct_reinstall(const char *path, int dfd)
++{
++	struct io_uring_cqe *cqe;
++	struct io_uring_sqe *sqe;
++	char buf[1] = { 0xfa };
++	struct io_uring ring;
++	int ret, pipe_fds[2];
++	ssize_t ret2;
++
++	if (pipe2(pipe_fds, O_NONBLOCK)) {
++		fprintf(stderr, "pipe() failed\n");
++		return -1;
++	}
++	ret = io_uring_queue_init(8, &ring, 0);
++	if (ret) {
++		fprintf(stderr, "ring setup failed\n");
++		return -1;
++	}
++	ret = io_uring_register_files(&ring, pipe_fds, 2);
++	if (ret) {
++		fprintf(stderr, "%s: register ret=%d\n", __FUNCTION__, ret);
++		return -1;
++	}
++
++	/* reinstall into the second slot */
++	ret = test_openat2(&ring, path, dfd, true, 1);
++	if (ret != 0) {
++		fprintf(stderr, "reinstall failed, %i\n", ret);
++		return -1;
++	}
++
++	/* verify it's reinstalled, first write into the slot... */
++	sqe = io_uring_get_sqe(&ring);
++	io_uring_prep_write(sqe, 1, buf, sizeof(buf), 0);
++	sqe->flags |= IOSQE_FIXED_FILE;
++
++	ret = io_uring_submit(&ring);
++	if (ret != 1) {
++		fprintf(stderr, "sqe submit failed: %d\n", ret);
++		return -1;
++	}
++	ret = io_uring_wait_cqe(&ring, &cqe);
++	if (ret < 0) {
++		fprintf(stderr, "wait completion %d\n", ret);
++		return ret;
++	}
++	ret = cqe->res;
++	io_uring_cqe_seen(&ring, cqe);
++	if (ret != 1) {
++		fprintf(stderr, "invalid write %i\n", ret);
++		return -1;
++	}
++
++	/* ... and make sure nothing has been written to the pipe */
++	ret2 = read(pipe_fds[0], buf, 1);
++	if (ret2 != 0 && !(ret2 < 0 && errno == EAGAIN)) {
++		fprintf(stderr, "invalid pipe read, %d %d\n", errno, (int)ret2);
++		return -1;
++	}
++
++	close(pipe_fds[0]);
++	close(pipe_fds[1]);
++	io_uring_queue_exit(&ring);
++	return 0;
++}
+ 
+ int main(int argc, char *argv[])
+ {
+@@ -227,6 +288,13 @@ int main(int argc, char *argv[])
+ 		fprintf(stderr, "test_open_fixed_fail failed\n");
+ 		goto err;
+ 	}
++
++	ret = test_direct_reinstall(path, -1);
++	if (ret) {
++		fprintf(stderr, "test_direct_reinstall failed\n");
++		goto err;
++	}
++
+ done:
+ 	unlink(path);
+ 	if (do_unlink)
 -- 
-Jens Axboe
+2.33.0
 

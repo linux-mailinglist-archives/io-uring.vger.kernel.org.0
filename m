@@ -2,60 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C60240A49B
-	for <lists+io-uring@lfdr.de>; Tue, 14 Sep 2021 05:33:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B91D40A4A1
+	for <lists+io-uring@lfdr.de>; Tue, 14 Sep 2021 05:34:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239008AbhINDfN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 13 Sep 2021 23:35:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55946 "EHLO
+        id S238952AbhINDfP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 13 Sep 2021 23:35:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239071AbhINDex (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 13 Sep 2021 23:34:53 -0400
-Received: from mail-qt1-x835.google.com (mail-qt1-x835.google.com [IPv6:2607:f8b0:4864:20::835])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E72D0C061766
-        for <io-uring@vger.kernel.org>; Mon, 13 Sep 2021 20:33:36 -0700 (PDT)
-Received: by mail-qt1-x835.google.com with SMTP id b14so10199375qtb.0
-        for <io-uring@vger.kernel.org>; Mon, 13 Sep 2021 20:33:36 -0700 (PDT)
+        with ESMTP id S239066AbhINDe7 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 13 Sep 2021 23:34:59 -0400
+Received: from mail-qk1-x729.google.com (mail-qk1-x729.google.com [IPv6:2607:f8b0:4864:20::729])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F7FFC0613E2
+        for <io-uring@vger.kernel.org>; Mon, 13 Sep 2021 20:33:43 -0700 (PDT)
+Received: by mail-qk1-x729.google.com with SMTP id bk29so13212672qkb.8
+        for <io-uring@vger.kernel.org>; Mon, 13 Sep 2021 20:33:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=subject:from:to:date:message-id:in-reply-to:references:user-agent
          :mime-version:content-transfer-encoding;
-        bh=1hmr6L0fVcZTcmxPJPnof4mx/iAEjJvjvO8eEYK9GTY=;
-        b=qPuX5/vw585Sn8sXxfV2jhjIJA+UeiZ6GNll27zSXPvWdTNB/vHf1WD4O0bzXD5NHi
-         icq+MFF3VqBIDNRenVQhoK4YYfRP7v4Xd5jT8GkjpEszP8GKefKDvmOeQ/QW0eNhMntv
-         RkRLnQurKrgiOV36gV2Feb0lsqgzrxnSq8KOwhfk1/eSd4/9FOu36mqbeRdmyaKHB+et
-         DQxU3EySubFgliQLhDeVf2qbufZvRVqUOXTduk1ZmS6iZkhwnsLU2PB/LSl+YBpYvodr
-         WIaQD27zb601BeNL6ba0DzQb/wSyfzg0oxJKFGW/SV2rrWSvJxXii1hFRj5dpMK/EvJt
-         XRHA==
+        bh=54Sbzge3G+aat3VcychMMrLelhIpqQAZp6yuJG+ykt8=;
+        b=aZ6thOvMHLr+wxTevjEA1i5Ht/W/KrKBQJDrsm43lV+2/eSbhr0/w/m5LaTbRZv97v
+         13VV/f6a5EZn+YwNo+evAqqV68Rk0Q3ZSZ7p66Z50xOHLmTvSRidUUAQqWKoRmufA//s
+         TRdH5DrwLc8h6Fex7ElS7A8hxXq9SCFZnCMT2WXwEZFLdqa6eaRHhZuYOqmQZA+UPyb8
+         U6kNemODgsXPNN7mcEVByROU8emfLbr8Vnk/Yuyf9KR1xQgvIKEYcEbjkCJLJqdNEz8k
+         K9dZzuNqP701EebgEt1oQ05r+hhjxT6DR0Y1fY8t9nmU0Lbxbb7cA5vBOG5ann40QGgU
+         C7rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:from:to:date:message-id:in-reply-to
          :references:user-agent:mime-version:content-transfer-encoding;
-        bh=1hmr6L0fVcZTcmxPJPnof4mx/iAEjJvjvO8eEYK9GTY=;
-        b=TD7hsF/s1iaf/Yr3f6ZY398FxiGh96ZFEGyoytsrleEVwjqDBoD9HqgJDrwu02wYEV
-         UrxNFLmqqCtulQE7DEJ7KwLLUs8qtDuOk7OFWpNddz7EEidLFMECj7x/PzhBCf+WMtiy
-         kKpRI4Iyq8XeGRRiRU819/YuvmphPjrdW0g12VdroSwmXAadcpdjgj8MSYJvCOHP6SlQ
-         eSn2tCo91tlhYzt6moy0KW8xc0FdM3R0/xLyuOCaxR0UaI3jPOA3yGfomqzMpxYESd/A
-         XvGD9LNewji37XarkVI9g7QdGHkQ/B2SDYG5XfB6nf/CcO7uT8YDAG5zxHxztb+2MDRK
-         oMCw==
-X-Gm-Message-State: AOAM533u51ir9nFowlGY7ULWqOPXfONJ4Lf/IXrrmxAtcgnZETIBxqM7
-        q5S8pv+QQIL2zJ7uq0p9pz0S
-X-Google-Smtp-Source: ABdhPJyIyp1hiwJfZDPM7fHYpgOdMt/MoPWfVS5fj481zKGK2WbXUsP0NNJpdTxyHYf8LDUGODkTwg==
-X-Received: by 2002:ac8:7090:: with SMTP id y16mr2821209qto.19.1631590415998;
-        Mon, 13 Sep 2021 20:33:35 -0700 (PDT)
+        bh=54Sbzge3G+aat3VcychMMrLelhIpqQAZp6yuJG+ykt8=;
+        b=STlhxOiOGXfHBkfv7e0g1quGIquvVjDwieyMBGrDgzZuCetoRtgt9man6dGFK84PJw
+         aw6TnMDJEsO8rRU7ovW48xyKS681Kv8/MkMgmFZRnsyUmMhpZwX2ulIH/G+85HYnz6n+
+         xeZuZPn6OfzDjPtD3Ue87jQbzszxZiQP0WlJ4M//CW5GbvvvG7z1IO4MIto8vtU56Gfs
+         fyN+xlo9BAsEpUAIbbm/1r8NU/xr0dhFswjnrZOVH8VnQUo8k11pYSJrOdG/5P660JCn
+         6nAMl8cvRSAeQN/VD2jNGGuaOCb+pEe3+fAvItin2iKnLHxu5DmuUv34LOEXfTL9+L2a
+         Zhwg==
+X-Gm-Message-State: AOAM532I0sh+vhIZmyRI5zSUxj4fIdwUlWpE7VhFDaoHUWBfKTZAdW/C
+        F4y8z8IXW9UUd0OI33rEW+9Y
+X-Google-Smtp-Source: ABdhPJxCTwAyD5dWI5ou1pL9SVHqbRt3WXQyP3KXoalYRryIJkcZ1TtZ+jPi+4HNVU0jJ4AhyxpGgA==
+X-Received: by 2002:a37:6691:: with SMTP id a139mr2900014qkc.310.1631590422163;
+        Mon, 13 Sep 2021 20:33:42 -0700 (PDT)
 Received: from localhost (pool-96-237-52-188.bstnma.fios.verizon.net. [96.237.52.188])
-        by smtp.gmail.com with ESMTPSA id g13sm6740138qkk.110.2021.09.13.20.33.35
+        by smtp.gmail.com with ESMTPSA id b1sm5212672qtj.76.2021.09.13.20.33.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Sep 2021 20:33:35 -0700 (PDT)
-Subject: [PATCH v3 7/8] selinux: add support for the io_uring access controls
+        Mon, 13 Sep 2021 20:33:41 -0700 (PDT)
+Subject: [PATCH v3 8/8] Smack: Brutalist io_uring support with debug
 From:   Paul Moore <paul@paul-moore.com>
 To:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
         linux-audit@redhat.com, io-uring@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
         Pavel Begunkov <asml.silence@gmail.com>,
         Kumar Kartikeya Dwivedi <memxor@gmail.com>
-Date:   Mon, 13 Sep 2021 23:33:35 -0400
-Message-ID: <163159041500.470089.11310853524829799938.stgit@olly>
+Date:   Mon, 13 Sep 2021 23:33:41 -0400
+Message-ID: <163159042110.470089.9405201508228711833.stgit@olly>
 In-Reply-To: <163159032713.470089.11728103630366176255.stgit@olly>
 References: <163159032713.470089.11728103630366176255.stgit@olly>
 User-Agent: StGit/1.1
@@ -66,115 +66,90 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This patch implements two new io_uring access controls, specifically
-support for controlling the io_uring "personalities" and
-IORING_SETUP_SQPOLL.  Controlling the sharing of io_urings themselves
-is handled via the normal file/inode labeling and sharing mechanisms.
+From: Casey Schaufler <casey@schaufler-ca.com>
 
-The io_uring { override_creds } permission restricts which domains
-the subject domain can use to override it's own credentials.
-Granting a domain the io_uring { override_creds } permission allows
-it to impersonate another domain in io_uring operations.
+Add Smack privilege checks for io_uring. Use CAP_MAC_OVERRIDE
+for the override_creds case and CAP_MAC_ADMIN for creating a
+polling thread. These choices are based on conjecture regarding
+the intent of the surrounding code.
 
-The io_uring { sqpoll } permission restricts which domains can create
-asynchronous io_uring polling threads.  This is important from a
-security perspective as operations queued by this asynchronous thread
-inherit the credentials of the thread creator by default; if an
-io_uring is shared across process/domain boundaries this could result
-in one domain impersonating another.  Controlling the creation of
-sqpoll threads, and the sharing of io_urings across processes, allow
-policy authors to restrict the ability of one domain to impersonate
-another via io_uring.
-
-As a quick summary, this patch adds a new object class with two
-permissions:
-
- io_uring { override_creds sqpoll }
-
-These permissions can be seen in the two simple policy statements
-below:
-
-  allow domA_t domB_t : io_uring { override_creds };
-  allow domA_t self : io_uring { sqpoll };
-
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+[PM: make the smack_uring_* funcs static, remove debug code]
 Signed-off-by: Paul Moore <paul@paul-moore.com>
 
 ---
 v3:
-- removed work-in-progress warning from the description
+- removed debug code
 v2:
-- made the selinux_uring_* funcs static
-- removed the debugging code
+- made the smack_uring_* funcs static
 v1:
 - initial draft
 ---
- security/selinux/hooks.c            |   34 ++++++++++++++++++++++++++++++++++
- security/selinux/include/classmap.h |    2 ++
- 2 files changed, 36 insertions(+)
+ security/smack/smack_lsm.c |   46 ++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 6517f221d52c..012e8504ed9e 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -7111,6 +7111,35 @@ static int selinux_perf_event_write(struct perf_event *event)
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index cacbe7518519..f90ab1efeb6d 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -4691,6 +4691,48 @@ static int smack_dentry_create_files_as(struct dentry *dentry, int mode,
+ 	return 0;
  }
- #endif
  
 +#ifdef CONFIG_IO_URING
 +/**
-+ * selinux_uring_override_creds - check the requested cred override
++ * smack_uring_override_creds - Is io_uring cred override allowed?
 + * @new: the target creds
 + *
 + * Check to see if the current task is allowed to override it's credentials
 + * to service an io_uring operation.
 + */
-+static int selinux_uring_override_creds(const struct cred *new)
++static int smack_uring_override_creds(const struct cred *new)
 +{
-+	return avc_has_perm(&selinux_state, current_sid(), cred_sid(new),
-+			    SECCLASS_IO_URING, IO_URING__OVERRIDE_CREDS, NULL);
++	struct task_smack *tsp = smack_cred(current_cred());
++	struct task_smack *nsp = smack_cred(new);
++
++	/*
++	 * Allow the degenerate case where the new Smack value is
++	 * the same as the current Smack value.
++	 */
++	if (tsp->smk_task == nsp->smk_task)
++		return 0;
++
++	if (smack_privileged_cred(CAP_MAC_OVERRIDE, current_cred()))
++		return 0;
++
++	return -EPERM;
 +}
 +
 +/**
-+ * selinux_uring_sqpoll - check if a io_uring polling thread can be created
++ * smack_uring_sqpoll - check if a io_uring polling thread can be created
 + *
 + * Check to see if the current task is allowed to create a new io_uring
 + * kernel polling thread.
 + */
-+static int selinux_uring_sqpoll(void)
++static int smack_uring_sqpoll(void)
 +{
-+	int sid = current_sid();
++	if (smack_privileged_cred(CAP_MAC_ADMIN, current_cred()))
++		return 0;
 +
-+	return avc_has_perm(&selinux_state, sid, sid,
-+			    SECCLASS_IO_URING, IO_URING__SQPOLL, NULL);
++	return -EPERM;
 +}
++
 +#endif /* CONFIG_IO_URING */
 +
- /*
-  * IMPORTANT NOTE: When adding new hooks, please be careful to keep this order:
-  * 1. any hooks that don't belong to (2.) or (3.) below,
-@@ -7349,6 +7378,11 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(perf_event_write, selinux_perf_event_write),
- #endif
- 
+ struct lsm_blob_sizes smack_blob_sizes __lsm_ro_after_init = {
+ 	.lbs_cred = sizeof(struct task_smack),
+ 	.lbs_file = sizeof(struct smack_known *),
+@@ -4843,6 +4885,10 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(inode_copy_up, smack_inode_copy_up),
+ 	LSM_HOOK_INIT(inode_copy_up_xattr, smack_inode_copy_up_xattr),
+ 	LSM_HOOK_INIT(dentry_create_files_as, smack_dentry_create_files_as),
 +#ifdef CONFIG_IO_URING
-+	LSM_HOOK_INIT(uring_override_creds, selinux_uring_override_creds),
-+	LSM_HOOK_INIT(uring_sqpoll, selinux_uring_sqpoll),
++	LSM_HOOK_INIT(uring_override_creds, smack_uring_override_creds),
++	LSM_HOOK_INIT(uring_sqpoll, smack_uring_sqpoll),
 +#endif
-+
- 	LSM_HOOK_INIT(locked_down, selinux_lockdown),
+ };
  
- 	/*
-diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
-index 084757ff4390..698ccfdaf82d 100644
---- a/security/selinux/include/classmap.h
-+++ b/security/selinux/include/classmap.h
-@@ -254,6 +254,8 @@ struct security_class_mapping secclass_map[] = {
- 	  { "integrity", "confidentiality", NULL } },
- 	{ "anon_inode",
- 	  { COMMON_FILE_PERMS, NULL } },
-+	{ "io_uring",
-+	  { "override_creds", "sqpoll", NULL } },
- 	{ NULL }
-   };
  
 

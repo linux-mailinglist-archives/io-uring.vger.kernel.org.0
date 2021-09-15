@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EC79840C412
-	for <lists+io-uring@lfdr.de>; Wed, 15 Sep 2021 13:04:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69E5F40C415
+	for <lists+io-uring@lfdr.de>; Wed, 15 Sep 2021 13:05:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232519AbhIOLFk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 15 Sep 2021 07:05:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40344 "EHLO
+        id S232468AbhIOLGV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 15 Sep 2021 07:06:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40514 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232313AbhIOLFk (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Sep 2021 07:05:40 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40F5BC061574
-        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 04:04:21 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id 140so1869815wma.0
-        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 04:04:21 -0700 (PDT)
+        with ESMTP id S232477AbhIOLGV (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Sep 2021 07:06:21 -0400
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB702C061574
+        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 04:05:02 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id w29so3211710wra.8
+        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 04:05:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=aGkOfyWSKRvhHFK7GxyU4tAUlG5lTmCWFHqwycyODGw=;
-        b=oZAm9KTSEm59kzn0hZHWaw8WwLf3nh4NoiW79fIBixGnz7VwivxTuvARwjviBIGAR8
-         yZq4ceENzu6iNLG+J5gYTcOdFWNeflBlf1wswrhEvT3w6GZQg4Ky1H4t+ma2u8bFdRQy
-         dSe7hAQEYaoleKll0O6doNAqZiP6ck9MxA0xRC8Oj8Q8r9Cq6yGR3XfeFsYYJrAlsxg7
-         OaVvh5Hf096JBbXeHOwsMuL5zsJkKyVy7T/urN+fYhwl7J2ZIF8H10XTne1bTQOljuKj
-         0nOl4ZzthEqrs1LpF55Coz9sl1IoeN6fDqPy/7gY0lhcVvqWvFfWpQrlmmlEDzZ6q8cu
-         CVnw==
+        bh=GSn5bVYw+bdxN+Baum6A+bIQeYJFS0/094pVNh4FOF8=;
+        b=dY0iTSAhqpsJ/Mz1b3l34lrqU8GM2QrtnuZ7Kiu2lVCATHJF4EAv8YLnWhVrv/+lW2
+         Pc9+z9r7m1VKvOq6V9xUvt8wGBSLmUd6WGCJ3Ls3AdKzv3TO2EPoGeeovdKocG5BvSyO
+         pqTAnWzGIio8dtqyM8DlkCr4K1GdjeUX2hjCcbOa0X9UJ5VBeFyMp3MKC/uaz5YnJoIY
+         CUyc9PBVAJW2LIk5e3gEom9jXyij5HArZU2J4Al5h8G3CwnJ+jf2T5JTLTLrNV0g6u2J
+         Bm17tAtVf7dRNMJPxOYnCe/3BQ+MhCXRFnNkniWtBruiE3cu90y66JxH9ZX+YRw/LLHr
+         EsqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=aGkOfyWSKRvhHFK7GxyU4tAUlG5lTmCWFHqwycyODGw=;
-        b=5MlUGlADnjX2F6GH5jYId1bmp/nzahUvcnNLwvMh8TDHJ16y0CnLdG2zeaNNMqTpqp
-         x5lc6P+ieFi1NckTyzwtG7edcgRikTLIn9djzKq7kHCodTuaOo3nJAXxs+ngw19079ps
-         9hGdmf0kPdDT3LiYDm7cTBfItGZBXVN6zPqAR13dHNy0GqkAJPgaYybqjsDPdRfd5GYr
-         pjVTNW0+cbLUBFvplZ5m8wxKS+Y9LG1Kaj9YS5Z9qWcpmE3hIwiez0PRb6rEuva4Nxg9
-         2VNHJ9vyEz5HnBBcRlTyVdz5ypzp3xqCmcvxRsFxDg+y9EvpW5AhQl7EPXjxH63Cuafr
-         664w==
-X-Gm-Message-State: AOAM532hqGV+HitdivlT6/8o2bDBpWt6f8KqOy/5rjC7CiIZXmYriNZI
-        WjEfWIaKUoqa07W+S5jZQgYr51I8Lgs=
-X-Google-Smtp-Source: ABdhPJy2LueiH4bMPt1YV3ee9sEzTGp8olh1HphxF1aH/+yjZIl9ZH89h7gBeLyUvsu9e4rdkw/Gcg==
-X-Received: by 2002:a1c:1b4f:: with SMTP id b76mr3664832wmb.161.1631703859741;
-        Wed, 15 Sep 2021 04:04:19 -0700 (PDT)
+        bh=GSn5bVYw+bdxN+Baum6A+bIQeYJFS0/094pVNh4FOF8=;
+        b=VwOb10iC3DoOQneXXIWy9VE1XeH5ltJDnT92LWGq8YRqT+9rQYoSG0L6/MQATiLSMq
+         z60wnDkB+beaBK8mrr0t2AK0aS8UvptMB/7s9yKrFimsm9T4P38hiOQSEPYyCz55j0ig
+         gYz76VdQMxr2tXnePPhqvVNrbT1KASepSfOI+60Cby2u4xeK2w0VDMUu9SYARU7S5k68
+         sELgLJRLRtWiVc/7fL3qvaK52/rCQ/34G8p5lMgAniYV9h8IUt2GWsGbUDyxCfLIiVlf
+         DvAPBx9BCdidKVdhlnrt5R5IGRHd4RI2YMHQKkA+c9LjpqmtrXnLGXXLwyUUAMtcDDwn
+         CyyQ==
+X-Gm-Message-State: AOAM532kt7UZSWHzdfkvG03yC3u2Ow5QFAlUGieJlwk7Ei07bSU//an0
+        hAIS2UTB3KxwPKXV1I8/H47rGBDM8iw=
+X-Google-Smtp-Source: ABdhPJzgpU3VJOsjw+6f7pcxI465LZ2FkvEGjBjF4ZqKZ/9ZSrrhPOXiNd0ZCHq8gu7zHdNQq6IiBw==
+X-Received: by 2002:a5d:4f91:: with SMTP id d17mr4325087wru.285.1631703901190;
+        Wed, 15 Sep 2021 04:05:01 -0700 (PDT)
 Received: from localhost.localdomain ([185.69.144.239])
-        by smtp.gmail.com with ESMTPSA id g9sm4098986wmg.21.2021.09.15.04.04.19
+        by smtp.gmail.com with ESMTPSA id z7sm16608753wre.72.2021.09.15.04.05.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Sep 2021 04:04:19 -0700 (PDT)
+        Wed, 15 Sep 2021 04:05:00 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH for-next] io_uring: optimise io_req_init() sqe flags checks
-Date:   Wed, 15 Sep 2021 12:03:38 +0100
-Message-Id: <dccfb9ab2ab0969a2d8dc59af88fa0ce44eeb1d5.1631703764.git.asml.silence@gmail.com>
+Subject: [PATCH for-next] io_uring: remove ctx referencing from complete_post
+Date:   Wed, 15 Sep 2021 12:04:20 +0100
+Message-Id: <60a0e96434c16ab4fe587651448290d61ec9a113.1631703756.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.33.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -59,76 +59,41 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-IOSQE_IO_DRAIN is quite marginal and we don't care too much about
-IOSQE_BUFFER_SELECT. Save to ifs and hide both of them under
-SQE_VALID_FLAGS check. Now we first check whether it uses a "safe"
-subset, i.e. without DRAIN and BUFFER_SELECT, and only if it's not
-true we test the rest of the flags.
+Now completions are done from task context, that means that it's either
+the task itself, task_work or io-wq worker. In all those cases the ctx
+will be staying alive by mutexing, explicit referencing or req
+references by iowq. Remove extra ctx pinning from
+io_req_complete_post().
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 29 +++++++++++++++++------------
- 1 file changed, 17 insertions(+), 12 deletions(-)
+ fs/io_uring.c | 10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index f4dcdda9d4ae..511fb8052ae9 100644
+index 511fb8052ae9..c23f3218d52b 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -103,9 +103,11 @@
- 
- #define IORING_MAX_REG_BUFFERS	(1U << 14)
- 
--#define SQE_VALID_FLAGS	(IOSQE_FIXED_FILE|IOSQE_IO_DRAIN|IOSQE_IO_LINK|	\
--				IOSQE_IO_HARDLINK | IOSQE_ASYNC | \
--				IOSQE_BUFFER_SELECT)
-+#define SQE_COMMON_FLAGS (IOSQE_FIXED_FILE | IOSQE_IO_LINK | \
-+			  IOSQE_IO_HARDLINK | IOSQE_ASYNC)
-+
-+#define SQE_VALID_FLAGS	(SQE_COMMON_FLAGS|IOSQE_BUFFER_SELECT|IOSQE_IO_DRAIN)
-+
- #define IO_REQ_CLEAN_FLAGS (REQ_F_BUFFER_SELECTED | REQ_F_NEED_CLEANUP | \
- 				REQ_F_POLLED | REQ_F_INFLIGHT | REQ_F_CREDS)
- 
-@@ -7044,20 +7046,21 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
- 	req->fixed_rsrc_refs = NULL;
- 	req->task = current;
- 
--	/* enforce forwards compatibility on users */
--	if (unlikely(sqe_flags & ~SQE_VALID_FLAGS))
--		return -EINVAL;
- 	if (unlikely(req->opcode >= IORING_OP_LAST))
- 		return -EINVAL;
-+	if (unlikely(sqe_flags & ~SQE_COMMON_FLAGS)) {
-+		/* enforce forwards compatibility on users */
-+		if (sqe_flags & ~SQE_VALID_FLAGS)
-+			return -EINVAL;
-+		if ((sqe_flags & IOSQE_BUFFER_SELECT) &&
-+		    !io_op_defs[req->opcode].buffer_select)
-+			return -EOPNOTSUPP;
-+		if (sqe_flags & IOSQE_IO_DRAIN)
-+			ctx->drain_active = true;
-+	}
- 	if (!io_check_restriction(ctx, req, sqe_flags))
- 		return -EACCES;
- 
--	if ((sqe_flags & IOSQE_BUFFER_SELECT) &&
--	    !io_op_defs[req->opcode].buffer_select)
--		return -EOPNOTSUPP;
--	if (unlikely(sqe_flags & IOSQE_IO_DRAIN))
--		ctx->drain_active = true;
+@@ -1816,17 +1816,11 @@ static void io_req_complete_post(struct io_kiocb *req, long res,
+ 		io_put_task(req->task, 1);
+ 		list_add(&req->inflight_entry, &ctx->locked_free_list);
+ 		ctx->locked_free_nr++;
+-	} else {
+-		if (!percpu_ref_tryget(&ctx->refs))
+-			req = NULL;
++		percpu_ref_put(&ctx->refs);
+ 	}
+ 	io_commit_cqring(ctx);
+ 	spin_unlock(&ctx->completion_lock);
 -
- 	personality = READ_ONCE(sqe->personality);
- 	if (personality) {
- 		req->creds = xa_load(&ctx->personalities, personality);
-@@ -10917,6 +10920,8 @@ static int __init io_uring_init(void)
+-	if (req) {
+-		io_cqring_ev_posted(ctx);
+-		percpu_ref_put(&ctx->refs);
+-	}
++	io_cqring_ev_posted(ctx);
+ }
  
- 	/* should fit into one byte */
- 	BUILD_BUG_ON(SQE_VALID_FLAGS >= (1 << 8));
-+	BUILD_BUG_ON(SQE_COMMON_FLAGS >= (1 << 8));
-+	BUILD_BUG_ON((SQE_VALID_FLAGS | SQE_COMMON_FLAGS) != SQE_VALID_FLAGS);
- 
- 	BUILD_BUG_ON(ARRAY_SIZE(io_op_defs) != IORING_OP_LAST);
- 	BUILD_BUG_ON(__REQ_F_LAST_BIT > 8 * sizeof(int));
+ static inline bool io_req_needs_clean(struct io_kiocb *req)
 -- 
 2.33.0
 

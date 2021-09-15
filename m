@@ -2,156 +2,131 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BA6C740CB33
-	for <lists+io-uring@lfdr.de>; Wed, 15 Sep 2021 18:50:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09A4940CC61
+	for <lists+io-uring@lfdr.de>; Wed, 15 Sep 2021 20:12:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230481AbhIOQvc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 15 Sep 2021 12:51:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36676 "EHLO
+        id S230203AbhIOSNi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 15 Sep 2021 14:13:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230240AbhIOQv3 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Sep 2021 12:51:29 -0400
-Received: from mail-qv1-xf34.google.com (mail-qv1-xf34.google.com [IPv6:2607:f8b0:4864:20::f34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6E3AC061764
-        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 09:50:10 -0700 (PDT)
-Received: by mail-qv1-xf34.google.com with SMTP id z12so2274147qvx.5
-        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 09:50:10 -0700 (PDT)
+        with ESMTP id S229479AbhIOSNi (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Sep 2021 14:13:38 -0400
+Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A913C061574
+        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 11:12:19 -0700 (PDT)
+Received: by mail-io1-xd30.google.com with SMTP id n24so4612564ion.10
+        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 11:12:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:date:message-id:in-reply-to:references:user-agent
-         :mime-version:content-transfer-encoding;
-        bh=znV6h22uLT4tju8GfDCyoAJth/iE5nhq2gX552Nh+J8=;
-        b=yR4M9FMq5YkZZZnLVBGoHE8n/L7LBcuRYu45AIK6rpu6q86Bt8q97V42UpmZakk9Hk
-         qy1Abyuha691Im0rYc9EK/tOxPEZ+1p++dVyuU49SBOnF3DsCPgp/ECkkaOcSk9hOYg9
-         uZwNWDENAneb/b3kwwfPpFtKTclqgTySmd7avIWwSBqFJauyZ+YBc6bH4I/Gmz4clP5w
-         UOG2/ZoGWt1ti8+ruNUFKiGZJPPEEa2XjAF0DA2xVI/cJ3BaH4r06uP8JDKIZQ63Cap9
-         ayT/rIEu7My8B35KdwQFfy0AsExXY/vMA5Y0BemiwrEF4O/6W75CvXEWvQeBY3Bhk5kO
-         rFyQ==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=qmtfPSicZt4+W2xOw2eszJcd4ZX5j/8yAZIvINEaqeI=;
+        b=FQoBMAFPRgxPefJNqhuYC1ycRXDOTjCVKeT+UiN4mRGYXHlPaPNCeAQAQr6ipL+ANA
+         V8w2xDHKUi9HrakNPg2Bw9lDPKEAdwx5XED0kW8hur+XT7xD1YVIf5U/cWr8wQtjidvN
+         wh/pLqEkXmljXk9SJLHQjp662qj+KXrUMFqlXfyJfi7dcNodAaE6Z/jm5B+xvLKL0zjF
+         B2nj7day+w03GiIMfWwWXLeiBDHNQxXJPz2g4efYV3ILXzmcS0CkH+BK2NancUITIhGx
+         HGz4JOg3rJ0LWP37/5c1YH5uwQO6PhXNDoaVT2QOWBJZHj5SgI9BtuJuyEa27w6A8to1
+         ngRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:from:to:date:message-id:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=znV6h22uLT4tju8GfDCyoAJth/iE5nhq2gX552Nh+J8=;
-        b=6XpK7E0bx7HNp+/C92C+azKO/kDn6MyPKdCZ+bkKCJh2P/mLKSmlIkD3Uaf3uiDeLG
-         XuGtWFF3Zp5hs/0ea6vXHvSSksxRpfIm+i/Mbo17dePAKuRaUom3NFoCenHK1t8TArlT
-         iIE2Kua2nigB4oUwhTDsiJLGYsVTRo1Crigd2qbg7AJdWGHEZdVa4pQpEuZlCK8t9fXZ
-         RARPIRkEaXFWkFp3SEofKJVCUGeS9DDKF1QY4ADkpuCWjSbFgsDlPi43Q8MLQ/bRyTaY
-         UWz/wQyU2aSc4Vgoh9d3NsS3O5S7xHz/iuyrqO8CuUkWcMUOM8PIIZ3OXr+MD2I1lwJN
-         JrGw==
-X-Gm-Message-State: AOAM533yT+4RNIqixd1gD1XO380RFDrIfjKAk6gOlc1iF442LCO+AeHt
-        M796NpiovzvCF5AANqpoH6v3
-X-Google-Smtp-Source: ABdhPJx75T0dQPzt4WSic6uHD74Uop3/gZqSo+/ev3KVEiS5rzNOA3M5qoWYDRrYR2z4q+uilRE4LA==
-X-Received: by 2002:a05:6214:1394:: with SMTP id g20mr812980qvz.21.1631724609746;
-        Wed, 15 Sep 2021 09:50:09 -0700 (PDT)
-Received: from localhost (pool-96-237-52-188.bstnma.fios.verizon.net. [96.237.52.188])
-        by smtp.gmail.com with ESMTPSA id w20sm377308qkj.116.2021.09.15.09.50.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Sep 2021 09:50:09 -0700 (PDT)
-Subject: [PATCH v4 8/8] Smack: Brutalist io_uring support
-From:   Paul Moore <paul@paul-moore.com>
-To:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>
-Date:   Wed, 15 Sep 2021 12:50:08 -0400
-Message-ID: <163172460848.88001.15344229885190060624.stgit@olly>
-In-Reply-To: <163172413301.88001.16054830862146685573.stgit@olly>
-References: <163172413301.88001.16054830862146685573.stgit@olly>
-User-Agent: StGit/1.1
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=qmtfPSicZt4+W2xOw2eszJcd4ZX5j/8yAZIvINEaqeI=;
+        b=xbNk1YX0+5Xqt0jNUnnmwWNQlTaAVNPeqULwZgwlDcv26yjdwBeqNB2okzAmfC8Pax
+         pZYmCiarrHRZVcgfYNgMPoqDam4+qmrjOqP0LazI3NxaQenFcP8UlIKVtGqfLRJVVpIx
+         S7GnmSzfMJcZ+OMF19McT+D8nMspS/BQ7EQQIHu8CfvvDURt1BvZvQQb5s0e9GErcoSC
+         UzQJ0f6I2Hfve1WQG7XBn4/NmstatGLvkBqFbPhh6yljnYRf/fE+a1JuXeVWnUGDflxm
+         /7jBSbd7CNHQLdY698+DN6NZrHuV0t2/jknq/lnssKKRhxQxHCKT8iAeTGGpnpldGHtX
+         2+dg==
+X-Gm-Message-State: AOAM531VQWTDJBhfAeQl9Aa8DyP2dVx8qnHZJEsFNUJ9ko7frGqC/+iA
+        owFX5tqQNKLLg10FUDe/XCFLrUjZMVAEK5oW8eA=
+X-Google-Smtp-Source: ABdhPJwQLuFHVEAc/C8enU+7Z2DY367nDmN1D1cBfRP90xSgmKTKUVhS3Uzr+T6ofKInOsfOLEXUsA==
+X-Received: by 2002:a5d:9488:: with SMTP id v8mr1090849ioj.195.1631729538420;
+        Wed, 15 Sep 2021 11:12:18 -0700 (PDT)
+Received: from [192.168.1.30] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id r16sm348008ile.66.2021.09.15.11.12.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Sep 2021 11:12:17 -0700 (PDT)
+Subject: Re: [PATCH -next] io-wq: Remove duplicate code in
+ io_workqueue_create()
+To:     Hao Xu <haoxu@linux.alibaba.com>,
+        Bixuan Cui <cuibixuan@huawei.com>,
+        linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+Cc:     asml.silence@gmail.com, Joseph Qi <joseph.qi@linux.alibaba.com>
+References: <20210911085847.34849-1-cuibixuan@huawei.com>
+ <49d9bb13-a7b3-48b5-20ef-d3b72052f92b@linux.alibaba.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <ba41595d-d7a7-4641-3c4c-26ddfe01eaed@kernel.dk>
+Date:   Wed, 15 Sep 2021 12:12:12 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <49d9bb13-a7b3-48b5-20ef-d3b72052f92b@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Casey Schaufler <casey@schaufler-ca.com>
+On 9/12/21 9:36 AM, Hao Xu wrote:
+> 在 2021/9/11 下午4:58, Bixuan Cui 写道:
+>> While task_work_add() in io_workqueue_create() is true,
+>> then duplicate code is executed:
+>>
+>>    -> clear_bit_unlock(0, &worker->create_state);
+>>    -> io_worker_release(worker);
+>>    -> atomic_dec(&acct->nr_running);
+>>    -> io_worker_ref_put(wq);
+>>    -> return false;
+>>
+>>    -> clear_bit_unlock(0, &worker->create_state); // back to io_workqueue_create()
+>>    -> io_worker_release(worker);
+>>    -> kfree(worker);
+>>
+>> The io_worker_release() and clear_bit_unlock() are executed twice.
+>>
+>> Fixes: 3146cba99aa2 ("io-wq: make worker creation resilient against signals")
+>> Signed-off-by: Bixuan Cui <cuibixuan@huawei.com>
+>> ---
+>>   fs/io-wq.c | 9 ++++-----
+>>   1 file changed, 4 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/fs/io-wq.c b/fs/io-wq.c
+>> index 6c55362c1f99..95d0eaed7c00 100644
+>> --- a/fs/io-wq.c
+>> +++ b/fs/io-wq.c
+>> @@ -329,8 +329,10 @@ static bool io_queue_worker_create(struct io_worker *worker,
+>>   
+>>   	init_task_work(&worker->create_work, func);
+>>   	worker->create_index = acct->index;
+>> -	if (!task_work_add(wq->task, &worker->create_work, TWA_SIGNAL))
+>> +	if (!task_work_add(wq->task, &worker->create_work, TWA_SIGNAL)) {
+>> +		clear_bit_unlock(0, &worker->create_state);
+>>   		return true;
+>> +	}
+>>   	clear_bit_unlock(0, &worker->create_state);
+>>   fail_release:
+>>   	io_worker_release(worker);
+>> @@ -723,11 +725,8 @@ static void io_workqueue_create(struct work_struct *work)
+>>   	struct io_worker *worker = container_of(work, struct io_worker, work);
+>>   	struct io_wqe_acct *acct = io_wqe_get_acct(worker);
+>>   
+>> -	if (!io_queue_worker_create(worker, acct, create_worker_cont)) {
+>> -		clear_bit_unlock(0, &worker->create_state);
+>> -		io_worker_release(worker);
+>> +	if (!io_queue_worker_create(worker, acct, create_worker_cont))
+>>   		kfree(worker);
+>> -	}
+>>   }
+>>   
+>>   static bool create_io_worker(struct io_wq *wq, struct io_wqe *wqe, int index)
+>>
+> AFAIK, this looks reasonable for me.
 
-Add Smack privilege checks for io_uring. Use CAP_MAC_OVERRIDE
-for the override_creds case and CAP_MAC_ADMIN for creating a
-polling thread. These choices are based on conjecture regarding
-the intent of the surrounding code.
+I took that as a reviewed-by, let me know if that isn't correct.
 
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-[PM: make the smack_uring_* funcs static, remove debug code]
-Signed-off-by: Paul Moore <paul@paul-moore.com>
-
----
-v4:
-- updated subject line
-v3:
-- removed debug code
-v2:
-- made the smack_uring_* funcs static
-v1:
-- initial draft
----
- security/smack/smack_lsm.c |   46 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
-
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index cacbe7518519..f90ab1efeb6d 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -4691,6 +4691,48 @@ static int smack_dentry_create_files_as(struct dentry *dentry, int mode,
- 	return 0;
- }
- 
-+#ifdef CONFIG_IO_URING
-+/**
-+ * smack_uring_override_creds - Is io_uring cred override allowed?
-+ * @new: the target creds
-+ *
-+ * Check to see if the current task is allowed to override it's credentials
-+ * to service an io_uring operation.
-+ */
-+static int smack_uring_override_creds(const struct cred *new)
-+{
-+	struct task_smack *tsp = smack_cred(current_cred());
-+	struct task_smack *nsp = smack_cred(new);
-+
-+	/*
-+	 * Allow the degenerate case where the new Smack value is
-+	 * the same as the current Smack value.
-+	 */
-+	if (tsp->smk_task == nsp->smk_task)
-+		return 0;
-+
-+	if (smack_privileged_cred(CAP_MAC_OVERRIDE, current_cred()))
-+		return 0;
-+
-+	return -EPERM;
-+}
-+
-+/**
-+ * smack_uring_sqpoll - check if a io_uring polling thread can be created
-+ *
-+ * Check to see if the current task is allowed to create a new io_uring
-+ * kernel polling thread.
-+ */
-+static int smack_uring_sqpoll(void)
-+{
-+	if (smack_privileged_cred(CAP_MAC_ADMIN, current_cred()))
-+		return 0;
-+
-+	return -EPERM;
-+}
-+
-+#endif /* CONFIG_IO_URING */
-+
- struct lsm_blob_sizes smack_blob_sizes __lsm_ro_after_init = {
- 	.lbs_cred = sizeof(struct task_smack),
- 	.lbs_file = sizeof(struct smack_known *),
-@@ -4843,6 +4885,10 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(inode_copy_up, smack_inode_copy_up),
- 	LSM_HOOK_INIT(inode_copy_up_xattr, smack_inode_copy_up_xattr),
- 	LSM_HOOK_INIT(dentry_create_files_as, smack_dentry_create_files_as),
-+#ifdef CONFIG_IO_URING
-+	LSM_HOOK_INIT(uring_override_creds, smack_uring_override_creds),
-+	LSM_HOOK_INIT(uring_sqpoll, smack_uring_sqpoll),
-+#endif
- };
- 
- 
+-- 
+Jens Axboe
 

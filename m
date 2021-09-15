@@ -2,64 +2,66 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 75B5440C852
-	for <lists+io-uring@lfdr.de>; Wed, 15 Sep 2021 17:31:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A172E40C85A
+	for <lists+io-uring@lfdr.de>; Wed, 15 Sep 2021 17:32:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234190AbhIOPdC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 15 Sep 2021 11:33:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46004 "EHLO
+        id S238000AbhIOPeM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 15 Sep 2021 11:34:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46250 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234154AbhIOPdB (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Sep 2021 11:33:01 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A12D4C061574
-        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 08:31:41 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id n7-20020a05600c3b8700b002f8ca941d89so2333086wms.2
-        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 08:31:41 -0700 (PDT)
+        with ESMTP id S234154AbhIOPeI (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Sep 2021 11:34:08 -0400
+Received: from mail-il1-x136.google.com (mail-il1-x136.google.com [IPv6:2607:f8b0:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62B8FC061574
+        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 08:32:49 -0700 (PDT)
+Received: by mail-il1-x136.google.com with SMTP id h29so3387691ila.2
+        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 08:32:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=J2EDhUfSKr3+xLXBcYbTTlnEPHJQPAffNe4PFsPKFSI=;
-        b=MRXTKEMLPPPS2pcABRnAFx4drCUhGDItELlSawVwgX/80Woxo2n2uofk/UFa3qJX7M
-         LcQNVsrexRfoVxoSPOGJ+s98yiJMzHvLHS/vF3lAbRHqlvnZfNz2gF1Rxz/V1PjrHXD3
-         7kTedI5F1qUlsOw1mv3wLtyIaBAto3tjUqxQgmlTMvmYrBLnIc63PijJ9pfgJ/QbQRzm
-         qkj1rrKTzorrCuzZ7QDusqvkAJLksHDW8qGPfLGSCOauVEy3G59QKekBdhlRU0GyZKb2
-         CfRjW6UP770Sn8G0P1TuXVeGh5iGVcdOJCPRjfMezFCJ3SW/8WK1iApPyMF20sx7aIrI
-         L3wA==
+        bh=oSHNnFw50NtaUug8pvKX9QcMvQT3CtTjqa5ZQCf5lYw=;
+        b=BeoejbJwto6fp6wF8J66qKTyU5kD1y18E4uGBjIXh7BsRbx3M09RvDjILvMeKiTu3J
+         Yz0oPWD/L5IDJ8WuVfpeW9HuXAJl3w5IWf3MBK4zTr3abiQRAzAdFJdGdKJZECGf9pYy
+         hOW7472vkpyvS2P78jSaMncCAiDDmxWbDNLH/bKXzsnkwDK67gyqkDsYoQzRpj8tLqQ6
+         YwhpGMD2fT/ocIuBQdPJH3DPyA5ZvB1slXXuVxWocA2lna3HMfHKcPnKVjhmOcPNnCtZ
+         10yIbkXRRz6o/yXXqvjG7o3bcBXtaBJnvOlgwTBHNiLA+uoKcdT0OTUn55GjRQR1gy40
+         85Qw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=J2EDhUfSKr3+xLXBcYbTTlnEPHJQPAffNe4PFsPKFSI=;
-        b=1N8AgmnODZ914vRF7G6mre7xaZ0Rq+eWKzvLc5mvfj9tB3WXTHHcVhVMW5jXyjKbP8
-         Gtj6g99Za+QsrlirD+G0jI6uWFtLvhLVRZtbvGsBtYejWc+tS5R8NamGo8OcwTVX4V42
-         AW3S91a+ASUEhmNd0JNKRTzbwelKSqW1odOqYYkqs5lT0X0nNj2VU4F+x2jt1FZ7DQxt
-         Nymj09OXJKNjpEK19F/GEy5UM6PeafhUaQ0gYiO4uHBRSdi+v4DQzGe7uiJkVTqHvFfO
-         ftvJ6dFBV52UnPev93y9ra5VvMnOV9PzBG7nnQZj/z9GOuzGr7eJSndqdC6QLwGuFq8T
-         qTjQ==
-X-Gm-Message-State: AOAM5316VdGxy92rRxbAQVPTsKkXaT7fJOfn8c4bczgFNbICyinyvNgo
-        c/M0b5kw25mWYnb9UkF3xqztj86oKLE=
-X-Google-Smtp-Source: ABdhPJykSplCYcLNDhxpj/61yWWUSFpkOjiM/HtbHbQpOuN+TbOcZQ9OPtnFTZGhCc6c1S9nIt3Eqw==
-X-Received: by 2002:a7b:c30b:: with SMTP id k11mr306506wmj.49.1631719900298;
-        Wed, 15 Sep 2021 08:31:40 -0700 (PDT)
-Received: from [192.168.8.197] ([185.69.144.239])
-        by smtp.gmail.com with ESMTPSA id z7sm368979wre.72.2021.09.15.08.31.39
+        bh=oSHNnFw50NtaUug8pvKX9QcMvQT3CtTjqa5ZQCf5lYw=;
+        b=FCyR+4UYeRKbKfyvIVh7dzZ+AAsMo7YZFp7bOukbygT8Xw0GDOgjKSjw43sQwnFD5r
+         KkYCOBVR4aiRdKADhjcLSIyrGLU17ia1xLX5QNQUg1v+hkv3HHPlr1+GgfuQRUVrN6CR
+         e97maIhwa0tKFQ7N/LdIKx0UXT/L9MzNE45FcE0lLFiuoSztN5au0lqG3+wkXcUd8Gsu
+         xSQ5SLGZYkwvvw2Wj5WQgmllhw/uXp05EfC2NGC4Ob0a+3w6KBhHTEUJUzlYdNpl5lZQ
+         K9//oh56KIPdIr7/w5zFLwnw41rPYOR30UapN8j9eOK/uWqWS7XfT9iQZxDBVb7rRfdW
+         RHbQ==
+X-Gm-Message-State: AOAM530I7wWw9ep/gqceT5Q+1+8si17FnLUv+zerW9npzbWwzAXFekZB
+        8LN+kv6Pv+FgYXKyon9emNFHT9VrxGhWrlOSvZQ=
+X-Google-Smtp-Source: ABdhPJxD3ZyTVXpd912PM60XFbzpkFmGhdVTrdaB29X/S58x1fx3jntc5LPRs/AMr3H0eSzlCxWRyw==
+X-Received: by 2002:a05:6e02:1305:: with SMTP id g5mr479222ilr.9.1631719968623;
+        Wed, 15 Sep 2021 08:32:48 -0700 (PDT)
+Received: from [192.168.1.30] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id b19sm136053ilc.41.2021.09.15.08.32.47
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Sep 2021 08:31:39 -0700 (PDT)
+        Wed, 15 Sep 2021 08:32:48 -0700 (PDT)
 Subject: Re: [PATCH] io_uring: add more uring info to fdinfo for debug
-To:     Jens Axboe <axboe@kernel.dk>, Hao Xu <haoxu@linux.alibaba.com>
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Hao Xu <haoxu@linux.alibaba.com>
 Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
 References: <20210913130854.38542-1-haoxu@linux.alibaba.com>
  <3ecf6b05-e92d-7d74-8f72-983ec0d790fc@kernel.dk>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <c5161c85-6e01-c949-e233-7adca5a63c46@gmail.com>
-Date:   Wed, 15 Sep 2021 16:31:05 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+ <c5161c85-6e01-c949-e233-7adca5a63c46@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <655da9c2-1926-370b-06f8-8e744111f3a7@kernel.dk>
+Date:   Wed, 15 Sep 2021 09:32:47 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <3ecf6b05-e92d-7d74-8f72-983ec0d790fc@kernel.dk>
+In-Reply-To: <c5161c85-6e01-c949-e233-7adca5a63c46@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -67,17 +69,22 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/15/21 4:26 PM, Jens Axboe wrote:
-> On 9/13/21 7:08 AM, Hao Xu wrote:
->> Developers may need some uring info to help themselves debug and address
->> issues, these info includes sqring/cqring head/tail and the detail
->> sqe/cqe info, which is very useful when it stucks.
+On 9/15/21 9:31 AM, Pavel Begunkov wrote:
+> On 9/15/21 4:26 PM, Jens Axboe wrote:
+>> On 9/13/21 7:08 AM, Hao Xu wrote:
+>>> Developers may need some uring info to help themselves debug and address
+>>> issues, these info includes sqring/cqring head/tail and the detail
+>>> sqe/cqe info, which is very useful when it stucks.
+>>
+>> I think this is a good addition, more info to help you debug a stuck case
+>> is always good. I'll queue this up for 5.16.
 > 
-> I think this is a good addition, more info to help you debug a stuck case
-> is always good. I'll queue this up for 5.16.
+> Are there limits how much we can print? I remember people were couldn't
+> even show a list of CPUs (was it proc?). The overflow list may be huge.
 
-Are there limits how much we can print? I remember people were couldn't
-even show a list of CPUs (was it proc?). The overflow list may be huge.
+It's using seq_file, so I _think_ we should be fine here. Not sure when/if
+it truncates.
 
 -- 
-Pavel Begunkov
+Jens Axboe
+

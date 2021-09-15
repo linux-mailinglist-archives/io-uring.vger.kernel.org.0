@@ -2,93 +2,79 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3475C40C721
-	for <lists+io-uring@lfdr.de>; Wed, 15 Sep 2021 16:12:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5C9C40C84A
+	for <lists+io-uring@lfdr.de>; Wed, 15 Sep 2021 17:26:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237861AbhIOONv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 15 Sep 2021 10:13:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55956 "EHLO
+        id S234154AbhIOP16 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 15 Sep 2021 11:27:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234504AbhIOONr (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Sep 2021 10:13:47 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86282C061574
-        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 07:12:21 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id o20so6436337ejd.7
-        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 07:12:21 -0700 (PDT)
+        with ESMTP id S234085AbhIOP16 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Sep 2021 11:27:58 -0400
+Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32573C061574
+        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 08:26:39 -0700 (PDT)
+Received: by mail-io1-xd30.google.com with SMTP id b10so3923752ioq.9
+        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 08:26:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=v0pohU1aHJ77epfHLj6ryM5BHHmhwa0qDe7dPwHtdd0=;
-        b=eR9PEA1KsnhcujiaSp4R8mWZA6mpDIsh7VwjmTZYtFbgFhGfhC2lDUVPNLsgqluhp1
-         ZuikeH6ISYHE0Hn7f+PMrZCFW44ut07bmJZ1SQKvFPC6gjbKsgOvLQZ9auK4V9BR8R8T
-         M2bLbsFY3FbDICQAhyIRjW6ppEhUxmEQVUaDKjMbU0nARv/4wsYZYt2AyqQQtAJZpdRY
-         5h+2cTsdVYZjWjc50/PPZAppcgb+L8yoY198lgv5cyCD/FGYpqYqoRkKbMWyBhI0bIsc
-         x6/KxbY5LcJYMtVQDTniz+9Z+fFHikG6d0ecHdSblx52D5SB7gvPkFyJ72x1ZdhpkNLb
-         NScQ==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=uhNdMnqrUuOGJjLHGNp0INA+/3+B4ztiCmheLJWqCc4=;
+        b=Lkd31Qe3IDheqacURKEta4mJMoaQV0EvWlpsDiEjWYRJWz0rhpIvCqNgJ2deNxPTQF
+         Qu8aAUYpPheo1fEnkAEEbx5ntNBcUBgQE2HhvebGMGRndlW2Cw02cp7Duw2Ih3Pom92h
+         DbDk1crWZu6Ygw5ccyZ6H+LIxFaBE5Xf/YMwCGvzA9JNK1dElGL1tuM/tkVMY0hH4xzZ
+         NBaC5URhnsiRWu1tRzPsRgqeAuaQ4Rhfiog97bFq63r65dywHjPzzuoPkFXTU04CAJAn
+         heVo4ZwhIkFGFh4C++7sO880wtpByjDF0Yry/vpmp0gfaf11/6ooGY1nbKUiwVTu4LLh
+         F6KQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=v0pohU1aHJ77epfHLj6ryM5BHHmhwa0qDe7dPwHtdd0=;
-        b=xC7KOo1SeLSxoC4GHIHalR8YXNcSj/F5UwqbDicS/2PNtFYXbU5uqtB/mNWB+rm6QJ
-         VLlg3Fpe6Uf82SzxReOcKR6tj/BsivmmMKCxFeRMbo+n+LQ4z3e9ialdmzqvaQ3QqCqB
-         02uiz7g4IMdppYjXRvFszV5GaS/kzr67UUz7o4VLjKl3LAW0GlbyxS73GB9oQ8IrOtvH
-         En8g+qW6CC6HGMlmqnn2c0WJSr8iq9kuutwecH4XlrYwh/d2QDAv0MDRLeeuQBzqwyD2
-         7jbOHbFjsEypPB7IInOwwJOmQAMktAm8e5uXJWdcM2cH94zjkpe8RZZsvPUbWlECs+y2
-         LEDA==
-X-Gm-Message-State: AOAM531oPe1OftpUeQTRmcKVr9+svT3Rg4bm6LPC2J0UxaTISrbLiP4D
-        ueKBiAjSyyW4+HaTMjImEd3ejxbrclC0TUjMWBol
-X-Google-Smtp-Source: ABdhPJwpk1md/Mu8TgFO2mVRBp4z/f1TQbOQxsU9h62w+09HhO3nxNPTIDXE3aB83Bt17saG3dLwywyDDJELQSMAYB8=
-X-Received: by 2002:a17:907:16ab:: with SMTP id hc43mr187667ejc.195.1631715139966;
- Wed, 15 Sep 2021 07:12:19 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=uhNdMnqrUuOGJjLHGNp0INA+/3+B4ztiCmheLJWqCc4=;
+        b=1BzAiW+cO5VuH9YupcRMOi/mNUBveVmgraWhiOyrRf6VR//XDiBzGyJxvcFQLGJfMi
+         dpoxNW1ABb3b8eYsailJ+b7vg04GkyMcnc7erSccmGd4ccKpRwm2oWfCTp/YC3HBDxu0
+         9hbAwMaFa16Ls1ePHQasj4rG0OBqe2evwoED7TlzXYcZYnX4QhwP36jVFPxfT9EWZMN4
+         5DXKil1bMw1n7tOLVgcztX4of1IMgyJSlQ2mNlwvzEWPUYZwHZTn6y3WltGHUJXxflew
+         BAtc72Y98Xy9k5opCGOW7+d/g6cbQBPK8JcPGITqdsRvJZo36nE9hijNzMf9IazeQOuB
+         4wMg==
+X-Gm-Message-State: AOAM5303gah9ZJK/KHV8yyux5kexqtLCKTNLQOzXQEGtGan/NM4W3zTR
+        nGnhoO3XQjuxO4LbKTuWL1qXS3iv71aDOsO7CJk=
+X-Google-Smtp-Source: ABdhPJyxEWt1NsxJI4JvPWAiS9UB0tUb3NEAiD5a0vRYQ7b1RtLbL9YoQG032TDYvJsFi2ejpayH4Q==
+X-Received: by 2002:a5d:959a:: with SMTP id a26mr500581ioo.154.1631719598546;
+        Wed, 15 Sep 2021 08:26:38 -0700 (PDT)
+Received: from [192.168.1.30] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id i14sm135855iol.27.2021.09.15.08.26.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Sep 2021 08:26:37 -0700 (PDT)
+Subject: Re: [PATCH] io_uring: add more uring info to fdinfo for debug
+To:     Hao Xu <haoxu@linux.alibaba.com>
+Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>
+References: <20210913130854.38542-1-haoxu@linux.alibaba.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <3ecf6b05-e92d-7d74-8f72-983ec0d790fc@kernel.dk>
+Date:   Wed, 15 Sep 2021 09:26:37 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <CAHC9VhTkZ-tUdrFjhc2k1supzW1QJpY-15pf08mw6=ynU9yY5g@mail.gmail.com>
- <20210827133559.GG490529@madcap2.tricolour.ca> <CAHC9VhRqSO6+MVX+LYBWHqwzd3QYgbSz3Gd8E756J0QNEmmHdQ@mail.gmail.com>
- <20210828150356.GH490529@madcap2.tricolour.ca> <CAHC9VhRgc_Fhi4c6L__butuW7cmSFJxTMxb+BBn6P-8Yt0ck_w@mail.gmail.com>
- <CAHC9VhQD8hKekqosjGgWPxZFqS=EFy-_kQL5zAo1sg0MU=6n5A@mail.gmail.com>
- <20210910005858.GL490529@madcap2.tricolour.ca> <CAHC9VhSRJYW7oRq6iLCH_UYukeFfE0pEJ_wBLdr1mw2QGUPh-Q@mail.gmail.com>
- <CAHC9VhTrimTds_miuyRhhHjoG_Fhmk2vH7G3hKeeFWO3BdLpKw@mail.gmail.com>
- <CAHC9VhTUKsijBVV-a3eHajYyOFYLQPWTTqxJ812NnB3_Y=UMeQ@mail.gmail.com> <20210915122907.GM490529@madcap2.tricolour.ca>
-In-Reply-To: <20210915122907.GM490529@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 15 Sep 2021 10:12:08 -0400
-Message-ID: <CAHC9VhRWzizGXuMk3+qK8jcYSDFEqjj+MOtFhHKYH0mpnA52=w@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 0/9] Add LSM access controls and auditing to io_uring
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     sgrubb@redhat.com, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, linux-audit@redhat.com,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20210913130854.38542-1-haoxu@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Sep 15, 2021 at 8:29 AM Richard Guy Briggs <rgb@redhat.com> wrote:
-> I was in the middle of reviewing the v2 patchset to add my acks when I
-> forgot to add the comment that you still haven't convinced me that ses=
-> isn't needed or relevant if we are including auid=.
+On 9/13/21 7:08 AM, Hao Xu wrote:
+> Developers may need some uring info to help themselves debug and address
+> issues, these info includes sqring/cqring head/tail and the detail
+> sqe/cqe info, which is very useful when it stucks.
 
-[Side note: v3 was posted on Monday, it would be more helpful to see
-the Reviewed-by tags on the v3 patchset.]
-
-Ah, okay, it wasn't clear to me from your earlier comments that this
-was your concern.  It sounded as if you were arguing that both session
-ID and audit ID needed to be logged for every io_uring op, which
-doesn't make sense (as previously discussed).  However, I see your
-point, and in fact pulling the audit ID from @current in the
-audit_log_uring() function is just plain wrong ... likely a vestige of
-the original copy-n-paste or format matching, I'll drop that now.
-Thanks.
-
-While a small code change, it is somewhat significant so I'll post an
-updated v4 patchset later today once it passes through a round of
-testing.
+I think this is a good addition, more info to help you debug a stuck case
+is always good. I'll queue this up for 5.16.
 
 -- 
-paul moore
-www.paul-moore.com
+Jens Axboe
+

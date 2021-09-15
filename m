@@ -2,58 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CC7C40CA12
-	for <lists+io-uring@lfdr.de>; Wed, 15 Sep 2021 18:29:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D42EF40CA18
+	for <lists+io-uring@lfdr.de>; Wed, 15 Sep 2021 18:29:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229728AbhIOQbD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 15 Sep 2021 12:31:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59708 "EHLO
+        id S229665AbhIOQbG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 15 Sep 2021 12:31:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59716 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229672AbhIOQbC (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Sep 2021 12:31:02 -0400
-Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAC75C061574
-        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 09:29:43 -0700 (PDT)
-Received: by mail-il1-x143.google.com with SMTP id i13so3558802ilm.4
-        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 09:29:43 -0700 (PDT)
+        with ESMTP id S229730AbhIOQbD (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Sep 2021 12:31:03 -0400
+Received: from mail-il1-x129.google.com (mail-il1-x129.google.com [IPv6:2607:f8b0:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4BB2C061575
+        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 09:29:44 -0700 (PDT)
+Received: by mail-il1-x129.google.com with SMTP id b6so3628781ilv.0
+        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 09:29:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=z7c8syQSjn5yBCKSSFtxNAKMp+iDYztMNgRmqIUn/y4=;
-        b=PiU+nnUpAHaZ2egnr4Y6Og19L9h+iQxOFSfQGXttAgxIGB0T2Zl5XuQ2TZfWoeIrlB
-         TzZ6or5kAVslXP9nEJrrgsmNXEiItJspGXdlPBBEuuV8zma4J+cj2LXq8Ur1TB5VKEUC
-         nKJSo+jzgcdBl74MbRHBNOf8Y4GuJVM3DueaOTX7eAuavrDR0zkmm4duR2AzNs9CHdes
-         ZNWHman2lxU7Qy6GfkmG3jrt98JbCOWouIkQUaH8rN5+dUsaC5EL2h9cmKS7mq1IRtUw
-         gpa+1iRAW1HTOsocZAPnMiFZdp+wVj6TfMa+KKtl5rxwY8f4MH/VPmlnEBI2I5B88lEa
-         pVCg==
+        bh=68QMgaOyy30ZWzL6VMOv0u6xAXRoGMvigRmyjt3oLcw=;
+        b=g4y04qurQjxWPvWomB7+xnwZltDDNwwIq1tQDrA3GvSggskcK4+qtoZuWW9Ay6EXrR
+         Oq0vmGKOc3utiT51usgqySMAF+kdlLus8XlBtJgIOO8kokkf1G0VYhl5KQeWnLie11zx
+         aO8pQhyPvlXnjE6VYGBGLM/31Z7KyZz98WV+WaHLfgM/CxTAQfcbPPYXBHbLZ0Ig1+Hw
+         mXKarhTwMYZ0DQDBDSCGB40hAUlNvn6nmd/Z7/GO5rd7TcSYLh62gvWir/3BhXI5++wz
+         sryQHnS2jOxnS/3P69MOOEkyQM6waBax2/dEE26y/fBI5yx/Za72lFmUWOR57KuKCt4t
+         sk6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=z7c8syQSjn5yBCKSSFtxNAKMp+iDYztMNgRmqIUn/y4=;
-        b=XlkEX4xU/4vy9L48YSxUyRuTaoqeKs0I51fzJIpFoKhWDxAu6HNk2mf375tlxAjgOJ
-         mTZKWuZanxvKRaCBeHvalgOvcgm7dEopOPhjIVYoxkjZYlW/JF1saMu6u2HBsIh4D8BK
-         oHqe2+DuCihv0q3+9CD8VbOGuFH4zsMFKIlIO5haBbvLkUtTcxyxpGKex+txnfWLuk7+
-         gnp4kBxqq7C9I5qC6BOzsfRo2dmFVD4rrdXvUTOpzjxiHlmjUzL3iCpFblZ6VVrGT+ti
-         Hr6PKk+9KgK9+X+s3Sq7VN+w1kjhvt1j97w+gW0KHGXY/IPcwNZDagNOS9xgPJxxkB+U
-         9Akw==
-X-Gm-Message-State: AOAM530RkIp2U0g1IFlIVwrA2qo+2NrUhbULEWo10Yb1yQNIlVF694qE
-        7lWvU23y62l2CnPABcfETb5gMDYky5wOI22WtO4=
-X-Google-Smtp-Source: ABdhPJxrdp+4RJX6C0QJPf3ojBGViVv5PLprSG4/eGOZhSyA1Mea+hZm2zPuqH0Rv6IsVHPYRrm0KQ==
-X-Received: by 2002:a92:d12:: with SMTP id 18mr637015iln.287.1631723383001;
-        Wed, 15 Sep 2021 09:29:43 -0700 (PDT)
+        bh=68QMgaOyy30ZWzL6VMOv0u6xAXRoGMvigRmyjt3oLcw=;
+        b=K88pVgYP/BVgEXJDAddvtcqR2HlXnHTSGbKvMy3ZYeVA6uz603qlBmZ9DG50boNc4T
+         oFZMC8sC1VNv69uuqhETy0wZFcZzxJ6i5J1RintRAXfrfOuEqNZ2s3ZB8VVoxElCid66
+         aGo/ajcF6poQP8tPXpjMFGJQIhDZTWnsuLzq3gnCfKB/FUg0R8vgUhn6XwGR2GjOF0fT
+         3TIB4w8cY4HVpyxoLl2fblroxYmYxhIKl27CVO0kyMHs+WYduizCzozUQLSc22cd5NaF
+         JUfP1BuoackVFE6wiHlmLC1laK1SxO8m1Ymxh5R/fL5/ZVlk4hZs2Wo/JuuH3lFIv78y
+         aIxg==
+X-Gm-Message-State: AOAM532l4u9ji77cKsgJG0vB+X9kKRQo3Rh81OUapQ2QgQefARqIybJs
+        pGBzaZ5io8A9ecSlo+mAIAWJrin6swzByO/UhwE=
+X-Google-Smtp-Source: ABdhPJxgUVu+M1LHqGpjznDJ+rPyInPuyzWHclEyGlCSFOsvCQyKu/xId6P3mCNg93VlDAeknvuG/Q==
+X-Received: by 2002:a05:6e02:5a3:: with SMTP id k3mr652283ils.283.1631723384023;
+        Wed, 15 Sep 2021 09:29:44 -0700 (PDT)
 Received: from p1.localdomain ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id t15sm227160ioi.7.2021.09.15.09.29.42
+        by smtp.gmail.com with ESMTPSA id t15sm227160ioi.7.2021.09.15.09.29.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Sep 2021 09:29:42 -0700 (PDT)
+        Wed, 15 Sep 2021 09:29:43 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Cc:     torvalds@linux-foundation.org, viro@zeniv.linux.org.uk,
         Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 1/3] iov_iter: add helper to save iov_iter state
-Date:   Wed, 15 Sep 2021 10:29:35 -0600
-Message-Id: <20210915162937.777002-2-axboe@kernel.dk>
+Subject: [PATCH 2/3] io_uring: use iov_iter state save/restore helpers
+Date:   Wed, 15 Sep 2021 10:29:36 -0600
+Message-Id: <20210915162937.777002-3-axboe@kernel.dk>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20210915162937.777002-1-axboe@kernel.dk>
 References: <20210915162937.777002-1-axboe@kernel.dk>
@@ -63,113 +63,225 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-In an ideal world, when someone is passed an iov_iter and returns X bytes,
-then X bytes would have been consumed/advanced from the iov_iter. But we
-have use cases that always consume the entire iterator, a few examples
-of that are iomap and bdev O_DIRECT. This means we cannot rely on the
-state of the iov_iter once we've called ->read_iter() or ->write_iter().
+Get rid of the need to do re-expand and revert on an iterator when we
+encounter a short IO, or failure that warrants a retry. Use the new
+state save/restore helpers instead.
 
-This would be easier if we didn't always have to deal with truncate of
-the iov_iter, as rewinding would be trivial without that. We recently
-added a commit to track the truncate state, but that grew the iov_iter
-by 8 bytes and wasn't the best solution.
+We keep the iov_iter_state persistent across retries, if we need to
+restart the read or write operation. If there's a pending retry, the
+operation will always exit with the state correctly saved.
 
-Implement a helper to save enough of the iov_iter state to sanely restore
-it after we've called the read/write iterator helpers. This currently
-only works for IOVEC/BVEC/KVEC as that's all we need, support for other
-iterator types are left as an exercise for the reader.
-
-Link: https://lore.kernel.org/linux-fsdevel/CAHk-=wiacKV4Gh-MYjteU0LwNBSGpWrK-Ov25HdqB1ewinrFPg@mail.gmail.com/
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- include/linux/uio.h | 15 +++++++++++++++
- lib/iov_iter.c      | 36 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 51 insertions(+)
+ fs/io_uring.c | 82 ++++++++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 61 insertions(+), 21 deletions(-)
 
-diff --git a/include/linux/uio.h b/include/linux/uio.h
-index 5265024e8b90..984c4ab74859 100644
---- a/include/linux/uio.h
-+++ b/include/linux/uio.h
-@@ -27,6 +27,12 @@ enum iter_type {
- 	ITER_DISCARD,
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 855ea544807f..25bda8a5a4e5 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -712,6 +712,7 @@ struct io_async_rw {
+ 	struct iovec			fast_iov[UIO_FASTIOV];
+ 	const struct iovec		*free_iovec;
+ 	struct iov_iter			iter;
++	struct iov_iter_state		iter_state;
+ 	size_t				bytes_done;
+ 	struct wait_page_queue		wpq;
  };
+@@ -2608,8 +2609,7 @@ static bool io_resubmit_prep(struct io_kiocb *req)
  
-+struct iov_iter_state {
-+	size_t iov_offset;
-+	size_t count;
-+	unsigned long nr_segs;
-+};
-+
- struct iov_iter {
- 	u8 iter_type;
- 	bool data_source;
-@@ -55,6 +61,14 @@ static inline enum iter_type iov_iter_type(const struct iov_iter *i)
- 	return i->iter_type;
+ 	if (!rw)
+ 		return !io_req_prep_async(req);
+-	/* may have left rw->iter inconsistent on -EIOCBQUEUED */
+-	iov_iter_revert(&rw->iter, req->result - iov_iter_count(&rw->iter));
++	iov_iter_restore(&rw->iter, &rw->iter_state);
+ 	return true;
  }
  
-+static inline void iov_iter_save_state(struct iov_iter *iter,
-+				       struct iov_iter_state *state)
-+{
-+	state->iov_offset = iter->iov_offset;
-+	state->count = iter->count;
-+	state->nr_segs = iter->nr_segs;
-+}
+@@ -3310,12 +3310,17 @@ static int io_setup_async_rw(struct io_kiocb *req, const struct iovec *iovec,
+ 	if (!force && !io_op_defs[req->opcode].needs_async_setup)
+ 		return 0;
+ 	if (!req->async_data) {
++		struct io_async_rw *iorw;
 +
- static inline bool iter_is_iovec(const struct iov_iter *i)
- {
- 	return iov_iter_type(i) == ITER_IOVEC;
-@@ -233,6 +247,7 @@ ssize_t iov_iter_get_pages(struct iov_iter *i, struct page **pages,
- ssize_t iov_iter_get_pages_alloc(struct iov_iter *i, struct page ***pages,
- 			size_t maxsize, size_t *start);
- int iov_iter_npages(const struct iov_iter *i, int maxpages);
-+void iov_iter_restore(struct iov_iter *i, struct iov_iter_state *state);
+ 		if (io_alloc_async_data(req)) {
+ 			kfree(iovec);
+ 			return -ENOMEM;
+ 		}
  
- const void *dup_iter(struct iov_iter *new, struct iov_iter *old, gfp_t flags);
- 
-diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index f2d50d69a6c3..755c10c5138c 100644
---- a/lib/iov_iter.c
-+++ b/lib/iov_iter.c
-@@ -1972,3 +1972,39 @@ int import_single_range(int rw, void __user *buf, size_t len,
+ 		io_req_map_rw(req, iovec, fast_iov, iter);
++		iorw = req->async_data;
++		/* we've copied and mapped the iter, ensure state is saved */
++		iov_iter_save_state(&iorw->iter, &iorw->iter_state);
+ 	}
  	return 0;
  }
- EXPORT_SYMBOL(import_single_range);
-+
-+/**
-+ * iov_iter_restore() - Restore a &struct iov_iter to the same state as when
-+ *     iov_iter_save_state() was called.
-+ *
-+ * @i: &struct iov_iter to restore
-+ * @state: state to restore from
-+ *
-+ * Used after iov_iter_save_state() to bring restore @i, if operations may
-+ * have advanced it.
-+ *
-+ * Note: only works on ITER_IOVEC, ITER_BVEC, and ITER_KVEC
-+ */
-+void iov_iter_restore(struct iov_iter *i, struct iov_iter_state *state)
-+{
-+	if (WARN_ON_ONCE(!iov_iter_is_bvec(i) && !iter_is_iovec(i)) &&
-+			 !iov_iter_is_kvec(i))
-+		return;
-+	i->iov_offset = state->iov_offset;
-+	i->count = state->count;
+@@ -3334,6 +3339,7 @@ static inline int io_rw_prep_async(struct io_kiocb *req, int rw)
+ 	iorw->free_iovec = iov;
+ 	if (iov)
+ 		req->flags |= REQ_F_NEED_CLEANUP;
++	iov_iter_save_state(&iorw->iter, &iorw->iter_state);
+ 	return 0;
+ }
+ 
+@@ -3437,19 +3443,28 @@ static int io_read(struct io_kiocb *req, unsigned int issue_flags)
+ 	struct kiocb *kiocb = &req->rw.kiocb;
+ 	struct iov_iter __iter, *iter = &__iter;
+ 	struct io_async_rw *rw = req->async_data;
+-	ssize_t io_size, ret, ret2;
+ 	bool force_nonblock = issue_flags & IO_URING_F_NONBLOCK;
++	struct iov_iter_state __state, *state;
++	ssize_t ret, ret2;
+ 
+ 	if (rw) {
+ 		iter = &rw->iter;
++		state = &rw->iter_state;
++		/*
++		 * We come here from an earlier attempt, restore our state to
++		 * match in case it doesn't. It's cheap enough that we don't
++		 * need to make this conditional.
++		 */
++		iov_iter_restore(iter, state);
+ 		iovec = NULL;
+ 	} else {
+ 		ret = io_import_iovec(READ, req, &iovec, iter, !force_nonblock);
+ 		if (ret < 0)
+ 			return ret;
++		state = &__state;
++		iov_iter_save_state(iter, state);
+ 	}
+-	io_size = iov_iter_count(iter);
+-	req->result = io_size;
++	req->result = iov_iter_count(iter);
+ 
+ 	/* Ensure we clear previously set non-block flag */
+ 	if (!force_nonblock)
+@@ -3463,7 +3478,7 @@ static int io_read(struct io_kiocb *req, unsigned int issue_flags)
+ 		return ret ?: -EAGAIN;
+ 	}
+ 
+-	ret = rw_verify_area(READ, req->file, io_kiocb_ppos(kiocb), io_size);
++	ret = rw_verify_area(READ, req->file, io_kiocb_ppos(kiocb), req->result);
+ 	if (unlikely(ret)) {
+ 		kfree(iovec);
+ 		return ret;
+@@ -3479,30 +3494,49 @@ static int io_read(struct io_kiocb *req, unsigned int issue_flags)
+ 		/* no retry on NONBLOCK nor RWF_NOWAIT */
+ 		if (req->flags & REQ_F_NOWAIT)
+ 			goto done;
+-		/* some cases will consume bytes even on error returns */
+-		iov_iter_reexpand(iter, iter->count + iter->truncated);
+-		iov_iter_revert(iter, io_size - iov_iter_count(iter));
+ 		ret = 0;
+ 	} else if (ret == -EIOCBQUEUED) {
+ 		goto out_free;
+-	} else if (ret <= 0 || ret == io_size || !force_nonblock ||
++	} else if (ret <= 0 || ret == req->result || !force_nonblock ||
+ 		   (req->flags & REQ_F_NOWAIT) || !need_read_all(req)) {
+ 		/* read all, failed, already did sync or don't want to retry */
+ 		goto done;
+ 	}
+ 
 +	/*
-+	 * For the *vec iters, nr_segs + iov is constant - if we increment
-+	 * the vec, then we also decrement the nr_segs count. Hence we don't
-+	 * need to track both of these, just one is enough and we can deduct
-+	 * the other from that. ITER_KVEC and ITER_IOVEC are the same struct
-+	 * size, so we can just increment the iov pointer as they are unionzed.
-+	 * ITER_BVEC _may_ be the same size on some archs, but on others it is
-+	 * not. Be safe and handle it separately.
++	 * Don't depend on the iter state matching what was consumed, or being
++	 * untouched in case of error. Restore it and we'll advance it
++	 * manually if we need to.
 +	 */
-+	BUILD_BUG_ON(sizeof(struct iovec) != sizeof(struct kvec));
-+	if (iov_iter_is_bvec(i))
-+		i->bvec -= state->nr_segs - i->nr_segs;
-+	else
-+		i->iov -= state->nr_segs - i->nr_segs;
-+	i->nr_segs = state->nr_segs;
-+}
++	iov_iter_restore(iter, state);
++
+ 	ret2 = io_setup_async_rw(req, iovec, inline_vecs, iter, true);
+ 	if (ret2)
+ 		return ret2;
+ 
+ 	iovec = NULL;
+ 	rw = req->async_data;
+-	/* now use our persistent iterator, if we aren't already */
+-	iter = &rw->iter;
++	/*
++	 * Now use our persistent iterator and state, if we aren't already.
++	 * We've restored and mapped the iter to match.
++	 */
++	if (iter != &rw->iter) {
++		iter = &rw->iter;
++		state = &rw->iter_state;
++	}
+ 
+ 	do {
+-		io_size -= ret;
++		/*
++		 * We end up here because of a partial read, either from
++		 * above or inside this loop. Advance the iter by the bytes
++		 * that were consumed.
++		 */
++		iov_iter_advance(iter, ret);
++		if (!iov_iter_count(iter))
++			break;
+ 		rw->bytes_done += ret;
++		iov_iter_save_state(iter, state);
++
+ 		/* if we can retry, do so with the callbacks armed */
+ 		if (!io_rw_should_retry(req)) {
+ 			kiocb->ki_flags &= ~IOCB_WAITQ;
+@@ -3520,7 +3554,8 @@ static int io_read(struct io_kiocb *req, unsigned int issue_flags)
+ 			return 0;
+ 		/* we got some bytes, but not all. retry. */
+ 		kiocb->ki_flags &= ~IOCB_WAITQ;
+-	} while (ret > 0 && ret < io_size);
++		iov_iter_restore(iter, state);
++	} while (ret > 0);
+ done:
+ 	kiocb_done(kiocb, ret, issue_flags);
+ out_free:
+@@ -3543,19 +3578,24 @@ static int io_write(struct io_kiocb *req, unsigned int issue_flags)
+ 	struct kiocb *kiocb = &req->rw.kiocb;
+ 	struct iov_iter __iter, *iter = &__iter;
+ 	struct io_async_rw *rw = req->async_data;
+-	ssize_t ret, ret2, io_size;
+ 	bool force_nonblock = issue_flags & IO_URING_F_NONBLOCK;
++	struct iov_iter_state __state, *state;
++	ssize_t ret, ret2;
+ 
+ 	if (rw) {
+ 		iter = &rw->iter;
++		state = &rw->iter_state;
++		iov_iter_restore(iter, state);
+ 		iovec = NULL;
+ 	} else {
+ 		ret = io_import_iovec(WRITE, req, &iovec, iter, !force_nonblock);
+ 		if (ret < 0)
+ 			return ret;
++		state = &__state;
++		iov_iter_save_state(iter, state);
+ 	}
+-	io_size = iov_iter_count(iter);
+-	req->result = io_size;
++	req->result = iov_iter_count(iter);
++	ret2 = 0;
+ 
+ 	/* Ensure we clear previously set non-block flag */
+ 	if (!force_nonblock)
+@@ -3572,7 +3612,7 @@ static int io_write(struct io_kiocb *req, unsigned int issue_flags)
+ 	    (req->flags & REQ_F_ISREG))
+ 		goto copy_iov;
+ 
+-	ret = rw_verify_area(WRITE, req->file, io_kiocb_ppos(kiocb), io_size);
++	ret = rw_verify_area(WRITE, req->file, io_kiocb_ppos(kiocb), req->result);
+ 	if (unlikely(ret))
+ 		goto out_free;
+ 
+@@ -3619,9 +3659,9 @@ static int io_write(struct io_kiocb *req, unsigned int issue_flags)
+ 		kiocb_done(kiocb, ret2, issue_flags);
+ 	} else {
+ copy_iov:
+-		/* some cases will consume bytes even on error returns */
+-		iov_iter_reexpand(iter, iter->count + iter->truncated);
+-		iov_iter_revert(iter, io_size - iov_iter_count(iter));
++		iov_iter_restore(iter, state);
++		if (ret2 > 0)
++			iov_iter_advance(iter, ret2);
+ 		ret = io_setup_async_rw(req, iovec, inline_vecs, iter, false);
+ 		return ret ?: -EAGAIN;
+ 	}
 -- 
 2.33.0
 

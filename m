@@ -2,85 +2,93 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1919B40C5EE
-	for <lists+io-uring@lfdr.de>; Wed, 15 Sep 2021 15:08:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3475C40C721
+	for <lists+io-uring@lfdr.de>; Wed, 15 Sep 2021 16:12:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229670AbhIONJS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 15 Sep 2021 09:09:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40676 "EHLO
+        id S237861AbhIOONv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 15 Sep 2021 10:13:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233143AbhIONJR (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Sep 2021 09:09:17 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A45ECC061574
-        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 06:07:58 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id i23so3831334wrb.2
-        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 06:07:58 -0700 (PDT)
+        with ESMTP id S234504AbhIOONr (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Sep 2021 10:13:47 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86282C061574
+        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 07:12:21 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id o20so6436337ejd.7
+        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 07:12:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=kngTyycORCLSwARpfVeNganjeFXcAmkFPNgjMRfEAB0=;
-        b=cel3c8huCNb2+Q2W+cDcD3v2aw8vRR5j6V/d1encENY5mE9LyZBp7rVrE8ER0Y7t9U
-         ZmuAUtFK5nLUhalg4icAz9PYw2oEI2WrJV1FKPgmse1LAJsl6NDsyzsH1hI4Vi7NWvcD
-         iHFQNkkBxYrZmUpe9Ll9cBCnnYLdHYQTCEAiGLQ7HY66QNmMpwc7UBAAVE6EFF0CwnYN
-         dH5BX22YrWKP8hzAZEsda1NOF1TKVftAgnPXrdQEhozD2VyX/u+4RqLUVmueVedpVILv
-         wVPgz/nABRI1l15rHyIObNiWSgqI25mijOZpMYG+RIkP2iMBqL3joBUJfKgviNyTC2ei
-         akzA==
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=v0pohU1aHJ77epfHLj6ryM5BHHmhwa0qDe7dPwHtdd0=;
+        b=eR9PEA1KsnhcujiaSp4R8mWZA6mpDIsh7VwjmTZYtFbgFhGfhC2lDUVPNLsgqluhp1
+         ZuikeH6ISYHE0Hn7f+PMrZCFW44ut07bmJZ1SQKvFPC6gjbKsgOvLQZ9auK4V9BR8R8T
+         M2bLbsFY3FbDICQAhyIRjW6ppEhUxmEQVUaDKjMbU0nARv/4wsYZYt2AyqQQtAJZpdRY
+         5h+2cTsdVYZjWjc50/PPZAppcgb+L8yoY198lgv5cyCD/FGYpqYqoRkKbMWyBhI0bIsc
+         x6/KxbY5LcJYMtVQDTniz+9Z+fFHikG6d0ecHdSblx52D5SB7gvPkFyJ72x1ZdhpkNLb
+         NScQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=kngTyycORCLSwARpfVeNganjeFXcAmkFPNgjMRfEAB0=;
-        b=rzNczpu1kjhDTlOIE2/WCygT3CL7HzPFONkIVz36R/ry6gvhYi1rNH/YSyEn9CJVbl
-         mDSfs7Ca/p8atzMYItjRQVQg6io0S8EnsY7jGV8dGO3hy5xfRoc9iqPZhyAiLhkT5txo
-         AyxwukORojh7lMDBDzSPVKogMR0DotFNIXKeMIc5tANsJ0iuFdxNHZ6pJeMH6h5+EFR6
-         ue6eHQLqSvmJQInAU53kbmfM1dNrnUE6ONCisqrcYPxJbYZZN2IoT9Otd4eKNdbkMNjk
-         inBAlCGIY/VPFiWvN+eOHsCO8Xsom+pVPrU/Hwqec+oOSwbJs1MBC2A3nXDn9Wr4qUis
-         gjDQ==
-X-Gm-Message-State: AOAM530a1wmL+pFovPinsqeRLJJeULAZxdwACpfKz9c5VlcKAu2yYxSG
-        0ASdUlYuH7p7Ee9ZPJOZ/wCscjrdmsI=
-X-Google-Smtp-Source: ABdhPJzZzXwUJ0bmRB0MsK+YjG9sHsjUvCcqJMl1xmk+qlp8/Z5iMZE38prlQlH7jzfFchKFyHoEIw==
-X-Received: by 2002:a5d:4579:: with SMTP id a25mr5090955wrc.222.1631711276958;
-        Wed, 15 Sep 2021 06:07:56 -0700 (PDT)
-Received: from [192.168.8.197] ([185.69.144.239])
-        by smtp.gmail.com with ESMTPSA id o8sm13283870wrm.9.2021.09.15.06.07.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Sep 2021 06:07:56 -0700 (PDT)
-Subject: Re: [PATCH for-next] io_uring: remove ctx referencing from
- complete_post
-To:     Hao Xu <haoxu@linux.alibaba.com>, Jens Axboe <axboe@kernel.dk>,
-        io-uring@vger.kernel.org
-References: <60a0e96434c16ab4fe587651448290d61ec9a113.1631703756.git.asml.silence@gmail.com>
- <27450ede-6a8a-1262-82a1-3e8749faba79@linux.alibaba.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <e93ff90a-0cf5-b434-66da-924255cab88b@gmail.com>
-Date:   Wed, 15 Sep 2021 14:07:21 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=v0pohU1aHJ77epfHLj6ryM5BHHmhwa0qDe7dPwHtdd0=;
+        b=xC7KOo1SeLSxoC4GHIHalR8YXNcSj/F5UwqbDicS/2PNtFYXbU5uqtB/mNWB+rm6QJ
+         VLlg3Fpe6Uf82SzxReOcKR6tj/BsivmmMKCxFeRMbo+n+LQ4z3e9ialdmzqvaQ3QqCqB
+         02uiz7g4IMdppYjXRvFszV5GaS/kzr67UUz7o4VLjKl3LAW0GlbyxS73GB9oQ8IrOtvH
+         En8g+qW6CC6HGMlmqnn2c0WJSr8iq9kuutwecH4XlrYwh/d2QDAv0MDRLeeuQBzqwyD2
+         7jbOHbFjsEypPB7IInOwwJOmQAMktAm8e5uXJWdcM2cH94zjkpe8RZZsvPUbWlECs+y2
+         LEDA==
+X-Gm-Message-State: AOAM531oPe1OftpUeQTRmcKVr9+svT3Rg4bm6LPC2J0UxaTISrbLiP4D
+        ueKBiAjSyyW4+HaTMjImEd3ejxbrclC0TUjMWBol
+X-Google-Smtp-Source: ABdhPJwpk1md/Mu8TgFO2mVRBp4z/f1TQbOQxsU9h62w+09HhO3nxNPTIDXE3aB83Bt17saG3dLwywyDDJELQSMAYB8=
+X-Received: by 2002:a17:907:16ab:: with SMTP id hc43mr187667ejc.195.1631715139966;
+ Wed, 15 Sep 2021 07:12:19 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <27450ede-6a8a-1262-82a1-3e8749faba79@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <CAHC9VhTkZ-tUdrFjhc2k1supzW1QJpY-15pf08mw6=ynU9yY5g@mail.gmail.com>
+ <20210827133559.GG490529@madcap2.tricolour.ca> <CAHC9VhRqSO6+MVX+LYBWHqwzd3QYgbSz3Gd8E756J0QNEmmHdQ@mail.gmail.com>
+ <20210828150356.GH490529@madcap2.tricolour.ca> <CAHC9VhRgc_Fhi4c6L__butuW7cmSFJxTMxb+BBn6P-8Yt0ck_w@mail.gmail.com>
+ <CAHC9VhQD8hKekqosjGgWPxZFqS=EFy-_kQL5zAo1sg0MU=6n5A@mail.gmail.com>
+ <20210910005858.GL490529@madcap2.tricolour.ca> <CAHC9VhSRJYW7oRq6iLCH_UYukeFfE0pEJ_wBLdr1mw2QGUPh-Q@mail.gmail.com>
+ <CAHC9VhTrimTds_miuyRhhHjoG_Fhmk2vH7G3hKeeFWO3BdLpKw@mail.gmail.com>
+ <CAHC9VhTUKsijBVV-a3eHajYyOFYLQPWTTqxJ812NnB3_Y=UMeQ@mail.gmail.com> <20210915122907.GM490529@madcap2.tricolour.ca>
+In-Reply-To: <20210915122907.GM490529@madcap2.tricolour.ca>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 15 Sep 2021 10:12:08 -0400
+Message-ID: <CAHC9VhRWzizGXuMk3+qK8jcYSDFEqjj+MOtFhHKYH0mpnA52=w@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 0/9] Add LSM access controls and auditing to io_uring
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     sgrubb@redhat.com, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org, linux-audit@redhat.com,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/15/21 2:00 PM, Hao Xu wrote:
-> 在 2021/9/15 下午7:04, Pavel Begunkov 写道:
->> Now completions are done from task context, that means that it's either
->> the task itself, task_work or io-wq worker. In all those cases the ctx
-> system-wq as well, not sure if that matters.
+On Wed, Sep 15, 2021 at 8:29 AM Richard Guy Briggs <rgb@redhat.com> wrote:
+> I was in the middle of reviewing the v2 patchset to add my acks when I
+> forgot to add the comment that you still haven't convinced me that ses=
+> isn't needed or relevant if we are including auid=.
 
-Yep, missed in the description.
-fwiw, io_fallback_req_func() explicitly pins ctx.
+[Side note: v3 was posted on Monday, it would be more helpful to see
+the Reviewed-by tags on the v3 patchset.]
 
+Ah, okay, it wasn't clear to me from your earlier comments that this
+was your concern.  It sounded as if you were arguing that both session
+ID and audit ID needed to be logged for every io_uring op, which
+doesn't make sense (as previously discussed).  However, I see your
+point, and in fact pulling the audit ID from @current in the
+audit_log_uring() function is just plain wrong ... likely a vestige of
+the original copy-n-paste or format matching, I'll drop that now.
+Thanks.
 
->> will be staying alive by mutexing, explicit referencing or req
->> references by iowq. Remove extra ctx pinning from
->> io_req_complete_post().
+While a small code change, it is somewhat significant so I'll post an
+updated v4 patchset later today once it passes through a round of
+testing.
 
 -- 
-Pavel Begunkov
+paul moore
+www.paul-moore.com

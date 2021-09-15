@@ -2,165 +2,139 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 01AAA40C332
-	for <lists+io-uring@lfdr.de>; Wed, 15 Sep 2021 12:00:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ACDC340C36F
+	for <lists+io-uring@lfdr.de>; Wed, 15 Sep 2021 12:13:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232071AbhIOKCJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 15 Sep 2021 06:02:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54338 "EHLO
+        id S237427AbhIOKOy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 15 Sep 2021 06:14:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232046AbhIOKCH (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Sep 2021 06:02:07 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58A10C061574
-        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 03:00:48 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id q26so2908377wrc.7
-        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 03:00:48 -0700 (PDT)
+        with ESMTP id S237460AbhIOKOx (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Sep 2021 06:14:53 -0400
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A56FC061574
+        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 03:13:34 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id d207-20020a1c1dd8000000b00307e2d1ec1aso1574002wmd.5
+        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 03:13:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=dIdbRJ3POeT5ftza9YtgdZF8EiZRmDjuXQPJwHCNHJ8=;
-        b=eY3b0XdB8F6CUQ+pkQEln4hmwHMeRqkYCnfaBLAHMaPovjhnyB02l4wj+J3x6nxLwk
-         bKyoWdsdbhud3sUsBPlzZ36IXK3HsAqi41Km8KRQFotJtJDn6kHKBLtZithZkVqQlKMI
-         rUV+3l7nOwqihJSstq5HdIwizldI6roBrDIwwkD4uNccu98SJdknF8qE3ILvseTQG8rM
-         N2HI2j1Q7fwXE445KmKaF1RSW/TyP/ehxYonNsdRdbhjFNhBKu/Pk18yZ1bHyuz80kcA
-         LW7Re4CQbr1HFW/GnvI86kzayqzpSq6JmIc5vYPOWy3RXLsCgV1k+8wwTdr9YCjkYl5L
-         ugtQ==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=tWhLOSCZu0rf9Ubu2f6omedKof6DA6vVn8yoSIa2x1E=;
+        b=TwVFdD54PciC4ITwNASFDTowCgPgH5qe5UIVXmdzyBUOhAjvLElVSsZAGb89yFztHE
+         aO8o4P86mfrKhvqSE53NR653MD7sx1Oaj35VJynRz85IGdaQ6l8EGWaisBB9x1mPx6Sp
+         OHAwqYTzMMpnNiEexmtq32UZxpOsh8MZRC+2+4q0uHXc7v/SRe9aB22hQ5zjLF7zTbFB
+         K+uGGQkIDjZ/f4QNmZjvsB8CeaEpX3ppfxfZXSJ/srXYpL4oTQo+ntBT+VWH60Hw9kBy
+         Swfc5bOFf2ZBE7eFK/tF6J5IP0D5OoF12s8uakbCKjfzrbeECJexlMKD1l7JGNhIYwUc
+         SP4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=dIdbRJ3POeT5ftza9YtgdZF8EiZRmDjuXQPJwHCNHJ8=;
-        b=vfezQSA+u7tfWQlQRZnKdR18e01OoidrACGAnTBpckfCEfIkLOu07kpY61y5KsaTT7
-         I22lGgMDOVMYHKEuV6qUbuv+Th5pctKZeg49PYBH7yeUJMFs65zyUGuar5hZ2tmdlTKQ
-         PSbk1mot8y+5ztJcW6st6pXHjfVRFE4hNxBi8F+7CQo6T1Jmkb9naUoG3vNCQ0/1n5cs
-         uneS6lg2yOdbWrdfElaVmkN/EX/8aXfiLPRDj+YXpFWWQwzjutbmTapqfb1+BQpxvtIP
-         HbnajQTp/ZMaH1eX42Eo0j689OzJAkHfupEbKIfwzvVrQj3tPq3eshqPuWoPrsqV54Zs
-         j0ww==
-X-Gm-Message-State: AOAM533Ua9SkWqo8Qw6TEpxYAIGFZ44YmYn6wiQwpjvT6vAJJSvedUCY
-        Ba+F0hv8PNnM0zABMaQb/nUC+/Az1ls=
-X-Google-Smtp-Source: ABdhPJwZWJFBTNFbZKeVOwQft2mf/i3z2oXeGzuwMDFDwrI7kOzHx1XuJpRDSeGJ/p58HmM4MQk3YA==
-X-Received: by 2002:a5d:59ad:: with SMTP id p13mr3916424wrr.253.1631700046750;
-        Wed, 15 Sep 2021 03:00:46 -0700 (PDT)
-Received: from localhost.localdomain ([185.69.144.239])
-        by smtp.gmail.com with ESMTPSA id g1sm3873931wrr.2.2021.09.15.03.00.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Sep 2021 03:00:46 -0700 (PDT)
+        bh=tWhLOSCZu0rf9Ubu2f6omedKof6DA6vVn8yoSIa2x1E=;
+        b=2ByuM3lAeJaNWF5qYeNtLko2iqmYk725Bg25sTtasajfJN+qaCaayE8WnmQAC0TpkJ
+         SqdGc0360ANNWzQlmClLqtNx1GX31sAW5v5MiugkemYKilsNSvNUe9g2ZeLKtLg3Wtqi
+         RRM8oqOCOxePIN/ZOj+sPOtfbPdX+9FIN3/7ALy+h00QVnOIRoDzEkpNDg+zAJy5N2+g
+         Y1Qt1W+LNXyC8mlx+nRqgK3nmRM6Bkehp1Iv+nEtvhLmgyoNwbamGj9uGgNqjng0Wu3j
+         GKA2n0lYuqcWAX7vpF6+4U+hjDca1vBmZv+SbSeJCiBhoMkxNcej9ibIbgV6DOecwaEu
+         a8sA==
+X-Gm-Message-State: AOAM530qT8ka9tVD9ksPgeUMHnoAo/ota/6tk2S8wBV/NlRAVlkmvWZa
+        twP/+FcUyiA1QZFOLV/6VkGO3fLq4Dg=
+X-Google-Smtp-Source: ABdhPJw/nYcAu25T8k5qhOVfzfgL8Rf6kSaQf0oV3DRv8vXym7jq0c6262Ca3wurgiQDqKwoG4YowQ==
+X-Received: by 2002:a05:600c:3203:: with SMTP id r3mr3541793wmp.175.1631700812941;
+        Wed, 15 Sep 2021 03:13:32 -0700 (PDT)
+Received: from [192.168.8.197] ([185.69.144.239])
+        by smtp.gmail.com with ESMTPSA id v28sm13203340wrv.93.2021.09.15.03.13.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Sep 2021 03:13:32 -0700 (PDT)
+Subject: Re: [PATCH 2/2] io_uring: fix race between poll completion and
+ cancel_hash insertion
+To:     Hao Xu <haoxu@linux.alibaba.com>, Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
+References: <20210912162345.51651-1-haoxu@linux.alibaba.com>
+ <20210912162345.51651-3-haoxu@linux.alibaba.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH v2] io_uring: move iopoll reissue into regular IO path
-Date:   Wed, 15 Sep 2021 11:00:05 +0100
-Message-Id: <f80dfee2d5fa7678f0052a8ab3cfca9496a112ca.1631699928.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.33.0
+Message-ID: <b4d71d4e-187d-c96e-2122-e50362c8ead0@gmail.com>
+Date:   Wed, 15 Sep 2021 11:12:57 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210912162345.51651-3-haoxu@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-230d50d448acb ("io_uring: move reissue into regular IO path")
-made non-IOPOLL I/O to not retry from ki_complete handler. Follow it
-steps and do the same for IOPOLL. Same problems, same implementation,
-same -EAGAIN assumptions.
+On 9/12/21 5:23 PM, Hao Xu wrote:
+> If poll arming and poll completion runs parallelly, there maybe races.
+> For instance, run io_poll_add in iowq and io_poll_task_func in original
+> context, then:
+>              iowq                          original context
+>   io_poll_add
+>     vfs_poll
+>      (interruption happens
+>       tw queued to original
+>       context)                              io_poll_task_func
+>                                               generate cqe
+>                                               del from cancel_hash[]
+>     if !poll.done
+>       insert to cancel_hash[]
+> 
+> The entry left in cancel_hash[], similar case for fast poll.
+> Fix it by set poll.done = true when del from cancel_hash[].
+> 
+> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
+> ---
+> 
+> Didn't find the exact commit to add Fixes: for..
+> 
+>  fs/io_uring.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index c16f6be3d46b..988679e5063f 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -5118,10 +5118,8 @@ static bool __io_poll_complete(struct io_kiocb *req, __poll_t mask)
+>  	}
+>  	if (req->poll.events & EPOLLONESHOT)
+>  		flags = 0;
+> -	if (!io_cqring_fill_event(ctx, req->user_data, error, flags)) {
+> -		req->poll.done = true;
+> +	if (!io_cqring_fill_event(ctx, req->user_data, error, flags))
+>  		flags = 0;
+> -	}
+>  	if (flags & IORING_CQE_F_MORE)
+>  		ctx->cq_extra++;
+>  
+> @@ -5152,6 +5150,7 @@ static void io_poll_task_func(struct io_kiocb *req, bool *locked)
+>  		if (done) {
+>  			io_poll_remove_double(req);
+>  			hash_del(&req->hash_node);
+> +			req->poll.done = true;
+>  		} else {
+>  			req->result = 0;
+>  			add_wait_queue(req->poll.head, &req->poll.wait);
+> @@ -5289,6 +5288,7 @@ static void io_async_task_func(struct io_kiocb *req, bool *locked)
+>  
+>  	hash_del(&req->hash_node);
+>  	io_poll_remove_double(req);
+> +	req->poll.done = true;
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
+Only poll request has req->poll. E.g. it overwrites parts of req->rw.kiocb,
+I guess .ki_complete in particular.
 
-v2: rebase, kiocb_done() locking for iopoll completion
+struct async_poll *apoll = req->apoll;
+apoll->poll.done = true;
 
- fs/io_uring.c | 34 +++++++++++++++-------------------
- 1 file changed, 15 insertions(+), 19 deletions(-)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index ae489ab275dd..a736a7826a36 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -735,7 +735,6 @@ enum {
- 	REQ_F_BUFFER_SELECTED_BIT,
- 	REQ_F_COMPLETE_INLINE_BIT,
- 	REQ_F_REISSUE_BIT,
--	REQ_F_DONT_REISSUE_BIT,
- 	REQ_F_CREDS_BIT,
- 	REQ_F_REFCOUNT_BIT,
- 	REQ_F_ARM_LTIMEOUT_BIT,
-@@ -782,8 +781,6 @@ enum {
- 	REQ_F_COMPLETE_INLINE	= BIT(REQ_F_COMPLETE_INLINE_BIT),
- 	/* caller should reissue async */
- 	REQ_F_REISSUE		= BIT(REQ_F_REISSUE_BIT),
--	/* don't attempt request reissue, see io_rw_reissue() */
--	REQ_F_DONT_REISSUE	= BIT(REQ_F_DONT_REISSUE_BIT),
- 	/* supports async reads */
- 	REQ_F_NOWAIT_READ	= BIT(REQ_F_NOWAIT_READ_BIT),
- 	/* supports async writes */
-@@ -2444,13 +2441,6 @@ static void io_iopoll_complete(struct io_ring_ctx *ctx, unsigned int *nr_events,
- 		req = list_first_entry(done, struct io_kiocb, inflight_entry);
- 		list_del(&req->inflight_entry);
- 
--		if (READ_ONCE(req->result) == -EAGAIN &&
--		    !(req->flags & REQ_F_DONT_REISSUE)) {
--			req->iopoll_completed = 0;
--			io_req_task_queue_reissue(req);
--			continue;
--		}
--
- 		__io_cqring_fill_event(ctx, req->user_data, req->result,
- 					io_put_rw_kbuf(req));
- 		(*nr_events)++;
-@@ -2714,10 +2704,9 @@ static void io_complete_rw_iopoll(struct kiocb *kiocb, long res, long res2)
- 	if (kiocb->ki_flags & IOCB_WRITE)
- 		kiocb_end_write(req);
- 	if (unlikely(res != req->result)) {
--		if (!(res == -EAGAIN && io_rw_should_reissue(req) &&
--		    io_resubmit_prep(req))) {
--			req_set_fail(req);
--			req->flags |= REQ_F_DONT_REISSUE;
-+		if (res == -EAGAIN && io_rw_should_reissue(req)) {
-+			req->flags |= REQ_F_REISSUE;
-+			return;
- 		}
- 	}
- 
-@@ -2931,7 +2920,6 @@ static void kiocb_done(struct kiocb *kiocb, ssize_t ret,
- {
- 	struct io_kiocb *req = container_of(kiocb, struct io_kiocb, rw.kiocb);
- 	struct io_async_rw *io = req->async_data;
--	bool check_reissue = kiocb->ki_complete == io_complete_rw;
- 
- 	/* add previously done IO, if any */
- 	if (io && io->bytes_done > 0) {
-@@ -2943,19 +2931,27 @@ static void kiocb_done(struct kiocb *kiocb, ssize_t ret,
- 
- 	if (req->flags & REQ_F_CUR_POS)
- 		req->file->f_pos = kiocb->ki_pos;
--	if (ret >= 0 && check_reissue)
-+	if (ret >= 0 && (kiocb->ki_complete == io_complete_rw))
- 		__io_complete_rw(req, ret, 0, issue_flags);
- 	else
- 		io_rw_done(kiocb, ret);
- 
--	if (check_reissue && (req->flags & REQ_F_REISSUE)) {
-+	if (req->flags & REQ_F_REISSUE) {
- 		req->flags &= ~REQ_F_REISSUE;
- 		if (io_resubmit_prep(req)) {
- 			io_req_task_queue_reissue(req);
- 		} else {
-+			unsigned int cflags = io_put_rw_kbuf(req);
-+			struct io_ring_ctx *ctx = req->ctx;
-+
- 			req_set_fail(req);
--			__io_req_complete(req, issue_flags, ret,
--					  io_put_rw_kbuf(req));
-+			if (issue_flags & IO_URING_F_NONBLOCK) {
-+				mutex_lock(&ctx->uring_lock);
-+				__io_req_complete(req, issue_flags, ret, cflags);
-+				mutex_unlock(&ctx->uring_lock);
-+			} else {
-+				__io_req_complete(req, issue_flags, ret, cflags);
-+			}
- 		}
- 	}
- }
+>  	spin_unlock(&ctx->completion_lock);
+>  
+>  	if (!READ_ONCE(apoll->poll.canceled))
+> 
+
 -- 
-2.33.0
-
+Pavel Begunkov

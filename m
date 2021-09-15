@@ -2,109 +2,120 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D62D640CA19
-	for <lists+io-uring@lfdr.de>; Wed, 15 Sep 2021 18:29:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02D6E40CB09
+	for <lists+io-uring@lfdr.de>; Wed, 15 Sep 2021 18:49:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229690AbhIOQbH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 15 Sep 2021 12:31:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59722 "EHLO
+        id S229888AbhIOQus (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 15 Sep 2021 12:50:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36382 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229750AbhIOQbE (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Sep 2021 12:31:04 -0400
-Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3BF3C061766
-        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 09:29:45 -0700 (PDT)
-Received: by mail-io1-xd2e.google.com with SMTP id q3so4215382iot.3
-        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 09:29:45 -0700 (PDT)
+        with ESMTP id S229515AbhIOQuk (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Sep 2021 12:50:40 -0400
+Received: from mail-qv1-xf35.google.com (mail-qv1-xf35.google.com [IPv6:2607:f8b0:4864:20::f35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23312C061575
+        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 09:49:21 -0700 (PDT)
+Received: by mail-qv1-xf35.google.com with SMTP id u4so2274272qvb.6
+        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 09:49:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=7aCyMA3VxhptRQuh2ttvtkXb5nYxSvlQb9n4PnL14HE=;
-        b=TnxV6azM337V7+EQTc7tgqg4h6BabFLlrm1nMP2mWqq8fSWZedsXCiezxxZ748yuKD
-         wNULwyCPFMzWQB1vJzp+gUlivZ9dzJ0LMSn8jCMznBpWqAJN0LIjOjPZI0ETiRXij0Im
-         QWJoA6KOSX3xX/6dhfU2LFCur0alTcWJbEIbm7lEEuBBrEFVIfuf2q2Hx+4HvKSG7zPG
-         jqaoXY61iFg7gdTjWu5KKt6NjWeECajEru5Nsf3+4ny/iiJDWZSKPs/yaszkqV+e2RtX
-         rXfXCmUrR6TCMLxDgxhuRVQC6npdvqo0ADcQSvcLjJqI3h8SXQeQw1dLK77yYGk3+WNn
-         U6iQ==
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=subject:from:to:date:message-id:user-agent:mime-version
+         :content-transfer-encoding;
+        bh=tZwBVZ5ivrPb6DCSmr/gfWXOF5H7MpGJkku89V1qfH0=;
+        b=GmYCadx8bMhGbpmSXQkaENi2AwpsDk4eicoMJAb8ftUwKq8x4RRfBTKM3YrGwJXIcK
+         LTK6/KOqdno7n7n/55XdVcVV23K7/9TedZipQAkrJVt9BcIZsNpl8JYvQOP7jTlkWoeS
+         IAmFraZ0WZGN9UOPi3qaJYgrE/bpl69T7juHgOdJBV+YMrSOGrQL5mY0nPqzlJKsHlgc
+         W/BkFiRcn58ZyCHY7Y7xVr20AzfPaXsL5J3W/BakFi4bUrDljf6RTA71kzPXXaoC+SAP
+         MWjc7HE3QZxgCn6M3Npq4lqaLjnXSGmIz5KB953JeZ90Cshp3gYGTGfKAu0Z2sGSNpnf
+         T+jw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=7aCyMA3VxhptRQuh2ttvtkXb5nYxSvlQb9n4PnL14HE=;
-        b=B9FURPJDOwPXVzPXa+qa9PZTRaUHZHR2mf1YLS2cVj9U1G0IJkNqYTeMe+9szXNKNt
-         HiV4xL0jhHNHzrtJM7fvSUbkITUYlqsXeMGfQRwaDawuf6tWm3saNWj6xc9uwNu9QD/C
-         ynOO2SXH3CiX43hq8qAYWd1CKmtara4o018KjXGMRDT2y05Z8/TuvEbUJW0U/1+IhpHT
-         vr7GemwhTrTLNGLvisN3eO/rnhIJLWKcI9gaz6Ism7kr5d2gCHXKfteyj0AN5wRbr+w9
-         9wzUMgb0KIuEfQkJFyA/ur2vp2AW25Hy89b6ndeIU8xjT0znlVHI+LQ39eGXbOmYsYDV
-         SaLg==
-X-Gm-Message-State: AOAM530W96Vpa/qUWJnh1irWDYTawZpfvoztONfmXStsBurbb88sZvMy
-        QhmHnPRtyJtCVru4URbopna7F9KalMaZoq7ojdY=
-X-Google-Smtp-Source: ABdhPJw0rEUbTlqPzEJ0gkbfI5nR+gnP7QBSpN/3+6wbIEL9EW781xjzD2XmKlZ/N2ckNBw8lUjbXw==
-X-Received: by 2002:a05:6638:1347:: with SMTP id u7mr754174jad.34.1631723385002;
-        Wed, 15 Sep 2021 09:29:45 -0700 (PDT)
-Received: from p1.localdomain ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id t15sm227160ioi.7.2021.09.15.09.29.44
+        h=x-gm-message-state:subject:from:to:date:message-id:user-agent
+         :mime-version:content-transfer-encoding;
+        bh=tZwBVZ5ivrPb6DCSmr/gfWXOF5H7MpGJkku89V1qfH0=;
+        b=1qxcskiV6cPiOYAxpzKrV9OFW9hiifD1RIp6fF6ee/p5hMVrV9xS6G6s6iN9J1Fpss
+         ezXAYEetAAOYXE9aPAq/R+jr13vx4MDJaPKKf7Bx9Pp+QRaO9InZMZBR4Pe99BiChq0x
+         1z2ZFmPbMwhrAoebdhklBAr+UhjonTZC6jObOuwqGpOcnt9NOae4/kWOoarStQIgu35Q
+         LTpL0qlNPjpr4HCAeS2/O0gz8ll3B7NPI/eck08e8Gyn2gYajDj3LNdRMSJ6FsF5ukJR
+         W/usvBeeMV1+zaUFvzJ/G6Ef0usF8XaliBYczCszYSRiqNdkycWhs92WMWhOqV3OsTiL
+         edMg==
+X-Gm-Message-State: AOAM532RzjcEUoxf/ZH9yO3sTAWNZKd6onC11AmkC5mJ/Dm0vtbrkBZF
+        hNRBGY7WLaw2/qYEv7eE6MWF
+X-Google-Smtp-Source: ABdhPJw8vf5IO3EobDwbYHe2XkhMkNPHww7tMzZRabrqUnjoI4PvPa3dInjX+UhLg8nS5HeMJcXDpA==
+X-Received: by 2002:ad4:55b3:: with SMTP id f19mr727008qvx.16.1631724560204;
+        Wed, 15 Sep 2021 09:49:20 -0700 (PDT)
+Received: from localhost (pool-96-237-52-188.bstnma.fios.verizon.net. [96.237.52.188])
+        by smtp.gmail.com with ESMTPSA id h9sm389334qkl.4.2021.09.15.09.49.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Sep 2021 09:29:44 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, viro@zeniv.linux.org.uk,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 3/3] Revert "iov_iter: track truncated size"
-Date:   Wed, 15 Sep 2021 10:29:37 -0600
-Message-Id: <20210915162937.777002-4-axboe@kernel.dk>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20210915162937.777002-1-axboe@kernel.dk>
-References: <20210915162937.777002-1-axboe@kernel.dk>
+        Wed, 15 Sep 2021 09:49:19 -0700 (PDT)
+Subject: [PATCH v4 0/8] Add LSM access controls and auditing to io_uring
+From:   Paul Moore <paul@paul-moore.com>
+To:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Date:   Wed, 15 Sep 2021 12:49:18 -0400
+Message-ID: <163172413301.88001.16054830862146685573.stgit@olly>
+User-Agent: StGit/1.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This reverts commit 2112ff5ce0c1128fe7b4d19cfe7f2b8ce5b595fa.
+A quick update to the v3 patchset with a small change to the audit
+record format (remove the audit login ID on io_uring records) and
+a subject line fix on the Smack patch.  I also caught a few minor
+things in the code comments and fixed those up.  All told, nothing
+significant but I really dislike merging patches that haven't hit
+the list so here ya go ...
 
-We no longer need to track the truncation count, the one user that did
-need it has been converted to using iov_iter_restore() instead.
+As a reminder, I'm planning to merge these in the selinux/next tree
+later this week and it would be *really* nice to get some ACKs from
+the io_uring folks; this patchset is implementing the ideas we all
+agreed to back in the v1 patchset so there shouldn't be anything
+surprising in here.
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+For reference the v3 patchset can be found here:
+https://lore.kernel.org/linux-security-module/163159032713.470089.11728103630366176255.stgit@olly/T/#t
+
+Those who would prefer to fetch these patches directly from git can
+do so using the tree/branch below:
+git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+ (checkout branch "working-io_uring")
+
 ---
- include/linux/uio.h | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/include/linux/uio.h b/include/linux/uio.h
-index 984c4ab74859..207101a9c5c3 100644
---- a/include/linux/uio.h
-+++ b/include/linux/uio.h
-@@ -53,7 +53,6 @@ struct iov_iter {
- 		};
- 		loff_t xarray_start;
- 	};
--	size_t truncated;
- };
- 
- static inline enum iter_type iov_iter_type(const struct iov_iter *i)
-@@ -270,10 +269,8 @@ static inline void iov_iter_truncate(struct iov_iter *i, u64 count)
- 	 * conversion in assignement is by definition greater than all
- 	 * values of size_t, including old i->count.
- 	 */
--	if (i->count > count) {
--		i->truncated += i->count - count;
-+	if (i->count > count)
- 		i->count = count;
--	}
- }
- 
- /*
-@@ -282,7 +279,6 @@ static inline void iov_iter_truncate(struct iov_iter *i, u64 count)
-  */
- static inline void iov_iter_reexpand(struct iov_iter *i, size_t count)
- {
--	i->truncated -= count - i->count;
- 	i->count = count;
- }
- 
--- 
-2.33.0
+Casey Schaufler (1):
+      Smack: Brutalist io_uring support
 
+Paul Moore (7):
+      audit: prepare audit_context for use in calling contexts beyond syscalls
+      audit,io_uring,io-wq: add some basic audit support to io_uring
+      audit: add filtering for io_uring records
+      fs: add anon_inode_getfile_secure() similar to anon_inode_getfd_secure()
+      io_uring: convert io_uring to the secure anon inode interface
+      lsm,io_uring: add LSM hooks to io_uring
+      selinux: add support for the io_uring access controls
+
+
+ fs/anon_inodes.c                    |  29 ++
+ fs/io-wq.c                          |   4 +
+ fs/io_uring.c                       |  69 +++-
+ include/linux/anon_inodes.h         |   4 +
+ include/linux/audit.h               |  26 ++
+ include/linux/lsm_hook_defs.h       |   5 +
+ include/linux/lsm_hooks.h           |  13 +
+ include/linux/security.h            |  16 +
+ include/uapi/linux/audit.h          |   4 +-
+ kernel/audit.h                      |   7 +-
+ kernel/audit_tree.c                 |   3 +-
+ kernel/audit_watch.c                |   3 +-
+ kernel/auditfilter.c                |  15 +-
+ kernel/auditsc.c                    | 469 ++++++++++++++++++++++------
+ security/security.c                 |  12 +
+ security/selinux/hooks.c            |  34 ++
+ security/selinux/include/classmap.h |   2 +
+ security/smack/smack_lsm.c          |  46 +++
+ 18 files changed, 646 insertions(+), 115 deletions(-)

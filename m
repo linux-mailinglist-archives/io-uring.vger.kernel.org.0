@@ -2,102 +2,83 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 96CB340CCBC
-	for <lists+io-uring@lfdr.de>; Wed, 15 Sep 2021 20:46:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2092440CD28
+	for <lists+io-uring@lfdr.de>; Wed, 15 Sep 2021 21:26:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231153AbhIOSsF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 15 Sep 2021 14:48:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35372 "EHLO
+        id S231433AbhIOT1y (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 15 Sep 2021 15:27:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229718AbhIOSsF (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Sep 2021 14:48:05 -0400
-Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BE32C061575
-        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 11:46:46 -0700 (PDT)
-Received: by mail-io1-xd34.google.com with SMTP id b200so4732436iof.13
-        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 11:46:46 -0700 (PDT)
+        with ESMTP id S230451AbhIOT1y (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Sep 2021 15:27:54 -0400
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C815FC061574
+        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 12:26:34 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id m3so6775582lfu.2
+        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 12:26:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=99Kw1j1eVMbhrAgZXfGRgYVdqT/i+a0+MPLD8HFFIc4=;
-        b=CsgcDCnADO5ugy7onKouza4fhG+yUV0MDOzSndd/gDrPbnCVnsz2J9QFoKjJgdlIiq
-         E3LwE/FHYLp7GI8a7djMfSXSqqptBInylpqEBEd8LybqxCSj5ZNLNAHIn9HdOOD+AJc0
-         Q9siDRJqOwGoR17QoQPu54YLX21JLnRCD/tF7/QkEiyo3OVe4Sq9p+1q2M3dAY0laEc1
-         22sv42Qvez1aPio7GMgHXG2+lHRL3mZbnSvwZI1GfxnF37zzQrVePJLGMstki/ajdbij
-         ryV/0MOXzmLApbHE6D3pSJhgeUR7WVEQ+RCBpfH1hrKIguR2X+wr6dL4dFOue9ykjDiQ
-         LINw==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6P9z1QCvAbv+k1VCp+BJZaSRLDdYfJBGVDJTbeRLGGs=;
+        b=RYKWs9AXUkHcdaPvDhM9IiyTnFbvdFnNl9EWvWcjqUXDqr2f/hZEtv9pQp1KoMWL0A
+         scCYipyvVNdf7qZYFLlaqanfBGdt7EngTZ41qZmuWN9jpiOJrrXi7I+JbbNaCtBplC5S
+         jdU29T018/5bOfc5OAMr+9gI+XuB3QtFda90I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=99Kw1j1eVMbhrAgZXfGRgYVdqT/i+a0+MPLD8HFFIc4=;
-        b=UID5dJJ8ABNirSccp4PE+/LOQTZctuUWCjcqGeG9aqJSM3d8Yru4xDpZNP6SK89www
-         c7vBoFr1FqfWxZsvDrRVBeFkHzhgROqfwYEcfB8ioyvt+jCqIWsXYxOR3T3Moy15fnGn
-         vrQuEKPwNy4BdrjRb4RIsUrxAvZkdR0ow/4v3/Qd3IT47dX6X6BUalgs3uL3y8NL3fdv
-         Gbh/G829f47Dv6bL0X7yiVQAG7SZuq75lT8WAzjalSuD3aBT8qxJvj6LAap5VsBc3TF7
-         EQw97WEuekNsm+jNAwGKdCbdaA+8IiKX1Fgrqwi3VfNVAEIrsHuUhqGhmCHf7Q24SbEc
-         EsFg==
-X-Gm-Message-State: AOAM531jMkoNOy3X5wkqtE/KsUD8bYD/lAUV22STTxLFG9G0K89dKq2o
-        4fvNIonI+haqsNgL87uuijx49Q==
-X-Google-Smtp-Source: ABdhPJyVmsyeTFwtvsHILTmGHuMTBRGYbKYqOePJZrL48z7bCy6x+55r/0kTd5bBtV7AnDU1ru+CLQ==
-X-Received: by 2002:a6b:710f:: with SMTP id q15mr1243760iog.77.1631731605376;
-        Wed, 15 Sep 2021 11:46:45 -0700 (PDT)
-Received: from [192.168.1.30] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id y26sm403955iob.37.2021.09.15.11.46.44
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6P9z1QCvAbv+k1VCp+BJZaSRLDdYfJBGVDJTbeRLGGs=;
+        b=614gSr0n0u03VbL+yyC7/TA0/6+Oca+xLZ5p45hg7xBX10ark0ZECbo+IDjipI4gvR
+         NO2MEgEbG4z6SHwoUNPwMxUrfG+Y7rzlFdjbWQzUAfdklqxjV1h4G8ahBE8fOjgs8Tsy
+         QKYSVt0nw8rgJ3tNhFhwBuZ/ER3BkhdhMlYZdCbtFxSGduv+jJFUF/l35NJuhGVw33u2
+         0oL9+ElPdBmVRrkEXcDcKBQFt+XZK7RyFsu2lRiZmQYFBKFeb9OsOft5WVceXPJJuDEw
+         Qv76GvZW3gBYLfKIDY05Rh4uQW5CNeyeuIyoWM1Vw0A1fiYK7xQygchaygcgu6beaOpq
+         9fzA==
+X-Gm-Message-State: AOAM531Z3V6h4U8PTWFPEjW70HB9FG9i4vhdh6FFipXPy9O+gzzDNoEl
+        s5nDzPZ0MuzrBaIqmABKdG6vhJt8sTWJiDPZqs8=
+X-Google-Smtp-Source: ABdhPJxCJWo8oL9zx922G6Dlb+pw/4xL/YoLVw++EChHjCTKj5qtV22egXt1awNHdmD23krQKVDl2w==
+X-Received: by 2002:a05:6512:513:: with SMTP id o19mr1179690lfb.31.1631733992717;
+        Wed, 15 Sep 2021 12:26:32 -0700 (PDT)
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
+        by smtp.gmail.com with ESMTPSA id k8sm89311lja.57.2021.09.15.12.26.31
+        for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Sep 2021 11:46:45 -0700 (PDT)
+        Wed, 15 Sep 2021 12:26:32 -0700 (PDT)
+Received: by mail-lf1-f45.google.com with SMTP id c8so8668874lfi.3
+        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 12:26:31 -0700 (PDT)
+X-Received: by 2002:a2e:7f1c:: with SMTP id a28mr1419825ljd.56.1631733991308;
+ Wed, 15 Sep 2021 12:26:31 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210915162937.777002-1-axboe@kernel.dk> <CAHk-=wgtROzcks4cozeEYG33UU1Q3T4RM-k3kv-GqrdLKFMoLw@mail.gmail.com>
+ <8c7c8aa0-9591-a50f-35ee-de0037df858a@kernel.dk>
+In-Reply-To: <8c7c8aa0-9591-a50f-35ee-de0037df858a@kernel.dk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 15 Sep 2021 12:26:15 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wj3dsQMK4y-EeMD1Zyod7=Sv68UqrND-GYgHXx6wNRawA@mail.gmail.com>
+Message-ID: <CAHk-=wj3dsQMK4y-EeMD1Zyod7=Sv68UqrND-GYgHXx6wNRawA@mail.gmail.com>
 Subject: Re: [PATCHSET v3 0/3] Add ability to save/restore iov_iter state
-To:     Linus Torvalds <torvalds@linux-foundation.org>
+To:     Jens Axboe <axboe@kernel.dk>
 Cc:     io-uring <io-uring@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Al Viro <viro@zeniv.linux.org.uk>
-References: <20210915162937.777002-1-axboe@kernel.dk>
- <CAHk-=wgtROzcks4cozeEYG33UU1Q3T4RM-k3kv-GqrdLKFMoLw@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <8c7c8aa0-9591-a50f-35ee-de0037df858a@kernel.dk>
-Date:   Wed, 15 Sep 2021 12:46:44 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <CAHk-=wgtROzcks4cozeEYG33UU1Q3T4RM-k3kv-GqrdLKFMoLw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/15/21 12:32 PM, Linus Torvalds wrote:
-> On Wed, Sep 15, 2021 at 9:29 AM Jens Axboe <axboe@kernel.dk> wrote:
->>
->> I've run this through vectored read/write with io_uring on the commonly
->> problematic cases (dm and low depth SCSI device) which trigger these
->> conditions often, and it seems to pass muster. I've also hacked in
->> faked randomly short reads and that helped find on issue with double
->> accounting. But it did validate the state handling otherwise.
-> 
-> Ok, so I can't see anything obviously wrong with this, or anything I
-> can object to. It's still fairly complicated, and I don't love how
-> hard it is to follow some of it, but I do believe it's better.
+On Wed, Sep 15, 2021 at 11:46 AM Jens Axboe <axboe@kernel.dk> wrote:
+>
+>    The usual tests
+> do end up hitting the -EAGAIN path quite easily for certain device
+> types, but not the short read/write.
 
-OK good
+No way to do something like "read in file to make sure it's cached,
+then invalidate caches from position X with POSIX_FADV_DONTNEED, then
+do a read that crosses that cached/uncached boundary"?
 
-> IOW, I don't have any objections. Al was saying he was looking at the
-> io_uring code, so maybe he'll find something.
-> 
-> Do you have these test-cases as some kind of test-suite so that this
-> all stays correct?
+To at least verify that "partly synchronous, but partly punted to async" case?
 
-Yep liburing has a whole bunch of regressions tests that we always run
-for any change, and new cases are added as problems are found. That also
-has test cases for new features, etc. This one is particularly difficult
-to test and have confidence in, which is why I ended up hacking up that
-faked short return so I knew I had exercised all of it. The usual tests
-do end up hitting the -EAGAIN path quite easily for certain device
-types, but not the short read/write.
+Or were you talking about some other situation?
 
--- 
-Jens Axboe
-
+            Linus

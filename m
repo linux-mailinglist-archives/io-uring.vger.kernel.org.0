@@ -2,89 +2,103 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A172E40C85A
-	for <lists+io-uring@lfdr.de>; Wed, 15 Sep 2021 17:32:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FD2440CA13
+	for <lists+io-uring@lfdr.de>; Wed, 15 Sep 2021 18:29:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238000AbhIOPeM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 15 Sep 2021 11:34:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46250 "EHLO
+        id S229465AbhIOQbD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 15 Sep 2021 12:31:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234154AbhIOPeI (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Sep 2021 11:34:08 -0400
-Received: from mail-il1-x136.google.com (mail-il1-x136.google.com [IPv6:2607:f8b0:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62B8FC061574
-        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 08:32:49 -0700 (PDT)
-Received: by mail-il1-x136.google.com with SMTP id h29so3387691ila.2
-        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 08:32:49 -0700 (PDT)
+        with ESMTP id S229592AbhIOQbB (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Sep 2021 12:31:01 -0400
+Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD687C061575
+        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 09:29:42 -0700 (PDT)
+Received: by mail-il1-x144.google.com with SMTP id b6so3628655ilv.0
+        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 09:29:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=oSHNnFw50NtaUug8pvKX9QcMvQT3CtTjqa5ZQCf5lYw=;
-        b=BeoejbJwto6fp6wF8J66qKTyU5kD1y18E4uGBjIXh7BsRbx3M09RvDjILvMeKiTu3J
-         Yz0oPWD/L5IDJ8WuVfpeW9HuXAJl3w5IWf3MBK4zTr3abiQRAzAdFJdGdKJZECGf9pYy
-         hOW7472vkpyvS2P78jSaMncCAiDDmxWbDNLH/bKXzsnkwDK67gyqkDsYoQzRpj8tLqQ6
-         YwhpGMD2fT/ocIuBQdPJH3DPyA5ZvB1slXXuVxWocA2lna3HMfHKcPnKVjhmOcPNnCtZ
-         10yIbkXRRz6o/yXXqvjG7o3bcBXtaBJnvOlgwTBHNiLA+uoKcdT0OTUn55GjRQR1gy40
-         85Qw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UxuAkQ4ZtEcbC+XH0J5oJ2exv4p4EDf6m4KsjfHsOSo=;
+        b=d4BsZUAHcQWlZRxgHrvDbCkMmPZAsdoZEzZwBDP59rutjmrLeTwIz9qARf8OewK3Wp
+         UxlKzMP6tmWPE0mCM9Q4F2zGQyT2i3Ev6sXkU5QOHBREW0B5VCJ4qpMo3+Q5WqNKov0L
+         CE0ELiE7emZ/v6aKI7PcDb047fIHhoXlqb/zXSmoYs5ed0735klf8/Yc2lg2/3dLtwMn
+         yUJQ3h54j8Ii13o7kAo3eI8veZkHtNpGANTM3p/MeZWdLyXRbu35e/+4GJQUC2lCqvlp
+         bL+G8ppx7fKbrlkHl+uqCiCwBv1WXNiGD0BiT88oBrDhF1dGw65qIo4qALhcdC/J3HeS
+         lAaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=oSHNnFw50NtaUug8pvKX9QcMvQT3CtTjqa5ZQCf5lYw=;
-        b=FCyR+4UYeRKbKfyvIVh7dzZ+AAsMo7YZFp7bOukbygT8Xw0GDOgjKSjw43sQwnFD5r
-         KkYCOBVR4aiRdKADhjcLSIyrGLU17ia1xLX5QNQUg1v+hkv3HHPlr1+GgfuQRUVrN6CR
-         e97maIhwa0tKFQ7N/LdIKx0UXT/L9MzNE45FcE0lLFiuoSztN5au0lqG3+wkXcUd8Gsu
-         xSQ5SLGZYkwvvw2Wj5WQgmllhw/uXp05EfC2NGC4Ob0a+3w6KBhHTEUJUzlYdNpl5lZQ
-         K9//oh56KIPdIr7/w5zFLwnw41rPYOR30UapN8j9eOK/uWqWS7XfT9iQZxDBVb7rRfdW
-         RHbQ==
-X-Gm-Message-State: AOAM530I7wWw9ep/gqceT5Q+1+8si17FnLUv+zerW9npzbWwzAXFekZB
-        8LN+kv6Pv+FgYXKyon9emNFHT9VrxGhWrlOSvZQ=
-X-Google-Smtp-Source: ABdhPJxD3ZyTVXpd912PM60XFbzpkFmGhdVTrdaB29X/S58x1fx3jntc5LPRs/AMr3H0eSzlCxWRyw==
-X-Received: by 2002:a05:6e02:1305:: with SMTP id g5mr479222ilr.9.1631719968623;
-        Wed, 15 Sep 2021 08:32:48 -0700 (PDT)
-Received: from [192.168.1.30] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id b19sm136053ilc.41.2021.09.15.08.32.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Sep 2021 08:32:48 -0700 (PDT)
-Subject: Re: [PATCH] io_uring: add more uring info to fdinfo for debug
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Hao Xu <haoxu@linux.alibaba.com>
-Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <20210913130854.38542-1-haoxu@linux.alibaba.com>
- <3ecf6b05-e92d-7d74-8f72-983ec0d790fc@kernel.dk>
- <c5161c85-6e01-c949-e233-7adca5a63c46@gmail.com>
+        bh=UxuAkQ4ZtEcbC+XH0J5oJ2exv4p4EDf6m4KsjfHsOSo=;
+        b=CowE0b611prH32oBkAX7b7AOYhCZYldBFEwATbmReJI8BbEbvv4Ucewvkcov2l9c+V
+         Oppqoh776gH1NWTdNNkHbRBLX1aMmQdn3ELArEGOAwv8jIYanYa01XFm0JNsCEJpGhiP
+         jnNo4HRedwTnZe/nlCYKQQuRl2TwZX7rE+Y0WeKL7YKGuZDbSggPsGWdGI5wGl8CZktq
+         4SOy02DQcOpjMKTzTWEJD3yrTi8mU9Ig475sVdjWvA82gVIAb7CxifxKjaDtQb6n4Ubj
+         JBQIWkVZauO7cshuJl8uJglD4rRvJ4QRCsu+32e3Ytuz2jzyw9nNDgJbp/8Rtp1rvd4v
+         fnBA==
+X-Gm-Message-State: AOAM530LVy02G+lLycqpkchcn+HkrrwHkebbPVaiudNCqkphmgKP6hni
+        dJ231O5sXh7HnWOj8qQWmvo8/MHpP892PtMxbv4=
+X-Google-Smtp-Source: ABdhPJzUsCoNUfzqz1dDtv0AlqnIYxxmDSmXZINr6v8l7jYvuEsMjmwaot8J1UrnGWEzrIFvxKmPsQ==
+X-Received: by 2002:a92:7114:: with SMTP id m20mr687074ilc.114.1631723381941;
+        Wed, 15 Sep 2021 09:29:41 -0700 (PDT)
+Received: from p1.localdomain ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id t15sm227160ioi.7.2021.09.15.09.29.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Sep 2021 09:29:41 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <655da9c2-1926-370b-06f8-8e744111f3a7@kernel.dk>
-Date:   Wed, 15 Sep 2021 09:32:47 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+To:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, viro@zeniv.linux.org.uk
+Subject: [PATCHSET v3 0/3] Add ability to save/restore iov_iter state
+Date:   Wed, 15 Sep 2021 10:29:34 -0600
+Message-Id: <20210915162937.777002-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.33.0
 MIME-Version: 1.0
-In-Reply-To: <c5161c85-6e01-c949-e233-7adca5a63c46@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/15/21 9:31 AM, Pavel Begunkov wrote:
-> On 9/15/21 4:26 PM, Jens Axboe wrote:
->> On 9/13/21 7:08 AM, Hao Xu wrote:
->>> Developers may need some uring info to help themselves debug and address
->>> issues, these info includes sqring/cqring head/tail and the detail
->>> sqe/cqe info, which is very useful when it stucks.
->>
->> I think this is a good addition, more info to help you debug a stuck case
->> is always good. I'll queue this up for 5.16.
-> 
-> Are there limits how much we can print? I remember people were couldn't
-> even show a list of CPUs (was it proc?). The overflow list may be huge.
+Hi,
 
-It's using seq_file, so I _think_ we should be fine here. Not sure when/if
-it truncates.
+Linus didn't particularly love the iov_iter->truncated addition and how
+it was used, and it was hard to disagree with that. Instead of relying
+on tracking ->truncated, add a few pieces of state so we can safely
+handle partial or errored read/write attempts (that we want to retry).
+
+Then we can get rid of the iov_iter addition, and at the same time
+handle cases that weren't handled correctly before.
+
+I've run this through vectored read/write with io_uring on the commonly
+problematic cases (dm and low depth SCSI device) which trigger these
+conditions often, and it seems to pass muster. I've also hacked in
+faked randomly short reads and that helped find on issue with double
+accounting. But it did validate the state handling otherwise.
+
+For a discussion on this topic, see the thread here:
+
+https://lore.kernel.org/linux-fsdevel/CAHk-=wiacKV4Gh-MYjteU0LwNBSGpWrK-Ov25HdqB1ewinrFPg@mail.gmail.com/
+
+You can find these patches here:
+
+https://git.kernel.dk/cgit/linux-block/log/?h=iov_iter.3
+
+Changes since v2:
+- Add comments on io_read() on the flow
+- Fix issue with rw->bytes_done being incremented too early and hence
+  double accounting if we enter that bottom do {} while loop in io_read()
+- Restore iter at the bottom of do {} while loop in io_read()
+
+Changes since v1:
+- Drop 'did_bytes' from iov_iter_restore(). Only two cases in io_uring
+  used it, and one of them had to be changed with v2. Better to just
+  make the subsequent iov_iter_advance() explicit at that point.
+- Cleanup and sanitize the io_uring side, and ensure it's sane around
+  worker retries. No more digging into iov_iter_state from io_uring, we
+  use it just for save/restore purposes.
 
 -- 
 Jens Axboe
+
 

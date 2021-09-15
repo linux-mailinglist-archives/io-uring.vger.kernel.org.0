@@ -2,83 +2,84 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C72840C180
-	for <lists+io-uring@lfdr.de>; Wed, 15 Sep 2021 10:15:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E02F40C2E3
+	for <lists+io-uring@lfdr.de>; Wed, 15 Sep 2021 11:39:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236528AbhIOIQN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 15 Sep 2021 04:16:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57956 "EHLO
+        id S232073AbhIOJlN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 15 Sep 2021 05:41:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231611AbhIOIQJ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Sep 2021 04:16:09 -0400
-Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43F22C061574
-        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 01:14:51 -0700 (PDT)
-Received: by mail-pg1-x52d.google.com with SMTP id w8so1931834pgf.5
-        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 01:14:51 -0700 (PDT)
+        with ESMTP id S237017AbhIOJlN (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Sep 2021 05:41:13 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59FE0C061574
+        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 02:39:54 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id i3so1629292wmq.3
+        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 02:39:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=3v5pICzI7YAo93jE7aozDJ4Qh239loxBwANtjiKwei4=;
-        b=UAoTIrQ8s6ZTdjJAKRfy8oTvgEOTxHlbDQNUPjSoFpEuTbyqwrwH0ngYqS/tJya4Gv
-         wbxMOJOxXkxG44iLnDIKao+oc50BQ6H3f4jMzfi1syzBinj5Zmc87NCd6fGThByNHEOc
-         J6KE56XrZLbxANZ01izvnWxj+iVe6ztxlYONX+roU9Wg0kS5Zkn0BGkdvhj7OfD/RAiE
-         OG6fyNTOFD2iluHBByrN2PqalJiE9fs7Gn3BM90r111YhqEgIlYHZLahH62rEZgw5Pfk
-         Cgywj2IzHnwSKEjAt+2+8N7Xxg19kyYpDMLKQ6dal9c6175NF7/MBU0tYnGrekWi7GwO
-         n8pg==
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=cvOAIIMa4ir4mtbjMNf7vuX/kLdm698F67r0e1lN2a8=;
+        b=Jh2aTJsenszi4n9R89In03homzsfalN673CTjv8r62GHvWKLc0ouHNJSEoWgnP5hiB
+         ZVGx2zeJR/jLUqVWEQk/9rJYuVpZ3iS6QffOLyM/3fCy5R3sP80YE0DvTet5ASgr+CUK
+         Wq/wGKcVoJZ4xSVzYIHFYvKlNTFinfr2IoOeeGiRvPHE5J2ZTGfw++RA/tjPUKwIvXCF
+         Il6m2Gcme9KCl30heHJIYNPR7YuV/KVtHff+TDN2Nwcbz3rYo2Beh0Zh6yDSpYY0Fgzr
+         9qoTY2tISfEvyYq+H4QGVaS4DW3IoI5XtMML3f7zttBjOB6WP940H0CmuPVS5bV3kVT7
+         efAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=3v5pICzI7YAo93jE7aozDJ4Qh239loxBwANtjiKwei4=;
-        b=yoodQyRMdsC9An47n+nQFA2zqCvMaPVf2/cPtvSDjf8oF5VCrh1L/YMYDKxYutqfv4
-         lxxo4rnBVFpE5ACqvHWMfy/d8gFohvSTX+ghYO53JxQ9g2ps2zYwScdTN96sxs/eoI8S
-         Zgi94DgqXwLthFCPR2oZZz2YpF3NZjTtS0R8hdp1/LbzfB/SNbQMokfJ0tp7OryH+ak3
-         +g1o5pCMYoGO0SFWGwP93CbqcoxNFIxQa9eQ2ixFPogxejjCZcJ70fvQ/CNNH2XKOnw6
-         MVbq0hpYVI3kJFDjN5UcHlJEC6egOk/nsm5GTUaABsZ7g/HLkr1OeTWvqRpQhsOKBkoG
-         /lsg==
-X-Gm-Message-State: AOAM5334n6t85IZK+CWHI8eA0DdDEOezQKgs6oPKZxcXGRwpIvHGUWYu
-        oxjL/v5OoIYk0nbiShX6Nk4=
-X-Google-Smtp-Source: ABdhPJzYdwIVK9PwUpr8xXxn/FitrrPoHj5ZuWjdY5uXFsdarGoUr3GgTIpTQiaWXOTUnISH5IJdmQ==
-X-Received: by 2002:a63:cd48:: with SMTP id a8mr19553482pgj.180.1631693690873;
-        Wed, 15 Sep 2021 01:14:50 -0700 (PDT)
-Received: from integral.. ([182.2.71.184])
-        by smtp.gmail.com with ESMTPSA id x22sm12643076pfm.102.2021.09.15.01.14.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Sep 2021 01:14:50 -0700 (PDT)
-From:   Ammar Faizi <ammarfaizi2@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Ammar Faizi <ammarfaizi2@gmail.com>
-Subject: [PATCH liburing 3/3] .gitignore: add `/test/output/`
-Date:   Wed, 15 Sep 2021 15:11:58 +0700
-Message-Id: <b9aacc68090774c08f871720d3f8b575e62f8807.1631692342.git.ammarfaizi2@gmail.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <2d53ef3f50713749511865a7f89e27c5378e316d.1631692342.git.ammarfaizi2@gmail.com>
-References: <2d53ef3f50713749511865a7f89e27c5378e316d.1631692342.git.ammarfaizi2@gmail.com>
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=cvOAIIMa4ir4mtbjMNf7vuX/kLdm698F67r0e1lN2a8=;
+        b=UKqhOevd0HOps4BbekoK8R/3/uErXkXkU576+x5OnfwKgaFJOdu+3/wQawldMmltNu
+         u8DdxCqKgkZT3FtWYmd40z56EKsbYwxKfsD+dTjrHK8E7RUcqzUYRm+5zm3K+ES45cuD
+         fOD7HzpoSOTVe7IlDRyJfXngWWI23oqJ/xt5NlqqgA1dxAAuxeZqoN2yhbdJG6ApeD7f
+         ZlrSiYGfm6ghEHN99vEJL5nHYI8BeCtwmPCoGkNWWm+eeOJqFKealYpLby/VZpds5NKz
+         0jdfm4LlVVvMFXuKEk2Y/FEzdNYkAK0np514degUKcECOxOeOH8CVSgmFGB+I0JpH84+
+         0S/Q==
+X-Gm-Message-State: AOAM531N+t5aMsWygplD0ClJCZOTwt+XU7FA2l53YETUWty8KrTFcvoI
+        Njx2zbtsoMy+vRo2Oat2kIa5VcIqCrQ=
+X-Google-Smtp-Source: ABdhPJxK57Bpec8lqoOtCoEi/aQKnltDH6lwwvYp7ozhXJHwbmrL1Xmrb4BtdaZk+VEPeRCeN6oM0g==
+X-Received: by 2002:a7b:c048:: with SMTP id u8mr3366417wmc.113.1631698792762;
+        Wed, 15 Sep 2021 02:39:52 -0700 (PDT)
+Received: from [192.168.8.197] ([185.69.144.239])
+        by smtp.gmail.com with ESMTPSA id z17sm2532471wml.24.2021.09.15.02.39.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Sep 2021 02:39:52 -0700 (PDT)
+Subject: Re: [PATCH] io_uring: move iopoll reissue into regular IO path
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <09c645bdf78117a5933490aff0eea10c4f1ceb0a.1631658805.git.asml.silence@gmail.com>
+ <a28f257c-6ab1-8beb-a797-d89c48c3cb62@kernel.dk>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Message-ID: <28d60cb5-04fe-5213-83c7-7178bb9e06ac@gmail.com>
+Date:   Wed, 15 Sep 2021 10:39:16 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <a28f257c-6ab1-8beb-a797-d89c48c3cb62@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Signed-off-by: Ammar Faizi <ammarfaizi2@gmail.com>
----
- .gitignore | 1 +
- 1 file changed, 1 insertion(+)
+On 9/15/21 2:14 AM, Jens Axboe wrote:
+> On 9/14/21 4:34 PM, Pavel Begunkov wrote:
+>> 230d50d448acb ("io_uring: move reissue into regular IO path")
+>> made non-IOPOLL I/O to not retry from ki_complete handler. Follow it
+>> steps and do the same for IOPOLL. Same problems, same implementation,
+>> same -EAGAIN assumptions.
+> 
+> This looks good to me. But I don't think it's against io_uring-5.15?
+> Trivial reject, but looks like -next to me.
 
-diff --git a/.gitignore b/.gitignore
-index 0213bfa..45f3cde 100644
---- a/.gitignore
-+++ b/.gitignore
-@@ -131,6 +131,7 @@
- /test/submit-link-fail
- /test/exec-target
- /test/*.dmesg
-+/test/output/
- 
- config-host.h
- config-host.mak
+Was checking out to io_uring-5.15, apparently something gone wrong.
+Not only that, but also a chunk left un-amended...
+
+I'll resend against io_uring-5.15
+
 -- 
-2.30.2
-
+Pavel Begunkov

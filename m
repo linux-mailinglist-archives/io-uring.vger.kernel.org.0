@@ -2,77 +2,75 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CBCCD40D174
-	for <lists+io-uring@lfdr.de>; Thu, 16 Sep 2021 03:54:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E27F40D288
+	for <lists+io-uring@lfdr.de>; Thu, 16 Sep 2021 06:27:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233291AbhIPBzv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 15 Sep 2021 21:55:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46526 "EHLO
+        id S231283AbhIPE3I (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 16 Sep 2021 00:29:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51706 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229816AbhIPBzv (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Sep 2021 21:55:51 -0400
-Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC062C061574
-        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 18:54:31 -0700 (PDT)
-Received: by mail-io1-xd2d.google.com with SMTP id z1so5989284ioh.7
-        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 18:54:31 -0700 (PDT)
+        with ESMTP id S229521AbhIPE3I (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 16 Sep 2021 00:29:08 -0400
+Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A77CC061574
+        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 21:27:48 -0700 (PDT)
+Received: by mail-pf1-x434.google.com with SMTP id j16so4758130pfc.2
+        for <io-uring@vger.kernel.org>; Wed, 15 Sep 2021 21:27:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=Spse/bHxUW8qExECpiVTJ/boNy9sMY+f+rtCz/a8Aho=;
-        b=gTm/ml9fOS++19oN/eaL97wTdBR9g3WCMjwRXJPjf2IOUyrB3imJjeDQQHld6jXiUa
-         nZZczlPYuNGDJS7ICmlSgQUOnxaJTZg4H57oCd56Oey2xh+fIpPlv+BCm3rn2mOu6/dP
-         QO9WvmDa62KYKfyy2iMJPMdK/b3LzOolOYX0F+i0eaosOUJ4Wct8+fEItb3jh33R92hZ
-         +zlar84bJH9cU0ETxY2ZrDr8q4oPZOnMEpDQgXsRe4OB245CdaRjgpNtnFwS8hKVtSmD
-         6MSZX9eJ5zHAB+o2gJs4tf5fRAKvmnyVkQD7Q+DkvUn0hEbs+nuPznKKDscM6YEGceem
-         z9SA==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3LAH4N0pSUbqMaoIoAlLsdNT6f8LH/oQjfwjff2nVCw=;
+        b=YpMeMww6McUhW3/haeu6sNh9i+8ZR9K2wmHkSMlPddGLHwNYCoA4bHKvxUNS9+lAzh
+         Z7GTLzyTh5TLdXxfd3BQo/u/l5BRMCyeKCwElQIsvG5d0YrPtI5cHI0GMeUB3464oONF
+         jGYEpMoyKnrRW6IxgZnC1lag/WfwZWWe8d1v85kDalSItY+NeiahwtfZEHOi2EOLcpRD
+         9wIgG2Q3tPIFhbq6BVlzR7dziNZRWdwLTIaWPkKk/viGySb8IejeHEvBM07PzpwkZ9UE
+         s6wWOyqzD/xdQ/upSiso9yS3cxRTs0f19H/H5Du5ZlZ3WG0Rv7TuPtG5W3tI+KP+vTkb
+         Tp4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=Spse/bHxUW8qExECpiVTJ/boNy9sMY+f+rtCz/a8Aho=;
-        b=ADjAqRU1wAWrj0d0PNuU3oXvRvF8We2fye+CNLWZ6l83D64FxDt2zELoJtMEhUqx0T
-         Yh/YmgWeXXks8VjJ4E0B68wPMqogec6AkxvY8mDDBECfNSff0bZzmQZnh331Bs3HQOrR
-         TfQROfjZJltgT0EE+Q3TJ/IGa2jHOBw1IJS2oWnfH1nXOqWOvwI0pu5iMaLBJHgCbVYk
-         5MCWbo4Pl6dVobneDz4+J9ItQtZTjjsgF9NoqCtqgGdXEgjK3IqGG5qKyu9lK9mKKoZU
-         L/AHboN0os8qu8tCDa3PayjMy125oiKXZ1u3b7JRiQzIr4eP2dvmC2IC8WAyAc3frWiB
-         G8Sw==
-X-Gm-Message-State: AOAM532A3wbFru2eTfuMjRR0Qw3jKjaxBJcCwehoe7z+uHGovVO1FBhD
-        dR/NABvRbvyxgrOji9Revfss9Z6apT/IFw==
-X-Google-Smtp-Source: ABdhPJwRVWWw89OORTBGsJzKFKHlAk/pJ2k1hh/yQL2+JHcTX9pE3XL+oa84uZ8tTkDvFS0xsvqHAA==
-X-Received: by 2002:a5e:c807:: with SMTP id y7mr2388571iol.87.1631757271106;
-        Wed, 15 Sep 2021 18:54:31 -0700 (PDT)
-Received: from [192.168.1.116] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id p11sm918365ilh.38.2021.09.15.18.54.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Sep 2021 18:54:30 -0700 (PDT)
-Subject: Re: [PATCH v2] io_uring: move iopoll reissue into regular IO path
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <f80dfee2d5fa7678f0052a8ab3cfca9496a112ca.1631699928.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <76f6779a-85a2-7877-8b03-44fd46684d7a@kernel.dk>
-Date:   Wed, 15 Sep 2021 19:54:30 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        bh=3LAH4N0pSUbqMaoIoAlLsdNT6f8LH/oQjfwjff2nVCw=;
+        b=00fZDAcJHBp9OK0F0XzAkwOA5lJAxqRn93yYoaOnVFVs7IxheC0Fwfzz+9kTxvWIfn
+         at1Fq5A3+A1IK6sB6Vg10wy/hwrHTdhVQMhI/2hkEfwIFPeaCe3ytEjtEU96nQ5MwZrC
+         pn19UidzFrFos/3D6lY0Rx32VHQqvuHOjpgqrBCAvcr7bcTDiD4XQJMY8bgBn4QXzX9m
+         Bobkjy7zjGAbeVvWdRsuEcbRSgM275u6THXub5oPd7IkDtxyMjxC3OY/PDyY0doxrYZA
+         vjQv9CbGy+IfSv9TPfoHqIxyjfjpY5UWzbvEg78BcrfIALYxGZjEBVRYoqQasMhOXz6L
+         hHAA==
+X-Gm-Message-State: AOAM530mGSLZtS3pD372o3yGnC6W3e7ikiSCecwpIpFysf8UssaZdS+5
+        qYTHIhK4afYOi/Fg1bLUpNJrIv89D8g=
+X-Google-Smtp-Source: ABdhPJw0tmQot71hJ59vkEdsi7FyApXILW/PfFq5J539aRgBaCJcrroau9oFKW2ivL9tNmtDKX6xsw==
+X-Received: by 2002:a62:7887:0:b0:434:a96a:e69f with SMTP id t129-20020a627887000000b00434a96ae69fmr2948446pfc.83.1631766467911;
+        Wed, 15 Sep 2021 21:27:47 -0700 (PDT)
+Received: from integral.. ([182.2.37.93])
+        by smtp.gmail.com with ESMTPSA id q3sm1521216pgf.18.2021.09.15.21.27.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Sep 2021 21:27:47 -0700 (PDT)
+From:   Ammar Faizi <ammarfaizi2@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org
+Subject: [PATCH liburing 0/2] Update .gitignore and fix 32-bit build
+Date:   Thu, 16 Sep 2021 11:27:29 +0700
+Message-Id: <20210916042731.210100-1-ammarfaizi2@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-In-Reply-To: <f80dfee2d5fa7678f0052a8ab3cfca9496a112ca.1631699928.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/15/21 4:00 AM, Pavel Begunkov wrote:
-> 230d50d448acb ("io_uring: move reissue into regular IO path")
-> made non-IOPOLL I/O to not retry from ki_complete handler. Follow it
-> steps and do the same for IOPOLL. Same problems, same implementation,
-> same -EAGAIN assumptions.
+- Add test/file-verify to .gitignore.
+- Fix 32-bit build
 
-Applied, thanks.
+----------------------------------------------------------------
+Ammar Faizi (2):
+      .gitignore: add `test/file-verify`
+      test/file-verify: fix 32-bit build -Werror=shift-count-overflow
 
--- 
-Jens Axboe
+ .gitignore         | 1 +
+ test/file-verify.c | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+ 
+
 

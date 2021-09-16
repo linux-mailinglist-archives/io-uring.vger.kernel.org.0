@@ -2,56 +2,94 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BFF340D341
-	for <lists+io-uring@lfdr.de>; Thu, 16 Sep 2021 08:30:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E3DD40D42E
+	for <lists+io-uring@lfdr.de>; Thu, 16 Sep 2021 10:00:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234580AbhIPGbH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 16 Sep 2021 02:31:07 -0400
-Received: from out30-54.freemail.mail.aliyun.com ([115.124.30.54]:37882 "EHLO
-        out30-54.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234579AbhIPGbH (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 16 Sep 2021 02:31:07 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UoYh8xZ_1631773785;
-Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UoYh8xZ_1631773785)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 16 Sep 2021 14:29:45 +0800
-Subject: Re: [PATCH] io_uring: add more uring info to fdinfo for debug
-To:     Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <20210913130854.38542-1-haoxu@linux.alibaba.com>
- <3ecf6b05-e92d-7d74-8f72-983ec0d790fc@kernel.dk>
- <c5161c85-6e01-c949-e233-7adca5a63c46@gmail.com>
- <655da9c2-1926-370b-06f8-8e744111f3a7@kernel.dk>
-From:   Hao Xu <haoxu@linux.alibaba.com>
-Message-ID: <60bfddf8-d19a-102e-21dc-bf4ea7bf9724@linux.alibaba.com>
-Date:   Thu, 16 Sep 2021 14:29:45 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.13.0
+        id S234932AbhIPIBV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 16 Sep 2021 04:01:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42186 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234900AbhIPIBV (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 16 Sep 2021 04:01:21 -0400
+Received: from mail-oo1-xc35.google.com (mail-oo1-xc35.google.com [IPv6:2607:f8b0:4864:20::c35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0676BC061574
+        for <io-uring@vger.kernel.org>; Thu, 16 Sep 2021 01:00:01 -0700 (PDT)
+Received: by mail-oo1-xc35.google.com with SMTP id v20-20020a4a2554000000b0028f8cc17378so1825517ooe.0
+        for <io-uring@vger.kernel.org>; Thu, 16 Sep 2021 01:00:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=93zx3vU1aklDWU/pl0rAprDMWU2o0pwv4FUA4FyOCAc=;
+        b=Nh3thr9/uwyT4GqeuZdCadhw3TTv9l0fUkLi4cddtGIVWB/kSoHsl8RTQbXDy5GtT6
+         wjIzSY6/nzhY3Fc7vPfgHXDXQlFjS38SbEqO52gLhY7c0UBT72zY3Y6nYK4JTwqzCZI/
+         qFwoCHIJM81r1ojcjumVtghzPeYlmah802j9eAtxSnxipUWOoeU1WYA9BYbiUblowCll
+         ru/hes4cVP8nQnR1HUMMazk26L/mC97CFDZhAjxqVBDhpE18Dbm6V6s+ot1wnykLKzV9
+         S7V+FTjKBAIyAND6vb6Y5jSEpeAi0x/tYu1olh4Nm76fhsHdzEfKzLkfzENxcf7P6UAB
+         YHww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=93zx3vU1aklDWU/pl0rAprDMWU2o0pwv4FUA4FyOCAc=;
+        b=02+muvgA48BdRP+qwxfjoTYNnfA+aeNpBD1DaPCxYV28gWMCZ6/mRgocos30ejq+Gz
+         irJqTi6TNUjmZiC45vxeKF6ZxTO0LIf5iulyN8xn+TMYaC8FUnWz/pi64EyxuBJQ/HX+
+         9kFAJ/l38236dJvecvaaqZJy7KGeMnpaHgik7Z6O/ZUZ91LC8LlgMb939l3KY4roc5aK
+         xmwbxSLht7WPern9MwGqv/TwThZWA1CXn2opLWst6Ya+gcTSFmx/SpGcVRuzf/Xi0GiD
+         CM28iSj3+Mp/tJoX7cn2xj9uq94XnqhNkarBGm9sPaHE4L1RUpUjWuTxbr+6Q3a3X1yq
+         YV2g==
+X-Gm-Message-State: AOAM530pWmtmmn7hKEbxNAG9UqqTYAq9rDrMNzZOMOOF8OZQVAmL/Npv
+        9ewBeZ/7o54rof58WJXi6eVKlv2I6Ck9J6I1WdVU3g==
+X-Google-Smtp-Source: ABdhPJx9WYkZtAm+l9hmPej8DdPKD0lNlKUA5YclHnJHZua1+FIPkm8muONXSS2oM1OJ+gYUhz1mA/ik1Z98A1nQUt4=
+X-Received: by 2002:a4a:e792:: with SMTP id x18mr3298706oov.53.1631779199332;
+ Thu, 16 Sep 2021 00:59:59 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <655da9c2-1926-370b-06f8-8e744111f3a7@kernel.dk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <0000000000006e9e0705bd91f762@google.com> <0000000000006ab57905cbdd002c@google.com>
+In-Reply-To: <0000000000006ab57905cbdd002c@google.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Thu, 16 Sep 2021 09:59:48 +0200
+Message-ID: <CACT4Y+avszKiyXYBTRus9DqeSUoGrWC8d2uEiJN3z=oYQSdz0g@mail.gmail.com>
+Subject: Re: [syzbot] WARNING in __percpu_ref_exit (2)
+To:     syzbot <syzbot+d6218cb2fae0b2411e9d@syzkaller.appspotmail.com>
+Cc:     asml.silence@gmail.com, axboe@kernel.dk, coreteam@netfilter.org,
+        davem@davemloft.net, dsahern@kernel.org, fw@strlen.de,
+        hdanton@sina.com, io-uring@vger.kernel.org, kadlec@netfilter.org,
+        kuba@kernel.org, linux-kernel@vger.kernel.org, ming.lei@redhat.com,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        pablo@netfilter.org, syzkaller-bugs@googlegroups.com,
+        yoshfuji@linux-ipv6.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-在 2021/9/15 下午11:32, Jens Axboe 写道:
-> On 9/15/21 9:31 AM, Pavel Begunkov wrote:
->> On 9/15/21 4:26 PM, Jens Axboe wrote:
->>> On 9/13/21 7:08 AM, Hao Xu wrote:
->>>> Developers may need some uring info to help themselves debug and address
->>>> issues, these info includes sqring/cqring head/tail and the detail
->>>> sqe/cqe info, which is very useful when it stucks.
->>>
->>> I think this is a good addition, more info to help you debug a stuck case
->>> is always good. I'll queue this up for 5.16.
->>
->> Are there limits how much we can print? I remember people were couldn't
->> even show a list of CPUs (was it proc?). The overflow list may be huge.
-> 
-> It's using seq_file, so I _think_ we should be fine here. Not sure when/if
-> it truncates.
-> 
-It seems the default buf size of seq_file is PAGE_SIZE.
+On Mon, 13 Sept 2021 at 11:22, syzbot
+<syzbot+d6218cb2fae0b2411e9d@syzkaller.appspotmail.com> wrote:
+>
+> syzbot suspects this issue was fixed by commit:
+>
+> commit 43016d02cf6e46edfc4696452251d34bba0c0435
+> Author: Florian Westphal <fw@strlen.de>
+> Date:   Mon May 3 11:51:15 2021 +0000
+>
+>     netfilter: arptables: use pernet ops struct during unregister
+>
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10acd273300000
+> start commit:   c98ff1d013d2 Merge tag 'scsi-fixes' of git://git.kernel.or..
+> git tree:       upstream
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=1c70e618af4c2e92
+> dashboard link: https://syzkaller.appspot.com/bug?extid=d6218cb2fae0b2411e9d
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=145cb2b6d00000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=157b72b1d00000
+>
+> If the result looks correct, please mark the issue as fixed by replying with:
+>
+> #syz fix: netfilter: arptables: use pernet ops struct during unregister
+>
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
+I guess this is a wrong commit and it was fixed by something in io_uring.
+Searching for refcount fixes I see
+a298232ee6b9a1d5d732aa497ff8be0d45b5bd82 "io_uring: fix link timeout
+refs".
+Pavel, does it look right to you?

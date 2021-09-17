@@ -2,59 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 112D440FDE9
-	for <lists+io-uring@lfdr.de>; Fri, 17 Sep 2021 18:29:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D7ACA40FF9C
+	for <lists+io-uring@lfdr.de>; Fri, 17 Sep 2021 20:49:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244154AbhIQQbJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 17 Sep 2021 12:31:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57006 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S244135AbhIQQbH (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Fri, 17 Sep 2021 12:31:07 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id AAE2D61019;
-        Fri, 17 Sep 2021 16:29:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631896185;
-        bh=xj+5JY3TPkof0038GE5PcyPNt7UPUAFr8KMuzpBQ6EU=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=J5X0R0nCfE4pk/gcOvbklSOmruL72p5srQ/ZSNf/ZoWdGFGs8pf2RtFEuTT7um0P2
-         bgDR9x328yr23BhzW5K1buvbPSKLNxlH4/dItqTvur8s2FCmAq1keiFo+WAmPNA+d6
-         OLkzrDswZKvLTYDC7SEYRMrTmUKiI6WPpX4Mczes439zTwOxyN+3lzR6NSWzmvEETT
-         xnt1PvlM7kxqnBd1PSNJqiV4cmX8871r35oEEl+xScY4ZkkAubfKSP/NHewvxDFUl7
-         IPmCGYMyGQukh+wn5/NcbEFdF6/2KSGZj/sjWZs643rzW402onTh79iqJs/484yMvF
-         byur9KLQm/9fg==
-Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id A5E4C60726;
-        Fri, 17 Sep 2021 16:29:45 +0000 (UTC)
-Subject: Re: [GIT PULL] io_uring fixes for 5.15-rc2
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <a80f867d-ae3f-02d4-405d-2e9e0fa56439@kernel.dk>
-References: <a80f867d-ae3f-02d4-405d-2e9e0fa56439@kernel.dk>
-X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
-X-PR-Tracked-Message-Id: <a80f867d-ae3f-02d4-405d-2e9e0fa56439@kernel.dk>
-X-PR-Tracked-Remote: git://git.kernel.dk/linux-block.git tags/io_uring-5.15-2021-09-17
-X-PR-Tracked-Commit-Id: 5d329e1286b0a040264e239b80257c937f6e685f
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 0bc7eb03cbd3e5d057cbe2ee15ddedf168f25a8d
-Message-Id: <163189618567.30150.18148180525729332030.pr-tracker-bot@kernel.org>
-Date:   Fri, 17 Sep 2021 16:29:45 +0000
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        io-uring <io-uring@vger.kernel.org>
+        id S1343615AbhIQSuo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 17 Sep 2021 14:50:44 -0400
+Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:40931 "EHLO
+        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S236020AbhIQSua (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 17 Sep 2021 14:50:30 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=alimailimapcm10staff010182156082;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UoiV53d_1631904545;
+Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UoiV53d_1631904545)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Sat, 18 Sep 2021 02:49:06 +0800
+Subject: Re: [PATCH 1/6] io_uring: enhance flush completion logic
+From:   Hao Xu <haoxu@linux.alibaba.com>
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
+References: <20210903110049.132958-1-haoxu@linux.alibaba.com>
+ <20210903110049.132958-2-haoxu@linux.alibaba.com>
+ <fd529494-96d4-bc91-8e0c-0adf731b9052@gmail.com>
+ <302430f6-f83e-4096-448e-9d35f8f4303e@linux.alibaba.com>
+ <5dd28d14-24b5-e2dc-aa55-a68cb5d9f4e8@gmail.com>
+ <53d4f2b4-b0eb-fa4a-9659-794c2c363a7f@linux.alibaba.com>
+Message-ID: <00d6d99c-946a-39b4-9f12-d46d4fee8e61@linux.alibaba.com>
+Date:   Sat, 18 Sep 2021 02:49:05 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.13.0
+MIME-Version: 1.0
+In-Reply-To: <53d4f2b4-b0eb-fa4a-9659-794c2c363a7f@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The pull request you sent on Fri, 17 Sep 2021 08:44:28 -0600:
-
-> git://git.kernel.dk/linux-block.git tags/io_uring-5.15-2021-09-17
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/0bc7eb03cbd3e5d057cbe2ee15ddedf168f25a8d
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+在 2021/9/3 下午9:38, Hao Xu 写道:
+> 在 2021/9/3 下午8:27, Pavel Begunkov 写道:
+>> On 9/3/21 1:08 PM, Hao Xu wrote:
+>>> 在 2021/9/3 下午7:42, Pavel Begunkov 写道:
+>>>> On 9/3/21 12:00 PM, Hao Xu wrote:
+>>>>> Though currently refcount of a req is always one when we flush inline
+>>>>
+>>>> It can be refcounted and != 1. E.g. poll requests, or consider
+>>> It seems poll requests don't leverage comp cache, do I miss anything?
+>>
+>> Hmm, looks so. Not great that it doesn't, but probably it's because
+>> of trying to submit next reqs right in io_poll_task_func().
+>>
+>> I'll be pushing for some changes around tw, with it should be easy
+>> to hook poll completion batching with no drawbacks. Would be great
+>> if you will be willing to take a shot on it.
+> Sure, I'll take a look.
+>>
+Tried to integrate poll logic to completion cache, I did test it with an
+echo-server program, both multishot and singleshot mode, not difference
+on req/s.

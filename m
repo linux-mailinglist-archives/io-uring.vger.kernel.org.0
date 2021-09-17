@@ -2,181 +2,95 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ACC97410010
-	for <lists+io-uring@lfdr.de>; Fri, 17 Sep 2021 21:52:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8683341004C
+	for <lists+io-uring@lfdr.de>; Fri, 17 Sep 2021 22:29:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343999AbhIQTxf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 17 Sep 2021 15:53:35 -0400
-Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:60588 "EHLO
-        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S242572AbhIQTxK (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 17 Sep 2021 15:53:10 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UoidBlQ_1631908295;
-Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UoidBlQ_1631908295)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Sat, 18 Sep 2021 03:51:36 +0800
-Subject: Re: [PATCH 5/5] io_uring: leverage completion cache for poll requests
-From:   Hao Xu <haoxu@linux.alibaba.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>
+        id S231281AbhIQUa3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 17 Sep 2021 16:30:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34120 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230166AbhIQUa0 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 17 Sep 2021 16:30:26 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87B00C061574
+        for <io-uring@vger.kernel.org>; Fri, 17 Sep 2021 13:29:03 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id d6so16992781wrc.11
+        for <io-uring@vger.kernel.org>; Fri, 17 Sep 2021 13:29:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=to:cc:references:from:subject:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=u7t4l61YDZzUYy12lcL2C+uTxYUjmBQVk0HnhepGPWs=;
+        b=WvBJqb7vDS2yzt8QuRlZh4hrzNsY4+H+rfpKuMuNNVddpqmYB0EPRe1vXzu/t1O6+t
+         3h/QZA6W+XxmFxUX/Z2jmUIIHweMMPba0Z/vEpYJEkouKwKJwonTZD7LY1OgN7GCeqgf
+         2QZoOR4hkUqvcC6lShLlfGkRyi+gR7/aJd9DnLZEeBJw524UXITsj35FL/0VHaOP85TM
+         LyVytIPDtOWWG51YqQM+Qtlxem8fXy8oapoVSlDSpEPfDLZqF9S8jyRk8poHJhLIotU9
+         F9QOQJ/r1VvjbHMT5H4nwzHuCBXShDFsEg2wRsihqt7W7PmX7xoWvSpRedaM5EE+rUzN
+         zNrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=u7t4l61YDZzUYy12lcL2C+uTxYUjmBQVk0HnhepGPWs=;
+        b=gBYad05PC9ijIbI1WrP5OrTnUWwMDh485dFnZRjccMZbJhJj476tWR3QcTWJgf5ukt
+         pWgY+j9WZPJPWsBAkAMt3TJs2eW5YE/sLF5EsavTilG5wRWZppwG1P5zvNd93X1apiWe
+         Qz51EWERlRt1s/nSX+TbzA5ZRn8/tMTEMu+NH9T62SvWN051Yi/Vt2lwgNCX40qXQmg9
+         esmpVxcYdYXEUyM499t0zxEv+pVqZJ/Y5rGnpl0JuSRohOBeAO4BZl74er4xmhTUT8s+
+         A8JWBDSY+grOkYWB8+LXjEcp6U25dewO3ZEGPxHSPQpSmSBP66S787kxD0NL5PO4zha2
+         GaEA==
+X-Gm-Message-State: AOAM530wetYXx51BhWFTo0uuUlUo7J4jxRwjDuM9qCN/wnSwBrkzEhM0
+        JkiS7AGEjw0W4dOm969AMeT7iu6gA/s=
+X-Google-Smtp-Source: ABdhPJywHn34GyBs86WILH1+hjLjozLq+3Kgpu86Tl7mXFvGS0fTDqY04pX3D78UflODi53VQHuKMA==
+X-Received: by 2002:adf:82a8:: with SMTP id 37mr14422519wrc.409.1631910542160;
+        Fri, 17 Sep 2021 13:29:02 -0700 (PDT)
+Received: from [192.168.8.197] ([85.255.235.54])
+        by smtp.gmail.com with ESMTPSA id z2sm7116967wma.45.2021.09.17.13.29.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 Sep 2021 13:29:01 -0700 (PDT)
+To:     Hao Xu <haoxu@linux.alibaba.com>, Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
 References: <20210917193820.224671-1-haoxu@linux.alibaba.com>
- <20210917193820.224671-6-haoxu@linux.alibaba.com>
-Message-ID: <f2eb5195-283c-90f9-795f-2d0eab5f07b7@linux.alibaba.com>
-Date:   Sat, 18 Sep 2021 03:51:35 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.13.0
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Subject: Re: [RFC 0/5] leverage completion cache for poll requests
+Message-ID: <47a76406-04c2-2140-5703-1305a84dd57e@gmail.com>
+Date:   Fri, 17 Sep 2021 21:28:26 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-In-Reply-To: <20210917193820.224671-6-haoxu@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20210917193820.224671-1-haoxu@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-在 2021/9/18 上午3:38, Hao Xu 写道:
-> Leverage completion cache to handle completions of poll requests in a
-> batch.
-> Good thing is we save compl_nr - 1 completion_lock and
-> io_cqring_ev_posted.
-> Bad thing is compl_nr extra ifs in flush_completion.
+On 9/17/21 8:38 PM, Hao Xu wrote:
+> 1st is a non-related code clean
+> 2nd ~ 4th are fixes.
+
+Looks only 3 and 4 are fixes. It's usually a good idea to send
+fixes separately or place them first in the series, so can be
+picked for-current / for-next. However, 1-2 are very simple,
+maybe easier to leave as is.
+
+
+> 5th is the the main logic, I tested it with an echo-server, both in
+> single-shot mode and multishot mode poll, not much difference compared
+> to code before with regard to req/s. But that may be resulted from my
+> poor network knowledge, feel free to test it and leave comments.
 > 
-> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
-Sorry, please ignore this one, didn't notice it failed to pass
-poll-mshot-update test
-> ---
->   fs/io_uring.c | 64 +++++++++++++++++++++++++++++++++++++++------------
->   1 file changed, 49 insertions(+), 15 deletions(-)
+> Hao Xu (5):
+>   io_uring: return boolean value for io_alloc_async_data
+>   io_uring: code clean for io_poll_complete()
+>   io_uring: fix race between poll completion and cancel_hash insertion
+>   io_uring: fix lacking of EPOLLONESHOT
+>   io_uring: leverage completion cache for poll requests
 > 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index b1d6c3a1d3cd..0f72cb0bf79a 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -1099,6 +1099,8 @@ static int io_install_fixed_file(struct io_kiocb *req, struct file *file,
->   				 unsigned int issue_flags, u32 slot_index);
->   static enum hrtimer_restart io_link_timeout_fn(struct hrtimer *timer);
->   
-> +static bool io_complete_poll(struct io_kiocb *req);
-> +
->   static struct kmem_cache *req_cachep;
->   
->   static const struct file_operations io_uring_fops;
-> @@ -2333,6 +2335,11 @@ static void __io_submit_flush_completions(struct io_ring_ctx *ctx)
->   	for (i = 0; i < nr; i++) {
->   		struct io_kiocb *req = state->compl_reqs[i];
->   
-> +		if (req->opcode == IORING_OP_POLL_ADD) {
-> +			if (!io_complete_poll(req))
-> +				state->compl_reqs[i] = NULL;
-> +			continue;
-> +		}
->   		__io_cqring_fill_event(ctx, req->user_data, req->result,
->   					req->compl.cflags);
->   	}
-> @@ -2344,7 +2351,7 @@ static void __io_submit_flush_completions(struct io_ring_ctx *ctx)
->   	for (i = 0; i < nr; i++) {
->   		struct io_kiocb *req = state->compl_reqs[i];
->   
-> -		if (req_ref_put_and_test(req))
-> +		if (req && req_ref_put_and_test(req))
->   			io_req_free_batch(&rb, req, &ctx->submit_state);
->   	}
->   
-> @@ -5360,6 +5367,23 @@ static inline void io_poll_complete(struct io_kiocb *req, __poll_t mask)
->   	return;
->   }
->   
-> +static bool io_complete_poll(struct io_kiocb *req)
-> +{
-> +	bool done;
-> +
-> +	done = __io_poll_complete(req, req->result);
-> +	if (done) {
-> +		io_poll_remove_double(req);
-> +		hash_del(&req->hash_node);
-> +		req->poll.done = true;
-> +	} else {
-> +		req->result = 0;
-> +		add_wait_queue(req->poll.head, &req->poll.wait);
-> +	}
-> +
-> +	return done;
-> +}
-> +
->   static void io_poll_task_func(struct io_kiocb *req, bool *locked)
->   {
->   	struct io_ring_ctx *ctx = req->ctx;
-> @@ -5367,18 +5391,10 @@ static void io_poll_task_func(struct io_kiocb *req, bool *locked)
->   
->   	if (io_poll_rewait(req, &req->poll)) {
->   		spin_unlock(&ctx->completion_lock);
-> -	} else {
-> +	} else if (!*locked) {
->   		bool done;
->   
-> -		done = __io_poll_complete(req, req->result);
-> -		if (done) {
-> -			io_poll_remove_double(req);
-> -			hash_del(&req->hash_node);
-> -			req->poll.done = true;
-> -		} else {
-> -			req->result = 0;
-> -			add_wait_queue(req->poll.head, &req->poll.wait);
-> -		}
-> +		done = io_complete_poll(req);
->   		io_commit_cqring(ctx);
->   		spin_unlock(&ctx->completion_lock);
->   		io_cqring_ev_posted(ctx);
-> @@ -5388,6 +5404,13 @@ static void io_poll_task_func(struct io_kiocb *req, bool *locked)
->   			if (nxt)
->   				io_req_task_submit(nxt, locked);
->   		}
-> +	} else {
-> +		struct io_submit_state *state = &ctx->submit_state;
-> +
-> +		spin_unlock(&ctx->completion_lock);
-> +		state->compl_reqs[state->compl_nr++] = req;
-> +		if (state->compl_nr == ARRAY_SIZE(state->compl_reqs))
-> +			io_submit_flush_completions(ctx);
->   	}
->   }
->   
-> @@ -5833,6 +5856,7 @@ static int io_poll_add(struct io_kiocb *req, unsigned int issue_flags)
->   	struct io_ring_ctx *ctx = req->ctx;
->   	struct io_poll_table ipt;
->   	__poll_t mask;
-> +	bool locked = current == req->task;
->   
->   	ipt.pt._qproc = io_poll_queue_proc;
->   
-> @@ -5841,14 +5865,24 @@ static int io_poll_add(struct io_kiocb *req, unsigned int issue_flags)
->   
->   	if (mask) { /* no async, we'd stolen it */
->   		ipt.error = 0;
-> -		io_poll_complete(req, mask);
-> +		if (!locked)
-> +			io_poll_complete(req, mask);
->   	}
->   	spin_unlock(&ctx->completion_lock);
->   
->   	if (mask) {
-> -		io_cqring_ev_posted(ctx);
-> -		if (poll->events & EPOLLONESHOT)
-> -			io_put_req(req);
-> +		if (!locked) {
-> +			io_cqring_ev_posted(ctx);
-> +			if (poll->events & EPOLLONESHOT)
-> +				io_put_req(req);
-> +		} else {
-> +			struct io_submit_state *state = &ctx->submit_state;
-> +
-> +			req->result = mask;
-> +			state->compl_reqs[state->compl_nr++] = req;
-> +			if (state->compl_nr == ARRAY_SIZE(state->compl_reqs))
-> +				io_submit_flush_completions(ctx);
-> +		}
->   	}
->   	return ipt.error;
->   }
+>  fs/io_uring.c | 70 ++++++++++++++++++++++++++++++++++++++-------------
+>  1 file changed, 53 insertions(+), 17 deletions(-)
 > 
 
+-- 
+Pavel Begunkov

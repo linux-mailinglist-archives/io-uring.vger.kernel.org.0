@@ -2,100 +2,87 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D46DF40E118
-	for <lists+io-uring@lfdr.de>; Thu, 16 Sep 2021 18:28:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41BFA40F193
+	for <lists+io-uring@lfdr.de>; Fri, 17 Sep 2021 07:21:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242274AbhIPQ1c (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 16 Sep 2021 12:27:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47274 "EHLO
+        id S244811AbhIQFW5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 17 Sep 2021 01:22:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241132AbhIPQZ3 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 16 Sep 2021 12:25:29 -0400
-Received: from mail-io1-xd2f.google.com (mail-io1-xd2f.google.com [IPv6:2607:f8b0:4864:20::d2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C53A7C061146
-        for <io-uring@vger.kernel.org>; Thu, 16 Sep 2021 09:10:02 -0700 (PDT)
-Received: by mail-io1-xd2f.google.com with SMTP id b10so8541174ioq.9
-        for <io-uring@vger.kernel.org>; Thu, 16 Sep 2021 09:10:02 -0700 (PDT)
+        with ESMTP id S229704AbhIQFW4 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 17 Sep 2021 01:22:56 -0400
+Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 524CDC061574
+        for <io-uring@vger.kernel.org>; Thu, 16 Sep 2021 22:21:34 -0700 (PDT)
+Received: by mail-lf1-x141.google.com with SMTP id m3so26194332lfu.2
+        for <io-uring@vger.kernel.org>; Thu, 16 Sep 2021 22:21:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=LNfszvXiWgDI6EDtDbmsSQhzeS38fRUrMmntryou2XE=;
-        b=zhaMPc55gDXQzGvk0PYF61B2JgkYfZBdC/jCgVzBDGO1/NT5TG1DSOAxtFiojv59TS
-         4xy/fZVdwJqKC9xzQUHZjLytim3uZKgAFbKNK4UE/AHi9gWtHJAdDfbfv5/KPWAvmVBP
-         OvRYFvTTmfJw3DlCoMslS9aX5rPMbTflZB7HYlRtM/z2+T5gAFsEHfhQsKn5wjGomKUL
-         16WuwuX6YwNXiWc9tBozeln5UEh7mEdEtcfLcRE4JzfzlBy1q4J/uouNHaZ1H+aqL/Lf
-         jd6/50yDRu5TjkwFjXfmz+1Qqwq74FglJ6nUfYnlC57++B6vV4Q/Pm3pCRspWT7pIRHd
-         6EvQ==
+        d=gmail.com; s=20210112;
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
+        bh=RzIkdEm5aJl66a3p0t6hmEQ+Qv+8MFJLxj5JlLxnEbs=;
+        b=m2zl0xOZ3wFhTOVRJ29+japJRUcwyRvdfaPZ9LcNaPNUqQYVu7S+H8r9nbKnOQik5U
+         Sc7cL1hjGjoz9y+bx2MS0DwawE2tNKBKtt5l/IlgE0sI6H23P08U5652jDDDXH7K4h5v
+         wX+guftn5JRAihqdPcx0RzlBn0up2RTnE/G3l6G2+2jmftw/vYB1CpWEqTP2i0SNTNJP
+         1dA55zWdjKYmHF5hOQnme/RGAAAFukLuH5PjwVcdaCsDQxoKDmeATf+JpCE5IwaIpKIX
+         suD+lguvbhwNl4usuqcpOc39dlFdl1nH7OQEDiOXIxCo8j5z3r840Ag9KUjGRePjKHXV
+         m/ow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=LNfszvXiWgDI6EDtDbmsSQhzeS38fRUrMmntryou2XE=;
-        b=HYan8oWRXUenuGf3iVuOWwpcM5nCYTbE79sqgBk/p3AREvl6RlH1fNV4RVjq2CTEq1
-         lD753DDdmvgUT67JEHgL3WQXTcRCcPMW2TuWQ0oJ8+KdAqcOO9t6Itvys98z6oA2EsKp
-         fd74qPpjZdhvtweonZU5RnR7kTKk8MDwcFEKr8tc21QNCncHxVLS6RhoUnRcxT9qheKW
-         E6FL7F/oiT9/TOLPUrZb2Q9ydVMaxpefeQsZZYH2+B+rWylJmMqqTWxCnzbkHQqWtAiY
-         tgn/yYV2y+NnYnq6JBLbRh1wzqBEn+LkzOYL6sywFLlMp8R6NM5bsC8/Fxzs7gs/MYBL
-         hVcA==
-X-Gm-Message-State: AOAM531a9eNigavVh2THy108ZLhV9yqNnsxSN7FVqWSu518RtZ6AZOJj
-        ecIt7dsFBGIOKGLZExqX80etGFXPst7mdEU5YmM=
-X-Google-Smtp-Source: ABdhPJwm3CCY3RzpdL9GLroEGIeWrGOhaKGzuyd4II6DMbREXBd3v+zzUiUPq08KT9a0zF2u9VOZHA==
-X-Received: by 2002:a5e:df47:: with SMTP id g7mr1938941ioq.92.1631808602154;
-        Thu, 16 Sep 2021 09:10:02 -0700 (PDT)
-Received: from [192.168.1.30] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id i14sm1994687iol.27.2021.09.16.09.10.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Sep 2021 09:10:01 -0700 (PDT)
-Subject: Re: [PATCHSET v3 0/3] Add ability to save/restore iov_iter state
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        torvalds@linux-foundation.org
-References: <20210915162937.777002-1-axboe@kernel.dk>
- <YULMf13OXvU70zV+@zeniv-ca.linux.org.uk>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <e7588d27-8dc8-a5bb-c024-05b6e7c336db@kernel.dk>
-Date:   Thu, 16 Sep 2021 10:10:00 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to;
+        bh=RzIkdEm5aJl66a3p0t6hmEQ+Qv+8MFJLxj5JlLxnEbs=;
+        b=mC3iCN8GRYuMjWdBIqq83b6disOylWjNddR12YvhsLwT6xa/v7JcYsoQjGSyxztNeZ
+         yLyKJz+ip3ATKnrauQjtPb+U0fOSikA/8aCRe7da50rXoM3riQdcORoJjPgvhhCX6slS
+         U9LrX5CmzzDZBe2JXYynMzfjj54hMoPwP9Mp4sBQoBR7qV6SMhXck3GE2vw/X54QgNuA
+         n75XKhi3fwmziiXaRNk7WnWAOIjvJ6gAQ+1t6Se7bXxTrSq8LoF8ydzNvjul70JQpbv1
+         vZyluA7lV0/Ou9ktzQtBKhnaSCSUOZewWwJDoUPGwEXlhTsETLgL32IVIF9WO4+IASKN
+         7m2Q==
+X-Gm-Message-State: AOAM53306jdZp7+LTvRJOhx9YGPNxUWCgXxoL5VaycmMIysZJsEit5CD
+        10D4cfXWSc8pVNFOrAQxew2It7dzkdst+HNKQRs=
+X-Google-Smtp-Source: ABdhPJzFJJKIW3KQDHT7Cn5q4ny5wqt8CP85TyJpBpPM0Brix1pdtEdpx57dApB/BhTNS7iCJZtXMU6ack8TTH33Vk8=
+X-Received: by 2002:ac2:483b:: with SMTP id 27mr6729524lft.644.1631856092603;
+ Thu, 16 Sep 2021 22:21:32 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <YULMf13OXvU70zV+@zeniv-ca.linux.org.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Reply-To: godwinppter@gmail.com
+Sender: maxwellagusdin8@gmail.com
+Received: by 2002:a05:6520:47c4:b0:139:1b10:ad9d with HTTP; Thu, 16 Sep 2021
+ 22:21:31 -0700 (PDT)
+From:   Godwin Pete <godwinnpeter@gmail.com>
+Date:   Fri, 17 Sep 2021 07:21:31 +0200
+X-Google-Sender-Auth: q-WbBr00O3O6_06CjhGECWzl0FA
+Message-ID: <CAK5X1Sc7FNq82=0h3uBehLopAxQeLW-a7uoF-Pf+ax2Xm44ceA@mail.gmail.com>
+Subject: I want to use this opportunity to inform you
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/15/21 10:47 PM, Al Viro wrote:
-> 	Jens, may I politely inquire why is struct io_rw playing
-> these games with overloading ->rw.addr, instead of simply having
-> struct io_buffer *kbuf in it?
+Hi,
 
-Very simply to avoid growing the union command part of io_kiocb beyond a
-cacheline. We're pretty sensitive to io_kiocb size in general, and io_rw
-is already the biggest member in there.
- 
-> 	Another question: what the hell are the rules for
-> REQ_F_BUFFER_SELECT?  The first time around io_iov_buffer_select()
-> will
-> 	* read iovec from ->rw.addr
-> 	* replace iovec.iov_base with value derived from
-> ->buf_index
-> 	* cap iovec.iov_len with value derived from ->buf_index
-> Next time around it will use the same base *AND* replace the
-> length with the value used to cap the original.
-> 	Is that deliberate?
+I just want to use this little opportunity to inform you about my
+success towards the transfer. I'm currently out of the country for an
+investment with part of my share, after completing the transfer with
+an Indian business man. But i will visit your country, next year.
+After the completion of my project. Please, contact my secretary to
+send you the (ATM) card which I've already credited with the sum of
+($500,000.00). Just contact her to help you in receiving the (ATM)
+card. I've explained everything to her before my trip. This is what I
+can do for you because, you couldn't help in the transfer, but for the
+fact that you're the person whom I've contacted initially, for the
+transfer. I decided to give this ($500,000.00) as a compensation for
+being contacted initially for the transfer. I always try to make the
+difference, in dealing with people any time I come in contact with
+them. I'm also trying to show that I'm quite a different person from
+others whose may have a different purpose within them. I believe that
+you will render some help to me when I, will visit your country, for
+another investment there. So contact my secretary for the card, Her
+contact are as follows,
 
-Probably not strictly needed, but doesn't harm anything. The buffer is
-being consumed (and hence removed) at completion anyway, it's not a
-persistent change. Selected buffers must be re-provided by the
-application as the kernel has no way of knowing when the application
-would otherwise be ready for it to get reused, and that's done by
-issuing a new provide buffers request for the buffers that can get
-recycled.
+Full name: Mrs, Jovita Dumuije,
+Country: Burkina Faso
+Email: jovitadumuije@gmail.com
 
--- 
-Jens Axboe
+Thanks, and hope for a good corporation with you in future.
 
+Godwin Peter,

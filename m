@@ -2,59 +2,74 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 584AC410444
-	for <lists+io-uring@lfdr.de>; Sat, 18 Sep 2021 08:11:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A68364106DD
+	for <lists+io-uring@lfdr.de>; Sat, 18 Sep 2021 15:41:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236712AbhIRGNO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 18 Sep 2021 02:13:14 -0400
-Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:44929 "EHLO
-        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229476AbhIRGNO (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 18 Sep 2021 02:13:14 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UolL.lb_1631945508;
-Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UolL.lb_1631945508)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Sat, 18 Sep 2021 14:11:49 +0800
-Subject: Re: [PATCH 5/5] io_uring: leverage completion cache for poll requests
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <20210917193820.224671-1-haoxu@linux.alibaba.com>
- <20210917193820.224671-6-haoxu@linux.alibaba.com>
- <fe379c0c-0eeb-6412-ffd7-69be2746745f@gmail.com>
-From:   Hao Xu <haoxu@linux.alibaba.com>
-Message-ID: <2ab8efb5-7927-cf1a-a1af-f4955f7d94f6@linux.alibaba.com>
-Date:   Sat, 18 Sep 2021 14:11:48 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.13.0
+        id S234836AbhIRNmm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 18 Sep 2021 09:42:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34182 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229810AbhIRNmm (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 18 Sep 2021 09:42:42 -0400
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A90DBC061574
+        for <io-uring@vger.kernel.org>; Sat, 18 Sep 2021 06:41:18 -0700 (PDT)
+Received: by mail-ed1-x529.google.com with SMTP id j13so41063233edv.13
+        for <io-uring@vger.kernel.org>; Sat, 18 Sep 2021 06:41:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=nametag.social; s=google;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=vKc2Ao4fxMdAR8OMZ6jinLImu79QEYOKmsJEu53F6mw=;
+        b=VDrweNEFrw4eRuAWEqygxJSReam8Xg5xNdyBNR+1oW57aiN2aADyK2/sgKbd4qhDAd
+         x0IXIJcollj6m6MWjjBq4091nWbu8Y86nbNfnZTKHQMxBrV6bjI8e5MjAwc6aGMhPbl/
+         3/qlLFCdudZtGFklUqx3y8y0VdUHsBHkkwg2AAc/FQfeojspG+msJcveLSeIH1cecanp
+         s70exRhvxPZFvu31YwGTQMmg9cuJLZ7TRyv9KBrKkZzlZRqDhHajvtk1vAb+FRw09OO6
+         aw+AqJsjbuJiUGxl0QqNj9Hn2Y70riOUWL8PhJJfcs+24iNajKk9JmUckWXxr4gLdiuK
+         vdrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=vKc2Ao4fxMdAR8OMZ6jinLImu79QEYOKmsJEu53F6mw=;
+        b=1oA/bBYzh/tCbdisKZrcw1cZBa2plB/gqxgIU7Ar1BmTpLATVWg576bwh29CqSGxs/
+         PssyHsybVoZnVwRBZICU2ApSlg8N42/aw6WYnbtF8tJAyOUzxQBYRHhx8oOceP+b6g7V
+         xYX3Wp9kgA7cqZg5fgnQNN+nbuvNfn62f8P009qdhVwqVmYY1y5rrVlsClzdJVRbbFUs
+         yjLRZZ+4Pc2rSwbOpBVluVJqE4oQkGOlpMFmqDLjGzzI3Sgc5O8ZWV0KaG8Utf8EpPIB
+         p9yJ3soi1e4C4l53PgKexAd5wKvTjsUpMh0L5/Rw+pG//6Nk00DdClI1wDk3YmcWqPOj
+         41hw==
+X-Gm-Message-State: AOAM530lPqCD0xKsftju8pkzVXYAIpCb3XKV0pdeYKqjugG5FREOCIn+
+        U0zShIPVSDcBVyuCvEcPAEPdokfIWAq4oyCmwNOiQ2SGqe2veweP4PE=
+X-Google-Smtp-Source: ABdhPJw/5tgCeOPBeFNsq43GBXHei3x1jFpW7xOLbndV6+riFNGHEHR6sm8AWSh/G/y+3kYKWO11oslofqWL1oCbxNQ=
+X-Received: by 2002:a17:906:f74f:: with SMTP id jp15mr18640781ejb.423.1631972477083;
+ Sat, 18 Sep 2021 06:41:17 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <fe379c0c-0eeb-6412-ffd7-69be2746745f@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From:   Victor Stewart <v@nametag.social>
+Date:   Sat, 18 Sep 2021 14:41:05 +0100
+Message-ID: <CAM1kxwjCjo9u5AwAn0UANCWkahkUYz8PwHkWgF0U83ue=KbfTA@mail.gmail.com>
+Subject: [BUG? liburing] io_uring_register_files_update with liburing 2.0 on 5.13.17
+To:     io-uring <io-uring@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-在 2021/9/18 上午4:39, Pavel Begunkov 写道:
-> On 9/17/21 8:38 PM, Hao Xu wrote:
->> Leverage completion cache to handle completions of poll requests in a
->> batch.
->> Good thing is we save compl_nr - 1 completion_lock and
->> io_cqring_ev_posted.
->> Bad thing is compl_nr extra ifs in flush_completion.
-> 
-> It does something really wrong breaking all abstractions, we can't go
-> with this. Can we have one of those below?
-> - __io_req_complete(issue_flags), forwarding issue_flags from above
-> - or maybe io_req_task_complete(), if we're in tw
-Make sense. we may need to remove io_clean_op logic in
-io_req_complete_state(), multishot reqs shouldn't do it, and it's ok for
-normal reqs since we do it later in __io_submit_flush_completions->
-io_req_free_batch->io_dismantle_req->io_clean_op, correct me if I'm
-wrong.
-I'll send another version later.
+just auto updated from 5.13.16 to 5.13.17, and suddenly my fixed
+file registrations fail with EOPNOTSUPP using liburing 2.0.
 
-> 
-> In any case, I'd recommend sending it separately from fixes.
-> 
+static inline struct io_uring ring;
+static inline int *socketfds;
 
+// ...
+
+void enableFD(int fd)
+{
+   int result = io_uring_register_files_update(&ring, fd,
+                      &(socketfds[fd] = fd), 1);
+   printf("enableFD, result = %d\n", result);
+}
+
+maybe this is due to the below and related work that
+occurred at the end of 5.13 and liburing got out of sync?
+
+https://github.com/torvalds/linux/commit/992da01aa932b432ef8dc3885fa76415b5dbe43f#diff-79ffab63f24ef28eec3badbc8769e2a23e0475ab1fbe390207269ece944a0824
+
+and can't use liburing 2.1 because of the api changes since 5.13.

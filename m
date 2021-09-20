@@ -2,71 +2,125 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 886E8410C55
-	for <lists+io-uring@lfdr.de>; Sun, 19 Sep 2021 18:10:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EB41410E76
+	for <lists+io-uring@lfdr.de>; Mon, 20 Sep 2021 04:45:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231255AbhISQLn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 19 Sep 2021 12:11:43 -0400
-Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:36465 "EHLO
-        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229933AbhISQLm (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 19 Sep 2021 12:11:42 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0Uot2qWO_1632067814;
-Received: from 192.168.31.215(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0Uot2qWO_1632067814)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 20 Sep 2021 00:10:15 +0800
-Subject: Re: [PATCH 5/5] io_uring: leverage completion cache for poll requests
-From:   Hao Xu <haoxu@linux.alibaba.com>
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <20210917193820.224671-1-haoxu@linux.alibaba.com>
- <20210917193820.224671-6-haoxu@linux.alibaba.com>
- <fe379c0c-0eeb-6412-ffd7-69be2746745f@gmail.com>
- <2ab8efb5-7927-cf1a-a1af-f4955f7d94f6@linux.alibaba.com>
- <166dc3e2-6eea-8354-ef12-07df49ec5aaf@gmail.com>
- <80237936-9a85-fd65-2b36-724d6caa279d@linux.alibaba.com>
-Message-ID: <3b49c202-9dc9-10f9-08db-f524f894b46b@linux.alibaba.com>
-Date:   Mon, 20 Sep 2021 00:10:14 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.13.0
+        id S231992AbhITCq3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 19 Sep 2021 22:46:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34402 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231258AbhITCq3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 19 Sep 2021 22:46:29 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FAA6C061760
+        for <io-uring@vger.kernel.org>; Sun, 19 Sep 2021 19:45:03 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id n10so54509272eda.10
+        for <io-uring@vger.kernel.org>; Sun, 19 Sep 2021 19:45:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=3Ifk3gkF4EZgOSOMd5BgLpaHigpIrEHERLHWxDsnhms=;
+        b=LVf1yeUaOvahbvnAr8QSl4J6ZtcbeULCwPTL7dt53FaJqSzp6G2JD/v8RAm+KDo8sc
+         1qAdKYmaeRzsm7I3CY1R1cnpCx+XM862SyESXguq2cv13yt5vMg1VMR4JFhGE4vfhoKk
+         w8FVR6rMzHt8XvuNyTW6Ztp7bihmi8Iypi1Iisxahzi1iAxmuj1yVBWgavP0uthDHohY
+         lvKtLRtrDQLxh5uiOZNgN/MaR4JIYdgjHT8oMYOZiABn2JTBBFrxq0vBroAsfzZG0X3A
+         o05l6ouifQ63PVw5owy9FwvYWmqGfcvrcVTtTDeJkvIMcYW7WHBeZl73sqRhvcmhAGOR
+         DzCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=3Ifk3gkF4EZgOSOMd5BgLpaHigpIrEHERLHWxDsnhms=;
+        b=65g7WBDeeT0KEnyfSG7/8PuR7gXRhtwFfrbFf0DBbvgJm4VKOm+o2DgehkUcE87h13
+         jwbZT/wVMbYME9BPb8Eg2qq/02pbbjQchSgBLw7e7rYY5oBMnvOpqDCtPSlsNYc/rZ7B
+         pU0Uz6DYx27uEkd6F8zmhGqnSHrQwSsjh/8n6DzMb07NWtdElvtSMDfQmQdfceps9aj/
+         Mxp2CTBsyyL5lMVcggmqyTBDz+luffUMlAyAxfCLulmelmyitRsM7d5ukRcyWzoOWisT
+         JSjNwTn6+PnNuRLBXOfdA2cFTYhrvkn7RBHobjUtdq8HGrpc9/pbwKFozRrbiT90qMqV
+         jwCw==
+X-Gm-Message-State: AOAM532o9/elOmSTvsjozrTU/QQGek132NB1PzI0Z6DB7FrH5edHqcm0
+        p7MLbE+3UzIzwDSy27JfcszWYDo6cdHcHFK4iIQs
+X-Google-Smtp-Source: ABdhPJw2UlastqklS4OK5FaL+3CWPBvyDVpEb1e1t4MZvuTxLVTwSniWgJwO2vosjrYuK5Il/R6vvtG2InMyHm29HSQ=
+X-Received: by 2002:a50:cf48:: with SMTP id d8mr16576051edk.293.1632105901532;
+ Sun, 19 Sep 2021 19:45:01 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <80237936-9a85-fd65-2b36-724d6caa279d@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <163172413301.88001.16054830862146685573.stgit@olly>
+In-Reply-To: <163172413301.88001.16054830862146685573.stgit@olly>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Sun, 19 Sep 2021 22:44:50 -0400
+Message-ID: <CAHC9VhSn3pvUgUo5_T=TfiBXw3=f6Pn6GaAUVS=jfg-Kfr_ZEw@mail.gmail.com>
+Subject: Re: [PATCH v4 0/8] Add LSM access controls and auditing to io_uring
+To:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-在 2021/9/19 下午11:52, Hao Xu 写道:
-> 在 2021/9/19 下午8:04, Pavel Begunkov 写道:
->> On 9/18/21 7:11 AM, Hao Xu wrote:
->>> 在 2021/9/18 上午4:39, Pavel Begunkov 写道:
->>>> On 9/17/21 8:38 PM, Hao Xu wrote:
->>>>> Leverage completion cache to handle completions of poll requests in a
->>>>> batch.
->>>>> Good thing is we save compl_nr - 1 completion_lock and
->>>>> io_cqring_ev_posted.
->>>>> Bad thing is compl_nr extra ifs in flush_completion.
->>>>
->>>> It does something really wrong breaking all abstractions, we can't go
->>>> with this. Can we have one of those below?
->>>> - __io_req_complete(issue_flags), forwarding issue_flags from above
->>>> - or maybe io_req_task_complete(), if we're in tw
->>> Make sense. we may need to remove io_clean_op logic in
->>
->>> io_req_complete_state(), multishot reqs shouldn't do it, and it's ok for
->>> normal reqs since we do it later in __io_submit_flush_completions->
->>> io_req_free_batch->io_dismantle_req->io_clean_op, correct me if I'm
->>> wrong.
->>
->> req->compl.cflags is in the first 64B, i.e. aliased with req->rw and
->> others. We need to clean everything left in there before using the
->> space, that's what io_clean_op() there is for
-> True, and that's why we souldn't do it for multishot reqs, since they
-> are not completed yet, and we won't reuse the req resource until its
-> final completion.
-I see what you are saying now..yes, we shouldn't remove that
-io_clean_op there.
->>
+On Wed, Sep 15, 2021 at 12:49 PM Paul Moore <paul@paul-moore.com> wrote:
+>
+> A quick update to the v3 patchset with a small change to the audit
+> record format (remove the audit login ID on io_uring records) and
+> a subject line fix on the Smack patch.  I also caught a few minor
+> things in the code comments and fixed those up.  All told, nothing
+> significant but I really dislike merging patches that haven't hit
+> the list so here ya go ...
+>
+> As a reminder, I'm planning to merge these in the selinux/next tree
+> later this week and it would be *really* nice to get some ACKs from
+> the io_uring folks; this patchset is implementing the ideas we all
+> agreed to back in the v1 patchset so there shouldn't be anything
+> surprising in here.
+>
+> For reference the v3 patchset can be found here:
+> https://lore.kernel.org/linux-security-module/163159032713.470089.11728103630366176255.stgit@olly/T/#t
+>
+> Those who would prefer to fetch these patches directly from git can
+> do so using the tree/branch below:
+> git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+>  (checkout branch "working-io_uring")
+>
+> ---
+>
+> Casey Schaufler (1):
+>       Smack: Brutalist io_uring support
+>
+> Paul Moore (7):
+>       audit: prepare audit_context for use in calling contexts beyond syscalls
+>       audit,io_uring,io-wq: add some basic audit support to io_uring
+>       audit: add filtering for io_uring records
+>       fs: add anon_inode_getfile_secure() similar to anon_inode_getfd_secure()
+>       io_uring: convert io_uring to the secure anon inode interface
+>       lsm,io_uring: add LSM hooks to io_uring
+>       selinux: add support for the io_uring access controls
+>
+>
+>  fs/anon_inodes.c                    |  29 ++
+>  fs/io-wq.c                          |   4 +
+>  fs/io_uring.c                       |  69 +++-
+>  include/linux/anon_inodes.h         |   4 +
+>  include/linux/audit.h               |  26 ++
+>  include/linux/lsm_hook_defs.h       |   5 +
+>  include/linux/lsm_hooks.h           |  13 +
+>  include/linux/security.h            |  16 +
+>  include/uapi/linux/audit.h          |   4 +-
+>  kernel/audit.h                      |   7 +-
+>  kernel/audit_tree.c                 |   3 +-
+>  kernel/audit_watch.c                |   3 +-
+>  kernel/auditfilter.c                |  15 +-
+>  kernel/auditsc.c                    | 469 ++++++++++++++++++++++------
+>  security/security.c                 |  12 +
+>  security/selinux/hooks.c            |  34 ++
+>  security/selinux/include/classmap.h |   2 +
+>  security/smack/smack_lsm.c          |  46 +++
+>  18 files changed, 646 insertions(+), 115 deletions(-)
 
+With no serious objections or outstanding comments, I just merged
+these patches into selinux/next.  If anyone has any follow-on patches
+please base them against selinux/next, thanks.
+
+-- 
+paul moore
+www.paul-moore.com

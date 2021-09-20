@@ -2,89 +2,89 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 482A94110C0
-	for <lists+io-uring@lfdr.de>; Mon, 20 Sep 2021 10:15:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B27774110CA
+	for <lists+io-uring@lfdr.de>; Mon, 20 Sep 2021 10:16:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233811AbhITIQz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 20 Sep 2021 04:16:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49996 "EHLO
+        id S235464AbhITIRp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 20 Sep 2021 04:17:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50258 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234342AbhITIQu (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 20 Sep 2021 04:16:50 -0400
-Received: from mail-ot1-x335.google.com (mail-ot1-x335.google.com [IPv6:2607:f8b0:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1476BC061574
-        for <io-uring@vger.kernel.org>; Mon, 20 Sep 2021 01:15:24 -0700 (PDT)
-Received: by mail-ot1-x335.google.com with SMTP id 97-20020a9d006a000000b00545420bff9eso15582658ota.8
-        for <io-uring@vger.kernel.org>; Mon, 20 Sep 2021 01:15:24 -0700 (PDT)
+        with ESMTP id S231749AbhITIRo (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 20 Sep 2021 04:17:44 -0400
+Received: from mail-ot1-x32d.google.com (mail-ot1-x32d.google.com [IPv6:2607:f8b0:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71D60C061760
+        for <io-uring@vger.kernel.org>; Mon, 20 Sep 2021 01:16:18 -0700 (PDT)
+Received: by mail-ot1-x32d.google.com with SMTP id 67-20020a9d0449000000b00546e5a8062aso10446864otc.9
+        for <io-uring@vger.kernel.org>; Mon, 20 Sep 2021 01:16:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=21r3SlBBRDN7c0GadObCkHwMNcefKesbIlR1sAlPsLQ=;
-        b=SQWorY7ZsfFtuloE/lG1ja9FAvI18dl+3bl39aMZLpZxDz27fU31wFPgbMvWVtOdh/
-         jH5lPNVNUsKGROWbTpJVqcFsltAcTwYq6aD3Qr+5PAA7SeVT1zKKDMSLqv7v81XUiv42
-         tLQKsYubNAudAduG3VA2BvmY5PzrTUH32YWZwuT/we2r/LH7pP++EwPC4RvZPzD5CBWU
-         zTEXxcBJcgaf4n199H6aPWL/uU67ZsIRMgZaPcf/PHYjRcVI5MVqZIKnhwPKag68NCqD
-         koCbJjQKlGy7LSty428a/2+jF10JJS8pdJV/zHpNGg+z9pTFoUePAAxc/broobCeL+ga
-         pNPA==
+        bh=SxNY97BOa0XmidHr8ngX6Xmdmy0rlhDyfhQlgL+xf9M=;
+        b=PflVeIefh9PtZyUXgOPqCGhfsFGQSSoYDchsSVS5Wrh2uVaeVBJbila4EfZ/2fVXuP
+         HJdnuNyXvRsF090bByE/Gj43INuq+5RbRXH78KatIS86fIQ8WgTnLdTMMOhRoFklJyMw
+         uKIr96sGaEhw3+PQnryCOySdDSsY/f03Dbp50ugJ+HputJhUOvh1RuS9f6F3Q7X0Dp4f
+         q6B9fYWrfi1TncQIfoET8rvBi3dL1XRRlB0DOapn9zdASXH15Lut5vMByWA82nxCboTN
+         0Q+cH15PLPCz+7qviSSM31rZpLHpPCqoP/mfcigc+aq2YOWHGP8UPUfQbAWChLz+39ff
+         2U1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=21r3SlBBRDN7c0GadObCkHwMNcefKesbIlR1sAlPsLQ=;
-        b=NwYb54kY2baruyjbOLAzbyrdtLnFWnII34pjQ9q4BI3nyEiETyDgmYQUzLxecObcGG
-         NBFa5p2rrwdNCNaccSIsiJZwgeGQfHbKSfMyX/PUGB2Nc/FVYFpqbwQTOWTygHhK4hs+
-         4f+xXTZnaXyJQp4eWeKkg+bbEkAyGKO4ZwseUuijOthcVQhjNMXWHXxX6Qxn7NYQdOaI
-         0/6IlsBOCIga6Js2EZ0GMr13irDs38i2jpWBR1JLnBKziyxpM2g3XKOGhGwVMw9Sy5Y3
-         BY4Lnh5vf8Xr8uUIuJg8W/FsLXSZja+hL7hC9Y+O9RT+DyeNfvNKkLbeYmFsar5WVEuR
-         2Oyw==
-X-Gm-Message-State: AOAM530gDdr87LhOW1Fy7jCdrF269WqbwG6P6Y4jvQb6CZQwudPFTO4X
-        8wLwGsd18A7MV9XSLa52mb2DseB4o2CuzA8AV7SmvA==
-X-Google-Smtp-Source: ABdhPJzEDVSSzCivHfiy0IzQdQlADqrjIknyU8CHTYUeZMc4g90+xJaP6rpoqArVDCE1Y9MpCoy2Dueb/K4l59izd04=
-X-Received: by 2002:a9d:2f28:: with SMTP id h37mr10592929otb.196.1632125723220;
- Mon, 20 Sep 2021 01:15:23 -0700 (PDT)
+        bh=SxNY97BOa0XmidHr8ngX6Xmdmy0rlhDyfhQlgL+xf9M=;
+        b=7vhoZC2klmOrq0rNV6cmk/Va1pEMbNdTaIMNzZq/up4lDBxaWa/w/NtyW2nqjF2/NF
+         5vspGZSC+SR7DnymHM16dhOP9Jkb7Y67H4LS97DkjGGacadJLdaFRROk2Dt6I8dM7c+B
+         ThDA5jQmJIPM+n6aKF15LDmG00SX3E+0JBeUgu3/TxGwG3Tf27xFIvtxj4UtgkAFP+eG
+         Bub5F0PytAIKeJZ+MCBDrlb1gIN9NXz9nifeI5jkQcXI9FjmpORZtDc2V43P+WA2nO1A
+         +nqiu1sX0cImRDfrJY+tpymSCz8wJkNt29WBAzWR1L1uMMj9jqlkZRP9mlZpGrdx43M9
+         EIAw==
+X-Gm-Message-State: AOAM530cpv97z4um7n3hbP5TxCQovSR4teu0SduNOWOqKtDeSajodSyr
+        9lfaMcEHGIf97a42W9oBlQgAECPVihfG2jZWSLUM8g==
+X-Google-Smtp-Source: ABdhPJxQYvOjJDSfjPQAxmlMvAz00/cVUDbJh6wOo5gIhqB/Ki9Kim5C50bKjMQiFlkco3PXh5M74WpTTLLbTThY1X0=
+X-Received: by 2002:a9d:7244:: with SMTP id a4mr20552216otk.137.1632125777610;
+ Mon, 20 Sep 2021 01:16:17 -0700 (PDT)
 MIME-Version: 1.0
-References: <0ddad8d7-03c2-4432-64a4-b717bbc90fb4@gmail.com> <000000000000526fb105cc1d3f5b@google.com>
-In-Reply-To: <000000000000526fb105cc1d3f5b@google.com>
+References: <00000000000022acbf05c06d9f0d@google.com> <00000000000053c98205cac53625@google.com>
+In-Reply-To: <00000000000053c98205cac53625@google.com>
 From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Mon, 20 Sep 2021 10:15:12 +0200
-Message-ID: <CACT4Y+bdXWBBXc9PfpU09d=zAGvKmMVuq=etQJ3b5WLgRwjGHg@mail.gmail.com>
-Subject: Re: [syzbot] WARNING in __percpu_ref_exit (2)
-To:     syzbot <syzbot+d6218cb2fae0b2411e9d@syzkaller.appspotmail.com>
-Cc:     asml.silence@gmail.com, axboe@kernel.dk, coreteam@netfilter.org,
-        davem@davemloft.net, dsahern@kernel.org, fw@strlen.de,
-        hdanton@sina.com, io-uring@vger.kernel.org, kadlec@netfilter.org,
-        kuba@kernel.org, linux-kernel@vger.kernel.org, ming.lei@redhat.com,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        pablo@netfilter.org, syzkaller-bugs@googlegroups.com,
-        yoshfuji@linux-ipv6.org
+Date:   Mon, 20 Sep 2021 10:16:06 +0200
+Message-ID: <CACT4Y+bnH0-6_M_BbB614j=1Vi3sjnU3oSxoKHKVYF-aGVBooQ@mail.gmail.com>
+Subject: Re: [syzbot] WARNING in io_poll_double_wake
+To:     syzbot <syzbot+f2aca089e6f77e5acd46@syzkaller.appspotmail.com>
+Cc:     asml.silence@gmail.com, axboe@kernel.dk, haoxu@linux.alibaba.com,
+        hdanton@sina.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, 16 Sept 2021 at 16:01, syzbot
-<syzbot+d6218cb2fae0b2411e9d@syzkaller.appspotmail.com> wrote:
+On Mon, 30 Aug 2021 at 13:34, syzbot
+<syzbot+f2aca089e6f77e5acd46@syzkaller.appspotmail.com> wrote:
 >
-> Hello,
+> syzbot suspects this issue was fixed by commit:
 >
-> syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+> commit a890d01e4ee016978776e45340e521b3bbbdf41f
+> Author: Hao Xu <haoxu@linux.alibaba.com>
+> Date:   Wed Jul 28 03:03:22 2021 +0000
 >
-> Reported-and-tested-by: syzbot+d6218cb2fae0b2411e9d@syzkaller.appspotmail.com
+>     io_uring: fix poll requests leaking second poll entries
 >
-> Tested on:
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15d8819d300000
+> start commit:   98f7fdced2e0 Merge tag 'irq-urgent-2021-07-11' of git://gi..
+> git tree:       upstream
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=139b08f9b7481d26
+> dashboard link: https://syzkaller.appspot.com/bug?extid=f2aca089e6f77e5acd46
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11650180300000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1510c6b0300000
 >
-> commit:         5318e5b9 io_uring: quiesce files reg
-> git tree:       https://github.com/isilence/linux.git syz_test_quiesce_files
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=f7d9f99709463d21
-> dashboard link: https://syzkaller.appspot.com/bug?extid=d6218cb2fae0b2411e9d
-> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+> If the result looks correct, please mark the issue as fixed by replying with:
 >
-> Note: testing is done by a robot and is best-effort only.
+> #syz fix: io_uring: fix poll requests leaking second poll entries
+>
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
-OK, since it's not failing, I assume we can say:
+Looks sane (io_uring commit fixes an issue in io_uring):
 
-#syz fix: io_uring: fix link timeout refs
-
-(and it's better to close it with a wrong fix, then to keep it open
-forever anyway)
+#syz fix: io_uring: fix poll requests leaking second poll entries

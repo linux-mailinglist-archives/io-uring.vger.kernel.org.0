@@ -2,85 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 42A61412F26
-	for <lists+io-uring@lfdr.de>; Tue, 21 Sep 2021 09:15:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BC9C412EDC
+	for <lists+io-uring@lfdr.de>; Tue, 21 Sep 2021 08:55:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230031AbhIUHQo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 21 Sep 2021 03:16:44 -0400
-Received: from mail107.syd.optusnet.com.au ([211.29.132.53]:49206 "EHLO
-        mail107.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230026AbhIUHQk (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 21 Sep 2021 03:16:40 -0400
-X-Greylist: delayed 2077 seconds by postgrey-1.27 at vger.kernel.org; Tue, 21 Sep 2021 03:16:40 EDT
-Received: from dread.disaster.area (pa49-195-238-16.pa.nsw.optusnet.com.au [49.195.238.16])
-        by mail107.syd.optusnet.com.au (Postfix) with ESMTPS id 93C201009B41;
-        Tue, 21 Sep 2021 16:40:33 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1mSZSC-00EwYv-Bt; Tue, 21 Sep 2021 16:40:32 +1000
-Date:   Tue, 21 Sep 2021 16:40:32 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring <io-uring@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: [5.15-rc1 regression] io_uring: fsstress hangs in do_coredump() on
- exit
-Message-ID: <20210921064032.GW2361455@dread.disaster.area>
+        id S229864AbhIUG5S (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 21 Sep 2021 02:57:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45416 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229755AbhIUG5R (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 21 Sep 2021 02:57:17 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAD55C061574;
+        Mon, 20 Sep 2021 23:55:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=KWSPXjobthOjv72bqCNOz8DtPivvepRJCfJ3a2IGzHM=; b=Twf1Y7esJEIGgbcfiJ/xfL0vZD
+        MTPhlau7lBnrnixVgS3MtIh9pGCwXN83jDSR+wuEdjoCynqpj0iY6I80vZLNgA3J5TFQpMhgcphEP
+        b72IDA10v4n2oq/SfQzBmVSKsZH6Y0G7yZ+I6CdpcW9oB7DXbW97JV2IRyRzZBUZ+w6z95MI/AyPm
+        2fLYy+Bym1ENuzW9fGO9xhNlbU8hECVaJCJTpuyuwbvDJAPPmQpyGrmgRDmuEfe1SyVSIs2Rh9a/F
+        AMXYM78n5+4yJpus79G+YJKAhCBjhfCcIuMZgYix6MPDP/YsoOFfup7njkNf/aMRN5qhMBjToXDu6
+        qQCdcqvw==;
+Received: from hch by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mSZg0-003Zvt-3t; Tue, 21 Sep 2021 06:55:01 +0000
+Date:   Tue, 21 Sep 2021 07:54:48 +0100
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Arnd Bergmann <arnd@kernel.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>, io-uring@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] [RFC] io_uring: warning about unused-but-set parameter
+Message-ID: <YUmBuLLTjN1vfhnA@infradead.org>
+References: <20210920121352.93063-1-arnd@kernel.org>
+ <YUh8Mj59BtyBdTRH@infradead.org>
+ <CAK8P3a30a1SKh+71+EgPmsJ1FKJTPKYQuAFUebwKKrhuVzBh3Q@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=YKPhNiOx c=1 sm=1 tr=0
-        a=DzKKRZjfViQTE5W6EVc0VA==:117 a=DzKKRZjfViQTE5W6EVc0VA==:17
-        a=kj9zAlcOel0A:10 a=7QKq2e-ADPsA:10 a=7-415B0cAAAA:8
-        a=BnQZExpEWCbP54y3Tb4A:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <CAK8P3a30a1SKh+71+EgPmsJ1FKJTPKYQuAFUebwKKrhuVzBh3Q@mail.gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Jens,
+On Mon, Sep 20, 2021 at 02:48:23PM +0200, Arnd Bergmann wrote:
+> complete madness of crouse, only -Wunused-but-set-parameter,
+> which is already part of W=1 and has the potential of catching
+> actual bugs such as
 
-I updated all my trees from 5.14 to 5.15-rc2 this morning and
-immediately had problems running the recoveryloop fstest group on
-them. These tests have a typical pattern of "run load in the
-background, shutdown the filesystem, kill load, unmount and test
-recovery".
+Well, i you care about that just remove the
 
-Whent eh load includes fsstress, and it gets killed after shutdown,
-it hangs on exit like so:
+	locked = NULL;
 
-# echo w > /proc/sysrq-trigger 
-[  370.669482] sysrq: Show Blocked State
-[  370.671732] task:fsstress        state:D stack:11088 pid: 9619 ppid:  9615 flags:0x00000000
-[  370.675870] Call Trace:
-[  370.677067]  __schedule+0x310/0x9f0
-[  370.678564]  schedule+0x67/0xe0
-[  370.679545]  schedule_timeout+0x114/0x160
-[  370.682002]  __wait_for_common+0xc0/0x160
-[  370.684274]  wait_for_completion+0x24/0x30
-[  370.685471]  do_coredump+0x202/0x1150
-[  370.690270]  get_signal+0x4c2/0x900
-[  370.691305]  arch_do_signal_or_restart+0x106/0x7a0
-[  370.693888]  exit_to_user_mode_prepare+0xfb/0x1d0
-[  370.695241]  syscall_exit_to_user_mode+0x17/0x40
-[  370.696572]  do_syscall_64+0x42/0x80
-[  370.697620]  entry_SYSCALL_64_after_hwframe+0x44/0xae
-
-It's 100% reproducable on one of my test machines, but only one of
-them. That one machine is running fstests on pmem, so it has
-synchronous storage. Every other test machine using normal async
-storage (nvme, iscsi, etc) and none of them are hanging.
-
-A quick troll of the commit history between 5.14 and 5.15-rc2
-indicates a couple of potential candidates. The 5th kernel build
-(instead of ~16 for a bisect) told me that commit 15e20db2e0ce
-("io-wq: only exit on fatal signals") is the cause of the
-regression. I've confirmed that this is the first commit where the
-problem shows up.
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+which is pretty weird anyway.

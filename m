@@ -2,60 +2,64 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6605B414C6C
-	for <lists+io-uring@lfdr.de>; Wed, 22 Sep 2021 16:49:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D118F414D5F
+	for <lists+io-uring@lfdr.de>; Wed, 22 Sep 2021 17:51:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236231AbhIVOv2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 22 Sep 2021 10:51:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34536 "EHLO
+        id S231712AbhIVPxC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 22 Sep 2021 11:53:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235464AbhIVOv1 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 22 Sep 2021 10:51:27 -0400
-Received: from mail-il1-x12f.google.com (mail-il1-x12f.google.com [IPv6:2607:f8b0:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF2B3C061574
-        for <io-uring@vger.kernel.org>; Wed, 22 Sep 2021 07:49:57 -0700 (PDT)
-Received: by mail-il1-x12f.google.com with SMTP id i13so3017256ilm.4
-        for <io-uring@vger.kernel.org>; Wed, 22 Sep 2021 07:49:57 -0700 (PDT)
+        with ESMTP id S236484AbhIVPxB (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 22 Sep 2021 11:53:01 -0400
+Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56D64C061574
+        for <io-uring@vger.kernel.org>; Wed, 22 Sep 2021 08:51:31 -0700 (PDT)
+Received: by mail-io1-xd2c.google.com with SMTP id q3so3994574iot.3
+        for <io-uring@vger.kernel.org>; Wed, 22 Sep 2021 08:51:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=to:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=nwcwy9+SEKk0IYBTIx4c6izQ+wfusS08Gk4HpdIOwgs=;
-        b=MYmkAjHcfOLyI6DqIxl+HUsdkEcw1FnDzWbK1v1q/AqhhrTqoHk6SY8d4+DYAnIvwo
-         QT434HDZkiag/T8wTaTc4SPfIKEv0W2KjPY5apjBDbYM5vCk9H2pe2UFoS2gG3/QvX4S
-         x1/UcYfq0GjQYb+13BaEWw09jgzKHJZOUFnDiNwD2Z69vU9esspNKdlAfit6b0LzT92A
-         i6jInsRjx7H79/pTkWaH31AWysE4mbYB+gE6xE1SIvwXDNeqy1lMmvOt/cbr74SE9Jn2
-         1ByCPx3HZeLwzPNiCb5Ivp0AQXpizUAL6KVRv3q8/nTag75VbMJl/wa1nJfsPOYN5Pd5
-         j4Ug==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=NNoniwPM+EYYtowb3pj0Cdng0l4936673rUFKZ/IzcQ=;
+        b=7Mst6AynbNg1z1IzjKNtbREyuAkHbwobKjMObJbYb9ab76ppdq81sDna1onNJa4bXG
+         n8JAS96NLQy/FtpLEhW1PYkCVpMMHQzJN1LsVzzYoBff2qRwP/oqOwcNgwzmH4bbN1tE
+         ZqzUSknPWj90cfj80J4M+B47PVBIEUbZ2c8x6j9nkB/SD6MRXWDt4GuDOSETlhMgyc/B
+         2nMj+HabpMZd1oHDJzpYbL/mP3789/RC3o9E5WBEkLMQGQaY/JQUMvL8eoetyhvDPhoE
+         dHFOQYeI7ccalKwAU5muqcq5wwbu/vz6t0ScNkNN+TC3j719PPfJP52Wu0Uh5iYYlQgC
+         V8rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=nwcwy9+SEKk0IYBTIx4c6izQ+wfusS08Gk4HpdIOwgs=;
-        b=hii7Jq4MIvVtnhM14BR/o00XGskg+yZP0XyulLrfeymWLDkGQXjS0LvNY+qHV60nRN
-         ttIZQUwxqhjndOpzQaXzpKZwMNzorasaMgqGO+iA7twWKrKNbjDIyOabXIjs0V4ZF40f
-         7qmZzv/PC/NqnIUlSJIkZLtd1kXzVYNED96j0GIrbbsULCSwCDPKAZuVPumR0lcQQeJA
-         W3V9BbfBuL7vMhf3GDDu15mR/Fl9edjdN9/Dptio9057XJHZWUZqjVE9c4HbSP0PJ+vy
-         Lhh9/JDPDR9GhW+5LKEts9c8Ed3kWih+se+p94oTEvufhx3gYiK/mjv2XtTOpiArPAQl
-         6NhA==
-X-Gm-Message-State: AOAM5308RKncwgb0gg1RtDNk9L2BZJtjAxKJLEjRLXRS9dea6pNeYbz6
-        NYUYq06gL/0iuqONzxi0MO2zGWanrVXBXl0RRIs=
-X-Google-Smtp-Source: ABdhPJzOunZ3EgYEBpylmdtP8j9FGpS3Jv2u/4lgTQ5K3DzQcGqKzGmAKemZi6ER65ENMXoFt2frFA==
-X-Received: by 2002:a05:6e02:1583:: with SMTP id m3mr13663ilu.265.1632322195871;
-        Wed, 22 Sep 2021 07:49:55 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=NNoniwPM+EYYtowb3pj0Cdng0l4936673rUFKZ/IzcQ=;
+        b=zG1McQc+UyW1wkePD4Ho3k1z312nvYNFxKzbEJB0KXZVVdz5/yoArhusgXsUONoMvN
+         vC1nkAebtbDFYCA2mmIXxXclg/VCI0WyR0+9EZcZoysecme8uVaFQE0Z/B/p4Chcj7Gi
+         yi9BQOrqaQu1FqJFZq6NFpfu6WMMeZGJwCNw0DnOdL8kq5X0PrKhRkYL102vq+Qd4WVI
+         6Im4TGFH+1O9JOzEZokZSI86YCp7EaiJyotudaLL9VYP4agiRDS/72hhAftnRhuQBQYr
+         NX6RJ5PUFoNjoKX6N8W+V1zXsv1i3hnAAOdfitAfCZ0RN5F/2VQBOtvHj2JV293H0aAc
+         9oJg==
+X-Gm-Message-State: AOAM533MO+ZNZhzyVbAzv4DkyKAuqtoeo9nCmOBZwq2X0Rz1qFfOIzrY
+        B2MZDv0OWpvS4OLXU/0i4MhOEw==
+X-Google-Smtp-Source: ABdhPJxiC5hTaqIgFMMYBN5vq7IIc8hL+tvWJxkPtPTILVsHxoaNOVSvFBGcVz29kiuowdcC822e5A==
+X-Received: by 2002:a5e:db44:: with SMTP id r4mr291119iop.56.1632325890387;
+        Wed, 22 Sep 2021 08:51:30 -0700 (PDT)
 Received: from [192.168.1.30] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id v6sm1092461iox.11.2021.09.22.07.49.55
-        for <io-uring@vger.kernel.org>
+        by smtp.gmail.com with ESMTPSA id o11sm1277982ilu.0.2021.09.22.08.51.29
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Sep 2021 07:49:55 -0700 (PDT)
-To:     io-uring <io-uring@vger.kernel.org>
+        Wed, 22 Sep 2021 08:51:30 -0700 (PDT)
+Subject: Re: [PATCH] io_uring: return boolean value for io_alloc_async_data
+To:     Hao Xu <haoxu@linux.alibaba.com>
+Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>
+References: <20210922101522.9179-1-haoxu@linux.alibaba.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io-wq: ensure we exit if thread group is exiting
-Message-ID: <12d822fd-9e33-d633-5b75-a444596502c1@kernel.dk>
-Date:   Wed, 22 Sep 2021 08:49:55 -0600
+Message-ID: <5aa39c69-331f-0b29-ad94-11001821bacf@kernel.dk>
+Date:   Wed, 22 Sep 2021 09:51:29 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <20210922101522.9179-1-haoxu@linux.alibaba.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -63,32 +67,11 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Dave reports that a coredumping workload gets stuck in 5.15-rc2, and
-identified the culprit in the Fixes line below. The problem is that
-relying solely on fatal_signal_pending() to gate whether to exit or not
-fails miserably if a process gets eg SIGILL sent. Don't exclusively
-rely on fatal signals, also check if the thread group is exiting.
+On 9/22/21 4:15 AM, Hao Xu wrote:
+> boolean value is good enough for io_alloc_async_data.
 
-Fixes: 15e20db2e0ce ("io-wq: only exit on fatal signals")
-Reported-by: Dave Chinner <david@fromorbit.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Applied for 5.16, thanks.
 
----
-
-diff --git a/fs/io-wq.c b/fs/io-wq.c
-index c2e0e8e80949..c2360cdc403d 100644
---- a/fs/io-wq.c
-+++ b/fs/io-wq.c
-@@ -584,7 +584,8 @@ static int io_wqe_worker(void *data)
- 
- 			if (!get_signal(&ksig))
- 				continue;
--			if (fatal_signal_pending(current))
-+			if (fatal_signal_pending(current) ||
-+			    signal_group_exit(current->signal))
- 				break;
- 			continue;
- 		}
 -- 
 Jens Axboe
 

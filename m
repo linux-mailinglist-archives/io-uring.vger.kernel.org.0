@@ -2,179 +2,158 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 34E7D413CB9
-	for <lists+io-uring@lfdr.de>; Tue, 21 Sep 2021 23:41:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 948C941428A
+	for <lists+io-uring@lfdr.de>; Wed, 22 Sep 2021 09:20:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235510AbhIUVmz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 21 Sep 2021 17:42:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52338 "EHLO
+        id S231426AbhIVHVu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 22 Sep 2021 03:21:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235637AbhIUVmx (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 21 Sep 2021 17:42:53 -0400
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26BD1C061574
-        for <io-uring@vger.kernel.org>; Tue, 21 Sep 2021 14:41:24 -0700 (PDT)
-Received: by mail-pj1-x102e.google.com with SMTP id dw14so565676pjb.1
-        for <io-uring@vger.kernel.org>; Tue, 21 Sep 2021 14:41:24 -0700 (PDT)
+        with ESMTP id S229697AbhIVHVu (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 22 Sep 2021 03:21:50 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6D54C061574
+        for <io-uring@vger.kernel.org>; Wed, 22 Sep 2021 00:20:20 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id d6so3758789wrc.11
+        for <io-uring@vger.kernel.org>; Wed, 22 Sep 2021 00:20:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=5isRS/SJ+SHPb4tK2U4UlkgLDNu8yJEV2NUNOZKLHhE=;
-        b=aq7tkQmkdyLO9HIv/wfKStKCvKppoyrPhboWuCg2PVBqW/teCyy8mU8UND90KA4D93
-         bGLj1XluIDD0tkPj3QoDeE3cMHZNeukX0+L2teTND0YhAzrrILblWO3kXlpTcKdd+sWJ
-         RDSsi9LBPFUq5IK6NYYTJLIuMkzxX45r0gA9QIryqWdjeJpPmnJIAS4Ky/Oj8aZzZA80
-         lf+iKkg2Qy43qTk7qtSbVhyZJzuM22UAu+B9h3YMgtXU8tQ3qV/8IDI2tMSiNSFJee8L
-         8D2qPvoqaRqc/rEZNiWNKX31kdPYvXBeSyCugRei3am10rYvrl0BiXgFFOzxL64/Wrf7
-         Rarg==
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yIWDbUeb9eVjg614LLtNWsjwRP6rzLhm90LjC7m9WB8=;
+        b=RwRvzT9WSFDWEGPN4KQntoyoN9ipb/5tISApBgsHlothq1kXIF5aXHcUN/dO9CmwtV
+         sWaxPZy6pH9zOYKFkBWlKASBviamDk1iBLoWeSaPjFzevqo1WiVkluoOcFYsa7UtJ/Kn
+         YSB/1VPwXfiDeGLBBHuxIfOGZam6a3PfJSBcscliVvyB20E2YqWScPgT4VZd0/9MfT2f
+         cYjZVfhVu54I1qhIYw2lZNCStKeLudDrXO01tdAQ0HgVNpXhKiAVuDsVXMYcG2kKfNSd
+         sKLx0XNRTMMjVJyY2CVDOl6/4eR2blOql769DwE7x7jqJb6MWeuxbtr29fUHuJAw22s7
+         Y2Bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=5isRS/SJ+SHPb4tK2U4UlkgLDNu8yJEV2NUNOZKLHhE=;
-        b=GEiG9ipOgyk94IHlRAva0jTGh9AsFWBl+x99stVKxn3BZv0iK8Dr5JJM9usTzJ64s9
-         G18ZM/eoNNs6Rpnk30+I57k1EJP//MMQ1atPkNumwH8LlghVl5NcJrPTu4DBDHdPQ4KC
-         GhpvXeCqjOKt56N+pdXGeQDvIFeTL8oS5CrG57hQbaEwvQb8ScGVhyZ/iB8451apbxqk
-         QeQL4P8eCD5vQ6NdzS8qBkG5MfiykUPNZv1URB/Q2x/rZjI8e4ZzNpP8Ezo5iYgb/cMk
-         mjI1fEIVHsZpTr1044a5Y6UMbEs9Jl2Ze75I7CyP2h3BnhKg49z1f8mltPATrO379LKA
-         qFxQ==
-X-Gm-Message-State: AOAM533iw+GtbEMn7oYFcUlNLdgKtZcg+K6PYqM1xT8SI1B+YrsNVK/s
-        lFlyXWoyw7U/7FhuSvTK+4JUSF5ksTlX7uHi
-X-Google-Smtp-Source: ABdhPJx3T06t+P60628HcFn0eD3R4C2eCTcMXrdZY+XZJqrnVqpCGWbC47gwMibP0BovklBeBKeqdA==
-X-Received: by 2002:a17:902:b205:b0:13d:b0a1:da90 with SMTP id t5-20020a170902b20500b0013db0a1da90mr11235712plr.26.1632260483527;
-        Tue, 21 Sep 2021 14:41:23 -0700 (PDT)
-Received: from ?IPv6:2600:380:7577:f451:85ed:5f4e:dcd2:ab75? ([2600:380:7577:f451:85ed:5f4e:dcd2:ab75])
-        by smtp.gmail.com with ESMTPSA id p27sm102665pfq.164.2021.09.21.14.41.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Sep 2021 14:41:22 -0700 (PDT)
-Subject: Re: [5.15-rc1 regression] io_uring: fsstress hangs in do_coredump()
- on exit
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     io-uring <io-uring@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <20210921064032.GW2361455@dread.disaster.area>
- <d9d2255c-fbac-3259-243a-2934b7ed0293@kernel.dk>
- <c97707cf-c543-52cd-5066-76b639f4f087@kernel.dk>
- <20210921213552.GZ2361455@dread.disaster.area>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <6d46951b-a7b3-0feb-3af0-aaa8ec87b87a@kernel.dk>
-Date:   Tue, 21 Sep 2021 15:41:20 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yIWDbUeb9eVjg614LLtNWsjwRP6rzLhm90LjC7m9WB8=;
+        b=fid6Zqey7Nksyqbx1Hp9b4ez8fy/qEzn71Tfal4Dhc/ToPYwBh9JJcZjGnA2hgCXtO
+         4xz8/7fjZq7eF4dB9oF8TWc/f8hpf7p8sN81E02AZGRxDn3vYo/RUkxPE9g5yFWffKLY
+         xltaFWq95E9d4tN80ML9qvdcpYVipDQOneNGnS9aP0/OniGBOnh+jqI6Dxz2A+TXgUil
+         +u6iYQ++EdnYjvNzLtzN0zoXjjDfC26aogJyqOOGngh82HDPFuRw2STf3RmWx+Br09LI
+         QGzWIpe47tQoGk3wNZS+pijnFsQ47hqV9KoFDswGoOcn7CR00fUDkh9YXg090Tbpi1nZ
+         Bqdw==
+X-Gm-Message-State: AOAM531S4UsiPLCCwz/JLX6xXaQnggx/Qnej4PkGbzX81MEvtrGiwm14
+        OdKH3UOHMm/zURSYTyrFaRe235li0RIUJ6RLFaQ=
+X-Google-Smtp-Source: ABdhPJwUTr4MdOkW7jZQVC8cFh/55BoLEygUfs6oW2DUmxurxeZfGGg2LbmR3gRaKBkDxZ/arWKjQhNTPCtMU6lM9VI=
+X-Received: by 2002:adf:8b19:: with SMTP id n25mr42586574wra.216.1632295219240;
+ Wed, 22 Sep 2021 00:20:19 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20210921213552.GZ2361455@dread.disaster.area>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20210805125539.66958-1-joshi.k@samsung.com> <CGME20210805125923epcas5p10e6c1b95475440be68f58244d5a3cb9a@epcas5p1.samsung.com>
+ <20210805125539.66958-3-joshi.k@samsung.com> <20210907074650.GB29874@lst.de>
+ <CA+1E3rJAav=4abJXs8fO49aiMNPqjv6dD7HBfhB+JQrNbaX3=A@mail.gmail.com> <20210908061530.GA28505@lst.de>
+In-Reply-To: <20210908061530.GA28505@lst.de>
+From:   Kanchan Joshi <joshiiitr@gmail.com>
+Date:   Wed, 22 Sep 2021 12:49:52 +0530
+Message-ID: <CA+1E3rLeM=GZn1gR_KN7b6o8LHDistp1ZoHBb0N54ayK-2+tPA@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/6] nvme: wire-up support for async-passthru on char-device.
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Kanchan Joshi <joshi.k@samsung.com>, Jens Axboe <axboe@kernel.dk>,
+        Keith Busch <kbusch@kernel.org>, io-uring@vger.kernel.org,
+        linux-nvme@lists.infradead.org, anuj20.g@samsung.com,
+        Javier Gonzalez <javier.gonz@samsung.com>, hare@suse.de
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/21/21 3:35 PM, Dave Chinner wrote:
-> On Tue, Sep 21, 2021 at 08:19:53AM -0600, Jens Axboe wrote:
->> On 9/21/21 7:25 AM, Jens Axboe wrote:
->>> On 9/21/21 12:40 AM, Dave Chinner wrote:
->>>> Hi Jens,
->>>>
->>>> I updated all my trees from 5.14 to 5.15-rc2 this morning and
->>>> immediately had problems running the recoveryloop fstest group on
->>>> them. These tests have a typical pattern of "run load in the
->>>> background, shutdown the filesystem, kill load, unmount and test
->>>> recovery".
->>>>
->>>> Whent eh load includes fsstress, and it gets killed after shutdown,
->>>> it hangs on exit like so:
->>>>
->>>> # echo w > /proc/sysrq-trigger 
->>>> [  370.669482] sysrq: Show Blocked State
->>>> [  370.671732] task:fsstress        state:D stack:11088 pid: 9619 ppid:  9615 flags:0x00000000
->>>> [  370.675870] Call Trace:
->>>> [  370.677067]  __schedule+0x310/0x9f0
->>>> [  370.678564]  schedule+0x67/0xe0
->>>> [  370.679545]  schedule_timeout+0x114/0x160
->>>> [  370.682002]  __wait_for_common+0xc0/0x160
->>>> [  370.684274]  wait_for_completion+0x24/0x30
->>>> [  370.685471]  do_coredump+0x202/0x1150
->>>> [  370.690270]  get_signal+0x4c2/0x900
->>>> [  370.691305]  arch_do_signal_or_restart+0x106/0x7a0
->>>> [  370.693888]  exit_to_user_mode_prepare+0xfb/0x1d0
->>>> [  370.695241]  syscall_exit_to_user_mode+0x17/0x40
->>>> [  370.696572]  do_syscall_64+0x42/0x80
->>>> [  370.697620]  entry_SYSCALL_64_after_hwframe+0x44/0xae
->>>>
->>>> It's 100% reproducable on one of my test machines, but only one of
->>>> them. That one machine is running fstests on pmem, so it has
->>>> synchronous storage. Every other test machine using normal async
->>>> storage (nvme, iscsi, etc) and none of them are hanging.
->>>>
->>>> A quick troll of the commit history between 5.14 and 5.15-rc2
->>>> indicates a couple of potential candidates. The 5th kernel build
->>>> (instead of ~16 for a bisect) told me that commit 15e20db2e0ce
->>>> ("io-wq: only exit on fatal signals") is the cause of the
->>>> regression. I've confirmed that this is the first commit where the
->>>> problem shows up.
->>>
->>> Thanks for the report Dave, I'll take a look. Can you elaborate on
->>> exactly what is being run? And when killed, it's a non-fatal signal?
-> 
-> It's whatever kill/killall sends by default.  Typical behaviour that
-> causes a hang is something like:
-> 
-> $FSSTRESS_PROG -n10000000 -p $PROCS -d $load_dir >> $seqres.full 2>&1 &
-> ....
-> sleep 5
-> _scratch_shutdown
-> $KILLALL_PROG -q $FSSTRESS_PROG
-> wait
-> 
-> _shutdown_scratch is typically just an 'xfs_io -rx -c "shutdown"
-> /mnt/scratch' command that shuts down the filesystem. Other tests in
-> the recoveryloop group use DM targets to fail IO that trigger a
-> shutdown, others inject errors that trigger shutdowns, etc. But the
-> result is that all hang waiting for fsstress processes that have
-> been using io_uring to exit.
-> 
-> Just run fstests with "./check -g recoveryloop" - there's only a
-> handful of tests and it only takes about 5 minutes to run them all
-> on a fake DRAM based pmem device..
+I am sorry for taking longer than I should have.
 
-I made a trivial reproducer just to verify.
+On Wed, Sep 8, 2021 at 11:45 AM Christoph Hellwig <hch@lst.de> wrote:
+>
+> On Tue, Sep 07, 2021 at 09:50:27PM +0530, Kanchan Joshi wrote:
+> > > A few other notes:
+> > >
+> > >  - I suspect the ioctl_cmd really should move into the core using_cmd
+> > >    infrastructure
+> >
+> > Yes, that seems possible by creating that field outside by combining
+> > "op" and "unused" below.
+> > +struct io_uring_cmd {
+> > + struct file *file;
+> > + __u16 op;
+> > + __u16 unused;
+> > + __u32 len;
+> > + __u64 pdu[5]; /* 40 bytes available inline for free use */
+> > +};
+>
+> Two different issues here:
+>
+>  - the idea of having a two layer indirection with op and a cmd doesn't
+>    really make much sense
+>  - if we want to avoid conflicts using 32-bit probably makes sense
+>
+> So I'd turn op and unused into a single cmd field, use the ioctl encoding
+> macros for it (but preferably pick different numbers than the existing
+> ioctls).
 
->> Can you try with this patch?
->>
->> diff --git a/fs/io-wq.c b/fs/io-wq.c
->> index b5fd015268d7..1e55a0a2a217 100644
->> --- a/fs/io-wq.c
->> +++ b/fs/io-wq.c
->> @@ -586,7 +586,8 @@ static int io_wqe_worker(void *data)
->>  
->>  			if (!get_signal(&ksig))
->>  				continue;
->> -			if (fatal_signal_pending(current))
->> +			if (fatal_signal_pending(current) ||
->> +			    signal_group_exit(current->signal)) {
->>  				break;
->>  			continue;
->>  		}
-> 
-> Cleaned up so it compiles and the tests run properly again. But
-> playing whack-a-mole with signals seems kinda fragile. I was pointed
-> to this patchset by another dev on #xfs overnight who saw the same
-> hangs that also fixed the hang:
+I was thinking along the same lines, except the "picking different
+numbers than existing ioctls" part.
+Does that mean adding a new IOCTL for each operation which requires
+async transport?
 
-It seems sane to me - exit if there's a fatal signal, or doing core
-dump. Don't think there should be other conditions.
+> > >  - that whole mix of user space interface and internal data in the
+> > >    ->pdu field is a mess.  What is the problem with deferring the
+> > >    request freeing into the user context, which would clean up
+> > >    quite a bit of that, especially if io_uring_cmd grows a private
+> > >    field.
+> >
+> > That mix isn't great but the attempt was to save the allocation.
+> > And I was not very sure if it'd be fine to defer freeing the request
+> > until task-work fires up.
+>
+> What would be the problem with the delaying?
 
-> https://lore.kernel.org/lkml/cover.1629655338.git.olivier@trillion01.com/
-> 
-> It was posted about a month ago and I don't see any response to it
-> on the lists...
+When we free the request, the tag is also freed, and that may enable
+someone else to pump more IO.
+Pushing freeing of requests to user-context seemed like delaying that part.
+If you think that is a misplaced concern, I can change.
+The changed structure will look like this -
 
-That's been a long discussion, but it's a different topic really. Yes
-it's signals, but it's not this particular issue. It'll happen to work
-around this issue, as it cancels everything post core dumping.
+struct nvme_uring_cmd {
+       __u32   ioctl_cmd;
+       __u32   unused1;
+       void __user *argp;
+      union {
+                struct bio *bio;
+                struct request *req;
+             };
+       void *meta;
+};
+cmd->bio will be freed in nvme-completion while cmd->req will be freed
+in user context.
+Since we have the request intact, we will not store "u64 result; int
+status;" anymore and overall there will be a reduction of 4 bytes in
+size of nvme_uring_cmd.
+Would you prefer this way?
+
+> > Even if we take that route, we would still need a place to store bio
+> > pointer (hopefully meta pointer can be extracted out of bio).
+> > Do you see it differently?
+>
+> We don't need the bio pointer at all.  The old passthrough code needed
+> it when we still used block layer bonuce buffering for it.  But that
+> bounce buffering for passthrough commands got removed a while ago,
+> and even before nvme never used it.
+
+nvme_submit_user_cmd() calls blk_rq_map_user(), which sets up req->bio
+(and that is regardless of bounce buffering I suppose).
+For sync-ioctl, this bio pointer is locally stored and that is used to
+free the bio post completion.
+For async-ioctl too, we need some place to store this.
+So I could not connect this to bounce buffering (alone). Am I missing
+your point?
+
+One of the way could be to change blk_update_request() to avoid
+setting req->bio to NULL. But perhaps that may invite more troubles,
+and we are not saving anything: bio-pointer is inside the union anyway
+(in above struct nvme_uring_cmd).
+
 
 -- 
-Jens Axboe
-
+Kanchan

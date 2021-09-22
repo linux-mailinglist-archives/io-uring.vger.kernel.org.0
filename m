@@ -2,159 +2,71 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C5A30414F6E
-	for <lists+io-uring@lfdr.de>; Wed, 22 Sep 2021 19:52:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B4F941519C
+	for <lists+io-uring@lfdr.de>; Wed, 22 Sep 2021 22:49:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233552AbhIVRyH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 22 Sep 2021 13:54:07 -0400
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:56192 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236815AbhIVRyF (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 22 Sep 2021 13:54:05 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R221e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0UpFet8c_1632333153;
-Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UpFet8c_1632333153)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 23 Sep 2021 01:52:34 +0800
-Subject: Re: [RFC 1/3] io_uring: reduce frequent add_wait_queue() overhead for
- multi-shot poll request
-To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
-        io-uring@vger.kernel.org
-Cc:     axboe@kernel.dk, asml.silence@gmail.com,
-        Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <20210922123417.2844-1-xiaoguang.wang@linux.alibaba.com>
- <20210922123417.2844-2-xiaoguang.wang@linux.alibaba.com>
-From:   Hao Xu <haoxu@linux.alibaba.com>
-Message-ID: <d2f55502-bc66-f357-d57f-e9ef280afb34@linux.alibaba.com>
-Date:   Thu, 23 Sep 2021 01:52:31 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.13.0
+        id S237684AbhIVUuk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 22 Sep 2021 16:50:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60700 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237592AbhIVUud (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 22 Sep 2021 16:50:33 -0400
+Received: from mail-qk1-x741.google.com (mail-qk1-x741.google.com [IPv6:2607:f8b0:4864:20::741])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B7C3C061574
+        for <io-uring@vger.kernel.org>; Wed, 22 Sep 2021 13:49:03 -0700 (PDT)
+Received: by mail-qk1-x741.google.com with SMTP id c7so14636616qka.2
+        for <io-uring@vger.kernel.org>; Wed, 22 Sep 2021 13:49:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:sender:from:date:message-id:subject:to;
+        bh=ijKrByR1/KtEp2Ut8Wj0vMi00kBZm/A/r1gPwOEYZIg=;
+        b=HgFbMGsOZCai/4tbOerlWfdO8DybuOJw7RZz6ZrdK2h8oWoZpGwfrk8AXH8ic15zZ1
+         AZh04wyt3i4Dkft+vgYMcoepLT++iqFfIEAQX0pBz2OAYkU22MN8kbl0U2FH14FZK9ar
+         sZyn8dzx4U+7mZL4HuH8yX9MkyvnDbRDJwO5wqIPPh24TnRf1r8gNK9BBjt09gQKoYEW
+         1o6eGK9gT9bJHSK8UjT0L1Y2eGwkXI6lfyV6031QZkL2JqleDNias3FbPca5rTX65t0Q
+         9wh04Hdr/90HiDgteYNuYvQmm+Sar7uGUSMY9OwdxT+OyWIq11Z1gpScMZn8UIw7kG1w
+         JCEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
+         :to;
+        bh=ijKrByR1/KtEp2Ut8Wj0vMi00kBZm/A/r1gPwOEYZIg=;
+        b=Lr21Mqf463zt6sKA3X/HRoWTVpYXI2qQ/1JIlKWVPmw/xA8Q847/AYTslZKVMbss2b
+         ooMtJpk9L9yzYnT/C15WjqEEk5B5DcTVro7Rer6KLpmDvlADPcA1SIKe7YQIEC6l5pr8
+         8ORW7avnbdU2auWzxuB9pb9lYeOHwfB/T17Jdfev1E0PCMRMfo3g4QY0DJYDENnt5qhJ
+         mUYVy+EVNPekwisFrIy1KprNbqPOrOQRhdtxo0TN7LsVC/GDuwsSseROqdZadD/K9Yut
+         RwUZAdRLMNGKRaMTp84PfKbJJ8+Qfz1VuAJ5wupZhpkyy877wravCTHmdP/aPrIFlwSi
+         55ow==
+X-Gm-Message-State: AOAM530xpcxTk9IpSERF3w8+ndLKdUdLUiI2N6DBf6/ipf7mLMl1pG7w
+        2rp4s4rNETFKSpkW7tlURJnJTF/3embUuvn/Ktc=
+X-Google-Smtp-Source: ABdhPJxijJDsaoqOM5766HnqohIaVrTgb3WuhLCWdq3LMr0IlF4yqzbUuYtTMEI1D+3NtsB4LmQtz+BO4kDtudKTTfs=
+X-Received: by 2002:a25:1345:: with SMTP id 66mr1234533ybt.502.1632343742412;
+ Wed, 22 Sep 2021 13:49:02 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20210922123417.2844-2-xiaoguang.wang@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Sender: okalapab@gmail.com
+Received: by 2002:a05:7110:8224:b0:f6:e178:3ae6 with HTTP; Wed, 22 Sep 2021
+ 13:49:02 -0700 (PDT)
+From:   Aisha Al-Qaddafi <aisha.gdaff21@gmail.com>
+Date:   Wed, 22 Sep 2021 21:49:02 +0100
+X-Google-Sender-Auth: w3OPmGT1nKYOaz1Qe-n_gAptvI4
+Message-ID: <CAP_P75Q5Fk7_Va3LOsanyydT+=_A1VLKZ_j8a_F5YkCnkCn6Lg@mail.gmail.com>
+Subject: My Dear Friend
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-在 2021/9/22 下午8:34, Xiaoguang Wang 写道:
-> Run echo_server to evaluate io_uring's multi-shot poll performance, perf
-> shows that add_wait_queue() has obvious overhead. Intruduce a new state
-> 'active' in io_poll_iocb to indicate whether io_poll_wake() should queue
-> a task_work. This new state will be set to true initially, be set to false
-> when starting to queue a task work, and be set to true again when a poll
-> cqe has been committed. One concern is that this method may lost waken-up
-> event, but seems it's ok.
-> 
->    io_poll_wake                io_poll_task_func
-> t1                       |
-> t2                       |    WRITE_ONCE(req->poll.active, true);
-> t3                       |
-> t4                       |    io_commit_cqring(ctx);
-> t5                       |
-> t6                       |
-> 
-> If waken-up events happens before or at t4, it's ok, user app will always
-> see a cqe. If waken-up events happens after t4 and IIUC, io_poll_wake()
-> will see the new req->poll.active value by using READ_ONCE().
-> 
-> With this patch, a pure echo_server(1000 connections, packet is 16 bytes)
-> shows about 1.6% reqs improvement.
-> 
-> Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-> ---
->   fs/io_uring.c | 20 ++++++++++++++++----
->   1 file changed, 16 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 1294b1ef4acb..ca4464a75c7b 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -487,6 +487,7 @@ struct io_poll_iocb {
->   	__poll_t			events;
->   	bool				done;
->   	bool				canceled;
-> +	bool				active;
->   	struct wait_queue_entry		wait;
->   };
->   
-> @@ -5025,8 +5026,6 @@ static int __io_async_wake(struct io_kiocb *req, struct io_poll_iocb *poll,
->   
->   	trace_io_uring_task_add(req->ctx, req->opcode, req->user_data, mask);
->   
-> -	list_del_init(&poll->wait.entry);
-> -
->   	req->result = mask;
->   	req->io_task_work.func = func;
->   
-> @@ -5057,7 +5056,10 @@ static bool io_poll_rewait(struct io_kiocb *req, struct io_poll_iocb *poll)
->   
->   	spin_lock(&ctx->completion_lock);
->   	if (!req->result && !READ_ONCE(poll->canceled)) {
-> -		add_wait_queue(poll->head, &poll->wait);
-> +		if (req->opcode == IORING_OP_POLL_ADD)
-> +			WRITE_ONCE(req->poll.active, true);
-> +		else
-> +			add_wait_queue(poll->head, &poll->wait);
->   		return true;
->   	}
->   
-> @@ -5133,6 +5135,9 @@ static inline bool io_poll_complete(struct io_kiocb *req, __poll_t mask)
->   	return done;
->   }
->   
-> +static bool __io_poll_remove_one(struct io_kiocb *req,
-> +				 struct io_poll_iocb *poll, bool do_cancel);
-> +
->   static void io_poll_task_func(struct io_kiocb *req, bool *locked)
->   {
->   	struct io_ring_ctx *ctx = req->ctx;
-> @@ -5146,10 +5151,11 @@ static void io_poll_task_func(struct io_kiocb *req, bool *locked)
->   		done = __io_poll_complete(req, req->result);
->   		if (done) {
->   			io_poll_remove_double(req);
-> +			__io_poll_remove_one(req, io_poll_get_single(req), true);
-This may cause race problems, like there may be multiple cancelled cqes
-considerring io_poll_add() parallelled. hash_del is redundant either.
-__io_poll_remove_one may not be the best choice here, and since we now
-don't del wait entry inbetween, code in _arm_poll should probably be
-tweaked as well(not very sure, will dive into it tomorrow).
-
-Regards,
-Hao
->   			hash_del(&req->hash_node);
->   		} else {
->   			req->result = 0;
-> -			add_wait_queue(req->poll.head, &req->poll.wait);
-> +			WRITE_ONCE(req->poll.active, true);
->   		}
->   		io_commit_cqring(ctx);
->   		spin_unlock(&ctx->completion_lock);
-> @@ -5204,6 +5210,7 @@ static void io_init_poll_iocb(struct io_poll_iocb *poll, __poll_t events,
->   	poll->head = NULL;
->   	poll->done = false;
->   	poll->canceled = false;
-> +	poll->active = true;
->   #define IO_POLL_UNMASK	(EPOLLERR|EPOLLHUP|EPOLLNVAL|EPOLLRDHUP)
->   	/* mask in events that we always want/need */
->   	poll->events = events | IO_POLL_UNMASK;
-> @@ -5301,6 +5308,7 @@ static int io_async_wake(struct wait_queue_entry *wait, unsigned mode, int sync,
->   	trace_io_uring_poll_wake(req->ctx, req->opcode, req->user_data,
->   					key_to_poll(key));
->   
-> +	list_del_init(&poll->wait.entry);
->   	return __io_async_wake(req, poll, key_to_poll(key), io_async_task_func);
->   }
->   
-> @@ -5569,6 +5577,10 @@ static int io_poll_wake(struct wait_queue_entry *wait, unsigned mode, int sync,
->   	struct io_kiocb *req = wait->private;
->   	struct io_poll_iocb *poll = &req->poll;
->   
-> +	if (!READ_ONCE(poll->active))
-> +		return 0;
-> +
-> +	WRITE_ONCE(poll->active, false);
->   	return __io_async_wake(req, poll, key_to_poll(key), io_poll_task_func);
->   }
->   
-> 
-
+Assalamu alaikum,
+I came across your e-mail contact prior to a private search while in
+need of your assistance. I am Aisha Al-Qaddafi, the only biological,
+Daughter of Former President of Libya Col. Muammar Al-Qaddafi. Am a
+single Mother and a Widow with three Children. I have investment funds
+worth Twenty Seven Million Five Hundred Thousand United State Dollar
+($27.500.000.00 ) and i need a trusted  investment Manager/Partner
+because of my current refugee status, however, I am interested in you
+for investment project assistance in your country. If you are willing
+to handle this project on my behalf kindly reply urgently to enable me
+to provide you more information about the investment
+funds.
+Best Regards

@@ -2,71 +2,81 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B4F941519C
-	for <lists+io-uring@lfdr.de>; Wed, 22 Sep 2021 22:49:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D17E416085
+	for <lists+io-uring@lfdr.de>; Thu, 23 Sep 2021 16:05:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237684AbhIVUuk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 22 Sep 2021 16:50:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60700 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237592AbhIVUud (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 22 Sep 2021 16:50:33 -0400
-Received: from mail-qk1-x741.google.com (mail-qk1-x741.google.com [IPv6:2607:f8b0:4864:20::741])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B7C3C061574
-        for <io-uring@vger.kernel.org>; Wed, 22 Sep 2021 13:49:03 -0700 (PDT)
-Received: by mail-qk1-x741.google.com with SMTP id c7so14636616qka.2
-        for <io-uring@vger.kernel.org>; Wed, 22 Sep 2021 13:49:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:sender:from:date:message-id:subject:to;
-        bh=ijKrByR1/KtEp2Ut8Wj0vMi00kBZm/A/r1gPwOEYZIg=;
-        b=HgFbMGsOZCai/4tbOerlWfdO8DybuOJw7RZz6ZrdK2h8oWoZpGwfrk8AXH8ic15zZ1
-         AZh04wyt3i4Dkft+vgYMcoepLT++iqFfIEAQX0pBz2OAYkU22MN8kbl0U2FH14FZK9ar
-         sZyn8dzx4U+7mZL4HuH8yX9MkyvnDbRDJwO5wqIPPh24TnRf1r8gNK9BBjt09gQKoYEW
-         1o6eGK9gT9bJHSK8UjT0L1Y2eGwkXI6lfyV6031QZkL2JqleDNias3FbPca5rTX65t0Q
-         9wh04Hdr/90HiDgteYNuYvQmm+Sar7uGUSMY9OwdxT+OyWIq11Z1gpScMZn8UIw7kG1w
-         JCEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
-         :to;
-        bh=ijKrByR1/KtEp2Ut8Wj0vMi00kBZm/A/r1gPwOEYZIg=;
-        b=Lr21Mqf463zt6sKA3X/HRoWTVpYXI2qQ/1JIlKWVPmw/xA8Q847/AYTslZKVMbss2b
-         ooMtJpk9L9yzYnT/C15WjqEEk5B5DcTVro7Rer6KLpmDvlADPcA1SIKe7YQIEC6l5pr8
-         8ORW7avnbdU2auWzxuB9pb9lYeOHwfB/T17Jdfev1E0PCMRMfo3g4QY0DJYDENnt5qhJ
-         mUYVy+EVNPekwisFrIy1KprNbqPOrOQRhdtxo0TN7LsVC/GDuwsSseROqdZadD/K9Yut
-         RwUZAdRLMNGKRaMTp84PfKbJJ8+Qfz1VuAJ5wupZhpkyy877wravCTHmdP/aPrIFlwSi
-         55ow==
-X-Gm-Message-State: AOAM530xpcxTk9IpSERF3w8+ndLKdUdLUiI2N6DBf6/ipf7mLMl1pG7w
-        2rp4s4rNETFKSpkW7tlURJnJTF/3embUuvn/Ktc=
-X-Google-Smtp-Source: ABdhPJxijJDsaoqOM5766HnqohIaVrTgb3WuhLCWdq3LMr0IlF4yqzbUuYtTMEI1D+3NtsB4LmQtz+BO4kDtudKTTfs=
-X-Received: by 2002:a25:1345:: with SMTP id 66mr1234533ybt.502.1632343742412;
- Wed, 22 Sep 2021 13:49:02 -0700 (PDT)
+        id S241604AbhIWOH3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 23 Sep 2021 10:07:29 -0400
+Received: from cloud48395.mywhc.ca ([173.209.37.211]:50538 "EHLO
+        cloud48395.mywhc.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S241554AbhIWOH1 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 23 Sep 2021 10:07:27 -0400
+Received: from modemcable064.203-130-66.mc.videotron.ca ([66.130.203.64]:53332 helo=[192.168.1.179])
+        by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <olivier@trillion01.com>)
+        id 1mTPMG-0000Sp-Gb; Thu, 23 Sep 2021 10:05:52 -0400
+Message-ID: <a9f88c7d9b7ac119431a343bda10da251ef7f57e.camel@trillion01.com>
+Subject: Re: [5.15-rc1 regression] io_uring: fsstress hangs in do_coredump()
+ on exit
+From:   Olivier Langlois <olivier@trillion01.com>
+To:     Jens Axboe <axboe@kernel.dk>, Dave Chinner <david@fromorbit.com>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Date:   Thu, 23 Sep 2021 10:05:51 -0400
+In-Reply-To: <6d46951b-a7b3-0feb-3af0-aaa8ec87b87a@kernel.dk>
+References: <20210921064032.GW2361455@dread.disaster.area>
+         <d9d2255c-fbac-3259-243a-2934b7ed0293@kernel.dk>
+         <c97707cf-c543-52cd-5066-76b639f4f087@kernel.dk>
+         <20210921213552.GZ2361455@dread.disaster.area>
+         <6d46951b-a7b3-0feb-3af0-aaa8ec87b87a@kernel.dk>
+Organization: Trillion01 Inc
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.40.4 
 MIME-Version: 1.0
-Sender: okalapab@gmail.com
-Received: by 2002:a05:7110:8224:b0:f6:e178:3ae6 with HTTP; Wed, 22 Sep 2021
- 13:49:02 -0700 (PDT)
-From:   Aisha Al-Qaddafi <aisha.gdaff21@gmail.com>
-Date:   Wed, 22 Sep 2021 21:49:02 +0100
-X-Google-Sender-Auth: w3OPmGT1nKYOaz1Qe-n_gAptvI4
-Message-ID: <CAP_P75Q5Fk7_Va3LOsanyydT+=_A1VLKZ_j8a_F5YkCnkCn6Lg@mail.gmail.com>
-Subject: My Dear Friend
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - trillion01.com
+X-Get-Message-Sender-Via: cloud48395.mywhc.ca: authenticated_id: olivier@trillion01.com
+X-Authenticated-Sender: cloud48395.mywhc.ca: olivier@trillion01.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Assalamu alaikum,
-I came across your e-mail contact prior to a private search while in
-need of your assistance. I am Aisha Al-Qaddafi, the only biological,
-Daughter of Former President of Libya Col. Muammar Al-Qaddafi. Am a
-single Mother and a Widow with three Children. I have investment funds
-worth Twenty Seven Million Five Hundred Thousand United State Dollar
-($27.500.000.00 ) and i need a trusted  investment Manager/Partner
-because of my current refugee status, however, I am interested in you
-for investment project assistance in your country. If you are willing
-to handle this project on my behalf kindly reply urgently to enable me
-to provide you more information about the investment
-funds.
-Best Regards
+On Tue, 2021-09-21 at 15:41 -0600, Jens Axboe wrote:
+> > 
+> > Cleaned up so it compiles and the tests run properly again. But
+> > playing whack-a-mole with signals seems kinda fragile. I was
+> > pointed
+> > to this patchset by another dev on #xfs overnight who saw the same
+> > hangs that also fixed the hang:
+> 
+> It seems sane to me - exit if there's a fatal signal, or doing core
+> dump. Don't think there should be other conditions.
+> 
+> > https://lore.kernel.org/lkml/cover.1629655338.git.olivier@trillion0
+> > 1.com/
+> > 
+> > It was posted about a month ago and I don't see any response to it
+> > on the lists...
+> 
+> That's been a long discussion, but it's a different topic really. Yes
+> it's signals, but it's not this particular issue. It'll happen to
+> work
+> around this issue, as it cancels everything post core dumping.
+> 
+I am glad to see that my patch is still on your radar.
+
+I was starting to wonder if it did somehow slip in a floor crack or if
+I did omit to do something justifying that noone is reviewing it.
+
+I guess that everyone has been crazy busy like mad men in the last few
+weeks...
+
+

@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A2C904178E6
+	by mail.lfdr.de (Postfix) with ESMTP id CEB7C4178E8
 	for <lists+io-uring@lfdr.de>; Fri, 24 Sep 2021 18:36:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344621AbhIXQiS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 24 Sep 2021 12:38:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38544 "EHLO
+        id S1343896AbhIXQiT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 24 Sep 2021 12:38:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38462 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347452AbhIXQh4 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 24 Sep 2021 12:37:56 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69C5CC06135F
-        for <io-uring@vger.kernel.org>; Fri, 24 Sep 2021 09:33:00 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id v18so2957630edc.11
-        for <io-uring@vger.kernel.org>; Fri, 24 Sep 2021 09:33:00 -0700 (PDT)
+        with ESMTP id S1347550AbhIXQh5 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 24 Sep 2021 12:37:57 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29DEAC06129D
+        for <io-uring@vger.kernel.org>; Fri, 24 Sep 2021 09:33:01 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id dj4so38330597edb.5
+        for <io-uring@vger.kernel.org>; Fri, 24 Sep 2021 09:33:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=wLCnCVYv4tRj0mwzleSWAeRGrIdDM+WbN76RMrzfLRM=;
-        b=q7uP92cyjUDv7qvv+MQLdI4SKeuquZAGJyG1MDkTxOMDDyq6WFX3wZEuyUPYN2OmN4
-         lsPFlAEHB1SmPD6KaG9vfBtRn2eoF6Uux7IW71x/otdXEAgeMfmnM4mcx68YZw5QHXcX
-         nxGA/ShuSXk9jL8UjCTnCvPEaEjahw8W3TdCXTlDjaZx8K/kIJMJK6huV1UqxljXi7Zf
-         m49ZBhTuyqAryPdcVH9KuRGPMuh6hfQIBHEgb77EAAMgnJwYxOip42b1KoGj3632ALVo
-         ZRxZhtHSuz2vrAjWcuFVUGEplSLm9pVYn7w7auAlzuj9ulFCcqveTGNHEt/GD5ChesEa
-         vnEA==
+        bh=g+9wxor79FpGahC2xymxZ+0SUOsxdFIdQJialRIb1Ec=;
+        b=Rxtu4L96+860MzNeg5x8wcdsFrC5r89+IuFInEUmqLAChcxIlLCGtWPv4yXJx68cDa
+         aEuerPUbTqJV2h7bAs/R1glD1Rvm9cLsv6aPTGUiZVjjuL4p7h/EqYU+87W/GBJXkj9C
+         ZPmGc3h4f0InZheSewidS3Kxp/4L0C5X7lLrRoDZopsrUZ6OD3kQSCC4dC7i5aHIez6B
+         GVpX4ASpwVHZtJpcxHtFL3UL+XYGhXZQ0jlU2rovYRpchKEHdHxY2VwlEM7Liv2yhAzx
+         txi6qEObLQpkYody80acIF8PG72Mo90IEhWJRUz9hSSqShtsL29JXdj3HzmrA6MuPtc+
+         g75w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=wLCnCVYv4tRj0mwzleSWAeRGrIdDM+WbN76RMrzfLRM=;
-        b=k9VH4BIh9SpCZ3ylyeHa7HT5YA36WQ4y9HKwseX3AREAMAltopjZ00dU8fgiYB2L2a
-         huXPd5woVdptjrKp2O6T6PEHleoVw3uSNM7KgqWuPa+e/tDAwl4bDc426ASUqZCHRKH1
-         2XpYBrFbsbHDpWCF3R486xa9sti6kCGl8N7D09ld1A9XEQd7h5UMu/84HUnOsYnnQ5LM
-         S4/RWHyMfI+w4S1xyElnIOfNctdUTyVN6g9l7GK7q+nSdkfcGPlxpkEgU57sOjJLVLh3
-         apwspJUes5dQcdbjLKKDiLlJnl7zVUdtN9A7a3XPEx8xVaix+UOU1ASszheUANbbQLzu
-         FNkw==
-X-Gm-Message-State: AOAM530JJo/QqvyYgy7EgKuHnuEtVkJUAp8wRIEBbWvkt4w6X6b3aZ5J
-        33qMpI51OgMnk34ci9yA+949EH/kpxU=
-X-Google-Smtp-Source: ABdhPJy7qlFoZWO/jsNzDQ92qOdDMUCLG2IkvXzFFSM6etxnJJaaMi4EXXZMTAEErJS+KmP0vvpbOg==
-X-Received: by 2002:a17:906:e85:: with SMTP id p5mr11974621ejf.159.1632501178880;
-        Fri, 24 Sep 2021 09:32:58 -0700 (PDT)
+        bh=g+9wxor79FpGahC2xymxZ+0SUOsxdFIdQJialRIb1Ec=;
+        b=3LKHHBimDvzVOx2vPZltyGEOuNZH3AdFIogszuXG4Z67qOy0mEjIcMhYVhuLV8CFKw
+         oF9+zQoQppn4mghjDmnGkGZDG6XZ36rzm+C8qYXVLDuJYOOHI7SMfVv+MbcXDRd6N0aB
+         GCZ1LV8bnPZ9QPRVVV+tiQmgY9WYLwq5ayeFezW3YfaQ1JBwtl39tF9VMM8QLoLNjn/z
+         YoF4sAPayvkZMdnuXAa+N04Aigi1FCMkbmiic7RfjL3IhNajOwDXWJQeysD7KQ4egE4R
+         5IO5U8qjriqIRjD3yUTunlV+A4b/IoGWcm4XSSEA9NTVzferUjVdwgnJf6E3QJ8/YHsR
+         TPGw==
+X-Gm-Message-State: AOAM532Z+gpldYzirih1xJQnGDyDgP1eDNmj+Yf7HYV1RNuzFa0ahdjT
+        7G76Op0LFSwDXpBW63i8xSmIFCm/hXw=
+X-Google-Smtp-Source: ABdhPJwXfJWXTYZ1i8YvedkDuLn3tvCvNHDVFMBC4EmfZwMilmlSiiqq0gWKDgirOn0tumStQc2rBw==
+X-Received: by 2002:a17:906:d1d6:: with SMTP id bs22mr12410065ejb.554.1632501179726;
+        Fri, 24 Sep 2021 09:32:59 -0700 (PDT)
 Received: from localhost.localdomain ([85.255.232.225])
-        by smtp.gmail.com with ESMTPSA id w10sm6167021eds.30.2021.09.24.09.32.58
+        by smtp.gmail.com with ESMTPSA id w10sm6167021eds.30.2021.09.24.09.32.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Sep 2021 09:32:58 -0700 (PDT)
+        Fri, 24 Sep 2021 09:32:59 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 13/23] io_uring: inline completion batching helpers
-Date:   Fri, 24 Sep 2021 17:31:51 +0100
-Message-Id: <4f0cb5ae875fba0de3593027031a91500f1d6b1d.1632500264.git.asml.silence@gmail.com>
+Subject: [PATCH 14/23] io_uring: don't pass tail into io_free_batch_list
+Date:   Fri, 24 Sep 2021 17:31:52 +0100
+Message-Id: <87c5633e7220f4dc453521f2e83293aed961ec5f.1632500264.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <cover.1632500264.git.asml.silence@gmail.com>
 References: <cover.1632500264.git.asml.silence@gmail.com>
@@ -61,104 +61,65 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-We now have a single function for batched put of requests, just inline
-struct req_batch and all related helpers into it.
+io_free_batch_list() iterates all requests in the passed in list,
+so we don't really need to know the tail but can keep iterating until
+meet NULL. Just pass the first node into it and it will be enough.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 66 +++++++++++++++++----------------------------------
- 1 file changed, 22 insertions(+), 44 deletions(-)
+ fs/io_uring.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 70cd32fb4c70..e1637ea4db4c 100644
+index e1637ea4db4c..1d14d85377b5 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -2266,63 +2266,41 @@ static void io_free_req_work(struct io_kiocb *req, bool *locked)
- 	io_free_req(req);
+@@ -2267,14 +2267,12 @@ static void io_free_req_work(struct io_kiocb *req, bool *locked)
  }
  
--struct req_batch {
--	struct task_struct	*task;
--	int			task_refs;
--	int			ctx_refs;
--};
--
--static inline void io_init_req_batch(struct req_batch *rb)
--{
--	rb->task_refs = 0;
--	rb->ctx_refs = 0;
--	rb->task = NULL;
--}
--
--static void io_req_free_batch_finish(struct io_ring_ctx *ctx,
--				     struct req_batch *rb)
--{
--	if (rb->ctx_refs)
--		percpu_ref_put_many(&ctx->refs, rb->ctx_refs);
--	if (rb->task)
--		io_put_task(rb->task, rb->task_refs);
--}
--
--static void io_req_free_batch(struct req_batch *rb, struct io_kiocb *req,
--			      struct io_submit_state *state)
--{
--	io_queue_next(req);
--	io_dismantle_req(req);
--
--	if (req->task != rb->task) {
--		if (rb->task)
--			io_put_task(rb->task, rb->task_refs);
--		rb->task = req->task;
--		rb->task_refs = 0;
--	}
--	rb->task_refs++;
--	rb->ctx_refs++;
--	wq_stack_add_head(&req->comp_list, &state->free_list);
--}
--
  static void io_free_batch_list(struct io_ring_ctx *ctx,
- 			       struct io_wq_work_list *list)
+-			       struct io_wq_work_list *list)
++				struct io_wq_work_node *node)
  	__must_hold(&ctx->uring_lock)
  {
- 	struct io_wq_work_node *node;
--	struct req_batch rb;
-+	struct task_struct *task = NULL;
-+	int task_refs = 0, ctx_refs = 0;
+-	struct io_wq_work_node *node;
+ 	struct task_struct *task = NULL;
+ 	int task_refs = 0, ctx_refs = 0;
  
--	io_init_req_batch(&rb);
- 	node = list->first;
+-	node = list->first;
  	do {
  		struct io_kiocb *req = container_of(node, struct io_kiocb,
  						    comp_list);
+@@ -2321,7 +2319,7 @@ static void __io_submit_flush_completions(struct io_ring_ctx *ctx)
+ 	spin_unlock(&ctx->completion_lock);
+ 	io_cqring_ev_posted(ctx);
  
- 		node = req->comp_list.next;
--		if (req_ref_put_and_test(req))
--			io_req_free_batch(&rb, req, &ctx->submit_state);
-+		if (!req_ref_put_and_test(req))
-+			continue;
-+
-+		io_queue_next(req);
-+		io_dismantle_req(req);
-+
-+		if (req->task != task) {
-+			if (task)
-+				io_put_task(task, task_refs);
-+			task = req->task;
-+			task_refs = 0;
-+		}
-+		task_refs++;
-+		ctx_refs++;
-+		wq_stack_add_head(&req->comp_list, &ctx->submit_state.free_list);
- 	} while (node);
--	io_req_free_batch_finish(ctx, &rb);
-+
-+	if (ctx_refs)
-+		percpu_ref_put_many(&ctx->refs, ctx_refs);
-+	if (task)
-+		io_put_task(task, task_refs);
+-	io_free_batch_list(ctx, &state->compl_reqs);
++	io_free_batch_list(ctx, state->compl_reqs.first);
+ 	INIT_WQ_LIST(&state->compl_reqs);
  }
  
- static void __io_submit_flush_completions(struct io_ring_ctx *ctx)
+@@ -2404,7 +2402,6 @@ static inline bool io_run_task_work(void)
+ static int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin)
+ {
+ 	struct io_wq_work_node *pos, *start, *prev;
+-	struct io_wq_work_list list;
+ 	int nr_events = 0;
+ 	bool spin;
+ 
+@@ -2458,10 +2455,9 @@ static int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin)
+ 
+ 	io_commit_cqring(ctx);
+ 	io_cqring_ev_posted_iopoll(ctx);
+-	list.first = start ? start->next : ctx->iopoll_list.first;
+-	list.last = prev;
++	pos = start ? start->next : ctx->iopoll_list.first;
+ 	wq_list_cut(&ctx->iopoll_list, prev, start);
+-	io_free_batch_list(ctx, &list);
++	io_free_batch_list(ctx, pos);
+ 	return nr_events;
+ }
+ 
 -- 
 2.33.0
 

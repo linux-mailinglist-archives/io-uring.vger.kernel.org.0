@@ -2,82 +2,109 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1250441787C
-	for <lists+io-uring@lfdr.de>; Fri, 24 Sep 2021 18:26:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B06734178D4
+	for <lists+io-uring@lfdr.de>; Fri, 24 Sep 2021 18:36:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244920AbhIXQ2A (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 24 Sep 2021 12:28:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37098 "EHLO
+        id S1344635AbhIXQhc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 24 Sep 2021 12:37:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244892AbhIXQ17 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 24 Sep 2021 12:27:59 -0400
-Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D061C061571
-        for <io-uring@vger.kernel.org>; Fri, 24 Sep 2021 09:26:26 -0700 (PDT)
-Received: by mail-il1-x12d.google.com with SMTP id b15so10969922ils.10
-        for <io-uring@vger.kernel.org>; Fri, 24 Sep 2021 09:26:26 -0700 (PDT)
+        with ESMTP id S1347584AbhIXQgm (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 24 Sep 2021 12:36:42 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7BA2C0617BC
+        for <io-uring@vger.kernel.org>; Fri, 24 Sep 2021 09:32:47 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id ee50so38224513edb.13
+        for <io-uring@vger.kernel.org>; Fri, 24 Sep 2021 09:32:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=f/I/FIGGhXLqBPfwn/fXGQSNSGnr9hT3MDELq/vgj3s=;
-        b=d2in46ePtmId2jQ1gdbdnmc7bizr6vj2KYrsOda4aUyr2bNl7xIXcaEaJtNVy+JCzd
-         wyXqKcr3rB+oy7kv57aO/W9Tc3N3VHE4Wg3p21cn9BsvVnG9DurRlkk+TrUB3VP9eX2F
-         7qYbO6gBTPCxJst/zqXQiuweJDqZJV3IQqmQWt4xbGwCA13GjBbSdHEZ5Z49MhL2e3NV
-         ajaSj4aT+qC5+qBUQqbomP5fg4BSCHqV4Y9ZrVx/LsYDGINmIUNxUb/zVZxujHSPHWA9
-         vod4ZYluqMfqGOMZElF/8LPFgi9yZOjl2u4Bqb3HH4ANhPKNYlR5el9XHwZlENc289s8
-         jX2g==
+        d=gmail.com; s=20210112;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=aM2DvxedSyxmPyluuSIjdTUJVWHKYl6F+53Wg27XMYY=;
+        b=azz7hhpM15yyx9iiz5E5jgvoPsL+dtw+BBSXFYDdffLGg+o4RZD4tE7OPdc0RM9jKk
+         9UraodHI4a+zegTwKh8JSAHobFhHeMcmp1Eb/LRXOcT7dCgO/r5uvNOMsAIr+IwniHVH
+         xn1gJqANb2dxaW4sBwgVFUOKdeSRVCg5wjvMouyRw0wT+5C4i8/vZR+R/DhLXmLndJRV
+         4wefUw1HcLwqHbgrIG2wVk6q8PEy5+/s4F+BjFdFLGTvYCTMIcmTvDBfsr4x0Q7NFE6y
+         lneRQTHbBb15k4ymn5xbyDXvuSUuu7ljDVfm8Vykbcl2jstCdlCHuN3M1mG/6mX6f6nd
+         NJPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=f/I/FIGGhXLqBPfwn/fXGQSNSGnr9hT3MDELq/vgj3s=;
-        b=CteaK/ZLvC9hPpWl87I437ESlHSUu7yZcaVPs8VC4mYESK6aOx+5qXNbgsA2WdXq6z
-         Bkkn8JIszJ34jaZKeJea4kywthsR4PpmijaInnDLDcPe5iMwoxk8qqBDJVKTF1bF/QHY
-         LXIuQmoDZQL/ygZ0N80dVSUF4AyumBrlaQSIKJujjXRZ47+GrR0ogBtIkplkqrsE6DSO
-         2x0HOm2meATYJqdevUCctsBbxosQRTD9Q5NnBtILfMC4dCl6cQl6oTbAwTC0aAZPdwwF
-         e8JFCkqaQtofwzlWrOE10yU57QxLdoMnG/pxNbYE8iCQtk2MQTshH/CTYApJdX2L91b0
-         BsfA==
-X-Gm-Message-State: AOAM533Bh/avxLPLuTCQBnIx52O+CxKkambpIy4riJefPvhY8Je9Q+w1
-        eEDOaQ6ViZyIqi1nCL+fyntLdw==
-X-Google-Smtp-Source: ABdhPJwFYjuOEqBACeF8FXp1oze31RWrd/zP51TnkXhVJ3dQcBe3Wzh44G5WC4OGFnfRjYt7Qu+QMw==
-X-Received: by 2002:a05:6e02:1e03:: with SMTP id g3mr7968979ila.127.1632500785833;
-        Fri, 24 Sep 2021 09:26:25 -0700 (PDT)
-Received: from [192.168.1.30] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id r13sm4706574ilh.80.2021.09.24.09.26.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Sep 2021 09:26:25 -0700 (PDT)
-Subject: Re: [PATCH] io_uring: kill extra checks in io_write()
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-Cc:     Dave Jones <davej@codemonkey.org.uk>
-References: <5b33e61034748ef1022766efc0fb8854cfcf749c.1632500058.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <f9be7854-449f-5891-d820-b558d9dd5434@kernel.dk>
-Date:   Fri, 24 Sep 2021 10:26:24 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        bh=aM2DvxedSyxmPyluuSIjdTUJVWHKYl6F+53Wg27XMYY=;
+        b=LEVIBRok9sXgK7lnf3BNBvp5fFROnaAAYar2MtsrQdcE+WGvwRL43W+EaOG+eMw9up
+         xT5+hrEHiG5MQ/4RMu29XCejxzvOo802k2Aedg5sGUx7ri71tbtKVyO+b1Nt7R5XZBk/
+         +ypExFtGj3JZ6FQC6Qko1+cOoQP8zuIhT1zRKitZiyb4XNFlw3j5uTWyD+IwQ1sme86z
+         EMCZP1u6i/J3Ts9TJj8YWtWEt4KtUX0aVqURlrE8a30TNxkq1NEwaPhSbZw8++MqAIzW
+         0K99t2jWnyx1j8TUiSYOkrgiUQYCC4NHcPkin2j9tMuZannB8eOT388wEhmihUyqgSGu
+         9ATQ==
+X-Gm-Message-State: AOAM532+G8OK0Gf/84ggtIwvzR1H4DHZhhuKEncp/IGJ+udB5YXTjS1S
+        EN8KZ/W41vUnZUFPR1igW07S0a6JQB0=
+X-Google-Smtp-Source: ABdhPJyqjLDwlckuZfUvNeLBlxpG11nrrP4CA3cEY8PQb1T5QWsCM0zZpOX+mQ3HhHe8FuUPYDbwCQ==
+X-Received: by 2002:a17:906:1289:: with SMTP id k9mr12407947ejb.2.1632501166372;
+        Fri, 24 Sep 2021 09:32:46 -0700 (PDT)
+Received: from localhost.localdomain ([85.255.232.225])
+        by smtp.gmail.com with ESMTPSA id w10sm6167021eds.30.2021.09.24.09.32.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Sep 2021 09:32:45 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [RFC][PATCHSET 00/23] rework/optimise submission+completion paths
+Date:   Fri, 24 Sep 2021 17:31:38 +0100
+Message-Id: <cover.1632500264.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.33.0
 MIME-Version: 1.0
-In-Reply-To: <5b33e61034748ef1022766efc0fb8854cfcf749c.1632500058.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/24/21 10:14 AM, Pavel Begunkov wrote:
-> We don't retry short writes and so we would never get to async setup in
-> io_write() in that case. Thus ret2 > 0 is always false and
-> iov_iter_advance() is never used. Apparently, the same is found by
-> Coverity, which complains on the code.
+tested with fio/t/io_uring nops all batching=32:
+24 vs 31.5 MIOPS, or ~30% win
 
-Thanks, applied. Should have a:
+WARNING: there is one problem with draining, will fix in v2
 
-Fixes: cd65869512ab ("io_uring: use iov_iter state save/restore helpers")
+There are two parts:
+1-14 are about optimising the completion path:
+- replaces lists with single linked lists
+- kills 64 * 8B of caches in ctx
+- adds some shuffling of iopoll bits
+- list splice instead of per-req list_add in one place
+- inlines io_req_free_batch() and other helpers
 
-which I added.
+15-22: inlines __io_queue_sqe() so all the submission path
+up to io_issue_sqe() is inlined + little tweaks
+
+
+Pavel Begunkov (23):
+  io_uring: mark having different creds unlikely
+  io_uring: force_nonspin
+  io_uring: make io_do_iopoll return number of reqs
+  io_uring: use slist for completion batching
+  io_uring: remove allocation cache array
+  io-wq: add io_wq_work_node based stack
+  io_uring: replace list with stack for req caches
+  io_uring: split iopoll loop
+  io_uring: use single linked list for iopoll
+  io_uring: add a helper for batch free
+  io_uring: convert iopoll_completed to store_release
+  io_uring: optimise batch completion
+  io_uring: inline completion batching helpers
+  io_uring: don't pass tail into io_free_batch_list
+  io_uring: don't pass state to io_submit_state_end
+  io_uring: deduplicate io_queue_sqe() call sites
+  io_uring: remove drain_active check from hot path
+  io_uring: split slow path from io_queue_sqe
+  io_uring: inline hot path of __io_queue_sqe()
+  io_uring: reshuffle queue_sqe completion handling
+  io_uring: restructure submit sqes to_submit checks
+  io_uring: kill off ->inflight_entry field
+  io_uring: comment why inline complete calls io_clean_op()
+
+ fs/io-wq.h    |  60 +++++-
+ fs/io_uring.c | 503 +++++++++++++++++++++++---------------------------
+ 2 files changed, 283 insertions(+), 280 deletions(-)
 
 -- 
-Jens Axboe
+2.33.0
 

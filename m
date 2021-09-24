@@ -2,103 +2,88 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BE74416A1B
-	for <lists+io-uring@lfdr.de>; Fri, 24 Sep 2021 04:43:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A1CA416ACB
+	for <lists+io-uring@lfdr.de>; Fri, 24 Sep 2021 06:22:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243954AbhIXCpV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 23 Sep 2021 22:45:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46916 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243947AbhIXCpV (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 23 Sep 2021 22:45:21 -0400
-Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B60B2C061756
-        for <io-uring@vger.kernel.org>; Thu, 23 Sep 2021 19:43:48 -0700 (PDT)
-Received: by mail-io1-xd34.google.com with SMTP id p80so10709167iod.10
-        for <io-uring@vger.kernel.org>; Thu, 23 Sep 2021 19:43:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=jNFV9KO3ralVqp4Wd7niMG35JvXLR+iQVqVzf0CGirI=;
-        b=EGG4MHj7Tiz5rEQ1HlKdAihTpb0A5zbW1OrHw3V7x/bkzVTOOMHwWjiuHCegqIaEWs
-         jPO+9PrqiDaGXDtQdYRA4B3INAh3MCXa4x+bkxNGebhcAPgOu3aeSy2vORxq9J5DWvd7
-         bL14awuetbiijQqKQxiA2zk2C7eHsC0w4Rvh8Y2fcg/XqqbrweBIvsSfnotfOKtZqJax
-         G1AsMniQi+y2ni1hSbDOeNQ0gwIWaPCrHmA9Wcb3cDxEafDeQV0whahVvP/zp1ABVVwR
-         iUDrBejLtbM24OWeW/XkTYNbTfEOzV0x6pkpGE3wPr7Fmi2Z+d7BT7WoFNAkzrtsDyK5
-         FXtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=jNFV9KO3ralVqp4Wd7niMG35JvXLR+iQVqVzf0CGirI=;
-        b=fVCcg2OoqWkF595HcFdbte/7wBXSNS8Mb3jq0jRh+BaFJoyUyl52Shg4BhIh7pmAmJ
-         8/kzaiREZHwtGtJ4WoiTeAhr6bP0RhdWiymWB6lThxeW/aRm6laZB3d+7bhzlg+ArQ3N
-         lufaZyek14f9lWyiaoD6GydAHAeAErVZZL0itMSnX5AtW4aFgwXcuD+B6zS+mX2lDK9o
-         WMML902eCpXUDeBJA97SrUAYVc7sbzXOj5+nz0iCYlab6VHiD8KnGOOVYzl4qVYxjsiZ
-         SGx/xIBQXhon1XYjp8aREtIXybnwhOy+tjVVVzci1kg2g81+6UVdWsPC0jinEQ9ggR5i
-         MEMg==
-X-Gm-Message-State: AOAM531cVY9nCDQ9Bw2WXWznRpgmGPMxuukihvTmdv5cR3PVPa0LLh22
-        Xfg/OaaSd3EgpwIGW1kGB82Dp/9dppk/6A==
-X-Google-Smtp-Source: ABdhPJw0TxbQoYO6X2WauMDduwfWqOIN9yQ5KvcohyP1JVEiIGwBqiwoB0SI7LkCGgoyJxtMJbyWMw==
-X-Received: by 2002:a5d:9c0a:: with SMTP id 10mr768337ioe.76.1632451427745;
-        Thu, 23 Sep 2021 19:43:47 -0700 (PDT)
-Received: from [192.168.1.116] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id v17sm3437970ilh.67.2021.09.23.19.43.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Sep 2021 19:43:46 -0700 (PDT)
-Subject: Re: [syzbot] INFO: task hung in io_uring_del_tctx_node
-To:     syzbot <syzbot+111d2a03f51f5ae73775@syzkaller.appspotmail.com>,
-        asml.silence@gmail.com, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <00000000000064b6b405ccb41113@google.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <5b3f8081-fbdd-ea2c-eddb-292d02be98a8@kernel.dk>
-Date:   Thu, 23 Sep 2021 20:43:45 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <00000000000064b6b405ccb41113@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S234783AbhIXEX7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 24 Sep 2021 00:23:59 -0400
+Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:33176 "EHLO
+        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229853AbhIXEX7 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 24 Sep 2021 00:23:59 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0UpOc.4M_1632457344;
+Received: from localhost(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0UpOc.4M_1632457344)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 24 Sep 2021 12:22:25 +0800
+From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+To:     io-uring@vger.kernel.org
+Cc:     axboe@kernel.dk, asml.silence@gmail.com
+Subject: [PATCH v2 0/2] improvements for poll requests
+Date:   Fri, 24 Sep 2021 12:22:22 +0800
+Message-Id: <20210924042224.8061-1-xiaoguang.wang@linux.alibaba.com>
+X-Mailer: git-send-email 2.17.2
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/23/21 7:57 PM, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    92477dd1faa6 Merge tag 's390-5.15-ebpf-jit-fixes' of git:/..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1471785b300000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=e917f3dfc452c977
-> dashboard link: https://syzkaller.appspot.com/bug?extid=111d2a03f51f5ae73775
-> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1511c4f7300000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=132d1d1d300000
+Echo_server codes can be clone from:
+https://codeup.openanolis.cn/codeup/storage/io_uring-echo-server.git
+branch is xiaoguangwang/io_uring_multishot. There is a simple HOWTO
+in this repository.
 
+Usage:
+In server: port 10016, 1000 connections, packet size 16 bytes, and
+enable fixed files.
+  taskset -c 10 io_uring_echo_server_multi_shot  -f -p 10016 -n 1000 -l 16
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index fe5e613b960f..efb244deb081 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -9636,8 +9641,10 @@ static void io_uring_clean_tctx(struct io_uring_task *tctx)
- 	struct io_tctx_node *node;
- 	unsigned long index;
- 
--	xa_for_each(&tctx->xa, index, node)
-+	xa_for_each(&tctx->xa, index, node) {
- 		io_uring_del_tctx_node(index);
-+		cond_resched();
-+	}
- 	if (wq) {
- 		/*
- 		 * Must be after io_uring_del_task_file() (removes nodes under
+In client:
+  taskset -c 13,14,15,16 ./echo -addr 11.238.147.21:10016 -n 1000 -size 16
+
+Before this patchset, the tps is like below:
+1:15:53 req: 1430425, req/s: 286084.693
+11:15:58 req: 1426021, req/s: 285204.079
+11:16:03 req: 1416761, req/s: 283352.146
+11:16:08 req: 1417969, req/s: 283165.637
+11:16:13 req: 1424591, req/s: 285349.915
+11:16:18 req: 1418706, req/s: 283738.725
+11:16:23 req: 1411988, req/s: 282399.052
+11:16:28 req: 1419097, req/s: 283820.477
+11:16:33 req: 1417816, req/s: 283563.262
+11:16:38 req: 1422461, req/s: 284491.702
+11:16:43 req: 1418176, req/s: 283635.327
+11:16:48 req: 1414525, req/s: 282905.276
+11:16:53 req: 1415624, req/s: 283124.140
+11:16:58 req: 1426435, req/s: 284970.486
+
+with this patchset:
+2021/09/24 11:10:01 start to do client
+11:10:06 req: 1444979, req/s: 288995.300
+11:10:11 req: 1442559, req/s: 288511.689
+11:10:16 req: 1427253, req/s: 285450.390
+11:10:21 req: 1445236, req/s: 288349.853
+11:10:26 req: 1423949, req/s: 285480.941
+11:10:31 req: 1445304, req/s: 289060.815
+11:10:36 req: 1441036, req/s: 288207.119
+11:10:41 req: 1441117, req/s: 288220.695
+11:10:46 req: 1441451, req/s: 288292.731
+11:10:51 req: 1438801, req/s: 287759.157
+11:10:56 req: 1433227, req/s: 286646.338
+11:11:01 req: 1438307, req/s: 287661.577
+
+about 1.3% tps improvements.
+
+Changes in v2:
+  I dropped the poll request completion batching patch in V1, since
+it shows performance fluctuations, hard to say whether it's useful.
+
+Xiaoguang Wang (2):
+  io_uring: reduce frequent add_wait_queue() overhead for multi-shot
+    poll request
+  io_uring: don't get completion_lock in io_poll_rewait()
+
+ fs/io_uring.c | 66 ++++++++++++++++++++++++++++++++---------------------------
+ 1 file changed, 36 insertions(+), 30 deletions(-)
 
 -- 
-Jens Axboe
+2.14.4.44.g2045bb6
 

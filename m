@@ -2,85 +2,210 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D359A417B74
-	for <lists+io-uring@lfdr.de>; Fri, 24 Sep 2021 21:06:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68EE7417B79
+	for <lists+io-uring@lfdr.de>; Fri, 24 Sep 2021 21:08:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346170AbhIXTHg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 24 Sep 2021 15:07:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46398 "EHLO
+        id S1344487AbhIXTJq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 24 Sep 2021 15:09:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229930AbhIXTHf (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 24 Sep 2021 15:07:35 -0400
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C771C061571
-        for <io-uring@vger.kernel.org>; Fri, 24 Sep 2021 12:06:02 -0700 (PDT)
-Received: by mail-ed1-x531.google.com with SMTP id c21so39334904edj.0
-        for <io-uring@vger.kernel.org>; Fri, 24 Sep 2021 12:06:02 -0700 (PDT)
+        with ESMTP id S229930AbhIXTJq (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 24 Sep 2021 15:09:46 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB1DBC061571
+        for <io-uring@vger.kernel.org>; Fri, 24 Sep 2021 12:08:12 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id v18so4543124edc.11
+        for <io-uring@vger.kernel.org>; Fri, 24 Sep 2021 12:08:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
+        h=from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=AtefL8lTV00VAdhOFVMSb/wrYCaeCdlRuTpk4Mudy+8=;
-        b=b0k92k2PoKPFisZBt6nOimOh+d2O+tB2fvi97UfUNiUZdwkcJV7iigjPE4irNmQVOl
-         7CpM2H/ROhFvbOJjuDYSvYN/SLL3mkoJolChYHjcoykDZE7k71WhsGsBxHE/sfdv37aX
-         NAhjqaQR6+tDmIpxhIXXEDpbMuDZA/Cr49KA/0/F32LLAQ0SdJ4nwFTHJAe0xboihB4Y
-         4JPkTIADJQTOcu8LmdkJZrU5cDrqCPuq2RL9qmRn/lqk41j30S364X5VgzP6ylfXAOGz
-         ShDnXY3VoTOFDKXEX/SEJnqVAxA8ZERuwoRgtje2kja29XIi9M08EMYVpxRdExWjVANA
-         9aEQ==
+        bh=0yu//2adI84qXJyu8Tlm8tizVoW5Hc90gPfWv7Tt61E=;
+        b=FJFDj82aa3Aq8+xZrO14e2t8lqjrV30cFw4qPEftmONIObCV1s7e1E6aL8d6F6iAdg
+         XSmIUidrnUpeoZPIsaxMj+wyoLhKkxoXGHkf3dESHr9IXkGvzQzQZukLuwfMx8F3Ajn5
+         NcB+FZzkJfj1pfEMm3BjAhfO6v451ot/lnDVoTfTc9/zH/qPdWZAeNf3zEGWkgx3jZgh
+         ZbQEHn65Hw6QRmnIhKJFYJ7p24Fn7epGPUe3eFJJrHviUECzheUPhlcIdnTw13y/etlN
+         EsIYjdcX5okiEhrGMNLzBzeQDA5/X53uAuPR58uUGmzigYQupNxEE/FP/8v8nccizAQG
+         NsZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=AtefL8lTV00VAdhOFVMSb/wrYCaeCdlRuTpk4Mudy+8=;
-        b=FJs382JZHmGosOkf1QAkWDTLzhH03A0CDjZxKYkLeTM9czjMmrrezbtRKUNhlK3dic
-         dnar0LwInAFmCKIqcgBneYk9pWvfTsCfTzqunJ92WUZQLJq3MnN+Grkg1xzakHSZIFem
-         WG/WtQ2sRu3lOGIQ0lyd1QDkF0kOiApXnNuJ97ZekRdK6LlJcJFYZfGv2bzt/uYD2Vb6
-         cdJAcirtBrGNHolgGHnieSYMM7HD51dqb3gRb1CECUxykMJgM3qwiYyl2MSVDPXha82K
-         BxFfI0W66UoL3xS3pMuu/7GVifcTwsGd5hbov1SZKE7tMK6NDqnJ4H2V/UDBeifOVwPn
-         6APw==
-X-Gm-Message-State: AOAM533Rd9w74IZw3Nbb13tqr7aXSoFs/DYFvOZRWztPGryW4atnx+v5
-        tNQPmoda7xgpXIlvUGhdnHo=
-X-Google-Smtp-Source: ABdhPJzgY2WD/Z+9o2XWPKeAqaINkhpG3hmvfP4PF8/Ga9++01EZD1458zBGk+HwvJ84rdaSatiQaw==
-X-Received: by 2002:a50:d9c9:: with SMTP id x9mr6935846edj.179.1632510360679;
-        Fri, 24 Sep 2021 12:06:00 -0700 (PDT)
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0yu//2adI84qXJyu8Tlm8tizVoW5Hc90gPfWv7Tt61E=;
+        b=GdZDUB3W7Hh7ThsoTqQA8V7uuM2cgd7znZ8wlLjUeD7i0/51Aacmx3ktwzNcKvvy+R
+         Y2yMcPb8wNHjVgK6WbJTDirBS/IaPfRIe3XA3203a8owk9R/EYkHw1WfKZ+FucpVFL9/
+         AZ4+0dDqrecNY88kbVk2UZ7SgAuGyOn06FLdkBUNpPmT6jmzRfQ5JC9CWrYW61pQUlm3
+         iVxFFPa4JjIF6q9gXPlv0ZZLRx57vxLKOnfN1B/6Sn76BIZ5kixs8PuSAtMltGthOb5U
+         H++ya96ZAZ+KjuSdm7ffGJxOm14tjXR96ztn+24a2n+HTd1KQiA/JCvbjNAGoODNyv1Q
+         FhlQ==
+X-Gm-Message-State: AOAM533Y83ErmMfssJ1AwicsArBdCHbFUoy6wrcxcx0FMfcsxaFuSRMu
+        obQJeD8GmdE5ZkGdZLEoLEdfAd0Juc8=
+X-Google-Smtp-Source: ABdhPJxmEK9HUvLTmYu6Qm4NZ3JxYj5UpYB4/wh5EJISkitE3z0mRXkuwdKdHaV4e+58wtB+QvgkTQ==
+X-Received: by 2002:a50:9b17:: with SMTP id o23mr7036276edi.341.1632510491400;
+        Fri, 24 Sep 2021 12:08:11 -0700 (PDT)
 Received: from localhost.localdomain ([85.255.232.225])
-        by smtp.gmail.com with ESMTPSA id m10sm5380301ejx.76.2021.09.24.12.06.00
+        by smtp.gmail.com with ESMTPSA id m22sm6265511edq.71.2021.09.24.12.08.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Sep 2021 12:06:00 -0700 (PDT)
+        Fri, 24 Sep 2021 12:08:11 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH liburing 2/2] tests: match kernel and pass fds in s32[]
-Date:   Fri, 24 Sep 2021 20:05:17 +0100
-Message-Id: <260526556a2a44c833e2265ba59e5d2705ce8870.1632507515.git.asml.silence@gmail.com>
+Subject: [PATCH liburing] tests: test close with fixed file table
+Date:   Fri, 24 Sep 2021 20:07:30 +0100
+Message-Id: <5e22cfaf9f0f513574a098dba6548cbb4fb5e2d8.1632510387.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.33.0
-In-Reply-To: <cover.1632507515.git.asml.silence@gmail.com>
-References: <cover.1632507515.git.asml.silence@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Follow the kernel ABI and pass fds in an array of s32 but not just ints.
+Test IO_CLOSE closing files in the fixed file table.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- test/rsrc_tags.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/test/rsrc_tags.c b/test/rsrc_tags.c
-index a3fec0c..f441b5c 100644
---- a/test/rsrc_tags.c
-+++ b/test/rsrc_tags.c
-@@ -322,7 +322,7 @@ static int test_files(int ring_flags)
- 	struct io_uring ring;
- 	const int nr = 50;
- 	int off = 5, i, ret, fd;
--	int files[nr];
-+	__s32 files[nr];
- 	__u64 tags[nr], tag;
+P.S. not tested with kernels not supporting the feature
+
+ test/open-close.c | 115 ++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 115 insertions(+)
+
+diff --git a/test/open-close.c b/test/open-close.c
+index 648737c..d5c116b 100644
+--- a/test/open-close.c
++++ b/test/open-close.c
+@@ -9,10 +9,119 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <fcntl.h>
++#include <assert.h>
  
- 	for (i = 0; i < nr; ++i) {
+ #include "helpers.h"
+ #include "liburing.h"
+ 
++static int submit_wait(struct io_uring *ring)
++{
++	struct io_uring_cqe *cqe;
++	int ret;
++
++	ret = io_uring_submit(ring);
++	if (ret <= 0) {
++		fprintf(stderr, "sqe submit failed: %d\n", ret);
++		return 1;
++	}
++	ret = io_uring_wait_cqe(ring, &cqe);
++	if (ret < 0) {
++		fprintf(stderr, "wait completion %d\n", ret);
++		return 1;
++	}
++
++	ret = cqe->res;
++	io_uring_cqe_seen(ring, cqe);
++	return ret;
++}
++
++static inline int try_close(struct io_uring *ring, int fd, int slot)
++{
++	struct io_uring_sqe *sqe;
++
++	sqe = io_uring_get_sqe(ring);
++	io_uring_prep_close(sqe, fd);
++	__io_uring_set_target_fixed_file(sqe, slot);
++	return submit_wait(ring);
++}
++
++static int test_close_fixed(void)
++{
++	struct io_uring ring;
++	struct io_uring_sqe *sqe;
++	int ret, fds[2];
++	char buf[1];
++
++	ret = io_uring_queue_init(8, &ring, 0);
++	if (ret) {
++		fprintf(stderr, "ring setup failed\n");
++		return -1;
++	}
++	if (pipe(fds)) {
++		perror("pipe");
++		return -1;
++	}
++
++	ret = try_close(&ring, 0, 0);
++	if (ret == -EINVAL) {
++		fprintf(stderr, "close for fixed files is not supported\n");
++		return 0;
++	} else if (ret != -ENXIO) {
++		fprintf(stderr, "no table failed %i\n", ret);
++		return -1;
++	}
++
++	ret = try_close(&ring, 1, 0);
++	if (ret != -EINVAL) {
++		fprintf(stderr, "set fd failed %i\n", ret);
++		return -1;
++	}
++
++	ret = io_uring_register_files(&ring, fds, 2);
++	if (ret) {
++		fprintf(stderr, "file_register: %d\n", ret);
++		return ret;
++	}
++
++	ret = try_close(&ring, 0, 2);
++	if (ret != -EINVAL) {
++		fprintf(stderr, "out of table failed %i\n", ret);
++		return -1;
++	}
++
++	ret = try_close(&ring, 0, 0);
++	if (ret != 0) {
++		fprintf(stderr, "close failed %i\n", ret);
++		return -1;
++	}
++
++	sqe = io_uring_get_sqe(&ring);
++	io_uring_prep_read(sqe, 0, buf, sizeof(buf), 0);
++	sqe->flags |= IOSQE_FIXED_FILE;
++	ret = submit_wait(&ring);
++	if (ret != -EBADF) {
++		fprintf(stderr, "read failed %i\n", ret);
++		return -1;
++	}
++
++	ret = try_close(&ring, 0, 1);
++	if (ret != 0) {
++		fprintf(stderr, "close 2 failed %i\n", ret);
++		return -1;
++	}
++
++	ret = try_close(&ring, 0, 0);
++	if (ret != -EBADF) {
++		fprintf(stderr, "empty slot failed %i\n", ret);
++		return -1;
++	}
++
++	close(fds[0]);
++	close(fds[1]);
++	io_uring_queue_exit(&ring);
++	return 0;
++}
++
+ static int test_close(struct io_uring *ring, int fd, int is_ring_fd)
+ {
+ 	struct io_uring_cqe *cqe;
+@@ -133,6 +242,12 @@ int main(int argc, char *argv[])
+ 		goto err;
+ 	}
+ 
++	ret = test_close_fixed();
++	if (ret) {
++		fprintf(stderr, "test_close_fixed failed\n");
++		goto err;
++	}
++
+ done:
+ 	unlink(path);
+ 	if (do_unlink)
 -- 
 2.33.0
 

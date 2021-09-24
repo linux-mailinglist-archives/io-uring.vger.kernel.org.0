@@ -2,62 +2,62 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 614F5417BB3
-	for <lists+io-uring@lfdr.de>; Fri, 24 Sep 2021 21:15:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70433417C07
+	for <lists+io-uring@lfdr.de>; Fri, 24 Sep 2021 21:57:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346121AbhIXTRD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 24 Sep 2021 15:17:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48500 "EHLO
+        id S1348266AbhIXT7P (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 24 Sep 2021 15:59:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346043AbhIXTRD (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 24 Sep 2021 15:17:03 -0400
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D31CC061571
-        for <io-uring@vger.kernel.org>; Fri, 24 Sep 2021 12:15:29 -0700 (PDT)
-Received: by mail-ed1-x532.google.com with SMTP id s17so21206688edd.8
-        for <io-uring@vger.kernel.org>; Fri, 24 Sep 2021 12:15:29 -0700 (PDT)
+        with ESMTP id S1344226AbhIXT7O (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 24 Sep 2021 15:59:14 -0400
+Received: from mail-il1-x12f.google.com (mail-il1-x12f.google.com [IPv6:2607:f8b0:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C821C061571
+        for <io-uring@vger.kernel.org>; Fri, 24 Sep 2021 12:57:41 -0700 (PDT)
+Received: by mail-il1-x12f.google.com with SMTP id q14so11690309ils.5
+        for <io-uring@vger.kernel.org>; Fri, 24 Sep 2021 12:57:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=subject:from:to:references:message-id:date:user-agent:mime-version
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
          :in-reply-to:content-language:content-transfer-encoding;
-        bh=DyWw/dav68KhNeGtKwCwcaVswLcOh9wwMffW7YcY6Vc=;
-        b=W8ZobZW9lciFYxLRJDgJ+iWG0SKIyBKRkfeR4JtCP7wxCQu8z6mEgWE6FOzFkKtFSb
-         2Pop6tQiP+cgxVyLrcqcxHogi3HhbGFn+qDt2FMLXNqYQCqrhZwTUyrPIh8mqANm0/x1
-         ZLA81X/mJRIwWzQWWFwOpW/mg8VZ/C0dWFlIR5ly/qcx6su9iSWK9Se8030vOXmtdI2h
-         F9qb+zS9G5kytr+M9emAR0BhSWG5Agarmwiv6uL6lwfMOaUeLizaOOx6YjUHROKSyk5R
-         4AqPF7gZQIHGDwdYFuq9kv/DhLXeT/g0D1qUIXj4kAkvlvriJnEtf9Hr5B1l2j0qUbYp
-         Gx1Q==
+        bh=cmmqjStBo0kla4JkfUGMM0gp7Ea9JpziSXM0loGa8Nk=;
+        b=oTqciDPSMH0zWfnHAv7Zc31Wm+/lDSN0WTWnrCKavgi6PJYuYTV+URSF7xkqdZkdKk
+         HftztLGZ0/3ET+3SVaKqqOAYV55KYclCIPNfSGhzyKopSrr94mEeZ/CrcCFI0WhpsKHJ
+         PKSeLK3Bor5Gna6fFTk4ycvDHhQ2pQliUsoNAI+5GdzoTGjF3GikMF53rBky9S5IDFhr
+         vPx+VHU/Zg7QRG98pWU10Up+A1O+JNHDDHzx4UfdT8aNiMoMCqXac2fJgm+5yulkgJFQ
+         zZTIkmIuXuCrHIeUQ6YZpcpuzJPi3duLAovI/gQ4Xut4x+Nrt+1bYAPQH709vJZwj0l8
+         P/6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:from:to:references:message-id:date
+        h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=DyWw/dav68KhNeGtKwCwcaVswLcOh9wwMffW7YcY6Vc=;
-        b=X5g/P1U9ExCwueFhq1VF2qFkt/sC9P6Dg26GpLIYuq0AE9X9xEG5baHzZ3YK1/2INs
-         8e04+d01YfpFxLX4iLio5Q+P4LtEFXy/BGr7cC3KcIGtXdCT8LAQuA81wbl764a92MPZ
-         2QmTYUidksdmD4sQI8fXgcaaZNyKHGUuN0wcfLfHCqzuXdScPvSrZImevk9TUVgvzzDM
-         JLzY6mxoUZBVt32XDn0zoX34nKIVx8Puv2cDOewfVWZbvSaQFw95z0miDMnpdp2xfqk9
-         wcq9i19XBAOkjl7M9sE/ntLro/Uukt+MrPymdE7CRRvnwoABEHeRv/TPK6fdQkn5qXQE
-         gGlA==
-X-Gm-Message-State: AOAM530kdlrfeCZyeCGVWC++9b3eS41OGH4Ifwq9+Ps87/O/UPN9U0lr
-        cYEVLSoqe7sepKAYmrJOHnBduppDGYI=
-X-Google-Smtp-Source: ABdhPJzge28JRonqBEi8Shzj8XQVrjrEKrfWFkGZaCii0uxxy2HOxaxbA8FXaq5S0qngaFK92JngMQ==
-X-Received: by 2002:a17:906:584b:: with SMTP id h11mr13511064ejs.209.1632510927167;
-        Fri, 24 Sep 2021 12:15:27 -0700 (PDT)
-Received: from [192.168.8.197] ([85.255.232.225])
-        by smtp.gmail.com with ESMTPSA id ml12sm5403945ejb.29.2021.09.24.12.15.26
+        bh=cmmqjStBo0kla4JkfUGMM0gp7Ea9JpziSXM0loGa8Nk=;
+        b=jEIxNECtmN1tfrZeLOIoyzjML4hWM89NCjIJ9t2uNF61NnchtSOCGAxTNsoXV24oHp
+         9poAHkmindwlwvxpNSveMWOFenXdvjLcoWaF0yR2T0yZjLWyEb7YzfdK6NSnJpQotOZI
+         QNdP72YTinFWjxgb/1JuiTeQq6rravLwNDUHoOzKU4wO/yPUgsfc53efdvNdxq6XMhm3
+         sgBR+Ket5jVl2zaxuVlnZsNFlbBHWSeWCbsnBRbUTDTI6zA2GasNJ4fziSWXo0yfXEx4
+         udD1WNUl8sO4AdWL+bD6elOUenAou/wLF9LpndppB3hJ+0p/sMhXW1NJTwq7XIpqU/wn
+         xTeQ==
+X-Gm-Message-State: AOAM5302JS2hEVb+w12VNduYs0vr9lQphIJVNXmz5mEyYLtSXC3PQMMW
+        JAWN9spTZvn2cun6xUKB6wQpF9MQ1AKQlU+SvB8=
+X-Google-Smtp-Source: ABdhPJzcE4WINoGD6mjNGYpkrQGFof/kA6O3MpQnV7Q2avBsOUwLddvKCaQ4EG/huqw5cCxBzeT+MA==
+X-Received: by 2002:a05:6e02:17ce:: with SMTP id z14mr9897645ilu.89.1632513459711;
+        Fri, 24 Sep 2021 12:57:39 -0700 (PDT)
+Received: from [192.168.1.30] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id z20sm4702157ill.2.2021.09.24.12.57.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Sep 2021 12:15:26 -0700 (PDT)
-Subject: Re: [PATCH liburing] tests: test close with fixed file table
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-References: <5e22cfaf9f0f513574a098dba6548cbb4fb5e2d8.1632510387.git.asml.silence@gmail.com>
-Message-ID: <f45010fb-44c3-3cba-12a0-ab299a319e15@gmail.com>
-Date:   Fri, 24 Sep 2021 20:14:50 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        Fri, 24 Sep 2021 12:57:39 -0700 (PDT)
+Subject: Re: [PATCH] io_uring: make OP_CLOSE consistent direct open
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <2b8a74c47ef43bfe03fba1973630f7704851dbdc.1632510251.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <30d37840-1e3d-3f68-2311-68bd7cac4320@kernel.dk>
+Date:   Fri, 24 Sep 2021 13:57:38 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <5e22cfaf9f0f513574a098dba6548cbb4fb5e2d8.1632510387.git.asml.silence@gmail.com>
+In-Reply-To: <2b8a74c47ef43bfe03fba1973630f7704851dbdc.1632510251.git.asml.silence@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -65,158 +65,60 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/24/21 8:07 PM, Pavel Begunkov wrote:
-> Test IO_CLOSE closing files in the fixed file table.
+On 9/24/21 1:04 PM, Pavel Begunkov wrote:
+> From recently open/accept are now able to manipulate fixed file table,
+> but it's inconsistent that close can't. Close the gap, keep API same as
+> with open/accept, i.e. via sqe->file_slot.
 
-s/IO_CLOSE/OP_CLOSE/
+I really think we should do this for 5.15 to make the API a bit more
+sane from the user point of view, folks definitely expect being able
+to use IORING_OP_CLOSE with a fixed file that they got with IORING_OP_OPEN,
+for example.
 
-> 
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> ---
-> 
-> P.S. not tested with kernels not supporting the feature
-> 
->  test/open-close.c | 115 ++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 115 insertions(+)
-> 
-> diff --git a/test/open-close.c b/test/open-close.c
-> index 648737c..d5c116b 100644
-> --- a/test/open-close.c
-> +++ b/test/open-close.c
-> @@ -9,10 +9,119 @@
->  #include <stdlib.h>
->  #include <string.h>
->  #include <fcntl.h>
-> +#include <assert.h>
->  
->  #include "helpers.h"
->  #include "liburing.h"
->  
-> +static int submit_wait(struct io_uring *ring)
-> +{
-> +	struct io_uring_cqe *cqe;
-> +	int ret;
-> +
-> +	ret = io_uring_submit(ring);
-> +	if (ret <= 0) {
-> +		fprintf(stderr, "sqe submit failed: %d\n", ret);
-> +		return 1;
-> +	}
-> +	ret = io_uring_wait_cqe(ring, &cqe);
-> +	if (ret < 0) {
-> +		fprintf(stderr, "wait completion %d\n", ret);
-> +		return 1;
-> +	}
-> +
-> +	ret = cqe->res;
-> +	io_uring_cqe_seen(ring, cqe);
-> +	return ret;
-> +}
-> +
-> +static inline int try_close(struct io_uring *ring, int fd, int slot)
-> +{
-> +	struct io_uring_sqe *sqe;
-> +
-> +	sqe = io_uring_get_sqe(ring);
-> +	io_uring_prep_close(sqe, fd);
-> +	__io_uring_set_target_fixed_file(sqe, slot);
-> +	return submit_wait(ring);
-> +}
-> +
-> +static int test_close_fixed(void)
-> +{
-> +	struct io_uring ring;
-> +	struct io_uring_sqe *sqe;
-> +	int ret, fds[2];
-> +	char buf[1];
-> +
-> +	ret = io_uring_queue_init(8, &ring, 0);
-> +	if (ret) {
-> +		fprintf(stderr, "ring setup failed\n");
-> +		return -1;
-> +	}
-> +	if (pipe(fds)) {
-> +		perror("pipe");
-> +		return -1;
-> +	}
-> +
-> +	ret = try_close(&ring, 0, 0);
-> +	if (ret == -EINVAL) {
-> +		fprintf(stderr, "close for fixed files is not supported\n");
-> +		return 0;
-> +	} else if (ret != -ENXIO) {
-> +		fprintf(stderr, "no table failed %i\n", ret);
-> +		return -1;
-> +	}
-> +
-> +	ret = try_close(&ring, 1, 0);
-> +	if (ret != -EINVAL) {
-> +		fprintf(stderr, "set fd failed %i\n", ret);
-> +		return -1;
-> +	}
-> +
-> +	ret = io_uring_register_files(&ring, fds, 2);
-> +	if (ret) {
-> +		fprintf(stderr, "file_register: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	ret = try_close(&ring, 0, 2);
-> +	if (ret != -EINVAL) {
-> +		fprintf(stderr, "out of table failed %i\n", ret);
-> +		return -1;
-> +	}
-> +
-> +	ret = try_close(&ring, 0, 0);
-> +	if (ret != 0) {
-> +		fprintf(stderr, "close failed %i\n", ret);
-> +		return -1;
-> +	}
-> +
-> +	sqe = io_uring_get_sqe(&ring);
-> +	io_uring_prep_read(sqe, 0, buf, sizeof(buf), 0);
-> +	sqe->flags |= IOSQE_FIXED_FILE;
-> +	ret = submit_wait(&ring);
-> +	if (ret != -EBADF) {
-> +		fprintf(stderr, "read failed %i\n", ret);
-> +		return -1;
-> +	}
-> +
-> +	ret = try_close(&ring, 0, 1);
-> +	if (ret != 0) {
-> +		fprintf(stderr, "close 2 failed %i\n", ret);
-> +		return -1;
-> +	}
-> +
-> +	ret = try_close(&ring, 0, 0);
-> +	if (ret != -EBADF) {
-> +		fprintf(stderr, "empty slot failed %i\n", ret);
-> +		return -1;
-> +	}
-> +
-> +	close(fds[0]);
-> +	close(fds[1]);
-> +	io_uring_queue_exit(&ring);
-> +	return 0;
-> +}
-> +
->  static int test_close(struct io_uring *ring, int fd, int is_ring_fd)
->  {
->  	struct io_uring_cqe *cqe;
-> @@ -133,6 +242,12 @@ int main(int argc, char *argv[])
->  		goto err;
->  	}
->  
-> +	ret = test_close_fixed();
-> +	if (ret) {
-> +		fprintf(stderr, "test_close_fixed failed\n");
-> +		goto err;
-> +	}
-> +
->  done:
->  	unlink(path);
->  	if (do_unlink)
-> 
+How about this small tweak, basically making it follow the same rules
+as other commands that do fixed files:
+
+1) Require IOSQE_FIXED_FILE to be set for a direct close. sqe->file_index
+   will be the descriptor to close in that case. If sqe->fd is set, we
+   -EINVAL the request.
+
+2) If IOSQE_FIXED_FILE isn't set, it's a normal close. As before, if
+   sqe->file_index is set and IOSQE_FIXED_FILE isn't, then we -EINVAL
+   the request.
+
+Basically this incremental on top of yours.
+
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 82f867983bb3..dc6e3699779d 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -4596,12 +4596,12 @@ static int io_close_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	if (sqe->ioprio || sqe->off || sqe->addr || sqe->len ||
+ 	    sqe->rw_flags || sqe->buf_index)
+ 		return -EINVAL;
+-	if (req->flags & REQ_F_FIXED_FILE)
+-		return -EBADF;
+ 
+ 	req->close.fd = READ_ONCE(sqe->fd);
+ 	req->close.file_slot = READ_ONCE(sqe->file_index);
+-	if (req->close.file_slot && req->close.fd)
++	if (!(req->flags & REQ_F_FIXED_FILE) && req->close.file_slot)
++		return -EINVAL;
++	else if (req->close.fd)
+ 		return -EINVAL;
+ 
+ 	return 0;
+@@ -4615,7 +4615,7 @@ static int io_close(struct io_kiocb *req, unsigned int issue_flags)
+ 	struct file *file = NULL;
+ 	int ret = -EBADF;
+ 
+-	if (req->close.file_slot) {
++	if (req->flags & REQ_F_FIXED_FILE) {
+ 		ret = io_close_fixed(req, issue_flags);
+ 		goto err;
+ 	}
 
 -- 
-Pavel Begunkov
+Jens Axboe
+

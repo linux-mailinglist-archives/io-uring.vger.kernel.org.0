@@ -2,62 +2,63 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A3B2417C0F
-	for <lists+io-uring@lfdr.de>; Fri, 24 Sep 2021 21:59:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A667417C25
+	for <lists+io-uring@lfdr.de>; Fri, 24 Sep 2021 22:06:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348271AbhIXUBE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 24 Sep 2021 16:01:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58246 "EHLO
+        id S1347111AbhIXUHy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 24 Sep 2021 16:07:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59854 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345980AbhIXUBD (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 24 Sep 2021 16:01:03 -0400
-Received: from mail-io1-xd35.google.com (mail-io1-xd35.google.com [IPv6:2607:f8b0:4864:20::d35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4607EC061571
-        for <io-uring@vger.kernel.org>; Fri, 24 Sep 2021 12:59:30 -0700 (PDT)
-Received: by mail-io1-xd35.google.com with SMTP id h129so14220231iof.1
-        for <io-uring@vger.kernel.org>; Fri, 24 Sep 2021 12:59:30 -0700 (PDT)
+        with ESMTP id S1348353AbhIXUHw (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 24 Sep 2021 16:07:52 -0400
+Received: from mail-il1-x132.google.com (mail-il1-x132.google.com [IPv6:2607:f8b0:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64AF1C061613
+        for <io-uring@vger.kernel.org>; Fri, 24 Sep 2021 13:06:19 -0700 (PDT)
+Received: by mail-il1-x132.google.com with SMTP id x2so11739807ilm.2
+        for <io-uring@vger.kernel.org>; Fri, 24 Sep 2021 13:06:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
+        h=subject:from:to:references:message-id:date:user-agent:mime-version
          :in-reply-to:content-language:content-transfer-encoding;
-        bh=tOf4reCSIPZkzRtu8obkS4ifnfSs27E0k8fLCVLDnNM=;
-        b=jC2jI8Kd/3+DNj5F3sABN45CNGPvSW43BCSYKnWY4q9EFUuzcRx4ts4JT2qvhPS9+J
-         RMOHFr5Wo0YmmO3ZdnN+zSgPHtUHqWVbjebOOLKbIh+g5y/5HartCV46dN55gq5KM5pd
-         hos7+eSPxVvyyM3Q5AOjCzRfn+SdQB1/11zc3EEEWvG/Ws7dMnBRdjl4yXLjUZKgMFR2
-         1NNLOUP6975bcr4tATKyxvHfPFhQKofUGMboxg4Qy8zKwYyLesDEpJ3ChPvrG+jR2cz8
-         S84aph0edMgXrDE70+TDxdDqsRLY70cYtJjrBY6koNnytvGg0GV8Dy7sncW19ekPpAym
-         fIzQ==
+        bh=WQMLl6k9zD637LuK2ODCrsD+8jNepGZ/dUM2MKrxjbY=;
+        b=8Db+vmYcbYMiXeE/y88nKhgnJll5jVoIIUmL4CZy+A9yPuXytxacwrVfkofnVs+kqh
+         A7jIV9eORZkdMXOfJetREmK0JNklhrmT/lgH5r8yQl2ws0jzE5Rjdhsb1MEXZmFkhx9s
+         cs87GBSmEpg4QirBh51A75FjpnAG8BmK480v7cGGyw0MVPtTMYopTu2NsChB8+FvwhN2
+         uHS5qkjFB3E6nhtRrhsRkWpiU9DIW2vRewjDkTnIiZl0ofva71cgcOJeQU15INT2gsam
+         nT35xD7+QmDJl/ToCUoZSpgq9AiaeoMPRRXcG2kARWDI4uYBmLqvT06R5/JjiJmdEMfm
+         ZFFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
+        h=x-gm-message-state:subject:from:to:references:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=tOf4reCSIPZkzRtu8obkS4ifnfSs27E0k8fLCVLDnNM=;
-        b=ipzQLnyGf1nMQZz3eL015MqouSJcDRaLqZaCtigebH0sjzPSVh2fgo7ugq5/QNIGeU
-         9Co93vo4qyonEIrc2XC5dvj5ZmDnWj4SGKixxAUPGjLE228Pnp5YaPeJNq++kWK7AQoj
-         xa9Jul3geutG9W/dS8gzWLyMiLtcwZ3XvgrCJXkRvJ3cR89/skOf2GSX9YpyTcXTspvv
-         or5mqUHWtENCpyRhwlJV/SnWczGcc9Endt8Mwzacb9WAC1XTiZ0Txo9uyibqS9qoj6dg
-         XObIb018EIhryG2Me1EXcpmyitlvYNsHAW/KqNtX5bwbRyVNQf53qRXi2XIQTOheokBa
-         GnXw==
-X-Gm-Message-State: AOAM533lM3cjCdY5N+S+gQINXtC9ELRLtGPdxL5d0+f0P+a7+1vb+UIu
-        iODBftNc66bkwCVpfqcAyFjglMUfrnvRbJDvao4=
-X-Google-Smtp-Source: ABdhPJyTySGu5Y2Zc8GKYyYSSv2/ryAAQ+c94yJbMjrzio2tCtst69JqapYKQ9p6HokrBAVT6VPJaA==
-X-Received: by 2002:a6b:b40a:: with SMTP id d10mr10687097iof.85.1632513569493;
-        Fri, 24 Sep 2021 12:59:29 -0700 (PDT)
+        bh=WQMLl6k9zD637LuK2ODCrsD+8jNepGZ/dUM2MKrxjbY=;
+        b=7T2BF5zGqC3i6Dfq0Sypr3PmATCF914Ajx+h2Qobe8aQlpVK1hu5+w3sdGaBJH+vtJ
+         KEBCzjItr0x4/W8OfCszFZz0aCrI8G2d3qECGYTIGFIdXH7DfW9CEvk987FLVz6e8Lsc
+         cdK5X/wnu4am8wl9+OFFZVODpM4WXENcbemmjpZaWerksxcFpWAC6UAQMYz5o/S/w8ki
+         dMyKN5L4lx7Bu4RFAU/vxLvFkhlK3DDQLKqeX4JozWxNahj7aOgvavuxJB2pTO+lHLH/
+         gsLI7AUeoP1z7nF2o+bMXMDkZdt6eVg6oCkbMPiOUen7HHQM5kpiHVjwLeOeZ/Kpz3iE
+         GcIw==
+X-Gm-Message-State: AOAM530Mp16JrcnmkwBAnC9sBmRJhCsBn22JzIMbOVJHDQd6csScD96n
+        ZI0gXzXOW20sZAMrCDEclb5r2a9RrlviaFEjqRk=
+X-Google-Smtp-Source: ABdhPJzeYHeGrdgVQnEFXZg0eikjKzcnrnY44cyL2IWmMMzQ8qaQjh5GxPsC3RK3fs2dY0IibDbZTg==
+X-Received: by 2002:a05:6e02:eb0:: with SMTP id u16mr9967221ilj.178.1632513978509;
+        Fri, 24 Sep 2021 13:06:18 -0700 (PDT)
 Received: from [192.168.1.30] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id w1sm4623360ilj.55.2021.09.24.12.59.27
+        by smtp.gmail.com with ESMTPSA id p14sm4688624ilc.78.2021.09.24.13.06.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Sep 2021 12:59:28 -0700 (PDT)
-Subject: Re: [PATCH liburing 0/2] small test improvements
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <cover.1632507515.git.asml.silence@gmail.com>
+        Fri, 24 Sep 2021 13:06:18 -0700 (PDT)
+Subject: Re: [PATCH] io_uring: make OP_CLOSE consistent direct open
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <145ac6b6-53c2-9bcb-dc98-b657fbc68d11@kernel.dk>
-Date:   Fri, 24 Sep 2021 13:59:27 -0600
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <2b8a74c47ef43bfe03fba1973630f7704851dbdc.1632510251.git.asml.silence@gmail.com>
+ <30d37840-1e3d-3f68-2311-68bd7cac4320@kernel.dk>
+Message-ID: <923961d5-28f6-c3d0-680b-035560c9e52a@kernel.dk>
+Date:   Fri, 24 Sep 2021 14:06:17 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <cover.1632507515.git.asml.silence@gmail.com>
+In-Reply-To: <30d37840-1e3d-3f68-2311-68bd7cac4320@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -65,10 +66,34 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/24/21 1:05 PM, Pavel Begunkov wrote:
-> fix types in rsrc_tags test, and make a few adjustments in multicqe_drain
+On 9/24/21 1:57 PM, Jens Axboe wrote:
+> On 9/24/21 1:04 PM, Pavel Begunkov wrote:
+>> From recently open/accept are now able to manipulate fixed file table,
+>> but it's inconsistent that close can't. Close the gap, keep API same as
+>> with open/accept, i.e. via sqe->file_slot.
+> 
+> I really think we should do this for 5.15 to make the API a bit more
+> sane from the user point of view, folks definitely expect being able
+> to use IORING_OP_CLOSE with a fixed file that they got with IORING_OP_OPEN,
+> for example.
+> 
+> How about this small tweak, basically making it follow the same rules
+> as other commands that do fixed files:
+> 
+> 1) Require IOSQE_FIXED_FILE to be set for a direct close. sqe->file_index
+>    will be the descriptor to close in that case. If sqe->fd is set, we
+>    -EINVAL the request.
+> 
+> 2) If IOSQE_FIXED_FILE isn't set, it's a normal close. As before, if
+>    sqe->file_index is set and IOSQE_FIXED_FILE isn't, then we -EINVAL
+>    the request.
+> 
+> Basically this incremental on top of yours.
 
-Applied, thanks.
+Hmm, we don't require that for open or accept. Why not? Seems a bit
+counter intuitive. But maybe it's better we do this one as-is, and then
+do a followup patch that solidifies the fact that IOSQE_FIXED_FILE
+should be set for direct open/accept/close.
 
 -- 
 Jens Axboe

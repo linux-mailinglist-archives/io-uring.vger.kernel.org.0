@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 998BB4178EF
-	for <lists+io-uring@lfdr.de>; Fri, 24 Sep 2021 18:37:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35B2F4178F1
+	for <lists+io-uring@lfdr.de>; Fri, 24 Sep 2021 18:37:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245135AbhIXQiX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 24 Sep 2021 12:38:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38490 "EHLO
+        id S1347524AbhIXQib (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 24 Sep 2021 12:38:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38464 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343872AbhIXQiC (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 24 Sep 2021 12:38:02 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 286C8C0612AD
-        for <io-uring@vger.kernel.org>; Fri, 24 Sep 2021 09:33:07 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id y12so2085017edo.9
+        with ESMTP id S1344065AbhIXQiM (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 24 Sep 2021 12:38:12 -0400
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02B19C0612AF
+        for <io-uring@vger.kernel.org>; Fri, 24 Sep 2021 09:33:08 -0700 (PDT)
+Received: by mail-ed1-x529.google.com with SMTP id g8so38222414edt.7
         for <io-uring@vger.kernel.org>; Fri, 24 Sep 2021 09:33:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=fiCW8JJzUjhdsuRCcKndOv71dRr1FwsRV5Vs+F93TaI=;
-        b=YXAJ3KfdsJRsgFVz2HpL3RHmkSMnv4ZRnC8mvJK9dX/4OlZLoYxy8bYELOsmwByCHp
-         7JpohOis2oiKiQ3QnKa47s78MWZqHCspYMPUy7EM496z1ts4+jSeMwlv3QR3xIZmdfvc
-         3NiDh/pLPfRHFOTz6vrwP7/SwedJq2XwLDLkq2/eJkGSKkwgRWC37Pkk1+BhE4gziubW
-         y6pfgGimeQmg7ZtupDe8XebgJoU2qnH1bz2mJjQvA13J7Q0BJMkjAwvlxkPlSn5GiFF1
-         /L4xTT1SxRLX/fjE3mOmLkg/JzG9uCDPODB+ZhFZYbzUM/6h36JJMRZnzi90J4r3pN66
-         Cghg==
+        bh=rMjmxdosJwCWERhXhGA5JeUltvRDhbQHXuwlhLP9Mds=;
+        b=NB5c9LULkUiwzQzkrsNvzeflbPUoHRyn1MDjtnf8eaMQ4G+NfT1CwP+9qv4UKIs+vQ
+         ZJil7Vy1/ktq98xgtcUSsjn92bkMdWbFxcp6lYB5fK3gufJ1kqnJwOvcnm2HYVupP5rw
+         6VjnGPYmL0p4XfOJOxYN6+CDEJ6KpRBcmwXhxIaindvaOqe52EM0MjzVi9f8+CL9/U2P
+         G2rjBFfX/XJK83s1iHWf3bpdMIoHqabwlA/v1QrCe6r5zy7K50BKS61ZUVyzSsUoZKgf
+         4h3bG8bJOm3077j+PB2GJOpSHgMMg6S9qj3IY1T+pCh6lmUoGARpT5EzmtKWspowARsY
+         Fr7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=fiCW8JJzUjhdsuRCcKndOv71dRr1FwsRV5Vs+F93TaI=;
-        b=K8FsfGzBT1Q9SAVB+pAP0zuE0sZmqt4O+ju55x+ZzrHobMCKcR4g1yBITBdITBqWC0
-         wLcOAHndJLlAsmRH3mYm58nvPbX9dX8ZfIut9en4SYBjx8J7IusWENxL+ehk8jdkz9Vv
-         t/tA2Hv7ylqRVKAM2CgiDjIAu25OTSFhIhPWcMP2LD+VUBIlwfiWkeXFOei0ojCbA0fN
-         qHtQa2ySu2NZgYilWDb8aXWI14Lih5LXpB6yEI5Iie0pQTV1UTYez4uYH08/Sm9BUiNT
-         bd3rEJbexlEDNKTpB/Ifo/C66BprzjYBJkYBglAFmJ5/ZgDjwro00x76MPJEzDFNOLOy
-         yCQg==
-X-Gm-Message-State: AOAM530dnRT7plspf77zejGzLlhYNvr0ByGynAgMMQ1mYnl3GXMiPyNy
-        NFpo5/soMRlvt4yummjRO37LqIfdhcg=
-X-Google-Smtp-Source: ABdhPJxVrs6z310hEzpe6IhEss1CqW6d+4S+fsiDeIxeTVB9SR4f9+5JZFxKDiRyDuZ/yc0TBvHPIQ==
-X-Received: by 2002:a17:906:d04b:: with SMTP id bo11mr12149782ejb.513.1632501185827;
-        Fri, 24 Sep 2021 09:33:05 -0700 (PDT)
+        bh=rMjmxdosJwCWERhXhGA5JeUltvRDhbQHXuwlhLP9Mds=;
+        b=2gNB41CxTGhy/RyRpIH8Rxk5MC/PIJhw9nYeqwWWtmbPx5AIMj0AALFRU8ZW3NB5HV
+         4uSowsTbh9YMwOnY26S8wcPYUYtd2HI/PexJ9rKV0hSlesBBHkEpzzGkQfB23WEdUI8J
+         Lt6pxBa6X+SpQ4TU1hamFYIzLNhBSLgzX+XGqDeffKwxXV++XLFIUB/+o183iaWUJfCk
+         kzz+E8Es05822sBJENoeiQYvti8Q0BW5Bz9louRZoZNHcUSO91Dv72B2rQtn4rUxPJ1W
+         Qj+ZjR5s3jsHQ0AcR0aPuuFy1j9M8Aa1RxOaofFufr3hAmNMTis6jENIOJbyECxBfjSA
+         bRbw==
+X-Gm-Message-State: AOAM532w0s9GkLh1k6+4+jEKcbuwVY0U6tXjgNSdOwUlnlPLv8AGgeJg
+        sSDYfJXWsZnSxL1UU2uW/qS/cT2ZDHw=
+X-Google-Smtp-Source: ABdhPJw3GKZ6T7k+rUIhqMBclhSbPuq3UBDnNFJA4KPRUY2YYkSY+VKsaa+Gbr3Ga+PJdZgByWUm9A==
+X-Received: by 2002:aa7:d74a:: with SMTP id a10mr6052543eds.102.1632501186611;
+        Fri, 24 Sep 2021 09:33:06 -0700 (PDT)
 Received: from localhost.localdomain ([85.255.232.225])
         by smtp.gmail.com with ESMTPSA id w10sm6167021eds.30.2021.09.24.09.33.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Sep 2021 09:33:05 -0700 (PDT)
+        Fri, 24 Sep 2021 09:33:06 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 21/23] io_uring: restructure submit sqes to_submit checks
-Date:   Fri, 24 Sep 2021 17:31:59 +0100
-Message-Id: <7c4eeaa0efd0d65cde143c28da1f4fa4785972b9.1632500265.git.asml.silence@gmail.com>
+Subject: [PATCH 22/23] io_uring: kill off ->inflight_entry field
+Date:   Fri, 24 Sep 2021 17:32:00 +0100
+Message-Id: <c3ca5e467274879fc753bd389f746318397960a4.1632500265.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <cover.1632500264.git.asml.silence@gmail.com>
 References: <cover.1632500264.git.asml.silence@gmail.com>
@@ -61,51 +61,41 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Put an explicit check for number of requests to submit. First,
-we can turn while into do-while and it generates better code, and second
-that if can be cheaper, e.g. by using CPU flags after sub in
-io_sqring_entries().
+->inflight_entry is not used anymore after converting everything to
+single linked lists, remove it. Also adjust io_kiocb layout, so all hot
+bits are in first 3 cachelines.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ fs/io_uring.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 7c91e194a43b..3ddca031d7d5 100644
+index 3ddca031d7d5..c53e0f48dc69 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -7217,16 +7217,19 @@ static const struct io_uring_sqe *io_get_sqe(struct io_ring_ctx *ctx)
- static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr)
- 	__must_hold(&ctx->uring_lock)
- {
-+	unsigned int entries = io_sqring_entries(ctx);
- 	int submitted = 0;
+@@ -868,18 +868,15 @@ struct io_kiocb {
+ 	struct percpu_ref		*fixed_rsrc_refs;
  
-+	if (!entries)
-+		return 0;
- 	/* make sure SQ entry isn't read before tail */
--	nr = min3(nr, ctx->sq_entries, io_sqring_entries(ctx));
-+	nr = min3(nr, ctx->sq_entries, entries);
- 	if (!percpu_ref_tryget_many(&ctx->refs, nr))
- 		return -EAGAIN;
- 	io_get_task_refs(nr);
+ 	/* used with ctx->iopoll_list with reads/writes */
+-	struct list_head		inflight_entry;
++	struct io_wq_work_node		comp_list;
+ 	struct io_task_work		io_task_work;
+ 	/* for polled requests, i.e. IORING_OP_POLL_ADD and async armed poll */
+ 	struct hlist_node		hash_node;
+ 	struct async_poll		*apoll;
+-	struct io_wq_work		work;
+-	const struct cred		*creds;
+-
+-	struct io_wq_work_node		comp_list;
+-
+ 	/* store used ubuf, so we can prevent reloading */
+ 	struct io_mapped_ubuf		*imu;
++	struct io_wq_work		work;
++	const struct cred		*creds;
+ };
  
- 	io_submit_state_start(&ctx->submit_state, nr);
--	while (submitted < nr) {
-+	do {
- 		const struct io_uring_sqe *sqe;
- 		struct io_kiocb *req;
- 
-@@ -7245,7 +7248,7 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr)
- 		submitted++;
- 		if (io_submit_sqe(ctx, req, sqe))
- 			break;
--	}
-+	} while (submitted < nr);
- 
- 	if (unlikely(submitted != nr)) {
- 		int ref_used = (submitted == -EAGAIN) ? 0 : submitted;
+ struct io_tctx_node {
 -- 
 2.33.0
 

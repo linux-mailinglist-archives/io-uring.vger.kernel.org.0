@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DB743417CA9
-	for <lists+io-uring@lfdr.de>; Fri, 24 Sep 2021 23:00:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C54C3417CAA
+	for <lists+io-uring@lfdr.de>; Fri, 24 Sep 2021 23:01:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346547AbhIXVC2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        id S1346467AbhIXVC2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
         Fri, 24 Sep 2021 17:02:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43994 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44002 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231531AbhIXVC1 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 24 Sep 2021 17:02:27 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E04B7C061613
-        for <io-uring@vger.kernel.org>; Fri, 24 Sep 2021 14:00:53 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id bx4so40994050edb.4
-        for <io-uring@vger.kernel.org>; Fri, 24 Sep 2021 14:00:53 -0700 (PDT)
+        with ESMTP id S231531AbhIXVC2 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 24 Sep 2021 17:02:28 -0400
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95487C061571
+        for <io-uring@vger.kernel.org>; Fri, 24 Sep 2021 14:00:54 -0700 (PDT)
+Received: by mail-ed1-x52c.google.com with SMTP id s17so22184180edd.8
+        for <io-uring@vger.kernel.org>; Fri, 24 Sep 2021 14:00:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=dFH5CheffFzQOxp6pCNxDg575vEGTDrFHU+KzVe7wvg=;
-        b=l/qoUifgFOh8F58tgAcP8+9jgVz216snZVzNrKJ9xj48sug4dVClmka65uYfHHT/B6
-         YyB8VXaM9uoJWalUBsJvZ3PCkXzeMxNbrYtbkD+YnOvIpDUVy4+zWlIHySOISNz+alZm
-         hqocRW94XUoDVCQNcHNZ3CfF5b9gElZv/38B+ZmHJdjQzKLvWCtbCxjH3Eb70lXi5oqz
-         J7f7TglcK3Z7VcF/NJvl8RJvLngyXJWgw/9GPrcCuOvWMxrcI/DPwwkQMTK1KZ9fASia
-         hw5IEOQhDPhD0ro40l8C7SrAlnzSiNotCU8EHb+GBHc7JYSU4bjvd+pBORuCq/FJgvz6
-         koYg==
+        bh=+YFN3sNp1iCCC/kEpufNcxNUuVijs73AzPY6EZD2PPc=;
+        b=Elkjof5OcT0/f1PqoPAMGDSWDmEZeYd/JTLu9sgZjRY7BqRpmLOh+fIVkifBzSXbMH
+         RKBQ/SKi+X0IbIhXfjhUpCE7J47kdmUm+Q1XQJUT5u+RXvImYJKi4eRuPNs8PNfYQ8ov
+         QDD12Do/Sg+GkSMarEaXXBOTDOxhqOmEdBlnK/yUT1uD+yI2By2mlODZT93N9W7nPQY+
+         tVzrShNuGTqGrHF4vNKja+I5kBgWG7J8QHcBB1/SQgHsxegje02IQGHJJbSnrBjfTt0l
+         GvYGmostBDup5+bpn2oYDcfsJ7Yic7QXJzUc0s5zxZfxTFHi5TR4I50dDpFbyNkywnFB
+         sINA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=dFH5CheffFzQOxp6pCNxDg575vEGTDrFHU+KzVe7wvg=;
-        b=FAlezRvGTWKQpknOEOyCLYlq1Rkg6zvAheazOlXugknW5yswX8hrlbkl4AqlOFeIHY
-         seARI8/vlUO/zZBMDqzTHSwWZcQuxTRtiDeBpjcZtgjn2LCJMde7xYGw9qdsoCIBncdo
-         EGn/jzliqRNpsw6M3ySBJXmsavkjPp+XaED18Kepw9XLGf6aLxg/JJrYUQJUvKB+T2b1
-         EutlRXdUq7lLdkxFCh+6httZnBm+pMoqHQ7jV8KPZ7b+cOigzR//TyulIfRtMcqcUaXa
-         Ktbj5C9Euk/XA/kUZyupU8OhdDCv/WqNeFwPBX+wiBgjT03Ku5/jTqjZE1bejTP6pVzo
-         ooDw==
-X-Gm-Message-State: AOAM530CU0zbV/gduE+sT4aj9fKrVTLPgPND3cI2ubEyqqCFkh4X4kTy
-        yq7dgnjh/ulF/yOOKTETg+NkgubeHgI=
-X-Google-Smtp-Source: ABdhPJxIN86nD++cjOzloqCBuDDomz+OXgYmI+R9eXzNXdbCB3fDWLe76JLZkJc8jq2OE2SA0UrjVw==
-X-Received: by 2002:a50:cd87:: with SMTP id p7mr7662150edi.294.1632517252355;
-        Fri, 24 Sep 2021 14:00:52 -0700 (PDT)
+        bh=+YFN3sNp1iCCC/kEpufNcxNUuVijs73AzPY6EZD2PPc=;
+        b=iI2SVmipUwjL7s/l8rcQHY2TUe5Z0kdnIBaHurqAK908X7oLz70d+syQYzwz4mX94l
+         SjScFu3eY4nzjQnb2+3kj2R7Xz0GCpbdwp7CZGZxcdkI/NA8nGIhtjMne2gwe/RHY/cS
+         6toBeCjn8jVzqJ1s0YuC914veXR6funn3cvylNVc+Rq+KmV+TKTjcF4Zjgm9/Z62H6I7
+         7Ak+x0epH0e0VwCkc+BzhNqVpir8ijjlqkti08spGsdXWPM2JyKIOCCxsNEaaAhZ67od
+         Fjis6UdBNce8hraWt7xOlJhrzn2pm2aFc4AE0+JwfUUukXbUWRYwFp4Byg3fsIafWWlP
+         CQVQ==
+X-Gm-Message-State: AOAM532GKh0wJKG6ZoURJ/TrfMs+dhAR6gIQZ0Iz8VIuUvKr3zNFUqgw
+        /fBmlFHN+zjOlH/uB1ZZ5PSVmUl/A+Q=
+X-Google-Smtp-Source: ABdhPJwYcxjrx51x8hxAtYu0ZSVWP35uHXbzuRXx6xkx4x5XFndVl2QsD+pfpRLvvsRi+N5/wwyrQg==
+X-Received: by 2002:a50:da8f:: with SMTP id q15mr7566495edj.139.1632517253167;
+        Fri, 24 Sep 2021 14:00:53 -0700 (PDT)
 Received: from localhost.localdomain ([85.255.232.225])
-        by smtp.gmail.com with ESMTPSA id bc4sm6276048edb.18.2021.09.24.14.00.51
+        by smtp.gmail.com with ESMTPSA id bc4sm6276048edb.18.2021.09.24.14.00.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Fri, 24 Sep 2021 14:00:52 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH v2 03/24] io_uring: make io_do_iopoll return number of reqs
-Date:   Fri, 24 Sep 2021 21:59:43 +0100
-Message-Id: <f771a8153a86f16f12ff4272524e9e549c5de40b.1632516769.git.asml.silence@gmail.com>
+Subject: [PATCH v2 04/24] io_uring: use slist for completion batching
+Date:   Fri, 24 Sep 2021 21:59:44 +0100
+Message-Id: <a666826f2854d17e9fb9417fb302edfeb750f425.1632516769.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <cover.1632516769.git.asml.silence@gmail.com>
 References: <cover.1632516769.git.asml.silence@gmail.com>
@@ -61,124 +61,151 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Don't pass nr_events pointer around but return directly, it's less
-expensive than pointer increments.
+Currently we collect requests for completion batching in an array.
+Replace them with a singly linked list. It's as fast as arrays but
+doesn't take some much space in ctx, and will be used in future patches.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 34 +++++++++++++++++-----------------
- 1 file changed, 17 insertions(+), 17 deletions(-)
+ fs/io_uring.c | 52 +++++++++++++++++++++++++--------------------------
+ 1 file changed, 25 insertions(+), 27 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index b615fa7963ae..9c14e9e722ba 100644
+index 9c14e9e722ba..9a76c4f84311 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -2430,8 +2430,7 @@ static inline bool io_run_task_work(void)
- /*
-  * Find and free completed poll iocbs
-  */
--static void io_iopoll_complete(struct io_ring_ctx *ctx, unsigned int *nr_events,
--			       struct list_head *done)
-+static void io_iopoll_complete(struct io_ring_ctx *ctx, struct list_head *done)
+@@ -322,8 +322,8 @@ struct io_submit_state {
+ 	/*
+ 	 * Batch completion logic
+ 	 */
+-	struct io_kiocb		*compl_reqs[IO_COMPL_BATCH];
+-	unsigned int		compl_nr;
++	struct io_wq_work_list	compl_reqs;
++
+ 	/* inline/task_work completion list, under ->uring_lock */
+ 	struct list_head	free_list;
+ };
+@@ -883,6 +883,8 @@ struct io_kiocb {
+ 	struct io_wq_work		work;
+ 	const struct cred		*creds;
+ 
++	struct io_wq_work_node		comp_list;
++
+ 	/* store used ubuf, so we can prevent reloading */
+ 	struct io_mapped_ubuf		*imu;
+ };
+@@ -1169,7 +1171,7 @@ static inline void req_ref_get(struct io_kiocb *req)
+ 
+ static inline void io_submit_flush_completions(struct io_ring_ctx *ctx)
  {
+-	if (ctx->submit_state.compl_nr)
++	if (!wq_list_empty(&ctx->submit_state.compl_reqs))
+ 		__io_submit_flush_completions(ctx);
+ }
+ 
+@@ -1326,6 +1328,7 @@ static struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
+ 	INIT_LIST_HEAD(&ctx->submit_state.free_list);
+ 	INIT_LIST_HEAD(&ctx->locked_free_list);
+ 	INIT_DELAYED_WORK(&ctx->fallback_work, io_fallback_req_func);
++	INIT_WQ_LIST(&ctx->submit_state.compl_reqs);
+ 	return ctx;
+ err:
+ 	kfree(ctx->dummy_ubuf);
+@@ -1831,11 +1834,16 @@ static inline bool io_req_needs_clean(struct io_kiocb *req)
+ static void io_req_complete_state(struct io_kiocb *req, long res,
+ 				  unsigned int cflags)
+ {
++	struct io_submit_state *state;
++
+ 	if (io_req_needs_clean(req))
+ 		io_clean_op(req);
+ 	req->result = res;
+ 	req->compl.cflags = cflags;
+ 	req->flags |= REQ_F_COMPLETE_INLINE;
++
++	state = &req->ctx->submit_state;
++	wq_list_add_tail(&req->comp_list, &state->compl_reqs);
+ }
+ 
+ static inline void __io_req_complete(struct io_kiocb *req, unsigned issue_flags,
+@@ -2324,13 +2332,14 @@ static void io_req_free_batch(struct req_batch *rb, struct io_kiocb *req,
+ static void __io_submit_flush_completions(struct io_ring_ctx *ctx)
+ 	__must_hold(&ctx->uring_lock)
+ {
++	struct io_wq_work_node *node, *prev;
+ 	struct io_submit_state *state = &ctx->submit_state;
+-	int i, nr = state->compl_nr;
  	struct req_batch rb;
- 	struct io_kiocb *req;
-@@ -2446,7 +2445,6 @@ static void io_iopoll_complete(struct io_ring_ctx *ctx, unsigned int *nr_events,
+ 
+ 	spin_lock(&ctx->completion_lock);
+-	for (i = 0; i < nr; i++) {
+-		struct io_kiocb *req = state->compl_reqs[i];
++	wq_list_for_each(node, prev, &state->compl_reqs) {
++		struct io_kiocb *req = container_of(node, struct io_kiocb,
++						    comp_list);
  
  		__io_cqring_fill_event(ctx, req->user_data, req->result,
- 					io_put_rw_kbuf(req));
--		(*nr_events)++;
+ 					req->compl.cflags);
+@@ -2340,15 +2349,18 @@ static void __io_submit_flush_completions(struct io_ring_ctx *ctx)
+ 	io_cqring_ev_posted(ctx);
  
+ 	io_init_req_batch(&rb);
+-	for (i = 0; i < nr; i++) {
+-		struct io_kiocb *req = state->compl_reqs[i];
++	node = state->compl_reqs.first;
++	do {
++		struct io_kiocb *req = container_of(node, struct io_kiocb,
++						    comp_list);
+ 
++		node = req->comp_list.next;
  		if (req_ref_put_and_test(req))
  			io_req_free_batch(&rb, req, &ctx->submit_state);
-@@ -2457,11 +2455,11 @@ static void io_iopoll_complete(struct io_ring_ctx *ctx, unsigned int *nr_events,
+-	}
++	} while (node);
+ 
  	io_req_free_batch_finish(ctx, &rb);
- }
- 
--static int io_do_iopoll(struct io_ring_ctx *ctx, unsigned int *nr_events,
--			bool force_nonspin)
-+static int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin)
- {
- 	struct io_kiocb *req, *tmp;
- 	LIST_HEAD(done);
-+	int nr_events = 0;
- 	bool spin;
- 
- 	/*
-@@ -2481,6 +2479,7 @@ static int io_do_iopoll(struct io_ring_ctx *ctx, unsigned int *nr_events,
- 		 */
- 		if (READ_ONCE(req->iopoll_completed)) {
- 			list_move_tail(&req->inflight_entry, &done);
-+			nr_events++;
- 			continue;
- 		}
- 		if (!list_empty(&done))
-@@ -2493,14 +2492,16 @@ static int io_do_iopoll(struct io_ring_ctx *ctx, unsigned int *nr_events,
- 			spin = false;
- 
- 		/* iopoll may have completed current req */
--		if (READ_ONCE(req->iopoll_completed))
-+		if (READ_ONCE(req->iopoll_completed)) {
- 			list_move_tail(&req->inflight_entry, &done);
-+			nr_events++;
-+		}
- 	}
- 
- 	if (!list_empty(&done))
--		io_iopoll_complete(ctx, nr_events, &done);
-+		io_iopoll_complete(ctx, &done);
- 
--	return 0;
-+	return nr_events;
+-	state->compl_nr = 0;
++	INIT_WQ_LIST(&state->compl_reqs);
  }
  
  /*
-@@ -2514,12 +2515,8 @@ static void io_iopoll_try_reap_events(struct io_ring_ctx *ctx)
+@@ -2668,17 +2680,10 @@ static void io_req_task_complete(struct io_kiocb *req, bool *locked)
+ 	unsigned int cflags = io_put_rw_kbuf(req);
+ 	long res = req->result;
  
- 	mutex_lock(&ctx->uring_lock);
- 	while (!list_empty(&ctx->iopoll_list)) {
--		unsigned int nr_events = 0;
+-	if (*locked) {
+-		struct io_ring_ctx *ctx = req->ctx;
+-		struct io_submit_state *state = &ctx->submit_state;
 -
--		io_do_iopoll(ctx, &nr_events, true);
++	if (*locked)
+ 		io_req_complete_state(req, res, cflags);
+-		state->compl_reqs[state->compl_nr++] = req;
+-		if (state->compl_nr == ARRAY_SIZE(state->compl_reqs))
+-			io_submit_flush_completions(ctx);
+-	} else {
++	else
+ 		io_req_complete_post(req, res, cflags);
+-	}
+ }
+ 
+ static void __io_complete_rw(struct io_kiocb *req, long res, long res2,
+@@ -6969,15 +6974,8 @@ static void __io_queue_sqe(struct io_kiocb *req)
+ 	 * doesn't support non-blocking read/write attempts
+ 	 */
+ 	if (likely(!ret)) {
+-		if (req->flags & REQ_F_COMPLETE_INLINE) {
+-			struct io_ring_ctx *ctx = req->ctx;
+-			struct io_submit_state *state = &ctx->submit_state;
 -
- 		/* let it sleep and repeat later if can't complete a request */
--		if (nr_events == 0)
-+		if (io_do_iopoll(ctx, true) == 0)
- 			break;
- 		/*
- 		 * Ensure we allow local-to-the-cpu processing to take place,
-@@ -2578,8 +2575,12 @@ static int io_iopoll_check(struct io_ring_ctx *ctx, long min)
- 			    list_empty(&ctx->iopoll_list))
- 				break;
- 		}
--		ret = io_do_iopoll(ctx, &nr_events, !min);
--	} while (!ret && nr_events < min && !need_resched());
-+		ret = io_do_iopoll(ctx, !min);
-+		if (ret < 0)
-+			break;
-+		nr_events += ret;
-+		ret = 0;
-+	} while (nr_events < min && !need_resched());
- out:
- 	mutex_unlock(&ctx->uring_lock);
- 	return ret;
-@@ -7346,7 +7347,6 @@ static int __io_sq_thread(struct io_ring_ctx *ctx, bool cap_entries)
- 		to_submit = IORING_SQPOLL_CAP_ENTRIES_VALUE;
+-			state->compl_reqs[state->compl_nr++] = req;
+-			if (state->compl_nr == ARRAY_SIZE(state->compl_reqs))
+-				io_submit_flush_completions(ctx);
++		if (req->flags & REQ_F_COMPLETE_INLINE)
+ 			return;
+-		}
  
- 	if (!list_empty(&ctx->iopoll_list) || to_submit) {
--		unsigned nr_events = 0;
- 		const struct cred *creds = NULL;
- 
- 		if (ctx->sq_creds != current_cred())
-@@ -7354,7 +7354,7 @@ static int __io_sq_thread(struct io_ring_ctx *ctx, bool cap_entries)
- 
- 		mutex_lock(&ctx->uring_lock);
- 		if (!list_empty(&ctx->iopoll_list))
--			io_do_iopoll(ctx, &nr_events, true);
-+			io_do_iopoll(ctx, true);
- 
- 		/*
- 		 * Don't submit if refs are dying, good for io_uring_register(),
+ 		linked_timeout = io_prep_linked_timeout(req);
+ 		if (linked_timeout)
 -- 
 2.33.0
 

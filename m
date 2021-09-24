@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CEB7C4178E8
+	by mail.lfdr.de (Postfix) with ESMTP id E1A174178E9
 	for <lists+io-uring@lfdr.de>; Fri, 24 Sep 2021 18:36:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343896AbhIXQiT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 24 Sep 2021 12:38:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38462 "EHLO
+        id S1347451AbhIXQiU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 24 Sep 2021 12:38:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347550AbhIXQh5 (ORCPT
+        with ESMTP id S1347574AbhIXQh5 (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Fri, 24 Sep 2021 12:37:57 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29DEAC06129D
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 005F0C06129E
         for <io-uring@vger.kernel.org>; Fri, 24 Sep 2021 09:33:01 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id dj4so38330597edb.5
+Received: by mail-ed1-x52e.google.com with SMTP id ee50so38227151edb.13
         for <io-uring@vger.kernel.org>; Fri, 24 Sep 2021 09:33:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=g+9wxor79FpGahC2xymxZ+0SUOsxdFIdQJialRIb1Ec=;
-        b=Rxtu4L96+860MzNeg5x8wcdsFrC5r89+IuFInEUmqLAChcxIlLCGtWPv4yXJx68cDa
-         aEuerPUbTqJV2h7bAs/R1glD1Rvm9cLsv6aPTGUiZVjjuL4p7h/EqYU+87W/GBJXkj9C
-         ZPmGc3h4f0InZheSewidS3Kxp/4L0C5X7lLrRoDZopsrUZ6OD3kQSCC4dC7i5aHIez6B
-         GVpX4ASpwVHZtJpcxHtFL3UL+XYGhXZQ0jlU2rovYRpchKEHdHxY2VwlEM7Liv2yhAzx
-         txi6qEObLQpkYody80acIF8PG72Mo90IEhWJRUz9hSSqShtsL29JXdj3HzmrA6MuPtc+
-         g75w==
+        bh=nvpshZorjLoykDtpKq3HQrucWftoyB6Tqw8TB61nC7E=;
+        b=LQXgNICkeU/owQoXyWuhMJJKG1XQ1MafcNWI3dUgBOX/QZP1Ot67E2xnkDXc2mgb52
+         s9MqpSOkYubjP5IZyXxnmlpIIsz4MqVjKoxeNd8hBC1UsGUlYqo/TEpgBeTXYrzlAlzG
+         B4dw55Wf84wNodzATssQy33rwMeNr3HmCR5TayUmbZtkYZIma3VvWjCszRaYcH5Rdtq2
+         +JZ4CmCX5WNGFxh8cMMl6DKxrkkknH6eOBjDYhi6lSj++InheiHGpP01oOoXnz+ciMSc
+         RTTsILIVlEkFbXu9Fed2LEa+FQFgQE8nYnsKeHpfcyRDVH2PGtDZkj/TPo9BqoLUkzHa
+         KwDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=g+9wxor79FpGahC2xymxZ+0SUOsxdFIdQJialRIb1Ec=;
-        b=3LKHHBimDvzVOx2vPZltyGEOuNZH3AdFIogszuXG4Z67qOy0mEjIcMhYVhuLV8CFKw
-         oF9+zQoQppn4mghjDmnGkGZDG6XZ36rzm+C8qYXVLDuJYOOHI7SMfVv+MbcXDRd6N0aB
-         GCZ1LV8bnPZ9QPRVVV+tiQmgY9WYLwq5ayeFezW3YfaQ1JBwtl39tF9VMM8QLoLNjn/z
-         YoF4sAPayvkZMdnuXAa+N04Aigi1FCMkbmiic7RfjL3IhNajOwDXWJQeysD7KQ4egE4R
-         5IO5U8qjriqIRjD3yUTunlV+A4b/IoGWcm4XSSEA9NTVzferUjVdwgnJf6E3QJ8/YHsR
-         TPGw==
-X-Gm-Message-State: AOAM532Z+gpldYzirih1xJQnGDyDgP1eDNmj+Yf7HYV1RNuzFa0ahdjT
-        7G76Op0LFSwDXpBW63i8xSmIFCm/hXw=
-X-Google-Smtp-Source: ABdhPJwXfJWXTYZ1i8YvedkDuLn3tvCvNHDVFMBC4EmfZwMilmlSiiqq0gWKDgirOn0tumStQc2rBw==
-X-Received: by 2002:a17:906:d1d6:: with SMTP id bs22mr12410065ejb.554.1632501179726;
-        Fri, 24 Sep 2021 09:32:59 -0700 (PDT)
+        bh=nvpshZorjLoykDtpKq3HQrucWftoyB6Tqw8TB61nC7E=;
+        b=Jv0TNKamq/PHjW3XmnFaQ9SokL7fmsCXPQ79uR5bBySqIa9La+Z/w1wYAv7hRB+7AW
+         460AkaFO0Hph8Rf12XSoReOLYBMcwMVkUDn9CDOucLdT2ZViCC5OrUXH82rHqO7WecHp
+         uKM3uUR//3dNfU9zioLXk6YDnDouKaJ+W9JM7FhLdaEYxxaBMAZqfO+BexXiEY1RTAjN
+         ZeaK8SDuCcY5EBW8IJ4LOcnw35/mfZA6m3CWej141hD+MNhKS3QUqXcVi2MEP7P1Kl/x
+         lop9xz3RS4kSRka6iqodf0WezNvda1qOKUAfz1Bko5r8bf9uw7/4WBiki6ZjkbPyLukC
+         VrLQ==
+X-Gm-Message-State: AOAM5304vmZlGpvyTG3bCL3GB7BYC8kjY/MfZH672wcu9XrwmT1DUELT
+        DFO44P4dlCT7jmudeKWS7ycsFgNll/4=
+X-Google-Smtp-Source: ABdhPJy3m23rHolfi7gDLElDEGzrHCmgj+UPSEB8ZD9OtrwjS8r74+/42avnCWryGwncGeQGXLJ8jA==
+X-Received: by 2002:a50:9d48:: with SMTP id j8mr6133928edk.165.1632501180656;
+        Fri, 24 Sep 2021 09:33:00 -0700 (PDT)
 Received: from localhost.localdomain ([85.255.232.225])
         by smtp.gmail.com with ESMTPSA id w10sm6167021eds.30.2021.09.24.09.32.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Sep 2021 09:32:59 -0700 (PDT)
+        Fri, 24 Sep 2021 09:33:00 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 14/23] io_uring: don't pass tail into io_free_batch_list
-Date:   Fri, 24 Sep 2021 17:31:52 +0100
-Message-Id: <87c5633e7220f4dc453521f2e83293aed961ec5f.1632500264.git.asml.silence@gmail.com>
+Subject: [PATCH 15/23] io_uring: don't pass state to io_submit_state_end
+Date:   Fri, 24 Sep 2021 17:31:53 +0100
+Message-Id: <fa953e60221a21f83152d3b755cf197e4231f437.1632500264.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <cover.1632500264.git.asml.silence@gmail.com>
 References: <cover.1632500264.git.asml.silence@gmail.com>
@@ -61,64 +61,41 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-io_free_batch_list() iterates all requests in the passed in list,
-so we don't really need to know the tail but can keep iterating until
-meet NULL. Just pass the first node into it and it will be enough.
+Submission state and ctx and coupled together, no need to passs
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ fs/io_uring.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index e1637ea4db4c..1d14d85377b5 100644
+index 1d14d85377b5..26342ff481cb 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -2267,14 +2267,12 @@ static void io_free_req_work(struct io_kiocb *req, bool *locked)
- }
- 
- static void io_free_batch_list(struct io_ring_ctx *ctx,
--			       struct io_wq_work_list *list)
-+				struct io_wq_work_node *node)
- 	__must_hold(&ctx->uring_lock)
+@@ -7129,11 +7129,13 @@ static int io_submit_sqe(struct io_ring_ctx *ctx, struct io_kiocb *req,
+ /*
+  * Batched submission is done, ensure local IO is flushed out.
+  */
+-static void io_submit_state_end(struct io_submit_state *state,
+-				struct io_ring_ctx *ctx)
++static void io_submit_state_end(struct io_ring_ctx *ctx)
  {
--	struct io_wq_work_node *node;
- 	struct task_struct *task = NULL;
- 	int task_refs = 0, ctx_refs = 0;
++	struct io_submit_state *state = &ctx->submit_state;
++
+ 	if (state->link.head)
+ 		io_queue_sqe(state->link.head);
++	/* flush only after queuing links as they can generate completions */
+ 	io_submit_flush_completions(ctx);
+ 	if (state->plug_started)
+ 		blk_finish_plug(&state->plug);
+@@ -7236,7 +7238,7 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr)
+ 		percpu_ref_put_many(&ctx->refs, unused);
+ 	}
  
--	node = list->first;
- 	do {
- 		struct io_kiocb *req = container_of(node, struct io_kiocb,
- 						    comp_list);
-@@ -2321,7 +2319,7 @@ static void __io_submit_flush_completions(struct io_ring_ctx *ctx)
- 	spin_unlock(&ctx->completion_lock);
- 	io_cqring_ev_posted(ctx);
- 
--	io_free_batch_list(ctx, &state->compl_reqs);
-+	io_free_batch_list(ctx, state->compl_reqs.first);
- 	INIT_WQ_LIST(&state->compl_reqs);
- }
- 
-@@ -2404,7 +2402,6 @@ static inline bool io_run_task_work(void)
- static int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin)
- {
- 	struct io_wq_work_node *pos, *start, *prev;
--	struct io_wq_work_list list;
- 	int nr_events = 0;
- 	bool spin;
- 
-@@ -2458,10 +2455,9 @@ static int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin)
- 
- 	io_commit_cqring(ctx);
- 	io_cqring_ev_posted_iopoll(ctx);
--	list.first = start ? start->next : ctx->iopoll_list.first;
--	list.last = prev;
-+	pos = start ? start->next : ctx->iopoll_list.first;
- 	wq_list_cut(&ctx->iopoll_list, prev, start);
--	io_free_batch_list(ctx, &list);
-+	io_free_batch_list(ctx, pos);
- 	return nr_events;
- }
+-	io_submit_state_end(&ctx->submit_state, ctx);
++	io_submit_state_end(ctx);
+ 	 /* Commit SQ ring head once we've consumed and submitted all SQEs */
+ 	io_commit_sqring(ctx);
  
 -- 
 2.33.0

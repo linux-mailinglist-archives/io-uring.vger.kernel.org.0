@@ -2,132 +2,100 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B0D9E418472
-	for <lists+io-uring@lfdr.de>; Sat, 25 Sep 2021 22:32:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F4C241851C
+	for <lists+io-uring@lfdr.de>; Sun, 26 Sep 2021 01:05:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229994AbhIYUeV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 25 Sep 2021 16:34:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40750 "EHLO
+        id S230122AbhIYXHC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 25 Sep 2021 19:07:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230028AbhIYUeQ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 25 Sep 2021 16:34:16 -0400
-Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFCEEC061740
-        for <io-uring@vger.kernel.org>; Sat, 25 Sep 2021 13:32:40 -0700 (PDT)
-Received: by mail-io1-xd32.google.com with SMTP id 134so17256887iou.12
-        for <io-uring@vger.kernel.org>; Sat, 25 Sep 2021 13:32:40 -0700 (PDT)
+        with ESMTP id S230078AbhIYXHB (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 25 Sep 2021 19:07:01 -0400
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E61DC061570
+        for <io-uring@vger.kernel.org>; Sat, 25 Sep 2021 16:05:26 -0700 (PDT)
+Received: by mail-lf1-x12c.google.com with SMTP id g41so57414213lfv.1
+        for <io-uring@vger.kernel.org>; Sat, 25 Sep 2021 16:05:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:subject:to:cc:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=ckfczCHGDqt59fZ5lCWMQcI3McIvnEEzCZWdAIibj/M=;
-        b=lQJ4FUC/v+1do2Fx5hMQmd3xbLQB+skGUqS/14rhVFXbevYyVkkiVw8lg6KDzvKF6n
-         48m1+gKBIcEXTf62tAWJHicemcyDEqy+Y833wna0K+vfSApnnWvWKEiGKUU4dAGhcyeb
-         p1EOXVHtJWm5xMSuqAknX4Bd+1tquQbWc7RIFFntGRxThPSQ3PMqo1FwC5wkvZ6Byl2H
-         CIVsIRgQ9jE9+Kobl+To/ZJVxylVFSwmDohhjTy6VyGOF6tNdmRnxLT5CG3hH0DQjKXb
-         Lkq1R0AdaUzsN7NJDl5zRq9q2WQdEm0QRBobBLOOD0I8uffd93zaCH3nYVEa8ptt0I4y
-         Fg2Q==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=sbHnE2QDsXnmv6AMlFohUnXs++TcZ00pHfdCA+ql4Xs=;
+        b=RNbEAHUh08JhCSlAgnolE9c89iW8+i3m5LVSHfnZSePEd25ZFyjBjBA0lnCaJfcOAw
+         jfJb/qUjXua4ANXoYKW/7/6yqK6mM8yPMb1RyNi9NGHQlrOhuhxyNLbajhERBzrsUPAQ
+         yjcsvy0hSxEr1kwKxST/HTIXAWtGFUxVTi3sU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=ckfczCHGDqt59fZ5lCWMQcI3McIvnEEzCZWdAIibj/M=;
-        b=DiMIPRMvTpItJa69NEZNnI9pLulbk+US6JKg6p+nuXVJ/u/Zmubf/vvAODKgV1F7gN
-         mtZ/Vp8FyCuKYhJtxrBB56EXYu2uid619ZRhjfkd1hLBKH81XMg54GCBEY9B4kZn5nHS
-         EY7wpkKhhg6w0mBvmjesTNlsE3X6qxEo6d17F+5a3QdGYV+txm5SMWvLAZVeYe6GlUiI
-         FdBs/xkbT28fOKAtPisrkQE8T/YmHiepnPCN0uwptpZTo6n73fbX4/oackiA1QKFUxWr
-         J8gWQFuvPMFdXjcCImeuvNbV041n1rrrLqBV/CgGuaxgVvOTlYD3dbH60p47VoCJs1BM
-         MBJg==
-X-Gm-Message-State: AOAM533uMRcjFR8pcLSSdpmDk20ARd9vGi8nidsyLS3j1a4vjQKI8lto
-        yFPhy+cYs4NoUVZAR5tlp81c2LRz1ZjMAA==
-X-Google-Smtp-Source: ABdhPJyFtVL/sdWrz/JolYsbD/6+xI9eLF1dRM6v261tQAzwwBpy64zHkpMt0M7b9n2Vc6bUaLVt0Q==
-X-Received: by 2002:a5d:8b59:: with SMTP id c25mr13887628iot.190.1632601960108;
-        Sat, 25 Sep 2021 13:32:40 -0700 (PDT)
-Received: from [192.168.1.116] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id y30sm6293512iox.54.2021.09.25.13.32.39
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sbHnE2QDsXnmv6AMlFohUnXs++TcZ00pHfdCA+ql4Xs=;
+        b=NC5HiEg0uVAggvwEpfQNaL0oSP0ge3nYSY+0eOsu/VVGaNCLf/auZhcFvhxvWgXBPJ
+         /ICLjx++W+RClYNLzIQtcUWwXL9Me7p1RpWHFZ/6qodB6gdq3qeFkjw7K+gF2YbLvqVg
+         FCTlpT+6+mxUmqmGR6QJj+PsH4UBO1odw28fS0QaxV/Vx8eFuJGiOUfxHmFgSlve+zPg
+         +CebV7RRIb6W8R6IwAESJlwRcSEOGmVh0Kt72KktYJkVou4YBlqNu7ZvsSVYMsG1tk1t
+         zP9QKvM4k5ry6eiLVjBAv+dzpMsmZcLqEXT/2KMyM14NQyJHqc4Fdqu8jMsYkw/WxF3K
+         Z3Tw==
+X-Gm-Message-State: AOAM533SGy9yZJdfrAArPHK/xapdxbWEGqL4wduo9KCKirnNkaNQBssl
+        hEjpjaD065OGwb59dGljujcxMsq2JFziXsDo
+X-Google-Smtp-Source: ABdhPJz4pwf/fCnz/xIbmdLRbSdSySKpKRxt/ggdvwb+IvXJYxdikBJFEltjQhQhbl4LvRLv5OvjAQ==
+X-Received: by 2002:ac2:4116:: with SMTP id b22mr17314209lfi.587.1632611124266;
+        Sat, 25 Sep 2021 16:05:24 -0700 (PDT)
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com. [209.85.167.42])
+        by smtp.gmail.com with ESMTPSA id u7sm1138067lft.79.2021.09.25.16.05.23
+        for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 25 Sep 2021 13:32:39 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] io_uring fixes for 5.15-rc3
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     io-uring <io-uring@vger.kernel.org>
-Message-ID: <fb81a0f6-0a9d-6651-88bc-d22e589de0ee@kernel.dk>
-Date:   Sat, 25 Sep 2021 14:32:38 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Sat, 25 Sep 2021 16:05:23 -0700 (PDT)
+Received: by mail-lf1-f42.google.com with SMTP id m3so57776287lfu.2
+        for <io-uring@vger.kernel.org>; Sat, 25 Sep 2021 16:05:23 -0700 (PDT)
+X-Received: by 2002:a05:6512:12c4:: with SMTP id p4mr17254083lfg.280.1632611123353;
+ Sat, 25 Sep 2021 16:05:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <fb81a0f6-0a9d-6651-88bc-d22e589de0ee@kernel.dk>
+In-Reply-To: <fb81a0f6-0a9d-6651-88bc-d22e589de0ee@kernel.dk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sat, 25 Sep 2021 16:05:07 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whi3UxvY1C1LQNCO9d2xzX5A69qfzNGbBVGpRE_6gv=9Q@mail.gmail.com>
+Message-ID: <CAHk-=whi3UxvY1C1LQNCO9d2xzX5A69qfzNGbBVGpRE_6gv=9Q@mail.gmail.com>
+Subject: Re: [GIT PULL] io_uring fixes for 5.15-rc3
+To:     Jens Axboe <axboe@kernel.dk>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Cc:     io-uring <io-uring@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Linus,
+On Sat, Sep 25, 2021 at 1:32 PM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> - io-wq core dump exit fix (me)
 
-This one looks a bit bigger than it is, but that's mainly because 2/3 of
-it is enabling IORING_OP_CLOSE to close direct file descriptors. We've
-had a few folks using them and finding it confusing that the way to
-close them is through using -1 for file update, this just brings API
-symmetry for direct descriptors. Hence I think we should just do this
-now and have a better API for 5.15 release. There's some room for
-de-duplicating the close code, but we're leaving that for the next merge
-window.
+Hmm.
 
-Outside of that, just small fixes:
+That one strikes me as odd.
 
-- Poll race fixes (Hao)
+I get the feeling that if the io_uring thread needs to have that
+signal_group_exit() test, something is wrong in signal-land.
 
-- io-wq core dump exit fix (me)
+It's basically a "fatal signal has been sent to another thread", and I
+really get the feeling that "fatal_signal_pending()" should just be
+modified to handle that case too.
 
-- Reschedule around potentially intensive tctx and buffer iterators on
-  teardown (me)
+Because what about a number of other situations where we have that
+"killable" logic (ie "stop waiting for locks or IO if you're just
+going to get killed anyway" - things like lock_page_killable() and
+friends)
 
-- Fix for always ending up punting files update to io-wq (me)
+Adding Eric, Oleg and Al to the participants, so that somebody else can pipe up.
 
-- Put the provided buffer meta data under memcg accounting (me)
+That piping up may quite possibly be to just tell me I'm being stupid,
+and that this is just a result of some io_uring thread thing, and
+nobody else has this problem.
 
-- Tweak for io_write(), removing dead code that was added with the
-  iterator changes in this release (Pavel)
+It's commit 87c169665578 ("io-wq: ensure we exit if thread group is
+exiting") in my tree.
 
-Please pull!
+Comments?
 
-
-The following changes since commit e4e737bb5c170df6135a127739a9e6148ee3da82:
-
-  Linux 5.15-rc2 (2021-09-19 17:28:22 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.dk/linux-block.git tags/io_uring-5.15-2021-09-25
-
-for you to fetch changes up to 7df778be2f61e1a23002d1f2f5d6aaf702771eb8:
-
-  io_uring: make OP_CLOSE consistent with direct open (2021-09-24 14:07:54 -0600)
-
-----------------------------------------------------------------
-io_uring-5.15-2021-09-25
-
-----------------------------------------------------------------
-Hao Xu (3):
-      io_uring: fix race between poll completion and cancel_hash insertion
-      io_uring: fix missing set of EPOLLONESHOT for CQ ring overflow
-      io_uring: fix potential req refcount underflow
-
-Jens Axboe (4):
-      io-wq: ensure we exit if thread group is exiting
-      io_uring: allow conditional reschedule for intensive iterators
-      io_uring: put provided buffer meta data under memcg accounting
-      io_uring: don't punt files update to io-wq unconditionally
-
-Pavel Begunkov (2):
-      io_uring: kill extra checks in io_write()
-      io_uring: make OP_CLOSE consistent with direct open
-
- fs/io-wq.c    |  3 ++-
- fs/io_uring.c | 85 ++++++++++++++++++++++++++++++++++++++++++++++++-----------
- 2 files changed, 72 insertions(+), 16 deletions(-)
-
--- 
-Jens Axboe
-
+            Linus

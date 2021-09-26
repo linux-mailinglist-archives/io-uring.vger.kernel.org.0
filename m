@@ -2,96 +2,104 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 919EC418561
-	for <lists+io-uring@lfdr.de>; Sun, 26 Sep 2021 03:20:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5148641860E
+	for <lists+io-uring@lfdr.de>; Sun, 26 Sep 2021 05:36:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230191AbhIZBWc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 25 Sep 2021 21:22:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46792 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229461AbhIZBWb (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 25 Sep 2021 21:22:31 -0400
-Received: from mail-il1-x135.google.com (mail-il1-x135.google.com [IPv6:2607:f8b0:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8369C061570
-        for <io-uring@vger.kernel.org>; Sat, 25 Sep 2021 18:20:55 -0700 (PDT)
-Received: by mail-il1-x135.google.com with SMTP id d11so14806505ilc.8
-        for <io-uring@vger.kernel.org>; Sat, 25 Sep 2021 18:20:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=h8rwZgo/X8fBt7Y1fQ9qY2zFB6VhIFdRa1FdI6tlUrk=;
-        b=7+SCbgnOTiUL9TXsAxtrUkxuwbtL2rwU5E21LOFEyIQ+mQvQn1KR5LsWjEe8nZDexS
-         oC5amrwhet1OISsckmJYby9FThJbzGzpaVbiXudE/o19PGFnma7VjcCgQ6GVVBytB5tD
-         RbfBkuft9KA6G0caBop4NStrl3Yvq2Ks751xoJoZNI6FlyiFF7XrcGYkfJEfLHCutXSG
-         ljLWjcj1GUyrRftRuRmPtUMDqpOAy7OB+XBC+BknY2UuOllgFJhY0aZXBSSZHuRN6fWI
-         RNEt38p5Thc4VdnbZIP/4JoiVDObmNw3whnMnVAyhscBF1OsJtbiKdYCTI3I2P9RL1Se
-         59OQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=h8rwZgo/X8fBt7Y1fQ9qY2zFB6VhIFdRa1FdI6tlUrk=;
-        b=dN1jCFM4VfiCR77CGc2t+hdBCxtBc70rXwzMgo5g8Pry9JeXlVTzve7SAGaskURnRn
-         n/ZQHXx7MOR53GQ6gdgtFVBcqTDSGavGrnTyvilEE+GMUfJ/PjceXJdPsqP0KuCxSU2L
-         QcsUSfYAGhW0kSQwPkQ34W+Lz5zVpBfZRZDi2Sl1AIz4XXFJq61U7ImhJa7z1pMA2Brr
-         /Okfpk248hHkr3jmMWk4skb0gkPRFT1+nfONKajpzcfd1s4NMtw4s35PyA5iTUmOXwaG
-         MGLA9wDs185+JDSDLeC7guIj2lOv5pFS9ZQoeqsY0hLxdfnyjC5eCiALx1Dy8ALcVee+
-         cQtw==
-X-Gm-Message-State: AOAM533wrO9iR1/txeXQTX6FRbt1WZEkzDQFcQOTXkJ/ncWbWZFq/4T9
-        NSnx4B7cuHzpRNrVkKnzZqqa6NWp7yOFJg==
-X-Google-Smtp-Source: ABdhPJwqHaUw5YmA24XByUvqlVoS7twFw04iPYBvHBNp6Pjy0VHUISsTbX6q+d8eaeGguTIt3ctl0g==
-X-Received: by 2002:a92:c56e:: with SMTP id b14mr3482303ilj.71.1632619254308;
-        Sat, 25 Sep 2021 18:20:54 -0700 (PDT)
-Received: from [192.168.1.116] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id z5sm6628868ile.42.2021.09.25.18.20.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 25 Sep 2021 18:20:53 -0700 (PDT)
-Subject: Re: [GIT PULL] io_uring fixes for 5.15-rc3
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Cc:     io-uring <io-uring@vger.kernel.org>
-References: <fb81a0f6-0a9d-6651-88bc-d22e589de0ee@kernel.dk>
- <CAHk-=whi3UxvY1C1LQNCO9d2xzX5A69qfzNGbBVGpRE_6gv=9Q@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <0eeefd32-f322-1470-9bcf-0f415be517bd@kernel.dk>
-Date:   Sat, 25 Sep 2021 19:20:52 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S230371AbhIZDh5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 25 Sep 2021 23:37:57 -0400
+Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:54908 "EHLO
+        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230373AbhIZDh5 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 25 Sep 2021 23:37:57 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R891e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0UpaJY70_1632627379;
+Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UpaJY70_1632627379)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Sun, 26 Sep 2021 11:36:20 +0800
+Subject: Re: [PATCH v2 10/24] io_uring: add a helper for batch free
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <cover.1632516769.git.asml.silence@gmail.com>
+ <4fc8306b542c6b1dd1d08e8021ef3bdb0ad15010.1632516769.git.asml.silence@gmail.com>
+From:   Hao Xu <haoxu@linux.alibaba.com>
+Message-ID: <1522b987-b614-7255-8336-7dbdf6f785fa@linux.alibaba.com>
+Date:   Sun, 26 Sep 2021 11:36:19 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.13.0
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=whi3UxvY1C1LQNCO9d2xzX5A69qfzNGbBVGpRE_6gv=9Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <4fc8306b542c6b1dd1d08e8021ef3bdb0ad15010.1632516769.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/25/21 5:05 PM, Linus Torvalds wrote:
-> On Sat, Sep 25, 2021 at 1:32 PM Jens Axboe <axboe@kernel.dk> wrote:
->>
->> - io-wq core dump exit fix (me)
+在 2021/9/25 上午4:59, Pavel Begunkov 写道:
+> Add a helper io_free_batch_list(), which takes a single linked list and
+> puts/frees all requests from it in an efficient manner. Will be reused
+> later.
 > 
-> Hmm.
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> ---
+>   fs/io_uring.c | 34 +++++++++++++++++++++-------------
+>   1 file changed, 21 insertions(+), 13 deletions(-)
 > 
-> That one strikes me as odd.
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 205127394649..ad8af05af4bc 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -2308,12 +2308,31 @@ static void io_req_free_batch(struct req_batch *rb, struct io_kiocb *req,
+>   	wq_stack_add_head(&req->comp_list, &state->free_list);
+>   }
+>   
+> +static void io_free_batch_list(struct io_ring_ctx *ctx,
+> +			       struct io_wq_work_list *list)
+> +	__must_hold(&ctx->uring_lock)
+> +{
+> +	struct io_wq_work_node *node;
+> +	struct req_batch rb;
+> +
+> +	io_init_req_batch(&rb);
+> +	node = list->first;
+> +	do {
+> +		struct io_kiocb *req = container_of(node, struct io_kiocb,
+> +						    comp_list);
+> +
+> +		node = req->comp_list.next;
+> +		if (req_ref_put_and_test(req))
+> +			io_req_free_batch(&rb, req, &ctx->submit_state);
+> +	} while (node);
+> +	io_req_free_batch_finish(ctx, &rb);
+> +}
+Hi Pavel, Why not we use the wq_list_for_each here as well?
+> +
+>   static void __io_submit_flush_completions(struct io_ring_ctx *ctx)
+>   	__must_hold(&ctx->uring_lock)
+>   {
+>   	struct io_wq_work_node *node, *prev;
+>   	struct io_submit_state *state = &ctx->submit_state;
+> -	struct req_batch rb;
+>   
+>   	spin_lock(&ctx->completion_lock);
+>   	wq_list_for_each(node, prev, &state->compl_reqs) {
+> @@ -2327,18 +2346,7 @@ static void __io_submit_flush_completions(struct io_ring_ctx *ctx)
+>   	spin_unlock(&ctx->completion_lock);
+>   	io_cqring_ev_posted(ctx);
+>   
+> -	io_init_req_batch(&rb);
+> -	node = state->compl_reqs.first;
+> -	do {
+> -		struct io_kiocb *req = container_of(node, struct io_kiocb,
+> -						    comp_list);
+> -
+> -		node = req->comp_list.next;
+> -		if (req_ref_put_and_test(req))
+> -			io_req_free_batch(&rb, req, &ctx->submit_state);
+> -	} while (node);
+> -
+> -	io_req_free_batch_finish(ctx, &rb);
+> +	io_free_batch_list(ctx, &state->compl_reqs);
+>   	INIT_WQ_LIST(&state->compl_reqs);
+>   }
+>   
 > 
-> I get the feeling that if the io_uring thread needs to have that
-> signal_group_exit() test, something is wrong in signal-land.
-> 
-> It's basically a "fatal signal has been sent to another thread", and I
-> really get the feeling that "fatal_signal_pending()" should just be
-> modified to handle that case too.
-
-It did surprise me as well, which is why that previous change ended up
-being broken for the coredump case... You could argue that the io-wq
-thread should just exit on signal_pending(), which is what we did
-before, but that really ends up sucking for workloads that do use
-signals for communication purposes. postgres was the reporter here.
-
--- 
-Jens Axboe
 

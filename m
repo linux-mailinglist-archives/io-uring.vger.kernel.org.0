@@ -2,51 +2,51 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 770C641C28D
-	for <lists+io-uring@lfdr.de>; Wed, 29 Sep 2021 12:18:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6F7141C294
+	for <lists+io-uring@lfdr.de>; Wed, 29 Sep 2021 12:18:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245538AbhI2KTR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 29 Sep 2021 06:19:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41288 "EHLO
+        id S245545AbhI2KT0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 29 Sep 2021 06:19:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245274AbhI2KS5 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 29 Sep 2021 06:18:57 -0400
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99FFEC061760
-        for <io-uring@vger.kernel.org>; Wed, 29 Sep 2021 03:17:16 -0700 (PDT)
-Received: by mail-pj1-x102f.google.com with SMTP id lp15-20020a17090b4a8f00b0019f4059bd90so9790pjb.3
-        for <io-uring@vger.kernel.org>; Wed, 29 Sep 2021 03:17:16 -0700 (PDT)
+        with ESMTP id S245516AbhI2KTN (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 29 Sep 2021 06:19:13 -0400
+Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F1D8C061772
+        for <io-uring@vger.kernel.org>; Wed, 29 Sep 2021 03:17:21 -0700 (PDT)
+Received: by mail-pg1-x535.google.com with SMTP id y186so2254287pgd.0
+        for <io-uring@vger.kernel.org>; Wed, 29 Sep 2021 03:17:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amikom.ac.id; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=lcenYzu+oA9Fj2QbuekN7tzi8G95tBvqNzWbY8TopP0=;
-        b=c9+yWeheqKoLD1YOErDKnLr+zP0eG/F82j/c/GgylHX2bGryLClGJvfOFQ25ritXbs
-         m5QZJ961g3vAibrxUQChuMV3sOCeqO4HdSauGtdqKxHF18DWZxlNkGJ7SyG9G/UaXPkV
-         h7iyW7HSyEpi13pU/1k2RhKvYuCb6DZcsTzOfRAKXr89NpiknKPAulJJk4AXGKvV8o54
-         SeOdSV8fWNQz9uiH/czTuRnJOZQag0stNnncK5+kpyf8rcCz82l1cNQXwlKofQei1Zk4
-         TbpBKwsT6qTwT3cBX5xphkyX1Wq4vojZp9yl/hKFGKF89S13wy4iFC8aaq/kXuyu5vjt
-         f/oQ==
+        bh=sUPXU68Cu9vvHGM0C0dqecgBfPZd9jfNcRECIjJ9m/0=;
+        b=LN0CLSEKRWYY/+9ZUXghZgxDc7Xa17nwLs9C2qIpWV3QAEnyBupN3Jm1salwEUpby9
+         RIe6qr3YIwRy30rPd6tSf5PXo3SbCj7pn8ae6MjIt6Gh5/d1qbW7+JgPLqK8eIC+XfeS
+         h2Mt+E0jieNzYql7bUjSxfYGNbCDzCHu+iEb28X4kmtom8gfeYPnfcrBmUBYLtHnomvy
+         cwdSD6XaVITtSXLzeQ0PoUT+mp33j3R8Ann5M1WzjZoP8lYr/5RnygfdeI/ms8EW/Xd9
+         cJCouj4g3TZUgaKj3SH7Ka+kKegqpdc5JFalGRb9LMknSt6fylHWWcwqmDhOqb31num1
+         KetQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=lcenYzu+oA9Fj2QbuekN7tzi8G95tBvqNzWbY8TopP0=;
-        b=UdQGAJPoYfOZq/gct6ygfnTqyw6bU9gKdss5Ke1/r/mW0SW2wk0BlT4OtTa83z2l0f
-         VdZUPh8dR1vF35ae8590vlojgsZU594c+mJWRhHOCc9AszIWREtkj51dkyu9g/AR0Q7F
-         Ni0MfYSGR1bp5X+J3mfl1dpG7WJmvfbNTF4B0IhGYubC8rkznsTo5agxCqecextVnsXz
-         hKtBfWOLMcBM4x+ZHFBPjsumnGRPdaYbbUjxSgn4Godc9GOkNWW+flWQe0X33diwHNpV
-         gI0XUIJ5b9ZWWGHvDleuMcpLG9dwKuvezRavdRJN79OKV+06x6e4izTPTmF44Uw/kma3
-         iNjA==
-X-Gm-Message-State: AOAM532uomLeGjuh1D+0Aaikix3tiu4YXCU34C9IiHP1kOB+tTZouBhf
-        JxF/ci/mGphloS90jUw+pMb/Xg==
-X-Google-Smtp-Source: ABdhPJzOhtg20uD4gLgUxodNnUu+PWHWPlSc6O0W+Idmtk8jkQeXr8eu7rqXDxnSSmacBhGVHx5HLQ==
-X-Received: by 2002:a17:902:b696:b0:13a:7871:55f5 with SMTP id c22-20020a170902b69600b0013a787155f5mr9683970pls.60.1632910636140;
-        Wed, 29 Sep 2021 03:17:16 -0700 (PDT)
+        bh=sUPXU68Cu9vvHGM0C0dqecgBfPZd9jfNcRECIjJ9m/0=;
+        b=7Wcjuv82OrAwem2WndUjhRFvcHY3lexh9brtIctcaEVNRY13jZFqzNp5WFMsoUi5+V
+         CSuyAjf+1QwXnncMhZr7MDE8u8FpxSVwYJeO1JtPIlmyQ1OerSUkt3OtSTCU6abMVFh5
+         LJUwFBEPTosOGZ+Nblp+rCKnpMjIpuZe+IciNHsGb5EcXRWuVZpScjH/IG2IaVCUJo+y
+         p/2OVuNfTy7vypRcUySSg6jdAMpAnd3M9zSH0LUikz/W4KmoA81nYqoeH6kOWtaRXHGI
+         mg6+GT97zULCiLLGKiQOVQiABY491nRnOkF14Ss5NtU+rWZQsyldLfCUBm4TMp1t4GSA
+         peHQ==
+X-Gm-Message-State: AOAM531b7ju0X5GuG1Y/8CJdFld3QNnJaDLw5xtAkF7WSK4xoGQoscER
+        6MtlTnXDW9v+1f4GBuHANvZ0dw==
+X-Google-Smtp-Source: ABdhPJzexl/slekXNhJrdZ8x+oU0oJND4vSjwV3NiLQwXFwaYOQ379S3f0vS4zQSZVgdMNJ9HC68Vg==
+X-Received: by 2002:a63:cd4e:: with SMTP id a14mr8865059pgj.429.1632910640621;
+        Wed, 29 Sep 2021 03:17:20 -0700 (PDT)
 Received: from integral.. ([68.183.184.174])
-        by smtp.gmail.com with ESMTPSA id f16sm2001512pfk.110.2021.09.29.03.17.12
+        by smtp.gmail.com with ESMTPSA id f16sm2001512pfk.110.2021.09.29.03.17.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Sep 2021 03:17:15 -0700 (PDT)
+        Wed, 29 Sep 2021 03:17:20 -0700 (PDT)
 From:   Ammar Faizi <ammar.faizi@students.amikom.ac.id>
 To:     Jens Axboe <axboe@kernel.dk>,
         Pavel Begunkov <asml.silence@gmail.com>
@@ -54,9 +54,9 @@ Cc:     io-uring Mailing List <io-uring@vger.kernel.org>,
         Louvian Lyndal <louvianlyndal@gmail.com>,
         Ammar Faizi <ammarfaizi2@gmail.com>,
         Ammar Faizi <ammar.faizi@students.amikom.ac.id>
-Subject: [PATCHSET v1 RFC liburing 5/6] Add `liburing_getrlimit()` and `liburing_setrlimit()`
-Date:   Wed, 29 Sep 2021 17:16:05 +0700
-Message-Id: <20210929101606.62822-6-ammar.faizi@students.amikom.ac.id>
+Subject: [PATCHSET v1 RFC liburing 6/6] src/{queue,register,setup}: Remove `#include <errno.h>`
+Date:   Wed, 29 Sep 2021 17:16:06 +0700
+Message-Id: <20210929101606.62822-7-ammar.faizi@students.amikom.ac.id>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210929101606.62822-1-ammar.faizi@students.amikom.ac.id>
 References: <20210929101606.62822-1-ammar.faizi@students.amikom.ac.id>
@@ -66,86 +66,53 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Do not use `getrlimit()` and `mumap()` directly from the libc in the
-liburing internal sources. Wrap them in `src/syscall.c`. This is the
-part of implementing the kernel style return value (which later is
-supposed to support no libc environment).
-
-`liburing_getrlimit()` and `liburing_setrlimit()` do the same thing
-with `getrlimit()` and `setrlimit()` from the libc. The only different
-is when error happens, the return value is of `liburing_{get,set}rlimit()`
-will be a negative error code.
+We don't need `#include <errno.h>` in these files anymore. For now,
+`errno` variable is only allowed to be used in `src/syscall.c` to
+separate the dependency from other liburing sources.
 
 Signed-off-by: Ammar Faizi <ammar.faizi@students.amikom.ac.id>
 ---
- src/register.c |  4 ++--
- src/syscall.c  | 16 ++++++++++++++++
- src/syscall.h  |  4 ++++
- 3 files changed, 22 insertions(+), 2 deletions(-)
+ src/queue.c    | 1 -
+ src/register.c | 1 -
+ src/setup.c    | 1 -
+ 3 files changed, 3 deletions(-)
 
+diff --git a/src/queue.c b/src/queue.c
+index e85ea1d..24ff8bc 100644
+--- a/src/queue.c
++++ b/src/queue.c
+@@ -5,7 +5,6 @@
+ #include <sys/stat.h>
+ #include <sys/mman.h>
+ #include <unistd.h>
+-#include <errno.h>
+ #include <string.h>
+ #include <stdbool.h>
+ 
 diff --git a/src/register.c b/src/register.c
-index 944852e..0908e3e 100644
+index 0908e3e..2b8cbac 100644
 --- a/src/register.c
 +++ b/src/register.c
-@@ -107,11 +107,11 @@ static int increase_rlimit_nofile(unsigned nr)
- {
- 	struct rlimit rlim;
+@@ -6,7 +6,6 @@
+ #include <sys/mman.h>
+ #include <sys/resource.h>
+ #include <unistd.h>
+-#include <errno.h>
+ #include <string.h>
  
--	if (getrlimit(RLIMIT_NOFILE, &rlim) < 0)
-+	if (liburing_getrlimit(RLIMIT_NOFILE, &rlim) < 0)
- 		return -errno;
- 	if (rlim.rlim_cur < nr) {
- 		rlim.rlim_cur += nr;
--		setrlimit(RLIMIT_NOFILE, &rlim);
-+		liburing_setrlimit(RLIMIT_NOFILE, &rlim);
- 	}
- 
- 	return 0;
-diff --git a/src/syscall.c b/src/syscall.c
-index 44861f6..b8e7cb3 100644
---- a/src/syscall.c
-+++ b/src/syscall.c
-@@ -141,3 +141,19 @@ int liburing_madvise(void *addr, size_t length, int advice)
- 	ret = madvise(addr, length, advice);
- 	return (ret < 0) ? -errno : ret;
- }
-+
-+int liburing_getrlimit(int resource, struct rlimit *rlim)
-+{
-+	int ret;
-+
-+	ret = getrlimit(resource, rlim);
-+	return (ret < 0) ? -errno : ret;
-+}
-+
-+int liburing_setrlimit(int resource, const struct rlimit *rlim)
-+{
-+	int ret;
-+
-+	ret = setrlimit(resource, rlim);
-+	return (ret < 0) ? -errno : ret;
-+}
-diff --git a/src/syscall.h b/src/syscall.h
-index 32381ce..1ac56f9 100644
---- a/src/syscall.h
-+++ b/src/syscall.h
-@@ -3,6 +3,8 @@
- #define LIBURING_SYSCALL_H
- 
+ #include "liburing/compat.h"
+diff --git a/src/setup.c b/src/setup.c
+index 52f3557..486a3a1 100644
+--- a/src/setup.c
++++ b/src/setup.c
+@@ -5,7 +5,6 @@
+ #include <sys/stat.h>
+ #include <sys/mman.h>
+ #include <unistd.h>
+-#include <errno.h>
+ #include <string.h>
+ #include <stdlib.h>
  #include <signal.h>
-+#include <sys/time.h>
-+#include <sys/resource.h>
- #include "kernel_err.h"
- 
- struct io_uring_params;
-@@ -30,5 +32,7 @@ void *liburing_mmap(void *addr, size_t length, int prot, int flags, int fd,
- 		    off_t offset);
- int liburing_munmap(void *addr, size_t length);
- int liburing_madvise(void *addr, size_t length, int advice);
-+int liburing_getrlimit(int resource, struct rlimit *rlim);
-+int liburing_setrlimit(int resource, const struct rlimit *rlim);
- 
- #endif
 -- 
 2.30.2
 

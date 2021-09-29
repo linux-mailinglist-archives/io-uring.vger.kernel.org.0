@@ -2,19 +2,19 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2790F41C029
-	for <lists+io-uring@lfdr.de>; Wed, 29 Sep 2021 09:52:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B07441C191
+	for <lists+io-uring@lfdr.de>; Wed, 29 Sep 2021 11:24:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244292AbhI2Hx5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 29 Sep 2021 03:53:57 -0400
-Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:57154 "EHLO
-        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S244241AbhI2Hx5 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 29 Sep 2021 03:53:57 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0Uq.o9wp_1632901934;
-Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0Uq.o9wp_1632901934)
+        id S244800AbhI2J0E (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 29 Sep 2021 05:26:04 -0400
+Received: from out30-54.freemail.mail.aliyun.com ([115.124.30.54]:35795 "EHLO
+        out30-54.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230347AbhI2J0D (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 29 Sep 2021 05:26:03 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0Uq0XSVY_1632907460;
+Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0Uq0XSVY_1632907460)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 29 Sep 2021 15:52:15 +0800
+          Wed, 29 Sep 2021 17:24:21 +0800
 Subject: Re: [PATCH RFC 5.13 1/2] io_uring: add support for ns granularity of
  io_sq_thread_idle
 To:     Pavel Begunkov <asml.silence@gmail.com>,
@@ -28,8 +28,8 @@ References: <1619616748-17149-1-git-send-email-haoxu@linux.alibaba.com>
  <0d781b5f-3d2d-5ad4-9ad3-8fabc994313a@linux.alibaba.com>
  <11c738b2-8024-1870-d54b-79e89c5bea54@gmail.com>
 From:   Hao Xu <haoxu@linux.alibaba.com>
-Message-ID: <d4768b49-1352-9b15-6bab-98fa86961a73@linux.alibaba.com>
-Date:   Wed, 29 Sep 2021 15:52:14 +0800
+Message-ID: <10358b7e-9eb3-290f-34b6-5f257e98bcb9@linux.alibaba.com>
+Date:   Wed, 29 Sep 2021 17:24:20 +0800
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
  Gecko/20100101 Thunderbird/78.13.0
 MIME-Version: 1.0
@@ -98,11 +98,13 @@ X-Mailing-List: io-uring@vger.kernel.org
 > In particular coarse variants may be of interest.
 > https://www.kernel.org/doc/html/latest/core-api/timekeeping.html#coarse-and-fast-ns-access
 > 
+The coarse functions seems to be like jiffies, because they use the last
+timer tick(from the explanation in that doc, it seems the timer tick is
+in the same frequency as jiffies update). So I believe it is just
+another format of jiffies which is low accurate.
 > 
 > Off topic: it sounds that you're a long user of SQPOLL. Interesting to
 > ask how do you find it in general. i.e. does it help much with
 > latency? Performance? Anything else?
-It helps with the latency and iops(can not surely recall the number now..)
-It is useful when many user threads offload IO to just one sqthread.
 > 
 

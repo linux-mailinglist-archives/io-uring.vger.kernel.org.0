@@ -2,70 +2,118 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B377441BA89
-	for <lists+io-uring@lfdr.de>; Wed, 29 Sep 2021 00:46:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D151441C001
+	for <lists+io-uring@lfdr.de>; Wed, 29 Sep 2021 09:36:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243089AbhI1Wrk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 28 Sep 2021 18:47:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55356 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238632AbhI1Wrj (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 28 Sep 2021 18:47:39 -0400
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F907C06161C
-        for <io-uring@vger.kernel.org>; Tue, 28 Sep 2021 15:45:59 -0700 (PDT)
-Received: by mail-lf1-x12a.google.com with SMTP id i4so2548094lfv.4
-        for <io-uring@vger.kernel.org>; Tue, 28 Sep 2021 15:45:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:sender:from:date:message-id:subject:to;
-        bh=Wio1uup08H5Sx+6SCL/n0juoDU93A6HYxVhPdWPXP44=;
-        b=qlc6U4d80khqjlHcOjSj2JJ2uIbikUUi6BpOzobzFZbkEOHnmM9qPSEzNpQqdFh3dM
-         2oViI0Jg9d4dK9qqXy6CZcO6vzPQGHi5+5rwO1sg/9ElFOHpgNqsePMUW3655wNLn0zV
-         30ymxbw+Kg8fHgPqqbYL9IZ9m8xufUjlZ1VMETV6JxNcKhuSrVKHpqxyWaYHN5SHIiyC
-         Q9bdRFkBqx0ex0Xq8rNJ7CAm0WQDUt54KnFB7CQpuaGbHwL9fL6sZuywnqr3ndzFiRVm
-         el3IsEg2AyZhB0hDw1/TfwkefSd25/UmDBbBBqZs60iKxvzg4eaDIMFHOBZXMfIITrhB
-         1qpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
-         :to;
-        bh=Wio1uup08H5Sx+6SCL/n0juoDU93A6HYxVhPdWPXP44=;
-        b=qMN+/C0LPCLM01NRGeI15wre/Is8A1WkX6GKgHcO1ZOl9MWl0twZI5sRn5xEHhZ6GC
-         /6Gd7OSXdfZqnnu+2dQ1uWFyKNtYbBZVaslMPsk5sFsuyTZreQzZa4n96ZKl2WBgL8W2
-         I8JcAPw4X9PlAhkDP0UprW7dhGxhgaYGYTkICzx8Bi01zubLy4KE15McGS48XJ/0WtYF
-         euEY/pAquJopWeJWfcO0DLes0I9fToJyJ5pq5rNGhJFQ/IQY80o+6QgtC1WT8OauALVh
-         +70+jM9Wq1VGV3BjIxP9FRqEm5sjVCc3sww8zmOceSE7F8bBLCizXw4YSkT4P68ySU11
-         A9XQ==
-X-Gm-Message-State: AOAM531cVOUEf01n+zhMDJUHMiNpUsOJzk4X0QyB5vDBSgw0rysk6rUI
-        flV6Rq2IKZJCwakSWU7SFbzn73GDSTi9O+k/xic=
-X-Google-Smtp-Source: ABdhPJxNmenYcnn0TnKVEwMQtbNup5F2DEA13ZdATto0Y27K0qktTmUySBwIN7/mseYV38+oJ3rf+XEadftlKZdxkw0=
-X-Received: by 2002:a05:6512:2090:: with SMTP id t16mr8235457lfr.119.1632869157669;
- Tue, 28 Sep 2021 15:45:57 -0700 (PDT)
+        id S244647AbhI2Hhn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 29 Sep 2021 03:37:43 -0400
+Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:54920 "EHLO
+        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S244650AbhI2Hhn (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 29 Sep 2021 03:37:43 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R261e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0Uq.YZUB_1632900960;
+Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0Uq.YZUB_1632900960)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 29 Sep 2021 15:36:00 +0800
+Subject: Re: [PATCH 1/8] io-wq: code clean for io_wq_add_work_after()
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
+References: <20210927061721.180806-1-haoxu@linux.alibaba.com>
+ <20210927061721.180806-2-haoxu@linux.alibaba.com>
+ <ec45dd61-194b-3611-dcd6-2a5440099575@gmail.com>
+From:   Hao Xu <haoxu@linux.alibaba.com>
+Message-ID: <140f1e02-d400-b6c7-5c78-5eab6ac23f24@linux.alibaba.com>
+Date:   Wed, 29 Sep 2021 15:36:00 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.13.0
 MIME-Version: 1.0
-Sender: michealkevin122@gmail.com
-Received: by 2002:a05:6512:1285:0:0:0:0 with HTTP; Tue, 28 Sep 2021 15:45:56
- -0700 (PDT)
-From:   Aisha Al-Qaddafi <aisha.gdaffi24@gmail.com>
-Date:   Tue, 28 Sep 2021 23:45:56 +0100
-X-Google-Sender-Auth: mHD1vXp079aDJe5FJFfgor91cqw
-Message-ID: <CAKC2Uf5kbEg9hJ=LcP7vqxfKamPv8yUaJdfKWd0=79M5tcU=Pw@mail.gmail.com>
-Subject: My Dear Friend,
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <ec45dd61-194b-3611-dcd6-2a5440099575@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Assalamu alaikum,
-I came across your e-mail contact prior to a private search while in
-need of your assistance. I am Aisha Al-Qaddafi, the only biological,
-Daughter of Former President of Libya Col. Muammar Al-Qaddafi. Am a
-single Mother and a Widow with three Children. I have investment funds
-worth Twenty Seven Million Five Hundred Thousand United State Dollar
-($27.500.000.00 ) and i need a trusted  investment Manager/Partner
-because of my current refugee status, however, I am interested in you
-for investment project assistance in your country. If you are willing
-to handle this project on my behalf kindly reply urgently to enable me
-to provide you more information about the investment funds.
-Best Regards
+在 2021/9/28 下午7:08, Pavel Begunkov 写道:
+> On 9/27/21 7:17 AM, Hao Xu wrote:
+>> Remove a local variable.
+> 
+> It's there to help alias analysis, which usually can't do anything
+> with pointer heavy logic. Compare ASMs below, before and after
+> respectively:
+> 	testq	%rax, %rax	# next
+> 
+> replaced with
+> 	cmpq	$0, (%rdi)	#, node_2(D)->next
+> 
+> One extra memory dereference and a bigger binary
+> 
+> 
+> =====================================================
+> 
+> wq_list_add_after:
+> # fs/io_uring.c:271: 	struct io_wq_work_node *next = pos->next;
+> 	movq	(%rsi), %rax	# pos_3(D)->next, next
+> # fs/io_uring.c:273: 	pos->next = node;
+> 	movq	%rdi, (%rsi)	# node, pos_3(D)->next
+> # fs/io_uring.c:275: 	if (!next)
+> 	testq	%rax, %rax	# next
+> # fs/io_uring.c:274: 	node->next = next;
+> 	movq	%rax, (%rdi)	# next, node_5(D)->next
+> # fs/io_uring.c:275: 	if (!next)
+> 	je	.L5927	#,
+> 	ret	
+> .L5927:
+> # fs/io_uring.c:276: 		list->last = node;
+> 	movq	%rdi, 8(%rdx)	# node, list_8(D)->last
+> 	ret	
+> 
+> =====================================================
+> 
+> wq_list_add_after:
+> # fs/io-wq.h:48: 	node->next = pos->next;
+> 	movq	(%rsi), %rax	# pos_3(D)->next, _5
+> # fs/io-wq.h:48: 	node->next = pos->next;
+> 	movq	%rax, (%rdi)	# _5, node_2(D)->next
+> # fs/io-wq.h:49: 	pos->next = node;
+> 	movq	%rdi, (%rsi)	# node, pos_3(D)->next
+> # fs/io-wq.h:50: 	if (!node->next)
+> 	cmpq	$0, (%rdi)	#, node_2(D)->next
+hmm, this is definitely not good, not sure why this is not optimised to
+cmpq $0, %rax (haven't touched assembly for a long time..)
+> 	je	.L5924	#,
+> 	ret	
+> .L5924:
+> # fs/io-wq.h:51: 		list->last = node;
+> 	movq	%rdi, 8(%rdx)	# node, list_4(D)->last
+> 	ret	
+> 
+> 
+>>
+>> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
+>> ---
+>>   fs/io-wq.h | 6 ++----
+>>   1 file changed, 2 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/fs/io-wq.h b/fs/io-wq.h
+>> index bf5c4c533760..8369a51b65c0 100644
+>> --- a/fs/io-wq.h
+>> +++ b/fs/io-wq.h
+>> @@ -33,11 +33,9 @@ static inline void wq_list_add_after(struct io_wq_work_node *node,
+>>   				     struct io_wq_work_node *pos,
+>>   				     struct io_wq_work_list *list)
+>>   {
+>> -	struct io_wq_work_node *next = pos->next;
+>> -
+>> +	node->next = pos->next;
+>>   	pos->next = node;
+>> -	node->next = next;
+>> -	if (!next)
+>> +	if (!node->next)
+>>   		list->last = node;
+>>   }
+>>   
+>>
+> 
+

@@ -2,105 +2,73 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 89D3241C451
-	for <lists+io-uring@lfdr.de>; Wed, 29 Sep 2021 14:09:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 934E741C460
+	for <lists+io-uring@lfdr.de>; Wed, 29 Sep 2021 14:13:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343504AbhI2MK3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 29 Sep 2021 08:10:29 -0400
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:58658 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1343586AbhI2MK2 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 29 Sep 2021 08:10:28 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R731e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0Uq1TOFa_1632917325;
-Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0Uq1TOFa_1632917325)
+        id S1343709AbhI2MO4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 29 Sep 2021 08:14:56 -0400
+Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:38813 "EHLO
+        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1343700AbhI2MOw (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 29 Sep 2021 08:14:52 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0Uq1.5JF_1632917589;
+Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0Uq1.5JF_1632917589)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 29 Sep 2021 20:08:46 +0800
-Subject: Re: [PATCH 2/2] io_uring: fix tw list mess-up by adding tw while it's
- already in tw list
+          Wed, 29 Sep 2021 20:13:09 +0800
+Subject: Re: [PATCH RFC 5.13 1/2] io_uring: add support for ns granularity of
+ io_sq_thread_idle
 To:     Pavel Begunkov <asml.silence@gmail.com>,
         Jens Axboe <axboe@kernel.dk>
 Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <20210927123600.234405-1-haoxu@linux.alibaba.com>
- <20210927123600.234405-3-haoxu@linux.alibaba.com>
- <513c3482-0d46-fd6a-2ee5-fe2b0b060105@gmail.com>
+References: <1619616748-17149-1-git-send-email-haoxu@linux.alibaba.com>
+ <1619616748-17149-2-git-send-email-haoxu@linux.alibaba.com>
+ <7136bf4f-089f-25d5-eaf8-1f55b946c005@gmail.com>
+ <51308ac4-03b7-0f66-7f26-8678807195ca@linux.alibaba.com>
+ <96ef70e8-7abf-d820-3cca-0f8aedc969d8@gmail.com>
+ <0d781b5f-3d2d-5ad4-9ad3-8fabc994313a@linux.alibaba.com>
+ <11c738b2-8024-1870-d54b-79e89c5bea54@gmail.com>
+ <10358b7e-9eb3-290f-34b6-5f257e98bcb9@linux.alibaba.com>
+ <f9c93212-1bc9-5025-f96d-510bbde84e21@gmail.com>
 From:   Hao Xu <haoxu@linux.alibaba.com>
-Message-ID: <f5f8c56d-e616-1016-0be5-3ca5f1ea7d6c@linux.alibaba.com>
-Date:   Wed, 29 Sep 2021 20:08:45 +0800
+Message-ID: <5af509fe-b9f7-7913-defd-4d32d4f98f4e@linux.alibaba.com>
+Date:   Wed, 29 Sep 2021 20:13:09 +0800
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
  Gecko/20100101 Thunderbird/78.13.0
 MIME-Version: 1.0
-In-Reply-To: <513c3482-0d46-fd6a-2ee5-fe2b0b060105@gmail.com>
+In-Reply-To: <f9c93212-1bc9-5025-f96d-510bbde84e21@gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-在 2021/9/29 下午7:13, Pavel Begunkov 写道:
-> On 9/27/21 1:36 PM, Hao Xu wrote:
->> For multishot mode, there may be cases like:
->> io_poll_task_func()
->> -> add_wait_queue()
->>                              async_wake()
->>                              ->io_req_task_work_add()
->>                              this one mess up the running task_work list
->>                              since req->io_task_work.node is in use.
+在 2021/9/29 下午7:37, Pavel Begunkov 写道:
+> On 9/29/21 10:24 AM, Hao Xu wrote:
+>> 在 2021/9/28 下午6:51, Pavel Begunkov 写道:
+>>> On 9/26/21 11:00 AM, Hao Xu wrote:
+> [...]
+>>>> I'm gonna pick this one up again, currently this patch
+>>>> with ktime_get_ns() works good on our productions. This
+>>>> patch makes the latency a bit higher than before, but
+>>>> still lower than aio.
+>>>> I haven't gotten a faster alternate for ktime_get_ns(),
+>>>> any hints?
+>>>
+>>> Good, I'd suggest to look through Documentation/core-api/timekeeping.rst
+>>> In particular coarse variants may be of interest.
+>>> https://www.kernel.org/doc/html/latest/core-api/timekeeping.html#coarse-and-fast-ns-access
+>>>
+>> The coarse functions seems to be like jiffies, because they use the last
+>> timer tick(from the explanation in that doc, it seems the timer tick is
+>> in the same frequency as jiffies update). So I believe it is just
+>> another format of jiffies which is low accurate.
 > 
-> By the time req->io_task_work.func() is called, node->next is undefined
-> and free to use. io_req_task_work_add() will override it without looking
-> at a prior value and that's fine, as the calling code doesn't touch it
-> after the callback.
-I misunderstood the code, since node->next will be reset to NULL in
-wq_list_add_tail(), so no problem here.
-> 
->> similar situation for req->io_task_work.fallback_node.
->> Fix it by set node->next = NULL before we run the tw, so that when we
->> add req back to the wait queue in middle of tw running, we can safely
->> re-add it to the tw list.
-> 
-> I might be missing what is the problem you're trying to fix. Does the
-> above makes sense? It doesn't sound like node->next=NULL can solve
-> anything.
-> 
->> Fixes: 7cbf1722d5fc ("io_uring: provide FIFO ordering for task_work")
->> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
->> ---
->>   fs/io_uring.c | 11 ++++++++---
->>   1 file changed, 8 insertions(+), 3 deletions(-)
->>
->> diff --git a/fs/io_uring.c b/fs/io_uring.c
->> index d0b358b9b589..f667d6286438 100644
->> --- a/fs/io_uring.c
->> +++ b/fs/io_uring.c
->> @@ -1250,13 +1250,17 @@ static void io_fallback_req_func(struct work_struct *work)
->>   	struct io_ring_ctx *ctx = container_of(work, struct io_ring_ctx,
->>   						fallback_work.work);
->>   	struct llist_node *node = llist_del_all(&ctx->fallback_llist);
->> -	struct io_kiocb *req, *tmp;
->> +	struct io_kiocb *req;
->>   	bool locked = false;
->>   
->>   	percpu_ref_get(&ctx->refs);
->> -	llist_for_each_entry_safe(req, tmp, node, io_task_work.fallback_node)
->> +	req = llist_entry(node, struct io_kiocb, io_task_work.fallback_node);
->> +	while (member_address_is_nonnull(req, io_task_work.fallback_node)) {
->> +		node = req->io_task_work.fallback_node.next;
->> +		req->io_task_work.fallback_node.next = NULL;
->>   		req->io_task_work.func(req, &locked);
->> -
->> +		req = llist_entry(node, struct io_kiocb, io_task_work.fallback_node);
->> +	}
->>   	if (locked) {
->>   		io_submit_flush_completions(ctx);
->>   		mutex_unlock(&ctx->uring_lock);
->> @@ -2156,6 +2160,7 @@ static void tctx_task_work(struct callback_head *cb)
->>   				locked = mutex_trylock(&ctx->uring_lock);
->>   				percpu_ref_get(&ctx->refs);
->>   			}
->> +			node->next = NULL;
->>   			req->io_task_work.func(req, &locked);
->>   			node = next;
->>   		} while (node);
->>
+> I haven't looked into the details, but it seems that unlike jiffies for
+> the coarse mode 10ms (or whatever) is the worst case, but it _may_ be
+Maybe I'm wrong, but for jiffies, 10ms uis also the worst case, no?
+(say HZ = 100, then jiffies updated by 1 every 10ms)
+> much better on average and feasible for your case, but can't predict
+> if that's really the case in a real system and what will be the
+> relative error comparing to normal ktime_ns().
 > 
 

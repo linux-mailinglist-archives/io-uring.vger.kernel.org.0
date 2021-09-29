@@ -2,51 +2,51 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BFE8641C287
-	for <lists+io-uring@lfdr.de>; Wed, 29 Sep 2021 12:17:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A910041C288
+	for <lists+io-uring@lfdr.de>; Wed, 29 Sep 2021 12:18:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245426AbhI2KS4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 29 Sep 2021 06:18:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41286 "EHLO
+        id S245351AbhI2KTL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 29 Sep 2021 06:19:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41356 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245492AbhI2KSo (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 29 Sep 2021 06:18:44 -0400
-Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 586F8C061774
-        for <io-uring@vger.kernel.org>; Wed, 29 Sep 2021 03:17:03 -0700 (PDT)
-Received: by mail-pg1-x543.google.com with SMTP id k24so2185666pgh.8
-        for <io-uring@vger.kernel.org>; Wed, 29 Sep 2021 03:17:03 -0700 (PDT)
+        with ESMTP id S245527AbhI2KSw (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 29 Sep 2021 06:18:52 -0400
+Received: from mail-pg1-x52e.google.com (mail-pg1-x52e.google.com [IPv6:2607:f8b0:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94F0EC06161C
+        for <io-uring@vger.kernel.org>; Wed, 29 Sep 2021 03:17:07 -0700 (PDT)
+Received: by mail-pg1-x52e.google.com with SMTP id 133so2214599pgb.1
+        for <io-uring@vger.kernel.org>; Wed, 29 Sep 2021 03:17:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amikom.ac.id; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=64oltCodKf44bJxLNVzYR4wYlpdw5wVyn85onY1bk3o=;
-        b=RhopWrkUShn7Qiemgj6TKPrdW/UAYUSYvmTIeW6E+lxJAOwt7TvzjMzU80GY3P9KXo
-         nRYIVqufGL81S51JfJRTmQG1qNCCTsx2cYEl+sXc5vopr40NammyKtfqBI/phgofuZzg
-         j1LxrQsLzH1bpmI1n2Dgz/btFQxQKGHGR3RG/4xOmZpdn5EHb+Db/2KrjWvXw2tlXi/C
-         zer5B2YXNPKBcU3rD08EQCX4Gk+10ckd0i7Q3wVikrhNQO9nC1A1XLF6Ejk4HDGgInlX
-         zLSpX/NT8mQ7owcUTkkwKOpSZCk98k0Sivw4bYfp0MPY0LIPRfOXyQ2gVncO+xNVUIx5
-         IMjQ==
+        bh=MFQgDk8mbszwP/XZDQ50oeWvtfgsBw8oAJUU0ivlq5g=;
+        b=TCFylJpPnhE3Guv1QwOgkZaolIrNhF25X9kZ3r85NeY/nQb6C5NEi6xWfHRzmY5PuJ
+         lcXQI1G3sneaScJh0U2um+VDP4p+UvCqW0lvtpXW1IYzOF2Guf9Ml3vVX5eVkK7oLBz6
+         TuWAr/fmVnCMkzV38jASCetriX311pi2rp/svdZb28e9JmrRhOBL5ssmeAahFW53odav
+         Z/PCMp2lodKG+QUBRrCWC5LXbc+l4LYy3M2cTUMy9sbAMcz1Tcr7OZMcT2oPwJrzuR7y
+         8JYLsFTYkj80k8ddlquoW9HfbuzTGbDa2CIC3ptvIQEOkFpUooXda0myYTinKTBHm4jn
+         wR2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=64oltCodKf44bJxLNVzYR4wYlpdw5wVyn85onY1bk3o=;
-        b=iIBtXCnQSDGDxvcIwp3t2zIqjG17IJ9jS2EmrKfyZYX3oAxhTS19JMM1sCLINOE/4B
-         CsN01KDUiTWFdZGeg4kbd40efbSkXToWPY+1HJt7oBV2BouvQ0fVSe0a+ZwVx0C1O7YA
-         SKR9e9wxACriWWeWpyGEC1AjWxnAuZdvwRUZ1WL2E18jJ/dRi/ney4A0ksiJKD0CCyFO
-         z6CIeGVtN3d9GzvrW/hyIA93V5xSCYDAnAg/KexdUMH27HPBZ9yCG18VzkftAzX1dlK+
-         c8//QKvf71K1SMSi3f1/qqBobbkb/QvOgm0KYj/M2Fuww4hrEAcJKB0s8KQ6Vq9p8lzO
-         6EBA==
-X-Gm-Message-State: AOAM5313mTfuM7T4m6W4V75LAENx5PO+Ifaw+AcQWOkQzBtrCqkotWs5
-        12pEeRaVW5AIH/wUo+G12vOtaKtQ+ZN3S41Q460w94fS
-X-Google-Smtp-Source: ABdhPJxEstP15BWa7y/cdGvF7wgeqlonZgjaF9OJx+qpwFq0jvvEv+IodkEsRdNuFq9yYWkh8gb3fg==
-X-Received: by 2002:a63:4606:: with SMTP id t6mr8759385pga.388.1632910622868;
-        Wed, 29 Sep 2021 03:17:02 -0700 (PDT)
+        bh=MFQgDk8mbszwP/XZDQ50oeWvtfgsBw8oAJUU0ivlq5g=;
+        b=dWi41HMfOPnoJPLMUs1nOaNQNcQFnbatRnnG9QYW+nNLcBvYRA+N7bRBQxW+8KXSyL
+         A/a0m3IY/b5GmZKPYlvptPLxGdn+2EFhJnOiMIhdlEef8vq4dOgBeNJVHkw2WsbuWgd5
+         DoAVdcmC9cXpjF7d0Z5GjkvBw6ytRy9RXRuXDV76087JRiHVQAJ9hFfjvpTn0mDxVKxJ
+         KG2t1PlPPCBM3gTR11UULPE9CjXZpDxod+ksGFfqLQM2vZLwoU5Qqc4z9AbuXIe2C2QL
+         8/UJb+88QXhXIwOWkgJMkk3UOXlD9Z3oJwDzJbrNASuJvRJN/sB8ebrJ1pdVHL7VlhLI
+         6hyA==
+X-Gm-Message-State: AOAM531WZ80LZuX/4vd1d+mLS1ErNIkFIhHa8NR0XXd4sWc+iNiGsjgM
+        quQ6023Wvdkapvid47rx+1ex4w==
+X-Google-Smtp-Source: ABdhPJwmVpOOth/0vFWWgTZxnp1oYDV+Jir8PFZQcUA7ZKA5NrDcp7IY+k+v9SZA4zkrXenTRqr/2w==
+X-Received: by 2002:a62:7dd3:0:b0:438:a22:a49c with SMTP id y202-20020a627dd3000000b004380a22a49cmr10084005pfc.44.1632910627156;
+        Wed, 29 Sep 2021 03:17:07 -0700 (PDT)
 Received: from integral.. ([68.183.184.174])
-        by smtp.gmail.com with ESMTPSA id f16sm2001512pfk.110.2021.09.29.03.17.00
+        by smtp.gmail.com with ESMTPSA id f16sm2001512pfk.110.2021.09.29.03.17.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Sep 2021 03:17:02 -0700 (PDT)
+        Wed, 29 Sep 2021 03:17:06 -0700 (PDT)
 From:   Ammar Faizi <ammar.faizi@students.amikom.ac.id>
 To:     Jens Axboe <axboe@kernel.dk>,
         Pavel Begunkov <asml.silence@gmail.com>
@@ -54,9 +54,9 @@ Cc:     io-uring Mailing List <io-uring@vger.kernel.org>,
         Louvian Lyndal <louvianlyndal@gmail.com>,
         Ammar Faizi <ammarfaizi2@gmail.com>,
         Ammar Faizi <ammar.faizi@students.amikom.ac.id>
-Subject: [PATCHSET v1 RFC liburing 2/6] Add kernel error header `src/kernel_err.h`
-Date:   Wed, 29 Sep 2021 17:16:02 +0700
-Message-Id: <20210929101606.62822-3-ammar.faizi@students.amikom.ac.id>
+Subject: [PATCHSET v1 RFC liburing 3/6] Add `liburing_mmap()` and `liburing_munmap()`
+Date:   Wed, 29 Sep 2021 17:16:03 +0700
+Message-Id: <20210929101606.62822-4-ammar.faizi@students.amikom.ac.id>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210929101606.62822-1-ammar.faizi@students.amikom.ac.id>
 References: <20210929101606.62822-1-ammar.faizi@students.amikom.ac.id>
@@ -66,108 +66,163 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-We take the `include/linux/err.h` file from Linux kernel with a bit
-modification.
+Do not use `mmap()` and `mumap()` directly from the libc in the
+liburing internal sources. Wrap them in `src/syscall.c`. This is the
+part of implementing the kernel style return value (which later is
+supposed to support no libc environment).
 
-The purpose of this file is to use `PTR_ERR()`, `ERR_PTR()`, and
-similar stuff to implement the kernel style return value which is
-discussed at [1].
+`liburing_mmap()` and `liburing_munmap()` do the same thing with
+`mmap()` and `munmap()` from the libc. The only different is when
+error happens, the return value is of `liburing_{mmap,munmap}()` will
+be a negative error code.
 
-The small modification summary:
-  1) Add `__must_check` attribute macro.
-  2) `#include <liburing.h>` to take the `uring_likely` and
-     `uring_unlikely` macros.
-
-This file is licensed under the GPL-2.0.
-
-Link: https://github.com/axboe/liburing/issues/443 [1]
 Signed-off-by: Ammar Faizi <ammar.faizi@students.amikom.ac.id>
 ---
- src/kernel_err.h | 75 ++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 75 insertions(+)
- create mode 100644 src/kernel_err.h
+ src/setup.c   | 37 +++++++++++++++++++++----------------
+ src/syscall.c | 23 +++++++++++++++++++++++
+ src/syscall.h |  5 +++++
+ 3 files changed, 49 insertions(+), 16 deletions(-)
 
-diff --git a/src/kernel_err.h b/src/kernel_err.h
-new file mode 100644
-index 0000000..b9ea5fe
---- /dev/null
-+++ b/src/kernel_err.h
-@@ -0,0 +1,75 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _LINUX_ERR_H
-+#define _LINUX_ERR_H
+diff --git a/src/setup.c b/src/setup.c
+index edfe94e..01cb151 100644
+--- a/src/setup.c
++++ b/src/setup.c
+@@ -15,12 +15,13 @@
+ #include "liburing.h"
+ 
+ #include "syscall.h"
++#include "kernel_err.h"
+ 
+ static void io_uring_unmap_rings(struct io_uring_sq *sq, struct io_uring_cq *cq)
+ {
+-	munmap(sq->ring_ptr, sq->ring_sz);
++	liburing_munmap(sq->ring_ptr, sq->ring_sz);
+ 	if (cq->ring_ptr && cq->ring_ptr != sq->ring_ptr)
+-		munmap(cq->ring_ptr, cq->ring_sz);
++		liburing_munmap(cq->ring_ptr, cq->ring_sz);
+ }
+ 
+ static int io_uring_mmap(int fd, struct io_uring_params *p,
+@@ -37,19 +38,22 @@ static int io_uring_mmap(int fd, struct io_uring_params *p,
+ 			sq->ring_sz = cq->ring_sz;
+ 		cq->ring_sz = sq->ring_sz;
+ 	}
+-	sq->ring_ptr = mmap(0, sq->ring_sz, PROT_READ | PROT_WRITE,
+-			MAP_SHARED | MAP_POPULATE, fd, IORING_OFF_SQ_RING);
+-	if (sq->ring_ptr == MAP_FAILED)
+-		return -errno;
++	sq->ring_ptr = liburing_mmap(0, sq->ring_sz, PROT_READ | PROT_WRITE,
++				     MAP_SHARED | MAP_POPULATE, fd,
++				     IORING_OFF_SQ_RING);
++	if (IS_ERR(sq->ring_ptr))
++		return PTR_ERR(sq->ring_ptr);
+ 
+ 	if (p->features & IORING_FEAT_SINGLE_MMAP) {
+ 		cq->ring_ptr = sq->ring_ptr;
+ 	} else {
+-		cq->ring_ptr = mmap(0, cq->ring_sz, PROT_READ | PROT_WRITE,
+-				MAP_SHARED | MAP_POPULATE, fd, IORING_OFF_CQ_RING);
+-		if (cq->ring_ptr == MAP_FAILED) {
++		cq->ring_ptr = liburing_mmap(0, cq->ring_sz,
++					     PROT_READ | PROT_WRITE,
++					     MAP_SHARED | MAP_POPULATE, fd,
++					     IORING_OFF_CQ_RING);
++		if (IS_ERR(cq->ring_ptr)) {
++			ret = PTR_ERR(cq->ring_ptr);
+ 			cq->ring_ptr = NULL;
+-			ret = -errno;
+ 			goto err;
+ 		}
+ 	}
+@@ -63,11 +67,11 @@ static int io_uring_mmap(int fd, struct io_uring_params *p,
+ 	sq->array = sq->ring_ptr + p->sq_off.array;
+ 
+ 	size = p->sq_entries * sizeof(struct io_uring_sqe);
+-	sq->sqes = mmap(0, size, PROT_READ | PROT_WRITE,
+-				MAP_SHARED | MAP_POPULATE, fd,
+-				IORING_OFF_SQES);
+-	if (sq->sqes == MAP_FAILED) {
+-		ret = -errno;
++	sq->sqes = liburing_mmap(0, size, PROT_READ | PROT_WRITE,
++				 MAP_SHARED | MAP_POPULATE, fd,
++				 IORING_OFF_SQES);
++	if (IS_ERR(sq->sqes)) {
++		ret = PTR_ERR(sq->sqes);
+ err:
+ 		io_uring_unmap_rings(sq, cq);
+ 		return ret;
+@@ -173,7 +177,8 @@ void io_uring_queue_exit(struct io_uring *ring)
+ 	struct io_uring_sq *sq = &ring->sq;
+ 	struct io_uring_cq *cq = &ring->cq;
+ 
+-	munmap(sq->sqes, *sq->kring_entries * sizeof(struct io_uring_sqe));
++	liburing_munmap(sq->sqes,
++			*sq->kring_entries * sizeof(struct io_uring_sqe));
+ 	io_uring_unmap_rings(sq, cq);
+ 	close(ring->ring_fd);
+ }
+diff --git a/src/syscall.c b/src/syscall.c
+index 0ecc17b..cb48a94 100644
+--- a/src/syscall.c
++++ b/src/syscall.c
+@@ -8,9 +8,12 @@
+ #include <unistd.h>
+ #include <sys/syscall.h>
+ #include <sys/uio.h>
++#include <sys/mman.h>
 +
-+#include <linux/types.h>
+ #include "liburing/compat.h"
+ #include "liburing/io_uring.h"
+ #include "syscall.h"
++#include "kernel_err.h"
+ 
+ #ifdef __alpha__
+ /*
+@@ -110,3 +113,23 @@ int ____sys_io_uring_enter(int fd, unsigned to_submit, unsigned min_complete,
+ 	return ____sys_io_uring_enter2(fd, to_submit, min_complete, flags, sig,
+ 				       _NSIG / 8);
+ }
 +
-+#include <asm/errno.h>
-+
-+#include <stdbool.h>
-+#include <liburing.h>
-+
-+/*
-+ * Kernel pointers have redundant information, so we can use a
-+ * scheme where we can return either an error code or a normal
-+ * pointer with the same return value.
-+ *
-+ * This should be a per-architecture thing, to allow different
-+ * error and pointer decisions.
-+ */
-+#define MAX_ERRNO	4095
-+
-+#ifndef __ASSEMBLY__
-+
-+#define IS_ERR_VALUE(x) uring_unlikely((unsigned long)(void *)(x) >= (unsigned long)-MAX_ERRNO)
-+
-+/*
-+ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-warn_005funused_005fresult-function-attribute
-+ * clang: https://clang.llvm.org/docs/AttributeReference.html#nodiscard-warn-unused-result
-+ */
-+#define __must_check __attribute__((__warn_unused_result__))
-+
-+static inline void * __must_check ERR_PTR(long error)
++void *liburing_mmap(void *addr, size_t length, int prot, int flags, int fd,
++		    off_t offset)
 +{
-+	return (void *) error;
++	void *ret;
++
++	ret = mmap(addr, length, prot, flags, fd, offset);
++	if (ret == MAP_FAILED)
++		ret = ERR_PTR(-errno);
++
++	return ret;
 +}
 +
-+static inline long __must_check PTR_ERR(const void *ptr)
++int liburing_munmap(void *addr, size_t length)
 +{
-+	return (long) ptr;
++	int ret;
++
++	ret = munmap(addr, length);
++	return (ret < 0) ? -errno : ret;
 +}
+diff --git a/src/syscall.h b/src/syscall.h
+index 8cd2d4c..feccf67 100644
+--- a/src/syscall.h
++++ b/src/syscall.h
+@@ -3,6 +3,7 @@
+ #define LIBURING_SYSCALL_H
+ 
+ #include <signal.h>
++#include "kernel_err.h"
+ 
+ struct io_uring_params;
+ 
+@@ -25,4 +26,8 @@ int ____sys_io_uring_enter2(int fd, unsigned to_submit, unsigned min_complete,
+ int ____sys_io_uring_register(int fd, unsigned int opcode, const void *arg,
+ 			      unsigned int nr_args);
+ 
++void *liburing_mmap(void *addr, size_t length, int prot, int flags, int fd,
++		    off_t offset);
++int liburing_munmap(void *addr, size_t length);
 +
-+static inline bool __must_check IS_ERR(const void *ptr)
-+{
-+	return IS_ERR_VALUE((unsigned long)ptr);
-+}
-+
-+static inline bool __must_check IS_ERR_OR_NULL(const void *ptr)
-+{
-+	return uring_unlikely(!ptr) || IS_ERR_VALUE((unsigned long)ptr);
-+}
-+
-+/**
-+ * ERR_CAST - Explicitly cast an error-valued pointer to another pointer type
-+ * @ptr: The pointer to cast.
-+ *
-+ * Explicitly cast an error-valued pointer to another pointer type in such a
-+ * way as to make it clear that's what's going on.
-+ */
-+static inline void * __must_check ERR_CAST(const void *ptr)
-+{
-+	/* cast away the const */
-+	return (void *) ptr;
-+}
-+
-+static inline int __must_check PTR_ERR_OR_ZERO(const void *ptr)
-+{
-+	if (IS_ERR(ptr))
-+		return PTR_ERR(ptr);
-+	else
-+		return 0;
-+}
-+
-+#endif /* #ifndef __ASSEMBLY__ */
-+
-+#endif /* #ifndef _LINUX_ERR_H */
+ #endif
 -- 
 2.30.2
 

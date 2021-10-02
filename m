@@ -2,120 +2,106 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C3C941F944
-	for <lists+io-uring@lfdr.de>; Sat,  2 Oct 2021 03:53:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D691541F94A
+	for <lists+io-uring@lfdr.de>; Sat,  2 Oct 2021 04:06:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232334AbhJBByy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 1 Oct 2021 21:54:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41626 "EHLO
+        id S232380AbhJBCHt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 1 Oct 2021 22:07:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44410 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232329AbhJBByy (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 1 Oct 2021 21:54:54 -0400
-Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19922C061775
-        for <io-uring@vger.kernel.org>; Fri,  1 Oct 2021 18:53:09 -0700 (PDT)
-Received: by mail-pl1-x634.google.com with SMTP id x4so7402417pln.5
-        for <io-uring@vger.kernel.org>; Fri, 01 Oct 2021 18:53:09 -0700 (PDT)
+        with ESMTP id S232278AbhJBCHs (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 1 Oct 2021 22:07:48 -0400
+Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE463C061775
+        for <io-uring@vger.kernel.org>; Fri,  1 Oct 2021 19:06:03 -0700 (PDT)
+Received: by mail-io1-xd34.google.com with SMTP id n71so13830435iod.0
+        for <io-uring@vger.kernel.org>; Fri, 01 Oct 2021 19:06:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amikom.ac.id; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=k7qoYGc8RfOYlXJq+zVDzZKk/zkMWH2ad6cuIXegfdY=;
-        b=ZUPkkknt1qxqIWfldpv+4O+BWqS/4l5pa7U3qc9QnVGPMKDgjR17rmnN/poNGFBgBI
-         YPmRenxGjdMKUwbKOkbva8kCJhGUj6k49c/o9ESrxRAQznv3lvOPrm2DVR0QuSu57LCd
-         UNqhvzpqcFZWsQSRyRPTtni0fhIxOz64bQaMW5yVUE/PPxTcVcdQrIiORlySf+q5Ttdj
-         Vg2kCXJgGDWyR7dhFST452Sy3EKtNcSkc3/BqlcjW4GIvldeJ4ndxkifvJjH2fe52tee
-         o6oiLBmjCi5W4NPQ3TbAVpY7Mol3rVOWnbyvcgF4fsRK2Sq8IVtBVtUR5Et1igrTjn/m
-         fNyA==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=from:subject:to:cc:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=9GxyXrxkG4P9XbDCbHpWzWcwlvlTFbTdmmi5BAfT/5o=;
+        b=VdEbxWIBVh3fMECFAy8NJZU76wRwQ2JNfvmSMriJNWTa5kM7zzSrFfoMvwVx2/XoDv
+         OK6clPgjAcFFMTAZ38A3Jw0J9wmfLopOgTK2H8ZavW4dmakyXDUSueTlPuiIeTGFx52l
+         2pDvXIi3EEx8TvyhFDTc5A1VqCZiKxP4QrvJdntKqIsMIz/Rw4mAho6aXRxQURf1H0Io
+         +7gFqWDxC2wSoRIqPFbRjaOPJjWxEGfhWCDRf6zAbRbRw1bxx1nmxl8KqRj9Ij0IQOUf
+         C6QgArUnf7pjRO8dETUKuHilhpu7kKgzWgiG3E9IB3sV/UFvjVNDyCgXJLamAsGEpCou
+         O4Ew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=k7qoYGc8RfOYlXJq+zVDzZKk/zkMWH2ad6cuIXegfdY=;
-        b=wyHVWGLMgpCd38/ntYUAhgvuTfbd1JQbuncVvfDtjNbDUCXaVV45d+n9/aWPq96RhY
-         +nL/33Se3kZr6kqr396WeFpVYszB5RSS4nf+lKZo69vkJRiLlKI2/NJVFlkdporbU9NU
-         PEVzRbBk26vIj7D1hkviPbPm4+RBve8KL/Cn5/RjRW1683K2bsfyjO35l4FMrFvn94wu
-         /Q/ZoAXWIMO6QuK+nWqxhjffrkdYiSAVGkrPd84IdbKGxOqDpiYMiGYLK+ANRlvlXiCw
-         IlvaJyKc25yR4yQjja3qK66dn//hX77mjWdZoRNgfB6OxuikkY2cJFWWssfRzY/H/ieK
-         94bg==
-X-Gm-Message-State: AOAM531xxt8E0ioJvIvONCt7Z8f6MKM1gYqi430UOohw6AunqUimgutz
-        xN6zwqhomztLT6MG5pVM2uJYIg==
-X-Google-Smtp-Source: ABdhPJwVhCqArvitOU/88tgyHXYmZlsBTorNoBmTdrVF41bXjm7imf/OmBVIFLJ03lZ+GAIiaAJeyw==
-X-Received: by 2002:a17:90a:7602:: with SMTP id s2mr23068645pjk.197.1633139588639;
-        Fri, 01 Oct 2021 18:53:08 -0700 (PDT)
-Received: from integral.. ([182.2.69.211])
-        by smtp.gmail.com with ESMTPSA id u4sm6989804pfn.190.2021.10.01.18.53.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Oct 2021 18:53:08 -0700 (PDT)
-From:   Ammar Faizi <ammar.faizi@students.amikom.ac.id>
-To:     Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Cc:     Ammar Faizi <ammarfaizi2@gmail.com>,
-        io-uring Mailing List <io-uring@vger.kernel.org>,
-        Bedirhan KURT <windowz414@gnuweeb.org>,
-        Louvian Lyndal <louvianlyndal@gmail.com>,
-        Ammar Faizi <ammar.faizi@students.amikom.ac.id>
-Subject: [PATCH v3 RFC liburing 4/4] src/{queue,register,setup}: Remove `#include <errno.h>`
-Date:   Sat,  2 Oct 2021 08:48:29 +0700
-Message-Id: <20211002014829.109096-5-ammar.faizi@students.amikom.ac.id>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20211002014829.109096-1-ammar.faizi@students.amikom.ac.id>
-References: <20211002014829.109096-1-ammar.faizi@students.amikom.ac.id>
+        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=9GxyXrxkG4P9XbDCbHpWzWcwlvlTFbTdmmi5BAfT/5o=;
+        b=pCBy7Q3+uhsIxX/NbvYraF6oZM8pZuWDZRn6ag5r16D+6GqU5KOQSy4o/WUnLyBC/v
+         q1vRx6Kd+2y1BYmR321WfTWfN1C1U5NpUbyhg4R9Oz/CC4sFOwwzDVERrWEgjc4k1Z3w
+         lT8iRO/2CXm0ytV7Ce4mfbKHADk3KJCVm19U1nh4kCcsRJPTBRMyM1T1KcEBBskN4o9M
+         KFGe33fV2cKnGZVQ6YTQGlAs1+LDcA0mm8euYvcIy3uJtsMucjRX38VXJUN0NG0pbkLq
+         IId0O4MGJ6atyPqjq7UlB3yvWNgx/nORzLsvMRnJ2OFMNgszll5EHabtsMcMNUVTQX51
+         NwTQ==
+X-Gm-Message-State: AOAM532akplM6EFwJbIVdp7zGfl2/96FAUyQ1urB3a1M8XQbDDhxUb8S
+        KRwloI7ZcL4XVaLQPoENWhz2y/G+HHLS9A==
+X-Google-Smtp-Source: ABdhPJx8xoziPs8unAGe+8H6PCHrvbdJyltYzVEhMxH6EW6FyM9J+0I6rISUZ7szF8MO89VMu1HT3Q==
+X-Received: by 2002:a5e:c101:: with SMTP id v1mr869211iol.90.1633140362638;
+        Fri, 01 Oct 2021 19:06:02 -0700 (PDT)
+Received: from [192.168.1.116] ([66.219.217.159])
+        by smtp.gmail.com with ESMTPSA id b6sm4251238iod.55.2021.10.01.19.06.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Oct 2021 19:06:02 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring fixes for 5.15-rc4
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     io-uring <io-uring@vger.kernel.org>
+Message-ID: <4aecbb63-a279-0fcc-3c8f-418c32b52810@kernel.dk>
+Date:   Fri, 1 Oct 2021 20:06:01 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-We don't need `#include <errno.h>` in these files anymore. For now,
-`errno` variable is only allowed to be used in `src/syscall.h` to
-make it possible to remove the dependency of `errno` variable.
+Hi Linus,
 
-Cc: Bedirhan KURT <windowz414@gnuweeb.org>
-Cc: Louvian Lyndal <louvianlyndal@gmail.com>
-Signed-off-by: Ammar Faizi <ammar.faizi@students.amikom.ac.id>
----
- src/queue.c    | 1 -
- src/register.c | 1 -
- src/setup.c    | 1 -
- 3 files changed, 3 deletions(-)
+Two fixes in here:
 
-diff --git a/src/queue.c b/src/queue.c
-index e85ea1d..24ff8bc 100644
---- a/src/queue.c
-+++ b/src/queue.c
-@@ -5,7 +5,6 @@
- #include <sys/stat.h>
- #include <sys/mman.h>
- #include <unistd.h>
--#include <errno.h>
- #include <string.h>
- #include <stdbool.h>
- 
-diff --git a/src/register.c b/src/register.c
-index 770a672..43964a4 100644
---- a/src/register.c
-+++ b/src/register.c
-@@ -5,7 +5,6 @@
- #include <sys/stat.h>
- #include <sys/mman.h>
- #include <unistd.h>
--#include <errno.h>
- #include <string.h>
- 
- #include "liburing/compat.h"
-diff --git a/src/setup.c b/src/setup.c
-index 7476e1e..f873443 100644
---- a/src/setup.c
-+++ b/src/setup.c
-@@ -4,7 +4,6 @@
- #include <sys/types.h>
- #include <sys/stat.h>
- #include <unistd.h>
--#include <errno.h>
- #include <string.h>
- #include <stdlib.h>
- #include <signal.h>
+- The signal issue that was discussed start of this week (me).
+
+- Kill dead fasync support in io_uring. Looks like it was broken since
+  io_uring was initially merged, and given that nobody has ever
+  complained about it, let's just kill it (Pavel).
+
+Please pull!
+
+
+The following changes since commit 7df778be2f61e1a23002d1f2f5d6aaf702771eb8:
+
+  io_uring: make OP_CLOSE consistent with direct open (2021-09-24 14:07:54 -0600)
+
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux-block.git tags/io_uring-5.15-2021-10-01
+
+for you to fetch changes up to 3f008385d46d3cea4a097d2615cd485f2184ba26:
+
+  io_uring: kill fasync (2021-10-01 11:16:02 -0600)
+
+----------------------------------------------------------------
+io_uring-5.15-2021-10-01
+
+----------------------------------------------------------------
+Jens Axboe (1):
+      io-wq: exclusively gate signal based exit on get_signal() return
+
+Pavel Begunkov (1):
+      io_uring: kill fasync
+
+ fs/io-wq.c    |  5 +----
+ fs/io_uring.c | 17 ++---------------
+ 2 files changed, 3 insertions(+), 19 deletions(-)
+
 -- 
-2.30.2
+Jens Axboe
 

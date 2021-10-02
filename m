@@ -2,81 +2,73 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 77C4341F929
-	for <lists+io-uring@lfdr.de>; Sat,  2 Oct 2021 03:28:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9707F41F92A
+	for <lists+io-uring@lfdr.de>; Sat,  2 Oct 2021 03:29:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230262AbhJBBal (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 1 Oct 2021 21:30:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36328 "EHLO
+        id S231904AbhJBBbI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 1 Oct 2021 21:31:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230255AbhJBBak (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 1 Oct 2021 21:30:40 -0400
-Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F2FFC061775
-        for <io-uring@vger.kernel.org>; Fri,  1 Oct 2021 18:28:55 -0700 (PDT)
-Received: by mail-pf1-x42e.google.com with SMTP id s55so8347658pfw.4
-        for <io-uring@vger.kernel.org>; Fri, 01 Oct 2021 18:28:55 -0700 (PDT)
+        with ESMTP id S230255AbhJBBbI (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 1 Oct 2021 21:31:08 -0400
+Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC81DC061775
+        for <io-uring@vger.kernel.org>; Fri,  1 Oct 2021 18:29:22 -0700 (PDT)
+Received: by mail-pl1-x629.google.com with SMTP id x4so7377407pln.5
+        for <io-uring@vger.kernel.org>; Fri, 01 Oct 2021 18:29:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amikom.ac.id; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wj20u24XpWc7LHuF6SioybL0Cy22FbnTxnMExkxdniA=;
-        b=HkK1+m3OFTz/MtQQ+nRjtxX80TfnBqJHPW89H+Jn2Qud+LQ32hrJi2tCUwGRO9p1v7
-         RAxkkEeF2WzKMvjAB6zXJy5/L/RcArZVOCVNdm78Tr2ciVoELcfG78XJi+yRsuaWaQvP
-         wDcXQbKJE8Yd/MhC94aw1A+BPxuj82U/gKXFGhJDSldMPaL5fRF5M5jy1Bt9bsRgl4s6
-         alj8ryajh68s0Jo8BNGeuuHKlKlQ3FPA86wCBHS4cgXPxCz3VX+yX3FBd/ZA4ziJ1WI8
-         1+yatXuudge3q5fu8AAl7o4bl+lt5RQwb7wP8BE1aqhECjwPWtoDTXkxQvxUlKdeK5TZ
-         v4cg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=n59o9XNcHfUxT95mwLLDOSF+fK2tB71OB69oeAiTLM8=;
+        b=UTGvTKvjdQyuAZhaHMXluuXm3uy/bwdZyq4Ua6FUsFrOnhns5muPYITRzupzfuog99
+         Yypf3iw74fjfAaMqiZtpzIiOJ0EQlcQextL9punRVZObtn+hWn77mugSQjjCAoFmqTGX
+         e0V66GsjX+0nzkq0uVUcW0bukPYSbXmHBNitfYvczhyNGOqVnG40MmiUsCQuAOzVEvSd
+         uskkG94QjL6ghk4lNrWr9XDnF9w7AkjAtSPakl/UisNWOcENrvoPFAaA50uIpKvDMY1S
+         04OUYiwVFlOqqL9053iZJDVhlwfwFXF+KbnZJfTj+t0b294kVvLoMvJmVPJWgCNdldCi
+         6IEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wj20u24XpWc7LHuF6SioybL0Cy22FbnTxnMExkxdniA=;
-        b=cc4XBTImr3lhd15QafWS2NE5itYDGzsnuVYZfV6MHkUe286aVRzUfEFgACu/Sw5Kt8
-         SWtDg0TQeTPCpplo9t5BkBqQNrsxeajGsSVJy2gbfqfI9akmPW7JE2Bk2NmjuGoXMoRe
-         4ccRaGRoNyClVCC4h8DrUtHlZZHUxU6xewM14MTAicqCj8wPpjZ3P+MMqlxwBhroqVQJ
-         PPCoAFvcXoIZwCSz5lcqIOfxUTNSkUiinAt/LHuyXCU7X8H7ELIj2fPqUtT08Lu5pAd/
-         RC9r87a3aqJeblDcVdlmFyXx8B9xg7/gULoeUOj1PnCz+vBCn5eVNw78ronWUSswLmya
-         mkUQ==
-X-Gm-Message-State: AOAM531pJ+UyK6Y7huVw/+U61L8Sm/kGGLocYPm++NmCBtIlvg+1knRM
-        5fOYS9dT5GTacH9VuNV1E0akhg==
-X-Google-Smtp-Source: ABdhPJz3YBEDJOH4tD7Ld6Q3yTV6wErFGw3n64sXwxnMgcDaUAaJEh6vK4pSvmR1LEqo+D4c6MoQdQ==
-X-Received: by 2002:a63:4607:: with SMTP id t7mr934853pga.332.1633138134541;
-        Fri, 01 Oct 2021 18:28:54 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=n59o9XNcHfUxT95mwLLDOSF+fK2tB71OB69oeAiTLM8=;
+        b=T8cwOMcOJms3YXMLSfeELOqvI69TQogBwdRsvtpc/2xPumLnWaHvWQMLx/d/PIiyLR
+         NSDmp93deN/scBKZee3G5eNN+Ca9X2IC6RDR5YNoko86WGQcgHBJoeGzyU/gwB42eQ8n
+         ctyA5ub9RMjhCPyq0vO1nRrzfXb7Q+EQetKPBEG9XxISEgSnTobcPcYN1itsXQCODtYt
+         LDt2iWBdf9TD4AN/s3wnV/4jZtqzW0PainW3qM+v3mwc3zLHb9amnvh/cmAVxO10md+1
+         u87HzgKw8fqKxEDdVQnH7DBWtt1Or0H0MKCuNRdhppgfastp43Dv7oy2pCrVWNWoLgqJ
+         8sBA==
+X-Gm-Message-State: AOAM532S5xwN/6Mg28+OV3LZstT0h3mGkRc0qrwQn9JZQf3rQ9zuLCv+
+        k1zj1GTTkdQbmfj/Ga/1+TM1Kg==
+X-Google-Smtp-Source: ABdhPJw5+Q0VNUCp6XqQ2ZRHcrmJxcSWBnzCF1HgJS2gquj1ivg06kVpM7q7hP30ZuypFpGn935yHA==
+X-Received: by 2002:a17:90a:14c4:: with SMTP id k62mr16573380pja.154.1633138162041;
+        Fri, 01 Oct 2021 18:29:22 -0700 (PDT)
 Received: from integral.. ([182.2.69.211])
-        by smtp.gmail.com with ESMTPSA id b13sm867654pjl.15.2021.10.01.18.28.51
+        by smtp.gmail.com with ESMTPSA id b13sm867654pjl.15.2021.10.01.18.29.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Oct 2021 18:28:53 -0700 (PDT)
+        Fri, 01 Oct 2021 18:29:21 -0700 (PDT)
 From:   Ammar Faizi <ammar.faizi@students.amikom.ac.id>
 To:     Jens Axboe <axboe@kernel.dk>,
         Pavel Begunkov <asml.silence@gmail.com>
 Cc:     Ammar Faizi <ammarfaizi2@gmail.com>,
         io-uring Mailing List <io-uring@vger.kernel.org>,
         Bedirhan KURT <windowz414@gnuweeb.org>,
-        Louvian Lyndal <louvianlyndal@gmail.com>
-Subject: [PATCHSET v2 RFC liburing 0/4] Implement the kernel style return value 
-Date:   Sat,  2 Oct 2021 08:28:13 +0700
-Message-Id: <20211002012817.107517-1-ammar.faizi@students.amikom.ac.id>
+        Louvian Lyndal <louvianlyndal@gmail.com>,
+        Ammar Faizi <ammar.faizi@students.amikom.ac.id>
+Subject: [PATCH v2 RFC liburing 1/4] src/syscall: Implement the kernel style return value
+Date:   Sat,  2 Oct 2021 08:28:14 +0700
+Message-Id: <20211002012817.107517-2-ammar.faizi@students.amikom.ac.id>
 X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20211002012817.107517-1-ammar.faizi@students.amikom.ac.id>
+References: <20211002012817.107517-1-ammar.faizi@students.amikom.ac.id>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi everyone,
-
-This is the v2 of RFC to implement the kernel style return value for
-liburing.
-
-The main purpose of these changes is to make it possible to remove
-the dependency of `errno` variable. If we can land this on liburing,
-we will start working on no libc support with raw system call written
-in Assembly (no libc). These changes should not affect the user, only
-affect liburing internal sources.
-
-We do not plan to drop the libc dependency, we just want to make it
-possible to build liburing without the libc.
+Make it possible to remove the dependency of `errno` variable (which
+comes from libc).
 
 Currently, we expose these functions to userland:
   1) `__sys_io_uring_register`
@@ -96,7 +88,7 @@ underscore as prefix, 4 underscores):
   2) `____sys_io_uring_setup`
   3) `____sys_io_uring_enter2`
   4) `____sys_io_uring_enter`
-    
+
 These functions do not use `errno` variable *on the caller*, they use
 the kernel style return value (return a negative value of error code
 when errors).
@@ -105,52 +97,167 @@ These functions are defined as `inline static` in `src/syscall.h`.
 They are just a wrapper to make sure liburing internal sources do not
 touch `errno` variable from C files directly.
 
-After that, we need to deal with other syscalls. Currently we have 5
-wrapper functions for all syscalls used in liburing. They are:
-  1) `liburing_mmap`
-  2) `liburing_munmap`
-  3) `liburing_madvise`
-  4) `liburing_getrlimit`
-  5) `liburing_setrlimit`
+Link: https://github.com/axboe/liburing/issues/443#issuecomment-927873932
+Cc: Bedirhan KURT <windowz414@gnuweeb.org>
+Suggested-by: Louvian Lyndal <louvianlyndal@gmail.com>
+Signed-off-by: Ammar Faizi <ammar.faizi@students.amikom.ac.id>
+Signed-off-by: Ammar Faizi <ammarfaizi2@gmail.com>
+---
+ src/syscall.c | 36 ----------------------
+ src/syscall.h | 82 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 82 insertions(+), 36 deletions(-)
 
-Also add kernel error header `src/kernel_err.h`, this is taken from
-the Linux kernel source `include/linux/err.h` with a bit modification.
-
-The purpose of `src/kernel_err.h` file is to use `PTR_ERR()`,
-`ERR_PTR()`, etc. to implement the kernel style return value for
-pointer return value. Currently only `liburing_mmap()` that depends
-on this kernel error header file.
-
-If you want a git repository, you can take a look at:
-    
-    git://github.com/ammarfaizi2/liburing.git kernel-style-retval
-
-Please review.
-----------------------------------------------------------------
-Changes since v1:
-- Make all wrapper functions be `static inline`, so they don't pollute
-  the global scope.
-- Reduce the number of patches. Now we only have 4 patches (it was 6).
-
-Link: https://github.com/axboe/liburing/issues/443
-Link: [v1] https://lore.kernel.org/io-uring/20210929101606.62822-1-ammar.faizi@students.amikom.ac.id/
-----------------------------------------------------------------
-Ammar Faizi (4):
-      src/syscall: Implement the kernel style return value
-      src/{queue,register,setup}: Don't use `__sys_io_uring*`
-      Wrap all syscalls in a kernel style return value
-      src/{queue,register,setup}: Remove `#include <errno.h>`
-
- src/kernel_err.h |  75 ++++++++++++++++++
- src/queue.c      |  28 +++----
- src/register.c   | 190 ++++++++++++++-------------------------------
- src/setup.c      |  61 ++++++++-------
- src/syscall.c    |  42 +---------
- src/syscall.h    | 130 +++++++++++++++++++++++++++++++
- 6 files changed, 310 insertions(+), 216 deletions(-)
- create mode 100644 src/kernel_err.h
-
---
-Ammar Faizi
-
+diff --git a/src/syscall.c b/src/syscall.c
+index 69027e5..221f0f1 100644
+--- a/src/syscall.c
++++ b/src/syscall.c
+@@ -5,47 +5,11 @@
+  * Will go away once libc support is there
+  */
+ #include <unistd.h>
+-#include <sys/syscall.h>
+ #include <sys/uio.h>
+ #include "liburing/compat.h"
+ #include "liburing/io_uring.h"
+ #include "syscall.h"
+ 
+-#ifdef __alpha__
+-/*
+- * alpha and mips are exception, other architectures have
+- * common numbers for new system calls.
+- */
+-# ifndef __NR_io_uring_setup
+-#  define __NR_io_uring_setup		535
+-# endif
+-# ifndef __NR_io_uring_enter
+-#  define __NR_io_uring_enter		536
+-# endif
+-# ifndef __NR_io_uring_register
+-#  define __NR_io_uring_register	537
+-# endif
+-#elif defined __mips__
+-# ifndef __NR_io_uring_setup
+-#  define __NR_io_uring_setup           (__NR_Linux + 425)
+-# endif
+-# ifndef __NR_io_uring_enter
+-#  define __NR_io_uring_enter           (__NR_Linux + 426)
+-# endif
+-# ifndef __NR_io_uring_register
+-#  define __NR_io_uring_register        (__NR_Linux + 427)
+-# endif
+-#else /* !__alpha__ and !__mips__ */
+-# ifndef __NR_io_uring_setup
+-#  define __NR_io_uring_setup		425
+-# endif
+-# ifndef __NR_io_uring_enter
+-#  define __NR_io_uring_enter		426
+-# endif
+-# ifndef __NR_io_uring_register
+-#  define __NR_io_uring_register	427
+-# endif
+-#endif
+ 
+ int __sys_io_uring_register(int fd, unsigned opcode, const void *arg,
+ 			    unsigned nr_args)
+diff --git a/src/syscall.h b/src/syscall.h
+index 2368f83..5f7343f 100644
+--- a/src/syscall.h
++++ b/src/syscall.h
+@@ -2,7 +2,47 @@
+ #ifndef LIBURING_SYSCALL_H
+ #define LIBURING_SYSCALL_H
+ 
++#include <errno.h>
+ #include <signal.h>
++#include <unistd.h>
++#include <sys/syscall.h>
++
++#ifdef __alpha__
++/*
++ * alpha and mips are exception, other architectures have
++ * common numbers for new system calls.
++ */
++# ifndef __NR_io_uring_setup
++#  define __NR_io_uring_setup		535
++# endif
++# ifndef __NR_io_uring_enter
++#  define __NR_io_uring_enter		536
++# endif
++# ifndef __NR_io_uring_register
++#  define __NR_io_uring_register	537
++# endif
++#elif defined __mips__
++# ifndef __NR_io_uring_setup
++#  define __NR_io_uring_setup           (__NR_Linux + 425)
++# endif
++# ifndef __NR_io_uring_enter
++#  define __NR_io_uring_enter           (__NR_Linux + 426)
++# endif
++# ifndef __NR_io_uring_register
++#  define __NR_io_uring_register        (__NR_Linux + 427)
++# endif
++#else /* !__alpha__ and !__mips__ */
++# ifndef __NR_io_uring_setup
++#  define __NR_io_uring_setup		425
++# endif
++# ifndef __NR_io_uring_enter
++#  define __NR_io_uring_enter		426
++# endif
++# ifndef __NR_io_uring_register
++#  define __NR_io_uring_register	427
++# endif
++#endif
++
+ 
+ struct io_uring_params;
+ 
+@@ -17,4 +57,46 @@ int __sys_io_uring_enter2(int fd, unsigned to_submit, unsigned min_complete,
+ int __sys_io_uring_register(int fd, unsigned int opcode, const void *arg,
+ 			    unsigned int nr_args);
+ 
++
++
++/*
++ * Syscall with kernel style return value.
++ */
++static inline int ____sys_io_uring_register(int fd, unsigned opcode,
++					    const void *arg, unsigned nr_args)
++{
++	int ret;
++
++	ret = syscall(__NR_io_uring_register, fd, opcode, arg, nr_args);
++	return (ret < 0) ? -errno : ret;
++}
++
++static inline int ____sys_io_uring_setup(unsigned entries,
++					 struct io_uring_params *p)
++{
++	int ret;
++
++	ret = syscall(__NR_io_uring_setup, entries, p);
++	return (ret < 0) ? -errno : ret;
++}
++
++static inline int ____sys_io_uring_enter2(int fd, unsigned to_submit,
++					  unsigned min_complete, unsigned flags,
++					  sigset_t *sig, int sz)
++{
++	int ret;
++
++	ret = syscall(__NR_io_uring_enter, fd, to_submit, min_complete,
++		      flags, sig, sz);
++	return (ret < 0) ? -errno : ret;
++}
++
++static inline int ____sys_io_uring_enter(int fd, unsigned to_submit,
++					 unsigned min_complete, unsigned flags,
++					 sigset_t *sig)
++{
++	return ____sys_io_uring_enter2(fd, to_submit, min_complete, flags, sig,
++				       _NSIG / 8);
++}
++
+ #endif
+-- 
+2.30.2
 

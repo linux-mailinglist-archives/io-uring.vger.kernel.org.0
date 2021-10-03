@@ -2,103 +2,66 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 46D7741FF06
-	for <lists+io-uring@lfdr.de>; Sun,  3 Oct 2021 03:06:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1968A42007A
+	for <lists+io-uring@lfdr.de>; Sun,  3 Oct 2021 09:34:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234365AbhJCBIR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 2 Oct 2021 21:08:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34578 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234236AbhJCBIR (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 2 Oct 2021 21:08:17 -0400
-Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82D6DC0613EC
-        for <io-uring@vger.kernel.org>; Sat,  2 Oct 2021 18:06:30 -0700 (PDT)
-Received: by mail-pg1-x535.google.com with SMTP id 133so13092538pgb.1
-        for <io-uring@vger.kernel.org>; Sat, 02 Oct 2021 18:06:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amikom.ac.id; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=E3cvN9oaAfAUZYwOTDnzYbZjYKSLlsXfSC6qD8UnGi4=;
-        b=Jezl3I+APuf14tU4u3nZ+MnIMBodHeLAFAQQ0WtmXG+TXPxpcxxwqw+K//BBUyzeqw
-         r3vdpMy6AEg9Mau2PDhBubIrl12pb77pbdD6MB2538LuwqvyooP9tbm+YDFl7fT9X0Ov
-         fQPgx+sb+UeUcLzbQ4bnpQmgIwdkOFnyUTAltNL5wVIoKJtGORHXy1OOkNdH4jeunsOu
-         afoC8iTFSyS/l1sYYWdJV0RCgtpy3jIfL+dcnA9Rs2YxU63399SACIrlN2EY+m1ItSAD
-         c3meD8YziE+DH4yNg6DIW3Ok8MhDA4RDquryknVMCRHZcw0/E0HTDR8B016/kNEXf9A5
-         NbGQ==
+        id S229906AbhJCHf7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 3 Oct 2021 03:35:59 -0400
+Received: from mail-io1-f70.google.com ([209.85.166.70]:50870 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229929AbhJCHfz (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 3 Oct 2021 03:35:55 -0400
+Received: by mail-io1-f70.google.com with SMTP id p71-20020a6b8d4a000000b005d323186f7cso13122002iod.17
+        for <io-uring@vger.kernel.org>; Sun, 03 Oct 2021 00:34:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=E3cvN9oaAfAUZYwOTDnzYbZjYKSLlsXfSC6qD8UnGi4=;
-        b=nyQTWIxh/rT279aMM8fhru1Mr5zwuB6y3n2QN+LDII+qCmCg0pm/ANIsH8w5svFOEO
-         w9wcTob2YJznHHcs4liKG5gE1cfSYwXrZOpeyHjwlcDCIRlW2WyhSzoEsiaICzVkvVhV
-         /Z5Yseh8oHkESrWWT0TtlZagLAdMLJKHiKEKcmXJ7y0tyZUKuNOGrcEgDEHYGKsHiI9f
-         IrGxL8gqNxpLVFqYrRK001FDdv8/Lg+5PLm71zyzT4KHToVz4JUh/EBMCMYd02ykW73w
-         YqdP/vSdoy0CqFd4T6+OZteJkouK0GosUe3MTQ7TWAhVFngm/sZI79CgobDY9Ur7016Y
-         E3Gw==
-X-Gm-Message-State: AOAM533KBMmIN1xccf87tj3TAm9PSZ/Sfq7O/72gbeayan60WGseulSr
-        0YOUzNqxupQ6uBMgAG8dpmEBEg==
-X-Google-Smtp-Source: ABdhPJxXS9tDh+/r4GmPbkEW6JGmowEK78ZaIFQZDXF4QBOlBUHd1llPU48B29s3kOGkALgOf4kcVg==
-X-Received: by 2002:aa7:954a:0:b0:44b:bc53:1e2b with SMTP id w10-20020aa7954a000000b0044bbc531e2bmr17664635pfq.64.1633223189934;
-        Sat, 02 Oct 2021 18:06:29 -0700 (PDT)
-Received: from integral.. ([182.2.37.211])
-        by smtp.gmail.com with ESMTPSA id x9sm10271444pfo.172.2021.10.02.18.06.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Oct 2021 18:06:29 -0700 (PDT)
-From:   Ammar Faizi <ammar.faizi@students.amikom.ac.id>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring Mailing List <io-uring@vger.kernel.org>,
-        Ammar Faizi <ammar.faizi@students.amikom.ac.id>
-Subject: [PATCH liburing] test/probe: Use `io_uring_free_probe()` instead of `free()`
-Date:   Sun,  3 Oct 2021 08:06:08 +0700
-Message-Id: <20211003010608.58380-1-ammar.faizi@students.amikom.ac.id>
-X-Mailer: git-send-email 2.30.2
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=c7Hhg1HS9ONwmBtdl/+gEC6wT21nlHlGkIEyTDo6QXw=;
+        b=bxYpOeGuR71QFw1N1q4yxxWCQAwP2RSQlYLhzR2Gds0fJyGOSkexweQPsR2d69OYRh
+         3Rkruo5Qk2oXKDiEwpe47opgbB5y/l5ljgdCkYOYQCD1mkT0rhUHjNjQ0aaTQLqUnkaY
+         8yxIXWsGVZaGXI2IIWmT6sOdbexzDdkbrBBWr1xGrnP6mMSPW8NUilBWApOmP+tHOix8
+         neXaAxKZSRTW4zMd66o064jq4jCdRibeEtC6NEq52zkM/90oJHjgz+VjRWShA9XLCxJj
+         D9roxW8M0xwxacIyC0Jakm41XYjOEqH5tuLbGGOPVODrRgYvCoQR7Jn7tOr1fpb1z3rc
+         oXAA==
+X-Gm-Message-State: AOAM531v3OopD7wie5r5J6N8r0fBldiGxpK9JpVWIjskHtcqs4cJm7YL
+        dn2hCT38fergHugsrYrdsToWMV4nMrmYCisgGVSNJhPkS28r
+X-Google-Smtp-Source: ABdhPJxqZIyLyb2GCKV1AwEY4i18NOKnl8EziN7c1CJrRf52GnzfgmaxpkDY00mNnhUSIeev2Hfg4nqSERwqf/mhBGnmraIIITRW
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:17ca:: with SMTP id z10mr4904868ilu.249.1633246448379;
+ Sun, 03 Oct 2021 00:34:08 -0700 (PDT)
+Date:   Sun, 03 Oct 2021 00:34:08 -0700
+In-Reply-To: <0000000000000d4da305cb1d2467@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000062ec7d05cd6dd2f6@google.com>
+Subject: Re: [syzbot] BUG: unable to handle kernel NULL pointer dereference in kiocb_done
+From:   syzbot <syzbot+726f2ce6dbbf2ad8d133@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-`io_uring_free_probe()` should really be used to free the return value
-of `io_uring_get_probe_ring()`. As we may not always allocate it with
-`malloc()`. For example, to support no libc build [1].
+syzbot suspects this issue was fixed by commit:
 
-Link: https://github.com/axboe/liburing/issues/443 [1]
-Signed-off-by: Ammar Faizi <ammar.faizi@students.amikom.ac.id>
----
- test/probe.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+commit b8ce1b9d25ccf81e1bbabd45b963ed98b2222df8
+Author: Pavel Begunkov <asml.silence@gmail.com>
+Date:   Tue Aug 31 13:13:11 2021 +0000
 
-diff --git a/test/probe.c b/test/probe.c
-index 29239ff..fd59612 100644
---- a/test/probe.c
-+++ b/test/probe.c
-@@ -45,6 +45,7 @@ static int verify_probe(struct io_uring_probe *p, int full)
- 
- static int test_probe_helper(struct io_uring *ring)
- {
-+	int ret;
- 	struct io_uring_probe *p;
- 
- 	p = io_uring_get_probe_ring(ring);
-@@ -53,12 +54,9 @@ static int test_probe_helper(struct io_uring *ring)
- 		return 1;
- 	}
- 
--	if (verify_probe(p, 1)) {
--		free(p);
--		return 1;
--	}
--
--	return 0;
-+	ret = verify_probe(p, 1);
-+	io_uring_free_probe(p);
-+	return ret;
- }
- 
- static int test_probe(struct io_uring *ring)
--- 
-2.30.2
+    io_uring: don't submit half-prepared drain request
 
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17b14b67300000
+start commit:   4ac6d90867a4 Merge tag 'docs-5.15' of git://git.lwn.net/li..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3c3a5498e99259cf
+dashboard link: https://syzkaller.appspot.com/bug?extid=726f2ce6dbbf2ad8d133
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=124a3b49300000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=142e610b300000
+
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: io_uring: don't submit half-prepared drain request
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection

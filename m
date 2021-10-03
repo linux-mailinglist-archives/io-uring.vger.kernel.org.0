@@ -2,77 +2,103 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C899841FE43
-	for <lists+io-uring@lfdr.de>; Sat,  2 Oct 2021 23:32:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46D7741FF06
+	for <lists+io-uring@lfdr.de>; Sun,  3 Oct 2021 03:06:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234089AbhJBVeT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 2 Oct 2021 17:34:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44528 "EHLO
+        id S234365AbhJCBIR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 2 Oct 2021 21:08:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229503AbhJBVeT (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 2 Oct 2021 17:34:19 -0400
-Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60AB9C061714
-        for <io-uring@vger.kernel.org>; Sat,  2 Oct 2021 14:32:33 -0700 (PDT)
-Received: by mail-io1-xd2c.google.com with SMTP id d18so15748675iof.13
-        for <io-uring@vger.kernel.org>; Sat, 02 Oct 2021 14:32:33 -0700 (PDT)
+        with ESMTP id S234236AbhJCBIR (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 2 Oct 2021 21:08:17 -0400
+Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82D6DC0613EC
+        for <io-uring@vger.kernel.org>; Sat,  2 Oct 2021 18:06:30 -0700 (PDT)
+Received: by mail-pg1-x535.google.com with SMTP id 133so13092538pgb.1
+        for <io-uring@vger.kernel.org>; Sat, 02 Oct 2021 18:06:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=slxJvLqIoIyNgVBm7X4YLfI4iWVi8o9k8bQd8I2W9R8=;
-        b=oAiAvDbn7s4i06aACeHhM4TRFxQBT4oeNJwz1ddX4pA5mE8hd0Xi5+1d2zeEaraxgG
-         AVfRU2v/nYbEj7BgS93VDw4QVOWp9Kgj81ZiGQH/GmKjwv36QkCFJsUgWcNgobbUovcc
-         rQ8i2IzwMdEOrIyeIQzv53W44biZnoS2Y8/IathbPN9Eyvn3MrS+8oquNQpZmHEyw7vV
-         UVhcNkO3nVdc+zHoNYGaxpuNq5FfQ8jq2AaEcHIGxPsN6fL8zs5aQSn16UEKxfoFBDu2
-         rP3B1g4z3pkY0748D6BHZ+fIWhHsi4Ax8TaPrgn8Otzud/cQlKWibbKo0RmIBq7sZskA
-         +BNg==
+        d=amikom.ac.id; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=E3cvN9oaAfAUZYwOTDnzYbZjYKSLlsXfSC6qD8UnGi4=;
+        b=Jezl3I+APuf14tU4u3nZ+MnIMBodHeLAFAQQ0WtmXG+TXPxpcxxwqw+K//BBUyzeqw
+         r3vdpMy6AEg9Mau2PDhBubIrl12pb77pbdD6MB2538LuwqvyooP9tbm+YDFl7fT9X0Ov
+         fQPgx+sb+UeUcLzbQ4bnpQmgIwdkOFnyUTAltNL5wVIoKJtGORHXy1OOkNdH4jeunsOu
+         afoC8iTFSyS/l1sYYWdJV0RCgtpy3jIfL+dcnA9Rs2YxU63399SACIrlN2EY+m1ItSAD
+         c3meD8YziE+DH4yNg6DIW3Ok8MhDA4RDquryknVMCRHZcw0/E0HTDR8B016/kNEXf9A5
+         NbGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=slxJvLqIoIyNgVBm7X4YLfI4iWVi8o9k8bQd8I2W9R8=;
-        b=HwzMyqELsGUIqRPnLN9jN8mUPO2aYlzClzw3LOQCzLYhacP75pN+nxj8becMSewsQp
-         JuoK8Nj19pYOxHUAETkWjd0tVWYKcbiDsPglx6Es4XkmqnZcjeGjy4cFjqMA/RAzRwsb
-         USbPrh2IGfYUNZQN1JmyRwKEHgfdePrS8ZYZ23zfyOxN73kbq/jhxqrgnxop8KCDBqCG
-         3ZOs7IKyzcLPZHvg2O73WwZy+z1FytLgEU3kp4mfvqU1lhFbHKD/no7db4bIUkm1gCL6
-         of1/4WXxBgWzneQJhZFLNolO5KC+8XPud4uZEhR3UNRle3hGQw30dCDdyYSGH0nujZKk
-         efgQ==
-X-Gm-Message-State: AOAM531MqCBqZkeX97bo/4FpLLqGuWCI28YCndhVPq38rEARMTqZCJX6
-        v0tiwJRAvoFGh/HAOdV6CAqHkz4mpMapSA==
-X-Google-Smtp-Source: ABdhPJwj8ujZrWYgNbFSkYSoSiEg583hKfiHQlsTAYo9F+jjpyYJ5tJXj3NKEQeiJEwnA5nEcfqUeg==
-X-Received: by 2002:a05:6602:1812:: with SMTP id t18mr3627273ioh.36.1633210352554;
-        Sat, 02 Oct 2021 14:32:32 -0700 (PDT)
-Received: from [192.168.1.116] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id b5sm2182258ilq.77.2021.10.02.14.32.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 02 Oct 2021 14:32:32 -0700 (PDT)
-Subject: Re: [PATCH v3] io_uring: add flag to not fail link after timeout
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <17c7ec0fb7a6113cc6be8cdaedcada0ba836ac0e.1633199723.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <ad256428-ea19-0b35-e8a0-01a1b6dc0271@kernel.dk>
-Date:   Sat, 2 Oct 2021 15:32:30 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        bh=E3cvN9oaAfAUZYwOTDnzYbZjYKSLlsXfSC6qD8UnGi4=;
+        b=nyQTWIxh/rT279aMM8fhru1Mr5zwuB6y3n2QN+LDII+qCmCg0pm/ANIsH8w5svFOEO
+         w9wcTob2YJznHHcs4liKG5gE1cfSYwXrZOpeyHjwlcDCIRlW2WyhSzoEsiaICzVkvVhV
+         /Z5Yseh8oHkESrWWT0TtlZagLAdMLJKHiKEKcmXJ7y0tyZUKuNOGrcEgDEHYGKsHiI9f
+         IrGxL8gqNxpLVFqYrRK001FDdv8/Lg+5PLm71zyzT4KHToVz4JUh/EBMCMYd02ykW73w
+         YqdP/vSdoy0CqFd4T6+OZteJkouK0GosUe3MTQ7TWAhVFngm/sZI79CgobDY9Ur7016Y
+         E3Gw==
+X-Gm-Message-State: AOAM533KBMmIN1xccf87tj3TAm9PSZ/Sfq7O/72gbeayan60WGseulSr
+        0YOUzNqxupQ6uBMgAG8dpmEBEg==
+X-Google-Smtp-Source: ABdhPJxXS9tDh+/r4GmPbkEW6JGmowEK78ZaIFQZDXF4QBOlBUHd1llPU48B29s3kOGkALgOf4kcVg==
+X-Received: by 2002:aa7:954a:0:b0:44b:bc53:1e2b with SMTP id w10-20020aa7954a000000b0044bbc531e2bmr17664635pfq.64.1633223189934;
+        Sat, 02 Oct 2021 18:06:29 -0700 (PDT)
+Received: from integral.. ([182.2.37.211])
+        by smtp.gmail.com with ESMTPSA id x9sm10271444pfo.172.2021.10.02.18.06.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 02 Oct 2021 18:06:29 -0700 (PDT)
+From:   Ammar Faizi <ammar.faizi@students.amikom.ac.id>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring Mailing List <io-uring@vger.kernel.org>,
+        Ammar Faizi <ammar.faizi@students.amikom.ac.id>
+Subject: [PATCH liburing] test/probe: Use `io_uring_free_probe()` instead of `free()`
+Date:   Sun,  3 Oct 2021 08:06:08 +0700
+Message-Id: <20211003010608.58380-1-ammar.faizi@students.amikom.ac.id>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-In-Reply-To: <17c7ec0fb7a6113cc6be8cdaedcada0ba836ac0e.1633199723.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 10/2/21 12:36 PM, Pavel Begunkov wrote:
-> For some reason non-off IORING_OP_TIMEOUT always fails links, it's
-> pretty inconvenient and unnecessary limits chaining after it to hard
-> linking, which is far from ideal, e.g. doesn't pair well with timeout
-> cancellation. Add a flag forcing it to not fail links on -ETIME.
+`io_uring_free_probe()` should really be used to free the return value
+of `io_uring_get_probe_ring()`. As we may not always allocate it with
+`malloc()`. For example, to support no libc build [1].
 
-Applied, thanks.
+Link: https://github.com/axboe/liburing/issues/443 [1]
+Signed-off-by: Ammar Faizi <ammar.faizi@students.amikom.ac.id>
+---
+ test/probe.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
+diff --git a/test/probe.c b/test/probe.c
+index 29239ff..fd59612 100644
+--- a/test/probe.c
++++ b/test/probe.c
+@@ -45,6 +45,7 @@ static int verify_probe(struct io_uring_probe *p, int full)
+ 
+ static int test_probe_helper(struct io_uring *ring)
+ {
++	int ret;
+ 	struct io_uring_probe *p;
+ 
+ 	p = io_uring_get_probe_ring(ring);
+@@ -53,12 +54,9 @@ static int test_probe_helper(struct io_uring *ring)
+ 		return 1;
+ 	}
+ 
+-	if (verify_probe(p, 1)) {
+-		free(p);
+-		return 1;
+-	}
+-
+-	return 0;
++	ret = verify_probe(p, 1);
++	io_uring_free_probe(p);
++	return ret;
+ }
+ 
+ static int test_probe(struct io_uring *ring)
 -- 
-Jens Axboe
+2.30.2
 

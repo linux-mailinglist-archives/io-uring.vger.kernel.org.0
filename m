@@ -2,51 +2,51 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 07E3D42012B
-	for <lists+io-uring@lfdr.de>; Sun,  3 Oct 2021 12:18:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8646F42012C
+	for <lists+io-uring@lfdr.de>; Sun,  3 Oct 2021 12:19:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229875AbhJCKUn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 3 Oct 2021 06:20:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41462 "EHLO
+        id S229786AbhJCKUt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 3 Oct 2021 06:20:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229786AbhJCKUm (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 3 Oct 2021 06:20:42 -0400
-Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D2FFC0613EC
-        for <io-uring@vger.kernel.org>; Sun,  3 Oct 2021 03:18:55 -0700 (PDT)
-Received: by mail-pj1-x1031.google.com with SMTP id pg10so9047656pjb.5
-        for <io-uring@vger.kernel.org>; Sun, 03 Oct 2021 03:18:55 -0700 (PDT)
+        with ESMTP id S230059AbhJCKUt (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 3 Oct 2021 06:20:49 -0400
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0456C061780
+        for <io-uring@vger.kernel.org>; Sun,  3 Oct 2021 03:18:58 -0700 (PDT)
+Received: by mail-pj1-x1034.google.com with SMTP id r7so9481493pjo.3
+        for <io-uring@vger.kernel.org>; Sun, 03 Oct 2021 03:18:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amikom.ac.id; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=MAweDbXCgivBLUGbVsmYI8Qi1lEAjMdbt3K/rExqIgg=;
-        b=dHTsZ2akbOpqFjs/qf33IExM20PgUogiVWnuHnz2R+x8mwrH8AMQwcSAEPUfPTv0L7
-         /G1xNWyWud0/KR75YSXoS83draNKliC4c8eIfmbAhKcRdhQ4E9Oj5VMfyD/ttsVinsnO
-         IZ1AS5cJR1FAbxg7aR3SeahW/ibMzfeH08crULNBzUx7C0rXbP/3vJZ1ocfgytmHaMzE
-         imVW0EZLfSFznGUrIo2uYNoYYDWui2XKypQzgij5rZpzWIfBpcj8YN1LRzunvmJBgkAS
-         dYvVNDkRUKgDwv+hvde42DswEObAkgQFKFX4bVS5VtWLk9KHaxeEz8ZXESXKyZGfgJMJ
-         U5vw==
+        bh=0rvkQDmhox/kHqrRd44qinkRpcry6FXqkJ7Wxxk/J+8=;
+        b=NbHjFnw8rh+U6pSg/za6CMHMg8/p+hJhxLazFPZCgsdpfOISBceSBXRyhMzvnZ0Y2G
+         T+ItKmDQlTU0daJkaWNMZKHROaLE0Quz+lKfqSHd0/+K2xymoC2mj6pLDk194AfOzVnK
+         E/9OwIOiiw+4+rJV5Ovx4NJPkcW+cfnHH1qfvLvqeV/PlS0K2e4l+2M3y+upE7scC+Ih
+         itxfMZztDeCMg2++hTS4dbOz+0LORyFWV/+OUqF5jNruz+enfE1sDWTShSGMWtZBwYRW
+         Iif++VlhWgvJ57vBXv9Gnr+1SVgV3RvnIrdroz/OoUFEAHG/Bb1RvYbWIfex/tHtUOTn
+         vlNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=MAweDbXCgivBLUGbVsmYI8Qi1lEAjMdbt3K/rExqIgg=;
-        b=tLneDVnn5gLYK7YaysAmOTT+P/zRO4m9MN/xfQPOclkGZ4i052xV1hIDjedzrPrQaw
-         Jt45ZOxdXT7tY5BEXEJ8XwyJSaUJ6WVL81RtPPF5dLdH8SBjlskQvRlRTLedrzWvK8jJ
-         ciorZg81dlCuciRulUGUtFhIR1f6O1PeXJ6C+P/h7DK89VfQbQs0PQUoXc+CJrSOqnot
-         zIhlqBDs3zPmVkHU34uSHgfTesZyj3F79AdDIUpWd2eohTGw2BAlC4tHmE1mYVAuPM/H
-         RCtTCuhWwoBPL9PSrUZ8pBkpekaNy7tra6S6iqL/bGjeh7/jWJotM4xcF+TrzM82KVl9
-         OaVw==
-X-Gm-Message-State: AOAM530mgkvad/UUghVbIBA+1xS4H6WPqxbMg9abAPXqedwXjzw2fyZS
-        tVfoqd6sP4k2oF4slVH1Cauwwg==
-X-Google-Smtp-Source: ABdhPJzjT29ahQlieaNjvpxDWEIf0NCidr8KhzE3NHF9LHFopRx3rgxTOvnmBTNS0tU6o9yOhNbzyA==
-X-Received: by 2002:a17:902:e547:b0:13e:564c:bf4d with SMTP id n7-20020a170902e54700b0013e564cbf4dmr18077254plf.5.1633256334438;
-        Sun, 03 Oct 2021 03:18:54 -0700 (PDT)
+        bh=0rvkQDmhox/kHqrRd44qinkRpcry6FXqkJ7Wxxk/J+8=;
+        b=ccL2ZNFjf5cyFNYjcmItnZvXQM6tf5BgAJ/P4ptlKZ6xnldUBuz7DcNFsSG3baukHC
+         iak8MCTI2mugZ/aMdVpb6QBDl7JP2eB+tJwoxlDZ6QGRT3Im5/XV4aN9IQQatq0lmKew
+         2R/ej+XN0YqMDiE//RJFJZLgauv5oKXwg1P2YFMvPigmYKFLnqwcmopxJXfl/EG3cUFz
+         AgcfWqkOPACA6p709mFvq/fZKBvdWCr8JeDEz74ipBgX8CEVuxl85+YF+4sRF9sf5JXo
+         2o81yqDixTnnr1JG6DthqwugE9tllRY+SWdRYPh4awpw3Z4vyC3JBsTBn+ylGcybf1ce
+         1cMQ==
+X-Gm-Message-State: AOAM531khbpujeWHlXZoYfO+1iDI8C++IumK7kt5xx9HgR4wJF65nOuh
+        l/0WSGMUY5/FJiOluv6lHgyR/Q==
+X-Google-Smtp-Source: ABdhPJzJQNVKvnfX62Yu86YmBN4n64VBzuvq31E7d0gHOtN8mHTp53Lhs3hdOLNy26OGeaQKS4e0Pg==
+X-Received: by 2002:a17:902:bb94:b0:13c:9113:5652 with SMTP id m20-20020a170902bb9400b0013c91135652mr19659450pls.70.1633256338444;
+        Sun, 03 Oct 2021 03:18:58 -0700 (PDT)
 Received: from integral.. ([182.2.36.212])
-        by smtp.gmail.com with ESMTPSA id d9sm10677290pgn.64.2021.10.03.03.18.51
+        by smtp.gmail.com with ESMTPSA id d9sm10677290pgn.64.2021.10.03.03.18.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Oct 2021 03:18:54 -0700 (PDT)
+        Sun, 03 Oct 2021 03:18:58 -0700 (PDT)
 From:   Ammar Faizi <ammar.faizi@students.amikom.ac.id>
 To:     Jens Axboe <axboe@kernel.dk>,
         Pavel Begunkov <asml.silence@gmail.com>
@@ -54,9 +54,9 @@ Cc:     io-uring Mailing List <io-uring@vger.kernel.org>,
         Bedirhan KURT <windowz414@gnuweeb.org>,
         Louvian Lyndal <louvianlyndal@gmail.com>,
         Ammar Faizi <ammar.faizi@students.amikom.ac.id>
-Subject: [PATCH v4 RFC liburing 1/3] src/syscall: Wrap `errno` for `__sys_io_uring_{register,setup,enter{2,}}`
-Date:   Sun,  3 Oct 2021 17:17:48 +0700
-Message-Id: <20211003101750.156218-2-ammar.faizi@students.amikom.ac.id>
+Subject: [PATCH v4 RFC liburing 2/3] src/{queue,register,setup}: Don't use `__sys_io_uring*`
+Date:   Sun,  3 Oct 2021 17:17:49 +0700
+Message-Id: <20211003101750.156218-3-ammar.faizi@students.amikom.ac.id>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20211003101750.156218-1-ammar.faizi@students.amikom.ac.id>
 References: <20211003101750.156218-1-ammar.faizi@students.amikom.ac.id>
@@ -66,211 +66,442 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Make it possible to remove the dependency of `errno` variable (which
-comes from libc).
+Don't use `__sys_io_uring*` for liburing internal. These functions
+are now supposed for user backward compatibility.
 
-Currently, we expose these functions to userland:
-  1) `__sys_io_uring_register`
-  2) `__sys_io_uring_setup`
-  3) `__sys_io_uring_enter2`
-  4) `__sys_io_uring_enter`
+For now, we use `____sys_io_uring*` (4 underscores). These are
+`static inline` functions that wrap the `errno` variable in a kernel
+style return value (directly returns negative error code when errors).
 
-The tests in `test/io_uring_{enter,register,setup}.c` are the examples
-of it. Since the userland needs to check the `errno` value to use them
-properly, this means those functions always depend on libc. So we
-cannot change their behavior. Don't touch them all, this ensures the
-changes only affect liburing internal and no visible functionality
-changes for the users.
+The main purpose of this change is to make it possible to remove the
+`errno` variable dependency from liburing C sources, so that later
+we will be able to build liburing without libc which doesn't use
+`errno` variable at all.
 
-Then we introduce new functions with the same name (with extra
-underscore as prefix, 4 underscores):
-  1) `____sys_io_uring_register`
-  2) `____sys_io_uring_setup`
-  3) `____sys_io_uring_enter2`
-  4) `____sys_io_uring_enter`
-
-These functions do not use `errno` variable *on the caller*, they use
-the kernel style return value (return a negative value of error code
-when errors).
-
-These functions are defined as `static inline` in `src/syscall.h`.
-They are just a wrapper to make sure liburing internal sources do not
-touch `errno` variable from C files directly. We need to make C files
-not to touch the `errno` variable to support build without libc.
-
-Link: https://github.com/axboe/liburing/issues/443#issuecomment-927873932
 Cc: Bedirhan KURT <windowz414@gnuweeb.org>
-Suggested-by: Louvian Lyndal <louvianlyndal@gmail.com>
+Cc: Louvian Lyndal <louvianlyndal@gmail.com>
 Signed-off-by: Ammar Faizi <ammar.faizi@students.amikom.ac.id>
 ---
- src/syscall.c | 43 +++------------------------
- src/syscall.h | 81 +++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 85 insertions(+), 39 deletions(-)
+ src/queue.c    |  27 +++----
+ src/register.c | 187 +++++++++++++++----------------------------------
+ src/setup.c    |   4 +-
+ 3 files changed, 70 insertions(+), 148 deletions(-)
 
-diff --git a/src/syscall.c b/src/syscall.c
-index 69027e5..5923fbb 100644
---- a/src/syscall.c
-+++ b/src/syscall.c
-@@ -11,41 +11,6 @@
- #include "liburing/io_uring.h"
- #include "syscall.h"
+diff --git a/src/queue.c b/src/queue.c
+index 10ef31c..c2881e9 100644
+--- a/src/queue.c
++++ b/src/queue.c
+@@ -117,11 +117,11 @@ static int _io_uring_get_cqe(struct io_uring *ring, struct io_uring_cqe **cqe_pt
+ 		if (!need_enter)
+ 			break;
  
--#ifdef __alpha__
--/*
-- * alpha and mips are exception, other architectures have
-- * common numbers for new system calls.
-- */
--# ifndef __NR_io_uring_setup
--#  define __NR_io_uring_setup		535
--# endif
--# ifndef __NR_io_uring_enter
--#  define __NR_io_uring_enter		536
--# endif
--# ifndef __NR_io_uring_register
--#  define __NR_io_uring_register	537
--# endif
--#elif defined __mips__
--# ifndef __NR_io_uring_setup
--#  define __NR_io_uring_setup           (__NR_Linux + 425)
--# endif
--# ifndef __NR_io_uring_enter
--#  define __NR_io_uring_enter           (__NR_Linux + 426)
--# endif
--# ifndef __NR_io_uring_register
--#  define __NR_io_uring_register        (__NR_Linux + 427)
--# endif
--#else /* !__alpha__ and !__mips__ */
--# ifndef __NR_io_uring_setup
--#  define __NR_io_uring_setup		425
--# endif
--# ifndef __NR_io_uring_enter
--#  define __NR_io_uring_enter		426
--# endif
--# ifndef __NR_io_uring_register
--#  define __NR_io_uring_register	427
--# endif
--#endif
+-		ret = __sys_io_uring_enter2(ring->ring_fd, data->submit,
+-				data->wait_nr, flags, data->arg,
+-				data->sz);
++		ret = ____sys_io_uring_enter2(ring->ring_fd, data->submit,
++					      data->wait_nr, flags, data->arg,
++					      data->sz);
+ 		if (ret < 0) {
+-			err = -errno;
++			err = ret;
+ 			break;
+ 		}
  
- int __sys_io_uring_register(int fd, unsigned opcode, const void *arg,
- 			    unsigned nr_args)
-@@ -59,15 +24,15 @@ int __sys_io_uring_setup(unsigned entries, struct io_uring_params *p)
- }
+@@ -178,8 +178,8 @@ again:
+ 		goto done;
  
- int __sys_io_uring_enter2(int fd, unsigned to_submit, unsigned min_complete,
--			 unsigned flags, sigset_t *sig, int sz)
-+			  unsigned flags, sigset_t *sig, int sz)
+ 	if (cq_ring_needs_flush(ring)) {
+-		__sys_io_uring_enter(ring->ring_fd, 0, 0,
+-				     IORING_ENTER_GETEVENTS, NULL);
++		____sys_io_uring_enter(ring->ring_fd, 0, 0,
++				       IORING_ENTER_GETEVENTS, NULL);
+ 		overflow_checked = true;
+ 		goto again;
+ 	}
+@@ -333,10 +333,8 @@ static int __io_uring_submit(struct io_uring *ring, unsigned submitted,
+ 		if (wait_nr || (ring->flags & IORING_SETUP_IOPOLL))
+ 			flags |= IORING_ENTER_GETEVENTS;
+ 
+-		ret = __sys_io_uring_enter(ring->ring_fd, submitted, wait_nr,
+-						flags, NULL);
+-		if (ret < 0)
+-			return -errno;
++		ret = ____sys_io_uring_enter(ring->ring_fd, submitted, wait_nr,
++					     flags, NULL);
+ 	} else
+ 		ret = submitted;
+ 
+@@ -391,11 +389,6 @@ struct io_uring_sqe *io_uring_get_sqe(struct io_uring *ring)
+ 
+ int __io_uring_sqring_wait(struct io_uring *ring)
  {
--	return syscall(__NR_io_uring_enter, fd, to_submit, min_complete,
--			flags, sig, sz);
-+	return syscall(__NR_io_uring_enter, fd, to_submit, min_complete, flags,
-+		       sig, sz);
+-	int ret;
+-
+-	ret = __sys_io_uring_enter(ring->ring_fd, 0, 0, IORING_ENTER_SQ_WAIT,
+-					NULL);
+-	if (ret < 0)
+-		ret = -errno;
+-	return ret;
++	return  ____sys_io_uring_enter(ring->ring_fd, 0, 0,
++				       IORING_ENTER_SQ_WAIT, NULL);
+ }
+diff --git a/src/register.c b/src/register.c
+index 5ea4331..cb09dea 100644
+--- a/src/register.c
++++ b/src/register.c
+@@ -26,12 +26,10 @@ int io_uring_register_buffers_update_tag(struct io_uring *ring, unsigned off,
+ 		.tags = (unsigned long)tags,
+ 		.nr = nr,
+ 	};
+-	int ret;
+ 
+-	ret = __sys_io_uring_register(ring->ring_fd,
+-				      IORING_REGISTER_BUFFERS_UPDATE,
+-				      &up, sizeof(up));
+-	return ret < 0 ? -errno : ret;
++	return ____sys_io_uring_register(ring->ring_fd,
++					 IORING_REGISTER_BUFFERS_UPDATE, &up,
++					 sizeof(up));
  }
  
- int __sys_io_uring_enter(int fd, unsigned to_submit, unsigned min_complete,
- 			 unsigned flags, sigset_t *sig)
+ int io_uring_register_buffers_tags(struct io_uring *ring,
+@@ -44,11 +42,9 @@ int io_uring_register_buffers_tags(struct io_uring *ring,
+ 		.data = (unsigned long)iovecs,
+ 		.tags = (unsigned long)tags,
+ 	};
+-	int ret;
+ 
+-	ret = __sys_io_uring_register(ring->ring_fd, IORING_REGISTER_BUFFERS2,
+-				      &reg, sizeof(reg));
+-	return ret < 0 ? -errno : ret;
++	return ____sys_io_uring_register(ring->ring_fd, IORING_REGISTER_BUFFERS2,
++					 &reg, sizeof(reg));
+ }
+ 
+ int io_uring_register_buffers(struct io_uring *ring, const struct iovec *iovecs,
+@@ -56,24 +52,18 @@ int io_uring_register_buffers(struct io_uring *ring, const struct iovec *iovecs,
  {
- 	return __sys_io_uring_enter2(fd, to_submit, min_complete, flags, sig,
--					_NSIG / 8);
-+				     _NSIG / 8);
+ 	int ret;
+ 
+-	ret = __sys_io_uring_register(ring->ring_fd, IORING_REGISTER_BUFFERS,
++	ret = ____sys_io_uring_register(ring->ring_fd, IORING_REGISTER_BUFFERS,
+ 					iovecs, nr_iovecs);
+-	if (ret < 0)
+-		return -errno;
+-
+-	return 0;
++	return (ret < 0) ? ret : 0;
  }
-diff --git a/src/syscall.h b/src/syscall.h
-index 2368f83..f7f63aa 100644
---- a/src/syscall.h
-+++ b/src/syscall.h
-@@ -2,7 +2,49 @@
- #ifndef LIBURING_SYSCALL_H
- #define LIBURING_SYSCALL_H
  
-+#include <errno.h>
- #include <signal.h>
-+#include <unistd.h>
-+#include <sys/mman.h>
-+#include <sys/syscall.h>
-+#include <sys/resource.h>
-+
-+#ifdef __alpha__
-+/*
-+ * alpha and mips are exception, other architectures have
-+ * common numbers for new system calls.
-+ */
-+# ifndef __NR_io_uring_setup
-+#  define __NR_io_uring_setup		535
-+# endif
-+# ifndef __NR_io_uring_enter
-+#  define __NR_io_uring_enter		536
-+# endif
-+# ifndef __NR_io_uring_register
-+#  define __NR_io_uring_register	537
-+# endif
-+#elif defined __mips__
-+# ifndef __NR_io_uring_setup
-+#  define __NR_io_uring_setup           (__NR_Linux + 425)
-+# endif
-+# ifndef __NR_io_uring_enter
-+#  define __NR_io_uring_enter           (__NR_Linux + 426)
-+# endif
-+# ifndef __NR_io_uring_register
-+#  define __NR_io_uring_register        (__NR_Linux + 427)
-+# endif
-+#else /* !__alpha__ and !__mips__ */
-+# ifndef __NR_io_uring_setup
-+#  define __NR_io_uring_setup		425
-+# endif
-+# ifndef __NR_io_uring_enter
-+#  define __NR_io_uring_enter		426
-+# endif
-+# ifndef __NR_io_uring_register
-+#  define __NR_io_uring_register	427
-+# endif
-+#endif
-+
+ int io_uring_unregister_buffers(struct io_uring *ring)
+ {
+ 	int ret;
  
- struct io_uring_params;
+-	ret = __sys_io_uring_register(ring->ring_fd, IORING_UNREGISTER_BUFFERS,
++	ret = ____sys_io_uring_register(ring->ring_fd, IORING_UNREGISTER_BUFFERS,
+ 					NULL, 0);
+-	if (ret < 0)
+-		return -errno;
+-
+-	return 0;
++	return (ret < 0) ? ret : 0;
+ }
  
-@@ -17,4 +59,43 @@ int __sys_io_uring_enter2(int fd, unsigned to_submit, unsigned min_complete,
- int __sys_io_uring_register(int fd, unsigned int opcode, const void *arg,
- 			    unsigned int nr_args);
+ int io_uring_register_files_update_tag(struct io_uring *ring, unsigned off,
+@@ -86,12 +76,10 @@ int io_uring_register_files_update_tag(struct io_uring *ring, unsigned off,
+ 		.tags = (unsigned long)tags,
+ 		.nr = nr_files,
+ 	};
+-	int ret;
  
-+
-+
-+static inline int ____sys_io_uring_register(int fd, unsigned opcode,
-+					    const void *arg, unsigned nr_args)
-+{
-+	int ret;
-+
-+	ret = syscall(__NR_io_uring_register, fd, opcode, arg, nr_args);
-+	return (ret < 0) ? -errno : ret;
-+}
-+
-+static inline int ____sys_io_uring_setup(unsigned entries,
-+					 struct io_uring_params *p)
-+{
-+	int ret;
-+
-+	ret = syscall(__NR_io_uring_setup, entries, p);
-+	return (ret < 0) ? -errno : ret;
-+}
-+
-+static inline int ____sys_io_uring_enter2(int fd, unsigned to_submit,
-+					  unsigned min_complete, unsigned flags,
-+					  sigset_t *sig, int sz)
-+{
-+	int ret;
-+
-+	ret = syscall(__NR_io_uring_enter, fd, to_submit, min_complete, flags,
-+		      sig, sz);
-+	return (ret < 0) ? -errno : ret;
-+}
-+
-+static inline int ____sys_io_uring_enter(int fd, unsigned to_submit,
-+					 unsigned min_complete, unsigned flags,
-+					 sigset_t *sig)
-+{
-+	return ____sys_io_uring_enter2(fd, to_submit, min_complete, flags, sig,
-+				       _NSIG / 8);
-+}
-+
- #endif
+-	ret = __sys_io_uring_register(ring->ring_fd,
+-					IORING_REGISTER_FILES_UPDATE2,
+-					&up, sizeof(up));
+-	return ret < 0 ? -errno : ret;
++	return ____sys_io_uring_register(ring->ring_fd,
++					 IORING_REGISTER_FILES_UPDATE2, &up,
++					 sizeof(up));
+ }
+ 
+ /*
+@@ -108,15 +96,10 @@ int io_uring_register_files_update(struct io_uring *ring, unsigned off,
+ 		.offset	= off,
+ 		.fds	= (unsigned long) files,
+ 	};
+-	int ret;
+-
+-	ret = __sys_io_uring_register(ring->ring_fd,
+-					IORING_REGISTER_FILES_UPDATE, &up,
+-					nr_files);
+-	if (ret < 0)
+-		return -errno;
+ 
+-	return ret;
++	return ____sys_io_uring_register(ring->ring_fd,
++					 IORING_REGISTER_FILES_UPDATE, &up,
++					 nr_files);
+ }
+ 
+ static int increase_rlimit_nofile(unsigned nr)
+@@ -133,9 +116,8 @@ static int increase_rlimit_nofile(unsigned nr)
+ 	return 0;
+ }
+ 
+-int io_uring_register_files_tags(struct io_uring *ring,
+-				 const int *files, const __u64 *tags,
+-				 unsigned nr)
++int io_uring_register_files_tags(struct io_uring *ring, const int *files,
++				 const __u64 *tags, unsigned nr)
+ {
+ 	struct io_uring_rsrc_register reg = {
+ 		.nr = nr,
+@@ -145,12 +127,12 @@ int io_uring_register_files_tags(struct io_uring *ring,
+ 	int ret, did_increase = 0;
+ 
+ 	do {
+-		ret = __sys_io_uring_register(ring->ring_fd,
+-					      IORING_REGISTER_FILES2, &reg,
+-					      sizeof(reg));
++		ret = ____sys_io_uring_register(ring->ring_fd,
++						IORING_REGISTER_FILES2, &reg,
++						sizeof(reg));
+ 		if (ret >= 0)
+ 			break;
+-		if (errno == EMFILE && !did_increase) {
++		if (ret == -EMFILE && !did_increase) {
+ 			did_increase = 1;
+ 			increase_rlimit_nofile(nr);
+ 			continue;
+@@ -158,21 +140,21 @@ int io_uring_register_files_tags(struct io_uring *ring,
+ 		break;
+ 	} while (1);
+ 
+-	return ret < 0 ? -errno : ret;
++	return ret;
+ }
+ 
+ int io_uring_register_files(struct io_uring *ring, const int *files,
+-			      unsigned nr_files)
++			    unsigned nr_files)
+ {
+ 	int ret, did_increase = 0;
+ 
+ 	do {
+-		ret = __sys_io_uring_register(ring->ring_fd,
+-					      IORING_REGISTER_FILES, files,
+-					      nr_files);
++		ret = ____sys_io_uring_register(ring->ring_fd,
++						IORING_REGISTER_FILES, files,
++						nr_files);
+ 		if (ret >= 0)
+ 			break;
+-		if (errno == EMFILE && !did_increase) {
++		if (ret == -EMFILE && !did_increase) {
+ 			did_increase = 1;
+ 			increase_rlimit_nofile(nr_files);
+ 			continue;
+@@ -180,55 +162,44 @@ int io_uring_register_files(struct io_uring *ring, const int *files,
+ 		break;
+ 	} while (1);
+ 
+-	return ret < 0 ? -errno : ret;
++	return ret;
+ }
+ 
+ int io_uring_unregister_files(struct io_uring *ring)
+ {
+ 	int ret;
+ 
+-	ret = __sys_io_uring_register(ring->ring_fd, IORING_UNREGISTER_FILES,
++	ret = ____sys_io_uring_register(ring->ring_fd, IORING_UNREGISTER_FILES,
+ 					NULL, 0);
+-	if (ret < 0)
+-		return -errno;
+-
+-	return 0;
++	return (ret < 0) ? ret : 0;
+ }
+ 
+ int io_uring_register_eventfd(struct io_uring *ring, int event_fd)
+ {
+ 	int ret;
+ 
+-	ret = __sys_io_uring_register(ring->ring_fd, IORING_REGISTER_EVENTFD,
++	ret = ____sys_io_uring_register(ring->ring_fd, IORING_REGISTER_EVENTFD,
+ 					&event_fd, 1);
+-	if (ret < 0)
+-		return -errno;
+-
+-	return 0;
++	return (ret < 0) ? ret : 0;
+ }
+ 
+ int io_uring_unregister_eventfd(struct io_uring *ring)
+ {
+ 	int ret;
+ 
+-	ret = __sys_io_uring_register(ring->ring_fd, IORING_UNREGISTER_EVENTFD,
++	ret = ____sys_io_uring_register(ring->ring_fd, IORING_UNREGISTER_EVENTFD,
+ 					NULL, 0);
+-	if (ret < 0)
+-		return -errno;
+-
+-	return 0;
++	return (ret < 0) ? ret : 0;
+ }
+ 
+ int io_uring_register_eventfd_async(struct io_uring *ring, int event_fd)
+ {
+ 	int ret;
+ 
+-	ret = __sys_io_uring_register(ring->ring_fd, IORING_REGISTER_EVENTFD_ASYNC,
+-			&event_fd, 1);
+-	if (ret < 0)
+-		return -errno;
+-
+-	return 0;
++	ret = ____sys_io_uring_register(ring->ring_fd,
++					IORING_REGISTER_EVENTFD_ASYNC,
++					&event_fd, 1);
++	return (ret < 0) ? ret : 0;
+ }
+ 
+ int io_uring_register_probe(struct io_uring *ring, struct io_uring_probe *p,
+@@ -236,36 +207,21 @@ int io_uring_register_probe(struct io_uring *ring, struct io_uring_probe *p,
+ {
+ 	int ret;
+ 
+-	ret = __sys_io_uring_register(ring->ring_fd, IORING_REGISTER_PROBE,
+-					p, nr_ops);
+-	if (ret < 0)
+-		return -errno;
+-
+-	return 0;
++	ret = ____sys_io_uring_register(ring->ring_fd, IORING_REGISTER_PROBE, p,
++					nr_ops);
++	return (ret < 0) ? ret : 0;
+ }
+ 
+ int io_uring_register_personality(struct io_uring *ring)
+ {
+-	int ret;
+-
+-	ret = __sys_io_uring_register(ring->ring_fd, IORING_REGISTER_PERSONALITY,
+-					NULL, 0);
+-	if (ret < 0)
+-		return -errno;
+-
+-	return ret;
++	return ____sys_io_uring_register(ring->ring_fd,
++					 IORING_REGISTER_PERSONALITY, NULL, 0);
+ }
+ 
+ int io_uring_unregister_personality(struct io_uring *ring, int id)
+ {
+-	int ret;
+-
+-	ret = __sys_io_uring_register(ring->ring_fd, IORING_UNREGISTER_PERSONALITY,
+-					NULL, id);
+-	if (ret < 0)
+-		return -errno;
+-
+-	return ret;
++	return ____sys_io_uring_register(ring->ring_fd,
++					 IORING_UNREGISTER_PERSONALITY, NULL, id);
+ }
+ 
+ int io_uring_register_restrictions(struct io_uring *ring,
+@@ -274,61 +230,34 @@ int io_uring_register_restrictions(struct io_uring *ring,
+ {
+ 	int ret;
+ 
+-	ret = __sys_io_uring_register(ring->ring_fd, IORING_REGISTER_RESTRICTIONS,
+-				      res, nr_res);
+-	if (ret < 0)
+-		return -errno;
+-
+-	return 0;
++	ret = ____sys_io_uring_register(ring->ring_fd,
++					IORING_REGISTER_RESTRICTIONS, res,
++					nr_res);
++	return (ret < 0) ? ret : 0;
+ }
+ 
+ int io_uring_enable_rings(struct io_uring *ring)
+ {
+-	int ret;
+-
+-	ret = __sys_io_uring_register(ring->ring_fd,
+-				      IORING_REGISTER_ENABLE_RINGS, NULL, 0);
+-	if (ret < 0)
+-		return -errno;
+-
+-	return ret;
++	return ____sys_io_uring_register(ring->ring_fd,
++					 IORING_REGISTER_ENABLE_RINGS, NULL, 0);
+ }
+ 
+ int io_uring_register_iowq_aff(struct io_uring *ring, size_t cpusz,
+ 			       const cpu_set_t *mask)
+ {
+-	int ret;
+-
+-	ret = __sys_io_uring_register(ring->ring_fd,
+-					IORING_REGISTER_IOWQ_AFF, mask, cpusz);
+-	if (ret < 0)
+-		return -errno;
+-
+-	return ret;
++	return ____sys_io_uring_register(ring->ring_fd, IORING_REGISTER_IOWQ_AFF,
++					 mask, cpusz);
+ }
+ 
+ int io_uring_unregister_iowq_aff(struct io_uring *ring)
+ {
+-	int ret;
+-
+-	ret = __sys_io_uring_register(ring->ring_fd,
+-					IORING_REGISTER_IOWQ_AFF, NULL, 0);
+-	if (ret < 0)
+-		return -errno;
+-
+-	return ret;
++	return  ____sys_io_uring_register(ring->ring_fd,
++					  IORING_REGISTER_IOWQ_AFF, NULL, 0);
+ }
+ 
+ int io_uring_register_iowq_max_workers(struct io_uring *ring, unsigned int *val)
+ {
+-	int ret;
+-
+-	ret = __sys_io_uring_register(ring->ring_fd,
+-					IORING_REGISTER_IOWQ_MAX_WORKERS,
+-					val, 2);
+-	if (ret < 0)
+-		return -errno;
+-
+-	return ret;
+-
++	return ____sys_io_uring_register(ring->ring_fd,
++					 IORING_REGISTER_IOWQ_MAX_WORKERS, val,
++					 2);
+ }
+diff --git a/src/setup.c b/src/setup.c
+index 54225e8..edfe94e 100644
+--- a/src/setup.c
++++ b/src/setup.c
+@@ -140,9 +140,9 @@ int io_uring_queue_init_params(unsigned entries, struct io_uring *ring,
+ {
+ 	int fd, ret;
+ 
+-	fd = __sys_io_uring_setup(entries, p);
++	fd = ____sys_io_uring_setup(entries, p);
+ 	if (fd < 0)
+-		return -errno;
++		return fd;
+ 
+ 	ret = io_uring_queue_mmap(fd, p, ring);
+ 	if (ret) {
 -- 
 2.30.2
 

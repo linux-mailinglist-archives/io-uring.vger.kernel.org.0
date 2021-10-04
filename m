@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DE13B4216E9
-	for <lists+io-uring@lfdr.de>; Mon,  4 Oct 2021 21:03:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 003934216EA
+	for <lists+io-uring@lfdr.de>; Mon,  4 Oct 2021 21:03:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237207AbhJDTFj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 4 Oct 2021 15:05:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59046 "EHLO
+        id S237447AbhJDTFl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 4 Oct 2021 15:05:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237266AbhJDTFi (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 4 Oct 2021 15:05:38 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4734FC061745
-        for <io-uring@vger.kernel.org>; Mon,  4 Oct 2021 12:03:49 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id f9so6316416edx.4
-        for <io-uring@vger.kernel.org>; Mon, 04 Oct 2021 12:03:49 -0700 (PDT)
+        with ESMTP id S237266AbhJDTFk (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 4 Oct 2021 15:05:40 -0400
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D9C3C061745
+        for <io-uring@vger.kernel.org>; Mon,  4 Oct 2021 12:03:51 -0700 (PDT)
+Received: by mail-ed1-x530.google.com with SMTP id z20so17359499edc.13
+        for <io-uring@vger.kernel.org>; Mon, 04 Oct 2021 12:03:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=LwXcMVZLipfWdgz9m4D/gl7eVTnWp73djXSvjVy8PRs=;
-        b=B0LIpdGMWPHIgYT51ECEJhDBxBjynK+IOdfrqlXu1RXbZArdcKA93NJSthkRZbRVJo
-         MDWl964wU091gRHGm8r/a0fHqb8KT7FVjlseaUzuFY8mpJ4kh9DHr6WZ+EoVco6CRKT+
-         1lP+w2oBQZvSbV+aWPAjsZc18vd4ybciohw+CGCDMY2BfxOj6xpO5wTRt0ASQi/9looS
-         Ie7UliagY5kRzLCQ4zmP19DT+qxFjVeBZ1uNKKrVRo/oFZYmyXQhuWUwiFDY7SvhAU1g
-         etronsn3Yu8FTzHBYmYmNQ5xvr1Rv8g6o9xTWBP4tkcB+xTDN0HMrMUQKkTnde+iiwBi
-         QAbA==
+        bh=OlSzEC78b2hKJX0lfVQGwxCCk4SLfQdCTbcrSgeGu1k=;
+        b=OW0AWfDo0mUGiptRjElzKihbTVC39ohgNH7lyr3tGaz6qylpw26su9kBNQDowske0M
+         SJdIIfyEmaFzKBinGXTJ3+se14B7PAgAlRKBbxNuaMS8gAC2dp9SF4rTatndXy51Jgep
+         CPuZkIU8r5In/pczOQaiyPcsycif6ztWUGey6ALVgMc1QfW3QqxY/L4jljwFJmklXLVu
+         coN7BMd9Vc6FtHWtqkolePOJ5XYny78LAjkVIUXIRes+Wr2AiG9TyIwoYw0TTe4CftFv
+         qbMVafP/+HpzP7cMLisirQRSREHA9890DFyK4yzxothb+V72AR7YmHzxMjSZl9xx3O/6
+         iC1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=LwXcMVZLipfWdgz9m4D/gl7eVTnWp73djXSvjVy8PRs=;
-        b=w+gjKsACtzZ15cyC6FlIaT+tkViEQexUDgYtUh2FxNatqh6QGuNLEGcTeiFQNI0fE3
-         m5TeCkzLDck8NTa3WhiI7wR8zuzt0YQIKEaoKN6Kd9tiYm2LwgSGNMruJssxATv5h25w
-         lxj7u6dL4rJPS8SDDRauDdTVjJvTZD8vjJC8N8HTJ5VA85auekFNRgNDbaNsJnD3WopO
-         gKQodtGOeYrNhW5MTbm5ZXhAuw3aH1l2K8jVlu/PO56+rZzJqLhkf+0DW9ckw59bExYF
-         c7gO9FJjvtzYQ6bAawzmvhQTpU0H63iYnKOJowNPCHCbIToH+h9U2fGXLZFus0gvUApg
-         UJeQ==
-X-Gm-Message-State: AOAM531v7ALzlazb4/hOe5xX1F2Txo50mgfcwpxmUNdForVFnYNAvaP+
-        Cm66+7nK5fqgzEWKKzLEiBJoF6jmXpc=
-X-Google-Smtp-Source: ABdhPJzNycHXHLScXRn2dbh318d20dkaYVax7GDUP0D1GhX/owE/lY1D61mIFGRrUWSWrCn+n1ELRQ==
-X-Received: by 2002:a17:906:2b07:: with SMTP id a7mr20348552ejg.284.1633374227565;
-        Mon, 04 Oct 2021 12:03:47 -0700 (PDT)
+        bh=OlSzEC78b2hKJX0lfVQGwxCCk4SLfQdCTbcrSgeGu1k=;
+        b=UScZHtMsZlxzfp5wdQeazjdFjmmGRGUFSFEGer6rbe81XMphaIMi2jDahe2qK6GPCG
+         2bno+471//vIba25mc2Whg6E27thR7XMD+TizOpFSFwOI8xRKG7aczyByoaAdtfsGQx6
+         jIZi/IQeNisNc+xB3yG1eStZoo+6PbLzUMOMbpxw+s96Qc3NWetfEjGsw2QIzIjdyKHQ
+         dxS8cJ0Gnm11choNK5Cx55ZxFq2uM4kxoUZ5/TKUQrdqK+yf0jm+fxVKIIcShKp+4XhW
+         6vT6Y0HtDo+1qda2jioYg9evf1UH7WDl6fKDQ68yIneHKBg4BYvvgWh2K37VT6hoTu12
+         NcYg==
+X-Gm-Message-State: AOAM532FPi3gTQ2/Tibn0rvJ4Uzupv2CkfaBwqk8TrmOSiBpBpaWk7AJ
+        vOhRfjMwR3H+IoS8lAydLYeAWpW34s8=
+X-Google-Smtp-Source: ABdhPJx/vd+q4ybrymc1PSwn7e2sH7hcelmr7LJo+zznU9DTM615STHqN29ESaFhWFAllSjIpehdPQ==
+X-Received: by 2002:a50:cd87:: with SMTP id p7mr20097580edi.294.1633374228641;
+        Mon, 04 Oct 2021 12:03:48 -0700 (PDT)
 Received: from localhost.localdomain ([85.255.237.101])
-        by smtp.gmail.com with ESMTPSA id k12sm6855045ejk.63.2021.10.04.12.03.46
+        by smtp.gmail.com with ESMTPSA id k12sm6855045ejk.63.2021.10.04.12.03.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Oct 2021 12:03:47 -0700 (PDT)
+        Mon, 04 Oct 2021 12:03:48 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH 01/16] io_uring: optimise kiocb layout
-Date:   Mon,  4 Oct 2021 20:02:46 +0100
-Message-Id: <9d9dde31f8f62279a5f48c575bbc27b8290edc0c.1633373302.git.asml.silence@gmail.com>
+Subject: [PATCH 02/16] io_uring: add more likely/unlikely() annotations
+Date:   Mon,  4 Oct 2021 20:02:47 +0100
+Message-Id: <88e087afe657e7660194353aada9b00f11d480f9.1633373302.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <cover.1633373302.git.asml.silence@gmail.com>
 References: <cover.1633373302.git.asml.silence@gmail.com>
@@ -62,45 +62,41 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-We want ->comp_list in the second cacheline, which is hotter comparing
-to the 3rd. Swap the field with ->link, which is not as hot and
-controlled by flags and so not accessed unless there is a link.
-
-By the way add a couple of comments for io_kiocb fields.
+Add two extra unlikely() in io_submit_sqes() and one around
+io_req_needs_clean() to help the compiler to avoid extra jumps
+in hot paths.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ fs/io_uring.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index a9eefd74b7e1..970535071564 100644
+index 970535071564..b09b267247f5 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -863,19 +863,22 @@ struct io_kiocb {
- 	struct task_struct		*task;
- 	u64				user_data;
+@@ -1957,7 +1957,7 @@ static inline void io_dismantle_req(struct io_kiocb *req)
+ {
+ 	unsigned int flags = req->flags;
  
--	struct io_kiocb			*link;
- 	struct percpu_ref		*fixed_rsrc_refs;
+-	if (io_req_needs_clean(req))
++	if (unlikely(io_req_needs_clean(req)))
+ 		io_clean_op(req);
+ 	if (!(flags & REQ_F_FIXED_FILE))
+ 		io_put_file(req->file);
+@@ -7201,11 +7201,11 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr)
+ 	unsigned int entries = io_sqring_entries(ctx);
+ 	int submitted = 0;
  
--	/* used with ctx->iopoll_list with reads/writes */
-+	/* used by request caches, completion batching and iopoll */
- 	struct io_wq_work_node		comp_list;
-+	struct io_kiocb			*link;
- 	struct io_task_work		io_task_work;
- 	/* for polled requests, i.e. IORING_OP_POLL_ADD and async armed poll */
- 	struct hlist_node		hash_node;
-+	/* internal polling, see IORING_FEAT_FAST_POLL */
- 	struct async_poll		*apoll;
- 	/* store used ubuf, so we can prevent reloading */
- 	struct io_mapped_ubuf		*imu;
- 	struct io_wq_work		work;
-+	/* custom credentials, valid IFF REQ_F_CREDS is set */
- 	const struct cred		*creds;
-+	/* stores selected buf, valid IFF REQ_F_BUFFER_SELECTED is set */
- 	struct io_buffer		*kbuf;
- };
+-	if (!entries)
++	if (unlikely(!entries))
+ 		return 0;
+ 	/* make sure SQ entry isn't read before tail */
+ 	nr = min3(nr, ctx->sq_entries, entries);
+-	if (!percpu_ref_tryget_many(&ctx->refs, nr))
++	if (unlikely(!percpu_ref_tryget_many(&ctx->refs, nr)))
+ 		return -EAGAIN;
+ 	io_get_task_refs(nr);
  
 -- 
 2.33.0

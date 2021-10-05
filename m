@@ -2,91 +2,121 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DF372421AAA
-	for <lists+io-uring@lfdr.de>; Tue,  5 Oct 2021 01:32:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C80634228D3
+	for <lists+io-uring@lfdr.de>; Tue,  5 Oct 2021 15:52:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233716AbhJDXeX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 4 Oct 2021 19:34:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35896 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229635AbhJDXeW (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 4 Oct 2021 19:34:22 -0400
-Received: from mail-il1-x135.google.com (mail-il1-x135.google.com [IPv6:2607:f8b0:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D971C061745
-        for <io-uring@vger.kernel.org>; Mon,  4 Oct 2021 16:32:32 -0700 (PDT)
-Received: by mail-il1-x135.google.com with SMTP id y17so11760976ilb.9
-        for <io-uring@vger.kernel.org>; Mon, 04 Oct 2021 16:32:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=fLdBvk4CrKALk5GZ/pC6C9jLesNQj4l4NnFXFbeN69w=;
-        b=67wSaUafE+BcyPKhTlrNUIoHh8eSrKpxOxYiHnrwHqhWqnvSp6dCFdASii1rIlj+6U
-         ZSPhuuvjEIheLXr81e4fofYKsbxrt5DLJoe0vMzz+zyozdi+fslGlDzzzSba6Emfrbww
-         EYCJYIsptua6WgwUXVdRI7vS9PVgxxEkpvFRR2t90mNIJVAvsw3673Ao9owD+H0JHEO2
-         l2AGaD4AzRVJXS2ZvvHxFNtZHZcvGk4ld7pFSomoLDwQ9gkX/ErHns5DcaSuXschS7Rk
-         kcW/1cDpZoUE/j1LkCMwAOXoACq08Zg8wnLd7QktTrgWzPWTYt1tTolakVDGnWiuMzdY
-         KKCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=fLdBvk4CrKALk5GZ/pC6C9jLesNQj4l4NnFXFbeN69w=;
-        b=hzY4FrAzCI4KwcJ/4zYlLc7steU/Mg162kjkZqEHpzcv9142TAD94aXI+WVt8uRDs0
-         dVMRK3YK8Ljt6L5Qtr5FZKO4lR/lry47Vkz2kvpeIhg1AYirqabh/iNTYemiJdH0lvX+
-         VzFJSp3r7MKZYMklkTrg+/fw/iksI6tsUl9sOq3o8SRlgyttDcE7RH8Eoo+CzLYAoiww
-         s4nB7RTiNNPa+60pkd1HclHFOw7wJX3u/5BmwzXpwG03OFI6kajC6wBJZ3jdBChkTVC3
-         vaCTLwUC39yZOTt+HzfzUqX6WvxsFnCnyQPQ9dnvKRgRSyZdY6Q5rbLegFYGs8dnqC49
-         x/Bg==
-X-Gm-Message-State: AOAM533OVrGIfP2b9BQChuCbbE7+CUuJg+ZUmbCNS3YblGAg8bsxrPSC
-        CJDfDaVbHf5u74zpaO2Fn8kZCL701rIxXg==
-X-Google-Smtp-Source: ABdhPJyau7mWekGhYGc1F6HvPkXS4mRvZZ+wdaS+30f5uogmWOZpyg3oKRHFdvCOG+Za0aX8xZlk9w==
-X-Received: by 2002:a92:cd8c:: with SMTP id r12mr573601ilb.164.1633390351352;
-        Mon, 04 Oct 2021 16:32:31 -0700 (PDT)
-Received: from [192.168.1.116] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id h23sm10682932ila.32.2021.10.04.16.32.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Oct 2021 16:32:30 -0700 (PDT)
-Subject: Re: [PATCH v2] liburing: Add io_uring_submit_and_wait_timeout
- function in API
-To:     Olivier Langlois <olivier@trillion01.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
+        id S235306AbhJENye (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 5 Oct 2021 09:54:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33310 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235717AbhJENx0 (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Tue, 5 Oct 2021 09:53:26 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 2C58F611F2;
+        Tue,  5 Oct 2021 13:51:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1633441895;
+        bh=+w/nfhy4vBx7ITifxhC1p8wHJQYh/36CYL4Ob9FMvHg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=PiuDtWSdLNusJY7U0PYI05FAdgxxfCOCf+9N1L60muVElEyQRAsiU2fnkiUVDEU3A
+         fnkm70eECnxwoGFy8cNjAZfAMm40mwQfq7HePQD0EJmU5jsG5iejQb9fdDyfCBTRKM
+         8UwxG0Z+Kb/1FzPSkCG5mFOAskGyMJBIk4rtzyX9dVXSMFixGe/lhrmxozYQrGjQFl
+         VNPbC0FpjSndsz2T+xHekzlzU8Z3ph40pv5bEyrh9WtCqlKZNLeXsLrh1/iULiIuaK
+         9qZzw9L36VE+csQRN7ZUpyOkyJB2ySF5+Hgr0GClMJNN+kuKeUwBvk1rs8hc5C1VGw
+         8tTK0XHTdcrvw==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
         io-uring@vger.kernel.org
-References: <1bbde6755535cb7b0bdfc0846254e7c06faf04e0.1633366467.git.olivier@trillion01.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <cceed63f-aae7-d391-dbc3-776fcac93afe@kernel.dk>
-Date:   Mon, 4 Oct 2021 17:32:29 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+Subject: [PATCH AUTOSEL 5.14 39/40] io_uring: kill fasync
+Date:   Tue,  5 Oct 2021 09:50:18 -0400
+Message-Id: <20211005135020.214291-39-sashal@kernel.org>
+X-Mailer: git-send-email 2.33.0
+In-Reply-To: <20211005135020.214291-1-sashal@kernel.org>
+References: <20211005135020.214291-1-sashal@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <1bbde6755535cb7b0bdfc0846254e7c06faf04e0.1633366467.git.olivier@trillion01.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 10/4/21 10:56 AM, Olivier Langlois wrote:
-> before commit 0ea4ccd1c0e4 ("src/queue: don't flush SQ ring for new wait interface"),
-> io_uring_wait_cqes() was serving the purpose of submit sqe and wait for cqe up to a certain timeout value.
+From: Pavel Begunkov <asml.silence@gmail.com>
 
-I fixed up this to wrap at 74 chars (standard style) to avoid wrapping
-in git log reading, and fixed up:
+[ Upstream commit 3f008385d46d3cea4a097d2615cd485f2184ba26 ]
 
-> +		if (to_submit < 0)
-> +			return to_submit;
->  	}
-> +	else
-> +		to_submit = __io_uring_flush_sq(ring);
->  
->  	return __io_uring_get_cqe(ring, cqe_ptr, to_submit, wait_nr, sigmask);
->  }
-> 
+We have never supported fasync properly, it would only fire when there
+is something polling io_uring making it useless. The original support came
+in through the initial io_uring merge for 5.1. Since it's broken and
+nobody has reported it, get rid of the fasync bits.
 
-this else condition which was still on a separate line. Applied, thanks.
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+Link: https://lore.kernel.org/r/2f7ca3d344d406d34fa6713824198915c41cea86.1633080236.git.asml.silence@gmail.com
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/io_uring.c | 17 ++---------------
+ 1 file changed, 2 insertions(+), 15 deletions(-)
 
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 699a08d724c2..9d6c415ac97c 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -419,7 +419,6 @@ struct io_ring_ctx {
+ 		struct wait_queue_head	cq_wait;
+ 		unsigned		cq_extra;
+ 		atomic_t		cq_timeouts;
+-		struct fasync_struct	*cq_fasync;
+ 		unsigned		cq_last_tm_flush;
+ 	} ____cacheline_aligned_in_smp;
+ 
+@@ -1448,10 +1447,8 @@ static void io_cqring_ev_posted(struct io_ring_ctx *ctx)
+ 		wake_up(&ctx->sq_data->wait);
+ 	if (io_should_trigger_evfd(ctx))
+ 		eventfd_signal(ctx->cq_ev_fd, 1);
+-	if (waitqueue_active(&ctx->poll_wait)) {
++	if (waitqueue_active(&ctx->poll_wait))
+ 		wake_up_interruptible(&ctx->poll_wait);
+-		kill_fasync(&ctx->cq_fasync, SIGIO, POLL_IN);
+-	}
+ }
+ 
+ static void io_cqring_ev_posted_iopoll(struct io_ring_ctx *ctx)
+@@ -1465,10 +1462,8 @@ static void io_cqring_ev_posted_iopoll(struct io_ring_ctx *ctx)
+ 	}
+ 	if (io_should_trigger_evfd(ctx))
+ 		eventfd_signal(ctx->cq_ev_fd, 1);
+-	if (waitqueue_active(&ctx->poll_wait)) {
++	if (waitqueue_active(&ctx->poll_wait))
+ 		wake_up_interruptible(&ctx->poll_wait);
+-		kill_fasync(&ctx->cq_fasync, SIGIO, POLL_IN);
+-	}
+ }
+ 
+ /* Returns true if there are no backlogged entries after the flush */
+@@ -8777,13 +8772,6 @@ static __poll_t io_uring_poll(struct file *file, poll_table *wait)
+ 	return mask;
+ }
+ 
+-static int io_uring_fasync(int fd, struct file *file, int on)
+-{
+-	struct io_ring_ctx *ctx = file->private_data;
+-
+-	return fasync_helper(fd, file, on, &ctx->cq_fasync);
+-}
+-
+ static int io_unregister_personality(struct io_ring_ctx *ctx, unsigned id)
+ {
+ 	const struct cred *creds;
+@@ -9567,7 +9555,6 @@ static const struct file_operations io_uring_fops = {
+ 	.mmap_capabilities = io_uring_nommu_mmap_capabilities,
+ #endif
+ 	.poll		= io_uring_poll,
+-	.fasync		= io_uring_fasync,
+ #ifdef CONFIG_PROC_FS
+ 	.show_fdinfo	= io_uring_show_fdinfo,
+ #endif
 -- 
-Jens Axboe
+2.33.0
 

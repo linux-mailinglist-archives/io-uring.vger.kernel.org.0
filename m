@@ -2,83 +2,67 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 96A90424351
-	for <lists+io-uring@lfdr.de>; Wed,  6 Oct 2021 18:48:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CB1642454E
+	for <lists+io-uring@lfdr.de>; Wed,  6 Oct 2021 19:54:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231528AbhJFQul (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 6 Oct 2021 12:50:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42524 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231317AbhJFQuk (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 6 Oct 2021 12:50:40 -0400
-Received: from mail-il1-x12e.google.com (mail-il1-x12e.google.com [IPv6:2607:f8b0:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C1A3C061746
-        for <io-uring@vger.kernel.org>; Wed,  6 Oct 2021 09:48:48 -0700 (PDT)
-Received: by mail-il1-x12e.google.com with SMTP id d11so3509523ilc.8
-        for <io-uring@vger.kernel.org>; Wed, 06 Oct 2021 09:48:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=RDYnh6EcREg8/N/kW1V0pwhFkyos4jq5uRnxmjGqXIo=;
-        b=TKjq7VR7ygugTUUOpKyqjQa+9ih9Y9cF0GxWrfYBdf9JkbZ9HU8JzeXpRoqFhylDUa
-         TArTqYV933mwjfdIuXY8bEeZqJCnBzLJF4FFf3ok4I/k3FVXXZKE7liIMxfSdCT1+fq0
-         mFBfMvl48oTxhn22Oxq0Rney1tDUw4iqMRC9+KsET+wURz0ojw89XF39kn7tJKjwem3h
-         9df+SFeDJldSU85Tgqg1vvdjwGm24B6xPFiklgJSy+CVgkxT4oYDeHbqnXRN7YtY/Hbz
-         CB/9L+DDDuA/Q+vMi0pP9nSWXtc2PEGlIVXBM7p12N+0QxJs/x7d8QT7R52kbWdAfV/Y
-         giNg==
+        id S229633AbhJFR4D (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 6 Oct 2021 13:56:03 -0400
+Received: from mail-io1-f70.google.com ([209.85.166.70]:47767 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229565AbhJFR4D (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 6 Oct 2021 13:56:03 -0400
+Received: by mail-io1-f70.google.com with SMTP id x24-20020a6b6a18000000b005db732f9449so2750081iog.14
+        for <io-uring@vger.kernel.org>; Wed, 06 Oct 2021 10:54:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=RDYnh6EcREg8/N/kW1V0pwhFkyos4jq5uRnxmjGqXIo=;
-        b=lxfuKhALgY+fXXzcAo0OzaS6ySRsc9bpYeVbSKa9Xy+wcNjFxbfUukVScIkQzrNc8U
-         DUT6LQT7cdGOJUsfNJrd/grtmpB2Iyyzn1mLpUZ0SkxrdrXIXJUPTzdrVbJF3KshTM8L
-         VSi6VGn6j2XJN5LJsSmrteGhlIalEvuWbhctAgdEHTr2Yq9b98Wvala2FeNnS5CDerov
-         pmZrQzCVrU1BEJQ/GMT8Q3QuHUGi4f9ZGbfdgYg3pvs2MeicPp8ZIYma9nOwv/NDwiq+
-         KRK333ETkBNvfpdzay6vg5cG+lV7SW8HUbVZTjpSHnmPRR2m/AgU69aBpNij+eD0YzxC
-         XuFQ==
-X-Gm-Message-State: AOAM533w88/YYvzH3Dz14v2+8UM8o7V7y+dGFsnCRXe6RRtmQxRuLqzX
-        jJzhzFULgM646/988j6a22JfXtIudT3A/fvDiCs=
-X-Google-Smtp-Source: ABdhPJwbPZPrDCOp9R4xQQ21y31FAcpPPCEOQZ9lNcAyiuu0lA9jCty0i7I6aT5F/Fk7Mxa2FVgbJw==
-X-Received: by 2002:a92:c241:: with SMTP id k1mr6156563ilo.258.1633538927329;
-        Wed, 06 Oct 2021 09:48:47 -0700 (PDT)
-Received: from [192.168.1.30] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id o5sm12976670ilk.88.2021.10.06.09.48.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Oct 2021 09:48:46 -0700 (PDT)
-Subject: Re: [PATCH 4/5] io_uring: optimise out req->opcode reloading
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <cover.1633532552.git.asml.silence@gmail.com>
- <6ba869f5f8b7b0f991c87fdf089f0abf87cbe06b.1633532552.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <6dc5a0c8-ac30-e4ee-4833-74a25fac2dc9@kernel.dk>
-Date:   Wed, 6 Oct 2021 10:48:46 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=V+I890c20q7qNEdOd1hUGCnKcSpI6F+6PfMtuEIOa7E=;
+        b=MVrogCzfbzy78Q7sxXXTTlc87ulaxnwmbb+naCWt+abSLpGOcExxzP/slSWTU3nqDA
+         f01IFSztS53OcFOu0dLNVgXsKoyVQqslHR7KBlFNijczMwTYfaypofv0icCxlgFqZGI2
+         EjsTF1v4dAE/nRfJvd5m/Uam+CnPUmQ+OWC//yQl9dKFAh46/ryeFnX1Aku3iOu7LlE/
+         3lIpyqmEDtmdfB8Bc01xuwhhjknUSmkFeFNDCxk6eIpwXZ/buScIN7nzWI20M4GGe+yg
+         2yA+jbUClqC6jBozJ28WomTPVlZr7cEJj4idomEfMjXiKgXnJ1jhV1fpC5qJotE1ZeNE
+         tr/Q==
+X-Gm-Message-State: AOAM530iPfPrW3Cr+62JFbbj9IeB7dzELgROTnV+8XPJtvPH4q63uNCF
+        cdaLQMafdu7ZfR7DHJ6qTsGeGqHKhJxwPmmL0/qazkLQFjbQ
+X-Google-Smtp-Source: ABdhPJwsyjZ6t7YeGUzi2E7eUx+7aaW1DzCy0NGrvQJYbyqWVCx9ftgACQozGvaotlyE8L8gj9MZAt+RjYMH/QNwTTn5gv04aF9b
 MIME-Version: 1.0
-In-Reply-To: <6ba869f5f8b7b0f991c87fdf089f0abf87cbe06b.1633532552.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1c05:: with SMTP id l5mr1984571ilh.7.1633542850801;
+ Wed, 06 Oct 2021 10:54:10 -0700 (PDT)
+Date:   Wed, 06 Oct 2021 10:54:10 -0700
+In-Reply-To: <0000000000006d354305cae2253f@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000058faf705cdb2d5f6@google.com>
+Subject: Re: [syzbot] general protection fault in __io_file_supports_nowait
+From:   syzbot <syzbot+e51249708aaa9b0e4d2c@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, haoxu@linux.alibaba.com,
+        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 10/6/21 9:06 AM, Pavel Begunkov wrote:
-> Looking at the assembly, the compiler decided to reload req->opcode in
-> io_op_defs[opcode].needs_file instead of one it had in a register, so
-> store it in a temp variable so it can be optimised out. Also move the
-> personality block later, it's better for spilling/etc. as it only
-> depends on @sqe, which we're keeping anyway.
-> 
-> By the way, zero req->opcode if it over IORING_OP_LAST, not a problem,
-> at the moment but is safer.
+syzbot suspects this issue was fixed by commit:
 
-That had me a bit worried, but you mean it's reloading req->opcode,
-not sqe->opcode. Phew.
+commit c6d3d9cbd659de8f2176b4e4721149c88ac096d4
+Author: Pavel Begunkov <asml.silence@gmail.com>
+Date:   Tue Aug 31 13:13:10 2021 +0000
 
--- 
-Jens Axboe
+    io_uring: fix queueing half-created requests
 
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=174ee814b00000
+start commit:   b91db6a0b52e Merge tag 'for-5.15/io_uring-vfs-2021-08-30' ..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=961d30359ac81f8c
+dashboard link: https://syzkaller.appspot.com/bug?extid=e51249708aaa9b0e4d2c
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10a91625300000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12512291300000
+
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: io_uring: fix queueing half-created requests
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection

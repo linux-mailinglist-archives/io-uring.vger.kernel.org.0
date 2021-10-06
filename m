@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 959E54240D7
-	for <lists+io-uring@lfdr.de>; Wed,  6 Oct 2021 17:07:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5DA34240D8
+	for <lists+io-uring@lfdr.de>; Wed,  6 Oct 2021 17:07:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239113AbhJFPJe (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        id S239017AbhJFPJe (ORCPT <rfc822;lists+io-uring@lfdr.de>);
         Wed, 6 Oct 2021 11:09:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46806 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239017AbhJFPJd (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 6 Oct 2021 11:09:33 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B8CBC061746
-        for <io-uring@vger.kernel.org>; Wed,  6 Oct 2021 08:07:41 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id v17so9789579wrv.9
+        with ESMTP id S239137AbhJFPJe (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 6 Oct 2021 11:09:34 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06BE7C061746
+        for <io-uring@vger.kernel.org>; Wed,  6 Oct 2021 08:07:42 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id s15so9816865wrv.11
         for <io-uring@vger.kernel.org>; Wed, 06 Oct 2021 08:07:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Xfrs0Xwy41pJGfUjg7KkrW0TW2W4QRo2ok0Is1HVatU=;
-        b=CaQGvht8IS0qTTAFnHYyFeK3UDtCxfx5CQpvU/Ddxgv1GDBFVcEeHrkpK8LVZN9vKD
-         o/SNZdsD5AlrUrj/L7oZp86VG6M7VMaZZMHUZOMOTevXSCFf5hjw4WC7jzK3NVvYUBrA
-         xKmWWXQ0ZErxmUbRqckOBCz2J1Tk+ZKkDO3n2Q7ZtLSDDivbPQIZdP/Ivp06oHVzBBd8
-         a7s2zJLHnkm63jirpGXB9jvZmbxwHx0js2CxpnvHBJXcDXUekAklTw4WLcwa2GHCCdYP
-         VLdgoJIXncPGjFa4XO6DueBa6E/09ZUhvK9obug0K5mnnOZHkKNGE1uQv7/YCVtZ8Jow
-         zXGg==
+        bh=eApkLLSyJ9zrDGGK3e49LpiJsyJ6BFIixo7VBvYi29Q=;
+        b=TkAYfszYTEkmWEa9mwd4TAwCg4oMVgBDeYgx2Dkf5Xz/AG7yWd1pOBREXHOmhOFZBQ
+         oL29z18c+iH+GSIXTlsl6R761SgJcUsCEgX8NaIL5tyXVAVmAhqZevTtCGoOs0xkgICr
+         Vq7xtBd1tRaihUiFHKDH4WklCWD2mMmIeeOaJqHJbHRiU+NavOxXa2zm989eh5cIEwje
+         dlCu2Qb6w3aA/TPmGB0YVNCo36kdBCtUUXU1EzIG7mlLKduxYCGOiYff5EMmPosPc2mo
+         SIC3StM0N30et+2DWHlm6mFPIKjm2Hm2w4UYnkZhh4Nr75adp+hxLSIjv7kNn25KGcO+
+         Chfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Xfrs0Xwy41pJGfUjg7KkrW0TW2W4QRo2ok0Is1HVatU=;
-        b=YRRDKfwhJhkFou0JHTtKD9Qm5k9slbF/dWNqqxTbfjs5c3R/RO4uJX5Ex+A1aUL5P6
-         5v+VakkjzNifG7W8S/jZ0e2Q8fU2bIt0U+t6kKUlXVTmIKtPBR6Bgbg4Qng6CenLMH8+
-         AamcZ+5/5pKY1yZgogkzZrfK/7HxH2WChCniTT3yLdwIrAD/CoRE+HwnaDcebb4TWyJe
-         CbhFwyIMLriXj6IY7CkyrH6S9YGFPVEhob9WD91k956gs8haRM5PCJCPXZJW66z3WJmr
-         87wZyZ3CJmsiEhzsWAdh1Kgs/AdOhUdma3HjMV3hmf1ZjHQKJ5+olKUMwy3zUDLG+sG6
-         NYww==
-X-Gm-Message-State: AOAM533/AWUvAsIZtpeu0HWwkMGpT7/a/j7YfSndTx1KyOs7Pfvfku0X
-        sTw24YVMtH6gGjoPgT37cXdbrzpa+TI=
-X-Google-Smtp-Source: ABdhPJxvip0IYF6nigfaEyt7HibVaJIdmPZBXWUq1OthHOlYfmeM3oxhQWLAarhrTkT2WErM/I+c/w==
-X-Received: by 2002:a1c:7d91:: with SMTP id y139mr10806351wmc.57.1633532859649;
-        Wed, 06 Oct 2021 08:07:39 -0700 (PDT)
+        bh=eApkLLSyJ9zrDGGK3e49LpiJsyJ6BFIixo7VBvYi29Q=;
+        b=2l3Y4rVe0/XZ0k0MKrLxi4jKGTJugkgAdPLisux8pQ//0rEadiof5aFfNsmHxCovCI
+         IdMZTOCpSK5V+c5Ir6bm9DlHNQ3sWmyuMW8ZoptYOdTfx+QYRBCLEIZlHgq1mqAu1wu0
+         2u5KsZ93RcW/hmPgg/9+12nju/TSPzL/P5aX5ninUVrqKjaDuhrxvD1I3GTyiGZC4L7b
+         IACnrzP2yGnoS7k+pMIZAIDvnZJ/hVkD1J/Fx9mVTfrxTxJsb5Wmhlu/S+lB/CU37/CT
+         Ov/PXNCU2nmE3zHLoUBunmQdtBWQ/H1iVso5dACn4nl6o34e5+n1zaC8musqtNuLPQfS
+         +Pxw==
+X-Gm-Message-State: AOAM533TS+0j3v17zyD/Y8KhIBEzM6tR945cdxL97V6SvUiGB+a/ti83
+        EzIIcs0sWVRYE4zQc3/o+oIxVY8fLDM=
+X-Google-Smtp-Source: ABdhPJwgQjK0zASLb6vXSMKwwA/IkoHUAJjMXftLMOYRxK709KpFhlGxs8ARI54jPJp1SqxZbTCNPA==
+X-Received: by 2002:a5d:64e2:: with SMTP id g2mr29848045wri.20.1633532860442;
+        Wed, 06 Oct 2021 08:07:40 -0700 (PDT)
 Received: from localhost.localdomain ([85.255.237.101])
-        by smtp.gmail.com with ESMTPSA id o7sm24678368wro.45.2021.10.06.08.07.38
+        by smtp.gmail.com with ESMTPSA id o7sm24678368wro.45.2021.10.06.08.07.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Oct 2021 08:07:39 -0700 (PDT)
+        Wed, 06 Oct 2021 08:07:40 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH 4/5] io_uring: optimise out req->opcode reloading
-Date:   Wed,  6 Oct 2021 16:06:49 +0100
-Message-Id: <6ba869f5f8b7b0f991c87fdf089f0abf87cbe06b.1633532552.git.asml.silence@gmail.com>
+Subject: [PATCH 5/5] io_uring: remove extra io_ring_exit_work wake up
+Date:   Wed,  6 Oct 2021 16:06:50 +0100
+Message-Id: <de9a71ee255112dcaed3b5d426be24934e74722c.1633532552.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <cover.1633532552.git.asml.silence@gmail.com>
 References: <cover.1633532552.git.asml.silence@gmail.com>
@@ -62,97 +62,26 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Looking at the assembly, the compiler decided to reload req->opcode in
-io_op_defs[opcode].needs_file instead of one it had in a register, so
-store it in a temp variable so it can be optimised out. Also move the
-personality block later, it's better for spilling/etc. as it only
-depends on @sqe, which we're keeping anyway.
-
-By the way, zero req->opcode if it over IORING_OP_LAST, not a problem,
-at the moment but is safer.
+task_work_add() takes care of waking up the thread, remove useless
+wake_up_process().
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 31 +++++++++++++++++--------------
- 1 file changed, 17 insertions(+), 14 deletions(-)
+ fs/io_uring.c | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 3f8bfa309b16..1f4aa2cdaaa2 100644
+index 1f4aa2cdaaa2..73135c5c6168 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -6978,9 +6978,10 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
- {
- 	unsigned int sqe_flags;
- 	int personality;
-+	u8 opcode;
+@@ -9370,7 +9370,6 @@ static __cold void io_ring_exit_work(struct work_struct *work)
+ 		ret = task_work_add(node->task, &exit.task_work, TWA_SIGNAL);
+ 		if (WARN_ON_ONCE(ret))
+ 			continue;
+-		wake_up_process(node->task);
  
- 	/* req is partially pre-initialised, see io_preinit_req() */
--	req->opcode = READ_ONCE(sqe->opcode);
-+	req->opcode = opcode = READ_ONCE(sqe->opcode);
- 	/* same numerical values with corresponding REQ_F_*, safe to copy */
- 	req->flags = sqe_flags = READ_ONCE(sqe->flags);
- 	req->user_data = READ_ONCE(sqe->user_data);
-@@ -6988,14 +6989,16 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
- 	req->fixed_rsrc_refs = NULL;
- 	req->task = current;
- 
--	if (unlikely(req->opcode >= IORING_OP_LAST))
-+	if (unlikely(opcode >= IORING_OP_LAST)) {
-+		req->opcode = 0;
- 		return -EINVAL;
-+	}
- 	if (unlikely(sqe_flags & ~SQE_COMMON_FLAGS)) {
- 		/* enforce forwards compatibility on users */
- 		if (sqe_flags & ~SQE_VALID_FLAGS)
- 			return -EINVAL;
- 		if ((sqe_flags & IOSQE_BUFFER_SELECT) &&
--		    !io_op_defs[req->opcode].buffer_select)
-+		    !io_op_defs[opcode].buffer_select)
- 			return -EOPNOTSUPP;
- 		if (sqe_flags & IOSQE_IO_DRAIN)
- 			io_init_req_drain(req);
-@@ -7014,23 +7017,14 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
- 		}
- 	}
- 
--	personality = READ_ONCE(sqe->personality);
--	if (personality) {
--		req->creds = xa_load(&ctx->personalities, personality);
--		if (!req->creds)
--			return -EINVAL;
--		get_cred(req->creds);
--		req->flags |= REQ_F_CREDS;
--	}
--
--	if (io_op_defs[req->opcode].needs_file) {
-+	if (io_op_defs[opcode].needs_file) {
- 		struct io_submit_state *state = &ctx->submit_state;
- 
- 		/*
- 		 * Plug now if we have more than 2 IO left after this, and the
- 		 * target is potentially a read/write to block based storage.
- 		 */
--		if (state->need_plug && io_op_defs[req->opcode].plug) {
-+		if (state->need_plug && io_op_defs[opcode].plug) {
- 			state->plug_started = true;
- 			state->need_plug = false;
- 			blk_start_plug(&state->plug);
-@@ -7042,6 +7036,15 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
- 			return -EBADF;
- 	}
- 
-+	personality = READ_ONCE(sqe->personality);
-+	if (personality) {
-+		req->creds = xa_load(&ctx->personalities, personality);
-+		if (!req->creds)
-+			return -EINVAL;
-+		get_cred(req->creds);
-+		req->flags |= REQ_F_CREDS;
-+	}
-+
- 	return io_req_prep(req, sqe);
- }
- 
+ 		mutex_unlock(&ctx->uring_lock);
+ 		wait_for_completion(&exit.completion);
 -- 
 2.33.0
 

@@ -2,113 +2,137 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BD450424A60
-	for <lists+io-uring@lfdr.de>; Thu,  7 Oct 2021 01:13:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 886EF424A62
+	for <lists+io-uring@lfdr.de>; Thu,  7 Oct 2021 01:13:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230499AbhJFXP2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 6 Oct 2021 19:15:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46840 "EHLO
+        id S230252AbhJFXP3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 6 Oct 2021 19:15:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230252AbhJFXP2 (ORCPT
+        with ESMTP id S230463AbhJFXP2 (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Wed, 6 Oct 2021 19:15:28 -0400
-Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA883C061753
-        for <io-uring@vger.kernel.org>; Wed,  6 Oct 2021 16:13:34 -0700 (PDT)
-Received: by mail-il1-x133.google.com with SMTP id d11so4479922ilc.8
-        for <io-uring@vger.kernel.org>; Wed, 06 Oct 2021 16:13:34 -0700 (PDT)
+Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91A10C061760
+        for <io-uring@vger.kernel.org>; Wed,  6 Oct 2021 16:13:35 -0700 (PDT)
+Received: by mail-io1-xd2d.google.com with SMTP id e144so4688805iof.3
+        for <io-uring@vger.kernel.org>; Wed, 06 Oct 2021 16:13:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=OCNBphKAfWXDaAht8UQdCK6F187ODvF0e1hM63EFZbQ=;
-        b=SNaa2PaGR6lXvINONlsLnAvfuyezrW4U04/yAA3RiP4x5CfKVOfjio46zKjPpRVYC6
-         miaidQHvu0m2lYgcWeerAz0vSjrJb9kfIXUr64BptFCUEPYk56YvJSqrOiTS4ZVq44K+
-         pQaD3RafWL9TyEuSTQDCgFVMVHan0SoXox03xOCSlYxLsyhwDncyFz8IfHZJ6PiebFjT
-         Y+AR+wEQneSLEKOZqaewNnJ+TEJ8RPaxnYtZAp2hBRtYJzDpF3ZxSuknFGzJ/OIFaUIB
-         th5sfLRJTh5la1L+k+yrnXLgKw42Fni/zzx46fnIrH8UmVbxFAJNubUoSrtpYBNs2sIe
-         plmQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=V3ile7Y+Lk23ZR7EdRYyUdG6ABjNHxlyVI4hZ5R+jUM=;
+        b=XA7mV0yGcVRHdSZ+QmTvpQav5MhU6JKmpDPoYFju3LI6oQwDflQnRAWHmEqL6XTgSx
+         Q31GKdwIQnEyS2A86adwPe9NSkhuC0plzfeLPQzKfyFroLnCoydJ/JHs9qr0GmWnUBYR
+         x9oxPq1WVGC/K42PzptC4tCGSWP2ovyAFDGCIBZJJkOY6EKwQ2H87D/xnPoKo3kSIq47
+         lypSZHt2FwjD97FcYXbUI1yx+L3wRXVje941OyoaZlWoY3CsM7e7c7vPSMoQPIAq+ZbZ
+         Hu4JJCqZWgRzLxcH0MKV4x2SjrKwg6Adbf7Hnm+PDDP07FfdTTpT/dztzdT07IVPLkVf
+         5b3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=OCNBphKAfWXDaAht8UQdCK6F187ODvF0e1hM63EFZbQ=;
-        b=LZkfdwur86+t1BZE4AE+5sTGEyK4Npr5fYqO1VHeTBFYPBR1p20nWXRdl41piGCrqX
-         UplI7QTjLp0hGJGEIDf6ONbjIuAnXZHLaPJITatBViz6iczACJn+o1TL13plBp5Kezwx
-         NMKI3YThkRtHTQ5Ha5P8cJqr3k9cZgxRaZV74QV3yL6Es4y91SHJwm6eBsT7+OCxRlsi
-         Y92+hWgM0ibLoFk9xv0TRen3xROF/cCFg9Ep5WadaX7Pdy5uMGTAaVnyUaal6hMzbYZd
-         JcUwsOGhMrFbNEOIf4N4/kfFxJyp/3vlUR8GDGGmOuGlG9oI2yY8UQmJUXJ+6YcLsDLc
-         55oA==
-X-Gm-Message-State: AOAM533wAuytcuBs+MFjleS1gZsMJ8irBMeZYM/s59YjzULBXO3QsiXd
-        6XqAt92PTEUJLHi4tbZ8APH3gImCT1M3fQ==
-X-Google-Smtp-Source: ABdhPJxOLwHCmtGHmTd6CVRRlGIOnDGJq14EogDccq49S/kNEJcVF8+5nhem0NZjyDdLgNOqqC2dXQ==
-X-Received: by 2002:a05:6e02:bc9:: with SMTP id c9mr640846ilu.309.1633562014171;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=V3ile7Y+Lk23ZR7EdRYyUdG6ABjNHxlyVI4hZ5R+jUM=;
+        b=tnIsLp2g1Yn93vrcUBs2dRRj+IyLIWn28u59BZVjR2Jmadhj+M/ztmeMNycEHrnmcd
+         /eymT1H94W5maN3HDFXQpBsPOiJXGDxcgFBsFeWeziXkeW4SGpv7SCCyi2l0pUkNL4ON
+         Xxz1hGVoXGe6ZQmB1N17b+5ZfAsswlqEzs327Me29ZYsELjtefnl+sy8lI9TxHJmdnou
+         jI9p8zrZ4f7nHHxgQuG3pANhNz4LqZ5UxstmZYz9Km9b+mVgqh0w3RsEJ+ItgFNjUS8U
+         BYxbj5qRv1NXRuXC3uLbV5vVrKdFQyU9/hrRzYnN4Vg9+KOEe78LlhulFWNioqyhMRsK
+         0ifg==
+X-Gm-Message-State: AOAM532G17LHUoRAkl1tZ5vJiPBc+0N9/aAgW9l9H+JnKNRevWtVBAXG
+        q7LQPkZNPhyE8Y5azjFb0LgHJNdM07ysRA==
+X-Google-Smtp-Source: ABdhPJzFmIMLO9P4hPZ1WlUrCzVnrP6wI3Jb3t19SwxcmGZ1mFYzmnZqp/IKSaihmrUI2OamW+cdog==
+X-Received: by 2002:a05:6638:2482:: with SMTP id x2mr405176jat.32.1633562014890;
         Wed, 06 Oct 2021 16:13:34 -0700 (PDT)
 Received: from p1.localdomain ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id o1sm12955203ilj.41.2021.10.06.16.13.33
+        by smtp.gmail.com with ESMTPSA id o1sm12955203ilj.41.2021.10.06.16.13.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Oct 2021 16:13:33 -0700 (PDT)
+        Wed, 06 Oct 2021 16:13:34 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     linux-block@vger.kernel.org
-Cc:     io-uring@vger.kernel.org
-Subject: [PATCHSET v2 0/3] Add plug based request allocation batching
-Date:   Wed,  6 Oct 2021 17:13:27 -0600
-Message-Id: <20211006231330.20268-1-axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 1/3] block: bump max plugged deferred size from 16 to 32
+Date:   Wed,  6 Oct 2021 17:13:28 -0600
+Message-Id: <20211006231330.20268-2-axboe@kernel.dk>
 X-Mailer: git-send-email 2.33.0
+In-Reply-To: <20211006231330.20268-1-axboe@kernel.dk>
+References: <20211006231330.20268-1-axboe@kernel.dk>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi,
+Particularly for NVMe with efficient deferred submission for many
+requests, there are nice benefits to be seen by bumping the default max
+plug count from 16 to 32. This is especially true for virtualized setups,
+where the submit part is more expensive. But can be noticed even on
+native hardware.
 
-Even if the caller knows that N requests will be submitted, we still
-have to go all the way to tag allocation for each one. That's somewhat
-inefficient, when we could just grab as many tags as we need initially
-instead.
+Reduce the multiple queue factor from 4 to 2, since we're changing the
+default size.
 
-This small series allows request caching in the blk_plug. We add a new
-helper for passing in how many requests we expect to submit,
-blk_start_plug_nr_ios(), and then we can use that information to
-populate the cache on the first request allocation. Subsequent queue
-attempts can then just grab a pre-allocated request out of the cache
-rather than go into the tag allocation again.
+While changing it, move the defines into the block layer private header.
+These aren't values that anyone outside of the block layer uses, or
+should use.
 
-This brings single core performance on my setup from:
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+---
+ block/blk-mq.c         | 4 ++--
+ block/blk.h            | 6 ++++++
+ include/linux/blkdev.h | 2 --
+ 3 files changed, 8 insertions(+), 4 deletions(-)
 
-taskset -c 0,16  t/io_uring -b512 -d128 -s32 -c32 -p1 -F1 -B1 -n2 /dev/nvme1n1 /dev/nvme2n1
-Added file /dev/nvme1n1 (submitter 0)
-Added file /dev/nvme2n1 (submitter 1)
-polled=1, fixedbufs=1, register_files=1, buffered=0, QD=128
-Engine=io_uring, sq_ring=128, cq_ring=256
-submitter=0, tid=1206
-submitter=1, tid=1207
-IOPS=5806400, BW=2835MiB/s, IOS/call=32/32, inflight=(77 32)
-IOPS=5860352, BW=2861MiB/s, IOS/call=32/31, inflight=(102 128)
-IOPS=5844800, BW=2853MiB/s, IOS/call=32/32, inflight=(102 32)
-
-to:
-
-taskset -c 0,16  t/io_uring -b512 -d128 -s32 -c32 -p1 -F1 -B1 -n2 /dev/nvme1n1 /dev/nvme2n1
-Added file /dev/nvme1n1 (submitter 0)
-Added file /dev/nvme2n1 (submitter 1)
-polled=1, fixedbufs=1, register_files=1, buffered=0, QD=128
-Engine=io_uring, sq_ring=128, cq_ring=256
-submitter=0, tid=1220
-submitter=1, tid=1221
-IOPS=6061248, BW=2959MiB/s, IOS/call=32/31, inflight=(114 82)
-IOPS=6100672, BW=2978MiB/s, IOS/call=32/31, inflight=(128 128)
-IOPS=6082496, BW=2969MiB/s, IOS/call=32/32, inflight=(77 38)
-
-which is about a 4-5% improvement in single core performance. Looking
-at profiles, we're spending _less_ time in sbitmap even though we're
-doing more work.
-
-V2:
-- Remove hunk from another patch in patch 2
-- Make the plugging limits block layer private
-
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index a40c94505680..5327abbefbab 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -2145,14 +2145,14 @@ static void blk_add_rq_to_plug(struct blk_plug *plug, struct request *rq)
+ }
+ 
+ /*
+- * Allow 4x BLK_MAX_REQUEST_COUNT requests on plug queue for multiple
++ * Allow 2x BLK_MAX_REQUEST_COUNT requests on plug queue for multiple
+  * queues. This is important for md arrays to benefit from merging
+  * requests.
+  */
+ static inline unsigned short blk_plug_max_rq_count(struct blk_plug *plug)
+ {
+ 	if (plug->multiple_queues)
+-		return BLK_MAX_REQUEST_COUNT * 4;
++		return BLK_MAX_REQUEST_COUNT * 2;
+ 	return BLK_MAX_REQUEST_COUNT;
+ }
+ 
+diff --git a/block/blk.h b/block/blk.h
+index 21283541a99f..38867b4c5c7e 100644
+--- a/block/blk.h
++++ b/block/blk.h
+@@ -222,6 +222,12 @@ bool blk_bio_list_merge(struct request_queue *q, struct list_head *list,
+ void blk_account_io_start(struct request *req);
+ void blk_account_io_done(struct request *req, u64 now);
+ 
++/*
++ * Plug flush limits
++ */
++#define BLK_MAX_REQUEST_COUNT	32
++#define BLK_PLUG_FLUSH_SIZE	(128 * 1024)
++
+ /*
+  * Internal elevator interface
+  */
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index b19172db7eef..472b4ab007c6 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -727,8 +727,6 @@ struct blk_plug {
+ 	bool multiple_queues;
+ 	bool nowait;
+ };
+-#define BLK_MAX_REQUEST_COUNT 16
+-#define BLK_PLUG_FLUSH_SIZE (128 * 1024)
+ 
+ struct blk_plug_cb;
+ typedef void (*blk_plug_cb_fn)(struct blk_plug_cb *, bool);
 -- 
-Jens Axboe
-
+2.33.0
 

@@ -2,134 +2,123 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F2081427F5F
-	for <lists+io-uring@lfdr.de>; Sun, 10 Oct 2021 08:41:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F0D04280C1
+	for <lists+io-uring@lfdr.de>; Sun, 10 Oct 2021 13:17:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230465AbhJJGnl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 10 Oct 2021 02:43:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44742 "EHLO
+        id S232527AbhJJLTE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 10 Oct 2021 07:19:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230433AbhJJGnk (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 10 Oct 2021 02:43:40 -0400
-Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C80BBC061764
-        for <io-uring@vger.kernel.org>; Sat,  9 Oct 2021 23:41:41 -0700 (PDT)
-Received: by mail-pf1-x431.google.com with SMTP id k26so11926612pfi.5
-        for <io-uring@vger.kernel.org>; Sat, 09 Oct 2021 23:41:41 -0700 (PDT)
+        with ESMTP id S232719AbhJJLSv (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 10 Oct 2021 07:18:51 -0400
+Received: from mail-io1-xd36.google.com (mail-io1-xd36.google.com [IPv6:2607:f8b0:4864:20::d36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4726DC06176C
+        for <io-uring@vger.kernel.org>; Sun, 10 Oct 2021 04:16:53 -0700 (PDT)
+Received: by mail-io1-xd36.google.com with SMTP id s17so11112656ioa.13
+        for <io-uring@vger.kernel.org>; Sun, 10 Oct 2021 04:16:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amikom.ac.id; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=SqyBzjlUnzSQmy573EQAqdqJc8Pc2d86PQ9u0ucfsRQ=;
-        b=hOR9s6CMymm96ddme28OwL41ldmXk+HO6WADRyw90949xyvHDQ1EUQz3u94P1TD2CP
-         /o21r4lPo5j1Cm9FhRms/QD0HoLoGjuWQjskqVFS+Kk8NJq6e1uDFFPbfWUw/oXCCe9N
-         aNO8vibbqETqike5MOINq773QyN+np5lHBMmnu5aImzN0xw0LincOMp3WHrWhDqROe/a
-         peco867AlUnLjRizN5kYyxIfHY9BQB0nCxUwH5x+VZJNPcIaiLpzc59AYLLFNtgX95Jv
-         yVemdZv19OeHDlhr3qwRqLrnkMNskXW3DIut3t7z5vU2ua6Hc1451wvk9JJHHFAxJH8M
-         20yw==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=bV2PQk5NsTuBLkNO5U5cp6aYX5eHoqcW8mhMWP2kvHA=;
+        b=ZHRz0VCShu7RtjgCxfHjwq94XPscmM98hFlfpm/GKmt0UnRBUYncgudeJEA+0OyxeI
+         IPDj9BuB0MiUCGSM54KU2Z3bXpL1966G5XjOmP3VE3+c7c0UPuNBC9dEHHt6bfY0mngq
+         2vs+DN3Cwog87/WWOmjIJXntozUsT15JDZohD/vkQgMv8+gRT+LUJR/QY0UGCBUCqP5q
+         HPaqb7BolbtjTKmV0go5XlE8GqfqtlOQP8/l8cVfparv8jhrOGzuZm9BGro2/UOWjuRz
+         ByTI/8k4/jXZbocVzjjjkFUY1JZS6D9V1Ms40zcFDxUx992SnrTzMOb5mNGMBlZzCqQ8
+         WMdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=SqyBzjlUnzSQmy573EQAqdqJc8Pc2d86PQ9u0ucfsRQ=;
-        b=b8q/SCtKWLMB3H9WEMwdgf3/29OKKHClDbgXI7Rt7T3M1nsLyyNdcYl1HAXZ3SxU7R
-         2oiskAblg7NcSNu+Tl72EhiTqOol3BtNPEXpo/7fqNS73yPx7aiDMZUjWpS7vlff5l4H
-         U3vvkGtdj/e00hKh6Was7zb3KXBWrbDdv09SIbeKEeQHpim3/fEr/6pwDrxZUS7249fq
-         V2vXvLqCqAuClm1sixkpdHOr1+bDh0hfuy3naIuVCG+x4xduXxy2udGthxqCeu9NEVYV
-         0d8mlAje/wR5It4eVYUW1WYnC6rBX0RI6VdX2w45EWA5g2RhWV+Um+7FkHPsHpY7BLVz
-         dl3w==
-X-Gm-Message-State: AOAM531eYN1DrnGZOydjPkT5OijZwvKdqeJN0V0Gx8koKOnYJNOtRctS
-        +AD+lKlFu5A5pwTIJ79znwNpVw==
-X-Google-Smtp-Source: ABdhPJy3iIWCAQ48PU4Ujc4WUyFZEJnNhWO7jEdmKZcwoA99N5owRbZ3OET95jiVVmedqptoMNLXtg==
-X-Received: by 2002:a65:6a0f:: with SMTP id m15mr12816637pgu.298.1633848101352;
-        Sat, 09 Oct 2021 23:41:41 -0700 (PDT)
-Received: from integral.. ([182.2.39.79])
-        by smtp.gmail.com with ESMTPSA id s25sm3742225pfm.138.2021.10.09.23.41.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 09 Oct 2021 23:41:40 -0700 (PDT)
-From:   Ammar Faizi <ammar.faizi@students.amikom.ac.id>
-To:     Jens Axboe <axboe@kernel.dk>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=bV2PQk5NsTuBLkNO5U5cp6aYX5eHoqcW8mhMWP2kvHA=;
+        b=UlzeyufKxqmMZhClIfc8QVUay+G0wzGYYSKanh2Yi/UxMOT2LeWAgNln/q3jMcDL8b
+         AgU2YPpCl9rJJx7Cm89u8tyN5/meCew9/F0U83DPsBaWFC5btEqnFIMyg9uOe/b6oI5o
+         cCPapsFEW6NieUji322dDJrX+v3I062kAHRovZ0pHNgtdQK42bRWbmE21kF1Bimv1N1M
+         pyI2XKfpSRiaZyu1bIzzyr/D0csPtgx8k5LVsqSeJTK6Y6uyEKEcV6S974m9uZu1ioQz
+         9OCPpH2vqz5M2lXOOqMbGrUrwaUu58F2750JkmY98Uv+tR6Y51+9mmaQtLMImLL+i8+r
+         x9Dw==
+X-Gm-Message-State: AOAM533hTurKf0/hVSgcmRGw88BmpAqIzOip9BLD4Y4DuGRAHlQv99OF
+        4xJ8OHBa8qahNftRsOX4Kvf6OQ==
+X-Google-Smtp-Source: ABdhPJy4t4cys1Mdma0XYzhSHsGGxVLKC2ovOtxaqj+q47g560HpPZqoliBBk0YaLOJ2ve/eoTFIKQ==
+X-Received: by 2002:a05:6638:3293:: with SMTP id f19mr15140203jav.51.1633864612552;
+        Sun, 10 Oct 2021 04:16:52 -0700 (PDT)
+Received: from [192.168.1.116] ([66.219.217.159])
+        by smtp.gmail.com with ESMTPSA id e10sm2403210ili.53.2021.10.10.04.16.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 10 Oct 2021 04:16:52 -0700 (PDT)
+Subject: Re: [PATCH v2 liburing 2/4] Add arch dependent directory and files
+To:     Ammar Faizi <ammar.faizi@students.amikom.ac.id>,
         Pavel Begunkov <asml.silence@gmail.com>,
         io-uring Mailing List <io-uring@vger.kernel.org>
 Cc:     Bedirhan KURT <windowz414@gnuweeb.org>,
-        Louvian Lyndal <louvianlyndal@gmail.com>,
-        Ammar Faizi <ammar.faizi@students.amikom.ac.id>
-Subject: [PATCH v2 liburing 4/4] Add CONFIG_NOLIBC variable and macro
-Date:   Sun, 10 Oct 2021 13:39:06 +0700
-Message-Id: <20211010063906.341014-5-ammar.faizi@students.amikom.ac.id>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20211010063906.341014-1-ammar.faizi@students.amikom.ac.id>
+        Louvian Lyndal <louvianlyndal@gmail.com>
 References: <20211010063906.341014-1-ammar.faizi@students.amikom.ac.id>
+ <20211010063906.341014-3-ammar.faizi@students.amikom.ac.id>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <3fbbc207-0df3-bace-838e-5286c3092935@kernel.dk>
+Date:   Sun, 10 Oct 2021 05:16:49 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20211010063906.341014-3-ammar.faizi@students.amikom.ac.id>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-For conditonal variable and macro to enable nolibc build.
-Add `--nolibc` option for `configure` to enable it.
+On 10/10/21 12:39 AM, Ammar Faizi wrote:
+> Create a new directory `src/arch` to save arch dependent sources.
+> Add support start from x86-64, add syscalls crafted in Assembly code
+> and lib (currently the lib only contains get page size function).
+> 
+> Link: https://github.com/axboe/liburing/issues/443
+> Signed-off-by: Ammar Faizi <ammar.faizi@students.amikom.ac.id>
+> ---
+>  src/arch/x86/lib.h     |  26 ++++++
+>  src/arch/x86/syscall.h | 200 +++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 226 insertions(+)
+>  create mode 100644 src/arch/x86/lib.h
+>  create mode 100644 src/arch/x86/syscall.h
+> 
+> diff --git a/src/arch/x86/lib.h b/src/arch/x86/lib.h
+> new file mode 100644
+> index 0000000..0d4b321
+> --- /dev/null
+> +++ b/src/arch/x86/lib.h
+> @@ -0,0 +1,26 @@
+> +/* SPDX-License-Identifier: MIT */
+> +
+> +#ifndef LIBURING_ARCH_X86_LIB_H
+> +#define LIBURING_ARCH_X86_LIB_H
+> +
+> +#ifndef LIBURING_LIB_H
+> +#  error "This file should be included from src/lib.h (liburing)"
+> +#endif
+> +
+> +#if defined(__x86_64__)
+> +
+> +static inline long __arch_impl_get_page_size(void)
+> +{
+> +	return 4096;
+> +}
+> +
+> +#else /* #if defined(__x86_64__) */
+> +
+> +/*
+> + * TODO: Add x86 (32-bit) support here.
+> + */
+> +#error "x86 (32-bit) is currently not supported"
 
-Link: https://github.com/axboe/liburing/issues/443
-Signed-off-by: Ammar Faizi <ammar.faizi@students.amikom.ac.id>
----
- configure    |  8 ++++++++
- src/Makefile | 13 ++++++++++++-
- 2 files changed, 20 insertions(+), 1 deletion(-)
+Can we change this to:
 
-diff --git a/configure b/configure
-index 92f51bd..6712ce3 100755
---- a/configure
-+++ b/configure
-@@ -24,6 +24,8 @@ for opt do
-   ;;
-   --cxx=*) cxx="$optarg"
-   ;;
-+  --nolibc) liburing_nolibc="yes"
-+  ;;
-   *)
-     echo "ERROR: unknown option $opt"
-     echo "Try '$0 --help' for more information"
-@@ -358,6 +360,12 @@ print_config "has_memfd_create" "$has_memfd_create"
- 
- 
- #############################################################################
-+if test "$liburing_nolibc" = "yes"; then
-+  output_sym "CONFIG_NOLIBC"
-+else
-+  liburing_nolibc="no"
-+fi
-+print_config "liburing_nolibc" "$liburing_nolibc"
- 
- if test "$__kernel_rwf_t" = "yes"; then
-   output_sym "CONFIG_HAVE_KERNEL_RWF_T"
-diff --git a/src/Makefile b/src/Makefile
-index 5e46a9d..290517d 100644
---- a/src/Makefile
-+++ b/src/Makefile
-@@ -32,11 +32,22 @@ endif
- 
- all: $(all_targets)
- 
--liburing_srcs := setup.c queue.c syscall.c register.c
-+liburing_srcs := setup.c queue.c register.c
-+
-+ifeq ($(CONFIG_NOLIBC),y)
-+	liburing_srcs += nolibc.c
-+	override CFLAGS += -nostdlib -nolibc -nodefaultlibs -ffreestanding -fno-stack-protector
-+	override CPPFLAGS += -nostdlib -nolibc -nodefaultlibs -ffreestanding -fno-stack-protector
-+	override LINK_FLAGS += -nostdlib -nolibc -nodefaultlibs
-+else
-+	liburing_srcs += syscall.c
-+endif
- 
- liburing_objs := $(patsubst %.c,%.ol,$(liburing_srcs))
- liburing_sobjs := $(patsubst %.c,%.os,$(liburing_srcs))
- 
-+$(liburing_srcs): syscall.h lib.h
-+
- $(liburing_objs) $(liburing_sobjs): include/liburing/io_uring.h
- 
- %.os: %.c
+#error "x86 (32-bit) is currently not supported for nolibc builds"
+
+to make it a bit more specific. Apart from that, this looks good.
+
 -- 
-2.30.2
+Jens Axboe
 

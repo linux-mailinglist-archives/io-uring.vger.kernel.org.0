@@ -2,140 +2,67 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 397C2428D77
-	for <lists+io-uring@lfdr.de>; Mon, 11 Oct 2021 15:00:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 659F242982A
+	for <lists+io-uring@lfdr.de>; Mon, 11 Oct 2021 22:32:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236745AbhJKNCT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 11 Oct 2021 09:02:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51608 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235237AbhJKNCS (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 11 Oct 2021 09:02:18 -0400
-Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1034C061570
-        for <io-uring@vger.kernel.org>; Mon, 11 Oct 2021 06:00:18 -0700 (PDT)
-Received: by mail-io1-xd32.google.com with SMTP id d125so3738103iof.5
-        for <io-uring@vger.kernel.org>; Mon, 11 Oct 2021 06:00:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=xt9MYELSWvEpJ0wW/+yrbE4Zqn0G14G0+UMfOsbM+5o=;
-        b=Lkete0sc59vLMBlceq8C7j5hiytmx1aJFQSnkUqhsPcSrP71KNUYEa+yL8mNL2Z/M2
-         XEB5lkaaNqCuply7BNRombhKrsHBQ5/3yEKNTrPMlQsiCoScJScWx/+qIVXF9bbNE2rn
-         tcG8L1WTyAr5IAhHzXKKyBI6al3WQtDdartiYcPKWIa8++Qjv82lMGeI6YIkxUQ9N6sf
-         gIxQiHvEUNA2tF2+HZ5c8199UlG6+oJIe6mShjAikd3GrfuRnLsgbTWDiIg2zHi4WR6L
-         cYJ/V6d2A+EBHXQOuhPtl0K1IlfdZ+wv7gxQyLx+NL4bidxEAFifdic7bCctnpUWBH2Z
-         boxA==
+        id S234896AbhJKUeJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 11 Oct 2021 16:34:09 -0400
+Received: from mail-il1-f198.google.com ([209.85.166.198]:40565 "EHLO
+        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232579AbhJKUeH (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 11 Oct 2021 16:34:07 -0400
+Received: by mail-il1-f198.google.com with SMTP id d12-20020a92680c000000b00258ec365becso10772716ilc.7
+        for <io-uring@vger.kernel.org>; Mon, 11 Oct 2021 13:32:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=xt9MYELSWvEpJ0wW/+yrbE4Zqn0G14G0+UMfOsbM+5o=;
-        b=5ii7ANo6za9QA+RXIZzCLTcimlej2GDPBAC1G5F07CcPPg7BJoKuMUCB2CPXE90djX
-         mmN3FZQQL6N0EQp46HkV6kQkI5aoaHD1UfVm+MqOH1jC1EBWVWDVXU1Ss4aEj2kRi9za
-         GP6ZeoKcKZOonaf47N4BWKTgpZ0kwv6Efrukfi9UNJkShmRv3i66cxg1ehwfJ8QkaKaJ
-         sG5hMC3vjLxd1hkp8dA1A2nPWKJKuuXrE+OCSJ9eJarrUzmdp+XOsUV17Eeh3AM5/ET7
-         T8I1GYe5emGMLG1fI3TDNZfCzds+GQmE2VgxoGaRIu231gKgdiZykGyzK8g7LCHDTtfa
-         3/Ow==
-X-Gm-Message-State: AOAM5310xzeZRePLfzCdkyXNmZKhonQxjc6fJf4cFFiNsuBTYJSs5uoG
-        D9cD4iilG/7815fi81srPefc0AEeEFDyAw==
-X-Google-Smtp-Source: ABdhPJyI2EOSdr9EOLyBAw0nwfJ9g5aSE0aFP1dgE0gfY69Rhz+gTY4kxcmuKkc75NvpAZ/pXcoX0w==
-X-Received: by 2002:a05:6602:2e8f:: with SMTP id m15mr11476540iow.21.1633957218323;
-        Mon, 11 Oct 2021 06:00:18 -0700 (PDT)
-Received: from [192.168.1.116] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id i64sm3577985iof.7.2021.10.11.06.00.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Oct 2021 06:00:17 -0700 (PDT)
-Subject: Re: [PATCH liburing] src/nolibc: Fix `malloc()` alignment
-To:     Ammar Faizi <ammar.faizi@students.amikom.ac.id>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring Mailing List <io-uring@vger.kernel.org>
-Cc:     Bedirhan KURT <windowz414@gnuweeb.org>,
-        Louvian Lyndal <louvianlyndal@gmail.com>
-References: <ae6aa009-765a-82b0-022c-d6696c6d3ee2@kernel.dk>
- <20211011125608.487082-1-ammar.faizi@students.amikom.ac.id>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <61055d89-2f4a-2238-e25c-3fb7478b8301@kernel.dk>
-Date:   Mon, 11 Oct 2021 07:00:17 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=69YQAoBbQKm9TqOi57aQVSWpMMSQKYJxlql/euFSSEE=;
+        b=L16MGXCmEu6cEdjg3lhdhHW1U7Wmn2GulmkXMpmyW0H15B12PAyftzgmBlV7vWFvpE
+         ZMAp1cRV/yBxJg7Qg1Xx709vgAZbjvKSomPFQzo9W+y7+LuVUQuyVYVjqFuWxkUlnH00
+         rKqgN32omYjqPASSJm0he33Queyz8ZrTFDqc2nra5iF+Vz7/7ZYiacEn09Efat+CsyHZ
+         f4xBUmXxdGl25tYaCW1ExabDzzjLEroWzzqmekH1QLZf/vFEbotEDYVOdjvdZOQiiBWR
+         xtFmQ3foyc+AWhjAcUGysiUiu0RvABjkaw64bK+pR1wiOgIvqdBPyxBZDuemRB+wz/pK
+         aSfw==
+X-Gm-Message-State: AOAM530fGXA72iOKz2pLUJLhV1eJc6cije8NMUkBtwAGwa3vFHm46h6P
+        YDbTwD/yFDxSYUHp4sRpjNm1CXvnkdNMJBKpmZ4EtAgtZ1A5
+X-Google-Smtp-Source: ABdhPJzcQtZG+lbdZ7wjSwBKdxMjz5X9CWlcrhgIHjIyn0/T16KZ5S0OlvEh8lUj07w+vinrQxWe4QPS0wANaZSsUf/mUWXFEMsw
 MIME-Version: 1.0
-In-Reply-To: <20211011125608.487082-1-ammar.faizi@students.amikom.ac.id>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:13c5:: with SMTP id v5mr6885528ilj.75.1633984327040;
+ Mon, 11 Oct 2021 13:32:07 -0700 (PDT)
+Date:   Mon, 11 Oct 2021 13:32:07 -0700
+In-Reply-To: <0000000000004bda3905cb84cfc0@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000061c94a05ce199f2a@google.com>
+Subject: Re: [syzbot] WARNING in io_wq_submit_work (2)
+From:   syzbot <syzbot+bc2d90f602545761f287@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, fgheet255t@gmail.com,
+        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 10/11/21 6:56 AM, Ammar Faizi wrote:
-> On Mon, Oct 11, 2021 at 7:13 PM Jens Axboe <axboe@kernel.dk> wrote:
->> On 10/11/21 12:49 AM, Ammar Faizi wrote:
->>> Add `__attribute__((__aligned__))` to the `user_p` to guarantee
->>> pointer returned by the `malloc()` is properly aligned for user.
->>>
->>> This attribute asks the compiler to align a type to the maximum
->>> useful alignment for the target machine we are compiling for,
->>> which is often, but by no means always, 8 or 16 bytes [1].
->>>
->>> Link: https://gcc.gnu.org/onlinedocs/gcc-11.2.0/gcc/Common-Variable-Attributes.html#Common-Variable-Attributes [1]
->>> Fixes: https://github.com/axboe/liburing/issues/454
->>> Reported-by: Louvian Lyndal <louvianlyndal@gmail.com>
->>> Signed-off-by: Ammar Faizi <ammar.faizi@students.amikom.ac.id>
->>> ---
->>>  src/nolibc.c | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/src/nolibc.c b/src/nolibc.c
->>> index 5582ca0..251780b 100644
->>> --- a/src/nolibc.c
->>> +++ b/src/nolibc.c
->>> @@ -20,7 +20,7 @@ void *memset(void *s, int c, size_t n)
->>>
->>>  struct uring_heap {
->>>       size_t          len;
->>> -     char            user_p[];
->>> +     char            user_p[] __attribute__((__aligned__));
->>>  };
->>
->> This seems to over-align for me, at 16 bytes where 8 bytes would be fine.
->> What guarantees does malloc() give?
->>
-> 
-> Section 7.20.3 of C99 states this about `malloc()`:
-> __The pointer returned if the allocation succeeds is suitably aligned
-> so that it may be assigned to a pointer to any type of object.__
-> 
-> I have just browsed the glibc source code, malloc does give us 16 bytes
-> alignment guarantee on x86-64. 
-> 
-> https://code.woboq.org/userspace/glibc/sysdeps/generic/malloc-alignment.h.html#_M/MALLOC_ALIGNMENT
-> 
-> Lookie here on Linux x86-64...
-> 
-> ```
-> ammarfaizi2@integral:/tmp$ cat > test.c
-> #include <stdio.h>
-> int main(void)
-> {
-> 	printf("alignof = %zu\n", __alignof__(long double));
-> 	return 0;
-> }
-> ammarfaizi2@integral:/tmp$ gcc -o test test.c
-> ammarfaizi2@integral:/tmp$ ./test
-> alignof = 16
-> ammarfaizi2@integral:/tmp$ 
-> ```
-> 
-> We have `long double` which requires 16 byte alignment. So `malloc()`
-> should cover this. Although we don't use floating point in liburing,
-> it's probably better to have this guarantee as well?
+syzbot suspects this issue was fixed by commit:
 
-Ah yes, good point. FWIW, I did apply your patch previously, for
-alignment it's always better to error on the side of caution.
+commit c57a91fb1ccfa203ba3e31e5a389cb04de5b0561
+Author: Pavel Begunkov <asml.silence@gmail.com>
+Date:   Wed Sep 8 19:49:17 2021 +0000
 
--- 
-Jens Axboe
+    io_uring: fix missing mb() before waitqueue_active
 
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=143b46bf300000
+start commit:   926de8c4326c Merge tag 'acpi-5.15-rc1-3' of git://git.kern..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=37df9ef5660a8387
+dashboard link: https://syzkaller.appspot.com/bug?extid=bc2d90f602545761f287
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11e4357d300000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1173a663300000
+
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: io_uring: fix missing mb() before waitqueue_active
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection

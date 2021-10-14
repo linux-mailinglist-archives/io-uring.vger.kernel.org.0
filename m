@@ -2,82 +2,80 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AC8E42DDB3
-	for <lists+io-uring@lfdr.de>; Thu, 14 Oct 2021 17:12:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D2CB42DDB7
+	for <lists+io-uring@lfdr.de>; Thu, 14 Oct 2021 17:12:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232944AbhJNPON (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 14 Oct 2021 11:14:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48802 "EHLO
+        id S233413AbhJNPOX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 14 Oct 2021 11:14:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234279AbhJNPN4 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 14 Oct 2021 11:13:56 -0400
-Received: from mail-io1-xd35.google.com (mail-io1-xd35.google.com [IPv6:2607:f8b0:4864:20::d35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A673C061361
-        for <io-uring@vger.kernel.org>; Thu, 14 Oct 2021 08:06:34 -0700 (PDT)
-Received: by mail-io1-xd35.google.com with SMTP id i189so4169990ioa.1
-        for <io-uring@vger.kernel.org>; Thu, 14 Oct 2021 08:06:34 -0700 (PDT)
+        with ESMTP id S233130AbhJNPOP (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 14 Oct 2021 11:14:15 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10405C061777
+        for <io-uring@vger.kernel.org>; Thu, 14 Oct 2021 08:11:09 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id g25so20458413wrb.2
+        for <io-uring@vger.kernel.org>; Thu, 14 Oct 2021 08:11:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=5VMQ+k7bLAjbj3fMB/xZGcjvf+XpTjPwLDTz2lQgj24=;
-        b=53m+az9tDqmLetTnYX7UZCC9ZjoUUtM+shTetZ0T7mJIN5Rf4EkRWMJH4OzdEpkN+n
-         p94h0WYnk2SbbP5sWpDWm0u/eu67jFLHIUGRMCtZh6/vOFd3E7rjccCwGWf1D3K5n1KR
-         L59/zQD0UT2za2lDVwYOdk/PNqdVaZYTQazGEZARVZFUfkZgObEQu9yYa883autpjzkq
-         xo+55V2WQwsnb2Z2iA7wQoYMJ8DGQqrI0tuONda6029dHEZ8qrTFItonDAl9pk6sloUI
-         U1OUVaBebcq2krY/XDlaYq4Ys8jBpzK5PF23hrprLK6v1pfkhzJBxXvrsAQ+zPa2WkvB
-         L7lg==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AQKdhtPZdV537B8lhHoBkkWV9ZxXlg+qPiLKXknXXPo=;
+        b=lOO4KOwjh8zeh3ftO1d/kmPGhG6cIba4j8WARly0bpT2jnKme57I1W4rq20XoJjO+x
+         Z+dNrxiMsRu83/zy1+yK2X1PZHtPQEMRq8/GTiJK+7Yf0zN74XMF+6/W/Dkn2oO3Il9n
+         IKsqyoZKL2+9pN/hqm2TGh96rNJ1qZS33nCh0tCXfzn9HCgYFGd3uaEVKsIqxI5SQBYg
+         cZBdMYo4ltuO7AITEeNW8NCSOuMXUtpqvZ1DgDw6NwZTaTUTPY8f5EXPrQmGan0A0KH4
+         HFb0lPCzkk/IyyE9GTQYBUDP7UxqLcKUsEhIWngLFp0XW1wKtZmPZQ5Wfm+LnUOejvv7
+         nD7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=5VMQ+k7bLAjbj3fMB/xZGcjvf+XpTjPwLDTz2lQgj24=;
-        b=sjrXD14FbuQ9CzN1GWCqSEUmmgGY8gP+iythRVRRPq5IGoKla0qW7FILInbIR5vU9w
-         ge26B3kfcwP0Gcf0Xysjj9gsXDR6ZAbc8VJbWK2KeU3Z7zrMu8x0gXzYBmVNC0OBmUyx
-         ANK4W0Wtx4rOwei06LDd6uqqDtlFvCwqkFV2sDOilFRW4+VWGALVmFMHCBRLpCe0lqUL
-         pUEzsPXa0vOaLC3doPggsQai/WiWniiuDTrR4LmrYC9pRoiRlZ1c5fCkMXvQgwuZttW+
-         EampxxL5jxkruhX5/8yRzXqMdUPfsz0i71i07GglGKSoV8b48Bcv2+/CLIOZRm2e4E/S
-         TpEA==
-X-Gm-Message-State: AOAM530R8DI+3w744uqmtamPOT7B4NeIaTn+1WNTCrBRQzAnv8Nrie5R
-        YHQZMWiLA9tmOuWKtGoQptLZoqGUk7eMmA==
-X-Google-Smtp-Source: ABdhPJwnXtL3erfXWeuG/Artubuceg26QgtBoM3fkS92TKjRnhKgQoXb6Dmo3PIqU14Z6ByqwIzj+w==
-X-Received: by 2002:a6b:2c95:: with SMTP id s143mr2802281ios.36.1634223992041;
-        Thu, 14 Oct 2021 08:06:32 -0700 (PDT)
-Received: from p1.localdomain ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id m1sm1288166ilc.75.2021.10.14.08.06.30
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AQKdhtPZdV537B8lhHoBkkWV9ZxXlg+qPiLKXknXXPo=;
+        b=3Nu2fF2sUrRoCZXdOG36V9UgYBOh52SKucWgC5I6DiPonRrplTFQyfCHn4myZC6WXK
+         LEh/mZIT9GE3o07YgOFagsirfsh+rNZMhN/7u5VISmBNHDRi4nnWB3ka6bmwsIyyj2e+
+         dhJKKqUyOy6ky6DnVubPbLewTqVXDtklJyW5+XzFJTMZD5LCf5TV1quYd3s9WHVS47BJ
+         Ewr+kQZEjEfHXbT0Qqm90cdxyEwGJAvGltezcWmoPZjYoIbkqPyAZ49/KzEJhsOpuepT
+         AVEmAwjfQk0bTLyFOFSFOmDWZyjgOx0gXDLsEX1MbrYSj2xtcu2VB9AxiNkjNZ1fO+7e
+         ePgw==
+X-Gm-Message-State: AOAM532A5C+Ho9hPqGsoeSnRb+4Oty/aDOTlASc5NAuJsS91ZLXINwg0
+        +K3L00T7SeH4Rn2VfDTaXxr26+aReFQ=
+X-Google-Smtp-Source: ABdhPJxBlRGEnEePO6Icc/BppeZaqMECRVFMbCZyr0+3NojnNZXBV3cQTtAC4nRWaowHQkRHM9w7rg==
+X-Received: by 2002:adf:ba0d:: with SMTP id o13mr7246189wrg.339.1634224267451;
+        Thu, 14 Oct 2021 08:11:07 -0700 (PDT)
+Received: from localhost.localdomain ([185.69.145.214])
+        by smtp.gmail.com with ESMTPSA id c14sm2549557wrd.50.2021.10.14.08.11.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Oct 2021 08:06:31 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Hao Xu <haoxu@linux.alibaba.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Subject: Re: [PATCH] io_uring: fix wrong condition to grab uring lock
-Date:   Thu, 14 Oct 2021 09:06:28 -0600
-Message-Id: <163422398324.1291352.14398198966350285434.b4-ty@kernel.dk>
-X-Mailer: git-send-email 2.33.1
-In-Reply-To: <20211014140400.50235-1-haoxu@linux.alibaba.com>
-References: <20211014140400.50235-1-haoxu@linux.alibaba.com>
+        Thu, 14 Oct 2021 08:11:06 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
+Subject: [PATCH for-next 0/8] read/write cleanup 
+Date:   Thu, 14 Oct 2021 16:10:11 +0100
+Message-Id: <cover.1634144845.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.33.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, 14 Oct 2021 22:04:00 +0800, Hao Xu wrote:
-> Grab uring lock when we are in io-worker rather than in the original
-> or system-wq context since we already hold it in these two situation.
-> 
-> 
+gave very slight boost (nullb IO) for my testing, 2.89 vs 2.92 MIOPS,
+but the main motivation is that I like the code better.
 
-Applied, thanks!
+Pavel Begunkov (8):
+  io_uring: consistent typing for issue_flags
+  io_uring: prioritise read success path over fails
+  io_uring: optimise rw comletion handlers
+  io_uring: encapsulate rw state
+  io_uring: optimise read/write iov state storing
+  io_uring: optimise io_import_iovec nonblock passing
+  io_uring: clean up io_import_iovec
+  io_uring: rearrange io_read()/write()
 
-[1/1] io_uring: fix wrong condition to grab uring lock
-      commit: 14cfbb7a7856f190035f8e53045bdbfa648fae41
+ fs/io_uring.c | 233 ++++++++++++++++++++++++++------------------------
+ 1 file changed, 122 insertions(+), 111 deletions(-)
 
-Best regards,
 -- 
-Jens Axboe
-
+2.33.0
 

@@ -2,206 +2,104 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CB3942DDBE
-	for <lists+io-uring@lfdr.de>; Thu, 14 Oct 2021 17:12:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B07C42E101
+	for <lists+io-uring@lfdr.de>; Thu, 14 Oct 2021 20:18:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233302AbhJNPO0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 14 Oct 2021 11:14:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49898 "EHLO
+        id S232822AbhJNSUI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 14 Oct 2021 14:20:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36062 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233279AbhJNPOV (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 14 Oct 2021 11:14:21 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 058C3C0613E3
-        for <io-uring@vger.kernel.org>; Thu, 14 Oct 2021 08:11:19 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id r18so20584764wrg.6
-        for <io-uring@vger.kernel.org>; Thu, 14 Oct 2021 08:11:18 -0700 (PDT)
+        with ESMTP id S230119AbhJNSUF (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 14 Oct 2021 14:20:05 -0400
+Received: from mail-io1-xd35.google.com (mail-io1-xd35.google.com [IPv6:2607:f8b0:4864:20::d35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CC4AC061570
+        for <io-uring@vger.kernel.org>; Thu, 14 Oct 2021 11:18:00 -0700 (PDT)
+Received: by mail-io1-xd35.google.com with SMTP id p68so4855457iof.6
+        for <io-uring@vger.kernel.org>; Thu, 14 Oct 2021 11:18:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=e923M7LVThaWLUvRQ1BuK+s8SPCRLtjQDrK66z4n6GI=;
-        b=Ez47UzaEgxfDFqnV9cIlmLaECVYvTrfxHce9E+IhQnW2CxP9yQlTzWxeOcfaWvQ/uP
-         wfyM7dVBTwqU58PQPbaCJHH9Tv87FLn4yENXz7l29l2oRn5JHS870bV7Mt82YlNRfpS2
-         y0bBkclkT9eN4oDVtZYbkaahKoqG7qshgtkypVMdtrLu+XIhYz3CvUihHM/VkQ905YP4
-         3eUNC8FWeqGkTGPy2DWBNca2EMXLAdc49gdt2pI8KO33LNILIi1PQXuYWCjiKQOKQ339
-         ky5CfVLrNV79+LgxcxRVxcybC3Rsc2I4dcAFU9mytUrdi+qb5PQWdyC1bni7lYtc/7ii
-         D+ew==
+        bh=Xyyd/ZnubbTPPijSP/CT18OhYkXDXMoW5W01trrWwy8=;
+        b=v3vwOjaBOfztMUXuQjl04Pu1o8FOyIK/dt0PIQ+4wkDBwSCKznv19q81XZXvOcuc5l
+         JnaOrDf4jqIbRn+nUHMfB3ZqlG7tQqbbUgbuWwFl1aHkxhd+AOOLk2ugZPNPBDlCn8aE
+         zah64neVFnspy7C6Op0SP4XSTRcIVJAtgrIIkfZlRKMn/isFhYg6eG5KOwDjNQg9SPoy
+         211dy9i0g9A+mmH1zvzqxgbwIvdNl+j2jj0s5aX0Cg8dnTvUn3ajAtlhTfBEEFG852dJ
+         UtYnjeePHKPR6IkPX9EOfFUj5FgkMnVTBLezOWni+syGtz0S/1yTJ7597Uc0eBCn8o2j
+         FRaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=e923M7LVThaWLUvRQ1BuK+s8SPCRLtjQDrK66z4n6GI=;
-        b=G2KoNXtPmuzy3GH8bMhxvzaRfe9COfT7BcatSevXHf8bPAQimPnjEPJw4T84mulcS0
-         zbTLLizaUgkbxnXYGxiWbhmLgMrOXCu16BdKQ9LwgDMRclFcu7mOC5z+PPCZJvwqp1sC
-         606egKAglqYItAJMjVov679mR1t7UCFoqo0YYldnbpDr+cd5LL5klBcUy9McwHvjSV0S
-         YJqOxikNf9/son4u6hI7l2PhfQgrctPrkVl4eRdIlDHM5r5ix1ujRkf5ff2hMYffaqxv
-         5gSzlqZoRZ6XUcZE18c438t4LNtl5rHLyKvIV5Ll4bdii8NjG12ZAULyc8iWsEO8OLDy
-         KY+Q==
-X-Gm-Message-State: AOAM533V/cmFuKHiLycn++PbQ+aPWv9CcWdIC8Z0ksP/THaomfxc3qgF
-        9vYwh9TTbNDjFpvjNLhvRZ2wokA2LI8=
-X-Google-Smtp-Source: ABdhPJwS6Br0gSmjadNhujhcGhvU9WsKBa5+QLmOaJ0euv8BHrzl7Hlu6ng9DdmNT2ibvt2NJoNC8Q==
-X-Received: by 2002:a1c:22d7:: with SMTP id i206mr6582295wmi.122.1634224275103;
-        Thu, 14 Oct 2021 08:11:15 -0700 (PDT)
-Received: from localhost.localdomain ([185.69.145.214])
-        by smtp.gmail.com with ESMTPSA id c14sm2549557wrd.50.2021.10.14.08.11.14
+        bh=Xyyd/ZnubbTPPijSP/CT18OhYkXDXMoW5W01trrWwy8=;
+        b=6HzGJMOF99Tu1vhoVNcSmK46wqTdqKWHmgMrXsuqdfGwQYqCWxcU6r3BVwn+FhZ8yI
+         HP93YI+sToWSHe+WyZMYChWz9FkojX2HBiDsMBINP68EBI/mnY6h+sib1dHkF0sEoXKm
+         vKOasSL5a19jbAKKbmO0rEukGhkXcdjYXtx3AzDCppE4nyihNR9UgAoFgeJZ46NloKyg
+         ACp5VFMdCDjSmqW474KiosRq65XW06h15YWsQI1Lnv3ieW93fBLjVkWd9zc/GfIXyi2o
+         Vx0wnMsN5m1rVD27b1uImqlAW/XcHKPvwDYhDTJlL/NPKsQNibHbk9+1TGBx1vfRMpCf
+         KGOg==
+X-Gm-Message-State: AOAM530n6U0rkNnVHWXo/iH8HuukhcZicUAfdQkUiazd2JsRqnAFpEaW
+        PwuqJYUmY5j2GJcU56xeISSwddY64nMfqQ==
+X-Google-Smtp-Source: ABdhPJzieGDQISdL4XwbBzQo+7XwzhzPnesyADfKVMcDTUXpwlERoN0ikYTsn/P+fvlw3qJnnyC8sA==
+X-Received: by 2002:a05:6602:2ac1:: with SMTP id m1mr425108iov.118.1634235479422;
+        Thu, 14 Oct 2021 11:17:59 -0700 (PDT)
+Received: from p1.localdomain ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id l18sm1548818ilj.12.2021.10.14.11.17.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Oct 2021 08:11:14 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH 8/8] io_uring: rearrange io_read()/write()
-Date:   Thu, 14 Oct 2021 16:10:19 +0100
-Message-Id: <2c2536c5896d70994de76e387ea09a0402173a3f.1634144845.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.33.0
+        Thu, 14 Oct 2021 11:17:59 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH for-next 0/8] read/write cleanup
+Date:   Thu, 14 Oct 2021 12:17:50 -0600
+Message-Id: <163423546311.1385699.18367704997906902690.b4-ty@kernel.dk>
+X-Mailer: git-send-email 2.33.1
 In-Reply-To: <cover.1634144845.git.asml.silence@gmail.com>
 References: <cover.1634144845.git.asml.silence@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Combine force_nonblock branches (which is already optimised by
-compiler), flip branches so the most hot/common path is the first, e.g.
-as with non on-stack iov setup, and add extra likely/unlikely
-attributions for errror paths.
+On Thu, 14 Oct 2021 16:10:11 +0100, Pavel Begunkov wrote:
+> gave very slight boost (nullb IO) for my testing, 2.89 vs 2.92 MIOPS,
+> but the main motivation is that I like the code better.
+> 
+> Pavel Begunkov (8):
+>   io_uring: consistent typing for issue_flags
+>   io_uring: prioritise read success path over fails
+>   io_uring: optimise rw comletion handlers
+>   io_uring: encapsulate rw state
+>   io_uring: optimise read/write iov state storing
+>   io_uring: optimise io_import_iovec nonblock passing
+>   io_uring: clean up io_import_iovec
+>   io_uring: rearrange io_read()/write()
+> 
+> [...]
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 75 +++++++++++++++++++++++++--------------------------
- 1 file changed, 37 insertions(+), 38 deletions(-)
+Applied, thanks!
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index f9af54b10238..8bbbe7ccad54 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -3395,7 +3395,7 @@ static bool io_rw_should_retry(struct io_kiocb *req)
- 
- static inline int io_iter_do_read(struct io_kiocb *req, struct iov_iter *iter)
- {
--	if (req->file->f_op->read_iter)
-+	if (likely(req->file->f_op->read_iter))
- 		return call_read_iter(req->file, &req->rw.kiocb, iter);
- 	else if (req->file->f_op->read)
- 		return loop_rw_iter(READ, req, iter);
-@@ -3411,14 +3411,18 @@ static bool need_read_all(struct io_kiocb *req)
- 
- static int io_read(struct io_kiocb *req, unsigned int issue_flags)
- {
--	struct io_rw_state __s, *s;
-+	struct io_rw_state __s, *s = &__s;
- 	struct iovec *iovec;
- 	struct kiocb *kiocb = &req->rw.kiocb;
- 	bool force_nonblock = issue_flags & IO_URING_F_NONBLOCK;
- 	struct io_async_rw *rw;
- 	ssize_t ret, ret2;
- 
--	if (req_has_async_data(req)) {
-+	if (!req_has_async_data(req)) {
-+		ret = io_import_iovec(READ, req, &iovec, s, issue_flags);
-+		if (unlikely(ret < 0))
-+			return ret;
-+	} else {
- 		rw = req->async_data;
- 		s = &rw->s;
- 		/*
-@@ -3428,24 +3432,19 @@ static int io_read(struct io_kiocb *req, unsigned int issue_flags)
- 		 */
- 		iov_iter_restore(&s->iter, &s->iter_state);
- 		iovec = NULL;
--	} else {
--		s = &__s;
--		ret = io_import_iovec(READ, req, &iovec, s, issue_flags);
--		if (unlikely(ret < 0))
--			return ret;
- 	}
- 	req->result = iov_iter_count(&s->iter);
- 
--	/* Ensure we clear previously set non-block flag */
--	if (!force_nonblock)
--		kiocb->ki_flags &= ~IOCB_NOWAIT;
--	else
-+	if (force_nonblock) {
-+		/* If the file doesn't support async, just async punt */
-+		if (unlikely(!io_file_supports_nowait(req, READ))) {
-+			ret = io_setup_async_rw(req, iovec, s, true);
-+			return ret ?: -EAGAIN;
-+		}
- 		kiocb->ki_flags |= IOCB_NOWAIT;
--
--	/* If the file doesn't support async, just async punt */
--	if (force_nonblock && !io_file_supports_nowait(req, READ)) {
--		ret = io_setup_async_rw(req, iovec, s, true);
--		return ret ?: -EAGAIN;
-+	} else {
-+		/* Ensure we clear previously set non-block flag */
-+		kiocb->ki_flags &= ~IOCB_NOWAIT;
- 	}
- 
- 	ret = rw_verify_area(READ, req->file, io_kiocb_ppos(kiocb), req->result);
-@@ -3541,40 +3540,40 @@ static int io_write_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 
- static int io_write(struct io_kiocb *req, unsigned int issue_flags)
- {
--	struct io_rw_state __s, *s;
--	struct io_async_rw *rw;
-+	struct io_rw_state __s, *s = &__s;
- 	struct iovec *iovec;
- 	struct kiocb *kiocb = &req->rw.kiocb;
- 	bool force_nonblock = issue_flags & IO_URING_F_NONBLOCK;
- 	ssize_t ret, ret2;
- 
--	if (req_has_async_data(req)) {
--		rw = req->async_data;
--		s = &rw->s;
--		iov_iter_restore(&s->iter, &s->iter_state);
--		iovec = NULL;
--	} else {
--		s = &__s;
-+	if (!req_has_async_data(req)) {
- 		ret = io_import_iovec(WRITE, req, &iovec, s, issue_flags);
- 		if (unlikely(ret < 0))
- 			return ret;
-+	} else {
-+		struct io_async_rw *rw = req->async_data;
-+
-+		s = &rw->s;
-+		iov_iter_restore(&s->iter, &s->iter_state);
-+		iovec = NULL;
- 	}
- 	req->result = iov_iter_count(&s->iter);
- 
--	/* Ensure we clear previously set non-block flag */
--	if (!force_nonblock)
--		kiocb->ki_flags &= ~IOCB_NOWAIT;
--	else
--		kiocb->ki_flags |= IOCB_NOWAIT;
-+	if (force_nonblock) {
-+		/* If the file doesn't support async, just async punt */
-+		if (unlikely(!io_file_supports_nowait(req, WRITE)))
-+			goto copy_iov;
- 
--	/* If the file doesn't support async, just async punt */
--	if (force_nonblock && !io_file_supports_nowait(req, WRITE))
--		goto copy_iov;
-+		/* file path doesn't support NOWAIT for non-direct_IO */
-+		if (force_nonblock && !(kiocb->ki_flags & IOCB_DIRECT) &&
-+		    (req->flags & REQ_F_ISREG))
-+			goto copy_iov;
- 
--	/* file path doesn't support NOWAIT for non-direct_IO */
--	if (force_nonblock && !(kiocb->ki_flags & IOCB_DIRECT) &&
--	    (req->flags & REQ_F_ISREG))
--		goto copy_iov;
-+		kiocb->ki_flags |= IOCB_NOWAIT;
-+	} else {
-+		/* Ensure we clear previously set non-block flag */
-+		kiocb->ki_flags &= ~IOCB_NOWAIT;
-+	}
- 
- 	ret = rw_verify_area(WRITE, req->file, io_kiocb_ppos(kiocb), req->result);
- 	if (unlikely(ret))
+[1/8] io_uring: consistent typing for issue_flags
+      (no commit info)
+[2/8] io_uring: prioritise read success path over fails
+      (no commit info)
+[3/8] io_uring: optimise rw comletion handlers
+      (no commit info)
+[4/8] io_uring: encapsulate rw state
+      (no commit info)
+[5/8] io_uring: optimise read/write iov state storing
+      (no commit info)
+[6/8] io_uring: optimise io_import_iovec nonblock passing
+      (no commit info)
+[7/8] io_uring: clean up io_import_iovec
+      (no commit info)
+[8/8] io_uring: rearrange io_read()/write()
+      (no commit info)
+
+Best regards,
 -- 
-2.33.0
+Jens Axboe
+
 

@@ -2,144 +2,105 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B7A0342F7C0
-	for <lists+io-uring@lfdr.de>; Fri, 15 Oct 2021 18:10:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9694B42FFEE
+	for <lists+io-uring@lfdr.de>; Sat, 16 Oct 2021 05:36:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241125AbhJOQMZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 15 Oct 2021 12:12:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50870 "EHLO
+        id S239232AbhJPDic (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 15 Oct 2021 23:38:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241138AbhJOQMT (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 15 Oct 2021 12:12:19 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89B72C061764
-        for <io-uring@vger.kernel.org>; Fri, 15 Oct 2021 09:10:12 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id e12so27390137wra.4
-        for <io-uring@vger.kernel.org>; Fri, 15 Oct 2021 09:10:12 -0700 (PDT)
+        with ESMTP id S233898AbhJPDib (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 15 Oct 2021 23:38:31 -0400
+Received: from mail-il1-x129.google.com (mail-il1-x129.google.com [IPv6:2607:f8b0:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A1BDC061570
+        for <io-uring@vger.kernel.org>; Fri, 15 Oct 2021 20:36:24 -0700 (PDT)
+Received: by mail-il1-x129.google.com with SMTP id h27so3407897ila.5
+        for <io-uring@vger.kernel.org>; Fri, 15 Oct 2021 20:36:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=P27WwlbaRMrLJEtxDFd0/GcO8h2SiXJYPH50hcUsc4Q=;
-        b=fV6fFgtmguLZWjYSXA1sXHqJk+1m/+S9QKa/tN8wFPP1T2HXkI4xgX1F896+H24Qfk
-         KdsMYoyDRylySlfDeIDLL65eZKQXUtZ78NzC0JGpN9Rf5cwZicWiAkfJSXzXvYNZfNIB
-         m/ZEzsYW4tSSlRal77gLIQhMORp698zF35eL58B6+mGMChX+xoUSWzRSAf2XxAkNg0X+
-         k8LvjXEYDb4n82NCAufEIhyW4CqwTxN5zyLdE1w3+Om5d9bvEy33Kpd2wbCnvl4QXgyo
-         GZXbYw5NarDVn+S1Whti6veNolVbLDV2MK0mEoZzeyWKF6yQ/+AXqIaBakWGZQdvTrAg
-         9Xmg==
+        bh=s3uMFLNwfOsmXbJztfSs/gVn9vPokSAL/2H9Vnm23Tc=;
+        b=7HTVSlZDwMCgw4KOFLeAUHRuzd7LH7EvMox2xAHGBV5VnrXpis1gF9LfHTZ8aHIaJk
+         qQYeWDrvk8Q76Z2sEt7J8VdyrDuTxSv94HxsKvVkhlXZpSCTm/f11XxQak13khMVx5SE
+         j/5zkevx3AN1WbP5K3CaDYiYuJ7HaCtXQ5q4QIMHyCQ59+w4eznmdFdzsQYqQMqQEpwt
+         n5Tje1k53BKkYitLKX12gAdpupgwJHEoTK/2heKQi6StA/8bzXHdmEcfWUB7PD0QHml2
+         UPmScc0tCYmQWo2D6DfUXUB12afT2FEC/Y0dvVATVuavKiEYj5iK98kzTbOic1Ql8h+u
+         QjTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=P27WwlbaRMrLJEtxDFd0/GcO8h2SiXJYPH50hcUsc4Q=;
-        b=okZZdu1nEIPkbzJDpHP8J4/dv1h65Q9/Xsuj2v2UaQ7PlvOLj8idyvsq3LBnTyDRj3
-         wQmEZg4ILAleAK/oLSLYW19Xqa6S2aDliJLX3iAaatKpVnaTgfvBjGJs86rJeKzJ5IOe
-         tR7gjXIqHRbOHDd8SdHVxuJexiS4+unBKNQPWNfyGrGUrjpCIKXK5yDWxnfDWzliF1ka
-         /Gtzg2fuD8cknBrwu/OJzGewM6F94EVkV23HXYXtBIa9f3ZQhPRQuv+a8Cjq2gfd0sFp
-         0FuiZfHeZ86SD/7SLx20yAbAQB2K4BSZrUaALeC8qvmLL9y5Qnoa8GlmmQIsE1fs2K4L
-         eGPw==
-X-Gm-Message-State: AOAM531pdgj1H6UxxpHP7feeNVmWmvXcj9Q8Tra9tmxa+sQjuiamKtUh
-        8NgskGd9SEIJEW+EYfPxFnkCTW05kAg=
-X-Google-Smtp-Source: ABdhPJyFFzJYhV68hxj3C12MzcCyn+rpL83eB3POAwC7pn5tiiHQW8KqlZzJsU19MF1enN/j07tq1w==
-X-Received: by 2002:a05:6000:1289:: with SMTP id f9mr15622263wrx.192.1634314211029;
-        Fri, 15 Oct 2021 09:10:11 -0700 (PDT)
-Received: from localhost.localdomain ([185.69.145.218])
-        by smtp.gmail.com with ESMTPSA id c15sm5282811wrs.19.2021.10.15.09.10.10
+        bh=s3uMFLNwfOsmXbJztfSs/gVn9vPokSAL/2H9Vnm23Tc=;
+        b=Ie3gpZS5xkUuTxalH5W5NU3fGb3QGb39iMYkCEwAQxKAkUUolbYJ1m5xj4jTf7ArOk
+         OpDvAocV8rxx1eGw/BniIc//Xn22I4y9w54hWpAcomiSnCzvnyVu7DeD2b60J7EJ+rXj
+         NcUtjq6UHVZiGiGcQZP5BEKCvgag+8wZLifJ+9Ch0I1oacfkq4IYjun23XFqJQE1ZYur
+         JYBr95F5y1Z0oE6RmFMSifEDbPufFvI8W9w7CJS6YzSrvllICV1Ph6Wghe1ZCs7eG5SQ
+         fTdzqtECqlRUXjEY+zk1hc46NWdmbkb+YsDWEUhJKfkxX11ZzcqW6KhGEZ+cg28CnzjI
+         m8Vw==
+X-Gm-Message-State: AOAM533Usi6lJjEeUqEELCrDXnElzi9jppv4iC+fAedbF3UBRh667d0l
+        HwD31iQO86Rz6keU62TzDi5n7C5fkpg=
+X-Google-Smtp-Source: ABdhPJwLvAvCHEc6yFGQorNF+7OY7CQ+xpD02zkM6RhAqVa0Pl/uCowLlVBAVZfkUfzOP/t8FlMsTw==
+X-Received: by 2002:a05:6e02:1985:: with SMTP id g5mr6909219ilf.158.1634355383168;
+        Fri, 15 Oct 2021 20:36:23 -0700 (PDT)
+Received: from localhost.localdomain ([66.219.217.159])
+        by smtp.gmail.com with ESMTPSA id d5sm3583214ilq.16.2021.10.15.20.36.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Oct 2021 09:10:10 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH 8/8] io_uring: simplify io_file_supports_nowait()
-Date:   Fri, 15 Oct 2021 17:09:18 +0100
-Message-Id: <b364bdf0dc7a8c39802b7274f741482cbe7611d9.1634314022.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.33.0
+        Fri, 15 Oct 2021 20:36:22 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH for-next 0/8] further rw cleanups+optimisisation
+Date:   Fri, 15 Oct 2021 21:36:19 -0600
+Message-Id: <163435537289.560258.5526499278850849147.b4-ty@kernel.dk>
+X-Mailer: git-send-email 2.33.1
 In-Reply-To: <cover.1634314022.git.asml.silence@gmail.com>
 References: <cover.1634314022.git.asml.silence@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Make sure that REQ_F_SUPPORT_NOWAIT is always set io_prep_rw(), and so
-we can stop caring about setting it down the line simplifying
-io_file_supports_nowait().
+On Fri, 15 Oct 2021 17:09:10 +0100, Pavel Begunkov wrote:
+> Some not difficult code reshuffling.
+> 
+> Default test with nullblk: around +1% throughput
+> 
+> Pavel Begunkov (8):
+>   io_uring: optimise req->ctx reloads
+>   io_uring: kill io_wq_current_is_worker() in iopoll
+>   io_uring: optimise io_import_iovec fixed path
+>   io_uring: return iovec from __io_import_iovec
+>   io_uring: optimise fixed rw rsrc node setting
+>   io_uring: clean io_prep_rw()
+>   io_uring: arm poll for non-nowait files
+>   io_uring: simplify io_file_supports_nowait()
+> 
+> [...]
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 34 ++++++++++++++++++++++------------
- 1 file changed, 22 insertions(+), 12 deletions(-)
+Applied, thanks!
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index c9acb4d2a1ff..b6f7fb5c910b 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -2767,10 +2767,8 @@ static bool io_bdev_nowait(struct block_device *bdev)
-  * any file. For now, just ensure that anything potentially problematic is done
-  * inline.
-  */
--static bool __io_file_supports_nowait(struct file *file)
-+static bool __io_file_supports_nowait(struct file *file, umode_t mode)
- {
--	umode_t mode = file_inode(file)->i_mode;
--
- 	if (S_ISBLK(mode)) {
- 		if (IS_ENABLED(CONFIG_BLOCK) &&
- 		    io_bdev_nowait(I_BDEV(file->f_mapping->host)))
-@@ -2793,11 +2791,26 @@ static bool __io_file_supports_nowait(struct file *file)
- 	return file->f_mode & FMODE_NOWAIT;
- }
- 
-+/*
-+ * If we tracked the file through the SCM inflight mechanism, we could support
-+ * any file. For now, just ensure that anything potentially problematic is done
-+ * inline.
-+ */
-+static unsigned int io_file_get_flags(struct file *file)
-+{
-+	umode_t mode = file_inode(file)->i_mode;
-+	unsigned int res = 0;
-+
-+	if (S_ISREG(mode))
-+		res |= FFS_ISREG;
-+	if (__io_file_supports_nowait(file, mode))
-+		res |= FFS_NOWAIT;
-+	return res;
-+}
-+
- static inline bool io_file_supports_nowait(struct io_kiocb *req)
- {
--	if (likely(req->flags & REQ_F_SUPPORT_NOWAIT))
--		return true;
--	return __io_file_supports_nowait(req->file);
-+	return req->flags & REQ_F_SUPPORT_NOWAIT;
- }
- 
- static int io_prep_rw(struct io_kiocb *req, const struct io_uring_sqe *sqe,
-@@ -2809,8 +2822,8 @@ static int io_prep_rw(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 	unsigned ioprio;
- 	int ret;
- 
--	if (!io_req_ffs_set(req) && S_ISREG(file_inode(file)->i_mode))
--		req->flags |= REQ_F_ISREG;
-+	if (!io_req_ffs_set(req))
-+		req->flags |= io_file_get_flags(file) << REQ_F_SUPPORT_NOWAIT_BIT;
- 
- 	kiocb->ki_pos = READ_ONCE(sqe->off);
- 	if (kiocb->ki_pos == -1 && !(file->f_mode & FMODE_STREAM)) {
-@@ -6767,10 +6780,7 @@ static void io_fixed_file_set(struct io_fixed_file *file_slot, struct file *file
- {
- 	unsigned long file_ptr = (unsigned long) file;
- 
--	if (__io_file_supports_nowait(file))
--		file_ptr |= FFS_NOWAIT;
--	if (S_ISREG(file_inode(file)->i_mode))
--		file_ptr |= FFS_ISREG;
-+	file_ptr |= io_file_get_flags(file);
- 	file_slot->file_ptr = file_ptr;
- }
- 
+[1/8] io_uring: optimise req->ctx reloads
+      commit: 5d946c9385d88990143a2a150ff24fd9d80f9ed2
+[2/8] io_uring: kill io_wq_current_is_worker() in iopoll
+      commit: 62768ee791cb7c55ffd74bb52ea384bc7457b247
+[3/8] io_uring: optimise io_import_iovec fixed path
+      commit: 406e1233ec43ee8cdfc13a17a2bebd169e75d7a6
+[4/8] io_uring: return iovec from __io_import_iovec
+      commit: 200a80aa207869f9e2a0e5b4487d39664f55a85d
+[5/8] io_uring: optimise fixed rw rsrc node setting
+      commit: 95462452d4c8469490e9396bcf31b582716063a5
+[6/8] io_uring: clean io_prep_rw()
+      commit: 8b0286cb37b407b04ec2a0c9f2f7908fa606af76
+[7/8] io_uring: arm poll for non-nowait files
+      commit: 7070f9ad7468e52c5bd36c6270aa4c6466f6bbf3
+[8/8] io_uring: simplify io_file_supports_nowait()
+      commit: 785d7baa96560c726b68d591a233532f1a203743
+
+Best regards,
 -- 
-2.33.0
+Jens Axboe
+
 

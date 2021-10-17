@@ -2,113 +2,95 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E8C084305EE
-	for <lists+io-uring@lfdr.de>; Sun, 17 Oct 2021 03:35:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EAAC9430949
+	for <lists+io-uring@lfdr.de>; Sun, 17 Oct 2021 15:16:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241259AbhJQBhb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 16 Oct 2021 21:37:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39592 "EHLO
+        id S242331AbhJQNTF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 17 Oct 2021 09:19:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231837AbhJQBhb (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 16 Oct 2021 21:37:31 -0400
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55602C061765
-        for <io-uring@vger.kernel.org>; Sat, 16 Oct 2021 18:35:22 -0700 (PDT)
-Received: by mail-pj1-x1033.google.com with SMTP id pf6-20020a17090b1d8600b0019fa884ab85so12023944pjb.5
-        for <io-uring@vger.kernel.org>; Sat, 16 Oct 2021 18:35:22 -0700 (PDT)
+        with ESMTP id S236593AbhJQNTF (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 17 Oct 2021 09:19:05 -0400
+Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B864AC061765
+        for <io-uring@vger.kernel.org>; Sun, 17 Oct 2021 06:16:55 -0700 (PDT)
+Received: by mail-io1-xd2e.google.com with SMTP id y67so13131924iof.10
+        for <io-uring@vger.kernel.org>; Sun, 17 Oct 2021 06:16:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mfATsEyVXnKtDnKQQIy1pz4sFb42CHndPmSa00Zw5mU=;
-        b=TO/arzVPoWtjcUZgSI69qV/tsuFqyC+agL6bckZ7+s9nF4OMfC3CK/EKGhHIxgHRu2
-         EAthdl/oQuHROVsGUE+KsfHwdA6cPeFc5Az4Hn9pq6IHPbyMe0jU0loFE4Jy5TBM8SKf
-         6faj0NINfKsv29agp8UBTXZu77sYSLRCUfhXonQATATRbvSgfxg3HziHp04/jFX3UNYS
-         1GcoH8gWMklUkl7sByyafWM51YRtuTs6mr1XiotfhAh68gGAbVbrrMhHct+ElpPDBwMn
-         pbZkUWCAgkp91jEh3yzPx6BIVANYr7W0lFpiJjfs7/eiv207upGKeDRu0bHj2p4Rq0Ci
-         WTyA==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=to:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=pik7y/oyiqrq7HFKdqdITg2/Ef/03PIXAlSOSXwclU8=;
+        b=hWESzmDnvYQPdCWv/oJ5W6tLdKG/vTnwI2O15yO1sSxkOAA+EQMmVSpJyz5shzhSOK
+         P6VlRaHoqsJ9l01q8cX1jYSEzjKRKhgcnzDRVv0E5pNy027PufcbHhqqMY6iSVX3BpPf
+         4VxWfx/1GtDWqjiUAay7NmEfb0of+ANj4SBNzh4zGs6F+3rpW1MyoQAeY7wGY8PjpSjg
+         UGH4gOvRv0OYM8d1bZhSY7J1HSsVOH90EDwaievTY8lfxT2WbrbR59DtSDsMmz8YTT4g
+         WnNAsQ8LsgR3v9Xsh4k+2+0r/5SVukUkLZJHsq+lGjTGkMZmugxTfKjMUyXu2Mf3tqj3
+         2eHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mfATsEyVXnKtDnKQQIy1pz4sFb42CHndPmSa00Zw5mU=;
-        b=LDCQAt2PQlrHHYRMQKhE1t+OZxvWPcKDVWUgTsNUB92h/PccLv1e18FeKvGVbasT3Z
-         naBppQmCwrH47HTf8nii9xaTVS+29RO3HjENXUKcvOHb6FrjQ0jQtNsr6OTGClh8Yskg
-         K4P1VP0uyEhiJSyKVTIlZYD9wa+yodBJGRNjagFXHAIzszjO8pDf9JgiFS9S5BmjvxL/
-         45SFYVBblgKX6ITtSrl4BvfW1h+gm0MeL51aJrdm3njEUrVPh6BEX7ZfYR8rkKcAzb0L
-         AsZxVgMpM1GwalAy3Mi48RRF54y81h61mClpIwTudv651E5tsdCjBfnHgPXiqBe3KvhX
-         eJNA==
-X-Gm-Message-State: AOAM533tn/j90GSfE+9mEg4tyvavIzGpGA7GZYUIwuKrbAli69Xm9Y5B
-        rwn/Xhn31YOKZm7bBFQY+u8hkaa/iRH+6bgU9Nk=
-X-Google-Smtp-Source: ABdhPJyhbO8hvuS9auafTKMnVDW59ot88SJoFAIawgt51oiRrh1LPX5dZZt40Gb31Ho0eLD2TPFEwodsmBoblwYTDug=
-X-Received: by 2002:a17:902:8d8b:b0:138:e09d:d901 with SMTP id
- v11-20020a1709028d8b00b00138e09dd901mr19691397plo.34.1634434521760; Sat, 16
- Oct 2021 18:35:21 -0700 (PDT)
+        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=pik7y/oyiqrq7HFKdqdITg2/Ef/03PIXAlSOSXwclU8=;
+        b=GK2YxG0uE/kQN44W0jAT8kX9bqDyARPR3mgPqcXxDZfmet9/XudZYqd7pnxD+RxC4c
+         iRnHNqcZB3OUniLiZi2eGpbAXgxMn1cfsDW5fNufzDIrI8ALT5W3ebsfgyURsSQpg36y
+         k8ibd6x2m7hf554APXMN/557GBZAKhDmej0BlWOFd/n6wHQBSBnZXtFt6nhDbqmubtzU
+         jUkp0Nt6N/jKSbkEV3qu8kaBvtj5U+FMgjPTWiZVrgXMQ6LmvWvVjntYbsbRuLEKypQx
+         52GbkttHWZrnLGTEebhLdw9u5Hhv/ZWMDUTGLlCf8O9SofLVWSDH9EY7QGJyckX9Blek
+         47+g==
+X-Gm-Message-State: AOAM532oKCjKMlx8l+Qiqi/K6tgkVhXvkyrcY/o5/x8e6e91djo3sn0x
+        uvtdusKnQQuQT3VWSoq+m5UsOtAAVZ4gJw==
+X-Google-Smtp-Source: ABdhPJycpvWgGAOvJIMYr8gD9/ysI8xydd/boYUkeEfqcntySOVM/WkGXdAH44iOwOrdvukz/F4/UA==
+X-Received: by 2002:a02:a409:: with SMTP id c9mr15132448jal.39.1634476614997;
+        Sun, 17 Oct 2021 06:16:54 -0700 (PDT)
+Received: from [192.168.1.116] ([66.219.217.159])
+        by smtp.gmail.com with ESMTPSA id y5sm5501071ilg.58.2021.10.17.06.16.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 17 Oct 2021 06:16:54 -0700 (PDT)
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        io-uring <io-uring@vger.kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring fix for 5.15-rc6
+Message-ID: <9d69d148-95be-c698-3394-f42cec90b49e@kernel.dk>
+Date:   Sun, 17 Oct 2021 07:16:53 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <cover.1634144845.git.asml.silence@gmail.com> <2c2536c5896d70994de76e387ea09a0402173a3f.1634144845.git.asml.silence@gmail.com>
- <CAFUsyfKyRnXhcxOVfSAxeyKsQqGXJ7PdDYw3TXC3H+q_yp5LMA@mail.gmail.com> <869d5110-973b-6c70-604d-48d6108c0379@gmail.com>
-In-Reply-To: <869d5110-973b-6c70-604d-48d6108c0379@gmail.com>
-From:   Noah Goldstein <goldstein.w.n@gmail.com>
-Date:   Sat, 16 Oct 2021 20:35:11 -0500
-Message-ID: <CAFUsyfKbCbLL-yVPvf-QofauEzU91RuFGmhTUZ+nhe7aNXry0w@mail.gmail.com>
-Subject: Re: [PATCH 8/8] io_uring: rearrange io_read()/write()
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     "open list:IO_URING" <io-uring@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Sat, Oct 16, 2021 at 6:26 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
->
-> On 10/16/21 23:52, Noah Goldstein wrote:
-> > On Thu, Oct 14, 2021 at 10:13 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
-> >> -       /* If the file doesn't support async, just async punt */
-> >> -       if (force_nonblock && !io_file_supports_nowait(req, WRITE))
-> >> -               goto copy_iov;
-> >> +               /* file path doesn't support NOWAIT for non-direct_IO */
-> >> +               if (force_nonblock && !(kiocb->ki_flags & IOCB_DIRECT) &&
-> >
-> > You can drop this 'force_nonblock' no?
->
-> Indeed
->
-> >
-> >> +                   (req->flags & REQ_F_ISREG))
-> >> +                       goto copy_iov;
-> >>
-> >> -       /* file path doesn't support NOWAIT for non-direct_IO */
-> >> -       if (force_nonblock && !(kiocb->ki_flags & IOCB_DIRECT) &&
-> >> -           (req->flags & REQ_F_ISREG))
-> >> -               goto copy_iov;
-> >> +               kiocb->ki_flags |= IOCB_NOWAIT;
-> >> +       } else {
-> >> +               /* Ensure we clear previously set non-block flag */
-> >> +               kiocb->ki_flags &= ~IOCB_NOWAIT;
-> >> +       }
-> >>
-> >>          ret = rw_verify_area(WRITE, req->file, io_kiocb_ppos(kiocb), req->result);
-> >>          if (unlikely(ret))
-> >
-> > ...
-> >
-> > What swapping order of conditions below:
-> > if ((req->ctx->flags & IORING_SETUP_IOPOLL) && ret2 == -EAGAIN)
-> >
-> > The ret2 check will almost certainly be faster than 2x deref.
->
-> Makes sense. Want to send a patch?
-Done.
->
-> --
-> Pavel Begunkov
+Hi Linus,
 
-As an aside regarding the reorganization of io_write/io_read, maybe
-it's worth it
-to add seperate versions of the function for w/w.o force_nonblock?
-Isn't something
-that will change during the function and seems to really just be
-adding 4-5 branches
-(of runtime and code complexity) to each where factoring it would just
-be +1 branch.
+Just a single fix for a wrong condition for grabbing a lock, a
+regression in this merge window. Please pull!
+
+
+The following changes since commit 3f008385d46d3cea4a097d2615cd485f2184ba26:
+
+  io_uring: kill fasync (2021-10-01 11:16:02 -0600)
+
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux-block.git tags/io_uring-5.15-2021-10-17
+
+for you to fetch changes up to 14cfbb7a7856f190035f8e53045bdbfa648fae41:
+
+  io_uring: fix wrong condition to grab uring lock (2021-10-14 09:06:11 -0600)
+
+----------------------------------------------------------------
+io_uring-5.15-2021-10-17
+
+----------------------------------------------------------------
+Hao Xu (1):
+      io_uring: fix wrong condition to grab uring lock
+
+ fs/io_uring.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+-- 
+Jens Axboe
+

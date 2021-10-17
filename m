@@ -2,75 +2,89 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 476F5430C01
-	for <lists+io-uring@lfdr.de>; Sun, 17 Oct 2021 22:33:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA810430C03
+	for <lists+io-uring@lfdr.de>; Sun, 17 Oct 2021 22:33:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242906AbhJQUfY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 17 Oct 2021 16:35:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33716 "EHLO
+        id S242910AbhJQUf0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 17 Oct 2021 16:35:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242900AbhJQUfX (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 17 Oct 2021 16:35:23 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3981AC06161C
-        for <io-uring@vger.kernel.org>; Sun, 17 Oct 2021 13:33:13 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id d3so62158905edp.3
-        for <io-uring@vger.kernel.org>; Sun, 17 Oct 2021 13:33:13 -0700 (PDT)
+        with ESMTP id S242900AbhJQUfZ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 17 Oct 2021 16:35:25 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E02FC06161C;
+        Sun, 17 Oct 2021 13:33:15 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id r18so62441671edv.12;
+        Sun, 17 Oct 2021 13:33:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=T8EbthODhXi/M1cP7quHaoZ9NwI6zhL6wnsh2Uloe48=;
-        b=LHtwhzb2sez1i3vfa2JZrNWfHIprXLnVU2pdHs6GXFSiYyAG9Y5cRTeUfyeK/4xIJN
-         qbFaIRgWy+UY3+WWGnjDGvFbqouuQC43vDtI5aBJyBDJUfECxaFthG6jT4gX1my4/5MR
-         7TN7TIB94hgSNFA57OKao9tUgCzaScbeJOofufbyaxxdieDiHlYEAw0bU/5/jc64bpIR
-         wOLQBxxLNrTtEE+h92t0QEsgUcquHGr3ltVPfiAazbyXGzMU7v/1EEYDIMQ11C0WKJ0u
-         BogLmAPiK+H18LJpPvFl2zDpdIl5Vu/Cmcd5CodMmuHBK9U9a3uFu2P7K+ppxCZpY6C2
-         86Pw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=/nVjTYA81wB7SSdqTCo1jbJLycAjbKBO8LR6ntkz6ew=;
+        b=OOHOAGXWjp5pGhcPMdUC60ixDV+HrVHaaX5YjsUu9BUm8qkmEFjgFmmUOtj8rkjRIe
+         gb3Dbj6NtE+XkpaaE93i4eieYfH8XB5NnzUXw3oiG8ot4lPxTKqAS2Of+qQ544nn25Lv
+         0qDcoR2q0YUBge6yyTDbDQ2IMYsA5GGesO5PTdKWHT0imD/bJlXeaOoHl7fCRvHdlYgf
+         ahUJg9DRNbU+3ug1m5VMpLiOrrxI2OChx2hEDDz3hfr69dC94qWxK/5pDkb/i/z4A+XU
+         ARZUObRDZtyd86wgZr0G5tbRkJVi84r8kXBp/6wJKbrfsXS7RcAXD7ozr0WIAeczMOOk
+         RkWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=T8EbthODhXi/M1cP7quHaoZ9NwI6zhL6wnsh2Uloe48=;
-        b=2ttuSUvx+AY6nC/iu0s0eeObe0SCl3X+az5FitC7h6Kf2X1jeCIiAKHMrkITryZGMQ
-         CCcGXwtNbN20uETV8QrG1Ma6d5YW22p2t0IFqHGey1eYy6qrQivU4LUVesUhowoBD8Ml
-         sBWmDa7uMefLIMvSxzGzOzBz3tnH+6pV54WZ2WcNrlzUV3ERuXoJtkceekTCFlqcKPpm
-         7deNvVMwuWXpou/FcNoyA8Nl9y8zJsWUJDNzh/q8wp2JwGaHjm5G08jkhbVs6wXTO58E
-         CHqgT1E3U80T2adm8U2W7AY9y3o37m52yMo6/BqC3NhCiejMBzIpsDHkTi9t1/8Rw8un
-         BrpQ==
-X-Gm-Message-State: AOAM532ZsemldNwM0E36Z9/rjw2lyAiYkWzlTjXO4xBWkEKCTdiw0WDu
-        DuArVrDmJ24cZq7mHzTDjaSOwLSDOe8KYA==
-X-Google-Smtp-Source: ABdhPJyyQKxk0/weEcBiTcmlGicWOEV2CabtENNFq9a0bUfhl4ZWqph5x81XoQxrcFVA3b+HUdCmuA==
-X-Received: by 2002:a17:907:330e:: with SMTP id ym14mr25825252ejb.417.1634502791733;
-        Sun, 17 Oct 2021 13:33:11 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=/nVjTYA81wB7SSdqTCo1jbJLycAjbKBO8LR6ntkz6ew=;
+        b=rmLxIyLC1XmZHxumQyNcs01jJ2OXPSNoe4SGDGJGs4R2eVDv6oXThrTQGGvM7x6hts
+         EqGdHvRIT+Yt0WW8/RfhV8TlwV0IU2455F4yOm9yEVm4FKjyLNqTfRC7vjBcOJ3YegB9
+         zWYc1awy/SJh9JFFrsabDM3D6iq2tPlTXQBIgQSW17pwgpi8JFXLc51HGKO5o68/aKua
+         BhNAUZBv8fQKrVphDqgzSRvsBQxoG9lk4eIhswCtzXThHsLTCdhjZj1X8UK5cccXKhap
+         0+5QpAVrVoDi4SzpHrlYplMlJgC9C6MtQNq1aBH67Kyg+J8q69jHrS3/RCQzsjPJA6uW
+         hjKg==
+X-Gm-Message-State: AOAM532KBuGvljaTxVvTABb6VvMWlGW0HYjLWfH6SnpVTM0qZrvP8EZ9
+        j70oQg+sinZJoU1gR/9OeDbP3c/D/6I7dA==
+X-Google-Smtp-Source: ABdhPJz3aVPzeaGtIbn4FvInvZCCws4Wo1x/U6G5+PlOrz9eyNiFHH0SOPcKcc1XOTNIsPXbIaH7/Q==
+X-Received: by 2002:a50:be82:: with SMTP id b2mr37204380edk.56.1634502792639;
+        Sun, 17 Oct 2021 13:33:12 -0700 (PDT)
 Received: from 127.0.0.1localhost ([185.69.145.195])
-        by smtp.gmail.com with ESMTPSA id ca4sm8119651ejb.1.2021.10.17.13.33.10
+        by smtp.gmail.com with ESMTPSA id ca4sm8119651ejb.1.2021.10.17.13.33.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Oct 2021 13:33:11 -0700 (PDT)
+        Sun, 17 Oct 2021 13:33:12 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Subject: [PATCH 0/2] two small fixes
-Date:   Sun, 17 Oct 2021 20:33:20 +0000
-Message-Id: <cover.1634501363.git.asml.silence@gmail.com>
+        Pavel Begunkov <asml.silence@gmail.com>, stable@vger.kernel.org
+Subject: [PATCH 1/2] io_uring: fail iopoll links if can't retry
+Date:   Sun, 17 Oct 2021 20:33:21 +0000
+Message-Id: <ff66f584ff352b94ef0f5cb4188da609834fe173.1634501363.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.33.1
+In-Reply-To: <cover.1634501363.git.asml.silence@gmail.com>
+References: <cover.1634501363.git.asml.silence@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The first correctly attributes failed iopoll requests.
-2/2 fixes a for-next bug.
+If io_rw_should_reissue() fails in iopoll path and we can't reissue we
+fail the request. Don't forget to also mark it as failed, so links are
+broken.
 
-Pavel Begunkov (2):
-  io_uring: fail iopoll links if can't retry
-  io_uring: fix async_data checks for msg setup
+Cc: stable@vger.kernel.org
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ fs/io_uring.c | 1 +
+ 1 file changed, 1 insertion(+)
 
- fs/io_uring.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 0d7613c7355c..40b1697e7354 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -2687,6 +2687,7 @@ static void io_complete_rw_iopoll(struct kiocb *kiocb, long res, long res2)
+ 			req->flags |= REQ_F_REISSUE;
+ 			return;
+ 		}
++		req_set_fail(req);
+ 		req->result = res;
+ 	}
+ 
 -- 
 2.33.1
 

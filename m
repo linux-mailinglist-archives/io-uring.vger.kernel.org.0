@@ -2,71 +2,103 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CADE4319BE
-	for <lists+io-uring@lfdr.de>; Mon, 18 Oct 2021 14:46:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E21444319C5
+	for <lists+io-uring@lfdr.de>; Mon, 18 Oct 2021 14:46:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231713AbhJRMsa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 18 Oct 2021 08:48:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52986 "EHLO
+        id S231601AbhJRMsp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 18 Oct 2021 08:48:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231739AbhJRMs3 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 18 Oct 2021 08:48:29 -0400
-Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56172C06161C
-        for <io-uring@vger.kernel.org>; Mon, 18 Oct 2021 05:46:18 -0700 (PDT)
-Received: by mail-pl1-x630.google.com with SMTP id t11so11136737plq.11
-        for <io-uring@vger.kernel.org>; Mon, 18 Oct 2021 05:46:18 -0700 (PDT)
+        with ESMTP id S229644AbhJRMso (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 18 Oct 2021 08:48:44 -0400
+Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88022C061714
+        for <io-uring@vger.kernel.org>; Mon, 18 Oct 2021 05:46:33 -0700 (PDT)
+Received: by mail-pg1-x536.google.com with SMTP id q5so16061980pgr.7
+        for <io-uring@vger.kernel.org>; Mon, 18 Oct 2021 05:46:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amikom.ac.id; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=iPYz+7pV0Bi6Nxp8QeeiK6wdgcmJbVjrHflLCRyp1wc=;
-        b=VYPSr9R2Tq9Xll97X+8C/tRMAEIkEEbN+TW9U8dM1fI2uRa9jtIj0A+QIg9d9iIHBK
-         9UeHApu+tabqHMJDYwSrYF5K6AISpIh7FiaFoELEuBaMMWCrrMbOIR90TKos1juGH5yc
-         K6mV5H8Ar94kvWWD6CikrFNXQisJjVysMoOGzDPKDRbLhQTWM7gpmCwIyXYC3DoeHJWf
-         m3BJNfDmUIez2alQpV1RcxiDtbMmhk7Cr1AIF68jQ92i1F3lu+TfvlXcyZnojV5l1xyk
-         mjahIaYI0ZVignNoRdGpbjIGll4pTPFiarqRQ2wyIm7+ou1NYFN/IaXI45f00w1ldPNd
-         4HVQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=btbR2pioYB+kAv444NCMQyOO8xBTQs0bRsgZjOfXS7s=;
+        b=JCY+PgtuebCpm0KuoIVIb1dtCHeJOj8nTx0KwX7zy1TefEm+f96oNlXsPJIYLnX7R4
+         5+UE8j3rcFc2U7s/5A8wg1V4e1+2oD6e/v2wlawK4gSsrRyFAo6foo+R0NU3cQJ0thFt
+         dpoYFZSk6Qk0PEr2BSyb1s5lLKXMWJkWeMVF6fobxQHJ7IHDVrT8kl4FHs55HPO1ww4l
+         T2UhtmV6RzC+N/MpJCQue+a/pDtEKlRCf9obvmniiFP+DMShXbE6+OO8ALmN/2Rsph+c
+         tOtz7jyXghwRlyHJTNux8461aAJ7DQr3kGadbelZLAAovPS1l26xxsxgMdHWWr84X6bg
+         r5dg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=iPYz+7pV0Bi6Nxp8QeeiK6wdgcmJbVjrHflLCRyp1wc=;
-        b=Ml456zbYju0kKsqkKr+f3LVqtoQ2h9TqScnnwe/4mo62xCOhucf3EVxYo9Dxl2Ot7g
-         N62nQfRvuhaeV5ZhvIt5IAF5ANXHJEctPnWCRsl2h/0P7mZe1XEveNEgIivy+zt94huu
-         zi5QnTaC7e/ritoje4xxcM4FYx/r3tAoDuqoOZXsn367papHVXwQXP8J2J2ojlPCuqxD
-         04gdC1+zBcepdIdhxf9i1A6fQLMuEX+fvQ+Q4FIGbdwX/jtQ9FcGuUWMJ3SrHYs2fYZw
-         I4LpDAfibRvaCdNnQrPZt3mnGEpuuSEvhzPTzDihxR4wMOhVU7rnvj5ewUD2uKTF2Wof
-         TfRw==
-X-Gm-Message-State: AOAM533yi8QQ/9Mh2D057J16YEFyVH2rus4XBiVtOYj5IYqvF3OZRe4k
-        hZzmJFS0egzjIHm6voYcTnATv0aYoAZhl63I
-X-Google-Smtp-Source: ABdhPJyWxEEArNlBiKax1AOK2PmEOqqeMy4WhOO8ZXAvCnP2e5NMQVmoA07/fg/y56Xzhbnuf1P5gg==
-X-Received: by 2002:a17:90a:49:: with SMTP id 9mr47240581pjb.80.1634561177890;
-        Mon, 18 Oct 2021 05:46:17 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=btbR2pioYB+kAv444NCMQyOO8xBTQs0bRsgZjOfXS7s=;
+        b=IuKRB4yrB+9tI2AsN4QgEHinEKqcZ2JNHQwRFWICtlHDmGL2kuxAWkeXW9C5+0TqjH
+         rgp+12wtAtfv6o1j0FuyTA6It41NsGMmHPUb7Bf+iMNrRrKVYPJNZ4/bMvZOhRszKZEF
+         J7uTKSgR1MEoO5tw/qpeKeR9RVAEHexurtTUzuPvHQ5LdHvwIjP1K71nneeGSSrtuxVo
+         Ztx37Loy4tyaItz4zEJhKQkotYBMTl4vBA6nRXUNfL0kehDiM+7A1VTyXCG7Eqw1E8Ou
+         NavujTxE7m3sqCtjRvrAET0VHmq6YvcJ1rR3wn6S5MNrjk6ixtIVr8o6uFQJVu59ibiS
+         he7w==
+X-Gm-Message-State: AOAM532BLCWiQLvoa/lBAiRqQ+RxcWApO4+huKfAarbxVS1EzGm9c/h6
+        DiFsg8aduzYFdskkkQUzrfTgaDKkepyOyzyn
+X-Google-Smtp-Source: ABdhPJzMoGdAyiCJUoxctnjDfNHrLGuh53/aNaT2Zs2/HZMAcvuMOPBKZkZpHcgfOd61+5ftpWdZcQ==
+X-Received: by 2002:a63:bf45:: with SMTP id i5mr23342631pgo.161.1634561192968;
+        Mon, 18 Oct 2021 05:46:32 -0700 (PDT)
 Received: from integral.. ([182.2.39.79])
-        by smtp.gmail.com with ESMTPSA id l14sm20096041pjq.13.2021.10.18.05.46.14
+        by smtp.gmail.com with ESMTPSA id l14sm20096041pjq.13.2021.10.18.05.46.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Oct 2021 05:46:17 -0700 (PDT)
+        Mon, 18 Oct 2021 05:46:32 -0700 (PDT)
 From:   Ammar Faizi <ammar.faizi@students.amikom.ac.id>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Pavel Begunkov <asml.silence@gmail.com>,
         io-uring Mailing List <io-uring@vger.kernel.org>,
-        zhangyi <yi.zhang@huawei.com>, yangerkun <yangerkun@huawei.com>
-Subject: [PATCHSET liburing 0/2] Small fixes for tests
-Date:   Mon, 18 Oct 2021 19:45:59 +0700
-Message-Id: <DdOIWk8hb7I-ammarfaizi2@gnuweeb.org>
+        zhangyi <yi.zhang@huawei.com>, yangerkun <yangerkun@huawei.com>,
+        Ammar Faizi <ammar.faizi@students.amikom.ac.id>
+Subject: [PATCH liburing 1/2] test/timeout: Fix `-Werror=maybe-uninitialized`
+Date:   Mon, 18 Oct 2021 19:46:00 +0700
+Message-Id: <hgUsvvrR9xY-ammarfaizi2@gnuweeb.org>
 X-Mailer: git-send-email 2.30.2
+In-Reply-To: <DdOIWk8hb7I-ammarfaizi2@gnuweeb.org>
+References: <DdOIWk8hb7I-ammarfaizi2@gnuweeb.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
- test/timeout-overflow.c | 2 +-
- test/timeout.c          | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+Fix this:
+```
+  timeout.c: In function ‘test_multi_timeout’:
+  timeout.c:590:20: warning: ‘user_data’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+    590 |                 if (cqe->user_data != user_data) {
+        |                    ^
+  timeout.c:601:51: warning: ‘time’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+    601 |                 if (exp < time / 2 || exp > (time * 3) / 2) {
+        |                                             ~~~~~~^~~~
+```
 
+Fixes: 37136cb4423b27dac2fc663b6a0c513b6d7d7ad1 ("test/timeout: add multi timeout reqs test with different timeout")
+Cc: zhangyi (F) <yi.zhang@huawei.com>
+Signed-off-by: Ammar Faizi <ammar.faizi@students.amikom.ac.id>
+---
+ test/timeout.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/test/timeout.c b/test/timeout.c
+index f8ba973..8c35b00 100644
+--- a/test/timeout.c
++++ b/test/timeout.c
+@@ -563,8 +563,8 @@ static int test_multi_timeout(struct io_uring *ring)
+ 
+ 	gettimeofday(&tv, NULL);
+ 	for (i = 0; i < 2; i++) {
+-		unsigned int time;
+-		__u64 user_data;
++		unsigned int time = 0;
++		__u64 user_data = 0;
+ 
+ 		ret = io_uring_wait_cqe(ring, &cqe);
+ 		if (ret < 0) {
 -- 
-Ammar Faizi
-
+2.30.2
 

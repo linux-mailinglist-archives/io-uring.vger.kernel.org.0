@@ -2,72 +2,71 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A233F43193A
-	for <lists+io-uring@lfdr.de>; Mon, 18 Oct 2021 14:35:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CADE4319BE
+	for <lists+io-uring@lfdr.de>; Mon, 18 Oct 2021 14:46:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231167AbhJRMht (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 18 Oct 2021 08:37:49 -0400
-Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:50996 "EHLO
-        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229581AbhJRMht (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 18 Oct 2021 08:37:49 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UsiHvPk_1634560536;
-Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UsiHvPk_1634560536)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 18 Oct 2021 20:35:36 +0800
-Subject: Re: [PATCH v2 0/2] async hybrid for pollable requests
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <20211018112923.16874-1-haoxu@linux.alibaba.com>
- <7a0d4182-6e08-99b9-ffca-483023f7a15f@gmail.com>
-From:   Hao Xu <haoxu@linux.alibaba.com>
-Message-ID: <55f9a560-e7f7-d37a-b0d5-a9327fc912c9@linux.alibaba.com>
-Date:   Mon, 18 Oct 2021 20:35:36 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.13.0
+        id S231713AbhJRMsa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 18 Oct 2021 08:48:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52986 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231739AbhJRMs3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 18 Oct 2021 08:48:29 -0400
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56172C06161C
+        for <io-uring@vger.kernel.org>; Mon, 18 Oct 2021 05:46:18 -0700 (PDT)
+Received: by mail-pl1-x630.google.com with SMTP id t11so11136737plq.11
+        for <io-uring@vger.kernel.org>; Mon, 18 Oct 2021 05:46:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amikom.ac.id; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=iPYz+7pV0Bi6Nxp8QeeiK6wdgcmJbVjrHflLCRyp1wc=;
+        b=VYPSr9R2Tq9Xll97X+8C/tRMAEIkEEbN+TW9U8dM1fI2uRa9jtIj0A+QIg9d9iIHBK
+         9UeHApu+tabqHMJDYwSrYF5K6AISpIh7FiaFoELEuBaMMWCrrMbOIR90TKos1juGH5yc
+         K6mV5H8Ar94kvWWD6CikrFNXQisJjVysMoOGzDPKDRbLhQTWM7gpmCwIyXYC3DoeHJWf
+         m3BJNfDmUIez2alQpV1RcxiDtbMmhk7Cr1AIF68jQ92i1F3lu+TfvlXcyZnojV5l1xyk
+         mjahIaYI0ZVignNoRdGpbjIGll4pTPFiarqRQ2wyIm7+ou1NYFN/IaXI45f00w1ldPNd
+         4HVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=iPYz+7pV0Bi6Nxp8QeeiK6wdgcmJbVjrHflLCRyp1wc=;
+        b=Ml456zbYju0kKsqkKr+f3LVqtoQ2h9TqScnnwe/4mo62xCOhucf3EVxYo9Dxl2Ot7g
+         N62nQfRvuhaeV5ZhvIt5IAF5ANXHJEctPnWCRsl2h/0P7mZe1XEveNEgIivy+zt94huu
+         zi5QnTaC7e/ritoje4xxcM4FYx/r3tAoDuqoOZXsn367papHVXwQXP8J2J2ojlPCuqxD
+         04gdC1+zBcepdIdhxf9i1A6fQLMuEX+fvQ+Q4FIGbdwX/jtQ9FcGuUWMJ3SrHYs2fYZw
+         I4LpDAfibRvaCdNnQrPZt3mnGEpuuSEvhzPTzDihxR4wMOhVU7rnvj5ewUD2uKTF2Wof
+         TfRw==
+X-Gm-Message-State: AOAM533yi8QQ/9Mh2D057J16YEFyVH2rus4XBiVtOYj5IYqvF3OZRe4k
+        hZzmJFS0egzjIHm6voYcTnATv0aYoAZhl63I
+X-Google-Smtp-Source: ABdhPJyWxEEArNlBiKax1AOK2PmEOqqeMy4WhOO8ZXAvCnP2e5NMQVmoA07/fg/y56Xzhbnuf1P5gg==
+X-Received: by 2002:a17:90a:49:: with SMTP id 9mr47240581pjb.80.1634561177890;
+        Mon, 18 Oct 2021 05:46:17 -0700 (PDT)
+Received: from integral.. ([182.2.39.79])
+        by smtp.gmail.com with ESMTPSA id l14sm20096041pjq.13.2021.10.18.05.46.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Oct 2021 05:46:17 -0700 (PDT)
+From:   Ammar Faizi <ammar.faizi@students.amikom.ac.id>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring Mailing List <io-uring@vger.kernel.org>,
+        zhangyi <yi.zhang@huawei.com>, yangerkun <yangerkun@huawei.com>
+Subject: [PATCHSET liburing 0/2] Small fixes for tests
+Date:   Mon, 18 Oct 2021 19:45:59 +0700
+Message-Id: <DdOIWk8hb7I-ammarfaizi2@gnuweeb.org>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-In-Reply-To: <7a0d4182-6e08-99b9-ffca-483023f7a15f@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-在 2021/10/18 下午8:31, Pavel Begunkov 写道:
-> On 10/18/21 11:29, Hao Xu wrote:
->> 1/2 is a prep patch. 2/2 is the main one.
->> The good thing: see commit message.
->> the side effect: for normal io-worker path, added two if and two local
->> variables. for FORCE_ASYNC path, added three if and several dereferences
->>
->> I think it is fine since the io-worker path is not the fast path, and
->> the benefit of this patchset is worth it.
-> 
-> We don't care about overhead in iowq, but would be better to get rid
-> of the in_worker in io_read(). See comments to 1/2.
-> 
-> Btw, you told that it performs better comparing to normal
-> IOSQE_ASYNC. I'm confused, didn't we agree that it can be
-> merged into IOSQE_ASYNC without extra flags?
-I said 'better than the old logic IOSQE_ASYNC logic for pollable cases'..
-> 
->>
->> Btw, we need to tweak the io-cancel.c a bit, not a big problem.
->> liburing tests will come later.
->>
->> v1-->v2:
->>   - split logic of force_nonblock
->>   - tweak added code in io_wq_submit_work to reduce overhead
->>   from Pavel's commments.
->>
->> Hao Xu (2):
->>    io_uring: split logic of force_nonblock
->>    io_uring: implement async hybrid mode for pollable requests
->>
->>   fs/io_uring.c                 | 85 ++++++++++++++++++++++++++---------
->>   include/uapi/linux/io_uring.h |  4 +-
->>   2 files changed, 66 insertions(+), 23 deletions(-)
->>
-> 
+ test/timeout-overflow.c | 2 +-
+ test/timeout.c          | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+-- 
+Ammar Faizi
+
 

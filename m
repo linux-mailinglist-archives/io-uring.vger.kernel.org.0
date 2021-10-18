@@ -2,102 +2,85 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 543B34319C6
-	for <lists+io-uring@lfdr.de>; Mon, 18 Oct 2021 14:46:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E95B431A1E
+	for <lists+io-uring@lfdr.de>; Mon, 18 Oct 2021 14:54:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229644AbhJRMsr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 18 Oct 2021 08:48:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53070 "EHLO
+        id S231167AbhJRM4Y (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 18 Oct 2021 08:56:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231646AbhJRMsr (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 18 Oct 2021 08:48:47 -0400
-Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14E0BC061714
-        for <io-uring@vger.kernel.org>; Mon, 18 Oct 2021 05:46:36 -0700 (PDT)
-Received: by mail-pg1-x530.google.com with SMTP id e7so16094464pgk.2
-        for <io-uring@vger.kernel.org>; Mon, 18 Oct 2021 05:46:36 -0700 (PDT)
+        with ESMTP id S230005AbhJRM4Y (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 18 Oct 2021 08:56:24 -0400
+Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52EDBC06161C
+        for <io-uring@vger.kernel.org>; Mon, 18 Oct 2021 05:54:13 -0700 (PDT)
+Received: by mail-io1-xd33.google.com with SMTP id z69so12967537iof.9
+        for <io-uring@vger.kernel.org>; Mon, 18 Oct 2021 05:54:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amikom.ac.id; s=google;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=PrqT27WqwnAiAj1y4BOZDaa+eKVDe5YdM9RZazdB5vA=;
-        b=eE8tlRKQ7zyK1BWg+2ASYdyA0YXfSgyZ/0HpAVZ43rRvP2c4ZQfxiO8tUM2tHhP/tw
-         yaq3+ykrchXqQMOufXAsMptIBw5mexe86kS54CFozEXZ5z5/+UhfaLXv10Q2Ifcs0KAh
-         s01T0NPNTfYncnGoN8HvRDfMll6vsb/XeB6nkuRBoaiWGsW/YG2L1IgN5pA0IXTLtmZS
-         Sk4DEiafHC9rabHEe6exchj+nKFJzRq/I1rcMGg4dZhonoOHhqUSrYmroG2+KOgmMSC/
-         1Fy9P8IyfNAJ2P5S5Yq/ddQsY0V1PxXPOufeepxBphagD2jSA3tFE/RO9vA+XwRavGx2
-         VHNg==
+        bh=YhPsVExHBU57cxWLCZcGnPL2hq8OB3c0EpUt+K1uEtM=;
+        b=p5z5xnEdwWphk1XQfbSWdfetVM6SPOTzhYa+uJ7weQVuM5pPEguYT8DoZynbtitCE6
+         AhpEH1LqusEqYRfgQsJF7m6IyDKRELreGQtKotlhGTBRQTW2v6cZTH3cCbikv8OubVCE
+         Si8wCMMlMhYLDiN3FN/J4x5bFgDIR47BrrrE1ofGm/S5hxSUg4N1yYVXxWksSTfBx9+y
+         /EFYClDO0srlG5m2r9uJwHvcCvQLrzrSkGqY85CBXJVQQ1/XXdNcIFMZ7D2tqCycZCZW
+         VOFZPFVoNv0G1cTp+momgt2tpaReevc16uHu8VXBo9ZUbkzVas8rXJMzWAjKXv6Tq4MQ
+         Mi+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=PrqT27WqwnAiAj1y4BOZDaa+eKVDe5YdM9RZazdB5vA=;
-        b=MGJxfs96cj8NZXsSIx61pgK/ZU38Q87Vut8bPw64ZFjIsV285eCUsmn+SoLLZmu6dv
-         GyExo7nzNZBWqt3wjOCy+EAeTJFa5ie2g9/2UHY2pqLBctQciMea91BELMISMdxMOtwW
-         n0JXy5CO7NO2PDdihNUCz+Oo5yqsvuGifvQarLK1rTRHsOcs8Aj/bGjF83E0UJmp7+WI
-         ZGKZzyzuvAuR+VcP/38dWamD6JuGPE3FxFFjsIT9DI3caqG7UoiHX0nFqnzdpNfFbVBi
-         bTJmdsGFGQT/xVinxbiEbszqYIZGecuWqR/Ytn1vmT7PbK4tUXsqI/JNzi3NQ4YeI2Yo
-         Pobg==
-X-Gm-Message-State: AOAM5338RdItKoMSXJRSQysbOJV5r7vB9UuelXi3ZzRuPaibCAva9OiC
-        y1a5xyIQCzUP121IDRW6fnUQEyVaIKfHsw==
-X-Google-Smtp-Source: ABdhPJzHUYEzsuLy4VvlecL95aQ3TFdOMRsEvEWEOFEJ4WkaYaDnn8xNuT6WLOIPsEDZmq0oD9Cf4w==
-X-Received: by 2002:a05:6a00:2388:b0:44d:4b5d:d5e with SMTP id f8-20020a056a00238800b0044d4b5d0d5emr28191948pfc.80.1634561195566;
-        Mon, 18 Oct 2021 05:46:35 -0700 (PDT)
-Received: from integral.. ([182.2.39.79])
-        by smtp.gmail.com with ESMTPSA id l14sm20096041pjq.13.2021.10.18.05.46.33
+        bh=YhPsVExHBU57cxWLCZcGnPL2hq8OB3c0EpUt+K1uEtM=;
+        b=7p12X43w486EEhvqZill3vYP5FZUzlyBNhe5Iq9r+6AyIq2DvaL69sminlXjE6g9qq
+         ZAUeaEJypgrdOFf+ZqtLVMfHmJL80WtCmQX5ix0IOG95zdZDprlwGvA7bik/RsJPlSeg
+         Mr2PxptnyuPK/lQa9UivOsvlbdZjl4nS+OahqEijhrovmAbeK00sIUzoU3bGdayZ6FpW
+         CB7H5XG3aEbntsBgTbDevvK2XVvRvZTaHUy4PuJW/xv/W1pX6cPrvttPoGIYdGNIcRFQ
+         Qww46L0UcQuQ/iFVQBYM+J7KAmCClKKXR3EjtFpQjizbFKWSJOOmc52/Bn6P1wHXv5rA
+         kgmw==
+X-Gm-Message-State: AOAM531ddqmPneNOfX2yM3VQlECy4Ngl4YGQ38Zd6XBQc2/MXWH8PPPr
+        dBJSj50N5GIp0rHyj3FRDR/GIQ==
+X-Google-Smtp-Source: ABdhPJyvV+6lzRfQcB6W01Bb5EfTaVDlHeK3SbN9iwTh2Noa4CiVwrX13AXktLn4rkklWvw5DEOsbQ==
+X-Received: by 2002:a6b:8d4a:: with SMTP id p71mr14145796iod.16.1634561652703;
+        Mon, 18 Oct 2021 05:54:12 -0700 (PDT)
+Received: from localhost.localdomain ([66.219.217.159])
+        by smtp.gmail.com with ESMTPSA id y14sm6833632ily.44.2021.10.18.05.54.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Oct 2021 05:46:35 -0700 (PDT)
-From:   Ammar Faizi <ammar.faizi@students.amikom.ac.id>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring Mailing List <io-uring@vger.kernel.org>,
-        zhangyi <yi.zhang@huawei.com>, yangerkun <yangerkun@huawei.com>,
-        Ammar Faizi <ammar.faizi@students.amikom.ac.id>
-Subject: [PATCH liburing 2/2] test/timeout-overflow: Fix `-Werror=maybe-uninitialized`
-Date:   Mon, 18 Oct 2021 19:46:01 +0700
-Message-Id: <BULrcXMbevM-ammarfaizi2@gnuweeb.org>
-X-Mailer: git-send-email 2.30.2
+        Mon, 18 Oct 2021 05:54:12 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Ammar Faizi <ammar.faizi@students.amikom.ac.id>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        yangerkun <yangerkun@huawei.com>, zhangyi <yi.zhang@huawei.com>,
+        io-uring Mailing List <io-uring@vger.kernel.org>
+Subject: Re: [PATCHSET liburing 0/2] Small fixes for tests
+Date:   Mon, 18 Oct 2021 06:54:09 -0600
+Message-Id: <163456164473.240708.6609248952703455574.b4-ty@kernel.dk>
+X-Mailer: git-send-email 2.33.1
 In-Reply-To: <DdOIWk8hb7I-ammarfaizi2@gnuweeb.org>
 References: <DdOIWk8hb7I-ammarfaizi2@gnuweeb.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Fix this:
-```
-  In file included from timeout-overflow.c:12:
-  timeout-overflow.c: In function ‘test_timeout_overflow’:
-  ../src/include/liburing.h:406:9: error: ‘num’ may be used uninitialized in this function [-Werror=maybe-uninitialized]
-    406 |         io_uring_prep_rw(IORING_OP_TIMEOUT, sqe, -1, ts, 1, count);
-        |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  timeout-overflow.c:104:26: note: ‘num’ was declared here
-    104 |                 unsigned num;
-        |                          ^~~
-```
+On Mon, 18 Oct 2021 19:45:59 +0700, Ammar Faizi wrote:
+> test/timeout-overflow.c | 2 +-
+>  test/timeout.c          | 4 ++--
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+> 
 
-Fixes: a4b465536021ee9c4d6d450a9461ddfc116d08b1 ("Add test for overflow of timeout request's sequence")
-Cc: yangerkun <yangerkun@huawei.com>
-Signed-off-by: Ammar Faizi <ammar.faizi@students.amikom.ac.id>
----
- test/timeout-overflow.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied, thanks!
 
-diff --git a/test/timeout-overflow.c b/test/timeout-overflow.c
-index f952f80..671f171 100644
---- a/test/timeout-overflow.c
-+++ b/test/timeout-overflow.c
-@@ -101,7 +101,7 @@ static int test_timeout_overflow(void)
- 
- 	msec_to_ts(&ts, TIMEOUT_MSEC);
- 	for (i = 0; i < 4; i++) {
--		unsigned num;
-+		unsigned num = 0;
- 		sqe = io_uring_get_sqe(&ring);
- 		switch (i) {
- 		case 0:
+[1/2] test/timeout: Fix `-Werror=maybe-uninitialized`
+      commit: 49e3095eb27febf4dd2639430cb554a5c694ccf9
+[2/2] test/timeout-overflow: Fix `-Werror=maybe-uninitialized`
+      commit: b3813170f9f24f9e18f068a7a1e29747417e360c
+
+Best regards,
 -- 
-2.30.2
+Jens Axboe
+
 

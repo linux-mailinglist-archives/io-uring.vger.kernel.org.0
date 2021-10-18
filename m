@@ -2,93 +2,89 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4ADE54318C9
-	for <lists+io-uring@lfdr.de>; Mon, 18 Oct 2021 14:18:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C7E74318F3
+	for <lists+io-uring@lfdr.de>; Mon, 18 Oct 2021 14:20:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229644AbhJRMUL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 18 Oct 2021 08:20:11 -0400
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:51819 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229519AbhJRMUK (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 18 Oct 2021 08:20:10 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R231e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0UsfKwST_1634559477;
-Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UsfKwST_1634559477)
+        id S229519AbhJRMW3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 18 Oct 2021 08:22:29 -0400
+Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:59500 "EHLO
+        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231727AbhJRMW0 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 18 Oct 2021 08:22:26 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R541e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UsfKww5_1634559613;
+Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UsfKww5_1634559613)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 18 Oct 2021 20:17:57 +0800
-Subject: Re: [PATCH v1] fs/io_uring: Hoist ret2 == -EAGAIN check in tail of
- io_write
-To:     Noah Goldstein <goldstein.w.n@gmail.com>
-Cc:     axboe@kernel.dk, asml.silence@gmail.com, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20211018070242.20325-1-goldstein.w.n@gmail.com>
+          Mon, 18 Oct 2021 20:20:14 +0800
+Subject: Re: [PATCH 2/2] io_uring: implement async hybrid mode for pollable
+ requests
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
+References: <20211018112923.16874-1-haoxu@linux.alibaba.com>
+ <20211018112923.16874-3-haoxu@linux.alibaba.com>
+ <07ecb722-bf42-b785-2064-79221a3362cc@linux.alibaba.com>
+ <30f3642e-972b-fa0f-6ce5-2208a29dad4d@gmail.com>
 From:   Hao Xu <haoxu@linux.alibaba.com>
-Message-ID: <f27e1842-f22e-a40d-7055-6f924b13100f@linux.alibaba.com>
-Date:   Mon, 18 Oct 2021 20:17:57 +0800
+Message-ID: <1fa473be-1802-8a8d-b4af-bd9afaf6d925@linux.alibaba.com>
+Date:   Mon, 18 Oct 2021 20:20:13 +0800
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
  Gecko/20100101 Thunderbird/78.13.0
 MIME-Version: 1.0
-In-Reply-To: <20211018070242.20325-1-goldstein.w.n@gmail.com>
+In-Reply-To: <30f3642e-972b-fa0f-6ce5-2208a29dad4d@gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-在 2021/10/18 下午3:02, Noah Goldstein 写道:
-> This commit reorganizes the branches in the tail of io_write so that
-> the 'ret2 == -EAGAIN' check is not repeated and done first.
+在 2021/10/18 下午8:10, Pavel Begunkov 写道:
+> On 10/18/21 11:34, Hao Xu wrote:
+>> 在 2021/10/18 下午7:29, Hao Xu 写道:
+>>> The current logic of requests with IOSQE_ASYNC is first queueing it to
+>>> io-worker, then execute it in a synchronous way. For unbound works like
+>>> pollable requests(e.g. read/write a socketfd), the io-worker may stuck
+>>> there waiting for events for a long time. And thus other works wait in
+>>> the list for a long time too.
+>>> Let's introduce a new way for unbound works (currently pollable
+>>> requests), with this a request will first be queued to io-worker, then
+>>> executed in a nonblock try rather than a synchronous way. Failure of
+>>> that leads it to arm poll stuff and then the worker can begin to handle
+>>> other works.
+>>> The detail process of this kind of requests is:
+>>>
+>>> step1: original context:
+>>>             queue it to io-worker
+>>> step2: io-worker context:
+>>>             nonblock try(the old logic is a synchronous try here)
+>>>                 |
+>>>                 |--fail--> arm poll
+>>>                              |
+>>>                              |--(fail/ready)-->synchronous issue
+>>>                              |
+>>>                              |--(succeed)-->worker finish it's job, tw
+>>>                                             take over the req
+>>>
+>>> This works much better than the old IOSQE_ASYNC logic in cases where
+>>> unbound max_worker is relatively small. In this case, number of
+>>> io-worker eazily increments to max_worker, new worker cannot be created
+>>> and running workers stuck there handling old works in IOSQE_ASYNC mode.
+>>>
+>>> In my 64-core machine, set unbound max_worker to 20, run echo-server,
+>>> turns out:
+>>> (arguments: register_file, connetion number is 1000, message size is 12
+>>> Byte)
+>>> original IOSQE_ASYNC: 76664.151 tps
+>>> after this patch: 166934.985 tps
+>>>
+>>> Suggested-by: Jens Axboe <axboe@kernel.dk>
+>>> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
+>> An irrelevant question: why do we do linked timeout logic in
+>> io_wq_submit_work() again regarding that we've already done it in
+>> io_queue_async_work().
 > 
-> The previous version was duplicating the 'ret2 == -EAGAIN'. As well
-> 'ret2 != -EAGAIN' gurantees the 'done:' path so it makes sense to
-> move that check to the front before the likely more expensive branches
-> which require memory derefences.
-> 
-> Signed-off-by: Noah Goldstein <goldstein.w.n@gmail.com>
-> ---
-> Generally I would want to rewrite this as:
-> ```
-> if (ret2 != -EAGAIN
->      || (req->flags & REQ_F_NOWAIT)
->      || (!force_nonblock && !(req->ctx->flags & IORING_SETUP_IOPOLL)))
->          kiocb_done(kiocb, ret2, issue_flags);
-> else {
->      ...
-> ```
-To me, this one is clear enough and short, but I think better to:
-if (ret2 != -EAGAIN || (req->flags & REQ_F_NOWAIT) ||
-     (!force_nonblock && !(req->ctx->flags & IORING_SETUP_IOPOLL))
-
-if the first line doesn't exceed the line limit.
-
-Reviewed-by: Hao Xu <haoxu@linux.alibaba.com>
-> 
-> But the style of the file seems to be to use gotos. If the above is
-> prefereable, let me know and I'll post a new version.
->   fs/io_uring.c | 9 ++++++---
->   1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index d1e672e7a2d1..932fc84d70d3 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -3648,12 +3648,15 @@ static int io_write(struct io_kiocb *req, unsigned int issue_flags)
->   	 */
->   	if (ret2 == -EOPNOTSUPP && (kiocb->ki_flags & IOCB_NOWAIT))
->   		ret2 = -EAGAIN;
-> +
-> +	if (ret2 != -EAGAIN)
-> +		goto done;
->   	/* no retry on NONBLOCK nor RWF_NOWAIT */
-> -	if (ret2 == -EAGAIN && (req->flags & REQ_F_NOWAIT))
-> +	if (req->flags & REQ_F_NOWAIT)
->   		goto done;
-> -	if (!force_nonblock || ret2 != -EAGAIN) {
-> +	if (!force_nonblock) {
->   		/* IOPOLL retry should happen for io-wq threads */
-> -		if (ret2 == -EAGAIN && (req->ctx->flags & IORING_SETUP_IOPOLL))
-> +		if (req->ctx->flags & IORING_SETUP_IOPOLL)
->   			goto copy_iov;
->   done:
->   		kiocb_done(kiocb, ret2, issue_flags);
+> Because io_wq_free_work() may enqueue new work (by returning it)
+> without going through io_queue_async_work(), and we don't care
+> enough to split those cases.
+Make sense. Thanks.
 > 
 

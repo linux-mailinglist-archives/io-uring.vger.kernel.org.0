@@ -2,172 +2,81 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EDB1F433511
-	for <lists+io-uring@lfdr.de>; Tue, 19 Oct 2021 13:50:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EFC294337D1
+	for <lists+io-uring@lfdr.de>; Tue, 19 Oct 2021 15:53:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235425AbhJSLww (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 19 Oct 2021 07:52:52 -0400
-Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:45432 "EHLO
-        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235383AbhJSLww (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 19 Oct 2021 07:52:52 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UsvUnOV_1634644231;
-Received: from e18g09479.et15sqa.tbsite.net(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UsvUnOV_1634644231)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 19 Oct 2021 19:50:38 +0800
-From:   Hao Xu <haoxu@linux.alibaba.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>
-Subject: [PATCH liburing] io_uring: add tests for async hybrid optimization
-Date:   Tue, 19 Oct 2021 19:50:31 +0800
-Message-Id: <20211019115031.119176-1-haoxu@linux.alibaba.com>
-X-Mailer: git-send-email 2.24.4
+        id S235690AbhJSNz5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 19 Oct 2021 09:55:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56614 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231231AbhJSNz4 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 19 Oct 2021 09:55:56 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B1C9C06161C
+        for <io-uring@vger.kernel.org>; Tue, 19 Oct 2021 06:53:43 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id z20so13147749edc.13
+        for <io-uring@vger.kernel.org>; Tue, 19 Oct 2021 06:53:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:sender:from:date:message-id:subject:to;
+        bh=O+HKlGGQWNv8NYic1b25xcKgjmle04QTeM1bUfWe8yk=;
+        b=Vtis/Gbh713odYBZpe/aat2+Fosbju9Dw6bOUSh0i+tDObEmhdzFFoUqeNJqwXUWwo
+         35DVdeqpPV+NrVcC1SxAOHx8NPl1l4D7+1wdiwTO5xbBTy5K50UkrU4iULRsaU52Z/z+
+         icGpA2h/R4eeHQ3bMeFxhtfXLCYYtjoQRw8Ld1/yTPbnLUgtbVc2Xrrr8/4N6V44ol48
+         wv6jIfOMvN3UTJtdreV/TKU+RwZolE1JDnhHd7QG3XmVDezSk/KDAwefgxFE0regB/9S
+         cTVu6VBWGypnMbLag7DaytMzBJ4+nYyRTWv2aJHYyLsibIDarNGpULZgxM5JtxNd+Mr8
+         ekVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
+         :to;
+        bh=O+HKlGGQWNv8NYic1b25xcKgjmle04QTeM1bUfWe8yk=;
+        b=SCORSCsiEcj2f0z9PkPCa27mlQfL791BFT6tS+yaUp+Li3L6b7lEIc7o+SBuM1Sg0z
+         ETYzAXXztm0Qubg9tqgpKRGFHrWOTUOEF9J+fEwk5uAwd+LVZT1i4/lmBmykxrqik3dZ
+         u8RzCvFzyt2MHohkym7QOnnYyxThrwYPLBmK7EI+3gvI3XH2SjipZedFS20F33xX+Pqa
+         gydCCjxeltur+m8ZpJr/NJuECNzNywhXuyL/BmUpUYsPd/ZM9xQrzvi9X/eAN4IGalva
+         D4a5Nvby3v4OvXxvltHwvl8vpKLEonptUGf+FOg//SCF8jgoIxQBfuXfbNMOplbHS2qv
+         /Vag==
+X-Gm-Message-State: AOAM532x7ncWH0NZy10bGSm9DJe8SN3cm0O1GB9xB3vKbfOL7Q2XZmKQ
+        fcm1URyYv9Epo/yeOE2gD+woyD0bD+JDLzm9UNg=
+X-Google-Smtp-Source: ABdhPJzBFW9huwOSQ6Vo3O7kxDOMB2RGwLW1PKAkuXm1/RmnQdbWHVlj3FhqQFENlNL4GRHsqjg8KvhU719CqKvly9o=
+X-Received: by 2002:a17:906:1287:: with SMTP id k7mr37247719ejb.342.1634651569785;
+ Tue, 19 Oct 2021 06:52:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Sender: mrshelenjoyce1@gmail.com
+Received: by 2002:a17:906:84e:0:0:0:0 with HTTP; Tue, 19 Oct 2021 06:52:49
+ -0700 (PDT)
+From:   "Mrs. Rita Hassan" <ritahassan02@gmail.com>
+Date:   Tue, 19 Oct 2021 13:52:49 +0000
+X-Google-Sender-Auth: NVptKWlaRfOzR2cgVMP8Wul7StY
+Message-ID: <CAFNfjd=DruMZO5DWm41jkUaF9hsqDEpQQNB8bFP-qq2H536-2Q@mail.gmail.com>
+Subject: Very Urgent.
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This test file is to test async hybrid optimization for pollable
-requests.
+Please forgive me for stressing you with my predicaments as I know
+that this letter may come to you as big surprise. Actually, I came
+across your E-mail from my personal search afterward I decided to
+email you directly believing that you will be honest to fulfill my
+final wish before i die.
 
-Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
----
- test/Makefile       |   2 +
- test/async_hybrid.c | 103 ++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 105 insertions(+)
- create mode 100644 test/async_hybrid.c
+Meanwhile, I am Mrs. Rita, 62 years old,I am suffering from a long
+time cancer and from all indication my condition is really
+deteriorating As a matter of fact, registered nurse by profession
+while my husband was dealing on Gold Dust and Gold Dory Bars till his
+sudden death the year 2019 then I took over his business till date. In
+fact,at this moment I have a deposit sum of $5.5million dollars with
+one of the leading bank.
 
-diff --git a/test/Makefile b/test/Makefile
-index 1a10a24c26b1..226bc5f0bc49 100644
---- a/test/Makefile
-+++ b/test/Makefile
-@@ -40,6 +40,7 @@ test_targets += \
- 	accept-reuse \
- 	accept-test \
- 	across-fork splice \
-+	async_hybrid \
- 	b19062a56726-test \
- 	b5837bd5311d-test \
- 	ce593a6c480a-test \
-@@ -192,6 +193,7 @@ test_srcs := \
- 	accept-test.c \
- 	accept.c \
- 	across-fork.c \
-+	async_hybrid.c \
- 	b19062a56726-test.c \
- 	b5837bd5311d-test.c \
- 	ce593a6c480a-test.c \
-diff --git a/test/async_hybrid.c b/test/async_hybrid.c
-new file mode 100644
-index 000000000000..2e38e2036c0c
---- /dev/null
-+++ b/test/async_hybrid.c
-@@ -0,0 +1,103 @@
-+/* SPDX-License-Identifier: MIT */
-+/*
-+ * Description: async hybrid tests
-+ */
-+#include <stdio.h>
-+#include <unistd.h>
-+#include <fcntl.h>
-+
-+#include "liburing.h"
-+
-+int write_pipe(int pipe, char *str)
-+{
-+    int ret;
-+    do {
-+        errno = 0;
-+        ret = write(pipe, str, 3);
-+    } while (ret == -1 && errno == EINTR);
-+    return ret;
-+}
-+
-+static int _test(struct io_uring *ring, bool async, bool link, bool drain)
-+{
-+	struct io_uring_sqe *sqe;
-+	struct io_uring_cqe *cqe;
-+	int i, ret, fds[2];
-+	char buf[4] = {0};
-+	unsigned int flags = 0;
-+
-+	if (pipe2(fds, O_NONBLOCK)) {
-+		perror("pipe");
-+		return 1;
-+	}
-+
-+	if (async)
-+		flags |= IOSQE_ASYNC;
-+	if (link)
-+		flags |= IOSQE_IO_LINK;
-+	if (drain)
-+		flags |= IOSQE_IO_DRAIN;
-+
-+	sqe = io_uring_get_sqe(ring);
-+	io_uring_prep_read(sqe, fds[0], buf, 3, 0);
-+	sqe->flags = flags;
-+	sqe->user_data = 1;
-+
-+	sqe = io_uring_get_sqe(ring);
-+	io_uring_prep_nop(sqe);
-+	sqe->flags = flags;
-+	sqe->user_data = 2;
-+
-+	ret = io_uring_submit(ring);
-+	if (ret != 2) {
-+		fprintf(stderr, "submitted %d\n", ret);
-+		return 1;
-+	}
-+
-+	sleep(3);
-+	write_pipe(fds[1], "foo");
-+
-+	for (i = 0; i < 2; i++) {
-+		ret = io_uring_wait_cqe(ring, &cqe);
-+		if (ret) {
-+			fprintf(stderr, "wait_cqe=%d\n", ret);
-+			return 1;
-+		}
-+		if ((cqe->user_data == 1 && cqe->res != 3) ||
-+		    (cqe->user_data == 2 && cqe->res)) {
-+			fprintf(stderr, "user_data:%lld, res:%d\n", cqe->user_data, cqe->res);
-+			return 1;
-+		}
-+		if ((link || drain) && !i && cqe->user_data != 1) {
-+			fprintf(stderr, "linked sqes, completed in wrong order\n");
-+			return 1;
-+		}
-+		io_uring_cqe_seen(ring, cqe);
-+	}
-+
-+	return 0;
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	int i, ret;
-+	struct io_uring ring;
-+
-+	ret = io_uring_queue_init(20,  &ring, 0);
-+	if (ret) {
-+		fprintf(stderr, "ring setup failed\n");
-+		return 1;
-+	}
-+
-+
-+	for (i = 0; i < 8; i++) {
-+		ret = _test(&ring, i & 1, !!(i & 2), !!(i & 4));
-+		if (ret) {
-+			fprintf(stderr, "async:%d link:%d drain:%d test failed\n",
-+				i & 1, !!(i & 2), !!(i & 4));
-+			return 1;
-+		}
-+	}
-+
-+	return 0;
-+}
--- 
-2.24.4
+Therefore, I want you to receive the money and take 30% to take care
+of yourself and family while 70% should be use basically on
+humanitarian purposes mostly to orphanages home, Motherless babies
+home,contact me for more details on this email.
+(ritahassan02@gmail.com )
 
+Yours Faithfully
+
+Mrs. Rita Hassan.

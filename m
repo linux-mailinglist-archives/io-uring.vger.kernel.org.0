@@ -2,126 +2,108 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AAB5B43475C
-	for <lists+io-uring@lfdr.de>; Wed, 20 Oct 2021 10:52:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3048643475D
+	for <lists+io-uring@lfdr.de>; Wed, 20 Oct 2021 10:53:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230103AbhJTIyc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 20 Oct 2021 04:54:32 -0400
-Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:55849 "EHLO
-        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229677AbhJTIy2 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 20 Oct 2021 04:54:28 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R821e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04357;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0Ut1O3RY_1634719932;
-Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0Ut1O3RY_1634719932)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 20 Oct 2021 16:52:12 +0800
-Subject: Re: [PATCH 5.15] io_uring: apply max_workers limit to all future
- users
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+        id S229548AbhJTIzZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 20 Oct 2021 04:55:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58568 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229544AbhJTIzY (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 20 Oct 2021 04:55:24 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7CC1C06161C
+        for <io-uring@vger.kernel.org>; Wed, 20 Oct 2021 01:53:10 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id b189-20020a1c1bc6000000b0030da052dd4fso8393617wmb.3
+        for <io-uring@vger.kernel.org>; Wed, 20 Oct 2021 01:53:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4giO67OyaI7jss5Kv99M/4BSgGdJR/v+BeORfRvtrdY=;
+        b=gFKoEyFYayRCS04ROdc3IYkN4wimH4+n5BJALHuV+7F0b96APQCDUg3wiajsexlJCC
+         yp9Dy9yoyDKfK+ZJY4OQz4wZCqgisa4IW0iD122oA/xBkeYf/nq4dWKE5kf7aIcKkamH
+         tscGt8ah6Um+vBzEBGDpAicyz1m7eJ1+k3Cz8u+9l6nYHyXASrM7xPpybxujh1/x9roe
+         f58EPkKsQReiPigfHEg+l84SCoKbrBgGTsYhWSB/Ah1gtQu0uoZEcaKlQRG/ukX/77Ap
+         EcKAlPZ8MeyjQ4Nq58vN7N7WgDTcDXiJ6yJAYGv8AiLK0INDhnZ806R4Wwr6SgypftUO
+         mUvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4giO67OyaI7jss5Kv99M/4BSgGdJR/v+BeORfRvtrdY=;
+        b=c89irsRaa64sLSNy8DFfNSnw1FSgkezej/Xj3w+RZFVDOx3GOMbPhVMz47CUe4PlX5
+         i2TdWf93I23mSz0Iqk06LF7+WIxnSa5zCYJIor4zOUh0lp6VLByC+nGpBO98eWNALdpY
+         dZqZqh5I0kSTvT+dFwOgZzQansWjstnW5FegLLuhqYfIT1dlqxuedYnEbhs9rz7pE8qk
+         Viev58x1O8WV2M37kzGQ2iIbWO0IzyuwjzUnjy4dJ2WHWXm0G3/ZRAhvn2M2IvDOCq4i
+         XdQvfnweZgch6IUGktFSVTXZ5T9Z5b6fPjhYWNrgz7d1QmLv1Pj7s3tefR7G4fj0mFhX
+         Ikbg==
+X-Gm-Message-State: AOAM530XwbJScxvUGGIDSOpkuY1KLD+k1Qov4ErfPvAZKKFUdJc03imW
+        OrvgrOKbxi8uoqYT/H0JvamxGXMmCH4r8A==
+X-Google-Smtp-Source: ABdhPJyL5UK7yZ9MYRu00Izl6EyO6ZZR9wqTaFzehtD9BOdfPphbNyX3ViYbQHzV1o+lNJpoYZ5pDg==
+X-Received: by 2002:a05:600c:a0b:: with SMTP id z11mr12691357wmp.147.1634719989147;
+        Wed, 20 Oct 2021 01:53:09 -0700 (PDT)
+Received: from 127.0.0.1localhost ([185.69.145.194])
+        by smtp.gmail.com with ESMTPSA id r4sm1715761wrz.58.2021.10.20.01.53.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Oct 2021 01:53:08 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <51d0bae97180e08ab722c0d5c93e7439cfb6f697.1634683237.git.asml.silence@gmail.com>
-From:   Hao Xu <haoxu@linux.alibaba.com>
-Message-ID: <67688dc3-e28a-5457-0984-90df0f2bcfc5@linux.alibaba.com>
-Date:   Wed, 20 Oct 2021 16:52:11 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.13.0
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Beld Zhang <beldzhang@gmail.com>
+Subject: [PATCH v2 1/1] io_uring: fix ltimeout unprep
+Date:   Wed, 20 Oct 2021 09:53:02 +0100
+Message-Id: <51b8e2bfc4bea8ee625cf2ba62b2a350cc9be031.1634719585.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
-In-Reply-To: <51d0bae97180e08ab722c0d5c93e7439cfb6f697.1634683237.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-在 2021/10/20 上午6:43, Pavel Begunkov 写道:
-> Currently, IORING_REGISTER_IOWQ_MAX_WORKERS applies only to the task
-> that issued it, it's unexpected for users. If one task creates a ring,
-> limits workers and then passes it to another task the limit won't be
-> applied to the other task.
-> 
-> Another pitfall is that a task should either create a ring or submit at
-> least one request for IORING_REGISTER_IOWQ_MAX_WORKERS to work at all,
-> furher complicating the picture.
-> 
-> Change the API, save the limits and apply to all future users. Note, it
-> should be done first before giving away the ring or submitting new
-> requests otherwise the result is not guaranteed.
-> 
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> ---
-> 
-> Change the API as it was introduced in this cycles. Tested by hand
-> observing the number of workers created, but there are no regression
-> tests.
-> 
->   fs/io_uring.c | 29 +++++++++++++++++++++++------
->   1 file changed, 23 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index e68d27829bb2..e8b71f14ac8b 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -456,6 +456,8 @@ struct io_ring_ctx {
->   		struct work_struct		exit_work;
->   		struct list_head		tctx_list;
->   		struct completion		ref_comp;
-> +		u32				iowq_limits[2];
-> +		bool				iowq_limits_set;
->   	};
->   };
->   
-> @@ -9638,7 +9640,16 @@ static int __io_uring_add_tctx_node(struct io_ring_ctx *ctx)
->   		ret = io_uring_alloc_task_context(current, ctx);
->   		if (unlikely(ret))
->   			return ret;
-> +
->   		tctx = current->io_uring;
-> +		if (ctx->iowq_limits_set) {
-> +			unsigned int limits[2] = { ctx->iowq_limits[0],
-> +						   ctx->iowq_limits[1], };
-> +
-> +			ret = io_wq_max_workers(tctx->io_wq, limits);
-> +			if (ret)
-> +				return ret;
-> +		}
->   	}
->   	if (!xa_load(&tctx->xa, (unsigned long)ctx)) {
->   		node = kmalloc(sizeof(*node), GFP_KERNEL);
-> @@ -10674,13 +10685,19 @@ static int io_register_iowq_max_workers(struct io_ring_ctx *ctx,
->   		tctx = current->io_uring;
->   	}
->   
-> -	ret = -EINVAL;
-> -	if (!tctx || !tctx->io_wq)
-> -		goto err;
-> +	BUILD_BUG_ON(sizeof(new_count) != sizeof(ctx->iowq_limits));
->   
-> -	ret = io_wq_max_workers(tctx->io_wq, new_count);
-> -	if (ret)
-> -		goto err;
-> +	memcpy(ctx->iowq_limits, new_count, sizeof(new_count));
-> +	ctx->iowq_limits_set = true;
-> +
-> +	ret = -EINVAL;
-> +	if (tctx && tctx->io_wq) {
-> +		ret = io_wq_max_workers(tctx->io_wq, new_count);
-Hi Pavel,
-The ctx->iowq_limits_set limits the future ctx users, but not the past
-ones, how about update the numbers for all the current ctx users here?
-I know the number of workers that a current user uses may already
-exceeds the newest limitation, but at least this will make it not to
-grow any more, and may decrement it to the limitation some time later.
+io_unprep_linked_timeout() is broken, first it needs to return back
+REQ_F_ARM_LTIMEOUT, so the linked timeout is enqueued and disarmed. But
+now we refcounted it, and linked timeouts may get not executed at all,
+leaking a request.
 
-Regards,
-Hao
-> +		if (ret)
-> +			goto err;
-> +	} else {
-> +		memset(new_count, 0, sizeof(new_count));
-> +	}
->   
->   	if (sqd) {
->   		mutex_unlock(&sqd->lock);
-> 
+Just kill the unprep optimisation.
+
+Fixes: 906c6caaf586 ("io_uring: optimise io_prep_linked_timeout()")
+Reported-by: Beld Zhang <beldzhang@gmail.com>
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+
+v2: rebase
+
+ fs/io_uring.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index e8b71f14ac8b..d5cc103224f1 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -1370,11 +1370,6 @@ static void io_req_track_inflight(struct io_kiocb *req)
+ 	}
+ }
+ 
+-static inline void io_unprep_linked_timeout(struct io_kiocb *req)
+-{
+-	req->flags &= ~REQ_F_LINK_TIMEOUT;
+-}
+-
+ static struct io_kiocb *__io_prep_linked_timeout(struct io_kiocb *req)
+ {
+ 	if (WARN_ON_ONCE(!req->link))
+@@ -6985,7 +6980,7 @@ static void __io_queue_sqe(struct io_kiocb *req)
+ 		switch (io_arm_poll_handler(req)) {
+ 		case IO_APOLL_READY:
+ 			if (linked_timeout)
+-				io_unprep_linked_timeout(req);
++				io_queue_linked_timeout(linked_timeout);
+ 			goto issue_sqe;
+ 		case IO_APOLL_ABORTED:
+ 			/*
+-- 
+2.33.1
 

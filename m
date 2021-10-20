@@ -2,76 +2,86 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A60574348C9
-	for <lists+io-uring@lfdr.de>; Wed, 20 Oct 2021 12:15:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A9F5434958
+	for <lists+io-uring@lfdr.de>; Wed, 20 Oct 2021 12:48:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229702AbhJTKSL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 20 Oct 2021 06:18:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49424 "EHLO
+        id S229952AbhJTKur (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 20 Oct 2021 06:50:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229881AbhJTKSL (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 20 Oct 2021 06:18:11 -0400
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFF19C061746
-        for <io-uring@vger.kernel.org>; Wed, 20 Oct 2021 03:15:56 -0700 (PDT)
-Received: by mail-wm1-x331.google.com with SMTP id d198-20020a1c1dcf000000b00322f53b9b89so8956871wmd.0
-        for <io-uring@vger.kernel.org>; Wed, 20 Oct 2021 03:15:56 -0700 (PDT)
+        with ESMTP id S229921AbhJTKuq (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 20 Oct 2021 06:50:46 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF8C2C06161C
+        for <io-uring@vger.kernel.org>; Wed, 20 Oct 2021 03:48:32 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id 186-20020a1c01c3000000b0030d8315b593so486622wmb.5
+        for <io-uring@vger.kernel.org>; Wed, 20 Oct 2021 03:48:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :references:from:in-reply-to:content-transfer-encoding;
-        bh=ysqyGz+NinvvZEqQkxmkSiiIh8ybm22Fux+g+CVqly4=;
-        b=D+eKQ21py+I4ntOcwKRhgeOCeqY1CFZKHu8Efee1EQbKrxVvS3ASypKX8jWeyioD8D
-         6DVOFbJL79kUTa6YrGD6Ad5y5fjxJfp9wm2f0Qv2nkvIa/Y1Au23WNljHQq4rDCXOvAP
-         knK7W/DPOhV7l/Is0JFrZm+xXWogbNvm5ClTWzUAziA1gQvtYYj9ODhnUAaTE0lniesc
-         aCWzJGs84YyPq+jZVrxit8P5PMvCqGdBRYWZm2xuZwripUrpxQtMN0FpWtndO2OsIhLf
-         5mr2MhTg32onKj1rb1Npv/4pGl2lgL/zGJz79vDoTaB+a32eTFqhdo7gNAWXovKtEJE7
-         zmIA==
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=v+sPSzq5zVG7qlS3kFSINGyuCQDlQwVj5gBxiNCHUq4=;
+        b=MtMZPWQx/l2X9VtcUYvbCsVE6cvcSAVJnZxZqm+UkdX3GeDIoVWmFnj62hGU65gpEb
+         VmVMEkKMD4tucnEpYDAJaHgc8Ka9G4bdNQPwxv9Sdpw4mJQ6FdZqZEFE1wX7D8bVognW
+         4k1ND2wFXZe+y34M6Djen7IgTggMeP5mv6vQacM9g9aDLFEJfq/eFjxFWW1mnM40CWMt
+         HnR/WNqobpOEFxh9RtC1ZjaNiuWWAhFGit74brTUXCXV88Lb/yVaT53p3s0JroDuFaP9
+         +TGUUpiIb9/qiAoG7md9lsajNqrn5jgvAwryB/5TcPSL+iSstW4WqpIOO0Br4bCK614Z
+         ps4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:from:in-reply-to
+         :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=ysqyGz+NinvvZEqQkxmkSiiIh8ybm22Fux+g+CVqly4=;
-        b=YX01QgojCPayUEiyaHnWBDt84K4beXEEUA0umuBUbcTe4dwR5hHxANzPvmol1uoN53
-         ykKoKBWAfMroZ6VQKIz29gyH6n7i42VDXMonF2EkX3HN9xjqFJVAN6F/1vb9Alp6G56Z
-         OwtWKlHs06SB6omMuPX5Z0V0ElKEf2DKZm31VhEQtVcyLFDtfbuRQRZMDqXgFaGzori+
-         jhZPNUy1OlFMGxL5jPbSNXDaPUPmdzhVom7vQNBt31aNuPOgI887N3zraIqf/ZIgxDae
-         E+J0B9zonini9R4dN2JBZi1HdhE9uZhudqPFbjTkYylMcJ8fUZ3iIP3evt1ljX8X2Sae
-         oBNA==
-X-Gm-Message-State: AOAM532ymypu17wszFPXg6ulYTtp8fjft5a8qLwoxdGiBClVd75lgoo6
-        l+1kezgO7NPUvFJwIOQ3YAFA00jN/y1zXQ==
-X-Google-Smtp-Source: ABdhPJz4gad22P72p1A/cFlOZUAvqOezx2ofeh1DxM5ScNoU6PClE0hadAVA5yZ1C9syCPHRylz8Nw==
-X-Received: by 2002:a05:600c:4f53:: with SMTP id m19mr12473240wmq.118.1634724955621;
-        Wed, 20 Oct 2021 03:15:55 -0700 (PDT)
+        bh=v+sPSzq5zVG7qlS3kFSINGyuCQDlQwVj5gBxiNCHUq4=;
+        b=R1SMkfXOMd0ED9oBvhxFrodcKiiR1EoSrSd+dZAy+KxZF3weUslOTkbXIuPNXaa2Nb
+         A9P7LJWOocehPTf6z+lJYDvuwzY3qxmIrU0473o7EC8WkVJRbqiRnUhiq6UWPjbYec5E
+         8yQ6h8rJvpjP2VJNVGUnZ7Cbkp5vq3tSAtwaCjA1MyHfO33Wfby0B7hnzKaiWZUaInuM
+         7vWX9YIEZqidogXeT9pkzDvjSfPvtSkfpF4OIRuT2Gp1nuT2XJFcsOd5ZX1q3L+WFgYJ
+         PJ0RltLztDGeOHdcZtaDO5GGdBIGKKDPdTqIg/vHmwP5dVNydApxN6HPSlTkM4py5oUj
+         SYuw==
+X-Gm-Message-State: AOAM530ffPocYIple7gxsOHnZIVtZsQIhVDChhOQFQLzD1iGoyG7LG+I
+        wzSbD7XosoHcBk1FfLo2OLU=
+X-Google-Smtp-Source: ABdhPJzSzx7SU6eOA3OjwkrF/Jwmr1ChmhE4/RNW8sLXyy3r8XJn23jlMqJT73uoSCaELb2ylu/KZQ==
+X-Received: by 2002:a05:600c:378f:: with SMTP id o15mr12747474wmr.63.1634726911305;
+        Wed, 20 Oct 2021 03:48:31 -0700 (PDT)
 Received: from [192.168.8.198] ([185.69.145.194])
-        by smtp.gmail.com with ESMTPSA id s8sm1623577wrr.15.2021.10.20.03.15.55
+        by smtp.gmail.com with ESMTPSA id d9sm1652409wrm.96.2021.10.20.03.48.30
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Oct 2021 03:15:55 -0700 (PDT)
-Message-ID: <70423334-a653-51e3-461c-7d09e7091714@gmail.com>
-Date:   Wed, 20 Oct 2021 11:15:58 +0100
+        Wed, 20 Oct 2021 03:48:31 -0700 (PDT)
+Message-ID: <67458cdf-9645-cd3b-bf83-ec5329bc160d@gmail.com>
+Date:   Wed, 20 Oct 2021 11:48:34 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.2.0
-Subject: Re: Polling on an io_uring file descriptor
+Subject: Re: [PATCH 5.15] io_uring: apply max_workers limit to all future
+ users
 Content-Language: en-US
-To:     Drew DeVault <sir@cmpwn.com>, io-uring@vger.kernel.org
-References: <CF44HAZOCG3O.1IGR35UF76JWC@taiga>
+To:     Hao Xu <haoxu@linux.alibaba.com>, io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>
+References: <51d0bae97180e08ab722c0d5c93e7439cfb6f697.1634683237.git.asml.silence@gmail.com>
+ <67688dc3-e28a-5457-0984-90df0f2bcfc5@linux.alibaba.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <CF44HAZOCG3O.1IGR35UF76JWC@taiga>
+In-Reply-To: <67688dc3-e28a-5457-0984-90df0f2bcfc5@linux.alibaba.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 10/20/21 10:21, Drew DeVault wrote:
-> I would like to poll on an io_uring file descriptor to be notified when
-> CQE's are available, either via poll(2) or IORING_OP_POLL_ADD. This
-> doesn't seem to work on 5.10. Is this feasible to add support for?
+On 10/20/21 09:52, Hao Xu wrote:
+> 在 2021/10/20 上午6:43, Pavel Begunkov 写道:
+> Hi Pavel,
+> The ctx->iowq_limits_set limits the future ctx users, but not the past
+> ones, how about update the numbers for all the current ctx users here?
+> I know the number of workers that a current user uses may already
+> exceeds the newest limitation, but at least this will make it not to
+> grow any more, and may decrement it to the limitation some time later.
 
-Not a canonical way, but both should work (POLLIN for CQEs).
-Do you have a simple test case for us to reproduce?
+Indeed, that was the idea! Though it's a bit trickier, would need
+ctx->tctx_list traversal, and before putting it in I wanted to take
+a look at another problem related to ->tctx_list. I hope to get that
+done asap for 5.15.
 
 -- 
 Pavel Begunkov

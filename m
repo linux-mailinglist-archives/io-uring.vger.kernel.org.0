@@ -2,65 +2,131 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0845243616D
-	for <lists+io-uring@lfdr.de>; Thu, 21 Oct 2021 14:19:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04B4E436183
+	for <lists+io-uring@lfdr.de>; Thu, 21 Oct 2021 14:20:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231709AbhJUMWE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 21 Oct 2021 08:22:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36992 "EHLO
+        id S230508AbhJUMWz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 21 Oct 2021 08:22:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37278 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231524AbhJUMWD (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 21 Oct 2021 08:22:03 -0400
-Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7D12C061753
-        for <io-uring@vger.kernel.org>; Thu, 21 Oct 2021 05:19:47 -0700 (PDT)
-Received: by mail-il1-x133.google.com with SMTP id i6so292165ila.12
-        for <io-uring@vger.kernel.org>; Thu, 21 Oct 2021 05:19:47 -0700 (PDT)
+        with ESMTP id S231447AbhJUMWy (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 21 Oct 2021 08:22:54 -0400
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55313C06161C
+        for <io-uring@vger.kernel.org>; Thu, 21 Oct 2021 05:20:38 -0700 (PDT)
+Received: by mail-wr1-x42b.google.com with SMTP id v17so747519wrv.9
+        for <io-uring@vger.kernel.org>; Thu, 21 Oct 2021 05:20:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=G2Jq8ABcZaKAiy06d3oRm5z7XXaT0OFvg3EWPt/6AmM=;
-        b=F1jMFWa3tcrf6C/q10jKM2KHE+3YUSGVvIR6OAK0HmxUbnqdLb697/8MbvJYm/Zv2j
-         hOdIDWtDq9eKS6DYl5aBeEJV06nEuV6Tpmd+KIJvU2tWgw6XN4fEAKXNbftvQsQsYZ+Z
-         FofRpROvB4fsoVF1OY/H42ntC4aKtdV1mbs2NuW4+lOfF+q88iyax2G/FJvgUUe9L9f+
-         oksNKi6CJ9Vhe/SFWlCUzhq48RRSNZ01IPiJ3wyMZ7HJfTlOhQAtLIHu4mBgG7CT0WpQ
-         XhuIjDaivbFll6AcGXzmi/34hO4BMv6n/DdHRtR+BvHZmkUFE/eag8cnyR6q1NNc+c1b
-         GpvA==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1QZ8fn7KJ3p5wKNqZyikr39JUFic1IVA3jWZquM4XzY=;
+        b=KSQrbzmtFXdg6gwS+khPFQzs3YV7Iqrqk5THlL5CvGW0zfAnlCpSWeY/0iFDdCPKOV
+         bDDsK8tP5UUVOBk/vek5S1IbhxTCeWJlWnDmpklF7ULKeyG2zBO3F4rtro5WBeP2FRQc
+         fTPIMZsgPDgDUNxvI7yzvkxUiyrr1GPg2+hcDmhqt0v/gnyfasPtjxmujnnXFg58HilG
+         ATfDxqtJ9ifQsk4L/HWn3x3Cqf+WIt8fe31vIU1QHLAruZBn0DdSBifvfu36HvAjh2qP
+         JgsB48RSYe/kVJDfeVQoS0mNjeI9rBgV2WgHlbxTkqdz5gvVM6VbQtw2E242kT/oTxYt
+         kuzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=G2Jq8ABcZaKAiy06d3oRm5z7XXaT0OFvg3EWPt/6AmM=;
-        b=SczkV8kBKDxmDf9GhKkwNB6kpklRMxz1AnvJCITWlBGCxLS5ip2Au170122A7s3lON
-         Ayegtcf1vLpwwllRI4oOyqg2VxFhJ3R1lzWVtPMA3vdmcwV/zVm7VJEHMCwClwE92NK3
-         AT5taHjK4+PMeMozcBReZTwx+fyLz4sAf8YmR4NvsmdJfJkjpsBsE88lssMdQc1hq8vG
-         tSYweLtATMFok+jGO7/WES7XJqRZymzokh2ETkEnf/rrBr1yXtosoigT1AqKclZsHrDp
-         boG+PzXvzk5+3VlSjuKli8ToSujrytkMFckH+thKqFLi2A/YkcSl/rm4tPRjE2hfOyD3
-         q7rw==
-X-Gm-Message-State: AOAM530DTk5p62xaLeKgHG/cujvUoIaLtbuH1VK0zBMmLwFfTeIjUnrF
-        j1g1q6+BR63WVxxO+JGVNcsQMlMBxGEcKa7hhp8=
-X-Google-Smtp-Source: ABdhPJx7pj0M+cQ0AHi6lCbgCpKulVRUXY7U66KdcH22YrWFVe/Yy9CZ/xIvBhCDxkUezv4+TH1X7IPH1Sd+tOfwhHg=
-X-Received: by 2002:a92:c206:: with SMTP id j6mr3370839ilo.71.1634818787157;
- Thu, 21 Oct 2021 05:19:47 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1QZ8fn7KJ3p5wKNqZyikr39JUFic1IVA3jWZquM4XzY=;
+        b=LZ+9k6gyvYtt62T+jUgMjHhEyZ5HpbZlKiupXIuFBUUA1fiujnW/+qajLNK56t58qe
+         h3DWyv5lOVMltxsu3cSpgnT1BCgLkWUS7hdlrd+vKWZFH6JYJr+UiL+C9sO8FypHOkwo
+         DDUbxUcF7BSKD4z4HdMeNe8VxqN+C++WWcaLtBfUw8MMk8s7ViXGsqrv+EBgtkBJpoAq
+         H28DSOOj/Q3Dc0qA7yPujz3wALsdQ85TRaJuKE2fWRZD6/hS9LSDoflAzUKS4kSdvttc
+         bsmpuoGxUqxbn7xajdSnHvC4KzNTc368cehYTAH+9myQyuefAJ+WbsRRglH/eG8x80AF
+         xywQ==
+X-Gm-Message-State: AOAM530f7NktxEZxWWoOM0qFJe04s4oqAb0uvLBPjuws/cxEfNCpHcJm
+        I1SBKFE5hMfFJWpg+daplKTlcx7TDeEA4A==
+X-Google-Smtp-Source: ABdhPJw5NJkUe5cmaK1yu4LWzFDQfH/t5N+8OdOwFDjvcb+WL363KrmmRjJNrICQMMZbx9tALgbKkg==
+X-Received: by 2002:a5d:528b:: with SMTP id c11mr6882838wrv.35.1634818836776;
+        Thu, 21 Oct 2021 05:20:36 -0700 (PDT)
+Received: from 127.0.0.1localhost ([185.69.145.206])
+        by smtp.gmail.com with ESMTPSA id l2sm4757627wrw.42.2021.10.21.05.20.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Oct 2021 05:20:36 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>, Hao Xu <haoxu@linux.alibaba.com>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Subject: [PATCH 5.15] io_uring: apply worker limits to previous users
+Date:   Thu, 21 Oct 2021 13:20:29 +0100
+Message-Id: <d6e09ecc3545e4dc56e43c906ee3d71b7ae21bed.1634818641.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
-Received: by 2002:a05:6638:1924:0:0:0:0 with HTTP; Thu, 21 Oct 2021 05:19:46
- -0700 (PDT)
-Reply-To: ooisangkuang63@gmail.com
-From:   Mr Ooi Sang Kuang <mrsshirleyperezfosgate7@gmail.com>
-Date:   Thu, 21 Oct 2021 05:19:46 -0700
-Message-ID: <CA+ynneAvQZSQVfF33SxyGk281-1Gx_d3FMuBrk1N2PF-sHgqzw@mail.gmail.com>
-Subject: Hello
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+Another change to the API io-wq worker limitation API added in 5.15,
+apply the limit to all prior users that already registered a tctx. It
+may be confusing as it's now, in particular the change covers the
+following 2 cases:
+
+TASK1                   | TASK2
+_________________________________________________
+ring = create()         |
+                        | limit_iowq_workers()
+*not limited*           |
+
+TASK1                   | TASK2
+_________________________________________________
+ring = create()         |
+                        | issue_requests()
+limit_iowq_workers()    |
+                        | *not limited*
+
+A note on locking, it's safe to traverse ->tctx_list as we hold
+->uring_lock, but do that after dropping sqd->lock to avoid possible
+problems. It's also safe to access tctx->io_wq there because tasks
+kill it only after removing themselves from tctx_list, see
+io_uring_cancel_generic() -> io_uring_clean_tctx()
+
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ fs/io_uring.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index d5cc103224f1..bc18af5e0a93 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -10649,7 +10649,9 @@ static int io_unregister_iowq_aff(struct io_ring_ctx *ctx)
+ 
+ static int io_register_iowq_max_workers(struct io_ring_ctx *ctx,
+ 					void __user *arg)
++	__must_hold(&ctx->uring_lock)
+ {
++	struct io_tctx_node *node;
+ 	struct io_uring_task *tctx = NULL;
+ 	struct io_sq_data *sqd = NULL;
+ 	__u32 new_count[2];
+@@ -10702,6 +10704,22 @@ static int io_register_iowq_max_workers(struct io_ring_ctx *ctx,
+ 	if (copy_to_user(arg, new_count, sizeof(new_count)))
+ 		return -EFAULT;
+ 
++	/* that's it for SQPOLL, only the SQPOLL task creates requests */
++	if (sqd)
++		return 0;
++
++	/* now propagate the restriction to all registered users */
++	list_for_each_entry(node, &ctx->tctx_list, ctx_node) {
++		struct io_uring_task *tctx = node->task->io_uring;
++
++		if (WARN_ON_ONCE(!tctx->io_wq))
++			continue;
++
++		for (i = 0; i < ARRAY_SIZE(new_count); i++)
++			new_count[i] = ctx->iowq_limits[i];
++		/* ignore errors, it always returns zero anyway */
++		(void)io_wq_max_workers(tctx->io_wq, new_count);
++	}
+ 	return 0;
+ err:
+ 	if (sqd) {
 -- 
-Hello,
+2.33.1
 
-I want to discuss an important project issue with you.
-Please, let me know if this email is valid. Reply me at ooisangkuang63@gmail.com
-
-Thank you,
-Mr Ooi Sang Kuang

@@ -2,64 +2,64 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 024A24364AB
-	for <lists+io-uring@lfdr.de>; Thu, 21 Oct 2021 16:47:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D10774364C0
+	for <lists+io-uring@lfdr.de>; Thu, 21 Oct 2021 16:49:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231485AbhJUOuA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 21 Oct 2021 10:50:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43568 "EHLO
+        id S231628AbhJUOwC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 21 Oct 2021 10:52:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44034 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230072AbhJUOuA (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 21 Oct 2021 10:50:00 -0400
-Received: from mail-ot1-x32a.google.com (mail-ot1-x32a.google.com [IPv6:2607:f8b0:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA9B8C0613B9
-        for <io-uring@vger.kernel.org>; Thu, 21 Oct 2021 07:47:43 -0700 (PDT)
-Received: by mail-ot1-x32a.google.com with SMTP id g62-20020a9d2dc4000000b0054752cfbc59so738067otb.1
-        for <io-uring@vger.kernel.org>; Thu, 21 Oct 2021 07:47:43 -0700 (PDT)
+        with ESMTP id S231702AbhJUOvz (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 21 Oct 2021 10:51:55 -0400
+Received: from mail-oo1-xc29.google.com (mail-oo1-xc29.google.com [IPv6:2607:f8b0:4864:20::c29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C315DC061220
+        for <io-uring@vger.kernel.org>; Thu, 21 Oct 2021 07:49:39 -0700 (PDT)
+Received: by mail-oo1-xc29.google.com with SMTP id a17-20020a4a6851000000b002b59bfbf669so194754oof.9
+        for <io-uring@vger.kernel.org>; Thu, 21 Oct 2021 07:49:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=jXozmuCxICQlBiW4FrmKg95k472yQ4RnrKN8/1rkH/c=;
-        b=g6fQWHnf+GWX8RSUw+0MiEuXTId32zKGXElHdXNbe6t5lnqh3y0QUN2L07TXytKc7X
-         7vsLCQVZD8zY+/3QE2jKU3T/G22aXYZwzFVO1aEHJnokZxO1gYRDdaxBAg4CQQT/2fRY
-         nvYq752+Kc4mCwxuRIOeJsLt6ze504AhLc9nDXo1ZDUtL7GXEyd2CCgmX22dgstkNfnG
-         ZNkitcenmeumCTUXxRE4j12dk9XM1nGxg0T1a/78GqC2rlryNKFGeVfkShB1uHodCe77
-         /kFAJS5hnp+fxMqSFfRS/mMr7ClFS+i4KJfMBFamMyYep8jORDTsOnA5pBoszrNLAdYA
-         UN8A==
+        bh=pXRyX3KX9bGPC/zOdp5JyDWEDq6qDJEPkNeWuxj85DU=;
+        b=qpoaEHVcuMdRoQ2K1TFK/LXtRMSNK0w0iKW5JKkc0bgEUsiCOVKXh1n2w8lBABl0+R
+         XCMuggKNwSRmPuC3aPUwuK+pOk5qe0rR164WOTgDEXTvkK2wjXnMdLuQxXeTFDkA+SLD
+         D9MBsVP8HLNKzlxCZXLCqWmEITqL8bk4WWk5HrrDsCYOV+xnWB5v+DQBXpWioJ1B8WvF
+         buLjD1slvjJc0BbpGWSon7bxO0k64g22dO6GdOcBxjy+4b6ZmgM0ktq6j1K7r42Hkwg+
+         ZGpQG/87ZpaWRmMYLBO2WUOAWYjOQTLQp9gBnu9xcZOM07+n3J4zYc9XUlCxunx7DNm8
+         DunA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=jXozmuCxICQlBiW4FrmKg95k472yQ4RnrKN8/1rkH/c=;
-        b=tgZwoTpnxAy3IlQHzlidRHuXM8xRcdO8RaU7XD44mSjaSwGQYOSrlgVAqHGZTGpfxQ
-         pD5XB5Lslf0QXlNJ/4vRLqy2aec5x3Dr9Rey7M9IYWPToVSkIaaNSURNxYPVSbk9i+6g
-         sR9XrYjrPPLWB4jV4akg4bWO0uZPXJtFOuKDHZLaBXwsS+PtNEwI3o1xCgnHY7jsVkpj
-         na9sqaibAGS7sjIU3hc5KKpzFJptBt94vMo+BGl8Os3B/PU1da2C3Y6Pc6v8lg/tyFJT
-         5wXpIohT+eWA98w7TCV95IGNsBvfuj77PuKWEMW6E0C2wlR4yRZtQY0XWoAHRxzS6F6/
-         lf7g==
-X-Gm-Message-State: AOAM530CbOkOwqnQzZGcrRyWhfuJuKcY50M/1eOblAfBoz2JX5q88DwI
-        a2vAvJtCl39SdM5Nkne0B4yIYg==
-X-Google-Smtp-Source: ABdhPJwzqkDS4pkd+h8zOpQlIeaey+YOTWxKGCO/ZJ4JhkTeAHwiVAdnIToqsWuERa98aqj9sCdtTg==
-X-Received: by 2002:a05:6830:101:: with SMTP id i1mr5014184otp.107.1634827663254;
-        Thu, 21 Oct 2021 07:47:43 -0700 (PDT)
+        bh=pXRyX3KX9bGPC/zOdp5JyDWEDq6qDJEPkNeWuxj85DU=;
+        b=IJ7JUp22ZnH67cp8+v5fyvJFa81iC18V+bacAkV1Ekt0X3XMGmfJ9H2Bf8rerOm+LJ
+         /jxmtk7osLVxZPLo82ViENo/4QS796vfcniq/mCDBlapu3M34CeZh0jIIEt+5xqxDGNM
+         XQa0ni2bnMO7nDbakhWsCuFKb34+bSELorGQxWSUIcYSnZW5wR+kLymylyK54IG+a+aa
+         EkwoMGU7p0ODLlzpPG/EiOzf3nt7Z6rUaCmJn9I8kl5baNBxcuhTiLP6dPhG7jAv1kXK
+         GA7kGfjG7zmuWCFxl2i2dnLgtELh/xZBwW9fqTpMZGwojMFL6DS9yuJoJOGUlo3nrOhG
+         n6KQ==
+X-Gm-Message-State: AOAM531Ov75gPYJazqbPE1Y28/xeAYWCctv+LjGS+Dx8fAOr6iRD7sQz
+        iXSIUq/IVMK/8k+Hjaqx7hedIQ==
+X-Google-Smtp-Source: ABdhPJwJVQavZx+exAzpmAAl57JfWF1VhiNBElrroIeHF/zpNATchxS3HE/i56a28pS3PE/b07naTA==
+X-Received: by 2002:a4a:a78d:: with SMTP id l13mr4698773oom.54.1634827779076;
+        Thu, 21 Oct 2021 07:49:39 -0700 (PDT)
 Received: from ?IPv6:2600:380:783a:c43c:af64:c142:4db7:63ac? ([2600:380:783a:c43c:af64:c142:4db7:63ac])
-        by smtp.gmail.com with ESMTPSA id v13sm1129065otn.41.2021.10.21.07.47.42
+        by smtp.gmail.com with ESMTPSA id v13sm1129954otn.41.2021.10.21.07.49.38
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Oct 2021 07:47:42 -0700 (PDT)
-Subject: Re: [PATCH v2 0/2] improvements for poll requests
+        Thu, 21 Oct 2021 07:49:38 -0700 (PDT)
+Subject: Re: [RFC] io_uring: add fixed poll support
 To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
         io-uring@vger.kernel.org
 Cc:     asml.silence@gmail.com
-References: <20210924042224.8061-1-xiaoguang.wang@linux.alibaba.com>
+References: <20211009075651.20316-1-xiaoguang.wang@linux.alibaba.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <eb2b4968-f520-1037-7c1e-491e70faae46@kernel.dk>
-Date:   Thu, 21 Oct 2021 08:47:40 -0600
+Message-ID: <25be94cc-efe2-c35a-1e72-2c113b856c32@kernel.dk>
+Date:   Thu, 21 Oct 2021 08:49:36 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20210924042224.8061-1-xiaoguang.wang@linux.alibaba.com>
+In-Reply-To: <20211009075651.20316-1-xiaoguang.wang@linux.alibaba.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -67,59 +67,41 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/23/21 10:22 PM, Xiaoguang Wang wrote:
-> Echo_server codes can be clone from:
-> https://codeup.openanolis.cn/codeup/storage/io_uring-echo-server.git
-> branch is xiaoguangwang/io_uring_multishot. There is a simple HOWTO
-> in this repository.
+On 10/9/21 1:56 AM, Xiaoguang Wang wrote:
+> Recently I spend time to research io_uring's fast-poll and multi-shot's
+> performance using network echo-server model. Previously I always thought
+> fast-poll is better than multi-shot and will give better performance,
+> but indeed multi-shot is almost always better than fast-poll in real
+> test, which is very interesting. I use ebpf to have some measurements,
+> it shows that whether fast-poll is excellent or not depends entirely on
+> that the first nowait try in io_issue_sqe() succeeds or fails. Take
+> io_recv operation as example(recv buffer is 16 bytes):
+>   1) the first nowait succeeds, a simple io_recv() is enough.
+> In my test machine, successful io_recv() consumes 1110ns averagely.
 > 
-> Usage:
-> In server: port 10016, 1000 connections, packet size 16 bytes, and
-> enable fixed files.
->   taskset -c 10 io_uring_echo_server_multi_shot  -f -p 10016 -n 1000 -l 16
+>   2) the first nowait fails, then we'll have some expensive work, which
+> contains failed io_revc(), apoll allocations, vfs_poll(), miscellaneous
+> initializations anc check in __io_arm_poll_handler() and a final
+> successful io_recv(). Among then:
+>     failed io_revc() consumes 620ns averagely.
+>     vfs_poll() consumes 550ns averagely.
+> I don't measure other overhead yet, but we can see if the first nowait
+> try fails, we'll need at least 2290ns(620 + 550 + 1110) to complete it.
+> In my echo server tests, 40% of first nowait io_recv() operations fails.
 > 
-> In client:
->   taskset -c 13,14,15,16 ./echo -addr 11.238.147.21:10016 -n 1000 -size 16
+> From above measurements, it can explain why mulit-shot is better than
+> multi-shot, mulit-shot can ensure the first nowait try succeed.
 > 
-> Before this patchset, the tps is like below:
-> 1:15:53 req: 1430425, req/s: 286084.693
-> 11:15:58 req: 1426021, req/s: 285204.079
-> 11:16:03 req: 1416761, req/s: 283352.146
-> 11:16:08 req: 1417969, req/s: 283165.637
-> 11:16:13 req: 1424591, req/s: 285349.915
-> 11:16:18 req: 1418706, req/s: 283738.725
-> 11:16:23 req: 1411988, req/s: 282399.052
-> 11:16:28 req: 1419097, req/s: 283820.477
-> 11:16:33 req: 1417816, req/s: 283563.262
-> 11:16:38 req: 1422461, req/s: 284491.702
-> 11:16:43 req: 1418176, req/s: 283635.327
-> 11:16:48 req: 1414525, req/s: 282905.276
-> 11:16:53 req: 1415624, req/s: 283124.140
-> 11:16:58 req: 1426435, req/s: 284970.486
-> 
-> with this patchset:
-> 2021/09/24 11:10:01 start to do client
-> 11:10:06 req: 1444979, req/s: 288995.300
-> 11:10:11 req: 1442559, req/s: 288511.689
-> 11:10:16 req: 1427253, req/s: 285450.390
-> 11:10:21 req: 1445236, req/s: 288349.853
-> 11:10:26 req: 1423949, req/s: 285480.941
-> 11:10:31 req: 1445304, req/s: 289060.815
-> 11:10:36 req: 1441036, req/s: 288207.119
-> 11:10:41 req: 1441117, req/s: 288220.695
-> 11:10:46 req: 1441451, req/s: 288292.731
-> 11:10:51 req: 1438801, req/s: 287759.157
-> 11:10:56 req: 1433227, req/s: 286646.338
-> 11:11:01 req: 1438307, req/s: 287661.577
-> 
-> about 1.3% tps improvements.
-> 
-> Changes in v2:
->   I dropped the poll request completion batching patch in V1, since
-> it shows performance fluctuations, hard to say whether it's useful.
+> Based on above measurements, I try to improve fast-poll a bit:
+>   1. introduce fix poll support, currently it only works in file
+> registered mode. With this feature, we can get rid of various repeated
+> operations in io_arm_poll_handler(), contains apoll allocations,
+> and miscellaneous initializations anc check.
+>   2. introduce an event generation, which will increase monotonically.
+> If there is no new event happen, we don't need to call vfs_poll(), just
+> put req in a waitting list.
 
-Sorry for being slow on this one. Can you resend it against
-for-5.16/io_uring? It no longer applies. Thanks!
+This also needs a respin, and can you split it into two patches?
 
 -- 
 Jens Axboe

@@ -2,181 +2,90 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D24B64374B4
-	for <lists+io-uring@lfdr.de>; Fri, 22 Oct 2021 11:27:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 332DF43750B
+	for <lists+io-uring@lfdr.de>; Fri, 22 Oct 2021 11:49:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232343AbhJVJ3i (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 22 Oct 2021 05:29:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42802 "EHLO
+        id S232134AbhJVJwM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 22 Oct 2021 05:52:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232307AbhJVJ3i (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 22 Oct 2021 05:29:38 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7353C061764
-        for <io-uring@vger.kernel.org>; Fri, 22 Oct 2021 02:27:20 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id u13so1195210edy.10
-        for <io-uring@vger.kernel.org>; Fri, 22 Oct 2021 02:27:20 -0700 (PDT)
+        with ESMTP id S231992AbhJVJwM (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 22 Oct 2021 05:52:12 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C93C7C061764
+        for <io-uring@vger.kernel.org>; Fri, 22 Oct 2021 02:49:54 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id a25so4984723edx.8
+        for <io-uring@vger.kernel.org>; Fri, 22 Oct 2021 02:49:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=wbC4agIo4V86kfOF+WPedHeZk9MWONdrl5votHlA/xQ=;
-        b=EkV1T+UdX7mrmjkKIIBSo3mA68TAUnBdn6vjgsWnOlZGmdl3yI7NGqPOqhDrBASdZ9
-         mY2eoJmedvHI3r97s25771ZwIzfztZqQc29Myk2HRUUxOZRbmy8xYqHnerWbd2PP+rAo
-         bHkr+Gx1S9JxPJ8nsZ8um3NRKCCr/fjk779u1gPP4DVCVqc1exip/epsFfUjIv4fvrP8
-         eT2TqqtmZAr3epuqvPQALhqv2K8Fl0grQ5VGB/1G6cI1Ln0godp0tSR/M41nTs6QAm0o
-         m7UGS6TJb6SvZGyM1NVlqmkar4a4M5e5XlLXh1r+Ja1E24UAgY7XdWfCx5nHre/ODBlg
-         +cPA==
+         :references:from:in-reply-to:content-transfer-encoding;
+        bh=qs3gIqdbkRBGBfsg9ypoTQYjDMosQFEn1tkf9xVNOkQ=;
+        b=F0TeB10CghmHv1DlzrwsDSi/w/X1VJJUBMioIg1IsfNGc2+ApOoGzG7F5KazK2z6Oe
+         9I4gM8WbLL1lPTcxdqpVwXS4c3IhVoXdRGn6oWHVGVrrFqRC2NDwfgIHj+7CXSnocOpE
+         I18vGC9Jned0VY0gFjy1nght+mwMywiMz57+TW+4GR092cIIX1eIY/c75hDsZp+XeQOF
+         kY/fLZlZpAe8k0Z5n8T7Um4HULGBf5UilpBTBtXffCxlIzwrUjVH1GaN7IrIxwHqeH0Q
+         9aKlNPKrBxr4R7iKDxpY0DxUW56NuDiH4rZ7bbOtIrzvqvrTbT9peJVNQKhx2j4YOvI0
+         1FYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+         :content-language:to:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=wbC4agIo4V86kfOF+WPedHeZk9MWONdrl5votHlA/xQ=;
-        b=m1bDTKdMnraPS8WNx6bEjLiz3l91FWB+WjfqpEt8zPq/02zF0T3dZ3EaDhad1b8d3H
-         4ROePdGjnxMKLn/FzUfQQib/bxQzbQ/9WMyuEUjLDvpdVfltX5EE4pttUp8ak9m59ZbN
-         4qRZYvMbsFDC3OLHxpH2JGoHDPFV5wt+bf+dzoI8p0TOpbvEh/S0+orYLYrDk6mDuwHg
-         sD+uEPm/HMNo5/5e2p5EHSgIiQ4r10644V7ezfr1dMfvACuOt7XYx2HQ/nh3LJ8Z92DY
-         M7lpZqHvsyuWpSixZsDoZr3VyG5wiv9ByIvuNb9rfHPy9U9dalex6LchVucFC5V7iBaz
-         EADw==
-X-Gm-Message-State: AOAM532UU21lteKEKcZLHoV2OC3A6afIAsUyf+RGabqNLFK2Syb1hRkA
-        oqGsMKI7MNxsvXkJU32X+o8=
-X-Google-Smtp-Source: ABdhPJyQma8o0mTCf8xOlSBCtnC6oiISUSH5zIFLYroqQFLbfFhNkuF0ilNJyFgTDUSY/YulyIxdhw==
-X-Received: by 2002:a17:907:6e2a:: with SMTP id sd42mr13802566ejc.333.1634894839444;
-        Fri, 22 Oct 2021 02:27:19 -0700 (PDT)
+        bh=qs3gIqdbkRBGBfsg9ypoTQYjDMosQFEn1tkf9xVNOkQ=;
+        b=BGYl5ShAkVSJXcmvTG1og5ULcGctIqsq8+X6GvpqaZKDC+ZUBNLKrq/vj9RyBsYDqT
+         xnZvDOShZWQoYaoIrLNLhqNui48tiklKKlu8AcfnpCglnkvXQFIZN62Kz00aKRaySNfJ
+         PqRQQdyaeNxx1PwDPiBMdASZ6dGv0sxT2ibkDwSPmjqQHpDBGXQFKEPjNhbDYrKkP+B2
+         RdMLWx3dqQ1K+h8H/MVatTXbLxgWFVKpShs2YoFeTArUMU4rHltqMG1FxWKZfD5KQHb+
+         G9sR7R5wRhTmmpSSkN+XN601rvTOKZnSTxnsVio/Ma0DHvzV/NGPlkPhOe5aUYMw9TUb
+         SNUg==
+X-Gm-Message-State: AOAM533AzbdV8Wq57+Qr8VKo4oWxUpcXCP2mZ3cUVqppltTcagb0q8Ge
+        nHQMoUvOFWTvfBIRY1lFtuFG8mkXpi4=
+X-Google-Smtp-Source: ABdhPJwWIj0KM0Bmv3pPNUwsgV2cVnay7ucdDp1fn2Uw5IyZXDImaCs8m3wb5zQbO6dilfzLaybMfg==
+X-Received: by 2002:a50:e1c4:: with SMTP id m4mr15499453edl.307.1634896192025;
+        Fri, 22 Oct 2021 02:49:52 -0700 (PDT)
 Received: from [192.168.8.198] ([148.252.133.195])
-        by smtp.gmail.com with ESMTPSA id g7sm4069582edu.48.2021.10.22.02.27.17
+        by smtp.gmail.com with ESMTPSA id g7sm4226955edk.13.2021.10.22.02.49.51
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Oct 2021 02:27:18 -0700 (PDT)
-Message-ID: <3f81403d-9594-426c-c480-1508ce90d04f@gmail.com>
-Date:   Fri, 22 Oct 2021 10:27:20 +0100
+        Fri, 22 Oct 2021 02:49:51 -0700 (PDT)
+Message-ID: <01fd5aeb-68c9-c30d-be9c-b8ce21f2f16b@gmail.com>
+Date:   Fri, 22 Oct 2021 10:49:55 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.2.0
-Subject: Re: [PATCH v3] io_uring: implement async hybrid mode for pollable
- requests
+Subject: Re: Polling on an io_uring file descriptor
 Content-Language: en-US
-To:     Hao Xu <haoxu@linux.alibaba.com>, Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <20211018133445.103438-1-haoxu@linux.alibaba.com>
+To:     Drew DeVault <sir@cmpwn.com>, io-uring@vger.kernel.org
+References: <CF44HAZOCG3O.1IGR35UF76JWC@taiga>
+ <70423334-a653-51e3-461c-7d09e7091714@gmail.com>
+ <CF47IHLKHBS7.27LZVJ5PQL4YU@taiga>
+ <1e3b5546-5844-bbed-e18a-99460a8ae3e4@gmail.com>
+ <CF47UZE6WXQ6.1MZDZ8OPGM0TW@taiga> <CF5RZ29XMY8T.2FIJ64YU0UFJ7@taiga>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20211018133445.103438-1-haoxu@linux.alibaba.com>
+In-Reply-To: <CF5RZ29XMY8T.2FIJ64YU0UFJ7@taiga>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 10/18/21 14:34, Hao Xu wrote:
-> The current logic of requests with IOSQE_ASYNC is first queueing it to
-> io-worker, then execute it in a synchronous way. For unbound works like
-> pollable requests(e.g. read/write a socketfd), the io-worker may stuck
-> there waiting for events for a long time. And thus other works wait in
-> the list for a long time too.
-> Let's introduce a new way for unbound works (currently pollable
-> requests), with this a request will first be queued to io-worker, then
-> executed in a nonblock try rather than a synchronous way. Failure of
-> that leads it to arm poll stuff and then the worker can begin to handle
-> other works.
-> The detail process of this kind of requests is:
+On 10/22/21 08:59, Drew DeVault wrote:
+> On Wed Oct 20, 2021 at 2:00 PM CEST, Drew DeVault wrote:
+>>> Surely should be updated if not mentioned
+>>
+>> That, or the constraint removed? The reasoning is a bit obscure and I
+>> suspect that this case could be made possible.
+> 
+> So I dug into this a bit more, and the constraint seems to be to avoid a
+> reference loop when CONFIG_UNIX=n. I grepped Google and SourceGraph for
+> "CONFIG_UNIX=n" and only found two kernel configs with Unix sockets
+> disabled, neither of which had io_uring enabled. Given the rather
+> arbitrary restriction on registering io_urings with each other, and the
+> apparent absence of a use-case for io_uring without Unix sockets, can we
+> just require CONFIG_UNIX for io_uring and remove the limitation?
 
-Looks good, I have some problems on my hands, but I'll try to test
-it and review more carefully today. I hope we can get it for 5.16
-
-
-> step1: original context:
->             queue it to io-worker
-> step2: io-worker context:
->             nonblock try(the old logic is a synchronous try here)
->                 |
->                 |--fail--> arm poll
->                              |
->                              |--(fail/ready)-->synchronous issue
->                              |
->                              |--(succeed)-->worker finish it's job, tw
->                                             take over the req
-> 
-> This works much better than the old IOSQE_ASYNC logic in cases where
-> unbound max_worker is relatively small. In this case, number of
-> io-worker eazily increments to max_worker, new worker cannot be created
-> and running workers stuck there handling old works in IOSQE_ASYNC mode.
-> 
-> In my 64-core machine, set unbound max_worker to 20, run echo-server,
-> turns out:
-> (arguments: register_file, connetion number is 1000, message size is 12
-> Byte)
-> original IOSQE_ASYNC: 76664.151 tps
-> after this patch: 166934.985 tps
-> 
-> Suggested-by: Jens Axboe <axboe@kernel.dk>
-> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
-> ---
-> 
-> v1-->v2:
->   - tweak added code in io_wq_submit_work to reduce overhead
-> v2-->v3:
->   - remove redundant IOSQE_ASYNC_HYBRID stuff
-> 
-> 
->   fs/io_uring.c | 36 +++++++++++++++++++++++++++++++++++-
->   1 file changed, 35 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index b3546eef0289..86819c7917df 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -6747,8 +6747,18 @@ static void io_wq_submit_work(struct io_wq_work *work)
->   		ret = -ECANCELED;
->   
->   	if (!ret) {
-> +		bool needs_poll = false;
-> +		unsigned int issue_flags = IO_URING_F_UNLOCKED;
-> +
-> +		if (req->flags & REQ_F_FORCE_ASYNC) {
-> +			needs_poll = req->file && file_can_poll(req->file);
-> +			if (needs_poll)
-> +				issue_flags |= IO_URING_F_NONBLOCK;
-> +		}
-> +
->   		do {
-> -			ret = io_issue_sqe(req, IO_URING_F_UNLOCKED);
-> +issue_sqe:
-> +			ret = io_issue_sqe(req, issue_flags);
->   			/*
->   			 * We can get EAGAIN for polled IO even though we're
->   			 * forcing a sync submission from here, since we can't
-> @@ -6756,6 +6766,30 @@ static void io_wq_submit_work(struct io_wq_work *work)
->   			 */
->   			if (ret != -EAGAIN)
->   				break;
-> +			if (needs_poll) {
-> +				bool armed = false;
-> +
-> +				ret = 0;
-> +				needs_poll = false;
-> +				issue_flags &= ~IO_URING_F_NONBLOCK;
-> +
-> +				switch (io_arm_poll_handler(req)) {
-> +				case IO_APOLL_READY:
-> +					goto issue_sqe;
-> +				case IO_APOLL_ABORTED:
-> +					/*
-> +					 * somehow we failed to arm the poll infra,
-> +					 * fallback it to a normal async worker try.
-> +					 */
-> +					break;
-> +				case IO_APOLL_OK:
-> +					armed = true;
-> +					break;
-> +				}
-> +
-> +				if (armed)
-> +					break;
-> +			}
->   			cond_resched();
->   		} while (1);
->   	}
-> 
+It's potentially problematic, even now we have a couple of other
+spots relying on it. Is there a good reason why it's needed?
 
 -- 
 Pavel Begunkov

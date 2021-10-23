@@ -2,58 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AC66438350
-	for <lists+io-uring@lfdr.de>; Sat, 23 Oct 2021 13:14:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2A6743834F
+	for <lists+io-uring@lfdr.de>; Sat, 23 Oct 2021 13:14:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230388AbhJWLQr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        id S230302AbhJWLQr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
         Sat, 23 Oct 2021 07:16:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45016 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45018 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230358AbhJWLQo (ORCPT
+        with ESMTP id S230359AbhJWLQo (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Sat, 23 Oct 2021 07:16:44 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25073C061767
-        for <io-uring@vger.kernel.org>; Sat, 23 Oct 2021 04:14:15 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id o20so3706738wro.3
-        for <io-uring@vger.kernel.org>; Sat, 23 Oct 2021 04:14:15 -0700 (PDT)
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 250FCC061348
+        for <io-uring@vger.kernel.org>; Sat, 23 Oct 2021 04:14:16 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id u18so9171404wrg.5
+        for <io-uring@vger.kernel.org>; Sat, 23 Oct 2021 04:14:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=hlsu21lpKzG0BU+KtWA0DDJFq+T4ppafvulCOhoJ5j4=;
-        b=ay4DzWSKwu/Uzmb5MLdQHp6EvA1JBhoLoIgjCigIBdDa5jCagCwXOPfKuwyjQ6MCpX
-         U1Oz9y3IZqw+LRt4mIgop5wYiv2nDuZUABZkchMsyI8bYFoSEM0wr23B4biBid5eGKq0
-         7bfPeW5VkWYLqq5es+MxrC4efCOTFCfL7aKsCcCxYbjISUVLKUIOJWZEtnJn8fz3g8p5
-         byui2+PKB6aoZyRSQuCYFSkjm7Lf31X+DHCqrkyXRxknKtV5/4vXcTMZkNHMoXYdKjGu
-         FHa7XHR9KA6MF8Qhsq72ah4lo269s8LUclk5+KOkIEiS7ES7YrYk4dcdvFPQskJ+xstr
-         yxyQ==
+        bh=sU3nMI2qf7u2Zh7nwQ0dYqc+2xHJnN3Yg1ACtR4+sVw=;
+        b=FjPN5Fnu4WFgresSTao/OAtDkvFzGnGF8qeX/V6WZ4lExbfReYvTB6gRoIhZ5A+ITB
+         37YCRuUvfJRrKIJqN44SL8CqwslI7lyygsbiZmpI5FlxecVmOkrFLK0CxIwLceDD5pB9
+         dxL6Je8vLgnIF0S6KucUAKimYgDn7mOoiP1vtbarQz5W974B5cvD/JlLM02sR8vUO+QY
+         zuU+/vQhHXGivxFMBjRgovY+gwnq90VPocEQ2aLHfYJQImnhDI4ixC0h1CC05VLLVYxe
+         sOVoyH7LFIjEjC/P0ZStraUN41jOKPViDgbIuhO2gGnSqPFeBlq4uPNrK41WgY7awM0Z
+         asww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=hlsu21lpKzG0BU+KtWA0DDJFq+T4ppafvulCOhoJ5j4=;
-        b=blZSq5XAt+Oq830T8vjHnbJJ9VtpS0zCpN+91D/pkc5xzRnkd96zn3B6Llmx4297os
-         jwyV4kHgKWHeelL1e2kbVqYAHd8NrSNI4TQqeTRhs1njd6zhqDdHEdBwguUBXotM+lsd
-         2cqf8KfJwdO8ri1pKhZ6haXAH6MnAm8DeYLxiCHfdeXliMyw+rGwf1lEDO/G91L4W/dH
-         yDXWFRibD6b/Fb3pzGkTbsZ8YDYkv4KLKJzRaL/4I5T7Eq+Wa3sZapvWCiK1R2S+s9mF
-         YlvqL2RmwtQLxq0+vtcQwJjTx0DYic5QvFLOqZLRAy/RrnEs5qZ25fF6X5r00ARX8ciF
-         hc4g==
-X-Gm-Message-State: AOAM530epskxnURGWLZvcUnw/A8Rznd8mTAUYWDvq6xLCdZKIGx8lAH1
-        NurRRSBw2u0vJnN88pQssgBjDYmxuto=
-X-Google-Smtp-Source: ABdhPJyDEt11HSzSWCA3OGs5TBhuX7ycGqKTEgVytmY2/Y4ugyFwWsMLwBuFiplJxIFai9ri6uyWxg==
-X-Received: by 2002:a5d:4845:: with SMTP id n5mr6845879wrs.251.1634987654181;
-        Sat, 23 Oct 2021 04:14:14 -0700 (PDT)
+        bh=sU3nMI2qf7u2Zh7nwQ0dYqc+2xHJnN3Yg1ACtR4+sVw=;
+        b=NXg+SIkcZeK17cloLVZM4o6OMhFVCDdJNu/NXgt+6ydlULLye62J9jep3gyOnDTyiW
+         7ql0jwRxhE+gexlgTontULHOxVZUW8zrJgXXsQorMUBEVQP/oVBoEb0Ijj847M6p9F4P
+         1dNImpWXVF8g0oXCvfjzCvUGEx+vjdrbOXe2S7biys9qBRYMfpLtUNFAImmWO17upH8W
+         FGdRP2Tm/Yk0GD7/lsOdVowXclbuahVnYbhVmg1v+8W2vguaJ65NNFZVxmSs2kXRrkxR
+         JgdKkMUSqAZrkgT85kiThTMvR5s+cbZoQqG3F+2+VCZI2qaPXeIg28UA3zTSVmq5WLMi
+         grQg==
+X-Gm-Message-State: AOAM531e7U7eD1We0qYeWqNSSPoF/o8wjgLyBvXRtOWBvqHhycNSk28V
+        YcBrFPdiZPVeUv40Z4w0M7QE9Qlj2gM=
+X-Google-Smtp-Source: ABdhPJwZnkOmNh+H2OaaFCTM08DAeg7chZ7V5oTCcONsWgu8htwm1RXwCkALaWuUz0E7W5YUvg5eJQ==
+X-Received: by 2002:adf:9b84:: with SMTP id d4mr5301007wrc.393.1634987655159;
+        Sat, 23 Oct 2021 04:14:15 -0700 (PDT)
 Received: from 127.0.0.1localhost ([148.252.133.195])
-        by smtp.gmail.com with ESMTPSA id w2sm10416316wrt.31.2021.10.23.04.14.13
+        by smtp.gmail.com with ESMTPSA id w2sm10416316wrt.31.2021.10.23.04.14.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 23 Oct 2021 04:14:13 -0700 (PDT)
+        Sat, 23 Oct 2021 04:14:14 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, Hao Xu <haoxu@linux.alibaba.com>,
         Pavel Begunkov <asml.silence@gmail.com>
-Subject: [PATCH 6/8] io_uring: clean up timeout async_data allocation
-Date:   Sat, 23 Oct 2021 12:14:00 +0100
-Message-Id: <75a28ca7dbcc5af8b6cd9092819e8384c24dedd4.1634987320.git.asml.silence@gmail.com>
+Subject: [PATCH 7/8] io_uring: kill unused param from io_file_supports_nowait
+Date:   Sat, 23 Oct 2021 12:14:01 +0100
+Message-Id: <4bd6709fc573d70c866ea656cb7a7dbe94be8026.1634987320.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.33.1
 In-Reply-To: <cover.1634987320.git.asml.silence@gmail.com>
 References: <cover.1634987320.git.asml.silence@gmail.com>
@@ -63,31 +63,45 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-opcode prep functions are one of the first things that are called, we
-can't have ->async_data allocated at this point and it's certainly a
-bug. Reflect this assumption in io_timeout_prep() and add a WARN_ONCE
-just in case.
+io_file_supports_nowait() doesn't use rw argument anymore, remove it.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/io_uring.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index c6f32fcf387b..e775529a36d8 100644
+index e775529a36d8..7042ed870b52 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -6113,7 +6113,9 @@ static int io_timeout_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 	if (unlikely(off && !req->ctx->off_timeout_used))
- 		req->ctx->off_timeout_used = true;
+@@ -2809,8 +2809,7 @@ static inline bool io_file_supports_nowait(struct io_kiocb *req)
+ 	return req->flags & REQ_F_SUPPORT_NOWAIT;
+ }
  
--	if (!req_has_async_data(req) && io_alloc_async_data(req))
-+	if (WARN_ON_ONCE(req_has_async_data(req)))
-+		return -EFAULT;
-+	if (io_alloc_async_data(req))
- 		return -ENOMEM;
+-static int io_prep_rw(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+-		      int rw)
++static int io_prep_rw(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ {
+ 	struct io_ring_ctx *ctx = req->ctx;
+ 	struct kiocb *kiocb = &req->rw.kiocb;
+@@ -3352,7 +3351,7 @@ static int io_read_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ {
+ 	if (unlikely(!(req->file->f_mode & FMODE_READ)))
+ 		return -EBADF;
+-	return io_prep_rw(req, sqe, READ);
++	return io_prep_rw(req, sqe);
+ }
  
- 	data = req->async_data;
+ /*
+@@ -3568,7 +3567,7 @@ static int io_write_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ {
+ 	if (unlikely(!(req->file->f_mode & FMODE_WRITE)))
+ 		return -EBADF;
+-	return io_prep_rw(req, sqe, WRITE);
++	return io_prep_rw(req, sqe);
+ }
+ 
+ static int io_write(struct io_kiocb *req, unsigned int issue_flags)
 -- 
 2.33.1
 

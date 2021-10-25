@@ -2,113 +2,92 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8071543866D
-	for <lists+io-uring@lfdr.de>; Sun, 24 Oct 2021 05:23:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33050438EF1
+	for <lists+io-uring@lfdr.de>; Mon, 25 Oct 2021 07:38:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231454AbhJXDZq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 23 Oct 2021 23:25:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55938 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231416AbhJXDZq (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 23 Oct 2021 23:25:46 -0400
-Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F1A1C061764
-        for <io-uring@vger.kernel.org>; Sat, 23 Oct 2021 20:23:25 -0700 (PDT)
-Received: by mail-pg1-x535.google.com with SMTP id r28so2965675pga.0
-        for <io-uring@vger.kernel.org>; Sat, 23 Oct 2021 20:23:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amikom.ac.id; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Q2uaKgg4TCzVF+cRh9oxDgLRgxuU0wzNZt0+uOs53yA=;
-        b=XKhUG+hS8p4a8WijYCNHh4N3sLXIfsUJAZyHLTLaaf8PaIf1sOPI3mJxz9+AKu26ML
-         OH5fRUP8UUnbFSOn5EWZBIz0erK4Zq+hmi+KOdlHjBMuRCXaLTPAh+S1R0YkTfZr36Cr
-         /tPNMZ5LvjopgiNwI3EPWLLH5YEizNN/Ei9JEoHGjSu4jYm68WquI6flgTVoXOfTLf9L
-         GnDs2wwCASWLO+mSgHtW0AM7wUB3I4zMNfBStX7FJtR0Hnfu+FpMTeUSbIFzucV86GUK
-         bWmm0TNjmnRrIpGhbArIu+XjOn5E1O/8YcRH0djb0SYUZiJL4E/OSB/Ynj6uUWcoocqr
-         c0SA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Q2uaKgg4TCzVF+cRh9oxDgLRgxuU0wzNZt0+uOs53yA=;
-        b=RukNctAqe5uYb1yecEmg776JPdR2P/ECb1Z9R5IuVkbi0gtNeltuXHiY+geDwTGwFy
-         wVf4OD4wo+S/+ijMgmYwnDTHUnkoyEd/2b5bmnuyxjiKZpGZphbAbx4BvZYwQNacg1M2
-         eQrWPSpyIGuI6JhbYv8AvzvSQa14U9OxMkJPzN3sOFpF4tFXSzVUjORZOPaiUfmIzfo6
-         Ydg146ArrP7AdhARun3lOLv9TRa44CiEFdwE6aMAdh3Ub2iXXwvGu7LjwRzMBo4TUBAN
-         dm4JnRxU7YiF7HNiq0Yd1RdxzTggquPUiqHwBqn16UtQtslbDnaBBWzV1j0uQ6se2DOS
-         2ZCg==
-X-Gm-Message-State: AOAM530zKHoc09OUOKrvUenlohuU2S5UunN5awsOwfjFJZlb5ni22zNv
-        ZhE9LXRay9AdAajfSKr0UyhzmQ==
-X-Google-Smtp-Source: ABdhPJwYbqnbJzPOaXw4sERygvezx3e+Y4kc4QuRO2W8gYbZDe/YreP2Kx2Gkdmia+OcAprSNll21A==
-X-Received: by 2002:a63:7881:: with SMTP id t123mr7041622pgc.150.1635045804354;
-        Sat, 23 Oct 2021 20:23:24 -0700 (PDT)
-Received: from integral.. ([182.2.37.49])
-        by smtp.gmail.com with ESMTPSA id 129sm985243pgd.3.2021.10.23.20.23.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 23 Oct 2021 20:23:23 -0700 (PDT)
-From:   Ammar Faizi <ammar.faizi@students.amikom.ac.id>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Praveen Kumar <kpraveen.lkml@gmail.com>, io-uring@vger.kernel.org
-Subject: Re: io-uring
-Date:   Sun, 24 Oct 2021 10:22:03 +0700
-Message-Id: <31ae179c-818e-5232-f035-64047ede0d65@intel.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <4a8f1917-e5af-b4a8-9938-e129987adc92@kernel.dk>
-References: <e17b443e-621b-80be-03fd-520139bf3bdd@gmail.com>, <4a8f1917-e5af-b4a8-9938-e129987adc92@kernel.dk>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S230061AbhJYFlN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 25 Oct 2021 01:41:13 -0400
+Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:38381 "EHLO
+        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230063AbhJYFlN (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 25 Oct 2021 01:41:13 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0UtW1-J2_1635140329;
+Received: from localhost(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0UtW1-J2_1635140329)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 25 Oct 2021 13:38:50 +0800
+From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+To:     io-uring@vger.kernel.org
+Cc:     axboe@kernel.dk, asml.silence@gmail.com
+Subject: [PATCH v3 0/3] improvements for multi-shot poll requests
+Date:   Mon, 25 Oct 2021 13:38:46 +0800
+Message-Id: <20211025053849.3139-1-xiaoguang.wang@linux.alibaba.com>
+X-Mailer: git-send-email 2.17.2
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+Echo_server codes can be clone from:
+https://codeup.openanolis.cn/codeup/storage/io_uring-echo-server.git
+branch is xiaoguangwang/io_uring_multishot. There is a simple HOWTO
+in this repository.
 
-On Sat, 23 Oct 2021 09:02:24 -0600, Jens Axboe wrote:
->On 10/23/21 2:08 AM, Praveen Kumar wrote:
->> Hello,
->> 
->> I am Praveen and have worked on couple of projects in my professional
->> experience, that includes File system driver and TCP stack
->> development. I came across fs/io_uring.c and was interested to know
->> more in-depth about the same and the use-cases, this solves. In
->> similar regards, I read https://kernel.dk/io_uring.pdf and going
->> through liburing. I'm interested to add value to this project.
->> 
->> I didn't find any webpage or TODO items, which I can start looking
->> upon. Please guide me and let me know if there are any small items to
->> start with. Also, is there any irc channel or email group apart from
->> io-uring@vger.kernel.org, where I can post my queries(design specific
->> or others).
->
->Great that you are interested! It's quite a fast moving project, but
->still plenty of things to tackle and improve. All discussion happens on
->the io-uring mailing list, we don't have a more realtime communication
->channel. Might make sense to setup a slack channel or something... But
->for now I'd encourage you to just participate on the mailing list, and
->question there are a good way to do it too.
->
+Usage:
+In server: port 10016, 1000 connections, packet size 16 bytes, and
+enable fixed files.
+  taskset -c 10 io_uring_echo_server_multi_shot  -f -p 10016 -n 1000 -l 16
 
-Hello,
+In client:
+  taskset -c 13,14,15,16 ./echo -addr 11.238.147.21:10016 -n 1000 -size 16
 
-We have several unresolved issues on liburing GitHub repo. Maybe they
-can be the TODO list?
+Before this patchset, the tps is like below:
+1:15:53 req: 1430425, req/s: 286084.693
+11:15:58 req: 1426021, req/s: 285204.079
+11:16:03 req: 1416761, req/s: 283352.146
+11:16:08 req: 1417969, req/s: 283165.637
+11:16:13 req: 1424591, req/s: 285349.915
+11:16:18 req: 1418706, req/s: 283738.725
+11:16:23 req: 1411988, req/s: 282399.052
+11:16:28 req: 1419097, req/s: 283820.477
+11:16:33 req: 1417816, req/s: 283563.262
+11:16:38 req: 1422461, req/s: 284491.702
+11:16:43 req: 1418176, req/s: 283635.327
+11:16:48 req: 1414525, req/s: 282905.276
+11:16:53 req: 1415624, req/s: 283124.140
+11:16:58 req: 1426435, req/s: 284970.486
 
-Most of them are kernel side issue, so they need to be resolved from
-io_uring.
+with this patchset:
+2021/09/24 11:10:01 start to do client
+11:10:06 req: 1444979, req/s: 288995.300
+11:10:11 req: 1442559, req/s: 288511.689
+11:10:16 req: 1427253, req/s: 285450.390
+11:10:21 req: 1445236, req/s: 288349.853
+11:10:26 req: 1423949, req/s: 285480.941
+11:10:31 req: 1445304, req/s: 289060.815
+11:10:36 req: 1441036, req/s: 288207.119
+11:10:41 req: 1441117, req/s: 288220.695
+11:10:46 req: 1441451, req/s: 288292.731
+11:10:51 req: 1438801, req/s: 287759.157
+11:10:56 req: 1433227, req/s: 286646.338
+11:11:01 req: 1438307, req/s: 287661.577
 
-Link: https://github.com/axboe/liburing/issues
+about 1.3% tps improvements.
 
-I would love to contribute too. But my experience in kernel space
-programming is not yet ready for that. I can test the patches. I
-can also integrate the feature with liburing, create regression test,
-and some userspace stuff work.
+Changes in v3:
+  Rebase to for-5.16/io_uring.
 
-Recently, I nudged this one:
-  https://github.com/axboe/liburing/issues/397
+Changes in v2:
+  I dropped the poll request completion batching patch in V1, since
+it shows performance fluctuations, hard to say whether it's useful.
 
-The work is to add recvfrom() and sendto() operation. You can CC me if
-you're willing to pick up this work. I can do the liburing part and
-create the test.
+Xiaoguang Wang (3):
+  io_uring: refactor event check out of __io_async_wake()
+  io_uring: reduce frequent add_wait_queue() overhead for multi-shot
+    poll request
+  io_uring: don't get completion_lock in io_poll_rewait()
+
+ fs/io_uring.c | 131 +++++++++++++++++++++++++++++++---------------------------
+ 1 file changed, 70 insertions(+), 61 deletions(-)
 
 -- 
-Ammar Faizi
+2.14.4.44.g2045bb6
+

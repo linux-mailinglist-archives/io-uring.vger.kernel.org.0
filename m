@@ -2,61 +2,98 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E10643ACE5
-	for <lists+io-uring@lfdr.de>; Tue, 26 Oct 2021 09:12:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9667C43B014
+	for <lists+io-uring@lfdr.de>; Tue, 26 Oct 2021 12:33:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231937AbhJZHOx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 26 Oct 2021 03:14:53 -0400
-Received: from out0.migadu.com ([94.23.1.103]:21506 "EHLO out0.migadu.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234671AbhJZHOi (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Tue, 26 Oct 2021 03:14:38 -0400
+        id S233758AbhJZKfm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 26 Oct 2021 06:35:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57900 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233734AbhJZKfj (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 26 Oct 2021 06:35:39 -0400
+Received: from mail-yb1-xb2a.google.com (mail-yb1-xb2a.google.com [IPv6:2607:f8b0:4864:20::b2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F724C061745
+        for <io-uring@vger.kernel.org>; Tue, 26 Oct 2021 03:33:15 -0700 (PDT)
+Received: by mail-yb1-xb2a.google.com with SMTP id e138so22646139ybc.3
+        for <io-uring@vger.kernel.org>; Tue, 26 Oct 2021 03:33:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/K8qRfWz6WWnF1FBtemCSJ/+bgi/DzOjq0Ewdft0ykE=;
+        b=ci1iwdu7guUxzCoYsuDdjBgySP8gXtcqkgQueGBwXsrDB8txBq1LcsLAIYwygM8tJV
+         9eQ2gogUmsPJQSu6I3q4ouqvQKo7D0mSHEKw/2Xpo3C8la3OupZN4I+pYSECb3wRAZxX
+         3y/pgn6kb01k9igShzYvVxv8AvhV3ikrHUKTF+KwCfKdBFb8+i0LINxFeHL+IkLyR0yz
+         TmJ70h1aek3rnGwvcjDV8aQAA7ZpzQFJFTgMd/tb8D9x5lJUZ43htNIyq17p/BmFzD9l
+         6rHpqEiPavWv63TdftPSHrZ11MyRD5unS8Ep0+Ss73sU8HMN5S7yMHE1t3sCkEHLfbck
+         AF3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/K8qRfWz6WWnF1FBtemCSJ/+bgi/DzOjq0Ewdft0ykE=;
+        b=n0xQRPS6E/Mhw++DbHiY5uizVvEaJIAZFNwFDTRrQ9kjJPtINKB8H5ATD9jSYBRaDt
+         bCWiPRYhIP2HY93Xed7y7uY47ub7qoPyCNIFBt3rtaEfJZw3GQJJspaKmTEFbUxAnJqx
+         nVoZFj0MpUHzMdZoCB7bdDP2Z6IXg76b71ld06EaDf+m8zYmCERmbPPLwS+cXgYuu9cG
+         zBf5PuE6FupbfpaRzkPpVEKyUad4rPrhWtK6um7okyEZRvB+GwsIlB2zgYoumGPin8QL
+         5Ivd7IXULyxKO8cnOUZV5pRdLDRvjkz84yDR8O2WOLNJZAIBIFRNsjy7E9Ipa7660wpX
+         2Zmg==
+X-Gm-Message-State: AOAM532F3AqHtob2pAqtI7P2aOF2ZyuD9WXLoX05CJJEfxWFJGEkmxMM
+        RGnGknR34+0qTsFz1I0eIEzoXa3DMki+6t9eu2ZKww==
+X-Google-Smtp-Source: ABdhPJx0hMX0lwPetHg9MgsT5TyVvVJGwRpb9keYjE9mznzxA4MWUGRj85dix2FR3dP6TFMJ2nAFMyw6m9l06kb5EhY=
+X-Received: by 2002:a25:fc08:: with SMTP id v8mr24492265ybd.404.1635244394513;
+ Tue, 26 Oct 2021 03:33:14 -0700 (PDT)
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cmpwn.com; s=key1;
-        t=1635232322;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=qowml88oFXgZx58We8Je8H/pdkfgblMYWcq5LhODy+o=;
-        b=Jh2GKGYz2Is70r5KeVy6au/uf5joNWEud9yrn8w058+WSHqdphMKf6SJ0pkeiB8pzVfvL+
-        4Wn8e8w9QQrcChzjw/6+sd/oTn3dWG1iuWFoB23ej/aHBr9oxbPjBJaCItE5jnvedHwGwT
-        6I3ILensXQgcY2FyFCHTsCPDcXp3xkUIjsiORdRfsaAmexhyfreFpC0TyPszuCqFVMDMMD
-        tgoQbrLNFVap49QmfcUY5gS8pzsxDyOh+Cb5gdsZ0e7GVi5os9A9e6+bYec6OcY48WH5CM
-        lYequ1mWVuW0c+ufQ92Ic6uqxOmvCzSmXax2NGAn3yF3O4ijZglHkk6s6QGnig==
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date:   Tue, 26 Oct 2021 09:12:02 +0200
-Message-Id: <CF95HABUTLQT.3S7V7X41CM2X2@taiga>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   "Drew DeVault" <sir@cmpwn.com>
-To:     "Vito Caputo" <vcaputo@pengaru.com>
-Cc:     <io-uring@vger.kernel.org>
-Subject: Re: Is IORING_REGISTER_BUFFERS useful given the current default
- RLIMIT_MLOCK?
-References: <CF8JHZUUYC1O.3DU8635RE8FSX@taiga>
- <20211025154247.fnw6ec75fmx5tkqy@shells.gnugeneration.com>
-In-Reply-To: <20211025154247.fnw6ec75fmx5tkqy@shells.gnugeneration.com>
-X-Migadu-Flow: FLOW_OUT
-X-Migadu-Auth-User: sir@cmpwn.com
+References: <20211026032304.30323-1-qiang.zhang1211@gmail.com>
+In-Reply-To: <20211026032304.30323-1-qiang.zhang1211@gmail.com>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Tue, 26 Oct 2021 18:32:38 +0800
+Message-ID: <CAMZfGtUXq=nQyijktRaP7xp=sAmVCryTjU4Jo5Z=ufed8arnKQ@mail.gmail.com>
+Subject: Re: [PATCH] io-wq: Remove unnecessary rcu_read_lock/unlock() in raw
+ spinlock critical section
+To:     Zqiang <qiang.zhang1211@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com,
+        io-uring@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon Oct 25, 2021 at 5:42 PM CEST, Vito Caputo wrote:
-> If not for the gpg precedent cited, I'd say it's obviously
-> distribution-specific defaults choice territory when it's as simple as
-> what's preset in /etc/security/limits.conf.
+On Tue, Oct 26, 2021 at 11:23 AM Zqiang <qiang.zhang1211@gmail.com> wrote:
 >
-> Systemd has also been getting its hands a bit dirty in the area of
-> bumping resource limits, which I'm not sure how I feel about. But it
-> does illustrate how downstream is perfectly capable of managing these
-> limits on behalf of users.
+> Due to raw_spin_lock/unlock() contains preempt_disable/enable() action,
+> already regarded as RCU critical region, so remove unnecessary
+> rcu_read_lock/unlock().
+>
+> Signed-off-by: Zqiang <qiang.zhang1211@gmail.com>
+> ---
+>  fs/io-wq.c | 2 --
+>  1 file changed, 2 deletions(-)
+>
+> diff --git a/fs/io-wq.c b/fs/io-wq.c
+> index cd88602e2e81..401be005d089 100644
+> --- a/fs/io-wq.c
+> +++ b/fs/io-wq.c
+> @@ -855,9 +855,7 @@ static void io_wqe_enqueue(struct io_wqe *wqe, struct io_wq_work *work)
+>         io_wqe_insert_work(wqe, work);
+>         clear_bit(IO_ACCT_STALLED_BIT, &acct->flags);
+>
+> -       rcu_read_lock();
 
-Most distros don't touch this default value as far as I'm aware, and the
-buck, as it were, stops with the kernel. I would prefer to bikeshed this
-once rather than N times where N is the number of Linux distributions.
+Add a comment like:
+/* spin_lock can serve as an RCU read-side critical section. */
 
-Accordingly, should any of the distros prefer the original value, or
-another value, they're entirely able to configure new defaults according
-to their preferences.
+With that.
+
+Reviewed-by: Muchun Song <songmuchun@bytedance.com>
+
+Thanks.
+
+>         do_create = !io_wqe_activate_free_worker(wqe, acct);
+> -       rcu_read_unlock();
+>
+>         raw_spin_unlock(&wqe->lock);
+>
+> --
+> 2.17.1
+>

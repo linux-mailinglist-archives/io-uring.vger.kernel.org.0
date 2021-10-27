@@ -2,111 +2,109 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EA9BC43C5FE
-	for <lists+io-uring@lfdr.de>; Wed, 27 Oct 2021 11:03:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BBF543C73E
+	for <lists+io-uring@lfdr.de>; Wed, 27 Oct 2021 12:01:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231651AbhJ0JFa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 27 Oct 2021 05:05:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53602 "EHLO
+        id S238834AbhJ0KDe (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 27 Oct 2021 06:03:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230350AbhJ0JFa (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 27 Oct 2021 05:05:30 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00B08C061570
-        for <io-uring@vger.kernel.org>; Wed, 27 Oct 2021 02:03:05 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id k7so2793029wrd.13
-        for <io-uring@vger.kernel.org>; Wed, 27 Oct 2021 02:03:04 -0700 (PDT)
+        with ESMTP id S241317AbhJ0KD0 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 27 Oct 2021 06:03:26 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EACE2C061237;
+        Wed, 27 Oct 2021 03:00:19 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id j35-20020a05600c1c2300b0032caeca81b7so2609977wms.0;
+        Wed, 27 Oct 2021 03:00:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=m/lmfg8lrkJFw99bDPYgEC/M85U2yW6MPQbOK719Eac=;
-        b=c55XGKacwy9vWeUKJwi+1vmNzQUpF4OcfK85SURbp8fUvAMXbgZaSbE9V/JdWYTaw6
-         SCzO02w0G1e2Zl1OpxgrLJ9aAsgkY8jOFc8FLP+dY0s/uZPRN4VQe/yzFoE57w5M7/Yg
-         vuUU3nZJZ1xs3XEkVJdO9YHuuyueF9+fJKAT3M5GNpgUXUNJ1FqxH/LHXThQg2L/aUgI
-         U6/v2DI/aAhF3QuDdhWfq+25Yk159N21V4DDakSBGizToeOyMOfj+LokECPvdJQZzBE2
-         u/OdjHgsjFhP/82+VcjBv6jRk9PZlfL7D+hTN2C2ir8RqMWP06/PLmgvD364+4GUifgz
-         vigg==
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=sVL40Dal23g+oTbNPT/e2XPj/Wo7WL5CwzUJYNKbLdw=;
+        b=CxfHDOj6sDUACNtdKs4jVTqIEmS01m02gbVy/3TKFUkBUpWF9wPAgXDIQayPUDqCEh
+         hgEVMSI3ES4LJ1GO6mIqbk6zwFo8qSRHF0o/eAb6Oy6BEGkBaRwS73YqYkZ2kvmuhnWX
+         o2g8tyh1Cck19wiPg4opeNaV+gYX3hsgxNcwQF0Ot51IyRoSt8rJXDJeX5Em/kY1U6XT
+         SHuTsDAzsQyO4vGZSR8VxuJwVy7SpP3FQxXNFjjPoA+MnJKfE/JdJff+q2zIdln/DYfl
+         t6DF5VQl70qHFeshd8yBzgEDlprwpjRysWsrVcEPWSExBk/0poOVPRdnpMc/vH/7Yo2q
+         KSGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=m/lmfg8lrkJFw99bDPYgEC/M85U2yW6MPQbOK719Eac=;
-        b=JGwEdzFJ/g3FXOgktf5RDrIMJW8pF88RzFAcbvBviS/iLlalPp/kbU54CZbH+OeYj5
-         WyCc1TRbmJCM2CdcM6//Br16rLamQwvMcOXFg7r8d5pkImrF7Ep7O5w0K2VlAyw2dMxJ
-         d9FhDlWjYIbIXRPs0VB/nMXGdwS25EiT6Gd6/BE4N0xke1P5OwEFczULDfB+3ZAaDNGi
-         oY37/KlCVdXKz6CfivpELnB6ZK52OvB9HahUtEQFwrLdLCuPYWJS2PzKwVWlvxZqXOGd
-         JvMKLaUQDMUUFvuT9iKSvO6kd2sESdildEb5MfR+RgKBXUEJYxXSjcHhcwWvZbPP0C57
-         alkw==
-X-Gm-Message-State: AOAM532pT4rf/S5r6M8J3fKokQ+2vYAOb120L7Rt1gpBjRNB5SkvXksl
-        xXbcoK0SuGFQk7bgUfcGBlli3A==
-X-Google-Smtp-Source: ABdhPJyjC2QuqWMe5pFr62dB8fh6LQPMeVykpGEWtlGNH3NBw+AL+uOyIjCFEtX8F9Eah9U7fKBW5g==
-X-Received: by 2002:adf:c183:: with SMTP id x3mr36753950wre.90.1635325383584;
-        Wed, 27 Oct 2021 02:03:03 -0700 (PDT)
-Received: from google.com ([95.148.6.207])
-        by smtp.gmail.com with ESMTPSA id b19sm2995765wmj.9.2021.10.27.02.03.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Oct 2021 02:03:03 -0700 (PDT)
-Date:   Wed, 27 Oct 2021 10:03:01 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Greg KH <greg@kroah.com>
-Cc:     stable@vger.kernel.org, axboe@kernel.dk, asml.silence@gmail.com,
-        io-uring@vger.kernel.org,
-        syzbot+59d8a1f4e60c20c066cf@syzkaller.appspotmail.com
-Subject: Re: [PATCH 5.10 1/1] io_uring: fix double free in the
- deferred/cancelled path
-Message-ID: <YXkVxVFg8e5Z33zV@google.com>
-References: <20211027080128.1836624-1-lee.jones@linaro.org>
- <YXkLVoAfCVNNPDSZ@kroah.com>
- <YXkP533F8Dj+HAxY@google.com>
- <YXkThoB6XUsmV8Yf@kroah.com>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=sVL40Dal23g+oTbNPT/e2XPj/Wo7WL5CwzUJYNKbLdw=;
+        b=B4XUHykRENiHR9w4kmOKaAB+hiFbqRs/cNYJkNS4S9L3GJGaDSM7j00juZ8+jCJreL
+         9waWk6+q8IP8x0oOe6X6hFTn0mhRiLv86icTPmuuOjWAECgj3TsSEfJGGrwdpw958U+Y
+         4OzC5luDQRKOsKOcV3srqJTc44erHSPJ0oncRIrgUYTGFKrl0eUz2G7dJycs24nwrcFa
+         oBTQBrDkOXcWI/DIHamJkPerKw0yahAVGJGbNaSSd2yiiIeVLvSIxbJuwJBhswd5UCA9
+         hdKB9SqS/PjR6hKTVLgFpZ6FZMelGjRLy0kcvAI7iIQnFb/8m6YSrTkzAT5b6D63uo23
+         Nt1Q==
+X-Gm-Message-State: AOAM5321MxKGYhnL8V7G0f2JlWhlUv0sYwQAIKvhNdrzTrWDhtnhGfzk
+        Nwk9hmpe9aSLgGpZv0/hfgI=
+X-Google-Smtp-Source: ABdhPJyguHvObOm7lVDICq2QVmWS9gg3Gwx7YYLpgE+5/TsBcILHLhOKLVWquOQjDv3An1qomMYuoQ==
+X-Received: by 2002:a7b:cc11:: with SMTP id f17mr4779203wmh.122.1635328818497;
+        Wed, 27 Oct 2021 03:00:18 -0700 (PDT)
+Received: from [192.168.8.198] ([148.252.132.100])
+        by smtp.gmail.com with ESMTPSA id u13sm21998993wri.50.2021.10.27.03.00.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Oct 2021 03:00:18 -0700 (PDT)
+Message-ID: <27d0d7bd-a5c3-27ca-03b3-ea3c5c363380@gmail.com>
+Date:   Wed, 27 Oct 2021 10:56:04 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <YXkThoB6XUsmV8Yf@kroah.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Subject: Re: [PATCH] io_uring: fix a GCC warning in wq_list_for_each()
+Content-Language: en-US
+To:     Qian Cai <quic_qiancai@quicinc.com>, Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20211025145906.71955-1-quic_qiancai@quicinc.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20211025145906.71955-1-quic_qiancai@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, 27 Oct 2021, Greg KH wrote:
-
-> On Wed, Oct 27, 2021 at 09:37:59AM +0100, Lee Jones wrote:
-> > On Wed, 27 Oct 2021, Greg KH wrote:
-> > 
-> > > On Wed, Oct 27, 2021 at 09:01:28AM +0100, Lee Jones wrote:
-> > > > 792bb6eb86233 ("io_uring: don't take uring_lock during iowq cancel")
-> > > > inadvertently fixed this issue in v5.12.  This patch cherry-picks the
-> > > > hunk of commit which does so.
-> > > 
-> > > Why can't we take all of that commit?  Why only part of it?
-> > 
-> > I don't know.
-> > 
-> > Why didn't the Stable team take it further than v5.11.y?
+On 10/25/21 15:59, Qian Cai wrote:
+> fs/io_uring.c: In function '__io_submit_flush_completions':
+> fs/io_uring.c:2367:33: warning: variable 'prev' set but not used
+> [-Wunused-but-set-variable]
+>   2367 |  struct io_wq_work_node *node, *prev;
+>        |                                 ^~~~
 > 
-> Look in the archives?  Did it not apply cleanly?
+> Fixed it by open-coded the wq_list_for_each() without an unused previous
+> node pointer.
+
+That's intentional, the var is optimised out and it's better to
+not hand code it (if possible).
+
+
+> Fixes: 6f33b0bc4ea4 ("io_uring: use slist for completion batching")
+> Signed-off-by: Qian Cai <quic_qiancai@quicinc.com>
+> ---
+>   fs/io_uring.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> /me goes off and looks...
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 23641d9e0871..b8968bd43e3f 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -2361,11 +2361,11 @@ static void io_free_batch_list(struct io_ring_ctx *ctx,
+>   static void __io_submit_flush_completions(struct io_ring_ctx *ctx)
+>   	__must_hold(&ctx->uring_lock)
+>   {
+> -	struct io_wq_work_node *node, *prev;
+> +	struct io_wq_work_node *node;
+>   	struct io_submit_state *state = &ctx->submit_state;
+>   
+>   	spin_lock(&ctx->completion_lock);
+> -	wq_list_for_each(node, prev, &state->compl_reqs) {
+> +	for (node = state->compl_reqs.first; node; node = node->next) {
+>   		struct io_kiocb *req = container_of(node, struct io_kiocb,
+>   						    comp_list);
+>   
 > 
-> Looks like I asked for a backport, but no one did it, I only received a
-> 5.11 version:
-> 	https://lore.kernel.org/r/1839646480a26a2461eccc38a75e98998d2d6e11.1615375332.git.asml.silence@gmail.com
-> 
-> so a 5.10 version would be nice, as I said it failed as-is:
-> 	https://lore.kernel.org/all/161460075611654@kroah.com/
-
-Precisely.  This is the answer to your question:
-
-  > > > Why can't we take all of that commit?  Why only part of it?
-
-Same reason the Stable team didn't back-port it - it doesn't apply.
-
-The second hunk is only relevant to v5.11+.
 
 -- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Pavel Begunkov

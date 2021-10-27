@@ -2,57 +2,119 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 61B4743C76F
-	for <lists+io-uring@lfdr.de>; Wed, 27 Oct 2021 12:14:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E27A43CA01
+	for <lists+io-uring@lfdr.de>; Wed, 27 Oct 2021 14:46:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239422AbhJ0KRL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 27 Oct 2021 06:17:11 -0400
-Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:37923 "EHLO
-        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235484AbhJ0KRK (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 27 Oct 2021 06:17:10 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UtsK7dQ_1635329676;
-Received: from e18g09479.et15sqa.tbsite.net(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UtsK7dQ_1635329676)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 27 Oct 2021 18:14:44 +0800
-From:   Hao Xu <haoxu@linux.alibaba.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>
-Subject: [PATCH] io_uring: fix warning in io_try_cancel_userdata()
-Date:   Wed, 27 Oct 2021 18:14:36 +0800
-Message-Id: <20211027101436.130908-1-haoxu@linux.alibaba.com>
-X-Mailer: git-send-email 2.24.4
+        id S242000AbhJ0MtF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 27 Oct 2021 08:49:05 -0400
+Received: from new3-smtp.messagingengine.com ([66.111.4.229]:57741 "EHLO
+        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S241986AbhJ0MtE (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 27 Oct 2021 08:49:04 -0400
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 78ACB5804E6;
+        Wed, 27 Oct 2021 08:46:38 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute1.internal (MEProxy); Wed, 27 Oct 2021 08:46:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=29V71h8BhQBo3sqoWQpAuVgqsrL
+        ReneVZFweoMQBIu4=; b=ZK5brb0K3eqJ8GVIQBs5mwJ8sq/VB5nEfzN80TuvOui
+        A3ysAVaBSHx9KjX6OjPwWH9hKABUc8u1MvB6T26BN29qBMpQu0grmmIlKkTx+ozM
+        LWrcXgMALqxp4Sx10gbrNt86AP1BYPR3OxreC7Mi1zuXFKti4hptnEI5xAwubc4N
+        K1UoYdzIUS+QaraymjMrnSNa5kN6b+K2BvyeMoN49LoqdPBjMUFjbd4iW3mU/lV4
+        +pJNYAAYZzbCumu3yYbaG+4fU9+kKJIswxWPdPRExWJkdbj/75UTGQ7f803yr78r
+        UJvrylLccdRSQyb5mi9HGbfw+BulBZi1RjBdbLYxbUQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=29V71h
+        8BhQBo3sqoWQpAuVgqsrLReneVZFweoMQBIu4=; b=ZsB/voN52dwQ+95upqa7Dm
+        uToXwOhKEA88mcgbmeVnje0utbEhSiOuazd0fJkEY7++RWFxrxqyyyjhJ75PB1yj
+        NGJ5TEbbEu2xsUDK9jApUnk3lzK3tLKYgCTCkuN9ISoDw+uC7vlXO3ksGYeEWwsb
+        W2r7qiSOc7zLVS+VvhGHAMf3oHrj9nu2iNL/zzlIJ2ieUBXUXN8ZtTDQshH6RnlE
+        EC0YigYUrtzAzfPwBtsV4s6Kl1U73aBANBQjRhJmxP07RnnXdtrxg6NUhWgpmS9N
+        qdf6U8LA/vf/2Um0Wq7kqDP2OSB8t2rAruU3FTKay3cyUouxEIfBkC5M9ugR67uw
+        ==
+X-ME-Sender: <xms:Lkp5YRfPt6cNJ-cbk3yno2jzaZZ0K42F7muv-qUd1t4t5ft5YR7aow>
+    <xme:Lkp5YfPye7AFhCy2y8yWZqJWCCK6ve6d1eZ10oTm1BMms7sAMJaDOqxrzFPlkJJJT
+    SYTXcrOgepw_A>
+X-ME-Received: <xmr:Lkp5YagbcSrL6fsGcRUeD4ZuCwF2UDAq04g6dnOTWvIt_-SQdM2iL4Aid-0d4ZaH9FLXAMJ0wzils40JfudFxYe3zqBl9VCz>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrvdegtddgheefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefirhgvghcu
+    mffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpeeuleeltd
+    ehkeeltefhleduuddvhfffuedvffduveegheekgeeiffevheegfeetgfenucffohhmrghi
+    nhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomhepghhrvghgsehkrhhorghhrdgtohhm
+X-ME-Proxy: <xmx:Lkp5Ya8ixSS8edVzmcyJmsBDCw48J9xF3dXTVbztIEm_Z0KKpT9xzw>
+    <xmx:Lkp5YdvCsLyNBO5vQWwIpvNB8BOPC_GC_650XOdG-ixe3fJpCgz31g>
+    <xmx:Lkp5YZFVHjMOZYYgeEG000zLIgfr6ABUsmyfyqaT8Ej01YzqE_wCVg>
+    <xmx:Lkp5YenBCUZUUxWKEkl_Ol0rvf9C4QzDF7HBOjaiFhPntescQggYDQ>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 27 Oct 2021 08:46:37 -0400 (EDT)
+Date:   Wed, 27 Oct 2021 14:46:35 +0200
+From:   Greg KH <greg@kroah.com>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     stable@vger.kernel.org, axboe@kernel.dk, asml.silence@gmail.com,
+        io-uring@vger.kernel.org,
+        syzbot+59d8a1f4e60c20c066cf@syzkaller.appspotmail.com
+Subject: Re: [PATCH 5.10 1/1] io_uring: fix double free in the
+ deferred/cancelled path
+Message-ID: <YXlKKxRETze45IPv@kroah.com>
+References: <20211027080128.1836624-1-lee.jones@linaro.org>
+ <YXkLVoAfCVNNPDSZ@kroah.com>
+ <YXkP533F8Dj+HAxY@google.com>
+ <YXkThoB6XUsmV8Yf@kroah.com>
+ <YXkVxVFg8e5Z33zV@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YXkVxVFg8e5Z33zV@google.com>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-task work can run in system-wq, so enhance the warnning in
-io_try_cancel_userdata() to reflect it.
+On Wed, Oct 27, 2021 at 10:03:01AM +0100, Lee Jones wrote:
+> On Wed, 27 Oct 2021, Greg KH wrote:
+> 
+> > On Wed, Oct 27, 2021 at 09:37:59AM +0100, Lee Jones wrote:
+> > > On Wed, 27 Oct 2021, Greg KH wrote:
+> > > 
+> > > > On Wed, Oct 27, 2021 at 09:01:28AM +0100, Lee Jones wrote:
+> > > > > 792bb6eb86233 ("io_uring: don't take uring_lock during iowq cancel")
+> > > > > inadvertently fixed this issue in v5.12.  This patch cherry-picks the
+> > > > > hunk of commit which does so.
+> > > > 
+> > > > Why can't we take all of that commit?  Why only part of it?
+> > > 
+> > > I don't know.
+> > > 
+> > > Why didn't the Stable team take it further than v5.11.y?
+> > 
+> > Look in the archives?  Did it not apply cleanly?
+> > 
+> > /me goes off and looks...
+> > 
+> > Looks like I asked for a backport, but no one did it, I only received a
+> > 5.11 version:
+> > 	https://lore.kernel.org/r/1839646480a26a2461eccc38a75e98998d2d6e11.1615375332.git.asml.silence@gmail.com
+> > 
+> > so a 5.10 version would be nice, as I said it failed as-is:
+> > 	https://lore.kernel.org/all/161460075611654@kroah.com/
+> 
+> Precisely.  This is the answer to your question:
+> 
+>   > > > Why can't we take all of that commit?  Why only part of it?
+> 
+> Same reason the Stable team didn't back-port it - it doesn't apply.
+> 
+> The second hunk is only relevant to v5.11+.
 
-Cc: stable@vger.kernel.org
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
----
- fs/io_uring.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Great, then use the "normal" stable style, but down in the s-o-b area
+say "dropped second chunk as it is not relevant to 5.10.y".
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 0099decac71d..a2a4b9d04404 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -6294,7 +6294,8 @@ static int io_try_cancel_userdata(struct io_kiocb *req, u64 sqe_addr)
- 	struct io_ring_ctx *ctx = req->ctx;
- 	int ret;
- 
--	WARN_ON_ONCE(!io_wq_current_is_worker() && req->task != current);
-+	WARN_ON_ONCE(!io_wq_current_is_worker() &&
-+		     !(current->flags & PF_WQ_WORKER) && req->task != current);
- 
- 	ret = io_async_cancel_one(req->task->io_uring, sqe_addr, ctx);
- 	if (ret != -ENOENT)
--- 
-2.24.4
+thanks,
 
+greg k-h

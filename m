@@ -2,147 +2,138 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 869F443CDCF
-	for <lists+io-uring@lfdr.de>; Wed, 27 Oct 2021 17:40:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4299843CC6B
+	for <lists+io-uring@lfdr.de>; Wed, 27 Oct 2021 16:38:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238369AbhJ0Pm6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 27 Oct 2021 11:42:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60794 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238673AbhJ0Pm6 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 27 Oct 2021 11:42:58 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBDEAC061570
-        for <io-uring@vger.kernel.org>; Wed, 27 Oct 2021 08:40:32 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id g7so3814123wrb.2
-        for <io-uring@vger.kernel.org>; Wed, 27 Oct 2021 08:40:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=HBxWl6LYwGRb58E32zkzz9VwsP7mpm0V9udu0IwC1Fg=;
-        b=jL5a+GVB71vvVgDaoqq0O3sdAkGtxotDiHj2DcxTKz+UBbg18PfkZuaYdkfCq3yHuK
-         FOUI3LBsJ4h0He919zrbPWSpO+VHxkTbd57Q7pan6efUDHP0b00h0Gp+Hq+7eZkEwmJ2
-         0Jm5RlR3xHEqzJ7qpW+CzyoubF7x3r1/J4Q3wUau8YNYmMaQVm/i9ZnQLV+5m0ASzhEa
-         2O33nRLTuzBM9MdqiRL03e5XmS5cZWQXWbDnzXiranSlKXGnALowb+85e8m6E9U2wN0/
-         h1HVYoJ7FpzjZcWny7pN5MHOjbotE/8YwKpk2nabeh/PJJHmsj37ncRvYvCKpBIoVN5D
-         yhqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=HBxWl6LYwGRb58E32zkzz9VwsP7mpm0V9udu0IwC1Fg=;
-        b=qaM2EHwrsvm427cIwddtKkLxIIPbAI5TTeeTWKCCiPKRLjg5MElqkJOpRROZZiskzF
-         K3rRf5242bJ/LxEN94fasvEkYxJ5Ti9Zo2JumM3wHwakiUkHZPQknBmAFBpKQLqcdCjc
-         6sBuVNmyRE7l9sXzySrh52tVyUxFyKgmWp1Yim/XiyIQjTogdtfYj9Y3pjOVMBnSx6P9
-         Shj4jqJC3/BKhCuNbhAYRJlexObRKUujcSS9XywSJcZF7GSuLK0PPIMRmggvPmoaUDsM
-         CvtMYrAqDlvqcfj5LmiU9tgWIlcBz4x8qmQ1zk6fQe5p0ubpP8hRO8vGXtO2Eq1PxB6z
-         clkA==
-X-Gm-Message-State: AOAM530OMK8ZymYHkQz/YSWGvH6Fzc6j4KimyHbPosPHjOLduCvHhFYR
-        JJJznniFCCcCbZjrXB0CR4xpMQ==
-X-Google-Smtp-Source: ABdhPJxVfn1nrtEZjB8RMH1aVl7G12bbc2Edm5bxAXZUBE9cEHMMpz5u8i4eDDmNdpOFaB+m0RbDoQ==
-X-Received: by 2002:a5d:64ed:: with SMTP id g13mr31060743wri.87.1635349231366;
-        Wed, 27 Oct 2021 08:40:31 -0700 (PDT)
-Received: from localhost.localdomain ([95.148.6.207])
-        by smtp.gmail.com with ESMTPSA id u16sm3674284wmc.21.2021.10.27.08.40.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Oct 2021 08:40:30 -0700 (PDT)
-From:   Lee Jones <lee.jones@linaro.org>
-To:     stable@vger.kernel.org, axboe@kernel.dk, asml.silence@gmail.com,
-        xiaoguang.wang@linux.alibaba.com
-Cc:     io-uring@vger.kernel.org, Abaci <abaci@linux.alibaba.com>,
-        Hao Xu <haoxu@linux.alibaba.com>,
-        syzbot+59d8a1f4e60c20c066cf@syzkaller.appspotmail.com,
-        Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH v5.10.y 1/1] io_uring: don't take uring_lock during iowq cancel
-Date:   Wed, 27 Oct 2021 15:08:02 +0100
-Message-Id: <20211027140802.1892780-1-lee.jones@linaro.org>
-X-Mailer: git-send-email 2.33.0.1079.g6e70778dc9-goog
+        id S237549AbhJ0Okz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 27 Oct 2021 10:40:55 -0400
+Received: from new2-smtp.messagingengine.com ([66.111.4.224]:33727 "EHLO
+        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233962AbhJ0Oky (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 27 Oct 2021 10:40:54 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.nyi.internal (Postfix) with ESMTP id D86C1580593;
+        Wed, 27 Oct 2021 10:38:28 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute4.internal (MEProxy); Wed, 27 Oct 2021 10:38:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=EQW6ogjIJGDseBKZUZlDLFw/kgn
+        I54KQm+3+JLexLeQ=; b=uvkRd6h6Z3Um1spyfD5prX7NogFRDqd00IzR6h9MCbi
+        KpPsIyfw1eDNUtGsNF4NMP3hyYfOjG01KsHU2kGY1elvdUvYUxHqrJPI6f7oDbeE
+        NiQQMyXvFdGr5axZW/jiOqVKH2gnUj+WAoBbBEgib2skoaFACaZ1bKVJr/oGOcMV
+        qislhj+yviX7gjHE7ngXx0dKFzBxZpzFhgJpcYI/qjERefgmMvHAf4ixR++bnjWs
+        OsoDkW8z0ZrjiPFN6z+SrQuFtMGFKTJdAgOvQxLNp22JkLK/UOX/aqOirTrB4W3V
+        8WBCmr7MbTjfCncmJ2lVJ3PK+kFifFY7R2gjKz7P5yQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=EQW6og
+        jIJGDseBKZUZlDLFw/kgnI54KQm+3+JLexLeQ=; b=TtnoLK8NH2i9K7POTI4lJg
+        RAiELU7JDt/WJqrX/wSSMUOrf41saz3QfqnpITWqOuqGqLHGtKUdEM7b4oupVxFa
+        HTqRaX6+U5Jvou/dsu58F1VipvyNpo0FI98zPeB3IDY66Z/DFTMZQSAknqjFlNvG
+        ZfS1vpnskGBpXgE+E1XjM9uSlUWCgl//72XUjuZZPx3kIxztVA1Wt6LYXVsHVmBT
+        ZuW2GH9KDtkyF9r+f8sfF+qv6nuW2DtYoMoRDf9oen1UuAXWH7yy/Z0ihQjYqymJ
+        wcYD3qWhSedZj7Y/EHZzOfZBGgyTAbpWb5d6+yZHBbfjG+5vXPO69LB297zmfiQg
+        ==
+X-ME-Sender: <xms:ZGR5Yc64IzHl17nYyIuXFtALShF3rB_CfiTSzpC1XtpazIVGQzBQrQ>
+    <xme:ZGR5Yd7fHE6cV7J5m6-Z-QG1O6k53y0Txta45dqKAArko9d26cqdEDrjy7-PId5vE
+    Wm48OfQ1fBuIg>
+X-ME-Received: <xmr:ZGR5YbcddQ_82u0wClpsHvXNn9YCLbyYK8c2zGsE5rQRZHFlMarVLA2160zb6-lDMxBNrsZ-6MQThA2l_mqjcn9sJZf1ZOCi>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrvdegtddgjeehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefirhgvghcu
+    mffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpeeuleeltd
+    ehkeeltefhleduuddvhfffuedvffduveegheekgeeiffevheegfeetgfenucffohhmrghi
+    nhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomhepghhrvghgsehkrhhorghhrdgtohhm
+X-ME-Proxy: <xmx:ZGR5YRJ9JykGewDtlddn7dSQuTBqe9rojq16uGlY8aGR7ChUisTZrQ>
+    <xmx:ZGR5YQIxCiUyyNg1NLFB91XYfjkOh7iIj2cRSm0zSYJn4byUvn_pkg>
+    <xmx:ZGR5YSxGHVjT911ASZFHR5gTFQb3rbIsJoZGi08bSbOdEXd8ipGLuw>
+    <xmx:ZGR5YdAHRwFXNcc53UiQU_f1aQWf21GXrPtKBzBLd_WjrnV-WqnnXQ>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 27 Oct 2021 10:38:28 -0400 (EDT)
+Date:   Wed, 27 Oct 2021 16:38:25 +0200
+From:   Greg KH <greg@kroah.com>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     stable@vger.kernel.org, axboe@kernel.dk, asml.silence@gmail.com,
+        io-uring@vger.kernel.org,
+        syzbot+59d8a1f4e60c20c066cf@syzkaller.appspotmail.com
+Subject: Re: [PATCH 5.10 1/1] io_uring: fix double free in the
+ deferred/cancelled path
+Message-ID: <YXlkYWPlz3TwNH7Z@kroah.com>
+References: <20211027080128.1836624-1-lee.jones@linaro.org>
+ <YXkLVoAfCVNNPDSZ@kroah.com>
+ <YXkP533F8Dj+HAxY@google.com>
+ <YXkThoB6XUsmV8Yf@kroah.com>
+ <YXkVxVFg8e5Z33zV@google.com>
+ <YXlKKxRETze45IPv@kroah.com>
+ <YXlbdJRa6kTu2GEz@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YXlbdJRa6kTu2GEz@google.com>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Pavel Begunkov <asml.silence@gmail.com>
+On Wed, Oct 27, 2021 at 03:00:20PM +0100, Lee Jones wrote:
+> On Wed, 27 Oct 2021, Greg KH wrote:
+> 
+> > On Wed, Oct 27, 2021 at 10:03:01AM +0100, Lee Jones wrote:
+> > > On Wed, 27 Oct 2021, Greg KH wrote:
+> > > 
+> > > > On Wed, Oct 27, 2021 at 09:37:59AM +0100, Lee Jones wrote:
+> > > > > On Wed, 27 Oct 2021, Greg KH wrote:
+> > > > > 
+> > > > > > On Wed, Oct 27, 2021 at 09:01:28AM +0100, Lee Jones wrote:
+> > > > > > > 792bb6eb86233 ("io_uring: don't take uring_lock during iowq cancel")
+> > > > > > > inadvertently fixed this issue in v5.12.  This patch cherry-picks the
+> > > > > > > hunk of commit which does so.
+> > > > > > 
+> > > > > > Why can't we take all of that commit?  Why only part of it?
+> > > > > 
+> > > > > I don't know.
+> > > > > 
+> > > > > Why didn't the Stable team take it further than v5.11.y?
+> > > > 
+> > > > Look in the archives?  Did it not apply cleanly?
+> > > > 
+> > > > /me goes off and looks...
+> > > > 
+> > > > Looks like I asked for a backport, but no one did it, I only received a
+> > > > 5.11 version:
+> > > > 	https://lore.kernel.org/r/1839646480a26a2461eccc38a75e98998d2d6e11.1615375332.git.asml.silence@gmail.com
+> > > > 
+> > > > so a 5.10 version would be nice, as I said it failed as-is:
+> > > > 	https://lore.kernel.org/all/161460075611654@kroah.com/
+> > > 
+> > > Precisely.  This is the answer to your question:
+> > > 
+> > >   > > > Why can't we take all of that commit?  Why only part of it?
+> > > 
+> > > Same reason the Stable team didn't back-port it - it doesn't apply.
+> > > 
+> > > The second hunk is only relevant to v5.11+.
+> > 
+> > Great, then use the "normal" stable style, but down in the s-o-b area
+> > say "dropped second chunk as it is not relevant to 5.10.y".
+> 
+> Just to clarify, by "normal", you mean:
+> 
+>  - Take the original patch
+>  - Apply an "[ Upstream commit <id> ]" tag (or similar)
+>  - Remove the hunk that doesn't apply
+>  - Make a note of the aforementioned action
+>  - Submit to Stable
 
-[ Upstream commit 792bb6eb862333658bf1bd2260133f0507e2da8d ]
+Yes.
 
-[   97.866748] a.out/2890 is trying to acquire lock:
-[   97.867829] ffff8881046763e8 (&ctx->uring_lock){+.+.}-{3:3}, at:
-io_wq_submit_work+0x155/0x240
-[   97.869735]
-[   97.869735] but task is already holding lock:
-[   97.871033] ffff88810dfe0be8 (&ctx->uring_lock){+.+.}-{3:3}, at:
-__x64_sys_io_uring_enter+0x3f0/0x5b0
-[   97.873074]
-[   97.873074] other info that might help us debug this:
-[   97.874520]  Possible unsafe locking scenario:
-[   97.874520]
-[   97.875845]        CPU0
-[   97.876440]        ----
-[   97.877048]   lock(&ctx->uring_lock);
-[   97.877961]   lock(&ctx->uring_lock);
-[   97.878881]
-[   97.878881]  *** DEADLOCK ***
-[   97.878881]
-[   97.880341]  May be due to missing lock nesting notation
-[   97.880341]
-[   97.881952] 1 lock held by a.out/2890:
-[   97.882873]  #0: ffff88810dfe0be8 (&ctx->uring_lock){+.+.}-{3:3}, at:
-__x64_sys_io_uring_enter+0x3f0/0x5b0
-[   97.885108]
-[   97.885108] stack backtrace:
-[   97.890457] Call Trace:
-[   97.891121]  dump_stack+0xac/0xe3
-[   97.891972]  __lock_acquire+0xab6/0x13a0
-[   97.892940]  lock_acquire+0x2c3/0x390
-[   97.894894]  __mutex_lock+0xae/0x9f0
-[   97.901101]  io_wq_submit_work+0x155/0x240
-[   97.902112]  io_wq_cancel_cb+0x162/0x490
-[   97.904126]  io_async_find_and_cancel+0x3b/0x140
-[   97.905247]  io_issue_sqe+0x86d/0x13e0
-[   97.909122]  __io_queue_sqe+0x10b/0x550
-[   97.913971]  io_queue_sqe+0x235/0x470
-[   97.914894]  io_submit_sqes+0xcce/0xf10
-[   97.917872]  __x64_sys_io_uring_enter+0x3fb/0x5b0
-[   97.921424]  do_syscall_64+0x2d/0x40
-[   97.922329]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> Rather than submitting a bespoke patch.  Right?
 
-While holding uring_lock, e.g. from inline execution, async cancel
-request may attempt cancellations through io_wq_submit_work, which may
-try to grab a lock. Delay it to task_work, so we do it from a clean
-context and don't have to worry about locking.
+Correct.
 
-Cc: <stable@vger.kernel.org> # 5.5+
-Fixes: c07e6719511e ("io_uring: hold uring_lock while completing failed polled io in io_wq_submit_work()")
-Reported-by: Abaci <abaci@linux.alibaba.com>
-Reported-by: Hao Xu <haoxu@linux.alibaba.com>
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-[Lee: The first hunk solves a different (double free) issue in v5.10.
-      Only the first hunk of the original patch is relevant to v5.10 AND
-      the first hunk of the original patch is only relevant to v5.10]
-Reported-by: syzbot+59d8a1f4e60c20c066cf@syzkaller.appspotmail.com
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
----
- fs/io_uring.c | 2 ++
- 1 file changed, 2 insertions(+)
+thanks,
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 26753d0cb4312..361f8ae96c36f 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -2075,7 +2075,9 @@ static void io_req_task_cancel(struct callback_head *cb)
- 	struct io_kiocb *req = container_of(cb, struct io_kiocb, task_work);
- 	struct io_ring_ctx *ctx = req->ctx;
- 
-+	mutex_lock(&ctx->uring_lock);
- 	__io_req_task_cancel(req, -ECANCELED);
-+	mutex_unlock(&ctx->uring_lock);
- 	percpu_ref_put(&ctx->refs);
- }
- 
--- 
-2.33.0.1079.g6e70778dc9-goog
-
+greg k-h

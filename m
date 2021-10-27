@@ -2,16 +2,16 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BD29743CB7A
-	for <lists+io-uring@lfdr.de>; Wed, 27 Oct 2021 16:03:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FB3C43CB78
+	for <lists+io-uring@lfdr.de>; Wed, 27 Oct 2021 16:03:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242372AbhJ0OFs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 27 Oct 2021 10:05:48 -0400
-Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:28477 "EHLO
-        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S242367AbhJ0OFr (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 27 Oct 2021 10:05:47 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04357;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UtuRLZW_1635343336;
+        id S242365AbhJ0OFj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 27 Oct 2021 10:05:39 -0400
+Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:47791 "EHLO
+        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S242334AbhJ0OFj (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 27 Oct 2021 10:05:39 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UtuRLZW_1635343336;
 Received: from e18g09479.et15sqa.tbsite.net(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UtuRLZW_1635343336)
           by smtp.aliyun-inc.com(127.0.0.1);
           Wed, 27 Oct 2021 22:02:24 +0800
@@ -19,9 +19,9 @@ From:   Hao Xu <haoxu@linux.alibaba.com>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
         Joseph Qi <joseph.qi@linux.alibaba.com>
-Subject: [PATCH 7/8] io_uring: batch completion in prior_task_list
-Date:   Wed, 27 Oct 2021 22:02:15 +0800
-Message-Id: <20211027140216.20008-8-haoxu@linux.alibaba.com>
+Subject: [PATCH 8/8] io_uring: add limited number of TWs to priority task list
+Date:   Wed, 27 Oct 2021 22:02:16 +0800
+Message-Id: <20211027140216.20008-9-haoxu@linux.alibaba.com>
 X-Mailer: git-send-email 2.24.4
 In-Reply-To: <20211027140216.20008-1-haoxu@linux.alibaba.com>
 References: <20211027140216.20008-1-haoxu@linux.alibaba.com>
@@ -31,88 +31,78 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-In previous patches, we have already gathered some tw with
-io_req_task_complete() as callback in prior_task_list, let's complete
-them in batch. This is better than before in cases where !locked.
+One thing to watch out is sometimes irq completion TWs comes
+overwhelmingly, which makes the new tw list grows fast, and TWs in
+the old list are starved. So we have to limit the length of the new
+tw list. A practical value is 1/3:
+    len of new tw list < 1/3 * (len of new + old tw list)
+
+In this way, the new tw list has a limited length and normal task get
+there chance to run.
+Say MAX_PRIORITY_TW_RATIO is k, the number of TWs in priority list is
+x, in non-priority list in is y. Then a TW can be inserted to the
+priority list in the condition:
+            x <= 1/k * (x + y)
+          =>k * x <= x + y
+          =>(1 - k) * x + y >= 0
+
+So we just need a variable z = (1 - k) * x + y. Everytime a new TW
+comes,
+    if z >= 0, we add it to prio list, and z += (1 - k)
+    if z < 0, we add it to non-prio list, and z++
+
+So we just one extra operation, and we can simplify the check to:
+       if (priority && k >= 0) add to prio list;
 
 Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
 ---
- fs/io_uring.c | 43 ++++++++++++++++++++++++++++++++++++-------
- 1 file changed, 36 insertions(+), 7 deletions(-)
+ fs/io_uring.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 7c6d90d693b8..bf1b730df158 100644
+index bf1b730df158..0099decac71d 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -2166,6 +2166,26 @@ static inline unsigned int io_put_rw_kbuf(struct io_kiocb *req)
- 	return io_put_kbuf(req, req->kbuf);
- }
+@@ -471,6 +471,7 @@ struct io_uring_task {
+ 	struct callback_head	task_work;
+ 	bool			task_running;
+ 	unsigned int		nr_ctx;
++	int			factor;
+ };
  
-+static void handle_prior_tw_list(struct io_wq_work_node *node)
-+{
-+	struct io_kiocb *req = container_of(node, struct io_kiocb, io_task_work.node);
-+	struct io_ring_ctx *ctx = req->ctx;
-+
-+	spin_lock(&ctx->completion_lock);
-+	do {
-+		struct io_wq_work_node *next = node->next;
-+		struct io_kiocb *req = container_of(node, struct io_kiocb,
-+						    io_task_work.node);
-+
-+		__io_req_complete_post(req, req->result, io_put_rw_kbuf(req));
-+		node = next;
-+	} while (node);
-+
-+	io_commit_cqring(ctx);
-+	spin_unlock(&ctx->completion_lock);
-+	io_cqring_ev_posted(ctx);
-+}
-+
- static void handle_tw_list(struct io_wq_work_node *node, struct io_ring_ctx **ctx, bool *locked)
- {
- 	do {
-@@ -2193,25 +2213,34 @@ static void tctx_task_work(struct callback_head *cb)
- 						  task_work);
- 
- 	while (1) {
--		struct io_wq_work_node *node;
--		struct io_wq_work_list *merged_list;
-+		unsigned int nr_ctx;
-+		struct io_wq_work_node *node1, *node2;
- 
- 		if (!tctx->prior_task_list.first &&
- 		    !tctx->task_list.first && locked)
- 			io_submit_flush_completions(ctx);
- 
- 		spin_lock_irq(&tctx->task_lock);
--		merged_list = wq_list_merge(&tctx->prior_task_list, &tctx->task_list);
--		node = merged_list->first;
-+		node1 = tctx->prior_task_list.first;
-+		node2 = tctx->task_list.first;
+ /*
+@@ -2225,6 +2226,7 @@ static void tctx_task_work(struct callback_head *cb)
+ 		node2 = tctx->task_list.first;
  		INIT_WQ_LIST(&tctx->task_list);
  		INIT_WQ_LIST(&tctx->prior_task_list);
--		if (!node)
-+		nr_ctx = tctx->nr_ctx;
-+		if (!node1 && !node2)
++		tctx->factor = 0;
+ 		nr_ctx = tctx->nr_ctx;
+ 		if (!node1 && !node2)
  			tctx->task_running = false;
- 		spin_unlock_irq(&tctx->task_lock);
--		if (!node)
-+		if (!node1 && !node2)
- 			break;
+@@ -2247,6 +2249,7 @@ static void tctx_task_work(struct callback_head *cb)
+ 	ctx_flush_and_put(ctx, &locked);
+ }
  
--		handle_tw_list(node, &ctx, &locked);
-+		if (node1) {
-+			if (nr_ctx == 1)
-+				handle_prior_tw_list(node1);
-+			else
-+				handle_tw_list(node1, &ctx, &locked);
-+		}
-+
-+		if (node2)
-+			handle_tw_list(node2, &ctx, &locked);
- 		cond_resched();
- 	}
++#define MAX_PRIORITY_TW_RATIO 3
+ static void io_req_task_work_add(struct io_kiocb *req, bool priority)
+ {
+ 	struct task_struct *tsk = req->task;
+@@ -2260,10 +2263,13 @@ static void io_req_task_work_add(struct io_kiocb *req, bool priority)
+ 	WARN_ON_ONCE(!tctx);
  
+ 	spin_lock_irqsave(&tctx->task_lock, flags);
+-	if (priority)
++	if (priority && tctx->factor >= 0) {
+ 		wq_list_add_tail(&req->io_task_work.node, &tctx->prior_task_list);
+-	else
++		tctx->factor += (1 - MAX_PRIORITY_TW_RATIO);
++	} else {
+ 		wq_list_add_tail(&req->io_task_work.node, &tctx->task_list);
++		tctx->factor++;
++	}
+ 	running = tctx->task_running;
+ 	if (!running)
+ 		tctx->task_running = true;
 -- 
 2.24.4
 

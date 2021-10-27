@@ -2,130 +2,109 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 84EBF43BEFC
-	for <lists+io-uring@lfdr.de>; Wed, 27 Oct 2021 03:27:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D611F43C379
+	for <lists+io-uring@lfdr.de>; Wed, 27 Oct 2021 09:06:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237460AbhJ0B3c (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 26 Oct 2021 21:29:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35994 "EHLO
+        id S238350AbhJ0HI3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 27 Oct 2021 03:08:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237208AbhJ0B32 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 26 Oct 2021 21:29:28 -0400
-Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82D10C061570;
-        Tue, 26 Oct 2021 18:27:03 -0700 (PDT)
-Received: by mail-pf1-x430.google.com with SMTP id o133so1148410pfg.7;
-        Tue, 26 Oct 2021 18:27:03 -0700 (PDT)
+        with ESMTP id S231656AbhJ0HI3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 27 Oct 2021 03:08:29 -0400
+Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45819C061570;
+        Wed, 27 Oct 2021 00:06:04 -0700 (PDT)
+Received: by mail-pf1-x435.google.com with SMTP id m14so1830898pfc.9;
+        Wed, 27 Oct 2021 00:06:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=in2IT+3mSwE8tp25ZK3anihHaZVwSuOsI+bIaMO5RWM=;
-        b=QgwCsKNtgEbQshdKjClqHboymG6L1itQ+OUIpXlSaWZDuRpUTQxUJu5JvOzPts6ura
-         RbV2ZDA7EocIQX7dZq92TXpF18NaP4cmDdLsGWvf11nUe8bbLc5Z+IL8EROxyr/ENd4e
-         97bAmGNq+7eAXqdhcD0y01AhG02SggX1sDNHDNXcibnR7RF1Q4dUco/tf9KYlpfAwmXG
-         YZts9w7POOSv9lxm51MVPyhwZL/Pzw89gedV14Ynktos/8STUSUHPG2fzWcMlwvaAZQ2
-         c/g5iDWkq6MuIsHvENndje78ijSQ/5GvrfEo/llJdFgc0mOLHtJks/67mMEdSJk29R8h
-         c9XA==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=u5MIYd+O5hYq/ovFrZ8EB6uv6EHBwk1t2oUT+vqCmdk=;
+        b=PKKiAviweRIkeGOXg+k99xLQYU0hND1oyvi/fu609NPXLjKQA9WeeWm1FPvARbPZjV
+         HBiWY4HtSokG90jZcD7uSOIFen53hG6zyg7tJpMlcqQWbQmHu+KGmFRpqPEzxSs+k352
+         7QrkbzYbHQgxNlQtb/cGajXtsYvno8yvaRaamGtOncoN0JVz62zxY7aBESSDPm4Ubpnj
+         eoNVf+GBbghhIOO0tQHGbLSzv0iT7MtlKECa6JvIrGSZr93OulENxjbjwWThC9NZylSX
+         2Br5WUupaHXhnljonHfbC6ZCRss3Zf07XEXpqSi8quxiNhnDHJN8NCXM/+IMof62QP1+
+         Xd5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=in2IT+3mSwE8tp25ZK3anihHaZVwSuOsI+bIaMO5RWM=;
-        b=WO31qT5Y0kD7nIxncH/Lm/0whYvnezWtt+XHmEwW7U4uR9RMYo7NfEw3jqBmC0fwx9
-         TIkOECL9t60E8+oVKEDcw3SzvmSLGj4Cvxx8ZDjWFWtzIRnLAbnGZlhpWB8zJVoAYxWX
-         m/7JwIdHxCdDeGTmJ7Re/DgYH5Q+s78WcWhvJyh8bJtQIW09nIKWpA/6lncwemuyJFbi
-         7qip9oH2cZs/0C4x+o88KRT3zkO4EKIYE50fp0ycP9im8bVCkr/0XFi2LoxLawHYnlbl
-         SaPzxlTJ0dZwyIf9VWp71KbInLbhdqDSA6bP3LpQN89AinfjDlisVE8utEK+gROnmPUT
-         52/w==
-X-Gm-Message-State: AOAM532GmL+PYZgvePxvoOAUhYWopq3ROGTJCx1eA+2WPF6fgBNDNfkw
-        rlzXZp+oPthcLGqREdv2i1wEYFyXYyCqYRm4YA==
-X-Google-Smtp-Source: ABdhPJzlRP9hUvJlwtoBlh/pQQz3JIxQ9fXjEYglXSMoVSEGnutcu8Qqc1Lg2FtstfcioORxr/UUkCP36zPWG3+ZnRM=
-X-Received: by 2002:a05:6a00:1242:b0:44c:2025:29e3 with SMTP id
- u2-20020a056a00124200b0044c202529e3mr29848282pfi.59.1635298022875; Tue, 26
- Oct 2021 18:27:02 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=u5MIYd+O5hYq/ovFrZ8EB6uv6EHBwk1t2oUT+vqCmdk=;
+        b=2coLuJ/UETliDMr+hxoZ+3SpdYztgZYRUxjk33OBDC9PfENgXIqb1KdGeU1FzC1aff
+         EJOT1MWt9tzQriw1InxUq9xESLIiyMqBg5fPpwGZoY4koy0i9impg9aOBMi5/NNiFuBv
+         n3eErQF7G2drbG5J/2TtDLqyvhIeWI4lZIxkvifuuPp3Yl/0qEEKaNTrQ/CULKPfG/xI
+         fkbq8xxlzvnWOYT/W7QiPo5+JgVY4+tWqDXOBwY8gPI4KWNXJEtrq39Xv37xtdI4pvgU
+         IWfWgBeGhaXqkA5mlhQXpwQWofppgwHaYHL44plNOv8pzEFE/lWQflF42ULc9JmUmXZ+
+         I5Sg==
+X-Gm-Message-State: AOAM530OXocCdpm3FhIga8d+eM0ysCe1LVQTVhhe+AIrsRKk9mKR8/Sb
+        9FuI+0B1B7lkmuAfsjE59vVM+W5PzfX3pw==
+X-Google-Smtp-Source: ABdhPJybHXPnSmGSka+1MoR/ets4gn1VHoOZag3l2n7NzsVqdTwcF4M/3GxCCZmmvvLX507ILpamrg==
+X-Received: by 2002:a63:e446:: with SMTP id i6mr23180230pgk.288.1635318363356;
+        Wed, 27 Oct 2021 00:06:03 -0700 (PDT)
+Received: from [172.18.2.138] ([137.59.101.13])
+        by smtp.gmail.com with ESMTPSA id a8sm7572790pgd.8.2021.10.27.00.06.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Oct 2021 00:06:02 -0700 (PDT)
+Subject: Re: [PATCH] io-wq: Remove unnecessary rcu_read_lock/unlock() in raw
+ spinlock critical section
+To:     Jens Axboe <axboe@kernel.dk>,
+        Muchun Song <songmuchun@bytedance.com>
+Cc:     asml.silence@gmail.com, io-uring@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20211026032304.30323-1-qiang.zhang1211@gmail.com>
+ <CAMZfGtUXq=nQyijktRaP7xp=sAmVCryTjU4Jo5Z=ufed8arnKQ@mail.gmail.com>
+ <0efbce2d-1f63-82a7-6479-d8ef062aa90d@kernel.dk>
+From:   Zqiang <qiang.zhang1211@gmail.com>
+Message-ID: <c4bcf2fa-b72a-5e3a-efe9-544457a9816a@gmail.com>
+Date:   Wed, 27 Oct 2021 15:06:00 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-From:   Hao Sun <sunhao.th@gmail.com>
-Date:   Wed, 27 Oct 2021 09:26:49 +0800
-Message-ID: <CACkBjsY6iQ7JObmRiU+ztLayVoLi7X42=VFT38aC3Agj_KLkxw@mail.gmail.com>
-Subject: WARNING in io_ring_exit_work
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <0efbce2d-1f63-82a7-6479-d8ef062aa90d@kernel.dk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
 
-When using Healer to fuzz the latest Linux kernel, the following crash
-was triggered.
+On 2021/10/26 下午10:47, Jens Axboe wrote:
+> On 10/26/21 4:32 AM, Muchun Song wrote:
+>> On Tue, Oct 26, 2021 at 11:23 AM Zqiang <qiang.zhang1211@gmail.com> wrote:
+>>> Due to raw_spin_lock/unlock() contains preempt_disable/enable() action,
+>>> already regarded as RCU critical region, so remove unnecessary
+>>> rcu_read_lock/unlock().
+>>>
+>>> Signed-off-by: Zqiang <qiang.zhang1211@gmail.com>
+>>> ---
+>>>   fs/io-wq.c | 2 --
+>>>   1 file changed, 2 deletions(-)
+>>>
+>>> diff --git a/fs/io-wq.c b/fs/io-wq.c
+>>> index cd88602e2e81..401be005d089 100644
+>>> --- a/fs/io-wq.c
+>>> +++ b/fs/io-wq.c
+>>> @@ -855,9 +855,7 @@ static void io_wqe_enqueue(struct io_wqe *wqe, struct io_wq_work *work)
+>>>          io_wqe_insert_work(wqe, work);
+>>>          clear_bit(IO_ACCT_STALLED_BIT, &acct->flags);
+>>>
+>>> -       rcu_read_lock();
+>> Add a comment like:
+>> /* spin_lock can serve as an RCU read-side critical section. */
+> Note that it's a raw spinlock. Honestly I'd probably prefer if we just leave
+> it as-is. There are plans to improve the io-wq locking, and a rcu lock/unlock
+> is pretty cheap.
+>
+> That said, if resend with a comment fully detailing why it's OK currently,
+> then I'd be fine with that as well.
+>
+Thanks Jens Axboe, Muchun
 
-HEAD commit: 519d81956ee2 Linux 5.15-rc6
-git tree: upstream
-console output:
-https://drive.google.com/file/d/1d_-yYvTUew4bWhNCFt9Fs2zdpijQwnwd/view?usp=sharing
-kernel config: https://drive.google.com/file/d/12PUnxIM1EPBgW4ZJmI7WJBRaY1lA83an/view?usp=sharing
+  I  will  add a comment fully detailing and resend.
 
-Sorry, I don't have a reproducer for this crash, hope the symbolized
-report can help.
-If you fix this issue, please add the following tag to the commit:
-Reported-by: Hao Sun <sunhao.th@gmail.com>
 
-------------[ cut here ]------------
-WARNING: CPU: 2 PID: 16505 at fs/io_uring.c:9413
-io_ring_exit_work+0x23e/0x1550 fs/io_uring.c:9413
-Modules linked in:
-CPU: 2 PID: 16505 Comm: kworker/u9:6 Not tainted 5.15.0-rc6 #4
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
-1.13.0-1ubuntu1.1 04/01/2014
-Workqueue: events_unbound io_ring_exit_work
-RIP: 0010:io_ring_exit_work+0x23e/0x1550 fs/io_uring.c:9413
-Code: 00 0f 85 67 0f 00 00 48 8b 05 ce b4 7c 09 31 ff 4c 8b 64 24 40
-49 29 c4 4c 89 e6 e8 7c 23 92 ff 4d 85 e4 79 0d e8 f2 21 92 ff <0f> 0b
-41 bd 70 17 00 00 e8 e5 21 92 ff 4c 89 ee 4c 89 ff e8 6a 42
-RSP: 0018:ffffc90001fafbb0 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffff88802fd22000 RCX: ffff8880144ab900
-RDX: 0000000000000000 RSI: ffff8880144ab900 RDI: 0000000000000002
-RBP: ffffc90001fafd28 R08: ffffffff81e43cce R09: 0000000000000000
-R10: 0000000000000007 R11: ffffed1005fa44c0 R12: fffffffffffffffc
-R13: 0000000000000005 R14: dffffc0000000000 R15: ffff88802fd22920
-FS:  0000000000000000(0000) GS:ffff888063f00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f3bcc12b000 CR3: 000000000b68e000 CR4: 0000000000350ee0
-Call Trace:
- process_one_work+0x9df/0x16d0 kernel/workqueue.c:2297
- worker_thread+0x90/0xed0 kernel/workqueue.c:2444
- kthread+0x3e5/0x4d0 kernel/kthread.c:319
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295
-Kernel panic - not syncing: panic_on_warn set ...
-CPU: 2 PID: 16505 Comm: kworker/u9:6 Not tainted 5.15.0-rc6 #4
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
-1.13.0-1ubuntu1.1 04/01/2014
-Workqueue: events_unbound io_ring_exit_work
-Call Trace:
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:106
- panic+0x2b0/0x6dd kernel/panic.c:232
- __warn.cold+0x20/0x2f kernel/panic.c:603
- report_bug+0x273/0x300 lib/bug.c:199
- handle_bug+0x3c/0x60 arch/x86/kernel/traps.c:239
- exc_invalid_op+0x14/0x40 arch/x86/kernel/traps.c:259
- asm_exc_invalid_op+0x12/0x20 arch/x86/include/asm/idtentry.h:566
-RIP: 0010:io_ring_exit_work+0x23e/0x1550 fs/io_uring.c:9413
-Code: 00 0f 85 67 0f 00 00 48 8b 05 ce b4 7c 09 31 ff 4c 8b 64 24 40
-49 29 c4 4c 89 e6 e8 7c 23 92 ff 4d 85 e4 79 0d e8 f2 21 92 ff <0f> 0b
-41 bd 70 17 00 00 e8 e5 21 92 ff 4c 89 ee 4c 89 ff e8 6a 42
-RSP: 0018:ffffc90001fafbb0 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffff88802fd22000 RCX: ffff8880144ab900
-RDX: 0000000000000000 RSI: ffff8880144ab900 RDI: 0000000000000002
-RBP: ffffc90001fafd28 R08: ffffffff81e43cce R09: 0000000000000000
-R10: 0000000000000007 R11: ffffed1005fa44c0 R12: fffffffffffffffc
-R13: 0000000000000005 R14: dffffc0000000000 R15: ffff88802fd22920
- process_one_work+0x9df/0x16d0 kernel/workqueue.c:2297
- worker_thread+0x90/0xed0 kernel/workqueue.c:2444
- kthread+0x3e5/0x4d0 kernel/kthread.c:319
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295
-Dumping ftrace buffer:
-   (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 1 seconds..
+

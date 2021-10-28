@@ -2,178 +2,243 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EB6343E8D7
-	for <lists+io-uring@lfdr.de>; Thu, 28 Oct 2021 21:11:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE29443E8F7
+	for <lists+io-uring@lfdr.de>; Thu, 28 Oct 2021 21:23:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230466AbhJ1TNg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 28 Oct 2021 15:13:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40180 "EHLO
+        id S230293AbhJ1T0X (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 28 Oct 2021 15:26:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43040 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230460AbhJ1TNg (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 28 Oct 2021 15:13:36 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96C68C061570
-        for <io-uring@vger.kernel.org>; Thu, 28 Oct 2021 12:11:08 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id o14so11909973wra.12
-        for <io-uring@vger.kernel.org>; Thu, 28 Oct 2021 12:11:08 -0700 (PDT)
+        with ESMTP id S230104AbhJ1T0X (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 28 Oct 2021 15:26:23 -0400
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA85FC061570
+        for <io-uring@vger.kernel.org>; Thu, 28 Oct 2021 12:23:55 -0700 (PDT)
+Received: by mail-wr1-x42b.google.com with SMTP id s13so4854443wrb.3
+        for <io-uring@vger.kernel.org>; Thu, 28 Oct 2021 12:23:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=y9vKIjGpAFPuGhwPQwu2qin3Gh+NZAHNW9NzQOg6/nc=;
-        b=iOhF6gFfSSujSLyZSIJsuLJqr1P0y7/I6LX41bU28dKXX45vAiZBj9k0XMq4sZsE/I
-         Nu7iRRVbEZEGZ0vIiUcFfgQuAsSBWqNeeoTRrrzfyH0MAyXTDTgmhOsHMzop/bO5bvO7
-         gbRUtP8h5yIcItuHLRc1xeaUROtDXJ+2UtSCKMMqxeCt9lQHEdgihys3m9DzwM/vQC8R
-         CjIO4O5u9l0ry+s50fXVc13O7TeBGH6a/VcteGPwTEjDDVxambQM76NJ/pbrLGd8goW6
-         Qa0FqMSAlw0vtOAQmKpUIudrciPoC14qwo62Luwc1Ythm5wfht++b/fDYAKOFSpLnGMp
-         Y7Mw==
+        bh=ddW+EFTB/raTNRLgh94MNFOvzi1MH/5NhYUZ1Llhiag=;
+        b=d5T1X9ZqScF0twKG+Ydg+QlK6ddxtXQEtLykxgAoj2/6p3/W/BLKSaWHcOUSyJJbKn
+         GQJYQLgQp0qHtyTOvPUmLXRjPhAtY7w+lJg8rzgWjNI346ff7XiRoLIRczN9PD1BTMLh
+         gYZ1/QyM9vk1hHldwL8bZ/0I0zGMRzeY/FyOiwCfs/ttUrZFsNUF/X2lDgs36mEGZjsD
+         jGtgc6ICD5aFTSas+GOcIZPnFoxgLuknSfSs/5Fdnfy7vTttGreqSXxY/ISj16GgstaB
+         cvwuBw8j6UVXdHwBBSY4aMmJEaVULbTRtt3hjt98B3p+tGiLG26uj7W2mkH7d3z7J5in
+         CIaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=y9vKIjGpAFPuGhwPQwu2qin3Gh+NZAHNW9NzQOg6/nc=;
-        b=JoFb+SZXpXRr7TTemXJ2UhniHUQzPUnEPRPkIlLcdFXZDKvJ/vI+bOGTbWAR+/QX0B
-         wrE0Pbs55kVe+cT53fsryPMoUvms6+d4eC8ZpRwmJUS+k9+urdynNCJit15XeHT5B/+S
-         tVW7Hf7cH2EfhLIw4NQHBG7HumDDNKDdHeleHECcPXtlhPhDSmjcBh5AkZGsjsTVqKMM
-         5Gf6vPYuOSJV+px4JsgYXOzHb+wloOFBQmWKQzPjK/OKSbKHFGzuG3YhtSpvoLV0f02t
-         dyMSqdrrR2JiugZEJjRKK5LHbyMhbgH04Pb53rxWxhMAMrK8HiVhEys1/p8ztvb4aa5k
-         Bvew==
-X-Gm-Message-State: AOAM533LIwO+Sq8TMXLLLKWwGzMcH7lFev6E4tuQh1afdJnge7MMaMSE
-        XcQ/7IMOUlXLatUy1XISlaySgpPQcTw=
-X-Google-Smtp-Source: ABdhPJwKIKEsD1LUk9ZlJu0CjoJfuMLIMr+9RXpFbsb0IpOhL9LTv24aExeEOjRO7usiFRjidw/O2w==
-X-Received: by 2002:adf:da44:: with SMTP id r4mr8310159wrl.180.1635448267212;
-        Thu, 28 Oct 2021 12:11:07 -0700 (PDT)
+        bh=ddW+EFTB/raTNRLgh94MNFOvzi1MH/5NhYUZ1Llhiag=;
+        b=y4xoUrHpB5+E5b1eOMVfXuPKmhdK2jJN+31j2RIFndzoe0OkfcfYne1ul7YzCD7f2d
+         PGuXfS4AQLYM1nOiKB1O3oryOsaFDHTxbpLraI0xv+mYQOKViHRy8s0ZkmDG3ikSL1DG
+         ffc1W0AWH79zgvYPQHvJKtb3c8KDIzOz51CpdXqkRKPBSN6I9p5nnk9dqIbf9oc7b74n
+         QSTOYssgl4K74ITTqYQZ/oLDF00oXVQVHcQMZ8Ad0DFygvZTDQ/oLUtPLgxdFzR+pXSp
+         JBgZDCqzev2d9vMOGCI/43DXxQiltC5m+II6bs3sexQ/q647OK4rPUXP/if8E2rMWEGD
+         b9lA==
+X-Gm-Message-State: AOAM5330RvBJiUh/+XQoN27sEkZLoPLEIBKfAsQ2CInhPazWHIuYLfTR
+        rejfJ8RBRa/djOjUzxfI8mc=
+X-Google-Smtp-Source: ABdhPJxs5o+A6Ol4KpvEx/w+wO/XUCDsyJdJJQSqVSHrNEedmpXu4cajtXlFBbOpErb596ZmxxVgpQ==
+X-Received: by 2002:a05:6000:187:: with SMTP id p7mr8607776wrx.404.1635449034429;
+        Thu, 28 Oct 2021 12:23:54 -0700 (PDT)
 Received: from [192.168.8.198] ([148.252.129.16])
-        by smtp.gmail.com with ESMTPSA id r11sm3580200wrt.42.2021.10.28.12.11.06
+        by smtp.gmail.com with ESMTPSA id t12sm3471118wmq.44.2021.10.28.12.23.53
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Oct 2021 12:11:06 -0700 (PDT)
-Message-ID: <d7bbf237-9c91-c971-246d-46b91e4c89a3@gmail.com>
-Date:   Thu, 28 Oct 2021 20:08:58 +0100
+        Thu, 28 Oct 2021 12:23:54 -0700 (PDT)
+Message-ID: <7dd1823d-0324-36d1-2562-362f2ef0399b@gmail.com>
+Date:   Thu, 28 Oct 2021 20:21:44 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.2.0
-Subject: Re: [PATCH for-5.16 v3 0/8] task work optimization
+Subject: Re: [PATCH v3 2/3] io_uring: reduce frequent add_wait_queue()
+ overhead for multi-shot poll request
 Content-Language: en-US
-To:     Hao Xu <haoxu@linux.alibaba.com>, Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <20211027140216.20008-1-haoxu@linux.alibaba.com>
- <da85ab25-a6c6-f6a7-e2d5-d9a13c4dcf2f@gmail.com>
- <7a528ce1-a44e-3ee7-095c-1a92528ec441@linux.alibaba.com>
- <a1acf557-e2d6-8beb-0108-f38e824e16ba@linux.alibaba.com>
+To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
+        io-uring@vger.kernel.org
+Cc:     axboe@kernel.dk
+References: <20211025053849.3139-1-xiaoguang.wang@linux.alibaba.com>
+ <20211025053849.3139-3-xiaoguang.wang@linux.alibaba.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <a1acf557-e2d6-8beb-0108-f38e824e16ba@linux.alibaba.com>
+In-Reply-To: <20211025053849.3139-3-xiaoguang.wang@linux.alibaba.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 10/28/21 12:46, Hao Xu wrote:
-> 在 2021/10/28 下午2:07, Hao Xu 写道:
->> 在 2021/10/28 上午2:15, Pavel Begunkov 写道:
->>> On 10/27/21 15:02, Hao Xu wrote:
->>>> Tested this patchset by manually replace __io_queue_sqe() in
->>>> io_queue_sqe() by io_req_task_queue() to construct 'heavy' task works.
->>>> Then test with fio:
->>>
->>> If submissions and completions are done by the same task it doesn't
->>> really matter in which order they're executed because the task won't
->>> get back to userspace execution to see CQEs until tw returns.
->> It may matter, it depends on the time cost of submittion
->> and the DMA IO time. Pick up sqpoll mode as example,
->> we submit 10 reqs:
->> t1          io_submit_sqes
->>              -->io_req_task_queue
->> t2          io_task_work_run
->> we actually do the submittion in t2,  but if the workload
->> is big engough, the 'irq completion TW' will be inserted
->> to the TW list after t2 is fully done, then those
->> 'irq completion TW' will be delayed to the next round.
->> With this patchset, we can handle them first.
->>> Furthermore, it even might be worse because the earlier you submit
->>> the better with everything else equal.
->>>
->>> IIRC, that's how it's with fio, right? If so, you may get better
->>> numbers with a test that does submissions and completions in
->>> different threads.
->> Because of the completion cache, I doubt if it works.
->> For single ctx, it seems we always update the cqring
->> pointer after all the TWs in the list are done.
-> I suddenly realized sqpoll mode does submissions and completions
-> in different threads, and in this situation this patchset always
-> first commit_cqring() after handling TWs in priority list.
-> So this is the right test, do I miss something?
+On 10/25/21 06:38, Xiaoguang Wang wrote:
+> Run echo_server to evaluate io_uring's multi-shot poll performance, perf
+> shows that add_wait_queue() has obvious overhead. Intruduce a new state
+> 'active' in io_poll_iocb to indicate whether io_poll_wake() should queue
+> a task_work. This new state will be set to true initially, be set to false
+> when starting to queue a task work, and be set to true again when a poll
+> cqe has been committed. One concern is that this method may lost waken-up
+> event, but seems it's ok.
+> 
+>    io_poll_wake                io_poll_task_func
+> t1                       |
+> t2                       |    WRITE_ONCE(req->poll.active, true);
+> t3                       |
+> t4                       |    io_commit_cqring(ctx);
+> t5                       |
+> t6                       |
+> 
+> If waken-up events happens before or at t4, it's ok, user app will always
+> see a cqe. If waken-up events happens after t4 and IIUC, io_poll_wake()
+> will see the new req->poll.active value by using READ_ONCE().
+> 
+> Echo_server codes can be cloned from:
+> https://codeup.openanolis.cn/codeup/storage/io_uring-echo-server.git,
+> branch is xiaoguangwang/io_uring_multishot.
+> 
+> Without this patch, the tps in our test environment is 284116, with
+> this patch, the tps is 287832, about 1.3% reqs improvement, which
+> is indeed in accord with the saved add_wait_queue() cost.
+> 
+> Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+> ---
+>   fs/io_uring.c | 57 +++++++++++++++++++++++++++++++++------------------------
+>   1 file changed, 33 insertions(+), 24 deletions(-)
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 18af9bb9a4bc..e4c779dac953 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -481,6 +481,7 @@ struct io_poll_iocb {
+>   	__poll_t			events;
+>   	bool				done;
+>   	bool				canceled;
+> +	bool				active;
+>   	struct wait_queue_entry		wait;
+>   };
+>   
+> @@ -5233,8 +5234,6 @@ static inline int __io_async_wake(struct io_kiocb *req, struct io_poll_iocb *pol
+>   {
+>   	trace_io_uring_task_add(req->ctx, req->opcode, req->user_data, mask);
+>   
+> -	list_del_init(&poll->wait.entry);
+> -
 
-Yep, should be it. So the scope of the feature is SQPOLL or
-completion/submission with different tasks.
+As I mentioned to Hao some time ago, we can't allow this function or in
+particular io_req_task_work_add() to happen twice before the first
+task work got executed, they use the same field in io_kiocb and those
+will corrupt the tw list.
 
->>>
->>> Also interesting to find an explanation for you numbers assuming
->> The reason may be what I said above, but I don't have a
->> strict proof now.
->>> they're stable. 7/8 batching? How often it does it go this path?
->>> If only one task submits requests it should already be covered
->>> with existing batching.
->> the problem of the existing batch is(given there is only
->> one ctx):
->> 1. we flush it after all the TWs done
->> 2. we batch them if we have uring lock.
->> the new batch is:
->> 1. don't care about uring lock
->> 2. we can flush the completions in the priority list
->>     in advance.(which means userland can see it earlier.)
->>>
->>>
->>>> ioengine=io_uring
->>>> sqpoll=1
->>>> thread=1
->>>> bs=4k
->>>> direct=1
->>>> rw=randread
->>>> time_based=1
->>>> runtime=600
->>>> randrepeat=0
->>>> group_reporting=1
->>>> filename=/dev/nvme0n1
->>>>
->>>> 2/8 set unlimited priority_task_list, 8/8 set a limitation of
->>>> 1/3 * (len_prority_list + len_normal_list), data below:
->>>>     depth     no 8/8   include 8/8      before this patchset
->>>>      1        7.05         7.82              7.10
->>>>      2        8.47         8.48              8.60
->>>>      4        10.42        9.99              10.42
->>>>      8        13.78        13.13             13.22
->>>>      16       27.41        27.92             24.33
->>>>      32       49.40        46.16             53.08
->>>>      64       102.53       105.68            103.36
->>>>      128      196.98       202.76            205.61
->>>>      256      372.99       375.61            414.88
->>>>      512      747.23       763.95            791.30
->>>>      1024     1472.59      1527.46           1538.72
->>>>      2048     3153.49      3129.22           3329.01
->>>>      4096     6387.86      5899.74           6682.54
->>>>      8192     12150.25     12433.59          12774.14
->>>>      16384    23085.58     24342.84          26044.71
->>>>
->>>> It seems 2/8 is better, haven't tried other choices other than 1/3,
->>>> still put 8/8 here for people's further thoughts.
->>>>
->>>> Hao Xu (8):
->>>>    io-wq: add helper to merge two wq_lists
->>>>    io_uring: add a priority tw list for irq completion work
->>>>    io_uring: add helper for task work execution code
->>>>    io_uring: split io_req_complete_post() and add a helper
->>>>    io_uring: move up io_put_kbuf() and io_put_rw_kbuf()
->>>>    io_uring: add nr_ctx to record the number of ctx in a task
->>>>    io_uring: batch completion in prior_task_list
->>>>    io_uring: add limited number of TWs to priority task list
->>>>
->>>>   fs/io-wq.h    |  21 +++++++
->>>>   fs/io_uring.c | 168 +++++++++++++++++++++++++++++++++++---------------
->>>>   2 files changed, 138 insertions(+), 51 deletions(-)
->>>>
->>>
+Looks that's what can happen here.
+
+>   	req->result = mask;
+>   	req->io_task_work.func = func;
+>   
+> @@ -5265,7 +5264,10 @@ static bool io_poll_rewait(struct io_kiocb *req, struct io_poll_iocb *poll)
+>   
+>   	spin_lock(&ctx->completion_lock);
+>   	if (!req->result && !READ_ONCE(poll->canceled)) {
+> -		add_wait_queue(poll->head, &poll->wait);
+> +		if (req->opcode == IORING_OP_POLL_ADD)
+> +			WRITE_ONCE(poll->active, true);
+> +		else
+> +			add_wait_queue(poll->head, &poll->wait);
+>   		return true;
+>   	}
+>   
+> @@ -5331,6 +5333,26 @@ static bool __io_poll_complete(struct io_kiocb *req, __poll_t mask)
+>   	return !(flags & IORING_CQE_F_MORE);
+>   }
+>   
+> +static bool __io_poll_remove_one(struct io_kiocb *req,
+> +				 struct io_poll_iocb *poll, bool do_cancel)
+> +	__must_hold(&req->ctx->completion_lock)
+> +{
+> +	bool do_complete = false;
+> +
+> +	if (!poll->head)
+> +		return false;
+> +	spin_lock_irq(&poll->head->lock);
+> +	if (do_cancel)
+> +		WRITE_ONCE(poll->canceled, true);
+> +	if (!list_empty(&poll->wait.entry)) {
+> +		list_del_init(&poll->wait.entry);
+> +		do_complete = true;
+> +	}
+> +	spin_unlock_irq(&poll->head->lock);
+> +	hash_del(&req->hash_node);
+> +	return do_complete;
+> +}
+> +
+>   static void io_poll_task_func(struct io_kiocb *req, bool *locked)
+>   {
+>   	struct io_ring_ctx *ctx = req->ctx;
+> @@ -5348,11 +5370,12 @@ static void io_poll_task_func(struct io_kiocb *req, bool *locked)
+>   		done = __io_poll_complete(req, req->result);
+>   		if (done) {
+>   			io_poll_remove_double(req);
+> +			__io_poll_remove_one(req, io_poll_get_single(req), true);
+>   			hash_del(&req->hash_node);
+>   			req->poll.done = true;
+>   		} else {
+>   			req->result = 0;
+> -			add_wait_queue(req->poll.head, &req->poll.wait);
+> +			WRITE_ONCE(req->poll.active, true);
+>   		}
+>   		io_commit_cqring(ctx);
+>   		spin_unlock(&ctx->completion_lock);
+> @@ -5407,6 +5430,7 @@ static void io_init_poll_iocb(struct io_poll_iocb *poll, __poll_t events,
+>   	poll->head = NULL;
+>   	poll->done = false;
+>   	poll->canceled = false;
+> +	poll->active = true;
+>   #define IO_POLL_UNMASK	(EPOLLERR|EPOLLHUP|EPOLLNVAL|EPOLLRDHUP)
+>   	/* mask in events that we always want/need */
+>   	poll->events = events | IO_POLL_UNMASK;
+> @@ -5513,6 +5537,7 @@ static int io_async_wake(struct wait_queue_entry *wait, unsigned mode, int sync,
+>   	if (mask && !(mask & poll->events))
+>   		return 0;
+>   
+> +	list_del_init(&poll->wait.entry);
+>   	return __io_async_wake(req, poll, mask, io_async_task_func);
+>   }
+>   
+> @@ -5623,26 +5648,6 @@ static int io_arm_poll_handler(struct io_kiocb *req)
+>   	return IO_APOLL_OK;
+>   }
+>   
+> -static bool __io_poll_remove_one(struct io_kiocb *req,
+> -				 struct io_poll_iocb *poll, bool do_cancel)
+> -	__must_hold(&req->ctx->completion_lock)
+> -{
+> -	bool do_complete = false;
+> -
+> -	if (!poll->head)
+> -		return false;
+> -	spin_lock_irq(&poll->head->lock);
+> -	if (do_cancel)
+> -		WRITE_ONCE(poll->canceled, true);
+> -	if (!list_empty(&poll->wait.entry)) {
+> -		list_del_init(&poll->wait.entry);
+> -		do_complete = true;
+> -	}
+> -	spin_unlock_irq(&poll->head->lock);
+> -	hash_del(&req->hash_node);
+> -	return do_complete;
+> -}
+> -
+>   static bool io_poll_remove_one(struct io_kiocb *req)
+>   	__must_hold(&req->ctx->completion_lock)
+>   {
+> @@ -5779,6 +5784,10 @@ static int io_poll_wake(struct wait_queue_entry *wait, unsigned mode, int sync,
+>   	if (mask && !(mask & poll->events))
+>   		return 0;
+>   
+> +	if (!READ_ONCE(poll->active))
+> +		return 0;
+> +	WRITE_ONCE(poll->active, false);
+> +
+>   	return __io_async_wake(req, poll, mask, io_poll_task_func);
+>   }
+>   
 > 
 
 -- 

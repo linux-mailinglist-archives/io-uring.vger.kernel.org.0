@@ -2,44 +2,44 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D4C5543E92F
-	for <lists+io-uring@lfdr.de>; Thu, 28 Oct 2021 22:01:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE55643E92E
+	for <lists+io-uring@lfdr.de>; Thu, 28 Oct 2021 22:01:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230323AbhJ1UDd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        id S230424AbhJ1UDd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
         Thu, 28 Oct 2021 16:03:33 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:31605 "EHLO
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:43651 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230460AbhJ1UDb (ORCPT
+        by vger.kernel.org with ESMTP id S230323AbhJ1UDb (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Thu, 28 Oct 2021 16:03:31 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1635451262;
+        s=mimecast20190719; t=1635451264;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=vYY0Sn5F1kczc7fQXEt/YWi2gSzo4ORIiG4eYh27afI=;
-        b=LC+9ubIEVWkY0xPFNIyTK32EOmxgra8eVhNiMczhsgMOAfdf3K9QNLzsGV0elon+P5LqMJ
-        qGqPsQgVrjfijW5DQXhfyJNVU7Nbr4w0bid4SwPZp0gMxxu166X/7ZHHO/UwabQbUVhAe4
-        0H8+DhYAV2ipluhC1Oc4rJGL39dB+lc=
+        bh=a3N07SdqyFGpFYdIk2c0ScWTh+x70cCVMOCVAmGSQe8=;
+        b=e5hbiXKi23JFS035kFNtiMyYGQKdkb31YeuET6zqMv9S4CPJpgGfytIYtP+iVhO5yrCz9x
+        ZZv4DoX41+mkao8ei60m7PCExvudnQPHTT/tO42LMV9f7kfZM0LeFSsQ8SfRNVKCGQR0AN
+        yCJxK4nNsbC363uRdMfJUDFxCqxko4o=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-590-F5UsboiYOVu-OOr72xNkgw-1; Thu, 28 Oct 2021 16:01:01 -0400
-X-MC-Unique: F5UsboiYOVu-OOr72xNkgw-1
+ us-mta-591-o44zzFB2N8CGbGp_HeWRuQ-1; Thu, 28 Oct 2021 16:01:02 -0400
+X-MC-Unique: o44zzFB2N8CGbGp_HeWRuQ-1
 Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3F0B4A40C1
-        for <io-uring@vger.kernel.org>; Thu, 28 Oct 2021 20:01:00 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A2448100C669
+        for <io-uring@vger.kernel.org>; Thu, 28 Oct 2021 20:01:01 +0000 (UTC)
 Received: from madcap2.tricolour.com (unknown [10.3.128.2])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2F5AC380;
-        Thu, 28 Oct 2021 20:00:58 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 89EBE380;
+        Thu, 28 Oct 2021 20:01:00 +0000 (UTC)
 From:   Richard Guy Briggs <rgb@redhat.com>
 To:     Linux-Audit Mailing List <linux-audit@redhat.com>
 Cc:     io-uring@vger.kernel.org, Steve Grubb <sgrubb@redhat.com>,
         Richard Guy Briggs <rgb@redhat.com>
-Subject: [PATCH v3 3/7] add support for uringop names
-Date:   Thu, 28 Oct 2021 15:59:35 -0400
-Message-Id: <20211028195939.3102767-4-rgb@redhat.com>
+Subject: [PATCH v3 4/7] add field support for the AUDIT_URINGOP record type
+Date:   Thu, 28 Oct 2021 15:59:36 -0400
+Message-Id: <20211028195939.3102767-5-rgb@redhat.com>
 In-Reply-To: <20211028195939.3102767-1-rgb@redhat.com>
 References: <20211028195939.3102767-1-rgb@redhat.com>
 MIME-Version: 1.0
@@ -49,190 +49,199 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+Kernel support to audit io_uring operations was added with commit 5bd2182d58e9
+("audit,io_uring,io-wq: add some basic audit support to io_uring").  Add
+support to interpret the "uringop" record field.
+
 Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
 ---
- lib/Makefile.am        | 17 ++++++++++--
- lib/lookup_table.c     |  5 ++--
- lib/test/lookup_test.c | 17 ++++++++++++
- lib/uringop_table.h    | 62 ++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 97 insertions(+), 4 deletions(-)
- create mode 100644 lib/uringop_table.h
+ audisp/plugins/ids/model_behavior.c |  1 +
+ auparse/auparse-defs.h              |  2 +-
+ auparse/auparse-idata.h             |  1 +
+ auparse/ellist.c                    |  7 +++++++
+ auparse/interpret.c                 | 21 ++++++++++++++++++++-
+ auparse/rnode.h                     |  1 +
+ auparse/typetab.h                   |  1 +
+ bindings/python/auparse_python.c    |  1 +
+ contrib/plugin/audisp-example.c     |  1 +
+ src/auditd-event.c                  |  1 +
+ 10 files changed, 35 insertions(+), 2 deletions(-)
 
-diff --git a/lib/Makefile.am b/lib/Makefile.am
-index f1107afabee6..7926ba50a78f 100644
---- a/lib/Makefile.am
-+++ b/lib/Makefile.am
-@@ -47,7 +47,7 @@ nodist_libaudit_la_SOURCES = $(BUILT_SOURCES)
- BUILT_SOURCES = actiontabs.h errtabs.h fieldtabs.h flagtabs.h \
- 	fstypetabs.h ftypetabs.h i386_tables.h machinetabs.h \
- 	msg_typetabs.h optabs.h ppc_tables.h s390_tables.h \
--	s390x_tables.h x86_64_tables.h
-+	s390x_tables.h x86_64_tables.h uringop_tables.h
- if USE_ARM
- BUILT_SOURCES += arm_tables.h
- endif
-@@ -58,7 +58,7 @@ noinst_PROGRAMS = gen_actiontabs_h gen_errtabs_h gen_fieldtabs_h \
- 	gen_flagtabs_h gen_fstypetabs_h gen_ftypetabs_h gen_i386_tables_h \
- 	gen_machinetabs_h gen_msg_typetabs_h \
- 	gen_optabs_h gen_ppc_tables_h gen_s390_tables_h \
--	gen_s390x_tables_h gen_x86_64_tables_h
-+	gen_s390x_tables_h gen_x86_64_tables_h gen_uringop_tables_h
- if USE_ARM
- noinst_PROGRAMS += gen_arm_tables_h
- endif
-@@ -266,6 +266,19 @@ gen_s390x_tables_h$(BUILD_EXEEXT): LDFLAGS=$(LDFLAGS_FOR_BUILD)
- s390x_tables.h: gen_s390x_tables_h Makefile
- 	./gen_s390x_tables_h --lowercase --i2s --s2i s390x_syscall > $@
+diff --git a/audisp/plugins/ids/model_behavior.c b/audisp/plugins/ids/model_behavior.c
+index df94fcaf4b0e..09c7017569b9 100644
+--- a/audisp/plugins/ids/model_behavior.c
++++ b/audisp/plugins/ids/model_behavior.c
+@@ -80,6 +80,7 @@ void process_behavior_model(auparse_state_t *au, struct ids_conf *config)
+ 	/* Now we can branch based on what the first record type we find. */
+ 	switch (type) {
+ 		case AUDIT_SYSCALL:
++		case AUDIT_URINGOP:
+ 			process_plain_syscalls(au);
+ 			break;
+ 		//case SECCOMP:
+diff --git a/auparse/auparse-defs.h b/auparse/auparse-defs.h
+index 7c0ac76c84cc..7e17d3306b4e 100644
+--- a/auparse/auparse-defs.h
++++ b/auparse/auparse-defs.h
+@@ -88,7 +88,7 @@ typedef enum {  AUPARSE_TYPE_UNCLASSIFIED,  AUPARSE_TYPE_UID, AUPARSE_TYPE_GID,
+ 	AUPARSE_TYPE_NETACTION, AUPARSE_TYPE_MACPROTO,
+ 	AUPARSE_TYPE_IOCTL_REQ, AUPARSE_TYPE_ESCAPED_KEY,
+ 	AUPARSE_TYPE_ESCAPED_FILE, AUPARSE_TYPE_FANOTIFY,
+-	AUPARSE_TYPE_NLMCGRP, AUPARSE_TYPE_RESOLVE
++	AUPARSE_TYPE_NLMCGRP, AUPARSE_TYPE_URINGOP, AUPARSE_TYPE_RESOLVE
+ } auparse_type_t;
  
-+gen_uringop_tables_h_SOURCES = gen_tables.c gen_tables.h uringop_table.h
-+gen_uringop_tables_h_CFLAGS = '-DTABLE_H="uringop_table.h"'
-+$(gen_uringop_tables_h_OBJECTS): CC=$(CC_FOR_BUILD)
-+$(gen_uringop_tables_h_OBJECTS): CFLAGS=$(CFLAGS_FOR_BUILD)
-+$(gen_uringop_tables_h_OBJECTS): CPPFLAGS=$(CPPFLAGS_FOR_BUILD)
-+$(gen_uringop_tables_h_OBJECTS): LDFLAGS=$(LDFLAGS_FOR_BUILD)
-+gen_uringop_tables_h$(BUILD_EXEEXT): CC=$(CC_FOR_BUILD)
-+gen_uringop_tables_h$(BUILD_EXEEXT): CFLAGS=$(CFLAGS_FOR_BUILD)
-+gen_uringop_tables_h$(BUILD_EXEEXT): CPPFLAGS=$(CPPFLAGS_FOR_BUILD)
-+gen_uringop_tables_h$(BUILD_EXEEXT): LDFLAGS=$(LDFLAGS_FOR_BUILD)
-+uringop_tables.h: gen_uringop_tables_h Makefile
-+	./gen_uringop_tables_h --lowercase --i2s --s2i uringop > $@
-+
- gen_x86_64_tables_h_SOURCES = gen_tables.c gen_tables.h x86_64_table.h
- gen_x86_64_tables_h_CFLAGS = '-DTABLE_H="x86_64_table.h"'
- $(gen_x86_64_tables_h_OBJECTS): CC=$(CC_FOR_BUILD)
-diff --git a/lib/lookup_table.c b/lib/lookup_table.c
-index ca619fba930d..d895b1ffe530 100644
---- a/lib/lookup_table.c
-+++ b/lib/lookup_table.c
-@@ -46,6 +46,7 @@
- #include "s390_tables.h"
- #include "s390x_tables.h"
- #include "x86_64_tables.h"
-+#include "uringop_tables.h"
- #include "errtabs.h"
- #include "fstypetabs.h"
- #include "ftypetabs.h"
-@@ -147,7 +148,7 @@ int audit_name_to_uringop(const char *uringop)
- 	int res = -1, found = 0;
- 
- #ifndef NO_TABLES
--	//found = uringop_s2i(uringop, &res);
-+	found = uringop_s2i(uringop, &res);
- #endif
- 	if (found)
- 		return res;
-@@ -187,7 +188,7 @@ const char *audit_syscall_to_name(int sc, int machine)
- const char *audit_uringop_to_name(int uringop)
- {
- #ifndef NO_TABLES
--	//return uringop_i2s(uringop);
-+	return uringop_i2s(uringop);
- #endif
- 	return NULL;
+ /* This type determines what escaping if any gets applied to interpreted fields */
+diff --git a/auparse/auparse-idata.h b/auparse/auparse-idata.h
+index eaca86a3da24..42f65d35b65b 100644
+--- a/auparse/auparse-idata.h
++++ b/auparse/auparse-idata.h
+@@ -33,6 +33,7 @@ typedef struct _idata {
+ 	int syscall;		// The syscall for the event
+ 	unsigned long long a0;	// arg 0 to the syscall
+ 	unsigned long long a1;	// arg 1 to the syscall
++	int uringop;		// The uring op for the event
+ 	const char *cwd;	// The current working directory
+ 	const char *name;	// name of field being interpreted
+ 	const char *val;	// value of field being interpreted
+diff --git a/auparse/ellist.c b/auparse/ellist.c
+index ae85addbe52a..cac2a9f38d8e 100644
+--- a/auparse/ellist.c
++++ b/auparse/ellist.c
+@@ -278,6 +278,12 @@ static int parse_up_record(rnode* r)
+ 			} else if (r->type == AUDIT_CWD) {
+ 				if (strcmp(n.name, "cwd") == 0)
+ 					r->cwd = strdup(n.val);
++			} else if (r->nv.cnt == (3 + offset) &&
++					strcmp(n.name, "uringop") == 0){
++				errno = 0;
++				r->uringop = strtoul(n.val, NULL, 10);
++				if (errno)
++					r->uringop = -1;
+ 			}
+ 		} else if (r->type == AUDIT_AVC || r->type == AUDIT_USER_AVC) {
+ 			// We special case these 2 fields because selinux
+@@ -362,6 +368,7 @@ int aup_list_append(event_list_t *l, char *record, int list_idx,
+ 	r->a1 = 0LL;
+ 	r->machine = -1;
+ 	r->syscall = -1;
++	r->uringop = -1;
+ 	r->item = l->cnt; 
+ 	r->list_idx = list_idx;
+ 	r->line_number = line_number;
+diff --git a/auparse/interpret.c b/auparse/interpret.c
+index 92b95b6a6dc8..8b5150638c4d 100644
+--- a/auparse/interpret.c
++++ b/auparse/interpret.c
+@@ -501,7 +501,7 @@ const char *_auparse_lookup_interpretation(const char *name)
+ 	if (nvlist_find_name(&il, name)) {
+ 		n = nvlist_get_cur(&il);
+ 		// This is only called from src/ausearch-lookup.c
+-		// it only looks up auid and syscall. One needs
++		// it only looks up auid and syscall/uringop. One needs
+ 		// escape, the other does not.
+ 		if (strstr(name, "id"))
+ 			return print_escaped(n->interp_val);
+@@ -817,6 +817,21 @@ static const char *print_syscall(const idata *id)
+ 	return out;
  }
-diff --git a/lib/test/lookup_test.c b/lib/test/lookup_test.c
-index 03f40aaf0899..f58d9dde65dd 100644
---- a/lib/test/lookup_test.c
-+++ b/lib/test/lookup_test.c
-@@ -234,6 +234,22 @@ test_x86_64_table(void)
- #undef S2I
- }
  
-+static void
-+test_uringop_table(void)
++static const char *print_uringop(const idata *id)
 +{
-+	static const struct entry t[] = {
-+#include "../uringop_table.h"
-+	};
++	const char *uring;
++	char *out;
++	int uringop = id->uringop;
 +
-+	printf("Testing uringop_table...\n");
-+#define I2S(I) audit_uringop_to_name((I))
-+#define S2I(S) audit_name_to_uringop((S))
-+	TEST_I2S(0);
-+	TEST_S2I(-1);
-+#undef I2S
-+#undef S2I
++	uring = audit_uringop_to_name(uringop);
++	if (uring) {
++		return strdup(uring);
++	}
++	if (asprintf(&out, "unknown-uringop(%d)", uringop) < 0)
++		out = NULL;
++	return out;
 +}
 +
- static void
- test_actiontab(void)
+ static const char *print_exit(const char *val)
  {
-@@ -395,6 +411,7 @@ main(void)
- 	test_s390_table();
- 	test_s390x_table();
- 	test_x86_64_table();
-+	test_uringop_table();
- 	test_actiontab();
- 	test_errtab();
- 	test_fieldtab();
-diff --git a/lib/uringop_table.h b/lib/uringop_table.h
-new file mode 100644
-index 000000000000..241828efc654
---- /dev/null
-+++ b/lib/uringop_table.h
-@@ -0,0 +1,62 @@
-+/* uringop_table.h --
-+ * Copyright 2005-21 Red Hat Inc.
-+ * All Rights Reserved.
-+ *
-+ * This library is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU Lesser General Public
-+ * License as published by the Free Software Foundation; either
-+ * version 2.1 of the License, or (at your option) any later version.
-+ *
-+ * This library is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-+ * Lesser General Public License for more details.
-+ *
-+ * You should have received a copy of the GNU Lesser General Public
-+ * License along with this library; if not, write to the Free Software
-+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-+ *
-+ * Authors:
-+ *      Richard Guy Briggs <rgb@redhat.com>
-+ */
-+
-+/* from /usr/include/linux/io_uring.h */
-+
-+_S(0,	"nop")
-+_S(1,	"readv")
-+_S(2,	"writev")
-+_S(3,	"fsync")
-+_S(4,	"read_fixed")
-+_S(5,	"write_fixed")
-+_S(6,	"poll_add")
-+_S(7,	"poll_remove")
-+_S(8,	"sync_file_range")
-+_S(9,	"sendmsg")
-+_S(10,	"recvmsg")
-+_S(11,	"timeout")
-+_S(12,	"timeout_remove")
-+_S(13,	"accept")
-+_S(14,	"async_cancel")
-+_S(15,	"link_timeout")
-+_S(16,	"connect")
-+_S(17,	"fallocate")
-+_S(18,	"openat")
-+_S(19,	"close")
-+_S(20,	"files_update")
-+_S(21,	"statx")
-+_S(22,	"read")
-+_S(23,	"write")
-+_S(24,	"fadvise")
-+_S(25,	"madvise")
-+_S(26,	"send")
-+_S(27,	"recv")
-+_S(28,	"openat2")
-+_S(29,	"epoll_ctl")
-+_S(30,	"splice")
-+_S(31,	"provide_bufers")
-+_S(32,	"remove_bufers")
-+_S(33,	"tee")
-+_S(34,	"shutdown")
-+_S(35,	"renameat")
-+_S(36,	"unlinkat")
-+
+         long long ival;
+@@ -3049,6 +3064,7 @@ const char *do_interpret(const rnode *r, auparse_esc_t escape_mode)
+ 
+ 	id.machine = r->machine;
+ 	id.syscall = r->syscall;
++	id.uringop = r->uringop;
+ 	id.a0 = r->a0;
+ 	id.a1 = r->a1;
+ 	id.cwd = r->cwd;
+@@ -3164,6 +3180,9 @@ unknown:
+ 		case AUPARSE_TYPE_ARCH:
+ 			out = print_arch(id->val, id->machine);
+ 			break;
++		case AUPARSE_TYPE_URINGOP:
++			out = print_uringop(id);
++			break;
+ 		case AUPARSE_TYPE_EXIT:
+ 			out = print_exit(id->val);
+ 			break;
+diff --git a/auparse/rnode.h b/auparse/rnode.h
+index 69f084369523..69e89170cdf6 100644
+--- a/auparse/rnode.h
++++ b/auparse/rnode.h
+@@ -55,6 +55,7 @@ typedef struct _rnode{
+ 	int syscall;            // The syscall for the event
+ 	unsigned long long a0;  // arg 0 to the syscall
+ 	unsigned long long a1;  // arg 1 to the syscall
++	int uringop;            // The uring op for the event
+ 	nvlist nv;              // name-value linked list of parsed elements
+ 	unsigned int item;      // Which item of the same event
+ 	int list_idx;		// The index into the source list, points to where record was found
+diff --git a/auparse/typetab.h b/auparse/typetab.h
+index 4a3027957072..ced0ce47fcaf 100644
+--- a/auparse/typetab.h
++++ b/auparse/typetab.h
+@@ -44,6 +44,7 @@ _S(AUPARSE_TYPE_GID,		"igid"		)
+ _S(AUPARSE_TYPE_GID,		"inode_gid"	)
+ _S(AUPARSE_TYPE_GID,		"new_gid"	)
+ _S(AUPARSE_TYPE_SYSCALL,	"syscall"	)
++_S(AUPARSE_TYPE_URINGOP,	"uringop"	)
+ _S(AUPARSE_TYPE_ARCH,		"arch"		)
+ _S(AUPARSE_TYPE_EXIT,		"exit"		)
+ _S(AUPARSE_TYPE_ESCAPED,	"path"		)
+diff --git a/bindings/python/auparse_python.c b/bindings/python/auparse_python.c
+index 77dd8615cf50..f924fb269a53 100644
+--- a/bindings/python/auparse_python.c
++++ b/bindings/python/auparse_python.c
+@@ -2356,6 +2356,7 @@ initauparse(void)
+     PyModule_AddIntConstant(m, "AUPARSE_TYPE_UID",     AUPARSE_TYPE_UID);
+     PyModule_AddIntConstant(m, "AUPARSE_TYPE_GID",     AUPARSE_TYPE_GID);
+     PyModule_AddIntConstant(m, "AUPARSE_TYPE_SYSCALL", AUPARSE_TYPE_SYSCALL);
++    PyModule_AddIntConstant(m, "AUPARSE_TYPE_URINGOP", AUPARSE_TYPE_URINGOP);
+     PyModule_AddIntConstant(m, "AUPARSE_TYPE_ARCH",    AUPARSE_TYPE_ARCH);
+     PyModule_AddIntConstant(m, "AUPARSE_TYPE_EXIT",    AUPARSE_TYPE_EXIT);
+     PyModule_AddIntConstant(m, "AUPARSE_TYPE_ESCAPED", AUPARSE_TYPE_ESCAPED);
+diff --git a/contrib/plugin/audisp-example.c b/contrib/plugin/audisp-example.c
+index c523c0a19804..6907d2036fb7 100644
+--- a/contrib/plugin/audisp-example.c
++++ b/contrib/plugin/audisp-example.c
+@@ -225,6 +225,7 @@ static void handle_event(auparse_state_t *au,
+ 				dump_fields_of_record(au);
+ 				break;
+ 			case AUDIT_SYSCALL:
++			case AUDIT_URINGOP:
+ 				dump_whole_record(au); 
+ 				break;
+ 			case AUDIT_USER_LOGIN:
+diff --git a/src/auditd-event.c b/src/auditd-event.c
+index 788c44a08197..68369fae81ab 100644
+--- a/src/auditd-event.c
++++ b/src/auditd-event.c
+@@ -456,6 +456,7 @@ static const char *format_enrich(const struct audit_reply *rep)
+ 					len -= vlen;
+ 					break;
+ 				case AUPARSE_TYPE_SYSCALL:
++				case AUPARSE_TYPE_URINGOP:
+ 				case AUPARSE_TYPE_ARCH:
+ 				case AUPARSE_TYPE_SOCKADDR:
+ 					if (add_separator(len))
 -- 
 2.27.0
 

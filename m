@@ -2,80 +2,103 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CCEFC43DB14
-	for <lists+io-uring@lfdr.de>; Thu, 28 Oct 2021 08:27:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FCF843DCA8
+	for <lists+io-uring@lfdr.de>; Thu, 28 Oct 2021 10:08:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229694AbhJ1G3b (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 28 Oct 2021 02:29:31 -0400
-Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:45347 "EHLO
-        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229626AbhJ1G3a (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 28 Oct 2021 02:29:30 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R781e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0Utz8C2H_1635402421;
-Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0Utz8C2H_1635402421)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 28 Oct 2021 14:27:02 +0800
-Subject: Re: [PATCH 6/8] io_uring: add nr_ctx to record the number of ctx in a
- task
-From:   Hao Xu <haoxu@linux.alibaba.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <20211027140216.20008-1-haoxu@linux.alibaba.com>
- <20211027140216.20008-7-haoxu@linux.alibaba.com>
-Message-ID: <1b168dde-6c62-cbac-158b-a9b824222639@linux.alibaba.com>
-Date:   Thu, 28 Oct 2021 14:27:01 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.13.0
+        id S229869AbhJ1IKz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 28 Oct 2021 04:10:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56926 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229626AbhJ1IKz (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 28 Oct 2021 04:10:55 -0400
+Received: from out10.migadu.com (out10.migadu.com [IPv6:2001:41d0:2:e8e3::])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D081DC061570;
+        Thu, 28 Oct 2021 01:08:20 -0700 (PDT)
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cmpwn.com; s=key1;
+        t=1635408499;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=ZvZCJVuHX1kdtjJ4rxf8UDdnwoMvm6VexH1bwaTv270=;
+        b=QfaZMLJyeQRs44fTwoBALQer/jqyU/AAhwcF4IkLbIRHlBopkYQMZYx10tkG/6+zvcI0Xa
+        j+fqD6jtlr/AmsYJ39VvsSC+DOvs+VB/hIzxel7ABaGbk1+JFYQVv5R9wt7TsDIYscA0Yc
+        q3vEJsbMKeGN0ItGaVuN/TE3ZJwHzgDpsC2F/DerxctjxatFoRQYOeYNFdjsceeyT8zSmI
+        5CH86ZLa93U8kgmF0sEn0htGncZihQkK8ChPzqP/V8D5sqKgntwhHcTjx023RMKTilcPv0
+        RkYbjLgO16uy9K/L91MHu+0I89daD0lZOiqrBHHf9jQVVZpEUByjxQkSnkFDNA==
+From:   Drew DeVault <sir@cmpwn.com>
+To:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        io-uring@vger.kernel.org
+Cc:     Drew DeVault <sir@cmpwn.com>, Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Subject: [PATCH] Increase default MLOCK_LIMIT to 8 MiB
+Date:   Thu, 28 Oct 2021 10:08:13 +0200
+Message-Id: <20211028080813.15966-1-sir@cmpwn.com>
 MIME-Version: 1.0
-In-Reply-To: <20211027140216.20008-7-haoxu@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
+X-Migadu-Auth-User: sir@cmpwn.com
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-在 2021/10/27 下午10:02, Hao Xu 写道:
-> This is used in the next patch for task_work batch optimization.
-> 
-> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
-haven't done the sqpoll part. nr_ctx works for
-non-sqpoll mode for now.
-> ---
->   fs/io_uring.c | 7 +++++++
->   1 file changed, 7 insertions(+)
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index db5d9189df3a..7c6d90d693b8 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -470,6 +470,7 @@ struct io_uring_task {
->   	struct io_wq_work_list	prior_task_list;
->   	struct callback_head	task_work;
->   	bool			task_running;
-> +	unsigned int		nr_ctx;
->   };
->   
->   /*
-> @@ -9655,6 +9656,9 @@ static int __io_uring_add_tctx_node(struct io_ring_ctx *ctx)
->   		mutex_lock(&ctx->uring_lock);
->   		list_add(&node->ctx_node, &ctx->tctx_list);
->   		mutex_unlock(&ctx->uring_lock);
-> +		spin_lock_irq(&tctx->task_lock);
-> +		tctx->nr_ctx++;
-> +		spin_unlock_irq(&tctx->task_lock);
->   	}
->   	tctx->last = ctx;
->   	return 0;
-> @@ -9692,6 +9696,9 @@ static __cold void io_uring_del_tctx_node(unsigned long index)
->   	mutex_lock(&node->ctx->uring_lock);
->   	list_del(&node->ctx_node);
->   	mutex_unlock(&node->ctx->uring_lock);
-> +	spin_lock_irq(&tctx->task_lock);
-> +	tctx->nr_ctx--;
-> +	spin_unlock_irq(&tctx->task_lock);
->   
->   	if (tctx->last == node->ctx)
->   		tctx->last = NULL;
-> 
+This limit has not been updated since 2008, when it was increased to 64
+KiB at the request of GnuPG. Until recently, the main use-cases for this
+feature were (1) preventing sensitive memory from being swapped, as in
+GnuPG's use-case; and (2) real-time use-cases. In the first case, little
+memory is called for, and in the second case, the user is generally in a
+position to increase it if they need more.
+
+The introduction of IOURING_REGISTER_BUFFERS adds a third use-case:
+preparing fixed buffers for high-performance I/O. This use-case will
+take as much of this memory as it can get, but is still limited to 64
+KiB by default, which is very little. This increases the limit to 8 MB,
+which was chosen fairly arbitrarily as a more generous, but still
+conservative, default value.
+---
+It is also possible to raise this limit in userspace. This is easily
+done, for example, in the use-case of a network daemon: systemd, for
+instance, provides for this via LimitMEMLOCK in the service file; OpenRC
+via the rc_ulimit variables. However, there is no established userspace
+facility for configuring this outside of daemons: end-user applications
+do not presently have access to a convenient means of raising their
+limits.
+
+The buck, as it were, stops with the kernel. It's much easier to address
+it here than it is to bring it to hundreds of distributions, and it can
+only realistically be relied upon to be high-enough by end-user software
+if it is more-or-less ubiquitous. Most distros don't change this
+particular rlimit from the kernel-supplied default value, so a change
+here will easily provide that ubiquity.
+
+ include/uapi/linux/resource.h | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
+
+diff --git a/include/uapi/linux/resource.h b/include/uapi/linux/resource.h
+index 74ef57b38f9f..c858c3c85fae 100644
+--- a/include/uapi/linux/resource.h
++++ b/include/uapi/linux/resource.h
+@@ -66,10 +66,17 @@ struct rlimit64 {
+ #define _STK_LIM	(8*1024*1024)
+ 
+ /*
+- * GPG2 wants 64kB of mlocked memory, to make sure pass phrases
+- * and other sensitive information are never written to disk.
++ * Limit the amount of locked memory by some sane default:
++ * root can always increase this limit if needed.
++ *
++ * The main use-cases are (1) preventing sensitive memory
++ * from being swapped; (2) real-time operations; (3) via
++ * IOURING_REGISTER_BUFFERS.
++ *
++ * The first two don't need much. The latter will take as
++ * much as it can get. 8MB is a reasonably sane default.
+  */
+-#define MLOCK_LIMIT	((PAGE_SIZE > 64*1024) ? PAGE_SIZE : 64*1024)
++#define MLOCK_LIMIT	((PAGE_SIZE > 8*1024*1024) ? PAGE_SIZE : 8*1024*1024)
+ 
+ /*
+  * Due to binary compatibility, the actual resource numbers
+-- 
+2.33.1
 

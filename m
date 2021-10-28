@@ -2,62 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EF7A143F17E
-	for <lists+io-uring@lfdr.de>; Thu, 28 Oct 2021 23:19:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB13F43F2D9
+	for <lists+io-uring@lfdr.de>; Fri, 29 Oct 2021 00:35:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231304AbhJ1VWD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 28 Oct 2021 17:22:03 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:37898 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230491AbhJ1VV5 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 28 Oct 2021 17:21:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1635455969;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=lYnZ+pHXh6p7up/Yz0cfJgXIZrWgYLmVol0wsk3IZqU=;
-        b=F1TRfQbydLF2/rEslMbYXK+tJz2d1AyvTE287DHENELoZecUAaGCzU/baU/k/jVWYEq66D
-        inA1AbEsscBV50Fo71SBdGf7i19KWRP0KNbxWKodvQxJLqxGQrjRxsfRKR7HmHCbeXbkiK
-        /4tpAPRAil9LPahmp/hadAZx9hCagIc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-424-OWeL722FOPW8SsENBUNCbQ-1; Thu, 28 Oct 2021 17:19:28 -0400
-X-MC-Unique: OWeL722FOPW8SsENBUNCbQ-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4017D1019982
-        for <io-uring@vger.kernel.org>; Thu, 28 Oct 2021 21:19:27 +0000 (UTC)
-Received: from x2.localnet (unknown [10.22.33.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 54DFC5F4EA;
-        Thu, 28 Oct 2021 21:19:18 +0000 (UTC)
-From:   Steve Grubb <sgrubb@redhat.com>
-To:     Linux-Audit Mailing List <linux-audit@redhat.com>,
-        Richard Guy Briggs <rgb@redhat.com>
-Cc:     io-uring@vger.kernel.org
-Subject: Re: [PATCH v3 1/7] add basic support for the AUDIT_URINGOP record type
-Date:   Thu, 28 Oct 2021 17:19:18 -0400
-Message-ID: <4784353.GXAFRqVoOG@x2>
-Organization: Red Hat
-In-Reply-To: <20211028195939.3102767-2-rgb@redhat.com>
-References: <20211028195939.3102767-1-rgb@redhat.com> <20211028195939.3102767-2-rgb@redhat.com>
+        id S231252AbhJ1Whj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 28 Oct 2021 18:37:39 -0400
+Received: from mail-io1-f71.google.com ([209.85.166.71]:45796 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231235AbhJ1Whj (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 28 Oct 2021 18:37:39 -0400
+Received: by mail-io1-f71.google.com with SMTP id r25-20020a5d9b99000000b005de9c9abc68so5141606iom.12
+        for <io-uring@vger.kernel.org>; Thu, 28 Oct 2021 15:35:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=N9EOrS/2LnqMiI4SQz1TSOBHS3qpfSRUoJVqf+vmGnY=;
+        b=cCvQe+KEJT6yHJq2aI0wVZ5Ljx9SSJJcdd0a+dM1Q5xEIeLvQrbC36wDOzPTyDfN7C
+         UBThXKLTabiF1f2cVmCrrU6q4wyU4VVdCVi0Sonf/EXibiw9Vel2pygZjI4MYLZhx7AK
+         XcdCKoMSyTPBeWOxG+riraVkkKXJng5TNVDVyGg64COq42FRxBl8vJL10yVJWU8tg3Zn
+         D0wa2SQHBI8153mrQnvbkC/NNHf6CKRfNUz7puZyzSGzjYzofotDXM+gkfV6NOJtDz8U
+         zk3gqo4vgwRllWZB5l8nxQVWNr1BFGZ1vnC2PgrJtNZRhZ+oIFgXyN7u001/t5PxZPQt
+         tIsg==
+X-Gm-Message-State: AOAM532Z1uL1vstBXANZP0ovlAVFpcNPVfOOZ/FlawhAOMT9H3hDVIPz
+        6vn70dJn3f387dbQ8KR863mrzZqGlyfMGtW71bfB6W2DcNP7
+X-Google-Smtp-Source: ABdhPJxugzRMQthei9yf9E8esqe3gS+EjBvi1+X3jXhL0239BRvPkn5bKFXqDB3+O+2rxAerku6rN1vKAPslwSeTkgvKXCwhF5fI
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Received: by 2002:a05:6e02:8b4:: with SMTP id a20mr5132740ilt.315.1635460511478;
+ Thu, 28 Oct 2021 15:35:11 -0700 (PDT)
+Date:   Thu, 28 Oct 2021 15:35:11 -0700
+In-Reply-To: <2b0d6d98-b6f6-e1b1-1ea8-3126f41ec0ce@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d4b82205cf71522e@google.com>
+Subject: Re: [syzbot] INFO: task hung in io_wqe_worker
+From:   syzbot <syzbot+27d62ee6f256b186883e@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thursday, October 28, 2021 3:59:33 PM EDT Richard Guy Briggs wrote:
-> Kernel support to audit io_uring operations was added with commit
-> 5bd2182d58e9 ("audit,io_uring,io-wq: add some basic audit support to
-> io_uring").  Add basic support to recognize the "AUDIT_URINGOP" record.
+Hello,
 
-Thanks! Applied.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
--Steve
+Reported-and-tested-by: syzbot+27d62ee6f256b186883e@syzkaller.appspotmail.com
 
+Tested on:
 
+commit:         5983fb88 io-wq: remove worker to owner dependency
+git tree:       https://github.com/isilence/linux.git syz_coredump
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1f7f46d98a0da80e
+dashboard link: https://syzkaller.appspot.com/bug?extid=27d62ee6f256b186883e
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+
+Note: testing is done by a robot and is best-effort only.

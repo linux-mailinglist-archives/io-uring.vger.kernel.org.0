@@ -2,126 +2,62 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D4B7643FC41
-	for <lists+io-uring@lfdr.de>; Fri, 29 Oct 2021 14:22:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DD3443FC50
+	for <lists+io-uring@lfdr.de>; Fri, 29 Oct 2021 14:27:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231580AbhJ2MZT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 29 Oct 2021 08:25:19 -0400
-Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:50793 "EHLO
-        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231572AbhJ2MZQ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 29 Oct 2021 08:25:16 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0Uu9pzWg_1635510157;
-Received: from e18g09479.et15sqa.tbsite.net(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0Uu9pzWg_1635510157)
+        id S231365AbhJ2M3y (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 29 Oct 2021 08:29:54 -0400
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:53507 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230492AbhJ2M3x (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 29 Oct 2021 08:29:53 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R621e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0Uu9TBqr_1635510443;
+Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0Uu9TBqr_1635510443)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 29 Oct 2021 20:22:47 +0800
+          Fri, 29 Oct 2021 20:27:23 +0800
+Subject: Re: [PATCH liburing] io-cancel: add check for -ECANCELED
 From:   Hao Xu <haoxu@linux.alibaba.com>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
         Joseph Qi <joseph.qi@linux.alibaba.com>
-Subject: [PATCH 6/6] io_uring: batch completion in prior_task_list
-Date:   Fri, 29 Oct 2021 20:22:37 +0800
-Message-Id: <20211029122237.164312-7-haoxu@linux.alibaba.com>
-X-Mailer: git-send-email 2.24.4
-In-Reply-To: <20211029122237.164312-1-haoxu@linux.alibaba.com>
-References: <20211029122237.164312-1-haoxu@linux.alibaba.com>
+References: <20211019092352.29782-1-haoxu@linux.alibaba.com>
+Message-ID: <ed9793a5-92e8-f5d9-3a33-d263bf5e760e@linux.alibaba.com>
+Date:   Fri, 29 Oct 2021 20:27:23 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.13.0
 MIME-Version: 1.0
+In-Reply-To: <20211019092352.29782-1-haoxu@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-In previous patches, we have already gathered some tw with
-io_req_task_complete() as callback in prior_task_list, let's complete
-them in batch regardless uring lock. For instance, we are doing simple
-direct read, most task work will be io_req_task_complete(), with this
-patch we don't need to hold uring lock there for long time.
-
-Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
----
- fs/io_uring.c | 52 ++++++++++++++++++++++++++++++++++++++++++---------
- 1 file changed, 43 insertions(+), 9 deletions(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 694195c086f3..565cd0b34f18 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -2166,6 +2166,37 @@ static inline unsigned int io_put_rw_kbuf(struct io_kiocb *req)
- 	return io_put_kbuf(req, req->kbuf);
- }
- 
-+static void handle_prior_tw_list(struct io_wq_work_node *node)
-+{
-+	struct io_ring_ctx *ctx = NULL;
-+
-+	do {
-+		struct io_wq_work_node *next = node->next;
-+		struct io_kiocb *req = container_of(node, struct io_kiocb,
-+						    io_task_work.node);
-+		if (req->ctx != ctx) {
-+			if (ctx) {
-+				io_commit_cqring(ctx);
-+				spin_unlock(&ctx->completion_lock);
-+				io_cqring_ev_posted(ctx);
-+				percpu_ref_put(&ctx->refs);
-+			}
-+			ctx = req->ctx;
-+			percpu_ref_get(&ctx->refs);
-+			spin_lock(&ctx->completion_lock);
-+		}
-+		__io_req_complete_post(req, req->result, io_put_rw_kbuf(req));
-+		node = next;
-+	} while (node);
-+
-+	if (ctx) {
-+		io_commit_cqring(ctx);
-+		spin_unlock(&ctx->completion_lock);
-+		io_cqring_ev_posted(ctx);
-+		percpu_ref_put(&ctx->refs);
-+	}
-+}
-+
- static void handle_tw_list(struct io_wq_work_node *node, struct io_ring_ctx **ctx, bool *locked)
- {
- 	do {
-@@ -2193,25 +2224,28 @@ static void tctx_task_work(struct callback_head *cb)
- 						  task_work);
- 
- 	while (1) {
--		struct io_wq_work_node *node;
--		struct io_wq_work_list *merged_list;
-+		struct io_wq_work_node *node1, *node2;
- 
--		if (!tctx->prior_task_list.first &&
--		    !tctx->task_list.first && locked)
-+		if (!tctx->task_list.first &&
-+		    !tctx->prior_task_list.first && locked)
- 			io_submit_flush_completions(ctx);
- 
- 		spin_lock_irq(&tctx->task_lock);
--		merged_list = wq_list_merge(&tctx->prior_task_list, &tctx->task_list);
--		node = merged_list->first;
-+		node1 = tctx->prior_task_list.first;
-+		node2 = tctx->task_list.first;
- 		INIT_WQ_LIST(&tctx->task_list);
- 		INIT_WQ_LIST(&tctx->prior_task_list);
--		if (!node)
-+		if (!node2 && !node1)
- 			tctx->task_running = false;
- 		spin_unlock_irq(&tctx->task_lock);
--		if (!node)
-+		if (!node2 && !node1)
- 			break;
- 
--		handle_tw_list(node, &ctx, &locked);
-+		if (node1)
-+			handle_prior_tw_list(node1);
-+
-+		if (node2)
-+			handle_tw_list(node2, &ctx, &locked);
- 		cond_resched();
- 	}
- 
--- 
-2.24.4
+ping this one since test/io-cancel will be broken
+if the async hybrid logic merges to 5.16
+在 2021/10/19 下午5:23, Hao Xu 写道:
+> The req to be async cancelled will most likely return -ECANCELED after
+> cancellation with the new async bybrid optimization applied. And -EINTR
+> is impossible to be returned anymore since we won't be in INTERRUPTABLE
+> sleep when reading, so remove it.
+> 
+> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
+> ---
+>   test/io-cancel.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/test/io-cancel.c b/test/io-cancel.c
+> index b5b443dc467b..c761e126be0c 100644
+> --- a/test/io-cancel.c
+> +++ b/test/io-cancel.c
+> @@ -341,7 +341,7 @@ static int test_cancel_req_across_fork(void)
+>   				fprintf(stderr, "wait_cqe=%d\n", ret);
+>   				return 1;
+>   			}
+> -			if ((cqe->user_data == 1 && cqe->res != -EINTR) ||
+> +			if ((cqe->user_data == 1 && cqe->res != -ECANCELED) ||
+>   			    (cqe->user_data == 2 && cqe->res != -EALREADY && cqe->res)) {
+>   				fprintf(stderr, "%i %i\n", (int)cqe->user_data, cqe->res);
+>   				exit(1);
+> 
 

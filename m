@@ -2,152 +2,155 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4846043F712
-	for <lists+io-uring@lfdr.de>; Fri, 29 Oct 2021 08:18:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF9ED43FA6C
+	for <lists+io-uring@lfdr.de>; Fri, 29 Oct 2021 12:03:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231806AbhJ2GVM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 29 Oct 2021 02:21:12 -0400
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:38973 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231774AbhJ2GVL (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 29 Oct 2021 02:21:11 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0Uu5jT6u_1635488321;
-Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0Uu5jT6u_1635488321)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 29 Oct 2021 14:18:42 +0800
-Subject: Re: [PATCH for-5.16 v3 0/8] task work optimization
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <20211027140216.20008-1-haoxu@linux.alibaba.com>
- <da85ab25-a6c6-f6a7-e2d5-d9a13c4dcf2f@gmail.com>
- <7a528ce1-a44e-3ee7-095c-1a92528ec441@linux.alibaba.com>
- <a1acf557-e2d6-8beb-0108-f38e824e16ba@linux.alibaba.com>
- <d7bbf237-9c91-c971-246d-46b91e4c89a3@gmail.com>
-From:   Hao Xu <haoxu@linux.alibaba.com>
-Message-ID: <4bc45226-8b27-500a-58e7-36da2eb5f92e@linux.alibaba.com>
-Date:   Fri, 29 Oct 2021 14:18:41 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.13.0
+        id S231708AbhJ2KFg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 29 Oct 2021 06:05:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41046 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231594AbhJ2KFg (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 29 Oct 2021 06:05:36 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBD6EC061570
+        for <io-uring@vger.kernel.org>; Fri, 29 Oct 2021 03:03:07 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id s13so8197791wrb.3
+        for <io-uring@vger.kernel.org>; Fri, 29 Oct 2021 03:03:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=utDCagHyTb2UPUs4agZdk+SXA/AMHbqzXzemhQdcnow=;
+        b=grnUqmCouFMzYdryFZ5lC2Rp4BAbaPfwwYZo1OSXg+EM13AM5l8siIUmbFOSyjUWA/
+         rvNHIcA1/gEJ82qohKqwclvq1wSTCPCCpfJHmz8FybXd9I1+fkNBPhLSNGBi8wPjkOn6
+         D3wahThR3fJU58MlcF/BoOjmEVl341y1ANX/BzGHZgaJmhwnrnt1UIuBvtAzraOFdzmG
+         caNWEl98DpCQgzvSnfQrHJcQcQ2zaXvt3sdphO/F9gjLN9XyPSnygIuoyuepk31jPNng
+         hkqtq1nbNTvVwlhLIuY2AWnB0d+nX9r7vx2nlFZ0aKY4E93sAYn+LgQ0pCZrEhx4kK27
+         tIaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=utDCagHyTb2UPUs4agZdk+SXA/AMHbqzXzemhQdcnow=;
+        b=LtK8SMSAWwt6jNSUEmsnlbPkW6a9btsA8w0MRHzrW0wiw0a1amNOezEGHS8rD2RGgD
+         wdb1JGclEgR6+W2Migk2PVg4G6YlrNFkvVv9caNTm4HxD1EwaGva8pXoFw8nHMmVFrEh
+         KQUvRzhmX8P5Qeo5FSFFrc4hr1xdUaskvIKtQZVmhEcHL6wABabmJHcGHuMWT538BlNk
+         pxdtvLDH2xO5nHsRa55Kksri+eId27XdQQifT+UXAr6FcsAq4cYalL3K0Ub531e/VQ/i
+         nJb/qoP9kNitbxillhRjOvDv+FTq4uibfo5zG12f+v7BG6hLE46iGXzyAeW2DDdWIhAU
+         hmFQ==
+X-Gm-Message-State: AOAM532pvsoyBdjg9jITpmUhylrwIhDWVz/wWj0Y+c+xhsQqYjIVDXRz
+        9YkBXnC+7n2Mygx/pMxqN8E=
+X-Google-Smtp-Source: ABdhPJwE+2PH/AKuIh4xYCtHH3VQdnigX2ln8YBPJTa83e4qXEmuphYGFKpIQKdfXWQ2EXzXjGbb4g==
+X-Received: by 2002:a5d:460d:: with SMTP id t13mr9837367wrq.44.1635501786382;
+        Fri, 29 Oct 2021 03:03:06 -0700 (PDT)
+Received: from [192.168.8.198] ([148.252.129.16])
+        by smtp.gmail.com with ESMTPSA id x8sm5458059wrw.6.2021.10.29.03.03.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Oct 2021 03:03:05 -0700 (PDT)
+Message-ID: <a448c9b6-65d8-c602-7716-d6630c1f2254@gmail.com>
+Date:   Fri, 29 Oct 2021 11:02:55 +0100
 MIME-Version: 1.0
-In-Reply-To: <d7bbf237-9c91-c971-246d-46b91e4c89a3@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Subject: Re: [PATCH v3 2/3] io_uring: reduce frequent add_wait_queue()
+ overhead for multi-shot poll request
+Content-Language: en-US
+To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
+        io-uring@vger.kernel.org
+Cc:     axboe@kernel.dk
+References: <20211025053849.3139-1-xiaoguang.wang@linux.alibaba.com>
+ <20211025053849.3139-3-xiaoguang.wang@linux.alibaba.com>
+ <7dd1823d-0324-36d1-2562-362f2ef0399b@gmail.com>
+ <7e6c2a36-adf5-ece5-9109-cd5c4429e79d@linux.alibaba.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <7e6c2a36-adf5-ece5-9109-cd5c4429e79d@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-在 2021/10/29 上午3:08, Pavel Begunkov 写道:
-> On 10/28/21 12:46, Hao Xu wrote:
->> 在 2021/10/28 下午2:07, Hao Xu 写道:
->>> 在 2021/10/28 上午2:15, Pavel Begunkov 写道:
->>>> On 10/27/21 15:02, Hao Xu wrote:
->>>>> Tested this patchset by manually replace __io_queue_sqe() in
->>>>> io_queue_sqe() by io_req_task_queue() to construct 'heavy' task works.
->>>>> Then test with fio:
->>>>
->>>> If submissions and completions are done by the same task it doesn't
->>>> really matter in which order they're executed because the task won't
->>>> get back to userspace execution to see CQEs until tw returns.
->>> It may matter, it depends on the time cost of submittion
->>> and the DMA IO time. Pick up sqpoll mode as example,
->>> we submit 10 reqs:
->>> t1          io_submit_sqes
->>>              -->io_req_task_queue
->>> t2          io_task_work_run
->>> we actually do the submittion in t2,  but if the workload
->>> is big engough, the 'irq completion TW' will be inserted
->>> to the TW list after t2 is fully done, then those
->>> 'irq completion TW' will be delayed to the next round.
->>> With this patchset, we can handle them first.
->>>> Furthermore, it even might be worse because the earlier you submit
->>>> the better with everything else equal.
->>>>
->>>> IIRC, that's how it's with fio, right? If so, you may get better
->>>> numbers with a test that does submissions and completions in
->>>> different threads.
->>> Because of the completion cache, I doubt if it works.
->>> For single ctx, it seems we always update the cqring
->>> pointer after all the TWs in the list are done.
->> I suddenly realized sqpoll mode does submissions and completions
->> in different threads, and in this situation this patchset always
->> first commit_cqring() after handling TWs in priority list.
->> So this is the right test, do I miss something?
+On 10/29/21 03:57, Xiaoguang Wang wrote:
+> hi,
 > 
-> Yep, should be it. So the scope of the feature is SQPOLL or
-> completion/submission with different tasks.
- From the test results, it's a bit risk to apply this feature to
-normal mode(no good, but have to ensure no bad), so I'd like to
-apply it to sqpoll mode for now. For completion/submission
-decoupled situation, maybe we can include it later.
-> 
->>>>
->>>> Also interesting to find an explanation for you numbers assuming
->>> The reason may be what I said above, but I don't have a
->>> strict proof now.
->>>> they're stable. 7/8 batching? How often it does it go this path?
->>>> If only one task submits requests it should already be covered
->>>> with existing batching.
->>> the problem of the existing batch is(given there is only
->>> one ctx):
->>> 1. we flush it after all the TWs done
->>> 2. we batch them if we have uring lock.
->>> the new batch is:
->>> 1. don't care about uring lock
->>> 2. we can flush the completions in the priority list
->>>     in advance.(which means userland can see it earlier.)
->>>>
->>>>
->>>>> ioengine=io_uring
->>>>> sqpoll=1
->>>>> thread=1
->>>>> bs=4k
->>>>> direct=1
->>>>> rw=randread
->>>>> time_based=1
->>>>> runtime=600
->>>>> randrepeat=0
->>>>> group_reporting=1
->>>>> filename=/dev/nvme0n1
->>>>>
->>>>> 2/8 set unlimited priority_task_list, 8/8 set a limitation of
->>>>> 1/3 * (len_prority_list + len_normal_list), data below:
->>>>>     depth     no 8/8   include 8/8      before this patchset
->>>>>      1        7.05         7.82              7.10
->>>>>      2        8.47         8.48              8.60
->>>>>      4        10.42        9.99              10.42
->>>>>      8        13.78        13.13             13.22
->>>>>      16       27.41        27.92             24.33
->>>>>      32       49.40        46.16             53.08
->>>>>      64       102.53       105.68            103.36
->>>>>      128      196.98       202.76            205.61
->>>>>      256      372.99       375.61            414.88
->>>>>      512      747.23       763.95            791.30
->>>>>      1024     1472.59      1527.46           1538.72
->>>>>      2048     3153.49      3129.22           3329.01
->>>>>      4096     6387.86      5899.74           6682.54
->>>>>      8192     12150.25     12433.59          12774.14
->>>>>      16384    23085.58     24342.84          26044.71
->>>>>
->>>>> It seems 2/8 is better, haven't tried other choices other than 1/3,
->>>>> still put 8/8 here for people's further thoughts.
->>>>>
->>>>> Hao Xu (8):
->>>>>    io-wq: add helper to merge two wq_lists
->>>>>    io_uring: add a priority tw list for irq completion work
->>>>>    io_uring: add helper for task work execution code
->>>>>    io_uring: split io_req_complete_post() and add a helper
->>>>>    io_uring: move up io_put_kbuf() and io_put_rw_kbuf()
->>>>>    io_uring: add nr_ctx to record the number of ctx in a task
->>>>>    io_uring: batch completion in prior_task_list
->>>>>    io_uring: add limited number of TWs to priority task list
->>>>>
->>>>>   fs/io-wq.h    |  21 +++++++
->>>>>   fs/io_uring.c | 168 
->>>>> +++++++++++++++++++++++++++++++++++---------------
->>>>>   2 files changed, 138 insertions(+), 51 deletions(-)
->>>>>
->>>>
+>> On 10/25/21 06:38, Xiaoguang Wang wrote:
+>>> Run echo_server to evaluate io_uring's multi-shot poll performance, perf
+>>> shows that add_wait_queue() has obvious overhead. Intruduce a new state
+>>> 'active' in io_poll_iocb to indicate whether io_poll_wake() should queue
+>>> a task_work. This new state will be set to true initially, be set to false
+>>> when starting to queue a task work, and be set to true again when a poll
+>>> cqe has been committed. One concern is that this method may lost waken-up
+>>> event, but seems it's ok.
+>>>
+>>>    io_poll_wake                io_poll_task_func
+>>> t1                       |
+>>> t2                       |    WRITE_ONCE(req->poll.active, true);
+>>> t3                       |
+>>> t4                       |    io_commit_cqring(ctx);
+>>> t5                       |
+>>> t6                       |
+>>>
+>>> If waken-up events happens before or at t4, it's ok, user app will always
+>>> see a cqe. If waken-up events happens after t4 and IIUC, io_poll_wake()
+>>> will see the new req->poll.active value by using READ_ONCE().
+>>>
+>>> Echo_server codes can be cloned from:
+>>> https://codeup.openanolis.cn/codeup/storage/io_uring-echo-server.git,
+>>> branch is xiaoguangwang/io_uring_multishot.
+>>>
+>>> Without this patch, the tps in our test environment is 284116, with
+>>> this patch, the tps is 287832, about 1.3% reqs improvement, which
+>>> is indeed in accord with the saved add_wait_queue() cost.
+>>>
+>>> Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+>>> ---
+>>>   fs/io_uring.c | 57 +++++++++++++++++++++++++++++++++------------------------
+>>>   1 file changed, 33 insertions(+), 24 deletions(-)
+>>>
+>>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>>> index 18af9bb9a4bc..e4c779dac953 100644
+>>> --- a/fs/io_uring.c
+>>> +++ b/fs/io_uring.c
+>>> @@ -481,6 +481,7 @@ struct io_poll_iocb {
+>>>       __poll_t            events;
+>>>       bool                done;
+>>>       bool                canceled;
+>>> +    bool                active;
+>>>       struct wait_queue_entry        wait;
+>>>   };
+>>>   @@ -5233,8 +5234,6 @@ static inline int __io_async_wake(struct io_kiocb *req, struct io_poll_iocb *pol
+>>>   {
+>>>       trace_io_uring_task_add(req->ctx, req->opcode, req->user_data, mask);
+>>>   -    list_del_init(&poll->wait.entry);
+>>> -
 >>
-> 
+>> As I mentioned to Hao some time ago, we can't allow this function or in
+>> particular io_req_task_work_add() to happen twice before the first
+>> task work got executed, they use the same field in io_kiocb and those
+>> will corrupt the tw list.
+>>
+>> Looks that's what can happen here.
+> If I have understood scenario your described correctly, I think it won't happen :)
+> With this patch, if the first io_req_task_work_add() is issued, poll.active
+> will be set to false, then no new io_req_task_work_add() will be issued.
+> Only the first task_work installed by the first io_req_task_work_add() has
+> completed, poll.active will be set to true again.
 
+Ah, I see now, the active dance is in io_poll_wake(). That won't work
+with READ_ONCE/WRITE_ONCE though, you would need real atomics
+
+The easiest race to explain is:
+
+CPU1                        | CPU2
+io_poll_wake                | io_poll_wake
+if (p->active) return 0;    | if (p->active) return 0;
+        // p->active is false in both cases, continue
+p->active = false;          | p->active = false;
+task_work_add()             | task_work_add()
+
+
+But there are more subtle races.
+
+-- 
+Pavel Begunkov

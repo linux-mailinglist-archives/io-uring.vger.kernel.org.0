@@ -2,54 +2,54 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BFA6143FEA9
-	for <lists+io-uring@lfdr.de>; Fri, 29 Oct 2021 16:46:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 606FB43FEAB
+	for <lists+io-uring@lfdr.de>; Fri, 29 Oct 2021 16:47:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229642AbhJ2Osv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 29 Oct 2021 10:48:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49432 "EHLO
+        id S229561AbhJ2Oto (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 29 Oct 2021 10:49:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229558AbhJ2Osu (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 29 Oct 2021 10:48:50 -0400
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C79F5C061570;
-        Fri, 29 Oct 2021 07:46:21 -0700 (PDT)
-Received: by mail-wm1-x32f.google.com with SMTP id v127so8988861wme.5;
-        Fri, 29 Oct 2021 07:46:21 -0700 (PDT)
+        with ESMTP id S229558AbhJ2Oto (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 29 Oct 2021 10:49:44 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93371C061570;
+        Fri, 29 Oct 2021 07:47:15 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id v127so8990858wme.5;
+        Fri, 29 Oct 2021 07:47:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :references:from:in-reply-to:content-transfer-encoding;
-        bh=3C6qLllCMM0b1NZ5QRTgX6ndz85vjXTemuvZzCRBGR4=;
-        b=IJ81hDOua/LMyiVeCpcUzU9bqFBphp4DdhP9Gge4xP3buW/HWvU5mS0UyJVpgp3xOF
-         qJYGeUqqcGhyq4YqN6Vkp6Y7rt9mgvskU3luEC98mBkkWlJ+q/IhKe3PwaVd3imit8kw
-         BipHC7QJPA1+etbi9ONvB0RQDSGnXLDVPxj1XWZcANAaIQTgVI/avHNfyBznVk87fURM
-         cZo1ci1e6XeM/pqzzIFxYyZ5hzyVcSJcxwIF1nfDmg0VIx3s70AccpiBFId1FgUWy1ef
-         Kz4cLnR7hvDHK54kfZtlBxvSu2NpwuxI3+cIa4H/1eSOxOijm8Eil89tcWQ2xlgGsPMn
-         pNuQ==
+        bh=0N9owYFIVYIlKo6ThDwpew2UCXBiZ1LXn6ea7t4uB8o=;
+        b=MlxU1qSvInV5I7FAjoMbKnUBbxBxjFgdtqScLAVnag8Kr9Rs2iASkX7TTDkGruCLtm
+         bX8fksRAPcNrsHN4yALEbgaZZqAbrWPZCCo5c5ChzaxiC5XDaPetlE2Yjx9pVlgpdZZy
+         CZqyOUXqtdNdzQ3fq5u81JXYx/R6W/NAPkTfnwaemN86Ewf8/mcBb+gqz83CaU3iqDS5
+         Ri6MbhIRSsPQjHEb9qFOailsENzbNIgx5+CbBVJsKPhIyT5OfXWTSyRt5PnkuYsJS4nJ
+         Je5Q1piigzFZufzYT+M1pd4jiUB075HOdq/w/yD+UaXTsljYWtbwavyqE72ZPwmGYeDy
+         p+lg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=3C6qLllCMM0b1NZ5QRTgX6ndz85vjXTemuvZzCRBGR4=;
-        b=TJCwVN1UCWUwnXcNauBhzUwfxzcCOLBb4qFwN32c8QJPvS2uBqZUF3WcB/yJTEtpow
-         MgvL3ENTet1eiZn7lCJdB7pPfvbbYg8ObMxDu2wj99AdrE/PfjhEvZVEUpoQfI9qoOx9
-         ouG4ESkH49DSx7ssqe0LWeWc/BG1Rpei4hHxelI5zEK8tZ/980Duu7Fy4tqMx5hm0nnS
-         Pm6Bobq+8Mb/VDWdRWGQ7PwwxmLKb6rlSNiVYb2mLHVrUevUdIpUt7sF1+G6HrYc5hyp
-         v+BKFwPS31bTVFEKbWkxG+5zOubq0FG19WYLVbehmLkGOBbKdxtS4kAtBHbs0NyYlaDM
-         Ie8g==
-X-Gm-Message-State: AOAM532gFcNa/iCW3tnoC8Q5LfuRcQpeJfNkE+9WC0wfJfjEwFVpG4ss
-        qcIhW+QHeeTNY3M4UuTdQrk=
-X-Google-Smtp-Source: ABdhPJyEze12t6Zf2mcXC6ZkSJyBW+w+S4dTaobNJI04hzOUz3K7kBUd9LM2fEYM1VAzQOyjIoWrDw==
-X-Received: by 2002:a7b:c5d4:: with SMTP id n20mr19896934wmk.32.1635518780403;
-        Fri, 29 Oct 2021 07:46:20 -0700 (PDT)
+        bh=0N9owYFIVYIlKo6ThDwpew2UCXBiZ1LXn6ea7t4uB8o=;
+        b=TgpIsIKSYYQ32KuJE32Y7H6Ch2fIgELSdxI/x9fNgpw1H4Jw5oZJ+oohnnHuzRYQgG
+         HdKz1ya+xO60KIRBisWadfxLjdn2FMMU6h6J8ZITLtxqZTfDgfncxxyC4oj2IYbuOm6e
+         kQWUB92MN4XQNPakfN2vjgQTZ+X/lkWshRIb8e+hSGDJwiKkKMFWqhOTePS6LNzFZ0f3
+         EBhudblDDxD0meN7j+QqX5RbsJ9s60S/O06cp4JBO0g7rdv6BXe6o/4BlN7bAS1jlUMY
+         C5mdNaGzlHFByIAORjovhbpPh3fAGx6LVHZS34FePisndNKBbxVe3sZQPMJsof/y3diA
+         0OTg==
+X-Gm-Message-State: AOAM530cb+YZuomru1/kXJM8gjl0YN3rzCAw7maeZK/pJ1qjyL6KRCU4
+        5jVIyaeco3L8jD7iMAafVyo=
+X-Google-Smtp-Source: ABdhPJzEUV2yOFnynEnoi4TKZEFjAZheYcIdCtWlCMSFuxZJdBp6wq14dP40Ozo6Bov7RtXwDBa2ZQ==
+X-Received: by 2002:a05:600c:2113:: with SMTP id u19mr12056582wml.125.1635518834115;
+        Fri, 29 Oct 2021 07:47:14 -0700 (PDT)
 Received: from [192.168.8.198] ([148.252.129.16])
-        by smtp.gmail.com with ESMTPSA id k8sm9599544wms.41.2021.10.29.07.46.19
+        by smtp.gmail.com with ESMTPSA id t189sm2176271wma.8.2021.10.29.07.47.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Oct 2021 07:46:20 -0700 (PDT)
-Message-ID: <ef640d96-750f-d92e-50ff-27c97f6dcc51@gmail.com>
-Date:   Fri, 29 Oct 2021 15:45:41 +0100
+        Fri, 29 Oct 2021 07:47:13 -0700 (PDT)
+Message-ID: <949780a1-8768-830f-ff89-f6092037cb58@gmail.com>
+Date:   Fri, 29 Oct 2021 15:46:34 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.2.0
@@ -83,7 +83,7 @@ On 10/29/21 15:34, syzbot wrote:
 > IMPORTANT: if you fix the issue, please add the following tag to the commit:
 > Reported-by: syzbot+78b76ebc91042904f34e@syzkaller.appspotmail.com
 
-#syz test: git://git.kernel.dk/linux-block for-5.16/io_uring
+#syz test: git://git.kernel.dk/linux-block 3884b83dff245e41def99ceacca8ed2056baf0a8
 
 > 
 > ==================================================================

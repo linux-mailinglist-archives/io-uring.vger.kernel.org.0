@@ -2,89 +2,67 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9ACB444113A
-	for <lists+io-uring@lfdr.de>; Sun, 31 Oct 2021 23:30:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 915D8441155
+	for <lists+io-uring@lfdr.de>; Sun, 31 Oct 2021 23:59:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230098AbhJaWcz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 31 Oct 2021 18:32:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41640 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230025AbhJaWcy (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 31 Oct 2021 18:32:54 -0400
-Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A0B9C061714
-        for <io-uring@vger.kernel.org>; Sun, 31 Oct 2021 15:30:22 -0700 (PDT)
-Received: by mail-io1-xd29.google.com with SMTP id e144so19446744iof.3
-        for <io-uring@vger.kernel.org>; Sun, 31 Oct 2021 15:30:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:in-reply-to:references:subject:message-id:date
-         :mime-version:content-transfer-encoding;
-        bh=/Dmx6emnmCMcMQTPRUk//X4hsMZZHU+latDa1ZS7xpo=;
-        b=U1eA5aTsFdagrc+YDxqaB37ksm8eFr0MUd0jV7ncStgQQTrbGZtwU+/ONDVWYJaPjI
-         HzSFCCf4yxCZq3VUp9XTsBAKz2xfz6abUDl+j3FAc+b2l9Ur6GtXOrKrbWu5Z+PKkSXs
-         KHNwFs0wR2FeeP4+RWSGNNJCSr3RYhycAroBEPQ8DVquoFsCDlYy08QwJtP6kWQXXh55
-         W1mJEdniYL0VEH2+vKpb+i241276sJWlCLR4JvOH18tSOIdWtXSXmulCB7XjABVPFryr
-         aIrAQx6w7kPWu1iFMg8PHfX2Fc1VELtJ8HfOi/MUU47ANmsIl+CU+nyrbsDwkSCwNmcU
-         4yPQ==
+        id S230232AbhJaXBj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 31 Oct 2021 19:01:39 -0400
+Received: from mail-io1-f70.google.com ([209.85.166.70]:50947 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230125AbhJaXBi (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 31 Oct 2021 19:01:38 -0400
+Received: by mail-io1-f70.google.com with SMTP id u20-20020a5ec014000000b005df4924e18dso11349580iol.17
+        for <io-uring@vger.kernel.org>; Sun, 31 Oct 2021 15:59:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
-         :message-id:date:mime-version:content-transfer-encoding;
-        bh=/Dmx6emnmCMcMQTPRUk//X4hsMZZHU+latDa1ZS7xpo=;
-        b=UYc4/NIE+h+dGuV0LhPdEKcuTPLkJxEDnPUAJS5yPLZJYcpAy24vI5/Ysxx9KP66Ah
-         f7iHLiqTEZaujUd7zWcIIUDwrqn41D/Cu5MOAFi991zIx2lnIPRDsHaXXeb/ZQRIKbkW
-         PyqZD85jdP9ZHd3mQrWQihTjtFrEXz6DMPu1vGTIlWCbnxGCrjVI9f1YzA2QqJfm1Som
-         eKUpfefmhhaHDZ9eppgFakXYgBulKhIngz0C+gmDT8o8ars3BfWQ0tkAkg4z9Jo9Ga3y
-         RUEClkw6/qYCvAIrpl4hqCguh67R5msyHkoDAp0kGiHQt3Bk/95Iggc0DLLkrgqjfSwq
-         hG/A==
-X-Gm-Message-State: AOAM530LT1OURj2jK+cMpiWMiYrlcqDK3HhEaVzwtYEh4CjV98cxJqSZ
-        nZUk2iN0V+yqtQTrnLsYuz+qRA==
-X-Google-Smtp-Source: ABdhPJzc82LYhHduV5YK+si1+WwhDOapx3D5vqbOAzAkZ72LDJIn2PIS9VMMgVz+TuYEmln6+nkCmQ==
-X-Received: by 2002:a05:6638:2385:: with SMTP id q5mr18990904jat.42.1635719421615;
-        Sun, 31 Oct 2021 15:30:21 -0700 (PDT)
-Received: from [127.0.1.1] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id m5sm6676807ild.45.2021.10.31.15.30.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 31 Oct 2021 15:30:21 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Ammar Faizi <ammar.faizi@students.amikom.ac.id>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring Mailing List <io-uring@vger.kernel.org>
-In-Reply-To: <20211030114858.320116-1-ammar.faizi@intel.com>
-References: <20211030114858.320116-1-ammar.faizi@intel.com>
-Subject: Re: [PATCH liburing 0/2] Fixes for Makefile
-Message-Id: <163571942062.98331.6952339658386200986.b4-ty@kernel.dk>
-Date:   Sun, 31 Oct 2021 16:30:20 -0600
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=zmKZGqzh8fouPbLaed+gBxcWLHzsUh8p7n964ZC6uwc=;
+        b=nVNy6duBwVECRlUogKtriZz6hExt7w/vk1TzhBLLJ1ocgO8MRnEd9CBlXLGE3JEuoF
+         8teuzDRQuoIXFy6SS8GjWupQFVgnLtUdjhhwu+42Jlb19kQjL3ircb42uhxncqGyoszm
+         MAssXW/fysZvOJ0I9//aB2GE9l+U585heIIjZ3F29p2sJZP5A9IFhNpBalurXvKT0TgX
+         4b2QjQhgqGNtfuRoOXJa2jg2IgNMaGZ8mLNSVrNAEdmAfCAWTmUivdtDc7ZAdHmQNgJl
+         IXqWZPsqkeebX/niDAn/88a/xaUM2gLfdXqdZXJ69nmlzkb06wSurm5bl93mdA5CSx2c
+         MNYQ==
+X-Gm-Message-State: AOAM531puO3jxAZVbTMXwPRhQKi+RiryiT9foqoE9HP1HN5WtgbeOM2E
+        0lMgiQfBKsQ9ngbGSCBOW+PHMoLFbfkSmPgA9YA9ih4MH8xE
+X-Google-Smtp-Source: ABdhPJywbfOpwWGX+8twysh9JnZdNyAmjt8vM3QTfSudoVwDDOBb7qmmPAVA7hKN+so8+5aTSnSyrEftThdLX7EqHh1cLqN9uIid
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6638:d53:: with SMTP id d19mr18923597jak.123.1635721146351;
+ Sun, 31 Oct 2021 15:59:06 -0700 (PDT)
+Date:   Sun, 31 Oct 2021 15:59:06 -0700
+In-Reply-To: <000000000000fba7bd05cf7eb8f5@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e143c505cfae0138@google.com>
+Subject: Re: [syzbot] KASAN: use-after-free Write in __io_free_req
+From:   syzbot <syzbot+78b76ebc91042904f34e@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        xiaoguang.wang@linux.alibaba.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Sat, 30 Oct 2021 22:55:52 +0700, Ammar Faizi wrote:
-> 2 patches for liburing, both fix the Makefile.
-> 
-> Ammar Faizi (2):
->   examples/Makefile: Fix build script bug
->   test/Makefile: Refactor the Makefile
-> 
-> examples/Makefile |  21 ++--
->  test/Makefile     | 263 +++++++++++++++-------------------------------
->  2 files changed, 98 insertions(+), 186 deletions(-)
-> 
-> [...]
+syzbot has bisected this issue to:
 
-Applied, thanks!
+commit 34ced75ca1f63fac6148497971212583aa0f7a87
+Author: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+Date:   Mon Oct 25 05:38:48 2021 +0000
 
-[1/2] examples/Makefile: Fix missing clean up
-      commit: d543ff1a23d0a9ad7a2628f60194896f9033f27e
-[2/2] test/Makefile: Refactor the Makefile
-      commit: bceaacc35f9e75469f6179d63436d67dc5bd47d0
+    io_uring: reduce frequent add_wait_queue() overhead for multi-shot poll request
 
-Best regards,
--- 
-Jens Axboe
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14f83bbab00000
+start commit:   bdcc9f6a5682 Add linux-next specific files for 20211029
+git tree:       linux-next
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=16f83bbab00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=12f83bbab00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=cea91ee10b0cd274
+dashboard link: https://syzkaller.appspot.com/bug?extid=78b76ebc91042904f34e
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10cf03e2b00000
 
+Reported-by: syzbot+78b76ebc91042904f34e@syzkaller.appspotmail.com
+Fixes: 34ced75ca1f6 ("io_uring: reduce frequent add_wait_queue() overhead for multi-shot poll request")
 
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection

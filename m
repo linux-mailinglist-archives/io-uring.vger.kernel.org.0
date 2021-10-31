@@ -2,244 +2,306 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 52D37440E2C
-	for <lists+io-uring@lfdr.de>; Sun, 31 Oct 2021 13:17:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B84A440E82
+	for <lists+io-uring@lfdr.de>; Sun, 31 Oct 2021 14:03:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229877AbhJaMUA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 31 Oct 2021 08:20:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49864 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229798AbhJaMT7 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 31 Oct 2021 08:19:59 -0400
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC833C061570;
-        Sun, 31 Oct 2021 05:17:27 -0700 (PDT)
-Received: by mail-wm1-x335.google.com with SMTP id 67-20020a1c1946000000b0030d4c90fa87so10023496wmz.2;
-        Sun, 31 Oct 2021 05:17:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :references:cc:from:in-reply-to:content-transfer-encoding;
-        bh=XGv9sXsKzYpjFAtjgqIjlcfVBcQ5nFprRJllT4RhWp4=;
-        b=agYz5rPBvFQbKMhFGX+J2F0vyeNDj8qV17tVhac8ba0f+2wDn2ylCpOnRhwDZLD9bz
-         n0tx3SvxJrp4rP5+5xIuPYqcHGctV4Lf9IL/PnUTlJyow07zlurWZbzlZSVuCPectgfB
-         JLMS6NczD3oNsO/i69Ztve0bt2vQ14szVqH9R1l/KcN4hWelZ28sROevWLofI/OvWx0+
-         pztEnrxVtj1o++jmU95C0T+OhA/b1+40Q0g2VX/Nj0JQ7XKJkkF3qnyMw+fYcDiUM/mV
-         5YuXNQmYiXfRzVWkov+yxsFPQZFmUTE3krME6vhyNQHHrGI5LE3Atj+mMEIvR/SJnhHo
-         SpEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:cc:from:in-reply-to
-         :content-transfer-encoding;
-        bh=XGv9sXsKzYpjFAtjgqIjlcfVBcQ5nFprRJllT4RhWp4=;
-        b=hY/yev0R6eIKdWQS5wNa2xiQkhaMvUWLl43/VtF0uElkCopVU9547rS/7Fk3og1lKT
-         kx9ALz+Co8x7C7g8pt7he5UE8RJL25Ft6eCXRj9JSw0nozmR5asFjkwnX3SZ4NRMS6uq
-         4rizh1W6HKhFj9Zm7lSN7aP/jg6m2Bu7UUyE+e2gX7PwTHFGAmuNXIfvzhfDj6wfhUfX
-         Gbq64HxuQREl8yGsLXLuaPcqny8X2NLM/9WCpdyZRGTiNDLME96gOruak2+vbUfaqplh
-         DbozAlIiwxtdzHE2QOEqPE7pXTYV06dw2PhC878Xb5DI71/ihRzOvan2qr04o5jpI3r8
-         6nSA==
-X-Gm-Message-State: AOAM532MDI6QSc747IYGKklIWOkI7el0orYF9aOdg9TJNsbBoVWD/Cqb
-        Jx3iaC0quK7qWp9U2ZMPCXY=
-X-Google-Smtp-Source: ABdhPJzzgc3cODrsEbRqZgIDiIIjg/WxLFi7XiNIHjkXqksaOPvH/QsEVY6ZHGq1NuyLcepQ1dNJzw==
-X-Received: by 2002:a1c:29c6:: with SMTP id p189mr3494960wmp.129.1635682646452;
-        Sun, 31 Oct 2021 05:17:26 -0700 (PDT)
-Received: from [192.168.8.198] ([85.255.232.29])
-        by smtp.gmail.com with ESMTPSA id v3sm11281533wrg.23.2021.10.31.05.17.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 31 Oct 2021 05:17:26 -0700 (PDT)
-Message-ID: <38a47857-05f4-4322-990e-3d83a7040517@gmail.com>
-Date:   Sun, 31 Oct 2021 12:14:23 +0000
+        id S229662AbhJaNF5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 31 Oct 2021 09:05:57 -0400
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:34283 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229626AbhJaNF4 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 31 Oct 2021 09:05:56 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UuM97cS_1635685402;
+Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UuM97cS_1635685402)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Sun, 31 Oct 2021 21:03:23 +0800
+Subject: Re: [RFC] io-wq: decouple work_list protection from the big wqe->lock
+From:   Hao Xu <haoxu@linux.alibaba.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>
+References: <20211031104945.224024-1-haoxu@linux.alibaba.com>
+Message-ID: <153b3bed-7aea-d4bb-1e5b-ffe11e8aabc1@linux.alibaba.com>
+Date:   Sun, 31 Oct 2021 21:03:22 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.13.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Subject: Re: [syzbot] KASAN: use-after-free Write in __io_free_req
-Content-Language: en-US
-To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-References: <000000000000fba7bd05cf7eb8f5@google.com>
-Cc:     syzbot <syzbot+78b76ebc91042904f34e@syzkaller.appspotmail.com>,
-        axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <000000000000fba7bd05cf7eb8f5@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20211031104945.224024-1-haoxu@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 10/29/21 15:34, syzbot wrote:
-> Hello,
+在 2021/10/31 下午6:49, Hao Xu 写道:
+> wqe->lock is abused, it now protects acct->work_list, hash stuff,
+> nr_workers, wqe->free_list and so on. Lets first get the work_list out
+> of the wqe-lock mess by introduce a specific lock for work list. This
+> is the first step to solve the huge contension between work insertion
+> and work consumption.
+> good thing:
+>    - split locking for bound and unbound work list
+>    - reduce contension between work_list visit and (worker's)free_list.
+           ^ not reduce, should be remove
 > 
-> syzbot found the following issue on:
+> For the hash stuff, since there won't be a work with same file in both
+> bound and unbound work list, thus they won't visit same hash entry. it
+> works well to use the new lock to protect hash stuff.
 > 
-> HEAD commit:    bdcc9f6a5682 Add linux-next specific files for 20211029
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=12a87e22b00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=cea91ee10b0cd274
-> dashboard link: https://syzkaller.appspot.com/bug?extid=78b76ebc91042904f34e
-> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10cf03e2b00000
+> Results:
+> set max_unbound_worker = 4, test with echo-server:
+> nice -n -15 ./io_uring_echo_server -p 8081 -f -n 1000 -l 16
+> (-n connection, -l workload)
+> before this patch:
+> Samples: 2M of event 'cycles:ppp', Event count (approx.): 1239982111074
+> Overhead  Command          Shared Object         Symbol
+>    28.59%  iou-wrk-10021    [kernel.vmlinux]      [k] native_queued_spin_lock_slowpath
+>     8.89%  io_uring_echo_s  [kernel.vmlinux]      [k] native_queued_spin_lock_slowpath
+>     6.20%  iou-wrk-10021    [kernel.vmlinux]      [k] _raw_spin_lock
+>     2.45%  io_uring_echo_s  [kernel.vmlinux]      [k] io_prep_async_work
+>     2.36%  iou-wrk-10021    [kernel.vmlinux]      [k] _raw_spin_lock_irqsave
+>     2.29%  iou-wrk-10021    [kernel.vmlinux]      [k] io_worker_handle_work
+>     1.29%  io_uring_echo_s  [kernel.vmlinux]      [k] io_wqe_enqueue
+>     1.06%  iou-wrk-10021    [kernel.vmlinux]      [k] io_wqe_worker
+>     1.06%  io_uring_echo_s  [kernel.vmlinux]      [k] _raw_spin_lock
+>     1.03%  iou-wrk-10021    [kernel.vmlinux]      [k] __schedule
+>     0.99%  iou-wrk-10021    [kernel.vmlinux]      [k] tcp_sendmsg_locked
 > 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+78b76ebc91042904f34e@syzkaller.appspotmail.com
-
-Hey Xiaoguang,
-
-Apparently, this was caused by those 3 dropped poll patches, when you'll
-be resending would be great if you test with this syz repro as well.
-
-
-> ==================================================================
-> BUG: KASAN: use-after-free in wq_list_add_head fs/io-wq.h:71 [inline]
-> BUG: KASAN: use-after-free in __io_free_req+0x33f/0x3c5 fs/io_uring.c:2040
-> Write of size 8 at addr ffff8880713ecbb8 by task syz-executor.0/8059
+> with this patch:
+> Samples: 1M of event 'cycles:ppp', Event count (approx.): 708446691943
+> Overhead  Command          Shared Object         Symbol
+>    16.86%  iou-wrk-10893    [kernel.vmlinux]      [k] native_queued_spin_lock_slowpat
+>     9.10%  iou-wrk-10893    [kernel.vmlinux]      [k] _raw_spin_lock
+>     4.53%  io_uring_echo_s  [kernel.vmlinux]      [k] native_queued_spin_lock_slowpat
+>     2.87%  iou-wrk-10893    [kernel.vmlinux]      [k] io_worker_handle_work
+>     2.57%  iou-wrk-10893    [kernel.vmlinux]      [k] _raw_spin_lock_irqsave
+>     2.56%  io_uring_echo_s  [kernel.vmlinux]      [k] io_prep_async_work
+>     1.82%  io_uring_echo_s  [kernel.vmlinux]      [k] _raw_spin_lock
+>     1.33%  iou-wrk-10893    [kernel.vmlinux]      [k] io_wqe_worker
+>     1.26%  io_uring_echo_s  [kernel.vmlinux]      [k] try_to_wake_up
 > 
-> CPU: 1 PID: 8059 Comm: syz-executor.0 Not tainted 5.15.0-rc7-next-20211029-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> Call Trace:
->   <TASK>
->   __dump_stack lib/dump_stack.c:88 [inline]
->   dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:106
->   print_address_description.constprop.0.cold+0x8d/0x320 mm/kasan/report.c:247
->   __kasan_report mm/kasan/report.c:433 [inline]
->   kasan_report.cold+0x83/0xdf mm/kasan/report.c:450
->   wq_list_add_head fs/io-wq.h:71 [inline]
->   __io_free_req+0x33f/0x3c5 fs/io_uring.c:2040
->   tctx_task_work+0x1b3/0x630 fs/io_uring.c:2207
->   task_work_run+0xdd/0x1a0 kernel/task_work.c:164
->   exit_task_work include/linux/task_work.h:32 [inline]
->   do_exit+0xc14/0x2b40 kernel/exit.c:832
->   do_group_exit+0x125/0x310 kernel/exit.c:929
->   get_signal+0x47d/0x21d0 kernel/signal.c:2820
->   arch_do_signal_or_restart+0x2a9/0x1c40 arch/x86/kernel/signal.c:868
->   handle_signal_work kernel/entry/common.c:148 [inline]
->   exit_to_user_mode_loop kernel/entry/common.c:172 [inline]
->   exit_to_user_mode_prepare+0x17d/0x290 kernel/entry/common.c:207
->   __syscall_exit_to_user_mode_work kernel/entry/common.c:289 [inline]
->   syscall_exit_to_user_mode+0x19/0x60 kernel/entry/common.c:300
->   do_syscall_64+0x42/0xb0 arch/x86/entry/common.c:86
->   entry_SYSCALL_64_after_hwframe+0x44/0xae
-> RIP: 0033:0x7f9da8c4ea39
-> Code: Unable to access opcode bytes at RIP 0x7f9da8c4ea0f.
-> RSP: 002b:00007f9da83a3218 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-> RAX: fffffffffffffe00 RBX: 00007f9da8d62028 RCX: 00007f9da8c4ea39
-> RDX: 0000000000000000 RSI: 0000000000000080 RDI: 00007f9da8d62028
-> RBP: 00007f9da8d62020 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00007f9da8d6202c
-> R13: 00007ffd6e91741f R14: 00007f9da83a3300 R15: 0000000000022000
->   </TASK>
+> spin_lock failure from 25.59% + 8.89% =  34.48% to 16.86% + 4.53% = 21.39%
+> TPS is similar, while cpu usage is from almost 400% to 350% (master
+> thread + io_workers)
 > 
-> Allocated by task 8059:
->   kasan_save_stack+0x1e/0x50 mm/kasan/common.c:38
->   kasan_set_track mm/kasan/common.c:46 [inline]
->   set_alloc_info mm/kasan/common.c:434 [inline]
->   __kasan_slab_alloc+0x90/0xc0 mm/kasan/common.c:467
->   kasan_slab_alloc include/linux/kasan.h:259 [inline]
->   slab_post_alloc_hook mm/slab.h:519 [inline]
->   kmem_cache_alloc_bulk+0x39d/0x720 mm/slub.c:3730
->   __io_alloc_req_refill fs/io_uring.c:1977 [inline]
->   io_alloc_req_refill fs/io_uring.c:2003 [inline]
->   io_submit_sqes.cold+0x20b/0x43d fs/io_uring.c:7325
->   __do_sys_io_uring_enter+0xf6e/0x1f50 fs/io_uring.c:10052
->   do_syscall_x64 arch/x86/entry/common.c:50 [inline]
->   do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
->   entry_SYSCALL_64_after_hwframe+0x44/0xae
-> 
-> Freed by task 1041:
->   kasan_save_stack+0x1e/0x50 mm/kasan/common.c:38
->   kasan_set_track+0x21/0x30 mm/kasan/common.c:46
->   kasan_set_free_info+0x20/0x30 mm/kasan/generic.c:370
->   ____kasan_slab_free mm/kasan/common.c:366 [inline]
->   ____kasan_slab_free mm/kasan/common.c:328 [inline]
->   __kasan_slab_free+0xff/0x130 mm/kasan/common.c:374
->   kasan_slab_free include/linux/kasan.h:235 [inline]
->   slab_free_hook mm/slub.c:1723 [inline]
->   slab_free_freelist_hook+0x8b/0x1c0 mm/slub.c:1749
->   slab_free mm/slub.c:3513 [inline]
->   kmem_cache_free+0x92/0x5e0 mm/slub.c:3529
->   io_req_caches_free+0x1aa/0x1e6 fs/io_uring.c:9291
->   io_ring_exit_work+0x1e4/0xbe8 fs/io_uring.c:9467
->   process_one_work+0x9b2/0x1690 kernel/workqueue.c:2298
->   worker_thread+0x658/0x11f0 kernel/workqueue.c:2445
->   kthread+0x405/0x4f0 kernel/kthread.c:327
->   ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295
-> 
-> The buggy address belongs to the object at ffff8880713ecb40
->   which belongs to the cache io_kiocb of size 224
-> The buggy address is located 120 bytes inside of
->   224-byte region [ffff8880713ecb40, ffff8880713ecc20)
-> The buggy address belongs to the page:
-> page:ffffea0001c4fb00 refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff8880713ec8c0 pfn:0x713ec
-> flags: 0xfff00000000200(slab|node=0|zone=1|lastcpupid=0x7ff)
-> raw: 00fff00000000200 ffffea0001c4d400 dead000000000004 ffff88814607bdc0
-> raw: ffff8880713ec8c0 00000000800c000b 00000001ffffffff 0000000000000000
-> page dumped because: kasan: bad access detected
-> page_owner tracks the page as allocated
-> page last allocated via order 0, migratetype Unmovable, gfp_mask 0x12cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY), pid 7168, ts 1580559391621, free_ts 1580537948913
->   prep_new_page mm/page_alloc.c:2418 [inline]
->   get_page_from_freelist+0xa72/0x2f50 mm/page_alloc.c:4149
->   __alloc_pages+0x1b2/0x500 mm/page_alloc.c:5369
->   alloc_pages+0x1a7/0x300 mm/mempolicy.c:2191
->   alloc_slab_page mm/slub.c:1793 [inline]
->   allocate_slab mm/slub.c:1930 [inline]
->   new_slab+0x32d/0x4a0 mm/slub.c:1993
->   ___slab_alloc+0x918/0xfe0 mm/slub.c:3022
->   kmem_cache_alloc_bulk+0x21a/0x720 mm/slub.c:3706
->   __io_alloc_req_refill fs/io_uring.c:1977 [inline]
->   io_alloc_req_refill fs/io_uring.c:2003 [inline]
->   io_submit_sqes.cold+0x20b/0x43d fs/io_uring.c:7325
->   __do_sys_io_uring_enter+0xf6e/0x1f50 fs/io_uring.c:10052
->   do_syscall_x64 arch/x86/entry/common.c:50 [inline]
->   do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
->   entry_SYSCALL_64_after_hwframe+0x44/0xae
-> page last free stack trace:
->   reset_page_owner include/linux/page_owner.h:24 [inline]
->   free_pages_prepare mm/page_alloc.c:1338 [inline]
->   free_pcp_prepare+0x374/0x870 mm/page_alloc.c:1389
->   free_unref_page_prepare mm/page_alloc.c:3309 [inline]
->   free_unref_page_list+0x1a9/0xfa0 mm/page_alloc.c:3425
->   release_pages+0x3f4/0x1480 mm/swap.c:979
->   tlb_batch_pages_flush mm/mmu_gather.c:49 [inline]
->   tlb_flush_mmu_free mm/mmu_gather.c:242 [inline]
->   tlb_flush_mmu mm/mmu_gather.c:249 [inline]
->   tlb_finish_mmu+0x165/0x8c0 mm/mmu_gather.c:340
->   exit_mmap+0x1ea/0x630 mm/mmap.c:3173
->   __mmput+0x122/0x4b0 kernel/fork.c:1164
->   mmput+0x56/0x60 kernel/fork.c:1185
->   exit_mm kernel/exit.c:507 [inline]
->   do_exit+0xb27/0x2b40 kernel/exit.c:819
->   do_group_exit+0x125/0x310 kernel/exit.c:929
->   get_signal+0x47d/0x21d0 kernel/signal.c:2820
->   arch_do_signal_or_restart+0x2a9/0x1c40 arch/x86/kernel/signal.c:868
->   handle_signal_work kernel/entry/common.c:148 [inline]
->   exit_to_user_mode_loop kernel/entry/common.c:172 [inline]
->   exit_to_user_mode_prepare+0x17d/0x290 kernel/entry/common.c:207
->   __syscall_exit_to_user_mode_work kernel/entry/common.c:289 [inline]
->   syscall_exit_to_user_mode+0x19/0x60 kernel/entry/common.c:300
->   do_syscall_64+0x42/0xb0 arch/x86/entry/common.c:86
->   entry_SYSCALL_64_after_hwframe+0x44/0xae
-> 
-> Memory state around the buggy address:
->   ffff8880713eca80: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
->   ffff8880713ecb00: fc fc fc fc fc fc fc fc fa fb fb fb fb fb fb fb
->> ffff8880713ecb80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->                                          ^
->   ffff8880713ecc00: fb fb fb fb fc fc fc fc fc fc fc fc fc fc fc fc
->   ffff8880713ecc80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ==================================================================
-> 
-> 
+> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
 > ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>   fs/io-wq.c | 61 +++++++++++++++++++++++++++++++++---------------------
+>   1 file changed, 37 insertions(+), 24 deletions(-)
 > 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> syzbot can test patches for this issue, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
+> diff --git a/fs/io-wq.c b/fs/io-wq.c
+> index fe6b2abcaa49..949573f947de 100644
+> --- a/fs/io-wq.c
+> +++ b/fs/io-wq.c
+> @@ -74,6 +74,7 @@ struct io_wqe_acct {
+>   	unsigned max_workers;
+>   	int index;
+>   	atomic_t nr_running;
+> +	raw_spinlock_t lock;
+>   	struct io_wq_work_list work_list;
+>   	unsigned long flags;
+>   };
+> @@ -221,12 +222,13 @@ static void io_worker_exit(struct io_worker *worker)
+>   	if (worker->flags & IO_WORKER_F_FREE)
+>   		hlist_nulls_del_rcu(&worker->nulls_node);
+>   	list_del_rcu(&worker->all_list);
+> -	preempt_disable();
+> +	raw_spin_unlock(&wqe->lock);
+> +
+>   	io_wqe_dec_running(worker);
+>   	worker->flags = 0;
+> +	preempt_disable();
+>   	current->flags &= ~PF_IO_WORKER;
+>   	preempt_enable();
+> -	raw_spin_unlock(&wqe->lock);
+>   
+>   	kfree_rcu(worker, rcu);
+>   	io_worker_ref_put(wqe->wq);
+> @@ -380,10 +382,14 @@ static void io_wqe_dec_running(struct io_worker *worker)
+>   	if (!(worker->flags & IO_WORKER_F_UP))
+>   		return;
+>   
+> +	raw_spin_lock(&acct->lock);
+>   	if (atomic_dec_and_test(&acct->nr_running) && io_acct_run_queue(acct)) {
+> +		raw_spin_unlock(&acct->lock);
+>   		atomic_inc(&acct->nr_running);
+>   		atomic_inc(&wqe->wq->worker_refs);
+>   		io_queue_worker_create(worker, acct, create_worker_cb);
+> +	} else {
+> +		raw_spin_unlock(&acct->lock);
+>   	}
+>   }
+>   
+> @@ -479,9 +485,9 @@ static struct io_wq_work *io_get_next_work(struct io_wqe_acct *acct,
+>   		 * work being added and clearing the stalled bit.
+>   		 */
+>   		set_bit(IO_ACCT_STALLED_BIT, &acct->flags);
+> -		raw_spin_unlock(&wqe->lock);
+> +		raw_spin_unlock(&acct->lock);
+>   		io_wait_on_hash(wqe, stall_hash);
+> -		raw_spin_lock(&wqe->lock);
+> +		raw_spin_lock(&acct->lock);
+>   	}
+>   
+>   	return NULL;
+> @@ -531,12 +537,14 @@ static void io_worker_handle_work(struct io_worker *worker)
+>   		 * clear the stalled flag.
+>   		 */
+>   		work = io_get_next_work(acct, worker);
+> -		if (work)
+> +		raw_spin_unlock(&acct->lock);
+> +		if (work) {
+> +			raw_spin_lock(&wqe->lock);
+>   			__io_worker_busy(wqe, worker, work);
+> -
+> -		raw_spin_unlock(&wqe->lock);
+> -		if (!work)
+> +			raw_spin_unlock(&wqe->lock);
+> +		} else {
+>   			break;
+> +		}
+>   		io_assign_current_work(worker, work);
+>   		__set_current_state(TASK_RUNNING);
+>   
+> @@ -567,15 +575,15 @@ static void io_worker_handle_work(struct io_worker *worker)
+>   				clear_bit(IO_ACCT_STALLED_BIT, &acct->flags);
+>   				if (wq_has_sleeper(&wq->hash->wait))
+>   					wake_up(&wq->hash->wait);
+> -				raw_spin_lock(&wqe->lock);
+> +				raw_spin_lock(&acct->lock);
+>   				/* skip unnecessary unlock-lock wqe->lock */
+>   				if (!work)
+>   					goto get_next;
+> -				raw_spin_unlock(&wqe->lock);
+> +				raw_spin_unlock(&acct->lock);
+>   			}
+>   		} while (work);
+>   
+> -		raw_spin_lock(&wqe->lock);
+> +		raw_spin_lock(&acct->lock);
+>   	} while (1);
+>   }
+>   
+> @@ -598,11 +606,14 @@ static int io_wqe_worker(void *data)
+>   
+>   		set_current_state(TASK_INTERRUPTIBLE);
+>   loop:
+> -		raw_spin_lock(&wqe->lock);
+> +		raw_spin_lock(&acct->lock);
+>   		if (io_acct_run_queue(acct)) {
+>   			io_worker_handle_work(worker);
+>   			goto loop;
+> +		} else {
+> +			raw_spin_unlock(&acct->lock);
+>   		}
+> +		raw_spin_lock(&wqe->lock);
+>   		/* timed out, exit unless we're the last worker */
+>   		if (last_timeout && acct->nr_workers > 1) {
+>   			acct->nr_workers--;
+> @@ -627,7 +638,7 @@ static int io_wqe_worker(void *data)
+>   	}
+>   
+>   	if (test_bit(IO_WQ_BIT_EXIT, &wq->state)) {
+> -		raw_spin_lock(&wqe->lock);
+> +		raw_spin_lock(&acct->lock);
+>   		io_worker_handle_work(worker);
+>   	}
+>   
+> @@ -668,10 +679,7 @@ void io_wq_worker_sleeping(struct task_struct *tsk)
+>   		return;
+>   
+>   	worker->flags &= ~IO_WORKER_F_RUNNING;
+> -
+> -	raw_spin_lock(&worker->wqe->lock);
+>   	io_wqe_dec_running(worker);
+> -	raw_spin_unlock(&worker->wqe->lock);
+>   }
+>   
+>   static void io_init_new_worker(struct io_wqe *wqe, struct io_worker *worker,
+> @@ -734,10 +742,12 @@ static void create_worker_cont(struct callback_head *cb)
+>   				.cancel_all	= true,
+>   			};
+>   
+> +			raw_spin_unlock(&wqe->lock);
+>   			while (io_acct_cancel_pending_work(wqe, acct, &match))
+> -				raw_spin_lock(&wqe->lock);
+> +				;
+> +		} else {
+> +			raw_spin_unlock(&wqe->lock);
+>   		}
+> -		raw_spin_unlock(&wqe->lock);
+>   		io_worker_ref_put(wqe->wq);
+>   		kfree(worker);
+>   		return;
+> @@ -883,10 +893,12 @@ static void io_wqe_enqueue(struct io_wqe *wqe, struct io_wq_work *work)
+>   		return;
+>   	}
+>   
+> -	raw_spin_lock(&wqe->lock);
+> +	raw_spin_lock(&acct->lock);
+>   	io_wqe_insert_work(wqe, work);
+>   	clear_bit(IO_ACCT_STALLED_BIT, &acct->flags);
+> +	raw_spin_unlock(&acct->lock);
+>   
+> +	raw_spin_lock(&wqe->lock);
+>   	rcu_read_lock();
+>   	do_create = !io_wqe_activate_free_worker(wqe, acct);
+>   	rcu_read_unlock();
+> @@ -910,8 +922,7 @@ static void io_wqe_enqueue(struct io_wqe *wqe, struct io_wq_work *work)
+>   				.cancel_all	= false,
+>   			};
+>   
+> -			if (io_acct_cancel_pending_work(wqe, acct, &match))
+> -				raw_spin_lock(&wqe->lock);
+> +			io_acct_cancel_pending_work(wqe, acct, &match);
+>   		}
+>   		raw_spin_unlock(&wqe->lock);
+>   	}
+> @@ -982,17 +993,19 @@ static bool io_acct_cancel_pending_work(struct io_wqe *wqe,
+>   	struct io_wq_work_node *node, *prev;
+>   	struct io_wq_work *work;
+>   
+> +	raw_spin_lock(&acct->lock);
+>   	wq_list_for_each(node, prev, &acct->work_list) {
+>   		work = container_of(node, struct io_wq_work, list);
+>   		if (!match->fn(work, match->data))
+>   			continue;
+>   		io_wqe_remove_pending(wqe, work, prev);
+> -		raw_spin_unlock(&wqe->lock);
+> +		raw_spin_unlock(&acct->lock);
+>   		io_run_cancel(work, wqe);
+>   		match->nr_pending++;
+>   		/* not safe to continue after unlock */
+>   		return true;
+>   	}
+> +	raw_spin_unlock(&acct->lock);
+>   
+>   	return false;
+>   }
+> @@ -1002,7 +1015,6 @@ static void io_wqe_cancel_pending_work(struct io_wqe *wqe,
+>   {
+>   	int i;
+>   retry:
+> -	raw_spin_lock(&wqe->lock);
+>   	for (i = 0; i < IO_WQ_ACCT_NR; i++) {
+>   		struct io_wqe_acct *acct = io_get_acct(wqe, i == 0);
+>   
+> @@ -1012,7 +1024,6 @@ static void io_wqe_cancel_pending_work(struct io_wqe *wqe,
+>   			return;
+>   		}
+>   	}
+> -	raw_spin_unlock(&wqe->lock);
+>   }
+>   
+>   static void io_wqe_cancel_running_work(struct io_wqe *wqe,
+> @@ -1126,6 +1137,8 @@ struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data)
+>   		wqe->acct[IO_WQ_ACCT_BOUND].max_workers = bounded;
+>   		wqe->acct[IO_WQ_ACCT_UNBOUND].max_workers =
+>   					task_rlimit(current, RLIMIT_NPROC);
+> +		raw_spin_lock_init(&wqe->acct[IO_WQ_ACCT_BOUND].lock);
+> +		raw_spin_lock_init(&wqe->acct[IO_WQ_ACCT_UNBOUND].lock);
+>   		INIT_LIST_HEAD(&wqe->wait.entry);
+>   		wqe->wait.func = io_wqe_hash_wake;
+>   		for (i = 0; i < IO_WQ_ACCT_NR; i++) {
 > 
 
--- 
-Pavel Begunkov

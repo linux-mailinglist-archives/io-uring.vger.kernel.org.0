@@ -2,271 +2,106 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BFF314432E8
-	for <lists+io-uring@lfdr.de>; Tue,  2 Nov 2021 17:36:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 726474434A1
+	for <lists+io-uring@lfdr.de>; Tue,  2 Nov 2021 18:36:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235124AbhKBQjK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 2 Nov 2021 12:39:10 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:22046 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235072AbhKBQir (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 2 Nov 2021 12:38:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1635870962;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=epuemumYZFBS7WS/wVl8YuSKbQMx/A8ZV6N+/T2zRsc=;
-        b=HrKAclkOtheAY1WVxYMTwMMV3uMFd5axe4d81X4SGUW20isPu4H6Ad45zT3rDKPQ6pxPjU
-        T9uDqCGeYt4Eoz8Pm71VqEW8JLIEe8DGHpYL9e+cy4VrocgXZ7foos6b4b5nkzRfa2APMd
-        dwnjDhnw39x2bYPxxrnYc9nPE2T2E0g=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-295-ItU3K6D_N0eecrZz7ybryQ-1; Tue, 02 Nov 2021 12:33:30 -0400
-X-MC-Unique: ItU3K6D_N0eecrZz7ybryQ-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DF7E78042E1;
-        Tue,  2 Nov 2021 16:33:29 +0000 (UTC)
-Received: from madcap2.tricolour.ca (unknown [10.3.128.2])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id A21F460C17;
-        Tue,  2 Nov 2021 16:33:00 +0000 (UTC)
-Date:   Tue, 2 Nov 2021 12:32:58 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Steve Grubb <sgrubb@redhat.com>
-Cc:     Linux-Audit Mailing List <linux-audit@redhat.com>,
-        io-uring@vger.kernel.org, Paul Moore <paul@paul-moore.com>
-Subject: Re: [PATCH v3 2/7] add support for the uring filter list
-Message-ID: <20211102163258.GH1550715@madcap2.tricolour.ca>
-References: <20211028195939.3102767-1-rgb@redhat.com>
- <2523658.Lt9SDvczpP@x2>
- <20211101150549.GG1550715@madcap2.tricolour.ca>
- <2282661.ElGaqSPkdT@x2>
+        id S234317AbhKBRjY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 2 Nov 2021 13:39:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56830 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229684AbhKBRjX (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 2 Nov 2021 13:39:23 -0400
+Received: from mail-yb1-xb2d.google.com (mail-yb1-xb2d.google.com [IPv6:2607:f8b0:4864:20::b2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC2F3C061714
+        for <io-uring@vger.kernel.org>; Tue,  2 Nov 2021 10:36:48 -0700 (PDT)
+Received: by mail-yb1-xb2d.google.com with SMTP id v64so218969ybi.5
+        for <io-uring@vger.kernel.org>; Tue, 02 Nov 2021 10:36:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=pe2MTo3IfB/qkA+auMThUnzp/9t22Jh5FrGC9uzrOws=;
+        b=Gb97JCPhgbeeGd6yvoU05frN718SSy7MV616Dyla0YPRubbkXv+fJA0PGy6qER+h27
+         sRj4s+L+xTJdDNHrn2LnuTxmjRZhVmQhZlUVSUYdYchCTY8g6W2WgTPvFgGo5M/bbRN9
+         dGAvV5nbiPPzbY1ZsybDq5wSiv5ZwMN0oIyE/HehRukkMeaNfXviHvUZm8VCmGp0GEtw
+         yUCqEZAXL4U+ap306QX3sA68wjbmGHo3FeOvQaGNQsSRWY/YUgEW8qYZoCNB1A/iDtMB
+         vNVC15BYL6AlGzSgcK1GF287uhjCcVZS/EMx3wVwljNrhFUVO1oMo9r+/0YGb8MeWJui
+         fjGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=pe2MTo3IfB/qkA+auMThUnzp/9t22Jh5FrGC9uzrOws=;
+        b=T1/P6fZVQ1Wki0IguT1weTdYvZ0vZ1pZo71i9QwQDWOhPuTcU+sDNUgZrytkS3LHxO
+         LZbRPfkeGUfyagAqIsw2HocaFw6sqkCZWzaG2zs0ch4x6zh6N1Hycv+iabH5EB5paZyU
+         bKwBQUCZ6YGh9qNT31nUSGnX6uarUm40VRM9KdsWoCmV4yKwsphaakagcMZGUzChDODL
+         piDKf4mxvw5Uip1uKL5MrgzshnatTVioYnnpSZP48D9YRAZ1iFdnbCm/wLYltxnQQEXg
+         l+rS1he01FEI7qVPoPu54zL7cXxPmN45DKupCfuhWb332OOh5q0+fKAToTlSdZjukJvz
+         llZg==
+X-Gm-Message-State: AOAM532H55p7UJOrMYk5W2BHlHa+DaEOhnHbi0RYadAEnRBZjEbfTbJx
+        KeTuNW2RSuTXZKZZX+onIJK08ymhkpKYs0ixZ934f6H8tS4=
+X-Google-Smtp-Source: ABdhPJwrxup3233jk/XCRvgLedgx4OonsewKUbultOS+5Frnep/iVWF0Is+sVV5g4K9Ebdm4BCh0yY+8qCMeYUOs2xk=
+X-Received: by 2002:a25:8746:: with SMTP id e6mr32676069ybn.138.1635874607940;
+ Tue, 02 Nov 2021 10:36:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2282661.ElGaqSPkdT@x2>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+From:   beld zhang <beldzhang@gmail.com>
+Date:   Tue, 2 Nov 2021 13:36:37 -0400
+Message-ID: <CAG7aomWpq3Gt9z9uqAQ5VCA_6pXgvVrL47yVx88xzX6bbotUXw@mail.gmail.com>
+Subject: fix max-workers not correctly set on multi-node system
+To:     io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2021-11-01 11:58, Steve Grubb wrote:
-> Hello Richard,
-> 
-> On Monday, November 1, 2021 11:05:49 AM EDT Richard Guy Briggs wrote:
-> > On 2021-10-29 14:39, Steve Grubb wrote:
-> > > On Thursday, October 28, 2021 3:59:34 PM EDT Richard Guy Briggs wrote:
-> > > > Kernel support to audit io_uring operations filtering was added with
-> > > > commit 67daf270cebc ("audit: add filtering for io_uring records").  Add
-> > > > support for the "uring" filter list to auditctl.
-> > > 
-> > > Might have been good to show what the resulting auditctl command looks
-> > > like. I think it would be:
-> > > 
-> > > auditctl -a always,io_uring  -U  open -F uid!=0 -F key=io_uring
-> > > 
-> > > But I wonder, why the choice of  -U rather than -S? That would make
-> > > remembering the syntax easier.
-> > > 
-> > > auditctl -a always,io_uring  -S  open -F uid!=0 -F key=io_uring
-> > 
-> > Well, I keep seeing the same what I assume is a typo in your
-> > communications about io_uring where the "u" is missing, which might help
-> > trigger your memory about the syntax.
-> 
-> Yeah, but I'm thinking that we can abstract that technicality away and keep 
-> the syntax the same.
+in io-wq.c: io_wq_max_workers(), new_count[] was changed right after
+each node's value was set.
+this cause the next node got the setting of the previous one,
+following patch fixed it.
 
-They do use the same mechanism to get the data into the kernel, but this
-is not user-visible.
+returned values are copied from node 0.
 
-> > The io_uring operations name list is different than the syscall list, so
-> > it needs to use a different lookup table.
-> 
-> Right. So, if you choose an operation that is not supported, you get an 
-> error. But to help people know what is supported, we can add the lookup to 
-> ausyscall where  --io_uring could direct it to the right lookup table.
-> 
-> > Have I misunderstood something?
-> 
-> No, but I'm thinking of aesthetics and usability. You already have to specify 
-> a filter. We don't really need to have completely different syntax in 
-> addition. Especially since the operations map to the equivalent of a syscall.
+Signed-off-by: Beld Zhang <beldzhang@gmail.com>
+---
+diff --git a/fs/io-wq.c b/fs/io-wq.c
+index c51691262208..b6f903fa41bd 100644
+--- a/fs/io-wq.c
++++ b/fs/io-wq.c
+@@ -1308,7 +1308,8 @@ int io_wq_cpu_affinity(struct io_wq *wq,
+cpumask_var_t mask)
+  */
+ int io_wq_max_workers(struct io_wq *wq, int *new_count)
+ {
+-    int i, node, prev = 0;
++    int i, node;
++    int prev[IO_WQ_ACCT_NR];
 
-In terms of usibility, it is a different lookup table and the operations
-don't map exactly to each other.  I'd *expect* to use a different
-command line option to specify io_uring ops than I did for syscalls
-since they are not the same since if I changed a rule text from one list
-to another, I'd also need to change the list of ops and which list they
-came from.  I'd want it to throw an error if I used the wrong argument
-type.
+     BUILD_BUG_ON((int) IO_WQ_ACCT_BOUND   != (int) IO_WQ_BOUND);
+     BUILD_BUG_ON((int) IO_WQ_ACCT_UNBOUND != (int) IO_WQ_UNBOUND);
+@@ -1319,6 +1320,9 @@ int io_wq_max_workers(struct io_wq *wq, int *new_count)
+             new_count[i] = task_rlimit(current, RLIMIT_NPROC);
+     }
 
-> > > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > > > ---
-> > > > docs/audit.rules.7         |  19 ++++--
-> > > > docs/audit_add_rule_data.3 |   4 ++
-> > > > docs/auditctl.8            |  10 ++-
-> > > > lib/flagtab.h              |  11 ++--
-> > > > lib/libaudit.c             |  50 ++++++++++++---
-> > > > lib/libaudit.h             |   7 +++
-> > > > lib/lookup_table.c         |  20 ++++++
-> > > > lib/private.h              |   1 +
-> > > > src/auditctl-listing.c     |  52 ++++++++++------
-> > > > src/auditctl.c             | 121 ++++++++++++++++++++++++++++++++-----
-> > > > 10 files changed, 240 insertions(+), 55 deletions(-)
-> > > 
-> > > <snip a whole lot of documentation>
-> > > 
-> > > > diff --git a/lib/libaudit.c b/lib/libaudit.c
-> > > > index 54e276156ef0..3790444f4497 100644
-> > > > --- a/lib/libaudit.c
-> > > > +++ b/lib/libaudit.c
-> > > > @@ -86,6 +86,7 @@ static const struct nv_list failure_actions[] =
-> > > > int _audit_permadded = 0;
-> > > > int _audit_archadded = 0;
-> > > > int _audit_syscalladded = 0;
-> > > > +int _audit_uringopadded = 0;
-> > > > int _audit_exeadded = 0;
-> > > > int _audit_filterfsadded = 0;
-> > > > unsigned int _audit_elf = 0U;
-> > > > @@ -999,6 +1000,26 @@ int audit_rule_syscallbyname_data(struct
-> > > > audit_rule_data *rule, return -1;
-> > > > }
-> > > > 
-> > > > +int audit_rule_uringopbyname_data(struct audit_rule_data *rule,
-> > > > +                                  const char *uringop)
-> > > > +{
-> > > > +       int nr, i;
-> > > > +
-> > > > +       if (!strcmp(uringop, "all")) {
-> > > > +               for (i = 0; i < AUDIT_BITMASK_SIZE; i++)
-> > > > +                       rule->mask[i] = ~0;
-> > > > +               return 0;
-> > > > +       }
-> > > > +       nr = audit_name_to_uringop(uringop);
-> > > > +       if (nr < 0) {
-> > > > +               if (isdigit(uringop[0]))
-> > > > +                       nr = strtol(uringop, NULL, 0);
-> > > > +       }
-> > > > +       if (nr >= 0)
-> > > > +               return audit_rule_syscall_data(rule, nr);
-> > > > +       return -1;
-> > > > +}
-> > > > +
-> > > > int audit_rule_interfield_comp_data(struct audit_rule_data **rulep,
-> > > > const char *pair,
-> > > > int flags)
-> > > > @@ -1044,7 +1065,7 @@ int audit_rule_interfield_comp_data(struct
-> > > > audit_rule_data **rulep, return -EAU_COMPVALUNKNOWN;
-> > > > 
-> > > > /* Interfield comparison can only be in exit filter */
-> > > > -       if (flags != AUDIT_FILTER_EXIT)
-> > > > +       if (flags != AUDIT_FILTER_EXIT && flags !=
-> > > > AUDIT_FILTER_URING_EXIT) return -EAU_EXITONLY;
-> > > > 
-> > > > // It should always be AUDIT_FIELD_COMPARE
-> > > > @@ -1557,7 +1578,8 @@ int audit_rule_fieldpair_data(struct
-> > > > audit_rule_data
-> > > > **rulep, const char *pair, }
-> > > > break;
-> > > > case AUDIT_EXIT:
-> > > > -                       if (flags != AUDIT_FILTER_EXIT)
-> > > > +                       if (flags != AUDIT_FILTER_EXIT &&
-> > > > +                           flags != AUDIT_FILTER_URING_EXIT)
-> > > > return -EAU_EXITONLY;
-> > > > vlen = strlen(v);
-> > > > if (isdigit((char)*(v)))
-> > > > @@ -1599,7 +1621,8 @@ int audit_rule_fieldpair_data(struct
-> > > > audit_rule_data
-> > > > **rulep, const char *pair, case AUDIT_DIR:
-> > > > /* Watch & object filtering is invalid on anything
-> > > > * but exit */
-> > > > -                       if (flags != AUDIT_FILTER_EXIT)
-> > > > +                       if (flags != AUDIT_FILTER_EXIT &&
-> > > > +                           flags != AUDIT_FILTER_URING_EXIT)
-> > > > return -EAU_EXITONLY;
-> > > > if (field == AUDIT_WATCH || field == AUDIT_DIR)
-> > > > _audit_permadded = 1;
-> > > > @@ -1621,9 +1644,11 @@ int audit_rule_fieldpair_data(struct
-> > > > audit_rule_data **rulep, const char *pair, _audit_exeadded = 1;
-> > > > }
-> > > > if (field == AUDIT_FILTERKEY &&
-> > > > -                               !(_audit_syscalladded ||
-> > > > _audit_permadded || -                               _audit_exeadded ||
-> > > > -                               _audit_filterfsadded))
-> > > > +                               !(_audit_syscalladded ||
-> > > > +                                 _audit_uringopadded ||
-> > > > +                                 _audit_permadded ||
-> > > > +                                 _audit_exeadded ||
-> > > > +                                 _audit_filterfsadded))
-> > > > return -EAU_KEYDEP;
-> > > > vlen = strlen(v);
-> > > > if (field == AUDIT_FILTERKEY &&
-> > > > @@ -1712,7 +1737,8 @@ int audit_rule_fieldpair_data(struct
-> > > > audit_rule_data
-> > > > **rulep, const char *pair, }
-> > > > break;
-> > > > case AUDIT_FILETYPE:
-> > > > -                       if (!(flags == AUDIT_FILTER_EXIT))
-> > > > +                       if (!(flags == AUDIT_FILTER_EXIT ||
-> > > > +                             flags == AUDIT_FILTER_URING_EXIT))
-> > > > return -EAU_EXITONLY;
-> > > > rule->values[rule->field_count] =
-> > > > audit_name_to_ftype(v);
-> > > > @@ -1754,7 +1780,8 @@ int audit_rule_fieldpair_data(struct
-> > > > audit_rule_data
-> > > > **rulep, const char *pair, return -EAU_FIELDNOSUPPORT;
-> > > > if (flags != AUDIT_FILTER_EXCLUDE &&
-> > > > flags != AUDIT_FILTER_USER &&
-> > > > -                           flags != AUDIT_FILTER_EXIT)
-> > > > +                           flags != AUDIT_FILTER_EXIT &&
-> > > > +                           flags != AUDIT_FILTER_URING_EXIT)
-> > > 
-> > > This is in the session_id code. Looking at the example audit event:
-> > > 
-> > > https://listman.redhat.com/archives/linux-audit/2021-September/msg00058.h
-> > > tml
-> > > 
-> > > session_id is not in the record.
-> > 
-> > Fair enough.  It can be re-added if we are able to reliably report it.
-> 
-> Thanks.
-> 
-> > > > return -EAU_FIELDNOFILTER;
-> > > > // Do positive & negative separate for 32 bit systems
-> > > > vlen = strlen(v);
-> > > > @@ -1775,7 +1802,8 @@ int audit_rule_fieldpair_data(struct
-> > > > audit_rule_data
-> > > > **rulep, const char *pair, break;
-> > > 
-> > > > case AUDIT_DEVMAJOR...AUDIT_INODE:
-> > > ^^^ Can you audit by devmajor, devminor, or inode in io_ring?
-> > 
-> > Should be able to monitor files.  The old "-w" syntax is not supported
-> > but path= and dir= should be.
-> 
-> But that's not what this is. These is for:
->  -F dev_major=
->  -F dev_minor=
->  -F inode=
-> 
-> It dates back to before watches were possible. In any event, this is being 
-> allowed when I suspect it shouldn't.
-
-Why shouldn't it be allowed?
-
-> -Steve
-
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
-
++    for (i = 0; i < IO_WQ_ACCT_NR; i++)
++        prev[i] = 0;
++
+     rcu_read_lock();
+     for_each_node(node) {
+         struct io_wqe *wqe = wq->wqes[node];
+@@ -1327,13 +1331,16 @@ int io_wq_max_workers(struct io_wq *wq, int *new_count)
+         raw_spin_lock(&wqe->lock);
+         for (i = 0; i < IO_WQ_ACCT_NR; i++) {
+             acct = &wqe->acct[i];
+-            prev = max_t(int, acct->max_workers, prev);
++            if (node == 0)
++                prev[i] = max_t(int, acct->max_workers, prev[i]);
+             if (new_count[i])
+                 acct->max_workers = new_count[i];
+-            new_count[i] = prev;
+         }
+         raw_spin_unlock(&wqe->lock);
+     }
++    for (i = 0; i < IO_WQ_ACCT_NR; i++)
++        new_count[i] = prev[i];
++
+     rcu_read_unlock();
+     return 0;
+ }

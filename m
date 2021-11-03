@@ -2,312 +2,81 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B0C5F44412D
-	for <lists+io-uring@lfdr.de>; Wed,  3 Nov 2021 13:17:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32EC944416D
+	for <lists+io-uring@lfdr.de>; Wed,  3 Nov 2021 13:24:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231816AbhKCMUA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 3 Nov 2021 08:20:00 -0400
-Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:47099 "EHLO
-        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229816AbhKCMUA (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 3 Nov 2021 08:20:00 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0Uuud2Sg_1635941841;
-Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0Uuud2Sg_1635941841)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 03 Nov 2021 20:17:22 +0800
+        id S231869AbhKCM1E (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 3 Nov 2021 08:27:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57620 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232098AbhKCM0y (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 3 Nov 2021 08:26:54 -0400
+Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A8B4C0432C8
+        for <io-uring@vger.kernel.org>; Wed,  3 Nov 2021 05:23:05 -0700 (PDT)
+Received: by mail-io1-xd33.google.com with SMTP id n128so2439154iod.9
+        for <io-uring@vger.kernel.org>; Wed, 03 Nov 2021 05:23:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=DrOhpIctO7PhQ7YDylmNaRziU4qxlandQOuzAvwA6Gg=;
+        b=nzGiv4ff8p/vtNP+vuCrSxOs+ifVucT0lJ2It127pujtvQ2kAQTQvAOa9y0diqhUju
+         zND+EZV0/yNoV6BgW5TzHyxd5SuMRNzVeuBUSqQQaalC1S0X+g0F7pJMZL3LH8znwSSh
+         0cGGZzCPrjDxLKe/JNmWJukAFCy5pXl/FAzd2w9t3YTe1zC/jQWP/RbKd8UnCUQKU3Wb
+         VVq7BZ81KqY1aVXHqOkXwSx6aVHxcA8/rVJDXfkl5E5k+l6ddoKpF/1IRwr0KauIqnJj
+         YWVS+U5GHmzyJTk8I83BweLDaU5VwC7Ji7BRRwFOdYln8M0eI8kRzMeyHflCnfoX9M5X
+         djuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=DrOhpIctO7PhQ7YDylmNaRziU4qxlandQOuzAvwA6Gg=;
+        b=3BK7pNbL8NBGkujgzKuvAsyWs+/mDBeRcY0mfB/ChOknNnA7egOL+RFKVKXf2UdPsW
+         GJpgKzH8cvlpzpWtaQx/9klNjbyz0SgIEb/3vjqN1GYOI50kigW798Essc8v/w7M7oyI
+         OKE2WPHlgf7Z3ftQUu1uk5i2Wz39ujaMv0S3zUVaRYj5Ij+sYjdeplM7vv/oYxAPlxD3
+         4PTeCvtP2A3wDcWVKtQpFn3O31zm+YGXCi8Psyo89Xdi4CVBIh1HARumqEMe7Rsu7VPJ
+         AyPNTgXaWVIMmP98GnmiPFS3uqTQ/iiIWD5WQygND7vS7k1s3aCShon9Ok1nTVjZWYEI
+         7Ddw==
+X-Gm-Message-State: AOAM532cA7PNjVkjyEBzbg+qUX/hSvzbUnuVWVkfgyyYZECNd9ki/tnA
+        yeChFI8Vfdv87WBTRkM5b27pqg==
+X-Google-Smtp-Source: ABdhPJzPiGS7fdjlMQ39eXTDd0OEScccbJemtK8GqutFnWINWUSFcROHYqM1VuqXLzgbXWP3XkDz2Q==
+X-Received: by 2002:a02:cb42:: with SMTP id k2mr18747570jap.25.1635942184737;
+        Wed, 03 Nov 2021 05:23:04 -0700 (PDT)
+Received: from [192.168.1.116] ([66.219.217.159])
+        by smtp.gmail.com with ESMTPSA id q1sm1028716ilc.88.2021.11.03.05.23.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Nov 2021 05:23:04 -0700 (PDT)
 Subject: Re: [RFC] io-wq: decouple work_list protection from the big wqe->lock
-From:   Hao Xu <haoxu@linux.alibaba.com>
-To:     Jens Axboe <axboe@kernel.dk>
+To:     Hao Xu <haoxu@linux.alibaba.com>
 Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
         Joseph Qi <joseph.qi@linux.alibaba.com>
 References: <20211031104945.224024-1-haoxu@linux.alibaba.com>
  <153b3bed-7aea-d4bb-1e5b-ffe11e8aabc1@linux.alibaba.com>
-Message-ID: <3c633538-7469-dc8c-561f-9fed7bfa699e@linux.alibaba.com>
-Date:   Wed, 3 Nov 2021 20:17:21 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.13.0
+ <3c633538-7469-dc8c-561f-9fed7bfa699e@linux.alibaba.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <ef805eea-7e90-9782-d59c-dff349d17490@kernel.dk>
+Date:   Wed, 3 Nov 2021 06:22:58 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <153b3bed-7aea-d4bb-1e5b-ffe11e8aabc1@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <3c633538-7469-dc8c-561f-9fed7bfa699e@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-ping this one.
-在 2021/10/31 下午9:03, Hao Xu 写道:
-> 在 2021/10/31 下午6:49, Hao Xu 写道:
->> wqe->lock is abused, it now protects acct->work_list, hash stuff,
->> nr_workers, wqe->free_list and so on. Lets first get the work_list out
->> of the wqe-lock mess by introduce a specific lock for work list. This
->> is the first step to solve the huge contension between work insertion
->> and work consumption.
->> good thing:
->>    - split locking for bound and unbound work list
->>    - reduce contension between work_list visit and (worker's)free_list.
->            ^ not reduce, should be remove
->>
->> For the hash stuff, since there won't be a work with same file in both
->> bound and unbound work list, thus they won't visit same hash entry. it
->> works well to use the new lock to protect hash stuff.
->>
->> Results:
->> set max_unbound_worker = 4, test with echo-server:
->> nice -n -15 ./io_uring_echo_server -p 8081 -f -n 1000 -l 16
->> (-n connection, -l workload)
->> before this patch:
->> Samples: 2M of event 'cycles:ppp', Event count (approx.): 1239982111074
->> Overhead  Command          Shared Object         Symbol
->>    28.59%  iou-wrk-10021    [kernel.vmlinux]      [k] 
->> native_queued_spin_lock_slowpath
->>     8.89%  io_uring_echo_s  [kernel.vmlinux]      [k] 
->> native_queued_spin_lock_slowpath
->>     6.20%  iou-wrk-10021    [kernel.vmlinux]      [k] _raw_spin_lock
->>     2.45%  io_uring_echo_s  [kernel.vmlinux]      [k] io_prep_async_work
->>     2.36%  iou-wrk-10021    [kernel.vmlinux]      [k] 
->> _raw_spin_lock_irqsave
->>     2.29%  iou-wrk-10021    [kernel.vmlinux]      [k] 
->> io_worker_handle_work
->>     1.29%  io_uring_echo_s  [kernel.vmlinux]      [k] io_wqe_enqueue
->>     1.06%  iou-wrk-10021    [kernel.vmlinux]      [k] io_wqe_worker
->>     1.06%  io_uring_echo_s  [kernel.vmlinux]      [k] _raw_spin_lock
->>     1.03%  iou-wrk-10021    [kernel.vmlinux]      [k] __schedule
->>     0.99%  iou-wrk-10021    [kernel.vmlinux]      [k] tcp_sendmsg_locked
->>
->> with this patch:
->> Samples: 1M of event 'cycles:ppp', Event count (approx.): 708446691943
->> Overhead  Command          Shared Object         Symbol
->>    16.86%  iou-wrk-10893    [kernel.vmlinux]      [k] 
->> native_queued_spin_lock_slowpat
->>     9.10%  iou-wrk-10893    [kernel.vmlinux]      [k] _raw_spin_lock
->>     4.53%  io_uring_echo_s  [kernel.vmlinux]      [k] 
->> native_queued_spin_lock_slowpat
->>     2.87%  iou-wrk-10893    [kernel.vmlinux]      [k] 
->> io_worker_handle_work
->>     2.57%  iou-wrk-10893    [kernel.vmlinux]      [k] 
->> _raw_spin_lock_irqsave
->>     2.56%  io_uring_echo_s  [kernel.vmlinux]      [k] io_prep_async_work
->>     1.82%  io_uring_echo_s  [kernel.vmlinux]      [k] _raw_spin_lock
->>     1.33%  iou-wrk-10893    [kernel.vmlinux]      [k] io_wqe_worker
->>     1.26%  io_uring_echo_s  [kernel.vmlinux]      [k] try_to_wake_up
->>
->> spin_lock failure from 25.59% + 8.89% =  34.48% to 16.86% + 4.53% = 
->> 21.39%
->> TPS is similar, while cpu usage is from almost 400% to 350% (master
->> thread + io_workers)
->>
->> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
->> ---
->>   fs/io-wq.c | 61 +++++++++++++++++++++++++++++++++---------------------
->>   1 file changed, 37 insertions(+), 24 deletions(-)
->>
->> diff --git a/fs/io-wq.c b/fs/io-wq.c
->> index fe6b2abcaa49..949573f947de 100644
->> --- a/fs/io-wq.c
->> +++ b/fs/io-wq.c
->> @@ -74,6 +74,7 @@ struct io_wqe_acct {
->>       unsigned max_workers;
->>       int index;
->>       atomic_t nr_running;
->> +    raw_spinlock_t lock;
->>       struct io_wq_work_list work_list;
->>       unsigned long flags;
->>   };
->> @@ -221,12 +222,13 @@ static void io_worker_exit(struct io_worker 
->> *worker)
->>       if (worker->flags & IO_WORKER_F_FREE)
->>           hlist_nulls_del_rcu(&worker->nulls_node);
->>       list_del_rcu(&worker->all_list);
->> -    preempt_disable();
->> +    raw_spin_unlock(&wqe->lock);
->> +
->>       io_wqe_dec_running(worker);
->>       worker->flags = 0;
->> +    preempt_disable();
->>       current->flags &= ~PF_IO_WORKER;
->>       preempt_enable();
->> -    raw_spin_unlock(&wqe->lock);
->>       kfree_rcu(worker, rcu);
->>       io_worker_ref_put(wqe->wq);
->> @@ -380,10 +382,14 @@ static void io_wqe_dec_running(struct io_worker 
->> *worker)
->>       if (!(worker->flags & IO_WORKER_F_UP))
->>           return;
->> +    raw_spin_lock(&acct->lock);
->>       if (atomic_dec_and_test(&acct->nr_running) && 
->> io_acct_run_queue(acct)) {
->> +        raw_spin_unlock(&acct->lock);
->>           atomic_inc(&acct->nr_running);
->>           atomic_inc(&wqe->wq->worker_refs);
->>           io_queue_worker_create(worker, acct, create_worker_cb);
->> +    } else {
->> +        raw_spin_unlock(&acct->lock);
->>       }
->>   }
->> @@ -479,9 +485,9 @@ static struct io_wq_work *io_get_next_work(struct 
->> io_wqe_acct *acct,
->>            * work being added and clearing the stalled bit.
->>            */
->>           set_bit(IO_ACCT_STALLED_BIT, &acct->flags);
->> -        raw_spin_unlock(&wqe->lock);
->> +        raw_spin_unlock(&acct->lock);
->>           io_wait_on_hash(wqe, stall_hash);
->> -        raw_spin_lock(&wqe->lock);
->> +        raw_spin_lock(&acct->lock);
->>       }
->>       return NULL;
->> @@ -531,12 +537,14 @@ static void io_worker_handle_work(struct 
->> io_worker *worker)
->>            * clear the stalled flag.
->>            */
->>           work = io_get_next_work(acct, worker);
->> -        if (work)
->> +        raw_spin_unlock(&acct->lock);
->> +        if (work) {
->> +            raw_spin_lock(&wqe->lock);
->>               __io_worker_busy(wqe, worker, work);
->> -
->> -        raw_spin_unlock(&wqe->lock);
->> -        if (!work)
->> +            raw_spin_unlock(&wqe->lock);
->> +        } else {
->>               break;
->> +        }
->>           io_assign_current_work(worker, work);
->>           __set_current_state(TASK_RUNNING);
->> @@ -567,15 +575,15 @@ static void io_worker_handle_work(struct 
->> io_worker *worker)
->>                   clear_bit(IO_ACCT_STALLED_BIT, &acct->flags);
->>                   if (wq_has_sleeper(&wq->hash->wait))
->>                       wake_up(&wq->hash->wait);
->> -                raw_spin_lock(&wqe->lock);
->> +                raw_spin_lock(&acct->lock);
->>                   /* skip unnecessary unlock-lock wqe->lock */
->>                   if (!work)
->>                       goto get_next;
->> -                raw_spin_unlock(&wqe->lock);
->> +                raw_spin_unlock(&acct->lock);
->>               }
->>           } while (work);
->> -        raw_spin_lock(&wqe->lock);
->> +        raw_spin_lock(&acct->lock);
->>       } while (1);
->>   }
->> @@ -598,11 +606,14 @@ static int io_wqe_worker(void *data)
->>           set_current_state(TASK_INTERRUPTIBLE);
->>   loop:
->> -        raw_spin_lock(&wqe->lock);
->> +        raw_spin_lock(&acct->lock);
->>           if (io_acct_run_queue(acct)) {
->>               io_worker_handle_work(worker);
->>               goto loop;
->> +        } else {
->> +            raw_spin_unlock(&acct->lock);
->>           }
->> +        raw_spin_lock(&wqe->lock);
->>           /* timed out, exit unless we're the last worker */
->>           if (last_timeout && acct->nr_workers > 1) {
->>               acct->nr_workers--;
->> @@ -627,7 +638,7 @@ static int io_wqe_worker(void *data)
->>       }
->>       if (test_bit(IO_WQ_BIT_EXIT, &wq->state)) {
->> -        raw_spin_lock(&wqe->lock);
->> +        raw_spin_lock(&acct->lock);
->>           io_worker_handle_work(worker);
->>       }
->> @@ -668,10 +679,7 @@ void io_wq_worker_sleeping(struct task_struct *tsk)
->>           return;
->>       worker->flags &= ~IO_WORKER_F_RUNNING;
->> -
->> -    raw_spin_lock(&worker->wqe->lock);
->>       io_wqe_dec_running(worker);
->> -    raw_spin_unlock(&worker->wqe->lock);
->>   }
->>   static void io_init_new_worker(struct io_wqe *wqe, struct io_worker 
->> *worker,
->> @@ -734,10 +742,12 @@ static void create_worker_cont(struct 
->> callback_head *cb)
->>                   .cancel_all    = true,
->>               };
->> +            raw_spin_unlock(&wqe->lock);
->>               while (io_acct_cancel_pending_work(wqe, acct, &match))
->> -                raw_spin_lock(&wqe->lock);
->> +                ;
->> +        } else {
->> +            raw_spin_unlock(&wqe->lock);
->>           }
->> -        raw_spin_unlock(&wqe->lock);
->>           io_worker_ref_put(wqe->wq);
->>           kfree(worker);
->>           return;
->> @@ -883,10 +893,12 @@ static void io_wqe_enqueue(struct io_wqe *wqe, 
->> struct io_wq_work *work)
->>           return;
->>       }
->> -    raw_spin_lock(&wqe->lock);
->> +    raw_spin_lock(&acct->lock);
->>       io_wqe_insert_work(wqe, work);
->>       clear_bit(IO_ACCT_STALLED_BIT, &acct->flags);
->> +    raw_spin_unlock(&acct->lock);
->> +    raw_spin_lock(&wqe->lock);
->>       rcu_read_lock();
->>       do_create = !io_wqe_activate_free_worker(wqe, acct);
->>       rcu_read_unlock();
->> @@ -910,8 +922,7 @@ static void io_wqe_enqueue(struct io_wqe *wqe, 
->> struct io_wq_work *work)
->>                   .cancel_all    = false,
->>               };
->> -            if (io_acct_cancel_pending_work(wqe, acct, &match))
->> -                raw_spin_lock(&wqe->lock);
->> +            io_acct_cancel_pending_work(wqe, acct, &match);
->>           }
->>           raw_spin_unlock(&wqe->lock);
->>       }
->> @@ -982,17 +993,19 @@ static bool io_acct_cancel_pending_work(struct 
->> io_wqe *wqe,
->>       struct io_wq_work_node *node, *prev;
->>       struct io_wq_work *work;
->> +    raw_spin_lock(&acct->lock);
->>       wq_list_for_each(node, prev, &acct->work_list) {
->>           work = container_of(node, struct io_wq_work, list);
->>           if (!match->fn(work, match->data))
->>               continue;
->>           io_wqe_remove_pending(wqe, work, prev);
->> -        raw_spin_unlock(&wqe->lock);
->> +        raw_spin_unlock(&acct->lock);
->>           io_run_cancel(work, wqe);
->>           match->nr_pending++;
->>           /* not safe to continue after unlock */
->>           return true;
->>       }
->> +    raw_spin_unlock(&acct->lock);
->>       return false;
->>   }
->> @@ -1002,7 +1015,6 @@ static void io_wqe_cancel_pending_work(struct 
->> io_wqe *wqe,
->>   {
->>       int i;
->>   retry:
->> -    raw_spin_lock(&wqe->lock);
->>       for (i = 0; i < IO_WQ_ACCT_NR; i++) {
->>           struct io_wqe_acct *acct = io_get_acct(wqe, i == 0);
->> @@ -1012,7 +1024,6 @@ static void io_wqe_cancel_pending_work(struct 
->> io_wqe *wqe,
->>               return;
->>           }
->>       }
->> -    raw_spin_unlock(&wqe->lock);
->>   }
->>   static void io_wqe_cancel_running_work(struct io_wqe *wqe,
->> @@ -1126,6 +1137,8 @@ struct io_wq *io_wq_create(unsigned bounded, 
->> struct io_wq_data *data)
->>           wqe->acct[IO_WQ_ACCT_BOUND].max_workers = bounded;
->>           wqe->acct[IO_WQ_ACCT_UNBOUND].max_workers =
->>                       task_rlimit(current, RLIMIT_NPROC);
->> +        raw_spin_lock_init(&wqe->acct[IO_WQ_ACCT_BOUND].lock);
->> +        raw_spin_lock_init(&wqe->acct[IO_WQ_ACCT_UNBOUND].lock);
->>           INIT_LIST_HEAD(&wqe->wait.entry);
->>           wqe->wait.func = io_wqe_hash_wake;
->>           for (i = 0; i < IO_WQ_ACCT_NR; i++) {
->>
+On 11/3/21 6:17 AM, Hao Xu wrote:
+> ping this one.
+
+I'll take a look at it, we do have some locking concerns here that would
+be nice to alleviate. But given that the patch came in right before the
+merge window, probably too late for 5.16 and I put it on the backburner
+a bit to tend to other items that were more pressing.
+
+-- 
+Jens Axboe
 

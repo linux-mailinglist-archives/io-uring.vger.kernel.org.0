@@ -2,112 +2,122 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0222F444683
-	for <lists+io-uring@lfdr.de>; Wed,  3 Nov 2021 18:01:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B6834448C7
+	for <lists+io-uring@lfdr.de>; Wed,  3 Nov 2021 20:10:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233069AbhKCRED (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 3 Nov 2021 13:04:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37164 "EHLO
+        id S231265AbhKCTNW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 3 Nov 2021 15:13:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233062AbhKCRED (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 3 Nov 2021 13:04:03 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46792C061714
-        for <io-uring@vger.kernel.org>; Wed,  3 Nov 2021 10:01:26 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id b184-20020a1c1bc1000000b0033140bf8dd5so2336186wmb.5
-        for <io-uring@vger.kernel.org>; Wed, 03 Nov 2021 10:01:26 -0700 (PDT)
+        with ESMTP id S231237AbhKCTNW (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 3 Nov 2021 15:13:22 -0400
+Received: from mail-ot1-x32d.google.com (mail-ot1-x32d.google.com [IPv6:2607:f8b0:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 898B1C061714
+        for <io-uring@vger.kernel.org>; Wed,  3 Nov 2021 12:10:45 -0700 (PDT)
+Received: by mail-ot1-x32d.google.com with SMTP id s19-20020a056830125300b0055ad9673606so3663557otp.0
+        for <io-uring@vger.kernel.org>; Wed, 03 Nov 2021 12:10:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=4lIhYLX16E5dGAMp8p9rDyFi1F2gTM+Q1Uh/Pl4rLPY=;
-        b=EaMKlGiCKGFYXlmVwztOTXSiL2HK7f05V2JPHBSDWT3027cIjatnLYxTIeXi99waqF
-         WI5CZsIgUtqMzRMn+MCMUVayjB0PZO/5w9rTyg/aB2FD+7/u2wipTNO1uKoTOtwcm29V
-         /MBOV6wocnSta4b76G23XaMj5wK2G4oE86QeeAHTd9cBXIQTXPr9ht1fV8w3IHwQOyns
-         XkK4BMUMkvChwanmCaSuyDQ5O3x4GVeHppLxIvTwEka+kRtSnYQVnoihhNtL348rl3wA
-         HGadB+Vd2gAwQMJJ0AzhAFeZThsRJW7/VELGAninhkI3hR9mcMYUgTR55y0huByLh+ZJ
-         BuLQ==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=hPDEOCN2iqOZpizNkjJYUsyv6b0bDmWcHevIM96ciNI=;
+        b=Qm7Iy0gi7zCeD/IQhpJ6W8XeETRVcpn4mr3m6dFyxznMeDH7OrYwfwBz+Z5onjqjAr
+         EMYtjUCj7oi0sRixoSXNazETULbPmVmEnlImkk5xpkjfJJLRT1188f6eor5zdgHEU4EC
+         e0sBKOwtwCwKlCugCdgSwlMA+NyKxmm9f2gP9lwFTNKs8CdtO2X2alEJLWivCHB0PGjQ
+         AYDEqknjl3oysWv62ZSM7XMwhKKGPknSEwlkHTawHp2Fr8cLgoG1yWwnehwDZ2gyeiB1
+         2UR+AY3K4bFQ2gS/3Yp6jR7VqOlEAvgthPGADCwY5zGRD7cWC20BRjCjKhVdP0ruU6dL
+         jfeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=4lIhYLX16E5dGAMp8p9rDyFi1F2gTM+Q1Uh/Pl4rLPY=;
-        b=FUnaKyfuzKkhavENnqd44KYCk5dmOxuMJjHcPGBrYfeWAhQ1FLc87S9aFj6b9jxb3Q
-         F9IXPi5j5KL7ebge4Ag3mDIkdyQskWK9GiVWXmzgEAV3xvXuUkF2RdBY5uukTn54Ml46
-         3xoJbXEkT0BH4qAFu1UYAtl1cFi2Bl1ZQtwXzl1xWCcnFHNqvHJUzM8Pp5bYiXjanzF4
-         3rpwv1Nkvo5z0xOEc5mMuJg/Xz5KEFcI5P1GWSkbXZKjlX9IVUmWpkDWEtulhuu8Zsf3
-         ulGMqfy+luc0/Koue47L73Lhg2+7Zz05b6NZ4rkzez+4h6Zvj+13LR7HQR92ISLEkrb7
-         04pQ==
-X-Gm-Message-State: AOAM531kpYmmljc45tAQcOKJwIrhp20K+Ond1KrmyPOfbhBaUDxb3A9K
-        LXUqxaEeBp41VPXYN9rFnOwsoA==
-X-Google-Smtp-Source: ABdhPJzWDmxu6si35aJclXAhUjcBNkg1SJiEjJ8BjEAzBYVwwyPTExaj5FFOMQK5ecqvYP64K1g+Dg==
-X-Received: by 2002:a7b:cc8f:: with SMTP id p15mr7503442wma.129.1635958884853;
-        Wed, 03 Nov 2021 10:01:24 -0700 (PDT)
-Received: from google.com ([95.148.6.174])
-        by smtp.gmail.com with ESMTPSA id p13sm6639467wmi.0.2021.11.03.10.01.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Nov 2021 10:01:24 -0700 (PDT)
-Date:   Wed, 3 Nov 2021 17:01:22 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     syzbot <syzbot+9671693590ef5aad8953@syzkaller.appspotmail.com>
-Cc:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] KASAN: stack-out-of-bounds Read in iov_iter_revert
-Message-ID: <YYLAYvFU+9cnu+4H@google.com>
-References: <6f7d4c1d-f923-3ab1-c525-45316b973c72@gmail.com>
- <00000000000047f3b805c962affb@google.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=hPDEOCN2iqOZpizNkjJYUsyv6b0bDmWcHevIM96ciNI=;
+        b=iaHTTGe2NFJWnL4qIpSRDYP9JhM6GTD5z6WBgSIokd1/0Nkc++vXfRE+0PP1PJwEe4
+         HZHCUvL23IeBURVddJm/iyEQKLYQbsKixSEv0LZOzULTNXWgWMfb3fmPTmZTYsAYHJ1F
+         bppGYie2Qibae+Z92+s0J7fLalBzykTICm3NN4k4AMBnP/ki7W8DQOf71Rv0u0T/hqnH
+         AEY3AD/DoSrg00Xmq/FPiX7eANfKsJNCj9IwRywnxW+Oo8m9q4uGle7jBZo8rkNeSMRe
+         q31AWM/9agcDBBFQCisiLdT6Sp+bOosNRyaGXdGzG08bL+avyy/DYUh3talnG2f3BkvJ
+         Q8/g==
+X-Gm-Message-State: AOAM531kzIWz4E/WhAgzguqS2Kcp963DGD0Wf/afT/vPGd6ELOEpT3vl
+        p5NRI0R3xSFeSMAU0gQBVSONfmF7KPuRTQ==
+X-Google-Smtp-Source: ABdhPJxvYsZulGOlfjkEIVrY4Je5In76ALURvsPAsWceEcScKVbjmZer6qOzrsyldVLVJedDAt0iJg==
+X-Received: by 2002:a05:6830:12d6:: with SMTP id a22mr27654448otq.288.1635966644854;
+        Wed, 03 Nov 2021 12:10:44 -0700 (PDT)
+Received: from [192.168.1.30] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id q1sm876578oiw.17.2021.11.03.12.10.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Nov 2021 12:10:44 -0700 (PDT)
+Subject: Re: [RFC] io-wq: decouple work_list protection from the big wqe->lock
+To:     Hao Xu <haoxu@linux.alibaba.com>
+Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>
+References: <20211031104945.224024-1-haoxu@linux.alibaba.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <df8a6142-73f5-32e1-6ffd-7de1093abab9@kernel.dk>
+Date:   Wed, 3 Nov 2021 13:10:43 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <20211031104945.224024-1-haoxu@linux.alibaba.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <00000000000047f3b805c962affb@google.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Good afternoon Pavel,
+On 10/31/21 4:49 AM, Hao Xu wrote:
+> @@ -380,10 +382,14 @@ static void io_wqe_dec_running(struct io_worker *worker)
+>  	if (!(worker->flags & IO_WORKER_F_UP))
+>  		return;
+>  
+> +	raw_spin_lock(&acct->lock);
+>  	if (atomic_dec_and_test(&acct->nr_running) && io_acct_run_queue(acct)) {
+> +		raw_spin_unlock(&acct->lock);
+>  		atomic_inc(&acct->nr_running);
+>  		atomic_inc(&wqe->wq->worker_refs);
+>  		io_queue_worker_create(worker, acct, create_worker_cb);
+> +	} else {
+> +		raw_spin_unlock(&acct->lock);
+>  	}
+>  }
 
-> syzbot has tested the proposed patch and the reproducer did not trigger any issue:
-> 
-> Reported-and-tested-by: syzbot+9671693590ef5aad8953@syzkaller.appspotmail.com
-> 
-> Tested on:
-> 
-> commit:         bff2c168 io_uring: don't retry with truncated iter
-> git tree:       https://github.com/isilence/linux.git truncate
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=730106bfb5bf8ace
-> dashboard link: https://syzkaller.appspot.com/bug?extid=9671693590ef5aad8953
-> compiler:       Debian clang version 11.0.1-2, GNU ld (GNU Binutils for Debian) 2.35.1
-> 
-> Note: testing is done by a robot and is best-effort only.
+I think this may be more readable as:
 
-As you can see in the 'dashboard link' above this bug also affects
-android-5-10 which is currently based on v5.10.75.
+static void io_wqe_dec_running(struct io_worker *worker)
+	__must_hold(wqe->lock)
+{
+	struct io_wqe_acct *acct = io_wqe_get_acct(worker);
+	struct io_wqe *wqe = worker->wqe;
 
-I see that the back-port of this patch failed in v5.10.y:
+	if (!(worker->flags & IO_WORKER_F_UP))
+		return;
+	if (!atomic_dec_and_test(&acct->nr_running))
+		return;
 
-  https://lore.kernel.org/stable/163152589512611@kroah.com/
+	raw_spin_lock(&acct->lock);
+	if (!io_acct_run_queue(acct)) {
+		raw_spin_unlock(&acct->lock);
+		return;
+	}
 
-And after solving the build-error by back-porting both:
+	raw_spin_unlock(&acct->lock);
+	atomic_inc(&acct->nr_running);
+	atomic_inc(&wqe->wq->worker_refs);
+	io_queue_worker_create(worker, acct, create_worker_cb);
+}
 
-  2112ff5ce0c11 iov_iter: track truncated size
-  89c2b3b749182 io_uring: reexpand under-reexpanded iters
+?
 
-I now see execution tripping the WARN() in iov_iter_revert():
-
-  if (WARN_ON(unroll > MAX_RW_COUNT))
-      return
-
-Am I missing any additional patches required to fix stable/v5.10.y?
-
-Any help would be gratefully received.
-
-Kind regards,
-Lee
+Patch looks pretty sane to me, but there's a lot of lock shuffling going
+on for it. Like in io_worker_handle_work(), and particularly in
+io_worker_handle_work(). I think it'd be worthwhile to spend some time
+to see if that could be improved. These days, lock contention is more
+about frequency of lock grabbing rather than hold time. Maybe clean
+nesting of wqe->lock -> acct->lock (which would be natural) can help
+that?
 
 -- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Jens Axboe
+

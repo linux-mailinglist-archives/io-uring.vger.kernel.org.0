@@ -2,100 +2,215 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 64C46444BA1
-	for <lists+io-uring@lfdr.de>; Thu,  4 Nov 2021 00:27:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9611444CF5
+	for <lists+io-uring@lfdr.de>; Thu,  4 Nov 2021 02:22:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230302AbhKCXaN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 3 Nov 2021 19:30:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39616 "EHLO
+        id S231806AbhKDBYr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 3 Nov 2021 21:24:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230155AbhKCXaK (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 3 Nov 2021 19:30:10 -0400
-Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72794C061714
-        for <io-uring@vger.kernel.org>; Wed,  3 Nov 2021 16:27:33 -0700 (PDT)
-Received: by mail-io1-xd34.google.com with SMTP id q203so4720783iod.12
-        for <io-uring@vger.kernel.org>; Wed, 03 Nov 2021 16:27:33 -0700 (PDT)
+        with ESMTP id S231373AbhKDBYr (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 3 Nov 2021 21:24:47 -0400
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11D08C061205
+        for <io-uring@vger.kernel.org>; Wed,  3 Nov 2021 18:22:10 -0700 (PDT)
+Received: by mail-pl1-x62a.google.com with SMTP id s24so4634393plp.0
+        for <io-uring@vger.kernel.org>; Wed, 03 Nov 2021 18:22:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=9briV7S+xwu2jII1u3WP74CsyaHx/9CSCvTDSgnplDA=;
-        b=e9pD45l8q/YOHP0mAg4QMA2i5/Q2mJSKMY7uFEzZkzmPjvSsV6zFs8gOa9EYCIxdj6
-         7gHRSEelccv3sy8JyDr8qa/fovYkBeLL46AlpKhXG7/lXricug6a8tYnIUI410fjtHNM
-         TD0Kuy+wz+xc4l97oecMxxUKTjf4HwAa9/oVy51HVW9F4PUarvVOIDJ+UpW9h2FRdw0r
-         QjMeeMdiLp4lu7XAdEbp+ukxblLdO1/+smft+8WjpuRHWXAOdiwjVKFhoUz/AMI2jfWr
-         RZc74GYdt3+1CzE9etbBlsV5K3mi8md60VWRkPUgZPKEqUxucsw7yJsj6FQLMI4hsA3x
-         4XYg==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=eHqAIzV719j9lAkpwSrBfwZkYLTO2TUYbW63qRGOcw8=;
+        b=JcDp7is6r26TrSdZ0q88ZPFszRzkzCKWQuNv8lvraPDM50WH6GhwKYgOTd+Poe0Ofp
+         QiM3HSyb4VpWvdmvy9DS4EXMAwF1O98JlIHepU7K6N1uvq7ZKDEVSF6UMUH7qK0weYfj
+         Zdf9LX/SDC7/oaD+O2O6l8WzEQ8kRkgvi1+ZaxeOIO9pEyhFQizHWDo2TN7bvLisVjw/
+         8zfaxAEbz8xiKC/8jf6PcRpABdpSNl1gUW3XVc1Sw/0YercramVOWNYxhSqZPBrnMzXI
+         oA+tcKwZ3CT+uz6qG4g9D8WmSpaGxCwLLwmqfcm192cSLTDtmHCI5rhoByBpWMdoFfmJ
+         +Xkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=9briV7S+xwu2jII1u3WP74CsyaHx/9CSCvTDSgnplDA=;
-        b=XKLDQ2DwUwoNEkFNg2XyoCu6V/gmEyRP2Y3H2GejUoVAF1+ZCZMcJUw9OaXh/cra3I
-         01tOmRoYkkvfMWParl+ZHwInOwN828F+0IpzW6NCyRQomXTl3SfnobDr+19nvyXOVVcB
-         6EcU0jCH+vyu/mQjgEPu8XNIXP4X7T6c4SVsfpbtf1gXP6yNDSeIcrs+bNdN4M/gkSyb
-         UQ2+ZHlK6c0CRj4Gh4Um2i0rjSPK+AuNUBAhD8p/zoLdGfXra13CPuz1W2T6SShG7jUR
-         Bv76/EMUUI3lFtm3Vb2BT61o5XMA0SHQtnwaown4bcOi9JYa+v8fpUyfyH89Gv+WrD9k
-         aBOA==
-X-Gm-Message-State: AOAM533Gu5HeFZSazhSbnurhp0oidS+ltUM/+K7J9pv5XerFIsxpF00a
-        Ozjxwlk2aOzY6JnH/ilPzWA3Lw==
-X-Google-Smtp-Source: ABdhPJyGoOfpZXPZcdChNFRjiYPgi/i385fBbmhb6Q0lulL3ZyL0ZdhNiI7a8bH+lOTwuWL3oKJPvg==
-X-Received: by 2002:a5d:954b:: with SMTP id a11mr33350224ios.99.1635982052859;
-        Wed, 03 Nov 2021 16:27:32 -0700 (PDT)
-Received: from [192.168.1.116] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id l18sm1682458iob.17.2021.11.03.16.27.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Nov 2021 16:27:32 -0700 (PDT)
-Subject: Re: [syzbot] WARNING in io_poll_task_func (2)
-To:     syzbot <syzbot+804709f40ea66018e544@syzkaller.appspotmail.com>,
-        asml.silence@gmail.com, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        xiaoguang.wang@linux.alibaba.com
-References: <0000000000007a0d5705cfea99b2@google.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <0935df19-f813-8840-fa35-43c5558b90e7@kernel.dk>
-Date:   Wed, 3 Nov 2021 17:27:26 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        bh=eHqAIzV719j9lAkpwSrBfwZkYLTO2TUYbW63qRGOcw8=;
+        b=KmanKIkfwvBABUvdVb+ewqtYfAAsekO8A6xwV/i2ryVhaFg9QPaDpN2jxz9iIDOVE+
+         WH9I5mKX97eMo9r9f/RTty3YLiBjUnqTD5e8ntaF7ef/DzUbax66zcRxKwDDN7aqP+5r
+         rP6SRBoDeZ0/5dTJIX2w1DCvy6umhC8zYttURv7MWutXKExtHJBTWe8LAJDrUOJA5fd2
+         V6vYXdW5TdKDFRco4JtvOIW0wrpjs9rId8F3+XDJETGvlNcY0TZ8w7Hh8rbLmAh8li+i
+         Qh2bbrPQVJjwjQ/Tjb7ppbf/gIleftso4st7WIg44ZJsdsFx0BHze299Zq7uesKMRIy+
+         E1sw==
+X-Gm-Message-State: AOAM533ppzDoMPYGIMFJKgOWRGYda6zw5K71vSS2v0/85Ozy8Hxmui7Z
+        O4TWF2wFkB8GDv2N+UmD6Ybxyw==
+X-Google-Smtp-Source: ABdhPJx6xhIDWyRA1hCuL+WEEewz3TJLvBAIAp/NDnCi6Iky/USsaRIUt3iyHq1gKN1wqrr1GE5tgw==
+X-Received: by 2002:a17:90a:9501:: with SMTP id t1mr18921689pjo.134.1635988929371;
+        Wed, 03 Nov 2021 18:22:09 -0700 (PDT)
+Received: from localhost.localdomain ([50.39.160.154])
+        by smtp.gmail.com with ESMTPSA id jz24sm2663464pjb.19.2021.11.03.18.22.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Nov 2021 18:22:08 -0700 (PDT)
+From:   Tadeusz Struk <tadeusz.struk@linaro.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Tadeusz Struk <tadeusz.struk@linaro.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        syzbot+6055980d041c8ac23307@syzkaller.appspotmail.com
+Subject: [PATCH] io_uring: prevent io_put_identity() from freeing a static identity
+Date:   Wed,  3 Nov 2021 18:21:20 -0700
+Message-Id: <20211104012120.729261-1-tadeusz.struk@linaro.org>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
-In-Reply-To: <0000000000007a0d5705cfea99b2@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 11/3/21 5:16 PM, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    bdcc9f6a5682 Add linux-next specific files for 20211029
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=14ab0e5cb00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=4b504bcb4c507265
-> dashboard link: https://syzkaller.appspot.com/bug?extid=804709f40ea66018e544
-> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15710012b00000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11862ef4b00000
-> 
-> The issue was bisected to:
-> 
-> commit 34ced75ca1f63fac6148497971212583aa0f7a87
-> Author: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-> Date:   Mon Oct 25 05:38:48 2021 +0000
-> 
->     io_uring: reduce frequent add_wait_queue() overhead for multi-shot poll request
+Note: this applies to 5.10 stable only. It doesn't trigger on anything
+above 5.10 as the code there has been substantially reworked. This also
+doesn't apply to any stable kernel below 5.10 afaict.
 
-Again:
+Syzbot found a bug: KASAN: invalid-free in io_dismantle_req
+https://syzkaller.appspot.com/bug?id=123d9a852fc88ba573ffcb2dbcf4f9576c3b0559
 
-#syz invalid
+The test submits bunch of io_uring writes and exits, which then triggers
+uring_task_cancel() and io_put_identity(), which in some corner cases,
+tries to free a static identity. This causes a panic as shown in the
+trace below:
 
-Please stop testing dead branches, it's pointless and just wastes time.
+ BUG: KASAN: double-free or invalid-free in kfree+0xd5/0x310
+ CPU: 0 PID: 4618 Comm: repro Not tainted 5.10.76-05281-g4944ec82ebb9-dirty #17
+ Call Trace:
+  dump_stack_lvl+0x1b2/0x21b
+  print_address_description+0x8d/0x3b0
+  kasan_report_invalid_free+0x58/0x130
+  ____kasan_slab_free+0x14b/0x170
+  __kasan_slab_free+0x11/0x20
+  slab_free_freelist_hook+0xcc/0x1a0
+  kfree+0xd5/0x310
+  io_dismantle_req+0x9b0/0xd90
+  io_do_iopoll+0x13a4/0x23e0
+  io_iopoll_try_reap_events+0x116/0x290
+  io_uring_cancel_task_requests+0x197d/0x1ee0
+  io_uring_flush+0x170/0x6d0
+  filp_close+0xb0/0x150
+  put_files_struct+0x1d4/0x350
+  exit_files+0x80/0xa0
+  do_exit+0x6d9/0x2390
+  do_group_exit+0x16a/0x2d0
+  get_signal+0x133e/0x1f80
+  arch_do_signal+0x7b/0x610
+  exit_to_user_mode_prepare+0xaa/0xe0
+  syscall_exit_to_user_mode+0x24/0x40
+  do_syscall_64+0x3d/0x70
+  entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
+ Allocated by task 4611:
+  ____kasan_kmalloc+0xcd/0x100
+  __kasan_kmalloc+0x9/0x10
+  kmem_cache_alloc_trace+0x208/0x390
+  io_uring_alloc_task_context+0x57/0x550
+  io_uring_add_task_file+0x1f7/0x290
+  io_uring_create+0x2195/0x3490
+  __x64_sys_io_uring_setup+0x1bf/0x280
+  do_syscall_64+0x31/0x70
+  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+ The buggy address belongs to the object at ffff88810732b500
+  which belongs to the cache kmalloc-192 of size 192
+ The buggy address is located 88 bytes inside of
+  192-byte region [ffff88810732b500, ffff88810732b5c0)
+ Kernel panic - not syncing: panic_on_warn set ...
+
+This issue bisected to this commit:
+commit 186725a80c4e ("io_uring: fix skipping disabling sqo on exec")
+
+Simple reverting the offending commit doesn't work as it hits some
+other, related issues like:
+
+/* sqo_dead check is for when this happens after cancellation */
+WARN_ON_ONCE(ctx->sqo_task == current && !ctx->sqo_dead &&
+	     !xa_load(&tctx->xa, (unsigned long)file));
+
+ ------------[ cut here ]------------
+ WARNING: CPU: 1 PID: 5622 at fs/io_uring.c:8960 io_uring_flush+0x5bc/0x6d0
+ Modules linked in:
+ CPU: 1 PID: 5622 Comm: repro Not tainted 5.10.76-05281-g4944ec82ebb9-dirty #16
+ Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.14.0-6.fc35 04/01/2014
+ RIP: 0010:io_uring_flush+0x5bc/0x6d0
+ Call Trace:
+ filp_close+0xb0/0x150
+ put_files_struct+0x1d4/0x350
+ reset_files_struct+0x88/0xa0
+ bprm_execve+0x7f2/0x9f0
+ do_execveat_common+0x46f/0x5d0
+ __x64_sys_execve+0x92/0xb0
+ do_syscall_64+0x31/0x70
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+Changing __io_uring_task_cancel() to call io_disable_sqo_submit() directly,
+as the comment suggests, only if __io_uring_files_cancel() is not executed
+seems to fix the issue.
+
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: <io-uring@vger.kernel.org>
+Cc: <linux-fsdevel@vger.kernel.org>
+Cc: <linux-kernel@vger.kernel.org>
+Cc: <stable@vger.kernel.org>
+Reported-by: syzbot+6055980d041c8ac23307@syzkaller.appspotmail.com
+Signed-off-by: Tadeusz Struk <tadeusz.struk@linaro.org>
+---
+ fs/io_uring.c | 21 +++++++++++++++++----
+ 1 file changed, 17 insertions(+), 4 deletions(-)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 0736487165da..fcf9ffe9b209 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -8882,20 +8882,18 @@ void __io_uring_task_cancel(void)
+ 	struct io_uring_task *tctx = current->io_uring;
+ 	DEFINE_WAIT(wait);
+ 	s64 inflight;
++	int canceled = 0;
+ 
+ 	/* make sure overflow events are dropped */
+ 	atomic_inc(&tctx->in_idle);
+ 
+-	/* trigger io_disable_sqo_submit() */
+-	if (tctx->sqpoll)
+-		__io_uring_files_cancel(NULL);
+-
+ 	do {
+ 		/* read completions before cancelations */
+ 		inflight = tctx_inflight(tctx);
+ 		if (!inflight)
+ 			break;
+ 		__io_uring_files_cancel(NULL);
++		canceled = 1;
+ 
+ 		prepare_to_wait(&tctx->wait, &wait, TASK_UNINTERRUPTIBLE);
+ 
+@@ -8909,6 +8907,21 @@ void __io_uring_task_cancel(void)
+ 		finish_wait(&tctx->wait, &wait);
+ 	} while (1);
+ 
++	/*
++	 * trigger io_disable_sqo_submit()
++	 * if not already done by __io_uring_files_cancel()
++	 */
++	if (tctx->sqpoll && !canceled) {
++		struct file *file;
++		unsigned long index;
++
++		xa_for_each(&tctx->xa, index, file) {
++			struct io_ring_ctx *ctx = file->private_data;
++
++			io_disable_sqo_submit(ctx);
++		}
++	}
++
+ 	atomic_dec(&tctx->in_idle);
+ 
+ 	io_uring_remove_task_files(tctx);
 -- 
-Jens Axboe
+2.33.1
 

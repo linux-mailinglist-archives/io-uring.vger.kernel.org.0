@@ -2,61 +2,525 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 605DF446CD7
-	for <lists+io-uring@lfdr.de>; Sat,  6 Nov 2021 08:13:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C645446CEB
+	for <lists+io-uring@lfdr.de>; Sat,  6 Nov 2021 08:43:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233760AbhKFHPa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 6 Nov 2021 03:15:30 -0400
-Received: from [103.31.38.59] ([103.31.38.59]:52192 "EHLO gnuweeb.org"
-        rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S233612AbhKFHPa (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Sat, 6 Nov 2021 03:15:30 -0400
-Received: from [192.168.43.248] (unknown [182.2.38.101])
-        by gnuweeb.org (Postfix) with ESMTPSA id D4DC9BFC2C;
-        Sat,  6 Nov 2021 07:12:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=gnuweeb.org;
-        s=default; t=1636182767;
-        bh=7H28ORP1QiFj2B2Z153JaJMaxh7DrB6hvJmL8uGJiVI=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=GpdOSjQfeiN7dDU79QFNfTft68VknmZ+hadnfn86oEkTIPy4FKSQNqOHZ5Gx8HN1w
-         9jVSEexb/FKhDPBWeGBLhzpi1UHxEoTPwhe8t2SzhMwe4/XI041FY7YgmQxyUHaGzv
-         wF8wtzUjsaQBZWYY44l5GKsoMoj0Dy+gqLwx1kpZv/dJOecEgOq91iJCicD2Ew1CP6
-         sUeHN/BvVv0Fd9VZvkpnF38LXv4IbmWJ6TV5KIfkP7AQ54kMnB+Zfl9rg+Dcqzo2y5
-         HpH+Y8MeZOCin88rVsButONFu8UHTmuoEZM0ZeyRLPyAYA9wzGhZvt4f7PC1dYFMaD
-         oUwI9yvbHP70Q==
-Subject: Re: [PATCH] Increase default MLOCK_LIMIT to 8 MiB
-To:     Drew DeVault <sir@cmpwn.com>
-Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        io_uring Mailing List <io-uring@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>,
+        id S233825AbhKFHqZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 6 Nov 2021 03:46:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57876 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232984AbhKFHqZ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 6 Nov 2021 03:46:25 -0400
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6ABC0C061570
+        for <io-uring@vger.kernel.org>; Sat,  6 Nov 2021 00:43:44 -0700 (PDT)
+Received: by mail-pj1-x1030.google.com with SMTP id n11-20020a17090a2bcb00b001a1e7a0a6a6so4987733pje.0
+        for <io-uring@vger.kernel.org>; Sat, 06 Nov 2021 00:43:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amikom.ac.id; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=25IB41uok1DlU6ig2SrA7mRJtP1yVr+kq55HlIYvdok=;
+        b=CGngrXGcwFQH7bbCGxXUhPe+7RW47EKJ4EdW92uzRhnd4kX0R9Tb8oZu9YZpUZhAlF
+         UmiN8RqvFWsA4smOau8lPduxLTUZhygAnW+ssBsHkNHPe9jiMxxGKvpmf1dknl5B171o
+         2Dbme+lPPRp4n2uHjra6dZDwI3lb1hgAEM2Hc7O49/pTtVt1kI7zsvzaU+ULD854ZvMJ
+         W+Y+fDpFT6nMFcDsDUbyUpdHLqLrvRWMZZXF+OrH3JTKypybImmrDpog/0s+qX4k8dUu
+         v05XYdelDN8JjY19oMl6WZDYjp/gde36f6jxy6lf1jilI9ZZk6dszIReWHQpMLKC27mr
+         xqAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=25IB41uok1DlU6ig2SrA7mRJtP1yVr+kq55HlIYvdok=;
+        b=AdmrVmhu0gqk+LZZoWYpIPFtbpsvjp4gxONfl/X4jX4ip5HF7DJ7wNLCyyLFHKytQn
+         /nAsy0uLC5NqXAh4aMgo+XOzhj5WzfXweOj9ftjd39HoxuqIO+/IoonEEE+vAda2etYd
+         yLkBSKLhDK6zOpgf0lXgWcaqV3DTS0yggFykGYdBuy/tLfLHptkboDKCTKj4tbbfkb/a
+         mb9dmQTkpWCpEKdze3/Sqr3/SrmCNS8JkQmvyhODdC11uQTiwhuvNz2dSkLkk2ER05hL
+         XU4h0UPcdFRoQXgA2uN4du5IPLpp4AQSGX3DVO6STEcIIk9/ByyNz5MeBmc4H/l7uGMN
+         XerA==
+X-Gm-Message-State: AOAM532YcFHdiDo298qN/qKrJZfBOSYHbcgnQAgwBP203NbIAdX8YBMJ
+        u6Hf+auwkqHKAQZ9z4WuuBgQag==
+X-Google-Smtp-Source: ABdhPJygJ8t3qXgu8EnCMfa7LMjohGmmTF3iMwS+2mGqwJU6qAigufKuA4ZxqfbF6LEx3ifjDU2Rfw==
+X-Received: by 2002:a17:90a:d3c3:: with SMTP id d3mr19157152pjw.209.1636184623715;
+        Sat, 06 Nov 2021 00:43:43 -0700 (PDT)
+Received: from integral.. ([182.2.38.101])
+        by smtp.gmail.com with ESMTPSA id kk7sm7644107pjb.19.2021.11.06.00.43.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 06 Nov 2021 00:43:43 -0700 (PDT)
+From:   Ammar Faizi <ammar.faizi@students.amikom.ac.id>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Ammar Faizi <ammar.faizi@students.amikom.ac.id>,
         Pavel Begunkov <asml.silence@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <20211028080813.15966-1-sir@cmpwn.com>
- <CAFBCWQ+=2T4U7iNQz_vsBsGVQ72s+QiECndy_3AMFV98bMOLow@mail.gmail.com>
- <CFII8LNSW5XH.3OTIVFYX8P65Y@taiga>
-From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
-Message-ID: <593aea3b-e4a4-65ce-0eda-cb3885ff81cd@gnuweeb.org>
-Date:   Sat, 6 Nov 2021 14:12:45 +0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        io-uring Mailing List <io-uring@vger.kernel.org>,
+        Bedirhan KURT <windowz414@gnuweeb.org>
+Subject: [PATCH v4 liburing] test: Add kworker-hang test
+Date:   Sat,  6 Nov 2021 14:42:49 +0700
+Message-Id: <20211106074057.431607-1-ammar.faizi@intel.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20211106005235.363346-1-ammar.faizi@intel.com>
+References: <20211106005235.363346-1-ammar.faizi@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <CFII8LNSW5XH.3OTIVFYX8P65Y@taiga>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 11/6/21 2:05 PM, Drew DeVault wrote:
-> Should I send a v2 or is this email sufficient:
-> 
-> Signed-off-by: Drew DeVault <sir@cmpwn.com>
+This is the reproducer for the kworker hang bug.
 
-Oops, I missed akpm from the CC list. Added Andrew.
+Reproduction Steps:
+  1) A user task calls io_uring_queue_exit().
 
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Ref: https://lore.kernel.org/io-uring/CFII8LNSW5XH.3OTIVFYX8P65Y@taiga/
+  2) Suspend the task with SIGSTOP / SIGTRAP before the ring exit is
+     finished (do it as soon as step (1) is done).
 
+  3) Wait for `/proc/sys/kernel/hung_task_timeout_secs` seconds
+     elapsed.
+
+  4) We get a complaint from the khungtaskd because the kworker is
+     stuck in an uninterruptible state (D).
+
+The kworkers waiting on ring exit are not progressing as the task
+cannot proceed. When the user task is continued (e.g. get SIGCONT
+after SIGSTOP, or continue after SIGTRAP breakpoint), the kworkers
+then can finish the ring exit.
+
+We need a special handling for this case to avoid khungtaskd
+complaint. Currently we don't have the fix for this.
+
+The dmesg says:
+
+  [247390.432294] INFO: task kworker/u8:2:358488 blocked for more than 10 seconds.
+  [247390.432314]       Tainted: G           OE     5.15.0-stable #5
+  [247390.432322] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+  [247390.432329] task:kworker/u8:2    state:D stack:    0 pid:358488 ppid:     2 flags:0x00004000
+  [247390.432341] Workqueue: events_unbound io_ring_exit_work
+  [247390.432354] Call Trace:
+  [247390.432368]  __schedule+0x453/0x1850
+  [247390.432388]  ? lock_acquire+0xc8/0x2d0
+  [247390.432404]  ? usleep_range+0x90/0x90
+  [247390.432412]  schedule+0x59/0xc0
+  [247390.432420]  schedule_timeout+0x1aa/0x1f0
+  [247390.432429]  ? mark_held_locks+0x49/0x70
+  [247390.432439]  ? lockdep_hardirqs_on_prepare+0xff/0x180
+  [247390.432445]  ? _raw_spin_unlock_irq+0x24/0x40
+  [247390.432456]  __wait_for_common+0xc2/0x170
+  [247390.432473]  io_ring_exit_work+0x1d9/0x750
+  [247390.432486]  ? io_uring_del_tctx_node+0xe0/0xe0
+  [247390.432502]  ? verify_cpu+0xf0/0x100
+  [247390.432520]  process_one_work+0x23b/0x550
+  [247390.432540]  worker_thread+0x55/0x3c0
+  [247390.432546]  ? process_one_work+0x550/0x550
+  [247390.432556]  kthread+0x140/0x160
+  [247390.432564]  ? set_kthread_struct+0x40/0x40
+  [247390.432574]  ret_from_fork+0x1f/0x30
+  [247390.432605] INFO: task kworker/u8:0:359615 blocked for more than 10 seconds.
+  [247390.432613]       Tainted: G           OE     5.15.0-stable #5
+  [247390.432620] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+  [247390.432626] task:kworker/u8:0    state:D stack:    0 pid:359615 ppid:     2 flags:0x00004000
+  [247390.432635] Workqueue: events_unbound io_ring_exit_work
+  [247390.432643] Call Trace:
+  [247390.432653]  __schedule+0x453/0x1850
+  [247390.432676]  ? usleep_range+0x90/0x90
+  [247390.432684]  schedule+0x59/0xc0
+  [247390.432691]  schedule_timeout+0x1aa/0x1f0
+  [247390.432700]  ? mark_held_locks+0x49/0x70
+  [247390.432710]  ? lockdep_hardirqs_on_prepare+0xff/0x180
+  [247390.432717]  ? _raw_spin_unlock_irq+0x24/0x40
+  [247390.432728]  __wait_for_common+0xc2/0x170
+  [247390.432744]  io_ring_exit_work+0x1d9/0x750
+  [247390.432758]  ? io_uring_del_tctx_node+0xe0/0xe0
+  [247390.432772]  ? verify_cpu+0xf0/0x100
+  [247390.432788]  process_one_work+0x23b/0x550
+  [247390.432807]  worker_thread+0x55/0x3c0
+  [247390.432813]  ? process_one_work+0x550/0x550
+  [247390.432824]  kthread+0x140/0x160
+  [247390.432830]  ? set_kthread_struct+0x40/0x40
+  [247390.432839]  ret_from_fork+0x1f/0x30
+  [247390.432870]
+                  Showing all locks held in the system:
+  [247390.432877] 1 lock held by khungtaskd/40:
+  [247390.432880]  #0: ffffffff82976700 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x15/0x174
+  [247390.432911] 1 lock held by in:imklog/922:
+  [247390.432915]  #0: ffff8881041cfcf0 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0x4a/0x60
+  [247390.432977] 2 locks held by pager/318088:
+  [247390.432981]  #0: ffff8881208d4898 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x24/0x50
+  [247390.433001]  #1: ffffc900010fd2e8 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x49e/0x660
+  [247390.433024] 1 lock held by htop/341462:
+  [247390.433032] 2 locks held by kworker/u8:2/358488:
+  [247390.433035]  #0: ffff888100106938 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x1c1/0x550
+  [247390.433053]  #1: ffffc90003797e70 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x1c1/0x550
+  [247390.433071] 2 locks held by kworker/u8:0/359615:
+  [247390.433075]  #0: ffff888100106938 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x1c1/0x550
+  [247390.433092]  #1: ffffc90003597e70 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x1c1/0x550
+  [247390.433110] 1 lock held by dmesg/361178:
+  [247390.433113]  #0: ffff88810b5300d0 (&user->lock){+.+.}-{3:3}, at: devkmsg_read+0x4b/0x230
+
+  [247390.433134] =============================================
+
+Cc: Pavel Begunkov <asml.silence@gmail.com>
+Link: https://github.com/axboe/liburing/issues/448
+Signed-off-by: Ammar Faizi <ammar.faizi@students.amikom.ac.id>
+---
+
+ v4:
+  - Update comment and function name.
+
+ .gitignore          |   1 +
+ test/Makefile       |   1 +
+ test/kworker-hang.c | 320 ++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 322 insertions(+)
+ create mode 100644 test/kworker-hang.c
+
+diff --git a/.gitignore b/.gitignore
+index fb3a859..b0f5edf 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -65,6 +65,7 @@
+ /test/io_uring_register
+ /test/io_uring_setup
+ /test/iopoll
++/test/kworker-hang
+ /test/lfs-openat
+ /test/lfs-openat-write
+ /test/link
+diff --git a/test/Makefile b/test/Makefile
+index f7eafad..2af684a 100644
+--- a/test/Makefile
++++ b/test/Makefile
+@@ -83,6 +83,7 @@ test_srcs := \
+ 	io_uring_enter.c \
+ 	io_uring_register.c \
+ 	io_uring_setup.c \
++	kworker-hang.c \
+ 	lfs-openat.c \
+ 	lfs-openat-write.c \
+ 	link.c \
+diff --git a/test/kworker-hang.c b/test/kworker-hang.c
+new file mode 100644
+index 0000000..cf76d46
+--- /dev/null
++++ b/test/kworker-hang.c
+@@ -0,0 +1,320 @@
++/* SPDX-License-Identifier: MIT */
++
++/*
++ * kworker-hang
++ *
++ * Link: https://github.com/axboe/liburing/issues/448
++ */
++
++#include <dirent.h>
++#include <errno.h>
++#include <stdio.h>
++#include <unistd.h>
++#include <stdlib.h>
++#include <string.h>
++#include <fcntl.h>
++#include <sys/types.h>
++#include <sys/poll.h>
++#include <sys/eventfd.h>
++#include <sys/resource.h>
++#include <sys/wait.h>
++
++#include "helpers.h"
++#include "liburing.h"
++
++#define NR_RINGS			2
++
++/*
++ * WAIT_FOR_KWORKER_SECS can be any longer, but to make
++ * the test short, 10 seconds should be enough.
++ */
++#define WAIT_FOR_KWORKER_SECS		10
++#define WAIT_FOR_KWORKER_SECS_STR	"10"
++
++static bool is_all_numeric(const char *pid)
++{
++	size_t i, l;
++	char c;
++
++	l = strnlen(pid, 32);
++	if (l == 0)
++		return false;
++
++	for (i = 0; i < l; i++) {
++		c = pid[i];
++		if (!('0' <= c && c <= '9'))
++			return false;
++	}
++
++	return true;
++}
++
++static bool is_kworker_event_unbound(const char *pid)
++{
++	int fd;
++	bool ret = false;
++	char fpath[256];
++	char read_buf[256] = { };
++	ssize_t read_size;
++
++	snprintf(fpath, sizeof(fpath), "/proc/%s/comm", pid);
++
++	fd = open(fpath, O_RDONLY);
++	if (fd < 0)
++		return false;
++
++	read_size = read(fd, read_buf, sizeof(read_buf) - 1);
++	if (read_size < 0)
++		goto out;
++
++	if (!strncmp(read_buf, "kworker", 7) && strstr(read_buf, "events_unbound"))
++		ret = true;
++out:
++	close(fd);
++	return ret;
++}
++
++static bool is_on_io_ring_exit_work(const char *pid)
++{
++	int fd;
++	bool ret = false;
++	char fpath[256];
++	char read_buf[4096] = { };
++	ssize_t read_size;
++
++	snprintf(fpath, sizeof(fpath), "/proc/%s/stack", pid);
++
++	fd = open(fpath, O_RDONLY);
++	if (fd < 0)
++		return false;
++
++	read_size = read(fd, read_buf, sizeof(read_buf) - 1);
++	if (read_size < 0)
++		goto out;
++
++	if (strstr(read_buf, "io_ring_exit_work"))
++		ret = true;
++out:
++	close(fd);
++	return ret;
++}
++
++static bool is_in_d_state(const char *pid)
++{
++	int fd;
++	bool ret = false;
++	char fpath[256];
++	char read_buf[4096] = { };
++	ssize_t read_size;
++	const char *p = read_buf;
++
++	snprintf(fpath, sizeof(fpath), "/proc/%s/stat", pid);
++
++	fd = open(fpath, O_RDONLY);
++	if (fd < 0)
++		return false;
++
++	read_size = read(fd, read_buf, sizeof(read_buf) - 1);
++	if (read_size < 0)
++		goto out;
++
++	/*
++	 * It looks like this:
++	 * 9384 (kworker/u8:8+events_unbound) D 2 0 0 0 -1 69238880 0 0 0 0 0 0 0 0 20 0 1 0
++	 *
++	 * Catch the 'D'!
++	 */
++	while (*p != ')') {
++		p++;
++		if (&p[2] >= &read_buf[sizeof(read_buf) - 1])
++			/*
++			 * /proc/$pid/stack shows the wrong output?
++			 */
++			goto out;
++	}
++
++	ret = (p[2] == 'D');
++out:
++	close(fd);
++	return ret;
++}
++
++/*
++ * Return 1 if we have kworkers hang or fail to open `/proc`.
++ */
++static int scan_kworker_hang(void)
++{
++	DIR *dr;
++	int ret = 0;
++	struct dirent *de;
++
++	dr = opendir("/proc");
++	if (dr == NULL) {
++		perror("opendir");
++		return 1;
++	}
++
++	while (1) {
++		const char *pid;
++
++		de = readdir(dr);
++		if (!de)
++			break;
++
++		pid = de->d_name;
++		if (!is_all_numeric(pid))
++			continue;
++
++		if (!is_kworker_event_unbound(pid))
++			continue;
++
++		if (!is_on_io_ring_exit_work(pid))
++			continue;
++
++		if (is_in_d_state(pid)) {
++			/* kworker hang */
++			printf("Bug: found hang kworker on io_ring_exit_work "
++			       "/proc/%s\n", pid);
++			ret = 1;
++		}
++	}
++
++	closedir(dr);
++	return ret;
++}
++
++static void set_hung_entries(void)
++{
++	const char *cmds[] = {
++		/* Backup current values. */
++		"cat /proc/sys/kernel/hung_task_all_cpu_backtrace > hung_task_all_cpu_backtrace.bak",
++		"cat /proc/sys/kernel/hung_task_check_count > hung_task_check_count.bak",
++		"cat /proc/sys/kernel/hung_task_panic > hung_task_panic.bak",
++		"cat /proc/sys/kernel/hung_task_check_interval_secs > hung_task_check_interval_secs.bak",
++		"cat /proc/sys/kernel/hung_task_timeout_secs > hung_task_timeout_secs.bak",
++		"cat /proc/sys/kernel/hung_task_warnings > hung_task_warnings.bak",
++
++		/* Set to do the test. */
++		"echo 1 > /proc/sys/kernel/hung_task_all_cpu_backtrace",
++		"echo 99999999 > /proc/sys/kernel/hung_task_check_count",
++		"echo 0 > /proc/sys/kernel/hung_task_panic",
++		"echo 1 > /proc/sys/kernel/hung_task_check_interval_secs",
++		"echo " WAIT_FOR_KWORKER_SECS_STR " > /proc/sys/kernel/hung_task_timeout_secs",
++		"echo -1 > /proc/sys/kernel/hung_task_warnings",
++	};
++	int p;
++	size_t i;
++
++	for (i = 0; i < ARRAY_SIZE(cmds); i++)
++		p = system(cmds[i]);
++
++	(void)p;
++}
++
++static void restore_hung_entries(void)
++{
++	const char *cmds[] = {
++		/* Restore old values. */
++		"cat hung_task_all_cpu_backtrace.bak > /proc/sys/kernel/hung_task_all_cpu_backtrace",
++		"cat hung_task_check_count.bak > /proc/sys/kernel/hung_task_check_count",
++		"cat hung_task_panic.bak > /proc/sys/kernel/hung_task_panic",
++		"cat hung_task_check_interval_secs.bak > /proc/sys/kernel/hung_task_check_interval_secs",
++		"cat hung_task_timeout_secs.bak > /proc/sys/kernel/hung_task_timeout_secs",
++		"cat hung_task_warnings.bak > /proc/sys/kernel/hung_task_warnings",
++
++		/* Clean up! */
++		"rm -f " \
++			"hung_task_all_cpu_backtrace.bak " \
++			"hung_task_check_count.bak " \
++			"hung_task_panic.bak " \
++			"hung_task_check_interval_secs.bak " \
++			"hung_task_timeout_secs.bak " \
++			"hung_task_warnings.bak"
++	};
++	int p;
++	size_t i;
++
++	for (i = 0; i < ARRAY_SIZE(cmds); i++)
++		p = system(cmds[i]);
++
++	(void)p;
++}
++
++
++static int run_child(void)
++{
++	int ret, i;
++	struct io_uring rings[NR_RINGS];
++
++	for (i = 0; i < NR_RINGS; i++) {
++		struct io_uring_params p = { };
++
++		ret = io_uring_queue_init_params(64, &rings[i], &p);
++		if (ret) {
++			printf("io_uring_queue_init_params(): (%d) %s\n",
++			       ret, strerror(-ret));
++			return 1;
++		}
++	}
++
++	for (i = 0; i < NR_RINGS; i++)
++		io_uring_queue_exit(&rings[i]);
++
++	kill(getpid(), SIGSTOP);
++	/*
++	 * kworkers hang right after this task sends SIGSTOP to itself.
++	 * The parent process will check it. We are suspended here!
++	 */
++	return 0;
++}
++
++int main(void)
++{
++	pid_t child_pid;
++	int ret, wstatus = 0;
++
++	/*
++	 * We need root to check /proc/$pid/stack and set /proc/sys/kernel/hung*
++	 */
++	if (getuid() != 0 && geteuid() != 0) {
++		printf("Skipping kworker-hang: not root\n");
++		return 0;
++	}
++
++	set_hung_entries();
++	child_pid = fork();
++	if (child_pid < 0) {
++		perror("fork()");
++		return 1;
++	}
++
++	if (!child_pid)
++		return run_child();
++
++	atexit(restore_hung_entries);
++
++	/*
++	 * +2 just to add small extra time for
++	 * fork(), io_uring_setup(), close(), etc.
++	 */
++	sleep(WAIT_FOR_KWORKER_SECS + 2);
++	ret = scan_kworker_hang();
++
++	/*
++	 * Continue the suspended task.
++	 */
++	kill(child_pid, SIGCONT);
++
++	if (waitpid(child_pid, &wstatus, 0) < 0) {
++		perror("waitpid()");
++		return 1;
++	}
++
++	if (!WIFEXITED(wstatus)) {
++		printf("Child process won't exit!\n");
++		return 1;
++	}
++
++	/* Make sure child process exited properly as well. */
++	return ret | WEXITSTATUS(wstatus);
++}
 -- 
-Ammar Faizi
+2.30.2
+

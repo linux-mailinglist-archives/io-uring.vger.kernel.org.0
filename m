@@ -2,52 +2,61 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D0F10446CD4
-	for <lists+io-uring@lfdr.de>; Sat,  6 Nov 2021 08:06:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 605DF446CD7
+	for <lists+io-uring@lfdr.de>; Sat,  6 Nov 2021 08:13:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229946AbhKFHIv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 6 Nov 2021 03:08:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49766 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233760AbhKFHIu (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 6 Nov 2021 03:08:50 -0400
-Received: from out2.migadu.com (out2.migadu.com [IPv6:2001:41d0:2:aacc::])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38C6EC061570;
-        Sat,  6 Nov 2021 00:06:01 -0700 (PDT)
-MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cmpwn.com; s=key1;
-        t=1636182359;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=NDMr7z63ANiwgUIqESxEicrfEzmTYXOfCodnq6yrouI=;
-        b=wr7gsNjaBJTobcl23roYYtsjIHMCyt/V1OCVL2bTO1mE1Utq3lFgYtGiAnLdV+deuGtTZ8
-        f0hgXyxuv1P3zC2S7BFgtrDs4BYcf58w8hc0JH5Yeo9wejSINAmro+DaTClTT6dHxmTmpN
-        lmfcWdi6Tw6thDPn1TTJukWNSYSdB9mdAo92hcrpWMezYJxs8S/LBWlURSCdw3uiW0yPQA
-        Oin1yT1N30EBqSKU6U+5nE3PWIgJleWvgO0/5s44ypmhwl27uK4td1oal5Z/+hTF0iN0Iw
-        D85+i7g43kN1Gk9/4dcACZuunrTuycR4qkWdMvnmyy8g0LPQTDMGS0ihNcBJLg==
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date:   Sat, 06 Nov 2021 08:05:55 +0100
-Message-Id: <CFII8LNSW5XH.3OTIVFYX8P65Y@taiga>
-Cc:     <linux-kernel@vger.kernel.org>, <linux-api@vger.kernel.org>,
-        "io_uring Mailing List" <io-uring@vger.kernel.org>,
-        "Jens Axboe" <axboe@kernel.dk>,
-        "Pavel Begunkov" <asml.silence@gmail.com>
+        id S233760AbhKFHPa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 6 Nov 2021 03:15:30 -0400
+Received: from [103.31.38.59] ([103.31.38.59]:52192 "EHLO gnuweeb.org"
+        rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S233612AbhKFHPa (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Sat, 6 Nov 2021 03:15:30 -0400
+Received: from [192.168.43.248] (unknown [182.2.38.101])
+        by gnuweeb.org (Postfix) with ESMTPSA id D4DC9BFC2C;
+        Sat,  6 Nov 2021 07:12:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=gnuweeb.org;
+        s=default; t=1636182767;
+        bh=7H28ORP1QiFj2B2Z153JaJMaxh7DrB6hvJmL8uGJiVI=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=GpdOSjQfeiN7dDU79QFNfTft68VknmZ+hadnfn86oEkTIPy4FKSQNqOHZ5Gx8HN1w
+         9jVSEexb/FKhDPBWeGBLhzpi1UHxEoTPwhe8t2SzhMwe4/XI041FY7YgmQxyUHaGzv
+         wF8wtzUjsaQBZWYY44l5GKsoMoj0Dy+gqLwx1kpZv/dJOecEgOq91iJCicD2Ew1CP6
+         sUeHN/BvVv0Fd9VZvkpnF38LXv4IbmWJ6TV5KIfkP7AQ54kMnB+Zfl9rg+Dcqzo2y5
+         HpH+Y8MeZOCin88rVsButONFu8UHTmuoEZM0ZeyRLPyAYA9wzGhZvt4f7PC1dYFMaD
+         oUwI9yvbHP70Q==
 Subject: Re: [PATCH] Increase default MLOCK_LIMIT to 8 MiB
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   "Drew DeVault" <sir@cmpwn.com>
-To:     "Ammar Faizi" <ammarfaizi2@gnuweeb.org>
+To:     Drew DeVault <sir@cmpwn.com>
+Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        io_uring Mailing List <io-uring@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>
 References: <20211028080813.15966-1-sir@cmpwn.com>
  <CAFBCWQ+=2T4U7iNQz_vsBsGVQ72s+QiECndy_3AMFV98bMOLow@mail.gmail.com>
-In-Reply-To: <CAFBCWQ+=2T4U7iNQz_vsBsGVQ72s+QiECndy_3AMFV98bMOLow@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
-X-Migadu-Auth-User: sir@cmpwn.com
+ <CFII8LNSW5XH.3OTIVFYX8P65Y@taiga>
+From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
+Message-ID: <593aea3b-e4a4-65ce-0eda-cb3885ff81cd@gnuweeb.org>
+Date:   Sat, 6 Nov 2021 14:12:45 +0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
+MIME-Version: 1.0
+In-Reply-To: <CFII8LNSW5XH.3OTIVFYX8P65Y@taiga>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Should I send a v2 or is this email sufficient:
+On 11/6/21 2:05 PM, Drew DeVault wrote:
+> Should I send a v2 or is this email sufficient:
+> 
+> Signed-off-by: Drew DeVault <sir@cmpwn.com>
 
-Signed-off-by: Drew DeVault <sir@cmpwn.com>
+Oops, I missed akpm from the CC list. Added Andrew.
+
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Ref: https://lore.kernel.org/io-uring/CFII8LNSW5XH.3OTIVFYX8P65Y@taiga/
+
+-- 
+Ammar Faizi

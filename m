@@ -2,63 +2,63 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C645446CEB
-	for <lists+io-uring@lfdr.de>; Sat,  6 Nov 2021 08:43:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45F34446DA7
+	for <lists+io-uring@lfdr.de>; Sat,  6 Nov 2021 12:37:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233825AbhKFHqZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 6 Nov 2021 03:46:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57876 "EHLO
+        id S229500AbhKFLkD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 6 Nov 2021 07:40:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232984AbhKFHqZ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 6 Nov 2021 03:46:25 -0400
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6ABC0C061570
-        for <io-uring@vger.kernel.org>; Sat,  6 Nov 2021 00:43:44 -0700 (PDT)
-Received: by mail-pj1-x1030.google.com with SMTP id n11-20020a17090a2bcb00b001a1e7a0a6a6so4987733pje.0
-        for <io-uring@vger.kernel.org>; Sat, 06 Nov 2021 00:43:44 -0700 (PDT)
+        with ESMTP id S229496AbhKFLkD (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 6 Nov 2021 07:40:03 -0400
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28437C061570
+        for <io-uring@vger.kernel.org>; Sat,  6 Nov 2021 04:37:22 -0700 (PDT)
+Received: by mail-pl1-x62d.google.com with SMTP id r5so12727641pls.1
+        for <io-uring@vger.kernel.org>; Sat, 06 Nov 2021 04:37:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amikom.ac.id; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=25IB41uok1DlU6ig2SrA7mRJtP1yVr+kq55HlIYvdok=;
-        b=CGngrXGcwFQH7bbCGxXUhPe+7RW47EKJ4EdW92uzRhnd4kX0R9Tb8oZu9YZpUZhAlF
-         UmiN8RqvFWsA4smOau8lPduxLTUZhygAnW+ssBsHkNHPe9jiMxxGKvpmf1dknl5B171o
-         2Dbme+lPPRp4n2uHjra6dZDwI3lb1hgAEM2Hc7O49/pTtVt1kI7zsvzaU+ULD854ZvMJ
-         W+Y+fDpFT6nMFcDsDUbyUpdHLqLrvRWMZZXF+OrH3JTKypybImmrDpog/0s+qX4k8dUu
-         v05XYdelDN8JjY19oMl6WZDYjp/gde36f6jxy6lf1jilI9ZZk6dszIReWHQpMLKC27mr
-         xqAQ==
+        bh=QYqiFQhbfMfg4eQtgqn5vpecYtbI5Vvj6uJSiZzgMfI=;
+        b=aqzDMuBtSP5RosSobPZOzKD929LNRTp1krT2kvrEGYOM55vmWdgfGNtavOyFMqQcjJ
+         ZPzsFIPpQzAUhZwduHSR+sV9C/qgl/ARa9BUZf1i0iCuhAQlItUIeFE26SGcssv6YRk8
+         UrxXWiXCrHO5+czHLwS8t+sfD57MUO8ZcY3IVlf0i7Cg0/qiMt06lSIK7s5zWP7qU/6l
+         whrVUfy1D/b1kIwJ/pg344hGJk0D624gGQbfrYLIYARSaOvdUgPMpDTOby7RCdouqc69
+         C3uEE9zd9jzVfGLjZH8whXPBDpcZPGh+9fJoGfnOutiLxOZ+D4lburmdA5XtTSmDZCOl
+         SKTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=25IB41uok1DlU6ig2SrA7mRJtP1yVr+kq55HlIYvdok=;
-        b=AdmrVmhu0gqk+LZZoWYpIPFtbpsvjp4gxONfl/X4jX4ip5HF7DJ7wNLCyyLFHKytQn
-         /nAsy0uLC5NqXAh4aMgo+XOzhj5WzfXweOj9ftjd39HoxuqIO+/IoonEEE+vAda2etYd
-         yLkBSKLhDK6zOpgf0lXgWcaqV3DTS0yggFykGYdBuy/tLfLHptkboDKCTKj4tbbfkb/a
-         mb9dmQTkpWCpEKdze3/Sqr3/SrmCNS8JkQmvyhODdC11uQTiwhuvNz2dSkLkk2ER05hL
-         XU4h0UPcdFRoQXgA2uN4du5IPLpp4AQSGX3DVO6STEcIIk9/ByyNz5MeBmc4H/l7uGMN
-         XerA==
-X-Gm-Message-State: AOAM532YcFHdiDo298qN/qKrJZfBOSYHbcgnQAgwBP203NbIAdX8YBMJ
-        u6Hf+auwkqHKAQZ9z4WuuBgQag==
-X-Google-Smtp-Source: ABdhPJygJ8t3qXgu8EnCMfa7LMjohGmmTF3iMwS+2mGqwJU6qAigufKuA4ZxqfbF6LEx3ifjDU2Rfw==
-X-Received: by 2002:a17:90a:d3c3:: with SMTP id d3mr19157152pjw.209.1636184623715;
-        Sat, 06 Nov 2021 00:43:43 -0700 (PDT)
+        bh=QYqiFQhbfMfg4eQtgqn5vpecYtbI5Vvj6uJSiZzgMfI=;
+        b=Q0dlabWtZlyxyMyVHO/OzK3lv2MCc2GHFRQtBMJLNG+SLkYd937sZ9ZvhPqu7YlU9P
+         oJ1+Juha3LISW9ZANf8s+rrdmzDVtC1NhGK04iBzmykbYOitM1B+gQ4YtLnviI21CyZS
+         w+s5aiyKqcTkJJXA5snaszUCDae5FF8KnxWSerHC6kJ3nEHqhp9e4VwgtO6WyvO2RHQx
+         REFKBwz8SCoKKGDGZ9gpttWmXuun/bIwFldOZrxjFvTmSrimmOEcwc6IVOtwBprsdneZ
+         TX4N4i9ymftmTMTg46EXivWNrASbEPPyD3/vd0IwvWADzZfsYrSFc5f5cjG2V/k66N3e
+         w+AA==
+X-Gm-Message-State: AOAM530b6SNRLJq2/NPxXLOKky6WX2U8e9fP998eAp6lbSyjAhiygb2D
+        hyv7l62j3fhlDW/5gb7gcaFSUQ==
+X-Google-Smtp-Source: ABdhPJx3bbpIIH1xfWYRvwRlebqj8t7amQIKjsgiGZGGLyQhZqbVHUNeFIEEaHYGT4gLPY4otCcP9A==
+X-Received: by 2002:a17:903:2288:b0:141:e76d:1b16 with SMTP id b8-20020a170903228800b00141e76d1b16mr37935077plh.21.1636198641318;
+        Sat, 06 Nov 2021 04:37:21 -0700 (PDT)
 Received: from integral.. ([182.2.38.101])
-        by smtp.gmail.com with ESMTPSA id kk7sm7644107pjb.19.2021.11.06.00.43.40
+        by smtp.gmail.com with ESMTPSA id cv1sm11678081pjb.48.2021.11.06.04.37.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 06 Nov 2021 00:43:43 -0700 (PDT)
+        Sat, 06 Nov 2021 04:37:20 -0700 (PDT)
 From:   Ammar Faizi <ammar.faizi@students.amikom.ac.id>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Ammar Faizi <ammar.faizi@students.amikom.ac.id>,
         Pavel Begunkov <asml.silence@gmail.com>,
         io-uring Mailing List <io-uring@vger.kernel.org>,
         Bedirhan KURT <windowz414@gnuweeb.org>
-Subject: [PATCH v4 liburing] test: Add kworker-hang test
-Date:   Sat,  6 Nov 2021 14:42:49 +0700
-Message-Id: <20211106074057.431607-1-ammar.faizi@intel.com>
+Subject: [PATCH v5 liburing] test: Add kworker-hang test
+Date:   Sat,  6 Nov 2021 18:37:09 +0700
+Message-Id: <20211106113506.457208-1-ammar.faizi@intel.com>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20211106005235.363346-1-ammar.faizi@intel.com>
-References: <20211106005235.363346-1-ammar.faizi@intel.com>
+In-Reply-To: <20211106074057.431607-1-ammar.faizi@intel.com>
+References: <20211106074057.431607-1-ammar.faizi@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -162,13 +162,13 @@ Link: https://github.com/axboe/liburing/issues/448
 Signed-off-by: Ammar Faizi <ammar.faizi@students.amikom.ac.id>
 ---
 
- v4:
-  - Update comment and function name.
+  v5:
+    - Use stderr for printing errors.
 
  .gitignore          |   1 +
  test/Makefile       |   1 +
- test/kworker-hang.c | 320 ++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 322 insertions(+)
+ test/kworker-hang.c | 322 ++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 324 insertions(+)
  create mode 100644 test/kworker-hang.c
 
 diff --git a/.gitignore b/.gitignore
@@ -197,10 +197,10 @@ index f7eafad..2af684a 100644
  	link.c \
 diff --git a/test/kworker-hang.c b/test/kworker-hang.c
 new file mode 100644
-index 0000000..cf76d46
+index 0000000..786bb36
 --- /dev/null
 +++ b/test/kworker-hang.c
-@@ -0,0 +1,320 @@
+@@ -0,0 +1,322 @@
 +/* SPDX-License-Identifier: MIT */
 +
 +/*
@@ -376,8 +376,8 @@ index 0000000..cf76d46
 +
 +		if (is_in_d_state(pid)) {
 +			/* kworker hang */
-+			printf("Bug: found hang kworker on io_ring_exit_work "
-+			       "/proc/%s\n", pid);
++			fprintf(stderr, "Bug: found hang kworker on "
++				"io_ring_exit_work /proc/%s\n", pid);
 +			ret = 1;
 +		}
 +	}
@@ -454,8 +454,8 @@ index 0000000..cf76d46
 +
 +		ret = io_uring_queue_init_params(64, &rings[i], &p);
 +		if (ret) {
-+			printf("io_uring_queue_init_params(): (%d) %s\n",
-+			       ret, strerror(-ret));
++			fprintf(stderr, "io_uring_queue_init_params(): (%d) %s\n",
++			        ret, strerror(-ret));
 +			return 1;
 +		}
 +	}
@@ -480,14 +480,15 @@ index 0000000..cf76d46
 +	 * We need root to check /proc/$pid/stack and set /proc/sys/kernel/hung*
 +	 */
 +	if (getuid() != 0 && geteuid() != 0) {
-+		printf("Skipping kworker-hang: not root\n");
++		fprintf(stderr, "Skipping kworker-hang: not root\n");
 +		return 0;
 +	}
 +
 +	set_hung_entries();
 +	child_pid = fork();
 +	if (child_pid < 0) {
-+		perror("fork()");
++		ret = errno;
++		fprintf(stderr, "fork(): (%d) %s\n", ret, strerror(ret));
 +		return 1;
 +	}
 +
@@ -509,12 +510,13 @@ index 0000000..cf76d46
 +	kill(child_pid, SIGCONT);
 +
 +	if (waitpid(child_pid, &wstatus, 0) < 0) {
-+		perror("waitpid()");
++		ret = errno;
++		fprintf(stderr, "waitpid(): (%d) %s\n", ret, strerror(ret));
 +		return 1;
 +	}
 +
 +	if (!WIFEXITED(wstatus)) {
-+		printf("Child process won't exit!\n");
++		fprintf(stderr, "Child process won't exit");
 +		return 1;
 +	}
 +

@@ -2,136 +2,102 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7025044989F
-	for <lists+io-uring@lfdr.de>; Mon,  8 Nov 2021 16:41:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 656934499DD
+	for <lists+io-uring@lfdr.de>; Mon,  8 Nov 2021 17:30:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236037AbhKHPoi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 8 Nov 2021 10:44:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57796 "EHLO
+        id S237209AbhKHQdg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 8 Nov 2021 11:33:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40748 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236257AbhKHPoi (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 8 Nov 2021 10:44:38 -0500
-Received: from mail-ot1-x333.google.com (mail-ot1-x333.google.com [IPv6:2607:f8b0:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC681C061570
-        for <io-uring@vger.kernel.org>; Mon,  8 Nov 2021 07:41:53 -0800 (PST)
-Received: by mail-ot1-x333.google.com with SMTP id h12-20020a056830034c00b0055c8458126fso7201817ote.0
-        for <io-uring@vger.kernel.org>; Mon, 08 Nov 2021 07:41:53 -0800 (PST)
+        with ESMTP id S232506AbhKHQdg (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 8 Nov 2021 11:33:36 -0500
+Received: from mail-oi1-x22a.google.com (mail-oi1-x22a.google.com [IPv6:2607:f8b0:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0706C061570
+        for <io-uring@vger.kernel.org>; Mon,  8 Nov 2021 08:30:51 -0800 (PST)
+Received: by mail-oi1-x22a.google.com with SMTP id bf8so10474678oib.6
+        for <io-uring@vger.kernel.org>; Mon, 08 Nov 2021 08:30:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=jfU5ZJRd8za3mOVIavSGK5Blg+rFCUkBl4miYhn8eGc=;
-        b=LqG6x657XXMGoTc7QYvHfP4ahE4g47et+f7FffakwpwY5cFARILuCNmdiTwPVThIfj
-         OLfiuEleM1diosomva7XpXvvyaTIPjbVWEQUfLshVp/+LcjgAyiRdwb+ZTxtOPYBOOAE
-         +Zma9+iFjJduSOV4SVma0ng/v9KO7HLEA09//ierw96VAmerP0kmjExrfmv5PG9SYcQS
-         bssEePeGxVeXGVeEwZWPegwUtqTtfZ1xWK/LzTjItvJM9lIymvoujqZS7Ap1H4WmaEKO
-         jSoUGPM3rbOUuAys+0J3iKS0l2KeHwRHvVtDIkE5x3RSClP2j8JNHJkGqWHpAzhpUm+4
-         /AGA==
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2NLlko22ws9u3osm/QBjCUdE0DTuITdkkMKME+p3p0k=;
+        b=RMvOlXp+BAtFmQ22eDRiZ6o7HlYtZ0K/HIZQC8DKgzazdP/Fbk7Ouekea1OUJI9Gam
+         lHF7H0VmNwFV4iWzjG15cVo+UldlEa6otM+Ny+tmxdnmd00l7yUz0iIwAZ/yzcASgQxl
+         Su7LGJtWS3xwi3aYGYdZF02kjpZytI8ooH7RVh5iIvD+VOQw8WfNIO4EzXeUO8T3RmfH
+         s4URQRUZo6j+/0I7igUSIRfolN2mTmhSs2DIWBA0Nkn9rJC0Vtujwqmo8QT/Q8skF7W9
+         FVmqum+tmF4k58ooabwvOMeSmFW4lHv/iE3Hd0DvvUZWlMDfRJw2VRNIvBYzI7ZJ5Hvt
+         IX4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=jfU5ZJRd8za3mOVIavSGK5Blg+rFCUkBl4miYhn8eGc=;
-        b=3ALrLu6ncx+RYllNpnfeE+vhMcer0EeKWyCWAa9nRKUg7AkS2ywUXNl+lgoAtInPWL
-         FDfaFGfOVKqFx5V4oH7R/r0Xh49kH7mUVblaPN1eXK/F9tK5JklxVKh/N/1IHcfKPl20
-         C25oZ2SjK4DK7+YVsvvihdbIsRZBrymdz7KEO6IaIO/APdAyCWqDc27nh6nt1Y8j8unt
-         MWBMemokytl0GxtESShCCSRDG68MIgRqFXI9RfPCHGqvleu1hnt7dXCmW4+pDUoAKK/V
-         tfgsJSir/eYWPjrcpGfnF77b+JWJIU4GuIEP131siDFvHf86CaswHyAoXM+O5ubklBy6
-         KQzA==
-X-Gm-Message-State: AOAM5304F8/fw5CA239nJ2T236Ets4nRsK9a5QM0+MHxQ5opWMB8qGl6
-        z1IPPg/1+bID0H8d8dqAkbPVfw==
-X-Google-Smtp-Source: ABdhPJx5LteWXnLHtxP6I1EP8bPIIGoTOvY+4FgRdcybIceE1tD1wWzGGRg4bxzbbuF8bfmvtYtdLQ==
-X-Received: by 2002:a05:6830:1e57:: with SMTP id e23mr586267otj.16.1636386113269;
-        Mon, 08 Nov 2021 07:41:53 -0800 (PST)
-Received: from [192.168.1.30] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id q9sm991366oti.32.2021.11.08.07.41.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Nov 2021 07:41:52 -0800 (PST)
-Subject: Re: [syzbot] KASAN: stack-out-of-bounds Read in iov_iter_revert
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        syzbot <syzbot+9671693590ef5aad8953@syzkaller.appspotmail.com>
-Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-References: <6f7d4c1d-f923-3ab1-c525-45316b973c72@gmail.com>
- <00000000000047f3b805c962affb@google.com> <YYLAYvFU+9cnu+4H@google.com>
- <0b4a5ff8-12e5-3cc7-8971-49e576444c9a@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <dd122760-5f87-10b1-e50d-388c2631c01a@kernel.dk>
-Date:   Mon, 8 Nov 2021 08:41:52 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2NLlko22ws9u3osm/QBjCUdE0DTuITdkkMKME+p3p0k=;
+        b=V1kPQaqO911wgtwHyrFwnzHlvUfU253LbmvXrw/WLQBRbtfiTK8VPbzsDy6RguSfzU
+         BgtECvdxGp/P1SufvuNX3GnTwH3IVhdAS+Xnoejw/F1E8HW0t2m5C4QjdrjZ1GRXU1cq
+         TYJd74PXIc/TGp+TLyLWGQhct5a94aNUYf+6AaRbMCRjjnvePE5obpL5SEgmoHo1niCC
+         ieiPsRY+6Y3CUKAgb3xvyET6ZHQdBiDSV38s+uMgn1RCfv828QVU64rNa/SajBJxIcgG
+         4vq4twFexYDg2WUXEFxa1CGIILLTRQZJFDGwDbAOzfUM3OD3FuOke6UCxMkCaWSypeho
+         PH9g==
+X-Gm-Message-State: AOAM533oowndIFYnulPjtajfQAYSFM9u8eOxZmowmbXUrLP08W/RpLaO
+        Pg7jhvD2t8aNw5ZbctTz8f8fONgqz3ygZUiYSeG3Jg==
+X-Google-Smtp-Source: ABdhPJxC4W/TmdRgvFfio+0JxJwA1O2TIYI9TSyleeOlIQ5U1De25vZ9O6YuZ4Nz05csB5d6H/FDXyeXnk8KKLSGXnk=
+X-Received: by 2002:a54:4390:: with SMTP id u16mr333430oiv.109.1636389050790;
+ Mon, 08 Nov 2021 08:30:50 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <0b4a5ff8-12e5-3cc7-8971-49e576444c9a@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <0000000000007a0d5705cfea99b2@google.com> <0935df19-f813-8840-fa35-43c5558b90e7@kernel.dk>
+ <CANp29Y4hi=iFti=BzZxEEPgnn74L80fr3WXDR8OVkGNqR9BOLw@mail.gmail.com> <97328832-70de-92d9-bf42-c2d1c9d5a2d6@kernel.dk>
+In-Reply-To: <97328832-70de-92d9-bf42-c2d1c9d5a2d6@kernel.dk>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Mon, 8 Nov 2021 17:30:39 +0100
+Message-ID: <CACT4Y+a05_HXcUfooYP5Jp2V5QsxB6zoSZKM6g6P3DiVWUvcyg@mail.gmail.com>
+Subject: Re: [syzbot] WARNING in io_poll_task_func (2)
+To:     Jens Axboe <axboe@kernel.dk>,
+        syzkaller <syzkaller@googlegroups.com>
+Cc:     Aleksandr Nogikh <nogikh@google.com>,
+        syzbot <syzbot+804709f40ea66018e544@syzkaller.appspotmail.com>,
+        asml.silence@gmail.com, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        xiaoguang.wang@linux.alibaba.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 11/8/21 8:29 AM, Pavel Begunkov wrote:
-> On 11/3/21 17:01, Lee Jones wrote:
->> Good afternoon Pavel,
->>
->>> syzbot has tested the proposed patch and the reproducer did not trigger any issue:
->>>
->>> Reported-and-tested-by: syzbot+9671693590ef5aad8953@syzkaller.appspotmail.com
->>>
->>> Tested on:
->>>
->>> commit:         bff2c168 io_uring: don't retry with truncated iter
->>> git tree:       https://github.com/isilence/linux.git truncate
->>> kernel config:  https://syzkaller.appspot.com/x/.config?x=730106bfb5bf8ace
->>> dashboard link: https://syzkaller.appspot.com/bug?extid=9671693590ef5aad8953
->>> compiler:       Debian clang version 11.0.1-2, GNU ld (GNU Binutils for Debian) 2.35.1
->>>
->>> Note: testing is done by a robot and is best-effort only.
->>
->> As you can see in the 'dashboard link' above this bug also affects
->> android-5-10 which is currently based on v5.10.75.
->>
->> I see that the back-port of this patch failed in v5.10.y:
->>
->>    https://lore.kernel.org/stable/163152589512611@kroah.com/
->>
->> And after solving the build-error by back-porting both:
->>
->>    2112ff5ce0c11 iov_iter: track truncated size
->>    89c2b3b749182 io_uring: reexpand under-reexpanded iters
->>
->> I now see execution tripping the WARN() in iov_iter_revert():
->>
->>    if (WARN_ON(unroll > MAX_RW_COUNT))
->>        return
->>
->> Am I missing any additional patches required to fix stable/v5.10.y?
-> 
-> Is it the same syz test? There was a couple more patches for
-> IORING_SETUP_IOPOLL, but strange if that's not the case.
-> 
-> 
-> fwiw, Jens decided to replace it with another mechanism shortly
-> after, so it may be a better idea to backport those. Jens,
-> what do you think?
-> 
-> 
-> commit 8fb0f47a9d7acf620d0fd97831b69da9bc5e22ed
-> Author: Jens Axboe <axboe@kernel.dk>
-> Date:   Fri Sep 10 11:18:36 2021 -0600
-> 
->      iov_iter: add helper to save iov_iter state
-> 
-> commit cd65869512ab5668a5d16f789bc4da1319c435c4
-> Author: Jens Axboe <axboe@kernel.dk>
-> Date:   Fri Sep 10 11:19:14 2021 -0600
-> 
->      io_uring: use iov_iter state save/restore helpers
+On Thu, 4 Nov 2021 at 12:44, Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 11/4/21 4:45 AM, Aleksandr Nogikh wrote:
+> > Hi Jeans,
+> >
+> > We'll try to figure something out.
+> >
+> > I've filed an issue to track progress on the problem.
+> > https://github.com/google/syzkaller/issues/2865
+>
+> Great thanks. It's annoyed me a bit in the past, but it's really
+> excessive this time around. Probably because that particular patch
+> caused more than its fair share of problems, but still shouldn't
+> be an issue once it's dropped from the trees.
 
-Yes, I think backporting based on the save/restore setup is the
-sanest way by far.
+syzbot always tests the latest working tree. In this case it's the
+latest linux-next tree. No dead branches were tested.
 
--- 
-Jens Axboe
+The real problem here is rebased trees and dropped patches and the use
+of "invalid" command.
+For issues fixed with a commit (#syz fix) syzbot tracks precisely when
+the commit reaches all of the tested builds and only then closes the
+issue and starts reporting new occurrences as new issues.
+But "syz invalid" does not give syzbot a commit to track and means
+literally "close now", so any new occurrences are reported as new
+issues immediately.
+The intention is that it's on the user issuing the "invalid" command
+to do this only when the issue is really not present in any of syzbot
+builds anymore.
+There are hacks around like saying "syz fix" with some unrelated later
+commit that will reach linux-next upstream along with the dropped
+patch, then syzbot will do proper tracking on its own.
+Better suggestions are welcome.
 
+I think https://github.com/google/syzkaller/issues/2865 will help only
+in very limited number of cases (no reproducer, can't determine the
+subsystem tree") and in some cases can make things worse (falsely
+deciding to not report a real bug).

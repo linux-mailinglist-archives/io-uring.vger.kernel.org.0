@@ -2,92 +2,97 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F5804497E6
-	for <lists+io-uring@lfdr.de>; Mon,  8 Nov 2021 16:13:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FB9B44980A
+	for <lists+io-uring@lfdr.de>; Mon,  8 Nov 2021 16:19:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237580AbhKHPPL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 8 Nov 2021 10:15:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49924 "EHLO
+        id S231557AbhKHPWI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 8 Nov 2021 10:22:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52532 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241011AbhKHPNt (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 8 Nov 2021 10:13:49 -0500
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80346C06122C
-        for <io-uring@vger.kernel.org>; Mon,  8 Nov 2021 07:10:12 -0800 (PST)
-Received: by mail-ed1-x52f.google.com with SMTP id x15so32560216edv.1
-        for <io-uring@vger.kernel.org>; Mon, 08 Nov 2021 07:10:12 -0800 (PST)
+        with ESMTP id S238600AbhKHPWI (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 8 Nov 2021 10:22:08 -0500
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A28A7C061714
+        for <io-uring@vger.kernel.org>; Mon,  8 Nov 2021 07:19:23 -0800 (PST)
+Received: by mail-ed1-x531.google.com with SMTP id x15so32681270edv.1
+        for <io-uring@vger.kernel.org>; Mon, 08 Nov 2021 07:19:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ul6XdfgMfHpq3WzmBOzb+vAyv5IQLq99/Xw23AELREY=;
-        b=aBGdMlnxXi67odT9itmMgpLmC2jZByeDoUFtwHmvmXJcC/pZqAgakMoyVXpoo6XqaD
-         kaopc9j0qIViSzHbMjscfppnundbOgI3kICiwBHQYoZEJgRO3miI50SrxL2Q6VB4e4LX
-         KA01WvOE8HD3IAnGhpf98BD5LOfXfs1VoFgjdyq4yfbO3g3Ij5AhoxTDZs9fq7LrtDhe
-         V7WNXOPCHD3s02c92aqeUcyFAfCXHrHqGyUCuKr+Ng5XnT6pIz9YSH40v7tIvvtTLHxL
-         n2s55ocNMcnkXCEPBIrg0JFmkWlkideJIhJJNBV/9wfG+IUZh672Wet78ZjSzFK7UQBq
-         WPuw==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=zOVIg/NZqY2LEkgOFQOO9O8LthGIuXkRy3bx4iuP5FQ=;
+        b=PGRaDMSmA38Fl6LZRDWk0rSh+omlKgQdV6K6S0PFChnxH7rQ9yBBpcrYGudPxNFV/r
+         oeaAnjHJxRaoMlyM3h1Gy+hoH7JiiGmuFXmX8PAqyv7zw3rcWByl3bqwwhpfDG48faqu
+         tkjeLsSPBKbgTZESbfskdUPySyz41hiCv7mnAz6knZWnXCEaVMcnZrU2QU2hcBiZKDxe
+         cVx9ISQeHIW/pTXt1Yx2esDtS5AqiYqCb1WX4NxBDAextXIrAKUpqFA115sZ7qdo8M80
+         HRN6iZ/zo2w5G2hHRfzZVcCSNadv/rWGpR/nhz8Q0iS9tAYwUNL8bYw89XCVgyw2+mdl
+         bGaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=ul6XdfgMfHpq3WzmBOzb+vAyv5IQLq99/Xw23AELREY=;
-        b=iNDrC4fci3AV8s6nwH8/xSpQA7C+XNVOxsz06fjI3AqvtZCj5cQuXVVyhdsDat8nk/
-         ElDYj8rY7AKFYs0U3cSKgAon2GTLcgI89PU++xXDN/FTGm70O2NrW+iMY/qKWpWfqghq
-         ENgwBVVJw7o3qiTSGjALNR7P515nFo+nFe+CvBpibnerQ5Sw8fK6MtpvyFVGWsO1ZP6n
-         H4Jvui7yEXbzk/Ke4f9ze8XGTFkYHs6GCcrFuhHxAS5XMAM/0EHvTRxR2NSdQA1zKNhE
-         9wCTMMIyYsAC7wYwqwv9D+xqHg00SObMbtw7zyMDGLmAmY6X5ShT6m+GsBe1kaVQQYng
-         eL/w==
-X-Gm-Message-State: AOAM531e/zGIRAeCm68DbSEkW2atKpDqIkp+y+lpDUeLN6j/ZFy6SRLL
-        6WTQtGPStkItx9TfycZCqfzSs7M2eFs=
-X-Google-Smtp-Source: ABdhPJz4J5AxCrsxsxoJJV18WBBzoT1AiXhAPrzmgJT49hoObk4NS5oeCAE5KlLC8aFW10pFY6oqRQ==
-X-Received: by 2002:a05:6402:40ce:: with SMTP id z14mr374181edb.294.1636384210683;
-        Mon, 08 Nov 2021 07:10:10 -0800 (PST)
-Received: from 127.0.0.1localhost ([148.252.128.239])
-        by smtp.gmail.com with ESMTPSA id h7sm9285288edt.37.2021.11.08.07.10.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Nov 2021 07:10:10 -0800 (PST)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com,
-        Beld Zhang <beldzhang@gmail.com>
-Subject: [PATCH 1/1] io_uring: honour zeroes as io-wq worker limits
-Date:   Mon,  8 Nov 2021 15:10:03 +0000
-Message-Id: <1b222a92f7a78a24b042763805e891a4cdd4b544.1636384034.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.33.1
+        bh=zOVIg/NZqY2LEkgOFQOO9O8LthGIuXkRy3bx4iuP5FQ=;
+        b=gsijp6iC8gojfxv2qhLJ4TyMXXlcZ1no9AGVZ+X7onXe/hZ1JOY0klLpqAQiMNLC4b
+         xr+CeanT+9vtXzfRK2ktYm09oMfC1pBYQr6suYqH3xGaTzfZpYYjTZags9sxukPWvGbO
+         xR8GeZr+bme5OB0vzG+qYIUHqOiGUqSDQ9CYbhbHtqXVSRcFM39reOGPvl7p/Uv/zsad
+         lglvRwY4b6f36m8dsoOL3w39OUnlJsL3Llp2zyXTL4BW1s3BVG0SqdlgdeSClq0rTWIz
+         7WeWYxf+1bXr1c9np8qHdIHp9LX1ChcVT1FqR/+76mgJgB4Mbv1M6v4e2/PNxFuYNY9F
+         BxYw==
+X-Gm-Message-State: AOAM531NR+Jc+vHwPVu/LHnnsOIdHd+QOzQ1/j+z8S1zhQ8GaI7kRjuc
+        KOEN/ASFea90bG+Zmnfikkks9aUq0Ho=
+X-Google-Smtp-Source: ABdhPJweaud5Hw+y6NyvJn+0ocLyjDT/pOkkNF4CsrwSoVGNUUuvPIHzQQEmDDFgxbeWh5lhQudYwQ==
+X-Received: by 2002:a17:906:12db:: with SMTP id l27mr115549ejb.244.1636384762199;
+        Mon, 08 Nov 2021 07:19:22 -0800 (PST)
+Received: from [192.168.8.198] ([148.252.128.239])
+        by smtp.gmail.com with ESMTPSA id bm2sm9438260edb.39.2021.11.08.07.19.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Nov 2021 07:19:21 -0800 (PST)
+Message-ID: <d49a7d24-7cea-0b4a-b577-3fac16ddc5fb@gmail.com>
+Date:   Mon, 8 Nov 2021 15:19:21 +0000
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Subject: Re: [bug report] io_uring: return iovec from __io_import_iovec
+Content-Language: en-US
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     io-uring@vger.kernel.org
+References: <20211108134937.GA2863@kili>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20211108134937.GA2863@kili>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-When we pass in zero as an io-wq worker number limit it shouldn't
-actually change the limits but return the old value, follow that
-behaviour with deferred limits setup as well.
+On 11/8/21 13:49, Dan Carpenter wrote:
+> Hello Pavel Begunkov,
+> 
+> The patch caa8fe6e86fd: "io_uring: return iovec from
+> __io_import_iovec" from Oct 15, 2021, leads to the following Smatch
+> static checker warning:
+> 
+> 	fs/io_uring.c:3218 __io_import_iovec()
+> 	warn: passing zero to 'ERR_PTR'
+> 
+[...]
+>      3188
+>      3189         BUILD_BUG_ON(ERR_PTR(0) != NULL);
+> 
+> This is super paranoid.  :P
 
-Cc: stable@kernel.org # 5.15
-Reported-by: Beld Zhang <beldzhang@gmail.com>
-Fixes: e139a1ec92f8d ("io_uring: apply max_workers limit to all future users")
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+A bit, but gives an idea about assumptions
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index ac1bc8ac4666..b07196b4511c 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -10791,7 +10791,9 @@ static __cold int io_register_iowq_max_workers(struct io_ring_ctx *ctx,
- 
- 	BUILD_BUG_ON(sizeof(new_count) != sizeof(ctx->iowq_limits));
- 
--	memcpy(ctx->iowq_limits, new_count, sizeof(new_count));
-+	for (i = 0; i < ARRAY_SIZE(new_count); i++)
-+		if (new_count[i])
-+			ctx->iowq_limits[i] = new_count[i];
- 	ctx->iowq_limits_set = true;
- 
- 	if (tctx && tctx->io_wq) {
+>      3209                 ret = import_single_range(rw, buf, sqe_len, s->fast_iov, iter);
+>      3210                 return ERR_PTR(ret);
+
+if (ret)
+	return ERR_PTR(ret);
+return NULL;
+
+How about this? I have some hope in compilers, should be
+optimised out
+
 -- 
-2.33.1
-
+Pavel Begunkov

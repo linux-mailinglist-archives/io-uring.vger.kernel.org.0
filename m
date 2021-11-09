@@ -2,133 +2,102 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C828449A0F
-	for <lists+io-uring@lfdr.de>; Mon,  8 Nov 2021 17:42:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 81D5044A671
+	for <lists+io-uring@lfdr.de>; Tue,  9 Nov 2021 06:45:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240118AbhKHQpY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 8 Nov 2021 11:45:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43440 "EHLO
+        id S231512AbhKIFrz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 9 Nov 2021 00:47:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236528AbhKHQpY (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 8 Nov 2021 11:45:24 -0500
-Received: from mail-io1-xd2f.google.com (mail-io1-xd2f.google.com [IPv6:2607:f8b0:4864:20::d2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20149C061570
-        for <io-uring@vger.kernel.org>; Mon,  8 Nov 2021 08:42:40 -0800 (PST)
-Received: by mail-io1-xd2f.google.com with SMTP id k21so2353858ioh.4
-        for <io-uring@vger.kernel.org>; Mon, 08 Nov 2021 08:42:40 -0800 (PST)
+        with ESMTP id S230364AbhKIFry (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 9 Nov 2021 00:47:54 -0500
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA75AC061764
+        for <io-uring@vger.kernel.org>; Mon,  8 Nov 2021 21:45:08 -0800 (PST)
+Received: by mail-ed1-x532.google.com with SMTP id v11so69617314edc.9
+        for <io-uring@vger.kernel.org>; Mon, 08 Nov 2021 21:45:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=IxAdOb0LqPBFkwvM1Auqh52QS5bnCXigClzsNcGh4zY=;
-        b=pWyC0UDicmpv1e+mmc2qy6UIzmW3a43fmJK9OZdzMGN6XowJNYmxkrcpLEY4l+L7Uo
-         Fq/pJ6H4QzukA1o4IOgeIvscd9PC/oHtKPMRK5VCYBDfbhYPwea94iqHZuQKQXfKrjfc
-         yuCy26oaXShM1f0JejBZJKq6UufqyTD0qRtXFeOKgKoOAhb4jZIKT1/Yf5tXgkqo8alL
-         FGcOQLVv+wAZmCBCUYZ/JLXSx3nvPgCywiHlHbqm8lwM/SWP/FeMkJorCet2x6uA4kj8
-         nWu67sAJz1p8TQwYp7iN6uvJytMFbtWuLpaKLqFAw5/FuqQb1YoRB3G2sjprezLhAKKL
-         DShg==
+        d=amikom.ac.id; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6+tELmWM9iOBqd3VL21YLcLYR1tRX2wq0JREpwlOgxU=;
+        b=YR0d8B/7idBbztiIx63sWP3yW+TN66fKqwZWNwjhd70VxvrizB4wdorXEbcJ/h4Dfp
+         H8cJn+xyUfbSllLjiQ5QDxGfheBdW4cYoEkww17HaFBg2kZRscDy0AwDgORHdTskDMbw
+         Qz1+07whB1VRWvhSEDjSoeeXmTv/lVfwLg6yNgD4pPTw6JoY3aauNG9MEO0y+xA7eTKX
+         LUaAQ/2XlnhNEM2FqItmyNOdQrsh2bTiNP3nycY3SFrEWqGHr/ykEvgww6fuCg3vmgKF
+         jNl3hQANXm0JIcgE+vGZmRxDVCj3dAcx7sxS5hbQuY7wxgM+JA2aMm7R4U+wY3o/G3Ce
+         x5OQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=IxAdOb0LqPBFkwvM1Auqh52QS5bnCXigClzsNcGh4zY=;
-        b=IgiXLpK0unfWETO14pvawBssf2glxkzOWAQEDBhYAfP3ni+mUO8IUWJpXDLbi/NPRH
-         QGXjscgXiOlUJXipztzmZjS3g6lHJoZDFalGSuknkiSXXFGHbFbEzlYzEbizuyMAnQ/T
-         hgLK0i+QlaehFjH1jQqO644hZ41sASDM+nnu9Ti/QaL9JwzMstvTdNYTQFOEsMbLFjit
-         Cv3hAJQztm8yXHta9Pa8DjVcAEiEaCRYoutj5d5AWyUtyvoF1Cf+zOZf40sagOduM1UZ
-         piiVEhQk5sF6/3fJ3y80fqKZASX9vUnToafKwM6SD7l3KYuVROoprY8ifpwnxB9DdyN0
-         TkXg==
-X-Gm-Message-State: AOAM530ONaorEgLjkNMo3WJEWQd82mH9tHgfGgSPan1IyQKCEd0LqS6y
-        KLcgKNBGtCxO2XrlIUdFM2gWuA==
-X-Google-Smtp-Source: ABdhPJzxMe8r2lK7rB22X1iHEP3HPlWk2R5o7xQgDc/cFcH3xAZ/kr4G8p2zgMbbxhXphENNO2BY+A==
-X-Received: by 2002:a6b:ee10:: with SMTP id i16mr369263ioh.98.1636389759476;
-        Mon, 08 Nov 2021 08:42:39 -0800 (PST)
-Received: from [192.168.1.30] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id i15sm10697495ila.12.2021.11.08.08.42.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Nov 2021 08:42:39 -0800 (PST)
-Subject: Re: [syzbot] WARNING in io_poll_task_func (2)
-To:     Dmitry Vyukov <dvyukov@google.com>,
-        syzkaller <syzkaller@googlegroups.com>
-Cc:     Aleksandr Nogikh <nogikh@google.com>,
-        syzbot <syzbot+804709f40ea66018e544@syzkaller.appspotmail.com>,
-        asml.silence@gmail.com, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        xiaoguang.wang@linux.alibaba.com
-References: <0000000000007a0d5705cfea99b2@google.com>
- <0935df19-f813-8840-fa35-43c5558b90e7@kernel.dk>
- <CANp29Y4hi=iFti=BzZxEEPgnn74L80fr3WXDR8OVkGNqR9BOLw@mail.gmail.com>
- <97328832-70de-92d9-bf42-c2d1c9d5a2d6@kernel.dk>
- <CACT4Y+a05_HXcUfooYP5Jp2V5QsxB6zoSZKM6g6P3DiVWUvcyg@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <0099680c-8955-6771-808f-7fcae8ba7dcb@kernel.dk>
-Date:   Mon, 8 Nov 2021 09:42:38 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6+tELmWM9iOBqd3VL21YLcLYR1tRX2wq0JREpwlOgxU=;
+        b=QU//J3OGH4n3VM7G6P3+eqaF9fLZufiP2dJ1kq/n7eA5Q88vNzjx6eWhiYe5HAddqW
+         mWsEb28fS4RvdrD/Wthy4jPedkLynuMLxBIW99Bp2O5Rv1aM+9iwEtYjbH1HElQPOVhR
+         59K5nzEGZcYkyN8I06JdWL18AiVyIu8bXUiqF/N0A3IdU6qQJ+aL0/NnvCo/NL+GGcTp
+         U6Px8PjN+zuYpI819WJPijLXvEaTrhNx8bMp8z0xqTB3GRUvOxLLp0VfJjbrAza+fTAS
+         4B3/5ltfD0rteT9xbfcHy4CyqkSA2IagYHAOoO3LKqmygJoxpoPegEVA+4G98qSxEVT3
+         GJMA==
+X-Gm-Message-State: AOAM532uxY7Z71juOh9XLkJGnGoyIyc73sbjQc2VAvgKh74U5G1b9Egj
+        RdZvFXMEJmZK56d6x945k+zoZTeUnMslwd6ea2WrS16x+30=
+X-Google-Smtp-Source: ABdhPJx6JFUt7rS9yN3M+/qQTVzGSDHzMSXma+5ul2gKcXDq4qahpU30kL3C47KjMHjbjbptVQNVPrSxtUmpQWAXeEE=
+X-Received: by 2002:a05:6402:d59:: with SMTP id ec25mr6520709edb.214.1636436707363;
+ Mon, 08 Nov 2021 21:45:07 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CACT4Y+a05_HXcUfooYP5Jp2V5QsxB6zoSZKM6g6P3DiVWUvcyg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20211106113506.457208-1-ammar.faizi@intel.com> <20211106114758.458535-1-ammar.faizi@intel.com>
+In-Reply-To: <20211106114758.458535-1-ammar.faizi@intel.com>
+From:   Ammar Faizi <ammar.faizi@students.amikom.ac.id>
+Date:   Tue, 9 Nov 2021 12:44:53 +0700
+Message-ID: <CAGzmLMWsFYe3VJLonr7dc6Z3qe7YoB8b1meX6hyiHQdacpzBtw@mail.gmail.com>
+Subject: Re: [PATCH v6 liburing] test: Add kworker-hang test
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring Mailing List <io-uring@vger.kernel.org>,
+        Bedirhan KURT <windowz414@gnuweeb.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 11/8/21 9:30 AM, Dmitry Vyukov wrote:
-> On Thu, 4 Nov 2021 at 12:44, Jens Axboe <axboe@kernel.dk> wrote:
->>
->> On 11/4/21 4:45 AM, Aleksandr Nogikh wrote:
->>> Hi Jeans,
->>>
->>> We'll try to figure something out.
->>>
->>> I've filed an issue to track progress on the problem.
->>> https://github.com/google/syzkaller/issues/2865
->>
->> Great thanks. It's annoyed me a bit in the past, but it's really
->> excessive this time around. Probably because that particular patch
->> caused more than its fair share of problems, but still shouldn't
->> be an issue once it's dropped from the trees.
-> 
-> syzbot always tests the latest working tree. In this case it's the
-> latest linux-next tree. No dead branches were tested.
+On Sat, Nov 6, 2021 at 6:49 PM Ammar Faizi wrote:
+>
+> This is the reproducer for the kworker hang bug.
+>
+> Reproduction Steps:
+>   1) A user task calls io_uring_queue_exit().
+>
+>   2) Suspend the task with SIGSTOP / SIGTRAP before the ring exit is
+>      finished (do it as soon as step (1) is done).
+>
+>   3) Wait for `/proc/sys/kernel/hung_task_timeout_secs` seconds
+>      elapsed.
+>
+>   4) We get a complaint from the khungtaskd because the kworker is
+>      stuck in an uninterruptible state (D).
+>
+> The kworkers waiting on ring exit are not progressing as the task
+> cannot proceed. When the user task is continued (e.g. get SIGCONT
+> after SIGSTOP, or continue after SIGTRAP breakpoint), the kworkers
+> then can finish the ring exit.
+>
+> We need a special handling for this case to avoid khungtaskd
+> complaint. Currently we don't have the fix for this.
+[...]
+> Cc: Pavel Begunkov <asml.silence@gmail.com>
+> Link: https://github.com/axboe/liburing/issues/448
+> Signed-off-by: Ammar Faizi <ammar.faizi@students.amikom.ac.id>
+> ---
+>
+>  v6:
+>    - Fix missing call to restore_hung_entries() when fork() fails.
+>
+>  .gitignore          |   1 +
+>  test/Makefile       |   1 +
+>  test/kworker-hang.c | 323 ++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 325 insertions(+)
+>  create mode 100644 test/kworker-hang.c
 
-Maybe the -next tree is just lagging. Does the syzbot setup for the
-kernel have some notion of the trees involved? For this particular
-example, if the upstream tree that contains/contained the patch that is
-flagged as problematic, then it would be ideal if it didn't get
-reported. Not sure if this is viable or not.
-
-Ditto if the upstream tree already has a fix for that issue, marked
-appropriately. But I guess this one naturally falls out from having told
-syzbot with a #fix reply, but that normally doesn't need to happen as
-long as the patch flows into the tree being tested. If -next is lagging,
-then again we'd get multiple reports for the same thing on an outdated
-tree.
-
-> The real problem here is rebased trees and dropped patches and the use
-> of "invalid" command.
-> For issues fixed with a commit (#syz fix) syzbot tracks precisely when
-> the commit reaches all of the tested builds and only then closes the
-> issue and starts reporting new occurrences as new issues.
-> But "syz invalid" does not give syzbot a commit to track and means
-> literally "close now", so any new occurrences are reported as new
-> issues immediately.
-> The intention is that it's on the user issuing the "invalid" command
-> to do this only when the issue is really not present in any of syzbot
-> builds anymore.
-
-And the latter is problematic if the -next tree isn't current anymore.
-
-> There are hacks around like saying "syz fix" with some unrelated later
-> commit that will reach linux-next upstream along with the dropped
-> patch, then syzbot will do proper tracking on its own.
-> Better suggestions are welcome.
-
-I guess a work-around would just be to use #fix for eg the merge commit
-in the upstream branch.
+It's ready for review.
 
 -- 
-Jens Axboe
-
+Ammar Faizi

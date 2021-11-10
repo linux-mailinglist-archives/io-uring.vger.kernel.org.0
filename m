@@ -2,110 +2,87 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9425544B955
-	for <lists+io-uring@lfdr.de>; Wed, 10 Nov 2021 00:24:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D88144C49E
+	for <lists+io-uring@lfdr.de>; Wed, 10 Nov 2021 16:49:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231757AbhKIX1U (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 9 Nov 2021 18:27:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37430 "EHLO
+        id S232030AbhKJPw3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 10 Nov 2021 10:52:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231725AbhKIX1T (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 9 Nov 2021 18:27:19 -0500
-Received: from mail-il1-x12f.google.com (mail-il1-x12f.google.com [IPv6:2607:f8b0:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D810EC061766
-        for <io-uring@vger.kernel.org>; Tue,  9 Nov 2021 15:24:32 -0800 (PST)
-Received: by mail-il1-x12f.google.com with SMTP id j28so523835ila.1
-        for <io-uring@vger.kernel.org>; Tue, 09 Nov 2021 15:24:32 -0800 (PST)
+        with ESMTP id S231795AbhKJPw3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 10 Nov 2021 10:52:29 -0500
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7178DC061764
+        for <io-uring@vger.kernel.org>; Wed, 10 Nov 2021 07:49:41 -0800 (PST)
+Received: by mail-wr1-x42b.google.com with SMTP id u1so4756397wru.13
+        for <io-uring@vger.kernel.org>; Wed, 10 Nov 2021 07:49:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=AaoatZyayFuinmUndTcOWSj3T2uLwGHcTSEK0zSn6qQ=;
-        b=bTKXEG+/7wCt8GWogC9x57iF+C2lnGsmdxmTLs8YBayY6ONSyTu/4BNxvCiAEU6qKg
-         rx+GWYUUhsMMlRIEAcdZM1LMgMozTtGcH5MV7m49U4K36e07gFcKdeJvhxXM8bcCy9PV
-         gi7/ZOzli91pVaCrAdFjaUPlc/sP87700k/nLc+TH448lUMMul6jBrOwNM9nRdXnBr9x
-         O+c1gFaxjVMRyVF7oCL7/+Y5Wxw4sYzIzgPGSeXWg77xa3Ch36Ii2CGP6e/NruVSWj9j
-         Em22MQcVLEgVfActTJYR9lAnT3IiWQzt7PeVkOg4Et6U+8wxfZ9YNBCtPSTKLkTEnbQ9
-         xUqA==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=iGPYQRw/d38U+WKQeXZxtrIsF9lLNmdz8EeNxJvpBlA=;
+        b=N8R1VG++rvfvdo3jSF06jh4MwRkzPP1ksHvO/OXF36iyloyIyEHkqqjxh290hLwLPz
+         WaWV7tRn+PIMS6csH5umQZS+XyQ+jjGsBP9sTzFZaonozid/K+CEEh8ZOjz5+XMa0XIf
+         my0qbdGybm5aHnQjMfLtTmfk6EJ9A/OuGeN63LxYuydgKLKt9iNIgcDmJm9F1lD9Yr7n
+         hYiO/h2w1jHvIomqMUiUmIprEf92aIbANbpO6nL/rJcP8iH5OPgNNA9BsQTDOza/x2KD
+         5ABYZKwYZnkNqviTZ77ViAZMT+gy/dK5gzvdbcdchlco7kTOk3m1jF1pKKpgTs7PL+PN
+         Nr1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=AaoatZyayFuinmUndTcOWSj3T2uLwGHcTSEK0zSn6qQ=;
-        b=oeoom3OvmfRi3VlUtxmX170kabHxO1IxpLTfxLoaWKxdnjWp1qUX9r9zwcIZ+F1yu+
-         EWIFn71Tw7RsEhe57CMdlfEee+X3fMYGPI/6skv9mFHlpsdO7iMzIjR6lcVGeZgczJEf
-         pbRfiDDcBSuFBQkO+qFTpFq9RgFOH+RCpVWVKBouoV0x54YKJo5lAqLxdyxDZz167hqK
-         NTa8jreAxjxYJysiytSMbs1k5aFSzMWwWE0vj/A3H+EA6V78rCgZtJe7mZXWIfrvHJ14
-         /CfaWl85LtZ87l9Ng2+y57rFhlT4l1B7HEgSOdnXq0pTX6ZXYl7Iu8PQsmbqnGMRV/Yq
-         iBqw==
-X-Gm-Message-State: AOAM531djf4n5JDBHpWRGBRjH9sjBMIgcBgpxfYk6vBuOPmhJOsJz86T
-        5q41aAryw79LgUaQPJJauI/+y3PuGpLe+SMk
-X-Google-Smtp-Source: ABdhPJzp9wNp0X16zpAwujYjUJ0HtaomjX38GrwBg9O4KCwyWiIuuVeMNzQbK5n8JNrOreq1LGjWEw==
-X-Received: by 2002:a05:6e02:1e04:: with SMTP id g4mr8381002ila.187.1636500271999;
-        Tue, 09 Nov 2021 15:24:31 -0800 (PST)
-Received: from [192.168.1.116] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id i15sm13260842ila.12.2021.11.09.15.24.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Nov 2021 15:24:31 -0800 (PST)
-Subject: Re: uring regression - lost write request
-To:     Daniel Black <daniel@mariadb.org>,
-        Salvatore Bonaccorso <carnil@debian.org>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        linux-block@vger.kernel.org, io-uring@vger.kernel.org
-References: <CABVffENnJ8JkP7EtuUTqi+VkJDBFU37w1UXe4Q3cB7-ixxh0VA@mail.gmail.com>
- <77f9feaa-2d65-c0f5-8e55-5f8210d6a4c6@gmail.com>
- <8cd3d258-91b8-c9b2-106c-01b577cc44d4@gmail.com>
- <CABVffEOMVbQ+MynbcNfD7KEA5Mwqdwm1YuOKgRWnpySboQSkSg@mail.gmail.com>
- <23555381-2bea-f63a-1715-a80edd3ee27f@gmail.com>
- <YXz0roPH+stjFygk@eldamar.lan>
- <CABVffEO4mBTuiLzvny1G1ocO7PvTpKYTCS5TO2fbaevu2TqdGQ@mail.gmail.com>
- <CABVffEMy+gWfkuEg4UOTZe3p_k0Ryxey921Hw2De8MyE=JafeA@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <f4f2ff29-abdd-b448-f58f-7ea99c35eb2b@kernel.dk>
-Date:   Tue, 9 Nov 2021 16:24:30 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        bh=iGPYQRw/d38U+WKQeXZxtrIsF9lLNmdz8EeNxJvpBlA=;
+        b=WN/aNmXtfI9vAZtoFpneZdHbMW19ZxE72+lbUDwOhIXGDdDBW13QObhgcr9Y9Q0e2l
+         18E3cA228Gb0knNErM35rbm0YEknyi9xYcnqfi77FVOFseh9g/FC5pbpKTrxRRn2RZW9
+         g6AJ6P3Znx+ZbcTEWlm9QfAutk19kB5dQ5b3kts2os70/yZgWfRt1EHKoHghpn/HpS1q
+         cGAzQSXwmxvYsrTe5IWmbwwSL1/TfYnhpE6OUkIh+YJIlJNxLyOF0LQxFXXMQhn4UcfF
+         oVbRZ/fOv338csaBSC4Gp5gQZBnX0i95xh2mzU6wWQvqU8A/cpUEVJjMZc5pqUciHBIH
+         ggmw==
+X-Gm-Message-State: AOAM530OewNl+RTSgUYObvphSdiUUybzPvDo4NMDl9RGPxMmaPJnvL0N
+        nc0BxA162/iwlIHUJi+VqWw+DApjPRw=
+X-Google-Smtp-Source: ABdhPJx4BuQqVUqu7Ocp8EBkdNMRA8/r4WJiDV1bw0pDNAggdCgGKMmnKwAbA8THXiO4fUyqhUV5jA==
+X-Received: by 2002:a5d:4443:: with SMTP id x3mr802739wrr.189.1636559379665;
+        Wed, 10 Nov 2021 07:49:39 -0800 (PST)
+Received: from 127.0.0.1localhost ([85.255.232.183])
+        by smtp.gmail.com with ESMTPSA id l15sm108820wme.47.2021.11.10.07.49.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Nov 2021 07:49:39 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
+Subject: [PATCH v2 0/4] allow to skip CQE posting
+Date:   Wed, 10 Nov 2021 15:49:30 +0000
+Message-Id: <cover.1636559119.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
-In-Reply-To: <CABVffEMy+gWfkuEg4UOTZe3p_k0Ryxey921Hw2De8MyE=JafeA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 11/9/21 3:58 PM, Daniel Black wrote:
->> On Sat, Oct 30, 2021 at 6:30 PM Salvatore Bonaccorso <carnil@debian.org> wrote:
->>> Were you able to pinpoint the issue?
-> 
-> While I have been unable to reproduce this on a single cpu, Marko can
-> repeat a stall on a dual Broadwell chipset on kernels:
-> 
-> * 5.15.1 - https://kernel.ubuntu.com/~kernel-ppa/mainline/v5.15.1
-> * 5.14.16 - https://packages.debian.org/sid/linux-image-5.14.0-4-amd64
-> 
-> Detailed observations:
-> https://jira.mariadb.org/browse/MDEV-26674
-> 
-> The previous script has been adapted to use MariaDB-10.6 package and
-> sysbench to demonstrate a workload, I've changed Marko's script to
-> work with the distro packages and use innodb_use_native_aio=1.
-> 
-> MariaDB packages:
-> 
-> https://mariadb.org/download/?t=repo-config
-> (needs a distro that has liburing userspace libraries as standard support)
-> 
-> Script:
-> 
-> https://jira.mariadb.org/secure/attachment/60358/Mariabench-MDEV-26674-io_uring-1
-> 
-> The state is achieved either when the sysbench prepare stalls, or the
-> tps printed at 5 second intervals falls to 0.
+It's expensive enough to post an CQE, and there are other
+reasons to want to ignore them, e.g. for link handling and
+it may just be more convenient for the userspace.
 
-Thanks, this is most useful! I'll take a look at this.
+Try to cover most of the use cases with one flag. The overhead
+is one "if (cqe->flags & IOSQE_CQE_SKIP_SUCCESS)" check per
+requests and a bit bloated req_set_fail(), should be bearable.
+
+See 2/4 for the actual description of the flag.
+
+v2: don't allow drain with the new flag (see 4/4)
+    add IORING_FEAT_CQE_SKIP
+
+Pavel Begunkov (4):
+  io_uring: clean cqe filling functions
+  io_uring: add option to skip CQE posting
+  io_uring: don't spinlock when not posting CQEs
+  io_uring: disable drain with cqe skip
+
+ fs/io_uring.c                 | 114 +++++++++++++++++++++++-----------
+ include/uapi/linux/io_uring.h |   4 ++
+ 2 files changed, 81 insertions(+), 37 deletions(-)
 
 -- 
-Jens Axboe
+2.33.1
 

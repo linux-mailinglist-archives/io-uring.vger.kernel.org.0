@@ -2,184 +2,95 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F5CE44ED2F
-	for <lists+io-uring@lfdr.de>; Fri, 12 Nov 2021 20:19:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4404C44F435
+	for <lists+io-uring@lfdr.de>; Sat, 13 Nov 2021 17:48:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230101AbhKLTWm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 12 Nov 2021 14:22:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51268 "EHLO
+        id S235226AbhKMQvH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 13 Nov 2021 11:51:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229810AbhKLTWl (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 12 Nov 2021 14:22:41 -0500
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9091AC061766;
-        Fri, 12 Nov 2021 11:19:50 -0800 (PST)
-Received: by mail-wr1-x429.google.com with SMTP id t30so17244934wra.10;
-        Fri, 12 Nov 2021 11:19:50 -0800 (PST)
+        with ESMTP id S231912AbhKMQvF (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 13 Nov 2021 11:51:05 -0500
+Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB937C061766
+        for <io-uring@vger.kernel.org>; Sat, 13 Nov 2021 08:48:12 -0800 (PST)
+Received: by mail-il1-x12d.google.com with SMTP id l19so12128874ilk.0
+        for <io-uring@vger.kernel.org>; Sat, 13 Nov 2021 08:48:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=OJ7XG1dTJKk7nHZtLziR7Mxnn3Gu3SKVQ1z5PP5IYzw=;
-        b=q7DKxufs3ny0SBMY5BPj0Iki3xXA4pUQY38EPt/AJCBsn91D6BosDtHzMTeRcDyI5u
-         8p931nDDfQlf+iDgbPBddGO4QovTPeS+GGHkl+84uJDUjEpmZ4gwviiwHh2naMDoz0FH
-         2BvXcd4TKSDQ9atkmnJRtza9E2B4vSqL7X6thBd4pTmCK4ZV9Hfmea5MEarso+FNc55k
-         S9y78DdcNrrtFHuE2s2QOPA8PVYIxy4gUR4dCOEMUe7BfYdtJhOzyx7ii0odKa8OKE9Y
-         zzGzMfsLz/b7FD9yVhTt+krJ4wrm9MYA/14F0RnDnIAbFzRsZnOV3qpAegGglinlzSeN
-         PBiw==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=to:cc:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=YMw+/xHSBXiW4uvrHmjjWa2ZQAXIFhC4l11l4bFQ3SE=;
+        b=G7YW6rCX5hB4ZhOfIi6Wq2bD9/WPOCSo+SsZY6/VMerNsIS3oIYXPl/PjghKYwYHey
+         mNHe4gsDLbsQoO243w4XEv7QhHaMmpJ3RktE9OcRPNmqQBbUt9COrr22soWbT/bxeHpR
+         2G+DlIdgRACZRl2cfn6/tGaFNhMTIQbipfb4yPQWG81z5woOoIxQdRC5byEeVpbjDp2m
+         B4fiZiuDbMM2CmOhV3FXF/465K2MJ+4gEgmz1qF5T9L2hPBPFkx2+WI0Ra2JSpJWv+eJ
+         r3w9RHv5aOrDOf9i8AMXgLGyhK0dX21Hk0rnadHJbhQVhZlc8ZC5BYRbNzP4iacbFodf
+         1gow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=OJ7XG1dTJKk7nHZtLziR7Mxnn3Gu3SKVQ1z5PP5IYzw=;
-        b=U6Cl7IEWqLN+TtLAH9XFgWvZRpfME/WE7Wu2s8ivoL6lrjoHO94ZkEAFXqINtqx8hW
-         JwbBnGU7obJjsrxtDjXyadnkQzKYTK6GOK5WInwwnHF3QxhG8LbgJkhWgV0tiLc1V7ky
-         vRCLWtmREEcvQl32oVaQ1lGZfm+oOm/uT3+wlSDybhYaQDbB363PONI8h7EEH1KhM5nQ
-         K5BJzwuVtdbdvko6yg0Extw9jrXWlocmseK/1Mbfpt8zLSXaaCJ6f63w29yvfIqEJYF3
-         5hUEgAg95m8npgk8rPtupMBg32VmL0Auz8nNi1jzLWL6rodkP60BsRDdavySoNRtWSW1
-         dnKw==
-X-Gm-Message-State: AOAM532BKcoELQjO4tdU5P4Er73xXde2oGN2suhi/7RE98sHjBauqa1Z
-        3K0SI/1yM0VdeejhiZp99ohroN7nLOH1JQ==
-X-Google-Smtp-Source: ABdhPJwQZPeu/imivt3AZNAUJopcd35P252PMMJD/I4JhJdruImm8Bm+YIrloapUNlWhBxkE6rfyvA==
-X-Received: by 2002:adf:d84c:: with SMTP id k12mr21324062wrl.24.1636744789121;
-        Fri, 12 Nov 2021 11:19:49 -0800 (PST)
-Received: from eldamar (80-218-24-251.dclient.hispeed.ch. [80.218.24.251])
-        by smtp.gmail.com with ESMTPSA id j17sm7666326wmq.41.2021.11.12.11.19.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Nov 2021 11:19:48 -0800 (PST)
-Sender: Salvatore Bonaccorso <salvatore.bonaccorso@gmail.com>
-Date:   Fri, 12 Nov 2021 20:19:47 +0100
-From:   Salvatore Bonaccorso <carnil@debian.org>
-To:     Daniel Black <daniel@mariadb.org>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        linux-block@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: uring regression - lost write request
-Message-ID: <YY6+Uxm+cV/Ji7XI@eldamar.lan>
-References: <ef299d5b-cc48-6c92-024d-27024b671fd3@kernel.dk>
- <CABVffEOpuViC9OyOuZg28sRfGK4GRc8cV0CnkOU2cM0RJyRhPw@mail.gmail.com>
- <e9b4d07e-d43d-9b3c-ac4c-f8b88bb987d4@kernel.dk>
- <1bd48c9b-c462-115c-d077-1b724d7e4d10@kernel.dk>
- <c6d6bffe-1770-c51d-11c6-c5483bde1766@kernel.dk>
- <bd7289c8-0b01-4fcf-e584-273d372f8343@kernel.dk>
- <6d0ca779-3111-bc5e-88c0-22a98a6974b8@kernel.dk>
- <281147cc-7da4-8e45-2d6f-3f7c2a2ca229@kernel.dk>
- <c92f97e5-1a38-e23f-f371-c00261cacb6d@kernel.dk>
- <CABVffEOEayBow2Oot7_jNHbXL0CQq9SZCWmiWEJjbT6gVC7WKg@mail.gmail.com>
+        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=YMw+/xHSBXiW4uvrHmjjWa2ZQAXIFhC4l11l4bFQ3SE=;
+        b=p23EOzls9h+Pgwp7YuOD8fS6tm36fVhKTeVkbE/qTJsJ5QoaUR0piWbdSJiYtG03c3
+         764UEvTo1tW9xpOHYOQq/S6OAps5xpjwc00M4ekwiIXXlnytL2lrvr82TpH8fJOW0Abx
+         dAtFUugUN0dhyw0wUcGGG+L/L9uavD2//irsfP+8lXOrJ66slpARZLFg99T/TcN1RZ8I
+         JX5JyU1NBTdlZ4pWJjRUBlCocrQaivvlh88vjzumADSvgt/0TdDPVZZa01WuiXOhFOg6
+         OIAhdGCch1VKjKLaw6DPix+H28rNOygp32rrLsoWo2mERK0pA4JhLbpwLJZxcfryOL7s
+         oXjQ==
+X-Gm-Message-State: AOAM531Ue/utVBTOQPtmNaXFRBBnFFNkEpo8IPEtYYggyQe0tEKI9MwV
+        kdrkgQhudB/jtKftOzBMua4+kdQkye+2QOKf
+X-Google-Smtp-Source: ABdhPJzLfi79I2jY4QMZmKp4W+hKwl6yTEGN3BxTbn/vYfuH/mZYQ2QnTcqrfWNdzvvdcGFN/LIang==
+X-Received: by 2002:a05:6e02:164e:: with SMTP id v14mr14130675ilu.144.1636822091820;
+        Sat, 13 Nov 2021 08:48:11 -0800 (PST)
+Received: from [192.168.1.116] ([66.219.217.159])
+        by smtp.gmail.com with ESMTPSA id w5sm6200625ilv.83.2021.11.13.08.48.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 13 Nov 2021 08:48:11 -0800 (PST)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     io-uring <io-uring@vger.kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring fix for 5.16-rc1
+Message-ID: <6b7088c9-fe17-1d29-44d9-6920050241b2@kernel.dk>
+Date:   Sat, 13 Nov 2021 09:48:07 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CABVffEOEayBow2Oot7_jNHbXL0CQq9SZCWmiWEJjbT6gVC7WKg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Daniel,
+Hi Linus,
 
-On Fri, Nov 12, 2021 at 05:25:31PM +1100, Daniel Black wrote:
-> On Fri, Nov 12, 2021 at 10:44 AM Jens Axboe <axboe@kernel.dk> wrote:
-> >
-> > On 11/11/21 10:28 AM, Jens Axboe wrote:
-> > > On 11/11/21 9:55 AM, Jens Axboe wrote:
-> > >> On 11/11/21 9:19 AM, Jens Axboe wrote:
-> > >>> On 11/11/21 8:29 AM, Jens Axboe wrote:
-> > >>>> On 11/11/21 7:58 AM, Jens Axboe wrote:
-> > >>>>> On 11/11/21 7:30 AM, Jens Axboe wrote:
-> > >>>>>> On 11/10/21 11:52 PM, Daniel Black wrote:
-> > >>>>>>>> Would it be possible to turn this into a full reproducer script?
-> > >>>>>>>> Something that someone that knows nothing about mysqld/mariadb can just
-> > >>>>>>>> run and have it reproduce. If I install the 10.6 packages from above,
-> > >>>>>>>> then it doesn't seem to use io_uring or be linked against liburing.
-> > >>>>>>>
-> > >>>>>>> Sorry Jens.
-> > >>>>>>>
-> > >>>>>>> Hope containers are ok.
-> > >>>>>>
-> > >>>>>> Don't think I have a way to run that, don't even know what podman is
-> > >>>>>> and nor does my distro. I'll google a bit and see if I can get this
-> > >>>>>> running.
-> > >>>>>>
-> > >>>>>> I'm fine building from source and running from there, as long as I
-> > >>>>>> know what to do. Would that make it any easier? It definitely would
-> > >>>>>> for me :-)
-> > >>>>>
-> > >>>>> The podman approach seemed to work,
-> 
-> Thanks for bearing with it.
-> 
-> > >>>>> and I was able to run all three
-> > >>>>> steps. Didn't see any hangs. I'm going to try again dropping down
-> > >>>>> the innodb pool size (box only has 32G of RAM).
-> > >>>>>
-> > >>>>> The storage can do a lot more than 5k IOPS, I'm going to try ramping
-> > >>>>> that up.
-> 
-> Good.
-> 
-> > >>>>>
-> > >>>>> Does your reproducer box have multiple NUMA nodes, or is it a single
-> > >>>>> socket/nod box?
-> 
-> It was NUMA. Pre 5.14.14 I could produce it on a simpler test on a single node.
-> 
-> > >>>>
-> > >>>> Doesn't seem to reproduce for me on current -git. What file system are
-> > >>>> you using?
-> 
-> Yes ext4.
-> 
-> > >>>
-> > >>> I seem to be able to hit it with ext4, guessing it has more cases that
-> > >>> punt to buffered IO. As I initially suspected, I think this is a race
-> > >>> with buffered file write hashing. I have a debug patch that just turns
-> > >>> a regular non-numa box into multi nodes, may or may not be needed be
-> > >>> needed to hit this, but I definitely can now. Looks like this:
-> > >>>
-> > >>> Node7 DUMP
-> > >>> index=0, nr_w=1, max=128, r=0, f=1, h=0
-> > >>>   w=ffff8f5e8b8470c0, hashed=1/0, flags=2
-> > >>>   w=ffff8f5e95a9b8c0, hashed=1/0, flags=2
-> > >>> index=1, nr_w=0, max=127877, r=0, f=0, h=0
-> > >>> free_list
-> > >>>   worker=ffff8f5eaf2e0540
-> > >>> all_list
-> > >>>   worker=ffff8f5eaf2e0540
-> > >>>
-> > >>> where we seed node7 in this case having two work items pending, but the
-> > >>> worker state is stalled on hash.
-> > >>>
-> > >>> The hash logic was rewritten as part of the io-wq worker threads being
-> > >>> changed for 5.11 iirc, which is why that was my initial suspicion here.
-> > >>>
-> > >>> I'll take a look at this and make a test patch. Looks like you are able
-> > >>> to test self-built kernels, is that correct?
-> 
-> I've been libreating prebuilt kernels, however on the path to self-built again.
-> 
-> Just searching for the holy penguin pee (from yaboot da(ze|ys)) to
-> peesign(sic) EFI kernels.
-> jk, working through docs:
-> https://docs.fedoraproject.org/en-US/quick-docs/kernel/build-custom-kernel/
-> 
-> > >> Can you try with this patch? It's against -git, but it will apply to
-> > >> 5.15 as well.
-> > >
-> > > I think that one covered one potential gap, but I just managed to
-> > > reproduce a stall even with it. So hang on testing that one, I'll send
-> > > you something more complete when I have confidence in it.
-> >
-> > Alright, give this one a go if you can. Against -git, but will apply to
-> > 5.15 as well.
-> 
-> Applied, built, attempting to boot....
+Just a single fix here for a buffered write hash stall, which is also
+affecting stable. Please pull!
 
-If you want to do the same for Debian based system, the following
-might help to get the package built:
 
-https://kernel-team.pages.debian.net/kernel-handbook/ch-common-tasks.html#s4.2.2
+The following changes since commit bad119b9a00019054f0c9e2045f312ed63ace4f4:
 
-I might be able to provide you otherwise a prebuild package with the
-patch (unsigned though, but best if you built and test it directly)
+  io_uring: honour zeroes as io-wq worker limits (2021-11-08 08:39:48 -0700)
 
-Regards,
-Salvatore
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux-block.git tags/io_uring-5.16-2021-11-13
+
+for you to fetch changes up to d3e3c102d107bb84251455a298cf475f24bab995:
+
+  io-wq: serialize hash clear with wakeup (2021-11-11 17:39:46 -0700)
+
+----------------------------------------------------------------
+io_uring-5.16-2021-11-13
+
+----------------------------------------------------------------
+Jens Axboe (1):
+      io-wq: serialize hash clear with wakeup
+
+ fs/io-wq.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
+
+-- 
+Jens Axboe
+

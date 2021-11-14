@@ -2,61 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 309A844FBB2
-	for <lists+io-uring@lfdr.de>; Sun, 14 Nov 2021 22:02:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68CB444FBB4
+	for <lists+io-uring@lfdr.de>; Sun, 14 Nov 2021 22:04:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236302AbhKNVFn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 14 Nov 2021 16:05:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48480 "EHLO
+        id S236313AbhKNVHF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 14 Nov 2021 16:07:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236232AbhKNVFl (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 14 Nov 2021 16:05:41 -0500
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09070C061746;
-        Sun, 14 Nov 2021 13:02:46 -0800 (PST)
-Received: by mail-wm1-x32b.google.com with SMTP id 133so12236067wme.0;
-        Sun, 14 Nov 2021 13:02:45 -0800 (PST)
+        with ESMTP id S236299AbhKNVGs (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 14 Nov 2021 16:06:48 -0500
+Received: from mail-il1-x135.google.com (mail-il1-x135.google.com [IPv6:2607:f8b0:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20F43C061766
+        for <io-uring@vger.kernel.org>; Sun, 14 Nov 2021 13:03:52 -0800 (PST)
+Received: by mail-il1-x135.google.com with SMTP id m11so14556521ilh.5
+        for <io-uring@vger.kernel.org>; Sun, 14 Nov 2021 13:03:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=1kCy14pWiHQLUZiqCYxumS5NGr0vdPf3t+I8K1dk1SM=;
-        b=USv5uFzF44loWe33r7DI2XgFiT4OSWX5r1GSWI9VG6Otc6KbgeVe7FcaogmHQro2iV
-         GqwO5f3hmfpGENPZLLY9W5xE2eJMmfJeX3lMIYEtQy/DHBmMABuzxFkhSUtH4BV/XW80
-         S6C1jCbw5y7HD6w3zM2SImeJSSafkEM274od/qsd5LVCvw4ZyH66bpFcGLEDIL0/6fw2
-         dthW4z1CldQzS+IXIMKvU0GMAp1iGiAlsnHNh1N7Ro2hQEcc60ihWm24WqJdgvBVejeQ
-         aVKduvTCMp7i6PFl8n6DQSCu827rkEBAfUbfiqrA2SX8o/6GGhK+cueBGlRtf9xXLWtM
-         fnSg==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=0ip9qQ/u4QUXJg3D+FksBcZUmlcQDc65Po9w80w1ZF4=;
+        b=46H4Cr1UNL40m37Tk4q5RVt6cYsjJq4Fx9008xDbfZNbJ/xcrfzPUkOwP1RVCVst0h
+         fZLAje+b87aaKvJ9x6axY4Sm4JA2WquyIDtQQSOTh7D+x6xqhE9amD0FP34Mem/iLGod
+         Efm1tL8/ZQQEDG/XTxOeG6CjENfDFKn/o7ZnmVLwWxB3mg8Yz9hw1XuJxSz31I/TGsLV
+         LY059wSpMCZQHKRv9frfY4fOB6ktLo00femLCHr5cRjgyQB1Wy/SE28c4ZdbjjviACC9
+         P0lVCnWFjFm0WS4ht65l67EykN/ddbYW1LhA/UTeiBYjvJY2wt/Ovcjwy9bVu2owu9+h
+         TyGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to;
-        bh=1kCy14pWiHQLUZiqCYxumS5NGr0vdPf3t+I8K1dk1SM=;
-        b=VPFmNRc6PszTQeqHLstO96DmZipjxmGjQm0U/nXz6qIzmv3SiTvSCSlwhdFasWA6wC
-         n+VS76P2fw7F49HavuBh3dt08Q+PtYqvuDhQl7NVvZRnrqeN9gd/fWfI0zdx6P/zXOSJ
-         NTBj6ymmItdE2y4Zqhu7lW9eagfb1NfxnOHs2ATLfHGnIWTx1ciLFrSgUyzvfpDubw0w
-         nz1f+h7ZfaVt8dwhbYkGEIqA8TwAbJW2LLcCdGGY//hkZWWh7ObhJbUE68tcHbOHDlDA
-         VX2DOXM9weeVUM/212/sIJJBoEy9k98tn0env81VWTGSM7SN4IEqSYcROOuD2INxbl/w
-         Rneg==
-X-Gm-Message-State: AOAM531NfVoMND6QBcXOWlzsmziLdLQooCklUaUnL8Y56emVo9Pp4Am6
-        IkYluPOuqvQvEwqnYVbJ9jCb8ciLSL31Om3Z
-X-Google-Smtp-Source: ABdhPJylkn8Rkgv8jlM6y7AvEhBNM6ZGbJ+xVxjllXxmCYC+caDe2HaNNj7Viu+6fBOVf6IQDjTZTg==
-X-Received: by 2002:a1c:1bd8:: with SMTP id b207mr54136148wmb.114.1636923764108;
-        Sun, 14 Nov 2021 13:02:44 -0800 (PST)
-Received: from eldamar (80-218-24-251.dclient.hispeed.ch. [80.218.24.251])
-        by smtp.gmail.com with ESMTPSA id e18sm12260857wrs.48.2021.11.14.13.02.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Nov 2021 13:02:43 -0800 (PST)
-Sender: Salvatore Bonaccorso <salvatore.bonaccorso@gmail.com>
-Date:   Sun, 14 Nov 2021 22:02:42 +0100
-From:   Salvatore Bonaccorso <carnil@debian.org>
-To:     Jens Axboe <axboe@kernel.dk>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=0ip9qQ/u4QUXJg3D+FksBcZUmlcQDc65Po9w80w1ZF4=;
+        b=PQvyTSDmMrV9n5BJih4dE5wzAPx35vidkcKXQLL9D2SJvyVdydnkK+cjyT5gEKnZMz
+         lN5qE0g55WmkEMID1liYiSCqN2TeFncdLWlKm2mDzkMSBzRu4cCoj5wPMTCz3Fr8p7Mb
+         QVUpjyYQ67BvF+UF/qm63pSVrZ3TkHV6u/M0CNYj5Pkg2zrljLYWM9x5Sw9QKhR9oTgz
+         4QxtuuWxvplPwGcjo+aSDhU00R/EEZYAUzL2BPmLsbzbKYTQ+aSOHcTuEc6YaayKmt72
+         fCCDS28ukNXKHB7rOeqKKchVE+23aWElPxvwU1iBucqBBBGC3E2vS9LZw2XgB4nAr0ca
+         7YQA==
+X-Gm-Message-State: AOAM533g/wO9S6gUJXnELamHsKFoyyS03HsTqIo/l1+Kcqb6POVA3it6
+        Tf9D67oEeTxZVgnKy1RHHSO+Pd2yOZcH4jCU
+X-Google-Smtp-Source: ABdhPJyctzjAfpa3VD0odqC9dlG8ubmykPwmzxgT7DWg4OEvy8Qk8DhP9ASOLzRRB1t4YSzPrMU5HQ==
+X-Received: by 2002:a92:360c:: with SMTP id d12mr19181644ila.172.1636923831387;
+        Sun, 14 Nov 2021 13:03:51 -0800 (PST)
+Received: from [192.168.1.116] ([66.219.217.159])
+        by smtp.gmail.com with ESMTPSA id l2sm7966729ils.82.2021.11.14.13.03.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 14 Nov 2021 13:03:51 -0800 (PST)
+Subject: Re: uring regression - lost write request
+To:     Salvatore Bonaccorso <carnil@debian.org>
 Cc:     Daniel Black <daniel@mariadb.org>,
         Pavel Begunkov <asml.silence@gmail.com>,
         linux-block@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: uring regression - lost write request
-Message-ID: <YZF5csKMKfKBeIyN@eldamar.lan>
 References: <CABVffEOpuViC9OyOuZg28sRfGK4GRc8cV0CnkOU2cM0RJyRhPw@mail.gmail.com>
  <e9b4d07e-d43d-9b3c-ac4c-f8b88bb987d4@kernel.dk>
  <1bd48c9b-c462-115c-d077-1b724d7e4d10@kernel.dk>
@@ -67,42 +63,51 @@ References: <CABVffEOpuViC9OyOuZg28sRfGK4GRc8cV0CnkOU2cM0RJyRhPw@mail.gmail.com>
  <c92f97e5-1a38-e23f-f371-c00261cacb6d@kernel.dk>
  <CABVffEN0LzLyrHifysGNJKpc_Szn7qPO4xy7aKvg7LTNc-Fpng@mail.gmail.com>
  <00d6e7ad-5430-4fca-7e26-0774c302be57@kernel.dk>
+ <YZF5csKMKfKBeIyN@eldamar.lan>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <627629af-d8ed-416a-cbef-4d74bdeee031@kernel.dk>
+Date:   Sun, 14 Nov 2021 14:03:49 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <YZF5csKMKfKBeIyN@eldamar.lan>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <00d6e7ad-5430-4fca-7e26-0774c302be57@kernel.dk>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi,
-
-On Sun, Nov 14, 2021 at 01:55:20PM -0700, Jens Axboe wrote:
-> On 11/14/21 1:33 PM, Daniel Black wrote:
-> > On Fri, Nov 12, 2021 at 10:44 AM Jens Axboe <axboe@kernel.dk> wrote:
-> >>
-> >> Alright, give this one a go if you can. Against -git, but will apply to
-> >> 5.15 as well.
-> > 
-> > 
-> > Works. Thank you very much.
-> > 
-> > https://jira.mariadb.org/browse/MDEV-26674?page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel&focusedCommentId=205599#comment-205599
-> > 
-> > Tested-by: Marko M‰kel‰ <marko.makela@mariadb.com>
+On 11/14/21 2:02 PM, Salvatore Bonaccorso wrote:
+> Hi,
 > 
-> Awesome, thanks so much for reporting and testing. All bugs are shallow
-> when given a reproducer, that certainly helped a ton in figuring out
-> what this was and nailing a fix.
+> On Sun, Nov 14, 2021 at 01:55:20PM -0700, Jens Axboe wrote:
+>> On 11/14/21 1:33 PM, Daniel Black wrote:
+>>> On Fri, Nov 12, 2021 at 10:44 AM Jens Axboe <axboe@kernel.dk> wrote:
+>>>>
+>>>> Alright, give this one a go if you can. Against -git, but will apply to
+>>>> 5.15 as well.
+>>>
+>>>
+>>> Works. Thank you very much.
+>>>
+>>> https://jira.mariadb.org/browse/MDEV-26674?page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel&focusedCommentId=205599#comment-205599
+>>>
+>>> Tested-by: Marko M√§kel√§ <marko.makela@mariadb.com>
+>>
+>> Awesome, thanks so much for reporting and testing. All bugs are shallow
+>> when given a reproducer, that certainly helped a ton in figuring out
+>> what this was and nailing a fix.
+>>
+>> The patch is already upstream (and in the 5.15 stable queue), and I
+>> provided 5.14 patches too.
 > 
-> The patch is already upstream (and in the 5.15 stable queue), and I
-> provided 5.14 patches too.
+> FTR, I cherry-picked as well the respective commit for Debian's upload
+> of 5.15.2-1~exp1 to experimental as
+> https://salsa.debian.org/kernel-team/linux/-/commit/657413869fa29b97ec886cf62a420ab43b935fff
 
-FTR, I cherry-picked as well the respective commit for Debian's upload
-of 5.15.2-1~exp1 to experimental as
-https://salsa.debian.org/kernel-team/linux/-/commit/657413869fa29b97ec886cf62a420ab43b935fff
-.
+Great thanks, you're beating stable :-)
 
-Regards,
-Salvatore
+-- 
+Jens Axboe
+

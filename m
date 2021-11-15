@@ -2,112 +2,228 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 68CB444FBB4
-	for <lists+io-uring@lfdr.de>; Sun, 14 Nov 2021 22:04:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D365E4509CB
+	for <lists+io-uring@lfdr.de>; Mon, 15 Nov 2021 17:38:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236313AbhKNVHF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 14 Nov 2021 16:07:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48722 "EHLO
+        id S231658AbhKOQlg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 15 Nov 2021 11:41:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57488 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236299AbhKNVGs (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 14 Nov 2021 16:06:48 -0500
-Received: from mail-il1-x135.google.com (mail-il1-x135.google.com [IPv6:2607:f8b0:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20F43C061766
-        for <io-uring@vger.kernel.org>; Sun, 14 Nov 2021 13:03:52 -0800 (PST)
-Received: by mail-il1-x135.google.com with SMTP id m11so14556521ilh.5
-        for <io-uring@vger.kernel.org>; Sun, 14 Nov 2021 13:03:52 -0800 (PST)
+        with ESMTP id S230099AbhKOQlf (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 15 Nov 2021 11:41:35 -0500
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7936C061746
+        for <io-uring@vger.kernel.org>; Mon, 15 Nov 2021 08:38:39 -0800 (PST)
+Received: by mail-pl1-x62e.google.com with SMTP id y7so15048059plp.0
+        for <io-uring@vger.kernel.org>; Mon, 15 Nov 2021 08:38:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=0ip9qQ/u4QUXJg3D+FksBcZUmlcQDc65Po9w80w1ZF4=;
-        b=46H4Cr1UNL40m37Tk4q5RVt6cYsjJq4Fx9008xDbfZNbJ/xcrfzPUkOwP1RVCVst0h
-         fZLAje+b87aaKvJ9x6axY4Sm4JA2WquyIDtQQSOTh7D+x6xqhE9amD0FP34Mem/iLGod
-         Efm1tL8/ZQQEDG/XTxOeG6CjENfDFKn/o7ZnmVLwWxB3mg8Yz9hw1XuJxSz31I/TGsLV
-         LY059wSpMCZQHKRv9frfY4fOB6ktLo00femLCHr5cRjgyQB1Wy/SE28c4ZdbjjviACC9
-         P0lVCnWFjFm0WS4ht65l67EykN/ddbYW1LhA/UTeiBYjvJY2wt/Ovcjwy9bVu2owu9+h
-         TyGw==
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=bsLeGFpbN8CpN9RU3ZNnNmz55GEbtlwvn/02SxJ3yO0=;
+        b=Xw/4izBdFkl2ShsOYjlglP1hnKh94ohUtgg8bF97/cI+6H2PhbW9Bc6moSppzqcYOM
+         reTt0VVwL6Kaws24pQ5whqflI23gH66oHW5ic2n1A2nQJUepO47HhLL3ckTL+6VS1L1r
+         zBVl+skRL4UJbf7kld4UJgMTm66Ag4umvhjMGy8CAK560H2nDbr86UtTeD0rFpvJn7z4
+         9J0eTNl6l5rmHznMIo28f95zHS6XZPHOlYRaU7hQL4dMt/77bk+ziJQ7Cc6RCHwZfikM
+         p7kULy+mbvESuHcKSdCY1LMSpupdfPlUAUOsWUFLw5pWq4i/EETv7NwoipwqGtVGIOJ9
+         ZKYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=0ip9qQ/u4QUXJg3D+FksBcZUmlcQDc65Po9w80w1ZF4=;
-        b=PQvyTSDmMrV9n5BJih4dE5wzAPx35vidkcKXQLL9D2SJvyVdydnkK+cjyT5gEKnZMz
-         lN5qE0g55WmkEMID1liYiSCqN2TeFncdLWlKm2mDzkMSBzRu4cCoj5wPMTCz3Fr8p7Mb
-         QVUpjyYQ67BvF+UF/qm63pSVrZ3TkHV6u/M0CNYj5Pkg2zrljLYWM9x5Sw9QKhR9oTgz
-         4QxtuuWxvplPwGcjo+aSDhU00R/EEZYAUzL2BPmLsbzbKYTQ+aSOHcTuEc6YaayKmt72
-         fCCDS28ukNXKHB7rOeqKKchVE+23aWElPxvwU1iBucqBBBGC3E2vS9LZw2XgB4nAr0ca
-         7YQA==
-X-Gm-Message-State: AOAM533g/wO9S6gUJXnELamHsKFoyyS03HsTqIo/l1+Kcqb6POVA3it6
-        Tf9D67oEeTxZVgnKy1RHHSO+Pd2yOZcH4jCU
-X-Google-Smtp-Source: ABdhPJyctzjAfpa3VD0odqC9dlG8ubmykPwmzxgT7DWg4OEvy8Qk8DhP9ASOLzRRB1t4YSzPrMU5HQ==
-X-Received: by 2002:a92:360c:: with SMTP id d12mr19181644ila.172.1636923831387;
-        Sun, 14 Nov 2021 13:03:51 -0800 (PST)
-Received: from [192.168.1.116] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id l2sm7966729ils.82.2021.11.14.13.03.50
+        bh=bsLeGFpbN8CpN9RU3ZNnNmz55GEbtlwvn/02SxJ3yO0=;
+        b=glpsiDOddka6VJYhv6SV0xjpe07bfBquOhffwqmseiVGvaHiBbkN8RuZoomO/OSR3G
+         1d48HmaquQijg5IxSrhg1SgEubASCBpO2ZJ4d+YCWixV7sA2790qIGvauMMvCXBulRVL
+         EO27J5kFgzxCyKMrynZvU9HIYNfkU5do8JwKV55sgUuyzLnoPOgBLaisWhWIeh6DaFdz
+         OXnfiP5bBThUjykxRGOa4jUznp112ILFGyYWu5OpSSWsMIt6pRNOdc44g39YZqMvMvju
+         ldsTk/8mtVoSJ0t0EH9QmS3Ou8rrF0aFhMmVXQCv+dqhfXHb66/jiQCh1twzYxCsySW6
+         6SoA==
+X-Gm-Message-State: AOAM531y3LcFPki/9KTyYcR9bKa5KeEYDKjxJVrov7INHM7NJY+PTfjN
+        AFvH2UIOIAgfxq2LkhbkvwYPig==
+X-Google-Smtp-Source: ABdhPJzBf7wcoCKV+XZ+8nE3LFOuitGqXpr5rZikvxP2qM33QNCA8eVQDO2cJXJ08GONxk+3/q9Chg==
+X-Received: by 2002:a17:90b:3a89:: with SMTP id om9mr48220230pjb.99.1636994319323;
+        Mon, 15 Nov 2021 08:38:39 -0800 (PST)
+Received: from [192.168.254.17] ([50.39.160.154])
+        by smtp.gmail.com with ESMTPSA id b9sm5985006pfm.127.2021.11.15.08.38.38
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 14 Nov 2021 13:03:51 -0800 (PST)
-Subject: Re: uring regression - lost write request
-To:     Salvatore Bonaccorso <carnil@debian.org>
-Cc:     Daniel Black <daniel@mariadb.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        linux-block@vger.kernel.org, io-uring@vger.kernel.org
-References: <CABVffEOpuViC9OyOuZg28sRfGK4GRc8cV0CnkOU2cM0RJyRhPw@mail.gmail.com>
- <e9b4d07e-d43d-9b3c-ac4c-f8b88bb987d4@kernel.dk>
- <1bd48c9b-c462-115c-d077-1b724d7e4d10@kernel.dk>
- <c6d6bffe-1770-c51d-11c6-c5483bde1766@kernel.dk>
- <bd7289c8-0b01-4fcf-e584-273d372f8343@kernel.dk>
- <6d0ca779-3111-bc5e-88c0-22a98a6974b8@kernel.dk>
- <281147cc-7da4-8e45-2d6f-3f7c2a2ca229@kernel.dk>
- <c92f97e5-1a38-e23f-f371-c00261cacb6d@kernel.dk>
- <CABVffEN0LzLyrHifysGNJKpc_Szn7qPO4xy7aKvg7LTNc-Fpng@mail.gmail.com>
- <00d6e7ad-5430-4fca-7e26-0774c302be57@kernel.dk>
- <YZF5csKMKfKBeIyN@eldamar.lan>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <627629af-d8ed-416a-cbef-4d74bdeee031@kernel.dk>
-Date:   Sun, 14 Nov 2021 14:03:49 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Mon, 15 Nov 2021 08:38:38 -0800 (PST)
+Message-ID: <dd53f11a-ae6f-79af-2ea2-8091d1c4f15e@linaro.org>
+Date:   Mon, 15 Nov 2021 08:38:38 -0800
 MIME-Version: 1.0
-In-Reply-To: <YZF5csKMKfKBeIyN@eldamar.lan>
-Content-Type: text/plain; charset=utf-8
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.0
+Subject: Re: [PATCH] io_uring: prevent io_put_identity() from freeing a static
+ identity
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org,
+        syzbot+6055980d041c8ac23307@syzkaller.appspotmail.com
+References: <20211104012120.729261-1-tadeusz.struk@linaro.org>
+From:   Tadeusz Struk <tadeusz.struk@linaro.org>
+In-Reply-To: <20211104012120.729261-1-tadeusz.struk@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 11/14/21 2:02 PM, Salvatore Bonaccorso wrote:
-> Hi,
+On 11/3/21 18:21, Tadeusz Struk wrote:
+> Note: this applies to 5.10 stable only. It doesn't trigger on anything
+> above 5.10 as the code there has been substantially reworked. This also
+> doesn't apply to any stable kernel below 5.10 afaict.
 > 
-> On Sun, Nov 14, 2021 at 01:55:20PM -0700, Jens Axboe wrote:
->> On 11/14/21 1:33 PM, Daniel Black wrote:
->>> On Fri, Nov 12, 2021 at 10:44 AM Jens Axboe <axboe@kernel.dk> wrote:
->>>>
->>>> Alright, give this one a go if you can. Against -git, but will apply to
->>>> 5.15 as well.
->>>
->>>
->>> Works. Thank you very much.
->>>
->>> https://jira.mariadb.org/browse/MDEV-26674?page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel&focusedCommentId=205599#comment-205599
->>>
->>> Tested-by: Marko Mäkelä <marko.makela@mariadb.com>
->>
->> Awesome, thanks so much for reporting and testing. All bugs are shallow
->> when given a reproducer, that certainly helped a ton in figuring out
->> what this was and nailing a fix.
->>
->> The patch is already upstream (and in the 5.15 stable queue), and I
->> provided 5.14 patches too.
+> Syzbot found a bug: KASAN: invalid-free in io_dismantle_req
+> https://syzkaller.appspot.com/bug?id=123d9a852fc88ba573ffcb2dbcf4f9576c3b0559
 > 
-> FTR, I cherry-picked as well the respective commit for Debian's upload
-> of 5.15.2-1~exp1 to experimental as
-> https://salsa.debian.org/kernel-team/linux/-/commit/657413869fa29b97ec886cf62a420ab43b935fff
+> The test submits bunch of io_uring writes and exits, which then triggers
+> uring_task_cancel() and io_put_identity(), which in some corner cases,
+> tries to free a static identity. This causes a panic as shown in the
+> trace below:
+> 
+>   BUG: KASAN: double-free or invalid-free in kfree+0xd5/0x310
+>   CPU: 0 PID: 4618 Comm: repro Not tainted 5.10.76-05281-g4944ec82ebb9-dirty #17
+>   Call Trace:
+>    dump_stack_lvl+0x1b2/0x21b
+>    print_address_description+0x8d/0x3b0
+>    kasan_report_invalid_free+0x58/0x130
+>    ____kasan_slab_free+0x14b/0x170
+>    __kasan_slab_free+0x11/0x20
+>    slab_free_freelist_hook+0xcc/0x1a0
+>    kfree+0xd5/0x310
+>    io_dismantle_req+0x9b0/0xd90
+>    io_do_iopoll+0x13a4/0x23e0
+>    io_iopoll_try_reap_events+0x116/0x290
+>    io_uring_cancel_task_requests+0x197d/0x1ee0
+>    io_uring_flush+0x170/0x6d0
+>    filp_close+0xb0/0x150
+>    put_files_struct+0x1d4/0x350
+>    exit_files+0x80/0xa0
+>    do_exit+0x6d9/0x2390
+>    do_group_exit+0x16a/0x2d0
+>    get_signal+0x133e/0x1f80
+>    arch_do_signal+0x7b/0x610
+>    exit_to_user_mode_prepare+0xaa/0xe0
+>    syscall_exit_to_user_mode+0x24/0x40
+>    do_syscall_64+0x3d/0x70
+>    entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> 
+>   Allocated by task 4611:
+>    ____kasan_kmalloc+0xcd/0x100
+>    __kasan_kmalloc+0x9/0x10
+>    kmem_cache_alloc_trace+0x208/0x390
+>    io_uring_alloc_task_context+0x57/0x550
+>    io_uring_add_task_file+0x1f7/0x290
+>    io_uring_create+0x2195/0x3490
+>    __x64_sys_io_uring_setup+0x1bf/0x280
+>    do_syscall_64+0x31/0x70
+>    entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> 
+>   The buggy address belongs to the object at ffff88810732b500
+>    which belongs to the cache kmalloc-192 of size 192
+>   The buggy address is located 88 bytes inside of
+>    192-byte region [ffff88810732b500, ffff88810732b5c0)
+>   Kernel panic - not syncing: panic_on_warn set ...
+> 
+> This issue bisected to this commit:
+> commit 186725a80c4e ("io_uring: fix skipping disabling sqo on exec")
+> 
+> Simple reverting the offending commit doesn't work as it hits some
+> other, related issues like:
+> 
+> /* sqo_dead check is for when this happens after cancellation */
+> WARN_ON_ONCE(ctx->sqo_task == current && !ctx->sqo_dead &&
+> 	     !xa_load(&tctx->xa, (unsigned long)file));
+> 
+>   ------------[ cut here ]------------
+>   WARNING: CPU: 1 PID: 5622 at fs/io_uring.c:8960 io_uring_flush+0x5bc/0x6d0
+>   Modules linked in:
+>   CPU: 1 PID: 5622 Comm: repro Not tainted 5.10.76-05281-g4944ec82ebb9-dirty #16
+>   Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.14.0-6.fc35 04/01/2014
+>   RIP: 0010:io_uring_flush+0x5bc/0x6d0
+>   Call Trace:
+>   filp_close+0xb0/0x150
+>   put_files_struct+0x1d4/0x350
+>   reset_files_struct+0x88/0xa0
+>   bprm_execve+0x7f2/0x9f0
+>   do_execveat_common+0x46f/0x5d0
+>   __x64_sys_execve+0x92/0xb0
+>   do_syscall_64+0x31/0x70
+>   entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> 
+> Changing __io_uring_task_cancel() to call io_disable_sqo_submit() directly,
+> as the comment suggests, only if __io_uring_files_cancel() is not executed
+> seems to fix the issue.
+> 
+> Cc: Jens Axboe <axboe@kernel.dk>
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: <io-uring@vger.kernel.org>
+> Cc: <linux-fsdevel@vger.kernel.org>
+> Cc: <linux-kernel@vger.kernel.org>
+> Cc: <stable@vger.kernel.org>
+> Reported-by: syzbot+6055980d041c8ac23307@syzkaller.appspotmail.com
+> Signed-off-by: Tadeusz Struk <tadeusz.struk@linaro.org>
+> ---
+>   fs/io_uring.c | 21 +++++++++++++++++----
+>   1 file changed, 17 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 0736487165da..fcf9ffe9b209 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -8882,20 +8882,18 @@ void __io_uring_task_cancel(void)
+>   	struct io_uring_task *tctx = current->io_uring;
+>   	DEFINE_WAIT(wait);
+>   	s64 inflight;
+> +	int canceled = 0;
+>   
+>   	/* make sure overflow events are dropped */
+>   	atomic_inc(&tctx->in_idle);
+>   
+> -	/* trigger io_disable_sqo_submit() */
+> -	if (tctx->sqpoll)
+> -		__io_uring_files_cancel(NULL);
+> -
+>   	do {
+>   		/* read completions before cancelations */
+>   		inflight = tctx_inflight(tctx);
+>   		if (!inflight)
+>   			break;
+>   		__io_uring_files_cancel(NULL);
+> +		canceled = 1;
+>   
+>   		prepare_to_wait(&tctx->wait, &wait, TASK_UNINTERRUPTIBLE);
+>   
+> @@ -8909,6 +8907,21 @@ void __io_uring_task_cancel(void)
+>   		finish_wait(&tctx->wait, &wait);
+>   	} while (1);
+>   
+> +	/*
+> +	 * trigger io_disable_sqo_submit()
+> +	 * if not already done by __io_uring_files_cancel()
+> +	 */
+> +	if (tctx->sqpoll && !canceled) {
+> +		struct file *file;
+> +		unsigned long index;
+> +
+> +		xa_for_each(&tctx->xa, index, file) {
+> +			struct io_ring_ctx *ctx = file->private_data;
+> +
+> +			io_disable_sqo_submit(ctx);
+> +		}
+> +	}
+> +
+>   	atomic_dec(&tctx->in_idle);
+>   
+>   	io_uring_remove_task_files(tctx);
+> 
 
-Great thanks, you're beating stable :-)
+Hi,
+Any comments on this one? It needs to be ACK'ed by the maintainer before
+it is applied to 5.10 stable.
 
 -- 
-Jens Axboe
-
+Thanks,
+Tadeusz

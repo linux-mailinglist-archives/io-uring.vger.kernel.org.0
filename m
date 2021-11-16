@@ -2,25 +2,26 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EA10E453C68
-	for <lists+io-uring@lfdr.de>; Tue, 16 Nov 2021 23:53:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB437453C65
+	for <lists+io-uring@lfdr.de>; Tue, 16 Nov 2021 23:53:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232125AbhKPW4g (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 16 Nov 2021 17:56:36 -0500
-Received: from dcvr.yhbt.net ([64.71.152.64]:43828 "EHLO dcvr.yhbt.net"
+        id S230378AbhKPW4a (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 16 Nov 2021 17:56:30 -0500
+Received: from dcvr.yhbt.net ([64.71.152.64]:43686 "EHLO dcvr.yhbt.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231911AbhKPW4g (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Tue, 16 Nov 2021 17:56:36 -0500
+        id S229527AbhKPW43 (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Tue, 16 Nov 2021 17:56:29 -0500
+X-Greylist: delayed 516 seconds by postgrey-1.27 at vger.kernel.org; Tue, 16 Nov 2021 17:56:29 EST
 Received: from localhost (dcvr.yhbt.net [127.0.0.1])
-        by dcvr.yhbt.net (Postfix) with ESMTP id A83701FA01;
+        by dcvr.yhbt.net (Postfix) with ESMTP id C7DE61FA10;
         Tue, 16 Nov 2021 22:44:56 +0000 (UTC)
 From:   Eric Wong <e@80x24.org>
 To:     io-uring@vger.kernel.org
 Cc:     Liu Changcheng <changcheng.liu@aliyun.com>,
         Stefan Metzmacher <metze@samba.org>
-Subject: [PATCH 3/4] debian/rules: fix for newer debhelper
-Date:   Tue, 16 Nov 2021 22:44:55 +0000
-Message-Id: <20211116224456.244746-4-e@80x24.org>
+Subject: [PATCH 4/4] debian/rules: support parallel build
+Date:   Tue, 16 Nov 2021 22:44:56 +0000
+Message-Id: <20211116224456.244746-5-e@80x24.org>
 In-Reply-To: <20211116224456.244746-1-e@80x24.org>
 References: <20211116224456.244746-1-e@80x24.org>
 MIME-Version: 1.0
@@ -29,41 +30,32 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-When testing on my Debian 11.x (stable) system, --add-udeb
-causes the following build error:
-
-  dh_makeshlibs: error: The udeb liburing1-udeb does not contain any shared librar
-  ies but --add-udeb=liburing1-udeb was passed!?
-  make: *** [debian/rules:82: binary-arch] Error 255
-
-Reading the current dh_makeshlibs(1) manpage reveals --add-udeb
-is nowadays implicit as of debhelper 12.3 and no longer
-necessary.  Compatibility with Debian oldstable (buster) remains
-intact.  Tested with debhelper 12.1.1 on Debian 10.x (buster)
-and debhelper 13.3.4 on Debian 11.x (bullseye).
+This bit stolen from the debian/rules file of `git'
+speeds up builds from ~35s to ~10s for me.
 
 Signed-off-by: Eric Wong <e@80x24.org>
 ---
- debian/rules | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ debian/rules | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
 diff --git a/debian/rules b/debian/rules
-index 1a334b3..2a0d563 100755
+index 2a0d563..4b58d90 100755
 --- a/debian/rules
 +++ b/debian/rules
-@@ -70,7 +70,14 @@ binary-arch: install-arch
- 	dh_strip -a --ddeb-migration='$(libdbg) (<< 0.3)'
- 	dh_compress -a
- 	dh_fixperms -a
--	dh_makeshlibs -a --add-udeb '$(libudeb)'
+@@ -9,6 +9,16 @@ DEB_CFLAGS_MAINT_PREPEND = -Wall
+ include /usr/share/dpkg/default.mk
+ include /usr/share/dpkg/buildtools.mk
+ 
++# taken from the debian/rules of src:git
++ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
++  NUMJOBS = $(patsubst parallel=%,%,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
++  MAKEFLAGS += -j$(NUMJOBS)
++  # Setting this with a pattern-specific rule prevents -O from
++  # affecting the top-level make, which would break realtime build
++  # output (unless dh is run as +dh, which causes other problems).
++  %: MAKEFLAGS += -O
++endif
 +
-+# --add-udeb is needed for <= 12.3, and breaks with auto-detection
-+#  on debhelper 13.3.4, at least
-+	if perl -MDebian::Debhelper::Dh_Version -e \
-+	'exit(eval("v$$Debian::Debhelper::Dh_Version::version") le v12.3)'; \
-+		then dh_makeshlibs -a; else \
-+		dh_makeshlibs -a --add-udeb '$(libudeb)'; fi
-+
- 	dh_shlibdeps -a
- 	dh_installdeb -a
- 	dh_gencontrol -a
+ export CC
+ 
+ lib := liburing1

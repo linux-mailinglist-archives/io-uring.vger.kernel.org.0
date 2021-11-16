@@ -2,29 +2,42 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 77685453A18
-	for <lists+io-uring@lfdr.de>; Tue, 16 Nov 2021 20:21:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B318B453A22
+	for <lists+io-uring@lfdr.de>; Tue, 16 Nov 2021 20:26:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234139AbhKPTYr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 16 Nov 2021 14:24:47 -0500
-Received: from shells.gnugeneration.com ([66.240.222.126]:48288 "EHLO
-        shells.gnugeneration.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239590AbhKPTYr (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 16 Nov 2021 14:24:47 -0500
-Received: by shells.gnugeneration.com (Postfix, from userid 1000)
-        id 468601A40175; Tue, 16 Nov 2021 11:21:48 -0800 (PST)
-Date:   Tue, 16 Nov 2021 11:21:48 -0800
-From:   Vito Caputo <vcaputo@pengaru.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ammar Faizi <ammarfaizi2@gnuweeb.org>,
-        Drew DeVault <sir@cmpwn.com>, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org,
-        io_uring Mailing List <io-uring@vger.kernel.org>,
-        Pavel Begunkov <asml.silence@gmail.com>, linux-mm@kvack.org
+        id S239838AbhKPT2f (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 16 Nov 2021 14:28:35 -0500
+Received: from out0.migadu.com ([94.23.1.103]:47314 "EHLO out0.migadu.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229663AbhKPT2f (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Tue, 16 Nov 2021 14:28:35 -0500
+MIME-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cmpwn.com; s=key1;
+        t=1637090734;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=NH4D06+wvki1Y2o8G9uIKdZSfom0w6wnccvPwaGoNTQ=;
+        b=tC1QclNLGPZYG5G+lNBUu61UJQoA9aD6mERtdhl9mxWXld6jHcG39WfFWPkGgYDgX9hYva
+        JBRnijENUJGIvCEjF0s3QXXdwgG8+cPey/+vjUSO+xevG07WiuwOwkHMiWmQxslOweAY9+
+        YKIgiIwhCh1/YmseHtmKc/sxvw6Pyw+liAK7Mmjhj1M2V04m4wMfm6qQ4UzAMT5qU6fYc+
+        dhyqsi7KqM+xDTLD55r2/gEymAt1xTQb2DUPYuuU8QfSxkwA3JVi1tyvD6e95Xys2ZAU84
+        44YhrkldU32fCmxtoRnPAV+hFr0lsyxdCnWK+XwfvrnV4XfUX4lLE5V1q4bw3Q==
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date:   Tue, 16 Nov 2021 20:25:33 +0100
+Message-Id: <CFRG8CM6QUPN.1Z75SA6XN02W1@taiga>
 Subject: Re: [PATCH] Increase default MLOCK_LIMIT to 8 MiB
-Message-ID: <20211116192148.vjdlng7pesbgjs6b@shells.gnugeneration.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   "Drew DeVault" <sir@cmpwn.com>
+To:     "Vito Caputo" <vcaputo@pengaru.com>, "Jens Axboe" <axboe@kernel.dk>
+Cc:     "Matthew Wilcox" <willy@infradead.org>,
+        "Andrew Morton" <akpm@linux-foundation.org>,
+        "Ammar Faizi" <ammarfaizi2@gnuweeb.org>,
+        <linux-kernel@vger.kernel.org>, <linux-api@vger.kernel.org>,
+        "io_uring Mailing List" <io-uring@vger.kernel.org>,
+        "Pavel Begunkov" <asml.silence@gmail.com>, <linux-mm@kvack.org>
 References: <20211028080813.15966-1-sir@cmpwn.com>
  <CAFBCWQ+=2T4U7iNQz_vsBsGVQ72s+QiECndy_3AMFV98bMOLow@mail.gmail.com>
  <CFII8LNSW5XH.3OTIVFYX8P65Y@taiga>
@@ -32,52 +45,18 @@ References: <20211028080813.15966-1-sir@cmpwn.com>
  <20211115203530.62ff33fdae14927b48ef6e5f@linux-foundation.org>
  <YZP6JSd4h45cyvsy@casper.infradead.org>
  <b97f1b15-fbcc-92a4-96ca-e918c2f6c7a3@kernel.dk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b97f1b15-fbcc-92a4-96ca-e918c2f6c7a3@kernel.dk>
+ <20211116192148.vjdlng7pesbgjs6b@shells.gnugeneration.com>
+In-Reply-To: <20211116192148.vjdlng7pesbgjs6b@shells.gnugeneration.com>
+X-Migadu-Flow: FLOW_OUT
+X-Migadu-Auth-User: sir@cmpwn.com
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Nov 16, 2021 at 11:55:41AM -0700, Jens Axboe wrote:
-> On 11/16/21 11:36 AM, Matthew Wilcox wrote:
-> > On Mon, Nov 15, 2021 at 08:35:30PM -0800, Andrew Morton wrote:
-> >> I'd also be interested in seeing feedback from the MM developers.
-> > [...]
-> >> Subject: Increase default MLOCK_LIMIT to 8 MiB
-> > 
-> > On the one hand, processes can already allocate at least this much
-> > memory that is non-swappable, just by doing things like opening a lot of
-> > files (allocating struct file & fdtable), using a lot of address space
-> > (allocating page tables), so I don't have a problem with it per se.
-> > 
-> > On the other hand, 64kB is available on anything larger than an IBM XT.
-> > Linux will still boot on machines with 4MB of RAM (eg routers).  For
-> > someone with a machine with only, say, 32MB of memory, this allows a
-> > process to make a quarter of the memory unswappable, and maybe that's
-> > not a good idea.  So perhaps this should scale over a certain range?
-> > 
-> > Is 8MB a generally useful amount of memory for an iouring user anyway?
-> > If you're just playing with it, sure, but if you have, oh i don't know,
-> > a database, don't you want to pin the entire cache and allow IO to the
-> > whole thing?
-> 
-> 8MB is plenty for most casual use cases, which is exactly the ones that
-> we want to "just work" without requiring weird system level
-> modifications to increase the memlock limit.
-> 
+On Tue Nov 16, 2021 at 8:21 PM CET, Vito Caputo wrote:
+> Considering a single fullscreen 32bpp 4K-resolution framebuffer is
+> ~32MiB, I'm not convinced this is really correct in nearly 2022.
 
-Considering a single fullscreen 32bpp 4K-resolution framebuffer is
-~32MiB, I'm not convinced this is really correct in nearly 2022.
-
-If we're going to bump the default at the kernel, I'm with Matthew on
-making it autoscale within a sane range, depending on available
-memory.
-
-As an upper bound I'd probably look at the highest anticipated
-consumer resolutions, and handle a couple fullscreen 32bpp instances
-being pinned.
-
-Regards,
-Vito Caputo
+Can you name a practical use-case where you'll be doing I/O with
+uncompressed 4K framebuffers? The kind of I/O which is supported by
+io_uring, to be specific, not, say, handing it off to libdrm.

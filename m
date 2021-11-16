@@ -2,220 +2,298 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D2A2452A2B
-	for <lists+io-uring@lfdr.de>; Tue, 16 Nov 2021 06:59:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 91588452A30
+	for <lists+io-uring@lfdr.de>; Tue, 16 Nov 2021 06:59:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240362AbhKPGBu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 16 Nov 2021 01:01:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35388 "EHLO
+        id S240161AbhKPGBw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 16 Nov 2021 01:01:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35350 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240161AbhKPGBm (ORCPT
+        with ESMTP id S240118AbhKPGBm (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Tue, 16 Nov 2021 01:01:42 -0500
-Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64953C061231;
-        Mon, 15 Nov 2021 21:42:46 -0800 (PST)
-Received: by mail-pl1-x642.google.com with SMTP id m24so6464471pls.10;
-        Mon, 15 Nov 2021 21:42:46 -0800 (PST)
+Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30BBEC0611FE;
+        Mon, 15 Nov 2021 21:42:49 -0800 (PST)
+Received: by mail-pl1-x644.google.com with SMTP id y7so16552769plp.0;
+        Mon, 15 Nov 2021 21:42:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=u0lClWPrvD/K1h3LgglE1rPein98w8QPLX7xeqet6rg=;
-        b=nIqUjdyXfJIJlTHhj+Wzyv5kOeWFHiXSJZu1cjHSdZG33TPnsO5MB5aE1C4JRgbtaA
-         mmhKCAE2v4vfeZS8dZyaB3lwRc023VndgcC/ExPox3+4v3mjg8dHhbARHl1NYWFYfOY3
-         JkBfc1Yk/ZgIMZocQUQnP+XsrCr3KO1PZKwp1j6PrDgRO2dDh3zhcwJoTZwI5uNBK/MH
-         xgxszz7O26rszx8vfFXErmfnomFI0sDoPR8U+EEv43b+mccAYfqTuEqPJknnqKqUotO3
-         yPdZqUlX1lOc0cf5SPZjgTYVd0TWGOHfMYtu4YCIJG56ntaOU6JFOt44q69q7Y3kAB7I
-         73qg==
+        bh=9m5mY4Ir11w/zrxUgoXRmOQA6YWYJV+7fBqTFmvYDJ8=;
+        b=Gk52qAmukeILt+Z85X6dzczGbu79c1p3NieBJNOO34A91qDODEMW0Mr/y3WPMl2Uw7
+         kS2uCDzj8GXhqDSALm9w523gGn0kaVUhc6YgyMKZSgeYA+4caUHA4F6Wjv4eYw9PyYYs
+         E3qEahuq5GmUTSBFLvygBRFvZxujKgsDlAsu7W00AFIcayKI6BFRvECIbY9MedCUJlrX
+         NpDcPblOJK3KghUyz4OepUVvaKAmu26DgUJ45ZX+/huW4tebQETXLzPIBhBgqSs/+CPF
+         G3j9lMGevalo8uIdhwu2/tCM+My+bpKIZhr/Ny9x0HVWIU3dPYRYntw41pkke3OHFQvT
+         Txxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=u0lClWPrvD/K1h3LgglE1rPein98w8QPLX7xeqet6rg=;
-        b=A5MSi2YKDzd8AjitE2dJKq+G1l2y3zeFE2p8rzjrDs6DmktTjl9UikjKzZp/5EGNO7
-         o5gQYLL6Aq4SxcI6DH7PbH5EhvHnWqLb8HmoXbP6lPBbbDWbkUjZ65rJsZo2Z7u26Ym5
-         Nn67jenQ1ReJ5gy4rwgiuFjfAXgPiKyT2+a1gUHa3hw8sgC303hgn/ITLqVKX6rmL1iT
-         h5cpmq2FBS64GOzGGB68NNEU/rEcJWTuTiYSuibKUvq4495JaTUdeliV5PO0sZF6HS33
-         bBv1A3OC3PBlb+lIPmhS6Xzc1zz/276b9pUQMxb6cxCQdZgT2AYF3uEhfC1c4bIZBCyB
-         1gkQ==
-X-Gm-Message-State: AOAM530DMoPu42PQVM7VC0HU2xXhRnk0sGJshVqjLz4xynjFSBkqoFKD
-        405zlVmGP60ANXx8Nq9EnbDIjn7FmVw=
-X-Google-Smtp-Source: ABdhPJxBGz/SRjgi7l0L6Q8eXVANhWP0NXj0Z57F/L2e+Rs3ReTGP+o5KTksilGOD6ZaEh1ojs4kUg==
-X-Received: by 2002:a17:90a:4b47:: with SMTP id o7mr35592429pjl.92.1637041365620;
-        Mon, 15 Nov 2021 21:42:45 -0800 (PST)
+        bh=9m5mY4Ir11w/zrxUgoXRmOQA6YWYJV+7fBqTFmvYDJ8=;
+        b=y3xX2EOqRGDp5D//DXX1GShhMhzD+tQOtztVAcNdBSVpXk3akTTBQzwhJsdvr7Z2Jv
+         tuMqaVpjc/agqiNO6qOufKDVb9ZlDiYwGgItJfGX52vJOMoeMjCBxJKa8mW68zGCbKut
+         6sFLtIOI5mmAaXoXLSv70TXC5yamOT0UQrWLIUhlMJFJLcgXGqv1UlH9S9LlNrPjtniO
+         WN233n8Ok5141fGzq4fkZQCA29XMWUEa9ayqQXI3hrHUk6xZT8F2VMPSXBjSTSBCzsuX
+         BEc0IIegoDPXNAKlnkvei4DBhpKR69HGD3NIECGr5X9TfrJDau6tNCKDOxQ26GXwdITY
+         cv6w==
+X-Gm-Message-State: AOAM533Ao1EvB+AqBoF0pdLskjyVON5WI+IgJgg2G2DdhkBaLOPo1mhf
+        O1MGSz7QQLhcmc+uxp8PvcDKExIeDl8=
+X-Google-Smtp-Source: ABdhPJyAHF2SFmea7g28GZKoITtfRE8lZMMxjXe5h83cj6X7/sl/AnJIQaH7JdjBxqwNJ1Zzgx70Qw==
+X-Received: by 2002:a17:90a:5917:: with SMTP id k23mr72424906pji.111.1637041368569;
+        Mon, 15 Nov 2021 21:42:48 -0800 (PST)
 Received: from localhost ([2405:201:6014:d064:3d4e:6265:800c:dc84])
-        by smtp.gmail.com with ESMTPSA id ne22sm1002573pjb.18.2021.11.15.21.42.45
+        by smtp.gmail.com with ESMTPSA id l28sm14027251pgu.45.2021.11.15.21.42.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Nov 2021 21:42:45 -0800 (PST)
+        Mon, 15 Nov 2021 21:42:48 -0800 (PST)
 From:   Kumar Kartikeya Dwivedi <memxor@gmail.com>
 To:     bpf@vger.kernel.org
-Cc:     Alexei Starovoitov <ast@kernel.org>,
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
         Daniel Borkmann <daniel@iogearbox.net>,
         Andrii Nakryiko <andrii@kernel.org>,
         Pavel Emelyanov <ovzxemul@gmail.com>,
         Alexander Mihalicyn <alexander@mihalicyn.com>,
         Andrei Vagin <avagin@gmail.com>, criu@openvz.org,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH bpf-next v1 2/8] bpf: Add bpf_page_to_pfn helper
-Date:   Tue, 16 Nov 2021 11:12:31 +0530
-Message-Id: <20211116054237.100814-3-memxor@gmail.com>
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH bpf-next v1 3/8] io_uring: Implement eBPF iterator for registered files
+Date:   Tue, 16 Nov 2021 11:12:32 +0530
+Message-Id: <20211116054237.100814-4-memxor@gmail.com>
 X-Mailer: git-send-email 2.33.1
 In-Reply-To: <20211116054237.100814-1-memxor@gmail.com>
 References: <20211116054237.100814-1-memxor@gmail.com>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5296; h=from:subject; bh=vnwFxGdaJpBG++VBChgGlEBqIAnV9UjRswVX4pSbVSY=; b=owEBbQKS/ZANAwAIAUzgyIZIvxHKAcsmYgBhk0S6qXxy7qrRuQKRRKAIPrBzMZcEaYxS3VShsUn5 OQUSrtCJAjMEAAEIAB0WIQRLvip+Buz51YI8YRFM4MiGSL8RygUCYZNEugAKCRBM4MiGSL8RyhmCEA CscqOFYalotS2DTRoBPvy+r8xLyKJ9AzMEnwRUfcK8OrSzIJn1n8mjRyGwBLnkShbC94pmq54fcxXx 0WJDgl0PUrIhxw2FIDbSOTI+RciU1hO9DSY6cH0dCa5JF6WpDBim2rDb+4UUs2tR9f0TOGKTUvummc DBBLKcgdrMbBh4fedbPK5UgB8elzM+BNFyvOgrkOfCBiiUjI312Y0qrM8TxK9XJjrsGQp90KTPwMP8 C2eg2HRa0yhmTwpCXqJWAYTz2yAPWyM/EYhV1nZfTqFM0zcc/CIqCjwJtV0d7Ccj1UzxIGa3lq9HoP q0X2aQPvQOO29lW/t+yf0sRsNE+VKqGkUAcAQAtdfQ3oL2+IUXmYT3LfArA4zrv30TpRX+M0sJXCOi v3L2MWELIX6XB00e+waSAi9dN1WU02dCILGZBpkQJm3Q70XrZRHSmT5DlXEc6ZaV5lcpySztIE9A7G mgc1FVeMk+mEVmTSRgiUtDJ5RhR8tEeN9YCwFqA8VYCUq0wA4Uort0i/mWa2KZmQOt7UJwjB8LsgH8 pFioVZsNj3J8uDiFf8LtR5F4nISevNB3Jn3/fR3DvLgmOQrnbOOFqNib6tlrNuuhUN1h5Mtig38IiB MgQLSNT6evdzBFcBY4rEsGQ+UcpQ2ZMocvXot1b0sszN4WPKQsr3NUPzryIA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7590; h=from:subject; bh=4UYxWbGiq/sKKUnwuIEWRtr0AZqHxKqyXPv77YH/sHg=; b=owEBbQKS/ZANAwAIAUzgyIZIvxHKAcsmYgBhk0S6lWQYf/gzn1knBEAdQjsAn3cbdKR+Up62zDhc W4k4mUuJAjMEAAEIAB0WIQRLvip+Buz51YI8YRFM4MiGSL8RygUCYZNEugAKCRBM4MiGSL8RytrpEA Cauy4Jmn2ObLRVsjUaSh0Iq1nJQpFOz43qV8XL0spPojOttz/VC0LwkE8nOlBAIbWpTTZfODq22tM7 /vVBSSsAVh69WB/gKECy94TLOzW9iOdPhc9PWDar7tgcDHRc1rdRBgADkh9c/6Ljf5lhfEX9KskJIH 7eQbFOkQHHtZ1Drv/YIXtLxqBH24xU0xvzjPrd3rlwkOr18V7coPfSyebSpFPs2EMpPjR/LsixWRJU IzS1IHF1dgxIYqXlB6qdvgSIndO84D84PYCCMWrgG3mKTUEAHDwbEWUmjvv2LjwNsxa1wPYo4g2I0+ /vS6+noI1aCcyOUyD06pfvoVEFSa5isUb5tG4+cxSoqkj4nv03+MtijLpe6DOJ8TGxxzdg//mMT78A SfDANOv6SH8yiivjKpntGEES3xV+Lu9ts30+yFCPpdRZnc4M1uE1y61tX/SMsviXo8opa4Of/V/A6c x/Xpo9US36ogzL9+KdHF11sQJM9MusJq6fVylPHd9V9xsfLsxvAcgjEinwusm8rpyOqAyL8EIXBJEr SpSApGu/nmWQZdXzyXGF+VMrKp6roh4hu6+K4APcLaeKG2ylNZB7a8q8DjBnZc3kyhMyP3FiE4ZC// YTBOvEztGUwYWmnodZpius+WwV7JCJqV6Xs4cFecSwHI71sk+VTHxJD+0+rQ==
 X-Developer-Key: i=memxor@gmail.com; a=openpgp; fpr=4BBE2A7E06ECF9D5823C61114CE0C88648BF11CA
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-In CRIU, we need to be able to determine whether the page pinned by
-io_uring is still present in the same range in the process VMA.
-/proc/<pid>/pagemap gives us the PFN, hence using this helper we can
-establish this mapping easily from the iterator side.
+This change adds eBPF iterator for buffers registered in io_uring ctx.
+It gives access to the ctx, the index of the registered buffer, and a
+pointer to the struct file itself. This allows the iterator to save
+info related to the file added to an io_uring instance, that isn't easy
+to export using the fdinfo interface (like being able to match
+registered files to a task's file set). Getting access to underlying
+struct file allows deduplication and efficient pairing with task file
+set (obtained using task_file iterator).
 
-It is a simple wrapper over the in-kernel page_to_pfn helper, and
-ensures the passed in pointer is a struct page PTR_TO_BTF_ID. This is
-obtained from the bvec of io_uring_ubuf for the CRIU usecase.
+The primary usecase this is enabling is checkpoint/restore support.
 
+Note that we need to use mutex_trylock when the file is read from, in
+seq_start functions, as the order of lock taken is opposite of what it
+would be when io_uring operation reads the same file.  We take
+seq_file->lock, then ctx->uring_lock, while io_uring would first take
+ctx->uring_lock and then seq_file->lock for the same ctx.
+
+This can lead to a deadlock scenario described below:
+
+      CPU 0                             CPU 1
+
+      vfs_read
+      mutex_lock(&seq_file->lock)       io_read
+					mutex_lock(&ctx->uring_lock)
+      mutex_lock(&ctx->uring_lock) # switched to mutex_trylock
+					mutex_lock(&seq_file->lock)
+
+The trylock also protects the case where io_uring tries to read from
+iterator attached to itself (same ctx), where the order of locks would
+be:
+ io_uring_enter
+  mutex_lock(&ctx->uring_lock) <-----------.
+  io_read                                   \
+   seq_read                                  \
+    mutex_lock(&seq_file->lock)              /
+    mutex_lock(&ctx->uring_lock) # deadlock-`
+
+In both these cases (recursive read and contended uring_lock), -EDEADLK
+is returned to userspace.
+
+With the advent of descriptorless files supported by io_uring, this
+iterator provides the required visibility and introspection of io_uring
+instance for the purposes of dumping and restoring it.
+
+In the future, this iterator will be extended to support direct
+inspection of a lot of file state (currently descriptorless files
+are obtained using openat2 and socket) to dump file state for these
+hidden files. Later, we can explore filling in the gaps for dumping
+file state for more file types (those not hidden in io_uring ctx).
+All this is out of scope for the current series however, but builds
+upon this iterator.
+
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Pavel Begunkov <asml.silence@gmail.com>
+Cc: io-uring@vger.kernel.org
 Signed-off-by: Kumar Kartikeya Dwivedi <memxor@gmail.com>
 ---
- fs/io_uring.c                  | 17 +++++++++++++++++
- include/linux/bpf.h            |  1 +
- include/uapi/linux/bpf.h       |  9 +++++++++
- kernel/trace/bpf_trace.c       |  2 ++
- scripts/bpf_doc.py             |  2 ++
- tools/include/uapi/linux/bpf.h |  9 +++++++++
- 6 files changed, 40 insertions(+)
+ fs/io_uring.c | 140 +++++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 139 insertions(+), 1 deletion(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 46a110989155..9e9df6767e29 100644
+index 9e9df6767e29..7ac479c95d4e 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -11295,6 +11295,23 @@ static struct bpf_iter_reg io_uring_buf_reg_info = {
- 	.seq_info	   = &bpf_io_uring_buf_seq_info,
+@@ -11132,6 +11132,7 @@ __initcall(io_uring_init);
+ BTF_ID_LIST(btf_io_uring_ids)
+ BTF_ID(struct, io_ring_ctx)
+ BTF_ID(struct, io_mapped_ubuf)
++BTF_ID(struct, file)
+ 
+ struct bpf_io_uring_seq_info {
+ 	struct io_ring_ctx *ctx;
+@@ -11312,11 +11313,148 @@ const struct bpf_func_proto bpf_page_to_pfn_proto = {
+ 	.arg1_btf_id	= &btf_page_to_pfn_ids[0],
  };
  
-+BPF_CALL_1(bpf_page_to_pfn, struct page *, page)
++/* io_uring iterator for registered files */
++
++struct bpf_iter__io_uring_file {
++	__bpf_md_ptr(struct bpf_iter_meta *, meta);
++	__bpf_md_ptr(struct io_ring_ctx *, ctx);
++	__bpf_md_ptr(struct file *, file);
++	unsigned long index;
++};
++
++static void *__bpf_io_uring_file_seq_get_next(struct bpf_io_uring_seq_info *info)
 +{
-+	/* PTR_TO_BTF_ID can be NULL */
-+	if (!page)
-+		return U64_MAX;
-+	return page_to_pfn(page);
++	struct file *file = NULL;
++
++	if (info->index < info->ctx->nr_user_files) {
++		/* file set can be sparse */
++		file = io_file_from_index(info->ctx, info->index++);
++		/* use info as a distinct pointer to distinguish between empty
++		 * slot and valid file, since we cannot return NULL for this
++		 * case if we want iter prog to still be invoked with file ==
++		 * NULL.
++		 */
++		if (!file)
++			return info;
++	}
++
++	return file;
 +}
 +
-+BTF_ID_LIST_SINGLE(btf_page_to_pfn_ids, struct, page)
++static void *bpf_io_uring_file_seq_start(struct seq_file *seq, loff_t *pos)
++{
++	struct bpf_io_uring_seq_info *info = seq->private;
++	struct file *file;
 +
-+const struct bpf_func_proto bpf_page_to_pfn_proto = {
-+	.func		= bpf_page_to_pfn,
-+	.ret_type	= RET_INTEGER,
-+	.arg1_type	= ARG_PTR_TO_BTF_ID,
-+	.arg1_btf_id	= &btf_page_to_pfn_ids[0],
++	/* Indicate to userspace that the uring lock is contended */
++	if (!mutex_trylock(&info->ctx->uring_lock))
++		return ERR_PTR(-EDEADLK);
++
++	file = __bpf_io_uring_file_seq_get_next(info);
++	if (!file)
++		return NULL;
++
++	if (*pos == 0)
++		++*pos;
++	return file;
++}
++
++static void *bpf_io_uring_file_seq_next(struct seq_file *seq, void *v, loff_t *pos)
++{
++	struct bpf_io_uring_seq_info *info = seq->private;
++
++	++*pos;
++	return __bpf_io_uring_file_seq_get_next(info);
++}
++
++DEFINE_BPF_ITER_FUNC(io_uring_file, struct bpf_iter_meta *meta,
++		     struct io_ring_ctx *ctx, struct file *file,
++		     unsigned long index)
++
++static int __bpf_io_uring_file_seq_show(struct seq_file *seq, void *v, bool in_stop)
++{
++	struct bpf_io_uring_seq_info *info = seq->private;
++	struct bpf_iter__io_uring_file ctx;
++	struct bpf_iter_meta meta;
++	struct bpf_prog *prog;
++
++	meta.seq = seq;
++	prog = bpf_iter_get_info(&meta, in_stop);
++	if (!prog)
++		return 0;
++
++	ctx.meta = &meta;
++	ctx.ctx = info->ctx;
++	/* when we encounter empty slot, v will point to info */
++	ctx.file = v == info ? NULL : v;
++	ctx.index = info->index ? info->index - !in_stop : 0;
++
++	return bpf_iter_run_prog(prog, &ctx);
++}
++
++static int bpf_io_uring_file_seq_show(struct seq_file *seq, void *v)
++{
++	return __bpf_io_uring_file_seq_show(seq, v, false);
++}
++
++static void bpf_io_uring_file_seq_stop(struct seq_file *seq, void *v)
++{
++	struct bpf_io_uring_seq_info *info = seq->private;
++
++	/* If IS_ERR(v) is true, then ctx->uring_lock wasn't taken */
++	if (IS_ERR(v))
++		return;
++	if (!v)
++		__bpf_io_uring_file_seq_show(seq, v, true);
++	else if (info->index) /* restart from index */
++		info->index--;
++	mutex_unlock(&info->ctx->uring_lock);
++}
++
++static const struct seq_operations bpf_io_uring_file_seq_ops = {
++	.start = bpf_io_uring_file_seq_start,
++	.next  = bpf_io_uring_file_seq_next,
++	.stop  = bpf_io_uring_file_seq_stop,
++	.show  = bpf_io_uring_file_seq_show,
++};
++
++static const struct bpf_iter_seq_info bpf_io_uring_file_seq_info = {
++	.seq_ops          = &bpf_io_uring_file_seq_ops,
++	.init_seq_private = bpf_io_uring_init_seq,
++	.fini_seq_private = NULL,
++	.seq_priv_size    = sizeof(struct bpf_io_uring_seq_info),
++};
++
++static struct bpf_iter_reg io_uring_file_reg_info = {
++	.target            = "io_uring_file",
++	.feature           = BPF_ITER_RESCHED,
++	.attach_target     = bpf_io_uring_iter_attach,
++	.detach_target     = bpf_io_uring_iter_detach,
++	.ctx_arg_info_size = 2,
++	.ctx_arg_info = {
++		{ offsetof(struct bpf_iter__io_uring_file, ctx),
++		  PTR_TO_BTF_ID },
++		{ offsetof(struct bpf_iter__io_uring_file, file),
++		  PTR_TO_BTF_ID_OR_NULL },
++	},
++	.seq_info	   = &bpf_io_uring_file_seq_info,
 +};
 +
  static int __init io_uring_iter_init(void)
  {
++	int ret;
++
  	io_uring_buf_reg_info.ctx_arg_info[0].btf_id = btf_io_uring_ids[0];
-diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-index ddb9d4520a3f..fe7b499da781 100644
---- a/include/linux/bpf.h
-+++ b/include/linux/bpf.h
-@@ -2166,6 +2166,7 @@ extern const struct bpf_func_proto bpf_sk_setsockopt_proto;
- extern const struct bpf_func_proto bpf_sk_getsockopt_proto;
- extern const struct bpf_func_proto bpf_kallsyms_lookup_name_proto;
- extern const struct bpf_func_proto bpf_find_vma_proto;
-+extern const struct bpf_func_proto bpf_page_to_pfn_proto;
+ 	io_uring_buf_reg_info.ctx_arg_info[1].btf_id = btf_io_uring_ids[1];
+-	return bpf_iter_reg_target(&io_uring_buf_reg_info);
++	io_uring_file_reg_info.ctx_arg_info[0].btf_id = btf_io_uring_ids[0];
++	io_uring_file_reg_info.ctx_arg_info[1].btf_id = btf_io_uring_ids[2];
++	ret = bpf_iter_reg_target(&io_uring_buf_reg_info);
++	if (ret)
++		return ret;
++	ret = bpf_iter_reg_target(&io_uring_file_reg_info);
++	if (ret)
++		bpf_iter_unreg_target(&io_uring_buf_reg_info);
++	return ret;
+ }
+ late_initcall(io_uring_iter_init);
  
- const struct bpf_func_proto *tracing_prog_func_proto(
-   enum bpf_func_id func_id, const struct bpf_prog *prog);
-diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
-index 3323defa99a1..b70e9da3d722 100644
---- a/include/uapi/linux/bpf.h
-+++ b/include/uapi/linux/bpf.h
-@@ -4960,6 +4960,14 @@ union bpf_attr {
-  *		**-ENOENT** if *task->mm* is NULL, or no vma contains *addr*.
-  *		**-EBUSY** if failed to try lock mmap_lock.
-  *		**-EINVAL** for invalid **flags**.
-+ *
-+ * long bpf_page_to_pfn(struct page *page)
-+ *	Description
-+ *		Obtain the page frame number (PFN) for the given *struct page*
-+ *		pointer.
-+ *	Return
-+ *		Page Frame Number corresponding to the page pointed to by the
-+ *		*struct page* pointer, or U64_MAX if pointer is NULL.
-  */
- #define __BPF_FUNC_MAPPER(FN)		\
- 	FN(unspec),			\
-@@ -5143,6 +5151,7 @@ union bpf_attr {
- 	FN(skc_to_unix_sock),		\
- 	FN(kallsyms_lookup_name),	\
- 	FN(find_vma),			\
-+	FN(page_to_pfn),		\
- 	/* */
- 
- /* integer value in 'imm' field of BPF_CALL instruction selects which helper
-diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-index 25ea521fb8f1..f68a8433be1a 100644
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -1212,6 +1212,8 @@ bpf_tracing_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 		return &bpf_find_vma_proto;
- 	case BPF_FUNC_trace_vprintk:
- 		return bpf_get_trace_vprintk_proto();
-+	case BPF_FUNC_page_to_pfn:
-+		return &bpf_page_to_pfn_proto;
- 	default:
- 		return bpf_base_func_proto(func_id);
- 	}
-diff --git a/scripts/bpf_doc.py b/scripts/bpf_doc.py
-index a6403ddf5de7..ae68ca794980 100755
---- a/scripts/bpf_doc.py
-+++ b/scripts/bpf_doc.py
-@@ -549,6 +549,7 @@ class PrinterHelpers(Printer):
-             'struct socket',
-             'struct file',
-             'struct bpf_timer',
-+            'struct page',
-     ]
-     known_types = {
-             '...',
-@@ -598,6 +599,7 @@ class PrinterHelpers(Printer):
-             'struct socket',
-             'struct file',
-             'struct bpf_timer',
-+            'struct page',
-     }
-     mapped_types = {
-             'u8': '__u8',
-diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
-index 3323defa99a1..b70e9da3d722 100644
---- a/tools/include/uapi/linux/bpf.h
-+++ b/tools/include/uapi/linux/bpf.h
-@@ -4960,6 +4960,14 @@ union bpf_attr {
-  *		**-ENOENT** if *task->mm* is NULL, or no vma contains *addr*.
-  *		**-EBUSY** if failed to try lock mmap_lock.
-  *		**-EINVAL** for invalid **flags**.
-+ *
-+ * long bpf_page_to_pfn(struct page *page)
-+ *	Description
-+ *		Obtain the page frame number (PFN) for the given *struct page*
-+ *		pointer.
-+ *	Return
-+ *		Page Frame Number corresponding to the page pointed to by the
-+ *		*struct page* pointer, or U64_MAX if pointer is NULL.
-  */
- #define __BPF_FUNC_MAPPER(FN)		\
- 	FN(unspec),			\
-@@ -5143,6 +5151,7 @@ union bpf_attr {
- 	FN(skc_to_unix_sock),		\
- 	FN(kallsyms_lookup_name),	\
- 	FN(find_vma),			\
-+	FN(page_to_pfn),		\
- 	/* */
- 
- /* integer value in 'imm' field of BPF_CALL instruction selects which helper
 -- 
 2.33.1
 

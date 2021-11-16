@@ -2,228 +2,142 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D365E4509CB
-	for <lists+io-uring@lfdr.de>; Mon, 15 Nov 2021 17:38:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3052045292C
+	for <lists+io-uring@lfdr.de>; Tue, 16 Nov 2021 05:36:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231658AbhKOQlg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 15 Nov 2021 11:41:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57488 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230099AbhKOQlf (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 15 Nov 2021 11:41:35 -0500
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7936C061746
-        for <io-uring@vger.kernel.org>; Mon, 15 Nov 2021 08:38:39 -0800 (PST)
-Received: by mail-pl1-x62e.google.com with SMTP id y7so15048059plp.0
-        for <io-uring@vger.kernel.org>; Mon, 15 Nov 2021 08:38:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=bsLeGFpbN8CpN9RU3ZNnNmz55GEbtlwvn/02SxJ3yO0=;
-        b=Xw/4izBdFkl2ShsOYjlglP1hnKh94ohUtgg8bF97/cI+6H2PhbW9Bc6moSppzqcYOM
-         reTt0VVwL6Kaws24pQ5whqflI23gH66oHW5ic2n1A2nQJUepO47HhLL3ckTL+6VS1L1r
-         zBVl+skRL4UJbf7kld4UJgMTm66Ag4umvhjMGy8CAK560H2nDbr86UtTeD0rFpvJn7z4
-         9J0eTNl6l5rmHznMIo28f95zHS6XZPHOlYRaU7hQL4dMt/77bk+ziJQ7Cc6RCHwZfikM
-         p7kULy+mbvESuHcKSdCY1LMSpupdfPlUAUOsWUFLw5pWq4i/EETv7NwoipwqGtVGIOJ9
-         ZKYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=bsLeGFpbN8CpN9RU3ZNnNmz55GEbtlwvn/02SxJ3yO0=;
-        b=glpsiDOddka6VJYhv6SV0xjpe07bfBquOhffwqmseiVGvaHiBbkN8RuZoomO/OSR3G
-         1d48HmaquQijg5IxSrhg1SgEubASCBpO2ZJ4d+YCWixV7sA2790qIGvauMMvCXBulRVL
-         EO27J5kFgzxCyKMrynZvU9HIYNfkU5do8JwKV55sgUuyzLnoPOgBLaisWhWIeh6DaFdz
-         OXnfiP5bBThUjykxRGOa4jUznp112ILFGyYWu5OpSSWsMIt6pRNOdc44g39YZqMvMvju
-         ldsTk/8mtVoSJ0t0EH9QmS3Ou8rrF0aFhMmVXQCv+dqhfXHb66/jiQCh1twzYxCsySW6
-         6SoA==
-X-Gm-Message-State: AOAM531y3LcFPki/9KTyYcR9bKa5KeEYDKjxJVrov7INHM7NJY+PTfjN
-        AFvH2UIOIAgfxq2LkhbkvwYPig==
-X-Google-Smtp-Source: ABdhPJzBf7wcoCKV+XZ+8nE3LFOuitGqXpr5rZikvxP2qM33QNCA8eVQDO2cJXJ08GONxk+3/q9Chg==
-X-Received: by 2002:a17:90b:3a89:: with SMTP id om9mr48220230pjb.99.1636994319323;
-        Mon, 15 Nov 2021 08:38:39 -0800 (PST)
-Received: from [192.168.254.17] ([50.39.160.154])
-        by smtp.gmail.com with ESMTPSA id b9sm5985006pfm.127.2021.11.15.08.38.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Nov 2021 08:38:38 -0800 (PST)
-Message-ID: <dd53f11a-ae6f-79af-2ea2-8091d1c4f15e@linaro.org>
-Date:   Mon, 15 Nov 2021 08:38:38 -0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.0
-Subject: Re: [PATCH] io_uring: prevent io_put_identity() from freeing a static
- identity
-Content-Language: en-US
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org,
-        syzbot+6055980d041c8ac23307@syzkaller.appspotmail.com
-References: <20211104012120.729261-1-tadeusz.struk@linaro.org>
-From:   Tadeusz Struk <tadeusz.struk@linaro.org>
-In-Reply-To: <20211104012120.729261-1-tadeusz.struk@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        id S239933AbhKPEix (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 15 Nov 2021 23:38:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56534 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S239023AbhKPEi3 (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Mon, 15 Nov 2021 23:38:29 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3EFEC61C12;
+        Tue, 16 Nov 2021 04:35:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1637037332;
+        bh=wq2Hk1CCwWeZtVWFL6tXwVQVKRV2RGmHT3DEnrbzvd4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=lIppLQ/19jJhPK6DKRdz0j/o4l4/w3roGokUnL+pR0KbfIovwlVJ6/exh0z0sYpfX
+         3bPcBXlAuhZqSAu39Q4pjmqlpFuha5tEHZopYmc20HbToOipEVpmQ+4X5IXMnD5jht
+         Tp9w+X1fadqmS238FVm7noO/9YEtZ8t0+PhBztQ4=
+Date:   Mon, 15 Nov 2021 20:35:30 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>
+Cc:     Drew DeVault <sir@cmpwn.com>, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org,
+        io_uring Mailing List <io-uring@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>, linux-mm@kvack.org
+Subject: Re: [PATCH] Increase default MLOCK_LIMIT to 8 MiB
+Message-Id: <20211115203530.62ff33fdae14927b48ef6e5f@linux-foundation.org>
+In-Reply-To: <593aea3b-e4a4-65ce-0eda-cb3885ff81cd@gnuweeb.org>
+References: <20211028080813.15966-1-sir@cmpwn.com>
+        <CAFBCWQ+=2T4U7iNQz_vsBsGVQ72s+QiECndy_3AMFV98bMOLow@mail.gmail.com>
+        <CFII8LNSW5XH.3OTIVFYX8P65Y@taiga>
+        <593aea3b-e4a4-65ce-0eda-cb3885ff81cd@gnuweeb.org>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 11/3/21 18:21, Tadeusz Struk wrote:
-> Note: this applies to 5.10 stable only. It doesn't trigger on anything
-> above 5.10 as the code there has been substantially reworked. This also
-> doesn't apply to any stable kernel below 5.10 afaict.
-> 
-> Syzbot found a bug: KASAN: invalid-free in io_dismantle_req
-> https://syzkaller.appspot.com/bug?id=123d9a852fc88ba573ffcb2dbcf4f9576c3b0559
-> 
-> The test submits bunch of io_uring writes and exits, which then triggers
-> uring_task_cancel() and io_put_identity(), which in some corner cases,
-> tries to free a static identity. This causes a panic as shown in the
-> trace below:
-> 
->   BUG: KASAN: double-free or invalid-free in kfree+0xd5/0x310
->   CPU: 0 PID: 4618 Comm: repro Not tainted 5.10.76-05281-g4944ec82ebb9-dirty #17
->   Call Trace:
->    dump_stack_lvl+0x1b2/0x21b
->    print_address_description+0x8d/0x3b0
->    kasan_report_invalid_free+0x58/0x130
->    ____kasan_slab_free+0x14b/0x170
->    __kasan_slab_free+0x11/0x20
->    slab_free_freelist_hook+0xcc/0x1a0
->    kfree+0xd5/0x310
->    io_dismantle_req+0x9b0/0xd90
->    io_do_iopoll+0x13a4/0x23e0
->    io_iopoll_try_reap_events+0x116/0x290
->    io_uring_cancel_task_requests+0x197d/0x1ee0
->    io_uring_flush+0x170/0x6d0
->    filp_close+0xb0/0x150
->    put_files_struct+0x1d4/0x350
->    exit_files+0x80/0xa0
->    do_exit+0x6d9/0x2390
->    do_group_exit+0x16a/0x2d0
->    get_signal+0x133e/0x1f80
->    arch_do_signal+0x7b/0x610
->    exit_to_user_mode_prepare+0xaa/0xe0
->    syscall_exit_to_user_mode+0x24/0x40
->    do_syscall_64+0x3d/0x70
->    entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> 
->   Allocated by task 4611:
->    ____kasan_kmalloc+0xcd/0x100
->    __kasan_kmalloc+0x9/0x10
->    kmem_cache_alloc_trace+0x208/0x390
->    io_uring_alloc_task_context+0x57/0x550
->    io_uring_add_task_file+0x1f7/0x290
->    io_uring_create+0x2195/0x3490
->    __x64_sys_io_uring_setup+0x1bf/0x280
->    do_syscall_64+0x31/0x70
->    entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> 
->   The buggy address belongs to the object at ffff88810732b500
->    which belongs to the cache kmalloc-192 of size 192
->   The buggy address is located 88 bytes inside of
->    192-byte region [ffff88810732b500, ffff88810732b5c0)
->   Kernel panic - not syncing: panic_on_warn set ...
-> 
-> This issue bisected to this commit:
-> commit 186725a80c4e ("io_uring: fix skipping disabling sqo on exec")
-> 
-> Simple reverting the offending commit doesn't work as it hits some
-> other, related issues like:
-> 
-> /* sqo_dead check is for when this happens after cancellation */
-> WARN_ON_ONCE(ctx->sqo_task == current && !ctx->sqo_dead &&
-> 	     !xa_load(&tctx->xa, (unsigned long)file));
-> 
->   ------------[ cut here ]------------
->   WARNING: CPU: 1 PID: 5622 at fs/io_uring.c:8960 io_uring_flush+0x5bc/0x6d0
->   Modules linked in:
->   CPU: 1 PID: 5622 Comm: repro Not tainted 5.10.76-05281-g4944ec82ebb9-dirty #16
->   Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.14.0-6.fc35 04/01/2014
->   RIP: 0010:io_uring_flush+0x5bc/0x6d0
->   Call Trace:
->   filp_close+0xb0/0x150
->   put_files_struct+0x1d4/0x350
->   reset_files_struct+0x88/0xa0
->   bprm_execve+0x7f2/0x9f0
->   do_execveat_common+0x46f/0x5d0
->   __x64_sys_execve+0x92/0xb0
->   do_syscall_64+0x31/0x70
->   entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> 
-> Changing __io_uring_task_cancel() to call io_disable_sqo_submit() directly,
-> as the comment suggests, only if __io_uring_files_cancel() is not executed
-> seems to fix the issue.
-> 
-> Cc: Jens Axboe <axboe@kernel.dk>
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: <io-uring@vger.kernel.org>
-> Cc: <linux-fsdevel@vger.kernel.org>
-> Cc: <linux-kernel@vger.kernel.org>
-> Cc: <stable@vger.kernel.org>
-> Reported-by: syzbot+6055980d041c8ac23307@syzkaller.appspotmail.com
-> Signed-off-by: Tadeusz Struk <tadeusz.struk@linaro.org>
-> ---
->   fs/io_uring.c | 21 +++++++++++++++++----
->   1 file changed, 17 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 0736487165da..fcf9ffe9b209 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -8882,20 +8882,18 @@ void __io_uring_task_cancel(void)
->   	struct io_uring_task *tctx = current->io_uring;
->   	DEFINE_WAIT(wait);
->   	s64 inflight;
-> +	int canceled = 0;
->   
->   	/* make sure overflow events are dropped */
->   	atomic_inc(&tctx->in_idle);
->   
-> -	/* trigger io_disable_sqo_submit() */
-> -	if (tctx->sqpoll)
-> -		__io_uring_files_cancel(NULL);
-> -
->   	do {
->   		/* read completions before cancelations */
->   		inflight = tctx_inflight(tctx);
->   		if (!inflight)
->   			break;
->   		__io_uring_files_cancel(NULL);
-> +		canceled = 1;
->   
->   		prepare_to_wait(&tctx->wait, &wait, TASK_UNINTERRUPTIBLE);
->   
-> @@ -8909,6 +8907,21 @@ void __io_uring_task_cancel(void)
->   		finish_wait(&tctx->wait, &wait);
->   	} while (1);
->   
-> +	/*
-> +	 * trigger io_disable_sqo_submit()
-> +	 * if not already done by __io_uring_files_cancel()
-> +	 */
-> +	if (tctx->sqpoll && !canceled) {
-> +		struct file *file;
-> +		unsigned long index;
-> +
-> +		xa_for_each(&tctx->xa, index, file) {
-> +			struct io_ring_ctx *ctx = file->private_data;
-> +
-> +			io_disable_sqo_submit(ctx);
-> +		}
-> +	}
-> +
->   	atomic_dec(&tctx->in_idle);
->   
->   	io_uring_remove_task_files(tctx);
-> 
+On Sat, 6 Nov 2021 14:12:45 +0700 Ammar Faizi <ammarfaizi2@gnuweeb.org> wrote:
 
-Hi,
-Any comments on this one? It needs to be ACK'ed by the maintainer before
-it is applied to 5.10 stable.
+> On 11/6/21 2:05 PM, Drew DeVault wrote:
+> > Should I send a v2 or is this email sufficient:
+> > 
+> > Signed-off-by: Drew DeVault <sir@cmpwn.com>
+> 
+> Oops, I missed akpm from the CC list. Added Andrew.
+> 
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Ref: https://lore.kernel.org/io-uring/CFII8LNSW5XH.3OTIVFYX8P65Y@taiga/
 
--- 
-Thanks,
-Tadeusz
+Let's cc linux-mm as well.
+
+
+Unfortunately I didn't know about this until Nov 4, which was formally
+too late for 5.16.  I guess I could try to sneak it past Linus if
+someone were to send me some sufficiently convincing words explaining
+the urgency.
+
+I'd also be interested in seeing feedback from the MM developers.
+
+And a question: rather than messing around with a constant which will
+need to be increased again in a couple of years, can we solve this one
+and for all?  For example, permit root to set the system-wide
+per-process max mlock size and depend upon initscripts to do this
+appropriately.
+
+
+
+
+From: Drew DeVault <sir@cmpwn.com>
+Subject: Increase default MLOCK_LIMIT to 8 MiB
+
+This limit has not been updated since 2008, when it was increased to 64
+KiB at the request of GnuPG.  Until recently, the main use-cases for this
+feature were (1) preventing sensitive memory from being swapped, as in
+GnuPG's use-case; and (2) real-time use-cases.  In the first case, little
+memory is called for, and in the second case, the user is generally in a
+position to increase it if they need more.
+
+The introduction of IOURING_REGISTER_BUFFERS adds a third use-case:
+preparing fixed buffers for high-performance I/O.  This use-case will take
+as much of this memory as it can get, but is still limited to 64 KiB by
+default, which is very little.  This increases the limit to 8 MB, which
+was chosen fairly arbitrarily as a more generous, but still conservative,
+default value.
+
+It is also possible to raise this limit in userspace.  This is easily
+done, for example, in the use-case of a network daemon: systemd, for
+instance, provides for this via LimitMEMLOCK in the service file; OpenRC
+via the rc_ulimit variables.  However, there is no established userspace
+facility for configuring this outside of daemons: end-user applications do
+not presently have access to a convenient means of raising their limits.
+
+The buck, as it were, stops with the kernel.  It's much easier to address
+it here than it is to bring it to hundreds of distributions, and it can
+only realistically be relied upon to be high-enough by end-user software
+if it is more-or-less ubiquitous.  Most distros don't change this
+particular rlimit from the kernel-supplied default value, so a change here
+will easily provide that ubiquity.
+
+Link: https://lkml.kernel.org/r/20211028080813.15966-1-sir@cmpwn.com
+Signed-off-by: Drew DeVault <sir@cmpwn.com>
+Acked-by: Jens Axboe <axboe@kernel.dk>
+Acked-by: Cyril Hrubis <chrubis@suse.cz>
+Cc: Pavel Begunkov <asml.silence@gmail.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+---
+
+ include/uapi/linux/resource.h |   13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
+
+--- a/include/uapi/linux/resource.h~increase-default-mlock_limit-to-8-mib
++++ a/include/uapi/linux/resource.h
+@@ -66,10 +66,17 @@ struct rlimit64 {
+ #define _STK_LIM	(8*1024*1024)
+ 
+ /*
+- * GPG2 wants 64kB of mlocked memory, to make sure pass phrases
+- * and other sensitive information are never written to disk.
++ * Limit the amount of locked memory by some sane default:
++ * root can always increase this limit if needed.
++ *
++ * The main use-cases are (1) preventing sensitive memory
++ * from being swapped; (2) real-time operations; (3) via
++ * IOURING_REGISTER_BUFFERS.
++ *
++ * The first two don't need much. The latter will take as
++ * much as it can get. 8MB is a reasonably sane default.
+  */
+-#define MLOCK_LIMIT	((PAGE_SIZE > 64*1024) ? PAGE_SIZE : 64*1024)
++#define MLOCK_LIMIT	((PAGE_SIZE > 8*1024*1024) ? PAGE_SIZE : 8*1024*1024)
+ 
+ /*
+  * Due to binary compatibility, the actual resource numbers
+_
+

@@ -2,188 +2,170 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A9C63454EE4
-	for <lists+io-uring@lfdr.de>; Wed, 17 Nov 2021 22:03:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D618455067
+	for <lists+io-uring@lfdr.de>; Wed, 17 Nov 2021 23:26:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240256AbhKQVGg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 17 Nov 2021 16:06:36 -0500
-Received: from mail-io1-f72.google.com ([209.85.166.72]:36505 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240209AbhKQVGc (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 17 Nov 2021 16:06:32 -0500
-Received: by mail-io1-f72.google.com with SMTP id w16-20020a5d8a10000000b005e241c13c7bso2282877iod.3
-        for <io-uring@vger.kernel.org>; Wed, 17 Nov 2021 13:03:33 -0800 (PST)
+        id S241217AbhKQW3c (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 17 Nov 2021 17:29:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53336 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S241209AbhKQW31 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 17 Nov 2021 17:29:27 -0500
+Received: from mail-qk1-x736.google.com (mail-qk1-x736.google.com [IPv6:2607:f8b0:4864:20::736])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCB94C061570
+        for <io-uring@vger.kernel.org>; Wed, 17 Nov 2021 14:26:27 -0800 (PST)
+Received: by mail-qk1-x736.google.com with SMTP id p4so4240384qkm.7
+        for <io-uring@vger.kernel.org>; Wed, 17 Nov 2021 14:26:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20210112.gappssmtp.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=fIFSYR5oDtZ1H7mQhwPY7SO4mu/8yyQ4jYLgc+T4ALA=;
+        b=eSOuZnJjuMjK36y5fHVBBRDur2pOngcl3oSYSzJMrOHfXx6JnF3zo/hWBpR5MWuRfX
+         VcLUVzEXV9XWMlXji0pDX4CugICZoX8ncXoqctAGFFO5fyZkXWaE+oa7U1TZ0p3xY4L2
+         1iqQRXllHjS5NhjPpF2vGlFKm/F3YLUCGH0MrC+8XgPR/2asfBfKBMzRtbvZzIRqzAks
+         nyvIlQKljHI8Tvl5rIUOWdfzoaseOW1DGzgUrCiNzbg2yCv1XvsII8zGgBObdWrlXRSR
+         kefZpsRk2f7Kbec1QwfwtdCsCEk1jtOdUGiyyYx1UOu7wCg49/N0trID4GMq74oxrZFM
+         RXhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=OGp6KUtBMIM47aOKsKERcrrE6R12+QeT9a+JtvCK008=;
-        b=M3x504wOyX2OfzEhQPuO83fncZmXUjzfqgpDC8U/ykUsv+gjc1iavl7FfclnYX558Y
-         WfJxIkioDTHxHjRgNYMsUYakTdYWKo89pkq2oDV5lyEW7nE04ipW9U57zZo4Qr67V+C2
-         A/lPnG+TgAa3ZJOVwSBBhosa2x8enntz6fW/YSOj91UwW0wSIL6hpyvVzYTjyx2CvnEO
-         cvuYJ7+c/2fVMGKSAsIcDOTOm8+SWcc8FyzfD8prJv8mJZew723CFZEIZDybqLo9n5wH
-         TAECG6feVZFQxU61wV4Ym5gj7B5bijIh3KPQaad0CzGlAuVxteUGfn4Y5JwRNxB6clnO
-         jsRg==
-X-Gm-Message-State: AOAM533X2KFxZS3BJtdgiurN2BAILbGRXtUPDby5cdmzsH7s4LmDIbOc
-        1EBXYb2Ic5c7zmPADQZ/UW+lJs8vOX9Z7sCNO3L9e7NVgD0T
-X-Google-Smtp-Source: ABdhPJwNdZe6+qo53JlVRrxhqJySuOTEqlqXFcCq44RtHvRPe0HMiRBWpEd8lLF1+jKzRkaP6P0dH7MwcM5Q+eeXEncTstYvikEP
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=fIFSYR5oDtZ1H7mQhwPY7SO4mu/8yyQ4jYLgc+T4ALA=;
+        b=uKwLTdc/N5skJObpAn4/pzI4jQJZB1mYYNosZCNfWJxtcowG6LPB1ruOTN5WjYzY5H
+         dBOTRDveFmOIbLwFGbqBWWUkA7PpFn/4eE1FD8TANetcIuTa3HXBlsFE3SI8AgcenYoM
+         //0vYEISgMcVpU28BhmN7/Bq2Qm5e5YcNdOwoiLbf1wBJ8WKYMp0wU4HaYJfawvF2ITB
+         4WzlqDedLHvcKGJwizG2w0l3Ne266EepRqOHwVuOmbFJrPwSsKnOCABg9pmSR5/arkkQ
+         A030ahIabEI+53+2LoP3kpigAtvlozIDJHizuRt8pcjvk7/avmsMOHIfrvR0avGxoQKV
+         zffA==
+X-Gm-Message-State: AOAM532hj4WiMd3KrOzl08/O69me3b4QJ6+h2X2Fcnzde3cohVg6v0uo
+        5UBiynkYv/fY8Q0gVjTPM/amFA==
+X-Google-Smtp-Source: ABdhPJwrJwV+j4r6Zh2jHJONUfkSMV0uwfBez4JbCEa+YqYEe6r92h01GGVXtnJ5TgtQ8o2dRre9Jw==
+X-Received: by 2002:a05:620a:208c:: with SMTP id e12mr5459888qka.445.1637187987082;
+        Wed, 17 Nov 2021 14:26:27 -0800 (PST)
+Received: from localhost (cpe-98-15-154-102.hvc.res.rr.com. [98.15.154.102])
+        by smtp.gmail.com with ESMTPSA id c24sm687479qkp.43.2021.11.17.14.26.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Nov 2021 14:26:26 -0800 (PST)
+Date:   Wed, 17 Nov 2021 17:26:25 -0500
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
+        Drew DeVault <sir@cmpwn.com>, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org,
+        io_uring Mailing List <io-uring@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>, linux-mm@kvack.org
+Subject: Re: [PATCH] Increase default MLOCK_LIMIT to 8 MiB
+Message-ID: <YZWBkZHdsh5LtWSG@cmpxchg.org>
+References: <20211028080813.15966-1-sir@cmpwn.com>
+ <CAFBCWQ+=2T4U7iNQz_vsBsGVQ72s+QiECndy_3AMFV98bMOLow@mail.gmail.com>
+ <CFII8LNSW5XH.3OTIVFYX8P65Y@taiga>
+ <593aea3b-e4a4-65ce-0eda-cb3885ff81cd@gnuweeb.org>
+ <20211115203530.62ff33fdae14927b48ef6e5f@linux-foundation.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:190f:: with SMTP id w15mr12753585ilu.197.1637183012212;
- Wed, 17 Nov 2021 13:03:32 -0800 (PST)
-Date:   Wed, 17 Nov 2021 13:03:32 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e016c205d1025f4c@google.com>
-Subject: [syzbot] INFO: task hung in io_uring_cancel_generic (2)
-From:   syzbot <syzbot+21e6887c0be14181206d@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211115203530.62ff33fdae14927b48ef6e5f@linux-foundation.org>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
+On Mon, Nov 15, 2021 at 08:35:30PM -0800, Andrew Morton wrote:
+> On Sat, 6 Nov 2021 14:12:45 +0700 Ammar Faizi <ammarfaizi2@gnuweeb.org> wrote:
+> 
+> > On 11/6/21 2:05 PM, Drew DeVault wrote:
+> > > Should I send a v2 or is this email sufficient:
+> > > 
+> > > Signed-off-by: Drew DeVault <sir@cmpwn.com>
+> > 
+> > Oops, I missed akpm from the CC list. Added Andrew.
+> > 
+> > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > Ref: https://lore.kernel.org/io-uring/CFII8LNSW5XH.3OTIVFYX8P65Y@taiga/
+> 
+> Let's cc linux-mm as well.
+> 
+> 
+> Unfortunately I didn't know about this until Nov 4, which was formally
+> too late for 5.16.  I guess I could try to sneak it past Linus if
+> someone were to send me some sufficiently convincing words explaining
+> the urgency.
+> 
+> I'd also be interested in seeing feedback from the MM developers.
+> 
+> And a question: rather than messing around with a constant which will
+> need to be increased again in a couple of years, can we solve this one
+> and for all?  For example, permit root to set the system-wide
+> per-process max mlock size and depend upon initscripts to do this
+> appropriately.
 
-syzbot found the following issue on:
+My take is that as long as the kernel sets some limit per default on
+this at all, it should be one that works for common workloads. Today
+this isn't the case.
 
-HEAD commit:    8ab774587903 Merge tag 'trace-v5.16-5' of git://git.kernel..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12b2344eb00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6d3b8fd1977c1e73
-dashboard link: https://syzkaller.appspot.com/bug?extid=21e6887c0be14181206d
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+We've recently switched our initscripts at FB to set the default to
+0.1% of total RAM. The impetus for this was a subtle but widespread
+issue where we failed to mmap the PERF_COUNT_SW_TASK_CLOCK event
+counter (perf event mmap also uses RLIMIT_MEMLOCK!) and silently fell
+back to the much less efficient clock_gettime() syscall.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Because the failure mode was subtle and annoying, we didn't just want
+to raise the limit, but raise it so that no reasonable application
+would run into it, and only buggy or malicious ones would.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+21e6887c0be14181206d@syzkaller.appspotmail.com
+And IMO, that's really what rlimits should be doing: catching clearly
+bogus requests, not trying to do fine-grained resource control. For
+more reasonable overuse that ends up causing memory pressure, the OOM
+killer will do the right thing since the pages still belong to tasks.
 
-INFO: task syz-executor.1:1474 blocked for more than 143 seconds.
-      Not tainted 5.16.0-rc1-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor.1  state:D stack:26328 pid: 1474 ppid:  6663 flags:0x00024004
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:4972 [inline]
- __schedule+0xa9a/0x4940 kernel/sched/core.c:6253
- schedule+0xd2/0x260 kernel/sched/core.c:6326
- io_uring_cancel_generic+0x53d/0x690 fs/io_uring.c:9846
- io_uring_files_cancel include/linux/io_uring.h:16 [inline]
- do_exit+0x60c/0x2b40 kernel/exit.c:787
- do_group_exit+0x125/0x310 kernel/exit.c:929
- get_signal+0x47d/0x2220 kernel/signal.c:2830
- arch_do_signal_or_restart+0x2a9/0x1c40 arch/x86/kernel/signal.c:868
- handle_signal_work kernel/entry/common.c:148 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:172 [inline]
- exit_to_user_mode_prepare+0x17d/0x290 kernel/entry/common.c:207
- __syscall_exit_to_user_mode_work kernel/entry/common.c:289 [inline]
- syscall_exit_to_user_mode+0x19/0x60 kernel/entry/common.c:300
- do_syscall_64+0x42/0xb0 arch/x86/entry/common.c:86
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-RIP: 0033:0x7fd09b5fbae9
-RSP: 002b:00007fd098b71218 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-RAX: fffffffffffffe00 RBX: 00007fd09b70ef68 RCX: 00007fd09b5fbae9
-RDX: 0000000000000000 RSI: 0000000000000080 RDI: 00007fd09b70ef68
-RBP: 00007fd09b70ef60 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fd09b70ef6c
-R13: 00007fd09bc42b2f R14: 00007fd098b71300 R15: 0000000000022000
- </TASK>
+So 0.1% of the machine seemed like a good default formula for
+that. And it would be a bit more future proof too.
 
-Showing all locks held in the system:
-1 lock held by khungtaskd/27:
- #0: ffffffff8bb83a60 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x53/0x260 kernel/locking/lockdep.c:6458
-1 lock held by in:imklog/6233:
- #0: ffff8880208d7270 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0xe9/0x100 fs/file.c:990
-2 locks held by kworker/u4:7/9581:
+On my 32G desktop machine, that would be 32M. For comparison, the
+default process rlimit on that machine is ~120k, which comes out to
+~2G worth of kernel stack, which also isn't reclaimable without OOM...
 
-=============================================
+> From: Drew DeVault <sir@cmpwn.com>
+> Subject: Increase default MLOCK_LIMIT to 8 MiB
+> 
+> This limit has not been updated since 2008, when it was increased to 64
+> KiB at the request of GnuPG.  Until recently, the main use-cases for this
+> feature were (1) preventing sensitive memory from being swapped, as in
+> GnuPG's use-case; and (2) real-time use-cases.  In the first case, little
+> memory is called for, and in the second case, the user is generally in a
+> position to increase it if they need more.
+> 
+> The introduction of IOURING_REGISTER_BUFFERS adds a third use-case:
+> preparing fixed buffers for high-performance I/O.  This use-case will take
+> as much of this memory as it can get, but is still limited to 64 KiB by
+> default, which is very little.  This increases the limit to 8 MB, which
+> was chosen fairly arbitrarily as a more generous, but still conservative,
+> default value.
+> 
+> It is also possible to raise this limit in userspace.  This is easily
+> done, for example, in the use-case of a network daemon: systemd, for
+> instance, provides for this via LimitMEMLOCK in the service file; OpenRC
+> via the rc_ulimit variables.  However, there is no established userspace
+> facility for configuring this outside of daemons: end-user applications do
+> not presently have access to a convenient means of raising their limits.
+> 
+> The buck, as it were, stops with the kernel.  It's much easier to address
+> it here than it is to bring it to hundreds of distributions, and it can
+> only realistically be relied upon to be high-enough by end-user software
+> if it is more-or-less ubiquitous.  Most distros don't change this
+> particular rlimit from the kernel-supplied default value, so a change here
+> will easily provide that ubiquity.
+> 
+> Link: https://lkml.kernel.org/r/20211028080813.15966-1-sir@cmpwn.com
+> Signed-off-by: Drew DeVault <sir@cmpwn.com>
+> Acked-by: Jens Axboe <axboe@kernel.dk>
+> Acked-by: Cyril Hrubis <chrubis@suse.cz>
+> Cc: Pavel Begunkov <asml.silence@gmail.com>
+> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 
-NMI backtrace for cpu 1
-CPU: 1 PID: 27 Comm: khungtaskd Not tainted 5.16.0-rc1-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:106
- nmi_cpu_backtrace.cold+0x47/0x144 lib/nmi_backtrace.c:105
- nmi_trigger_cpumask_backtrace+0x1ae/0x220 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:146 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:210 [inline]
- watchdog+0xc1d/0xf50 kernel/hung_task.c:295
- kthread+0x405/0x4f0 kernel/kthread.c:327
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295
- </TASK>
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0
-CPU: 0 PID: 2969 Comm: systemd-journal Not tainted 5.16.0-rc1-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:__lock_acquire+0x8fe/0x54a0 kernel/locking/lockdep.c:5000
-Code: 03 38 d0 7c 08 84 d2 0f 85 d7 48 00 00 8b 0d a9 a5 ef 0e 85 c9 0f 84 05 07 00 00 49 8d 85 50 0a 00 00 48 89 c2 48 89 44 24 68 <48> b8 00 00 00 00 00 fc ff df 48 c1 ea 03 80 3c 02 00 0f 85 73 37
-RSP: 0018:ffffc900020bfa38 EFLAGS: 00000047
-RAX: ffff88807ad2c450 RBX: 0000000000000000 RCX: ffffffff815cab4a
-RDX: ffff88807ad2c450 RSI: 0000000000000008 RDI: ffffffff8ff76a00
-RBP: ffff88807ad2c482 R08: 0000000000000000 R09: ffffffff8ff76a07
-R10: fffffbfff1feed40 R11: 0000000000000000 R12: ffff88807ad2c460
-R13: ffff88807ad2ba00 R14: 0000000000000000 R15: 0000000000000002
-FS:  00007f19aca9d8c0(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f19a99a0028 CR3: 000000001cdbc000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- lock_acquire kernel/locking/lockdep.c:5637 [inline]
- lock_acquire+0x1ab/0x510 kernel/locking/lockdep.c:5602
- __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
- _raw_spin_lock_irqsave+0x39/0x50 kernel/locking/spinlock.c:162
- __debug_object_init+0xb1/0xd10 lib/debugobjects.c:569
- debug_object_init lib/debugobjects.c:620 [inline]
- debug_object_activate+0x32c/0x3e0 lib/debugobjects.c:706
- debug_rcu_head_queue kernel/rcu/rcu.h:176 [inline]
- __call_rcu kernel/rcu/tree.c:2969 [inline]
- call_rcu+0x2c/0x740 kernel/rcu/tree.c:3065
- task_work_run+0xdd/0x1a0 kernel/task_work.c:164
- tracehook_notify_resume include/linux/tracehook.h:189 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:175 [inline]
- exit_to_user_mode_prepare+0x27e/0x290 kernel/entry/common.c:207
- __syscall_exit_to_user_mode_work kernel/entry/common.c:289 [inline]
- syscall_exit_to_user_mode+0x19/0x60 kernel/entry/common.c:300
- do_syscall_64+0x42/0xb0 arch/x86/entry/common.c:86
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-RIP: 0033:0x7f19ac02c840
-Code: 73 01 c3 48 8b 0d 68 77 20 00 f7 d8 64 89 01 48 83 c8 ff c3 66 0f 1f 44 00 00 83 3d 89 bb 20 00 00 75 10 b8 02 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 31 c3 48 83 ec 08 e8 1e f6 ff ff 48 89 04 24
-RSP: 002b:00007fffa9120ee8 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
-RAX: fffffffffffffffe RBX: 00007fffa91211f0 RCX: 00007f19ac02c840
-RDX: 00000000000001a0 RSI: 0000000000080042 RDI: 00005590b7443010
-RBP: 000000000000000d R08: 0000000000000000 R09: 00000000ffffffff
-R10: 0000000000000069 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00005590b7436040 R14: 00007fffa91211b0 R15: 00005590b7442e30
- </TASK>
-----------------
-Code disassembly (best guess):
-   0:	03 38                	add    (%rax),%edi
-   2:	d0 7c 08 84          	sarb   -0x7c(%rax,%rcx,1)
-   6:	d2 0f                	rorb   %cl,(%rdi)
-   8:	85 d7                	test   %edx,%edi
-   a:	48 00 00             	rex.W add %al,(%rax)
-   d:	8b 0d a9 a5 ef 0e    	mov    0xeefa5a9(%rip),%ecx        # 0xeefa5bc
-  13:	85 c9                	test   %ecx,%ecx
-  15:	0f 84 05 07 00 00    	je     0x720
-  1b:	49 8d 85 50 0a 00 00 	lea    0xa50(%r13),%rax
-  22:	48 89 c2             	mov    %rax,%rdx
-  25:	48 89 44 24 68       	mov    %rax,0x68(%rsp)
-* 2a:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax <-- trapping instruction
-  31:	fc ff df
-  34:	48 c1 ea 03          	shr    $0x3,%rdx
-  38:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1)
-  3c:	0f                   	.byte 0xf
-  3d:	85 73 37             	test   %esi,0x37(%rbx)
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
 
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+As per above, I think basing it off of RAM size would be better, but
+this increase is overdue given all the new users beyond mlock(), and
+8M is much better than the current value.

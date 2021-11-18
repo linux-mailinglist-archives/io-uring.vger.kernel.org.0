@@ -2,75 +2,87 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D7362455E57
-	for <lists+io-uring@lfdr.de>; Thu, 18 Nov 2021 15:37:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B3764455F30
+	for <lists+io-uring@lfdr.de>; Thu, 18 Nov 2021 16:17:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229740AbhKROkr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 18 Nov 2021 09:40:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45828 "EHLO
+        id S231190AbhKRPUg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 18 Nov 2021 10:20:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229514AbhKROkr (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 18 Nov 2021 09:40:47 -0500
-Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7EE1C061574
-        for <io-uring@vger.kernel.org>; Thu, 18 Nov 2021 06:37:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-        s=42; h=Date:Message-ID:From:Cc:To;
-        bh=uVRi+8RIKjUAy9PkUbqwmBKJahIZjR/5G0FcTcpJkA4=; b=4AcP/pxBLUpOvmvD0BBgvSBiU6
-        47wQQmF5tdrWwAUN2D1lruBSxBO3G8hus7aHokA7zjOOsw3L5FEPqXT2ALxMCEG2yhtqNic9gTX5Z
-        rX12+ocHWPMFL/1xUmumyVWjYOt7DEZebmJEXH1TlzgcWfQu6DNlrvMQIu3/j0xivvH7qkiV148K6
-        AxMGVnkmOEjAIIKYKEBvZ/jBhzKxZJHZSW4Jh8XjerUdiiElzHUe7QtJN1l4clEMinov7lFeJrzu7
-        e/JcxfSWaKn5Z+GKEsPSFtpkYTHbCjh9e1qSCTSb7PIAj30nxX3Owa1Z15hExkokaa65ow83vMAF3
-        Vjx5fa0aD23bQYT8LaeJp2sLwb0M3abcFxZ70nWTHZDGtlan6dU37Xn6nZQ+2uILxB3U2dtq01GgD
-        z55JRVUa+s71Ihd7rFyWBf/fEm+XRUl6CvE4+cc1/xOzjDWACG9QhawVYDGsBftKdA5xGxKRrsqyW
-        rzg6IJSPp+qV3MINcyfcN4uz;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
-        (Exim)
-        id 1mniXn-007l1p-LF; Thu, 18 Nov 2021 14:37:43 +0000
-Subject: Re: [PATCH v2 3/7] debian/rules: fix for newer debhelper
-To:     Eric Wong <e@80x24.org>
-Cc:     io-uring@vger.kernel.org,
-        Liu Changcheng <changcheng.liu@aliyun.com>
-References: <20211118031016.354105-1-e@80x24.org>
- <20211118031016.354105-4-e@80x24.org>
- <4a3f4693-40dc-ec48-e25b-904dd73343b1@samba.org>
- <20211118051150.GA10496@dcvr> <20211118053512.M750014@dcvr>
-From:   Stefan Metzmacher <metze@samba.org>
-Message-ID: <8ccd3b34-bd3a-6c9f-fdb6-64d1b3b43f64@samba.org>
-Date:   Thu, 18 Nov 2021 15:37:43 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        with ESMTP id S229583AbhKRPUf (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 18 Nov 2021 10:20:35 -0500
+Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E1BCC061574
+        for <io-uring@vger.kernel.org>; Thu, 18 Nov 2021 07:17:35 -0800 (PST)
+Received: by mail-pg1-x530.google.com with SMTP id 200so5616232pga.1
+        for <io-uring@vger.kernel.org>; Thu, 18 Nov 2021 07:17:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=XTpOu3C6ypOxJdAqziHwMT+WgzZABxAOQFGer02Qdgg=;
+        b=i4sZAbQG0WCa8HLYGljK5o7ssW0xJh04mVoyo1vhxlbsBba5vfP7Z9nK25GfGLDPi9
+         vAWavWWrRdQAxfsjdyX0zDjhqjHLX/BvRpEB5s96dCDQErk1LPFQdSSosnqcetCBnkNz
+         OeeICJ5FVYWSaJSX9wC7tkhiqJuxNGn07Jn4+7dThi5quhyzxYwWUboJ9dqPfBf6SRFi
+         QKy5yZ3PX9DNTyWWA1rfYnpZq+KItQl6OON2QjsZKkR3b1TYaLNTPWiJcGDSNYKejZUt
+         Gd0/EYK1Xs/s+O4WcRgf0G2fMaBwOq+bTt67kEEfND4cIHmDcFGGtCI40qMmZWzn+akw
+         vg0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=XTpOu3C6ypOxJdAqziHwMT+WgzZABxAOQFGer02Qdgg=;
+        b=33+mreDWCf1I46Z8+0CdpO126RrRt34rEWrxksWds4CDSx+Or9bPGOCOkdm4psjn15
+         crQZ5Nl3ek54o52BXukSxBw9BMDu/Qe+Jbif0lFc1ipSYSmPhrC60kEoGOxs66bU8mI4
+         ljJ89hWIw1nmVHmHBZybDYlOBqbxokWQD00sAVBBQbjEPa2v7Re9yfyCkOq9GKHmf55i
+         MligA/ptuOIcZcqw2mnl2pE+9Dkpbagy8vJaYxCY0xXK4h6svQ8bCKCY8UuMM6tUj0VT
+         aEiUWGy8kTMdON0MX4jnBUI+NwwvBq0wT9EV/hSDEwqpOwhXyGcDCedBTjVUXRQlQRI0
+         H6cw==
+X-Gm-Message-State: AOAM531LzJLQRUVEuhbieAsTz1QmE2CY6W0lRLHMy9LRY1YKjiqfsz7o
+        F/9/vSWDP3Va1hsrlpNQ+fxoEoVm58kCO1+2mcg=
+X-Google-Smtp-Source: ABdhPJwaN48BoYTZdZ6WNLgyc4tcdSQvlgqcNr564vYUNqe9V32dC5yeT2VwjndCtFtEmQvVtpVTBxuTBodTtJzUK7w=
+X-Received: by 2002:a62:88c3:0:b0:4a2:b2d2:7082 with SMTP id
+ l186-20020a6288c3000000b004a2b2d27082mr15858893pfd.48.1637248655053; Thu, 18
+ Nov 2021 07:17:35 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20211118053512.M750014@dcvr>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a05:6a10:6714:0:0:0:0 with HTTP; Thu, 18 Nov 2021 07:17:34
+ -0800 (PST)
+Reply-To: mrsaishag45@gmail.com
+From:   Mrs Aisha Al-Qaddafi <mrsaishagaddafi35@gmail.com>
+Date:   Thu, 18 Nov 2021 07:17:34 -0800
+Message-ID: <CABTz6dMj2L2OHaGNDST7OEt_tfSiqLFVFeMEWzfaQOXbXn8hbw@mail.gmail.com>
+Subject: Dear Friend,
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Eric,
+Dear Friend,
 
-> Sorry, I missed a semi-colon and temporarily lost connectivity
-> to my bullseye machine :x  Tested on both bullseye and buster, now
-> 
-> diff --git a/debian/rules b/debian/rules
-> index cd41bb8..d0b4eea 100755
-> --- a/debian/rules
-> +++ b/debian/rules
-> @@ -84,7 +84,8 @@ binary-arch: install-arch
->  # --add-udeb is needed for < 12.3, and breaks with auto-detection
->  #  on debhelper 13.3.4, at least
->  	if perl -MDebian::Debhelper::Dh_Version -e \
-> -	'exit(eval("v$$Debian::Debhelper::Dh_Version::version") lt v12.3)'; \
-> +	'($$v) = ($$Debian::Debhelper::Dh_Version::version =~ /\A([\d\.]+)/);' \
-> +	-e 'exit(eval("v$$v") lt v12.3)'; \
->  		then dh_makeshlibs -a; else \
->  		dh_makeshlibs -a --add-udeb '$(libudeb)'; fi
->  
+I came across your e-mail contact prior a private search while in need
+of your assistance. My name is Aisha Gaddafi a single
 
-That seems to work, thanks!
+Mother and a Widow with three Children. I am the only biological
+Daughter of late Libyan President (Late Colonel Muammar
 
-metze
+Gaddafi).
 
+I have investment funds worth Twenty Seven Million Five Hundred
+Thousand United State Dollar ($27.500.000.00 ) and i need a
+
+trusted investment Manager/Partner because of my current refugee
+status, however, I am interested in you for investment
+
+project assistance in your country, may be from there, we can build
+business relationship in the nearest future.
+
+I am willing to negotiate investment/business profit sharing ratio
+with you base on the future investment earning profits.
+If you are willing to handle this project on my behalf kindly reply
+urgent to enable me provide you more information about
+
+the investment funds. Your Urgent Reply Will Be appreciated and all
+email should be at the email below;
+
+Best Regards
+Mrs Aisha Al-Qaddafi

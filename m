@@ -2,142 +2,75 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 58C4B455942
-	for <lists+io-uring@lfdr.de>; Thu, 18 Nov 2021 11:41:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D7362455E57
+	for <lists+io-uring@lfdr.de>; Thu, 18 Nov 2021 15:37:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245717AbhKRKnE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 18 Nov 2021 05:43:04 -0500
-Received: from out30-54.freemail.mail.aliyun.com ([115.124.30.54]:43883 "EHLO
-        out30-54.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S245334AbhKRKmw (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 18 Nov 2021 05:42:52 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01424;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UxBVrB2_1637231989;
-Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UxBVrB2_1637231989)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 18 Nov 2021 18:39:50 +0800
-Subject: Re: [PATCH 6/6] io_uring: batch completion in prior_task_list
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <20211029122237.164312-1-haoxu@linux.alibaba.com>
- <20211029122237.164312-7-haoxu@linux.alibaba.com>
- <743d74dd-84c6-8a74-d7fb-780634cd59f7@gmail.com>
-From:   Hao Xu <haoxu@linux.alibaba.com>
-Message-ID: <d6d298b5-fbd5-a58d-8fa1-610517a4ca1d@linux.alibaba.com>
-Date:   Thu, 18 Nov 2021 18:39:49 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.14.0
+        id S229740AbhKROkr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 18 Nov 2021 09:40:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45828 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229514AbhKROkr (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 18 Nov 2021 09:40:47 -0500
+Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7EE1C061574
+        for <io-uring@vger.kernel.org>; Thu, 18 Nov 2021 06:37:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+        s=42; h=Date:Message-ID:From:Cc:To;
+        bh=uVRi+8RIKjUAy9PkUbqwmBKJahIZjR/5G0FcTcpJkA4=; b=4AcP/pxBLUpOvmvD0BBgvSBiU6
+        47wQQmF5tdrWwAUN2D1lruBSxBO3G8hus7aHokA7zjOOsw3L5FEPqXT2ALxMCEG2yhtqNic9gTX5Z
+        rX12+ocHWPMFL/1xUmumyVWjYOt7DEZebmJEXH1TlzgcWfQu6DNlrvMQIu3/j0xivvH7qkiV148K6
+        AxMGVnkmOEjAIIKYKEBvZ/jBhzKxZJHZSW4Jh8XjerUdiiElzHUe7QtJN1l4clEMinov7lFeJrzu7
+        e/JcxfSWaKn5Z+GKEsPSFtpkYTHbCjh9e1qSCTSb7PIAj30nxX3Owa1Z15hExkokaa65ow83vMAF3
+        Vjx5fa0aD23bQYT8LaeJp2sLwb0M3abcFxZ70nWTHZDGtlan6dU37Xn6nZQ+2uILxB3U2dtq01GgD
+        z55JRVUa+s71Ihd7rFyWBf/fEm+XRUl6CvE4+cc1/xOzjDWACG9QhawVYDGsBftKdA5xGxKRrsqyW
+        rzg6IJSPp+qV3MINcyfcN4uz;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
+        (Exim)
+        id 1mniXn-007l1p-LF; Thu, 18 Nov 2021 14:37:43 +0000
+Subject: Re: [PATCH v2 3/7] debian/rules: fix for newer debhelper
+To:     Eric Wong <e@80x24.org>
+Cc:     io-uring@vger.kernel.org,
+        Liu Changcheng <changcheng.liu@aliyun.com>
+References: <20211118031016.354105-1-e@80x24.org>
+ <20211118031016.354105-4-e@80x24.org>
+ <4a3f4693-40dc-ec48-e25b-904dd73343b1@samba.org>
+ <20211118051150.GA10496@dcvr> <20211118053512.M750014@dcvr>
+From:   Stefan Metzmacher <metze@samba.org>
+Message-ID: <8ccd3b34-bd3a-6c9f-fdb6-64d1b3b43f64@samba.org>
+Date:   Thu, 18 Nov 2021 15:37:43 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-In-Reply-To: <743d74dd-84c6-8a74-d7fb-780634cd59f7@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20211118053512.M750014@dcvr>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-在 2021/11/18 上午6:55, Pavel Begunkov 写道:
-> On 10/29/21 13:22, Hao Xu wrote:
->> In previous patches, we have already gathered some tw with
->> io_req_task_complete() as callback in prior_task_list, let's complete
->> them in batch regardless uring lock. For instance, we are doing simple
->> direct read, most task work will be io_req_task_complete(), with this
->> patch we don't need to hold uring lock there for long time.
->>
->> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
->> ---
->>   fs/io_uring.c | 52 ++++++++++++++++++++++++++++++++++++++++++---------
->>   1 file changed, 43 insertions(+), 9 deletions(-)
->>
->> diff --git a/fs/io_uring.c b/fs/io_uring.c
->> index 694195c086f3..565cd0b34f18 100644
->> --- a/fs/io_uring.c
->> +++ b/fs/io_uring.c
->> @@ -2166,6 +2166,37 @@ static inline unsigned int 
->> io_put_rw_kbuf(struct io_kiocb *req)
->>       return io_put_kbuf(req, req->kbuf);
->>   }
->> +static void handle_prior_tw_list(struct io_wq_work_node *node)
->> +{
->> +    struct io_ring_ctx *ctx = NULL;
->> +
->> +    do {
->> +        struct io_wq_work_node *next = node->next;
->> +        struct io_kiocb *req = container_of(node, struct io_kiocb,
->> +                            io_task_work.node);
->> +        if (req->ctx != ctx) {
->> +            if (ctx) {
->> +                io_commit_cqring(ctx);
->> +                spin_unlock(&ctx->completion_lock);
->> +                io_cqring_ev_posted(ctx);
->> +                percpu_ref_put(&ctx->refs);
->> +            }
->> +            ctx = req->ctx;
->> +            percpu_ref_get(&ctx->refs);
->> +            spin_lock(&ctx->completion_lock);
->> +        }
->> +        __io_req_complete_post(req, req->result, io_put_rw_kbuf(req));
->> +        node = next;
->> +    } while (node);
->> +
->> +    if (ctx) {
->> +        io_commit_cqring(ctx);
->> +        spin_unlock(&ctx->completion_lock);
->> +        io_cqring_ev_posted(ctx);
->> +        percpu_ref_put(&ctx->refs);
->> +    }
->> +}
->> +
->>   static void handle_tw_list(struct io_wq_work_node *node, struct 
->> io_ring_ctx **ctx, bool *locked)
->>   {
->>       do {
->> @@ -2193,25 +2224,28 @@ static void tctx_task_work(struct 
->> callback_head *cb)
->>                             task_work);
->>       while (1) {
->> -        struct io_wq_work_node *node;
->> -        struct io_wq_work_list *merged_list;
->> +        struct io_wq_work_node *node1, *node2;
->> -        if (!tctx->prior_task_list.first &&
->> -            !tctx->task_list.first && locked)
->> +        if (!tctx->task_list.first &&
->> +            !tctx->prior_task_list.first && locked)
->>               io_submit_flush_completions(ctx);
->>           spin_lock_irq(&tctx->task_lock);
->> -        merged_list = wq_list_merge(&tctx->prior_task_list, 
->> &tctx->task_list);
->> -        node = merged_list->first;
->> +        node1 = tctx->prior_task_list.first;
->> +        node2 = tctx->task_list.first;
->>           INIT_WQ_LIST(&tctx->task_list);
->>           INIT_WQ_LIST(&tctx->prior_task_list);
->> -        if (!node)
->> +        if (!node2 && !node1)
->>               tctx->task_running = false;
->>           spin_unlock_irq(&tctx->task_lock);
->> -        if (!node)
->> +        if (!node2 && !node1)
->>               break;
->> -        handle_tw_list(node, &ctx, &locked);
->> +        if (node1)
->> +            handle_prior_tw_list(node1);
+Hi Eric,
+
+> Sorry, I missed a semi-colon and temporarily lost connectivity
+> to my bullseye machine :x  Tested on both bullseye and buster, now
 > 
-> IIUC, it moves all IRQ rw completions to this new path even when we already
-> have the lock. One concern is that io_submit_flush_completions() is better
-> optimised. Should probably be visible for one threaded apps and a bunch of
-> other cases.
-> 
-> How about a combined scheme? if we can grab the lock, go through the old
-> path, otherwise handle_prior_tw_list(). The rest looks good, will formally
-> review once we deal with this one.
-Thanks Pavel, I'll look into this patchset soon after
-finishing some tests to my io-wq patchset.
-> 
->> +
->> +        if (node2)
->> +            handle_tw_list(node2, &ctx, &locked);
->>           cond_resched();
->>       }
->>
-> 
+> diff --git a/debian/rules b/debian/rules
+> index cd41bb8..d0b4eea 100755
+> --- a/debian/rules
+> +++ b/debian/rules
+> @@ -84,7 +84,8 @@ binary-arch: install-arch
+>  # --add-udeb is needed for < 12.3, and breaks with auto-detection
+>  #  on debhelper 13.3.4, at least
+>  	if perl -MDebian::Debhelper::Dh_Version -e \
+> -	'exit(eval("v$$Debian::Debhelper::Dh_Version::version") lt v12.3)'; \
+> +	'($$v) = ($$Debian::Debhelper::Dh_Version::version =~ /\A([\d\.]+)/);' \
+> +	-e 'exit(eval("v$$v") lt v12.3)'; \
+>  		then dh_makeshlibs -a; else \
+>  		dh_makeshlibs -a --add-udeb '$(libudeb)'; fi
+>  
+
+That seems to work, thanks!
+
+metze
 

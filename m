@@ -2,69 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D22B04594AF
-	for <lists+io-uring@lfdr.de>; Mon, 22 Nov 2021 19:26:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B64D4595CC
+	for <lists+io-uring@lfdr.de>; Mon, 22 Nov 2021 20:53:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231418AbhKVS33 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 22 Nov 2021 13:29:29 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:60992 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S240287AbhKVS32 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 22 Nov 2021 13:29:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1637605581;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=su8UwITbLNscSJUA/m0/+bJ/+gkmAd2xTdWSLbbVwD0=;
-        b=aizePcr0HEfS3SnIRXrpCh3xpQGiX2WzRtHuvuVe2fCc/tjzl882aqdNA7+M8lc1Xrm4al
-        47Tn/O5TKY6GKqmMmYNOiBvmBYZ7BGeTDP1aOnDWZTOUoPzYJygr1Iy76Xwo/dCa6DuwM3
-        WvfcLn66y9JqR5gUh3GcZzINxyvow7E=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-598-urlZ8nY7OBibvw-4d7_fsQ-1; Mon, 22 Nov 2021 13:26:18 -0500
-X-MC-Unique: urlZ8nY7OBibvw-4d7_fsQ-1
-Received: by mail-wm1-f71.google.com with SMTP id n41-20020a05600c502900b003335ab97f41so285550wmr.3
-        for <io-uring@vger.kernel.org>; Mon, 22 Nov 2021 10:26:18 -0800 (PST)
+        id S240276AbhKVT4l (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 22 Nov 2021 14:56:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35862 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240255AbhKVT4k (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 22 Nov 2021 14:56:40 -0500
+Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0139C061714
+        for <io-uring@vger.kernel.org>; Mon, 22 Nov 2021 11:53:33 -0800 (PST)
+Received: by mail-il1-x12d.google.com with SMTP id i9so13826032ilu.1
+        for <io-uring@vger.kernel.org>; Mon, 22 Nov 2021 11:53:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=aYWRo4OnMSjtGg0tX+Mk+QuvsqmMl0X/zqqUxoDxPuQ=;
+        b=qoIiOgAz8Ked6kslZpQ1ZXKr3ZWose+cMbN8e9bUt2W9tM31pFZfHHWfthnKAumbo/
+         1iP0vPgfFO1apG/C8gEGIo6yTpnJ6JPgdrRwSgIAqStCoogmfCmweTHT/YQQ469eLX23
+         T8Y3uvEi8+aNAfk3DCwP1TzSgZHmy0qJS7/uXfgkgcGEtpsWhdMTngaYY9BXV/61i+a9
+         SW3V5XEHG8wSYxT+88+G0ie4lIJuZ7yx4a4nP+IW2R8k4nXEHpHA/nr+9jVYIUaUwrL5
+         QBGPVGnUUFY7x+w4KS7oAAv5gRkF+1rM3ZekVRyRutgpFYSnbxMpoeLU9UOr6l6yh2zs
+         LMgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent
-         :content-language:to:cc:references:from:organization:subject
-         :in-reply-to:content-transfer-encoding;
-        bh=su8UwITbLNscSJUA/m0/+bJ/+gkmAd2xTdWSLbbVwD0=;
-        b=HnPC5hq/Od65as1nfHNGEHSwSBySd708phjVD7trQEV0KMa19StbsWfSuLIn2rxXMJ
-         kTGopBOSg716KWWHabcXYTdBz06+EpgiU9rGoE27mueibw2joLC04vkBgN1w3zqTokpQ
-         lYKxP+llRUhNiU0YBzJvcHUUd2TnnmjJY7idtFCCblZ8rsdS/v71Q7BjqdTQDPfhLb1Y
-         ygAgfGo5oWmJvcfh+Z/815jAQFnCSEDsWLT8yHmL4p90Jz+aycfXQOqHU6WxWqyMsbQx
-         GSeJEA/9dctXF8aQSKf64LRHupU2m+IyT29RuociC/9H0Jn528TrqTG7KbP6BhIVPdob
-         /PsA==
-X-Gm-Message-State: AOAM531ZQYERFVD/5m+zfrvIBUFFCifds6thsChdULu4lCiOaYVjGGah
-        S/90xlKO+IfKPxBgM3tt1L6vDEGod7y80fSkpfNvzKkg9/ZFHy01i3t3PcyHPkdXjvwiVquYEEk
-        NJkJaL8/5D8+dm5NQuAo=
-X-Received: by 2002:a7b:c207:: with SMTP id x7mr33034607wmi.108.1637605577022;
-        Mon, 22 Nov 2021 10:26:17 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwl1geMQCCGpeHmabH1NU7TvFBIvZ2sdcXAUIiuRx8awMBeyFGSlesgD0P73Py4z3p5I7iiAw==
-X-Received: by 2002:a7b:c207:: with SMTP id x7mr33034569wmi.108.1637605576784;
-        Mon, 22 Nov 2021 10:26:16 -0800 (PST)
-Received: from [192.168.3.132] (p5b0c667b.dip0.t-ipconnect.de. [91.12.102.123])
-        by smtp.gmail.com with ESMTPSA id t8sm11470375wmq.32.2021.11.22.10.26.15
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=aYWRo4OnMSjtGg0tX+Mk+QuvsqmMl0X/zqqUxoDxPuQ=;
+        b=itS1l4UbvdM9zJDjqnqjrAzEvx0yOyLlld0tM9X39yVBW0sE5qhHEMm5Pk1FM4a7WT
+         Z7LZuCf7ynHCbORkGweRKaWFUFrCS4KZyTVtZqQdraEec5870UHCSrKOnFpHEZRLcW3h
+         JUhsTJoC4Jd3beANBlkkWLUtNjJ6jl1T9gvLcn4IRJCEL8Y/lxleFlMFQ9MIX/uBzfb2
+         FCl1TjReTdLyq3pMW55sMoNS57SeeZkHABWfC/Luwywfipb0VG/i+XVWv+i/SprL4i42
+         1hRh9Pz28FozPZe8QbRlrrLXOoXM9as8wrp8gdJQqIvH65/rQt7sriN6A7x+3A8KorDm
+         xKLQ==
+X-Gm-Message-State: AOAM533nMCyvb0racXTzhziQeJbpyHLVo6HNFb3gmb+HSfeXgaUQmBGT
+        7wlak7VN36gUmEfcLUxadvBjaA==
+X-Google-Smtp-Source: ABdhPJwP3wYrRTZQJ8HHrsPBlUltYe5Z5Bf7eDFAFZOy32OsoOlu2fOqGFaq9YOGEZF+8WYUctP5NQ==
+X-Received: by 2002:a05:6e02:1563:: with SMTP id k3mr21659500ilu.256.1637610813112;
+        Mon, 22 Nov 2021 11:53:33 -0800 (PST)
+Received: from [192.168.1.30] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id a25sm5389768ioa.24.2021.11.22.11.53.32
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Nov 2021 10:26:16 -0800 (PST)
-Message-ID: <333cb52b-5b02-648e-af7a-090e23261801@redhat.com>
-Date:   Mon, 22 Nov 2021 19:26:14 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Content-Language: en-US
-To:     Andrew Dona-Couch <andrew@donacou.ch>,
+        Mon, 22 Nov 2021 11:53:32 -0800 (PST)
+Subject: Re: [PATCH] Increase default MLOCK_LIMIT to 8 MiB
+To:     David Hildenbrand <david@redhat.com>,
+        Andrew Dona-Couch <andrew@donacou.ch>,
         Andrew Morton <akpm@linux-foundation.org>,
         Drew DeVault <sir@cmpwn.com>
 Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
         linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         io_uring Mailing List <io-uring@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>,
         Pavel Begunkov <asml.silence@gmail.com>, linux-mm@kvack.org
 References: <20211028080813.15966-1-sir@cmpwn.com>
  <CAFBCWQ+=2T4U7iNQz_vsBsGVQ72s+QiECndy_3AMFV98bMOLow@mail.gmail.com>
@@ -77,51 +68,56 @@ References: <20211028080813.15966-1-sir@cmpwn.com>
  <20211116133750.0f625f73a1e4843daf13b8f7@linux-foundation.org>
  <b84bc345-d4ea-96de-0076-12ff245c5e29@redhat.com>
  <8f219a64-a39f-45f0-a7ad-708a33888a3b@www.fastmail.com>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Subject: Re: [PATCH] Increase default MLOCK_LIMIT to 8 MiB
-In-Reply-To: <8f219a64-a39f-45f0-a7ad-708a33888a3b@www.fastmail.com>
-Content-Type: text/plain; charset=UTF-8
+ <333cb52b-5b02-648e-af7a-090e23261801@redhat.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <ca96bb88-295c-ccad-ed2f-abc585cb4904@kernel.dk>
+Date:   Mon, 22 Nov 2021 12:53:31 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <333cb52b-5b02-648e-af7a-090e23261801@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 22.11.21 18:55, Andrew Dona-Couch wrote:
-> Forgive me for jumping in to an already overburdened thread.  But can
-> someone pushing back on this clearly explain the issue with applying
-> this patch?
-
-It will allow unprivileged users to easily and even "accidentally"
-allocate more unmovable memory than it should in some environments. Such
-limits exist for a reason. And there are ways for admins/distros to
-tweak these limits if they know what they are doing.
-
+On 11/22/21 11:26 AM, David Hildenbrand wrote:
+> On 22.11.21 18:55, Andrew Dona-Couch wrote:
+>> Forgive me for jumping in to an already overburdened thread.  But can
+>> someone pushing back on this clearly explain the issue with applying
+>> this patch?
 > 
-> The only concerns I've heard are that it doesn't go far enough.  That
-> another strategy (that everyone seems to agree would be a fair bit more
-> effort) could potentially achieve the same goal and then some.  Isn't
-> that exactly what's meant by "don't let perfection be the enemy of the
-> good"? The saying is not talking about literal perfection -- the idea is
-> that you make progress where you can, and that incremental progress and
-> broader changes are not necessarily in conflict.
+> It will allow unprivileged users to easily and even "accidentally"
+> allocate more unmovable memory than it should in some environments. Such
+> limits exist for a reason. And there are ways for admins/distros to
+> tweak these limits if they know what they are doing.
+
+But that's entirely the point, the cases where this change is needed are
+already screwed by a distro and the user is the administrator. This is
+_exactly_ the case where things should just work out of the box. If
+you're managing farms of servers, yeah you have competent administration
+and you can be expected to tweak settings to get the best experience and
+performance, but the kernel should provide a sane default. 64K isn't a
+sane default.
+
+> This is not a step into the right direction. This is all just trying to
+> hide the fact that we're exposing FOLL_LONGTERM usage to random
+> unprivileged users.
 > 
-> This tiny patch could be a step in the right direction.  Why does this
-> thread need dozens of replies?
+> Maybe we could instead try getting rid of FOLL_LONGTERM usage and the
+> memlock limit in io_uring altogether, for example, by using mmu
+> notifiers. But I'm no expert on the io_uring code.
 
-Because it does something controversial. Send controversial patches,
-receive many opinions, it's that simple.
+You can't use mmu notifiers without impacting the fast path. This isn't
+just about io_uring, there are other users of memlock right now (like
+bpf) which just makes it even worse.
 
-This is not a step into the right direction. This is all just trying to
-hide the fact that we're exposing FOLL_LONGTERM usage to random
-unprivileged users.
-
-Maybe we could instead try getting rid of FOLL_LONGTERM usage and the
-memlock limit in io_uring altogether, for example, by using mmu
-notifiers. But I'm no expert on the io_uring code.
+We should just make this 0.1% of RAM (min(0.1% ram, 64KB)) or something
+like what was suggested, if that will help move things forward. IMHO the
+32MB machine is mostly a theoretical case, but whatever .
 
 -- 
-Thanks,
-
-David / dhildenb
+Jens Axboe
 

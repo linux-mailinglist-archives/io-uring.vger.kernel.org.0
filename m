@@ -2,206 +2,174 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 89862459707
-	for <lists+io-uring@lfdr.de>; Mon, 22 Nov 2021 22:56:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B289E4597E4
+	for <lists+io-uring@lfdr.de>; Mon, 22 Nov 2021 23:53:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237299AbhKVV7i (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 22 Nov 2021 16:59:38 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:56836 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S237016AbhKVV7g (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 22 Nov 2021 16:59:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1637618188;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=W5DAe1gdf6Kwi2vx+MSMPnRhHLBKz9idjNkHP8MSJ3s=;
-        b=eJzlQTUIrW2h9w5GZAjEgU2F0JskkVAhAvBx6IdSkV0Md978KsxQK31fJ8b3Wl2GcYN3tu
-        NTee58HU/CedzjYegLUr8IJ3BqSM0A8RiJOk/pMotCENDY1sZEQWjIlQ6X6DF+9iJB+Jh0
-        nJRQRf3l4pgdB6Ig0vv/T/4An95nTQ0=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-53-EjdRclQKO4qt-e5Aky5qxQ-1; Mon, 22 Nov 2021 16:56:27 -0500
-X-MC-Unique: EjdRclQKO4qt-e5Aky5qxQ-1
-Received: by mail-wm1-f71.google.com with SMTP id r129-20020a1c4487000000b00333629ed22dso214283wma.6
-        for <io-uring@vger.kernel.org>; Mon, 22 Nov 2021 13:56:27 -0800 (PST)
+        id S232400AbhKVW5D (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 22 Nov 2021 17:57:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48634 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230201AbhKVW5C (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 22 Nov 2021 17:57:02 -0500
+Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C871CC061574;
+        Mon, 22 Nov 2021 14:53:55 -0800 (PST)
+Received: by mail-pj1-x1043.google.com with SMTP id x7so15061457pjn.0;
+        Mon, 22 Nov 2021 14:53:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NquELzBjcT3sMLblVcPvV1MkAki2ZKYx67AnRd0Qf8A=;
+        b=RqibWQqgGJCuoquY7Q4pOisIBklt4ZDnKgNkY2YF9knvRg2uhbfpYPWiR20pGCVwDd
+         nREAPtC456erGB7zRHPwY8t/HJHCtONdfgfAAZzgZfuE1jP2WyCw54qoBz8Gd/WJaQKk
+         TJGlPPx3WCWdn4T5oj8qBiZrmJidJ0SDSmbnhgQs5M6B5UOQOiSkHLecOjvbOlWj10JW
+         K+L6ltzcUOIxfNXrwUDcNIFueKMnNSZsHB15QW+MXEeUjLH1hNjFxpA+L+b4EEq2wwEZ
+         4X7oerIUP+kIIY0VIAimSBTv9yF/DHqAHzI8dOvg+TNtYGWKsejWoZj/IRga2c5podSx
+         dbpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent
-         :content-language:to:cc:references:from:organization:subject
-         :in-reply-to:content-transfer-encoding;
-        bh=W5DAe1gdf6Kwi2vx+MSMPnRhHLBKz9idjNkHP8MSJ3s=;
-        b=l2XV4GBrsXp/C+cJX7/nuWeLI4KMMgRGnG+Jnhb8I8ybf23TODRZEUXlhHW1qfCFoS
-         fhuVtlD+GEKfWMI2fSwuTT/oPV6SlFXxsp5iKSDRrSK7RaNxFoXkylOIVJ8PrxBeWP7W
-         qprK/23PCnu7fMg8098M0iu0kfQKtt9vqZs7kq2Ubw06ivEiEYQpMYPY/7DO/DYTFT6L
-         SvETAjZQin1yO7lSmQFB9TLQXdDmQi/cgquslyohXc8yThIDc/GykHYlNahtpmOVHQT8
-         gn6yfaHpofvNu8BCx8ufzHPslO8EMyOjuij0lZ98dSQ1X5b+XQFvRYK1s9pvGCsP0z3y
-         xRDg==
-X-Gm-Message-State: AOAM530Uy1/FDkyFta56hcANh8yEbreD4wTf/rJ2i1YUUhMbucUYQ1sf
-        rOlsH/3j+GaP4YqfGfsaLft4btzokUGyFpR0uFW9DNdjePiTV8WybRHUwnhrpvFYHC5zWULD/Vf
-        CYViP9qXTj9bkfYW39SY=
-X-Received: by 2002:a5d:68ce:: with SMTP id p14mr708354wrw.116.1637618186173;
-        Mon, 22 Nov 2021 13:56:26 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJxKXRB9yEqdwVRzeunUOwgploM8hm0Lx19ZeHTw7CQCkN1pDTfPBIbiiZcU9xqPM8Lk/YdiAw==
-X-Received: by 2002:a5d:68ce:: with SMTP id p14mr708315wrw.116.1637618185919;
-        Mon, 22 Nov 2021 13:56:25 -0800 (PST)
-Received: from [192.168.3.132] (p5b0c667b.dip0.t-ipconnect.de. [91.12.102.123])
-        by smtp.gmail.com with ESMTPSA id s8sm10545506wra.9.2021.11.22.13.56.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Nov 2021 13:56:25 -0800 (PST)
-Message-ID: <ffa66565-d546-a2cf-1748-38b9992fd5b8@redhat.com>
-Date:   Mon, 22 Nov 2021 22:56:24 +0100
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NquELzBjcT3sMLblVcPvV1MkAki2ZKYx67AnRd0Qf8A=;
+        b=GKUx0W1CAPDT2ncXANW8VwzGbLjbluQt87Xe5FYDapD4FOMty8HVR/O849bokg4Zoa
+         D6arj1Fzz9J2wtH/khjLYHR9917zaFPu1FfaMwtMlRe5D4Xz6M2lCYYIclIwPWXxo5ke
+         b4FMSL3g4aImDvFP5SHs+YB4FU63wYJ2dn8HpcT4dbd4K7c4IxZ5SsRPjHjvXmFglPpV
+         00QKbTVXxgH/mabspZ+tunqeyI681ITWbjM2YIruN2RMxN83fVhMn9b1gbkJQDcVT7px
+         iecl6Me1puO/AipJOulV+PE9XR//p/ShPReEUteq6xwWNioyuPU+RyaqgVNHbHhsvXmO
+         6DFw==
+X-Gm-Message-State: AOAM533M9QdUN02gSHcWme4hBOCMDjV7zXx7paGkCt9wR5D+1lUVh53c
+        t7+gx0Oph2MooJ2r0Qq3tL0gx0QeqKM=
+X-Google-Smtp-Source: ABdhPJw+mWuoBoclb8H/VdY6vQocKMpB6Hla4TsgdQUN156AIotMSzeH+4B+IHo1vLWFaHr68z+MPg==
+X-Received: by 2002:a17:90b:1d07:: with SMTP id on7mr36899741pjb.45.1637621634720;
+        Mon, 22 Nov 2021 14:53:54 -0800 (PST)
+Received: from localhost ([2405:201:6014:d064:3d4e:6265:800c:dc84])
+        by smtp.gmail.com with ESMTPSA id s19sm5176126pfu.104.2021.11.22.14.53.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Nov 2021 14:53:54 -0800 (PST)
+From:   Kumar Kartikeya Dwivedi <memxor@gmail.com>
+To:     bpf@vger.kernel.org
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Yonghong Song <yhs@fb.com>,
+        Pavel Emelyanov <ovzxemul@gmail.com>,
+        Alexander Mikhalitsyn <alexander@mihalicyn.com>,
+        Andrei Vagin <avagin@gmail.com>, criu@openvz.org,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH bpf-next v2 00/10] Introduce BPF iterators for io_uring and epoll
+Date:   Tue, 23 Nov 2021 04:23:42 +0530
+Message-Id: <20211122225352.618453-1-memxor@gmail.com>
+X-Mailer: git-send-email 2.34.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Content-Language: en-US
-To:     Jens Axboe <axboe@kernel.dk>,
-        Andrew Dona-Couch <andrew@donacou.ch>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Drew DeVault <sir@cmpwn.com>
-Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        io_uring Mailing List <io-uring@vger.kernel.org>,
-        Pavel Begunkov <asml.silence@gmail.com>, linux-mm@kvack.org
-References: <20211028080813.15966-1-sir@cmpwn.com>
- <CAFBCWQ+=2T4U7iNQz_vsBsGVQ72s+QiECndy_3AMFV98bMOLow@mail.gmail.com>
- <CFII8LNSW5XH.3OTIVFYX8P65Y@taiga>
- <593aea3b-e4a4-65ce-0eda-cb3885ff81cd@gnuweeb.org>
- <20211115203530.62ff33fdae14927b48ef6e5f@linux-foundation.org>
- <CFQZSHV700KV.18Y62SACP8KOO@taiga>
- <20211116114727.601021d0763be1f1efe2a6f9@linux-foundation.org>
- <CFRGQ58D9IFX.PEH1JI9FGHV4@taiga>
- <20211116133750.0f625f73a1e4843daf13b8f7@linux-foundation.org>
- <b84bc345-d4ea-96de-0076-12ff245c5e29@redhat.com>
- <8f219a64-a39f-45f0-a7ad-708a33888a3b@www.fastmail.com>
- <333cb52b-5b02-648e-af7a-090e23261801@redhat.com>
- <ca96bb88-295c-ccad-ed2f-abc585cb4904@kernel.dk>
- <5f998bb7-7b5d-9253-2337-b1d9ea59c796@redhat.com>
- <3adc55d3-f383-efa9-7319-740fc6ab5d7a@kernel.dk>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Subject: Re: [PATCH] Increase default MLOCK_LIMIT to 8 MiB
-In-Reply-To: <3adc55d3-f383-efa9-7319-740fc6ab5d7a@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5451; h=from:subject; bh=Eda6ob2x7nQ6hY//FPXuD76ZZeY2klQq3Fmn+F68dDY=; b=owEBbQKS/ZANAwAIAUzgyIZIvxHKAcsmYgBhnBrLyOHFtho5EXaBVpkGjCxPpNihOutcHsk9xVum i8Yp8KaJAjMEAAEIAB0WIQRLvip+Buz51YI8YRFM4MiGSL8RygUCYZwaywAKCRBM4MiGSL8RynIID/ 93rxxX5PPbLd1+xXtyr5UhiRSp49LRTAKhd9dIydQanqDFi21spyu3WK4VlZIWLQtfRtJe+8L3Ofzw q/FH2gffjO7+ndDmhWAaxgnuxgeQJuLqfSFKoaGL8kOABenH9vcbjB5emduLDEzHi9TIaelvxuFg0c z35BCzvqUg3FlLqv4c9AcRmWKjF7azsnGJNHbMwk43E5lMLBu7LSdrBZ14o0vmGcUmlffWT9QvRUw5 mwFVJbKq8pTND1Z62q7gclMbhJ1ypJFbuHl78RPmwEjdwtKbzywfkZpAmETMvEjOfAuWdwNXCuFLrb domQQO9jaiECh+nr3xBMYmg1m2iIsOdJHzAucDpyZ7b+kekRUOfinAknTMRzSbPUmhWkIwe3Mw6JcA 0yBTZCK7YHooen5pwfOMRtj1Sz9QhiKbsWVP/nPYE9sbqc1OWP2QcgsIqHUrsKRRFsQs9+G45mIWK3 /gJXU5mrxeY5zqIoz3fRGd0mx0cEb9I3tDO8CNPCDAqrRsyk/dsMk+uvAZZiUoJczCvsIbtiRZUDGf BMNJrKenBYc6UNqNC54W/hBocg5ThiVU/2Hq5v3OI3ErmvQmI1tqUI7ydHqBbxS5s14RSBx3FmyksW HR/lxyKV4/HqqVTntH2bzeTPI+dt8Ed5LAzSJMDQ7YLpdht9jH5Pd+MsYcaw==
+X-Developer-Key: i=memxor@gmail.com; a=openpgp; fpr=4BBE2A7E06ECF9D5823C61114CE0C88648BF11CA
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 22.11.21 21:44, Jens Axboe wrote:
-> On 11/22/21 1:08 PM, David Hildenbrand wrote:
->> On 22.11.21 20:53, Jens Axboe wrote:
->>> On 11/22/21 11:26 AM, David Hildenbrand wrote:
->>>> On 22.11.21 18:55, Andrew Dona-Couch wrote:
->>>>> Forgive me for jumping in to an already overburdened thread.  But can
->>>>> someone pushing back on this clearly explain the issue with applying
->>>>> this patch?
->>>>
->>>> It will allow unprivileged users to easily and even "accidentally"
->>>> allocate more unmovable memory than it should in some environments. Such
->>>> limits exist for a reason. And there are ways for admins/distros to
->>>> tweak these limits if they know what they are doing.
->>>
->>> But that's entirely the point, the cases where this change is needed are
->>> already screwed by a distro and the user is the administrator. This is
->>> _exactly_ the case where things should just work out of the box. If
->>> you're managing farms of servers, yeah you have competent administration
->>> and you can be expected to tweak settings to get the best experience and
->>> performance, but the kernel should provide a sane default. 64K isn't a
->>> sane default.
->>
->> 0.1% of RAM isn't either.
-> 
-> No default is perfect, byt 0.1% will solve 99% of the problem. And most
-> likely solve 100% of the problems for the important case, which is where
-> you want things to Just Work on your distro without doing any
-> administration.  If you're aiming for perfection, it doesn't exist.
+The CRIU [0] project developers are exploring potential uses of the BPF
+subsystem to do complicated tasks that are difficult to add support for in the
+kernel using existing interfaces.  Even if they are implemented using procfs,
+or kcmp, it is difficult to make it perform well without having some kind of
+programmable introspection into the kernel data structures. Moreover, for
+procfs based state inspection, the output format once agreed upon is set in
+stone and hard to extend, and at the same time inefficient to consume from
+programs (where it is first converted from machine readable form to human
+readable form, only to be converted again to machine readable form).  In
+addition to this, kcmp based file set matching algorithm performs poorly since
+each file in one set needs to be compared to each file in another set, to
+determine struct file equivalence.
 
-... and my Fedora is already at 16 MiB *sigh*.
+This set adds a io_uring file iterator (for registered files), a io_uring ubuf
+iterator (for registered buffers), and a epoll iterator (for registered items
+(files, registered using EPOLL_CTL_ADD)) to overcome these limitations.  Using
+existing task, task_file, task_vma iterators, all of these can be combined
+together to significantly enhance and speed up the task dumping procedure.
 
-And I'm not aiming for perfection, I'm aiming for as little
-FOLL_LONGTERM users as possible ;)
+The two immediate use cases are io_uring checkpoint/restore support and epoll
+checkpoint/restore support. The first is unimplemented, and the second is being
+expedited using a new epoll iterator. In the future, more stages of the
+checkpointing sequence can be offloaded to eBPF programs to reduce process
+downtime, e.g. in pre-dump stage, before task is seized.
 
-> 
->>>> This is not a step into the right direction. This is all just trying to
->>>> hide the fact that we're exposing FOLL_LONGTERM usage to random
->>>> unprivileged users.
->>>>
->>>> Maybe we could instead try getting rid of FOLL_LONGTERM usage and the
->>>> memlock limit in io_uring altogether, for example, by using mmu
->>>> notifiers. But I'm no expert on the io_uring code.
->>>
->>> You can't use mmu notifiers without impacting the fast path. This isn't
->>> just about io_uring, there are other users of memlock right now (like
->>> bpf) which just makes it even worse.
->>
->> 1) Do we have a performance evaluation? Did someone try and come up with
->> a conclusion how bad it would be?
-> 
-> I honestly don't remember the details, I took a look at it about a year
-> ago due to some unrelated reasons. These days it just pertains to
-> registered buffers, so it's less of an issue than back then when it
-> dealt with the rings as well. Hence might be feasible, I'm certainly not
-> against anyone looking into it. Easy enough to review and test for
-> performance concerns.
+The io_uring file iterator is even more important now due to the advent of
+descriptorless files in io_uring [1], which makes dumping a task's files a lot
+more harder for CRIU, since there is no visibility into these hidden
+descriptors that the task depends upon for operation. Similarly, the
+io_uring_ubuf iterator is useful in case original VMA used in registering a
+buffer has been destroyed.
 
-That at least sounds promising.
+The set includes an example sample showing how these iterator(s) along with
+task_file iterator can be useful to restore an io_uring instance, implementing a
+simplified version of the code we are planning to adopt for CRIU. Patch 10 is
+not meant for submission, only exposition. It implements all the missing
+features noted in [2].
 
-> 
->> 2) Could be provide a mmu variant to ordinary users that's just good
->> enough but maybe not as fast as what we have today? And limit
->> FOLL_LONGTERM to special, privileged users?
-> 
-> If it's not as fast, then it's most likely not good enough though...
+Please see the individual patches for more details.
 
-There is always a compromise of course.
+[ Note (for Yonghong): I am still unusure what will be useful in show_fdinfo,
+  fill_link_info for epoll, so that has been left out. I was reminded that
+  io_uring now uses anon_inode_getfile_secure, which we also use in CRIU to
+  determine source fd of ring mapping, so this should be enough to identify
+  the io_uring fd in userspace, hence I implemented it for io_uring in v2.   ]
 
-See, FOLL_LONGTERM is *the worst* kind of memory allocation thingy you
-could possible do to your MM subsystem. It's absolutely the worst thing
-you can do to swap and compaction.
+  [0]: https://criu.org/Main_Page
+  [1]: https://lwn.net/Articles/863071
+  [2]: https://github.com/checkpoint-restore/criu/pull/1597
 
-I really don't want random feature X to be next and say "well, io_uring
-uses it, so I can just use it for max performance and we'll adjust the
-memlock limit, who cares!".
+Changelog:
+----------
 
-> 
->> 3) Just because there are other memlock users is not an excuse. For
->> example, VFIO/VDPA have to use it for a reason, because there is no way
->> not do use FOLL_LONGTERM.
-> 
-> It's not an excuse, the statement merely means that the problem is
-> _worse_ as there are other memlock users.
+v1 -> v2:
+v1: https://lore.kernel.org/bpf/20211116054237.100814-1-memxor@gmail.com
 
-Yes, and it will keep getting worse every time we introduce more
-FOLL_LONGTERM users that really shouldn't be FOLL_LONGTERM users unless
-really required. Again, VFIO/VDPA/RDMA are prime examples, because the
-HW forces us to do it. And these are privileged features either way.
+ * Add example showing how iterator is useful in C/R of io_uring (Alexei)
+ * Change type of index from unsigned long to u64 (Yonghong)
+ * Fix build error for CONFIG_IO_URING=n (Kernel Test Robot)
+  * Move bpf_page_to_pfn out of CONFIG_IO_URING (Yonghong)
+ * Add comment to bpf_iter_aux_info for map member (Yonghong)
+ * show_fdinfo/fill_link_info for io_uring (Yonghong)
+ * Fix other nits
 
-> 
->>>
->>> We should just make this 0.1% of RAM (min(0.1% ram, 64KB)) or something
->>> like what was suggested, if that will help move things forward. IMHO the
->>> 32MB machine is mostly a theoretical case, but whatever .
->>
->> 1) I'm deeply concerned about large ZONE_MOVABLE and MIGRATE_CMA ranges
->> where FOLL_LONGTERM cannot be used, as that memory is not available.
->>
->> 2) With 0.1% RAM it's sufficient to start 1000 processes to break any
->> system completely and deeply mess up the MM. Oh my.
-> 
-> We're talking per-user limits here. But if you want to talk hyperbole,
-> then 64K multiplied by some other random number will also allow
-> everything to be pinned, potentially.
-> 
+Kumar Kartikeya Dwivedi (10):
+  io_uring: Implement eBPF iterator for registered buffers
+  bpf: Add bpf_page_to_pfn helper
+  io_uring: Implement eBPF iterator for registered files
+  epoll: Implement eBPF iterator for registered items
+  bpftool: Output io_uring iterator info
+  selftests/bpf: Add test for io_uring BPF iterators
+  selftests/bpf: Add test for epoll BPF iterator
+  selftests/bpf: Test partial reads for io_uring, epoll iterators
+  selftests/bpf: Fix btf_dump test for bpf_iter_link_info
+  samples/bpf: Add example to checkpoint/restore io_uring
 
-Right, it's per-user. 0.1% per user FOLL_LONGTERM locked into memory in
-the worst case.
+ fs/eventpoll.c                                | 196 ++++-
+ fs/io_uring.c                                 | 345 +++++++++
+ include/linux/bpf.h                           |  16 +
+ include/uapi/linux/bpf.h                      |  18 +
+ kernel/trace/bpf_trace.c                      |  19 +
+ samples/bpf/.gitignore                        |   1 +
+ samples/bpf/Makefile                          |   8 +-
+ samples/bpf/bpf_cr.bpf.c                      | 185 +++++
+ samples/bpf/bpf_cr.c                          | 686 ++++++++++++++++++
+ samples/bpf/bpf_cr.h                          |  48 ++
+ samples/bpf/hbm_kern.h                        |   2 -
+ scripts/bpf_doc.py                            |   2 +
+ tools/bpf/bpftool/link.c                      |  10 +
+ tools/include/uapi/linux/bpf.h                |  18 +
+ .../selftests/bpf/prog_tests/bpf_iter.c       | 387 +++++++++-
+ .../selftests/bpf/prog_tests/btf_dump.c       |   4 +-
+ .../selftests/bpf/progs/bpf_iter_epoll.c      |  33 +
+ .../selftests/bpf/progs/bpf_iter_io_uring.c   |  50 ++
+ 18 files changed, 2020 insertions(+), 8 deletions(-)
+ create mode 100644 samples/bpf/bpf_cr.bpf.c
+ create mode 100644 samples/bpf/bpf_cr.c
+ create mode 100644 samples/bpf/bpf_cr.h
+ create mode 100644 tools/testing/selftests/bpf/progs/bpf_iter_epoll.c
+ create mode 100644 tools/testing/selftests/bpf/progs/bpf_iter_io_uring.c
 
 -- 
-Thanks,
-
-David / dhildenb
+2.34.0
 

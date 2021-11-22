@@ -2,422 +2,274 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 830B34597F8
+	by mail.lfdr.de (Postfix) with ESMTP id 92FFF4597F9
 	for <lists+io-uring@lfdr.de>; Mon, 22 Nov 2021 23:54:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230166AbhKVW52 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 22 Nov 2021 17:57:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48716 "EHLO
+        id S231277AbhKVW5a (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 22 Nov 2021 17:57:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229998AbhKVW5V (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 22 Nov 2021 17:57:21 -0500
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0920EC061574;
-        Mon, 22 Nov 2021 14:54:13 -0800 (PST)
-Received: by mail-pl1-x643.google.com with SMTP id y7so15450211plp.0;
-        Mon, 22 Nov 2021 14:54:13 -0800 (PST)
+        with ESMTP id S230428AbhKVW5X (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 22 Nov 2021 17:57:23 -0500
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1ACCC061574;
+        Mon, 22 Nov 2021 14:54:15 -0800 (PST)
+Received: by mail-pf1-x444.google.com with SMTP id u80so5831877pfc.9;
+        Mon, 22 Nov 2021 14:54:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=eZz/i/LW/pYopHevV0UZkgBAZImgYdtC2F2e/9PEk9U=;
-        b=AdDdLNU7XyI+BGSi7FA85aclwzQMdZ/bI6OurYqcqYTExE2OvviWbNZhbCNnhw3nR5
-         +pN1uVVSITe4yy97KEjnoZiv/t+VFnM/Hap+bcLQYVy3X1wWnaoIy0MXXC13SIAigcGI
-         mk6vTmPqyZKKA2gz2qXkCHCC9VWSDnRda9nnDukBN6QwA0J0AR6wg7Z+BDi4FAGXlOiB
-         j6KU5lfeYTSyAlx0V0iCiJE0KRaBWOTnTA7H++JiN/SnB+vJJTcGN+Df8VPkbwY0O0JT
-         MJB42/OmitwwNWopbugEGLEeFW2PcHgKXNKSVQ90TNs0hodMVPpPCwolhiwwrPLEgiTc
-         MDKQ==
+        bh=Y8fd/OzoWO0A4euNuWolWcSQ1k5QoF6gHKtM1v6KFXI=;
+        b=OUvvhWYC+ge2LI8AESR+JF0HyeuaXNSYPw3VE702Rpjq7xHm9eA53xo6wYNPpYL4Jf
+         70RnxeEVLRht9cFuNAjr7daUWeYYeh184lM/2KGoiJuZrErgUObCCPN75VahtufHj8Hc
+         tV/3Lcg6U2l9YSQHt+Umi12+VwdJFcHoYCVO3sm/vHlTqXObUXcaxqgOtre3v3LD7HOv
+         mO5RtwNCAvueRjEASZsPKr7bWJEVIguTXHSsslkKGslrmOLz5le1CR2jFjzbZ4N7i7x0
+         L3M5nwaO4AIWcm1IxfPWeXmHflwwTB96ExgEb2MzIFh/Q3xG2dir7Rns2PlFSKxwLT21
+         hbrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=eZz/i/LW/pYopHevV0UZkgBAZImgYdtC2F2e/9PEk9U=;
-        b=4A3U8kOsaV5CGXRAdbOD6wOuD8yx9AP7fdIwiM8DKj3vQnz5JRAcrdYYtmKtIADm4z
-         Xxx8TRs/QKBUn7SbiqJyPeXHvWqL56Y3w8lcz/7iuSZGJGY8EJwS+1Dqe07qr7BbpC4r
-         EjpXhDOEkpB+k5j50HNXuJvEd5vSqVvpUpLp2Nqe4JAe5g30bQNaRBRqfh1nd8ley4GO
-         MExdIP3BeWkd4qwDExTDoPRDtgVBzY0I4hhPTfsPaPd+rPdiKgTiv9hVAmOL8RCBOc3Q
-         Qr4Yt+DpgyJE0L88QYJ8pdsXRHvy0iOLGf7GgmjCgLZ5bEt/2JEG9Hmm47jr9CQWOBpO
-         hhwA==
-X-Gm-Message-State: AOAM531Un+zDNPn6XxbKt1E+A/Df3+/WFs0lkJmA+o9M8fch4vcD+KCO
-        i+1vrQPz+D7jBtj8VAoPScsj2VCkevE=
-X-Google-Smtp-Source: ABdhPJyOmlQPIlKjWbA5AxRKnGAZnr8K8j9+YPSInHCHgJLxdaGpzxcefhttMp9XEc+LZ02Gy2rEVg==
-X-Received: by 2002:a17:902:d4d0:b0:141:c13d:6c20 with SMTP id o16-20020a170902d4d000b00141c13d6c20mr507350plg.44.1637621652388;
-        Mon, 22 Nov 2021 14:54:12 -0800 (PST)
+        bh=Y8fd/OzoWO0A4euNuWolWcSQ1k5QoF6gHKtM1v6KFXI=;
+        b=Ru0Uf5vBA06+8BHkOy30K2a3y0awZ8vGtwmPHXOUZuoQ5Ynmw3DqcCCUhuXnhMBz2J
+         dKUjIm+PFh+mxcTXqxpl/ypEd5vSbmG4Ujk/y3yANG6FNY59CT+OaTLZX+GQlLFNogXs
+         V1CX/U7QcZRCczoPhcoO6EkIJyyHKfLcoYIXCspsYB8ZMNfzVFIcDzUnXfQ9bh1dU7bv
+         IDPlZtqTNedWi2uN7oUmM66PZAm11bFRNwQ3ssSOkNuqR/6FP/Kj4EdFDWfXHsE57pZd
+         uoFXyl96aWbH6b5k8GOMug35MkBRiz86qgBsBdhgRdIrWy9kCYWtAr5dkU6ekoABXb8N
+         nSCA==
+X-Gm-Message-State: AOAM530RTzhLQ2+XqUenf1LblDt5gKNi1hPb56J53JTlpM1gK8Qz6R09
+        jOMvw3QaVQf3eXzP+JrJjWUWMfABv3Y=
+X-Google-Smtp-Source: ABdhPJwubNKRzEqF3TgEEJ5euzH8JJvmO4ZBg3zenrtJQXfjnbidaCTg2Dtf02bm4l4nqBKhNwY5xQ==
+X-Received: by 2002:a62:7541:0:b0:4a3:8a3b:6136 with SMTP id q62-20020a627541000000b004a38a3b6136mr806380pfc.78.1637621655252;
+        Mon, 22 Nov 2021 14:54:15 -0800 (PST)
 Received: from localhost ([2405:201:6014:d064:3d4e:6265:800c:dc84])
-        by smtp.gmail.com with ESMTPSA id c10sm3588081pgk.84.2021.11.22.14.54.11
+        by smtp.gmail.com with ESMTPSA id c9sm7044106pgq.58.2021.11.22.14.54.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Nov 2021 14:54:12 -0800 (PST)
+        Mon, 22 Nov 2021 14:54:15 -0800 (PST)
 From:   Kumar Kartikeya Dwivedi <memxor@gmail.com>
 To:     bpf@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
         Daniel Borkmann <daniel@iogearbox.net>,
         Andrii Nakryiko <andrii@kernel.org>,
         Yonghong Song <yhs@fb.com>,
         Pavel Emelyanov <ovzxemul@gmail.com>,
         Alexander Mikhalitsyn <alexander@mihalicyn.com>,
         Andrei Vagin <avagin@gmail.com>, criu@openvz.org,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH bpf-next v2 06/10] selftests/bpf: Add test for io_uring BPF iterators
-Date:   Tue, 23 Nov 2021 04:23:48 +0530
-Message-Id: <20211122225352.618453-7-memxor@gmail.com>
+        io-uring@vger.kernel.org
+Subject: [PATCH bpf-next v2 07/10] selftests/bpf: Add test for epoll BPF iterator
+Date:   Tue, 23 Nov 2021 04:23:49 +0530
+Message-Id: <20211122225352.618453-8-memxor@gmail.com>
 X-Mailer: git-send-email 2.34.0
 In-Reply-To: <20211122225352.618453-1-memxor@gmail.com>
 References: <20211122225352.618453-1-memxor@gmail.com>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=10827; h=from:subject; bh=kxGPKIv67E1/n+m11jdziOrgwqJ5F4bn7WE5AYofjKY=; b=owEBbQKS/ZANAwAIAUzgyIZIvxHKAcsmYgBhnBrL6LM8NFigs+Kn+EQ1mc+HyeU9K+wFutqBdQTb QNTJZU6JAjMEAAEIAB0WIQRLvip+Buz51YI8YRFM4MiGSL8RygUCYZwaywAKCRBM4MiGSL8RyonlEA C67wEFtLrD91zVdY+J8t3iMwQbF5f65M6iA+o5yRQv9xhWGzY/4yDiiZ7R9qd/id3wgN2lW7zsj3zo JvyPqdv4RAJK8ykp9/b3pQKPQqgq4FCaeVKCbz4Nr2XK8Un4q7mgGW13Azv7DfdhhuJqVN9DFatKq7 u2/gMGwgxZCplBWPhLf3enFv+OEHtcQOpS27rcEWhdoNM5Tzz3d0CQMMTpI6sJyK7tvGp22lBoXx4c gbmA7tfGPiZechuyhQQAPUEMUX4A9VkieZs8E7l2aTcfyBu+DMtws3eUsFSyLM2jK/Uol/4Chp4Vos wiBSfGgSEA0JbSjlSC81wSKF2RhHKggRS/DPJMOeKi3O6yqzcoJt0/C1COy5OI+or40rNM+8Zja50G 3c75N0Uzpnb/sok9ia4oBZ5GTnfYJ1g8NqAibeIuHZtsSeg/hI8zg+MLms0dOhVV8jWH6Nx0+PUXDp K/6bs18ES0hVWLUn5lZgVV+k8YTneSZx+4Uj0Qn0a3UdzHhdXuVX/WkiX09xhrtGg+b7HAhXU8CFWa xJ4W3Cqmg7jCAXaHVpGPfZxCVgi5wUbmtpQ1cWv2hyEbpjaNx2PTAJfI8U69n0X5Q+fAGmSHidsVdf qPbFpJeHlaCM0saeE/0cwoDDFWmuJC/cqApFNk+eNfz4CB5y4qlWqte2Xkfg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5763; h=from:subject; bh=wwA+z5sb920kQ2kHDEdlo3XuyNd/1OGKswevIlyym7c=; b=owEBbQKS/ZANAwAIAUzgyIZIvxHKAcsmYgBhnBrM3EGICESPIZLbqEZWOuWAUbGWRqIllKwYN30n GPnjQEWJAjMEAAEIAB0WIQRLvip+Buz51YI8YRFM4MiGSL8RygUCYZwazAAKCRBM4MiGSL8Rysa5EA C4U+xHvMHjgwmmc8vZFGOapkFm+jL1Ee3OtqWhZGtMgk2xvvVETELDoB+7XAMWrudN3a9cH4ysvx9e +z844r1/osWPivwFzUxpBq+OSMMTrxNR+KQV0BF1as8jV9pgTndCC4StyAeWtrWjqQ3kCEir7ubEtu iyZc40mlaYyBG5nNQ2GRA2UK4yyx/UWZcQf9LPeWTbMbTc1I2E+JLaNUKbmrSsawMTrKQf0s6mpgUS uXDNrjE/3Ns+RZ/VjDn6uZK8nMxJi1aHzQZfjEgrsLDFiJyq4XLATbCgW5IGpPm5jzItVuWIq66smv JLyMo8ohv1On4/4Jg3691S0HQBOgN/URiCovKvLn6G5F425LrGPnZkIb4KrD9gVqfe6t0A+dgo5HmN gyx9binrGOxK9pyHI8Q9UVn9n7n9s1XGY9DCjGzJT2MI7AneGB/SSB/XDEnNXXp7MgZiwE0gWY3Akb evatiShc90ZBygI4emWqqNEzfOlyqP9X/6yBtgTv5orvDNHNlvK2t3jt6s12hKXT3NOXtd6qW4kikg JvwYohUahD6WdJG9eCTiMTCrkvkTw99z5cVja2d2YlfBcrtwSNMU0m94/oS6dR4WRG+npwueV+Mhlu mxO5+cX0RHWjQhw4mfFRIKPfj2n2U2IDD0ZNyEHDtBUEZ9HQW89YIHx66n9w==
 X-Developer-Key: i=memxor@gmail.com; a=openpgp; fpr=4BBE2A7E06ECF9D5823C61114CE0C88648BF11CA
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This exercises the io_uring_buf and io_uring_file iterators, and tests
-sparse file sets as well.
+This tests the epoll iterator, including peeking into the epitem to
+inspect the registered file and fd number, and verifying that in
+userspace.
 
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Pavel Begunkov <asml.silence@gmail.com>
-Cc: io-uring@vger.kernel.org
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org
 Signed-off-by: Kumar Kartikeya Dwivedi <memxor@gmail.com>
 ---
- .../selftests/bpf/prog_tests/bpf_iter.c       | 251 ++++++++++++++++++
- .../selftests/bpf/progs/bpf_iter_io_uring.c   |  50 ++++
- 2 files changed, 301 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/progs/bpf_iter_io_uring.c
+ .../selftests/bpf/prog_tests/bpf_iter.c       | 121 ++++++++++++++++++
+ .../selftests/bpf/progs/bpf_iter_epoll.c      |  33 +++++
+ 2 files changed, 154 insertions(+)
+ create mode 100644 tools/testing/selftests/bpf/progs/bpf_iter_epoll.c
 
 diff --git a/tools/testing/selftests/bpf/prog_tests/bpf_iter.c b/tools/testing/selftests/bpf/prog_tests/bpf_iter.c
-index 3e10abce3e5a..d21121d62458 100644
+index d21121d62458..7fb995deb22d 100644
 --- a/tools/testing/selftests/bpf/prog_tests/bpf_iter.c
 +++ b/tools/testing/selftests/bpf/prog_tests/bpf_iter.c
-@@ -1,6 +1,10 @@
- // SPDX-License-Identifier: GPL-2.0
+@@ -2,6 +2,7 @@
  /* Copyright (c) 2020 Facebook */
-+#include <sys/stat.h>
-+#include <sys/mman.h>
+ #include <sys/stat.h>
+ #include <sys/mman.h>
++#include <sys/epoll.h>
  #include <test_progs.h>
-+#include <linux/io_uring.h>
-+
- #include "bpf_iter_ipv6_route.skel.h"
- #include "bpf_iter_netlink.skel.h"
- #include "bpf_iter_bpf_map.skel.h"
-@@ -26,6 +30,7 @@
- #include "bpf_iter_bpf_sk_storage_map.skel.h"
+ #include <linux/io_uring.h>
+ 
+@@ -31,6 +32,7 @@
  #include "bpf_iter_test_kern5.skel.h"
  #include "bpf_iter_test_kern6.skel.h"
-+#include "bpf_iter_io_uring.skel.h"
+ #include "bpf_iter_io_uring.skel.h"
++#include "bpf_iter_epoll.skel.h"
  
  static int duration;
  
-@@ -1239,6 +1244,248 @@ static void test_task_vma(void)
- 	bpf_iter_task_vma__destroy(skel);
+@@ -1486,6 +1488,123 @@ void test_io_uring_file(void)
+ 	bpf_iter_io_uring__destroy(skel);
  }
  
-+static int sys_io_uring_setup(u32 entries, struct io_uring_params *p)
++void test_epoll(void)
 +{
-+	return syscall(__NR_io_uring_setup, entries, p);
-+}
-+
-+static int io_uring_register_bufs(int io_uring_fd, struct iovec *iovs, unsigned int nr)
-+{
-+	return syscall(__NR_io_uring_register, io_uring_fd,
-+		       IORING_REGISTER_BUFFERS, iovs, nr);
-+}
-+
-+static int io_uring_register_files(int io_uring_fd, int *fds, unsigned int nr)
-+{
-+	return syscall(__NR_io_uring_register, io_uring_fd,
-+		       IORING_REGISTER_FILES, fds, nr);
-+}
-+
-+static unsigned long long page_addr_to_pfn(unsigned long addr)
-+{
-+	int page_size = sysconf(_SC_PAGE_SIZE), fd, ret;
-+	unsigned long long pfn;
-+
-+	if (page_size < 0)
-+		return 0;
-+	fd = open("/proc/self/pagemap", O_RDONLY);
-+	if (fd < 0)
-+		return 0;
-+
-+	ret = pread(fd, &pfn, sizeof(pfn), (addr / page_size) * 8);
-+	close(fd);
-+	if (ret < 0)
-+		return 0;
-+	/* Bits 0-54 have PFN for non-swapped page */
-+	return pfn & 0x7fffffffffffff;
-+}
-+
-+static int io_uring_inode_match(int link_fd, int io_uring_fd)
-+{
-+	struct bpf_link_info linfo = {};
-+	__u32 info_len = sizeof(linfo);
-+	struct stat st;
-+	int ret;
-+
-+	ret = fstat(io_uring_fd, &st);
-+	if (ret < 0)
-+		return -errno;
-+
-+	ret = bpf_obj_get_info_by_fd(link_fd, &linfo, &info_len);
-+	if (ret < 0)
-+		return -errno;
-+
-+	ASSERT_EQ(st.st_ino, linfo.iter.io_uring.inode, "io_uring inode matches");
-+	return 0;
-+}
-+
-+void test_io_uring_buf(void)
-+{
++	const char *fmt = "B\npipe:%d\nsocket:%d\npipe:%d\nsocket:%d\nE\n";
 +	DECLARE_LIBBPF_OPTS(bpf_iter_attach_opts, opts);
-+	char rbuf[4096], buf[4096] = "B\n";
++	char buf[4096] = {}, rbuf[4096] = {};
 +	union bpf_iter_link_info linfo;
-+	struct bpf_iter_io_uring *skel;
-+	int ret, fd, i, len = 128;
-+	struct io_uring_params p;
-+	struct iovec iovs[8];
-+	int iter_fd;
-+	char *str;
++	int fds[2], sk[2], epfd, ret;
++	struct bpf_iter_epoll *skel;
++	struct epoll_event ev = {};
++	int iter_fd, set[4];
++	char *s, *t;
 +
 +	opts.link_info = &linfo;
 +	opts.link_info_len = sizeof(linfo);
 +
-+	skel = bpf_iter_io_uring__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "bpf_iter_io_uring__open_and_load"))
++	skel = bpf_iter_epoll__open_and_load();
++	if (!ASSERT_OK_PTR(skel, "bpf_iter_epoll__open_and_load"))
 +		return;
 +
-+	for (i = 0; i < ARRAY_SIZE(iovs); i++) {
-+		iovs[i].iov_len	 = len;
-+		iovs[i].iov_base = mmap(NULL, len, PROT_READ | PROT_WRITE,
-+					MAP_ANONYMOUS | MAP_SHARED, -1, 0);
-+		if (iovs[i].iov_base == MAP_FAILED)
-+			goto end;
-+		len *= 2;
-+	}
-+
-+	memset(&p, 0, sizeof(p));
-+	fd = sys_io_uring_setup(1, &p);
-+	if (!ASSERT_GE(fd, 0, "io_uring_setup"))
++	epfd = epoll_create1(EPOLL_CLOEXEC);
++	if (!ASSERT_GE(epfd, 0, "epoll_create1"))
 +		goto end;
 +
-+	linfo.io_uring.io_uring_fd = fd;
-+	skel->links.dump_io_uring_buf = bpf_program__attach_iter(skel->progs.dump_io_uring_buf,
-+								 &opts);
-+	if (!ASSERT_OK_PTR(skel->links.dump_io_uring_buf, "bpf_program__attach_iter"))
-+		goto end_close_fd;
++	ret = pipe(fds);
++	if (!ASSERT_OK(ret, "pipe(fds)"))
++		goto end_epfd;
 +
-+	if (!ASSERT_OK(io_uring_inode_match(bpf_link__fd(skel->links.dump_io_uring_buf), fd), "inode match"))
-+		goto end_close_fd;
++	ret = socketpair(AF_UNIX, SOCK_STREAM, 0, sk);
++	if (!ASSERT_OK(ret, "socketpair"))
++		goto end_pipe;
 +
-+	ret = io_uring_register_bufs(fd, iovs, ARRAY_SIZE(iovs));
-+	if (!ASSERT_OK(ret, "io_uring_register_bufs"))
-+		goto end_close_fd;
++	ev.events = EPOLLIN;
 +
-+	/* "B\n" */
-+	len = 2;
-+	str = buf + len;
-+	for (int j = 0; j < ARRAY_SIZE(iovs); j++) {
-+		ret = snprintf(str, sizeof(buf) - len, "%d:0x%lx:%zu\n", j,
-+			       (unsigned long)iovs[j].iov_base,
-+			       iovs[j].iov_len);
-+		if (!ASSERT_GE(ret, 0, "snprintf") || !ASSERT_LT(ret, sizeof(buf) - len, "snprintf"))
-+			goto end_close_fd;
-+		len += ret;
-+		str += ret;
++	ret = epoll_ctl(epfd, EPOLL_CTL_ADD, fds[0], &ev);
++	if (!ASSERT_OK(ret, "epoll_ctl"))
++		goto end_sk;
 +
-+		ret = snprintf(str, sizeof(buf) - len, "`-PFN for bvec[0]=%llu\n",
-+			       page_addr_to_pfn((unsigned long)iovs[j].iov_base));
-+		if (!ASSERT_GE(ret, 0, "snprintf") || !ASSERT_LT(ret, sizeof(buf) - len, "snprintf"))
-+			goto end_close_fd;
-+		len += ret;
-+		str += ret;
-+	}
++	ret = epoll_ctl(epfd, EPOLL_CTL_ADD, sk[0], &ev);
++	if (!ASSERT_OK(ret, "epoll_ctl"))
++		goto end_sk;
 +
-+	ret = snprintf(str, sizeof(buf) - len, "E:%zu\n", ARRAY_SIZE(iovs));
-+	if (!ASSERT_GE(ret, 0, "snprintf") || !ASSERT_LT(ret, sizeof(buf) - len, "snprintf"))
-+		goto end_close_fd;
++	ret = epoll_ctl(epfd, EPOLL_CTL_ADD, fds[1], &ev);
++	if (!ASSERT_OK(ret, "epoll_ctl"))
++		goto end_sk;
 +
-+	iter_fd = bpf_iter_create(bpf_link__fd(skel->links.dump_io_uring_buf));
++	ret = epoll_ctl(epfd, EPOLL_CTL_ADD, sk[1], &ev);
++	if (!ASSERT_OK(ret, "epoll_ctl"))
++		goto end_sk;
++
++	linfo.epoll.epoll_fd = epfd;
++	skel->links.dump_epoll = bpf_program__attach_iter(skel->progs.dump_epoll, &opts);
++	if (!ASSERT_OK_PTR(skel->links.dump_epoll, "bpf_program__attach_iter"))
++		goto end_sk;
++
++	iter_fd = bpf_iter_create(bpf_link__fd(skel->links.dump_epoll));
 +	if (!ASSERT_GE(iter_fd, 0, "bpf_iter_create"))
-+		goto end_close_fd;
++		goto end_sk;
++
++	ret = epoll_ctl(epfd, EPOLL_CTL_ADD, iter_fd, &ev);
++	if (!ASSERT_EQ(ret, -1, "epoll_ctl add for iter_fd"))
++		goto end_iter_fd;
++
++	ret = snprintf(buf, sizeof(buf), fmt, fds[0], sk[0], fds[1], sk[1]);
++	if (!ASSERT_GE(ret, 0, "snprintf") || !ASSERT_LT(ret, sizeof(buf), "snprintf"))
++		goto end_iter_fd;
 +
 +	ret = read_fd_into_buffer(iter_fd, rbuf, sizeof(rbuf));
 +	if (!ASSERT_GT(ret, 0, "read_fd_into_buffer"))
-+		goto end_close_iter;
++		goto end_iter_fd;
 +
-+	if (!ASSERT_OK(strcmp(rbuf, buf), "compare iterator output")) {
-+		puts("=== Expected Output ===");
-+		printf("%s", buf);
-+		puts("==== Actual Output ====");
-+		printf("%s", rbuf);
-+		puts("=======================");
-+	}
-+end_close_iter:
-+	close(iter_fd);
-+end_close_fd:
-+	close(fd);
-+end:
-+	while (i--)
-+		munmap(iovs[i].iov_base, iovs[i].iov_len);
-+	bpf_iter_io_uring__destroy(skel);
-+}
++	puts("=== Expected Output ===");
++	printf("%s", buf);
++	puts("==== Actual Output ====");
++	printf("%s", rbuf);
++	puts("=======================");
 +
-+void test_io_uring_file(void)
-+{
-+	int reg_files[] = { [0 ... 7] = -1 };
-+	DECLARE_LIBBPF_OPTS(bpf_iter_attach_opts, opts);
-+	char buf[4096] = "B\n", rbuf[4096] = {}, *str;
-+	union bpf_iter_link_info linfo = {};
-+	struct bpf_iter_io_uring *skel;
-+	int iter_fd, fd, len = 0, ret;
-+	struct io_uring_params p;
++	s = rbuf;
++	while ((s = strtok_r(s, "\n", &t))) {
++		int fd = -1;
 +
-+	opts.link_info = &linfo;
-+	opts.link_info_len = sizeof(linfo);
-+
-+	skel = bpf_iter_io_uring__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "bpf_iter_io_uring__open_and_load"))
-+		return;
-+
-+	/* "B\n" */
-+	len = 2;
-+	str = buf + len;
-+	ret = snprintf(str, sizeof(buf) - len, "B\n");
-+	for (int i = 0; i < ARRAY_SIZE(reg_files); i++) {
-+		char templ[] = "/tmp/io_uringXXXXXX";
-+		const char *name, *def = "<none>";
-+
-+		/* create sparse set */
-+		if (i & 1) {
-+			name = def;
++		if (s[0] == 'B' || s[0] == 'E')
++			goto next;
++		ASSERT_EQ(sscanf(s, s[0] == 'p' ? "pipe:%d" : "socket:%d", &fd), 1, s);
++		if (fd == fds[0]) {
++			ASSERT_NEQ(set[0], 1, "pipe[0]");
++			set[0] = 1;
++		} else if (fd == fds[1]) {
++			ASSERT_NEQ(set[1], 1, "pipe[1]");
++			set[1] = 1;
++		} else if (fd == sk[0]) {
++			ASSERT_NEQ(set[2], 1, "sk[0]");
++			set[2] = 1;
++		} else if (fd == sk[1]) {
++			ASSERT_NEQ(set[3], 1, "sk[1]");
++			set[3] = 1;
 +		} else {
-+			reg_files[i] = mkstemp(templ);
-+			if (!ASSERT_GE(reg_files[i], 0, templ))
-+				goto end_close_reg_files;
-+			name = templ;
-+			ASSERT_OK(unlink(name), "unlink");
++			ASSERT_TRUE(0, "Incorrect fd in iterator output");
 +		}
-+		ret = snprintf(str, sizeof(buf) - len, "%d:%s%s\n", i, name, name != def ? " (deleted)" : "");
-+		if (!ASSERT_GE(ret, 0, "snprintf") || !ASSERT_LT(ret, sizeof(buf) - len, "snprintf"))
-+			goto end_close_reg_files;
-+		len += ret;
-+		str += ret;
++next:
++		s = NULL;
 +	}
-+
-+	ret = snprintf(str, sizeof(buf) - len, "E:%zu\n", ARRAY_SIZE(reg_files));
-+	if (!ASSERT_GE(ret, 0, "snprintf") || !ASSERT_LT(ret, sizeof(buf) - len, "snprintf"))
-+		goto end_close_reg_files;
-+
-+	memset(&p, 0, sizeof(p));
-+	fd = sys_io_uring_setup(1, &p);
-+	if (!ASSERT_GE(fd, 0, "io_uring_setup"))
-+		goto end_close_reg_files;
-+
-+	linfo.io_uring.io_uring_fd = fd;
-+	skel->links.dump_io_uring_file = bpf_program__attach_iter(skel->progs.dump_io_uring_file,
-+								  &opts);
-+	if (!ASSERT_OK_PTR(skel->links.dump_io_uring_file, "bpf_program__attach_iter"))
-+		goto end_close_fd;
-+
-+	if (!ASSERT_OK(io_uring_inode_match(bpf_link__fd(skel->links.dump_io_uring_file), fd), "inode match"))
-+		goto end_close_fd;
-+
-+	iter_fd = bpf_iter_create(bpf_link__fd(skel->links.dump_io_uring_file));
-+	if (!ASSERT_GE(iter_fd, 0, "bpf_iter_create"))
-+		goto end;
-+
-+	ret = io_uring_register_files(fd, reg_files, ARRAY_SIZE(reg_files));
-+	if (!ASSERT_OK(ret, "io_uring_register_files"))
-+		goto end_iter_fd;
-+
-+	ret = read_fd_into_buffer(iter_fd, rbuf, sizeof(rbuf));
-+	if (!ASSERT_GT(ret, 0, "read_fd_into_buffer(iterator_fd, buf)"))
-+		goto end_iter_fd;
-+
-+	if (!ASSERT_OK(strcmp(rbuf, buf), "compare iterator output")) {
-+		puts("=== Expected Output ===");
-+		printf("%s", buf);
-+		puts("==== Actual Output ====");
-+		printf("%s", rbuf);
-+		puts("=======================");
-+	}
++	for (int i = 0; i < ARRAY_SIZE(set); i++)
++		ASSERT_EQ(set[i], 1, "fd found");
 +end_iter_fd:
 +	close(iter_fd);
-+end_close_fd:
-+	close(fd);
-+end_close_reg_files:
-+	for (int i = 0; i < ARRAY_SIZE(reg_files); i++) {
-+		if (reg_files[i] != -1)
-+			close(reg_files[i]);
-+	}
++end_sk:
++	close(sk[1]);
++	close(sk[0]);
++end_pipe:
++	close(fds[1]);
++	close(fds[0]);
++end_epfd:
++	close(epfd);
 +end:
-+	bpf_iter_io_uring__destroy(skel);
++	bpf_iter_epoll__destroy(skel);
 +}
 +
  void test_bpf_iter(void)
  {
  	if (test__start_subtest("btf_id_or_null"))
-@@ -1299,4 +1546,8 @@ void test_bpf_iter(void)
- 		test_rdonly_buf_out_of_bound();
- 	if (test__start_subtest("buf-neg-offset"))
- 		test_buf_neg_offset();
-+	if (test__start_subtest("io_uring_buf"))
-+		test_io_uring_buf();
-+	if (test__start_subtest("io_uring_file"))
-+		test_io_uring_file();
+@@ -1550,4 +1669,6 @@ void test_bpf_iter(void)
+ 		test_io_uring_buf();
+ 	if (test__start_subtest("io_uring_file"))
+ 		test_io_uring_file();
++	if (test__start_subtest("epoll"))
++		test_epoll();
  }
-diff --git a/tools/testing/selftests/bpf/progs/bpf_iter_io_uring.c b/tools/testing/selftests/bpf/progs/bpf_iter_io_uring.c
+diff --git a/tools/testing/selftests/bpf/progs/bpf_iter_epoll.c b/tools/testing/selftests/bpf/progs/bpf_iter_epoll.c
 new file mode 100644
-index 000000000000..caf8bd0bf8d4
+index 000000000000..0afc74d154a1
 --- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/bpf_iter_io_uring.c
-@@ -0,0 +1,50 @@
++++ b/tools/testing/selftests/bpf/progs/bpf_iter_epoll.c
+@@ -0,0 +1,33 @@
 +// SPDX-License-Identifier: GPL-2.0
 +#include "bpf_iter.h"
 +#include <bpf/bpf_helpers.h>
 +
-+SEC("iter/io_uring_buf")
-+int dump_io_uring_buf(struct bpf_iter__io_uring_buf *ctx)
-+{
-+	struct io_mapped_ubuf *ubuf = ctx->ubuf;
-+	struct seq_file *seq = ctx->meta->seq;
-+	unsigned int index = ctx->index;
++extern void pipefifo_fops __ksym;
 +
-+	if (!ctx->meta->seq_num)
-+		BPF_SEQ_PRINTF(seq, "B\n");
-+
-+	if (ubuf) {
-+		BPF_SEQ_PRINTF(seq, "%u:0x%lx:%lu\n", index, (unsigned long)ubuf->ubuf,
-+			       (unsigned long)ubuf->ubuf_end - ubuf->ubuf);
-+		BPF_SEQ_PRINTF(seq, "`-PFN for bvec[0]=%lu\n",
-+			       (unsigned long)bpf_page_to_pfn(ubuf->bvec[0].bv_page));
-+	} else {
-+		BPF_SEQ_PRINTF(seq, "E:%u\n", index);
-+	}
-+	return 0;
-+}
-+
-+SEC("iter/io_uring_file")
-+int dump_io_uring_file(struct bpf_iter__io_uring_file *ctx)
++SEC("iter/epoll")
++int dump_epoll(struct bpf_iter__epoll *ctx)
 +{
 +	struct seq_file *seq = ctx->meta->seq;
-+	unsigned int index = ctx->index;
-+	struct file *file = ctx->file;
-+	char buf[256] = "";
++	struct epitem *epi = ctx->epi;
++	char sstr[] = "socket";
++	char pstr[] = "pipe";
 +
-+	if (!ctx->meta->seq_num)
++	if (!ctx->meta->seq_num) {
 +		BPF_SEQ_PRINTF(seq, "B\n");
-+	/* for io_uring_file iterator, this is the terminating condition */
-+	if (ctx->ctx->nr_user_files == index) {
-+		BPF_SEQ_PRINTF(seq, "E:%u\n", index);
-+		return 0;
 +	}
-+	if (file) {
-+		bpf_d_path(&file->f_path, buf, sizeof(buf));
-+		BPF_SEQ_PRINTF(seq, "%u:%s\n", index, buf);
++	if (epi) {
++		struct file *f = epi->ffd.file;
++		char *str;
++
++		if (f->f_op == &pipefifo_fops)
++			str = pstr;
++		else
++			str = sstr;
++		BPF_SEQ_PRINTF(seq, "%s:%d\n", str, epi->ffd.fd);
 +	} else {
-+		BPF_SEQ_PRINTF(seq, "%u:<none>\n", index);
++		BPF_SEQ_PRINTF(seq, "E\n");
 +	}
 +	return 0;
 +}

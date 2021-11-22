@@ -2,134 +2,142 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F04C045880E
-	for <lists+io-uring@lfdr.de>; Mon, 22 Nov 2021 03:35:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 201624593B8
+	for <lists+io-uring@lfdr.de>; Mon, 22 Nov 2021 18:11:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229870AbhKVCi1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 21 Nov 2021 21:38:27 -0500
-Received: from szxga08-in.huawei.com ([45.249.212.255]:27155 "EHLO
-        szxga08-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229775AbhKVCi1 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 21 Nov 2021 21:38:27 -0500
-Received: from canpemm500010.china.huawei.com (unknown [172.30.72.55])
-        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4HyBBp4N1Zz1DDfZ;
-        Mon, 22 Nov 2021 10:32:50 +0800 (CST)
-Received: from huawei.com (10.175.127.227) by canpemm500010.china.huawei.com
- (7.192.105.118) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2308.20; Mon, 22 Nov
- 2021 10:35:19 +0800
-From:   Ye Bin <yebin10@huawei.com>
-To:     <axboe@kernel.dk>, <asml.silence@gmail.com>,
-        <io-uring@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     Ye Bin <yebin10@huawei.com>
-Subject: [PATCH -next] io_uring: fix soft lockup when call __io_remove_buffers
-Date:   Mon, 22 Nov 2021 10:47:37 +0800
-Message-ID: <20211122024737.2198530-1-yebin10@huawei.com>
-X-Mailer: git-send-email 2.31.1
+        id S239806AbhKVROk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 22 Nov 2021 12:14:40 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:60445 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S238230AbhKVROk (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 22 Nov 2021 12:14:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1637601093;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Phf2QrzzmaDIwGVfZVve7wU0yQ9D8hvAWEdQ6KPMNRo=;
+        b=MdcmPQc0UquFRd9NSENg4GpjSEQLlk/LNNyNYJEiGOMRRQ0f4O5I8cWHvIHwSlgGv1R3Vg
+        Z5s3HPVL49AeXSorRMico6xCsh030xwb1Eee8fvSraP3sPajbDAy4/y+48iSquyZ5BljVQ
+        Nyskr7d5PyYaF5ytMUwWbhP+/+YAb9I=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-439-JXPn9vsKPL-EkgwN1jwhtQ-1; Mon, 22 Nov 2021 12:11:32 -0500
+X-MC-Unique: JXPn9vsKPL-EkgwN1jwhtQ-1
+Received: by mail-wm1-f72.google.com with SMTP id j193-20020a1c23ca000000b003306ae8bfb7so7072759wmj.7
+        for <io-uring@vger.kernel.org>; Mon, 22 Nov 2021 09:11:31 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent
+         :content-language:to:cc:references:from:organization:subject
+         :in-reply-to:content-transfer-encoding;
+        bh=Phf2QrzzmaDIwGVfZVve7wU0yQ9D8hvAWEdQ6KPMNRo=;
+        b=f45PE0KgsOCRHcWahG84VmSAfD5hsLgflC8awxcSFOiKFJWAsedqbJ7q/7+5gtXy51
+         QcMNCoYNjZXjrDBh4Mdex1t+nSullfvySsshcTqhCD4+hcCaMh+rj87zbQJGeTsKp16x
+         CtgIKhCXJZW545lE2/a/vjRnicNvtnZ4CazQFJTX8LSYhAI/43MGrN5pkTx7spzs7j2G
+         GP9I6AMIv8/K8SVuqnnmvJPAu+TCTVGc6CEY7ymmQLNVdfaBO48dLWrCqrtEgftVHUaS
+         hstmMoyhkDPjvRD4v/Taxm2Xtq6U1ztrRvLIOwIlJQ93dToovxiGVX5R+k8uE+Cxcq5K
+         0zRQ==
+X-Gm-Message-State: AOAM532NnMX0B1fSQL/PTprPNef7V3XxzQGKQ+Oizyu7HvqzYxGvhLCA
+        UbR/piYPyn5ES4taYOvS1PeC/3t2GDCu/TtqTvFPOhCTVr0+vqmS/Q30gfBVd6BZP5IUdQsRjSe
+        PeEkseQmvHyRMkijxLYI=
+X-Received: by 2002:a7b:cd93:: with SMTP id y19mr30737762wmj.190.1637601090596;
+        Mon, 22 Nov 2021 09:11:30 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwJSOfXqMAnLV5Q/tuhdq3GNQ8VLl419MW+cfbNy8G3bRV/AYoyovM3ensDWzOdfrrIx6af/Q==
+X-Received: by 2002:a7b:cd93:: with SMTP id y19mr30737727wmj.190.1637601090332;
+        Mon, 22 Nov 2021 09:11:30 -0800 (PST)
+Received: from [192.168.3.132] (p5b0c667b.dip0.t-ipconnect.de. [91.12.102.123])
+        by smtp.gmail.com with ESMTPSA id k37sm11072331wms.21.2021.11.22.09.11.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Nov 2021 09:11:29 -0800 (PST)
+Message-ID: <b84bc345-d4ea-96de-0076-12ff245c5e29@redhat.com>
+Date:   Mon, 22 Nov 2021 18:11:28 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.127.227]
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- canpemm500010.china.huawei.com (7.192.105.118)
-X-CFilter-Loop: Reflected
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Content-Language: en-US
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Drew DeVault <sir@cmpwn.com>
+Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        io_uring Mailing List <io-uring@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>, linux-mm@kvack.org
+References: <20211028080813.15966-1-sir@cmpwn.com>
+ <CAFBCWQ+=2T4U7iNQz_vsBsGVQ72s+QiECndy_3AMFV98bMOLow@mail.gmail.com>
+ <CFII8LNSW5XH.3OTIVFYX8P65Y@taiga>
+ <593aea3b-e4a4-65ce-0eda-cb3885ff81cd@gnuweeb.org>
+ <20211115203530.62ff33fdae14927b48ef6e5f@linux-foundation.org>
+ <CFQZSHV700KV.18Y62SACP8KOO@taiga>
+ <20211116114727.601021d0763be1f1efe2a6f9@linux-foundation.org>
+ <CFRGQ58D9IFX.PEH1JI9FGHV4@taiga>
+ <20211116133750.0f625f73a1e4843daf13b8f7@linux-foundation.org>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+Subject: Re: [PATCH] Increase default MLOCK_LIMIT to 8 MiB
+In-Reply-To: <20211116133750.0f625f73a1e4843daf13b8f7@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-I got issue as follows:
-[ 567.094140] __io_remove_buffers: [1]start ctx=0xffff8881067bf000 bgid=65533 buf=0xffff8881fefe1680
-[  594.360799] watchdog: BUG: soft lockup - CPU#2 stuck for 26s! [kworker/u32:5:108]
-[  594.364987] Modules linked in:
-[  594.365405] irq event stamp: 604180238
-[  594.365906] hardirqs last  enabled at (604180237): [<ffffffff93fec9bd>] _raw_spin_unlock_irqrestore+0x2d/0x50
-[  594.367181] hardirqs last disabled at (604180238): [<ffffffff93fbbadb>] sysvec_apic_timer_interrupt+0xb/0xc0
-[  594.368420] softirqs last  enabled at (569080666): [<ffffffff94200654>] __do_softirq+0x654/0xa9e
-[  594.369551] softirqs last disabled at (569080575): [<ffffffff913e1d6a>] irq_exit_rcu+0x1ca/0x250
-[  594.370692] CPU: 2 PID: 108 Comm: kworker/u32:5 Tainted: G            L    5.15.0-next-20211112+ #88
-[  594.371891] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS ?-20190727_073836-buildvm-ppc64le-16.ppc.fedoraproject.org-3.fc31 04/01/2014
-[  594.373604] Workqueue: events_unbound io_ring_exit_work
-[  594.374303] RIP: 0010:_raw_spin_unlock_irqrestore+0x33/0x50
-[  594.375037] Code: 48 83 c7 18 53 48 89 f3 48 8b 74 24 10 e8 55 f5 55 fd 48 89 ef e8 ed a7 56 fd 80 e7 02 74 06 e8 43 13 7b fd fb bf 01 00 00 00 <e8> f8 78 474
-[  594.377433] RSP: 0018:ffff888101587a70 EFLAGS: 00000202
-[  594.378120] RAX: 0000000024030f0d RBX: 0000000000000246 RCX: 1ffffffff2f09106
-[  594.379053] RDX: 0000000000000000 RSI: ffffffff9449f0e0 RDI: 0000000000000001
-[  594.379991] RBP: ffffffff9586cdc0 R08: 0000000000000001 R09: fffffbfff2effcab
-[  594.380923] R10: ffffffff977fe557 R11: fffffbfff2effcaa R12: ffff8881b8f3def0
-[  594.381858] R13: 0000000000000246 R14: ffff888153a8b070 R15: 0000000000000000
-[  594.382787] FS:  0000000000000000(0000) GS:ffff888399c00000(0000) knlGS:0000000000000000
-[  594.383851] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  594.384602] CR2: 00007fcbe71d2000 CR3: 00000000b4216000 CR4: 00000000000006e0
-[  594.385540] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[  594.386474] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[  594.387403] Call Trace:
-[  594.387738]  <TASK>
-[  594.388042]  find_and_remove_object+0x118/0x160
-[  594.389321]  delete_object_full+0xc/0x20
-[  594.389852]  kfree+0x193/0x470
-[  594.390275]  __io_remove_buffers.part.0+0xed/0x147
-[  594.390931]  io_ring_ctx_free+0x342/0x6a2
-[  594.392159]  io_ring_exit_work+0x41e/0x486
-[  594.396419]  process_one_work+0x906/0x15a0
-[  594.399185]  worker_thread+0x8b/0xd80
-[  594.400259]  kthread+0x3bf/0x4a0
-[  594.401847]  ret_from_fork+0x22/0x30
-[  594.402343]  </TASK>
+On 16.11.21 22:37, Andrew Morton wrote:
+> On Tue, 16 Nov 2021 20:48:48 +0100 "Drew DeVault" <sir@cmpwn.com> wrote:
+> 
+>> On Tue Nov 16, 2021 at 8:47 PM CET, Andrew Morton wrote:
+>>> Well, why change the default? Surely anyone who cares is altering it
+>>> at runtime anyway. And if they are not, we should encourage them to do
+>>> so?
+>>
+>> I addressed this question in the original patch's commit message.
+> 
+> Kinda.
+> 
+> We're never going to get this right, are we?  The only person who can
+> decide on a system's appropriate setting is the operator of that
+> system.  Haphazardly increasing the limit every few years mainly
+> reduces incentive for people to get this right.
+> 
+> And people who test their software on 5.17 kernels will later find that
+> it doesn't work on 5.16 and earlier, so they still need to tell their
+> users to configure their systems appropriately.  Until 5.16 is
+> obsolete, by which time we're looking at increasing the default again.
+> 
+> I don't see how this change gets us closer to the desired state:
+> getting distros and their users to configure their systems
+> appropriately.
+> 
 
-Message from syslogd@localhost at Nov 13 09:09:54 ...
-kernel:watchdog: BUG: soft lockup - CPU#2 stuck for 26s! [kworker/u32:5:108]
-[  596.793660] __io_remove_buffers: [2099199]start ctx=0xffff8881067bf000 bgid=65533 buf=0xffff8881fefe1680
+My 2 cents: while we should actually try to avoid new FOLL_LONGTERM
+users where possible, we introduce more (IOURING_REGISTER_BUFFERS) to be
+consumed by ordinary, unprivileged users. These new features, *when
+used* require us to raise the MLOCK_LIMIT. Secretmem is similar, but for
+now it rather "replaces" old mlock usage and IIRC has similarly small
+memory demands; that might change in the future, though.
 
-We can reproduce this issue by follow syzkaller log:
-r0 = syz_io_uring_setup(0x401, &(0x7f0000000300), &(0x7f0000003000/0x2000)=nil, &(0x7f0000ff8000/0x4000)=nil, &(0x7f0000000280)=<r1=>0x0, &(0x7f0000000380)=<r2=>0x0)
-sendmsg$ETHTOOL_MSG_FEATURES_SET(0xffffffffffffffff, &(0x7f0000003080)={0x0, 0x0, &(0x7f0000003040)={&(0x7f0000000040)=ANY=[], 0x18}}, 0x0)
-syz_io_uring_submit(r1, r2, &(0x7f0000000240)=@IORING_OP_PROVIDE_BUFFERS={0x1f, 0x5, 0x0, 0x401, 0x1, 0x0, 0x100, 0x0, 0x1, {0xfffd}}, 0x0)
-io_uring_enter(r0, 0x3a2d, 0x0, 0x0, 0x0, 0x0)
+Why is FOLL_LONGTERM bad? Not only does it prevent swapping like mlock
+does, the pages are also unmovable in memory, such that they cannot be
+moved around, for example, for memory compaction.
 
-The reason above issue  is 'buf->list' has 2,100,000 nodes, occupied cpu lead
-to soft lockup.
-To solve this issue, we need add schedule point when do while loop in
-'__io_remove_buffers'.
-After add  schedule point we do regression, get follow data.
-[  240.141864] __io_remove_buffers: [1]start ctx=0xffff888170603000 bgid=65533 buf=0xffff8881116fcb00
-[  268.408260] __io_remove_buffers: [1]start ctx=0xffff8881b92d2000 bgid=65533 buf=0xffff888130c83180
-[  275.899234] __io_remove_buffers: [2099199]start ctx=0xffff888170603000 bgid=65533 buf=0xffff8881116fcb00
-[  296.741404] __io_remove_buffers: [1]start ctx=0xffff8881b659c000 bgid=65533 buf=0xffff8881010fe380
-[  305.090059] __io_remove_buffers: [2099199]start ctx=0xffff8881b92d2000 bgid=65533 buf=0xffff888130c83180
-[  325.415746] __io_remove_buffers: [1]start ctx=0xffff8881b92d1000 bgid=65533 buf=0xffff8881a17d8f00
-[  333.160318] __io_remove_buffers: [2099199]start ctx=0xffff8881b659c000 bgid=65533 buf=0xffff8881010fe380
-...
+Well, I'm not too mad about IOURING_REGISTER_BUFFERS, it actually helped
+me to write a simple reproducer for the COW issues we have in upstream
+mm, and can be quite beneficial in some setups. Still, I think it should
+be used with care depending on the actual environment.
 
-Fixes:8bab4c09f24e("io_uring: allow conditional reschedule for intensive iterators")
-Signed-off-by: Ye Bin <yebin10@huawei.com>
----
- fs/io_uring.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+So, just because a new feature is around that could be used, does it
+mean that we should adjust our kernel default? I'd say in this case,
+rather not. Distributions, or much better, the responsible admin, should
+make such decisions, knowing the environment and the effect this could have.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 76871e3807fd..d8a6446a7921 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -4327,6 +4327,7 @@ static int __io_remove_buffers(struct io_ring_ctx *ctx, struct io_buffer *buf,
- 		kfree(nxt);
- 		if (++i == nbufs)
- 			return i;
-+		cond_resched();
- 	}
- 	i++;
- 	kfree(buf);
-@@ -9258,10 +9259,8 @@ static void io_destroy_buffers(struct io_ring_ctx *ctx)
- 	struct io_buffer *buf;
- 	unsigned long index;
- 
--	xa_for_each(&ctx->io_buffers, index, buf) {
-+	xa_for_each(&ctx->io_buffers, index, buf)
- 		__io_remove_buffers(ctx, buf, index, -1U);
--		cond_resched();
--	}
- }
- 
- static void io_req_caches_free(struct io_ring_ctx *ctx)
+(I know that we can similarly trigger allocation of a lot of unmovable
+memory using other means by malicious user space; but that is rather
+something to limit or handle in the future IMHO)
+
 -- 
-2.31.1
+Thanks,
+
+David / dhildenb
 

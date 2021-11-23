@@ -2,164 +2,279 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 73A32459CC6
-	for <lists+io-uring@lfdr.de>; Tue, 23 Nov 2021 08:30:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FE9B45A220
+	for <lists+io-uring@lfdr.de>; Tue, 23 Nov 2021 13:02:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234063AbhKWHdx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 23 Nov 2021 02:33:53 -0500
-Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:29428 "EHLO
-        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233890AbhKWHdx (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 23 Nov 2021 02:33:53 -0500
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1AN6oiL0013439;
-        Tue, 23 Nov 2021 07:30:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : content-type : in-reply-to :
- mime-version; s=corp-2021-07-09;
- bh=YccPD5L8Xvw9PEgLzU6WTak+A1qGg1/pyVqPgCJQkcw=;
- b=TYKN2TJwMNoyFLTTs+xMVHSBLOU22ZQITyYH4gG1iXlQBudh7AKlRPLW7rIXfSxNqp5t
- KNze31o/NZtEAhmt4VAeD/+jgO0E7u4sKpa4qXEcdH1yZv9NGy3MBMuhoyCL5UThXnwn
- 0tt7i2OCF9FCiIHuXwrlYnafxndaOfw/Bu6cMsv9YrPrCz3ld9KMlvK9spLByT0Wzhu5
- lp/+TJEbK59yIIoB18zClgW81OmZQDDT9G7xg7r6M+1/qCpYifFpVgx94pTojpHupu52
- 2zWsgeUwOvw3LJzBIVufut85b8M71SUlAKTgA70ki+zQavPiF8QfyRmcm2seSDP/d3LJ FQ== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by mx0b-00069f02.pphosted.com with ESMTP id 3cg305789y-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 23 Nov 2021 07:30:43 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 1AN7POVc178161;
-        Tue, 23 Nov 2021 07:30:39 GMT
-Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2100.outbound.protection.outlook.com [104.47.55.100])
-        by userp3020.oracle.com with ESMTP id 3cfasrybpj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 23 Nov 2021 07:30:39 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=V/EC6MK3LkzZzaVq+Ve2kPkWMA4axh9BFy1veVKZ8AODnHoljDnbVSlIYGVn923u45L6G4X5rJpZmMP1ayO/X/IzkNUTFYEH4EJ0GkFlXcCyM84cc9+xO4THG0yhtJ76XwaaP6kHFzzz/I8HZ9oggVyC/vuVe8rEt6dOWYS5peWjD6AY0udIpH0MmASNZ3fX8qVgvVEIOpzay7l4vdRzjw9IYaRMqXdbJNyK+6GSONKL2OaHA30OI/QJJEFlU4Yb8UbHp2ITOZA/YuFUAJgpTAQBwoe+jQmPvG52IQIyG6cMvGtmnN+r4pdsW8lVPfacwEBjWmsIHQr3Xq67EEw6IQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YccPD5L8Xvw9PEgLzU6WTak+A1qGg1/pyVqPgCJQkcw=;
- b=cQnUD64+rujoUL3249mjFzxN8zgWtsur9/XDWY8bmnpkVqNOMXG7dlNN4Ai+Kh7XKD2WQfKYRTuEuwqJQFNoaurzvDaz5FNGRt8smnHOQGkcAI1LP1FXAgnGJt7wcEyUl+hYOfQYUDCE5Ru6kqnhQSwf3D+xcJj+jVe7lFwNq0axOc5yIw+eVv2m/JctbBGa/p15+yMQA/9q/ZGj4oOZngz3MvRiJ9k6EVs+CXOULnKEwrPtsHz/+ryHpBLDforwQeJs6UfM/Ndip7K1u4EMH4UMuatbHYKJ0S40DeesNvUM2SAUG3giY5+3iBTfxaftuClXHwig+fs/vkSWZ8e5KQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YccPD5L8Xvw9PEgLzU6WTak+A1qGg1/pyVqPgCJQkcw=;
- b=mVsmc8na5kWVkLeZ41wb5jy71EUCH5nVoG/o/FvCsdpQhp0+ObAg03JXjAlSxUDlgx3R7lhAb24OxW2WjwltSEBEW+/dhjEndt6eE/zVVQtNIMKZoe9OjzzHN6/VgPUCFzeMBqcmW5qpnB+Qhl5nBnWIkSTA0abe81bKI/j3wIM=
-Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
- (2603:10b6:301:2d::28) by MWHPR10MB1566.namprd10.prod.outlook.com
- (2603:10b6:300:27::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4713.21; Tue, 23 Nov
- 2021 07:30:37 +0000
-Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
- ([fe80::495f:a05d:ba7a:682]) by MWHPR1001MB2365.namprd10.prod.outlook.com
- ([fe80::495f:a05d:ba7a:682%6]) with mapi id 15.20.4713.026; Tue, 23 Nov 2021
- 07:30:37 +0000
-Date:   Tue, 23 Nov 2021 10:30:17 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH 3/4] io_uring: clean __io_import_iovec()
-Message-ID: <20211123073017.GD10517@kadam>
-References: <cover.1637524285.git.asml.silence@gmail.com>
- <5c6ed369ad95075dab345df679f8677b8fe66656.1637524285.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5c6ed369ad95075dab345df679f8677b8fe66656.1637524285.git.asml.silence@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-ClientProxiedBy: JNXP275CA0047.ZAFP275.PROD.OUTLOOK.COM (2603:1086:0:18::35)
- To MWHPR1001MB2365.namprd10.prod.outlook.com (2603:10b6:301:2d::28)
+        id S234328AbhKWMFQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 23 Nov 2021 07:05:16 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:21617 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233959AbhKWMFP (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 23 Nov 2021 07:05:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1637668927;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=JdNCVm5I+Q2tdRBLAErQwYJMGPXNfC9Gg37QHqIgOLg=;
+        b=GNzlh+KjSmxEvh5YfaWlwTJ7rCv+VhxN03aLBi5lpe9TiNp9Q+Uduz5+DE+8uVwj+j9ShV
+        jr+/LiJMZHSyad3qVMjLPKtDb0KdRn2zTCm/1RV47Kbg2/PzSDDXw6pUm8gSUzgXYjjmIu
+        Jt6UeicuBYW8VhE5FabPIhifR9x8p1k=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-564-Jh60Pg6bPrWwGNCnJxlbOg-1; Tue, 23 Nov 2021 07:02:06 -0500
+X-MC-Unique: Jh60Pg6bPrWwGNCnJxlbOg-1
+Received: by mail-wm1-f69.google.com with SMTP id l6-20020a05600c4f0600b0033321934a39so1400011wmq.9
+        for <io-uring@vger.kernel.org>; Tue, 23 Nov 2021 04:02:06 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent
+         :content-language:from:to:cc:references:organization:subject
+         :in-reply-to:content-transfer-encoding;
+        bh=JdNCVm5I+Q2tdRBLAErQwYJMGPXNfC9Gg37QHqIgOLg=;
+        b=Oxb5W89z1gcsllX6BMN4buIM+Ql8OoAJePn87VtEFrIKTXrFOm3tZKpn1nPAz0tj+e
+         i9faNhnWnJANFFubPcD6LWJ+ZlSTmaWajA9YGglGcKzb3e+JMK7vLsUaR4NsMfYNBoaW
+         aPoX9BY2Zyf2ENQ77l14izTLkRXcRL+DIesjAKBzQeoWoz8UcfGJIp+aoaWl8VeA3dCo
+         +tbBBgN9+fnJ6wgGLLZwZb3FYURFLIDWmit4aAQFWQlgeAKu64i0RhBtyNL/7a5T9238
+         P/WcYHBf/3cj8QeI7CGCT/Tsv+oSTOYBafrv7dfp9C54PCWjBjjNta/i7dOkuROJEiWu
+         oLrw==
+X-Gm-Message-State: AOAM532smNcOkFgHXa+6x0p/Eer/3lNMREBxgHOpv3Js6c6M7+lzf8Nu
+        D8t/mpdbCHtOrEB/p4LUHl0h6gwcaErq0Rryo8QngTeMXZvuYCqcN7Qfo2Gv3eCGxxGxvZOCJeJ
+        54J7G+B6Ud8QLP95mQJk=
+X-Received: by 2002:a1c:ac46:: with SMTP id v67mr2408115wme.182.1637668925101;
+        Tue, 23 Nov 2021 04:02:05 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJz4X+d0sHyk7qvzIlv4QXcrhMXR7T+rdEozr8VusV5WWhJueU/JGKC/I3FJqrdQaE2c0TuMzg==
+X-Received: by 2002:a1c:ac46:: with SMTP id v67mr2408050wme.182.1637668924714;
+        Tue, 23 Nov 2021 04:02:04 -0800 (PST)
+Received: from [192.168.3.132] (p5b0c6765.dip0.t-ipconnect.de. [91.12.103.101])
+        by smtp.gmail.com with ESMTPSA id l5sm1074222wms.16.2021.11.23.04.02.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Nov 2021 04:02:04 -0800 (PST)
+Message-ID: <4409acf9-4927-861e-997a-6e3db42d6851@redhat.com>
+Date:   Tue, 23 Nov 2021 13:02:03 +0100
 MIME-Version: 1.0
-Received: from kadam (102.222.70.114) by JNXP275CA0047.ZAFP275.PROD.OUTLOOK.COM (2603:1086:0:18::35) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4713.19 via Frontend Transport; Tue, 23 Nov 2021 07:30:34 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 9b670cce-52bc-4855-3c50-08d9ae5324af
-X-MS-TrafficTypeDiagnostic: MWHPR10MB1566:
-X-Microsoft-Antispam-PRVS: <MWHPR10MB15667401D968566F4F11706D8E609@MWHPR10MB1566.namprd10.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:3513;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: l+Pjh1eAxAulDxOTIcoQIcBOFg+jC9gPtxTUB4eVAI1t/8v98CftNWMpBkTQqT20lxNS2Pts1wsYkqqNaXuNIS/Fr1EPqwAVirklwAYpfu+hx5ZC6GClYKEMT518NirKjzpGcV9Ol3ny9cQCuioCATiEc3gvFQukcvrMltYAzd/pvavkj1YJfQj7XmjOnUXLDbZp8qhBDVw2WSLZBKhsOLjBJQQZcFG+syIhDvFda06y+ZwqHJwn0zc01yebhmwP9DjZFb+tEpP9DnRzOMHHgo+ewcIhcm0yrPeek3HfZ3CXqooZK3ox8LWqlGWiGcy+9ze5xWlj6ewRNpyNc7w39fCF6mKXXLmf+wDtxrI6c9eDJ7qhSXJ7WCXM5BZ+u0K8TaVZVPaODlFUfl8GK0Db/pRmNHiE1NcRO6mlgudtl+a4yX/ixLCW5CQJcTAIUo9VN7D0qgTblpjCqcwC6aCj/0LaBL76Y8JeVqW14lezP6yxaPr7b5Zy2PQd65xLrELbaeuk7geeCQx8Qzd6fhmw0e/FucWLeN0kM9xNvoZ70kIzE6jrXXSi/jXMvJEtBFGCI/pYTAYD11cajB3pHJ3W4vpIPHVlwZHj/Z2do3ap2WhFotjJXQo2lkkvYeB1ArWpGRsqEL7IRoxqkYg4zg5G21efdHyMoJQI6/fNXNHOuIM64nL1UH7HQcuYv3mols/rURGQF5daiQqHEMwhhAw5biFLKZ7Ug7GAEtcDKDmwa8i/PxKe39TAFFTgwLN+9R70zg0RvhKoW57W3ps8b+34YHZl7zkoSa8f0hImj5xETa4=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(186003)(2906002)(6666004)(6916009)(66946007)(966005)(8676002)(66476007)(8936002)(26005)(66556008)(956004)(44832011)(83380400001)(33656002)(1076003)(86362001)(316002)(52116002)(9576002)(6496006)(5660300002)(508600001)(38100700002)(38350700002)(9686003)(55016003)(33716001)(4326008);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?lVuICI7kZsspv4Xc1Fffi2kj8vNih17SV669BfidDqBCBi0DWxJ/4RJK8ohF?=
- =?us-ascii?Q?v4+13RhbvOL/bATNWI+eQ6n7nsRBawVaYJfYpWlE31ZuKS/t7Lma9QgRYL0v?=
- =?us-ascii?Q?Nf1JXXbHtPuAofhGArcwWjIOI37Hh5dPHZEvQd5JQOkEUxn8j91z71+hxbU/?=
- =?us-ascii?Q?Owgr4eiji5AMhli7Tt/wG2Pfc11C46bp4Tg/XYeD/ISma8A4lS+eTN9NiDSq?=
- =?us-ascii?Q?SP0l8uUrZUITnbsQa8A1vzw9S0qtik6orqLa6zEnrHF0kR0MY6pUeLFh+G1Q?=
- =?us-ascii?Q?EEvqoylWgncfC5Aa/9ZMhTOqxKEVl/4uqE3xCFo89lMPXNyolURgQ33We9fG?=
- =?us-ascii?Q?5KNcWex3KCTc0vIYz4NLOHVSyaJuL/ou06yT/GE+Nw35KVrf9kOW1BUCeTIR?=
- =?us-ascii?Q?7BviQDroY0Kmpn3hdDlXysj0jaX+4DAk5eAjPIuMz/8KMxeoG/VQLzH595mA?=
- =?us-ascii?Q?FQ2Vp9PQUbQ292C9d1b+PxKEV/bzjKHy51Ce7V7JPRSFpYzUSqyYve/X/YmX?=
- =?us-ascii?Q?8miwGz1ojaV/uVB46yPIRxUYFg/l8bqP5nn6Ke5O/lfeuJcn9bd9014n+gnV?=
- =?us-ascii?Q?fLMezTRtDJmKW282+G1B84bI/WSh9pU5QVRP0pUNQicUv9a1ULcXYMIviewV?=
- =?us-ascii?Q?DU5a7PL61gLC5E13ZTaD2VO6yykFxxLVPYq1vqUCqrcmeEn7xckF0ZIP0Jeq?=
- =?us-ascii?Q?xwHbUoXkhb7SIofIjBrIRRYWCMydMKmQbu6qPzRtSkcY/TIxqNmBaNmfJ6td?=
- =?us-ascii?Q?LcaDPvhdze5D++BVusXI4UqYayDcCSOZ1zowsngNQUdz1glT25VgtwHG8VCG?=
- =?us-ascii?Q?OfY7iAZ+ufKORT5i9/5p/j3U4v49YCxPl50D9JrHuYlpjGZ7gwGXBIWmo4HX?=
- =?us-ascii?Q?BWT3NUUyMbiiTYRuF4zhRvcWvjE/AbEH+4fFFB0rugLWhjmIplaT9W4Ul5jT?=
- =?us-ascii?Q?ty8KH6oEqheNBwIw9175r3k3peEEvExEozLeVC6PDaLBiKJdCPWuMoG7yR6S?=
- =?us-ascii?Q?c732d4ORJu3e45mrzXwS5cKuF7Iti/4TCkX7opTmlEhHzfCggeqwBKGrqsRd?=
- =?us-ascii?Q?ZJQuFNqsAnxyVafpJfk1FH0Bmszf15/BHPOrY+mgWQTbHDhxlr8OVc477fwl?=
- =?us-ascii?Q?bbGL74DomhbEHJDhfN6t3MJQABPPsLm7lUY9KI9s6VdcgYApikzrnneGMUBP?=
- =?us-ascii?Q?IGbayq/8+pH5wtPQLK5n3Jkxo/1CEINTSxrY8/fbHSBDtRezY/8ptnrgJZX+?=
- =?us-ascii?Q?vFKZSVRgtuIpM/AFPiHNCBFiiDaSyZYdVd8RmcXZlh0toXB6KRZVZI1pJfCD?=
- =?us-ascii?Q?3N4JM5A/eJhHcAF6xuIf/auDz2CyeYLTntKGoFjtCqsVag/n1CfJR8uJ+jrV?=
- =?us-ascii?Q?EQZ2zQJWabbpxzqV7DQhGVAEQxa3q9H3Iv4OT/U6YefLr5wTbk3zHh52f1bX?=
- =?us-ascii?Q?CRB27mlBTTULeTEL3FxYk93zzsy6pDgkiTZ29j7J6hjoRm9DSDuhVtE7G2MS?=
- =?us-ascii?Q?tCH6M+3Ki7LgSbQQ7fkcM0ZtWAAQ7B67AIuxuerrSmmK+ZL1xQJQbPgIcPu9?=
- =?us-ascii?Q?tPaC3QNot0R+39CG0KQzYu7B3Ppk1RjFnf/Ohaq+ujgNr8n84kE8wD0XauNn?=
- =?us-ascii?Q?cWUl00YBuoE9u+q7cjteRyywC4nqvWrKEMnrTNiY6R66jTQ5i6/gU76c0Ka4?=
- =?us-ascii?Q?KKTio+z5T+fVUyezfCy+/gaRNjg=3D?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9b670cce-52bc-4855-3c50-08d9ae5324af
-X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Nov 2021 07:30:37.5305
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BXrv3netKU0c5VJVxHbT5ibXhRFD3XX/GXhkynCFfvd0CJduJp05Vcv5hE0WHXJJQ58hVOYTFLPmUqTtW5fY3Py6xRejkgP0CT89gfcsr8A=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR10MB1566
-X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10176 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 adultscore=0 phishscore=0
- bulkscore=0 suspectscore=0 malwarescore=0 mlxscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2110150000
- definitions=main-2111230037
-X-Proofpoint-GUID: pEh4ES_C_mY7K2YEK0fuMyJIyS9cN-d7
-X-Proofpoint-ORIG-GUID: pEh4ES_C_mY7K2YEK0fuMyJIyS9cN-d7
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Content-Language: en-US
+From:   David Hildenbrand <david@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Andrew Dona-Couch <andrew@donacou.ch>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Drew DeVault <sir@cmpwn.com>
+Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        io_uring Mailing List <io-uring@vger.kernel.org>,
+        Pavel Begunkov <asml.silence@gmail.com>, linux-mm@kvack.org
+References: <20211028080813.15966-1-sir@cmpwn.com>
+ <CAFBCWQ+=2T4U7iNQz_vsBsGVQ72s+QiECndy_3AMFV98bMOLow@mail.gmail.com>
+ <CFII8LNSW5XH.3OTIVFYX8P65Y@taiga>
+ <593aea3b-e4a4-65ce-0eda-cb3885ff81cd@gnuweeb.org>
+ <20211115203530.62ff33fdae14927b48ef6e5f@linux-foundation.org>
+ <CFQZSHV700KV.18Y62SACP8KOO@taiga>
+ <20211116114727.601021d0763be1f1efe2a6f9@linux-foundation.org>
+ <CFRGQ58D9IFX.PEH1JI9FGHV4@taiga>
+ <20211116133750.0f625f73a1e4843daf13b8f7@linux-foundation.org>
+ <b84bc345-d4ea-96de-0076-12ff245c5e29@redhat.com>
+ <8f219a64-a39f-45f0-a7ad-708a33888a3b@www.fastmail.com>
+ <333cb52b-5b02-648e-af7a-090e23261801@redhat.com>
+ <ca96bb88-295c-ccad-ed2f-abc585cb4904@kernel.dk>
+ <5f998bb7-7b5d-9253-2337-b1d9ea59c796@redhat.com>
+ <3adc55d3-f383-efa9-7319-740fc6ab5d7a@kernel.dk>
+ <ffa66565-d546-a2cf-1748-38b9992fd5b8@redhat.com>
+Organization: Red Hat
+Subject: Re: [PATCH] Increase default MLOCK_LIMIT to 8 MiB
+In-Reply-To: <ffa66565-d546-a2cf-1748-38b9992fd5b8@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Nov 23, 2021 at 12:07:48AM +0000, Pavel Begunkov wrote:
-> Apparently, implicit 0 to NULL conversion with ERR_PTR is not
-> recommended and makes some tooling like Smatch to complain. Handle it
-> explicitly, compilers are perfectly capable to optimise it out.
+>>>>
+>>>> We should just make this 0.1% of RAM (min(0.1% ram, 64KB)) or something
+>>>> like what was suggested, if that will help move things forward. IMHO the
+>>>> 32MB machine is mostly a theoretical case, but whatever .
+>>>
+>>> 1) I'm deeply concerned about large ZONE_MOVABLE and MIGRATE_CMA ranges
+>>> where FOLL_LONGTERM cannot be used, as that memory is not available.
+>>>
+>>> 2) With 0.1% RAM it's sufficient to start 1000 processes to break any
+>>> system completely and deeply mess up the MM. Oh my.
+>>
+>> We're talking per-user limits here. But if you want to talk hyperbole,
+>> then 64K multiplied by some other random number will also allow
+>> everything to be pinned, potentially.
+>>
 > 
-> Link: https://lore.kernel.org/all/20211108134937.GA2863@kili/ 
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> Right, it's per-user. 0.1% per user FOLL_LONGTERM locked into memory in
+> the worst case.
+> 
 
-I like that this this code is now really explicit that the NULL returns
-are intentional.  I had figured that out from the git log already.
+To make it clear why I keep complaining about FOLL_LONGTERM for
+unprivileged users even if we're talking about "only" 0.1% of RAM ...
 
-Passing zero to ERR_PTR() is valid.  Linus complained about this Smatch
-warning.  But I'm not going to delete the check because probably around
-70% (complete guess) of the cases in new code are bugs.  In older
-kernels the Smatch warnings tend to be 100% false positives because we
-fix the real bugs.  Also the kbuild-bot hits a bunch of error pointer
-false positives for cross compile builds but I don't have a cross
-compile system set up so I haven't debugged that.  :/  It has something
-to do with pointers being treated as signed on those arches.
+On x86-64 a 2 MiB THP (IOW pageblock) has 512 sub-pages. If we manage to
+FOLL_LONGTERM a single sub-page, we can make the THP unavailable to the
+system, meaning we cannot form a THP by
+compaction/swapping/migration/whatever at that physical memory area
+until we unpin that single page. We essentially "block" a THP from
+forming at that physical memory area.
 
-But what I really like to see is documentation explaining when a
-function is going to return NULL vs an error pointer.
+So with a single 4k page we can block one 2 MiB THP. With 0.1% we can,
+therefore, block 51,2 % of all THP. Theoretically, of course, if the
+stars align.
 
-regards,
-dan carpenter
+
+... or if we're malicious or unlucky. I wrote a reproducer this morning
+that tries blocking as many THP as it can:
+
+https://gitlab.com/davidhildenbrand/scratchspace/-/blob/main/io_uring_thp.c
+
+------------------------------------------------------------------------
+
+Example on my 16 GiB (8096 THP "in theory") notebook with some
+applications running in the background.
+
+$ uname -a
+Linux t480s 5.14.16-201.fc34.x86_64 #1 SMP Wed Nov 3 13:57:29 UTC 2021
+x86_64 x86_64 x86_64 GNU/Linux
+
+$ ./io_uring_thp
+PAGE size: 4096 bytes (sensed)
+THP size: 2097152 bytes (sensed)
+RLIMIT_MEMLOCK: 16777216 bytes (sensed)
+IORING_MAX_REG_BUFFERS: 16384 (guess)
+Pages per THP: 512
+User can block 4096 THP (8589934592 bytes)
+Process can block 4096 THP (8589934592 bytes)
+Blocking 1 THP
+Blocking 2 THP
+...
+Blocking 3438 THP
+Blocking 3439 THP
+Blocking 3440 THP
+Blocking 3441 THP
+Blocking 3442 THP
+... and after a while
+Blocking 4093 THP
+Blocking 4094 THP
+Blocking 4095 THP
+Blocking 4096 THP
+
+$ cat /proc/`pgrep io_uring_thp`/status
+Name:   io_uring_thp
+Umask:  0002
+State:  S (sleeping)
+[...]
+VmPeak:     6496 kB
+VmSize:     6496 kB
+VmLck:         0 kB
+VmPin:     16384 kB
+VmHWM:      3628 kB
+VmRSS:      1580 kB
+RssAnon:             160 kB
+RssFile:            1420 kB
+RssShmem:              0 kB
+VmData:     4304 kB
+VmStk:       136 kB
+VmExe:         8 kB
+VmLib:      1488 kB
+VmPTE:        48 kB
+VmSwap:        0 kB
+HugetlbPages:          0 kB
+CoreDumping:    0
+THP_enabled:    1
+
+$ cat /proc/meminfo
+MemTotal:       16250920 kB
+MemFree:        11648016 kB
+MemAvailable:   11972196 kB
+Buffers:           50480 kB
+Cached:          1156768 kB
+SwapCached:        54680 kB
+Active:           704788 kB
+Inactive:        3477576 kB
+Active(anon):     427716 kB
+Inactive(anon):  3207604 kB
+Active(file):     277072 kB
+Inactive(file):   269972 kB
+...
+Mlocked:            5692 kB
+SwapTotal:       8200188 kB
+SwapFree:        7742716 kB
+...
+AnonHugePages:         0 kB
+ShmemHugePages:        0 kB
+ShmemPmdMapped:        0 kB
+FileHugePages:         0 kB
+FilePmdMapped:         0 kB
+
+
+Let's see how many contiguous 2M pages we can still get as root:
+$ echo 1 > /proc/sys/vm/compact_memory
+$ cat
+/sys/devices/system/node/node0/hugepages/hugepages-2048kB/nr_hugepages
+0
+$ echo 8192 >
+/sys/devices/system/node/node0/hugepages/hugepages-2048kB/nr_hugepages
+$ cat
+/sys/devices/system/node/node0/hugepages/hugepages-2048kB/nr_hugepages
+537
+... keep retrying a couple of times
+ $ cat
+/sys/devices/system/node/node0/hugepages/hugepages-2048kB/nr_hugepages
+583
+
+Let's kill the io_uring process and try again:
+
+$ echo 8192 >
+/sys/devices/system/node/node0/hugepages/hugepages-2048kB/nr_hugepages
+$ cat
+/sys/devices/system/node/node0/hugepages/hugepages-2048kB/nr_hugepages
+4766
+... keep retrying a couple of times
+$ echo 8192 >
+/sys/devices/system/node/node0/hugepages/hugepages-2048kB/nr_hugepages
+$ cat
+/sys/devices/system/node/node0/hugepages/hugepages-2048kB/nr_hugepages
+4823
+
+------------------------------------------------------------------------
+
+I'm going to leave judgment how bad this is or isn't to the educated
+reader, and I'll stop spending time on this as I have more important
+things to work on.
+
+
+To summarize my humble opinion:
+
+1) I am not against raising the default memlock limit if it's for a sane
+use case. While mlock itself can be somewhat bad for swap, FOLL_LONGTERM
+that also checks the memlock limit here is the real issue. This patch
+explicitly states the "IOURING_REGISTER_BUFFERS" use case, though, and
+that makes me nervous.
+
+2) Exposing FOLL_LONGTERM to unprivileged users should be avoided best
+we can; in an ideal world, we wouldn't have it at all; in a sub-optimal
+world we'd have it only for use cases that really require it due to HW
+limitations. Ideally we'd even have yet another limit for this, because
+mlock != FOLL_LONGTERM.
+
+3) IOURING_REGISTER_BUFFERS shouldn't use FOLL_LONGTERM for use by
+unprivileged users. We should provide a variant that doesn't rely on
+FOLL_LONGTERM or even rely on the memlock limit.
+
+
+Sorry to the patch author for bringing it up as response to the patch.
+After this patch just does what some distros already do (many distros
+even provide higher limits than 8 MiB!). I would be curious why some
+distros already have such high values ... and if it's already because of
+IOURING_REGISTER_BUFFERS after all.
+
+-- 
+Thanks,
+
+David / dhildenb
 

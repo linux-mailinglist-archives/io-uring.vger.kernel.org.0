@@ -2,57 +2,64 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CCCEE45A3B0
-	for <lists+io-uring@lfdr.de>; Tue, 23 Nov 2021 14:25:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3109045A3F4
+	for <lists+io-uring@lfdr.de>; Tue, 23 Nov 2021 14:39:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234772AbhKWN2f (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 23 Nov 2021 08:28:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47960 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234197AbhKWN2f (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 23 Nov 2021 08:28:35 -0500
-Received: from mail-qv1-xf2d.google.com (mail-qv1-xf2d.google.com [IPv6:2607:f8b0:4864:20::f2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57235C06173E
-        for <io-uring@vger.kernel.org>; Tue, 23 Nov 2021 05:25:27 -0800 (PST)
-Received: by mail-qv1-xf2d.google.com with SMTP id jo22so14883718qvb.13
-        for <io-uring@vger.kernel.org>; Tue, 23 Nov 2021 05:25:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=f6bH75B5uISe754dD7QVxSQqAX2xbC77T+3hEu0cg7s=;
-        b=ZAIcvL7QYRTkyqM+UDLXRaCX+Pmpvh5KGYJtlJ/8CtTMaajohDKyBjLo+LXPQsQ8Yw
-         XJc5afxG/RkwB16aWB8+I6/k0XUX2B/wj17o9z6XmNpyTEaJXlMb5L+LByJJ6UmseguW
-         Ov+d4K4llr4KbsOc4yNahw4VUaa0J/UPstNjoW7aBSVvDLkG7J98XrFQn5eqLhT6y944
-         lOF8fXpAFO4n/SjRKOZQ3F9nKAhVWibTWB41gsH8TKX+2XumUIPwcmEZNpRGEhINzKmB
-         iHzWXuUr3Cl5dq8DO8NsvFO+gy7mHuUAE9kXTyJqqdpr7Mb0Ur5NVMTJS+j87RGmZH5G
-         r55g==
+        id S236592AbhKWNme (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 23 Nov 2021 08:42:34 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:44852 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S236552AbhKWNmc (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 23 Nov 2021 08:42:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1637674763;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=+jh8FTAWWG20K+UA82402ba7LKfonIbuvjtOQUuW19c=;
+        b=GYWWa0+JpIjt8sbExUi+TfLb8lTNgAQQufEpM4pemEgYNiNUSKWMogo1C9K2v5lSpVeu9A
+        buAuiHSD4Rjtg/k39vcuCdvQ9CRRgKq0mM6dhwRuIxl8r8VrMCSNnjs00W90vHZqalMEW3
+        Z+2SdJ2JzniGIrrvW6Jvr3h/hWPYXQ0=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-100-6ZjOhzTrORGDmM5gMbQfwg-1; Tue, 23 Nov 2021 08:39:22 -0500
+X-MC-Unique: 6ZjOhzTrORGDmM5gMbQfwg-1
+Received: by mail-wm1-f69.google.com with SMTP id a64-20020a1c7f43000000b003335e5dc26bso2891823wmd.8
+        for <io-uring@vger.kernel.org>; Tue, 23 Nov 2021 05:39:22 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=f6bH75B5uISe754dD7QVxSQqAX2xbC77T+3hEu0cg7s=;
-        b=kqaO19I6qL81whqnuhY0ShagKRwLkm+/omDCsBzTo6GvnYi4LiW0JvZgRJWvxBqVXD
-         5d35VtOxsucNvp7c4ecwJmEiCDTP0XsPDQLZZ0ZQNhXT1LV1xSXTGxCXqaZg00aoZW1N
-         4fR8JSbZ5H64OT1hRSmDFArtTJZ757yRodpIPDpPjBLQE8eD3kw7bBmZ9q+p69ORuJHO
-         xok69BtrAA58HXci0Ky8kkH9+nlIKrXjgEN5UY9CX7a8fltFUoRl2IaUYiMUcEpdvxoL
-         4YhLAkh67yJBsYP9Hrep/yfhjz2hLEYgExAVhM4i5niAPQe0uD1bBetyIl8sWhY1G1Wd
-         4z3Q==
-X-Gm-Message-State: AOAM5311J56pTQvSJ9s/BQbEKbJ1NibqBUpuPn/IUpik2Bn6S7XwGBT0
-        MV/Do2WthEdx3PIVn4RDwYRTe8aAjQEejg==
-X-Google-Smtp-Source: ABdhPJwB201iiHpk5+3QL8eVGM7clp0AERsAw7H4ideQyhyMRSxukGJYxwk3RyMAbG2TOvmekK3D4g==
-X-Received: by 2002:a05:6214:2505:: with SMTP id gf5mr5909823qvb.55.1637673925554;
-        Tue, 23 Nov 2021 05:25:25 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-142-162-113-129.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.162.113.129])
-        by smtp.gmail.com with ESMTPSA id b2sm5837535qtg.88.2021.11.23.05.25.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Nov 2021 05:25:24 -0800 (PST)
-Received: from jgg by mlx with local (Exim 4.94)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1mpVnX-0001kU-Up; Tue, 23 Nov 2021 09:25:23 -0400
-Date:   Tue, 23 Nov 2021 09:25:23 -0400
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     David Hildenbrand <david@redhat.com>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:organization:in-reply-to
+         :content-transfer-encoding;
+        bh=+jh8FTAWWG20K+UA82402ba7LKfonIbuvjtOQUuW19c=;
+        b=D34eF9B19cMbyan077mOyXuRCoPmYcWyQQT4tvLF+mlwiOGdrLlpscV/ENjfxrLX2z
+         amFwzOY+J0M87gCz5ZrJ5/qatS+4SpinfZorgn4MoHBS+3ezGB7HNfhvuOPvPwMGEc4k
+         WlGSIwUS2zS5zas68NGowzz3mm5ne0YJxDAzIQWzqviC7ZClPKEdRX1e7lLMkVLfSvpz
+         Pqh+IYhe2RisLL/KR1dPkLWd3Z0P/4KFmKw+e/n+grJz9MbVKtz9uDTdccwaiE5p+Pkp
+         E/1FBPqWqNKf1HVEWM0wu22oTkP62ld3B4nKDrnAfQBzmMfSU+d2oTcj1uMwo9rnTRlr
+         oolg==
+X-Gm-Message-State: AOAM533+6tgEWSVFh75DX/euA8HOUyxI3nI7F8uRo3QeJ0McCOWYa2Ax
+        b+ih8ytguU2LJ7JlXXr0fuBExhJXHTEIIHWF9ve45Ix6zQ8kT1nmbOtlJOhjrKSUEahsLcjqxel
+        FN6ooDrH7SeK7K/HbSt0=
+X-Received: by 2002:adf:f5ce:: with SMTP id k14mr7219871wrp.100.1637674761160;
+        Tue, 23 Nov 2021 05:39:21 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJzD7sb1IiFmX+xh4eNwq0pLdsNnZ6eK+UsBEy9hQfqP/PgF8XkS6qu6y8mJps6VYrFnZ4fKEQ==
+X-Received: by 2002:adf:f5ce:: with SMTP id k14mr7219846wrp.100.1637674760974;
+        Tue, 23 Nov 2021 05:39:20 -0800 (PST)
+Received: from [192.168.3.132] (p5b0c6765.dip0.t-ipconnect.de. [91.12.103.101])
+        by smtp.gmail.com with ESMTPSA id d6sm1456582wrn.53.2021.11.23.05.39.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Nov 2021 05:39:20 -0800 (PST)
+Message-ID: <10ccf01b-f13a-d626-beba-cbee70770cf1@redhat.com>
+Date:   Tue, 23 Nov 2021 14:39:19 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Subject: Re: [PATCH] Increase default MLOCK_LIMIT to 8 MiB
+Content-Language: en-US
+To:     Jason Gunthorpe <jgg@ziepe.ca>
 Cc:     Jens Axboe <axboe@kernel.dk>,
         Andrew Dona-Couch <andrew@donacou.ch>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -61,8 +68,6 @@ Cc:     Jens Axboe <axboe@kernel.dk>,
         linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         io_uring Mailing List <io-uring@vger.kernel.org>,
         Pavel Begunkov <asml.silence@gmail.com>, linux-mm@kvack.org
-Subject: Re: [PATCH] Increase default MLOCK_LIMIT to 8 MiB
-Message-ID: <20211123132523.GA5112@ziepe.ca>
 References: <20211115203530.62ff33fdae14927b48ef6e5f@linux-foundation.org>
  <CFQZSHV700KV.18Y62SACP8KOO@taiga>
  <20211116114727.601021d0763be1f1efe2a6f9@linux-foundation.org>
@@ -73,33 +78,29 @@ References: <20211115203530.62ff33fdae14927b48ef6e5f@linux-foundation.org>
  <333cb52b-5b02-648e-af7a-090e23261801@redhat.com>
  <ca96bb88-295c-ccad-ed2f-abc585cb4904@kernel.dk>
  <5f998bb7-7b5d-9253-2337-b1d9ea59c796@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5f998bb7-7b5d-9253-2337-b1d9ea59c796@redhat.com>
+ <20211123132523.GA5112@ziepe.ca>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+In-Reply-To: <20211123132523.GA5112@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, Nov 22, 2021 at 09:08:47PM +0100, David Hildenbrand wrote:
-
-> > You can't use mmu notifiers without impacting the fast path. This isn't
-> > just about io_uring, there are other users of memlock right now (like
-> > bpf) which just makes it even worse.
 > 
-> 1) Do we have a performance evaluation? Did someone try and come up with
-> a conclusion how bad it would be?
+>> 2) Could be provide a mmu variant to ordinary users that's just good
+>> enough but maybe not as fast as what we have today? And limit
+>> FOLL_LONGTERM to special, privileged users?
+> 
+> rdma has never been privileged
 
-It needs additional locking between page readers and the mmu notifier.
+Feel free to correct me if I'm wrong: it requires special networking
+hardware and the admin/kernel has to prepare the system in a way such
+that it can be used.
 
-One of the virtio things does this thing and they used rcu on the page
-readers and a synchronize rcu in a mmu notifier - which I think is
-pretty bad.
+-- 
+Thanks,
 
-> 2) Could be provide a mmu variant to ordinary users that's just good
-> enough but maybe not as fast as what we have today? And limit
-> FOLL_LONGTERM to special, privileged users?
+David / dhildenb
 
-rdma has never been privileged
-
-Jason

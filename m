@@ -2,135 +2,79 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 621004599D2
-	for <lists+io-uring@lfdr.de>; Tue, 23 Nov 2021 02:45:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D1894459A21
+	for <lists+io-uring@lfdr.de>; Tue, 23 Nov 2021 03:33:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230040AbhKWBsw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 22 Nov 2021 20:48:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59162 "EHLO
+        id S232357AbhKWCgT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 22 Nov 2021 21:36:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229484AbhKWBsw (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 22 Nov 2021 20:48:52 -0500
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 300F6C061574
-        for <io-uring@vger.kernel.org>; Mon, 22 Nov 2021 17:45:45 -0800 (PST)
-Received: by mail-wr1-x42b.google.com with SMTP id t30so35963540wra.10
-        for <io-uring@vger.kernel.org>; Mon, 22 Nov 2021 17:45:45 -0800 (PST)
+        with ESMTP id S229672AbhKWCgO (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 22 Nov 2021 21:36:14 -0500
+Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88EEBC061574
+        for <io-uring@vger.kernel.org>; Mon, 22 Nov 2021 18:33:07 -0800 (PST)
+Received: by mail-pl1-x634.google.com with SMTP id q17so15727715plr.11
+        for <io-uring@vger.kernel.org>; Mon, 22 Nov 2021 18:33:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=from:to:in-reply-to:references:subject:message-id:date:mime-version
          :content-transfer-encoding;
-        bh=1EDKVDrf4s2Q6KEUJVP41sdLDTbYTwcXz4LomrLElSM=;
-        b=hbrzv0yUXu+cpZmcXeVb0Xhk6p5VAXfWZK2QCB15Ru7flWJUqX3XW4GOYxbUpGL6C+
-         HKJnLV5aJMDtKb+PKwuXCa7fwa3QN6xgbudfk2w5n7I5ByVL9dBPtKKuihkYldvO/C75
-         7ObbeuHI2vTvX/Wfgww5xELnhwMZbySMGCkPZORrFHwkupH6UQ7AmF/97bK6d/z1yxle
-         stBmlY7OBUVNu2VyL1FbUXalU4r5dVmn79rn8usPtrk7aZSrcCzMdEjwcPJOyGSR9IDv
-         ZsVr0ZcnOp37/hHMSjjyHS/bMzknNvm98iJ1bjkPrQdtsxcV9JBIvEqnMbdx7sJ7P4EB
-         K4XQ==
+        bh=pgaAaX3T1OeHUTU+Fz6cbLnkDzrHVYO91NReNmkVwXA=;
+        b=OqefOFOK1hrePLcoiCmfUub47EpDLfKCcjkX+m9jNREQqjbyVhv5d3KXMa7tgjZqDe
+         KorFQ/WthU5+lY676FdFAGpNXos96JM7lpdqBa+l9xPPXxwwHektbo9FvDBGAcVDcir/
+         tSEAwfO6FdGr4Y3r/bFJjYGDhcHh7dzJMgyy/kK7Pwcx+5t7xK4L2RT+LuOsaHayCX68
+         GdHs6w8+VfAY5AC7cFT8ajyoFy6hMMQ4V8Ok2NMLY0CxzSCsNLxdCrAulcb/h1jUJ8z6
+         kfyOWe75GpiHEq32SXyyNpUpXEuzMdb2z1U9izdzWqSA03Oli/OKIF19SDu8/drSChMU
+         bltA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=1EDKVDrf4s2Q6KEUJVP41sdLDTbYTwcXz4LomrLElSM=;
-        b=39cctMoajUVFDfSTEI2LQgc84yUpj2JiNVdwhEcJVH1XvxtIuq0Svqook8rTP/Kca3
-         0Ug/Yvb96ldZTWt7bNNcba8aeAksDrS6gSFfq/KYNle6R+4hy9uMHc2BVPh1OQdKIRzK
-         akqHiikauofRPE1Yz4gGsWrEbOA5Z/1aQJckS5xG2ClkXVs7rtcCf8f9Y9tQQwWE8KQW
-         Zlrrr2hTDB4UGaCvlnyanYgTzqJtmzl1Oeftm6/XJc552L0Raf2eddrzaaXHZrVu0Qqa
-         KBwXSdY5zvWcnv+174zysv+68OnmbRfHyLxHy3IEgRX++z/8yCEshsIRJivcoDpBCNC3
-         WihQ==
-X-Gm-Message-State: AOAM533cfssK+k+p/6lGsDrinT2I6jFIWH+KBNCIF2HVREkdrqNMqIpD
-        Y98yS2qrB+sKmqUZgdf7OwDlNO3cs8g=
-X-Google-Smtp-Source: ABdhPJwfpb6ihcCePuN7t3ptDnyoKq78X0fdbQ40ZOS43PtIunsLHPJOOpqWuM7L1iTjjvHX5rS++A==
-X-Received: by 2002:a05:6000:1a88:: with SMTP id f8mr2556057wry.54.1637631943631;
-        Mon, 22 Nov 2021 17:45:43 -0800 (PST)
-Received: from 127.0.0.1localhost ([185.69.145.196])
-        by smtp.gmail.com with ESMTPSA id e8sm10452156wrr.26.2021.11.22.17.45.42
+        h=x-gm-message-state:from:to:in-reply-to:references:subject
+         :message-id:date:mime-version:content-transfer-encoding;
+        bh=pgaAaX3T1OeHUTU+Fz6cbLnkDzrHVYO91NReNmkVwXA=;
+        b=6ycm3slDCgbmwI8XWNMZ+T8kBZXkTExAZuWA0CemZIMc4V6cK0eUn7deodnlL+N3iC
+         HCJYWGOusBHO8Mm5sBHQ0oO096wyw5O+2CAHxYjGx2XqbkMKT0JnyFAybpA4uuwj+7Iv
+         1TU1gY2ZO0coelAz8VLZ0RYPzgNSjYKFN8m7T0Iftb7M21hNHisPVSULpcD1VvZbY+Wz
+         QpHiVc/q7A5Ed5VTU7S8efhuR7l0kiGuaRJmr1H56HFtoU/dto5XNl9y9kmD6dJljPnI
+         ycmgrL952Ov0fkHFA19o7Rx1g41J7dqWUFyL8i/cOadD1KekPWpjW4qM7aGQUK05Q9Qf
+         lyow==
+X-Gm-Message-State: AOAM532TrcnEzoxWAmFZ4FPli17MrgVKjMITVHz0A9A4tGtp46z6mdx8
+        Errsy7jPh2iHatmusXpWn3Q4Kd7O9Uk0EF71
+X-Google-Smtp-Source: ABdhPJwy3KNvGKXXbesKBUl7NhzdG1axtQtZb2D9Bf8iALBaInT7bkyJf8oYX+wpDqXhgRgl7bN+7w==
+X-Received: by 2002:a17:90b:1d09:: with SMTP id on9mr2088794pjb.191.1637634786864;
+        Mon, 22 Nov 2021 18:33:06 -0800 (PST)
+Received: from [127.0.1.1] ([2620:10d:c090:400::5:684])
+        by smtp.gmail.com with ESMTPSA id 95sm8585535pjo.2.2021.11.22.18.33.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Nov 2021 17:45:43 -0800 (PST)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH 1/1] io_uring: correct link-list traversal locking
-Date:   Tue, 23 Nov 2021 01:45:35 +0000
-Message-Id: <b54541cedf7de59cb5ae36109e58529ca16e66aa.1637631883.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.33.1
+        Mon, 22 Nov 2021 18:33:06 -0800 (PST)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+In-Reply-To: <b54541cedf7de59cb5ae36109e58529ca16e66aa.1637631883.git.asml.silence@gmail.com>
+References: <b54541cedf7de59cb5ae36109e58529ca16e66aa.1637631883.git.asml.silence@gmail.com>
+Subject: Re: [PATCH 1/1] io_uring: correct link-list traversal locking
+Message-Id: <163763478443.306813.16267056114971361012.b4-ty@kernel.dk>
+Date:   Mon, 22 Nov 2021 19:33:04 -0700
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-As io_remove_next_linked() is now under ->timeout_lock (see
-io_link_timeout_fn), we should update locking around io_for_each_link()
-and io_match_task() to use the new lock.
+On Tue, 23 Nov 2021 01:45:35 +0000, Pavel Begunkov wrote:
+> As io_remove_next_linked() is now under ->timeout_lock (see
+> io_link_timeout_fn), we should update locking around io_for_each_link()
+> and io_match_task() to use the new lock.
+> 
+> 
 
-Cc: stable@kernel.org # 5.15+
-Fixes: 89850fce16a1a ("io_uring: run timeouts from task_work")
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+Applied, thanks!
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index e98e7ce3dc39..a4c508a1e0cf 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1502,10 +1502,10 @@ static void io_prep_async_link(struct io_kiocb *req)
- 	if (req->flags & REQ_F_LINK_TIMEOUT) {
- 		struct io_ring_ctx *ctx = req->ctx;
- 
--		spin_lock(&ctx->completion_lock);
-+		spin_lock_irq(&ctx->timeout_lock);
- 		io_for_each_link(cur, req)
- 			io_prep_async_work(cur);
--		spin_unlock(&ctx->completion_lock);
-+		spin_unlock_irq(&ctx->timeout_lock);
- 	} else {
- 		io_for_each_link(cur, req)
- 			io_prep_async_work(cur);
-@@ -5699,6 +5699,7 @@ static __cold bool io_poll_remove_all(struct io_ring_ctx *ctx,
- 	int posted = 0, i;
- 
- 	spin_lock(&ctx->completion_lock);
-+	spin_lock_irq(&ctx->timeout_lock);
- 	for (i = 0; i < (1U << ctx->cancel_hash_bits); i++) {
- 		struct hlist_head *list;
- 
-@@ -5708,6 +5709,7 @@ static __cold bool io_poll_remove_all(struct io_ring_ctx *ctx,
- 				posted += io_poll_remove_one(req);
- 		}
- 	}
-+	spin_unlock_irq(&ctx->timeout_lock);
- 	spin_unlock(&ctx->completion_lock);
- 
- 	if (posted)
-@@ -9568,9 +9570,9 @@ static bool io_cancel_task_cb(struct io_wq_work *work, void *data)
- 		struct io_ring_ctx *ctx = req->ctx;
- 
- 		/* protect against races with linked timeouts */
--		spin_lock(&ctx->completion_lock);
-+		spin_lock_irq(&ctx->timeout_lock);
- 		ret = io_match_task(req, cancel->task, cancel->all);
--		spin_unlock(&ctx->completion_lock);
-+		spin_unlock_irq(&ctx->timeout_lock);
- 	} else {
- 		ret = io_match_task(req, cancel->task, cancel->all);
- 	}
-@@ -9585,12 +9587,14 @@ static __cold bool io_cancel_defer_files(struct io_ring_ctx *ctx,
- 	LIST_HEAD(list);
- 
- 	spin_lock(&ctx->completion_lock);
-+	spin_lock_irq(&ctx->timeout_lock);
- 	list_for_each_entry_reverse(de, &ctx->defer_list, list) {
- 		if (io_match_task(de->req, task, cancel_all)) {
- 			list_cut_position(&list, &ctx->defer_list, &de->list);
- 			break;
- 		}
- 	}
-+	spin_unlock_irq(&ctx->timeout_lock);
- 	spin_unlock(&ctx->completion_lock);
- 	if (list_empty(&list))
- 		return false;
+[1/1] io_uring: correct link-list traversal locking
+      commit: 674ee8e1b4a41d2fdffc885c55350c3fbb38c22a
+
+Best regards,
 -- 
-2.33.1
+Jens Axboe
+
 

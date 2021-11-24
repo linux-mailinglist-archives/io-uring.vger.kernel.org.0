@@ -2,127 +2,81 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E988445CD95
-	for <lists+io-uring@lfdr.de>; Wed, 24 Nov 2021 20:59:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 699F445CE88
+	for <lists+io-uring@lfdr.de>; Wed, 24 Nov 2021 21:58:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236914AbhKXUCN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 24 Nov 2021 15:02:13 -0500
-Received: from mga04.intel.com ([192.55.52.120]:28074 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234835AbhKXUCN (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Wed, 24 Nov 2021 15:02:13 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10178"; a="234090618"
-X-IronPort-AV: E=Sophos;i="5.87,261,1631602800"; 
-   d="scan'208";a="234090618"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Nov 2021 11:59:02 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.87,261,1631602800"; 
-   d="scan'208";a="607317869"
-Received: from lkp-server02.sh.intel.com (HELO 9e1e9f9b3bcb) ([10.239.97.151])
-  by orsmga004.jf.intel.com with ESMTP; 24 Nov 2021 11:59:00 -0800
-Received: from kbuild by 9e1e9f9b3bcb with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1mpyPz-0005GS-TA; Wed, 24 Nov 2021 19:58:59 +0000
-Date:   Thu, 25 Nov 2021 03:58:11 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org, shr@fb.com
-Subject: Re: [PATCH v1 1/3] fs: add parameter use_fpos to iterate_dir function
-Message-ID: <202111250356.yBAHK4KL-lkp@intel.com>
-References: <20211123181010.1607630-2-shr@fb.com>
+        id S244854AbhKXVBc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 24 Nov 2021 16:01:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53496 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237844AbhKXVBb (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 24 Nov 2021 16:01:31 -0500
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0396C061574
+        for <io-uring@vger.kernel.org>; Wed, 24 Nov 2021 12:58:20 -0800 (PST)
+Received: by mail-ed1-x533.google.com with SMTP id z5so16194574edd.3
+        for <io-uring@vger.kernel.org>; Wed, 24 Nov 2021 12:58:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tU+DmN9W20Qayr+XDrTHdT2YEe8mYh5uJWiheD22Fz0=;
+        b=BaHQBYFGqQT9CzTFy898vgRQl1QV4puKDRAXuboZphikgp6gFPxemKasizjPApVGlh
+         FxuVjl2KeQHq1aEntoEUQYdbKnVAcjWoUuoEQWvkH8CvWpiLIvKl8rL6hri2PloS+XoX
+         9Vl1VYnB1efpbPpgX/rz/3MFZsB56Pv19d9QvYShR0RQPmqj8HD0BjrHO802+ZwNDpuc
+         c/xTAX6vwMRFfq9w0uKjOwHs6AQaoiCS+/Yn7eXt96XmZ2TCMNnm7048cpUReu/XaWOB
+         8uW9tj53YyyFbpMZBBCpf9TpbaQg114xp16yZtGO6HdtRUIr4ErHonDqGd99IZh2/bKv
+         pZSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tU+DmN9W20Qayr+XDrTHdT2YEe8mYh5uJWiheD22Fz0=;
+        b=xJsd2+aFZ30xxGkb2nEmuunAy2dkVpaPlnSyRDJJxxVhlW43FXbNL1gDJoHviDMyyy
+         OYhlIB6lDv5jyy/eJZBBUjt6VJHkDIG5dWzuuLAV460X+ISFOs5/2yutZbapFDDURqdD
+         0vQeqrsfQX5zm6yU8+sXFRnEeVLeB4c6V45esDzCNIsLsxV1B6+Q7Y4CjT8cpLAUjT8B
+         FLgZOqPvwcKOTKSvEGd8jgFES+9Ij2cGDM+WWWyP7OT0EtqdnP6mmACU/2AcZ9SNWndl
+         Axl8XW82LQ/Kr1udWYtFUn3Jl9zPKOPlY2hh6XFQ0Qoc+IaKukQVOwv+ZAhiNOf4hBiy
+         PAwQ==
+X-Gm-Message-State: AOAM533ClTyBe5jaOk/1q1eV4S0p6LhvbH8lwmsNgs+Nqjo9N5USnqnJ
+        bFuYx1mek96NeofD6V7tcORZk88Oy1w=
+X-Google-Smtp-Source: ABdhPJw05AZVVNv3MnbHHQaDoSKWjSlyTBYhq0xzERY1v/f7aVZSDks1GG4aeA6m70MuoFeeDQxDHg==
+X-Received: by 2002:a50:da48:: with SMTP id a8mr29720676edk.146.1637787499347;
+        Wed, 24 Nov 2021 12:58:19 -0800 (PST)
+Received: from 127.0.0.1localhost ([148.252.128.168])
+        by smtp.gmail.com with ESMTPSA id h7sm745843edb.89.2021.11.24.12.58.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Nov 2021 12:58:19 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
+Subject: [PATCH liburing v2 0/2] cqe skip tests
+Date:   Wed, 24 Nov 2021 20:58:10 +0000
+Message-Id: <cover.1637786880.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.34.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211123181010.1607630-2-shr@fb.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Stefan,
+add tests for IOSQE_CQE_SKIP_SUCCESS
 
-Thank you for the patch! Yet something to improve:
+v2: rebase
+    update io_uring.h
+    use IORING_FEAT_CQE_SKIP for compat checks
 
-[auto build test ERROR on linus/master]
-[also build test ERROR on v5.16-rc2 next-20211124]
-[cannot apply to mszeredi-vfs/overlayfs-next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
+Pavel Begunkov (2):
+  io_uring.h: update to reflect cqe-skip feature
+  tests: add tests for IOSQE_CQE_SKIP_SUCCESS
 
-url:    https://github.com/0day-ci/linux/commits/Stefan-Roesch/io_uring-add-getdents64-support/20211124-022809
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 136057256686de39cc3a07c2e39ef6bc43003ff6
-config: x86_64-randconfig-r006-20211124 (https://download.01.org/0day-ci/archive/20211125/202111250356.yBAHK4KL-lkp@intel.com/config)
-compiler: clang version 14.0.0 (https://github.com/llvm/llvm-project 67a1c45def8a75061203461ab0060c75c864df1c)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/0day-ci/linux/commit/94fab53b56d471270b8b7b9afe6d73a8098448be
-        git remote add linux-review https://github.com/0day-ci/linux
-        git fetch --no-tags linux-review Stefan-Roesch/io_uring-add-getdents64-support/20211124-022809
-        git checkout 94fab53b56d471270b8b7b9afe6d73a8098448be
-        # save the config file to linux build tree
-        mkdir build_dir
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=x86_64 SHELL=/bin/bash fs/
+ .gitignore                      |   1 +
+ src/include/liburing/io_uring.h |   4 +
+ test/Makefile                   |   1 +
+ test/skip-cqe.c                 | 338 ++++++++++++++++++++++++++++++++
+ 4 files changed, 344 insertions(+)
+ create mode 100644 test/skip-cqe.c
 
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
+-- 
+2.34.0
 
-All errors (new ones prefixed by >>):
-
->> fs/ksmbd/vfs.c:1139:47: error: too few arguments to function call, expected 3, have 2
-           err = iterate_dir(fp->filp, &readdir_data.ctx);
-                 ~~~~~~~~~~~                            ^
-   include/linux/fs.h:3346:12: note: 'iterate_dir' declared here
-   extern int iterate_dir(struct file *file, struct dir_context *ctx, bool use_fpos);
-              ^
-   fs/ksmbd/vfs.c:1189:44: error: too few arguments to function call, expected 3, have 2
-           ret = iterate_dir(dfilp, &readdir_data.ctx);
-                 ~~~~~~~~~~~                         ^
-   include/linux/fs.h:3346:12: note: 'iterate_dir' declared here
-   extern int iterate_dir(struct file *file, struct dir_context *ctx, bool use_fpos);
-              ^
-   2 errors generated.
---
->> fs/ksmbd/smb2pdu.c:3926:58: error: too few arguments to function call, expected 3, have 2
-           rc = iterate_dir(dir_fp->filp, &dir_fp->readdir_data.ctx);
-                ~~~~~~~~~~~                                        ^
-   include/linux/fs.h:3346:12: note: 'iterate_dir' declared here
-   extern int iterate_dir(struct file *file, struct dir_context *ctx, bool use_fpos);
-              ^
-   1 error generated.
-
-
-vim +1139 fs/ksmbd/vfs.c
-
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1122  
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1123  /**
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1124   * ksmbd_vfs_empty_dir() - check for empty directory
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1125   * @fp:	ksmbd file pointer
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1126   *
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1127   * Return:	true if directory empty, otherwise false
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1128   */
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1129  int ksmbd_vfs_empty_dir(struct ksmbd_file *fp)
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1130  {
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1131  	int err;
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1132  	struct ksmbd_readdir_data readdir_data;
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1133  
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1134  	memset(&readdir_data, 0, sizeof(struct ksmbd_readdir_data));
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1135  
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1136  	set_ctx_actor(&readdir_data.ctx, __dir_empty);
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1137  	readdir_data.dirent_count = 0;
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1138  
-e8c061917133dd fs/cifsd/vfs.c Namjae Jeon 2021-06-22 @1139  	err = iterate_dir(fp->filp, &readdir_data.ctx);
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1140  	if (readdir_data.dirent_count > 2)
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1141  		err = -ENOTEMPTY;
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1142  	else
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1143  		err = 0;
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1144  	return err;
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1145  }
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1146  
-
----
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org

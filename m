@@ -2,213 +2,127 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D47045CCB9
-	for <lists+io-uring@lfdr.de>; Wed, 24 Nov 2021 20:09:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E988445CD95
+	for <lists+io-uring@lfdr.de>; Wed, 24 Nov 2021 20:59:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242697AbhKXTM5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 24 Nov 2021 14:12:57 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:43752 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S242254AbhKXTM5 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 24 Nov 2021 14:12:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1637780986;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=isQsxZ+UIWuySQG9MheyCegH/iYJKHmJZxPqthMror0=;
-        b=XTGGPM2IjDIlRrmfjTZF30naq210eEAZiIo5HG6Zqg7Ol/de0YNuEPSbCr5R6E6LkKoA5j
-        Zq0dyUyNsoc/PYwH9svysXkuoe/RGzfzuyy7BzWBmVBpjiwNGf+v++pYjbhZQ2Y/DRYJx+
-        OTxgYPirwDAISk8BMwkfrREfAW5pNRg=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-525-XGb5o49xPwKtI0J2gsXB1Q-1; Wed, 24 Nov 2021 14:09:45 -0500
-X-MC-Unique: XGb5o49xPwKtI0J2gsXB1Q-1
-Received: by mail-wm1-f70.google.com with SMTP id l6-20020a05600c4f0600b0033321934a39so1951598wmq.9
-        for <io-uring@vger.kernel.org>; Wed, 24 Nov 2021 11:09:45 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent
-         :content-language:to:cc:references:from:organization:subject
-         :in-reply-to:content-transfer-encoding;
-        bh=isQsxZ+UIWuySQG9MheyCegH/iYJKHmJZxPqthMror0=;
-        b=2TiKAPrk9I32Lz0GQX5q7X5rXca1tcECx5AD0f8SB0KVPdPWdlPBuydzrZnKkcp1c1
-         3Ol5/jgtQWibYIH3TJlLsYDKFjmfelIGaqUIoHw9DdrXumgsB5ZiwKo8Dp/4pSJOmxQN
-         Ef3nCWeAKdTzvSCwhJ8q0fW+Y03njnS/Jc/nIsBi4UISEJMMPBnu1Eg643mc2KhpMqU7
-         V7tA2rnJkDZjzIObNB8MlAKAXnCnv9KZwEkchKAsUDoBCNrNDNxyG0pGNpfg6kCm/M/S
-         4jbteKWuX6i4NDB7LkjBA2tsET9mcGT75GijeNJq2L2oWc4vcrjWAVztox9huLbw+wh4
-         +fuQ==
-X-Gm-Message-State: AOAM530MyDwIq+GEEDpcWDNBu/TgXHfDmUzfbV0cYm1vwUpPySF2ECex
-        FeRivECLAAPqkZTFf9EfP72GnBcm1TUfZqrpW2NfUGfNZdDpKHYSUgw/BVM0qE6d+a/Uau172s6
-        crGC71ykvmIkkTNoEemg=
-X-Received: by 2002:a5d:4e0f:: with SMTP id p15mr22328422wrt.48.1637780983923;
-        Wed, 24 Nov 2021 11:09:43 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJw4cnG6zQAtfTxbiF3GkI02UpMt0XyyBIq1dEWEXIxz2pHNKNMEO5mJ1P1ByRxTDNJ/bVfvjw==
-X-Received: by 2002:a5d:4e0f:: with SMTP id p15mr22328368wrt.48.1637780983653;
-        Wed, 24 Nov 2021 11:09:43 -0800 (PST)
-Received: from [192.168.3.132] (p5b0c6380.dip0.t-ipconnect.de. [91.12.99.128])
-        by smtp.gmail.com with ESMTPSA id bg12sm805901wmb.5.2021.11.24.11.09.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Nov 2021 11:09:42 -0800 (PST)
-Message-ID: <cc9d3f3e-2fe1-0df0-06b2-c54e020161da@redhat.com>
-Date:   Wed, 24 Nov 2021 20:09:42 +0100
+        id S236914AbhKXUCN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 24 Nov 2021 15:02:13 -0500
+Received: from mga04.intel.com ([192.55.52.120]:28074 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234835AbhKXUCN (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Wed, 24 Nov 2021 15:02:13 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10178"; a="234090618"
+X-IronPort-AV: E=Sophos;i="5.87,261,1631602800"; 
+   d="scan'208";a="234090618"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Nov 2021 11:59:02 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.87,261,1631602800"; 
+   d="scan'208";a="607317869"
+Received: from lkp-server02.sh.intel.com (HELO 9e1e9f9b3bcb) ([10.239.97.151])
+  by orsmga004.jf.intel.com with ESMTP; 24 Nov 2021 11:59:00 -0800
+Received: from kbuild by 9e1e9f9b3bcb with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1mpyPz-0005GS-TA; Wed, 24 Nov 2021 19:58:59 +0000
+Date:   Thu, 25 Nov 2021 03:58:11 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org, shr@fb.com
+Subject: Re: [PATCH v1 1/3] fs: add parameter use_fpos to iterate_dir function
+Message-ID: <202111250356.yBAHK4KL-lkp@intel.com>
+References: <20211123181010.1607630-2-shr@fb.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Content-Language: en-US
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Vlastimil Babka <vbabka@suse.cz>, Jens Axboe <axboe@kernel.dk>,
-        Andrew Dona-Couch <andrew@donacou.ch>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Drew DeVault <sir@cmpwn.com>,
-        Ammar Faizi <ammarfaizi2@gnuweeb.org>,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        io_uring Mailing List <io-uring@vger.kernel.org>,
-        Pavel Begunkov <asml.silence@gmail.com>, linux-mm@kvack.org
-References: <20211123235953.GF5112@ziepe.ca>
- <2adca04f-92e1-5f99-6094-5fac66a22a77@redhat.com>
- <20211124132353.GG5112@ziepe.ca>
- <cca0229e-e53e-bceb-e215-327b6401f256@redhat.com>
- <20211124132842.GH5112@ziepe.ca>
- <eab5aeba-e064-9f3e-fbc3-f73cd299de83@redhat.com>
- <20211124134812.GI5112@ziepe.ca>
- <2cdbebb9-4c57-7839-71ab-166cae168c74@redhat.com>
- <20211124153405.GJ5112@ziepe.ca>
- <63294e63-cf82-1f59-5ea8-e996662e6393@redhat.com>
- <20211124183544.GL5112@ziepe.ca>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Subject: Re: [PATCH] Increase default MLOCK_LIMIT to 8 MiB
-In-Reply-To: <20211124183544.GL5112@ziepe.ca>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211123181010.1607630-2-shr@fb.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 24.11.21 19:35, Jason Gunthorpe wrote:
-> On Wed, Nov 24, 2021 at 05:43:58PM +0100, David Hildenbrand wrote:
->> On 24.11.21 16:34, Jason Gunthorpe wrote:
->>> On Wed, Nov 24, 2021 at 03:14:00PM +0100, David Hildenbrand wrote:
->>>
->>>> I'm not aware of any where you can fragment 50% of all pageblocks in the
->>>> system as an unprivileged user essentially consuming almost no memory
->>>> and essentially staying inside well-defined memlock limits. But sure if
->>>> there are "many" people will be able to come up with at least one
->>>> comparable thing. I'll be happy to learn.
->>>
->>> If the concern is that THP's can be DOS'd then any avenue that renders
->>> the system out of THPs is a DOS attack vector. Including all the
->>> normal workloads that people run and already complain that THPs get
->>> exhausted.
->>>
->>> A hostile userspace can only quicken this process.
->>
->> We can not only fragment THP but also easily smaller compound pages,
->> with less impact though (well, as long as people want more than 0.1% per
->> user ...).
-> 
-> My point is as long as userspace can drive this fragmentation, by any
-> means, we can never have DOS proof higher order pages, so lets not
-> worry so much about one of many ways to create fragmentation.
-> 
+Hi Stefan,
 
-That would be giving up on compound pages (hugetlbfs, THP, ...) on any
-current Linux system that does not use ZONE_MOVABLE -- which is not
-something I am not willing to buy into, just like our customers ;)
+Thank you for the patch! Yet something to improve:
 
-See my other mail, the upstream version of my reproducer essentially
-shows what FOLL_LONGTERM is currently doing wrong with pageblocks. And
-at least to me that's an interesting insight :)
+[auto build test ERROR on linus/master]
+[also build test ERROR on v5.16-rc2 next-20211124]
+[cannot apply to mszeredi-vfs/overlayfs-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
 
-I agree that the more extreme scenarios I can construct are a secondary
-concern. But my upstream reproducer just highlights what can easily
-happen in reality.
+url:    https://github.com/0day-ci/linux/commits/Stefan-Roesch/io_uring-add-getdents64-support/20211124-022809
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 136057256686de39cc3a07c2e39ef6bc43003ff6
+config: x86_64-randconfig-r006-20211124 (https://download.01.org/0day-ci/archive/20211125/202111250356.yBAHK4KL-lkp@intel.com/config)
+compiler: clang version 14.0.0 (https://github.com/llvm/llvm-project 67a1c45def8a75061203461ab0060c75c864df1c)
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/0day-ci/linux/commit/94fab53b56d471270b8b7b9afe6d73a8098448be
+        git remote add linux-review https://github.com/0day-ci/linux
+        git fetch --no-tags linux-review Stefan-Roesch/io_uring-add-getdents64-support/20211124-022809
+        git checkout 94fab53b56d471270b8b7b9afe6d73a8098448be
+        # save the config file to linux build tree
+        mkdir build_dir
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=x86_64 SHELL=/bin/bash fs/
 
->>>> My position that FOLL_LONGTERM for unprivileged users is a strong no-go
->>>> stands as it is.
->>>
->>> As this basically excludes long standing pre-existing things like
->>> RDMA, XDP, io_uring, and more I don't think this can be the general
->>> answer for mm, sorry.
->>
->> Let's think about options to restrict FOLL_LONGTERM usage:
-> 
-> Which gives me the view that we should be talking about how to make
-> high order pages completely DOS proof, not about FOLL_LONGTERM.
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
 
-Sure, one step at a time ;)
+All errors (new ones prefixed by >>):
 
-> 
-> To me that is exactly what ZONE_MOVABLE strives to achieve, and I
-> think anyone who cares about QOS around THP must include ZONE_MOVABLE
-> in their solution.
+>> fs/ksmbd/vfs.c:1139:47: error: too few arguments to function call, expected 3, have 2
+           err = iterate_dir(fp->filp, &readdir_data.ctx);
+                 ~~~~~~~~~~~                            ^
+   include/linux/fs.h:3346:12: note: 'iterate_dir' declared here
+   extern int iterate_dir(struct file *file, struct dir_context *ctx, bool use_fpos);
+              ^
+   fs/ksmbd/vfs.c:1189:44: error: too few arguments to function call, expected 3, have 2
+           ret = iterate_dir(dfilp, &readdir_data.ctx);
+                 ~~~~~~~~~~~                         ^
+   include/linux/fs.h:3346:12: note: 'iterate_dir' declared here
+   extern int iterate_dir(struct file *file, struct dir_context *ctx, bool use_fpos);
+              ^
+   2 errors generated.
+--
+>> fs/ksmbd/smb2pdu.c:3926:58: error: too few arguments to function call, expected 3, have 2
+           rc = iterate_dir(dir_fp->filp, &dir_fp->readdir_data.ctx);
+                ~~~~~~~~~~~                                        ^
+   include/linux/fs.h:3346:12: note: 'iterate_dir' declared here
+   extern int iterate_dir(struct file *file, struct dir_context *ctx, bool use_fpos);
+              ^
+   1 error generated.
 
-For 100% yes.
 
-> 
-> In all of this I am thinking back to the discussion about the 1GB THP
-> proposal which was resoundly shot down on the grounds that 2MB THP
-> *doesn't work* today due to the existing fragmentation problems.
+vim +1139 fs/ksmbd/vfs.c
 
-The point that "2MB THP" doesn't work is just wrong. pageblocks do their
-job very well, but we can end up in corner case situations where more
-and more pageblocks are getting fragmented. And people are constantly
-improving these corner cases (e.g. proactive compaction).
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1122  
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1123  /**
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1124   * ksmbd_vfs_empty_dir() - check for empty directory
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1125   * @fp:	ksmbd file pointer
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1126   *
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1127   * Return:	true if directory empty, otherwise false
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1128   */
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1129  int ksmbd_vfs_empty_dir(struct ksmbd_file *fp)
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1130  {
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1131  	int err;
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1132  	struct ksmbd_readdir_data readdir_data;
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1133  
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1134  	memset(&readdir_data, 0, sizeof(struct ksmbd_readdir_data));
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1135  
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1136  	set_ctx_actor(&readdir_data.ctx, __dir_empty);
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1137  	readdir_data.dirent_count = 0;
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1138  
+e8c061917133dd fs/cifsd/vfs.c Namjae Jeon 2021-06-22 @1139  	err = iterate_dir(fp->filp, &readdir_data.ctx);
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1140  	if (readdir_data.dirent_count > 2)
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1141  		err = -ENOTEMPTY;
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1142  	else
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1143  		err = 0;
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1144  	return err;
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1145  }
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1146  
 
-Usually you have to allocate *a lot* of memory and put the system under
-extreme memory pressure, such that unmovable allocations spill into
-movable pageblocks and the other way around.
-
-The thing about my reproducer is that it does that without any memory
-pressure, and that is the BIG difference to everything else we have in
-that regard. You can have an idle 1TiB system running my reproducer and
-it will fragment half of of all pageblocks in the system while mlocking
-~ 1GiB. And that highlights the real issue IMHO.
-
-The 1 GB THP project is still going on BTW.
-
-> 
->> Another option would be not accounting FOLL_LONGTERM as RLIMIT_MEMLOCK,
->> but instead as something that explicitly matches the differing
->> semantics. 
-> 
-> Also a good idea, someone who cares about this should really put
-> pinned pages into the cgroup machinery (with correct accounting!)
-> 
->> At the same time, eventually work on proper alternatives with mmu
->> notifiers (and possibly without the any such limits) where possible
->> and required.
-> 
-> mmu_notifiers is also bad, it just offends a different group of MM
-> concerns :)
-
-Yeah, I know, locking nightmare.
-
-> 
-> Something like io_ring is registering a bulk amount of memory and then
-> doing some potentially long operations against it.
-
-The individual operations it performs are comparable to O_DIRECT I think
--- but no expert.
-
-> 
-> So to use a mmu_notifier scheme you'd have to block the mmu_notifier
-> invalidate_range_start until all the operations touching the memory
-> finish (and suspend new operations at the same time!).
-> 
-> Blocking the notifier like this locks up the migration/etc threads
-> completely, and is destructive to the OOM reclaim.
-> 
-> At least with a pinned page those threads don't even try to touch it
-> instead of getting stuck up.
-
-Yes, if only we'd be pinning for a restricted amount of time ...
-
--- 
-Thanks,
-
-David / dhildenb
-
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org

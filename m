@@ -2,114 +2,129 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A3B0745B088
-	for <lists+io-uring@lfdr.de>; Wed, 24 Nov 2021 01:00:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 983F245B2A1
+	for <lists+io-uring@lfdr.de>; Wed, 24 Nov 2021 04:27:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240334AbhKXADG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 23 Nov 2021 19:03:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53784 "EHLO
+        id S240820AbhKXDan (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 23 Nov 2021 22:30:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43340 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230491AbhKXADE (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 23 Nov 2021 19:03:04 -0500
-Received: from mail-qt1-x82f.google.com (mail-qt1-x82f.google.com [IPv6:2607:f8b0:4864:20::82f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C868C061574
-        for <io-uring@vger.kernel.org>; Tue, 23 Nov 2021 15:59:56 -0800 (PST)
-Received: by mail-qt1-x82f.google.com with SMTP id t11so964873qtw.3
-        for <io-uring@vger.kernel.org>; Tue, 23 Nov 2021 15:59:56 -0800 (PST)
+        with ESMTP id S229959AbhKXDam (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 23 Nov 2021 22:30:42 -0500
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB239C061574
+        for <io-uring@vger.kernel.org>; Tue, 23 Nov 2021 19:27:33 -0800 (PST)
+Received: by mail-ed1-x534.google.com with SMTP id x6so3888561edr.5
+        for <io-uring@vger.kernel.org>; Tue, 23 Nov 2021 19:27:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=JWwXPG24ltmWOflqT79hbe7WHAGSXzFDRpPzyqTCphM=;
-        b=SM7g2CC2T7HtEJAOomAVVeoee9cBvpCmPhxJgr3oGO8VH5HDRMkKwuNnBdd/tdtLra
-         ix57VCmhP/D7B7OeCzH8s3rrnpADi75OMdOMFwELa15V0MBJDAvel4bfDue625PHX6OG
-         hS6h6+fJuNRKIYJkla2s/iTwTYPHWRYYa0/1VdGXSQPkR5SOAWvSE54rNRYV4UTL/pyB
-         YKJ7Wzj0llu879N5OsWvxcLn+Em+r+KowY4iabzniDrrl1UmaTxLZD4jvwTpO97ItqwK
-         HI8tPMYfGiMInv0fc7x84iaO3eiMci7X4scAZRwoS8d5ff2O7cTzDrXSvh/sNXeg6f9H
-         8O4g==
+        d=mariadb.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=D3mlwxctVc4YiNL6SnhzyJ7Y2X2Dj6ittHGw+Kf7k0k=;
+        b=FQFEgmxbILrG5odT1Ghdmx+0mB51dD6nTOs2uX5aQJDin9DYe/wkkczPtxjcJag/fC
+         XAlCINVzNG6gNeiGEzmCsRZ2QH3AsLSuGxi0Vsl4Mm9UD1iZboHxKvnB1JAy4Bjjbyt+
+         +m7uDe6YdsvE+k1rfVp85v/8zhTdsWSP7ZfPc7cQEuVy9minHTpXQjT9U6V0bhd4gncD
+         4kW3gsQ7FZfMNgv09yYwtrl6HkzCj79fbf7FgCUmlA6hi88hRKf+yiH4ebF6QInaoSIh
+         ZZ/OP6qO/EfBMxR8wIn20wXbNJI6wZMp30DGSuI5vUf5NKaNoBi4K7fiI46X8EE57Aho
+         8sEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=JWwXPG24ltmWOflqT79hbe7WHAGSXzFDRpPzyqTCphM=;
-        b=v3fBgJTy35El4BHDiy5GtmRdZRt0Fa0099od5eRKZ9PCD2IZr7VsN6OSumk3VPY6hx
-         fQp0PJsBzTjoMZywW3k+t/X8gx45auChFB62VBZ01wUq3UyFQPsmt5Sq+zG84r4C9ae4
-         IUqhhXDRz6XSt8jHv+Z0l482EmHV90EwxdVaIv8gry7rDDH1otPg1qIREedkcPk5TTKE
-         FclBuPOf+r5dP8E5KmkuW9eTqfzXczgDtCn/BdVrxd8Fh73MHB4ndkQjJU77YwJ1B6o+
-         hceSIpkyzC5dCBR2RNqyaXc7F6sx1NMBGkFj9GoZ0w2UOGBrY5/fuNfl+1zUqbDavRmL
-         fluA==
-X-Gm-Message-State: AOAM5327HK6M5VNFG5vAl2bjTQpW1Q5gLDkXk+ZEAerHCaXD4ii0WtX3
-        hthrs+E27fIHA1zJIhhQh3lg9w==
-X-Google-Smtp-Source: ABdhPJxUUgxbyWZyuW6Sl74vLoLYpS/heqCJSK/6Ktu0i9Jt6ejBXXhBIGBoXvKcqrkbxigSQu4NJg==
-X-Received: by 2002:a05:622a:1901:: with SMTP id w1mr1756372qtc.134.1637711995285;
-        Tue, 23 Nov 2021 15:59:55 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-142-162-113-129.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.162.113.129])
-        by smtp.gmail.com with ESMTPSA id f16sm6699243qkk.16.2021.11.23.15.59.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Nov 2021 15:59:54 -0800 (PST)
-Received: from jgg by mlx with local (Exim 4.94)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1mpfhZ-000naV-I3; Tue, 23 Nov 2021 19:59:53 -0400
-Date:   Tue, 23 Nov 2021 19:59:53 -0400
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     David Hildenbrand <david@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        Andrew Dona-Couch <andrew@donacou.ch>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Drew DeVault <sir@cmpwn.com>,
-        Ammar Faizi <ammarfaizi2@gnuweeb.org>,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        io_uring Mailing List <io-uring@vger.kernel.org>,
-        Pavel Begunkov <asml.silence@gmail.com>, linux-mm@kvack.org
-Subject: Re: [PATCH] Increase default MLOCK_LIMIT to 8 MiB
-Message-ID: <20211123235953.GF5112@ziepe.ca>
-References: <8f219a64-a39f-45f0-a7ad-708a33888a3b@www.fastmail.com>
- <333cb52b-5b02-648e-af7a-090e23261801@redhat.com>
- <ca96bb88-295c-ccad-ed2f-abc585cb4904@kernel.dk>
- <5f998bb7-7b5d-9253-2337-b1d9ea59c796@redhat.com>
- <20211123132523.GA5112@ziepe.ca>
- <10ccf01b-f13a-d626-beba-cbee70770cf1@redhat.com>
- <20211123140709.GB5112@ziepe.ca>
- <e4d7d211-5d62-df89-8f94-e49385286f1f@redhat.com>
- <20211123170056.GC5112@ziepe.ca>
- <dd92a69a-6d09-93a1-4f50-5020f5cc59d0@suse.cz>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=D3mlwxctVc4YiNL6SnhzyJ7Y2X2Dj6ittHGw+Kf7k0k=;
+        b=46Bik2X49H8rogh5a0QA4yxY9ngaXtsRAUe5b8MlnLrKkFMrYzZbG2xj9ZyqUvKu9m
+         IBMBeuLgUPzpI2SS8o0j/Ra3tjQtutCkAWhFpLAeazch73sui2njgZLDf/y9JYGQ2Muq
+         EjS4eyrj6MwrgmTnRj6eBqIpyuFt5NX71cE2DLYGHBuqTlizgE50QYAWYQhcBfXji5Tm
+         o1ABI0FMYi5FC8WiFg+ahdqXxA7KXMg7vm1fLlr8UhUuwS/QeUItrmaK7qMxAwEXmvq/
+         toyDx0wbDAMWhkJReXaxLjLLBxA2gVpFLXY8Jz1Iyt6v+zcdL9lID5yOSTN+OZx8wjA+
+         Jhww==
+X-Gm-Message-State: AOAM5328u6pWDn92aWTdInY0q08lZ9NRi36+LJIjKftFmTxIBP1ULNrd
+        LOwDXHSzUEtIjMG5ZVusMT1AZ71cYGBBg+XhVDZ43243JhSCWw==
+X-Google-Smtp-Source: ABdhPJxEX3C0q6ga3rdCbtItwvoOsWDSpxLt++YGtTOkdlHeJP27dulf3Jmz7XeNV7OAQLgXeItWjRxmNtT7gDbl9Zk=
+X-Received: by 2002:a05:6402:40d3:: with SMTP id z19mr19351146edb.185.1637724452475;
+ Tue, 23 Nov 2021 19:27:32 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dd92a69a-6d09-93a1-4f50-5020f5cc59d0@suse.cz>
+References: <CABVffENnJ8JkP7EtuUTqi+VkJDBFU37w1UXe4Q3cB7-ixxh0VA@mail.gmail.com>
+ <8cd3d258-91b8-c9b2-106c-01b577cc44d4@gmail.com> <CABVffEOMVbQ+MynbcNfD7KEA5Mwqdwm1YuOKgRWnpySboQSkSg@mail.gmail.com>
+ <23555381-2bea-f63a-1715-a80edd3ee27f@gmail.com> <YXz0roPH+stjFygk@eldamar.lan>
+ <CABVffEO4mBTuiLzvny1G1ocO7PvTpKYTCS5TO2fbaevu2TqdGQ@mail.gmail.com>
+ <CABVffEMy+gWfkuEg4UOTZe3p_k0Ryxey921Hw2De8MyE=JafeA@mail.gmail.com>
+ <f4f2ff29-abdd-b448-f58f-7ea99c35eb2b@kernel.dk> <ef299d5b-cc48-6c92-024d-27024b671fd3@kernel.dk>
+ <CABVffEOpuViC9OyOuZg28sRfGK4GRc8cV0CnkOU2cM0RJyRhPw@mail.gmail.com>
+ <e9b4d07e-d43d-9b3c-ac4c-f8b88bb987d4@kernel.dk> <1bd48c9b-c462-115c-d077-1b724d7e4d10@kernel.dk>
+ <c6d6bffe-1770-c51d-11c6-c5483bde1766@kernel.dk> <bd7289c8-0b01-4fcf-e584-273d372f8343@kernel.dk>
+ <6d0ca779-3111-bc5e-88c0-22a98a6974b8@kernel.dk> <281147cc-7da4-8e45-2d6f-3f7c2a2ca229@kernel.dk>
+ <c92f97e5-1a38-e23f-f371-c00261cacb6d@kernel.dk> <CABVffEN0LzLyrHifysGNJKpc_Szn7qPO4xy7aKvg7LTNc-Fpng@mail.gmail.com>
+ <00d6e7ad-5430-4fca-7e26-0774c302be57@kernel.dk>
+In-Reply-To: <00d6e7ad-5430-4fca-7e26-0774c302be57@kernel.dk>
+From:   Daniel Black <daniel@mariadb.org>
+Date:   Wed, 24 Nov 2021 14:27:21 +1100
+Message-ID: <CABVffEM79CZ+4SW0+yP0+NioMX=sHhooBCEfbhqs6G6hex2YwQ@mail.gmail.com>
+Subject: Re: uring regression - lost write request
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Salvatore Bonaccorso <carnil@debian.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        linux-block@vger.kernel.org, io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Nov 23, 2021 at 11:04:04PM +0100, Vlastimil Babka wrote:
-> On 11/23/21 18:00, Jason Gunthorpe wrote:
-> > 
-> >> believe what you say and I trust your experience :) So could as well be
-> >> that on such a "special" (or not so special) systems there should be a
-> >> way to restrict it to privileged users only.
-> > 
-> > At this point RDMA is about as "special" as people running large
-> > ZONE_MOVABLE systems, and the two are going to start colliding
-> > heavily. The RDMA VFIO migration driver should be merged soon which
-> > makes VMs using this stuff finally practical.
-> 
-> How does that work, I see the word migration, so does it cause pages to
+On Mon, Nov 15, 2021 at 7:55 AM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 11/14/21 1:33 PM, Daniel Black wrote:
+> > On Fri, Nov 12, 2021 at 10:44 AM Jens Axboe <axboe@kernel.dk> wrote:
+> >>
+> >> Alright, give this one a go if you can. Against -git, but will apply t=
+o
+> >> 5.15 as well.
+> >
+> >
+> > Works. Thank you very much.
+> >
+> > https://jira.mariadb.org/browse/MDEV-26674?page=3Dcom.atlassian.jira.pl=
+ugin.system.issuetabpanels:comment-tabpanel&focusedCommentId=3D205599#comme=
+nt-205599
+> >
+> > Tested-by: Marko M=C3=A4kel=C3=A4 <marko.makela@mariadb.com>
+>
+> The patch is already upstream (and in the 5.15 stable queue), and I
+> provided 5.14 patches too.
 
-Sorry I mean what is often called "VM live migration". Typically that
-cannot be done if a PCI device is assigned to the VM as suspending and
-the migrating a PCI device to another server is complicated. With
-forthcoming hardware mlx5 can do this and thus the entire RDMA stack
-becomes practically usable and performant within a VM.
+Jens,
 
-> be migrated out of ZONE_MOVABLE before they are pinned?
+I'm getting the same reproducer on 5.14.20
+(https://bugzilla.redhat.com/show_bug.cgi?id=3D2018882#c3) though the
+backport change logs indicate 5.14.19 has the patch.
 
-GUP already does this automatically for FOLL_LONGTERM.
+Anything missing?
 
-> Similarly for io-uring we could be migrating pages to be pinned so that
-> the end up consolidated close together, and prevent pathologic
-> situations like in David's reproducer. 
+ext4 again (my mount is /dev/mapper/fedora_localhost--live-home on
+/home type ext4 (rw,relatime,seclabel)).
 
-It is an interesting idea to have GUP do some kind of THP preserving
-migration.
+previous container should work, thought a source option is there:
 
-Jason
+build deps: liburing-dev, bison, libevent-dev, ncurses-dev, c++
+libraries/compiler
+
+git clone --branch 10.6 --single-branch
+https://github.com/MariaDB/server mariadb-server
+(cd mariadb-server; git submodule update --init --recursive)
+mkdir build-mariadb-server
+cd build-mariadb-server
+cmake -DPLUGIN_{MROONGA,ROCKSDB,CONNECT,SPIDER,SPHINX,S3,COLUMNSTORE}=3DNO
+../mariadb-server
+(ensure liburing userspace is picked up)
+cmake --build . --parallel
+mysql-test/mtr  --mysqld=3D--innodb_use_native_aio=3D1 --nowarnings
+--parallel=3D4 --force encryption.innochecksum{,,,,,}
+
+Adding to mtr: --mysqld=3D--innodb_io_capacity=3D50000
+--mysqld=3D--innodb_io_capacity_max=3D90000 will probably trip this
+quicker.
+
+
+5.15.3 is good (https://jira.mariadb.org/browse/MDEV-26674?focusedCommentId=
+=3D206787&page=3Dcom.atlassian.jira.plugin.system.issuetabpanels:comment-ta=
+bpanel#comment-206787).

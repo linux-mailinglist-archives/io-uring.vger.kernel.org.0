@@ -2,198 +2,128 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C674F45CA47
-	for <lists+io-uring@lfdr.de>; Wed, 24 Nov 2021 17:44:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7497645CB7A
+	for <lists+io-uring@lfdr.de>; Wed, 24 Nov 2021 18:55:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240816AbhKXQrO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 24 Nov 2021 11:47:14 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:53123 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238476AbhKXQrO (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 24 Nov 2021 11:47:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1637772243;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=QsMXLEsfUpg3nTh4LVta/33dXBWrEFr08t86tyNbxD8=;
-        b=A76AX7zxVEKnJpDetWPWG8JEy5XR2PQvlnqqogVIejfZLJSVDPcJIKXODQ1ZGhorKyQrKq
-        uloOCQfy70d6x3fmwl39qf1E0TRBhdU1cdtsbYgWXzW0WL0k94MquHG85tWIJif+WVgKca
-        yjEISlBIJ5AGySBqhJSCN5kl9+VP3EA=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-243-XQqKyLyxNnizD8sjiti73w-1; Wed, 24 Nov 2021 11:44:02 -0500
-X-MC-Unique: XQqKyLyxNnizD8sjiti73w-1
-Received: by mail-wm1-f69.google.com with SMTP id l4-20020a05600c1d0400b00332f47a0fa3so1738931wms.8
-        for <io-uring@vger.kernel.org>; Wed, 24 Nov 2021 08:44:02 -0800 (PST)
+        id S241380AbhKXR6j (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 24 Nov 2021 12:58:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39726 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1350105AbhKXR6h (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 24 Nov 2021 12:58:37 -0500
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57436C061574
+        for <io-uring@vger.kernel.org>; Wed, 24 Nov 2021 09:55:27 -0800 (PST)
+Received: by mail-ed1-x52d.google.com with SMTP id x6so14065830edr.5
+        for <io-uring@vger.kernel.org>; Wed, 24 Nov 2021 09:55:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :references:from:in-reply-to:content-transfer-encoding;
+        bh=dcCTdXhc/66Hxhv0CMUh76tN/9qtGJlnWHRrC4adIBQ=;
+        b=YtPHQ79E+x9wT9iMjR545coJo3fL9wy0fusltLVJgLeHkDF4OapsbYSa3L5Trdndeu
+         8+Y/G7Q5akApxVQ1buK3KFdkH93ME5Y1+DsPORi7lXEICGS65W12X8EIHvzqfLYG7t1S
+         Lb+IP/JQEi+yBHEY8GdOGIV3l5Lze+4Xa1IVYOtxbqUv8jTItSsRHyBtUTJQLw2VgRTM
+         5an/3fAhcPPU2v7s+K3CcatpURtIEGKfepFCupwmrY0F0/9R/MckWqlud1KPnHmta8A+
+         TX3Juy6+dcCmz8rhLYedSkVV9rmrUj+L4/U/93pJ0ol5dZClCAnYhVtP8X8REShZm+gx
+         dUrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent
-         :content-language:to:cc:references:from:organization:subject
-         :in-reply-to:content-transfer-encoding;
-        bh=QsMXLEsfUpg3nTh4LVta/33dXBWrEFr08t86tyNbxD8=;
-        b=vh6QGB4nzVI1A23FPLZ6vsXtvT+7B7whI6TofTiG0ZEAb5au4WWLg0cDT8PhjZTpaM
-         VOEy9kUcMd9mMYlntQjPvup+fgu2plpvE/vcB3CbWy5H9qltj89bHZ+DmCRyz1IHDA0b
-         DFmmftnXX/s0kOBFs37sdUI6IO0k8JmjPrkorCI0PRRQkyzfi+iQmUpGWBk/YDVddcS1
-         QFqt+sx6XixvlDY+Sq6dnUkCxJ3kVDPXUlyck7Tx9mVdpGe2q7co7EhUxjfm83rHAMTB
-         zyQk1Fu8pVdi8fI1zdVlX2KKsZ7FzHIemmd3rJs7BgjM424MXP9rHMABu5YfOEuv49vL
-         J1Uw==
-X-Gm-Message-State: AOAM531zhhKSB5vd00MafyHGU3HhxgdJvNhMq24GiyASsB0Qp0x7ArsS
-        grZpl6CGwRMCuilUVDtlJn7o60adk/D/JBBvDcEcFtRLfIs50XGUOyVCOclJxe1MdHErP2ai3Q1
-        RWBUhdNMnGUlpuvFS3vY=
-X-Received: by 2002:a7b:cd02:: with SMTP id f2mr16953543wmj.115.1637772241076;
-        Wed, 24 Nov 2021 08:44:01 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJy/aTWG+EhXz/LEDFYbuIzrNXajT2pjFwM6ekqvEq0ltZvjf/SVX2f84TgWFEY087L2XnaMJQ==
-X-Received: by 2002:a7b:cd02:: with SMTP id f2mr16953496wmj.115.1637772240810;
-        Wed, 24 Nov 2021 08:44:00 -0800 (PST)
-Received: from [192.168.3.132] (p5b0c6380.dip0.t-ipconnect.de. [91.12.99.128])
-        by smtp.gmail.com with ESMTPSA id f15sm307434wmg.30.2021.11.24.08.43.59
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=dcCTdXhc/66Hxhv0CMUh76tN/9qtGJlnWHRrC4adIBQ=;
+        b=J/RrdIFZZAVAMEhufF8/pflvshvzyt1oo5b+7kHx+QmO5bIOiLahv21IOfFu059OXW
+         dQ8mC9j3lzHoT/rYT91uqL0glPAlBFcdN5HgXNnowWxD/CzxCoKafRQiWz8AqlGidJhT
+         pOltkOzubDhc0tBtSwmYiroo3rtKZ+ytFc4UcNDAxFhA5Ei39I7uouBVrfwOPcbf0+1p
+         xBMSbVn5zNEFvvvKQ+tLGF4bIrUW9nLyUDVsI9tzSGhDy+HWdx3gvPHLoSG706PA20iE
+         6mIj6ORb9JIBiHgepdZ5386m1/nPbQvz0QXGe1GjABL+68VK6OcOJOM/56fDn+X7n59V
+         qKzw==
+X-Gm-Message-State: AOAM531+4CuT7uUeJMiofNXNTxL2NrO2xdvCaTERtZ49prmvPFGZsQ+G
+        S0tKIMl/JMmQe/G+gB0h7IxK/XnUy6E=
+X-Google-Smtp-Source: ABdhPJzsNUG3yKV5XAPLGjuiRDGSd9z47ye5ddM2EheavQMIozu/VdaGLJRmyiAbXTqaLJ35ADP6JQ==
+X-Received: by 2002:a17:906:8051:: with SMTP id x17mr23015282ejw.473.1637776525856;
+        Wed, 24 Nov 2021 09:55:25 -0800 (PST)
+Received: from [192.168.8.198] ([148.252.128.180])
+        by smtp.gmail.com with ESMTPSA id x14sm269526ejs.124.2021.11.24.09.55.24
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Nov 2021 08:43:59 -0800 (PST)
-Message-ID: <63294e63-cf82-1f59-5ea8-e996662e6393@redhat.com>
-Date:   Wed, 24 Nov 2021 17:43:58 +0100
+        Wed, 24 Nov 2021 09:55:25 -0800 (PST)
+Message-ID: <39fad08c-f820-e4ef-6d30-4f63f00a3282@gmail.com>
+Date:   Wed, 24 Nov 2021 17:55:20 +0000
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
+ Thunderbird/91.3.2
+Subject: Re: [PATCH v2 0/4] allow to skip CQE posting
 Content-Language: en-US
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Vlastimil Babka <vbabka@suse.cz>, Jens Axboe <axboe@kernel.dk>,
-        Andrew Dona-Couch <andrew@donacou.ch>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Drew DeVault <sir@cmpwn.com>,
-        Ammar Faizi <ammarfaizi2@gnuweeb.org>,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        io_uring Mailing List <io-uring@vger.kernel.org>,
-        Pavel Begunkov <asml.silence@gmail.com>, linux-mm@kvack.org
-References: <20211123170056.GC5112@ziepe.ca>
- <dd92a69a-6d09-93a1-4f50-5020f5cc59d0@suse.cz>
- <20211123235953.GF5112@ziepe.ca>
- <2adca04f-92e1-5f99-6094-5fac66a22a77@redhat.com>
- <20211124132353.GG5112@ziepe.ca>
- <cca0229e-e53e-bceb-e215-327b6401f256@redhat.com>
- <20211124132842.GH5112@ziepe.ca>
- <eab5aeba-e064-9f3e-fbc3-f73cd299de83@redhat.com>
- <20211124134812.GI5112@ziepe.ca>
- <2cdbebb9-4c57-7839-71ab-166cae168c74@redhat.com>
- <20211124153405.GJ5112@ziepe.ca>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Subject: Re: [PATCH] Increase default MLOCK_LIMIT to 8 MiB
-In-Reply-To: <20211124153405.GJ5112@ziepe.ca>
-Content-Type: text/plain; charset=UTF-8
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <cover.1636559119.git.asml.silence@gmail.com>
+ <239ab9cc-e53c-f8aa-6bbf-816dfac73f32@kernel.dk>
+ <153a9c03-6fae-d821-c18b-9ea1bb7c62d5@gmail.com>
+ <7a4f8655-06df-9549-e3df-c3bf972f06e6@kernel.dk>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <7a4f8655-06df-9549-e3df-c3bf972f06e6@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 24.11.21 16:34, Jason Gunthorpe wrote:
-> On Wed, Nov 24, 2021 at 03:14:00PM +0100, David Hildenbrand wrote:
+On 11/10/21 16:47, Jens Axboe wrote:
+> On 11/10/21 9:42 AM, Pavel Begunkov wrote:
+>> On 11/10/21 16:14, Jens Axboe wrote:
+>>> On 11/10/21 8:49 AM, Pavel Begunkov wrote:
+>>>> It's expensive enough to post an CQE, and there are other
+>>>> reasons to want to ignore them, e.g. for link handling and
+>>>> it may just be more convenient for the userspace.
+>>>>
+>>>> Try to cover most of the use cases with one flag. The overhead
+>>>> is one "if (cqe->flags & IOSQE_CQE_SKIP_SUCCESS)" check per
+>>>> requests and a bit bloated req_set_fail(), should be bearable.
+>>>
+>>> I like the idea, one thing I'm struggling with is I think a normal use
+>>> case of this would be fast IO where we still need to know if a
+>>> completion event has happened, we just don't need to know the details of
+>>> it since we already know what those details would be if it ends up in
+>>> success.
+>>>
+>>> How about having a skip counter? That would supposedly also allow drain
+>>> to work, and it could be mapped with the other cq parts to allow the app
+>>> to see it as well.
+>>
+>> It doesn't go through expensive io_cqring_ev_posted(), so the
+>> userspace can't really wait on it. It can do some linking tricks to
+>> alleviate that, but I don't see any new capabilities from the current
+>> approach.
 > 
->> I'm not aware of any where you can fragment 50% of all pageblocks in the
->> system as an unprivileged user essentially consuming almost no memory
->> and essentially staying inside well-defined memlock limits. But sure if
->> there are "many" people will be able to come up with at least one
->> comparable thing. I'll be happy to learn.
+> I'm not talking about waiting, just reading the cqring entry to see how
+> many were skipped. If you ask for no cqe, by definition there would be
+> nothing to wait on for you. Though it'd probably be better as an sqring
+> entry, since we'd be accounting at that time. Only caveat there is then
+> if the sqe errors and we do end up posting a cqe..
 > 
-> If the concern is that THP's can be DOS'd then any avenue that renders
-> the system out of THPs is a DOS attack vector. Including all the
-> normal workloads that people run and already complain that THPs get
-> exhausted.
+>> Also the locking is a problem, I was thinking about it, mainly hoping
+>> that I can adjust cq_extra and leave draining, but it didn't appear
+>> great to me. AFAIK, it's either an atomic, beating the purpose of the
+>> thing.
 > 
-> A hostile userspace can only quicken this process.
+> If we do submission side, then the ring mutex would cover it. No need
+> for any extra locking
 
-We can not only fragment THP but also easily smaller compound pages,
-with less impact though (well, as long as people want more than 0.1% per
-user ...).
-
-We want to make more excessive use of THP; the whole folio work is about
-using THP. Some people are even working on increasing the MAX_ORDER and
-introduce gigantic THP.
-
-And here we are having mechanisms available to unprivileged users to
-just sabotage the very thing at its core extremely easily. Personally, I
-think this is very bad, but that's just my humble opinion.
-
-> 
->> My position that FOLL_LONGTERM for unprivileged users is a strong no-go
->> stands as it is.
-> 
-> As this basically excludes long standing pre-existing things like
-> RDMA, XDP, io_uring, and more I don't think this can be the general
-> answer for mm, sorry.
-
-Let's think about options to restrict FOLL_LONGTERM usage:
-
-One option would be to add toggle(s) (e.g., kernel cmdline options) to
-make relevant mechanisms (or even FOLL_LONGTERM itself) privileged. The
-admin can opt in if unprivileged users should have that capability. A
-distro might overwrite the default and set it to "on". I'm not
-completely happy about that.
-
-Another option would be not accounting FOLL_LONGTERM as RLIMIT_MEMLOCK,
-but instead as something that explicitly matches the differing
-semantics. We could have a limit for privileged and one for unprivileged
-users. The default in the kernel could be 0 but an admin/system can
-overwrite it to opt in and a distro might apply different rules. Yes,
-we're back to the original question about limits, but now with the
-thought that FOLL_LONGTERM really is different than mlock and
-potentially more dangerous.
-
-At the same time, eventually work on proper alternatives with mmu
-notifiers (and possibly without the any such limits) where possible and
-required. (I assume it's hardly possible for RDMA because of the way the
-hardware works)
-
-Just some ideas, open for alternatives. I know that for the cases where
-we want it to "just work" for unprivileged users but cannot even have
-alternative implementations, this is bad.
+Jens, let's decide what we're going to do with this feature
 
 > 
-> Sure, lets stop now since I don't think we can agree.
-
-Don't get me wrong, I really should be working on other stuff, so I have
-limited brain capacity and time :) OTOH I'm willing to help at least
-discuss alternatives.
-
-
-Let's think about realistic alternatives to keep FOLL_LONGTERM for any
-user working (that would tackle the extreme fragmentation issue at
-least, ignoring e.g., other fragmentation we can trigger with
-FOLL_LONGTERM or ZONE_MOVABLE/MIGRATE_CMA):
-
-The nasty thing really is splitting a compound page and then pinning
-some pages, even if it's pinning the complete compound range. Ideally,
-we'd defer any action to the time we actually FOLL_LONGTERM pin a page.
-
-
-a) I think we cannot migrate pages when splitting the PMD (e.g., unmap,
-MADV_DONTNEED, swap?, page compaction?). User space can just pin the
-compound page to block migration.
-
-b) We might migrate pages when splitting the compound page. In
-split_huge_page_to_list() we know that we have nobody pinning the page.
-I did not check if it's possible. There might be cases where it's not
-immediately clear if it's possible (e.g., inside shrink_page_list())
-
-It would mean that we would migrate pages essentially any time we split
-a compound page because there could be someone FOLL_LONGTERM pinning the
-page later. Usually we'd expect page compaction to fix this up on actual
-demand. I'd call this sub-optimal.
-
-c) We migrate any time someone FOLL_LONGTERM pins a page and the page is
-not pinned yet -- because it might have been a split compound page. I
-think we can agree that that's not an option :)
-
-d) We remember if a page was part of a compound page and was not freed
-yet. If we FOLL_LONGTERM such a page, we migrate it. Unfortunately,
-we're short on pageflags for anon pages I think.
-
-Hm, alternatives?
+>> Another option is to split it in two, one counter is kept under
+>> ->uring_lock and another under ->completion_lock. But it'll be messy,
+>> shifting flushing part of draining to a work-queue for mutex locking,
+>> adding yet another bunch of counters that hard to maintain and so.
+> 
+> You'd only need the cqring counter for the unlikely event that the
+> request is failed and does post an cqe, though.
+> 
+>> And __io_submit_flush_completions() would also need to go through
+>> the request list one extra time to do the accounting, wouldn't
+>> want to grow massively inlined io_req_complete_state().
+> 
 
 -- 
-Thanks,
-
-David / dhildenb
-
+Pavel Begunkov

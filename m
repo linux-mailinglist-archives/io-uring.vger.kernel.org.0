@@ -2,115 +2,82 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2493545CF5B
-	for <lists+io-uring@lfdr.de>; Wed, 24 Nov 2021 22:41:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18AE545D082
+	for <lists+io-uring@lfdr.de>; Wed, 24 Nov 2021 23:53:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242390AbhKXVoZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 24 Nov 2021 16:44:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35180 "EHLO
+        id S243948AbhKXW4N (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 24 Nov 2021 17:56:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51366 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234293AbhKXVoZ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 24 Nov 2021 16:44:25 -0500
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9C85C061574
-        for <io-uring@vger.kernel.org>; Wed, 24 Nov 2021 13:41:14 -0800 (PST)
-Received: by mail-ed1-x532.google.com with SMTP id e3so16529783edu.4
-        for <io-uring@vger.kernel.org>; Wed, 24 Nov 2021 13:41:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=CpIw3XYox3zNZ1BssfOHoIU4Mg/pV6NGb+DsXwkaAoY=;
-        b=p9FQ2WyI7bgV5OXEsArZDMngbFt3NpGBm+TWzL1AjM6BjcWAfK3vWc9UO+p5Ok/Nan
-         dxOYJcsIX+VzTg6sO3Id/ZkyvALWSZQ4D2MTQ9jOtWTtbH+lILHuosHIIa03O2zNd2TX
-         QDyb4hXvcg4EwKJ/8jgif+gJBwd+Xhag97trNkHJJkfoqEb/7j11AF9gMQ6LNrNAsjzP
-         SRVdDtkrDTwvyvta7KPQBuMTUZQsUKhpB76DGOrfsIhoUlAEejZTCkO0KaZ2KqWqrpFl
-         77uXZvy7Ps8YidwkafioTBmeaQ42TdWsku/xFEEQUv0qPQeM2IkHx8SJf6nspz6FeLx4
-         zPMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=CpIw3XYox3zNZ1BssfOHoIU4Mg/pV6NGb+DsXwkaAoY=;
-        b=AX9C+JpmUfeVPByv34O5Lw5T2dlAHLGfeUWwXdVWk/lvD/hjmxta4eQzaXl5h/tecL
-         1HYFcaQsNWSUYTKZ9OBhCBRnG92WGKEfqgLJuhEsyRUruBj0fkJMJ76xzg7zDPM1HU/8
-         dnozLXyx9xB7qwvTGbEHDgkHUKH/roe8SIQO1nCNs3B2qP497+xaVz9xIdRdkFs50vm/
-         FdoVtHrPhmuqxVxmaWS17X3yqXrz0irmzDADqTEwRTAE0Nyyg0Ovu9om05F6ZyQlToFP
-         MUQQXFKLriO1S3LNXIJIWHHMCmahYvz+9UlBva7gjxhpg2rq5Wk5vTAHJlcjNUwx+04Z
-         dv2Q==
-X-Gm-Message-State: AOAM532Qtxon86Fd7Q1pji2qKOAuZzpdrQyp3nPLXdL6WDba3hu5JQXD
-        FVAiAvmx2HaQ7XuVLIjK4Ew=
-X-Google-Smtp-Source: ABdhPJzZO8PiCh4xvGz1us2S46wu5mGQORZuIWJA1oBH3cN2RSOyBEn0gtPwOS45lq+ryhX38josuw==
-X-Received: by 2002:a17:906:58d3:: with SMTP id e19mr24566672ejs.350.1637790073524;
-        Wed, 24 Nov 2021 13:41:13 -0800 (PST)
-Received: from [192.168.8.198] ([148.252.128.168])
-        by smtp.gmail.com with ESMTPSA id a17sm673800edx.14.2021.11.24.13.41.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Nov 2021 13:41:13 -0800 (PST)
-Message-ID: <28685b5a-5484-809c-38d7-ef60f359b535@gmail.com>
-Date:   Wed, 24 Nov 2021 21:41:10 +0000
+        with ESMTP id S231346AbhKXW4M (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 24 Nov 2021 17:56:12 -0500
+Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A0B0C061574;
+        Wed, 24 Nov 2021 14:53:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+        s=42; h=Date:Message-ID:From:Cc:To;
+        bh=+Cel5t5mgEKdccPULfn4I2rYPBfGX3bHzdJOMnRwesQ=; b=IJW9NHZgjPfPHOj8Sm+sJbNmXo
+        ZZd50MFikt34l2PoQZFxBWLLjhy3rC8T+0hkrKVLf0fPDOjHUNzRs7mZ0QV3cWqEf4zVAB3Uv9qFM
+        jIJF+PF44NslkTiEiBKnYTio8m01//FBuSl4CEDN7CED1D+m9OhQbhr1lTVaOiy1mYCSb32+Cja20
+        Pny3w0o62tPv0i3UujndWUWWEsY7nNoP/0sS9E/8BLAhKX5jE7OCx2+dFU1AegVZPtF5B8d05ico3
+        +gLSX3fjn3eED+eVX/LxXNLZ7KEBhSa1QEHeR8kDkpUYMnbxbnzSnoYWkoWNVL8xC3GVwn8oW/FIE
+        y9bdYAwG1VBgz0XNyVdJF30ck/pgWKqW7PQdRp1T83QY1st1i/jDo9N8NEdxIUdwJ/jGCLefgnule
+        nh9KRfV+HNYgg4rXF0F0/WKc7gpmz/f/ttZQvVQrgd5TLHzKMAW+jjND2RxtxOwv0zKyweDHuDXbN
+        c8qWv3IDvt3/M7Rc9P7iXAbj;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
+        (Exim)
+        id 1mq18M-008nwU-80; Wed, 24 Nov 2021 22:52:58 +0000
+To:     Jens Axboe <axboe@kernel.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Daniel Black <daniel@mariadb.org>,
+        Salvatore Bonaccorso <carnil@debian.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        linux-block@vger.kernel.org, io-uring@vger.kernel.org,
+        stable@vger.kernel.org
+References: <c6d6bffe-1770-c51d-11c6-c5483bde1766@kernel.dk>
+ <bd7289c8-0b01-4fcf-e584-273d372f8343@kernel.dk>
+ <6d0ca779-3111-bc5e-88c0-22a98a6974b8@kernel.dk>
+ <281147cc-7da4-8e45-2d6f-3f7c2a2ca229@kernel.dk>
+ <c92f97e5-1a38-e23f-f371-c00261cacb6d@kernel.dk>
+ <CABVffEN0LzLyrHifysGNJKpc_Szn7qPO4xy7aKvg7LTNc-Fpng@mail.gmail.com>
+ <00d6e7ad-5430-4fca-7e26-0774c302be57@kernel.dk>
+ <CABVffEM79CZ+4SW0+yP0+NioMX=sHhooBCEfbhqs6G6hex2YwQ@mail.gmail.com>
+ <3aaac8b2-e2f6-6a84-1321-67409b2a3dce@kernel.dk>
+ <98f8a00f-c634-4a1a-4eba-f97be5b2e801@kernel.dk> <YZ5lvtfqsZEllUJq@kroah.com>
+ <c0a7ac89-2a8c-b1e3-00c2-96ee259582b4@kernel.dk>
+From:   Stefan Metzmacher <metze@samba.org>
+Subject: Re: uring regression - lost write request
+Message-ID: <96d6241f-7bf0-cefe-947e-ee03d83fb828@samba.org>
+Date:   Wed, 24 Nov 2021 23:52:57 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.2
-Subject: Re: [PATCH v5 0/6] task work optimization
+In-Reply-To: <c0a7ac89-2a8c-b1e3-00c2-96ee259582b4@kernel.dk>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-To:     Hao Xu <haoxu@linux.alibaba.com>, Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <20211124122202.218756-1-haoxu@linux.alibaba.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20211124122202.218756-1-haoxu@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 11/24/21 12:21, Hao Xu wrote:
-> v4->v5
-> - change the implementation of merge_wq_list
+Hi Jens,
 
-They only concern I had was about 6/6 not using inline completion
-infra, when it's faster to grab ->uring_lock. i.e.
-io_submit_flush_completions(), which should be faster when batching
-is good.
-
-Looking again through the code, the only user is SQPOLL
-
-io_req_task_work_add(req, !!(req->ctx->flags & IORING_SETUP_SQPOLL));
-
-And with SQPOLL the lock is mostly grabbed by the SQPOLL task only,
-IOW for pure block rw there shouldn't be any contention.
-Doesn't make much sense, what am I missing?
-How many requests are completed on average per tctx_task_work()?
-
-
-It doesn't apply to for-5.17/io_uring, here is a rebase:
-https://github.com/isilence/linux.git haoxu_tw_opt
-link: https://github.com/isilence/linux/tree/haoxu_tw_opt
-
-With that first 5 patches look good, so for them:
-Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
-
-but I still don't understand how 6/6 is better. Can it be because of
-indirect branching? E.g. would something like this give the result?
-
-- req->io_task_work.func(req, locked);
-+ INDIRECT_CALL_1(req->io_task_work.func, io_req_task_complete, req, locked);
-
-
-> Hao Xu (6):
->    io-wq: add helper to merge two wq_lists
->    io_uring: add a priority tw list for irq completion work
->    io_uring: add helper for task work execution code
->    io_uring: split io_req_complete_post() and add a helper
->    io_uring: move up io_put_kbuf() and io_put_rw_kbuf()
->    io_uring: batch completion in prior_task_list
+>>> Looks good to me - Greg, would you mind queueing this up for
+>>> 5.14-stable?
+>>
+>> 5.14 is end-of-life and not getting any more releases (the front page of
+>> kernel.org should show that.)
 > 
->   fs/io-wq.h    |  22 +++++++
->   fs/io_uring.c | 158 +++++++++++++++++++++++++++++++++-----------------
->   2 files changed, 128 insertions(+), 52 deletions(-)
+> Oh, well I guess that settles that...
 > 
+>> If this needs to go anywhere else, please let me know.
+> 
+> Should be fine, previous 5.10 isn't affected and 5.15 is fine too as it
+> already has the patch.
 
--- 
-Pavel Begunkov
+Are 5.11 and 5.13 are affected, these are hwe kernels for ubuntu,
+I may need to open a bug for them...
+
+Thanks!
+metze

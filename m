@@ -2,544 +2,107 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5813F45C8A3
-	for <lists+io-uring@lfdr.de>; Wed, 24 Nov 2021 16:28:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A383D45C8C5
+	for <lists+io-uring@lfdr.de>; Wed, 24 Nov 2021 16:34:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236193AbhKXPcD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 24 Nov 2021 10:32:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33792 "EHLO
+        id S241314AbhKXPhU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 24 Nov 2021 10:37:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235552AbhKXPb7 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 24 Nov 2021 10:31:59 -0500
-Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D54A1C061714
-        for <io-uring@vger.kernel.org>; Wed, 24 Nov 2021 07:28:49 -0800 (PST)
-Received: by mail-io1-xd34.google.com with SMTP id k21so3720561ioh.4
-        for <io-uring@vger.kernel.org>; Wed, 24 Nov 2021 07:28:49 -0800 (PST)
+        with ESMTP id S241279AbhKXPhU (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 24 Nov 2021 10:37:20 -0500
+Received: from mail-qv1-xf2a.google.com (mail-qv1-xf2a.google.com [IPv6:2607:f8b0:4864:20::f2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3044C061714
+        for <io-uring@vger.kernel.org>; Wed, 24 Nov 2021 07:34:10 -0800 (PST)
+Received: by mail-qv1-xf2a.google.com with SMTP id g9so101034qvd.2
+        for <io-uring@vger.kernel.org>; Wed, 24 Nov 2021 07:34:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language;
-        bh=Vkp4hfx+glKEcCHx6H870KjOF1DaA/F4vMkSN8+Kgu0=;
-        b=ArXRs6Yaf0UWXU+X+mSV6vxSS957mQV4ZQJ2Zb2Mh3LQvTbmpqmkJB6c41GneG9ttF
-         k2oOScrsdxA0/FLJFhm1HXqxNaKrRkrwoUCOFOAS0FARZF0jKhOWGqMaFCKswiIblG30
-         5naIm2xC2MYR4jWWSdHQmCO0k1SOAm34ximiplYCjuAmpzJ98hFTxUxSXrqfOPPa8srk
-         Y4ydK0OXK4xYrMkq1JxZfcAD89d8Qgv7ceD4CIJSfK8rM6vIY10a8Ff42O4RwyXp7lpt
-         CYAH44BxpkasSpqJrWiqePnZ5LZeMX7GdmSXbhalSevtqYutYeI+6WiZgkVtaYnploYT
-         izCA==
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=jewS1/U+Uwx2MsMSvVTsbDbxDhtWEO2xK/fTTXK8uck=;
+        b=WzvFRKZ061/KNaexoESH+Gbb4RgMMBXdqHhbtVDCJUWaGKS0bnX4c6P4VO4hkjahGS
+         /3zHBhDb+rJ4bQfUU/5o0p7g5Oq4oHvasOY5UeFTNeegJ14CkGmQ0rO3rB12VPpaJpFR
+         gChu8p5mtj04YG1x5v/Js2Wxkzh4Wbj7B3fohbz2UoOYCEyU/TDOBZLuXavFMULGkfTJ
+         GjZzuFZNy3a1tQgtuifVOgbMoqA9TPXpZeM+Et1sowb/lyMJrVJ9CxBCNCSSNl79GP0A
+         zTttDgOQkS2aqHt73ydZLqX6ZPRNdxo6YgMiQtSBwlqc06vXom0vpQ6CnRifIvQ6aw7l
+         EeRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language;
-        bh=Vkp4hfx+glKEcCHx6H870KjOF1DaA/F4vMkSN8+Kgu0=;
-        b=1M3EgDGOxCANiCrjQyxVIzczGaeRcV1EcGa8cXfeec+1lH4lXv3L1+vlU5gY+lUiSQ
-         OAI70xAfxqF68ijPsZlSa0sUdueQRPZCmdAYgiDeML0gxq40jQOL4GXGujSjGpVWgneG
-         q/SGxxFNvZNk/fIOwV5Bs/nFKDXqwVey8ne4ESsYs5sIdqHCHed+BHetE3n/Bo8qJSio
-         DuB4EkPSxHsnmZ6kur+uBawAoqNQQKvAooa53OJfxvHb5sXVD+WHdSm/vP2aqykFnGRi
-         PBmTTe9e3/nDhIECGmbBVfWwMxXqg/Dy5+aCgl1ichIKPgFFBS43wNhL+AY/8yfkMNgw
-         L9Ug==
-X-Gm-Message-State: AOAM533+iAEIaaGeagvm+yABbMPS0X/FDRap00jP0ogyQTbfYW68IIEw
-        D+Qb9l5QcDrx1UBe5aUa7uPXfrdYQmxnKQt0
-X-Google-Smtp-Source: ABdhPJywEujReNmGzlPKNdvdXNGKmer9A/gncvpYKayqIjWIPQexvGr0SBSfXeR2m8hga3ybLT6UKA==
-X-Received: by 2002:a02:b790:: with SMTP id f16mr17189174jam.2.1637767729071;
-        Wed, 24 Nov 2021 07:28:49 -0800 (PST)
-Received: from [192.168.1.30] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id k9sm76615ilv.66.2021.11.24.07.28.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Nov 2021 07:28:48 -0800 (PST)
-Subject: Re: uring regression - lost write request
-To:     Daniel Black <daniel@mariadb.org>
-Cc:     Salvatore Bonaccorso <carnil@debian.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        linux-block@vger.kernel.org, io-uring@vger.kernel.org
-References: <CABVffENnJ8JkP7EtuUTqi+VkJDBFU37w1UXe4Q3cB7-ixxh0VA@mail.gmail.com>
- <23555381-2bea-f63a-1715-a80edd3ee27f@gmail.com>
- <YXz0roPH+stjFygk@eldamar.lan>
- <CABVffEO4mBTuiLzvny1G1ocO7PvTpKYTCS5TO2fbaevu2TqdGQ@mail.gmail.com>
- <CABVffEMy+gWfkuEg4UOTZe3p_k0Ryxey921Hw2De8MyE=JafeA@mail.gmail.com>
- <f4f2ff29-abdd-b448-f58f-7ea99c35eb2b@kernel.dk>
- <ef299d5b-cc48-6c92-024d-27024b671fd3@kernel.dk>
- <CABVffEOpuViC9OyOuZg28sRfGK4GRc8cV0CnkOU2cM0RJyRhPw@mail.gmail.com>
- <e9b4d07e-d43d-9b3c-ac4c-f8b88bb987d4@kernel.dk>
- <1bd48c9b-c462-115c-d077-1b724d7e4d10@kernel.dk>
- <c6d6bffe-1770-c51d-11c6-c5483bde1766@kernel.dk>
- <bd7289c8-0b01-4fcf-e584-273d372f8343@kernel.dk>
- <6d0ca779-3111-bc5e-88c0-22a98a6974b8@kernel.dk>
- <281147cc-7da4-8e45-2d6f-3f7c2a2ca229@kernel.dk>
- <c92f97e5-1a38-e23f-f371-c00261cacb6d@kernel.dk>
- <CABVffEN0LzLyrHifysGNJKpc_Szn7qPO4xy7aKvg7LTNc-Fpng@mail.gmail.com>
- <00d6e7ad-5430-4fca-7e26-0774c302be57@kernel.dk>
- <CABVffEM79CZ+4SW0+yP0+NioMX=sHhooBCEfbhqs6G6hex2YwQ@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <3aaac8b2-e2f6-6a84-1321-67409b2a3dce@kernel.dk>
-Date:   Wed, 24 Nov 2021 08:28:47 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=jewS1/U+Uwx2MsMSvVTsbDbxDhtWEO2xK/fTTXK8uck=;
+        b=H/Twp4ZnFBpevxoT2YoNuKTP6o0kJxKH+yd41eXXYWGLQcGXi7WEiiohfSww7/fUB2
+         nxFFojElMWU9vkKScjBkwjePPGCKMUSBE4WTI+i79/UeOgOlVnny+pzD3lnHXhorzrXy
+         OpMAcMmKGzOGYh7i/ZGoqCPhmlQ4MOFW8aphfT/eNsss4I507jpK/L/rS9El+EyRTPFl
+         2Z9qzgU1iX9qXN+MG6FIYeozBjd3/SKzXkyFMqh06TsJc7NnMQ5XIo/mXvXWKBWXjt/j
+         T3U3utnkbpSlogQkNl18XW9SpTeE3oku6UKpvjqSOP8wOxJ7If/bFhfOAZ4kECrm+mYU
+         ZaOQ==
+X-Gm-Message-State: AOAM531kn290BGzSTPZfaTkVlUwGtADzPnXrSeuW8xwFSW8BQII6cPaZ
+        1HVXwOb/uMFCjNTq7fyCiWHOEg==
+X-Google-Smtp-Source: ABdhPJxZDhSiT7D5AMdmLtkaSczYkt5IgUp2uFeWHEYmNkWlb9JcYltzAKN/FqypiDM3IlbZxasu5A==
+X-Received: by 2002:ad4:5dea:: with SMTP id jn10mr8349179qvb.17.1637768049952;
+        Wed, 24 Nov 2021 07:34:09 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-142-162-113-129.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.162.113.129])
+        by smtp.gmail.com with ESMTPSA id l22sm42040qtj.68.2021.11.24.07.34.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Nov 2021 07:34:06 -0800 (PST)
+Received: from jgg by mlx with local (Exim 4.94)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1mpuHd-0013L9-Or; Wed, 24 Nov 2021 11:34:05 -0400
+Date:   Wed, 24 Nov 2021 11:34:05 -0400
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Vlastimil Babka <vbabka@suse.cz>, Jens Axboe <axboe@kernel.dk>,
+        Andrew Dona-Couch <andrew@donacou.ch>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Drew DeVault <sir@cmpwn.com>,
+        Ammar Faizi <ammarfaizi2@gnuweeb.org>,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        io_uring Mailing List <io-uring@vger.kernel.org>,
+        Pavel Begunkov <asml.silence@gmail.com>, linux-mm@kvack.org
+Subject: Re: [PATCH] Increase default MLOCK_LIMIT to 8 MiB
+Message-ID: <20211124153405.GJ5112@ziepe.ca>
+References: <20211123170056.GC5112@ziepe.ca>
+ <dd92a69a-6d09-93a1-4f50-5020f5cc59d0@suse.cz>
+ <20211123235953.GF5112@ziepe.ca>
+ <2adca04f-92e1-5f99-6094-5fac66a22a77@redhat.com>
+ <20211124132353.GG5112@ziepe.ca>
+ <cca0229e-e53e-bceb-e215-327b6401f256@redhat.com>
+ <20211124132842.GH5112@ziepe.ca>
+ <eab5aeba-e064-9f3e-fbc3-f73cd299de83@redhat.com>
+ <20211124134812.GI5112@ziepe.ca>
+ <2cdbebb9-4c57-7839-71ab-166cae168c74@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <CABVffEM79CZ+4SW0+yP0+NioMX=sHhooBCEfbhqs6G6hex2YwQ@mail.gmail.com>
-Content-Type: multipart/mixed;
- boundary="------------90E65037E8984261A2C9A5CA"
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2cdbebb9-4c57-7839-71ab-166cae168c74@redhat.com>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------90E65037E8984261A2C9A5CA
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+On Wed, Nov 24, 2021 at 03:14:00PM +0100, David Hildenbrand wrote:
 
-On 11/23/21 8:27 PM, Daniel Black wrote:
-> On Mon, Nov 15, 2021 at 7:55 AM Jens Axboe <axboe@kernel.dk> wrote:
->>
->> On 11/14/21 1:33 PM, Daniel Black wrote:
->>> On Fri, Nov 12, 2021 at 10:44 AM Jens Axboe <axboe@kernel.dk> wrote:
->>>>
->>>> Alright, give this one a go if you can. Against -git, but will apply to
->>>> 5.15 as well.
->>>
->>>
->>> Works. Thank you very much.
->>>
->>> https://jira.mariadb.org/browse/MDEV-26674?page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel&focusedCommentId=205599#comment-205599
->>>
->>> Tested-by: Marko Mäkelä <marko.makela@mariadb.com>
->>
->> The patch is already upstream (and in the 5.15 stable queue), and I
->> provided 5.14 patches too.
-> 
-> Jens,
-> 
-> I'm getting the same reproducer on 5.14.20
-> (https://bugzilla.redhat.com/show_bug.cgi?id=2018882#c3) though the
-> backport change logs indicate 5.14.19 has the patch.
-> 
-> Anything missing?
+> I'm not aware of any where you can fragment 50% of all pageblocks in the
+> system as an unprivileged user essentially consuming almost no memory
+> and essentially staying inside well-defined memlock limits. But sure if
+> there are "many" people will be able to come up with at least one
+> comparable thing. I'll be happy to learn.
 
-We might also need another patch that isn't in stable, I'm attaching
-it here. Any chance you can run 5.14.20/21 with this applied? If not,
-I'll do some sanity checking here and push it to -stable.
+If the concern is that THP's can be DOS'd then any avenue that renders
+the system out of THPs is a DOS attack vector. Including all the
+normal workloads that people run and already complain that THPs get
+exhausted.
 
--- 
-Jens Axboe
+A hostile userspace can only quicken this process.
 
+> My position that FOLL_LONGTERM for unprivileged users is a strong no-go
+> stands as it is.
 
---------------90E65037E8984261A2C9A5CA
-Content-Type: text/x-patch; charset=UTF-8;
- name="0001-io-wq-split-bounded-and-unbounded-work-into-separate.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename*0="0001-io-wq-split-bounded-and-unbounded-work-into-separate.pa";
- filename*1="tch"
+As this basically excludes long standing pre-existing things like
+RDMA, XDP, io_uring, and more I don't think this can be the general
+answer for mm, sorry.
 
-From 99e6a29dbda79e5e050be1ffd38dd36622f61af5 Mon Sep 17 00:00:00 2001
-From: Jens Axboe <axboe@kernel.dk>
-Date: Wed, 24 Nov 2021 08:26:11 -0700
-Subject: [PATCH] io-wq: split bounded and unbounded work into separate lists
+Sure, lets stop now since I don't think we can agree.
 
-commit f95dc207b93da9c88ddbb7741ec3730c6657b88e upstream.
-
-We've got a few issues that all boil down to the fact that we have one
-list of pending work items, yet two different types of workers to
-serve them. This causes some oddities around workers switching type and
-even hashed work vs regular work on the same bounded list.
-
-Just separate them out cleanly, similarly to how we already do
-accounting of what is running. That provides a clean separation and
-removes some corner cases that can cause stalls when handling IO
-that is punted to io-wq.
-
-Fixes: ecc53c48c13d ("io-wq: check max_worker limits if a worker transitions bound state")
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- fs/io-wq.c | 156 +++++++++++++++++++++++------------------------------
- 1 file changed, 68 insertions(+), 88 deletions(-)
-
-diff --git a/fs/io-wq.c b/fs/io-wq.c
-index 0890d85ba285..7d63299b4776 100644
---- a/fs/io-wq.c
-+++ b/fs/io-wq.c
-@@ -32,7 +32,7 @@ enum {
- };
- 
- enum {
--	IO_WQE_FLAG_STALLED	= 1,	/* stalled on hash */
-+	IO_ACCT_STALLED_BIT	= 0,	/* stalled on hash */
- };
- 
- /*
-@@ -71,25 +71,24 @@ struct io_wqe_acct {
- 	unsigned max_workers;
- 	int index;
- 	atomic_t nr_running;
-+	struct io_wq_work_list work_list;
-+	unsigned long flags;
- };
- 
- enum {
- 	IO_WQ_ACCT_BOUND,
- 	IO_WQ_ACCT_UNBOUND,
-+	IO_WQ_ACCT_NR,
- };
- 
- /*
-  * Per-node worker thread pool
-  */
- struct io_wqe {
--	struct {
--		raw_spinlock_t lock;
--		struct io_wq_work_list work_list;
--		unsigned flags;
--	} ____cacheline_aligned_in_smp;
-+	raw_spinlock_t lock;
-+	struct io_wqe_acct acct[2];
- 
- 	int node;
--	struct io_wqe_acct acct[2];
- 
- 	struct hlist_nulls_head free_list;
- 	struct list_head all_list;
-@@ -195,11 +194,10 @@ static void io_worker_exit(struct io_worker *worker)
- 	do_exit(0);
- }
- 
--static inline bool io_wqe_run_queue(struct io_wqe *wqe)
--	__must_hold(wqe->lock)
-+static inline bool io_acct_run_queue(struct io_wqe_acct *acct)
- {
--	if (!wq_list_empty(&wqe->work_list) &&
--	    !(wqe->flags & IO_WQE_FLAG_STALLED))
-+	if (!wq_list_empty(&acct->work_list) &&
-+	    !test_bit(IO_ACCT_STALLED_BIT, &acct->flags))
- 		return true;
- 	return false;
- }
-@@ -208,7 +206,8 @@ static inline bool io_wqe_run_queue(struct io_wqe *wqe)
-  * Check head of free list for an available worker. If one isn't available,
-  * caller must create one.
-  */
--static bool io_wqe_activate_free_worker(struct io_wqe *wqe)
-+static bool io_wqe_activate_free_worker(struct io_wqe *wqe,
-+					struct io_wqe_acct *acct)
- 	__must_hold(RCU)
- {
- 	struct hlist_nulls_node *n;
-@@ -222,6 +221,10 @@ static bool io_wqe_activate_free_worker(struct io_wqe *wqe)
- 	hlist_nulls_for_each_entry_rcu(worker, n, &wqe->free_list, nulls_node) {
- 		if (!io_worker_get(worker))
- 			continue;
-+		if (io_wqe_get_acct(worker) != acct) {
-+			io_worker_release(worker);
-+			continue;
-+		}
- 		if (wake_up_process(worker->task)) {
- 			io_worker_release(worker);
- 			return true;
-@@ -340,7 +343,7 @@ static void io_wqe_dec_running(struct io_worker *worker)
- 	if (!(worker->flags & IO_WORKER_F_UP))
- 		return;
- 
--	if (atomic_dec_and_test(&acct->nr_running) && io_wqe_run_queue(wqe)) {
-+	if (atomic_dec_and_test(&acct->nr_running) && io_acct_run_queue(acct)) {
- 		atomic_inc(&acct->nr_running);
- 		atomic_inc(&wqe->wq->worker_refs);
- 		io_queue_worker_create(wqe, worker, acct);
-@@ -355,29 +358,10 @@ static void __io_worker_busy(struct io_wqe *wqe, struct io_worker *worker,
- 			     struct io_wq_work *work)
- 	__must_hold(wqe->lock)
- {
--	bool worker_bound, work_bound;
--
--	BUILD_BUG_ON((IO_WQ_ACCT_UNBOUND ^ IO_WQ_ACCT_BOUND) != 1);
--
- 	if (worker->flags & IO_WORKER_F_FREE) {
- 		worker->flags &= ~IO_WORKER_F_FREE;
- 		hlist_nulls_del_init_rcu(&worker->nulls_node);
- 	}
--
--	/*
--	 * If worker is moving from bound to unbound (or vice versa), then
--	 * ensure we update the running accounting.
--	 */
--	worker_bound = (worker->flags & IO_WORKER_F_BOUND) != 0;
--	work_bound = (work->flags & IO_WQ_WORK_UNBOUND) == 0;
--	if (worker_bound != work_bound) {
--		int index = work_bound ? IO_WQ_ACCT_UNBOUND : IO_WQ_ACCT_BOUND;
--		io_wqe_dec_running(worker);
--		worker->flags ^= IO_WORKER_F_BOUND;
--		wqe->acct[index].nr_workers--;
--		wqe->acct[index ^ 1].nr_workers++;
--		io_wqe_inc_running(worker);
--	 }
- }
- 
- /*
-@@ -419,44 +403,23 @@ static bool io_wait_on_hash(struct io_wqe *wqe, unsigned int hash)
- 	return ret;
- }
- 
--/*
-- * We can always run the work if the worker is currently the same type as
-- * the work (eg both are bound, or both are unbound). If they are not the
-- * same, only allow it if incrementing the worker count would be allowed.
-- */
--static bool io_worker_can_run_work(struct io_worker *worker,
--				   struct io_wq_work *work)
--{
--	struct io_wqe_acct *acct;
--
--	if (!(worker->flags & IO_WORKER_F_BOUND) !=
--	    !(work->flags & IO_WQ_WORK_UNBOUND))
--		return true;
--
--	/* not the same type, check if we'd go over the limit */
--	acct = io_work_get_acct(worker->wqe, work);
--	return acct->nr_workers < acct->max_workers;
--}
--
--static struct io_wq_work *io_get_next_work(struct io_wqe *wqe,
-+static struct io_wq_work *io_get_next_work(struct io_wqe_acct *acct,
- 					   struct io_worker *worker)
- 	__must_hold(wqe->lock)
- {
- 	struct io_wq_work_node *node, *prev;
- 	struct io_wq_work *work, *tail;
- 	unsigned int stall_hash = -1U;
-+	struct io_wqe *wqe = worker->wqe;
- 
--	wq_list_for_each(node, prev, &wqe->work_list) {
-+	wq_list_for_each(node, prev, &acct->work_list) {
- 		unsigned int hash;
- 
- 		work = container_of(node, struct io_wq_work, list);
- 
--		if (!io_worker_can_run_work(worker, work))
--			break;
--
- 		/* not hashed, can run anytime */
- 		if (!io_wq_is_hashed(work)) {
--			wq_list_del(&wqe->work_list, node, prev);
-+			wq_list_del(&acct->work_list, node, prev);
- 			return work;
- 		}
- 
-@@ -467,7 +430,7 @@ static struct io_wq_work *io_get_next_work(struct io_wqe *wqe,
- 		/* hashed, can run if not already running */
- 		if (!test_and_set_bit(hash, &wqe->wq->hash->map)) {
- 			wqe->hash_tail[hash] = NULL;
--			wq_list_cut(&wqe->work_list, &tail->list, prev);
-+			wq_list_cut(&acct->work_list, &tail->list, prev);
- 			return work;
- 		}
- 		if (stall_hash == -1U)
-@@ -483,12 +446,12 @@ static struct io_wq_work *io_get_next_work(struct io_wqe *wqe,
- 		 * Set this before dropping the lock to avoid racing with new
- 		 * work being added and clearing the stalled bit.
- 		 */
--		wqe->flags |= IO_WQE_FLAG_STALLED;
-+		set_bit(IO_ACCT_STALLED_BIT, &acct->flags);
- 		raw_spin_unlock(&wqe->lock);
- 		unstalled = io_wait_on_hash(wqe, stall_hash);
- 		raw_spin_lock(&wqe->lock);
- 		if (unstalled) {
--			wqe->flags &= ~IO_WQE_FLAG_STALLED;
-+			clear_bit(IO_ACCT_STALLED_BIT, &acct->flags);
- 			if (wq_has_sleeper(&wqe->wq->hash->wait))
- 				wake_up(&wqe->wq->hash->wait);
- 		}
-@@ -525,6 +488,7 @@ static void io_wqe_enqueue(struct io_wqe *wqe, struct io_wq_work *work);
- static void io_worker_handle_work(struct io_worker *worker)
- 	__releases(wqe->lock)
- {
-+	struct io_wqe_acct *acct = io_wqe_get_acct(worker);
- 	struct io_wqe *wqe = worker->wqe;
- 	struct io_wq *wq = wqe->wq;
- 	bool do_kill = test_bit(IO_WQ_BIT_EXIT, &wq->state);
-@@ -539,7 +503,7 @@ static void io_worker_handle_work(struct io_worker *worker)
- 		 * can't make progress, any work completion or insertion will
- 		 * clear the stalled flag.
- 		 */
--		work = io_get_next_work(wqe, worker);
-+		work = io_get_next_work(acct, worker);
- 		if (work)
- 			__io_worker_busy(wqe, worker, work);
- 
-@@ -575,7 +539,7 @@ static void io_worker_handle_work(struct io_worker *worker)
- 				/* serialize hash clear with wake_up() */
- 				spin_lock_irq(&wq->hash->wait.lock);
- 				clear_bit(hash, &wq->hash->map);
--				wqe->flags &= ~IO_WQE_FLAG_STALLED;
-+				clear_bit(IO_ACCT_STALLED_BIT, &acct->flags);
- 				spin_unlock_irq(&wq->hash->wait.lock);
- 				if (wq_has_sleeper(&wq->hash->wait))
- 					wake_up(&wq->hash->wait);
-@@ -594,6 +558,7 @@ static void io_worker_handle_work(struct io_worker *worker)
- static int io_wqe_worker(void *data)
- {
- 	struct io_worker *worker = data;
-+	struct io_wqe_acct *acct = io_wqe_get_acct(worker);
- 	struct io_wqe *wqe = worker->wqe;
- 	struct io_wq *wq = wqe->wq;
- 	char buf[TASK_COMM_LEN];
-@@ -609,7 +574,7 @@ static int io_wqe_worker(void *data)
- 		set_current_state(TASK_INTERRUPTIBLE);
- loop:
- 		raw_spin_lock_irq(&wqe->lock);
--		if (io_wqe_run_queue(wqe)) {
-+		if (io_acct_run_queue(acct)) {
- 			io_worker_handle_work(worker);
- 			goto loop;
- 		}
-@@ -777,12 +742,13 @@ static void io_run_cancel(struct io_wq_work *work, struct io_wqe *wqe)
- 
- static void io_wqe_insert_work(struct io_wqe *wqe, struct io_wq_work *work)
- {
-+	struct io_wqe_acct *acct = io_work_get_acct(wqe, work);
- 	unsigned int hash;
- 	struct io_wq_work *tail;
- 
- 	if (!io_wq_is_hashed(work)) {
- append:
--		wq_list_add_tail(&work->list, &wqe->work_list);
-+		wq_list_add_tail(&work->list, &acct->work_list);
- 		return;
- 	}
- 
-@@ -792,7 +758,7 @@ static void io_wqe_insert_work(struct io_wqe *wqe, struct io_wq_work *work)
- 	if (!tail)
- 		goto append;
- 
--	wq_list_add_after(&work->list, &tail->list, &wqe->work_list);
-+	wq_list_add_after(&work->list, &tail->list, &acct->work_list);
- }
- 
- static void io_wqe_enqueue(struct io_wqe *wqe, struct io_wq_work *work)
-@@ -814,10 +780,10 @@ static void io_wqe_enqueue(struct io_wqe *wqe, struct io_wq_work *work)
- 
- 	raw_spin_lock_irqsave(&wqe->lock, flags);
- 	io_wqe_insert_work(wqe, work);
--	wqe->flags &= ~IO_WQE_FLAG_STALLED;
-+	clear_bit(IO_ACCT_STALLED_BIT, &acct->flags);
- 
- 	rcu_read_lock();
--	do_create = !io_wqe_activate_free_worker(wqe);
-+	do_create = !io_wqe_activate_free_worker(wqe, acct);
- 	rcu_read_unlock();
- 
- 	raw_spin_unlock_irqrestore(&wqe->lock, flags);
-@@ -870,6 +836,7 @@ static inline void io_wqe_remove_pending(struct io_wqe *wqe,
- 					 struct io_wq_work *work,
- 					 struct io_wq_work_node *prev)
- {
-+	struct io_wqe_acct *acct = io_work_get_acct(wqe, work);
- 	unsigned int hash = io_get_work_hash(work);
- 	struct io_wq_work *prev_work = NULL;
- 
-@@ -881,7 +848,7 @@ static inline void io_wqe_remove_pending(struct io_wqe *wqe,
- 		else
- 			wqe->hash_tail[hash] = NULL;
- 	}
--	wq_list_del(&wqe->work_list, &work->list, prev);
-+	wq_list_del(&acct->work_list, &work->list, prev);
- }
- 
- static void io_wqe_cancel_pending_work(struct io_wqe *wqe,
-@@ -890,22 +857,27 @@ static void io_wqe_cancel_pending_work(struct io_wqe *wqe,
- 	struct io_wq_work_node *node, *prev;
- 	struct io_wq_work *work;
- 	unsigned long flags;
-+	int i;
- 
- retry:
- 	raw_spin_lock_irqsave(&wqe->lock, flags);
--	wq_list_for_each(node, prev, &wqe->work_list) {
--		work = container_of(node, struct io_wq_work, list);
--		if (!match->fn(work, match->data))
--			continue;
--		io_wqe_remove_pending(wqe, work, prev);
--		raw_spin_unlock_irqrestore(&wqe->lock, flags);
--		io_run_cancel(work, wqe);
--		match->nr_pending++;
--		if (!match->cancel_all)
--			return;
-+	for (i = 0; i < IO_WQ_ACCT_NR; i++) {
-+		struct io_wqe_acct *acct = io_get_acct(wqe, i == 0);
- 
--		/* not safe to continue after unlock */
--		goto retry;
-+		wq_list_for_each(node, prev, &acct->work_list) {
-+			work = container_of(node, struct io_wq_work, list);
-+			if (!match->fn(work, match->data))
-+				continue;
-+			io_wqe_remove_pending(wqe, work, prev);
-+			raw_spin_unlock_irqrestore(&wqe->lock, flags);
-+			io_run_cancel(work, wqe);
-+			match->nr_pending++;
-+			if (!match->cancel_all)
-+				return;
-+
-+			/* not safe to continue after unlock */
-+			goto retry;
-+		}
- 	}
- 	raw_spin_unlock_irqrestore(&wqe->lock, flags);
- }
-@@ -966,18 +938,24 @@ static int io_wqe_hash_wake(struct wait_queue_entry *wait, unsigned mode,
- 			    int sync, void *key)
- {
- 	struct io_wqe *wqe = container_of(wait, struct io_wqe, wait);
-+	int i;
- 
- 	list_del_init(&wait->entry);
- 
- 	rcu_read_lock();
--	io_wqe_activate_free_worker(wqe);
-+	for (i = 0; i < IO_WQ_ACCT_NR; i++) {
-+		struct io_wqe_acct *acct = &wqe->acct[i];
-+
-+		if (test_and_clear_bit(IO_ACCT_STALLED_BIT, &acct->flags))
-+			io_wqe_activate_free_worker(wqe, acct);
-+	}
- 	rcu_read_unlock();
- 	return 1;
- }
- 
- struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data)
- {
--	int ret, node;
-+	int ret, node, i;
- 	struct io_wq *wq;
- 
- 	if (WARN_ON_ONCE(!data->free_work || !data->do_work))
-@@ -1012,18 +990,20 @@ struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data)
- 		cpumask_copy(wqe->cpu_mask, cpumask_of_node(node));
- 		wq->wqes[node] = wqe;
- 		wqe->node = alloc_node;
--		wqe->acct[IO_WQ_ACCT_BOUND].index = IO_WQ_ACCT_BOUND;
--		wqe->acct[IO_WQ_ACCT_UNBOUND].index = IO_WQ_ACCT_UNBOUND;
- 		wqe->acct[IO_WQ_ACCT_BOUND].max_workers = bounded;
--		atomic_set(&wqe->acct[IO_WQ_ACCT_BOUND].nr_running, 0);
- 		wqe->acct[IO_WQ_ACCT_UNBOUND].max_workers =
- 					task_rlimit(current, RLIMIT_NPROC);
--		atomic_set(&wqe->acct[IO_WQ_ACCT_UNBOUND].nr_running, 0);
--		wqe->wait.func = io_wqe_hash_wake;
- 		INIT_LIST_HEAD(&wqe->wait.entry);
-+		wqe->wait.func = io_wqe_hash_wake;
-+		for (i = 0; i < IO_WQ_ACCT_NR; i++) {
-+			struct io_wqe_acct *acct = &wqe->acct[i];
-+
-+			acct->index = i;
-+			atomic_set(&acct->nr_running, 0);
-+			INIT_WQ_LIST(&acct->work_list);
-+		}
- 		wqe->wq = wq;
- 		raw_spin_lock_init(&wqe->lock);
--		INIT_WQ_LIST(&wqe->work_list);
- 		INIT_HLIST_NULLS_HEAD(&wqe->free_list, 0);
- 		INIT_LIST_HEAD(&wqe->all_list);
- 	}
--- 
-2.34.0
-
-
---------------90E65037E8984261A2C9A5CA--
+Jason

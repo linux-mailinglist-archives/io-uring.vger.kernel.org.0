@@ -2,137 +2,89 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 58F8145CBF2
-	for <lists+io-uring@lfdr.de>; Wed, 24 Nov 2021 19:17:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A38C45CBF3
+	for <lists+io-uring@lfdr.de>; Wed, 24 Nov 2021 19:18:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241695AbhKXSUy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 24 Nov 2021 13:20:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44940 "EHLO
+        id S242011AbhKXSVV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 24 Nov 2021 13:21:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45042 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230396AbhKXSUx (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 24 Nov 2021 13:20:53 -0500
-Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6F49C061574
-        for <io-uring@vger.kernel.org>; Wed, 24 Nov 2021 10:17:43 -0800 (PST)
-Received: by mail-io1-xd2b.google.com with SMTP id f9so4340212ioo.11
-        for <io-uring@vger.kernel.org>; Wed, 24 Nov 2021 10:17:43 -0800 (PST)
+        with ESMTP id S230396AbhKXSVV (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 24 Nov 2021 13:21:21 -0500
+Received: from mail-il1-x130.google.com (mail-il1-x130.google.com [IPv6:2607:f8b0:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA28CC061574
+        for <io-uring@vger.kernel.org>; Wed, 24 Nov 2021 10:18:11 -0800 (PST)
+Received: by mail-il1-x130.google.com with SMTP id r2so3345741ilb.10
+        for <io-uring@vger.kernel.org>; Wed, 24 Nov 2021 10:18:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=qdNYw7MlaeHdvI+Gff2jXbCCIW/XplvmMUOVBpQvAWU=;
-        b=RUdNNClJepCKJ+uJoVXo5VN7qvwhccUQyBwMb9uceKgJNlUs4Xr4nV3f6BSSFFvogm
-         QJC3K8OPpkO0MrsBDm1SCQmrcKDuWIYHOKcLwVj6/otYCQcqoVXJgcVBirD3IlD0VRLc
-         AK/i4ZDbCU1GOb7gNKCj9YAHQjPrdwT1Gokja6xQxNc3Dema1Jrq8GM+k0tlDT5BS7kC
-         zyeix5aCqVxjNp7H5rKnHYrb1napm1j8VY+ITDxvhUFhBUvWhKpTH89mu203379wlFdO
-         vfhTtnBKXrfr/07KU8Km0L8+dz0qoBhKLB56pcLqi9ZX4BTzJEnKB3ApOmWRvXP4MLXD
-         PbAA==
+        h=from:to:in-reply-to:references:subject:message-id:date:mime-version
+         :content-transfer-encoding;
+        bh=CTzNrMs1VOWfBNKCsPfzvSmYOJVX0vigBxaApO6DJ0U=;
+        b=64mOW27W5oomAEGJfWGNIJ+nnr+sKzXo7EQUD0QIHNL/8CIeDFX03rjWondm11SnJS
+         oH7UpsVTCqUGqmXw6ThRt0iNjp5rkNlmZOUmPme/CX2Iklk4rFAXjXhky9fvhL7qAKYp
+         g5KGtTENpTN0rEaBJsNEB9t0gDn5ZAU4/0FRaJrBWFZ9+Rtc6oC5+l16BEfQqTzYWYrJ
+         oN09XFZ41wnmbw3pgu2zqeX2vU08qQXmFrTgCOILmKlbQk3e7IYsIthNP/16YM5gPIQh
+         TZv5oYm6EYAuPc6lbLuxmWSFJPo3y/O1A3RtBeqwIm+mXdmu2kBWeizrUBBbW9olWRyH
+         segQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=qdNYw7MlaeHdvI+Gff2jXbCCIW/XplvmMUOVBpQvAWU=;
-        b=T75aZnbB9ekpl1+u79eHcomHxt8yf3kYjvmfKy130U1q3PKtfwfp4SrfoZ4sq62p3F
-         XVShFAjUUjx6jMrT0gYmeptfdwqO2vPb9M4vgxdalyT6uJA1LmzetXO9HvB7jSkHgh7k
-         /RZjcYSvsmJzhU3j2LbsU3pIE/FdJkLfvwMSSqf7Ek6MGEsmzhCaJPPBgYkwN31encyL
-         Sn0O8wQsh27m3iw6kRJbBPFtYW3boE6QuvhAzmK2qR8FzgCrKC/E1FDfHOepapYHs+5p
-         u0Md5NxrTWtvHRTf2RprTkR0lQ/6damdq8aZQbqb8IIjXVDjkLjME67tYkmYSZKgVnXU
-         HJWA==
-X-Gm-Message-State: AOAM531bYMXJWL8VPF7yrRZUTbMcqbetr+c+OlUxGviAT9t1+V6dBDuf
-        5C4gNwZE2f8ZqEH9MhS58BYVAU6FVhb5U22o
-X-Google-Smtp-Source: ABdhPJxHHWNh+ZveMSdSmyaiSFNKvpMmYYcfolHHLrDZ53pxlSiKJl/iwZ0gWsyPNmsXRWxE0iAj0Q==
-X-Received: by 2002:a02:9a14:: with SMTP id b20mr19738560jal.52.1637777862084;
-        Wed, 24 Nov 2021 10:17:42 -0800 (PST)
-Received: from [192.168.1.30] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id 1sm266671ill.57.2021.11.24.10.17.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Nov 2021 10:17:41 -0800 (PST)
-Subject: Re: [PATCH v2 0/4] allow to skip CQE posting
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <cover.1636559119.git.asml.silence@gmail.com>
- <239ab9cc-e53c-f8aa-6bbf-816dfac73f32@kernel.dk>
- <153a9c03-6fae-d821-c18b-9ea1bb7c62d5@gmail.com>
- <7a4f8655-06df-9549-e3df-c3bf972f06e6@kernel.dk>
- <39fad08c-f820-e4ef-6d30-4f63f00a3282@gmail.com>
- <3c9d0246-97f5-deb5-7d82-d6ba4d9aa990@kernel.dk>
- <9f825af2-3d51-c4d8-e986-eb1d5e7d6fe7@gmail.com>
+        h=x-gm-message-state:from:to:in-reply-to:references:subject
+         :message-id:date:mime-version:content-transfer-encoding;
+        bh=CTzNrMs1VOWfBNKCsPfzvSmYOJVX0vigBxaApO6DJ0U=;
+        b=fMs9qdCCzQQngHh5J4O86F6OxLkuvm8+BC4BQmipMpeqK4qoBZoCkgEUVVgSBt6tLF
+         0oXrGCOlNIEmcikPqBE2Y8VLVrDysFPK0J1MCZ/jrpVLh4l3TxAJ+QvbzilUFwcZnymH
+         +dP8wMLuL2vZOhSZ6zvP8zXeClC7NsTkO6c35LxaR2g4AZUcgfJ6LZti4BiqJatYKoEG
+         yW4N0nWR9nhtEfQ+hN0SIynZ7gCzZl611UkdLncsAuKMD4CVdTVDmK/zA1f3IKwnY8Xc
+         mLlouu415BBwl8JQSt6/RavrTZZhivXth3FIvnMUFScWy66ZBBaz0zrmnZMUtGdwYHtW
+         0ytg==
+X-Gm-Message-State: AOAM531a9EeOaC6Hz/CRAPwltXLwvPx0PfLedM0l/Z8LzlsHA5r0VmER
+        X34RdVOPSfjO/6SrGHgYbxFUdGoEEa6UWeOM
+X-Google-Smtp-Source: ABdhPJw7iotNhLVqwkkbbuhJqDhDOyYtyqVP84efm7nMvD+s6x5KUD8Bi6469vxpJmgZhnRhFfkhfA==
+X-Received: by 2002:a05:6e02:17cf:: with SMTP id z15mr14931835ilu.214.1637777890934;
+        Wed, 24 Nov 2021 10:18:10 -0800 (PST)
+Received: from [127.0.1.1] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id l17sm286417ilk.22.2021.11.24.10.18.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Nov 2021 10:18:10 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <e85246cb-a6b8-40f3-dc51-0ebb7ceb1328@kernel.dk>
-Date:   Wed, 24 Nov 2021 11:17:41 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+To:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <cover.1636559119.git.asml.silence@gmail.com>
+References: <cover.1636559119.git.asml.silence@gmail.com>
+Subject: Re: [PATCH v2 0/4] allow to skip CQE posting
+Message-Id: <163777789036.479228.12615656445425738291.b4-ty@kernel.dk>
+Date:   Wed, 24 Nov 2021 11:18:10 -0700
 MIME-Version: 1.0
-In-Reply-To: <9f825af2-3d51-c4d8-e986-eb1d5e7d6fe7@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 11/24/21 11:02 AM, Pavel Begunkov wrote:
-> On 11/24/21 17:57, Jens Axboe wrote:
->> On 11/24/21 10:55 AM, Pavel Begunkov wrote:
->>> On 11/10/21 16:47, Jens Axboe wrote:
->>>> On 11/10/21 9:42 AM, Pavel Begunkov wrote:
->>>>> On 11/10/21 16:14, Jens Axboe wrote:
->>>>>> On 11/10/21 8:49 AM, Pavel Begunkov wrote:
->>>>>>> It's expensive enough to post an CQE, and there are other
->>>>>>> reasons to want to ignore them, e.g. for link handling and
->>>>>>> it may just be more convenient for the userspace.
->>>>>>>
->>>>>>> Try to cover most of the use cases with one flag. The overhead
->>>>>>> is one "if (cqe->flags & IOSQE_CQE_SKIP_SUCCESS)" check per
->>>>>>> requests and a bit bloated req_set_fail(), should be bearable.
->>>>>>
->>>>>> I like the idea, one thing I'm struggling with is I think a normal use
->>>>>> case of this would be fast IO where we still need to know if a
->>>>>> completion event has happened, we just don't need to know the details of
->>>>>> it since we already know what those details would be if it ends up in
->>>>>> success.
->>>>>>
->>>>>> How about having a skip counter? That would supposedly also allow drain
->>>>>> to work, and it could be mapped with the other cq parts to allow the app
->>>>>> to see it as well.
->>>>>
->>>>> It doesn't go through expensive io_cqring_ev_posted(), so the
->>>>> userspace can't really wait on it. It can do some linking tricks to
->>>>> alleviate that, but I don't see any new capabilities from the current
->>>>> approach.
->>>>
->>>> I'm not talking about waiting, just reading the cqring entry to see how
->>>> many were skipped. If you ask for no cqe, by definition there would be
->>>> nothing to wait on for you. Though it'd probably be better as an sqring
->>>> entry, since we'd be accounting at that time. Only caveat there is then
->>>> if the sqe errors and we do end up posting a cqe..
->>>>
->>>>> Also the locking is a problem, I was thinking about it, mainly hoping
->>>>> that I can adjust cq_extra and leave draining, but it didn't appear
->>>>> great to me. AFAIK, it's either an atomic, beating the purpose of the
->>>>> thing.
->>>>
->>>> If we do submission side, then the ring mutex would cover it. No need
->>>> for any extra locking
->>>
->>> Jens, let's decide what we're going to do with this feature
->>
->> Only weird bit is the drain, but apart from that I think it looks sane.
+On Wed, 10 Nov 2021 15:49:30 +0000, Pavel Begunkov wrote:
+> It's expensive enough to post an CQE, and there are other
+> reasons to want to ignore them, e.g. for link handling and
+> it may just be more convenient for the userspace.
 > 
-> agree, but I can't find a fix without penalising performance
-
-I think we're OK as I don't DRAIN is used very much, and as long as it's
-adequately documented in terms of them not co-existing and what the error
-code is, then if we do find a way to  make them work together we can
-relax them in the future.
-
->> Are you going to send a documentation update to liburing as well? Should
->> be detailed in terms of what it does and the usability of it.
+> Try to cover most of the use cases with one flag. The overhead
+> is one "if (cqe->flags & IOSQE_CQE_SKIP_SUCCESS)" check per
+> requests and a bit bloated req_set_fail(), should be bearable.
 > 
-> yeah, and also need to rebase and resend tests
+> [...]
 
-Great thanks.
+Applied, thanks!
 
+[1/4] io_uring: clean cqe filling functions
+      commit: 913a571affedd17239c4d4ea90c8874b32fc2191
+[2/4] io_uring: add option to skip CQE posting
+      commit: 04c76b41ca974b508522831441dd7e5b1b59cbb0
+[3/4] io_uring: don't spinlock when not posting CQEs
+      commit: 3d4aeb9f98058c3bdfef5286e240cf18c50fee89
+[4/4] io_uring: disable drain with cqe skip
+      commit: 5562a8d71aa32ea27133d8b10406b3dcd57c01a5
+
+Best regards,
 -- 
 Jens Axboe
+
 

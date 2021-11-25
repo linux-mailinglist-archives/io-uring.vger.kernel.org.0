@@ -2,65 +2,64 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1308F45DCB8
-	for <lists+io-uring@lfdr.de>; Thu, 25 Nov 2021 15:51:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C303B45DCFD
+	for <lists+io-uring@lfdr.de>; Thu, 25 Nov 2021 16:11:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355838AbhKYOyV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 25 Nov 2021 09:54:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35934 "EHLO
+        id S239065AbhKYPO7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 25 Nov 2021 10:14:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41226 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355859AbhKYOwV (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 25 Nov 2021 09:52:21 -0500
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75582C06174A
-        for <io-uring@vger.kernel.org>; Thu, 25 Nov 2021 06:47:39 -0800 (PST)
-Received: by mail-wr1-x433.google.com with SMTP id b12so12202210wrh.4
-        for <io-uring@vger.kernel.org>; Thu, 25 Nov 2021 06:47:39 -0800 (PST)
+        with ESMTP id S1349048AbhKYPM6 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 25 Nov 2021 10:12:58 -0500
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A336C061761
+        for <io-uring@vger.kernel.org>; Thu, 25 Nov 2021 07:09:47 -0800 (PST)
+Received: by mail-wm1-x332.google.com with SMTP id m25-20020a7bcb99000000b0033aa12cdd33so1106494wmi.1
+        for <io-uring@vger.kernel.org>; Thu, 25 Nov 2021 07:09:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=ypFnZ9/MANQhwsLmJZWOieoDv6+6itZR1e9CfVQl7vo=;
-        b=j8bD5Un147m2OyayKwh3r+k7qlRRgAooXv+11myoYCEsRDF0eswOSXNNrsM+qu93qL
-         Bwa5idOgeekyQSHKoVF7Q2TmH+72WpoM2c12pQ1kDk0jdqoJLsnTyVUdguIu81cI+/Wz
-         xBOrQq8UWA0j4/TzUidSM6sHEAiKoru5FD2ZWf0vgkzgrSpWp9YiPuBIgW80AztvNIaY
-         NBPSqfoXl+3rB7ucLR0sPs+Nhiw40KFdW5iOcxXcJILd9Z5HnIuSDmLm5ORxUHuT0E1I
-         oPn/e6SF6VGKSbMxDLbt4DZurXS2RQVPzokQb79LACFXO4HCo5OR7v33nfzHpszQsX9+
-         wwkA==
+        bh=RoRxDpjGNXLBXB6uq4lhdnX3xKOtcXEO9Z9sv3sol4Y=;
+        b=EpXJ8imGcgMWbQ0SJRaMwvozJxm5BY0D0lBJPHzTl3G5Az7HXPXPlcWk4p8lWEqDRK
+         7NFwhsztT2TBiioIgMIppXXdek/DcfUz219WQZT7YcC0yeG3qyqUc9a1Q8oIMoX3WKVL
+         Za68plzmgQWeSTtC0Mddj9euAAe/DjhEcxlVoKeeUdN+8YBV/fhKmaHz6JUDrAfAzq8G
+         hQEjcavacYegwVUEZTkfzR2Vj4oMsjESOLvdBzapttE4ZwF5tMv6RAr9/nGpsJRHaaKo
+         8uNdTOG9tMkgsFbFga8s8YOgQ+n4wSRSYTD8h2IUlO2VHIAy5NjlWanuvHERm5H8mqBw
+         l/EQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=ypFnZ9/MANQhwsLmJZWOieoDv6+6itZR1e9CfVQl7vo=;
-        b=JeJxYciEWxUVG69Ajl4ZxLA9kz8wpOcIVTpt+w3UnJqCdHyjEWBIel5L2WVVEVvmtJ
-         hPy81aTcMV2ktewpw++0HU4+RdzZFMep5yQH4DjU5/RfGOPynxQGXac2RmR7czn9fThk
-         ruyot9sqyTqMMlIjkLxiuq0hFDwYU/jIEu3pAQn6/iJWMLk5zTTpXb/L1Rhi3P+wcZTQ
-         kJtU8tTzVIzmWGBbalcPv7O5t/kHZRdDe4kDcER/IOAXkiEqH+qxlVFhF0iqfOSiUSW0
-         h1eyMppOGkZzPTIzP+Hf3DrflnmfUTbyRJtziZlIh/y9Pu0k0pdda7r5EN3KkK91XoO2
-         3QWQ==
-X-Gm-Message-State: AOAM531sPqn1oYY/FhmVtJEGD8WnyUxGwsMZH/qpdgJKQF5J/gL4wi5H
-        MBTBS4Pi+USYPSzo0ttTuLc=
-X-Google-Smtp-Source: ABdhPJx8f+YBji5EzSGQYwG3xc6d3eaPIE9QoGPyJ3tK0pzkdQSHwvg/q1aX7nOzDzSmtZy/4Ny6zw==
-X-Received: by 2002:a5d:66cb:: with SMTP id k11mr7189357wrw.253.1637851658074;
-        Thu, 25 Nov 2021 06:47:38 -0800 (PST)
+        bh=RoRxDpjGNXLBXB6uq4lhdnX3xKOtcXEO9Z9sv3sol4Y=;
+        b=JXW3dZrpsQ4t8nV54itQlyIuTkJizy9qfluMh2hXJufuYVSTnV4fcy3jKTK9m8J4tb
+         iBzDlKlKJVyg+AYxjCR04E+bCAXGzvFigNzWRT5KkVBIJpWpdA5nxiKqwWYlPgS55OC2
+         oovNO+F436+Dyf/esap15TYEGsjTpmDDoic4E/6HNViUoLDqGqA7VxVOHw6Fo+9Qwkl0
+         OdV68UZ98l2lkcRzc2SVi75Vl0/zuDogiDDWpIXQcQy6RuzQO4I+tV2yA2K6EnxOdoy/
+         kbXBsxUBUhOnocykzUNSfhYfuyc7DZq3bEQQk1yaL+yy8iyjk4kfaNqOCLiEcT1G0q1C
+         St0w==
+X-Gm-Message-State: AOAM5316NclPtCZ3ovGwr9a17kYzJDTc8eMDbhPxiGGU+ujujrzdclZM
+        tDZsE5e4aYCbcuUXC729q3jq4jjDdo4=
+X-Google-Smtp-Source: ABdhPJwWimbPwlpvFCUBQpTo4ROzEsMRJJbQ4/hIuWEJhWFYm4Bn99E2j4ycgt/LDOpJQKwNhDT0mA==
+X-Received: by 2002:a7b:cd96:: with SMTP id y22mr7937447wmj.121.1637852985970;
+        Thu, 25 Nov 2021 07:09:45 -0800 (PST)
 Received: from [192.168.43.77] (82-132-229-54.dab.02.net. [82.132.229.54])
-        by smtp.gmail.com with ESMTPSA id r83sm8171829wma.22.2021.11.25.06.47.36
+        by smtp.gmail.com with ESMTPSA id t189sm3154757wma.8.2021.11.25.07.09.44
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Nov 2021 06:47:37 -0800 (PST)
-Message-ID: <6905b2e7-bd27-fb74-da64-ed02123e427d@gmail.com>
-Date:   Thu, 25 Nov 2021 14:47:23 +0000
+        Thu, 25 Nov 2021 07:09:45 -0800 (PST)
+Message-ID: <a8bbe4e1-9017-76a4-eddb-d6a6676f7290@gmail.com>
+Date:   Thu, 25 Nov 2021 15:09:28 +0000
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.3.2
-Subject: Re: [PATCH 3/9] io-wq: update check condition for lock
+Subject: Re: [RFC 0/9] fixed worker: a new way to handle io works
 Content-Language: en-US
 To:     Hao Xu <haoxu@linux.alibaba.com>, Jens Axboe <axboe@kernel.dk>
 Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
 References: <20211124044648.142416-1-haoxu@linux.alibaba.com>
- <20211124044648.142416-4-haoxu@linux.alibaba.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20211124044648.142416-4-haoxu@linux.alibaba.com>
+In-Reply-To: <20211124044648.142416-1-haoxu@linux.alibaba.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -68,53 +67,47 @@ List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 On 11/24/21 04:46, Hao Xu wrote:
-> Update sparse check since we changed the lock.
+> There is big contension in current io-wq implementation. Introduce a new
+> type io-worker called fixed-worker to solve this problem. it is also a
+> new way to handle works. In this new system, works are dispatched to
+> different private queues rather than a long shared queue.
 
-Shouldn't it be a part of one of the previous patches?
+It's really great to temper the contention here, even though it looks
+we are stepping onto the path of reinventing all the optimisations
+solved long ago in other thread pools. Work stealing is probably
+the next, but guess it's inevitable :)
 
+First four patchhes sound like a good idea, they will probably go
+first. However, IIUC, the hashing is crucial and it's a must have.
+Are you planning to add it? If not, is there an easy way to leave
+hashing working even if hashed reqs not going through those new
+per-worker queues? E.g. (if it's not already as this...)
+
+if (hashed) {
+	// fixed workers don't support hashing, so go through the
+	// old path and place into the shared queue.
+	enqueue_shared_queue();
+} else
+	enqueue_new_path();
+
+And last note, just fyi, it's easier to sell patches if you put
+numbers in the cover letter
+
+
+> Hao Xu (9):
+>    io-wq: decouple work_list protection from the big wqe->lock
+>    io-wq: reduce acct->lock crossing functions lock/unlock
+>    io-wq: update check condition for lock
+>    io-wq: use IO_WQ_ACCT_NR rather than hardcoded number
+>    io-wq: move hash wait entry to io_wqe_acct
+>    io-wq: add infra data structure for fix workers
+>    io-wq: implement fixed worker logic
+>    io-wq: batch the handling of fixed worker private works
+>    io-wq: small optimization for __io_worker_busy()
 > 
-> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
-> ---
->   fs/io-wq.c | 5 +----
->   1 file changed, 1 insertion(+), 4 deletions(-)
-> 
-> diff --git a/fs/io-wq.c b/fs/io-wq.c
-> index 26ccc04797b7..443c34d9b326 100644
-> --- a/fs/io-wq.c
-> +++ b/fs/io-wq.c
-> @@ -378,7 +378,6 @@ static bool io_queue_worker_create(struct io_worker *worker,
->   }
->   
->   static void io_wqe_dec_running(struct io_worker *worker)
-> -	__must_hold(wqe->lock)
->   {
->   	struct io_wqe_acct *acct = io_wqe_get_acct(worker);
->   	struct io_wqe *wqe = worker->wqe;
-> @@ -449,7 +448,7 @@ static void io_wait_on_hash(struct io_wqe *wqe, unsigned int hash)
->   
->   static struct io_wq_work *io_get_next_work(struct io_wqe_acct *acct,
->   					   struct io_worker *worker)
-> -	__must_hold(wqe->lock)
-> +	__must_hold(acct->lock)
->   {
->   	struct io_wq_work_node *node, *prev;
->   	struct io_wq_work *work, *tail;
-> @@ -523,7 +522,6 @@ static void io_assign_current_work(struct io_worker *worker,
->   static void io_wqe_enqueue(struct io_wqe *wqe, struct io_wq_work *work);
->   
->   static void io_worker_handle_work(struct io_worker *worker)
-> -	__releases(wqe->lock)
->   {
->   	struct io_wqe_acct *acct = io_wqe_get_acct(worker);
->   	struct io_wqe *wqe = worker->wqe;
-> @@ -986,7 +984,6 @@ static inline void io_wqe_remove_pending(struct io_wqe *wqe,
->   static bool io_acct_cancel_pending_work(struct io_wqe *wqe,
->   					struct io_wqe_acct *acct,
->   					struct io_cb_cancel_data *match)
-> -	__releases(wqe->lock)
->   {
->   	struct io_wq_work_node *node, *prev;
->   	struct io_wq_work *work;
+>   fs/io-wq.c | 415 ++++++++++++++++++++++++++++++++++++++---------------
+>   fs/io-wq.h |   5 +
+>   2 files changed, 308 insertions(+), 112 deletions(-)
 > 
 
 -- 

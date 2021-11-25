@@ -2,60 +2,81 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B487E45DECB
-	for <lists+io-uring@lfdr.de>; Thu, 25 Nov 2021 17:51:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A9AC45DF89
+	for <lists+io-uring@lfdr.de>; Thu, 25 Nov 2021 18:21:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242334AbhKYQyJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 25 Nov 2021 11:54:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33802 "EHLO
+        id S235101AbhKYRYj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 25 Nov 2021 12:24:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40792 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237330AbhKYQwJ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 25 Nov 2021 11:52:09 -0500
-Received: from mail-il1-x134.google.com (mail-il1-x134.google.com [IPv6:2607:f8b0:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38618C0613DD
-        for <io-uring@vger.kernel.org>; Thu, 25 Nov 2021 08:42:36 -0800 (PST)
-Received: by mail-il1-x134.google.com with SMTP id k1so6401179ilo.7
-        for <io-uring@vger.kernel.org>; Thu, 25 Nov 2021 08:42:36 -0800 (PST)
+        with ESMTP id S231145AbhKYRYK (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 25 Nov 2021 12:24:10 -0500
+Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E121C061374
+        for <io-uring@vger.kernel.org>; Thu, 25 Nov 2021 09:11:08 -0800 (PST)
+Received: by mail-io1-xd32.google.com with SMTP id f9so8270464ioo.11
+        for <io-uring@vger.kernel.org>; Thu, 25 Nov 2021 09:11:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:subject:to:cc:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=setNTYMIuzrDEp2or8mwKSFAAw0+fV8cLApv3wLAiok=;
-        b=sumCBU3f04vXlLdBHoZlY1xDOXdgNuMnwkskG+0suLnJxKH4DwTaew94l+vz4a8zB3
-         /CqOuwfb3MuQ+591mar238id+xKR78jQpKEiT+AO3OGNjkjwXKLdsC3PDyZdBw3n7fXR
-         WaENa/8iOPsMr7jBvE3t85xK9c2UjmczGiveXnxN8sCYF3iBRhL/4RtJ3vlEr/62j7k3
-         LioWfIw+yln5ByMS+m4jfF1LDFit+Jh/19eKwUss8+vkcnzd3DW1BNqk/YcCBmkOD1tq
-         EC1wRoF62iB8pRtaDMShdCg6ZGXZDSfiGSkdmvYGT1IZwi37/p7qGT0471k6tLT4249a
-         FNAw==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=DRbNy34LFTYJZ4PmJRBEOK4pAtCounE3z5hGbxu2tJw=;
+        b=cmSSChLr0hznhgNLogLW3A9kM31FlaOruR25XArlP/11Dum3xcFjZegD3xEnXXlwL2
+         EMPTDMwfyV6lf+kVt5X1L3c4SwHY07KSODoUFde9nIQZ1lz+Xe6EZIy8N0plW/OWtaOB
+         vOT9FhcwUYMRujhDxOe90pWJsaVLFZGsCQuY6qx0DGDqGkHJ7ORYBBVuPVI0cOh5AwD/
+         CnkmAYcq/OHitd0MDrbCIUQUjBQ5AjdRtVwPzt/l9nh/2dSrXwy7POOyr56fJpDmdw6S
+         gU6oEUUe9P4H3rQymiuZ0rs4ptDj/SmzXUdVp+LSk9OkWguJ8Wnbs0n9+Q70dZSEpNE3
+         2Wew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=setNTYMIuzrDEp2or8mwKSFAAw0+fV8cLApv3wLAiok=;
-        b=INF8tvmz9rLOYYoRQ02EiEBHEVoV4Fh12FNoynaWeQfE2m4rSdNmRPTQtODb7sayvA
-         bYBYh23NIwbE8QeYVrMr19gIJ95vON6swUVTywjUnOJQ82MGZJz03jN3dadawIPlOYep
-         pNkzLHiB1xA2t0e/hRYgOXo+Iq+imOBw1MPmi+BBEHVBnd+5B5nE7ae+9TPUt3ifzFmK
-         WYgp2+rl390xd8hdti3/EUFF1pggrpMfQGCgeUxuKAf+olXR9+WGRh0gIWbSfTGa5UrU
-         smvlV1BloHo//rHj0mC7ubuhqwIu5ONSquA63RK5t9eSOUkbtNhKtaMRxej1qMALz5Wu
-         8C4g==
-X-Gm-Message-State: AOAM531n3RGXy4pGJJ7Iubwgo1KeKdiwE2ViGtRzbPoENSFSEKOXM3/8
-        kA8Ks94o0FTzHPnt1nmfGfwPt7wXgrvpc3+l
-X-Google-Smtp-Source: ABdhPJznpkWgWSWfkzMwv0VpzZgWSJBgRHWFEHdxmSLkghenNxBpL5IOYwSWkReKju++KdAS8Xp98A==
-X-Received: by 2002:a92:cd86:: with SMTP id r6mr22814123ilb.149.1637858550271;
-        Thu, 25 Nov 2021 08:42:30 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=DRbNy34LFTYJZ4PmJRBEOK4pAtCounE3z5hGbxu2tJw=;
+        b=xtldtla66k1avq30now4DJDT/f5ZDxV+tVWIQUwXsv4DzMvUhvHTf398fmm030VFCP
+         M6RUBXByOjjL1by/YeousU3EkAnuLym6VGG49hIFA61JREObgShMC8JLe0+MQ/UE5CVS
+         QyRBCKVl+MmCumAwNIRXrRBYTPtx3HlfVR/unRhsfusXKYi26SwwNekWuW7pQtKX/PUJ
+         eORitey5iJ6yfAiQRLFUEAnc00UuvV02rlh0kcBc7gMeNtJp1oBM6Sy9waDBo+MUZ2lB
+         L1P48WfJ0BlbRU3xy3VQ2gAhpLE9N9+RXSzArtoeR0vV5gXvqL1/OJ6Xc/PgVqLBS+Q0
+         PhJQ==
+X-Gm-Message-State: AOAM530V3CDB3c/KgccaytMgMKLdZckqiFHzncS12hfFHwScBRX0HnqI
+        RTE/pB7g2DzPeC3vYRX4J1f4vw==
+X-Google-Smtp-Source: ABdhPJy3qO38k+rwRNWfSIV8GHKZ0b4x3vzXuhrJ8iz4pX7oHJ0jXid6qB4LXMoKKQzmnI4WgdhqXQ==
+X-Received: by 2002:a05:6638:2191:: with SMTP id s17mr32430885jaj.67.1637860267798;
+        Thu, 25 Nov 2021 09:11:07 -0800 (PST)
 Received: from [192.168.1.116] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id b8sm1956625iow.2.2021.11.25.08.42.29
+        by smtp.gmail.com with ESMTPSA id h11sm1998376ili.30.2021.11.25.09.11.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Nov 2021 08:42:29 -0800 (PST)
+        Thu, 25 Nov 2021 09:11:07 -0800 (PST)
+Subject: Re: uring regression - lost write request
+To:     Stefan Metzmacher <metze@samba.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Daniel Black <daniel@mariadb.org>,
+        Salvatore Bonaccorso <carnil@debian.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        linux-block@vger.kernel.org, io-uring@vger.kernel.org,
+        stable@vger.kernel.org
+References: <c6d6bffe-1770-c51d-11c6-c5483bde1766@kernel.dk>
+ <bd7289c8-0b01-4fcf-e584-273d372f8343@kernel.dk>
+ <6d0ca779-3111-bc5e-88c0-22a98a6974b8@kernel.dk>
+ <281147cc-7da4-8e45-2d6f-3f7c2a2ca229@kernel.dk>
+ <c92f97e5-1a38-e23f-f371-c00261cacb6d@kernel.dk>
+ <CABVffEN0LzLyrHifysGNJKpc_Szn7qPO4xy7aKvg7LTNc-Fpng@mail.gmail.com>
+ <00d6e7ad-5430-4fca-7e26-0774c302be57@kernel.dk>
+ <CABVffEM79CZ+4SW0+yP0+NioMX=sHhooBCEfbhqs6G6hex2YwQ@mail.gmail.com>
+ <3aaac8b2-e2f6-6a84-1321-67409b2a3dce@kernel.dk>
+ <98f8a00f-c634-4a1a-4eba-f97be5b2e801@kernel.dk> <YZ5lvtfqsZEllUJq@kroah.com>
+ <c0a7ac89-2a8c-b1e3-00c2-96ee259582b4@kernel.dk>
+ <96d6241f-7bf0-cefe-947e-ee03d83fb828@samba.org>
+ <6d6fc76f-880a-938d-64dd-527e6be3009e@kernel.dk>
+ <5217de38-d166-de32-c115-fd34399eb234@samba.org>
 From:   Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] io_uring fixes for 5.16-rc3
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     io-uring <io-uring@vger.kernel.org>
-Message-ID: <e3595b67-d7f5-895f-4cbf-0a6b1456e39d@kernel.dk>
-Date:   Thu, 25 Nov 2021 09:42:29 -0700
+Message-ID: <1714eba7-dfa7-b08c-dd29-ae4ea616041f@kernel.dk>
+Date:   Thu, 25 Nov 2021 10:11:06 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <5217de38-d166-de32-c115-fd34399eb234@samba.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -63,38 +84,38 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Linus,
+On 11/25/21 9:35 AM, Stefan Metzmacher wrote:
+> Am 25.11.21 um 01:58 schrieb Jens Axboe:
+>> On 11/24/21 3:52 PM, Stefan Metzmacher wrote:
+>>> Hi Jens,
+>>>
+>>>>>> Looks good to me - Greg, would you mind queueing this up for
+>>>>>> 5.14-stable?
+>>>>>
+>>>>> 5.14 is end-of-life and not getting any more releases (the front page of
+>>>>> kernel.org should show that.)
+>>>>
+>>>> Oh, well I guess that settles that...
+>>>>
+>>>>> If this needs to go anywhere else, please let me know.
+>>>>
+>>>> Should be fine, previous 5.10 isn't affected and 5.15 is fine too as it
+>>>> already has the patch.
+>>>
+>>> Are 5.11 and 5.13 are affected, these are hwe kernels for ubuntu,
+>>> I may need to open a bug for them...
+>>
+>> Please do, then we can help get the appropriate patches lined up for
+>> 5.11/13. They should need the same set, basically what ended up in 5.14
+>> plus the one I posted today.
+> 
+> Ok, I've created https://bugs.launchpad.net/bugs/1952222
+> 
+> Let's see what happens...
 
-A locking fix for link traversal, and fixing up an outdated function
-name in a comment.
-
-Please pull!
-
-
-The following changes since commit fa55b7dcdc43c1aa1ba12bca9d2dd4318c2a0dbf:
-
-  Linux 5.16-rc1 (2021-11-14 13:56:52 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.dk/linux-block.git tags/io_uring-5.16-2021-11-25
-
-for you to fetch changes up to 674ee8e1b4a41d2fdffc885c55350c3fbb38c22a:
-
-  io_uring: correct link-list traversal locking (2021-11-22 19:31:54 -0700)
-
-----------------------------------------------------------------
-io_uring-5.16-2021-11-25
-
-----------------------------------------------------------------
-Kamal Mostafa (1):
-      io_uring: fix missed comment from *task_file rename
-
-Pavel Begunkov (1):
-      io_uring: correct link-list traversal locking
-
- fs/io_uring.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+Let me know if I can help, should probably prepare a set for 5.11-stable
+and 5.13-stable, but I don't know if the above kernels already have some
+patches applied past last stable release of each...
 
 -- 
 Jens Axboe

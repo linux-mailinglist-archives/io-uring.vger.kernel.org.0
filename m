@@ -2,41 +2,41 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 95DB445E356
-	for <lists+io-uring@lfdr.de>; Fri, 26 Nov 2021 00:28:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F310645E354
+	for <lists+io-uring@lfdr.de>; Fri, 26 Nov 2021 00:28:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347590AbhKYXbU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        id S1346741AbhKYXbU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
         Thu, 25 Nov 2021 18:31:20 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:2326 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1347032AbhKYX3U (ORCPT
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:15308 "EHLO
+        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231982AbhKYX3U (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Thu, 25 Nov 2021 18:29:20 -0500
-Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
-        by m0001303.ppops.net (8.16.1.2/8.16.1.2) with SMTP id 1APEulwi023381
+Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1APN5rkl026273
         for <io-uring@vger.kernel.org>; Thu, 25 Nov 2021 15:26:08 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=facebook;
- bh=OzrGUqFjZkUVUKcRusdDO/2aSw+QPBRmstUFUN4UCGQ=;
- b=WaPwey8PR8RCO0CkVeV4msh2oOVRh48q9JgFK38uTqseQsQxGIG0xGd0ZNvYeakWecWl
- bOfLeN3sv1m6YDN/dcjgA2Ae+BGroeRIV7L7NtwYBtnb/U6aM1yJA/97/EIgK86jQHht
- BLOF4Ry2dbtnGc/k1V+IqFqhgH5Sk69kbFU= 
-Received: from mail.thefacebook.com ([163.114.132.120])
-        by m0001303.ppops.net with ESMTP id 3cjcppj3rq-1
+ bh=ewaqU2t7m6J/wYYlU7WE+7Hm8wgdez9pYRYBbpwdhzY=;
+ b=RzK6WqYiW1U0iQtyDhyu00sdJqL02EDbQXEl8cowqZcu8wlfLyoN1ffR9CgZo/lOt8M3
+ hleFa9LU4r/Y7frf/FmK8RdCAKgkK+fDDzKBhK9YL1xg5jiITTQitJFvPmw9B+6920uA
+ Q5RAE/shzUc0+xG3gYUbixrs1ERrc4rIgX4= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com with ESMTP id 3cj4fcvtcs-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Thu, 25 Nov 2021 15:26:08 -0800
-Received: from intmgw002.25.frc3.facebook.com (2620:10d:c085:208::f) by
- mail.thefacebook.com (2620:10d:c085:21d::7) with Microsoft SMTP Server
+        for <io-uring@vger.kernel.org>; Thu, 25 Nov 2021 15:26:07 -0800
+Received: from intmgw001.06.ash9.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:82::e) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.20; Thu, 25 Nov 2021 15:26:06 -0800
+ 15.1.2308.20; Thu, 25 Nov 2021 15:26:07 -0800
 Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
-        id 3B2FD6E85F89; Thu, 25 Nov 2021 15:25:56 -0800 (PST)
+        id 40B2C6E85F8B; Thu, 25 Nov 2021 15:25:56 -0800 (PST)
 From:   Stefan Roesch <shr@fb.com>
 To:     <io-uring@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
-CC:     <shr@fb.com>
-Subject: [PATCH v3 2/3] fs: split off vfs_getdents function of getdents64 syscall
-Date:   Thu, 25 Nov 2021 15:25:48 -0800
-Message-ID: <20211125232549.3333746-3-shr@fb.com>
+CC:     <shr@fb.com>, Pavel Begunkov <asml.silence@gmail.com>
+Subject: [PATCH v3 3/3] io_uring: add support for getdents64
+Date:   Thu, 25 Nov 2021 15:25:49 -0800
+Message-ID: <20211125232549.3333746-4-shr@fb.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20211125232549.3333746-1-shr@fb.com>
 References: <20211125232549.3333746-1-shr@fb.com>
@@ -45,111 +45,146 @@ Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
 X-FB-Source: Intern
-X-Proofpoint-ORIG-GUID: DSl3RXcZqnu2nrPBE_-d1vCKdnGL_cH3
-X-Proofpoint-GUID: DSl3RXcZqnu2nrPBE_-d1vCKdnGL_cH3
+X-Proofpoint-GUID: ERVhLIOYCXWgXX7FlG-ohIYoqBgp57Wd
+X-Proofpoint-ORIG-GUID: ERVhLIOYCXWgXX7FlG-ohIYoqBgp57Wd
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.0.607.475
  definitions=2021-11-25_07,2021-11-25_02,2020-04-07_01
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 lowpriorityscore=0
- spamscore=0 phishscore=0 mlxlogscore=849 malwarescore=0 adultscore=0
- priorityscore=1501 clxscore=1015 bulkscore=0 suspectscore=0 mlxscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 impostorscore=0
+ suspectscore=0 clxscore=1015 adultscore=0 lowpriorityscore=0 mlxscore=0
+ spamscore=0 phishscore=0 mlxlogscore=919 malwarescore=0 priorityscore=1501
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2110150000 definitions=main-2111250132
 X-FB-Internal: deliver
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This splits off the vfs_getdents function from the getdents64 system
-call. This allows io_uring to call the function.
+This adds support for getdents64 to io_uring.
 
 Signed-off-by: Stefan Roesch <shr@fb.com>
+Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/internal.h |  8 ++++++++
- fs/readdir.c  | 36 ++++++++++++++++++++++++++++--------
- 2 files changed, 36 insertions(+), 8 deletions(-)
+ fs/io_uring.c                 | 52 +++++++++++++++++++++++++++++++++++
+ include/uapi/linux/io_uring.h |  1 +
+ 2 files changed, 53 insertions(+)
 
-diff --git a/fs/internal.h b/fs/internal.h
-index 7979ff8d168c..355be993b9f1 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -194,3 +194,11 @@ long splice_file_to_pipe(struct file *in,
- 			 struct pipe_inode_info *opipe,
- 			 loff_t *offset,
- 			 size_t len, unsigned int flags);
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 08b1b3de9b3f..8fdff4745742 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -691,6 +691,13 @@ struct io_hardlink {
+ 	int				flags;
+ };
+=20
++struct io_getdents {
++	struct file			*file;
++	struct linux_dirent64 __user	*dirent;
++	unsigned int			count;
++	loff_t				pos;
++};
 +
-+/*
-+ * fs/readdir.c
-+ */
-+struct linux_dirent64;
-+
-+int vfs_getdents(struct file *file, struct linux_dirent64 __user *dirent=
-,
-+		 unsigned int count, s64 pos);
-diff --git a/fs/readdir.c b/fs/readdir.c
-index e9c197edf73a..c9ee066cd677 100644
---- a/fs/readdir.c
-+++ b/fs/readdir.c
-@@ -368,22 +368,26 @@ static int filldir64(struct dir_context *ctx, const=
- char *name, int namlen,
- 	return -EFAULT;
+ struct io_async_connect {
+ 	struct sockaddr_storage		address;
+ };
+@@ -856,6 +863,7 @@ struct io_kiocb {
+ 		struct io_mkdir		mkdir;
+ 		struct io_symlink	symlink;
+ 		struct io_hardlink	hardlink;
++		struct io_getdents	getdents;
+ 	};
+=20
+ 	u8				opcode;
+@@ -1105,6 +1113,9 @@ static const struct io_op_def io_op_defs[] =3D {
+ 	[IORING_OP_MKDIRAT] =3D {},
+ 	[IORING_OP_SYMLINKAT] =3D {},
+ 	[IORING_OP_LINKAT] =3D {},
++	[IORING_OP_GETDENTS] =3D {
++		.needs_file		=3D 1,
++	},
+ };
+=20
+ /* requests with any of those set should undergo io_disarm_next() */
+@@ -3971,6 +3982,42 @@ static int io_linkat(struct io_kiocb *req, unsigne=
+d int issue_flags)
+ 	return 0;
  }
 =20
--SYSCALL_DEFINE3(getdents64, unsigned int, fd,
--		struct linux_dirent64 __user *, dirent, unsigned int, count)
-+/**
-+ * vfs_getdents - getdents without fdget
-+ * @file    : pointer to file struct of directory
-+ * @dirent  : pointer to user directory structure
-+ * @count   : size of buffer
-+ * @ctx_pos : if file pos is used, pass -1,
-+ *            if ctx pos is used, pass ctx pos
-+ */
-+int vfs_getdents(struct file *file, struct linux_dirent64 __user *dirent=
-,
-+		 unsigned int count, s64 ctx_pos)
- {
--	struct fd f;
- 	struct getdents_callback64 buf =3D {
- 		.ctx.actor =3D filldir64,
-+		.ctx.pos =3D ctx_pos,
- 		.count =3D count,
- 		.current_dir =3D dirent
- 	};
- 	int error;
-=20
--	f =3D fdget_pos(fd);
--	if (!f.file)
--		return -EBADF;
--
--	error =3D iterate_dir(f.file, &buf.ctx);
-+	error =3D do_iterate_dir(file, &buf.ctx, ctx_pos < 0);
- 	if (error >=3D 0)
- 		error =3D buf.error;
- 	if (buf.prev_reclen) {
-@@ -396,6 +400,22 @@ SYSCALL_DEFINE3(getdents64, unsigned int, fd,
- 		else
- 			error =3D count - buf.count;
- 	}
++static int io_getdents_prep(struct io_kiocb *req, const struct io_uring_=
+sqe *sqe)
++{
++	struct io_getdents *getdents =3D &req->getdents;
 +
-+	return error;
++	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
++		return -EINVAL;
++	if (sqe->ioprio || sqe->rw_flags || sqe->buf_index)
++		return -EINVAL;
++
++	getdents->pos =3D READ_ONCE(sqe->off);
++	getdents->dirent =3D u64_to_user_ptr(READ_ONCE(sqe->addr));
++	getdents->count =3D READ_ONCE(sqe->len);
++
++	return 0;
 +}
 +
-+SYSCALL_DEFINE3(getdents64, unsigned int, fd,
-+		struct linux_dirent64 __user *, dirent, unsigned int, count)
++static int io_getdents(struct io_kiocb *req, unsigned int issue_flags)
 +{
-+	struct fd f;
-+	int error;
++	struct io_getdents *getdents =3D &req->getdents;
++	int ret;
 +
-+	f =3D fdget_pos(fd);
-+	if (!f.file)
-+		return -EBADF;
++	if (issue_flags & IO_URING_F_NONBLOCK)
++		return -EAGAIN;
 +
-+	error =3D vfs_getdents(f.file, dirent, count, -1);
++	ret =3D vfs_getdents(req->file, getdents->dirent, getdents->count, getd=
+ents->pos);
++	if (ret < 0) {
++		if (ret =3D=3D -ERESTARTSYS)
++			ret =3D -EINTR;
 +
- 	fdput_pos(f);
- 	return error;
- }
++		req_set_fail(req);
++	}
++
++	io_req_complete(req, ret);
++	return 0;
++}
++
+ static int io_shutdown_prep(struct io_kiocb *req,
+ 			    const struct io_uring_sqe *sqe)
+ {
+@@ -6486,6 +6533,8 @@ static int io_req_prep(struct io_kiocb *req, const =
+struct io_uring_sqe *sqe)
+ 		return io_symlinkat_prep(req, sqe);
+ 	case IORING_OP_LINKAT:
+ 		return io_linkat_prep(req, sqe);
++	case IORING_OP_GETDENTS:
++		return io_getdents_prep(req, sqe);
+ 	}
+=20
+ 	printk_once(KERN_WARNING "io_uring: unhandled opcode %d\n",
+@@ -6771,6 +6820,9 @@ static int io_issue_sqe(struct io_kiocb *req, unsig=
+ned int issue_flags)
+ 	case IORING_OP_LINKAT:
+ 		ret =3D io_linkat(req, issue_flags);
+ 		break;
++	case IORING_OP_GETDENTS:
++		ret =3D io_getdents(req, issue_flags);
++		break;
+ 	default:
+ 		ret =3D -EINVAL;
+ 		break;
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.=
+h
+index 787f491f0d2a..57dc88db5793 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -143,6 +143,7 @@ enum {
+ 	IORING_OP_MKDIRAT,
+ 	IORING_OP_SYMLINKAT,
+ 	IORING_OP_LINKAT,
++	IORING_OP_GETDENTS,
+=20
+ 	/* this goes last, obviously */
+ 	IORING_OP_LAST,
 --=20
 2.30.2
 

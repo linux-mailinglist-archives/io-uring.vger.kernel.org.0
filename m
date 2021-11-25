@@ -2,87 +2,94 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 737C345DE74
-	for <lists+io-uring@lfdr.de>; Thu, 25 Nov 2021 17:14:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 049A645DEC3
+	for <lists+io-uring@lfdr.de>; Thu, 25 Nov 2021 17:49:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345575AbhKYQRW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 25 Nov 2021 11:17:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54882 "EHLO
+        id S1356645AbhKYQwJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 25 Nov 2021 11:52:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349570AbhKYQPV (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 25 Nov 2021 11:15:21 -0500
-Received: from mail-il1-x12a.google.com (mail-il1-x12a.google.com [IPv6:2607:f8b0:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA305C0613DD
-        for <io-uring@vger.kernel.org>; Thu, 25 Nov 2021 08:00:54 -0800 (PST)
-Received: by mail-il1-x12a.google.com with SMTP id l8so6306278ilv.3
-        for <io-uring@vger.kernel.org>; Thu, 25 Nov 2021 08:00:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:in-reply-to:references:subject:message-id:date
-         :mime-version:content-transfer-encoding;
-        bh=O0g780XUQdQIIN+4g5hKQ/7jBqzvWjKKGQrD1uDI7U8=;
-        b=5JZW2bwVv/aK9eNSDwpG8fOrlJZXPg6+2ftnW944g499H9rNQfrvuK4tB6wU0ZwnCv
-         o1eX2wdV6NE5C5dn6BzrvCmmiij0pdyG/OFJFV6dfWLY6tCEpB/dKKYpvCOnxu2Of+k8
-         I8taiPwukG1D1mzeD7d3L1ljElZ/Mpqn8eNXzu5b+R1gciTYWJXkzz2feJdNYhyV/D2+
-         NI+xBNhRMJbJq29nAadlC6o4Oc91N0BoCCMAZOkp64W4khezW0uSs6WtX4LhsJ3KQEQi
-         AKJtqf1jRkbAgV5R/cbKHee4EcovpyziRDm9ybwQ2uRYwX0M7o7pMUYYucByVr3TuRpY
-         K0uA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
-         :message-id:date:mime-version:content-transfer-encoding;
-        bh=O0g780XUQdQIIN+4g5hKQ/7jBqzvWjKKGQrD1uDI7U8=;
-        b=Tmko5sZhFz94nGzjHCnUACyTBBuOANk+tZ/sEX8qyCve2GwGWCZ4m+wkAKbIwTgIzn
-         7JP4griZMi7yu7nId2ZGMXSvE7JWrQGcg3AKiiNsJ+V44lne1jrVRhM8Vpkr3VtjGyvf
-         p1jGnBxLWRhhzoajk7eoXdWDmQL3OuNGBjC6yg4CW+rPCSsZYSsfqxxOF2G/PwHf7Klr
-         sK/xL3wSuB1ttux/ZrOkz+qBUQ+xtAhF9kZ4gmbcKM1dC/A6Bl2TUQyyGznXQR8sjRiV
-         Xl4SP0I9h44rBw5EHsn2iU+dZknvsYmqZpd+pgvNdIkOmgq1bTj1NKCr1g6avAfWwLu1
-         tVbQ==
-X-Gm-Message-State: AOAM532kZ6EHQdgfyQoWafopWMeYBmCBuOGLuKzLcAQ711+W2IL0IAnB
-        UhRLLGSp2Abk0i1nNC/OuMjCBw==
-X-Google-Smtp-Source: ABdhPJzwdE8S6Ow4YEixXyyWlbdR0jsy/XEa9qnE/W7rkBmfBQeiBEAw0Zm+KN0OEqfIIREurMgckw==
-X-Received: by 2002:a05:6e02:12cb:: with SMTP id i11mr21335695ilm.12.1637856054115;
-        Thu, 25 Nov 2021 08:00:54 -0800 (PST)
-Received: from [127.0.1.1] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id 10sm1985866ilx.42.2021.11.25.08.00.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Nov 2021 08:00:53 -0800 (PST)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Hao Xu <haoxu@linux.alibaba.com>
-Cc:     Joseph Qi <joseph.qi@linux.alibaba.com>,
+        with ESMTP id S1346102AbhKYQuI (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 25 Nov 2021 11:50:08 -0500
+Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17383C06139B;
+        Thu, 25 Nov 2021 08:35:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+        s=42; h=Date:Message-ID:From:Cc:To;
+        bh=KZ8p9IqkJMuifV3MoPHGueQyyLNb1ZlJH3HXVXKtYds=; b=22YKaGJiAO8MfCRiOBCwgb0TF7
+        zxRB/OnQgaFpdRXtdQcKl9r9TLSTu5Lj/zSi+h+k67sgV2njLo8/0WX4Q9aJtVsy2YyFxOphdQD+4
+        em5tSndd/MRNlsBbbd21LtQ7b0H+NZHYl80OBxis9RncITiWkgpnrbFBYlXiuDqPIK3l25Jo97EIk
+        EUd4Lzv6fJ7tOT6mEiMW/kICzAD7iuDSo10aUShvGVy7izLLTklDqxx3nVQIqQvidJHY8lqCu+SZZ
+        AwuNj9OHu/amsO0hAtxKCstiwDmwyplE0olCIlrP81FwfSkZnUJKQ8ize15/6hiz0kOyq8GFwM9vO
+        kX2nrYqf2tjrsdSUfo/EIx2o0pvLHQK9IzSLC+bfWaOA6AK1pfOIVkUCIK8eLvNkeL4zv+9tL2Yw9
+        B/1EVhxTO72fHiR0xXnEQflGE9LVcDuevJL4VrhxqkIpPsiDA4NgpvzJeoT4wdpm1GanSCdkAHDCw
+        jhPa3Y/Px9g75XQBJJMRcMJT;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
+        (Exim)
+        id 1mqHie-008xAS-Fr; Thu, 25 Nov 2021 16:35:32 +0000
+Subject: Re: uring regression - lost write request
+To:     Jens Axboe <axboe@kernel.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Daniel Black <daniel@mariadb.org>,
+        Salvatore Bonaccorso <carnil@debian.org>,
         Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring@vger.kernel.org
-In-Reply-To: <20211125092103.224502-1-haoxu@linux.alibaba.com>
-References: <20211125092103.224502-1-haoxu@linux.alibaba.com>
-Subject: Re: [PATCH for-5.17 0/2] small fix and code clean
-Message-Id: <163785605138.523421.7852091101066277742.b4-ty@kernel.dk>
-Date:   Thu, 25 Nov 2021 09:00:51 -0700
+        linux-block@vger.kernel.org, io-uring@vger.kernel.org,
+        stable@vger.kernel.org
+References: <c6d6bffe-1770-c51d-11c6-c5483bde1766@kernel.dk>
+ <bd7289c8-0b01-4fcf-e584-273d372f8343@kernel.dk>
+ <6d0ca779-3111-bc5e-88c0-22a98a6974b8@kernel.dk>
+ <281147cc-7da4-8e45-2d6f-3f7c2a2ca229@kernel.dk>
+ <c92f97e5-1a38-e23f-f371-c00261cacb6d@kernel.dk>
+ <CABVffEN0LzLyrHifysGNJKpc_Szn7qPO4xy7aKvg7LTNc-Fpng@mail.gmail.com>
+ <00d6e7ad-5430-4fca-7e26-0774c302be57@kernel.dk>
+ <CABVffEM79CZ+4SW0+yP0+NioMX=sHhooBCEfbhqs6G6hex2YwQ@mail.gmail.com>
+ <3aaac8b2-e2f6-6a84-1321-67409b2a3dce@kernel.dk>
+ <98f8a00f-c634-4a1a-4eba-f97be5b2e801@kernel.dk> <YZ5lvtfqsZEllUJq@kroah.com>
+ <c0a7ac89-2a8c-b1e3-00c2-96ee259582b4@kernel.dk>
+ <96d6241f-7bf0-cefe-947e-ee03d83fb828@samba.org>
+ <6d6fc76f-880a-938d-64dd-527e6be3009e@kernel.dk>
+From:   Stefan Metzmacher <metze@samba.org>
+Message-ID: <5217de38-d166-de32-c115-fd34399eb234@samba.org>
+Date:   Thu, 25 Nov 2021 17:35:32 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <6d6fc76f-880a-938d-64dd-527e6be3009e@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, 25 Nov 2021 17:21:01 +0800, Hao Xu wrote:
-> Hao Xu (2):
->   io_uring: fix no lock protection for ctx->cq_extra
->   io_uring: better to use REQ_F_IO_DRAIN for req->flags
+Am 25.11.21 um 01:58 schrieb Jens Axboe:
+> On 11/24/21 3:52 PM, Stefan Metzmacher wrote:
+>> Hi Jens,
+>>
+>>>>> Looks good to me - Greg, would you mind queueing this up for
+>>>>> 5.14-stable?
+>>>>
+>>>> 5.14 is end-of-life and not getting any more releases (the front page of
+>>>> kernel.org should show that.)
+>>>
+>>> Oh, well I guess that settles that...
+>>>
+>>>> If this needs to go anywhere else, please let me know.
+>>>
+>>> Should be fine, previous 5.10 isn't affected and 5.15 is fine too as it
+>>> already has the patch.
+>>
+>> Are 5.11 and 5.13 are affected, these are hwe kernels for ubuntu,
+>> I may need to open a bug for them...
 > 
-> fs/io_uring.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> [...]
+> Please do, then we can help get the appropriate patches lined up for
+> 5.11/13. They should need the same set, basically what ended up in 5.14
+> plus the one I posted today.
 
-Applied, thanks!
+Ok, I've created https://bugs.launchpad.net/bugs/1952222
 
-[1/2] io_uring: fix no lock protection for ctx->cq_extra
-      commit: e302f1046f4c209291b07ff7bc4d15ca26891f16
-[2/2] io_uring: better to use REQ_F_IO_DRAIN for req->flags
-      commit: b6c7db32183251204f124b10d6177d46558ca7b8
+Let's see what happens...
 
-Best regards,
--- 
-Jens Axboe
-
+metze
 

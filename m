@@ -2,109 +2,103 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D0A345D295
-	for <lists+io-uring@lfdr.de>; Thu, 25 Nov 2021 02:48:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53C1E45D3C0
+	for <lists+io-uring@lfdr.de>; Thu, 25 Nov 2021 04:50:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353301AbhKYBvu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 24 Nov 2021 20:51:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33190 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346532AbhKYBtu (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 24 Nov 2021 20:49:50 -0500
-Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 815DEC07E5E2
-        for <io-uring@vger.kernel.org>; Wed, 24 Nov 2021 16:58:23 -0800 (PST)
-Received: by mail-io1-xd29.google.com with SMTP id f9so5442499ioo.11
-        for <io-uring@vger.kernel.org>; Wed, 24 Nov 2021 16:58:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=RLrd8YvXFk/NH6B4UNPf4BvxkmXNi5tB4hYOVCt3QC8=;
-        b=xEYNVeKKngvVNXvxCecrhrF+dhCpI3JNYai0l9KnKgihJ0I01EUyn6342gfDHpPJIF
-         /7q6wV2REhOJuHIb/lYLaWYERAKShYlGUyeC58Z4EhKW5k35o1PRcvba04e+kRFBUZLR
-         GYYaVnPqgy0bVSbkIpRJx93kpqiqNwhtywyejvwyJ51PLSjA/jqcNOxItHGNkoaxuuqN
-         5/TC5bAM75Yn0/SKiua018lB0Bbqxr2ffGz09uLiOkS2BEkaMIXtM3JiG9VfyLrL0Tc2
-         eI1FDQifw26dYMM24XJlT0vZCnRwvcbdevwhW6CKZXtGH2W0fwWIaiauk7CVXbzaMuy+
-         7Xfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=RLrd8YvXFk/NH6B4UNPf4BvxkmXNi5tB4hYOVCt3QC8=;
-        b=rShq2RtoyaSgGeJn/Du84cHqViYmfLzOPNn//VgfKEUn4arG4a8SZ2ZeDKNbyLq4qK
-         MbtIDM7A1qBrRmd2bf/FdNSzpq3+fIsDOmIQL89dUxBt+zDSsqaFJN5YO4ldly1Laqtw
-         AALHpePHC9FlgcmQVqSod/MfD8ip/SsYmsYzXXm8KXb5eGkodtjF+8JXhgoqeLPRN6Fi
-         tIOJISbVoxl15gC/f80WKNeuLhjQ7njtbv+d+ZbN2/yGtVUZlCcf+ndyzXAEKPYLxUyo
-         ctWDhcOneIh5V0avhxZOLEjBXkuclMS3XibkgmLXgSkllrnRegXPDwUGcgGdHInR5Hbq
-         /PPw==
-X-Gm-Message-State: AOAM533/XNO0RbbnZGR6qnzHIB+oyJUYjqPNFrfYLMNlsInhbr41Pf4h
-        u2u4LbSOAWInV+cTdKMwf8+UvQ==
-X-Google-Smtp-Source: ABdhPJz5Il1xVb0xmrNpKE0GpQPqF5TiX+oAopQgozeU43W9y6HIqvacoAyp9oBIWo5k1qKNrwcjWg==
-X-Received: by 2002:a05:6602:493:: with SMTP id y19mr20188734iov.126.1637801902921;
-        Wed, 24 Nov 2021 16:58:22 -0800 (PST)
-Received: from [192.168.1.116] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id s3sm859302ilv.61.2021.11.24.16.58.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Nov 2021 16:58:22 -0800 (PST)
-Subject: Re: uring regression - lost write request
-To:     Stefan Metzmacher <metze@samba.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Daniel Black <daniel@mariadb.org>,
-        Salvatore Bonaccorso <carnil@debian.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        linux-block@vger.kernel.org, io-uring@vger.kernel.org,
-        stable@vger.kernel.org
-References: <c6d6bffe-1770-c51d-11c6-c5483bde1766@kernel.dk>
- <bd7289c8-0b01-4fcf-e584-273d372f8343@kernel.dk>
- <6d0ca779-3111-bc5e-88c0-22a98a6974b8@kernel.dk>
- <281147cc-7da4-8e45-2d6f-3f7c2a2ca229@kernel.dk>
- <c92f97e5-1a38-e23f-f371-c00261cacb6d@kernel.dk>
- <CABVffEN0LzLyrHifysGNJKpc_Szn7qPO4xy7aKvg7LTNc-Fpng@mail.gmail.com>
- <00d6e7ad-5430-4fca-7e26-0774c302be57@kernel.dk>
- <CABVffEM79CZ+4SW0+yP0+NioMX=sHhooBCEfbhqs6G6hex2YwQ@mail.gmail.com>
- <3aaac8b2-e2f6-6a84-1321-67409b2a3dce@kernel.dk>
- <98f8a00f-c634-4a1a-4eba-f97be5b2e801@kernel.dk> <YZ5lvtfqsZEllUJq@kroah.com>
- <c0a7ac89-2a8c-b1e3-00c2-96ee259582b4@kernel.dk>
- <96d6241f-7bf0-cefe-947e-ee03d83fb828@samba.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <6d6fc76f-880a-938d-64dd-527e6be3009e@kernel.dk>
-Date:   Wed, 24 Nov 2021 17:58:20 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S229636AbhKYDx1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 24 Nov 2021 22:53:27 -0500
+Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:48516 "EHLO
+        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234928AbhKYDv1 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 24 Nov 2021 22:51:27 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R211e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0UyDwPSy_1637812094;
+Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UyDwPSy_1637812094)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 25 Nov 2021 11:48:15 +0800
+Subject: Re: [PATCH v2 3/4] io_uring: don't spinlock when not posting CQEs
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>
+References: <cover.1636559119.git.asml.silence@gmail.com>
+ <8d4b4a08bca022cbe19af00266407116775b3e4d.1636559119.git.asml.silence@gmail.com>
+From:   Hao Xu <haoxu@linux.alibaba.com>
+Message-ID: <19624295-224b-cbbc-7f63-17d4d5a9d1b9@linux.alibaba.com>
+Date:   Thu, 25 Nov 2021 11:48:14 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.14.0
 MIME-Version: 1.0
-In-Reply-To: <96d6241f-7bf0-cefe-947e-ee03d83fb828@samba.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <8d4b4a08bca022cbe19af00266407116775b3e4d.1636559119.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 11/24/21 3:52 PM, Stefan Metzmacher wrote:
-> Hi Jens,
+在 2021/11/10 下午11:49, Pavel Begunkov 写道:
+> When no of queued for the batch completion requests need to post an CQE,
+> see IOSQE_CQE_SKIP_SUCCESS, avoid grabbing ->completion_lock and other
+> commit/post.
 > 
->>>> Looks good to me - Greg, would you mind queueing this up for
->>>> 5.14-stable?
->>>
->>> 5.14 is end-of-life and not getting any more releases (the front page of
->>> kernel.org should show that.)
->>
->> Oh, well I guess that settles that...
->>
->>> If this needs to go anywhere else, please let me know.
->>
->> Should be fine, previous 5.10 isn't affected and 5.15 is fine too as it
->> already has the patch.
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> ---
+>   fs/io_uring.c | 26 +++++++++++++++++---------
+>   1 file changed, 17 insertions(+), 9 deletions(-)
 > 
-> Are 5.11 and 5.13 are affected, these are hwe kernels for ubuntu,
-> I may need to open a bug for them...
-
-Please do, then we can help get the appropriate patches lined up for
-5.11/13. They should need the same set, basically what ended up in 5.14
-plus the one I posted today.
-
--- 
-Jens Axboe
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 22572cfd6864..0c0ea3bbb50a 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -321,6 +321,7 @@ struct io_submit_state {
+>   
+>   	bool			plug_started;
+>   	bool			need_plug;
+> +	bool			flush_cqes;
+>   	unsigned short		submit_nr;
+>   	struct blk_plug		plug;
+>   };
+> @@ -1525,8 +1526,11 @@ static void io_prep_async_link(struct io_kiocb *req)
+>   
+>   static inline void io_req_add_compl_list(struct io_kiocb *req)
+>   {
+> +	struct io_ring_ctx *ctx = req->ctx;
+>   	struct io_submit_state *state = &req->ctx->submit_state;
+>   
+> +	if (!(req->flags & REQ_F_CQE_SKIP))
+> +		ctx->submit_state.flush_cqes = true;
+Should we init it to false in submit_state_start()?
+>   	wq_list_add_tail(&req->comp_list, &state->compl_reqs);
+>   }
+>   
+> @@ -2386,18 +2390,22 @@ static void __io_submit_flush_completions(struct io_ring_ctx *ctx)
+>   	struct io_wq_work_node *node, *prev;
+>   	struct io_submit_state *state = &ctx->submit_state;
+>   
+> -	spin_lock(&ctx->completion_lock);
+> -	wq_list_for_each(node, prev, &state->compl_reqs) {
+> -		struct io_kiocb *req = container_of(node, struct io_kiocb,
+> +	if (state->flush_cqes) {
+> +		spin_lock(&ctx->completion_lock);
+> +		wq_list_for_each(node, prev, &state->compl_reqs) {
+> +			struct io_kiocb *req = container_of(node, struct io_kiocb,
+>   						    comp_list);
+>   
+> -		if (!(req->flags & REQ_F_CQE_SKIP))
+> -			__io_fill_cqe(ctx, req->user_data, req->result,
+> -				      req->cflags);
+> +			if (!(req->flags & REQ_F_CQE_SKIP))
+> +				__io_fill_cqe(ctx, req->user_data, req->result,
+> +					      req->cflags);
+> +		}
+> +
+> +		io_commit_cqring(ctx);
+> +		spin_unlock(&ctx->completion_lock);
+> +		io_cqring_ev_posted(ctx);
+> +		state->flush_cqes = false;
+>   	}
+> -	io_commit_cqring(ctx);
+> -	spin_unlock(&ctx->completion_lock);
+> -	io_cqring_ev_posted(ctx);
+>   
+>   	io_free_batch_list(ctx, state->compl_reqs.first);
+>   	INIT_WQ_LIST(&state->compl_reqs);
+> 
 

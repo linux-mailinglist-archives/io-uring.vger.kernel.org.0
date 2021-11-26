@@ -2,91 +2,123 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F17C45E6B2
-	for <lists+io-uring@lfdr.de>; Fri, 26 Nov 2021 05:00:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1493B45E80C
+	for <lists+io-uring@lfdr.de>; Fri, 26 Nov 2021 07:46:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1358326AbhKZEDX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 25 Nov 2021 23:03:23 -0500
-Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:35193 "EHLO
-        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S241872AbhKZEBO (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 25 Nov 2021 23:01:14 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R531e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04357;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UyKaAxQ_1637899080;
-Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UyKaAxQ_1637899080)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 26 Nov 2021 11:58:01 +0800
-Subject: Re: [PATCH v5 0/6] task work optimization
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <20211124122202.218756-1-haoxu@linux.alibaba.com>
- <28685b5a-5484-809c-38d7-ef60f359b535@gmail.com>
- <9682cd7d-bdc6-cbc9-b209-311e65a5fce9@linux.alibaba.com>
- <876d367c-91d5-b0bf-9e88-acfaa98e77b9@gmail.com>
-From:   Hao Xu <haoxu@linux.alibaba.com>
-Message-ID: <29df82ba-fdf1-af45-3529-aaef100526a2@linux.alibaba.com>
-Date:   Fri, 26 Nov 2021 11:58:00 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.14.0
+        id S1359062AbhKZGte (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 26 Nov 2021 01:49:34 -0500
+Received: from mga09.intel.com ([134.134.136.24]:54934 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1352578AbhKZGrc (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Fri, 26 Nov 2021 01:47:32 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10179"; a="235440534"
+X-IronPort-AV: E=Sophos;i="5.87,265,1631602800"; 
+   d="scan'208";a="235440534"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2021 22:44:20 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.87,265,1631602800"; 
+   d="scan'208";a="539159617"
+Received: from lkp-server02.sh.intel.com (HELO 9e1e9f9b3bcb) ([10.239.97.151])
+  by orsmga001.jf.intel.com with ESMTP; 25 Nov 2021 22:44:18 -0800
+Received: from kbuild by 9e1e9f9b3bcb with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1mqUy1-0007iN-Ck; Fri, 26 Nov 2021 06:44:17 +0000
+Date:   Fri, 26 Nov 2021 14:44:06 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org, shr@fb.com
+Subject: Re: [PATCH v3 2/3] fs: split off vfs_getdents function of getdents64
+ syscall
+Message-ID: <202111261416.mniOvY08-lkp@intel.com>
+References: <20211125232549.3333746-3-shr@fb.com>
 MIME-Version: 1.0
-In-Reply-To: <876d367c-91d5-b0bf-9e88-acfaa98e77b9@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211125232549.3333746-3-shr@fb.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-在 2021/11/25 下午11:27, Pavel Begunkov 写道:
-> On 11/25/21 11:37, Hao Xu wrote:
->> 在 2021/11/25 上午5:41, Pavel Begunkov 写道:
->>> On 11/24/21 12:21, Hao Xu wrote:
->>>> v4->v5
->>>> - change the implementation of merge_wq_list
->>>
->>> They only concern I had was about 6/6 not using inline completion
->>> infra, when it's faster to grab ->uring_lock. i.e.
->>> io_submit_flush_completions(), which should be faster when batching
->>> is good.
->>>
->>> Looking again through the code, the only user is SQPOLL
->>>
->>> io_req_task_work_add(req, !!(req->ctx->flags & IORING_SETUP_SQPOLL));
->>>
->>> And with SQPOLL the lock is mostly grabbed by the SQPOLL task only,
->>> IOW for pure block rw there shouldn't be any contention.
->> There still could be other type of task work, like async buffered reads.
->> I considered generic situation where different kinds of task works mixed
->> in the task list, then the inline completion infra always handle the
->> completions at the end, while in this new batching, we first handle the
->> completions and commit_cqring then do other task works.
-> 
-> I was talking about 6/6 in particular. The reordering (done by first
-> 2 or 3 patches) sound plausible, but if compare say 1-5 vs same but
-> + patch 6/6
-Ah, sorry.. misremember the content of 6/6 and the previous ones.
-> 
->> Btw, I'm not sure the inline completion infra is faster than this
->> batching in pure rw completion(where all the task works are completion)
->> case, from the code, seems they are similar. Any hints about this?
-> 
-> Was looking through, and apparently I placed task_put optimisation
-> into io_req_complete_post() as well, see io_put_task().
-> 
-> pros of io_submit_flush_completions:
-> 1) batched rsrc refs put
-> 2) a bit better on assembly
-> 3) shorter spin section (separate loop)
-> 4) enqueueing right into ctx->submit_state.free_list, so no
->     1 io_flush_cached_reqs() per IO_COMPL_BATCH=32
-> 
-> pros of io_req_complete_post() path:
-> 1) no uring_lock locking (not contended)
-> 2) de-virtualisation
-> 3) no extra (yet another) list traversal and io_req_complete_state()
-> 
-> So, with put_task optimised, indeed not so clear which would win > Did you use fixed rsrc for testing? (files or buffers)
-No, I didn't. Let's first play it safe as you said:
-if (locked) flush_completions
-else new stuff
-> 
+Hi Stefan,
 
+Thank you for the patch! Perhaps something to improve:
+
+[auto build test WARNING on de5de0813b7dbbb71fb5d677ed823505a0e685c5]
+
+url:    https://github.com/0day-ci/linux/commits/Stefan-Roesch/io_uring-add-getdents64-support/20211126-072952
+base:   de5de0813b7dbbb71fb5d677ed823505a0e685c5
+config: mips-buildonly-randconfig-r003-20211125 (https://download.01.org/0day-ci/archive/20211126/202111261416.mniOvY08-lkp@intel.com/config)
+compiler: clang version 14.0.0 (https://github.com/llvm/llvm-project 0332d105b9ad7f1f0ffca7e78b71de8b3a48f158)
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # install mips cross compiling tool for clang build
+        # apt-get install binutils-mips-linux-gnu
+        # https://github.com/0day-ci/linux/commit/018019be0b26997402fe7ba8367e5260ec2aa8c8
+        git remote add linux-review https://github.com/0day-ci/linux
+        git fetch --no-tags linux-review Stefan-Roesch/io_uring-add-getdents64-support/20211126-072952
+        git checkout 018019be0b26997402fe7ba8367e5260ec2aa8c8
+        # save the config file to linux build tree
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 ARCH=mips 
+
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
+
+All warnings (new ones prefixed by >>):
+
+>> fs/readdir.c:379:5: warning: no previous prototype for function 'vfs_getdents' [-Wmissing-prototypes]
+   int vfs_getdents(struct file *file, struct linux_dirent64 __user *dirent,
+       ^
+   fs/readdir.c:379:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
+   int vfs_getdents(struct file *file, struct linux_dirent64 __user *dirent,
+   ^
+   static 
+   1 warning generated.
+
+
+vim +/vfs_getdents +379 fs/readdir.c
+
+   370	
+   371	/**
+   372	 * vfs_getdents - getdents without fdget
+   373	 * @file    : pointer to file struct of directory
+   374	 * @dirent  : pointer to user directory structure
+   375	 * @count   : size of buffer
+   376	 * @ctx_pos : if file pos is used, pass -1,
+   377	 *            if ctx pos is used, pass ctx pos
+   378	 */
+ > 379	int vfs_getdents(struct file *file, struct linux_dirent64 __user *dirent,
+   380			 unsigned int count, s64 ctx_pos)
+   381	{
+   382		struct getdents_callback64 buf = {
+   383			.ctx.actor = filldir64,
+   384			.ctx.pos = ctx_pos,
+   385			.count = count,
+   386			.current_dir = dirent
+   387		};
+   388		int error;
+   389	
+   390		error = do_iterate_dir(file, &buf.ctx, ctx_pos < 0);
+   391		if (error >= 0)
+   392			error = buf.error;
+   393		if (buf.prev_reclen) {
+   394			struct linux_dirent64 __user * lastdirent;
+   395			typeof(lastdirent->d_off) d_off = buf.ctx.pos;
+   396	
+   397			lastdirent = (void __user *) buf.current_dir - buf.prev_reclen;
+   398			if (put_user(d_off, &lastdirent->d_off))
+   399				error = -EFAULT;
+   400			else
+   401				error = count - buf.count;
+   402		}
+   403	
+   404		return error;
+   405	}
+   406	
+
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org

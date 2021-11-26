@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E22D845F03B
-	for <lists+io-uring@lfdr.de>; Fri, 26 Nov 2021 15:59:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EC4745F03D
+	for <lists+io-uring@lfdr.de>; Fri, 26 Nov 2021 15:59:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350882AbhKZPCo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 26 Nov 2021 10:02:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41262 "EHLO
+        id S1352782AbhKZPDF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 26 Nov 2021 10:03:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41344 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345332AbhKZPAn (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 26 Nov 2021 10:00:43 -0500
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03722C06139B
-        for <io-uring@vger.kernel.org>; Fri, 26 Nov 2021 06:38:26 -0800 (PST)
-Received: by mail-wr1-x431.google.com with SMTP id a18so19111425wrn.6
-        for <io-uring@vger.kernel.org>; Fri, 26 Nov 2021 06:38:25 -0800 (PST)
+        with ESMTP id S239892AbhKZPBF (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 26 Nov 2021 10:01:05 -0500
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 517AFC06139E
+        for <io-uring@vger.kernel.org>; Fri, 26 Nov 2021 06:38:27 -0800 (PST)
+Received: by mail-wr1-x435.google.com with SMTP id u18so19120573wrg.5
+        for <io-uring@vger.kernel.org>; Fri, 26 Nov 2021 06:38:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=tjVbAJWfp0o9fqH7pXO04cL2VHMhiynHzV6LniKBYaY=;
-        b=ZAkJa9igsAmBEBBtGOBHhAdNxyHzwIUeclugLcrvD8t7kpOY2Wb/Q8SO8m/kFmX5dr
-         Ste4OiTu2wwl15/tQ4/N4mNixoy7gQfjNpIrL0EAPLLWfb4SQvucs976UycCjsClmuhS
-         5FNDy1Z02nbJ+QNLIxs92fllWVJZH8d7GhxuOsURdvCaz607aBHbSgvUzFeugbNYKdaT
-         mPCAjpoZlZYxDDzO7C5XGuT6cqklFwrNXsUE9ptIUIMP/W76kYfhP15Ldkbi212iKssH
-         DDgBIUU67782YOCe8p3zPuKPp7akjGo2HbLNAXxymeg9typsaifHpBBPlChacLpa05qV
-         MLbw==
+        bh=8yZOYKzRgBcV9OhAngIzjFkKSoTrdiVJnMn/b+utoX8=;
+        b=cLbOtu6S0PKX+vgK5y6cjMKngKYLh/pTrwIoVxzaZvtH82hTITxDGXlosl6llOlZ9U
+         UzYkxRbtmb040KSA+2J65RB4vhEeHXZDKWbcGoKwBMC5+8j6mog7AzFYr+cSG0Oyoyev
+         Zn2325kkC1hGklZeoUJiArkz/0EjFkpNiJJlgbZTGWXuM4tCcKvlr98Nn/q/5YOxs0HZ
+         2bFHFsO5I2gk/KZyGtP/jjyFUq4OzKyxVWX5vGDgkGtjVeNkd0kvdX+ShNQ59f1cOXgV
+         ogMKUMG7TXSYj33ubN+DD01m+MhdBrtng7RvY2NXrcwn0By8mOH2UhnIJ1tkzIOw9PB3
+         AnIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=tjVbAJWfp0o9fqH7pXO04cL2VHMhiynHzV6LniKBYaY=;
-        b=y2pYEBCEaPuB13YEON1xQO5zOOthVRs1VcIZ0o0kAy9x9ezsEF3k05EaItTdQ2p6+u
-         J9eM0KbA5Sd4MbOmrERyoBOcvzAcirrEvSI2BXBK3vZfaZfM2UIWBlb7/z3K6XmGEZuM
-         6eM0oVRvwAPnvZWUkpnCFDesFXXlX0SHTIzMaEXwzpBlV07dshH5rJBPE2lr6PMe4jzV
-         UxrYXH77Vpw80I0RTehHEOE+aasU5y9+9acwmx+oJAV34GWMX0uLgz4TNqmXHbDbBceq
-         DtHfxivI8QXI3ww9tcBx73cyuTOqBfaNRn9gnaALjvvVhl23VLcltxuOMxi+8PWKjAYB
-         7Gew==
-X-Gm-Message-State: AOAM5300O9Ap17fN5Wimo/xTjDcy/Qs5AYEffD+qmRqv4mNOo+IPVeNf
-        r3pi+t/Z3efsAp7tC+UMYmfZHS2TSCY=
-X-Google-Smtp-Source: ABdhPJwiwuniWGN9hmXODKK4RMk5Tgc4+7GPIGB9+pVKK/S7RI27gbhsKP6cpH/MqO7TF/FS5JOu3w==
-X-Received: by 2002:a05:6000:15c8:: with SMTP id y8mr15035695wry.55.1637937504454;
-        Fri, 26 Nov 2021 06:38:24 -0800 (PST)
+        bh=8yZOYKzRgBcV9OhAngIzjFkKSoTrdiVJnMn/b+utoX8=;
+        b=ewREkQwdyO8ZNdk2j4g7zmENPzl0j2AFV50Dng/IBum5m2y6xxO+IuG3xW/s2WCGDm
+         aVCiHfZC3gBRF2LXwFjUfbClFBLkq6pEv3NBOkzeiGmH3R+PV5dicbzcaRD0gsj3aAr5
+         Pr0EPyk0FmlPtrFba2NTgjZooLnTn9yTaryCT6MV5GdQ/VGg/iujqG6c/c7G8O4L0/WK
+         CdR8dgg0g2UXPgEqKCwW3X8g77oQUz5Ot4033rsh+F/7rKq8KUhwKTYoGJVqtt+cjhUy
+         k95IwnQQnc8UzdgFTv/xpm4I53cpfjguVLxfIry/JuZ2lr+d5wrU5UFBz2+1ogvSXnJr
+         4ZqQ==
+X-Gm-Message-State: AOAM533Pn9l4tcEo0gqf3xoj/9WhqnFwXOrg4gcT1wToMYda8Z7XJmAH
+        prVZYq55cmIJI/zcltDHp+1bHZoZosI=
+X-Google-Smtp-Source: ABdhPJxKEWIhA4OPlr81Sm2oeinc1u4F9K+7/MAk+9yepwECYiMNkGGHQ/vu+WUheNzHDoxW7TKfQg==
+X-Received: by 2002:adf:f0c8:: with SMTP id x8mr14871048wro.290.1637937505656;
+        Fri, 26 Nov 2021 06:38:25 -0800 (PST)
 Received: from 127.0.0.1localhost (82-132-231-175.dab.02.net. [82.132.231.175])
-        by smtp.gmail.com with ESMTPSA id j134sm6588640wmj.3.2021.11.26.06.38.23
+        by smtp.gmail.com with ESMTPSA id j134sm6588640wmj.3.2021.11.26.06.38.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Nov 2021 06:38:24 -0800 (PST)
+        Fri, 26 Nov 2021 06:38:25 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH 1/2] io_uring: fail cancellation for EXITING tasks
-Date:   Fri, 26 Nov 2021 14:38:14 +0000
-Message-Id: <4c41c5f379c6941ad5a07cd48cb66ed62199cf7e.1637937097.git.asml.silence@gmail.com>
+Subject: [PATCH 2/2] io_uring: fix link traversal locking
+Date:   Fri, 26 Nov 2021 14:38:15 +0000
+Message-Id: <397f7ebf3f4171f1abe41f708ac1ecb5766f0b68.1637937097.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.34.0
 In-Reply-To: <cover.1637937097.git.asml.silence@gmail.com>
 References: <cover.1637937097.git.asml.silence@gmail.com>
@@ -62,48 +62,169 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-WARNING: CPU: 1 PID: 20 at fs/io_uring.c:6269 io_try_cancel_userdata+0x3c5/0x640 fs/io_uring.c:6269
-CPU: 1 PID: 20 Comm: kworker/1:0 Not tainted 5.16.0-rc1-syzkaller #0
-Workqueue: events io_fallback_req_func
-RIP: 0010:io_try_cancel_userdata+0x3c5/0x640 fs/io_uring.c:6269
-Call Trace:
- <TASK>
- io_req_task_link_timeout+0x6b/0x1e0 fs/io_uring.c:6886
- io_fallback_req_func+0xf9/0x1ae fs/io_uring.c:1334
- process_one_work+0x9b2/0x1690 kernel/workqueue.c:2298
- worker_thread+0x658/0x11f0 kernel/workqueue.c:2445
- kthread+0x405/0x4f0 kernel/kthread.c:327
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295
- </TASK>
+WARNING: inconsistent lock state
+5.16.0-rc2-syzkaller #0 Not tainted
+inconsistent {HARDIRQ-ON-W} -> {IN-HARDIRQ-W} usage.
+ffff888078e11418 (&ctx->timeout_lock
+){?.+.}-{2:2}
+, at: io_timeout_fn+0x6f/0x360 fs/io_uring.c:5943
+{HARDIRQ-ON-W} state was registered at:
+  [...]
+  spin_unlock_irq include/linux/spinlock.h:399 [inline]
+  __io_poll_remove_one fs/io_uring.c:5669 [inline]
+  __io_poll_remove_one fs/io_uring.c:5654 [inline]
+  io_poll_remove_one+0x236/0x870 fs/io_uring.c:5680
+  io_poll_remove_all+0x1af/0x235 fs/io_uring.c:5709
+  io_ring_ctx_wait_and_kill+0x1cc/0x322 fs/io_uring.c:9534
+  io_uring_release+0x42/0x46 fs/io_uring.c:9554
+  __fput+0x286/0x9f0 fs/file_table.c:280
+  task_work_run+0xdd/0x1a0 kernel/task_work.c:164
+  exit_task_work include/linux/task_work.h:32 [inline]
+  do_exit+0xc14/0x2b40 kernel/exit.c:832
 
-We need original task's context to do cancellations, so if it's dying
-and the callback is executed in a fallback mode, fail the cancellation
-attempt.
+674ee8e1b4a41 ("io_uring: correct link-list traversal locking") fixed a
+data race but introduced a possible deadlock and inconsistentcy in irq
+states. E.g.
 
-Reported-by: syzbot+ab0cfe96c2b3cd1c1153@syzkaller.appspotmail.com
+io_poll_remove_all()
+    spin_lock_irq(timeout_lock)
+    io_poll_remove_one()
+        spin_lock/unlock_irq(poll_lock);
+    spin_unlock_irq(timeout_lock)
+
+Another type of problem is freeing a request while holding
+->timeout_lock, which may leads to a deadlock in
+io_commit_cqring() -> io_flush_timeouts() and other places.
+
+Having 3 nested locks is also too ugly. Add io_match_task_safe(), which
+would briefly take and release timeout_lock for race prevention inside,
+so the actuall request cancellation / free / etc. code doesn't have it
+taken.
+
+Reported-by: syzbot+ff49a3059d49b0ca0eec@syzkaller.appspotmail.com
+Reported-by: syzbot+847f02ec20a6609a328b@syzkaller.appspotmail.com
+Reported-by: syzbot+3368aadcd30425ceb53b@syzkaller.appspotmail.com
+Reported-by: syzbot+51ce8887cdef77c9ac83@syzkaller.appspotmail.com
+Reported-by: syzbot+3cb756a49d2f394a9ee3@syzkaller.appspotmail.com
+Fixes: 674ee8e1b4a41 ("io_uring: correct link-list traversal locking")
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fs/io_uring.c | 60 +++++++++++++++++++++++++++++++++++----------------
+ 1 file changed, 42 insertions(+), 18 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index a4c508a1e0cf..7dd112d44adf 100644
+index 7dd112d44adf..75841b919dce 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -6882,10 +6882,11 @@ static inline struct file *io_file_get(struct io_ring_ctx *ctx,
- static void io_req_task_link_timeout(struct io_kiocb *req, bool *locked)
- {
- 	struct io_kiocb *prev = req->timeout.prev;
--	int ret;
-+	int ret = -ENOENT;
+@@ -1278,6 +1278,7 @@ static void io_refs_resurrect(struct percpu_ref *ref, struct completion *compl)
  
- 	if (prev) {
--		ret = io_try_cancel_userdata(req, prev->user_data);
-+		if (!(req->task->flags & PF_EXITING))
-+			ret = io_try_cancel_userdata(req, prev->user_data);
- 		io_req_complete_post(req, ret ?: -ETIME, 0);
- 		io_put_req(prev);
- 	} else {
+ static bool io_match_task(struct io_kiocb *head, struct task_struct *task,
+ 			  bool cancel_all)
++	__must_hold(&req->ctx->timeout_lock)
+ {
+ 	struct io_kiocb *req;
+ 
+@@ -1293,6 +1294,44 @@ static bool io_match_task(struct io_kiocb *head, struct task_struct *task,
+ 	return false;
+ }
+ 
++static bool io_match_linked(struct io_kiocb *head)
++{
++	struct io_kiocb *req;
++
++	io_for_each_link(req, head) {
++		if (req->flags & REQ_F_INFLIGHT)
++			return true;
++	}
++	return false;
++}
++
++/*
++ * As io_match_task() but protected against racing with linked timeouts.
++ * User must not hold timeout_lock.
++ */
++static bool io_match_task_safe(struct io_kiocb *head, struct task_struct *task,
++			       bool cancel_all)
++{
++	bool matched;
++
++	if (task && head->task != task)
++		return false;
++	if (cancel_all)
++		return true;
++
++	if (head->flags & REQ_F_LINK_TIMEOUT) {
++		struct io_ring_ctx *ctx = head->ctx;
++
++		/* protect against races with linked timeouts */
++		spin_lock_irq(&ctx->timeout_lock);
++		matched = io_match_linked(head);
++		spin_unlock_irq(&ctx->timeout_lock);
++	} else {
++		matched = io_match_linked(head);
++	}
++	return matched;
++}
++
+ static inline bool req_has_async_data(struct io_kiocb *req)
+ {
+ 	return req->flags & REQ_F_ASYNC_DATA;
+@@ -5699,17 +5738,15 @@ static __cold bool io_poll_remove_all(struct io_ring_ctx *ctx,
+ 	int posted = 0, i;
+ 
+ 	spin_lock(&ctx->completion_lock);
+-	spin_lock_irq(&ctx->timeout_lock);
+ 	for (i = 0; i < (1U << ctx->cancel_hash_bits); i++) {
+ 		struct hlist_head *list;
+ 
+ 		list = &ctx->cancel_hash[i];
+ 		hlist_for_each_entry_safe(req, tmp, list, hash_node) {
+-			if (io_match_task(req, tsk, cancel_all))
++			if (io_match_task_safe(req, tsk, cancel_all))
+ 				posted += io_poll_remove_one(req);
+ 		}
+ 	}
+-	spin_unlock_irq(&ctx->timeout_lock);
+ 	spin_unlock(&ctx->completion_lock);
+ 
+ 	if (posted)
+@@ -9565,19 +9602,8 @@ static bool io_cancel_task_cb(struct io_wq_work *work, void *data)
+ {
+ 	struct io_kiocb *req = container_of(work, struct io_kiocb, work);
+ 	struct io_task_cancel *cancel = data;
+-	bool ret;
+ 
+-	if (!cancel->all && (req->flags & REQ_F_LINK_TIMEOUT)) {
+-		struct io_ring_ctx *ctx = req->ctx;
+-
+-		/* protect against races with linked timeouts */
+-		spin_lock_irq(&ctx->timeout_lock);
+-		ret = io_match_task(req, cancel->task, cancel->all);
+-		spin_unlock_irq(&ctx->timeout_lock);
+-	} else {
+-		ret = io_match_task(req, cancel->task, cancel->all);
+-	}
+-	return ret;
++	return io_match_task_safe(req, cancel->task, cancel->all);
+ }
+ 
+ static __cold bool io_cancel_defer_files(struct io_ring_ctx *ctx,
+@@ -9588,14 +9614,12 @@ static __cold bool io_cancel_defer_files(struct io_ring_ctx *ctx,
+ 	LIST_HEAD(list);
+ 
+ 	spin_lock(&ctx->completion_lock);
+-	spin_lock_irq(&ctx->timeout_lock);
+ 	list_for_each_entry_reverse(de, &ctx->defer_list, list) {
+-		if (io_match_task(de->req, task, cancel_all)) {
++		if (io_match_task_safe(de->req, task, cancel_all)) {
+ 			list_cut_position(&list, &ctx->defer_list, &de->list);
+ 			break;
+ 		}
+ 	}
+-	spin_unlock_irq(&ctx->timeout_lock);
+ 	spin_unlock(&ctx->completion_lock);
+ 	if (list_empty(&list))
+ 		return false;
 -- 
 2.34.0
 

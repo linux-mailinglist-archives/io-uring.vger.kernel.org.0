@@ -2,90 +2,198 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 293C845F101
-	for <lists+io-uring@lfdr.de>; Fri, 26 Nov 2021 16:46:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 04A1445F583
+	for <lists+io-uring@lfdr.de>; Fri, 26 Nov 2021 20:50:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354131AbhKZPtm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 26 Nov 2021 10:49:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51960 "EHLO
+        id S229953AbhKZTx6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 26 Nov 2021 14:53:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49202 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378135AbhKZPrl (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 26 Nov 2021 10:47:41 -0500
-Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E8DAC0617A5
-        for <io-uring@vger.kernel.org>; Fri, 26 Nov 2021 07:39:23 -0800 (PST)
-Received: by mail-io1-xd29.google.com with SMTP id w22so11917333ioa.1
-        for <io-uring@vger.kernel.org>; Fri, 26 Nov 2021 07:39:23 -0800 (PST)
+        with ESMTP id S239037AbhKZTv5 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 26 Nov 2021 14:51:57 -0500
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E403BC061A2D
+        for <io-uring@vger.kernel.org>; Fri, 26 Nov 2021 11:34:11 -0800 (PST)
+Received: by mail-ed1-x532.google.com with SMTP id y13so42714312edd.13
+        for <io-uring@vger.kernel.org>; Fri, 26 Nov 2021 11:34:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=274Q/ZAR2tJK2tvrv6ob2tLr8yiaidfzpxRndGsg+Jw=;
-        b=VILeHlJ58UYc/45Jyz0QIBZo5je0NWjHDkZc7Slj4nmZOkq6P9/xbXke7Q6zWVZgzf
-         CdLMHgGoDy106GlBIwv2PFCrXX+tgUca/8EOoPwZtCvKd4zegO0F6GNS7HcYk1bZP6Uy
-         mmRZobVs87Hzz8vPEtgioM6q2d8jILrAX3DsYAGmJs8rjaPVoLul2LYqBuEpPkPthAh9
-         ViT8VqvN+rGLebfFYA2FPFY5EypgOjJOSjaFNrKCo++oaZ6sUgIvJ056hmk9ZD6qBmId
-         N6N094YWVL3jf6GCAk8gdXH0V3ylTxFhBLfvU88u5Cfjr8NWh3OJNgs0zCJEzo2tjHpC
-         mbnA==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=J4xUZ3iCuoAY8wWhGyx78+8zdzd0frvLxAviqmIGYJM=;
+        b=Dfbv5ZExhtMsPQY1MFrgxaI6hFt8GT1auRuyDj2UxoDMQgTHtd99rgZcyIiUWDqzAL
+         FC9o1S5v8wGxapBMyKHOVP+oROm+iu6NXNtnHYavJq2KGK2WJERUs4xZncicnQNXpmbI
+         bFffBdWX2lJSlnSF0I9PKd3lnFzOM0bH09NKVFGLEyQ6906IRllp4zunRTTfpSIFIkrl
+         8PyV2YfpakEO5YyB4aHjCNrXvtOifzrSTv9NZChnOfJOg1aZRqTg8Plkmc6+vuZzAiOV
+         tiE58YRmVdfzTzkYv7ohb1eKtij9OkaJiY4/wflNl2FUzEYcVofm1gFeey7f2TgoZTow
+         PjeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=274Q/ZAR2tJK2tvrv6ob2tLr8yiaidfzpxRndGsg+Jw=;
-        b=VLWLC+G4WVOvQvaoX//xYqo+qFiVvrau9J02o2Sk3X3YFv4imrY4EuVvBUtHEwzwW6
-         hhFy9MwwYOqrhVDlRGz7SUiv8l6GphOuxhzdXp47/iz5ZO09yCPN1dkQQkgQHFvl5wL8
-         n93a1ujpPAzOc5ZiX35IOpez41XQrrpJ5wZrxRR1Te7hk+PUbEIFMeJUye12FRe8TpL3
-         lpjtE5tdjzReOkHasBsC60p9E/pX923wmr8FvzJ0diVfonWrLW7KObsENlM5Z7ugcx7b
-         511dpUgBTA2g5uUfH8e4HcJ4tTYJ8QZy6ExBVHHRqsLuVSkNiIuPyyPGPy+OdS117iHg
-         5+CA==
-X-Gm-Message-State: AOAM532af3Cq5ohmY4XtJkeDQEFZ9yumkpaq71+6mTQm6s/vlGTly+vg
-        czjKcakLFoBR0TSajUX2hKkTyA==
-X-Google-Smtp-Source: ABdhPJzQdGcpJo8sMqqf55R9qprT9dw8UY5pSjpXa2ITLDMJZDJcUG2UlSUi12nSVpKZxN+fVT8//Q==
-X-Received: by 2002:a05:6638:3182:: with SMTP id z2mr41736223jak.134.1637941162695;
-        Fri, 26 Nov 2021 07:39:22 -0800 (PST)
-Received: from [192.168.1.116] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id a4sm3367274ild.52.2021.11.26.07.39.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Nov 2021 07:39:22 -0800 (PST)
-Subject: Re: [syzbot] inconsistent lock state in io_poll_remove_all
-To:     syzbot <syzbot+51ce8887cdef77c9ac83@syzkaller.appspotmail.com>,
-        asml.silence@gmail.com, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <000000000000c7ba4b05d1adb200@google.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <cc6aeb46-1cfc-ac3e-0764-c2f930b6f28e@kernel.dk>
-Date:   Fri, 26 Nov 2021 08:39:20 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        bh=J4xUZ3iCuoAY8wWhGyx78+8zdzd0frvLxAviqmIGYJM=;
+        b=DNdhmQ1O2N1uGr19KlIlaEK2h9FuboGtaeRNGs+mDCznjMJ6MgWLioj7lOc6w8Z4Re
+         d4LsiW2JhWzyer7NoaH8Yw67eKhuV6RMbQcoImZa6TpX7WnESmaVPeE22UsZzsZA7DXf
+         jfma9zo0USaE6lC0mJqVzyR/t9WXNtiVXCV+PZSNWh9H6a4V7OKepYjJbCGkc18WeumL
+         0N92UILALlRz2kyCl5Hqn/h2y9tXDYRmH62IAWvZb34s4W5wVh2VACgscu+NA+kVOG9i
+         iqaFEs6YUNjJZNqlGyL/T+Cma6a9qSMQk5cNup/xv023/ntYwKOf2Lm+YhtWuKN7+mBn
+         NiOQ==
+X-Gm-Message-State: AOAM531rVaAODmYmG2bjVZw0E/K+nBGVUrIFEeXK/KW+8EqLxnGl4IfX
+        OypBGVFS3iUxjKKo6khJnzlu454/L8c=
+X-Google-Smtp-Source: ABdhPJyOK/WjpOsf0Q26hM5IFKD4PxTqyyji0GYURe9lxJG5MnW+DkiNsDNlFoQBkySqL6dL9ggarg==
+X-Received: by 2002:a17:907:3f04:: with SMTP id hq4mr39924029ejc.202.1637955250240;
+        Fri, 26 Nov 2021 11:34:10 -0800 (PST)
+Received: from 127.0.0.1localhost ([85.255.237.101])
+        by smtp.gmail.com with ESMTPSA id y19sm4890179edc.17.2021.11.26.11.34.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Nov 2021 11:34:09 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     io-uring@vger.kernel.org
+Cc:     asml.silence@gmail.com
+Subject: [PATCH] test: poll cancellation with offset timeouts
+Date:   Fri, 26 Nov 2021 19:34:05 +0000
+Message-Id: <21ed5cd19ba6cff23714dddb07358360a1ac6f91.1637955206.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.34.0
 MIME-Version: 1.0
-In-Reply-To: <000000000000c7ba4b05d1adb200@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 11/26/21 2:27 AM, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    a4849f6000e2 Merge tag 'drm-fixes-2021-11-26' of git://ano..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=11162e9ab00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=bf85c53718a1e697
-> dashboard link: https://syzkaller.appspot.com/bug?extid=51ce8887cdef77c9ac83
-> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-> 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+51ce8887cdef77c9ac83@syzkaller.appspotmail.com
+Test for a recent locking problem during poll cancellation with
+offset timeouts queued.
 
-#syz fix io_uring: fix link traversal locking
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ test/poll-cancel.c | 101 +++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 97 insertions(+), 4 deletions(-)
 
+diff --git a/test/poll-cancel.c b/test/poll-cancel.c
+index a74e915..408159d 100644
+--- a/test/poll-cancel.c
++++ b/test/poll-cancel.c
+@@ -26,7 +26,7 @@ static void sig_alrm(int sig)
+ 	exit(1);
+ }
+ 
+-int main(int argc, char *argv[])
++static int test_poll_cancel(void)
+ {
+ 	struct io_uring ring;
+ 	int pipe1[2];
+@@ -36,9 +36,6 @@ int main(int argc, char *argv[])
+ 	struct sigaction act;
+ 	int ret;
+ 
+-	if (argc > 1)
+-		return 0;
+-
+ 	if (pipe(pipe1) != 0) {
+ 		perror("pipe");
+ 		return 1;
+@@ -130,6 +127,102 @@ int main(int argc, char *argv[])
+ 		return 1;
+ 	}
+ 
++	close(pipe1[0]);
++	close(pipe1[1]);
+ 	io_uring_cqe_seen(&ring, cqe);
++	io_uring_queue_exit(&ring);
++	return 0;
++}
++
++
++static int __test_poll_cancel_with_timeouts(void)
++{
++	struct __kernel_timespec ts = { .tv_sec = 10, };
++	struct io_uring ring, ring2;
++	struct io_uring_sqe *sqe;
++	int ret, off_nr = 1000;
++
++	ret = io_uring_queue_init(8, &ring, 0);
++	if (ret) {
++		fprintf(stderr, "ring setup failed: %d\n", ret);
++		return 1;
++	}
++
++	ret = io_uring_queue_init(1, &ring2, 0);
++	if (ret) {
++		fprintf(stderr, "ring setup failed: %d\n", ret);
++		return 1;
++	}
++
++	/* test timeout-offset triggering path during cancellation */
++	sqe = io_uring_get_sqe(&ring);
++	io_uring_prep_timeout(sqe, &ts, off_nr, 0);
++
++	/* poll ring2 to trigger cancellation on exit() */
++	sqe = io_uring_get_sqe(&ring);
++	io_uring_prep_poll_add(sqe, ring2.ring_fd, POLLIN);
++	sqe->flags |= IOSQE_IO_LINK;
++
++	sqe = io_uring_get_sqe(&ring);
++	io_uring_prep_link_timeout(sqe, &ts, 0);
++
++	ret = io_uring_submit(&ring);
++	if (ret != 3) {
++		fprintf(stderr, "sqe submit failed\n");
++		return 1;
++	}
++
++	/* just drop all rings/etc. intact, exit() will clean them up */
++	return 0;
++}
++
++static int test_poll_cancel_with_timeouts(void)
++{
++	int ret;
++	pid_t p;
++
++	p = fork();
++	if (p == -1) {
++		fprintf(stderr, "fork() failed\n");
++		return 1;
++	}
++
++	if (p == 0) {
++		ret = __test_poll_cancel_with_timeouts();
++		exit(ret);
++	} else {
++		int wstatus;
++
++		if (waitpid(p, &wstatus, 0) == (pid_t)-1) {
++			perror("waitpid()");
++			return 1;
++		}
++		if (!WIFEXITED(wstatus) || WEXITSTATUS(wstatus)) {
++			fprintf(stderr, "child failed %i\n", WEXITSTATUS(wstatus));
++			return 1;
++		}
++	}
++	return 0;
++}
++
++int main(int argc, char *argv[])
++{
++	int ret;
++
++	if (argc > 1)
++		return 0;
++
++	ret = test_poll_cancel();
++	if (ret) {
++		fprintf(stderr, "test_poll_cancel failed\n");
++		return -1;
++	}
++
++	ret = test_poll_cancel_with_timeouts();
++	if (ret) {
++		fprintf(stderr, "test_poll_cancel_with_timeouts failed\n");
++		return -1;
++	}
++
+ 	return 0;
+ }
 -- 
-Jens Axboe
+2.34.0
 

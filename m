@@ -2,36 +2,36 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1493B45E80C
-	for <lists+io-uring@lfdr.de>; Fri, 26 Nov 2021 07:46:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3302245E991
+	for <lists+io-uring@lfdr.de>; Fri, 26 Nov 2021 09:46:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1359062AbhKZGte (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 26 Nov 2021 01:49:34 -0500
-Received: from mga09.intel.com ([134.134.136.24]:54934 "EHLO mga09.intel.com"
+        id S1353539AbhKZItf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 26 Nov 2021 03:49:35 -0500
+Received: from mga09.intel.com ([134.134.136.24]:62441 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1352578AbhKZGrc (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Fri, 26 Nov 2021 01:47:32 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10179"; a="235440534"
+        id S1345082AbhKZIrf (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Fri, 26 Nov 2021 03:47:35 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10179"; a="235454625"
 X-IronPort-AV: E=Sophos;i="5.87,265,1631602800"; 
-   d="scan'208";a="235440534"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2021 22:44:20 -0800
+   d="scan'208";a="235454625"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2021 00:44:22 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.87,265,1631602800"; 
-   d="scan'208";a="539159617"
+   d="scan'208";a="675487932"
 Received: from lkp-server02.sh.intel.com (HELO 9e1e9f9b3bcb) ([10.239.97.151])
-  by orsmga001.jf.intel.com with ESMTP; 25 Nov 2021 22:44:18 -0800
+  by orsmga005.jf.intel.com with ESMTP; 26 Nov 2021 00:44:21 -0800
 Received: from kbuild by 9e1e9f9b3bcb with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1mqUy1-0007iN-Ck; Fri, 26 Nov 2021 06:44:17 +0000
-Date:   Fri, 26 Nov 2021 14:44:06 +0800
+        id 1mqWqC-0007qp-IZ; Fri, 26 Nov 2021 08:44:20 +0000
+Date:   Fri, 26 Nov 2021 16:43:54 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org, shr@fb.com
+Cc:     kbuild-all@lists.01.org, shr@fb.com
 Subject: Re: [PATCH v3 2/3] fs: split off vfs_getdents function of getdents64
  syscall
-Message-ID: <202111261416.mniOvY08-lkp@intel.com>
+Message-ID: <202111261631.wvcMUeXO-lkp@intel.com>
 References: <20211125232549.3333746-3-shr@fb.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -50,33 +50,24 @@ Thank you for the patch! Perhaps something to improve:
 
 url:    https://github.com/0day-ci/linux/commits/Stefan-Roesch/io_uring-add-getdents64-support/20211126-072952
 base:   de5de0813b7dbbb71fb5d677ed823505a0e685c5
-config: mips-buildonly-randconfig-r003-20211125 (https://download.01.org/0day-ci/archive/20211126/202111261416.mniOvY08-lkp@intel.com/config)
-compiler: clang version 14.0.0 (https://github.com/llvm/llvm-project 0332d105b9ad7f1f0ffca7e78b71de8b3a48f158)
+config: um-i386_defconfig (https://download.01.org/0day-ci/archive/20211126/202111261631.wvcMUeXO-lkp@intel.com/config)
+compiler: gcc-9 (Debian 9.3.0-22) 9.3.0
 reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # install mips cross compiling tool for clang build
-        # apt-get install binutils-mips-linux-gnu
         # https://github.com/0day-ci/linux/commit/018019be0b26997402fe7ba8367e5260ec2aa8c8
         git remote add linux-review https://github.com/0day-ci/linux
         git fetch --no-tags linux-review Stefan-Roesch/io_uring-add-getdents64-support/20211126-072952
         git checkout 018019be0b26997402fe7ba8367e5260ec2aa8c8
         # save the config file to linux build tree
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 ARCH=mips 
+        make W=1 ARCH=um SUBARCH=i386
 
 If you fix the issue, kindly add following tag as appropriate
 Reported-by: kernel test robot <lkp@intel.com>
 
 All warnings (new ones prefixed by >>):
 
->> fs/readdir.c:379:5: warning: no previous prototype for function 'vfs_getdents' [-Wmissing-prototypes]
-   int vfs_getdents(struct file *file, struct linux_dirent64 __user *dirent,
-       ^
-   fs/readdir.c:379:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
-   int vfs_getdents(struct file *file, struct linux_dirent64 __user *dirent,
-   ^
-   static 
-   1 warning generated.
+>> fs/readdir.c:379:5: warning: no previous prototype for 'vfs_getdents' [-Wmissing-prototypes]
+     379 | int vfs_getdents(struct file *file, struct linux_dirent64 __user *dirent,
+         |     ^~~~~~~~~~~~
 
 
 vim +/vfs_getdents +379 fs/readdir.c

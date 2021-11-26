@@ -2,105 +2,84 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 895C245F0DD
-	for <lists+io-uring@lfdr.de>; Fri, 26 Nov 2021 16:40:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9640245F0F8
+	for <lists+io-uring@lfdr.de>; Fri, 26 Nov 2021 16:44:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346675AbhKZPno (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 26 Nov 2021 10:43:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50660 "EHLO
+        id S1378139AbhKZPrs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 26 Nov 2021 10:47:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51992 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346814AbhKZPlo (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 26 Nov 2021 10:41:44 -0500
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA9C3C06179E
-        for <io-uring@vger.kernel.org>; Fri, 26 Nov 2021 07:32:34 -0800 (PST)
-Received: by mail-wm1-x336.google.com with SMTP id n33-20020a05600c502100b0032fb900951eso10980422wmr.4
-        for <io-uring@vger.kernel.org>; Fri, 26 Nov 2021 07:32:34 -0800 (PST)
+        with ESMTP id S1346814AbhKZPps (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 26 Nov 2021 10:45:48 -0500
+Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27E7DC0613DD
+        for <io-uring@vger.kernel.org>; Fri, 26 Nov 2021 07:36:56 -0800 (PST)
+Received: by mail-io1-xd30.google.com with SMTP id x6so11748262iol.13
+        for <io-uring@vger.kernel.org>; Fri, 26 Nov 2021 07:36:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=OCEIHHuN+mfEu9OCXvmtqJNTxeQpkhsDg8TmGe9jVO4=;
-        b=g//2yWZlIa1wx5XbL3oeb9OHCSdVufYuXaKeLKD+4sxBA9nx1cPkiKQ4VU/JvKRZ8K
-         IXJfO0dfThYzj/f8bZcdmT+HU8fOqu1Zkfsk5DZD/GU8XtWeP8QZpGojixD+d5cpGmjF
-         MHk0TfK3OBO/JTrsLj789Hz7P2II9tb3V+PDWAzObZzdz9oL5LzoXVvFbnAoF/sBa5uZ
-         4paCJB8rf3SBHGs3KQ4NEs+OhGeMD8EYPGN/lvGqN/+gU/GB+eMX2W5fK82t8Gpx6SFW
-         wDQJIedupvgYCrr99zqE9RN7/7rnjHkx55uJSGc5zmvKXBx9bxoJ7ZCc409E7KkwZKhV
-         yIjA==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=from:to:in-reply-to:references:subject:message-id:date:mime-version
+         :content-transfer-encoding;
+        bh=eZY3eWMCLZylZcQVRlvFldRK3qzOUbWAK155NPoSgzM=;
+        b=KKbrES84+imS+tPWuHi9UGggr5ST6DQHYno3fYFwXo/Wzfv43193w6eu81hoPGdSdr
+         Aun7jz/1/F8XAdfFdmViTXxPuSffdPAQuBgt81E7H9NAM6j1kejzRfUeo0AsUhImZR9G
+         tT6tMKlZQx5Fme+2WLSCnqqc/jlRZbehn0yAFQ6hXKTrXL7XVvjPDX3VULD4ccsUmGJM
+         9PBA3uV1IjDDvjO4GIrOeFgZ3atDL7ykTt6xSbmCzcjSj+Jvs2jfGKkUqKaWIfDF+lT7
+         pUZQ5Pn4c3iVi+OTL4dkinNWJiLaitHKElD5M8n7o99TKhjRcJbV/u5/iD6U03jQpjAg
+         he2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=OCEIHHuN+mfEu9OCXvmtqJNTxeQpkhsDg8TmGe9jVO4=;
-        b=ZLxGiTl+cLD9dOi48ycTkASog1gP/cFXcjjoe9bOTtcjeHjhC18EQ7UvGz5rfqKab8
-         9+VN2p5h/Y81FeGiXZmgZeR0GnWjTjZ9xdMOVFW5DT+g5K3o+cs/oL6mg//kt1jKt6Fe
-         JXa8DIL9oSLnvwKr2lF3llT7Eug9wL5I9L/8oBN8+sJ+kEPMjC5S2DWOMY27dTRfBVFs
-         kz/DUubAmzkVaEP42bJ1nT36XhTlNAnSikYQ2eyppFNWrYzyhUnyNBP/E12VNNbkszur
-         IsHbgzSU+D+GFD2qBDSpERgKRA/q4V1QafGZ2FyDeJ06VEQJc0LpJr+YGhNL1uAQhzfG
-         Df5g==
-X-Gm-Message-State: AOAM530zBf/Zs7gilNHuaOD2oQwP/gJm2h16+MOEEzZDzWjilE3rqfZs
-        Zi2qrXXP+CDmwkObyFjYur0vut4xQuc=
-X-Google-Smtp-Source: ABdhPJz1SfA8n/0VmEqrEvVTorzHfRnxfBw+AyjTDvc/dmTE179Q1JtXxpyUSxoecMYNX00ZmHxouA==
-X-Received: by 2002:a1c:a710:: with SMTP id q16mr16491354wme.138.1637940753081;
-        Fri, 26 Nov 2021 07:32:33 -0800 (PST)
-Received: from [192.168.43.77] (82-132-231-175.dab.02.net. [82.132.231.175])
-        by smtp.gmail.com with ESMTPSA id k37sm7504191wms.21.2021.11.26.07.32.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Nov 2021 07:32:32 -0800 (PST)
-Message-ID: <4f35110d-d1a4-f6b0-6d74-0b523c7b981a@gmail.com>
-Date:   Fri, 26 Nov 2021 15:32:33 +0000
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.2
-Subject: Re: [PATCH 1/2] io_uring: fail cancellation for EXITING tasks
-Content-Language: en-US
-To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>
+        h=x-gm-message-state:from:to:in-reply-to:references:subject
+         :message-id:date:mime-version:content-transfer-encoding;
+        bh=eZY3eWMCLZylZcQVRlvFldRK3qzOUbWAK155NPoSgzM=;
+        b=ThofTCzbwIISCcbY6FXydn7UPcX1DMS5lGcdIZX4YxENxI+w0Gzs4guVmuAzllkT4y
+         iGtbv4JuGOkyTIzHvymlTQWpAb2stZsQlbCeqNcGf3RhSB2EjAscRq4LJgz/Zwq+BkwD
+         mueu+wbJ+rEG3NgiiKxV2HEPlfcXdXG9J3pKXhOurtwF5eoBSBkZnPAi5IuIkspIOLEb
+         Eei6es6am5IjSWrZZjNf45VlpQSVwyTJBIvfggWDdvakrWdoiaLQVPr22cG82lJIvhEY
+         EZiiMIdbQMBxqfimZATS9RHGHp6aronWZLoqFGma5mYCRHV+8uQePLM6j+cGkB5yYQjI
+         Hm3g==
+X-Gm-Message-State: AOAM53321n50qJgy3C2SMwMnI4wqp8Wr/kPX5LtKyf4VOVdv8sn8cVlL
+        377W2Orf1o+rUeEA5vRix6+vBC54LtXQjuma
+X-Google-Smtp-Source: ABdhPJxu2eLn4YdqdpZ0+fRK4CF0oldK27oSL+TTf0eB8bc0NlC5A5Ne3RkXHY3spNKL48ZHygAFWQ==
+X-Received: by 2002:a05:6638:160c:: with SMTP id x12mr40953819jas.60.1637941015294;
+        Fri, 26 Nov 2021 07:36:55 -0800 (PST)
+Received: from [127.0.1.1] ([66.219.217.159])
+        by smtp.gmail.com with ESMTPSA id d137sm3312989iof.16.2021.11.26.07.36.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Nov 2021 07:36:54 -0800 (PST)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+In-Reply-To: <cover.1637937097.git.asml.silence@gmail.com>
 References: <cover.1637937097.git.asml.silence@gmail.com>
- <4c41c5f379c6941ad5a07cd48cb66ed62199cf7e.1637937097.git.asml.silence@gmail.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <4c41c5f379c6941ad5a07cd48cb66ed62199cf7e.1637937097.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH 0/2] 5.16 fixes for syz reports
+Message-Id: <163794101368.606591.5665140915720222853.b4-ty@kernel.dk>
+Date:   Fri, 26 Nov 2021 08:36:53 -0700
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 11/26/21 14:38, Pavel Begunkov wrote:
-> We need original task's context to do cancellations, so if it's dying
-> and the callback is executed in a fallback mode, fail the cancellation
-> attempt.
-
-Fixes: 89b263f6d56e6 ("io_uring: run linked timeouts from task_work")
-Cc: stable@kernel.org # 5.15+
-
+On Fri, 26 Nov 2021 14:38:13 +0000, Pavel Begunkov wrote:
+> The second patch fixes the last five reports, i.e. deadlocks and
+> inconsistent irq state, all of the caused by the same patch and
+> are dups of each other.
 > 
-> Reported-by: syzbot+ab0cfe96c2b3cd1c1153@syzkaller.appspotmail.com
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> ---
->   fs/io_uring.c | 5 +++--
->   1 file changed, 3 insertions(+), 2 deletions(-)
+> 1/2 is for another report, where tw of cancellation requests don't
+> handle PF_EXITING.
 > 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index a4c508a1e0cf..7dd112d44adf 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -6882,10 +6882,11 @@ static inline struct file *io_file_get(struct io_ring_ctx *ctx,
->   static void io_req_task_link_timeout(struct io_kiocb *req, bool *locked)
->   {
->   	struct io_kiocb *prev = req->timeout.prev;
-> -	int ret;
-> +	int ret = -ENOENT;
->   
->   	if (prev) {
-> -		ret = io_try_cancel_userdata(req, prev->user_data);
-> +		if (!(req->task->flags & PF_EXITING))
-> +			ret = io_try_cancel_userdata(req, prev->user_data);
->   		io_req_complete_post(req, ret ?: -ETIME, 0);
->   		io_put_req(prev);
->   	} else {
-> 
+> [...]
 
+Applied, thanks!
+
+[1/2] io_uring: fail cancellation for EXITING tasks
+      commit: 617a89484debcd4e7999796d693cf0b77d2519de
+[2/2] io_uring: fix link traversal locking
+      commit: 6af3f48bf6156a7f02e91aca64e2927c4bebda03
+
+Best regards,
 -- 
-Pavel Begunkov
+Jens Axboe
+
+

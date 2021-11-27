@@ -2,144 +2,112 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AC56645FFDA
-	for <lists+io-uring@lfdr.de>; Sat, 27 Nov 2021 16:26:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 91D0946000E
+	for <lists+io-uring@lfdr.de>; Sat, 27 Nov 2021 17:06:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229557AbhK0P3f (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 27 Nov 2021 10:29:35 -0500
-Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:39065 "EHLO
-        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233438AbhK0P1e (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 27 Nov 2021 10:27:34 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UyTnBGh_1638026652;
-Received: from e18g09479.et15sqa.tbsite.net(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UyTnBGh_1638026652)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Sat, 27 Nov 2021 23:24:18 +0800
-From:   Hao Xu <haoxu@linux.alibaba.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>
-Subject: [PATCH v7] io_uring: batch completion in prior_task_list
-Date:   Sat, 27 Nov 2021 23:24:12 +0800
-Message-Id: <20211127152412.232005-1-haoxu@linux.alibaba.com>
-X-Mailer: git-send-email 2.24.4
-In-Reply-To: <20211126133749.65516-1-haoxu@linux.alibaba.com>
-References: <20211126133749.65516-1-haoxu@linux.alibaba.com>
+        id S1349351AbhK0QJz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 27 Nov 2021 11:09:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57708 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1355406AbhK0QHy (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 27 Nov 2021 11:07:54 -0500
+Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38C66C06174A
+        for <io-uring@vger.kernel.org>; Sat, 27 Nov 2021 08:04:40 -0800 (PST)
+Received: by mail-io1-xd2c.google.com with SMTP id m9so15420305iop.0
+        for <io-uring@vger.kernel.org>; Sat, 27 Nov 2021 08:04:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=from:subject:to:cc:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=uORRXo3QDjnE640eufO8aomunRys8JwIfvGEaYgUI7A=;
+        b=cXKKGW6Myj34mFiw/KbMHyzT+mwuH+G/9aXkv34nkAdP5HyDypFCpWxyh2yw4VkkoC
+         +pu7kgeoSRR66sEAgvDpa90e8nI1eDepH+bkAXLTaXrWYyaUAdptaNm/0w8pl/ZWjGPy
+         nu0gApdXDGBQh7R/LY4pf3F7ggw221hKUDUQH0kVaVSXpfvYXbmr4c9SPR6zd6oQhiPr
+         n3wwqqlyHUTPLkpByoGtDwj0XkpFbBK5YJGEIBHGCYa5h8h1n5WhZueOeOXsCzyNHIOx
+         ksN54bxnQtmhj+lT4dyheMGFZu1uExMYstxWvXAPaOuHPi87mRSEaFcwAFn8kVhiF+Ed
+         sU1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=uORRXo3QDjnE640eufO8aomunRys8JwIfvGEaYgUI7A=;
+        b=AV6cZ8bQe11AMAw/oQ4DHVG8uJD07RboTL3WvYVZ9GM9cYcHosmquPu55bOotmJWi4
+         7aySpLp9qOQtwESzvPXl4uDCI9N8aEzrNcoGOLvtfM36ROFDwvntil1Z2sOv6dT4gLN0
+         JlfbODiaXTo3FPeGQTS821EMLqswIw3plvfDgpi5tKetT91kzTBaydGoZ/hB8sxQGD6u
+         S7mltx6Gp4zQO1/w0tSqs5rlRyp7iIVqSCdl72zzQjl6mTVRvS0/kabwpec4lFSHWWIZ
+         CXy0LJAooGNw3Dt8EYeyUrDqI3B6MXVkrC5dkloQOyKiMR03dOX6i6JnscrT1JkWIVGX
+         4R8A==
+X-Gm-Message-State: AOAM533Nyv8p42GzIJ/MnxUo/DVCPqLEB39AygbeD7DrpnCF8e2UIZfl
+        fn/bxVZTknk7xdAobVnYwnYq2fVVxfVNYMXn
+X-Google-Smtp-Source: ABdhPJy/M+YAgapm6xePMUEsV53tHI/7iTWANU3mRxD8WTEl9ZQYQnWwxGwWBgoAAvR9Lcucurj6Ow==
+X-Received: by 2002:a05:6602:1686:: with SMTP id s6mr48163253iow.186.1638029078869;
+        Sat, 27 Nov 2021 08:04:38 -0800 (PST)
+Received: from [192.168.1.116] ([66.219.217.159])
+        by smtp.gmail.com with ESMTPSA id z12sm2718835ilu.27.2021.11.27.08.04.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 27 Nov 2021 08:04:37 -0800 (PST)
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] Followup io_uring fixes for 5.16-rc3
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     io-uring <io-uring@vger.kernel.org>
+Message-ID: <45a2054b-0b02-c0c8-1c62-89e204144701@kernel.dk>
+Date:   Sat, 27 Nov 2021 09:04:37 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-In previous patches, we have already gathered some tw with
-io_req_task_complete() as callback in prior_task_list, let's complete
-them in batch while we cannot grab uring lock. In this way, we batch
-the req_complete_post path.
+Hi Linus,
 
-Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
----
+The locking fixup that was applied earlier this rc has both a deadlock
+and IRQ safety issue, let's get that ironed out before -rc3. This pull
+request contains:
 
-v6->v7
-- use function pointer to reduce the if check everytime running a task
-work in handle_prior_tw_list()
+- Link traversal locking fix (Pavel)
 
- fs/io_uring.c | 68 +++++++++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 61 insertions(+), 7 deletions(-)
+- Cancelation fix (Pavel)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index e9c67f19d585..2c0ff1fc6974 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -2223,6 +2223,53 @@ static inline unsigned int io_put_rw_kbuf(struct io_kiocb *req)
- 	return io_put_kbuf(req, req->kbuf);
- }
- 
-+static inline void ctx_commit_and_unlock(struct io_ring_ctx *ctx)
-+{
-+	io_commit_cqring(ctx);
-+	spin_unlock(&ctx->completion_lock);
-+	io_cqring_ev_posted(ctx);
-+}
-+
-+static inline void io_req_complete_inline(struct io_kiocb *req, s32 res,
-+					  u32 cflags)
-+{
-+		io_req_complete_state(req, res, cflags);
-+		io_req_add_compl_list(req);
-+}
-+
-+static void handle_prior_tw_list(struct io_wq_work_node *node, struct io_ring_ctx **ctx,
-+				 bool *locked)
-+{
-+	void (*io_req_complete_func)(struct io_kiocb *, s32, u32);
-+
-+	do {
-+		struct io_wq_work_node *next = node->next;
-+		struct io_kiocb *req = container_of(node, struct io_kiocb,
-+						    io_task_work.node);
-+
-+		if (req->ctx != *ctx) {
-+			if (unlikely(!*locked) && *ctx)
-+				ctx_commit_and_unlock(*ctx);
-+			ctx_flush_and_put(*ctx, locked);
-+			*ctx = req->ctx;
-+			/* if not contended, grab and improve batching */
-+			*locked = mutex_trylock(&(*ctx)->uring_lock);
-+			percpu_ref_get(&(*ctx)->refs);
-+			if (unlikely(!*locked)) {
-+				spin_lock(&(*ctx)->completion_lock);
-+				io_req_complete_func = __io_req_complete_post;
-+			} else {
-+				io_req_complete_func = io_req_complete_inline;
-+			}
-+		}
-+		io_req_complete_func(req, req->result, io_put_rw_kbuf(req));
-+		node = next;
-+	} while (node);
-+
-+	if (unlikely(!*locked) && *ctx)
-+		ctx_commit_and_unlock(*ctx);
-+}
-+
- static void handle_tw_list(struct io_wq_work_node *node, struct io_ring_ctx **ctx, bool *locked)
- {
- 	do {
-@@ -2250,21 +2297,28 @@ static void tctx_task_work(struct callback_head *cb)
- 						  task_work);
- 
- 	while (1) {
--		struct io_wq_work_node *node;
-+		struct io_wq_work_node *node1, *node2;
- 
--		if (!tctx->prior_task_list.first &&
--		    !tctx->task_list.first && locked)
-+		if (!tctx->task_list.first &&
-+		    !tctx->prior_task_list.first && locked)
- 			io_submit_flush_completions(ctx);
- 
- 		spin_lock_irq(&tctx->task_lock);
--		node= wq_list_merge(&tctx->prior_task_list, &tctx->task_list);
--		if (!node)
-+		node1 = tctx->prior_task_list.first;
-+		node2 = tctx->task_list.first;
-+		INIT_WQ_LIST(&tctx->task_list);
-+		INIT_WQ_LIST(&tctx->prior_task_list);
-+		if (!node2 && !node1)
- 			tctx->task_running = false;
- 		spin_unlock_irq(&tctx->task_lock);
--		if (!node)
-+		if (!node2 && !node1)
- 			break;
- 
--		handle_tw_list(node, &ctx, &locked);
-+		if (node1)
-+			handle_prior_tw_list(node1, &ctx, &locked);
-+
-+		if (node2)
-+			handle_tw_list(node2, &ctx, &locked);
- 		cond_resched();
- 	}
- 
+- Relocate cond_resched() for huge buffer chain freeing, avoiding a
+  softlockup warning (Ye)
+
+- Fix timespec validation (Ye)
+
+Please pull!
+
+
+The following changes since commit 674ee8e1b4a41d2fdffc885c55350c3fbb38c22a:
+
+  io_uring: correct link-list traversal locking (2021-11-22 19:31:54 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux-block.git tags/io_uring-5.16-2021-11-27
+
+for you to fetch changes up to f6223ff799666235a80d05f8137b73e5580077b9:
+
+  io_uring: Fix undefined-behaviour in io_issue_sqe (2021-11-27 06:41:38 -0700)
+
+----------------------------------------------------------------
+io_uring-5.16-2021-11-27
+
+----------------------------------------------------------------
+Pavel Begunkov (2):
+      io_uring: fail cancellation for EXITING tasks
+      io_uring: fix link traversal locking
+
+Ye Bin (2):
+      io_uring: fix soft lockup when call __io_remove_buffers
+      io_uring: Fix undefined-behaviour in io_issue_sqe
+
+ fs/io_uring.c | 73 ++++++++++++++++++++++++++++++++++++++++-------------------
+ 1 file changed, 50 insertions(+), 23 deletions(-)
+
 -- 
-2.24.4
+Jens Axboe
 

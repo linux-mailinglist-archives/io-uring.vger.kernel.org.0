@@ -2,77 +2,76 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F5D445FEF0
-	for <lists+io-uring@lfdr.de>; Sat, 27 Nov 2021 14:48:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B42345FF08
+	for <lists+io-uring@lfdr.de>; Sat, 27 Nov 2021 15:10:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355166AbhK0Nvg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 27 Nov 2021 08:51:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55874 "EHLO
+        id S243460AbhK0ONU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 27 Nov 2021 09:13:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354987AbhK0Ntf (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 27 Nov 2021 08:49:35 -0500
-Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B014C06174A
-        for <io-uring@vger.kernel.org>; Sat, 27 Nov 2021 05:46:21 -0800 (PST)
-Received: by mail-il1-x133.google.com with SMTP id r2so11898800ilb.10
-        for <io-uring@vger.kernel.org>; Sat, 27 Nov 2021 05:46:21 -0800 (PST)
+        with ESMTP id S231760AbhK0OLT (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 27 Nov 2021 09:11:19 -0500
+Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E78BC06173E
+        for <io-uring@vger.kernel.org>; Sat, 27 Nov 2021 06:08:05 -0800 (PST)
+Received: by mail-il1-x12d.google.com with SMTP id m5so11934559ilh.11
+        for <io-uring@vger.kernel.org>; Sat, 27 Nov 2021 06:08:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:in-reply-to:references:subject:message-id:date:mime-version
-         :content-transfer-encoding;
-        bh=/rbKWSYj1TtsCLDx2e36TOwgVXc6MG78mEEGzPOqHhQ=;
-        b=Ye3h2BPztouXx46IRtMiFr4MSfgYVTLJPULM/rQ0yP/TcSGfk5K0q3gzQAf8ZVNfOa
-         lKPm+RzibiC7JUJbdK2efU9fDUXlUOttZ570ksRR+yx77eIs5C006NinMkq8lo5/KF/S
-         WM7chSsoPyLvoDa15J6Jlh5nxFpGg4dvekCNXL0CassgZQgCdPWukHpgvLEX4DI281wQ
-         QEtG9+2SuGIjIcD8IFc0LNdXyE7KPzVRiD1qAug7MdWt+E4NZqCrFjNgbcOPKxiPVTBe
-         CG1J0DWNjTPUsYeulmIyC009PxO9Yc2ica9seZuNNft9acAJ2lXp1q3CQVyOjexFaO+P
-         W4UQ==
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=RWi2CG+nAnrQUUuAvjobRe+jVeZCzFI56+rNYVOXVD0=;
+        b=quMPngJe6S+cbrYa6lGvvGD4vAV5s8wKhtcCln16iTBIJyrGjnWEfkVt4+ifuzdMR7
+         8A85Ad18z02DRHiR90W5qV+l8ScbFVzprbZFhzdeZoZff1a74G25WJoPyB/bDYalnz3C
+         eL5SMxxw7+4KYEWBW92ml6DIRtVsn/ceQtFIGCT3uzztYzsgOIAQZJ4dun1PAh92tS1y
+         6/FRXsfMQtSX6azoaetjtbVaCzkPIZMRYkBTU6a7Q4y55lOZlkCFU3imCLGzS7nrdGv4
+         D3Oaculwhl/brc0n27eNNVKQck/s61ErRKEM4TDJ9M79Qj17YqfWHRsA8s3LEOC8ntj+
+         hVWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:in-reply-to:references:subject
-         :message-id:date:mime-version:content-transfer-encoding;
-        bh=/rbKWSYj1TtsCLDx2e36TOwgVXc6MG78mEEGzPOqHhQ=;
-        b=b+E1pL2wO1x2e6BrS7oqapxa0BrX93aUum5Zl6wwjWZCEa6+6sHwhvg8K4mKOO5JpV
-         JA3PS4LjUnPn3tEGmCD4ZoYwC73bcjfvigajjZyRNgvrer21y/70aq1BzqB83pCRMk+3
-         QFW222gPIf8g7HjizlyGRk3YyOPcaTp+Ghw7f/ZS1tf9jie6s1ihErEAsuQb37kVQ7Jd
-         ou8mA2v3CFA8FTLhtJpVZPZA9+SEsvv2nJICeoAXYizYOCNGDcg52fzK5CbocfkBJnJr
-         g2B9Z7pUt5zOlETh8RLTJidPzuHVYPOdBKAe6SkYD6SLpPhIgORFYwsu7n7xF4AAIPv7
-         wvSw==
-X-Gm-Message-State: AOAM531ahGg7hPQtT7AUEzg4BTt9rgiMtVMleAkFaAQFEU9uMJp4ZLq/
-        1lMTeDqjYvTBrnYhPxM/kmJAZg==
-X-Google-Smtp-Source: ABdhPJwfYpfl2VDuttIyeUFNDTeKGMY6J78Mc/7iKl8UuOGmJyZJ/VmLCIFfBcjNIghTtCvzA4r+ZA==
-X-Received: by 2002:a05:6e02:1d19:: with SMTP id i25mr41321141ila.9.1638020780480;
-        Sat, 27 Nov 2021 05:46:20 -0800 (PST)
-Received: from [127.0.1.1] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id m5sm4962322iln.11.2021.11.27.05.46.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Nov 2021 05:46:20 -0800 (PST)
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=RWi2CG+nAnrQUUuAvjobRe+jVeZCzFI56+rNYVOXVD0=;
+        b=DR1TqIMp9scaZxkoucLJLbkY7iDlbG0ZGdwOsYEGuDpxNOlRuttt8Mljx+eeM+qVtU
+         nXlA8M242Om0Rmb9etRwk29/TLjdWyy6uC35yNdvn2P6yERoW8bM8/b5TU6nGIqBrUrx
+         xfEWrvZlhu6Lb3ian4zNVxF65xnRBPwJkdtKMv3q500X74A0bMeW9RvyXVRJO6mrdwk3
+         do/HrotC375qw2w/Wfewe9VcUm6uuHhJf1g2OxVtMQPQDG2jE6+ERYC58CZ4v4MFqvgI
+         E2bx2m5Wefp4WLtCPsOMoGxrK8zduRAeIFkMy+V0dk8Z5sj6fkM4kZCT12rOJsS1TUl6
+         HceQ==
+X-Gm-Message-State: AOAM5333cxE4CgXHamIygtR7k/hkIcipQTz/RxxYqBg4rDjLo1Og06io
+        ifLhSjYaxJmkt+WzPaEIam4HzNuP+mKlBs/7
+X-Google-Smtp-Source: ABdhPJwL6KjbVT3RmozUQWZvIPmzsrx8Vd9GVpCuzuq2DT/GWVzVzROpipx0ADnc3RE2+I3zECXXEw==
+X-Received: by 2002:a05:6e02:154c:: with SMTP id j12mr5142591ilu.51.1638022084345;
+        Sat, 27 Nov 2021 06:08:04 -0800 (PST)
+Received: from [192.168.1.116] ([66.219.217.159])
+        by smtp.gmail.com with ESMTPSA id h14sm5310945ild.16.2021.11.27.06.08.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 27 Nov 2021 06:08:03 -0800 (PST)
+Subject: Re: [PATCH liburing] man/io_uring_enter.2: document
+ IOSQE_CQE_SKIP_SUCCESS
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <381237725f0f09a2668ea7f38b804d5733595b1f.1637977800.git.asml.silence@gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <fe5333e8832e6bacb5c9ca9ec8d0004a6fd2646d.1637958333.git.asml.silence@gmail.com>
-References: <fe5333e8832e6bacb5c9ca9ec8d0004a6fd2646d.1637958333.git.asml.silence@gmail.com>
-Subject: Re: [PATCH liburing 1/1] test: skip-cqe with hardlinks
-Message-Id: <163802077989.625364.6989109780301499376.b4-ty@kernel.dk>
-Date:   Sat, 27 Nov 2021 06:46:19 -0700
+Message-ID: <1aa70085-c405-4818-96af-9f4a409eecc1@kernel.dk>
+Date:   Sat, 27 Nov 2021 07:08:03 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <381237725f0f09a2668ea7f38b804d5733595b1f.1637977800.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, 26 Nov 2021 20:25:42 +0000, Pavel Begunkov wrote:
-> Test IOSQE_CQE_SKIP_SUCCESS together with IOSQE_IO_HARDLINK.
-> 
-> 
+On 11/26/21 6:50 PM, Pavel Begunkov wrote:
+> Add a section about IOSQE_CQE_SKIP_SUCCESS describing the behaviour and
+> use cases.
 
-Applied, thanks!
+Thanks, applied with a few language edits.
 
-[1/1] test: skip-cqe with hardlinks
-      (no commit info)
-
-Best regards,
 -- 
 Jens Axboe
-
 

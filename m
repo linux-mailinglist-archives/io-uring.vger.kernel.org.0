@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C41A945F5F0
-	for <lists+io-uring@lfdr.de>; Fri, 26 Nov 2021 21:34:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 533D045FC3A
+	for <lists+io-uring@lfdr.de>; Sat, 27 Nov 2021 03:55:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234280AbhKZUhw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 26 Nov 2021 15:37:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58316 "EHLO
+        id S236451AbhK0C6O (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 26 Nov 2021 21:58:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55770 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239450AbhKZUfw (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 26 Nov 2021 15:35:52 -0500
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5509AC06137E
-        for <io-uring@vger.kernel.org>; Fri, 26 Nov 2021 12:25:54 -0800 (PST)
-Received: by mail-ed1-x535.google.com with SMTP id z5so43410488edd.3
-        for <io-uring@vger.kernel.org>; Fri, 26 Nov 2021 12:25:54 -0800 (PST)
+        with ESMTP id S240415AbhK0C4O (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 26 Nov 2021 21:56:14 -0500
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD4D2C07E5F6
+        for <io-uring@vger.kernel.org>; Fri, 26 Nov 2021 17:51:06 -0800 (PST)
+Received: by mail-ed1-x536.google.com with SMTP id x15so45569590edv.1
+        for <io-uring@vger.kernel.org>; Fri, 26 Nov 2021 17:51:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=oXxF8pOXLObRJo1CNRtnu9qapxcwUYMO0x5oNzOu3f8=;
-        b=lrCL/BicbHB5FY3o429VBuRA+cXeGw/6vd/EZbaLku7bVWiNcbIE8kLu8AMx6aRmZf
-         e9lFSxn03fujsmz9MxXDTjmdcrgWH+mmThbghYw+vF+tmC/FEOlA6xqwwgbHM8Ulj7MZ
-         3kNe2VEUVzgq8M2zO4f1z3xjFtp2bUTQms3jjPwV6B9fFYLisKVy9uWtxPpIsMq4I3kF
-         fzAO0USSVGxCurqMDBC0IURx0LzXyz4YXqDLh+abajJwZKCPhQ5/7pmFMhCxE9lLIM0V
-         UbTnkQSTL8z9JCQk6vy/s6ln0Hw/OuEf1XFKIIjKnNxxTGd+GjyDNmpi2fOan6rJDvmY
-         DMqw==
+        bh=KY3v76vJAGWXxYiiVuMw8B/ERRQFpA6uxH7HrE6j2qI=;
+        b=VARv6h72XPdwFC+sI7sYBmYBQLg2uGdJqqftxoT5rw8ad75UhV3Ibb/y85o1b4EXfH
+         G1L1DhTMtVXwajrDW+QAJkvLV6xE34mpISf+7pQB6n8zZNbXWy6Kz1MD2w+sAs+Q/pNQ
+         Bom7IQWdvpm8hhV+8JRqRYJgK7TRwKw0kzZhjL+c+RwVnu2H9rWGUg4L7n2mAXSpG2G6
+         cvS72/uFYeDswvjRV7ZT7Gv33wbeiZ/pO1TdZCtArsKHCoGa5x0dO6sDMtPjhQ13SijZ
+         VcaHdRq/T+DXHSzfZUsKn55grEfQPxkjIsd4ZE32542tAHhVzYOF/SxF4pOc1QbFTYAl
+         GA0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=oXxF8pOXLObRJo1CNRtnu9qapxcwUYMO0x5oNzOu3f8=;
-        b=DxX+2FRibkjITcdvoBiq+gHFbxS/m+yoQjAbBKXn+twa5b/iHrAu7gjZFzyHb5F89B
-         V/VLaBAoykdkFPqqpCUI6FyGa9Viq6JmxeEYfWvgKqQAKrUP+WHalcy9RKnXfhrU93px
-         JrrsSKUtIpaj76K8+Li98cWFLXPnFv8vqFD3GVjNTVs6UGdDnnqny0QSOcN+IOH+rMuL
-         kh1STXsslW3HBDLpoovzios4OB6ymb1bvB9yYVbPrqSrWaz7rYMmAN/9cRRTWoZNU5Bz
-         oFmvNc1IJQOvc+ynuEhYccBCkdmUvhc/ti080sQtlNeyETFhEV0VkhRHGQe2Bc/lIzbD
-         Y/Dw==
-X-Gm-Message-State: AOAM530VpFwW8xuZdQ2rQsdKHm58Nt7V2EqVhm3T81o5jQIjCAjn+1qD
-        1lgE4KXoT76qW/qe63kJGwAyA/nl9ks=
-X-Google-Smtp-Source: ABdhPJz95ne6EWwzgNRzlY6Mujmdhh8ZGirFegOCcnweh0RLSpe2fL2I4YUJnx+3+doAKUvwJllUSg==
-X-Received: by 2002:a17:906:2844:: with SMTP id s4mr40624117ejc.66.1637958352603;
-        Fri, 26 Nov 2021 12:25:52 -0800 (PST)
+        bh=KY3v76vJAGWXxYiiVuMw8B/ERRQFpA6uxH7HrE6j2qI=;
+        b=y5mybrc53Ake8igUxSmWD0ArIZr0op2BHuR4ETHBq94ustK+7sWZXE1hifYuhBCTdv
+         la1hunxQDwD3269AbufHkt5aofKTUmScQIP+xGCqDfJBQmML5H7Rc1e2VGE4og80GPhl
+         PjL2Oo2dEY4G79vgfGfMCF36tcAE4gz7cqNR+uRXhCJQn6Tu7QURLA9X874p2RzdoPRB
+         IAbfWBPNZwppHYeyscCGUy5O++yzkb5VcVOvlyQ7sWPoPJfbn+bST+qQ2DyRHrRNBQKK
+         HNSTfh4kRbO91w1ULsG6FkpHUSospxqUt7bhpeAAwdCeWm+/nviknZVy3Tq0mVz52C14
+         OBpg==
+X-Gm-Message-State: AOAM531F/uzxsq+pfYkgiUW6TrMlMBAS0sF5FQZ4PQTyV8LiBtU/q353
+        1Hb8ow2lwfh7wq5sH9/+5wPnshAoCq8=
+X-Google-Smtp-Source: ABdhPJxrN3sdQZEzcMksMCSm7AsH8NuLFJ/jYCotBhdKdsqjJPLMjcPxk7zyhrxIWz/Gu02nwVXyCQ==
+X-Received: by 2002:a05:6402:4396:: with SMTP id o22mr50871576edc.263.1637977865079;
+        Fri, 26 Nov 2021 17:51:05 -0800 (PST)
 Received: from 127.0.0.1localhost ([85.255.237.101])
-        by smtp.gmail.com with ESMTPSA id aq14sm3604481ejc.23.2021.11.26.12.25.51
+        by smtp.gmail.com with ESMTPSA id u23sm4806644edi.88.2021.11.26.17.51.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Nov 2021 12:25:51 -0800 (PST)
+        Fri, 26 Nov 2021 17:51:04 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     asml.silence@gmail.com
-Subject: [PATCH liburing 1/1] test: skip-cqe with hardlinks
-Date:   Fri, 26 Nov 2021 20:25:42 +0000
-Message-Id: <fe5333e8832e6bacb5c9ca9ec8d0004a6fd2646d.1637958333.git.asml.silence@gmail.com>
+Subject: [PATCH liburing] man/io_uring_enter.2: document IOSQE_CQE_SKIP_SUCCESS
+Date:   Sat, 27 Nov 2021 01:50:25 +0000
+Message-Id: <381237725f0f09a2668ea7f38b804d5733595b1f.1637977800.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.34.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -60,130 +60,49 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Test IOSQE_CQE_SKIP_SUCCESS together with IOSQE_IO_HARDLINK.
+Add a section about IOSQE_CQE_SKIP_SUCCESS describing the behaviour and
+use cases.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- test/skip-cqe.c | 89 ++++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 88 insertions(+), 1 deletion(-)
+ man/io_uring_enter.2 | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/test/skip-cqe.c b/test/skip-cqe.c
-index 184932f..9de5bae 100644
---- a/test/skip-cqe.c
-+++ b/test/skip-cqe.c
-@@ -4,6 +4,7 @@
- #include <stdlib.h>
- #include <string.h>
- #include <fcntl.h>
-+#include <assert.h>
+diff --git a/man/io_uring_enter.2 b/man/io_uring_enter.2
+index 93b97e6..710e84e 100644
+--- a/man/io_uring_enter.2
++++ b/man/io_uring_enter.2
+@@ -1094,6 +1094,30 @@ are available and this flag is set, then the request will fail with
+ as the error code. Once a buffer has been used, it is no longer available in
+ the kernel pool. The application must re-register the given buffer again when
+ it is ready to recycle it (eg has completed using it). Available since 5.7.
++.TP
++.B IOSQE_CQE_SKIP_SUCCESS
++Instruct to not generate a CQE if the request completes successfully. If the
++request fails an appropriate CQE will be posted as usual and if there is no
++.B IOSQE_IO_HARDLINK,
++CQEs for all linked requests will be omitted. The notion
++of failure/success is opcode specific and is the same as with breaking chains
++of
++.B IOSQE_IO_LINK.
++One special case is when the request has a linked timeout, then the CQE
++generation for the linked timeout is decided solely by whether it has
++.B IOSQE_CQE_SKIP_SUCCESS
++set, regardless whether it timed out or
++was cancelled. In other words, if a linked timeout has the flag set, it's
++guaranteed to not post a CQE.
++
++The semantics is chosen to accommodate several use cases. First, when all but
++last requests of a normal link without linked timeouts are marked with the flag,
++it guarantees to post only one CQE per link. Also, it makes possible to suppress
++CQEs in cases where side effects of a successfully executed operation will be
++enough for the userspace to know the state of the system, e.g. writing to
++a synchronisation file.
++
++Available since 5.17.
  
- #include "liburing.h"
- 
-@@ -232,10 +233,79 @@ static int test_ltimeout_fire(struct io_uring *ring, bool async,
- 	return 0;
- }
- 
-+static int test_hardlink(struct io_uring *ring, int nr, int fail_idx,
-+			int skip_idx, bool hardlink_last)
-+{
-+	struct io_uring_cqe *cqe;
-+	struct io_uring_sqe *sqe;
-+	int ret, i;
-+
-+	assert(fail_idx < nr);
-+	assert(skip_idx < nr);
-+
-+	for (i = 0; i < nr; i++) {
-+		sqe = io_uring_get_sqe(ring);
-+		if (i == fail_idx)
-+			prep_exec_fail_req(sqe);
-+		else
-+			io_uring_prep_nop(sqe);
-+		if (i != nr - 1 || hardlink_last)
-+			sqe->flags |= IOSQE_IO_HARDLINK;
-+		if (i == skip_idx)
-+			sqe->flags |= IOSQE_CQE_SKIP_SUCCESS;
-+		sqe->user_data = i;
-+	}
-+
-+	ret = io_uring_submit(ring);
-+	if (ret != nr) {
-+		fprintf(stderr, "sqe submit failed: %d\n", ret);
-+		goto err;
-+	}
-+
-+	for (i = 0; i < nr; i++) {
-+		if (i == skip_idx && fail_idx != skip_idx)
-+			continue;
-+
-+		ret = io_uring_wait_cqe(ring, &cqe);
-+		if (ret != 0) {
-+			fprintf(stderr, "wait completion %d\n", ret);
-+			goto err;
-+		}
-+		if (cqe->user_data != i) {
-+			fprintf(stderr, "invalid user_data %d (%i)\n",
-+				(int)cqe->user_data, i);
-+			goto err;
-+		}
-+		if (i == fail_idx) {
-+			if (cqe->res >= 0) {
-+				fprintf(stderr, "req should've failed %d %d\n",
-+					(int)cqe->user_data, cqe->res);
-+				goto err;
-+			}
-+		} else {
-+			if (cqe->res) {
-+				fprintf(stderr, "req error %d %d\n",
-+					(int)cqe->user_data, cqe->res);
-+				goto err;
-+			}
-+		}
-+
-+		io_uring_cqe_seen(ring, cqe);
-+	}
-+
-+	if (io_uring_peek_cqe(ring, &cqe) >= 0) {
-+		fprintf(stderr, "single CQE expected %i\n", (int)cqe->user_data);
-+		goto err;
-+	}
-+	return 0;
-+err:
-+	return 1;
-+}
-+
- int main(int argc, char *argv[])
- {
- 	struct io_uring ring;
--	int ret, i;
-+	int ret, i, j, k;
- 	int mid_idx = LINK_SIZE / 2;
- 	int last_idx = LINK_SIZE - 1;
- 
-@@ -331,6 +401,23 @@ int main(int argc, char *argv[])
- 		}
- 	}
- 
-+	/* test 3 positions, start/middle/end of the link, i.e. indexes 0, 3, 6 */
-+	for (i = 0; i < 3; i++) {
-+		for (j = 0; j < 3; j++) {
-+			for (k = 0; k < 2; k++) {
-+				bool mark_last = k & 1;
-+
-+				ret = test_hardlink(&ring, 7, i * 3, j * 3, mark_last);
-+				if (ret) {
-+					fprintf(stderr, "test_hardlink failed"
-+							"fail %i skip %i mark last %i\n",
-+						i * 3, j * 3, k);
-+					return 1;
-+				}
-+			}
-+		}
-+	}
-+
- 	close(fds[0]);
- 	close(fds[1]);
- 	io_uring_queue_exit(&ring);
+ .PP
+ .I ioprio
 -- 
 2.34.0
 

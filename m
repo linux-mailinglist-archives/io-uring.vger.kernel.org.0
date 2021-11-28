@@ -2,67 +2,86 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C4C22460144
-	for <lists+io-uring@lfdr.de>; Sat, 27 Nov 2021 20:49:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E79446071E
+	for <lists+io-uring@lfdr.de>; Sun, 28 Nov 2021 16:31:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239815AbhK0Twf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 27 Nov 2021 14:52:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49500 "EHLO
+        id S1358104AbhK1Pei (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 28 Nov 2021 10:34:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233748AbhK0Tue (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 27 Nov 2021 14:50:34 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAF46C06173E
-        for <io-uring@vger.kernel.org>; Sat, 27 Nov 2021 11:47:19 -0800 (PST)
-Received: from mail.kernel.org (unknown [198.145.29.99])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4BBB960AC9
-        for <io-uring@vger.kernel.org>; Sat, 27 Nov 2021 19:47:19 +0000 (UTC)
-Received: by mail.kernel.org (Postfix) with ESMTPS id B0DD660230;
-        Sat, 27 Nov 2021 19:47:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1638042438;
-        bh=1dH6sceJXfozBIDkkunhBO7P+GkxyuBRhFaO8LN+CNg=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=pLcBANfucHTAxDbnXOKjT5Qh8UtTfz43PUNhxRhtEcR/M5/3xCXml4LefVFgxex6k
-         XqgfloLld4GoYDDVUFF+wRfYKOK4mgVEaOQ4bMAh+6JgMi9m8aQlNV/CCUvf9IKug5
-         T+0Y5iF4CRKKoeIQm3RNcYKt9AjN1OuxyCTFIk6l2uK1nvjzU7xMfsouHuwVejKnEU
-         PKq2ysrk5N1ASM+FwJV6MXNM2hMf/ZA+kr4s1E39TqoRyPe2fh4Ndcs0T/+eN+2XQZ
-         /vx6VuNDG69TECuWbuZ11MDRgqV+ltQD2V/nkYH83ndBQBYRzi2ZIFC+uHIYAW5FFA
-         DyqOFGhxSNE3Q==
-Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id AB6C6608AF;
-        Sat, 27 Nov 2021 19:47:18 +0000 (UTC)
-Subject: Re: [GIT PULL] Followup io_uring fixes for 5.16-rc3
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <45a2054b-0b02-c0c8-1c62-89e204144701@kernel.dk>
-References: <45a2054b-0b02-c0c8-1c62-89e204144701@kernel.dk>
-X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
-X-PR-Tracked-Message-Id: <45a2054b-0b02-c0c8-1c62-89e204144701@kernel.dk>
-X-PR-Tracked-Remote: git://git.kernel.dk/linux-block.git tags/io_uring-5.16-2021-11-27
-X-PR-Tracked-Commit-Id: f6223ff799666235a80d05f8137b73e5580077b9
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 86799cdfbcd2308cbad6c1dc983b81595b77b639
-Message-Id: <163804243869.4525.9074465469540248199.pr-tracker-bot@kernel.org>
-Date:   Sat, 27 Nov 2021 19:47:18 +0000
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        io-uring <io-uring@vger.kernel.org>
+        with ESMTP id S1358053AbhK1Pch (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 28 Nov 2021 10:32:37 -0500
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7653FC061574
+        for <io-uring@vger.kernel.org>; Sun, 28 Nov 2021 07:29:19 -0800 (PST)
+Received: by mail-wr1-x434.google.com with SMTP id v11so30950312wrw.10
+        for <io-uring@vger.kernel.org>; Sun, 28 Nov 2021 07:29:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=fOm81/G3fSjZlvypfH9ZARmztzXMFg6JzWtwqnfaxuQ=;
+        b=JlzekC6VRwv00TlfDmgP0GLxzOMW3hfbmTEAXeOH/cQRXl7diMhrmGumZC13XYlK4w
+         gViD/o+X5utRqTNLwdcQpFp2aKo1Mg2G/40KF9SZ8NUfTS/6LB4b4sTnr+E6GlbODiMe
+         RdL4sLx4VRO1yOocS6nJHHXbWEC9pmNmsS2tI156YUnfZbChkKBl57lu/08PdrE8Zpnd
+         pmKEYl7Hvs02RP67mNnnTnTv1XZppGCPywISQOqCTIjWmZkXaP+IVkfc6bl8zyGR32f9
+         TQP3TKk9hLfs0ooT9+CWByG50Z3OJrYuurE2siVspr1uR8Qf8rOUNuoc6o3sK4FPSojT
+         p4ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=fOm81/G3fSjZlvypfH9ZARmztzXMFg6JzWtwqnfaxuQ=;
+        b=QJOmPfqb32NHsQDO+KdyhtFooanO4tHQ1Gc9fizYsIaIN6jWfmNvHPcGHcXAvlrj6w
+         0J0VzKw/MG2FcvF9j709bhim/L+0YnZsYkLQwf50JvGp72A4kzBUzL2R8ove1KR4Ovtc
+         m4md3RkgJFX/xciqYsKjnOfFlamBvE1X0OPmUmygL4YS6it3d9AmlkNH8bL2tsa2b8LQ
+         YwKmMxHgMsC0ym9GVWpdEn0hALMOUGrByebiAZ7sxW4hkgoJZr+kKY/X72ekBxMkyu2W
+         w1j6x4IE/852DDY7U7zPSGoZmLYtxz8cxzX98wct2OCb62/QAyMEQ3wu94U6bB5m92P/
+         WQGA==
+X-Gm-Message-State: AOAM533No76FHcnlcfid3qoJ59kLYBEyZYAF4T8k1uDVLy4kay5Ufcvy
+        aWugebG+d6ERevfeIyOwqqkncy0LNgk=
+X-Google-Smtp-Source: ABdhPJw1Ck+dEIhWOeQYCGF8/SgXNZ+yVHlF7Ged/LaI3V8lirDYz55VJYrpb37dst7KgUqF9j5RmA==
+X-Received: by 2002:a5d:4411:: with SMTP id z17mr27504435wrq.59.1638113356468;
+        Sun, 28 Nov 2021 07:29:16 -0800 (PST)
+Received: from [192.168.8.198] ([85.255.234.162])
+        by smtp.gmail.com with ESMTPSA id bg12sm14848343wmb.5.2021.11.28.07.29.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 28 Nov 2021 07:29:16 -0800 (PST)
+Message-ID: <bc87a321-72bf-b24d-95c2-88d7c6d2e348@gmail.com>
+Date:   Sun, 28 Nov 2021 15:28:57 +0000
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.2
+Subject: Re: [PATCH v7] io_uring: batch completion in prior_task_list
+Content-Language: en-US
+To:     Hao Xu <haoxu@linux.alibaba.com>, Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
+References: <20211126133749.65516-1-haoxu@linux.alibaba.com>
+ <20211127152412.232005-1-haoxu@linux.alibaba.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20211127152412.232005-1-haoxu@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The pull request you sent on Sat, 27 Nov 2021 09:04:37 -0700:
+On 11/27/21 15:24, Hao Xu wrote:
+> In previous patches, we have already gathered some tw with
+> io_req_task_complete() as callback in prior_task_list, let's complete
+> them in batch while we cannot grab uring lock. In this way, we batch
+> the req_complete_post path.
+> 
+> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
+> ---
+> 
+> v6->v7
+> - use function pointer to reduce the if check everytime running a task
+> work in handle_prior_tw_list()
 
-> git://git.kernel.dk/linux-block.git tags/io_uring-5.16-2021-11-27
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/86799cdfbcd2308cbad6c1dc983b81595b77b639
-
-Thank you!
+Ifs are not a big problem, but retpolines may screw performance,
+let's stay with v6.
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Pavel Begunkov

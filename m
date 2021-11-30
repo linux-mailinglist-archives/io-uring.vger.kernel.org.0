@@ -2,91 +2,169 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CD092462B4C
-	for <lists+io-uring@lfdr.de>; Tue, 30 Nov 2021 04:48:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BDEE462CDE
+	for <lists+io-uring@lfdr.de>; Tue, 30 Nov 2021 07:37:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237956AbhK3DwE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 29 Nov 2021 22:52:04 -0500
-Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:49217 "EHLO
-        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229769AbhK3DwD (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 29 Nov 2021 22:52:03 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UypgNRP_1638244122;
-Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UypgNRP_1638244122)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 30 Nov 2021 11:48:42 +0800
-Subject: Re: [RFC 0/9] fixed worker: a new way to handle io works
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <20211124044648.142416-1-haoxu@linux.alibaba.com>
- <a8bbe4e1-9017-76a4-eddb-d6a6676f7290@gmail.com>
-From:   Hao Xu <haoxu@linux.alibaba.com>
-Message-ID: <1c900f05-5f3f-9649-5240-813b16daf8eb@linux.alibaba.com>
-Date:   Tue, 30 Nov 2021 11:48:41 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.14.0
+        id S238631AbhK3Gk3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 30 Nov 2021 01:40:29 -0500
+Received: from bee.birch.relay.mailchannels.net ([23.83.209.14]:38487 "EHLO
+        bee.birch.relay.mailchannels.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233463AbhK3Gk3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 30 Nov 2021 01:40:29 -0500
+X-Greylist: delayed 19707 seconds by postgrey-1.27 at vger.kernel.org; Tue, 30 Nov 2021 01:40:27 EST
+X-Sender-Id: dreamhost|x-authsender|cosmos@claycon.org
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+        by relay.mailchannels.net (Postfix) with ESMTP id 4ADD0860B0C;
+        Tue, 30 Nov 2021 06:37:06 +0000 (UTC)
+Received: from pdx1-sub0-mail-a246.dreamhost.com (unknown [127.0.0.6])
+        (Authenticated sender: dreamhost)
+        by relay.mailchannels.net (Postfix) with ESMTPA id 9FEE786095B;
+        Tue, 30 Nov 2021 06:37:05 +0000 (UTC)
+X-Sender-Id: dreamhost|x-authsender|cosmos@claycon.org
+Received: from pdx1-sub0-mail-a246.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+        by 100.105.57.78 (trex/6.4.3);
+        Tue, 30 Nov 2021 06:37:06 +0000
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|cosmos@claycon.org
+X-MailChannels-Auth-Id: dreamhost
+X-Wide-Eyed-Average: 4fa65c2e7eda005e_1638254226129_97219434
+X-MC-Loop-Signature: 1638254226129:1353081103
+X-MC-Ingress-Time: 1638254226129
+Received: from ps29521.dreamhostps.com (ps29521.dreamhostps.com [69.163.186.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: cosmos@claycon.org)
+        by pdx1-sub0-mail-a246.dreamhost.com (Postfix) with ESMTPSA id 4J3CDx24PPz2r;
+        Mon, 29 Nov 2021 22:37:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; d=claycon.org;
+        s=claycon.org; t=1638254225; bh=xK/BaFTAtQfL8gbSawi50m+prkU=;
+        h=Date:From:To:Cc:Subject:Content-Type;
+        b=dhYBGQIEIb7qLoK9CxNmpbrlhzUOvXoojFkuzACK03OwckQbBkVwmSJ+9DV1z/66n
+         uSiX1Ay7wk/q5XEsYP9j32cRjZRvv67VesgkacvtGBICynYfCUAKhSHN32+lqYxwbA
+         VC15Qi6bUAI+iRxO2K7vODyX1Rg1wSc6Od9X8G4I=
+Date:   Tue, 30 Nov 2021 00:37:03 -0600
+From:   Clay Harris <bugs@claycon.org>
+To:     Andreas Dilger <adilger@dilger.ca>
+Cc:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v1 0/5] io_uring: add xattr support
+Message-ID: <20211130063703.hszzs3tg5qb37fyj@ps29521.dreamhostps.com>
+References: <20211129221257.2536146-1-shr@fb.com>
+ <20211130010836.jqp5nuemrse43aca@ps29521.dreamhostps.com>
+ <6A6C8E58-BCFD-46E8-9AF7-B6635D959CB6@dilger.ca>
 MIME-Version: 1.0
-In-Reply-To: <a8bbe4e1-9017-76a4-eddb-d6a6676f7290@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6A6C8E58-BCFD-46E8-9AF7-B6635D959CB6@dilger.ca>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-在 2021/11/25 下午11:09, Pavel Begunkov 写道:
-> On 11/24/21 04:46, Hao Xu wrote:
->> There is big contension in current io-wq implementation. Introduce a new
->> type io-worker called fixed-worker to solve this problem. it is also a
->> new way to handle works. In this new system, works are dispatched to
->> different private queues rather than a long shared queue.
-> 
-> It's really great to temper the contention here, even though it looks
-> we are stepping onto the path of reinventing all the optimisations
-> solved long ago in other thread pools. Work stealing is probably
-Hmm, hope io_uring can do it better, a powerful iowq! :)
-> the next, but guess it's inevitable :)
-Probably yes :)
-> 
-> First four patchhes sound like a good idea, they will probably go
-> first. However, IIUC, the hashing is crucial and it's a must have.
-> Are you planning to add it? If not, is there an easy way to leave
-I'm planning to add it, still need some time to make it robust.
-> hashing working even if hashed reqs not going through those new
-> per-worker queues? E.g. (if it's not already as this...)
-> 
-> if (hashed) {
->      // fixed workers don't support hashing, so go through the
->      // old path and place into the shared queue.
->      enqueue_shared_queue();
-> } else
->      enqueue_new_path();
->
-Good idea.
+On Mon, Nov 29 2021 at 20:16:02 -0700, Andreas Dilger quoth thus:
 
+> 
+> > On Nov 29, 2021, at 6:08 PM, Clay Harris <bugs@claycon.org> wrote:
+> > 
+> > On Mon, Nov 29 2021 at 14:12:52 -0800, Stefan Roesch quoth thus:
+> > 
+> >> This adds the xattr support to io_uring. The intent is to have a more
+> >> complete support for file operations in io_uring.
+> >> 
+> >> This change adds support for the following functions to io_uring:
+> >> - fgetxattr
+> >> - fsetxattr
+> >> - getxattr
+> >> - setxattr
+> > 
+> > You may wish to consider the following.
+> > 
+> > Patching for these functions makes for an excellent opportunity
+> > to provide a better interface.  Rather than implement fXetattr
+> > at all, you could enable io_uring to use functions like:
+> > 
+> > int Xetxattr(int dfd, const char *path, const char *name,
+> > 	[const] void *value, size_t size, int flags);
+> 
+> This would naturally be named "...xattrat()"?
 
-> And last note, just fyi, it's easier to sell patches if you put
-> numbers in the cover letter
-Thanks Pavel, that's definitely clearer for people to review.
+Indeed!
 
-Cheers,
-Hao
+> > Not only does this simplify the io_uring interface down to two
+> > functions, but modernizes and fixes a deficit in usability.
+> > In terms of io_uring, this is just changing internal interfaces.
+> 
+> Even better would be the ability to get/set an array of xattrs in
+> one call, to avoid repeated path lookups in the common case of
+> handling multiple xattrs on a single file.
+
+True.
+
+> > Although unnecessary for io_uring, it would be nice to at least
+> > consider what parts of this code could be leveraged for future
+> > Xetxattr2 syscalls.
+s/Xetxattr2/Xetxattrat/
+
+> > 
+> >> Patch 1: fs: make user_path_at_empty() take a struct filename
+> >>  The user_path_at_empty filename parameter has been changed
+> >>  from a const char user pointer to a filename struct. io_uring
+> >>  operates on filenames.
+> >>  In addition also the functions that call user_path_at_empty
+> >>  in namei.c and stat.c have been modified for this change.
+> >> 
+> >> Patch 2: fs: split off setxattr_setup function from setxattr
+> >>  Split off the setup part of the setxattr function
+> >> 
+> >> Patch 3: fs: split off the vfs_getxattr from getxattr
+> >>  Split of the vfs_getxattr part from getxattr. This will
+> >>  allow to invoke it from io_uring.
+> >> 
+> >> Patch 4: io_uring: add fsetxattr and setxattr support
+> >>  This adds new functions to support the fsetxattr and setxattr
+> >>  functions.
+> >> 
+> >> Patch 5: io_uring: add fgetxattr and getxattr support
+> >>  This adds new functions to support the fgetxattr and getxattr
+> >>  functions.
+> >> 
+> >> 
+> >> There are two additional patches:
+> >>  liburing: Add support for xattr api's.
+> >>            This also includes the tests for the new code.
+> >>  xfstests: Add support for io_uring xattr support.
+> >> 
+> >> 
+> >> Stefan Roesch (5):
+> >>  fs: make user_path_at_empty() take a struct filename
+> >>  fs: split off setxattr_setup function from setxattr
+> >>  fs: split off the vfs_getxattr from getxattr
+> >>  io_uring: add fsetxattr and setxattr support
+> >>  io_uring: add fgetxattr and getxattr support
+> >> 
+> >> fs/internal.h                 |  23 +++
+> >> fs/io_uring.c                 | 325 ++++++++++++++++++++++++++++++++++
+> >> fs/namei.c                    |   5 +-
+> >> fs/stat.c                     |   7 +-
+> >> fs/xattr.c                    | 114 +++++++-----
+> >> include/linux/namei.h         |   4 +-
+> >> include/uapi/linux/io_uring.h |   8 +-
+> >> 7 files changed, 439 insertions(+), 47 deletions(-)
+> >> 
+> >> 
+> >> Signed-off-by: Stefan Roesch <shr@fb.com>
+> >> base-commit: c2626d30f312afc341158e07bf088f5a23b4eeeb
+> >> --
+> >> 2.30.2
 > 
 > 
->> Hao Xu (9):
->>    io-wq: decouple work_list protection from the big wqe->lock
->>    io-wq: reduce acct->lock crossing functions lock/unlock
->>    io-wq: update check condition for lock
->>    io-wq: use IO_WQ_ACCT_NR rather than hardcoded number
->>    io-wq: move hash wait entry to io_wqe_acct
->>    io-wq: add infra data structure for fix workers
->>    io-wq: implement fixed worker logic
->>    io-wq: batch the handling of fixed worker private works
->>    io-wq: small optimization for __io_worker_busy()
->>
->>   fs/io-wq.c | 415 ++++++++++++++++++++++++++++++++++++++---------------
->>   fs/io-wq.h |   5 +
->>   2 files changed, 308 insertions(+), 112 deletions(-)
->>
+> Cheers, Andreas
 > 
+> 
+> 
+> 
+> 
+
 

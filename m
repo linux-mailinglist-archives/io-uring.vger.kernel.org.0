@@ -2,122 +2,182 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CE3AC4656C2
-	for <lists+io-uring@lfdr.de>; Wed,  1 Dec 2021 20:52:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA6684656CE
+	for <lists+io-uring@lfdr.de>; Wed,  1 Dec 2021 20:59:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238837AbhLAT4Q (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 1 Dec 2021 14:56:16 -0500
-Received: from bee.birch.relay.mailchannels.net ([23.83.209.14]:12207 "EHLO
-        bee.birch.relay.mailchannels.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1352727AbhLAT4M (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 1 Dec 2021 14:56:12 -0500
-X-Sender-Id: dreamhost|x-authsender|cosmos@claycon.org
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-        by relay.mailchannels.net (Postfix) with ESMTP id D95218C1E0C;
-        Wed,  1 Dec 2021 19:52:41 +0000 (UTC)
-Received: from pdx1-sub0-mail-a238.dreamhost.com (unknown [127.0.0.6])
-        (Authenticated sender: dreamhost)
-        by relay.mailchannels.net (Postfix) with ESMTPA id 60BAC8C1DEC;
-        Wed,  1 Dec 2021 19:52:41 +0000 (UTC)
-X-Sender-Id: dreamhost|x-authsender|cosmos@claycon.org
-Received: from pdx1-sub0-mail-a238.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-        by 100.114.196.229 (trex/6.4.3);
-        Wed, 01 Dec 2021 19:52:41 +0000
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|cosmos@claycon.org
-X-MailChannels-Auth-Id: dreamhost
-X-Callous-Keen: 60690afb720acca1_1638388361739_2254961659
-X-MC-Loop-Signature: 1638388361739:3640251298
-X-MC-Ingress-Time: 1638388361739
-Received: from ps29521.dreamhostps.com (ps29521.dreamhostps.com [69.163.186.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: cosmos@claycon.org)
-        by pdx1-sub0-mail-a238.dreamhost.com (Postfix) with ESMTPSA id 4J48rS66q3z2K;
-        Wed,  1 Dec 2021 11:52:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; d=claycon.org;
-        s=claycon.org; t=1638388361; bh=06EKC+aL0nYBr8NNM3/0TaMmdG0=;
-        h=Date:From:To:Cc:Subject:Content-Type;
-        b=Cjyc9wKctz/d2tTx8tQ3Py0oHEhngo8erzhnfIbH0HkmXQCg0IejkJg0/yDfyzj2N
-         9Yfj2QBGhd/NjqjzGHBuDEMEXgYPcHBiXB1/s78/jRUVxb2o284JL8CmsHSk3nSgya
-         Ga3dYxumWt5MuSSk22ECCKhTwqvpYa1vxnA7WrP4=
-Date:   Wed, 1 Dec 2021 13:52:39 -0600
-From:   Clay Harris <bugs@claycon.org>
-To:     Stefan Metzmacher <metze@samba.org>
-Cc:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v1 0/5] io_uring: add xattr support
-Message-ID: <20211201195239.mlgb4qwj2hk2d3tv@ps29521.dreamhostps.com>
-References: <20211129221257.2536146-1-shr@fb.com>
- <20211130010836.jqp5nuemrse43aca@ps29521.dreamhostps.com>
- <2ba45a80-ce7a-a105-49e5-5507b4453e05@fb.com>
- <56e1aa77-c4c1-2c37-9fc0-96cf0dc0f289@samba.org>
+        id S236764AbhLAUCd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 1 Dec 2021 15:02:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38676 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1352739AbhLAUC3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 1 Dec 2021 15:02:29 -0500
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B254EC061574;
+        Wed,  1 Dec 2021 11:59:06 -0800 (PST)
+Received: by mail-wr1-x432.google.com with SMTP id l16so54778053wrp.11;
+        Wed, 01 Dec 2021 11:59:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=eBzFPvXsnl0PWl/qQRoBt7zd2fQQiSK0790Spm1vPuU=;
+        b=e5zgUC1MwKZrjDzWQKvKHRyhyexQQawLcDDPtwBX2GViAy7EmAjvAveyqzSA8L8uVM
+         zQ+Ttwg3ycFaVRgmGUI/LIESOJhILNdB7vwyOGjuOSGoklbtV14alTmKDmHaJ6FadEih
+         XRNyZOuF+P8I5jvmO9IWTGwg3fV6jDM1yKRikFrL+YnEkhJs7mJEmTuOTyvB3NhqQ5rl
+         SrqeqsVBb6jPXHsh3+ErNTxUrLroOYCqBCL46PA8B63kbwClqKk8QGExmvJ24GG3D2t9
+         pskd1CRvEztu/+NwZYjLMTFCq5irWHhSrR0sTJtYX0yiNO0ScIuv+lVklaI9hRAS3zcz
+         yEUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=eBzFPvXsnl0PWl/qQRoBt7zd2fQQiSK0790Spm1vPuU=;
+        b=ejjBMRLe7Ft11L3cwV3ZZQMtMNStjD3MK6woeeKZML7wna70EN/A7GAs4tKNbtDjaX
+         A21ARHvndronAPI4ARLIvn9P8uRInVw8AyiLc70qYWkwZLSP7iUzLl3A7OhJnBoR+pgi
+         ShkYKqQsXRjx07zwvS7xMblU3UcclTZX1+vaA9Beox3NJxxIpscUHBGCEtsSMYbMYsTb
+         75jjApKnHr3jveKyyQee2tiUqS3zvJWKYmgRb3l5zNhbuUtbrYby8Ch6hjC3ocC/0Tcg
+         /CXlTqfdIITNLG5KuAm/WVOe9Dpl3L4e1yUGD8snO8M3GNJLNYSeuu+gz2XHHWsaoJ6S
+         8lJg==
+X-Gm-Message-State: AOAM530UPgvtHyRqQY9JHH9sZAQom+9WFv2DzCDHLThc1BRi9l/qhMYH
+        u1wxoBLbEUbc0YrJzX1JIidJbbV6qPQ=
+X-Google-Smtp-Source: ABdhPJwwsyx8LJcAfk1LKU8LdXM37VTlxi5NgzhBEq+mG1a4iAqNaQoCyT5QEKzCf3M/loHesNxhrQ==
+X-Received: by 2002:a5d:4bc9:: with SMTP id l9mr9196010wrt.503.1638388745297;
+        Wed, 01 Dec 2021 11:59:05 -0800 (PST)
+Received: from [192.168.8.198] ([185.69.144.129])
+        by smtp.gmail.com with ESMTPSA id e18sm620020wrs.48.2021.12.01.11.59.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 01 Dec 2021 11:59:04 -0800 (PST)
+Message-ID: <0d82f4e2-730f-4888-ec82-2354ffa9c2d8@gmail.com>
+Date:   Wed, 1 Dec 2021 19:59:00 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <56e1aa77-c4c1-2c37-9fc0-96cf0dc0f289@samba.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.2
+Subject: Re: [RFC 00/12] io_uring zerocopy send
+Content-Language: en-US
+To:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc:     io-uring@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        David Ahern <dsahern@kernel.org>, Jens Axboe <axboe@kernel.dk>
+References: <cover.1638282789.git.asml.silence@gmail.com>
+ <CA+FuTSf-N08d6pcbie2=zFcQJf3_e2dBJRUZuop4pOhNfSANUA@mail.gmail.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <CA+FuTSf-N08d6pcbie2=zFcQJf3_e2dBJRUZuop4pOhNfSANUA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Dec 01 2021 at 13:19:03 +0100, Stefan Metzmacher quoth thus:
+On 12/1/21 18:10, Willem de Bruijn wrote:
+>> # performance:
+>>
+>> The worst case for io_uring is (4), still 1.88 times faster than
+>> msg_zerocopy (2), and there are a couple of "easy" optimisations left
+>> out from the patchset. For 4096 bytes payload zc is only slightly
+>> outperforms non-zc version, the larger payload the wider gap.
+>> I'll get more numbers next time.
+> 
+>> Comparing (3) and (4), and (5) vs (6), @flush doesn't affect it too
+>> much. Notification posting is not a big problem for now, but need
+>> to compare the performance for when io_uring_tx_zerocopy_callback()
+>> is called from IRQ context, and possible rework it to use task_work.
+>>
+>> It supports both, regular buffers and fixed ones, but there is a bunch of
+>> optimisations exclusively for io_uring's fixed buffers. For comparison,
+>> normal vs fixed buffers (@nr_reqs=8, @flush=0): 75677 vs 116079 MB/s
+>>
+>> 1) we pass a bvec, so no page table walks.
+>> 2) zerocopy_sg_from_iter() is just slow, adding a bvec optimised version
+>>     still doing page get/put (see 4/12) slashed 4-5%.
+>> 3) avoiding get_page/put_page in 5/12
+>> 4) completion events are posted into io_uring's CQ, so no
+>>     extra recvmsg for getting events
+>> 5) no poll(2) in the code because of io_uring
+>> 6) lot of time is spent in sock_omalloc()/free allocating ubuf_info.
+>>     io_uring caches the structures reducing it to nearly zero-overhead.
+> 
+> Nice set of complementary optimizations.
+> 
+> We have looked at adding some of those as independent additions to
+> msg_zerocopy before, such as long-term pinned regions. One issue with
+> that is that the pages must remain until the request completes,
+> regardless of whether the calling process is alive. So it cannot rely
+> on a pinned range held by a process only.
+> 
+> If feasible, it would be preferable if the optimizations can be added
+> to msg_zerocopy directly, rather than adding a dependency on io_uring
+> to make use of them. But not sure how feasible that is. For some, like
+> 4 and 5, the answer is clearly it isn't.  6, it probably is?
 
-> Hi Stefan,
-> 
-> > On 11/29/21 5:08 PM, Clay Harris wrote:
-> >> On Mon, Nov 29 2021 at 14:12:52 -0800, Stefan Roesch quoth thus:
-> >>
-> >>> This adds the xattr support to io_uring. The intent is to have a more
-> >>> complete support for file operations in io_uring.
-> >>>
-> >>> This change adds support for the following functions to io_uring:
-> >>> - fgetxattr
-> >>> - fsetxattr
-> >>> - getxattr
-> >>> - setxattr
-> >>
-> >> You may wish to consider the following.
-> >>
-> >> Patching for these functions makes for an excellent opportunity
-> >> to provide a better interface.  Rather than implement fXetattr
-> >> at all, you could enable io_uring to use functions like:
-> >>
-> >> int Xetxattr(int dfd, const char *path, const char *name,
-> >> 	[const] void *value, size_t size, int flags);
-> >>
-> >> Not only does this simplify the io_uring interface down to two
-> >> functions, but modernizes and fixes a deficit in usability.
-> >> In terms of io_uring, this is just changing internal interfaces.
-> >>
-> >> Although unnecessary for io_uring, it would be nice to at least
-> >> consider what parts of this code could be leveraged for future
-> >> Xetxattr2 syscalls.
-> > 
-> > Clay, 
-> > 
-> > while we can reduce the number of calls to 2, providing 4 calls will
-> > ease the adoption of the interface. 
-> > 
-> > If you look at the userspace interface in liburing, you can see the
-> > following function signature:
-> > 
-> > static inline void io_uring_prep_fgetxattr(struct io_uring_sqe *sqe,
-> > 		                           int         fd,
-> > 					   const char *name,
-> > 					   const char *value,
-> > 					   size_t      len)
-> > 
-> > This is very similar to what you proposed.
-> 
-> What's with lsetxattr and lgetxattr, why are they missing.
-Do any filesystems even support xattrs on symbolic links?
+And for 3), io_uring has a complex infra for keeping pages alive,
+the additional overhead is one almost percpu_ref_put() per
+request/notification, or even better in common cases. Not sure it's
+feasible/possible with current msg_zerocopy. Also, io_uring's
+ubufs are kept as a part of a larger structure, which may complicate
+things.
 
-> I'd assume that even 6 helper functions in liburing would be able
-> to use just 2 low level iouring opcodes.
+
+>> # discussion / questions
+>>
+>> I haven't got a grasp on many aspects of the net stack yet, so would
+>> appreciate feedback in general and there are a couple of questions
+>> thoughts.
+>>
+>> 1) What are initialisation rules for adding a new field into
+>> struct mshdr? E.g. many users (mainly LLD) hand code initialisation not
+>> filling all the fields.
+>>
+>> 2) I don't like too much ubuf_info propagation from udp_sendmsg() into
+>> __ip_append_data() (see 3/12). Ideas how to do it better?
 > 
-> *listxattr is also missing, are there plans for them?
+> Agreed that both of these are less than ideal.
 > 
-> metze
+> I can't comment too much on the io_uring aspect of the patch series.
+> But msg_zerocopy is probably used in a small fraction of traffic (even
+> if a high fraction for users who care about its benefits). We have to
+> try to minimize the cost incurred on the general hot path.
+
+One thing, I can hide the initial ubuf check in the beginning of
+__ip_append_data() under a common
+
+if (sock_flag(sk, SOCK_ZEROCOPY)) {}
+
+But as SOCK_ZEROCOPY is more of a design problem workaround,
+tbh not sure I like from the API perspective. Thoughts? I hope
+I can also shuffle some of the stuff in 5/12 out of the
+hot path, need to dig a bit deeper.
+
+> I was going to suggest using the standard msg_zerocopy ubuf_info
+> alloc/free mechanism. But you explicitly mention seeing omalloc/ofree
+> in the cycle profile.
+> 
+> It might still be possible to somehow signal to msg_zerocopy_alloc
+> that this is being called from within an io_uring request, and
+> therefore should use a pre-existing uarg with different
+> uarg->callback. If nothing else, some info can be passed as a cmsg.
+> But perhaps there is a more direct pointer path to follow from struct
+> sk, say? Here my limited knowledge of io_uring forces me to hand wave.
+
+One thing I consider important though is to be able to specify a
+ubuf per request, but not somehow registering it in a socket. It's
+more flexible from the userspace API perspective. It would also need
+constant register/unregister, and there are concerns with
+referencing/cancellations, that's where it came from in the first
+place.
+
+IOW, I'd really prefer to pass it down on a per request basis.
+
+> Probably also want to see how all this would integrate with TCP. In
+> some ways, that might be easier, as it does not have the indirection
+> through ip_make_skb, etc.
+
+Worked well in general, but patches I used should be a broken for
+some input after adding 5/12, so need some work. will send next time.
+
+-- 
+Pavel Begunkov

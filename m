@@ -2,51 +2,51 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B6AEB4645EE
-	for <lists+io-uring@lfdr.de>; Wed,  1 Dec 2021 05:24:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0AFB4645F7
+	for <lists+io-uring@lfdr.de>; Wed,  1 Dec 2021 05:24:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346597AbhLAE1y (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 30 Nov 2021 23:27:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49558 "EHLO
+        id S232052AbhLAE2L (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 30 Nov 2021 23:28:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346606AbhLAE1i (ORCPT
+        with ESMTP id S1346608AbhLAE1i (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Tue, 30 Nov 2021 23:27:38 -0500
-Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AECFFC06175A;
-        Tue, 30 Nov 2021 20:24:01 -0800 (PST)
-Received: by mail-pg1-x541.google.com with SMTP id s37so12537553pga.9;
-        Tue, 30 Nov 2021 20:24:01 -0800 (PST)
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C9FDC06175B;
+        Tue, 30 Nov 2021 20:24:04 -0800 (PST)
+Received: by mail-pf1-x444.google.com with SMTP id n26so23004876pff.3;
+        Tue, 30 Nov 2021 20:24:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=/GG26fljeFe9x6wzQv8DNbXQNyp/pOqmJex7xSjYwQY=;
-        b=SnJBUkTHcfWk6urUJMXJzXclIQBnC03ctgh2DcPP4EvvRRWbxLtOPIQbY9ehhmUIo6
-         JIofsap0RTaSSRNEsvdf2drwr4IWqIGCeahfgCWOUMtu2UtFEumIr8mqIfHa0sXyHG6O
-         iTULkA/H3DFGKAFuGkLGGh/g+5qWBTPRGUQznCERwhz7hdQO6fS7B0Pc8+R3suWySvXR
-         PniLlgrUKlAUNz0LQTFf+N9BthY80KchPRjsmcTz18Yu9vo/jOFtpJ5+SGf8RG4C+oqy
-         f6F8RUbfBljHq1tLfqn/JbnUF+zoN+1KfFZYuVptQ8SpHG50P8EIKCw4qjOdRAIQuByY
-         DCBA==
+        bh=y7IcXh7hkKTNMPxt6YZo1bjq2Oa0ASN2LOQPZecX9IA=;
+        b=G+voL6wJw3c+eMoG3p9xj5cgifda2ejkqCJqCQLLeSaGHJ+JKnfVBotRvVX/0sOx7I
+         6C7aicypaCP+nfwUqw+9GgnLaR2+E0Z9BaOMfv5bxQ/+EiZP9sEE2pDKFhmbp50KMs1i
+         WCLE0WBK5FO9w9UtFchHY1Sf2OIuxQao92ENqR5m8o70J7D/TD5/ffzmblQ6eg3adjbx
+         kx7AGLbanbtH/jgwLvctaEdQlBzpXpf0aufSTxSocbY6r2+CE+20IiWSqy1KK3Cr4SSe
+         DX1ODKLbUZL45dcKPm3Sxm7cmEQfhNT3qin/o1eFpYV2+Pl3PaZ9kcURRsH2PeAJepX/
+         DI9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=/GG26fljeFe9x6wzQv8DNbXQNyp/pOqmJex7xSjYwQY=;
-        b=1qihPktxkVCuF8NURhMgof9KWIQOm7ChqFINhHIsODpuvDRWUcsmALz45GmDfIrE3X
-         G4e33Uwn0ZHVnmT0cqIzokKoGg+mDM9X+0/uuLrl0yxgLaOMht5gu36F7Aqe3duNbHFD
-         k7yQslxdw+eH0VZw0XmS5aYvIzzkCeFfWbTmZhfUO7zf/1wJhJA708hyy4rp3yIMHvsF
-         wLproyKjOxVDbqZVG+L/d0YF8KM+832trSxfMj7OzKc6yasq1hyRoTIehuKrOHp0XzV4
-         QdA0JLVsBUrV0ciBntIXja1NODvqaEtzD/YXd1C8msTwnLvrJolyar2KZZgVYumFc1W3
-         p2bQ==
-X-Gm-Message-State: AOAM531tg1/zTIquPFRXZy9ZvFwYEuugnHbqoDQ2YSemm4+jE8f6adxt
-        WEqTbi6TFxW8njmeGLiX3xweXpHKaCY=
-X-Google-Smtp-Source: ABdhPJzzZpX3Lrd931VgUe8gGDP/OUZQWzFevWu/CavZhJvUCF5YDd7DWx9Ma0rJZRvjQxIJhFjMUA==
-X-Received: by 2002:a65:4bc6:: with SMTP id p6mr2812040pgr.544.1638332641147;
-        Tue, 30 Nov 2021 20:24:01 -0800 (PST)
+        bh=y7IcXh7hkKTNMPxt6YZo1bjq2Oa0ASN2LOQPZecX9IA=;
+        b=Ae+ZirFiA8s+tt0Sl9LaLA16zBKM19rg3lOBCEslue1UdYr24K1ofI6ATFiJSHHBqL
+         b06GEodYBrjrFhCqyQG5kjWFN6OwYNwC+6IZy9sryXTZORuUzaa9hYO5VfHWZ8b4sx5l
+         BS71DleUw2fMO2Zm5CEFJtHsiN3LOL9qZxWabTE++XVpXp086DCY60++ZGADRs5uahxa
+         CnhYrsY3nJQW7F5jx2DAgth8IJFpJA7SzpFEXUhihUSUvl1jE5xDRnWMUQE4GzcRFYV0
+         yo8wSU3lj4huP1B0VF2oBg16jHyrAZqlNvM61yvlLOl7Y8VW5tK40yhx1XKInPHvRuku
+         cn0w==
+X-Gm-Message-State: AOAM532zWHr+Y0TOkwpszeRXEZrgu4WAT+5sB9U6eL2P8QtSeZahn5CK
+        3R5IpdExtliTIZym3reak1VSIcIv29s=
+X-Google-Smtp-Source: ABdhPJxLaJnjlMXWkC24b57twGFlBGMgy582WfgYrQLbB/lD8ZTWNvk/AyBOttqbm/xjQsyogkyLLw==
+X-Received: by 2002:a05:6a00:234a:b0:49f:c0f7:f474 with SMTP id j10-20020a056a00234a00b0049fc0f7f474mr3616842pfj.64.1638332644067;
+        Tue, 30 Nov 2021 20:24:04 -0800 (PST)
 Received: from localhost ([2405:201:6014:d064:3d4e:6265:800c:dc84])
-        by smtp.gmail.com with ESMTPSA id qe2sm4538986pjb.42.2021.11.30.20.24.00
+        by smtp.gmail.com with ESMTPSA id g1sm8435444pgm.23.2021.11.30.20.24.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Nov 2021 20:24:00 -0800 (PST)
+        Tue, 30 Nov 2021 20:24:03 -0800 (PST)
 From:   Kumar Kartikeya Dwivedi <memxor@gmail.com>
 To:     bpf@vger.kernel.org
 Cc:     Alexei Starovoitov <ast@kernel.org>,
@@ -57,137 +57,43 @@ Cc:     Alexei Starovoitov <ast@kernel.org>,
         Alexander Mikhalitsyn <alexander@mihalicyn.com>,
         Andrei Vagin <avagin@gmail.com>, criu@openvz.org,
         io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH bpf-next v3 08/10] selftests/bpf: Test partial reads for io_uring, epoll iterators
-Date:   Wed,  1 Dec 2021 09:53:31 +0530
-Message-Id: <20211201042333.2035153-9-memxor@gmail.com>
+Subject: [PATCH bpf-next v3 09/10] selftests/bpf: Fix btf_dump test for bpf_iter_link_info
+Date:   Wed,  1 Dec 2021 09:53:32 +0530
+Message-Id: <20211201042333.2035153-10-memxor@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20211201042333.2035153-1-memxor@gmail.com>
 References: <20211201042333.2035153-1-memxor@gmail.com>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4120; h=from:subject; bh=aaB79qIuMMM7CbUZq9r3qLVaIyomUA09O47gys8VzJY=; b=owEBbQKS/ZANAwAIAUzgyIZIvxHKAcsmYgBhpvYyIvWjAWHOYOzMoD2ZREvPrPxvUqFa24X82mna LbuaSzaJAjMEAAEIAB0WIQRLvip+Buz51YI8YRFM4MiGSL8RygUCYab2MgAKCRBM4MiGSL8RypZIEA CR3mW3w4TBLpLOUaxrQ2T2UfBGffRRTxgV3Vo4MoGuYCOpdoYiSKh0FAQd38pZZ9i7K/X0T1+uBC0q 14ezpGDLl1SbiXNe4KZzqBQ6UWN1Q3G7kgOSdwYtir9Z9uDTTZ+GNCVlyhaB6Ut1eZmsvQhYXA/VMf XVXsgGaJfcjhg1NrUZqDD90sfaPLAH085IavERpfNOK3FUw2Vis8SDpGHtVLj+dS9lboxdXpehGk2K GGqvdEews0VF9uRivLIz8rd/w6pactdirOTZjQqTn0GbkIU84sDLAMUeXcyt9IJl9BTG9BBmiJsFTc TbqTjJts04aUEZ/3JSpCv5ULYsrnQ89nHedL91pvqCAnyqtBBky4KgWb/bn0HaJqyAFC9RnkcCFjLG ogBePSCceufxFl2joHm36v5o4JuL8RzRCeccDFocvcOTEPHhto4LuGSm7Eeql1+TGTln5QeO+xqgID 7J3/io4Sq+j5Xfd+36jLo1AL/SKWH7V5stF8uxWT0+vsCMcuHezb4FhoVETOuwvpQthyDWRClMAiRt 5uVTcfGvdoXv1WkgKput9St+Ozk6cjPkHLCUKu4IfM9DmevmZhRfH2opJYcAX+pfJSdHzMXb336Lcr E+RgbOPWq66u43PvyHRL5WP8xt4ULQAuQctpFKNTjHRIFEvqE5DQ023hRKaQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1199; h=from:subject; bh=QE4SyOAFzzmkq+EmLnqIhi3J/rXlE8epdKkKQ0ddjk0=; b=owEBbQKS/ZANAwAIAUzgyIZIvxHKAcsmYgBhpvYyHodypS5dcJxgGWq6Gcm01FTC9AoUN7RCDrNE /m9lpO2JAjMEAAEIAB0WIQRLvip+Buz51YI8YRFM4MiGSL8RygUCYab2MgAKCRBM4MiGSL8RysTEEA DCmZCmJmDZDxqlorY0oGjDyVOz8xicGLWGmSH307rEylOEUw85KOGpd3eIMfiK/Nnqg9rK5s2wHPyc /ARNL1eox1+ygPgQQUQ0haEENVe149mNIY/bB5clUNBw+8dhw26Jt+Vy2LepNOEYDIAsIC+y/s374r qh6XZm2I8MsXRuSTgWWdV71OsJ221i9gMWFW+H/ReIFwLFg1Nh5n6suRxc+bv6FdTUpn7zERR7kxxO v4c6C8k3f2fuhfQ9JMcnWu4QSiJsYfGQWVShUA/alh0W6ah9MvRYJvyfpUUL+v7ObgbCYbicBIb/pl RC4aSphiHmGciptihLOImE6FmlEw3HAdz/kIpPtLarR6fEXgAIGfeClA8LIu5YtJRj/v6eh3WK4vI0 J8nawV0icVnf9wjjMvRdKF2Ge8cYv8lmHVYnGGiLK61qeGrq0BtCBxBycYrFRmS5Kv07SSlfwqAnHm I0T+D5giFEj0fLONEz1X8U0h1tHGpnrH4Ha/YSt0LDHHQ0ZPN6uWHJhAQwls+gcoVHrc9QFxrt/amO hNfMhKbhGZuCEkRNYHpVDJFOf7452KtXXmLPHWomWisxX7E/c0Kha4lYlLFFJlH6wg1bBnRHVYyadm 8CK3YEOupz+hdjA4nV9A70shbJW6vHjAjpWhf9B1PR22DK1pa0fRWf4Rd+Bw==
 X-Developer-Key: i=memxor@gmail.com; a=openpgp; fpr=4BBE2A7E06ECF9D5823C61114CE0C88648BF11CA
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Ensure that the output is consistent in face of partial reads that
-return to userspace and then resume again later. To this end, we do
-reads in 1-byte chunks, which is a bit stupid in real life, but works
-well to simulate interrupted iteration. This also tests case where
-seq_file buffer is consumed (after seq_printf) on interrupted read
-before iterator invoked BPF prog again.
+Since we changed the definition while adding io_uring and epoll iterator
+support, adjust the selftest to check against the updated definition.
 
 Signed-off-by: Kumar Kartikeya Dwivedi <memxor@gmail.com>
 ---
- .../selftests/bpf/prog_tests/bpf_iter.c       | 33 ++++++++++++-------
- 1 file changed, 22 insertions(+), 11 deletions(-)
+ tools/testing/selftests/bpf/prog_tests/btf_dump.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/bpf_iter.c b/tools/testing/selftests/bpf/prog_tests/bpf_iter.c
-index cc0555c5b373..3a07fdf31874 100644
---- a/tools/testing/selftests/bpf/prog_tests/bpf_iter.c
-+++ b/tools/testing/selftests/bpf/prog_tests/bpf_iter.c
-@@ -73,13 +73,13 @@ static void do_dummy_read(struct bpf_program *prog)
- 	bpf_link__destroy(link);
- }
+diff --git a/tools/testing/selftests/bpf/prog_tests/btf_dump.c b/tools/testing/selftests/bpf/prog_tests/btf_dump.c
+index 9e26903f9170..1678b2c49f78 100644
+--- a/tools/testing/selftests/bpf/prog_tests/btf_dump.c
++++ b/tools/testing/selftests/bpf/prog_tests/btf_dump.c
+@@ -736,7 +736,9 @@ static void test_btf_dump_struct_data(struct btf *btf, struct btf_dump *d,
  
--static int read_fd_into_buffer(int fd, char *buf, int size)
-+static int __read_fd_into_buffer(int fd, char *buf, int size, size_t chunks)
- {
- 	int bufleft = size;
- 	int len;
+ 	/* union with nested struct */
+ 	TEST_BTF_DUMP_DATA(btf, d, "union", str, union bpf_iter_link_info, BTF_F_COMPACT,
+-			   "(union bpf_iter_link_info){.map = (struct){.map_fd = (__u32)1,},}",
++			   "(union bpf_iter_link_info){.map = (struct){.map_fd = (__u32)1,},"
++			   ".io_uring = (struct){.io_uring_fd = (__u32)1,},"
++			   ".epoll = (struct){.epoll_fd = (__u32)1,},}",
+ 			   { .map = { .map_fd = 1 }});
  
- 	do {
--		len = read(fd, buf, bufleft);
-+		len = read(fd, buf, chunks ?: bufleft);
- 		if (len > 0) {
- 			buf += len;
- 			bufleft -= len;
-@@ -89,6 +89,11 @@ static int read_fd_into_buffer(int fd, char *buf, int size)
- 	return len < 0 ? len : size - bufleft;
- }
- 
-+static int read_fd_into_buffer(int fd, char *buf, int size)
-+{
-+	return __read_fd_into_buffer(fd, buf, size, 0);
-+}
-+
- static void test_ipv6_route(void)
- {
- 	struct bpf_iter_ipv6_route *skel;
-@@ -1301,7 +1306,7 @@ static int io_uring_inode_match(int link_fd, int io_uring_fd)
- 	return 0;
- }
- 
--void test_io_uring_buf(void)
-+void test_io_uring_buf(bool partial)
- {
- 	DECLARE_LIBBPF_OPTS(bpf_iter_attach_opts, opts);
- 	char rbuf[4096], buf[4096] = "B\n";
-@@ -1375,7 +1380,7 @@ void test_io_uring_buf(void)
- 	if (!ASSERT_GE(iter_fd, 0, "bpf_iter_create"))
- 		goto end_close_fd;
- 
--	ret = read_fd_into_buffer(iter_fd, rbuf, sizeof(rbuf));
-+	ret = __read_fd_into_buffer(iter_fd, rbuf, sizeof(rbuf), partial);
- 	if (!ASSERT_GT(ret, 0, "read_fd_into_buffer"))
- 		goto end_close_iter;
- 
-@@ -1396,7 +1401,7 @@ void test_io_uring_buf(void)
- 	bpf_iter_io_uring__destroy(skel);
- }
- 
--void test_io_uring_file(void)
-+void test_io_uring_file(bool partial)
- {
- 	int reg_files[] = { [0 ... 7] = -1 };
- 	DECLARE_LIBBPF_OPTS(bpf_iter_attach_opts, opts);
-@@ -1464,7 +1469,7 @@ void test_io_uring_file(void)
- 	if (!ASSERT_OK(ret, "io_uring_register_files"))
- 		goto end_iter_fd;
- 
--	ret = read_fd_into_buffer(iter_fd, rbuf, sizeof(rbuf));
-+	ret = __read_fd_into_buffer(iter_fd, rbuf, sizeof(rbuf), partial);
- 	if (!ASSERT_GT(ret, 0, "read_fd_into_buffer(iterator_fd, buf)"))
- 		goto end_iter_fd;
- 
-@@ -1488,7 +1493,7 @@ void test_io_uring_file(void)
- 	bpf_iter_io_uring__destroy(skel);
- }
- 
--void test_epoll(void)
-+void test_epoll(bool partial)
- {
- 	const char *fmt = "B\npipe:%d\nsocket:%d\npipe:%d\nsocket:%d\nE\n";
- 	DECLARE_LIBBPF_OPTS(bpf_iter_attach_opts, opts);
-@@ -1554,7 +1559,7 @@ void test_epoll(void)
- 	if (!ASSERT_GE(ret, 0, "snprintf") || !ASSERT_LT(ret, sizeof(buf), "snprintf"))
- 		goto end_iter_fd;
- 
--	ret = read_fd_into_buffer(iter_fd, rbuf, sizeof(rbuf));
-+	ret = __read_fd_into_buffer(iter_fd, rbuf, sizeof(rbuf), partial);
- 	if (!ASSERT_GT(ret, 0, "read_fd_into_buffer"))
- 		goto end_iter_fd;
- 
-@@ -1666,9 +1671,15 @@ void test_bpf_iter(void)
- 	if (test__start_subtest("buf-neg-offset"))
- 		test_buf_neg_offset();
- 	if (test__start_subtest("io_uring_buf"))
--		test_io_uring_buf();
-+		test_io_uring_buf(false);
- 	if (test__start_subtest("io_uring_file"))
--		test_io_uring_file();
-+		test_io_uring_file(false);
- 	if (test__start_subtest("epoll"))
--		test_epoll();
-+		test_epoll(false);
-+	if (test__start_subtest("io_uring_buf-partial"))
-+		test_io_uring_buf(true);
-+	if (test__start_subtest("io_uring_file-partial"))
-+		test_io_uring_file(true);
-+	if (test__start_subtest("epoll-partial"))
-+		test_epoll(true);
- }
+ 	/* struct skb with nested structs/unions; because type output is so
 -- 
 2.34.1
 

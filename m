@@ -2,117 +2,92 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E75E464E9E
-	for <lists+io-uring@lfdr.de>; Wed,  1 Dec 2021 14:14:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C7B58464EB7
+	for <lists+io-uring@lfdr.de>; Wed,  1 Dec 2021 14:21:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349525AbhLANRs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 1 Dec 2021 08:17:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56298 "EHLO
+        id S243852AbhLANYp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 1 Dec 2021 08:24:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242786AbhLANRn (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 1 Dec 2021 08:17:43 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71D3AC06174A;
-        Wed,  1 Dec 2021 05:14:21 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 3A298B81EB3;
-        Wed,  1 Dec 2021 13:14:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC23CC53FAD;
-        Wed,  1 Dec 2021 13:14:17 +0000 (UTC)
-Date:   Wed, 1 Dec 2021 14:14:14 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Clay Harris <bugs@claycon.org>
-Cc:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v1 0/5] io_uring: add xattr support
-Message-ID: <20211201131414.neoskbfqs56e4vt2@wittgenstein>
-References: <20211129221257.2536146-1-shr@fb.com>
- <20211130010836.jqp5nuemrse43aca@ps29521.dreamhostps.com>
- <2ba45a80-ce7a-a105-49e5-5507b4453e05@fb.com>
- <20211201074621.qzebnsb7f3t27dvo@ps29521.dreamhostps.com>
+        with ESMTP id S234027AbhLANYo (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 1 Dec 2021 08:24:44 -0500
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBB17C061574
+        for <io-uring@vger.kernel.org>; Wed,  1 Dec 2021 05:21:22 -0800 (PST)
+Received: by mail-wm1-x32d.google.com with SMTP id az34-20020a05600c602200b0033bf8662572so1136807wmb.0
+        for <io-uring@vger.kernel.org>; Wed, 01 Dec 2021 05:21:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jSpnMHKvhBQEYOSDHZ4uy6f8JUGZsGZg8bj5CZFIIHw=;
+        b=kC5gcRaO4pNKu2WwkGGRqxUnYarmdtFNfeP2NTeApMKoI0lutD7N1vrXceLV90AImJ
+         0BNxx4Gh5UWSAySsreIKNOOgTa0rOKGdIt5xsdDQUjmtufZutnB7IG9xxthIiXj+XhWh
+         RmoEbxZQTihIen3nF1j7T6zP+sVmBmJZUojkW5uTOceGpWMYObDr6x5aYDZas97bEXSx
+         YnzXf1kSGlmywAF+wfp9tofGqbFk0qi3iu8bBuALYeUCCZuG7D40zkx0cmFvR1OdYvev
+         eMubnrafmO0owiGX1XJIwY+UziFPKxfzJTMokwbHsqE9J7Js5SpTbA2TzF4S5WyYBBP2
+         CB2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jSpnMHKvhBQEYOSDHZ4uy6f8JUGZsGZg8bj5CZFIIHw=;
+        b=Yvk8Er7mqpKPf3cEfJ8UW5StTU7HQlbDeEk28xS4zCnKE7rFV+wI6hRZBYh73D5Uqd
+         9a2quD2KUm8BmkRDidobBj7AU9usUIMFFAijPgSeePvxiaBgnMhvX0zsDb2pBv0AEvHC
+         1DPalTXlds+IxGO2at7tQwHDT2OyFmUbWBDhbRVLTfj9lnll1dYI1w8MQ+A5u4Kl+jd3
+         i+nw+LzVdyD7aYBKqQB4U7fcbJNxEgHm96nZ6/MtDMl8uaPhcYf8eQQj/9zgy+S+kn3E
+         DbTPyvPfGlgAntfDLrkkEgz8brC+nCF3hxf682/98Lzqc12ea+sF/rYdxDvF92FckqRG
+         AAag==
+X-Gm-Message-State: AOAM530JB16BOM56Q1pKixRHLWBvOn+Vzmsu6dzfwWpj3i1RZc7EUtaE
+        L47TV8UQukDgb3D9ps7mUQhxT9N3wBE=
+X-Google-Smtp-Source: ABdhPJwG1LmqeSATZqdklddWENRtVA/tX4K5yzVCEN38EUK6ZwHfzzepzSxAQNLC+KwFVYlGojcq2A==
+X-Received: by 2002:a1c:80c5:: with SMTP id b188mr7198557wmd.57.1638364881212;
+        Wed, 01 Dec 2021 05:21:21 -0800 (PST)
+Received: from 127.0.0.1localhost (82-132-231-182.dab.02.net. [82.132.231.182])
+        by smtp.gmail.com with ESMTPSA id d2sm1103929wmb.31.2021.12.01.05.21.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Dec 2021 05:21:20 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     io-uring@vger.kernel.org
+Cc:     asml.silence@gmail.com
+Subject: [PATCH liburing 1/1] man/io_uring_enter.2: notes about cqe-skip & drain interoperability
+Date:   Wed,  1 Dec 2021 13:20:37 +0000
+Message-Id: <8c81bf9b01a54d1214bb65678c2ff1362a9f9328.1638364791.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.34.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20211201074621.qzebnsb7f3t27dvo@ps29521.dreamhostps.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Dec 01, 2021 at 01:46:21AM -0600, Clay Harris wrote:
-> On Tue, Nov 30 2021 at 22:07:47 -0800, Stefan Roesch quoth thus:
-> 
-> > 
-> > 
-> > On 11/29/21 5:08 PM, Clay Harris wrote:
-> > > On Mon, Nov 29 2021 at 14:12:52 -0800, Stefan Roesch quoth thus:
-> > > 
-> > >> This adds the xattr support to io_uring. The intent is to have a more
-> > >> complete support for file operations in io_uring.
-> > >>
-> > >> This change adds support for the following functions to io_uring:
-> > >> - fgetxattr
-> > >> - fsetxattr
-> > >> - getxattr
-> > >> - setxattr
-> > > 
-> > > You may wish to consider the following.
-> > > 
-> > > Patching for these functions makes for an excellent opportunity
-> > > to provide a better interface.  Rather than implement fXetattr
-> > > at all, you could enable io_uring to use functions like:
-> > > 
-> > > int Xetxattr(int dfd, const char *path, const char *name,
-> > > 	[const] void *value, size_t size, int flags);
-> > > 
-> > > Not only does this simplify the io_uring interface down to two
-> > > functions, but modernizes and fixes a deficit in usability.
-> > > In terms of io_uring, this is just changing internal interfaces.
-> > > 
-> > > Although unnecessary for io_uring, it would be nice to at least
-> > > consider what parts of this code could be leveraged for future
-> > > Xetxattr2 syscalls.
-> > 
-> 
-> I may have become a little over-excited when I saw someone was thinking
-> about new code associated with these interfaces.  It's just that, to be
-> very kind, the existing interfaces have so much room for improvement.
-> I'm aware that changes in this area can be a non-trivial amount of
-> work, due to specific xattr keys being handled by different security
-> module hooks.
-> 
-> > Clay, 
-> > 
-> > while we can reduce the number of calls to 2, providing 4 calls will
-> > ease the adoption of the interface. 
-> 
-> Well, there's removexattr(), but who's counting?
-> I believe people use the other *at() interfaces without ever looking
-> back at the old calls and that there is little point in io_uring reproducing
-> all of the old baggage.
-> 
-> > If you look at the userspace interface in liburing, you can see the
-> > following function signature:
-> > 
-> > static inline void io_uring_prep_fgetxattr(struct io_uring_sqe *sqe,
-> > 		                           int         fd,
-> > 					   const char *name,
-> > 					   const char *value,
-> > 					   size_t      len)
-> > 
-> > This is very similar to what you proposed.
-> 
-> Even though these functions desperately need updating, and as super nice
+IOSQE_CQE_SKIP_SUCCESS can't be used together with draining in a single
+ring, add a paragraph explaining what are the restrictions.
 
-This code could use some serious cleanup as it is super hard to follow
-right now imho. It often gives the impression of forming loops when
-following callchains down into the filesystem. None of this is by
-design of course. I just happened to grow that way, I guess.
-However, for maintenance this is quite painful. I also don't like that
-the relationship between xattr and acls and the .set_acl inode methods
-is rather opaque in the code. I have a vague plan to cleanup some of
-that since I had to mess with this code not too long ago.
-But that'll be a bigger chunk of work.
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ man/io_uring_enter.2 | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Christian
+diff --git a/man/io_uring_enter.2 b/man/io_uring_enter.2
+index b003e05..871cbce 100644
+--- a/man/io_uring_enter.2
++++ b/man/io_uring_enter.2
+@@ -1115,6 +1115,15 @@ CQEs in cases where the side effects of a successfully executed operation is
+ enough for userspace to know the state of the system. One such example would
+ be writing to a synchronisation file.
+ 
++It also doesn't work with
++.B IOSQE_IO_DRAIN.
++Using both of them in a ring is undefined behaviour even when they never appear
++together in a single request. Currently, after first request with
++.B IOSQE_CQE_SKIP_SUCCESS,
++all subsequent requests marked for drain will be failed. However, the
++error reporting is best effort only and restrictions may change in
++the future.
++
+ Available since 5.17.
+ 
+ .PP
+-- 
+2.34.0
+

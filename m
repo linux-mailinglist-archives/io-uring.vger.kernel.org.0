@@ -2,60 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D84FC4651BF
-	for <lists+io-uring@lfdr.de>; Wed,  1 Dec 2021 16:32:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A80D446543E
+	for <lists+io-uring@lfdr.de>; Wed,  1 Dec 2021 18:49:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351012AbhLAPgO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 1 Dec 2021 10:36:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60550 "EHLO
+        id S239797AbhLARwu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 1 Dec 2021 12:52:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35732 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243063AbhLAPgN (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 1 Dec 2021 10:36:13 -0500
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C192DC061574;
-        Wed,  1 Dec 2021 07:32:52 -0800 (PST)
-Received: by mail-wm1-x32a.google.com with SMTP id j140-20020a1c2392000000b003399ae48f58so22595274wmj.5;
-        Wed, 01 Dec 2021 07:32:52 -0800 (PST)
+        with ESMTP id S238520AbhLARwt (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 1 Dec 2021 12:52:49 -0500
+Received: from mail-oo1-xc2e.google.com (mail-oo1-xc2e.google.com [IPv6:2607:f8b0:4864:20::c2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71167C06174A;
+        Wed,  1 Dec 2021 09:49:27 -0800 (PST)
+Received: by mail-oo1-xc2e.google.com with SMTP id b1-20020a4a8101000000b002c659ab1342so8081452oog.1;
+        Wed, 01 Dec 2021 09:49:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=z1V9o3659iPfdup74dALWjx0yYdBSgLCQ5oAR/ZzaQs=;
-        b=lxnQ4umUeWipBDpN2gZjlZykRF7m4hJaKOyzlcQG8U3t9Fw/WO7NcDRNDXeSKfGpDZ
-         YxZRsb2aUWRzriDHbIJ0hUF7/lLzAZUtzCDflJ/1yetTeFeVGGkprCAatokvV0ZrnI/C
-         g90RwDZllj8JYXmQuQnnxDqzxhJs8+jAETm5kH9QXNHcJdYcvSKB+sRvsY3xvnYQ1zLS
-         L1XBVfkhJv9PreUQSwtH+Tu38ibBugfdo0wSFP2xxo8/NeJsDxkKmNA874o7WemBj3kN
-         ZMJ0twfQH9MM49I0uLOZgwM7iXWAsNNs63qofSIHV+5sna9MlfJp4izI085AKE8M5nc7
-         0mTA==
+        bh=1XDu06P04Pjz8/ikLvnu1Vrhi/zfmVsztNfuvwqajak=;
+        b=LFK2JqBm/fBD40FqHMEn41tfqpj88fxmZxE0oNbwbsJi9rLMH8VIE/wYChNvNOzCVd
+         Q/sPhM4knLso3/jHx/DeW/CGe7VeLyA+/7OWHfv0QuFB2qOTttShqADX/mV1LNW/544v
+         MHjeZJVGsj4a0N0X+keTmesDK/9ZdOOID/HAHRrACObd1+CPix8xOerNWJUGK+0UcjcU
+         PF5lhq3tmbuSAatkCLaoopfDh0iSMu+UyrevTgvb36UfX5Lq6NjrBTQJPg0Hiw2wNycN
+         XCyp0l3vpcaG3uoSEe+AQwEA7G2F2MMaB+g2jpCUjPauHFPMk5Kzcima8JifhkNnTTTw
+         8YOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=z1V9o3659iPfdup74dALWjx0yYdBSgLCQ5oAR/ZzaQs=;
-        b=JDExmbHexqtSDwK5xoRJebaljHs2z5yhWf3gJdbcG/h0QixbW7Tv0OaRvSmf3pHXwc
-         XoTx1ysy/VYcyEL6s5Y/vqm+TRXbBr/eiVw7BZTTI61TXrzKE+RP1/WvtwZWWkBYXVnF
-         mD6HVuBwzH2ptVrdT4WixaDXhhjkvRT5bRB0eWTiBIisnCibgJuvmEelYtg062DI3EXN
-         BqXnIgW5WjHH+r1Csr5obPDqt6Banv4xru9AS4VSUxvZ01ZlH9G7kvBw44EGRvbQ4F34
-         fJ5s217YxbCJUW0d3MYHAEy5kmkWrNNL/bMoW6qCB5Kd1Uw2TjVfnZmlURSRQC43bASz
-         e2gg==
-X-Gm-Message-State: AOAM530GY7Gc//e4AMCW8eA/pMTL+AfOdLB27ukvSpMO/CmDn4XvklW/
-        LO97kBBc4HveQ9Uv1e2RQSw=
-X-Google-Smtp-Source: ABdhPJz6yQt0JgWoTo72Vz2EXFyUjMRkcWx6iGLk1uOrjm+1+3VsgHwSOnOE3hC4TysnhQVPwi71Hg==
-X-Received: by 2002:a05:600c:1c1a:: with SMTP id j26mr8109049wms.28.1638372771338;
-        Wed, 01 Dec 2021 07:32:51 -0800 (PST)
-Received: from [192.168.43.77] (82-132-228-4.dab.02.net. [82.132.228.4])
-        by smtp.gmail.com with ESMTPSA id r11sm140905wrw.5.2021.12.01.07.32.44
+        bh=1XDu06P04Pjz8/ikLvnu1Vrhi/zfmVsztNfuvwqajak=;
+        b=nlqKdasUnQa1OONejuUi6lDVhPncWKw2KVzIoL7RdoX0HTTLzKMRML5MsHbXeJO0FW
+         IlYNjyjrCSFX1qFQ5uGpr4dAu6e+2heV7NMKazwW20YETd9vAXLYg+4mbnz7VBBI28u8
+         ja114hCOuVEiFkNyzM7diEfB5II1T2NHZUJlmANGNhpWCpQuBsvgTENRtg260oDqLjsP
+         gKO4imTuywXdatNw8OaNq8OUOJ5HAOPEYrZHmk8+7KlulscaydXLJOeq/5/M8JAUn3n1
+         7jR3biveYxPVF0MGIL/pYHnwz7Y57rHnn/UrYfeU7Ut+b/BquWWa8kU7GNAbLa5hqM4i
+         iF1A==
+X-Gm-Message-State: AOAM531xXQvR9icBGJ+9eozJU9XA6XNa+thfSBVhPZOU8zSGdYZL6ymD
+        wRyWgXY0vjdMK+58va16XCgjbOutUvbE/A==
+X-Google-Smtp-Source: ABdhPJys07tIqMlr8hwT3qISM9EXA2JC7AHZrq2a4Y/0c29uQKU7jCi/EdAzeac5JUzAG0+iYUAD2w==
+X-Received: by 2002:a05:6820:30b:: with SMTP id l11mr5316875ooe.32.1638380966836;
+        Wed, 01 Dec 2021 09:49:26 -0800 (PST)
+Received: from [172.16.0.2] ([8.48.134.30])
+        by smtp.googlemail.com with ESMTPSA id a3sm147030oti.29.2021.12.01.09.49.25
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Dec 2021 07:32:50 -0800 (PST)
-Message-ID: <994e315b-fdb7-1467-553e-290d4434d853@gmail.com>
-Date:   Wed, 1 Dec 2021 15:32:36 +0000
+        Wed, 01 Dec 2021 09:49:26 -0800 (PST)
+Message-ID: <2c8bf94e-1265-2f3c-98ae-dfc73598f8f2@gmail.com>
+Date:   Wed, 1 Dec 2021 10:49:25 -0700
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.2
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.3.1
 Subject: Re: [RFC 00/12] io_uring zerocopy send
 Content-Language: en-US
-To:     David Ahern <dsahern@gmail.com>, io-uring@vger.kernel.org,
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
         netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Jakub Kicinski <kuba@kernel.org>,
         Jonathan Lemon <jonathan.lemon@gmail.com>,
@@ -65,141 +65,23 @@ Cc:     Jakub Kicinski <kuba@kernel.org>,
         Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
         David Ahern <dsahern@kernel.org>, Jens Axboe <axboe@kernel.dk>
 References: <cover.1638282789.git.asml.silence@gmail.com>
- <ae2d2dab-6f42-403a-f167-1ba3db3fd07f@gmail.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <ae2d2dab-6f42-403a-f167-1ba3db3fd07f@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+ <4c0170fa-5b6f-ff76-0eff-a83ffec9864d@gmail.com>
+From:   David Ahern <dsahern@gmail.com>
+In-Reply-To: <4c0170fa-5b6f-ff76-0eff-a83ffec9864d@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 12/1/21 03:10, David Ahern wrote:
-> On 11/30/21 8:18 AM, Pavel Begunkov wrote:
->> Early proof of concept for zerocopy send via io_uring. This is just
->> an RFC, there are details yet to be figured out, but hope to gather
->> some feedback.
->>
->> Benchmarking udp (65435 bytes) with a dummy net device (mtu=0xffff):
->> The best case io_uring=116079 MB/s vs msg_zerocopy=47421 MB/s,
->> or 2.44 times faster.
->>
->> № | test:                                | BW (MB/s)  | speedup
->> 1 | msg_zerocopy (non-zc)                |  18281     | 0.38
->> 2 | msg_zerocopy -z (baseline)           |  47421     | 1
->> 3 | io_uring (@flush=false, nr_reqs=1)   |  96534     | 2.03
->> 4 | io_uring (@flush=true,  nr_reqs=1)   |  89310     | 1.88
->> 5 | io_uring (@flush=false, nr_reqs=8)   | 116079     | 2.44
->> 6 | io_uring (@flush=true,  nr_reqs=8)   | 109722     | 2.31
->>
->> Based on selftests/.../msg_zerocopy but more limited. You can use
->> msg_zerocopy -r as usual for receive side.
->>
-> ...
+On 12/1/21 7:31 AM, Pavel Begunkov wrote:
 > 
-> Can you state the exact command lines you are running for all of the
-> commands? I tried this set (and commands referenced below) and my
+> Also, as was asked, attaching a standalone .c version of the
+> benchmark. Requires any relatively up-to-date liburing installed.
+> 
+attached command differs from the version mentioned in the cover letter:
 
-Sure. First, for dummy I set mtu by hand, not sure can do it from
-the userspace, can I? Without it __ip_append_data() falls into
-non-zerocopy path.
+https://github.com/isilence/liburing.git zc_v1
 
-diff --git a/drivers/net/dummy.c b/drivers/net/dummy.c
-index f82ad7419508..5c5aeacdabd5 100644
---- a/drivers/net/dummy.c
-+++ b/drivers/net/dummy.c
-@@ -132,7 +132,8 @@ static void dummy_setup(struct net_device *dev)
-  	eth_hw_addr_random(dev);
-  
-  	dev->min_mtu = 0;
--	dev->max_mtu = 0;
-+	dev->mtu = 0xffff;
-+	dev->max_mtu = 0xffff;
-  }
-
-# dummy configuration
-
-modprobe dummy numdummies=1
-ip link set dummy0 up
-# force requests to <dummy_ip_addr> go through the dummy device
-ip route add <dummy_ip_addr> dev dummy0
-
-
-With dummy I was just sinking the traffic to the dummy device,
-was good enough for me. Omitting "taskset" and "nice":
-
-send-zc -4 -D <dummy_ip_addr> -t 10 udp
-
-Similarly with msg_zerocopy:
-
-<kernel>/tools/testing/selftests/net/msg_zerocopy -4 -p 6666 -D <dummy_ip_addr> -t 10 -z udp
-
-
-For loopback testing, as zerocopy is not allowed for it as Willem explained in
-the original MSG_ZEROCOPY cover-letter, I used a hack to bypass it:
-
-diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
-index ebb12a7d386d..42df33b175ce 100644
---- a/include/linux/skbuff.h
-+++ b/include/linux/skbuff.h
-@@ -2854,9 +2854,7 @@ static inline int skb_orphan_frags(struct sk_buff *skb, gfp_t gfp_mask)
-  /* Frags must be orphaned, even if refcounted, if skb might loop to rx path */
-  static inline int skb_orphan_frags_rx(struct sk_buff *skb, gfp_t gfp_mask)
-  {
--	if (likely(!skb_zcopy(skb)))
--		return 0;
--	return skb_copy_ubufs(skb, gfp_mask);
-+	return skb_orphan_frags(skb, gfp_mask);
-  }
-  
-  /**
-
-Then running those two lines below in parallel and looking for the numbers
-send shows. It was in favor of io_uring for me, but don't remember
-exactly. perf shows that "send-zc" spends lot of time receiving, so
-wasn't testing performance of it after some point.
-
-msg_zerocopy -r -v -4 -t 20 udp
-send-zc -4 -D 127.0.0.1 -t 10 udp
-
-
-> mileage varies quite a bit.
-
-Interesting, any brief notes on the setup and the results? Dummy
-or something real? io_uring doesn't show if it was really zerocopied
-or not, but I assume you checked it (e.g. with perf/bpftrace).
-
-I expected that @flush=true might be worse with real devices,
-there is one spot to be patched, but apart from that and
-cycles spend in a real LLD offseting the overhead, didn't
-anticipate any problems. I'll see once I try a real device.
-
-
-> Also, have you run this proposed change (and with TCP) across nodes
-> (ie., not just local process to local process via dummy interface)?
-
-Not yet, I tried dummy, and localhost UDP as per above and similarly
-TCP. Just need to grab a server with a proper NIC, will try it out
-soon.
-
->> Benchmark:
->> https://github.com/isilence/liburing.git zc_v1
->>
->> or this file in particular:
->> https://github.com/isilence/liburing/blob/zc_v1/test/send-zc.c
->>
->> To run the benchmark:
->> ```
->> cd <liburing_dir> && make && cd test
->> # ./send-zc -4 [-p <port>] [-s <payload_size>] -D <destination> udp
->> ./send-zc -4 -D 127.0.0.1 udp
->> ```
->>
->> msg_zerocopy can be used for the server side, e.g.
->> ```
->> cd <linux-kernel>/tools/testing/selftests/net && make
->> ./msg_zerocopy -4 -r [-p <port>] [-t <sec>] udp
->> ```
-
--- 
-Pavel Begunkov
+copying this version into that branch, removing the duplicate
+definitions and it works.

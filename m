@@ -2,180 +2,445 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E23664645DA
-	for <lists+io-uring@lfdr.de>; Wed,  1 Dec 2021 05:23:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9230B4645DC
+	for <lists+io-uring@lfdr.de>; Wed,  1 Dec 2021 05:23:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346545AbhLAE1B (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 30 Nov 2021 23:27:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49398 "EHLO
+        id S1346555AbhLAE1E (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 30 Nov 2021 23:27:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49410 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229590AbhLAE06 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 30 Nov 2021 23:26:58 -0500
+        with ESMTP id S241760AbhLAE1B (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 30 Nov 2021 23:27:01 -0500
 Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8305FC061574;
-        Tue, 30 Nov 2021 20:23:37 -0800 (PST)
-Received: by mail-pl1-x641.google.com with SMTP id u17so16655408plg.9;
-        Tue, 30 Nov 2021 20:23:37 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7989EC061574;
+        Tue, 30 Nov 2021 20:23:40 -0800 (PST)
+Received: by mail-pl1-x641.google.com with SMTP id b11so16650045pld.12;
+        Tue, 30 Nov 2021 20:23:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=bUNS+Sa8lyKiGCkA+yHXnwWVJUVBTnwtTeWAMPi77yU=;
-        b=AUPrMX2FYEVyWVtXZF8Mq1+JnAUt7vxT1USS8RlM6Y2qeM16AaTrc1LIFFqXIgH4Xz
-         n1yXFrn/zYsO1AoQxcHdf6JkD80NRfgEfAOsnaTPwHuh0eDXvRSG7T5PBFRjPuHBKfDv
-         Gc/cjpeyzTZ3QDnDN3Yi0rkmgdN+CUqnD/rmIWm8CZvFvAAOLLYvF5oq8pHZ1C6iS8Hj
-         Ly5gnVIEcmIHcUunnj90/EQ4OPhQqPO+C/FnAV5Sa3s6nrK1rP+63zI6Jlcm8GMsO3/T
-         nwQeEvOWakHYjhC/3/PBxxFXQAg2xHQ6zukKYBeGygsu0bluatriZC2BSNV2l9HwcKDW
-         mUlA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Go51Y2BiE5h2mzVAYbH7sxo6TMFat2Nz0AxJAMmUrTs=;
+        b=GfNSdCXFEu1Zs7qBS8zp1igfVvEB3iZwDTGSf4MVrT7q3I2KUlrs9QC/MI6MoLo9Ig
+         5W3PCKaBvh3fKPFVBNaZySFyGQeMXnP8YIlTL9O6RZBu6E73X5f9rnUwusXgG+N7Rgaw
+         PAw/uDJEqnF9lXIUuXt0fcx1oomj1eKysxW3Cp2Dmz0OoePyVgEiIDsh/4tclSUEUvdL
+         9M2pK3+zuR8BqtElGywQZ9B63n0LgGVwThqZaFWmoI/dcOUAX+XZiIK7ivuxvlhcPuzG
+         YMsG/v8jn+p7PkM7PeVgsqj/0z5J0afu5AtOMlJmBsD9aYEFOkUBagRzAlur8BsavaX3
+         bwJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=bUNS+Sa8lyKiGCkA+yHXnwWVJUVBTnwtTeWAMPi77yU=;
-        b=wdgg3h6JmXOVBQKYciN5XwaY/wepIhq7TXoGAdeR1eMKxBYsk/u9CThE+KRqfBkzsY
-         wXRQjb+XLyHQBmIIG3+6AZM2z9pbUDzKZ27OxqtrZjWGvpsekiuSa6Y431tiX4HeSB+3
-         t0Tx49jAMAiSDlnygc/le6pQKGNiEwnsLIjBfNeIO/J0+CqMUH2UAmL0ECwuoPQgFDLQ
-         MfmGAcSHkMyGoxTr/k6RcxAkoZE2xADjFUxApPiwxs8q0CMyRPbKZVx1kS3J6Bd7W+xr
-         XQ+k5j2ZMgJnbRIzVsuh6gx9ZnYOMdzoPbbmjVWYGzBqInXwCZBVfUDNt+WIEm3tWYM8
-         ABzw==
-X-Gm-Message-State: AOAM533ob83kg48/bVLDbEJCdLECdSUnB9mx2zRM3M7pZGJo/r8JCY9W
-        GV+6PbF7bdQu8S+ag0CM2RMjMcVWlgU=
-X-Google-Smtp-Source: ABdhPJzsEXToPhYGsoz+kClFoqPOupoKGXO57zQ2W/4x2taxvfdw8IUT5ugl1N7Eikqqyz19bTyVKg==
-X-Received: by 2002:a17:90a:fe0a:: with SMTP id ck10mr4400247pjb.216.1638332616806;
-        Tue, 30 Nov 2021 20:23:36 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Go51Y2BiE5h2mzVAYbH7sxo6TMFat2Nz0AxJAMmUrTs=;
+        b=uv+3Y/WPuTAsL5WAdH017/b0QfUJGDrIHG7zFFLjt/M5ZKxrBBJtT759ANc/vQBsuG
+         Lv48daLkVfcsc2u4Kar2i+Nh5IYMbXwxzo6jLKTu/5atTUCpZuUImiE8CjJwniSDY6J8
+         G1gB1WryT2PWA4D3pK9CJ5T/yXbob8Ibwt2X4QQfDmL5PbZ43VExjRGksV0P9i0X2ov7
+         yawetWfcpB5YQbTRtuNQ+6LSn9XrSNgjxh76mnvg8dsRDERnkYhCsfcEpeXZUnDpFOxD
+         BrBBq/eDci+VF+JJj38C/xaZ5JoysyKH7+Jd9+9kYg69Z6ilEyjJWjpF1Q7dm+1u0Z/W
+         eaCg==
+X-Gm-Message-State: AOAM5313rc9+FnPZQq17ZXeowWwG0nlj4WS0/avgX2jDTrsyAqjks9Y1
+        AJpwtK1Bym62N4KoBQTg6lisGSvGdNc=
+X-Google-Smtp-Source: ABdhPJzH1HbgozM5Ptszs3tX2jwXuk50EKJlfSHC2R7KpCN9g0VrAzkOukL9ab7pjCfFewWIHr34nA==
+X-Received: by 2002:a17:90a:e005:: with SMTP id u5mr4278585pjy.17.1638332619802;
+        Tue, 30 Nov 2021 20:23:39 -0800 (PST)
 Received: from localhost ([2405:201:6014:d064:3d4e:6265:800c:dc84])
-        by smtp.gmail.com with ESMTPSA id j1sm21330637pfe.158.2021.11.30.20.23.35
+        by smtp.gmail.com with ESMTPSA id g18sm22002734pfb.103.2021.11.30.20.23.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Nov 2021 20:23:36 -0800 (PST)
+        Tue, 30 Nov 2021 20:23:39 -0800 (PST)
 From:   Kumar Kartikeya Dwivedi <memxor@gmail.com>
 To:     bpf@vger.kernel.org
-Cc:     Alexei Starovoitov <ast@kernel.org>,
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
         Daniel Borkmann <daniel@iogearbox.net>,
         Andrii Nakryiko <andrii@kernel.org>,
         Yonghong Song <yhs@fb.com>,
         Pavel Emelyanov <ovzxemul@gmail.com>,
         Alexander Mikhalitsyn <alexander@mihalicyn.com>,
         Andrei Vagin <avagin@gmail.com>, criu@openvz.org,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH bpf-next v3 00/10] Introduce BPF iterators for io_uring and epoll
-Date:   Wed,  1 Dec 2021 09:53:23 +0530
-Message-Id: <20211201042333.2035153-1-memxor@gmail.com>
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH bpf-next v3 01/10] io_uring: Implement eBPF iterator for registered buffers
+Date:   Wed,  1 Dec 2021 09:53:24 +0530
+Message-Id: <20211201042333.2035153-2-memxor@gmail.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20211201042333.2035153-1-memxor@gmail.com>
+References: <20211201042333.2035153-1-memxor@gmail.com>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5748; h=from:subject; bh=78j4YRjD1ivrtgADq/aBU0z1jmIS5yDNBh6P6aC15iE=; b=owEBbQKS/ZANAwAIAUzgyIZIvxHKAcsmYgBhpvYxUM1Dy/xAourqI/VAL5JiyFeJL5BD/eBYJet/ +XPkbeeJAjMEAAEIAB0WIQRLvip+Buz51YI8YRFM4MiGSL8RygUCYab2MQAKCRBM4MiGSL8Rysc5D/ 47yUGjwZcGdDvkiIfUKjBSxSB+C6/R6f1rwOWZyp/13XsPvJkppU06j5+yKLATMPTfFiBt7zG7ONzS IXsLB4Fi3o6HkPt+Y4X0q9/BaECD34r/0+wCnz+q/Hq4JnUsRRej9ZOOdNjDs+4zHCfvFDcxsLYTxg jCecWe/sP2JcXzUbQxtK9V/aa700Q5hl92a6v8zwEjKFpC36NrB/njmlYMk+udgBR0P4yFsdhiqzxI QhaK6DS6mMdKLR7+XNs4egILTLlVT///H3np0SK2t3w0E2w9AaTUvEnCJtFbZuDAhhQE0RiN9E9mog 1/RNi3/0jUqq+WzI+tTpnGQyQknPKW19OQTAywWE4ndj02XIySQfGEbReIRDfCwCum0MQymlyRy1P2 xf9yXH2fZSy+hGQu4Sh04MUaXOfvVd1oZfKLz7luh7HSRVP86OsKZtGSmHAcRbhkKWU1Zr71/n9Ohv bZ7MPV5H8qhU0Nl9K4u1VRVfL3KWw8V/JqPNH1S/1RzI/70x5UMBnZimAGipu/L5HJ2HYYT0/2zyYB sBQNxkVZoDGar4AG8GfpMbEkRXlFQkhmJHXP3URPu8gwaZK95mtQCzYM6YZaXWXXOo1N8BnFxn3s+D iFDaDAZxLg3pLXKD4Qpt0MZRmdTAclqoUeYYkvED+FPDlWMg+91gxRFoexDw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=10970; h=from:subject; bh=fzO1nhPRAyw/l1yTDLhzFaDJvb5Q/r/wRyKrusivRBY=; b=owEBbQKS/ZANAwAIAUzgyIZIvxHKAcsmYgBhpvYxmk+ulZG46nuBuoJPDtb2dwXZjy5T59Qop8iV VnTvQSOJAjMEAAEIAB0WIQRLvip+Buz51YI8YRFM4MiGSL8RygUCYab2MQAKCRBM4MiGSL8RytHZD/ wK1MvZ6X1XV1s68nfwPtpDsebriDmbKQ3kJu/UWvgUXH3giewfYVB6vDgmt1KeGHnhpnfKKI3n1K3T 6XYRvxpWdYjLZgYCFUkT2bUZT3lYznqZGpF8ZCSrzF5+N0x6TTIbSd0LVjyRxmFaEZYFB4GC59IaHr 8s1e+2AEILyAWBTpL8Ms3kptzyGTUlDrlvhZ5dLAFo+0XASyCp7O+g/HwTFIrqQkxkqAC7o+Z2yOBT dQFKTni/qcjLLL/N0sJ7AoqJ4VoIx5iHGR2POn6DYf1xJwoIj9sABYIKaG5wSIpGiWKUndst6xujlR 3lTr7hR+eexoXV0/Bb9Y7M75WNQRzws0pA1AvKMl3xSA6cuZG7Pd2A9CruSoGAl47UI7vggm8c70Xj TjZZqt0lg5ec/Rt8vFGGaeP77bJga7NZC0LJ6rHaJWUIlyJ1CFahiMzHf2ffjpz7B+QzHyd0rRkP9P j202dMxrsnEkRwAMoBf4gsLjVHboYMmB5WqMimrX1QMA2QmdjjmR9mj5JK/7EJECMmI00eUHlZxLUC xJhQn3ZkIO+pvK3TUewpTwSAEAAMl8GZt5X/aUnP9jpSSND9hvS3Lve6pbUH34q/VdZ1zW6PBF6A2o 7CLvsnVRbsC6apadgGgAoBAWWQhIkHlNKVT5mVSvjyYNoBcwCHJnVbpYCdCQ==
 X-Developer-Key: i=memxor@gmail.com; a=openpgp; fpr=4BBE2A7E06ECF9D5823C61114CE0C88648BF11CA
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The CRIU [0] project developers are exploring potential uses of the BPF
-subsystem to do complicated tasks that are difficult to add support for in the
-kernel using existing interfaces.  Even if they are implemented using procfs,
-or kcmp, it is difficult to make it perform well without having some kind of
-programmable introspection into the kernel data structures. Moreover, for
-procfs based state inspection, the output format once agreed upon is set in
-stone and hard to extend, and at the same time inefficient to consume from
-programs (where it is first converted from machine readable form to human
-readable form, only to be converted again to machine readable form).  In
-addition to this, kcmp based file set matching algorithm performs poorly since
-each file in one set needs to be compared to each file in another set, to
-determine struct file equivalence.
+This change adds eBPF iterator for buffers registered in io_uring ctx.
+It gives access to the ctx, the index of the registered buffer, and a
+pointer to the io_uring_ubuf itself. This allows the iterator to save
+info related to buffers added to an io_uring instance, that isn't easy
+to export using the fdinfo interface (like exact struct page composing
+the registered buffer).
 
-This set adds a io_uring file iterator (for registered files), a io_uring ubuf
-iterator (for registered buffers), and a epoll iterator (for registered items
-(files, registered using EPOLL_CTL_ADD)) to overcome these limitations.  Using
-existing task, task_file, task_vma iterators, all of these can be combined
-together to significantly enhance and speed up the task dumping procedure.
+The primary usecase this is enabling is checkpoint/restore support.
 
-The two immediate use cases are io_uring checkpoint/restore support and epoll
-checkpoint/restore support. The first is unimplemented, and the second is being
-expedited using a new epoll iterator. In the future, more stages of the
-checkpointing sequence can be offloaded to eBPF programs to reduce process
-downtime, e.g. in pre-dump stage, before task is seized.
+Note that we need to use mutex_trylock when the file is read from, in
+seq_start functions, as the order of lock taken is opposite of what it
+would be when io_uring operation reads the same file.  We take
+seq_file->lock, then ctx->uring_lock, while io_uring would first take
+ctx->uring_lock and then seq_file->lock for the same ctx.
 
-The io_uring file iterator is even more important now due to the advent of
-descriptorless files in io_uring [1], which makes dumping a task's files a lot
-more harder for CRIU, since there is no visibility into these hidden
-descriptors that the task depends upon for operation. Similarly, the
-io_uring_ubuf iterator is useful in case original VMA used in registering a
-buffer has been destroyed.
+This can lead to a deadlock scenario described below:
 
-The set includes an example sample showing how these iterator(s) along with
-task_file iterator can be useful to restore an io_uring instance, implementing a
-simplified version of the code we are planning to adopt for CRIU. Patch 10 is
-not meant for submission, only exposition, hence explicitly marked RFC. It
-implements the missing features noted in [2].
+The sequence on CPU 0 is for normal read(2) on iterator.
+For CPU 1, it is an io_uring instance trying to do same on iterator attached to
+itself.
 
-Please see the individual patches for more details.
+So CPU 0 does
 
-[ Note (for Yonghong): I am still unusure what will be useful in show_fdinfo,
-  fill_link_info for epoll, so that has been left out. I was reminded that
-  io_uring now uses anon_inode_getfile_secure, which we also use in CRIU to
-  determine source fd of ring mapping, so this should be enough to identify
-  the io_uring fd in userspace, hence I implemented it for io_uring in v2.   ]
+sys_read
+vfs_read
+ bpf_seq_read
+ mutex_lock(&seq_file->lock)    # A
+  io_uring_buf_seq_start
+  mutex_lock(&ctx->uring_lock)  # B
 
-  [0]: https://criu.org/Main_Page
-  [1]: https://lwn.net/Articles/863071
-  [2]: https://github.com/checkpoint-restore/criu/pull/1597
+and CPU 1 does
 
-Changelog:
-----------
-v2 -> v3:
-v2: https://lore.kernel.org/bpf/20211122225352.618453-1-memxor@gmail.com
+io_uring_enter
+mutex_lock(&ctx->uring_lock)    # B
+ io_read
+  bpf_seq_read
+  mutex_lock(&seq_file->lock)   # A
+  ...
 
- * Make show_fdinfo/fill_link_info functions static (Kernel Test Robot)
- * Minor memory leak fixes for bpf_cr
- * Use proper names instead of -2, -1 for denoting epoll iterator state
+Since the order of locks is opposite, it can deadlock. So we switch the
+mutex_lock in io_uring_buf_seq_start to trylock, so it can return an
+error for this case, then it will release seq_file->lock and CPU 1 will
+make progress.
 
-v1 -> v2:
-v1: https://lore.kernel.org/bpf/20211116054237.100814-1-memxor@gmail.com
+The trylock also protects the case where io_uring tries to read from
+iterator attached to itself (same ctx), where the order of locks would
+be:
+ io_uring_enter
+ mutex_lock(&ctx->uring_lock) <------------.
+  io_read				    \
+   seq_read				     \
+    mutex_lock(&seq_file->lock)		     /
+    mutex_lock(&ctx->uring_lock) # deadlock-`
 
- * Add example showing how iterator is useful in C/R of io_uring (Alexei)
- * Change type of index from unsigned long to u64 (Yonghong)
- * Fix build error for CONFIG_IO_URING=n (Kernel Test Robot)
-  * Move bpf_page_to_pfn out of CONFIG_IO_URING (Yonghong)
- * Add comment to bpf_iter_aux_info for map member (Yonghong)
- * show_fdinfo/fill_link_info for io_uring (Yonghong)
- * Fix other nits
+In both these cases (recursive read and contended uring_lock), -EDEADLK
+is returned to userspace.
 
-Kumar Kartikeya Dwivedi (10):
-  io_uring: Implement eBPF iterator for registered buffers
-  bpf: Add bpf_page_to_pfn helper
-  io_uring: Implement eBPF iterator for registered files
-  epoll: Implement eBPF iterator for registered items
-  bpftool: Output io_uring iterator info
-  selftests/bpf: Add test for io_uring BPF iterators
-  selftests/bpf: Add test for epoll BPF iterator
-  selftests/bpf: Test partial reads for io_uring, epoll iterators
-  selftests/bpf: Fix btf_dump test for bpf_iter_link_info
-  samples/bpf: Add example to checkpoint/restore io_uring
+In the future, this iterator will be extended to directly support
+iteration of bvec Flexible Array Member, so that when there is no
+corresponding VMA that maps to the registered buffer (e.g. if VMA is
+destroyed after pinning pages), we are able to reconstruct the
+registration on restore by dumping the page contents and then replaying
+them into a temporary mapping used for registration later. All this is
+out of scope for the current series however, but builds upon this
+iterator.
 
- fs/eventpoll.c                                | 201 ++++-
- fs/io_uring.c                                 | 345 +++++++++
- include/linux/bpf.h                           |  16 +
- include/uapi/linux/bpf.h                      |  18 +
- kernel/trace/bpf_trace.c                      |  19 +
- samples/bpf/.gitignore                        |   1 +
- samples/bpf/Makefile                          |   8 +-
- samples/bpf/bpf_cr.bpf.c                      | 185 +++++
- samples/bpf/bpf_cr.c                          | 688 ++++++++++++++++++
- samples/bpf/bpf_cr.h                          |  48 ++
- samples/bpf/hbm_kern.h                        |   2 -
- scripts/bpf_doc.py                            |   2 +
- tools/bpf/bpftool/link.c                      |  10 +
- tools/include/uapi/linux/bpf.h                |  18 +
- .../selftests/bpf/prog_tests/bpf_iter.c       | 387 +++++++++-
- .../selftests/bpf/prog_tests/btf_dump.c       |   4 +-
- .../selftests/bpf/progs/bpf_iter_epoll.c      |  33 +
- .../selftests/bpf/progs/bpf_iter_io_uring.c   |  50 ++
- 18 files changed, 2027 insertions(+), 8 deletions(-)
- create mode 100644 samples/bpf/bpf_cr.bpf.c
- create mode 100644 samples/bpf/bpf_cr.c
- create mode 100644 samples/bpf/bpf_cr.h
- create mode 100644 tools/testing/selftests/bpf/progs/bpf_iter_epoll.c
- create mode 100644 tools/testing/selftests/bpf/progs/bpf_iter_io_uring.c
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Pavel Begunkov <asml.silence@gmail.com>
+Cc: io-uring@vger.kernel.org
+Signed-off-by: Kumar Kartikeya Dwivedi <memxor@gmail.com>
+---
+ fs/io_uring.c                  | 203 +++++++++++++++++++++++++++++++++
+ include/linux/bpf.h            |  12 ++
+ include/uapi/linux/bpf.h       |   6 +
+ tools/include/uapi/linux/bpf.h |   6 +
+ 4 files changed, 227 insertions(+)
 
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index b07196b4511c..02e628448ebd 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -81,6 +81,7 @@
+ #include <linux/tracehook.h>
+ #include <linux/audit.h>
+ #include <linux/security.h>
++#include <linux/btf_ids.h>
+ 
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/io_uring.h>
+@@ -11125,3 +11126,205 @@ static int __init io_uring_init(void)
+ 	return 0;
+ };
+ __initcall(io_uring_init);
++
++#ifdef CONFIG_BPF_SYSCALL
++
++BTF_ID_LIST(btf_io_uring_ids)
++BTF_ID(struct, io_ring_ctx)
++BTF_ID(struct, io_mapped_ubuf)
++
++struct bpf_io_uring_seq_info {
++	struct io_ring_ctx *ctx;
++	u64 index;
++};
++
++static int bpf_io_uring_init_seq(void *priv_data, struct bpf_iter_aux_info *aux)
++{
++	struct bpf_io_uring_seq_info *info = priv_data;
++	struct io_ring_ctx *ctx = aux->io_uring.ctx;
++
++	info->ctx = ctx;
++	return 0;
++}
++
++static int bpf_io_uring_iter_attach(struct bpf_prog *prog,
++				    union bpf_iter_link_info *linfo,
++				    struct bpf_iter_aux_info *aux)
++{
++	struct io_ring_ctx *ctx;
++	struct fd f;
++	int ret;
++
++	f = fdget(linfo->io_uring.io_uring_fd);
++	if (unlikely(!f.file))
++		return -EBADF;
++
++	ret = -EOPNOTSUPP;
++	if (unlikely(f.file->f_op != &io_uring_fops))
++		goto out_fput;
++
++	ret = -ENXIO;
++	ctx = f.file->private_data;
++	if (unlikely(!percpu_ref_tryget(&ctx->refs)))
++		goto out_fput;
++
++	ret = 0;
++	aux->io_uring.ctx = ctx;
++	/* each io_uring file's inode is unique, since it uses
++	 * anon_inode_getfile_secure, which can be used to search
++	 * through files and map link fd back to the io_uring.
++	 */
++	aux->io_uring.inode = f.file->f_inode->i_ino;
++
++out_fput:
++	fdput(f);
++	return ret;
++}
++
++static void bpf_io_uring_iter_detach(struct bpf_iter_aux_info *aux)
++{
++	percpu_ref_put(&aux->io_uring.ctx->refs);
++}
++
++#ifdef CONFIG_PROC_FS
++static void bpf_io_uring_iter_show_fdinfo(const struct bpf_iter_aux_info *aux,
++					  struct seq_file *seq)
++{
++	seq_printf(seq, "io_uring_inode:\t%lu\n", aux->io_uring.inode);
++}
++#endif
++
++static int bpf_io_uring_iter_fill_link_info(const struct bpf_iter_aux_info *aux,
++					    struct bpf_link_info *info)
++{
++	info->iter.io_uring.inode = aux->io_uring.inode;
++	return 0;
++}
++
++/* io_uring iterator for registered buffers */
++
++struct bpf_iter__io_uring_buf {
++	__bpf_md_ptr(struct bpf_iter_meta *, meta);
++	__bpf_md_ptr(struct io_ring_ctx *, ctx);
++	__bpf_md_ptr(struct io_mapped_ubuf *, ubuf);
++	u64 index;
++};
++
++static void *__bpf_io_uring_buf_seq_get_next(struct bpf_io_uring_seq_info *info)
++{
++	if (info->index < info->ctx->nr_user_bufs)
++		return info->ctx->user_bufs[info->index++];
++	return NULL;
++}
++
++static void *bpf_io_uring_buf_seq_start(struct seq_file *seq, loff_t *pos)
++{
++	struct bpf_io_uring_seq_info *info = seq->private;
++	struct io_mapped_ubuf *ubuf;
++
++	/* Indicate to userspace that the uring lock is contended */
++	if (!mutex_trylock(&info->ctx->uring_lock))
++		return ERR_PTR(-EDEADLK);
++
++	ubuf = __bpf_io_uring_buf_seq_get_next(info);
++	if (!ubuf)
++		return NULL;
++
++	if (*pos == 0)
++		++*pos;
++	return ubuf;
++}
++
++static void *bpf_io_uring_buf_seq_next(struct seq_file *seq, void *v, loff_t *pos)
++{
++	struct bpf_io_uring_seq_info *info = seq->private;
++
++	++*pos;
++	return __bpf_io_uring_buf_seq_get_next(info);
++}
++
++DEFINE_BPF_ITER_FUNC(io_uring_buf, struct bpf_iter_meta *meta,
++		     struct io_ring_ctx *ctx, struct io_mapped_ubuf *ubuf,
++		     u64 index)
++
++static int __bpf_io_uring_buf_seq_show(struct seq_file *seq, void *v, bool in_stop)
++{
++	struct bpf_io_uring_seq_info *info = seq->private;
++	struct bpf_iter__io_uring_buf ctx;
++	struct bpf_iter_meta meta;
++	struct bpf_prog *prog;
++
++	meta.seq = seq;
++	prog = bpf_iter_get_info(&meta, in_stop);
++	if (!prog)
++		return 0;
++
++	ctx.meta = &meta;
++	ctx.ctx = info->ctx;
++	ctx.ubuf = v;
++	ctx.index = info->index ? info->index - !in_stop : 0;
++
++	return bpf_iter_run_prog(prog, &ctx);
++}
++
++static int bpf_io_uring_buf_seq_show(struct seq_file *seq, void *v)
++{
++	return __bpf_io_uring_buf_seq_show(seq, v, false);
++}
++
++static void bpf_io_uring_buf_seq_stop(struct seq_file *seq, void *v)
++{
++	struct bpf_io_uring_seq_info *info = seq->private;
++
++	/* If IS_ERR(v) is true, then ctx->uring_lock wasn't taken */
++	if (IS_ERR(v))
++		return;
++	if (!v)
++		__bpf_io_uring_buf_seq_show(seq, v, true);
++	else if (info->index) /* restart from index */
++		info->index--;
++	mutex_unlock(&info->ctx->uring_lock);
++}
++
++static const struct seq_operations bpf_io_uring_buf_seq_ops = {
++	.start = bpf_io_uring_buf_seq_start,
++	.next  = bpf_io_uring_buf_seq_next,
++	.stop  = bpf_io_uring_buf_seq_stop,
++	.show  = bpf_io_uring_buf_seq_show,
++};
++
++static const struct bpf_iter_seq_info bpf_io_uring_buf_seq_info = {
++	.seq_ops          = &bpf_io_uring_buf_seq_ops,
++	.init_seq_private = bpf_io_uring_init_seq,
++	.fini_seq_private = NULL,
++	.seq_priv_size    = sizeof(struct bpf_io_uring_seq_info),
++};
++
++static struct bpf_iter_reg io_uring_buf_reg_info = {
++	.target            = "io_uring_buf",
++	.feature	   = BPF_ITER_RESCHED,
++	.attach_target     = bpf_io_uring_iter_attach,
++	.detach_target     = bpf_io_uring_iter_detach,
++#ifdef CONFIG_PROC_FS
++	.show_fdinfo	   = bpf_io_uring_iter_show_fdinfo,
++#endif
++	.fill_link_info    = bpf_io_uring_iter_fill_link_info,
++	.ctx_arg_info_size = 2,
++	.ctx_arg_info = {
++		{ offsetof(struct bpf_iter__io_uring_buf, ctx),
++		  PTR_TO_BTF_ID },
++		{ offsetof(struct bpf_iter__io_uring_buf, ubuf),
++		  PTR_TO_BTF_ID_OR_NULL },
++	},
++	.seq_info	   = &bpf_io_uring_buf_seq_info,
++};
++
++static int __init io_uring_iter_init(void)
++{
++	io_uring_buf_reg_info.ctx_arg_info[0].btf_id = btf_io_uring_ids[0];
++	io_uring_buf_reg_info.ctx_arg_info[1].btf_id = btf_io_uring_ids[1];
++	return bpf_iter_reg_target(&io_uring_buf_reg_info);
++}
++late_initcall(io_uring_iter_init);
++
++#endif
+diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+index cc7a0c36e7df..967842881024 100644
+--- a/include/linux/bpf.h
++++ b/include/linux/bpf.h
+@@ -1509,8 +1509,20 @@ int bpf_obj_get_user(const char __user *pathname, int flags);
+ 	extern int bpf_iter_ ## target(args);			\
+ 	int __init bpf_iter_ ## target(args) { return 0; }
+ 
++struct io_ring_ctx;
++
+ struct bpf_iter_aux_info {
++	/* Map member must not alias any other members, due to the check in
++	 * bpf_trace.c:__get_seq_info, since in case of map the seq_ops for
++	 * iterator is different from others. The seq_ops is not from main
++	 * iter registration but from map_ops. Nullability of 'map' allows
++	 * to skip this check for non-map iterator cheaply.
++	 */
+ 	struct bpf_map *map;
++	struct {
++		struct io_ring_ctx *ctx;
++		ino_t inode;
++	} io_uring;
+ };
+ 
+ typedef int (*bpf_iter_attach_target_t)(struct bpf_prog *prog,
+diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+index a69e4b04ffeb..1ad1ae85743c 100644
+--- a/include/uapi/linux/bpf.h
++++ b/include/uapi/linux/bpf.h
+@@ -91,6 +91,9 @@ union bpf_iter_link_info {
+ 	struct {
+ 		__u32	map_fd;
+ 	} map;
++	struct {
++		__u32   io_uring_fd;
++	} io_uring;
+ };
+ 
+ /* BPF syscall commands, see bpf(2) man-page for more details. */
+@@ -5720,6 +5723,9 @@ struct bpf_link_info {
+ 				struct {
+ 					__u32 map_id;
+ 				} map;
++				struct {
++					__u64 inode;
++				} io_uring;
+ 			};
+ 		} iter;
+ 		struct  {
+diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
+index a69e4b04ffeb..1ad1ae85743c 100644
+--- a/tools/include/uapi/linux/bpf.h
++++ b/tools/include/uapi/linux/bpf.h
+@@ -91,6 +91,9 @@ union bpf_iter_link_info {
+ 	struct {
+ 		__u32	map_fd;
+ 	} map;
++	struct {
++		__u32   io_uring_fd;
++	} io_uring;
+ };
+ 
+ /* BPF syscall commands, see bpf(2) man-page for more details. */
+@@ -5720,6 +5723,9 @@ struct bpf_link_info {
+ 				struct {
+ 					__u32 map_id;
+ 				} map;
++				struct {
++					__u64 inode;
++				} io_uring;
+ 			};
+ 		} iter;
+ 		struct  {
 -- 
 2.34.1
 

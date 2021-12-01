@@ -2,117 +2,129 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E78514656FA
-	for <lists+io-uring@lfdr.de>; Wed,  1 Dec 2021 21:18:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BB7D465727
+	for <lists+io-uring@lfdr.de>; Wed,  1 Dec 2021 21:30:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352880AbhLAUVd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 1 Dec 2021 15:21:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42864 "EHLO
+        id S245617AbhLAUdi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 1 Dec 2021 15:33:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238230AbhLAUVD (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 1 Dec 2021 15:21:03 -0500
+        with ESMTP id S245591AbhLAUdD (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 1 Dec 2021 15:33:03 -0500
 Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25B3AC061758;
-        Wed,  1 Dec 2021 12:17:42 -0800 (PST)
-Received: by mail-wr1-x430.google.com with SMTP id l16so54875281wrp.11;
-        Wed, 01 Dec 2021 12:17:42 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3C1EC061748;
+        Wed,  1 Dec 2021 12:29:39 -0800 (PST)
+Received: by mail-wr1-x430.google.com with SMTP id o13so54813288wrs.12;
+        Wed, 01 Dec 2021 12:29:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=bZLA4Cc1gP5Q5im8BpOiaRiaj3XtOM5lk5oHTlIAmW0=;
-        b=ZVZ+DEdS+bicoTkpu0maw3d+X/nOU8wwm0AQ5C3EEUC2pj3o7s7HHj/V3oY0XKYodk
-         TsDXu+Wz1g1nDlI5nwcn5LXOY50HXdbFCm7FnWBj4EkjOMVxBVC78vNKRIMjoRaqTSH5
-         zEwZL7lYGKar8s2j4I52Qv3RtsR2Ab+yhKe/F7U0AZD6hjEeuD7VYaznuTmc7ISoAt6V
-         0KwrDr2RjP9rq9E3HYIYyDYUqKcBirbaZzm2Zq4uQJmAbvdvH4Q5Z75NS6r/13tyOGDL
-         efJ4Ysx1KKpxIAqW1rCN8LJoaZSDZHOiV6qgYzWxZOkRnj0gnefy4hLXl3z8xcDTDfkJ
-         3fqA==
+        h=message-id:date:mime-version:user-agent:subject:content-language
+         :from:to:cc:references:in-reply-to:content-transfer-encoding;
+        bh=IQVCvC7bWt4Xisw903m5V4gdM4PCh3ZxZ6pWb+wSumc=;
+        b=Ttc/daCKB1xsqJSAbBWUAhTaX1mkQwqfih6zlAgigRQxLe+55NertkiTHpkBZfyydU
+         6O/4xP0D0314+dldLp8W/ZznrR321dGeNqMd/YUdr8tQD9y+a3S4CojVFcI3ne7R3IQ1
+         E9g40HkSLEVWPtWLxjP0IZAkJkFEVat8Ajrn9vkSP9wl8j6MhF1ox0PtX9SVk/T4y2m6
+         YzTyxunyWPC7g7pZeRXQfZSEdNtFgrQvqtgC3nXT8BBVid1qiTwLFCjVKKwaT0X8vUG/
+         HhEGtU7wNUNlXFAQc8kxhAaAlA8uadibxtaslqWdHj1iiITN6LjYGSl+s/ieC8XJduxF
+         mYCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+         :content-language:from:to:cc:references:in-reply-to
          :content-transfer-encoding;
-        bh=bZLA4Cc1gP5Q5im8BpOiaRiaj3XtOM5lk5oHTlIAmW0=;
-        b=aunLLUqN3AyRTPV3yYpOf00hDXVGePUWs+2DODBQLdoHEMqBQiCr4UQO5dsE/A9cB7
-         +ZJPq0MdI9l5rBKv08iJtYjxsLVnRwL8WG07r+D0Jf+Zojh/vpQ6Zl7nEueTT2wWJfxn
-         q5XZDqqXg5jkd1H2A7aERC9gLvlK5nmpZw14HT8Zqhn1cgf9nvPI8qYn7FMh1wJ9n1Im
-         l2RA5OVERjVNxnSSss/XG3P2xFEj9mcQCkvCs2/I1xhIcmft1aL058hhxD0SrVEMAB82
-         YYHiZSJq0lq9JRHqb7KqyKt86zfIPmjlTSYLiqXsoENcQtZ8PvTJbiPJbN4a3KG+GZ4r
-         qihA==
-X-Gm-Message-State: AOAM530hFg0MvXC5o5nRMSJuAwoVf/EGsz0w9hIO1+HcyUFK1Z1zLK5A
-        zUstQKbnUMbXbhVswr70C6E=
-X-Google-Smtp-Source: ABdhPJwD6JDD0zm0cHanRMt7tWmYrkBb4yRD+fKjnOQ1VT+EIXc++sg6IJ5LgSfXGPRY1RQKuRG2rA==
-X-Received: by 2002:a05:6000:2a2:: with SMTP id l2mr9226808wry.110.1638389860790;
-        Wed, 01 Dec 2021 12:17:40 -0800 (PST)
+        bh=IQVCvC7bWt4Xisw903m5V4gdM4PCh3ZxZ6pWb+wSumc=;
+        b=O4pXpz7Z6lx5Mncam/MrL5qEGkb8cb8dx+E4rYbym3wljoyufYimv4B311OkA9eLxv
+         JOer6RMaEa8oX1SnX8UypkqHZzP6DxeM8mwQmNkrITXUFgXWvD28nyZn9pXlUUkLrrFz
+         HUeiy68yb/TSGagzjhxzV+hgYGjeuB4BRZkaFTebZL6sWObTFQAP3VvvHcT8wXxs1yYW
+         zjBq15TDW8oCOGSbJveT5O3qHaMPxZf+fzVBBZ40Vo64i+Ra9fSV6qRJSR87dXzLbtUa
+         jhANJolqCstiDh0AqDr0Gzmdjge89O+uZcnvndaD7WC/gslm1Ai2UNhI5Bb/ZH93zpS+
+         DI6Q==
+X-Gm-Message-State: AOAM532CF0dWGGxfL0+ewvVihJs7VkYy5aWIcgwD40IM3JqIf3aEMMhq
+        PgXAcCI7hsqWpX6hhcP2BQzuxy2LOMw=
+X-Google-Smtp-Source: ABdhPJzKfq7KUmQMQVNcnV6iSRGFXP9Dj/YjvokmXuumucaJRS8nro+os98lnGPjzGJ9bszkoJpZPw==
+X-Received: by 2002:a5d:69ca:: with SMTP id s10mr9213840wrw.312.1638390578238;
+        Wed, 01 Dec 2021 12:29:38 -0800 (PST)
 Received: from [192.168.8.198] ([185.69.144.129])
-        by smtp.gmail.com with ESMTPSA id f15sm332710wmg.30.2021.12.01.12.17.39
+        by smtp.gmail.com with ESMTPSA id 38sm770626wrc.1.2021.12.01.12.29.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Dec 2021 12:17:40 -0800 (PST)
-Message-ID: <d4ef96a8-94e7-bd9d-b3b9-f4f8e85373e4@gmail.com>
-Date:   Wed, 1 Dec 2021 20:17:34 +0000
+        Wed, 01 Dec 2021 12:29:37 -0800 (PST)
+Message-ID: <d5a07e01-7fc3-2f73-a406-21246a252876@gmail.com>
+Date:   Wed, 1 Dec 2021 20:29:30 +0000
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.3.2
-Subject: Re: [RFC 05/12] net: optimise page get/free for bvec zc
+Subject: Re: [RFC 00/12] io_uring zerocopy send
 Content-Language: en-US
-To:     Jonathan Lemon <jonathan.lemon@gmail.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>
 Cc:     io-uring@vger.kernel.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
         "David S . Miller" <davem@davemloft.net>,
-        Willem de Bruijn <willemb@google.com>,
         Eric Dumazet <edumazet@google.com>,
         Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
         David Ahern <dsahern@kernel.org>, Jens Axboe <axboe@kernel.dk>
 References: <cover.1638282789.git.asml.silence@gmail.com>
- <72608c13553a1372e7f6f7a32eb53d5d4b23a1fc.1638282789.git.asml.silence@gmail.com>
- <20211201192043.tqed7rtwibnwhw7c@bsd-mbp.dhcp.thefacebook.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20211201192043.tqed7rtwibnwhw7c@bsd-mbp.dhcp.thefacebook.com>
+ <CA+FuTSf-N08d6pcbie2=zFcQJf3_e2dBJRUZuop4pOhNfSANUA@mail.gmail.com>
+ <0d82f4e2-730f-4888-ec82-2354ffa9c2d8@gmail.com>
+In-Reply-To: <0d82f4e2-730f-4888-ec82-2354ffa9c2d8@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 12/1/21 19:20, Jonathan Lemon wrote:
-> On Tue, Nov 30, 2021 at 03:18:53PM +0000, Pavel Begunkov wrote:
->> get_page() in __zerocopy_sg_from_bvec() and matching put_page()s are
->> expensive. However, we can avoid it if the caller can guarantee that
->> pages stay alive until the corresponding ubuf_info is not released.
->> In particular, it targets io_uring with fixed buffers following the
->> described contract.
+On 12/1/21 19:59, Pavel Begunkov wrote:
+> On 12/1/21 18:10, Willem de Bruijn wrote:
+>>> # performance:
+>>>
+>>> The worst case for io_uring is (4), still 1.88 times faster than
+>>> msg_zerocopy (2), and there are a couple of "easy" optimisations left
+>>> out from the patchset. For 4096 bytes payload zc is only slightly
+>>> outperforms non-zc version, the larger payload the wider gap.
+>>> I'll get more numbers next time.
 >>
->> Assuming that nobody yet uses bvec together with zerocopy, make all
->> calls with bvec iterators follow this model.
+>>> Comparing (3) and (4), and (5) vs (6), @flush doesn't affect it too
+>>> much. Notification posting is not a big problem for now, but need
+>>> to compare the performance for when io_uring_tx_zerocopy_callback()
+>>> is called from IRQ context, and possible rework it to use task_work.
+>>>
+>>> It supports both, regular buffers and fixed ones, but there is a bunch of
+>>> optimisations exclusively for io_uring's fixed buffers. For comparison,
+>>> normal vs fixed buffers (@nr_reqs=8, @flush=0): 75677 vs 116079 MB/s
+>>>
+>>> 1) we pass a bvec, so no page table walks.
+>>> 2) zerocopy_sg_from_iter() is just slow, adding a bvec optimised version
+>>>     still doing page get/put (see 4/12) slashed 4-5%.
+>>> 3) avoiding get_page/put_page in 5/12
+>>> 4) completion events are posted into io_uring's CQ, so no
+>>>     extra recvmsg for getting events
+>>> 5) no poll(2) in the code because of io_uring
+>>> 6) lot of time is spent in sock_omalloc()/free allocating ubuf_info.
+>>>     io_uring caches the structures reducing it to nearly zero-overhead.
 >>
->> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
->> ---
-[...]
->> diff --git a/net/core/skbuff.c b/net/core/skbuff.c
->> index b23db60ea6f9..b7b087815539 100644
->> --- a/net/core/skbuff.c
->> +++ b/net/core/skbuff.c
->> @@ -666,10 +666,14 @@ static void skb_release_data(struct sk_buff *skb)
->>   			      &shinfo->dataref))
->>   		goto exit;
->>   
->> -	skb_zcopy_clear(skb, true);
->> +	if (!(shinfo->flags & SKBFL_MANAGED_FRAGS)) {
->> +		for (i = 0; i < shinfo->nr_frags; i++)
->> +			__skb_frag_unref(&shinfo->frags[i], skb->pp_recycle);
->> +	} else {
->> +		shinfo->flags &= ~SKBFL_MANAGED_FRAGS;
->> +	}
->>   
->> -	for (i = 0; i < shinfo->nr_frags; i++)
->> -		__skb_frag_unref(&shinfo->frags[i], skb->pp_recycle);
->> +	skb_zcopy_clear(skb, true);
-> 
-> It would be better if all of this logic was moved into the callback
-> under zcopy_clear.  Note that this path is called for both TX and RX.
+>> Nice set of complementary optimizations.
+>>
+>> We have looked at adding some of those as independent additions to
+>> msg_zerocopy before, such as long-term pinned regions. One issue with
+>> that is that the pages must remain until the request completes,
+>> regardless of whether the calling process is alive. So it cannot rely
+>> on a pinned range held by a process only.
+>>
+>> If feasible, it would be preferable if the optimizations can be added
+>> to msg_zerocopy directly, rather than adding a dependency on io_uring
+>> to make use of them. But not sure how feasible that is. For some, like
+>> 4 and 5, the answer is clearly it isn't.  6, it probably is?
 
-Yeah, can be done and removes the extra if from non-zc path.
-Thanks!
+Forgot about 6), io_uring uses the fact that submissions are
+done under an per ring mutex, and completions are under a per
+ring spinlock, so there are two lists for them and no extra
+locking. Lists are spliced in a batched manner, so it's
+1 spinlock per N (e.g. 32) cached ubuf_info's allocations.
+
+Any similar guarantees for sockets?
+
+[...]
 
 -- 
 Pavel Begunkov

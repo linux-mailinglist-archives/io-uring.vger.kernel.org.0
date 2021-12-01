@@ -2,201 +2,185 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A98754647A1
-	for <lists+io-uring@lfdr.de>; Wed,  1 Dec 2021 08:11:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63707464913
+	for <lists+io-uring@lfdr.de>; Wed,  1 Dec 2021 08:46:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347097AbhLAHOb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 1 Dec 2021 02:14:31 -0500
-Received: from bee.birch.relay.mailchannels.net ([23.83.209.14]:46791 "EHLO
+        id S234735AbhLAHtr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 1 Dec 2021 02:49:47 -0500
+Received: from bee.birch.relay.mailchannels.net ([23.83.209.14]:11667 "EHLO
         bee.birch.relay.mailchannels.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232517AbhLAHOa (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 1 Dec 2021 02:14:30 -0500
+        by vger.kernel.org with ESMTP id S230144AbhLAHtq (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 1 Dec 2021 02:49:46 -0500
 X-Sender-Id: dreamhost|x-authsender|cosmos@claycon.org
 Received: from relay.mailchannels.net (localhost [127.0.0.1])
-        by relay.mailchannels.net (Postfix) with ESMTP id 45C8F6605CA;
-        Wed,  1 Dec 2021 07:11:08 +0000 (UTC)
+        by relay.mailchannels.net (Postfix) with ESMTP id 8D7206209D9;
+        Wed,  1 Dec 2021 07:46:23 +0000 (UTC)
 Received: from pdx1-sub0-mail-a239.dreamhost.com (unknown [127.0.0.6])
         (Authenticated sender: dreamhost)
-        by relay.mailchannels.net (Postfix) with ESMTPA id 97C75661685;
-        Wed,  1 Dec 2021 07:11:07 +0000 (UTC)
+        by relay.mailchannels.net (Postfix) with ESMTPA id C2A11620894;
+        Wed,  1 Dec 2021 07:46:22 +0000 (UTC)
 X-Sender-Id: dreamhost|x-authsender|cosmos@claycon.org
 Received: from pdx1-sub0-mail-a239.dreamhost.com (pop.dreamhost.com
  [64.90.62.162])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-        by 100.127.242.146 (trex/6.4.3);
-        Wed, 01 Dec 2021 07:11:08 +0000
+        by 100.109.250.6 (trex/6.4.3);
+        Wed, 01 Dec 2021 07:46:23 +0000
 X-MC-Relay: Neutral
 X-MailChannels-SenderId: dreamhost|x-authsender|cosmos@claycon.org
 X-MailChannels-Auth-Id: dreamhost
-X-Desert-Slimy: 609438f53f158204_1638342668059_1381473076
-X-MC-Loop-Signature: 1638342668059:3203880526
-X-MC-Ingress-Time: 1638342668059
+X-Harbor-Suffer: 4982dbea23ba7336_1638344783231_287088708
+X-MC-Loop-Signature: 1638344783231:4208909484
+X-MC-Ingress-Time: 1638344783231
 Received: from ps29521.dreamhostps.com (ps29521.dreamhostps.com [69.163.186.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: cosmos@claycon.org)
-        by pdx1-sub0-mail-a239.dreamhost.com (Postfix) with ESMTPSA id 4J3qxl22pLz3Z;
-        Tue, 30 Nov 2021 23:11:07 -0800 (PST)
+        by pdx1-sub0-mail-a239.dreamhost.com (Postfix) with ESMTPSA id 4J3rkQ4FV6z1Jd;
+        Tue, 30 Nov 2021 23:46:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; d=claycon.org;
-        s=claycon.org; t=1638342667; bh=3zIaAWlZUmi5p5cVvgaB8EJfYbA=;
+        s=claycon.org; t=1638344782; bh=jzLWxBpLhm1LQux+SiiHrLGTxuA=;
         h=Date:From:To:Cc:Subject:Content-Type;
-        b=fsEvYc1TO7vKX7M1QLqS9tFDRIseZC1iIkunmDhv0n10mF8ARMCMSE1cD3Mo+u6dY
-         3sOSwK76pyru1jLl7gqPPDckViFdRcdlQpBIg0fMgpeCekBA22HJok7D9Up45LeqP8
-         ro/gf1PrtNB0hQcD8W0xMksHROT2f3THtIG0N4P4=
-Date:   Wed, 1 Dec 2021 01:11:01 -0600
+        b=QayqVyXxG8djF+aeyhs2Yph1g1K0GVFDrpWMJ8z5CfLGaQOT6A5mrM8nmc0rfT67p
+         ROy976nGJ5mS3nTJGRrzzyPsZUNRTusYoWvtgwk3AOnK1nLPXZ9COw49AtV/Ry27xP
+         +Qs9rLFNVDaFbjjSU5cwSmCu9hZWn3qi8ol6uyLQ=
+Date:   Wed, 1 Dec 2021 01:46:21 -0600
 From:   Clay Harris <bugs@claycon.org>
 To:     Stefan Roesch <shr@fb.com>
 Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 0/3] io_uring: add getdents64 support
-Message-ID: <20211201071101.6aus4oxhocztt7t6@ps29521.dreamhostps.com>
-References: <20211124231700.1158521-1-shr@fb.com>
- <20211125044246.ve2433klyjua3a6d@ps29521.dreamhostps.com>
- <58fbf170-a1ae-a841-f41f-17c2d6df5503@fb.com>
+Subject: Re: [PATCH v1 0/5] io_uring: add xattr support
+Message-ID: <20211201074621.qzebnsb7f3t27dvo@ps29521.dreamhostps.com>
+References: <20211129221257.2536146-1-shr@fb.com>
+ <20211130010836.jqp5nuemrse43aca@ps29521.dreamhostps.com>
+ <2ba45a80-ce7a-a105-49e5-5507b4453e05@fb.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <58fbf170-a1ae-a841-f41f-17c2d6df5503@fb.com>
+In-Reply-To: <2ba45a80-ce7a-a105-49e5-5507b4453e05@fb.com>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Nov 30 2021 at 22:01:30 -0800, Stefan Roesch quoth thus:
+On Tue, Nov 30 2021 at 22:07:47 -0800, Stefan Roesch quoth thus:
 
 > 
 > 
-> On 11/24/21 8:42 PM, Clay Harris wrote:
+> On 11/29/21 5:08 PM, Clay Harris wrote:
+> > On Mon, Nov 29 2021 at 14:12:52 -0800, Stefan Roesch quoth thus:
 > > 
-> > I seem to recall making a few comments the last time a getdents64
-> > for io_uring was proposed; in particular I wanted to bring up one
-> > here.  This applies only to altering the internal interface, which
-> > io_uring would use, although wiring up a new syscall would be a nice
-> > addition.
+> >> This adds the xattr support to io_uring. The intent is to have a more
+> >> complete support for file operations in io_uring.
+> >>
+> >> This change adds support for the following functions to io_uring:
+> >> - fgetxattr
+> >> - fsetxattr
+> >> - getxattr
+> >> - setxattr
 > > 
-> > The current interface has 2 issues:
+> > You may wish to consider the following.
 > > 
-> > 1)
-> > getdents64 requires at least two calls to read a directory.
-> > One or more to get the dents and a final call to see the EOF.
-> > With small directories, this means literally 50% of the calls
-> > are wasted.
+> > Patching for these functions makes for an excellent opportunity
+> > to provide a better interface.  Rather than implement fXetattr
+> > at all, you could enable io_uring to use functions like:
 > > 
-> > 2)
-> > The fpos cannot be changed atomically with a read, so it is not
-> > possible to to safely perform concurrent reads on the same fd.
+> > int Xetxattr(int dfd, const char *path, const char *name,
+> > 	[const] void *value, size_t size, int flags);
 > > 
-> > But, the kernel knows (most, if not all of the time) that it is at
-> > EOF at the time it returns the last buffer.  So, it would be very
-> > useful to get an EOF indicator back with the final buffer.  This
-> > could just a flag, or for instance make an fpos parameter which is
-> > both input and output, returning the (post read) fpos or zero at
-> > EOF.
+> > Not only does this simplify the io_uring interface down to two
+> > functions, but modernizes and fixes a deficit in usability.
+> > In terms of io_uring, this is just changing internal interfaces.
 > > 
-> > Futhermore, for input, one could supply:
-> > 	0:	Start from directory beginning
-> > 	-1:	Read from current position
-> > 	other:	(output from previous call) Read from here
-> > 
-
-Thank you for taking the time to respond!
-
-> While I can understand the wish to optimize the getdents call, this
-> has its own set of challenges:
+> > Although unnecessary for io_uring, it would be nice to at least
+> > consider what parts of this code could be leveraged for future
+> > Xetxattr2 syscalls.
 > 
-> - The getdents API is following the logic of other read API's. None
->   of these API's has the logic you described above. This would be
->   inconsistent.
 
-The point was that the familiar interface can be improved by changing its API.
+I may have become a little over-excited when I saw someone was thinking
+about new code associated with these interfaces.  It's just that, to be
+very kind, the existing interfaces have so much room for improvement.
+I'm aware that changes in this area can be a non-trivial amount of
+work, due to specific xattr keys being handled by different security
+module hooks.
 
-Consider as if you were implementing a new syscall:
-ssize_t getdents2(int fd, void *buf, size_t count, off_t *offset, int flags);
+> Clay, 
+> 
+> while we can reduce the number of calls to 2, providing 4 calls will
+> ease the adoption of the interface. 
 
-This is close enough to pread() that no one would be slowed down by its
-unfamiliarity.  It would work just like getdents64(), except that the fpos
-at the end of the read would always be returned in offset.  At EOF, fpos 0
-would be returned.  On the calling side, one would set a flag and set offset
-to a value other than -1 to cause it to atomically change fpos before the read.
+Well, there's removexattr(), but who's counting?
+I believe people use the other *at() interfaces without ever looking
+back at the old calls and that there is little point in io_uring reproducing
+all of the old baggage.
 
-Just considering an io_uring (only) call, io_uring is already a new interface,
-so the inconsistency point doesn't really seem to apply.
+> If you look at the userspace interface in liburing, you can see the
+> following function signature:
+> 
+> static inline void io_uring_prep_fgetxattr(struct io_uring_sqe *sqe,
+> 		                           int         fd,
+> 					   const char *name,
+> 					   const char *value,
+> 					   size_t      len)
+> 
+> This is very similar to what you proposed.
 
-> - The eof needs to be stored in another field. The dirent structure
->   does not have space in the field, so a new data structure needs to be defined.
-
-I believe the important part of the idea is the EOF processing, so I'll drop
-the fpos discussion for now.  In this case you could use exactly the old
-getdents64() API for io_uring with the minor addition of a returned flag bit.
-My understanding, which I'll admit could be flawed, is that the directory
-iterator should be testable for the EOF condition.  If correct, I'd think
-that testing it and setting a bit in the cqe flags field is all you'd need.
-So, as long as the internal call has access to the iterator, no new structures
-are required.
-
-> - However the goal is to provide a familiar interface to the user.
-> - If the user wants to reduce the number of calls he can still provide
->   a bigger user buffer.
-
-In io_uring, if there is no EOF flag as suggested above, the best you
-could probably due is to queue two requests, IOSQE_IO_HARDLINK-ed together,
-every time you want some directory entries, and then look for a zero length
-return.  That's extra logic, the extra wasted call, and already doubling the
-required buffering.
+Even though these functions desperately need updating, and as super nice
+as it would be, I don't expect you to implement getxattrat() and setxattrat().
+If I were to name a single thing that would most increase the usability of
+these functions, it would be:
+	Make the fXetxattr() functions (at least the io_uring versions)
+	work with an O_PATH descriptor.
+That one thing would at least provide most of the desired functionality at
+the cost of an extra openat() call.
 
 > 
-> > On Wed, Nov 24 2021 at 15:16:57 -0800, Stefan Roesch quoth thus:
 > > 
-> >> This series adds support for getdents64 in liburing. The intent is to
-> >> provide a more complete I/O interface for io_uring.
+> >> Patch 1: fs: make user_path_at_empty() take a struct filename
+> >>   The user_path_at_empty filename parameter has been changed
+> >>   from a const char user pointer to a filename struct. io_uring
+> >>   operates on filenames.
+> >>   In addition also the functions that call user_path_at_empty
+> >>   in namei.c and stat.c have been modified for this change.
 > >>
-> >> Patch 1: fs: add parameter use_fpos to iterate_dir()
-> >>   This adds a new parameter to the function iterate_dir() so the
-> >>   caller can specify if the position is the file position or the
-> >>   position stored in the buffer context.
+> >> Patch 2: fs: split off setxattr_setup function from setxattr
+> >>   Split off the setup part of the setxattr function
 > >>
-> >> Patch 2: fs: split off vfs_getdents function from getdents64 system call
-> >>   This splits of the iterate_dir part of the syscall in its own
-> >>   dedicated function. This allows to call the function directly from
-> >>   liburing.
+> >> Patch 3: fs: split off the vfs_getxattr from getxattr
+> >>   Split of the vfs_getxattr part from getxattr. This will
+> >>   allow to invoke it from io_uring.
 > >>
-> >> Patch 3: io_uring: add support for getdents64
-> >>   Adds the functions to io_uring to support getdents64.
+> >> Patch 4: io_uring: add fsetxattr and setxattr support
+> >>   This adds new functions to support the fsetxattr and setxattr
+> >>   functions.
 > >>
-> >> There is also a patch series for the changes to liburing. This includes
-> >> a new test. The patch series is called "liburing: add getdents support."
+> >> Patch 5: io_uring: add fgetxattr and getxattr support
+> >>   This adds new functions to support the fgetxattr and getxattr
+> >>   functions.
 > >>
-> >> The following tests have been performed:
-> >> - new liburing getdents test program has been run
-> >> - xfstests have been run
-> >> - both tests have been repeated with the kernel memory leak checker
-> >>   and no leaks have been reported.
+> >>
+> >> There are two additional patches:
+> >>   liburing: Add support for xattr api's.
+> >>             This also includes the tests for the new code.
+> >>   xfstests: Add support for io_uring xattr support.
+> >>
+> >>
+> >> Stefan Roesch (5):
+> >>   fs: make user_path_at_empty() take a struct filename
+> >>   fs: split off setxattr_setup function from setxattr
+> >>   fs: split off the vfs_getxattr from getxattr
+> >>   io_uring: add fsetxattr and setxattr support
+> >>   io_uring: add fgetxattr and getxattr support
+> >>
+> >>  fs/internal.h                 |  23 +++
+> >>  fs/io_uring.c                 | 325 ++++++++++++++++++++++++++++++++++
+> >>  fs/namei.c                    |   5 +-
+> >>  fs/stat.c                     |   7 +-
+> >>  fs/xattr.c                    | 114 +++++++-----
+> >>  include/linux/namei.h         |   4 +-
+> >>  include/uapi/linux/io_uring.h |   8 +-
+> >>  7 files changed, 439 insertions(+), 47 deletions(-)
+> >>
 > >>
 > >> Signed-off-by: Stefan Roesch <shr@fb.com>
-> >> ---
-> >> V2: Updated the iterate_dir calls in fs/ksmbd, fs/ecryptfs and arch/alpha with
-> >>     the additional parameter.
-> >>
-> >> Stefan Roesch (3):
-> >>   fs: add parameter use_fpos to iterate_dir function
-> >>   fs: split off vfs_getdents function of getdents64 syscall
-> >>   io_uring: add support for getdents64
-> >>
-> >>  arch/alpha/kernel/osf_sys.c   |  2 +-
-> >>  fs/ecryptfs/file.c            |  2 +-
-> >>  fs/exportfs/expfs.c           |  2 +-
-> >>  fs/internal.h                 |  8 +++++
-> >>  fs/io_uring.c                 | 52 ++++++++++++++++++++++++++++
-> >>  fs/ksmbd/smb2pdu.c            |  2 +-
-> >>  fs/ksmbd/vfs.c                |  4 +--
-> >>  fs/nfsd/nfs4recover.c         |  2 +-
-> >>  fs/nfsd/vfs.c                 |  2 +-
-> >>  fs/overlayfs/readdir.c        |  6 ++--
-> >>  fs/readdir.c                  | 64 ++++++++++++++++++++++++++---------
-> >>  include/linux/fs.h            |  2 +-
-> >>  include/uapi/linux/io_uring.h |  1 +
-> >>  13 files changed, 121 insertions(+), 28 deletions(-)
-> >>
-> >>
-> >> base-commit: f0afafc21027c39544a2c1d889b0cff75b346932
+> >> base-commit: c2626d30f312afc341158e07bf088f5a23b4eeeb
 > >> -- 
 > >> 2.30.2

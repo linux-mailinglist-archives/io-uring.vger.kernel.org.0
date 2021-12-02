@@ -2,129 +2,135 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B56F846671E
-	for <lists+io-uring@lfdr.de>; Thu,  2 Dec 2021 16:48:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B1F2C4667F3
+	for <lists+io-uring@lfdr.de>; Thu,  2 Dec 2021 17:25:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347541AbhLBPvz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 2 Dec 2021 10:51:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55236 "EHLO
+        id S1359503AbhLBQ3H (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 2 Dec 2021 11:29:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35464 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242293AbhLBPvx (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 2 Dec 2021 10:51:53 -0500
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD485C06174A;
-        Thu,  2 Dec 2021 07:48:30 -0800 (PST)
-Received: by mail-wr1-x430.google.com with SMTP id l16so60532769wrp.11;
-        Thu, 02 Dec 2021 07:48:30 -0800 (PST)
+        with ESMTP id S1359487AbhLBQ2s (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 2 Dec 2021 11:28:48 -0500
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20F5AC06174A;
+        Thu,  2 Dec 2021 08:25:25 -0800 (PST)
+Received: by mail-wr1-x42a.google.com with SMTP id q3so37927326wru.5;
+        Thu, 02 Dec 2021 08:25:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=tGC3LpdEhf/azzucNhguXDxEcjakxGW5c1+cbDZrOzA=;
-        b=Cuw4refrkxRuzxjplWfBvXRstEa1sCgXRTrB9M6vZZZutwu5bGygklfwcZMz9fqdh6
-         brookoLg8n2YWE1FVC6QCBq7CNF2Ppwz9l/fbMpa2dz8XfJAgAUSbX+EuQ7epfRWIoQt
-         1FF8AxIwKVVMloGmPgKtv9p6eZp2BHl1sDLB8oKQFcLZHF3SWZVsuxjO90HnRxmyPhti
-         rAXK4AcQPan+6z066haa9Fbs2NutpEb+owuLl47tz8ZgzenuD65o/Kg7Wp1NcDTbwTs/
-         TGkAQDEEkuHEEpmH7y7xeTZkn8aEK+FeEgXbxflO5hmFeLeVR8Jmo7/slBpUPGePdS5Q
-         7dYA==
+        bh=0JGsvnjiYkIl6j1i8qSpFvEIFGcGRddganu7CpOyXOk=;
+        b=X/0Vs8VNVs+6CMRA+kwG8jWZnxgMrYIY1EwQaL97BJweRb0ZY6vFKjx5CeZCmsapfX
+         KBgZ7E9zyr3Lc+QK9JFXV8xHH0hffaS/cer6YtrdTK0cgCJ46otgp+x0AS2obh9g9BYE
+         /WAg4XqUpnC3pywG+rx8VDprgBM1safugNRPF6eW1LNo23FU23WCBwei4gmdEde9uNdd
+         0t8/WIGTqWj1CeHrAl8UW/P+HsWgQMM3rQhK81g5Gp3WHG3mBHDwUBpZa0MbG0LLA5uf
+         xqO2+IsIaNd5i2a+rCcf2NMBRdceoyDB325XWR1M5XL2uOeV2jQjWFXnSmdSHossravG
+         7BEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=tGC3LpdEhf/azzucNhguXDxEcjakxGW5c1+cbDZrOzA=;
-        b=VXH3hUnwUBdCWhwjtz2jgHTt1nOzWw918XSbkr1wbz6ysXagX6uG4FUL42wKEy2PwT
-         zfgcVwHEYAwGCm13tvIeT5mX0lreqeKz82OP4byyz7OqWBTKAITkBPBHbqxsLsYZKhwC
-         3PGHhYt2c3n9UTGtrE+9F8Ln8WT5Kz5afJw8yhDqyqO96wyP4Vm2NDv4bZtNSA8JoDJo
-         blaY0OS3rFuNRzg9vgjQEXLdrQRu30/z5bwVAjbp6C+vb4sqDTQ4yteIxgz3Uj3LCACl
-         UCDvajcFJok6ubM+5tnbv1DG9sfAFnCyzCtwZWlzhYA+f+0ws/kj70gbLF2yIx0dfSc4
-         9gDA==
-X-Gm-Message-State: AOAM531G1buqMcsVmbwE0RRgt8JWXStOMvehCi2eGikH9y7S4D+HdAK4
-        fjuHB8T1N+AUq4BctIah59s=
-X-Google-Smtp-Source: ABdhPJwNz5AmAptN2Wtm7R8RgB0gpQZvAJdTETPL6m07GjnXiWJS7juoQ03JqVsWEd/3n9Gm9uhRog==
-X-Received: by 2002:a5d:588b:: with SMTP id n11mr15125945wrf.344.1638460109405;
-        Thu, 02 Dec 2021 07:48:29 -0800 (PST)
+        bh=0JGsvnjiYkIl6j1i8qSpFvEIFGcGRddganu7CpOyXOk=;
+        b=7cRCnCqa0sTn4zyKMmf1M5zRoG02SVdsxDPUN86am8BZatQazpFoSL8tuE++vrSF8f
+         Bpw7M4rsOPJSo/2nHEmKMNHxVxXWPs0LYT0DzC692YCuXH8z64Z6QVKruvgvXWmc9uX8
+         s6QNAkNCFyLtgZnh6is1mRKGiN5Ski6r8b8gk+QcT+JXPU37GbuEMPm9tVhJl+GoSrEb
+         nSdQRFApvsf4CEOXvS4gp3hxLE84g+g7oNuKOI6xU20LLKYQtooJ6zmvosHrtiU1781c
+         1zMpwxIAlaJ6r+ZJmuurvlLpUVK23lpAFPU/wCQRgRmLLlVRLN9hgKA1mnIfHx3qzCgN
+         wQiA==
+X-Gm-Message-State: AOAM530BPupTeiWIg7mRuMSZXMl5mczpy9cYQjRl+pRafQqjvfuQiwWB
+        qg6iE4+iGOHSj0d5Lwoa2x8=
+X-Google-Smtp-Source: ABdhPJzUsiFaBatwrqVRFWnbt+o+h6w2j9qYRd+3ZiiiY/fxafluV9DaJ2LV6+OCq8hY+8pp9BRyXg==
+X-Received: by 2002:adf:f7d2:: with SMTP id a18mr15223132wrq.354.1638462323689;
+        Thu, 02 Dec 2021 08:25:23 -0800 (PST)
 Received: from [192.168.8.198] ([185.69.144.137])
-        by smtp.gmail.com with ESMTPSA id d2sm41111wmb.31.2021.12.02.07.48.27
+        by smtp.gmail.com with ESMTPSA id p12sm349112wrr.10.2021.12.02.08.25.22
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Dec 2021 07:48:28 -0800 (PST)
-Message-ID: <ffd25188-aa92-2d69-a749-3058d1d33bc1@gmail.com>
-Date:   Thu, 2 Dec 2021 15:48:14 +0000
+        Thu, 02 Dec 2021 08:25:23 -0800 (PST)
+Message-ID: <9db0edcf-75c0-d014-6120-514cc37a1a9f@gmail.com>
+Date:   Thu, 2 Dec 2021 16:25:19 +0000
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.3.2
 Subject: Re: [RFC 00/12] io_uring zerocopy send
 Content-Language: en-US
-To:     Martin KaFai Lau <kafai@fb.com>
-Cc:     David Ahern <dsahern@gmail.com>, io-uring@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jakub Kicinski <kuba@kernel.org>,
+To:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc:     io-uring@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
         Jonathan Lemon <jonathan.lemon@gmail.com>,
         "David S . Miller" <davem@davemloft.net>,
-        Willem de Bruijn <willemb@google.com>,
         Eric Dumazet <edumazet@google.com>,
         Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
         David Ahern <dsahern@kernel.org>, Jens Axboe <axboe@kernel.dk>
 References: <cover.1638282789.git.asml.silence@gmail.com>
- <ae2d2dab-6f42-403a-f167-1ba3db3fd07f@gmail.com>
- <994e315b-fdb7-1467-553e-290d4434d853@gmail.com>
- <c4424a7a-2ef1-6524-9b10-1e7d1f1e1fe4@gmail.com>
- <889c0306-afed-62cd-d95b-a20b8e798979@gmail.com>
- <0b92f046-5ac3-7138-2775-59fadee6e17a@gmail.com>
- <974b266e-d224-97da-708f-c4a7e7050190@gmail.com>
- <20211201215157.kgqd5attj3dytfgs@kafai-mbp.dhcp.thefacebook.com>
+ <CA+FuTSf-N08d6pcbie2=zFcQJf3_e2dBJRUZuop4pOhNfSANUA@mail.gmail.com>
+ <0d82f4e2-730f-4888-ec82-2354ffa9c2d8@gmail.com>
+ <d5a07e01-7fc3-2f73-a406-21246a252876@gmail.com>
+ <CA+FuTSeP-W-ePV1EkWMmD4Ycsfq9viYdtyfDbUW3LXTc2q+BHQ@mail.gmail.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20211201215157.kgqd5attj3dytfgs@kafai-mbp.dhcp.thefacebook.com>
+In-Reply-To: <CA+FuTSeP-W-ePV1EkWMmD4Ycsfq9viYdtyfDbUW3LXTc2q+BHQ@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 12/1/21 21:51, Martin KaFai Lau wrote:
-> On Wed, Dec 01, 2021 at 08:15:28PM +0000, Pavel Begunkov wrote:
->> On 12/1/21 19:20, David Ahern wrote:
->>> On 12/1/21 12:11 PM, Pavel Begunkov wrote:
->>>> btw, why a dummy device would ever go through loopback? It doesn't
->>>> seem to make sense, though may be missing something.
->>>
->>> You are sending to a local ip address, so the fib_lookup returns
->>> RTN_LOCAL. The code makes dev_out the loopback:
->>>
->>> https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/tree/net/ipv4/route.c#n2773
+On 12/2/21 00:36, Willem de Bruijn wrote:
+>>>>> 1) we pass a bvec, so no page table walks.
+>>>>> 2) zerocopy_sg_from_iter() is just slow, adding a bvec optimised version
+>>>>>      still doing page get/put (see 4/12) slashed 4-5%.
+>>>>> 3) avoiding get_page/put_page in 5/12
+>>>>> 4) completion events are posted into io_uring's CQ, so no
+>>>>>      extra recvmsg for getting events
+>>>>> 5) no poll(2) in the code because of io_uring
+>>>>> 6) lot of time is spent in sock_omalloc()/free allocating ubuf_info.
+>>>>>      io_uring caches the structures reducing it to nearly zero-overhead.
+>>>>
+>>>> Nice set of complementary optimizations.
+>>>>
+>>>> We have looked at adding some of those as independent additions to
+>>>> msg_zerocopy before, such as long-term pinned regions. One issue with
+>>>> that is that the pages must remain until the request completes,
+>>>> regardless of whether the calling process is alive. So it cannot rely
+>>>> on a pinned range held by a process only.
+>>>>
+>>>> If feasible, it would be preferable if the optimizations can be added
+>>>> to msg_zerocopy directly, rather than adding a dependency on io_uring
+>>>> to make use of them. But not sure how feasible that is. For some, like
+>>>> 4 and 5, the answer is clearly it isn't.  6, it probably is?
 >>
->> I see, thanks. I still don't use the skb_orphan_frags_rx() hack
->> and it doesn't go through the loopback (for my dummy tests), just
->> dummy_xmit() and no mention of loopback in perf data, see the
->> flamegraph. Don't know what is the catch.
+>> Forgot about 6), io_uring uses the fact that submissions are
+>> done under an per ring mutex, and completions are under a per
+>> ring spinlock, so there are two lists for them and no extra
+>> locking. Lists are spliced in a batched manner, so it's
+>> 1 spinlock per N (e.g. 32) cached ubuf_info's allocations.
 >>
->> I'm illiterate of the routing paths. Can it be related to
->> the "ip route add"? How do you get an ipv4 address for the device?
-> I also bumped into the udp-connect() => ECONNREFUSED (111) error from send-zc.
-> because I assumed no server is needed by using dummy.  Then realized
-> the cover letter mentioned msg_zerocopy is used as the server.
-> Mentioning just in case someone hits it also.
+>> Any similar guarantees for sockets?
 > 
-> To tx out dummy, I did:
-> #> ip a add 10.0.0.1/24 dev dummy0
+> For datagrams it might matter, not sure if it would show up in a
+> profile. The current notification mechanism is quite a bit more
+> heavyweight than any form of fixed ubuf pool.
 
-Works well for me, IOW getting the same behaviour as with my
-ip route add <ip> dev dummy0
+Just to give an idea what I'm seeing in profiles: while testing
 
-I'm curious what is the difference bw them?
+3 | io_uring (@flush=false, nr_reqs=1)   |  96534     | 2.03
 
+I found that removing one extra smb_mb() per request in io_uring
+gave around +0.65% of t-put (quick testing). In profiles the
+function where it was dropped from 0.93% to 0.09%.
 
-> #> ip -4 r
-> 10.0.0.0/24 dev dummy0 proto kernel scope link src 10.0.0.1
-> 
-> #> ./send-zc -4 -D 10.0.0.(2) -t 10 udp
-> ip -s link show dev dummy0
-> 2: dummy0: <BROADCAST,NOARP,UP,LOWER_UP> mtu 65535 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
->     link/ether 82:0f:e0:dc:f7:e6 brd ff:ff:ff:ff:ff:ff
->     RX:    bytes packets errors dropped  missed   mcast
->                0       0      0       0       0       0
->     TX:    bytes packets errors dropped carrier collsns
->     140800890299 2150397      0       0       0       0
+ From what I see, alloc+free takes 6-10% for 64KB UDP, it may be
+great to have something for MSG_ZEROCOPY, but if that adds
+additional locking/atomics, honestly I'd prefer to keep it separate
+from io_uring's caching.
+
+I also hope we can optimise generic paths at some point, and the
+faster it gets the more such additional locking will hurt, pretty
+much how it was with the block layer.
+
+> For TCP this matters less, as multiple sends are not needed and
+> completions are coalesced, because in order.
 > 
 
 -- 

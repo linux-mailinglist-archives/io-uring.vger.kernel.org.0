@@ -2,118 +2,153 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B7895466BA6
-	for <lists+io-uring@lfdr.de>; Thu,  2 Dec 2021 22:26:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33E13466DA3
+	for <lists+io-uring@lfdr.de>; Fri,  3 Dec 2021 00:24:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349095AbhLBV3p (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 2 Dec 2021 16:29:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46952 "EHLO
+        id S1356451AbhLBX1m (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 2 Dec 2021 18:27:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243442AbhLBV3o (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 2 Dec 2021 16:29:44 -0500
-Received: from mail-ua1-x936.google.com (mail-ua1-x936.google.com [IPv6:2607:f8b0:4864:20::936])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A425C061758
-        for <io-uring@vger.kernel.org>; Thu,  2 Dec 2021 13:26:22 -0800 (PST)
-Received: by mail-ua1-x936.google.com with SMTP id n6so1727235uak.1
-        for <io-uring@vger.kernel.org>; Thu, 02 Dec 2021 13:26:21 -0800 (PST)
+        with ESMTP id S1349346AbhLBX1l (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 2 Dec 2021 18:27:41 -0500
+Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB372C061757
+        for <io-uring@vger.kernel.org>; Thu,  2 Dec 2021 15:24:18 -0800 (PST)
+Received: by mail-io1-xd2e.google.com with SMTP id v23so1530240iom.12
+        for <io-uring@vger.kernel.org>; Thu, 02 Dec 2021 15:24:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1Hn9In6dG6/T2rUegQRPLN+LJLRotI0z9a+p2oSgmSw=;
-        b=WcLNPe7hi8P0a769XfSLDW7w5eRkULcbKfx7dM8r6rxLfqJDSlKAGrRjzWgWCu1yBE
-         FTcMiBj74CHLSYb2X7t8R6PffWxPZxiuRiM0VpHebGEJYZMPWozDd4/1DjJXMN9vz+SU
-         9h8aWhii8li6bipguj05vVjcXY1Qe7+iUoCqHjelzow8TIE7G0sP3ExCUascltLi4NTH
-         gIifVEf+zJhTBoAYpVxGTLo/G7tGu0Y7stdZkUaamJHkAyiinRIFuv0YGcgPFk7aJj05
-         upSI/uq4CmgnoIxwcDoH3RKoNxhNAe0qWfmX2r484uDLtutlPGJ89f8DdLEEWVixhBgs
-         g8EA==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=to:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=NLDDw1pqgSFWCbeKySen1cv6lFv+DqvXYym5kKf0q4s=;
+        b=mZCsJDK8loRnEhs1PHBAcK+4zZR5uR5yZrJTL53/yNDbJGFGg3d6+oKTFcAo5+uicQ
+         /JuRrE7MFqz99uE9qsrjp6PN1OKCn8NXK6xATr1rDNHhL3N5aPzKDq6ZgdFwA5scRVJl
+         Xo838GyR70XH0XIulYstak7JT/rvLJ8Jn4yIga2Cti7TnY8H18vaxllHUP7PNr4NcvKx
+         gsQWc6BlbknwaJqEUz08+lyclM8lo6QfUMJ9VTg31f2vBfvJaLV0PakTQzPhbCwulN0Z
+         rUqqyjE3MJ38LNYTjgY/bisrF6UmE3R4Lx7xswL2ZAO8AZEUXxeFaWj5CKftd46RIkHS
+         0aUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1Hn9In6dG6/T2rUegQRPLN+LJLRotI0z9a+p2oSgmSw=;
-        b=aaBTW85EYF5q/Xau0tl+y15yHdvPFQ9xuuELWt52jsoYBLyTHE0PKXNssfQRSMfQj1
-         4A+tySlPofc2lzeS0RH/As3otVnYr55iIxunzjuFz1bECXN8A7cnOz98pXbeUJCtO+ES
-         dCTIyG6U+CLisJfrC/cCBqXKbvdOCd1R4GYHsNQq+G3w9T3KZI+Lv+cgET2CNdBusf2Y
-         apUSo9josNeVH79fnrks0GAQSg9EevFUyTOiDfPaXf7ocmaNMVEQoes1L/y9EM5ODT0D
-         nUHiaPOVVMpabBWV8zbw1iOLiQcbCg2Ymt1hbSZTui2nvDXDB2JYrKqmCsRmB8uVRKCS
-         cJTw==
-X-Gm-Message-State: AOAM530Mn9bH6MO83QYo29tR8+Cd8MyG77DiAHsHEf8Hv7uxJQwDP780
-        3/B3EYDoMwqWrOrS9IIGO+QXti0Fv6Q=
-X-Google-Smtp-Source: ABdhPJxYIoLo35ShrdYSU/lmsHfbLGMAdsHsDYzNOYNWKK7OW4Ld2RnVCiPNXyqN6mJ78L/nl3UUrA==
-X-Received: by 2002:a67:ec10:: with SMTP id d16mr18367918vso.58.1638480381043;
-        Thu, 02 Dec 2021 13:26:21 -0800 (PST)
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com. [209.85.221.169])
-        by smtp.gmail.com with ESMTPSA id t20sm196376vsj.27.2021.12.02.13.26.19
-        for <io-uring@vger.kernel.org>
+        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=NLDDw1pqgSFWCbeKySen1cv6lFv+DqvXYym5kKf0q4s=;
+        b=rpA0W76s5wdtlM/9mOcX1wcO5h+cU0mcRj91POvV/UTrwcUjCbMmgRSdNIvs7yscaC
+         eAnnAokksnw1l9SlmGyX3BI0xyekCpQ9+UCrmJFail+rpEr27WnOZpRv5LM3nXLM6vPM
+         jECJqlVw2XaIB+isK+fJCtYshQo57qK6I/LNXVIgzBQXIH2k7fx4UBVUQyxm9bys3wgS
+         6vSgJZ03lKEa5tqFNi+xnrLCEu+3fwC56Q5eIbJQT9FhZWuI2V/MTP1aaI+06eadQH5C
+         xNQgbADjonhBMqkYbvd20geIVXu8xnON7fmSnq1COa2BUg9xepMQxQqVCocI4OO5Fl7C
+         gkeg==
+X-Gm-Message-State: AOAM530vowSyEGsJjamB1n3Mz0aTBErWVO/FH0QCoJB72nT7L5QXyyPw
+        7EXJkErQTHwPy5UxCJi7Qd7ocm1CdFUYbVbR
+X-Google-Smtp-Source: ABdhPJxKXoNYer6IUg2VNbco2TTVgn2gGULZpd15LSrIlBDh/DG/mXm99yvW1npuIEUPfWqpr5aftQ==
+X-Received: by 2002:a05:6602:3422:: with SMTP id n34mr3289994ioz.7.1638487458048;
+        Thu, 02 Dec 2021 15:24:18 -0800 (PST)
+Received: from [192.168.1.116] ([66.219.217.159])
+        by smtp.gmail.com with ESMTPSA id m2sm637168iob.21.2021.12.02.15.24.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Dec 2021 13:26:20 -0800 (PST)
-Received: by mail-vk1-f169.google.com with SMTP id b192so514684vkf.3
-        for <io-uring@vger.kernel.org>; Thu, 02 Dec 2021 13:26:19 -0800 (PST)
-X-Received: by 2002:a05:6122:1350:: with SMTP id f16mr19584323vkp.10.1638480379557;
- Thu, 02 Dec 2021 13:26:19 -0800 (PST)
+        Thu, 02 Dec 2021 15:24:17 -0800 (PST)
+To:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        io-uring <io-uring@vger.kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH RFC] block: enable bio allocation cache for IRQ driven IO
+Message-ID: <c24fe04b-6a46-93b2-a6a6-a77606a1084c@kernel.dk>
+Date:   Thu, 2 Dec 2021 16:24:17 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <cover.1638282789.git.asml.silence@gmail.com> <CA+FuTSf-N08d6pcbie2=zFcQJf3_e2dBJRUZuop4pOhNfSANUA@mail.gmail.com>
- <0d82f4e2-730f-4888-ec82-2354ffa9c2d8@gmail.com> <CA+FuTSf1dk-ZCN_=oFcYo31XdkLLAaHJHHNfHwJKe01CVq3X+A@mail.gmail.com>
- <6e07fb0c-075b-4072-273b-f9d55ba1e1dd@gmail.com>
-In-Reply-To: <6e07fb0c-075b-4072-273b-f9d55ba1e1dd@gmail.com>
-From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Date:   Thu, 2 Dec 2021 16:25:42 -0500
-X-Gmail-Original-Message-ID: <CA+FuTSfe63=SuuZeC=eZPLWstgOL6oFUrsL4o+J8=3BwHJSTVg@mail.gmail.com>
-Message-ID: <CA+FuTSfe63=SuuZeC=eZPLWstgOL6oFUrsL4o+J8=3BwHJSTVg@mail.gmail.com>
-Subject: Re: [RFC 00/12] io_uring zerocopy send
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-        io-uring@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        David Ahern <dsahern@kernel.org>, Jens Axboe <axboe@kernel.dk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-> > What if the ubuf pool can be found from the sk, and the index in that
-> > pool is passed as a cmsg?
->
-> It looks to me that ubufs are by nature is something that is not
-> tightly bound to a socket (at least for io_uring API in the patchset),
-> it'll be pretty ugly:
->
-> 1) io_uring'd need to care to register the pool in the socket. Having
-> multiple rings using the same socket would be horrible. It may be that
-> it doesn't make much sense to send in parallel from multiple rings, but
-> a per thread io_uring is a popular solution, and then someone would
-> want to pass a socket from one thread to another and we'd need to support
-> it.
->
-> 2) And io_uring would also need to unregister it, so the pool would
-> store a list of sockets where it's used, and so referencing sockets
-> and then we need to bind it somehow to io_uring fixed files or
-> register all that for tracking referencing circular dependencies.
->
-> 3) IIRC, we can't add a cmsg entry from the kernel, right? May be wrong,
-> but if so I don't like exposing basically io_uring's referencing through
-> cmsg. And it sounds io_uring would need to parse cmsg then.
->
->
-> A lot of nuances :) I'd really prefer to pass it on per-request basis,
+We currently cannot use the bio recycling allocation cache for IRQ driven
+IO, as the cache isn't IRQ safe (by design).
 
-Ok
+Add a way for the completion side to pass back a bio that needs freeing,
+so we can do it from the io_uring side. io_uring completions always
+run in task context.
 
-> it's much cleaner, but still haven't got what's up with msghdr
-> initialisation...
+This is good for about a 13% improvement in IRQ driven IO, taking us from
+around 6.3M/core to 7.1M/core IOPS.
 
-And passing the struct through multiple layers of functions.
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-> Maybe, it's better to add a flags field, which would include
-> "msg_control_is_user : 1" and whether msghdr includes msg_iocb, msg_ubuf,
-> and everything else that may be optional. Does it sound sane?
+---
 
-If sendmsg takes the argument, it will just have to be initialized, I think.
+Open to suggestions on how to potentially do this cleaner. The below
+obviously works, but ideally we'd want to run the whole end_io handler
+from this context rather than just the bio put. That would enable
+further optimizations in this area.
 
-Other functions are not aware of its existence so it can remain
-uninitialized there.
+But the wins are rather large as-is.
+
+diff --git a/block/fops.c b/block/fops.c
+index 10015e1a5b01..9cea5b60f044 100644
+--- a/block/fops.c
++++ b/block/fops.c
+@@ -295,14 +295,19 @@ static void blkdev_bio_end_io_async(struct bio *bio)
+ 		ret = blk_status_to_errno(bio->bi_status);
+ 	}
+ 
+-	iocb->ki_complete(iocb, ret);
+-
+ 	if (dio->flags & DIO_SHOULD_DIRTY) {
+ 		bio_check_pages_dirty(bio);
+ 	} else {
+ 		bio_release_pages(bio, false);
+-		bio_put(bio);
++		if (iocb->ki_flags & IOCB_BIO_PASSBACK) {
++			iocb->ki_flags |= IOCB_PRIV_IS_BIO;
++			iocb->private = bio;
++		} else {
++			bio_put(bio);
++		}
+ 	}
++
++	iocb->ki_complete(iocb, ret);
+ }
+ 
+ static ssize_t __blkdev_direct_IO_async(struct kiocb *iocb,
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 4591bcb79b1f..5644628b8cb7 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -2770,6 +2770,9 @@ static void io_req_task_complete(struct io_kiocb *req, bool *locked)
+ 	unsigned int cflags = io_put_rw_kbuf(req);
+ 	int res = req->result;
+ 
++	if (req->rw.kiocb.ki_flags & IOCB_PRIV_IS_BIO)
++		bio_put(req->rw.kiocb.private);
++
+ 	if (*locked) {
+ 		io_req_complete_state(req, res, cflags);
+ 		io_req_add_compl_list(req);
+@@ -2966,6 +2969,7 @@ static int io_prep_rw(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	} else {
+ 		if (kiocb->ki_flags & IOCB_HIPRI)
+ 			return -EINVAL;
++		kiocb->ki_flags |= IOCB_ALLOC_CACHE | IOCB_BIO_PASSBACK;
+ 		kiocb->ki_complete = io_complete_rw;
+ 	}
+ 
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 0cc4f5fd4cfe..1e9d86955e3d 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -322,6 +322,10 @@ enum rw_hint {
+ #define IOCB_NOIO		(1 << 20)
+ /* can use bio alloc cache */
+ #define IOCB_ALLOC_CACHE	(1 << 21)
++/* iocb supports bio passback */
++#define IOCB_BIO_PASSBACK	(1 << 22)
++/* iocb->private holds bio to put */
++#define IOCB_PRIV_IS_BIO	(1 << 23)
+ 
+ struct kiocb {
+ 	struct file		*ki_filp;
+
+-- 
+Jens Axboe
+

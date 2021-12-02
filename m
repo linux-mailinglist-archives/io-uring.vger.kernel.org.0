@@ -2,179 +2,234 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E9156466890
-	for <lists+io-uring@lfdr.de>; Thu,  2 Dec 2021 17:45:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B5A04668CB
+	for <lists+io-uring@lfdr.de>; Thu,  2 Dec 2021 18:04:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1359648AbhLBQtH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 2 Dec 2021 11:49:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40268 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238116AbhLBQtG (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 2 Dec 2021 11:49:06 -0500
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30FF6C06174A;
-        Thu,  2 Dec 2021 08:45:44 -0800 (PST)
-Received: by mail-wr1-x430.google.com with SMTP id d9so66365wrw.4;
-        Thu, 02 Dec 2021 08:45:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=AKQ2pAOmEBJeGaC+Fg+TZ5OgSJZapELwBH5HT52ld0E=;
-        b=DWyCnwkiT9jP17kIiITLctgKV5J8BjqINPgNPrM3tZ6Rg2b5hCB7yvJlJ5w7i8rFui
-         /STV1QMz9I/mghF4FGTpGqd3feDNxMZUbC/aw/Mw3/hh1ZuWQ0xh+mzog0LgfHBDyuv3
-         6rpY7d28lzihf35gndWOnFBZuc+VBrzlqkUi2CeHl7rz3SVmVSplaI1swxtwy+bE8pq7
-         INjTe8sPMC9FyYLq6EOsquMDypF1Q7ajA3vdQZ/HZRcxh7lI5INusAv+XYcP/B0ZITj1
-         Kqp7IUPZAiCq0ymQXsbwlPY+30qaYjnHmKceBNgvAvPGXMwpO05jmBp0zbTjRBnZFrMX
-         Szaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=AKQ2pAOmEBJeGaC+Fg+TZ5OgSJZapELwBH5HT52ld0E=;
-        b=s3y2HDqeH6iU5IYuU2IiBkZXT+Z9HTLS42KjGxhMMmvvJ36jkrgrRXFm4nfE+FmTt6
-         rP+hC3XbWNYS59/N0zy2LToDdX4zF5KfQaLeZjKJpqbSg+6u4A+tJUxNXFR+DzgFFA2v
-         lFna8oOJgSuJKm2ZkFhv7zN8AgecihBw9Sk9XpAn1hzbplE+ztm+kuee2yL4rSogJFg4
-         +ERknfD4dpt8ivfr712tAwk+x6bI35AJldd89/2f+zjUYauIaf0oZ5Y6AkZ7N9I/IZHK
-         dC/HSNv799iiZYTVIPBUmJFj79sJWxxpOO9uoz3CBawOwHX446TYMcWrVyVNBMScZH2H
-         D8NQ==
-X-Gm-Message-State: AOAM531R0DAfr3HuAmp6oF4juaoiFfU7Ad/LCmiLA39HmKT9/BhYhQKA
-        NjapsDVg93cTPeC8tH9F8zo=
-X-Google-Smtp-Source: ABdhPJzYALyvcqQRhcSVq0MDZZC1OBiAF0C2u/IvC46Hz2V7qJ8Q8UyzJFyXmFMsz7YAtJ1uOBtTTQ==
-X-Received: by 2002:adf:d22a:: with SMTP id k10mr16152878wrh.80.1638463542576;
-        Thu, 02 Dec 2021 08:45:42 -0800 (PST)
-Received: from [192.168.8.198] ([185.69.144.137])
-        by smtp.gmail.com with ESMTPSA id h204sm169540wmh.33.2021.12.02.08.45.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Dec 2021 08:45:42 -0800 (PST)
-Message-ID: <6e07fb0c-075b-4072-273b-f9d55ba1e1dd@gmail.com>
-Date:   Thu, 2 Dec 2021 16:45:36 +0000
+        id S1348023AbhLBRH0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 2 Dec 2021 12:07:26 -0500
+Received: from mx-rz-1.rrze.uni-erlangen.de ([131.188.11.20]:46987 "EHLO
+        mx-rz-1.rrze.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1348043AbhLBRH0 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 2 Dec 2021 12:07:26 -0500
+X-Greylist: delayed 460 seconds by postgrey-1.27 at vger.kernel.org; Thu, 02 Dec 2021 12:07:25 EST
+Received: from mx-rz-smart.rrze.uni-erlangen.de (mx-rz-smart.rrze.uni-erlangen.de [IPv6:2001:638:a000:1025::1e])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx-rz-1.rrze.uni-erlangen.de (Postfix) with ESMTPS id 4J4htZ03VKz8tQg;
+        Thu,  2 Dec 2021 17:56:22 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fau.de; s=fau-2021;
+        t=1638464182; bh=KlVsAy7OGVzh0Xfjl+WSSgiFJLlzKE+dpm9VJQZwdl0=;
+        h=Date:From:To:Cc:Subject:From:To:CC:Subject;
+        b=fm0uMa0/GUKqYsLgsieRsH1eIFvSoPgB6+BOl8yPn/AAqeSWTrPVAfd8yN6kZHvCA
+         /acfhRwaVZNsUy6mnFfKj8A3/+RPiR7CBqrquo6IgxGvM6YuLpwWybAWiwu8m+lGPi
+         0wK4gjVbmn16upaR+/XPucVsPCCYHcoQBW2kOJggYKigAVP/Tak+HfIWkfQ+WTSssF
+         RUMq0c3U+JWScNM0BuaMpwgqOifkOyhvF0a3VVDHGoJytBpBYna/MQbYtSBe2dSiIS
+         GHXg+aFDd9j2t9iiONEDU2dTjFzDBrce21ejdbUXUa8vpxqlfLbk0Cm87KIoLCeInk
+         x9FUOSgkDRjpA==
+X-Virus-Scanned: amavisd-new at boeck5.rrze.uni-erlangen.de (RRZE)
+X-RRZE-Flag: Not-Spam
+X-RRZE-Submit-IP: 2003:eb:5724:4441:7a2b:46ff:fe28:e01a
+Received: from localhost (p200300eb572444417a2b46fffe28e01a.dip0.t-ipconnect.de [IPv6:2003:eb:5724:4441:7a2b:46ff:fe28:e01a])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: U2FsdGVkX1+li2saNnm/ykosi7e3NQpiGOhh5PqVYBo=)
+        by smtp-auth.uni-erlangen.de (Postfix) with ESMTPSA id 4J4htV3688z8v3s;
+        Thu,  2 Dec 2021 17:56:18 +0100 (CET)
+Date:   Thu, 2 Dec 2021 17:56:06 +0100
+From:   Florian Fischer <florian.fl.fischer@fau.de>
+To:     io-uring@vger.kernel.org
+Cc:     Florian Schmaus <schmaus@cs.fau.de>
+Subject: Tasks stuck on exit(2) with 5.15.6
+Message-ID: <20211202165606.mqryio4yzubl7ms5@pasture>
+Mail-Followup-To: io-uring@vger.kernel.org,
+        Florian Schmaus <schmaus@cs.fau.de>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.2
-Subject: Re: [RFC 00/12] io_uring zerocopy send
-Content-Language: en-US
-To:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc:     io-uring@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        David Ahern <dsahern@kernel.org>, Jens Axboe <axboe@kernel.dk>
-References: <cover.1638282789.git.asml.silence@gmail.com>
- <CA+FuTSf-N08d6pcbie2=zFcQJf3_e2dBJRUZuop4pOhNfSANUA@mail.gmail.com>
- <0d82f4e2-730f-4888-ec82-2354ffa9c2d8@gmail.com>
- <CA+FuTSf1dk-ZCN_=oFcYo31XdkLLAaHJHHNfHwJKe01CVq3X+A@mail.gmail.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <CA+FuTSf1dk-ZCN_=oFcYo31XdkLLAaHJHHNfHwJKe01CVq3X+A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 12/2/21 00:32, Willem de Bruijn wrote:
->>>> # discussion / questions
->>>>
->>>> I haven't got a grasp on many aspects of the net stack yet, so would
->>>> appreciate feedback in general and there are a couple of questions
->>>> thoughts.
->>>>
->>>> 1) What are initialisation rules for adding a new field into
->>>> struct mshdr? E.g. many users (mainly LLD) hand code initialisation not
->>>> filling all the fields.
->>>>
->>>> 2) I don't like too much ubuf_info propagation from udp_sendmsg() into
->>>> __ip_append_data() (see 3/12). Ideas how to do it better?
->>>
->>> Agreed that both of these are less than ideal.
->>>
->>> I can't comment too much on the io_uring aspect of the patch series.
->>> But msg_zerocopy is probably used in a small fraction of traffic (even
->>> if a high fraction for users who care about its benefits). We have to
->>> try to minimize the cost incurred on the general hot path.
->>
->> One thing, I can hide the initial ubuf check in the beginning of
->> __ip_append_data() under a common
->>
->> if (sock_flag(sk, SOCK_ZEROCOPY)) {}
->>
->> But as SOCK_ZEROCOPY is more of a design problem workaround,
->> tbh not sure I like from the API perspective. Thoughts?
-> 
-> Agreed. io_uring does not have the legacy concerns that msg_zerocopy
-> had to resolve.
-> 
-> It is always possible to hide runtime overhead behind a static_branch,
-> if nothing else.
-> 
-> Or perhaps do pass the flag and use that:
-> 
->    - if (flags & MSG_ZEROCOPY && length && sock_flag(sk, SOCK_ZEROCOPY)) {
->    + if (flags & MSG_ZEROCOPY && length) {
->    +         if (uarg) {
-> 
->    etc.
+Hello,
 
-Good idea. Unfortunately, not going to work (SOCK_ZEROCOPY would neither)
-because we pass ubuf as a parameter into the function, and e.g. we need
-to NULL it if not used, but at least good for tcp_sendmsg_locked
+I experienced stuck tasks during a process' exit when using multiple
+io_uring instances on a 48/96-core system in a multi-threaded environment,
+where we use an io_uring per thread and a single pipe(2) to pass messages
+between the threads.
 
->> I hope
->> I can also shuffle some of the stuff in 5/12 out of the
->> hot path, need to dig a bit deeper.
->>
->>> I was going to suggest using the standard msg_zerocopy ubuf_info
->>> alloc/free mechanism. But you explicitly mention seeing omalloc/ofree
->>> in the cycle profile.
->>>
->>> It might still be possible to somehow signal to msg_zerocopy_alloc
->>> that this is being called from within an io_uring request, and
->>> therefore should use a pre-existing uarg with different
->>> uarg->callback. If nothing else, some info can be passed as a cmsg.
->>> But perhaps there is a more direct pointer path to follow from struct
->>> sk, say? Here my limited knowledge of io_uring forces me to hand wave.
->>
->> One thing I consider important though is to be able to specify a
->> ubuf per request, but not somehow registering it in a socket. It's
->> more flexible from the userspace API perspective. It would also need
->> constant register/unregister, and there are concerns with
->> referencing/cancellations, that's where it came from in the first
->> place.
-> 
-> What if the ubuf pool can be found from the sk, and the index in that
-> pool is passed as a cmsg?
+When the program calls exit(2) without joining the threads or unmapping/closing
+the io_urings, the program gets stuck in the zombie state - sometimes leaving
+behind multiple <cpu>:<n>-events kernel-threads using a considerable amount of CPU.
 
-It looks to me that ubufs are by nature is something that is not
-tightly bound to a socket (at least for io_uring API in the patchset),
-it'll be pretty ugly:
+I can reproduce this behavior on Debian running Linux 5.15.6 with the
+reproducer below compiled with Debian's gcc (10.2.1-6):
 
-1) io_uring'd need to care to register the pool in the socket. Having
-multiple rings using the same socket would be horrible. It may be that
-it doesn't make much sense to send in parallel from multiple rings, but
-a per thread io_uring is a popular solution, and then someone would
-want to pass a socket from one thread to another and we'd need to support
-it.
+// gcc -Werror -Wall -O3 hang-pipe-reproducer.c -o hang-pipe-reproducer -pthread -luring
+#include <assert.h>
+#include <err.h>
+#include <errno.h>
+#include <liburing.h>
+#include <pthread.h>
+#include <semaphore.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/sysinfo.h>
+#include <unistd.h>
 
-2) And io_uring would also need to unregister it, so the pool would
-store a list of sockets where it's used, and so referencing sockets
-and then we need to bind it somehow to io_uring fixed files or
-register all that for tracking referencing circular dependencies.
+#define IORING_ENTRIES 8
+#define UNUSED __attribute((unused))
 
-3) IIRC, we can't add a cmsg entry from the kernel, right? May be wrong,
-but if so I don't like exposing basically io_uring's referencing through
-cmsg. And it sounds io_uring would need to parse cmsg then.
+static pthread_t* threads;
+static pthread_barrier_t init_barrier;
+static int sleep_fd, notify_fd;
+static sem_t sem;
+
+void* thread_func(UNUSED void* arg) {
+	struct io_uring ring;
+	int res = io_uring_queue_init(IORING_ENTRIES, &ring, 0);
+	if (res) err(EXIT_FAILURE, "io_uring_queue_init failed");
+
+	pthread_barrier_wait(&init_barrier);
+
+	for(;;) {
+		struct io_uring_sqe* sqe = io_uring_get_sqe(&ring);
+		assert(sqe);
+
+		uint64_t buf;
+		io_uring_prep_read(sqe, sleep_fd, &buf, sizeof(buf), 0);
+    
+		int res = io_uring_submit_and_wait(&ring, 1);
+		if (res < 0) err(EXIT_FAILURE, "io_uring_submit_and_wait failed");
+
+		struct io_uring_cqe* cqe;
+		res = io_uring_peek_cqe(&ring, &cqe);
+		assert(!res);
+		if (cqe->res < 0) {
+			errno = -cqe->res;
+			err(EXIT_FAILURE, "read failed");
+		}
+		assert(cqe->res == sizeof(buf));
+
+		sem_post(&sem);
+
+		io_uring_cqe_seen(&ring, cqe);
+	}
+
+	return NULL;
+}
+
+int main() {
+	int cpus = get_nprocs();
+	int res = pthread_barrier_init(&init_barrier, NULL, cpus);
+	if (res) err(EXIT_FAILURE, "pthread_barrier_init failed");
+
+	res = sem_init(&sem, 0, 0);
+	if (res) err(EXIT_FAILURE, "sem_init failed");
+
+	printf("start %d io_uring threads\n", cpus);
+	threads = malloc(sizeof(pthread_t) * cpus);
+	if (!threads) err(EXIT_FAILURE, "malloc failed");
+
+	int fds[2];
+	res = pipe(fds);
+	if (res) err(EXIT_FAILURE, "pipe failed");
+	sleep_fd = fds[0];
+	notify_fd = fds[1];
+
+	for (unsigned i = 0; i < cpus; ++i) {
+		errno = pthread_create(&threads[i], NULL, thread_func, NULL);
+		if (errno) err(EXIT_FAILURE, "pthread_create failed");
+	}
+
+	// Write #cpus notifications
+	printf("write %d notifications\n", cpus);
+	const uint64_t n = 0x42;
+	for (unsigned i = 0; i < cpus; ++i) {
+		res = write(notify_fd, &n, sizeof(n));
+		if (res < 0) err(EXIT_FAILURE, "write failed");
+		assert(res == sizeof(n));
+	}
+
+	// Await that all notifications were received
+	for (unsigned i = 0; i < cpus; ++i) {
+		sem_wait(&sem);
+	}
+
+	// Exit without resource cleanup
+	exit(EXIT_SUCCESS);
+}
+
+Kernel info message about the hung task:
+
+INFO: task hang-pipe-repro:404364 blocked for more than 845 seconds.
+      Tainted: G            E     5.15.6 #1
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:hang-pipe-repro state:D stack:    0 pid:404364 ppid: 19554 flags:0x00024004
+Call Trace:
+ <TASK>
+ ? usleep_range+0x80/0x80
+ __schedule+0x2eb/0x910
+ ? usleep_range+0x80/0x80
+ schedule+0x44/0xa0
+ schedule_timeout+0xfc/0x140
+ ? __prepare_to_swait+0x4b/0x70
+ __wait_for_common+0xae/0x160
+ io_wq_put_and_exit+0xf9/0x330
+ io_uring_cancel_generic+0x200/0x2e0
+ ? finish_wait+0x80/0x80
+ do_exit+0xba/0xa90
+ do_group_exit+0x33/0xa0
+ get_signal+0x170/0x910
+ arch_do_signal_or_restart+0xf0/0x7a0
+ ? __schedule+0x2f3/0x910
+ ? __queue_work+0x1c8/0x3d0
+ exit_to_user_mode_prepare+0x119/0x180
+ syscall_exit_to_user_mode+0x23/0x40
+ do_syscall_64+0x48/0xc0
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x7f2df15c59b9
+RSP: 002b:00007f2dd4434de8 EFLAGS: 00000212 ORIG_RAX: 00000000000001aa
+RAX: 0000000000000001 RBX: 00007f2dd4434e30 RCX: 00007f2df15c59b9
+RDX: 0000000000000001 RSI: 0000000000000001 RDI: 000000000000003f
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000008
+R10: 0000000000000001 R11: 0000000000000212 R12: 00007f2dd4434e20
+R13: 00007ffc8577b38f R14: 00007f2dd4434fc0 R15: 0000000000802000
+ </TASK>
+
+The trace ran through scripts/decode_stacktrace.sh
+
+Call Trace:
+<TASK>
+ ? usleep_range (kernel/time/timer.c:1843)
+ __schedule (kernel/sched/core.c:4944 kernel/sched/core.c:6291)
+ ? usleep_range (kernel/time/timer.c:1843)
+ schedule (./arch/x86/include/asm/bitops.h:207 (discriminator 1) ./include/asm-generic/bitops/instrumented-non-atomic.h:135 (discriminator 1) ./include/linux/thread_info.h:118 (discriminator 1) ./include/linux/sched.h:2107 (discriminator 1) kernel/sched/core.c:6372 (discriminator 1))
+ schedule_timeout (kernel/time/timer.c:1858)
+ ? __prepare_to_swait (./include/linux/list.h:67 ./include/linux/list.h:100 kernel/sched/swait.c:89)
+ __wait_for_common (kernel/sched/completion.c:86 kernel/sched/completion.c:106)
+ io_wq_put_and_exit (./include/asm-generic/bitops/find.h:117 ./include/linux/nodemask.h:265 fs/io-wq.c:1216 fs/io-wq.c:1249)
+ io_uring_cancel_generic (fs/io_uring.c:9753 fs/io_uring.c:9832)
+ ? finish_wait (kernel/sched/wait.c:408)
+ do_exit (kernel/exit.c:781)
+ do_group_exit (./include/linux/sched/signal.h:269 kernel/exit.c:905)
+ get_signal (./arch/x86/include/asm/current.h:15 kernel/signal.c:2758)
+ arch_do_signal_or_restart (arch/x86/kernel/signal.c:865 (discriminator 1))
+ ? __schedule (kernel/sched/core.c:6299)
+ ? __queue_work (./arch/x86/include/asm/paravirt.h:590 ./arch/x86/include/asm/qspinlock.h:56 ./include/linux/spinlock.h:216 ./include/linux/spinlock_api_smp.h:151 kernel/workqueue.c:1522)
+ exit_to_user_mode_prepare (kernel/entry/common.c:174 kernel/entry/common.c:207)
+ syscall_exit_to_user_mode (./arch/x86/include/asm/jump_label.h:55 ./arch/x86/include/asm/nospec-branch.h:289 ./arch/x86/include/asm/entry-common.h:94 kernel/entry/common.c:131 kernel/entry/common.c:302)
+ do_syscall_64 (arch/x86/entry/common.c:87)
+ entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:113)
+RIP: 0033:0x7f2df15c59b9
+RSP: 002b:00007f2dd4434de8 EFLAGS: 00000212 ORIG_RAX: 00000000000001aa
+RAX: 0000000000000001 RBX: 00007f2dd4434e30 RCX: 00007f2df15c59b9
+RDX: 0000000000000001 RSI: 0000000000000001 RDI: 000000000000003f
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000008
+R10: 0000000000000001 R11: 0000000000000212 R12: 00007f2dd4434e20
+R13: 00007ffc8577b38f R14: 00007f2dd4434fc0 R15: 0000000000802000
+ </TASK>
 
 
-A lot of nuances :) I'd really prefer to pass it on per-request basis,
-it's much cleaner, but still haven't got what's up with msghdr
-initialisation...
+Using a 5.14 kernel the reproducer exits immediately.
 
-Maybe, it's better to add a flags field, which would include
-"msg_control_is_user : 1" and whether msghdr includes msg_iocb, msg_ubuf,
-and everything else that may be optional. Does it sound sane?
-
--- 
-Pavel Begunkov
+Florian Fischer

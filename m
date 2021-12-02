@@ -2,182 +2,130 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2ED14466025
-	for <lists+io-uring@lfdr.de>; Thu,  2 Dec 2021 10:08:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B56F846671E
+	for <lists+io-uring@lfdr.de>; Thu,  2 Dec 2021 16:48:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345898AbhLBJLx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 2 Dec 2021 04:11:53 -0500
-Received: from mail-io1-f71.google.com ([209.85.166.71]:45664 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345884AbhLBJLs (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 2 Dec 2021 04:11:48 -0500
-Received: by mail-io1-f71.google.com with SMTP id ay10-20020a5d9d8a000000b005e238eaeaa9so32091152iob.12
-        for <io-uring@vger.kernel.org>; Thu, 02 Dec 2021 01:08:24 -0800 (PST)
+        id S1347541AbhLBPvz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 2 Dec 2021 10:51:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55236 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S242293AbhLBPvx (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 2 Dec 2021 10:51:53 -0500
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD485C06174A;
+        Thu,  2 Dec 2021 07:48:30 -0800 (PST)
+Received: by mail-wr1-x430.google.com with SMTP id l16so60532769wrp.11;
+        Thu, 02 Dec 2021 07:48:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=tGC3LpdEhf/azzucNhguXDxEcjakxGW5c1+cbDZrOzA=;
+        b=Cuw4refrkxRuzxjplWfBvXRstEa1sCgXRTrB9M6vZZZutwu5bGygklfwcZMz9fqdh6
+         brookoLg8n2YWE1FVC6QCBq7CNF2Ppwz9l/fbMpa2dz8XfJAgAUSbX+EuQ7epfRWIoQt
+         1FF8AxIwKVVMloGmPgKtv9p6eZp2BHl1sDLB8oKQFcLZHF3SWZVsuxjO90HnRxmyPhti
+         rAXK4AcQPan+6z066haa9Fbs2NutpEb+owuLl47tz8ZgzenuD65o/Kg7Wp1NcDTbwTs/
+         TGkAQDEEkuHEEpmH7y7xeTZkn8aEK+FeEgXbxflO5hmFeLeVR8Jmo7/slBpUPGePdS5Q
+         7dYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=2nEPO550Rj0CJg8yzFP5f3pa89cCWBV9CiKJJK9J9Ac=;
-        b=A+f9Jm7BreWIcsblEjFywk1Jrnjes68P9yQIkCSZwsL6vD/OYHXAgg3ColsAB3hFc4
-         iSm9FeaZTen1zs5k7+xcQXRm/zCm8Rk2RQUn/oYPhDJ5g/4ICoyrVgkfPlrlI8+SG+E9
-         rJwhtfctnYw51dQ33ez2xKB7qHiQqCeT8Eehg1sAl9QiWoeDjG8gDocP83FzH1p8FX+4
-         CV9mSgt6CdfMZXneDR9oPX++ZMNPX237toWFuPAm0QbE1kAF8yWmkfhJRyE2qGzWFLyf
-         KmzLVk7dO5ISVpzdqQN3+0KeRn0pG+/Oahp99u1Isl4jaq2zVHORYREUg3rSZoAK2GzP
-         gdIQ==
-X-Gm-Message-State: AOAM531DpIPCsjBlTI1XDWDsLHToFNuTTdlh78JGmgoUVsUgAn1EwsBL
-        pNyxPRgx0l0E0vAsmafgwGpxCh030fJmEayOd+8nNHZ35cFw
-X-Google-Smtp-Source: ABdhPJwdIiqglfIfrBETAzYIY+rhwwS3wQVLPY4aL7a9eQGw6Sh6Athe+nzFhQbvf66S+B/MJoucChJZb6IAY85eDyrQWXmZKz/U
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=tGC3LpdEhf/azzucNhguXDxEcjakxGW5c1+cbDZrOzA=;
+        b=VXH3hUnwUBdCWhwjtz2jgHTt1nOzWw918XSbkr1wbz6ysXagX6uG4FUL42wKEy2PwT
+         zfgcVwHEYAwGCm13tvIeT5mX0lreqeKz82OP4byyz7OqWBTKAITkBPBHbqxsLsYZKhwC
+         3PGHhYt2c3n9UTGtrE+9F8Ln8WT5Kz5afJw8yhDqyqO96wyP4Vm2NDv4bZtNSA8JoDJo
+         blaY0OS3rFuNRzg9vgjQEXLdrQRu30/z5bwVAjbp6C+vb4sqDTQ4yteIxgz3Uj3LCACl
+         UCDvajcFJok6ubM+5tnbv1DG9sfAFnCyzCtwZWlzhYA+f+0ws/kj70gbLF2yIx0dfSc4
+         9gDA==
+X-Gm-Message-State: AOAM531G1buqMcsVmbwE0RRgt8JWXStOMvehCi2eGikH9y7S4D+HdAK4
+        fjuHB8T1N+AUq4BctIah59s=
+X-Google-Smtp-Source: ABdhPJwNz5AmAptN2Wtm7R8RgB0gpQZvAJdTETPL6m07GjnXiWJS7juoQ03JqVsWEd/3n9Gm9uhRog==
+X-Received: by 2002:a5d:588b:: with SMTP id n11mr15125945wrf.344.1638460109405;
+        Thu, 02 Dec 2021 07:48:29 -0800 (PST)
+Received: from [192.168.8.198] ([185.69.144.137])
+        by smtp.gmail.com with ESMTPSA id d2sm41111wmb.31.2021.12.02.07.48.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 02 Dec 2021 07:48:28 -0800 (PST)
+Message-ID: <ffd25188-aa92-2d69-a749-3058d1d33bc1@gmail.com>
+Date:   Thu, 2 Dec 2021 15:48:14 +0000
 MIME-Version: 1.0
-X-Received: by 2002:a6b:b2c1:: with SMTP id b184mr14946846iof.24.1638436103738;
- Thu, 02 Dec 2021 01:08:23 -0800 (PST)
-Date:   Thu, 02 Dec 2021 01:08:23 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f35e3b05d22621ff@google.com>
-Subject: [syzbot] INFO: task hung in io_uring_try_cancel_iowq
-From:   syzbot <syzbot+97bcaa1dfa37e2512746@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.2
+Subject: Re: [RFC 00/12] io_uring zerocopy send
+Content-Language: en-US
+To:     Martin KaFai Lau <kafai@fb.com>
+Cc:     David Ahern <dsahern@gmail.com>, io-uring@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jakub Kicinski <kuba@kernel.org>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Willem de Bruijn <willemb@google.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        David Ahern <dsahern@kernel.org>, Jens Axboe <axboe@kernel.dk>
+References: <cover.1638282789.git.asml.silence@gmail.com>
+ <ae2d2dab-6f42-403a-f167-1ba3db3fd07f@gmail.com>
+ <994e315b-fdb7-1467-553e-290d4434d853@gmail.com>
+ <c4424a7a-2ef1-6524-9b10-1e7d1f1e1fe4@gmail.com>
+ <889c0306-afed-62cd-d95b-a20b8e798979@gmail.com>
+ <0b92f046-5ac3-7138-2775-59fadee6e17a@gmail.com>
+ <974b266e-d224-97da-708f-c4a7e7050190@gmail.com>
+ <20211201215157.kgqd5attj3dytfgs@kafai-mbp.dhcp.thefacebook.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20211201215157.kgqd5attj3dytfgs@kafai-mbp.dhcp.thefacebook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
+On 12/1/21 21:51, Martin KaFai Lau wrote:
+> On Wed, Dec 01, 2021 at 08:15:28PM +0000, Pavel Begunkov wrote:
+>> On 12/1/21 19:20, David Ahern wrote:
+>>> On 12/1/21 12:11 PM, Pavel Begunkov wrote:
+>>>> btw, why a dummy device would ever go through loopback? It doesn't
+>>>> seem to make sense, though may be missing something.
+>>>
+>>> You are sending to a local ip address, so the fib_lookup returns
+>>> RTN_LOCAL. The code makes dev_out the loopback:
+>>>
+>>> https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/tree/net/ipv4/route.c#n2773
+>>
+>> I see, thanks. I still don't use the skb_orphan_frags_rx() hack
+>> and it doesn't go through the loopback (for my dummy tests), just
+>> dummy_xmit() and no mention of loopback in perf data, see the
+>> flamegraph. Don't know what is the catch.
+>>
+>> I'm illiterate of the routing paths. Can it be related to
+>> the "ip route add"? How do you get an ipv4 address for the device?
+> I also bumped into the udp-connect() => ECONNREFUSED (111) error from send-zc.
+> because I assumed no server is needed by using dummy.  Then realized
+> the cover letter mentioned msg_zerocopy is used as the server.
+> Mentioning just in case someone hits it also.
+> 
+> To tx out dummy, I did:
+> #> ip a add 10.0.0.1/24 dev dummy0
 
-syzbot found the following issue on:
+Works well for me, IOW getting the same behaviour as with my
+ip route add <ip> dev dummy0
 
-HEAD commit:    58e1100fdc59 MAINTAINERS: co-maintain random.c
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14b06cc5b00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e9ea28d2c3c2c389
-dashboard link: https://syzkaller.appspot.com/bug?extid=97bcaa1dfa37e2512746
-compiler:       Debian clang version 11.0.1-2, GNU ld (GNU Binutils for Debian) 2.35.2
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+97bcaa1dfa37e2512746@syzkaller.appspotmail.com
-
-INFO: task kworker/u4:10:22176 blocked for more than 143 seconds.
-      Not tainted 5.16.0-rc3-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:kworker/u4:10   state:D stack:22352 pid:22176 ppid:     2 flags:0x00004000
-Workqueue: events_unbound io_ring_exit_work
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:4972 [inline]
- __schedule+0xb72/0x1460 kernel/sched/core.c:6253
- schedule+0x12b/0x1f0 kernel/sched/core.c:6326
- schedule_preempt_disabled+0xf/0x20 kernel/sched/core.c:6385
- __mutex_lock_common+0xd1f/0x2590 kernel/locking/mutex.c:680
- __mutex_lock kernel/locking/mutex.c:740 [inline]
- mutex_lock_nested+0x1a/0x20 kernel/locking/mutex.c:792
- io_uring_try_cancel_iowq+0x2e/0x17e fs/io_uring.c:9644
- io_uring_try_cancel_requests+0x16f/0x42a fs/io_uring.c:9674
- io_ring_exit_work+0x10b/0x6b7 fs/io_uring.c:9483
- process_one_work+0x853/0x1140 kernel/workqueue.c:2298
- worker_thread+0xac1/0x1320 kernel/workqueue.c:2445
- kthread+0x468/0x490 kernel/kthread.c:327
- ret_from_fork+0x1f/0x30
- </TASK>
-
-Showing all locks held in the system:
-1 lock held by khungtaskd/27:
- #0: ffffffff8cb1db40 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire+0x0/0x30
-1 lock held by in:imklog/6218:
- #0: ffff88801a8a9c70 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0x24e/0x2f0 fs/file.c:990
-3 locks held by kworker/u4:10/22176:
- #0: ffff888011469138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x7ca/0x1140
- #1: ffffc9000f5a7d20 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x808/0x1140 kernel/workqueue.c:2273
- #2: ffff88807ca0c0a8 (&ctx->uring_lock){+.+.}-{3:3}, at: io_uring_try_cancel_iowq+0x2e/0x17e fs/io_uring.c:9644
-2 locks held by kworker/u4:7/4146:
-3 locks held by iou-sqp-5421/5424:
-
-=============================================
-
-NMI backtrace for cpu 1
-CPU: 1 PID: 27 Comm: khungtaskd Not tainted 5.16.0-rc3-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x1dc/0x2d8 lib/dump_stack.c:106
- nmi_cpu_backtrace+0x45f/0x490 lib/nmi_backtrace.c:111
- nmi_trigger_cpumask_backtrace+0x16a/0x280 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:146 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:210 [inline]
- watchdog+0xc82/0xcd0 kernel/hung_task.c:295
- kthread+0x468/0x490 kernel/kthread.c:327
- ret_from_fork+0x1f/0x30
- </TASK>
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0
-CPU: 0 PID: 2950 Comm: systemd-journal Not tainted 5.16.0-rc3-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:check_kcov_mode kernel/kcov.c:177 [inline]
-RIP: 0010:write_comp_data kernel/kcov.c:221 [inline]
-RIP: 0010:__sanitizer_cov_trace_const_cmp4+0x31/0xa0 kernel/kcov.c:287
-Code: 14 25 c0 6f 02 00 65 8b 05 74 e3 7d 7e a9 00 01 ff 00 74 10 a9 00 01 00 00 74 6e 83 ba a4 15 00 00 00 74 65 8b 82 80 15 00 00 <83> f8 03 75 5a 48 8b 8a 88 15 00 00 44 8b 8a 84 15 00 00 49 c1 e1
-RSP: 0018:ffffc90001acf6d0 EFLAGS: 00000246
-RAX: 0000000000000000 RBX: ffffc90001acfbc0 RCX: ffff88807d1bba00
-RDX: ffff88807d1bba00 RSI: 0000000000000040 RDI: 0000000000000000
-RBP: 0000000000000051 R08: ffffffff81df889b R09: ffffc90001acf660
-R10: fffff52000359ed5 R11: 0000000000000000 R12: 1ffff92000359f7f
-R13: dffffc0000000000 R14: ffffc90001acfbf8 R15: dffffc0000000000
-FS:  00007f46c1ca58c0(0000) GS:ffff8880b9a00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f46bf1cd000 CR3: 000000001f549000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- try_to_unlazy+0x7b/0xce0 fs/namei.c:772
- may_lookup fs/namei.c:1684 [inline]
- link_path_walk+0x298/0xd00 fs/namei.c:2239
- path_openat+0x25b/0x3660 fs/namei.c:3555
- do_filp_open+0x277/0x4f0 fs/namei.c:3586
- do_sys_openat2+0x13b/0x500 fs/open.c:1212
- do_sys_open fs/open.c:1228 [inline]
- __do_sys_open fs/open.c:1236 [inline]
- __se_sys_open fs/open.c:1232 [inline]
- __x64_sys_open+0x221/0x270 fs/open.c:1232
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x44/0xd0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-RIP: 0033:0x7f46c1234840
-Code: 73 01 c3 48 8b 0d 68 77 20 00 f7 d8 64 89 01 48 83 c8 ff c3 66 0f 1f 44 00 00 83 3d 89 bb 20 00 00 75 10 b8 02 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 31 c3 48 83 ec 08 e8 1e f6 ff ff 48 89 04 24
-RSP: 002b:00007fffe2dca4d8 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 00007fffe2dca7e0 RCX: 00007f46c1234840
-RDX: 00000000000001a0 RSI: 0000000000080042 RDI: 0000563b4c24d640
-RBP: 000000000000000d R08: 000000000000c0c1 R09: 00000000ffffffff
-R10: 0000000000000069 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 0000563b4c240040 R14: 00007fffe2dca7a0 R15: 0000563b4c24d690
- </TASK>
-----------------
-Code disassembly (best guess):
-   0:	14 25                	adc    $0x25,%al
-   2:	c0 6f 02 00          	shrb   $0x0,0x2(%rdi)
-   6:	65 8b 05 74 e3 7d 7e 	mov    %gs:0x7e7de374(%rip),%eax        # 0x7e7de381
-   d:	a9 00 01 ff 00       	test   $0xff0100,%eax
-  12:	74 10                	je     0x24
-  14:	a9 00 01 00 00       	test   $0x100,%eax
-  19:	74 6e                	je     0x89
-  1b:	83 ba a4 15 00 00 00 	cmpl   $0x0,0x15a4(%rdx)
-  22:	74 65                	je     0x89
-  24:	8b 82 80 15 00 00    	mov    0x1580(%rdx),%eax
-* 2a:	83 f8 03             	cmp    $0x3,%eax <-- trapping instruction
-  2d:	75 5a                	jne    0x89
-  2f:	48 8b 8a 88 15 00 00 	mov    0x1588(%rdx),%rcx
-  36:	44 8b 8a 84 15 00 00 	mov    0x1584(%rdx),%r9d
-  3d:	49                   	rex.WB
-  3e:	c1                   	.byte 0xc1
-  3f:	e1                   	.byte 0xe1
+I'm curious what is the difference bw them?
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> #> ip -4 r
+> 10.0.0.0/24 dev dummy0 proto kernel scope link src 10.0.0.1
+> 
+> #> ./send-zc -4 -D 10.0.0.(2) -t 10 udp
+> ip -s link show dev dummy0
+> 2: dummy0: <BROADCAST,NOARP,UP,LOWER_UP> mtu 65535 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
+>     link/ether 82:0f:e0:dc:f7:e6 brd ff:ff:ff:ff:ff:ff
+>     RX:    bytes packets errors dropped  missed   mcast
+>                0       0      0       0       0       0
+>     TX:    bytes packets errors dropped carrier collsns
+>     140800890299 2150397      0       0       0       0
+> 
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+-- 
+Pavel Begunkov

@@ -2,175 +2,102 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 67F5E4670B1
-	for <lists+io-uring@lfdr.de>; Fri,  3 Dec 2021 04:24:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E7084670F4
+	for <lists+io-uring@lfdr.de>; Fri,  3 Dec 2021 04:55:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240202AbhLCD1f (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 2 Dec 2021 22:27:35 -0500
-Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:42451 "EHLO
-        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230294AbhLCD1f (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 2 Dec 2021 22:27:35 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01424;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UzEPFvI_1638501849;
-Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UzEPFvI_1638501849)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 03 Dec 2021 11:24:10 +0800
-Subject: Re: [PATCH v6 0/6] task work optimization
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <20211126100740.196550-1-haoxu@linux.alibaba.com>
- <e63b44a9-72ba-09fd-82d8-448fce356a9a@gmail.com>
-From:   Hao Xu <haoxu@linux.alibaba.com>
-Message-ID: <e1f0a017-2aa4-a585-f35b-aefafd035de4@linux.alibaba.com>
-Date:   Fri, 3 Dec 2021 11:24:08 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.14.0
+        id S232437AbhLCD6g (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 2 Dec 2021 22:58:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50084 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229907AbhLCD6f (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 2 Dec 2021 22:58:35 -0500
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F6AAC06174A;
+        Thu,  2 Dec 2021 19:55:12 -0800 (PST)
+Received: by mail-wm1-x32b.google.com with SMTP id 137so1311216wma.1;
+        Thu, 02 Dec 2021 19:55:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :references:from:in-reply-to:content-transfer-encoding;
+        bh=1hebGR6Cl+u05IUMKJC6xIrtBc5TTp7uBFStdIMVjpY=;
+        b=hOzzmww3mDoKbNS6lCz7ofNTQsW7ZlO1tSz0ffX+1WOTXvaYcXWoqpydhjMF4sIYD+
+         fZHmiZ1aIvtJb9iYhBFdRcQxDNzZlFqydyb6zRuv7pC5IcJ7IrRBxxQP5vojsgH0QyOa
+         ZLZ8OwWuB0rr3QcFRcFwiUk3eE13qGB+2t8OhbX4lKPiAdTLbLRGiYTvN3pQehf6ewts
+         gmRlK353TWZtE1uKOhypuIHuJHti+YwKvrqx8EI0XLKG+occ3id1BgQPCSQ4zAiGdvTW
+         PetwTQ3L+6qTT/P6FWG62LVELTg87YCXgQCpRIcxNYjg0/O6dbzt8b1vNRWqQBgHdiNo
+         2A4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=1hebGR6Cl+u05IUMKJC6xIrtBc5TTp7uBFStdIMVjpY=;
+        b=1ucG2P0cSZkwMhDRXaakukSmVTHOK7lnF5I2XdF08omcHhJeIv/Lld1s1xXLyPjFJA
+         qko2BwtZ4EZMgDAqAXOWT8ZVzfox/GTWdPnPS5/Y+ReUzWWR7nItazcABp85Q6iyz5s/
+         p21cFX7Upn26O6r0tzU6t9U9Q54X7cEAD2gV0tkzua2rTi7BnPq+wiiqRzktmdaZDPMM
+         Yq2HICI4uRfRGVDI/xYSkRA6opHNMMDGq9qg4bVeKWjSPVlPBIJq7kdlBXjjP+6FcCwl
+         Dc7m2O6dnOcdPzOyg5MeA9ayKi1ISvrk8MDhrnCLCtGq/2ZIJSULs6uOj5JUAPTIe2Au
+         kHpw==
+X-Gm-Message-State: AOAM5335tJjeCsDvIAeuXFNdgbkhRgGcN8Dmmvh86jDJyINXHK/qGhR+
+        kdhl3CtoKzKDn054uIxcgMhe31MCe5o=
+X-Google-Smtp-Source: ABdhPJzHpmAft/pgu83IA7iI8miPRBo9VdAYa8SEO/jpW0LEWRRFmKM0ZW1lekOa3xijFQV5SIWwrA==
+X-Received: by 2002:a05:600c:1914:: with SMTP id j20mr11767788wmq.26.1638503710633;
+        Thu, 02 Dec 2021 19:55:10 -0800 (PST)
+Received: from [192.168.8.198] ([148.252.132.146])
+        by smtp.gmail.com with ESMTPSA id n1sm1382364wmq.6.2021.12.02.19.55.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 02 Dec 2021 19:55:10 -0800 (PST)
+Message-ID: <ed683410-92bd-fecf-c52a-32c865b13ae4@gmail.com>
+Date:   Fri, 3 Dec 2021 03:55:07 +0000
 MIME-Version: 1.0
-In-Reply-To: <e63b44a9-72ba-09fd-82d8-448fce356a9a@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.2
+Subject: Re: [PATCH v2 4/5] io_uring: add fsetxattr and setxattr support
+Content-Language: en-US
+To:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, kernel-team@fb.com
+References: <20211201055144.3141001-1-shr@fb.com>
+ <20211201055144.3141001-5-shr@fb.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20211201055144.3141001-5-shr@fb.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-在 2021/12/3 上午9:39, Pavel Begunkov 写道:
-> On 11/26/21 10:07, Hao Xu wrote:
->> v4->v5
->> - change the implementation of merge_wq_list
->>
->> v5->v6
->> - change the logic of handling prior task list to:
->>    1) grabbed uring_lock: leverage the inline completion infra
->>    2) otherwise: batch __req_complete_post() calls to save
->>       completion_lock operations.
-> 
-> some testing for v6, first is taking first 5 patches (1-5), and
-> then all 6 (see 1-6).
-> 
-> modprobe null_blk no_sched=1 irqmode=1 completion_nsec=0 
-> submit_queues=16 poll_queues=32 hw_queue_depth=128
-> echo 2 | sudo tee /sys/block/nullb0/queue/nomerges
-> echo 0 | sudo tee /sys/block/nullb0/queue/iostats
-> mitigations=off
-> 
-> added this to test non-sqpoll:
-> 
-> @@ -2840,7 +2840,7 @@ static void io_complete_rw(struct kiocb *kiocb, 
-> long res)
->                  return;
->          req->result = res;
->          req->io_task_work.func = io_req_task_complete;
-> -       io_req_task_work_add(req, !!(req->ctx->flags & 
-> IORING_SETUP_SQPOLL));
-> +       io_req_task_work_add(req, true);
->   }
-> 
-> # 1-5, sqpoll=0
-> nice -n -20 taskset -c 0 ./io_uring -d32 -s32 -c32 -p0 -B1 -F1 -b512 
-> /dev/nullb0
-> IOPS=3238688, IOS/call=32/32, inflight=32 (32)
-> IOPS=3299776, IOS/call=32/32, inflight=32 (32)
-> IOPS=3328416, IOS/call=32/32, inflight=32 (32)
-> IOPS=3291488, IOS/call=32/32, inflight=32 (32)
-> IOPS=3284480, IOS/call=32/32, inflight=32 (32)
-> IOPS=3305248, IOS/call=32/32, inflight=32 (32)
-> IOPS=3275392, IOS/call=32/32, inflight=32 (32)
-> IOPS=3301376, IOS/call=32/32, inflight=32 (32)
-> IOPS=3287392, IOS/call=32/32, inflight=32 (32)
-> 
-> # 1-5, sqpoll=1
-> nice -n -20  ./io_uring -d32 -s32 -c32 -p0 -B1 -F1 -b512 /dev/nullb0
-> IOPS=2730752, IOS/call=2730752/2730752, inflight=32 (32)
-> IOPS=2822432, IOS/call=-1/-1, inflight=0 (32)
-> IOPS=2818464, IOS/call=-1/-1, inflight=32 (32)
-> IOPS=2802880, IOS/call=-1/-1, inflight=0 (32)
-> IOPS=2773440, IOS/call=-1/-1, inflight=32 (32)
-> IOPS=2827296, IOS/call=-1/-1, inflight=32 (32)
-> IOPS=2808320, IOS/call=-1/-1, inflight=32 (32)
-> IOPS=2793120, IOS/call=-1/-1, inflight=32 (32)
-> IOPS=2769632, IOS/call=-1/-1, inflight=32 (32)
-> IOPS=2752896, IOS/call=-1/-1, inflight=32 (32)
-> 
-> # 1-6, sqpoll=0
-> nice -n -20 taskset -c 0 ./io_uring -d32 -s32 -c32 -p0 -B1 -F1 -b512 
-> /dev/nullb0
-> IOPS=3219552, IOS/call=32/32, inflight=32 (32)
-> IOPS=3284128, IOS/call=32/32, inflight=32 (32)
-> IOPS=3305024, IOS/call=32/32, inflight=32 (32)
-> IOPS=3301920, IOS/call=32/32, inflight=32 (32)
-> IOPS=3330592, IOS/call=32/32, inflight=32 (32)
-> IOPS=3286496, IOS/call=32/32, inflight=32 (32)
-> IOPS=3236160, IOS/call=32/32, inflight=32 (32)
-> IOPS=3307552, IOS/call=32/32, inflight=32 (32)
-> 
-> # 1-6, sqpoll=1
-> nice -n -20  ./io_uring -d32 -s32 -c32 -p0 -B1 -F1 -b512 /dev/nullb0
-> IOPS=2777152, IOS/call=2777152/2777152, inflight=32 (32)
-> IOPS=2822080, IOS/call=-1/-1, inflight=32 (32)
-> IOPS=2785472, IOS/call=-1/-1, inflight=0 (32)
-> IOPS=2763360, IOS/call=-1/-1, inflight=0 (32)
-> IOPS=2789856, IOS/call=-1/-1, inflight=32 (32)
-> IOPS=2783296, IOS/call=-1/-1, inflight=32 (32)
-> IOPS=2786016, IOS/call=-1/-1, inflight=0 (32)
-> IOPS=2773760, IOS/call=-1/-1, inflight=32 (32)
-> IOPS=2745408, IOS/call=-1/-1, inflight=32 (32)
-> IOPS=2764352, IOS/call=-1/-1, inflight=32 (32)
-> IOPS=2766912, IOS/call=-1/-1, inflight=32 (32)
-> IOPS=2757216, IOS/call=-1/-1, inflight=32 (32)
-> 
-> So, no difference here as expected, it just takes uring_lock
-> as per v6 changes and goes through the old path. Than I added
-> this to compare old vs new paths:
-> 
-> @@ -2283,7 +2283,7 @@ static void handle_prior_tw_list(struct 
-> io_wq_work_node *node, struct io_ring_ct
->                          ctx_flush_and_put(*ctx, locked);
->                          *ctx = req->ctx;
->                          /* if not contended, grab and improve batching */
-> -                       *locked = mutex_trylock(&(*ctx)->uring_lock);
-> +                       // *locked = mutex_trylock(&(*ctx)->uring_lock);
->                          percpu_ref_get(&(*ctx)->refs);
->                          if (unlikely(!*locked))
->                                  spin_lock(&(*ctx)->completion_lock);
-> 
-> 
-> # 1-6 + no trylock, sqpoll=0
-> nice -n -20 taskset -c 0 ./io_uring -d32 -s32 -c32 -p0 -B1 -F1 -b512 
-> /dev/nullb0
-> IOPS=3239040, IOS/call=32/32, inflight=32 (32)
-> IOPS=3244800, IOS/call=32/32, inflight=32 (32)
-> IOPS=3208544, IOS/call=32/32, inflight=32 (32)
-> IOPS=3264384, IOS/call=32/32, inflight=32 (32)
-> IOPS=3264000, IOS/call=32/32, inflight=32 (32)
-> IOPS=3296960, IOS/call=32/32, inflight=32 (32)
-> IOPS=3283424, IOS/call=32/32, inflight=32 (32)
-> IOPS=3284064, IOS/call=32/32, inflight=32 (32)
-> IOPS=3275232, IOS/call=32/32, inflight=32 (32)
-> IOPS=3261248, IOS/call=32/32, inflight=32 (32)
-> IOPS=3273792, IOS/call=32/32, inflight=32 (32)
-> 
-> #1-6 + no trylock, sqpoll=1
-> nice -n -20  ./io_uring -d32 -s32 -c32 -p0 -B1 -F1 -b512 /dev/nullb0
-> IOPS=2676736, IOS/call=2676736/2676736, inflight=32 (32)
-> IOPS=2639776, IOS/call=-1/-1, inflight=32 (32)
-> IOPS=2660000, IOS/call=-1/-1, inflight=32 (32)
-> IOPS=2639584, IOS/call=-1/-1, inflight=32 (32)
-> IOPS=2634592, IOS/call=-1/-1, inflight=0 (32)
-> IOPS=2611488, IOS/call=-1/-1, inflight=32 (32)
-> IOPS=2647360, IOS/call=-1/-1, inflight=32 (32)
-> IOPS=2630720, IOS/call=-1/-1, inflight=32 (32)
-> IOPS=2663200, IOS/call=-1/-1, inflight=32 (32)
-> IOPS=2694240, IOS/call=-1/-1, inflight=32 (32)
-> IOPS=2674592, IOS/call=-1/-1, inflight=32 (32)
-> 
-> Seems it goes a little bit down, but not much. Considering that
-> it's an optimisation for cases where there is no batching at all,
-> that's good.
-Nice, thanks for testing this, now it's clear that the inline completion
-path is faster.
+On 12/1/21 05:51, Stefan Roesch wrote:
+> This adds support to io_uring for the fsetxattr and setxattr API.
 
-Regards,
-Hao
-> 
+io_uring part (4/5 and 5/5) look sane, just one comments below
 
+  
+> Signed-off-by: Stefan Roesch <shr@fb.com>
+> ---
+>   fs/io_uring.c                 | 174 ++++++++++++++++++++++++++++++++++
+>   include/uapi/linux/io_uring.h |   6 +-
+>   2 files changed, 179 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 568729677e25..9d977bf243fd 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+[...]
+> +static int io_fsetxattr_prep(struct io_kiocb *req,
+> +			const struct io_uring_sqe *sqe)
+> +{
+> +	if (!req->file)
+> +		return -EBADF;
+
+No need, io_init_req() will fail the request if it can't get a file.
+Same for fgetxattr.
+
+
+> +
+> +	return __io_setxattr_prep(req, sqe, file_mnt_user_ns(req->file));
+> +}
+> +
+
+-- 
+Pavel Begunkov

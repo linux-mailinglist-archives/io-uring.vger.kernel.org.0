@@ -2,144 +2,113 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B4AF3467AA2
-	for <lists+io-uring@lfdr.de>; Fri,  3 Dec 2021 16:53:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E223467AC1
+	for <lists+io-uring@lfdr.de>; Fri,  3 Dec 2021 17:04:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1381900AbhLCP42 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 3 Dec 2021 10:56:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44432 "EHLO
+        id S245484AbhLCQHa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 3 Dec 2021 11:07:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46886 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239659AbhLCP42 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 3 Dec 2021 10:56:28 -0500
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D665DC061751;
-        Fri,  3 Dec 2021 07:53:03 -0800 (PST)
-Received: by mail-wr1-x42e.google.com with SMTP id c4so6595531wrd.9;
-        Fri, 03 Dec 2021 07:53:03 -0800 (PST)
+        with ESMTP id S234430AbhLCQHa (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 3 Dec 2021 11:07:30 -0500
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC66DC061751
+        for <io-uring@vger.kernel.org>; Fri,  3 Dec 2021 08:04:05 -0800 (PST)
+Received: by mail-wm1-x32a.google.com with SMTP id j140-20020a1c2392000000b003399ae48f58so5234677wmj.5
+        for <io-uring@vger.kernel.org>; Fri, 03 Dec 2021 08:04:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=SlChr/C9B3f/kBuwxOD1vj3J8HLlstf4N3S7LZOUMRw=;
-        b=k/LiumMTH3Bplh1A+Ww8rKdtzXe2p8H59v/wv9T6B98NqdnJ//ytQFh8I/Bv4VJl3p
-         Er5LOSJebGhePqGJ6SOUJ1nqQgJ8Y8lKIyrkf6diXLjhVze5epmhGzCth8JZf6HlRy2D
-         9WFcfBvgjqn4oKAHovlA4VgvHcKNMAqxDBXKRZqVWt+eccJw3oDKpYGShoJb8v1VAZVF
-         utMQAjmM8G16WQztKN0U9k0xtPKUsVo4+Ir6aq2+OAPgfvsgno1BYFtKeG/Y0j5T+fNF
-         PQjmn5rg6vOscXOjCtZySljDleJPK6HPg6LfIzucEas0E1jihRr/U3dxCDsJW15s1Dgp
-         p5NA==
+        bh=LIPjRGEw1tZHM9X6pc531MFU/keF7K2sjoUFL02KU1s=;
+        b=liaPGJA5BXa4MrAFuS3xQgJ3wx+gOJAfQ8WyoIDlResGwoABCsiS5ZKzCIQl3u4CXz
+         o1OOOWdubnCAjiI1xO+IyNaZQImqhJntOrJU+CRskkNwNOgKbHseL8nls3sQFdN8/ozn
+         pDOIQXbLO8IptLLaJWUdt11vF2PUj4POP0ZvC86Lb/4WcSafnavppemtemYYafcqvF1t
+         7ANgst0PnU7U+WecFiE/F1I/giQjy9IiBzgewx6NhjbFyq6BuTMEzkW9Y7ITOyeYooyh
+         P650zKHEQWnr7QI+S9fqmZLFeB6MsSRBxB4+VuSUUtQT9V7PWwUuQ38T3flvO48pkOUC
+         HHEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=SlChr/C9B3f/kBuwxOD1vj3J8HLlstf4N3S7LZOUMRw=;
-        b=xUDo6YAYvOyPGY3vBq1tOO8hnuXsvYutVpAtNo3syRCtX9pki4m69OPK2lvfjcMOre
-         Bs0iEX8RPJfCpyA+N6wm4zD8nyDFuAQMOWqo7ORSqI73x5RYr8qG4rU6Oddbldkh6x+B
-         aT2cdk2jhAAArjoIpOrz8xaIBSJy25TxiGt4ljhxKiGnGIhiWKKimf1tGDJ+rhFuX/0l
-         mjWB6Mupp0SCQ2uDUqxAuVNo6cJzA/1YEGOI2VZveO9M95wpZzhtS+HT8x2Cou5VIlxc
-         itfGVTizltgFFnsfjgjGauoMQxaSuJckeh0dDnMqw3lotpw+3i6nwfr6PM0TYUixvVpG
-         N5nQ==
-X-Gm-Message-State: AOAM5336T6SSKC5/GpOE1bgg8EYaJ46Bn/UDsUafW3v5iWLohQ7LZnj3
-        brtJb0heDCOJkbWwtPKViGt0MsPjAsnNhQ==
-X-Google-Smtp-Source: ABdhPJw7V1dnWzckIi4ZUDBC/Xt4+CKo4e/5BthhA1BaCuOD0ueFksCDLtSsh1SVY6EZADUL2UMISA==
-X-Received: by 2002:adf:e0c7:: with SMTP id m7mr22965121wri.530.1638546782386;
-        Fri, 03 Dec 2021 07:53:02 -0800 (PST)
+        bh=LIPjRGEw1tZHM9X6pc531MFU/keF7K2sjoUFL02KU1s=;
+        b=lxr8K1kuUW1NgdhJG8G/WcTvdDlu3qJe9zjnq2Yx34KTpLkOXmHjqT1edHIMwe2KNf
+         w4qWB0rJB7o95LU6sfe7GDLfrclNcYFkUTlbSAXlJVHfLv2VTWtlbr2FxYBJpL0ZXfp9
+         Uwag4033Q5vvJORm1+Waiq4IK6tA/VVJY2j7yxvMnfo4HRjk62/ZeG0YnlzdYqpTFKYB
+         krBJ0mGPmp2kUa1axhz4OUGaI7VhoKMB+7OFzszAHSSiUquLzMqXnmiqGcjyFfl5ifqT
+         yKQsDemU3jhsPiQW1LLZKceD+LhydDMLdCprw+AFv5KkVEXbUsdavN+l5/DJWpnOwKyl
+         GneA==
+X-Gm-Message-State: AOAM532RHJ3JSKTijXW7JYfaWspeKgvjb1juHANaJVtDe8wiv+ivTUK0
+        WS+OeHzPa/NayJuyAjUCkJ4=
+X-Google-Smtp-Source: ABdhPJzek3pEglpCe9cA2jJnangMciW1QWz/3aR5T3j0kiA9cxiHxBjY0hK5z2AhipMRfPkqmqXeZA==
+X-Received: by 2002:a1c:7f56:: with SMTP id a83mr16082271wmd.32.1638547444423;
+        Fri, 03 Dec 2021 08:04:04 -0800 (PST)
 Received: from [192.168.43.77] (82-132-231-141.dab.02.net. [82.132.231.141])
-        by smtp.gmail.com with ESMTPSA id w2sm2942643wrn.67.2021.12.03.07.53.01
+        by smtp.gmail.com with ESMTPSA id r11sm3012037wrw.5.2021.12.03.08.04.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 03 Dec 2021 07:53:02 -0800 (PST)
-Message-ID: <aaf8aa08-f4ee-0688-2af3-2c59bb76dda6@gmail.com>
-Date:   Fri, 3 Dec 2021 15:52:54 +0000
+        Fri, 03 Dec 2021 08:04:03 -0800 (PST)
+Message-ID: <8cc826ea-c721-a178-eea1-2ee2a03722f3@gmail.com>
+Date:   Fri, 3 Dec 2021 16:03:55 +0000
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.3.2
-Subject: Re: [PATCH bpf-next v1 1/8] io_uring: Implement eBPF iterator for
- registered buffers
+Subject: Re: Question about sendfile
 Content-Language: en-US
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>
-Cc:     bpf <bpf@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>,
-        io-uring@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Pavel Emelyanov <ovzxemul@gmail.com>,
-        Alexander Mihalicyn <alexander@mihalicyn.com>,
-        Andrei Vagin <avagin@gmail.com>, criu@openvz.org,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
-References: <20211116054237.100814-1-memxor@gmail.com>
- <20211116054237.100814-2-memxor@gmail.com>
- <20211118220226.ritjbjeh5s4yw7hl@ast-mbp.dhcp.thefacebook.com>
- <20211119041523.cf427s3hzj75f7jr@apollo.localdomain>
- <20211119045659.vriegs5nxgszo3p3@ast-mbp.dhcp.thefacebook.com>
- <20211119051657.5334zvkcqga754z3@apollo.localdomain>
- <CAADnVQ+rdAh2LaHOHxqk7z4aheMQ2gjzMFegrehzEfE_6twBdg@mail.gmail.com>
+To:     Hao Xu <haoxu@linux.alibaba.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>
+References: <6a7ceb04-3503-7300-8089-86c106a95e96@linux.alibaba.com>
+ <4831bcfd-ce4a-c386-c5b2-a1417a23c500@gmail.com>
+ <1414c8f9-e454-fb5a-7e44-cead5bbd61ea@linux.alibaba.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <CAADnVQ+rdAh2LaHOHxqk7z4aheMQ2gjzMFegrehzEfE_6twBdg@mail.gmail.com>
+In-Reply-To: <1414c8f9-e454-fb5a-7e44-cead5bbd61ea@linux.alibaba.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 11/19/21 05:24, Alexei Starovoitov wrote:
-> On Thu, Nov 18, 2021 at 9:17 PM Kumar Kartikeya Dwivedi
-> <memxor@gmail.com> wrote:
+On 11/26/21 08:50, Hao Xu wrote:
+> 在 2021/7/7 下午10:16, Pavel Begunkov 写道:
+>> On 7/3/21 11:47 AM, Hao Xu wrote:
+>>> Hi Pavel,
+>>> I found this mail about sendfile in the maillist, may I ask why it's not
+>>> good to have one pipe each for a io-wq thread.
+>>> https://lore.kernel.org/io-uring/94dbbb15-4751-d03c-01fd-d25a0fe98e25@gmail.com/
 >>
->> On Fri, Nov 19, 2021 at 10:26:59AM IST, Alexei Starovoitov wrote:
->>> On Fri, Nov 19, 2021 at 09:45:23AM +0530, Kumar Kartikeya Dwivedi wrote:
->>>>
->>>> Also, this work is part of GSoC. There is already code that is waiting for this
->>>> to fill in the missing pieces [0]. If you want me to add a sample/selftest that
->>>> demonstrates/tests how this can be used to reconstruct a task's io_uring, I can
->>>> certainly do that. We've already spent a few months contemplating on a few
->>>> approaches and this turned out to be the best/most powerful. At one point I had
->>>> to scrap some my earlier patches completely because they couldn't work with
->>>> descriptorless io_uring. Iterator seem like the best solution so far that can
->>>> adapt gracefully to feature additions in something seeing as heavy development
->>>> as io_uring.
->>>>
->>>>    [0]: https://github.com/checkpoint-restore/criu/commit/cfa3f405d522334076fc4d687bd077bee3186ccf#diff-d2cfa5a05213c854d539de003a23a286311ae81431026d3d50b0068c0cb5a852
->>>>    [1]: https://github.com/checkpoint-restore/criu/pull/1597
->>>
->>> Is that the main PR? 1095 changed files? Is it stale or something?
->>> Is there a way to view the actual logic that exercises these bpf iterators?
+>> IIRC, it's one page allocated for each such task, which is bearable but
+>> don't like yet another chunk of uncontrollable implicit state. If there
+>> not a bunch of active workers, IFAIK there is no way to force them to
+>> drop their pipes.
 >>
->> No, there is no code exercising BPF iterator in that PR yet (since it wouldn't
->> build/run in CI). There's some code I have locally that uses these to collect
->> the necessary information, I can post that, either as a sample or selftest in
->> the next version, or separately on GH for you to take a look.
->>
->> I still rebased it so that you can see the rest of the actual code.
-> 
-> I would like to see a working end to end solution.
-> 
-> Also I'd like to hear what Jens and Pavel have to say about
-> applicability of CRIU to io_uring in general.
+>> I also don't remember the restrictions on the sendfile and what's with
+>> the eternal question of "what to do if the write part of sendfile has
+>> failed".
+> Hi Pavel,
+> Could you explain this question a little bit.., is there any special
+> concern? What I thought is sendfile does what it does,when it fails,
+> it will return -1 and errno is set appropriately.
 
-First, we have no way to know what requests are in flight, without it
-CR doesn't make much sense. The most compelling way for me is to add
-a feature to fail all in-flights as it does when is closed. But maybe,
-you already did solve it somehow?
+I don't have much concern about this one, though interesting how
+it was solved and whether you need to know the issuing task to
+handle errors.
 
-There is probably a way to restore registered buffers and files, though
-it may be tough considering that files may not have corresponding fds in
-the userspace, buffers may be unmapped, buffers may come from
-shmem/etc. and other corner cases.
+I didn't like more having uncontrollable memory, i.e. a pipe per
+worker that used sendfile (IIRC it keeps 1 page), and no way to
+reuse the memory or release it. In other words, a sendfile request
+chooses to which worker it goes randomly. E.g. First sendfile may go
+to worker 1 leaving 1 page allocated. The second sendfile goes to
+worker 2, so after we have 2 pages allocated, an so on. At some
+point you have N pages, where any particular one may likely be
+rarely used.
 
-There are also not covered here pieces of state, SELECT_BUFFER
-buffers, personalities (aka creds), registered eventfd, io-wq
-configuration, etc. I'm assuming you'll be checking them and
-failing CR if any of them is there.
+Please correct me if I forgot how it works and wrong here.
 
-And the last point, there will be some stuff CR of which is
-likely to be a bad idea. E.g. registered dmabuf's,
-pre-registered DMA mappings, zerocopy contexts and so on.
-
-IOW, if the first point is solved, there may be a subset of ring
-setups that can probably be CR. That should cover a good amount
-of cases. I don't have a strong opinion on the whole thing,
-I guess it depends on the amount of problems to implement
-in-flight cancellations.
+>> Though, workers are now much more alike to user threads, so there
+>> should be less of concern. And even though my gut feeling don't like
+>> them, it may actually be useful. Do you have a good use case where
+>> explicit pipes don't work well?
 
 -- 
 Pavel Begunkov

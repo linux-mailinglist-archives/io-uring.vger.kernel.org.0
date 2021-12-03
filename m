@@ -2,91 +2,76 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 40C704676D0
-	for <lists+io-uring@lfdr.de>; Fri,  3 Dec 2021 12:53:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 414184677CE
+	for <lists+io-uring@lfdr.de>; Fri,  3 Dec 2021 14:03:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231576AbhLCL4a (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 3 Dec 2021 06:56:30 -0500
-Received: from mx-rz-3.rrze.uni-erlangen.de ([131.188.11.22]:55891 "EHLO
-        mx-rz-3.rrze.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231466AbhLCL43 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 3 Dec 2021 06:56:29 -0500
-Received: from mx-rz-smart.rrze.uni-erlangen.de (mx-rz-smart.rrze.uni-erlangen.de [IPv6:2001:638:a000:1025::1e])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx-rz-3.rrze.uni-erlangen.de (Postfix) with ESMTPS id 4J5B6761DGz1yQT;
-        Fri,  3 Dec 2021 12:53:03 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fau.de; s=fau-2021;
-        t=1638532383; bh=uOQ2lXF8j/VY/RqPLQPxwEEOWmBAZxRpKUUdawKY5u4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From:To:CC:
-         Subject;
-        b=MbEgggiJENwLXgVsrcFrn1s7GaqercU4QMKy4WTsq3OOThW9y15c3wtOQWasDfuf8
-         m4QbOmpK8uCL1PO/f9HmMW2zIbwUdIb72el3tu6QSXs/wltsK4kVVAaE//9VqOQApF
-         mvfFN/utkAgECS7S62VjFi5Mvd5PZkIXN4DUq0z56SzrnYNkYwzVhlUWrNve8CuxeL
-         RPO8PEfwxUWERiZgw9UYNAbKn2RfSH/Vf2dlHNUGetd9OmPd1LIx0IxP5vfs1CT2Ph
-         1dhOVg8FBUs/SMz1ZM5cc3o+6y4If/azBqCtXTrqg8nDyFDH/K9mXYVYkHzAf/knD5
-         oOfmiBe/e43OA==
-X-Virus-Scanned: amavisd-new at boeck2.rrze.uni-erlangen.de (RRZE)
-X-RRZE-Flag: Not-Spam
-X-RRZE-Submit-IP: 2003:eb:5724:4441:7a2b:46ff:fe28:e01a
-Received: from localhost (p200300eb572444417a2b46fffe28e01a.dip0.t-ipconnect.de [IPv6:2003:eb:5724:4441:7a2b:46ff:fe28:e01a])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: U2FsdGVkX1/284fAtmHJGlO8nU5ZLzRUc3tDUctkowQ=)
-        by smtp-auth.uni-erlangen.de (Postfix) with ESMTPSA id 4J5B651r1Dz20Mt;
-        Fri,  3 Dec 2021 12:53:01 +0100 (CET)
-Date:   Fri, 3 Dec 2021 12:52:51 +0100
-From:   Florian Fischer <florian.fl.fischer@fau.de>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc:     flow@cs.fau.de
-Subject: Re: Tasks stuck on exit(2) with 5.15.6
-Message-ID: <20211203115251.nbwzvwokyg4w3b34@pasture>
-Mail-Followup-To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        flow@cs.fau.de
-References: <20211202165606.mqryio4yzubl7ms5@pasture>
- <c4c47346-e499-2210-b511-8aa34677ff2e@kernel.dk>
+        id S1380981AbhLCNGw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 3 Dec 2021 08:06:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33100 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239885AbhLCNGv (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 3 Dec 2021 08:06:51 -0500
+Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68440C06173E
+        for <io-uring@vger.kernel.org>; Fri,  3 Dec 2021 05:03:27 -0800 (PST)
+Received: by mail-io1-xd29.google.com with SMTP id y16so3549207ioc.8
+        for <io-uring@vger.kernel.org>; Fri, 03 Dec 2021 05:03:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=ND29YhDtqe38nf0VEXnMETJ4EHQdmJsgvTdT8SGMNTw=;
+        b=I17DLxEkEFOdiutC2WnLZnpohKiiwuo/BmlS/lk6dPLtoJl8fEqT6n12o4lqSFCuJ6
+         tgef45gL2yQQavUOiWSavX0mHsp02r/FYRg0X20CthXb3AcLvqSV7yYUEmXq/tS/bYRY
+         5Bbp1Cd5/Zq733RO/7dhg5EOh4KDpuEyB2y03T/sTKK/cgWy3ngi0gQml4WZJhxmUB6D
+         dHByJDjdxkOAXu7FSmpLjhqVPxvebr8YV3MsbdQ2T8Po5Xk1a7B31I8HZ+GyxNwJfSXh
+         orgDDIHf0YRgB6vTC7sjAuYOnAsXyv5OT9pX3YJBhZS9TnLJA2BipMVFUsjOD5s7V3bj
+         r2lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=ND29YhDtqe38nf0VEXnMETJ4EHQdmJsgvTdT8SGMNTw=;
+        b=5zlq+SbQoZNFAdc9XPknB4kG04b+bFgZscpWoKFea483WOTBuKTIekY9laPmOIH7xQ
+         Lus1HR/nR9fWBx4uyR9PyAjP+CqH0VNJsF9XTRlUcv2+TqCO405N8FVJ+Xe049ZqmrHc
+         k/77yKsNx+1j8gfguoVnlp3ePu7W8MIwURnGrx/Kn7T0uD4ImUHTAOwyMIJ5QXB9vItB
+         LOxwBgt+18qqnOMy1bU0p1nsRNfV+Rj7LEYVGtTFzV/aztPYD8t5brPCWgzhLw/nkpg0
+         /bIiE7srkiOehXh/7I/i5ooLvbPRdNn1dmlm+zuSj+o06RelpGdGHXS+N4c4Qfah0IF7
+         Nvrg==
+X-Gm-Message-State: AOAM5321zJfkHYe22k6iplvML7A1Ct4yjlQqLw9vb8y/22tvzG7eJXe1
+        o7VyH3Jpl8iaWI9CmLJ/Wl0XKkxbuGqnvwT9dyKKtVZw
+X-Google-Smtp-Source: ABdhPJwr05T1Jrs6UJDXM2IRpC1si9IyvEi4GIuYpQRzNhJ60z82kMhTwZWWWb3D5iSXHWyc78hSg31uLxsUPmCFvoc=
+X-Received: by 2002:a02:a816:: with SMTP id f22mr24579283jaj.81.1638536606504;
+ Fri, 03 Dec 2021 05:03:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c4c47346-e499-2210-b511-8aa34677ff2e@kernel.dk>
+From:   Hiroaki Nakamura <hnakamur@gmail.com>
+Date:   Fri, 3 Dec 2021 22:02:51 +0900
+Message-ID: <CAN-DUMSSQ8_5Zi+ULhHZKEC535U3ZiqtS=o3VcXUV1yk2==pvA@mail.gmail.com>
+Subject: [Question] Is it expected link_timeout linked to send returns -ENOENT?
+To:     io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Jens, 
+Hi, there.
 
-> Thanks for the bug report, and I really appreciate including a reproducer.
-> Makes everything so much easier to debug.
+I wrote an example for send + link_timeout and found link_timeout
+returns -ENOENT.
+Is this an expected behavior?
 
-Glad I could help :)
+My example is at
+https://github.com/hnakamur/liburing/commit/3a19659cda50dec05c59d80716b69f0390c5c600
 
-> Are you able to compile your own kernels? Would be great if you can try
-> and apply this one on top of 5.15.6.
-> 
-> 
-> diff --git a/fs/io-wq.c b/fs/io-wq.c
-> index 8c6131565754..e8f77903d775 100644
-> --- a/fs/io-wq.c
-> +++ b/fs/io-wq.c
-> @@ -711,6 +711,13 @@ static bool io_wq_work_match_all(struct io_wq_work *work, void *data)
->  
->  static inline bool io_should_retry_thread(long err)
->  {
-> +	/*
-> +	 * Prevent perpetual task_work retry, if the task (or its group) is
-> +	 * exiting.
-> +	 */
-> +	if (fatal_signal_pending(current))
-> +		return false;
-> +
->  	switch (err) {
->  	case -EAGAIN:
->  	case -ERESTARTSYS:
+If the timeout is very short like < 1000 nanoseconds, cqe->res for
+link_timeout is -ENOENT.
+If the timeout is long like > 1000 nanoseconds, cqe->res for
+link_timeout is -ECANCELED.
+In both cases, the send operation is executed successfully.
 
-With your patch on top of 5.15.6 I can no longer reproduce stuck processes.
-Neither with our software nor with the reproducer.
-I ran both a hundred times and both terminated immediately without unexpected CPU usage.
+I read the explanation for IORING_OP_LINK_TIMEOUT at
+https://manpages.ubuntu.com/manpages/jammy/en/man2/io_uring_enter.2.html
+but it says nothing about ENOENT.
 
-Tested-by: Florian Fischer <florian.fl.fischer@fau.de>
+Thanks,
 
-Florian Fischer
+--
+)Hioraki Nakamura) hnakamur@gmail.com

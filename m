@@ -2,60 +2,62 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 33E13466DA3
-	for <lists+io-uring@lfdr.de>; Fri,  3 Dec 2021 00:24:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 39B4F466EC9
+	for <lists+io-uring@lfdr.de>; Fri,  3 Dec 2021 01:49:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356451AbhLBX1m (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 2 Dec 2021 18:27:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45552 "EHLO
+        id S1377936AbhLCAxE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 2 Dec 2021 19:53:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349346AbhLBX1l (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 2 Dec 2021 18:27:41 -0500
-Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB372C061757
-        for <io-uring@vger.kernel.org>; Thu,  2 Dec 2021 15:24:18 -0800 (PST)
-Received: by mail-io1-xd2e.google.com with SMTP id v23so1530240iom.12
-        for <io-uring@vger.kernel.org>; Thu, 02 Dec 2021 15:24:18 -0800 (PST)
+        with ESMTP id S1377798AbhLCAxD (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 2 Dec 2021 19:53:03 -0500
+Received: from mail-io1-xd36.google.com (mail-io1-xd36.google.com [IPv6:2607:f8b0:4864:20::d36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FC88C06174A
+        for <io-uring@vger.kernel.org>; Thu,  2 Dec 2021 16:49:40 -0800 (PST)
+Received: by mail-io1-xd36.google.com with SMTP id x6so1701535iol.13
+        for <io-uring@vger.kernel.org>; Thu, 02 Dec 2021 16:49:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=to:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=NLDDw1pqgSFWCbeKySen1cv6lFv+DqvXYym5kKf0q4s=;
-        b=mZCsJDK8loRnEhs1PHBAcK+4zZR5uR5yZrJTL53/yNDbJGFGg3d6+oKTFcAo5+uicQ
-         /JuRrE7MFqz99uE9qsrjp6PN1OKCn8NXK6xATr1rDNHhL3N5aPzKDq6ZgdFwA5scRVJl
-         Xo838GyR70XH0XIulYstak7JT/rvLJ8Jn4yIga2Cti7TnY8H18vaxllHUP7PNr4NcvKx
-         gsQWc6BlbknwaJqEUz08+lyclM8lo6QfUMJ9VTg31f2vBfvJaLV0PakTQzPhbCwulN0Z
-         rUqqyjE3MJ38LNYTjgY/bisrF6UmE3R4Lx7xswL2ZAO8AZEUXxeFaWj5CKftd46RIkHS
-         0aUw==
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=jVXlZUdc270qJIiO0ke6GCXHxXLR9ixPUlyQJCOolsk=;
+        b=ae34wnV7EZa4fqa+vvz9ZhUwzOkIMtkhtcsuZqK3rJmzu69w9+Ypl/a9RbevRCVVu9
+         e03Sjj2j8SwKyGrC/TrEgmauo/CohTBB5KMRgmYo3oTNv36TAV4tH9o9wV5/ff5LsRXJ
+         cG7JquJgEQHPGWvN2ljbTf2ER0Fio6i1CXuSIgLY9HcWgSqIzhttriCYhNCCuvb73z3i
+         JeOH57bwVq8RobOfVuR9+4fC/nqBkn1vp23DAcB8gx/vs0bZixxDigi6dVh65JLn0Var
+         aeU+AMQUxNKZA+dJkvGDS9gsjtW2tTfLFdfsfWjgdGQqb/y2bM2J45611d1RLYBJ2Tjk
+         dMRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=NLDDw1pqgSFWCbeKySen1cv6lFv+DqvXYym5kKf0q4s=;
-        b=rpA0W76s5wdtlM/9mOcX1wcO5h+cU0mcRj91POvV/UTrwcUjCbMmgRSdNIvs7yscaC
-         eAnnAokksnw1l9SlmGyX3BI0xyekCpQ9+UCrmJFail+rpEr27WnOZpRv5LM3nXLM6vPM
-         jECJqlVw2XaIB+isK+fJCtYshQo57qK6I/LNXVIgzBQXIH2k7fx4UBVUQyxm9bys3wgS
-         6vSgJZ03lKEa5tqFNi+xnrLCEu+3fwC56Q5eIbJQT9FhZWuI2V/MTP1aaI+06eadQH5C
-         xNQgbADjonhBMqkYbvd20geIVXu8xnON7fmSnq1COa2BUg9xepMQxQqVCocI4OO5Fl7C
-         gkeg==
-X-Gm-Message-State: AOAM530vowSyEGsJjamB1n3Mz0aTBErWVO/FH0QCoJB72nT7L5QXyyPw
-        7EXJkErQTHwPy5UxCJi7Qd7ocm1CdFUYbVbR
-X-Google-Smtp-Source: ABdhPJxKXoNYer6IUg2VNbco2TTVgn2gGULZpd15LSrIlBDh/DG/mXm99yvW1npuIEUPfWqpr5aftQ==
-X-Received: by 2002:a05:6602:3422:: with SMTP id n34mr3289994ioz.7.1638487458048;
-        Thu, 02 Dec 2021 15:24:18 -0800 (PST)
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=jVXlZUdc270qJIiO0ke6GCXHxXLR9ixPUlyQJCOolsk=;
+        b=szzayRbCHEpgUJdV75vDVItLll70BlnpRThjJeJ6lgrwUwSWIowuZH22OZ/BSUS2NZ
+         X9teHDcU47f+c3Wf775B9SVerrJAUVOf4vXO1XOrSSQQiOOv9ovTnqvFhZRFTnExxuXX
+         LwUXl2w4KcJ7vrm5V9y/TFg1lrCoge7JMgQ0jKfq7MuGTDdrwRiknxcNMQkk48Rj6gQi
+         DOUSE8pnZdUf6vJqJhovlgjuaE9od4Ong5LC8nu5+x9xTj7b/P2pNZi7MSPoS5KUE4+T
+         XcAz7FGCO/qsB37JcIm5dX4b4CAG/2IJllFfLyle56SmgxqQnWrQeDzi+oc3fdAHg4dK
+         Eu2A==
+X-Gm-Message-State: AOAM532bPfCRUFXW0jCpnhVdmnZL1DBeDNKkkvHVP1CWajsP6EBeJ8Zd
+        juxSj7QZsTi+s1JM9bPb8b+3Grj0kXqj1Gli
+X-Google-Smtp-Source: ABdhPJzQxpBa3Kq2BIAMFiTSJN66Zl3r12ZpABFCq7qD2/L2s75xwsNyUgIcPsPMuWjG17gUduDQ9Q==
+X-Received: by 2002:a05:6638:32a2:: with SMTP id f34mr20421741jav.63.1638492579908;
+        Thu, 02 Dec 2021 16:49:39 -0800 (PST)
 Received: from [192.168.1.116] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id m2sm637168iob.21.2021.12.02.15.24.17
+        by smtp.gmail.com with ESMTPSA id 11sm686143ilt.63.2021.12.02.16.49.38
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Dec 2021 15:24:17 -0800 (PST)
-To:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>
+        Thu, 02 Dec 2021 16:49:39 -0800 (PST)
+Subject: Re: Tasks stuck on exit(2) with 5.15.6
+To:     io-uring@vger.kernel.org, Florian Schmaus <schmaus@cs.fau.de>
+References: <20211202165606.mqryio4yzubl7ms5@pasture>
 From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH RFC] block: enable bio allocation cache for IRQ driven IO
-Message-ID: <c24fe04b-6a46-93b2-a6a6-a77606a1084c@kernel.dk>
-Date:   Thu, 2 Dec 2021 16:24:17 -0700
+Message-ID: <c4c47346-e499-2210-b511-8aa34677ff2e@kernel.dk>
+Date:   Thu, 2 Dec 2021 17:49:38 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <20211202165606.mqryio4yzubl7ms5@pasture>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -63,91 +65,46 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-We currently cannot use the bio recycling allocation cache for IRQ driven
-IO, as the cache isn't IRQ safe (by design).
+On 12/2/21 9:56 AM, Florian Fischer wrote:
+> Hello,
+> 
+> I experienced stuck tasks during a process' exit when using multiple
+> io_uring instances on a 48/96-core system in a multi-threaded environment,
+> where we use an io_uring per thread and a single pipe(2) to pass messages
+> between the threads.
+> 
+> When the program calls exit(2) without joining the threads or unmapping/closing
+> the io_urings, the program gets stuck in the zombie state - sometimes leaving
+> behind multiple <cpu>:<n>-events kernel-threads using a considerable amount of CPU.
+> 
+> I can reproduce this behavior on Debian running Linux 5.15.6 with the
+> reproducer below compiled with Debian's gcc (10.2.1-6):
 
-Add a way for the completion side to pass back a bio that needs freeing,
-so we can do it from the io_uring side. io_uring completions always
-run in task context.
+Thanks for the bug report, and I really appreciate including a reproducer.
+Makes everything so much easier to debug.
 
-This is good for about a 13% improvement in IRQ driven IO, taking us from
-around 6.3M/core to 7.1M/core IOPS.
+Are you able to compile your own kernels? Would be great if you can try
+and apply this one on top of 5.15.6.
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
----
-
-Open to suggestions on how to potentially do this cleaner. The below
-obviously works, but ideally we'd want to run the whole end_io handler
-from this context rather than just the bio put. That would enable
-further optimizations in this area.
-
-But the wins are rather large as-is.
-
-diff --git a/block/fops.c b/block/fops.c
-index 10015e1a5b01..9cea5b60f044 100644
---- a/block/fops.c
-+++ b/block/fops.c
-@@ -295,14 +295,19 @@ static void blkdev_bio_end_io_async(struct bio *bio)
- 		ret = blk_status_to_errno(bio->bi_status);
- 	}
+diff --git a/fs/io-wq.c b/fs/io-wq.c
+index 8c6131565754..e8f77903d775 100644
+--- a/fs/io-wq.c
++++ b/fs/io-wq.c
+@@ -711,6 +711,13 @@ static bool io_wq_work_match_all(struct io_wq_work *work, void *data)
  
--	iocb->ki_complete(iocb, ret);
--
- 	if (dio->flags & DIO_SHOULD_DIRTY) {
- 		bio_check_pages_dirty(bio);
- 	} else {
- 		bio_release_pages(bio, false);
--		bio_put(bio);
-+		if (iocb->ki_flags & IOCB_BIO_PASSBACK) {
-+			iocb->ki_flags |= IOCB_PRIV_IS_BIO;
-+			iocb->private = bio;
-+		} else {
-+			bio_put(bio);
-+		}
- 	}
+ static inline bool io_should_retry_thread(long err)
+ {
++	/*
++	 * Prevent perpetual task_work retry, if the task (or its group) is
++	 * exiting.
++	 */
++	if (fatal_signal_pending(current))
++		return false;
 +
-+	iocb->ki_complete(iocb, ret);
- }
- 
- static ssize_t __blkdev_direct_IO_async(struct kiocb *iocb,
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 4591bcb79b1f..5644628b8cb7 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -2770,6 +2770,9 @@ static void io_req_task_complete(struct io_kiocb *req, bool *locked)
- 	unsigned int cflags = io_put_rw_kbuf(req);
- 	int res = req->result;
- 
-+	if (req->rw.kiocb.ki_flags & IOCB_PRIV_IS_BIO)
-+		bio_put(req->rw.kiocb.private);
-+
- 	if (*locked) {
- 		io_req_complete_state(req, res, cflags);
- 		io_req_add_compl_list(req);
-@@ -2966,6 +2969,7 @@ static int io_prep_rw(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	} else {
- 		if (kiocb->ki_flags & IOCB_HIPRI)
- 			return -EINVAL;
-+		kiocb->ki_flags |= IOCB_ALLOC_CACHE | IOCB_BIO_PASSBACK;
- 		kiocb->ki_complete = io_complete_rw;
- 	}
- 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 0cc4f5fd4cfe..1e9d86955e3d 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -322,6 +322,10 @@ enum rw_hint {
- #define IOCB_NOIO		(1 << 20)
- /* can use bio alloc cache */
- #define IOCB_ALLOC_CACHE	(1 << 21)
-+/* iocb supports bio passback */
-+#define IOCB_BIO_PASSBACK	(1 << 22)
-+/* iocb->private holds bio to put */
-+#define IOCB_PRIV_IS_BIO	(1 << 23)
- 
- struct kiocb {
- 	struct file		*ki_filp;
+ 	switch (err) {
+ 	case -EAGAIN:
+ 	case -ERESTARTSYS:
 
 -- 
 Jens Axboe

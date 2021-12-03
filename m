@@ -2,76 +2,110 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 414184677CE
-	for <lists+io-uring@lfdr.de>; Fri,  3 Dec 2021 14:03:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C075C467873
+	for <lists+io-uring@lfdr.de>; Fri,  3 Dec 2021 14:35:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1380981AbhLCNGw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 3 Dec 2021 08:06:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33100 "EHLO
+        id S1381168AbhLCNia (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 3 Dec 2021 08:38:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239885AbhLCNGv (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 3 Dec 2021 08:06:51 -0500
-Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68440C06173E
-        for <io-uring@vger.kernel.org>; Fri,  3 Dec 2021 05:03:27 -0800 (PST)
-Received: by mail-io1-xd29.google.com with SMTP id y16so3549207ioc.8
-        for <io-uring@vger.kernel.org>; Fri, 03 Dec 2021 05:03:27 -0800 (PST)
+        with ESMTP id S1381194AbhLCNiW (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 3 Dec 2021 08:38:22 -0500
+Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2DBBC06139A
+        for <io-uring@vger.kernel.org>; Fri,  3 Dec 2021 05:34:56 -0800 (PST)
+Received: by mail-pg1-x533.google.com with SMTP id r5so3042905pgi.6
+        for <io-uring@vger.kernel.org>; Fri, 03 Dec 2021 05:34:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=ND29YhDtqe38nf0VEXnMETJ4EHQdmJsgvTdT8SGMNTw=;
-        b=I17DLxEkEFOdiutC2WnLZnpohKiiwuo/BmlS/lk6dPLtoJl8fEqT6n12o4lqSFCuJ6
-         tgef45gL2yQQavUOiWSavX0mHsp02r/FYRg0X20CthXb3AcLvqSV7yYUEmXq/tS/bYRY
-         5Bbp1Cd5/Zq733RO/7dhg5EOh4KDpuEyB2y03T/sTKK/cgWy3ngi0gQml4WZJhxmUB6D
-         dHByJDjdxkOAXu7FSmpLjhqVPxvebr8YV3MsbdQ2T8Po5Xk1a7B31I8HZ+GyxNwJfSXh
-         orgDDIHf0YRgB6vTC7sjAuYOnAsXyv5OT9pX3YJBhZS9TnLJA2BipMVFUsjOD5s7V3bj
-         r2lw==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=WLh7tFpP4KucswHbquZcNDu4MyRihxhPLauGM6dWyuc=;
+        b=0me4p3+9aQHUI5cnf9bg/zwfCGsJwORalNjog3H+Io2pxHwAWPQtlTZuIT8XVOeaDt
+         63kTgne+UtXHZfZdqVacaJQXenbcGJFiHINE434udQiEQxPjCJ/mg+h50uwYYffDvzUP
+         YpRda53PCQQnacPHBwju44utRVsQ758Ci/dV0cQbCrJ4Vxyl9HJ1glLwsL8eg+dQDP2Y
+         UdKY9lLgxPPgl46OLbiHz+mQjYsshZ0CSNiX9ZHH70gNTe+AoqrlfmUUms2l4wc4YTsm
+         twU96CY7q6BZ6qrQAG9+/J06brOI76zGRPigOxjPd53EljDqLrulUF6l2A52qJZjZQQc
+         RRNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=ND29YhDtqe38nf0VEXnMETJ4EHQdmJsgvTdT8SGMNTw=;
-        b=5zlq+SbQoZNFAdc9XPknB4kG04b+bFgZscpWoKFea483WOTBuKTIekY9laPmOIH7xQ
-         Lus1HR/nR9fWBx4uyR9PyAjP+CqH0VNJsF9XTRlUcv2+TqCO405N8FVJ+Xe049ZqmrHc
-         k/77yKsNx+1j8gfguoVnlp3ePu7W8MIwURnGrx/Kn7T0uD4ImUHTAOwyMIJ5QXB9vItB
-         LOxwBgt+18qqnOMy1bU0p1nsRNfV+Rj7LEYVGtTFzV/aztPYD8t5brPCWgzhLw/nkpg0
-         /bIiE7srkiOehXh/7I/i5ooLvbPRdNn1dmlm+zuSj+o06RelpGdGHXS+N4c4Qfah0IF7
-         Nvrg==
-X-Gm-Message-State: AOAM5321zJfkHYe22k6iplvML7A1Ct4yjlQqLw9vb8y/22tvzG7eJXe1
-        o7VyH3Jpl8iaWI9CmLJ/Wl0XKkxbuGqnvwT9dyKKtVZw
-X-Google-Smtp-Source: ABdhPJwr05T1Jrs6UJDXM2IRpC1si9IyvEi4GIuYpQRzNhJ60z82kMhTwZWWWb3D5iSXHWyc78hSg31uLxsUPmCFvoc=
-X-Received: by 2002:a02:a816:: with SMTP id f22mr24579283jaj.81.1638536606504;
- Fri, 03 Dec 2021 05:03:26 -0800 (PST)
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=WLh7tFpP4KucswHbquZcNDu4MyRihxhPLauGM6dWyuc=;
+        b=LzyNU4XeOfjJs30HLilwrzcZdNLvLogN4jUUdcqqsry9hmuliuBa2gQT1E6RPdIJYL
+         fOZLq2Cz2Sh4DgiBEwUbqo6pSB1JcxBac98ICgcSlE8KykQPnv9goMd3gJFPdcxJwljF
+         UjCiB1R73hSBTsgHBxul0X2SSJT6jucQ2yLMyJgkJFCuKkL9WlzXltbpT1n5mA9P8RZn
+         oEh2Aqad8Qz4QFVZ7jFvpz9LdLh1534XOMozz2mpmFg75rbykflBxpw5sRE3NLaJALsr
+         K4HL34KcJGzhK53D6EK8W09tC0JGqioV2Yh05g1uBGWR2EF0GyLAobviaYa9USfuoNwG
+         l/hA==
+X-Gm-Message-State: AOAM530vvwAUQBLDzUnio4SKUtOhYN+WPFdzVMGyUhjf0/EkIwFNIoK0
+        oRyZ3Ca2nrrxkF1lJlJpUwit7XE5uqWIIzG9
+X-Google-Smtp-Source: ABdhPJxaecEggafht3pnbsFoq8kq479WgMMflwSsuRKbdMA2N8kfUjgXK9xnajCstYG5Po3ie/KOsA==
+X-Received: by 2002:a05:6a00:a8b:b0:44d:ef7c:94b9 with SMTP id b11-20020a056a000a8b00b0044def7c94b9mr19231196pfl.36.1638538496245;
+        Fri, 03 Dec 2021 05:34:56 -0800 (PST)
+Received: from [192.168.1.116] ([66.219.217.159])
+        by smtp.gmail.com with ESMTPSA id q5sm3983517pfu.66.2021.12.03.05.34.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 03 Dec 2021 05:34:55 -0800 (PST)
+Subject: Re: Tasks stuck on exit(2) with 5.15.6
+To:     io-uring@vger.kernel.org, flow@cs.fau.de
+References: <20211202165606.mqryio4yzubl7ms5@pasture>
+ <c4c47346-e499-2210-b511-8aa34677ff2e@kernel.dk>
+ <20211203115251.nbwzvwokyg4w3b34@pasture>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <00283a90-a05e-1cd5-ed02-743c8c03faaf@kernel.dk>
+Date:   Fri, 3 Dec 2021 06:34:54 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-From:   Hiroaki Nakamura <hnakamur@gmail.com>
-Date:   Fri, 3 Dec 2021 22:02:51 +0900
-Message-ID: <CAN-DUMSSQ8_5Zi+ULhHZKEC535U3ZiqtS=o3VcXUV1yk2==pvA@mail.gmail.com>
-Subject: [Question] Is it expected link_timeout linked to send returns -ENOENT?
-To:     io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20211203115251.nbwzvwokyg4w3b34@pasture>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi, there.
+On 12/3/21 4:52 AM, Florian Fischer wrote:
+> Hi Jens, 
+> 
+>> Thanks for the bug report, and I really appreciate including a reproducer.
+>> Makes everything so much easier to debug.
+> 
+> Glad I could help :)
+> 
+>> Are you able to compile your own kernels? Would be great if you can try
+>> and apply this one on top of 5.15.6.
+>>
+>>
+>> diff --git a/fs/io-wq.c b/fs/io-wq.c
+>> index 8c6131565754..e8f77903d775 100644
+>> --- a/fs/io-wq.c
+>> +++ b/fs/io-wq.c
+>> @@ -711,6 +711,13 @@ static bool io_wq_work_match_all(struct io_wq_work *work, void *data)
+>>  
+>>  static inline bool io_should_retry_thread(long err)
+>>  {
+>> +	/*
+>> +	 * Prevent perpetual task_work retry, if the task (or its group) is
+>> +	 * exiting.
+>> +	 */
+>> +	if (fatal_signal_pending(current))
+>> +		return false;
+>> +
+>>  	switch (err) {
+>>  	case -EAGAIN:
+>>  	case -ERESTARTSYS:
+> 
+> With your patch on top of 5.15.6 I can no longer reproduce stuck processes.
+> Neither with our software nor with the reproducer.
+> I ran both a hundred times and both terminated immediately without unexpected CPU usage.
+> 
+> Tested-by: Florian Fischer <florian.fl.fischer@fau.de>
 
-I wrote an example for send + link_timeout and found link_timeout
-returns -ENOENT.
-Is this an expected behavior?
+Great, thanks for testing!
 
-My example is at
-https://github.com/hnakamur/liburing/commit/3a19659cda50dec05c59d80716b69f0390c5c600
+-- 
+Jens Axboe
 
-If the timeout is very short like < 1000 nanoseconds, cqe->res for
-link_timeout is -ENOENT.
-If the timeout is long like > 1000 nanoseconds, cqe->res for
-link_timeout is -ECANCELED.
-In both cases, the send operation is executed successfully.
-
-I read the explanation for IORING_OP_LINK_TIMEOUT at
-https://manpages.ubuntu.com/manpages/jammy/en/man2/io_uring_enter.2.html
-but it says nothing about ENOENT.
-
-Thanks,
-
---
-)Hioraki Nakamura) hnakamur@gmail.com

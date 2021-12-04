@@ -2,107 +2,101 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AEBA468793
-	for <lists+io-uring@lfdr.de>; Sat,  4 Dec 2021 21:50:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2192E46879D
+	for <lists+io-uring@lfdr.de>; Sat,  4 Dec 2021 21:58:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233298AbhLDUxa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 4 Dec 2021 15:53:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60788 "EHLO
+        id S1355723AbhLDVCC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 4 Dec 2021 16:02:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230015AbhLDUxa (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 4 Dec 2021 15:53:30 -0500
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3ABFC061751
-        for <io-uring@vger.kernel.org>; Sat,  4 Dec 2021 12:50:03 -0800 (PST)
-Received: by mail-wr1-x42b.google.com with SMTP id u1so13411447wru.13
-        for <io-uring@vger.kernel.org>; Sat, 04 Dec 2021 12:50:03 -0800 (PST)
+        with ESMTP id S1353461AbhLDVCB (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 4 Dec 2021 16:02:01 -0500
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F71CC061751
+        for <io-uring@vger.kernel.org>; Sat,  4 Dec 2021 12:58:35 -0800 (PST)
+Received: by mail-wm1-x32f.google.com with SMTP id p3-20020a05600c1d8300b003334fab53afso7493096wms.3
+        for <io-uring@vger.kernel.org>; Sat, 04 Dec 2021 12:58:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=pBDiJuBesGkI/74BWQjzmA+8NCGeoGwJJacLXJ58R1o=;
-        b=guEh+J6zxUP9ISa1DMYHkyaDngpXeUByBpsdXFmureyJnVkJriX/+Zv5xO4MaV315z
-         fJdDGPEKUpp1Wjtw4YnhzTDY7PzsG3LM27McG+waBjdPYFlSlPxCTGtB2Fxq5/mr38hw
-         W1WET4FskVanGKOm06BW7XwL9YgZRJl6XXRr+2erXmQ3zDvGUVutoaSTcIXHPwW7GUOV
-         RS/NezfKaH6ViV35AS2jy3ENL+9Mxb16mr3ivMTzIkQ8Jt34BcKLfJ9+/dnQ4udKMolZ
-         fKEPSfzNCZy1czEAi8jzsmQYRXFQ3kucTpkRUbYX+doydYX32X0eHcQF2WBhvjYaHBM4
-         Zkhg==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=I08e73UT5TNnEZdv9qbbhUd8WvRfCpPSmKDvUWTOzIc=;
+        b=Lk0J2qgs5GdkxwBJDphNcQDcNnSuFC0caJ9s2a+PHph0HrYmY+bbRg+M7uDYl0j+lI
+         yeXrm3vhw3LJbVqP5M5YLZgNZmL+POq8NHvL8RnZBQEkzZ1h5Oe1PtKjwNq2SCWFG+cl
+         KsdTOu/SjmPABlKRD1Q69T6dvwtulA3Uk+TBuCVL7aFY1ut64OWXWqcX2VCIbQdePJ32
+         kxW9ee8m2WMJAhnR5q4oaVmAOB3rygYrn9NCVviL7CBunBJoXcl/t4WV1wxJ8PQknPGq
+         muumS2Yf/u9XU7h/8GKhoVWpeDdXuLFid3k5vI9m8I7ujsmnd4ib6npl2MttRbh4cDFC
+         Y8FQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=pBDiJuBesGkI/74BWQjzmA+8NCGeoGwJJacLXJ58R1o=;
-        b=SRSSCd2b2qKMGWupDH2lC9pvLGmL4rXWhDJ4el/WIdOWAKO7ERev7ee8gNCsN5VKNm
-         s6+J1+YHPhKIaTRk+vsDtzRFM3XOkFfOilsEGzYyRKBFKpQr8oP+yNBxBzdxiW4Kz1IH
-         b9MOGX3pTaTRpWU+XiE3tpZHuFJV/MdUSN/ZP01dtLZgBqY5rgJfMpK2W4anqnHPX1zZ
-         8oQzwYL4JwVG8H2gaDLeXIKP3ar1hm56yOxUqhGI6Fk3/9g4fetGYxWWcHZl+C/sc5tU
-         brBqijfAmIQV3SsYS9maXbmlvJF6Tg1djAvEnUu7mLpg6k4/QBQQ49UlN6vY/kpZsSsA
-         mQKA==
-X-Gm-Message-State: AOAM530NxXKEYzJPKoEURID1Ns/G48vfd5xRwBmG9fHMuF4qG1ioBHR3
-        FeFd4fR2q8Q4nPY4QzuQ55TKrl002+w=
-X-Google-Smtp-Source: ABdhPJwoI/ZSJbnfkmbVWglzI5/YBiFN6HNtYjAihiTiFUGNIHsTJjof2Iv2lCQrueR1v7NfYerzrA==
-X-Received: by 2002:a5d:4ece:: with SMTP id s14mr32215211wrv.371.1638651001918;
-        Sat, 04 Dec 2021 12:50:01 -0800 (PST)
-Received: from 127.0.0.1localhost ([148.252.132.146])
-        by smtp.gmail.com with ESMTPSA id k187sm8393143wme.0.2021.12.04.12.50.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 Dec 2021 12:50:01 -0800 (PST)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     io-uring@vger.kernel.org
-Cc:     asml.silence@gmail.com
-Subject: [PATCH 4/4] io_uring: reuse io_req_task_complete for timeouts
-Date:   Sat,  4 Dec 2021 20:49:30 +0000
-Message-Id: <d649e243edd88c26e2af2e38b96ff9d9b7b655fc.1638650836.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.34.0
-In-Reply-To: <cover.1638650836.git.asml.silence@gmail.com>
-References: <cover.1638650836.git.asml.silence@gmail.com>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=I08e73UT5TNnEZdv9qbbhUd8WvRfCpPSmKDvUWTOzIc=;
+        b=45emf9HVoVXhCFR3++kSjQzaJWc3MSvFDrPvAd2NvKh84dkt8P3ehboleABuPe1x4G
+         uFN8O1Kx5zeZR8T2jY4O3VbhkAW87kl+Pp9hBsLFMwfUbIBGn4pTZZ3mT1bUN5y5QGRJ
+         erEpnifBNUg75yIbaKBWYSQq54bMGu6zKNGp/Zxo+MOB7b9oE5r0zCS28ziw9+6n3gKl
+         33lEKXWz4sUqQocdBw04gSvuzvZlvdXA5t3e9xE4A48TvJJax1gyThZZi46hFMvjX862
+         9eaXdDc2hbXyRBW4B0sr1TmkYeg6pxRGvVXqbGN/8hjPYrjI8DU9rZmpW77xDegmEkq3
+         OYTg==
+X-Gm-Message-State: AOAM531tivYF/p+meqEC4Xt5t4Nep3UNBd2yN0h824Wd2Y0iSYIn0HQ0
+        Dhv3LvuvTNG5fDw6Axkbbw08T9MxkKQ=
+X-Google-Smtp-Source: ABdhPJwX5KuW00D5x9WxD8qoAmApOkCCF24BTj4lOEos4k3NAKCGl3gH71ZOh7p8KqsU1UerOxJxVQ==
+X-Received: by 2002:a05:600c:1083:: with SMTP id e3mr25443218wmd.167.1638651514115;
+        Sat, 04 Dec 2021 12:58:34 -0800 (PST)
+Received: from [192.168.8.198] ([148.252.132.146])
+        by smtp.gmail.com with ESMTPSA id x1sm6428195wru.40.2021.12.04.12.58.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 04 Dec 2021 12:58:33 -0800 (PST)
+Message-ID: <7184b704-5996-e3b5-a277-7a4f446b2f82@gmail.com>
+Date:   Sat, 4 Dec 2021 20:58:18 +0000
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.2
+Subject: Re: [PATCH v6 0/6] task work optimization
+Content-Language: en-US
+To:     Hao Xu <haoxu@linux.alibaba.com>, Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
+References: <20211126100740.196550-1-haoxu@linux.alibaba.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20211126100740.196550-1-haoxu@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-With kbuf unification io_req_task_complete() is now a generic function,
-use it for timeout's tw completions.
+On 11/26/21 10:07, Hao Xu wrote:
+> v4->v5
+> - change the implementation of merge_wq_list
+> 
+> v5->v6
+> - change the logic of handling prior task list to:
+>    1) grabbed uring_lock: leverage the inline completion infra
+>    2) otherwise: batch __req_complete_post() calls to save
+>       completion_lock operations.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 15 +++++----------
- 1 file changed, 5 insertions(+), 10 deletions(-)
+FYI, took 5/6 into another patchset to avoid conflicts.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index ea7a0daa0b3b..1265dc1942eb 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -5953,15 +5953,6 @@ static int io_poll_update(struct io_kiocb *req, unsigned int issue_flags)
- 	return 0;
- }
- 
--static void io_req_task_timeout(struct io_kiocb *req, bool *locked)
--{
--	struct io_timeout_data *data = req->async_data;
--
--	if (!(data->flags & IORING_TIMEOUT_ETIME_SUCCESS))
--		req_set_fail(req);
--	io_req_complete_post(req, -ETIME, 0);
--}
--
- static enum hrtimer_restart io_timeout_fn(struct hrtimer *timer)
- {
- 	struct io_timeout_data *data = container_of(timer,
-@@ -5976,7 +5967,11 @@ static enum hrtimer_restart io_timeout_fn(struct hrtimer *timer)
- 		atomic_read(&req->ctx->cq_timeouts) + 1);
- 	spin_unlock_irqrestore(&ctx->timeout_lock, flags);
- 
--	req->io_task_work.func = io_req_task_timeout;
-+	if (!(data->flags & IORING_TIMEOUT_ETIME_SUCCESS))
-+		req_set_fail(req);
-+
-+	req->result = -ETIME;
-+	req->io_task_work.func = io_req_task_complete;
- 	io_req_task_work_add(req);
- 	return HRTIMER_NORESTART;
- }
+also, you can remove "[pavel: ...]" from patches, I was just
+leaving them as a hint that the patches were very slightly
+modified. I'll retest/etc. once you fix 6/6. Hopefully, will
+be merged soon, the patches already had been bouncing around
+for too long.
+
+
+> Hao Xu (6):
+>    io-wq: add helper to merge two wq_lists
+>    io_uring: add a priority tw list for irq completion work
+>    io_uring: add helper for task work execution code
+>    io_uring: split io_req_complete_post() and add a helper
+>    io_uring: move up io_put_kbuf() and io_put_rw_kbuf()
+>    io_uring: batch completion in prior_task_list
+> 
+>   fs/io-wq.h    |  22 +++++++
+>   fs/io_uring.c | 168 ++++++++++++++++++++++++++++++++++----------------
+>   2 files changed, 136 insertions(+), 54 deletions(-)
+> 
+
 -- 
-2.34.0
-
+Pavel Begunkov

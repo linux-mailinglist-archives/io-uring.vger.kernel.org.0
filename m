@@ -2,60 +2,135 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 54CB546EE61
-	for <lists+io-uring@lfdr.de>; Thu,  9 Dec 2021 17:56:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B3F246F298
+	for <lists+io-uring@lfdr.de>; Thu,  9 Dec 2021 18:56:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241362AbhLIRAC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 9 Dec 2021 12:00:02 -0500
-Received: from mail-il1-f198.google.com ([209.85.166.198]:35563 "EHLO
-        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241719AbhLIQ7q (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 9 Dec 2021 11:59:46 -0500
-Received: by mail-il1-f198.google.com with SMTP id m9-20020a056e021c2900b002a1d679b412so7781523ilh.2
-        for <io-uring@vger.kernel.org>; Thu, 09 Dec 2021 08:56:13 -0800 (PST)
+        id S237672AbhLISAG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 9 Dec 2021 13:00:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57140 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237632AbhLISAF (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 9 Dec 2021 13:00:05 -0500
+Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2478C061746
+        for <io-uring@vger.kernel.org>; Thu,  9 Dec 2021 09:56:31 -0800 (PST)
+Received: by mail-il1-x133.google.com with SMTP id d14so3713656ila.1
+        for <io-uring@vger.kernel.org>; Thu, 09 Dec 2021 09:56:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=IwDQColPGCU49BS4yP7Ee0C5BTDNWKC0qbV8xP+eXUg=;
+        b=elwo14buS+US6KaK2JgnQiS0L06mqmS8PcR3s8oohAKmrKLqQiH4dQsH/qShYyMQFw
+         6Wqgt1MztAxPd0Z9wLqOt/EHqyu3uoX38r4e0qSiDaIZjX9TKVR1wnsSHxifTRHEd2aO
+         92pxnIT7AukV47LphWHpkC0U847e8iQRDwwnVQFFbWf/ohanXFXm9+RnUPa+XJuw9CdJ
+         qytXsvRLY+0E/3znKC25AOiWzKpkXt7HNbCt7yXtRqko6kdmqA9Re1RRZ4EtBlotNf3F
+         EYvuwNnQtjISfi69HZBdHnX0IUPN0jIfU5jn2AxTbajllqJvwPM54qnhY73RrbFZ1xwV
+         0RqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=StI9htrsT9nAfOWxOwIUSz384tvOEJibgAyyKfuu94M=;
-        b=K1amPROUoAc3Ws0UtEggDXLp/HPbffXv6ulTbP/pplpgppIFGe4zY0qiBDHgeNhKdW
-         /jsx6H1rr/h66nMIXyGGUZV7/aJOJJJurxJz6uW5hNOYzxxskEugC/vyxt41vc/EvOv3
-         nvpXoEtohuL193SYfhhNKlms/9EGTgeirRpyzfrFkqKNQFnGhOJl1iVRQ5nSJ9PQepQp
-         b4V2Ug+G4q4HZDhZGtwDEQxslGp6yEtD1PGe7kIa6Eu8lWu+JjfemVSq2O9TiA3Q7TJ7
-         Dbg3iPTaoHsLjVPuAs2bpRnGKUkhIjy8yxBzGddn8IshAVsa75L68tz00xrNDl9UUXEe
-         WcBQ==
-X-Gm-Message-State: AOAM530/pwmHqFnSiYc1lrfM4HL+SzWCLEEN4mp9Sya1XQrR1Z48PL8N
-        zWzqAH4FnHVd1OBqF/EW4fXn/ztPSSAMJXImgtLO+VV23go+
-X-Google-Smtp-Source: ABdhPJylw/81I/nLoI8OtCd07PKPJbCgDmiv6LeRlCXOeEfrSkyRuz/Sv5bVLCazKWZhGEFvDxMAvkeWWZnUE5ePteGtDwJXoKnS
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=IwDQColPGCU49BS4yP7Ee0C5BTDNWKC0qbV8xP+eXUg=;
+        b=lldHTawr5ASY1KNg3N39JRxHOehS1J8TbpFqueLJaJ92godrqo5jtNubUxfKbtG8N8
+         d+8UrwAKhlIshjZ+W51+pN341b4XWZMSXhKGSVbIqVjUSVQHtMF3midZnBkA1V6AAE5k
+         HVFg3F2oY3qY6h2zex9G/9R0i38rVSsu1Czg6teopjuK3rjki1/anKGtjQi9nShsODIS
+         Yro48lqN81l+oxNPGoFmgLQ6tubUZoAMczLLWemTGRguzevpy9CHDfnyP7gfAG7iKVXV
+         ctDtceCH8bgk/YzVYnGSfL15DVWhMcYdOw9lSNzoufpO/Z8wUCOT7XGYpjY+zHzoeOwH
+         NBig==
+X-Gm-Message-State: AOAM533N6e73MEewjUkAnuvpJ7wTDe2DuGWaDsLGPTcpuI7HkW0h5Kd9
+        Z07wwGPg8AgelL8pHAw0OYZeDAULfWg=
+X-Google-Smtp-Source: ABdhPJxP/9vN/DoAza/xmJrDv4DUML6dSm2vEEIm2JeYon83K+M2IlktSkS/V6mX2/U9vReVqQ0HnA==
+X-Received: by 2002:a05:6e02:1ba8:: with SMTP id n8mr17332683ili.254.1639072591377;
+        Thu, 09 Dec 2021 09:56:31 -0800 (PST)
+Received: from p51.localdomain (bras-base-mtrlpq4706w-grc-05-174-93-161-243.dsl.bell.ca. [174.93.161.243])
+        by smtp.gmail.com with ESMTPSA id l1sm275897iln.48.2021.12.09.09.56.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Dec 2021 09:56:30 -0800 (PST)
+Received: by p51.localdomain (Postfix, from userid 60092)
+        id 233D711B88C0; Thu,  9 Dec 2021 12:56:36 -0500 (EST)
+Date:   Thu, 9 Dec 2021 12:56:36 -0500
+From:   jrun <darwinskernel@gmail.com>
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     io-uring <io-uring@vger.kernel.org>
+Subject: Re: happy io_uring_prep_accept_direct() submissions go hiding!
+Message-ID: <20211209175636.oq6npmqf24h5hthi@p51>
+References: <20211208190733.xazgugkuprosux6k@p51>
+ <024aae30-1fdc-f51b-7744-9518a39cbb19@gmail.com>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:160d:: with SMTP id t13mr14013859ilu.306.1639068972803;
- Thu, 09 Dec 2021 08:56:12 -0800 (PST)
-Date:   Thu, 09 Dec 2021 08:56:12 -0800
-In-Reply-To: <053430b4-8b7a-249e-19a9-17752b47504a@kernel.dk>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e2eddb05d2b97be5@google.com>
-Subject: Re: [syzbot] INFO: task hung in io_uring_cancel_generic (2)
-From:   syzbot <syzbot+21e6887c0be14181206d@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <024aae30-1fdc-f51b-7744-9518a39cbb19@gmail.com>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
+On Thu, Dec 09, 2021 at 03:02:12PM +0000, Pavel Begunkov wrote:
+> Don't see how a CQE may get missing, so let me ask a bunch of questions:
+> 
+> First, let's try out my understanding of your problem. At the beginning you
+> submit MAX_CONNECTIONS/2 accept requests and _all_ of them complete. 
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+correct.
 
-Reported-and-tested-by: syzbot+21e6887c0be14181206d@syzkaller.appspotmail.com
+> In the main loop you add another bunch of accepts, but you're not getting CQEs
+> from them. Right ?
 
-Tested on:
+yes, io_uring_prep_accept_direct() submissions before entering the main loop
+complete.any io_uring_prep_accept_direct() submitted from within the main loop
+goes missing.
 
-commit:         59614c5c io_uring: ensure task_work gets run as part o..
-git tree:       git://git.kernel.dk/linux-block io_uring-5.16
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b7264d1cb8ba2795
-dashboard link: https://syzkaller.appspot.com/bug?extid=21e6887c0be14181206d
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+> 1) Anything in dmesg? Please when it got stuck (or what the symptoms are),
+> don't kill it but wait for 3 minutes and check dmesg again.
+>
 
-Note: testing is done by a robot and is best-effort only.
+nothing in dmesg!
+
+> Or you to reduce the waiting time:
+> "echo 10 > /proc/sys/kernel/hung_task_timeout_secs"
+
+oh, my kernel[mek] is missing that; rebuilding right now with
+`CONFIG_DETECT_HUNG_TASK=y`; will report back after reboot.
+
+btw, enabled CONFIG_WQ_WATCHDOG=y for workqueue.watchdog_thresh; don't know if
+that would help too. let me know.
+
+also any magic with bpftrace you would suggest?
+
+> And then should if anything wrong it should appear in dmesg max in 20-30 secs
+>
+> 2) What kernel version are you running?
+
+[mek]: Linux 5.15.6-gentoo-p51 #5 SMP PREEMPT x86_64 i7-7700HQ
+
+> 3) Have you tried normal accept (non-direct)?
+
+no, will try, but accept_direct worked for me before introducing pthread into
+the code. don't know if it matters.
+
+> 4) Can try increase the max number io-wq workers exceeds the max number
+> of inflight requests? Increase RLIMIT_NPROC, E.g. set it to
+> RLIMIT_NPROC = nr_threads + max inflight requests.
+
+i only have 1 thread atm but will try this with the new kernel and report back.
+
+> 5) Do you get CQEs when you shutdown listening sockets?
+
+yes! io_uring_prep_close_direct() call, there is only one inside dq_msg(), come
+in on subsequent arrival of connect() requests from the client.
+tested with and without IOSQE_ASYNC set.
+
+> 6) Do you check return values of io_uring_submit()?
+> 
+> 7) Any variability during execution? E.g. a different number of
+> sockets get accepted.
+
+with IORING_SETUP_SQPOLL, i was getting different numbers for:
+pending, = io_uring_sq_ready(ring); vs
+submitted, = io_uring_submit(ring); according to the commented block at the
+beginning of the event loop. don't if that's the way to check what you're
+asking. let me know please.
+
+
+thanks for the help,
+	- jrun

@@ -2,88 +2,71 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 233EB46EC5F
-	for <lists+io-uring@lfdr.de>; Thu,  9 Dec 2021 16:58:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A22B346EC66
+	for <lists+io-uring@lfdr.de>; Thu,  9 Dec 2021 17:00:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240671AbhLIQBq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 9 Dec 2021 11:01:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55276 "EHLO
+        id S240716AbhLIQDe (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 9 Dec 2021 11:03:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55732 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239846AbhLIQBq (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 9 Dec 2021 11:01:46 -0500
-Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20584C0617A1
-        for <io-uring@vger.kernel.org>; Thu,  9 Dec 2021 07:58:12 -0800 (PST)
-Received: by mail-pl1-x62d.google.com with SMTP id q17so4182887plr.11
-        for <io-uring@vger.kernel.org>; Thu, 09 Dec 2021 07:58:12 -0800 (PST)
+        with ESMTP id S239832AbhLIQDd (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 9 Dec 2021 11:03:33 -0500
+Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7D77C061746
+        for <io-uring@vger.kernel.org>; Thu,  9 Dec 2021 07:59:59 -0800 (PST)
+Received: by mail-pf1-x435.google.com with SMTP id u80so5789331pfc.9
+        for <io-uring@vger.kernel.org>; Thu, 09 Dec 2021 07:59:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=biv5OTi9ySXLAnrzcd/teCA8NX2vw4nxLXTxzbrLMPQ=;
-        b=tHRLi5to+H4EjBwccLnByww/gm1JUZym5mUe+YOKjx6/ETopTeXWC94Po5bRg7j+cC
-         dwPDxyBfOEs1GndutpZzbxHDQzXX7bPSsJzVNucaadRMKjFDHjw/IhJcqobFU58zZhIn
-         VGLcdIZpXHTJOTLP1kybtC1JIMXbkzwhvthiXvk9zq0+wRdChKm64TDh07KhLyUPyIfA
-         aNy7i4swkoZLGFZJvtJFG5TovILAG2u4ZLeYiadfbsDUFtUCWBLJqA5P1GZNogUINye8
-         0shT2rGDUjKvk395Jrv7fSIB+TVd1He94kEEPk9N77bLMQDzGJDTEZlb2DV5qS2qWB/9
-         ZfOQ==
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=luGXX7YfnGRbhc6haQmxFvEOin62WmRD4qzh0DjhbG4=;
+        b=AthNWAHbP2LeW9YsEl/tqu4wkGDs3Fm4MIP25S6A2+oqponof792h/fHaw6Yfp2XlR
+         eCx46ujEb29MIPu1GI8b0l3K7nNg1UuC7ZsnZRGcAbJefcom/KnMpuVy3KzSyaE4rTmi
+         0OAkP4E88R6l0TiVQpthCMF+UoJzNkC87WnlSQRG9T+UM774NB+7u30PM4jrvtB4GYdp
+         OvTH36XZv3shTCs8Sa1y6FdMsuOJNM/rpxdW5zt1t9gknddQBNCElGR8ZiTA9H1+2rZ7
+         jt7y5sw3dvWNDpNo/oaMnJ/ZYA7W61H/aS6xXVGhJXcVhXeiC1A+4BvQ734yyHiZ+gXt
+         kqhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=biv5OTi9ySXLAnrzcd/teCA8NX2vw4nxLXTxzbrLMPQ=;
-        b=b7OYG+lt/1k4yQOkE0zWk3nAtd2xPHdSkkYqVDDOINXcHtr+QQDIU+fs2HBEru+Lmy
-         vGxnQy9pqMyE9L383a9/C0kuUrzML3FKrFhiq3LcxcKDo4WowR63pH4T+mzEmxuVrHsj
-         +gGbaVzx+mby7b/NuIb+hjfQ/14CW7PeAd/GzOGBK/P3jGs1IJk9xWSZ0XsjuoADSgs5
-         yB+fWoeLLAVwZh2kxXeSKmccNK6qcgcUSpf8kXgT/B3s2v4v51qC/mbXyQN3FQMKU4Hx
-         KUWzclbtOD+AOF2nSzaVxONNhc9CYpAT/R+TkzQ2FmKHltzlRHqwOoBtSoe6nRlS1NoT
-         deUA==
-X-Gm-Message-State: AOAM533RcDg/uJLlMgn3lFCq++NAJ6+ltKvAnRKmfaNgQVhZnIUxb5Fl
-        5RU9I/dsQsAL7i+3Qlb+WKVniQ==
-X-Google-Smtp-Source: ABdhPJx9AV16TY4XwyxRRoUmtkt9/ytp79OHBNK2x67X/9jHLAI3NsiGUhgfOsdGmFlPKdqsX6ARCQ==
-X-Received: by 2002:a17:90a:a786:: with SMTP id f6mr16637212pjq.158.1639065491356;
-        Thu, 09 Dec 2021 07:58:11 -0800 (PST)
-Received: from [172.20.4.26] ([66.185.175.30])
-        by smtp.gmail.com with ESMTPSA id k15sm82825pgn.91.2021.12.09.07.58.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Dec 2021 07:58:10 -0800 (PST)
-Subject: Re: [syzbot] INFO: task hung in io_uring_cancel_generic (2)
-To:     syzbot <syzbot+21e6887c0be14181206d@syzkaller.appspotmail.com>,
-        asml.silence@gmail.com, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <00000000000060ab3b05d2973c1a@google.com>
+        bh=luGXX7YfnGRbhc6haQmxFvEOin62WmRD4qzh0DjhbG4=;
+        b=mzMVLhUBSYPlSSg5or/4XEptbHAX9kHadkNPm7soplLLVQHF2bZDP9VgO8eB5jA1pi
+         C/yoxRAdg3BRW5wnAd4DOqYLClFpJY8DZtYByuO8UgIP0RDS9XB/aMLY+l3qoD6jSIUL
+         pyp/0+sDx8GEF0C42qDnVs+8f5w4DMaWgPVz7ZU9xuS/W61VyGTVmH1+YW19Gtp/3AlT
+         siK1WNozqWuiHFpJNuyGGxcvb4V35Dx6/RVKtJ+Kr+l7Ri4JLiJtyuu71v+PKMce/6L2
+         W9N+135E0Ok3m4wz7W8clqkBt14mY5SCsl0pW06qddx1z3X5bphEkAbO3sXFn0iv5ND/
+         VNJQ==
+X-Gm-Message-State: AOAM5337efbNgaUTCh25oh1CjNmKVdpsl5Vlc0KfWUMvKpAUT2NkaQ+C
+        v4PNfSGLjSnIetz/CyUS04w8SZU7WZo+DA==
+X-Google-Smtp-Source: ABdhPJwY4eRzgm93HZp3wfHpbYAh0PHZ4GZrZm7SdOmZDaAZ58NLuXr2mtqvLAlURgZ/geY+VARZ/g==
+X-Received: by 2002:a63:6a03:: with SMTP id f3mr35141884pgc.618.1639065598480;
+        Thu, 09 Dec 2021 07:59:58 -0800 (PST)
+Received: from localhost.localdomain ([66.185.175.30])
+        by smtp.gmail.com with ESMTPSA id q17sm146875pfu.117.2021.12.09.07.59.57
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Dec 2021 07:59:58 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <053430b4-8b7a-249e-19a9-17752b47504a@kernel.dk>
-Date:   Thu, 9 Dec 2021 08:58:09 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+To:     io-uring@vger.kernel.org
+Subject: [PATCHSET 0/2] Cancelation fixes
+Date:   Thu,  9 Dec 2021 08:59:54 -0700
+Message-Id: <20211209155956.383317-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-In-Reply-To: <00000000000060ab3b05d2973c1a@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 12/7/21 5:04 PM, syzbot wrote:
-> syzbot has found a reproducer for the following issue on:
-> 
-> HEAD commit:    cd8c917a56f2 Makefile: Do not quote value for CONFIG_CC_IM..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=153be575b00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=5247c9e141823545
-> dashboard link: https://syzkaller.appspot.com/bug?extid=21e6887c0be14181206d
-> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1218dce1b00000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16f91d89b00000
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+21e6887c0be14181206d@syzkaller.appspotmail.com
+Hi,
 
-#syz test git://git.kernel.dk/linux-block io_uring-5.16
+#1 fixes a missing wakeup on decrement of a value that is used with
+the tctx->wait and in_idle tracking, and #2 ensures that we properly
+process task_work off the cancelation path.
 
 -- 
 Jens Axboe
+
 

@@ -2,125 +2,104 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 44AFA4708FC
-	for <lists+io-uring@lfdr.de>; Fri, 10 Dec 2021 19:38:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 167D0471215
+	for <lists+io-uring@lfdr.de>; Sat, 11 Dec 2021 07:09:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245468AbhLJSmH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 10 Dec 2021 13:42:07 -0500
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:47132 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S242061AbhLJSmG (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 10 Dec 2021 13:42:06 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R641e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04357;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=2;SR=0;TI=SMTPD_---0V-BPx1O_1639161508;
-Received: from 192.168.31.207(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0V-BPx1O_1639161508)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Sat, 11 Dec 2021 02:38:29 +0800
-Subject: Re: [PATCH] io-wq: check for wq exit after adding new worker
- task_work
-To:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
-References: <6ec527b1-3d50-d484-912d-eff86849241d@kernel.dk>
-From:   Hao Xu <haoxu@linux.alibaba.com>
-Message-ID: <8b8c624d-788b-86dd-4fd2-a72b7117ec2b@linux.alibaba.com>
-Date:   Sat, 11 Dec 2021 02:38:27 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        id S229762AbhLKGJu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 11 Dec 2021 01:09:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45832 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229728AbhLKGJu (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 11 Dec 2021 01:09:50 -0500
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EE6BC061714
+        for <io-uring@vger.kernel.org>; Fri, 10 Dec 2021 22:09:50 -0800 (PST)
+Received: by mail-pj1-x102c.google.com with SMTP id k6-20020a17090a7f0600b001ad9d73b20bso9238861pjl.3
+        for <io-uring@vger.kernel.org>; Fri, 10 Dec 2021 22:09:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=from:subject:to:cc:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=+H3vzDiULG89UBP6LJ1q5qFUCsZyGr7+u27ISsVNZjk=;
+        b=SISyXOaTJJzNWTXKZjPFGtNR1BpeXDeHsaOkiryIF3JNYwPlV206+VPyDSDe3uq4gd
+         05Ox+lQrRRKoIMfR4agZ2NYAlFyegH2kG28O6B+KChKDokVps50slTEJIWSDuQuUUPm9
+         QslVmoxvV8NGTsX/vYNZ7M+D8rBtMgV4s5Z8P1CNtQS9oiT52NkAx8AUT0NJx+zexbEO
+         FPsYv7J5NKKZv/UWqBZh7LyBDH2EOF5FvAE86hYPjYg1SN8ppCXYGcRerW4XOze59uc4
+         Gew3xnpX140hc9JXEbihk0kHWsQOfY15QzRmT45J8OR2zvFV3nBeXPkXlMy5EVK36MeK
+         3yVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=+H3vzDiULG89UBP6LJ1q5qFUCsZyGr7+u27ISsVNZjk=;
+        b=hCk8b1PPFfJ3ocJY8QtIhLAEgTt6sqQIHbsY1XUXA6hwsxPdt3BJItOxbawtssxbSY
+         zD/d1RDXS4GSLBtFAGtUoRz+UTWp4947J8RCVBo/ZlTJevuYnhfVs4tsb6rp9sg6LyN9
+         klL2JGTbE7FFI6/oBk69wpKYH9zrIPPJsOis726P+XWMHlqwgtAKeBaE79lvc5usJXjI
+         frouljWK63BaNoRJ0XtnPHBgCfYJ+mbIbeM31UVPm1vgcUER7UxjxPGu35KZoczDIWCr
+         DUzRb9qLDTzX3GPumhB8Mrj1XyPCfGn1CvkVYJ9SWYbnqXqBIY7/jK3R6Y/bLuiOyHDK
+         8xOA==
+X-Gm-Message-State: AOAM533cfvkejW/40Q0VN8KP5kjaXRSIoIirZvtP+GodWH8wVUypHA+j
+        hhSZWAmii56sh5rQ3Lb6Nt9u/NrbfC52tQ==
+X-Google-Smtp-Source: ABdhPJwjyvELok4CW18d65GaPMDwCCYhsyfwhhmHBi0GMHWKUHluR7RF3MK8yTvSE/Yzv6qDAzcABA==
+X-Received: by 2002:a17:90a:fe87:: with SMTP id co7mr28784350pjb.21.1639202988428;
+        Fri, 10 Dec 2021 22:09:48 -0800 (PST)
+Received: from [172.20.4.26] ([66.185.175.30])
+        by smtp.gmail.com with ESMTPSA id o124sm5132313pfb.177.2021.12.10.22.09.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Dec 2021 22:09:48 -0800 (PST)
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring fixes for 5.16-rc5
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     io-uring <io-uring@vger.kernel.org>
+Message-ID: <a32963b8-3453-1af5-3544-3d533aa30c3e@kernel.dk>
+Date:   Fri, 10 Dec 2021 23:09:46 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <6ec527b1-3d50-d484-912d-eff86849241d@kernel.dk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+Hi Linus,
 
-在 2021/12/10 下午11:35, Jens Axboe 写道:
-> We check IO_WQ_BIT_EXIT before attempting to create a new worker, and
-> wq exit cancels pending work if we have any. But it's possible to have
-> a race between the two, where creation checks exit finding it not set,
-> but we're in the process of exiting. The exit side will cancel pending
-> creation task_work, but there's a gap where we add task_work after we've
-> canceled existing creations at exit time.
->
-> Fix this by checking the EXIT bit post adding the creation task_work.
-> If it's set, run the same cancelation that exit does.
->
-> Reported-by: syzbot+b60c982cb0efc5e05a47@syzkaller.appspotmail.com
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->
-> ---
+A few fixes that are all bound for stable:
 
-Looks good.
+- Two syzbot reports for io-wq that turned out to be separate fixes, but
+  ultimately very closely related.
 
-Reviewed-by: Hao Xu <haoxu@linux.alibaba.com>
+- io_uring task_work running on cancelations.
 
->
-> diff --git a/fs/io-wq.c b/fs/io-wq.c
-> index 35da9d90df76..8d2bb818a3bb 100644
-> --- a/fs/io-wq.c
-> +++ b/fs/io-wq.c
-> @@ -142,6 +142,7 @@ static bool io_acct_cancel_pending_work(struct io_wqe *wqe,
->   					struct io_wqe_acct *acct,
->   					struct io_cb_cancel_data *match);
->   static void create_worker_cb(struct callback_head *cb);
-> +static void io_wq_cancel_tw_create(struct io_wq *wq);
->   
->   static bool io_worker_get(struct io_worker *worker)
->   {
-> @@ -357,10 +358,22 @@ static bool io_queue_worker_create(struct io_worker *worker,
->   	    test_and_set_bit_lock(0, &worker->create_state))
->   		goto fail_release;
->   
-> +	atomic_inc(&wq->worker_refs);
->   	init_task_work(&worker->create_work, func);
->   	worker->create_index = acct->index;
-> -	if (!task_work_add(wq->task, &worker->create_work, TWA_SIGNAL))
-> +	if (!task_work_add(wq->task, &worker->create_work, TWA_SIGNAL)) {
-> +		/*
-> +		 * EXIT may have been set after checking it above, check after
-> +		 * adding the task_work and remove any creation item if it is
-> +		 * now set. wq exit does that too, but we can have added this
-> +		 * work item after we canceled in io_wq_exit_workers().
-> +		 */
-> +		if (test_bit(IO_WQ_BIT_EXIT, &wq->state))
-> +			io_wq_cancel_tw_create(wq);
-> +		io_worker_ref_put(wq);
->   		return true;
-> +	}
-> +	io_worker_ref_put(wq);
->   	clear_bit_unlock(0, &worker->create_state);
->   fail_release:
->   	io_worker_release(worker);
-> @@ -1196,13 +1209,9 @@ void io_wq_exit_start(struct io_wq *wq)
->   	set_bit(IO_WQ_BIT_EXIT, &wq->state);
->   }
->   
-> -static void io_wq_exit_workers(struct io_wq *wq)
-> +static void io_wq_cancel_tw_create(struct io_wq *wq)
->   {
->   	struct callback_head *cb;
-> -	int node;
-> -
-> -	if (!wq->task)
-> -		return;
->   
->   	while ((cb = task_work_cancel_match(wq->task, io_task_work_match, wq)) != NULL) {
->   		struct io_worker *worker;
-> @@ -1210,6 +1219,16 @@ static void io_wq_exit_workers(struct io_wq *wq)
->   		worker = container_of(cb, struct io_worker, create_work);
->   		io_worker_cancel_cb(worker);
->   	}
-> +}
-> +
-> +static void io_wq_exit_workers(struct io_wq *wq)
-> +{
-> +	int node;
-> +
-> +	if (!wq->task)
-> +		return;
-> +
-> +	io_wq_cancel_tw_create(wq);
->   
->   	rcu_read_lock();
->   	for_each_node(node) {
->
+Please pull!
+
+
+The following changes since commit a226abcd5d427fe9d42efc442818a4a1821e2664:
+
+  io-wq: don't retry task_work creation failure on fatal conditions (2021-12-03 06:27:32 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux-block.git tags/io_uring-5.16-2021-12-10
+
+for you to fetch changes up to 71a85387546e50b1a37b0fa45dadcae3bfb35cf6:
+
+  io-wq: check for wq exit after adding new worker task_work (2021-12-10 13:56:28 -0700)
+
+----------------------------------------------------------------
+io_uring-5.16-2021-12-10
+
+----------------------------------------------------------------
+Jens Axboe (3):
+      io-wq: remove spurious bit clear on task_work addition
+      io_uring: ensure task_work gets run as part of cancelations
+      io-wq: check for wq exit after adding new worker task_work
+
+ fs/io-wq.c    | 29 +++++++++++++++++++++++------
+ fs/io_uring.c |  6 ++++--
+ 2 files changed, 27 insertions(+), 8 deletions(-)
+
+-- 
+Jens Axboe
+

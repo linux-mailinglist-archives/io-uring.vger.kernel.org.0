@@ -2,190 +2,91 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 12558476512
-	for <lists+io-uring@lfdr.de>; Wed, 15 Dec 2021 22:59:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 210BF47656C
+	for <lists+io-uring@lfdr.de>; Wed, 15 Dec 2021 23:09:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230322AbhLOV7b (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 15 Dec 2021 16:59:31 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:38690 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230308AbhLOV7a (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Dec 2021 16:59:30 -0500
-Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 1BFLifgD014620
-        for <io-uring@vger.kernel.org>; Wed, 15 Dec 2021 13:59:30 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=facebook;
- bh=TPGTwC/sjpO4chV3paU1y8XS532m0TBytzcqN5Gt/Hc=;
- b=LMpbnwSwKs73XpzcyoQiFrTPPF/uaT/HlDihVaLr06ZMhpeJIDwuJvxvSLpOovgKF5Qh
- 9I4MmLEN/akydSCDvJBBlTtP/UFGxXnao8iFfH5/POQyhjc77vomnme66vWkChDU034J
- yp8qLnT2Rr2J8rObWj86kq+CCW6kl3NxKYY= 
-Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3cy84ky7vv-3
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Wed, 15 Dec 2021 13:59:30 -0800
-Received: from intmgw001.05.ash7.facebook.com (2620:10d:c085:208::f) by
- mail.thefacebook.com (2620:10d:c085:21d::5) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.20; Wed, 15 Dec 2021 13:59:29 -0800
-Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
-        id E16E381A4041; Wed, 15 Dec 2021 13:59:26 -0800 (PST)
-From:   Stefan Roesch <shr@fb.com>
-To:     <io-uring@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
-CC:     <viro@zeniv.linux.org.uk>, <shr@fb.com>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Subject: [PATCH v6 3/3] io_uring: add support for getdents64
-Date:   Wed, 15 Dec 2021 13:59:24 -0800
-Message-ID: <20211215215924.3301586-4-shr@fb.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20211215215924.3301586-1-shr@fb.com>
-References: <20211215215924.3301586-1-shr@fb.com>
+        id S231196AbhLOWJF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 15 Dec 2021 17:09:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45900 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230368AbhLOWJE (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Dec 2021 17:09:04 -0500
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A3A3C061574
+        for <io-uring@vger.kernel.org>; Wed, 15 Dec 2021 14:09:04 -0800 (PST)
+Received: by mail-ed1-x534.google.com with SMTP id g14so78912441edb.8
+        for <io-uring@vger.kernel.org>; Wed, 15 Dec 2021 14:09:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=cXKWjOWwCKMXPMdaQKcCIj7d9Mfr1wyl2LHyh/AgAGM=;
+        b=Kg7ySUBb3T0SepCxXCBlE6Tl5dwhBo80/zDtalnYPLXBb8ibTTaJwq4w2KJ6E484hp
+         fK2XrCQHXIhz/YPIEpusUoQ8IkOAeWXHhLp/41I5s1rXmrsw5kykzPcX7f4IF4NSaUNm
+         w8x+1S8CCitap/U87roFGJavHVA5fEN2RtaZZEk8lPIZxVm5GM1Db4AvN9mC5wFOtkMq
+         mhKW8anDT5nBMS5JlcdxFiF7ZnUEjvUzrdHrVPqBQOQl2s6kwatvfFOI/3Ej2zc0UL03
+         AK1MPpEPIYgQ7n1NTYp3Ix3zvRFZgziG0kL3nx/vPpyEJJuV7AcwZmTfxsXVgNr0bIzf
+         SUMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=cXKWjOWwCKMXPMdaQKcCIj7d9Mfr1wyl2LHyh/AgAGM=;
+        b=RToGL5N0KX8W3S/tWoJcF17HDGt7jhVC++IrSqRLLKC6nLJ5rh8lDeGJ6g6DSAUDIg
+         aCFNpDP529HUF9DaWY6Cid082VRbEW9CsDvA/hXDnlQAykNVVacq++Gx34eoOh3sGCf7
+         23TO4lJ2QdNwBIVGxPAEw0SxSgU6yq1UMXqccwffsfb3xnA49TB1asHf/+w5HqXs7PCd
+         1522jcZqdy5OTiBCfZ1SleEzVFZrbThEPmx+Slo5hkxaVzkXoCIbPL4dqDzUeIXj4nqf
+         hlXZMTMaVtEVd1Rd8IUjeuCpMVWTc0z/mQqK8zZvp4WrttHqaAaaB1tJTpBEJ6NOf0xi
+         8ehw==
+X-Gm-Message-State: AOAM531yLV+kWLZ3H+0af+9b9B78YXhmvl4TybRJSHBpPQiA6AcUDJ22
+        Nv6xNkqBnfBadOukUkpvhZeufwXDRik=
+X-Google-Smtp-Source: ABdhPJyYJPlWRKNElilJj7Hk7IR6PZDqg2FHAm/a/t6AbsFg/n+S9OkwBOayXxbGNyWcBpoSnK9E3A==
+X-Received: by 2002:a17:907:97d4:: with SMTP id js20mr13210108ejc.416.1639606142506;
+        Wed, 15 Dec 2021 14:09:02 -0800 (PST)
+Received: from 127.0.0.1localhost ([148.252.129.75])
+        by smtp.gmail.com with ESMTPSA id l16sm1572006edb.59.2021.12.15.14.09.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Dec 2021 14:09:02 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     io-uring@vger.kernel.org
+Cc:     asml.silence@gmail.com
+Subject: [PATCH for-next 0/7] reworking io_uring's poll and internal poll
+Date:   Wed, 15 Dec 2021 22:08:43 +0000
+Message-Id: <cover.1639605189.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.34.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-FB-Source: Intern
-X-Proofpoint-GUID: 2sVRCXFp047xtJOlA7Zj8ur34VJ4u3qz
-X-Proofpoint-ORIG-GUID: 2sVRCXFp047xtJOlA7Zj8ur34VJ4u3qz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2021-12-15_13,2021-12-14_01,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=fb_outbound_notspam policy=fb_outbound score=0 suspectscore=0
- spamscore=0 clxscore=1015 bulkscore=0 mlxlogscore=925 priorityscore=1501
- impostorscore=0 lowpriorityscore=0 mlxscore=0 phishscore=0 malwarescore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2110150000 definitions=main-2112150120
-X-FB-Internal: deliver
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This adds support for getdents64 to io_uring.
+That's mostly a bug fixing set, some of the problems are listed in 5/7.
+The main part is 5/7, which is bulky but at this point it's hard (if
+possible) to do anything without breaking a dozen of things on the
+way, so I consider it necessary evil.
+It also addresses one of two problems brought up by Eric Biggers
+for aio, specifically poll rewait. There is no poll-free support yet.
 
-Signed-off-by: Stefan Roesch <shr@fb.com>
-Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c                 | 52 +++++++++++++++++++++++++++++++++++
- include/uapi/linux/io_uring.h |  1 +
- 2 files changed, 53 insertions(+)
+As a side effect it also changes performance characteristics, adding
+extra atomics but removing io_kiocb referencing, improving rewait, etc.
+There are also drafts on optimising locking needed for hashing, those
+will go later.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 5092dfe56da6..bbc00761f5fe 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -693,6 +693,13 @@ struct io_hardlink {
- 	int				flags;
- };
-=20
-+struct io_getdents {
-+	struct file			*file;
-+	struct linux_dirent64 __user	*dirent;
-+	unsigned int			count;
-+	loff_t				pos;
-+};
-+
- struct io_async_connect {
- 	struct sockaddr_storage		address;
- };
-@@ -858,6 +865,7 @@ struct io_kiocb {
- 		struct io_mkdir		mkdir;
- 		struct io_symlink	symlink;
- 		struct io_hardlink	hardlink;
-+		struct io_getdents	getdents;
- 	};
-=20
- 	u8				opcode;
-@@ -1107,6 +1115,9 @@ static const struct io_op_def io_op_defs[] =3D {
- 	[IORING_OP_MKDIRAT] =3D {},
- 	[IORING_OP_SYMLINKAT] =3D {},
- 	[IORING_OP_LINKAT] =3D {},
-+	[IORING_OP_GETDENTS] =3D {
-+		.needs_file		=3D 1,
-+	},
- };
-=20
- /* requests with any of those set should undergo io_disarm_next() */
-@@ -4068,6 +4079,42 @@ static int io_linkat(struct io_kiocb *req, unsigne=
-d int issue_flags)
- 	return 0;
- }
-=20
-+static int io_getdents_prep(struct io_kiocb *req, const struct io_uring_=
-sqe *sqe)
-+{
-+	struct io_getdents *getdents =3D &req->getdents;
-+
-+	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
-+		return -EINVAL;
-+	if (sqe->ioprio || sqe->rw_flags || sqe->buf_index)
-+		return -EINVAL;
-+
-+	getdents->pos =3D READ_ONCE(sqe->off);
-+	getdents->dirent =3D u64_to_user_ptr(READ_ONCE(sqe->addr));
-+	getdents->count =3D READ_ONCE(sqe->len);
-+
-+	return 0;
-+}
-+
-+static int io_getdents(struct io_kiocb *req, unsigned int issue_flags)
-+{
-+	struct io_getdents *getdents =3D &req->getdents;
-+	int ret;
-+
-+	if (issue_flags & IO_URING_F_NONBLOCK)
-+		return -EAGAIN;
-+
-+	ret =3D vfs_getdents(req->file, getdents->dirent, getdents->count, getd=
-ents->pos);
-+	if (ret < 0) {
-+		if (ret =3D=3D -ERESTARTSYS)
-+			ret =3D -EINTR;
-+
-+		req_set_fail(req);
-+	}
-+
-+	io_req_complete(req, ret);
-+	return 0;
-+}
-+
- static int io_shutdown_prep(struct io_kiocb *req,
- 			    const struct io_uring_sqe *sqe)
- {
-@@ -6574,6 +6621,8 @@ static int io_req_prep(struct io_kiocb *req, const =
-struct io_uring_sqe *sqe)
- 		return io_symlinkat_prep(req, sqe);
- 	case IORING_OP_LINKAT:
- 		return io_linkat_prep(req, sqe);
-+	case IORING_OP_GETDENTS:
-+		return io_getdents_prep(req, sqe);
- 	}
-=20
- 	printk_once(KERN_WARNING "io_uring: unhandled opcode %d\n",
-@@ -6857,6 +6906,9 @@ static int io_issue_sqe(struct io_kiocb *req, unsig=
-ned int issue_flags)
- 	case IORING_OP_LINKAT:
- 		ret =3D io_linkat(req, issue_flags);
- 		break;
-+	case IORING_OP_GETDENTS:
-+		ret =3D io_getdents(req, issue_flags);
-+		break;
- 	default:
- 		ret =3D -EINVAL;
- 		break;
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.=
-h
-index 787f491f0d2a..57dc88db5793 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -143,6 +143,7 @@ enum {
- 	IORING_OP_MKDIRAT,
- 	IORING_OP_SYMLINKAT,
- 	IORING_OP_LINKAT,
-+	IORING_OP_GETDENTS,
-=20
- 	/* this goes last, obviously */
- 	IORING_OP_LAST,
---=20
-2.30.2
+Performance measurements is a TODO, but the main goal lies in
+correctness and maintainability.
+
+Pavel Begunkov (7):
+  io_uring: remove double poll on poll update
+  io_uring: refactor poll update
+  io_uring: move common poll bits
+  io_uring: kill poll linking optimisation
+  io_uring: poll rework
+  io_uring: single shot poll removal optimisation
+  io_uring: use completion batching for poll rem/upd
+
+ fs/io_uring.c | 649 ++++++++++++++++++++++----------------------------
+ 1 file changed, 287 insertions(+), 362 deletions(-)
+
+-- 
+2.34.0
 

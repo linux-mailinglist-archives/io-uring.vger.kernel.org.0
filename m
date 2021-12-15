@@ -2,92 +2,119 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FCAC47644B
-	for <lists+io-uring@lfdr.de>; Wed, 15 Dec 2021 22:09:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C9AD1476514
+	for <lists+io-uring@lfdr.de>; Wed, 15 Dec 2021 22:59:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229561AbhLOVJy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 15 Dec 2021 16:09:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60604 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229468AbhLOVJy (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Dec 2021 16:09:54 -0500
-Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55464C06173E
-        for <io-uring@vger.kernel.org>; Wed, 15 Dec 2021 13:09:54 -0800 (PST)
-Received: by mail-io1-xd2a.google.com with SMTP id p65so32285968iof.3
-        for <io-uring@vger.kernel.org>; Wed, 15 Dec 2021 13:09:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=5Q+WSgSr064mkUseEEX3jWFB2tdlOM5Z453qQSoCbHg=;
-        b=WDlBqkdEI7kxFH+wJqgqXjUjeYPC1/0TkN+cEF34zn2SRUrML+Dgbin5phBwiRtsAt
-         m1dYAXifjaNaSzKX4SxOimN2ee5uYH7Q6IDxzyGwxKwAhGVRXFmao5vc+L+6a0PU/3Sz
-         uO8VKvDTKuxT6YDNsZX0/n3RHOPikReASjGPFgg/l/SImoN6kzJdjTXF3c77nDvXUmDD
-         rl7MMddA60u9j/fbDDqsLhGYrIHCjnasoli1QU5bRuchIektDsf/D/ycE0HgbGZeR8qu
-         5gi0sFC9LmTPZ8l2bU1kje3w9wNfS09g4X0rRCsV6SOEyd9t7k+K2riagwLDpwtPTPAk
-         qR2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=5Q+WSgSr064mkUseEEX3jWFB2tdlOM5Z453qQSoCbHg=;
-        b=tmEM6EszWlrCOx54qb7h+F5C/hnpvMndcUnbETmYiQb40USknXa3/HLWlXNAV6SUk/
-         q87zUvhY+jxfNOyTafUGDnLb6r7t2s2LM1UnsE5dg7CRmNTEsM5ySw7NCi9Y4iNXMfWT
-         +WoL8K2IPX4Az1lN/M8NeQDNMidFZsdGBjaMVsNSjjjVfUxKP1hfO6f3g/nDuT0kUWTl
-         CULqBe1XC2ZtMzShV2ZCQetM2R5plHLTygXcwlyPEFyygD7drcjxCUjuQjzxu8FUonRq
-         CVtyBsuKn5jjsPdbldi366mjuDGoFeFwrc5HR4CYiC6YiRN7osw4Mae9cyb+u88OIE/W
-         ITSw==
-X-Gm-Message-State: AOAM532OZnrZoMPq7zhOOZJyGcCg6GzSZHxmbuukICQ1CV981DXTyevW
-        sv0DSTdVB96LR/AhxfnviDAyew==
-X-Google-Smtp-Source: ABdhPJwTvinOdFkaSDVsp24gveeu8UqEF5AB3Nx+fm5Kd2lsZrKm1PTUVDnWjrAKYv97eTEZWBpuzw==
-X-Received: by 2002:a02:ab8f:: with SMTP id t15mr7128205jan.147.1639602593713;
-        Wed, 15 Dec 2021 13:09:53 -0800 (PST)
-Received: from [192.168.1.30] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id u24sm1558545ior.20.2021.12.15.13.09.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Dec 2021 13:09:53 -0800 (PST)
-Subject: Re: [PATCH v2 0/3] io_uring: add getdents64 support
-To:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
-References: <20211124231700.1158521-1-shr@fb.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <49b476cb-0de6-22ff-61b7-87ac300b9567@kernel.dk>
-Date:   Wed, 15 Dec 2021 14:09:52 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S230116AbhLOV7c (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 15 Dec 2021 16:59:32 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:7180 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230306AbhLOV7b (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Dec 2021 16:59:31 -0500
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 1BFLiPPP020358
+        for <io-uring@vger.kernel.org>; Wed, 15 Dec 2021 13:59:31 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=facebook; bh=Ivgbdb74LSR/ebqtsWhU+W+nyb2uC9VUXrbA16sEIEw=;
+ b=FSzg+QsmEUUhyFtLOgfptKHfVn97kKYKwelr5pjRwjATpnewdSgYe7bTvKbi9KloPoG/
+ fHpPmNBAa7BXIOvxaE63gXJRDw5kMYabAhCGUwc1vnexN4/st4eCyQjFsyOiYrPs4cP5
+ 33YW9Kv20Y1UdoDfGhbo8VejXdP/Pbzo8Z0= 
+Received: from mail.thefacebook.com ([163.114.132.120])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3cyga3va34-2
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <io-uring@vger.kernel.org>; Wed, 15 Dec 2021 13:59:31 -0800
+Received: from intmgw001.38.frc1.facebook.com (2620:10d:c085:208::f) by
+ mail.thefacebook.com (2620:10d:c085:21d::7) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.20; Wed, 15 Dec 2021 13:59:31 -0800
+Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
+        id CF2FB81A403B; Wed, 15 Dec 2021 13:59:26 -0800 (PST)
+From:   Stefan Roesch <shr@fb.com>
+To:     <io-uring@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
+CC:     <viro@zeniv.linux.org.uk>, <shr@fb.com>
+Subject: [PATCH v6 0/3] io_uring: add getdents64 support
+Date:   Wed, 15 Dec 2021 13:59:21 -0800
+Message-ID: <20211215215924.3301586-1-shr@fb.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-In-Reply-To: <20211124231700.1158521-1-shr@fb.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-FB-Source: Intern
+X-Proofpoint-ORIG-GUID: YNkDvtIbS-9cRz5o_Yvt5LKJrPF_7IuD
+X-Proofpoint-GUID: YNkDvtIbS-9cRz5o_Yvt5LKJrPF_7IuD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2021-12-15_13,2021-12-14_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=fb_outbound_notspam policy=fb_outbound score=0 lowpriorityscore=0
+ mlxlogscore=541 impostorscore=0 phishscore=0 mlxscore=0 adultscore=0
+ clxscore=1015 suspectscore=0 bulkscore=0 spamscore=0 malwarescore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2110150000 definitions=main-2112150121
+X-FB-Internal: deliver
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 11/24/21 4:16 PM, Stefan Roesch wrote:
-> This series adds support for getdents64 in liburing. The intent is to
-> provide a more complete I/O interface for io_uring.
-> 
-> Patch 1: fs: add parameter use_fpos to iterate_dir()
->   This adds a new parameter to the function iterate_dir() so the
->   caller can specify if the position is the file position or the
->   position stored in the buffer context.
-> 
-> Patch 2: fs: split off vfs_getdents function from getdents64 system call
->   This splits of the iterate_dir part of the syscall in its own
->   dedicated function. This allows to call the function directly from
->   liburing.
-> 
-> Patch 3: io_uring: add support for getdents64
->   Adds the functions to io_uring to support getdents64.
-> 
-> There is also a patch series for the changes to liburing. This includes
-> a new test. The patch series is called "liburing: add getdents support."
+This series adds support for getdents64 in liburing. The intent is to
+provide a more complete I/O interface for io_uring.
 
-Al, ping on this one as well, same question on the VFS side.
+Patch 1: fs: split off do_iterate_dir from iterate_dir function
+  This splits of the function do_iterate_dir() from the iterate_dir()
+  function and adds a new parameter. The new parameter allows the
+  caller to specify if the position is the file position or the
+  position stored in the buffer context.
 
--- 
-Jens Axboe
+  The function iterate_dir() calls do_iterate_dir().
+
+Patch 2: fs: split off vfs_getdents function from getdents64 system call
+  This splits of the iterate_dir part of the syscall in its own
+  dedicated function. This allows to call the function directly from
+  liburing.
+
+Patch 3: io_uring: add support for getdents64
+  Adds the functions to io_uring to support getdents64.
+
+There is also a patch series for the changes to liburing. This includes
+a new test. The patch series is called "liburing: add getdents support."
+
+The following tests have been performed:
+- new liburing getdents test program has been run
+- xfstests have been run
+- both tests have been repeated with the kernel memory leak checker
+  and no leaks have been reported.
+
+Signed-off-by: Stefan Roesch <shr@fb.com>
+---
+v6: - rebased patch series
+v5: - remove old patch (v4 contained a patch file from v3)
+
+V4: - silence compiler warnings
+
+V3: - add do_iterate_dir() function to Patch 1
+    - make iterate_dir() function call do_iterate_dir()
+      This has the advantage that the function signature of iterate_dir
+      does not change
+
+V2: Updated the iterate_dir calls in fs/ksmbd, fs/ecryptfs and arch/alpha=
+ with
+    the additional parameter.
+
+
+Stefan Roesch (3):
+  fs: split off do_iterate_dir from iterate_dir function
+  fs: split off vfs_getdents function of getdents64 syscall
+  io_uring: add support for getdents64
+
+ fs/internal.h                 |  8 +++++
+ fs/io_uring.c                 | 52 +++++++++++++++++++++++++++++
+ fs/readdir.c                  | 62 ++++++++++++++++++++++++++++-------
+ include/uapi/linux/io_uring.h |  1 +
+ 4 files changed, 111 insertions(+), 12 deletions(-)
+
+
+base-commit: d09358c3d161dcea8f02eae1281bc996819cc769
+--=20
+2.30.2
 

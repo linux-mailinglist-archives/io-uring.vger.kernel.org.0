@@ -2,115 +2,122 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 00F91476573
-	for <lists+io-uring@lfdr.de>; Wed, 15 Dec 2021 23:09:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E30F476580
+	for <lists+io-uring@lfdr.de>; Wed, 15 Dec 2021 23:17:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231223AbhLOWJK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 15 Dec 2021 17:09:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45940 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231209AbhLOWJJ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Dec 2021 17:09:09 -0500
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B895C061574
-        for <io-uring@vger.kernel.org>; Wed, 15 Dec 2021 14:09:09 -0800 (PST)
-Received: by mail-ed1-x530.google.com with SMTP id b7so20566149edd.6
-        for <io-uring@vger.kernel.org>; Wed, 15 Dec 2021 14:09:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=zk7tq+jeU/KIuJIF1RK+uXu2NXCXDfvMa8p3uA92U8s=;
-        b=oXdEBVUxQwmOgzqS0LPSzYxLqpFqNxBAAHFAvcuyb0v+avMaDRUde3MakXgL+FbKyM
-         KyJSudObZy5RUvN0ZwzlwKBJI6iyu7+sLVnq3LzpIyLkh9eRAwDjqOpItUyR7IRLrWNm
-         IN+YQAoqe/dnRi+eO67NvcLNvOgcJpiwB9w31EAWg1o90CcNmTkQusPyrC9/HXpru99i
-         /txqUNdD1tMwM5pLyc/l5a1Eb4LBMXFIKALx3JRgsHAdUMr+4DY8HecuehpiCMC4hMg+
-         g6yqpp5jCWSAxOdlxF4/u8o37EQhZZ92qVkNWEH/+UqgElb2nlsVw82yOeQu6ClE6NCX
-         3Ycw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=zk7tq+jeU/KIuJIF1RK+uXu2NXCXDfvMa8p3uA92U8s=;
-        b=5kEWeGTiM//Sv4MHsqpuK1JB/r0KJ6YFgm2oBcqPGv+mixgcRW7733o8E02WI2SWSS
-         WfJji0/MrWECU7dtj7hpAxaqulnkQ4jdyXXFOQzyV18BkMomD76cV+Fcl7x+PIN83ofj
-         NZOB1YREMXiVPmJmnw/ZmBiOd64wahXq3qCaHpqtgplKRw5UgU3gGw6LvDlPdkXQKCtA
-         DnectPbKa3741CvlVsPLWn8ux7T4ymU6s4/pfDQ+6wg3Cw5b5zoDnFuGaXZvVAc5gAEi
-         ez4A7/pPC+dvK/z57FWNcvJNFlhstGbc3ajDQ7lmwIJVsyQxwgf13ywJ1oJdlgDfMiOR
-         xzYA==
-X-Gm-Message-State: AOAM5332WlrObcripWhxZBg9kJKbjulaadO//lxAH8J/GKC6+Oaw2GXX
-        2E0SJqVtwN4kSQbDwb1Lx0JujlXaaRQ=
-X-Google-Smtp-Source: ABdhPJzSbzG19Hzr7xvBretYnATUtAFPozbL1NU+XpMckYJ+qOqK8xAtBrF1qXNsVzL+MZAFmobzLQ==
-X-Received: by 2002:a05:6402:26c8:: with SMTP id x8mr17167360edd.156.1639606147622;
-        Wed, 15 Dec 2021 14:09:07 -0800 (PST)
-Received: from 127.0.0.1localhost ([148.252.129.75])
-        by smtp.gmail.com with ESMTPSA id l16sm1572006edb.59.2021.12.15.14.09.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Dec 2021 14:09:07 -0800 (PST)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     io-uring@vger.kernel.org
-Cc:     asml.silence@gmail.com
-Subject: [PATCH 7/7] io_uring: use completion batching for poll rem/upd
-Date:   Wed, 15 Dec 2021 22:08:50 +0000
-Message-Id: <e2bdc6c5abd9e9b80f09b86d8823eb1c780362cd.1639605189.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.34.0
-In-Reply-To: <cover.1639605189.git.asml.silence@gmail.com>
-References: <cover.1639605189.git.asml.silence@gmail.com>
+        id S230475AbhLOWRI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 15 Dec 2021 17:17:08 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:61068 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229472AbhLOWRI (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Dec 2021 17:17:08 -0500
+Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 1BFLiYck016083
+        for <io-uring@vger.kernel.org>; Wed, 15 Dec 2021 14:17:08 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=facebook; bh=llgFdcLg2I/3Yytv92pWfiET0i1jN8rumAav6O0H5vQ=;
+ b=CrbwI98hmIVbrJEWJiuNsjNlYBorn32EYef93Po4kIxB73Fsz+GgChfiGKOy58ZUtSFt
+ im9hxVsT1QRTMBzOyIOukibLAxluC3Yj2j4HRIzOZ+8FvG80p52jBL0T4QKQYlS1hCM7
+ vuVWqzj7scGbJQ3YxqLNfY9WlquMaWzqP7k= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3cyf7fvwh5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <io-uring@vger.kernel.org>; Wed, 15 Dec 2021 14:17:08 -0800
+Received: from intmgw001.06.ash9.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:82::e) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.20; Wed, 15 Dec 2021 14:17:06 -0800
+Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
+        id 5A7E081B0199; Wed, 15 Dec 2021 14:17:05 -0800 (PST)
+From:   Stefan Roesch <shr@fb.com>
+To:     <io-uring@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <kernel-team@fb.com>
+CC:     <viro@zeniv.linux.org.uk>, <shr@fb.com>
+Subject: [PATCH v4 0/5] io_uring: add xattr support
+Date:   Wed, 15 Dec 2021 14:16:57 -0800
+Message-ID: <20211215221702.3695098-1-shr@fb.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-FB-Source: Intern
+X-Proofpoint-GUID: sOYw1PpWjO8INC6CH5SFcqNPlHSE--Ik
+X-Proofpoint-ORIG-GUID: sOYw1PpWjO8INC6CH5SFcqNPlHSE--Ik
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2021-12-15_13,2021-12-14_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=fb_outbound_notspam policy=fb_outbound score=0 bulkscore=0 spamscore=0
+ mlxlogscore=849 priorityscore=1501 suspectscore=0 mlxscore=0 phishscore=0
+ impostorscore=0 lowpriorityscore=0 clxscore=1015 malwarescore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2110150000 definitions=main-2112150123
+X-FB-Internal: deliver
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Use __io_req_complete() in io_poll_update(), so we can utilise
-completion batching for both update/remove request and the poll
-we're killing (if any).
+This adds the xattr support to io_uring. The intent is to have a more
+complete support for file operations in io_uring.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+This change adds support for the following functions to io_uring:
+- fgetxattr
+- fsetxattr
+- getxattr
+- setxattr
+
+Patch 1: fs: split off do_user_path_at_empty from user_path_at_empty()
+  This splits off a new function do_user_path_at_empty from
+  user_path_at_empty that is based on filename and not on a
+  user-specified string.
+
+Patch 2: fs: split off setxattr_setup function from setxattr
+  Split off the setup part of the setxattr function.
+
+Patch 3: fs: split off do_getxattr from getxattr
+  Split of the do_getxattr part from getxattr. This will
+  allow it to be invoked it from io_uring.
+
+Patch 4: io_uring: add fsetxattr and setxattr support
+  This adds new functions to support the fsetxattr and setxattr
+  functions.
+
+Patch 5: io_uring: add fgetxattr and getxattr support
+  This adds new functions to support the fgetxattr and getxattr
+  functions.
+
+
+There are two additional patches:
+  liburing: Add support for xattr api's.
+            This also includes the tests for the new code.
+  xfstests: Add support for io_uring xattr support.
+
 ---
- fs/io_uring.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+V4: - rebased patch series
+V3: - remove req->file checks in prep functions
+    - change size parameter in do_xattr
+V2: - split off function do_user_path_empty instead of changing
+      the function signature of user_path_at
+    - Fix datatype size problem in do_getxattr
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 20feca3d86ae..2ff12404b5e7 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -2778,7 +2778,7 @@ static bool __io_complete_rw_common(struct io_kiocb *req, long res)
- 	return false;
- }
- 
--static void io_req_task_complete(struct io_kiocb *req, bool *locked)
-+static inline void io_req_task_complete(struct io_kiocb *req, bool *locked)
- {
- 	unsigned int cflags = io_put_kbuf(req);
- 	int res = req->result;
-@@ -5903,6 +5903,7 @@ static int io_poll_update(struct io_kiocb *req, unsigned int issue_flags)
- 	struct io_ring_ctx *ctx = req->ctx;
- 	struct io_kiocb *preq;
- 	int ret2, ret = 0;
-+	bool locked;
- 
- 	spin_lock(&ctx->completion_lock);
- 	preq = io_poll_find(ctx, req->poll_update.old_user_data, true);
-@@ -5928,13 +5929,16 @@ static int io_poll_update(struct io_kiocb *req, unsigned int issue_flags)
- 		if (!ret2)
- 			goto out;
- 	}
-+
- 	req_set_fail(preq);
--	io_req_complete(preq, -ECANCELED);
-+	preq->result = -ECANCELED;
-+	locked = !(issue_flags & IO_URING_F_UNLOCKED);
-+	io_req_task_complete(preq, &locked);
- out:
- 	if (ret < 0)
- 		req_set_fail(req);
- 	/* complete update request, we're done with it */
--	io_req_complete(req, ret);
-+	__io_req_complete(req, issue_flags, ret, 0);
- 	return 0;
- }
- 
--- 
-2.34.0
+Stefan Roesch (5):
+  fs: split off do_user_path_at_empty from user_path_at_empty()
+  fs: split off setxattr_setup function from setxattr
+  fs: split off do_getxattr from getxattr
+  io_uring: add fsetxattr and setxattr support
+  io_uring: add fgetxattr and getxattr support
+
+ fs/internal.h                 |  23 +++
+ fs/io_uring.c                 | 321 ++++++++++++++++++++++++++++++++++
+ fs/namei.c                    |  10 +-
+ fs/xattr.c                    | 106 +++++++----
+ include/linux/namei.h         |   2 +
+ include/uapi/linux/io_uring.h |   8 +-
+ 6 files changed, 431 insertions(+), 39 deletions(-)
+
+
+base-commit: d09358c3d161dcea8f02eae1281bc996819cc769
+--=20
+2.30.2
 

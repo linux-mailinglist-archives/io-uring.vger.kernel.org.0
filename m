@@ -2,137 +2,83 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8190C477699
-	for <lists+io-uring@lfdr.de>; Thu, 16 Dec 2021 17:05:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DC0847769A
+	for <lists+io-uring@lfdr.de>; Thu, 16 Dec 2021 17:05:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233165AbhLPQFO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 16 Dec 2021 11:05:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38038 "EHLO
+        id S237405AbhLPQFl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 16 Dec 2021 11:05:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38152 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232897AbhLPQFO (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 16 Dec 2021 11:05:14 -0500
-Received: from mail-il1-x12e.google.com (mail-il1-x12e.google.com [IPv6:2607:f8b0:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFEEEC061574
-        for <io-uring@vger.kernel.org>; Thu, 16 Dec 2021 08:05:13 -0800 (PST)
-Received: by mail-il1-x12e.google.com with SMTP id m12so9512996ild.0
-        for <io-uring@vger.kernel.org>; Thu, 16 Dec 2021 08:05:13 -0800 (PST)
+        with ESMTP id S237369AbhLPQFl (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 16 Dec 2021 11:05:41 -0500
+Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20C78C06173E
+        for <io-uring@vger.kernel.org>; Thu, 16 Dec 2021 08:05:41 -0800 (PST)
+Received: by mail-io1-xd2d.google.com with SMTP id q72so35762135iod.12
+        for <io-uring@vger.kernel.org>; Thu, 16 Dec 2021 08:05:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=N6UA84ftd4sgVUyBJEtQoIMCZZdOizw9zRC7TOsJMr4=;
-        b=wxuG+E0mLOOJSWSjoDUpjwsovXHL/4Br3NfpP110XTS+uAuaVFaml/WrOZjVokKgzh
-         bOKwD8iLX7NvHeSwziVpwUFoQ4de99RvPksmdGwqfrUYDjSwqYrIJeOKlvOPkT2fr1CC
-         0ASujzwPZ7gOWYb212VFRVNJcZ2kBGlwWG3QZ/87gIedvBPNnD5PSQE9X0bVBY7RWfdr
-         +z6sXvpU3roMcaKyg0lWCQ6zcV1DocQ2QaYiOkqH1SqoPWX4iRZJ91hfbGKDrBgCcwuP
-         dymwGPQJRh63qfsQ1ZAOEb8RrUTAaSZrJy3e7A6PDzSBJ9dpWos8Pkib3LvFO2gfVh0Z
-         0acg==
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tL3o525SSbhSebgjQfZMQ7uigsMTO2fDpoEDGUF4HUE=;
+        b=0LEQNGb1bTHq9e+hYsc3l+U2okJ0k4nHCnm1dhpKeonjqY5/ZM5neoakgeOcnU8rMt
+         pqd/Xs3gl8OfNB5zpWbbHRemeoSAhzx4OjzZC9/nUuQ5hNpz9f5iBm0955pOnS1isizS
+         JAip0m3naR8v4h1fESL4IKpKKycnMHxyPGjlktYqX9o1oKPQgvGE6+BklJ58NVHSreeu
+         pIxhC+CTNkzBhAgy0G4S4qMsOTW6SLnoF3binn+Y5vangPa3tr2JNByLyvb6RJlZUOSc
+         Q6M4wLWZjHPSPDI/FLUA7mI2SPGwGpULFNf82V7VdpjkSXl9392Ow7vVukUVOmKvpL0U
+         /eNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=N6UA84ftd4sgVUyBJEtQoIMCZZdOizw9zRC7TOsJMr4=;
-        b=ukl1rN2eRtWpHdZlGG/oRXQvCDzfEYQA8QOtvdzzMTDGfD2n9obiXZAZ1U0wgNQ0Zq
-         WaLKWg8Q1F1FLf15nKwm8nXeNX5Y9eurcFjYxOC3gxAGlgfg9mmAbjrP7975JslmvvSw
-         WDI3nWYhKDNY9eciExEM3PuSQv9PryxOy78asljMwp2DymJ40fT8cqW1y/+SUq6147Dt
-         hWRHptpoZa+5mUEqTabhICnkUA8OaMZxvXRSskXVheK48I65N4VSF0mCkzAS7MuiCAHs
-         eyY/d2ENwTPUqlqqnhYdC6vClpBs8GzgLtOfgo2V5lJRgVys8ndI+wg/tPP0Oyz4Ep/V
-         oZww==
-X-Gm-Message-State: AOAM532g2fi3yYRfyv+WjvoOkZWcsgejKAx6mRQ1ofV6y9PzCthjk+54
-        3F4SUXMaUwSJEEI28cfq8mxzUw==
-X-Google-Smtp-Source: ABdhPJwqF9eDs3713Z00opgYLwwgfH2xbAIythGLGLVihXl3/zor5fKLqunW6WGSqo2Q3ls5bpQM4w==
-X-Received: by 2002:a05:6e02:1a07:: with SMTP id s7mr10289591ild.50.1639670713196;
-        Thu, 16 Dec 2021 08:05:13 -0800 (PST)
-Received: from [192.168.1.30] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id j15sm2955439ile.68.2021.12.16.08.05.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Dec 2021 08:05:12 -0800 (PST)
-Subject: Re: [PATCH 4/4] nvme: add support for mq_ops->queue_rqs()
-To:     Max Gurtovoy <mgurtovoy@nvidia.com>,
-        Christoph Hellwig <hch@infradead.org>
-Cc:     io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
-        Hannes Reinecke <hare@suse.de>
-References: <20211215162421.14896-1-axboe@kernel.dk>
- <20211215162421.14896-5-axboe@kernel.dk> <YbsB/W/1Uwok4i0u@infradead.org>
- <2adafc43-3860-d9f0-9cb5-ca3bf9a27109@nvidia.com>
- <06ab52e6-47b7-6010-524c-45bb73fbfabc@kernel.dk>
- <9b4202b4-192a-6611-922e-0b837e2b97c3@nvidia.com>
+        bh=tL3o525SSbhSebgjQfZMQ7uigsMTO2fDpoEDGUF4HUE=;
+        b=0mClI6LPNUiCFTjOBE4CIPqTOxcaPwi5pYb2Lcq3bPooLrxNLULNe9dCfYl7etSdt1
+         ykBJDOPejlfKarld3SoI3ovnj73/SwrTosv/Ysu8d5VX5oDSTy5OHE6hMUQz2dwjocbu
+         Ta8jGoDODCQ4eLMY93yvxUkO8lgu1QIA4zDrwXMJFFt5mEiJfTFRcs5V7i8hJa3cFFQp
+         ZwaFOTR1OL12LIXrzsWJmQKttK9Zbr3COSDe5nikGigIT7jbe50OfMOOMphZNyWxyhGW
+         shSfQgpdm5MZN1I9OkE7b/tgy/YBMkGNTpyOy5fmBqg/mE05HwIBkZnKK12CAXKAdlz5
+         dB1g==
+X-Gm-Message-State: AOAM532C+yJqjYNCdaOntfCdfAFyAcKVaYdG4aMRSFhBLDjaH1XhFft+
+        vLG/IxZCc+i00QG+1Yn//vPTmX6FhrFwjg==
+X-Google-Smtp-Source: ABdhPJyX8QJ18MhgVKKInSNZnCJnXEn3TufvHX3LuCasO/H2/ZZH4vXTozIHee1wM/MvTcWLkJaRoA==
+X-Received: by 2002:a05:6638:3381:: with SMTP id h1mr10264337jav.176.1639670740358;
+        Thu, 16 Dec 2021 08:05:40 -0800 (PST)
+Received: from x1.localdomain ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id s9sm3237155ild.14.2021.12.16.08.05.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Dec 2021 08:05:39 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <5f249c03-5cb2-9978-cd2c-669c0594d1c0@kernel.dk>
-Date:   Thu, 16 Dec 2021 09:05:10 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+To:     io-uring@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-nvme@lists.infradead.org
+Subject: [PATCHSET v4 0/4] Add support for list issue
+Date:   Thu, 16 Dec 2021 09:05:33 -0700
+Message-Id: <20211216160537.73236-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-In-Reply-To: <9b4202b4-192a-6611-922e-0b837e2b97c3@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 12/16/21 9:00 AM, Max Gurtovoy wrote:
-> 
-> On 12/16/2021 5:48 PM, Jens Axboe wrote:
->> On 12/16/21 6:06 AM, Max Gurtovoy wrote:
->>> On 12/16/2021 11:08 AM, Christoph Hellwig wrote:
->>>> On Wed, Dec 15, 2021 at 09:24:21AM -0700, Jens Axboe wrote:
->>>>> +	spin_lock(&nvmeq->sq_lock);
->>>>> +	while (!rq_list_empty(*rqlist)) {
->>>>> +		struct request *req = rq_list_pop(rqlist);
->>>>> +		struct nvme_iod *iod = blk_mq_rq_to_pdu(req);
->>>>> +
->>>>> +		memcpy(nvmeq->sq_cmds + (nvmeq->sq_tail << nvmeq->sqes),
->>>>> +				absolute_pointer(&iod->cmd), sizeof(iod->cmd));
->>>>> +		if (++nvmeq->sq_tail == nvmeq->q_depth)
->>>>> +			nvmeq->sq_tail = 0;
->>>> So this doesn't even use the new helper added in patch 2?  I think this
->>>> should call nvme_sq_copy_cmd().
->>> I also noticed that.
->>>
->>> So need to decide if to open code it or use the helper function.
->>>
->>> Inline helper sounds reasonable if you have 3 places that will use it.
->> Yes agree, that's been my stance too :-)
->>
->>>> The rest looks identical to the incremental patch I posted, so I guess
->>>> the performance degration measured on the first try was a measurement
->>>> error?
->>> giving 1 dbr for a batch of N commands sounds good idea. Also for RDMA host.
->>>
->>> But how do you moderate it ? what is the batch_sz <--> time_to_wait
->>> algorithm ?
->> The batching is naturally limited at BLK_MAX_REQUEST_COUNT, which is 32
->> in total. I do agree that if we ever made it much larger, then we might
->> want to cap it differently. But 32 seems like a pretty reasonable number
->> to get enough gain from the batching done in various areas, while still
->> not making it so large that we have a potential latency issue. That
->> batch count is already used consistently for other items too (like tag
->> allocation), so it's not specific to just this one case.
-> 
-> I'm saying that the you can wait to the batch_max_count too long and it 
-> won't be efficient from latency POV.
-> 
-> So it's better to limit the block layar to wait for the first to come: x 
-> usecs or batch_max_count before issue queue_rqs.
+With the support in 5.16-rc1 for allocating and completing batches of
+IO, the one missing piece is passing down a list of requests for issue.
+Drivers can take advantage of this by defining an mq_ops->queue_rqs()
+hook.
 
-There's no waiting specifically for this, it's just based on the plug.
-We just won't do more than 32 in that plug. This is really just an
-artifact of the plugging, and if that should be limited based on "max of
-32 or xx time", then that should be done there.
+This implements it for NVMe, allowing copy of multiple commands in one
+swoop.
 
-But in general I think it's saner and enough to just limit the total
-size. If we spend more than xx usec building up the plug list, we're
-doing something horribly wrong. That really should not happen with 32
-requests, and we'll never eg wait on requests if we're out of tags. That
-will result in a plug flush to begin with.
+This is good for around a 500K IOPS/core improvement in my testing,
+which is around a 5-6% improvement in efficiency.
 
-> Also, This batch is per HW queue or SW queue or the entire request queue ?
+Note to Christoph - I kept the copy helper, since it's used in 3
+spots and I _think_ you ended up being fine with that...
 
-It's per submitter, so whatever the submitter ends up queueing IO
-against. In general it'll be per-queue.
+Changes since v3:
+- Use nvme_sq_copy_cmd() in nvme_submit_cmds()
+- Add reviewed-by's
 
 -- 
 Jens Axboe
+
 

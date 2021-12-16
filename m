@@ -2,59 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DC7D947795D
-	for <lists+io-uring@lfdr.de>; Thu, 16 Dec 2021 17:39:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 06CF2477960
+	for <lists+io-uring@lfdr.de>; Thu, 16 Dec 2021 17:39:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233378AbhLPQjH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 16 Dec 2021 11:39:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47604 "EHLO
+        id S233368AbhLPQjI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 16 Dec 2021 11:39:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47610 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233333AbhLPQjH (ORCPT
+        with ESMTP id S233079AbhLPQjH (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Thu, 16 Dec 2021 11:39:07 -0500
-Received: from mail-il1-x136.google.com (mail-il1-x136.google.com [IPv6:2607:f8b0:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA5E2C06173E
-        for <io-uring@vger.kernel.org>; Thu, 16 Dec 2021 08:39:06 -0800 (PST)
-Received: by mail-il1-x136.google.com with SMTP id 15so22548865ilq.2
-        for <io-uring@vger.kernel.org>; Thu, 16 Dec 2021 08:39:06 -0800 (PST)
+Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72218C06173E
+        for <io-uring@vger.kernel.org>; Thu, 16 Dec 2021 08:39:07 -0800 (PST)
+Received: by mail-io1-xd34.google.com with SMTP id z18so35954416iof.5
+        for <io-uring@vger.kernel.org>; Thu, 16 Dec 2021 08:39:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=5IX74MWW+MmXrMtixah+OlhoboMuiSi2pn/mLZENDuU=;
-        b=h+xv2L16XaQ7XBDfUh+cBCV9gZOt0jGlTL7hJlxewlVZdF/KeFEOAg7wqeIW1HM6ie
-         jgXXOhESr35rI4HJ4X+Lu956zTOfva+wHc9X+OS+cHwQDYQQsiOlCjGGQNXxxxXL3I6Z
-         KR8I0USQ0qocIEMrJdMij14zZSRyEl99f4ZwWWMeKgVe2FRjrLq7H62gvxYedEf7BfX8
-         UmznztDNj7Rca2f7nqJ3qajucZsF2SZ9IXxANYRiCevLitEFfsZyIeWMZW6HlGpKh5mR
-         rgjQnaQhIu5ogeO3wLn88mcMp1igflNUVn8bUtGxPxVpVFJhfl5cYUEJ6Hmk4t1EPSK5
-         jZOg==
+        bh=xEIyIeQItOxJNAK+GZxR0AU9fLDjbQGibSW3G09wzOM=;
+        b=zRA+kbRsHGd+7od2RWLlx3FvBE1xCRl1+3C5MhHDQ+HqHJNy0xJHOFBUOHy1+O/22d
+         8LJAxe/jM0DL4lXc3HETGaIjv17lonI5G2vIzdR5O6DOKsu0v9qPob2Nds760/l/SCVl
+         3YtccMlZD0Etp5r1+mQtN6VkR+2CZPl7qIw5jLJUIDxb3fSO0QHV1u9Dklaa7vcf8Qmf
+         msFaBGJtzHIa0MmvRLZvUJx2ZRI9Qf1xFyoXZU/5DHjXHb39VdfOZ+uQfpXHv/jQs2QD
+         YomC17TZGd3Cg2BBGj/dvIoBgUCqOcGHq80iBjaz2DlIwzdnRFL7KJO6UHrw8EJoOgW6
+         wbmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=5IX74MWW+MmXrMtixah+OlhoboMuiSi2pn/mLZENDuU=;
-        b=VrTQf1gNN2Z8gt30Y+tJqTG5LQuxWTgqFxNXQBWpC6vbmiGIoeaCAbDmBm/cOtqtO0
-         BUPClonQOA9UYzdAoWswbJBay09jmJUCnJrDUTmOJtU6zgEmcZxeJsGQTolh4vF+C3ZE
-         bYHIpDrJF4HMRLsTcBcgtICujJPW3BzeMHw8niMwsv9Bn6R78Tjw+WKjrcXWuPzr88QZ
-         SsLaaMntaDPN2CaMRKhqeMJ5yNXjr6yJsDLbhNnuNWBGEHYWxKlg8vQ7cgOWz6aBzn3f
-         w2ZfY+MWfzb0rk8cuyDxs7+6Dpb818F7nJhUOr+hdSCZn+gjYFpHJlEwcgiJyyIK0b9g
-         HUlA==
-X-Gm-Message-State: AOAM533jFWPN1uvT1XVAZLKollyv6kH0TGFVizJIycHQWitpmoSQPKrn
-        LOmrHcSFklyTo+7YdRGy8LCWfyIe/YD6AA==
-X-Google-Smtp-Source: ABdhPJypT/FJAV4gbG5r+26xb+eg8kD4Wm9SRoUbE/cBV9XcOAGBXdJ3GFjTL1jOtWhomlwQk+8iqg==
-X-Received: by 2002:a05:6e02:1528:: with SMTP id i8mr10122850ilu.312.1639672746003;
+        bh=xEIyIeQItOxJNAK+GZxR0AU9fLDjbQGibSW3G09wzOM=;
+        b=s2fYHUm4svCYNeYdFLzrE8coWwGXiMRkoXK42kp4G9U/uiKJcqmSPWUIHVhuwC5Qe7
+         8uk8HLomGiXVSQsiDnPD98SufcJwClETslmhnR+Vmr6x8ps4n7lAzVoAUX9Rh6HRbWxp
+         0TfIwW8WJHjwgnbLXs2nC7F8mf23Tm1wg/JGnarhDTaw82FONdU9OC4xMdLq5UntpDAE
+         OY8tFMCNbvDFRSc6D04mCL0D9eWMZLW35kwus9kugmqHoib+4sLlxNIGgcuan6aT+7y7
+         WZKAwfHD0ZWtfKUbKixTtihPLKhmym5bCwaz7EPaw0IIfyrxcuhvDCRv2KtbtnxQQxRK
+         mRbw==
+X-Gm-Message-State: AOAM531Q8Biaw1Dn20ZbpgQ+4mnDDQaKkpDbiEbNTTa2Brg7gVId7dUy
+        NbX8uymjUDp60VSAbCTX3EbGV1VhduQ2Uw==
+X-Google-Smtp-Source: ABdhPJwab3tMpsiybMjm9sus1v4EzqXqt6Hcyi92T+FXmNaQbb7mkeQlqpuplIBRFp6xzC+i0g+knw==
+X-Received: by 2002:a05:6638:1923:: with SMTP id p35mr10202987jal.16.1639672746662;
         Thu, 16 Dec 2021 08:39:06 -0800 (PST)
 Received: from x1.localdomain ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id t17sm71816ilm.46.2021.12.16.08.39.05
+        by smtp.gmail.com with ESMTPSA id t17sm71816ilm.46.2021.12.16.08.39.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Dec 2021 08:39:05 -0800 (PST)
+        Thu, 16 Dec 2021 08:39:06 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org, linux-block@vger.kernel.org,
         linux-nvme@lists.infradead.org
 Cc:     Jens Axboe <axboe@kernel.dk>, Hannes Reinecke <hare@suse.de>,
-        Christoph Hellwig <hch@lst.de>
-Subject: [PATCH 3/4] nvme: separate command prep and issue
-Date:   Thu, 16 Dec 2021 09:39:00 -0700
-Message-Id: <20211216163901.81845-4-axboe@kernel.dk>
+        Keith Busch <kbusch@kernel.org>
+Subject: [PATCH 4/4] nvme: add support for mq_ops->queue_rqs()
+Date:   Thu, 16 Dec 2021 09:39:01 -0700
+Message-Id: <20211216163901.81845-5-axboe@kernel.dk>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20211216163901.81845-1-axboe@kernel.dk>
 References: <20211216163901.81845-1-axboe@kernel.dk>
@@ -64,119 +64,101 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Add a nvme_prep_rq() helper to setup a command, and nvme_queue_rq() is
-adapted to use this helper.
+This enables the block layer to send us a full plug list of requests
+that need submitting. The block layer guarantees that they all belong
+to the same queue, but we do have to check the hardware queue mapping
+for each request.
+
+If errors are encountered, leave them in the passed in list. Then the
+block layer will handle them individually.
+
+This is good for about a 4% improvement in peak performance, taking us
+from 9.6M to 10M IOPS/core.
 
 Reviewed-by: Hannes Reinecke <hare@suse.de>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Keith Busch <kbusch@kernel.org>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- drivers/nvme/host/pci.c | 63 +++++++++++++++++++++++------------------
- 1 file changed, 36 insertions(+), 27 deletions(-)
+ drivers/nvme/host/pci.c | 59 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 59 insertions(+)
 
 diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index 9d2a36de228a..7062128c8204 100644
+index 7062128c8204..51a903d91d92 100644
 --- a/drivers/nvme/host/pci.c
 +++ b/drivers/nvme/host/pci.c
-@@ -903,55 +903,32 @@ static blk_status_t nvme_map_metadata(struct nvme_dev *dev, struct request *req,
+@@ -969,6 +969,64 @@ static blk_status_t nvme_queue_rq(struct blk_mq_hw_ctx *hctx,
  	return BLK_STS_OK;
  }
  
--/*
-- * NOTE: ns is NULL when called on the admin queue.
-- */
--static blk_status_t nvme_queue_rq(struct blk_mq_hw_ctx *hctx,
--			 const struct blk_mq_queue_data *bd)
-+static blk_status_t nvme_prep_rq(struct nvme_dev *dev, struct request *req)
- {
--	struct nvme_ns *ns = hctx->queue->queuedata;
--	struct nvme_queue *nvmeq = hctx->driver_data;
--	struct nvme_dev *dev = nvmeq->dev;
--	struct request *req = bd->rq;
- 	struct nvme_iod *iod = blk_mq_rq_to_pdu(req);
--	struct nvme_command *cmnd = &iod->cmd;
- 	blk_status_t ret;
- 
- 	iod->aborted = 0;
- 	iod->npages = -1;
- 	iod->nents = 0;
- 
--	/*
--	 * We should not need to do this, but we're still using this to
--	 * ensure we can drain requests on a dying queue.
--	 */
--	if (unlikely(!test_bit(NVMEQ_ENABLED, &nvmeq->flags)))
--		return BLK_STS_IOERR;
--
--	if (!nvme_check_ready(&dev->ctrl, req, true))
--		return nvme_fail_nonready_command(&dev->ctrl, req);
--
--	ret = nvme_setup_cmd(ns, req);
-+	ret = nvme_setup_cmd(req->q->queuedata, req);
- 	if (ret)
- 		return ret;
- 
- 	if (blk_rq_nr_phys_segments(req)) {
--		ret = nvme_map_data(dev, req, cmnd);
-+		ret = nvme_map_data(dev, req, &iod->cmd);
- 		if (ret)
- 			goto out_free_cmd;
- 	}
- 
- 	if (blk_integrity_rq(req)) {
--		ret = nvme_map_metadata(dev, req, cmnd);
-+		ret = nvme_map_metadata(dev, req, &iod->cmd);
- 		if (ret)
- 			goto out_unmap_data;
- 	}
- 
- 	blk_mq_start_request(req);
--	spin_lock(&nvmeq->sq_lock);
--	nvme_sq_copy_cmd(nvmeq, &iod->cmd);
--	nvme_write_sq_db(nvmeq, bd->last);
--	spin_unlock(&nvmeq->sq_lock);
- 	return BLK_STS_OK;
- out_unmap_data:
- 	nvme_unmap_data(dev, req);
-@@ -960,6 +937,38 @@ static blk_status_t nvme_queue_rq(struct blk_mq_hw_ctx *hctx,
- 	return ret;
- }
- 
-+/*
-+ * NOTE: ns is NULL when called on the admin queue.
-+ */
-+static blk_status_t nvme_queue_rq(struct blk_mq_hw_ctx *hctx,
-+			 const struct blk_mq_queue_data *bd)
++static void nvme_submit_cmds(struct nvme_queue *nvmeq, struct request **rqlist)
 +{
-+	struct nvme_queue *nvmeq = hctx->driver_data;
-+	struct nvme_dev *dev = nvmeq->dev;
-+	struct request *req = bd->rq;
-+	struct nvme_iod *iod = blk_mq_rq_to_pdu(req);
-+	blk_status_t ret;
++	spin_lock(&nvmeq->sq_lock);
++	while (!rq_list_empty(*rqlist)) {
++		struct request *req = rq_list_pop(rqlist);
++		struct nvme_iod *iod = blk_mq_rq_to_pdu(req);
 +
++		nvme_sq_copy_cmd(nvmeq, &iod->cmd);
++	}
++	nvme_write_sq_db(nvmeq, true);
++	spin_unlock(&nvmeq->sq_lock);
++}
++
++static bool nvme_prep_rq_batch(struct nvme_queue *nvmeq, struct request *req)
++{
 +	/*
 +	 * We should not need to do this, but we're still using this to
 +	 * ensure we can drain requests on a dying queue.
 +	 */
 +	if (unlikely(!test_bit(NVMEQ_ENABLED, &nvmeq->flags)))
-+		return BLK_STS_IOERR;
++		return false;
++	if (unlikely(!nvme_check_ready(&nvmeq->dev->ctrl, req, true)))
++		return false;
 +
-+	if (unlikely(!nvme_check_ready(&dev->ctrl, req, true)))
-+		return nvme_fail_nonready_command(&dev->ctrl, req);
++	req->mq_hctx->tags->rqs[req->tag] = req;
++	return nvme_prep_rq(nvmeq->dev, req) == BLK_STS_OK;
++}
 +
-+	ret = nvme_prep_rq(dev, req);
-+	if (unlikely(ret))
-+		return ret;
-+	spin_lock(&nvmeq->sq_lock);
-+	nvme_sq_copy_cmd(nvmeq, &iod->cmd);
-+	nvme_write_sq_db(nvmeq, bd->last);
-+	spin_unlock(&nvmeq->sq_lock);
-+	return BLK_STS_OK;
++static void nvme_queue_rqs(struct request **rqlist)
++{
++	struct request *req = rq_list_peek(rqlist), *prev = NULL;
++	struct request *requeue_list = NULL;
++
++	do {
++		struct nvme_queue *nvmeq = req->mq_hctx->driver_data;
++
++		if (!nvme_prep_rq_batch(nvmeq, req)) {
++			/* detach 'req' and add to remainder list */
++			if (prev)
++				prev->rq_next = req->rq_next;
++			rq_list_add(&requeue_list, req);
++		} else {
++			prev = req;
++		}
++
++		req = rq_list_next(req);
++		if (!req || (prev && req->mq_hctx != prev->mq_hctx)) {
++			/* detach rest of list, and submit */
++			if (prev)
++				prev->rq_next = NULL;
++			nvme_submit_cmds(nvmeq, rqlist);
++			*rqlist = req;
++		}
++	} while (req);
++
++	*rqlist = requeue_list;
 +}
 +
  static __always_inline void nvme_pci_unmap_rq(struct request *req)
  {
  	struct nvme_iod *iod = blk_mq_rq_to_pdu(req);
+@@ -1670,6 +1728,7 @@ static const struct blk_mq_ops nvme_mq_admin_ops = {
+ 
+ static const struct blk_mq_ops nvme_mq_ops = {
+ 	.queue_rq	= nvme_queue_rq,
++	.queue_rqs	= nvme_queue_rqs,
+ 	.complete	= nvme_pci_complete_rq,
+ 	.commit_rqs	= nvme_commit_rqs,
+ 	.init_hctx	= nvme_init_hctx,
 -- 
 2.34.1
 

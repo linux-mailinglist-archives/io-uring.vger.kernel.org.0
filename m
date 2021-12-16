@@ -2,65 +2,67 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 364FD47763E
-	for <lists+io-uring@lfdr.de>; Thu, 16 Dec 2021 16:45:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D6CA477652
+	for <lists+io-uring@lfdr.de>; Thu, 16 Dec 2021 16:48:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232086AbhLPPpw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 16 Dec 2021 10:45:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33384 "EHLO
+        id S238676AbhLPPsG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 16 Dec 2021 10:48:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231948AbhLPPpv (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 16 Dec 2021 10:45:51 -0500
-Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FE41C061574
-        for <io-uring@vger.kernel.org>; Thu, 16 Dec 2021 07:45:50 -0800 (PST)
-Received: by mail-io1-xd33.google.com with SMTP id q72so35673936iod.12
-        for <io-uring@vger.kernel.org>; Thu, 16 Dec 2021 07:45:50 -0800 (PST)
+        with ESMTP id S238697AbhLPPsD (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 16 Dec 2021 10:48:03 -0500
+Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EFB4C061574
+        for <io-uring@vger.kernel.org>; Thu, 16 Dec 2021 07:48:03 -0800 (PST)
+Received: by mail-io1-xd31.google.com with SMTP id c3so35760172iob.6
+        for <io-uring@vger.kernel.org>; Thu, 16 Dec 2021 07:48:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=SBc3GAZ4YIZ93s8r+/3FQmo1yidZe9JMqHnGjAewgfA=;
-        b=TV6wSRzLfaitAAev15bGgk32ATQBKLUauLBN3HJF2ETNkTpl5pszIifpP+yj0RDwIL
-         4RYMlw2TagUJa01p3ziZxfwqkdBSh0Qa8Vov14hk3IhmlNLh1uQzjaGt6gt+K0f5+kRF
-         4fIa16ymlTeCbf6hldLKQHYWlCxhTxKfgUsb6SodSoKs6HsbZWUMkB2bIlGW/PRLuOfU
-         s6uYDzFk3tAiTAa4R5GzFQL+ncUST1uJGZFLJXW4K/afgT9MZBwGrwB25fcrXwpstlyj
-         /DSJ9JrGOF8fsyMVscLoU15aR1rKwWZTkDGfGHKc+zDy8XTDgJUA+XXePVQuAbqm4whh
-         ASTA==
+        bh=NRFQR8Yf1vYbRc7EqH9E5i9XTaBo5dlhI5KykDhEunY=;
+        b=jbGPcR8DsNLJmTTf6Jn9+BAvg4fll+eALhhOgFsGp/QxKiyf2eXeO/QZehs90taEM5
+         3LtUg4rDb794xYffxF2sADQi7iP+XEXA1KB3sonsG0AHRXtK2neRkUFAPylYDlYVYqU5
+         or8HEX0QhTXCjKXZgwdfg1t97UiAHTeGGtfIQHInHTzRBpmwh3SfhXau2MrLoplwy24r
+         W8r16JxcPaTWD95IJF9JIUZSnEd3+Eme0MfTGZyOX/qUogC7yPIKavUJmqWVExMS3HBY
+         CxNpYVcHQsZrcJJItYMK2+tx3ivpnbOecMDV82BSlSTgaMG8ydKudoBBFSB8X4vGeS3j
+         weGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=SBc3GAZ4YIZ93s8r+/3FQmo1yidZe9JMqHnGjAewgfA=;
-        b=1z1EaRd6InJQoLRXlcui06e0uzu+2QTz/IuiwBlJ3F7WGyTESgZK7TwnMlG1cA5/wF
-         y+28oIhHTWp2WMSjsIsNHmPfF+1F12V5S0Mt5K57TAXowyRkwwAcCaKx9n7SP1WLX5S2
-         6IUHdrnqo/9fYoJsPgTmvHgvg0WfWV3ohEXpWQzFdcwCP70bqLwOvIGO1nmpo3vU/TTj
-         bqK+BjyqK27ryJ3jwfCiBwRewPYXIp9bp2kis5597Ne8sLbzXPYnN6KK659AVGRXRkLd
-         RH+QtSPqqRqo1g/6bADJnKECadersyMTj0V/hWkaIeOKbIEcCnDfHhUKq1HNBEq96HY5
-         tUEA==
-X-Gm-Message-State: AOAM532qPEuKHYeFpA6eq0kUufYcx/KtDRVcLu1Zylr8iJocxBgmls3X
-        8npycw30H4frKmHjD2P2P4O1AQ==
-X-Google-Smtp-Source: ABdhPJxplkANgDmAeUKaQOmui2rltUUu3y+oFsyxBSdV6c9hGPou7JZdqdr7SPCy+0CdVlD+v46jsQ==
-X-Received: by 2002:a05:6638:d89:: with SMTP id l9mr10226540jaj.80.1639669549784;
-        Thu, 16 Dec 2021 07:45:49 -0800 (PST)
+        bh=NRFQR8Yf1vYbRc7EqH9E5i9XTaBo5dlhI5KykDhEunY=;
+        b=hFpA93ItwsqWKQsU5rSx0fa13K7bjIQ5CDa5yyJejWUIYK3IyvC0/15G8fYpRLa4/V
+         twNBkBlWDGqqHt3uxyBQgigbbSBQMgeyUaB/7BDlX7TRNbE35jTPMJRoLvSAMl38801o
+         Vip/cKCBBTolGBMStnKFTZlKCddWZXra3hDsCLpT1+0ZFN9D0RyLeYAqbNp4YsRI7Bcn
+         cjSiqCAszfFxtu9lLtInxZY8ElIJIVcxg1bAI51dtnPlTGF6kn2SLJdlZyBUT7sd6Tjy
+         2ENxTzYMIvBfSWiy2/k/KcV97Rw4WL/IEjvnYSIQhHFZ6fkYo+zueyvcgZkyyh/ryFpY
+         UOpA==
+X-Gm-Message-State: AOAM533+BMKQb9XZBRRZdTUwUvcay0QUzXzw/bOHyuNJxSahX8QEJ/KS
+        3rYn8kHzrUpdRGnZT/aD7ZwX35iC+wZpYw==
+X-Google-Smtp-Source: ABdhPJwOvcVk5qmGsJ1rKQqPyPcBkxxJ2k5pa75zQElP9O9KZv4qyx8PvMI6zG+010jN7cnOKI0L4w==
+X-Received: by 2002:a02:85a9:: with SMTP id d38mr9988551jai.71.1639669682314;
+        Thu, 16 Dec 2021 07:48:02 -0800 (PST)
 Received: from [192.168.1.30] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id t6sm2680980ioi.51.2021.12.16.07.45.49
+        by smtp.gmail.com with ESMTPSA id j7sm3552824iow.26.2021.12.16.07.48.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Dec 2021 07:45:49 -0800 (PST)
+        Thu, 16 Dec 2021 07:48:02 -0800 (PST)
 Subject: Re: [PATCH 4/4] nvme: add support for mq_ops->queue_rqs()
-To:     Christoph Hellwig <hch@infradead.org>
+To:     Max Gurtovoy <mgurtovoy@nvidia.com>,
+        Christoph Hellwig <hch@infradead.org>
 Cc:     io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
         Hannes Reinecke <hare@suse.de>
 References: <20211215162421.14896-1-axboe@kernel.dk>
  <20211215162421.14896-5-axboe@kernel.dk> <YbsB/W/1Uwok4i0u@infradead.org>
+ <2adafc43-3860-d9f0-9cb5-ca3bf9a27109@nvidia.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <83aa4715-7bf8-4ed1-6945-3910cb13f233@kernel.dk>
-Date:   Thu, 16 Dec 2021 08:45:46 -0700
+Message-ID: <06ab52e6-47b7-6010-524c-45bb73fbfabc@kernel.dk>
+Date:   Thu, 16 Dec 2021 08:48:00 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <YbsB/W/1Uwok4i0u@infradead.org>
+In-Reply-To: <2adafc43-3860-d9f0-9cb5-ca3bf9a27109@nvidia.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -68,32 +70,46 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 12/16/21 2:08 AM, Christoph Hellwig wrote:
-> On Wed, Dec 15, 2021 at 09:24:21AM -0700, Jens Axboe wrote:
->> +	spin_lock(&nvmeq->sq_lock);
->> +	while (!rq_list_empty(*rqlist)) {
->> +		struct request *req = rq_list_pop(rqlist);
->> +		struct nvme_iod *iod = blk_mq_rq_to_pdu(req);
->> +
->> +		memcpy(nvmeq->sq_cmds + (nvmeq->sq_tail << nvmeq->sqes),
->> +				absolute_pointer(&iod->cmd), sizeof(iod->cmd));
->> +		if (++nvmeq->sq_tail == nvmeq->q_depth)
->> +			nvmeq->sq_tail = 0;
+On 12/16/21 6:06 AM, Max Gurtovoy wrote:
 > 
-> So this doesn't even use the new helper added in patch 2?  I think this
-> should call nvme_sq_copy_cmd().
+> On 12/16/2021 11:08 AM, Christoph Hellwig wrote:
+>> On Wed, Dec 15, 2021 at 09:24:21AM -0700, Jens Axboe wrote:
+>>> +	spin_lock(&nvmeq->sq_lock);
+>>> +	while (!rq_list_empty(*rqlist)) {
+>>> +		struct request *req = rq_list_pop(rqlist);
+>>> +		struct nvme_iod *iod = blk_mq_rq_to_pdu(req);
+>>> +
+>>> +		memcpy(nvmeq->sq_cmds + (nvmeq->sq_tail << nvmeq->sqes),
+>>> +				absolute_pointer(&iod->cmd), sizeof(iod->cmd));
+>>> +		if (++nvmeq->sq_tail == nvmeq->q_depth)
+>>> +			nvmeq->sq_tail = 0;
+>> So this doesn't even use the new helper added in patch 2?  I think this
+>> should call nvme_sq_copy_cmd().
+> 
+> I also noticed that.
+> 
+> So need to decide if to open code it or use the helper function.
+> 
+> Inline helper sounds reasonable if you have 3 places that will use it.
 
-But you NAK'ed that one? It definitely should use that helper, so I take it
-you are fine with it then if we do it here too? That would make 3 call sites,
-and I still do think the helper makes sense...
+Yes agree, that's been my stance too :-)
 
-> The rest looks identical to the incremental patch I posted, so I guess
-> the performance degration measured on the first try was a measurement
-> error?
+>> The rest looks identical to the incremental patch I posted, so I guess
+>> the performance degration measured on the first try was a measurement
+>> error?
+> 
+> giving 1 dbr for a batch of N commands sounds good idea. Also for RDMA host.
+> 
+> But how do you moderate it ? what is the batch_sz <--> time_to_wait 
+> algorithm ?
 
-It may have been a measurement error, I'm honestly not quite sure. I
-reshuffled and modified a few bits here and there, and verified the
-end result. Wish I had a better answer, but...
+The batching is naturally limited at BLK_MAX_REQUEST_COUNT, which is 32
+in total. I do agree that if we ever made it much larger, then we might
+want to cap it differently. But 32 seems like a pretty reasonable number
+to get enough gain from the batching done in various areas, while still
+not making it so large that we have a potential latency issue. That
+batch count is already used consistently for other items too (like tag
+allocation), so it's not specific to just this one case.
 
 -- 
 Jens Axboe

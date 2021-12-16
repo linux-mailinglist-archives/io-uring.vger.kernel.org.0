@@ -2,76 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 412764772E4
-	for <lists+io-uring@lfdr.de>; Thu, 16 Dec 2021 14:15:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BBF74774B5
+	for <lists+io-uring@lfdr.de>; Thu, 16 Dec 2021 15:33:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237387AbhLPNPQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 16 Dec 2021 08:15:16 -0500
-Received: from szxga08-in.huawei.com ([45.249.212.255]:29136 "EHLO
-        szxga08-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237386AbhLPNPP (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 16 Dec 2021 08:15:15 -0500
-Received: from canpemm500010.china.huawei.com (unknown [172.30.72.56])
-        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4JFCFS3Sprz1DJv2;
-        Thu, 16 Dec 2021 21:12:12 +0800 (CST)
-Received: from [10.174.178.185] (10.174.178.185) by
- canpemm500010.china.huawei.com (7.192.105.118) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.20; Thu, 16 Dec 2021 21:15:13 +0800
-Subject: Re: [PATCH -next] io_uring: use timespec64_valid() to verify time
- value
-To:     <axboe@kernel.dk>, <asml.silence@gmail.com>,
-        <io-uring@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20211202064946.1424490-1-yebin10@huawei.com>
-From:   yebin <yebin10@huawei.com>
-Message-ID: <61BB3BE0.8080405@huawei.com>
-Date:   Thu, 16 Dec 2021 21:15:12 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.1.0
+        id S232478AbhLPOdI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 16 Dec 2021 09:33:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44430 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232285AbhLPOdH (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 16 Dec 2021 09:33:07 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14057C061574;
+        Thu, 16 Dec 2021 06:33:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=foz6dy1ECdcmAJmBbiUNLfCBWvq99F8FjH6VIB+KgRE=; b=teYpovxEayYy4rigPnetUtCN42
+        XN68VU1P0NcV3ItbIehL7awC8l+d6xdIycCRyOHGR/nwT7fj/LCKGoBmzA8SfQWh+BWg9aamzIqqN
+        rCVL6POwOSLUkd/dRZy/FMRaLnZvmnZNXhthSNQpoGn2c7C/7sMjV0owjDHxlZjXv19Gg7vXmGHRE
+        RBGvrNN5EDsm1OOnB02XAF/g6Y8j4UoZb02RjZqNDH5uwDai8WZ+tCZ5aL9ZGLo5Xma0xeLcW+OtR
+        EAoNMvcrDhEVxuX8ax0rRn8YJy19FkONCSHGzjXxb0Y4MWMx2yU7HlQNcBwGWBRnFJ5eKkp2uzifD
+        NOGQqYyA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mxroe-006BWV-P4; Thu, 16 Dec 2021 14:33:04 +0000
+Date:   Thu, 16 Dec 2021 06:33:04 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, linux-block@vger.kernel.org
+Subject: Re: [PATCH 3/3] block: enable bio allocation cache for IRQ driven IO
+Message-ID: <YbtOIA7eI0nyh8rb@infradead.org>
+References: <20211215163009.15269-1-axboe@kernel.dk>
+ <20211215163009.15269-4-axboe@kernel.dk>
 MIME-Version: 1.0
-In-Reply-To: <20211202064946.1424490-1-yebin10@huawei.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.174.178.185]
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- canpemm500010.china.huawei.com (7.192.105.118)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211215163009.15269-4-axboe@kernel.dk>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-ping...
+On Wed, Dec 15, 2021 at 09:30:09AM -0700, Jens Axboe wrote:
+> We currently cannot use the bio recycling allocation cache for IRQ driven
+> IO, as the cache isn't IRQ safe (by design).
+> 
+> Add a way for the completion side to pass back a bio that needs freeing,
+> so we can do it from the io_uring side. io_uring completions always
+> run in task context.
+> 
+> This is good for about a 13% improvement in IRQ driven IO, taking us from
+> around 6.3M/core to 7.1M/core IOPS.
 
-On 2021/12/2 14:49, Ye Bin wrote:
-> It's better to use timespec64_valid() to verify time value.
->
-> Fixes: 2087009c74d4("io_uring: validate timespec for timeout removals")
-> Fixes: f6223ff79966("io_uring: Fix undefined-behaviour in io_issue_sqe")
-> Signed-off-by: Ye Bin <yebin10@huawei.com>
-> ---
->   fs/io_uring.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 568729677e25..929ff732d6dc 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -6151,7 +6151,7 @@ static int io_timeout_remove_prep(struct io_kiocb *req,
->   			return -EINVAL;
->   		if (get_timespec64(&tr->ts, u64_to_user_ptr(sqe->addr2)))
->   			return -EFAULT;
-> -		if (tr->ts.tv_sec < 0 || tr->ts.tv_nsec < 0)
-> +		if (!timespec64_valid(&tr->ts))
->   			return -EINVAL;
->   	} else if (tr->flags) {
->   		/* timeout removal doesn't support flags */
-> @@ -6238,7 +6238,7 @@ static int io_timeout_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe,
->   	if (get_timespec64(&data->ts, u64_to_user_ptr(sqe->addr)))
->   		return -EFAULT;
->   
-> -	if (data->ts.tv_sec < 0 || data->ts.tv_nsec < 0)
-> +	if (!timespec64_valid(&data->ts))
->   		return -EINVAL;
->   
->   	data->mode = io_translate_timeout_mode(flags);
+The numbers looks great, but I really hate how it ties the caller into
+using a bio.  I'll have to think hard about a better structure.
 
+Just curious:  are the numbers with retpolines or without?  Do you care
+about the cost of indirect calls with retpolines for these benchmarks?

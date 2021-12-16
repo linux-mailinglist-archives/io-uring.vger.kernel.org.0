@@ -2,163 +2,140 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 06CF2477960
-	for <lists+io-uring@lfdr.de>; Thu, 16 Dec 2021 17:39:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7046B4779C6
+	for <lists+io-uring@lfdr.de>; Thu, 16 Dec 2021 17:55:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233368AbhLPQjI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 16 Dec 2021 11:39:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47610 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233079AbhLPQjH (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 16 Dec 2021 11:39:07 -0500
-Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72218C06173E
-        for <io-uring@vger.kernel.org>; Thu, 16 Dec 2021 08:39:07 -0800 (PST)
-Received: by mail-io1-xd34.google.com with SMTP id z18so35954416iof.5
-        for <io-uring@vger.kernel.org>; Thu, 16 Dec 2021 08:39:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=xEIyIeQItOxJNAK+GZxR0AU9fLDjbQGibSW3G09wzOM=;
-        b=zRA+kbRsHGd+7od2RWLlx3FvBE1xCRl1+3C5MhHDQ+HqHJNy0xJHOFBUOHy1+O/22d
-         8LJAxe/jM0DL4lXc3HETGaIjv17lonI5G2vIzdR5O6DOKsu0v9qPob2Nds760/l/SCVl
-         3YtccMlZD0Etp5r1+mQtN6VkR+2CZPl7qIw5jLJUIDxb3fSO0QHV1u9Dklaa7vcf8Qmf
-         msFaBGJtzHIa0MmvRLZvUJx2ZRI9Qf1xFyoXZU/5DHjXHb39VdfOZ+uQfpXHv/jQs2QD
-         YomC17TZGd3Cg2BBGj/dvIoBgUCqOcGHq80iBjaz2DlIwzdnRFL7KJO6UHrw8EJoOgW6
-         wbmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=xEIyIeQItOxJNAK+GZxR0AU9fLDjbQGibSW3G09wzOM=;
-        b=s2fYHUm4svCYNeYdFLzrE8coWwGXiMRkoXK42kp4G9U/uiKJcqmSPWUIHVhuwC5Qe7
-         8uk8HLomGiXVSQsiDnPD98SufcJwClETslmhnR+Vmr6x8ps4n7lAzVoAUX9Rh6HRbWxp
-         0TfIwW8WJHjwgnbLXs2nC7F8mf23Tm1wg/JGnarhDTaw82FONdU9OC4xMdLq5UntpDAE
-         OY8tFMCNbvDFRSc6D04mCL0D9eWMZLW35kwus9kugmqHoib+4sLlxNIGgcuan6aT+7y7
-         WZKAwfHD0ZWtfKUbKixTtihPLKhmym5bCwaz7EPaw0IIfyrxcuhvDCRv2KtbtnxQQxRK
-         mRbw==
-X-Gm-Message-State: AOAM531Q8Biaw1Dn20ZbpgQ+4mnDDQaKkpDbiEbNTTa2Brg7gVId7dUy
-        NbX8uymjUDp60VSAbCTX3EbGV1VhduQ2Uw==
-X-Google-Smtp-Source: ABdhPJwab3tMpsiybMjm9sus1v4EzqXqt6Hcyi92T+FXmNaQbb7mkeQlqpuplIBRFp6xzC+i0g+knw==
-X-Received: by 2002:a05:6638:1923:: with SMTP id p35mr10202987jal.16.1639672746662;
-        Thu, 16 Dec 2021 08:39:06 -0800 (PST)
-Received: from x1.localdomain ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id t17sm71816ilm.46.2021.12.16.08.39.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Dec 2021 08:39:06 -0800 (PST)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-nvme@lists.infradead.org
-Cc:     Jens Axboe <axboe@kernel.dk>, Hannes Reinecke <hare@suse.de>,
-        Keith Busch <kbusch@kernel.org>
-Subject: [PATCH 4/4] nvme: add support for mq_ops->queue_rqs()
-Date:   Thu, 16 Dec 2021 09:39:01 -0700
-Message-Id: <20211216163901.81845-5-axboe@kernel.dk>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20211216163901.81845-1-axboe@kernel.dk>
-References: <20211216163901.81845-1-axboe@kernel.dk>
+        id S239748AbhLPQzy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 16 Dec 2021 11:55:54 -0500
+Received: from out30-54.freemail.mail.aliyun.com ([115.124.30.54]:38878 "EHLO
+        out30-54.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S238700AbhLPQzx (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 16 Dec 2021 11:55:53 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0V-plzSV_1639673751;
+Received: from 192.168.31.207(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0V-plzSV_1639673751)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 17 Dec 2021 00:55:51 +0800
+Subject: Re: [POC RFC 0/3] support graph like dependent sqes
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
+References: <20211214055734.61702-1-haoxu@linux.alibaba.com>
+ <4ef630f4-54d8-e8c6-8622-dccef5323864@gmail.com>
+ <7607c0f9-cad3-cfc5-687e-07dc82684b4e@linux.alibaba.com>
+ <06e21b01-a168-e25f-1b42-97789392bd89@gmail.com>
+From:   Hao Xu <haoxu@linux.alibaba.com>
+Message-ID: <c6e18c00-7c1b-d1e9-a152-91b86f426289@linux.alibaba.com>
+Date:   Fri, 17 Dec 2021 00:55:50 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
+In-Reply-To: <06e21b01-a168-e25f-1b42-97789392bd89@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This enables the block layer to send us a full plug list of requests
-that need submitting. The block layer guarantees that they all belong
-to the same queue, but we do have to check the hardware queue mapping
-for each request.
 
-If errors are encountered, leave them in the passed in list. Then the
-block layer will handle them individually.
+在 2021/12/15 上午2:16, Pavel Begunkov 写道:
+> On 12/14/21 16:53, Hao Xu wrote:
+>>
+>> 在 2021/12/14 下午11:21, Pavel Begunkov 写道:
+>>> On 12/14/21 05:57, Hao Xu wrote:
+>>>> This is just a proof of concept which is incompleted, send it early 
+>>>> for
+>>>> thoughts and suggestions.
+>>>>
+>>>> We already have IOSQE_IO_LINK to describe linear dependency
+>>>> relationship sqes. While this patchset provides a new feature to
+>>>> support DAG dependency. For instance, 4 sqes have a relationship
+>>>> as below:
+>>>>        --> 2 --
+>>>>       /        \
+>>>> 1 ---          ---> 4
+>>>>       \        /
+>>>>        --> 3 --
+>>>> IOSQE_IO_LINK serializes them to 1-->2-->3-->4, which unneccessarily
+>>>> serializes 2 and 3. But a DAG can fully describe it.
+>>>>
+>>>> For the detail usage, see the following patches' messages.
+>>>>
+>>>> Tested it with 100 direct read sqes, each one reads a BS=4k block data
+>>>> in a same file, blocks are not overlapped. These sqes form a graph:
+>>>>        2
+>>>>        3
+>>>> 1 --> 4 --> 100
+>>>>       ...
+>>>>        99
+>>>>
+>>>> This is an extreme case, just to show the idea.
+>>>>
+>>>> results below:
+>>>> io_link:
+>>>> IOPS: 15898251
+>>>> graph_link:
+>>>> IOPS: 29325513
+>>>> io_link:
+>>>> IOPS: 16420361
+>>>> graph_link:
+>>>> IOPS: 29585798
+>>>> io_link:
+>>>> IOPS: 18148820
+>>>> graph_link:
+>>>> IOPS: 27932960
+>>>
+>>> Hmm, what do we compare here? IIUC,
+>>> "io_link" is a huge link of 100 requests. Around 15898251 IOPS
+>>> "graph_link" is a graph of diameter 3. Around 29585798 IOPS
+>
+> Diam 2 graph, my bad
+>
+>
+>>> Is that right? If so it'd more more fair to compare with a
+>>> similar graph-like scheduling on the userspace side.
+>>
+>> The above test is more like to show the disadvantage of LINK
+>
+> Oh yeah, links can be slow, especially when it kills potential
+> parallelism or need extra allocations for keeping state, like
+> READV and WRITEV.
+>
+>
+>> But yes, it's better to test the similar userspace  scheduling since
+>>
+>> LINK is definitely not a good choice so have to prove the graph stuff
+>>
+>> beat the userspace scheduling. Will test that soon. Thanks.
+>
+> Would be also great if you can also post the benchmark once
+> it's done
 
-This is good for about a 4% improvement in peak performance, taking us
-from 9.6M to 10M IOPS/core.
+Wrote a new test to test nop sqes forming a full binary tree with 
+(2^10)-1 nodes,
 
-Reviewed-by: Hannes Reinecke <hare@suse.de>
-Reviewed-by: Keith Busch <kbusch@kernel.org>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- drivers/nvme/host/pci.c | 59 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 59 insertions(+)
+which I think it a more general case.  Turns out the result is still not 
+stable and
 
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index 7062128c8204..51a903d91d92 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -969,6 +969,64 @@ static blk_status_t nvme_queue_rq(struct blk_mq_hw_ctx *hctx,
- 	return BLK_STS_OK;
- }
- 
-+static void nvme_submit_cmds(struct nvme_queue *nvmeq, struct request **rqlist)
-+{
-+	spin_lock(&nvmeq->sq_lock);
-+	while (!rq_list_empty(*rqlist)) {
-+		struct request *req = rq_list_pop(rqlist);
-+		struct nvme_iod *iod = blk_mq_rq_to_pdu(req);
-+
-+		nvme_sq_copy_cmd(nvmeq, &iod->cmd);
-+	}
-+	nvme_write_sq_db(nvmeq, true);
-+	spin_unlock(&nvmeq->sq_lock);
-+}
-+
-+static bool nvme_prep_rq_batch(struct nvme_queue *nvmeq, struct request *req)
-+{
-+	/*
-+	 * We should not need to do this, but we're still using this to
-+	 * ensure we can drain requests on a dying queue.
-+	 */
-+	if (unlikely(!test_bit(NVMEQ_ENABLED, &nvmeq->flags)))
-+		return false;
-+	if (unlikely(!nvme_check_ready(&nvmeq->dev->ctrl, req, true)))
-+		return false;
-+
-+	req->mq_hctx->tags->rqs[req->tag] = req;
-+	return nvme_prep_rq(nvmeq->dev, req) == BLK_STS_OK;
-+}
-+
-+static void nvme_queue_rqs(struct request **rqlist)
-+{
-+	struct request *req = rq_list_peek(rqlist), *prev = NULL;
-+	struct request *requeue_list = NULL;
-+
-+	do {
-+		struct nvme_queue *nvmeq = req->mq_hctx->driver_data;
-+
-+		if (!nvme_prep_rq_batch(nvmeq, req)) {
-+			/* detach 'req' and add to remainder list */
-+			if (prev)
-+				prev->rq_next = req->rq_next;
-+			rq_list_add(&requeue_list, req);
-+		} else {
-+			prev = req;
-+		}
-+
-+		req = rq_list_next(req);
-+		if (!req || (prev && req->mq_hctx != prev->mq_hctx)) {
-+			/* detach rest of list, and submit */
-+			if (prev)
-+				prev->rq_next = NULL;
-+			nvme_submit_cmds(nvmeq, rqlist);
-+			*rqlist = req;
-+		}
-+	} while (req);
-+
-+	*rqlist = requeue_list;
-+}
-+
- static __always_inline void nvme_pci_unmap_rq(struct request *req)
- {
- 	struct nvme_iod *iod = blk_mq_rq_to_pdu(req);
-@@ -1670,6 +1728,7 @@ static const struct blk_mq_ops nvme_mq_admin_ops = {
- 
- static const struct blk_mq_ops nvme_mq_ops = {
- 	.queue_rq	= nvme_queue_rq,
-+	.queue_rqs	= nvme_queue_rqs,
- 	.complete	= nvme_pci_complete_rq,
- 	.commit_rqs	= nvme_commit_rqs,
- 	.init_hctx	= nvme_init_hctx,
--- 
-2.34.1
+the kernel side graph link is much slow. I'll try to optimize it.
 
+Btw, is there any comparison data between the current io link feature 
+and the
+
+userspace scheduling.
+
+
+Regards,
+
+Hao
+
+>
+>
+>>> submit(req={1});
+>>> wait(nr=1);
+>>> submit({2-99});
+>>> wait(nr=98);
+>>> submit(req={100});
+>>> wait(nr=1);
+>>>
+>

@@ -2,67 +2,151 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D9091479673
-	for <lists+io-uring@lfdr.de>; Fri, 17 Dec 2021 22:44:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F2C22479941
+	for <lists+io-uring@lfdr.de>; Sat, 18 Dec 2021 07:57:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229968AbhLQVna (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 17 Dec 2021 16:43:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59856 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229982AbhLQVn3 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 17 Dec 2021 16:43:29 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3858C061574
-        for <io-uring@vger.kernel.org>; Fri, 17 Dec 2021 13:43:28 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 824CDB82AD9
-        for <io-uring@vger.kernel.org>; Fri, 17 Dec 2021 21:43:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 53626C36AE5;
-        Fri, 17 Dec 2021 21:43:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639777406;
-        bh=RSM9PVtUSPkubVb+f6uJCnWzczi+pq7mbURtL16w354=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=h9TBMgUo7X8huJU77H2ApuI4QZ4l0wp2IzvPtZiT/Mk+cPxR8owLcJozfJLAwim1D
-         t1iIeYiD19mC5Di77rR35XAcPu5YesPg683rB2pj6WSDLnlD2+8/luo86jPLVb1uUb
-         rG18KnwxW30BxdY9VYQzmHAAOwH3aRnMZcLI9Qb9nGh3MtZqWhpP19qLYjJXrbgmOB
-         6atOLoa/P6JegFmJpnpfTE3fqtE+14wA6dE4GAa1a9Lali+0aSmb4bkCLW1eNhxTKA
-         oVdksLpfDLF+NmYYkg6AbmTWUDJPS15pLEvDn60WticZ7Lflq2LBP5yNWlEChJdxTl
-         MtWKYRRFoNfTA==
-Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id 4085C60A27;
-        Fri, 17 Dec 2021 21:43:26 +0000 (UTC)
-Subject: Re: [GIT PULL] io_uring fix for 5.16-rc6
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <1a6bc93c-df75-d47e-e90e-e90a87e48a56@kernel.dk>
-References: <1a6bc93c-df75-d47e-e90e-e90a87e48a56@kernel.dk>
-X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
-X-PR-Tracked-Message-Id: <1a6bc93c-df75-d47e-e90e-e90a87e48a56@kernel.dk>
-X-PR-Tracked-Remote: git://git.kernel.dk/linux-block.git tags/io_uring-5.16-2021-12-17
-X-PR-Tracked-Commit-Id: d800c65c2d4eccebb27ffb7808e842d5b533823c
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: cb29eee3b28c79f26aff9e396a55bf2cb831e1d9
-Message-Id: <163977740625.30898.9399892661523808579.pr-tracker-bot@kernel.org>
-Date:   Fri, 17 Dec 2021 21:43:26 +0000
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        io-uring <io-uring@vger.kernel.org>
+        id S232213AbhLRG5N (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 18 Dec 2021 01:57:13 -0500
+Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:51868 "EHLO
+        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232199AbhLRG5N (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 18 Dec 2021 01:57:13 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04357;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0V-yXjeg_1639810629;
+Received: from 192.168.31.207(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0V-yXjeg_1639810629)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Sat, 18 Dec 2021 14:57:10 +0800
+Subject: Re: [POC RFC 0/3] support graph like dependent sqes
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
+References: <20211214055734.61702-1-haoxu@linux.alibaba.com>
+ <4ef630f4-54d8-e8c6-8622-dccef5323864@gmail.com>
+ <7607c0f9-cad3-cfc5-687e-07dc82684b4e@linux.alibaba.com>
+ <06e21b01-a168-e25f-1b42-97789392bd89@gmail.com>
+ <c6e18c00-7c1b-d1e9-a152-91b86f426289@linux.alibaba.com>
+ <aebc5433-258d-2d36-9e38-36860b99a669@gmail.com>
+From:   Hao Xu <haoxu@linux.alibaba.com>
+Message-ID: <96155b9c-9f35-53b8-456a-8623fc850b03@linux.alibaba.com>
+Date:   Sat, 18 Dec 2021 14:57:08 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
+MIME-Version: 1.0
+In-Reply-To: <aebc5433-258d-2d36-9e38-36860b99a669@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The pull request you sent on Fri, 17 Dec 2021 10:00:21 -0700:
 
-> git://git.kernel.dk/linux-block.git tags/io_uring-5.16-2021-12-17
+在 2021/12/18 上午3:33, Pavel Begunkov 写道:
+> On 12/16/21 16:55, Hao Xu wrote:
+>> 在 2021/12/15 上午2:16, Pavel Begunkov 写道:
+>>> On 12/14/21 16:53, Hao Xu wrote:
+>>>> 在 2021/12/14 下午11:21, Pavel Begunkov 写道:
+>>>>> On 12/14/21 05:57, Hao Xu wrote:
+>>>>>> This is just a proof of concept which is incompleted, send it 
+>>>>>> early for
+>>>>>> thoughts and suggestions.
+>>>>>>
+>>>>>> We already have IOSQE_IO_LINK to describe linear dependency
+>>>>>> relationship sqes. While this patchset provides a new feature to
+>>>>>> support DAG dependency. For instance, 4 sqes have a relationship
+>>>>>> as below:
+>>>>>>        --> 2 --
+>>>>>>       /        \
+>>>>>> 1 ---          ---> 4
+>>>>>>       \        /
+>>>>>>        --> 3 --
+>>>>>> IOSQE_IO_LINK serializes them to 1-->2-->3-->4, which unneccessarily
+>>>>>> serializes 2 and 3. But a DAG can fully describe it.
+>>>>>>
+>>>>>> For the detail usage, see the following patches' messages.
+>>>>>>
+>>>>>> Tested it with 100 direct read sqes, each one reads a BS=4k block 
+>>>>>> data
+>>>>>> in a same file, blocks are not overlapped. These sqes form a graph:
+>>>>>>        2
+>>>>>>        3
+>>>>>> 1 --> 4 --> 100
+>>>>>>       ...
+>>>>>>        99
+>>>>>>
+>>>>>> This is an extreme case, just to show the idea.
+>>>>>>
+>>>>>> results below:
+>>>>>> io_link:
+>>>>>> IOPS: 15898251
+>>>>>> graph_link:
+>>>>>> IOPS: 29325513
+>>>>>> io_link:
+>>>>>> IOPS: 16420361
+>>>>>> graph_link:
+>>>>>> IOPS: 29585798
+>>>>>> io_link:
+>>>>>> IOPS: 18148820
+>>>>>> graph_link:
+>>>>>> IOPS: 27932960
+>>>>>
+>>>>> Hmm, what do we compare here? IIUC,
+>>>>> "io_link" is a huge link of 100 requests. Around 15898251 IOPS
+>>>>> "graph_link" is a graph of diameter 3. Around 29585798 IOPS
+>>>
+>>> Diam 2 graph, my bad
+>>>
+>>>
+>>>>> Is that right? If so it'd more more fair to compare with a
+>>>>> similar graph-like scheduling on the userspace side.
+>>>>
+>>>> The above test is more like to show the disadvantage of LINK
+>>>
+>>> Oh yeah, links can be slow, especially when it kills potential
+>>> parallelism or need extra allocations for keeping state, like
+>>> READV and WRITEV.
+>>>
+>>>
+>>>> But yes, it's better to test the similar userspace  scheduling since
+>>>>
+>>>> LINK is definitely not a good choice so have to prove the graph stuff
+>>>>
+>>>> beat the userspace scheduling. Will test that soon. Thanks.
+>>>
+>>> Would be also great if you can also post the benchmark once
+>>> it's done
+>>
+>> Wrote a new test to test nop sqes forming a full binary tree with 
+>> (2^10)-1 nodes,
+>> which I think it a more general case.  Turns out the result is still 
+>> not stable and
+>> the kernel side graph link is much slow. I'll try to optimize it.
+>
+> That's expected unfortunately. And without reacting on results
+> of previous requests, it's hard to imagine to be useful. BPF may
+> have helped, e.g. not keeping an explicit graph but just generating
+> new requests from the kernel... But apparently even with this it's
+> hard to compete with just leaving it in userspace.
+>
+Tried to exclude the memory allocation stuff, seems it's a bit better 
+than the user graph.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/cb29eee3b28c79f26aff9e396a55bf2cb831e1d9
+For the result delivery, I was thinking of attaching BPF program within 
+a sqe, not creating
 
-Thank you!
+a single BPF type sqe. Then we can have data flow in the graph or 
+linkchain. But I haven't
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+had a clear draft for it
+
+>> Btw, is there any comparison data between the current io link feature 
+>> and the
+>> userspace scheduling.
+>
+> Don't remember. I'd try to look up the cover-letter for the patches
+> implementing it, I believe there should've been some numbers and
+> hopefully test description.
+>
+> fwiw, before io_uring mailing list got established patches/etc.
+> were mostly going through linux-block mailing list. Links are old, so
+> patches might be there.
+>

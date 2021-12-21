@@ -2,90 +2,176 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 86FA447C4E4
-	for <lists+io-uring@lfdr.de>; Tue, 21 Dec 2021 18:22:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E573147C503
+	for <lists+io-uring@lfdr.de>; Tue, 21 Dec 2021 18:27:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240338AbhLURWW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 21 Dec 2021 12:22:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58502 "EHLO
+        id S233144AbhLUR1S (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 21 Dec 2021 12:27:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231630AbhLURWV (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 21 Dec 2021 12:22:21 -0500
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90C12C06173F
-        for <io-uring@vger.kernel.org>; Tue, 21 Dec 2021 09:22:20 -0800 (PST)
-Received: by mail-ed1-x534.google.com with SMTP id y22so54958748edq.2
-        for <io-uring@vger.kernel.org>; Tue, 21 Dec 2021 09:22:20 -0800 (PST)
+        with ESMTP id S231187AbhLUR1S (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 21 Dec 2021 12:27:18 -0500
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 003D4C061574;
+        Tue, 21 Dec 2021 09:27:17 -0800 (PST)
+Received: by mail-wr1-x42f.google.com with SMTP id r17so28039159wrc.3;
+        Tue, 21 Dec 2021 09:27:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RciAcnWyVHWI3EHz4UlmUBMKLfdlkLS3DXjlC5GePT0=;
-        b=cjvZQXVO+yHzd3mZg0uoHHs2c8B3Ix1oGnL/jHK6ue6lmvuhiKGSQTA4n/z1XfEQls
-         glhwCS7oNUlwMlYC3iPo1WclkyEYk3k+5AC7hQNooGKfMc7fFjTUzBbeosM7O16o14V6
-         +AvQmIW+AKMtnS9LSu1l0C0SXGsmXH1qBws1s=
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=oyvUCfdobGml0EEFEHDlLQAVdTsHOTqZdq5eX1pl9Cc=;
+        b=CFqfVV8J2NDsUKcYoGHtx5HEi1lReGSHHmPQxcpzsS+KUinEvgIYCncCYjKUwRmzZw
+         6W4+wR145jRwIvdETSlDdqLGvogrRlbECGeP1i/OPlukd/lHz/NuQIBM11neeLGiYGSC
+         jzWgdg1lH3yi409N5qUnGhezq0GhhT2pko71DroXiTuVCj6YUVZycCyxxWSmrNknAv3X
+         mc1r9ITZJJJL5XbuJ8u3B8b5Uhf/D6IMNBX5CO5kXYDqxzWsJu1PliCP/f12bwJFBcFE
+         5w3shd7zLPwAtSlxWePaUDlEVMsR6leyiLO+BHNzH8o7YSIRsUxBf+FHWvIBbjr0u7VO
+         DJKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RciAcnWyVHWI3EHz4UlmUBMKLfdlkLS3DXjlC5GePT0=;
-        b=Il2CR7QHh2mUftRP02ao/8MVpMe3L+yHTEMCzPd6pwjxdfZj6NV1n2psYpTBqr4RcL
-         nCv2aT2/DUXApgWjnjvCsmMN42wIQGXZSnKzWNhkrfgLY7eA7/iOjpo6P/PVUJFQEln+
-         4G3rImyIVRJsAHDXa+E9MuFnSlyp2AjROFe7oJ3yTAYJEWtr315ovYKa5lhD4bbIxkOv
-         RhD+K0R20pQtryvztb0NRdpJrsqxvJL/92BLVBmr4IycjbKOohyltRG6ezLOp2yEkFG/
-         dnf0JqRpluxlduHoU5kqYnjnUxYPvsRPfMPSKtS+9rKlr/vcZW7eQXoA75zhJ577YMh7
-         uahA==
-X-Gm-Message-State: AOAM530r72//iqtgNCBiLI1IDmJ01cWj9CP5xypjQLetZ4FPMcIPY9dU
-        osHIlSXJQlWaatlFhGK+jswegbgpHiQF/Pj4fRA=
-X-Google-Smtp-Source: ABdhPJwmJBWIr914q4icmhDJW+FuY5k5UOQoy7rbAF/0h7ZRSic9ka6gFLIHvWoIXp/Wjsfi2jNZDA==
-X-Received: by 2002:a17:907:d8f:: with SMTP id go15mr3752827ejc.501.1640107338898;
-        Tue, 21 Dec 2021 09:22:18 -0800 (PST)
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com. [209.85.221.41])
-        by smtp.gmail.com with ESMTPSA id bx6sm3202469edb.78.2021.12.21.09.22.18
-        for <io-uring@vger.kernel.org>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=oyvUCfdobGml0EEFEHDlLQAVdTsHOTqZdq5eX1pl9Cc=;
+        b=kWHXp/pA7uYIU0gbiY0qof/A296eIKtYymDQoszskkX5N3823vCzeO7jdyABzugjKw
+         NHKROdeADRrLupSkERmAYuqg91lwVFWX5ElYY/ZYS29Vy5u/AIICfHZYzX6PP++AvP/R
+         ekkd9MejY+bptQ2uRUu0h5lqoXky44nR4k+q13tINDpRf7aO1HBN/RH59eJQIFQU9bUI
+         ji1Cs2Zf7S/n/TTaDYRXuKsOgzxXsxDSsAndQAybV+kWyszpBc8CegeMM5wCNLmZQ05q
+         E1yzYpVvJy/i94zp5SX4auoF6OnU4Ymw6cyJ6kV8AqPNahyLdYPhenDat4xvNgHuDBse
+         CZ5w==
+X-Gm-Message-State: AOAM530JHrdf+JKMOvw3LdYlGPoaoaN3HzOAsoQOPk5Q3ApLwWtStfna
+        4+44ieaJY5nZQUTS3g38AJjDzi0DD5k=
+X-Google-Smtp-Source: ABdhPJxtbhhhtm4UAZ/ptxfo6P1c25OXx/LSR/HFA4iERmYvqoElD7wBKqnU0wMnPqJJY1pCE8egog==
+X-Received: by 2002:a05:6000:178c:: with SMTP id e12mr966323wrg.563.1640107636589;
+        Tue, 21 Dec 2021 09:27:16 -0800 (PST)
+Received: from [192.168.8.198] ([148.252.128.24])
+        by smtp.gmail.com with ESMTPSA id i4sm2843223wmd.34.2021.12.21.09.27.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Dec 2021 09:22:18 -0800 (PST)
-Received: by mail-wr1-f41.google.com with SMTP id q16so28365239wrg.7
-        for <io-uring@vger.kernel.org>; Tue, 21 Dec 2021 09:22:18 -0800 (PST)
-X-Received: by 2002:adf:d1a6:: with SMTP id w6mr3336062wrc.274.1640107337991;
- Tue, 21 Dec 2021 09:22:17 -0800 (PST)
+        Tue, 21 Dec 2021 09:27:16 -0800 (PST)
+Message-ID: <6ce7133b-802f-74cf-7610-a7b0bbbb45fd@gmail.com>
+Date:   Tue, 21 Dec 2021 17:27:02 +0000
 MIME-Version: 1.0
-References: <20211221164959.174480-1-shr@fb.com> <20211221164959.174480-4-shr@fb.com>
-In-Reply-To: <20211221164959.174480-4-shr@fb.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 21 Dec 2021 09:22:01 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whChmLy02-degmLFC9sgwpdgmF=XoAjeF1bTdHcEc8bdQ@mail.gmail.com>
-Message-ID: <CAHk-=whChmLy02-degmLFC9sgwpdgmF=XoAjeF1bTdHcEc8bdQ@mail.gmail.com>
-Subject: Re: [PATCH v5 3/5] fs: split off do_getxattr from getxattr
-To:     Stefan Roesch <shr@fb.com>
-Cc:     io-uring <io-uring@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Kernel Team <kernel-team@fb.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.0
+Subject: Re: [PATCH v4 4/5] io_uring: add fsetxattr and setxattr support
+Content-Language: en-US
+To:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, kernel-team@fb.com
+Cc:     viro@zeniv.linux.org.uk
+References: <20211215221702.3695098-1-shr@fb.com>
+ <20211215221702.3695098-5-shr@fb.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20211215221702.3695098-5-shr@fb.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Dec 21, 2021 at 8:50 AM Stefan Roesch <shr@fb.com> wrote:
->
-> This splits off do_getxattr function from the getxattr
-> function. This will allow io_uring to call it from its
-> io worker.
+On 12/15/21 22:17, Stefan Roesch wrote:
+> This adds support to io_uring for the fsetxattr and setxattr API.
 
-Hmm.
+Apart from potentially putname comment,
 
-My reaction to this one is
+Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
 
- "Why isn't do_getxattr() using 'struct xattr_ctx' for its context?"
+> 
+> Signed-off-by: Stefan Roesch <shr@fb.com>
+> ---
+>   fs/io_uring.c                 | 171 ++++++++++++++++++++++++++++++++++
+>   include/uapi/linux/io_uring.h |   6 +-
+>   2 files changed, 176 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 5092dfe56da6..fc2239635342 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+[...]> +static int __io_setxattr_prep(struct io_kiocb *req,
+> +			const struct io_uring_sqe *sqe,
+> +			struct user_namespace *user_ns)
+> +{
+> +	struct io_xattr *ix = &req->xattr;
+> +	const char __user *name;
+> +	void *ret;
+> +
+> +	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
+> +		return -EINVAL;
+> +	if (unlikely(sqe->ioprio))
+> +		return -EINVAL;
+> +	if (unlikely(req->flags & REQ_F_FIXED_FILE))
+> +		return -EBADF;
+> +
+> +	ix->filename = NULL;
+> +	name = u64_to_user_ptr(READ_ONCE(sqe->addr));
+> +	ix->ctx.value = u64_to_user_ptr(READ_ONCE(sqe->addr2));
+> +	ix->ctx.size = READ_ONCE(sqe->len);
+> +	ix->ctx.flags = READ_ONCE(sqe->xattr_flags);
+> +
+> +	ix->ctx.kname = kmalloc(XATTR_NAME_MAX + 1, GFP_KERNEL);
+> +	if (!ix->ctx.kname)
+> +		return -ENOMEM;> +	ix->ctx.kname_sz = XATTR_NAME_MAX + 1;
 
-As far as I can tell, that's *exactly* what it wants, and it would be
-logical to match up with the setxattr side.
+Might make sense to let the userspace specify kname size, but
+depends what is the average name length and how much of free
+space we have in io_xattr
 
-Yeah, yeah, setxattr has a 'const void __user *value' while getxattr
-obviously has just a 'void __user *value'. But if the cost of having a
-unified interface is that you lose the 'const' part for the setxattr,
-I think that's still a good thing.
+[...]
+> +static int io_setxattr(struct io_kiocb *req, unsigned int issue_flags)
+> +{
+> +	struct io_xattr *ix = &req->xattr;
+> +	unsigned int lookup_flags = LOOKUP_FOLLOW;
+> +	struct path path;
+> +	int ret;
+> +
+> +	if (issue_flags & IO_URING_F_NONBLOCK)
+> +		return -EAGAIN;
+> +
+> +retry:
+> +	ret = do_user_path_at_empty(AT_FDCWD, ix->filename, lookup_flags, &path);
+> +	putname(ix->filename);
 
-Yes? No? Comments?
+It putname() multiple times on retry, how does it work?
 
-              Linus
+
+> +	if (!ret) {
+> +		ret = __io_setxattr(req, issue_flags, &path);
+> +		path_put(&path);
+> +		if (retry_estale(ret, lookup_flags)) {
+> +			lookup_flags |= LOOKUP_REVAL;
+> +			goto retry;
+> +		}
+> +	}
+> +
+> +	req->flags &= ~REQ_F_NEED_CLEANUP;
+> +	kfree(ix->ctx.kname);
+> +
+> +	if (ix->value)
+> +		kvfree(ix->value);
+> +	if (ret < 0)
+> +		req_set_fail(req);
+> +
+> +	io_req_complete(req, ret);
+> +	return 0;
+> +}
+> +
+[...]
+>   
+>   	printk_once(KERN_WARNING "io_uring: unhandled opcode %d\n",
+> @@ -6715,6 +6870,15 @@ static void io_clean_op(struct io_kiocb *req)
+>   			putname(req->hardlink.oldpath);
+>   			putname(req->hardlink.newpath);
+>   			break;
+> +		case IORING_OP_SETXATTR:
+> +			if (req->xattr.filename)
+> +				putname(req->xattr.filename);
+> +			fallthrough;
+> +		case IORING_OP_FSETXATTR:
+> +			kfree(req->xattr.ctx.kname);
+> +			if (req->xattr.value)
+> +				kvfree(req->xattr.value);
+
+nit: it's slow path and kvfree() handles NULLs, so we don't
+really need NULL checks here.
+
+-- 
+Pavel Begunkov

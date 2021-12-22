@@ -2,70 +2,129 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4316747D421
-	for <lists+io-uring@lfdr.de>; Wed, 22 Dec 2021 16:11:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 548D147D86F
+	for <lists+io-uring@lfdr.de>; Wed, 22 Dec 2021 22:01:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237278AbhLVPLf convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+io-uring@lfdr.de>); Wed, 22 Dec 2021 10:11:35 -0500
-Received: from usmailhost21.kioxia.com ([12.0.68.226]:30302 "EHLO
-        SJSMAIL01.us.kioxia.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S234907AbhLVPLf (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 22 Dec 2021 10:11:35 -0500
-Received: from SJSMAIL01.us.kioxia.com (10.90.133.90) by
- SJSMAIL01.us.kioxia.com (10.90.133.90) with Microsoft SMTP Server
+        id S237569AbhLVVBg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 22 Dec 2021 16:01:36 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:18982 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S237153AbhLVVBf (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 22 Dec 2021 16:01:35 -0500
+Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 1BMIrCFE022624
+        for <io-uring@vger.kernel.org>; Wed, 22 Dec 2021 13:01:35 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=facebook; bh=cUFU43HbwgQ544ozH9BDFFclJYl6i3/yQmmixHNGvkk=;
+ b=BWqA0Tct3Gxn3dD49dx+phLxoWiFMxrRTPcfsO0iryTXnFZfNB91zZMiJwip8CKJuweD
+ qFho3fFPwDPqYuL0FRJyQuMF7vQECAiQmDJTaUNDybTluZvIRVCmiiSQocRFXUJod2S6
+ 8Z5+XtBxLS4bYSqVXCjX6IOTQEVpmcbqmAc= 
+Received: from mail.thefacebook.com ([163.114.132.120])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3d49pdgrgk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <io-uring@vger.kernel.org>; Wed, 22 Dec 2021 13:01:35 -0800
+Received: from twshared12416.02.ash9.facebook.com (2620:10d:c085:108::4) by
+ mail.thefacebook.com (2620:10d:c085:11d::7) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.14; Wed, 22 Dec 2021 07:11:33 -0800
-Received: from SJSMAIL01.us.kioxia.com ([fe80::4822:8b9:76de:8b6]) by
- SJSMAIL01.us.kioxia.com ([fe80::4822:8b9:76de:8b6%3]) with mapi id
- 15.01.2176.014; Wed, 22 Dec 2021 07:11:33 -0800
-From:   Clay Mayers <Clay.Mayers@kioxia.com>
-To:     "hch@lst.de" <hch@lst.de>
-CC:     "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "kbusch@kernel.org" <kbusch@kernel.org>,
-        "javier@javigon.com" <javier@javigon.com>,
-        "anuj20.g@samsung.com" <anuj20.g@samsung.com>,
-        "joshiiitr@gmail.com" <joshiiitr@gmail.com>,
-        "pankydev8@gmail.com" <pankydev8@gmail.com>
-Subject: RE: [RFC 02/13] nvme: wire-up support for async-passthru on
-Thread-Topic: [RFC 02/13] nvme: wire-up support for async-passthru on
-Thread-Index: Adf2q4Y1jNlE3svCRZSHuwnlq+XxWAAocZcAAAIa2KA=
-Date:   Wed, 22 Dec 2021 15:11:33 +0000
-Message-ID: <1ef1f30f1b52498ba10c727a69f7612b@kioxia.com>
-References: <2da62822fd56414d9893b89e160ed05c@kioxia.com>
- <20211222080220.GA21346@lst.de>
-In-Reply-To: <20211222080220.GA21346@lst.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.90.53.183]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+ 15.1.2308.20; Wed, 22 Dec 2021 13:01:34 -0800
+Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
+        id 35D2986EFCD4; Wed, 22 Dec 2021 13:01:30 -0800 (PST)
+From:   Stefan Roesch <shr@fb.com>
+To:     <io-uring@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <kernel-team@fb.com>
+CC:     <torvalds@linux-foundation.org>, <shr@fb.com>
+Subject: [PATCH v6 0/5] io_uring: add xattr support
+Date:   Wed, 22 Dec 2021 13:01:22 -0800
+Message-ID: <20211222210127.958902-1-shr@fb.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-GUID: KXMECbpRBGxxysW4bQ5s9WbeN-eze2Ez
+X-Proofpoint-ORIG-GUID: KXMECbpRBGxxysW4bQ5s9WbeN-eze2Ez
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2021-12-22_09,2021-12-22_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=fb_outbound_notspam policy=fb_outbound score=0 mlxscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0 bulkscore=0
+ priorityscore=1501 suspectscore=0 phishscore=0 malwarescore=0 spamscore=0
+ mlxlogscore=847 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2110150000 definitions=main-2112220111
+X-FB-Internal: deliver
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-> From: hch@lst.de <hch@lst.de>
-> Sent: Wednesday, December 22, 2021 12:02 AM
-> 
-> On Tue, Dec 21, 2021 at 09:16:27PM +0000, Clay Mayers wrote:
-> > Message-ID: <20211220141734.12206-3-joshi.k@samsung.com>
-> >
-> > On 12/20/21 19:47:23 +0530, Kanchan Joshi wrote:
-> > > Introduce handlers for fops->async_cmd(), implementing async
-> > > passthru on char device (including the multipath one).
-> > > The handlers supports NVME_IOCTL_IO64_CMD.
-> > >
-> > I commented on these two issues below in more detail at
-> > https://github.com/joshkan/nvme-uring-pt/issues
-> 
-> If you want people to read your comments send them here and not on some
-> random website no one is reading.
+This adds the xattr support to io_uring. The intent is to have a more
+complete support for file operations in io_uring.
 
-Of course.  That's the site this patch was staged on before being submitted
-here.  The comments there precede the posting here.
+This change adds support for the following functions to io_uring:
+- fgetxattr
+- fsetxattr
+- getxattr
+- setxattr
+
+Patch 1: fs: split off do_user_path_at_empty from user_path_at_empty()
+  This splits off a new function do_user_path_at_empty from
+  user_path_at_empty that is based on filename and not on a
+  user-specified string.
+
+Patch 2: fs: split off setxattr_setup function from setxattr
+  Split off the setup part of the setxattr function.
+
+Patch 3: fs: split off do_getxattr from getxattr
+  Split of the do_getxattr part from getxattr. This will
+  allow it to be invoked it from io_uring.
+
+Patch 4: io_uring: add fsetxattr and setxattr support
+  This adds new functions to support the fsetxattr and setxattr
+  functions.
+
+Patch 5: io_uring: add fgetxattr and getxattr support
+  This adds new functions to support the fgetxattr and getxattr
+  functions.
+
+
+There are two additional patches:
+  liburing: Add support for xattr api's.
+            This also includes the tests for the new code.
+  xfstests: Add support for io_uring xattr support.
+
+
+V6: - reverted addition of kname array to xattr_ctx structure
+      Adding the kname array increases the io_kiocb beyond 64 bytes
+      (increases it to 224 bytes). We try hard to limit it to 64 bytes.
+      Keeping the original interface also is a bit more efficient.
+    - rebased on for-5.17/io_uring-getdents64
+V5: - add kname array to xattr_ctx structure
+V4: - rebased patch series
+V3: - remove req->file checks in prep functions
+    - change size parameter in do_xattr
+V2: - split off function do_user_path_empty instead of changing
+      the function signature of user_path_at
+    - Fix datatype size problem in do_getxattr
+
+
+
+Stefan Roesch (5):
+  fs: split off do_user_path_at_empty from user_path_at_empty()
+  fs: split off setxattr_setup function from setxattr
+  fs: split off do_getxattr from getxattr
+  io_uring: add fsetxattr and setxattr support
+  io_uring: add fgetxattr and getxattr support
+
+ fs/internal.h                 |  23 +++
+ fs/io_uring.c                 | 318 ++++++++++++++++++++++++++++++++++
+ fs/namei.c                    |  10 +-
+ fs/xattr.c                    | 107 ++++++++----
+ include/linux/namei.h         |   2 +
+ include/uapi/linux/io_uring.h |   8 +-
+ 6 files changed, 428 insertions(+), 40 deletions(-)
+
+
+base-commit: b4518682080d3a1cdd6ea45a54ff6772b8b2797a
+--=20
+2.30.2
 

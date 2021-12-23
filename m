@@ -2,97 +2,77 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 878B447E8EB
-	for <lists+io-uring@lfdr.de>; Thu, 23 Dec 2021 22:11:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E5DB47E9AC
+	for <lists+io-uring@lfdr.de>; Fri, 24 Dec 2021 00:39:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245103AbhLWVL3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 23 Dec 2021 16:11:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51238 "EHLO
+        id S232017AbhLWXjn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 23 Dec 2021 18:39:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240686AbhLWVL3 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 23 Dec 2021 16:11:29 -0500
-Received: from mail-il1-x130.google.com (mail-il1-x130.google.com [IPv6:2607:f8b0:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E173C061401
-        for <io-uring@vger.kernel.org>; Thu, 23 Dec 2021 13:11:29 -0800 (PST)
-Received: by mail-il1-x130.google.com with SMTP id w1so5167397ilh.9
-        for <io-uring@vger.kernel.org>; Thu, 23 Dec 2021 13:11:29 -0800 (PST)
+        with ESMTP id S229834AbhLWXjn (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 23 Dec 2021 18:39:43 -0500
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A17FC061401
+        for <io-uring@vger.kernel.org>; Thu, 23 Dec 2021 15:39:43 -0800 (PST)
+Received: by mail-ed1-x531.google.com with SMTP id f5so27008168edq.6
+        for <io-uring@vger.kernel.org>; Thu, 23 Dec 2021 15:39:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:subject:to:cc:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=ZTyw5Oz/wOUUV8ZnwqpcAeWmU1Q7SPzuGN13QbLBdss=;
-        b=VWUV9LMRdsJTP0M8Kme3GQRroNwCmiOFZuGJy9bRTrgWbL09NN5CcfV08Z0MQMUlKO
-         f+j+ArIB7ngqnK+GUUW9Uu4lici7RNDmhIx3whS02MjGUsntjFfW9JWqk6PlEJWm/TzO
-         EV+g9CcgMOmdeOfHJtJKTeHvT9NJdE79WUFsSOZx0S3sda50puk2YyVuZWEwwcIrPdRJ
-         +XVe9TAquLGgU17Tn7eBUh/R6NAyS/mHIROuhUNUPh/A4XS9I3G0WMC6Jg+qcBRgJA3f
-         qAYoQu374yZZvst58afiBCP7UR4fVKmBbKB6Kj9HWd1BAQh97ycCa6FW2+61+aqhZBEu
-         n2rQ==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=AL3HzL4cKyYJ2EZ6WJmgT62XCqTymgz5pGxiiXe4IfY=;
+        b=dFWlYUplfGDBl7WTzsC+cvFHXd3jjM/Ek1k9ANKm1mbvWwD1FEzmeAnTWRw9pMzYPW
+         YDU0OUEU0o967bRncuFSbur1czpOvYfygJBKtomUQJZiQyJdeIpscGTBkYXhVWwfUhWR
+         kQPkIHOCXIgtWKO4l+t4EMFAr6zG6DQ3Nozn0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=ZTyw5Oz/wOUUV8ZnwqpcAeWmU1Q7SPzuGN13QbLBdss=;
-        b=yiWmRGkgw/UEs+qDLQZAVsSzVMMfEeKDAwTDYWwElhW66ibZCClux/dxkyMwnflbaB
-         gHVnJqMZZ4RNXyrVe6dDTq1H0siAtIeryfWtZrXJ1BnfTAsGx1mYvApMYqFAwwU7invy
-         tuoHAWLxWus8aY5iVLQ27AFHX793PLXvzRwslzK8SDxv9Iy/M6o/GqBzXxK5y2Sd5qLs
-         BKZwc2Eye+dBsLCq8YWSaa7j7/WlZ/LBt5H7tir6f5mx8ll9O5/XeOvVBw3F2XFBXQrA
-         vxQAzFTBUnJXlHNWu4BKwZNMz4FTNE+jGMgSqMN9gV1/tsSsPMiCX6qDQRtz9911yimb
-         Jogw==
-X-Gm-Message-State: AOAM531Xh5ahFghMPrkINxVt0E1xuNPjYiu2FtSW3nrwxRO8Ep5b3mHr
-        TRS3sPBM3nujGguy1rErZHchrijYItpNaA==
-X-Google-Smtp-Source: ABdhPJzHGoCg6kJXspppBIMSR7eYI3wbw1xI/WAS7TFlKQJ2qroZhkDancca3zbV3i720lUTwW5Ekw==
-X-Received: by 2002:a05:6e02:170a:: with SMTP id u10mr2027673ill.261.1640293887911;
-        Thu, 23 Dec 2021 13:11:27 -0800 (PST)
-Received: from [192.168.1.116] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id h1sm4803304iow.31.2021.12.23.13.11.27
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AL3HzL4cKyYJ2EZ6WJmgT62XCqTymgz5pGxiiXe4IfY=;
+        b=vuW9Wu3cBBDNMnT+gnf3k2hJWnZTrLZavlsrpdAaFlXd22KFuUfs59mzcRTiiIbG89
+         VVIOMpbSdVcfngXOuJUIxfTdG9FbZuC+OH3pXJ4EMj+JzfI4f6VtA8Wpt+8IWSz9cp0n
+         ITtC8V90F7KPowWClhlV7H4Vujiy4MeqVqyCEy4v1qBjl30abqTI7dNm6bMaErsarg54
+         0pLTIkEdM1buea+K01yVuAAakj/3Fl0Y4+JpAjgFCcUcaiMZ18eeQ/lVYp8EQd7aja7f
+         7wKTv/hh0B70SsY+T5gA9a4XG+I58Ml0x0LlJxEZnE6usv1RayjJOZkhWFj3SkC47kNj
+         9f0A==
+X-Gm-Message-State: AOAM530dXhkczUE5defEt0yTeoiFpsEQ5PY1INQgCpAXZGovPFHqM6pA
+        vdcfkr8OT4jKm/R+6jYfVwZRvIUTk0EGgOgpGHo=
+X-Google-Smtp-Source: ABdhPJz2GKh4DNSfkVM2pT3VkbtTqIJqwtKi4sEkFRnmwqdRJGEnSsc7UAcdbQxnYuAlaHrp804bgQ==
+X-Received: by 2002:a17:907:7dac:: with SMTP id oz44mr3427103ejc.307.1640302781385;
+        Thu, 23 Dec 2021 15:39:41 -0800 (PST)
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com. [209.85.221.41])
+        by smtp.gmail.com with ESMTPSA id he34sm2134046ejc.70.2021.12.23.15.39.40
+        for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Dec 2021 13:11:27 -0800 (PST)
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] io_uring fix for 5.16-rc7
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     io-uring <io-uring@vger.kernel.org>
-Message-ID: <b004710b-1c16-3d90-b990-7a1faf1e5fd0@kernel.dk>
-Date:   Thu, 23 Dec 2021 14:11:26 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Thu, 23 Dec 2021 15:39:41 -0800 (PST)
+Received: by mail-wr1-f41.google.com with SMTP id j18so14308333wrd.2
+        for <io-uring@vger.kernel.org>; Thu, 23 Dec 2021 15:39:40 -0800 (PST)
+X-Received: by 2002:adf:f54e:: with SMTP id j14mr3032332wrp.442.1640302780605;
+ Thu, 23 Dec 2021 15:39:40 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <b004710b-1c16-3d90-b990-7a1faf1e5fd0@kernel.dk>
+In-Reply-To: <b004710b-1c16-3d90-b990-7a1faf1e5fd0@kernel.dk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 23 Dec 2021 15:39:24 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wj-fA6Sp+dNaSkadCg0sgB2fKW7Wi=f8DoG+GmiM2_shA@mail.gmail.com>
+Message-ID: <CAHk-=wj-fA6Sp+dNaSkadCg0sgB2fKW7Wi=f8DoG+GmiM2_shA@mail.gmail.com>
+Subject: Re: [GIT PULL] io_uring fix for 5.16-rc7
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring <io-uring@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Linus,
+On Thu, Dec 23, 2021 at 1:11 PM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> Single fix for not clearing kiocb->ki_pos back to 0 for a stream,
+> destined for stable as well.
 
-Single fix for not clearing kiocb->ki_pos back to 0 for a stream,
-destined for stable as well.
+I don't think any of this is right.
 
-Please pull!
+You can't use f_pos without using fdget_pos() to actually get the lock to it.
 
+Which you don't do in io_uring.
 
-The following changes since commit d800c65c2d4eccebb27ffb7808e842d5b533823c:
-
-  io-wq: drop wqe lock before creating new worker (2021-12-13 09:04:01 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.dk/linux-block.git tags/io_uring-5.16-2021-12-23
-
-for you to fetch changes up to 7b9762a5e8837b92a027d58d396a9d27f6440c36:
-
-  io_uring: zero iocb->ki_pos for stream file types (2021-12-22 20:34:32 -0700)
-
-----------------------------------------------------------------
-io_uring-5.16-2021-12-23
-
-----------------------------------------------------------------
-Jens Axboe (1):
-      io_uring: zero iocb->ki_pos for stream file types
-
- fs/io_uring.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
-
--- 
-Jens Axboe
-
+            Linus

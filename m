@@ -2,109 +2,97 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D693447E8A1
-	for <lists+io-uring@lfdr.de>; Thu, 23 Dec 2021 21:11:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 878B447E8EB
+	for <lists+io-uring@lfdr.de>; Thu, 23 Dec 2021 22:11:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350209AbhLWULv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 23 Dec 2021 15:11:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38318 "EHLO
+        id S245103AbhLWVL3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 23 Dec 2021 16:11:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233073AbhLWULv (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 23 Dec 2021 15:11:51 -0500
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2ABEC061401
-        for <io-uring@vger.kernel.org>; Thu, 23 Dec 2021 12:11:50 -0800 (PST)
-Received: by mail-ed1-x529.google.com with SMTP id y22so25606033edq.2
-        for <io-uring@vger.kernel.org>; Thu, 23 Dec 2021 12:11:50 -0800 (PST)
+        with ESMTP id S240686AbhLWVL3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 23 Dec 2021 16:11:29 -0500
+Received: from mail-il1-x130.google.com (mail-il1-x130.google.com [IPv6:2607:f8b0:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E173C061401
+        for <io-uring@vger.kernel.org>; Thu, 23 Dec 2021 13:11:29 -0800 (PST)
+Received: by mail-il1-x130.google.com with SMTP id w1so5167397ilh.9
+        for <io-uring@vger.kernel.org>; Thu, 23 Dec 2021 13:11:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bUoKqKXav8GLeL8li3Vc/v8SEeuVLhpuAYYxjYZyCOs=;
-        b=HBVjgu0AzE2cyS3rGvR4GkNmbepRCwIYU1YnXYIATUUKwMJ4CLwLln8sDgup/0C9V5
-         wB8DGO1L1VZZtzRTC93vFJ/yD4p/E24ViKIkLiS7xnFaJM8EsBm+ypSvTf7HSJRqi5EN
-         I1MlMHJoKIuQZBwvzanaLfgP1lA2YEfqjmyko=
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=from:subject:to:cc:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=ZTyw5Oz/wOUUV8ZnwqpcAeWmU1Q7SPzuGN13QbLBdss=;
+        b=VWUV9LMRdsJTP0M8Kme3GQRroNwCmiOFZuGJy9bRTrgWbL09NN5CcfV08Z0MQMUlKO
+         f+j+ArIB7ngqnK+GUUW9Uu4lici7RNDmhIx3whS02MjGUsntjFfW9JWqk6PlEJWm/TzO
+         EV+g9CcgMOmdeOfHJtJKTeHvT9NJdE79WUFsSOZx0S3sda50puk2YyVuZWEwwcIrPdRJ
+         +XVe9TAquLGgU17Tn7eBUh/R6NAyS/mHIROuhUNUPh/A4XS9I3G0WMC6Jg+qcBRgJA3f
+         qAYoQu374yZZvst58afiBCP7UR4fVKmBbKB6Kj9HWd1BAQh97ycCa6FW2+61+aqhZBEu
+         n2rQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bUoKqKXav8GLeL8li3Vc/v8SEeuVLhpuAYYxjYZyCOs=;
-        b=0I84IgfiXFgLWqxaNkW9MF3zNuyOhKxaahsPTI8NJLUY7eDDpHUvza+QHi50IQkPdO
-         g2RylkdTl8yO3r2CuAigNYIK2Gbm6dYAaX2qSfw7SEHBg2OItMd4keVaShAcahLysjVp
-         xnLXN1ZBFpSfiS1tAHoWhj6ilDFqq/bWXavm1SWtbGVwSO7+3jN/O2UlE8zIfa9eaAJa
-         zWBlEZs1p4Hw5Htfi2A3InuXD2awmxmjhCi+HyG0Rtkh3cEADHXF5wA+z49225rJqerM
-         6s/3aCmLA9OnOeAlPh+S2XmwQkfqOOYy8EfQVLwY9/YPcY2rjROd3D1T6hJ0ITCC0xjq
-         rX0A==
-X-Gm-Message-State: AOAM531ugN/ZvA79X2HDAA2+A86B8MpygEKezGI4AoaOAwBNJcvE1Qc0
-        m7jOkWnumQ8EhaO0ZFU41nnMNhJQ+PQS9Zg4Qq8=
-X-Google-Smtp-Source: ABdhPJzsJk2YfydaHv00F98fd6Iz5LZmmIVN79YKCZQwshMHSOkPCuD0fTglsg1zIw75sm24knRJBg==
-X-Received: by 2002:a17:907:7e95:: with SMTP id qb21mr3236689ejc.105.1640290308630;
-        Thu, 23 Dec 2021 12:11:48 -0800 (PST)
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com. [209.85.128.43])
-        by smtp.gmail.com with ESMTPSA id qt5sm1987881ejb.214.2021.12.23.12.11.47
-        for <io-uring@vger.kernel.org>
+        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=ZTyw5Oz/wOUUV8ZnwqpcAeWmU1Q7SPzuGN13QbLBdss=;
+        b=yiWmRGkgw/UEs+qDLQZAVsSzVMMfEeKDAwTDYWwElhW66ibZCClux/dxkyMwnflbaB
+         gHVnJqMZZ4RNXyrVe6dDTq1H0siAtIeryfWtZrXJ1BnfTAsGx1mYvApMYqFAwwU7invy
+         tuoHAWLxWus8aY5iVLQ27AFHX793PLXvzRwslzK8SDxv9Iy/M6o/GqBzXxK5y2Sd5qLs
+         BKZwc2Eye+dBsLCq8YWSaa7j7/WlZ/LBt5H7tir6f5mx8ll9O5/XeOvVBw3F2XFBXQrA
+         vxQAzFTBUnJXlHNWu4BKwZNMz4FTNE+jGMgSqMN9gV1/tsSsPMiCX6qDQRtz9911yimb
+         Jogw==
+X-Gm-Message-State: AOAM531Xh5ahFghMPrkINxVt0E1xuNPjYiu2FtSW3nrwxRO8Ep5b3mHr
+        TRS3sPBM3nujGguy1rErZHchrijYItpNaA==
+X-Google-Smtp-Source: ABdhPJzHGoCg6kJXspppBIMSR7eYI3wbw1xI/WAS7TFlKQJ2qroZhkDancca3zbV3i720lUTwW5Ekw==
+X-Received: by 2002:a05:6e02:170a:: with SMTP id u10mr2027673ill.261.1640293887911;
+        Thu, 23 Dec 2021 13:11:27 -0800 (PST)
+Received: from [192.168.1.116] ([66.219.217.159])
+        by smtp.gmail.com with ESMTPSA id h1sm4803304iow.31.2021.12.23.13.11.27
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Dec 2021 12:11:48 -0800 (PST)
-Received: by mail-wm1-f43.google.com with SMTP id c66so4366917wma.5
-        for <io-uring@vger.kernel.org>; Thu, 23 Dec 2021 12:11:47 -0800 (PST)
-X-Received: by 2002:a05:600c:4f13:: with SMTP id l19mr2912168wmq.152.1640290307233;
- Thu, 23 Dec 2021 12:11:47 -0800 (PST)
+        Thu, 23 Dec 2021 13:11:27 -0800 (PST)
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring fix for 5.16-rc7
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     io-uring <io-uring@vger.kernel.org>
+Message-ID: <b004710b-1c16-3d90-b990-7a1faf1e5fd0@kernel.dk>
+Date:   Thu, 23 Dec 2021 14:11:26 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <20211223195658.2805049-1-shr@fb.com> <20211223195658.2805049-3-shr@fb.com>
-In-Reply-To: <20211223195658.2805049-3-shr@fb.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 23 Dec 2021 12:11:31 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjZ4YORKUBswiH5CZ5pukRju=k+Aby6pKwdgCbqXJP1Nw@mail.gmail.com>
-Message-ID: <CAHk-=wjZ4YORKUBswiH5CZ5pukRju=k+Aby6pKwdgCbqXJP1Nw@mail.gmail.com>
-Subject: Re: [PATCH v7 2/5] fs: split off setxattr_copy and do_setxattr
- function from setxattr
-To:     Stefan Roesch <shr@fb.com>
-Cc:     io-uring <io-uring@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Kernel Team <kernel-team@fb.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Dec 23, 2021 at 11:57 AM Stefan Roesch <shr@fb.com> wrote:
->
-> +       /* Attribute name */
-> +       char *kname;
-> +       int kname_sz;
+Hi Linus,
 
-I still don't like this.
+Single fix for not clearing kiocb->ki_pos back to 0 for a stream,
+destined for stable as well.
 
-Clearly the "just embed the kname in the context" didn't work, but I
-hate how this adds that "pointer and size", when the size really
-should be part of the type.
+Please pull!
 
-The patch takes what used to be a fixed size, and turns it into
-something we pass along as an argument - for no actual good reason.
-The 'size' isn't even the size of the name, it's literally the size of
-the allocation that has a fixed definition.
 
-Can we perhaps do it another way, by just encoding the size in the
-type itself - but keeping it as a pointer.
+The following changes since commit d800c65c2d4eccebb27ffb7808e842d5b533823c:
 
-We have a fixed size for attribute names, so maybe we can do
+  io-wq: drop wqe lock before creating new worker (2021-12-13 09:04:01 -0700)
 
-        struct xattr_name {
-                char name[XATTR_NAME_MAX + 1];
-        };
+are available in the Git repository at:
 
-and actually use that.
+  git://git.kernel.dk/linux-block.git tags/io_uring-5.16-2021-12-23
 
-Because I don't see that kname_sz is ever validly anything else, and
-ever has any actual value to be passed around?
+for you to fetch changes up to 7b9762a5e8837b92a027d58d396a9d27f6440c36:
 
-Maybe some day we'd actually make that "xattr_name" structure also
-have the actual length of the name in it, but that would still *not*
-be the size of the allocation.
+  io_uring: zero iocb->ki_pos for stream file types (2021-12-22 20:34:32 -0700)
 
-I think it's actively misleading to have "kname_sz' that isn't
-actually the size of the name, but I also think it's stupid to have a
-variable for what is a constant value.
+----------------------------------------------------------------
+io_uring-5.16-2021-12-23
 
-             Linus
+----------------------------------------------------------------
+Jens Axboe (1):
+      io_uring: zero iocb->ki_pos for stream file types
+
+ fs/io_uring.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+-- 
+Jens Axboe
+

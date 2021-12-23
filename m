@@ -2,18 +2,18 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 40A8347E9C4
-	for <lists+io-uring@lfdr.de>; Fri, 24 Dec 2021 00:54:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 47DEC47E9C2
+	for <lists+io-uring@lfdr.de>; Fri, 24 Dec 2021 00:52:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245307AbhLWXyX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 23 Dec 2021 18:54:23 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:1336 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S245240AbhLWXyX (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 23 Dec 2021 18:54:23 -0500
-Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 1BNN9Z5C011625
-        for <io-uring@vger.kernel.org>; Thu, 23 Dec 2021 15:54:22 -0800
+        id S245315AbhLWXwS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 23 Dec 2021 18:52:18 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:24092 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S245299AbhLWXwS (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 23 Dec 2021 18:52:18 -0500
+Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 1BNDGiRM029676
+        for <io-uring@vger.kernel.org>; Thu, 23 Dec 2021 15:52:18 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=facebook;
@@ -22,13 +22,13 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc
  CFdqz4Emzcl4BNKaZ3ACaExEAabFC7Vw8gaSZAu9EQDridl2YrawqObUVTXtyTzVgJxm
  isu8JFdjpQEvhZGhmiY1/bSx7QJUlKItUXQ= 
 Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3d52hn85mg-1
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3d4suqkg59-7
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Thu, 23 Dec 2021 15:54:22 -0800
-Received: from twshared7500.02.ash7.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:83::7) with Microsoft SMTP Server
+        for <io-uring@vger.kernel.org>; Thu, 23 Dec 2021 15:52:18 -0800
+Received: from twshared18912.14.frc2.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:82::e) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.20; Thu, 23 Dec 2021 15:54:21 -0800
+ 15.1.2308.20; Thu, 23 Dec 2021 15:52:10 -0800
 Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
         id 8969B87DF615; Thu, 23 Dec 2021 15:51:55 -0800 (PST)
 From:   Stefan Roesch <shr@fb.com>
@@ -46,15 +46,15 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-GUID: TlLtHTOuZ4XvwCaFspEFeBf7iHnncI2T
-X-Proofpoint-ORIG-GUID: TlLtHTOuZ4XvwCaFspEFeBf7iHnncI2T
+X-Proofpoint-ORIG-GUID: 8HDXWLzJnW5H7ICKK5n-7dX734wz-hmh
+X-Proofpoint-GUID: 8HDXWLzJnW5H7ICKK5n-7dX734wz-hmh
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
  definitions=2021-12-23_04,2021-12-22_01,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=fb_outbound_notspam policy=fb_outbound score=0 malwarescore=0
- suspectscore=0 bulkscore=0 phishscore=0 adultscore=0 priorityscore=1501
- spamscore=0 mlxscore=0 impostorscore=0 mlxlogscore=705 lowpriorityscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=fb_outbound_notspam policy=fb_outbound score=0 mlxlogscore=705
+ adultscore=0 lowpriorityscore=0 priorityscore=1501 spamscore=0
+ impostorscore=0 suspectscore=0 mlxscore=0 phishscore=0 malwarescore=0
+ clxscore=1015 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2110150000 definitions=main-2112230122
 X-FB-Internal: deliver
 Precedence: bulk

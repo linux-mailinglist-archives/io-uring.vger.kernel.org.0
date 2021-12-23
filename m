@@ -2,180 +2,110 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6695147DE37
-	for <lists+io-uring@lfdr.de>; Thu, 23 Dec 2021 05:14:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F39147E176
+	for <lists+io-uring@lfdr.de>; Thu, 23 Dec 2021 11:31:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346299AbhLWEOU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 22 Dec 2021 23:14:20 -0500
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:37773 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1346298AbhLWEOT (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 22 Dec 2021 23:14:19 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0V.ULv6H_1640232857;
-Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0V.ULv6H_1640232857)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 23 Dec 2021 12:14:17 +0800
-Subject: Re: [POC RFC 0/3] support graph like dependent sqes
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
+        id S243167AbhLWKbB convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+io-uring@lfdr.de>); Thu, 23 Dec 2021 05:31:01 -0500
+Received: from mailgate.zerties.org ([144.76.28.47]:57416 "EHLO
+        mailgate.zerties.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S243143AbhLWKbA (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 23 Dec 2021 05:31:00 -0500
+X-Greylist: delayed 1477 seconds by postgrey-1.27 at vger.kernel.org; Thu, 23 Dec 2021 05:31:00 EST
+Received: from ip5f5ab8c1.dynamic.kabel-deutschland.de ([95.90.184.193] helo=localhost)
+        by mailgate.zerties.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <stettberger@dokucode.de>)
+        id 1n0KzK-000ZjF-On; Thu, 23 Dec 2021 10:06:21 +0000
+From:   Christian Dietrich <stettberger@dokucode.de>
+To:     Hao Xu <haoxu@linux.alibaba.com>, Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>,
+        horst.schirmeier@tu-dresden.de,
+        "Franz-B. Tuneke" <franz-bernhard.tuneke@tu-dortmund.de>,
+        Hendrik Sieck <hendrik.sieck@tuhh.de>
+In-Reply-To: <20211214055734.61702-1-haoxu@linux.alibaba.com>
+Organization: Technische =?utf-8?Q?Universit=C3=A4t?= Hamburg
 References: <20211214055734.61702-1-haoxu@linux.alibaba.com>
- <4ef630f4-54d8-e8c6-8622-dccef5323864@gmail.com>
- <7607c0f9-cad3-cfc5-687e-07dc82684b4e@linux.alibaba.com>
- <06e21b01-a168-e25f-1b42-97789392bd89@gmail.com>
- <c6e18c00-7c1b-d1e9-a152-91b86f426289@linux.alibaba.com>
- <aebc5433-258d-2d36-9e38-36860b99a669@gmail.com>
- <96155b9c-9f35-53b8-456a-8623fc850b03@linux.alibaba.com>
- <84ed785a-b0b0-6d05-2c13-7c3efe9fd60b@gmail.com>
-From:   Hao Xu <haoxu@linux.alibaba.com>
-Message-ID: <a0e53941-0093-5e55-ac9b-b2e2c1f32060@linux.alibaba.com>
-Date:   Thu, 23 Dec 2021 12:14:16 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.14.0
+X-Commit-Hash-org: f01fca33b1535359a4f3d7fe903261c35a059bba
+X-Commit-Hash-Maildir: 21463e538b8be37cea4aa13f1c503800360e4a44
+Date:   Thu, 23 Dec 2021 11:06:17 +0100
+Message-ID: <s7by24bd49y.fsf@dokucode.de>
 MIME-Version: 1.0
-In-Reply-To: <84ed785a-b0b0-6d05-2c13-7c3efe9fd60b@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-SA-Do-Not-Rej: Yes
+X-SA-Exim-Connect-IP: 95.90.184.193
+X-SA-Exim-Mail-From: stettberger@dokucode.de
+X-Spam-Checker-Version: SpamAssassin 3.4.4 (2020-01-24) on mailgate.zerties.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.9 required=4.0 tests=ALL_TRUSTED,BAYES_00,
+        URIBL_BLOCKED shortcircuit=no autolearn=ham autolearn_force=no
+        version=3.4.4
+Subject: Re: [POC RFC 0/3] support graph like dependent sqes
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-在 2021/12/22 上午12:19, Pavel Begunkov 写道:
-> On 12/18/21 06:57, Hao Xu wrote:
->> 在 2021/12/18 上午3:33, Pavel Begunkov 写道:
->>> On 12/16/21 16:55, Hao Xu wrote:
->>>> 在 2021/12/15 上午2:16, Pavel Begunkov 写道:
->>>>> On 12/14/21 16:53, Hao Xu wrote:
->>>>>> 在 2021/12/14 下午11:21, Pavel Begunkov 写道:
->>>>>>> On 12/14/21 05:57, Hao Xu wrote:
->>>>>>>> This is just a proof of concept which is incompleted, send it 
->>>>>>>> early for
->>>>>>>> thoughts and suggestions.
->>>>>>>>
->>>>>>>> We already have IOSQE_IO_LINK to describe linear dependency
->>>>>>>> relationship sqes. While this patchset provides a new feature to
->>>>>>>> support DAG dependency. For instance, 4 sqes have a relationship
->>>>>>>> as below:
->>>>>>>>        --> 2 --
->>>>>>>>       /        \
->>>>>>>> 1 ---          ---> 4
->>>>>>>>       \        /
->>>>>>>>        --> 3 --
->>>>>>>> IOSQE_IO_LINK serializes them to 1-->2-->3-->4, which 
->>>>>>>> unneccessarily
->>>>>>>> serializes 2 and 3. But a DAG can fully describe it.
->>>>>>>>
->>>>>>>> For the detail usage, see the following patches' messages.
->>>>>>>>
->>>>>>>> Tested it with 100 direct read sqes, each one reads a BS=4k 
->>>>>>>> block data
->>>>>>>> in a same file, blocks are not overlapped. These sqes form a graph:
->>>>>>>>        2
->>>>>>>>        3
->>>>>>>> 1 --> 4 --> 100
->>>>>>>>       ...
->>>>>>>>        99
->>>>>>>>
->>>>>>>> This is an extreme case, just to show the idea.
->>>>>>>>
->>>>>>>> results below:
->>>>>>>> io_link:
->>>>>>>> IOPS: 15898251
->>>>>>>> graph_link:
->>>>>>>> IOPS: 29325513
->>>>>>>> io_link:
->>>>>>>> IOPS: 16420361
->>>>>>>> graph_link:
->>>>>>>> IOPS: 29585798
->>>>>>>> io_link:
->>>>>>>> IOPS: 18148820
->>>>>>>> graph_link:
->>>>>>>> IOPS: 27932960
->>>>>>>
->>>>>>> Hmm, what do we compare here? IIUC,
->>>>>>> "io_link" is a huge link of 100 requests. Around 15898251 IOPS
->>>>>>> "graph_link" is a graph of diameter 3. Around 29585798 IOPS
->>>>>
->>>>> Diam 2 graph, my bad
->>>>>
->>>>>
->>>>>>> Is that right? If so it'd more more fair to compare with a
->>>>>>> similar graph-like scheduling on the userspace side.
->>>>>>
->>>>>> The above test is more like to show the disadvantage of LINK
->>>>>
->>>>> Oh yeah, links can be slow, especially when it kills potential
->>>>> parallelism or need extra allocations for keeping state, like
->>>>> READV and WRITEV.
->>>>>
->>>>>
->>>>>> But yes, it's better to test the similar userspace  scheduling since
->>>>>>
->>>>>> LINK is definitely not a good choice so have to prove the graph stuff
->>>>>>
->>>>>> beat the userspace scheduling. Will test that soon. Thanks.
->>>>>
->>>>> Would be also great if you can also post the benchmark once
->>>>> it's done
->>>>
->>>> Wrote a new test to test nop sqes forming a full binary tree with 
->>>> (2^10)-1 nodes,
->>>> which I think it a more general case.  Turns out the result is still 
->>>> not stable and
->>>> the kernel side graph link is much slow. I'll try to optimize it.
->>>
->>> That's expected unfortunately. And without reacting on results
->>> of previous requests, it's hard to imagine to be useful. BPF may
->>> have helped, e.g. not keeping an explicit graph but just generating
->>> new requests from the kernel... But apparently even with this it's
->>> hard to compete with just leaving it in userspace.
-Not sure what it looks like by 'generating new requests by BPF', since
-a sqe may have multiple pre-sqes. Can a BPF sleeps there and waits for
-all the pre-sqes done, and if it can, there still have to be some
-counting stuff and wakeups. Another problem is does the bpf sleep blocks
-the main context? So not sure 'BPF fully controls graph/link logic'
-beats 'only let BPF do data flow and build graph/link explicitly'.
-Have you tested using BPF to form links/graph, curious about the
-real performance comparison with userspace scheduling.
->>>
->> Tried to exclude the memory allocation stuff, seems it's a bit better 
->> than the user graph.
->>
->> For the result delivery, I was thinking of attaching BPF program 
->> within a sqe, not creating
->> a single BPF type sqe. Then we can have data flow in the graph or 
->> linkchain. But I haven't
->> had a clear draft for it
-> 
-> Oh, I dismissed this idea before. Even if it can be done in-place 
-> without any
-> additional tw (consider recursion and submit_state not prepared for 
-> that), it'll
-> be a horror to maintain. And I also don't see it being flexible enough
-> 
-> There is one idea from guys that I have to implement, i.e. having a per-CQ
-> callback. Might interesting to experiment, but I don't see it being viable
-> in the long run.
-> 
-> 
->>>> Btw, is there any comparison data between the current io link 
->>>> feature and the
->>>> userspace scheduling.
->>>
->>> Don't remember. I'd try to look up the cover-letter for the patches
->>> implementing it, I believe there should've been some numbers and
->>> hopefully test description.
->>>
->>> fwiw, before io_uring mailing list got established patches/etc.
->>> were mostly going through linux-block mailing list. Links are old, so
->>> patches might be there.
->>>
-> 
-https://lore.kernel.org/linux-block/20190517214131.5925-1-axboe@kernel.dk/
-found the initial patchset here, seems Jens tested it by
-example/iouring-cp, I'll test it later. Also found the same idea of 
-attaching BPF to a sqe so that it can run at the end of sqe completion.
-Curious if there has been POC implemented before and numbers of this,
-compared with userspace result delivery.
+Hi everyone!
 
+We experimented with the BPF patchset provided by Pavel a few months
+ago. And I had the exact same question: How can we compare the benefits
+and drawbacks of a more flexible io_uring implementation? In that
+specific use case, I wanted to show that a flexible SQE-dependency
+generation with BPF could outperform user-space SQE scheduling. From my
+experience with BPF, I learned that it is quite hard to beat
+io_uring+userspace, if there is enough parallelism in your IO jobs.
 
+For this purpose, I've built a benchmark generator that is able to
+produce random dependency graphs of various shapes (isolated nodes,
+binary tree, parallel-dependency chains, random DAC) and different
+scheduling backends (usual system-call backend, plain io_uring,
+BPF-enhanced io_uring) and different workloads.
+
+At this point, I didn't have the time to polish the generator and
+publish it, but I put the current state into this git:
+
+https://collaborating.tuhh.de/e-exk4/projects/syscall-graph-generator
+
+After running:
+
+    ./generate.sh
+    [sudo modprobe null_blk...]
+    ./run.sh
+    ./analyze.py
+
+You get the following results (at least if you own my machine):
+
+generator              iouring      syscall      iouring_norm
+graph action size
+chain read   128    938.563366  2019.199010   46.48%
+flat  read   128    922.132673  2011.566337   45.84%
+graph read   128   1129.017822  2021.905941   55.84%
+rope  read   128   2051.763366  2014.563366  101.85%
+tree  read   128   1049.427723  2015.254455   52.07%
+
+For the userspace scheduler, I perform an offline analysis that finds
+linear chains of operations that are not (anymore) dependent on other previous
+unfinished results. These linear chains are then pushed into io_uring
+with a SQE-link chain.
+
+As I'm highly interested in this topic of pushing complex
+IO-dependencies into the kernel space, I would be delighted to see how
+your SQE-graph extension would compare against my rudimentary userspace
+scheduler.
+
+@Hao: Do you have a specific use case for your graph-like dependencies
+      in mind? If you need assistance with the generator, please feel
+      free to contact me.
+
+chris
+-- 
+Prof. Dr.-Ing. Christian Dietrich
+Operating System Group (E-EXK4)
+Technische Universität Hamburg
+Am Schwarzenberg-Campus 3 (E), 4.092
+21073 Hamburg
+
+eMail:  christian.dietrich@tuhh.de
+Tel:    +49 40 42878 2188
+WWW:    https://osg.tuhh.de/

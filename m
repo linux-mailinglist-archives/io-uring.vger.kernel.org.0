@@ -2,277 +2,132 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2115447D878
-	for <lists+io-uring@lfdr.de>; Wed, 22 Dec 2021 22:01:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E342947DDD6
+	for <lists+io-uring@lfdr.de>; Thu, 23 Dec 2021 03:49:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236184AbhLVVBn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 22 Dec 2021 16:01:43 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:40546 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229811AbhLVVBn (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 22 Dec 2021 16:01:43 -0500
-Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 1BMIrGY9022662
-        for <io-uring@vger.kernel.org>; Wed, 22 Dec 2021 13:01:43 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=facebook;
- bh=M3kZ+VO42GL0w7WDa5VjfzDgZSIpq4TiQRI0nfJSGJg=;
- b=DdahXCYfqJivmiwB5pIxtQydj4ytYComsYXApHavTbItbEowMGSvBuf89UcXs81vu9ey
- CsZ+t3nRlDOLw6bpay9EpKYWMMtAgU7VVknE7wOi5zzIWSCPMbP+SL6QTAEm631nrTs+
- Ds+xcpX1OuwjgCFaans0KGozeAztMClPX00= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3d49pdgrhk-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Wed, 22 Dec 2021 13:01:43 -0800
-Received: from twshared3814.24.frc3.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:83::6) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.20; Wed, 22 Dec 2021 13:01:42 -0800
-Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
-        id 4EED386EFCDE; Wed, 22 Dec 2021 13:01:30 -0800 (PST)
-From:   Stefan Roesch <shr@fb.com>
-To:     <io-uring@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <kernel-team@fb.com>
-CC:     <torvalds@linux-foundation.org>, <shr@fb.com>
-Subject: [PATCH v6 5/5] io_uring: add fgetxattr and getxattr support
-Date:   Wed, 22 Dec 2021 13:01:27 -0800
-Message-ID: <20211222210127.958902-6-shr@fb.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20211222210127.958902-1-shr@fb.com>
-References: <20211222210127.958902-1-shr@fb.com>
+        id S1346012AbhLWCtJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 22 Dec 2021 21:49:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60278 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238419AbhLWCtI (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 22 Dec 2021 21:49:08 -0500
+Received: from mail-ua1-x92c.google.com (mail-ua1-x92c.google.com [IPv6:2607:f8b0:4864:20::92c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61912C061574
+        for <io-uring@vger.kernel.org>; Wed, 22 Dec 2021 18:49:08 -0800 (PST)
+Received: by mail-ua1-x92c.google.com with SMTP id p37so7425854uae.8
+        for <io-uring@vger.kernel.org>; Wed, 22 Dec 2021 18:49:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=jcMeKyqyA4b31y0Yd/3BJHEddtbdEh2BTdyOHm+ABFQ=;
+        b=SJ3y65ISdEtpTm/qecS0g3xfNnnbRgRHYq8O5395NyuvS3q6rjNCRRoZirfv3NVLXR
+         c8urbEoU9CutS4+E7m/ChMqAfd6lD+ehklhbh97m+28V2wDKqDzWsSiGipQmarvN8Be5
+         83faksOZKNTJYGzp3EwuW/mouR+x+MRA7VIlU6OA9I8mND9QHeXEZgWeN8tyMv++UX2T
+         mcxGV29vG7S8H7YEHQ5bxpLSPRQNgxFJiGnNgoOEH3xvhGvIVS3MiXwM4XhFEeH2Wat+
+         9HZoPPA+bszQ4MQJiUjYogSEv+xAfy24hFrinysVOnl2iiNvS6iP2xPSoBb37LkkpLnv
+         mw8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=jcMeKyqyA4b31y0Yd/3BJHEddtbdEh2BTdyOHm+ABFQ=;
+        b=bCxr2b0RZMbe0IJ6OtPTuNSKeWta4ilHXk/VXVSTScrAF1nQuN+l0z/vQDKRvmIK1C
+         wbOwrN8QNRA8imbwUW8EJBKtyaNVYwcePlI7aKvJwg+lHbRC1UjN4gLOzdAZ7cjgRsLd
+         /YwkmLP/u7Ksh5hQeShHFJUrFjxwskeLZcDfcruitIYUUrjSJu1GQsE0oMij2q+sh8Rm
+         KIyfnbCyFZ7Q3RlUmN7MJxQpJoP30qOSKSJecGkEJYYYfZnd2tWLKTh7ekrTSSLES1lI
+         JJo/qkpeqyf2Lzjx40jEUDI3W+B9ZOjpiNSo6IUtMw0mtPyz3yRqp8Nmmzz/VwiGkKTI
+         LoGA==
+X-Gm-Message-State: AOAM530ScIKjJnO7NcayOH0MHm9c38pc1gUvA+Zl51iHmZ0byY/Etu93
+        XA+anfhAKlYAZ0r8AauFzJizrKP8jlPA5eP3kEZo5Rb/qfY=
+X-Google-Smtp-Source: ABdhPJzrdHP4TUA20B/YV7QZ6vgWL/7G5/PA6R2awzMAGE4KUK4BcXJ7CBWOLE0AUx733nnhOwwc1kYxlgMewdUszFU=
+X-Received: by 2002:a67:d207:: with SMTP id y7mr150647vsi.28.1640227747384;
+ Wed, 22 Dec 2021 18:49:07 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-GUID: AUUSAPh-kT2K6XlGfGh95QgKmEfjGYQJ
-X-Proofpoint-ORIG-GUID: AUUSAPh-kT2K6XlGfGh95QgKmEfjGYQJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2021-12-22_09,2021-12-22_01,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=fb_outbound_notspam policy=fb_outbound score=0 mlxscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0 bulkscore=0
- priorityscore=1501 suspectscore=0 phishscore=0 malwarescore=0 spamscore=0
- mlxlogscore=790 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2110150000 definitions=main-2112220111
-X-FB-Internal: deliver
+From:   David Butler <croepha@gmail.com>
+Date:   Wed, 22 Dec 2021 18:48:56 -0800
+Message-ID: <CANm61jem0rMt75PuaK_+-suX_WRi+jXPy3BqHZjAR95vzP73Jg@mail.gmail.com>
+Subject: Beginner question, user_data not getting filled in as expected
+To:     io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This adds support to io_uring for the fgetxattr and getxattr API.
+Hello,
 
-Signed-off-by: Stefan Roesch <shr@fb.com>
----
- fs/io_uring.c                 | 148 ++++++++++++++++++++++++++++++++++
- include/uapi/linux/io_uring.h |   2 +
- 2 files changed, 150 insertions(+)
+I'm trying to learn the basics of io_uring.  I have this code `hello_uring.cpp':
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 8b6c70d6cacc..4d8c99370f14 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1131,6 +1131,10 @@ static const struct io_op_def io_op_defs[] =3D {
- 		.needs_file =3D 1
- 	},
- 	[IORING_OP_SETXATTR] =3D {},
-+	[IORING_OP_FGETXATTR] =3D {
-+		.needs_file =3D 1
-+	},
-+	[IORING_OP_GETXATTR] =3D {},
- };
-=20
- /* requests with any of those set should undergo io_disarm_next() */
-@@ -3900,6 +3904,133 @@ static int io_renameat(struct io_kiocb *req, unsi=
-gned int issue_flags)
- 	return 0;
- }
-=20
-+static int __io_getxattr_prep(struct io_kiocb *req,
-+			      const struct io_uring_sqe *sqe)
-+{
-+	struct io_xattr *ix =3D &req->xattr;
-+	const char __user *name;
-+	int ret;
-+
-+	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
-+		return -EINVAL;
-+	if (unlikely(sqe->ioprio))
-+		return -EINVAL;
-+	if (unlikely(req->flags & REQ_F_FIXED_FILE))
-+		return -EBADF;
-+
-+	ix->filename =3D NULL;
-+	ix->value =3D NULL;
-+	name =3D u64_to_user_ptr(READ_ONCE(sqe->addr));
-+	ix->ctx.value =3D u64_to_user_ptr(READ_ONCE(sqe->addr2));
-+	ix->ctx.size =3D READ_ONCE(sqe->len);
-+	ix->ctx.flags =3D READ_ONCE(sqe->xattr_flags);
-+
-+	if (ix->ctx.flags)
-+		return -EINVAL;
-+
-+	ix->ctx.kname =3D kmalloc(XATTR_NAME_MAX + 1, GFP_KERNEL);
-+	if (!ix->ctx.kname)
-+		return -ENOMEM;
-+
-+	ret =3D strncpy_from_user(ix->ctx.kname, name, XATTR_NAME_MAX + 1);
-+	if (!ret || ret =3D=3D XATTR_NAME_MAX + 1)
-+		ret =3D -ERANGE;
-+	if (ret < 0) {
-+		kfree(ix->ctx.kname);
-+		return ret;
-+	}
-+
-+	req->flags |=3D REQ_F_NEED_CLEANUP;
-+	return 0;
-+}
-+
-+static int io_fgetxattr_prep(struct io_kiocb *req,
-+			     const struct io_uring_sqe *sqe)
-+{
-+	return __io_getxattr_prep(req, sqe);
-+}
-+
-+static int io_getxattr_prep(struct io_kiocb *req,
-+			    const struct io_uring_sqe *sqe)
-+{
-+	struct io_xattr *ix =3D &req->xattr;
-+	const char __user *path;
-+	int ret;
-+
-+	ret =3D __io_getxattr_prep(req, sqe);
-+	if (ret)
-+		return ret;
-+
-+	path =3D u64_to_user_ptr(READ_ONCE(sqe->addr3));
-+
-+	ix->filename =3D getname_flags(path, LOOKUP_FOLLOW, NULL);
-+	if (IS_ERR(ix->filename)) {
-+		ret =3D PTR_ERR(ix->filename);
-+		ix->filename =3D NULL;
-+	}
-+
-+	return ret;
-+}
-+
-+static int io_fgetxattr(struct io_kiocb *req, unsigned int issue_flags)
-+{
-+	struct io_xattr *ix =3D &req->xattr;
-+	int ret;
-+
-+	if (issue_flags & IO_URING_F_NONBLOCK)
-+		return -EAGAIN;
-+
-+	ret =3D do_getxattr(mnt_user_ns(req->file->f_path.mnt),
-+			req->file->f_path.dentry,
-+			ix->ctx.kname,
-+			(void __user *)ix->ctx.value,
-+			ix->ctx.size);
-+
-+	req->flags &=3D ~REQ_F_NEED_CLEANUP;
-+	kfree(ix->ctx.kname);
-+	if (ret < 0)
-+		req_set_fail(req);
-+
-+	io_req_complete(req, ret);
-+	return 0;
-+}
-+
-+static int io_getxattr(struct io_kiocb *req, unsigned int issue_flags)
-+{
-+	struct io_xattr *ix =3D &req->xattr;
-+	unsigned int lookup_flags =3D LOOKUP_FOLLOW;
-+	struct path path;
-+	int ret;
-+
-+	if (issue_flags & IO_URING_F_NONBLOCK)
-+		return -EAGAIN;
-+
-+retry:
-+	ret =3D do_user_path_at_empty(AT_FDCWD, ix->filename, lookup_flags, &pa=
-th);
-+	if (!ret) {
-+		ret =3D do_getxattr(mnt_user_ns(path.mnt),
-+				path.dentry,
-+				ix->ctx.kname,
-+				(void __user *)ix->ctx.value,
-+				ix->ctx.size);
-+
-+		path_put(&path);
-+		if (retry_estale(ret, lookup_flags)) {
-+			lookup_flags |=3D LOOKUP_REVAL;
-+			goto retry;
-+		}
-+	}
-+	putname(ix->filename);
-+
-+	req->flags &=3D ~REQ_F_NEED_CLEANUP;
-+	kfree(ix->ctx.kname);
-+	if (ret < 0)
-+		req_set_fail(req);
-+
-+	io_req_complete(req, ret);
-+	return 0;
-+}
-+
- static int __io_setxattr_prep(struct io_kiocb *req,
- 			const struct io_uring_sqe *sqe,
- 			struct user_namespace *user_ns)
-@@ -6778,6 +6909,10 @@ static int io_req_prep(struct io_kiocb *req, const=
- struct io_uring_sqe *sqe)
- 		return io_fsetxattr_prep(req, sqe);
- 	case IORING_OP_SETXATTR:
- 		return io_setxattr_prep(req, sqe);
-+	case IORING_OP_FGETXATTR:
-+		return io_fgetxattr_prep(req, sqe);
-+	case IORING_OP_GETXATTR:
-+		return io_getxattr_prep(req, sqe);
- 	}
-=20
- 	printk_once(KERN_WARNING "io_uring: unhandled opcode %d\n",
-@@ -6927,6 +7062,13 @@ static void io_clean_op(struct io_kiocb *req)
- 			kfree(req->xattr.ctx.kname);
- 			kvfree(req->xattr.value);
- 			break;
-+		case IORING_OP_GETXATTR:
-+			if (req->xattr.filename)
-+				putname(req->xattr.filename);
-+			fallthrough;
-+		case IORING_OP_FGETXATTR:
-+			kfree(req->xattr.ctx.kname);
-+			break;
- 		}
- 	}
- 	if ((req->flags & REQ_F_POLLED) && req->apoll) {
-@@ -7078,6 +7220,12 @@ static int io_issue_sqe(struct io_kiocb *req, unsi=
-gned int issue_flags)
- 	case IORING_OP_SETXATTR:
- 		ret =3D io_setxattr(req, issue_flags);
- 		break;
-+	case IORING_OP_FGETXATTR:
-+		ret =3D io_fgetxattr(req, issue_flags);
-+		break;
-+	case IORING_OP_GETXATTR:
-+		ret =3D io_getxattr(req, issue_flags);
-+		break;
- 	default:
- 		ret =3D -EINVAL;
- 		break;
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.=
-h
-index c62a8bec8cd4..efc7ac9b3a6b 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -148,6 +148,8 @@ enum {
- 	IORING_OP_GETDENTS,
- 	IORING_OP_FSETXATTR,
- 	IORING_OP_SETXATTR,
-+	IORING_OP_FGETXATTR,
-+	IORING_OP_GETXATTR,
-=20
- 	/* this goes last, obviously */
- 	IORING_OP_LAST,
---=20
-2.30.2
+// clang-13 -O0 -glldb -fsanitize=address -fno-exceptions -Wall
+-Werror -luring hello_uring.cpp -o build/hello_uring.exec
+#include <fcntl.h>
+#include <stdio.h>
+#include <assert.h>
+#include <liburing.h>
 
+#define error_check(v) if ((u_int64_t)v == -1) {perror(#v);
+assert((u_int64_t)v != -1);}
+static int const queue_depth = 4;
+static int const buf_size = 1<<10;
+
+char buffers[queue_depth][buf_size];
+
+int main () { int r;
+
+    {
+        // setup test
+        auto f = fopen("build/testfile2", "w");
+        for (unsigned long i = 0; i< 1024; i++) {
+            fwrite(&i, sizeof i, 1, f);
+        }
+        fclose(f);
+    }
+
+    auto file_fd = open("build/testfile2", O_RDONLY);
+
+    io_uring ring;
+    r = io_uring_queue_init(queue_depth, &ring, 0);
+    error_check(r);
+
+    {
+        struct iovec vecs[queue_depth];
+        for (int veci = 0; veci < queue_depth; veci++) {
+            auto sqe = io_uring_get_sqe(&ring);
+            assert(sqe);
+            sqe->user_data = veci;
+            printf("submit: %d\n", veci);
+            vecs[veci] = { .iov_base = buffers[veci], .iov_len = buf_size};
+            io_uring_prep_readv(sqe, file_fd, &vecs[veci], 1, veci * buf_size);
+        }
+        r = io_uring_submit(&ring);
+        error_check(r);
+        assert(r == queue_depth);
+    }
+
+    for (int done_count = 0; done_count < queue_depth; done_count++) {
+
+        struct io_uring_cqe *cqe;
+        r = io_uring_wait_cqe(&ring, &cqe);
+        error_check(r);
+
+        printf("got_completion: %lld, %d, %d\n", cqe->user_data,
+cqe->res, cqe->flags);
+        io_uring_cqe_seen(&ring, cqe);
+    }
+
+    {
+        unsigned long next_value = 0;
+        for (int buf_i = 0; buf_i < queue_depth; buf_i++) {
+            for (auto buf_values = (unsigned long *)buffers[buf_i];
+(char*)buf_values < buffers[buf_i] + buf_size; buf_values++) {
+                assert(*buf_values == next_value++);
+            }
+        }
+        assert(next_value == (1024/8) * 4);
+    }
+}
+
+On execution, I get all zeros for user_data on the `got_completion'
+lines... I was expecting those to be 0, 1, 2, 3.... What am I missing
+here?
+
+Thanks :)
+--Dave

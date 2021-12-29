@@ -2,279 +2,75 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AAF7480C98
-	for <lists+io-uring@lfdr.de>; Tue, 28 Dec 2021 19:42:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B5AF9481397
+	for <lists+io-uring@lfdr.de>; Wed, 29 Dec 2021 14:36:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237074AbhL1SmG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 28 Dec 2021 13:42:06 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:65444 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S237095AbhL1SmG (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 28 Dec 2021 13:42:06 -0500
-Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 1BSB6W6g009623
-        for <io-uring@vger.kernel.org>; Tue, 28 Dec 2021 10:42:06 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=facebook;
- bh=8Dkzt6Va+XixCQuqizImRVpHs9Wj7ppAZBNN9lNIJHI=;
- b=B3OYsbdKIfWG2jrvXwx3ajHseWT1gO5lXUqEviQDfNiIdLGHDwga/92TYzFLZeZlmIMZ
- mQSzddx5oPdPLM5g1FLBxFNY7ZjmBoTnLlOtGae2YPvWOEaohbUAtRulqKBuxEzifjhW
- jbDF/GhKwFN5R7SIfLJvUlUUhdROczA3A5k= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3d78cd7thc-10
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Tue, 28 Dec 2021 10:42:06 -0800
-Received: from twshared7572.23.frc3.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:82::e) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.20; Tue, 28 Dec 2021 10:42:00 -0800
-Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
-        id 317AF8B3D9CC; Tue, 28 Dec 2021 10:41:48 -0800 (PST)
-From:   Stefan Roesch <shr@fb.com>
-To:     <io-uring@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <kernel-team@fb.com>
-CC:     <torvalds@linux-foundation.org>, <christian.brauner@ubuntu.com>,
-        <shr@fb.com>
-Subject: [PATCH v9 5/5] io_uring: add fgetxattr and getxattr support
-Date:   Tue, 28 Dec 2021 10:41:45 -0800
-Message-ID: <20211228184145.1131605-6-shr@fb.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20211228184145.1131605-1-shr@fb.com>
-References: <20211228184145.1131605-1-shr@fb.com>
+        id S236782AbhL2Ng4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 29 Dec 2021 08:36:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51364 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229554AbhL2Ng4 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 29 Dec 2021 08:36:56 -0500
+Received: from mail-qk1-x735.google.com (mail-qk1-x735.google.com [IPv6:2607:f8b0:4864:20::735])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57261C061574
+        for <io-uring@vger.kernel.org>; Wed, 29 Dec 2021 05:36:56 -0800 (PST)
+Received: by mail-qk1-x735.google.com with SMTP id m2so18260347qkd.8
+        for <io-uring@vger.kernel.org>; Wed, 29 Dec 2021 05:36:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=hQ5DbP4MITHgtHViXOya0lanhcMqZ8b4WidUu29kIn4=;
+        b=D5Bs0yGIj2p+fN7f+AJCB0j4GSDKT7vt21xeNJa41MC2nsHM77B/sTUwG/aCWgMsnX
+         J/+6uvVIYjbui/BvThOoElgb0tMvGjDkPg+WhjeK+Ve4k6382LaJr8rx81zLp17b6HDD
+         l97VlRHjw17TMnuLELQ+/Wl8WZbNdBBg4c/edMD0WO4uG57aCsbP8FHEQYCcg/Ha1TZe
+         XvlUbQ4qOqy23a+tS/d7SEMXzH6BIIE2nu8yi4btnea5Bf2yBOg72O2AnQUHoK+Sxjsk
+         yLeAEu6H8NZrKkgebcPCcPbN2qIwFEHGkMC+UMnEuJ+riQANWzEio2DNS4TDUwkD1MMx
+         zouQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=hQ5DbP4MITHgtHViXOya0lanhcMqZ8b4WidUu29kIn4=;
+        b=4KthQh8GgZIgQeOLkiVtJwI4mfLvYnBsNfdGC1gIkf4nLPmqXolwcsq0CVSxBr7GET
+         KmfmM83u913CdXiCS5Tob1wCGyQt2w0t16oC75a3BYN9VcAwYPhspIayd7cLt0+ueBRl
+         Cc3vsuzQi9dk6Da68ahGZnzzFOXDl61JXteyQJZd1t09eh2TkfZOyI0/NcDvbgPDLs/8
+         GGY7LGIGuCdoBDZ9dMgf0ip1Djh2qQ8Rq2uHyJ4yq4VbX7DxGzBOVsTzw5YHhRxrf5Gg
+         LlL9R6hbv5ZALKb9XCQOAc4V364IKXEE3WQyysU9SfBXIm8KYTc0SoA372a7anBiRuIN
+         L8tA==
+X-Gm-Message-State: AOAM531d5afXdINaYtYUN5Gjyzdo//54bj5YevZYcAqm0huH2ZlDG738
+        ZoJabmKtc+Notx/nBAzniRxXZzGr8sj09R1HYYQ=
+X-Google-Smtp-Source: ABdhPJzCVyuSHn6j5q2hUfg+iBrfLQEZRzj2HUR0n2vyA3e7pKw/2+BUWLa7L09WD9Qle2CFIoeorjwipCmYJJz6xN0=
+X-Received: by 2002:ae9:ef4b:: with SMTP id d72mr18168339qkg.690.1640785015473;
+ Wed, 29 Dec 2021 05:36:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-GUID: VBPkNdktRHCGTaIYMo555C4g_Fukbps8
-X-Proofpoint-ORIG-GUID: VBPkNdktRHCGTaIYMo555C4g_Fukbps8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2021-12-28_10,2021-12-28_01,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=fb_outbound_notspam policy=fb_outbound score=0 spamscore=0
- lowpriorityscore=0 bulkscore=0 mlxlogscore=792 priorityscore=1501
- adultscore=0 impostorscore=0 mlxscore=0 phishscore=0 clxscore=1015
- suspectscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2110150000 definitions=main-2112280084
-X-FB-Internal: deliver
+Received: by 2002:a05:6214:c2f:0:0:0:0 with HTTP; Wed, 29 Dec 2021 05:36:55
+ -0800 (PST)
+Reply-To: mrsaishag45@gmail.com
+From:   Mrs Aisha Al-Qaddafi <mrsaishagaddafi344@gmail.com>
+Date:   Wed, 29 Dec 2021 05:36:55 -0800
+Message-ID: <CADgtnOOjh50y8AfiUCB5V9udRRoxFi2VbQ-Z==5ii9UsQ9+SkQ@mail.gmail.com>
+Subject: Dear Friend,
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This adds support to io_uring for the fgetxattr and getxattr API.
+Dear Friend,
 
-Signed-off-by: Stefan Roesch <shr@fb.com>
----
- fs/io_uring.c                 | 149 ++++++++++++++++++++++++++++++++++
- include/uapi/linux/io_uring.h |   2 +
- 2 files changed, 151 insertions(+)
+I came across your e-mail contact prior a private search while in need
+of your assistance. My name is Aisha Gaddafi a single Mother and a
+Widow with three Children. I am the only biological Daughter of late
+Libyan President (Late Colonel Muammar Gaddafi).
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 2a0138a2876a..5b8370a62547 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1130,6 +1130,10 @@ static const struct io_op_def io_op_defs[] =3D {
- 		.needs_file =3D 1
- 	},
- 	[IORING_OP_SETXATTR] =3D {},
-+	[IORING_OP_FGETXATTR] =3D {
-+		.needs_file =3D 1
-+	},
-+	[IORING_OP_GETXATTR] =3D {},
- };
-=20
- /* requests with any of those set should undergo io_disarm_next() */
-@@ -3899,6 +3903,134 @@ static int io_renameat(struct io_kiocb *req, unsi=
-gned int issue_flags)
- 	return 0;
- }
-=20
-+static int __io_getxattr_prep(struct io_kiocb *req,
-+			      const struct io_uring_sqe *sqe)
-+{
-+	struct io_xattr *ix =3D &req->xattr;
-+	const char __user *name;
-+	int ret;
-+
-+	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
-+		return -EINVAL;
-+	if (unlikely(sqe->ioprio))
-+		return -EINVAL;
-+	if (unlikely(req->flags & REQ_F_FIXED_FILE))
-+		return -EBADF;
-+
-+	ix->filename =3D NULL;
-+	ix->ctx.kvalue =3D NULL;
-+	name =3D u64_to_user_ptr(READ_ONCE(sqe->addr));
-+	ix->ctx.value =3D u64_to_user_ptr(READ_ONCE(sqe->addr2));
-+	ix->ctx.size =3D READ_ONCE(sqe->len);
-+	ix->ctx.flags =3D READ_ONCE(sqe->xattr_flags);
-+
-+	if (ix->ctx.flags)
-+		return -EINVAL;
-+
-+	ix->ctx.kname =3D kmalloc(sizeof(*ix->ctx.kname), GFP_KERNEL);
-+	if (!ix->ctx.kname)
-+		return -ENOMEM;
-+
-+	ret =3D strncpy_from_user(ix->ctx.kname->name, name,
-+				sizeof(ix->ctx.kname->name));
-+	if (!ret || ret =3D=3D sizeof(ix->ctx.kname->name))
-+		ret =3D -ERANGE;
-+	if (ret < 0) {
-+		kfree(ix->ctx.kname);
-+		return ret;
-+	}
-+
-+	req->flags |=3D REQ_F_NEED_CLEANUP;
-+	return 0;
-+}
-+
-+static int io_fgetxattr_prep(struct io_kiocb *req,
-+			     const struct io_uring_sqe *sqe)
-+{
-+	return __io_getxattr_prep(req, sqe);
-+}
-+
-+static int io_getxattr_prep(struct io_kiocb *req,
-+			    const struct io_uring_sqe *sqe)
-+{
-+	struct io_xattr *ix =3D &req->xattr;
-+	const char __user *path;
-+	int ret;
-+
-+	ret =3D __io_getxattr_prep(req, sqe);
-+	if (ret)
-+		return ret;
-+
-+	path =3D u64_to_user_ptr(READ_ONCE(sqe->addr3));
-+
-+	ix->filename =3D getname_flags(path, LOOKUP_FOLLOW, NULL);
-+	if (IS_ERR(ix->filename)) {
-+		ret =3D PTR_ERR(ix->filename);
-+		ix->filename =3D NULL;
-+	}
-+
-+	return ret;
-+}
-+
-+static int io_fgetxattr(struct io_kiocb *req, unsigned int issue_flags)
-+{
-+	struct io_xattr *ix =3D &req->xattr;
-+	int ret;
-+
-+	if (issue_flags & IO_URING_F_NONBLOCK)
-+		return -EAGAIN;
-+
-+	ret =3D do_getxattr(mnt_user_ns(req->file->f_path.mnt),
-+			req->file->f_path.dentry,
-+			ix->ctx.kname->name,
-+			(void __user *)ix->ctx.value,
-+			ix->ctx.size);
-+
-+	req->flags &=3D ~REQ_F_NEED_CLEANUP;
-+	kfree(ix->ctx.kname);
-+	if (ret < 0)
-+		req_set_fail(req);
-+
-+	io_req_complete(req, ret);
-+	return 0;
-+}
-+
-+static int io_getxattr(struct io_kiocb *req, unsigned int issue_flags)
-+{
-+	struct io_xattr *ix =3D &req->xattr;
-+	unsigned int lookup_flags =3D LOOKUP_FOLLOW;
-+	struct path path;
-+	int ret;
-+
-+	if (issue_flags & IO_URING_F_NONBLOCK)
-+		return -EAGAIN;
-+
-+retry:
-+	ret =3D do_user_path_at_empty(AT_FDCWD, ix->filename, lookup_flags, &pa=
-th);
-+	if (!ret) {
-+		ret =3D do_getxattr(mnt_user_ns(path.mnt),
-+				path.dentry,
-+				ix->ctx.kname->name,
-+				(void __user *)ix->ctx.value,
-+				ix->ctx.size);
-+
-+		path_put(&path);
-+		if (retry_estale(ret, lookup_flags)) {
-+			lookup_flags |=3D LOOKUP_REVAL;
-+			goto retry;
-+		}
-+	}
-+	putname(ix->filename);
-+
-+	req->flags &=3D ~REQ_F_NEED_CLEANUP;
-+	kfree(ix->ctx.kname);
-+	if (ret < 0)
-+		req_set_fail(req);
-+
-+	io_req_complete(req, ret);
-+	return 0;
-+}
-+
- static int __io_setxattr_prep(struct io_kiocb *req,
- 			const struct io_uring_sqe *sqe)
- {
-@@ -6773,6 +6905,10 @@ static int io_req_prep(struct io_kiocb *req, const=
- struct io_uring_sqe *sqe)
- 		return io_fsetxattr_prep(req, sqe);
- 	case IORING_OP_SETXATTR:
- 		return io_setxattr_prep(req, sqe);
-+	case IORING_OP_FGETXATTR:
-+		return io_fgetxattr_prep(req, sqe);
-+	case IORING_OP_GETXATTR:
-+		return io_getxattr_prep(req, sqe);
- 	}
-=20
- 	printk_once(KERN_WARNING "io_uring: unhandled opcode %d\n",
-@@ -6922,6 +7058,13 @@ static void io_clean_op(struct io_kiocb *req)
- 			kfree(req->xattr.ctx.kname);
- 			kvfree(req->xattr.ctx.kvalue);
- 			break;
-+		case IORING_OP_GETXATTR:
-+			if (req->xattr.filename)
-+				putname(req->xattr.filename);
-+			fallthrough;
-+		case IORING_OP_FGETXATTR:
-+			kfree(req->xattr.ctx.kname);
-+			break;
- 		}
- 	}
- 	if ((req->flags & REQ_F_POLLED) && req->apoll) {
-@@ -7073,6 +7216,12 @@ static int io_issue_sqe(struct io_kiocb *req, unsi=
-gned int issue_flags)
- 	case IORING_OP_SETXATTR:
- 		ret =3D io_setxattr(req, issue_flags);
- 		break;
-+	case IORING_OP_FGETXATTR:
-+		ret =3D io_fgetxattr(req, issue_flags);
-+		break;
-+	case IORING_OP_GETXATTR:
-+		ret =3D io_getxattr(req, issue_flags);
-+		break;
- 	default:
- 		ret =3D -EINVAL;
- 		break;
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.=
-h
-index c62a8bec8cd4..efc7ac9b3a6b 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -148,6 +148,8 @@ enum {
- 	IORING_OP_GETDENTS,
- 	IORING_OP_FSETXATTR,
- 	IORING_OP_SETXATTR,
-+	IORING_OP_FGETXATTR,
-+	IORING_OP_GETXATTR,
-=20
- 	/* this goes last, obviously */
- 	IORING_OP_LAST,
---=20
-2.30.2
+I have investment funds worth Twenty Seven Million Five Hundred
+Thousand United State Dollar ($27.500.000.00 ) and i need a trusted
+investment Manager/Partner because of my current refugee status,
+however, I am interested in you for investment project assistance in
+your country, may be from there, we can build business relationship in
+the nearest future.
 
+I am willing to negotiate investment/business profit sharing ratio
+with you base on the future investment earning profits.
+Best Regards
+Mrs Aisha Gaddafi

@@ -2,206 +2,142 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BC52B48171B
-	for <lists+io-uring@lfdr.de>; Wed, 29 Dec 2021 22:48:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FAFF4817B3
+	for <lists+io-uring@lfdr.de>; Thu, 30 Dec 2021 00:24:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232375AbhL2VsF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 29 Dec 2021 16:48:05 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:36852 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S231322AbhL2VsF (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 29 Dec 2021 16:48:05 -0500
-Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
-        by m0001303.ppops.net (8.16.1.2/8.16.1.2) with ESMTP id 1BTHDlRu011770
-        for <io-uring@vger.kernel.org>; Wed, 29 Dec 2021 13:48:04 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-transfer-encoding :
- content-type; s=facebook; bh=F+GlZ2cSO0Ie3lufY8YGswNQaVXi8N9gOyAXbRX6hsk=;
- b=iE7+fBS9ezfY5ssz2OdIoVVrQAZeCPnyc9Xb19uzETFMETqsSawYJANO8xjsZuIQAivN
- YnczLfqGiHxnIzYEbfGD52nCAWJy4cXy3qObJXTbxTn8C/Gz7A5KreIyly78eEw8IZ/D
- oeamrNLbqgFNJgv5c049w/nlsrRDfuDwI5A= 
-Received: from mail.thefacebook.com ([163.114.132.120])
-        by m0001303.ppops.net (PPS) with ESMTPS id 3d80p4hb4q-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Wed, 29 Dec 2021 13:48:04 -0800
-Received: from twshared3115.02.ash8.facebook.com (2620:10d:c085:208::f) by
- mail.thefacebook.com (2620:10d:c085:11d::6) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.20; Wed, 29 Dec 2021 13:48:02 -0800
-Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
-        id 263498C2C91A; Wed, 29 Dec 2021 13:47:53 -0800 (PST)
-From:   Stefan Roesch <shr@fb.com>
-To:     <io-uring@vger.kernel.org>, <kernel-team@fb.com>
-CC:     <shr@fb.com>
-Subject: [PATCH v1] liburing: add xattr and getdents documentation
-Date:   Wed, 29 Dec 2021 13:47:48 -0800
-Message-ID: <20211229214748.290407-1-shr@fb.com>
-X-Mailer: git-send-email 2.30.2
+        id S233152AbhL2XYN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 29 Dec 2021 18:24:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38912 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233145AbhL2XYN (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 29 Dec 2021 18:24:13 -0500
+Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E9A7C061574
+        for <io-uring@vger.kernel.org>; Wed, 29 Dec 2021 15:24:13 -0800 (PST)
+Received: by mail-pf1-x42b.google.com with SMTP id t19so19776086pfg.9
+        for <io-uring@vger.kernel.org>; Wed, 29 Dec 2021 15:24:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=q/RsEoAEnfxSOt9gWWHLaLVPshCO9nFwJ35IWu03k8A=;
+        b=UvnpF0JXHYawVGO5uyv5HQ6pNYPFI7Qdb63I9o4Ky/VFQhdpsm24aT/umNzwG0iDsH
+         Yo1bJ9gH8Czz2uTO3wElPkiVyEcoJ0pnIm9+Yd0roMFtQmVU1h5cL0SBwtWo93YFFf+W
+         wnAymvevNUFxP59nGarwt0OkvpmzJ7GdPffxv/KucfDOzCJfCp/V64CZI8jTT1tMgc8e
+         351vZ8irxVJ4hU8WIrL497wQe6QssUnjglnorfnCMcbN4aNNJUbBBxMhGue//rrYFkDj
+         iPi1h5udvKclAxrhfadjzsJhinJKsk1uvTseaxmta6cnWiJTqefz5JdNqUvIzIE8UkQz
+         TaXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=q/RsEoAEnfxSOt9gWWHLaLVPshCO9nFwJ35IWu03k8A=;
+        b=IgEKfa1YkpqPazfT/KPtIDNL55I0/pPf1ehgjEoVftb3CQ90qw2iKUlKgb/13TwUb9
+         sZeEuc9qsIY1N9Op+PXMJFdBuQGSuhYNXam618upmX2397hj5XFKV19kCKtvlldsTL1I
+         +06xReSf80/JiHoIpCOsSGVTmeBLRl9Jp8dzmkQK1863O3M1pGzBbM5EIFZRGO8Ylwvd
+         G7dyzWgQx+IUioBQ5b5GrhlDXo2JWkopwhuu7G9rpUTO4mcluLiTwxWOH544rLtjF3Pz
+         WlP69gPAUPGSJzy47RwoicFXLcZRGt5ytr9TMvwoJPzSeBJv0p1BGYX5hcWP00a7bAMn
+         kwyg==
+X-Gm-Message-State: AOAM530Isjk747BCMyg+JzAvlkAdB53KYqgfp4RaeGWI8Qn2Kdf4yqZ0
+        aYGEWkv/SKy0KRRt2YBOlIU=
+X-Google-Smtp-Source: ABdhPJxIgWCS3o/ti0L1+lunEPhRkWq1H5XDR/tlbVj3maJD6eD7si0tO+fuFBof7Us/zIli4FG5sA==
+X-Received: by 2002:a62:e904:0:b0:4a4:b4e3:a712 with SMTP id j4-20020a62e904000000b004a4b4e3a712mr28910036pfh.25.1640820252897;
+        Wed, 29 Dec 2021 15:24:12 -0800 (PST)
+Received: from integral2.. ([68.183.184.174])
+        by smtp.gmail.com with ESMTPSA id x33sm26431518pfh.212.2021.12.29.15.24.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Dec 2021 15:24:12 -0800 (PST)
+From:   Ammar Faizi <ammarfaizi2@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring Mailing List <io-uring@vger.kernel.org>,
+        Ammar Faizi <ammarfaizi2@gmail.com>, Stefan Roesch <shr@fb.com>
+Subject: [PATCH liburing xattr-getdents64] test/xattr: Fix random failure due to undefined behavior
+Date:   Thu, 30 Dec 2021 06:23:10 +0700
+Message-Id: <20211229232131.60874-1-ammar.faizi@intel.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-GUID: 9lWioeJlelHk6vLvEpYEn7uU55rHKbQm
-X-Proofpoint-ORIG-GUID: 9lWioeJlelHk6vLvEpYEn7uU55rHKbQm
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2021-12-29_07,2021-12-29_01,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=fb_outbound_notspam policy=fb_outbound score=0 priorityscore=1501
- suspectscore=0 lowpriorityscore=0 malwarescore=0 phishscore=0
- clxscore=1015 impostorscore=0 bulkscore=0 mlxlogscore=975 spamscore=0
- adultscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2110150000 definitions=main-2112290115
-X-FB-Internal: deliver
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This adds the getdents and xattr API documentation to the
-io_uring_enter man page.
+Running `test/xattr` sometimes fails. When it fails, there are strange
+characters at the end of the returned value:
+```
+  $ for i in {1..10}; do ./xattr; done;
+  Error: fgetxattr expected value: value2-a-lot-longer, returned value: value2-a-lot-longer��
+  Error: fgetxattr expected value: value2-a-lot-longer, returned value: value2-a-lot-longerg�
+  Error: fgetxattr expected value: value2-a-lot-longer, returned value: value2-a-lot-longeri�
+  Error: fgetxattr expected value: value2-a-lot-longer, returned value: value2-a-lot-longerp�
+  Error: fgetxattr expected value: value2-a-lot-longer, returned value: value2-a-lot-longer��
+  Error: fgetxattr expected value: value2-a-lot-longer, returned value: value2-a-lot-longer"�
+  Error: fgetxattr expected value: value2-a-lot-longer, returned value: value2-a-lot-longer��
+  Error: fgetxattr expected value: value2-a-lot-longer, returned value: value2-a-lot-longerQ�
+```
 
-Signed-off-by: Stefan Roesch <shr@fb.com>
+Debugged it with valgrind, valgrind says:
+```
+  ==59962== Conditional jump or move depends on uninitialised value(s)
+  ==59962==    at 0x4849C59: strlen (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+  ==59962==    by 0x1099E9: test_fxattr (xattr.c:213)
+  ==59962==    by 0x109391: main (xattr.c:416)
+```
+
+It turned out that `char value[XATTR_SIZE]` may not be NUL
+terminated, so the `strlen()` results in the wrong value and %s format
+to the "returned value" shows strange characters.
+
+Fix this by changing it to `char value[XATTR_SIZE + 1] = { }` so that
+it is guaranteed to be NUL terminated.
+
+Cc: Stefan Roesch <shr@fb.com>
+Fixes: e194e24ff8721e67d8526737aa644b313bff3148 ("liburing: Add new test program to verify xattr support")
+Signed-off-by: Ammar Faizi <ammarfaizi2@gmail.com>
 ---
- man/io_uring_enter.2 | 106 ++++++++++++++++++++++++++++++++++++-------
- 1 file changed, 89 insertions(+), 17 deletions(-)
+ test/xattr.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/man/io_uring_enter.2 b/man/io_uring_enter.2
-index 589f3ef..9b1d0f9 100644
---- a/man/io_uring_enter.2
-+++ b/man/io_uring_enter.2
-@@ -176,7 +176,7 @@ struct io_uring_sqe {
-     __u16   ioprio;         /* ioprio for the request */
-     __s32   fd;             /* file descriptor to do IO on */
-     union {
--        __u64   off;            /* offset into file */
-+        __u64   off;        /* offset into file */
-         __u64   addr2;
-     };
-     union {
-@@ -201,26 +201,23 @@ struct io_uring_sqe {
-         __u32    rename_flags;
-         __u32    unlink_flags;
-         __u32    hardlink_flags;
-+        __u32    xattr_flags;
-     };
--    __u64    user_data;     /* data to be passed back at completion time=
- */
-+    __u64 user_data; /* data to be passed back at completion time */
-     union {
--    struct {
-         /* index into fixed buffers, if used */
--            union {
--                /* index into fixed buffers, if used */
--                __u16    buf_index;
--                /* for grouped buffer selection */
--                __u16    buf_group;
--            }
--        /* personality to use, if used */
--        __u16    personality;
--        union {
--            __s32    splice_fd_in;
--            __u32    file_index;
--	};
--    };
--    __u64    __pad2[3];
-+        __u16    buf_index;
-+        /* for grouped buffer selection */
-+        __u16    buf_group;
-+    } __attribute__((packed))
-+    /* personality to use, if used */
-+    __u16    personality;
-+    union {
-+        __s32    splice_fd_in;
-+        __u32    file_index;
-     };
-+    __u64    addr3;
-+    __u64    __pad2[1];
- };
- .EE
- .in
-@@ -1024,6 +1021,81 @@ being passed in to
- .BR linkat(2).
- Available since 5.15.
-=20
-+.TP
-+.B IORING_OP_GETDENTS
-+Issue the equivalent of a
-+.BR getdents64(2)
-+system call.
-+.I fd
-+should be set to the dirfd,
-+.I addr
-+should point to linux_dirent64 structure
-+.I len
-+should be set to the size of the above structure
-+.I off
-+should be set to the directory offset.
-+Available since 5.17.
-+
-+.TP
-+.B IORING_OP_GETXATTR
-+Issue the equivalent of a
-+.BR getxattr(2)
-+system call.
-+.I addr
-+should point to the attribute name,
-+.I len
-+should be set to the length of the attribute value,
-+.I off
-+should point to the attribute value,
-+.I addr3
-+should point to the path name.
-+Available since 5.17.
-+
-+.TP
-+.B IORING_OP_FGETXATTR
-+Issue the equivalent of a
-+.BR fgetxattr(2)
-+system call.
-+.I fd
-+should be set to the file descriptor of the file,
-+.I addr
-+should point to the attribute name,
-+.I len
-+should be set to the length of the attribute value,
-+.I off
-+should point to the attribute value.
-+Available since 5.17.
-+
-+.TP
-+.B IORING_OP_SETXATTR
-+Issue the equivalent of a
-+.BR setxattr(2)
-+system call.
-+.I addr
-+should point to the attribute name,
-+.I len
-+should be set to the length of the attribute value,
-+.I off
-+should point to the attribute value,
-+.I addr3
-+should point to the path name.
-+Available since 5.17.
-+
-+.TP
-+.B IORING_OP_FSETXATTR
-+Issue the equivalent of a
-+.BR fsetxattr(2)
-+system call.
-+.I fd
-+should be set to the file descriptor of the file,
-+.I addr
-+should point to the attribute name,
-+.I len
-+should be set to the length of the attribute value,
-+.I off
-+should point to the attribute value.
-+Available since 5.17.
-+
- .PP
- The
- .I flags
+diff --git a/test/xattr.c b/test/xattr.c
+index d88059c..af7df5f 100644
+--- a/test/xattr.c
++++ b/test/xattr.c
+@@ -175,7 +175,7 @@ static int test_fxattr(void)
+ 	int rc = 0;
+ 	size_t value_len;
+ 	struct io_uring ring;
+-	char value[XATTR_SIZE];
++	char value[XATTR_SIZE + 1] = { };
 
-base-commit: 18d71076f6c97e1b25aa0e3b0e12a913ec4717fa
---=20
-2.30.2
+ 	/* Init io-uring queue. */
+ 	int ret = io_uring_queue_init(QUEUE_DEPTH, &ring, 0);
+@@ -239,7 +239,7 @@ static int test_xattr(void)
+ 	int rc = 0;
+ 	int value_len;
+ 	struct io_uring ring;
+-	char value[XATTR_SIZE];
++	char value[XATTR_SIZE + 1] = { };
+
+ 	/* Init io-uring queue. */
+ 	int ret = io_uring_queue_init(QUEUE_DEPTH, &ring, 0);
+@@ -292,7 +292,7 @@ static int test_failure_fxattr(void)
+ {
+ 	int rc = 0;
+ 	struct io_uring ring;
+-	char value[XATTR_SIZE];
++	char value[XATTR_SIZE + 1] = { };
+
+ 	/* Init io-uring queue. */
+ 	int ret = io_uring_queue_init(QUEUE_DEPTH, &ring, 0);
+@@ -335,7 +335,7 @@ static int test_failure_xattr(void)
+ {
+ 	int rc = 0;
+ 	struct io_uring ring;
+-	char value[XATTR_SIZE];
++	char value[XATTR_SIZE + 1] = { };
+
+ 	/* Init io-uring queue. */
+ 	int ret = io_uring_queue_init(QUEUE_DEPTH, &ring, 0);
+--
+2.32.0
 

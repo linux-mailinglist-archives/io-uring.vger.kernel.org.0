@@ -2,75 +2,90 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B5AF9481397
-	for <lists+io-uring@lfdr.de>; Wed, 29 Dec 2021 14:36:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 943BA48141B
+	for <lists+io-uring@lfdr.de>; Wed, 29 Dec 2021 15:31:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236782AbhL2Ng4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 29 Dec 2021 08:36:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51364 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229554AbhL2Ng4 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 29 Dec 2021 08:36:56 -0500
-Received: from mail-qk1-x735.google.com (mail-qk1-x735.google.com [IPv6:2607:f8b0:4864:20::735])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57261C061574
-        for <io-uring@vger.kernel.org>; Wed, 29 Dec 2021 05:36:56 -0800 (PST)
-Received: by mail-qk1-x735.google.com with SMTP id m2so18260347qkd.8
-        for <io-uring@vger.kernel.org>; Wed, 29 Dec 2021 05:36:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=hQ5DbP4MITHgtHViXOya0lanhcMqZ8b4WidUu29kIn4=;
-        b=D5Bs0yGIj2p+fN7f+AJCB0j4GSDKT7vt21xeNJa41MC2nsHM77B/sTUwG/aCWgMsnX
-         J/+6uvVIYjbui/BvThOoElgb0tMvGjDkPg+WhjeK+Ve4k6382LaJr8rx81zLp17b6HDD
-         l97VlRHjw17TMnuLELQ+/Wl8WZbNdBBg4c/edMD0WO4uG57aCsbP8FHEQYCcg/Ha1TZe
-         XvlUbQ4qOqy23a+tS/d7SEMXzH6BIIE2nu8yi4btnea5Bf2yBOg72O2AnQUHoK+Sxjsk
-         yLeAEu6H8NZrKkgebcPCcPbN2qIwFEHGkMC+UMnEuJ+riQANWzEio2DNS4TDUwkD1MMx
-         zouQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=hQ5DbP4MITHgtHViXOya0lanhcMqZ8b4WidUu29kIn4=;
-        b=4KthQh8GgZIgQeOLkiVtJwI4mfLvYnBsNfdGC1gIkf4nLPmqXolwcsq0CVSxBr7GET
-         KmfmM83u913CdXiCS5Tob1wCGyQt2w0t16oC75a3BYN9VcAwYPhspIayd7cLt0+ueBRl
-         Cc3vsuzQi9dk6Da68ahGZnzzFOXDl61JXteyQJZd1t09eh2TkfZOyI0/NcDvbgPDLs/8
-         GGY7LGIGuCdoBDZ9dMgf0ip1Djh2qQ8Rq2uHyJ4yq4VbX7DxGzBOVsTzw5YHhRxrf5Gg
-         LlL9R6hbv5ZALKb9XCQOAc4V364IKXEE3WQyysU9SfBXIm8KYTc0SoA372a7anBiRuIN
-         L8tA==
-X-Gm-Message-State: AOAM531d5afXdINaYtYUN5Gjyzdo//54bj5YevZYcAqm0huH2ZlDG738
-        ZoJabmKtc+Notx/nBAzniRxXZzGr8sj09R1HYYQ=
-X-Google-Smtp-Source: ABdhPJzCVyuSHn6j5q2hUfg+iBrfLQEZRzj2HUR0n2vyA3e7pKw/2+BUWLa7L09WD9Qle2CFIoeorjwipCmYJJz6xN0=
-X-Received: by 2002:ae9:ef4b:: with SMTP id d72mr18168339qkg.690.1640785015473;
- Wed, 29 Dec 2021 05:36:55 -0800 (PST)
+        id S240216AbhL2Obf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 29 Dec 2021 09:31:35 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:44014 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236856AbhL2Obe (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 29 Dec 2021 09:31:34 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 88447B81905;
+        Wed, 29 Dec 2021 14:31:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C165FC36AE7;
+        Wed, 29 Dec 2021 14:31:30 +0000 (UTC)
+Date:   Wed, 29 Dec 2021 15:31:26 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Stefan Roesch <shr@fb.com>
+Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        kernel-team@fb.com, torvalds@linux-foundation.org
+Subject: Re: [PATCH v9 1/5] fs: split off do_user_path_at_empty from
+ user_path_at_empty()
+Message-ID: <20211229143126.advkumqim7tztlmq@wittgenstein>
+References: <20211228184145.1131605-1-shr@fb.com>
+ <20211228184145.1131605-2-shr@fb.com>
 MIME-Version: 1.0
-Received: by 2002:a05:6214:c2f:0:0:0:0 with HTTP; Wed, 29 Dec 2021 05:36:55
- -0800 (PST)
-Reply-To: mrsaishag45@gmail.com
-From:   Mrs Aisha Al-Qaddafi <mrsaishagaddafi344@gmail.com>
-Date:   Wed, 29 Dec 2021 05:36:55 -0800
-Message-ID: <CADgtnOOjh50y8AfiUCB5V9udRRoxFi2VbQ-Z==5ii9UsQ9+SkQ@mail.gmail.com>
-Subject: Dear Friend,
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20211228184145.1131605-2-shr@fb.com>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Dear Friend,
+On Tue, Dec 28, 2021 at 10:41:41AM -0800, Stefan Roesch wrote:
+> This splits off a do_user_path_at_empty function from the
+> user_path_at_empty_function. This is required so it can be
+> called from io_uring.
+> 
+> Signed-off-by: Stefan Roesch <shr@fb.com>
+> Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+> ---
+>  fs/namei.c            | 10 ++++++++--
+>  include/linux/namei.h |  2 ++
+>  2 files changed, 10 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 1f9d2187c765..d988e241b32c 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -2794,12 +2794,18 @@ int path_pts(struct path *path)
+>  }
+>  #endif
+>  
+> +int do_user_path_at_empty(int dfd, struct filename *filename, unsigned int flags,
+> +		       struct path *path)
+> +{
+> +	return filename_lookup(dfd, filename, flags, path, NULL);
+> +}
+> +
+>  int user_path_at_empty(int dfd, const char __user *name, unsigned flags,
+> -		 struct path *path, int *empty)
+> +		struct path *path, int *empty)
+>  {
+>  	struct filename *filename = getname_flags(name, flags, empty);
+> -	int ret = filename_lookup(dfd, filename, flags, path, NULL);
+>  
+> +	int ret = do_user_path_at_empty(dfd, filename, flags, path);
+>  	putname(filename);
+>  	return ret;
+>  }
+> diff --git a/include/linux/namei.h b/include/linux/namei.h
+> index e89329bb3134..8f3ef38c057b 100644
+> --- a/include/linux/namei.h
+> +++ b/include/linux/namei.h
+> @@ -49,6 +49,8 @@ enum {LAST_NORM, LAST_ROOT, LAST_DOT, LAST_DOTDOT};
+>  
+>  extern int path_pts(struct path *path);
+>  
+> +extern int do_user_path_at_empty(int dfd, struct filename *filename,
+> +				unsigned int flags, struct path *path);
 
-I came across your e-mail contact prior a private search while in need
-of your assistance. My name is Aisha Gaddafi a single Mother and a
-Widow with three Children. I am the only biological Daughter of late
-Libyan President (Late Colonel Muammar Gaddafi).
-
-I have investment funds worth Twenty Seven Million Five Hundred
-Thousand United State Dollar ($27.500.000.00 ) and i need a trusted
-investment Manager/Partner because of my current refugee status,
-however, I am interested in you for investment project assistance in
-your country, may be from there, we can build business relationship in
-the nearest future.
-
-I am willing to negotiate investment/business profit sharing ratio
-with you base on the future investment earning profits.
-Best Regards
-Mrs Aisha Gaddafi
+Sorry, just seeing this now but this wants to live in internal.h not in
+namei.h similar to all the other io_uring specific exports we added over
+the last releases. There's no need to make this a kernel-wide thing if
+we can avoid it, imho. With that changed:
+Acked-by: Christian Brauner <christian.brauner@ubuntu.com>

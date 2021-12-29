@@ -2,313 +2,141 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 66A7F48143C
-	for <lists+io-uring@lfdr.de>; Wed, 29 Dec 2021 15:52:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FC6A4816A1
+	for <lists+io-uring@lfdr.de>; Wed, 29 Dec 2021 21:30:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240421AbhL2OwG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 29 Dec 2021 09:52:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39764 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233850AbhL2OwG (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 29 Dec 2021 09:52:06 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7106FC061574;
-        Wed, 29 Dec 2021 06:52:05 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D7322614FF;
-        Wed, 29 Dec 2021 14:52:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31744C36AE7;
-        Wed, 29 Dec 2021 14:52:01 +0000 (UTC)
-Date:   Wed, 29 Dec 2021 15:51:58 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Stefan Roesch <shr@fb.com>
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        kernel-team@fb.com, torvalds@linux-foundation.org
-Subject: Re: [PATCH v9 4/5] io_uring: add fsetxattr and setxattr support
-Message-ID: <20211229145158.ir7h7uii4l46zctu@wittgenstein>
-References: <20211228184145.1131605-1-shr@fb.com>
- <20211228184145.1131605-5-shr@fb.com>
+        id S231207AbhL2UaK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 29 Dec 2021 15:30:10 -0500
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:19246 "EHLO
+        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230117AbhL2UaK (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 29 Dec 2021 15:30:10 -0500
+Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 1BTHDngX003206
+        for <io-uring@vger.kernel.org>; Wed, 29 Dec 2021 12:30:10 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=facebook; bh=LDfKUxCM5U+f1cBbwXXzttnvFQm6dvVFiA8btQ95LWw=;
+ b=dScNmEyC3qeAzq3DWfBbFBNx1TAQS/WCa3jXxzSZatalY9981a+OXrPhHiVUu0nzvtlz
+ Kf5iKAUboj/orrQLw6CFSiKkzqCnjZC+zWs4StEXjhNxFnDgTTDZvslk8VtBR57i5XjP
+ OKPLXBj33laY6xvTuoIebMYA/VzkdveFYKk= 
+Received: from mail.thefacebook.com ([163.114.132.120])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3d8evtcyak-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <io-uring@vger.kernel.org>; Wed, 29 Dec 2021 12:30:09 -0800
+Received: from twshared3814.24.frc3.facebook.com (2620:10d:c085:208::f) by
+ mail.thefacebook.com (2620:10d:c085:11d::7) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.20; Wed, 29 Dec 2021 12:30:07 -0800
+Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
+        id 6C2068C20DF0; Wed, 29 Dec 2021 12:30:04 -0800 (PST)
+From:   Stefan Roesch <shr@fb.com>
+To:     <io-uring@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <kernel-team@fb.com>
+CC:     <torvalds@linux-foundation.org>, <christian.brauner@ubuntu.com>,
+        <shr@fb.com>
+Subject: [PATCH v10 0/5] io_uring: add xattr support
+Date:   Wed, 29 Dec 2021 12:29:57 -0800
+Message-ID: <20211229203002.4110839-1-shr@fb.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20211228184145.1131605-5-shr@fb.com>
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-GUID: xG3Wsasw8ADshYiM_DpZwTFlAjB3U4BW
+X-Proofpoint-ORIG-GUID: xG3Wsasw8ADshYiM_DpZwTFlAjB3U4BW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2021-12-29_06,2021-12-29_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=fb_outbound_notspam policy=fb_outbound score=0 priorityscore=1501
+ clxscore=1015 impostorscore=0 lowpriorityscore=0 adultscore=0 mlxscore=0
+ phishscore=0 malwarescore=0 mlxlogscore=999 suspectscore=0 spamscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2110150000 definitions=main-2112290110
+X-FB-Internal: deliver
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Dec 28, 2021 at 10:41:44AM -0800, Stefan Roesch wrote:
-> This adds support to io_uring for the fsetxattr and setxattr API.
-> 
-> Signed-off-by: Stefan Roesch <shr@fb.com>
-> ---
->  fs/io_uring.c                 | 165 ++++++++++++++++++++++++++++++++++
->  include/uapi/linux/io_uring.h |   6 +-
->  2 files changed, 170 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index c8258c784116..2a0138a2876a 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -82,6 +82,7 @@
->  #include <linux/audit.h>
->  #include <linux/security.h>
->  #include <linux/atomic-ref.h>
-> +#include <linux/xattr.h>
->  
->  #define CREATE_TRACE_POINTS
->  #include <trace/events/io_uring.h>
-> @@ -726,6 +727,12 @@ struct io_async_rw {
->  	struct wait_page_queue		wpq;
->  };
->  
-> +struct io_xattr {
-> +	struct file			*file;
-> +	struct xattr_ctx		ctx;
-> +	struct filename			*filename;
-> +};
-> +
->  enum {
->  	REQ_F_FIXED_FILE_BIT	= IOSQE_FIXED_FILE_BIT,
->  	REQ_F_IO_DRAIN_BIT	= IOSQE_IO_DRAIN_BIT,
-> @@ -866,6 +873,7 @@ struct io_kiocb {
->  		struct io_symlink	symlink;
->  		struct io_hardlink	hardlink;
->  		struct io_getdents	getdents;
-> +		struct io_xattr		xattr;
->  	};
->  
->  	u8				opcode;
-> @@ -1118,6 +1126,10 @@ static const struct io_op_def io_op_defs[] = {
->  	[IORING_OP_GETDENTS] = {
->  		.needs_file		= 1,
->  	},
-> +	[IORING_OP_FSETXATTR] = {
-> +		.needs_file = 1
-> +	},
-> +	[IORING_OP_SETXATTR] = {},
->  };
->  
->  /* requests with any of those set should undergo io_disarm_next() */
-> @@ -3887,6 +3899,140 @@ static int io_renameat(struct io_kiocb *req, unsigned int issue_flags)
->  	return 0;
->  }
->  
-> +static int __io_setxattr_prep(struct io_kiocb *req,
-> +			const struct io_uring_sqe *sqe)
-> +{
-> +	struct io_xattr *ix = &req->xattr;
-> +	const char __user *name;
-> +	int ret;
-> +
-> +	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
-> +		return -EINVAL;
-> +	if (unlikely(sqe->ioprio))
-> +		return -EINVAL;
-> +	if (unlikely(req->flags & REQ_F_FIXED_FILE))
-> +		return -EBADF;
-> +
-> +	ix->filename = NULL;
-> +	name = u64_to_user_ptr(READ_ONCE(sqe->addr));
-> +	ix->ctx.value = u64_to_user_ptr(READ_ONCE(sqe->addr2));
-> +	ix->ctx.kvalue = NULL;
-> +	ix->ctx.size = READ_ONCE(sqe->len);
-> +	ix->ctx.flags = READ_ONCE(sqe->xattr_flags);
-> +
-> +	ix->ctx.kname = kmalloc(sizeof(*ix->ctx.kname), GFP_KERNEL);
-> +	if (!ix->ctx.kname)
-> +		return -ENOMEM;
-> +
-> +	ret = setxattr_copy(name, &ix->ctx);
-> +	if (ret) {
-> +		kfree(ix->ctx.kname);
-> +		return ret;
-> +	}
-> +
-> +	req->flags |= REQ_F_NEED_CLEANUP;
-> +	return 0;
-> +}
-> +
-> +static int io_setxattr_prep(struct io_kiocb *req,
-> +			const struct io_uring_sqe *sqe)
-> +{
-> +	struct io_xattr *ix = &req->xattr;
-> +	const char __user *path;
-> +	int ret;
-> +
-> +	ret = __io_setxattr_prep(req, sqe);
-> +	if (ret)
-> +		return ret;
-> +
-> +	path = u64_to_user_ptr(READ_ONCE(sqe->addr3));
-> +
-> +	ix->filename = getname_flags(path, LOOKUP_FOLLOW, NULL);
-> +	if (IS_ERR(ix->filename)) {
-> +		ret = PTR_ERR(ix->filename);
-> +		ix->filename = NULL;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static int io_fsetxattr_prep(struct io_kiocb *req,
-> +			const struct io_uring_sqe *sqe)
-> +{
-> +	return __io_setxattr_prep(req, sqe);
-> +}
-> +
-> +static int __io_setxattr(struct io_kiocb *req, unsigned int issue_flags,
-> +			struct path *path)
-> +{
-> +	struct io_xattr *ix = &req->xattr;
-> +	int ret;
-> +
-> +	ret = mnt_want_write(path->mnt);
-> +	if (!ret) {
-> +		ret = do_setxattr(mnt_user_ns(path->mnt), path->dentry, &ix->ctx);
-> +		mnt_drop_write(path->mnt);
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static int io_fsetxattr(struct io_kiocb *req, unsigned int issue_flags)
-> +{
-> +	struct io_xattr *ix = &req->xattr;
-> +	int ret;
-> +
-> +	if (issue_flags & IO_URING_F_NONBLOCK)
-> +		return -EAGAIN;
-> +
-> +	ret = __io_setxattr(req, issue_flags, &req->file->f_path);
-> +
-> +	req->flags &= ~REQ_F_NEED_CLEANUP;
-> +	kfree(ix->ctx.kname);
-> +
-> +	if (ix->ctx.kvalue)
-> +		kvfree(ix->ctx.kvalue);
-> +	if (ret < 0)
-> +		req_set_fail(req);
-> +
-> +	io_req_complete(req, ret);
-> +	return 0;
-> +}
-> +
-> +static int io_setxattr(struct io_kiocb *req, unsigned int issue_flags)
-> +{
-> +	struct io_xattr *ix = &req->xattr;
-> +	unsigned int lookup_flags = LOOKUP_FOLLOW;
-> +	struct path path;
-> +	int ret;
-> +
-> +	if (issue_flags & IO_URING_F_NONBLOCK)
-> +		return -EAGAIN;
-> +
-> +retry:
-> +	ret = do_user_path_at_empty(AT_FDCWD, ix->filename, lookup_flags, &path);
-> +	if (!ret) {
-> +		ret = __io_setxattr(req, issue_flags, &path);
-> +		path_put(&path);
-> +		if (retry_estale(ret, lookup_flags)) {
-> +			lookup_flags |= LOOKUP_REVAL;
-> +			goto retry;
-> +		}
-> +	}
-> +	putname(ix->filename);
-> +
-> +	req->flags &= ~REQ_F_NEED_CLEANUP;
-> +	kfree(ix->ctx.kname);
-> +
-> +	if (ix->ctx.kvalue)
-> +		kvfree(ix->ctx.kvalue);
-> +	if (ret < 0)
-> +		req_set_fail(req);
-> +
-> +	io_req_complete(req, ret);
-> +	return 0;
-> +}
+This adds the xattr support to io_uring. The intent is to have a more
+complete support for file operations in io_uring.
 
-(One suggestin below.)
+This change adds support for the following functions to io_uring:
+- fgetxattr
+- fsetxattr
+- getxattr
+- setxattr
 
-Looks good,
-Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+Patch 1: fs: split off do_user_path_at_empty from user_path_at_empty()
+  This splits off a new function do_user_path_at_empty from
+  user_path_at_empty that is based on filename and not on a
+  user-specified string.
 
-You could minimize the redudancy by implementing a simple helper
-callable from both io_fsetxattr() and io_setxattr() if you think it's
-worth with. So sm like:
+Patch 2: fs: split off setxattr_copy and do_setxattr function from setxat=
+tr
+  Split off the setup part of the setxattr function in the setxattr_copy
+  function. Split off the processing part in do_setxattr.
 
-From 2f837aa2a19b5cd8e73fffb9b87b6e6b22c5cae7 Mon Sep 17 00:00:00 2001
-From: Christian Brauner <christian.brauner@ubuntu.com>
-Date: Wed, 29 Dec 2021 15:22:34 +0100
-Subject: [PATCH] UNTESTED
+Patch 3: fs: split off do_getxattr from getxattr
+  Split of the do_getxattr part from getxattr. This will
+  allow it to be invoked it from io_uring.
 
----
- fs/io_uring.c | 36 +++++++++++++++++-------------------
- 1 file changed, 17 insertions(+), 19 deletions(-)
+Patch 4: io_uring: add fsetxattr and setxattr support
+  This adds new functions to support the fsetxattr and setxattr
+  functions.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 7204b8d593e4..c88916b8cccc 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -4118,6 +4118,21 @@ static int __io_setxattr(struct io_kiocb *req, unsigned int issue_flags,
- 	return ret;
- }
- 
-+static void __io_setxattr_finish(struct io_kiocb *req, int ret)
-+{
-+	struct xattr_ctx *ctx = &req->xattr.ctx;
-+
-+	req->flags &= ~REQ_F_NEED_CLEANUP;
-+
-+	kfree(ctx->kname);
-+	if (ctx->kvalue)
-+		kvfree(ctx->kvalue);
-+
-+	if (ret < 0)
-+		req_set_fail(req);
-+
-+	io_req_complete(req, ret);
-+}
-+
- static int io_fsetxattr(struct io_kiocb *req, unsigned int issue_flags)
- {
- 	struct io_xattr *ix = &req->xattr;
-@@ -4127,16 +4142,7 @@ static int io_fsetxattr(struct io_kiocb *req, unsigned int issue_flags)
- 		return -EAGAIN;
- 
- 	ret = __io_setxattr(req, issue_flags, &req->file->f_path);
--
--	req->flags &= ~REQ_F_NEED_CLEANUP;
--	kfree(ix->ctx.kname);
--
--	if (ix->ctx.kvalue)
--		kvfree(ix->ctx.kvalue);
--	if (ret < 0)
--		req_set_fail(req);
--
--	io_req_complete(req, ret);
-+	__io_setxattr_finish(req, ret);
- 	return 0;
- }
- 
-@@ -4162,15 +4168,7 @@ static int io_setxattr(struct io_kiocb *req, unsigned int issue_flags)
- 	}
- 	putname(ix->filename);
- 
--	req->flags &= ~REQ_F_NEED_CLEANUP;
--	kfree(ix->ctx.kname);
--
--	if (ix->ctx.kvalue)
--		kvfree(ix->ctx.kvalue);
--	if (ret < 0)
--		req_set_fail(req);
--
--	io_req_complete(req, ret);
-+	__io_setxattr_finish(req, ret);
- 	return 0;
- }
- 
--- 
+Patch 5: io_uring: add fgetxattr and getxattr support
+  This adds new functions to support the fgetxattr and getxattr
+  functions.
+
+
+There are two additional patches:
+  liburing: Add support for xattr api's.
+            This also includes the tests for the new code.
+  xfstests: Add support for io_uring xattr support.
+
+
+V10: - move do_user_path_at_empty definition to fs/internal.h
+     - introduce __io_setxattr_finish function
+     - introduce __io_getxattr_finish function
+V9 : - keep kvalue in struct xattr_ctx
+V8 : - introduce xattr_name struct as advised by Linus
+     - remove kname_sz field in xattr_ctx
+V7 : - split off setxattr in two functions as recommeneded by
+       Christian.
+V6 : - reverted addition of kname array to xattr_ctx structure
+       Adding the kname array increases the io_kiocb beyond 64 bytes
+       (increases it to 224 bytes). We try hard to limit it to 64 bytes.
+       Keeping the original interface also is a bit more efficient.
+     - addressed Pavel's reordering comment
+     - addressed Pavel's putname comment
+     - addressed Pavel's kvfree comment
+     - rebased on for-5.17/io_uring-getdents64
+V5 : - add kname array to xattr_ctx structure
+V4 : - rebased patch series
+V3 : - remove req->file checks in prep functions
+     - change size parameter in do_xattr
+V2 : - split off function do_user_path_empty instead of changing
+       the function signature of user_path_at
+     - Fix datatype size problem in do_getxattr
+
+
+Stefan Roesch (5):
+  fs: split off do_user_path_at_empty from user_path_at_empty()
+  fs: split off setxattr_copy and do_setxattr function from setxattr
+  fs: split off do_getxattr from getxattr
+  io_uring: add fsetxattr and setxattr support
+  io_uring: add fgetxattr and getxattr support
+
+ fs/internal.h                 |  34 ++++
+ fs/io_uring.c                 | 316 ++++++++++++++++++++++++++++++++++
+ fs/namei.c                    |  10 +-
+ fs/xattr.c                    | 114 ++++++++----
+ include/uapi/linux/io_uring.h |   8 +-
+ 5 files changed, 444 insertions(+), 38 deletions(-)
+
+
+base-commit: b4518682080d3a1cdd6ea45a54ff6772b8b2797a
+--=20
 2.30.2
 

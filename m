@@ -2,136 +2,122 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E944481E01
-	for <lists+io-uring@lfdr.de>; Thu, 30 Dec 2021 17:16:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 971AF481EBF
+	for <lists+io-uring@lfdr.de>; Thu, 30 Dec 2021 18:50:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239436AbhL3QQi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 30 Dec 2021 11:16:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34920 "EHLO
+        id S233989AbhL3Ruq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 30 Dec 2021 12:50:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239267AbhL3QQi (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 30 Dec 2021 11:16:38 -0500
-Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B167C061574;
-        Thu, 30 Dec 2021 08:16:38 -0800 (PST)
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1n2y6U-00G2Vv-Pq; Thu, 30 Dec 2021 16:16:34 +0000
-Date:   Thu, 30 Dec 2021 16:16:34 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, kernel-team@fb.com,
-        torvalds@linux-foundation.org
-Subject: Re: [PATCH v10 4/5] io_uring: add fsetxattr and setxattr support
-Message-ID: <Yc3bYj33YPwpAg8q@zeniv-ca.linux.org.uk>
-References: <20211229203002.4110839-1-shr@fb.com>
- <20211229203002.4110839-5-shr@fb.com>
- <Yc0Ws8LevbWc+N1q@zeniv-ca.linux.org.uk>
- <Yc0hwttkEu4wSPGa@zeniv-ca.linux.org.uk>
- <20211230101242.j6jzxc4ahmx2plqx@wittgenstein>
+        with ESMTP id S229914AbhL3Rup (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 30 Dec 2021 12:50:45 -0500
+Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07E29C061574;
+        Thu, 30 Dec 2021 09:50:45 -0800 (PST)
+Received: by mail-pf1-x430.google.com with SMTP id b22so21904483pfb.5;
+        Thu, 30 Dec 2021 09:50:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XD1PBLWCU+Wd5wgLSL4PPf6wiHtTvn/c3ckq8ac1Qlo=;
+        b=iZcBNzqqZEPdGcPvtFpJW1L763zW4VB2am4IknSlJpiW4SDwYbEGbgyfSVAFiFc+Ij
+         Pna+3VXxavyn6t28BGKwHaS62q5ekLcF6zQZVTxSoEK0bJr0+W1Pu4+mNTZ9/BWl80oL
+         R/a0Pa2Beobu8zOk/RHvywQBGJf4sG0ZDtbao6iWeT4uyLnR7AfV7ic3TyqtyazRRmeI
+         44Nk5XfEWItfDBSef5B6dNeH1UNMA4JRHMOzSO0+PkfLNohqtezZKFrXScvRQoRTRCCk
+         dZM6UCdwaiBn7TQOqzzW+6OqesV9WC4YmJ0IgXXQmvQl7WohaGxz32VRbrVV7JsmLAwI
+         uj2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XD1PBLWCU+Wd5wgLSL4PPf6wiHtTvn/c3ckq8ac1Qlo=;
+        b=o0XXgpzgykVHXcAOeCRJYaCy/413CtoPQ21zrkTNcXIFWA+fIne15IJ0kKUJ7SLsfe
+         ftC6MlxKPOhkK2Ie1LplxC+ihJV72Kbt0Lua7wL/zxY1XRLiNCXMPQx3Vi0linAzMnF6
+         bBuj5BrPXDc6nhYnMwiQ1LwTI9CZZgE6Ni2bNbDaMph1O3gT13mT+8gwk1EEgf7Fe6zb
+         I3Z0sC/8EH+dp89EBop9401Mv0IT2h7oVi6XN1MAtiOD+svYXH2P+JG6zyeOWGYQn6w5
+         RVyXcjDe3ihEYfCtvDBoFIckUZoMjuS7cSNirDjQ7lRyy55pIxksSYg66EikNmEoshY1
+         0nPQ==
+X-Gm-Message-State: AOAM532oKIkd8um1m9oCHwBIpbUsZTiiQSjVXYy/HT6z2NwDb+6oQQkD
+        KgRbh6DaSl9rHwYulPbVvLk=
+X-Google-Smtp-Source: ABdhPJxmUXSCIaytsRADgXQo1VF1eD7leC83pLPvYJ6+CAc5oCVzJZ0wmSppKXiZEO3+vSCpQtUVkA==
+X-Received: by 2002:a63:b34c:: with SMTP id x12mr17059473pgt.541.1640886644567;
+        Thu, 30 Dec 2021 09:50:44 -0800 (PST)
+Received: from integral2.. ([180.254.126.2])
+        by smtp.gmail.com with ESMTPSA id s34sm29980811pfg.198.2021.12.30.09.50.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Dec 2021 09:50:44 -0800 (PST)
+From:   Ammar Faizi <ammarfaizi2@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring Mailing List <io-uring@vger.kernel.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Ammar Faizi <ammarfaizi2@gmail.com>,
+        Nugra <richiisei@gmail.com>
+Subject: [RFC PATCH liburing v1 0/5] liburing: Add sendto(2) and recvfrom(2) support
+Date:   Fri, 31 Dec 2021 00:50:14 +0700
+Message-Id: <20211230174548.178641-1-ammar.faizi@intel.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211230101242.j6jzxc4ahmx2plqx@wittgenstein>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Dec 30, 2021 at 11:12:42AM +0100, Christian Brauner wrote:
+Hello,
 
-> @@ -545,6 +545,7 @@ EXPORT_SYMBOL_GPL(vfs_removexattr);
->  int setxattr_copy(const char __user *name, struct xattr_ctx *ctx)
->  {
->  	int error;
-> +	struct xattr_ctx *new_ctx;
->  
->  	if (ctx->flags & ~(XATTR_CREATE|XATTR_REPLACE))
->  		return -EINVAL;
-> @@ -606,12 +607,9 @@ setxattr(struct user_namespace *mnt_userns, struct dentry *d,
->  	int error;
->  
->  	error = setxattr_copy(name, &ctx);
-> -	if (error)
-> -		return error;
-> -
-> -	error = do_setxattr(mnt_userns, d, &ctx);
-> -
-> -	kvfree(ctx.kvalue);
-> +	if (!error)
-> +		error = do_setxattr(mnt_userns, d, &ctx);
-> +	setxattr_finish(&ctx);
->  	return error;
->  }
+I submitted an RFC patchset to add sendto(2) and recvfrom(2) support
+for io_uring. This RFC patchset adds the support for the liburing.
 
-Huh?  Have you lost a chunk or two in there?  The only modification of
-setxattr_copy() in your delta is the introduction of an unused local
-variable.  Confused...
+There are 5 patches in this series. 4 from me. 1 from Nugra.
 
-What I had in mind is something like this:
+For PATCH 1/5, it is just a .gitignore clean up.
 
-// same for getxattr and setxattr
-static int xattr_name_from_user(const char __user *name, struct xattr_ctx *ctx)
-{
-	int copied;
+## Changes Summary
+ - Update io_uring.h header (sync with the kernel).
 
-	if (!ctx->xattr_name) {
-		ctx->xattr_name = kmalloc(XATTR_NAME_MAX + 1, GFP_KERNEL);
-		if (!ctx->xattr_name)
-			return -ENOMEM;
-	}
+ - Add `io_uring_prep_{sendto,sendto}` functions.
 
-	copied = strncpy_from_user(ctx->xattr_name, name, XATTR_NAME_MAX + 1);
- 	if (copied < 0)
- 		return copied;	// copyin failure; almost always -EFAULT
-	if (copied == 0 || copied == XATTR_NAME_MAX + 1)
-		return  -ERANGE;
-	return 0;
-}
+ - Add test program for `IORING_OP_SENDTO` and `IORING_OP_RECVFROM`.
 
-// freeing is up to the caller, whether we succeed or not
-int setxattr_copy(const char __user *name, struct xattr_ctx *ctx)
-{
- 	int error;
+ - Add documentation for `io_uring_prep_{sendto,sendto}` functions.
 
-	if (ctx->flags & ~(XATTR_CREATE|XATTR_REPLACE))
- 		return -EINVAL;
 
-	error = xattr_name_from_user(name, ctx);
- 	if (error)
- 		return error;
+## How to test
 
-	if (ctx->size) {
-		void *p;
+This patchset is based on branch "xattr-getdents64" commit:
 
-		if (ctx->size > XATTR_SIZE_MAX)
- 			return -E2BIG;
+  18d71076f6c97e1b25aa0e3b0e12a913ec4717fa ("src/include/liburing.h: style cleanups")
 
-		p = vmemdup_user(ctx->value, ctx->size);
-		if (IS_ERR(p))
-			return PTR_ERR(p);
-		ctx->kvalue = p;
- 	}
-	return 0;
-}
 
-with syscall side concluded with freeing ->kvalue (unconditionally), while
-io_uring one - ->kvalue and ->xattr_name (also unconditionally).  And to
-hell with struct xattr_name - a string is a string.
+Signed-off-by: Nugra <richiisei@gmail.com>
+Signed-off-by: Ammar Faizi <ammarfaizi2@gmail.com>
+---
 
-However, what I really want to see is the answer to my question re control
-flow and the place where we do copy the arguments from userland.  Including
-the pathname.
+Ammar Faizi (4):
+  .gitignore: Add `/test/xattr` and `/test/getdents`
+  io_uring.h: Add `IORING_OP_SENDTO` and `IORING_OP_RECVFROM`
+  liburing.h: Add `io_uring_prep_{sendto,sendto}` helper
+  test: Add sendto_recvfrom test program
 
-*IF* there's a subtle reason that has to be done from prep phase (and there
-might very well be - figuring out the control flow in io_uring is bloody
-painful), I would really like to see it spelled out, along with the explanation
-of the reasons why statx() doesn't need anything of that sort.
+Nugra (1):
+  man: Add `io_uring_prep_{sendto,recvfrom}` docs
 
-If there's no such reasons, I would bloody well leave marshalling to the
-payload, allowing to share a lot more with the syscall path.  In that
-case xattr_ctx only needs to carry the userland pointers/size/flags.
-And all that "do we allocate the kernel copy of the name dynamically,
-or does it live on stack" simply goes away.
+ .gitignore                      |   3 +
+ man/io_uring_prep_recvfrom.3    |  33 +++
+ man/io_uring_prep_sendto.3      |  34 +++
+ src/include/liburing.h          |  22 ++
+ src/include/liburing/io_uring.h |   2 +
+ test/Makefile                   |   2 +
+ test/sendto_recvfrom.c          | 384 ++++++++++++++++++++++++++++++++
+ 7 files changed, 480 insertions(+)
+ create mode 100644 man/io_uring_prep_recvfrom.3
+ create mode 100644 man/io_uring_prep_sendto.3
+ create mode 100644 test/sendto_recvfrom.c
 
-Details, please.
+
+base-commit: 18d71076f6c97e1b25aa0e3b0e12a913ec4717fa
+-- 
+2.32.0
+

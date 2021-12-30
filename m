@@ -2,307 +2,150 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DFA38481EDA
-	for <lists+io-uring@lfdr.de>; Thu, 30 Dec 2021 18:52:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B80FB481EF8
+	for <lists+io-uring@lfdr.de>; Thu, 30 Dec 2021 19:01:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241562AbhL3Rwv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 30 Dec 2021 12:52:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56170 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241577AbhL3Rwt (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 30 Dec 2021 12:52:49 -0500
-Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CA0CC061401;
-        Thu, 30 Dec 2021 09:52:49 -0800 (PST)
-Received: by mail-pj1-x1035.google.com with SMTP id o63-20020a17090a0a4500b001b1c2db8145so28579038pjo.5;
-        Thu, 30 Dec 2021 09:52:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=dcBlXZFiwjA71AEHcnKhvkZGJOjelC7heeu53qWimxg=;
-        b=OV8sN2JkxtylbB7LoYCTzmrx77UhGCo5ssLqmcH9QyiMDoG+2gsk4w7hBkLu+KeAht
-         gy7O95n3Ai2G/3OOe612lhPolyFTwivvkNiE1PmcFAkesrEUpBomqt3j0wBIxBSHxk2M
-         u0tCKPHgS3OkrXQIihG6rdwKDf/JD7K4JJVQgZgf5FXCDrCe0+37Wo/dqhsBIm9G07Sc
-         Sh+y21jNYaoMOpx1LpSAZ0AdOudhKL2kb4Vr9ZPuYvAa7ZgIv8QcBnAsPRJc0DdAlAYM
-         hVyCgETDgYsE3NbLYicISsstUh6v3hW4cL7Ly4ti7DBuuF3ISthRP2zYib6fJwktIstF
-         jMqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=dcBlXZFiwjA71AEHcnKhvkZGJOjelC7heeu53qWimxg=;
-        b=RP5Zm8QfRw5KffHegWTzKwYUfYN4suIpFmSz+aFL+FpNsdUpqTqRxbjW9ciCo1dGB6
-         U4jaRCM1cOLGCv8Pi1IXSVVVk8Z9NznVAdKXUGh+J3ra1Qs6k4sy646yUPNN2NZ94M2i
-         Cbcd53XwRH8cxUNDyRQEpbQTSlmbM0cTlY1VHtZAzoOZKaPEJGXyxf+ZPje8HW2mGnS3
-         A1TYHXxnpDtVcn9DsMjsmytSM+xnu2IeS1lXeE0yzVCxz+jN+TM8yDjCxXj7xQfTqPNR
-         3dCROtaBV7cUsw084OrTW5LDqiRfWi7x77scfu+CIPQslGVV6r0Tmy4NHCct3ElXr13S
-         cNfw==
-X-Gm-Message-State: AOAM530tVBYV9M1BG878pM9GFSK1+PZg3zcL2ijRBH7Nckg7BcyqS7Xr
-        z7GORaHDAY8zyuTwBDwaiGM=
-X-Google-Smtp-Source: ABdhPJyzDtTIP4keK4rHYgRg3tve4+Tryzjz8S1GqzA6arlkfArgmE+w2sLOZXLPQLwUCuGDx+QYkg==
-X-Received: by 2002:a17:902:eb44:b0:148:b1ed:1a33 with SMTP id i4-20020a170902eb4400b00148b1ed1a33mr31814748pli.149.1640886769096;
-        Thu, 30 Dec 2021 09:52:49 -0800 (PST)
-Received: from integral2.. ([180.254.126.2])
-        by smtp.gmail.com with ESMTPSA id 185sm9244188pfe.26.2021.12.30.09.52.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Dec 2021 09:52:48 -0800 (PST)
-From:   Ammar Faizi <ammarfaizi2@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring Mailing List <io-uring@vger.kernel.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Ammar Faizi <ammarfaizi2@gmail.com>,
-        Nugra <richiisei@gmail.com>
-Subject: [RFC PATCH v3 3/3] io_uring: Add `sendto(2)` and `recvfrom(2)` support
-Date:   Fri, 31 Dec 2021 00:52:32 +0700
-Message-Id: <20211230173126.174350-4-ammar.faizi@intel.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20211230173126.174350-1-ammar.faizi@intel.com>
-References: <20211230115057.139187-3-ammar.faizi@intel.com>
- <20211230173126.174350-1-ammar.faizi@intel.com>
+        id S241521AbhL3SBV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 30 Dec 2021 13:01:21 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:55494 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236001AbhL3SBV (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 30 Dec 2021 13:01:21 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1261361716;
+        Thu, 30 Dec 2021 18:01:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D7EFC36AE9;
+        Thu, 30 Dec 2021 18:01:18 +0000 (UTC)
+Date:   Thu, 30 Dec 2021 19:01:14 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, kernel-team@fb.com,
+        torvalds@linux-foundation.org
+Subject: Re: [PATCH v10 4/5] io_uring: add fsetxattr and setxattr support
+Message-ID: <20211230180114.vuum3zorhafd2zta@wittgenstein>
+References: <20211229203002.4110839-1-shr@fb.com>
+ <20211229203002.4110839-5-shr@fb.com>
+ <Yc0Ws8LevbWc+N1q@zeniv-ca.linux.org.uk>
+ <Yc0hwttkEu4wSPGa@zeniv-ca.linux.org.uk>
+ <20211230101242.j6jzxc4ahmx2plqx@wittgenstein>
+ <Yc3bYj33YPwpAg8q@zeniv-ca.linux.org.uk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Yc3bYj33YPwpAg8q@zeniv-ca.linux.org.uk>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This adds sendto(2) and recvfrom(2) support for io_uring.
+On Thu, Dec 30, 2021 at 04:16:34PM +0000, Al Viro wrote:
+> On Thu, Dec 30, 2021 at 11:12:42AM +0100, Christian Brauner wrote:
+> 
+> > @@ -545,6 +545,7 @@ EXPORT_SYMBOL_GPL(vfs_removexattr);
+> >  int setxattr_copy(const char __user *name, struct xattr_ctx *ctx)
+> >  {
+> >  	int error;
+> > +	struct xattr_ctx *new_ctx;
+> >  
+> >  	if (ctx->flags & ~(XATTR_CREATE|XATTR_REPLACE))
+> >  		return -EINVAL;
+> > @@ -606,12 +607,9 @@ setxattr(struct user_namespace *mnt_userns, struct dentry *d,
+> >  	int error;
+> >  
+> >  	error = setxattr_copy(name, &ctx);
+> > -	if (error)
+> > -		return error;
+> > -
+> > -	error = do_setxattr(mnt_userns, d, &ctx);
+> > -
+> > -	kvfree(ctx.kvalue);
+> > +	if (!error)
+> > +		error = do_setxattr(mnt_userns, d, &ctx);
+> > +	setxattr_finish(&ctx);
+> >  	return error;
+> >  }
+> 
+> Huh?  Have you lost a chunk or two in there?  The only modification of
+> setxattr_copy() in your delta is the introduction of an unused local
+> variable.  Confused...
+> 
+> What I had in mind is something like this:
+> 
+> // same for getxattr and setxattr
+> static int xattr_name_from_user(const char __user *name, struct xattr_ctx *ctx)
+> {
+> 	int copied;
+> 
+> 	if (!ctx->xattr_name) {
+> 		ctx->xattr_name = kmalloc(XATTR_NAME_MAX + 1, GFP_KERNEL);
+> 		if (!ctx->xattr_name)
+> 			return -ENOMEM;
+> 	}
+> 
+> 	copied = strncpy_from_user(ctx->xattr_name, name, XATTR_NAME_MAX + 1);
+>  	if (copied < 0)
+>  		return copied;	// copyin failure; almost always -EFAULT
+> 	if (copied == 0 || copied == XATTR_NAME_MAX + 1)
+> 		return  -ERANGE;
+> 	return 0;
+> }
+> 
+> // freeing is up to the caller, whether we succeed or not
+> int setxattr_copy(const char __user *name, struct xattr_ctx *ctx)
+> {
+>  	int error;
+> 
+> 	if (ctx->flags & ~(XATTR_CREATE|XATTR_REPLACE))
+>  		return -EINVAL;
+> 
+> 	error = xattr_name_from_user(name, ctx);
+>  	if (error)
+>  		return error;
+> 
+> 	if (ctx->size) {
+> 		void *p;
+> 
+> 		if (ctx->size > XATTR_SIZE_MAX)
+>  			return -E2BIG;
+> 
+> 		p = vmemdup_user(ctx->value, ctx->size);
+> 		if (IS_ERR(p))
+> 			return PTR_ERR(p);
+> 		ctx->kvalue = p;
+>  	}
+> 	return 0;
+> }
+> 
+> with syscall side concluded with freeing ->kvalue (unconditionally), while
+> io_uring one - ->kvalue and ->xattr_name (also unconditionally).  And to
+> hell with struct xattr_name - a string is a string.
 
-New opcodes:
-  IORING_OP_SENDTO
-  IORING_OP_RECVFROM
+Uhm, it wasn't obvious at all that you were just talking about
+attr_ctx->kname. At least to me. I thought you were saying to allocate
+struct xattr_ctx dynamically for io_uring and have it static for the
+syscall path. Anyway, that change seems sensible to me. I don't care
+much if there's a separate struct xattr_name or not.
 
-Cc: Nugra <richiisei@gmail.com>
-Tested-by: Nugra <richiisei@gmail.com>
-Link: https://github.com/axboe/liburing/issues/397
-Signed-off-by: Ammar Faizi <ammarfaizi2@gmail.com>
----
+> 
+> However, what I really want to see is the answer to my question re control
+> flow and the place where we do copy the arguments from userland.  Including
+> the pathname.
+> 
+> *IF* there's a subtle reason that has to be done from prep phase (and there
+> might very well be - figuring out the control flow in io_uring is bloody
+> painful), I would really like to see it spelled out, along with the explanation
+> of the reasons why statx() doesn't need anything of that sort.
+> 
+> If there's no such reasons, I would bloody well leave marshalling to the
 
-v3:
-  - Fix build error when CONFIG_NET is undefined should be done in
-    the first patch, not this patch.
+That's really something the io_uring folks should explain to us. I can't
+help much there either apart from what I can gather from looking through
+the io_req_prep() switch.
 
-  - Add Tested-by tag from Nugra.
-
-v2:
-  - In `io_recvfrom()`, mark the error check of `move_addr_to_user()`
-    call as unlikely.
-
-  - Fix build error when CONFIG_NET is undefined.
-
-  - Added Nugra to CC list (tester).
----
- fs/io_uring.c                 | 80 +++++++++++++++++++++++++++++++++--
- include/uapi/linux/io_uring.h |  2 +
- 2 files changed, 78 insertions(+), 4 deletions(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 7adcb591398f..3726958f8f58 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -575,7 +575,15 @@ struct io_sr_msg {
- 	union {
- 		struct compat_msghdr __user	*umsg_compat;
- 		struct user_msghdr __user	*umsg;
--		void __user			*buf;
-+
-+		struct {
-+			void __user		*buf;
-+			struct sockaddr __user	*addr;
-+			union {
-+				int		sendto_addr_len;
-+				int __user	*recvfrom_addr_len;
-+			};
-+		};
- 	};
- 	int				msg_flags;
- 	int				bgid;
-@@ -1133,6 +1141,19 @@ static const struct io_op_def io_op_defs[] = {
- 		.needs_file = 1
- 	},
- 	[IORING_OP_GETXATTR] = {},
-+	[IORING_OP_SENDTO] = {
-+		.needs_file		= 1,
-+		.unbound_nonreg_file	= 1,
-+		.pollout		= 1,
-+		.audit_skip		= 1,
-+	},
-+	[IORING_OP_RECVFROM] = {
-+		.needs_file		= 1,
-+		.unbound_nonreg_file	= 1,
-+		.pollin			= 1,
-+		.buffer_select		= 1,
-+		.audit_skip		= 1,
-+	},
- };
- 
- /* requests with any of those set should undergo io_disarm_next() */
-@@ -5216,12 +5237,24 @@ static int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
- 		return -EINVAL;
- 
-+	/*
-+	 * For IORING_OP_SEND{,TO}, the assignment to @sr->umsg
-+	 * is equivalent to an assignment to @sr->buf.
-+	 */
- 	sr->umsg = u64_to_user_ptr(READ_ONCE(sqe->addr));
-+
- 	sr->len = READ_ONCE(sqe->len);
- 	sr->msg_flags = READ_ONCE(sqe->msg_flags) | MSG_NOSIGNAL;
- 	if (sr->msg_flags & MSG_DONTWAIT)
- 		req->flags |= REQ_F_NOWAIT;
- 
-+	if (req->opcode == IORING_OP_SENDTO) {
-+		sr->addr = u64_to_user_ptr(READ_ONCE(sqe->addr2));
-+		sr->sendto_addr_len = READ_ONCE(sqe->addr3);
-+	} else {
-+		sr->addr = (struct sockaddr __user *) NULL;
-+	}
-+
- #ifdef CONFIG_COMPAT
- 	if (req->ctx->compat)
- 		sr->msg_flags |= MSG_CMSG_COMPAT;
-@@ -5275,6 +5308,7 @@ static int io_sendmsg(struct io_kiocb *req, unsigned int issue_flags)
- 
- static int io_sendto(struct io_kiocb *req, unsigned int issue_flags)
- {
-+	struct sockaddr_storage address;
- 	struct io_sr_msg *sr = &req->sr_msg;
- 	struct msghdr msg;
- 	struct iovec iov;
-@@ -5291,10 +5325,20 @@ static int io_sendto(struct io_kiocb *req, unsigned int issue_flags)
- 	if (unlikely(ret))
- 		return ret;
- 
--	msg.msg_name = NULL;
-+
- 	msg.msg_control = NULL;
- 	msg.msg_controllen = 0;
--	msg.msg_namelen = 0;
-+	if (sr->addr) {
-+		ret = move_addr_to_kernel(sr->addr, sr->sendto_addr_len,
-+					  &address);
-+		if (unlikely(ret < 0))
-+			goto fail;
-+		msg.msg_name = (struct sockaddr *) &address;
-+		msg.msg_namelen = sr->sendto_addr_len;
-+	} else {
-+		msg.msg_name = NULL;
-+		msg.msg_namelen = 0;
-+	}
- 
- 	flags = req->sr_msg.msg_flags;
- 	if (issue_flags & IO_URING_F_NONBLOCK)
-@@ -5309,6 +5353,7 @@ static int io_sendto(struct io_kiocb *req, unsigned int issue_flags)
- 			return -EAGAIN;
- 		if (ret == -ERESTARTSYS)
- 			ret = -EINTR;
-+	fail:
- 		req_set_fail(req);
- 	}
- 	__io_req_complete(req, issue_flags, ret, 0);
-@@ -5427,13 +5472,25 @@ static int io_recvmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
- 		return -EINVAL;
- 
-+	/*
-+	 * For IORING_OP_RECV{,FROM}, the assignment to @sr->umsg
-+	 * is equivalent to an assignment to @sr->buf.
-+	 */
- 	sr->umsg = u64_to_user_ptr(READ_ONCE(sqe->addr));
-+
- 	sr->len = READ_ONCE(sqe->len);
- 	sr->bgid = READ_ONCE(sqe->buf_group);
- 	sr->msg_flags = READ_ONCE(sqe->msg_flags) | MSG_NOSIGNAL;
- 	if (sr->msg_flags & MSG_DONTWAIT)
- 		req->flags |= REQ_F_NOWAIT;
- 
-+	if (req->opcode == IORING_OP_RECVFROM) {
-+		sr->addr = u64_to_user_ptr(READ_ONCE(sqe->addr2));
-+		sr->recvfrom_addr_len = u64_to_user_ptr(READ_ONCE(sqe->addr3));
-+	} else {
-+		sr->addr = (struct sockaddr __user *) NULL;
-+	}
-+
- #ifdef CONFIG_COMPAT
- 	if (req->ctx->compat)
- 		sr->msg_flags |= MSG_CMSG_COMPAT;
-@@ -5509,6 +5566,7 @@ static int io_recvfrom(struct io_kiocb *req, unsigned int issue_flags)
- 	struct iovec iov;
- 	unsigned flags;
- 	int ret, min_ret = 0;
-+	struct sockaddr_storage address;
- 	bool force_nonblock = issue_flags & IO_URING_F_NONBLOCK;
- 
- 	sock = sock_from_file(req->file);
-@@ -5526,7 +5584,7 @@ static int io_recvfrom(struct io_kiocb *req, unsigned int issue_flags)
- 	if (unlikely(ret))
- 		goto out_free;
- 
--	msg.msg_name = NULL;
-+	msg.msg_name = sr->addr ? (struct sockaddr *) &address : NULL;
- 	msg.msg_control = NULL;
- 	msg.msg_controllen = 0;
- 	msg.msg_namelen = 0;
-@@ -5540,6 +5598,16 @@ static int io_recvfrom(struct io_kiocb *req, unsigned int issue_flags)
- 		min_ret = iov_iter_count(&msg.msg_iter);
- 
- 	ret = sock_recvmsg(sock, &msg, flags);
-+
-+	if (ret >= 0 && sr->addr != NULL) {
-+		int tmp;
-+
-+		tmp = move_addr_to_user(&address, msg.msg_namelen, sr->addr,
-+					sr->recvfrom_addr_len);
-+		if (unlikely(tmp < 0))
-+			ret = tmp;
-+	}
-+
- out_free:
- 	if (ret < min_ret) {
- 		if (ret == -EAGAIN && force_nonblock)
-@@ -6778,9 +6846,11 @@ static int io_req_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	case IORING_OP_SYNC_FILE_RANGE:
- 		return io_sfr_prep(req, sqe);
- 	case IORING_OP_SENDMSG:
-+	case IORING_OP_SENDTO:
- 	case IORING_OP_SEND:
- 		return io_sendmsg_prep(req, sqe);
- 	case IORING_OP_RECVMSG:
-+	case IORING_OP_RECVFROM:
- 	case IORING_OP_RECV:
- 		return io_recvmsg_prep(req, sqe);
- 	case IORING_OP_CONNECT:
-@@ -7060,12 +7130,14 @@ static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags)
- 	case IORING_OP_SENDMSG:
- 		ret = io_sendmsg(req, issue_flags);
- 		break;
-+	case IORING_OP_SENDTO:
- 	case IORING_OP_SEND:
- 		ret = io_sendto(req, issue_flags);
- 		break;
- 	case IORING_OP_RECVMSG:
- 		ret = io_recvmsg(req, issue_flags);
- 		break;
-+	case IORING_OP_RECVFROM:
- 	case IORING_OP_RECV:
- 		ret = io_recvfrom(req, issue_flags);
- 		break;
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index efc7ac9b3a6b..a360069d1e8e 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -150,6 +150,8 @@ enum {
- 	IORING_OP_SETXATTR,
- 	IORING_OP_FGETXATTR,
- 	IORING_OP_GETXATTR,
-+	IORING_OP_SENDTO,
-+	IORING_OP_RECVFROM,
- 
- 	/* this goes last, obviously */
- 	IORING_OP_LAST,
--- 
-2.32.0
-
+Where it's clear that nearly all syscall-operations immediately do a
+getname() and/or copy their arguments in the *_prep() phase as, not in
+the actual "do-the-work" phase. For example, io_epoll_ctl_prep() which
+copies struct epoll_event via copy_from_user(). It doesn't do it in
+io_epoll_ctl(). So as such io_statx_prep() is the outlier...

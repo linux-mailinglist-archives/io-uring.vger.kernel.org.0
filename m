@@ -2,145 +2,68 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 418D04818D2
-	for <lists+io-uring@lfdr.de>; Thu, 30 Dec 2021 04:04:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D83BD481B32
+	for <lists+io-uring@lfdr.de>; Thu, 30 Dec 2021 10:41:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235077AbhL3DEh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 29 Dec 2021 22:04:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58556 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231751AbhL3DEg (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 29 Dec 2021 22:04:36 -0500
-Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAF64C061574;
-        Wed, 29 Dec 2021 19:04:36 -0800 (PST)
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1n2lk2-00Ft24-Pu; Thu, 30 Dec 2021 03:04:34 +0000
-Date:   Thu, 30 Dec 2021 03:04:34 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Stefan Roesch <shr@fb.com>
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        kernel-team@fb.com, torvalds@linux-foundation.org,
-        christian.brauner@ubuntu.com
-Subject: Re: [PATCH v10 4/5] io_uring: add fsetxattr and setxattr support
-Message-ID: <Yc0hwttkEu4wSPGa@zeniv-ca.linux.org.uk>
+        id S238345AbhL3Jl5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 30 Dec 2021 04:41:57 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:55808 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234584AbhL3Jl5 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 30 Dec 2021 04:41:57 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 392F66164B;
+        Thu, 30 Dec 2021 09:41:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2DAFC36AEA;
+        Thu, 30 Dec 2021 09:41:54 +0000 (UTC)
+Date:   Thu, 30 Dec 2021 10:41:51 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, kernel-team@fb.com,
+        torvalds@linux-foundation.org
+Subject: Re: [PATCH v10 2/5] fs: split off setxattr_copy and do_setxattr
+ function from setxattr
+Message-ID: <20211230094151.z7frfjxv3xhlgckx@wittgenstein>
 References: <20211229203002.4110839-1-shr@fb.com>
- <20211229203002.4110839-5-shr@fb.com>
- <Yc0Ws8LevbWc+N1q@zeniv-ca.linux.org.uk>
+ <20211229203002.4110839-3-shr@fb.com>
+ <Yc0IHp2igNlXqyKV@zeniv-ca.linux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Yc0Ws8LevbWc+N1q@zeniv-ca.linux.org.uk>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <Yc0IHp2igNlXqyKV@zeniv-ca.linux.org.uk>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Dec 30, 2021 at 02:17:23AM +0000, Al Viro wrote:
-> On Wed, Dec 29, 2021 at 12:30:01PM -0800, Stefan Roesch wrote:
+On Thu, Dec 30, 2021 at 01:15:10AM +0000, Al Viro wrote:
+> On Wed, Dec 29, 2021 at 12:29:59PM -0800, Stefan Roesch wrote:
+> > +	if (ctx->size) {
+> > +		if (ctx->size > XATTR_SIZE_MAX)
+> >  			return -E2BIG;
+> > -		kvalue = kvmalloc(size, GFP_KERNEL);
+> > -		if (!kvalue)
+> > +
+> > +		ctx->kvalue = kvmalloc(ctx->size, GFP_KERNEL);
+> > +		if (!ctx->kvalue)
+> >  			return -ENOMEM;
+> > -		if (copy_from_user(kvalue, value, size)) {
+> > -			error = -EFAULT;
+> > -			goto out;
+> > +
+> > +		if (copy_from_user(ctx->kvalue, ctx->value, ctx->size)) {
+> > +			kvfree(ctx->kvalue);
+> > +			return -EFAULT;
 > 
-> > +static int __io_setxattr_prep(struct io_kiocb *req,
-> > +			const struct io_uring_sqe *sqe)
-> > +{
-> > +	struct io_xattr *ix = &req->xattr;
-> > +	const char __user *name;
-> > +	int ret;
-> > +
-> > +	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
-> > +		return -EINVAL;
-> > +	if (unlikely(sqe->ioprio))
-> > +		return -EINVAL;
-> > +	if (unlikely(req->flags & REQ_F_FIXED_FILE))
-> > +		return -EBADF;
-> > +
-> > +	ix->filename = NULL;
-> > +	name = u64_to_user_ptr(READ_ONCE(sqe->addr));
-> > +	ix->ctx.value = u64_to_user_ptr(READ_ONCE(sqe->addr2));
-> > +	ix->ctx.kvalue = NULL;
-> > +	ix->ctx.size = READ_ONCE(sqe->len);
-> > +	ix->ctx.flags = READ_ONCE(sqe->xattr_flags);
-> > +
-> > +	ix->ctx.kname = kmalloc(sizeof(*ix->ctx.kname), GFP_KERNEL);
-> > +	if (!ix->ctx.kname)
-> > +		return -ENOMEM;
-> > +
-> > +	ret = setxattr_copy(name, &ix->ctx);
-> > +	if (ret) {
-> > +		kfree(ix->ctx.kname);
-> > +		return ret;
-> > +	}
-> > +
-> > +	req->flags |= REQ_F_NEED_CLEANUP;
-> > +	return 0;
-> > +}
-> 
-> OK, so you
-> 	* allocate a buffer for xattr name
-> 	* have setxattr_copy() copy the name in *and* memdup the contents
-> 	* on failure, you have the buffer for xattr name freed and return
-> an error.  memdup'ed stuff is left for cleanup, presumably.
-> 
-> > +static int io_setxattr_prep(struct io_kiocb *req,
-> > +			const struct io_uring_sqe *sqe)
-> > +{
-> > +	struct io_xattr *ix = &req->xattr;
-> > +	const char __user *path;
-> > +	int ret;
-> > +
-> > +	ret = __io_setxattr_prep(req, sqe);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	path = u64_to_user_ptr(READ_ONCE(sqe->addr3));
-> > +
-> > +	ix->filename = getname_flags(path, LOOKUP_FOLLOW, NULL);
-> > +	if (IS_ERR(ix->filename)) {
-> > +		ret = PTR_ERR(ix->filename);
-> > +		ix->filename = NULL;
-> > +	}
-> > +
-> > +	return ret;
-> > +}
-> 
-> ... and here you use it and bring the pathname in.  Should the latter
-> step fail, you restore ->filename to NULL and return an error.
-> 
-> Could you explain what kind of magic could allow the caller to tell
-> whether ix->ctx.kname needs to be freed on error?  I don't see any way
-> that could possibly work...
+> BTW, what's wrong with using vmemdup_user() here?
 
-FWIW, your calling conventions make no sense whatsoever.  OK, you have
-a helper that does copyin of the arguments.  And it needs to be shared
-between the syscall path (where you put the xattr name on stack) and
-io_uring one (where you allocate it dynamically).  Why not simply move
-the allocation into that helper, conditional upon the passed value being
-NULL?  And leave it alone on any failure paths in that helper.
+Nothing? It's simply timing paired with that specific code not needing
+to be touched:
 
-Syscall user would set it pointing to local structure/string/whatnot.
-No freeing is needed there in any case.
+- in 2005 that code was kmalloc(GFP_KERNEL) + copy_from_user()
+- in 2009 it was changed to memdup_user(GFP_USER)
+- in 2012 it was changed to kvmalloc(GFP_KERNEL) + copy_from_user()
 
-io_uring one would set it to NULL and free the value left there on
-cleanup.  Again, same in all cases, error or no error.  Just make sure
-you have it zeroed *before* any failure exits (including those on req->flags,
-etc.)
-
-While we are at it, syscall path needs to free the copied xattr contents
-anyway.  So screw freeing anything in that helper (both allocation failures
-and copyin ones); have all freeing done by caller, and make it unconditional
-there.  An error is usually a slow path; an error of that sort - definitely
-so.  IOW,
-	1) call the helper, copying userland data into the buffers allocated
-by the helper
-	2) if helper hasn't returned an error, do work
-	3) free whatever the helper has allocated
-With (3) being unconditional.  It doesn't make any sense to have a separate
-early exit, especially since with your approach you end up paying the price
-on failure exits in the helper anyway.
-
-	error = setxattr_copy(...);
-	if (likely(!error))
-		error = do_setxattr(...);
-	kvfree(...);
-	return error;
-
-would've been better for the syscall side as well.
+In 2018 you added vmemdup_user() and noone has updated that codepath. :)

@@ -2,117 +2,96 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FA6B483417
-	for <lists+io-uring@lfdr.de>; Mon,  3 Jan 2022 16:22:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BDE3948373C
+	for <lists+io-uring@lfdr.de>; Mon,  3 Jan 2022 19:55:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232546AbiACPWa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 3 Jan 2022 10:22:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52538 "EHLO
+        id S235897AbiACSzu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 3 Jan 2022 13:55:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44596 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231175AbiACPW3 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 3 Jan 2022 10:22:29 -0500
-Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62AC8C061761
-        for <io-uring@vger.kernel.org>; Mon,  3 Jan 2022 07:22:29 -0800 (PST)
-Received: by mail-io1-xd31.google.com with SMTP id h23so30560591iol.11
-        for <io-uring@vger.kernel.org>; Mon, 03 Jan 2022 07:22:29 -0800 (PST)
+        with ESMTP id S235519AbiACSzu (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 3 Jan 2022 13:55:50 -0500
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F38E0C061761
+        for <io-uring@vger.kernel.org>; Mon,  3 Jan 2022 10:55:49 -0800 (PST)
+Received: by mail-ed1-x529.google.com with SMTP id f5so139313537edq.6
+        for <io-uring@vger.kernel.org>; Mon, 03 Jan 2022 10:55:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=a0cR/6w8uqwzTMG+CuX313qBRCEM9+65JVhVSxfZXSI=;
-        b=pFpeojOrh358OHZlb6AmXhZw9zsHYcd3g6zZZS5Dp9TMt/5ZzkhOpdO75RDTXCEDJE
-         fm2ComG8Jm45tJ76qDylJvQAZVZPSvaYr4bpl/8tq+H0G94eXiGbGMPxpqX2B/q6vWSr
-         CyAqCYLJ+pqvbxKQKCBqUEtAjj7XZlrp2ne7kMLIJxO0Rckd8IGamlhh8ILqVtFEjB9Q
-         TpQQ5lh+Js6ovT48AUkumjGypnhK90V6yKPmMVTZCUvxl5k2c+T+esisfXxdvK7iAGJ/
-         J+5336tCmPKgC67OmPthw2J3PkPteaMOMM1uOi/N3ehz+8AwDC4HcUgYFNX//Tld14sn
-         pPeA==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=h/tl740B5dKu3LcT9k/DwsMLta3onSSEJxNz0w7L77Q=;
+        b=Kswum6/H/CUH2m0aHNjA1M5P7b2h+4XmNGY0uwlFwhgK88+sTraM9oPHfrCUvC7BBC
+         z9HqFO/bsZzRqNxojrBth5Oqqu5mYpoIPKcy4zoL5GBEtm0KpwU4q8c0MbhbFUQPm6Z1
+         +tMVNRgmFAbuDQCKKiMS5Qsyxrr9JVh2pPJKs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=a0cR/6w8uqwzTMG+CuX313qBRCEM9+65JVhVSxfZXSI=;
-        b=CZmvIkEstyIw1vTiCvU3fsKSE7vnfqd20bzcT6E+KYp6CILSpRN73ByRrF6HyJR70M
-         urlTz36xStLQp99XO/X5zAeHQp1X0NtyBNBtZp8ru9VjDL578f73r5E5v0I1y8vxbX5V
-         fsbFlu4fq/kCtmBt+ChaKuxsrFoCeAoKsztlAVzDqvcAZviibD7c1bEMaYKCvz57fZMl
-         gtEgBLtAJjzazMK5oCkNqZj4yJsMeg5kiOB5czmxXUNx1DrppBPx+yGAdH8kcwl0HQab
-         5r6XqHaSQKVIUb7BJ8NDf8reHkLF4Nowu+M2BBLYs5I64p2FQSQygaBOrW8/cU44b2HT
-         2dEw==
-X-Gm-Message-State: AOAM532FPGNSxV+9Dd6LJ9bkdrP7ZBPfbZas7ULtHrv9AVB9BLR2Dmmr
-        C1BtL/sH1T0r7F9CB5/kNtDVRUmwp6C8AA==
-X-Google-Smtp-Source: ABdhPJxyiONubxQ+zDbq9p/0xpcsRrUXA3tP4jaSBMdlWHgb2z8P7/Do86VsXzbeerzGqmVmJnglUQ==
-X-Received: by 2002:a05:6638:1410:: with SMTP id k16mr19255535jad.224.1641223348564;
-        Mon, 03 Jan 2022 07:22:28 -0800 (PST)
-Received: from [192.168.1.30] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id k7sm23749948iov.40.2022.01.03.07.22.28
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=h/tl740B5dKu3LcT9k/DwsMLta3onSSEJxNz0w7L77Q=;
+        b=MEKZ5zUy6Wci+FX20uY29WZoUaj7JktTCloym5uqGj0qh2+3A33lxkQfk7gOrSYNMe
+         1Tl+yjm8a0RNSP1ygmas2jm0jWvIgrCrD1HufaEFNIVzZ4pOvWoWr1264gCV/YxfsoCX
+         nQjl6UEtb1sBt8LMT2CS4CF0q/KAcHRS9OLbfQ1gXq4FhaT8nT7hoaqfZ4dHLP3idafz
+         beU0K7EJnFBkV/nyZVjac1wv0tvfPoACafh5w5BK+Y08n/Oj7uzyg6lHLkbG62cIGpMe
+         XKU5YVjjJltTCAXT+27nRcw4wYyFdO6XZKSbW4uu1TstT41JA/mbPZlKknHvJ/2P8dCP
+         nHMQ==
+X-Gm-Message-State: AOAM530y00iyAyN4DO4+V+x1CpFnw8ESoWWJ/Gf/9NzjyQc8CvN9OaON
+        jhmLra/jfVod7PIW6qvtqxEigJVmZ9VEoysp
+X-Google-Smtp-Source: ABdhPJzDnouy/CkrNnM3lI9llRzT97jBUynXiq46C5GjOId8w8j7rTMUKdzV+yBlASlW+P005E91ZA==
+X-Received: by 2002:a17:906:a15a:: with SMTP id bu26mr2407352ejb.335.1641236148368;
+        Mon, 03 Jan 2022 10:55:48 -0800 (PST)
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com. [209.85.221.50])
+        by smtp.gmail.com with ESMTPSA id o22sm13958868edc.85.2022.01.03.10.55.47
+        for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Jan 2022 07:22:28 -0800 (PST)
-Subject: Re: [PATCH RFC] io_uring: improve current file position IO
-To:     Jann Horn <jannh@google.com>
-Cc:     io-uring <io-uring@vger.kernel.org>
-References: <8a9e55bf-3195-5282-2907-41b2f2b23cc8@kernel.dk>
- <CAG48ez3ndoSC=fRvmzku1hLkO99RPwA3F3PA5mVZ47AkU5q-5A@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <0cb60924-b92c-8844-4ec7-1219fcef08df@kernel.dk>
-Date:   Mon, 3 Jan 2022 08:22:27 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Mon, 03 Jan 2022 10:55:47 -0800 (PST)
+Received: by mail-wr1-f50.google.com with SMTP id o3so13390655wrh.10
+        for <io-uring@vger.kernel.org>; Mon, 03 Jan 2022 10:55:47 -0800 (PST)
+X-Received: by 2002:a05:6000:10d2:: with SMTP id b18mr39310306wrx.193.1641236147522;
+ Mon, 03 Jan 2022 10:55:47 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAG48ez3ndoSC=fRvmzku1hLkO99RPwA3F3PA5mVZ47AkU5q-5A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20211221164004.119663-1-shr@fb.com> <CAHk-=wgHC_niLQqhmJRPTDULF7K9n8XRDfHV=SCOWvCPugUv5Q@mail.gmail.com>
+ <Yc+PK4kRo5ViXu0O@zeniv-ca.linux.org.uk> <YdCyoQNPNcaM9rqD@zeniv-ca.linux.org.uk>
+ <CAG48ez1O9VxSuWuLXBjke23YxUA8EhMP+6RCHo5PNQBf3B0pDQ@mail.gmail.com>
+In-Reply-To: <CAG48ez1O9VxSuWuLXBjke23YxUA8EhMP+6RCHo5PNQBf3B0pDQ@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 3 Jan 2022 10:55:31 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjPEDXkiyTtLijupF80JdNbKG9Rr8QA448u1siuZLCfkw@mail.gmail.com>
+Message-ID: <CAHk-=wjPEDXkiyTtLijupF80JdNbKG9Rr8QA448u1siuZLCfkw@mail.gmail.com>
+Subject: Re: [PATCH v7 0/3] io_uring: add getdents64 support
+To:     Jann Horn <jannh@google.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>,
+        Stefan Roesch <shr@fb.com>,
+        io-uring <io-uring@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 1/3/22 7:17 AM, Jann Horn wrote:
-> On Fri, Dec 24, 2021 at 3:35 PM Jens Axboe <axboe@kernel.dk> wrote:
->> io_uring should be protecting the current file position with the
->> file position lock, ->f_pos_lock. Grab and track the lock state when
->> the request is being issued, and make the unlock part of request
->> cleaning.
->>
->> Fixes: ba04291eb66e ("io_uring: allow use of offset == -1 to mean file position")
->> Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
->> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->>
->> ---
->>
->> Main thing I don't like here:
->>
->> - We're holding the f_pos_lock across the kernel/user boundary, as
->>   it's held for the duration of the IO. Alternatively we could
->>   keep it local to io_read() and io_write() and lose REQ_F_CUR_POS_LOCK,
->>   but will messy up those functions more and add more items to the
->>   fast path (which current position read/write definitely is not).
->>
->> Suggestions welcome...
-> 
-> Oh, that's not pretty... is it guaranteed that the
+On Sun, Jan 2, 2022 at 11:04 PM Jann Horn <jannh@google.com> wrote:
+>
+> And for this validation caching to work properly, AFAIU you need to
+> hold the file->f_pos_lock (or have exclusive access to the "struct
+> file"), which happens in the normal getdents() path via fdget_pos().
+> This guarantees that the readdir handler has exclusive access to the
+> file's ->f_version, which has to stay in sync with the position.
 
-Right, hence why it's an RFC :-)
+Yes.
 
-> __f_unlock_pos(req->file) will happen in the same task as the
-> io_file_pos_lock(req, false), and have you tried running this with
+So the whole 'preaddir()' model was wrong, and thanks to Al for noticing.
 
-It might unlock from a thread off that task, depends on how the execution
-happens. And as it stands, it'll also potentially exit the kernel with
-the lock held until it completes.
+It turns out that you cannot pass in a different 'pos' than f_pos,
+because we have that very tight coupling between the 'struct file' and
+readdir().
 
-> lockdep and mutex debugging enabled? Could a task deadlock if it tried
-> to do a read() on a file while io_uring is already holding the
-> position lock?
+It's not just about f_pos and f_version, either - Al pointed out the
+virtual filesystems, which use a special dentry cursor to traverse the
+child dentries for readdir, and that one uses 'file->private_data'.
 
-lockdep will complain about the leaving the kernel with it held aspect
-for sure.
+So the directory position isn't really about some simple passed-in
+pos, it has locking rules, it has validation, and it has actual
+secondary data in the file pointer.
 
-I think the better solution here is, as I suggested in the patch, to
-keep it local to io_read() and io_write() rather than try and track it.
-Which is a bit annoying in terms of adding mostly useless code to the
-fast path, but... Don't think there's a better way.
-
--- 
-Jens Axboe
-
+                  Linus

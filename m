@@ -2,92 +2,86 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B53BB4833D7
-	for <lists+io-uring@lfdr.de>; Mon,  3 Jan 2022 16:00:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D226A48340C
+	for <lists+io-uring@lfdr.de>; Mon,  3 Jan 2022 16:18:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232426AbiACPAk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 3 Jan 2022 10:00:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47500 "EHLO
+        id S233654AbiACPSA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 3 Jan 2022 10:18:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231329AbiACPAk (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 3 Jan 2022 10:00:40 -0500
-Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AF29C061761
-        for <io-uring@vger.kernel.org>; Mon,  3 Jan 2022 07:00:40 -0800 (PST)
-Received: by mail-io1-xd2e.google.com with SMTP id 19so40074772ioz.4
-        for <io-uring@vger.kernel.org>; Mon, 03 Jan 2022 07:00:40 -0800 (PST)
+        with ESMTP id S229995AbiACPR7 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 3 Jan 2022 10:17:59 -0500
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72CF3C061761
+        for <io-uring@vger.kernel.org>; Mon,  3 Jan 2022 07:17:59 -0800 (PST)
+Received: by mail-lf1-x12e.google.com with SMTP id x7so75655957lfu.8
+        for <io-uring@vger.kernel.org>; Mon, 03 Jan 2022 07:17:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=iX+J3aUp4/IGEYlAX+jrwzk7n9Ng8QNRRPfY0+N+Kk0=;
-        b=HO7yn1sHsLHQ8xV6Fb5gP9LX9CRdwL8v10dc8u0Qz9x1J7mhvwM/WuLdgcLLj+ocHF
-         tKYU+TzUGmAhpJj8Rj0+X/XJaOC0/u+OBLLfMLVZF5n95is3OMam9ROEaJUtWEMyURge
-         nf3JVFnvfvSdt0QPx41emgEZ0y2MW1ouDMFOH0gW7TP6PJ/B500/5yyto3V4k+KFFR79
-         kvVYxR/l182j+Onmfda+fHwr9lwQIkWsOG3cWajZPizzt2u5b6u0cCevtAvskcUATmS9
-         tPrZ5olhHdTZZAzlxtYSCS2eH2kpIRLBXaHqJPZQrVNno91OHRl8yktJesxZphVqHSte
-         n0Yw==
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ry3k6TMSdh/DK80Rx4rIhtXsJ2SvLfemPDT0neaiOU4=;
+        b=W37kuECTvbS1vNsDuS3JXCpVtqICrFAp977bN1fRG0Mz1HvKwbq9TgwEEAiIYbczYD
+         v4uV0LmWcZ6fmkei07vokBYVac5FGq2tVpdiA4pFVyT92QNnCFPsdQJkV8siEHCBGkYS
+         JVQKKct1+Ndp0N+ObC92AStzKq+D3B/ARUeR1w/MJXRYBzx2GbtIK3QrH2xRWa3VzLye
+         MoBrLR2xclB4/y7i+Cltv7pCQWF/v0VX8sAT76uY+ga1q2toX3Dlh9WZ8N6XQB7MIoBn
+         sjHtlCg+nPH8I0cbBXj5eXUlN3Bh6fkE37xH/+aNmjyerWPdReKDi1N1dSQpnjtmfi0A
+         UX/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=iX+J3aUp4/IGEYlAX+jrwzk7n9Ng8QNRRPfY0+N+Kk0=;
-        b=XVN2ii2xD03O7Llw0kMsVus/ZYjQtinX021inoVjAnWLAss7TJ1mUBELWuSVLbaTdo
-         VAFzsx8mOVZCmG5RiCeGbyhOpopXtL8drCEWUq/+CbEYg6mdNIYwu6JiR2wvvRcK52Yw
-         RV1GfT3VXW3mMdE/WHqgMibCJZUPbBYGBAeD+8asRUnEQkVBDk5pnBetWykAruoHRgb1
-         PSCtBvLLqxzO/L1Ao4LvU/gBGQt0TuPDxLj2RWl+J/TwjijRR8a+BPZkhsjUpqPN0//A
-         ItIkW0azYCqjtBB9pYRVCHj58XUaKgzFMSu90qPe2HwRzetjaHDzVJeI5p1ZepVAM1K7
-         1bMw==
-X-Gm-Message-State: AOAM532P3TRmJobvDyPHH7P76wsBRPvOl4u8iJpTZBTjKrtSnlVUT8E4
-        Hf8svH7DYW/uf/znL45tBhwdhw==
-X-Google-Smtp-Source: ABdhPJxpUJWBb8t7exxUVuaHvXrw5nM1iSJzHo9x/1RIfXrTiIGXiV1X9VTNjSB411TykyOMMeTNbA==
-X-Received: by 2002:a02:734b:: with SMTP id a11mr12608906jae.168.1641222038571;
-        Mon, 03 Jan 2022 07:00:38 -0800 (PST)
-Received: from [192.168.1.30] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id z13sm2228796iln.43.2022.01.03.07.00.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Jan 2022 07:00:38 -0800 (PST)
-Subject: Re: [PATCH v7 0/3] io_uring: add getdents64 support
-To:     Jann Horn <jannh@google.com>, Al Viro <viro@zeniv.linux.org.uk>,
-        Stefan Roesch <shr@fb.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        io-uring <io-uring@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Pavel Begunkov <asml.silence@gmail.com>
-References: <20211221164004.119663-1-shr@fb.com>
- <CAHk-=wgHC_niLQqhmJRPTDULF7K9n8XRDfHV=SCOWvCPugUv5Q@mail.gmail.com>
- <Yc+PK4kRo5ViXu0O@zeniv-ca.linux.org.uk>
- <YdCyoQNPNcaM9rqD@zeniv-ca.linux.org.uk>
- <CAG48ez1O9VxSuWuLXBjke23YxUA8EhMP+6RCHo5PNQBf3B0pDQ@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <308dafb1-9ed8-c626-2cf5-34ecf914db4f@kernel.dk>
-Date:   Mon, 3 Jan 2022 08:00:36 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ry3k6TMSdh/DK80Rx4rIhtXsJ2SvLfemPDT0neaiOU4=;
+        b=NbUK/MZX4YMsiofkdUPfPAJTmxAJAJV8sV79iGflj59/6pS2D3lfRY3vtI8tF6AVVx
+         xU0x0OBYWdI6f3RG6cb/T3m63zx7TjC6CbWMRkDxWCeFsMf+KSvjd6JDg220DSzPLa3P
+         72n/QTXQcHmuleFUHUGoF24Z9yE81QB6//uHTkbywX8nxVFFkOQ8Mrfqs2ZmviuJV9sI
+         3LjbtmB2RIhZIxgcTwjlLDu8f6MKOdmUsGU0Dz6RuBRgbprvOsedYsen/qLF73prnJu7
+         pwzqy9qXRNVnNIM84zn+gf0/CKwRdz6fg/tdAwhCchObLplnEhOAp6/j89MwpDHXsZSE
+         hJXg==
+X-Gm-Message-State: AOAM533mAb/uTsEgc9iX7riIVUVrqcE33aHUXpQP/dBEyv4+aBSgg6rs
+        DvO6QH6Lg3+UKsPc1J98y4yFTnnzFM1Xr09QPcga+Q==
+X-Google-Smtp-Source: ABdhPJygtMLxs8vYujwNA8bJLtMKxAhntijZICzkrJxSek8Y004N4PXvHfUX27r6UuGE4ezp7ZgyiqNjz7TtifW3zDk=
+X-Received: by 2002:a05:6512:22c7:: with SMTP id g7mr40020775lfu.315.1641223077495;
+ Mon, 03 Jan 2022 07:17:57 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAG48ez1O9VxSuWuLXBjke23YxUA8EhMP+6RCHo5PNQBf3B0pDQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <8a9e55bf-3195-5282-2907-41b2f2b23cc8@kernel.dk>
+In-Reply-To: <8a9e55bf-3195-5282-2907-41b2f2b23cc8@kernel.dk>
+From:   Jann Horn <jannh@google.com>
+Date:   Mon, 3 Jan 2022 16:17:31 +0100
+Message-ID: <CAG48ez3ndoSC=fRvmzku1hLkO99RPwA3F3PA5mVZ47AkU5q-5A@mail.gmail.com>
+Subject: Re: [PATCH RFC] io_uring: improve current file position IO
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring <io-uring@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 1/2/22 11:03 PM, Jann Horn wrote:
-> io_uring has some dodgy code that seems to be reading and writing
-> file->f_pos without holding the file->f_pos_lock. And even if the file
-> doesn't have an f_op->read or f_op->read_iter handler, I think you
-> might be able to read ->f_pos of an ext4 directory and write the value
-> back later, unless I'm missing a check somewhere?
+On Fri, Dec 24, 2021 at 3:35 PM Jens Axboe <axboe@kernel.dk> wrote:
+> io_uring should be protecting the current file position with the
+> file position lock, ->f_pos_lock. Grab and track the lock state when
+> the request is being issued, and make the unlock part of request
+> cleaning.
+>
+> Fixes: ba04291eb66e ("io_uring: allow use of offset == -1 to mean file position")
+> Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>
+> ---
+>
+> Main thing I don't like here:
+>
+> - We're holding the f_pos_lock across the kernel/user boundary, as
+>   it's held for the duration of the IO. Alternatively we could
+>   keep it local to io_read() and io_write() and lose REQ_F_CUR_POS_LOCK,
+>   but will messy up those functions more and add more items to the
+>   fast path (which current position read/write definitely is not).
+>
+> Suggestions welcome...
 
-I posted an RFC to hold f_pos_lock across those operations before the
-break:
-
-https://lore.kernel.org/io-uring/8a9e55bf-3195-5282-2907-41b2f2b23cc8@kernel.dk/
-
-picking it up this week and flushing it out, hopefully.
-
--- 
-Jens Axboe
-
+Oh, that's not pretty... is it guaranteed that the
+__f_unlock_pos(req->file) will happen in the same task as the
+io_file_pos_lock(req, false), and have you tried running this with
+lockdep and mutex debugging enabled? Could a task deadlock if it tried
+to do a read() on a file while io_uring is already holding the
+position lock?

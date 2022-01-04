@@ -2,139 +2,226 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B8713484850
-	for <lists+io-uring@lfdr.de>; Tue,  4 Jan 2022 20:09:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C2757484853
+	for <lists+io-uring@lfdr.de>; Tue,  4 Jan 2022 20:09:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232327AbiADTJq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 4 Jan 2022 14:09:46 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:18706 "EHLO
+        id S232664AbiADTJu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 4 Jan 2022 14:09:50 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:50730 "EHLO
         mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232029AbiADTJq (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 4 Jan 2022 14:09:46 -0500
-Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 204GFfRq023079
-        for <io-uring@vger.kernel.org>; Tue, 4 Jan 2022 11:09:46 -0800
+        by vger.kernel.org with ESMTP id S231343AbiADTJu (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 4 Jan 2022 14:09:50 -0500
+Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 204GFK9F019289
+        for <io-uring@vger.kernel.org>; Tue, 4 Jan 2022 11:09:50 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-transfer-encoding :
- content-type; s=facebook; bh=DXeIzVPghLGFxUiVUkz8ASRNUB5lxCLthbUVSkvaEv0=;
- b=TUzJDGx0brQGL46dsNyPbqF1ZtNWRUS8wxER4G8LLKkyv+AQ9c5+WI9FdoWOORnbkgly
- QpeHPZ3xL6cL76+B/55FHLFVIv2IkIR9KGvFZZ37UGVZ4UQaOx2X1t11WC2qkh0nOheo
- vUuHLL7QRvslNcBIYeeDqzqRx3r+iZ4t6L4= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3dcaerddf6-1
+ : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding : content-type; s=facebook;
+ bh=FjGxnC986xNMAOkWCTY3KciMFTTPqeyxo54ALOxZjQ0=;
+ b=AmCtXkik+Av8m79QuFS8VNcGhT6I26aMVL+TBV9D8VPXfIGT6gmGDiHGRNnXbnPxhhnB
+ Qk2CPmtCQ70oGZ3DC4KPH8VRkqovh/j6UzLvWZxQg4wItPOpSDwDBeJJ3Y+muEy+eCI7
+ noj+1dGucfieNOZzLAmTx/kucU37vUoXXeE= 
+Received: from mail.thefacebook.com ([163.114.132.120])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3dcp6h2eqm-2
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Tue, 04 Jan 2022 11:09:45 -0800
-Received: from twshared12416.02.ash9.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:82::c) with Microsoft SMTP Server
+        for <io-uring@vger.kernel.org>; Tue, 04 Jan 2022 11:09:50 -0800
+Received: from twshared7572.23.frc3.facebook.com (2620:10d:c085:208::f) by
+ mail.thefacebook.com (2620:10d:c085:11d::5) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.20; Tue, 4 Jan 2022 11:09:44 -0800
+ 15.1.2308.20; Tue, 4 Jan 2022 11:09:45 -0800
 Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
-        id B33558FC8E0B; Tue,  4 Jan 2022 11:09:38 -0800 (PST)
+        id B688A8FC8E0D; Tue,  4 Jan 2022 11:09:38 -0800 (PST)
 From:   Stefan Roesch <shr@fb.com>
 To:     <io-uring@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
         <kernel-team@fb.com>
 CC:     <torvalds@linux-foundation.org>, <christian.brauner@ubuntu.com>,
         <shr@fb.com>
-Subject: [PATCH v11 0/4] io_uring: add xattr support
-Date:   Tue, 4 Jan 2022 11:09:32 -0800
-Message-ID: <20220104190936.3085647-1-shr@fb.com>
+Subject: [PATCH v11 1/4] fs: split off setxattr_copy and do_setxattr function from setxattr
+Date:   Tue, 4 Jan 2022 11:09:33 -0800
+Message-ID: <20220104190936.3085647-2-shr@fb.com>
 X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20220104190936.3085647-1-shr@fb.com>
+References: <20220104190936.3085647-1-shr@fb.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-GUID: cC0WUl8qcnyzaRDPmmlLjpJdluImToxF
-X-Proofpoint-ORIG-GUID: cC0WUl8qcnyzaRDPmmlLjpJdluImToxF
+X-Proofpoint-GUID: RR4qOScJgGNzqOfP9xI0KSbnUP4Iu561
+X-Proofpoint-ORIG-GUID: RR4qOScJgGNzqOfP9xI0KSbnUP4Iu561
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
  definitions=2022-01-04_09,2022-01-04_01,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=fb_outbound_notspam policy=fb_outbound score=0 phishscore=0
- mlxlogscore=874 spamscore=0 bulkscore=0 lowpriorityscore=0 impostorscore=0
- malwarescore=0 priorityscore=1501 clxscore=1015 suspectscore=0 mlxscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2110150000 definitions=main-2201040126
+X-Proofpoint-Spam-Details: rule=fb_outbound_notspam policy=fb_outbound score=0 lowpriorityscore=0
+ adultscore=0 priorityscore=1501 phishscore=0 mlxlogscore=999 bulkscore=0
+ mlxscore=0 impostorscore=0 malwarescore=0 spamscore=0 suspectscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2110150000 definitions=main-2201040127
 X-FB-Internal: deliver
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This adds the xattr support to io_uring. The intent is to have a more
-complete support for file operations in io_uring.
+This splits of the setup part of the function
+setxattr in its own dedicated function called
+setxattr_copy. In addition it also exposes a
+new function called do_setxattr for making the
+setxattr call.
 
-This change adds support for the following functions to io_uring:
-- fgetxattr
-- fsetxattr
-- getxattr
-- setxattr
+This makes it possible to call these two functions
+from io_uring in the processing of an xattr request.
 
-Patch 1: fs: split off setxattr_copy and do_setxattr function from setxat=
-tr
-  Split off the setup part of the setxattr function in the setxattr_copy
-  function. Split off the processing part in do_setxattr.
+Signed-off-by: Stefan Roesch <shr@fb.com>
+Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+---
+ fs/internal.h | 21 +++++++++++++
+ fs/xattr.c    | 82 ++++++++++++++++++++++++++++++++++++---------------
+ 2 files changed, 79 insertions(+), 24 deletions(-)
 
-Patch 2: fs: split off do_getxattr from getxattr
-  Split of the do_getxattr part from getxattr. This will
-  allow it to be invoked it from io_uring.
-
-Patch 3: io_uring: add fsetxattr and setxattr support
-  This adds new functions to support the fsetxattr and setxattr
-  functions.
-
-Patch 4: io_uring: add fgetxattr and getxattr support
-  This adds new functions to support the fgetxattr and getxattr
-  functions.
-
-
-There are two additional patches:
-  liburing: Add support for xattr api's.
-            This also includes the tests for the new code.
-  xfstests: Add support for io_uring xattr support.
-
-
-V11: - removed the do_user_path_at_empty function and directly
-       call filename_lookup
-     - introduce __io_xattr_finish and io_xattr_finish functions
-       to unify the cleanup code
-     - remove the older __io_setxattr_finish function
-V10: - move do_user_path_at_empty definition to fs/internal.h
-     - introduce __io_setxattr_finish function
-     - introduce __io_getxattr_finish function
-V9 : - keep kvalue in struct xattr_ctx
-V8 : - introduce xattr_name struct as advised by Linus
-     - remove kname_sz field in xattr_ctx
-V7 : - split off setxattr in two functions as recommeneded by
-       Christian.
-V6 : - reverted addition of kname array to xattr_ctx structure
-       Adding the kname array increases the io_kiocb beyond 64 bytes
-       (increases it to 224 bytes). We try hard to limit it to 64 bytes.
-       Keeping the original interface also is a bit more efficient.
-     - addressed Pavel's reordering comment
-     - addressed Pavel's putname comment
-     - addressed Pavel's kvfree comment
-     - rebased on for-5.17/io_uring-getdents64
-V5 : - add kname array to xattr_ctx structure
-V4 : - rebased patch series
-V3 : - remove req->file checks in prep functions
-     - change size parameter in do_xattr
-V2 : - split off function do_user_path_empty instead of changing
-       the function signature of user_path_at
-     - Fix datatype size problem in do_getxattr
-
-
-Stefan Roesch (4):
-  fs: split off setxattr_copy and do_setxattr function from setxattr
-  fs: split off do_getxattr from getxattr
-  io_uring: add fsetxattr and setxattr support
-  io_uring: add fgetxattr and getxattr support
-
- fs/internal.h                 |  28 ++++
- fs/io_uring.c                 | 298 ++++++++++++++++++++++++++++++++++
- fs/xattr.c                    | 114 +++++++++----
- include/uapi/linux/io_uring.h |   8 +-
- 4 files changed, 411 insertions(+), 37 deletions(-)
-
-
-base-commit: b4518682080d3a1cdd6ea45a54ff6772b8b2797a
+diff --git a/fs/internal.h b/fs/internal.h
+index 432ea3ce76ec..00c98b0cd634 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -202,3 +202,24 @@ struct linux_dirent64;
+=20
+ int vfs_getdents(struct file *file, struct linux_dirent64 __user *dirent=
+,
+ 		 unsigned int count, loff_t *pos);
++
++ /*
++  * fs/xattr.c:
++  */
++struct xattr_name {
++	char name[XATTR_NAME_MAX + 1];
++};
++
++struct xattr_ctx {
++	/* Value of attribute */
++	const void __user *value;
++	void *kvalue;
++	size_t size;
++	/* Attribute name */
++	struct xattr_name *kname;
++	unsigned int flags;
++};
++
++int setxattr_copy(const char __user *name, struct xattr_ctx *ctx);
++int do_setxattr(struct user_namespace *mnt_userns, struct dentry *dentry=
+,
++		struct xattr_ctx *ctx);
+diff --git a/fs/xattr.c b/fs/xattr.c
+index 5c8c5175b385..dec7ac3e0e89 100644
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -25,6 +25,8 @@
+=20
+ #include <linux/uaccess.h>
+=20
++#include "internal.h"
++
+ static const char *
+ strcmp_prefix(const char *a, const char *a_prefix)
+ {
+@@ -539,43 +541,75 @@ EXPORT_SYMBOL_GPL(vfs_removexattr);
+ /*
+  * Extended attribute SET operations
+  */
+-static long
+-setxattr(struct user_namespace *mnt_userns, struct dentry *d,
+-	 const char __user *name, const void __user *value, size_t size,
+-	 int flags)
++
++int setxattr_copy(const char __user *name, struct xattr_ctx *ctx)
+ {
+ 	int error;
+-	void *kvalue =3D NULL;
+-	char kname[XATTR_NAME_MAX + 1];
+=20
+-	if (flags & ~(XATTR_CREATE|XATTR_REPLACE))
++	if (ctx->flags & ~(XATTR_CREATE|XATTR_REPLACE))
+ 		return -EINVAL;
+=20
+-	error =3D strncpy_from_user(kname, name, sizeof(kname));
+-	if (error =3D=3D 0 || error =3D=3D sizeof(kname))
+-		error =3D -ERANGE;
++	error =3D strncpy_from_user(ctx->kname->name, name,
++				sizeof(ctx->kname->name));
++	if (error =3D=3D 0 || error =3D=3D sizeof(ctx->kname->name))
++		return  -ERANGE;
+ 	if (error < 0)
+ 		return error;
+=20
+-	if (size) {
+-		if (size > XATTR_SIZE_MAX)
++	error =3D 0;
++	if (ctx->size) {
++		if (ctx->size > XATTR_SIZE_MAX)
+ 			return -E2BIG;
+-		kvalue =3D kvmalloc(size, GFP_KERNEL);
+-		if (!kvalue)
+-			return -ENOMEM;
+-		if (copy_from_user(kvalue, value, size)) {
+-			error =3D -EFAULT;
+-			goto out;
++
++		ctx->kvalue =3D vmemdup_user(ctx->value, ctx->size);
++		if (IS_ERR(ctx->kvalue)) {
++			error =3D PTR_ERR(ctx->kvalue);
++			ctx->kvalue =3D NULL;
+ 		}
+-		if ((strcmp(kname, XATTR_NAME_POSIX_ACL_ACCESS) =3D=3D 0) ||
+-		    (strcmp(kname, XATTR_NAME_POSIX_ACL_DEFAULT) =3D=3D 0))
+-			posix_acl_fix_xattr_from_user(mnt_userns, kvalue, size);
+ 	}
+=20
+-	error =3D vfs_setxattr(mnt_userns, d, kname, kvalue, size, flags);
+-out:
+-	kvfree(kvalue);
++	return error;
++}
++
++static void setxattr_convert(struct user_namespace *mnt_userns,
++			struct xattr_ctx *ctx)
++{
++	if (ctx->size &&
++		((strcmp(ctx->kname->name, XATTR_NAME_POSIX_ACL_ACCESS) =3D=3D 0) ||
++		(strcmp(ctx->kname->name, XATTR_NAME_POSIX_ACL_DEFAULT) =3D=3D 0)))
++		posix_acl_fix_xattr_from_user(mnt_userns, ctx->kvalue, ctx->size);
++}
++
++int do_setxattr(struct user_namespace *mnt_userns, struct dentry *dentry=
+,
++		struct xattr_ctx *ctx)
++{
++	setxattr_convert(mnt_userns, ctx);
++	return vfs_setxattr(mnt_userns, dentry, ctx->kname->name,
++			ctx->kvalue, ctx->size, ctx->flags);
++}
++
++static long
++setxattr(struct user_namespace *mnt_userns, struct dentry *d,
++	const char __user *name, const void __user *value, size_t size,
++	int flags)
++{
++	struct xattr_name kname;
++	struct xattr_ctx ctx =3D {
++		.value    =3D value,
++		.kvalue   =3D NULL,
++		.size     =3D size,
++		.kname    =3D &kname,
++		.flags    =3D flags,
++	};
++	int error;
++
++	error =3D setxattr_copy(name, &ctx);
++	if (error)
++		return error;
++
++	error =3D do_setxattr(mnt_userns, d, &ctx);
+=20
++	kvfree(ctx.kvalue);
+ 	return error;
+ }
+=20
 --=20
 2.30.2
 

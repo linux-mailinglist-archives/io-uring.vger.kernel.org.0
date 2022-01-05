@@ -2,72 +2,63 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5324F48510C
-	for <lists+io-uring@lfdr.de>; Wed,  5 Jan 2022 11:21:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A3CB848510E
+	for <lists+io-uring@lfdr.de>; Wed,  5 Jan 2022 11:21:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235359AbiAEKVL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 5 Jan 2022 05:21:11 -0500
-Received: from prt-mail.chinatelecom.cn ([42.123.76.223]:52477 "EHLO
+        id S239401AbiAEKVT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 5 Jan 2022 05:21:19 -0500
+Received: from prt-mail.chinatelecom.cn ([42.123.76.226]:37797 "EHLO
         chinatelecom.cn" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S234187AbiAEKVK (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 5 Jan 2022 05:21:10 -0500
-X-Greylist: delayed 525 seconds by postgrey-1.27 at vger.kernel.org; Wed, 05 Jan 2022 05:21:10 EST
-HMM_SOURCE_IP: 172.18.0.188:39278.2063135568
+        with ESMTP id S239406AbiAEKVS (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 5 Jan 2022 05:21:18 -0500
+HMM_SOURCE_IP: 172.18.0.218:48684.1571331312
 HMM_ATTACHE_NUM: 0000
 HMM_SOURCE_TYPE: SMTP
-Received: from clientip-110.86.5.92 (unknown [172.18.0.188])
-        by chinatelecom.cn (HERMES) with SMTP id 99534280098;
-        Wed,  5 Jan 2022 18:12:06 +0800 (CST)
+Received: from clientip-110.86.5.92 (unknown [172.18.0.218])
+        by chinatelecom.cn (HERMES) with SMTP id 6225E2800AA;
+        Wed,  5 Jan 2022 18:13:07 +0800 (CST)
 X-189-SAVE-TO-SEND: +zhenggy@chinatelecom.cn
-Received: from  ([172.18.0.188])
-        by app0023 with ESMTP id 7809a9feb3d1420a8760338527f4550a for axboe@kernel.dk;
-        Wed, 05 Jan 2022 18:12:08 CST
-X-Transaction-ID: 7809a9feb3d1420a8760338527f4550a
+Received: from  ([172.18.0.218])
+        by app0025 with ESMTP id 97814b44f502412390feeacc96d5d9cd for axboe@kernel.dk;
+        Wed, 05 Jan 2022 18:13:09 CST
+X-Transaction-ID: 97814b44f502412390feeacc96d5d9cd
 X-Real-From: zhenggy@chinatelecom.cn
-X-Receive-IP: 172.18.0.188
+X-Receive-IP: 172.18.0.218
 X-MEDUSA-Status: 0
 Sender: zhenggy@chinatelecom.cn
 From:   GuoYong Zheng <zhenggy@chinatelecom.cn>
 To:     axboe@kernel.dk, asml.silence@gmail.com
 Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
         GuoYong Zheng <zhenggy@chinatelecom.cn>
-Subject: [PATCH] io_uring: remove unused para
-Date:   Wed,  5 Jan 2022 18:12:02 +0800
-Message-Id: <1641377522-1851-1-git-send-email-zhenggy@chinatelecom.cn>
+Subject: [PATCH] io_uring: remove redundant tap space
+Date:   Wed,  5 Jan 2022 18:13:05 +0800
+Message-Id: <1641377585-1891-1-git-send-email-zhenggy@chinatelecom.cn>
 X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Para res2 is not used in __io_complete_rw, remove it.
+When show fdinfo, SqMask follow two tap space, Inconsistent with
+other paras, remove one.
 
 Signed-off-by: GuoYong Zheng <zhenggy@chinatelecom.cn>
 ---
- fs/io_uring.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/io_uring.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index e6fb1bb..8473f955 100644
+index e6fb1bb..78a6181 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -2858,7 +2858,7 @@ static inline void io_req_task_complete(struct io_kiocb *req, bool *locked)
- 	}
- }
- 
--static void __io_complete_rw(struct io_kiocb *req, long res, long res2,
-+static void __io_complete_rw(struct io_kiocb *req, long res,
- 			     unsigned int issue_flags)
- {
- 	if (__io_complete_rw_common(req, res))
-@@ -3108,7 +3108,7 @@ static void kiocb_done(struct io_kiocb *req, ssize_t ret,
- 	if (req->flags & REQ_F_CUR_POS)
- 		req->file->f_pos = req->rw.kiocb.ki_pos;
- 	if (ret >= 0 && (req->rw.kiocb.ki_complete == io_complete_rw))
--		__io_complete_rw(req, ret, 0, issue_flags);
-+		__io_complete_rw(req, ret, issue_flags);
- 	else
- 		io_rw_done(&req->rw.kiocb, ret);
- 
+@@ -10553,7 +10553,7 @@ static __cold void __io_uring_show_fdinfo(struct io_ring_ctx *ctx,
+ 	 * and sq_tail and cq_head are changed by userspace. But it's ok since
+ 	 * we usually use these info when it is stuck.
+ 	 */
+-	seq_printf(m, "SqMask:\t\t0x%x\n", sq_mask);
++	seq_printf(m, "SqMask:\t0x%x\n", sq_mask);
+ 	seq_printf(m, "SqHead:\t%u\n", sq_head);
+ 	seq_printf(m, "SqTail:\t%u\n", sq_tail);
+ 	seq_printf(m, "CachedSqHead:\t%u\n", ctx->cached_sq_head);
 -- 
 1.8.3.1
 

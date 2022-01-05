@@ -2,80 +2,79 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A0DD48592F
-	for <lists+io-uring@lfdr.de>; Wed,  5 Jan 2022 20:31:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 44375485931
+	for <lists+io-uring@lfdr.de>; Wed,  5 Jan 2022 20:32:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243475AbiAETa7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 5 Jan 2022 14:30:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54956 "EHLO
+        id S243541AbiAETcd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 5 Jan 2022 14:32:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231584AbiAETa6 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 5 Jan 2022 14:30:58 -0500
-Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4E6FC061245
-        for <io-uring@vger.kernel.org>; Wed,  5 Jan 2022 11:30:58 -0800 (PST)
-Received: by mail-io1-xd2a.google.com with SMTP id y70so388381iof.2
-        for <io-uring@vger.kernel.org>; Wed, 05 Jan 2022 11:30:58 -0800 (PST)
+        with ESMTP id S231584AbiAETca (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 5 Jan 2022 14:32:30 -0500
+Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D112C061245
+        for <io-uring@vger.kernel.org>; Wed,  5 Jan 2022 11:32:30 -0800 (PST)
+Received: by mail-il1-x133.google.com with SMTP id o1so181792ilo.6
+        for <io-uring@vger.kernel.org>; Wed, 05 Jan 2022 11:32:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=DMDyVFtwDqG7zCTgnBPM/RrWzwScfQ0OQCuIiJfEtKw=;
-        b=uG54arT6RqfHaPHgXk3nwdqxgRz3XKT51x0cp9cpIHnDAtHjqpq/vLdnGsGX5dL9VG
-         wWYqTbSM/II/30qgOZO/ZTDB/CniH4t6V5H50ufWhSD3Sp4t6P1i2OsUgUznfKbkpSUz
-         OWAA/OxZj0NyMJfUbOEkbzzKIzyXZVKsMSMjWpsFD3RrnIqVULqyb0Zj6RRGMwERk3hF
-         Vk6S5vpBBP6Ir/OhepgzAL3JGVbia44TiG72J1uedmXvdHvWw8RyQ2vwT+cqEyffmLQ/
-         aEQsS0BLo+NZqScB42EreMzOEbNYZ7mJGkEGlDsBKYl5fmgc+DJ4B+wQxicWQIcoKJ+S
-         SaJQ==
+        h=from:to:cc:in-reply-to:references:subject:message-id:date
+         :mime-version:content-transfer-encoding;
+        bh=qpCxtfwyVwBIee1PBexn3Z3InR/064lKrv4gYmq0iEg=;
+        b=W7u+wiQHn79Ti242OgCMKDUwuBUEcwO3WrLpyVELKVQUsGM02xzlhOmH4Btz8Zo6XU
+         lxvQwfPs96IbaCkCFCq61GpwsM4uT2Jq0eYYXWUaC63yRStHgClTP8WQF/wfaiGtsxlB
+         k8z5Y0VaoVZCD295+pgtNGIfOi4dPaYrpBkpVFaUKklOh3X6JG0W6gXO/x0JPmArQMG4
+         MPEFjPZv0bSmXr0RYA43pW817W0TCRh3WwN/qwPgW3EH3gYQTp+1s6jiavkCZA/u0v2a
+         MXSxzhTEZ0i8viw+qytehIKE/7osM1ESsiPhO9AvDqS2UDo9Eas8lMU8o3JLlcllQ92k
+         d05w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=DMDyVFtwDqG7zCTgnBPM/RrWzwScfQ0OQCuIiJfEtKw=;
-        b=5HWUUvikBqJUgMDsWomQe9d0NV+y/EC9uRrQaC4hCIMmFKusgyGFYJcnLrPzVQZRYM
-         4XYYeUUbfD68Ny2qFv1FZbNnmLLKJ+O1HsC5vpwATLA19Lh3VvWhxocZpY6gOQCrrstU
-         9EyxBo16CKvKPgZTYzRX1Ua98c5s11IsLe9EIcAr8bvqKQRn2YNoUx0pS3b/n9rTkWW4
-         AAQLx4mSBqGPq1aWecQ4gnliXvG0Bo4/qipGWZ21TMcFagUO9dyXaJda81HpG31QODwn
-         HXAU3qSkCyVjsKP6QYLXcZlbkyXUpgkQLjfyB7i4CPoyyMz1R5YRcuDV4Y0RWUkKOof3
-         3ePg==
-X-Gm-Message-State: AOAM530f2fJJiPG4w2x8jijKSVQbMEfmx118WgXUtpqnuLm1/CFL4OX1
-        U20qCMQlGiNXJmJpojrQ/p151g==
-X-Google-Smtp-Source: ABdhPJxAjdF18pppt7QsGuUeqs5t3GeE6qeeALB1KYU5MTy/EqK6/mPlT+h5EUjSykkKLKsxA7R0vQ==
-X-Received: by 2002:a5d:944a:: with SMTP id x10mr25007319ior.18.1641411058036;
-        Wed, 05 Jan 2022 11:30:58 -0800 (PST)
-Received: from [192.168.1.30] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id z13sm6024551iln.43.2022.01.05.11.30.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Jan 2022 11:30:57 -0800 (PST)
-Subject: Re: [PATCH] io_uring: remove unused para
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
+         :message-id:date:mime-version:content-transfer-encoding;
+        bh=qpCxtfwyVwBIee1PBexn3Z3InR/064lKrv4gYmq0iEg=;
+        b=HZ49Gfn65EhNvzeNTVMohkaU1M+uUlu5Znj/t0FXIErWOHz7PnDEVlqQ+od4uJjGz0
+         nKFVdiO+RGvmqzJ9oRwT5//2IRaE6g74XouuqKAYS56/M+oCzHiir98sp7b25JYt4cd6
+         b+ryU7eb8FH646DQFXRzWkyoQiZbAMiUrr6YuuZdyHgVOWk79hv9SUWF5UHzzBPjPWbW
+         67pD+6kch4g+T0R6Aghmb6LXO96jHZx3L06faB+phCpSfhnE60eJfgtlrAc8AT68IxWW
+         VNRTjE75JCjjtL2tK4mWaz3YqXd3mKw4HoemHiVWVoVtTx2EN5OQLWNOh/GNwU41NvtW
+         hMVQ==
+X-Gm-Message-State: AOAM533fPwub/MO9f5cnR3h9tuWeWHtGM39mRVN099oH2/8HP/KGWWnI
+        ILOwkdDgnlxAgWqGySP0THyoCA==
+X-Google-Smtp-Source: ABdhPJwFb3zv4DUiGeu9ejxwMSGKd4PB3tS78fU79SVD8P7c1pBDEfYPEx9omtq3DFe8IXXA6+V74Q==
+X-Received: by 2002:a92:c510:: with SMTP id r16mr1237447ilg.74.1641411149774;
+        Wed, 05 Jan 2022 11:32:29 -0800 (PST)
+Received: from x1.localdomain ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id 7sm27406883ilq.23.2022.01.05.11.32.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Jan 2022 11:32:29 -0800 (PST)
+From:   Jens Axboe <axboe@kernel.dk>
 To:     GuoYong Zheng <zhenggy@chinatelecom.cn>, asml.silence@gmail.com
 Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1641377522-1851-1-git-send-email-zhenggy@chinatelecom.cn>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <296e66fa-e8a1-4888-92e3-6f5093c5378d@kernel.dk>
-Date:   Wed, 5 Jan 2022 12:30:56 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+In-Reply-To: <1641377585-1891-1-git-send-email-zhenggy@chinatelecom.cn>
+References: <1641377585-1891-1-git-send-email-zhenggy@chinatelecom.cn>
+Subject: Re: [PATCH] io_uring: remove redundant tap space
+Message-Id: <164141114909.317320.15522175308443944192.b4-ty@kernel.dk>
+Date:   Wed, 05 Jan 2022 12:32:29 -0700
 MIME-Version: 1.0
-In-Reply-To: <1641377522-1851-1-git-send-email-zhenggy@chinatelecom.cn>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 1/5/22 2:12 AM, GuoYong Zheng wrote:
-> Para res2 is not used in __io_complete_rw, remove it.
+On Wed, 5 Jan 2022 18:13:05 +0800, GuoYong Zheng wrote:
+> When show fdinfo, SqMask follow two tap space, Inconsistent with
+> other paras, remove one.
+> 
+> 
 
-Applied, but changed 'para' to parameter. Please just spell it out,
-there's no point in being too verbose here. Also added a Fixes tag:
+Applied, thanks!
 
-https://git.kernel.dk/cgit/linux-block/commit/?h=for-5.17/io_uring&id=00f6e68b8d59bf006db54e3e257684f44d26195c
+[1/1] io_uring: remove redundant tap space
+      commit: c0235652ee5194fc75926daa580817e63ceb37ab
 
-Thank you!
-
+Best regards,
 -- 
 Jens Axboe
+
 

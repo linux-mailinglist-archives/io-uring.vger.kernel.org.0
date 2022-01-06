@@ -2,144 +2,327 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7591848651D
-	for <lists+io-uring@lfdr.de>; Thu,  6 Jan 2022 14:20:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C73C048689D
+	for <lists+io-uring@lfdr.de>; Thu,  6 Jan 2022 18:32:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239408AbiAFNU1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 6 Jan 2022 08:20:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41602 "EHLO
+        id S242004AbiAFRcI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 6 Jan 2022 12:32:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231453AbiAFNU1 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 6 Jan 2022 08:20:27 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 314E2C061245;
-        Thu,  6 Jan 2022 05:20:27 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C3B0661C00;
-        Thu,  6 Jan 2022 13:20:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8E5FC36AE5;
-        Thu,  6 Jan 2022 13:20:24 +0000 (UTC)
-Date:   Thu, 6 Jan 2022 14:20:21 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Stefan Roesch <shr@fb.com>
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        kernel-team@fb.com, torvalds@linux-foundation.org
-Subject: Re: [PATCH v12 0/4] io_uring: add xattr support
-Message-ID: <20220106132021.n2cwzvf2winkw3qk@wittgenstein>
-References: <20220105221830.2668297-1-shr@fb.com>
+        with ESMTP id S242096AbiAFRcE (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 6 Jan 2022 12:32:04 -0500
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8CA2C034000;
+        Thu,  6 Jan 2022 09:32:03 -0800 (PST)
+Received: by mail-pj1-x1029.google.com with SMTP id n30-20020a17090a5aa100b001b2b6509685so3896033pji.3;
+        Thu, 06 Jan 2022 09:32:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=F6BvddQSghSUpi/aUMLF/la8hm42Cnpo4XIe+FyB6vw=;
+        b=JQcvWNT5+7ufzcU8rBnRYw/j7jOGmf5VbXNL7fhEorWyg+yssPSE48I85lZd0Hot1l
+         wUe3imRBJAgGkW8cbvIwZAsZgGPtUvIWmjKVGc3QIF1W+dyuEaeMTf1hVpyDhn0ZF4vT
+         vei1n5LHZdbEGyiW3EKWaAXicfrtoLVK/PvuRgl8P+nCdT2QT0ICYoBzFq7t8xjF364u
+         stVZcCjz27SDtztEkM20Xi0eLq5EHqHSW+16jDG1DGGlaCT6KF+quh8CufBAhiP2520b
+         bOI/60vGkrKUrh0Pu78oOzBmS9Oq78tCXekWB9OJEqrk4OgCIwJEzVaMOqOyPhIgN7JH
+         jXiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=F6BvddQSghSUpi/aUMLF/la8hm42Cnpo4XIe+FyB6vw=;
+        b=sz+03cHPsZOkOOvwhhWj95xGErThc0j2FO7dbbFLr9N99kFvgH5VmHXTYLZoM8wRp3
+         3jhEHQcoNUqmnyjXwrbFANgPWV7y7VGRqsilPdqavNxn209ZROt3+cu2iQu+dsf/VnhR
+         o1voWoxgiIQ1ajEhXZWRZsMR9JFQ4BeEZxppeGIwxBECiThhbi5iYES5gHD+pm/9LAxX
+         Pp+6s0v8LXVOOOm/NTDvnTNd2Ya/8Qi+6Zubf/nuH3tLkvzzDNQPtVsVZV2vnnUucFPb
+         oJ9G12MdLJVwOBfX4/E5DPG+SbM4JOFec/3zEUYV85CSG+ghvV9tocGQf35XJLvJ7BPR
+         cZdQ==
+X-Gm-Message-State: AOAM530SMNKoDVjvZoHqZj8TqDNsKeS3J1z7WXk9cDRSJOGesmPGwgs/
+        QIs1zHg1Gi9iriv5wDoeKwplZQ/PHLM=
+X-Google-Smtp-Source: ABdhPJyCQs+I8O+y7HMBQUgUXeBjmEgs9ULVUwVMvYLKsWOGT+/jlb2BLG/2gfIISPXZO/xmb0kE9A==
+X-Received: by 2002:a17:902:c008:b0:149:346b:cb85 with SMTP id v8-20020a170902c00800b00149346bcb85mr59811515plx.122.1641490323396;
+        Thu, 06 Jan 2022 09:32:03 -0800 (PST)
+Received: from [192.168.1.122] ([122.172.37.80])
+        by smtp.gmail.com with ESMTPSA id t5sm2487888pgj.85.2022.01.06.09.32.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Jan 2022 09:32:03 -0800 (PST)
+Message-ID: <597c1bfc-f8ab-d513-4916-dbd93b05e66a@gmail.com>
+Date:   Thu, 6 Jan 2022 23:01:59 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20220105221830.2668297-1-shr@fb.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.1
+Subject: Re: [RFC PATCH v3 3/3] io_uring: Add `sendto(2)` and `recvfrom(2)`
+ support
+Content-Language: en-US
+To:     Ammar Faizi <ammarfaizi2@gmail.com>, Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring Mailing List <io-uring@vger.kernel.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Nugra <richiisei@gmail.com>
+References: <20211230115057.139187-3-ammar.faizi@intel.com>
+ <20211230173126.174350-1-ammar.faizi@intel.com>
+ <20211230173126.174350-4-ammar.faizi@intel.com>
+From:   Praveen Kumar <kpraveen.lkml@gmail.com>
+In-Reply-To: <20211230173126.174350-4-ammar.faizi@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Jan 05, 2022 at 02:18:26PM -0800, Stefan Roesch wrote:
-> This adds the xattr support to io_uring. The intent is to have a more
-> complete support for file operations in io_uring.
+On 30-12-2021 23:22, Ammar Faizi wrote:
+> This adds sendto(2) and recvfrom(2) support for io_uring.
 > 
-> This change adds support for the following functions to io_uring:
-> - fgetxattr
-> - fsetxattr
-> - getxattr
-> - setxattr
+> New opcodes:
+>   IORING_OP_SENDTO
+>   IORING_OP_RECVFROM
 > 
-> Patch 1: fs: split off setxattr_copy and do_setxattr function from setxattr
->   Split off the setup part of the setxattr function in the setxattr_copy
->   function. Split off the processing part in do_setxattr.
+> Cc: Nugra <richiisei@gmail.com>
+> Tested-by: Nugra <richiisei@gmail.com>
+> Link: https://github.com/axboe/liburing/issues/397
+> Signed-off-by: Ammar Faizi <ammarfaizi2@gmail.com>
+> ---
 > 
-> Patch 2: fs: split off do_getxattr from getxattr
->   Split of the do_getxattr part from getxattr. This will
->   allow it to be invoked it from io_uring.
+> v3:
+>   - Fix build error when CONFIG_NET is undefined should be done in
+>     the first patch, not this patch.
 > 
-> Patch 3: io_uring: add fsetxattr and setxattr support
->   This adds new functions to support the fsetxattr and setxattr
->   functions.
+>   - Add Tested-by tag from Nugra.
 > 
-> Patch 4: io_uring: add fgetxattr and getxattr support
->   This adds new functions to support the fgetxattr and getxattr
->   functions.
+> v2:
+>   - In `io_recvfrom()`, mark the error check of `move_addr_to_user()`
+>     call as unlikely.
 > 
+>   - Fix build error when CONFIG_NET is undefined.
 > 
-> There are two additional patches:
->   liburing: Add support for xattr api's.
->             This also includes the tests for the new code.
->   xfstests: Add support for io_uring xattr support.
+>   - Added Nugra to CC list (tester).
+> ---
+>  fs/io_uring.c                 | 80 +++++++++++++++++++++++++++++++++--
+>  include/uapi/linux/io_uring.h |  2 +
+>  2 files changed, 78 insertions(+), 4 deletions(-)
 > 
-> 
-> V12: - add union to xattr_ctx structure. The getxattr api requires
->        a pointer to value and the setxattr requires a const pointer
->        to value (with a union this can be unified).
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 7adcb591398f..3726958f8f58 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -575,7 +575,15 @@ struct io_sr_msg {
+>  	union {
+>  		struct compat_msghdr __user	*umsg_compat;
+>  		struct user_msghdr __user	*umsg;
+> -		void __user			*buf;
+> +
+> +		struct {
+> +			void __user		*buf;
+> +			struct sockaddr __user	*addr;
+> +			union {
+> +				int		sendto_addr_len;
+> +				int __user	*recvfrom_addr_len;
+> +			};
+> +		};
+>  	};
+>  	int				msg_flags;
+>  	int				bgid;
+> @@ -1133,6 +1141,19 @@ static const struct io_op_def io_op_defs[] = {
+>  		.needs_file = 1
+>  	},
+>  	[IORING_OP_GETXATTR] = {},
+> +	[IORING_OP_SENDTO] = {
+> +		.needs_file		= 1,
+> +		.unbound_nonreg_file	= 1,
+> +		.pollout		= 1,
+> +		.audit_skip		= 1,
+> +	},
+> +	[IORING_OP_RECVFROM] = {
+> +		.needs_file		= 1,
+> +		.unbound_nonreg_file	= 1,
+> +		.pollin			= 1,
+> +		.buffer_select		= 1,
+> +		.audit_skip		= 1,
+> +	},
+>  };
+>  
+>  /* requests with any of those set should undergo io_disarm_next() */
+> @@ -5216,12 +5237,24 @@ static int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>  	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
+>  		return -EINVAL;
+>  
+> +	/*
+> +	 * For IORING_OP_SEND{,TO}, the assignment to @sr->umsg
+> +	 * is equivalent to an assignment to @sr->buf.
+> +	 */
+>  	sr->umsg = u64_to_user_ptr(READ_ONCE(sqe->addr));
+> +
+>  	sr->len = READ_ONCE(sqe->len);
+>  	sr->msg_flags = READ_ONCE(sqe->msg_flags) | MSG_NOSIGNAL;
+>  	if (sr->msg_flags & MSG_DONTWAIT)
+>  		req->flags |= REQ_F_NOWAIT;
+>  
+> +	if (req->opcode == IORING_OP_SENDTO) {
+> +		sr->addr = u64_to_user_ptr(READ_ONCE(sqe->addr2));
+> +		sr->sendto_addr_len = READ_ONCE(sqe->addr3);
+> +	} else {
+> +		sr->addr = (struct sockaddr __user *) NULL;
 
-I'm fine with adding a union in there. I think it's also what Linus
-suggested in a previous mail. Al suggested a different allocation for
-the attribute name. Fwiw, I'm fine with either (struct kattr or
-dynamically allocating via an additional helper).
+Let's have sendto_addr_len  = 0  
 
-I've ran this through the generic vfs and idmapped mount xfstests I
-added last year. They do test core xattr functionality. I've applied
-your patchset on top of Jen's for-next. They pass:
+> +	}
+> +
+>  #ifdef CONFIG_COMPAT
+>  	if (req->ctx->compat)
+>  		sr->msg_flags |= MSG_CMSG_COMPAT;
+> @@ -5275,6 +5308,7 @@ static int io_sendmsg(struct io_kiocb *req, unsigned int issue_flags)
+>  
+>  static int io_sendto(struct io_kiocb *req, unsigned int issue_flags)
+>  {
+> +	struct sockaddr_storage address;
+>  	struct io_sr_msg *sr = &req->sr_msg;
+>  	struct msghdr msg;
+>  	struct iovec iov;
+> @@ -5291,10 +5325,20 @@ static int io_sendto(struct io_kiocb *req, unsigned int issue_flags)
+>  	if (unlikely(ret))
+>  		return ret;
+>  
+> -	msg.msg_name = NULL;
+> +
+>  	msg.msg_control = NULL;
+>  	msg.msg_controllen = 0;
+> -	msg.msg_namelen = 0;
+> +	if (sr->addr) {
+> +		ret = move_addr_to_kernel(sr->addr, sr->sendto_addr_len,
+> +					  &address);
+> +		if (unlikely(ret < 0))
+> +			goto fail;
+> +		msg.msg_name = (struct sockaddr *) &address;
+> +		msg.msg_namelen = sr->sendto_addr_len;
+> +	} else {
+> +		msg.msg_name = NULL;
+> +		msg.msg_namelen = 0;
+> +	}
+>  
+>  	flags = req->sr_msg.msg_flags;
+>  	if (issue_flags & IO_URING_F_NONBLOCK)
+> @@ -5309,6 +5353,7 @@ static int io_sendto(struct io_kiocb *req, unsigned int issue_flags)
+>  			return -EAGAIN;
+>  		if (ret == -ERESTARTSYS)
+>  			ret = -EINTR;
+> +	fail:
+>  		req_set_fail(req);
 
-ubuntu@f2-vm:~/src/git/xfstests$ sudo ./check -g idmapped
-SECTION       -- xfs
-RECREATING    -- xfs on /dev/loop4
-FSTYP         -- xfs (debug)
-PLATFORM      -- Linux/x86_64 f2-vm 5.16.0-rc3-fs-xattr-c62607c023ad #41 SMP PREEMPT Thu Jan 6 12:11:34 UTC 2022
-MKFS_OPTIONS  -- -f -f /dev/loop5
-MOUNT_OPTIONS -- /dev/loop5 /mnt/scratch
+I think there is a problem with "fail" goto statement. Not getting full clarity on this change. With latest kernel, I see req_set_fail(req) inside if check, which I don't see here. Can you please resend the patch on latest kernel version. Thanks.
 
-generic/633 26s ...  29s
-generic/644 5s ...  19s
-generic/645 413s ...  225s
-generic/656 13s ...  21s
-xfs/152 70s ...  75s
-xfs/153 46s ...  48s
-Ran: generic/633 generic/644 generic/645 generic/656 xfs/152 xfs/153
-Passed all 6 tests
+>  	}
+>  	__io_req_complete(req, issue_flags, ret, 0);
+> @@ -5427,13 +5472,25 @@ static int io_recvmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>  	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
+>  		return -EINVAL;
+>  
+> +	/*
+> +	 * For IORING_OP_RECV{,FROM}, the assignment to @sr->umsg
+> +	 * is equivalent to an assignment to @sr->buf.
+> +	 */
+>  	sr->umsg = u64_to_user_ptr(READ_ONCE(sqe->addr));
+> +
+>  	sr->len = READ_ONCE(sqe->len);
+>  	sr->bgid = READ_ONCE(sqe->buf_group);
+>  	sr->msg_flags = READ_ONCE(sqe->msg_flags) | MSG_NOSIGNAL;
+>  	if (sr->msg_flags & MSG_DONTWAIT)
+>  		req->flags |= REQ_F_NOWAIT;
+>  
+> +	if (req->opcode == IORING_OP_RECVFROM) {
+> +		sr->addr = u64_to_user_ptr(READ_ONCE(sqe->addr2));
+> +		sr->recvfrom_addr_len = u64_to_user_ptr(READ_ONCE(sqe->addr3));
+> +	} else {
+> +		sr->addr = (struct sockaddr __user *) NULL;
 
-SECTION       -- ext4
-RECREATING    -- ext4 on /dev/loop4
-FSTYP         -- ext4
-PLATFORM      -- Linux/x86_64 f2-vm 5.16.0-rc3-fs-xattr-c62607c023ad #41 SMP PREEMPT Thu Jan 6 12:11:34 UTC 2022
-MKFS_OPTIONS  -- -F -F /dev/loop5
-MOUNT_OPTIONS -- -o acl,user_xattr /dev/loop5 /mnt/scratch
+I think recvfrom_addr_len should also be pointed to NULL, instead of garbage for this case.
 
-generic/633 29s ...  20s
-generic/644 19s ...  5s
-generic/645 225s ...  208s
-generic/656 21s ...  12s
-Ran: generic/633 generic/644 generic/645 generic/656
-Passed all 4 tests
+> +	}
+> +
+>  #ifdef CONFIG_COMPAT
+>  	if (req->ctx->compat)
+>  		sr->msg_flags |= MSG_CMSG_COMPAT;
+> @@ -5509,6 +5566,7 @@ static int io_recvfrom(struct io_kiocb *req, unsigned int issue_flags)
+>  	struct iovec iov;
+>  	unsigned flags;
+>  	int ret, min_ret = 0;
+> +	struct sockaddr_storage address;
+>  	bool force_nonblock = issue_flags & IO_URING_F_NONBLOCK;
+>  
+>  	sock = sock_from_file(req->file);
+> @@ -5526,7 +5584,7 @@ static int io_recvfrom(struct io_kiocb *req, unsigned int issue_flags)
+>  	if (unlikely(ret))
+>  		goto out_free;
+>  
+> -	msg.msg_name = NULL;
+> +	msg.msg_name = sr->addr ? (struct sockaddr *) &address : NULL;
+>  	msg.msg_control = NULL;
+>  	msg.msg_controllen = 0;
+>  	msg.msg_namelen = 0;
 
-SECTION       -- btrfs
-RECREATING    -- btrfs on /dev/loop4
-FSTYP         -- btrfs
-PLATFORM      -- Linux/x86_64 f2-vm 5.16.0-rc3-fs-xattr-c62607c023ad #41 SMP PREEMPT Thu Jan 6 12:11:34 UTC 2022
-MKFS_OPTIONS  -- -f /dev/loop5
-MOUNT_OPTIONS -- /dev/loop5 /mnt/scratch
+I think namelen should also be updated ?
 
-btrfs/245 10s ...  11s
-generic/633 20s ...  25s
-generic/644 5s ...  4s
-generic/645 208s ...  209s
-generic/656 12s ...  14s
-Ran: btrfs/245 generic/633 generic/644 generic/645 generic/656
-Passed all 5 tests
+> @@ -5540,6 +5598,16 @@ static int io_recvfrom(struct io_kiocb *req, unsigned int issue_flags)
+>  		min_ret = iov_iter_count(&msg.msg_iter);
+>  
+>  	ret = sock_recvmsg(sock, &msg, flags);
+> +
+> +	if (ret >= 0 && sr->addr != NULL) {
+> +		int tmp;
+> +
+> +		tmp = move_addr_to_user(&address, msg.msg_namelen, sr->addr,
+> +					sr->recvfrom_addr_len);
+> +		if (unlikely(tmp < 0))
+> +			ret = tmp;
+> +	}
+> +
+>  out_free:
+>  	if (ret < min_ret) {
+>  		if (ret == -EAGAIN && force_nonblock)
+> @@ -6778,9 +6846,11 @@ static int io_req_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>  	case IORING_OP_SYNC_FILE_RANGE:
+>  		return io_sfr_prep(req, sqe);
+>  	case IORING_OP_SENDMSG:
+> +	case IORING_OP_SENDTO:
+>  	case IORING_OP_SEND:
+>  		return io_sendmsg_prep(req, sqe);
+>  	case IORING_OP_RECVMSG:
+> +	case IORING_OP_RECVFROM:
+>  	case IORING_OP_RECV:
+>  		return io_recvmsg_prep(req, sqe);
+>  	case IORING_OP_CONNECT:
+> @@ -7060,12 +7130,14 @@ static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags)
+>  	case IORING_OP_SENDMSG:
+>  		ret = io_sendmsg(req, issue_flags);
+>  		break;
+> +	case IORING_OP_SENDTO:
+>  	case IORING_OP_SEND:
+>  		ret = io_sendto(req, issue_flags);
+>  		break;
+>  	case IORING_OP_RECVMSG:
+>  		ret = io_recvmsg(req, issue_flags);
+>  		break;
+> +	case IORING_OP_RECVFROM:
+>  	case IORING_OP_RECV:
+>  		ret = io_recvfrom(req, issue_flags);
+>  		break;
+> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+> index efc7ac9b3a6b..a360069d1e8e 100644
+> --- a/include/uapi/linux/io_uring.h
+> +++ b/include/uapi/linux/io_uring.h
+> @@ -150,6 +150,8 @@ enum {
+>  	IORING_OP_SETXATTR,
+>  	IORING_OP_FGETXATTR,
+>  	IORING_OP_GETXATTR,
+> +	IORING_OP_SENDTO,
+> +	IORING_OP_RECVFROM,
+>  
+>  	/* this goes last, obviously */
+>  	IORING_OP_LAST,
 
-SECTION       -- xfs
-=========================
-Ran: generic/633 generic/644 generic/645 generic/656 xfs/152 xfs/153
-Passed all 6 tests
 
-SECTION       -- ext4
-=========================
-Ran: generic/633 generic/644 generic/645 generic/656
-Passed all 4 tests
+Regards,
 
-SECTION       -- btrfs
-=========================
-Ran: btrfs/245 generic/633 generic/644 generic/645 generic/656
-Passed all 5 tests
+~Praveen.

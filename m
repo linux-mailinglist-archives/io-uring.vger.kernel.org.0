@@ -2,112 +2,107 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 46A3A4877E3
-	for <lists+io-uring@lfdr.de>; Fri,  7 Jan 2022 14:02:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68A914877E4
+	for <lists+io-uring@lfdr.de>; Fri,  7 Jan 2022 14:02:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231612AbiAGNC1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 7 Jan 2022 08:02:27 -0500
-Received: from ip59.38.31.103.in-addr.arpa.unknwn.cloudhost.asia ([103.31.38.59]:44668
+        id S232097AbiAGNC2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 7 Jan 2022 08:02:28 -0500
+Received: from ip59.38.31.103.in-addr.arpa.unknwn.cloudhost.asia ([103.31.38.59]:44684
         "EHLO gnuweeb.org" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S230218AbiAGNC1 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 7 Jan 2022 08:02:27 -0500
+        with ESMTP id S230218AbiAGNC2 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 7 Jan 2022 08:02:28 -0500
 Received: from integral2.. (unknown [36.68.70.227])
-        by gnuweeb.org (Postfix) with ESMTPSA id 76C23C00E2;
-        Fri,  7 Jan 2022 13:02:23 +0000 (UTC)
+        by gnuweeb.org (Postfix) with ESMTPSA id 92778C17F2;
+        Fri,  7 Jan 2022 13:02:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=gnuweeb.org;
-        s=default; t=1641560545;
-        bh=rAWzHPQU/qBZ7SLNNkOvxjWtaOMwpHxMsutZJSUpV14=;
-        h=From:To:Cc:Subject:Date:From;
-        b=QKJyQqIJOpsPh+Jg4JXz1uHRq681kNIHH9mfAok0UIs9+xNjh9mZEcaJ5WyhUGXrW
-         F9l1oKAOca2g+dJLP4RRhlNgKY/3ISmKt4q1pxXif/DCF9kA/s6dyYzMbmgUHBmbIl
-         VnGKWlYurvNsd4OQ0iozVBaCAaJLEEjbBhLIyjIyb6gkO+6TeKVmZcoPwgjj6ZerKp
-         cHMDFZzR9I9+xIX7fUEm4zWv8FoNwRhiuc7qe7qE17rv4QjTNX+psPG2qAeDFrlrJy
-         BAojgv9Y7wKdwRzSQFArSO8/ojnN5ceIfzg+JZ6fh4QVU+Nym3fUM8C/oi2cMZVZcq
-         j3ii4f6qRgIeQ==
+        s=default; t=1641560547;
+        bh=+u4pKlYPYt1PipEjrDT7r8Ze8KmQqAXhDupoPACiK3c=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=WmPvt5TQOcW6rYp+Bk0Kmq7NLA94wPid8Y3COV7rUhCybGDkpA5k5lXprjPEZHqKz
+         mM0dYSRHJKy+8I5hPbc0RN35t0dzVOPl94weNKak2Bc1lH3z8Wvx1JX/aFoTOHXzPI
+         RnTwzgd1f83a7WplOu5ZIlEcLZ9S1aHvIK/9FLjVT1d+SQ5B6mo+TxNiP8akdP6n/1
+         1jWa2lAmae2HbitST+pCQ+DeSGJUBoUr2yJh54LRRPpX4N7MD7jzJNw/DcnSePOhZn
+         6kps8bAiJViSw8xdxBwx09SLx6z8NxtaBzYnvbBpb+juc5qPCHf5ZaFDfJZgW6phFh
+         WpZUiw+BhgMzQ==
 From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
         io-uring Mailing List <io-uring@vger.kernel.org>,
         GNU/Weeb Mailing List <gwml@gnuweeb.org>,
         Ammar Faizi <ammarfaizi2@gmail.com>
-Subject: [PATCH liburing 0/3] Fix undefined behavior, acessing dead object
-Date:   Fri,  7 Jan 2022 20:02:15 +0700
-Message-Id: <20220107130218.1238910-1-ammarfaizi2@gnuweeb.org>
+Subject: [PATCH liburing 1/3] test/socket-rw-eagain: Fix UB, accessing dead object
+Date:   Fri,  7 Jan 2022 20:02:16 +0700
+Message-Id: <20220107130218.1238910-2-ammarfaizi2@gnuweeb.org>
 X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20220107130218.1238910-1-ammarfaizi2@gnuweeb.org>
+References: <20220107130218.1238910-1-ammarfaizi2@gnuweeb.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This series fixes undefined behavior caused by accessing local
-variables that have been out of their scope.
+Dereference to a local variable that has been out of its scope is
+undefined behavior, it may contain garbage or the compiler may
+reuse it for other local variables.
 
-FWIW, compile the following code with gcc (Ubuntu 11.2.0-7ubuntu2) 11.2.0:
-```
-#include <stdio.h>
+Fix this by moving the struct iov variable declarations so their
+lifetime is extended.
 
-int main(void)
-{
-	int *pa, *pb;
-
-	{
-		int a;
-		pa = &a;
-	}
-
-	{
-		int b;
-		pb = &b;
-	}
-
-	*pa = 100;
-	*pb = 200;
-
-	printf("(pa == pb) = %d\n", pa == pb);
-	printf("*pa == %d; *pb == %d\n", *pa, *pb);
-	return 0;
-}
-```
-
-produces the following output:
-
-```
-  ammarfaizi2@integral2:/tmp$ gcc q.c -o q
-  ammarfaizi2@integral2:/tmp$ ./q
-  (pa == pb) = 1
-  *pa == 200; *pb == 200
-  ammarfaizi2@integral2:/tmp$
-  ammarfaizi2@integral2:/tmp$ gcc -O3 q.c -o q
-  ammarfaizi2@integral2:/tmp$ ./q
-  (pa == pb) = 0
-  *pa == 100; *pb == 200
-  ammarfaizi2@integral2:/tmp$
-```
-
-Note that the `int a` and `int b` lifetime have ended, but we still
-hold the references to them dereference them.
-
-Also the result differs for the different optimization levels.
-That's to say, there is no guarantee due to UB. Compiler is free
-to reuse "out of scope variable"'s storage.
-
-The same happens with test/socket-rw{,-eagain,-offset}.c.
-
+Cc: Jens Axboe <axboe@kernel.dk>
+Fixes: 76e3b7921fee98a5627cd270628b6a5160d3857d ("Add nonblock empty socket read test")
 Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 ---
-Ammar Faizi (3):
-  test/socket-rw-eagain: Fix UB, accessing dead object
-  test/socket-rw: Fix UB, accessing dead object
-  test/socket-rw-offset: Fix UB, accessing dead object
-
  test/socket-rw-eagain.c | 17 +++++++----------
- test/socket-rw-offset.c | 17 +++++++----------
- test/socket-rw.c        | 17 +++++++----------
- 3 files changed, 21 insertions(+), 30 deletions(-)
+ 1 file changed, 7 insertions(+), 10 deletions(-)
 
-
-base-commit: 918d8061ffdfdf253806a1e8e141c71644e678bd
+diff --git a/test/socket-rw-eagain.c b/test/socket-rw-eagain.c
+index 9854e00..2d6a817 100644
+--- a/test/socket-rw-eagain.c
++++ b/test/socket-rw-eagain.c
+@@ -25,6 +25,7 @@ int main(int argc, char *argv[])
+ 	int32_t recv_s0;
+ 	int32_t val = 1;
+ 	struct sockaddr_in addr;
++	struct iovec iov_r[1], iov_w[1];
+ 
+ 	if (argc > 1)
+ 		return 0;
+@@ -105,28 +106,24 @@ int main(int argc, char *argv[])
+ 	char send_buff[128];
+ 
+ 	{
+-		struct iovec iov[1];
+-
+-		iov[0].iov_base = recv_buff;
+-		iov[0].iov_len = sizeof(recv_buff);
++		iov_r[0].iov_base = recv_buff;
++		iov_r[0].iov_len = sizeof(recv_buff);
+ 
+ 		struct io_uring_sqe* sqe = io_uring_get_sqe(&m_io_uring);
+ 		assert(sqe != NULL);
+ 
+-		io_uring_prep_readv(sqe, p_fd[0], iov, 1, 0);
++		io_uring_prep_readv(sqe, p_fd[0], iov_r, 1, 0);
+ 		sqe->user_data = 1;
+ 	}
+ 
+ 	{
+-		struct iovec iov[1];
+-
+-		iov[0].iov_base = send_buff;
+-		iov[0].iov_len = sizeof(send_buff);
++		iov_w[0].iov_base = send_buff;
++		iov_w[0].iov_len = sizeof(send_buff);
+ 
+ 		struct io_uring_sqe* sqe = io_uring_get_sqe(&m_io_uring);
+ 		assert(sqe != NULL);
+ 
+-		io_uring_prep_writev(sqe, p_fd[1], iov, 1, 0);
++		io_uring_prep_writev(sqe, p_fd[1], iov_w, 1, 0);
+ 		sqe->user_data = 2;
+ 	}
+ 
 -- 
 2.32.0
 

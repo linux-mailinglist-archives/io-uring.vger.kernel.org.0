@@ -2,405 +2,385 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 50EA6487425
-	for <lists+io-uring@lfdr.de>; Fri,  7 Jan 2022 09:33:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B6CE487619
+	for <lists+io-uring@lfdr.de>; Fri,  7 Jan 2022 12:02:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236245AbiAGIdv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 7 Jan 2022 03:33:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48346 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236102AbiAGIdu (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 7 Jan 2022 03:33:50 -0500
-Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1150C061245;
-        Fri,  7 Jan 2022 00:33:50 -0800 (PST)
-Received: by mail-pf1-x42a.google.com with SMTP id 205so4685814pfu.0;
-        Fri, 07 Jan 2022 00:33:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=2CeQfauMdUXmKOMOuK6I4lQHEIz0dx7w2UsHkNa4A8Q=;
-        b=b+9vQmWEnkOUZKO2v2v4MhjX5Po/KUcTNVNgzNeHSNCMd46eQ3KIgMNTQHYovaR1BV
-         jaeDG4OozYn2u1ufwQOeMolEFPJnqJ6GJfCL+RRBjBCDf9xuFlAx9BFfedzYEGD9Nw4Y
-         EnXz41+KQhXKGNFGEgezCX04IAVL2PVbHLVr95MUP8GVTU6JF+F2Ax4tOsHvA7HNCA2j
-         zjvjHPlftFznwmCD2iCwcs/2S7cXk4zdUVz7VTsTBvzWbi1216jeg2FabSW33KDpeYXB
-         zHTYG6argcX/8GFOylgYvm8Sfr7WQD9EuflTZiWwjFaX/QW4jXMXPmtZFW8U7PKYFnbx
-         0d5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=2CeQfauMdUXmKOMOuK6I4lQHEIz0dx7w2UsHkNa4A8Q=;
-        b=BayPfm9ZpnWK0QZRV3bbliuLKpLfWcnLGmo1TQCbFIY2TSr2aNzNjPzQ8zALeU9aKf
-         exoQuuPZrCVP4BAQvGenaXPK5qA0jW+3RT9olYWbWRwZUTJvOTo9iSq8n6Mfv0U8+dOH
-         EMMwzfYzGNdn91gd77CKoozEh17fX6LHeBU7I6VzHFL1NTL6tDt+Hs9y6JM1tv6z1TZ0
-         JwYzKNF6FePuDYPXDShsqtzbSHig+ODQT1+/l8eLQKk3Ou1GEMN6I7Wu5xF88Mh8QnX7
-         1Os82MLEOJzY7JG1R43bCRQ6Ll3pUHatstZekdn7+HRaXAAT+tNapJ0bEixeZf5mUU5t
-         jK7A==
-X-Gm-Message-State: AOAM532mO0CzrFUXeiCoctBqG0s49iPriY3ls9zPd+xmViyqjLOE3+JH
-        5p0ROTlZXPMbQv3HyLJGWYrqqWPt5sU=
-X-Google-Smtp-Source: ABdhPJzjJkaa6TyZQekKo8cWjieVHdcbRwScC6H+cuytx+RFk3t1aFUwwrEwwYhAaQ3HbFg+941hfA==
-X-Received: by 2002:a65:6a84:: with SMTP id q4mr774461pgu.303.1641544430159;
-        Fri, 07 Jan 2022 00:33:50 -0800 (PST)
-Received: from [192.168.1.87] ([122.172.37.80])
-        by smtp.gmail.com with ESMTPSA id h7sm5184908pfv.35.2022.01.07.00.33.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Jan 2022 00:33:49 -0800 (PST)
-Message-ID: <778df8ea-f8c6-d586-5c9c-42329da0e40d@gmail.com>
-Date:   Fri, 7 Jan 2022 14:03:44 +0530
+        id S237817AbiAGLCO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 7 Jan 2022 06:02:14 -0500
+Received: from ip59.38.31.103.in-addr.arpa.unknwn.cloudhost.asia ([103.31.38.59]:44628
+        "EHLO gnuweeb.org" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S237515AbiAGLCO (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 7 Jan 2022 06:02:14 -0500
+Received: from [192.168.88.87] (unknown [36.68.70.227])
+        by gnuweeb.org (Postfix) with ESMTPSA id 5730FC17E1;
+        Fri,  7 Jan 2022 11:02:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=gnuweeb.org;
+        s=default; t=1641553331;
+        bh=69iC82DV9kEJV/y18CXzQrwBf7JCWfwDCvwqflWLAyg=;
+        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
+        b=EBDp/MeweWTi1DS3kvD1Z1D9e2RrI94g8B7M3p5YLqjH2Qq6VodebI+npXLZIISx6
+         WhRqNmE4LpeWvrJZByB3MG4IJ4+YUaZr3vqxbhga447B1qev4LQhO9usqsBVndqyXB
+         AB7Yd5UeMpgZsrC/5d/LfqH1ya3yBSS5o3JRLgXOAJmxU9C3dVMu2/fw8WNndJSm0n
+         WrGHFFM1fnl9aL3W0yTTi9FZMjL315t/h/BJTRKtQkWp13onFVNrORUoxJykbB5PyE
+         KlPUmyPBuudFpuCWaQHYZIPJujPPM5GDZykcfAFpBYBOQnr+hN2EA3rg9/CVgjEiLA
+         oK3yqqE2Bnu9A==
+Message-ID: <754444d8-72e0-6b65-20f5-c41f3a698de9@gnuweeb.org>
+Date:   Fri, 7 Jan 2022 18:02:10 +0700
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.1
-Subject: Re: [RFC PATCH v3 3/3] io_uring: Add `sendto(2)` and `recvfrom(2)`
- support
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.1
 Content-Language: en-US
-To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>, Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring Mailing List <io-uring@vger.kernel.org>,
+To:     Praveen Kumar <kpraveen.lkml@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
+        io-uring Mailing List <io-uring@vger.kernel.org>,
+        netdev Mailing List <netdev@vger.kernel.org>,
+        GNU/Weeb Mailing List <gwml@gnuweeb.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Pavel Begunkov <asml.silence@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Nugra <richiisei@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, Nugra <richiisei@gmail.com>,
         Ammar Faizi <ammarfaizi2@gmail.com>
 References: <20211230115057.139187-3-ammar.faizi@intel.com>
  <20211230173126.174350-1-ammar.faizi@intel.com>
  <20211230173126.174350-4-ammar.faizi@intel.com>
  <597c1bfc-f8ab-d513-4916-dbd93b05e66a@gmail.com>
  <20220106203850.1133211-1-ammarfaizi2@gnuweeb.org>
-From:   Praveen Kumar <kpraveen.lkml@gmail.com>
-In-Reply-To: <20220106203850.1133211-1-ammarfaizi2@gnuweeb.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+ <778df8ea-f8c6-d586-5c9c-42329da0e40d@gmail.com>
+From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
+Autocrypt: addr=ammarfaizi2@gnuweeb.org; keydata=
+ xsBNBGECqsMBCADy9cU6jMSaJECZXmbOE1Sox1zeJXEy51BRQNOEKbsR0dnRNUCl2tUR1rxd
+ M+8V9TQUInBxERJcOdbUKibS8PQRy1g8LKJO/yrrMN8SFqnxYyX8M3WDz1PWuJ7DZE4gECtj
+ RPuYN978y9w7Hi6micjraQeXbNp1S7MxEk5AxtlokO6u6Mrdm1WRNDytagkY61PP+5lJwiQS
+ XOqiSLyT/ydEbG/hdBiOTOEN4J8MxE+p2xwhHjSTvU4ehq1b6b6N62pIA0r6NMRtdqp0c+Qv
+ 3SVkTV8TVHcck60ZKaNtKQTsCObqUHKRurU1qmF6i2Zs+nfL/e+EtT0NVOVEipRZrkGXABEB
+ AAHNJUFtbWFyIEZhaXppIDxhbW1hcmZhaXppMkBnbnV3ZWViLm9yZz7CwJQEEwEKAD4WIQTo
+ k3JtyOTA3juiAQc2T7o0/xcKSwUCYQKqwwIbAwUJBaOagAULCQgHAgYVCgkICwIEFgIDAQIe
+ AQIXgAAKCRA2T7o0/xcKS0CHCAC2x/Vq6OodDFs0rCon2VBZFvnIyXIaOsJWNnIrlkNKVHWL
+ QC+ALmiSwFN1822v8JP+8Fyf+HHIKVTsAPkovCnrIbliM8ZA+YTUmcLMPL+Aa05+XyZjR14l
+ 6Oyu9BhN7MW/XKXQnw96OE8AHpbX+Pgd4A7RtA2FGlaoBzrGlEe1B8nDBcS9ldJ0J95VKX6j
+ LCJeU51msq1Q+ZyZstJ7SFsY9XKcMW7cS/aHzsayBRKtansSTkyJWCTinHn17rzkSRVcmdNY
+ uga3YOBOfRIEq9LzrewE9gV40VNctY+sciMc/Z8uK5TfGIlYDTtuLmlvmw+EWjEKzwS6O0uQ
+ K9YtIvl7zsBNBGECqsMBCADrprHwlhdUQBY1kzzeCozyx1AWGpyFNiFGjsRC3+UK4dhO9h6u
+ Gz3OY5o0G7AV6nOniZCQofgm78NL5wdvIjL/ko5l7LNFQkU4SBjcGjn+Wc4UAWd2EpFPo/Dc
+ 3kTFzSlowp2+/kETA+FK7UDdwJTH/n05XwvGTZ9/pmVwP0e6iDnyJ5yIwbv28wTdIm4L3/uB
+ xMp1UeHwztLk4Dcw+FX5ye/JfK3dbx0Gx8cfhAeFlVEz9z6LvtAn94BNYVd4CxE9Vh2BFFzq
+ 07bDQGhAN0Rim1K8uEahuKyyg2MuoDI8lvzONLbaiEw9/OgT1z+h4qyzjulXAHzxqkcjz4Of
+ SqzfABEBAAHCwHwEGAEKACYWIQTok3JtyOTA3juiAQc2T7o0/xcKSwUCYQKqwwIbDAUJBaOa
+ gAAKCRA2T7o0/xcKS2+RB/43pagncTq0/ywbQhjHrXtOuYDPcrbKusD1jiURWXEMgM48nV/H
+ dQYTHd8mabMT0xa4NOUlDA2If2t9HvzLoNDPefP4+z41DJL6ZZNCQhLUJBh5/zhSedRF6JHW
+ PiO/nWkfdUUhBTabadgUYI80djY63rG3LKmjuh3/AZ4Vb9qBVpJX0tjZSbXa47yzL7tiQ539
+ u7eqoTXOy4oc5XC2koICy4DMNAEVaL2uEfY9MPHJKcsmrcwtu4w1gg8JehM/bwtphPG5J+H7
+ mFZqTLyTMNfOmAKErQlwCfFzyh0uFggluVBlOLImyrKOh6+0bUZGZ0CaTE10OMTS6HgE1W10 EZJc
+Subject: Re: [RFC PATCH v3 3/3] io_uring: Add `sendto(2)` and `recvfrom(2)`
+ support
+In-Reply-To: <778df8ea-f8c6-d586-5c9c-42329da0e40d@gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------0BPPakvX3xrne7GYz0xeCG0J"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 07-01-2022 02:08, Ammar Faizi wrote:
-> 
-> On Thu, 6 Jan 2022 at 23:01:59 +0530, Praveen Kumar <kpraveen.lkml@gmail.com> wrote:
->> On 30-12-2021 23:22, Ammar Faizi wrote:
->>> This adds sendto(2) and recvfrom(2) support for io_uring.
->>>
->>> New opcodes:
->>>   IORING_OP_SENDTO
->>>   IORING_OP_RECVFROM
->>>
->>> Cc: Nugra <richiisei@gmail.com>
->>> Tested-by: Nugra <richiisei@gmail.com>
->>> Link: https://github.com/axboe/liburing/issues/397
->>> Signed-off-by: Ammar Faizi <ammarfaizi2@gmail.com>
->>> ---
->>>
->>> v3:
->>>   - Fix build error when CONFIG_NET is undefined should be done in
->>>     the first patch, not this patch.
->>>
->>>   - Add Tested-by tag from Nugra.
->>>
->>> v2:
->>>   - In `io_recvfrom()`, mark the error check of `move_addr_to_user()`
->>>     call as unlikely.
->>>
->>>   - Fix build error when CONFIG_NET is undefined.
->>>
->>>   - Added Nugra to CC list (tester).
->>> ---
->>>  fs/io_uring.c                 | 80 +++++++++++++++++++++++++++++++++--
->>>  include/uapi/linux/io_uring.h |  2 +
->>>  2 files changed, 78 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/fs/io_uring.c b/fs/io_uring.c
->>> index 7adcb591398f..3726958f8f58 100644
->>> --- a/fs/io_uring.c
->>> +++ b/fs/io_uring.c
->>> @@ -575,7 +575,15 @@ struct io_sr_msg {
->>>  	union {
->>>  		struct compat_msghdr __user	*umsg_compat;
->>>  		struct user_msghdr __user	*umsg;
->>> -		void __user			*buf;
->>> +
->>> +		struct {
->>> +			void __user		*buf;
->>> +			struct sockaddr __user	*addr;
->>> +			union {
->>> +				int		sendto_addr_len;
->>> +				int __user	*recvfrom_addr_len;
->>> +			};
->>> +		};
->>>  	};
->>>  	int				msg_flags;
->>>  	int				bgid;
->>> @@ -1133,6 +1141,19 @@ static const struct io_op_def io_op_defs[] = {
->>>  		.needs_file = 1
->>>  	},
->>>  	[IORING_OP_GETXATTR] = {},
->>> +	[IORING_OP_SENDTO] = {
->>> +		.needs_file		= 1,
->>> +		.unbound_nonreg_file	= 1,
->>> +		.pollout		= 1,
->>> +		.audit_skip		= 1,
->>> +	},
->>> +	[IORING_OP_RECVFROM] = {
->>> +		.needs_file		= 1,
->>> +		.unbound_nonreg_file	= 1,
->>> +		.pollin			= 1,
->>> +		.buffer_select		= 1,
->>> +		.audit_skip		= 1,
->>> +	},
->>>  };
->>>  
->>>  /* requests with any of those set should undergo io_disarm_next() */
->>> @@ -5216,12 +5237,24 @@ static int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
->>>  	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
->>>  		return -EINVAL;
->>>  
->>> +	/*
->>> +	 * For IORING_OP_SEND{,TO}, the assignment to @sr->umsg
->>> +	 * is equivalent to an assignment to @sr->buf.
->>> +	 */
->>>  	sr->umsg = u64_to_user_ptr(READ_ONCE(sqe->addr));
->>> +
->>>  	sr->len = READ_ONCE(sqe->len);
->>>  	sr->msg_flags = READ_ONCE(sqe->msg_flags) | MSG_NOSIGNAL;
->>>  	if (sr->msg_flags & MSG_DONTWAIT)
->>>  		req->flags |= REQ_F_NOWAIT;
->>>  
->>> +	if (req->opcode == IORING_OP_SENDTO) {
->>> +		sr->addr = u64_to_user_ptr(READ_ONCE(sqe->addr2));
->>> +		sr->sendto_addr_len = READ_ONCE(sqe->addr3);
->>> +	} else {
->>> +		sr->addr = (struct sockaddr __user *) NULL;
->>
->> Let's have sendto_addr_len  = 0  
-> 
-> Will do in the RFC v5.
-> 
->>
->>> +	}
->>> +
->>>  #ifdef CONFIG_COMPAT
->>>  	if (req->ctx->compat)
->>>  		sr->msg_flags |= MSG_CMSG_COMPAT;
->>> @@ -5275,6 +5308,7 @@ static int io_sendmsg(struct io_kiocb *req, unsigned int issue_flags)
->>>  
->>>  static int io_sendto(struct io_kiocb *req, unsigned int issue_flags)
->>>  {
->>> +	struct sockaddr_storage address;
->>>  	struct io_sr_msg *sr = &req->sr_msg;
->>>  	struct msghdr msg;
->>>  	struct iovec iov;
->>> @@ -5291,10 +5325,20 @@ static int io_sendto(struct io_kiocb *req, unsigned int issue_flags)
->>>  	if (unlikely(ret))
->>>  		return ret;
->>>  
->>> -	msg.msg_name = NULL;
->>> +
->>>  	msg.msg_control = NULL;
->>>  	msg.msg_controllen = 0;
->>> -	msg.msg_namelen = 0;
->>> +	if (sr->addr) {
->>> +		ret = move_addr_to_kernel(sr->addr, sr->sendto_addr_len,
->>> +					  &address);
->>> +		if (unlikely(ret < 0))
->>> +			goto fail;
->>> +		msg.msg_name = (struct sockaddr *) &address;
->>> +		msg.msg_namelen = sr->sendto_addr_len;
->>> +	} else {
->>> +		msg.msg_name = NULL;
->>> +		msg.msg_namelen = 0;
->>> +	}
->>>  
->>>  	flags = req->sr_msg.msg_flags;
->>>  	if (issue_flags & IO_URING_F_NONBLOCK)
->>> @@ -5309,6 +5353,7 @@ static int io_sendto(struct io_kiocb *req, unsigned int issue_flags)
->>>  			return -EAGAIN;
->>>  		if (ret == -ERESTARTSYS)
->>>  			ret = -EINTR;
->>> +	fail:
->>>  		req_set_fail(req);
->>
->> I think there is a problem with "fail" goto statement. Not getting
->> full clarity on this change. With latest kernel, I see
->> req_set_fail(req) inside if check, which I don't see here. Can you
->> please resend the patch on latest kernel version. Thanks.
-> 
-> I will send the v5 on top of "for-next" branch in Jens' tree soon.
-> 
-> That is already inside an "if check" anyway. We go to that label when
-> the move_addr_to_kernel() fails (most of the time it is -EFAULT or
-> -EINVAL).
-> 
-> That part looks like this (note the if check before the goto):
-> ----------------------------------------------------------------------
-> 	msg.msg_control = NULL;
-> 	msg.msg_controllen = 0;
-> 	if (sr->addr) {
-> 		ret = move_addr_to_kernel(sr->addr, sr->sendto_addr_len,
-> 					  &address);
-> 		if (unlikely(ret < 0))
-> 			goto fail;
-> 		msg.msg_name = (struct sockaddr *) &address;
-> 		msg.msg_namelen = sr->sendto_addr_len;
-> 	} else {
-> 		msg.msg_name = NULL;
-> 		msg.msg_namelen = 0;
-> 	}
-> 
-> 	flags = req->sr_msg.msg_flags;
-> 	if (issue_flags & IO_URING_F_NONBLOCK)
-> 		flags |= MSG_DONTWAIT;
-> 	if (flags & MSG_WAITALL)
-> 		min_ret = iov_iter_count(&msg.msg_iter);
-> 
-> 	msg.msg_flags = flags;
-> 	ret = sock_sendmsg(sock, &msg);
-> 	if (ret < min_ret) {
-> 		if (ret == -EAGAIN && (issue_flags & IO_URING_F_NONBLOCK))
-> 			return -EAGAIN;
-> 		if (ret == -ERESTARTSYS)
-> 			ret = -EINTR;
-> 	fail:
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------0BPPakvX3xrne7GYz0xeCG0J
+Content-Type: multipart/mixed; boundary="------------80ndkno0jde7tz51bZwsvISz";
+ protected-headers="v1"
+From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+To: Praveen Kumar <kpraveen.lkml@gmail.com>, Jens Axboe <axboe@kernel.dk>
+Cc: Ammar Faizi <ammarfaizi2@gnuweeb.org>,
+ io-uring Mailing List <io-uring@vger.kernel.org>,
+ netdev Mailing List <netdev@vger.kernel.org>,
+ GNU/Weeb Mailing List <gwml@gnuweeb.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Pavel Begunkov <asml.silence@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Nugra <richiisei@gmail.com>, Ammar Faizi <ammarfaizi2@gmail.com>
+Message-ID: <754444d8-72e0-6b65-20f5-c41f3a698de9@gnuweeb.org>
+Subject: Re: [RFC PATCH v3 3/3] io_uring: Add `sendto(2)` and `recvfrom(2)`
+ support
+References: <20211230115057.139187-3-ammar.faizi@intel.com>
+ <20211230173126.174350-1-ammar.faizi@intel.com>
+ <20211230173126.174350-4-ammar.faizi@intel.com>
+ <597c1bfc-f8ab-d513-4916-dbd93b05e66a@gmail.com>
+ <20220106203850.1133211-1-ammarfaizi2@gnuweeb.org>
+ <778df8ea-f8c6-d586-5c9c-42329da0e40d@gmail.com>
+In-Reply-To: <778df8ea-f8c6-d586-5c9c-42329da0e40d@gmail.com>
 
-Thanks for sending this. IMO this goto label should be just before the "if (ret < min_ret)" statement.
+--------------80ndkno0jde7tz51bZwsvISz
+Content-Type: multipart/mixed; boundary="------------j69tG9iEAkNghz5yAWR0hnPx"
 
-> 		req_set_fail(req);
-> 	}
-> 	__io_req_complete(req, issue_flags, ret, 0);
-> 	return 0;
-> ----------------------------------------------------------------------
-> 
->>>  	}
->>>  	__io_req_complete(req, issue_flags, ret, 0);
->>> @@ -5427,13 +5472,25 @@ static int io_recvmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
->>>  	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
->>>  		return -EINVAL;
->>>  
->>> +	/*
->>> +	 * For IORING_OP_RECV{,FROM}, the assignment to @sr->umsg
->>> +	 * is equivalent to an assignment to @sr->buf.
->>> +	 */
->>>  	sr->umsg = u64_to_user_ptr(READ_ONCE(sqe->addr));
->>> +
->>>  	sr->len = READ_ONCE(sqe->len);
->>>  	sr->bgid = READ_ONCE(sqe->buf_group);
->>>  	sr->msg_flags = READ_ONCE(sqe->msg_flags) | MSG_NOSIGNAL;
->>>  	if (sr->msg_flags & MSG_DONTWAIT)
->>>  		req->flags |= REQ_F_NOWAIT;
->>>  
->>> +	if (req->opcode == IORING_OP_RECVFROM) {
->>> +		sr->addr = u64_to_user_ptr(READ_ONCE(sqe->addr2));
->>> +		sr->recvfrom_addr_len = u64_to_user_ptr(READ_ONCE(sqe->addr3));
->>> +	} else {
->>> +		sr->addr = (struct sockaddr __user *) NULL;
->>
->> I think recvfrom_addr_len should also be pointed to NULL, instead of
->> garbage for this case.
-> 
-> Will do in the RFC v5.
-> 
->>
->>> +	}
->>> +
->>>  #ifdef CONFIG_COMPAT
->>>  	if (req->ctx->compat)
->>>  		sr->msg_flags |= MSG_CMSG_COMPAT;
->>> @@ -5509,6 +5566,7 @@ static int io_recvfrom(struct io_kiocb *req, unsigned int issue_flags)
->>>  	struct iovec iov;
->>>  	unsigned flags;
->>>  	int ret, min_ret = 0;
->>> +	struct sockaddr_storage address;
->>>  	bool force_nonblock = issue_flags & IO_URING_F_NONBLOCK;
->>>  
->>>  	sock = sock_from_file(req->file);
->>> @@ -5526,7 +5584,7 @@ static int io_recvfrom(struct io_kiocb *req, unsigned int issue_flags)
->>>  	if (unlikely(ret))
->>>  		goto out_free;
->>>  
->>> -	msg.msg_name = NULL;
->>> +	msg.msg_name = sr->addr ? (struct sockaddr *) &address : NULL;
->>>  	msg.msg_control = NULL;
->>>  	msg.msg_controllen = 0;
->>>  	msg.msg_namelen = 0;
->>
->> I think namelen should also be updated ?
-> 
-> It doesn't have to be updated. From net/socket.c there is a comment
-> like this:
-> 
-> 	/* We assume all kernel code knows the size of sockaddr_storage */
-> 	msg.msg_namelen = 0;
-> 
-> Full __sys_recvfrom() source code, see here:
-> https://github.com/torvalds/linux/blob/v5.16-rc8/net/socket.c#L2085-L2088
-> 
-> I will add the same comment in next series to clarify this one.
-> 
->>
->>> @@ -5540,6 +5598,16 @@ static int io_recvfrom(struct io_kiocb *req, unsigned int issue_flags)
->>>  		min_ret = iov_iter_count(&msg.msg_iter);
->>>  
->>>  	ret = sock_recvmsg(sock, &msg, flags);
->>> +
->>> +	if (ret >= 0 && sr->addr != NULL) {
->>> +		int tmp;
->>> +
->>> +		tmp = move_addr_to_user(&address, msg.msg_namelen, sr->addr,
->>> +					sr->recvfrom_addr_len);
->>> +		if (unlikely(tmp < 0))
->>> +			ret = tmp;
->>> +	}
->>> +
->>>  out_free:
->>>  	if (ret < min_ret) {
->>>  		if (ret == -EAGAIN && force_nonblock)
->>> @@ -6778,9 +6846,11 @@ static int io_req_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
->>>  	case IORING_OP_SYNC_FILE_RANGE:
->>>  		return io_sfr_prep(req, sqe);
->>>  	case IORING_OP_SENDMSG:
->>> +	case IORING_OP_SENDTO:
->>>  	case IORING_OP_SEND:
->>>  		return io_sendmsg_prep(req, sqe);
->>>  	case IORING_OP_RECVMSG:
->>> +	case IORING_OP_RECVFROM:
->>>  	case IORING_OP_RECV:
->>>  		return io_recvmsg_prep(req, sqe);
->>>  	case IORING_OP_CONNECT:
->>> @@ -7060,12 +7130,14 @@ static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags)
->>>  	case IORING_OP_SENDMSG:
->>>  		ret = io_sendmsg(req, issue_flags);
->>>  		break;
->>> +	case IORING_OP_SENDTO:
->>>  	case IORING_OP_SEND:
->>>  		ret = io_sendto(req, issue_flags);
->>>  		break;
->>>  	case IORING_OP_RECVMSG:
->>>  		ret = io_recvmsg(req, issue_flags);
->>>  		break;
->>> +	case IORING_OP_RECVFROM:
->>>  	case IORING_OP_RECV:
->>>  		ret = io_recvfrom(req, issue_flags);
->>>  		break;
->>> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
->>> index efc7ac9b3a6b..a360069d1e8e 100644
->>> --- a/include/uapi/linux/io_uring.h
->>> +++ b/include/uapi/linux/io_uring.h
->>> @@ -150,6 +150,8 @@ enum {
->>>  	IORING_OP_SETXATTR,
->>>  	IORING_OP_FGETXATTR,
->>>  	IORING_OP_GETXATTR,
->>> +	IORING_OP_SENDTO,
->>> +	IORING_OP_RECVFROM,
->>>  
->>>  	/* this goes last, obviously */
->>>  	IORING_OP_LAST,
->>
->>
->> Regards,
->>
->> ~Praveen.
->>
-> 
-> Thanks for the review. I will send the RFC v5 soon.
-> 
+--------------j69tG9iEAkNghz5yAWR0hnPx
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
+T24gMS83LzIyIDM6MzMgUE0sIFByYXZlZW4gS3VtYXIgd3JvdGU6DQo+IE9uIDA3LTAxLTIw
+MjIgMDI6MDgsIEFtbWFyIEZhaXppIHdyb3RlOg0KPj4gT24gVGh1LCA2IEphbiAyMDIyIGF0
+IDIzOjAxOjU5ICswNTMwLCBQcmF2ZWVuIEt1bWFyIDxrcHJhdmVlbi5sa21sQGdtYWlsLmNv
+bT4gd3JvdGU6DQo+Pj4gT24gMzAtMTItMjAyMSAyMzoyMiwgQW1tYXIgRmFpemkgd3JvdGU6
+DQo+Pj4+IFRoaXMgYWRkcyBzZW5kdG8oMikgYW5kIHJlY3Zmcm9tKDIpIHN1cHBvcnQgZm9y
+IGlvX3VyaW5nLg0KPj4+Pg0KPj4+PiBOZXcgb3Bjb2RlczoNCj4+Pj4gICAgSU9SSU5HX09Q
+X1NFTkRUTw0KPj4+PiAgICBJT1JJTkdfT1BfUkVDVkZST00NCj4+Pj4NCj4+Pj4gQ2M6IE51
+Z3JhIDxyaWNoaWlzZWlAZ21haWwuY29tPg0KPj4+PiBUZXN0ZWQtYnk6IE51Z3JhIDxyaWNo
+aWlzZWlAZ21haWwuY29tPg0KPj4+PiBMaW5rOiBodHRwczovL2dpdGh1Yi5jb20vYXhib2Uv
+bGlidXJpbmcvaXNzdWVzLzM5Nw0KPj4+PiBTaWduZWQtb2ZmLWJ5OiBBbW1hciBGYWl6aSA8
+YW1tYXJmYWl6aTJAZ21haWwuY29tPg0KPj4+PiAtLS0NCj4+Pj4NCj4+Pj4gdjM6DQo+Pj4+
+ICAgIC0gRml4IGJ1aWxkIGVycm9yIHdoZW4gQ09ORklHX05FVCBpcyB1bmRlZmluZWQgc2hv
+dWxkIGJlIGRvbmUgaW4NCj4+Pj4gICAgICB0aGUgZmlyc3QgcGF0Y2gsIG5vdCB0aGlzIHBh
+dGNoLg0KPj4+Pg0KPj4+PiAgICAtIEFkZCBUZXN0ZWQtYnkgdGFnIGZyb20gTnVncmEuDQo+
+Pj4+DQo+Pj4+IHYyOg0KPj4+PiAgICAtIEluIGBpb19yZWN2ZnJvbSgpYCwgbWFyayB0aGUg
+ZXJyb3IgY2hlY2sgb2YgYG1vdmVfYWRkcl90b191c2VyKClgDQo+Pj4+ICAgICAgY2FsbCBh
+cyB1bmxpa2VseS4NCj4+Pj4NCj4+Pj4gICAgLSBGaXggYnVpbGQgZXJyb3Igd2hlbiBDT05G
+SUdfTkVUIGlzIHVuZGVmaW5lZC4NCj4+Pj4NCj4+Pj4gICAgLSBBZGRlZCBOdWdyYSB0byBD
+QyBsaXN0ICh0ZXN0ZXIpLg0KPj4+PiAtLS0NCj4+Pj4gICBmcy9pb191cmluZy5jICAgICAg
+ICAgICAgICAgICB8IDgwICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0tDQo+
+Pj4+ICAgaW5jbHVkZS91YXBpL2xpbnV4L2lvX3VyaW5nLmggfCAgMiArDQo+Pj4+ICAgMiBm
+aWxlcyBjaGFuZ2VkLCA3OCBpbnNlcnRpb25zKCspLCA0IGRlbGV0aW9ucygtKQ0KPj4+Pg0K
+Pj4+PiBkaWZmIC0tZ2l0IGEvZnMvaW9fdXJpbmcuYyBiL2ZzL2lvX3VyaW5nLmMNCj4+Pj4g
+aW5kZXggN2FkY2I1OTEzOThmLi4zNzI2OTU4ZjhmNTggMTAwNjQ0DQo+Pj4+IC0tLSBhL2Zz
+L2lvX3VyaW5nLmMNCj4+Pj4gKysrIGIvZnMvaW9fdXJpbmcuYw0KPj4+PiBAQCAtNTc1LDcg
+KzU3NSwxNSBAQCBzdHJ1Y3QgaW9fc3JfbXNnIHsNCj4+Pj4gICAJdW5pb24gew0KPj4+PiAg
+IAkJc3RydWN0IGNvbXBhdF9tc2doZHIgX191c2VyCSp1bXNnX2NvbXBhdDsNCj4+Pj4gICAJ
+CXN0cnVjdCB1c2VyX21zZ2hkciBfX3VzZXIJKnVtc2c7DQo+Pj4+IC0JCXZvaWQgX191c2Vy
+CQkJKmJ1ZjsNCj4+Pj4gKw0KPj4+PiArCQlzdHJ1Y3Qgew0KPj4+PiArCQkJdm9pZCBfX3Vz
+ZXIJCSpidWY7DQo+Pj4+ICsJCQlzdHJ1Y3Qgc29ja2FkZHIgX191c2VyCSphZGRyOw0KPj4+
+PiArCQkJdW5pb24gew0KPj4+PiArCQkJCWludAkJc2VuZHRvX2FkZHJfbGVuOw0KPj4+PiAr
+CQkJCWludCBfX3VzZXIJKnJlY3Zmcm9tX2FkZHJfbGVuOw0KPj4+PiArCQkJfTsNCj4+Pj4g
+KwkJfTsNCj4+Pj4gICAJfTsNCj4+Pj4gICAJaW50CQkJCW1zZ19mbGFnczsNCj4+Pj4gICAJ
+aW50CQkJCWJnaWQ7DQo+Pj4+IEBAIC0xMTMzLDYgKzExNDEsMTkgQEAgc3RhdGljIGNvbnN0
+IHN0cnVjdCBpb19vcF9kZWYgaW9fb3BfZGVmc1tdID0gew0KPj4+PiAgIAkJLm5lZWRzX2Zp
+bGUgPSAxDQo+Pj4+ICAgCX0sDQo+Pj4+ICAgCVtJT1JJTkdfT1BfR0VUWEFUVFJdID0ge30s
+DQo+Pj4+ICsJW0lPUklOR19PUF9TRU5EVE9dID0gew0KPj4+PiArCQkubmVlZHNfZmlsZQkJ
+PSAxLA0KPj4+PiArCQkudW5ib3VuZF9ub25yZWdfZmlsZQk9IDEsDQo+Pj4+ICsJCS5wb2xs
+b3V0CQk9IDEsDQo+Pj4+ICsJCS5hdWRpdF9za2lwCQk9IDEsDQo+Pj4+ICsJfSwNCj4+Pj4g
+KwlbSU9SSU5HX09QX1JFQ1ZGUk9NXSA9IHsNCj4+Pj4gKwkJLm5lZWRzX2ZpbGUJCT0gMSwN
+Cj4+Pj4gKwkJLnVuYm91bmRfbm9ucmVnX2ZpbGUJPSAxLA0KPj4+PiArCQkucG9sbGluCQkJ
+PSAxLA0KPj4+PiArCQkuYnVmZmVyX3NlbGVjdAkJPSAxLA0KPj4+PiArCQkuYXVkaXRfc2tp
+cAkJPSAxLA0KPj4+PiArCX0sDQo+Pj4+ICAgfTsNCj4+Pj4gICANCj4+Pj4gICAvKiByZXF1
+ZXN0cyB3aXRoIGFueSBvZiB0aG9zZSBzZXQgc2hvdWxkIHVuZGVyZ28gaW9fZGlzYXJtX25l
+eHQoKSAqLw0KPj4+PiBAQCAtNTIxNiwxMiArNTIzNywyNCBAQCBzdGF0aWMgaW50IGlvX3Nl
+bmRtc2dfcHJlcChzdHJ1Y3QgaW9fa2lvY2IgKnJlcSwgY29uc3Qgc3RydWN0IGlvX3VyaW5n
+X3NxZSAqc3FlKQ0KPj4+PiAgIAlpZiAodW5saWtlbHkocmVxLT5jdHgtPmZsYWdzICYgSU9S
+SU5HX1NFVFVQX0lPUE9MTCkpDQo+Pj4+ICAgCQlyZXR1cm4gLUVJTlZBTDsNCj4+Pj4gICAN
+Cj4+Pj4gKwkvKg0KPj4+PiArCSAqIEZvciBJT1JJTkdfT1BfU0VORHssVE99LCB0aGUgYXNz
+aWdubWVudCB0byBAc3ItPnVtc2cNCj4+Pj4gKwkgKiBpcyBlcXVpdmFsZW50IHRvIGFuIGFz
+c2lnbm1lbnQgdG8gQHNyLT5idWYuDQo+Pj4+ICsJICovDQo+Pj4+ICAgCXNyLT51bXNnID0g
+dTY0X3RvX3VzZXJfcHRyKFJFQURfT05DRShzcWUtPmFkZHIpKTsNCj4+Pj4gKw0KPj4+PiAg
+IAlzci0+bGVuID0gUkVBRF9PTkNFKHNxZS0+bGVuKTsNCj4+Pj4gICAJc3ItPm1zZ19mbGFn
+cyA9IFJFQURfT05DRShzcWUtPm1zZ19mbGFncykgfCBNU0dfTk9TSUdOQUw7DQo+Pj4+ICAg
+CWlmIChzci0+bXNnX2ZsYWdzICYgTVNHX0RPTlRXQUlUKQ0KPj4+PiAgIAkJcmVxLT5mbGFn
+cyB8PSBSRVFfRl9OT1dBSVQ7DQo+Pj4+ICAgDQo+Pj4+ICsJaWYgKHJlcS0+b3Bjb2RlID09
+IElPUklOR19PUF9TRU5EVE8pIHsNCj4+Pj4gKwkJc3ItPmFkZHIgPSB1NjRfdG9fdXNlcl9w
+dHIoUkVBRF9PTkNFKHNxZS0+YWRkcjIpKTsNCj4+Pj4gKwkJc3ItPnNlbmR0b19hZGRyX2xl
+biA9IFJFQURfT05DRShzcWUtPmFkZHIzKTsNCj4+Pj4gKwl9IGVsc2Ugew0KPj4+PiArCQlz
+ci0+YWRkciA9IChzdHJ1Y3Qgc29ja2FkZHIgX191c2VyICopIE5VTEw7DQo+Pj4NCj4+PiBM
+ZXQncyBoYXZlIHNlbmR0b19hZGRyX2xlbiAgPSAwDQo+Pg0KPj4gV2lsbCBkbyBpbiB0aGUg
+UkZDIHY1Lg0KPj4NCj4+Pg0KPj4+PiArCX0NCj4+Pj4gKw0KPj4+PiAgICNpZmRlZiBDT05G
+SUdfQ09NUEFUDQo+Pj4+ICAgCWlmIChyZXEtPmN0eC0+Y29tcGF0KQ0KPj4+PiAgIAkJc3It
+Pm1zZ19mbGFncyB8PSBNU0dfQ01TR19DT01QQVQ7DQo+Pj4+IEBAIC01Mjc1LDYgKzUzMDgs
+NyBAQCBzdGF0aWMgaW50IGlvX3NlbmRtc2coc3RydWN0IGlvX2tpb2NiICpyZXEsIHVuc2ln
+bmVkIGludCBpc3N1ZV9mbGFncykNCj4+Pj4gICANCj4+Pj4gICBzdGF0aWMgaW50IGlvX3Nl
+bmR0byhzdHJ1Y3QgaW9fa2lvY2IgKnJlcSwgdW5zaWduZWQgaW50IGlzc3VlX2ZsYWdzKQ0K
+Pj4+PiAgIHsNCj4+Pj4gKwlzdHJ1Y3Qgc29ja2FkZHJfc3RvcmFnZSBhZGRyZXNzOw0KPj4+
+PiAgIAlzdHJ1Y3QgaW9fc3JfbXNnICpzciA9ICZyZXEtPnNyX21zZzsNCj4+Pj4gICAJc3Ry
+dWN0IG1zZ2hkciBtc2c7DQo+Pj4+ICAgCXN0cnVjdCBpb3ZlYyBpb3Y7DQo+Pj4+IEBAIC01
+MjkxLDEwICs1MzI1LDIwIEBAIHN0YXRpYyBpbnQgaW9fc2VuZHRvKHN0cnVjdCBpb19raW9j
+YiAqcmVxLCB1bnNpZ25lZCBpbnQgaXNzdWVfZmxhZ3MpDQo+Pj4+ICAgCWlmICh1bmxpa2Vs
+eShyZXQpKQ0KPj4+PiAgIAkJcmV0dXJuIHJldDsNCj4+Pj4gICANCj4+Pj4gLQltc2cubXNn
+X25hbWUgPSBOVUxMOw0KPj4+PiArDQo+Pj4+ICAgCW1zZy5tc2dfY29udHJvbCA9IE5VTEw7
+DQo+Pj4+ICAgCW1zZy5tc2dfY29udHJvbGxlbiA9IDA7DQo+Pj4+IC0JbXNnLm1zZ19uYW1l
+bGVuID0gMDsNCj4+Pj4gKwlpZiAoc3ItPmFkZHIpIHsNCj4+Pj4gKwkJcmV0ID0gbW92ZV9h
+ZGRyX3RvX2tlcm5lbChzci0+YWRkciwgc3ItPnNlbmR0b19hZGRyX2xlbiwNCj4+Pj4gKwkJ
+CQkJICAmYWRkcmVzcyk7DQo+Pj4+ICsJCWlmICh1bmxpa2VseShyZXQgPCAwKSkNCj4+Pj4g
+KwkJCWdvdG8gZmFpbDsNCj4+Pj4gKwkJbXNnLm1zZ19uYW1lID0gKHN0cnVjdCBzb2NrYWRk
+ciAqKSAmYWRkcmVzczsNCj4+Pj4gKwkJbXNnLm1zZ19uYW1lbGVuID0gc3ItPnNlbmR0b19h
+ZGRyX2xlbjsNCj4+Pj4gKwl9IGVsc2Ugew0KPj4+PiArCQltc2cubXNnX25hbWUgPSBOVUxM
+Ow0KPj4+PiArCQltc2cubXNnX25hbWVsZW4gPSAwOw0KPj4+PiArCX0NCj4+Pj4gICANCj4+
+Pj4gICAJZmxhZ3MgPSByZXEtPnNyX21zZy5tc2dfZmxhZ3M7DQo+Pj4+ICAgCWlmIChpc3N1
+ZV9mbGFncyAmIElPX1VSSU5HX0ZfTk9OQkxPQ0spDQo+Pj4+IEBAIC01MzA5LDYgKzUzNTMs
+NyBAQCBzdGF0aWMgaW50IGlvX3NlbmR0byhzdHJ1Y3QgaW9fa2lvY2IgKnJlcSwgdW5zaWdu
+ZWQgaW50IGlzc3VlX2ZsYWdzKQ0KPj4+PiAgIAkJCXJldHVybiAtRUFHQUlOOw0KPj4+PiAg
+IAkJaWYgKHJldCA9PSAtRVJFU1RBUlRTWVMpDQo+Pj4+ICAgCQkJcmV0ID0gLUVJTlRSOw0K
+Pj4+PiArCWZhaWw6DQo+Pj4+ICAgCQlyZXFfc2V0X2ZhaWwocmVxKTsNCj4+Pg0KPj4+IEkg
+dGhpbmsgdGhlcmUgaXMgYSBwcm9ibGVtIHdpdGggImZhaWwiIGdvdG8gc3RhdGVtZW50LiBO
+b3QgZ2V0dGluZw0KPj4+IGZ1bGwgY2xhcml0eSBvbiB0aGlzIGNoYW5nZS4gV2l0aCBsYXRl
+c3Qga2VybmVsLCBJIHNlZQ0KPj4+IHJlcV9zZXRfZmFpbChyZXEpIGluc2lkZSBpZiBjaGVj
+aywgd2hpY2ggSSBkb24ndCBzZWUgaGVyZS4gQ2FuIHlvdQ0KPj4+IHBsZWFzZSByZXNlbmQg
+dGhlIHBhdGNoIG9uIGxhdGVzdCBrZXJuZWwgdmVyc2lvbi4gVGhhbmtzLg0KPj4NCj4+IEkg
+d2lsbCBzZW5kIHRoZSB2NSBvbiB0b3Agb2YgImZvci1uZXh0IiBicmFuY2ggaW4gSmVucycg
+dHJlZSBzb29uLg0KPj4NCj4+IFRoYXQgaXMgYWxyZWFkeSBpbnNpZGUgYW4gImlmIGNoZWNr
+IiBhbnl3YXkuIFdlIGdvIHRvIHRoYXQgbGFiZWwgd2hlbg0KPj4gdGhlIG1vdmVfYWRkcl90
+b19rZXJuZWwoKSBmYWlscyAobW9zdCBvZiB0aGUgdGltZSBpdCBpcyAtRUZBVUxUIG9yDQo+
+PiAtRUlOVkFMKS4NCj4+DQo+PiBUaGF0IHBhcnQgbG9va3MgbGlrZSB0aGlzIChub3RlIHRo
+ZSBpZiBjaGVjayBiZWZvcmUgdGhlIGdvdG8pOg0KPj4gLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KPj4g
+CW1zZy5tc2dfY29udHJvbCA9IE5VTEw7DQo+PiAJbXNnLm1zZ19jb250cm9sbGVuID0gMDsN
+Cj4+IAlpZiAoc3ItPmFkZHIpIHsNCj4+IAkJcmV0ID0gbW92ZV9hZGRyX3RvX2tlcm5lbChz
+ci0+YWRkciwgc3ItPnNlbmR0b19hZGRyX2xlbiwNCj4+IAkJCQkJICAmYWRkcmVzcyk7DQo+
+PiAJCWlmICh1bmxpa2VseShyZXQgPCAwKSkNCj4+IAkJCWdvdG8gZmFpbDsNCj4+IAkJbXNn
+Lm1zZ19uYW1lID0gKHN0cnVjdCBzb2NrYWRkciAqKSAmYWRkcmVzczsNCj4+IAkJbXNnLm1z
+Z19uYW1lbGVuID0gc3ItPnNlbmR0b19hZGRyX2xlbjsNCj4+IAl9IGVsc2Ugew0KPj4gCQlt
+c2cubXNnX25hbWUgPSBOVUxMOw0KPj4gCQltc2cubXNnX25hbWVsZW4gPSAwOw0KPj4gCX0N
+Cj4+DQo+PiAJZmxhZ3MgPSByZXEtPnNyX21zZy5tc2dfZmxhZ3M7DQo+PiAJaWYgKGlzc3Vl
+X2ZsYWdzICYgSU9fVVJJTkdfRl9OT05CTE9DSykNCj4+IAkJZmxhZ3MgfD0gTVNHX0RPTlRX
+QUlUOw0KPj4gCWlmIChmbGFncyAmIE1TR19XQUlUQUxMKQ0KPj4gCQltaW5fcmV0ID0gaW92
+X2l0ZXJfY291bnQoJm1zZy5tc2dfaXRlcik7DQo+Pg0KPj4gCW1zZy5tc2dfZmxhZ3MgPSBm
+bGFnczsNCj4+IAlyZXQgPSBzb2NrX3NlbmRtc2coc29jaywgJm1zZyk7DQo+PiAJaWYgKHJl
+dCA8IG1pbl9yZXQpIHsNCj4+IAkJaWYgKHJldCA9PSAtRUFHQUlOICYmIChpc3N1ZV9mbGFn
+cyAmIElPX1VSSU5HX0ZfTk9OQkxPQ0spKQ0KPj4gCQkJcmV0dXJuIC1FQUdBSU47DQo+PiAJ
+CWlmIChyZXQgPT0gLUVSRVNUQVJUU1lTKQ0KPj4gCQkJcmV0ID0gLUVJTlRSOw0KPj4gCWZh
+aWw6DQo+IA0KPiBUaGFua3MgZm9yIHNlbmRpbmcgdGhpcy4gSU1PIHRoaXMgZ290byBsYWJl
+bCBzaG91bGQgYmUganVzdCBiZWZvcmUNCj4gdGhlICJpZiAocmV0IDwgbWluX3JldCkiIHN0
+YXRlbWVudC4NCg0KQUZBSUNULCBlcnJvciByZXR1cm5lZCBieSBtb3ZlX2FkZHJfdG9fa2Vy
+bmVsIGFyZSBvbmx5IC1FRkFVTFQgYW5kIC1FSU5WQUwsDQpzbyB0aGUgY2hlY2sgYWdhaW5z
+dCAtRUFHQUlOIGFuZCAtRVJFU1RBUlRTWVMgaXMgdW5uZWNlc3NhcnkgZm9yIHRoYXQNCmNh
+c2UuIFdlIGNhbiBza2lwIHRoYXQuDQoNClJGQyB2NCBoZXJlIChyZWJhc2VkIG9uIHRvcCBv
+ZiAiZm9yLW5leHQiIEplbnMnIHRyZWUpOg0KaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvaW8t
+dXJpbmcvMjAyMjAxMDcwMDAwMDYuMTE5NDAyNi0xLWFtbWFyZmFpemkyQGdudXdlZWIub3Jn
+L1QvDQoNCj4gDQo+PiAJCXJlcV9zZXRfZmFpbChyZXEpOw0KPj4gCX0NCj4+IAlfX2lvX3Jl
+cV9jb21wbGV0ZShyZXEsIGlzc3VlX2ZsYWdzLCByZXQsIDApOw0KPj4gCXJldHVybiAwOw0K
+Pj4gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLQ0KPj4NCj4+Pj4gICAJfQ0KPj4+PiAgIAlfX2lvX3JlcV9j
+b21wbGV0ZShyZXEsIGlzc3VlX2ZsYWdzLCByZXQsIDApOw0KPj4+PiBAQCAtNTQyNywxMyAr
+NTQ3MiwyNSBAQCBzdGF0aWMgaW50IGlvX3JlY3Ztc2dfcHJlcChzdHJ1Y3QgaW9fa2lvY2Ig
+KnJlcSwgY29uc3Qgc3RydWN0IGlvX3VyaW5nX3NxZSAqc3FlKQ0KPj4+PiAgIAlpZiAodW5s
+aWtlbHkocmVxLT5jdHgtPmZsYWdzICYgSU9SSU5HX1NFVFVQX0lPUE9MTCkpDQo+Pj4+ICAg
+CQlyZXR1cm4gLUVJTlZBTDsNCj4+Pj4gICANCj4+Pj4gKwkvKg0KPj4+PiArCSAqIEZvciBJ
+T1JJTkdfT1BfUkVDVnssRlJPTX0sIHRoZSBhc3NpZ25tZW50IHRvIEBzci0+dW1zZw0KPj4+
+PiArCSAqIGlzIGVxdWl2YWxlbnQgdG8gYW4gYXNzaWdubWVudCB0byBAc3ItPmJ1Zi4NCj4+
+Pj4gKwkgKi8NCj4+Pj4gICAJc3ItPnVtc2cgPSB1NjRfdG9fdXNlcl9wdHIoUkVBRF9PTkNF
+KHNxZS0+YWRkcikpOw0KPj4+PiArDQo+Pj4+ICAgCXNyLT5sZW4gPSBSRUFEX09OQ0Uoc3Fl
+LT5sZW4pOw0KPj4+PiAgIAlzci0+YmdpZCA9IFJFQURfT05DRShzcWUtPmJ1Zl9ncm91cCk7
+DQo+Pj4+ICAgCXNyLT5tc2dfZmxhZ3MgPSBSRUFEX09OQ0Uoc3FlLT5tc2dfZmxhZ3MpIHwg
+TVNHX05PU0lHTkFMOw0KPj4+PiAgIAlpZiAoc3ItPm1zZ19mbGFncyAmIE1TR19ET05UV0FJ
+VCkNCj4+Pj4gICAJCXJlcS0+ZmxhZ3MgfD0gUkVRX0ZfTk9XQUlUOw0KPj4+PiAgIA0KPj4+
+PiArCWlmIChyZXEtPm9wY29kZSA9PSBJT1JJTkdfT1BfUkVDVkZST00pIHsNCj4+Pj4gKwkJ
+c3ItPmFkZHIgPSB1NjRfdG9fdXNlcl9wdHIoUkVBRF9PTkNFKHNxZS0+YWRkcjIpKTsNCj4+
+Pj4gKwkJc3ItPnJlY3Zmcm9tX2FkZHJfbGVuID0gdTY0X3RvX3VzZXJfcHRyKFJFQURfT05D
+RShzcWUtPmFkZHIzKSk7DQo+Pj4+ICsJfSBlbHNlIHsNCj4+Pj4gKwkJc3ItPmFkZHIgPSAo
+c3RydWN0IHNvY2thZGRyIF9fdXNlciAqKSBOVUxMOw0KPj4+DQo+Pj4gSSB0aGluayByZWN2
+ZnJvbV9hZGRyX2xlbiBzaG91bGQgYWxzbyBiZSBwb2ludGVkIHRvIE5VTEwsIGluc3RlYWQg
+b2YNCj4+PiBnYXJiYWdlIGZvciB0aGlzIGNhc2UuDQo+Pg0KPj4gV2lsbCBkbyBpbiB0aGUg
+UkZDIHY1Lg0KPj4NCj4+Pg0KPj4+PiArCX0NCj4+Pj4gKw0KPj4+PiAgICNpZmRlZiBDT05G
+SUdfQ09NUEFUDQo+Pj4+ICAgCWlmIChyZXEtPmN0eC0+Y29tcGF0KQ0KPj4+PiAgIAkJc3It
+Pm1zZ19mbGFncyB8PSBNU0dfQ01TR19DT01QQVQ7DQo+Pj4+IEBAIC01NTA5LDYgKzU1NjYs
+NyBAQCBzdGF0aWMgaW50IGlvX3JlY3Zmcm9tKHN0cnVjdCBpb19raW9jYiAqcmVxLCB1bnNp
+Z25lZCBpbnQgaXNzdWVfZmxhZ3MpDQo+Pj4+ICAgCXN0cnVjdCBpb3ZlYyBpb3Y7DQo+Pj4+
+ICAgCXVuc2lnbmVkIGZsYWdzOw0KPj4+PiAgIAlpbnQgcmV0LCBtaW5fcmV0ID0gMDsNCj4+
+Pj4gKwlzdHJ1Y3Qgc29ja2FkZHJfc3RvcmFnZSBhZGRyZXNzOw0KPj4+PiAgIAlib29sIGZv
+cmNlX25vbmJsb2NrID0gaXNzdWVfZmxhZ3MgJiBJT19VUklOR19GX05PTkJMT0NLOw0KPj4+
+PiAgIA0KPj4+PiAgIAlzb2NrID0gc29ja19mcm9tX2ZpbGUocmVxLT5maWxlKTsNCj4+Pj4g
+QEAgLTU1MjYsNyArNTU4NCw3IEBAIHN0YXRpYyBpbnQgaW9fcmVjdmZyb20oc3RydWN0IGlv
+X2tpb2NiICpyZXEsIHVuc2lnbmVkIGludCBpc3N1ZV9mbGFncykNCj4+Pj4gICAJaWYgKHVu
+bGlrZWx5KHJldCkpDQo+Pj4+ICAgCQlnb3RvIG91dF9mcmVlOw0KPj4+PiAgIA0KPj4+PiAt
+CW1zZy5tc2dfbmFtZSA9IE5VTEw7DQo+Pj4+ICsJbXNnLm1zZ19uYW1lID0gc3ItPmFkZHIg
+PyAoc3RydWN0IHNvY2thZGRyICopICZhZGRyZXNzIDogTlVMTDsNCj4+Pj4gICAJbXNnLm1z
+Z19jb250cm9sID0gTlVMTDsNCj4+Pj4gICAJbXNnLm1zZ19jb250cm9sbGVuID0gMDsNCj4+
+Pj4gICAJbXNnLm1zZ19uYW1lbGVuID0gMDsNCj4+Pg0KPj4+IEkgdGhpbmsgbmFtZWxlbiBz
+aG91bGQgYWxzbyBiZSB1cGRhdGVkID8NCj4+DQo+PiBJdCBkb2Vzbid0IGhhdmUgdG8gYmUg
+dXBkYXRlZC4gRnJvbSBuZXQvc29ja2V0LmMgdGhlcmUgaXMgYSBjb21tZW50DQo+PiBsaWtl
+IHRoaXM6DQo+Pg0KPj4gCS8qIFdlIGFzc3VtZSBhbGwga2VybmVsIGNvZGUga25vd3MgdGhl
+IHNpemUgb2Ygc29ja2FkZHJfc3RvcmFnZSAqLw0KPj4gCW1zZy5tc2dfbmFtZWxlbiA9IDA7
+DQo+Pg0KPj4gRnVsbCBfX3N5c19yZWN2ZnJvbSgpIHNvdXJjZSBjb2RlLCBzZWUgaGVyZToN
+Cj4+IGh0dHBzOi8vZ2l0aHViLmNvbS90b3J2YWxkcy9saW51eC9ibG9iL3Y1LjE2LXJjOC9u
+ZXQvc29ja2V0LmMjTDIwODUtTDIwODgNCj4+DQo+PiBJIHdpbGwgYWRkIHRoZSBzYW1lIGNv
+bW1lbnQgaW4gbmV4dCBzZXJpZXMgdG8gY2xhcmlmeSB0aGlzIG9uZS4NCj4+DQo+Pj4NCj4+
+Pj4gQEAgLTU1NDAsNiArNTU5OCwxNiBAQCBzdGF0aWMgaW50IGlvX3JlY3Zmcm9tKHN0cnVj
+dCBpb19raW9jYiAqcmVxLCB1bnNpZ25lZCBpbnQgaXNzdWVfZmxhZ3MpDQo+Pj4+ICAgCQlt
+aW5fcmV0ID0gaW92X2l0ZXJfY291bnQoJm1zZy5tc2dfaXRlcik7DQo+Pj4+ICAgDQo+Pj4+
+ICAgCXJldCA9IHNvY2tfcmVjdm1zZyhzb2NrLCAmbXNnLCBmbGFncyk7DQo+Pj4+ICsNCj4+
+Pj4gKwlpZiAocmV0ID49IDAgJiYgc3ItPmFkZHIgIT0gTlVMTCkgew0KPj4+PiArCQlpbnQg
+dG1wOw0KPj4+PiArDQo+Pj4+ICsJCXRtcCA9IG1vdmVfYWRkcl90b191c2VyKCZhZGRyZXNz
+LCBtc2cubXNnX25hbWVsZW4sIHNyLT5hZGRyLA0KPj4+PiArCQkJCQlzci0+cmVjdmZyb21f
+YWRkcl9sZW4pOw0KPj4+PiArCQlpZiAodW5saWtlbHkodG1wIDwgMCkpDQo+Pj4+ICsJCQly
+ZXQgPSB0bXA7DQo+Pj4+ICsJfQ0KPj4+PiArDQo+Pj4+ICAgb3V0X2ZyZWU6DQo+Pj4+ICAg
+CWlmIChyZXQgPCBtaW5fcmV0KSB7DQo+Pj4+ICAgCQlpZiAocmV0ID09IC1FQUdBSU4gJiYg
+Zm9yY2Vfbm9uYmxvY2spDQo+Pj4+IEBAIC02Nzc4LDkgKzY4NDYsMTEgQEAgc3RhdGljIGlu
+dCBpb19yZXFfcHJlcChzdHJ1Y3QgaW9fa2lvY2IgKnJlcSwgY29uc3Qgc3RydWN0IGlvX3Vy
+aW5nX3NxZSAqc3FlKQ0KPj4+PiAgIAljYXNlIElPUklOR19PUF9TWU5DX0ZJTEVfUkFOR0U6
+DQo+Pj4+ICAgCQlyZXR1cm4gaW9fc2ZyX3ByZXAocmVxLCBzcWUpOw0KPj4+PiAgIAljYXNl
+IElPUklOR19PUF9TRU5ETVNHOg0KPj4+PiArCWNhc2UgSU9SSU5HX09QX1NFTkRUTzoNCj4+
+Pj4gICAJY2FzZSBJT1JJTkdfT1BfU0VORDoNCj4+Pj4gICAJCXJldHVybiBpb19zZW5kbXNn
+X3ByZXAocmVxLCBzcWUpOw0KPj4+PiAgIAljYXNlIElPUklOR19PUF9SRUNWTVNHOg0KPj4+
+PiArCWNhc2UgSU9SSU5HX09QX1JFQ1ZGUk9NOg0KPj4+PiAgIAljYXNlIElPUklOR19PUF9S
+RUNWOg0KPj4+PiAgIAkJcmV0dXJuIGlvX3JlY3Ztc2dfcHJlcChyZXEsIHNxZSk7DQo+Pj4+
+ICAgCWNhc2UgSU9SSU5HX09QX0NPTk5FQ1Q6DQo+Pj4+IEBAIC03MDYwLDEyICs3MTMwLDE0
+IEBAIHN0YXRpYyBpbnQgaW9faXNzdWVfc3FlKHN0cnVjdCBpb19raW9jYiAqcmVxLCB1bnNp
+Z25lZCBpbnQgaXNzdWVfZmxhZ3MpDQo+Pj4+ICAgCWNhc2UgSU9SSU5HX09QX1NFTkRNU0c6
+DQo+Pj4+ICAgCQlyZXQgPSBpb19zZW5kbXNnKHJlcSwgaXNzdWVfZmxhZ3MpOw0KPj4+PiAg
+IAkJYnJlYWs7DQo+Pj4+ICsJY2FzZSBJT1JJTkdfT1BfU0VORFRPOg0KPj4+PiAgIAljYXNl
+IElPUklOR19PUF9TRU5EOg0KPj4+PiAgIAkJcmV0ID0gaW9fc2VuZHRvKHJlcSwgaXNzdWVf
+ZmxhZ3MpOw0KPj4+PiAgIAkJYnJlYWs7DQo+Pj4+ICAgCWNhc2UgSU9SSU5HX09QX1JFQ1ZN
+U0c6DQo+Pj4+ICAgCQlyZXQgPSBpb19yZWN2bXNnKHJlcSwgaXNzdWVfZmxhZ3MpOw0KPj4+
+PiAgIAkJYnJlYWs7DQo+Pj4+ICsJY2FzZSBJT1JJTkdfT1BfUkVDVkZST006DQo+Pj4+ICAg
+CWNhc2UgSU9SSU5HX09QX1JFQ1Y6DQo+Pj4+ICAgCQlyZXQgPSBpb19yZWN2ZnJvbShyZXEs
+IGlzc3VlX2ZsYWdzKTsNCj4+Pj4gICAJCWJyZWFrOw0KPj4+PiBkaWZmIC0tZ2l0IGEvaW5j
+bHVkZS91YXBpL2xpbnV4L2lvX3VyaW5nLmggYi9pbmNsdWRlL3VhcGkvbGludXgvaW9fdXJp
+bmcuaA0KPj4+PiBpbmRleCBlZmM3YWM5YjNhNmIuLmEzNjAwNjlkMWU4ZSAxMDA2NDQNCj4+
+Pj4gLS0tIGEvaW5jbHVkZS91YXBpL2xpbnV4L2lvX3VyaW5nLmgNCj4+Pj4gKysrIGIvaW5j
+bHVkZS91YXBpL2xpbnV4L2lvX3VyaW5nLmgNCj4+Pj4gQEAgLTE1MCw2ICsxNTAsOCBAQCBl
+bnVtIHsNCj4+Pj4gICAJSU9SSU5HX09QX1NFVFhBVFRSLA0KPj4+PiAgIAlJT1JJTkdfT1Bf
+RkdFVFhBVFRSLA0KPj4+PiAgIAlJT1JJTkdfT1BfR0VUWEFUVFIsDQo+Pj4+ICsJSU9SSU5H
+X09QX1NFTkRUTywNCj4+Pj4gKwlJT1JJTkdfT1BfUkVDVkZST00sDQo+Pj4+ICAgDQo+Pj4+
+ICAgCS8qIHRoaXMgZ29lcyBsYXN0LCBvYnZpb3VzbHkgKi8NCj4+Pj4gICAJSU9SSU5HX09Q
+X0xBU1QsDQo+Pj4NCj4+Pg0KPj4+IFJlZ2FyZHMsDQo+Pj4NCj4+PiB+UHJhdmVlbi4NCj4+
+Pg0KPj4NCj4+IFRoYW5rcyBmb3IgdGhlIHJldmlldy4gSSB3aWxsIHNlbmQgdGhlIFJGQyB2
+NSBzb29uLg0KPj4NCj4gDQoNCi0tIA0KQW1tYXIgRmFpemkNCg0K
+--------------j69tG9iEAkNghz5yAWR0hnPx
+Content-Type: application/pgp-keys; name="OpenPGP_0x364FBA34FF170A4B.asc"
+Content-Disposition: attachment; filename="OpenPGP_0x364FBA34FF170A4B.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
+
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+xsBNBGECqsMBCADy9cU6jMSaJECZXmbOE1Sox1zeJXEy51BRQNOEKbsR0dnRNUCl
+2tUR1rxdM+8V9TQUInBxERJcOdbUKibS8PQRy1g8LKJO/yrrMN8SFqnxYyX8M3WD
+z1PWuJ7DZE4gECtjRPuYN978y9w7Hi6micjraQeXbNp1S7MxEk5AxtlokO6u6Mrd
+m1WRNDytagkY61PP+5lJwiQSXOqiSLyT/ydEbG/hdBiOTOEN4J8MxE+p2xwhHjST
+vU4ehq1b6b6N62pIA0r6NMRtdqp0c+Qv3SVkTV8TVHcck60ZKaNtKQTsCObqUHKR
+urU1qmF6i2Zs+nfL/e+EtT0NVOVEipRZrkGXABEBAAHNJUFtbWFyIEZhaXppIDxh
+bW1hcmZhaXppMkBnbnV3ZWViLm9yZz7CwJQEEwEKAD4WIQTok3JtyOTA3juiAQc2
+T7o0/xcKSwUCYQKqwwIbAwUJBaOagAULCQgHAgYVCgkICwIEFgIDAQIeAQIXgAAK
+CRA2T7o0/xcKS0CHCAC2x/Vq6OodDFs0rCon2VBZFvnIyXIaOsJWNnIrlkNKVHWL
+QC+ALmiSwFN1822v8JP+8Fyf+HHIKVTsAPkovCnrIbliM8ZA+YTUmcLMPL+Aa05+
+XyZjR14l6Oyu9BhN7MW/XKXQnw96OE8AHpbX+Pgd4A7RtA2FGlaoBzrGlEe1B8nD
+BcS9ldJ0J95VKX6jLCJeU51msq1Q+ZyZstJ7SFsY9XKcMW7cS/aHzsayBRKtansS
+TkyJWCTinHn17rzkSRVcmdNYuga3YOBOfRIEq9LzrewE9gV40VNctY+sciMc/Z8u
+K5TfGIlYDTtuLmlvmw+EWjEKzwS6O0uQK9YtIvl7zsBNBGECqsMBCADrprHwlhdU
+QBY1kzzeCozyx1AWGpyFNiFGjsRC3+UK4dhO9h6uGz3OY5o0G7AV6nOniZCQofgm
+78NL5wdvIjL/ko5l7LNFQkU4SBjcGjn+Wc4UAWd2EpFPo/Dc3kTFzSlowp2+/kET
+A+FK7UDdwJTH/n05XwvGTZ9/pmVwP0e6iDnyJ5yIwbv28wTdIm4L3/uBxMp1UeHw
+ztLk4Dcw+FX5ye/JfK3dbx0Gx8cfhAeFlVEz9z6LvtAn94BNYVd4CxE9Vh2BFFzq
+07bDQGhAN0Rim1K8uEahuKyyg2MuoDI8lvzONLbaiEw9/OgT1z+h4qyzjulXAHzx
+qkcjz4OfSqzfABEBAAHCwHwEGAEKACYWIQTok3JtyOTA3juiAQc2T7o0/xcKSwUC
+YQKqwwIbDAUJBaOagAAKCRA2T7o0/xcKS2+RB/43pagncTq0/ywbQhjHrXtOuYDP
+crbKusD1jiURWXEMgM48nV/HdQYTHd8mabMT0xa4NOUlDA2If2t9HvzLoNDPefP4
++z41DJL6ZZNCQhLUJBh5/zhSedRF6JHWPiO/nWkfdUUhBTabadgUYI80djY63rG3
+LKmjuh3/AZ4Vb9qBVpJX0tjZSbXa47yzL7tiQ539u7eqoTXOy4oc5XC2koICy4DM
+NAEVaL2uEfY9MPHJKcsmrcwtu4w1gg8JehM/bwtphPG5J+H7mFZqTLyTMNfOmAKE
+rQlwCfFzyh0uFggluVBlOLImyrKOh6+0bUZGZ0CaTE10OMTS6HgE1W10EZJc
+=3D33gS
+-----END PGP PUBLIC KEY BLOCK-----
+--------------j69tG9iEAkNghz5yAWR0hnPx--
+
+
+--------------80ndkno0jde7tz51bZwsvISz--
+
+--------------0BPPakvX3xrne7GYz0xeCG0J
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature"
+
+-----BEGIN PGP SIGNATURE-----
+
+wsB5BAABCAAjFiEE6JNybcjkwN47ogEHNk+6NP8XCksFAmHYHbIFAwAAAAAACgkQNk+6NP8XCku3
+RAgA0/DgBzxby2W7FL0CikSlsLeYfoP9QhFvrq6AuON0yyUkJmcWKq8lEmYCD7MPn4Rt8D1JWioP
+0utlHDEdwPQn4+EscIa59N8qx9XZXfaRQc5N/myTtwjGySVrZlPfrcVtJcz5C1vzLEdVYcUed/1E
+g63g8dt/kXOFyjDcPI7ws637GJBU4vP0Ouzxc0TvRPvpWt+ufV0P5c1hgWmxu3AYKF7zcF2Ocz9j
+64JWGTdIbjMXU2hH/pu284A6GNTF2/LycNlGd66VfDuU9lsavzF7IhApc+ArFet2hEzO0cCXIN8U
+6WD47GtF6ldm02lbziFRHFhMaZGT4XiM66M5akFCrg==
+=xwhT
+-----END PGP SIGNATURE-----
+
+--------------0BPPakvX3xrne7GYz0xeCG0J--

@@ -2,37 +2,38 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 68A914877E4
-	for <lists+io-uring@lfdr.de>; Fri,  7 Jan 2022 14:02:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C7684877E5
+	for <lists+io-uring@lfdr.de>; Fri,  7 Jan 2022 14:02:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232097AbiAGNC2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 7 Jan 2022 08:02:28 -0500
-Received: from ip59.38.31.103.in-addr.arpa.unknwn.cloudhost.asia ([103.31.38.59]:44684
+        id S238767AbiAGNCb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 7 Jan 2022 08:02:31 -0500
+Received: from ip59.38.31.103.in-addr.arpa.unknwn.cloudhost.asia ([103.31.38.59]:44694
         "EHLO gnuweeb.org" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S230218AbiAGNC2 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 7 Jan 2022 08:02:28 -0500
+        with ESMTP id S230218AbiAGNCa (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 7 Jan 2022 08:02:30 -0500
 Received: from integral2.. (unknown [36.68.70.227])
-        by gnuweeb.org (Postfix) with ESMTPSA id 92778C17F2;
-        Fri,  7 Jan 2022 13:02:25 +0000 (UTC)
+        by gnuweeb.org (Postfix) with ESMTPSA id 713A2C17FC;
+        Fri,  7 Jan 2022 13:02:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=gnuweeb.org;
-        s=default; t=1641560547;
-        bh=+u4pKlYPYt1PipEjrDT7r8Ze8KmQqAXhDupoPACiK3c=;
+        s=default; t=1641560549;
+        bh=jxiUZwLzhvAtVVYmpsCory4e6DnzuQhhApnmwUn+hpo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WmPvt5TQOcW6rYp+Bk0Kmq7NLA94wPid8Y3COV7rUhCybGDkpA5k5lXprjPEZHqKz
-         mM0dYSRHJKy+8I5hPbc0RN35t0dzVOPl94weNKak2Bc1lH3z8Wvx1JX/aFoTOHXzPI
-         RnTwzgd1f83a7WplOu5ZIlEcLZ9S1aHvIK/9FLjVT1d+SQ5B6mo+TxNiP8akdP6n/1
-         1jWa2lAmae2HbitST+pCQ+DeSGJUBoUr2yJh54LRRPpX4N7MD7jzJNw/DcnSePOhZn
-         6kps8bAiJViSw8xdxBwx09SLx6z8NxtaBzYnvbBpb+juc5qPCHf5ZaFDfJZgW6phFh
-         WpZUiw+BhgMzQ==
+        b=azNWke3Aja+fX58XjIK8bFDH7L4RL4Rn9pKOy2nGFEH99IB/RPNcl8qVBO+T1nY8F
+         dDdSDhCARBUty7LDcdS+bC7l4tu2GRvf9C6knBPQ98XpVE9uAL7cc9bKZG9mbf7eYY
+         jbHopARx4zC4d7IpZDoB9a6+wqFNTs2JTxsg422sQ+JVeVEFbIw6cq6X/y0pfa7OWY
+         k9cvF0ibib+RLgP0IO+z+pi6tAWJonGLUMEgHEi5TbP0N/1Boo7AaRrBtMtDcghkkY
+         Im3GPVDGb3tcnhPk+LZcljy7Zs17VMjSvp1rAry11MFoiGH5RQTce0NS9PVJ6Pt2hJ
+         hVpkW9iWunybQ==
 From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
         io-uring Mailing List <io-uring@vger.kernel.org>,
         GNU/Weeb Mailing List <gwml@gnuweeb.org>,
-        Ammar Faizi <ammarfaizi2@gmail.com>
-Subject: [PATCH liburing 1/3] test/socket-rw-eagain: Fix UB, accessing dead object
-Date:   Fri,  7 Jan 2022 20:02:16 +0700
-Message-Id: <20220107130218.1238910-2-ammarfaizi2@gnuweeb.org>
+        Ammar Faizi <ammarfaizi2@gmail.com>,
+        Hrvoje Zeba <zeba.hrvoje@gmail.com>
+Subject: [PATCH liburing 2/3] test/socket-rw: Fix UB, accessing dead object
+Date:   Fri,  7 Jan 2022 20:02:17 +0700
+Message-Id: <20220107130218.1238910-3-ammarfaizi2@gnuweeb.org>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20220107130218.1238910-1-ammarfaizi2@gnuweeb.org>
 References: <20220107130218.1238910-1-ammarfaizi2@gnuweeb.org>
@@ -50,17 +51,18 @@ Fix this by moving the struct iov variable declarations so their
 lifetime is extended.
 
 Cc: Jens Axboe <axboe@kernel.dk>
-Fixes: 76e3b7921fee98a5627cd270628b6a5160d3857d ("Add nonblock empty socket read test")
+Cc: Hrvoje Zeba <zeba.hrvoje@gmail.com>
+Fixes: 79ba71a4881fb1cd300520553d7285b3c5ee1293 ("Add deadlock socket read/write test case")
 Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 ---
- test/socket-rw-eagain.c | 17 +++++++----------
+ test/socket-rw.c | 17 +++++++----------
  1 file changed, 7 insertions(+), 10 deletions(-)
 
-diff --git a/test/socket-rw-eagain.c b/test/socket-rw-eagain.c
-index 9854e00..2d6a817 100644
---- a/test/socket-rw-eagain.c
-+++ b/test/socket-rw-eagain.c
-@@ -25,6 +25,7 @@ int main(int argc, char *argv[])
+diff --git a/test/socket-rw.c b/test/socket-rw.c
+index 5afd14d..4fbf032 100644
+--- a/test/socket-rw.c
++++ b/test/socket-rw.c
+@@ -27,6 +27,7 @@ int main(int argc, char *argv[])
  	int32_t recv_s0;
  	int32_t val = 1;
  	struct sockaddr_in addr;
@@ -68,7 +70,7 @@ index 9854e00..2d6a817 100644
  
  	if (argc > 1)
  		return 0;
-@@ -105,28 +106,24 @@ int main(int argc, char *argv[])
+@@ -103,27 +104,23 @@ int main(int argc, char *argv[])
  	char send_buff[128];
  
  	{
@@ -84,7 +86,6 @@ index 9854e00..2d6a817 100644
  
 -		io_uring_prep_readv(sqe, p_fd[0], iov, 1, 0);
 +		io_uring_prep_readv(sqe, p_fd[0], iov_r, 1, 0);
- 		sqe->user_data = 1;
  	}
  
  	{
@@ -100,9 +101,9 @@ index 9854e00..2d6a817 100644
  
 -		io_uring_prep_writev(sqe, p_fd[1], iov, 1, 0);
 +		io_uring_prep_writev(sqe, p_fd[1], iov_w, 1, 0);
- 		sqe->user_data = 2;
  	}
  
+ 	ret = io_uring_submit_and_wait(&m_io_uring, 2);
 -- 
 2.32.0
 

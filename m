@@ -2,100 +2,64 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A9024899B4
-	for <lists+io-uring@lfdr.de>; Mon, 10 Jan 2022 14:20:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CB1D48AEE6
+	for <lists+io-uring@lfdr.de>; Tue, 11 Jan 2022 14:52:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231380AbiAJNU4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 10 Jan 2022 08:20:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46506 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230248AbiAJNUz (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 10 Jan 2022 08:20:55 -0500
-Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88B79C06173F
-        for <io-uring@vger.kernel.org>; Mon, 10 Jan 2022 05:20:55 -0800 (PST)
-Received: by mail-yb1-xb2b.google.com with SMTP id g14so9378298ybs.8
-        for <io-uring@vger.kernel.org>; Mon, 10 Jan 2022 05:20:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XNye1TnFFysA92DS32jbU6JjhG8n0xBu2ZbXY8SQOOI=;
-        b=MH2XQU9Wcf9eyWxg0gONvc7HCz8VN/QoiBIb4bbwdYePOdSIpYZaN/xQ5zzLfNnNPG
-         DqIr2okoDO2bwR80dexXQLZfiI/xaitFdiA4lRyiHPzpBQjPs6QMOzA/TXyBE1NgsTk5
-         PKSyFUvxQQqc+OeurtJjyhdEa5pOYqJ24Kx5rHRfavloAz1c3E2X4rOnZ1tdKWDE8eR0
-         T7MXvMizyAo/voOVDRNrwiWwalDcfLdqCQhGEtzE1fj1T8AIquCjcjVcbyCul+mqIoQi
-         KywhKjUPbQu9g8SFKlMWHWe1UQ44VfPw6kkb+quoTE7XafynJMACmbQAthTDC57uMGKU
-         pLeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XNye1TnFFysA92DS32jbU6JjhG8n0xBu2ZbXY8SQOOI=;
-        b=uVQh0h59AjKUDjIht2YfQrKmpReyrzvpkm5Bz2Q+Z+9eknAELwVxxBNPI2ohV0KJaS
-         7CiPmVjgvSkmo7sP4xGggTEAHIs5DY9xz2NrJuiW77Ki4UwiZTFZAy9btLg8zZVKc94F
-         B9ucOkVQ0VxRO5QUUyG6rp15o4WeV9D6DkQ1vxMRJ9Sqi88X+SsYKkuOs1MTf+RxYI8i
-         BCv2tLIRoVKnFWFFze3Y1UOuJl9o5mgsPcXOpp24kj1HLN3FlCtnCABg3/HMEbLQgOK2
-         pXPqZGIbBeR7WXCf0KJczsh/YAk7RLPv64NCuqjJ0H7TVe1+y5IVYovCBeRHGVCsUOu/
-         0Nag==
-X-Gm-Message-State: AOAM533sHA6t3o/9spJYoC/j7xQ6rpPjKdN7ckbA19a158ucBNU9ZKOA
-        AaGZOG0860tgDXRRgZtLeQ7goSI8dcDgOe1DOT4=
-X-Google-Smtp-Source: ABdhPJzXahI7cOaa52c/s7h/X38R6hJp/LyRYWqMYB3LDfl/t0Aqa709daWdIxLqJRk18wje3aN+eiWv5OK6BXcsj9E=
-X-Received: by 2002:a25:fc4:: with SMTP id 187mr1607718ybp.608.1641820854165;
- Mon, 10 Jan 2022 05:20:54 -0800 (PST)
+        id S241130AbiAKNwA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 11 Jan 2022 08:52:00 -0500
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:54518 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S241076AbiAKNv7 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 11 Jan 2022 08:51:59 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04357;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0V1Zvkwx_1641909115;
+Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0V1Zvkwx_1641909115)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 11 Jan 2022 21:51:56 +0800
+Subject: Re: [RFC v2 02/19] skbuff: pass a struct ubuf_info in msghdr
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Jakub Kicinski <kuba@kernel.org>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Willem de Bruijn <willemb@google.com>,
+        Eric Dumazet <edumazet@google.com>,
+        David Ahern <dsahern@kernel.org>, Jens Axboe <axboe@kernel.dk>
+References: <cover.1640029579.git.asml.silence@gmail.com>
+ <7dae2f61ee9a1ad38822870764fcafad43a3fe4e.1640029579.git.asml.silence@gmail.com>
+From:   Hao Xu <haoxu@linux.alibaba.com>
+Message-ID: <fd376342-13e2-4ce9-074a-f6b3da69be3b@linux.alibaba.com>
+Date:   Tue, 11 Jan 2022 21:51:55 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.14.0
 MIME-Version: 1.0
-References: <69f226b35fbdb996ab799a8bbc1c06bf634ccec1.1641688805.git.asml.silence@gmail.com>
- <164174539343.69043.6549592398281965008.b4-ty@kernel.dk>
-In-Reply-To: <164174539343.69043.6549592398281965008.b4-ty@kernel.dk>
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date:   Mon, 10 Jan 2022 14:20:43 +0100
-Message-ID: <CAKXUXMxnowRRZTLZAW_zF0Su8PYBKJc3x3j=m+-cyM6ox6E2LQ@mail.gmail.com>
-Subject: Re: [PATCH for-next] io_uring: fix not released cached task refs
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <7dae2f61ee9a1ad38822870764fcafad43a3fe4e.1640029579.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Sun, Jan 9, 2022 at 5:23 PM Jens Axboe <axboe@kernel.dk> wrote:
->
-> On Sun, 9 Jan 2022 00:53:22 +0000, Pavel Begunkov wrote:
-> > tctx_task_work() may get run after io_uring cancellation and so there
-> > will be no one to put cached in tctx task refs that may have been added
-> > back by tw handlers using inline completion infra, Call
-> > io_uring_drop_tctx_refs() at the end of the main tw handler to release
-> > them.
-> >
-> >
-> > [...]
->
-> Applied, thanks!
->
-> [1/1] io_uring: fix not released cached task refs
->       commit: 3cc7fdb9f90a25ae92250bf9e6cf3b9556b230e9
->
+在 2021/12/21 下午11:35, Pavel Begunkov 写道:
+> Instead of the net stack managing ubuf_info, allow to pass it in from
+> outside in a struct msghdr (in-kernel structure), so io_uring can make
+> use of it.
+> 
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> ---
+Hi Pavel,
+I've some confusions here since I have a lack of
+network knowledge.
+The first one is why do we make ubuf_info visible
+for io_uring. Why not just follow the old MSG_ZEROCOPY
+logic?
 
-The memory leak, reported in
-https://lore.kernel.org/all/CAKXUXMzHUi3q4K-OpiBKyMAsQ2K=FOsVzULC76v05nCUKNCA+Q@mail.gmail.com/:
+The second one, my understanding about the buffer
+lifecycle is that the kernel side informs
+the userspace by a cqe generated by the ubuf_info
+callback that all the buffers attaching to the
+same notifier is now free to use when all the data
+is sent, then why is the flush in 13/19 needed as
+it is at the submission period?
 
-    - does     trigger on next-20220107.
-
-    - does NOT trigger on next-20220107 + cherry-pick
-3cc7fdb9f90a25ae92250bf9e6cf3b9556b230e9.
-
-    - does NOT trigger on next-20220110, which already includes commit
-3cc7fdb9f90a25ae92250bf9e6cf3b9556b230e9.
-
-
-So, with that I think this patch resolves the reported memory leak for good:
-
-Tested-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-
-Pavel, thanks for the quick fix.
-
-I guess that the patch has already landed in linux-next, so the tag
-above will not be applied to the commit, but is only for our own
-historic reference.
-
-Lukas
+Regards,
+Hao

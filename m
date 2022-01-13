@@ -2,64 +2,73 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AC1F748CBAB
-	for <lists+io-uring@lfdr.de>; Wed, 12 Jan 2022 20:13:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 97A1F48D6CA
+	for <lists+io-uring@lfdr.de>; Thu, 13 Jan 2022 12:43:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356876AbiALTNv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 12 Jan 2022 14:13:51 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:59522 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356933AbiALTMK (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 12 Jan 2022 14:12:10 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4D96161ABA
-        for <io-uring@vger.kernel.org>; Wed, 12 Jan 2022 19:12:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B49ACC36AEB;
-        Wed, 12 Jan 2022 19:12:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642014729;
-        bh=sGLhn3wYn+khc/4rAdy650S4GwIswMdZtZUsoecWC40=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=MCBPIwr+A4/SpzwSY1ClnHdOrf655t7zi8g/puf98z6ywpeJFuptGKx8OddgO0Seh
-         mUlQ9WrMoZTgWR8A4QKka7aO61KS44fTBh3HX2HOCx71Ky/HCXDbzFZPloO9YiR4nb
-         2AQNPBCl4wSltJ/PD98gQotqi6pRFT20aTeXKaeUWCmRSR454QepTA+wkKrtNIm56q
-         FCr/FU9TeQSYkBPtjGLHfZqxWK4Oe9NrDGg4HkWOaN/i1XQDbytfjIj6SjgIG+QDD4
-         fCIml83jj4YtOACXHm5TdqjMrhynHnaufbuCzligBoAB3LuH+xRLGMB0+Cg6WckCrw
-         UyoRC++4eF+yA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id A38E9F60796;
-        Wed, 12 Jan 2022 19:12:09 +0000 (UTC)
-Subject: Re: [GIT PULL] io_uring updates for 5.17-rc
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <b5dc115b-b549-aa6d-6845-3244660ee680@kernel.dk>
-References: <b5dc115b-b549-aa6d-6845-3244660ee680@kernel.dk>
-X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
-X-PR-Tracked-Message-Id: <b5dc115b-b549-aa6d-6845-3244660ee680@kernel.dk>
-X-PR-Tracked-Remote: git://git.kernel.dk/linux-block.git tags/for-5.17/io_uring-2022-01-11
-X-PR-Tracked-Commit-Id: 3cc7fdb9f90a25ae92250bf9e6cf3b9556b230e9
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 42a7b4ed45e7667836fae4fb0e1ac6340588b1b0
-Message-Id: <164201472966.2601.13722928287048336858.pr-tracker-bot@kernel.org>
-Date:   Wed, 12 Jan 2022 19:12:09 +0000
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        io-uring <io-uring@vger.kernel.org>
+        id S230124AbiAMLnd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 13 Jan 2022 06:43:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54190 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231629AbiAMLnd (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 13 Jan 2022 06:43:33 -0500
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59C84C061748
+        for <io-uring@vger.kernel.org>; Thu, 13 Jan 2022 03:43:32 -0800 (PST)
+Received: by mail-ed1-x52f.google.com with SMTP id o6so22041485edc.4
+        for <io-uring@vger.kernel.org>; Thu, 13 Jan 2022 03:43:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=jhWn7T4hrA7xl2IAMoVZUWsxv+GoNPnOF3yuOrAjNoM=;
+        b=O6znUgvgKgL5BdP5cj72YFiTXwMCfhJznE8ThXGEZ7LZzTrrSUuTHBOcjh8j3mH27z
+         YRt2Us7gNfeEpsE+RpCciNjcfFzd5IyvoXgF1UWciTNkT8RSsWHH0DNHtItBTzcwV2nW
+         bE/T3a99hBV5dH6ED3zjFzG7pSfeEUTtik3dRKzg/TPuOe9M2F3L8obGUKvBS7opkfFv
+         J5I7ccOPe0SUdifTHx4D6NvCrh8NNfV4BKSMAR1hZ1VfEBJLOs9YwwD4ptkKMbNBUrMA
+         UlNi9tyyqpKh+vwOLaOOOPevAwxHAFy0HqCgrvEf36MEAhJCIGyubUD4dfP88QbA08Z3
+         B9aQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=jhWn7T4hrA7xl2IAMoVZUWsxv+GoNPnOF3yuOrAjNoM=;
+        b=eZJpZ65gHM8wwSkYfLsqwXmkU5yLpSORToKCA4dlj8nEGAi7yybx/vZrlyW/zKPrq5
+         oPs63KH8HZ5BetiMRc7SFughVdWgnsJ8ryrtOkiDCjvWQVHxEsX4oa9dXVfBgLdH5l7m
+         QaUsx8Qo3IbSNk+VyAhMSBiGTRvT1ji51s2DcCUVqcVD6g6EOk0NxbSqgwdELW6uuyTQ
+         J1JbCz65efQHm6gekRlwESRVlqJXFgVfJXeCHkFQ4za8CnhxqH+53+GXO2+GaO4tGcpK
+         MLb2Up4ROZVYAEyKJNst53R5izfU0RbkouNF1ZXFj+gTD5DyBrpstvifIb1aV0X293Gx
+         RG3A==
+X-Gm-Message-State: AOAM531pOHXiGe3+xv70ILUDxYwk3bG4a9uy8qg4d9SSDSgmrgf2E/BD
+        gePu67EHUOTvooioJVr+M0TpdcJPJUxRORt9Kwo=
+X-Google-Smtp-Source: ABdhPJxyoiY8VXI7Ap+xAKk2PRUCGBv2OlVGjIuSXN6ReOxXW5RkQkxED+IDptohray8Xj361uyQT4in8afbYhKcEOc=
+X-Received: by 2002:a17:906:9251:: with SMTP id c17mr3129257ejx.611.1642074210635;
+ Thu, 13 Jan 2022 03:43:30 -0800 (PST)
+MIME-Version: 1.0
+Received: by 2002:a54:3348:0:0:0:0:0 with HTTP; Thu, 13 Jan 2022 03:43:30
+ -0800 (PST)
+Reply-To: orlandomoris56@gmail.com
+From:   Orlando Moris <officebe274@gmail.com>
+Date:   Thu, 13 Jan 2022 11:43:30 +0000
+Message-ID: <CAL_4xW-9DBwe67n8ZW0SFDOPUqWdawWoro75_sa2TwTxQmPqdg@mail.gmail.com>
+Subject: 
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The pull request you sent on Tue, 11 Jan 2022 14:47:01 -0700:
-
-> git://git.kernel.dk/linux-block.git tags/for-5.17/io_uring-2022-01-11
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/42a7b4ed45e7667836fae4fb0e1ac6340588b1b0
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Tere! Teavitage, et see teie postkasti saabunud e-kiri ei ole viga,
+vaid see oli spetsiaalselt teile adresseeritud. Mul on (7 500 000 $)
+pakkumine, mille j=C3=A4ttis mu varalahkunud klient insener Carlos, kes
+kannab teiega sama nime, kes t=C3=B6=C3=B6tas ja elas siin Lome Togos. Minu
+hiline klient ja perekond sattusid auto=C3=B5nnetusse, mis v=C3=B5ttis neil=
+t elu
+. V=C3=B5tan teiega =C3=BChendust kui lahkunu l=C3=A4hisugulasega, et saaks=
+ite n=C3=B5uete
+alusel raha k=C3=A4tte. P=C3=A4rast teie kiiret reageerimist teavitan teid =
+selle
+re=C5=BEiimidest
+selle lepingu t=C3=A4itmine., v=C3=B5tke minuga sellel e-kirjal =C3=BChendu=
+st
+(orlandomoris56@gmail.com )

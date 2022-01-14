@@ -2,139 +2,177 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B4F248E74D
-	for <lists+io-uring@lfdr.de>; Fri, 14 Jan 2022 10:20:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F287B48E995
+	for <lists+io-uring@lfdr.de>; Fri, 14 Jan 2022 13:00:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230305AbiANJTx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 14 Jan 2022 04:19:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35948 "EHLO
+        id S234681AbiANMAR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 14 Jan 2022 07:00:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230124AbiANJTw (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 14 Jan 2022 04:19:52 -0500
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0D63C061574
-        for <io-uring@vger.kernel.org>; Fri, 14 Jan 2022 01:19:51 -0800 (PST)
-Received: by mail-ed1-x535.google.com with SMTP id u25so32759423edf.1
-        for <io-uring@vger.kernel.org>; Fri, 14 Jan 2022 01:19:51 -0800 (PST)
+        with ESMTP id S234788AbiANMAQ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 14 Jan 2022 07:00:16 -0500
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49766C061574
+        for <io-uring@vger.kernel.org>; Fri, 14 Jan 2022 04:00:16 -0800 (PST)
+Received: by mail-wm1-x32b.google.com with SMTP id l4so5840961wmq.3
+        for <io-uring@vger.kernel.org>; Fri, 14 Jan 2022 04:00:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=NzE71MhjCUShzxvm2h8DsVIT1hIwhp1LevHcd53e3TE=;
-        b=qZiFcExji+zJrPK/Kvz+8mzO/w4yBfDz+B7KpJILr+jIRUgT2bRm97CsSx3liquYqC
-         YaNIR+TIcXlpFyVSfnsuF2q66nfw+uFNTkwDLrDwt6p0Jr9q9nfNWNgMSbMfoAnG9rA8
-         NJslz4Q7XnRt9iYEL7oz0kF1sZxE42Y0xomWPnJn+bSDlcLULhQdANUW5dR9yu7zTt/X
-         E8jPG3gK6JblOJtn5sp/gWYMXl0UIHz6B4FYxaHYvLEAAwY1UWBELaMMsGv7Dfy5y1Mi
-         WrRrGGzDqxEhBNmguDFOPGpXbUTny+0DlQlj2cqiCjNjA8KonDkB7gS04xN3Q2HwP+tP
-         LcFg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+1uoSoXCv01sSrv9GnqjB4cAHx5uzmHn1bzyib6GLeU=;
+        b=Wjzu4YXDHbUkrVZhxtM6WadmWhrjFzy9ntCZdHmURLxlt6EsjREc1xYkm9oHGmH/3d
+         d7+egRtHlzwaWBs90BRiHXzTu9GgqGZnjf9zV8vnUW92WTmjJtoZX94ATNzByKKLpht+
+         pW9zu0rGT5MuHrs9ey+Pxd0rq6Eqo29PPo7uHat9obrZcNjxNetKvqe9FBXdMemqn43e
+         6qVRIgSldw4cOXLwmZnuTQW+Ke4hjEKVWXFw1UXrrW/ZQ2rszwg9I0oPkfhMTJef06Br
+         zuSFSpJu1H1kmVgesrc+rZhWWVOoVrmSpgghO3ewjV9V6ZIlSaQsxfeQ5HGSgAmmi9TT
+         Zs6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=NzE71MhjCUShzxvm2h8DsVIT1hIwhp1LevHcd53e3TE=;
-        b=4DbG7aMvaxAh7pWmMTQnJNc/uZjXoHdmUdgDWH/nG1nZEEOpqBf0kW8OkejOg6k0WK
-         1Rn0pEKEWQmuLVg2UHKcm+R9NjeJiOS9eun0MEIsPLikOX2rbDVqaOTSQyMi75Rqnl+6
-         Kh3oJSWy0xFLeiF5t3Km183xoeaLwyYCNd9xI9zcSxYlCKI8BanbVS9i+HeKgfQJvu0K
-         QQS64FgnKzgqvSDyvM+J5hP4EvRO7Lq6D/vGedujUsoF09qtc2VEUHdJ9JHRTnSJURUD
-         rqJLglEzVba5zzrZvl5Uy6GiTi9Cb31YcUIF4Am048AgHaI3ZJ7ryKDVV85ALobEhKrK
-         PJ4Q==
-X-Gm-Message-State: AOAM530ho3PJeH54xTPCNSBdc1osiBkc8EDCFhS2+Jd7OXEnI+Ejfrpe
-        V8JMALZbTbJZcYLXZqmoXxzPbm3HZLGosXELvbEmVjWAyrk=
-X-Google-Smtp-Source: ABdhPJzkfhgvLdY4FhY/XAxMhaEYfXnkEYPfEdrdcfWQQve270z7UIpwQFyGfLOaqBt5DlPBSZ5Y/9oInOsu6MT7wNs=
-X-Received: by 2002:a17:907:728e:: with SMTP id dt14mr813998ejc.723.1642151990125;
- Fri, 14 Jan 2022 01:19:50 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+1uoSoXCv01sSrv9GnqjB4cAHx5uzmHn1bzyib6GLeU=;
+        b=h3vySV8Zb/GkaGyocf9cnahMPHMmReno6b4F2vdBplQ/AtR0FS2C5+ekPE0Nwiu4WY
+         A4ac+z6u3sEBe6SkuHZB8rSpWOC2j1HuRJrE/cviLKMjAoKvctkbEkcDjYohOrnsvzhj
+         oW681DNnCjL6K/vJY7ks4gMNW9ccBGCWXtkDjIVlzplI1nmEeA6d5Lbvl8DYoyNEBYuT
+         f4YNHLHicBMmMk34k7Y0QCmdVAiTnmBEHN3sWmb5cECm5edW3aJ4R8v39qcfU3XBmhPm
+         1AT/g2XKpVwG3P+QVrJ0uJsY898Ateb8pLGg9uRLttw4Kx2XSJ4p/g5UQmaeX3Pyjlor
+         j4pA==
+X-Gm-Message-State: AOAM532weIKDo4SNOM6+NxncoSMbzDG07YmNfGmMrWRSYgVgcj7e9uY5
+        oL6c39g447nKd6wt/ALp+judOR3jFCM=
+X-Google-Smtp-Source: ABdhPJxLQ0zuMmAmpcyeesbPStvbpHg6gsEGSEtbSV2sRZhNMpI302LbmxXa99eNY4J1d5SvNsM3Mg==
+X-Received: by 2002:a05:600c:3d0c:: with SMTP id bh12mr11786544wmb.66.1642161614602;
+        Fri, 14 Jan 2022 04:00:14 -0800 (PST)
+Received: from 127.0.0.1localhost ([85.255.234.103])
+        by smtp.gmail.com with ESMTPSA id m20sm4668054wms.4.2022.01.14.04.00.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Jan 2022 04:00:14 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com,
+        Eric Biggers <ebiggers@google.com>,
+        syzbot+5426c7ed6868c705ca14@syzkaller.appspotmail.com
+Subject: [PATCH] io_uring: fix UAF due to missing POLLFREE handling
+Date:   Fri, 14 Jan 2022 11:59:10 +0000
+Message-Id: <4ed56b6f548f7ea337603a82315750449412748a.1642161259.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <e354897-adca-114-3830-4cc243f99fc1@rydia.net> <CAAss7+q_qjYBbiN+RaGrd3ngOPPGRwJiQU+Gkq1YPzfy7X8wqg@mail.gmail.com>
-In-Reply-To: <CAAss7+q_qjYBbiN+RaGrd3ngOPPGRwJiQU+Gkq1YPzfy7X8wqg@mail.gmail.com>
-From:   Josef <josef.grieb@gmail.com>
-Date:   Fri, 14 Jan 2022 10:19:38 +0100
-Message-ID: <CAAss7+qkBUzADaG+B6WTHz5hdZbbGvLFkD56sRhUzni7Js7amA@mail.gmail.com>
-Subject: Re: User questions: client code and SQE/CQE starvation
-To:     dormando <dormando@rydia.net>, io-uring <io-uring@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-sorry i accidentally pressed send message...
+Fixes a problem described in 50252e4b5e989
+("aio: fix use-after-free due to missing POLLFREE handling")
+and copies the approach used there.
 
-run out of SQE should not be problem, when
-io_uring_get_sqe(https://github.com/axboe/liburing/blob/master/src/queue.c#L409)
-returns a null, you can run io_uring_submit
-in netty we do that automatically when its full
-https://github.com/netty/netty-incubator-transport-io_uring/blob/main/transport-classes-io_uring/src/main/java/io/netty/incubator/channel/uring/IOUringSubmissionQueue.java#L117
+In short, we have to forcibly eject a poll entry when we meet POLLFREE.
+We can't rely on io_poll_get_ownership() as can't wait for potentially
+running tw handlers, so we use the fact that wqs are RCU freed. See
+Eric's patch and comments for more details.
 
-In theory you could run out of CQE, netty io_uring approach is a
-little bit different.
-https://github.com/netty/netty-incubator-transport-io_uring/blob/main/transport-classes-io_uring/src/main/java/io/netty/incubator/channel/uring/IOUringCompletionQueue.java#L86
-(similar to io_uring_for_each_cqe) to make sure the kernel sees that
-and the process function is called here
-https://github.com/netty/netty-incubator-transport-io_uring/blob/main/transport-classes-io_uring/src/main/java/io/netty/incubator/channel/uring/IOUringEventLoop.java#L203
+Reported-by: Eric Biggers <ebiggers@google.com>
+Link: https://lore.kernel.org/r/20211209010455.42744-6-ebiggers@kernel.org
+Reported-and-tested-by: syzbot+5426c7ed6868c705ca14@syzkaller.appspotmail.com
+Fixes: 221c5eb233823 ("io_uring: add support for IORING_OP_POLL")
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ fs/io_uring.c | 60 +++++++++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 51 insertions(+), 9 deletions(-)
 
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index fa3277844d2e..bc424af1833b 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -5462,12 +5462,14 @@ static void io_init_poll_iocb(struct io_poll_iocb *poll, __poll_t events,
+ 
+ static inline void io_poll_remove_entry(struct io_poll_iocb *poll)
+ {
+-	struct wait_queue_head *head = poll->head;
++	struct wait_queue_head *head = smp_load_acquire(&poll->head);
+ 
+-	spin_lock_irq(&head->lock);
+-	list_del_init(&poll->wait.entry);
+-	poll->head = NULL;
+-	spin_unlock_irq(&head->lock);
++	if (head) {
++		spin_lock_irq(&head->lock);
++		list_del_init(&poll->wait.entry);
++		poll->head = NULL;
++		spin_unlock_irq(&head->lock);
++	}
+ }
+ 
+ static void io_poll_remove_entries(struct io_kiocb *req)
+@@ -5475,10 +5477,26 @@ static void io_poll_remove_entries(struct io_kiocb *req)
+ 	struct io_poll_iocb *poll = io_poll_get_single(req);
+ 	struct io_poll_iocb *poll_double = io_poll_get_double(req);
+ 
+-	if (poll->head)
+-		io_poll_remove_entry(poll);
+-	if (poll_double && poll_double->head)
++	/*
++	 * While we hold the waitqueue lock and the waitqueue is nonempty,
++	 * wake_up_pollfree() will wait for us.  However, taking the waitqueue
++	 * lock in the first place can race with the waitqueue being freed.
++	 *
++	 * We solve this as eventpoll does: by taking advantage of the fact that
++	 * all users of wake_up_pollfree() will RCU-delay the actual free.  If
++	 * we enter rcu_read_lock() and see that the pointer to the queue is
++	 * non-NULL, we can then lock it without the memory being freed out from
++	 * under us.
++	 *
++	 * Keep holding rcu_read_lock() as long as we hold the queue lock, in
++	 * case the caller deletes the entry from the queue, leaving it empty.
++	 * In that case, only RCU prevents the queue memory from being freed.
++	 */
++	rcu_read_lock();
++	io_poll_remove_entry(poll);
++	if (poll_double)
+ 		io_poll_remove_entry(poll_double);
++	rcu_read_unlock();
+ }
+ 
+ /*
+@@ -5618,13 +5636,37 @@ static int io_poll_wake(struct wait_queue_entry *wait, unsigned mode, int sync,
+ 						 wait);
+ 	__poll_t mask = key_to_poll(key);
+ 
++	if (unlikely(mask & POLLFREE)) {
++		io_poll_mark_cancelled(req);
++		/* we have to kick tw in case it's not already */
++		io_poll_execute(req, 0);
++
++		/*
++		 * If the waitqueue is being freed early but someone is already
++		 * holds ownership over it, we have to tear down the request as
++		 * best we can. That means immediately removing the request from
++		 * its waitqueue and preventing all further accesses to the
++		 * waitqueue via the request.
++		 */
++		list_del_init(&poll->wait.entry);
++
++		/*
++		 * Careful: this *must* be the last step, since as soon
++		 * as req->head is NULL'ed out, the request can be
++		 * completed and freed, since aio_poll_complete_work()
++		 * will no longer need to take the waitqueue lock.
++		 */
++		smp_store_release(&poll->head, NULL);
++		return 1;
++	}
++
+ 	/* for instances that support it check for an event match first */
+ 	if (mask && !(mask & poll->events))
+ 		return 0;
+ 
+ 	if (io_poll_get_ownership(req)) {
+ 		/* optional, saves extra locking for removal in tw handler */
+-		if (mask && poll->events & EPOLLONESHOT) {
++		if (mask && (poll->events & EPOLLONESHOT)) {
+ 			list_del_init(&poll->wait.entry);
+ 			poll->head = NULL;
+ 		}
+-- 
+2.34.1
 
-
-> On Wed, 12 Jan 2022 at 22:17, dormando <dormando@rydia.net> wrote:
-> >
-> > Hey,
-> >
-> > Been integrating io_uring in my stack which has been going well-ish.
-> > Wondering if you folks have seen implementations of client libraries that
-> > feel clean and user friendly?
-> >
-> > IE: with poll/select/epoll/kqueue most client libraries (like libcurl)
-> > implement functions like "client_send_data(ctx, etc)", which returns
-> > -WANT_READ/-WANT_WRITE/etc and an fd if it needs more data to move
-> > forward. With the syscalls themselves externalized in io_uring I'm
-> > struggling to come up with abstractions I like and haven't found much
-> > public on a googlin'. Do any public ones exist yet?
-> >
-> > On implementing networked servers, it feels natural to do a core loop
-> > like:
-> >
-> >       while (1) {
-> >           io_uring_submit_and_wait(&t->ring, 1);
-> >
-> >           uint32_t head = 0;
-> >           uint32_t count = 0;
-> >
-> >           io_uring_for_each_cqe(&t->ring, head, cqe) {
-> >
-> >               event *pe = io_uring_cqe_get_data(cqe);
-> >               pe->callback(pe->udata, cqe);
-> >
-> >               count++;
-> >           }
-> >           io_uring_cq_advance(&t->ring, count);
-> >       }
-> >
-> > ... but A) you can run out of SQE's if they're generated from within
-> > callbacks()'s (retries, get further data, writes after reads, etc).
-> > B) Run out of CQE's with IORING_FEAT_NODROP and can no longer free up
-> > SQE's
-> >
-> > So this loop doesn't work under pressure :)
-> >
-> > I see that qemu's implementation walks an object queue, which calls
-> > io_uring_submit() if SQE's are exhausted. I don't recall it trying to do
-> > anything if submit returns EBUSY because of CQE exhaustion? I've not found
-> > other merged code implementing non-toy network servers and most examples
-> > are rewrites of CLI tooling which are much more constrained problems. Have
-> > I missed anything?
-> >
-> > I can make this work but a lot of solutions are double walking lists
-> > (fetch all CQE's into an array, advance them, then process), or not being
-> > able to take advantage of any of the batching API's. Hoping the
-> > community's got some better examples to untwist my brain a bit :)
-> >
-> > For now I have things working but want to do a cleanup pass before making
-> > my clients/server bits public facing.
-> >
-> > Thanks!
-> > -Dormando
->
->
->
-> --
-> Josef Grieb
-
---
-Josef Grieb

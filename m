@@ -2,120 +2,76 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9412848F9CE
-	for <lists+io-uring@lfdr.de>; Sun, 16 Jan 2022 00:32:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2F374921DB
+	for <lists+io-uring@lfdr.de>; Tue, 18 Jan 2022 10:04:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233895AbiAOXcc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 15 Jan 2022 18:32:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34924 "EHLO
+        id S1345122AbiARJD6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 18 Jan 2022 04:03:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37726 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233894AbiAOXcc (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 15 Jan 2022 18:32:32 -0500
-Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 461D0C061574
-        for <io-uring@vger.kernel.org>; Sat, 15 Jan 2022 15:32:32 -0800 (PST)
-Received: by mail-pf1-x42d.google.com with SMTP id a5so6226982pfo.5
-        for <io-uring@vger.kernel.org>; Sat, 15 Jan 2022 15:32:32 -0800 (PST)
+        with ESMTP id S233608AbiARJDy (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 18 Jan 2022 04:03:54 -0500
+Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC9B0C061747
+        for <io-uring@vger.kernel.org>; Tue, 18 Jan 2022 01:03:50 -0800 (PST)
+Received: by mail-yb1-xb36.google.com with SMTP id e195so23598780ybb.7
+        for <io-uring@vger.kernel.org>; Tue, 18 Jan 2022 01:03:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lVyxhCI3iLqfjpAEROZNvvsw5mjAaY6idxkjkt9xJ5s=;
-        b=ilr7C1lqwsZJrlf6XwaAvIuax+PuTu9PFgnleBvFcw0uGG5CfV3asbtnQ7HERhIDW1
-         HoMzJgJcB91+iWGiyMYv1nigQOuMnLPgJluoycsOL7o+lb4IvsbQlQSnl41gsc94RQnX
-         tDVGHTV3Zd9pIux0CZrI106tBW7HJ///yK690fY5kgzVolSUHdxlqYSelB2D8Y6pFoP1
-         RV6u+N/lB4rqhl1mIdZvswYRZHZgoQEapvYJfzXp4qUApd9lnox2bydLiBDx+A4ifdhz
-         otg2yck8Y41f+1a+iJGy8v3YlWRIow7iSqoXjVM2Ve6jXtChO8Xx25qE8hNhlgz8tUAF
-         h8cw==
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=IAamEH5Xu1dJ3X0trVcFTPIrL7aTtcDGn5mUS4vw1a8=;
+        b=MKVoGuH84JEqwH7FLePXiHWn749zPRU0NdtP8Sm2JMhUl9c1iVyWjbwz6g8cfGp/lf
+         wGwjovvsv0mdzOrkruLS7VCe5a7nqOLOAOguQfLlO7KlNogBFH31ts7TJnJIMROay93O
+         zLFD2FXmAbjh/mANJwaPSceaNEIBY2ial/GMPVceYyFjbk49spZ6usuG0YECL34rgvGB
+         iei5o2VJiTWPHrHs+06yeYgSnvm3Lro4YfCcKClwdqQV0oHYRRf0rSUvau/jSGUGIY/g
+         PIq25ry8zIUYTR1kpaKtOSp5p5QnPiBRoNfQN58gXlJM4igUY1pzRJNojXS4U/9SVgkd
+         1m4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lVyxhCI3iLqfjpAEROZNvvsw5mjAaY6idxkjkt9xJ5s=;
-        b=lbK8CH4dSPMmgCfSW6DFx+yw2iWJSuMhZT01P7AdPYnGARC6YjA2BUgbdlYLuMTKz5
-         Rb9twpxasDxP56mHI/epb50aJuWzT4zBl0SL6eAT0aJcH8Axy0CeN25z0sW6YH2FSXQj
-         OWPiPTP3X2/8lT3OV5TQh+X212mSvxeJ5N4x58nqG4EkmkbCbNyYTQpKyzGKMOkZeOUu
-         ASpfyVuoIzfedalLcGQsEwOwuiNhvt3tZ5Ta0aoBhN7Zu9Wu85h9w/41aZIv4ugPLqo9
-         dV3pqoDG8a9hwAGSG88NBx20uOvpdZvA4E/v5KhK3WNhVNyhoTzPqzB5lj/4ikwMxAtY
-         Ppcg==
-X-Gm-Message-State: AOAM531cJBb/5/iH4XysmZ+IA+eNXk6/BqOqHrpr/r03QFV98dbpc+5R
-        UfPAIPkSPW1st7+YTvmiLCln/wa/V28zakduo1UJ91YLJuo=
-X-Google-Smtp-Source: ABdhPJwOEHmP2lLRMygeRwVHHTJ1NPGTq/Xgq8F7b94PyUNJIqnwfGi1d/47WMlD0fQ15SlHvs7MU2u1VepwS7mCAqE=
-X-Received: by 2002:a63:7407:: with SMTP id p7mr13435802pgc.14.1642289551389;
- Sat, 15 Jan 2022 15:32:31 -0800 (PST)
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=IAamEH5Xu1dJ3X0trVcFTPIrL7aTtcDGn5mUS4vw1a8=;
+        b=FBtxboqy6zdz6jMEBLX740+nZhtEVWqqKZUPuvhkC/qYxzCaQViEhi1Wnr7ODpbYr/
+         V8X2DsypQcWpRdOUrK7DThAtfZ7nqiPJ5L87+3+GYYd3+/lhgMK+K5wNUdLk1K6ilO/9
+         kiBaJfHi/p/Wrc+pHkLyD8SGvpZJw0piOUZzcex+fh39hA9LAUOEHOKhP+QbbhghlM57
+         ASvqQXPsi86wEnY4ovXTXwse9BYhVRxTja+IDNcYzcD+ztl0u3Cr/Bs2PK3icPdj6FZ0
+         4Fmmy+2XONAcx5bP7/YnMRYUCF8CbdNdJxHDLPK2R9pxB3t/9M9ZoKhdUqBKQ5GGqqSm
+         Db8w==
+X-Gm-Message-State: AOAM5332bMgiGlIs1wemIR+QZPMSdnuZACWGEmsbu0zUiZVOkCPf234n
+        S3dQnYmk82k2LENQYMFez5X4Ll/qHfXWD7ixltw=
+X-Google-Smtp-Source: ABdhPJy6S8YpzyetQz5KgFrhfh63qx4z5C4Z/Y2SVI8oau6/Qt6fRl+454Z9GiaGeU2dYh9fMxr8ktnL9Tw7RDFSq4I=
+X-Received: by 2002:a25:7287:: with SMTP id n129mr30710797ybc.351.1642496630031;
+ Tue, 18 Jan 2022 01:03:50 -0800 (PST)
 MIME-Version: 1.0
-References: <e354897-adca-114-3830-4cc243f99fc1@rydia.net>
-In-Reply-To: <e354897-adca-114-3830-4cc243f99fc1@rydia.net>
-From:   Noah Goldstein <goldstein.w.n@gmail.com>
-Date:   Sat, 15 Jan 2022 17:32:20 -0600
-Message-ID: <CAFUsyfJ1FqLHHRy7dQ7T20nPxs1MEbfd1DyfvmQLw=G2rFUhMw@mail.gmail.com>
-Subject: Re: User questions: client code and SQE/CQE starvation
-To:     dormando <dormando@rydia.net>
-Cc:     "open list:IO_URING" <io-uring@vger.kernel.org>
+Received: by 2002:a05:7108:3655:0:0:0:0 with HTTP; Tue, 18 Jan 2022 01:03:49
+ -0800 (PST)
+Reply-To: asil.ajwad@gmail.com
+From:   Asil Ajwad <graceyaogokamboule@gmail.com>
+Date:   Mon, 17 Jan 2022 21:03:49 -1200
+Message-ID: <CA+Yy_gAHH8Aue7iwiH_cJ4+g8NkHKK3sLYXeb_HRC+HesC70HA@mail.gmail.com>
+Subject: Greetings,
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Jan 12, 2022 at 3:17 PM dormando <dormando@rydia.net> wrote:
->
-> Hey,
->
-> Been integrating io_uring in my stack which has been going well-ish.
-> Wondering if you folks have seen implementations of client libraries that
-> feel clean and user friendly?
+-- 
+Greetings,
 
-libev: http://cvs.schmorp.de/libev/
-has an io_uring backend: http://cvs.schmorp.de/libev/ev_iouring.c?view=markup
+I am Mr.Asil Ajwad, I work with United Bank of Africa, can you use
+an ATM Visa Card to withdraw money at, ATM Cash Machine in your
+country, if yes I want to transfer abounded fund the sum of $10.5million
+US-Dollars, to you from my country, this is part of the money that was
+abounded by our late old client a politician who unfortunately lost
+his life and was forced out of power Du to greedy act, the bank will
 
->
-> IE: with poll/select/epoll/kqueue most client libraries (like libcurl)
-> implement functions like "client_send_data(ctx, etc)", which returns
-> -WANT_READ/-WANT_WRITE/etc and an fd if it needs more data to move
-> forward. With the syscalls themselves externalized in io_uring I'm
-> struggling to come up with abstractions I like and haven't found much
-> public on a googlin'. Do any public ones exist yet?
->
-> On implementing networked servers, it feels natural to do a core loop
-> like:
->
->       while (1) {
->           io_uring_submit_and_wait(&t->ring, 1);
->
->           uint32_t head = 0;
->           uint32_t count = 0;
->
->           io_uring_for_each_cqe(&t->ring, head, cqe) {
->
->               event *pe = io_uring_cqe_get_data(cqe);
->               pe->callback(pe->udata, cqe);
->
->               count++;
->           }
->           io_uring_cq_advance(&t->ring, count);
->       }
->
-> ... but A) you can run out of SQE's if they're generated from within
-> callbacks()'s (retries, get further data, writes after reads, etc).
-> B) Run out of CQE's with IORING_FEAT_NODROP and can no longer free up
-> SQE's
->
-> So this loop doesn't work under pressure :)
->
-> I see that qemu's implementation walks an object queue, which calls
-> io_uring_submit() if SQE's are exhausted. I don't recall it trying to do
-> anything if submit returns EBUSY because of CQE exhaustion? I've not found
-> other merged code implementing non-toy network servers and most examples
-> are rewrites of CLI tooling which are much more constrained problems. Have
-> I missed anything?
->
-> I can make this work but a lot of solutions are double walking lists
-> (fetch all CQE's into an array, advance them, then process), or not being
-> able to take advantage of any of the batching API's. Hoping the
-> community's got some better examples to untwist my brain a bit :)
->
-> For now I have things working but want to do a cleanup pass before making
-> my clients/server bits public facing.
->
-> Thanks!
-> -Dormando
+change the account details to your name, and apply for a Visa Card
+with your details, the Visa Card will be send to you, and you can be
+withdrawing money with it always, whatever any amount you withdraw
+daily, you will send 60% to me and you will take 40%, the Visa Card
+and the bank account will be on your name, I will be waiting for your
+response for more details, thanks to you a lot for giving me your time.
+
+regards,
+Mr.Asil Ajwad.

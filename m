@@ -2,58 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E38D6493313
-	for <lists+io-uring@lfdr.de>; Wed, 19 Jan 2022 03:42:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A900493314
+	for <lists+io-uring@lfdr.de>; Wed, 19 Jan 2022 03:42:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351046AbiASCmu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        id S1351048AbiASCmu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
         Tue, 18 Jan 2022 21:42:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54706 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351040AbiASCmt (ORCPT
+        with ESMTP id S1351045AbiASCmt (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Tue, 18 Jan 2022 21:42:49 -0500
-Received: from mail-il1-x129.google.com (mail-il1-x129.google.com [IPv6:2607:f8b0:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BB02C061574
+Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBFEEC06161C
         for <io-uring@vger.kernel.org>; Tue, 18 Jan 2022 18:42:49 -0800 (PST)
-Received: by mail-il1-x129.google.com with SMTP id e8so925940ilm.13
+Received: by mail-io1-xd29.google.com with SMTP id i82so1092929ioa.8
         for <io-uring@vger.kernel.org>; Tue, 18 Jan 2022 18:42:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=IFyirZnLCthMo4svojlXOKbCwV/+Jr8P1f0i0akXm+o=;
-        b=Rz8V3DQtrIgd89CNzSgp0vmepiel8QXoq68qo+8NcwGfXmNUR4XkhkTaGhyryR779a
-         MwePeacqs0oQbI1lPYJesDMUgj6Ror2Ns56UFrKC/uKJGPaVASyrRlkHrjAXo9xjp5GA
-         WAMza7N7tyK/f8qUJdCfmWe6amY2ZJxPIBVntow6QmjXt7CLCCNVq7bK0La14w1dpKW6
-         jl2AxYLJALGSIECssBqkN1rMFnkTLd83ba+Z6klaLeLDtqtpkK/S7tH80El9dnz7w5RO
-         CboUo5DQIg8xZWFhKszIB0fxCOKCxWRJBeCanB/LUKs28tCtV6EwLhpHLCSMPbtU+4kg
-         9izQ==
+        bh=UsLJjNEyTCtuxLztO4+4TNxfRVom4/pkvewZLCOxBkw=;
+        b=bYSZIEb7FB6Ot7MRAFRP570hXjHEbRNUHot862ij5XTdOyrx885/vnxWZO57qLbdMW
+         n0DpcEcgpFvK43snwbdg+x/9Nk4HQ9pd08buF6Oh/c4cOEWZE/8kKhVHPzs3SFZVqUNr
+         4LrecWkTyf/Soau8kY6vocbewAQy2+tXVssM0wUPSZAufGp2nfqxcJydNCPjvAKgEC2h
+         Hb32ASeBY2nd3dIw2hf/ls5S/kW95elGB0y4utH4b123rDKrJcwqLp554Bu6WrxjBSCY
+         x96XQiKsBTXZjNHDR/ke19ROpwhxKRfzzxsyAdgzNi7Fl91zfPOpWybZFIQ/moTmBn7Y
+         6DWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=IFyirZnLCthMo4svojlXOKbCwV/+Jr8P1f0i0akXm+o=;
-        b=cGxTdGopzRj25F3yXSv98CeAA7LHPr3boyuU9Mzk38V9pQuXhf5bJnufb0MI2iZrn+
-         qMcd5iQZgia+jX2SjHpGRL8Ha/tuODI29xlANE6afxZv79BL2zsVEd/lVMzjfdd5TE3i
-         y/BP1ZKX1Q5vxNgLa7lIubflsr/kVE0ooICu2VIXc/vfa69+LnuQouoCvwZyJTFBztUg
-         pdAH5NI59bhm7otZsgSjC6d8KoXaszTXguugfViPt22gudYoSdJdOOj+VSPYhh0/5bUJ
-         S6c2Mj5qIX1To7BKO6AHNvmjdlayopRGechKZBlHNc2XogdF3X6TRwMTzah4Hchp0YkW
-         e/Hg==
-X-Gm-Message-State: AOAM533rBMgq6UYD9R2zDNkGnC33MUWUv6aCUF3rMAnhO4bTZ5X1zJXH
-        +rr7pg+ORtVWtdWw0uUGveWZIf82B1Xvcw==
-X-Google-Smtp-Source: ABdhPJwK5JsE0eY60//4Mucqjx/VdCVnkGO9HgEOjlIFRIfgFxEP0WC9W7OmOjpaiCXJR3uTaGeRGw==
-X-Received: by 2002:a92:ca4b:: with SMTP id q11mr15122589ilo.147.1642560168389;
-        Tue, 18 Jan 2022 18:42:48 -0800 (PST)
+        bh=UsLJjNEyTCtuxLztO4+4TNxfRVom4/pkvewZLCOxBkw=;
+        b=PmLkxMeG9rebjeVFpVGALCEciJdMI60DtwJQ87xZ1khsrVJ5nwF4uPCa4ztG1OKYv8
+         fkSxJbqOVRuMdLcHW1QHIbRWz7wIx+f/vPUcg3Q8mUhi3u0J/75OBNhTdJVs9LAmZ1uz
+         AA6GVA6iD3A7a4qi62rel/IbxsBC8g71MaBimQU9pnmkCG3MVvgY+6RQ4ddLjqWbpk/l
+         MVcprrU8plgWd5KaJ8Ix/BJNGJnRJLDe+2b9d+jnAOrgJwpQh4kvvIFAqcSZNmzETVsE
+         wlVH7K2fQAaBdL3FFQx5CQsa6CKNGJUeW9v51prdeTpb1HtysglwtaLY+PNqJWbxzCOR
+         txuQ==
+X-Gm-Message-State: AOAM53372EB1JRNz1n3N+LAVPd1eiYMyxotQ5D2sukaJsK6Itgqzinp1
+        G4zhZS3u8jDFrbXGabY15FmKVk9QcL4L6w==
+X-Google-Smtp-Source: ABdhPJxYKreHLXZuLa8F+UJ9pVBz8yUqg62HVasav/+hrkGiEXJ6cAPkYfXladN+9DIocxQMOHU2OA==
+X-Received: by 2002:a5d:8d89:: with SMTP id b9mr13596731ioj.205.1642560169071;
+        Tue, 18 Jan 2022 18:42:49 -0800 (PST)
 Received: from localhost.localdomain ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id v5sm9863704ile.72.2022.01.18.18.42.47
+        by smtp.gmail.com with ESMTPSA id v5sm9863704ile.72.2022.01.18.18.42.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Tue, 18 Jan 2022 18:42:48 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>,
         Florian Fischer <florian.fl.fischer@fau.de>
-Subject: [PATCH 5/6] io-wq: add intermediate work step between pending list and active work
-Date:   Tue, 18 Jan 2022 19:42:40 -0700
-Message-Id: <20220119024241.609233-6-axboe@kernel.dk>
+Subject: [PATCH 6/6] io_uring: perform poll removal even if async work removal is successful
+Date:   Tue, 18 Jan 2022 19:42:41 -0700
+Message-Id: <20220119024241.609233-7-axboe@kernel.dk>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220119024241.609233-1-axboe@kernel.dk>
 References: <20220119024241.609233-1-axboe@kernel.dk>
@@ -63,100 +63,49 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-We have a gap where a worker removes an item from the work list and to
-when it gets added as the workers active work. In this state, the work
-item cannot be found by cancelations. This is a small window, but it does
-exist.
-
-Add a temporary pointer to a work item that isn't on the pending work
-list anymore, but also not the active work. This is needed as we need
-to drop the wqe lock in between grabbing the work item and marking it
-as active, to ensure that signal based cancelations are properly
-ordered.
+An active work can have poll armed, hence it's not enough to just do
+the async work removal and return the value if it's different from "not
+found". Rather than make poll removal special, just fall through to do
+the remaining type lookups and removals.
 
 Reported-by: Florian Fischer <florian.fl.fischer@fau.de>
 Link: https://lore.kernel.org/io-uring/20220118151337.fac6cthvbnu7icoc@pasture/
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/io-wq.c | 34 +++++++++++++++++++++++++++++-----
- 1 file changed, 29 insertions(+), 5 deletions(-)
+ fs/io_uring.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/fs/io-wq.c b/fs/io-wq.c
-index db150186ce94..1efb134c98b7 100644
---- a/fs/io-wq.c
-+++ b/fs/io-wq.c
-@@ -48,6 +48,7 @@ struct io_worker {
- 	struct io_wqe *wqe;
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 422d6de48688..e54c4127422e 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -6386,16 +6386,21 @@ static int io_try_cancel_userdata(struct io_kiocb *req, u64 sqe_addr)
+ 	WARN_ON_ONCE(!io_wq_current_is_worker() && req->task != current);
  
- 	struct io_wq_work *cur_work;
-+	struct io_wq_work *next_work;
- 	raw_spinlock_t lock;
+ 	ret = io_async_cancel_one(req->task->io_uring, sqe_addr, ctx);
+-	if (ret != -ENOENT)
+-		return ret;
++	/*
++	 * Fall-through even for -EALREADY, as we may have poll armed
++	 * that need unarming.
++	 */
++	if (!ret)
++		return 0;
  
- 	struct completion ref_done;
-@@ -530,6 +531,7 @@ static void io_assign_current_work(struct io_worker *worker,
- 
- 	raw_spin_lock(&worker->lock);
- 	worker->cur_work = work;
-+	worker->next_work = NULL;
- 	raw_spin_unlock(&worker->lock);
- }
- 
-@@ -554,9 +556,20 @@ static void io_worker_handle_work(struct io_worker *worker)
- 		 * clear the stalled flag.
- 		 */
- 		work = io_get_next_work(acct, worker);
--		if (work)
-+		if (work) {
- 			__io_worker_busy(wqe, worker);
- 
-+			/*
-+			 * Make sure cancelation can find this, even before
-+			 * it becomes the active work. That avoids a window
-+			 * where the work has been removed from our general
-+			 * work list, but isn't yet discoverable as the
-+			 * current work item for this worker.
-+			 */
-+			raw_spin_lock(&worker->lock);
-+			worker->next_work = work;
-+			raw_spin_unlock(&worker->lock);
-+		}
- 		raw_spin_unlock(&wqe->lock);
- 		if (!work)
- 			break;
-@@ -972,6 +985,19 @@ void io_wq_hash_work(struct io_wq_work *work, void *val)
- 	work->flags |= (IO_WQ_WORK_HASHED | (bit << IO_WQ_HASH_SHIFT));
- }
- 
-+static bool __io_wq_worker_cancel(struct io_worker *worker,
-+				  struct io_cb_cancel_data *match,
-+				  struct io_wq_work *work)
-+{
-+	if (work && match->fn(work, match->data)) {
-+		work->flags |= IO_WQ_WORK_CANCEL;
-+		set_notify_signal(worker->task);
-+		return true;
-+	}
+ 	spin_lock(&ctx->completion_lock);
++	ret = io_poll_cancel(ctx, sqe_addr, false);
++	if (ret != -ENOENT)
++		goto out;
 +
-+	return false;
-+}
-+
- static bool io_wq_worker_cancel(struct io_worker *worker, void *data)
- {
- 	struct io_cb_cancel_data *match = data;
-@@ -981,11 +1007,9 @@ static bool io_wq_worker_cancel(struct io_worker *worker, void *data)
- 	 * may dereference the passed in work.
- 	 */
- 	raw_spin_lock(&worker->lock);
--	if (worker->cur_work &&
--	    match->fn(worker->cur_work, match->data)) {
--		set_notify_signal(worker->task);
-+	if (__io_wq_worker_cancel(worker, match, worker->cur_work) ||
-+	    __io_wq_worker_cancel(worker, match, worker->next_work))
- 		match->nr_running++;
--	}
- 	raw_spin_unlock(&worker->lock);
- 
- 	return match->nr_running && !match->cancel_all;
+ 	spin_lock_irq(&ctx->timeout_lock);
+ 	ret = io_timeout_cancel(ctx, sqe_addr);
+ 	spin_unlock_irq(&ctx->timeout_lock);
+-	if (ret != -ENOENT)
+-		goto out;
+-	ret = io_poll_cancel(ctx, sqe_addr, false);
+ out:
+ 	spin_unlock(&ctx->completion_lock);
+ 	return ret;
 -- 
 2.34.1
 

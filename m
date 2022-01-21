@@ -2,118 +2,67 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E903B495FDD
-	for <lists+io-uring@lfdr.de>; Fri, 21 Jan 2022 14:41:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C2FF14960B6
+	for <lists+io-uring@lfdr.de>; Fri, 21 Jan 2022 15:27:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350625AbiAUNlB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 21 Jan 2022 08:41:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33040 "EHLO
+        id S1381064AbiAUO1a (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 21 Jan 2022 09:27:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43850 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235175AbiAUNlB (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 21 Jan 2022 08:41:01 -0500
-Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F7D5C061574
-        for <io-uring@vger.kernel.org>; Fri, 21 Jan 2022 05:41:01 -0800 (PST)
-Received: by mail-io1-xd2a.google.com with SMTP id y22so10809090iof.7
-        for <io-uring@vger.kernel.org>; Fri, 21 Jan 2022 05:41:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=to:cc:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=baTMGVNcOO2CyLwWywpn3gvJeYK8c9XpKdqmhxeUFlo=;
-        b=s+56BfDbgofHRz5Vhn093axL6U43jzXMkcCwkyFQtbS6bc7Ll00wikqNTpRWRSXHaz
-         8h72FtHpNr2k/goQrXwYMkSDWlaKwlgzOs9iogk7HWvvfeZ8x5F0IVyl+0W3Vw3Gv3X9
-         b8fOTW0ubTYuTRADktWdRwF/5CCEpr8XLvnNiJ0FllSIyHcnb344NO9YYfzvq3DVc0C/
-         oKOHXYf2U1J2ihOHukICI+plpYjzzvoZwWbkvObSulpxPX1+hBv3GUdTeN8OrfZbHxKc
-         moJ5dx0S5YeilBjhIAwvnwg2YGZsEe4MvueJWQ8GcWWjrE68JsTHpOVc73ZWWf0ikf2M
-         aViw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=baTMGVNcOO2CyLwWywpn3gvJeYK8c9XpKdqmhxeUFlo=;
-        b=o7Shs///RFyDaVeN95EG5C5o1tXjR2RouvnTu1Al8jBDsOe+AwYGhJpnso7N65f/mY
-         7O+T4YFd0VLDriq6JD4X0JclhsQBasa1yueN195EELzFcRNOUDk4MabOPXBHVz1EMEuj
-         Ls08HooAaRvA7uP0JmuypwyK+KZYwVwGkIMav+svYUOh8/dGKEWYXiuWJn27yV3Wmr1F
-         7dMR/pdoHSPj+qkjO8cs0pI41e37/f7oQ7UF/Ro4ZCfP1ilMxPu07mTt1hTO41o5B95S
-         paddZ/RohL9CNJ+yBXXzOiltM9hc0RD7U7m3isar8CCEAS9G+XlhbF4ryK+erfMLZN5E
-         Pgjw==
-X-Gm-Message-State: AOAM53131QcvmQvrPdikyMmIkn4/gad1P0REnF81SsefWejWy1Tnu+VR
-        tX3G4Irr5aHxWDqtObqErrLyfB8KJd024g==
-X-Google-Smtp-Source: ABdhPJxBm7lAX38tsol0Rsy6fsaLWKCfPQduO+By3G94bF02naAgwQ8tilHANUiCPuLYai1sr6AK5Q==
-X-Received: by 2002:a05:6638:628:: with SMTP id h8mr1666121jar.192.1642772460503;
-        Fri, 21 Jan 2022 05:41:00 -0800 (PST)
-Received: from [192.168.1.116] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id d16sm1532410iow.13.2022.01.21.05.40.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Jan 2022 05:40:59 -0800 (PST)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     io-uring <io-uring@vger.kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] io_uring fixes for 5.17-rc1
-Message-ID: <8d84c26c-cee8-64c7-1b86-16638a68e977@kernel.dk>
-Date:   Fri, 21 Jan 2022 06:40:56 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        with ESMTP id S1381097AbiAUO1X (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 21 Jan 2022 09:27:23 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1E49C061768
+        for <io-uring@vger.kernel.org>; Fri, 21 Jan 2022 06:27:18 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 593D4CE23A9
+        for <io-uring@vger.kernel.org>; Fri, 21 Jan 2022 14:27:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A3F60C340E1;
+        Fri, 21 Jan 2022 14:27:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1642775235;
+        bh=ZTAofQ8nr/rC8lTjLAj6rZiTFxC60HWuL/3P3a9eLMo=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=B0HhhV7queaxp99Sww9iRFdjjA2kpaEimJfuKl5uIB59++7bouQw8dPEoGqJzrq8C
+         7jvnV25vHRsnG8qLRWIYkmfWLO0krv9uEMXZE4LLfg0e4lwZ9CNMSxuk+rOZ6snAQJ
+         vss0kMW2gOBNHRyRNf5VvNzCZRGe7c4Amkt5FFyhYib6xW7OaLaUBTxy7iVSTaKIci
+         5LBDkEtIZH3CDDfAvu/JpU1KeKFc6pUmcmLj/J3sfx/Q5HyKZIrQghN6YpR5RVHePU
+         JJg0cqMJxJwDnNBBqLyI8M6jm/ebIZ2paNKprFahF+iyffjXU8CFxqqoZBBG2lZrEp
+         4CeLgXFxcSm4w==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 92884F60795;
+        Fri, 21 Jan 2022 14:27:15 +0000 (UTC)
+Subject: Re: [GIT PULL] io_uring fixes for 5.17-rc1
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <8d84c26c-cee8-64c7-1b86-16638a68e977@kernel.dk>
+References: <8d84c26c-cee8-64c7-1b86-16638a68e977@kernel.dk>
+X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
+X-PR-Tracked-Message-Id: <8d84c26c-cee8-64c7-1b86-16638a68e977@kernel.dk>
+X-PR-Tracked-Remote: git://git.kernel.dk/linux-block.git tags/io_uring-5.17-2022-01-21
+X-PR-Tracked-Commit-Id: 73031f761cb7c2397d73957d14d041c31fe58c34
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: f3a78227eef20c0ba13bbf9401f0a340bca3ad16
+Message-Id: <164277523558.13796.2562021968040015798.pr-tracker-bot@kernel.org>
+Date:   Fri, 21 Jan 2022 14:27:15 +0000
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        io-uring <io-uring@vger.kernel.org>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Linus,
+The pull request you sent on Fri, 21 Jan 2022 06:40:56 -0700:
 
-io_uring fixes for the 5.17-rc1 merge window:
+> git://git.kernel.dk/linux-block.git tags/io_uring-5.17-2022-01-21
 
-- Fix the io_uring POLLFREE handling, similarly to how it was done for
-  aio (Pavel)
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/f3a78227eef20c0ba13bbf9401f0a340bca3ad16
 
-- Remove (now) unused function (Jiapeng)
-
-- Small series fixing an issue with work cancelations. A window exists
-  where work isn't locatable in the pending list, and isn't active in a
-  worker yet either. (me)
-
-Please pull!
-
-
-The following changes since commit fb3b0673b7d5b477ed104949450cd511337ba3c6:
-
-  Merge tag 'mailbox-v5.17' of git://git.linaro.org/landing-teams/working/fujitsu/integration (2022-01-13 11:19:07 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.dk/linux-block.git tags/io_uring-5.17-2022-01-21
-
-for you to fetch changes up to 73031f761cb7c2397d73957d14d041c31fe58c34:
-
-  io-wq: delete dead lock shuffling code (2022-01-19 13:11:58 -0700)
-
-----------------------------------------------------------------
-io_uring-5.17-2022-01-21
-
-----------------------------------------------------------------
-Jens Axboe (7):
-      io-wq: remove useless 'work' argument to __io_worker_busy()
-      io-wq: make io_worker lock a raw spinlock
-      io-wq: invoke work cancelation with wqe->lock held
-      io-wq: perform both unstarted and started work cancelations in one go
-      io-wq: add intermediate work step between pending list and active work
-      io_uring: perform poll removal even if async work removal is successful
-      io-wq: delete dead lock shuffling code
-
-Jiapeng Chong (1):
-      io_uring: Remove unused function req_ref_put
-
-Pavel Begunkov (1):
-      io_uring: fix UAF due to missing POLLFREE handling
-
- fs/io-wq.c    | 91 ++++++++++++++++++++++++++++++++++++-----------------------
- fs/io_uring.c | 79 ++++++++++++++++++++++++++++++++++++++-------------
- 2 files changed, 116 insertions(+), 54 deletions(-)
+Thank you!
 
 -- 
-Jens Axboe
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html

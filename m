@@ -2,26 +2,26 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 898834964FB
-	for <lists+io-uring@lfdr.de>; Fri, 21 Jan 2022 19:26:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D1AD4964FC
+	for <lists+io-uring@lfdr.de>; Fri, 21 Jan 2022 19:26:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235596AbiAUS0l (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 21 Jan 2022 13:26:41 -0500
-Received: from dcvr.yhbt.net ([64.71.152.64]:50864 "EHLO dcvr.yhbt.net"
+        id S1382089AbiAUS0n (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 21 Jan 2022 13:26:43 -0500
+Received: from dcvr.yhbt.net ([64.71.152.64]:50888 "EHLO dcvr.yhbt.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1382083AbiAUS0j (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Fri, 21 Jan 2022 13:26:39 -0500
+        id S1382083AbiAUS0m (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Fri, 21 Jan 2022 13:26:42 -0500
 Received: from localhost (dcvr.yhbt.net [127.0.0.1])
-        by dcvr.yhbt.net (Postfix) with ESMTP id 7E4F51FA00;
+        by dcvr.yhbt.net (Postfix) with ESMTP id 9CE411FA01;
         Fri, 21 Jan 2022 18:26:35 +0000 (UTC)
 From:   Eric Wong <e@80x24.org>
 To:     io-uring@vger.kernel.org
 Cc:     Stefan Metzmacher <metze@samba.org>,
         Liu Changcheng <changcheng.liu@aliyun.com>,
         Eric Wong <e@80x24.org>
-Subject: [PATCH v3 2/7] debian: avoid prompting package builder for signature
-Date:   Fri, 21 Jan 2022 18:26:30 +0000
-Message-Id: <20220121182635.1147333-3-e@80x24.org>
+Subject: [PATCH v3 3/7] debian/rules: fix for newer debhelper
+Date:   Fri, 21 Jan 2022 18:26:31 +0000
+Message-Id: <20220121182635.1147333-4-e@80x24.org>
 In-Reply-To: <20220121182635.1147333-1-e@80x24.org>
 References: <20220121182635.1147333-1-e@80x24.org>
 MIME-Version: 1.0
@@ -30,53 +30,46 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-By setting the distribution to "UNRELEASED", debuild(1) will no
-longer prompt users to sign the package(s).  I expect most users
-building these Debian packages with make-debs.sh will be using
-them locally on a development system which may not have private
-keys.
+When testing on my Debian 11.x (stable) system, --add-udeb
+causes the following build error:
 
-While "debuild -us -uc" could also be used to avoid signatures,
-using "UNRELEASED" also helps communicate to changelog readers
-that the package(s) are not from an official Debian source.
+  dh_makeshlibs: error: The udeb liburing1-udeb does not contain any shared
+  libraries but --add-udeb=liburing1-udeb was passed!?
+  make: *** [debian/rules:82: binary-arch] Error 255
 
-AFAIK the official Debian package is maintained separately at
-<https://git.hadrons.org/git/debian/pkgs/liburing.git>,
-and won't be affected by this change.
+Reading the current dh_makeshlibs(1) manpage reveals --add-udeb
+is nowadays implicit as of debhelper 12.3 and no longer
+necessary.  Compatibility with older debhelper on Debian
+oldstable (buster) remains intact.  Tested with debhelper 12.1.1
+on Debian 10.x (buster) and debhelper 13.3.4 on Debian 11.x
+(bullseye).  Ubuntu was tested by Stefan since its version
+strings contain non-numeric values (e.g. "12.10ubuntu1")
 
+Tested-by: Stefan Metzmacher <metze@samba.org>
+Link: https://lore.kernel.org/io-uring/8ccd3b34-bd3a-6c9f-fdb6-64d1b3b43f64@samba.org/
 Signed-off-by: Eric Wong <e@80x24.org>
 ---
- debian/changelog | 6 ++++++
- make-debs.sh     | 5 ++++-
- 2 files changed, 10 insertions(+), 1 deletion(-)
+ debian/rules | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/debian/changelog b/debian/changelog
-index f0032e3..fbc361b 100644
---- a/debian/changelog
-+++ b/debian/changelog
-@@ -1,3 +1,9 @@
-+liburing (2.0-1) UNRELEASED; urgency=low
+diff --git a/debian/rules b/debian/rules
+index 1a334b3..6631b10 100755
+--- a/debian/rules
++++ b/debian/rules
+@@ -70,7 +70,15 @@ binary-arch: install-arch
+ 	dh_strip -a --ddeb-migration='$(libdbg) (<< 0.3)'
+ 	dh_compress -a
+ 	dh_fixperms -a
+-	dh_makeshlibs -a --add-udeb '$(libudeb)'
 +
-+  * development package built for local use
++# --add-udeb is needed for < 12.3, and breaks with auto-detection
++#  on debhelper 13.3.4, at least
++	if perl -MDebian::Debhelper::Dh_Version -e \
++	'($$v) = ($$Debian::Debhelper::Dh_Version::version =~ /\A([\d\.]+)/);' \
++	-e 'exit(eval("v$$v") lt v12.3)'; \
++		then dh_makeshlibs -a; else \
++		dh_makeshlibs -a --add-udeb '$(libudeb)'; fi
 +
-+ -- Local User <user@example.com>  Tue, 16 Nov 2021 18:04:09 +0000
-+
- liburing (0.7-1) stable; urgency=low
- 
-   * Update to 0.7
-diff --git a/make-debs.sh b/make-debs.sh
-index 136b79e..aea05f0 100755
---- a/make-debs.sh
-+++ b/make-debs.sh
-@@ -20,7 +20,10 @@ set -o pipefail
- 
- # Create dir for build
- base=${1:-/tmp/release}
--codename=$(lsb_release -sc)
-+
-+# UNRELEASED here means debuild won't prompt for signing
-+codename=UNRELEASED
-+
- releasedir=$base/$(lsb_release -si)/liburing
- rm -rf $releasedir
- mkdir -p $releasedir
+ 	dh_shlibdeps -a
+ 	dh_installdeb -a
+ 	dh_gencontrol -a

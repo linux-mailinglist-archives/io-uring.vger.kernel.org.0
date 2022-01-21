@@ -2,68 +2,65 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 41B544964F9
-	for <lists+io-uring@lfdr.de>; Fri, 21 Jan 2022 19:26:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DFBD4964FA
+	for <lists+io-uring@lfdr.de>; Fri, 21 Jan 2022 19:26:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1382087AbiAUS0f (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 21 Jan 2022 13:26:35 -0500
-Received: from dcvr.yhbt.net ([64.71.152.64]:50752 "EHLO dcvr.yhbt.net"
+        id S1381902AbiAUS0h (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 21 Jan 2022 13:26:37 -0500
+Received: from dcvr.yhbt.net ([64.71.152.64]:50854 "EHLO dcvr.yhbt.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1381902AbiAUS0f (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Fri, 21 Jan 2022 13:26:35 -0500
+        id S235596AbiAUS0h (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Fri, 21 Jan 2022 13:26:37 -0500
 Received: from localhost (dcvr.yhbt.net [127.0.0.1])
-        by dcvr.yhbt.net (Postfix) with ESMTP id 2DF6C1F852;
+        by dcvr.yhbt.net (Postfix) with ESMTP id 5B1371F9FC;
         Fri, 21 Jan 2022 18:26:35 +0000 (UTC)
 From:   Eric Wong <e@80x24.org>
 To:     io-uring@vger.kernel.org
 Cc:     Stefan Metzmacher <metze@samba.org>,
         Liu Changcheng <changcheng.liu@aliyun.com>,
         Eric Wong <e@80x24.org>
-Subject: [PULL|PATCH v3 0/7] liburing debian packaging fixes
-Date:   Fri, 21 Jan 2022 18:26:28 +0000
-Message-Id: <20220121182635.1147333-1-e@80x24.org>
-In-Reply-To: <20211116224456.244746-1-e@80x24.org>
-References: 
+Subject: [PATCH v3 1/7] make-debs: fix version detection
+Date:   Fri, 21 Jan 2022 18:26:29 +0000
+Message-Id: <20220121182635.1147333-2-e@80x24.org>
+In-Reply-To: <20220121182635.1147333-1-e@80x24.org>
+References: <20220121182635.1147333-1-e@80x24.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The previous patch 8/7 in v2 is squashed into 3/7 in this series.
-Apologies for the delay since v2, many bad things happened :<
+`head -l' is not supported on my version of head(1) on Debian
+buster nor bullseye (and AFAIK, not any version of head(1)).
+Furthermore, head(1) is not required at all since sed(1) can
+limit operations to any line.
 
-The following changes since commit bbcaabf808b53ef11ad9851c6b968140fb430500:
+Since this is a bash script, we'll also use "set -o pipefail" to
+ensure future errors of this type are caught.
 
-  man/io_uring_enter.2: make it clear that chains terminate at submit (2022-01-19 18:09:40 -0700)
+Signed-off-by: Eric Wong <e@80x24.org>
+---
+ make-debs.sh | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-are available in the Git repository at:
-
-  https://yhbt.net/liburing.git deb-v3
-
-for you to fetch changes up to 77b99bb1dbe237eef38eceb313501a9fd247d672:
-
-  make-debs: remove dependency on git (2022-01-21 16:54:42 +0000)
-
-----------------------------------------------------------------
-Eric Wong (7):
-      make-debs: fix version detection
-      debian: avoid prompting package builder for signature
-      debian/rules: fix for newer debhelper
-      debian/rules: support parallel build
-      debian: rename package to liburing2 to match .so version
-      make-debs: use version from RPM .spec
-      make-debs: remove dependency on git
-
- Makefile                                           |  5 ++++-
- debian/changelog                                   |  6 ++++++
- debian/control                                     |  6 +++---
- ...buring1-udeb.install => liburing2-udeb.install} |  0
- debian/{liburing1.install => liburing2.install}    |  0
- debian/{liburing1.symbols => liburing2.symbols}    |  2 +-
- debian/rules                                       | 22 ++++++++++++++++++++--
- make-debs.sh                                       | 19 ++++++++++++++-----
- 8 files changed, 48 insertions(+), 12 deletions(-)
- rename debian/{liburing1-udeb.install => liburing2-udeb.install} (100%)
- rename debian/{liburing1.install => liburing2.install} (100%)
- rename debian/{liburing1.symbols => liburing2.symbols} (97%)
+diff --git a/make-debs.sh b/make-debs.sh
+index 01d563c..136b79e 100755
+--- a/make-debs.sh
++++ b/make-debs.sh
+@@ -16,6 +16,7 @@
+ # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ #
+ set -xe
++set -o pipefail
+ 
+ # Create dir for build
+ base=${1:-/tmp/release}
+@@ -38,7 +39,7 @@ cd ${releasedir}/${outfile}
+ git clean -dxf
+ 
+ # Change changelog if it's needed
+-cur_ver=`head -l debian/changelog | sed -n -e 's/.* (\(.*\)) .*/\1/p'`
++cur_ver=$(sed -n -e '1s/.* (\(.*\)) .*/\1/p' debian/changelog)
+ if [ "$cur_ver" != "$version-1" ]; then
+ 	dch -D $codename --force-distribution -b -v "$version-1" "new version"
+ fi

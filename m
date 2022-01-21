@@ -2,142 +2,118 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B7ED495F68
-	for <lists+io-uring@lfdr.de>; Fri, 21 Jan 2022 14:07:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E903B495FDD
+	for <lists+io-uring@lfdr.de>; Fri, 21 Jan 2022 14:41:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238448AbiAUNHI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 21 Jan 2022 08:07:08 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:11298 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1380549AbiAUNGx (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 21 Jan 2022 08:06:53 -0500
-Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 20L06XBo010764
-        for <io-uring@vger.kernel.org>; Fri, 21 Jan 2022 05:06:53 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : content-type : content-transfer-encoding :
- mime-version; s=facebook; bh=1DXXF5oMXWXRE35tCOeqMgWYORzjdlF4E+Cbmbq4lDc=;
- b=c7qRJhJjjOCCCAFzOvYKf2YxQ24FZv31NMKneecafKg9HfPdksv9rK1/0ltJa8BxQaRF
- vnbIlGp0bnYdFPSf8j15mLHXD2d6NDKxFnARZtBNHeB7qIP9ms/IzJQ+azOiUwCi2sfJ
- 1OcSb00YjpRlCmIiXtJSBoGgSLr3XfCTYV8= 
-Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3dqj0gk2ms-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Fri, 21 Jan 2022 05:06:52 -0800
-Received: from twshared7500.02.ash7.facebook.com (2620:10d:c085:108::4) by
- mail.thefacebook.com (2620:10d:c085:11d::4) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.21; Fri, 21 Jan 2022 05:06:51 -0800
-Received: by devbig039.lla1.facebook.com (Postfix, from userid 572232)
-        id 878772C3FB9B; Fri, 21 Jan 2022 05:06:45 -0800 (PST)
-From:   Dylan Yudaken <dylany@fb.com>
-To:     <io-uring@vger.kernel.org>
-CC:     <axboe@kernel.dk>, <asml.silence@gmail.com>,
-        Dylan Yudaken <dylany@fb.com>
-Subject: [PATCH liburing] Add a test that ensures unregistering is reasonably quick
-Date:   Fri, 21 Jan 2022 05:06:07 -0800
-Message-ID: <20220121130607.3985559-1-dylany@fb.com>
-X-Mailer: git-send-email 2.30.2
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: g3lH7PALZlz7AHNMpzFJ-JMsYp0f89uT
-X-Proofpoint-GUID: g3lH7PALZlz7AHNMpzFJ-JMsYp0f89uT
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        id S1350625AbiAUNlB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 21 Jan 2022 08:41:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33040 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235175AbiAUNlB (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 21 Jan 2022 08:41:01 -0500
+Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F7D5C061574
+        for <io-uring@vger.kernel.org>; Fri, 21 Jan 2022 05:41:01 -0800 (PST)
+Received: by mail-io1-xd2a.google.com with SMTP id y22so10809090iof.7
+        for <io-uring@vger.kernel.org>; Fri, 21 Jan 2022 05:41:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=to:cc:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=baTMGVNcOO2CyLwWywpn3gvJeYK8c9XpKdqmhxeUFlo=;
+        b=s+56BfDbgofHRz5Vhn093axL6U43jzXMkcCwkyFQtbS6bc7Ll00wikqNTpRWRSXHaz
+         8h72FtHpNr2k/goQrXwYMkSDWlaKwlgzOs9iogk7HWvvfeZ8x5F0IVyl+0W3Vw3Gv3X9
+         b8fOTW0ubTYuTRADktWdRwF/5CCEpr8XLvnNiJ0FllSIyHcnb344NO9YYfzvq3DVc0C/
+         oKOHXYf2U1J2ihOHukICI+plpYjzzvoZwWbkvObSulpxPX1+hBv3GUdTeN8OrfZbHxKc
+         moJ5dx0S5YeilBjhIAwvnwg2YGZsEe4MvueJWQ8GcWWjrE68JsTHpOVc73ZWWf0ikf2M
+         aViw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=baTMGVNcOO2CyLwWywpn3gvJeYK8c9XpKdqmhxeUFlo=;
+        b=o7Shs///RFyDaVeN95EG5C5o1tXjR2RouvnTu1Al8jBDsOe+AwYGhJpnso7N65f/mY
+         7O+T4YFd0VLDriq6JD4X0JclhsQBasa1yueN195EELzFcRNOUDk4MabOPXBHVz1EMEuj
+         Ls08HooAaRvA7uP0JmuypwyK+KZYwVwGkIMav+svYUOh8/dGKEWYXiuWJn27yV3Wmr1F
+         7dMR/pdoHSPj+qkjO8cs0pI41e37/f7oQ7UF/Ro4ZCfP1ilMxPu07mTt1hTO41o5B95S
+         paddZ/RohL9CNJ+yBXXzOiltM9hc0RD7U7m3isar8CCEAS9G+XlhbF4ryK+erfMLZN5E
+         Pgjw==
+X-Gm-Message-State: AOAM53131QcvmQvrPdikyMmIkn4/gad1P0REnF81SsefWejWy1Tnu+VR
+        tX3G4Irr5aHxWDqtObqErrLyfB8KJd024g==
+X-Google-Smtp-Source: ABdhPJxBm7lAX38tsol0Rsy6fsaLWKCfPQduO+By3G94bF02naAgwQ8tilHANUiCPuLYai1sr6AK5Q==
+X-Received: by 2002:a05:6638:628:: with SMTP id h8mr1666121jar.192.1642772460503;
+        Fri, 21 Jan 2022 05:41:00 -0800 (PST)
+Received: from [192.168.1.116] ([66.219.217.159])
+        by smtp.gmail.com with ESMTPSA id d16sm1532410iow.13.2022.01.21.05.40.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Jan 2022 05:40:59 -0800 (PST)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     io-uring <io-uring@vger.kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring fixes for 5.17-rc1
+Message-ID: <8d84c26c-cee8-64c7-1b86-16638a68e977@kernel.dk>
+Date:   Fri, 21 Jan 2022 06:40:56 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2022-01-21_06,2022-01-21_01,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=fb_outbound_notspam policy=fb_outbound score=0 mlxscore=0 adultscore=0
- clxscore=1015 bulkscore=0 impostorscore=0 spamscore=0 phishscore=0
- suspectscore=0 mlxlogscore=999 lowpriorityscore=0 malwarescore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2201110000 definitions=main-2201210089
-X-FB-Internal: deliver
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-There was a bug [1] in io_uring that caused a 1 second delay on shutdown
-due to how registered resources were cleaned up. This test exposes the
-bug, and verifies that it does not reoccur. While time based tests have
-the potential to be flaky, locally with the fix it completes in 5ms, and
-so I do not expect this to be a practical problem.
+Hi Linus,
 
-[1]: https://lore.kernel.org/io-uring/20220121123856.3557884-1-dylany@fb.co=
-m/T/#u
+io_uring fixes for the 5.17-rc1 merge window:
 
-Signed-off-by: Dylan Yudaken <dylany@fb.com>
----
- test/io_uring_register.c | 46 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+- Fix the io_uring POLLFREE handling, similarly to how it was done for
+  aio (Pavel)
 
-diff --git a/test/io_uring_register.c b/test/io_uring_register.c
-index b8a4ea5..8bf0fd3 100644
---- a/test/io_uring_register.c
-+++ b/test/io_uring_register.c
-@@ -609,6 +609,50 @@ out:
- 	return 0;
- }
-=20
-+static size_t timeus(struct timespec t)
-+{
-+	return (size_t)t.tv_sec * 1000000 + t.tv_nsec / 1000;
-+}
-+
-+static int
-+test_unregister_speed(void)
-+{
-+	struct timespec start, end;
-+	struct io_uring_params p;
-+	int fd, ret;
-+	struct iovec iov;
-+	size_t diff;
-+	void *buf;
-+
-+	memset(&p, 0, sizeof(p));
-+	fd =3D new_io_uring(1, &p);
-+
-+	buf =3D t_malloc(pagesize);
-+	iov.iov_base =3D buf;
-+	iov.iov_len =3D pagesize;
-+
-+	ret =3D __sys_io_uring_register(fd, IORING_REGISTER_BUFFERS, &iov, 1);
-+	if (ret) {
-+		fprintf(stderr, "error registering buffers\n");
-+		goto done;
-+	}
-+
-+	clock_gettime(CLOCK_MONOTONIC_RAW, &start);
-+	__sys_io_uring_register(fd, IORING_UNREGISTER_BUFFERS, 0, 0);
-+	clock_gettime(CLOCK_MONOTONIC_RAW, &end);
-+	diff =3D timeus(end) - timeus(start);
-+
-+	/* 500ms should be enough to deregister any buffers */
-+	ret =3D  diff > 500000 ? -1 : 0;
-+
-+	fprintf(stderr, "took %lu us to unregister buffers: %s\n",
-+		diff, ret ? "FAIL" : "PASS");
-+done:
-+	free(buf);
-+	close(fd);
-+	return ret;
-+}
-+
- int
- main(int argc, char **argv)
- {
-@@ -660,6 +704,8 @@ main(int argc, char **argv)
- 	/* uring poll on the uring fd */
- 	status |=3D test_poll_ringfd();
-=20
-+	status |=3D test_unregister_speed();
-+
- 	if (!status)
- 		printf("PASS\n");
- 	else
+- Remove (now) unused function (Jiapeng)
 
-base-commit: bbcaabf808b53ef11ad9851c6b968140fb430500
---=20
-2.30.2
+- Small series fixing an issue with work cancelations. A window exists
+  where work isn't locatable in the pending list, and isn't active in a
+  worker yet either. (me)
+
+Please pull!
+
+
+The following changes since commit fb3b0673b7d5b477ed104949450cd511337ba3c6:
+
+  Merge tag 'mailbox-v5.17' of git://git.linaro.org/landing-teams/working/fujitsu/integration (2022-01-13 11:19:07 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux-block.git tags/io_uring-5.17-2022-01-21
+
+for you to fetch changes up to 73031f761cb7c2397d73957d14d041c31fe58c34:
+
+  io-wq: delete dead lock shuffling code (2022-01-19 13:11:58 -0700)
+
+----------------------------------------------------------------
+io_uring-5.17-2022-01-21
+
+----------------------------------------------------------------
+Jens Axboe (7):
+      io-wq: remove useless 'work' argument to __io_worker_busy()
+      io-wq: make io_worker lock a raw spinlock
+      io-wq: invoke work cancelation with wqe->lock held
+      io-wq: perform both unstarted and started work cancelations in one go
+      io-wq: add intermediate work step between pending list and active work
+      io_uring: perform poll removal even if async work removal is successful
+      io-wq: delete dead lock shuffling code
+
+Jiapeng Chong (1):
+      io_uring: Remove unused function req_ref_put
+
+Pavel Begunkov (1):
+      io_uring: fix UAF due to missing POLLFREE handling
+
+ fs/io-wq.c    | 91 ++++++++++++++++++++++++++++++++++++-----------------------
+ fs/io_uring.c | 79 ++++++++++++++++++++++++++++++++++++++-------------
+ 2 files changed, 116 insertions(+), 54 deletions(-)
+
+-- 
+Jens Axboe
 

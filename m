@@ -2,102 +2,164 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E6651496F01
-	for <lists+io-uring@lfdr.de>; Sun, 23 Jan 2022 01:16:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D92AC497087
+	for <lists+io-uring@lfdr.de>; Sun, 23 Jan 2022 08:43:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236122AbiAWAPu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 22 Jan 2022 19:15:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37072 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235644AbiAWAOe (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 22 Jan 2022 19:14:34 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D802C0617BD;
-        Sat, 22 Jan 2022 16:13:25 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 75A62CE0AC8;
-        Sun, 23 Jan 2022 00:12:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C8E4C004E1;
-        Sun, 23 Jan 2022 00:12:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642896775;
-        bh=HDcG4XHnKQR2EYsnCiCD99ex1SLaB3RdyJgfkBuuN64=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=s3E86InD6zYCOIr6K+j9jaoX09SevSge1cyz46gMd3SUrkwepACHUq1DurncQ9sMT
-         c9aLXGY4Oe26M226BSgsbUoXEyINCj6YiE9cxZs+A6ZuFLIccPhb2u4gslrlQvMXd1
-         1sgHIXM32xFItn2Vdwb/6cYAKv+ymsyNxLutGcmu6ZK+NNblym34GU2yUMBUlbXGCD
-         /bN9GrIkNPQeiF80fsSyehfuZDBx1ImX5peZG6AtTy/cwGsCVq+35uzEej1yFncDcR
-         OnMYXGDxwdaa0vbQoHfQ+xl1c02rhzRlSjxeUjwRgEWClC7i/M89C8j17v/sdn7FC+
-         IpZGlCKbuASqg==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Florian Fischer <florian.fl.fischer@fau.de>,
-        Sasha Levin <sashal@kernel.org>, io-uring@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 15/16] io_uring: perform poll removal even if async work removal is successful
-Date:   Sat, 22 Jan 2022 19:12:14 -0500
-Message-Id: <20220123001216.2460383-15-sashal@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220123001216.2460383-1-sashal@kernel.org>
-References: <20220123001216.2460383-1-sashal@kernel.org>
+        id S235957AbiAWHna (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 23 Jan 2022 02:43:30 -0500
+Received: from ip59.38.31.103.in-addr.arpa.unknwn.cloudhost.asia ([103.31.38.59]:48064
+        "EHLO gnuweeb.org" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S230390AbiAWHna (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 23 Jan 2022 02:43:30 -0500
+Received: from integral2.. (unknown [125.163.200.97])
+        by gnuweeb.org (Postfix) with ESMTPSA id 403F9C2DAE;
+        Sun, 23 Jan 2022 07:43:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=gnuweeb.org;
+        s=default; t=1642923808;
+        bh=LGnmNCnB7OqjUzoB8+bGGCdld3PTk7xq2rS7VduDXa0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=cQJFgeNGRF1JZ04DTe59jk2SzLVX/P7x/mzZo+HaGyD9b8w3aE/8q03xwRUofubNA
+         FUPeQQmmAr07j3Mmqzwh3UmsAskQW/Z7GMPZvt8ujHerl1Rok/j6cK6BfnsOv2zheY
+         zntsomMM+MlGXeoS3Wj88Rch3jd0nj4613j0Lgj90+bfV3my/67tgHruMCNanzuWbS
+         NYOUpLhe6jzf5efK0gQ+dop8zdCxy4AkXRLmXr6FC3S/UeVaImU1JZ/udWXLpLTS8A
+         05TB3fRTrqDivSJJ9YZVKDnxs1M2+wqUtG8yrfxfRNnQv4TduprXxdE49dlxMIlADu
+         xWPn++3QDHjZQ==
+From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring Mailing List <io-uring@vger.kernel.org>,
+        GNU/Weeb Mailing List <gwml@gnuweeb.org>,
+        Tea Inside Mailing List <timl@vger.teainside.org>,
+        Ammar Faizi <ammarfaizi2@gnuweeb.org>,
+        Miyasaki Kohaku <kohaku.mski@gmail.com>,
+        Alviro Iskandar Setiawan <alviro.iskandar@gmail.com>
+Subject: [PATCH] nolibc: Don't use `malloc()` and `free()` as the function name
+Date:   Sun, 23 Jan 2022 14:42:30 +0700
+Message-Id: <20220123074230.3353274-1-ammarfaizi2@gnuweeb.org>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Jens Axboe <axboe@kernel.dk>
+Miyasaki reports that liburing with CONFIG_NOLIBC breaks apps that
+use libc. The first spotted issue was a realloc() call that results
+in an invalid pointer, and then the program exits with SIGABRT.
 
-[ Upstream commit ccbf726171b7328f800bc98005132fd77eb1a175 ]
+The cause is liburing nolibc overrides malloc() and free() from the
+libc (especially when we statically link the "liburing.a" to the apps
+that use libc).
 
-An active work can have poll armed, hence it's not enough to just do
-the async work removal and return the value if it's different from "not
-found". Rather than make poll removal special, just fall through to do
-the remaining type lookups and removals.
+The malloc() and free() from liburing nolibc use hand-coded Assembly
+to invoke mmap() and munmap() syscall directly. That means any
+allocation from malloc() is not a valid object with respect to the
+libc, and free() will also break the app if we use it to free a
+pointer from a libc function (e.g., strdup()).
 
-Reported-by: Florian Fischer <florian.fl.fischer@fau.de>
-Link: https://lore.kernel.org/io-uring/20220118151337.fac6cthvbnu7icoc@pasture/
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+liburing nolibc should not break any libc app.
+
+This renames the malloc() and free() to __uring_malloc() and
+__uring_free(). Also, add new inline functions to wrap the malloc()
+and free(), they are uring_malloc() and uring_free(). These wrappers
+will call the appropriate functions depending on CONFIG_NOLIBC.
+
+Fixes: f48ee3168cdc325233825603269f304d348d323c ("Add nolibc build support")
+Cc: Tea Inside Mailing List <timl@vger.teainside.org>
+Reported-by: Miyasaki Kohaku <kohaku.mski@gmail.com>
+Tested-by: Miyasaki Kohaku <kohaku.mski@gmail.com>
+Co-authored-by: Alviro Iskandar Setiawan <alviro.iskandar@gmail.com>
+Signed-off-by: Alviro Iskandar Setiawan <alviro.iskandar@gmail.com>
+Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 ---
- fs/io_uring.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ src/lib.h    | 20 ++++++++++++++++++++
+ src/nolibc.c |  4 ++--
+ src/setup.c  |  6 +++---
+ 3 files changed, 25 insertions(+), 5 deletions(-)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 0006fc7479ca3..dbdd8c77774c1 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -6304,16 +6304,21 @@ static int io_try_cancel_userdata(struct io_kiocb *req, u64 sqe_addr)
- 	WARN_ON_ONCE(!io_wq_current_is_worker() && req->task != current);
+diff --git a/src/lib.h b/src/lib.h
+index 58d91be..bd02805 100644
+--- a/src/lib.h
++++ b/src/lib.h
+@@ -25,6 +25,26 @@
+ })
+ #endif
  
- 	ret = io_async_cancel_one(req->task->io_uring, sqe_addr, ctx);
--	if (ret != -ENOENT)
--		return ret;
-+	/*
-+	 * Fall-through even for -EALREADY, as we may have poll armed
-+	 * that need unarming.
-+	 */
-+	if (!ret)
-+		return 0;
- 
- 	spin_lock(&ctx->completion_lock);
-+	ret = io_poll_cancel(ctx, sqe_addr, false);
-+	if (ret != -ENOENT)
-+		goto out;
++void *__uring_malloc(size_t len);
++void __uring_free(void *p);
 +
- 	spin_lock_irq(&ctx->timeout_lock);
- 	ret = io_timeout_cancel(ctx, sqe_addr);
- 	spin_unlock_irq(&ctx->timeout_lock);
--	if (ret != -ENOENT)
--		goto out;
--	ret = io_poll_cancel(ctx, sqe_addr, false);
- out:
- 	spin_unlock(&ctx->completion_lock);
- 	return ret;
++static inline void *uring_malloc(size_t len)
++{
++#ifdef CONFIG_NOLIBC
++	return __uring_malloc(len);
++#else
++	return malloc(len);
++#endif
++}
++
++static inline void uring_free(void *ptr)
++{
++#ifdef CONFIG_NOLIBC
++	__uring_free(ptr);
++#else
++	free(ptr);
++#endif
++}
+ 
+ static inline long get_page_size(void)
+ {
+diff --git a/src/nolibc.c b/src/nolibc.c
+index 251780b..f7848d3 100644
+--- a/src/nolibc.c
++++ b/src/nolibc.c
+@@ -23,7 +23,7 @@ struct uring_heap {
+ 	char		user_p[] __attribute__((__aligned__));
+ };
+ 
+-void *malloc(size_t len)
++void *__uring_malloc(size_t len)
+ {
+ 	struct uring_heap *heap;
+ 
+@@ -36,7 +36,7 @@ void *malloc(size_t len)
+ 	return heap->user_p;
+ }
+ 
+-void free(void *p)
++void __uring_free(void *p)
+ {
+ 	struct uring_heap *heap;
+ 
+diff --git a/src/setup.c b/src/setup.c
+index 891fc43..1e4dbf4 100644
+--- a/src/setup.c
++++ b/src/setup.c
+@@ -178,7 +178,7 @@ struct io_uring_probe *io_uring_get_probe_ring(struct io_uring *ring)
+ 	int r;
+ 
+ 	len = sizeof(*probe) + 256 * sizeof(struct io_uring_probe_op);
+-	probe = malloc(len);
++	probe = uring_malloc(len);
+ 	if (!probe)
+ 		return NULL;
+ 	memset(probe, 0, len);
+@@ -187,7 +187,7 @@ struct io_uring_probe *io_uring_get_probe_ring(struct io_uring *ring)
+ 	if (r >= 0)
+ 		return probe;
+ 
+-	free(probe);
++	uring_free(probe);
+ 	return NULL;
+ }
+ 
+@@ -208,7 +208,7 @@ struct io_uring_probe *io_uring_get_probe(void)
+ 
+ void io_uring_free_probe(struct io_uring_probe *probe)
+ {
+-	free(probe);
++	uring_free(probe);
+ }
+ 
+ static inline int __fls(int x)
 -- 
-2.34.1
+2.32.0
 

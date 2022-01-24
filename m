@@ -2,47 +2,46 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CBE84982D7
-	for <lists+io-uring@lfdr.de>; Mon, 24 Jan 2022 16:02:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC03C4983B4
+	for <lists+io-uring@lfdr.de>; Mon, 24 Jan 2022 16:43:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243204AbiAXPCn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 24 Jan 2022 10:02:43 -0500
-Received: from mga12.intel.com ([192.55.52.136]:5547 "EHLO mga12.intel.com"
+        id S238767AbiAXPm5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 24 Jan 2022 10:42:57 -0500
+Received: from mga02.intel.com ([134.134.136.20]:23174 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S240105AbiAXPCd (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Mon, 24 Jan 2022 10:02:33 -0500
+        id S231167AbiAXPm4 (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Mon, 24 Jan 2022 10:42:56 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1643036553; x=1674572553;
+  t=1643038976; x=1674574976;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=QfWyV+HXtcs6rILaxpwLONmm+UzDSrHuA/oNh1yavC0=;
-  b=hJ4DA+v6VOrYtnC7REwEKDh4vUtys4WpBNm6kxRrklPWGxyfHDxrUn8n
-   Nf+w+qBLm6y67GCYrSblQUSn8NW9sznQeKohdYKJfVF9zv1YGUfn61+TX
-   X9j7vo1anHhNa9YW4D4JFmhlMcgviM6pUZ2+FLX1fgOG6H1l2leFCqD1c
-   YqSLhIY+3iWFrys90XVvRi2MLuhhRvtRQTuqPCQ0gn7ZOZa8lbNU/zn8f
-   wYJntJBbqdd2mwi7vjRicxC00/qlSd/kDbwkU+zEdO74pvQ2BXZLPROby
-   r/I/JYVkVRgbLCjLXTHq20vHuarxPI0MgTmhceHHce+Lex4oxC5tJn2mi
-   w==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10236"; a="226042904"
+  bh=o374rmsG+xD0MCUkRz8aZ3tGXmyq3kmBCir4r7b5GiQ=;
+  b=D4fzWCB99saGwxZHUybdqgMH79hQHrlaDTEgl5gLgHsqs4e3vpvOykng
+   FCyZaLsgLpX2cXENiEFyE/XfKF2pDaE5TKQHzosUqDwX1wIYB+FcBb9eA
+   DMcdCU/0v1CTphVRNiaU/QVV9Jj5w8ZPI1cOFv9oTEBUWVrLl8Yyg51he
+   KwOWrTBygO6Z+QrAGibxG4sJjMlKAKNIyq4fKP4DO1L2amPvkkSfQkii5
+   /xUNihyFW8kMH/4PRahaNB7CRfh02TYHO1APN8lznZZdUfdPZXbQ+qUgG
+   Ruv9HRiEKhdiMzCiA2KTflAENgxDKHS6GRzfLhTqDfSyz1UM96Sy1iVfc
+   Q==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10236"; a="233432624"
 X-IronPort-AV: E=Sophos;i="5.88,311,1635231600"; 
-   d="scan'208";a="226042904"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jan 2022 07:01:50 -0800
+   d="scan'208";a="233432624"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jan 2022 07:42:56 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.88,311,1635231600"; 
-   d="scan'208";a="596809947"
+   d="scan'208";a="494659476"
 Received: from lkp-server01.sh.intel.com (HELO 276f1b88eecb) ([10.239.97.150])
-  by fmsmga004.fm.intel.com with ESMTP; 24 Jan 2022 07:01:47 -0800
+  by orsmga002.jf.intel.com with ESMTP; 24 Jan 2022 07:42:53 -0800
 Received: from kbuild by 276f1b88eecb with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1nC0qo-000IUh-Iq; Mon, 24 Jan 2022 15:01:46 +0000
-Date:   Mon, 24 Jan 2022 23:01:26 +0800
+        id 1nC1Ua-000IXl-Id; Mon, 24 Jan 2022 15:42:52 +0000
+Date:   Mon, 24 Jan 2022 23:42:46 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Hao Xu <haoxu@linux.alibaba.com>, netdev@vger.kernel.org,
         io-uring@vger.kernel.org
-Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
-        Jens Axboe <axboe@kernel.dk>,
+Cc:     kbuild-all@lists.01.org, Jens Axboe <axboe@kernel.dk>,
         Pavel Begunkov <asml.silence@gmail.com>,
         Eric Dumazet <edumazet@google.com>,
         "David S . Miller" <davem@davemloft.net>,
@@ -51,7 +50,7 @@ Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
         David Ahern <dsahern@kernel.org>,
         Joseph Qi <joseph.qi@linux.alibaba.com>
 Subject: Re: [PATCH 3/3] io_uring: zerocopy receive
-Message-ID: <202201242233.64QOWQZ1-lkp@intel.com>
+Message-ID: <202201242307.INcQOwqz-lkp@intel.com>
 References: <20220124094320.900713-4-haoxu@linux.alibaba.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -75,120 +74,57 @@ https://git-scm.com/docs/git-format-patch]
 
 url:    https://github.com/0day-ci/linux/commits/Hao-Xu/io_uring-zerocopy-receive/20220124-174546
 base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git dd81e1c7d5fb126e5fbc5c9e334d7b3ec29a16a0
-config: s390-buildonly-randconfig-r004-20220124 (https://download.01.org/0day-ci/archive/20220124/202201242233.64QOWQZ1-lkp@intel.com/config)
-compiler: clang version 14.0.0 (https://github.com/llvm/llvm-project 2e58a18910867ba6795066e044293e6daf89edf5)
+config: h8300-randconfig-r026-20220124 (https://download.01.org/0day-ci/archive/20220124/202201242307.INcQOwqz-lkp@intel.com/config)
+compiler: h8300-linux-gcc (GCC) 11.2.0
 reproduce (this is a W=1 build):
         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
         chmod +x ~/bin/make.cross
-        # install s390 cross compiling tool for clang build
-        # apt-get install binutils-s390x-linux-gnu
         # https://github.com/0day-ci/linux/commit/295704165d394635876364522d3ac1451b62da66
         git remote add linux-review https://github.com/0day-ci/linux
         git fetch --no-tags linux-review Hao-Xu/io_uring-zerocopy-receive/20220124-174546
         git checkout 295704165d394635876364522d3ac1451b62da66
         # save the config file to linux build tree
         mkdir build_dir
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=s390 SHELL=/bin/bash
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross O=build_dir ARCH=h8300 SHELL=/bin/bash
 
 If you fix the issue, kindly add following tag as appropriate
 Reported-by: kernel test robot <lkp@intel.com>
 
 All errors (new ones prefixed by >>):
 
-   In file included from fs/io_uring.c:60:
-   In file included from include/linux/blk-mq.h:8:
-   In file included from include/linux/scatterlist.h:9:
-   In file included from arch/s390/include/asm/io.h:75:
-   include/asm-generic/io.h:464:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           val = __raw_readb(PCI_IOBASE + addr);
-                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:477:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-                                                           ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/big_endian.h:37:59: note: expanded from macro '__le16_to_cpu'
-   #define __le16_to_cpu(x) __swab16((__force __u16)(__le16)(x))
-                                                             ^
-   include/uapi/linux/swab.h:102:54: note: expanded from macro '__swab16'
-   #define __swab16(x) (__u16)__builtin_bswap16((__u16)(x))
-                                                        ^
-   In file included from fs/io_uring.c:60:
-   In file included from include/linux/blk-mq.h:8:
-   In file included from include/linux/scatterlist.h:9:
-   In file included from arch/s390/include/asm/io.h:75:
-   include/asm-generic/io.h:490:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-                                                           ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/big_endian.h:35:59: note: expanded from macro '__le32_to_cpu'
-   #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
-                                                             ^
-   include/uapi/linux/swab.h:115:54: note: expanded from macro '__swab32'
-   #define __swab32(x) (__u32)__builtin_bswap32((__u32)(x))
-                                                        ^
-   In file included from fs/io_uring.c:60:
-   In file included from include/linux/blk-mq.h:8:
-   In file included from include/linux/scatterlist.h:9:
-   In file included from arch/s390/include/asm/io.h:75:
-   include/asm-generic/io.h:501:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           __raw_writeb(value, PCI_IOBASE + addr);
-                               ~~~~~~~~~~ ^
-   include/asm-generic/io.h:511:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-                                                         ~~~~~~~~~~ ^
-   include/asm-generic/io.h:521:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-                                                         ~~~~~~~~~~ ^
-   include/asm-generic/io.h:609:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           readsb(PCI_IOBASE + addr, buffer, count);
-                  ~~~~~~~~~~ ^
-   include/asm-generic/io.h:617:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           readsw(PCI_IOBASE + addr, buffer, count);
-                  ~~~~~~~~~~ ^
-   include/asm-generic/io.h:625:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           readsl(PCI_IOBASE + addr, buffer, count);
-                  ~~~~~~~~~~ ^
-   include/asm-generic/io.h:634:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           writesb(PCI_IOBASE + addr, buffer, count);
-                   ~~~~~~~~~~ ^
-   include/asm-generic/io.h:643:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           writesw(PCI_IOBASE + addr, buffer, count);
-                   ~~~~~~~~~~ ^
-   include/asm-generic/io.h:652:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           writesl(PCI_IOBASE + addr, buffer, count);
-                   ~~~~~~~~~~ ^
->> fs/io_uring.c:6639:10: error: implicit declaration of function 'io_recvzc_prep' [-Werror,-Wimplicit-function-declaration]
-                   return io_recvzc_prep(req, sqe);
-                          ^
-   fs/io_uring.c:6639:10: note: did you mean 'io_recvmsg_prep'?
-   fs/io_uring.c:5462:1: note: 'io_recvmsg_prep' declared here
-   IO_NETOP_PREP_ASYNC(recvmsg);
-   ^
-   fs/io_uring.c:5454:38: note: expanded from macro 'IO_NETOP_PREP_ASYNC'
-   #define IO_NETOP_PREP_ASYNC(op)                                         \
-                                                                           ^
-   fs/io_uring.c:5449:12: note: expanded from macro '\
-   IO_NETOP_PREP'
-   static int io_##op##_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe) \
-              ^
-   <scratch space>:22:1: note: expanded from here
-   io_recvmsg_prep
-   ^
->> fs/io_uring.c:6924:9: error: implicit declaration of function 'io_recvzc' [-Werror,-Wimplicit-function-declaration]
-                   ret = io_recvzc(req, issue_flags);
-                         ^
-   fs/io_uring.c:6924:9: note: did you mean 'io_recv'?
-   fs/io_uring.c:5466:1: note: 'io_recv' declared here
-   IO_NETOP_FN(recv);
-   ^
-   fs/io_uring.c:5442:12: note: expanded from macro 'IO_NETOP_FN'
-   static int io_##op(struct io_kiocb *req, unsigned int issue_flags)      \
-              ^
-   <scratch space>:34:1: note: expanded from here
-   io_recv
-   ^
-   12 warnings and 2 errors generated.
+   In file included from include/linux/kernel.h:20,
+                    from fs/io_uring.c:42:
+   include/linux/scatterlist.h: In function 'sg_set_buf':
+   include/asm-generic/page.h:89:51: warning: ordered comparison of pointer with null pointer [-Wextra]
+      89 | #define virt_addr_valid(kaddr)  (((void *)(kaddr) >= (void *)PAGE_OFFSET) && \
+         |                                                   ^~
+   include/linux/compiler.h:78:45: note: in definition of macro 'unlikely'
+      78 | # define unlikely(x)    __builtin_expect(!!(x), 0)
+         |                                             ^
+   include/linux/scatterlist.h:160:9: note: in expansion of macro 'BUG_ON'
+     160 |         BUG_ON(!virt_addr_valid(buf));
+         |         ^~~~~~
+   include/linux/scatterlist.h:160:17: note: in expansion of macro 'virt_addr_valid'
+     160 |         BUG_ON(!virt_addr_valid(buf));
+         |                 ^~~~~~~~~~~~~~~
+   fs/io_uring.c: In function '__io_submit_flush_completions':
+   fs/io_uring.c:2537:40: warning: variable 'prev' set but not used [-Wunused-but-set-variable]
+    2537 |         struct io_wq_work_node *node, *prev;
+         |                                        ^~~~
+   fs/io_uring.c: In function 'io_req_prep':
+>> fs/io_uring.c:6639:24: error: implicit declaration of function 'io_recvzc_prep'; did you mean 'io_recvmsg_prep'? [-Werror=implicit-function-declaration]
+    6639 |                 return io_recvzc_prep(req, sqe);
+         |                        ^~~~~~~~~~~~~~
+         |                        io_recvmsg_prep
+   fs/io_uring.c: In function 'io_issue_sqe':
+>> fs/io_uring.c:6924:23: error: implicit declaration of function 'io_recvzc'; did you mean 'io_recv'? [-Werror=implicit-function-declaration]
+    6924 |                 ret = io_recvzc(req, issue_flags);
+         |                       ^~~~~~~~~
+         |                       io_recv
+   cc1: some warnings being treated as errors
 
 
-vim +/io_recvzc_prep +6639 fs/io_uring.c
+vim +6639 fs/io_uring.c
 
   6560	
   6561	static int io_req_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)

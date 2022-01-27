@@ -2,94 +2,65 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7303349E422
-	for <lists+io-uring@lfdr.de>; Thu, 27 Jan 2022 15:05:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 04A0E49E5E5
+	for <lists+io-uring@lfdr.de>; Thu, 27 Jan 2022 16:21:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237367AbiA0OFP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 27 Jan 2022 09:05:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43800 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233877AbiA0OFP (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 27 Jan 2022 09:05:15 -0500
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEB8DC06173B
-        for <io-uring@vger.kernel.org>; Thu, 27 Jan 2022 06:05:14 -0800 (PST)
-Received: by mail-wm1-x32c.google.com with SMTP id i187-20020a1c3bc4000000b0034d2ed1be2aso6014701wma.1
-        for <io-uring@vger.kernel.org>; Thu, 27 Jan 2022 06:05:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=UISkPhT4BIca5WtrYEoFfdvyYgnDGNawnKFtZI4dWXI=;
-        b=MQ4hjmTLKV3S+exHiNuEnPrwYDeQ3PRnIHGNbWhvRaBbD4/ewTiy2Vsoh14g1hwXIL
-         G88aSutxFfatY/ruzii1OmT4QEpF6Gjm58fLP/EcCeLaiqSeIzFmy4mpCOmKY50o5rHm
-         DLsgEeec8EE37gvjvSHu5KlYaW9zrEkkTPklJjJF0Zeyn0JU1J0DXQoFsTKYz2NOsGVK
-         2Z861mbR1WX5eLd46hc++N7R1NPtPOLPpURLruWYBtyMEERzVXOuIRxFCUwrirWucW4q
-         j53leMkSnF1l+pyq/28dLTlJ+/YvFeyReMVKhC8WATLfaUMtdFCkFblL1goEjR/Pd1fV
-         Wm5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=UISkPhT4BIca5WtrYEoFfdvyYgnDGNawnKFtZI4dWXI=;
-        b=FC/LDVGgLTG6SzsyDeSqYwLPltGbM1r/l1n7pjrxs9FlxmUdCVpyG0CiMoMfUqPPy5
-         iWz/7EQWH5YrVdhplwuTb5W/uOsBIBpO5Oyaz0NJvO0m+WDl4NvAQuym1NyWES21zrA0
-         otGZnr5ckbOifOz58n3+zUWWTiArSityFKCZratiTwu6mEq/HEaEO9/7ajl5jpzpAVTA
-         nTozEi+N1AT6VDWgsnZ9tJzr8Ee5cNEz+AYLTBO9d32gQKC/iPejwXVKhpfq3u9y/f2Q
-         B4E0wxuvL/54du42YITn03nneXiu4ao1x41ztoXkmzdgMIZWYxbA+rFx+EmiPxbumAjD
-         IbCQ==
-X-Gm-Message-State: AOAM531M/WDli6i47pMT+jUNhTmvDKsY1GEPKDolBPOlQY4m++slGz3M
-        Goa6agK2+qAgyZ+QDhodLiNh6HRhi8OJfg==
-X-Google-Smtp-Source: ABdhPJzooFiVCR3Ny5P0GNnKhxVwEEWl+CPWpFH0tsQEsjmwsHUGx5lcyR4WRQdykwYiTlcDw1EOWw==
-X-Received: by 2002:a05:600c:1c8d:: with SMTP id k13mr3377064wms.171.1643292313171;
-        Thu, 27 Jan 2022 06:05:13 -0800 (PST)
-Received: from usaari01.cust.communityfibre.co.uk ([2a02:6b6d:f804:0:b164:2cad:2ae3:b81a])
-        by smtp.gmail.com with ESMTPSA id bg26sm6101321wmb.48.2022.01.27.06.05.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jan 2022 06:05:12 -0800 (PST)
-From:   Usama Arif <usama.arif@bytedance.com>
-To:     io-uring@vger.kernel.org, axboe@kernel.dk, asml.silence@gmail.com,
-        linux-kernel@vger.kernel.org
-Cc:     fam.zheng@bytedance.com, Usama Arif <usama.arif@bytedance.com>
-Subject: [PATCH] io_uring: remove unused argument from io_rsrc_node_alloc
-Date:   Thu, 27 Jan 2022 14:04:44 +0000
-Message-Id: <20220127140444.4016585-1-usama.arif@bytedance.com>
-X-Mailer: git-send-email 2.25.1
+        id S231146AbiA0PV2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 27 Jan 2022 10:21:28 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:39886 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231421AbiA0PV1 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 27 Jan 2022 10:21:27 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 34DC560D36;
+        Thu, 27 Jan 2022 15:21:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 167A6C340E4;
+        Thu, 27 Jan 2022 15:21:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1643296886;
+        bh=76nZwLBHp/od8C56ExFMjc0Xuxw2Kck3UnGovEIXx8E=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=yCjw6t28dZIV1UVe9Gi25+ZaW4qio1HfH2BlhmYeOXRj4TCJ9uYpij0K0B6+CWqJ1
+         b/QeCFnHqiucCdU/N/MuaRbozQUMDS/+ITdJw2uJ8U0IjVXI51bp7A4nDQ6A0Vk9sV
+         hZh813jcm4TxXNtaMphbJrNd7/zlTueOEVMD25ho=
+Date:   Thu, 27 Jan 2022 16:21:23 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        stable@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: Re: [PATCH stable-5.16] io_uring: fix not released cached task refs
+Message-ID: <YfK4c8qRZ2p0g6qF@kroah.com>
+References: <562c76e037f77a17401327b9c953cd53744a5c7d.1643221940.git.asml.silence@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <562c76e037f77a17401327b9c953cd53744a5c7d.1643221940.git.asml.silence@gmail.com>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-io_ring_ctx is not used in the function.
+On Wed, Jan 26, 2022 at 06:41:00PM +0000, Pavel Begunkov wrote:
+> [ upstream commit 3cc7fdb9f90a25ae92250bf9e6cf3b9556b230e9 ]
+> 
+> tctx_task_work() may get run after io_uring cancellation and so there
+> will be no one to put cached in tctx task refs that may have been added
+> back by tw handlers using inline completion infra, Call
+> io_uring_drop_tctx_refs() at the end of the main tw handler to release
+> them.
+> 
+> Cc: stable@vger.kernel.org # 5.15+
+> Reported-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> Fixes: e98e49b2bbf7 ("io_uring: extend task put optimisations")
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> Link: https://lore.kernel.org/r/69f226b35fbdb996ab799a8bbc1c06bf634ccec1.1641688805.git.asml.silence@gmail.com
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> ---
+>  fs/io_uring.c | 34 +++++++++++++++++++++-------------
+>  1 file changed, 21 insertions(+), 13 deletions(-)
+> 
 
-Signed-off-by: Usama Arif <usama.arif@bytedance.com>
----
- fs/io_uring.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Both backports now queued up, thanks.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index e54c41274..a256600fa 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -7841,7 +7841,7 @@ static __cold void io_rsrc_node_ref_zero(struct percpu_ref *ref)
- 		mod_delayed_work(system_wq, &ctx->rsrc_put_work, HZ);
- }
- 
--static struct io_rsrc_node *io_rsrc_node_alloc(struct io_ring_ctx *ctx)
-+static struct io_rsrc_node *io_rsrc_node_alloc(void)
- {
- 	struct io_rsrc_node *ref_node;
- 
-@@ -7892,7 +7892,7 @@ static int io_rsrc_node_switch_start(struct io_ring_ctx *ctx)
- {
- 	if (ctx->rsrc_backup_node)
- 		return 0;
--	ctx->rsrc_backup_node = io_rsrc_node_alloc(ctx);
-+	ctx->rsrc_backup_node = io_rsrc_node_alloc();
- 	return ctx->rsrc_backup_node ? 0 : -ENOMEM;
- }
- 
--- 
-2.25.1
-
+greg k-h

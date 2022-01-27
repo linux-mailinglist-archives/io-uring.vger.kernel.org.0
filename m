@@ -2,153 +2,94 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 877C749D1E6
-	for <lists+io-uring@lfdr.de>; Wed, 26 Jan 2022 19:41:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7303349E422
+	for <lists+io-uring@lfdr.de>; Thu, 27 Jan 2022 15:05:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232539AbiAZSlF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 26 Jan 2022 13:41:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33586 "EHLO
+        id S237367AbiA0OFP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 27 Jan 2022 09:05:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43800 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229478AbiAZSlE (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 26 Jan 2022 13:41:04 -0500
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64A02C06161C;
-        Wed, 26 Jan 2022 10:41:04 -0800 (PST)
-Received: by mail-ej1-x636.google.com with SMTP id jx6so651714ejb.0;
-        Wed, 26 Jan 2022 10:41:04 -0800 (PST)
+        with ESMTP id S233877AbiA0OFP (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 27 Jan 2022 09:05:15 -0500
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEB8DC06173B
+        for <io-uring@vger.kernel.org>; Thu, 27 Jan 2022 06:05:14 -0800 (PST)
+Received: by mail-wm1-x32c.google.com with SMTP id i187-20020a1c3bc4000000b0034d2ed1be2aso6014701wma.1
+        for <io-uring@vger.kernel.org>; Thu, 27 Jan 2022 06:05:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=eTBZW5zsYuJD2A4yD4/Czs3pes/Ju/EwqHkjm2EiVQk=;
-        b=ALasHIlLcer5vn2BZtOPd1MC94zWtOzT2dHbaww4iu7YUSVfOlBR2T1HBZBY3/rkfD
-         1EUQJpFlX59ET6isyF3yWla3+f6u9nO3eQIqqqfMXifbRSU49dvRtJCOE7mSy86e6ahf
-         EqQSj58e7YrlZv8bHEeBBavW/rJmpdw/dBdQALxiPFcP2+JupRqkKLL75soxQ+0114yI
-         vJKAr9gEGZ3UKtNoHp3nyAuha3mpIanfmjSXTJXi9V6KK7TVAsciVnCW2Nb7+CnpX9vu
-         +64/+mXJ1FEhbxP9scNU2G5yFYJSbZJcE2j5AG8ONvA0XC8k5X9HGj1lUIHKr4/tLh6v
-         OSFQ==
+        bh=UISkPhT4BIca5WtrYEoFfdvyYgnDGNawnKFtZI4dWXI=;
+        b=MQ4hjmTLKV3S+exHiNuEnPrwYDeQ3PRnIHGNbWhvRaBbD4/ewTiy2Vsoh14g1hwXIL
+         G88aSutxFfatY/ruzii1OmT4QEpF6Gjm58fLP/EcCeLaiqSeIzFmy4mpCOmKY50o5rHm
+         DLsgEeec8EE37gvjvSHu5KlYaW9zrEkkTPklJjJF0Zeyn0JU1J0DXQoFsTKYz2NOsGVK
+         2Z861mbR1WX5eLd46hc++N7R1NPtPOLPpURLruWYBtyMEERzVXOuIRxFCUwrirWucW4q
+         j53leMkSnF1l+pyq/28dLTlJ+/YvFeyReMVKhC8WATLfaUMtdFCkFblL1goEjR/Pd1fV
+         Wm5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=eTBZW5zsYuJD2A4yD4/Czs3pes/Ju/EwqHkjm2EiVQk=;
-        b=NocdDteiEdzAxgGTmhnQGpMBDOvtCtn9pEsdYh2AApmTnR2fgQgNU58TdJAbt+lXHV
-         gDxjkSjvCR4KAVB10m8j4ZcsC4rjvrEmOub/UICrungKFeXkEOjdTnHeTeo8tkXGAA3Z
-         KCDqkVkviu5D+34GxREaZBKu4ThhPOB6aEUbqjs/N8F0ts/GnszFLRWWrNDOP0fL8x7r
-         Fb5P16slOy/kdOMlHSvOAk7eyYk8Bl6nRugpB0kibYp1XRl2vTm8ywCkBW9KKG16L/Nx
-         HmV3jqge9fHF2jPJK9qb8so7SofeejXUNHRMms9nbuUM4ikuvO3MG5wIKoy8bEvICNTm
-         JIzg==
-X-Gm-Message-State: AOAM532VqZXnm09Fe2qf0bk1jkV9o7/bF5jJg1dvbJMufUm69HrmvHZU
-        gN+9dJ/zEnX+ZurUjGZEVketItBcNbg=
-X-Google-Smtp-Source: ABdhPJyEkTozEsq5NrppS0LRP7o5TKLo/Pnu4wo7bANSePqXkQ5NFd1tyVKolRvhHptig5VGmHroJw==
-X-Received: by 2002:a17:907:9620:: with SMTP id gb32mr70346ejc.436.1643222462436;
-        Wed, 26 Jan 2022 10:41:02 -0800 (PST)
-Received: from 127.0.0.1localhost ([85.255.234.222])
-        by smtp.gmail.com with ESMTPSA id lc22sm7783031ejc.74.2022.01.26.10.41.01
+        bh=UISkPhT4BIca5WtrYEoFfdvyYgnDGNawnKFtZI4dWXI=;
+        b=FC/LDVGgLTG6SzsyDeSqYwLPltGbM1r/l1n7pjrxs9FlxmUdCVpyG0CiMoMfUqPPy5
+         iWz/7EQWH5YrVdhplwuTb5W/uOsBIBpO5Oyaz0NJvO0m+WDl4NvAQuym1NyWES21zrA0
+         otGZnr5ckbOifOz58n3+zUWWTiArSityFKCZratiTwu6mEq/HEaEO9/7ajl5jpzpAVTA
+         nTozEi+N1AT6VDWgsnZ9tJzr8Ee5cNEz+AYLTBO9d32gQKC/iPejwXVKhpfq3u9y/f2Q
+         B4E0wxuvL/54du42YITn03nneXiu4ao1x41ztoXkmzdgMIZWYxbA+rFx+EmiPxbumAjD
+         IbCQ==
+X-Gm-Message-State: AOAM531M/WDli6i47pMT+jUNhTmvDKsY1GEPKDolBPOlQY4m++slGz3M
+        Goa6agK2+qAgyZ+QDhodLiNh6HRhi8OJfg==
+X-Google-Smtp-Source: ABdhPJzooFiVCR3Ny5P0GNnKhxVwEEWl+CPWpFH0tsQEsjmwsHUGx5lcyR4WRQdykwYiTlcDw1EOWw==
+X-Received: by 2002:a05:600c:1c8d:: with SMTP id k13mr3377064wms.171.1643292313171;
+        Thu, 27 Jan 2022 06:05:13 -0800 (PST)
+Received: from usaari01.cust.communityfibre.co.uk ([2a02:6b6d:f804:0:b164:2cad:2ae3:b81a])
+        by smtp.gmail.com with ESMTPSA id bg26sm6101321wmb.48.2022.01.27.06.05.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jan 2022 10:41:02 -0800 (PST)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, stable@vger.kernel.org,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH stable-5.16] io_uring: fix not released cached task refs
-Date:   Wed, 26 Jan 2022 18:41:00 +0000
-Message-Id: <562c76e037f77a17401327b9c953cd53744a5c7d.1643221940.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Thu, 27 Jan 2022 06:05:12 -0800 (PST)
+From:   Usama Arif <usama.arif@bytedance.com>
+To:     io-uring@vger.kernel.org, axboe@kernel.dk, asml.silence@gmail.com,
+        linux-kernel@vger.kernel.org
+Cc:     fam.zheng@bytedance.com, Usama Arif <usama.arif@bytedance.com>
+Subject: [PATCH] io_uring: remove unused argument from io_rsrc_node_alloc
+Date:   Thu, 27 Jan 2022 14:04:44 +0000
+Message-Id: <20220127140444.4016585-1-usama.arif@bytedance.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-[ upstream commit 3cc7fdb9f90a25ae92250bf9e6cf3b9556b230e9 ]
+io_ring_ctx is not used in the function.
 
-tctx_task_work() may get run after io_uring cancellation and so there
-will be no one to put cached in tctx task refs that may have been added
-back by tw handlers using inline completion infra, Call
-io_uring_drop_tctx_refs() at the end of the main tw handler to release
-them.
-
-Cc: stable@vger.kernel.org # 5.15+
-Reported-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Fixes: e98e49b2bbf7 ("io_uring: extend task put optimisations")
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-Link: https://lore.kernel.org/r/69f226b35fbdb996ab799a8bbc1c06bf634ccec1.1641688805.git.asml.silence@gmail.com
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Usama Arif <usama.arif@bytedance.com>
 ---
- fs/io_uring.c | 34 +++++++++++++++++++++-------------
- 1 file changed, 21 insertions(+), 13 deletions(-)
+ fs/io_uring.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index fb2a0cb4aaf8..9cab29b6f579 100644
+index e54c41274..a256600fa 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -1830,6 +1830,18 @@ static inline void io_get_task_refs(int nr)
- 		io_task_refs_refill(tctx);
+@@ -7841,7 +7841,7 @@ static __cold void io_rsrc_node_ref_zero(struct percpu_ref *ref)
+ 		mod_delayed_work(system_wq, &ctx->rsrc_put_work, HZ);
  }
  
-+static __cold void io_uring_drop_tctx_refs(struct task_struct *task)
-+{
-+	struct io_uring_task *tctx = task->io_uring;
-+	unsigned int refs = tctx->cached_refs;
-+
-+	if (refs) {
-+		tctx->cached_refs = 0;
-+		percpu_counter_sub(&tctx->inflight, refs);
-+		put_task_struct_many(task, refs);
-+	}
-+}
-+
- static bool io_cqring_event_overflow(struct io_ring_ctx *ctx, u64 user_data,
- 				     s32 res, u32 cflags)
+-static struct io_rsrc_node *io_rsrc_node_alloc(struct io_ring_ctx *ctx)
++static struct io_rsrc_node *io_rsrc_node_alloc(void)
  {
-@@ -2250,6 +2262,10 @@ static void tctx_task_work(struct callback_head *cb)
- 	}
+ 	struct io_rsrc_node *ref_node;
  
- 	ctx_flush_and_put(ctx, &locked);
-+
-+	/* relaxed read is enough as only the task itself sets ->in_idle */
-+	if (unlikely(atomic_read(&tctx->in_idle)))
-+		io_uring_drop_tctx_refs(current);
+@@ -7892,7 +7892,7 @@ static int io_rsrc_node_switch_start(struct io_ring_ctx *ctx)
+ {
+ 	if (ctx->rsrc_backup_node)
+ 		return 0;
+-	ctx->rsrc_backup_node = io_rsrc_node_alloc(ctx);
++	ctx->rsrc_backup_node = io_rsrc_node_alloc();
+ 	return ctx->rsrc_backup_node ? 0 : -ENOMEM;
  }
  
- static void io_req_task_work_add(struct io_kiocb *req)
-@@ -9814,18 +9830,6 @@ static s64 tctx_inflight(struct io_uring_task *tctx, bool tracked)
- 	return percpu_counter_sum(&tctx->inflight);
- }
- 
--static __cold void io_uring_drop_tctx_refs(struct task_struct *task)
--{
--	struct io_uring_task *tctx = task->io_uring;
--	unsigned int refs = tctx->cached_refs;
--
--	if (refs) {
--		tctx->cached_refs = 0;
--		percpu_counter_sub(&tctx->inflight, refs);
--		put_task_struct_many(task, refs);
--	}
--}
--
- /*
-  * Find any io_uring ctx that this task has registered or done IO on, and cancel
-  * requests. @sqd should be not-null IFF it's an SQPOLL thread cancellation.
-@@ -9883,10 +9887,14 @@ static __cold void io_uring_cancel_generic(bool cancel_all,
- 			schedule();
- 		finish_wait(&tctx->wait, &wait);
- 	} while (1);
--	atomic_dec(&tctx->in_idle);
- 
- 	io_uring_clean_tctx(tctx);
- 	if (cancel_all) {
-+		/*
-+		 * We shouldn't run task_works after cancel, so just leave
-+		 * ->in_idle set for normal exit.
-+		 */
-+		atomic_dec(&tctx->in_idle);
- 		/* for exec all current's requests should be gone, kill tctx */
- 		__io_uring_free(current);
- 	}
 -- 
-2.34.1
+2.25.1
 

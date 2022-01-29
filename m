@@ -2,104 +2,195 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 822CA4A0343
-	for <lists+io-uring@lfdr.de>; Fri, 28 Jan 2022 23:03:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53EC44A2F9B
+	for <lists+io-uring@lfdr.de>; Sat, 29 Jan 2022 14:03:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242174AbiA1WDu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 28 Jan 2022 17:03:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34592 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229608AbiA1WDu (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 28 Jan 2022 17:03:50 -0500
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56F58C061714
-        for <io-uring@vger.kernel.org>; Fri, 28 Jan 2022 14:03:50 -0800 (PST)
-Received: by mail-pj1-x1032.google.com with SMTP id q63so7739751pja.1
-        for <io-uring@vger.kernel.org>; Fri, 28 Jan 2022 14:03:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=to:cc:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=nA03+1lp3EH1KU4vRbyXbF/ubGJQZpEGNE+JWPfHJRw=;
-        b=vI5OS8p7j6gXT36N44cmdpREOguPRpF7UhzbK6Q7BxejpHX7mwmX2cWvIUfIle7s7K
-         FHjqUz7lTFcPPYHRFZKUHJCiXSw3yoKaH+cxACzM47cvaokAku19a2D+QPxNnHZL7glw
-         mslOwY+Oow0fBfI5IcrUzNj5svlnp5ZkR4FnwkGXfAj2dyzHrm7dEO/u/pEXC1R2hRJV
-         /O6c8Ku9c1eMIyvdIK2Vamr4F2t0cH14ZG3DA12AXOiluItqRmaTswsxzplj8i4+gwKr
-         eg0lllqhoQiVZntFchMQxW1b8FoffqdTpOdeCifJbD7UJ6iOT1hJJy20YyVRs6/ehXfw
-         5owQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=nA03+1lp3EH1KU4vRbyXbF/ubGJQZpEGNE+JWPfHJRw=;
-        b=DuThVtVSgLWq02DP2LTHR9FQVzj1dPgcra0eCrZJatUh2QumYjypbsf/R+ZoQhtpt/
-         sEtKk7skgPAp/QU87oQircO65K9UGKE4L+kloS4uSOoCX1SoX3Bjt5/QZVK/9YOfi1cm
-         EE4l4KZjK64VyT59d0W92CGTaWk0aQUSxfkyz8GI7bKDdRCa3w7y76FLKtz86tCFa0Vm
-         do9oB390U3CisWjoBLabvmWHUI8rhEh15wcdlct1gzdYd+rtIL286iSpYGKGJZAxv2tF
-         boI86C0I7lU/982jEqOefB8HYZa5GOLlPrUht6qw+E2Ba7ek5/qnAXFgUgUCaIQcIgKK
-         eLzw==
-X-Gm-Message-State: AOAM530Y+L6G8XuZldFxfGBzuULu4w2uxWIHseYYkQbnMF4WL/zafCtO
-        dW0RTikM2lRX5kjSSyORZpFdGeNoANCXwQ==
-X-Google-Smtp-Source: ABdhPJycZzjJhex711BSa8PPYtyeWMZxwjsyvD4anNkyZkRXHXONFjmZL/rlmfK0QEwetYSeEI5vbQ==
-X-Received: by 2002:a17:90a:f485:: with SMTP id bx5mr21914414pjb.46.1643407429296;
-        Fri, 28 Jan 2022 14:03:49 -0800 (PST)
-Received: from [192.168.1.116] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id y18sm11707768pgh.67.2022.01.28.14.03.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Jan 2022 14:03:48 -0800 (PST)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     io-uring <io-uring@vger.kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] io_uring fixes for 5.17-rc2
-Message-ID: <86d85ee1-3fea-bb62-b1b2-f0459f3d2371@kernel.dk>
-Date:   Fri, 28 Jan 2022 15:03:48 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1344190AbiA2NDW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 29 Jan 2022 08:03:22 -0500
+Received: from ip59.38.31.103.in-addr.arpa.unknwn.cloudhost.asia ([103.31.38.59]:49182
+        "EHLO gnuweeb.org" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S245328AbiA2NDW (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 29 Jan 2022 08:03:22 -0500
+Received: from integral2.. (unknown [36.81.38.25])
+        by gnuweeb.org (Postfix) with ESMTPSA id 9B4D9C32BA;
+        Sat, 29 Jan 2022 13:03:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=gnuweeb.org;
+        s=default; t=1643461399;
+        bh=esyoix7dI6V5J0buSuffpV0/NwoGCHX9L6wXtIYgymQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=j8ooXZG8ZT3Ob+s6o8ME5fl1wRf0G93PgaPT33QSHi9KnujyXkGt7NvysPATJgHwk
+         1oEKtS7m7TH9pf+0rl9nJUc/hVBEXYlEzp0Vfx+2UhsMffW+CrJ2QWGmeYXt5fs3a5
+         RUnyduPd6usV2Ws24w4hSVdjLT6aqICaVjeEE/4/wKrK8n+KK6/55B6ao96dezSPJ5
+         rD9D3YbFVPOY9emu+dnCJnH9cma7gLkgyVqVF8N1W40EERdQ8oGk1kNo+FprWT0lFP
+         L+GsXxbkvG5uHkksbtKJfA2420S/pumE4tB4P+36TB5/CRp4CaZLijo0Tqa7VXwPg8
+         MdxkVitshXrrA==
+From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
+        io-uring Mailing List <io-uring@vger.kernel.org>,
+        netdev Mailing List <netdev@vger.kernel.org>,
+        GNU/Weeb Mailing List <gwml@gnuweeb.org>,
+        Tea Inside Mailing List <timl@vger.teainside.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, Nugra <richiisei@gmail.com>,
+        Praveen Kumar <kpraveen.lkml@gmail.com>,
+        Alviro Iskandar Setiawan <alviro.iskandar@gmail.com>
+Subject: [PATCH for-5.18 v1 0/3] Add `sendto(2)` and `recvfrom(2)` support
+Date:   Sat, 29 Jan 2022 19:50:18 +0700
+Message-Id: <20220129125021.15223-1-ammarfaizi2@gnuweeb.org>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Linus,
+Hello,
 
-Just two small fixes this time:
+This patchset adds sendto(2) and recvfrom(2) support for io_uring. It
+also addresses an issue in the liburing GitHub repository [1].
 
-- Fix a bug that can lead to node registration taking 1 second, when it
-  should finish much quicker (Dylan)
+## Motivations:
 
-- Remove an unused argument from a function (Usama)
+1) By using `sendto()` and `recvfrom()` we can make the submission
+   simpler compared to always using `sendmsg()` and `recvmsg()` from
+   the userspace. Especially for UDP socket.
 
-Please pull!
+2) There is a historical patch that tried to add the same
+   functionality, but did not end up being applied. [2]
 
+On Tue, 7 Jul 2020 12:29:18 -0600, Jens Axboe <axboe@kernel.dk> wrote:
+> In a private conversation with the author, a good point was brought
+> up that the sendto/recvfrom do not require an allocation of an async
+> context, if we need to defer or go async with the request. I think
+> that's a major win, to be honest. There are other benefits as well
+> (like shorter path), but to me, the async less part is nice and will
+> reduce overhead
 
-The following changes since commit dd81e1c7d5fb126e5fbc5c9e334d7b3ec29a16a0:
+## Changes summary:
 
-  Merge tag 'powerpc-5.17-2' of git://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux (2022-01-23 17:52:42 +0200)
+1)  Rename `io_{send,recv}` to `io_{sendto,recvfrom}`
+    _____________________________________________________
+    The following call
+    
+        send(sockfd, buf, len, flags);
+    
+    is equivalent to
+    
+        sendto(sockfd, buf, len, flags, NULL, 0);
+    _____________________________________________________
+    The following call
+    
+        recv(sockfd, buf, len, flags);
+    
+    is equivalent to
+    
+        recvfrom(sockfd, buf, len, flags, NULL, NULL);
+    _____________________________________________________
 
-are available in the Git repository at:
+    Currently, io_uring supports send() and recv() operation. Now, we are
+    going to add sendto() and recvfrom() support. Since the latter is the
+    superset of the former, change the function name to the latter.
 
-  git://git.kernel.dk/linux-block.git tags/io_uring-5.17-2022-01-28
+2)  Make `move_addr_to_user()` be a non static function. This is required for
+    adding recvfrom() support for io_uring.
 
-for you to fetch changes up to f6133fbd373811066c8441737e65f384c8f31974:
+3)  Add `sendto(2)` and `recvfrom(2)` support.
+
+    New opcodes:
+      - IORING_OP_SENDTO
+      - IORING_OP_RECVFROM
+
+## How to apply
+
+This work is based on Jens' tree, branch "io-uring-5.17".
+
+The following changes since commit f6133fbd373811066c8441737e65f384c8f31974:
 
   io_uring: remove unused argument from io_rsrc_node_alloc (2022-01-27 10:18:53 -0700)
 
+are available in the Git repository at:
+
+  git://github.com/ammarfaizi2/linux-block.git tags/io_uring-sendto-recvfrom.v1
+
+for you to fetch changes up to 68d110c39241b887ec388cd3316dbedb85b0cbcf:
+
+  io_uring: Add `sendto(2)` and `recvfrom(2)` support (2022-01-29 13:08:13 +0700)
+```
 ----------------------------------------------------------------
-io_uring-5.17-2022-01-28
+io_uring-sendto-recvfrom.v1
 
 ----------------------------------------------------------------
-Dylan Yudaken (1):
-      io_uring: fix bug in slow unregistering of nodes
+```
+## liburing support and test program:
 
-Usama Arif (1):
-      io_uring: remove unused argument from io_rsrc_node_alloc
+  git://github.com/ammarfaizi2/liburing.git tags/sendto-recvfrom.v1-2022-01-29
 
- fs/io_uring.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+  Run the test program from liburing:
+```
+    ./configure;
+    make -j$(nproc);
+    test/sendto_recvfrom;
+    echo $?;
+```
+## Changelog:
 
+v1:
+    - Rebase the work (sync with "io_uring-5.17" branch in Jens' tree).
+    - Add BUILD_BUG_SQE_ELEM(48, __u64,  addr3); for compile time
+      assertion.
+    - Reword the commit messages.
+    - Add Alviro Iskandar Setiawan to CC list (tester).
+
+RFC v4:
+    - Rebase the work (sync with "for-next" branch in Jens' tree).
+    - Remove Tested-by tag from Nugra as this patch changes.
+    - (Address Praveen's comment) Zero `sendto_addr_len` and
+      `recvfrom_addr_len` on prep when the `req->opcode` is not
+      `IORING_OP_{SENDTO,RECVFROM}`.
+
+RFC v3:
+    - Fix build error when CONFIG_NET is undefined for PATCH 1/3. I
+      tried to fix it in PATCH 3/3, but it should be fixed in PATCH 1/3,
+      otherwise it breaks the build in PATCH 1/3.
+    - Add `io_uring_prep_{sendto,recvfrom}` docs to the liburing.
+
+RFC v2:
+    - Rebase the work, now this patchset is based on commit
+      bb3294e22482db4b7ec ("Merge branch 'for-5.17/drivers' into
+      for-next").
+    - In `io_recvfrom()`, mark the error check of `move_addr_to_user()`
+      call as unlikely.
+    - Fix build error when CONFIG_NET is undefined.
+    - Update liburing test (the branch is still the same, just force
+      pushed).
+    - Add Nugra to CC list (tester).
+
+## Refs
+[1]: https://github.com/axboe/liburing/issues/397
+[2]: https://lore.kernel.org/io-uring/a2399c89-2c45-375c-7395-b5caf556ec3d@kernel.dk/
+
+---
+RFC v4: https://lore.kernel.org/io-uring/20220107000006.1194026-1-ammarfaizi2@gnuweeb.org/
+RFC v3: https://lore.kernel.org/io-uring/20211230114846.137954-1-ammar.faizi@intel.com/
+RFC v2: https://lore.kernel.org/io-uring/20211230114846.137954-1-ammar.faizi@intel.com/
+RFC v1: https://lore.kernel.org/io-uring/20211230013154.102910-1-ammar.faizi@intel.com/
+Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+---
+Ammar Faizi (3):
+  io_uring: Rename `io_{send,recv}` to `io_{sendto,recvfrom}`
+  net: Make `move_addr_to_user()` be a non static function
+  io_uring: Add `sendto(2)` and `recvfrom(2)` support
+
+ fs/io_uring.c                 | 95 +++++++++++++++++++++++++++++++----
+ include/linux/socket.h        |  2 +
+ include/uapi/linux/io_uring.h |  5 +-
+ net/socket.c                  |  4 +-
+ 4 files changed, 93 insertions(+), 13 deletions(-)
+
+
+base-commit: f6133fbd373811066c8441737e65f384c8f31974
 -- 
-Jens Axboe
-
+Ammar Faizi

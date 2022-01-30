@@ -2,87 +2,66 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F2FDE4A329D
-	for <lists+io-uring@lfdr.de>; Sun, 30 Jan 2022 00:31:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C2AF4A339F
+	for <lists+io-uring@lfdr.de>; Sun, 30 Jan 2022 05:02:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353211AbiA2Xa6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 29 Jan 2022 18:30:58 -0500
-Received: from ip59.38.31.103.in-addr.arpa.unknwn.cloudhost.asia ([103.31.38.59]:49292
-        "EHLO gnuweeb.org" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S238951AbiA2Xa6 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 29 Jan 2022 18:30:58 -0500
-Received: from [192.168.88.87] (unknown [36.81.38.25])
-        by gnuweeb.org (Postfix) with ESMTPSA id AE5C8C32D0;
-        Sat, 29 Jan 2022 23:30:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=gnuweeb.org;
-        s=default; t=1643499055;
-        bh=B4K+3+JFTWWKU/O0tyev275Y374cFJ34SuhCQURx7oc=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=JKJ5Ct61wVnrR2iphOOxgQYDqWKHYayo3MF1SEnxb+dYFC0P7aw2idbQ1+YoOhngb
-         Wfkb89NKejxQCeTxH4CWHkbjtRsG7pIj5zktfZT0kPzn9bMyUvtgicacW1FFwLRK3p
-         LYnE7fh5WJIpxBqXMoVo4LAArpgAxK/IEXPT00uFhLkIZFJG8zKXO016l1qH/RhrMH
-         Hx2N0lsxNpHe3lpPcQgWY/+HUwJ6IkJ9jpIZX6sQ0V7ThEfaXCLVpQn3ekYrLlL3uq
-         YxK4kUYb395e8tCKQC9goRn4GwgbKq3TK69ts9um/JEMhdJ77rZOzaY/KrO95ambO1
-         bsnQtR12AyXng==
-Message-ID: <8c5e3b16-15ac-45fe-d9c2-14615eccb981@gnuweeb.org>
-Date:   Sun, 30 Jan 2022 06:30:52 +0700
+        id S1354136AbiA3ECb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 29 Jan 2022 23:02:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60724 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1354138AbiA3ECa (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 29 Jan 2022 23:02:30 -0500
+Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8248DC061714
+        for <io-uring@vger.kernel.org>; Sat, 29 Jan 2022 20:02:30 -0800 (PST)
+Received: by mail-io1-xd2a.google.com with SMTP id r144so12629739iod.9
+        for <io-uring@vger.kernel.org>; Sat, 29 Jan 2022 20:02:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=B5teSI3NqSzeGu7ngV/22RiyR60khzQ8THYZDZ9DX3Q=;
+        b=qtvs3ASswlHu1fK05Gs+48fBv7R9EA8MYNlmedNgb/ss2hT0nZR9LWlJTT5ig9FvZN
+         teVhmVvEsATnZTpA94WX5E3SIRbSRtUjLWYDCtBBgRgKGjWMj2tjbZKmWr8vittJf0fR
+         ysD8NIqT8Y74GJEZUdJW4b7xz+qsrRDgk6sg6ChG1ajIWBkkOK7VT+D1XF6iZUx8JpgO
+         fdqvJcYg1at+XUX7kmu2VMldh2SboNhKUACSe3wtr8Hi0pXxUHMCNT/3lnbcqbjTyDkM
+         74eX5Jjw+zdZppBwRmQEU/Whyijvn8jOLgFORj/j6THTYCQh2aIeA5F2IS3r7XVlRFWF
+         PDWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=B5teSI3NqSzeGu7ngV/22RiyR60khzQ8THYZDZ9DX3Q=;
+        b=bCVx1vbCmm+w9vuIxKsrM1Pk7oifDvjwJXG7iXenKJNoii5GyNLZ8r0B6BEpWhvWws
+         Qzj+ZU9oCygGMOpgrS2ulGX7SdBdpWNZwa0zvyn7gJElHS7XodGiGI6LjSqEDe6jJFFc
+         CazATA2t+EX3XZBhyaISOIZui4zPceoen+6CchRMw7FCx88G9KOYUyDpPgDjO3cFCXHH
+         mLW0jHGYHIW9yOTfio6OVhTNgyfQMwbxnEyvbyr2q0oy7LyM7JYughEvWXPLdvPWEb1y
+         T1vs1zgKezsDru4YOnwmTozaeJ2le3gaG+CqwqZGuZvazoTlGdrftzwriAgFLZf+kPBB
+         u90w==
+X-Gm-Message-State: AOAM532JEtoMBsI6JjrVuU2+BNQTlNNyh19lcqhgwdVYq3lNOYCGF5rt
+        CVMMPFZ11p+W2/GUJrTxWZhvOdPcr+bV0oHxpkQ=
+X-Google-Smtp-Source: ABdhPJyTOzp+TP3la9oADR95OR/vZUOmeqPSBb6+UdCLoHjwHlP1twanlayutWllvx0XCgSvRzg/wwUX3Glfw7iWeao=
+X-Received: by 2002:a05:6602:1484:: with SMTP id a4mr8352259iow.133.1643515349376;
+ Sat, 29 Jan 2022 20:02:29 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH for-5.18 v1 0/3] Add `sendto(2)` and `recvfrom(2)` support
-Content-Language: en-US
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring Mailing List <io-uring@vger.kernel.org>,
-        netdev Mailing List <netdev@vger.kernel.org>,
-        GNU/Weeb Mailing List <gwml@gnuweeb.org>,
-        Tea Inside Mailing List <timl@vger.teainside.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, Nugra <richiisei@gmail.com>,
-        Praveen Kumar <kpraveen.lkml@gmail.com>,
-        Alviro Iskandar Setiawan <alviro.iskandar@gmail.com>
-References: <20220129125021.15223-1-ammarfaizi2@gnuweeb.org>
- <98d4f268-5945-69a7-cec7-bccfcdedde1c@kernel.dk>
-From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
-In-Reply-To: <98d4f268-5945-69a7-cec7-bccfcdedde1c@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a4f:2b4c:0:0:0:0:0 with HTTP; Sat, 29 Jan 2022 20:02:28
+ -0800 (PST)
+Reply-To: mrs.bill.chantalone01@gmail.com
+From:   Mrs B Chantal <lastgift74@gmail.com>
+Date:   Sun, 30 Jan 2022 05:02:28 +0100
+Message-ID: <CAOc-_fxZkjaNgk9Jb5n9cztGs7RFwQYcnQSpRzXmu76p-Dhs-A@mail.gmail.com>
+Subject: Hello....
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 1/30/22 1:32 AM, Jens Axboe wrote:
-> On 1/29/22 5:50 AM, Ammar Faizi wrote:
->> Hello,
->>
->> This patchset adds sendto(2) and recvfrom(2) support for io_uring. It
->> also addresses an issue in the liburing GitHub repository [1].
->>
->> ## Motivations:
->>
->> 1) By using `sendto()` and `recvfrom()` we can make the submission
->>     simpler compared to always using `sendmsg()` and `recvmsg()` from
->>     the userspace. Especially for UDP socket.
->>
->> 2) There is a historical patch that tried to add the same
->>     functionality, but did not end up being applied. [2]
-> 
-> As far as I can tell, the only win from sendto/recvfrom is that we can
-> handle async offload a bit cheaper compared to sendmsg/recvmsg. Is this
-> enough to warrant adding them separately? I don't know, which is why
-> this has been somewhat stalled for a while.
-> 
-> Maybe you have done some testing and have numbers (or other reasons) to
-> back up the submission? There's not a whole lot of justification in this
-> patchset.
-> 
+You have been compensated with the sum of 9.5 million dollars in this
+united nation the payment will be issue into atm visa  card and send
+to you from the santander bank we need your address and your
+Whatsapp number  + 1 6465853907  this my email.ID
+( mrs.bill.chantal.roland@gmail.com )  contact  me
 
-So far, I haven't done it. I only created a test that ensures the
-functionality is working properly.
+Thanks my
 
-I will play with this further. If I win, I will submit the v2 of
-this series for review. Thanks, Jens!
-
--- 
-Ammar Faizi
+mrs bill chantal

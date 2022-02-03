@@ -2,54 +2,54 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E4E584A9039
-	for <lists+io-uring@lfdr.de>; Thu,  3 Feb 2022 22:52:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CC2F4A9070
+	for <lists+io-uring@lfdr.de>; Thu,  3 Feb 2022 23:07:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355516AbiBCVwQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 3 Feb 2022 16:52:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49094 "EHLO
+        id S1355676AbiBCWHj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 3 Feb 2022 17:07:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52612 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355311AbiBCVwP (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 3 Feb 2022 16:52:15 -0500
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 169BBC061714;
-        Thu,  3 Feb 2022 13:52:15 -0800 (PST)
-Received: by mail-wm1-x32d.google.com with SMTP id o1-20020a1c4d01000000b0034d95625e1fso8128950wmh.4;
-        Thu, 03 Feb 2022 13:52:15 -0800 (PST)
+        with ESMTP id S1355674AbiBCWHj (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 3 Feb 2022 17:07:39 -0500
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69E9EC061714;
+        Thu,  3 Feb 2022 14:07:38 -0800 (PST)
+Received: by mail-wr1-x434.google.com with SMTP id j16so7635116wrd.8;
+        Thu, 03 Feb 2022 14:07:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=buRa9dy1somA+KRSylXRCFC8cwfGjuaHgmtJ/vC9N5I=;
-        b=AJNb52/UXg2h/IDNv/EvUdWeUh6pcQr6BUVY2EpdPy9u87X12BXD2JXN0P4WCGQtPN
-         vvV6SVqmjQz7RJxChS7bwJl65p5kVU69BBes0C+l84m1I/++PUxcpPCV5bHd5FZu7WdC
-         C4x4i1MfPCF44QyGdPdxgKDeKrQ5l0+QTxg85Pfpmepaa/fCpHb+yL5XlVYqCNKuOUTf
-         OGCTZCnAASFiJ2kc/PRnajASxWLpiOgZtZebOmwzPxLzHs3WarP/uPY3XB6EketqJiYv
-         kXe/cyB6tqWk0LqgtIuVIalJUlhrMiKvohA/evJaxHjrSdXNuH0c8gbu8efqAZw+47SD
-         mUlQ==
+        bh=VgFLORR4v1ez4B6LMIcDycEWtW4pAhoVBiVCyzb5WgM=;
+        b=jEgbO/JvCr5a80SQ8kHQXwPRi0hsbwshS721x37C04F+7AwLexMUIcFUW5dzoOe/n7
+         S4W4thd/mlO7tzdLq17PUC4hkIo4DE0f58u6YuGPk8IFkiL2no+9ESEPcKLrxH1gp1xU
+         E14lrKxHcKUoQX4hK6fhOzM2JVjN8SR1HqarJ/8zqDXutEtBK0hYrGNuKS+6HsJDFpdg
+         EKAD2Ex5Y4ROhUXAHmYfS0LWrecA4DjtPDThLXae0t3RhseM2muww8uAuSdwUnyYR4dF
+         VENcgl6dMlKyMl0op1IsxdL3isLhFiouSlbyjomQa9g+xrkA3BJRa+SZ/keNPxPONlmW
+         +pLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=buRa9dy1somA+KRSylXRCFC8cwfGjuaHgmtJ/vC9N5I=;
-        b=etszp/6QbEpBplZhHZbf3LtK3CoxjI9WOBt4igzoD+uyGuTvh0l1aoc6eigRqZQGWm
-         5MIPnSYZS3GySmciHClDyeYkxwM75iDDUf5k8JpIcNDARlT9mcPH6SMWY7BZRchnHd6h
-         +d+hkQQ05vhLrZVmgOv9oZYGT72NLNOEuBkfXCkClUNk0K3FGb2K1W7e3dELQ/6CRB/a
-         4qLV0JePbU/PTlUA1WwFZQ5RmK7T9jQBbhihNsRJUH0ZFiUAZHF1mnfP+xSfO3ny3gnI
-         dr9JF5WwlsDBj/0oK1aRtx6KkITQOgzDsX/pntSRwuAoJ0IAbbrTeng7Yv+cmM0ksJ+T
-         Ey0A==
-X-Gm-Message-State: AOAM532irNy0iiz0iPvpP5f7UQfwt8GSkzjD0ZBU8zz94MO+AvT+zbUF
-        PZLLI+uvvq9WYkBU2Q/OCwsBO1KjfTU=
-X-Google-Smtp-Source: ABdhPJzPWwnqVZ6nC+SkSCc23HRV11PNduKuSsjkFgoYPxIiyQtPgz7ZqNcgsVUX7Sh0vdGTTA/TPw==
-X-Received: by 2002:a05:600c:3593:: with SMTP id p19mr11818890wmq.172.1643925133525;
-        Thu, 03 Feb 2022 13:52:13 -0800 (PST)
+        bh=VgFLORR4v1ez4B6LMIcDycEWtW4pAhoVBiVCyzb5WgM=;
+        b=ktGAgKaGOzjvK4y16eaCrg5euW2pbKgCqyJb4p0QIsfB0lgTJmCSjgHJg/it8IDY40
+         OvTg7NMESqMBKnH951wzLXNb5QuUXCFv2N2wgWtlSdkkGqQNd+tLpJw837ELi0P2kT58
+         xxhSbVNkUyEJoGFRwXgAwQb8FVv4VeVuVAcO/eRiDD62d87PMkdhhNzoVRvNQ44q/Zze
+         F5nCcJeNpT7taQ6UQq0dnn74KeD/qj8NQmd5+p/I3APgjtH1lBt1ztG0Zvq6DxuXVfH+
+         J5zx9825k5x6Nnl13UaPkdRGk9GFvDSMbJP2y1VDD7L23UJgpruNil7Yu1K0RBkTx/CJ
+         MD4Q==
+X-Gm-Message-State: AOAM532pxKtzzEgdp/s6jP7lpGCNClDPi4RF5PCHXmcynit2DzzuCL3C
+        675USNq6adVA+3XcVbcn9rNFMxJ19ig=
+X-Google-Smtp-Source: ABdhPJy2aEjcgSSu9zRsY2TefFfp7/7tsTwkaoZTuXWkk5rb7dHpgttAm7Aeqt7kWy34IQKbqpXx5w==
+X-Received: by 2002:a5d:4d07:: with SMTP id z7mr29911584wrt.327.1643926057033;
+        Thu, 03 Feb 2022 14:07:37 -0800 (PST)
 Received: from [192.168.8.198] ([85.255.232.204])
-        by smtp.gmail.com with ESMTPSA id u14sm20350wrs.55.2022.02.03.13.52.12
+        by smtp.gmail.com with ESMTPSA id i94sm52531wri.21.2022.02.03.14.07.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Feb 2022 13:52:13 -0800 (PST)
-Message-ID: <a2939109-5f97-ff56-df53-0a56ba12e268@gmail.com>
-Date:   Thu, 3 Feb 2022 21:47:21 +0000
+        Thu, 03 Feb 2022 14:07:36 -0800 (PST)
+Message-ID: <c9e0628b-c9ce-7866-dff9-9a44c51d82b2@gmail.com>
+Date:   Thu, 3 Feb 2022 22:02:43 +0000
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.5.0
@@ -114,9 +114,7 @@ On 2/3/22 19:54, Usama Arif wrote:
 >>
 > 
 > I had checked! I had posted below in in reply to v1 (https://lore.kernel.org/io-uring/02fb0bc3-fc38-b8f0-3067-edd2a525ef29@gmail.com/T/#m5ac7867ac61d86fe62c099be793ffe5a9a334976), but i think it got missed! Copy-pasting here for reference:
-
-May have missed it then, apologies
-
+> 
 > "
 > I see that if we remove ring quiesce from the the above 3 opcodes, then
 > only IORING_REGISTER_ENABLE_RINGS and IORING_REGISTER_RESTRICTIONS is
@@ -124,37 +122,17 @@ May have missed it then, apologies
 > see we might not need to enter ring quiesce in
 > IORING_REGISTER_ENABLE_RINGS as the ring is already disabled at that point?
 > And for IORING_REGISTER_RESTRICTIONS if we do a similar approach to
-> IORING_REGISTER_EVENTFD, i.e. wrap ctx->restrictions inside an RCU
-> protected data structure, use spin_lock to prevent multiple
-> io_register_restrictions calls at the same time, and use read_rcu_lock
-> in io_check_restriction, then we can remove ring quiesce from
-> io_uring_register altogether?
-> 
-> My usecase only uses IORING_REGISTER_EVENTFD, but i think entering ring
-> quiesce costs similar in other opcodes. If the above sounds reasonable,
-> please let me know and i can send patches for removing ring quiesce for
-> io_uring_register.
-> "
-> 
-> Let me know if above makes sense, i can add patches on top of the current patchset, or we can do it after they get merged.
-> 
-> As for why, quiesce state is very expensive. its making io_uring_register the most expensive syscall in my usecase (~15ms) compared to ~0.1ms now with RCU, which is why i started investigating this. And this patchset avoids ring quiesce for 3 of the opcodes, so it would generally be quite helpful if someone does registers and unregisters eventfd multiple times.
 
-I agree that 15ms for initial setup is silly and it has to be
-reduced. However, I'm trying weight the extra complexity against
-potential benefits of _also_ optimising [de,re]-registration
+IORING_REGISTER_RESTRICTIONS and IORING_REGISTER_ENABLE_RINGS are simpler,
+we can just remove quiesce (i.e. put them into io_register_op_must_quiesce())
+without any extra changes.
 
-Considering that you only register it one time at the beginning,
-we risk adding a yet another feature that nobody is going to ever
-use. This doesn't give me a nice feeling, well, unless you do
-have a use case.
+TL;DR;
+That's because IORING_SETUP_R_DISABLED prevents submitting requests
+and so there will be no requests until IORING_REGISTER_ENABLE_RINGS is
+called. And IORING_REGISTER_RESTRICTIONS works only before
+IORING_REGISTER_ENABLE_RINGS was called.
 
-To emphasise, I'm comparing 15->0.1 improvement for only initial
-registration (which is simpler) vs 15->0.1 for both registration
-and unregistration.
-
-fwiw, it alters userpace visible behaviour in either case, shouldn't
-be as important here but there is always a chance to break userspace
 
 -- 
 Pavel Begunkov

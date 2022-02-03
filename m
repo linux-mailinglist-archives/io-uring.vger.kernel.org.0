@@ -2,157 +2,182 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DC5B74A8B92
-	for <lists+io-uring@lfdr.de>; Thu,  3 Feb 2022 19:25:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 820194A8B9B
+	for <lists+io-uring@lfdr.de>; Thu,  3 Feb 2022 19:26:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353483AbiBCSYu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 3 Feb 2022 13:24:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56962 "EHLO
+        id S1353463AbiBCS0o (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 3 Feb 2022 13:26:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353468AbiBCSYt (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 3 Feb 2022 13:24:49 -0500
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80AF0C061744
-        for <io-uring@vger.kernel.org>; Thu,  3 Feb 2022 10:24:48 -0800 (PST)
-Received: by mail-wm1-x335.google.com with SMTP id k6-20020a05600c1c8600b003524656034cso2351109wms.2
-        for <io-uring@vger.kernel.org>; Thu, 03 Feb 2022 10:24:48 -0800 (PST)
+        with ESMTP id S1353456AbiBCS0o (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 3 Feb 2022 13:26:44 -0500
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBC54C061714
+        for <io-uring@vger.kernel.org>; Thu,  3 Feb 2022 10:26:43 -0800 (PST)
+Received: by mail-wr1-x42b.google.com with SMTP id s18so6705273wrv.7
+        for <io-uring@vger.kernel.org>; Thu, 03 Feb 2022 10:26:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Nbb/JonlYt2gwQTccH2YTHZ8fFvVyRbc8c63+KA/SXs=;
-        b=tIGn+9IvEdbkXn5xnNLy09gK3SY2EFeBj/BT39em5zIXMjreIH0iirlTjng4muT1re
-         iqgntSWn1lpNoVerckRjRAvdhLtLuHRymFX88dZi47LvqLyQFnGVfmf1H0AyReqDmx/n
-         BVQvPiqTc63TJTO75Y/SmZrRXGCWz1QEGbVZA/VP7r91FFphT1FX9pS2MWkuZR5viui8
-         fpvguOV37Xq9Zlxlqm6EsKxFrhCtXzdLEUtPO6EUUEkETmysOeQiRlj1Aaslysc0afL3
-         tJgWWVpfWQEF+juElhCDyExWrDjLzjJ9YwYnXInIhchz30cDe92A1MC2PQWwdAuM+NOI
-         aR+g==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ZWI0+x1zjRdNZd4hSHdWsF4M1u/QYwQfZKbKt9HgHN4=;
+        b=CIZgAFLya2oubgyuO1IEyvirg9Km0oHON+oACRu7wZ/jCnd+q7F5JydvsOhv0qZAqV
+         JkaddLV6bjn41QTYlWd3U6eTLuSnQpTQ8FPlp3DlMiuzfgiQVXE4s/pPcsCD526uSpyw
+         TlbvcCjOC7PdH99QmZ0mwry+zRxJItoiKCO0yaCaIShoxWgTw/RtRsNKlmixi8qzHoXU
+         2/CaEubGCNQg7lRtfipGA99TgzEt370fA5uhtX0bQMx8xIDYgsIxLPxcGn7aZOkYHZ4+
+         4gNYpvQo7ROABvLeVnXihtVr2aCO4ra16Tjx6WStOA8p/hcmRVEROrKw+l1mnkh02LLJ
+         cESg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Nbb/JonlYt2gwQTccH2YTHZ8fFvVyRbc8c63+KA/SXs=;
-        b=sT/Kbnkw7wNMeVwQzojULUwK9TWhUK7iEz7mxZ6LLQq3vnP0DG9cSWnwm6s+BOQrbZ
-         u/cvI6zBB7KlwB/xCCJNeH3HRsWvk631JAl4ORi0nV5QAV1iju3xLXurNYm6HuDTRykR
-         2Y18Jc75R7HH1IlZW1/lmWpMJEa3jismozv1X2tC3KT8/0zek5tKQqYklOXVvaQ213eR
-         5nFakBd4Q7b2pE7MVAhefDaHNDuGSECkU0k6cnAINF+nmhyWP/Wsl4h8OugzICqy3Fwk
-         LncmoX/8kGLlIuD5VRqxfKsvgojDie9jrGIIlam+saM2G+Qq948CDp/lesU7CwbFYCiS
-         f7xQ==
-X-Gm-Message-State: AOAM533UC2PmWgMFtmcImqLW3E3KQ1qyXTrU++/jEZv8188U0KLWTfTj
-        ZeBfE25vLzDURxG76x+9ak9Q+icHK8Wmrw==
-X-Google-Smtp-Source: ABdhPJy8kFjgZA7GepNZjH7o49H9W94lbEP8JvFAcXl7hMwg0rlZPQMT0bcsqkgE3yBPSknYYP+iTA==
-X-Received: by 2002:a7b:c0c8:: with SMTP id s8mr11511762wmh.3.1643912687002;
-        Thu, 03 Feb 2022 10:24:47 -0800 (PST)
-Received: from usaari01.cust.communityfibre.co.uk ([2a02:6b6d:f804:0:28c2:5854:c832:e580])
-        by smtp.gmail.com with ESMTPSA id h18sm3540056wro.9.2022.02.03.10.24.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Feb 2022 10:24:46 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ZWI0+x1zjRdNZd4hSHdWsF4M1u/QYwQfZKbKt9HgHN4=;
+        b=QKk44PLy+yrUqWpeuuR6CqzVp+sZ3fyjqRXV8oitKiNMocW1XIAv9hQUVh+Dm1zJKh
+         hq2w3Y22Cu4DN/Ej1rKMKrlyENwR5wdPyXUIYatk3SYftR3IHAJRYhFJGbZLWX75jpgc
+         qVMWRjOdZh/uwYF36herMKTgri6dFNA/gZB9QstSaJ6XB1y7lPVh8djvdo4LwhnVnh19
+         x90mJY6r13Qln4wJT0qczuAMKs9/zr7OWXiC18gzUn1Dg1zCdYGiCIJyR4eBLjYI0pi/
+         Wm+2QcKwps49Sj5Dc4Qb9c1agklejBPmhVZKhWEoxx36xHxyDbM2LLB6u5IYuUqz7r8Z
+         +h4A==
+X-Gm-Message-State: AOAM533i6voADKKeKymlAKALNsec4H9epd2QHPv+pPJ3s+Tg6eV+omni
+        h3fWtL+onYI8s8EBDA7xPoYEJg==
+X-Google-Smtp-Source: ABdhPJzgY1E3Db9HP3QjZL8LbCqVu2j+/FSXE1GJbMCMq+V3z/8fHgHSWoPUpwF2xytTvVs5u6B33g==
+X-Received: by 2002:adf:e846:: with SMTP id d6mr21729812wrn.539.1643912802404;
+        Thu, 03 Feb 2022 10:26:42 -0800 (PST)
+Received: from ?IPv6:2a02:6b6d:f804:0:28c2:5854:c832:e580? ([2a02:6b6d:f804:0:28c2:5854:c832:e580])
+        by smtp.gmail.com with ESMTPSA id bh19sm2088001wmb.1.2022.02.03.10.26.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Feb 2022 10:26:42 -0800 (PST)
+Subject: Re: [External] Re: [PATCH v3 2/3] io_uring: avoid ring quiesce while
+ registering/unregistering eventfd
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        asml.silence@gmail.com, linux-kernel@vger.kernel.org
+Cc:     fam.zheng@bytedance.com
+References: <20220203174108.668549-1-usama.arif@bytedance.com>
+ <20220203174108.668549-3-usama.arif@bytedance.com>
+ <ffa271c7-3f49-2b5a-b67e-3bb1b052ee4e@kernel.dk>
 From:   Usama Arif <usama.arif@bytedance.com>
-To:     io-uring@vger.kernel.org, axboe@kernel.dk, asml.silence@gmail.com,
-        linux-kernel@vger.kernel.org
-Cc:     fam.zheng@bytedance.com, Usama Arif <usama.arif@bytedance.com>
-Subject: [PATCH v4 3/3] io_uring: avoid ring quiesce for IORING_REGISTER_EVENTFD_ASYNC
-Date:   Thu,  3 Feb 2022 18:24:41 +0000
-Message-Id: <20220203182441.692354-4-usama.arif@bytedance.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220203182441.692354-1-usama.arif@bytedance.com>
-References: <20220203182441.692354-1-usama.arif@bytedance.com>
+Message-ID: <877d54b9-5baa-f0b5-23fe-25aef78e37c4@bytedance.com>
+Date:   Thu, 3 Feb 2022 18:26:41 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <ffa271c7-3f49-2b5a-b67e-3bb1b052ee4e@kernel.dk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This is done using the RCU data structure (io_ev_fd). eventfd_async
-is moved from io_ring_ctx to io_ev_fd which is RCU protected hence
-avoiding ring quiesce which is much more expensive than an RCU lock.
-io_should_trigger_evfd is already under rcu_read_lock so there is
-no extra RCU read-side critical section needed.
 
-Signed-off-by: Usama Arif <usama.arif@bytedance.com>
----
- fs/io_uring.c | 22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
+
+On 03/02/2022 17:56, Jens Axboe wrote:
+> On 2/3/22 10:41 AM, Usama Arif wrote:
+>> @@ -1726,13 +1732,24 @@ static inline struct io_uring_cqe *io_get_cqe(struct io_ring_ctx *ctx)
+>>   	return &rings->cqes[tail & mask];
+>>   }
+>>   
+>> -static inline bool io_should_trigger_evfd(struct io_ring_ctx *ctx)
+>> +static void io_eventfd_signal(struct io_ring_ctx *ctx)
+>>   {
+>> -	if (likely(!ctx->cq_ev_fd))
+>> -		return false;
+>> +	struct io_ev_fd *ev_fd;
+>> +
+>> +	rcu_read_lock();
+>> +	/* rcu_dereference ctx->io_ev_fd once and use it for both for checking and eventfd_signal */
+>> +	ev_fd = rcu_dereference(ctx->io_ev_fd);
+>> +
+>> +	if (likely(!ev_fd))
+>> +		goto out;
+>>   	if (READ_ONCE(ctx->rings->cq_flags) & IORING_CQ_EVENTFD_DISABLED)
+>> -		return false;
+>> -	return !ctx->eventfd_async || io_wq_current_is_worker();
+>> +		goto out;
+>> +
+>> +	if (!ctx->eventfd_async || io_wq_current_is_worker())
+>> +		eventfd_signal(ev_fd->cq_ev_fd, 1);
+>> +
+>> +out:
+>> +	rcu_read_unlock();
+>>   }
+> 
+> Like Pavel pointed out, we still need the fast path (of not having an
+> event fd registered at all) to just do the cheap check and not need rcu
+> lock/unlock. Outside of that, I think this looks fine.
+> 
+
+Hmm, maybe i didn't understand you and Pavel correctly. Are you 
+suggesting to do the below diff over patch 3? I dont think that would be 
+correct, as it is possible that just after checking if ctx->io_ev_fd is 
+present unregister can be called by another thread and set ctx->io_ev_fd 
+to NULL that would cause a NULL pointer exception later? In the current 
+patch, the check of whether ev_fd exists happens as the first thing 
+after rcu_read_lock and the rcu_read_lock are extremely cheap i believe.
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 7a8f4ac7a785..e287fc61879f 100644
+index 25ed86533910..0cf282fba14d 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -329,6 +329,7 @@ struct io_submit_state {
- struct io_ev_fd {
- 	struct eventfd_ctx	*cq_ev_fd;
- 	struct io_ring_ctx	*ctx;
-+	unsigned int		eventfd_async: 1;
- 	struct rcu_head		rcu;
- };
- 
-@@ -341,7 +342,6 @@ struct io_ring_ctx {
- 		unsigned int		flags;
- 		unsigned int		compat: 1;
- 		unsigned int		drain_next: 1;
--		unsigned int		eventfd_async: 1;
- 		unsigned int		restricted: 1;
- 		unsigned int		off_timeout_used: 1;
- 		unsigned int		drain_active: 1;
-@@ -1747,7 +1747,7 @@ static void io_eventfd_signal(struct io_ring_ctx *ctx)
- 	if (READ_ONCE(ctx->rings->cq_flags) & IORING_CQ_EVENTFD_DISABLED)
- 		goto out;
- 
--	if (!ctx->eventfd_async || io_wq_current_is_worker())
-+	if (!ev_fd->eventfd_async || io_wq_current_is_worker())
- 		eventfd_signal(ev_fd->cq_ev_fd, 1);
- 
- out:
-@@ -9368,7 +9368,8 @@ static int __io_sqe_buffers_update(struct io_ring_ctx *ctx,
- 	return done ? done : err;
- }
- 
--static int io_eventfd_register(struct io_ring_ctx *ctx, void __user *arg)
-+static int io_eventfd_register(struct io_ring_ctx *ctx, void __user *arg,
-+			       unsigned int eventfd_async)
- {
- 	struct io_ev_fd *ev_fd;
- 	__s32 __user *fds = arg;
-@@ -9398,6 +9399,7 @@ static int io_eventfd_register(struct io_ring_ctx *ctx, void __user *arg)
- 		goto out;
- 	}
- 	ev_fd->ctx = ctx;
-+	ev_fd->eventfd_async = eventfd_async;
- 
- 	rcu_assign_pointer(ctx->io_ev_fd, ev_fd);
- 	ret = 0;
-@@ -11013,6 +11015,7 @@ static bool io_register_op_must_quiesce(int op)
- 	case IORING_UNREGISTER_FILES:
- 	case IORING_REGISTER_FILES_UPDATE:
- 	case IORING_REGISTER_EVENTFD:
-+	case IORING_REGISTER_EVENTFD_ASYNC:
- 	case IORING_UNREGISTER_EVENTFD:
- 	case IORING_REGISTER_PROBE:
- 	case IORING_REGISTER_PERSONALITY:
-@@ -11113,17 +11116,16 @@ static int __io_uring_register(struct io_ring_ctx *ctx, unsigned opcode,
- 		ret = io_register_files_update(ctx, arg, nr_args);
- 		break;
- 	case IORING_REGISTER_EVENTFD:
--	case IORING_REGISTER_EVENTFD_ASYNC:
- 		ret = -EINVAL;
- 		if (nr_args != 1)
- 			break;
--		ret = io_eventfd_register(ctx, arg);
--		if (ret)
-+		ret = io_eventfd_register(ctx, arg, 0);
-+		break;
-+	case IORING_REGISTER_EVENTFD_ASYNC:
-+		ret = -EINVAL;
-+		if (nr_args != 1)
- 			break;
--		if (opcode == IORING_REGISTER_EVENTFD_ASYNC)
--			ctx->eventfd_async = 1;
--		else
--			ctx->eventfd_async = 0;
-+		ret = io_eventfd_register(ctx, arg, 1);
- 		break;
- 	case IORING_UNREGISTER_EVENTFD:
- 		ret = -EINVAL;
--- 
-2.25.1
+@@ -1736,12 +1736,13 @@ static void io_eventfd_signal(struct io_ring_ctx 
+*ctx)
+  {
+         struct io_ev_fd *ev_fd;
 
++       if (likely(!ctx->io_ev_fd))
++               return;
++
+         rcu_read_lock();
+         /* rcu_dereference ctx->io_ev_fd once and use it for both for 
+checking and eventfd_signal */
+         ev_fd = rcu_dereference(ctx->io_ev_fd);
+
+-       if (likely(!ev_fd))
+-               goto out;
+         if (READ_ONCE(ctx->rings->cq_flags) & IORING_CQ_EVENTFD_DISABLED)
+                 goto out;
+
+
+
+
+>>   static int io_eventfd_unregister(struct io_ring_ctx *ctx)
+>>   {
+>> -	if (ctx->cq_ev_fd) {
+>> -		eventfd_ctx_put(ctx->cq_ev_fd);
+>> -		ctx->cq_ev_fd = NULL;
+>> -		return 0;
+>> +	struct io_ev_fd *ev_fd;
+>> +	int ret;
+>> +
+>> +	mutex_lock(&ctx->ev_fd_lock);
+>> +	ev_fd = rcu_dereference_protected(ctx->io_ev_fd, lockdep_is_held(&ctx->ev_fd_lock));
+>> +	if (!ev_fd) {
+>> +		ret = -ENXIO;
+>> +		goto out;
+>>   	}
+>> +	synchronize_rcu();
+>> +	eventfd_ctx_put(ev_fd->cq_ev_fd);
+>> +	kfree(ev_fd);
+>> +	rcu_assign_pointer(ctx->io_ev_fd, NULL);
+>> +	ret = 0;
+>>   
+>> -	return -ENXIO;
+>> +out:
+>> +	mutex_unlock(&ctx->ev_fd_lock);
+>> +	return ret;
+>>   }
+> 
+> synchronize_rcu() can take a long time, and I think this is in the wrong
+> spot. It should be on the register side, IFF we need to expedite the
+> completion of a previous event fd unregistration. If we do it that way,
+> at least it'll only happen if it's necessary. What do you think?
+> 
+
+
+How about the approach in v4? so switching back to call_rcu as in v2 and 
+if ctx->io_ev_fd is NULL then we call rcu_barrier to make sure all rcu 
+callbacks are finished and check for NULL again.
+
+Thanks!
+Usama

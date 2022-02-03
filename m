@@ -2,139 +2,101 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6657D4A8B04
-	for <lists+io-uring@lfdr.de>; Thu,  3 Feb 2022 18:57:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 981434A8B8B
+	for <lists+io-uring@lfdr.de>; Thu,  3 Feb 2022 19:24:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238071AbiBCR47 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 3 Feb 2022 12:56:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50278 "EHLO
+        id S1353441AbiBCSYq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 3 Feb 2022 13:24:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234338AbiBCR46 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 3 Feb 2022 12:56:58 -0500
-Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1667C06173B
-        for <io-uring@vger.kernel.org>; Thu,  3 Feb 2022 09:56:58 -0800 (PST)
-Received: by mail-io1-xd33.google.com with SMTP id r144so4223423iod.9
-        for <io-uring@vger.kernel.org>; Thu, 03 Feb 2022 09:56:58 -0800 (PST)
+        with ESMTP id S1353398AbiBCSYp (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 3 Feb 2022 13:24:45 -0500
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A594C06173B
+        for <io-uring@vger.kernel.org>; Thu,  3 Feb 2022 10:24:45 -0800 (PST)
+Received: by mail-wr1-x42f.google.com with SMTP id u15so6733684wrt.3
+        for <io-uring@vger.kernel.org>; Thu, 03 Feb 2022 10:24:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=QBQw4YaYAvigQAPD4ZL0nY/1iT625q+QNDy6YJwrySk=;
-        b=YDmMmk2pG/yQ5AlcbYAlR6g02JmqXkdvWui9gp8rRkImqihSgKfmox2DvV5WF4W3hZ
-         tLsl7QwNxjas7mdPCS347odQfyi9VY4oS1+XSFKiMp6jJDm1Yd09aw89trz+dsbnFT0y
-         wv+lrb50Lozq/hoNPHgLsjgcc9V4KJJqMOQ4K00dJbxx45zhiqmrXHvjpAgD9lkn5VYi
-         shTODxNPaLvUYXc+pbX3oJ7GYb6GmBDPAkxZ9PBYwTiBRH6YviNRhP0oRapyua+v4Q7d
-         YcvwQENTbsTsV+eofp3kMMPwmkl+JqCJODI534DlDi7LDXa01gld6xijyJPH30TiZo+p
-         Yvhw==
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QIZiYOb5KIYRl/qJc3StlrUHLBXvSan9TakJg38R+r0=;
+        b=hBlA3xaNLllrMEAMRhqVVebO2N0bJadJaFI+KSJaqMBuIR4QR3BSR6zVxK1U+oHfB1
+         yEEUIglJoDYa3z4eZN6P5y80hN7LykGGWvM8isNRSKtemPSw6JcHhqbcEf5ZLHIsgiR8
+         wtBA6e3oAtrz1FeG9FgkrAWPAE3RWFKH4fmeQFh0l3qvi5WpWiSLXBqFun/4CJcz579m
+         kP2OX3zuQEeQLrmsL8L2l1ZvGo1dYIm6+FPwndq0MrpMKMbIPh59UzOf87FPUd6y8iWJ
+         6AhLTR4y2F1GCDac4OfMY8dcNv7YUZcs2k9O8JvIl7xAca6s5PVk6XbUO2hWRG91503u
+         Ex6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=QBQw4YaYAvigQAPD4ZL0nY/1iT625q+QNDy6YJwrySk=;
-        b=FFp4YAJFQchXdNAEo/6tNFaFRbKxy69DokSnAq/se73g9Wg5TnxOuK2JttRt2jwIMf
-         29iY73UWGC/SPQYLrUmdSRVc7DfIn3Wo66V5pCDJRDC6P9O0DpU5Elh4Z8IF+Dywth4e
-         6x0zwrkAMHedVJTGZSn0tZCo4a/vPte0kcUINIaBtjFAGHza1KgM6j92q+9G7RfiIAp3
-         NAdgeRW1+hs5cjBpXMt2FNkeiuBBFt5rixnpUM8OR4UrsBvN7Sgg+aoh9vFxe5ixixHR
-         HSTteneJchSukOV1fAsmR0bOfVaayF8Ji5AhqVjtSpOOIeOLSRq4vwBwwMhVZ5aZKsn3
-         vjPw==
-X-Gm-Message-State: AOAM532JDZNyl0jE2Rfw5C2w6Px+FGej6IJT7GsMLUKNSweebXLLnDO8
-        gpFSVO9+xsckFK3yXLW5RAWsvg==
-X-Google-Smtp-Source: ABdhPJytfhjGnanyS876GVdOlq4/O2Tq31lL8ASLDN+wmxsNOJfZLP7hXhmdJJg+k7NyQFdUUP+E6w==
-X-Received: by 2002:a05:6602:2a49:: with SMTP id k9mr18570929iov.83.1643911018102;
-        Thu, 03 Feb 2022 09:56:58 -0800 (PST)
-Received: from [192.168.1.30] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id r8sm13309722ilj.4.2022.02.03.09.56.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Feb 2022 09:56:57 -0800 (PST)
-Subject: Re: [PATCH v3 2/3] io_uring: avoid ring quiesce while
- registering/unregistering eventfd
-To:     Usama Arif <usama.arif@bytedance.com>, io-uring@vger.kernel.org,
-        asml.silence@gmail.com, linux-kernel@vger.kernel.org
-Cc:     fam.zheng@bytedance.com
-References: <20220203174108.668549-1-usama.arif@bytedance.com>
- <20220203174108.668549-3-usama.arif@bytedance.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <ffa271c7-3f49-2b5a-b67e-3bb1b052ee4e@kernel.dk>
-Date:   Thu, 3 Feb 2022 10:56:56 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        bh=QIZiYOb5KIYRl/qJc3StlrUHLBXvSan9TakJg38R+r0=;
+        b=iZp5QxweXTJnRMvR0InltCxfn7n9vW5U757+I5jwz9zqforR3zQ4bM3BwHKSHtYAWX
+         K0+p9wf55Us5UQrReDxhtOs1VBtDsdNQmc2lIXHRPyZFpNbB0zeqPpur3eQG9D/9xshI
+         hAsbnZoiz1xDyUAjBQMOQ4Oo+ci5xxTFxb3c6WdUIacifFqaV0Fla6ZfJfuDC0OehtyZ
+         6CpQTvVLPX7cq3vantrmULvobZyz14RfhBZJIHLptGJTUcK93+DeV7hcFJmxtDNMZJrl
+         LvR1mm+7OiuWq/a7zMz9+F4QINMc+2kG+Xx+9f/GSzW1/yP7GxpZ6Ik7huf//AW77Q7M
+         TKig==
+X-Gm-Message-State: AOAM5327NEGkOlqYTdI68V6Bw9TGX3tB8BeiGvSKdaOLHI6iZhqUMqJr
+        +RaMgVOFhOa+uoEdMRKVp4g9hHFPP4KONg==
+X-Google-Smtp-Source: ABdhPJwkq1lu/FX3hmHrjWcRzfmDXRRgs1s6TEjLoxV53Cdc30bUV5zS5H2RhYT9CS9sVFZuekLC3Q==
+X-Received: by 2002:adf:fb0f:: with SMTP id c15mr31290512wrr.42.1643912683900;
+        Thu, 03 Feb 2022 10:24:43 -0800 (PST)
+Received: from usaari01.cust.communityfibre.co.uk ([2a02:6b6d:f804:0:28c2:5854:c832:e580])
+        by smtp.gmail.com with ESMTPSA id h18sm3540056wro.9.2022.02.03.10.24.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Feb 2022 10:24:43 -0800 (PST)
+From:   Usama Arif <usama.arif@bytedance.com>
+To:     io-uring@vger.kernel.org, axboe@kernel.dk, asml.silence@gmail.com,
+        linux-kernel@vger.kernel.org
+Cc:     fam.zheng@bytedance.com, Usama Arif <usama.arif@bytedance.com>
+Subject: [PATCH v4 0/3] io_uring: avoid ring quiesce in io_uring_register for eventfd opcodes
+Date:   Thu,  3 Feb 2022 18:24:38 +0000
+Message-Id: <20220203182441.692354-1-usama.arif@bytedance.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <20220203174108.668549-3-usama.arif@bytedance.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/3/22 10:41 AM, Usama Arif wrote:
-> @@ -1726,13 +1732,24 @@ static inline struct io_uring_cqe *io_get_cqe(struct io_ring_ctx *ctx)
->  	return &rings->cqes[tail & mask];
->  }
->  
-> -static inline bool io_should_trigger_evfd(struct io_ring_ctx *ctx)
-> +static void io_eventfd_signal(struct io_ring_ctx *ctx)
->  {
-> -	if (likely(!ctx->cq_ev_fd))
-> -		return false;
-> +	struct io_ev_fd *ev_fd;
-> +
-> +	rcu_read_lock();
-> +	/* rcu_dereference ctx->io_ev_fd once and use it for both for checking and eventfd_signal */
-> +	ev_fd = rcu_dereference(ctx->io_ev_fd);
-> +
-> +	if (likely(!ev_fd))
-> +		goto out;
->  	if (READ_ONCE(ctx->rings->cq_flags) & IORING_CQ_EVENTFD_DISABLED)
-> -		return false;
-> -	return !ctx->eventfd_async || io_wq_current_is_worker();
-> +		goto out;
-> +
-> +	if (!ctx->eventfd_async || io_wq_current_is_worker())
-> +		eventfd_signal(ev_fd->cq_ev_fd, 1);
-> +
-> +out:
-> +	rcu_read_unlock();
->  }
+This is done by creating a new RCU data structure (io_ev_fd) as part of
+io_ring_ctx that holds the eventfd_ctx, with reads to the structure protected
+by rcu_read_lock and writes (register/unregister calls) protected by a mutex.
 
-Like Pavel pointed out, we still need the fast path (of not having an
-event fd registered at all) to just do the cheap check and not need rcu
-lock/unlock. Outside of that, I think this looks fine.
+With the above approach ring quiesce can be avoided which is much more
+expensive then using RCU lock. On the system tested, io_uring_reigster with
+IORING_REGISTER_EVENTFD takes less than 1ms with RCU lock, compared to 15ms
+before with ring quiesce.
 
->  static int io_eventfd_unregister(struct io_ring_ctx *ctx)
->  {
-> -	if (ctx->cq_ev_fd) {
-> -		eventfd_ctx_put(ctx->cq_ev_fd);
-> -		ctx->cq_ev_fd = NULL;
-> -		return 0;
-> +	struct io_ev_fd *ev_fd;
-> +	int ret;
-> +
-> +	mutex_lock(&ctx->ev_fd_lock);
-> +	ev_fd = rcu_dereference_protected(ctx->io_ev_fd, lockdep_is_held(&ctx->ev_fd_lock));
-> +	if (!ev_fd) {
-> +		ret = -ENXIO;
-> +		goto out;
->  	}
-> +	synchronize_rcu();
-> +	eventfd_ctx_put(ev_fd->cq_ev_fd);
-> +	kfree(ev_fd);
-> +	rcu_assign_pointer(ctx->io_ev_fd, NULL);
-> +	ret = 0;
->  
-> -	return -ENXIO;
-> +out:
-> +	mutex_unlock(&ctx->ev_fd_lock);
-> +	return ret;
->  }
+The first patch creates the RCU protected data structure and removes ring
+quiesce for IORING_REGISTER_EVENTFD and IORING_UNREGISTER_EVENTFD.
 
-synchronize_rcu() can take a long time, and I think this is in the wrong
-spot. It should be on the register side, IFF we need to expedite the
-completion of a previous event fd unregistration. If we do it that way,
-at least it'll only happen if it's necessary. What do you think?
+The second patch builds on top of the first patch and removes ring quiesce
+for IORING_REGISTER_EVENTFD_ASYNC.
+
+---
+v3->v4:
+- Switch back to call_rcu and use rcu_barrier incase io_eventfd_register fails
+to make sure all rcu callbacks have finished.
+
+v2->v3:
+- Switched to using synchronize_rcu from call_rcu in io_eventfd_unregister.
+
+v1->v2:
+- Added patch to remove eventfd from tracepoint (Patch 1) (Jens Axboe)
+- Made the code of io_should_trigger_evfd as part of io_eventfd_signal (Jens Axboe)
+
+Usama Arif (3):
+  io_uring: remove trace for eventfd
+  io_uring: avoid ring quiesce while registering/unregistering eventfd
+  io_uring: avoid ring quiesce for IORING_REGISTER_EVENTFD_ASYNC
+
+ fs/io_uring.c                   | 127 +++++++++++++++++++++++---------
+ include/trace/events/io_uring.h |  13 ++--
+ 2 files changed, 96 insertions(+), 44 deletions(-)
 
 -- 
-Jens Axboe
+2.25.1
 

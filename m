@@ -2,65 +2,54 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B17F44AB925
-	for <lists+io-uring@lfdr.de>; Mon,  7 Feb 2022 11:57:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CDC6E4ABF32
+	for <lists+io-uring@lfdr.de>; Mon,  7 Feb 2022 14:23:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236908AbiBGK5T (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 7 Feb 2022 05:57:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38532 "EHLO
+        id S230467AbiBGNGh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 7 Feb 2022 08:06:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39638 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352158AbiBGKuq (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 7 Feb 2022 05:50:46 -0500
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5254BC0401C1
-        for <io-uring@vger.kernel.org>; Mon,  7 Feb 2022 02:50:45 -0800 (PST)
-Received: by mail-wr1-x429.google.com with SMTP id e3so9988701wra.0
-        for <io-uring@vger.kernel.org>; Mon, 07 Feb 2022 02:50:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=EZDSS2MYdieKNY+ptNKFPV1o4mbS/p6IjuUtTxEmOkI=;
-        b=duNxmxAdk7clYt7ndWPXMcPdSolXHBq4k1vpVSHdqeR3Y4OWFGyd1weIqSmOvwZb6S
-         Spl+lEN4s/4eqR+CV2VBUi31PwqNpLhu1spSm9qyFUZFnw96KF9rCAhnyUvDBEIf11z1
-         PSnr7JICxX6dz2N2SJiFNsqmL9hadf/eri3EZFXn1w2FkBwZdwQP/eyRjWS5wMaFGvdn
-         ZF0lDFr030L6E1u3lhpYKRKDd4tReFjacJB9q+g0p4uS1S2/apocHH72RqIDegc24uK8
-         2jrlj+s/8rx96MGL4wDFQmWS8/lusi4cE2hPx9vSkIyDaelQhP2a0llYAaxuDq8JyPit
-         J5CA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=EZDSS2MYdieKNY+ptNKFPV1o4mbS/p6IjuUtTxEmOkI=;
-        b=Mqeh22Meplf05U4vxvvtPpI7zQMod1/MsF0uR5LrSvaxfAuB9rLFkGktvzG3/4FLoi
-         C9zxWflMtx5BgIUUL7lp0SI1IFBCKzLj0mfna6t+3S64Pp0XQbZVNGbRcw75yeBXT6tq
-         z8sSebuAGc483/uUemYNjHvlJtqBmu8u9Ojoy2H7pdMXmVtJQ7ylk/Pn4KfJyzdxVY3T
-         vBnId9dVzR9Tirw5obNDG+Kr/4tsZjSqo5lTqNTnIa+p7ShOc5WPrah2ahji/58ADQyC
-         GyKwnOLoq7tDDhVQghFjHiMU9maEcAteoKU0YUCXLtdRNXaXr2nEAq+rj7dQ2iewIkUv
-         VY3Q==
-X-Gm-Message-State: AOAM533wQL0uspgtd8L72Pq5ZOK/NLUGYFsLp/TlTLYE50dLgfo6ObrV
-        oH8Hb4BrCYKDt4YcRW9mfJRKWfGDcV5LMw==
-X-Google-Smtp-Source: ABdhPJxLDom1n0BQAQA7DNHaMf3QjJwyZDXY+ENwGqJe57G5ZW9q1SeMh9v9S8yRdiIbSkPeP/Mi6A==
-X-Received: by 2002:a5d:6486:: with SMTP id o6mr8980127wri.454.1644231043764;
-        Mon, 07 Feb 2022 02:50:43 -0800 (PST)
-Received: from usaari01.cust.communityfibre.co.uk ([2a02:6b6d:f804:0:9277:27e1:ecf9:6ab6])
-        by smtp.gmail.com with ESMTPSA id a22sm112080wmq.45.2022.02.07.02.50.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Feb 2022 02:50:43 -0800 (PST)
-From:   Usama Arif <usama.arif@bytedance.com>
-To:     io-uring@vger.kernel.org, axboe@kernel.dk, asml.silence@gmail.com,
-        linux-kernel@vger.kernel.org
-Cc:     fam.zheng@bytedance.com, lkp@lists.01.org, lkp@intel.com,
-        Usama Arif <usama.arif@bytedance.com>,
-        kernel test robot <oliver.sang@intel.com>
-Subject: [PATCH] io_uring: unregister eventfd while holding lock when freeing ring ctx
-Date:   Mon,  7 Feb 2022 10:50:40 +0000
-Message-Id: <20220207105040.2662467-1-usama.arif@bytedance.com>
-X-Mailer: git-send-email 2.25.1
+        with ESMTP id S1391445AbiBGMBt (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 7 Feb 2022 07:01:49 -0500
+X-Greylist: delayed 210 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 07 Feb 2022 03:59:31 PST
+Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E917C03E921;
+        Mon,  7 Feb 2022 03:59:30 -0800 (PST)
+Received: from integral2.. (unknown [36.72.213.52])
+        by gnuweeb.org (Postfix) with ESMTPSA id A50E97E258;
+        Mon,  7 Feb 2022 11:44:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
+        s=default; t=1644234255;
+        bh=UC+l746d+ctD97nNi+ogzS1mPkamtQDrniJtWWP4aXM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=M8RxUq8vBDKlrMWCk6tUjzExD87kUWg+ChDGFxXP4ig7iMkkzz389ytZoZG/In1i4
+         DCDMeFvvZ5/7fp3IEuf/wupbvmAyPfAJnwWXpqChxyndNjM5l1PHI7QqLsyU4PJUfT
+         V+oS8oNUo5UBy9TohgSER7tI1yEoSAaE+vBxnyiV8z5nM9ORVnG6A5ie3Wpl8BSF8Q
+         W8G9PqVd8o+MnyfPP4LOs9iLhpUx35UfMPvADdyW1Q/bDrpkz8Sq6PW+AftCLixJBY
+         w1S5zJ0TH8NPIOMvZfYp44I+b0XSPt4W7i4W4Zalm6M0UHJI7HN2xx23T2w+JEcGv3
+         rAS4mnNqq3ERQ==
+From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     GNU/Weeb Mailing List <gwml@gnuweeb.org>,
+        io-uring Mailing list <io-uring@vger.kernel.org>,
+        Tea Inside Mailing List <timl@vger.teainside.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alviro Iskandar Setiawan <alviro.iskandar@gmail.com>,
+        kernel test robot <lkp@intel.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        "Chen, Rong A" <rong.a.chen@intel.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Ammar Faizi <ammarfaizi2@gnuweeb.org>
+Subject: [PATCH io_uring-5.17] io_uring: Fix build error potential reading uninitialized value
+Date:   Mon,  7 Feb 2022 18:43:15 +0700
+Message-Id: <20220207114315.555413-1-ammarfaizi2@gnuweeb.org>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <d33bb5a9-8173-f65b-f653-51fc0681c6d6@intel.com>
+References: <d33bb5a9-8173-f65b-f653-51fc0681c6d6@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -68,30 +57,64 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This is because ctx->io_ev_fd is rcu_dereference_protected using
-ctx->uring_lock in io_eventfd_unregister. Not locking the function
-resulted in suspicious RCU usage reported by kernel test robot.
+From: Alviro Iskandar Setiawan <alviro.iskandar@gmail.com>
 
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Signed-off-by: Usama Arif <usama.arif@bytedance.com>
+In io_recv() if import_single_range() fails, the @flags variable is
+uninitialized, then it will goto out_free.
+
+After the goto, the compiler doesn't know that (ret < min_ret) is
+always true, so it thinks the "if ((flags & MSG_WAITALL) ..."  path
+could be taken.
+
+The complaint comes from gcc-9 (Debian 9.3.0-22) 9.3.0:
+```
+  fs/io_uring.c:5238 io_recvfrom() error: uninitialized symbol 'flags'
+```
+Fix this by bypassing the @ret and @flags check when
+import_single_range() fails.
+
+Reasons:
+ 1. import_single_range() only returns -EFAULT when it fails.
+ 2. At that point @flags is uninitialized and shouldn't be read.
+
+Reported-by: kernel test robot <lkp@intel.com>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reported-by: "Chen, Rong A" <rong.a.chen@intel.com>
+Link: https://lore.gnuweeb.org/timl/d33bb5a9-8173-f65b-f653-51fc0681c6d6@intel.com/
+Cc: Pavel Begunkov <asml.silence@gmail.com>
+Suggested-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+Fixes: 7297ce3d59449de49d3c9e1f64ae25488750a1fc ("io_uring: improve send/recv error handling")
+Signed-off-by: Alviro Iskandar Setiawan <alviro.iskandar@gmail.com>
+Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 ---
- fs/io_uring.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/io_uring.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index ad8f84376955..dbc9d3f3f6c5 100644
+index 2e04f718319d..3445c4da0153 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -9471,8 +9471,8 @@ static __cold void io_ring_ctx_free(struct io_ring_ctx *ctx)
- 		__io_sqe_files_unregister(ctx);
- 	if (ctx->rings)
- 		__io_cqring_overflow_flush(ctx, true);
--	mutex_unlock(&ctx->uring_lock);
- 	io_eventfd_unregister(ctx);
-+	mutex_unlock(&ctx->uring_lock);
- 	io_destroy_buffers(ctx);
- 	if (ctx->sq_creds)
- 		put_cred(ctx->sq_creds);
+@@ -5228,7 +5228,6 @@ static int io_recv(struct io_kiocb *req, unsigned int issue_flags)
+ 		min_ret = iov_iter_count(&msg.msg_iter);
+ 
+ 	ret = sock_recvmsg(sock, &msg, flags);
+-out_free:
+ 	if (ret < min_ret) {
+ 		if (ret == -EAGAIN && force_nonblock)
+ 			return -EAGAIN;
+@@ -5236,9 +5235,9 @@ static int io_recv(struct io_kiocb *req, unsigned int issue_flags)
+ 			ret = -EINTR;
+ 		req_set_fail(req);
+ 	} else if ((flags & MSG_WAITALL) && (msg.msg_flags & (MSG_TRUNC | MSG_CTRUNC))) {
++out_free:
+ 		req_set_fail(req);
+ 	}
+-
+ 	__io_req_complete(req, issue_flags, ret, io_put_kbuf(req));
+ 	return 0;
+ }
+
+base-commit: f6133fbd373811066c8441737e65f384c8f31974
 -- 
-2.25.1
+2.32.0
 

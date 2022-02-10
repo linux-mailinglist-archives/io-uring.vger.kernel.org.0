@@ -2,189 +2,119 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 431044B0E42
-	for <lists+io-uring@lfdr.de>; Thu, 10 Feb 2022 14:19:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1963F4B11AC
+	for <lists+io-uring@lfdr.de>; Thu, 10 Feb 2022 16:29:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242065AbiBJNR7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 10 Feb 2022 08:17:59 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:48946 "EHLO
+        id S243614AbiBJP3o (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 10 Feb 2022 10:29:44 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:59640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242072AbiBJNR5 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 10 Feb 2022 08:17:57 -0500
-Received: from mta-01.yadro.com (mta-02.yadro.com [89.207.88.252])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C0FF22F;
-        Thu, 10 Feb 2022 05:17:56 -0800 (PST)
-Received: from localhost (unknown [127.0.0.1])
-        by mta-01.yadro.com (Postfix) with ESMTP id 245DF47827;
-        Thu, 10 Feb 2022 13:09:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=yadro.com; h=
-        content-type:content-type:content-transfer-encoding:mime-version
-        :references:in-reply-to:x-mailer:message-id:date:date:subject
-        :subject:from:from:received:received:received; s=mta-01; t=
-        1644498551; x=1646312952; bh=yiWgb8zfUEyXzRBjxEPMjRX13PSIX80va5z
-        tpeaSm9E=; b=MRpwAx43q7O3OJv7dIuLBiVqw46iYqp4QAm5Um39Nq+BerVQRUv
-        JHBulRcdgLkISBknV5qKTHqQPy6Q19dVXU/VpRpcAI+3z35ubNpEfsgYNZ6pQijn
-        9y3dTSGY0aUddYW7HrX8u9RkZ/Lez/kS0fyxywJwkV2p8/EDhWUqN3Vc=
-X-Virus-Scanned: amavisd-new at yadro.com
-Received: from mta-01.yadro.com ([127.0.0.1])
-        by localhost (mta-01.yadro.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 6BzW_HNHStRw; Thu, 10 Feb 2022 16:09:11 +0300 (MSK)
-Received: from T-EXCH-04.corp.yadro.com (t-exch-04.corp.yadro.com [172.17.100.104])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mta-01.yadro.com (Postfix) with ESMTPS id D96CC41846;
-        Thu, 10 Feb 2022 16:09:11 +0300 (MSK)
-Received: from localhost.localdomain (10.178.114.63) by
- T-EXCH-04.corp.yadro.com (172.17.100.104) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id
- 15.1.669.32; Thu, 10 Feb 2022 16:09:10 +0300
-From:   "Alexander V. Buev" <a.buev@yadro.com>
-To:     <linux-block@vger.kernel.org>
-CC:     <io-uring@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@lst.de>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Chaitanya Kulkarni <chaitanyak@nvidia.com>,
-        Mikhail Malygin <m.malygin@yadro.com>, <linux@yadro.com>,
-        "Alexander V. Buev" <a.buev@yadro.com>
-Subject: [PATCH v2 3/3] block: fops: handle IOCB_USE_PI in direct IO
-Date:   Thu, 10 Feb 2022 16:08:25 +0300
-Message-ID: <20220210130825.657520-4-a.buev@yadro.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220210130825.657520-1-a.buev@yadro.com>
-References: <20220210130825.657520-1-a.buev@yadro.com>
+        with ESMTP id S234557AbiBJP3n (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 10 Feb 2022 10:29:43 -0500
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D1DCC5
+        for <io-uring@vger.kernel.org>; Thu, 10 Feb 2022 07:29:45 -0800 (PST)
+Received: by mail-pj1-x1029.google.com with SMTP id v13-20020a17090ac90d00b001b87bc106bdso8862840pjt.4
+        for <io-uring@vger.kernel.org>; Thu, 10 Feb 2022 07:29:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XReVY2xQtHetUZYvyEAVJNhsvn3U+rEGg4o8H/7DTLc=;
+        b=Jlh8jCc2fq18b8yPUJsd2qBJb4Fdwb7OR+mzBaaIP1Jk5jw5hkbAcZy6I/XbHtRkOe
+         7mlQ7ckygOGe/0FTs+3lXTKnDN5eSGFPmG4ZvloTITOpf+HLJoZ59Co229sPknHmQeCC
+         wNAVX5rf1HyQE5JV0UxVQ31UBZVMr19vZ5N6zTUIRy9k99CkWKxd0DYyk2eeEk/vI8nN
+         galsylQyIXHk1f1L7hLwUWDSgstMhPF5iJrBriihElB6Ks5/PWMt1l/LFLN4YuEvPD5c
+         JYcPu/gxSyMz1LILKgX8inQHPpPhKniBsc5VBXhZY2owpJksYOTIasv8Ftu1u/lGb03o
+         KB2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XReVY2xQtHetUZYvyEAVJNhsvn3U+rEGg4o8H/7DTLc=;
+        b=zTQ3DeZRTu2CgH1THFXAEVdgYRQPC1maFSpJ7olxQrCSv+d21ofEix5DXkL2xN6tBH
+         W4vFkHvFJLnZfcit+ldpvMBXfCYU3iodXWQz5AsJuNQMSKCTxLrDaw/Eyg47H6uyMRXo
+         2K6FKBqKhP1o+rm+g4/LjS7d24zpLVPL3jiikI5mqeYzVAoJN6xHL3lOO7EJG9kOpEXe
+         HwTw0G5bXtVjWetG55+YVk9qhqIe7IEsIg9kEr3TzwwVoPu5NyamD5CV5fW1Gt9v+WqO
+         8aMZysQMgf9yDQzrxJDBPxV/kYbh1XlKN5bW1DL3nViPrsCaJTfN78J+vgpJsfhp8gIk
+         2cXA==
+X-Gm-Message-State: AOAM5304sEYw8ep1TjZuFoMckD9bW/Nv0oArYpfcRYttlgldrGJqXsxk
+        N6hYF1/CbDfZH/ZmRF313jqPQSac83k=
+X-Google-Smtp-Source: ABdhPJwaC32t5N7Que1odAMj/S7ZnJe4TkUmnp0rPmFcAUtF1yTXg3xmFSh4OIzZjF/HCQIkTQaeOQ==
+X-Received: by 2002:a17:902:8215:: with SMTP id x21mr315423pln.10.1644506984288;
+        Thu, 10 Feb 2022 07:29:44 -0800 (PST)
+Received: from localhost.localdomain ([240f:34:212d:1:850b:c1e2:34a1:2aa4])
+        by smtp.gmail.com with ESMTPSA id c8sm24844022pfv.57.2022.02.10.07.29.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Feb 2022 07:29:43 -0800 (PST)
+From:   Akinobu Mita <akinobu.mita@gmail.com>
+To:     io-uring@vger.kernel.org
+Cc:     Akinobu Mita <akinobu.mita@gmail.com>
+Subject: [PATCH] Fix __io_uring_get_cqe() for IORING_SETUP_IOPOLL
+Date:   Fri, 11 Feb 2022 00:29:24 +0900
+Message-Id: <20220210152924.14413-1-akinobu.mita@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.178.114.63]
-X-ClientProxiedBy: T-EXCH-01.corp.yadro.com (172.17.10.101) To
- T-EXCH-04.corp.yadro.com (172.17.100.104)
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Check that the size of integrity data correspond to device integrity
-profile and data size. Split integrity data to the different bio's
-in case of to big orginal bio (together with normal data).
+If __io_uring_get_cqe() is called for the ring setup with IOPOLL, we must enter the kernel
+to get completion events. Even if that is called with wait_nr is zero.
 
-Signed-off-by: Alexander V. Buev <a.buev@yadro.com>
+Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
 ---
- block/fops.c | 62 ++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 62 insertions(+)
+ src/queue.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/block/fops.c b/block/fops.c
-index 4f59e0f5bf30..99c670b9f7d4 100644
---- a/block/fops.c
-+++ b/block/fops.c
-@@ -16,6 +16,7 @@
- #include <linux/suspend.h>
- #include <linux/fs.h>
- #include <linux/module.h>
-+#include <linux/blk-integrity.h>
- #include "blk.h"
+diff --git a/src/queue.c b/src/queue.c
+index eb0c736..f8384d1 100644
+--- a/src/queue.c
++++ b/src/queue.c
+@@ -31,6 +31,11 @@ static inline bool cq_ring_needs_flush(struct io_uring *ring)
+ 	return IO_URING_READ_ONCE(*ring->sq.kflags) & IORING_SQ_CQ_OVERFLOW;
+ }
  
- static inline struct inode *bdev_file_inode(struct file *file)
-@@ -44,6 +45,19 @@ static unsigned int dio_bio_write_op(struct kiocb *iocb)
- 
- #define DIO_INLINE_BIO_VECS 4
- 
-+static int __bio_integrity_add_iovec(struct bio *bio, struct iov_iter *pi_iter)
++static inline bool cq_ring_needs_enter(struct io_uring *ring)
 +{
-+	struct blk_integrity *bi = bdev_get_integrity(bio->bi_bdev);
-+	unsigned int pi_len = bio_integrity_bytes(bi, bio->bi_iter.bi_size >> SECTOR_SHIFT);
-+	size_t iter_count = pi_iter->count-pi_len;
-+	int ret;
-+
-+	iov_iter_truncate(pi_iter, pi_len);
-+	ret = bio_integrity_add_iovec(bio, pi_iter);
-+	pi_iter->count = iter_count;
-+	return ret;
++	return (ring->flags & IORING_SETUP_IOPOLL) || cq_ring_needs_flush(ring);
 +}
 +
- static void blkdev_bio_end_io_simple(struct bio *bio)
- {
- 	struct task_struct *waiter = bio->bi_private;
-@@ -101,6 +115,14 @@ static ssize_t __blkdev_direct_IO_simple(struct kiocb *iocb,
- 	if (iocb->ki_flags & IOCB_HIPRI)
- 		bio_set_polled(&bio, iocb);
+ static int __io_uring_peek_cqe(struct io_uring *ring,
+ 			       struct io_uring_cqe **cqe_ptr,
+ 			       unsigned *nr_available)
+@@ -84,7 +89,6 @@ static int _io_uring_get_cqe(struct io_uring *ring, struct io_uring_cqe **cqe_pt
  
-+	if (iocb->ki_flags & IOCB_USE_PI) {
-+		ret = __bio_integrity_add_iovec(&bio, iocb->pi_iter);
-+		if (ret) {
-+			bio_release_pages(&bio, should_dirty);
-+			goto out;
-+		}
-+	}
-+
- 	submit_bio(&bio);
- 	for (;;) {
- 		set_current_state(TASK_UNINTERRUPTIBLE);
-@@ -252,6 +274,16 @@ static ssize_t __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
- 		pos += bio->bi_iter.bi_size;
- 
- 		nr_pages = bio_iov_vecs_to_alloc(iter, BIO_MAX_VECS);
-+
-+		if (iocb->ki_flags & IOCB_USE_PI) {
-+			ret = __bio_integrity_add_iovec(bio, iocb->pi_iter);
-+			if (ret) {
-+				bio->bi_status = BLK_STS_IOERR;
-+				bio_endio(bio);
-+				break;
-+			}
-+		}
-+
- 		if (!nr_pages) {
- 			submit_bio(bio);
+ 	do {
+ 		bool need_enter = false;
+-		bool cq_overflow_flush = false;
+ 		unsigned flags = 0;
+ 		unsigned nr_available;
+ 		int ret;
+@@ -93,13 +97,13 @@ static int _io_uring_get_cqe(struct io_uring *ring, struct io_uring_cqe **cqe_pt
+ 		if (err)
  			break;
-@@ -358,6 +390,15 @@ static ssize_t __blkdev_direct_IO_async(struct kiocb *iocb,
- 		task_io_account_write(bio->bi_iter.bi_size);
- 	}
- 
-+	if (iocb->ki_flags & IOCB_USE_PI) {
-+		ret = __bio_integrity_add_iovec(bio, iocb->pi_iter);
-+		if (ret) {
-+			bio->bi_status = BLK_STS_IOERR;
-+			bio_endio(bio);
-+			return ret;
-+		}
-+	}
-+
- 	if (iocb->ki_flags & IOCB_HIPRI) {
- 		bio->bi_opf |= REQ_POLLED | REQ_NOWAIT;
- 		submit_bio(bio);
-@@ -377,6 +418,27 @@ static ssize_t blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- 	if (!iov_iter_count(iter))
- 		return 0;
- 
-+	if (iocb->ki_flags & IOCB_USE_PI) {
-+		struct block_device *bdev = iocb->ki_filp->private_data;
-+		struct blk_integrity *bi = bdev_get_integrity(bdev);
-+		unsigned int intervals;
-+
-+		if (unlikely(!(bi && bi->tuple_size &&
-+				bi->flags & BLK_INTEGRITY_DEVICE_CAPABLE))) {
-+			pr_err("Device %d:%d is not integrity capable",
-+				MAJOR(bdev->bd_dev), MINOR(bdev->bd_dev));
-+			return -EINVAL;
-+		}
-+
-+		intervals = bio_integrity_intervals(bi, iter->count >> 9);
-+		if (unlikely(intervals * bi->tuple_size > iocb->pi_iter->count)) {
-+			pr_err("Integrity & data size mismatch data=%zu integrity=%zu intervals=%u tuple=%u",
-+				iter->count, iocb->pi_iter->count,
-+				intervals, bi->tuple_size);
-+				return -EINVAL;
-+		}
-+	}
-+
- 	nr_pages = bio_iov_vecs_to_alloc(iter, BIO_MAX_VECS + 1);
- 	if (likely(nr_pages <= BIO_MAX_VECS)) {
- 		if (is_sync_kiocb(iocb))
+ 		if (!cqe && !data->wait_nr && !data->submit) {
+-			if (!cq_ring_needs_flush(ring)) {
++			if (!cq_ring_needs_enter(ring)) {
+ 				err = -EAGAIN;
+ 				break;
+ 			}
+-			cq_overflow_flush = true;
++			need_enter = true;
+ 		}
+-		if (data->wait_nr > nr_available || cq_overflow_flush) {
++		if (data->wait_nr > nr_available || need_enter) {
+ 			flags = IORING_ENTER_GETEVENTS | data->get_flags;
+ 			need_enter = true;
+ 		}
 -- 
-2.34.1
+2.25.1
 

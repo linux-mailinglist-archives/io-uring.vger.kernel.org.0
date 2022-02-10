@@ -2,119 +2,124 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1963F4B11AC
-	for <lists+io-uring@lfdr.de>; Thu, 10 Feb 2022 16:29:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0574D4B11D6
+	for <lists+io-uring@lfdr.de>; Thu, 10 Feb 2022 16:40:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243614AbiBJP3o (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 10 Feb 2022 10:29:44 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:59640 "EHLO
+        id S243686AbiBJPjn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 10 Feb 2022 10:39:43 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:35950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234557AbiBJP3n (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 10 Feb 2022 10:29:43 -0500
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D1DCC5
-        for <io-uring@vger.kernel.org>; Thu, 10 Feb 2022 07:29:45 -0800 (PST)
-Received: by mail-pj1-x1029.google.com with SMTP id v13-20020a17090ac90d00b001b87bc106bdso8862840pjt.4
-        for <io-uring@vger.kernel.org>; Thu, 10 Feb 2022 07:29:45 -0800 (PST)
+        with ESMTP id S243694AbiBJPjm (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 10 Feb 2022 10:39:42 -0500
+Received: from mail-il1-x12c.google.com (mail-il1-x12c.google.com [IPv6:2607:f8b0:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DBD69C
+        for <io-uring@vger.kernel.org>; Thu, 10 Feb 2022 07:39:43 -0800 (PST)
+Received: by mail-il1-x12c.google.com with SMTP id n5so4615649ilk.12
+        for <io-uring@vger.kernel.org>; Thu, 10 Feb 2022 07:39:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=XReVY2xQtHetUZYvyEAVJNhsvn3U+rEGg4o8H/7DTLc=;
-        b=Jlh8jCc2fq18b8yPUJsd2qBJb4Fdwb7OR+mzBaaIP1Jk5jw5hkbAcZy6I/XbHtRkOe
-         7mlQ7ckygOGe/0FTs+3lXTKnDN5eSGFPmG4ZvloTITOpf+HLJoZ59Co229sPknHmQeCC
-         wNAVX5rf1HyQE5JV0UxVQ31UBZVMr19vZ5N6zTUIRy9k99CkWKxd0DYyk2eeEk/vI8nN
-         galsylQyIXHk1f1L7hLwUWDSgstMhPF5iJrBriihElB6Ks5/PWMt1l/LFLN4YuEvPD5c
-         JYcPu/gxSyMz1LILKgX8inQHPpPhKniBsc5VBXhZY2owpJksYOTIasv8Ftu1u/lGb03o
-         KB2Q==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=D7GM+GqUKAF1DIfoNZ7Ua9NE0gBe59nnht7Zuf81U1g=;
+        b=k7PPK5rKCEMvuJXrE5mKDNy0HYl289BTEcQvBDGZNwtPJrRwPt7tJAkxebsDu1/sPf
+         KOy572UE8SqYOPPXweQTXI6XW7UHH9/x72W8wYhe4sZG3pK1ZtzUfIxquiYSI1xHKYQe
+         zIeEUbq9JyUbm0BeqI6HVDyvr26GOpe47qxaXDJ3WBL1Cup0HNXmypY/0HGujPwwlMyn
+         tR1sEnfZPVnSjimL1Pc9xPaU9X/5vIhN6ldmh57V0Hdj4bsSXBlhT/v4nRSdJV74wbRg
+         RrRXh/LmX9LiTTTAOq1CjHrrht43z2t/vjejUSLLYbuYu2PHI+QBo1lGUpxWgI1C7JGy
+         7H8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=XReVY2xQtHetUZYvyEAVJNhsvn3U+rEGg4o8H/7DTLc=;
-        b=zTQ3DeZRTu2CgH1THFXAEVdgYRQPC1maFSpJ7olxQrCSv+d21ofEix5DXkL2xN6tBH
-         W4vFkHvFJLnZfcit+ldpvMBXfCYU3iodXWQz5AsJuNQMSKCTxLrDaw/Eyg47H6uyMRXo
-         2K6FKBqKhP1o+rm+g4/LjS7d24zpLVPL3jiikI5mqeYzVAoJN6xHL3lOO7EJG9kOpEXe
-         HwTw0G5bXtVjWetG55+YVk9qhqIe7IEsIg9kEr3TzwwVoPu5NyamD5CV5fW1Gt9v+WqO
-         8aMZysQMgf9yDQzrxJDBPxV/kYbh1XlKN5bW1DL3nViPrsCaJTfN78J+vgpJsfhp8gIk
-         2cXA==
-X-Gm-Message-State: AOAM5304sEYw8ep1TjZuFoMckD9bW/Nv0oArYpfcRYttlgldrGJqXsxk
-        N6hYF1/CbDfZH/ZmRF313jqPQSac83k=
-X-Google-Smtp-Source: ABdhPJwaC32t5N7Que1odAMj/S7ZnJe4TkUmnp0rPmFcAUtF1yTXg3xmFSh4OIzZjF/HCQIkTQaeOQ==
-X-Received: by 2002:a17:902:8215:: with SMTP id x21mr315423pln.10.1644506984288;
-        Thu, 10 Feb 2022 07:29:44 -0800 (PST)
-Received: from localhost.localdomain ([240f:34:212d:1:850b:c1e2:34a1:2aa4])
-        by smtp.gmail.com with ESMTPSA id c8sm24844022pfv.57.2022.02.10.07.29.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Feb 2022 07:29:43 -0800 (PST)
-From:   Akinobu Mita <akinobu.mita@gmail.com>
-To:     io-uring@vger.kernel.org
-Cc:     Akinobu Mita <akinobu.mita@gmail.com>
-Subject: [PATCH] Fix __io_uring_get_cqe() for IORING_SETUP_IOPOLL
-Date:   Fri, 11 Feb 2022 00:29:24 +0900
-Message-Id: <20220210152924.14413-1-akinobu.mita@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        bh=D7GM+GqUKAF1DIfoNZ7Ua9NE0gBe59nnht7Zuf81U1g=;
+        b=qBas2Tc+eMk3lRhLkorb++jUrBrA9wKHHO1XatOuUKeLGyQvPFJbqhzsprbC1xU1Se
+         QcM0zz6CM3tK5CZH2k9WkUlCmXpu8EhwP1vdxfknmWCwghAo3b64UcFOhH9OURiE0IdR
+         H8hEgTWRFB6fkXf73kZ7MFsx4toYFxz2qz0UonelD1HUIE5nGs9y+N4+Dman9Zs9DmZW
+         a8PH1ZCqHnNyY02goU4scLnfpUoPnHj2Cp/Wh+wS9GBfQPDYMbtsh99u63P9WarqjbJv
+         WNSmTzdNNiwdKG2uiFLIN+AJH05ubETqeVanQtqx+BqPv08/JEArrN4uvN2HG+hom4ER
+         wF9A==
+X-Gm-Message-State: AOAM533Rz0OlrSaVf0YWCiaLcmQJ9UAGokOmXXFeI6+AktqpEwwKONUX
+        jxIkb3dNVjN+h/xIvLCN1ZBN1g==
+X-Google-Smtp-Source: ABdhPJyjDh1UwbeWcK5TMRqqDXA235k/ZGoezkKzxuVJP03HulbT5qnf3LMACpPuqUJPSNMSpOYygQ==
+X-Received: by 2002:a92:ca4f:: with SMTP id q15mr4388023ilo.157.1644507582796;
+        Thu, 10 Feb 2022 07:39:42 -0800 (PST)
+Received: from [192.168.1.30] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id q18sm7604670ils.78.2022.02.10.07.39.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Feb 2022 07:39:42 -0800 (PST)
+Subject: Re: [PATCH v2 2/3] block: io_uring: add READV_PI/WRITEV_PI operations
+To:     "Alexander V. Buev" <a.buev@yadro.com>, linux-block@vger.kernel.org
+Cc:     io-uring@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Chaitanya Kulkarni <chaitanyak@nvidia.com>,
+        Mikhail Malygin <m.malygin@yadro.com>, linux@yadro.com
+References: <20220210130825.657520-1-a.buev@yadro.com>
+ <20220210130825.657520-3-a.buev@yadro.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <6d505bdc-d687-a9e7-54a1-9a2e662e9707@kernel.dk>
+Date:   Thu, 10 Feb 2022 08:39:39 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20220210130825.657520-3-a.buev@yadro.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-If __io_uring_get_cqe() is called for the ring setup with IOPOLL, we must enter the kernel
-to get completion events. Even if that is called with wait_nr is zero.
+On 2/10/22 6:08 AM, Alexander V. Buev wrote:
+> Added new READV_PI/WRITEV_PI operations to io_uring.
+> Added new pi_addr & pi_len fields to SQE struct.
+> Added new pi_iter field and IOCB_USE_PI flag to kiocb struct.
+> Make corresponding corrections to io uring trace event.
+> 
+> Signed-off-by: Alexander V. Buev <a.buev@yadro.com>
+> ---
+>  fs/io_uring.c                   | 209 ++++++++++++++++++++++++++++++++
+>  include/linux/fs.h              |   2 +
+>  include/trace/events/io_uring.h |  17 +--
+>  include/uapi/linux/io_uring.h   |   6 +-
+>  include/uapi/linux/uio.h        |   3 +-
+>  5 files changed, 228 insertions(+), 9 deletions(-)
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 2e04f718319d..6e941040f228 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -563,6 +563,19 @@ struct io_rw {
+>  	u64				len;
+>  };
+>  
+> +struct io_rw_pi_state {
+> +	struct iov_iter			iter;
+> +	struct iov_iter_state		iter_state;
+> +	struct iovec			fast_iov[UIO_FASTIOV_PI];
+> +};
+> +
+> +struct io_rw_pi {
+> +	struct io_rw			rw;
+> +	struct iovec			*pi_iov;
+> +	u32				nr_pi_segs;
+> +	struct io_rw_pi_state		*s;
+> +};
 
-Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
----
- src/queue.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+One immediate issue I see here is that io_rw_pi is big, and we try very
+hard to keep the per-command payload to 64-bytes. This would be 88 bytes
+by my count :-/
 
-diff --git a/src/queue.c b/src/queue.c
-index eb0c736..f8384d1 100644
---- a/src/queue.c
-+++ b/src/queue.c
-@@ -31,6 +31,11 @@ static inline bool cq_ring_needs_flush(struct io_uring *ring)
- 	return IO_URING_READ_ONCE(*ring->sq.kflags) & IORING_SQ_CQ_OVERFLOW;
- }
- 
-+static inline bool cq_ring_needs_enter(struct io_uring *ring)
-+{
-+	return (ring->flags & IORING_SETUP_IOPOLL) || cq_ring_needs_flush(ring);
-+}
-+
- static int __io_uring_peek_cqe(struct io_uring *ring,
- 			       struct io_uring_cqe **cqe_ptr,
- 			       unsigned *nr_available)
-@@ -84,7 +89,6 @@ static int _io_uring_get_cqe(struct io_uring *ring, struct io_uring_cqe **cqe_pt
- 
- 	do {
- 		bool need_enter = false;
--		bool cq_overflow_flush = false;
- 		unsigned flags = 0;
- 		unsigned nr_available;
- 		int ret;
-@@ -93,13 +97,13 @@ static int _io_uring_get_cqe(struct io_uring *ring, struct io_uring_cqe **cqe_pt
- 		if (err)
- 			break;
- 		if (!cqe && !data->wait_nr && !data->submit) {
--			if (!cq_ring_needs_flush(ring)) {
-+			if (!cq_ring_needs_enter(ring)) {
- 				err = -EAGAIN;
- 				break;
- 			}
--			cq_overflow_flush = true;
-+			need_enter = true;
- 		}
--		if (data->wait_nr > nr_available || cq_overflow_flush) {
-+		if (data->wait_nr > nr_available || need_enter) {
- 			flags = IORING_ENTER_GETEVENTS | data->get_flags;
- 			need_enter = true;
- 		}
+Do you need everything from io_rw? If not, I'd just make io_rw_pi
+contain the bits you need and see if you can squeeze it into the
+existing cacheline.
+
 -- 
-2.25.1
+Jens Axboe
 

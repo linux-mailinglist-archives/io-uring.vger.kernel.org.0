@@ -2,73 +2,81 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F4424B2E38
-	for <lists+io-uring@lfdr.de>; Fri, 11 Feb 2022 21:06:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 272624B3004
+	for <lists+io-uring@lfdr.de>; Fri, 11 Feb 2022 23:03:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353162AbiBKUFZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 11 Feb 2022 15:05:25 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:49828 "EHLO
+        id S244180AbiBKWDr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 11 Feb 2022 17:03:47 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:37520 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353136AbiBKUFX (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 11 Feb 2022 15:05:23 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BC2BCE5
-        for <io-uring@vger.kernel.org>; Fri, 11 Feb 2022 12:05:22 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CC0A261FD6
-        for <io-uring@vger.kernel.org>; Fri, 11 Feb 2022 20:05:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 17B21C340F7;
-        Fri, 11 Feb 2022 20:05:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1644609921;
-        bh=Xr0eg1NAHeSvwS+nfJH/lC4d0NairnZQho+qCaHbAyw=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=ekIOBuqWWuGbFfAexzs92ccDNPWmpLNapiJFKh7oET/Xc0/V7U/aUwnqJ15GzEyWS
-         O6uE2krVldnqGEuaVH0IM9xoPECdUUOoc6uJCezk3fVTTTIedGaF/AuUv2ptNrjgAy
-         wAmPDYioJF6SUioe8pUSwqlY/GKMlxgYQCp4UyDh3eLVX9XDkz/kNpOTtP9LBw/46E
-         8xNaV/j/IOjPDAm6IO6MOHOeP11dCFiTmha6C/mczDlP6KoWheRN+qo8ENbznylxZA
-         JschXo9o9qNyGk02xQZm7Zlgn3LpAmbisa1zxmhqhVppEqKutWTItOBMNTXJEJCykG
-         eEUIdKGqbXBlQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 052F3E6BBD2;
-        Fri, 11 Feb 2022 20:05:21 +0000 (UTC)
-Subject: Re: [GIT PULL] io_uring fixes for 5.17-rc4
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <bdc1cfce-e78b-bf75-de0a-77e13116e710@kernel.dk>
-References: <bdc1cfce-e78b-bf75-de0a-77e13116e710@kernel.dk>
-X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
-X-PR-Tracked-Message-Id: <bdc1cfce-e78b-bf75-de0a-77e13116e710@kernel.dk>
-X-PR-Tracked-Remote: git://git.kernel.dk/linux-block.git tags/io_uring-5.17-2022-02-11
-X-PR-Tracked-Commit-Id: 0a3f1e0beacf6cc8ae5f846b0641c1df476e83d6
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 199b7f84c428d90e1858dafa583f7b1d587cbeb8
-Message-Id: <164460992101.1412.12478648606269035084.pr-tracker-bot@kernel.org>
-Date:   Fri, 11 Feb 2022 20:05:21 +0000
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        io-uring <io-uring@vger.kernel.org>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+        with ESMTP id S236288AbiBKWDr (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 11 Feb 2022 17:03:47 -0500
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 844F8C72
+        for <io-uring@vger.kernel.org>; Fri, 11 Feb 2022 14:03:45 -0800 (PST)
+Received: by mail-pl1-x62a.google.com with SMTP id c3so5740166pls.5
+        for <io-uring@vger.kernel.org>; Fri, 11 Feb 2022 14:03:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=from:to:in-reply-to:references:subject:message-id:date:mime-version
+         :content-transfer-encoding;
+        bh=2POW2w7lvVbXmXZyVW8XR9h7Hdpvjp2im19fardYC30=;
+        b=JapK++UtR09u5svIH4oZ0T3AY9fKJDokbPVDRPRrOeBW4iptertyc93s2iXEuGdM3Q
+         g+MZZnusxgiWkw8Flzf726yFtKvwWb2zXNpkCgx5LOeggEcyoMd5VE64ah/+36Cbskin
+         MTicVpQtNL5zJj+PiLOB1aFlA1Sa+Vdx3dCqahefGfWCjwvoDkKEJA3OaodEOl7Xn2hU
+         d7Dl6xwKuaQAQvkelca/PjC2lsA0N7lYNt90hRCAfl2eu3jWss6NKQhZdrSKg4ulBjvw
+         PMrfh852wEfG7gxwlJLmQVteCtdkGkeMb+4a0/FvQ/u50ZCdyAts6O/Z/c6RgRxbs91c
+         ED2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:in-reply-to:references:subject
+         :message-id:date:mime-version:content-transfer-encoding;
+        bh=2POW2w7lvVbXmXZyVW8XR9h7Hdpvjp2im19fardYC30=;
+        b=aTIXPvp5zJNHUiqgooOIml/22FuU30NLIP1ncaKiTQvea9ybU7NKnlCq2owh80ITdY
+         VijcTxqt2+uXbBkKgDn4O1iXGFV1m9A+HQpPEtNa0baiupWVB48ymJAN4Gq+WIDG7e/P
+         kTCC7XAXFBUvvU+TOdUymgtgoEHvlS9bk4Dj8NRQ/C1IOXjZgmIJGdeljPAngR701W9U
+         9awTtkiXqW/pH/nmg7mFTTqANn1u31E+C2fqaro0v722DGfEE9bj6W+gQhXzleNqICMt
+         a+xP0iqMwCDYqnB6BnUGZ36SgbnuoFunkjELzLauanekBfd5tiEXaNDgNih3r7dfdfZ6
+         1y0Q==
+X-Gm-Message-State: AOAM530N8rme13Ytp/bGqcF2jUoRAbSu/ZzJRzfAzz2dibv0t1JYGwA/
+        4LvedbsfUvDb4OimfJ0IqsvBMA==
+X-Google-Smtp-Source: ABdhPJxwbBOVdZ/vkxmRHAIGWuMntJED5uR0H5UJlDNgr+AUFK1f23UFt6qs1wb2XeDpRTHZzC5wow==
+X-Received: by 2002:a17:90a:1a47:: with SMTP id 7mr2464695pjl.222.1644617024902;
+        Fri, 11 Feb 2022 14:03:44 -0800 (PST)
+Received: from [192.168.1.100] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 142sm19428431pfy.41.2022.02.11.14.03.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Feb 2022 14:03:44 -0800 (PST)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     io-uring@vger.kernel.org, Akinobu Mita <akinobu.mita@gmail.com>
+In-Reply-To: <20220210152924.14413-1-akinobu.mita@gmail.com>
+References: <20220210152924.14413-1-akinobu.mita@gmail.com>
+Subject: Re: [PATCH] Fix __io_uring_get_cqe() for IORING_SETUP_IOPOLL
+Message-Id: <164461702387.21078.8567133944140020262.b4-ty@kernel.dk>
+Date:   Fri, 11 Feb 2022 15:03:43 -0700
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The pull request you sent on Fri, 11 Feb 2022 09:49:06 -0700:
+On Fri, 11 Feb 2022 00:29:24 +0900, Akinobu Mita wrote:
+> If __io_uring_get_cqe() is called for the ring setup with IOPOLL, we must enter the kernel
+> to get completion events. Even if that is called with wait_nr is zero.
+> 
+> 
 
-> git://git.kernel.dk/linux-block.git tags/io_uring-5.17-2022-02-11
+Applied, thanks!
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/199b7f84c428d90e1858dafa583f7b1d587cbeb8
+[1/1] Fix __io_uring_get_cqe() for IORING_SETUP_IOPOLL
+      commit: 333561791386112e4801b61be15feaf4044c02c6
 
-Thank you!
-
+Best regards,
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Jens Axboe <axboe@kernel.dk>

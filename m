@@ -2,113 +2,217 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 944944B5855
-	for <lists+io-uring@lfdr.de>; Mon, 14 Feb 2022 18:18:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 455194B58D4
+	for <lists+io-uring@lfdr.de>; Mon, 14 Feb 2022 18:44:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348654AbiBNRSh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 14 Feb 2022 12:18:37 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:48142 "EHLO
+        id S1344316AbiBNRo2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 14 Feb 2022 12:44:28 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:34704 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242400AbiBNRSg (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 14 Feb 2022 12:18:36 -0500
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C115488A9
-        for <io-uring@vger.kernel.org>; Mon, 14 Feb 2022 09:18:25 -0800 (PST)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R271e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0V4U-a8c_1644859101;
-Received: from 192.168.31.207(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0V4U-a8c_1644859101)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 15 Feb 2022 01:18:23 +0800
-Message-ID: <19c981c2-95aa-b56a-2fea-7c5f4a886179@linux.alibaba.com>
-Date:   Tue, 15 Feb 2022 01:18:21 +0800
+        with ESMTP id S1357201AbiBNRo1 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 14 Feb 2022 12:44:27 -0500
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 364F165481
+        for <io-uring@vger.kernel.org>; Mon, 14 Feb 2022 09:44:19 -0800 (PST)
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 21ECHTrW024115
+        for <io-uring@vger.kernel.org>; Mon, 14 Feb 2022 09:44:19 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=facebook; bh=m7BP5GqmDIx7PKgEuSQ5KsLYXYPqHLneIHsLUxw8VqM=;
+ b=q7iAOXwnhAV8vL1tvl8A+lof5fKTNAVeDvmM6GjoOo/r5iw1Fy936NzNF3esAJRYjxg3
+ Cd6pNjYKzKXDnQSQZAZCpt3eHdiIRhzFqVPYixUHs9l2iv6+Kk9v/9VXttpapId86UmT
+ 7PbCZaKCWvU/BntOURXgBiJ3zFJDqRNHYyo= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3e7py4j416-11
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <io-uring@vger.kernel.org>; Mon, 14 Feb 2022 09:44:18 -0800
+Received: from twshared0654.04.ash8.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:82::f) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.21; Mon, 14 Feb 2022 09:44:18 -0800
+Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
+        id 8C557ABBD0F3; Mon, 14 Feb 2022 09:44:09 -0800 (PST)
+From:   Stefan Roesch <shr@fb.com>
+To:     <io-uring@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <kernel-team@fb.com>
+CC:     <shr@fb.com>
+Subject: [PATCH v1 00/14] Support sync buffered writes for io-uring
+Date:   Mon, 14 Feb 2022 09:43:49 -0800
+Message-ID: <20220214174403.4147994-1-shr@fb.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH 0/3] decouple work_list protection from the big wqe->lock
-Content-Language: en-US
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <20220206095241.121485-1-haoxu@linux.alibaba.com>
- <43f8ca19-fa38-929b-88c8-cfff565fbb16@kernel.dk>
-From:   Hao Xu <haoxu@linux.alibaba.com>
-In-Reply-To: <43f8ca19-fa38-929b-88c8-cfff565fbb16@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: tYt-hoUBRkzeHyLaESlI6dWT4VRlEZ5D
+X-Proofpoint-GUID: tYt-hoUBRkzeHyLaESlI6dWT4VRlEZ5D
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2022-02-14_07,2022-02-14_03,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=fb_outbound_notspam policy=fb_outbound score=0 phishscore=0
+ clxscore=1015 spamscore=0 bulkscore=0 adultscore=0 priorityscore=1501
+ suspectscore=0 mlxlogscore=999 impostorscore=0 lowpriorityscore=0
+ mlxscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2201110000 definitions=main-2202140105
+X-FB-Internal: deliver
+X-Spam-Status: No, score=-2.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+This patch series adds support for async buffered writes. Currently
+io-uring only supports buffered writes in the slow path, by processing
+them in the io workers. With this patch series it is now possible to
+support buffered writes in the fast path. To be able to use the fast
+path the required pages must be in the page cache or they can be loaded
+with noio. Otherwise they still get punted to the slow path.
 
-On 2/12/22 00:55, Jens Axboe wrote:
-> On 2/6/22 2:52 AM, Hao Xu wrote:
->> wqe->lock is abused, it now protects acct->work_list, hash stuff,
->> nr_workers, wqe->free_list and so on. Lets first get the work_list out
->> of the wqe-lock mess by introduce a specific lock for work list. This
->> is the first step to solve the huge contension between work insertion
->> and work consumption.
->> good thing:
->>    - split locking for bound and unbound work list
->>    - reduce contension between work_list visit and (worker's)free_list.
->>
->> For the hash stuff, since there won't be a work with same file in both
->> bound and unbound work list, thus they won't visit same hash entry. it
->> works well to use the new lock to protect hash stuff.
->>
->> Results:
->> set max_unbound_worker = 4, test with echo-server:
->> nice -n -15 ./io_uring_echo_server -p 8081 -f -n 1000 -l 16
->> (-n connection, -l workload)
->> before this patch:
->> Samples: 2M of event 'cycles:ppp', Event count (approx.): 1239982111074
->> Overhead  Command          Shared Object         Symbol
->>    28.59%  iou-wrk-10021    [kernel.vmlinux]      [k] native_queued_spin_lock_slowpath
->>     8.89%  io_uring_echo_s  [kernel.vmlinux]      [k] native_queued_spin_lock_slowpath
->>     6.20%  iou-wrk-10021    [kernel.vmlinux]      [k] _raw_spin_lock
->>     2.45%  io_uring_echo_s  [kernel.vmlinux]      [k] io_prep_async_work
->>     2.36%  iou-wrk-10021    [kernel.vmlinux]      [k] _raw_spin_lock_irqsave
->>     2.29%  iou-wrk-10021    [kernel.vmlinux]      [k] io_worker_handle_work
->>     1.29%  io_uring_echo_s  [kernel.vmlinux]      [k] io_wqe_enqueue
->>     1.06%  iou-wrk-10021    [kernel.vmlinux]      [k] io_wqe_worker
->>     1.06%  io_uring_echo_s  [kernel.vmlinux]      [k] _raw_spin_lock
->>     1.03%  iou-wrk-10021    [kernel.vmlinux]      [k] __schedule
->>     0.99%  iou-wrk-10021    [kernel.vmlinux]      [k] tcp_sendmsg_locked
->>
->> with this patch:
->> Samples: 1M of event 'cycles:ppp', Event count (approx.): 708446691943
->> Overhead  Command          Shared Object         Symbol
->>    16.86%  iou-wrk-10893    [kernel.vmlinux]      [k] native_queued_spin_lock_slowpat
->>     9.10%  iou-wrk-10893    [kernel.vmlinux]      [k] _raw_spin_lock
->>     4.53%  io_uring_echo_s  [kernel.vmlinux]      [k] native_queued_spin_lock_slowpat
->>     2.87%  iou-wrk-10893    [kernel.vmlinux]      [k] io_worker_handle_work
->>     2.57%  iou-wrk-10893    [kernel.vmlinux]      [k] _raw_spin_lock_irqsave
->>     2.56%  io_uring_echo_s  [kernel.vmlinux]      [k] io_prep_async_work
->>     1.82%  io_uring_echo_s  [kernel.vmlinux]      [k] _raw_spin_lock
->>     1.33%  iou-wrk-10893    [kernel.vmlinux]      [k] io_wqe_worker
->>     1.26%  io_uring_echo_s  [kernel.vmlinux]      [k] try_to_wake_up
->>
->> spin_lock failure from 25.59% + 8.89% =  34.48% to 16.86% + 4.53% = 21.39%
->> TPS is similar, while cpu usage is from almost 400% to 350%
-> I think this looks like a good start to improving the io-wq locking. I
-> didnt spot anything immediately wrong with the series, my only worker
-> was worker->flags protection, but I _think_ that looks OK to in terms of
-> the worker itself doing the manipulations.
+If a buffered write request requires more than one page, it is possible
+that only part of the request can use the fast path, the resst will be
+completed by the io workers.
 
-Yes, I went over the code  to make sure worker->flags is manipulated by 
-the worker
+Support for async buffered writes:
+  Patch 1: fs: Add flags parameter to __block_write_begin_int
+    Add a flag parameter to the function __block_write_begin_int
+    to allow specifying a nowait parameter.
+   =20
+  Patch 2: mm: Introduce do_generic_perform_write
+    Introduce a new do_generic_perform_write function. The function
+    is split off from the existing generic_perform_write() function.
+    It allows to specify an additional flag parameter. This parameter
+    is used to specify the nowait flag.
+   =20
+  Patch 3: mm: add noio support in filemap_get_pages
+    This allows to allocate pages with noio, if a page for async
+    buffered writes is not yet loaded in the page cache.
+   =20
+  Patch 4: mm: Add support for async buffered writes
+    For async buffered writes allocate pages without blocking on the
+    allocation.
 
-itself when doing coding.
+  Patch 5: fs: split off __alloc_page_buffers function
+    Split off __alloc_page_buffers() function with new gfp_t parameter.
+
+  Patch 6: fs: split off __create_empty_buffers function
+    Split off __create_empty_buffers() function with new gfp_t parameter.
+
+  Patch 7: fs: Add aop_flags parameter to create_page_buffers()
+    Add aop_flags to create_page_buffers() function. Use atomic allocatio=
+n
+    for async buffered writes.
+
+  Patch 8: fs: add support for async buffered writes
+    Return -EAGAIN instead of -ENOMEM for async buffered writes. This
+    will cause the write request to be processed by an io worker.
+
+  Patch 9: io_uring: add support for async buffered writes
+    This enables the async buffered writes for block devices in io_uring.
+    Buffered writes are enabled for blocks that are already in the page
+    cache or can be acquired with noio.
+
+  Patch 10: io_uring: Add tracepoint for short writes
+
+Support for write throttling of async buffered writes:
+  Patch 11: sched: add new fields to task_struct
+    Add two new fields to the task_struct. These fields store the
+    deadline after which writes are no longer throttled.
+
+  Patch 12: mm: support write throttling for async buffered writes
+    This changes the balance_dirty_pages function to take an additonal
+    parameter. When nowait is specified the write throttling code no
+    longer waits synchronously for the deadline to expire. Instead
+    it sets the fields in task_struct. Once the deadline expires the
+    fields are reset.
+   =20
+  Patch 13: io_uring: support write throttling for async buffered writes
+    Adds support to io_uring for write throttling. When the writes
+    are throttled, the write requests are added to the pending io list.
+    Once the write throttling deadline expires, the writes are submitted.
+   =20
+Enable async buffered write support
+  Patch 14: fs: add flag to support async buffered writes
+    This sets the flags that enables async buffered writes for block
+    devices.
 
 
-Regards,
+Testing:
+  This patch has been tested with xfstests and fio.
 
-Hao
 
->
-> Let's queue this up for 5.18 testing, thanks!
->
+Peformance results:
+  For fio the following results have been obtained with a queue depth of
+  1 and 4k block size (runtime 600 secs):
+
+                 sequential writes:
+                 without patch                 with patch
+  throughput:       329 Mib/s                    1032Mib/s
+  iops:              82k                          264k
+  slat (nsec)      2332                          3340=20
+  clat (nsec)      9017                            60
+                  =20
+  CPU util%:         37%                          78%
+
+
+
+                 random writes:
+                 without patch                 with patch
+  throughput:       307 Mib/s                    909Mib/s
+  iops:              76k                         227k
+  slat (nsec)      2419                         3780=20
+  clat (nsec)      9934                           59
+
+  CPU util%:         57%                          88%
+
+For an io depth of 1, the new patch improves throughput by close to 3
+times and also the latency is considerably reduced. To achieve the same
+or better performance with the exisiting code an io depth of 4 is require=
+d.
+
+Especially for mixed workloads this is a considerable improvement.
+
+
+
+
+Stefan Roesch (14):
+  fs: Add flags parameter to __block_write_begin_int
+  mm: Introduce do_generic_perform_write
+  mm: add noio support in filemap_get_pages
+  mm: Add support for async buffered writes
+  fs: split off __alloc_page_buffers function
+  fs: split off __create_empty_buffers function
+  fs: Add aop_flags parameter to create_page_buffers()
+  fs: add support for async buffered writes
+  io_uring: add support for async buffered writes
+  io_uring: Add tracepoint for short writes
+  sched: add new fields to task_struct
+  mm: support write throttling for async buffered writes
+  io_uring: support write throttling for async buffered writes
+  block: enable async buffered writes for block devices.
+
+ block/fops.c                    |   5 +-
+ fs/buffer.c                     | 103 ++++++++++++++++---------
+ fs/internal.h                   |   3 +-
+ fs/io_uring.c                   | 130 +++++++++++++++++++++++++++++---
+ fs/iomap/buffered-io.c          |   4 +-
+ fs/read_write.c                 |   3 +-
+ include/linux/fs.h              |   4 +
+ include/linux/sched.h           |   3 +
+ include/linux/writeback.h       |   1 +
+ include/trace/events/io_uring.h |  25 ++++++
+ kernel/fork.c                   |   1 +
+ mm/filemap.c                    |  34 +++++++--
+ mm/folio-compat.c               |   4 +
+ mm/page-writeback.c             |  54 +++++++++----
+ 14 files changed, 298 insertions(+), 76 deletions(-)
+
+
+base-commit: f1baf68e1383f6ed93eb9cff2866d46562607a43
+--=20
+2.30.2
+

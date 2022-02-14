@@ -2,52 +2,52 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 388904B5DE4
-	for <lists+io-uring@lfdr.de>; Mon, 14 Feb 2022 23:47:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D5E7F4B5E3D
+	for <lists+io-uring@lfdr.de>; Tue, 15 Feb 2022 00:28:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231990AbiBNWrc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 14 Feb 2022 17:47:32 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:42538 "EHLO
+        id S229449AbiBNX2d (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 14 Feb 2022 18:28:33 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:50566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231680AbiBNWrc (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 14 Feb 2022 17:47:32 -0500
+        with ESMTP id S232136AbiBNX2d (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 14 Feb 2022 18:28:33 -0500
 Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D38D2637D;
-        Mon, 14 Feb 2022 14:47:23 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE21013C9F3;
+        Mon, 14 Feb 2022 15:28:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1644878843; x=1676414843;
+  t=1644881304; x=1676417304;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=K3a6Zjp2gNL+ScYW4VyycJes6+euUESuJKuGjxwjJ0g=;
-  b=F/aujAXli1omd9gToaZTlMSJcomRNChumcyDoIYlKRzHoXlmb+zvO8Lk
-   dW3indi7fctGl9A/MJYGBVOZv+J8Br0zJiGjbh3DrlNwiTdlfaW/CSHsA
-   q6DKUdkIZyMHuMHrzvvk25c3E5G+nLFqGd8KfDOuiuKuztbrJf+Oodx1k
-   O/C8+MtH2JwrH0FS7k+vaLgcX603wndtDPNDouEyLx9aB4aW6whyI0/Mq
-   RT3Hh1mOu/ANwm3FYf7BofJlv7gX1G2ONkAkG5gyBPQakhXNc0kGPvvyH
-   0l6bvb+VNG0Q8SE5T+doCJETxOp+INSOEDsC7ArdlnMruRn4IJyypFNEE
+  bh=W5UIWR8IMeyiFdF3gjE6OW8Sj3dciI4kypY/RklK8Aw=;
+  b=eu9y2CXkIQpD+I1WI4cmR9QQ3dOu4o+6AGRpt1egt8Aj3WvW+NW9Cr8L
+   tHvxbKxall0TRKbZCr9QTeQeaXyXJnBYsRarlhRgqWbE09ssgLFHtRoui
+   +ZTktBt9XiMxsYhEcpsjcQz48L7ho40J7bDVCBY+LmqbPMJu49OMPNWy4
+   63w+Od5ELSjiBUqHMnfKmxBjyFbajH39TZryx7nYk5Pr19raQR3RK+sQL
+   qwklrM+KwERgF3vzOcOWRvUwZEs26tW0/ju1OcSQzzA6WOKmlTw5nxb6T
+   wpOB8wXBS7GfbzN/UHLW0QkVYwAR/CNOZ80RiIFrHge8JvKpI7BygwI+o
    g==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10258"; a="247793797"
+X-IronPort-AV: E=McAfee;i="6200,9189,10258"; a="247801910"
 X-IronPort-AV: E=Sophos;i="5.88,368,1635231600"; 
-   d="scan'208";a="247793797"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2022 14:47:23 -0800
+   d="scan'208";a="247801910"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2022 15:28:24 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.88,368,1635231600"; 
-   d="scan'208";a="570512590"
+   d="scan'208";a="603507168"
 Received: from lkp-server01.sh.intel.com (HELO d95dc2dabeb1) ([10.239.97.150])
-  by orsmga001.jf.intel.com with ESMTP; 14 Feb 2022 14:47:21 -0800
+  by fmsmga004.fm.intel.com with ESMTP; 14 Feb 2022 15:28:22 -0800
 Received: from kbuild by d95dc2dabeb1 with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1nJk7t-00090J-43; Mon, 14 Feb 2022 22:47:21 +0000
-Date:   Tue, 15 Feb 2022 06:46:30 +0800
+        id 1nJklZ-00091z-Tr; Mon, 14 Feb 2022 23:28:21 +0000
+Date:   Tue, 15 Feb 2022 07:27:25 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
         kernel-team@fb.com
-Cc:     kbuild-all@lists.01.org, shr@fb.com
+Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org, shr@fb.com
 Subject: Re: [PATCH v1 05/14] fs: split off __alloc_page_buffers function
-Message-ID: <202202150646.hLANces3-lkp@intel.com>
+Message-ID: <202202150743.R5ymlf5z-lkp@intel.com>
 References: <20220214174403.4147994-6-shr@fb.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -72,25 +72,34 @@ Thank you for the patch! Perhaps something to improve:
 
 url:    https://github.com/0day-ci/linux/commits/Stefan-Roesch/Support-sync-buffered-writes-for-io-uring/20220215-014908
 base:   f1baf68e1383f6ed93eb9cff2866d46562607a43
-config: i386-randconfig-a016-20220214 (https://download.01.org/0day-ci/archive/20220215/202202150646.hLANces3-lkp@intel.com/config)
-compiler: gcc-9 (Debian 9.3.0-22) 9.3.0
+config: arm-s5pv210_defconfig (https://download.01.org/0day-ci/archive/20220215/202202150743.R5ymlf5z-lkp@intel.com/config)
+compiler: clang version 15.0.0 (https://github.com/llvm/llvm-project ea071884b0cc7210b3cc5fe858f0e892a779a23b)
 reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # install arm cross compiling tool for clang build
+        # apt-get install binutils-arm-linux-gnueabi
         # https://github.com/0day-ci/linux/commit/e8b24c1ab111c127cbe1daaac3b607c626fb03a8
         git remote add linux-review https://github.com/0day-ci/linux
         git fetch --no-tags linux-review Stefan-Roesch/Support-sync-buffered-writes-for-io-uring/20220215-014908
         git checkout e8b24c1ab111c127cbe1daaac3b607c626fb03a8
         # save the config file to linux build tree
         mkdir build_dir
-        make W=1 O=build_dir ARCH=i386 SHELL=/bin/bash
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=arm SHELL=/bin/bash
 
 If you fix the issue, kindly add following tag as appropriate
 Reported-by: kernel test robot <lkp@intel.com>
 
 All warnings (new ones prefixed by >>):
 
->> fs/buffer.c:805:21: warning: no previous prototype for '__alloc_page_buffers' [-Wmissing-prototypes]
-     805 | struct buffer_head *__alloc_page_buffers(struct page *page, unsigned long size,
-         |                     ^~~~~~~~~~~~~~~~~~~~
+>> fs/buffer.c:805:21: warning: no previous prototype for function '__alloc_page_buffers' [-Wmissing-prototypes]
+   struct buffer_head *__alloc_page_buffers(struct page *page, unsigned long size,
+                       ^
+   fs/buffer.c:805:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
+   struct buffer_head *__alloc_page_buffers(struct page *page, unsigned long size,
+   ^
+   static 
+   1 warning generated.
 
 
 vim +/__alloc_page_buffers +805 fs/buffer.c

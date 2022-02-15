@@ -2,45 +2,45 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BDC014B71D1
-	for <lists+io-uring@lfdr.de>; Tue, 15 Feb 2022 17:41:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BE9E4B729F
+	for <lists+io-uring@lfdr.de>; Tue, 15 Feb 2022 17:42:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239964AbiBOP2B (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 15 Feb 2022 10:28:01 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:47442 "EHLO
+        id S240129AbiBOPbe (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 15 Feb 2022 10:31:34 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:47726 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239837AbiBOP1r (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 15 Feb 2022 10:27:47 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFD4CA94C5;
-        Tue, 15 Feb 2022 07:27:31 -0800 (PST)
+        with ESMTP id S240268AbiBOPar (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 15 Feb 2022 10:30:47 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27731C24A6;
+        Tue, 15 Feb 2022 07:29:05 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7D396615F0;
-        Tue, 15 Feb 2022 15:27:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35A89C340F3;
-        Tue, 15 Feb 2022 15:27:30 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id D394BB81AEA;
+        Tue, 15 Feb 2022 15:29:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED63BC340EB;
+        Tue, 15 Feb 2022 15:29:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1644938850;
-        bh=NlYiKCzMphCEljHl8byhWKGsGFsOAvjFrsw6xUZdgSs=;
+        s=k20201202; t=1644938942;
+        bh=KOo0Lc0CAVLi3RcvWm0aAT+pWN+D05lgre7KkXptlF4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u8Rhp1s2D77mGd7msnOu40KcXPl6/vH/HSMWqZBtMqsNlD5D1BsVUILBbh6rQFmpM
-         E0SFHFaj/Jk5jSjZlczJ44+POHvvzlz3YOWj/7fgMgfUSVqQ5RxbdyNric0z4o0Fzc
-         Q9gk7n+jLMMAANntgQBYc7OeJetbrT1TX7GUM7VypVcSK4CH1gmsOU0dNFUWCrI+jr
-         4NwV3KLIZTIlk+SW3QUUz8xYwvwb5KASh63mWytK6WWsYRBr+hHWdRFAwW9V2ASmks
-         yIRYsGPpXV4JGGR3FGZOQvsMGNlI15umJclun6ZwRUAFxzGNUI7OazR9RRmRSrG9fV
-         RUIjEA+YIclaA==
+        b=IPDtRYALCJnZL+KCCcX8/Wt30zPzxZijJ90RqPy7DyHJkEAMzt+pzu5kWsUkAIacF
+         wFj4pkUXbqxZJNxKN6H+mJCQczrGe4qNs8hR7wdUfHlr58lGi3pHNUa9BHEtt11k7+
+         yhkLP9YbbMT1WmO238+ofQcuXWVls95FwQLwMZDjHJ5BsfPNvEhYJ1w1JlFjZ8TwJI
+         KQDdZjFWlap0FiIw6KYTv/cAVdRZRKN0IEjbXGuopRJVR4pphNtCAkJXacJkQ/V6SX
+         o0ILnASE0KUofhwYQn94atp6tvTC5PcwF19vxfW2LJEoQ+fV4hZQhf9x3CV7gI77Oq
+         dwFGLJj1XLILQ==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Shakeel Butt <shakeelb@google.com>, Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <sashal@kernel.org>, io-uring@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.16 17/34] mm: io_uring: allow oom-killer from io_uring_setup
-Date:   Tue, 15 Feb 2022 10:26:40 -0500
-Message-Id: <20220215152657.580200-17-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.15 17/33] mm: io_uring: allow oom-killer from io_uring_setup
+Date:   Tue, 15 Feb 2022 10:28:15 -0500
+Message-Id: <20220215152831.580780-17-sashal@kernel.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220215152657.580200-1-sashal@kernel.org>
-References: <20220215152657.580200-1-sashal@kernel.org>
+In-Reply-To: <20220215152831.580780-1-sashal@kernel.org>
+References: <20220215152831.580780-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -76,10 +76,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+), 3 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 698db7fb62e06..a92f276f21d9c 100644
+index 993913c585fbf..21fc8ce9405d3 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -8872,10 +8872,9 @@ static void io_mem_free(void *ptr)
+@@ -8820,10 +8820,9 @@ static void io_mem_free(void *ptr)
  
  static void *io_mem_alloc(size_t size)
  {

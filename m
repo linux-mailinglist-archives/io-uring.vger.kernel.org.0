@@ -2,39 +2,68 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3749D4B61E7
-	for <lists+io-uring@lfdr.de>; Tue, 15 Feb 2022 04:59:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA7354B61F4
+	for <lists+io-uring@lfdr.de>; Tue, 15 Feb 2022 05:10:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230129AbiBOD7X (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 14 Feb 2022 22:59:23 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:55066 "EHLO
+        id S230172AbiBOEKS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 14 Feb 2022 23:10:18 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:41754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230088AbiBOD7X (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 14 Feb 2022 22:59:23 -0500
-Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0963137009;
-        Mon, 14 Feb 2022 19:59:12 -0800 (PST)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0V4WYNGT_1644897549;
-Received: from 30.225.24.82(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0V4WYNGT_1644897549)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 15 Feb 2022 11:59:10 +0800
-Message-ID: <fe10885d-78b7-a90a-01a0-60ac58d64357@linux.alibaba.com>
-Date:   Tue, 15 Feb 2022 11:59:09 +0800
+        with ESMTP id S229947AbiBOEKR (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 14 Feb 2022 23:10:17 -0500
+Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09B5FAFF59;
+        Mon, 14 Feb 2022 20:10:08 -0800 (PST)
+Received: by mail-pf1-x42d.google.com with SMTP id l19so26956211pfu.2;
+        Mon, 14 Feb 2022 20:10:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sH4/2oJtfi5laET5tEMr+Y3iQdUpMaIDyoN80AX7CZk=;
+        b=TFB9JYwYT2dieEmGZmjGby6qN+n15NKEVhbbshPnmGbfZM5sMIGksQiob4rIqkMXAE
+         1iXaDhLW9Wp7Np+0a6OLl5f4+qly1AO+QCk5YulLk9bvoKG/7GsgG3redqZX/h/RopHQ
+         paopzfRbA74736juS6cvZhCxmrtnZ5jzuupmRIpyClljBpph+xqWclLfuHrQ5/Efqgr/
+         ZM6XmM8qcBSHiJbO2aKU0mYvzrq/vTWdyls/MayWpK/KPaEoPbsmrPeTsWJST/OzIkK5
+         NRpOilJd1ExVzxOtDipjk2uKuxopa/aySiPiYbgm/EGFhF4TuRIwPfX+XTWRk1GisvCM
+         an2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sH4/2oJtfi5laET5tEMr+Y3iQdUpMaIDyoN80AX7CZk=;
+        b=ft0QTSBn6MVz3BFm2kAS5Qw7O10PYfz9pZXEEcodv8K4qZWHTuYEppZfaCEHVs0gmw
+         5ji71J6G57cNEV4eIVEJbc/ClX5E5PH3MKx1ZQzyWlVFaxF4FsMr3vqJros4VaUUSumd
+         vXkHsA8Wpp9mhcuXZbWHDQSt5bAwrIQXNBJuFzNowS8kk3V2sT+LDT/OvPjCSimA4+ok
+         CCB02GuIWhz6r4Ujee34sB8PIRmX6cb214EwSzObqazoDYD+Oid+e5vVMvPShTtY36us
+         MjtSd7FTo/3hlvnudWDECLKn2Eb+xMfSCyNH5HcOWINd1fT0vIEBX2Cl+N3y9qVb5q0h
+         j5Hw==
+X-Gm-Message-State: AOAM533QIvtvCxjYg/bl76s8jhUV97N9Dzls6/kA4sTNtO7oEShSCepp
+        KiooI+UMl4/7+ODAJ3uye6ukuf3Y36M=
+X-Google-Smtp-Source: ABdhPJzBnrC5+k4E1LSF4Y/ZMXxUsvgq54z6F3pzi8xaU875WJtw9MKOdzTK1Ka9HrtVqhCxKHQjEg==
+X-Received: by 2002:aa7:88d1:: with SMTP id k17mr2053151pff.38.1644898207434;
+        Mon, 14 Feb 2022 20:10:07 -0800 (PST)
+Received: from edumazet1.svl.corp.google.com ([2620:15c:2c4:201:ff52:228f:b44e:a40b])
+        by smtp.gmail.com with ESMTPSA id bm3sm871353pgb.88.2022.02.14.20.10.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Feb 2022 20:10:06 -0800 (PST)
+From:   Eric Dumazet <eric.dumazet@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring <io-uring@vger.kernel.org>,
+        syzbot <syzkaller@googlegroups.com>
+Subject: [PATCH] io_uring: add a schedule point in io_add_buffers()
+Date:   Mon, 14 Feb 2022 20:10:03 -0800
+Message-Id: <20220215041003.2394784-1-eric.dumazet@gmail.com>
+X-Mailer: git-send-email 2.35.1.265.g69c8d7142f-goog
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.3.0
-Subject: Re: [PATCH v1 00/14] Support sync buffered writes for io-uring
-To:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        kernel-team@fb.com
-References: <20220214174403.4147994-1-shr@fb.com>
-From:   Hao Xu <haoxu@linux.alibaba.com>
-In-Reply-To: <20220214174403.4147994-1-shr@fb.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -42,154 +71,85 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-在 2022/2/15 上午1:43, Stefan Roesch 写道:
-> This patch series adds support for async buffered writes. Currently
-> io-uring only supports buffered writes in the slow path, by processing
-> them in the io workers. With this patch series it is now possible to
-> support buffered writes in the fast path. To be able to use the fast
-> path the required pages must be in the page cache or they can be loaded
-> with noio. Otherwise they still get punted to the slow path.
-> 
-> If a buffered write request requires more than one page, it is possible
-> that only part of the request can use the fast path, the resst will be
-> completed by the io workers.
-> 
-> Support for async buffered writes:
->    Patch 1: fs: Add flags parameter to __block_write_begin_int
->      Add a flag parameter to the function __block_write_begin_int
->      to allow specifying a nowait parameter.
->      
->    Patch 2: mm: Introduce do_generic_perform_write
->      Introduce a new do_generic_perform_write function. The function
->      is split off from the existing generic_perform_write() function.
->      It allows to specify an additional flag parameter. This parameter
->      is used to specify the nowait flag.
->      
->    Patch 3: mm: add noio support in filemap_get_pages
->      This allows to allocate pages with noio, if a page for async
->      buffered writes is not yet loaded in the page cache.
->      
->    Patch 4: mm: Add support for async buffered writes
->      For async buffered writes allocate pages without blocking on the
->      allocation.
-> 
->    Patch 5: fs: split off __alloc_page_buffers function
->      Split off __alloc_page_buffers() function with new gfp_t parameter.
-> 
->    Patch 6: fs: split off __create_empty_buffers function
->      Split off __create_empty_buffers() function with new gfp_t parameter.
-> 
->    Patch 7: fs: Add aop_flags parameter to create_page_buffers()
->      Add aop_flags to create_page_buffers() function. Use atomic allocation
->      for async buffered writes.
-> 
->    Patch 8: fs: add support for async buffered writes
->      Return -EAGAIN instead of -ENOMEM for async buffered writes. This
->      will cause the write request to be processed by an io worker.
-> 
->    Patch 9: io_uring: add support for async buffered writes
->      This enables the async buffered writes for block devices in io_uring.
->      Buffered writes are enabled for blocks that are already in the page
->      cache or can be acquired with noio.
-> 
->    Patch 10: io_uring: Add tracepoint for short writes
-> 
-> Support for write throttling of async buffered writes:
->    Patch 11: sched: add new fields to task_struct
->      Add two new fields to the task_struct. These fields store the
->      deadline after which writes are no longer throttled.
-> 
->    Patch 12: mm: support write throttling for async buffered writes
->      This changes the balance_dirty_pages function to take an additonal
->      parameter. When nowait is specified the write throttling code no
->      longer waits synchronously for the deadline to expire. Instead
->      it sets the fields in task_struct. Once the deadline expires the
->      fields are reset.
->      
->    Patch 13: io_uring: support write throttling for async buffered writes
->      Adds support to io_uring for write throttling. When the writes
->      are throttled, the write requests are added to the pending io list.
->      Once the write throttling deadline expires, the writes are submitted.
->      
-> Enable async buffered write support
->    Patch 14: fs: add flag to support async buffered writes
->      This sets the flags that enables async buffered writes for block
->      devices.
-> 
-> 
-> Testing:
->    This patch has been tested with xfstests and fio.
-> 
-> 
-> Peformance results:
->    For fio the following results have been obtained with a queue depth of
->    1 and 4k block size (runtime 600 secs):
-> 
->                   sequential writes:
->                   without patch                 with patch
->    throughput:       329 Mib/s                    1032Mib/s
->    iops:              82k                          264k
->    slat (nsec)      2332                          3340
->    clat (nsec)      9017                            60
->                     
->    CPU util%:         37%                          78%
-> 
-> 
-> 
->                   random writes:
->                   without patch                 with patch
->    throughput:       307 Mib/s                    909Mib/s
->    iops:              76k                         227k
->    slat (nsec)      2419                         3780
->    clat (nsec)      9934                           59
-> 
->    CPU util%:         57%                          88%
-> 
-> For an io depth of 1, the new patch improves throughput by close to 3
-> times and also the latency is considerably reduced. To achieve the same
-> or better performance with the exisiting code an io depth of 4 is required.
-> 
-> Especially for mixed workloads this is a considerable improvement.
-> 
-> 
-> 
-> 
-> Stefan Roesch (14):
->    fs: Add flags parameter to __block_write_begin_int
->    mm: Introduce do_generic_perform_write
->    mm: add noio support in filemap_get_pages
->    mm: Add support for async buffered writes
->    fs: split off __alloc_page_buffers function
->    fs: split off __create_empty_buffers function
->    fs: Add aop_flags parameter to create_page_buffers()
->    fs: add support for async buffered writes
->    io_uring: add support for async buffered writes
->    io_uring: Add tracepoint for short writes
->    sched: add new fields to task_struct
->    mm: support write throttling for async buffered writes
->    io_uring: support write throttling for async buffered writes
->    block: enable async buffered writes for block devices.
-> 
->   block/fops.c                    |   5 +-
->   fs/buffer.c                     | 103 ++++++++++++++++---------
->   fs/internal.h                   |   3 +-
->   fs/io_uring.c                   | 130 +++++++++++++++++++++++++++++---
->   fs/iomap/buffered-io.c          |   4 +-
->   fs/read_write.c                 |   3 +-
->   include/linux/fs.h              |   4 +
->   include/linux/sched.h           |   3 +
->   include/linux/writeback.h       |   1 +
->   include/trace/events/io_uring.h |  25 ++++++
->   kernel/fork.c                   |   1 +
->   mm/filemap.c                    |  34 +++++++--
->   mm/folio-compat.c               |   4 +
->   mm/page-writeback.c             |  54 +++++++++----
->   14 files changed, 298 insertions(+), 76 deletions(-)
-> 
-> 
-> base-commit: f1baf68e1383f6ed93eb9cff2866d46562607a43
-> 
-It's a little bit different between buffered read and buffered write,
-there may be block points in detail filesystems due to journal
-operations for the latter.
+From: Eric Dumazet <edumazet@google.com>
+
+Looping ~65535 times doing kmalloc() calls can trigger soft lockups,
+especially with DEBUG features (like KASAN).
+
+[  253.536212] watchdog: BUG: soft lockup - CPU#64 stuck for 26s! [b219417889:12575]
+[  253.544433] Modules linked in: vfat fat i2c_mux_pca954x i2c_mux spidev cdc_acm xhci_pci xhci_hcd sha3_generic gq(O)
+[  253.544451] CPU: 64 PID: 12575 Comm: b219417889 Tainted: G S         O      5.17.0-smp-DEV #801
+[  253.544457] RIP: 0010:kernel_text_address (./include/asm-generic/sections.h:192 ./include/linux/kallsyms.h:29 kernel/extable.c:67 kernel/extable.c:98)
+[  253.544464] Code: 0f 93 c0 48 c7 c1 e0 63 d7 a4 48 39 cb 0f 92 c1 20 c1 0f b6 c1 5b 5d c3 90 0f 1f 44 00 00 55 48 89 e5 41 57 41 56 53 48 89 fb <48> c7 c0 00 00 80 a0 41 be 01 00 00 00 48 39 c7 72 0c 48 c7 c0 40
+[  253.544468] RSP: 0018:ffff8882d8baf4c0 EFLAGS: 00000246
+[  253.544471] RAX: 1ffff1105b175e00 RBX: ffffffffa13ef09a RCX: 00000000a13ef001
+[  253.544474] RDX: ffffffffa13ef09a RSI: ffff8882d8baf558 RDI: ffffffffa13ef09a
+[  253.544476] RBP: ffff8882d8baf4d8 R08: ffff8882d8baf5e0 R09: 0000000000000004
+[  253.544479] R10: ffff8882d8baf5e8 R11: ffffffffa0d59a50 R12: ffff8882eab20380
+[  253.544481] R13: ffffffffa0d59a50 R14: dffffc0000000000 R15: 1ffff1105b175eb0
+[  253.544483] FS:  00000000016d3380(0000) GS:ffff88af48c00000(0000) knlGS:0000000000000000
+[  253.544486] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  253.544488] CR2: 00000000004af0f0 CR3: 00000002eabfa004 CR4: 00000000003706e0
+[  253.544491] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[  253.544492] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[  253.544494] Call Trace:
+[  253.544496]  <TASK>
+[  253.544498] ? io_queue_sqe (fs/io_uring.c:7143)
+[  253.544505] __kernel_text_address (kernel/extable.c:78)
+[  253.544508] unwind_get_return_address (arch/x86/kernel/unwind_frame.c:19)
+[  253.544514] arch_stack_walk (arch/x86/kernel/stacktrace.c:27)
+[  253.544517] ? io_queue_sqe (fs/io_uring.c:7143)
+[  253.544521] stack_trace_save (kernel/stacktrace.c:123)
+[  253.544527] ____kasan_kmalloc (mm/kasan/common.c:39 mm/kasan/common.c:45 mm/kasan/common.c:436 mm/kasan/common.c:515)
+[  253.544531] ? ____kasan_kmalloc (mm/kasan/common.c:39 mm/kasan/common.c:45 mm/kasan/common.c:436 mm/kasan/common.c:515)
+[  253.544533] ? __kasan_kmalloc (mm/kasan/common.c:524)
+[  253.544535] ? kmem_cache_alloc_trace (./include/linux/kasan.h:270 mm/slab.c:3567)
+[  253.544541] ? io_issue_sqe (fs/io_uring.c:4556 fs/io_uring.c:4589 fs/io_uring.c:6828)
+[  253.544544] ? __io_queue_sqe (fs/io_uring.c:?)
+[  253.544551] __kasan_kmalloc (mm/kasan/common.c:524)
+[  253.544553] kmem_cache_alloc_trace (./include/linux/kasan.h:270 mm/slab.c:3567)
+[  253.544556] ? io_issue_sqe (fs/io_uring.c:4556 fs/io_uring.c:4589 fs/io_uring.c:6828)
+[  253.544560] io_issue_sqe (fs/io_uring.c:4556 fs/io_uring.c:4589 fs/io_uring.c:6828)
+[  253.544564] ? __kasan_slab_alloc (mm/kasan/common.c:45 mm/kasan/common.c:436 mm/kasan/common.c:469)
+[  253.544567] ? __kasan_slab_alloc (mm/kasan/common.c:39 mm/kasan/common.c:45 mm/kasan/common.c:436 mm/kasan/common.c:469)
+[  253.544569] ? kmem_cache_alloc_bulk (mm/slab.h:732 mm/slab.c:3546)
+[  253.544573] ? __io_alloc_req_refill (fs/io_uring.c:2078)
+[  253.544578] ? io_submit_sqes (fs/io_uring.c:7441)
+[  253.544581] ? __se_sys_io_uring_enter (fs/io_uring.c:10154 fs/io_uring.c:10096)
+[  253.544584] ? __x64_sys_io_uring_enter (fs/io_uring.c:10096)
+[  253.544587] ? do_syscall_64 (arch/x86/entry/common.c:50 arch/x86/entry/common.c:80)
+[  253.544590] ? entry_SYSCALL_64_after_hwframe (??:?)
+[  253.544596] __io_queue_sqe (fs/io_uring.c:?)
+[  253.544600] io_queue_sqe (fs/io_uring.c:7143)
+[  253.544603] io_submit_sqe (fs/io_uring.c:?)
+[  253.544608] io_submit_sqes (fs/io_uring.c:?)
+[  253.544612] __se_sys_io_uring_enter (fs/io_uring.c:10154 fs/io_uring.c:10096)
+[  253.544616] __x64_sys_io_uring_enter (fs/io_uring.c:10096)
+[  253.544619] do_syscall_64 (arch/x86/entry/common.c:50 arch/x86/entry/common.c:80)
+[  253.544623] entry_SYSCALL_64_after_hwframe (??:?)
+
+Fixes: ddf0322db79c ("io_uring: add IORING_OP_PROVIDE_BUFFERS")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Pavel Begunkov <asml.silence@gmail.com>
+Cc: io-uring <io-uring@vger.kernel.org>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+---
+ fs/io_uring.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 77b9c7e4793bf3332a0229ed74603d195b761756..b928928617a475af71fe2d42c63bc32099b42ada 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -4567,6 +4567,7 @@ static int io_add_buffers(struct io_provide_buf *pbuf, struct io_buffer **head)
+ 		} else {
+ 			list_add_tail(&buf->list, &(*head)->list);
+ 		}
++		cond_resched();
+ 	}
+ 
+ 	return i ? i : -ENOMEM;
+-- 
+2.35.1.265.g69c8d7142f-goog
 

@@ -2,59 +2,64 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DBD8F4B79CB
-	for <lists+io-uring@lfdr.de>; Tue, 15 Feb 2022 22:49:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A4E64B79B9
+	for <lists+io-uring@lfdr.de>; Tue, 15 Feb 2022 22:49:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239197AbiBOV20 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 15 Feb 2022 16:28:26 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:36472 "EHLO
+        id S237647AbiBOVn0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 15 Feb 2022 16:43:26 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:44312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233069AbiBOV20 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 15 Feb 2022 16:28:26 -0500
-Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADA8FC24A9
-        for <io-uring@vger.kernel.org>; Tue, 15 Feb 2022 13:28:15 -0800 (PST)
-Received: by mail-io1-xd31.google.com with SMTP id 24so30516ioe.7
-        for <io-uring@vger.kernel.org>; Tue, 15 Feb 2022 13:28:15 -0800 (PST)
+        with ESMTP id S232789AbiBOVnZ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 15 Feb 2022 16:43:25 -0500
+Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49388B3E4C
+        for <io-uring@vger.kernel.org>; Tue, 15 Feb 2022 13:43:15 -0800 (PST)
+Received: by mail-io1-xd2d.google.com with SMTP id 24so73692ioe.7
+        for <io-uring@vger.kernel.org>; Tue, 15 Feb 2022 13:43:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:in-reply-to:references:subject:message-id:date:mime-version
-         :content-transfer-encoding;
-        bh=TVxWEGcfCbi1M719NahdGHtaD+pm+hes3/++d+n/l4g=;
-        b=zX5CyrW4TzeZiLbmDDazf1luRyRVoXBEeK53My2OdUIl/TVNsyoTqf5LvT3jIFpY5X
-         fi0STrGADLVwYLMJ2/YbwDl4IBRcg1H64ZY0Jf0xOoDRIcx3fSdB+0XngUzVtZ97GI/n
-         YMBWiWja9FiHD/GiEZS0+nJYGvTT4dq0pXauDA4oEBK6B2u7aAYE4OeWL7bQfvdBsLmS
-         hozNEXVrdcs/S//Zz8yLX5AhI3/dilyacexs10MivNKLop7Azw5tFDtrPx0Ua8Bt5d+P
-         Ip27LmBql2KYsCXo482BbQzlrTE9xt3HtTucBLIPXTKnpzdypWtZz8yBJ9V/Csdv1B4y
-         zECg==
+        h=from:to:cc:in-reply-to:references:subject:message-id:date
+         :mime-version:content-transfer-encoding;
+        bh=UBfIa9QaOEP9iMmtgy5U6FtxHzePl0Ulhu75DIbx6tw=;
+        b=8K1kul5A1ckyjPzUM7iV3OeWfS7btbZDnv2g7rzPeUkyPUTWbfSOq4HE4VjwaD262U
+         gptsVea95+rfEjZ9uEOe61kcJ2elru2Eds95Bq/g4MgzvImPRuCYbo6YEg7ef3/MFyvy
+         dhku2I3z8QCSG6vofHGYfD5RKQyiKz4VR6cSBFyJGJGTZY05s9HqzVb0AEsxN5Bpw6vq
+         gv3cvt84xekuDYZ8IwaXBEsTvdceOhnzsoQAAIh8rUuvI0SXqGxCMhels5hEEhuuZVTa
+         5dq9mkzaM4rMfAJ2ISKQwdGZH4mtl6QN6B2nS7c4/z8nm7MK1ITJQzDMzJNlmFj0kxMG
+         Uwcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:in-reply-to:references:subject
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
          :message-id:date:mime-version:content-transfer-encoding;
-        bh=TVxWEGcfCbi1M719NahdGHtaD+pm+hes3/++d+n/l4g=;
-        b=gvCB4IWFWm2luwbCety+Eyfu6TzepEQa5IXMA5yWdExefmgx7BHOddgssV0gSVtchp
-         cMTNudLk1dSknFwWLjVTOygmI/N+mrC3KPYE7C+NgcN1OjaFjoMGzsDBskwXkIrYMUmG
-         9qj57cMbfr4a/5GUUvOvIuJWtw7T6GlW5bDaxAu6W0EB1hPemSL0v7+FjC+powKOCvCh
-         aNeAVOcZm8ctEXOcm6arTn0YHj7p2bhIgbnqFtAgapXrc4xE3/vUAd/rHJq3bWLnSOxO
-         NZYc7ITAALCktkKE2TcinVwvNlknuzZLtBrQkM1TjjZfsfY6tNgCE1HffV+bXcvWScj3
-         8Srw==
-X-Gm-Message-State: AOAM530mduQ1qiaiM23JjbEoTr+PG5ZA3CNp/F7RJyG50UgqpCctxD+1
-        XoknJf2UO+J/ObP+nWPwZIT6UnU9NAa8aQ==
-X-Google-Smtp-Source: ABdhPJx9xvkAcrWvIk1MzgZOQgQq7sBQZbbyL7YrQ9jLkApUqrnf4rAZyn4/nO7BLFJK8H4NmY4QNg==
-X-Received: by 2002:a05:6638:210d:: with SMTP id n13mr582500jaj.60.1644960494874;
-        Tue, 15 Feb 2022 13:28:14 -0800 (PST)
+        bh=UBfIa9QaOEP9iMmtgy5U6FtxHzePl0Ulhu75DIbx6tw=;
+        b=b2BX+i/aoHWaL57VjT8JccwXftwZte42Z0I8c8l5BKw2xSZ78M7x6BgPu01a4ECLA6
+         pBbj+mjPlPsBw5b4eYEOJIUjGlLiFY3FhQUHoguBnX8GE8zMD9mC+ZFjWTJoKyJGtmL7
+         bMNq/GvWFWf43K1XHDnmXKVqsdcIAc0SeO5k2WP2UIWp+VjAcVWOW6V7sDpdFC1Ybx/c
+         k79sYbuGn0e6WY/53SiZn759/9KGqbp/zp+mgZuAoGYi9HJ7xrCdrYz5H94ACtkw6GdT
+         syMbKQHefzNTQgS2CvIN7jpQ2+vTufwg8amHrVNCkYmCPiBAGKZEtqVcxhx1ZcpSmEL0
+         qS+Q==
+X-Gm-Message-State: AOAM531wlTSXK1rq94HdG14U183ASoC8vlh/MU0Mu6JbFyooA/d6PSJh
+        7Gmk116SaJM/mARp2guz4368ouig44yuqg==
+X-Google-Smtp-Source: ABdhPJxe6xS3Iqb5A+26Igd7wGbbMz+zUM81wX+VqoJzmLZtY5hsUYLKS5LIQ41Q/zqlvASkjbIAfg==
+X-Received: by 2002:a05:6638:2217:: with SMTP id l23mr555241jas.190.1644961394648;
+        Tue, 15 Feb 2022 13:43:14 -0800 (PST)
 Received: from m1.localdomain ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id c2sm19843107ilh.43.2022.02.15.13.28.14
+        by smtp.gmail.com with ESMTPSA id t195sm17112212iof.47.2022.02.15.13.43.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Feb 2022 13:28:14 -0800 (PST)
+        Tue, 15 Feb 2022 13:43:14 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org, Stefan Roesch <shr@fb.com>,
-        kernel-team@fb.com
-In-Reply-To: <20220214180430.70572-1-shr@fb.com>
-References: <20220214180430.70572-1-shr@fb.com>
-Subject: Re: [PATCH v1 0/2] io-uring: use consisten tracepoint format
-Message-Id: <164496049438.9528.3864389411204852885.b4-ty@kernel.dk>
-Date:   Tue, 15 Feb 2022 14:28:14 -0700
+To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>
+Cc:     GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>,
+        Nugra <nnn@gnuweeb.org>, Nugra <richiisei@gmail.com>,
+        io-uring Mailing List <io-uring@vger.kernel.org>,
+        Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
+        Tea Inside Mailing List <timl@vger.teainside.org>,
+        Arthur Lapz <rlapz@gnuweeb.org>
+In-Reply-To: <20220215153651.181319-1-ammarfaizi2@gnuweeb.org>
+References: <20220215153651.181319-1-ammarfaizi2@gnuweeb.org>
+Subject: Re: [PATCH liburing v1 0/2] Support busybox mktemp and add x86-64 syscall macros
+Message-Id: <164496139393.13212.16397855953865799793.b4-ty@kernel.dk>
+Date:   Tue, 15 Feb 2022 14:43:13 -0700
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -67,25 +72,26 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, 14 Feb 2022 10:04:28 -0800, Stefan Roesch wrote:
-> So far the tracepoints haven't used a consistent format. This change
-> adds consistent formatting for the io-uring tracepoints. This makes it
-> easier to follow individual requests.
+On Tue, 15 Feb 2022 22:36:49 +0700, Ammar Faizi wrote:
+> Two patches in this series.
+> 1) Support busybox mktemp from Nugra.
+> -------------------------------------
+> Busybox mktemp does not support `--tmpdir`, it says:
+>     mktemp: unrecognized option: tmpdir
 > 
-> Where it makes sense it uses the following format:
-> - context structure pointer
-> - request structure pointer
-> - user data
-> - opcode.
+> It can be fixed with:
+> 	1. Create a temporary directory.
+> 	2. Use touch to create the temporary files inside the directory.
+> 	3. Clean up by deleting the temporary directory.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/2] io-uring: add __fill_cqe function
-      commit: 8592d34e8ffa738e4dec7edae3b39055d4215a7e
-[2/2] io-uring: Make tracepoints consistent.
-      commit: b57d34f5cc694761d9ab89e519cf41045a174a07
+[1/2] configure: Support busybox mktemp
+      commit: cce3026ee45a86cfdd104fd1be270b759a161233
+[2/2] arch/x86: Create syscall __do_syscall{0..6} macros
+      commit: 20bb37e0f828909742f845b8113b2bb7e1065cd1
 
 Best regards,
 -- 

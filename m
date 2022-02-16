@@ -2,30 +2,30 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 38C244BA784
-	for <lists+io-uring@lfdr.de>; Thu, 17 Feb 2022 18:53:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EF454BA77E
+	for <lists+io-uring@lfdr.de>; Thu, 17 Feb 2022 18:52:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243900AbiBQRwv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 17 Feb 2022 12:52:51 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:54794 "EHLO
+        id S243890AbiBQRvA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 17 Feb 2022 12:51:00 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:49020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243887AbiBQRwu (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 17 Feb 2022 12:52:50 -0500
-X-Greylist: delayed 110 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 17 Feb 2022 09:52:36 PST
+        with ESMTP id S243882AbiBQRu7 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 17 Feb 2022 12:50:59 -0500
 Received: from cloud48395.mywhc.ca (cloud48395.mywhc.ca [173.209.37.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA30F297206;
-        Thu, 17 Feb 2022 09:52:35 -0800 (PST)
-Received: from [45.44.224.220] (port=39848 helo=localhost)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 490F0291FBF
+        for <io-uring@vger.kernel.org>; Thu, 17 Feb 2022 09:50:45 -0800 (PST)
+Received: from [45.44.224.220] (port=39846 helo=localhost)
         by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94.2)
         (envelope-from <olivier@trillion01.com>)
-        id 1nKkxG-0001kw-Ba; Thu, 17 Feb 2022 12:52:34 -0500
+        id 1nKkvU-0001fk-2c; Thu, 17 Feb 2022 12:50:44 -0500
 From:   Olivier Langlois <olivier@trillion01.com>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Pavel Begunkov <asml.silence@gmail.com>,
         io-uring <io-uring@vger.kernel.org>,
         linux-kernel <linux-kernel@vger.kernel.org>
 Message-Id: <bd7c0495f7656e803e5736708591bb665e6eaacd.1645041650.git.olivier@trillion01.com>
+From:   Olivier Langlois <olivier@trillion01.com>
 Date:   Wed, 16 Feb 2022 14:53:42 -0500
 Subject: [PATCH] io_uring: Remove unneeded test in io_run_task_work_sig()
 X-AntiAbuse: This header was added to track abuse, please include it with any abuse report

@@ -2,112 +2,234 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BFA894B8629
-	for <lists+io-uring@lfdr.de>; Wed, 16 Feb 2022 11:49:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E91444B876D
+	for <lists+io-uring@lfdr.de>; Wed, 16 Feb 2022 13:14:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229455AbiBPKtT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 16 Feb 2022 05:49:19 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:33238 "EHLO
+        id S233068AbiBPMOm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 16 Feb 2022 07:14:42 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:33578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230281AbiBPKtM (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 16 Feb 2022 05:49:12 -0500
-Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B347EC
-        for <io-uring@vger.kernel.org>; Wed, 16 Feb 2022 02:49:00 -0800 (PST)
-Received: by mail-lf1-x142.google.com with SMTP id j7so3054370lfu.6
-        for <io-uring@vger.kernel.org>; Wed, 16 Feb 2022 02:49:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
-        bh=y/WwzOufdV8bFjC2XhKxeIddPBCZMNKZVHLfMOMvj6I=;
-        b=iQOOErdMyg0YJRTTgG4ji0zDDGM+SIytjJRPcEEQPuaTGwhp/aiigfZDD9bqY9/lle
-         n3shoMbeqOoJnB4Gs7y3PxV1yWs+FgXg1DQni9fEkWnQvfD6ujF3JdwrCYtfXEiXwCFG
-         EMoIqTGUg8PlfYD2Dudm7oF2e6PrsXBUa8abDFNcHtD9XZrYbwVgkIOdCPQkAfke1bW2
-         d6oSo3gc7HEQUImg17cy7ua6fRdTLx0tbtHrFIX7T0BgySGsesGFAfqiIAkrXpdBt4pE
-         asNwo+zZJpnL5PI+3yd8D981jYdO1vW3vX9FaNDq6Sca4WePJrDdIJgk92JNsvfW0zzi
-         7/iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to;
-        bh=y/WwzOufdV8bFjC2XhKxeIddPBCZMNKZVHLfMOMvj6I=;
-        b=INSCKqV04jcyCtEy1tXr2PhsqgjX3tktiBl8la0T36cX4khaJ956qnPIUEC2wuqVYD
-         oNEvfugtcca6QDZK/ZCH6i1RkDt+ARGVb3+XUA9/VKi5A6dBPTFyy844agZJotksd0IA
-         6CDFgMdFTdjbxjv26zrHahhuLhX0KrYPh8YzNSurZp524BXMqBvlcd9wz6rFiNilLcP0
-         ckEWSwgUoEcQOgeQk+OIxnzVQbr3g4xhxQ1GReFrJ8ZRYDUrbAWpg5AzEcPw9LXcXmxU
-         vUPJapkZUQWSmJJF57LEdD4+Tr8U5FLxVf2CnvsJ/ypoaGYfqW+nmiO1sDVr+zD36wi/
-         aVIg==
-X-Gm-Message-State: AOAM532BvlPyxuAN/IRNOZKh0ydHTiBYUwrzvng4MslU9EZoDzOj21wB
-        d3yeoX4cPqUZqH1mkBuXLyRKWlk1iTpcpvwquAE=
-X-Google-Smtp-Source: ABdhPJxwdwf5qoj45PaA+ECEBde3DhBE+xadDzz9D6HvJYXumOZlQvtgcirtNw7dEH8rx6RjtNALSddoy+kJlHSuQxQ=
-X-Received: by 2002:a05:6512:318b:b0:443:946a:83a3 with SMTP id
- i11-20020a056512318b00b00443946a83a3mr1214361lfe.269.1645008538878; Wed, 16
- Feb 2022 02:48:58 -0800 (PST)
+        with ESMTP id S230059AbiBPMOl (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 16 Feb 2022 07:14:41 -0500
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66DA22A229C
+        for <io-uring@vger.kernel.org>; Wed, 16 Feb 2022 04:14:28 -0800 (PST)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0V4d7eK5_1645013665;
+Received: from 30.225.24.82(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0V4d7eK5_1645013665)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 16 Feb 2022 20:14:26 +0800
+Message-ID: <f7f658cd-d76f-26c4-6549-0b3d2008d249@linux.alibaba.com>
+Date:   Wed, 16 Feb 2022 20:14:25 +0800
 MIME-Version: 1.0
-Reply-To: drtracywilliams89@gmail.com
-Sender: modym1332015@gmail.com
-Received: by 2002:a05:6520:4084:b0:190:abcf:a3ee with HTTP; Wed, 16 Feb 2022
- 02:48:58 -0800 (PST)
-From:   "Dr. Tracy Williams" <tracy0wiliams@gmail.com>
-Date:   Wed, 16 Feb 2022 02:48:58 -0800
-X-Google-Sender-Auth: l5OWyKyAhlsA2XBtonT5g6Hg7Ng
-Message-ID: <CAKSnB2aw-FtUPGMx2iftVHpA_wrRKvuHZ2vHRUtr5Zf=oBHrpQ@mail.gmail.com>
-Subject: From Dr. Tracy Williams.
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: Yes, score=5.6 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,FREEMAIL_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        UNDISC_FREEM autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Report: *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4750]
-        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
-        * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
-        *      https://www.dnswl.org/, no trust
-        *      [2a00:1450:4864:20:0:0:0:142 listed in]
-        [list.dnswl.org]
-        * -0.0 SPF_PASS SPF: sender matches SPF record
-        *  0.2 FREEMAIL_REPLYTO_END_DIGIT Reply-To freemail username ends in
-        *      digit
-        *      [drtracywilliams89[at]gmail.com]
-        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
-        *      provider
-        *      [modym1332015[at]gmail.com]
-        *  0.2 FREEMAIL_ENVFROM_END_DIGIT Envelope-from freemail username ends
-        *       in digit
-        *      [modym1332015[at]gmail.com]
-        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
-        *      author's domain
-        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
-        *       valid
-        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
-        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
-        *      envelope-from domain
-        * -0.0 T_SCC_BODY_TEXT_LINE No description available.
-        *  3.5 UNDISC_FREEM Undisclosed recipients + freemail reply-to
-        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
-        *      different freemails
-X-Spam-Level: *****
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.3.0
+Subject: Re: napi_busy_poll
+To:     Olivier Langlois <olivier@trillion01.com>,
+        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <21bfe359aa45123b36ee823076a036146d1d9518.camel@trillion01.com>
+ <fc9664c4-11db-54e1-d3b6-c35ea345166a@kernel.dk>
+ <f408374a-c0aa-1ca0-936a-0bbed68a01f6@linux.alibaba.com>
+ <d3412259cb13e9e76d45387e171228655ebe91b0.camel@trillion01.com>
+ <0446f39d-f926-0ae4-7ea4-00aff9236322@linux.alibaba.com>
+ <995e65ce3d353cacea4d426c9876b2a5e88faa99.camel@trillion01.com>
+ <a5e58292ff6207161af287ccd116ebf3c5b8a0fb.camel@trillion01.com>
+From:   Hao Xu <haoxu@linux.alibaba.com>
+In-Reply-To: <a5e58292ff6207161af287ccd116ebf3c5b8a0fb.camel@trillion01.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello Dear,
+在 2022/2/16 上午2:05, Olivier Langlois 写道:
+> On Tue, 2022-02-15 at 03:37 -0500, Olivier Langlois wrote:
+>>
+>> That being said, I have not been able to make it work yet. For some
+>> unknown reasons, no valid napi_id is extracted from the sockets added
+>> to the context so the net_busy_poll function is never called.
+>>
+>> I find that very strange since prior to use io_uring, my code was
+>> using
+>> epoll and the busy polling was working fine with my application
+>> sockets. Something is escaping my comprehension. I must tired and
+>> this
+>> will become obvious...
+>>
+> The napi_id values associated with my sockets appear to be in the range
+> 0 < napi_id < MIN_NAPI_ID
+> 
+> from busy_loop.h:
+> /*		0 - Reserved to indicate value not set
+>   *     1..NR_CPUS - Reserved for sender_cpu
+>   *  NR_CPUS+1..~0 - Region available for NAPI IDs
+>   */
+> #define MIN_NAPI_ID ((unsigned int)(NR_CPUS + 1))
+> 
+> I have found this:
+> https://lwn.net/Articles/619862/
+> 
+> hinting that busy_poll may be incompatible with RPS
+> (Documentation/networking/scaling.rst) that I may have discovered
+> *AFTER* my epoll -> io_uring transition (I don't recall exactly the
+> sequence of my learning process).
+> 
+> With my current knowledge, it makes little sense why busy polling would
+> not be possible with RPS. Also, what exactly is a NAPI device is quite
+> nebulous to me... Looking into the Intel igb driver code, it seems like
+> 1 NAPI device is created for each interrupt vector/Rx buffer of the
+> device.
+> 
+> Bottomline, it seems like I have fallen into a new rabbit hole. It may
+> take me a day or 2 to figure it all... you are welcome to enlight me if
+> you know a thing or 2 about those topics... I am kinda lost right
+> now...
+> 
+Hi Olivier,
+I've write something to express my idea, it would be great if you can
+try it.
+It's totally untested and only does polling in sqthread, won't be hard
+to expand it to cqring_wait. My original idea is to poll all the napi
+device but seems that may be not efficient. so for a request, just
+do napi polling for one napi.
+There is still one problem: when to delete the polled NAPIs.
 
-how are you today,I hope you are doing great. It is my great pleasure
-to contact you,I want to make a new and special friend,I hope you
-don't mind. My name is Tracy Williams
+Regards,
+Hao
 
-from the United States, Am a french and English nationality. I will
-give you pictures and more details about my self as soon as i hear
-from you in my email account bellow,
-Here is my email address; drtracywilliams89@gmail.com
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 538f90bd0508..2e32d5fe0641 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -63,6 +63,7 @@
+  #include <net/sock.h>
+  #include <net/af_unix.h>
+  #include <net/scm.h>
++#include <net/busy_poll.h>
+  #include <linux/anon_inodes.h>
+  #include <linux/sched/mm.h>
+  #include <linux/uaccess.h>
+@@ -443,6 +444,7 @@ struct io_ring_ctx {
+                 spinlock_t                      rsrc_ref_lock;
+         };
 
++       struct list_head                napi_list;
+         /* Keep this last, we don't need it for the fast path */
+         struct {
+                 #if defined(CONFIG_UNIX)
+@@ -1457,6 +1459,7 @@ static __cold struct io_ring_ctx 
+*io_ring_ctx_alloc(struct io_uring_params *p)
+         INIT_WQ_LIST(&ctx->locked_free_list);
+         INIT_DELAYED_WORK(&ctx->fallback_work, io_fallback_req_func);
+         INIT_WQ_LIST(&ctx->submit_state.compl_reqs);
++       INIT_LIST_HEAD(&ctx->napi_list);
+         return ctx;
+  err:
+         kfree(ctx->dummy_ubuf);
+@@ -5419,6 +5422,70 @@ IO_NETOP_FN(send);
+  IO_NETOP_FN(recv);
+  #endif /* CONFIG_NET */
 
-Please send your reply to my PRIVATE  mail box.
-Thanks,
++#ifdef CONFIG_NET_RX_BUSY_POLL
++struct napi_entry {
++       struct list_head        list;
++       unsigned int            napi_id;
++};
++
++static void io_add_napi(struct file *file, struct io_ring_ctx *ctx)
++{
++       unsigned int napi_id;
++       struct socket *sock;
++       struct sock *sk;
++       struct napi_entry *ne;
++
++       if (!net_busy_loop_on())
++               return;
++
++       sock = sock_from_file(file);
++       if (!sock)
++               return;
++
++       sk = sock->sk;
++       if (!sk)
++               return;
++
++       napi_id = READ_ONCE(sk->sk_napi_id);
++       if (napi_id < MIN_NAPI_ID)
++               return;
++
++       list_for_each_entry(ne, &ctx->napi_list, list) {
++               if (ne->napi_id == napi_id)
++                       return;
++       }
++
++       ne = kmalloc(sizeof(*ne), GFP_KERNEL);
++       if (!ne)
++               return;
++
++       list_add_tail(&ne->list, &ctx->napi_list);
++}
++
++static void io_napi_busy_loop(struct io_ring_ctx *ctx)
++{
++       struct napi_entry *ne;
++
++       if (list_empty(&ctx->napi_list) || !net_busy_loop_on())
++               return;
++
++       list_for_each_entry(ne, &ctx->napi_list, list)
++               napi_busy_loop(ne->napi_id, NULL, NULL, false, 
+BUSY_POLL_BUDGET);
++}
++#else
++
++static inline void io_add_napi(struct file *file, struct io_ring_ctx *ctx)
++{
++       return;
++}
++
++static inline void io_napi_busy_loop(struct io_ring_ctx *ctx)
++{
++       return;
++}
++#endif /* CONFIG_NET_RX_BUSY_POLL */
++
++
+  struct io_poll_table {
+         struct poll_table_struct pt;
+         struct io_kiocb *req;
+@@ -5583,6 +5650,7 @@ static void io_poll_task_func(struct io_kiocb 
+*req, bool *locked)
+         struct io_ring_ctx *ctx = req->ctx;
+         int ret;
 
-Tracy Williams.
++       io_add_napi(req->file, req->ctx);
+         ret = io_poll_check_events(req);
+         if (ret > 0)
+                 return;
+@@ -5608,6 +5676,7 @@ static void io_apoll_task_func(struct io_kiocb 
+*req, bool *locked)
+         struct io_ring_ctx *ctx = req->ctx;
+         int ret;
+
++       io_add_napi(req->file, req->ctx);
+         ret = io_poll_check_events(req);
+         if (ret > 0)
+                 return;
+@@ -7544,6 +7613,9 @@ static int __io_sq_thread(struct io_ring_ctx *ctx, 
+bool cap_entries)
+                         wake_up(&ctx->sqo_sq_wait);
+                 if (creds)
+                         revert_creds(creds);
++#ifdef CONFIG_NET_RX_BUSY_POLL
++               io_napi_busy_loop(ctx);
++#endif
+         }
+
+         return ret;
+

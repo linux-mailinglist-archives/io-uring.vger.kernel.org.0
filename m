@@ -2,99 +2,97 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A4E64B79B9
-	for <lists+io-uring@lfdr.de>; Tue, 15 Feb 2022 22:49:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8087E4B7E50
+	for <lists+io-uring@lfdr.de>; Wed, 16 Feb 2022 04:15:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237647AbiBOVn0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 15 Feb 2022 16:43:26 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:44312 "EHLO
+        id S237750AbiBPDMb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 15 Feb 2022 22:12:31 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:46842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232789AbiBOVnZ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 15 Feb 2022 16:43:25 -0500
-Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49388B3E4C
-        for <io-uring@vger.kernel.org>; Tue, 15 Feb 2022 13:43:15 -0800 (PST)
-Received: by mail-io1-xd2d.google.com with SMTP id 24so73692ioe.7
-        for <io-uring@vger.kernel.org>; Tue, 15 Feb 2022 13:43:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:in-reply-to:references:subject:message-id:date
-         :mime-version:content-transfer-encoding;
-        bh=UBfIa9QaOEP9iMmtgy5U6FtxHzePl0Ulhu75DIbx6tw=;
-        b=8K1kul5A1ckyjPzUM7iV3OeWfS7btbZDnv2g7rzPeUkyPUTWbfSOq4HE4VjwaD262U
-         gptsVea95+rfEjZ9uEOe61kcJ2elru2Eds95Bq/g4MgzvImPRuCYbo6YEg7ef3/MFyvy
-         dhku2I3z8QCSG6vofHGYfD5RKQyiKz4VR6cSBFyJGJGTZY05s9HqzVb0AEsxN5Bpw6vq
-         gv3cvt84xekuDYZ8IwaXBEsTvdceOhnzsoQAAIh8rUuvI0SXqGxCMhels5hEEhuuZVTa
-         5dq9mkzaM4rMfAJ2ISKQwdGZH4mtl6QN6B2nS7c4/z8nm7MK1ITJQzDMzJNlmFj0kxMG
-         Uwcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
-         :message-id:date:mime-version:content-transfer-encoding;
-        bh=UBfIa9QaOEP9iMmtgy5U6FtxHzePl0Ulhu75DIbx6tw=;
-        b=b2BX+i/aoHWaL57VjT8JccwXftwZte42Z0I8c8l5BKw2xSZ78M7x6BgPu01a4ECLA6
-         pBbj+mjPlPsBw5b4eYEOJIUjGlLiFY3FhQUHoguBnX8GE8zMD9mC+ZFjWTJoKyJGtmL7
-         bMNq/GvWFWf43K1XHDnmXKVqsdcIAc0SeO5k2WP2UIWp+VjAcVWOW6V7sDpdFC1Ybx/c
-         k79sYbuGn0e6WY/53SiZn759/9KGqbp/zp+mgZuAoGYi9HJ7xrCdrYz5H94ACtkw6GdT
-         syMbKQHefzNTQgS2CvIN7jpQ2+vTufwg8amHrVNCkYmCPiBAGKZEtqVcxhx1ZcpSmEL0
-         qS+Q==
-X-Gm-Message-State: AOAM531wlTSXK1rq94HdG14U183ASoC8vlh/MU0Mu6JbFyooA/d6PSJh
-        7Gmk116SaJM/mARp2guz4368ouig44yuqg==
-X-Google-Smtp-Source: ABdhPJxe6xS3Iqb5A+26Igd7wGbbMz+zUM81wX+VqoJzmLZtY5hsUYLKS5LIQ41Q/zqlvASkjbIAfg==
-X-Received: by 2002:a05:6638:2217:: with SMTP id l23mr555241jas.190.1644961394648;
-        Tue, 15 Feb 2022 13:43:14 -0800 (PST)
-Received: from m1.localdomain ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id t195sm17112212iof.47.2022.02.15.13.43.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Feb 2022 13:43:14 -0800 (PST)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>
-Cc:     GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>,
-        Nugra <nnn@gnuweeb.org>, Nugra <richiisei@gmail.com>,
-        io-uring Mailing List <io-uring@vger.kernel.org>,
-        Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
-        Tea Inside Mailing List <timl@vger.teainside.org>,
-        Arthur Lapz <rlapz@gnuweeb.org>
-In-Reply-To: <20220215153651.181319-1-ammarfaizi2@gnuweeb.org>
-References: <20220215153651.181319-1-ammarfaizi2@gnuweeb.org>
-Subject: Re: [PATCH liburing v1 0/2] Support busybox mktemp and add x86-64 syscall macros
-Message-Id: <164496139393.13212.16397855953865799793.b4-ty@kernel.dk>
-Date:   Tue, 15 Feb 2022 14:43:13 -0700
+        with ESMTP id S236446AbiBPDMb (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 15 Feb 2022 22:12:31 -0500
+Received: from out30-44.freemail.mail.aliyun.com (out30-44.freemail.mail.aliyun.com [115.124.30.44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE508939D3
+        for <io-uring@vger.kernel.org>; Tue, 15 Feb 2022 19:12:19 -0800 (PST)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0V4bHGHq_1644981136;
+Received: from 30.225.24.82(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0V4bHGHq_1644981136)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 16 Feb 2022 11:12:17 +0800
+Message-ID: <4d889559-9268-7948-eb6b-1cb60d90016f@linux.alibaba.com>
+Date:   Wed, 16 Feb 2022 11:12:16 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.3.0
+Subject: Re: napi_busy_poll
+To:     Olivier Langlois <olivier@trillion01.com>,
+        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <21bfe359aa45123b36ee823076a036146d1d9518.camel@trillion01.com>
+ <fc9664c4-11db-54e1-d3b6-c35ea345166a@kernel.dk>
+ <f408374a-c0aa-1ca0-936a-0bbed68a01f6@linux.alibaba.com>
+ <d3412259cb13e9e76d45387e171228655ebe91b0.camel@trillion01.com>
+ <0446f39d-f926-0ae4-7ea4-00aff9236322@linux.alibaba.com>
+ <995e65ce3d353cacea4d426c9876b2a5e88faa99.camel@trillion01.com>
+ <a5e58292ff6207161af287ccd116ebf3c5b8a0fb.camel@trillion01.com>
+From:   Hao Xu <haoxu@linux.alibaba.com>
+In-Reply-To: <a5e58292ff6207161af287ccd116ebf3c5b8a0fb.camel@trillion01.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-9.1 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        SCC_BODY_URI_ONLY,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, 15 Feb 2022 22:36:49 +0700, Ammar Faizi wrote:
-> Two patches in this series.
-> 1) Support busybox mktemp from Nugra.
-> -------------------------------------
-> Busybox mktemp does not support `--tmpdir`, it says:
->     mktemp: unrecognized option: tmpdir
+在 2022/2/16 上午2:05, Olivier Langlois 写道:
+> On Tue, 2022-02-15 at 03:37 -0500, Olivier Langlois wrote:
+>>
+>> That being said, I have not been able to make it work yet. For some
+>> unknown reasons, no valid napi_id is extracted from the sockets added
+>> to the context so the net_busy_poll function is never called.
+>>
+>> I find that very strange since prior to use io_uring, my code was
+>> using
+>> epoll and the busy polling was working fine with my application
+>> sockets. Something is escaping my comprehension. I must tired and
+>> this
+>> will become obvious...
+>>
+> The napi_id values associated with my sockets appear to be in the range
+> 0 < napi_id < MIN_NAPI_ID
 > 
-> It can be fixed with:
-> 	1. Create a temporary directory.
-> 	2. Use touch to create the temporary files inside the directory.
-> 	3. Clean up by deleting the temporary directory.
+> from busy_loop.h:
+> /*		0 - Reserved to indicate value not set
+>   *     1..NR_CPUS - Reserved for sender_cpu
+>   *  NR_CPUS+1..~0 - Region available for NAPI IDs
+>   */
+> #define MIN_NAPI_ID ((unsigned int)(NR_CPUS + 1))
 > 
-> [...]
-
-Applied, thanks!
-
-[1/2] configure: Support busybox mktemp
-      commit: cce3026ee45a86cfdd104fd1be270b759a161233
-[2/2] arch/x86: Create syscall __do_syscall{0..6} macros
-      commit: 20bb37e0f828909742f845b8113b2bb7e1065cd1
-
-Best regards,
--- 
-Jens Axboe
-
+> I have found this:
+> https://lwn.net/Articles/619862/
+> 
+> hinting that busy_poll may be incompatible with RPS
+> (Documentation/networking/scaling.rst) that I may have discovered
+> *AFTER* my epoll -> io_uring transition (I don't recall exactly the
+> sequence of my learning process).
+> 
+I read your code, I guess the thing is the sk->napi_id is set from
+skb->napi_id and the latter is set when the net device received some
+packets.
+> With my current knowledge, it makes little sense why busy polling would
+> not be possible with RPS. Also, what exactly is a NAPI device is quite
+> nebulous to me... Looking into the Intel igb driver code, it seems like
+> 1 NAPI device is created for each interrupt vector/Rx buffer of the
+> device.
+AFAIK, yes, each Rx ring has its own NAPI.
+> 
+> Bottomline, it seems like I have fallen into a new rabbit hole. It may
+> take me a day or 2 to figure it all... you are welcome to enlight me if
+> you know a thing or 2 about those topics... I am kinda lost right
+> now...
+> 
 

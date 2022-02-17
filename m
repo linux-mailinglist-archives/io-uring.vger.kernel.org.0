@@ -2,31 +2,31 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F59F4BA792
-	for <lists+io-uring@lfdr.de>; Thu, 17 Feb 2022 18:56:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D83834BA8B2
+	for <lists+io-uring@lfdr.de>; Thu, 17 Feb 2022 19:48:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243937AbiBQR4y (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 17 Feb 2022 12:56:54 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:32824 "EHLO
+        id S238405AbiBQSqx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 17 Feb 2022 13:46:53 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:58522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240904AbiBQR4x (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 17 Feb 2022 12:56:53 -0500
+        with ESMTP id S235553AbiBQSqw (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 17 Feb 2022 13:46:52 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37D1886E38;
-        Thu, 17 Feb 2022 09:56:39 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60C443CFCD;
+        Thu, 17 Feb 2022 10:46:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
         MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=6ckybct3FPMLo0xdtJt/GmtfVHGW/Fz7SoVWRuRzIWI=; b=TUk9ZD8zmd4WwF2rBQG9Jy/e5p
-        5/RU/3srRwzJ89C2uJkDKgQuUAGrU8foXgaLFUMGR2nd11CEsvw2Fw0ISiVnq6/VKwHMlzZrPSpmJ
-        ElBjW1AZ30cUxiqF4MLaObpeC6e2QMklaIVBovHi/3AZudcLuRvJoXiKbpySC9wiyCbVXK2AQKyaw
-        BQyXz9oUsgb1xwPDCTO+GJG8q9dEhlOQGxGLKLT6rdqKneCfI1OGhMvMMrE2fRfYiyDIJv1pD+xhz
-        4BmfyHUJ/USaLx3Ho9w3G8yhtnYjljxZzb4t8Lt24dtC/yqRYdI3ekqAGwztwJx0/iF1LU4piW2qB
-        QTXPatVQ==;
+        bh=s56TtY8DxMR7zBFoRRt9eI9KXJDyEEH2IYtgCwy2sC8=; b=a249VHjfyQYY9fpZ9TV8pJzxRO
+        veDARkv1Wr6CPTEB0/uMLIGiIgggQ1XI/Q4O2iw6UyUj8G2xA2aiM2FZHabWv4XPOSYE/tdpHHpVA
+        YFrTqSZs2BeGEQgkQe4AA+5LO2mMzg+6bRxn8dq8oG/BI7kjAS/XrJallZmXcQjRikEBm2a9l3HH6
+        EtwF1qQoZTK5xXdWyb44BkGvhJJD+xzRlNfi4l8hvuNQaV++47QDnanD9AzaN1ttfy/0J5BqWKavu
+        VvPc2ThkJ+O6+KozhzBDnCT9Vpay4kAjR5/czaUtuelASEdH5X8V6jhidJNfkjBhLuN925nY9pCiM
+        85wtsH5Q==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nKl1B-00BeVy-81; Thu, 17 Feb 2022 17:56:37 +0000
-Date:   Thu, 17 Feb 2022 09:56:37 -0800
+        id 1nKlnY-00BmkR-7h; Thu, 17 Feb 2022 18:46:36 +0000
+Date:   Thu, 17 Feb 2022 10:46:36 -0800
 From:   Luis Chamberlain <mcgrof@kernel.org>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Kanchan Joshi <joshiiitr@gmail.com>,
@@ -39,7 +39,7 @@ Cc:     Kanchan Joshi <joshiiitr@gmail.com>,
         Pankaj Raghav <pankydev8@gmail.com>
 Subject: Re: [RFC 01/13] io_uring: add infra for uring_cmd completion in
  submitter-task
-Message-ID: <Yg6MVe2Qpy92CsNF@bombadil.infradead.org>
+Message-ID: <Yg6YDJHcSh1WPh2+@bombadil.infradead.org>
 References: <20211220141734.12206-1-joshi.k@samsung.com>
  <CGME20211220142228epcas5p2978d92d38f2015148d5f72913d6dbc3e@epcas5p2.samsung.com>
  <20211220141734.12206-2-joshi.k@samsung.com>
@@ -99,26 +99,7 @@ On Thu, Feb 17, 2022 at 08:50:59AM -0700, Jens Axboe wrote:
 > 
 > And the req isn't going away before it's completed.
 
-Groovy, it would be nice to add a little /* comment */ to just remind
-the reader?
-
-> >>> +{
-> >>> +     struct io_kiocb *req = container_of(ioucmd, struct io_kiocb, uring_cmd);
-> >>> +
-> >>> +     req->uring_cmd.driver_cb = driver_cb;
-> >>> +     req->io_task_work.func = io_uring_cmd_work;
-> >>> +     io_req_task_work_add(req, !!(req->ctx->flags & IORING_SETUP_SQPOLL));
-> >>
-> >> This can schedules, and so the callback may go fishing in the meantime.
-> > 
-> > io_req_task_work_add is safe to be called in atomic context. FWIW,
-> > io_uring uses this for regular (i.e. direct block) io completion too.
-> 
-> Correct, it doesn't schedule and is safe from irq context as long as the
-> task is pinned (which it is, via the req itself).
-
-Great, a kdoc explaining the routine and that it can be called from
-atomic context and the rationale would be very useful to users. And ..
-so the callback *must* be safe in atomic context too or can it sleep?
+Just to be clear, I was thinking outside of the block layer context too.
+Does this still hold true?
 
   Luis

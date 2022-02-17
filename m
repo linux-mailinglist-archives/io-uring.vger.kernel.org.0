@@ -2,55 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E3F874B910F
-	for <lists+io-uring@lfdr.de>; Wed, 16 Feb 2022 20:19:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D1B4B4B9538
+	for <lists+io-uring@lfdr.de>; Thu, 17 Feb 2022 02:03:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238054AbiBPTTm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 16 Feb 2022 14:19:42 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:43682 "EHLO
+        id S229471AbiBQBEA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 16 Feb 2022 20:04:00 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:45992 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232255AbiBPTTl (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 16 Feb 2022 14:19:41 -0500
-Received: from cloud48395.mywhc.ca (cloud48395.mywhc.ca [173.209.37.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABB572AEDBB
-        for <io-uring@vger.kernel.org>; Wed, 16 Feb 2022 11:19:28 -0800 (PST)
-Received: from [45.44.224.220] (port=44342 helo=[192.168.1.179])
-        by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <olivier@trillion01.com>)
-        id 1nKPpm-0000rH-Ng; Wed, 16 Feb 2022 14:19:26 -0500
-Message-ID: <e0f54d9aabcfbdf605856608a30b64ad8a8842aa.camel@trillion01.com>
-Subject: Re: napi_busy_poll
-From:   Olivier Langlois <olivier@trillion01.com>
-To:     Hao Xu <haoxu@linux.alibaba.com>, Jens Axboe <axboe@kernel.dk>,
-        io-uring@vger.kernel.org
-Date:   Wed, 16 Feb 2022 14:19:26 -0500
-In-Reply-To: <4d889559-9268-7948-eb6b-1cb60d90016f@linux.alibaba.com>
-References: <21bfe359aa45123b36ee823076a036146d1d9518.camel@trillion01.com>
-         <fc9664c4-11db-54e1-d3b6-c35ea345166a@kernel.dk>
-         <f408374a-c0aa-1ca0-936a-0bbed68a01f6@linux.alibaba.com>
-         <d3412259cb13e9e76d45387e171228655ebe91b0.camel@trillion01.com>
-         <0446f39d-f926-0ae4-7ea4-00aff9236322@linux.alibaba.com>
-         <995e65ce3d353cacea4d426c9876b2a5e88faa99.camel@trillion01.com>
-         <a5e58292ff6207161af287ccd116ebf3c5b8a0fb.camel@trillion01.com>
-         <4d889559-9268-7948-eb6b-1cb60d90016f@linux.alibaba.com>
-Organization: Trillion01 Inc
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.42.3 
+        with ESMTP id S229854AbiBQBEA (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 16 Feb 2022 20:04:00 -0500
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73ED82819BC
+        for <io-uring@vger.kernel.org>; Wed, 16 Feb 2022 17:03:47 -0800 (PST)
+Received: by mail-pl1-f169.google.com with SMTP id u12so3331258plf.13
+        for <io-uring@vger.kernel.org>; Wed, 16 Feb 2022 17:03:47 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=cK/B5LPhFrjMxTQlkSj0W2EXcO7lXH9qkZ05XTZiSUQ=;
+        b=xbJqpTev7D2kANmTC5bIdEZhdAqeIE+KvCXbGvs7vwIn/ixIJJzlV/8Pf1rX/prZYL
+         DW5BVUzQ3S6n8yKTepwHJ3bjtbhB1SidRFWOdM0Cjs9ajGTy57orhJK66TvU4/VmHl2F
+         xN7D7GWwD+MhoFlbFI+FAsSS0xIOe/2D6k2U26gPbElBD1EsNILBcPGa1fmjbQA6vDno
+         emuVFdO801heAWjWkg7smOYqQpNlVGiV0PMdColyIg5U658+S9JH01HT3foJUDNJ0lQp
+         rqmVua+276fYXT9Y2CdI2HY5nmF1FTljdHytKEzDNEcrJPozbYM4iFJN87ypKzYVhPfD
+         9fpA==
+X-Gm-Message-State: AOAM5334qoQ0K/9DcrM8yvk6K61Mwwvfa2zpdIjrHuZjd1qexO/IH5PO
+        2GCIvCpw81q21ez9H1stwVc=
+X-Google-Smtp-Source: ABdhPJylnnnC1an21rCotApMu7vno6eYEiR9q1Ke7wjlxLuxciJNGuYt+VE13QbaH8O2YwI7zRn/9Q==
+X-Received: by 2002:a17:90b:33c9:b0:1b9:15d9:4968 with SMTP id lk9-20020a17090b33c900b001b915d94968mr4787847pjb.214.1645059826890;
+        Wed, 16 Feb 2022 17:03:46 -0800 (PST)
+Received: from garbanzo (136-24-173-63.cab.webpass.net. [136.24.173.63])
+        by smtp.gmail.com with ESMTPSA id w23sm6546635pgm.14.2022.02.16.17.03.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Feb 2022 17:03:45 -0800 (PST)
+Date:   Wed, 16 Feb 2022 17:03:43 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, joshi.k@samsung.com, hch@lst.de,
+        kbusch@kernel.org, linux-nvme@lists.infradead.org, metze@samba.org,
+        mcgrof@kernel.org
+Subject: Re: [PATCH 7/8] net: wire up support for file_operations->uring_cmd()
+Message-ID: <20220217010343.uvw2yuanqo2viv3a@garbanzo>
+References: <20210317221027.366780-1-axboe@kernel.dk>
+ <20210317221027.366780-8-axboe@kernel.dk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - trillion01.com
-X-Get-Message-Sender-Via: cloud48395.mywhc.ca: authenticated_id: olivier@trillion01.com
-X-Authenticated-Sender: cloud48395.mywhc.ca: olivier@trillion01.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210317221027.366780-8-axboe@kernel.dk>
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -58,51 +61,17 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, 2022-02-16 at 11:12 +0800, Hao Xu wrote:
+On Wed, Mar 17, 2021 at 04:10:26PM -0600, Jens Axboe wrote:
+> Pass it through the proto_ops->uring_cmd() handler, so we can plumb it
+> through all the way to the proto->uring_cmd() handler.
 > 
-> > 
-> I read your code, I guess the thing is the sk->napi_id is set from
-> skb->napi_id and the latter is set when the net device received some
-> packets.
-> > With my current knowledge, it makes little sense why busy polling
-> > would
-> > not be possible with RPS. Also, what exactly is a NAPI device is
-> > quite
-> > nebulous to me... Looking into the Intel igb driver code, it seems
-> > like
-> > 1 NAPI device is created for each interrupt vector/Rx buffer of the
-> > device.
-> AFAIK, yes, each Rx ring has its own NAPI.
-> > 
-> > Bottomline, it seems like I have fallen into a new rabbit hole. It
-> > may
-> > take me a day or 2 to figure it all... you are welcome to enlight
-> > me if
-> > you know a thing or 2 about those topics... I am kinda lost right
-> > now...
-> > 
-> 
-My dive into the net/core code has been beneficial!
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-I have found out that the reason why I did not have napi_id for my
-sockets is because I have introduced a local SOCKS proxy into my setup.
-By using the loopback device, this is de facto removing NAPI out of the
-picture.
+Without a user I think this is just a distraction for now, although a
+nice proof of concept.
 
-After having fixed this issue, I have started to test my code.
+metze,
 
-The modified io_cqring_wait() code does not work. With a pending recv()
-request, the moment napi_busy_loop() is called, the recv() request
-fails with an EFAULT error.
+do we have a user lined up yet? :)
 
-I suspect this might be because io_busy_loop_end() is doing something
-that is not allowed while inside napi_busy_loop().
-
-The simpler code change inside __io_sq_thread() might work but I still
-have to validate.
-
-I'll update later today or tomorrow with the latest result and
-discovery!
-
-Greetings,
-
+  Luis

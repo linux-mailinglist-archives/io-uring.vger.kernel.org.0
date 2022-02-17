@@ -2,96 +2,155 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E97474B961D
-	for <lists+io-uring@lfdr.de>; Thu, 17 Feb 2022 03:52:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AEE064BA4A1
+	for <lists+io-uring@lfdr.de>; Thu, 17 Feb 2022 16:40:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231974AbiBQCwh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 16 Feb 2022 21:52:37 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:37818 "EHLO
+        id S238324AbiBQPkL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 17 Feb 2022 10:40:11 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:60928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231570AbiBQCwh (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 16 Feb 2022 21:52:37 -0500
-Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 495BB1162B3
-        for <io-uring@vger.kernel.org>; Wed, 16 Feb 2022 18:52:23 -0800 (PST)
-Received: by mail-pg1-x52d.google.com with SMTP id 12so220886pgd.0
-        for <io-uring@vger.kernel.org>; Wed, 16 Feb 2022 18:52:23 -0800 (PST)
+        with ESMTP id S242614AbiBQPkK (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 17 Feb 2022 10:40:10 -0500
+Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 520842B2E15;
+        Thu, 17 Feb 2022 07:39:56 -0800 (PST)
+Received: by mail-pf1-x42c.google.com with SMTP id x18so1046pfh.5;
+        Thu, 17 Feb 2022 07:39:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=j6m+l1oUecnNNLOok0/YBcj8+iHstx9eNeTw7wBI+vA=;
-        b=1NIhBqfb2bt9IE2LPyzVew1RAtL5yrCM88EQpdmg6GEr8qnOkpIWCQ89qbETK3wn41
-         405LfItUQrIwoslP8n9/+YWIZ8h07NA8EsHoSRppWXR20HRyv5w/21fyTrXSvRVAN8Y7
-         OA5NYmoCc5xvn/zNbOGlCKoNQn+lLaqk/EM8oTUGT8tt6yVjkqfhZh3B0yxDqNF7fpW8
-         +qDsvS3dKCxFJqyolz+geks4B1IuZCkWgZcOjtXovaSco6y/Zk6tprtJRVnq4prlsggc
-         wsi4mUiJ+iiDJfN6TG9wrURJIjEV1r0soDnfP80XcpxiCpCfD0I77qRSeiutRLYLim/7
-         g/BQ==
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TE8n2qHv14fuB3CwoM4G4MqgZMfIJ3HjzCk+Yfyt5N8=;
+        b=qMt5VtEERrppHzkcA843sKlSXVkDWwJVCc8xr8+WeAWWtHU+r71qgQBRYbX1ux5DHL
+         NTb7U6GXDPSHTmip7AfIy5Ko8VL/n2wYZkfTF+oblRqdZyRfvEJN8zeIrsT+U1xUpvfJ
+         riVOgdNN8btUUwTA2klq9U/ssBcB0UxtckmqrZ9tEwGNj1BJ21gr/PO2oSD17bvd5xTR
+         WaPxX9eN4glrpIkVpONkOkPCdwiqP9MsrN3kghCci+eV1jQZ8IyRz1YxvinGdbLTKvYS
+         g0yJtFpgUiwqm4F4jDITroCd2gmObqxz7e5DqX7MyAaS2lksK8rHnhn45TfDiH1mcbj+
+         z0hg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=j6m+l1oUecnNNLOok0/YBcj8+iHstx9eNeTw7wBI+vA=;
-        b=VWW7c2yExZHoI4lmpBDVIzLxEAGATjbHbpxd2ugkVBkbN+5fLzAxUaQtmFeApjpM6N
-         HE8SA26lGpbQQa5Wwl8QjobEyuKnO5kJUIulPos2u4OiWQ8bI6enzoF1B77YptKwpsuk
-         NKeTHueK2ZA+C5zLVIdoXnNj1JQ4Qw9115BCHu5NcG3taMJvDZT5r8xqXPzatE+PfqpX
-         PVXTCLj1Y7bkAiY2b8ORLDny3o9M42HUwXM8PCND+UofN2x6vRdkCUoZgoS5Va85LBXX
-         b9RJXf5kPKFVQQUiO1NpQTjx5DrcWAAkB0ShcR2E9RcwHszz//UGI3svxL4hikSGrhy5
-         sqQQ==
-X-Gm-Message-State: AOAM530ykhkHwkB6WLb6gkkRsr2/vwAgkae2tQMwnYzbWtouEdiKgyWE
-        fxZLLaOSVppU/eY1c8WD1ASu/A==
-X-Google-Smtp-Source: ABdhPJw5EWuYRb71wLCJIIGBT4noHs4G6tbIHUSogiGVkMhwAu8zdLPxq3GuTH+vZb/3vCh0Kw73mQ==
-X-Received: by 2002:a62:63c2:0:b0:4e1:604:f07 with SMTP id x185-20020a6263c2000000b004e106040f07mr851283pfb.56.1645066342700;
-        Wed, 16 Feb 2022 18:52:22 -0800 (PST)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id b8sm1263990pfv.74.2022.02.16.18.52.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Feb 2022 18:52:22 -0800 (PST)
-Message-ID: <384cd4ed-6727-d7d0-b267-6a19f58df7eb@kernel.dk>
-Date:   Wed, 16 Feb 2022 19:52:19 -0700
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TE8n2qHv14fuB3CwoM4G4MqgZMfIJ3HjzCk+Yfyt5N8=;
+        b=kygUEExA9ls2eY9mP3l1m+7HNipYu3K0HPgAtc5fP7Hvhf0611sonb/+WE5HFgs6O8
+         g4e8c0pLOQve2Oi/h2Hj7XNF/4gESq72fq3DHGVInzXqn9LfFcxRoIoRG1AAvNU4XiRO
+         EeM5R+IwUFq8MNrGY6VOHeYIeptzqzKfwVgZK6daQrwPMAhX52I/JJUT9WWhIdiHjj7q
+         agQ3b5GQQFGorgECrJXK0yoRa4bDcg4dXxXUbZmLvz/u6yAf1cvcvpuIVT5ziGXvwtzW
+         itDDHWgkQezEGlif9G4atfBcGFbGzkqGqmJ8VPrtU843AJZSMXy5LXNjco27q6ozr021
+         lGfQ==
+X-Gm-Message-State: AOAM532jCfIG3ExumzhnK4yfb6SCfUjomLEvWuuaKVQb5NmZHLySg9cv
+        eum6kbkUrfETFMjBUzW2NW0VtzBUnNEvAsnLHaQ=
+X-Google-Smtp-Source: ABdhPJzPHsLcfwtzgYqMUfCU52gOXoVikjFPcVCnRLCbbJ9C8FYtQSZ8LnF5dDCB8RmVXuGNHrzFCDcOFwUhqIC04Qk=
+X-Received: by 2002:a05:6a00:a8b:b0:4cd:6030:4df3 with SMTP id
+ b11-20020a056a000a8b00b004cd60304df3mr3442934pfl.40.1645112395768; Thu, 17
+ Feb 2022 07:39:55 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.1
-Subject: Re: [RFC 03/13] io_uring: mark iopoll not supported for uring-cmd
-Content-Language: en-US
-To:     Luis Chamberlain <mcgrof@kernel.org>,
-        Kanchan Joshi <joshi.k@samsung.com>
-Cc:     io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org, hch@lst.de, kbusch@kernel.org,
-        javier@javigon.com, anuj20.g@samsung.com, joshiiitr@gmail.com,
-        pankydev8@gmail.com
-References: <20211220141734.12206-1-joshi.k@samsung.com>
- <CGME20211220142233epcas5p3b54aa591fb7b81bfb58bc33b5f92a2d3@epcas5p3.samsung.com>
- <20211220141734.12206-4-joshi.k@samsung.com>
- <Yg2wA2xxrDthoCDi@bombadil.infradead.org>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <Yg2wA2xxrDthoCDi@bombadil.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+References: <20211220141734.12206-1-joshi.k@samsung.com> <CGME20211220142228epcas5p2978d92d38f2015148d5f72913d6dbc3e@epcas5p2.samsung.com>
+ <20211220141734.12206-2-joshi.k@samsung.com> <Yg2vP7lo3hGLGakx@bombadil.infradead.org>
+In-Reply-To: <Yg2vP7lo3hGLGakx@bombadil.infradead.org>
+From:   Kanchan Joshi <joshiiitr@gmail.com>
+Date:   Thu, 17 Feb 2022 21:09:30 +0530
+Message-ID: <CA+1E3rLpKp0h2x7CoFPXwsYOc4ZYg_sqQQ+ed8cJhq77ESOAjg@mail.gmail.com>
+Subject: Re: [RFC 01/13] io_uring: add infra for uring_cmd completion in submitter-task
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Kanchan Joshi <joshi.k@samsung.com>, io-uring@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+        Keith Busch <kbusch@kernel.org>,
+        =?UTF-8?Q?Javier_Gonz=C3=A1lez?= <javier@javigon.com>,
+        Anuj Gupta <anuj20.g@samsung.com>,
+        Pankaj Raghav <pankydev8@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/16/22 7:16 PM, Luis Chamberlain wrote:
-> On Mon, Dec 20, 2021 at 07:47:24PM +0530, Kanchan Joshi wrote:
->> From: Anuj Gupta <anuj20.g@samsung.com>
->>
->> Currently uring-passthrough doesn't support iopoll. Bail out to avoid
->> the panic.
->>
->> Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
-> 
-> Jens, can you fold this in to your series?
+On Thu, Feb 17, 2022 at 7:43 AM Luis Chamberlain <mcgrof@kernel.org> wrote:
+>
+> On Mon, Dec 20, 2021 at 07:47:22PM +0530, Kanchan Joshi wrote:
+> > Completion of a uring_cmd ioctl may involve referencing certain
+> > ioctl-specific fields, requiring original submitter context.
+> > Export an API that driver can use for this purpose.
+> > The API facilitates reusing task-work infra of io_uring, while driver
+> > gets to implement cmd-specific handling in a callback.
+> >
+> > Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
+> > Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
+> > ---
+> >  fs/io_uring.c            | 16 ++++++++++++++++
+> >  include/linux/io_uring.h |  8 ++++++++
+> >  2 files changed, 24 insertions(+)
+> >
+> > diff --git a/fs/io_uring.c b/fs/io_uring.c
+> > index e96ed3d0385e..246f1085404d 100644
+> > --- a/fs/io_uring.c
+> > +++ b/fs/io_uring.c
+> > @@ -2450,6 +2450,22 @@ static void io_req_task_submit(struct io_kiocb *req, bool *locked)
+> >               io_req_complete_failed(req, -EFAULT);
+> >  }
+> >
+> > +static void io_uring_cmd_work(struct io_kiocb *req, bool *locked)
+> > +{
+> > +     req->uring_cmd.driver_cb(&req->uring_cmd);
+>
+> If the callback memory area is gone, boom.
 
-Yes, we really need to spin a new series with the bits combined. I've
-got some ideas for that...
+Why will the memory area be gone?
+Module removal is protected because try_module_get is done anyway when
+the namespace was opened.
 
--- 
-Jens Axboe
+> > +}
+> > +
+> > +void io_uring_cmd_complete_in_task(struct io_uring_cmd *ioucmd,
+> > +                     void (*driver_cb)(struct io_uring_cmd *))
+>
+> Adding kdoc style comment for this would be nice. Please document
+> the context that is allowed.
 
+Sure, for all kdoc style comments. Will add that in the next version.
+
+> > +{
+> > +     struct io_kiocb *req = container_of(ioucmd, struct io_kiocb, uring_cmd);
+> > +
+> > +     req->uring_cmd.driver_cb = driver_cb;
+> > +     req->io_task_work.func = io_uring_cmd_work;
+> > +     io_req_task_work_add(req, !!(req->ctx->flags & IORING_SETUP_SQPOLL));
+>
+> This can schedules, and so the callback may go fishing in the meantime.
+
+io_req_task_work_add is safe to be called in atomic context.
+FWIW, io_uring uses this for regular (i.e. direct block) io completion too.
+
+> > +}
+> > +EXPORT_SYMBOL_GPL(io_uring_cmd_complete_in_task);
+> > +
+> >  static void io_req_task_queue_fail(struct io_kiocb *req, int ret)
+> >  {
+> >       req->result = ret;
+> > diff --git a/include/linux/io_uring.h b/include/linux/io_uring.h
+> > index 64e788b39a86..f4b4990a3b62 100644
+> > --- a/include/linux/io_uring.h
+> > +++ b/include/linux/io_uring.h
+> > @@ -14,11 +14,15 @@ struct io_uring_cmd {
+> >       __u16           op;
+> >       __u16           unused;
+> >       __u32           len;
+> > +     /* used if driver requires update in task context*/
+>
+> By using kdoc above youcan remove this comment.
+>
+> > +     void (*driver_cb)(struct io_uring_cmd *cmd);
+>
+> So we'd need a struct module here I think if we're going to
+> defer this into memory which can be removed.
+>
+Same as the previous module-removal comment.Do we really need that?
+
+Thanks,
+--

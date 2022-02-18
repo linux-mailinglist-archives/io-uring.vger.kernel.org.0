@@ -2,45 +2,45 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 548BD4BC0CE
-	for <lists+io-uring@lfdr.de>; Fri, 18 Feb 2022 20:58:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 292FC4BC0C2
+	for <lists+io-uring@lfdr.de>; Fri, 18 Feb 2022 20:58:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238562AbiBRT6Z (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 18 Feb 2022 14:58:25 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:44666 "EHLO
+        id S238479AbiBRT6Q (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 18 Feb 2022 14:58:16 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:44188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238598AbiBRT6W (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 18 Feb 2022 14:58:22 -0500
+        with ESMTP id S238476AbiBRT6Q (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 18 Feb 2022 14:58:16 -0500
 Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86F4D20181
-        for <io-uring@vger.kernel.org>; Fri, 18 Feb 2022 11:58:04 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33D7931C
+        for <io-uring@vger.kernel.org>; Fri, 18 Feb 2022 11:57:59 -0800 (PST)
 Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 21IGAsx5023865
-        for <io-uring@vger.kernel.org>; Fri, 18 Feb 2022 11:58:04 -0800
+        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 21IFr9RB026039
+        for <io-uring@vger.kernel.org>; Fri, 18 Feb 2022 11:57:59 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=facebook;
- bh=dyQGKcmKLpBFkL0VFOvvJJDt9XqOrzO/TDGIL6U8++0=;
- b=H57y9wVdNGQuv+4ziv9okUhV1TSt/PMqnpZ6avVGOdn0fXztN5aetoOoeoe5Ze/E5Slr
- 4/vFXmtFFzHwhoKRZlLmT00tSz9GmoT/6nHyK99/CBjFHMTlTAgSJG7t92MNU68J8DpP
- Bzt7OSo+qvD5mXrCFAzK1meESV3xDsi7tYE= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3ea1mp5p2g-2
+ bh=zcQrDPv3eW71zY4XW+9wjHujhsnhMRVqCLVW8ftO+VU=;
+ b=i4FhaxWqZyH/Ab7xkJHmk7gZe4IyVEm+3PD6IJxkX7L3/NE3PFbCD6b5o6nhTVWWPPcA
+ fZ2YGHIHfALt9xRtcn7DyAliPHT8uNMjJ2UVazjCZt7/ZUFdle/ocSdsBwtCVh8U8y8j
+ kBNq5fxHoxaLV9rYjet4oFQKYsdAm3W8HtA= 
+Received: from mail.thefacebook.com ([163.114.132.120])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3ea1mp5p21-2
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Fri, 18 Feb 2022 11:58:04 -0800
-Received: from twshared6457.05.ash9.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:82::d) with Microsoft SMTP Server
+        for <io-uring@vger.kernel.org>; Fri, 18 Feb 2022 11:57:58 -0800
+Received: from twshared27297.14.frc2.facebook.com (2620:10d:c085:108::4) by
+ mail.thefacebook.com (2620:10d:c085:21d::5) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.21; Fri, 18 Feb 2022 11:58:02 -0800
+ 15.1.2308.21; Fri, 18 Feb 2022 11:57:58 -0800
 Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
-        id 963EBAEB6603; Fri, 18 Feb 2022 11:57:50 -0800 (PST)
+        id 9C739AEB6605; Fri, 18 Feb 2022 11:57:50 -0800 (PST)
 From:   Stefan Roesch <shr@fb.com>
 To:     <io-uring@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
         <linux-block@vger.kernel.org>, <kernel-team@fb.com>
 CC:     <shr@fb.com>
-Subject: [PATCH v2 03/13] mm: Add support for async buffered writes
-Date:   Fri, 18 Feb 2022 11:57:29 -0800
-Message-ID: <20220218195739.585044-4-shr@fb.com>
+Subject: [PATCH v2 04/13] fs: split off __alloc_page_buffers function
+Date:   Fri, 18 Feb 2022 11:57:30 -0800
+Message-ID: <20220218195739.585044-5-shr@fb.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220218195739.585044-1-shr@fb.com>
 References: <20220218195739.585044-1-shr@fb.com>
@@ -48,13 +48,13 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-GUID: vzfdbqgb41urqk121ASX8IXTsbHhP4jb
-X-Proofpoint-ORIG-GUID: vzfdbqgb41urqk121ASX8IXTsbHhP4jb
+X-Proofpoint-GUID: QGK8nnmb0IQGGQzVkDiCafP3hjES7XMT
+X-Proofpoint-ORIG-GUID: QGK8nnmb0IQGGQzVkDiCafP3hjES7XMT
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
  definitions=2022-02-18_09,2022-02-18_01,2021-12-02_01
 X-Proofpoint-Spam-Details: rule=fb_outbound_notspam policy=fb_outbound score=0 clxscore=1015
- suspectscore=0 mlxlogscore=877 mlxscore=0 malwarescore=0 phishscore=0
+ suspectscore=0 mlxlogscore=999 mlxscore=0 malwarescore=0 phishscore=0
  spamscore=0 bulkscore=0 lowpriorityscore=0 impostorscore=0 adultscore=0
  priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2201110000 definitions=main-2202180122
@@ -69,55 +69,78 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This adds support for async buffered writes in the mm layer. When the
-AOP_FLAG_NOWAIT flag is set, if the page is not already loaded,
-the page gets created without blocking on the allocation.
+This splits off the __alloc_page_buffers() function from the
+alloc_page_buffers_function(). In addition it adds a gfp_t parameter, so
+the caller can specify the allocation flags.
 
 Signed-off-by: Stefan Roesch <shr@fb.com>
 ---
- mm/filemap.c      |  1 +
- mm/folio-compat.c | 12 ++++++++++--
- 2 files changed, 11 insertions(+), 2 deletions(-)
+ fs/buffer.c | 37 ++++++++++++++++++++++---------------
+ 1 file changed, 22 insertions(+), 15 deletions(-)
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 5bd692a327d0..f4e2036c5029 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -42,6 +42,7 @@
- #include <linux/ramfs.h>
- #include <linux/page_idle.h>
- #include <linux/migrate.h>
-+#include <linux/sched/mm.h>
- #include <asm/pgalloc.h>
- #include <asm/tlbflush.h>
- #include "internal.h"
-diff --git a/mm/folio-compat.c b/mm/folio-compat.c
-index 749555a232a8..8243eeb883c1 100644
---- a/mm/folio-compat.c
-+++ b/mm/folio-compat.c
-@@ -133,11 +133,19 @@ struct page *grab_cache_page_write_begin(struct add=
-ress_space *mapping,
- 					pgoff_t index, unsigned flags)
- {
- 	unsigned fgp_flags =3D FGP_LOCK | FGP_WRITE | FGP_CREAT | FGP_STABLE;
-+	gfp_t gfp =3D mapping_gfp_mask(mapping);
-=20
- 	if (flags & AOP_FLAG_NOFS)
- 		fgp_flags |=3D FGP_NOFS;
--	return pagecache_get_page(mapping, index, fgp_flags,
--			mapping_gfp_mask(mapping));
-+
-+	if (flags & AOP_FLAG_NOWAIT) {
-+		fgp_flags |=3D FGP_NOWAIT;
-+
-+		gfp |=3D GFP_ATOMIC;
-+		gfp &=3D ~__GFP_DIRECT_RECLAIM;
-+	}
-+
-+	return pagecache_get_page(mapping, index, fgp_flags, gfp);
+diff --git a/fs/buffer.c b/fs/buffer.c
+index 6e6a69a12eed..2858eaf433c8 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -802,26 +802,13 @@ int remove_inode_buffers(struct inode *inode)
+ 	return ret;
  }
- EXPORT_SYMBOL(grab_cache_page_write_begin);
 =20
+-/*
+- * Create the appropriate buffers when given a page for data area and
+- * the size of each buffer.. Use the bh->b_this_page linked list to
+- * follow the buffers created.  Return NULL if unable to create more
+- * buffers.
+- *
+- * The retry flag is used to differentiate async IO (paging, swapping)
+- * which may not fail from ordinary buffer allocations.
+- */
+-struct buffer_head *alloc_page_buffers(struct page *page, unsigned long =
+size,
+-		bool retry)
++static struct buffer_head *__alloc_page_buffers(struct page *page,
++						unsigned long size, gfp_t gfp)
+ {
+ 	struct buffer_head *bh, *head;
+-	gfp_t gfp =3D GFP_NOFS | __GFP_ACCOUNT;
+ 	long offset;
+ 	struct mem_cgroup *memcg, *old_memcg;
+=20
+-	if (retry)
+-		gfp |=3D __GFP_NOFAIL;
+-
+ 	/* The page lock pins the memcg */
+ 	memcg =3D page_memcg(page);
+ 	old_memcg =3D set_active_memcg(memcg);
+@@ -859,6 +846,26 @@ struct buffer_head *alloc_page_buffers(struct page *=
+page, unsigned long size,
+=20
+ 	goto out;
+ }
++
++/*
++ * Create the appropriate buffers when given a page for data area and
++ * the size of each buffer.. Use the bh->b_this_page linked list to
++ * follow the buffers created.  Return NULL if unable to create more
++ * buffers.
++ *
++ * The retry flag is used to differentiate async IO (paging, swapping)
++ * which may not fail from ordinary buffer allocations.
++ */
++struct buffer_head *alloc_page_buffers(struct page *page, unsigned long =
+size,
++		bool retry)
++{
++	gfp_t gfp =3D GFP_NOFS | __GFP_ACCOUNT;
++
++	if (retry)
++		gfp |=3D __GFP_NOFAIL;
++
++	return __alloc_page_buffers(page, size, gfp);
++}
+ EXPORT_SYMBOL_GPL(alloc_page_buffers);
+=20
+ static inline void
 --=20
 2.30.2
 

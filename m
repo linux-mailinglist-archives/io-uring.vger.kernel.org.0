@@ -2,349 +2,223 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 253D84BC6E3
-	for <lists+io-uring@lfdr.de>; Sat, 19 Feb 2022 09:03:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CE19C4BC715
+	for <lists+io-uring@lfdr.de>; Sat, 19 Feb 2022 10:26:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240699AbiBSIEO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 19 Feb 2022 03:04:14 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:55006 "EHLO
+        id S238925AbiBSJUo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 19 Feb 2022 04:20:44 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:41534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234840AbiBSIEN (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 19 Feb 2022 03:04:13 -0500
-Received: from cloud48395.mywhc.ca (cloud48395.mywhc.ca [173.209.37.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 820605675C;
-        Sat, 19 Feb 2022 00:03:55 -0800 (PST)
-Received: from [45.44.224.220] (port=39896 helo=localhost)
-        by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <olivier@trillion01.com>)
-        id 1nLKig-0001bt-Ib; Sat, 19 Feb 2022 03:03:54 -0500
-Date:   Sat, 19 Feb 2022 03:03:53 -0500
-Message-Id: <d11e31bd59c75b2cce994dd90a07e769d4e039db.1645257310.git.olivier@trillion01.com>
-From:   Olivier Langlois <olivier@trillion01.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        Hao Xu <haoxu@linux.alibaba.com>,
-        io-uring <io-uring@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: [PATCH v1] io_uring: Add support for napi_busy_poll
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - trillion01.com
-X-Get-Message-Sender-Via: cloud48395.mywhc.ca: authenticated_id: olivier@trillion01.com
-X-Authenticated-Sender: cloud48395.mywhc.ca: olivier@trillion01.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+        with ESMTP id S236876AbiBSJUo (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 19 Feb 2022 04:20:44 -0500
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E24D207FE9
+        for <io-uring@vger.kernel.org>; Sat, 19 Feb 2022 01:20:25 -0800 (PST)
+Received: by mail-il1-f200.google.com with SMTP id x6-20020a92d306000000b002bdff65a8e1so5429471ila.3
+        for <io-uring@vger.kernel.org>; Sat, 19 Feb 2022 01:20:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=ckvJmtS+yRVhxy+A79GduUDFZwqPmpPSNh3O8zJ0EkU=;
+        b=YGjf+PK1usKs7zMZG69y7IYKn2UJsJ+5tZ80aA8rQeBfPfSrX4wZ0j8DE2kvkPaCpW
+         uwZbDVyyCkNTJJuY3X7G8zpY0YMNJ2E5gK1dPBwi8Ksqrnu4xHs+N+BXl8MIN1CP+YwM
+         GjJZ4JBZrCijsL/fbhTHIU/Ja2eubU7oa6GMHeGtQJ2QsCK0No2anhhmdbs0hDGG3RVr
+         SZocGEITAkzRuGplWtlMHIG7Aj9QnMFrNcyGw9PjWH6XoPFui2yDTQNkSYQBQVQr39bZ
+         bn8N6u+AzPFx6qEJLn1N/iAWT5CajEgm0BIRXGl9oCC5/ACnhGaR5qNjNkm5NYW9dDs3
+         7XSw==
+X-Gm-Message-State: AOAM532mkHvymhZmealUPEFdZXzxpyZy6iOTuXkzWEaA+jQlhq6d4svY
+        NB//NNqlCjFAAGWZFrWgrL/r1IMeSQaGoM2O3h+9E8nW7mcB
+X-Google-Smtp-Source: ABdhPJwebZdHdIzFMONM1uJsoutpR4znRB4ODc+YKE99903UIXtDRzSQUDhvwO8U0ut2poXVCkp61f7r1100ZYkoajnFyVOhbN5k
+MIME-Version: 1.0
+X-Received: by 2002:a5e:c64a:0:b0:640:7b5a:3446 with SMTP id
+ s10-20020a5ec64a000000b006407b5a3446mr4376673ioo.82.1645262424834; Sat, 19
+ Feb 2022 01:20:24 -0800 (PST)
+Date:   Sat, 19 Feb 2022 01:20:24 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000065061a05d85b8262@google.com>
+Subject: [syzbot] KASAN: use-after-free Read in io_poll_check_events
+From:   syzbot <syzbot+edb9c7738ba8cbdbf197@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The sqpoll thread can be used for performing the napi busy poll in a
-similar way that it does io polling for file systems supporting direct
-access bypassing the page cache.
+Hello,
 
-The other way that io_uring can be used for napi busy poll is by
-calling io_uring_enter() to get events.
+syzbot found the following issue on:
 
-If the user specify a timeout value, it is distributed between polling
-and sleeping by using the systemwide setting
-/proc/sys/net/core/busy_poll.
+HEAD commit:    d567f5db412e Merge tag 'regulator-fix-v5.17-rc4' of git://..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=137545a4700000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c252f01504189189
+dashboard link: https://syzkaller.appspot.com/bug?extid=edb9c7738ba8cbdbf197
+compiler:       Debian clang version 11.0.1-2, GNU ld (GNU Binutils for Debian) 2.35.2
 
-Co-developed-by: Hao Xu <haoxu@linux.alibaba.com>
-Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
-Signed-off-by: Olivier Langlois <olivier@trillion01.com>
+Unfortunately, I don't have any reproducer for this issue yet.
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+edb9c7738ba8cbdbf197@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: use-after-free in io_poll_check_events+0x994/0x9a0 fs/io_uring.c:5516
+Read of size 4 at addr ffff88802452ba2c by task kworker/1:21/2630
+
+CPU: 1 PID: 2630 Comm: kworker/1:21 Not tainted 5.17.0-rc4-syzkaller-00002-gd567f5db412e #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Workqueue: events io_fallback_req_func
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x1dc/0x2d8 lib/dump_stack.c:106
+ print_address_description+0x65/0x3a0 mm/kasan/report.c:255
+ __kasan_report mm/kasan/report.c:442 [inline]
+ kasan_report+0x19a/0x1f0 mm/kasan/report.c:459
+ io_poll_check_events+0x994/0x9a0 fs/io_uring.c:5516
+ io_apoll_task_func+0x4c/0xb10 fs/io_uring.c:5590
+ io_fallback_req_func+0x118/0x1fd fs/io_uring.c:1400
+ process_one_work+0x86c/0x1190 kernel/workqueue.c:2307
+ worker_thread+0xab1/0x1300 kernel/workqueue.c:2454
+ kthread+0x2a3/0x2d0 kernel/kthread.c:377
+ ret_from_fork+0x1f/0x30
+ </TASK>
+
+Allocated by task 9351:
+ kasan_save_stack mm/kasan/common.c:38 [inline]
+ kasan_set_track mm/kasan/common.c:45 [inline]
+ set_alloc_info mm/kasan/common.c:436 [inline]
+ __kasan_slab_alloc+0xb2/0xe0 mm/kasan/common.c:469
+ kasan_slab_alloc include/linux/kasan.h:260 [inline]
+ slab_post_alloc_hook mm/slab.h:732 [inline]
+ slab_alloc_node mm/slub.c:3230 [inline]
+ kmem_cache_alloc_node+0x201/0x370 mm/slub.c:3266
+ alloc_task_struct_node kernel/fork.c:171 [inline]
+ dup_task_struct+0x52/0x9a0 kernel/fork.c:883
+ copy_process+0x64a/0x5aa0 kernel/fork.c:1998
+ kernel_clone+0x22a/0x7e0 kernel/fork.c:2555
+ __do_sys_clone kernel/fork.c:2672 [inline]
+ __se_sys_clone kernel/fork.c:2656 [inline]
+ __x64_sys_clone+0x245/0x2b0 kernel/fork.c:2656
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x44/0xd0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+
+Freed by task 2630:
+ kasan_save_stack mm/kasan/common.c:38 [inline]
+ kasan_set_track+0x4c/0x70 mm/kasan/common.c:45
+ kasan_set_free_info+0x1f/0x40 mm/kasan/generic.c:370
+ ____kasan_slab_free+0x126/0x180 mm/kasan/common.c:366
+ kasan_slab_free include/linux/kasan.h:236 [inline]
+ slab_free_hook mm/slub.c:1728 [inline]
+ slab_free_freelist_hook+0x12e/0x1a0 mm/slub.c:1754
+ slab_free mm/slub.c:3509 [inline]
+ kmem_cache_free+0xb6/0x1c0 mm/slub.c:3526
+ __io_req_complete_post+0x25c/0x470 fs/io_uring.c:1960
+ io_req_complete_post fs/io_uring.c:1972 [inline]
+ io_req_complete_failed fs/io_uring.c:2003 [inline]
+ io_apoll_task_func+0x226/0xb10 fs/io_uring.c:5602
+ io_fallback_req_func+0x118/0x1fd fs/io_uring.c:1400
+ process_one_work+0x86c/0x1190 kernel/workqueue.c:2307
+ worker_thread+0xab1/0x1300 kernel/workqueue.c:2454
+ kthread+0x2a3/0x2d0 kernel/kthread.c:377
+ ret_from_fork+0x1f/0x30
+
+Last potentially related work creation:
+ kasan_save_stack+0x3b/0x60 mm/kasan/common.c:38
+ __kasan_record_aux_stack+0xb2/0xc0 mm/kasan/generic.c:348
+ __call_rcu kernel/rcu/tree.c:3026 [inline]
+ call_rcu+0x1c4/0xa70 kernel/rcu/tree.c:3106
+ context_switch kernel/sched/core.c:4990 [inline]
+ __schedule+0x92e/0x1080 kernel/sched/core.c:6296
+ preempt_schedule_common kernel/sched/core.c:6462 [inline]
+ preempt_schedule+0x14d/0x190 kernel/sched/core.c:6487
+ preempt_schedule_thunk+0x16/0x18
+ __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:160 [inline]
+ _raw_spin_unlock_irq+0x3c/0x40 kernel/locking/spinlock.c:202
+ spin_unlock_irq include/linux/spinlock.h:399 [inline]
+ do_group_exit+0x29f/0x2b0 kernel/exit.c:932
+ __do_sys_exit_group+0x13/0x20 kernel/exit.c:946
+ __ia32_sys_exit_group+0x0/0x40 kernel/exit.c:944
+ __x64_sys_exit_group+0x37/0x40 kernel/exit.c:944
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x44/0xd0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+
+Second to last potentially related work creation:
+ kasan_save_stack+0x3b/0x60 mm/kasan/common.c:38
+ __kasan_record_aux_stack+0xb2/0xc0 mm/kasan/generic.c:348
+ __call_rcu kernel/rcu/tree.c:3026 [inline]
+ call_rcu+0x1c4/0xa70 kernel/rcu/tree.c:3106
+ put_task_struct_rcu_user kernel/exit.c:180 [inline]
+ release_task+0x133b/0x15d0 kernel/exit.c:226
+ wait_task_zombie kernel/exit.c:1121 [inline]
+ wait_consider_task+0x1995/0x3020 kernel/exit.c:1348
+ do_wait_thread kernel/exit.c:1411 [inline]
+ do_wait+0x291/0x9d0 kernel/exit.c:1528
+ kernel_wait4+0x2a3/0x3c0 kernel/exit.c:1691
+ __do_sys_wait4 kernel/exit.c:1719 [inline]
+ __se_sys_wait4 kernel/exit.c:1715 [inline]
+ __x64_sys_wait4+0x130/0x1e0 kernel/exit.c:1715
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x44/0xd0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+
+The buggy address belongs to the object at ffff88802452ba00
+ which belongs to the cache task_struct of size 7168
+The buggy address is located 44 bytes inside of
+ 7168-byte region [ffff88802452ba00, ffff88802452d600)
+The buggy address belongs to the page:
+page:ffffea0000914a00 refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff888024528000 pfn:0x24528
+head:ffffea0000914a00 order:3 compound_mapcount:0 compound_pincount:0
+memcg:ffff88801b05ff01
+flags: 0xfff00000010200(slab|head|node=0|zone=1|lastcpupid=0x7ff)
+raw: 00fff00000010200 ffffea00008c1408 ffffea0001f56408 ffff888140006280
+raw: ffff888024528000 0000000000040002 00000001ffffffff ffff88801b05ff01
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 2, ts 12556673292, free_ts 0
+ prep_new_page mm/page_alloc.c:2434 [inline]
+ get_page_from_freelist+0x729/0x9e0 mm/page_alloc.c:4165
+ __alloc_pages+0x255/0x580 mm/page_alloc.c:5389
+ alloc_slab_page mm/slub.c:1799 [inline]
+ allocate_slab+0xce/0x3f0 mm/slub.c:1944
+ new_slab mm/slub.c:2004 [inline]
+ ___slab_alloc+0x3fe/0xc30 mm/slub.c:3018
+ __slab_alloc mm/slub.c:3105 [inline]
+ slab_alloc_node mm/slub.c:3196 [inline]
+ kmem_cache_alloc_node+0x2bb/0x370 mm/slub.c:3266
+ alloc_task_struct_node kernel/fork.c:171 [inline]
+ dup_task_struct+0x52/0x9a0 kernel/fork.c:883
+ copy_process+0x64a/0x5aa0 kernel/fork.c:1998
+ kernel_clone+0x22a/0x7e0 kernel/fork.c:2555
+ kernel_thread+0x155/0x1d0 kernel/fork.c:2607
+ create_kthread kernel/kthread.c:400 [inline]
+ kthreadd+0x5b5/0x7a0 kernel/kthread.c:746
+ ret_from_fork+0x1f/0x30
+page_owner free stack trace missing
+
+Memory state around the buggy address:
+ ffff88802452b900: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff88802452b980: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff88802452ba00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                  ^
+ ffff88802452ba80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88802452bb00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
 ---
- fs/io_uring.c | 194 +++++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 192 insertions(+), 2 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 77b9c7e4793b..0ed06f024e79 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -63,6 +63,7 @@
- #include <net/sock.h>
- #include <net/af_unix.h>
- #include <net/scm.h>
-+#include <net/busy_poll.h>
- #include <linux/anon_inodes.h>
- #include <linux/sched/mm.h>
- #include <linux/uaccess.h>
-@@ -395,6 +396,10 @@ struct io_ring_ctx {
- 	struct list_head	sqd_list;
- 
- 	unsigned long		check_cq_overflow;
-+#ifdef CONFIG_NET_RX_BUSY_POLL
-+	/* used to track busy poll napi_id */
-+	struct list_head	napi_list;
-+#endif
- 
- 	struct {
- 		unsigned		cached_cq_tail;
-@@ -1464,6 +1469,7 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
- 	INIT_WQ_LIST(&ctx->locked_free_list);
- 	INIT_DELAYED_WORK(&ctx->fallback_work, io_fallback_req_func);
- 	INIT_WQ_LIST(&ctx->submit_state.compl_reqs);
-+	INIT_LIST_HEAD(&ctx->napi_list);
- 	return ctx;
- err:
- 	kfree(ctx->dummy_ubuf);
-@@ -5398,6 +5404,111 @@ IO_NETOP_FN(send);
- IO_NETOP_FN(recv);
- #endif /* CONFIG_NET */
- 
-+#ifdef CONFIG_NET_RX_BUSY_POLL
-+
-+#define NAPI_TIMEOUT			(60 * SEC_CONVERSION)
-+
-+struct napi_entry {
-+	struct list_head	list;
-+	unsigned int		napi_id;
-+	unsigned long		timeout;
-+};
-+
-+/*
-+ * Add busy poll NAPI ID from sk.
-+ */
-+static void io_add_napi(struct file *file, struct io_ring_ctx *ctx)
-+{
-+	unsigned int napi_id;
-+	struct socket *sock;
-+	struct sock *sk;
-+	struct napi_entry *ne;
-+
-+	if (!net_busy_loop_on())
-+		return;
-+
-+	sock = sock_from_file(file);
-+	if (!sock)
-+		return;
-+
-+	sk = sock->sk;
-+	if (!sk)
-+		return;
-+
-+	napi_id = READ_ONCE(sk->sk_napi_id);
-+
-+	/* Non-NAPI IDs can be rejected */
-+	if (napi_id < MIN_NAPI_ID)
-+		return;
-+
-+	list_for_each_entry(ne, &ctx->napi_list, list) {
-+		if (ne->napi_id == napi_id) {
-+			ne->timeout = jiffies + NAPI_TIMEOUT;
-+			return;
-+		}
-+	}
-+
-+	ne = kmalloc(sizeof(*ne), GFP_KERNEL);
-+	if (!ne)
-+		return;
-+
-+	ne->napi_id = napi_id;
-+	ne->timeout = jiffies + NAPI_TIMEOUT;
-+	list_add_tail(&ne->list, &ctx->napi_list);
-+}
-+
-+static inline void io_check_napi_entry_timeout(struct napi_entry *ne)
-+{
-+	if (time_after(jiffies, ne->timeout)) {
-+		list_del(&ne->list);
-+		kfree(ne);
-+	}
-+}
-+
-+/*
-+ * Busy poll if globally on and supporting sockets found
-+ */
-+static bool io_napi_busy_loop(struct io_ring_ctx *ctx)
-+{
-+	struct napi_entry *ne, *n;
-+
-+	if (list_empty(&ctx->napi_list))
-+		return false;
-+
-+	list_for_each_entry_safe(ne, n, &ctx->napi_list, list) {
-+		napi_busy_loop(ne->napi_id, NULL, NULL, true,
-+			       BUSY_POLL_BUDGET);
-+		io_check_napi_entry_timeout(ne);
-+	}
-+	return !list_empty(&ctx->napi_list);
-+}
-+
-+static void io_free_napi_list(struct io_ring_ctx *ctx)
-+{
-+	while (!list_empty(&ctx->napi_list)) {
-+		struct napi_entry *ne =
-+			list_first_entry(&ctx->napi_list, struct napi_entry,
-+					 list);
-+
-+		list_del(&ne->list);
-+		kfree(ne);
-+	}
-+}
-+#else
-+static inline void io_add_napi(struct file *file, struct io_ring_ctx *ctx)
-+{
-+}
-+
-+static inline bool io_napi_busy_loop(struct io_ring_ctx *ctx)
-+{
-+	return false;
-+}
-+
-+static inline void io_free_napi_list(struct io_ring_ctx *ctx)
-+{
-+}
-+#endif /* CONFIG_NET_RX_BUSY_POLL */
-+
- struct io_poll_table {
- 	struct poll_table_struct pt;
- 	struct io_kiocb *req;
-@@ -5776,6 +5887,7 @@ static int __io_arm_poll_handler(struct io_kiocb *req,
- 		__io_poll_execute(req, mask);
- 		return 0;
- 	}
-+	io_add_napi(req->file, req->ctx);
- 
- 	/*
- 	 * Release ownership. If someone tried to queue a tw while it was
-@@ -7518,7 +7630,8 @@ static int __io_sq_thread(struct io_ring_ctx *ctx, bool cap_entries)
- 		    !(ctx->flags & IORING_SETUP_R_DISABLED))
- 			ret = io_submit_sqes(ctx, to_submit);
- 		mutex_unlock(&ctx->uring_lock);
--
-+		if (io_napi_busy_loop(ctx))
-+			++ret;
- 		if (to_submit && wq_has_sleeper(&ctx->sqo_sq_wait))
- 			wake_up(&ctx->sqo_sq_wait);
- 		if (creds)
-@@ -7649,6 +7762,9 @@ struct io_wait_queue {
- 	struct io_ring_ctx *ctx;
- 	unsigned cq_tail;
- 	unsigned nr_timeouts;
-+#ifdef CONFIG_NET_RX_BUSY_POLL
-+	unsigned busy_poll_to;
-+#endif
- };
- 
- static inline bool io_should_wake(struct io_wait_queue *iowq)
-@@ -7709,6 +7825,67 @@ static inline int io_cqring_wait_schedule(struct io_ring_ctx *ctx,
- 	return !*timeout ? -ETIME : 1;
- }
- 
-+#ifdef CONFIG_NET_RX_BUSY_POLL
-+static void io_adjust_busy_loop_timeout(struct timespec64 *ts,
-+					struct io_wait_queue *iowq)
-+{
-+	unsigned busy_poll_to = READ_ONCE(sysctl_net_busy_poll);
-+	struct timespec64 pollto = ns_to_timespec64(1000 * (s64)busy_poll_to);
-+
-+	if (timespec64_compare(ts, &pollto) > 0) {
-+		*ts = timespec64_sub(*ts, pollto);
-+		iowq->busy_poll_to = busy_poll_to;
-+	} else {
-+		iowq->busy_poll_to = timespec64_to_ns(ts) / 1000;
-+		ts->tv_sec = 0;
-+		ts->tv_nsec = 0;
-+	}
-+}
-+
-+static inline bool io_busy_loop_timeout(unsigned long start_time,
-+					unsigned long bp_usec)
-+{
-+	if (bp_usec) {
-+		unsigned long end_time = start_time + bp_usec;
-+		unsigned long now = busy_loop_current_time();
-+
-+		return time_after(now, end_time);
-+	}
-+	return true;
-+}
-+
-+static bool io_busy_loop_end(void *p, unsigned long start_time)
-+{
-+	struct io_wait_queue *iowq = p;
-+
-+	return signal_pending(current) ||
-+	       io_should_wake(iowq) ||
-+	       io_busy_loop_timeout(start_time, iowq->busy_poll_to);
-+}
-+
-+static void io_blocking_napi_busy_loop(struct io_ring_ctx *ctx,
-+				       struct io_wait_queue *iowq)
-+{
-+	unsigned long start_time =
-+		list_is_singular(&ctx->napi_list) ? 0 :
-+		busy_loop_current_time();
-+
-+	do {
-+		if (list_is_singular(&ctx->napi_list)) {
-+			struct napi_entry *ne =
-+				list_first_entry(&ctx->napi_list,
-+						 struct napi_entry, list);
-+
-+			napi_busy_loop(ne->napi_id, io_busy_loop_end, iowq,
-+				       true, BUSY_POLL_BUDGET);
-+			io_check_napi_entry_timeout(ne);
-+			break;
-+		}
-+	} while (io_napi_busy_loop(ctx) &&
-+		 !io_busy_loop_end(iowq, start_time));
-+}
-+#endif /* CONFIG_NET_RX_BUSY_POLL */
-+
- /*
-  * Wait until events become available, if we don't already have some. The
-  * application must reap them itself, as they reside on the shared cq ring.
-@@ -7729,12 +7906,20 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
- 		if (!io_run_task_work())
- 			break;
- 	} while (1);
--
-+#ifdef CONFIG_NET_RX_BUSY_POLL
-+	iowq.busy_poll_to = 0;
-+#endif
- 	if (uts) {
- 		struct timespec64 ts;
- 
- 		if (get_timespec64(&ts, uts))
- 			return -EFAULT;
-+#ifdef CONFIG_NET_RX_BUSY_POLL
-+		if (!(ctx->flags & IORING_SETUP_SQPOLL) &&
-+		    !list_empty(&ctx->napi_list)) {
-+			io_adjust_busy_loop_timeout(&ts, &iowq);
-+		}
-+#endif
- 		timeout = timespec64_to_jiffies(&ts);
- 	}
- 
-@@ -7759,6 +7944,10 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
- 	iowq.cq_tail = READ_ONCE(ctx->rings->cq.head) + min_events;
- 
- 	trace_io_uring_cqring_wait(ctx, min_events);
-+#ifdef CONFIG_NET_RX_BUSY_POLL
-+	if (iowq.busy_poll_to)
-+		io_blocking_napi_busy_loop(ctx, &iowq);
-+#endif
- 	do {
- 		/* if we can't even flush overflow, don't wait for more */
- 		if (!io_cqring_overflow_flush(ctx)) {
-@@ -9440,6 +9629,7 @@ static __cold void io_ring_ctx_free(struct io_ring_ctx *ctx)
- 		__io_sqe_files_unregister(ctx);
- 	if (ctx->rings)
- 		__io_cqring_overflow_flush(ctx, true);
-+	io_free_napi_list(ctx);
- 	mutex_unlock(&ctx->uring_lock);
- 	io_eventfd_unregister(ctx);
- 	io_destroy_buffers(ctx);
--- 
-2.35.1
-
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.

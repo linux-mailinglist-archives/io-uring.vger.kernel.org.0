@@ -2,115 +2,178 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C0754BFE4F
-	for <lists+io-uring@lfdr.de>; Tue, 22 Feb 2022 17:18:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F6C94BFF31
+	for <lists+io-uring@lfdr.de>; Tue, 22 Feb 2022 17:48:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233392AbiBVQSb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 22 Feb 2022 11:18:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45520 "EHLO
+        id S234322AbiBVQtI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 22 Feb 2022 11:49:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42980 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232395AbiBVQSa (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 22 Feb 2022 11:18:30 -0500
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1038165C1F
-        for <io-uring@vger.kernel.org>; Tue, 22 Feb 2022 08:18:03 -0800 (PST)
-Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 21M8MqxR008012
-        for <io-uring@vger.kernel.org>; Tue, 22 Feb 2022 08:18:03 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-transfer-encoding :
- content-type; s=facebook; bh=sAS+yhP6M/KBAqTWm+Sl37KXHeR+8ch+5URhdyiyxuI=;
- b=LfcpQD0/am7CzjV4slUyQpwrwDan6sWsXSTPQOtMKa+2kOnbWihQaq3MPK3+tjhY6bSK
- 6mlH4qrtHXracBtVnS2yIkpkxGkkzdVFvdJ71uayK7oyP6xqSCCZoZ5ZW0BSi1AjKvYm
- Mop6jk5coEGmPG5KWPYidIRTUfyb2VkDpW0= 
-Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3ecv8qjnmu-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Tue, 22 Feb 2022 08:18:03 -0800
-Received: from twshared26885.03.ash8.facebook.com (2620:10d:c085:208::f) by
- mail.thefacebook.com (2620:10d:c085:21d::7) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.21; Tue, 22 Feb 2022 08:18:00 -0800
-Received: by devbig039.lla1.facebook.com (Postfix, from userid 572232)
-        id 9B20D47F7668; Tue, 22 Feb 2022 08:17:53 -0800 (PST)
-From:   Dylan Yudaken <dylany@fb.com>
-To:     Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        <io-uring@vger.kernel.org>
-CC:     <kernel-team@fb.com>, Dylan Yudaken <dylany@fb.com>,
-        <syzbot+ca8bf833622a1662745b@syzkaller.appspotmail.com>
-Subject: [PATCH] io_uring: disallow  modification of rsrc_data during quiesce
-Date:   Tue, 22 Feb 2022 08:17:51 -0800
-Message-ID: <20220222161751.995746-1-dylany@fb.com>
-X-Mailer: git-send-email 2.30.2
+        with ESMTP id S233480AbiBVQtH (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 22 Feb 2022 11:49:07 -0500
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5920164D1E
+        for <io-uring@vger.kernel.org>; Tue, 22 Feb 2022 08:48:40 -0800 (PST)
+Received: by mail-wr1-x435.google.com with SMTP id j17so7834862wrc.0
+        for <io-uring@vger.kernel.org>; Tue, 22 Feb 2022 08:48:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=x47Zw43229IZO4IO8goHSCFdx3yNKtus0NrHOFjE1i4=;
+        b=siKTRbGEYKAGv3nSMyaeYDbvI3vy1v+gTqiMpFWShUmW5/unSndeekgRFD4gueNQ/x
+         Lxltu44Fe9I7+PPBE95MTeL1YNl8nxYyffVXdh+nQRInZnZNze+bg2fzJt0Upbvz8d0c
+         hQcqw+sWRL8j2Z4cLXKmKz4PbW86Xt8o5xNVgV1p9c2vg/efEHr+HeXp82MADzBM5v3K
+         27nnKKP5HifcQ4jNeqokIFIxc5o4ibZrP+a3WR/+hXS4A/WP0CujfdDuMJ4PIDfPCYb+
+         wxEGNVUlyzwJQbx4xQ1kOaDRVFBXv5TlkkVyJCu+ZKAhgoevb96g0A8k/own0+9pcqy3
+         Nyvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=x47Zw43229IZO4IO8goHSCFdx3yNKtus0NrHOFjE1i4=;
+        b=R4X02e5HJieWUhue7yCT/nQysGOutuFtwLztujJ8cfr3rBGtUDHrU7JRoh9QddCUJy
+         8CCCWF/hllkUiJtlWUsSrfGWgWRfz4gzAUKRsvZfxzTKSrjMrygRDP7KIK+8eqIpUWmC
+         cEMyuWW1p7zIDh582U7y8X7lnPJFC0NJYeMhb0tfVilA0EohL3wknQLT8EYn1omM58hr
+         DeWSc5aEdT1s81iP8t/B+S5whe1HAuO0GcJTj5mwWL/1wlDuOAPsTlnbtT5/vFOjVILW
+         Xnt6hlW7c1AQPzKubhJ/biNsPFUYZAMYeoSX7IcLcvXYBiL2Dpl2LlhIxhrp32vIcHl3
+         Krvw==
+X-Gm-Message-State: AOAM533dlYIMoto6Hq9AXH+ZE16YibURcsAfzJUG+1w1Vv5hdJ02qmCL
+        loPStCCqZ6mtVzI6BC96q0M9EQ==
+X-Google-Smtp-Source: ABdhPJz0izC0yXy6h3y3NtZOQtkMpe310Gmq26f4R4C4tYbJKqoTk5k23OB+G0d5icNv+gEv2Ct2PA==
+X-Received: by 2002:a5d:6911:0:b0:1ea:9cad:7cf0 with SMTP id t17-20020a5d6911000000b001ea9cad7cf0mr1915455wru.503.1645548519234;
+        Tue, 22 Feb 2022 08:48:39 -0800 (PST)
+Received: from google.com (cpc155339-bagu17-2-0-cust87.1-3.cable.virginm.net. [86.27.177.88])
+        by smtp.gmail.com with ESMTPSA id n7sm2819274wmd.30.2022.02.22.08.48.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Feb 2022 08:48:38 -0800 (PST)
+Date:   Tue, 22 Feb 2022 16:48:36 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        syzbot <syzbot+9671693590ef5aad8953@syzkaller.appspotmail.com>,
+        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [syzbot] KASAN: stack-out-of-bounds Read in iov_iter_revert
+Message-ID: <YhUT5I/64oaOjfDA@google.com>
+References: <6f7d4c1d-f923-3ab1-c525-45316b973c72@gmail.com>
+ <00000000000047f3b805c962affb@google.com>
+ <YYLAYvFU+9cnu+4H@google.com>
+ <0b4a5ff8-12e5-3cc7-8971-49e576444c9a@gmail.com>
+ <dd122760-5f87-10b1-e50d-388c2631c01a@kernel.dk>
+ <YYp4rC4M/oh8fgr7@google.com>
+ <YbmiIpQKfrLClsKV@google.com>
+ <c7131961-23de-8bf4-7773-efffe9b8d294@gmail.com>
+ <YbtxPB/ceMUVK7t7@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: 2ns3xdp_bOtg_g833dgJ1AjfL6n_R_i6
-X-Proofpoint-GUID: 2ns3xdp_bOtg_g833dgJ1AjfL6n_R_i6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2022-02-22_04,2022-02-21_02,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=fb_outbound_notspam policy=fb_outbound score=0 adultscore=0
- mlxlogscore=999 lowpriorityscore=0 spamscore=0 impostorscore=0
- phishscore=0 clxscore=1015 mlxscore=0 bulkscore=0 priorityscore=1501
- suspectscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2201110000 definitions=main-2202220100
-X-FB-Internal: deliver
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <YbtxPB/ceMUVK7t7@google.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-io_rsrc_ref_quiesce will unlock the uring while it waits for references t=
-o
-the io_rsrc_data to be killed.
-There are other places to the data that might add references to data via
-calls to io_rsrc_node_switch.
-There is a race condition where this reference can be added after the
-completion has been signalled. At this point the io_rsrc_ref_quiesce call
-will wake up and relock the uring, assuming the data is unused and can be
-freed - although it is actually being used.
+On Thu, 16 Dec 2021, Lee Jones wrote:
 
-To fix this check in io_rsrc_ref_quiesce if a resource has been revived.
+> On Wed, 15 Dec 2021, Pavel Begunkov wrote:
+> 
+> > On 12/15/21 08:06, Lee Jones wrote:
+> > > On Tue, 09 Nov 2021, Lee Jones wrote:
+> > > 
+> > > > On Mon, 08 Nov 2021, Jens Axboe wrote:
+> > > > > On 11/8/21 8:29 AM, Pavel Begunkov wrote:
+> > > > > > On 11/3/21 17:01, Lee Jones wrote:
+> > > > > > > Good afternoon Pavel,
+> > > > > > > 
+> > > > > > > > syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+> > > > > > > > 
+> > > > > > > > Reported-and-tested-by: syzbot+9671693590ef5aad8953@syzkaller.appspotmail.com
+> > > > > > > > 
+> > > > > > > > Tested on:
+> > > > > > > > 
+> > > > > > > > commit:         bff2c168 io_uring: don't retry with truncated iter
+> > > > > > > > git tree:       https://github.com/isilence/linux.git truncate
+> > > > > > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=730106bfb5bf8ace
+> > > > > > > > dashboard link: https://syzkaller.appspot.com/bug?extid=9671693590ef5aad8953
+> > > > > > > > compiler:       Debian clang version 11.0.1-2, GNU ld (GNU Binutils for Debian) 2.35.1
+> > > > > > > > 
+> > > > > > > > Note: testing is done by a robot and is best-effort only.
+> > > > > > > 
+> > > > > > > As you can see in the 'dashboard link' above this bug also affects
+> > > > > > > android-5-10 which is currently based on v5.10.75.
+> > > > > > > 
+> > > > > > > I see that the back-port of this patch failed in v5.10.y:
+> > > > > > > 
+> > > > > > >     https://lore.kernel.org/stable/163152589512611@kroah.com/
+> > > > > > > 
+> > > > > > > And after solving the build-error by back-porting both:
+> > > > > > > 
+> > > > > > >     2112ff5ce0c11 iov_iter: track truncated size
+> > > > > > >     89c2b3b749182 io_uring: reexpand under-reexpanded iters
+> > > > > > > 
+> > > > > > > I now see execution tripping the WARN() in iov_iter_revert():
+> > > > > > > 
+> > > > > > >     if (WARN_ON(unroll > MAX_RW_COUNT))
+> > > > > > >         return
+> > > > > > > 
+> > > > > > > Am I missing any additional patches required to fix stable/v5.10.y?
+> > > > > > 
+> > > > > > Is it the same syz test? There was a couple more patches for
+> > > > > > IORING_SETUP_IOPOLL, but strange if that's not the case.
+> > > > > > 
+> > > > > > 
+> > > > > > fwiw, Jens decided to replace it with another mechanism shortly
+> > > > > > after, so it may be a better idea to backport those. Jens,
+> > > > > > what do you think?
+> > > > > > 
+> > > > > > 
+> > > > > > commit 8fb0f47a9d7acf620d0fd97831b69da9bc5e22ed
+> > > > > > Author: Jens Axboe <axboe@kernel.dk>
+> > > > > > Date:   Fri Sep 10 11:18:36 2021 -0600
+> > > > > > 
+> > > > > >       iov_iter: add helper to save iov_iter state
+> > > > > > 
+> > > > > > commit cd65869512ab5668a5d16f789bc4da1319c435c4
+> > > > > > Author: Jens Axboe <axboe@kernel.dk>
+> > > > > > Date:   Fri Sep 10 11:19:14 2021 -0600
+> > > > > > 
+> > > > > >       io_uring: use iov_iter state save/restore helpers
+> > > > > 
+> > > > > Yes, I think backporting based on the save/restore setup is the
+> > > > > sanest way by far.
+> > > > 
+> > > > Would you be kind enough to attempt to send these patches to Stable?
+> > > > 
+> > > > When I tried to back-port them, the second one gave me trouble.  And
+> > > > without the in depth knowledge of the driver/subsystem that you guys
+> > > > have, I found it almost impossible to resolve all of the conflicts:
+> > > 
+> > > Any movement on this chaps?
+> > > 
+> > > Not sure I am able to do this back-port without your help.
+> > 
+> > Apologies, slipped from my attention, we'll backport it,
+> > and thanks for the reminder
+> 
+> Excellent.  Thanks Pavel.
 
-Reported-by: syzbot+ca8bf833622a1662745b@syzkaller.appspotmail.com
-Fixes: b36a2050040b ("io_uring: fix bug in slow unregistering of nodes")
-Signed-off-by: Dylan Yudaken <dylany@fb.com>
----
- fs/io_uring.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+Has this now been back-ported to Stable?
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 77b9c7e4793b..02086e8e0dec 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -7924,7 +7924,15 @@ static __cold int io_rsrc_ref_quiesce(struct io_rs=
-rc_data *data,
- 		ret =3D wait_for_completion_interruptible(&data->done);
- 		if (!ret) {
- 			mutex_lock(&ctx->uring_lock);
--			break;
-+			if (atomic_read(&data->refs) > 0) {
-+				/*
-+				 * it has been revived by another thread while
-+				 * we were unlocked
-+				 */
-+				mutex_unlock(&ctx->uring_lock);
-+			} else {
-+				break;
-+			}
- 		}
-=20
- 		atomic_inc(&data->refs);
+If so, would you be kind enough to provide the SHA1?
 
-base-commit: cfb92440ee71adcc2105b0890bb01ac3cddb8507
---=20
-2.30.2
+Thanks.
 
+-- 
+Lee Jones [李琼斯]
+Principal Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog

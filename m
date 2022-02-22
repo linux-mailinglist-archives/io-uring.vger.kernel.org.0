@@ -2,380 +2,174 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EA444BF6D2
-	for <lists+io-uring@lfdr.de>; Tue, 22 Feb 2022 11:58:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C0D314BF765
+	for <lists+io-uring@lfdr.de>; Tue, 22 Feb 2022 12:42:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230446AbiBVK5w (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 22 Feb 2022 05:57:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52886 "EHLO
+        id S229629AbiBVLm2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 22 Feb 2022 06:42:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231570AbiBVK5t (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 22 Feb 2022 05:57:49 -0500
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C93D19F6F9
-        for <io-uring@vger.kernel.org>; Tue, 22 Feb 2022 02:57:23 -0800 (PST)
-Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 21LJ4wDS013675
-        for <io-uring@vger.kernel.org>; Tue, 22 Feb 2022 02:57:23 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-transfer-encoding :
- content-type; s=facebook; bh=sy1j14aoslgSCkaWygEi9nLqU8U0pKdBASZmbjW9UEs=;
- b=kyBpJj4sRRQWVY0NrbymOs3xjm/0HtHN3AvmtTshdztcbeOCeOPR54TSzhAazdxvXYqV
- pMZYDm3opmR5EdFRhee3HyTrsW5zNF3YB14GJVrguTF55YVHUFBYJv9lz4m4aUxpHc3/
- zKv4EnirZOwydKluNFXMGPNEXzI0RUPnDjQ= 
-Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3ecgjru8sk-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Tue, 22 Feb 2022 02:57:22 -0800
-Received: from twshared9880.08.ash8.facebook.com (2620:10d:c085:208::11) by
- mail.thefacebook.com (2620:10d:c085:11d::7) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.21; Tue, 22 Feb 2022 02:57:20 -0800
-Received: by devbig039.lla1.facebook.com (Postfix, from userid 572232)
-        id B35C647C3FD2; Tue, 22 Feb 2022 02:57:15 -0800 (PST)
-From:   Dylan Yudaken <dylany@fb.com>
-To:     Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        <io-uring@vger.kernel.org>
-CC:     <kernel-team@fb.com>, Dylan Yudaken <dylany@fb.com>
-Subject: [PATCH v3 liburing] Test consistent file position updates
-Date:   Tue, 22 Feb 2022 02:57:12 -0800
-Message-ID: <20220222105712.3342740-1-dylany@fb.com>
-X-Mailer: git-send-email 2.30.2
+        with ESMTP id S229523AbiBVLm1 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 22 Feb 2022 06:42:27 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22902136EED;
+        Tue, 22 Feb 2022 03:42:02 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id AA908B81984;
+        Tue, 22 Feb 2022 11:42:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2EE9C340E8;
+        Tue, 22 Feb 2022 11:41:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1645530119;
+        bh=EjscWLGJWk9jJIq0Yuq9lpx8LbZ3BlFOQvLg5DZEOg0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=e7ZT/JmCl5YhyboLSCPp0oAtWsnVvbC1YIohXWQc40w6ZDy0d6QvOMXE5khpCWEWy
+         qH9Ex/a8LEYOLsT12cUpELOlibJGEwiJThs1T91RXV2jTyFZOiLgV+7kX7QcXItsfC
+         0L9NJWlGp+Q74UsomLQYwF81Q+q339WWloCBruFV4tBKa2HVbGBpwmZw4IMeSECkhg
+         4TjDppofiEhj6keu2fkw0bjZdEixiwzKJkmrWn/BT3/8IodcMr4795suiCR8E97PBY
+         rY4iGhKPEymnAE71+QQSKzP8rrlakd8yOdW9J4jZWOfP4G1YXZ+k3FI2kPSL8gmLRg
+         J5mR0CbR9yJrQ==
+Date:   Tue, 22 Feb 2022 11:41:56 +0000
+From:   Filipe Manana <fdmanana@kernel.org>
+To:     Daniel Black <daniel@mariadb.org>
+Cc:     io-uring@vger.kernel.org, linux-btrfs@vger.kernel.org
+Subject: Re: Fwd: btrfs / io-uring corrupting reads
+Message-ID: <YhTMBFrZeEvROh0C@debian9.Home>
+References: <CABVffEM0eEWho+206m470rtM0d9J8ue85TtR-A_oVTuGLWFicA@mail.gmail.com>
+ <CABVffEO3DZTtTNdjkwTegxNPTHbeM-PBeKk5B_dFXdsTvL2wFg@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-GUID: dsvMa19wLDGJNTKbYArqa7rNzT0b83dK
-X-Proofpoint-ORIG-GUID: dsvMa19wLDGJNTKbYArqa7rNzT0b83dK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2022-02-22_02,2022-02-21_02,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=fb_outbound_notspam policy=fb_outbound score=0 malwarescore=0
- bulkscore=0 mlxlogscore=999 spamscore=0 adultscore=0 suspectscore=0
- impostorscore=0 priorityscore=1501 phishscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2201110000 definitions=main-2202220064
-X-FB-Internal: deliver
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <CABVffEO3DZTtTNdjkwTegxNPTHbeM-PBeKk5B_dFXdsTvL2wFg@mail.gmail.com>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-read(2)/write(2) and friends support sequential reads without giving an
-explicit offset. The result of these should leave the file with an
-incremented offset.
+On Tue, Feb 22, 2022 at 08:53:02AM +1100, Daniel Black wrote:
+> Per references at the bottom btfs + iouring manage to corrupt the
+> reading of a file.
+>=20
+> Using podman here however docker or another container runtime will
+> probably work. As will any MariaDB-10.6 on a distro with a native
+> liburing userspace. Apologies for the older and bloated container
+> image.
+>=20
+> Reproduction of bug:
+>=20
+> using a btrfs:
+>=20
+> $ dd if=3D/dev/zero  of=3D../btrfs.blk bs=3D1M count=3D2K
+> $ sudo losetup --direct-io=3Don  -f ../btrfs.blk
+> $ sudo mkfs.btrfs /dev/loop6
+> $ sudo mount /dev/loop/6 /mnt/btrfstest
+> $ sudo mkdir /mnt/btrfstest/noaio
+> $ sudo chown dan: /mnt/btrfstest/noaio
+>=20
+> Initialize database on directory:
+>=20
+> $ podman run --name mdbinit --rm -v
+> /mnt/btrfstest/noaio/:/var/lib/mysql:Z -e
+> MARIADB_ALLOW_EMPTY_ROOT_PASSWORD=3D1
+> quay.io/danielgblack/mariadb-test:10.6-impish-sysbench
+> --innodb_use_native_aio=3D0
+>=20
+> $ podman kill mdbinit
+>=20
+> Switch to using uring to read:
+>=20
+> $ podman run --rm -v /mnt/btrfstest/noaio/:/var/lib/mysql:Z -e
+> MARIADB_ALLOW_EMPTY_ROOT_PASSWORD=3D1
+> quay.io/danielgblack/mariadb-test:10.6-impish-sysbench
+> --innodb_use_native_aio=3D1
+>=20
+> Failure observed on startup:
+>=20
+> 2022-02-21 14:43:31 0 [ERROR] InnoDB: Database page corruption on disk
+> or a failed read of file './ibdata1' page [page id: space=3D0, page
+> number=3D9]. You may have to recover from a backup.
 
-Add tests for both read and write to check that io_uring behaves
-consistently in these scenarios. Expect that if you queue many
-reads/writes, and set the IOSQE_IO_LINK flag, that they will behave
-similarly to calling read(2)/write(2) in sequence.
+I gave it a try, but it fails setting up io_uring:
 
-Set IOSQE_ASYNC as well in a set of tests. This exacerbates the problem b=
-y
-forcing work to happen in different threads to submission.
+2022-02-22 11:27:13 0 [Note] mysqld: O_TMPFILE is not supported on /tmp (di=
+sabling future attempts)
+2022-02-22 11:27:13 0 [Warning] mysqld: io_uring_queue_init() failed with e=
+rrno 1
+2022-02-22 11:27:13 0 [Warning] InnoDB: liburing disabled: falling back to =
+innodb_use_native_aio=3DOFF
+2022-02-22 11:27:13 0 [Note] InnoDB: Initializing buffer pool, total size =
+=3D 134217728, chunk size =3D 134217728
+2022-02-22 11:27:13 0 [Note] InnoDB: Completed initialization of buffer pool
 
-Also add tests for not setting IOSQE_IO_LINK, but allow the file offset t=
-o
-progress past the end of the file.
+So that's why it doesn't fail here, as it fallbacks to no aio mode.
 
-Signed-off-by: Dylan Yudaken <dylany@fb.com>
----
+Any idea why it's failing to setup io_uring?
 
-v2:
- - fixed a bug in how cqe ordering was processed
- - enforce sequential reads for !IOSQE_IO_LINK
+I have the liburing2 and liburing-dev packages installed on debian, and
+tried with a 5.17-rc4 kernel.
 
-v3:
- - lots of style cleanups
- - do not output on success
+I can run fio with io_uring as the ioengine (works perferctly so far).
 
-test/Makefile |   1 +
- test/fpos.c   | 256 ++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 257 insertions(+)
- create mode 100644 test/fpos.c
+Thanks.
 
-diff --git a/test/Makefile b/test/Makefile
-index 1e318f7..f421f53 100644
---- a/test/Makefile
-+++ b/test/Makefile
-@@ -78,6 +78,7 @@ test_srcs :=3D \
- 	file-update.c \
- 	file-verify.c \
- 	fixed-link.c \
-+	fpos.c \
- 	fsync.c \
- 	hardlink.c \
- 	io-cancel.c \
-diff --git a/test/fpos.c b/test/fpos.c
-new file mode 100644
-index 0000000..40df613
---- /dev/null
-+++ b/test/fpos.c
-@@ -0,0 +1,256 @@
-+/* SPDX-License-Identifier: MIT */
-+/*
-+ * Description: test io_uring fpos handling
-+ *
-+ */
-+#include <errno.h>
-+#include <stdio.h>
-+#include <unistd.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <fcntl.h>
-+#include <assert.h>
-+
-+#include "helpers.h"
-+#include "liburing.h"
-+
-+#define FILE_SIZE 5000
-+#define QUEUE_SIZE 2048
-+
-+static void create_file(const char *file, size_t size)
-+{
-+	ssize_t ret;
-+	char *buf;
-+	size_t idx;
-+	int fd;
-+
-+	buf =3D t_malloc(size);
-+	for (idx =3D 0; idx < size; ++idx) {
-+		/* write 0 or 1 */
-+		buf[idx] =3D (unsigned char)(idx & 0x01);
-+	}
-+
-+	fd =3D open(file, O_WRONLY | O_CREAT, 0644);
-+	assert(fd >=3D 0);
-+
-+	ret =3D write(fd, buf, size);
-+	fsync(fd);
-+	close(fd);
-+	free(buf);
-+	assert(ret =3D=3D size);
-+}
-+
-+static int test_read(struct io_uring *ring, bool async, bool link,
-+		     int blocksize)
-+{
-+	int ret, fd, i;
-+	bool done =3D false;
-+	struct io_uring_sqe *sqe;
-+	struct io_uring_cqe *cqe;
-+	loff_t current, expected =3D 0;
-+	int count_ok;
-+	int count_0 =3D 0, count_1 =3D 0;
-+	unsigned char buff[QUEUE_SIZE * blocksize];
-+	unsigned char reordered[QUEUE_SIZE * blocksize];
-+
-+	create_file(".test_fpos_read", FILE_SIZE);
-+	fd =3D open(".test_fpos_read", O_RDONLY);
-+	unlink(".test_fpos_read");
-+	assert(fd >=3D 0);
-+
-+	while (!done) {
-+		for (i =3D 0; i < QUEUE_SIZE; ++i) {
-+			sqe =3D io_uring_get_sqe(ring);
-+			if (!sqe) {
-+				fprintf(stderr, "no sqe\n");
-+				return -1;
-+			}
-+			io_uring_prep_read(sqe, fd,
-+					buff + i * blocksize,
-+					blocksize, -1);
-+			sqe->user_data =3D i;
-+			if (async)
-+				sqe->flags |=3D IOSQE_ASYNC;
-+			if (link && i !=3D QUEUE_SIZE - 1)
-+				sqe->flags |=3D IOSQE_IO_LINK;
-+		}
-+		ret =3D io_uring_submit_and_wait(ring, QUEUE_SIZE);
-+		if (ret !=3D QUEUE_SIZE) {
-+			fprintf(stderr, "submit failed: %d\n", ret);
-+			return 1;
-+		}
-+		count_ok  =3D 0;
-+		for (i =3D 0; i < QUEUE_SIZE; ++i) {
-+			int res;
-+
-+			ret =3D io_uring_peek_cqe(ring, &cqe);
-+			if (ret) {
-+				fprintf(stderr, "peek failed: %d\n", ret);
-+				return ret;
-+			}
-+			assert(cqe->user_data < QUEUE_SIZE);
-+			memcpy(reordered + count_ok,
-+				buff + cqe->user_data * blocksize, blocksize);
-+			res =3D cqe->res;
-+			io_uring_cqe_seen(ring, cqe);
-+			if (res =3D=3D 0) {
-+				done =3D true;
-+			} else if (res =3D=3D -ECANCELED) {
-+				/* cancelled, probably ok */
-+			} else if (res < 0 || res > blocksize) {
-+				fprintf(stderr, "bad read: %d\n", res);
-+				return -1;
-+			} else {
-+				expected +=3D res;
-+				count_ok +=3D res;
-+			}
-+		}
-+		ret =3D 0;
-+		for (i =3D 0; i < count_ok; i++) {
-+			if (reordered[i] =3D=3D 1) {
-+				count_1++;
-+			} else if (reordered[i] =3D=3D 0) {
-+				count_0++;
-+			} else {
-+				fprintf(stderr, "odd read %d\n",
-+						(int)reordered[i]);
-+				ret =3D -1;
-+				break;
-+			}
-+		}
-+		if (labs(count_1 - count_0) > 1) {
-+			fprintf(stderr, "inconsistent reads, got 0s:%d 1s:%d\n",
-+					count_0, count_1);
-+			ret =3D -1;
-+		}
-+		current =3D lseek(fd, 0, SEEK_CUR);
-+		if (current < expected || (current !=3D expected && link)) {
-+			/* accept that with !link current may be > expected */
-+			fprintf(stderr, "f_pos incorrect, expected %ld have %ld\n",
-+					expected, current);
-+			ret =3D -1;
-+		}
-+		if (ret)
-+			return ret;
-+	}
-+	return 0;
-+}
-+
-+
-+static int test_write(struct io_uring *ring, bool async,
-+		      bool link, int blocksize)
-+{
-+	int ret, fd, i;
-+	struct io_uring_sqe *sqe;
-+	struct io_uring_cqe *cqe;
-+	bool fail =3D false;
-+	loff_t current;
-+	char data[blocksize+1];
-+	char readbuff[QUEUE_SIZE*blocksize+1];
-+
-+	fd =3D open(".test_fpos_write", O_RDWR | O_CREAT, 0644);
-+	unlink(".test_fpos_write");
-+	assert(fd >=3D 0);
-+
-+	for (i =3D 0; i < blocksize; i++)
-+		data[i] =3D 'A' + i;
-+
-+	data[blocksize] =3D '\0';
-+
-+	for (i =3D 0; i < QUEUE_SIZE; ++i) {
-+		sqe =3D io_uring_get_sqe(ring);
-+		if (!sqe) {
-+			fprintf(stderr, "no sqe\n");
-+			return -1;
-+		}
-+		io_uring_prep_write(sqe, fd, data + (i % blocksize), 1, -1);
-+		sqe->user_data =3D 1;
-+		if (async)
-+			sqe->flags |=3D IOSQE_ASYNC;
-+		if (link && i !=3D QUEUE_SIZE - 1)
-+			sqe->flags |=3D IOSQE_IO_LINK;
-+	}
-+	ret =3D io_uring_submit_and_wait(ring, QUEUE_SIZE);
-+	if (ret !=3D QUEUE_SIZE) {
-+		fprintf(stderr, "submit failed: %d\n", ret);
-+		return 1;
-+	}
-+	for (i =3D 0; i < QUEUE_SIZE; ++i) {
-+		int res;
-+
-+		ret =3D io_uring_peek_cqe(ring, &cqe);
-+		res =3D cqe->res;
-+		if (ret) {
-+			fprintf(stderr, "peek failed: %d\n", ret);
-+			return ret;
-+		}
-+		io_uring_cqe_seen(ring, cqe);
-+		if (!fail && res !=3D 1) {
-+			fprintf(stderr, "bad result %d\n", res);
-+			fail =3D true;
-+		}
-+	}
-+	current =3D lseek(fd, 0, SEEK_CUR);
-+	if (current !=3D QUEUE_SIZE) {
-+		fprintf(stderr, "f_pos incorrect, expected %ld have %d\n",
-+				current, QUEUE_SIZE);
-+		fail =3D true;
-+	}
-+	current =3D lseek(fd, 0, SEEK_SET);
-+	if (current !=3D 0) {
-+		perror("seek to start");
-+		return -1;
-+	}
-+	ret =3D read(fd, readbuff, QUEUE_SIZE);
-+	if (ret !=3D QUEUE_SIZE) {
-+		fprintf(stderr, "did not write enough: %d\n", ret);
-+		return -1;
-+	}
-+	i =3D 0;
-+	while (i < QUEUE_SIZE - blocksize) {
-+		if (strncmp(readbuff + i, data, blocksize)) {
-+			char bad[QUEUE_SIZE+1];
-+
-+			memcpy(bad, readbuff + i, blocksize);
-+			bad[blocksize] =3D '\0';
-+			fprintf(stderr, "unexpected data %s\n", bad);
-+			fail =3D true;
-+		}
-+		i +=3D blocksize;
-+	}
-+
-+	return fail ? -1 : 0;
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	struct io_uring ring;
-+	int ret;
-+
-+	if (argc > 1)
-+		return 0;
-+
-+	ret =3D io_uring_queue_init(QUEUE_SIZE, &ring, 0);
-+	if (ret) {
-+		fprintf(stderr, "ring setup failed\n");
-+		return 1;
-+	}
-+
-+	for (int test =3D 0; test < 16; test++) {
-+		int async =3D test & 0x01;
-+		int link =3D test & 0x02;
-+		int write =3D test & 0x04;
-+		int blocksize =3D test & 0x08 ? 1 : 7;
-+
-+		ret =3D write
-+			? test_write(&ring, !!async, !!link, blocksize)
-+			: test_read(&ring, !!async, !!link, blocksize);
-+		if (ret) {
-+			fprintf(stderr, "failed %s async=3D%d link=3D%d blocksize=3D%d\n",
-+					write ? "write" : "read",
-+					async, link, blocksize);
-+			return -1;
-+		}
-+	}
-+	return 0;
-+}
-
-base-commit: 20bb37e0f828909742f845b8113b2bb7e1065cd1
---=20
-2.30.2
-
+>=20
+> 2022-02-21 14:43:31 0 [Note] InnoDB: Page dump in ascii and hex (16384 by=
+tes):
+>=20
+>  len 16384; hex 00000000000000092022-02-21 14:43:31 0 [ERROR] InnoDB:
+> Database page corruption on disk or a failed read of file './ibdata1'
+> page [page id: space=3D0, page number=3D243]. You may have to recover from
+> a backup.
+>=20
+> ffffffffffffff2022-02-21 14:43:31 0 [Note] InnoDB: Page dump in ascii
+> and hex (16384 bytes):
+>=20
+>  len 16384; hex
+> 00000000000000f3ffffff0000000000009c2045bf00ffffff0000000000ffffff0000000=
+000000002017100090000000001550002000600070000000000000009000000000000000000=
+0000000500000000000000020572000000000000000204b208010000030085690000006e666=
+96d756d000908a0d3000300000803000073757072656d756d000000000013080000100500a0=
+00000000000000000000000000000b5359535f464f524549474e18080000180500c00000000=
+00000000c5359ffffff535f464fff0000524549474e5f434f4c531308ffffff0000200500ff=
+0000db000000000000000d5359535f56495254550000000000000056414c000000000000200=
+80000280501030000ffffffff0000ffffffff0000000000000000000e6d7973000000716c2f=
+696e6e6f64625f7461626c655f7300ffffffff0000ffffffff0000000000746174732000fff=
+f080000300501ffff0000ffffffff000005d6692b000000000000000f6d7973716c2f696e6e=
+6f64625f696e6465785fd2007374617473220800003805015500000000000000106d7973716=
+c2f7472616e73616374696f6e5f72656769737472791c0800004005000000f4ffffff740000=
+00000000ffffff00116d79ffffffffffffffffffffffffffffffffffff73716c2f67fffffff=
+fffffffffff7469645f736c6176655fffffffffffffffffff706f7300ffffffffffffff2022=
+-02-21
+> 14:43:31 0 [ERROR] InnoDB: Database page corruption on disk or a
+> failed read of file './mysql/innodb_table_stats.ibd' page [page id:
+> space=3D1, page number=3D0]. You may have to recover from a backup.
+>=20
+> 002022-02-21 14:43:31 0 [Note] InnoDB: Page dump in ascii and hex (16384 =
+bytes):
+>=20
+> Without --innodb_use_native_aio=3D0 as a container argument this starts
+> without error.
+>=20
+> $ sudo losetup --direct-io=3Doff  -f btrfs.blk also exhibits the failure
+>=20
+> Observed failures in:
+> * 5.17.0-0.rc4.96.fc36.x86_64
+> * 5.16.8 (on nixos)
+> * 5.15.6
+>=20
+> No observed failure:
+> * 5.15.14-200.fc35.x86_64
+> * 5.10
+>=20
+> references:
+> * https://jira.mariadb.org/browse/MDEV-27900
+> * https://github.com/NixOS/nixpkgs/issues/160516
+> * https://jira.mariadb.org/browse/MDEV-27449

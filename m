@@ -2,83 +2,95 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 23BEF4C1F56
-	for <lists+io-uring@lfdr.de>; Thu, 24 Feb 2022 00:07:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5922D4C2033
+	for <lists+io-uring@lfdr.de>; Thu, 24 Feb 2022 00:45:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237315AbiBWXH0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 23 Feb 2022 18:07:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48214 "EHLO
+        id S244965AbiBWXpK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 23 Feb 2022 18:45:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244062AbiBWXHZ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 23 Feb 2022 18:07:25 -0500
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45C8011C2B
-        for <io-uring@vger.kernel.org>; Wed, 23 Feb 2022 15:06:57 -0800 (PST)
-Received: by mail-wm1-x32a.google.com with SMTP id bg16-20020a05600c3c9000b00380f6f473b0so2015420wmb.1
-        for <io-uring@vger.kernel.org>; Wed, 23 Feb 2022 15:06:57 -0800 (PST)
+        with ESMTP id S230499AbiBWXpJ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 23 Feb 2022 18:45:09 -0500
+Received: from mail-qv1-xf2b.google.com (mail-qv1-xf2b.google.com [IPv6:2607:f8b0:4864:20::f2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75D1259A57
+        for <io-uring@vger.kernel.org>; Wed, 23 Feb 2022 15:44:40 -0800 (PST)
+Received: by mail-qv1-xf2b.google.com with SMTP id j11so1051802qvy.0
+        for <io-uring@vger.kernel.org>; Wed, 23 Feb 2022 15:44:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=DXht5QiO0hXb/Ggpab2+QkP0Eaos8xQns6oR63guU/g=;
-        b=pbYT3zTSoQleFrr71I2DecDMPyL7+TGyAoiMDyxWSJh2DjsDPkr/rXlCT8FVDqMH9Z
-         IgutYY7Ffvrps7O6mYCwBw41z5dbcE+v8ObJ7m4cjxOR1bR7FZNy6G+duE0CZZPbdkqG
-         HoEUlSp9oPoLvnFzP0T4HIJ4L9BKA49DOfvVhUqZTJe/Rvmjhrebbkev7IjJCLpK8mGZ
-         fP99zeG5MIvc8x5sImQW8gzTtkf4p+gsAjxNsQZpELQS+eyj/om9BbK/TbR+V8FMf5Gd
-         pK3BSH59PHrUpNChivi/XmXqucD3RP8MSbPOci+1gmD/Vvfe037gG/+P6UOw+wVd5zjK
-         5+8Q==
+        bh=JX2j6/CStgbXRu6oviI2PhBCShvC/e8sssqjH5A+Bec=;
+        b=zoe4ht23DWg9xZHZLh5zB0Ve8xg2uxa7aDv6Gn/+6+UtwCtr+/RLw74M0g+g2HR7bV
+         NuvzBxdPX8RKP/fHD6QQkEXYtdtmBQ1HUao0BJBVhmnEQKkwwxGYO0VJ2VHwV3LbH8tL
+         Y1fLnJl/Cx1V5qnpaNhZzq4TyeEaQpuN2R/AYqPfj5OX01+Ekg1gjouodrlR9LjQMSgn
+         SEyYoLpkJMor1oIPfInNhw32N01uQmfCuhj902QyU4i7VyVSmSV84OQt8V31oTCITmRR
+         TwsbN9z7/JL7FqIkpVGFO7UAiMwIp/ORQLluzR9ujMDnuS0K/WyXvGMo69L7aXUSJDWl
+         4H/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=DXht5QiO0hXb/Ggpab2+QkP0Eaos8xQns6oR63guU/g=;
-        b=a64B3pATxICtxCwyRhx3jyeTrOXdVP6SKubyAnkaAZfxTi/A6IdZsWse9ODtRhj3v1
-         +3IHeYHVeCkdNKi+DY2s4SHrf2FOKzsoWCKBxzHLz3loepNfEnrcwO81YRbNbG63AqIs
-         RxdL0Alfk4Rd7mxjqQM9qhpLMbeWf2goahA2MN+KNoj0m9ndmlLtqKFM66li3yHEKEkW
-         KLT9fw/zB2w6do96UefVBmcp4miE5kPhKSUtBk0K3UILzB+NX70jwo0PW9/q502Gfev5
-         j2a+ORIhN70qX5y5a4DysGReY9drVIyENuPKeKkgRPM63Ume3EY+k0337C0tHmkxfDa0
-         kUfQ==
-X-Gm-Message-State: AOAM530FFKub9ZEZAbDgJ5dEgtZ2AoH/F0K6pFQWW/+CcXyk0sua9Cid
-        jZ4uXNoIvMHxtWurbXRz8fY=
-X-Google-Smtp-Source: ABdhPJyGlzIyT7GJfdQc2njJ6aSmioM5xO4owf8PytVfQsR69ad0inQyyYpmfUsDBma1y2LuPblLaw==
-X-Received: by 2002:a05:600c:4fc4:b0:37c:9116:ef3d with SMTP id o4-20020a05600c4fc400b0037c9116ef3dmr17194wmq.167.1645657615867;
-        Wed, 23 Feb 2022 15:06:55 -0800 (PST)
-Received: from [192.168.8.198] ([85.255.236.236])
-        by smtp.gmail.com with ESMTPSA id c4sm236519wrn.116.2022.02.23.15.06.55
+        bh=JX2j6/CStgbXRu6oviI2PhBCShvC/e8sssqjH5A+Bec=;
+        b=hMkhBUBWUxQZTRIyg3WVUBKVnpnDxSanqVnLNRu+ALiQGDpfBvsu/3dPbIKQaZPddz
+         YvjRpkL+p5nRcsiibzh99HzpTdjDBHhuYJ4SdIqbYJ7046XpUGiC7mRGlNhvEC1Y2uhR
+         +I1DGLr75KHNVFojX5UvoeIkYkKEyLL/PUgAK19raeg2zhi3yZ7fKG+hi2l6gYGmJMGp
+         NN1BosZXK71Mfyy+7WatJGj1Sl9jb0E4hYdrd/pblkqM9MLZVoGPufM0NIN3fm62aI/a
+         ieogaE+KSZLAmt90cEpOIDBV2xDfcBKjOyNQ0hzkCRaeWJO3+Rb6U7Db7xdcX4UEcBd6
+         V71Q==
+X-Gm-Message-State: AOAM532EtkPkKGyLLwLOJL7g/pqYOKLwes6Msq7Fii/P7mUUEXPtatn/
+        i3VYoUOjRR0hF7Wg2OHWxrrIGw==
+X-Google-Smtp-Source: ABdhPJwfU8bLXtL+RVH1T46PgABMs5FSbhygxQDdk7xl5P6U+wkeT7LxW6TMR3YVyyFOen/ay1BuZg==
+X-Received: by 2002:a05:6214:5190:b0:42b:fc43:bf63 with SMTP id kl16-20020a056214519000b0042bfc43bf63mr75841qvb.33.1645659879512;
+        Wed, 23 Feb 2022 15:44:39 -0800 (PST)
+Received: from [172.19.131.148] ([8.46.73.115])
+        by smtp.gmail.com with ESMTPSA id i19sm487045qkl.89.2022.02.23.15.44.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Feb 2022 15:06:55 -0800 (PST)
-Message-ID: <1fed35a9-e0b7-9f72-af12-64b9e6f6126f@gmail.com>
-Date:   Wed, 23 Feb 2022 23:07:00 +0000
+        Wed, 23 Feb 2022 15:44:39 -0800 (PST)
+Message-ID: <ae62c67d-5720-9bb3-70eb-76e7dda496a3@kernel.dk>
+Date:   Wed, 23 Feb 2022 16:44:32 -0700
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
  Thunderbird/91.6.0
-Subject: Re: [PATCH v3 3/4] io_uring: do not recalculate ppos unnecessarily
+Subject: Re: [PATCH v3 liburing] Test consistent file position updates
 Content-Language: en-US
-To:     Dylan Yudaken <dylany@fb.com>, Jens Axboe <axboe@kernel.dk>,
+To:     Dylan Yudaken <dylany@fb.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
         io-uring@vger.kernel.org
 Cc:     kernel-team@fb.com
-References: <20220222105504.3331010-1-dylany@fb.com>
- <20220222105504.3331010-4-dylany@fb.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20220222105504.3331010-4-dylany@fb.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+References: <20220222105712.3342740-1-dylany@fb.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20220222105712.3342740-1-dylany@fb.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/22/22 10:55, Dylan Yudaken wrote:
-> There is a slight optimisation to be had by calculating the correct pos
-> pointer inside io_kiocb_update_pos and then using that later.
+On 2/22/22 3:57 AM, Dylan Yudaken wrote:
+> read(2)/write(2) and friends support sequential reads without giving an
+> explicit offset. The result of these should leave the file with an
+> incremented offset.
+> 
+> Add tests for both read and write to check that io_uring behaves
+> consistently in these scenarios. Expect that if you queue many
+> reads/writes, and set the IOSQE_IO_LINK flag, that they will behave
+> similarly to calling read(2)/write(2) in sequence.
+> 
+> Set IOSQE_ASYNC as well in a set of tests. This exacerbates the problem by
+> forcing work to happen in different threads to submission.
+> 
+> Also add tests for not setting IOSQE_IO_LINK, but allow the file offset to
+> progress past the end of the file.
 
-Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
+Applied, thanks.
 
 -- 
-Pavel Begunkov
+Jens Axboe
+

@@ -2,108 +2,91 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B7AF4C0568
-	for <lists+io-uring@lfdr.de>; Wed, 23 Feb 2022 00:40:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C0C764C1F53
+	for <lists+io-uring@lfdr.de>; Thu, 24 Feb 2022 00:06:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236245AbiBVXkw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 22 Feb 2022 18:40:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57194 "EHLO
+        id S234170AbiBWXHT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 23 Feb 2022 18:07:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235678AbiBVXkw (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 22 Feb 2022 18:40:52 -0500
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1B213207F
-        for <io-uring@vger.kernel.org>; Tue, 22 Feb 2022 15:40:25 -0800 (PST)
-Received: by mail-il1-f199.google.com with SMTP id r9-20020a056e0219c900b002c271bebeeaso1427229ill.16
-        for <io-uring@vger.kernel.org>; Tue, 22 Feb 2022 15:40:25 -0800 (PST)
+        with ESMTP id S244712AbiBWXHS (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 23 Feb 2022 18:07:18 -0500
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0669935DF2
+        for <io-uring@vger.kernel.org>; Wed, 23 Feb 2022 15:06:49 -0800 (PST)
+Received: by mail-wm1-x336.google.com with SMTP id r187-20020a1c2bc4000000b003810e6b192aso44928wmr.1
+        for <io-uring@vger.kernel.org>; Wed, 23 Feb 2022 15:06:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=lnITPqwcbF4xDj8afflrnDi00eUm+sr8ZvJa9lEfI7M=;
+        b=F6w6diGlO7nit6vm+PoA3GpP2E+W9odrqXnqSkaYXcYBuZbIkc7Du8boQp9r60yAfs
+         KrduPsFn1meWfX7CwHjOiA0MR3XO3dWfNjhVvoqfzFmx2efP4fBKJ2a0BWHgnbR3BkKC
+         AtdXOTL7JqGFe9C+vVu0U6HJ8SAxhe+cMOqaroX+4XPpeh+ZnXA6NdDNBCsy1Eymqnxu
+         v+AKKhn2RlTDFf0SBJ6KtQyK6oKpNhZzJ0ohHQh6KdcOQ0zaui/7vTxChLxTFSKcH9ZN
+         QaX+AwCfHr7tlLf4ruuUNFrb+hG+3N++pdWOlvf9TNzaeMop3dRG2sPQISUlxqsKcb4p
+         Jarg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=OooVyoOgW3l6HohSHtsDC5MFtd8nu7N8NE3HmObQJ5o=;
-        b=2ZrgjhciPdeicuB6TbRpyUjWXaWYOJRs7gsdPOAG3t6cPOEXon0Al8n9RIk0fGo21O
-         DlIwESQPqFHiHmbASxvSacTyi96vxXcnuD22j2wESNpgg/+ZqgD4STEfIyyk28bAFMnZ
-         mhHpngsKt/+7msqmyLA/Wz8y/5sm0lk2J+DcbF5Og1z9b9Twl69jVvoGbxPaiHCefuAa
-         K3hC/FLYxKDcS/NbxcsJz+gsKxbAcKQHGE74fQY5tfV+LO1RkrTPvspohMILCMmUCdf7
-         O362vQhe8vwMMZXt2oqdhJ6x3gPdtCNeiMhqi7fcbDlDhTfFb11Tot3NWPZ4DPr1ofn4
-         s7CA==
-X-Gm-Message-State: AOAM530LvLNRvrNC+be4yVyAbFMZxDlHgYl6cGaRvgTMeC9o3OKEBr6W
-        u9X2pz4FbZACsfEj8GzOrNf9iLfWJkS7SRgjAK9G71i3LCYc
-X-Google-Smtp-Source: ABdhPJz1Fn+Fc9twJUyPU6QWtzbHGw3fAKOtx1KnBpDPEkMKqEXzMWm6kEI3vtUc/FsqtVLZMEPaHKQ/tQu+tmerahxeUEwSCk1w
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=lnITPqwcbF4xDj8afflrnDi00eUm+sr8ZvJa9lEfI7M=;
+        b=UFYaW4eruo29ZHZf0AeCk5VzpS8+gK34vQZxiOsTy7jYGXpvIFp8sVFFGWGGyx0o6F
+         tF79rPZ+KguVixdtk0IYXcKY9rUwUV+WpCOlDatdiRkOEt8dciA30hNRVeJiw3JUJ0iB
+         IlLfogOPnzONSLiZsGaiGrfBI0BqlfdufAmpww3h1xs1tghN78+zoYHjcVeOLXPN7p5K
+         uYd/BtpP/H2TOMPZq07rcKtigvTlRd5/IZewPJVpmEYegI4o3NRTPSlgc3st2Lef79rp
+         hYSI6nqMmUUbJaygpjwwG99p5u7IWYuhkkP4hkBIcBfIM/+wXasBcy3hW4emFC/FLIhj
+         XhLA==
+X-Gm-Message-State: AOAM533pX7reOZfPQmBA8aVVtTCll4gmNKl1fgrB3gWgzDgNlz2H1eWQ
+        qRHdaW3Y++xJK0+hrpumHbQCmVCdEXw=
+X-Google-Smtp-Source: ABdhPJx8OTFxpKPyOeusbrW0zkzLNJBB9wNTIJyXD2gz+Q8RCC4zPggb/b2XgFKA4udcOXqQRsgOsw==
+X-Received: by 2002:a7b:c001:0:b0:37d:409d:624d with SMTP id c1-20020a7bc001000000b0037d409d624dmr6466wmb.64.1645657607419;
+        Wed, 23 Feb 2022 15:06:47 -0800 (PST)
+Received: from [192.168.8.198] ([85.255.236.236])
+        by smtp.gmail.com with ESMTPSA id p8sm794156wro.106.2022.02.23.15.06.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Feb 2022 15:06:47 -0800 (PST)
+Message-ID: <e80c7f0a-a4f2-9343-5e7e-b09f71bb8ead@gmail.com>
+Date:   Wed, 23 Feb 2022 23:06:52 +0000
 MIME-Version: 1.0
-X-Received: by 2002:a02:c772:0:b0:314:9319:9076 with SMTP id
- k18-20020a02c772000000b0031493199076mr19486218jao.176.1645573224994; Tue, 22
- Feb 2022 15:40:24 -0800 (PST)
-Date:   Tue, 22 Feb 2022 15:40:24 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000871dfa05d8a3df7c@google.com>
-Subject: [syzbot] memory leak in create_io_worker (2)
-From:   syzbot <syzbot+7085977fe51df63eb2bf@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.4 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,LONGWORDS,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=no autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: [PATCH v3 1/4] io_uring: remove duplicated calls to io_kiocb_ppos
+Content-Language: en-US
+To:     Dylan Yudaken <dylany@fb.com>, Jens Axboe <axboe@kernel.dk>,
+        io-uring@vger.kernel.org
+Cc:     kernel-team@fb.com
+References: <20220222105504.3331010-1-dylany@fb.com>
+ <20220222105504.3331010-2-dylany@fb.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20220222105504.3331010-2-dylany@fb.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
+On 2/22/22 10:55, Dylan Yudaken wrote:
+> io_kiocb_ppos is called in both branches, and it seems that the compiler
+> does not fuse this. Fusing removes a few bytes from loop_rw_iter.
+> 
+> Before:
+> $ nm -S fs/io_uring.o | grep loop_rw_iter
+> 0000000000002430 0000000000000124 t loop_rw_iter
+> 
+> After:
+> $ nm -S fs/io_uring.o | grep loop_rw_iter
+> 0000000000002430 000000000000010d t loop_rw_iter
 
-syzbot found the following issue on:
+Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
 
-HEAD commit:    7993e65fdd0f Merge tag 'mtd/fixes-for-5.17-rc5' of git://g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12b8d5bc700000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6668288739b7ad26
-dashboard link: https://syzkaller.appspot.com/bug?extid=7085977fe51df63eb2bf
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17eae25a700000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17a51236700000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+7085977fe51df63eb2bf@syzkaller.appspotmail.com
-
-executing program
-executing program
-executing program
-executing program
-executing program
-BUG: memory leak
-unreferenced object 0xffff888112ec56c0 (size 192):
-  comm "syz-executor313", pid 30410, jiffies 4294958360 (age 18.100s)
-  hex dump (first 32 bytes):
-    01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-  backtrace:
-    [<ffffffff816515c6>] kmalloc_node include/linux/slab.h:599 [inline]
-    [<ffffffff816515c6>] kzalloc_node include/linux/slab.h:726 [inline]
-    [<ffffffff816515c6>] create_io_worker+0x46/0x250 fs/io-wq.c:812
-    [<ffffffff81652ab2>] create_worker_cb+0xd2/0xf0 fs/io-wq.c:331
-    [<ffffffff81273853>] task_work_run+0x73/0xb0 kernel/task_work.c:164
-    [<ffffffff8163dadd>] tracehook_notify_signal include/linux/tracehook.h:213 [inline]
-    [<ffffffff8163dadd>] io_run_task_work fs/io_uring.c:2595 [inline]
-    [<ffffffff8163dadd>] io_run_task_work fs/io_uring.c:2591 [inline]
-    [<ffffffff8163dadd>] io_run_task_work_sig+0x6d/0x110 fs/io_uring.c:7684
-    [<ffffffff8164ec75>] io_cqring_wait_schedule fs/io_uring.c:7701 [inline]
-    [<ffffffff8164ec75>] io_cqring_wait fs/io_uring.c:7770 [inline]
-    [<ffffffff8164ec75>] __do_sys_io_uring_enter+0x715/0xf60 fs/io_uring.c:10178
-    [<ffffffff844b4875>] do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-    [<ffffffff844b4875>] do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
-    [<ffffffff84600068>] entry_SYSCALL_64_after_hwframe+0x44/0xae
-
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+-- 
+Pavel Begunkov

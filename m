@@ -2,76 +2,89 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2346A4C38DB
-	for <lists+io-uring@lfdr.de>; Thu, 24 Feb 2022 23:39:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E78114C38D3
+	for <lists+io-uring@lfdr.de>; Thu, 24 Feb 2022 23:34:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235588AbiBXWkQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 24 Feb 2022 17:40:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34796 "EHLO
+        id S235524AbiBXWfD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 24 Feb 2022 17:35:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231214AbiBXWkP (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Feb 2022 17:40:15 -0500
-X-Greylist: delayed 335 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 24 Feb 2022 14:39:45 PST
-Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 601E41F6BFB
-        for <io-uring@vger.kernel.org>; Thu, 24 Feb 2022 14:39:45 -0800 (PST)
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-        by gnuweeb.org (Postfix) with ESMTPSA id 33F977ED7E
-        for <io-uring@vger.kernel.org>; Thu, 24 Feb 2022 22:34:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1645742050;
-        bh=H3RncMTCXZsAX8O8FnhD689soGg5r0sYGE80H3BWedU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=RglzdcLX6oxjkuIbQMGk/ft05x/gRgoOCW8No5JTFz2oPucUW/sflgswPBABdbC/g
-         CrigWDqaYgexY1NoX9CFkTwQA28La0p+vsNO14mPa6Rb35xSYNvZwsbffLQ3a0vCyR
-         LMrV3+kT9VTIyWC9x77njMQ+e+DgKONk/Pe3vb8VBzwA7PIzmFJbaIjKy/bWozpwgw
-         NfT/vZj/6DuJeZUQfnaKBwqAZzwe3ouewNILpTJXk8P7q7l9We7Gx94zQSUEj8CnfO
-         eN26hNsWlrZwXR6ZZrSUPr+ydg6MsxzRaqf4h9o6qae+2raWBxMz+JsR+eKOaQ29+Z
-         wVCaV+doj75mA==
-Received: by mail-lj1-f169.google.com with SMTP id e8so4983342ljj.2
-        for <io-uring@vger.kernel.org>; Thu, 24 Feb 2022 14:34:10 -0800 (PST)
-X-Gm-Message-State: AOAM530To+WASWJUr96Ec5WWVN9V91G0bE6qMSa8LjWAPNoJMPFBfrjd
-        No6uoH+q9hL3MV1NfIuXNZRr5FQWHP4TeNzCdRw=
-X-Google-Smtp-Source: ABdhPJwQQlbvhRh5NTWjJ+X9GCp4g1f01QcErxKoW7JvH9Anw/EpxHISja0qIVNsEvQcMHF4WGOtt2XIlOC5XQVzHJk=
-X-Received: by 2002:a2e:b794:0:b0:246:4196:9c0a with SMTP id
- n20-20020a2eb794000000b0024641969c0amr3372514ljo.2.1645742048193; Thu, 24 Feb
- 2022 14:34:08 -0800 (PST)
+        with ESMTP id S231328AbiBXWfC (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Feb 2022 17:35:02 -0500
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2F7C1DFDFB
+        for <io-uring@vger.kernel.org>; Thu, 24 Feb 2022 14:34:29 -0800 (PST)
+Received: by mail-pl1-f180.google.com with SMTP id i1so3147495plr.2
+        for <io-uring@vger.kernel.org>; Thu, 24 Feb 2022 14:34:29 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=puf/8FKdbLYr0quA4rpvgcZpxrpDxz2P+EMGDZo/H/8=;
+        b=zW1XQed7hZqIDys1FFIRwDgCwawIM8Wlc0HH7sHO9m3Py+lyaGDIlZ5e9W6kIDlm2E
+         tfRHJFz1yrsLOGZKCw+pV7qAE2aCyGJ/+BiTuRUUoOvGJ8itTnUV+4eMy3+LUwxn83ll
+         yqhWHMbZ8TIoPo0kUa320x80m7l0Vboh+VAQPNVJfRlpvOo6T7eLUd0Bxd96WjHd3zR5
+         LsQtjr4HTN8GJ5J5Dw6MaC4kF/3xFz4JH/ETEvat9tChhXw6XTfbZLsKazed5lgLfn+z
+         VU+roUqbuJ13GHYCsqLKi+yxF6uS5yA7a+xtY9R8hn6Z79KolamVt8KQlCwK55hgVeCK
+         TEgQ==
+X-Gm-Message-State: AOAM532hdIeHfw7MS6bj/nG5IT8MNg+WK1HoxVUVNODMO7qQbSETKynw
+        thGrd9VtHJDe3PM+8rRokbA=
+X-Google-Smtp-Source: ABdhPJzRDjZLym3li7hQ1xawBNXudqozQ0BsjH0SuPNJGvDI9I0OWzXtLRm+ZuRQbprUfctKxS5dAg==
+X-Received: by 2002:a17:902:b08e:b0:14f:11f7:db14 with SMTP id p14-20020a170902b08e00b0014f11f7db14mr4511843plr.106.1645742069068;
+        Thu, 24 Feb 2022 14:34:29 -0800 (PST)
+Received: from garbanzo (136-24-173-63.cab.webpass.net. [136.24.173.63])
+        by smtp.gmail.com with ESMTPSA id my6-20020a17090b4c8600b001bc2cb011dasm305319pjb.4.2022.02.24.14.34.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Feb 2022 14:34:27 -0800 (PST)
+Date:   Thu, 24 Feb 2022 14:34:25 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Christoph Hellwig <hch@lst.de>, io-uring@vger.kernel.org,
+        joshi.k@samsung.com, kbusch@kernel.org,
+        linux-nvme@lists.infradead.org, metze@samba.org
+Subject: Re: [PATCH 1/8] io_uring: split up io_uring_sqe into hdr + main
+Message-ID: <20220224223425.yb2bs5sp3vhttjz3@garbanzo>
+References: <20210317221027.366780-1-axboe@kernel.dk>
+ <20210317221027.366780-2-axboe@kernel.dk>
+ <20210318053454.GA28063@lst.de>
+ <04ffff78-4a34-0848-4131-8b3cfd9a24f7@kernel.dk>
 MIME-Version: 1.0
-References: <20220224222427.66206-1-ammarfaizi2@gnuweeb.org>
-In-Reply-To: <20220224222427.66206-1-ammarfaizi2@gnuweeb.org>
-From:   Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
-Date:   Fri, 25 Feb 2022 05:33:56 +0700
-X-Gmail-Original-Message-ID: <CAOG64qOgZ9bvdCV3-N=uk4ZCCj46W1VJU_+kN9ZsV8uTMnJ8-A@mail.gmail.com>
-Message-ID: <CAOG64qOgZ9bvdCV3-N=uk4ZCCj46W1VJU_+kN9ZsV8uTMnJ8-A@mail.gmail.com>
-Subject: Re: [PATCH liburing v1] src/Makefile: Don't use stack protector for
- all builds by default
-To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, Nugra <richiisei@gmail.com>,
-        "GNU/Weeb Mailing List" <gwml@vger.gnuweeb.org>,
-        Tea Inside Mailing List <timl@vger.teainside.org>,
-        io-uring Mailing List <io-uring@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <04ffff78-4a34-0848-4131-8b3cfd9a24f7@kernel.dk>
+X-Spam-Status: No, score=1.1 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SORTED_RECIPS,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+        autolearn_force=no version=3.4.6
+X-Spam-Level: *
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, Feb 25, 2022 at 5:25 AM Ammar Faizi <ammarfaizi2@gnuweeb.org> wrote:
-> Stack protector adds extra mov, extra stack allocation and extra branch
-> to save and validate the stack canary. While this feature could be
-> useful to detect stack corruption in some scenarios, it is not really
-> needed for liburing which is simple enough to review.
->
-> Good code shouldn't corrupt the stack. We don't need this extra
-> checking at the moment. Just for comparison, let's take a hot function
-> __io_uring_get_cqe.
+On Thu, Mar 18, 2021 at 12:40:25PM -0600, Jens Axboe wrote:
+> I'm not at all interested
+> in having a v3 down the line as well. And I'd need to be able to do this
+> seamlessly, both from an application point of view, and a performance
+> point of view (no stupid conversions inline).
 
-Yes, I don't see any harm in removing the stack protector here.
+At this point I've now traced the history of effort of wanting to do
+io-uring "ioctl" work through 3 sepearate independent efforts:
 
-Reviewed-by: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
+2019-12-14: Pavel Begunkov - https://lore.kernel.org/all/f77ac379ddb6a67c3ac6a9dc54430142ead07c6f.1576336565.git.asml.silence@gmail.com/
+2020-11-02: Hao Xu - https://lore.kernel.org/all/1604303041-184595-1-git-send-email-haoxu@linux.alibaba.com/
+2021-01-27: Kanchan Joshi - https://lore.kernel.org/linux-nvme/20210127150029.13766-1-joshi.k@samsung.com/#r
 
--- Viro
+So clearly there is interest in this moving forward.
+
+On the same day as Joshi's post you posted your file_operations based
+implemenation. So that's 2 years, 2 months to this day since Pavel's
+first patchset... Wouldn't we be a bit too much of a burden to ensure a
+v2 will suffice for *all* use cases? If so, adaptability for evolution
+sounds like a more fitting use case for design here. That way
+we reduce our requirements and allow for experimentation, while
+enabling improvements on future design.
+
+  Luis

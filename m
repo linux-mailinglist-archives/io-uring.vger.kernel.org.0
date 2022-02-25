@@ -2,89 +2,125 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E78114C38D3
-	for <lists+io-uring@lfdr.de>; Thu, 24 Feb 2022 23:34:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 16F384C3A56
+	for <lists+io-uring@lfdr.de>; Fri, 25 Feb 2022 01:29:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235524AbiBXWfD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 24 Feb 2022 17:35:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49516 "EHLO
+        id S229794AbiBYA3n (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 24 Feb 2022 19:29:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231328AbiBXWfC (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Feb 2022 17:35:02 -0500
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2F7C1DFDFB
-        for <io-uring@vger.kernel.org>; Thu, 24 Feb 2022 14:34:29 -0800 (PST)
-Received: by mail-pl1-f180.google.com with SMTP id i1so3147495plr.2
-        for <io-uring@vger.kernel.org>; Thu, 24 Feb 2022 14:34:29 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=puf/8FKdbLYr0quA4rpvgcZpxrpDxz2P+EMGDZo/H/8=;
-        b=zW1XQed7hZqIDys1FFIRwDgCwawIM8Wlc0HH7sHO9m3Py+lyaGDIlZ5e9W6kIDlm2E
-         tfRHJFz1yrsLOGZKCw+pV7qAE2aCyGJ/+BiTuRUUoOvGJ8itTnUV+4eMy3+LUwxn83ll
-         yqhWHMbZ8TIoPo0kUa320x80m7l0Vboh+VAQPNVJfRlpvOo6T7eLUd0Bxd96WjHd3zR5
-         LsQtjr4HTN8GJ5J5Dw6MaC4kF/3xFz4JH/ETEvat9tChhXw6XTfbZLsKazed5lgLfn+z
-         VU+roUqbuJ13GHYCsqLKi+yxF6uS5yA7a+xtY9R8hn6Z79KolamVt8KQlCwK55hgVeCK
-         TEgQ==
-X-Gm-Message-State: AOAM532hdIeHfw7MS6bj/nG5IT8MNg+WK1HoxVUVNODMO7qQbSETKynw
-        thGrd9VtHJDe3PM+8rRokbA=
-X-Google-Smtp-Source: ABdhPJzRDjZLym3li7hQ1xawBNXudqozQ0BsjH0SuPNJGvDI9I0OWzXtLRm+ZuRQbprUfctKxS5dAg==
-X-Received: by 2002:a17:902:b08e:b0:14f:11f7:db14 with SMTP id p14-20020a170902b08e00b0014f11f7db14mr4511843plr.106.1645742069068;
-        Thu, 24 Feb 2022 14:34:29 -0800 (PST)
-Received: from garbanzo (136-24-173-63.cab.webpass.net. [136.24.173.63])
-        by smtp.gmail.com with ESMTPSA id my6-20020a17090b4c8600b001bc2cb011dasm305319pjb.4.2022.02.24.14.34.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Feb 2022 14:34:27 -0800 (PST)
-Date:   Thu, 24 Feb 2022 14:34:25 -0800
-From:   Luis Chamberlain <mcgrof@kernel.org>
+        with ESMTP id S229558AbiBYA3m (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Feb 2022 19:29:42 -0500
+Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA3B32757B1
+        for <io-uring@vger.kernel.org>; Thu, 24 Feb 2022 16:29:11 -0800 (PST)
+Received: from integral2.. (unknown [36.78.50.60])
+        by gnuweeb.org (Postfix) with ESMTPSA id B1D197E29A;
+        Fri, 25 Feb 2022 00:29:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
+        s=default; t=1645748951;
+        bh=QN1I5dEGk/1XZ2b606eyJLOOAe8yIhsPpPgwLVgSakM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Vm4zecVgI0XbGiPUfbRTxmPc8+vSUi9mXx+w12XBSFqKkT1hrssny5nxpZ9VeeytG
+         KSLP6gT9Pw9hs+7ykKp2XEtBZwspQREfPNrZ6pP6GyufXEGQVNrHpHat/vdbwqAXYL
+         0jEJJCXM+qokEEP3Wj79XO0nLp8YsjcvsxF+LYZ+XLD5P+fCljDNOyt7mvXgu3Ll0P
+         H0VsCtqG0bqiWj+UNQ1iIws6ovf+p9qFDHroQJ9qm5vLXMflvTmaM6r0bIl8R7b+i9
+         q50IbK/QS3R2PbQCE7x73RaICIJUUQx4xuAxd6soXcckCYvkzOVLO9VXy/mtyPrYpq
+         EvhZw/cEQQgbg==
+From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
 To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Christoph Hellwig <hch@lst.de>, io-uring@vger.kernel.org,
-        joshi.k@samsung.com, kbusch@kernel.org,
-        linux-nvme@lists.infradead.org, metze@samba.org
-Subject: Re: [PATCH 1/8] io_uring: split up io_uring_sqe into hdr + main
-Message-ID: <20220224223425.yb2bs5sp3vhttjz3@garbanzo>
-References: <20210317221027.366780-1-axboe@kernel.dk>
- <20210317221027.366780-2-axboe@kernel.dk>
- <20210318053454.GA28063@lst.de>
- <04ffff78-4a34-0848-4131-8b3cfd9a24f7@kernel.dk>
+Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>, Nugra <richiisei@gmail.com>,
+        Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
+        GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>,
+        Tea Inside Mailing List <timl@vger.teainside.org>,
+        io-uring Mailing List <io-uring@vger.kernel.org>
+Subject: [PATCH liburing v1] queue, liburing.h: Avoid `io_uring_get_sqe()` code duplication
+Date:   Fri, 25 Feb 2022 07:28:52 +0700
+Message-Id: <20220225002852.111521-1-ammarfaizi2@gnuweeb.org>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <04ffff78-4a34-0848-4131-8b3cfd9a24f7@kernel.dk>
-X-Spam-Status: No, score=1.1 required=5.0 tests=BAYES_00,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SORTED_RECIPS,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
-        autolearn_force=no version=3.4.6
-X-Spam-Level: *
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2514; h=from:subject; bh=QN1I5dEGk/1XZ2b606eyJLOOAe8yIhsPpPgwLVgSakM=; b=owEBbQGS/pANAwAKATZPujT/FwpLAcsmYgBiGCJROb237lp//t482+s9ZwaR8WdadFSFaxKepOyZ jv8vM5WJATMEAAEKAB0WIQTok3JtyOTA3juiAQc2T7o0/xcKSwUCYhgiUQAKCRA2T7o0/xcKS6sFB/ 9r2Ljzjiqwp9d9n22XM8uO6RTvYEqAbq2RAJagxbCJCyvWQqFDmfXTVP9nw1Ng9o2ET2qZCfpGVOuE 6QiYUMBbmHfln/VfFUMOT5pE5/ps2Cov+n03lX7iYmOJmkFV2+EkSx53k+xw4R79VL59kCcW/oZ2DK z0yEx1FXpHJuV4WmiDRXOnqC7Hyo0kYVaaw+UTkn2WLU/Fikdo4Xt/MOJZYGXKFrbMg7pu+5mk9IQ1 aY6qayTna7S8G9GWxso1wTtuGae0k3D05EukRR1bloBiBpibZzIU4OBH/u1hxJet0lnOBNFRf5IwBw T8QSDBfnpdJ7GDT56QquTOh2SltKg/
+X-Developer-Key: i=ammarfaizi2@gnuweeb.org; a=openpgp; fpr=E893726DC8E4C0DE3BA20107364FBA34FF170A4B
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Mar 18, 2021 at 12:40:25PM -0600, Jens Axboe wrote:
-> I'm not at all interested
-> in having a v3 down the line as well. And I'd need to be able to do this
-> seamlessly, both from an application point of view, and a performance
-> point of view (no stupid conversions inline).
+Since commit 8be8af4afcb4909104c ("queue: provide io_uring_get_sqe()
+symbol again"), we have the same defintion of `io_uring_get_sqe()` in
+queue.c and liburing.h.
 
-At this point I've now traced the history of effort of wanting to do
-io-uring "ioctl" work through 3 sepearate independent efforts:
+Make it simpler, maintain it in a single place, create a new static
+inline function wrapper with name `_io_uring_get_sqe()`. Then tail
+call both `io_uring_get_sqe()` functions to `_io_uring_get_sqe()`.
 
-2019-12-14: Pavel Begunkov - https://lore.kernel.org/all/f77ac379ddb6a67c3ac6a9dc54430142ead07c6f.1576336565.git.asml.silence@gmail.com/
-2020-11-02: Hao Xu - https://lore.kernel.org/all/1604303041-184595-1-git-send-email-haoxu@linux.alibaba.com/
-2021-01-27: Kanchan Joshi - https://lore.kernel.org/linux-nvme/20210127150029.13766-1-joshi.k@samsung.com/#r
+Cc: Nugra <richiisei@gmail.com>
+Cc: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
+Cc: GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>
+Cc: Tea Inside Mailing List <timl@vger.teainside.org>
+Cc: io-uring Mailing List <io-uring@vger.kernel.org>
+Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+---
+ src/include/liburing.h |  9 +++++++--
+ src/queue.c            | 11 +----------
+ 2 files changed, 8 insertions(+), 12 deletions(-)
 
-So clearly there is interest in this moving forward.
+diff --git a/src/include/liburing.h b/src/include/liburing.h
+index 590fe7f..ef5a4cd 100644
+--- a/src/include/liburing.h
++++ b/src/include/liburing.h
+@@ -831,8 +831,7 @@ static inline int io_uring_wait_cqe(struct io_uring *ring,
+  *
+  * Returns a vacant sqe, or NULL if we're full.
+  */
+-#ifndef LIBURING_INTERNAL
+-static inline struct io_uring_sqe *io_uring_get_sqe(struct io_uring *ring)
++static inline struct io_uring_sqe *_io_uring_get_sqe(struct io_uring *ring)
+ {
+ 	struct io_uring_sq *sq = &ring->sq;
+ 	unsigned int head = io_uring_smp_load_acquire(sq->khead);
+@@ -845,6 +844,12 @@ static inline struct io_uring_sqe *io_uring_get_sqe(struct io_uring *ring)
+ 	}
+ 	return sqe;
+ }
++
++#ifndef LIBURING_INTERNAL
++static inline struct io_uring_sqe *io_uring_get_sqe(struct io_uring *ring)
++{
++	return _io_uring_get_sqe(ring);
++}
+ #else
+ struct io_uring_sqe *io_uring_get_sqe(struct io_uring *ring);
+ #endif
+diff --git a/src/queue.c b/src/queue.c
+index 6b63490..f9b6c86 100644
+--- a/src/queue.c
++++ b/src/queue.c
+@@ -405,16 +405,7 @@ int io_uring_submit_and_wait(struct io_uring *ring, unsigned wait_nr)
+ 
+ struct io_uring_sqe *io_uring_get_sqe(struct io_uring *ring)
+ {
+-	struct io_uring_sq *sq = &ring->sq;
+-	unsigned int head = io_uring_smp_load_acquire(sq->khead);
+-	unsigned int next = sq->sqe_tail + 1;
+-	struct io_uring_sqe *sqe = NULL;
+-
+-	if (next - head <= *sq->kring_entries) {
+-		sqe = &sq->sqes[sq->sqe_tail & *sq->kring_mask];
+-		sq->sqe_tail = next;
+-	}
+-	return sqe;
++	return _io_uring_get_sqe(ring);
+ }
+ 
+ int __io_uring_sqring_wait(struct io_uring *ring)
 
-On the same day as Joshi's post you posted your file_operations based
-implemenation. So that's 2 years, 2 months to this day since Pavel's
-first patchset... Wouldn't we be a bit too much of a burden to ensure a
-v2 will suffice for *all* use cases? If so, adaptability for evolution
-sounds like a more fitting use case for design here. That way
-we reduce our requirements and allow for experimentation, while
-enabling improvements on future design.
+base-commit: 896a1d3ab14a8777a45db6e7b67cf557a44923fb
+-- 
+2.32.0
 
-  Luis

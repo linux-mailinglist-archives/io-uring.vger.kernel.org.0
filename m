@@ -2,186 +2,113 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 206914C4911
-	for <lists+io-uring@lfdr.de>; Fri, 25 Feb 2022 16:33:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 124434C4E12
+	for <lists+io-uring@lfdr.de>; Fri, 25 Feb 2022 19:53:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238151AbiBYPdg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 25 Feb 2022 10:33:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40840 "EHLO
+        id S233501AbiBYSyJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 25 Feb 2022 13:54:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242133AbiBYPdf (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 25 Feb 2022 10:33:35 -0500
-Received: from cloud48395.mywhc.ca (cloud48395.mywhc.ca [173.209.37.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2574F17063;
-        Fri, 25 Feb 2022 07:32:59 -0800 (PST)
-Received: from [45.44.224.220] (port=57024 helo=[192.168.1.179])
-        by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <olivier@trillion01.com>)
-        id 1nNcaY-0002AP-EJ; Fri, 25 Feb 2022 10:32:58 -0500
-Message-ID: <2cedc9f21a1c89aa9fe1fa4dffc2ebeabeb761f5.camel@trillion01.com>
-Subject: Re: [PATCH v1] io_uring: Add support for napi_busy_poll
-From:   Olivier Langlois <olivier@trillion01.com>
-To:     Hao Xu <haoxu@linux.alibaba.com>, Jens Axboe <axboe@kernel.dk>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring <io-uring@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Date:   Fri, 25 Feb 2022 10:32:57 -0500
-In-Reply-To: <f84f59e3edd9b4973ea2013b2893d4394a7bdb61.camel@trillion01.com>
-References: <d11e31bd59c75b2cce994dd90a07e769d4e039db.1645257310.git.olivier@trillion01.com>
-         <aee0e905-7af4-332c-57bc-ece0bca63ce2@linux.alibaba.com>
-         <f84f59e3edd9b4973ea2013b2893d4394a7bdb61.camel@trillion01.com>
-Organization: Trillion01 Inc
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.42.4 
+        with ESMTP id S233495AbiBYSyI (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 25 Feb 2022 13:54:08 -0500
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5E035EBFD
+        for <io-uring@vger.kernel.org>; Fri, 25 Feb 2022 10:53:35 -0800 (PST)
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 21PEGMde003771
+        for <io-uring@vger.kernel.org>; Fri, 25 Feb 2022 10:53:35 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=facebook; bh=keiZoEA/mN/EC2yQReM//REMZUleXJTb0LpsMB8T54E=;
+ b=INVh/10QSe049ymKNQ6EnhonAv6KE6S7UfkF0iSfZIESUtuDTKD57y22e22LQc0UvjYu
+ pV0KcNcGA4JabtTW/R9VY95Y8KC6naj5lGR/Ke1+BJli9m3LUC+15ikWfQ4NZ8bk/IWh
+ eCjNEXWiuaU3Gyoc0Osb47k32QtkEEOY2jw= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3ef0qf9v72-6
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <io-uring@vger.kernel.org>; Fri, 25 Feb 2022 10:53:35 -0800
+Received: from twshared9880.08.ash8.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:82::e) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.21; Fri, 25 Feb 2022 10:53:34 -0800
+Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
+        id 52CE1B52F88B; Fri, 25 Feb 2022 10:53:28 -0800 (PST)
+From:   Stefan Roesch <shr@fb.com>
+To:     <io-uring@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <kernel-team@fb.com>
+CC:     <viro@zeniv.linux.org.uk>, <shr@fb.com>, <rostedt@goodmis.org>,
+        <m.szyprowski@samsung.com>
+Subject: [PATCH v4 0/1] io-uring: Make statx api stable 
+Date:   Fri, 25 Feb 2022 10:53:25 -0800
+Message-ID: <20220225185326.1373304-1-shr@fb.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - trillion01.com
-X-Get-Message-Sender-Via: cloud48395.mywhc.ca: authenticated_id: olivier@trillion01.com
-X-Authenticated-Sender: cloud48395.mywhc.ca: olivier@trillion01.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: zrtBurLkRbohl3atV1A8JamyZiLC3pPL
+X-Proofpoint-GUID: zrtBurLkRbohl3atV1A8JamyZiLC3pPL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.64.514
+ definitions=2022-02-25_10,2022-02-25_01,2022-02-23_01
+X-Proofpoint-Spam-Details: rule=fb_outbound_notspam policy=fb_outbound score=0 phishscore=0
+ spamscore=0 mlxlogscore=625 suspectscore=0 lowpriorityscore=0 mlxscore=0
+ malwarescore=0 impostorscore=0 priorityscore=1501 clxscore=1015
+ adultscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2201110000 definitions=main-2202250107
+X-FB-Internal: deliver
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, 2022-02-25 at 00:32 -0500, Olivier Langlois wrote:
-> 
-> > > 
-> > > +#ifdef CONFIG_NET_RX_BUSY_POLL
-> > > +static void io_adjust_busy_loop_timeout(struct timespec64 *ts,
-> > > +                                       struct io_wait_queue
-> > > *iowq)
-> > > +{
-> > > +       unsigned busy_poll_to = READ_ONCE(sysctl_net_busy_poll);
-> > > +       struct timespec64 pollto = ns_to_timespec64(1000 *
-> > > (s64)busy_poll_to);
-> > > +
-> > > +       if (timespec64_compare(ts, &pollto) > 0) {
-> > > +               *ts = timespec64_sub(*ts, pollto);
-> > > +               iowq->busy_poll_to = busy_poll_to;
-> > > +       } else {
-> > > +               iowq->busy_poll_to = timespec64_to_ns(ts) / 1000;
-> > 
-> > How about timespec64_tons(ts) >> 10, since we don't need accurate
-> > number.
-> 
-> Fantastic suggestion! The kernel test robot did also detect an issue
-> with that statement. I did discover do_div() in the meantime but what
-> you suggest is better, IMHO...
+One of the key architectual tenets of io-uring is to keep the
+parameters for io-uring stable. After the call has been submitted,
+its value can be changed.  Unfortunaltely this is not the case for
+the current statx implementation.
 
-After having seen Jens patch (io_uring: don't convert to jiffies for
-waiting on timeouts), I think that I'll stick with do_div().
+Patch:
+ Part 1: fs: replace const char* parameter in vfs_statx and do_statx with
+          struct filename
+   Create filename object outside of do_statx and vfs_statx, so io-uring
+   can create the filename object during the prepare phase
 
-I have a hard time considering removing timing accuracy when effort is
-made to make the same function more accurate...
-> 
-> 
-> > > +                !io_busy_loop_end(iowq, start_time));
-> > > +}
-> > > +#endif /* CONFIG_NET_RX_BUSY_POLL */
-> > > +
-> > >   /*
-> > >    * Wait until events become available, if we don't already have
-> > > some. The
-> > >    * application must reap them itself, as they reside on the
-> > > shared cq ring.
-> > > @@ -7729,12 +7906,20 @@ static int io_cqring_wait(struct
-> > > io_ring_ctx *ctx, int min_events,
-> > >                 if (!io_run_task_work())
-> > >                         break;
-> > >         } while (1);
-> > > -
-> > > +#ifdef CONFIG_NET_RX_BUSY_POLL
-> > > +       iowq.busy_poll_to = 0;
-> > > +#endif
-> > >         if (uts) {
-> > >                 struct timespec64 ts;
-> > >   
-> > >                 if (get_timespec64(&ts, uts))
-> > >                         return -EFAULT;
-> > > +#ifdef CONFIG_NET_RX_BUSY_POLL
-> > > +               if (!(ctx->flags & IORING_SETUP_SQPOLL) &&
-> > > +                   !list_empty(&ctx->napi_list)) {
-> > > +                       io_adjust_busy_loop_timeout(&ts, &iowq);
-> > > +               }
-> > > +#endif
-> > >                 timeout = timespec64_to_jiffies(&ts);
-> > >         }
-> > >   
-> > > @@ -7759,6 +7944,10 @@ static int io_cqring_wait(struct
-> > > io_ring_ctx
-> > > *ctx, int min_events,
-> > >         iowq.cq_tail = READ_ONCE(ctx->rings->cq.head) +
-> > > min_events;
-> > >   
-> > >         trace_io_uring_cqring_wait(ctx, min_events);
-> > > +#ifdef CONFIG_NET_RX_BUSY_POLL
-> > > +       if (iowq.busy_poll_to)
-> > > +               io_blocking_napi_busy_loop(ctx, &iowq);
-> > 
-> > We may not need locks for the napi_list, the reason is we don't
-> > need
-> > to
-> > poll an accurate list, the busy polling/NAPI itself is kind of
-> > speculation. So the deletion is not an emergency.
-> > To say the least, we can probably delay the deletion to some safe
-> > place
-> > like the original task's task work though this may cause other
-> > problems...
-> 
-> There are 2 concerns here.
-> 
-> 1. Iterating a list while another thread modify it is not thread-safe
-> unless you use a lock.
-> 
-> If we offer napi_busy_poll() without sqpoll with the modification in
-> io_cqring_wait(), this is a real possibility. A thread could call
-> io_uring_enter(IORING_ENTER_GETEVENTS) while another thread calls
-> io_uring_enter() to submit new sqes that could trigger a call to
-> io_add_napi().
-> 
-> If napi_busy_poll() is only offered through sqpoll thread, this
-> becomes
-> a non-issue since the only thread accessing/modifying the napi_list
-> field is the sqpoll thread.
-> 
-> Providing the patch benchmark result with v2 could help deciding what
-> to do with this choice.
-> 
-> 2. You are correct when you say that deletion is not an emergency. 
-> 
-> However, the design guideline that I did follow when writing the
-> patch
-> is that napi_busy_poll support should not impact users not using this
-> feature. Doing the deletion where that patch is doing it fullfill
-> this
-> goal.
-> 
-> Comparing a timeout value with the jiffies variable is very cheap and
-> will only be performed when napi_busy_poll is used.
-> 
-> The other option would be to add a refcount to each napi_entry and
-> decrement it if needed everytime a request is discarded. Doing that
-> that check for every requests that io_uring discards on completion, I
-> am very confident that this would negatively impact various
-> performance
-> benchmarks that Jens routinely perform...
-> 
-Another fact to consider, it is that I expect the content of napi_list
-to be extremely stable. Regular entry deletion should not be a thing.
+ Part 2: io-uring: Copy path name during prepare stage for statx
+   Create and store filename object during prepare phase
 
-postponing the deletion using task work is not an option too. How would
-io_busy_loop_end() discern between a pending list entry deletion and
-any other task work making the busy looping stop?
+
+There is also a patch for the liburing libray to add a new test case. Thi=
+s
+patch makes sure that the api is stable.
+  "liburing: add test for stable statx api"
+
+The patch has been tested with the liburing test suite and fstests.
+
+
+Changes:
+V2: don't check name in vfs_fstatat
+V3: don't check name in statx syscall
+V4: - incorporate Steven Rostedt's fix
+    - Merge both patches to avoid bisect problem
+      (the io-uring changes have a dependency on the parameter change in
+       the fs layer)
+
+
+Stefan Roesch (1):
+  io-uring: Make statx API stable
+
+ fs/internal.h |  4 +++-
+ fs/io_uring.c | 22 ++++++++++++++++++++--
+ fs/stat.c     | 49 +++++++++++++++++++++++++++++++++++--------------
+ 3 files changed, 58 insertions(+), 17 deletions(-)
+
+
+base-commit: 5c1ee569660d4a205dced9cb4d0306b907fb7599
+--=20
+2.30.2
 

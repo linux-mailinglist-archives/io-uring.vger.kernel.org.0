@@ -2,93 +2,95 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EF024C3A74
-	for <lists+io-uring@lfdr.de>; Fri, 25 Feb 2022 01:47:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 049AB4C3A82
+	for <lists+io-uring@lfdr.de>; Fri, 25 Feb 2022 01:52:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235009AbiBYArW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 24 Feb 2022 19:47:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59074 "EHLO
+        id S236156AbiBYAwf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 24 Feb 2022 19:52:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41526 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229923AbiBYArW (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Feb 2022 19:47:22 -0500
+        with ESMTP id S230285AbiBYAwe (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Feb 2022 19:52:34 -0500
 Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0238B0D30
-        for <io-uring@vger.kernel.org>; Thu, 24 Feb 2022 16:46:49 -0800 (PST)
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-        by gnuweeb.org (Postfix) with ESMTPSA id 3EF417E2A3
-        for <io-uring@vger.kernel.org>; Fri, 25 Feb 2022 00:46:49 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 813746211C
+        for <io-uring@vger.kernel.org>; Thu, 24 Feb 2022 16:52:03 -0800 (PST)
+Received: from [192.168.88.87] (unknown [36.78.50.60])
+        by gnuweeb.org (Postfix) with ESMTPSA id 235967E29A;
+        Fri, 25 Feb 2022 00:52:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1645750009;
-        bh=ylxb9aXNgXNBH+uyWNT1OFQXhShEQMh/op4b+jhmMWc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=GsltgnT7pQ0ULZ7xObE9qfYWRtEy/JuSUYmp6bzbOLA3/Mk77SROwCHztQd1Ge9pm
-         cMMes4XRkMyYr0kmt7wvd12X2J+4UUHbnCnVnC6P8O6Fewjqb8br9sqqH75eGQDI9Z
-         Nl39MXfxpOqJ7pOj1IRurioh/WFSM3Fd2aLZYJQizEABMGK/v1lUO95T8nmwsaWIv5
-         kYV4LHyVE1Ym9jsTRwI5koelYi+A1DI05HRrhCBdQHthA2XGt4Hu1drGgD/Dc0a4ef
-         GW0ISs8D5AUruVq1xuUzwAg5JEu+nUviU0mN5Ufua99MvB/Y1V6W0/pWXXXL4Luhxc
-         gmDDHVLAENuWw==
-Received: by mail-lj1-f171.google.com with SMTP id e2so5248205ljq.12
-        for <io-uring@vger.kernel.org>; Thu, 24 Feb 2022 16:46:49 -0800 (PST)
-X-Gm-Message-State: AOAM531V+cMiLEi4icipp8UMJK5LhqqJTa9HfzTlOI6/Y2Kv6639dA4N
-        vDeND1Mt2msgN3gzgnatwfZaWu/XVsjoaLPzjZc=
-X-Google-Smtp-Source: ABdhPJyDJQo/mw0jBatf8hhDL/kzbG0K9E28iURiqmaCUJnLtxO7M+5FOfFydkvK5aiE7P1NDQM1cLD5oK9n3kUYlcs=
-X-Received: by 2002:a2e:a37a:0:b0:22d:7f2b:23c with SMTP id
- i26-20020a2ea37a000000b0022d7f2b023cmr3734359ljn.81.1645750007267; Thu, 24
- Feb 2022 16:46:47 -0800 (PST)
+        s=default; t=1645750322;
+        bh=gCzpBm1Ve/XwJwjRRyy3IKdwe861sPfvD8OJseUeiQ0=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=ZK5W12LJhnTYyJc5isDeGBboVDgHyVrowlayiOq0Q3M9W3CX50cWQeoW9CXIIVzlz
+         p3jZ5BfvmyZiKR/cDZutZdJMyRbWxTVRXdFnw2uyDYFbi+xwELzcYTec16FqbK+RsF
+         ZXVhbbCgjUGVhwSyAd91b4NtDNGYK5bt3C8mABkIz2MuqhIcF1cwhb75KgGMIyX8CO
+         C6T0uDUWnBcwxGIn2zwo5qMLTW/Zy8e8lfa6yRAyEClUoOJOl0M1843x03NspTl+SS
+         hfqLn7C5wDgt7HzS8x06V5fi08Mh7bzHeJ2TL51/ry6od/ArE0Qq8FEOjCmwP6TE3Y
+         W3Jsfj7GuaLJw==
+Message-ID: <ef7d0e27-cdd1-7791-a55d-8bd08825b52b@gnuweeb.org>
+Date:   Fri, 25 Feb 2022 07:51:49 +0700
 MIME-Version: 1.0
-References: <20220225002852.111521-1-ammarfaizi2@gnuweeb.org>
-In-Reply-To: <20220225002852.111521-1-ammarfaizi2@gnuweeb.org>
-From:   Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
-Date:   Fri, 25 Feb 2022 07:46:36 +0700
-X-Gmail-Original-Message-ID: <CAOG64qORUFkWjO3e6paDrG9NhykTvd+RCfwFgjADHjxn+N2rSA@mail.gmail.com>
-Message-ID: <CAOG64qORUFkWjO3e6paDrG9NhykTvd+RCfwFgjADHjxn+N2rSA@mail.gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
 Subject: Re: [PATCH liburing v1] queue, liburing.h: Avoid `io_uring_get_sqe()`
  code duplication
-To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>
+Content-Language: en-US
+To:     Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
 Cc:     Jens Axboe <axboe@kernel.dk>, Nugra <richiisei@gmail.com>,
-        "GNU/Weeb Mailing List" <gwml@vger.gnuweeb.org>,
+        GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>,
         Tea Inside Mailing List <timl@vger.teainside.org>,
         io-uring Mailing List <io-uring@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+References: <20220225002852.111521-1-ammarfaizi2@gnuweeb.org>
+ <CAOG64qORUFkWjO3e6paDrG9NhykTvd+RCfwFgjADHjxn+N2rSA@mail.gmail.com>
+From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
+In-Reply-To: <CAOG64qORUFkWjO3e6paDrG9NhykTvd+RCfwFgjADHjxn+N2rSA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_PASS,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, Feb 25, 2022 at 7:29 AM Ammar Faizi <ammarfaizi2@gnuweeb.org> wrote:
->
-> Since commit 8be8af4afcb4909104c ("queue: provide io_uring_get_sqe()
-> symbol again"), we have the same defintion of `io_uring_get_sqe()` in
+On 2/25/22 7:46 AM, Alviro Iskandar Setiawan wrote:
+> On Fri, Feb 25, 2022 at 7:29 AM Ammar Faizi <ammarfaizi2@gnuweeb.org> wrote:
+>>
+>> Since commit 8be8af4afcb4909104c ("queue: provide io_uring_get_sqe()
+>> symbol again"), we have the same defintion of `io_uring_get_sqe()` in
+> 
+> Typo
+> /s/defintion/definition/
+> 
+> with that fixed
+> 
+> Reviewed-by: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
+> 
+>> queue.c and liburing.h.
+>>
+>> Make it simpler, maintain it in a single place, create a new static
+>> inline function wrapper with name `_io_uring_get_sqe()`. Then tail
+>> call both `io_uring_get_sqe()` functions to `_io_uring_get_sqe()`.
+>>
+> 
+> Also, I tested this, the fpos test failed. Maybe it needs the recent
+> kernel fixes? So I assume everything is fine.
+> 
+>    Tests timed out:  <rsrc_tags>
+>    Tests failed:  <fpos>
+> 
+>    [viro@freezing ~/liburing]$ test/fpos
+>    inconsistent reads, got 0s:8192 1s:6144
+>    f_pos incorrect, expected 14336 have 7
+>    failed read async=0 blocksize=7
+> 
+> Tested-by: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
 
-Typo
-/s/defintion/definition/
+Thanks for reviewing and testing. I will fix it and append those tags and
+in the v2.
 
-with that fixed
-
-Reviewed-by: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
-
-> queue.c and liburing.h.
->
-> Make it simpler, maintain it in a single place, create a new static
-> inline function wrapper with name `_io_uring_get_sqe()`. Then tail
-> call both `io_uring_get_sqe()` functions to `_io_uring_get_sqe()`.
->
-
-Also, I tested this, the fpos test failed. Maybe it needs the recent
-kernel fixes? So I assume everything is fine.
-
-  Tests timed out:  <rsrc_tags>
-  Tests failed:  <fpos>
-
-  [viro@freezing ~/liburing]$ test/fpos
-  inconsistent reads, got 0s:8192 1s:6144
-  f_pos incorrect, expected 14336 have 7
-  failed read async=0 blocksize=7
-
-Tested-by: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
-
--- Viro
+-- 
+Ammar Faizi

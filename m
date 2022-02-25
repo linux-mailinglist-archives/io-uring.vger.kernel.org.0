@@ -2,63 +2,63 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CDE714C4742
-	for <lists+io-uring@lfdr.de>; Fri, 25 Feb 2022 15:16:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB2724C4745
+	for <lists+io-uring@lfdr.de>; Fri, 25 Feb 2022 15:17:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229872AbiBYORT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 25 Feb 2022 09:17:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41400 "EHLO
+        id S241605AbiBYORc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 25 Feb 2022 09:17:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240671AbiBYORS (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 25 Feb 2022 09:17:18 -0500
-Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8662934B89
-        for <io-uring@vger.kernel.org>; Fri, 25 Feb 2022 06:16:44 -0800 (PST)
-Received: by mail-pf1-x42c.google.com with SMTP id d187so4781636pfa.10
-        for <io-uring@vger.kernel.org>; Fri, 25 Feb 2022 06:16:44 -0800 (PST)
+        with ESMTP id S241721AbiBYORb (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 25 Feb 2022 09:17:31 -0500
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 215204FC4F
+        for <io-uring@vger.kernel.org>; Fri, 25 Feb 2022 06:16:59 -0800 (PST)
+Received: by mail-pj1-x1036.google.com with SMTP id b8so4857876pjb.4
+        for <io-uring@vger.kernel.org>; Fri, 25 Feb 2022 06:16:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=from:to:cc:in-reply-to:references:subject:message-id:date
          :mime-version:content-transfer-encoding;
-        bh=4HKJXFsqbCU8ZlJrUHK2ZfxHsjnNJeIKGbdPC5wBnjw=;
-        b=mZFiO8V9kniKYq13DoQl3dADEHw8FSbWEhVRDjG9QTd6vqn73DZEEfe45rZmQ4snlS
-         LHo4nGO5tZVwaUu//jsUwcSRifvgzCrxRDHXys+SfjoQ2TsBS4IS3j460wht37d4EA9J
-         9iyyK9Md+jjCp0xmUc4lziltSfy3z3ACrbOe8RLBmuL+dVDmgQUL9E1ycMMJHpWIM4Pu
-         6VQWRhi8FYFE3i7IV6u3HlEMYOyjgeckCc4GEZdAR6mTDtpDbtInB4lklcQ10PwSbGo0
-         Sw7xUFDMCVz1e/9Oz43gUBf/aCYaYtBql1kiFQ+tl98FLEjOzCtHoZRz6kqqUa6hSrmm
-         gPfA==
+        bh=YhYYsdQcONY9YRE8coWu1QboYVmf7M3G+Dh3/qRXnN4=;
+        b=aNfRbSCV2oAKwSPzOihMM7ec4srpm92wWo/QL2Ns29f1lI7s6SqWRwXKqFXLDQNDMo
+         5RoAUtlecEd8gNAuMDdR63EGcS298xppL53L6haWLWOdjIZCuVoDujXvmsbB/Oamhba7
+         cN4rczTfF7RAFutO9RRcOeQByAFk9EENncx9nBSsaA8i48TtF+rwK+DI5oVrdk1TqalS
+         +PUwjPiLiHK9s6rVoVXx0Ho29Emwp/pETgwivW0pW9KsBUbXxOTCVYag/upZ79ylrn+Z
+         YPMzfUAnWfHWlACZTIzPfyFRLFgy6T5hguEKpb3gWIwsWolO6pIv3el/LdrqTHsbKh9N
+         oGNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
          :message-id:date:mime-version:content-transfer-encoding;
-        bh=4HKJXFsqbCU8ZlJrUHK2ZfxHsjnNJeIKGbdPC5wBnjw=;
-        b=LxzF456gkjE0w3VpW4TU2n9/Jjy9/JWS+Gfv0kUFW06Q4HA4h4zEQeYECIsUmVs2RS
-         bRFbsOsS1K6GjlCBgdfBnELDidI4nYC/AAVGiul+xvSj5x24V+eirzom7Dabx+OrWEro
-         mWlKUN5noKMM7OJ8XphPixIQRUgdLD69QKH3tDycjk7iI34Wg/BN196Ly8GEpcdwFYR1
-         lkodYHOccX6nF8+hrxih1xBGEY09f6Z6yguo7q5kskJlKaRMxo/27P5WQTqzIiNtC+Y3
-         fmOlETeGVEOzkTPYtkrilRHes7LwFj/+zUc2RBDj1g44usRHcVDN4BQsTMAK/gCte30S
-         p/BA==
-X-Gm-Message-State: AOAM530BrlQx9LgWKCqasHxIp8Wpaml2xHawEcRVDeACwAG5tE6TTsIA
-        T3XjdcMXxEyCG6P/jOZs/W8ebg==
-X-Google-Smtp-Source: ABdhPJyjAU5MM8RYlzaVTzTp+k531UMo32vBtLZfrHF2F/Fa/86qHD2IEB/lqZdRvJWEI7taNPieGQ==
-X-Received: by 2002:a63:5004:0:b0:373:e921:c0ca with SMTP id e4-20020a635004000000b00373e921c0camr6311293pgb.154.1645798604161;
-        Fri, 25 Feb 2022 06:16:44 -0800 (PST)
+        bh=YhYYsdQcONY9YRE8coWu1QboYVmf7M3G+Dh3/qRXnN4=;
+        b=MwWnWfPyt00bkgSurpE3YpA/Dkj/AMe1Gi6fUbUsKt5Fd1rGy3iHLcUHdr45qMWRI0
+         FD8sv/eoU2dcX9bFCNkeOIYhi8Cbqhz/jIggd5OxQW7RbD6qD4PPvMdIxcC4KYnsqQ5p
+         3y/dFEkDKeWMlpFYuh4q3Gogmxt3dqBGFdP7Bia2OnbGNBy8noO33ZKsbaLyOgmHG43y
+         9lH+B9tC+s01E9LTSacWw3tRisVNsJaab8Qaeoy2QDPYbSW6isQXBhc9poUHzhFju/k0
+         yRLigyDi90E+iNXQL/gZEwqxLgaiUBMUGA/BduEHHHOrP/ZLGtOk2jG5Zhg6nBwSMJn4
+         9mDA==
+X-Gm-Message-State: AOAM532QTgRygNv00noV4qmCDX5SrzIjbcGAWCMoOCxer/UWHfaoAQfR
+        zbUVg83E/Q+LFLGTSyMuVDK1+41l8P1USg==
+X-Google-Smtp-Source: ABdhPJytJ0jsGHfjOdogc1bvVxlpSppRZwEZapHzG6utp54mWhWFSB7d/Uo4tW7tHyLPD5kqk4gmQA==
+X-Received: by 2002:a17:903:2406:b0:14d:2f71:2e6d with SMTP id e6-20020a170903240600b0014d2f712e6dmr7522734plo.98.1645798618311;
+        Fri, 25 Feb 2022 06:16:58 -0800 (PST)
 Received: from [127.0.1.1] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id e7-20020aa78c47000000b004de8f900716sm3255717pfd.127.2022.02.25.06.16.43
+        by smtp.gmail.com with ESMTPSA id pg14-20020a17090b1e0e00b001bbadc2205dsm2978049pjb.20.2022.02.25.06.16.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Feb 2022 06:16:43 -0800 (PST)
+        Fri, 25 Feb 2022 06:16:57 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>
 Cc:     io-uring Mailing List <io-uring@vger.kernel.org>,
         GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>,
-        Tea Inside Mailing List <timl@vger.teainside.org>,
         Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
-        Nugra <richiisei@gmail.com>
-In-Reply-To: <20220225005814.146492-1-ammarfaizi2@gnuweeb.org>
-References: <20220225005814.146492-1-ammarfaizi2@gnuweeb.org>
-Subject: Re: [PATCH liburing v2] queue, liburing.h: Avoid `io_uring_get_sqe()` code duplication
-Message-Id: <164579860316.5714.11586792942122127124.b4-ty@kernel.dk>
-Date:   Fri, 25 Feb 2022 07:16:43 -0700
+        Nugra <richiisei@gmail.com>,
+        Tea Inside Mailing List <timl@vger.teainside.org>
+In-Reply-To: <20220225011436.147898-1-ammarfaizi2@gnuweeb.org>
+References: <20220225011436.147898-1-ammarfaizi2@gnuweeb.org>
+Subject: Re: [PATCH liburing v1] .gitignore: Add `/test/fpos` to .gitignore
+Message-Id: <164579861740.5846.9688732659758320323.b4-ty@kernel.dk>
+Date:   Fri, 25 Feb 2022 07:16:57 -0700
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -71,21 +71,15 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, 25 Feb 2022 07:58:14 +0700, Ammar Faizi wrote:
-> Since commit 8be8af4afcb4909104c ("queue: provide io_uring_get_sqe()
-> symbol again"), we have the same definition of `io_uring_get_sqe()` in
-> queue.c and liburing.h.
+On Fri, 25 Feb 2022 08:14:36 +0700, Ammar Faizi wrote:
+> Dylan forgot to add it to .gitignore when creating this test.
 > 
-> Make it simpler, maintain it in a single place, create a new static
-> inline function wrapper with name `_io_uring_get_sqe()`. Then tail
-> call both `io_uring_get_sqe()` functions to `_io_uring_get_sqe()`.
 > 
-> [...]
 
 Applied, thanks!
 
-[1/1] queue, liburing.h: Avoid `io_uring_get_sqe()` code duplication
-      commit: 15c01fcd1b0d37a12d945ab8dcdf96b3e055a4fd
+[1/1] .gitignore: Add `/test/fpos` to .gitignore
+      commit: ac154c44e8c2d5b23017111dc44b419068c1ae34
 
 Best regards,
 -- 

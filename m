@@ -2,32 +2,32 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 71D674C7659
-	for <lists+io-uring@lfdr.de>; Mon, 28 Feb 2022 19:04:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BE574C74E5
+	for <lists+io-uring@lfdr.de>; Mon, 28 Feb 2022 18:48:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234303AbiB1SEq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 28 Feb 2022 13:04:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44302 "EHLO
+        id S235183AbiB1Rs2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 28 Feb 2022 12:48:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51654 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240603AbiB1SDm (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 28 Feb 2022 13:03:42 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 347A5DB2;
-        Mon, 28 Feb 2022 09:47:30 -0800 (PST)
+        with ESMTP id S239036AbiB1RsB (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 28 Feb 2022 12:48:01 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04655A0BDC;
+        Mon, 28 Feb 2022 09:38:26 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 7336BB81187;
-        Mon, 28 Feb 2022 17:46:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5BDCC340E7;
-        Mon, 28 Feb 2022 17:46:49 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9804F61549;
+        Mon, 28 Feb 2022 17:38:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2758C340E7;
+        Mon, 28 Feb 2022 17:38:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1646070410;
-        bh=zAcEzO9rWRlFOf8Z2O5jioA9Bj7raYxbPbKD+GiBMdc=;
+        s=korg; t=1646069905;
+        bh=7IUjcYtpSmXwRIc5CdSx6f7wOUuj9jn09/OakLM90AU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OwsuNW25D1pngmoWL6rAib/Zaex8s15VW87b1mcwqlRcEy/UmBJinRJvDxwnZ/vjx
-         WPHMDro5DkFAXGp0nij78A4q98rudUS2EU6YSpKBIkJ6U5hg/d//7fiycyKJCQ/rWX
-         ZAmbun2pbXFpLdCY12Akj1n6wvmgU9CKM46s10Yc=
+        b=LcPKbG7qtLWqYvSR4+1qa5RvcWuZaV1f8+n4fW38S9SaaRumfQ6JGM6I73QBsVjDH
+         cezxpi0f9aS1khFOsS3d9/IrFYHs+CwDsJJCYGetZgkiYrQ14il5c08h8j6B3Di4Pg
+         /KHDvxJydISbwztv/nMWVN9iZF2EIadXLVZ4/Trc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -36,12 +36,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Pavel Begunkov <asml.silence@gmail.com>,
         io-uring <io-uring@vger.kernel.org>,
         syzbot <syzkaller@googlegroups.com>
-Subject: [PATCH 5.16 061/164] io_uring: add a schedule point in io_add_buffers()
-Date:   Mon, 28 Feb 2022 18:23:43 +0100
-Message-Id: <20220228172405.729864177@linuxfoundation.org>
+Subject: [PATCH 5.15 055/139] io_uring: add a schedule point in io_add_buffers()
+Date:   Mon, 28 Feb 2022 18:23:49 +0100
+Message-Id: <20220228172353.504279908@linuxfoundation.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220228172359.567256961@linuxfoundation.org>
-References: <20220228172359.567256961@linuxfoundation.org>
+In-Reply-To: <20220228172347.614588246@linuxfoundation.org>
+References: <20220228172347.614588246@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -130,7 +130,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -4477,6 +4477,7 @@ static int io_add_buffers(struct io_prov
+@@ -4454,6 +4454,7 @@ static int io_add_buffers(struct io_prov
  		} else {
  			list_add_tail(&buf->list, &(*head)->list);
  		}

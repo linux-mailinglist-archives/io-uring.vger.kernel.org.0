@@ -2,32 +2,32 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BE7C14C8CC8
-	for <lists+io-uring@lfdr.de>; Tue,  1 Mar 2022 14:38:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C0C804C8CE9
+	for <lists+io-uring@lfdr.de>; Tue,  1 Mar 2022 14:47:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235083AbiCANjM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 1 Mar 2022 08:39:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50670 "EHLO
+        id S231383AbiCANsC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 1 Mar 2022 08:48:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42258 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232955AbiCANjM (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 1 Mar 2022 08:39:12 -0500
+        with ESMTP id S233904AbiCANsC (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 1 Mar 2022 08:48:02 -0500
 Received: from cloud48395.mywhc.ca (cloud48395.mywhc.ca [173.209.37.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDBA326101;
-        Tue,  1 Mar 2022 05:38:31 -0800 (PST)
-Received: from [45.44.224.220] (port=56374 helo=localhost)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96CE29F39B;
+        Tue,  1 Mar 2022 05:47:20 -0800 (PST)
+Received: from [45.44.224.220] (port=56376 helo=localhost)
         by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94.2)
         (envelope-from <olivier@trillion01.com>)
-        id 1nP2hy-0001ms-B1; Tue, 01 Mar 2022 08:38:30 -0500
-Date:   Tue, 01 Mar 2022 08:38:29 -0500
-Message-Id: <cover.1646141294.git.olivier@trillion01.com>
+        id 1nP2qV-0002GI-4T; Tue, 01 Mar 2022 08:47:19 -0500
+Date:   Tue, 01 Mar 2022 08:47:18 -0500
+Message-Id: <cover.1646142288.git.olivier@trillion01.com>
 From:   Olivier Langlois <olivier@trillion01.com>
 To:     Jens Axboe <axboe@kernel.dk>,
         Pavel Begunkov <asml.silence@gmail.com>
 Cc:     Hao Xu <haoxu@linux.alibaba.com>,
         io-uring <io-uring@vger.kernel.org>,
         linux-kernel <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 0/2] io_uring: Add support for napi_busy_poll
+Subject: [PATCH v4 0/2] io_uring: Add support for napi_busy_poll
 X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
 X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
 X-AntiAbuse: Original Domain - vger.kernel.org
@@ -58,6 +58,22 @@ If the user specify a timeout value, it is distributed between polling
 and sleeping by using the systemwide setting
 /proc/sys/net/core/busy_poll.
 
+The changes have been tested with this program:
+https://github.com/lano1106/io_uring_udp_ping
+
+and the result is:
+Without sqpoll:
+NAPI busy loop disabled:
+rtt min/avg/max/mdev = 40.631/42.050/58.667/1.547 us
+NAPI busy loop enabled:
+rtt min/avg/max/mdev = 30.619/31.753/61.433/1.456 us
+
+With sqpoll:
+NAPI busy loop disabled:
+rtt min/avg/max/mdev = 42.087/44.438/59.508/1.533 us
+NAPI busy loop enabled:
+rtt min/avg/max/mdev = 35.779/37.347/52.201/0.924 us
+
 v2:
  * Evaluate list_empty(&ctx->napi_list) outside io_napi_busy_loop() to keep
    __io_sq_thread() execution as fast as possible
@@ -72,10 +88,8 @@ v3:
  * Reduce uring_lock contention by creating a spinlock for protecting
    napi_list
  * Support correctly MULTISHOT poll requests
-
-Co-developed-by: Hao Xu <haoxu@linux.alibaba.com>
-Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
-Signed-off-by: Olivier Langlois <olivier@trillion01.com>
+v4:
+ * Put back benchmark result in commit text
 
 Olivier Langlois (2):
   io_uring: minor io_cqring_wait() optimization

@@ -2,125 +2,169 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5ADB14C9DDD
-	for <lists+io-uring@lfdr.de>; Wed,  2 Mar 2022 07:38:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 58A904CA3A4
+	for <lists+io-uring@lfdr.de>; Wed,  2 Mar 2022 12:28:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231694AbiCBGi4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 2 Mar 2022 01:38:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46170 "EHLO
+        id S234815AbiCBL3E (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 2 Mar 2022 06:29:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231644AbiCBGi4 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 2 Mar 2022 01:38:56 -0500
-Received: from out30-44.freemail.mail.aliyun.com (out30-44.freemail.mail.aliyun.com [115.124.30.44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F46013DDE;
-        Tue,  1 Mar 2022 22:38:13 -0800 (PST)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0V61CwrZ_1646203089;
-Received: from 30.226.12.26(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0V61CwrZ_1646203089)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 02 Mar 2022 14:38:10 +0800
-Message-ID: <81a915d3-cf5f-a884-4649-704a5cf26835@linux.alibaba.com>
-Date:   Wed, 2 Mar 2022 14:38:09 +0800
+        with ESMTP id S233839AbiCBL3D (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 2 Mar 2022 06:29:03 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A2DD3ED35;
+        Wed,  2 Mar 2022 03:28:20 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B9D4B61804;
+        Wed,  2 Mar 2022 11:28:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB75CC004E1;
+        Wed,  2 Mar 2022 11:28:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1646220499;
+        bh=NNW4l+jluOy6hGNsds61IYRiSLBNoFZnVB4BY5EzUeE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=fJrIu5HiHUVuYb1YtJcldJe13nkso3YpgyfAL7is/pavjDfZJ7bTd3A8pRUeqMcN4
+         BpqXtZaWFhShjX+U3caPGbOw6QlpZbMizPZQwU+fZ9hiJx94y9E65Li0IGhWYhpM4L
+         uJlzE55FQwGV6WnfgFlnXsyBmYgp8kxDXHkAJuGq24/23ev0r6rZowonCaV7hc8Jhz
+         wckbfc5fV2oNMcD8omZM4ebCCgaPoR69RQeeJ1jxSVsI1pCfDbynUJ/8KaoodVfDIJ
+         1NwILteumnfROBqmcq3QtSVDr2Zk5+GLpsmZgPcvaBwzXIeXY8jI2cnrktJl1HHIaY
+         PNyRKbeaEvtqA==
+Date:   Wed, 2 Mar 2022 11:28:16 +0000
+From:   Filipe Manana <fdmanana@kernel.org>
+To:     Daniel Black <daniel@mariadb.org>
+Cc:     io-uring@vger.kernel.org, linux-btrfs <linux-btrfs@vger.kernel.org>
+Subject: Re: Fwd: btrfs / io-uring corrupting reads
+Message-ID: <Yh9U0PSU+gfWGqU+@debian9.Home>
+References: <CABVffEM0eEWho+206m470rtM0d9J8ue85TtR-A_oVTuGLWFicA@mail.gmail.com>
+ <CABVffEO3DZTtTNdjkwTegxNPTHbeM-PBeKk5B_dFXdsTvL2wFg@mail.gmail.com>
+ <YhTMBFrZeEvROh0C@debian9.Home>
+ <CABVffENr6xfB=ujMhMEVywbuzo8kYTSVzym1ctCbZOPipVCpHg@mail.gmail.com>
+ <CAL3q7H5mSV69ambZy_uCnTMOW7U0n_fU1DtVNA-FYwDdHVrp9w@mail.gmail.com>
+ <CAL3q7H4gwg+9ACTZV-BF_kr6QQ6-AFFtufezo2KYrVORC81QhQ@mail.gmail.com>
+ <CABVffEOWjSg+8pqzALuLt6mMviA0y7XRwsdJyv9_DodWKQFpqQ@mail.gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v4 2/2] io_uring: Add support for napi_busy_poll
-Content-Language: en-US
-From:   Hao Xu <haoxu@linux.alibaba.com>
-To:     Olivier Langlois <olivier@trillion01.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Cc:     io-uring <io-uring@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <cover.1646142288.git.olivier@trillion01.com>
- <aa38a667ef28cce54c08212fdfa1e2b3747ad3ec.1646142288.git.olivier@trillion01.com>
- <29bad95d-06f8-ea7c-29fe-81e52823c90a@linux.alibaba.com>
- <4f01857ca757ab4f0995420e6b1a6e3668a40da5.camel@trillion01.com>
- <4af380e8-796b-2dd6-4ebc-e40e7fa51ce1@linux.alibaba.com>
-In-Reply-To: <4af380e8-796b-2dd6-4ebc-e40e7fa51ce1@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CABVffEOWjSg+8pqzALuLt6mMviA0y7XRwsdJyv9_DodWKQFpqQ@mail.gmail.com>
+X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+On Wed, Mar 02, 2022 at 08:51:53AM +1100, Daniel Black wrote:
+> Filipe,
+> 
+> DId you find anything? This is starting to be noticed by our mutual users.
 
-On 3/2/22 14:27, Hao Xu wrote:
->
-> On 3/2/22 04:06, Olivier Langlois wrote:
->> On Wed, 2022-03-02 at 02:31 +0800, Hao Xu wrote:
->>>> +       ne = kmalloc(sizeof(*ne), GFP_NOWAIT);
->>>> +       if (!ne)
->>>> +               goto out;
->>> IMHO, we need to handle -ENOMEM here, I cut off the error handling
->>> when
->>>
->>> I did the quick coding. Sorry for misleading.
->> If you are correct, I would be shocked about this.
->>
->> I did return in my 'Linux Device Drivers' book and nowhere it is
->> mentionned that the kmalloc() can return something else than a pointer
->>
->> No mention at all about the return value
->>
->> in man page:
->> https://www.kernel.org/doc/htmldocs/kernel-api/API-kmalloc.html
->> API doc:
->>
->> https://www.kernel.org/doc/html/latest/core-api/mm-api.html?highlight=kmalloc#c.kmalloc 
->>
->>
->> header file:
->> https://elixir.bootlin.com/linux/latest/source/include/linux/slab.h#L522
->>
->> I did browse into the kmalloc code. There is a lot of paths to cover
->> but from preliminary reading, it pretty much seems that kmalloc only
->> returns a valid pointer or NULL...
->>
->> /**
->>   * kmem_cache_alloc - Allocate an object
->>   * @cachep: The cache to allocate from.
->>   * @flags: See kmalloc().
->>   *
->>   * Allocate an object from this cache.  The flags are only relevant
->>   * if the cache has no available objects.
->>   *
->>   * Return: pointer to the new object or %NULL in case of error
->>   */
->>     /**
->>   * __do_kmalloc - allocate memory
->>   * @size: how many bytes of memory are required.
->>   * @flags: the type of memory to allocate (see kmalloc).
->>   * @caller: function caller for debug tracking of the caller
->>   *
->>   * Return: pointer to the allocated memory or %NULL in case of error
->>   */
->>
->> I'll need someone else to confirm about possible kmalloc() return
->> values with perhaps an example
->>
->> I am a bit skeptic that something special needs to be done here...
->>
->> Or perhaps you are suggesting that io_add_napi() returns an error code
->> when allocation fails.
-> This is what I mean.
->>
->> as done here:
->> https://elixir.bootlin.com/linux/latest/source/arch/alpha/kernel/core_marvel.c#L867 
->>
->>
->> If that is what you suggest, what would this info do for the caller?
->>
->> IMHO, it wouldn't help in any way...
->
-> Hmm, I'm not sure, you're probably right based on that ENOMEM here 
-> shouldn't
->
-> fail the arm poll, but we wanna do it, we can do something like what 
-> we do for
-                             ^---but if we wanna do it
+Yes, I've sent a patch to address it:
+
+https://lore.kernel.org/linux-btrfs/39c96b5608ed99b7d666d4d159f8d135e86b9606.1646219178.git.fdmanana@suse.com/T/#u
+
+The details are in the changelog.
+
+Basically, MariaDB is getting a short read - it asks to read 16K of data
+but it only gets the first 4K of data (or the first 8K or 12K). It treats
+such partial read as a corruption, but in fact it could check that it's a
+short read and then try to read the remaining data.
+
+I understand it's an unexpected result, since it knows its read requests
+don't cross the EOF boundary and knows exactly the length and file offsets
+of its pages/blocks, so it expects a read requesting 16K of data to return
+exactly 16K of data, and no less than that. I've worked in the database
+industry before, and the same assumptions existed on the engines I worked on.
+Either way it was a behaviour change in btrfs and it can, and should be,
+addressed in btrfs.
+
+And yes, before your report, there was at least another on the btrfs mailing
+list from someone getting MariaDB corruptions on btrfs only. However yours had
+a useful reproducer that made it easier to dig into.
+
+Thanks.
+
+> 
+> https://jira.mariadb.org/browse/MDEV-27900
+> https://mariadb.zulipchat.com/#narrow/stream/118759-general/topic/Corrupt.20database.20page.20when.20updating.20from.2010.2E5
+> 
+> On Tue, Feb 22, 2022 at 11:55 PM Filipe Manana <fdmanana@kernel.org> wrote:
+> >
+> > On Tue, Feb 22, 2022 at 12:46 PM Filipe Manana <fdmanana@kernel.org> wrote:
+> > >
+> > > On Tue, Feb 22, 2022 at 12:22 PM Daniel Black <daniel@mariadb.org> wrote:
+> > > >
+> > > > On Tue, Feb 22, 2022 at 10:42 PM Filipe Manana <fdmanana@kernel.org> wrote:
+> > > >
+> > > > > I gave it a try, but it fails setting up io_uring:
+> > > > >
+> > > > > 2022-02-22 11:27:13 0 [Note] mysqld: O_TMPFILE is not supported on /tmp (disabling future attempts)
+> > > > > 2022-02-22 11:27:13 0 [Warning] mysqld: io_uring_queue_init() failed with errno 1
+> > > > > 2022-02-22 11:27:13 0 [Warning] InnoDB: liburing disabled: falling back to innodb_use_native_aio=OFF
+> > > > > 2022-02-22 11:27:13 0 [Note] InnoDB: Initializing buffer pool, total size = 134217728, chunk size = 134217728
+> > > > > 2022-02-22 11:27:13 0 [Note] InnoDB: Completed initialization of buffer pool
+> > > > >
+> > > > > So that's why it doesn't fail here, as it fallbacks to no aio mode.
+> > > >
+> > > > error 1 is EPERM. Seems it needs --privileged on the container startup
+> > > > as a podman argument (before the image name). Sorry I missed that
+> > > >
+> > > > > Any idea why it's failing to setup io_uring?
+> > > > >
+> > > > > I have the liburing2 and liburing-dev packages installed on debian, and
+> > > > > tried with a 5.17-rc4 kernel.
+> > > >
+> > > > Taking https://packages.debian.org/bookworm/mariadb-server-core-10.6 package:
+> > > >
+> > > > mariadb-install-db --no-defaults --datadir=/empty/btrfs/path
+> > > > --innodb-use-native-aio=0
+> > > >
+> > > > mariadbd --no-defaults --datadir=/empty/btrfs/path --innodb-use-native-aio=1
+> > > >
+> > > > should achieve the same thing.
+> > >
+> > > Sorry, I have no experience with mariadb and podman. How am I supposed
+> > > to run that?
+> > > Is that supposed to run inside the container, on the host? Do I need
+> > > to change the podman command lines?
+> > >
+> > > What I did before was:
+> > >
+> > > DEV=/dev/sdh
+> > > MNT=/mnt/sdh
+> > >
+> > > mkfs.btrfs -f $DEV
+> > > mount $DEV $MNT
+> > >
+> > > mkdir $MNT/noaio
+> > > chown fdmanana: $MNT/noaio
+> > >
+> > > podman run --name mdbinit --rm -v $MNT/noaio/:/var/lib/mysql:Z -e
+> > > MARIADB_ALLOW_EMPTY_ROOT_PASSWORD=1
+> > > quay.io/danielgblack/mariadb-test:10.6-impish-sysbench
+> > > --innodb_use_native_aio=0
+> > >
+> > >
+> > > Then in another shell:
+> > >
+> > > podman kill --all
+> > >
+> > > podman run --rm -v $MNT/noaio/:/var/lib/mysql:Z -e
+> > > MARIADB_ALLOW_EMPTY_ROOT_PASSWORD=1
+> > > quay.io/danielgblack/mariadb-test:10.6-impish-sysbench
+> > > --innodb_use_native_aio=1
+> > >
+> > >
+> > > What should I change or add in there?
+> >
+> > Ok, just passing  --privileged to both podman commands triggered the
+> > bug as in your report.
+> > I'll see if I can figure out what's causing the read corruption.
+> >
+> >
+> > >
+> > > Thanks.

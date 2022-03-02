@@ -2,169 +2,106 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 58A904CA3A4
-	for <lists+io-uring@lfdr.de>; Wed,  2 Mar 2022 12:28:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AA804CB020
+	for <lists+io-uring@lfdr.de>; Wed,  2 Mar 2022 21:43:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234815AbiCBL3E (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 2 Mar 2022 06:29:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33296 "EHLO
+        id S233730AbiCBUoV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 2 Mar 2022 15:44:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41894 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233839AbiCBL3D (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 2 Mar 2022 06:29:03 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A2DD3ED35;
-        Wed,  2 Mar 2022 03:28:20 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B9D4B61804;
-        Wed,  2 Mar 2022 11:28:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB75CC004E1;
-        Wed,  2 Mar 2022 11:28:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646220499;
-        bh=NNW4l+jluOy6hGNsds61IYRiSLBNoFZnVB4BY5EzUeE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fJrIu5HiHUVuYb1YtJcldJe13nkso3YpgyfAL7is/pavjDfZJ7bTd3A8pRUeqMcN4
-         BpqXtZaWFhShjX+U3caPGbOw6QlpZbMizPZQwU+fZ9hiJx94y9E65Li0IGhWYhpM4L
-         uJlzE55FQwGV6WnfgFlnXsyBmYgp8kxDXHkAJuGq24/23ev0r6rZowonCaV7hc8Jhz
-         wckbfc5fV2oNMcD8omZM4ebCCgaPoR69RQeeJ1jxSVsI1pCfDbynUJ/8KaoodVfDIJ
-         1NwILteumnfROBqmcq3QtSVDr2Zk5+GLpsmZgPcvaBwzXIeXY8jI2cnrktJl1HHIaY
-         PNyRKbeaEvtqA==
-Date:   Wed, 2 Mar 2022 11:28:16 +0000
-From:   Filipe Manana <fdmanana@kernel.org>
-To:     Daniel Black <daniel@mariadb.org>
-Cc:     io-uring@vger.kernel.org, linux-btrfs <linux-btrfs@vger.kernel.org>
-Subject: Re: Fwd: btrfs / io-uring corrupting reads
-Message-ID: <Yh9U0PSU+gfWGqU+@debian9.Home>
-References: <CABVffEM0eEWho+206m470rtM0d9J8ue85TtR-A_oVTuGLWFicA@mail.gmail.com>
- <CABVffEO3DZTtTNdjkwTegxNPTHbeM-PBeKk5B_dFXdsTvL2wFg@mail.gmail.com>
- <YhTMBFrZeEvROh0C@debian9.Home>
- <CABVffENr6xfB=ujMhMEVywbuzo8kYTSVzym1ctCbZOPipVCpHg@mail.gmail.com>
- <CAL3q7H5mSV69ambZy_uCnTMOW7U0n_fU1DtVNA-FYwDdHVrp9w@mail.gmail.com>
- <CAL3q7H4gwg+9ACTZV-BF_kr6QQ6-AFFtufezo2KYrVORC81QhQ@mail.gmail.com>
- <CABVffEOWjSg+8pqzALuLt6mMviA0y7XRwsdJyv9_DodWKQFpqQ@mail.gmail.com>
+        with ESMTP id S231127AbiCBUoV (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 2 Mar 2022 15:44:21 -0500
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77BFA36B6A;
+        Wed,  2 Mar 2022 12:43:37 -0800 (PST)
+Received: by mail-pj1-f41.google.com with SMTP id gj15-20020a17090b108f00b001bef86c67c1so2753935pjb.3;
+        Wed, 02 Mar 2022 12:43:37 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=lgYOR0NAjV43r8oYaHMPMronWC+T+uvO+TYbc9ZRf2U=;
+        b=Do7KuqMBP/y4oIXCc27REEmmeyXsQ6BpAC2gB6U/LVB2ZNfh4Nh9GmKMZPuFes/YLC
+         pHO8uQOYa/PKUaJhi3WDoHy8KcCkLkLZgvHOBnNnqfRzrGEz20DRVGbHUkIIRZWGQeu8
+         fzyZDAGiKgkuRZ2dtHZaLS6JzPV4zMF/sygEzbeF+6zvqGtxSzRIEZTFhRfQBIlE7RJF
+         9F9iFyjiuHKY1F/mE/XWWByHSumXeQHnLjkI2CPFr/t/5PwZpfOtCNX2x1/qW/0/t33L
+         A8k649uAPfZ972Tlr0KQCNp6qHYmmsl+UT0hXzwKmpD7N/O9s7bQ4EvEGLeMaLL2z9NI
+         jZIw==
+X-Gm-Message-State: AOAM532wr43A/92deLW2TbooI5zAFm1jwDp3LLIoYzl5q46w9sHMXH0W
+        tTkJFtYz6r/mm07TRtQWbFcqdUTLcF4=
+X-Google-Smtp-Source: ABdhPJyaNbmqlyYCF0pLP/kU5mYs6ZZtG6sJ6Lt4AcJ3790H8g6EdnWM4bXzhCMZArL+GVOyY1Rd0w==
+X-Received: by 2002:a17:902:d50b:b0:151:94d9:eeaf with SMTP id b11-20020a170902d50b00b0015194d9eeafmr5879371plg.133.1646253816786;
+        Wed, 02 Mar 2022 12:43:36 -0800 (PST)
+Received: from garbanzo (136-24-173-63.cab.webpass.net. [136.24.173.63])
+        by smtp.gmail.com with ESMTPSA id k4-20020a17090a910400b001bd171c7fd4sm5933510pjo.25.2022.03.02.12.43.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Mar 2022 12:43:35 -0800 (PST)
+Date:   Wed, 2 Mar 2022 12:43:32 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     "hch@infradead.org" <hch@infradead.org>
+Cc:     Kanchan Joshi <joshiiitr@gmail.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Kanchan Joshi <joshi.k@samsung.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "bcrl@kvack.org" <bcrl@kvack.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-aio@kvack.org" <linux-aio@kvack.org>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        SelvaKumar S <selvakuma.s1@samsung.com>,
+        Nitesh Shetty <nj.shetty@samsung.com>,
+        Javier Gonzalez <javier.gonz@samsung.com>,
+        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+        Naohiro Aota <Naohiro.Aota@wdc.com>,
+        Adam Manzanares <a.manzanares@samsung.com>,
+        "Remzi H. Arpaci-Dusseau" <remzi@cs.wisc.edu>
+Subject: Re: [PATCH v4 6/6] io_uring: add support for zone-append
+Message-ID: <20220302204332.dgstbjcpzgiurn5t@garbanzo>
+References: <MWHPR04MB375863C20C1EF2CB27E62703E74E0@MWHPR04MB3758.namprd04.prod.outlook.com>
+ <20200731091416.GA29634@infradead.org>
+ <MWHPR04MB37586D39CA389296CE0252A4E74E0@MWHPR04MB3758.namprd04.prod.outlook.com>
+ <20200731094135.GA4104@infradead.org>
+ <MWHPR04MB3758A4B2967DB1FABAAD9265E74E0@MWHPR04MB3758.namprd04.prod.outlook.com>
+ <20200731125110.GA11500@infradead.org>
+ <CY4PR04MB37517D633920E4D31AC6EA0DE74B0@CY4PR04MB3751.namprd04.prod.outlook.com>
+ <20200814081411.GA16943@infradead.org>
+ <CA+1E3r+WXC_MK5Zf2OZEv17ddJDjtXbhpRFoeDns4F341xMhow@mail.gmail.com>
+ <20200908151801.GA16742@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CABVffEOWjSg+8pqzALuLt6mMviA0y7XRwsdJyv9_DodWKQFpqQ@mail.gmail.com>
-X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <20200908151801.GA16742@infradead.org>
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Mar 02, 2022 at 08:51:53AM +1100, Daniel Black wrote:
-> Filipe,
+On Tue, Sep 08, 2020 at 04:18:01PM +0100, hch@infradead.org wrote:
+> On Mon, Sep 07, 2020 at 12:31:42PM +0530, Kanchan Joshi wrote:
+> > But there are use-cases which benefit from supporting zone-append on
+> > raw block-dev path.
+> > Certain user-space log-structured/cow FS/DB will use the device that
+> > way. Aerospike is one example.
+> > Pass-through is synchronous, and we lose the ability to use io-uring.
 > 
-> DId you find anything? This is starting to be noticed by our mutual users.
+> So use zonefs, which is designed exactly for that use case.
 
-Yes, I've sent a patch to address it:
+Using zonefs to test append alone can introduce a slight overhead with
+the VFS if we want to do something such as just testing any hot path
+with append and the block layer. If we want to live with that, that's
+fine!
 
-https://lore.kernel.org/linux-btrfs/39c96b5608ed99b7d666d4d159f8d135e86b9606.1646219178.git.fdmanana@suse.com/T/#u
+Just saying.
 
-The details are in the changelog.
-
-Basically, MariaDB is getting a short read - it asks to read 16K of data
-but it only gets the first 4K of data (or the first 8K or 12K). It treats
-such partial read as a corruption, but in fact it could check that it's a
-short read and then try to read the remaining data.
-
-I understand it's an unexpected result, since it knows its read requests
-don't cross the EOF boundary and knows exactly the length and file offsets
-of its pages/blocks, so it expects a read requesting 16K of data to return
-exactly 16K of data, and no less than that. I've worked in the database
-industry before, and the same assumptions existed on the engines I worked on.
-Either way it was a behaviour change in btrfs and it can, and should be,
-addressed in btrfs.
-
-And yes, before your report, there was at least another on the btrfs mailing
-list from someone getting MariaDB corruptions on btrfs only. However yours had
-a useful reproducer that made it easier to dig into.
-
-Thanks.
-
-> 
-> https://jira.mariadb.org/browse/MDEV-27900
-> https://mariadb.zulipchat.com/#narrow/stream/118759-general/topic/Corrupt.20database.20page.20when.20updating.20from.2010.2E5
-> 
-> On Tue, Feb 22, 2022 at 11:55 PM Filipe Manana <fdmanana@kernel.org> wrote:
-> >
-> > On Tue, Feb 22, 2022 at 12:46 PM Filipe Manana <fdmanana@kernel.org> wrote:
-> > >
-> > > On Tue, Feb 22, 2022 at 12:22 PM Daniel Black <daniel@mariadb.org> wrote:
-> > > >
-> > > > On Tue, Feb 22, 2022 at 10:42 PM Filipe Manana <fdmanana@kernel.org> wrote:
-> > > >
-> > > > > I gave it a try, but it fails setting up io_uring:
-> > > > >
-> > > > > 2022-02-22 11:27:13 0 [Note] mysqld: O_TMPFILE is not supported on /tmp (disabling future attempts)
-> > > > > 2022-02-22 11:27:13 0 [Warning] mysqld: io_uring_queue_init() failed with errno 1
-> > > > > 2022-02-22 11:27:13 0 [Warning] InnoDB: liburing disabled: falling back to innodb_use_native_aio=OFF
-> > > > > 2022-02-22 11:27:13 0 [Note] InnoDB: Initializing buffer pool, total size = 134217728, chunk size = 134217728
-> > > > > 2022-02-22 11:27:13 0 [Note] InnoDB: Completed initialization of buffer pool
-> > > > >
-> > > > > So that's why it doesn't fail here, as it fallbacks to no aio mode.
-> > > >
-> > > > error 1 is EPERM. Seems it needs --privileged on the container startup
-> > > > as a podman argument (before the image name). Sorry I missed that
-> > > >
-> > > > > Any idea why it's failing to setup io_uring?
-> > > > >
-> > > > > I have the liburing2 and liburing-dev packages installed on debian, and
-> > > > > tried with a 5.17-rc4 kernel.
-> > > >
-> > > > Taking https://packages.debian.org/bookworm/mariadb-server-core-10.6 package:
-> > > >
-> > > > mariadb-install-db --no-defaults --datadir=/empty/btrfs/path
-> > > > --innodb-use-native-aio=0
-> > > >
-> > > > mariadbd --no-defaults --datadir=/empty/btrfs/path --innodb-use-native-aio=1
-> > > >
-> > > > should achieve the same thing.
-> > >
-> > > Sorry, I have no experience with mariadb and podman. How am I supposed
-> > > to run that?
-> > > Is that supposed to run inside the container, on the host? Do I need
-> > > to change the podman command lines?
-> > >
-> > > What I did before was:
-> > >
-> > > DEV=/dev/sdh
-> > > MNT=/mnt/sdh
-> > >
-> > > mkfs.btrfs -f $DEV
-> > > mount $DEV $MNT
-> > >
-> > > mkdir $MNT/noaio
-> > > chown fdmanana: $MNT/noaio
-> > >
-> > > podman run --name mdbinit --rm -v $MNT/noaio/:/var/lib/mysql:Z -e
-> > > MARIADB_ALLOW_EMPTY_ROOT_PASSWORD=1
-> > > quay.io/danielgblack/mariadb-test:10.6-impish-sysbench
-> > > --innodb_use_native_aio=0
-> > >
-> > >
-> > > Then in another shell:
-> > >
-> > > podman kill --all
-> > >
-> > > podman run --rm -v $MNT/noaio/:/var/lib/mysql:Z -e
-> > > MARIADB_ALLOW_EMPTY_ROOT_PASSWORD=1
-> > > quay.io/danielgblack/mariadb-test:10.6-impish-sysbench
-> > > --innodb_use_native_aio=1
-> > >
-> > >
-> > > What should I change or add in there?
-> >
-> > Ok, just passing  --privileged to both podman commands triggered the
-> > bug as in your report.
-> > I'll see if I can figure out what's causing the read corruption.
-> >
-> >
-> > >
-> > > Thanks.
+  Luis

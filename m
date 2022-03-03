@@ -2,54 +2,54 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D8CB14CC2D3
-	for <lists+io-uring@lfdr.de>; Thu,  3 Mar 2022 17:31:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC5EA4CC38E
+	for <lists+io-uring@lfdr.de>; Thu,  3 Mar 2022 18:18:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232756AbiCCQc0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 3 Mar 2022 11:32:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43450 "EHLO
+        id S235032AbiCCRTC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 3 Mar 2022 12:19:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48410 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232003AbiCCQcZ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 3 Mar 2022 11:32:25 -0500
-Received: from mail-il1-x129.google.com (mail-il1-x129.google.com [IPv6:2607:f8b0:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF7A119D60C
-        for <io-uring@vger.kernel.org>; Thu,  3 Mar 2022 08:31:39 -0800 (PST)
-Received: by mail-il1-x129.google.com with SMTP id q4so4480961ilt.0
-        for <io-uring@vger.kernel.org>; Thu, 03 Mar 2022 08:31:39 -0800 (PST)
+        with ESMTP id S233552AbiCCRTB (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 3 Mar 2022 12:19:01 -0500
+Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7840DDF488
+        for <io-uring@vger.kernel.org>; Thu,  3 Mar 2022 09:18:14 -0800 (PST)
+Received: by mail-il1-x12d.google.com with SMTP id w4so4563633ilj.5
+        for <io-uring@vger.kernel.org>; Thu, 03 Mar 2022 09:18:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=message-id:date:mime-version:user-agent:subject:content-language
          :from:to:cc:references:in-reply-to:content-transfer-encoding;
-        bh=B99Qor5NBNaDHHFFqhnqvCq9Z8A+m+mSM67Na/eYOnw=;
-        b=sMYjRlq9t7jBCWMElRMWRfcX5zj6WzsLvqqy2OenTbQX70XDzlODI56TMPy7HGbc4A
-         NNDjThSV3F307wMirKaigU3RiC2NpS8+mc/X8CcgZ0TadBGsBKWG64OnTW3CXGBHdU2D
-         NSfMD/IMGJqrvJl+3Y5ZVXJvp5/d9GOtuaPX9c8y2+j8QQP7vUBNzkAWaOL8a2SHI1Vw
-         m28vrydmlKKDl18L/YvXpKeDAMlWRRDR3ixak914Q17MWtg6IFdNUPURqNP5o+6zdW3e
-         laR6ni6dehYuMgvb49DKsLuTROs2Vg/Q+njxWVHly0dRG20GFxw0Z5Oet33io8WVh4sR
-         DGCw==
+        bh=t+Zzwf9xU/NfWk7moQbHdu4OeT0cXa8C1pDV8nUi2PE=;
+        b=N9UYMil9P0nwDs60s6vKTlxzQguImG4fD/Wu4sjqOkvXZSKwaRbrb+JG5Wh7HNPi0e
+         yPUvDFWyTKXynydmUF+aMapcMSIqe+laek6ZoZbOmbszwfBwf2C/1TJOpCXw30qvRU1n
+         OXpkpHQqblgJvZLe2tM/Nmm4/FMXSXCbgGEWddYAKHlLFuWNMv3GvitlTvrt1sMR3+22
+         +pAED74Ibpru8N1fEOEDoEXsKMOJZ6z30TrSFGTGepQRBglkIqddTwFwBoOgcxz4jIri
+         MABcN1rYWlnf8LWp+a1FTmVQkc76Vfr4+jpTHrXUg0+wnRb+lcYn+6ByISJM277jewr/
+         gqDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:from:to:cc:references:in-reply-to
          :content-transfer-encoding;
-        bh=B99Qor5NBNaDHHFFqhnqvCq9Z8A+m+mSM67Na/eYOnw=;
-        b=IhUSSHtwykmcX/RbSTIAMZR7cLcCvdYt4zOGAolHWG55lfR3bxk/QAEUogcOao5yt7
-         70HDbOMm50FSzEipxWKqL56X6Qcv24j3rWm4JCvn257T0mv0EPb+B2elyytiQXEHlqRA
-         sp0g0gjL2Z8syNva15zEb5OepWMJabYfZ/89yIlmDBBCgWyfctU5RRKODOKnpboBvHse
-         hzgFuFbxYqUgGxw8DnfaXLYt3wo+Kxn/BeWFwaP9OWr7wCjIutwYg9Yt2wen6KAPJWnr
-         qCkh2KVr5GdorHbQSAqdGgDRN0dRdF31MsFON47XPRZQn8CdLoUgUZSwfkl1plD01aye
-         tTfw==
-X-Gm-Message-State: AOAM532rxAWk1xLqAWiJSUneMOqZAEICP00eYMmRkPUkhN48cuaaZSKT
-        VqqcPiNZGZERDhpQkA/oxU3ebNejhO4q1A==
-X-Google-Smtp-Source: ABdhPJwgeRjEEDz+ZH6zsqzLrXO46CJKMvwFi7vD37ugtMj1cX28hEV9q4CVOzVEP8lyGzgGSC37bg==
-X-Received: by 2002:a05:6e02:190c:b0:2c2:6851:bce3 with SMTP id w12-20020a056e02190c00b002c26851bce3mr32043317ilu.28.1646325098882;
-        Thu, 03 Mar 2022 08:31:38 -0800 (PST)
+        bh=t+Zzwf9xU/NfWk7moQbHdu4OeT0cXa8C1pDV8nUi2PE=;
+        b=k8fUOxDgpczE+p5qCaLd/qBbjz7KeTfZjv5ZtGbjmuirdk1YRt10DXwnUERGAHEJCV
+         kCyFWglGO1051tg7gPFvIXwrOYoWvlbV8I5C1XDjje9m1McAGAkmIUVfgd8g47glKMBP
+         tbmf5WUf+lNK5PLvg0ysEml+e5m/RgHUFRXLdivsFO/9k81hxkmSQuxAHcObL2hmnBqf
+         /nJ+UMTGyRWvhzclvnML4vG5T0hrvwXkl/AUUVuiMlBH6kE1yiMSRbWTJayn1d3VQ8FK
+         C6SgG9xzIjkvcG46c0UshmKemjGjYt9BR3Q7G7k6Vy1ywK5ctqxU9hgvMwUxPJTRO++E
+         5+fA==
+X-Gm-Message-State: AOAM533CUDIUS1zprqmLSra9Zwlk/nN/WgFS0myxbENXlXs1VGV7X6VA
+        iLEXjLOHlfmh0FgL8hFJ6ob0VA==
+X-Google-Smtp-Source: ABdhPJxAltOFVm6QKsElu9I92NMUeTIKsyLmi2PBYbvJ30FvhULyOFlL0PjTFbdeylFhBgRGWzH5BQ==
+X-Received: by 2002:a92:b501:0:b0:2c2:5e63:ddae with SMTP id f1-20020a92b501000000b002c25e63ddaemr31958552ile.311.1646327893708;
+        Thu, 03 Mar 2022 09:18:13 -0800 (PST)
 Received: from [192.168.1.172] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id t8-20020a92cc48000000b002be3e8ef453sm2510772ilq.16.2022.03.03.08.31.38
+        by smtp.gmail.com with ESMTPSA id k15-20020a92c24f000000b002c2e03c5925sm3164416ilo.8.2022.03.03.09.18.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Mar 2022 08:31:38 -0800 (PST)
-Message-ID: <951ea55c-b6a3-59e4-1011-4f46fae547b3@kernel.dk>
-Date:   Thu, 3 Mar 2022 09:31:36 -0700
+        Thu, 03 Mar 2022 09:18:13 -0800 (PST)
+Message-ID: <66bfc962-b983-e737-7c36-85784c52b7fa@kernel.dk>
+Date:   Thu, 3 Mar 2022 10:18:12 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
  Thunderbird/91.6.1
@@ -63,7 +63,8 @@ References: <20220303052811.31470-1-xiaoguang.wang@linux.alibaba.com>
  <4f197b0e-6066-b59e-aae0-2218e9c1b643@kernel.dk>
  <528ce414-c0fe-3318-483a-f51aa8a407b9@kernel.dk>
  <040e9262-4ebb-8505-5a14-6f399e40332c@kernel.dk>
-In-Reply-To: <040e9262-4ebb-8505-5a14-6f399e40332c@kernel.dk>
+ <951ea55c-b6a3-59e4-1011-4f46fae547b3@kernel.dk>
+In-Reply-To: <951ea55c-b6a3-59e4-1011-4f46fae547b3@kernel.dk>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -75,63 +76,49 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/3/22 7:40 AM, Jens Axboe wrote:
-> On 3/3/22 7:36 AM, Jens Axboe wrote:
->> The only potential oddity here is that the fd passed back is not a
->> legitimate fd. io_uring does support poll(2) on its file descriptor, so
->> that could cause some confusion even if I don't think anyone actually
->> does poll(2) on io_uring.
+On 3/3/22 9:31 AM, Jens Axboe wrote:
+> On 3/3/22 7:40 AM, Jens Axboe wrote:
+>> On 3/3/22 7:36 AM, Jens Axboe wrote:
+>>> The only potential oddity here is that the fd passed back is not a
+>>> legitimate fd. io_uring does support poll(2) on its file descriptor, so
+>>> that could cause some confusion even if I don't think anyone actually
+>>> does poll(2) on io_uring.
+>>
+>> Side note - the only implication here is that we then likely can't make
+>> the optimized behavior the default, it has to be an IORING_SETUP_REG
+>> flag which tells us that the application is aware of this limitation.
+>> Though I guess close(2) might mess with that too... Hmm.
 > 
-> Side note - the only implication here is that we then likely can't make
-> the optimized behavior the default, it has to be an IORING_SETUP_REG
-> flag which tells us that the application is aware of this limitation.
-> Though I guess close(2) might mess with that too... Hmm.
+> Not sure I can find a good approach for that. Tried out your patch and
+> made some fixes:
+> 
+> - Missing free on final tctx free
+> - Rename registered_files to registered_rings
+> - Fix off-by-ones in checking max registration count
+> - Use kcalloc
+> - Rename ENTER_FIXED_FILE -> ENTER_REGISTERED_RING
+> - Don't pass in tctx to io_uring_unreg_ringfd()
+> - Get rid of forward declaration for adding tctx node
+> - Get rid of extra file pointer in io_uring_enter()
+> - Fix deadlock in io_ringfd_register()
+> - Use io_uring_rsrc_update rather than add a new struct type
 
-Not sure I can find a good approach for that. Tried out your patch and
-made some fixes:
+- Allow multiple register/unregister instead of enforcing just 1 at the
+  time
+- Check for it really being a ring fd when registering
 
-- Missing free on final tctx free
-- Rename registered_files to registered_rings
-- Fix off-by-ones in checking max registration count
-- Use kcalloc
-- Rename ENTER_FIXED_FILE -> ENTER_REGISTERED_RING
-- Don't pass in tctx to io_uring_unreg_ringfd()
-- Get rid of forward declaration for adding tctx node
-- Get rid of extra file pointer in io_uring_enter()
-- Fix deadlock in io_ringfd_register()
-- Use io_uring_rsrc_update rather than add a new struct type
+For different batch counts, nice improvements are seen. Roughly:
 
-Patch I ran below.
+Batch==1	15% faster
+Batch==2	13% faster
+Batch==4	11% faster
 
-Ran some testing here, and on my laptop, running:
-
-axboe@m1pro-kvm ~/g/fio (master)> t/io_uring -N1 -s1 -f0
-polled=1, fixedbufs=1/0, register_files=1, buffered=0, QD=128
-Engine=io_uring, sq_ring=128, cq_ring=128
-submitter=0, tid=673
-IOPS=6627K, IOS/call=1/1, inflight=()
-IOPS=6995K, IOS/call=1/1, inflight=()
-IOPS=6992K, IOS/call=1/1, inflight=()
-IOPS=7005K, IOS/call=1/1, inflight=()
-IOPS=6999K, IOS/call=1/1, inflight=()
-
-and with registered ring
-
-axboe@m1pro-kvm ~/g/fio (master)> t/io_uring -N1 -s1 -f1
-polled=1, fixedbufs=1/0, register_files=1, buffered=0, QD=128
-Engine=io_uring, sq_ring=128, cq_ring=128
-submitter=0, tid=687
-ring register 0
-IOPS=7714K, IOS/call=1/1, inflight=()
-IOPS=8030K, IOS/call=1/1, inflight=()
-IOPS=8025K, IOS/call=1/1, inflight=()
-IOPS=8015K, IOS/call=1/1, inflight=()
-IOPS=8037K, IOS/call=1/1, inflight=()
-
-which is about a 15% improvement, pretty massive...
+This is just in microbenchmarks where the fdget/fdput play a bigger
+factor, but it will certainly help with real world situations where
+batching is more limited than in benchmarks.
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index ad3e0b0ab3b9..8a1f97054b71 100644
+index ad3e0b0ab3b9..452e68b73e1f 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
 @@ -466,6 +466,8 @@ struct io_ring_ctx {
@@ -184,7 +171,7 @@ index ad3e0b0ab3b9..8a1f97054b71 100644
  	percpu_counter_destroy(&tctx->inflight);
  	kfree(tctx);
  	tsk->io_uring = NULL;
-@@ -10061,6 +10074,68 @@ void __io_uring_cancel(bool cancel_all)
+@@ -10061,6 +10074,103 @@ void __io_uring_cancel(bool cancel_all)
  	io_uring_cancel_generic(cancel_all, NULL);
  }
  
@@ -201,59 +188,94 @@ index ad3e0b0ab3b9..8a1f97054b71 100644
 +	}
 +}
 +
-+static int io_ringfd_register(struct io_ring_ctx *ctx, void __user *arg)
++static int io_ringfd_register(struct io_ring_ctx *ctx, void __user *arg,
++			      unsigned nr_args)
 +{
 +	struct io_uring_rsrc_update reg;
 +	struct io_uring_task *tctx;
 +	struct file *file;
-+	int ret;
++	int ret, nr, i;
 +
-+	if (copy_from_user(&reg, arg, sizeof(reg)))
-+		return -EFAULT;
-+	if (reg.offset >= IO_RINGFD_REG_MAX)
++	if (!nr_args || nr_args > IO_RINGFD_REG_MAX)
 +		return -EINVAL;
 +
 +	mutex_unlock(&ctx->uring_lock);
 +	ret = io_uring_add_tctx_node(ctx);
 +	mutex_lock(&ctx->uring_lock);
-+	if (unlikely(ret))
++	if (ret)
 +		return ret;
 +
 +	tctx = current->io_uring;
-+	if (tctx->registered_rings[reg.offset])
-+		return -EBUSY;
-+	file = fget(reg.data);
-+	if (unlikely(!file))
-+		return -EBADF;
-+	tctx->registered_rings[reg.offset] = file;
-+	return 0;
++	for (i = 0; i < nr_args; i++) {
++		if (copy_from_user(&reg, arg, sizeof(reg))) {
++			ret = -EFAULT;
++			break;
++		}
++		if (reg.offset >= IO_RINGFD_REG_MAX) {
++			ret = -EINVAL;
++			break;
++		}
++
++		if (tctx->registered_rings[reg.offset]) {
++			ret = -EBUSY;
++			break;
++		}
++		file = fget(reg.data);
++		if (!file) {
++			ret = -EBADF;
++			break;
++		} else if (file->f_op != &io_uring_fops) {
++			ret = -EOPNOTSUPP;
++			fput(file);
++			break;
++		}
++
++		tctx->registered_rings[reg.offset] = file;
++		arg += sizeof(reg);
++		nr++;
++	}
++
++	return nr ? nr : ret;
 +}
 +
-+static int io_ringfd_unregister(struct io_ring_ctx *ctx, void __user *arg)
++static int io_ringfd_unregister(struct io_ring_ctx *ctx, void __user *arg,
++				unsigned nr_args)
 +{
 +	struct io_uring_task *tctx = current->io_uring;
-+	__u32 offset;
++	struct io_uring_rsrc_update reg;
++	int ret, nr, i;
 +
++	if (!nr_args || nr_args > IO_RINGFD_REG_MAX)
++		return -EINVAL;
 +	if (!tctx)
 +		return 0;
 +
-+	if (copy_from_user(&offset, arg, sizeof(__u32)))
-+		return -EFAULT;
-+	if (offset >= IO_RINGFD_REG_MAX)
-+		return -EINVAL;
++	ret = nr = 0;
++	for (i = 0; i < nr_args; i++) {
++		if (copy_from_user(&reg, arg, sizeof(reg))) {
++			ret = -EFAULT;
++			break;
++		}
++		if (reg.offset >= IO_RINGFD_REG_MAX) {
++			ret = -EINVAL;
++			break;
++		}
 +
-+	if (tctx->registered_rings[offset]) {
-+		fput(tctx->registered_rings[offset]);
-+		tctx->registered_rings[offset] = NULL;
++		if (tctx->registered_rings[reg.offset]) {
++			fput(tctx->registered_rings[reg.offset]);
++			tctx->registered_rings[reg.offset] = NULL;
++		}
++		arg += sizeof(reg);
++		nr++;
 +	}
 +
-+	return 0;
++	return nr ? nr : ret;
 +}
 +
  static void *io_uring_validate_mmap_request(struct file *file,
  					    loff_t pgoff, size_t sz)
  {
-@@ -10191,12 +10266,23 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
+@@ -10191,12 +10301,23 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
  	io_run_task_work();
  
  	if (unlikely(flags & ~(IORING_ENTER_GETEVENTS | IORING_ENTER_SQ_WAKEUP |
@@ -281,7 +303,7 @@ index ad3e0b0ab3b9..8a1f97054b71 100644
  
  	ret = -EOPNOTSUPP;
  	if (unlikely(f.file->f_op != &io_uring_fops))
-@@ -10270,7 +10356,8 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
+@@ -10270,7 +10391,8 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
  out:
  	percpu_ref_put(&ctx->refs);
  out_fput:
@@ -291,21 +313,15 @@ index ad3e0b0ab3b9..8a1f97054b71 100644
  	return submitted ? submitted : ret;
  }
  
-@@ -11160,6 +11247,18 @@ static int __io_uring_register(struct io_ring_ctx *ctx, unsigned opcode,
+@@ -11160,6 +11282,12 @@ static int __io_uring_register(struct io_ring_ctx *ctx, unsigned opcode,
  			break;
  		ret = io_register_iowq_max_workers(ctx, arg);
  		break;
 +	case IORING_REGISTER_IORINGFD:
-+		ret = -EINVAL;
-+		if (nr_args != 1)
-+			break;
-+		ret = io_ringfd_register(ctx, arg);
++		ret = io_ringfd_register(ctx, arg, nr_args);
 +		break;
 +	case IORING_UNREGISTER_IORINGFD:
-+		ret = -EINVAL;
-+		if (nr_args != 1)
-+			break;
-+		ret = io_ringfd_unregister(ctx, arg);
++		ret = io_ringfd_unregister(ctx, arg, nr_args);
 +		break;
  	default:
  		ret = -EINVAL;

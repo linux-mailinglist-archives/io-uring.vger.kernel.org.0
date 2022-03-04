@@ -2,54 +2,54 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 52E4C4CCBA5
-	for <lists+io-uring@lfdr.de>; Fri,  4 Mar 2022 03:18:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4192A4CCBA6
+	for <lists+io-uring@lfdr.de>; Fri,  4 Mar 2022 03:19:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234801AbiCDCSw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 3 Mar 2022 21:18:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51926 "EHLO
+        id S232909AbiCDCT4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 3 Mar 2022 21:19:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232871AbiCDCSv (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 3 Mar 2022 21:18:51 -0500
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4725649FAB
-        for <io-uring@vger.kernel.org>; Thu,  3 Mar 2022 18:18:04 -0800 (PST)
-Received: by mail-pj1-x102f.google.com with SMTP id m22so6245361pja.0
-        for <io-uring@vger.kernel.org>; Thu, 03 Mar 2022 18:18:04 -0800 (PST)
+        with ESMTP id S232871AbiCDCT4 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 3 Mar 2022 21:19:56 -0500
+Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B51343E5C2
+        for <io-uring@vger.kernel.org>; Thu,  3 Mar 2022 18:19:09 -0800 (PST)
+Received: by mail-pj1-x1033.google.com with SMTP id m11-20020a17090a7f8b00b001beef6143a8so6725887pjl.4
+        for <io-uring@vger.kernel.org>; Thu, 03 Mar 2022 18:19:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :references:from:in-reply-to:content-transfer-encoding;
-        bh=jS+WusDimvE8zDmHWBhmi1daUh6Dhb47oS4mrHoRdro=;
-        b=0pqs6A+beiJBlsgFJEFBc+lg6PvV5rcyUGAXveMfbEJO2z+Rf36ErAUqTH95WJu1Ih
-         +Aku0aw7rM7/eFT+hLJpzoCQdYf2LFIAviYgpUSM+ar1eES4O2ZITOmxLMQtVAjzflUw
-         T0rmvka/2PGVOCs6kl9o8rLLNIuNedeEUsYVtu8gLra2HNvvQTL99Cm+v6QmrxEXWA+w
-         dCWM8aACJVTlLOPU3oOwSrG6vbDIc5hPkjbMBbJdmRZxO11hc/RfTxZnVk+UG8GYmBxu
-         TDUOnlZOZD62f5SUHXstrI8/PyGxNA+8JwyfQ0LBNFEvkCG7BUH/KbsN3zvtA1Zc2zkF
-         Y0RA==
+        bh=DnWkKbIgosDy7l8wQbX9bT6/GTjo/RBgH5YwF5tX11M=;
+        b=ZbOlrW19qfF+/2OYN1hjOU89iTAk0u/RZhWBDlrTaLsEL16fvjrJEb0N3WQtHkXCYh
+         FwYczuECVBNuZZT4nAswi7R0Ny40S0DyZO4J5MB4tJE/AOvDXdTGYTTwHtkAF2/LINnN
+         fVxarAuWV629OvxzGadYCxfwCpeU3C4vyNNdblvcxDYd49AEoPplCLNDKoa+AEDpRA/1
+         gjZUyaRfD/KfULIIpLRsMHfl/5/HfvHhN9bnCoSKvrhf+FWOSErHDIUZmo/pVd1ZqnxG
+         MQV+aI3bk6oge7I2E421egsLss8l/lZeJnCIUZuFMpOlZpdRxQKqXTOlQUlQqa67S6Tm
+         b5nQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=jS+WusDimvE8zDmHWBhmi1daUh6Dhb47oS4mrHoRdro=;
-        b=M30Tg/0i6JoQ4nsZglrNMzJmwPHoD7fDbfsZCE9/BfoZxrW1p5gPBExtBA1MVEIvwI
-         o4ivr0+jdmDBDafLa0mRvTCru2pd6KbbSctZKxuo4rCAVsbjGbOUqWdWrff1AqPu7HFO
-         C0lx3h/KijiCRw2PcOhRN8qZ8PWhYTeITlbHGN98hRB3npt0+crNo07hBzBYsViNKR9E
-         fcuWlzNwP+gsN2sfbFyd5SIBUaeOmWDtr0B0PKix41PQkQL3N1lyp6nMxS5k+CjvD2KK
-         UK5ocBOIpkwxgjlDYNVy2wdegW1ckoiNbE4hm66qZ+pUluoEHQpyy35xESuGVWXqL3dm
-         iksA==
-X-Gm-Message-State: AOAM532Yv3RDlT85tH1+EtVpHJHzukcKHDOTBnfZPG5vru9fS9JhApjC
-        EsGORZVlfwDns1PW80uXlKiNbhDdkXBClg==
-X-Google-Smtp-Source: ABdhPJwRel0ma9V801T6mgri9MHL/gQrdsSNdvKTR+Zz67N0lCGxpifcWgokg87SPf3dtJCsRPvAIQ==
-X-Received: by 2002:a17:90b:3b45:b0:1bf:275d:e3a6 with SMTP id ot5-20020a17090b3b4500b001bf275de3a6mr1008809pjb.157.1646360283561;
-        Thu, 03 Mar 2022 18:18:03 -0800 (PST)
+        bh=DnWkKbIgosDy7l8wQbX9bT6/GTjo/RBgH5YwF5tX11M=;
+        b=2TxQSF1zb5WZE6i6sO8XfOL5wuITNFcMi+BLNxo4hphxU7SZAZAYjLY/2rOwqs245V
+         eZdrmqOfLZU4hkNy3TbjkEQMksJNX1ntNbUl78y69uKlGPNEqwEj4LsyiVmSr4kIpwdd
+         p7jhvrWfyMSiI4XqZX8n2B8UX+yuCSegKhxG2Ycyr/LI1qkcS7BmykKtP61jpIlKXzw4
+         OGNlFU2S2syuCK6xdnrWB3kkf7ehLcx2acT43oH5KcmvZxxO7ZSEpNINN0OtR6s4ShO1
+         FC2aEZjjs3kde7jAXBSy+ppKJGGuRjbzng4yy4GFppkfcZoDUlWkT71wvnXnzdLx2kJ2
+         XWnQ==
+X-Gm-Message-State: AOAM531FPk/cSrl062V5TsUYkdxQIk33YgCZTN6E0xVxZBCpjf81LI5s
+        8Aec04nqSjYzLHug8+N/CHvmOQ==
+X-Google-Smtp-Source: ABdhPJw7U6qvItdPl5OnIRHLT5vQj+WihO9gqOThZnXvMVom2HAgXD+c/OcEJmE8DhZiVUCamSYV4g==
+X-Received: by 2002:a17:90b:4394:b0:1bc:e369:1f2b with SMTP id in20-20020a17090b439400b001bce3691f2bmr8323655pjb.92.1646360349084;
+        Thu, 03 Mar 2022 18:19:09 -0800 (PST)
 Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id ck20-20020a17090afe1400b001bd0494a4e7sm3452666pjb.16.2022.03.03.18.18.02
+        by smtp.gmail.com with ESMTPSA id y39-20020a056a00182700b004e19980d6cbsm3804798pfa.210.2022.03.03.18.19.08
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Mar 2022 18:18:02 -0800 (PST)
-Message-ID: <bf325a86-91a4-aa70-dbda-9b12b3677a8c@kernel.dk>
-Date:   Thu, 3 Mar 2022 19:18:01 -0700
+        Thu, 03 Mar 2022 18:19:08 -0800 (PST)
+Message-ID: <69ef4007-45d6-3b15-022b-b00fc7182499@kernel.dk>
+Date:   Thu, 3 Mar 2022 19:19:07 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
  Thunderbird/91.6.1
@@ -63,9 +63,9 @@ References: <20220303052811.31470-1-xiaoguang.wang@linux.alibaba.com>
  <528ce414-c0fe-3318-483a-f51aa8a407b9@kernel.dk>
  <040e9262-4ebb-8505-5a14-6f399e40332c@kernel.dk>
  <951ea55c-b6a3-59e4-1011-4f46fae547b3@kernel.dk>
- <559685fd-c8aa-d2d4-d659-f4b0ffc840d4@gmail.com>
+ <8e4ce4da-040f-70e6-8a9d-54e25c71222f@gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <559685fd-c8aa-d2d4-d659-f4b0ffc840d4@gmail.com>
+In-Reply-To: <8e4ce4da-040f-70e6-8a9d-54e25c71222f@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -79,7 +79,7 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/3/22 6:49 PM, Pavel Begunkov wrote:
+On 3/3/22 6:52 PM, Pavel Begunkov wrote:
 > On 3/3/22 16:31, Jens Axboe wrote:
 >> On 3/3/22 7:40 AM, Jens Axboe wrote:
 >>> On 3/3/22 7:36 AM, Jens Axboe wrote:
@@ -135,13 +135,37 @@ On 3/3/22 6:49 PM, Pavel Begunkov wrote:
 >> IOPS=8037K, IOS/call=1/1, inflight=()
 >>
 >> which is about a 15% improvement, pretty massive...
+>>
+>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>> index ad3e0b0ab3b9..8a1f97054b71 100644
+>> --- a/fs/io_uring.c
+>> +++ b/fs/io_uring.c
+> [...]
+>>   static void *io_uring_validate_mmap_request(struct file *file,
+>>                           loff_t pgoff, size_t sz)
+>>   {
+>> @@ -10191,12 +10266,23 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
+>>       io_run_task_work();
+>>         if (unlikely(flags & ~(IORING_ENTER_GETEVENTS | IORING_ENTER_SQ_WAKEUP |
+>> -                   IORING_ENTER_SQ_WAIT | IORING_ENTER_EXT_ARG)))
+>> +                   IORING_ENTER_SQ_WAIT | IORING_ENTER_EXT_ARG |
+>> +                   IORING_ENTER_REGISTERED_RING)))
+>>           return -EINVAL;
+>>   -    f = fdget(fd);
+>> -    if (unlikely(!f.file))
+>> -        return -EBADF;
+>> +    if (flags & IORING_ENTER_REGISTERED_RING) {
+>> +        struct io_uring_task *tctx = current->io_uring;
+>> +
+>> +        if (fd >= IO_RINGFD_REG_MAX || !tctx)
+>> +            return -EINVAL;
+>> +        f.file = tctx->registered_rings[fd];
 > 
-> Is the bench single threaded (including io-wq)? Because if it
-> is, get/put shouldn't do any atomics and I don't see where the
-> result comes from.
+> btw, array_index_nospec(), possibly not only here.
 
-Yes, it has a main thread and IO threads. Which is not uncommon, most
-things are multithreaded these days...
+Yeah, was thinking that earlier too in fact but forgot about it. Might
+as well, though I don't think it's strictly required as it isn't a user
+table.
 
 -- 
 Jens Axboe

@@ -2,54 +2,54 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 45A5A4CCB70
-	for <lists+io-uring@lfdr.de>; Fri,  4 Mar 2022 02:53:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF3F14CCB79
+	for <lists+io-uring@lfdr.de>; Fri,  4 Mar 2022 02:58:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232406AbiCDBy2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 3 Mar 2022 20:54:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50472 "EHLO
+        id S236454AbiCDB6X (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 3 Mar 2022 20:58:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56664 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231808AbiCDBy2 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 3 Mar 2022 20:54:28 -0500
+        with ESMTP id S237612AbiCDB6Q (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 3 Mar 2022 20:58:16 -0500
 Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EC5413D553
-        for <io-uring@vger.kernel.org>; Thu,  3 Mar 2022 17:53:41 -0800 (PST)
-Received: by mail-ej1-x629.google.com with SMTP id r13so14436311ejd.5
-        for <io-uring@vger.kernel.org>; Thu, 03 Mar 2022 17:53:41 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 333E217CC72
+        for <io-uring@vger.kernel.org>; Thu,  3 Mar 2022 17:57:26 -0800 (PST)
+Received: by mail-ej1-x629.google.com with SMTP id kt27so14532773ejb.0
+        for <io-uring@vger.kernel.org>; Thu, 03 Mar 2022 17:57:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :references:from:in-reply-to:content-transfer-encoding;
-        bh=xp4bM1Hg4bo73DnW6mSf8uz4RU9TSIHRvWpWCDZBvaU=;
-        b=f2+2PuwybBkInwx57X6xOZ1eLnFy/SdB8GaCFaNhWomCttpH1cuBUVcsyGGwoRcDqZ
-         jHbSI2D3zVUnsX9O4vetr7vj5ncLLWXT8Qr9e0eRC0/N9x/s+gbC5IVhr7iPZz5vwdYh
-         OgTShddQBMYdIfO/J1OmN/pUHJZ99hM6gUqf1AlS+LsnZN0z1Igw7JE4cEbdjyWgjnQs
-         pZMbDJliIxkT2TQ25B9oalRsVsXg/FQ+WsqUPPAyJwGlu4qfBMkj/98Zud/rcXJjKS/6
-         ARGFqTh9V5YjtvnNmx8BeMhV4uiTscv+esYySB+9LDV6WKAaBBEicShNXzIAs2tTmj5J
-         vjLQ==
+        bh=ywg4Gb/nN/HpsJ+y6zbn9VzEM2YJsD+0EcUkZu0bb1E=;
+        b=emAC8z7MkOVXOK4Zm8z4d5hFkmRa84cnvye0i0Tw0vAwPxvrul1eZYncdtmiwVeZwd
+         eT9M1OtVUEKZc74Qqbo5Tf2y9aHHGkQkWFCqFmk/cVahap6oYmq4BdHpwICWWd33qeFZ
+         NiKCiAAFlYJOf1MSHZW6DqWQa6Sgl0cJ9AkDVVLxGo+/ygIcJUq7XreC2y5hCVkjziim
+         5BoGkSDJDtUuVJLdP31EBvVIrP31djNA+xempCkMPaP5MqjiCWQ/QePzu54ZNgmnqATT
+         5DMpzzaNuiMYT48n0RzzwZqNkW+TswexCZyn9zha/yj+B3NQVDk4BoKAgVj57wPbCGfo
+         a3qQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=xp4bM1Hg4bo73DnW6mSf8uz4RU9TSIHRvWpWCDZBvaU=;
-        b=7ORykcdzTyextou91XZktiSJ9ZBSQkOz9gDNcrZqYp3YKcqT7ncfwRjqirXYt9fX5l
-         YAwukpgcHBxmeW5+xA37PakfM8dA+UZRjgjpgVMGA+lDGtzJaQ9SRWVQCvscI7nZlSs2
-         pOuhj4/1wneMIiXMxSRceWnm7wCx9axSeUVXmLSLrb45jnXwRzCsLyI0tvx/kb3aDJtz
-         iYQb3C/KJ2IgRlMd3B/TzLzNYN5OScZiebeo86nHoAFNjCio14HhiIEERpHdObPUTJUN
-         /YoDwsrtEgVmnA3Ol1ubLddXy3EoJx9KehLD4JCONKqnNUtHJsPwCUzMm20Sv2Ja6By8
-         reVg==
-X-Gm-Message-State: AOAM532WM8bgthNR0LqKjc7awwtM9h/HzJ/kX1WHyjMKsmnn6XhUEyq0
-        P8f0tAE8q80DsdiCRjAobiQ=
-X-Google-Smtp-Source: ABdhPJy68kr2iklLx/OeCnt3laKl5oGblgEmQKEAsQOaa8ZLKRF90y0pW9Xab7mxZhM0QwnKh4BLqw==
-X-Received: by 2002:a17:907:3da6:b0:6da:8dde:a4aa with SMTP id he38-20020a1709073da600b006da8ddea4aamr5034095ejc.209.1646358819815;
-        Thu, 03 Mar 2022 17:53:39 -0800 (PST)
+        bh=ywg4Gb/nN/HpsJ+y6zbn9VzEM2YJsD+0EcUkZu0bb1E=;
+        b=CdkvwOgsKgUtguq75mUfNOJ/CLUTcEkgF2kEGoU0qrM9xuSMx778aW8J7CIf1Jj+az
+         M0wMTM2LlF4Glr8KCwG4NUAAc1OMcl3VsNtzJzyJWyLNqHrmYnBpI8xKRqLzxukDCm8E
+         2ZUPaUBHdUZ9j1m5iciFWbkAlhBC38hKmmzRoPyIxmnLIs3T52VtW7s1FBAbbr/ljmfe
+         w/XLGbYFTZPDn3aKOSNE1lm7vZVgHUIIVc4osmyn73LO9cYcOl1snwL6IwSjtzirkOah
+         8WjBtiON6iVA/WhzAo7goiwsXRDp/RPqr//aJgdo/tNLprc68VW9lNXekDUuLqENRjFG
+         im0w==
+X-Gm-Message-State: AOAM533TkXNJGhAdRKLcVszAibJYWCLx+YCeSxjT/pVIlDIvW0jZXVC2
+        JG8FQcnU04lQU82BGUkQEqsn2CDbKyQ=
+X-Google-Smtp-Source: ABdhPJztmBEko1m+JrvfS5dlZKybbw0sFeKoAKBG7skqTxPSOS3ztDdvEoG+ROxckC3u755xAcqFig==
+X-Received: by 2002:a17:906:d10c:b0:6cd:4aa2:cd62 with SMTP id b12-20020a170906d10c00b006cd4aa2cd62mr30395143ejz.229.1646359044695;
+        Thu, 03 Mar 2022 17:57:24 -0800 (PST)
 Received: from [192.168.8.198] ([85.255.236.114])
-        by smtp.gmail.com with ESMTPSA id vw19-20020a170907059300b006ba4e0f2046sm1240691ejb.137.2022.03.03.17.53.38
+        by smtp.gmail.com with ESMTPSA id l24-20020a170906231800b006d69a771a34sm1248284eja.93.2022.03.03.17.57.24
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Mar 2022 17:53:39 -0800 (PST)
-Message-ID: <559685fd-c8aa-d2d4-d659-f4b0ffc840d4@gmail.com>
-Date:   Fri, 4 Mar 2022 01:49:08 +0000
+        Thu, 03 Mar 2022 17:57:24 -0800 (PST)
+Message-ID: <8e4ce4da-040f-70e6-8a9d-54e25c71222f@gmail.com>
+Date:   Fri, 4 Mar 2022 01:52:52 +0000
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.6.0
@@ -132,28 +132,35 @@ On 3/3/22 16:31, Jens Axboe wrote:
 > IOPS=8037K, IOS/call=1/1, inflight=()
 > 
 > which is about a 15% improvement, pretty massive...
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index ad3e0b0ab3b9..8a1f97054b71 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+[...]
+>   static void *io_uring_validate_mmap_request(struct file *file,
+>   					    loff_t pgoff, size_t sz)
+>   {
+> @@ -10191,12 +10266,23 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
+>   	io_run_task_work();
+>   
+>   	if (unlikely(flags & ~(IORING_ENTER_GETEVENTS | IORING_ENTER_SQ_WAKEUP |
+> -			       IORING_ENTER_SQ_WAIT | IORING_ENTER_EXT_ARG)))
+> +			       IORING_ENTER_SQ_WAIT | IORING_ENTER_EXT_ARG |
+> +			       IORING_ENTER_REGISTERED_RING)))
+>   		return -EINVAL;
+>   
+> -	f = fdget(fd);
+> -	if (unlikely(!f.file))
+> -		return -EBADF;
+> +	if (flags & IORING_ENTER_REGISTERED_RING) {
+> +		struct io_uring_task *tctx = current->io_uring;
+> +
+> +		if (fd >= IO_RINGFD_REG_MAX || !tctx)
+> +			return -EINVAL;
+> +		f.file = tctx->registered_rings[fd];
 
-Is the bench single threaded (including io-wq)? Because if it
-is, get/put shouldn't do any atomics and I don't see where the
-result comes from.
-
-static unsigned long __fget_light(unsigned int fd, fmode_t mask)
-{
-	struct files_struct *files = current->files;
-	struct file *file;
-
-	if (atomic_read(&files->count) == 1) {
-		file = files_lookup_fd_raw(files, fd);
-		if (!file || unlikely(file->f_mode & mask))
-			return 0;
-		return (unsigned long)file;
-	} else {
-		file = __fget(fd, mask, 1);
-		if (!file)
-			return 0;
-		return FDPUT_FPUT | (unsigned long)file;
-	}
-}
+btw, array_index_nospec(), possibly not only here.
 
 -- 
 Pavel Begunkov

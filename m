@@ -2,32 +2,34 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2524B4D2420
-	for <lists+io-uring@lfdr.de>; Tue,  8 Mar 2022 23:18:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF3634D241D
+	for <lists+io-uring@lfdr.de>; Tue,  8 Mar 2022 23:18:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346928AbiCHWSW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        id S242026AbiCHWSW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
         Tue, 8 Mar 2022 17:18:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54104 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350929AbiCHWSR (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 8 Mar 2022 17:18:17 -0500
+        with ESMTP id S1350945AbiCHWSU (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 8 Mar 2022 17:18:20 -0500
 Received: from cloud48395.mywhc.ca (cloud48395.mywhc.ca [173.209.37.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A63C5749F;
-        Tue,  8 Mar 2022 14:17:16 -0800 (PST)
-Received: from [45.44.224.220] (port=42886 helo=localhost)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 773035749F;
+        Tue,  8 Mar 2022 14:17:23 -0800 (PST)
+Received: from [45.44.224.220] (port=42888 helo=localhost)
         by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94.2)
         (envelope-from <olivier@trillion01.com>)
-        id 1nRi8p-0000SK-Dp; Tue, 08 Mar 2022 17:17:15 -0500
-Date:   Tue, 08 Mar 2022 17:17:14 -0500
-Message-Id: <cover.1646777484.git.olivier@trillion01.com>
+        id 1nRi8w-0000Sr-6k; Tue, 08 Mar 2022 17:17:22 -0500
+Date:   Tue, 08 Mar 2022 17:17:21 -0500
+Message-Id: <84513f7cc1b1fb31d8f4cb910aee033391d036b4.1646777484.git.olivier@trillion01.com>
+In-Reply-To: <cover.1646777484.git.olivier@trillion01.com>
+References: <cover.1646777484.git.olivier@trillion01.com>
 From:   Olivier Langlois <olivier@trillion01.com>
 To:     Jens Axboe <axboe@kernel.dk>,
         Pavel Begunkov <asml.silence@gmail.com>
 Cc:     Hao Xu <haoxu@linux.alibaba.com>,
         io-uring <io-uring@vger.kernel.org>,
         linux-kernel <linux-kernel@vger.kernel.org>
-Subject: [PATCH v5 0/2] io_uring: Add support for napi_busy_poll
+Subject: [PATCH v5 1/2] io_uring: minor io_cqring_wait() optimization
 X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
 X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
 X-AntiAbuse: Original Domain - vger.kernel.org
@@ -47,59 +49,49 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The sqpoll thread can be used for performing the napi busy poll in a
-similar way that it does io polling for file systems supporting direct
-access bypassing the page cache.
+Move up the block manipulating the sig variable to execute code
+that may encounter an error and exit first before continuing
+executing the rest of the function and avoid useless computations
 
-The other way that io_uring can be used for napi busy poll is by
-calling io_uring_enter() to get events.
+Signed-off-by: Olivier Langlois <olivier@trillion01.com>
+---
+ fs/io_uring.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-If the user specify a timeout value, it is distributed between polling
-and sleeping by using the systemwide setting
-/proc/sys/net/core/busy_poll.
-
-The changes have been tested with this program:
-https://github.com/lano1106/io_uring_udp_ping
-
-and the result is:
-Without sqpoll:
-NAPI busy loop disabled:
-rtt min/avg/max/mdev = 40.631/42.050/58.667/1.547 us
-NAPI busy loop enabled:
-rtt min/avg/max/mdev = 30.619/31.753/61.433/1.456 us
-
-With sqpoll:
-NAPI busy loop disabled:
-rtt min/avg/max/mdev = 42.087/44.438/59.508/1.533 us
-NAPI busy loop enabled:
-rtt min/avg/max/mdev = 35.779/37.347/52.201/0.924 us
-
-v2:
- * Evaluate list_empty(&ctx->napi_list) outside io_napi_busy_loop() to keep
-   __io_sq_thread() execution as fast as possible
- * In io_cqring_wait(), move up the sig block to avoid needless computation
-   if the block exits the function
- * In io_cqring_wait(), protect ctx->napi_list from race condition by
-   splicing it into a local list
- * In io_cqring_wait(), allow busy polling when uts is missing
- * Fix kernel test robot issues
-v3:
- * Fix do_div() type mismatch warning
- * Reduce uring_lock contention by creating a spinlock for protecting
-   napi_list
- * Support correctly MULTISHOT poll requests
-v4:
- * Put back benchmark result in commit text
-v5:
- * Protect napi_list from concurrent access from io_workers threads
-
-Olivier Langlois (2):
-  io_uring: minor io_cqring_wait() optimization
-  io_uring: Add support for napi_busy_poll
-
- fs/io_uring.c | 248 ++++++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 239 insertions(+), 9 deletions(-)
-
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 4715980e9015..f7b8df79a02b 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -7732,14 +7732,6 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
+ 			break;
+ 	} while (1);
+ 
+-	if (uts) {
+-		struct timespec64 ts;
+-
+-		if (get_timespec64(&ts, uts))
+-			return -EFAULT;
+-		timeout = ktime_add_ns(timespec64_to_ktime(ts), ktime_get_ns());
+-	}
+-
+ 	if (sig) {
+ #ifdef CONFIG_COMPAT
+ 		if (in_compat_syscall())
+@@ -7753,6 +7745,14 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
+ 			return ret;
+ 	}
+ 
++	if (uts) {
++		struct timespec64 ts;
++
++		if (get_timespec64(&ts, uts))
++			return -EFAULT;
++		timeout = ktime_add_ns(timespec64_to_ktime(ts), ktime_get_ns());
++	}
++
+ 	init_waitqueue_func_entry(&iowq.wq, io_wake_function);
+ 	iowq.wq.private = current;
+ 	INIT_LIST_HEAD(&iowq.wq.entry);
 -- 
 2.35.1
 

@@ -2,55 +2,55 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 422B34D1C14
-	for <lists+io-uring@lfdr.de>; Tue,  8 Mar 2022 16:43:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DD334D1C15
+	for <lists+io-uring@lfdr.de>; Tue,  8 Mar 2022 16:43:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347918AbiCHPn6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 8 Mar 2022 10:43:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58360 "EHLO
+        id S1347923AbiCHPoB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 8 Mar 2022 10:44:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347928AbiCHPn4 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 8 Mar 2022 10:43:56 -0500
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70AEE2CC89
-        for <io-uring@vger.kernel.org>; Tue,  8 Mar 2022 07:42:57 -0800 (PST)
+        with ESMTP id S1347933AbiCHPn6 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 8 Mar 2022 10:43:58 -0500
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98ABE34656
+        for <io-uring@vger.kernel.org>; Tue,  8 Mar 2022 07:43:01 -0800 (PST)
 Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20220308154255epoutp037e3c47e40ed675e931d082f2dd7d272a~acjK0Zyuq2772027720epoutp03h
-        for <io-uring@vger.kernel.org>; Tue,  8 Mar 2022 15:42:55 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20220308154255epoutp037e3c47e40ed675e931d082f2dd7d272a~acjK0Zyuq2772027720epoutp03h
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20220308154259epoutp0140180e55022f7c7b6ea67441a6ba1bd7~acjOptq9a1308713087epoutp01F
+        for <io-uring@vger.kernel.org>; Tue,  8 Mar 2022 15:42:59 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20220308154259epoutp0140180e55022f7c7b6ea67441a6ba1bd7~acjOptq9a1308713087epoutp01F
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1646754175;
-        bh=t4ZrZpuvC13gfl85z8lIeeIdlnonTz/uCGTqcpBiwxQ=;
+        s=mail20170921; t=1646754180;
+        bh=yZrnUJ+OizD3P426LO8RDZ9aFK64rTJqSnlCEwq+Q0Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Vla7QIYupvhYCJ5O2M1R7aYv+2mpLetxZyTgphP+6MD5And8gWCiRL/GphvBEVR6J
-         FKOjG3aqluLZymH1dsL+qAimcx6anIphmZbsMxMziJvLYvBqP6L6hfpJ13nibbeVNK
-         w+TbEocv6DN/d63s3z1/L1YgKkaEKmwXsCIkTl2Q=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20220308154254epcas5p3d9c44455f00cfa3e2418dfaeb97a2037~acjJ7WQs-1110111101epcas5p3b;
-        Tue,  8 Mar 2022 15:42:54 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.183]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4KCfjQ1xGDz4x9Pq; Tue,  8 Mar
-        2022 15:42:50 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+        b=tgyRWrzGR6g0UegyOi5IZVYEWWxQhmfnzuZnZgfReyAauvnWOLFmdXzugkxsGoDoz
+         RYT4rSboXJUTdgPuoABqyrrI7DFThh2gAV9L3ApIxDqqXGDDWr8cTCiSlkgoZlLCMl
+         ULqPnfmnY/C/UIDMif75Wy8YsVgUtYQkHJYHW1JY=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+        20220308154259epcas5p4378118cc100fa519e953b6d8c5b8ed84~acjONar9f2304623046epcas5p4I;
+        Tue,  8 Mar 2022 15:42:59 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.176]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4KCfjX26Wmz4x9Pt; Tue,  8 Mar
+        2022 15:42:56 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
         epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        0F.AB.05590.A7977226; Wed,  9 Mar 2022 00:42:50 +0900 (KST)
+        70.BB.05590.08977226; Wed,  9 Mar 2022 00:42:56 +0900 (KST)
 Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
         epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-        20220308152716epcas5p3d38d2372c184259f1a10c969f7e4396f~acVfzwP-30623006230epcas5p3k;
-        Tue,  8 Mar 2022 15:27:16 +0000 (GMT)
+        20220308152718epcas5p3afd2c8a628f4e9733572cbb39270989d~acVh836sV0623006230epcas5p3t;
+        Tue,  8 Mar 2022 15:27:18 +0000 (GMT)
 Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
         epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220308152716epsmtrp20d7f75940f1233e666a3e0d035a212a3~acVfyxrEJ2706527065epsmtrp2C;
-        Tue,  8 Mar 2022 15:27:16 +0000 (GMT)
-X-AuditID: b6c32a4b-723ff700000015d6-5b-6227797ade75
+        20220308152718epsmtrp20821a446ed5389f4dcc0574257c867fe~acVh7_rJl2706527065epsmtrp2D;
+        Tue,  8 Mar 2022 15:27:18 +0000 (GMT)
+X-AuditID: b6c32a4b-723ff700000015d6-65-6227798078e9
 Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
         epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        5A.51.29871.4D577226; Wed,  9 Mar 2022 00:27:16 +0900 (KST)
+        7B.51.29871.6D577226; Wed,  9 Mar 2022 00:27:18 +0900 (KST)
 Received: from localhost.localdomain (unknown [107.110.206.5]) by
         epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20220308152714epsmtip165f9a4da945e9fd75cdc64cd6d1d83a5~acVdwBZ8h3168431684epsmtip1F;
-        Tue,  8 Mar 2022 15:27:13 +0000 (GMT)
+        20220308152716epsmtip17df4dff75fe115ee2b149232b262bb53~acVf4GXN23168431684epsmtip1G;
+        Tue,  8 Mar 2022 15:27:16 +0000 (GMT)
 From:   Kanchan Joshi <joshi.k@samsung.com>
 To:     axboe@kernel.dk, hch@lst.de, kbusch@kernel.org,
         asml.silence@gmail.com
@@ -59,155 +59,174 @@ Cc:     io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
         logang@deltatee.com, pankydev8@gmail.com, javier@javigon.com,
         mcgrof@kernel.org, a.manzanares@samsung.com, joshiiitr@gmail.com,
         anuj20.g@samsung.com
-Subject: [PATCH 11/17] block: factor out helper for bio allocation from
- cache
-Date:   Tue,  8 Mar 2022 20:50:59 +0530
-Message-Id: <20220308152105.309618-12-joshi.k@samsung.com>
+Subject: [PATCH 12/17] nvme: enable bio-cache for fixed-buffer passthru
+Date:   Tue,  8 Mar 2022 20:51:00 +0530
+Message-Id: <20220308152105.309618-13-joshi.k@samsung.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220308152105.309618-1-joshi.k@samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFJsWRmVeSWpSXmKPExsWy7bCmpm5VpXqSQdM9bovphxUtmib8ZbaY
-        s2obo8Xqu/1sFitXH2WyeNd6jsWi8/QFJovzbw8zWUw6dI3RYu8tbYv5y56yWyxpPc5mcWPC
-        U0aLNTefslh8PjOP1YHf49nVZ4weO2fdZfdoXnCHxePy2VKPTas62Tw2L6n32H2zgc1j2+KX
-        rB59W1YxenzeJBfAFZVtk5GamJJapJCal5yfkpmXbqvkHRzvHG9qZmCoa2hpYa6kkJeYm2qr
-        5OIToOuWmQP0g5JCWWJOKVAoILG4WEnfzqYov7QkVSEjv7jEVim1ICWnwKRArzgxt7g0L10v
-        L7XEytDAwMgUqDAhO+PIhNyCk5IV95Z9ZWtgvC3SxcjBISFgIvGwn7GLkYtDSGA3o8SFO4fY
-        uxg5gZxPjBKtX5UgEt8YJdp2HWEGSYA0dJ57zARRtJdR4uwOLwj7M6PE/CdRIEPZBDQlLkwu
-        BQmLCHhJ3L/9nhVkDrNAF5PE23332UASwgL+Ekv/zAGbwyKgKnGp5SCYzStgJbH98TZGiF3y
-        EjMvfQc7iBMo/vPWVlaIGkGJkzOfsIDYzEA1zVtnM4MskBA4wCHxr2sJVLOLxK2ns1ghbGGJ
-        V8e3sEPYUhKf3+1lg7CLJX7dOQrV3MEocb1hJgtEwl7i4p6/TCDfMAN9s36XPkRYVmLqqXVM
-        EIv5JHp/P2GCiPNK7JgHYytK3Jv0FGqvuMTDGUugbA+JiVsuskBCtJdR4kT3F6YJjAqzkDw0
-        C8lDsxBWL2BkXsUomVpQnJueWmxaYJyXWg6P4uT83E2M4ESt5b2D8dGDD3qHGJk4GA8xSnAw
-        K4nw3j+vkiTEm5JYWZValB9fVJqTWnyI0RQY4hOZpUST84G5Iq8k3tDE0sDEzMzMxNLYzFBJ
-        nPdU+oZEIYH0xJLU7NTUgtQimD4mDk6pBqY5pXOFJA2P+vDHrFGYurLjnprXOwXnrx/02Vre
-        ukpUHV8naCa2YfKrH4kKrxikW3VYdc/737zlUyTv2vhO46btl+P/T3ksqRJaP//pX4ETyXnP
-        ua/NtlQz13mfFJzcL/hbOMnC48zxG8mn6tev1JrGeLmm/Q2TuiTbqh8mFuIhn38ULHno3WOm
-        JvX53TZzObsDFg63K0WPrz99OlzgnVSC5psN00wUT/oue3XslN6Khcvfsq/xuOe+4AXjnfXK
-        twvCm5m8J7qGuLKx+r88X7B+1a7Fa7RS/1s+cV5blc9Xpdz759wtrnl5ppNvXRbocTi08h77
-        lW45TpOEXacEWM/9tneSO2ofNNOo6KuL3CMlluKMREMt5qLiRAAqDQ66XQQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpikeLIzCtJLcpLzFFi42LZdlhJTvdKqXqSwas/3BbTDytaNE34y2wx
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrLJsWRmVeSWpSXmKPExsWy7bCmlm5DpXqSwZl9nBbTDytaNE34y2wx
         Z9U2RovVd/vZLFauPspk8a71HItF5+kLTBbn3x5msph06Bqjxd5b2hbzlz1lt1jSepzN4saE
         p4wWa24+ZbH4fGYeqwO/x7Orzxg9ds66y+7RvOAOi8fls6Uem1Z1snlsXlLvsftmA5vHtsUv
-        WT36tqxi9Pi8SS6AK4rLJiU1J7MstUjfLoEr48iE3IKTkhX3ln1la2C8LdLFyMkhIWAi0Xnu
-        MROILSSwm1Gi9aEDRFxcovnaD3YIW1hi5b/nQDYXUM1HRol3ky6wdDFycLAJaEpcmFwKUiMi
-        ECBxsPEyWA2zwAwmiZ7mzywgCWEBX4mFm3vZQGwWAVWJSy0HwZbxClhJbH+8jRFigbzEzEvf
-        wZZxAsV/3trKCnGQpcSKdb/ZIOoFJU7OfAI2kxmovnnrbOYJjAKzkKRmIUktYGRaxSiZWlCc
-        m55bbFhgmJdarlecmFtcmpeul5yfu4kRHE1amjsYt6/6oHeIkYmD8RCjBAezkgjv/fMqSUK8
-        KYmVValF+fFFpTmpxYcYpTlYlMR5L3SdjBcSSE8sSc1OTS1ILYLJMnFwSjUwuTxhXH0s+kf8
-        /Z3d2655SX3RqnbMikmTTz55f13iy0BdF3ftb8yZnOeXGr2Vn9Thsv3663D+xEU3s1MKfopP
-        Pch05+uTpPNcG63zM9OOepWfKZO028BWOE3P49vSNSdFAlUiFtuuM7a1nuCasIhNL5bnb/LB
-        u2esFfsue72wjA56krJ7tnz8BJVZUw+/fz3V98VGySCZpBlbj95In3KLM2K61ZRZvYy2D6ft
-        adn4PGC9+KY35jV3ztrvSJPcer30aNaUJStFqpLldtas21f/71xuzG699XfehQr8aE5eFqZm
-        yBd/i2+pjt2qr5kpul8WML05uPznkhtqSu8qTvevYd3Aycpz1ezUFdX98VZmc5RYijMSDbWY
-        i4oTAYJXiPcVAwAA
-X-CMS-MailID: 20220308152716epcas5p3d38d2372c184259f1a10c969f7e4396f
+        WT36tqxi9Pi8SS6AKyrbJiM1MSW1SCE1Lzk/JTMv3VbJOzjeOd7UzMBQ19DSwlxJIS8xN9VW
+        ycUnQNctMwfoByWFssScUqBQQGJxsZK+nU1RfmlJqkJGfnGJrVJqQUpOgUmBXnFibnFpXrpe
+        XmqJlaGBgZEpUGFCdsbXBZfZC27IVyxf1c/ewDhNqouRg0NCwESi56ldFyMXh5DAbkaJOXPW
+        s0M4nxgllr26xQrhfGOUeH5qEVMXIydYR/OZScwQib2MElebtkE5nxklnpxczwgyl01AU+LC
+        5FKQBhEBL4n7t9+DTWIW6GKSeLvvPhtIQljAXeLs20ssIDaLgKrEtfMguzk5eAWsJNb/WskM
+        sU1eYual72BxTqD4z1tbWSFqBCVOznwC1ssMVNO8dTZU/REOiZm/2CBsF4nby3dCXS0s8er4
+        FnYIW0ri87u9UDXFEr/uHAV7QEKgg1HiesNMFoiEvcTFPX+ZQJ5hBnpm/S59iLCsxNRT65gg
+        9vJJ9P5+AjWfV2LHPBhbUeLepKesELa4xMMZS6BsD4mz/+9BA6uXUaJ/20G2CYwKs5D8MwvJ
+        P7MQVi9gZF7FKJlaUJybnlpsWmCcl1oOj+Xk/NxNjOB0reW9g/HRgw96hxiZOBgPMUpwMCuJ
+        8N4/r5IkxJuSWFmVWpQfX1Sak1p8iNEUGOATmaVEk/OBGSOvJN7QxNLAxMzMzMTS2MxQSZz3
+        VPqGRCGB9MSS1OzU1ILUIpg+Jg5OqQamtRkvjn+R/bxuMtshvrXF114cnOn3qNdf2GnDCs84
+        b9nyb2/+buYuNd+zsv/WtlOmZabTXgVYT3Tsd4k7YTU93ubXbKMlSZ2t+YlhZ+9rP+s3ltgy
+        8V9P8sdb1q8vfuw8uVdnLvOvyXcZM8+2PBJf9q1db8vVAzoyOjvs9tl+Obota/N/2f9+wuap
+        PesKb51eajLnuM76oCsXin/qhl5bKX/98NdT+xhKXQ4fWFYl4ZvosDK46ahBMbNNkm8FA7PS
+        5OdPNHc2+z03EU18d+3585Wbjm9UcjlkrTtjqpPio7d/Z19or07pYSreGmt8PlagsyXvZqlN
+        9ks/pSV3lZ+uXu3sv5OJWfOjAXfc1KxGDiWW4oxEQy3mouJEAC6rD9lgBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmphkeLIzCtJLcpLzFFi42LZdlhJTvdaqXqSwcnpshbTDytaNE34y2wx
+        Z9U2RovVd/vZLFauPspk8a71HItF5+kLTBbn3x5msph06Bqjxd5b2hbzlz1lt1jSepzN4saE
+        p4wWa24+ZbH4fGYeqwO/x7Orzxg9ds66y+7RvOAOi8fls6Uem1Z1snlsXlLvsftmA5vHtsUv
+        WT36tqxi9Pi8SS6AK4rLJiU1J7MstUjfLoEr4+uCy+wFN+Qrlq/qZ29gnCbVxcjJISFgItF8
+        ZhJzFyMXh5DAbkaJh+v3M0IkxCWar/1gh7CFJVb+e84OUfQRqGjTJpYuRg4ONgFNiQuTS0Fq
+        RAQCJA42XgarYRaYwSTR0/yZBSQhLOAucfbtJTCbRUBV4tr59WBDeQWsJNb/WskMsUBeYual
+        72BxTqD4z1tbWUFsIQFLiRXrfrNB1AtKnJz5BGwOM1B989bZzBMYBWYhSc1CklrAyLSKUTK1
+        oDg3PbfYsMAwL7Vcrzgxt7g0L10vOT93EyM4orQ0dzBuX/VB7xAjEwfjIUYJDmYlEd7751WS
+        hHhTEiurUovy44tKc1KLDzFKc7AoifNe6DoZLySQnliSmp2aWpBaBJNl4uCUamBirwt+oOTo
+        9640Qavs3bHvgVIWqatdIh6JR2zPF+3c+fre8xQpo4UTi/b6PBN+fMnf5YGA4dqzbRnJmgz2
+        KkLik43OPV26IVNc70FT+tOYGa6brBLv//Fxu+GqdL3bgmvmB/ZNx6vvejzx0Alwq7uTfebQ
+        VCeBnqr8JN/93speR+9LzczaGVbI8kM5J2Gm/n5VF1azRacWLmWQVV3g+WBa/ScRoaWHLJ7x
+        PDT9+f31BGvHEhv9yLypud+vx8Qnn/fedJL/dOpzdgeT2pJH85+rv/0b72zOXF/uekt0xkyZ
+        T5L/VwnPY4/lcK5YVfX+VuC3dv7WgyIJQVe+zK3M7NKbvzFJdoq6w5mjN07eM1RiKc5INNRi
+        LipOBACYbmLUFwMAAA==
+X-CMS-MailID: 20220308152718epcas5p3afd2c8a628f4e9733572cbb39270989d
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: REQ_APPROVE
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220308152716epcas5p3d38d2372c184259f1a10c969f7e4396f
+X-CMS-RootMailID: 20220308152718epcas5p3afd2c8a628f4e9733572cbb39270989d
 References: <20220308152105.309618-1-joshi.k@samsung.com>
-        <CGME20220308152716epcas5p3d38d2372c184259f1a10c969f7e4396f@epcas5p3.samsung.com>
+        <CGME20220308152718epcas5p3afd2c8a628f4e9733572cbb39270989d@epcas5p3.samsung.com>
 X-Spam-Status: No, score=-4.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Factor the code to pull out bio_from_cache helper which is not tied to
-kiocb. This is prep patch.
+Since we do submission/completion in task, we can have this up.
+Add a bio-set for nvme as we need that for bio-cache.
 
 Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
 ---
- block/bio.c         | 43 ++++++++++++++++++++++++++-----------------
- include/linux/bio.h |  1 +
- 2 files changed, 27 insertions(+), 17 deletions(-)
+ block/blk-map.c           | 4 ++--
+ drivers/nvme/host/core.c  | 9 +++++++++
+ drivers/nvme/host/ioctl.c | 2 +-
+ drivers/nvme/host/nvme.h  | 1 +
+ include/linux/blk-mq.h    | 3 ++-
+ 5 files changed, 15 insertions(+), 4 deletions(-)
 
-diff --git a/block/bio.c b/block/bio.c
-index 4312a8085396..5e12c6bd43d3 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -1705,27 +1705,12 @@ int bioset_init_from_src(struct bio_set *bs, struct bio_set *src)
- }
- EXPORT_SYMBOL(bioset_init_from_src);
+diff --git a/block/blk-map.c b/block/blk-map.c
+index 027e8216e313..c39917f0eb78 100644
+--- a/block/blk-map.c
++++ b/block/blk-map.c
+@@ -580,7 +580,7 @@ EXPORT_SYMBOL(blk_rq_map_user);
  
--/**
-- * bio_alloc_kiocb - Allocate a bio from bio_set based on kiocb
-- * @kiocb:	kiocb describing the IO
-- * @nr_vecs:	number of iovecs to pre-allocate
-- * @bs:		bio_set to allocate from
-- *
-- * Description:
-- *    Like @bio_alloc_bioset, but pass in the kiocb. The kiocb is only
-- *    used to check if we should dip into the per-cpu bio_set allocation
-- *    cache. The allocation uses GFP_KERNEL internally. On return, the
-- *    bio is marked BIO_PERCPU_CACHEABLE, and the final put of the bio
-- *    MUST be done from process context, not hard/soft IRQ.
-- *
-- */
--struct bio *bio_alloc_kiocb(struct kiocb *kiocb, unsigned short nr_vecs,
--			    struct bio_set *bs)
-+struct bio *bio_from_cache(unsigned short nr_vecs, struct bio_set *bs)
+ /* Unlike blk_rq_map_user () this is only for fixed-buffer async passthrough. */
+ int blk_rq_map_user_fixedb(struct request_queue *q, struct request *rq,
+-		     u64 ubuf, unsigned long len, gfp_t gfp_mask,
++		     u64 ubuf, unsigned long len, struct bio_set *bs,
+ 		     struct io_uring_cmd *ioucmd)
  {
- 	struct bio_alloc_cache *cache;
- 	struct bio *bio;
+ 	struct iov_iter iter;
+@@ -604,7 +604,7 @@ int blk_rq_map_user_fixedb(struct request_queue *q, struct request *rq,
+ 	if (nr_segs > queue_max_segments(q))
+ 		return -EINVAL;
+ 	/* no iovecs to alloc, as we already have a BVEC iterator */
+-	bio = bio_alloc(gfp_mask, 0);
++	bio = bio_from_cache(0, bs);
+ 	if (!bio)
+ 		return -ENOMEM;
  
--	if (!(kiocb->ki_flags & IOCB_ALLOC_CACHE) || nr_vecs > BIO_INLINE_VECS)
-+	if (nr_vecs > BIO_INLINE_VECS)
- 		return bio_alloc_bioset(GFP_KERNEL, nr_vecs, bs);
+diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+index 3fe8f5901cd9..4a385001f124 100644
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -30,6 +30,9 @@
  
- 	cache = per_cpu_ptr(bs->cache, get_cpu());
-@@ -1744,6 +1729,30 @@ struct bio *bio_alloc_kiocb(struct kiocb *kiocb, unsigned short nr_vecs,
- 	bio_set_flag(bio, BIO_PERCPU_CACHE);
- 	return bio;
- }
-+EXPORT_SYMBOL_GPL(bio_from_cache);
+ #define NVME_MINORS		(1U << MINORBITS)
+ 
++#define NVME_BIO_POOL_SZ	(4)
++struct bio_set nvme_bio_pool;
 +
-+/**
-+ * bio_alloc_kiocb - Allocate a bio from bio_set based on kiocb
-+ * @kiocb:	kiocb describing the IO
-+ * @nr_vecs:	number of iovecs to pre-allocate
-+ * @bs:		bio_set to allocate from
-+ *
-+ * Description:
-+ *    Like @bio_alloc_bioset, but pass in the kiocb. The kiocb is only
-+ *    used to check if we should dip into the per-cpu bio_set allocation
-+ *    cache. The allocation uses GFP_KERNEL internally. On return, the
-+ *    bio is marked BIO_PERCPU_CACHEABLE, and the final put of the bio
-+ *    MUST be done from process context, not hard/soft IRQ.
-+ *
-+ */
-+struct bio *bio_alloc_kiocb(struct kiocb *kiocb, unsigned short nr_vecs,
-+			    struct bio_set *bs)
-+{
-+	if (!(kiocb->ki_flags & IOCB_ALLOC_CACHE))
-+		return bio_alloc_bioset(GFP_KERNEL, nr_vecs, bs);
+ unsigned int admin_timeout = 60;
+ module_param(admin_timeout, uint, 0644);
+ MODULE_PARM_DESC(admin_timeout, "timeout in seconds for admin commands");
+@@ -4797,6 +4800,11 @@ static int __init nvme_core_init(void)
+ 		goto unregister_generic_ns;
+ 	}
+ 
++	result = bioset_init(&nvme_bio_pool, NVME_BIO_POOL_SZ, 0,
++			BIOSET_NEED_BVECS | BIOSET_PERCPU_CACHE);
++	if (result < 0)
++		goto unregister_generic_ns;
 +
-+	return bio_from_cache(nr_vecs, bs);
-+}
- EXPORT_SYMBOL_GPL(bio_alloc_kiocb);
+ 	return 0;
  
- static int __init init_bio(void)
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index 117d7f248ac9..3216401f75b0 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -409,6 +409,7 @@ struct bio *bio_alloc_bioset(gfp_t gfp, unsigned short nr_iovecs,
- 		struct bio_set *bs);
- struct bio *bio_alloc_kiocb(struct kiocb *kiocb, unsigned short nr_vecs,
- 		struct bio_set *bs);
-+struct bio *bio_from_cache(unsigned short nr_vecs, struct bio_set *bs);
- struct bio *bio_kmalloc(gfp_t gfp_mask, unsigned short nr_iovecs);
- extern void bio_put(struct bio *);
+ unregister_generic_ns:
+@@ -4819,6 +4827,7 @@ static int __init nvme_core_init(void)
  
+ static void __exit nvme_core_exit(void)
+ {
++	bioset_exit(&nvme_bio_pool);
+ 	class_destroy(nvme_ns_chr_class);
+ 	class_destroy(nvme_subsys_class);
+ 	class_destroy(nvme_class);
+diff --git a/drivers/nvme/host/ioctl.c b/drivers/nvme/host/ioctl.c
+index 91d893eedc82..a4cde210aab9 100644
+--- a/drivers/nvme/host/ioctl.c
++++ b/drivers/nvme/host/ioctl.c
+@@ -159,7 +159,7 @@ static int nvme_submit_user_cmd(struct request_queue *q,
+ 	if (ubuffer && bufflen) {
+ 		if (likely(nvme_is_fixedb_passthru(ioucmd)))
+ 			ret = blk_rq_map_user_fixedb(q, req, ubuffer, bufflen,
+-					GFP_KERNEL, ioucmd);
++					&nvme_bio_pool, ioucmd);
+ 		else
+ 			ret = blk_rq_map_user(q, req, NULL, nvme_to_user_ptr(ubuffer),
+ 					bufflen, GFP_KERNEL);
+diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
+index e6a30543d7c8..9a3e5093dedc 100644
+--- a/drivers/nvme/host/nvme.h
++++ b/drivers/nvme/host/nvme.h
+@@ -47,6 +47,7 @@ extern unsigned int admin_timeout;
+ extern struct workqueue_struct *nvme_wq;
+ extern struct workqueue_struct *nvme_reset_wq;
+ extern struct workqueue_struct *nvme_delete_wq;
++extern struct bio_set nvme_bio_pool;
+ 
+ /*
+  * List of workarounds for devices that required behavior not specified in
+diff --git a/include/linux/blk-mq.h b/include/linux/blk-mq.h
+index 48bcfd194bdc..5f21f71b2529 100644
+--- a/include/linux/blk-mq.h
++++ b/include/linux/blk-mq.h
+@@ -967,7 +967,8 @@ struct rq_map_data {
+ int blk_rq_map_user(struct request_queue *, struct request *,
+ 		struct rq_map_data *, void __user *, unsigned long, gfp_t);
+ int blk_rq_map_user_fixedb(struct request_queue *, struct request *,
+-		     u64 ubuf, unsigned long, gfp_t,  struct io_uring_cmd *);
++		     u64 ubuf, unsigned long, struct bio_set *,
++		     struct io_uring_cmd *);
+ int blk_rq_map_user_iov(struct request_queue *, struct request *,
+ 		struct rq_map_data *, const struct iov_iter *, gfp_t);
+ int blk_rq_unmap_user(struct bio *);
 -- 
 2.25.1
 

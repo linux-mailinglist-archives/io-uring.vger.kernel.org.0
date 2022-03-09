@@ -2,47 +2,48 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A09D4D24A0
-	for <lists+io-uring@lfdr.de>; Wed,  9 Mar 2022 00:09:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 345234D25EB
+	for <lists+io-uring@lfdr.de>; Wed,  9 Mar 2022 02:14:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229547AbiCHXJM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 8 Mar 2022 18:09:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37036 "EHLO
+        id S229506AbiCIBCj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 8 Mar 2022 20:02:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229580AbiCHXJL (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 8 Mar 2022 18:09:11 -0500
+        with ESMTP id S229526AbiCIBCi (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 8 Mar 2022 20:02:38 -0500
 Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8793569CEE
-        for <io-uring@vger.kernel.org>; Tue,  8 Mar 2022 15:08:11 -0800 (PST)
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-        by gnuweeb.org (Postfix) with ESMTPSA id 3F87A7E6E2
-        for <io-uring@vger.kernel.org>; Tue,  8 Mar 2022 23:08:11 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 265E91C9460
+        for <io-uring@vger.kernel.org>; Tue,  8 Mar 2022 16:40:19 -0800 (PST)
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+        by gnuweeb.org (Postfix) with ESMTPSA id C747D7E6E3
+        for <io-uring@vger.kernel.org>; Wed,  9 Mar 2022 00:24:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1646780891;
-        bh=SwcHS54sikmo3eu3YNcCFc1MNPCGLwx6jOyfBqb6q2o=;
+        s=default; t=1646785452;
+        bh=y+AGYe4W2NEYGIeCYH0cqaTXwO0QEInpr22w4Kp8DVk=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=tHJxywcVNuGFpdwnBh6Dp2pukAUtJL4rKsFQJwiAMC71fjaK36wDzTka4QJ8iIuaM
-         9v7+hRpTit50y1vQdJbu3rCzIaWnVqUTlI9UVcIMBH5hXLFQ3UEVHyMYAEOZwOX4kD
-         nF6xEPc2BbZcypCvkd0gk8fJM8ET4ywR20dxf+/M1adf77ROQ8c7eGquurmDNPO8VP
-         H1oLpdHd2SEv351X3UkS+LDFATvKA+08KxfWp5NC/jmtEsZV0bNi6AQyfO23pOOhVh
-         NjR/9vQLQJCCHfvdr3NdO9nn9E9zjCHBLSlHtNhBhTiujoGyr8TCeXpfF9PxAH+GDy
-         tPSX7iMW+7ddQ==
-Received: by mail-lf1-f42.google.com with SMTP id w12so650226lfr.9
-        for <io-uring@vger.kernel.org>; Tue, 08 Mar 2022 15:08:11 -0800 (PST)
-X-Gm-Message-State: AOAM530dfrt7PHbWdfl7ujC5LdgZWCpVE2u2XzltE4T49vgFz6BsKmVe
-        HXKM5C59eJSpuR1+4W6P9awv6YPq4B5gKaOmJ+U=
-X-Google-Smtp-Source: ABdhPJwLyTxgggPjUgVqlJpnPhX2XeDvIfxcg7BL1ZVf3bOiDX0Ie8leUwMS7AOmmVl13jpslQ8zHbqC9bHniwIcVLg=
-X-Received: by 2002:a05:6512:ad2:b0:448:3655:fac5 with SMTP id
- n18-20020a0565120ad200b004483655fac5mr5704421lfu.136.1646780889374; Tue, 08
- Mar 2022 15:08:09 -0800 (PST)
+        b=TsEzGaZCx0b7Un3Rq6dAQqXALg6EIFNe/ZzQzOuJzL4CdxtCBjA7WJfxS84ODnutU
+         8aMQTIWQGT07fJACItO752ixSYxvKWrQprAhLuZd4Eo5ZDVpo+qq1e+1uWP2/fqMZe
+         O3B8p0GJLo+n6ooGvWBuFRHb1xbhFa8HefQrHtlDJE37DcEeXLhTKLVxW1lQuu9BHJ
+         q7bhpaqMrsZJTctJQnbnuSsoiRLjjcX5tW5P7MuCWzhweMljGd9yFpfYvebfcJwQ30
+         Xc7eRwNYb68h7UUziU/ts1EtIoCRvdZBfiAkiOkj3fx1ZCz3Lm7lOwyT8IwAwn32Ra
+         zM1gGk27BJtFw==
+Received: by mail-lj1-f175.google.com with SMTP id r22so889247ljd.4
+        for <io-uring@vger.kernel.org>; Tue, 08 Mar 2022 16:24:12 -0800 (PST)
+X-Gm-Message-State: AOAM5324EjIR5/K1/ylFohWJEa79SDu9wcy+JIkwibdqtuR/4lTQQRk6
+        bpp7Hp8quNK8SjdCxlv5q0HpI+A7WgQvGb5w980=
+X-Google-Smtp-Source: ABdhPJwAizxZ85f6W/4dPVOGlSmdctbFVQ+eAu+FokRiFZFZBatgKp2VeqLVSRJyRd/MAlnfGMSpqRfV5x+mdErPV6k=
+X-Received: by 2002:a2e:3013:0:b0:247:ea0d:11e2 with SMTP id
+ w19-20020a2e3013000000b00247ea0d11e2mr6477216ljw.2.1646785450753; Tue, 08 Mar
+ 2022 16:24:10 -0800 (PST)
 MIME-Version: 1.0
 References: <20220308224002.3814225-1-alviro.iskandar@gnuweeb.org>
- <20220308224002.3814225-3-alviro.iskandar@gnuweeb.org> <756bf7eb-ed5a-ea69-ba0a-685418125bfe@gnuweeb.org>
-In-Reply-To: <756bf7eb-ed5a-ea69-ba0a-685418125bfe@gnuweeb.org>
+ <20220308224002.3814225-3-alviro.iskandar@gnuweeb.org> <acccd7d5-4570-1da3-0f27-1013fb4138ab@gnuweeb.org>
+ <CAOG64qNECK73RGZek10_5se-H9T5EY3XwRaA4Jj-1PuCJv5F=w@mail.gmail.com>
+In-Reply-To: <CAOG64qNECK73RGZek10_5se-H9T5EY3XwRaA4Jj-1PuCJv5F=w@mail.gmail.com>
 From:   Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
-Date:   Wed, 9 Mar 2022 06:07:58 +0700
-X-Gmail-Original-Message-ID: <CAOG64qMqr07u-L8ZHede8AeQvifxdtzccJmnj1hH0BiQOaTa6A@mail.gmail.com>
-Message-ID: <CAOG64qMqr07u-L8ZHede8AeQvifxdtzccJmnj1hH0BiQOaTa6A@mail.gmail.com>
+Date:   Wed, 9 Mar 2022 07:23:59 +0700
+X-Gmail-Original-Message-ID: <CAOG64qNjjy9j5QcdqSKjiETUFn6AZb6A4OKWN25nZdia=6X2ew@mail.gmail.com>
+Message-ID: <CAOG64qNjjy9j5QcdqSKjiETUFn6AZb6A4OKWN25nZdia=6X2ew@mail.gmail.com>
 Subject: Re: [PATCH liburing 2/2] src/Makefile: Add header files as dependency
 To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>
 Cc:     Jens Axboe <axboe@kernel.dk>,
@@ -59,18 +60,46 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Mar 9, 2022 at 5:59 AM Ammar Faizi wrote:
-> On 3/9/22 5:40 AM, Alviro Iskandar Setiawan wrote:
-> > When the header files are modified, the compiled object are not going
-> > to be recompiled because the header files are not marked as dependency
-> > for the objects. Add those header files as dependency so it is safe
-> > not to do "make clean" after changing those files.
+On Wed, Mar 9, 2022 at 6:06 AM Alviro Iskandar Setiawan wrote:
+> On Wed, Mar 9, 2022 at 5:52 AM Ammar Faizi wrote:
+> > This is ugly, it blindly adds all of them to the dependency while
+> > they're actually not dependencies for all the C files here. For
+> > example, when compiling for x86, we don't touch aarch64 files.
+> >
+> > It is not a problem for liburing at the moment, because we don't
+> > have many files in the src directory now. But I think we better
+> > provide a long term solution on this.
+> >
+> > For the headers files, I think we should rely on the compilers to
+> > generate the dependency list with something like:
+> >
+> >     "-MT ... -MMD -MP -MF"
+> >
+> > Then include the generated dependency list to the Makefile.
+> >
+> > What do you think?
 >
-> Another missing part is the test files, they should also be recompiled
-> when changes to files in src/ are made. With this change, they are not.
->
-> The same also for examples/.
+> Yes, I think it's better to do that. I'll fix this in v2.
+> thx
 
-oc oc, that will be separate patches. Will be done in v2.
+Sir, I am a bit confused with the include dependency files to the Makefile.
+
+I use like this:
+
+   -MT <object_filename> -MMD -MP -MF <dependency_file>
+
+the dependency file is generated, but how to include them dynamically?
+I think it shouldn't be included one by one.
+
+So after this
+
+   [...] -MT "setup.os" -MMD -MP -MF ".deps/setup.os.d" [...]
+   [...] -MT "queue.os" -MMD -MP -MF ".deps/queue.os.d" [...]
+   [...] -MT "register.os" -MMD -MP -MF ".deps/register.os.d" [...]
+   [...] -MT "syscall.os" -MMD -MP -MF ".deps/syscall.os.d" [...]
+
+files .deps/{setup,queue,registers,syscall}.os.d are generated, but I
+have to include them to Makefile right? How to include them all at
+once?
 
 -- Viro

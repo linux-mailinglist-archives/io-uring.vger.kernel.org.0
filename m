@@ -2,36 +2,35 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B5A0A4D2882
-	for <lists+io-uring@lfdr.de>; Wed,  9 Mar 2022 06:37:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DEBA4D288D
+	for <lists+io-uring@lfdr.de>; Wed,  9 Mar 2022 06:47:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229791AbiCIFh6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 9 Mar 2022 00:37:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39306 "EHLO
+        id S229524AbiCIFsg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 9 Mar 2022 00:48:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229742AbiCIFhs (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 9 Mar 2022 00:37:48 -0500
+        with ESMTP id S229706AbiCIFse (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 9 Mar 2022 00:48:34 -0500
 Received: from cloud48395.mywhc.ca (cloud48395.mywhc.ca [173.209.37.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 452E414F280;
-        Tue,  8 Mar 2022 21:36:50 -0800 (PST)
-Received: from [45.44.224.220] (port=34370 helo=[192.168.1.179])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3595280;
+        Tue,  8 Mar 2022 21:47:32 -0800 (PST)
+Received: from [45.44.224.220] (port=34372 helo=[192.168.1.179])
         by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94.2)
         (envelope-from <olivier@trillion01.com>)
-        id 1nRp0C-0007Rd-NM; Wed, 09 Mar 2022 00:36:48 -0500
-Message-ID: <36cd0f716bda419f477c3256769f382a31461481.camel@trillion01.com>
-Subject: Re: [PATCH v5 1/2] io_uring: minor io_cqring_wait() optimization
+        id 1nRpAZ-0007ll-Bp; Wed, 09 Mar 2022 00:47:31 -0500
+Message-ID: <b0b2c07eb3b7acad02159e0db145a5b4e825b026.camel@trillion01.com>
+Subject: Re: [PATCH v5 0/2] io_uring: Add support for napi_busy_poll
 From:   Olivier Langlois <olivier@trillion01.com>
 To:     Jens Axboe <axboe@kernel.dk>,
         Pavel Begunkov <asml.silence@gmail.com>
 Cc:     Hao Xu <haoxu@linux.alibaba.com>,
         io-uring <io-uring@vger.kernel.org>,
         linux-kernel <linux-kernel@vger.kernel.org>
-Date:   Wed, 09 Mar 2022 00:36:47 -0500
-In-Reply-To: <7f39095c-1070-7a70-91a0-b0ccb33c368b@kernel.dk>
+Date:   Wed, 09 Mar 2022 00:47:30 -0500
+In-Reply-To: <612546a3-5630-f1d4-f455-ef2bf564c83e@kernel.dk>
 References: <cover.1646777484.git.olivier@trillion01.com>
-         <84513f7cc1b1fb31d8f4cb910aee033391d036b4.1646777484.git.olivier@trillion01.com>
-         <7f39095c-1070-7a70-91a0-b0ccb33c368b@kernel.dk>
+         <612546a3-5630-f1d4-f455-ef2bf564c83e@kernel.dk>
 Organization: Trillion01 Inc
 Content-Type: text/plain; charset="ISO-8859-1"
 User-Agent: Evolution 3.42.4 
@@ -58,27 +57,32 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 On Tue, 2022-03-08 at 17:54 -0700, Jens Axboe wrote:
 > On 3/8/22 3:17 PM, Olivier Langlois wrote:
-> > Move up the block manipulating the sig variable to execute code
-> > that may encounter an error and exit first before continuing
-> > executing the rest of the function and avoid useless computations
+> > The sqpoll thread can be used for performing the napi busy poll in
+> > a
+> > similar way that it does io polling for file systems supporting
+> > direct
+> > access bypassing the page cache.
+> > 
+> > The other way that io_uring can be used for napi busy poll is by
+> > calling io_uring_enter() to get events.
+> > 
+> > If the user specify a timeout value, it is distributed between
+> > polling
+> > and sleeping by using the systemwide setting
+> > /proc/sys/net/core/busy_poll.
 > 
-> I don't think this is worthwhile doing. If you're hitting an error
-> in any of them, it's by definition not the fast path.
+> I think we should get this queued up, but it doesn't apply to
+> for-5.18/io_uring at all. I can fix it up, but just curious what you
+> tested against?
 > 
-Well, by itself it is not a big improvement but it is still an
-improvement.
+Hi Jens,
 
-but most importantly, it has to be considered in the context of the
-current patchset because in patch #2, the following step is to
+I did wrote the patch from
+git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 
-1. acquire the napi spin lock
-2. splice the context napi list into a local one.
-3. release the lock
+My testing systems are based on 5.16. I have backported the patch and
+compiled 5.16.12 with the patch for my testing.
 
-If this patch is not in place before patch #2, you would need undo all
-that before returning from the sig block which would make the function
-bigger when all that is completely avoidable by accepting this patch...
+sorry if I didn't use the right repo...
 
-Both patches were together in v1 but I decided to break them apart
-thinking that this was the right thing to do...
 

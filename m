@@ -2,225 +2,92 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DDCC74D4389
-	for <lists+io-uring@lfdr.de>; Thu, 10 Mar 2022 10:27:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 333B04D4434
+	for <lists+io-uring@lfdr.de>; Thu, 10 Mar 2022 11:05:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233910AbiCJJ2x (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 10 Mar 2022 04:28:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57180 "EHLO
+        id S235824AbiCJKGa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 10 Mar 2022 05:06:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234741AbiCJJ2w (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 10 Mar 2022 04:28:52 -0500
-X-Greylist: delayed 721 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 10 Mar 2022 01:27:51 PST
-Received: from mail.j284.net (mail.j284.net [151.236.222.166])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6296B32ECC
-        for <io-uring@vger.kernel.org>; Thu, 10 Mar 2022 01:27:50 -0800 (PST)
-Received: by mail.j284.net  with ESMTPSA id 22A9FjAH449685; Thu, 10 Mar 2022 09:15:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=movency.com; s=mail;
-        t=1646903746; bh=h9/j23gj+/NJ46U9iAPJ21oYHlG2puGZjw//kmGAcyI=;
-        h=Date:Subject:To:References:From:In-Reply-To:From;
-        b=TdobgQA3y2K27L3mHfZHS1lyneLY7Utv2TG+9T1dtlqaF8neZolIHGmEV8n9pEkvx
-         ruBDJ79kt5UftFKr3PUJ4rqvjURDOOmVDXViRjOOKEy2RQL8Puazvxz2YKQ++6M3w8
-         R30HcK6OgXCr0NvgP91P6KhL/ylnQotameEu+j7nmYXgWdBEgPmGeW4ULQjXqRDs5X
-         GBzdXxAYkfx967h7p972lnhDLXdSVEWoCeXb/lWejtZHVuNWDViGI+696FSGusN8tc
-         2yZZUU09TsBxD0zNlaAez78J+mrBfiFcB5wz4l4wDEczD4mJoS7Fpd2r34QViTMoFA
-         y2U41vUqNXQDg==
-Message-ID: <aeead0ae-9a38-7920-69fd-9da37aa40d31@movency.com>
-Date:   Thu, 10 Mar 2022 09:15:44 +0000
+        with ESMTP id S239862AbiCJKG3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 10 Mar 2022 05:06:29 -0500
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87F8213D578;
+        Thu, 10 Mar 2022 02:05:28 -0800 (PST)
+Received: by mail-lf1-x12b.google.com with SMTP id s25so8464987lfs.10;
+        Thu, 10 Mar 2022 02:05:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=g1v6ovUNSf+kFskR5R+v2NInQ6xsMS01QhfDEC1m/98=;
+        b=ns33X3mSvUp/dV4LlGedMNO7aMi7dLjkJEUK4S+oJGMyRCgCRbpIY/bN1lKR7coIXt
+         fgnlmrPnvIUWbzXLZXsahgLPJJhWkeuczEbUHP5ElqKexNzJYP0gAxHjGPJX/CqPQ8QH
+         kpmjVHzhjJ7tMioIgTAfkNZ4h0efJFIsYgBVKYRvA4/s8c3a3BH+AEJgU8qpbf+bbY2g
+         uXSUBVqregysJ4ss/HApTFtigwZZsAH+zVvVgLhTS54BwnE+AcGY/PjPVE3mFH+r28D8
+         p/MNit5koONLvhhlYyCG0wohubRoqL2ukmTOS7AqUs+r4XjBh3AtK8PrI0HUlMBfQFsM
+         zNaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=g1v6ovUNSf+kFskR5R+v2NInQ6xsMS01QhfDEC1m/98=;
+        b=6fzY7q3np4SYhAlcXyg4nAaT33aMFOC2EidjgQ73GORPPT3b3xwZdZpjXTznCjuJk8
+         c1rTNfJtMW/xtjHD+NTl2Ox78krv6wi2YwILPqPV/QS6PzyGeJfJ63ydeWmBoBHTcESQ
+         PQ5gEDlOJ+10nk0uo+zPhprVgUoyZEHEqFlWoIvHHwMTaP1mUm6g71vYHxICH+QwUzj4
+         cBu0O3rR2Q45NYNSvOvFwFlAR/6W6zB8KLTNm3R7G5hIS71QxOTYCueOwRViusxmk75T
+         9SMpd0QTJBpSfkLK6TXzGDWiXJz/dt6xyfWpZ3jQvxYCvGHnAsyqFQIzRHWtzI+JjGZK
+         xPdw==
+X-Gm-Message-State: AOAM531UD7kX93AdyvngN6V/FCCwv2ZcsF4f/DyImpS/ik/pAtGqd1jh
+        whYdZSTF32EY3itf6ZlAGk2vih1OTxiQ+r7IKno=
+X-Google-Smtp-Source: ABdhPJwDzqA1hnug0wbCxuMMC9bwFUJgrX7k50AuAyOlBBQCCbHd+EQ98+xL/K6bjR+dxXF673VzxbFS2cGid0d5Jgc=
+X-Received: by 2002:a05:6512:2208:b0:448:5c7a:6dd9 with SMTP id
+ h8-20020a056512220800b004485c7a6dd9mr2577551lfu.334.1646906726687; Thu, 10
+ Mar 2022 02:05:26 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: Sending CQE to a different ring
-Content-Language: en-US
-To:     Jens Axboe <axboe@kernel.dk>, Artyom Pavlov <newpavlov@gmail.com>,
-        io-uring@vger.kernel.org
-References: <bf044fd3-96c0-3b54-f643-c62ae333b4db@gmail.com>
- <e31e5b96-5c20-d49b-da90-db559ba44927@kernel.dk>
- <f4db0d4c-0ea3-3efa-7e28-bc727b7bc05a@kernel.dk>
- <1f58dbfa-9b1f-5627-89aa-2dda3e2844ab@kernel.dk>
-From:   Chris Panayis <chris@movency.com>
-In-Reply-To: <1f58dbfa-9b1f-5627-89aa-2dda3e2844ab@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-0.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_SBL autolearn=no
-        autolearn_force=no version=3.4.6
+References: <CGME20220308152651epcas5p1ebd2dc7fa01db43dd587c228a3695696@epcas5p1.samsung.com>
+ <20220308152105.309618-1-joshi.k@samsung.com> <20220310082926.GA26614@lst.de>
+In-Reply-To: <20220310082926.GA26614@lst.de>
+From:   Kanchan Joshi <joshiiitr@gmail.com>
+Date:   Thu, 10 Mar 2022 15:35:02 +0530
+Message-ID: <CA+1E3rJ17F0Rz5UKUnW-LPkWDfPHXG5aeq-ocgNxHfGrxYtAuw@mail.gmail.com>
+Subject: Re: [PATCH 00/17] io_uring passthru over nvme
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Kanchan Joshi <joshi.k@samsung.com>, Jens Axboe <axboe@kernel.dk>,
+        Keith Busch <kbusch@kernel.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-block@vger.kernel.org, sbates@raithlin.com,
+        logang@deltatee.com, Pankaj Raghav <pankydev8@gmail.com>,
+        =?UTF-8?Q?Javier_Gonz=C3=A1lez?= <javier@javigon.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Adam Manzanares <a.manzanares@samsung.com>,
+        Anuj Gupta <anuj20.g@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-ooo.. I like this simple interface, even if there ends up being a more 
-'infra-ring-esque' api... We currently implement thread/ring 
-callbacks/wakeups using eventfd - this IORING_OP_WAKEUP_RING interface 
-would be much better..
-
-Thanks
-
-Chris
-
-
-On 10/03/2022 02:33, Jens Axboe wrote:
-> On 3/9/22 6:55 PM, Jens Axboe wrote:
->> On 3/9/22 6:36 PM, Jens Axboe wrote:
->>> On 3/9/22 4:49 PM, Artyom Pavlov wrote:
->>>> Greetings!
->>>>
->>>> A common approach for multi-threaded servers is to have a number of
->>>> threads equal to a number of cores and launch a separate ring in each
->>>> one. AFAIK currently if we want to send an event to a different ring,
->>>> we have to write-lock this ring, create SQE, and update the index
->>>> ring. Alternatively, we could use some kind of user-space message
->>>> passing.
->>>>
->>>> Such approaches are somewhat inefficient and I think it can be solved
->>>> elegantly by updating the io_uring_sqe type to allow accepting fd of a
->>>> ring to which CQE must be sent by kernel. It can be done by
->>>> introducing an IOSQE_ flag and using one of currently unused padding
->>>> u64s.
->>>>
->>>> Such feature could be useful for load balancing and message passing
->>>> between threads which would ride on top of io-uring, i.e. you could
->>>> send NOP with user_data pointing to a message payload.
->>> So what you want is a NOP with 'fd' set to the fd of another ring, and
->>> that nop posts a CQE on that other ring? I don't think we'd need IOSQE
->>> flags for that, we just need a NOP that supports that. I see a few ways
->>> of going about that:
->>>
->>> 1) Add a new 'NOP' that takes an fd, and validates that that fd is an
->>>     io_uring instance. It can then grab the completion lock on that ring
->>>     and post an empty CQE.
->>>
->>> 2) We add a FEAT flag saying NOP supports taking an 'fd' argument, where
->>>     'fd' is another ring. Posting CQE same as above.
->>>
->>> 3) We add a specific opcode for this. Basically the same as #2, but
->>>     maybe with a more descriptive name than NOP.
->>>
->>> Might make sense to pair that with a CQE flag or something like that, as
->>> there's no specific user_data that could be used as it doesn't match an
->>> existing SQE that has been issued. IORING_CQE_F_WAKEUP for example.
->>> Would be applicable to all the above cases.
->>>
->>> I kind of like #3 the best. Add a IORING_OP_RING_WAKEUP command, require
->>> that sqe->fd point to a ring (could even be the ring itself, doesn't
->>> matter). And add IORING_CQE_F_WAKEUP as a specific flag for that.
->> Something like the below, totally untested. The request will complete on
->> the original ring with either 0, for success, or -EOVERFLOW if the
->> target ring was already in an overflow state. If the fd specified isn't
->> an io_uring context, then the request will complete with -EBADFD.
->>
->> If you have any way of testing this, please do. I'll write a basic
->> functionality test for it as well, but not until tomorrow.
->>
->> Maybe we want to include in cqe->res who the waker was? We can stuff the
->> pid/tid in there, for example.
-> Made the pid change, and also wrote a test case for it. Only change
-> otherwise is adding a completion trace event as well. Patch below
-> against for-5.18/io_uring, and attached the test case for liburing.
+On Thu, Mar 10, 2022 at 1:59 PM Christoph Hellwig <hch@lst.de> wrote:
 >
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 2e04f718319d..b21f85a48224 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -1105,6 +1105,9 @@ static const struct io_op_def io_op_defs[] = {
->   	[IORING_OP_MKDIRAT] = {},
->   	[IORING_OP_SYMLINKAT] = {},
->   	[IORING_OP_LINKAT] = {},
-> +	[IORING_OP_WAKEUP_RING] = {
-> +		.needs_file		= 1,
-> +	},
->   };
->   
->   /* requests with any of those set should undergo io_disarm_next() */
-> @@ -4235,6 +4238,44 @@ static int io_nop(struct io_kiocb *req, unsigned int issue_flags)
->   	return 0;
->   }
->   
-> +static int io_wakeup_ring_prep(struct io_kiocb *req,
-> +			       const struct io_uring_sqe *sqe)
-> +{
-> +	if (unlikely(sqe->addr || sqe->ioprio || sqe->buf_index || sqe->off ||
-> +		     sqe->len || sqe->rw_flags || sqe->splice_fd_in ||
-> +		     sqe->buf_index || sqe->personality))
-> +		return -EINVAL;
-> +
-> +	if (req->file->f_op != &io_uring_fops)
-> +		return -EBADFD;
-> +
-> +	return 0;
-> +}
-> +
-> +static int io_wakeup_ring(struct io_kiocb *req, unsigned int issue_flags)
-> +{
-> +	struct io_uring_cqe *cqe;
-> +	struct io_ring_ctx *ctx;
-> +	int ret = 0;
-> +
-> +	ctx = req->file->private_data;
-> +	spin_lock(&ctx->completion_lock);
-> +	cqe = io_get_cqe(ctx);
-> +	if (cqe) {
-> +		WRITE_ONCE(cqe->user_data, 0);
-> +		WRITE_ONCE(cqe->res, 0);
-> +		WRITE_ONCE(cqe->flags, IORING_CQE_F_WAKEUP);
-> +	} else {
-> +		ret = -EOVERFLOW;
-> +	}
-> +	io_commit_cqring(ctx);
-> +	spin_unlock(&ctx->completion_lock);
-> +	io_cqring_ev_posted(ctx);
-> +
-> +	__io_req_complete(req, issue_flags, ret, 0);
-> +	return 0;
-> +}
-> +
->   static int io_fsync_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
->   {
->   	struct io_ring_ctx *ctx = req->ctx;
-> @@ -6568,6 +6609,8 @@ static int io_req_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
->   		return io_symlinkat_prep(req, sqe);
->   	case IORING_OP_LINKAT:
->   		return io_linkat_prep(req, sqe);
-> +	case IORING_OP_WAKEUP_RING:
-> +		return io_wakeup_ring_prep(req, sqe);
->   	}
->   
->   	printk_once(KERN_WARNING "io_uring: unhandled opcode %d\n",
-> @@ -6851,6 +6894,9 @@ static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags)
->   	case IORING_OP_LINKAT:
->   		ret = io_linkat(req, issue_flags);
->   		break;
-> +	case IORING_OP_WAKEUP_RING:
-> +		ret = io_wakeup_ring(req, issue_flags);
-> +		break;
->   	default:
->   		ret = -EINVAL;
->   		break;
-> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-> index 787f491f0d2a..088232133594 100644
-> --- a/include/uapi/linux/io_uring.h
-> +++ b/include/uapi/linux/io_uring.h
-> @@ -143,6 +143,7 @@ enum {
->   	IORING_OP_MKDIRAT,
->   	IORING_OP_SYMLINKAT,
->   	IORING_OP_LINKAT,
-> +	IORING_OP_WAKEUP_RING,
->   
->   	/* this goes last, obviously */
->   	IORING_OP_LAST,
-> @@ -199,9 +200,11 @@ struct io_uring_cqe {
->    *
->    * IORING_CQE_F_BUFFER	If set, the upper 16 bits are the buffer ID
->    * IORING_CQE_F_MORE	If set, parent SQE will generate more CQE entries
-> + * IORING_CQE_F_WAKEUP	Wakeup request CQE, no link to an SQE
->    */
->   #define IORING_CQE_F_BUFFER		(1U << 0)
->   #define IORING_CQE_F_MORE		(1U << 1)
-> +#define IORING_CQE_F_WAKEUP		(1U << 2)
->   
->   enum {
->   	IORING_CQE_BUFFER_SHIFT		= 16,
->
+> What branch is this against?
+Sorry I missed that in the cover.
+Two options -
+(a) https://git.kernel.dk/cgit/linux-block/log/?h=io_uring-big-sqe
+first patch ("128 byte sqe support") is already there.
+(b) for-next (linux-block), series will fit on top of commit 9e9d83faa
+("io_uring: Remove unneeded test in io_run_task_work_sig")
+
+> Do you have a git tree available?
+Not at the moment.
+
+@Jens: Please see if it is possible to move patches to your
+io_uring-big-sqe branch (and maybe rename that to big-sqe-pt.v1).
+
+Thanks.

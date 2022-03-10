@@ -2,78 +2,88 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AA25C4D44B4
-	for <lists+io-uring@lfdr.de>; Thu, 10 Mar 2022 11:32:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E7C34D44FD
+	for <lists+io-uring@lfdr.de>; Thu, 10 Mar 2022 11:50:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241294AbiCJKdp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 10 Mar 2022 05:33:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58480 "EHLO
+        id S241410AbiCJKvy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 10 Mar 2022 05:51:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47860 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241433AbiCJKde (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 10 Mar 2022 05:33:34 -0500
+        with ESMTP id S241406AbiCJKvx (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 10 Mar 2022 05:51:53 -0500
 Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AE441145
-        for <io-uring@vger.kernel.org>; Thu, 10 Mar 2022 02:32:32 -0800 (PST)
-Received: from localhost.localdomain (unknown [138.197.159.143])
-        by gnuweeb.org (Postfix) with ESMTPSA id 133717E2E4;
-        Thu, 10 Mar 2022 10:32:31 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A9FF4ECEA
+        for <io-uring@vger.kernel.org>; Thu, 10 Mar 2022 02:50:53 -0800 (PST)
+Received: from [192.168.43.69] (unknown [114.10.7.234])
+        by gnuweeb.org (Postfix) with ESMTPSA id 69BB37E2A8;
+        Thu, 10 Mar 2022 10:50:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1646908351;
-        bh=fY4q6lGnj3OamfZVejrbTHNDiPr3EM8Yt0ZMFUXi+Ss=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GCxFdJrP5cc8EuTQcq4RKoJV5WFwO0Rh9VC8ytbS/J1Y1s+yI5dxEXmgh3KLTWbi2
-         xHVY8RLc9n1sfZNKTnE43zTeYVw5XPlVHmdgEEGUqekmW06rH+0HDwL2IDX+KmRqqK
-         9QpIKqU5e4FTWIw/wpTtwnd5WsDOdRDRP83SO37pDVoxsM3JQs5/ljUnvbaT9d8fMd
-         Cc0IAWa4BhnD4M/eyIB8E8Ll5B3Ez1wObHZ1M0ZoEmvxpLwutVEX4AA6D5NuGDjjxH
-         7tSFBztDeAFxDXQDq8dBi5YHbToHkXghejB3eYvnPbPl1BKj3ZYznKUlFXDqreWy2J
-         RGWR3P1QkhhXg==
-From:   Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Ammar Faizi <ammarfaizi2@gnuweeb.org>,
+        s=default; t=1646909452;
+        bh=44z16Psp1/61+s0UDwU+Lqf5cI03j0t229G6p/Mvp9c=;
+        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
+        b=qqT7FG2gzhMt/C5dGSA/cdUbtDAWH70GO1c8rbQ0y7sfRMoLPuYEo51+XdM5bZq2G
+         PwRmthKSmuTK/sZHLSvQA1MfQBSQPIVj8NvRVufuq9rW4/8LIqBhjfbphOWvQ+lrWX
+         ylrsZz99YRL0FfXb3CKXBOMPHGsttDJYjSJczFYQzNNf4T2W8X8aXzEGMvrUc2hG6z
+         86JIBDTlphNwRwuNeG5N6R2T/bg7n7nzOdgrPSI/IyAaggQyQtcJvRJbcZcUCkyA4q
+         Vm4FJ1W0k8PADh6LSrTPpLskbBZn/GxeoPlcFKNQ83A/JhNWrS8oT84zbu/p6iFVgt
+         3vKd9i51ta71g==
+Message-ID: <628f2f77-b20c-ac5f-90cc-586a9939b6af@gnuweeb.org>
+Date:   Thu, 10 Mar 2022 17:50:41 +0700
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Content-Language: en-US
+To:     Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
         Alviro Iskandar Setiawan <alviro.iskandar@gmail.com>,
         io-uring <io-uring@vger.kernel.org>, gwml <gwml@vger.gnuweeb.org>
-Subject: [PATCH liburing v2 4/4] examples/Makefile: Add liburing.a as a dependency
-Date:   Thu, 10 Mar 2022 10:32:24 +0000
-Message-Id: <20220310103224.1675123-5-alviro.iskandar@gnuweeb.org>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20220310103224.1675123-1-alviro.iskandar@gnuweeb.org>
 References: <20220310103224.1675123-1-alviro.iskandar@gnuweeb.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+ <20220310103224.1675123-3-alviro.iskandar@gnuweeb.org>
+From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
+Subject: Re: [PATCH liburing v2 2/4] src/Makefile: Add header files as
+ dependency
+In-Reply-To: <20220310103224.1675123-3-alviro.iskandar@gnuweeb.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_PASS,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The example binaries statically link liburing using liburing.a file.
-When liburing.a is recompiled, make sure the example binaries are also
-recompiled to ensure changes are applied to the binaries. It makes
-"make clean" command optional when making changes.
+On 3/10/22 5:32 PM, Alviro Iskandar Setiawan wrote:
+> When the header files are modified, the compiled objects are not going
+> to be recompiled because the header files are not marked as a dependency
+> for the objects.
+> 
+>    - Instruct the compiler to generate dependency files.
+> 
+>    - Include those files from src/Makefile. Ensure if any changes are
+>      made, files that depend on the changes are recompiled.
+> 
+> Suggested-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+> Signed-off-by: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
 
-Signed-off-by: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
----
- examples/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+You should add the dependency files to .gitignore, otherwise we will have
+these files untracked after build.
 
-diff --git a/examples/Makefile b/examples/Makefile
-index f966f94..95a45f9 100644
---- a/examples/Makefile
-+++ b/examples/Makefile
-@@ -29,7 +29,7 @@ all_targets += $(example_targets)
- 
- all: $(example_targets)
- 
--%: %.c
-+%: %.c ../src/liburing.a
- 	$(QUIET_CC)$(CC) $(CPPFLAGS) $(CFLAGS) -o $@ $< $(LDFLAGS)
- 
- clean:
+   Untracked files:
+     (use "git add <file>..." to include in what will be committed)
+           src/queue.ol.d
+           src/queue.os.d
+           src/register.ol.d
+           src/register.os.d
+           src/setup.ol.d
+           src/setup.os.d
+           src/syscall.ol.d
+           src/syscall.os.d
+
+Also, when doing `make clean`, the dependency files should be removed.
+
 -- 
-2.25.1
-
+Ammar Faizi

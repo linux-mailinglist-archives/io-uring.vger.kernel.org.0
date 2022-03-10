@@ -2,54 +2,54 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 183234D3F72
-	for <lists+io-uring@lfdr.de>; Thu, 10 Mar 2022 04:00:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 883BD4D3F85
+	for <lists+io-uring@lfdr.de>; Thu, 10 Mar 2022 04:06:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236904AbiCJDBk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 9 Mar 2022 22:01:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54886 "EHLO
+        id S234714AbiCJDHG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 9 Mar 2022 22:07:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229795AbiCJDBk (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 9 Mar 2022 22:01:40 -0500
-Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25D6A124C25
-        for <io-uring@vger.kernel.org>; Wed,  9 Mar 2022 19:00:40 -0800 (PST)
-Received: by mail-pf1-x42f.google.com with SMTP id s42so3991758pfg.0
-        for <io-uring@vger.kernel.org>; Wed, 09 Mar 2022 19:00:40 -0800 (PST)
+        with ESMTP id S234157AbiCJDHG (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 9 Mar 2022 22:07:06 -0500
+Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC57D127555
+        for <io-uring@vger.kernel.org>; Wed,  9 Mar 2022 19:06:04 -0800 (PST)
+Received: by mail-pj1-x102a.google.com with SMTP id v4so4058209pjh.2
+        for <io-uring@vger.kernel.org>; Wed, 09 Mar 2022 19:06:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :references:from:in-reply-to:content-transfer-encoding;
-        bh=E/dSH0Kfhl1s12OdbtenOvD9QnZIr6FLI2hQXGAw3XQ=;
-        b=2AJp0JDIKVuazoN6pj7sowRJwm2AWHcA4rxlggW0BR9JMr3Zo/DRkMbLYh/qfWXTgN
-         k5YqSOfIPCwq5go+jcOw31rHNeibCJzs38hD/qBjTRJWwSbgESbp7wXdUTeVIxMrKjUa
-         JSLsW3mP5FmVHlAV2e0EIiyDG0BpQJQsIVhyPLziSBNjlfk4zEfHavbSDH25KrhwqESv
-         JYyNHXvHzXkkpHHHk4L88CpmkXudNCGEJJb+fjCjedWNkWsHaJqHxbvClrh5dG8OdtBW
-         U+kbT64+cmMvRC+I/diqrtXun5qOGfs/f5zMiGB30HhHwY+pJm19vguaA39Z148XlQnu
-         DLwA==
+        bh=pyZMJe8UdeK8gUVhAIlxwPaF/UEVAewxBY/dl/StI70=;
+        b=D/ANjou3zp6hmPHcBbVRf6Ixj+zxdspzsbDImvcpzHt62mZ+0YOI7D7iUbxhV4KypO
+         5ysMKlHY/YQHWU5Tw1q+KNZXIeAZCFCle8X1eD3sXWO79QTrL4fuWHn8ycxZRvGUnGU1
+         6UKqI6rpOFAVLK5Z/2q6j9rJ7F3MMcWVHGRvUNLKLP1UYW83DkIKFNr5D3TmufqSyLpl
+         Lh9JVvqSuk+9plJ91sMuihVfkheoq7QM42QK9H2PkKRN8cMJICqG9GtKWCVVdXbJcIh8
+         YuZYkEjnGDuNBU1NBJ1RjmepbwyrKdKQXn+kJ9t9zFYCiiH/EQjzHm4247OoLQzLSLSR
+         36fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=E/dSH0Kfhl1s12OdbtenOvD9QnZIr6FLI2hQXGAw3XQ=;
-        b=O4fEaM1QolZWKNptkNZxBudPz8ipu/cwLN7VSj4LTsJ7ODVhnykG3HxnpdNxV9yXEu
-         D4EJ5ESoqszbIow9nJN/OO4Quczu5YqAzTDmLvFL1W9V5qN5cTJSQhuAA42Sqpb0ADo5
-         cYC3m4TvDA9B8qD0RW4cjHIeX4VG3yqBeSOVaodqitGW5QPrXPrSwQmIiJr/YcsRNeke
-         e3d4QPe16Xt4ew/Wuhne/PqVd2lirXrGpa1n8RNFspUmIfelz7wEsZHMWc6UT356JMso
-         97oGr4ZYM4ggk5Yf6rjUTvpDYoGYZpFUbHoirBiBpyPhzL6zm6Sqhxq6erpnM4q1WUaf
-         6XMg==
-X-Gm-Message-State: AOAM533CNY0po8y082lWV7mUqcQ4sgCy3K5PkZS3SA60Q8i3ksiC75GI
-        wFXyxPSqquR+qavCkDgOrIJZdEL8i1C0U0F7
-X-Google-Smtp-Source: ABdhPJxRaT3pFlOfcHBa5qPMAdF6BSo8tZsfWeCPFWlZnt8aGWtRT/N1RrQF1dsW6cEckeBI0Cg4/w==
-X-Received: by 2002:a63:950a:0:b0:375:64a3:f98c with SMTP id p10-20020a63950a000000b0037564a3f98cmr2348700pgd.22.1646881239388;
-        Wed, 09 Mar 2022 19:00:39 -0800 (PST)
+        bh=pyZMJe8UdeK8gUVhAIlxwPaF/UEVAewxBY/dl/StI70=;
+        b=DI+K/Xwj3sdkdH/EiCyzudCWFR9szlLDoRd8QxtJuTQTITujEyE8HhjdS1OgfmoXix
+         QJs14JdaW5mkjEJinZdhgY1YSoxe6B8aNfNJvcwgk8MzSv+sam+fdOIw0stT1S0L+Bsf
+         RtDCGT9/4G/XMczQVjiV39zasoWykmvgY3EzFv/hIUXF7ggKhDlkq/4Gtoi/SfENLhjK
+         DpdMix/yU8s+2VGdQWrRnX/nOKLGmOQxYQBddwyiLKZXSqasNrlJp8XAWAmQjsZc36ZD
+         2Mjm9z+oNl/7RteFmzm4BisV8VG0LJamRwjEzNISVrDxEjbags6aIZRD2inr0tvbWxOi
+         qYaA==
+X-Gm-Message-State: AOAM531tL+XENv3z7xf1DtBhn8wm3bYu8TlAZoq4W/Z8viwtVJCtjulr
+        mHTmnYAKIslekgVr/61qUvdSQQ==
+X-Google-Smtp-Source: ABdhPJw4v9dOJb8K6mu/gqZNunlSYWqFLHgVgygLzKq0Z9o9ehrYmtlF0d+G7oFevJQE7CrIG6xsrg==
+X-Received: by 2002:a17:90a:8582:b0:1b9:b0da:9ca9 with SMTP id m2-20020a17090a858200b001b9b0da9ca9mr2720675pjn.146.1646881564380;
+        Wed, 09 Mar 2022 19:06:04 -0800 (PST)
 Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id v14-20020a056a00148e00b004e1cee6f6b4sm4785713pfu.47.2022.03.09.19.00.38
+        by smtp.gmail.com with ESMTPSA id o65-20020a17090a0a4700b001bef5cffea7sm9044420pjo.0.2022.03.09.19.06.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Mar 2022 19:00:38 -0800 (PST)
-Message-ID: <478d1650-139b-f02b-bebf-7d54aa24eae2@kernel.dk>
-Date:   Wed, 9 Mar 2022 20:00:37 -0700
+        Wed, 09 Mar 2022 19:06:03 -0800 (PST)
+Message-ID: <9c833608-5df8-8281-54e4-056a0db0c84c@kernel.dk>
+Date:   Wed, 9 Mar 2022 20:06:02 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
  Thunderbird/91.6.1
@@ -73,86 +73,19 @@ List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 On 3/9/22 7:11 PM, Artyom Pavlov wrote:
-> 10.03.2022 04:36, Jens Axboe wrote:
->> On 3/9/22 4:49 PM, Artyom Pavlov wrote:
->>> Greetings!
->>>
->>> A common approach for multi-threaded servers is to have a number of
->>> threads equal to a number of cores and launch a separate ring in each
->>> one. AFAIK currently if we want to send an event to a different ring,
->>> we have to write-lock this ring, create SQE, and update the index
->>> ring. Alternatively, we could use some kind of user-space message
->>> passing.
->>>
->>> Such approaches are somewhat inefficient and I think it can be solved
->>> elegantly by updating the io_uring_sqe type to allow accepting fd of a
->>> ring to which CQE must be sent by kernel. It can be done by
->>> introducing an IOSQE_ flag and using one of currently unused padding
->>> u64s.
->>>
->>> Such feature could be useful for load balancing and message passing
->>> between threads which would ride on top of io-uring, i.e. you could
->>> send NOP with user_data pointing to a message payload.
->>
->> So what you want is a NOP with 'fd' set to the fd of another ring, and
->> that nop posts a CQE on that other ring? I don't think we'd need IOSQE
->> flags for that, we just need a NOP that supports that. I see a few ways
->> of going about that:
->>
->> 1) Add a new 'NOP' that takes an fd, and validates that that fd is an
->>     io_uring instance. It can then grab the completion lock on that ring
->>     and post an empty CQE.
->>
->> 2) We add a FEAT flag saying NOP supports taking an 'fd' argument, where
->>     'fd' is another ring. Posting CQE same as above.
->>
->> 3) We add a specific opcode for this. Basically the same as #2, but
->>     maybe with a more descriptive name than NOP.
->>
->> Might make sense to pair that with a CQE flag or something like that, as
->> there's no specific user_data that could be used as it doesn't match an
->> existing SQE that has been issued. IORING_CQE_F_WAKEUP for example.
->> Would be applicable to all the above cases.
->>
->> I kind of like #3 the best. Add a IORING_OP_RING_WAKEUP command, require
->> that sqe->fd point to a ring (could even be the ring itself, doesn't
->> matter). And add IORING_CQE_F_WAKEUP as a specific flag for that.
->>
-> 
 > No, ideally I would like to be able to send any type of SQE to a
 > different ring. For example, if I see that the current ring is
 > overloaded, I can create exactly the same SQEs as during usual
 > operation, but with a changed recipient ring.
-> 
-> Your approach with a new "sendable" NOP will allow to emulate it in
-> user-space, but it will involve unnecessary ring round-trip and will
-> be a bit less pleasant in user code, e.g. we would need to encode a
-> separate state "the task is being sent to a different ring" instead of
-> simply telling io-uring "read data and report CQE on this ring"
-> without any intermediate states.
 
-OK, so what you're asking is to be able to submit an sqe to ring1, but
-have the completion show up in ring2? With the idea being that the rings
-are setup so that you're basing this on which thread should ultimately
-process the request when it completes, which is why you want it to
-target another ring?
-
-It'd certainly be doable, but it's a bit of a strange beast. My main
-concern with that would be:
-
-1) It's a fast path code addition to every request, we'd need to check
-   some new field (sqe->completion_ring_fd) and then also grab a
-   reference to that file for use at completion time.
-
-2) Completions are protected by the completion lock, and it isn't
-   trivial to nest these. What happens if ring1 submits an sqe with
-   ring2 as the cqe target, and ring2 submits an sqe with ring1 as the
-   cqe target? We can't safely nest these, as we could easily introduce
-   deadlocks that way.
-
-My knee jerk reaction is that it'd be both simpler and cheaper to
-implement this in userspace... Unless there's an elegant solution to it,
-which I don't immediately see.
+And since I could still be misunderstanding your intent here, if you
+mean that you want to submit sqe to ring1 with ring2 being the target,
+then I'm not sure that would be very helpful. The submitting task is the
+owner of the request, and will ultimately be the one that ends up
+running eg task_work associated with the request. It's not really a good
+way to shift work from one ring to another, if the setup is such that
+the rings are tied to a thread and the threads are in turn mostly tied
+to a CPU or group of CPUs.
 
 -- 
 Jens Axboe

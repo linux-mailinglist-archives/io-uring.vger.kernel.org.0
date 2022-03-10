@@ -2,92 +2,102 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 333B04D4434
-	for <lists+io-uring@lfdr.de>; Thu, 10 Mar 2022 11:05:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 55D714D44B2
+	for <lists+io-uring@lfdr.de>; Thu, 10 Mar 2022 11:32:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235824AbiCJKGa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 10 Mar 2022 05:06:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49180 "EHLO
+        id S241291AbiCJKdp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 10 Mar 2022 05:33:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239862AbiCJKG3 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 10 Mar 2022 05:06:29 -0500
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87F8213D578;
-        Thu, 10 Mar 2022 02:05:28 -0800 (PST)
-Received: by mail-lf1-x12b.google.com with SMTP id s25so8464987lfs.10;
-        Thu, 10 Mar 2022 02:05:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=g1v6ovUNSf+kFskR5R+v2NInQ6xsMS01QhfDEC1m/98=;
-        b=ns33X3mSvUp/dV4LlGedMNO7aMi7dLjkJEUK4S+oJGMyRCgCRbpIY/bN1lKR7coIXt
-         fgnlmrPnvIUWbzXLZXsahgLPJJhWkeuczEbUHP5ElqKexNzJYP0gAxHjGPJX/CqPQ8QH
-         kpmjVHzhjJ7tMioIgTAfkNZ4h0efJFIsYgBVKYRvA4/s8c3a3BH+AEJgU8qpbf+bbY2g
-         uXSUBVqregysJ4ss/HApTFtigwZZsAH+zVvVgLhTS54BwnE+AcGY/PjPVE3mFH+r28D8
-         p/MNit5koONLvhhlYyCG0wohubRoqL2ukmTOS7AqUs+r4XjBh3AtK8PrI0HUlMBfQFsM
-         zNaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=g1v6ovUNSf+kFskR5R+v2NInQ6xsMS01QhfDEC1m/98=;
-        b=6fzY7q3np4SYhAlcXyg4nAaT33aMFOC2EidjgQ73GORPPT3b3xwZdZpjXTznCjuJk8
-         c1rTNfJtMW/xtjHD+NTl2Ox78krv6wi2YwILPqPV/QS6PzyGeJfJ63ydeWmBoBHTcESQ
-         PQ5gEDlOJ+10nk0uo+zPhprVgUoyZEHEqFlWoIvHHwMTaP1mUm6g71vYHxICH+QwUzj4
-         cBu0O3rR2Q45NYNSvOvFwFlAR/6W6zB8KLTNm3R7G5hIS71QxOTYCueOwRViusxmk75T
-         9SMpd0QTJBpSfkLK6TXzGDWiXJz/dt6xyfWpZ3jQvxYCvGHnAsyqFQIzRHWtzI+JjGZK
-         xPdw==
-X-Gm-Message-State: AOAM531UD7kX93AdyvngN6V/FCCwv2ZcsF4f/DyImpS/ik/pAtGqd1jh
-        whYdZSTF32EY3itf6ZlAGk2vih1OTxiQ+r7IKno=
-X-Google-Smtp-Source: ABdhPJwDzqA1hnug0wbCxuMMC9bwFUJgrX7k50AuAyOlBBQCCbHd+EQ98+xL/K6bjR+dxXF673VzxbFS2cGid0d5Jgc=
-X-Received: by 2002:a05:6512:2208:b0:448:5c7a:6dd9 with SMTP id
- h8-20020a056512220800b004485c7a6dd9mr2577551lfu.334.1646906726687; Thu, 10
- Mar 2022 02:05:26 -0800 (PST)
-MIME-Version: 1.0
-References: <CGME20220308152651epcas5p1ebd2dc7fa01db43dd587c228a3695696@epcas5p1.samsung.com>
- <20220308152105.309618-1-joshi.k@samsung.com> <20220310082926.GA26614@lst.de>
-In-Reply-To: <20220310082926.GA26614@lst.de>
-From:   Kanchan Joshi <joshiiitr@gmail.com>
-Date:   Thu, 10 Mar 2022 15:35:02 +0530
-Message-ID: <CA+1E3rJ17F0Rz5UKUnW-LPkWDfPHXG5aeq-ocgNxHfGrxYtAuw@mail.gmail.com>
-Subject: Re: [PATCH 00/17] io_uring passthru over nvme
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Kanchan Joshi <joshi.k@samsung.com>, Jens Axboe <axboe@kernel.dk>,
-        Keith Busch <kbusch@kernel.org>,
+        with ESMTP id S241436AbiCJKde (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 10 Mar 2022 05:33:34 -0500
+Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A56FE1039
+        for <io-uring@vger.kernel.org>; Thu, 10 Mar 2022 02:32:29 -0800 (PST)
+Received: from localhost.localdomain (unknown [138.197.159.143])
+        by gnuweeb.org (Postfix) with ESMTPSA id C7FFE7E2B2;
+        Thu, 10 Mar 2022 10:32:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
+        s=default; t=1646908348;
+        bh=3LklH9xcZlJsW8N4l5LemR/TtMKAc+MebSjm6DfEsr0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Q2zE2VHtA+gUXZnZHIvFjJnDzlVqdZhK+XxreiA/18lop0G1jwwLK791s11wkVk8r
+         cWCXK20MN5plNkegoP9ryQzsZtmatNLs0+LY//iX1CjGTXwo51/MZ7vVlFGGnOheys
+         56RunSz/M5FR8y3lmhk0qVjGCuHZqok5l1B634omZGXNFA/P1DQcOIKnep9bs1TcrP
+         2MqoNdtIXwEwu6iwPsjbKC33NCB8SrxvhiD7x19KqBK5cTn4QnBT6zBUjlOH0/kJLW
+         DnXRZzdP/mRCaU8gsBZyCh8EH1ans/BTjAFJg5OXroECw6vm/0GlsrLAlWNVAcyWG3
+         hn2M3Q/RLqwxQ==
+From:   Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
         Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org, sbates@raithlin.com,
-        logang@deltatee.com, Pankaj Raghav <pankydev8@gmail.com>,
-        =?UTF-8?Q?Javier_Gonz=C3=A1lez?= <javier@javigon.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Adam Manzanares <a.manzanares@samsung.com>,
-        Anuj Gupta <anuj20.g@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+        Ammar Faizi <ammarfaizi2@gnuweeb.org>,
+        Alviro Iskandar Setiawan <alviro.iskandar@gmail.com>,
+        io-uring <io-uring@vger.kernel.org>, gwml <gwml@vger.gnuweeb.org>
+Subject: [PATCH liburing v2 0/4] Changes for Makefile
+Date:   Thu, 10 Mar 2022 10:32:20 +0000
+Message-Id: <20220310103224.1675123-1-alviro.iskandar@gnuweeb.org>
+X-Mailer: git-send-email 2.27.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Mar 10, 2022 at 1:59 PM Christoph Hellwig <hch@lst.de> wrote:
->
-> What branch is this against?
-Sorry I missed that in the cover.
-Two options -
-(a) https://git.kernel.dk/cgit/linux-block/log/?h=io_uring-big-sqe
-first patch ("128 byte sqe support") is already there.
-(b) for-next (linux-block), series will fit on top of commit 9e9d83faa
-("io_uring: Remove unneeded test in io_run_task_work_sig")
+Hello sir,
 
-> Do you have a git tree available?
-Not at the moment.
+This patchset (v2) changes Makefile. 4 patches here:
 
-@Jens: Please see if it is possible to move patches to your
-io_uring-big-sqe branch (and maybe rename that to big-sqe-pt.v1).
+1. Remove -fomit-frame-pointer flag, because it's already covered
+   by the -O2 optimization flag.
 
-Thanks.
+2. When the header files are modified, the compiled objects are
+   not going to be recompiled because the header files are not
+   marked as a dependency for the objects.
+
+  - Instruct the compiler to generate dependency files.
+
+  - Include those files from src/Makefile. Ensure if any changes are
+    made, files that depend on the changes are recompiled.
+
+3. The test binaries statically link liburing using liburing.a file.
+   When liburing.a is recompiled, make sure the tests are also
+   recompiled to ensure changes are applied to the test binary. It
+   makes "make clean" command optional when making changes.
+
+4. Same as no. 3, but for examples.
+
+please review,
+thx
+
+link v1: https://lore.kernel.org/io-uring/20220308224002.3814225-1-alviro.iskandar@gnuweeb.org/
+v1 -> v2:
+  - Instruct the compiler to generate dependency files instead
+    of hard code it in the Makefile.
+  - Add liburing.a to dependency for test (patch 3).
+  - Add liburing.a to dependency for examples (patch 4).
+
+Signed-off-by: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
+---
+
+Alviro Iskandar Setiawan (4):
+  src/Makefile: Remove `-fomit-frame-pointer` from default build
+  src/Makefile: Add header files as dependency
+  test/Makefile: Add liburing.a as a dependency
+  examples/Makefile: Add liburing.a as a dependency
+
+ examples/Makefile |  2 +-
+ src/Makefile      | 13 ++++++-------
+ test/Makefile     |  4 ++--
+ 3 files changed, 9 insertions(+), 10 deletions(-)
+
+
+base-commit: 6231f56da7881bde6fb011e1b54d672f8fe5a224
+-- 
+2.25.1
+

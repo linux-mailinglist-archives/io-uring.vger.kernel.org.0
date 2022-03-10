@@ -2,223 +2,166 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B8F1C4D4800
-	for <lists+io-uring@lfdr.de>; Thu, 10 Mar 2022 14:25:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A32B4D4838
+	for <lists+io-uring@lfdr.de>; Thu, 10 Mar 2022 14:38:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242383AbiCJNZf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 10 Mar 2022 08:25:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45958 "EHLO
+        id S242512AbiCJNia (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 10 Mar 2022 08:38:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236943AbiCJNZe (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 10 Mar 2022 08:25:34 -0500
-Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0227BCEA24
-        for <io-uring@vger.kernel.org>; Thu, 10 Mar 2022 05:24:31 -0800 (PST)
-Received: by mail-pf1-x42f.google.com with SMTP id p8so5089986pfh.8
-        for <io-uring@vger.kernel.org>; Thu, 10 Mar 2022 05:24:30 -0800 (PST)
+        with ESMTP id S236870AbiCJNi3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 10 Mar 2022 08:38:29 -0500
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACAF714F2BC
+        for <io-uring@vger.kernel.org>; Thu, 10 Mar 2022 05:37:07 -0800 (PST)
+Received: by mail-wm1-x32b.google.com with SMTP id m42-20020a05600c3b2a00b00382ab337e14so5446096wms.3
+        for <io-uring@vger.kernel.org>; Thu, 10 Mar 2022 05:37:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:content-language:to:from
-         :subject:cc:content-transfer-encoding;
-        bh=o5IvQV1WjWmJf/aHwQ2SxU3sB0EykZpyrdLtO0AUHEg=;
-        b=DiTmKFGakOyxauqUwKRqzI4s+wuvOr9jjZ7DJJqPc6iJzhEEP4eSHrCIkqiU6hAmH6
-         +qJ3Snu/OICLxm+c9JrivHQc3H+qet8iFlaCdaaMbyPzjKMelmuNByTXfJGpOqxir/ao
-         ZHdJxw96z0pyF4bGHqJQJpM8Opz9g5ELyS36HzkYL0mISn+2DPZhrDirv4rk43yPCZv4
-         afMVEg/azUr3XgFVF/ltJLHBwbMe6ATL+W8hqNCd8WrRxVjPgYAloWPq38s3UIr9QqoY
-         TZWDFY6+hm4z3akOr3JMeM4piJIBcEj+EP1sdbVmHKHKpzWsEYQEUAQb2siON0bdawto
-         kChQ==
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :references:from:in-reply-to:content-transfer-encoding;
+        bh=t01d7DZUeVTS0b6xXmSJgoao5+zwN5iU4o+ZQVS/n1E=;
+        b=lCoP08hhVgFmhqtfdM5tvo6I29fFKQizHFdXrRW1xl9xcJZ94cq1ciyK4Z+yMA8LJl
+         9rXgCGS7RQvUH/QPYPmVeLM69nmvlEsOvniga0H5jiwcDTq/WW2a8CBGzZljN1Og8HBb
+         REsCY7VKzFH9CtuIWT0cKC1VRy3hKIHvHL9Ql1Sj+5j5E96Xr+bnZ01pmAyI3PE7T/lv
+         ZuaJkkf9HHZv43kTd9sJTFa+eu/bNEvdm1QUG1enOrqdPyzbm9K0/aFGFOMmU3qbCAGP
+         8u38E6tuykFnbbZRgSIEPkdtNDumk+AJ+xBw9fxYNmszqpLMekPHD0s5ld49t2KfNP5/
+         mOIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent
-         :content-language:to:from:subject:cc:content-transfer-encoding;
-        bh=o5IvQV1WjWmJf/aHwQ2SxU3sB0EykZpyrdLtO0AUHEg=;
-        b=4aBjyzG6Aa358sc9yf/Av/pRsWtZTpeeeEM2vsytiJus4zqhQdWU6UpNk+D94diK5N
-         Vf9M9POnOdYDFEYMk9h/DxEfELBERzcvD3jmXk6S32fPJkOhNHCvrc4u15FeYfojUxEQ
-         nvrItQjlim6PlwfipP1iHyMKtSKCBhFCj0edpAgje0EWogMpVKqhIUgQdhrpr4dEg4/c
-         YT0OBRgSbQBmtEnlVqSTUaS/NF0oTzpkLcV98cAWk0wSCtV01qZaG32rQASdY6i8A3EZ
-         OzE2jbbxUHiIFaiU/lREsyu1mprcW1ql5Kps7/JL7oplY3zu5fSDZRNwoLOd71qXNbjA
-         l6qw==
-X-Gm-Message-State: AOAM531uHkN+eLjWniNeO/PvrxZFYtBrQNgpi1s8q+yum0BmQdC0zuMc
-        tZlEyxumml8d3Iq2UeFHE9aFkdt3+T/9kOwY
-X-Google-Smtp-Source: ABdhPJzWZpc1x4dcR8WZSqEWoVRt6yIUVjxE95KFEGaNt/awn9VltbhlFwKTCdPqR4dfIa0aYijCRA==
-X-Received: by 2002:a65:6942:0:b0:378:9365:5963 with SMTP id w2-20020a656942000000b0037893655963mr4056263pgq.142.1646918670024;
-        Thu, 10 Mar 2022 05:24:30 -0800 (PST)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id j13-20020a633c0d000000b0037ffd2e6a4asm5899500pga.86.2022.03.10.05.24.29
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=t01d7DZUeVTS0b6xXmSJgoao5+zwN5iU4o+ZQVS/n1E=;
+        b=u34dnEBZ8GlPyeDQRWlpL7FqfA4XzqMEbI1mlgFneGoMB17pUuEwfN+VZ0Cic4AHIs
+         NRsRdu1uf4WyzfftgitSsB6+5m1Nh+teZsQDZ1dFkURKeQPFmuf/6ezweaxdJN6w004Z
+         0uOfAuN+APYFFPMd0dqlx/MBrRALSnqw0GDB5wY0ReKpvtSWq7VhTI2905zjcgmNyeQx
+         agiTTg6rIYRSiVYM9x8OPtQUJJk11LJynLkccLYwJORslxxnMx9mlPaEYOBvirUruWAu
+         b3xV6bZCt96Djz5KdRPgHFVPadYtZnWKL6BEDuvIGgzfNqE+k9txZ9L841rKCi7BQ1km
+         vMKA==
+X-Gm-Message-State: AOAM531v+ijaaI3vXpfXD8rYZXpg9ggKp/6020DJMrt2NtT81VYAI6hk
+        8Vj+BNY2Ss4qEAGgOTiyh9g=
+X-Google-Smtp-Source: ABdhPJyX7ydClqCSErivP9ld4Pe3lpvoRKOfGQftfEW1AZA3sckTKJmRdGAAYzcpbAUBH9H2xxWVxw==
+X-Received: by 2002:a05:600c:1d18:b0:389:cda6:f39f with SMTP id l24-20020a05600c1d1800b00389cda6f39fmr8469686wms.69.1646919426070;
+        Thu, 10 Mar 2022 05:37:06 -0800 (PST)
+Received: from [192.168.8.198] ([85.255.237.75])
+        by smtp.gmail.com with ESMTPSA id n2-20020a056000170200b001f1e16f3c53sm4282470wrc.51.2022.03.10.05.37.05
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Mar 2022 05:24:29 -0800 (PST)
-Message-ID: <35b8fdf8-25c0-0aae-417c-c9f808a27643@kernel.dk>
-Date:   Thu, 10 Mar 2022 06:24:28 -0700
+        Thu, 10 Mar 2022 05:37:05 -0800 (PST)
+Message-ID: <745ea281-8e34-d92a-214b-ab2fc421acb8@gmail.com>
+Date:   Thu, 10 Mar 2022 13:34:13 +0000
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.1
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: Sending CQE to a different ring
 Content-Language: en-US
-To:     io-uring <io-uring@vger.kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring: add support for IORING_OP_MSG_RING command
-Cc:     Artyom Pavlov <newpavlov@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+To:     Jens Axboe <axboe@kernel.dk>, Artyom Pavlov <newpavlov@gmail.com>,
+        io-uring@vger.kernel.org
+References: <bf044fd3-96c0-3b54-f643-c62ae333b4db@gmail.com>
+ <e31e5b96-5c20-d49b-da90-db559ba44927@kernel.dk>
+ <c4a02dbd-8dff-a311-ce4a-e7daffd6a22a@gmail.com>
+ <478d1650-139b-f02b-bebf-7d54aa24eae2@kernel.dk>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <478d1650-139b-f02b-bebf-7d54aa24eae2@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This adds support for IORING_OP_MSG_RING, which allows an SQE to signal
-another ring. That allows either waking up someone waiting on the ring,
-or even passing a 64-bit value via the user_data field in the CQE.
+On 3/10/22 03:00, Jens Axboe wrote:
+> On 3/9/22 7:11 PM, Artyom Pavlov wrote:
+>> 10.03.2022 04:36, Jens Axboe wrote:
+>>> On 3/9/22 4:49 PM, Artyom Pavlov wrote:
+>>>> Greetings!
+>>>>
+>>>> A common approach for multi-threaded servers is to have a number of
+>>>> threads equal to a number of cores and launch a separate ring in each
+>>>> one. AFAIK currently if we want to send an event to a different ring,
+>>>> we have to write-lock this ring, create SQE, and update the index
+>>>> ring. Alternatively, we could use some kind of user-space message
+>>>> passing.
+>>>>
+>>>> Such approaches are somewhat inefficient and I think it can be solved
+>>>> elegantly by updating the io_uring_sqe type to allow accepting fd of a
+>>>> ring to which CQE must be sent by kernel. It can be done by
+>>>> introducing an IOSQE_ flag and using one of currently unused padding
+>>>> u64s.
+>>>>
+>>>> Such feature could be useful for load balancing and message passing
+>>>> between threads which would ride on top of io-uring, i.e. you could
+>>>> send NOP with user_data pointing to a message payload.
+>>>
+>>> So what you want is a NOP with 'fd' set to the fd of another ring, and
+>>> that nop posts a CQE on that other ring? I don't think we'd need IOSQE
+>>> flags for that, we just need a NOP that supports that. I see a few ways
+>>> of going about that:
+>>>
+>>> 1) Add a new 'NOP' that takes an fd, and validates that that fd is an
+>>>      io_uring instance. It can then grab the completion lock on that ring
+>>>      and post an empty CQE.
+>>>
+>>> 2) We add a FEAT flag saying NOP supports taking an 'fd' argument, where
+>>>      'fd' is another ring. Posting CQE same as above.
+>>>
+>>> 3) We add a specific opcode for this. Basically the same as #2, but
+>>>      maybe with a more descriptive name than NOP.
+>>>
+>>> Might make sense to pair that with a CQE flag or something like that, as
+>>> there's no specific user_data that could be used as it doesn't match an
+>>> existing SQE that has been issued. IORING_CQE_F_WAKEUP for example.
+>>> Would be applicable to all the above cases.
+>>>
+>>> I kind of like #3 the best. Add a IORING_OP_RING_WAKEUP command, require
+>>> that sqe->fd point to a ring (could even be the ring itself, doesn't
+>>> matter). And add IORING_CQE_F_WAKEUP as a specific flag for that.
+>>>
+>>
+>> No, ideally I would like to be able to send any type of SQE to a
+>> different ring. For example, if I see that the current ring is
+>> overloaded, I can create exactly the same SQEs as during usual
+>> operation, but with a changed recipient ring.
+>>
+>> Your approach with a new "sendable" NOP will allow to emulate it in
+>> user-space, but it will involve unnecessary ring round-trip and will
+>> be a bit less pleasant in user code, e.g. we would need to encode a
+>> separate state "the task is being sent to a different ring" instead of
+>> simply telling io-uring "read data and report CQE on this ring"
+>> without any intermediate states.
+> 
+> OK, so what you're asking is to be able to submit an sqe to ring1, but
+> have the completion show up in ring2? With the idea being that the rings
+> are setup so that you're basing this on which thread should ultimately
+> process the request when it completes, which is why you want it to
+> target another ring?
+> 
+> It'd certainly be doable, but it's a bit of a strange beast. My main
+> concern with that would be:
+> 
+> 1) It's a fast path code addition to every request, we'd need to check
+>     some new field (sqe->completion_ring_fd) and then also grab a
+>     reference to that file for use at completion time.
+> 
+> 2) Completions are protected by the completion lock, and it isn't
+>     trivial to nest these. What happens if ring1 submits an sqe with
+>     ring2 as the cqe target, and ring2 submits an sqe with ring1 as the
+>     cqe target? We can't safely nest these, as we could easily introduce
+>     deadlocks that way.
+> 
+> My knee jerk reaction is that it'd be both simpler and cheaper to
+> implement this in userspace... Unless there's an elegant solution to it,
+> which I don't immediately see.
 
-sqe->fd must point to the fd of a ring that should receive the CQE.
-sqe->off will be propagated to the cqe->user_data on the target ring,
-and the CQE will have IORING_CQE_F_MSG set in its flags to indicate that
-this CQE was generated from a messaging request rather than a SQE issued
-locally on that ring. cqe->res will contain the pid/tid of the
-application that sent the request.
-
-This request type has the following request specific error cases:
-
-- -EBADFD. Set if the sqe->fd doesn't point to a file descriptor that is
-  of the io_uring type.
-- -EOVERFLOW. Set if the target rings CQ ring was in an overflow state
-  and we could not post the msssage.
-
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-
----
-
-There's a test case in the liburing wakeup-ring branch:
-
-https://git.kernel.dk/cgit/liburing/log/?h=wakeup-ring
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 4ea5356599cb..941d513f50cc 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -707,6 +707,11 @@ struct io_hardlink {
- 	int				flags;
- };
- 
-+struct io_msg {
-+	struct file			*file;
-+	u64 user_data;
-+};
-+
- struct io_async_connect {
- 	struct sockaddr_storage		address;
- };
-@@ -872,6 +877,7 @@ struct io_kiocb {
- 		struct io_mkdir		mkdir;
- 		struct io_symlink	symlink;
- 		struct io_hardlink	hardlink;
-+		struct io_msg		msg;
- 	};
- 
- 	u8				opcode;
-@@ -1122,6 +1128,9 @@ static const struct io_op_def io_op_defs[] = {
- 	[IORING_OP_MKDIRAT] = {},
- 	[IORING_OP_SYMLINKAT] = {},
- 	[IORING_OP_LINKAT] = {},
-+	[IORING_OP_MSG_RING] = {
-+		.needs_file		= 1,
-+	},
- };
- 
- /* requests with any of those set should undergo io_disarm_next() */
-@@ -4356,6 +4365,46 @@ static int io_nop(struct io_kiocb *req, unsigned int issue_flags)
- 	return 0;
- }
- 
-+static int io_msg_ring_prep(struct io_kiocb *req,
-+			    const struct io_uring_sqe *sqe)
-+{
-+	if (unlikely(sqe->addr || sqe->ioprio || sqe->buf_index || sqe->len ||
-+		     sqe->rw_flags || sqe->splice_fd_in || sqe->buf_index ||
-+		     sqe->personality))
-+		return -EINVAL;
-+
-+	if (req->file->f_op != &io_uring_fops)
-+		return -EBADFD;
-+
-+	req->msg.user_data = READ_ONCE(sqe->off);
-+	return 0;
-+}
-+
-+static int io_msg_ring(struct io_kiocb *req, unsigned int issue_flags)
-+{
-+	struct io_ring_ctx *target_ctx;
-+	struct io_uring_cqe *cqe;
-+	int ret = -EOVERFLOW;
-+
-+	target_ctx = req->file->private_data;
-+	spin_lock(&target_ctx->completion_lock);
-+	cqe = io_get_cqe(target_ctx);
-+	if (cqe) {
-+		ret = 0;
-+		WRITE_ONCE(cqe->user_data, req->msg.user_data);
-+		WRITE_ONCE(cqe->res, current->pid);
-+		WRITE_ONCE(cqe->flags, IORING_CQE_F_MSG);
-+		trace_io_uring_complete(target_ctx, NULL, cqe->user_data,
-+					cqe->res, cqe->flags);
-+	}
-+	io_commit_cqring(target_ctx);
-+	spin_unlock(&target_ctx->completion_lock);
-+	io_cqring_ev_posted(target_ctx);
-+
-+	__io_req_complete(req, issue_flags, ret, 0);
-+	return 0;
-+}
-+
- static int io_fsync_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- {
- 	struct io_ring_ctx *ctx = req->ctx;
-@@ -6734,6 +6783,8 @@ static int io_req_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 		return io_symlinkat_prep(req, sqe);
- 	case IORING_OP_LINKAT:
- 		return io_linkat_prep(req, sqe);
-+	case IORING_OP_MSG_RING:
-+		return io_msg_ring_prep(req, sqe);
- 	}
- 
- 	printk_once(KERN_WARNING "io_uring: unhandled opcode %d\n",
-@@ -7017,6 +7068,9 @@ static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags)
- 	case IORING_OP_LINKAT:
- 		ret = io_linkat(req, issue_flags);
- 		break;
-+	case IORING_OP_MSG_RING:
-+		ret = io_msg_ring(req, issue_flags);
-+		break;
- 	default:
- 		ret = -EINVAL;
- 		break;
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 42b2fe84dbcd..8bd4bfdd9a89 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -143,6 +143,7 @@ enum {
- 	IORING_OP_MKDIRAT,
- 	IORING_OP_SYMLINKAT,
- 	IORING_OP_LINKAT,
-+	IORING_OP_MSG_RING,
- 
- 	/* this goes last, obviously */
- 	IORING_OP_LAST,
-@@ -199,9 +200,11 @@ struct io_uring_cqe {
-  *
-  * IORING_CQE_F_BUFFER	If set, the upper 16 bits are the buffer ID
-  * IORING_CQE_F_MORE	If set, parent SQE will generate more CQE entries
-+ * IORING_CQE_F_MSG	If set, CQE was generated with IORING_OP_MSG_RING
-  */
- #define IORING_CQE_F_BUFFER		(1U << 0)
- #define IORING_CQE_F_MORE		(1U << 1)
-+#define IORING_CQE_F_MSG		(1U << 2)
- 
- enum {
- 	IORING_CQE_BUFFER_SHIFT		= 16,
+Per request fd will be ugly and slow unfortunately. As people asked about
+a similar thing before, the only thing I can suggest is to add a way
+to pass another SQ. The execution will be slower, but at least can be
+made zero overhead for the normal path.
 
 -- 
-Jens Axboe
-
+Pavel Begunkov

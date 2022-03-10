@@ -2,67 +2,69 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C06134D4874
-	for <lists+io-uring@lfdr.de>; Thu, 10 Mar 2022 14:56:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AAF844D4881
+	for <lists+io-uring@lfdr.de>; Thu, 10 Mar 2022 15:01:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242597AbiCJN5U (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 10 Mar 2022 08:57:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47484 "EHLO
+        id S231761AbiCJOCB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 10 Mar 2022 09:02:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242589AbiCJN5T (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 10 Mar 2022 08:57:19 -0500
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 030C014FBF8
-        for <io-uring@vger.kernel.org>; Thu, 10 Mar 2022 05:56:17 -0800 (PST)
-Received: by mail-wr1-x42e.google.com with SMTP id x15so8042917wru.13
-        for <io-uring@vger.kernel.org>; Thu, 10 Mar 2022 05:56:16 -0800 (PST)
+        with ESMTP id S231335AbiCJOCA (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 10 Mar 2022 09:02:00 -0500
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B38514E976
+        for <io-uring@vger.kernel.org>; Thu, 10 Mar 2022 06:00:59 -0800 (PST)
+Received: by mail-lf1-x12d.google.com with SMTP id w12so9567498lfr.9
+        for <io-uring@vger.kernel.org>; Thu, 10 Mar 2022 06:00:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :references:from:in-reply-to:content-transfer-encoding;
-        bh=z/++jREUCz4bbNPChd6mAA6U/hGJ4aJuktBIuoOLfds=;
-        b=F+dhGE9vGLHWEusYXUBjkyA/XDXbR+izXOPwMAUzjz3qG0GgZX2U4NNZP3bosf8lu9
-         0Gqso+jkhQh+s53mvQdB+KUen/c+qfmv8iDfXq4B1irI7yh7yv0x3VCYQNzwfpAQ/Ut6
-         Z0rSuCfS+ftObHaAVuLxzEvecpmXalMOiXJC0Et0CPw4i1yHkyWvqx6dWLxhvSm8Nv/6
-         tkLEVAKb76La1LOTItzrJJphRD8Gu7sESHUYE/Mscw4mm4zzZYOIbrFmHXrkgwVk2j8i
-         qzGLWVFCxqno5ikrLLwMo2XTr4OnDLzLnfi9nXu/pYBvzwsPYM0MncPkjR77vFq/0Yko
-         7dWQ==
+        bh=65P+uR8tywTIrtMqpg7cTIjPCnwNPA7Ch9lJDEY0oMs=;
+        b=m4irANCDxMhzd7P65cQIbPKdtA6eY2YBchQ514tnVeGNEQAaOfuGcUic4CAfUSbR/q
+         9BFobWCBCHcqY666PnsblX0C2+RbmEF2KbCTE0jRmMni04tGyCw5FFqJVcIkhxRD9KaD
+         HH9ELvAg7Ptx0Z7d4IE9Giawcuj1RJIQU7O6wkw5ppM8fFItmvkHRMkOhprOa7vyPJLo
+         CyPvpQhXuY3ApvQ+JLSlZSnZMJaF2WxiCaFVe2TBguN5MFg9KUwRJ6MBuK5Diq3AA4WK
+         EegsRTrHxEf3U9V5Yic1NATpSK/gQFSp0FSLbzbp6REtRwW0Odw8Ge41y9B5yAXGiBkW
+         /bVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=z/++jREUCz4bbNPChd6mAA6U/hGJ4aJuktBIuoOLfds=;
-        b=R0FwVqAEQ3KtgeO3V+z3y6DgZL8oykAddcf5ArvlOYVjY+J8QZ481unXYiUYyqAk1G
-         HIcIVSJNkE1oynf+Q+DUxhLcaLj+QIDaOFaEmC7aARG2LF88WJyCVxX0OH6RuohtUyGQ
-         JidoCZjQHvi6I0/rH3BAaFYuC5UM9nRSKRPDVxKfydD8nUttr6yiruRR0D6HTDsIFTQ6
-         /rBOVi2DZJ3zD7Z7NKLYxdq6PExnM88hX/rIfjqflvVnoLA3/p5qWlbChzptrVgc69JD
-         zZ902qVmrJBc1Lq+MW4NcI+MP/qlnrQau670oaR/H/EYO2tCzlGNxNSPOdvYrZjV50b4
-         uHUQ==
-X-Gm-Message-State: AOAM530bYrVa7G7iBbVbm4R74z7L2b/RGJVtzde4aV6WvUl4aX/eAAIZ
-        IkBuQdk0aHD1Xl92QJvZJ14=
-X-Google-Smtp-Source: ABdhPJxvZvDy8R+EjIPk2ckly8M+HysPaLuwqFiGGqY1pOyoc0AEPUpbbkXW+Nrvgyz3+ZYpGaEr2Q==
-X-Received: by 2002:adf:f082:0:b0:1f1:d917:c286 with SMTP id n2-20020adff082000000b001f1d917c286mr3715523wro.490.1646920575403;
-        Thu, 10 Mar 2022 05:56:15 -0800 (PST)
-Received: from [192.168.8.198] ([85.255.237.75])
-        by smtp.gmail.com with ESMTPSA id u25-20020a05600c211900b00389d4bdb3d2sm5169563wml.36.2022.03.10.05.56.14
+        bh=65P+uR8tywTIrtMqpg7cTIjPCnwNPA7Ch9lJDEY0oMs=;
+        b=gsQl5zYI6FRj+NPLkO3CUAD7b/rIMllGbbCrTc++IeqwfOjo+/wQ1Rizj7q3WWQ/Zx
+         QQ6C2J3A5Az9Vz8DPXatQ1sNz0K4G+QGYCfFLJxb/Jhs2KNFqs/KitINYs1JmXsAcN5+
+         YXJOV+p8jJpVqq84k+WpN9kFJdauCUyBylLEVOwzDZ5NAsibHKIX2oN02+6J19ks3WKo
+         wm4V+9oBJ4mJw2En+qI7BPUcNyEPzGtxdFq5+eDtl1x8pRdN9tIShubFWtK+wOWDkM+A
+         VXQR02ZGAtP1w0IB4ISlJlIibhJRj+ut83GgjUKHmeICv/33N+ZeE57PLXDMsN2FqP+b
+         JKQQ==
+X-Gm-Message-State: AOAM530kxBeraYHQM22fRNbpYvEiphd3u7RjxKK97KdQApPREWH4mLLD
+        udkUQmHMB+jwkA9N2fdfCg==
+X-Google-Smtp-Source: ABdhPJy9j/7RgcMjD2NFcSJJe0WLDixq+W1Rh8gsLuAnU7kr0jSz268UVUiKh0Yiv31J2+yI9QUHhQ==
+X-Received: by 2002:ac2:5d62:0:b0:448:6a0b:da42 with SMTP id h2-20020ac25d62000000b004486a0bda42mr817741lft.223.1646920857165;
+        Thu, 10 Mar 2022 06:00:57 -0800 (PST)
+Received: from [172.31.10.33] ([109.72.231.42])
+        by smtp.gmail.com with ESMTPSA id f14-20020a056512092e00b004423570c03asm991562lft.287.2022.03.10.06.00.56
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Mar 2022 05:56:15 -0800 (PST)
-Message-ID: <c483c170-9bb7-2f97-744a-267b06b2f142@gmail.com>
-Date:   Thu, 10 Mar 2022 13:53:19 +0000
+        Thu, 10 Mar 2022 06:00:56 -0800 (PST)
+Message-ID: <fd93cb36-6dd3-322b-7ec2-017a72e1a5f7@gmail.com>
+Date:   Thu, 10 Mar 2022 17:00:55 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
+ Thunderbird/91.6.1
 Subject: Re: Sending CQE to a different ring
 Content-Language: en-US
-To:     Jens Axboe <axboe@kernel.dk>, Artyom Pavlov <newpavlov@gmail.com>,
-        io-uring@vger.kernel.org
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
 References: <bf044fd3-96c0-3b54-f643-c62ae333b4db@gmail.com>
  <e31e5b96-5c20-d49b-da90-db559ba44927@kernel.dk>
- <f4db0d4c-0ea3-3efa-7e28-bc727b7bc05a@kernel.dk>
- <1f58dbfa-9b1f-5627-89aa-2dda3e2844ab@kernel.dk>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <1f58dbfa-9b1f-5627-89aa-2dda3e2844ab@kernel.dk>
+ <c4a02dbd-8dff-a311-ce4a-e7daffd6a22a@gmail.com>
+ <478d1650-139b-f02b-bebf-7d54aa24eae2@kernel.dk>
+ <a13e9f56-0f1c-c934-9ca7-07ca8f82c6c8@gmail.com>
+ <9f8c753d-fed4-08ac-7b39-aee23b8ba04c@kernel.dk>
+ <f12c2f2b-858a-421c-d663-b944b2adb472@kernel.dk>
+From:   Artyom Pavlov <newpavlov@gmail.com>
+In-Reply-To: <f12c2f2b-858a-421c-d663-b944b2adb472@kernel.dk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -75,176 +77,63 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/10/22 02:33, Jens Axboe wrote:
-> On 3/9/22 6:55 PM, Jens Axboe wrote:
->> On 3/9/22 6:36 PM, Jens Axboe wrote:
->>> On 3/9/22 4:49 PM, Artyom Pavlov wrote:
->>>> Greetings!
->>>>
->>>> A common approach for multi-threaded servers is to have a number of
->>>> threads equal to a number of cores and launch a separate ring in each
->>>> one. AFAIK currently if we want to send an event to a different ring,
->>>> we have to write-lock this ring, create SQE, and update the index
->>>> ring. Alternatively, we could use some kind of user-space message
->>>> passing.
->>>>
->>>> Such approaches are somewhat inefficient and I think it can be solved
->>>> elegantly by updating the io_uring_sqe type to allow accepting fd of a
->>>> ring to which CQE must be sent by kernel. It can be done by
->>>> introducing an IOSQE_ flag and using one of currently unused padding
->>>> u64s.
->>>>
->>>> Such feature could be useful for load balancing and message passing
->>>> between threads which would ride on top of io-uring, i.e. you could
->>>> send NOP with user_data pointing to a message payload.
->>>
->>> So what you want is a NOP with 'fd' set to the fd of another ring, and
->>> that nop posts a CQE on that other ring? I don't think we'd need IOSQE
->>> flags for that, we just need a NOP that supports that. I see a few ways
->>> of going about that:
->>>
->>> 1) Add a new 'NOP' that takes an fd, and validates that that fd is an
->>>     io_uring instance. It can then grab the completion lock on that ring
->>>     and post an empty CQE.
->>>
->>> 2) We add a FEAT flag saying NOP supports taking an 'fd' argument, where
->>>     'fd' is another ring. Posting CQE same as above.
->>>
->>> 3) We add a specific opcode for this. Basically the same as #2, but
->>>     maybe with a more descriptive name than NOP.
->>>
->>> Might make sense to pair that with a CQE flag or something like that, as
->>> there's no specific user_data that could be used as it doesn't match an
->>> existing SQE that has been issued. IORING_CQE_F_WAKEUP for example.
->>> Would be applicable to all the above cases.
->>>
->>> I kind of like #3 the best. Add a IORING_OP_RING_WAKEUP command, require
->>> that sqe->fd point to a ring (could even be the ring itself, doesn't
->>> matter). And add IORING_CQE_F_WAKEUP as a specific flag for that.
->>
->> Something like the below, totally untested. The request will complete on
->> the original ring with either 0, for success, or -EOVERFLOW if the
->> target ring was already in an overflow state. If the fd specified isn't
->> an io_uring context, then the request will complete with -EBADFD.
->>
->> If you have any way of testing this, please do. I'll write a basic
->> functionality test for it as well, but not until tomorrow.
->>
->> Maybe we want to include in cqe->res who the waker was? We can stuff the
->> pid/tid in there, for example.
-> 
-> Made the pid change, and also wrote a test case for it. Only change
-> otherwise is adding a completion trace event as well. Patch below
-> against for-5.18/io_uring, and attached the test case for liburing.
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 2e04f718319d..b21f85a48224 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -1105,6 +1105,9 @@ static const struct io_op_def io_op_defs[] = {
->   	[IORING_OP_MKDIRAT] = {},
->   	[IORING_OP_SYMLINKAT] = {},
->   	[IORING_OP_LINKAT] = {},
-> +	[IORING_OP_WAKEUP_RING] = {
-> +		.needs_file		= 1,
-> +	},
->   };
->   
->   /* requests with any of those set should undergo io_disarm_next() */
-> @@ -4235,6 +4238,44 @@ static int io_nop(struct io_kiocb *req, unsigned int issue_flags)
->   	return 0;
->   }
->   
-> +static int io_wakeup_ring_prep(struct io_kiocb *req,
-> +			       const struct io_uring_sqe *sqe)
-> +{
-> +	if (unlikely(sqe->addr || sqe->ioprio || sqe->buf_index || sqe->off ||
-> +		     sqe->len || sqe->rw_flags || sqe->splice_fd_in ||
-> +		     sqe->buf_index || sqe->personality))
-> +		return -EINVAL;
-> +
-> +	if (req->file->f_op != &io_uring_fops)
-> +		return -EBADFD;
-> +
-> +	return 0;
-> +}
-> +
-> +static int io_wakeup_ring(struct io_kiocb *req, unsigned int issue_flags)
-> +{
-> +	struct io_uring_cqe *cqe;
-> +	struct io_ring_ctx *ctx;
-> +	int ret = 0;
-> +
-> +	ctx = req->file->private_data;
-> +	spin_lock(&ctx->completion_lock);
-> +	cqe = io_get_cqe(ctx);
-> +	if (cqe) {
-> +		WRITE_ONCE(cqe->user_data, 0);
-> +		WRITE_ONCE(cqe->res, 0);
-> +		WRITE_ONCE(cqe->flags, IORING_CQE_F_WAKEUP);
-> +	} else {
-> +		ret = -EOVERFLOW;
-> +	}
+> It's not the branches I'm worried about, it's the growing of the request
+> to accomodate it, and the need to bring in another fd for this.
+Maybe it's worth to pre-register fds of rings to which we can send CQEs 
+similarly to pre-registering file fds? It would allow us to use u8 or 
+u16 instead of u64 for identifying recipient ring.
 
-io_fill_cqe_aux(), maybe? Handles overflows better, increments cq_extra,
-etc. Might also make sense to kick cq_timeouts, so waiters are forced to
-wake up.
+> But I guess I'm still a bit confused on what this will buy is. The
+> request is still being executed on the first ring (and hence the thread
+> associated with it), with the suggested approach here the only thing
+> you'd gain is the completion going somewhere else. Is this purely about
+> the post-processing that happens when a completion is posted to a given
+> ring?
 
-> +	io_commit_cqring(ctx);
-> +	spin_unlock(&ctx->completion_lock);
-> +	io_cqring_ev_posted(ctx);
-> +
-> +	__io_req_complete(req, issue_flags, ret, 0);
-> +	return 0;
-> +}
-> +
->   static int io_fsync_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
->   {
->   	struct io_ring_ctx *ctx = req->ctx;
-> @@ -6568,6 +6609,8 @@ static int io_req_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
->   		return io_symlinkat_prep(req, sqe);
->   	case IORING_OP_LINKAT:
->   		return io_linkat_prep(req, sqe);
-> +	case IORING_OP_WAKEUP_RING:
-> +		return io_wakeup_ring_prep(req, sqe);
->   	}
->   
->   	printk_once(KERN_WARNING "io_uring: unhandled opcode %d\n",
-> @@ -6851,6 +6894,9 @@ static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags)
->   	case IORING_OP_LINKAT:
->   		ret = io_linkat(req, issue_flags);
->   		break;
-> +	case IORING_OP_WAKEUP_RING:
-> +		ret = io_wakeup_ring(req, issue_flags);
-> +		break;
->   	default:
->   		ret = -EINVAL;
->   		break;
-> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-> index 787f491f0d2a..088232133594 100644
-> --- a/include/uapi/linux/io_uring.h
-> +++ b/include/uapi/linux/io_uring.h
-> @@ -143,6 +143,7 @@ enum {
->   	IORING_OP_MKDIRAT,
->   	IORING_OP_SYMLINKAT,
->   	IORING_OP_LINKAT,
-> +	IORING_OP_WAKEUP_RING,
->   
->   	/* this goes last, obviously */
->   	IORING_OP_LAST,
-> @@ -199,9 +200,11 @@ struct io_uring_cqe {
->    *
->    * IORING_CQE_F_BUFFER	If set, the upper 16 bits are the buffer ID
->    * IORING_CQE_F_MORE	If set, parent SQE will generate more CQE entries
-> + * IORING_CQE_F_WAKEUP	Wakeup request CQE, no link to an SQE
->    */
->   #define IORING_CQE_F_BUFFER		(1U << 0)
->   #define IORING_CQE_F_MORE		(1U << 1)
-> +#define IORING_CQE_F_WAKEUP		(1U << 2)
->   
->   enum {
->   	IORING_CQE_BUFFER_SHIFT		= 16,
-> 
+As I wrote earlier, I am not familiar with internals of the io-uring 
+implementation, so I am talking purely from user point of view. I will 
+trust your judgment in regards of implementation complexity.
 
--- 
-Pavel Begunkov
+I guess, from user PoV, it does not matter on which ring the SQE will be 
+executed. It can have certain performance implications, but otherwise it 
+for user it's simply an implementation detail.
+
+> How did the original thread end up with the work to begin with? Was the
+> workload evenly distributed at that point, but later conditions (before
+> it get issued) mean that the situation has now changed and we'd prefer
+> to execute it somewhere else?
+
+Let's talk about a concrete simplified example. Imagine a server which 
+accepts from network commands to compute hash for a file with given 
+path. The server executes the following algorithm:
+
+1) Accept connection
+2) Read command
+3) Open file and create hasher state
+4) Read chunk of data from file
+5) If read data is not empty, update hasher state and go to step 4, else 
+finalize hasher
+6) Return the resulting hash and go to step 2
+
+We have two places where we can balance load. First, after we accepted 
+connection we should decide a ring which will process this connection. 
+Second, during creation of SQE for step 4, if the current thread is 
+overloaded, we can transfer task to a different thread.
+
+The problem is that we can not predict how kernel will return read 
+chunks. Even if we distributed SQEs evenly across rings, it's possible 
+that kernel will return CQEs for a single ring in burst thus overloading 
+it, while other threads will starve for events.
+
+On a second thought, it looks like your solution with 
+IORING_OP_WAKEUP_RING will have the following advantage: it will allow 
+us to migrate task before execution of step 5 has started, while with my 
+proposal we will be able to migrate tasks only on SQE creation (i.e. on 
+step 4).
+
+> One idea... You issue the request as you normally would for ring1, and
+> you mark that request A with IOSQE_CQE_SKIP_SUCCESS. Then you link an
+> IORING_OP_WAKEUP_RING to request A, with the fd for it set to ring2, and
+> also mark that with IOSQE_CQE_SKIP_SUCCESS.
+
+Looks interesting! I have forgot about linking and IOSQE_CQE_SKIP_SUCCESS.

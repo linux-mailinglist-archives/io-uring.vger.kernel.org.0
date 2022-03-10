@@ -2,104 +2,144 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 51DB14D402B
-	for <lists+io-uring@lfdr.de>; Thu, 10 Mar 2022 05:14:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 426D54D4287
+	for <lists+io-uring@lfdr.de>; Thu, 10 Mar 2022 09:29:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231663AbiCJEPY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 9 Mar 2022 23:15:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33664 "EHLO
+        id S240348AbiCJIad (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 10 Mar 2022 03:30:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44382 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230368AbiCJEPY (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 9 Mar 2022 23:15:24 -0500
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F2077807B
-        for <io-uring@vger.kernel.org>; Wed,  9 Mar 2022 20:14:24 -0800 (PST)
-Received: by mail-pj1-x102e.google.com with SMTP id k5-20020a17090a3cc500b001befa0d3102so5422389pjd.1
-        for <io-uring@vger.kernel.org>; Wed, 09 Mar 2022 20:14:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language
-         :from:to:references:in-reply-to:content-transfer-encoding;
-        bh=bwN/6GkoqDkfoY3yn2mLxmQRADUiBaQOC0CQ6Jfm2sg=;
-        b=lbffrn88bN/WgA/WROGCMFDx40DeR7drEiGfA9Btf0I56bZlRGANVGsi5m31cGDJzn
-         sZgkhIKmaxyRImRNnDeMu4TPUXWMBpsOWX+RawpyI2TQ3RFe4o+j6ag20BI3MGnHwBvk
-         F7pdA9lO5Y1qAM/a62/gsAVQHMJvALDuH9pmwDQ1XLY0B2E2+Jg0DoUlZ0OY1wtbDBn9
-         ZhquKdZ5CR606gjaP0xXIL5wyFRLj5ZnKL6x/JvLPFKefsrVubkUWcmiMqeaqf/8+qBm
-         y3TJrGIbHbXBoM5+yOOOIg3SrYOWQXZq6KxIObObFqpdXxrCDcGfIjMZiw8wjkm2/6NV
-         SJWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:from:to:references:in-reply-to
-         :content-transfer-encoding;
-        bh=bwN/6GkoqDkfoY3yn2mLxmQRADUiBaQOC0CQ6Jfm2sg=;
-        b=oZY1gNzL++nA+OHJDKRxIRKgHSO1D84O+U+1JzxxTm5Dpo1YG56NgWJlIXsTtPYf3V
-         EpBEDLFNvxwisfq+Gr5YRBGGA6tK/oSyskIad3epaE6oUteL288bK9Cn3YJFbnlmo5MP
-         cul2gnuUoLJh9NL+28CxzU46ydZgcv6uoJ0k91mtUzVkH8nwfoxBsHLxodfjfUcQnvlk
-         oy546tWScCGlTv9EnBdCVpltflEc9uviX6cyZwR8mj2dpZtFLbisO27fssgYc1DgD3UW
-         ZmpZOQEzpTxml0U6yKfQJJ78P8ZKx9zxK4FGQPVmsp7uLt8SALezN+fPkHKbnsv1S8c2
-         TRhQ==
-X-Gm-Message-State: AOAM531lg6kBWUQSBHE48cewl/skOuKmGfrXElm4+7EmUAf43amrquG0
-        5XKxOEoLCyLYtv11PIUgKNbPS6k3jwgaU2yu
-X-Google-Smtp-Source: ABdhPJw3jM5he8PwBcnhYhGC2HVDFSXBGUrb3o31xvIob8l71GMydvvoNBHVbj7yjhlWmpAtOZmscg==
-X-Received: by 2002:a17:903:281:b0:14c:f3b3:209b with SMTP id j1-20020a170903028100b0014cf3b3209bmr2866047plr.87.1646885663425;
-        Wed, 09 Mar 2022 20:14:23 -0800 (PST)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id m79-20020a628c52000000b004f6f249d298sm4663219pfd.80.2022.03.09.20.14.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Mar 2022 20:14:22 -0800 (PST)
-Message-ID: <f12c2f2b-858a-421c-d663-b944b2adb472@kernel.dk>
-Date:   Wed, 9 Mar 2022 21:14:21 -0700
+        with ESMTP id S232250AbiCJIab (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 10 Mar 2022 03:30:31 -0500
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D834513570C;
+        Thu, 10 Mar 2022 00:29:30 -0800 (PST)
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 4F60268AFE; Thu, 10 Mar 2022 09:29:26 +0100 (CET)
+Date:   Thu, 10 Mar 2022 09:29:26 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Kanchan Joshi <joshi.k@samsung.com>
+Cc:     axboe@kernel.dk, hch@lst.de, kbusch@kernel.org,
+        asml.silence@gmail.com, io-uring@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+        sbates@raithlin.com, logang@deltatee.com, pankydev8@gmail.com,
+        javier@javigon.com, mcgrof@kernel.org, a.manzanares@samsung.com,
+        joshiiitr@gmail.com, anuj20.g@samsung.com
+Subject: Re: [PATCH 00/17] io_uring passthru over nvme
+Message-ID: <20220310082926.GA26614@lst.de>
+References: <CGME20220308152651epcas5p1ebd2dc7fa01db43dd587c228a3695696@epcas5p1.samsung.com> <20220308152105.309618-1-joshi.k@samsung.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.1
-Subject: Re: Sending CQE to a different ring
-Content-Language: en-US
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Artyom Pavlov <newpavlov@gmail.com>, io-uring@vger.kernel.org
-References: <bf044fd3-96c0-3b54-f643-c62ae333b4db@gmail.com>
- <e31e5b96-5c20-d49b-da90-db559ba44927@kernel.dk>
- <c4a02dbd-8dff-a311-ce4a-e7daffd6a22a@gmail.com>
- <478d1650-139b-f02b-bebf-7d54aa24eae2@kernel.dk>
- <a13e9f56-0f1c-c934-9ca7-07ca8f82c6c8@gmail.com>
- <9f8c753d-fed4-08ac-7b39-aee23b8ba04c@kernel.dk>
-In-Reply-To: <9f8c753d-fed4-08ac-7b39-aee23b8ba04c@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220308152105.309618-1-joshi.k@samsung.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/9/22 9:03 PM, Jens Axboe wrote:
-> I'll mull over this a bit...
+What branch is this against?
 
-One idea... You issue the request as you normally would for ring1, and
-you mark that request A with IOSQE_CQE_SKIP_SUCCESS. Then you link an
-IORING_OP_WAKEUP_RING to request A, with the fd for it set to ring2, and
-also mark that with IOSQE_CQE_SKIP_SUCCESS.
+Do you have a git tree available?
 
-We'd need to have sqe->addr (or whatever field) in the WAKEUP_RING
-request be set to the user_data of request A, so we can propagate it.
-
-The end result is that ring1 won't see any completions for request A or
-the linked WAKEUP, unless one of them fails. If that happens, then you
-get to process things locally still, but given that this is a weird
-error case, shouldn't affect things in practice. ring2 will get the CQE
-posted once request A has completed, with the user_data filled in from
-request A. Which is really what we care about here, as far as I
-understand.
-
-This basically works right now with what I posted, and without needing
-to rearchitect a bunch of stuff. And it's pretty efficient. Only thing
-we'd need to add is passing in the target cqe user_data for the WAKEUP
-request. Would just need to be wrapped in something that allows you to
-do this easily, as it would be useful for others too potentially.
-
--- 
-Jens Axboe
-
+On Tue, Mar 08, 2022 at 08:50:48PM +0530, Kanchan Joshi wrote:
+> This is a streamlined series with new way of doing uring-cmd, and connects
+> nvme-passthrough (over char device /dev/ngX) to it.
+> uring-cmd enables using io_uring for any arbitrary command (ioctl,
+> fsctl etc.) exposed by the command provider (e.g. driver, fs etc.).
+> 
+> To store the command inline within the sqe, Jens added an option to setup
+> the ring with 128-byte SQEs.This gives 80 bytes of space (16 bytes at
+> the end of the first sqe + 64 bytes in the second sqe). With inline
+> command in sqe, the application avoids explicit allocation and, in the
+> kernel, we avoid doing copy_from_user. Command-opcode, length etc.
+> are stored in per-op fields of io_uring_sqe.
+> 
+> Non-inline submission (when command is a user-space pointer rather than
+> housed inside sqe) is also supported.
+> 
+> io_uring sends this command down by newly introduced ->async_cmd()
+> handler in file_operations. The handler does what is required to
+> submit, and indicates queued completion.The infra has been added to
+> process the completion when it arrives.
+> 
+> Overall the patches wire up the following capabilities for this path:
+> - async
+> - fixed-buffer
+> - plugging
+> - bio-cache
+> - sync and async polling.
+> 
+> This scales well. 512b randread perf (KIOPS) comparing
+> uring-passthru-over-char (/dev/ng0n1) to
+> uring-over-block(/dev/nvme0n1)
+> 
+> QD    uring    pt    uring-poll    pt-poll
+> 8      538     589      831         902
+> 64     967     1131     1351        1378
+> 256    1043    1230     1376        1429
+> 
+> Testing/perf is done with this custom fio that turnes regular-io into
+> passthru-io on supplying "uring_cmd=1" option.
+> https://github.com/joshkan/fio/tree/big-sqe-pt.v1
+> 
+> Example command-line:
+> fio -iodepth=256 -rw=randread -ioengine=io_uring -bs=512 -numjobs=1
+> -runtime=60 -group_reporting -iodepth_batch_submit=64
+> -iodepth_batch_complete_min=1 -iodepth_batch_complete_max=64
+> -fixedbufs=1 -hipri=1 -sqthread_poll=0 -filename=/dev/ng0n1
+> -name=io_uring_256 -uring_cmd=1
+> 
+> 
+> Anuj Gupta (3):
+>   io_uring: prep for fixed-buffer enabled uring-cmd
+>   nvme: enable passthrough with fixed-buffer
+>   nvme: enable non-inline passthru commands
+> 
+> Jens Axboe (5):
+>   io_uring: add support for 128-byte SQEs
+>   fs: add file_operations->async_cmd()
+>   io_uring: add infra and support for IORING_OP_URING_CMD
+>   io_uring: plug for async bypass
+>   block: wire-up support for plugging
+> 
+> Kanchan Joshi (5):
+>   nvme: wire-up support for async-passthru on char-device.
+>   io_uring: add support for uring_cmd with fixed-buffer
+>   block: factor out helper for bio allocation from cache
+>   nvme: enable bio-cache for fixed-buffer passthru
+>   io_uring: add support for non-inline uring-cmd
+> 
+> Keith Busch (2):
+>   nvme: modify nvme_alloc_request to take an additional parameter
+>   nvme: allow user passthrough commands to poll
+> 
+> Pankaj Raghav (2):
+>   io_uring: add polling support for uring-cmd
+>   nvme: wire-up polling for uring-passthru
+> 
+>  block/bio.c                     |  43 ++--
+>  block/blk-map.c                 |  45 +++++
+>  block/blk-mq.c                  |  93 ++++-----
+>  drivers/nvme/host/core.c        |  21 +-
+>  drivers/nvme/host/ioctl.c       | 336 +++++++++++++++++++++++++++-----
+>  drivers/nvme/host/multipath.c   |   2 +
+>  drivers/nvme/host/nvme.h        |  11 +-
+>  drivers/nvme/host/pci.c         |   4 +-
+>  drivers/nvme/target/passthru.c  |   2 +-
+>  fs/io_uring.c                   | 188 ++++++++++++++++--
+>  include/linux/bio.h             |   1 +
+>  include/linux/blk-mq.h          |   4 +
+>  include/linux/fs.h              |   2 +
+>  include/linux/io_uring.h        |  43 ++++
+>  include/uapi/linux/io_uring.h   |  21 +-
+>  include/uapi/linux/nvme_ioctl.h |   4 +
+>  16 files changed, 689 insertions(+), 131 deletions(-)
+> 
+> -- 
+> 2.25.1
+---end quoted text---

@@ -2,31 +2,31 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 55D714D44B2
-	for <lists+io-uring@lfdr.de>; Thu, 10 Mar 2022 11:32:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53A4B4D44AE
+	for <lists+io-uring@lfdr.de>; Thu, 10 Mar 2022 11:32:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241291AbiCJKdp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 10 Mar 2022 05:33:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58460 "EHLO
+        id S241276AbiCJKdo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 10 Mar 2022 05:33:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58470 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241436AbiCJKde (ORCPT
+        with ESMTP id S241434AbiCJKde (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Thu, 10 Mar 2022 05:33:34 -0500
 Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A56FE1039
-        for <io-uring@vger.kernel.org>; Thu, 10 Mar 2022 02:32:29 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 615AF108B
+        for <io-uring@vger.kernel.org>; Thu, 10 Mar 2022 02:32:30 -0800 (PST)
 Received: from localhost.localdomain (unknown [138.197.159.143])
-        by gnuweeb.org (Postfix) with ESMTPSA id C7FFE7E2B2;
-        Thu, 10 Mar 2022 10:32:27 +0000 (UTC)
+        by gnuweeb.org (Postfix) with ESMTPSA id 9A2197E2BF;
+        Thu, 10 Mar 2022 10:32:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1646908348;
-        bh=3LklH9xcZlJsW8N4l5LemR/TtMKAc+MebSjm6DfEsr0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Q2zE2VHtA+gUXZnZHIvFjJnDzlVqdZhK+XxreiA/18lop0G1jwwLK791s11wkVk8r
-         cWCXK20MN5plNkegoP9ryQzsZtmatNLs0+LY//iX1CjGTXwo51/MZ7vVlFGGnOheys
-         56RunSz/M5FR8y3lmhk0qVjGCuHZqok5l1B634omZGXNFA/P1DQcOIKnep9bs1TcrP
-         2MqoNdtIXwEwu6iwPsjbKC33NCB8SrxvhiD7x19KqBK5cTn4QnBT6zBUjlOH0/kJLW
-         DnXRZzdP/mRCaU8gsBZyCh8EH1ans/BTjAFJg5OXroECw6vm/0GlsrLAlWNVAcyWG3
-         hn2M3Q/RLqwxQ==
+        s=default; t=1646908349;
+        bh=OMEfabtPm7vY8fJO6cczoM+3Wl07SdHJQA2hhu2EJjk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=RHyE3ncvASDFkuGRFy4oJwgzx0+E72zoLTFyDlwHFR9cP/qfK3bnlItN2OFE8yNCI
+         YSt1Y1yfo73lCWKJjJ9RAfNkyaKUsGXfrULm7ehVo3eQmIltBOTrkWlviSJk0USKje
+         W5LI2JswZoFsfCd3n6TX2N6Vka7UStiGuzKo3jZqYft2vmgk5R8XTRq5Yer+O7An1U
+         c0cYPcc7uxG/+thCMeHkaCMasYK41RLY8KSR5rD8SvkyMi+tTj/JVfYh1njB4pP2kk
+         n3VCDkd6qmDxS9OZZrfokcic7HCfdO/AtfbbASNm25EYmUt30faAtx3M+UiYasZVTa
+         dYfAb20EsCDLw==
 From:   Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
@@ -34,10 +34,12 @@ Cc:     Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
         Ammar Faizi <ammarfaizi2@gnuweeb.org>,
         Alviro Iskandar Setiawan <alviro.iskandar@gmail.com>,
         io-uring <io-uring@vger.kernel.org>, gwml <gwml@vger.gnuweeb.org>
-Subject: [PATCH liburing v2 0/4] Changes for Makefile
-Date:   Thu, 10 Mar 2022 10:32:20 +0000
-Message-Id: <20220310103224.1675123-1-alviro.iskandar@gnuweeb.org>
+Subject: [PATCH liburing v2 1/4] src/Makefile: Remove `-fomit-frame-pointer` from default build
+Date:   Thu, 10 Mar 2022 10:32:21 +0000
+Message-Id: <20220310103224.1675123-2-alviro.iskandar@gnuweeb.org>
 X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20220310103224.1675123-1-alviro.iskandar@gnuweeb.org>
+References: <20220310103224.1675123-1-alviro.iskandar@gnuweeb.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -49,55 +51,31 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello sir,
+-fomit-frame-pointer is already turned on by -O1 optimization flag.
 
-This patchset (v2) changes Makefile. 4 patches here:
+The liburing default compilation uses -O2 optimization, -O2 turns on
+all optimization flags specified by -O1. Therefore, we don't need to
+specify -fomit-frame-pointer here. Remove it.
 
-1. Remove -fomit-frame-pointer flag, because it's already covered
-   by the -O2 optimization flag.
-
-2. When the header files are modified, the compiled objects are
-   not going to be recompiled because the header files are not
-   marked as a dependency for the objects.
-
-  - Instruct the compiler to generate dependency files.
-
-  - Include those files from src/Makefile. Ensure if any changes are
-    made, files that depend on the changes are recompiled.
-
-3. The test binaries statically link liburing using liburing.a file.
-   When liburing.a is recompiled, make sure the tests are also
-   recompiled to ensure changes are applied to the test binary. It
-   makes "make clean" command optional when making changes.
-
-4. Same as no. 3, but for examples.
-
-please review,
-thx
-
-link v1: https://lore.kernel.org/io-uring/20220308224002.3814225-1-alviro.iskandar@gnuweeb.org/
-v1 -> v2:
-  - Instruct the compiler to generate dependency files instead
-    of hard code it in the Makefile.
-  - Add liburing.a to dependency for test (patch 3).
-  - Add liburing.a to dependency for examples (patch 4).
-
+Link: https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html
 Signed-off-by: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
 ---
+ src/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Alviro Iskandar Setiawan (4):
-  src/Makefile: Remove `-fomit-frame-pointer` from default build
-  src/Makefile: Add header files as dependency
-  test/Makefile: Add liburing.a as a dependency
-  examples/Makefile: Add liburing.a as a dependency
-
- examples/Makefile |  2 +-
- src/Makefile      | 13 ++++++-------
- test/Makefile     |  4 ++--
- 3 files changed, 9 insertions(+), 10 deletions(-)
-
-
-base-commit: 6231f56da7881bde6fb011e1b54d672f8fe5a224
+diff --git a/src/Makefile b/src/Makefile
+index 3e1192f..f19d45e 100644
+--- a/src/Makefile
++++ b/src/Makefile
+@@ -8,7 +8,7 @@ libdevdir ?= $(prefix)/lib
+ CPPFLAGS ?=
+ override CPPFLAGS += -D_GNU_SOURCE \
+ 	-Iinclude/ -include ../config-host.h
+-CFLAGS ?= -g -fomit-frame-pointer -O2 -Wall -Wextra -fno-stack-protector
++CFLAGS ?= -g -O2 -Wall -Wextra -fno-stack-protector
+ override CFLAGS += -Wno-unused-parameter -Wno-sign-compare -DLIBURING_INTERNAL
+ SO_CFLAGS=-fPIC $(CFLAGS)
+ L_CFLAGS=$(CFLAGS)
 -- 
 2.25.1
 

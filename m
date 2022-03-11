@@ -2,136 +2,91 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E11B4D52D2
-	for <lists+io-uring@lfdr.de>; Thu, 10 Mar 2022 21:06:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3091C4D579D
+	for <lists+io-uring@lfdr.de>; Fri, 11 Mar 2022 02:51:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230060AbiCJUHh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 10 Mar 2022 15:07:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53788 "EHLO
+        id S239153AbiCKBwf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 10 Mar 2022 20:52:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237904AbiCJUHh (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 10 Mar 2022 15:07:37 -0500
-Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 440E1199D43
-        for <io-uring@vger.kernel.org>; Thu, 10 Mar 2022 12:06:35 -0800 (PST)
-Received: by mail-io1-xd29.google.com with SMTP id r11so7782782ioh.10
-        for <io-uring@vger.kernel.org>; Thu, 10 Mar 2022 12:06:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:content-language:to:from
-         :subject:content-transfer-encoding;
-        bh=cPltiTh9wRUv4TpvV8s5G33dusVaaqJMQJVQKyysldU=;
-        b=iTH9rbO+2Xksbzbp4a3ND18hYogcV8Bneo0RkKyaNUDBJ3RBkkI/0HLSnk/6i32LIg
-         f7/sXPQGdr97J7yE7QPamdsrAuxTeVKv88XIylFnAjZmES93HRcOFhgnJHj+VV4mB1KP
-         wpyvvSnf7GlUFWpNVIqvrp0XyQEpoLGDAg7CY8BnquRlmBRkjhRIf+k6jAC0TCFz+71E
-         0CC1ipYzAIb7f8iYpDzh+lDPebyzxMXDzffCCbX9phIEExUeICtYOy7G3idmxoFfhSO5
-         6AgTDUQopVXLU7XzcQdp/lxtMAoAl9LWjD6hwM+A2Ta4zVMMDAxQVyOmixPGU3TgHKO9
-         I8gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent
-         :content-language:to:from:subject:content-transfer-encoding;
-        bh=cPltiTh9wRUv4TpvV8s5G33dusVaaqJMQJVQKyysldU=;
-        b=TCXtS8kXEwPvyD0QVt+GtOOTXW88+AcAy6WYX0iknQDyC+ReI65Vc/Zu3m39ffyyz8
-         sx9IVzEINpHbMEcUfCOd0sj8g3OADLtlqWpOkqgmwCYAMd/mvOsvaZ2Zha4y1+hmTBmB
-         KYsLLNnzc9mtr9bSZ4optmO4hfJTgX8ldslnOkUIa5vd7x8YIP/uNbmH5KWcTw2hCEWu
-         qGD8CJVLLjh3jx/7NlKKaU5fU7aHBKNELZK+FMvgMM6gWtgFwdMXFTF4KsmbaLTHdw5n
-         R2ab+tiRTz6sdqRg+mGNL2GJVGdxBdNdXHqstbgHoUyFvrl+q39V6qGYdiDH+S8jBqyH
-         C2Ug==
-X-Gm-Message-State: AOAM533pNfDySsjLw8scs85O1FCQ42jASzYPX5qqiJw9iHVcMZQjbbGF
-        JwcbniDJJ4hXMG9fOzS5enOCwPnGwQllTzVE
-X-Google-Smtp-Source: ABdhPJyASmJnEwZL4vc7+ymplEdGHcb14/tLiTlPIStvu0bTlyCqJcWVHZW/7BquQJ388zJVP7uzlw==
-X-Received: by 2002:a05:6638:16d2:b0:319:9cf8:fe18 with SMTP id g18-20020a05663816d200b003199cf8fe18mr5269530jat.202.1646942794423;
-        Thu, 10 Mar 2022 12:06:34 -0800 (PST)
-Received: from [192.168.1.172] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id a18-20020a6b6c12000000b005ece5a4f2dfsm2991355ioh.54.2022.03.10.12.06.34
-        for <io-uring@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Mar 2022 12:06:34 -0800 (PST)
-Message-ID: <671f5715-9f94-568b-685f-ec6f16a875f9@kernel.dk>
-Date:   Thu, 10 Mar 2022 13:06:33 -0700
+        with ESMTP id S238035AbiCKBwe (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 10 Mar 2022 20:52:34 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC4F117B88A;
+        Thu, 10 Mar 2022 17:51:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=z4x2hBPkj+jEGWmrRVyRt/pxXSV3iAHniQAONJ1aiFU=; b=v74GbM3lNawZ8OCADSP2zPJxjR
+        MzG+bFSw0KM7uz7hTY24330lowcuhv9cbU1UFb5Lf7Tlg+/aGIrtS4HlgTSg082cXgOb6n54hsWSJ
+        Zf4ePwaISlU7Kya+rFBJEifCI8lbTQYNZxXxPu9klnNH1ScxZvZz/5oVsu1YBzZoXbq3Cdg1yPN0r
+        rlAWbCJVy0OypTSHgIYBlvrhAECF0wnEcscHQmnM1omByhhgOddhJMdjAn1syAiTktdMYaBtF9jAC
+        ZDJvfZHTKxukYSZfAEyUCvZhR84Q7sdoiZL/l0l18g6MUK9pNfWzB+7pY4991N8qwN4+oCjyHQkmB
+        LCZFXLMQ==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nSUR1-00EX8e-P7; Fri, 11 Mar 2022 01:51:15 +0000
+Date:   Thu, 10 Mar 2022 17:51:15 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Kanchan Joshi <joshi.k@samsung.com>, jmorris@namei.org,
+        serge@hallyn.com, ast@kernel.org, daniel@iogearbox.net,
+        andrii@kernel.org, kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
+        john.fastabend@gmail.com, kpsingh@kernel.org,
+        linux-security-module@vger.kernel.org
+Cc:     axboe@kernel.dk, hch@lst.de, kbusch@kernel.org,
+        asml.silence@gmail.com, io-uring@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+        sbates@raithlin.com, logang@deltatee.com, pankydev8@gmail.com,
+        javier@javigon.com, a.manzanares@samsung.com, joshiiitr@gmail.com,
+        anuj20.g@samsung.com
+Subject: Re: [PATCH 03/17] io_uring: add infra and support for
+ IORING_OP_URING_CMD
+Message-ID: <YiqrE4K5TWeB7aLd@bombadil.infradead.org>
+References: <20220308152105.309618-1-joshi.k@samsung.com>
+ <CGME20220308152658epcas5p3929bd1fcf75edc505fec71901158d1b5@epcas5p3.samsung.com>
+ <20220308152105.309618-4-joshi.k@samsung.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.1
-Content-Language: en-US
-To:     io-uring <io-uring@vger.kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH[ io_uring: allow submissions to continue on error
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220308152105.309618-4-joshi.k@samsung.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-By default, io_uring will stop submitting a batch of requests if we run
-into an error submitting a request. This isn't strictly necessary, as
-the error result is passed out-of-band via a CQE anyway. And it can be
-a bit confusing for some applications.
+On Tue, Mar 08, 2022 at 08:50:51PM +0530, Kanchan Joshi wrote:
+> From: Jens Axboe <axboe@kernel.dk>
+> 
+> This is a file private kind of request. io_uring doesn't know what's
+> in this command type, it's for the file_operations->async_cmd()
+> handler to deal with.
+> 
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
+> ---
 
-Provide a way to setup a ring that will continue submitting on error,
-when the error CQE has been posted.
+<-- snip -->
 
-There's still one case that will break out of submission. If we fail
-allocating a request, then we'll still return -ENOMEM. We could in theory
-post a CQE for that condition too even if we never got a request. Leave
-that for a potential followup.
+> +static int io_uring_cmd(struct io_kiocb *req, unsigned int issue_flags)
+> +{
+> +	struct file *file = req->file;
+> +	int ret;
+> +	struct io_uring_cmd *ioucmd = &req->uring_cmd;
+> +
+> +	ioucmd->flags |= issue_flags;
+> +	ret = file->f_op->async_cmd(ioucmd);
 
-Reported-by: Dylan Yudaken <dylany@fb.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+I think we're going to have to add a security_file_async_cmd() check
+before this call here. Because otherwise we're enabling to, for
+example, bypass security_file_ioctl() for example using the new
+iouring-cmd interface.
 
----
+Or is this already thought out with the existing security_uring_*() stuff?
 
-This has come up before, let's finally provide that flag as it makes
-it easier for applications to deal with.
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 3145c9cacee0..229b31d644ef 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -7801,8 +7801,14 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr)
- 		}
- 		/* will complete beyond this point, count as submitted */
- 		submitted++;
--		if (io_submit_sqe(ctx, req, sqe))
--			break;
-+		if (io_submit_sqe(ctx, req, sqe)) {
-+			/*
-+			 * Continue submitting even for sqe failure if the
-+			 * ring was setup with IORING_SETUP_SUBMIT_ALL
-+			 */
-+			if (!(ctx->flags & IORING_SETUP_SUBMIT_ALL))
-+				break;
-+		}
- 	} while (submitted < nr);
- 
- 	if (unlikely(submitted != nr)) {
-@@ -11265,7 +11271,7 @@ static long io_uring_setup(u32 entries, struct io_uring_params __user *params)
- 	if (p.flags & ~(IORING_SETUP_IOPOLL | IORING_SETUP_SQPOLL |
- 			IORING_SETUP_SQ_AFF | IORING_SETUP_CQSIZE |
- 			IORING_SETUP_CLAMP | IORING_SETUP_ATTACH_WQ |
--			IORING_SETUP_R_DISABLED))
-+			IORING_SETUP_R_DISABLED | IORING_SETUP_SUBMIT_ALL))
- 		return -EINVAL;
- 
- 	return  io_uring_create(entries, &p, params);
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 8bd4bfdd9a89..d2be4eb22008 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -101,6 +101,7 @@ enum {
- #define IORING_SETUP_CLAMP	(1U << 4)	/* clamp SQ/CQ ring sizes */
- #define IORING_SETUP_ATTACH_WQ	(1U << 5)	/* attach to existing wq */
- #define IORING_SETUP_R_DISABLED	(1U << 6)	/* start with ring disabled */
-+#define IORING_SETUP_SUBMIT_ALL	(1U << 7)	/* continue submit on error */
- 
- enum {
- 	IORING_OP_NOP,
-
--- 
-Jens Axboe
-
+  Luis

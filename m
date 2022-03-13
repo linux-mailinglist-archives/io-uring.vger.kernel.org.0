@@ -2,107 +2,92 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 11BF94D7288
-	for <lists+io-uring@lfdr.de>; Sun, 13 Mar 2022 06:10:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A4F94D7882
+	for <lists+io-uring@lfdr.de>; Sun, 13 Mar 2022 22:53:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230514AbiCMFL4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 13 Mar 2022 00:11:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44864 "EHLO
+        id S233679AbiCMVyu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 13 Mar 2022 17:54:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229441AbiCMFLz (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 13 Mar 2022 00:11:55 -0500
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7BFB62A24;
-        Sat, 12 Mar 2022 21:10:47 -0800 (PST)
-Received: by mail-lf1-x12c.google.com with SMTP id h14so21704748lfk.11;
-        Sat, 12 Mar 2022 21:10:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/2a/Y/9RxUg+RQvi15qObMdwkcPWgNkuVkFYsEACDhk=;
-        b=dGMG4CGvo7ZEusw/Ld484ohSc3fYw9xqgxsiNBnbP8RjQymD23frQDRtA4TW3JRFVz
-         jyAX5CFAD+gbxRCxqPKxnI0UAy07HAt1Y2vEaYJwOB5vjA3P4ANAdITS01kxTKXz8O2D
-         +sSzFavIAAfwkUgBVvkMttK1YxbvW+aNqAj+6/2zqODavQLvBpF618r1pqPQcVPiHKqi
-         RIH32k+3xmJ/nEgrsm7XoAGIn0j2XfYCxTMYQ5Dx+oqIfQJwENAOnkszZe1FHWBjeUR3
-         JqVzOIVmSfHNscDmoynYYFTViaH43dYTwpWhDE1vVrSoNYbMx5rYUTbi9qjH/u9GzdZ9
-         kMrg==
+        with ESMTP id S231156AbiCMVyt (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 13 Mar 2022 17:54:49 -0400
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DA5B15A10;
+        Sun, 13 Mar 2022 14:53:41 -0700 (PDT)
+Received: by mail-ej1-f49.google.com with SMTP id r13so30080277ejd.5;
+        Sun, 13 Mar 2022 14:53:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/2a/Y/9RxUg+RQvi15qObMdwkcPWgNkuVkFYsEACDhk=;
-        b=3XlaxNDOtRcvBGpdb/sICxioMF69U8osDt0tsEbaZGd7YysK9fFkpdlrx/We0dmQ5h
-         QpeLtITlYsIujUBPypZTtRmYDWTBBphz8WHsV5IKb92WXRU8l5v0+jyE56OEKRXfRyKB
-         0zKQwJHDF8uUPZ5HOowfbZ2dNBkSB0+xPsDnklBtWZv/+ngfZNMRoGWRiuGThJFOYv8m
-         bnjwYqGi1QBeosXKN4be3kTZ7SKgSqURNbIFQVierH2UsjbF1MGfci6SmnznfyvILEw8
-         ByqCA3ka/flyAPNSZJBiYnT5ukE9HlShtK9HrfYgeH7bjDgVTur/r64H4DrjVellYBlF
-         tRtg==
-X-Gm-Message-State: AOAM5334va/nVGXRMKLvJ1ndzKXJevqWbWhRAtbC/6n64ZOLXVUDxrTy
-        6nI127QusMPHp7LUAXzeCLvilqbKSY0UJ6yXl4s=
-X-Google-Smtp-Source: ABdhPJyU6aJ5LvlLIm1T0ym3uRSz5wd5N0P5WXOILbF4l1t4ugCeri+GG6bQDZpgXFpiYUZyRYDJV79MInjH6/VIu7A=
-X-Received: by 2002:a05:6512:3f99:b0:447:7fc0:8d3 with SMTP id
- x25-20020a0565123f9900b004477fc008d3mr10460588lfa.671.1647148245909; Sat, 12
- Mar 2022 21:10:45 -0800 (PST)
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=GhvMlaLXIBl69d2e2I1DBwNJZfAkADFlzhCg7cXuE7k=;
+        b=xT+6CZydUyXijY4NFZ9DRytUZo0z1IGpqYev9Pj8Fi+PcOMVpkbby4+2KjOR84qqXS
+         8n2AmNX5Du8M7s+P3JTgHHRuGF0/08St/iVyuie22ERNKpxa6eYfGRrs/Qsa/m2ZT3nI
+         nW3zxLtEA1rUybxfYqB3yCZ6P6DyjrRTOYprg4o9Oo6Krcy6otqMigWBGwACenLJHyJh
+         z8noWqHXuB7yIbiw9KHAXNrPTCEEsQpVvV8BQtz3QxzT58FJqRdjG9QNCN3ovIywpkv1
+         twMkkgEKK4p/jkyUcSJwoFJSynsLxQs6wK6eIA4pvHVHyfc/P808I3JT0a1UQ+yBZbfp
+         Bk0w==
+X-Gm-Message-State: AOAM530cr8efXgywVbiCno2XJjfCV7ew/yJgBC/v8baTkpD6fQ3IL0js
+        kAqPtCtgUh1XRyuR6UdMSCg=
+X-Google-Smtp-Source: ABdhPJxed+q6AT46dUxx+14XZWsrYC4Q4t/biXHM77QpXqFMCGdDrmRX1buo2MOHsW3KyPhpW3Z1qQ==
+X-Received: by 2002:a17:906:2695:b0:6cf:e1b4:118b with SMTP id t21-20020a170906269500b006cfe1b4118bmr16156282ejc.348.1647208419888;
+        Sun, 13 Mar 2022 14:53:39 -0700 (PDT)
+Received: from [10.100.102.14] (46-117-116-119.bb.netvision.net.il. [46.117.116.119])
+        by smtp.gmail.com with ESMTPSA id q16-20020a170906145000b006bdaf981589sm5997845ejc.81.2022.03.13.14.53.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 13 Mar 2022 14:53:39 -0700 (PDT)
+Message-ID: <7a123895-1102-4b36-2d6e-1e00e978d03d@grimberg.me>
+Date:   Sun, 13 Mar 2022 23:53:37 +0200
 MIME-Version: 1.0
-References: <CGME20220308152651epcas5p1ebd2dc7fa01db43dd587c228a3695696@epcas5p1.samsung.com>
- <20220308152105.309618-1-joshi.k@samsung.com> <20220310082926.GA26614@lst.de>
- <CA+1E3rJ17F0Rz5UKUnW-LPkWDfPHXG5aeq-ocgNxHfGrxYtAuw@mail.gmail.com> <Yit8LFAMK3t0nY/q@bombadil.infradead.org>
-In-Reply-To: <Yit8LFAMK3t0nY/q@bombadil.infradead.org>
-From:   Kanchan Joshi <joshiiitr@gmail.com>
-Date:   Sun, 13 Mar 2022 10:40:20 +0530
-Message-ID: <CA+1E3rKgGgOQonGpjjwdAFc2FAXH5UkGKNXh0RqrBo9_=H6VSQ@mail.gmail.com>
-Subject: Re: [PATCH 00/17] io_uring passthru over nvme
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Kanchan Joshi <joshi.k@samsung.com>,
-        Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH 05/17] nvme: wire-up support for async-passthru on
+ char-device.
+Content-Language: en-US
+To:     Kanchan Joshi <joshi.k@samsung.com>, axboe@kernel.dk, hch@lst.de,
+        kbusch@kernel.org, asml.silence@gmail.com
+Cc:     io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
         linux-block@vger.kernel.org, sbates@raithlin.com,
-        logang@deltatee.com, Pankaj Raghav <pankydev8@gmail.com>,
-        =?UTF-8?Q?Javier_Gonz=C3=A1lez?= <javier@javigon.com>,
-        Adam Manzanares <a.manzanares@samsung.com>,
-        Anuj Gupta <anuj20.g@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        logang@deltatee.com, pankydev8@gmail.com, javier@javigon.com,
+        mcgrof@kernel.org, a.manzanares@samsung.com, joshiiitr@gmail.com,
+        anuj20.g@samsung.com
+References: <20220308152105.309618-1-joshi.k@samsung.com>
+ <CGME20220308152702epcas5p1eb1880e024ac8b9531c85a82f31a4e78@epcas5p1.samsung.com>
+ <20220308152105.309618-6-joshi.k@samsung.com>
+From:   Sagi Grimberg <sagi@grimberg.me>
+In-Reply-To: <20220308152105.309618-6-joshi.k@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, Mar 11, 2022 at 10:13 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
->
-> On Thu, Mar 10, 2022 at 03:35:02PM +0530, Kanchan Joshi wrote:
-> > On Thu, Mar 10, 2022 at 1:59 PM Christoph Hellwig <hch@lst.de> wrote:
-> > >
-> > > What branch is this against?
-> > Sorry I missed that in the cover.
-> > Two options -
-> > (a) https://git.kernel.dk/cgit/linux-block/log/?h=io_uring-big-sqe
-> > first patch ("128 byte sqe support") is already there.
-> > (b) for-next (linux-block), series will fit on top of commit 9e9d83faa
-> > ("io_uring: Remove unneeded test in io_run_task_work_sig")
-> >
-> > > Do you have a git tree available?
-> > Not at the moment.
-> >
-> > @Jens: Please see if it is possible to move patches to your
-> > io_uring-big-sqe branch (and maybe rename that to big-sqe-pt.v1).
->
-> Since Jens might be busy, I've put up a tree with all this stuff:
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux-next.git/log/?h=20220311-io-uring-cmd
->
-> It is based on option (b) mentioned above, I took linux-block for-next
-> and reset the tree to commit "io_uring: Remove unneeded test in
-> io_run_task_work_sig" before applying the series.
 
-Thanks for putting this up.
+> +int nvme_ns_head_chr_async_cmd(struct io_uring_cmd *ioucmd)
+> +{
+> +	struct cdev *cdev = file_inode(ioucmd->file)->i_cdev;
+> +	struct nvme_ns_head *head = container_of(cdev, struct nvme_ns_head, cdev);
+> +	int srcu_idx = srcu_read_lock(&head->srcu);
+> +	struct nvme_ns *ns = nvme_find_path(head);
+> +	int ret = -EWOULDBLOCK;
+> +
+> +	if (ns)
+> +		ret = nvme_ns_async_ioctl(ns, ioucmd);
+> +	srcu_read_unlock(&head->srcu, srcu_idx);
+> +	return ret;
+> +}
 
--- 
-Joshi
+No one cares that this has no multipathing capabilities what-so-ever?
+despite being issued on the mpath device node?
+
+I know we are not doing multipathing for userspace today, but this
+feels like an alternative I/O interface for nvme, seems a bit cripled
+with zero multipathing capabilities...

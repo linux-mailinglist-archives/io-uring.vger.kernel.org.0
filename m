@@ -2,149 +2,84 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CC5334D85C0
-	for <lists+io-uring@lfdr.de>; Mon, 14 Mar 2022 14:10:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E33D04D86FC
+	for <lists+io-uring@lfdr.de>; Mon, 14 Mar 2022 15:34:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241481AbiCNNLU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 14 Mar 2022 09:11:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59444 "EHLO
+        id S235702AbiCNOf3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 14 Mar 2022 10:35:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241460AbiCNNLR (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 14 Mar 2022 09:11:17 -0400
-Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86F211D0DE;
-        Mon, 14 Mar 2022 06:10:04 -0700 (PDT)
-Received: by mail-lj1-x22e.google.com with SMTP id h11so21821050ljb.2;
-        Mon, 14 Mar 2022 06:10:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yMdQruxukN7xczRg3+vAgQmSYHLw/uLRbeJd/4syR58=;
-        b=XKObeHOAEnAi5szMWcuxy6hbm6P5lMl58rcXpLysUh3Zs333P41+/w9w4CIS/yYEPS
-         6FyZWgEMnZCAFdAWamB50WH6HDKh2UrQuRhYssI2r8YMp+uHrk8r/KRPUEB9/hcAeOhk
-         6g+589fJuf/StdGXTDh5qXWB6Do2HhEf9UgvwRPUiYZ79x/wCGzEyinlj5g9uMPtbYti
-         bVflhgMSaelokJOsgVIKbdOwdaORu68H12OWckf2pNsN6DRjR3/ALtRmy7TqG0ePERp8
-         FzGmY7nezB9TC/9kwGfaIxrZKqBJ8DmQTR4Z3hUi7hLLLi71UMDHX4RcoGAG2ssoIDzM
-         kpgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yMdQruxukN7xczRg3+vAgQmSYHLw/uLRbeJd/4syR58=;
-        b=RdG2E4V6GUXXgasPbRmxNUfrfUS56XdM2TXkNr77NAUZN6t5XmS9YesLJhwrmD+qyr
-         4c6+QMz2D/LBaLvt+h3hYhsPpL9BDEA4/yyMa+tXSRfNL7KtOvCRlHVajz3R0fx/MHAH
-         w6fmN9I9lnmznIsvTBdq6s2Geep2q3Q1we818EnaeeratK9LS7xGOcOEt6vyVIfCNXxE
-         caJd/HkhYRy3DpcZX+hZJ30LFF3QGJkO3Vyf+SQigMFPk4thOupjFshuhT98lajGEYWF
-         yBzbjUEqQHBRrKu+KfSOc3gat2FPf+hOgOxb+/Gy5qWW1u+lLAWGhE9Y0LaPY0W5/42k
-         Byiw==
-X-Gm-Message-State: AOAM530h3Pv2Gk4F22HvrxV9NVwA7Wy4dEoqXrswjVm73n+O2jAaLsNR
-        REeEjh6/mL3Dx8y3O+bx9tpTg3/3mbO6WQ8pRxc=
-X-Google-Smtp-Source: ABdhPJw1JcRokQe60GlwSImervGGE6MV8GniXt1BZxf+h7qeLDo5laRHUUleD/fkGbbNSp9VwAivyabaAaylx/wqv0k=
-X-Received: by 2002:a2e:80cf:0:b0:247:f28d:b04e with SMTP id
- r15-20020a2e80cf000000b00247f28db04emr14585255ljg.528.1647263402899; Mon, 14
- Mar 2022 06:10:02 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220308152105.309618-1-joshi.k@samsung.com> <CGME20220308152709epcas5p1f9d274a0214dc462c22c278a72d8697c@epcas5p1.samsung.com>
- <20220308152105.309618-9-joshi.k@samsung.com> <Yi8ynSFjllfuj4NB@T590>
-In-Reply-To: <Yi8ynSFjllfuj4NB@T590>
-From:   Kanchan Joshi <joshiiitr@gmail.com>
-Date:   Mon, 14 Mar 2022 18:39:38 +0530
-Message-ID: <CA+1E3rK0-CXoCvE+5cKD_Vx=17b5A=HRhPrTeYtd4MeFKEAUrw@mail.gmail.com>
-Subject: Re: [PATCH 08/17] nvme: enable passthrough with fixed-buffer
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Kanchan Joshi <joshi.k@samsung.com>, Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@lst.de>,
-        Keith Busch <kbusch@kernel.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
+        with ESMTP id S234542AbiCNOf3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 14 Mar 2022 10:35:29 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 338B938780
+        for <io-uring@vger.kernel.org>; Mon, 14 Mar 2022 07:34:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1647268458;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Y8HXqoZS0yakVP1rRgpLH13VjxuiqLVz2udIjsoRQfM=;
+        b=hKzWUxHBY1SHZ8PrWp9zuCtYZBHJo8JGQPelbFxlf52r9hkjL30yhjwGk3wrwP0ZQGFJgi
+        WevUq3ETcT3ayfMJ9tfcU5hf5JAQzlCohf6/BKS51I5K2PXvoqAXyPpx0V8KR0rlPmISuq
+        E4U2EpXknlWB2VPK4gzJl6hR8uLp5ZQ=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-536-YmGGBlXHNb-y4s2yNYNVQQ-1; Mon, 14 Mar 2022 10:34:12 -0400
+X-MC-Unique: YmGGBlXHNb-y4s2yNYNVQQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 10280804186;
+        Mon, 14 Mar 2022 14:34:12 +0000 (UTC)
+Received: from T590 (ovpn-8-17.pek2.redhat.com [10.72.8.17])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0208E404C309;
+        Mon, 14 Mar 2022 14:34:02 +0000 (UTC)
+Date:   Mon, 14 Mar 2022 22:33:57 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Kanchan Joshi <joshi.k@samsung.com>, axboe@kernel.dk,
+        kbusch@kernel.org, asml.silence@gmail.com,
         io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
         linux-block@vger.kernel.org, sbates@raithlin.com,
-        logang@deltatee.com, Pankaj Raghav <pankydev8@gmail.com>,
-        =?UTF-8?Q?Javier_Gonz=C3=A1lez?= <javier@javigon.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Adam Manzanares <a.manzanares@samsung.com>,
-        Anuj Gupta <anuj20.g@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        logang@deltatee.com, pankydev8@gmail.com, javier@javigon.com,
+        mcgrof@kernel.org, a.manzanares@samsung.com, joshiiitr@gmail.com,
+        anuj20.g@samsung.com
+Subject: Re: [PATCH 09/17] io_uring: plug for async bypass
+Message-ID: <Yi9SVXAs8TlIcIkU@T590>
+References: <20220308152105.309618-1-joshi.k@samsung.com>
+ <CGME20220308152711epcas5p31de5d63f5de91fae94e61e5c857c0f13@epcas5p3.samsung.com>
+ <20220308152105.309618-10-joshi.k@samsung.com>
+ <20220310083303.GC26614@lst.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220310083303.GC26614@lst.de>
+X-Scanned-By: MIMEDefang 2.84 on 10.11.54.1
+X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, Mar 14, 2022 at 5:49 PM Ming Lei <ming.lei@redhat.com> wrote:
->
-> On Tue, Mar 08, 2022 at 08:50:56PM +0530, Kanchan Joshi wrote:
-> > From: Anuj Gupta <anuj20.g@samsung.com>
-> >
-> > Add support to carry out passthrough command with pre-mapped buffers.
-> >
-> > Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
-> > Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
-> > ---
-> >  block/blk-map.c           | 45 +++++++++++++++++++++++++++++++++++++++
-> >  drivers/nvme/host/ioctl.c | 27 ++++++++++++++---------
-> >  include/linux/blk-mq.h    |  2 ++
-> >  3 files changed, 64 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/block/blk-map.c b/block/blk-map.c
-> > index 4526adde0156..027e8216e313 100644
-> > --- a/block/blk-map.c
-> > +++ b/block/blk-map.c
-> > @@ -8,6 +8,7 @@
-> >  #include <linux/bio.h>
-> >  #include <linux/blkdev.h>
-> >  #include <linux/uio.h>
-> > +#include <linux/io_uring.h>
-> >
-> >  #include "blk.h"
-> >
-> > @@ -577,6 +578,50 @@ int blk_rq_map_user(struct request_queue *q, struct request *rq,
-> >  }
-> >  EXPORT_SYMBOL(blk_rq_map_user);
-> >
-> > +/* Unlike blk_rq_map_user () this is only for fixed-buffer async passthrough. */
-> > +int blk_rq_map_user_fixedb(struct request_queue *q, struct request *rq,
-> > +                  u64 ubuf, unsigned long len, gfp_t gfp_mask,
-> > +                  struct io_uring_cmd *ioucmd)
-> > +{
-> > +     struct iov_iter iter;
-> > +     size_t iter_count, nr_segs;
-> > +     struct bio *bio;
-> > +     int ret;
-> > +
-> > +     /*
-> > +      * Talk to io_uring to obtain BVEC iterator for the buffer.
-> > +      * And use that iterator to form bio/request.
-> > +      */
-> > +     ret = io_uring_cmd_import_fixed(ubuf, len, rq_data_dir(rq), &iter,
-> > +                     ioucmd);
-> > +     if (unlikely(ret < 0))
-> > +             return ret;
-> > +     iter_count = iov_iter_count(&iter);
-> > +     nr_segs = iter.nr_segs;
-> > +
-> > +     if (!iter_count || (iter_count >> 9) > queue_max_hw_sectors(q))
-> > +             return -EINVAL;
-> > +     if (nr_segs > queue_max_segments(q))
-> > +             return -EINVAL;
-> > +     /* no iovecs to alloc, as we already have a BVEC iterator */
-> > +     bio = bio_alloc(gfp_mask, 0);
-> > +     if (!bio)
-> > +             return -ENOMEM;
-> > +
-> > +     ret = bio_iov_iter_get_pages(bio, &iter);
->
-> Here bio_iov_iter_get_pages() may not work as expected since the code
-> needs to check queue limit before adding page to bio and we don't run
-> split for passthrough bio. __bio_iov_append_get_pages() may be generalized
-> for covering this case.
+On Thu, Mar 10, 2022 at 09:33:03AM +0100, Christoph Hellwig wrote:
+> On Tue, Mar 08, 2022 at 08:50:57PM +0530, Kanchan Joshi wrote:
+> > From: Jens Axboe <axboe@kernel.dk>
+> > 
+> > Enable .plug for uring-cmd.
+> 
+> This should go into the patch adding the
+> IORING_OP_URING_CMD/IORING_OP_URING_CMD_FIXED.
 
-Yes. That may just be the right thing to do. Thanks for the suggestion.
+Plug support for passthrough rq is added in the following patch, so
+this one may be put after patch 'block: wire-up support for plugging'.
 
 
--- 
-Kanchan
+Thanks,
+Ming
+

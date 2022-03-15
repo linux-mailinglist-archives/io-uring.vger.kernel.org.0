@@ -2,65 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D7CE4DA0A2
-	for <lists+io-uring@lfdr.de>; Tue, 15 Mar 2022 17:58:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 55ACF4DA435
+	for <lists+io-uring@lfdr.de>; Tue, 15 Mar 2022 21:48:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231308AbiCOQ7x (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 15 Mar 2022 12:59:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46928 "EHLO
+        id S1351737AbiCOUuB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 15 Mar 2022 16:50:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349586AbiCOQ7w (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 15 Mar 2022 12:59:52 -0400
-Received: from mail-il1-x12f.google.com (mail-il1-x12f.google.com [IPv6:2607:f8b0:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71EC157B27
-        for <io-uring@vger.kernel.org>; Tue, 15 Mar 2022 09:58:40 -0700 (PDT)
-Received: by mail-il1-x12f.google.com with SMTP id p2so13740419ile.2
-        for <io-uring@vger.kernel.org>; Tue, 15 Mar 2022 09:58:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:content-language:to:from
-         :subject:content-transfer-encoding;
-        bh=aFLoBpMpCKO43YcTK0w0pTlHlYQN5KpP7tSrrzp4CBE=;
-        b=0JDxJWTHO4Zw2YnWfCco9pU0deETDgQGEqIsmbMqJGSrfDOIA/fIJFaepAy4GiM61E
-         lWCkOg2HnuZrDDx9hjpWzi4NWFWEmj6kAoJlnM4NKrMQFMToKRVfyZnFo2OSH4VGRuWq
-         vsp83OYF62UEgZdpT/wcb4HET2haxCpv9tvD27CAymMNHr7+YzAeVBLZN09ze1ag3cHR
-         ikcPUgkFOux503Mraw0SOmSIV0h+Azs9dZisz9ts0eSB1s2F7313mJy/hjWWik9qbAlI
-         liX0gzKI4BqmqRcHCYvUw28am+XceWEJibgWXxeRo0ky7z4MZqb3vj5BAAJhBLvMJ6FT
-         zJhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent
-         :content-language:to:from:subject:content-transfer-encoding;
-        bh=aFLoBpMpCKO43YcTK0w0pTlHlYQN5KpP7tSrrzp4CBE=;
-        b=doGSLfCAXU5rll+SSGNOJ4vfIqj3WMrCWQzj2d6xEC0kvfj1m8DV7hzKeb2ti+Jg2c
-         TetDfj63nHaCJyRmV9vPPl4KImy9PAUKCWvE6fWd/EzF2cMhF+nNO7u0ktTwu5ktATXF
-         NaMxxboob+SUGUjHNsoBPfmGNht6crh4R8w/dctAzOmyIclG8LazwmV7msgOOFbnlnq5
-         NzLue/p7U6byOxGF//+lbuXGQOu95ZSVXOuiigrGYUJikkbcQcaGbFXw+gJCqKcrFm/t
-         X6IlfBdCA53e7xCyciPE73T6ShKhIAMLHDxldw+VKk69rY7D8iuKnNwm1BD5vqcTH8s5
-         2O8A==
-X-Gm-Message-State: AOAM530bGlAJx8vc0NiC42iDCA2HXhSMPQTTRG4dbX+dSW4IeoCcGdfD
-        OZpyz3VHCiLqQHXVJTuS8ST7sR2vuOGSy0TP
-X-Google-Smtp-Source: ABdhPJydXwzDQA7jlT4QX70zSuvv/qlWUyAY3GccbLw+udJGQDW4WhYKbkcgikhgjk5DQ8T6GMtcGg==
-X-Received: by 2002:a05:6e02:4b0:b0:2c6:f4e:28bf with SMTP id e16-20020a056e0204b000b002c60f4e28bfmr23180444ils.317.1647363519306;
-        Tue, 15 Mar 2022 09:58:39 -0700 (PDT)
-Received: from [192.168.1.172] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id a6-20020a92c546000000b002c7a44bf1a5sm3555569ilj.48.2022.03.15.09.58.38
-        for <io-uring@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Mar 2022 09:58:39 -0700 (PDT)
-Message-ID: <ed1f5f0d-6ef2-c277-c465-a07513902c0e@kernel.dk>
-Date:   Tue, 15 Mar 2022 10:58:38 -0600
+        with ESMTP id S241084AbiCOUuB (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 15 Mar 2022 16:50:01 -0400
+Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F00221273
+        for <io-uring@vger.kernel.org>; Tue, 15 Mar 2022 13:48:49 -0700 (PDT)
+Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 22FGWaTF003133
+        for <io-uring@vger.kernel.org>; Tue, 15 Mar 2022 13:48:48 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=facebook; bh=GfW2Z2sEMsdKvPg8IyIDC8UxCnLYmvtdKxDDLVFMWMA=;
+ b=rmOqRoap4PMedM9wxBaXWXJtB71V9ftOQ6h5KkOh/LBy1Bf3HBp6FudtakSUkKt8YReP
+ oKEO+1KIO0Iq2jNZ5Qg/IUREnqdabkjFJAqrk5Hy3jl6xq8vqxgjuXPVB9/xh/8UC7r1
+ z/P22OEmg1mKj9K9zOTO5Rc6hFLytSYF9w0= 
+Received: from mail.thefacebook.com ([163.114.132.120])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3et8vraq4e-2
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <io-uring@vger.kernel.org>; Tue, 15 Mar 2022 13:48:48 -0700
+Received: from twshared6486.05.ash9.facebook.com (2620:10d:c085:208::f) by
+ mail.thefacebook.com (2620:10d:c085:11d::5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.21; Tue, 15 Mar 2022 13:48:46 -0700
+Received: by devbig039.lla1.facebook.com (Postfix, from userid 572232)
+        id A5EB35BA5138; Tue, 15 Mar 2022 13:48:34 -0700 (PDT)
+From:   Dylan Yudaken <dylany@fb.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        <io-uring@vger.kernel.org>
+CC:     <kernel-team@fb.com>, Dylan Yudaken <dylany@fb.com>
+Subject: [PATCH] io_uring: make tracing format consistent
+Date:   Tue, 15 Mar 2022 13:48:29 -0700
+Message-ID: <20220315204829.2908979-1-dylany@fb.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.2
-Content-Language: en-US
-To:     io-uring <io-uring@vger.kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring: recycle apoll_poll entries
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: 2symC_GU0Kbg9dQpmfTeI_Og6DOtfvzH
+X-Proofpoint-GUID: 2symC_GU0Kbg9dQpmfTeI_Og6DOtfvzH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.850,Hydra:6.0.425,FMLib:17.11.64.514
+ definitions=2022-03-15_10,2022-03-15_01,2022-02-23_01
+X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -68,137 +61,65 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Particularly for networked workloads, io_uring intensively uses its
-poll based backend to get a notification when data/space is available.
-Profiling workloads, we see 3-4% of alloc+free that is directly attributed
-to just the apoll allocation and free (and the rest being skb alloc+free).
+Make the tracing formatting for user_data and flags consistent.
 
-For the fast path, we have ctx->uring_lock held already for both issue
-and the inline completions, and we can utilize that to avoid any extra
-locking needed to have a basic recycling cache for the apoll entries on
-both the alloc and free side.
+Having consistent formatting allows one for example to grep for a specifi=
+c
+user_data/flags and be able to trace a single sqe through easily.
 
-Double poll still requires an allocation. But those are rare and not
-a fast path item.
+Change user_data to be %llu everywhere, and flags to be %u. Additionally
+remove the '=3D' for flags in io_uring_req_failed, again for consistency.
 
-With the simple cache in place, we see a 3-4% reduction in overhead for
-the workload.
-
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-
+Signed-off-by: Dylan Yudaken <dylany@fb.com>
 ---
+ include/trace/events/io_uring.h | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 299154efcd8a..b17cf54653df 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -387,6 +387,7 @@ struct io_ring_ctx {
- 		struct list_head	cq_overflow_list;
- 		struct xarray		io_buffers;
- 		struct list_head	io_buffers_cache;
-+		struct list_head	apoll_cache;
- 		struct xarray		personalities;
- 		u32			pers_next;
- 		unsigned		sq_thread_idle;
-@@ -1528,6 +1529,7 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
- 	INIT_LIST_HEAD(&ctx->sqd_list);
- 	INIT_LIST_HEAD(&ctx->cq_overflow_list);
- 	INIT_LIST_HEAD(&ctx->io_buffers_cache);
-+	INIT_LIST_HEAD(&ctx->apoll_cache);
- 	init_completion(&ctx->ref_comp);
- 	xa_init_flags(&ctx->io_buffers, XA_FLAGS_ALLOC1);
- 	xa_init_flags(&ctx->personalities, XA_FLAGS_ALLOC1);
-@@ -2650,6 +2652,15 @@ static void __io_submit_flush_completions(struct io_ring_ctx *ctx)
- 
- 			if (!(req->flags & REQ_F_CQE_SKIP))
- 				__io_fill_cqe(req, req->result, req->cflags);
-+			if ((req->flags & REQ_F_POLLED) && req->apoll) {
-+				struct async_poll *apoll = req->apoll;
-+
-+				if (apoll->double_poll)
-+					kfree(apoll->double_poll);
-+				list_add(&apoll->poll.wait.entry,
-+						&ctx->apoll_cache);
-+				req->flags &= ~REQ_F_POLLED;
-+			}
- 		}
- 
- 		io_commit_cqring(ctx);
-@@ -6143,7 +6154,7 @@ enum {
- 	IO_APOLL_READY
- };
- 
--static int io_arm_poll_handler(struct io_kiocb *req)
-+static int io_arm_poll_handler(struct io_kiocb *req, unsigned issue_flags)
- {
- 	const struct io_op_def *def = &io_op_defs[req->opcode];
- 	struct io_ring_ctx *ctx = req->ctx;
-@@ -6168,9 +6179,16 @@ static int io_arm_poll_handler(struct io_kiocb *req)
- 		mask |= POLLOUT | POLLWRNORM;
- 	}
- 
--	apoll = kmalloc(sizeof(*apoll), GFP_ATOMIC);
--	if (unlikely(!apoll))
--		return IO_APOLL_ABORTED;
-+	if (!(issue_flags & IO_URING_F_UNLOCKED) &&
-+	    !list_empty(&ctx->apoll_cache)) {
-+		apoll = list_first_entry(&ctx->apoll_cache, struct async_poll,
-+						poll.wait.entry);
-+		list_del_init(&apoll->poll.wait.entry);
-+	} else {
-+		apoll = kmalloc(sizeof(*apoll), GFP_ATOMIC);
-+		if (unlikely(!apoll))
-+			return IO_APOLL_ABORTED;
-+	}
- 	apoll->double_poll = NULL;
- 	req->apoll = apoll;
- 	req->flags |= REQ_F_POLLED;
-@@ -7271,7 +7289,7 @@ static void io_wq_submit_work(struct io_wq_work *work)
- 			continue;
- 		}
- 
--		if (io_arm_poll_handler(req) == IO_APOLL_OK)
-+		if (io_arm_poll_handler(req, issue_flags) == IO_APOLL_OK)
- 			return;
- 		/* aborted or ready, in either case retry blocking */
- 		needs_poll = false;
-@@ -7417,7 +7435,7 @@ static void io_queue_sqe_arm_apoll(struct io_kiocb *req)
- {
- 	struct io_kiocb *linked_timeout = io_prep_linked_timeout(req);
- 
--	switch (io_arm_poll_handler(req)) {
-+	switch (io_arm_poll_handler(req, 0)) {
- 	case IO_APOLL_READY:
- 		io_req_task_queue(req);
- 		break;
-@@ -9938,6 +9956,18 @@ static void io_wait_rsrc_data(struct io_rsrc_data *data)
- 		wait_for_completion(&data->done);
- }
- 
-+static void io_flush_apoll_cache(struct io_ring_ctx *ctx)
-+{
-+	struct async_poll *apoll;
-+
-+	while (!list_empty(&ctx->apoll_cache)) {
-+		apoll = list_first_entry(&ctx->apoll_cache, struct async_poll,
-+						poll.wait.entry);
-+		list_del(&apoll->poll.wait.entry);
-+		kfree(apoll);
-+	}
-+}
-+
- static __cold void io_ring_ctx_free(struct io_ring_ctx *ctx)
- {
- 	io_sq_thread_finish(ctx);
-@@ -9960,6 +9990,7 @@ static __cold void io_ring_ctx_free(struct io_ring_ctx *ctx)
- 	if (ctx->rings)
- 		__io_cqring_overflow_flush(ctx, true);
- 	io_eventfd_unregister(ctx);
-+	io_flush_apoll_cache(ctx);
- 	mutex_unlock(&ctx->uring_lock);
- 	io_destroy_buffers(ctx);
- 	if (ctx->sq_creds)
+diff --git a/include/trace/events/io_uring.h b/include/trace/events/io_ur=
+ing.h
+index 18d4341c581c..92446436b3ac 100644
+--- a/include/trace/events/io_uring.h
++++ b/include/trace/events/io_uring.h
+@@ -327,11 +327,11 @@ TRACE_EVENT(io_uring_complete,
+ 	TP_ARGS(ctx, req, user_data, res, cflags),
+=20
+ 	TP_STRUCT__entry (
+-		__field(  void *,	ctx		)
+-		__field(  void *,	req		)
+-		__field(  u64,		user_data	)
+-		__field(  int,		res		)
+-		__field(  unsigned,	cflags		)
++		__field(  void *,		ctx		)
++		__field(  void *,		req		)
++		__field(  unsigned long long, 	user_data	)
++		__field(  int,			res		)
++		__field(  unsigned,		cflags		)
+ 	),
+=20
+ 	TP_fast_assign(
+@@ -342,9 +342,9 @@ TRACE_EVENT(io_uring_complete,
+ 		__entry->cflags		=3D cflags;
+ 	),
+=20
+-	TP_printk("ring %p, req %p, user_data 0x%llx, result %d, cflags %x",
++	TP_printk("ring %p, req %p, user_data %llu, result %d, cflags %u",
+ 		__entry->ctx, __entry->req,
+-		(unsigned long long)__entry->user_data,
++		__entry->user_data,
+ 		__entry->res, __entry->cflags)
+ );
+=20
+@@ -530,7 +530,7 @@ TRACE_EVENT(io_uring_req_failed,
+ 	),
+=20
+ 	TP_printk("ring %p, req %p, user_data %llu, "
+-		"op %d, flags=3D0x%x, prio=3D%d, off=3D%llu, addr=3D%llu, "
++		"op %d, flags %u, prio=3D%d, off=3D%llu, addr=3D%llu, "
+ 		  "len=3D%u, rw_flags=3D0x%x, buf_index=3D%d, "
+ 		  "personality=3D%d, file_index=3D%d, pad=3D0x%llx/%llx, error=3D%d",
+ 		  __entry->ctx, __entry->req, __entry->user_data,
 
--- 
-Jens Axboe
+base-commit: f3b6a41eb2bbdf545a42e54d637c34f4b1fdf5b9
+--=20
+2.30.2
 

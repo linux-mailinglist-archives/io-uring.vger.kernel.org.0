@@ -2,117 +2,112 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9ACF54DB69A
-	for <lists+io-uring@lfdr.de>; Wed, 16 Mar 2022 17:47:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 556654DB84A
+	for <lists+io-uring@lfdr.de>; Wed, 16 Mar 2022 19:56:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243143AbiCPQsD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 16 Mar 2022 12:48:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34692 "EHLO
+        id S239941AbiCPS5J (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 16 Mar 2022 14:57:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345914AbiCPQsC (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 16 Mar 2022 12:48:02 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C2D02BB25
-        for <io-uring@vger.kernel.org>; Wed, 16 Mar 2022 09:46:48 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id d7so3793126wrb.7
-        for <io-uring@vger.kernel.org>; Wed, 16 Mar 2022 09:46:47 -0700 (PDT)
+        with ESMTP id S1357839AbiCPS5I (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 16 Mar 2022 14:57:08 -0400
+Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 635226E4E4
+        for <io-uring@vger.kernel.org>; Wed, 16 Mar 2022 11:55:53 -0700 (PDT)
+Received: by mail-pf1-x42b.google.com with SMTP id d19so4803793pfv.7
+        for <io-uring@vger.kernel.org>; Wed, 16 Mar 2022 11:55:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=Lb3XF/+CKjkSk9ky0qqTNoBuJPQ2QHPnILnwSH93Uoc=;
-        b=KTtvcsxTjnb1IBEzgBVVePeYXWDSIlz2lru6iEimrm1wHtznvMW+DYfbMJpSLhvixR
-         SYS/M4LWfd1Ear7pp+gpHXkPjM/PdYj43Sixp58O4SdBFxgv+GyeV+TVe/j7n/+h9IOQ
-         +P7DZE52I0M7gZ2UZar57O5hCANeJiOVvU22rrM5LaqWX01ZVpsvxQRbY3kZ3q0qRAU7
-         BMivQvds39emNbWZTUxiowSCpZ6YXVQZ23/5V/XcYqz5H6NLGkTFakRM7vDAbSpDfKvl
-         68MKzDxYPNbex7Dr369ClW43eV7LzlHyqt8mxB1MmAi9v9hw0crDzANlL9UK140A7Wip
-         7ThQ==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:content-language:to:from
+         :subject:content-transfer-encoding;
+        bh=IDPpGsUWxk+2ss+hOwztUiPV0w2T2AyiU2FD77oZ8tU=;
+        b=PwkFmHYiIvqIO00fhbFVvc/me3MvY8PNz+fBE3SrP/2I2o1FwIt1iHPKFHBCxHxXPH
+         QJtxzyDR51fu8hkagI7VHgx/g//UmzkUudxz6KSi/1AvvlVAvUBzriTtvtKoE5eygJ5/
+         7HkLmm4zlVBDGYnYKbdoHR9x77oGAt4Q9bTjRnBO4rQKkdOMhaeBabbwiveuF2xeKI4u
+         qacEiD1dc/aCIjdLKva69ua2HsA7K5Q9S08BwHY3CC4vC0A5ERuuc1n6HxzC4ObRZgTo
+         49AaFswhUcye+VgAa7HxWHmVSWBdTPOjM4V486uQp3rVMZ1yJfI6Q4EwclTKTYFkhZg9
+         9FIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=Lb3XF/+CKjkSk9ky0qqTNoBuJPQ2QHPnILnwSH93Uoc=;
-        b=Z0xuaKKh9i0szNyiQiTz6toBF4MLXjAzNMNLv8NkV+ljA1ZzCGJm1qsb5xBMDGsS+N
-         IGZ+rp9iw+/Zt6XgJewuZEZkl787ffcV1hlUOLREz5jfTpxJUQQIgVJ3dt2x10NLV0AC
-         cn8TJg+BhVfxaiSdigqwmOBitT9bTpmWaJISZmrIrrV2J7xSjZDX7QDg3DAwSakL3exu
-         DPUNF+1fweMxZR7dp3VJgrYnba8NkI5bfHLNJ39pFJnK3Wm3fg9TWKyITBm+N6XuRoMI
-         3xB/zUF77sosVFkqwOrFw471jop/tt6PSCf/VQOgJjBSggfC0/MWueei27hORId4TStD
-         k3Wg==
-X-Gm-Message-State: AOAM530ooLPUZKeQjyWsiFhPa+YOxDwg7WukTbhkLEvEfMJ53bjb99WJ
-        b0G8nB2xtvJzVA5QTrfyu1Bs8w==
-X-Google-Smtp-Source: ABdhPJxE08qzZW9bENd61uGLSf8BldCyY7wm6oYlLXCkB+OxQi7WuYhzpMFsPiyR3yfyaV8GJuIIoQ==
-X-Received: by 2002:a05:6000:1acc:b0:203:7140:c38c with SMTP id i12-20020a0560001acc00b002037140c38cmr627592wry.590.1647449205490;
-        Wed, 16 Mar 2022 09:46:45 -0700 (PDT)
-Received: from google.com (cpc155339-bagu17-2-0-cust87.1-3.cable.virginm.net. [86.27.177.88])
-        by smtp.gmail.com with ESMTPSA id n1-20020a5d5981000000b00203d8ea8c94sm2323854wri.84.2022.03.16.09.46.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Mar 2022 09:46:44 -0700 (PDT)
-Date:   Wed, 16 Mar 2022 16:46:42 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>, stable@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: Re: [PATCH] io_uring: return back safer resurrect
-Message-ID: <YjIUckYrxbp7Lew2@google.com>
-References: <cover.1618101759.git.asml.silence@gmail.com>
- <7a080c20f686d026efade810b116b72f88abaff9.1618101759.git.asml.silence@gmail.com>
- <YjINyFwcvPs+a8uq@google.com>
- <YjISer/xC0/ZEh/1@kroah.com>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent
+         :content-language:to:from:subject:content-transfer-encoding;
+        bh=IDPpGsUWxk+2ss+hOwztUiPV0w2T2AyiU2FD77oZ8tU=;
+        b=KGAtm6VrniihLAU039SskOywAuGWoPFx2j6fy0+a1nNsko2MV9dfuAcE2yZl+O1KaI
+         91rq6akmefMiJtUNYBmI9VPu0ZhljMfKePsXhPlSXmwAJfsTbZ9be48rLE39PE48FYCG
+         ZYcPbTIh0itm45fgCokRB7eVGAiiKerlFPYEBqINP1cCVYa9ZWXtHGI/wENG6LvO0fBJ
+         aNXRtCs4euopcaQZyTqxKFtgL9Xbwi9gU8zFYUJ5wotsNdp6GGnA2UNcSoGs9bOYhlEG
+         MXlB9nH5EYqvsA4VNxHG/dhffG0qoU4014dkj7RcWdAx4/mDlsLNPlekiokuLLO8bqOl
+         Rbtg==
+X-Gm-Message-State: AOAM533l5ySRymk133DlzWk3bBdDz2U/eWbm2NCi69KkosaAVtnGtZFB
+        rzk6+CwE0QZSMMdG8w6i/qRNzaSVCsMtS83E
+X-Google-Smtp-Source: ABdhPJzznHjRYe6iVb/PHwSxZftpfQP0fz1DIM0MCtOP7BsYlRCw13fNXHpOK02ZSrWapec6e3K0lg==
+X-Received: by 2002:aa7:81c1:0:b0:4f7:6ba1:553b with SMTP id c1-20020aa781c1000000b004f76ba1553bmr1221180pfn.45.1647456952404;
+        Wed, 16 Mar 2022 11:55:52 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c085:21e8::1b2e? ([2620:10d:c090:400::5:fc73])
+        by smtp.gmail.com with ESMTPSA id bg3-20020a17090b0d8300b001c6077ea0edsm7222055pjb.23.2022.03.16.11.55.51
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Mar 2022 11:55:52 -0700 (PDT)
+Message-ID: <513adf9d-4344-cfc5-9d4b-49a712939394@kernel.dk>
+Date:   Wed, 16 Mar 2022 12:55:51 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <YjISer/xC0/ZEh/1@kroah.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.2
+Content-Language: en-US
+To:     io-uring <io-uring@vger.kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring: move req->poll_refs into previous struct hole
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, 16 Mar 2022, Greg KH wrote:
+This serves two purposes:
 
-> On Wed, Mar 16, 2022 at 04:18:16PM +0000, Lee Jones wrote:
-> > Stable Team,
-> > 
-> > > Revert of revert of "io_uring: wait potential ->release() on resurrect",
-> > > which adds a helper for resurrect not racing completion reinit, as was
-> > > removed because of a strange bug with no clear root or link to the
-> > > patch.
-> > > 
-> > > Was improved, instead of rcu_synchronize(), just wait_for_completion()
-> > > because we're at 0 refs and it will happen very shortly. Specifically
-> > > use non-interruptible version to ignore all pending signals that may
-> > > have ended prior interruptible wait.
-> > > 
-> > > This reverts commit cb5e1b81304e089ee3ca948db4d29f71902eb575.
-> > > 
-> > > Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> > > ---
-> > >  fs/io_uring.c | 18 ++++++++++++++----
-> > >  1 file changed, 14 insertions(+), 4 deletions(-)
-> > 
-> > Please back-port this as far as it will apply.
-> > 
-> > Definitely through v5.10.y.
-> > 
-> > It solves a critical bug.
-> > 
-> > Subject: "io_uring: return back safer resurrect"
-> > 
-> > Upstream commit:: f70865db5ff35f5ed0c7e9ef63e7cca3d4947f04
-> 
-> It only applies to 5.10.y.  It showed up in 5.12, so if you want it
-> further back than 5.10.y, can you provide a working backport?
+- We now have the last cacheline mostly unused for generic workloads,
+  instead of having to pull in the poll refs explicitly for workloads
+  that rely on poll arming.
 
-Works for me, thanks.
+- It shrinks the io_kiocb from 232 to 224 bytes.
+
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+
+---
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index b17cf54653df..fa4e2cb47e56 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -908,6 +908,7 @@ struct io_kiocb {
+ 	/* used by request caches, completion batching and iopoll */
+ 	struct io_wq_work_node		comp_list;
+ 	atomic_t			refs;
++	atomic_t			poll_refs;
+ 	struct io_kiocb			*link;
+ 	struct io_task_work		io_task_work;
+ 	/* for polled requests, i.e. IORING_OP_POLL_ADD and async armed poll */
+@@ -916,12 +917,11 @@ struct io_kiocb {
+ 	struct async_poll		*apoll;
+ 	/* opcode allocated if it needs to store data for async defer */
+ 	void				*async_data;
+-	struct io_wq_work		work;
+ 	/* custom credentials, valid IFF REQ_F_CREDS is set */
+-	const struct cred		*creds;
+ 	/* stores selected buf, valid IFF REQ_F_BUFFER_SELECTED is set */
+ 	struct io_buffer		*kbuf;
+-	atomic_t			poll_refs;
++	const struct cred		*creds;
++	struct io_wq_work		work;
+ };
+ 
+ struct io_tctx_node {
 
 -- 
-Lee Jones [李琼斯]
-Principal Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Jens Axboe
+

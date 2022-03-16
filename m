@@ -2,116 +2,106 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D0774DB3B1
-	for <lists+io-uring@lfdr.de>; Wed, 16 Mar 2022 15:50:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 02BF34DB5EF
+	for <lists+io-uring@lfdr.de>; Wed, 16 Mar 2022 17:19:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233040AbiCPOwL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 16 Mar 2022 10:52:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40884 "EHLO
+        id S1357464AbiCPQTn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 16 Mar 2022 12:19:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53484 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236677AbiCPOwK (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 16 Mar 2022 10:52:10 -0400
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A45A35F4C6;
-        Wed, 16 Mar 2022 07:50:56 -0700 (PDT)
-Received: by mail-wr1-f45.google.com with SMTP id x15so3286264wru.13;
-        Wed, 16 Mar 2022 07:50:56 -0700 (PDT)
+        with ESMTP id S1357473AbiCPQTl (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 16 Mar 2022 12:19:41 -0400
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 571D222523
+        for <io-uring@vger.kernel.org>; Wed, 16 Mar 2022 09:18:21 -0700 (PDT)
+Received: by mail-wm1-x32e.google.com with SMTP id n33-20020a05600c3ba100b003832caf7f3aso2735301wms.0
+        for <io-uring@vger.kernel.org>; Wed, 16 Mar 2022 09:18:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=A+59yFsYVoDK+at5g7PvFGFDwqhNlmSfcoynwM/AfCw=;
+        b=t4W4+rEBdAZOfy5a/oTq9bvr6aR6ef24myKd+Lzw4J1JrH03ZpjPcrFjQsXfupZ9Bl
+         ywkeRHKrunCqq98zyxSr2U8yrXNxHetS7vxzQP/+eMK+Pu81/3eNedR66dbmzdfyqRMO
+         GiyfwrOtDF65nxUngwTdjqPL4oO4ENsjwPlW8F+wMbkll/qSg8PrAQYcLZrTyndghdQN
+         0ShN254evo9Smd4rkXnD/I8s09s2fTS210LEJsbl4pAa2ZOd9xUY/D3Pl9IKh43b3/8L
+         AeVmilqyp3WJdQSJD9EmobfXSlbxyUW3BHsw0geBck693102T4CaHgle8I4hqsPSviut
+         D7kg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=bI4ZhjQL8dIuJvz21TfUD5JbGeAx7Qdq2Uugzf6XgB0=;
-        b=T8eaUq22SmrqQEkehJYK1KwHHKCraiQH+4hHcqgNBQs+Scx79ozCBs1JN48AnC9eP1
-         5EUEn4qjPWOW2TbrGeYkC2iLd0GC6DDMqbvmjsWZnf3XbKjH4Luhifn4MOmifOlTfCWR
-         nu7xZ4PzuwCbBITZUatpCMQA/OdZMGPyTZSbip6YaX7d9Q6Dr8fG433rs7yAS1B31FF7
-         mflix6gZ/mx7PVKzRv76SOvWLGJBCT09PPCaLwIqvxFjQYSzlPS2I0dGL6u6jCHLj20b
-         36K3MSO1TOnq5ci4kDV8DMTPYs3I/5QsdLcVr+dKc9DA3jWLIKuOi4zYvGxlGLWPjAyM
-         I80g==
-X-Gm-Message-State: AOAM533EY5CgNqtUTieYVFhwclZbpMGUF4U7O54hDoSm6lirKT40g63Y
-        i84O2P/Wwrm6e8rb6mlRS38=
-X-Google-Smtp-Source: ABdhPJzrRH5zBsn9fYkNcZjd08EnDBOCdVlS4Q3hFeb7W2Pq1bG2CpbUzWEW5D36WNgcL+UcKvbCng==
-X-Received: by 2002:a5d:6c6b:0:b0:1ea:77ea:dde8 with SMTP id r11-20020a5d6c6b000000b001ea77eadde8mr271610wrz.690.1647442255234;
-        Wed, 16 Mar 2022 07:50:55 -0700 (PDT)
-Received: from [192.168.64.180] (bzq-219-42-90.isdn.bezeqint.net. [62.219.42.90])
-        by smtp.gmail.com with ESMTPSA id r4-20020a05600c35c400b00389f368cf1esm513959wmq.40.2022.03.16.07.50.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Mar 2022 07:50:54 -0700 (PDT)
-Message-ID: <28b53100-9930-92d4-ba3b-f9c5e8773808@grimberg.me>
-Date:   Wed, 16 Mar 2022 16:50:53 +0200
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=A+59yFsYVoDK+at5g7PvFGFDwqhNlmSfcoynwM/AfCw=;
+        b=B+rnmEpmntlVrplnzOXkAoTYCCi9f1awgITgdeP31U4z/jvAPpmDPyYUd3HVdyJ/L0
+         El/A5mbkvli69yiKhqNbKv91kYMVH77zYfxef9hcDNcY01ezNiKzt4n4IaLCR321bhDi
+         FymJqyPAEW3GBYYUYt2Iww3HLem4YSt+IrE6nJ/wuhNMMyKSWWCURAMzdqtZiFxrYfd7
+         INEfFpkPXOyXcY8IYnendB5YeQVkpcGwO5cVOnYbn0Z+LLkizmw2CYCjKkUJpYwk/5tL
+         6hkIVsQ59NFMQHgt/+tCMPcmRwoHJfBgyrey8Rcmo54CPSR2vyFtymyNdS2TVQMswy8l
+         mZRA==
+X-Gm-Message-State: AOAM531pIeDCPuSscDx0NSgan1a1vPZ6ZhVVbbj4psbxwI/7lYKR4scr
+        Kli0ZDHOgrrLt8EfDnNC7qCc2Q==
+X-Google-Smtp-Source: ABdhPJxZplXaKqtlacyb/vCEKzev5Rge+fc9+IWR79ChHZDyrVbAJByWIm6Cl2Q/Vh66bHbDPTOD6Q==
+X-Received: by 2002:a05:600c:1ca6:b0:389:ab9a:b040 with SMTP id k38-20020a05600c1ca600b00389ab9ab040mr359701wms.111.1647447499772;
+        Wed, 16 Mar 2022 09:18:19 -0700 (PDT)
+Received: from google.com (cpc155339-bagu17-2-0-cust87.1-3.cable.virginm.net. [86.27.177.88])
+        by smtp.gmail.com with ESMTPSA id f22-20020a1cc916000000b00380d3e49e89sm2005319wmb.22.2022.03.16.09.18.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Mar 2022 09:18:19 -0700 (PDT)
+Date:   Wed, 16 Mar 2022 16:18:16 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Pavel Begunkov <asml.silence@gmail.com>, stable@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [PATCH] io_uring: return back safer resurrect
+Message-ID: <YjINyFwcvPs+a8uq@google.com>
+References: <cover.1618101759.git.asml.silence@gmail.com>
+ <7a080c20f686d026efade810b116b72f88abaff9.1618101759.git.asml.silence@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH 05/17] nvme: wire-up support for async-passthru on
- char-device.
-Content-Language: en-US
-To:     Jens Axboe <axboe@kernel.dk>, Kanchan Joshi <joshiiitr@gmail.com>
-Cc:     Kanchan Joshi <joshi.k@samsung.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Keith Busch <kbusch@kernel.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org, sbates@raithlin.com,
-        logang@deltatee.com, Pankaj Raghav <pankydev8@gmail.com>,
-        =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <javier@javigon.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Adam Manzanares <a.manzanares@samsung.com>,
-        Anuj Gupta <anuj20.g@samsung.com>
-References: <20220308152105.309618-1-joshi.k@samsung.com>
- <CGME20220308152702epcas5p1eb1880e024ac8b9531c85a82f31a4e78@epcas5p1.samsung.com>
- <20220308152105.309618-6-joshi.k@samsung.com>
- <7a123895-1102-4b36-2d6e-1e00e978d03d@grimberg.me>
- <CA+1E3rK8wnABptQLQrEo8XRdsbua9t_88e3ZP-Ass3CnxHv+oA@mail.gmail.com>
- <8f45a761-5ecb-5911-1064-9625a285c93d@grimberg.me>
- <20220316092153.GA4885@test-zns>
- <11f9e933-cfc8-2e3b-c815-c49a4b7db4ec@grimberg.me>
- <CA+1E3r+_DEw5ABPbLzSp9Gvg6L8XU-2HBoLK7kuXucLjr=+Ezw@mail.gmail.com>
- <3ed01280-5487-7206-a326-0cd110118b65@grimberg.me>
- <666deb0e-fa10-8a39-c1aa-cf3908b3795c@kernel.dk>
-From:   Sagi Grimberg <sagi@grimberg.me>
-In-Reply-To: <666deb0e-fa10-8a39-c1aa-cf3908b3795c@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7a080c20f686d026efade810b116b72f88abaff9.1618101759.git.asml.silence@gmail.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+Stable Team,
 
->> [...]
->>
->>> Got it, thanks. Passthrough (sync or async) just returns the failure
->>> to user-space if that fails.
->>> No attempt to retry/requeue as the block path does.
->>
->> I know, and that was my original question, no one cares that this
->> interface completely lacks this capability? Maybe it is fine, but
->> it is not a trivial assumption given that this is designed to be more
->> than an interface to send admin/vs commands to the controller...
+> Revert of revert of "io_uring: wait potential ->release() on resurrect",
+> which adds a helper for resurrect not racing completion reinit, as was
+> removed because of a strange bug with no clear root or link to the
+> patch.
 > 
-> Most people don't really care about or use multipath, so it's not a
-> primary goal.
+> Was improved, instead of rcu_synchronize(), just wait_for_completion()
+> because we're at 0 refs and it will happen very shortly. Specifically
+> use non-interruptible version to ignore all pending signals that may
+> have ended prior interruptible wait.
+> 
+> This reverts commit cb5e1b81304e089ee3ca948db4d29f71902eb575.
+> 
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> ---
+>  fs/io_uring.c | 18 ++++++++++++++----
+>  1 file changed, 14 insertions(+), 4 deletions(-)
 
-This statement is generally correct. However what application would be 
-interested in speaking raw nvme to a device and gaining performance that
-is even higher than the block layer (which is great to begin with)?
+Please back-port this as far as it will apply.
 
-First thing that comes to mind is a high-end storage array, where
-dual-ported drives are considered to be the standard. I could argue the
-same for a high-end oracle appliance or something like that... Although
-in a lot of cases, each nvme port will connect to a different host...
+Definitely through v5.10.y.
 
-What are the use-cases that need this interface that are the target
-here? Don't remember seeing this come up in the cover-letter or previous
-iterations...
+It solves a critical bug.
 
-> For passthrough, most of request types should hit the
-> exact target, I would suggest that if someone cares about multipath for
-> specific commands, that they be flagged as such.
-What do you mean by "they be flagged as such"?
+Subject: "io_uring: return back safer resurrect"
+
+Upstream commit:: f70865db5ff35f5ed0c7e9ef63e7cca3d4947f04
+
+-- 
+Lee Jones [李琼斯]
+Principal Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog

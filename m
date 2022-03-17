@@ -2,92 +2,84 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A56C4DC8D6
-	for <lists+io-uring@lfdr.de>; Thu, 17 Mar 2022 15:37:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 287A74DC976
+	for <lists+io-uring@lfdr.de>; Thu, 17 Mar 2022 16:00:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229953AbiCQOiY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 17 Mar 2022 10:38:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46556 "EHLO
+        id S235593AbiCQPBz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 17 Mar 2022 11:01:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231243AbiCQOiW (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 17 Mar 2022 10:38:22 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E0611D66CD
-        for <io-uring@vger.kernel.org>; Thu, 17 Mar 2022 07:37:05 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id u16so6648336wru.4
-        for <io-uring@vger.kernel.org>; Thu, 17 Mar 2022 07:37:04 -0700 (PDT)
+        with ESMTP id S233694AbiCQPBy (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 17 Mar 2022 11:01:54 -0400
+Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF7692042A5
+        for <io-uring@vger.kernel.org>; Thu, 17 Mar 2022 08:00:37 -0700 (PDT)
+Received: by mail-io1-xd2c.google.com with SMTP id z7so6203679iom.1
+        for <io-uring@vger.kernel.org>; Thu, 17 Mar 2022 08:00:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=from:to:in-reply-to:references:subject:message-id:date:mime-version
          :content-transfer-encoding;
-        bh=9Xfu1Khmqex3g8Ibmb+SH5O2jm+fTTl2AXij/DcOm9c=;
-        b=QITx/QZ2yzH+WwhWSf1+rrF//8HbLTEsACHoODLEj1Sos/nkFQoWROj+H13Xmi55Sj
-         ptXQcu6RjusnMfsvUHpTIqVNIBwPCxgcmn0goq3202sbELXkXqwx5eAqRBFMEs4dfnXs
-         6THspQspgoAwBTMo+Xbr57Ia8JDHbOTId11D1QE5GKMm4JzTo0dMpQ+8Ov2Zt6wPKzm6
-         AmxZpzOGpzWtCNiO0iJLSiEWBRjOiH3P4J2mWXjYQLPjwhX5X/FMSvKhPlY9fJP5WlkC
-         FTtgabK03Hn37mzXetzcBVJU3s/m5ZKmEuKEKhKIxStDZIdDBrdqkIJT7zJTYjx/TsiE
-         NBAA==
+        bh=J4VwOjzZ+LY9+GtUO8xpCDXQDKcYNJ7STh7gQt1of2U=;
+        b=TIMGZkF1w2ezQRvollXGduqDIIdAODt6pKyg7VN7Y9MFI8gB5AEI8B/la5og7KiZTh
+         V3I7AS2RViBVCgPbvyfVyra51Pb0fiqNfPyF/fNbG7TBk8wQrPeqjfEGgeYZF909HxQk
+         46rjpKKfFBD8I7VNoDA+EZlMbzRiBDfKGJR0c9+MSsu/Hpwb0wflWtUacz6iItatLxhl
+         XtIrxQRgklhagAOq3JqAE1jLnYyOpJcqq6b7L3Wg+DWMOC8h5h9vWGF0towr+XqnLte9
+         RjbFql89xCkm/PakD5sB8ZxPaE0EmP9tNgBbPqbY85ttkHJJKzImIB5p1TOO4N1wz5oA
+         Q7Rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=9Xfu1Khmqex3g8Ibmb+SH5O2jm+fTTl2AXij/DcOm9c=;
-        b=H/gIiIiKZL+BA64GjeXaVPLHoOMG/97fLzsI9S4jpDZ/m345IhVfx7+zL/ZXVcRE/k
-         5AmcetpLfhZgU3wREkUj2n5DbAl4sld+m++KjxzDICvkD4JROvahFQ/shh9FCnKYTq/y
-         SBIwKmHA/ppv+DCcUxdXqMS/uArRZogTFzCAdgQxkWf373UPH/VwOd463kEDddK9BEMe
-         IaNzxDNgfiiKhnrE+FmWfKrIVHTAqD6G7OELsN0WCyKAqgAu/nfviYdEj9r2bRA6KaxO
-         5a9NCXIrqsbCPbNs8xRybN+oXlsPFmB5qe0PSfg6+WXzQs9xUbh8uqS3E+JFV4uGfuFn
-         69Yg==
-X-Gm-Message-State: AOAM5308ssiQhVvCy7F1Q7F3PFXCgzhehYy/ke+vadfT7B5puIWVkrQA
-        4f+ujxGfvS5vODQo+BmCWGH4Bqna/cA=
-X-Google-Smtp-Source: ABdhPJzvL8wbPA3NwMm9WnAgDT5I+H6LxDHeT7gbSo9o/n3j9f7R0lugnwpPCjHCIl8504u+SzJH/A==
-X-Received: by 2002:a5d:61c4:0:b0:203:ee2c:e0aa with SMTP id q4-20020a5d61c4000000b00203ee2ce0aamr2108565wrv.101.1647527823333;
-        Thu, 17 Mar 2022 07:37:03 -0700 (PDT)
-Received: from 127.0.0.1localhost (82-132-228-233.dab.02.net. [82.132.228.233])
-        by smtp.gmail.com with ESMTPSA id bg20-20020a05600c3c9400b0037fa5c422c8sm8664700wmb.48.2022.03.17.07.37.02
+        h=x-gm-message-state:from:to:in-reply-to:references:subject
+         :message-id:date:mime-version:content-transfer-encoding;
+        bh=J4VwOjzZ+LY9+GtUO8xpCDXQDKcYNJ7STh7gQt1of2U=;
+        b=3THQpu4g8yWvO1DJKJFqwY9KiyIJpV34sfTEg/1QX4ZuRwU61MCAPimKE84/0l8MwV
+         tERMl214/1T3kgX9gozxIPLoxugol31AbkVFn61ury+wT0YXlLwiR/7THvk6OqMvc1vl
+         Jb+0TpJI70x3T22prskPb+fQ6PCm4ZwobmsymYrIpwsh/bGFROoZd3ZB0EBPfd7OVCXY
+         EJZ0H8UJHQhzj8DQiD8MFCewN1CrU9/r2ONwmZ8oL+eeVol1Pky68F3z2gPmKJ/ydxns
+         0yDC1Ldrhp0mVX1TEITsDw0Yz4ktZLzEuWnSumLLYVvG+NcwXh+atywXwtH8onSwrDYR
+         1D/w==
+X-Gm-Message-State: AOAM532+zBhfH7+MIoAYorwbkDMV9J+3s77EheGUhA8zKG09LYcttaHu
+        L54nW6zTtlzuilaMJ8ric1AAfHJ+n+2h95EP
+X-Google-Smtp-Source: ABdhPJwP/HArQRL2cGtG00RPR9de3+5KtlkCd49Acrx+H7Vm7OCoXgb06c5Z+NOKGryztg09Oi5hjw==
+X-Received: by 2002:a05:6602:160a:b0:648:cf59:3613 with SMTP id x10-20020a056602160a00b00648cf593613mr2318985iow.163.1647529236969;
+        Thu, 17 Mar 2022 08:00:36 -0700 (PDT)
+Received: from [127.0.1.1] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id n25-20020a6bf619000000b00640dc440799sm2814910ioh.50.2022.03.17.08.00.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Mar 2022 07:37:02 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH liburing 1/1] tests: don't sleep too much for rsrc tags
-Date:   Thu, 17 Mar 2022 14:35:22 +0000
-Message-Id: <16780e103cfd395ad380bab4dbe6cf35cb581d98.1647527537.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.35.1
+        Thu, 17 Mar 2022 08:00:36 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+In-Reply-To: <16780e103cfd395ad380bab4dbe6cf35cb581d98.1647527537.git.asml.silence@gmail.com>
+References: <16780e103cfd395ad380bab4dbe6cf35cb581d98.1647527537.git.asml.silence@gmail.com>
+Subject: Re: [PATCH liburing 1/1] tests: don't sleep too much for rsrc tags
+Message-Id: <164752923635.67374.16812721047342854913.b4-ty@kernel.dk>
+Date:   Thu, 17 Mar 2022 09:00:36 -0600
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-check_cq_empty() sleeps for a second, and it's called many times
-throughout the test. It's too much, reduced it to 1ms. Even if there is
-a false negative, we don't care and next check_cq_empty() will fail.
+On Thu, 17 Mar 2022 14:35:22 +0000, Pavel Begunkov wrote:
+> check_cq_empty() sleeps for a second, and it's called many times
+> throughout the test. It's too much, reduced it to 1ms. Even if there is
+> a false negative, we don't care and next check_cq_empty() will fail.
+> 
+> 
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- test/rsrc_tags.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied, thanks!
 
-diff --git a/test/rsrc_tags.c b/test/rsrc_tags.c
-index f441b5c..2d11d2a 100644
---- a/test/rsrc_tags.c
-+++ b/test/rsrc_tags.c
-@@ -27,7 +27,7 @@ static bool check_cq_empty(struct io_uring *ring)
- 	struct io_uring_cqe *cqe = NULL;
- 	int ret;
- 
--	sleep(1); /* doesn't happen immediately, so wait */
-+	usleep(1000); /* doesn't happen immediately, so wait */
- 	ret = io_uring_peek_cqe(ring, &cqe); /* nothing should be there */
- 	return ret == -EAGAIN;
- }
+[1/1] tests: don't sleep too much for rsrc tags
+      commit: 77e374c9c1a04578b845ccdac9773c779aa1518a
+
+Best regards,
 -- 
-2.35.1
+Jens Axboe
+
 

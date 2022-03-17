@@ -2,106 +2,92 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C3D7F4DC5DE
-	for <lists+io-uring@lfdr.de>; Thu, 17 Mar 2022 13:32:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A56C4DC8D6
+	for <lists+io-uring@lfdr.de>; Thu, 17 Mar 2022 15:37:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233576AbiCQMdB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 17 Mar 2022 08:33:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58406 "EHLO
+        id S229953AbiCQOiY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 17 Mar 2022 10:38:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233578AbiCQMdA (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 17 Mar 2022 08:33:00 -0400
-Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E10EE1EB814
-        for <io-uring@vger.kernel.org>; Thu, 17 Mar 2022 05:31:43 -0700 (PDT)
-Received: by mail-pl1-x630.google.com with SMTP id n18so4316180plg.5
-        for <io-uring@vger.kernel.org>; Thu, 17 Mar 2022 05:31:43 -0700 (PDT)
+        with ESMTP id S231243AbiCQOiW (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 17 Mar 2022 10:38:22 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E0611D66CD
+        for <io-uring@vger.kernel.org>; Thu, 17 Mar 2022 07:37:05 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id u16so6648336wru.4
+        for <io-uring@vger.kernel.org>; Thu, 17 Mar 2022 07:37:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:in-reply-to:references:subject:message-id:date:mime-version
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=ITuWcQTZUUHxYZKQG+yikYNAyM57saBDq+q1IdGti5k=;
-        b=AWdgK1dE1r/15dw/3zZyn4TEakvTFaYJzYeg6vbAarmSFdZecxy3q82w4f7xmkyUGQ
-         /HOjrHRpwE/GtnyOo9rejxrHRO1hdBfkVSy3KEmfka/uTzv4KdINaa7zrO1AIojDvuFk
-         N7o3ZKZ6BVlHhctgS1g34X+GXpWEap8XYwl1n6QB6m479IdGPKih6/AFlaadJYge4mDY
-         4CnVLTkjCHabPzNDZtfRMyxINDCBJTwxwKJhKlX/FCgPJPPtj9bK3bJHpXzHUcZ3dYDw
-         ricvq+CoDgbpCTTLvOKX7Q8ndqqHyf7MFhdOKQSVujmodrqQZ0xIUdEbIgvd/C+j9Sxb
-         Ee2g==
+        bh=9Xfu1Khmqex3g8Ibmb+SH5O2jm+fTTl2AXij/DcOm9c=;
+        b=QITx/QZ2yzH+WwhWSf1+rrF//8HbLTEsACHoODLEj1Sos/nkFQoWROj+H13Xmi55Sj
+         ptXQcu6RjusnMfsvUHpTIqVNIBwPCxgcmn0goq3202sbELXkXqwx5eAqRBFMEs4dfnXs
+         6THspQspgoAwBTMo+Xbr57Ia8JDHbOTId11D1QE5GKMm4JzTo0dMpQ+8Ov2Zt6wPKzm6
+         AmxZpzOGpzWtCNiO0iJLSiEWBRjOiH3P4J2mWXjYQLPjwhX5X/FMSvKhPlY9fJP5WlkC
+         FTtgabK03Hn37mzXetzcBVJU3s/m5ZKmEuKEKhKIxStDZIdDBrdqkIJT7zJTYjx/TsiE
+         NBAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:in-reply-to:references:subject
-         :message-id:date:mime-version:content-transfer-encoding;
-        bh=ITuWcQTZUUHxYZKQG+yikYNAyM57saBDq+q1IdGti5k=;
-        b=A5t0L/GGwECnFQxgvFFU10/2NR6wkaiQJQ0nhPSkS9j8JztrMtnCG9yHO4idn5hlEQ
-         ESV4DPG7C5nsAX60QxiKBezGy2xCGy5Phdgar8o4cePydSjM7uyqT5i3DXVGYpUEqpTt
-         lhFXRxWJcWteF9eZKisLCjz0KKGicac/+QbrKTX81sQj45A3+ANYqEpBxylZlQuz+kex
-         8GpmbnkZrmvI43kzPVTr0sMzyd/wGxS0lYfnK5DgovoPc7GYbZLfA9x5kwTm+ByIFySe
-         3xR70Wqxo5zr4h/1VhZZYN9H2FmbOsfXRE68VlUEAWhf60ybHRgibin98GJzu4VL9Fbh
-         qE3w==
-X-Gm-Message-State: AOAM531ZtaqZDKq8x1GoE8c5HVIspqcnDZkLGT5ZyHfGRt5SSrsdEhI+
-        BpWCp18bwLHEKisc2Q23/VsDtMcM7NQY6O7L
-X-Google-Smtp-Source: ABdhPJypmO1sBMQZ984dFWDSDRIVFbpYadkG7aFbAOx5TteG1Tv0uJ9twnYj8DLCepglAQnsJMrv3A==
-X-Received: by 2002:a17:902:8a91:b0:14f:969b:f6be with SMTP id p17-20020a1709028a9100b0014f969bf6bemr4573655plo.161.1647520302371;
-        Thu, 17 Mar 2022 05:31:42 -0700 (PDT)
-Received: from [127.0.1.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id kb10-20020a17090ae7ca00b001bfad03c750sm10301511pjb.26.2022.03.17.05.31.40
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9Xfu1Khmqex3g8Ibmb+SH5O2jm+fTTl2AXij/DcOm9c=;
+        b=H/gIiIiKZL+BA64GjeXaVPLHoOMG/97fLzsI9S4jpDZ/m345IhVfx7+zL/ZXVcRE/k
+         5AmcetpLfhZgU3wREkUj2n5DbAl4sld+m++KjxzDICvkD4JROvahFQ/shh9FCnKYTq/y
+         SBIwKmHA/ppv+DCcUxdXqMS/uArRZogTFzCAdgQxkWf373UPH/VwOd463kEDddK9BEMe
+         IaNzxDNgfiiKhnrE+FmWfKrIVHTAqD6G7OELsN0WCyKAqgAu/nfviYdEj9r2bRA6KaxO
+         5a9NCXIrqsbCPbNs8xRybN+oXlsPFmB5qe0PSfg6+WXzQs9xUbh8uqS3E+JFV4uGfuFn
+         69Yg==
+X-Gm-Message-State: AOAM5308ssiQhVvCy7F1Q7F3PFXCgzhehYy/ke+vadfT7B5puIWVkrQA
+        4f+ujxGfvS5vODQo+BmCWGH4Bqna/cA=
+X-Google-Smtp-Source: ABdhPJzvL8wbPA3NwMm9WnAgDT5I+H6LxDHeT7gbSo9o/n3j9f7R0lugnwpPCjHCIl8504u+SzJH/A==
+X-Received: by 2002:a5d:61c4:0:b0:203:ee2c:e0aa with SMTP id q4-20020a5d61c4000000b00203ee2ce0aamr2108565wrv.101.1647527823333;
+        Thu, 17 Mar 2022 07:37:03 -0700 (PDT)
+Received: from 127.0.0.1localhost (82-132-228-233.dab.02.net. [82.132.228.233])
+        by smtp.gmail.com with ESMTPSA id bg20-20020a05600c3c9400b0037fa5c422c8sm8664700wmb.48.2022.03.17.07.37.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Mar 2022 05:31:41 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <cover.1647481208.git.asml.silence@gmail.com>
-References: <cover.1647481208.git.asml.silence@gmail.com>
-Subject: Re: [PATCH for-next 0/7] completion path optimisations
-Message-Id: <164752030091.31627.8845796970959443213.b4-ty@kernel.dk>
-Date:   Thu, 17 Mar 2022 06:31:40 -0600
+        Thu, 17 Mar 2022 07:37:02 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
+Subject: [PATCH liburing 1/1] tests: don't sleep too much for rsrc tags
+Date:   Thu, 17 Mar 2022 14:35:22 +0000
+Message-Id: <16780e103cfd395ad380bab4dbe6cf35cb581d98.1647527537.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: *
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, 17 Mar 2022 02:03:35 +0000, Pavel Begunkov wrote:
-> A small series that for me prepares the code for further work but is
-> also adds some nice optimisations for completion path, including
-> removing an extra smp_mb() from the iopoll path.
-> 
-> Pavel Begunkov (7):
->   io_uring: normilise naming for fill_cqe*
->   io_uring: refactor timeout cancellation cqe posting
->   io_uring: extend provided buf return to fails
->   io_uring: remove extra barrier for non-sqpoll iopoll
->   io_uring: shuffle io_eventfd_signal() bits around
->   io_uring: thin down io_commit_cqring()
->   io_uring: fold evfd signalling under a slower path
-> 
-> [...]
+check_cq_empty() sleeps for a second, and it's called many times
+throughout the test. It's too much, reduced it to 1ms. Even if there is
+a false negative, we don't care and next check_cq_empty() will fail.
 
-Applied, thanks!
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ test/rsrc_tags.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[1/7] io_uring: normilise naming for fill_cqe*
-      commit: ae4da18941c1c13a9bd6f1d39888ca9a4ff3db91
-[2/7] io_uring: refactor timeout cancellation cqe posting
-      commit: 6695490dc85781fe98b782f36f27c13710dbc921
-[3/7] io_uring: extend provided buf return to fails
-      commit: b91ef1872869d99cd42e908eb9754b81115c2c05
-[4/7] io_uring: remove extra barrier for non-sqpoll iopoll
-      commit: 0f84747177b962c32243a57cb454193bdba4fe8d
-[5/7] io_uring: shuffle io_eventfd_signal() bits around
-      commit: 66fc25ca6b7ec4124606e0d59c71c6bcf14e05bb
-[6/7] io_uring: thin down io_commit_cqring()
-      commit: 9333f6b4628c8037a89ed23e1188d4b7dc5d74e4
-[7/7] io_uring: fold evfd signalling under a slower path
-      commit: 9aa8dfde4869ccdec0a7290b686dbc10e079e163
-
-Best regards,
+diff --git a/test/rsrc_tags.c b/test/rsrc_tags.c
+index f441b5c..2d11d2a 100644
+--- a/test/rsrc_tags.c
++++ b/test/rsrc_tags.c
+@@ -27,7 +27,7 @@ static bool check_cq_empty(struct io_uring *ring)
+ 	struct io_uring_cqe *cqe = NULL;
+ 	int ret;
+ 
+-	sleep(1); /* doesn't happen immediately, so wait */
++	usleep(1000); /* doesn't happen immediately, so wait */
+ 	ret = io_uring_peek_cqe(ring, &cqe); /* nothing should be there */
+ 	return ret == -EAGAIN;
+ }
 -- 
-Jens Axboe
-
+2.35.1
 

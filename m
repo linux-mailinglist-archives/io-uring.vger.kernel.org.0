@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F6164DBCD8
-	for <lists+io-uring@lfdr.de>; Thu, 17 Mar 2022 03:05:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 827EE4DBCD5
+	for <lists+io-uring@lfdr.de>; Thu, 17 Mar 2022 03:05:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350319AbiCQCGV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 16 Mar 2022 22:06:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33126 "EHLO
+        id S1358423AbiCQCGW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 16 Mar 2022 22:06:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358423AbiCQCGQ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 16 Mar 2022 22:06:16 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DEF91EADB
-        for <io-uring@vger.kernel.org>; Wed, 16 Mar 2022 19:05:00 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id m12so4852579edc.12
-        for <io-uring@vger.kernel.org>; Wed, 16 Mar 2022 19:05:00 -0700 (PDT)
+        with ESMTP id S1358427AbiCQCGT (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 16 Mar 2022 22:06:19 -0400
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C9381EAE8
+        for <io-uring@vger.kernel.org>; Wed, 16 Mar 2022 19:05:01 -0700 (PDT)
+Received: by mail-ed1-x530.google.com with SMTP id m12so4852612edc.12
+        for <io-uring@vger.kernel.org>; Wed, 16 Mar 2022 19:05:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=bb98qC6bDW05x2jyG6wIMmqqaKxr+V1j9h9eZBM3j7c=;
-        b=g/Vck5OJxU0NNxemNXarV/x2mAdMIZevXD36uPQZe4pJeGQRMgp2md2stBsHX+slQ9
-         jYMCXp3Fn7PkbadsZkGLhlyY0V+t6lTWdBXBaDKvFIEsO53IIWoR29tcHNT34JfyEMwb
-         rM1iSyZ/3f/Ix3RfBKBkN/CFojursQwZdev2YARkOcoU1uTCbVrgH7DE4ax5xiHZDNyW
-         uI2SHU+o6Xq87P/uEM7nABpVUWMVBDrEJVNrlfnPejNYnhU7Jbqy/7pqxRe1RQwLHZVi
-         laAwL8H6DgrHb/Vu2Zpq1pESQd7272j2x2oXM3RM6bB7ShL/gxovFC88HbmFdgHJAXVW
-         Hu9Q==
+        bh=U3M6eAjqTEsQe3B4WXnBdsBGUdh7aRt4QVvDKHknjdM=;
+        b=lei/g7TFioqZMQ/luOA1yU2dfITqnqVXbdu1kRMeNJqLsw6g60pj121h0LOasho8J3
+         8Mk4kJCmatWQBTI5Ra5unEpIbbJsZIo+QWsxIYlxltKwC7N8cNRn/UL98kyEIYudWmQk
+         bUdllmmtwxEw5xnoKFVDCUeCUcpcb2mdm948wBLnlY3bfLGmIY1f5ssE5FprgJWNS019
+         pi0x8Wi1BiN7kIyMw13NXRoiHQfZEoQtfAmVH6/wbqgCzI0h2aMFwzH0tlFXQ/qsx0Se
+         Zf6x6VOlkvSBqegbmP6/wFHXCKP5aNZ39kfoHEB4mC4yQTsYVckkPhtGFTvf9cHhTFT0
+         AZYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=bb98qC6bDW05x2jyG6wIMmqqaKxr+V1j9h9eZBM3j7c=;
-        b=XTVHhinPl4TcldmMYatQ1bukbdDDf/ObEBT2pvpRcB4ENJ5lzGHaDVer036gWoALv6
-         EJWl4SSwhJya2D+3AC+Bu2xMEQoq3ph4wZB1qS5GLnzAMt/Vp9eagBGoFXbEazNOOahH
-         ZWesYd/mKW70xlbNXx5I2cwuJvgKN/2YX7LzL8rTfJ8cjbsJU7glA+T1WIgY5nTVuKCD
-         Y5i16shFlG6H2inyjB24CHbxo7TDi2WjU3RCGGKGe7Y0fU7M+0w47DP4zOYY4GNO15jt
-         QMYkj1pb9foFP5WrJe4oGT7rH5vPj/d6KxC+AcxuMAZ3Un4JGC1mL1k1jzIM9/Wwgp/7
-         IoeQ==
-X-Gm-Message-State: AOAM533/aIlTh5TXDWqvaAhWC09tGhqL7J1VE2TCOPZHX8ahUGm1ss/L
-        u/SZzLFPIZ++DHocmuM51gE1UbC2oJxtIw==
-X-Google-Smtp-Source: ABdhPJzjS5PWfl5LU9g6Rjndy3YsdMsAKkvppWhjJjdl1FC+ikS8Fyd/AwW4xBjpVRpuA2GG/LclrA==
-X-Received: by 2002:a05:6402:42d4:b0:412:c26b:789 with SMTP id i20-20020a05640242d400b00412c26b0789mr2187205edc.232.1647482698828;
-        Wed, 16 Mar 2022 19:04:58 -0700 (PDT)
+        bh=U3M6eAjqTEsQe3B4WXnBdsBGUdh7aRt4QVvDKHknjdM=;
+        b=cVit+TrYrl50z90O9Wl/TcGGJhewphn0ulfXNrWkDaWOzNodhO3vN5Jq93UAcs4Cvz
+         QxFN/K84kbX2y4YGcSkHTdaY+K7Gv1kAHI6wP6eH6ARNCUzgUAssG1DrdT/UNiokjzo6
+         0YSLnnZNo+PTEY69Q8gT+cQqJJy9IawegF8n6SqDGyGd3azSDq4w7fiFNA8HyLhiAp69
+         6/ZZNh4fveZ4q7VfGIgH1Ibqy6jMHT847smb9ElgpGI1Fb+LdnvSDpjDEq+CiZR0ka09
+         KE2NFNDdXhPo4VY0oscxmZHXAHZFabd254J10JeBSYDzgkIwYXesiqnmgMIwGNb7vOH3
+         xMEA==
+X-Gm-Message-State: AOAM533NWVlCIO4Y8msjfjZhSfD+hrst8jSQ2O5J2Gqx84vpJyknDpuM
+        Uq5CY0OtwokqtrXs5/wOHkt02cAuqqe+Tw==
+X-Google-Smtp-Source: ABdhPJwKzUJbACOP00i/hb53SgCp6vq3vYwPCFnXd1mouMnHstXu58helQzOUMfV8TeHo/WwZzDRhQ==
+X-Received: by 2002:aa7:c34d:0:b0:418:c96a:cb58 with SMTP id j13-20020aa7c34d000000b00418c96acb58mr2057571edr.49.1647482699772;
+        Wed, 16 Mar 2022 19:04:59 -0700 (PDT)
 Received: from 127.0.0.1localhost ([85.255.234.67])
-        by smtp.gmail.com with ESMTPSA id b26-20020aa7df9a000000b00416b3005c4bsm1876048edy.46.2022.03.16.19.04.58
+        by smtp.gmail.com with ESMTPSA id b26-20020aa7df9a000000b00416b3005c4bsm1876048edy.46.2022.03.16.19.04.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Mar 2022 19:04:58 -0700 (PDT)
+        Wed, 16 Mar 2022 19:04:59 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH 3/7] io_uring: extend provided buf return to fails
-Date:   Thu, 17 Mar 2022 02:03:38 +0000
-Message-Id: <a4880106fcf199d5810707fe2d17126fcdf18bc4.1647481208.git.asml.silence@gmail.com>
+Subject: [PATCH 4/7] io_uring: remove extra barrier for non-sqpoll iopoll
+Date:   Thu, 17 Mar 2022 02:03:39 +0000
+Message-Id: <d72e8ef6f7a3f6a72e18fad8409f7d47afc8da7d.1647481208.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <cover.1647481208.git.asml.silence@gmail.com>
 References: <cover.1647481208.git.asml.silence@gmail.com>
@@ -68,50 +68,33 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-It's never a good idea to put provided buffers without notifying the
-userspace, it'll lead to userspace leaks, so add io_put_kbuf() in
-io_req_complete_failed(). The fail helper is called by all sorts of
-requests, but it's still safe to do as io_put_kbuf() will return 0 in
-for all requests that don't support and so don't expect provided buffers.
-
-btw, remove some code duplication from kiocb_done().
+smp_mb() in io_cqring_ev_posted_iopoll() is only there because of
+waitqueue_active(). However, non-SQPOLL IOPOLL ring doesn't wake the CQ
+and so the barrier there is useless. Kill it, it's usually pretty
+expensive.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ fs/io_uring.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index b4b12aa7d107..bbbbf889dfd8 100644
+index bbbbf889dfd8..603cbe687dd2 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -2116,7 +2116,7 @@ static inline void io_req_complete(struct io_kiocb *req, s32 res)
- static void io_req_complete_failed(struct io_kiocb *req, s32 res)
+@@ -1869,11 +1869,8 @@ static void io_cqring_ev_posted(struct io_ring_ctx *ctx)
+ 
+ static void io_cqring_ev_posted_iopoll(struct io_ring_ctx *ctx)
  {
- 	req_set_fail(req);
--	io_req_complete_post(req, res, 0);
-+	io_req_complete_post(req, res, io_put_kbuf(req, 0));
- }
- 
- static void io_req_complete_fail_submit(struct io_kiocb *req)
-@@ -3225,14 +3225,10 @@ static void kiocb_done(struct io_kiocb *req, ssize_t ret,
- 
- 	if (req->flags & REQ_F_REISSUE) {
- 		req->flags &= ~REQ_F_REISSUE;
--		if (io_resubmit_prep(req)) {
-+		if (io_resubmit_prep(req))
- 			io_req_task_queue_reissue(req);
--		} else {
--			req_set_fail(req);
--			req->result = ret;
--			req->io_task_work.func = io_req_task_complete;
--			io_req_task_work_add(req, false);
--		}
-+		else
-+			io_req_task_queue_fail(req, ret);
+-	/* see waitqueue_active() comment */
+-	smp_mb();
+-
+ 	if (ctx->flags & IORING_SETUP_SQPOLL) {
+-		if (waitqueue_active(&ctx->cq_wait))
++		if (wq_has_sleeper(&ctx->cq_wait))
+ 			wake_up_all(&ctx->cq_wait);
  	}
- }
- 
+ 	io_eventfd_signal(ctx);
 -- 
 2.35.1
 

@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2496B4DBCD7
+	by mail.lfdr.de (Postfix) with ESMTP id 6F6164DBCD8
 	for <lists+io-uring@lfdr.de>; Thu, 17 Mar 2022 03:05:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1358451AbiCQCGV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        id S1350319AbiCQCGV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
         Wed, 16 Mar 2022 22:06:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33068 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350319AbiCQCGO (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 16 Mar 2022 22:06:14 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 548C31EAD7
-        for <io-uring@vger.kernel.org>; Wed, 16 Mar 2022 19:04:59 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id a17so3839085edm.9
-        for <io-uring@vger.kernel.org>; Wed, 16 Mar 2022 19:04:59 -0700 (PDT)
+        with ESMTP id S1358423AbiCQCGQ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 16 Mar 2022 22:06:16 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DEF91EADB
+        for <io-uring@vger.kernel.org>; Wed, 16 Mar 2022 19:05:00 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id m12so4852579edc.12
+        for <io-uring@vger.kernel.org>; Wed, 16 Mar 2022 19:05:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=jHjGvmKzuX1Y5843SgTTSYbOkmlpTRMUqOEUGkvwHRc=;
-        b=eHpJNasHkZeqvO7ZhcUoZ5y96gmJhhMwPgmRhuQLlSmmR9dXfKwzwQrhj4g/bzBsKB
-         iigVTZI1pshOTVmbGtOkDKMqt/cjEpTHydLNdsOhf+4y3xsaN4+6BoOv3kyHxno1gTBL
-         wwXXAH4hgUquF2a1g3y/FPUelnvMfN67qrB1YtliYs3hw0/s9qNcByFq7xk9KBrGtg0/
-         yHCAe5zU/XjJrSW+/hayXwaCcIn2XaETFezFAU220b5mqreBo9kewaf94XACYFkYjQ2h
-         1vK+k+oinLz5I8hc+mBYRv2hIfOT5LGd8l0t1/sSzrq59iSOEJPyegMImdRESx7QOsyl
-         wt0w==
+        bh=bb98qC6bDW05x2jyG6wIMmqqaKxr+V1j9h9eZBM3j7c=;
+        b=g/Vck5OJxU0NNxemNXarV/x2mAdMIZevXD36uPQZe4pJeGQRMgp2md2stBsHX+slQ9
+         jYMCXp3Fn7PkbadsZkGLhlyY0V+t6lTWdBXBaDKvFIEsO53IIWoR29tcHNT34JfyEMwb
+         rM1iSyZ/3f/Ix3RfBKBkN/CFojursQwZdev2YARkOcoU1uTCbVrgH7DE4ax5xiHZDNyW
+         uI2SHU+o6Xq87P/uEM7nABpVUWMVBDrEJVNrlfnPejNYnhU7Jbqy/7pqxRe1RQwLHZVi
+         laAwL8H6DgrHb/Vu2Zpq1pESQd7272j2x2oXM3RM6bB7ShL/gxovFC88HbmFdgHJAXVW
+         Hu9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=jHjGvmKzuX1Y5843SgTTSYbOkmlpTRMUqOEUGkvwHRc=;
-        b=XXL7F5Q8uDzdOk1zQSjMZI3Fzgf7AdG/p91WmUxok7+YedbD3mH9B6g+g9hGulmNLo
-         j/lS4CYzpIFNtXuWRRocYbdpaiX5jhL8L1h4Yb3QJrmQKoOTYv8XYWjafCaE6bmwNm5y
-         2VIx0WSCJ9Lw21whgFReyOHB3sDM7BDz31EE3IJNpGp4dJMskmJyFACWNXoGAZdReRhW
-         s3wcBOITQmHMjFGvXNQmKSyYb1ikywJRTnkxu7Uqp5ZA/MELe7hmWSuzl5b5n3Ohjbd7
-         Ol7VpknQ26R4/lvUsA7NjEQTYqwEe0jQUwGPaRKjRcRcbnNlAiWE30ZH7NPL9elotiCG
-         ZqVA==
-X-Gm-Message-State: AOAM532k+VCwJ94I6XJ2hkjasIi0Mc/seS7czePVqvfENRg+dFVjq4VH
-        Z+SULg3yQf45b0/56EMt+r0msy1a8GwXjA==
-X-Google-Smtp-Source: ABdhPJx+yBDi3SopeGGGGf+cPzyNhJNnD7hvCQ75nTO5Ehbh6BedxW92kGo1pFUOfMC9zDJcTcU6cQ==
-X-Received: by 2002:a05:6402:d7:b0:413:673:ba2f with SMTP id i23-20020a05640200d700b004130673ba2fmr2111496edu.29.1647482697792;
-        Wed, 16 Mar 2022 19:04:57 -0700 (PDT)
+        bh=bb98qC6bDW05x2jyG6wIMmqqaKxr+V1j9h9eZBM3j7c=;
+        b=XTVHhinPl4TcldmMYatQ1bukbdDDf/ObEBT2pvpRcB4ENJ5lzGHaDVer036gWoALv6
+         EJWl4SSwhJya2D+3AC+Bu2xMEQoq3ph4wZB1qS5GLnzAMt/Vp9eagBGoFXbEazNOOahH
+         ZWesYd/mKW70xlbNXx5I2cwuJvgKN/2YX7LzL8rTfJ8cjbsJU7glA+T1WIgY5nTVuKCD
+         Y5i16shFlG6H2inyjB24CHbxo7TDi2WjU3RCGGKGe7Y0fU7M+0w47DP4zOYY4GNO15jt
+         QMYkj1pb9foFP5WrJe4oGT7rH5vPj/d6KxC+AcxuMAZ3Un4JGC1mL1k1jzIM9/Wwgp/7
+         IoeQ==
+X-Gm-Message-State: AOAM533/aIlTh5TXDWqvaAhWC09tGhqL7J1VE2TCOPZHX8ahUGm1ss/L
+        u/SZzLFPIZ++DHocmuM51gE1UbC2oJxtIw==
+X-Google-Smtp-Source: ABdhPJzjS5PWfl5LU9g6Rjndy3YsdMsAKkvppWhjJjdl1FC+ikS8Fyd/AwW4xBjpVRpuA2GG/LclrA==
+X-Received: by 2002:a05:6402:42d4:b0:412:c26b:789 with SMTP id i20-20020a05640242d400b00412c26b0789mr2187205edc.232.1647482698828;
+        Wed, 16 Mar 2022 19:04:58 -0700 (PDT)
 Received: from 127.0.0.1localhost ([85.255.234.67])
-        by smtp.gmail.com with ESMTPSA id b26-20020aa7df9a000000b00416b3005c4bsm1876048edy.46.2022.03.16.19.04.57
+        by smtp.gmail.com with ESMTPSA id b26-20020aa7df9a000000b00416b3005c4bsm1876048edy.46.2022.03.16.19.04.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Mar 2022 19:04:57 -0700 (PDT)
+        Wed, 16 Mar 2022 19:04:58 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH 2/7] io_uring: refactor timeout cancellation cqe posting
-Date:   Thu, 17 Mar 2022 02:03:37 +0000
-Message-Id: <46113ec4345764b4aef3b384ce38cceabaeedcbb.1647481208.git.asml.silence@gmail.com>
+Subject: [PATCH 3/7] io_uring: extend provided buf return to fails
+Date:   Thu, 17 Mar 2022 02:03:38 +0000
+Message-Id: <a4880106fcf199d5810707fe2d17126fcdf18bc4.1647481208.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <cover.1647481208.git.asml.silence@gmail.com>
 References: <cover.1647481208.git.asml.silence@gmail.com>
@@ -68,30 +68,48 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-io_fill_cqe*() is not always the best way to post CQEs just because
-there is enough of infrastructure on top. Replace a raw call to a
-variant of it inside of io_timeout_cancel(), which also saves us some
-bloating and might help with batching later.
+It's never a good idea to put provided buffers without notifying the
+userspace, it'll lead to userspace leaks, so add io_put_kbuf() in
+io_req_complete_failed(). The fail helper is called by all sorts of
+requests, but it's still safe to do as io_put_kbuf() will return 0 in
+for all requests that don't support and so don't expect provided buffers.
+
+btw, remove some code duplication from kiocb_done().
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ fs/io_uring.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 10fb82f1c8ca..b4b12aa7d107 100644
+index b4b12aa7d107..bbbbf889dfd8 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -6432,10 +6432,7 @@ static int io_timeout_cancel(struct io_ring_ctx *ctx, __u64 user_data)
+@@ -2116,7 +2116,7 @@ static inline void io_req_complete(struct io_kiocb *req, s32 res)
+ static void io_req_complete_failed(struct io_kiocb *req, s32 res)
+ {
+ 	req_set_fail(req);
+-	io_req_complete_post(req, res, 0);
++	io_req_complete_post(req, res, io_put_kbuf(req, 0));
+ }
  
- 	if (IS_ERR(req))
- 		return PTR_ERR(req);
--
--	req_set_fail(req);
--	io_fill_cqe_req(req, -ECANCELED, 0);
--	io_put_req_deferred(req);
-+	io_req_task_queue_fail(req, -ECANCELED);
- 	return 0;
+ static void io_req_complete_fail_submit(struct io_kiocb *req)
+@@ -3225,14 +3225,10 @@ static void kiocb_done(struct io_kiocb *req, ssize_t ret,
+ 
+ 	if (req->flags & REQ_F_REISSUE) {
+ 		req->flags &= ~REQ_F_REISSUE;
+-		if (io_resubmit_prep(req)) {
++		if (io_resubmit_prep(req))
+ 			io_req_task_queue_reissue(req);
+-		} else {
+-			req_set_fail(req);
+-			req->result = ret;
+-			req->io_task_work.func = io_req_task_complete;
+-			io_req_task_work_add(req, false);
+-		}
++		else
++			io_req_task_queue_fail(req, ret);
+ 	}
  }
  
 -- 

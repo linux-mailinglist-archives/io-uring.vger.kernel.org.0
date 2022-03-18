@@ -2,86 +2,86 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0778A4DD329
-	for <lists+io-uring@lfdr.de>; Fri, 18 Mar 2022 03:41:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C403B4DDAFB
+	for <lists+io-uring@lfdr.de>; Fri, 18 Mar 2022 14:53:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231856AbiCRCmT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 17 Mar 2022 22:42:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59118 "EHLO
+        id S236903AbiCRNzJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 18 Mar 2022 09:55:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58078 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231683AbiCRCmS (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 17 Mar 2022 22:42:18 -0400
-Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CE8411BD8F
-        for <io-uring@vger.kernel.org>; Thu, 17 Mar 2022 19:40:58 -0700 (PDT)
-Received: by mail-pf1-x435.google.com with SMTP id p5so2256803pfo.5
-        for <io-uring@vger.kernel.org>; Thu, 17 Mar 2022 19:40:58 -0700 (PDT)
+        with ESMTP id S233544AbiCRNzI (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 18 Mar 2022 09:55:08 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BC32192362
+        for <io-uring@vger.kernel.org>; Fri, 18 Mar 2022 06:53:49 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id 7-20020a05600c228700b00385fd860f49so4868130wmf.0
+        for <io-uring@vger.kernel.org>; Fri, 18 Mar 2022 06:53:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:in-reply-to:references:subject:message-id:date:mime-version
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=5KML22uVpd0gvcZvJ5obgsC0Ky21jYtwaTzQb1AQSmc=;
-        b=A6qVW65Kd6nzjrpHZVdvX/VSmj5EtEt11JjjG3mOYzWxKV603PFQPrLs1w5Z45LHjC
-         pdGC60MGOhZPPMHci2Vnhn+5venc3EMxmym57OGlrjZoromMtxe20HxTFed/5NxH4Vw8
-         v7fHgf8POY6HVyasfGns5RqsYY4KUbk1hWeTcIbrARY3cgFrPufjJXxzqGFxxmzI/g13
-         pHVDgWLlhwOUxrRgbYchwmPZ4Bly4z3Z75mqQlsz7VxzvayAW9EAsOOuaklluhm16250
-         DyRNVVEXuiyRY+8Iip4slH+u0LvTWevYDkWRT4iH39qNm8k4WCAitp6vWXXYbJ+W+jYI
-         /Msw==
+        bh=CzbJpsO65K7YCQf/Pcc+zCIwC61oTRSmu8shEEswaHE=;
+        b=A0e+RpUIuBnru9Thf3bAAFnBStt5oO6L/oV/uT+MJbwE1VdQng60WDBBLXNus3ozeo
+         opH388A4lxSeegWclXox+DMQ7tpq1nAZquOozW+N0wB9xEK+svvtCSUUswB0BT2FxeR/
+         3Q3tR7UiPYLyI6tWg6sjWbw/uQ8eC+R5wnnQ6JKnDU8pa8TyAm9DREjrzoyYCO/SfJAp
+         bcq7nHKj1hpsaQLGBLWj6/CUIxXx1wUKrc9QIh/kk0sgh5bk2UNc1WyETDnNypfgVu/O
+         OKI+nxDV+4JdoWuQm7ijvHcIqmmocE56azKBSfO3K9BAALzJGl253m0ecz7VvYD6Am/T
+         emmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:in-reply-to:references:subject
-         :message-id:date:mime-version:content-transfer-encoding;
-        bh=5KML22uVpd0gvcZvJ5obgsC0Ky21jYtwaTzQb1AQSmc=;
-        b=lntpZyxayN9JTzSJPrngKA9r5vs81/9haOwQjuNvZnYckY8KRKR52lpKF3mU6JLEve
-         rojAvmWxN2/o6hHzuz4wbnISibaxsCNdUa+1RZenv80PaLcoxt4NW51z2BPP/8NYgtrb
-         LCZqI9rtu/i3P6/nr7t5ixrZq+JniLLUGgdjs8KBHyGbVZvtji6EWLRmA4m1afh9mt7B
-         Ov2FfTaAgKJRLUElhZabjS7Zmr0mFZcL0jOzAhNhTp1g3djH2WKRhkOjKY8spbHBPzQD
-         NYl/eok3oFYWLv3JP2EiyB/OIum8AZuxUAkIE0Ai0DTxcxqUjfe7eO3AP9K542WyMu6Q
-         CYMQ==
-X-Gm-Message-State: AOAM530PJq9qMawu0rpVbagYarqqy4PshSkjw/DFjOP4jvJxcmhnhUMF
-        cZ/xSOdbIGxhDJ8JD8/eeehkuZqYXNcjo9qX
-X-Google-Smtp-Source: ABdhPJzBiY2w1J/JgZQePWouxL3mImRbCPB/mc2zOID9qLtAaxK/HSB7adDQPw1zy8QdwhI//w7Djg==
-X-Received: by 2002:aa7:8b14:0:b0:4f7:83b1:2e0b with SMTP id f20-20020aa78b14000000b004f783b12e0bmr7690468pfd.37.1647571257836;
-        Thu, 17 Mar 2022 19:40:57 -0700 (PDT)
-Received: from [127.0.1.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id b13-20020a056a00114d00b004c122b90703sm8083514pfm.27.2022.03.17.19.40.57
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CzbJpsO65K7YCQf/Pcc+zCIwC61oTRSmu8shEEswaHE=;
+        b=iUW+oImvDIeC6LhHwP/C10jC7mau8EMJUYXAAiYYnxtQ0KRazAbFcHZjFtUCnWI2nJ
+         7qTIn6xHfRLqOCDyOya/xccSDnPsc4867Opnqx5yc/KGa8s0uRMmo/2QPfbpwBHvljMe
+         ro1w0fPqmnJpscLHC817Xve19jdhpwLtdVACsklMSJG6Vt8CZ4/Iiwo/FYKlgnPFUThM
+         gWbL0aJqx6yuseEIpFSMZhQY2c0jsqo5Wciix01gn1oYdk9vg0RC2Jcjoi/7ltJwJg2B
+         4Cq4WFux+YmS0bdTnLrgyatenjAFHguYI00mUp1x3TewlkLaC7l5wvKYzR2AzlpZHMCl
+         ZTog==
+X-Gm-Message-State: AOAM531+Jhmcmhj9Gx5sewaAEMqdMT6GrRLuF6vRRT5xGXUWi1I5gUru
+        zO2XFbtapxNQdJ52JdwygdlVyFNaELZB1g==
+X-Google-Smtp-Source: ABdhPJwe88eZkJjCbS7e8XvOLO03UZbeI36RDygsrpAJgotEpF8phLaTMdUb4t9msPPuR21MjUSr4g==
+X-Received: by 2002:a05:600c:19d4:b0:389:d5d2:e90f with SMTP id u20-20020a05600c19d400b00389d5d2e90fmr8279617wmq.103.1647611627463;
+        Fri, 18 Mar 2022 06:53:47 -0700 (PDT)
+Received: from 127.0.0.1localhost ([85.255.234.70])
+        by smtp.gmail.com with ESMTPSA id j8-20020a05600c1c0800b0038c8da4d9b8sm1290375wms.30.2022.03.18.06.53.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Mar 2022 19:40:57 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <4b6736f6da309756027b00f3b294417eb1832506.1647530578.git.asml.silence@gmail.com>
-References: <4b6736f6da309756027b00f3b294417eb1832506.1647530578.git.asml.silence@gmail.com>
-Subject: Re: [PATCH liburing 1/1] man: clarifications about direct open/accept
-Message-Id: <164757125702.111082.18333308307485650186.b4-ty@kernel.dk>
-Date:   Thu, 17 Mar 2022 20:40:57 -0600
+        Fri, 18 Mar 2022 06:53:47 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
+Subject: [RFC 0/4] completion locking optimisation feature
+Date:   Fri, 18 Mar 2022 13:52:19 +0000
+Message-Id: <cover.1647610155.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: *
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, 17 Mar 2022 15:23:34 +0000, Pavel Begunkov wrote:
-> Direct open/accept replaces files for slots that are taken, so it's not
-> necessary to use sparse file tables. Update on that, mention the
-> replacing mechanism, and add a note about possible compitability issues
-> for raw io_uring API users.
-> 
-> 
+A WIP feature optimising out CQEs posting spinlocking for some use cases.
+For a more detailed description see 4/4.
 
-Applied, thanks!
+Quick benchmarking with fio/t/io_uring nops gives extra 4% to throughput for
+QD=1, and ~+2.5% for QD=4.
 
-[1/1] man: clarifications about direct open/accept
-      (no commit info)
+Pavel Begunkov (4):
+  io_uring: get rid of raw fill cqe in kill_timeout
+  io_uring: get rid of raw fill_cqe in io_fail_links
+  io_uring: remove raw fill_cqe from linked timeout
+  io_uring: optimise compl locking for non-shared rings
 
-Best regards,
+ fs/io_uring.c                 | 126 ++++++++++++++++++++++------------
+ include/uapi/linux/io_uring.h |   1 +
+ 2 files changed, 85 insertions(+), 42 deletions(-)
+
 -- 
-Jens Axboe
-
+2.35.1
 

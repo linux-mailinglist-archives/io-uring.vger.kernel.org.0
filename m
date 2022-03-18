@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C5364DDAF9
+	by mail.lfdr.de (Postfix) with ESMTP id 178864DDAF8
 	for <lists+io-uring@lfdr.de>; Fri, 18 Mar 2022 14:53:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233544AbiCRNzK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        id S236895AbiCRNzK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
         Fri, 18 Mar 2022 09:55:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58108 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236896AbiCRNzJ (ORCPT
+        with ESMTP id S236904AbiCRNzJ (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Fri, 18 Mar 2022 09:55:09 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33CB5192365
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A5AC192368
         for <io-uring@vger.kernel.org>; Fri, 18 Mar 2022 06:53:50 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id p184-20020a1c29c1000000b0037f76d8b484so4817289wmp.5
+Received: by mail-wr1-x42b.google.com with SMTP id u10so11832684wra.9
         for <io-uring@vger.kernel.org>; Fri, 18 Mar 2022 06:53:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=bl5oIFrNHH1R/iKO7J+lN5DTRcvrejwIqPo24F/1sMw=;
-        b=K2oRb8deflm9WOnlpgfDajJeOwTDvbZI+rQJO5Pdd1hmSydqWTCPZCSOsAdqQHB+2m
-         mB2YMKXiGfNhenKCGVic8spxd78DIC/gfT8e1F1dM7A9xFc35LYnyFMWlG8f0rFkoDTW
-         ENOzw1ghogkmmXx+WWTy9zVV/JXjjhbH9SQ2Ry+LZlGlLwz3RmgvrV1kVuhWeUVX9o3E
-         V862u6QiBXk/QSuWiv4i1qtpEarlqEghOP8dPEwYR7GoUflWds++bus2rMw+A3aFAN//
-         OFtIlG6iPH5vz8Oxahb0pzhe+xpe995BwTGjTys1/8H1LXRrYUtmhymf5MnKcb0oRon+
-         nITw==
+        bh=Cotu7f1hSNtQkSjMN6OlZm9xjjg5JZZExS/3eskPU7A=;
+        b=qpBS4npP0fw1+p1JUMyp2XBL4ix+1iYtqpDfpfjEsfE5B3knqa8MQnNyK5z5Lop9pc
+         jo1BoyC/QKl0FPH65zAtvcEDxD4KvGJ8zLhJ1HnfuNxiCDth1qMss6n8w6IpSkXVe/ML
+         fH33319oHlD4HynWvqELoFqPrXEEakyHM/nM4yy2FRr//6+0lG3Z4otKMYzoAEs1xYTD
+         iklK0sL03K4f9FzisZYjoNZYFR3WR21UTjdy+kjbJXexpSg4Ln4qft6MmrDKt9hpTd7g
+         rnyfx7DhXZGFI1BYdN0KzdNiQmhY0jUteisvRQWCWr8iv7hcvRMqoKSMJcD3AUbYr8R9
+         gSsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=bl5oIFrNHH1R/iKO7J+lN5DTRcvrejwIqPo24F/1sMw=;
-        b=03S+fAQ4MYfZhWNMsV0IxpBXGqPcmDEYmvmwu7v3WJTC1kPsKJlR3oG3rRY5mddm6I
-         HSkj6zaAU3mCUJbEkjaI83pUUbwKGdgXn5hiMgjEZ3Cq8c2Dv118Tetsn3o3cBQuZXxq
-         fIqvUK30zhRbsW7Df5USrvH5LvnscJVIvfsS2L/iF8aRq6Dy0cy+gBEGUdKyVcEmkw9s
-         5Vw9R++DHa98HL3AIy8qDu39o4/KXel/Yng1+5ZT8yVVgeOQOQMCMBzAwh9ZXDRTNFzC
-         Cy5jxNDHrqxcAwcEpciyb5VbmGmSq1j/zjb6ay8mS/obSLXK5jdFzH2hmwHUTVVgwKbl
-         yvhQ==
-X-Gm-Message-State: AOAM533uGyJZQLYA6cMocQK7uve0WG266pvSv8ePtVQfXaiY5vJE8k7D
-        u3JAzz8Rxpj0+Yqea58i4t+iGqYdc/eJwg==
-X-Google-Smtp-Source: ABdhPJwpN+vYqWQ3Dss7zbswFPh8mM12IiUVZ+9gohUCa1q/VvZvKJoOeQw/6NMpSJC/1Tkkaqtm8g==
-X-Received: by 2002:a1c:f30b:0:b0:380:e444:86b9 with SMTP id q11-20020a1cf30b000000b00380e44486b9mr8334370wmq.81.1647611628499;
-        Fri, 18 Mar 2022 06:53:48 -0700 (PDT)
+        bh=Cotu7f1hSNtQkSjMN6OlZm9xjjg5JZZExS/3eskPU7A=;
+        b=GZ8RLLytI6LlH+fL5uMB9rSYzjRUHB5n/QtYakzeRdv/VXXYaDXTk++cVYmgHPT0ol
+         3pYF6E0Rt0fJllGgO7w3rCjCf3sV7hUe546CLzNJW+0QJk4vQkQ1p6D0b0kN91vBh+TM
+         L9g+u5vN0SAUp6zteRvprtewdc3jhKJMXLFfF8Mi5xl4OoyGjU2DkVu9B7IgrVOx2w8U
+         jCi6yUjCu24LXjiC/4k//E07H+WySE0Y8aEzeHxY05nFlPEUyGcaNbnp3SGoyYLFX1xA
+         HfcRrxI3DrZ5RMAfwIFaSzeIbtNwyr34zZrDU1mFOEu02BBSI8Tz4w58TX1NSCqFJblp
+         aaJA==
+X-Gm-Message-State: AOAM530yTdyI7ETe5Y9DoNCnv8cC/iRmlWs5jnqi5A+n0ZxmBY0T0usF
+        izoU0FMKoY8GN8Qs8/7/APVGJol0VCPFjg==
+X-Google-Smtp-Source: ABdhPJxtIEv5ysXZCa9EtLYtvwwZK/tYKVEfeDR1A/r7yWTv5eYNsef1WhFbXh/rHXhV6vvvt7t9Zg==
+X-Received: by 2002:a5d:5847:0:b0:203:8c46:9e1e with SMTP id i7-20020a5d5847000000b002038c469e1emr8706778wrf.350.1647611629231;
+        Fri, 18 Mar 2022 06:53:49 -0700 (PDT)
 Received: from 127.0.0.1localhost ([85.255.234.70])
-        by smtp.gmail.com with ESMTPSA id j8-20020a05600c1c0800b0038c8da4d9b8sm1290375wms.30.2022.03.18.06.53.47
+        by smtp.gmail.com with ESMTPSA id j8-20020a05600c1c0800b0038c8da4d9b8sm1290375wms.30.2022.03.18.06.53.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Fri, 18 Mar 2022 06:53:48 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH 1/4] io_uring: get rid of raw fill cqe in kill_timeout
-Date:   Fri, 18 Mar 2022 13:52:20 +0000
-Message-Id: <54b5facc9f4d30822f7fd6a87baaf26cc279c921.1647610155.git.asml.silence@gmail.com>
+Subject: [PATCH 2/4] io_uring: get rid of raw fill_cqe in io_fail_links
+Date:   Fri, 18 Mar 2022 13:52:21 +0000
+Message-Id: <37cd4691cf4fd7388f26c6be57fa588966f46371.1647610155.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <cover.1647610155.git.asml.silence@gmail.com>
 References: <cover.1647610155.git.asml.silence@gmail.com>
@@ -68,101 +68,36 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-We don't want raw fill_cqe calls. In preparation for upcoming features,
-get rid of fill cqe by using io_req_task_complete
+Replace fill_cqe insside of io_fail_links with tw. The CQE ordering
+guarantees rely on the fact that io_uring's tw's are executed in order.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 41 +++++++++++++++++++++++------------------
- 1 file changed, 23 insertions(+), 18 deletions(-)
+ fs/io_uring.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 690bfeaa609a..0e04e0997d7d 100644
+index 0e04e0997d7d..fff66f4d00c4 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -1191,6 +1191,7 @@ static int io_close_fixed(struct io_kiocb *req, unsigned int issue_flags);
+@@ -2335,11 +2335,13 @@ static void io_fail_links(struct io_kiocb *req)
+ 		trace_io_uring_fail_link(req->ctx, req, req->user_data,
+ 					req->opcode, link);
  
- static enum hrtimer_restart io_link_timeout_fn(struct hrtimer *timer);
- static void io_eventfd_signal(struct io_ring_ctx *ctx);
-+static void io_req_tw_queue_complete(struct io_kiocb *req, u32 res);
- 
- static struct kmem_cache *req_cachep;
- 
-@@ -1746,8 +1747,7 @@ static void io_kill_timeout(struct io_kiocb *req, int status)
- 		atomic_set(&req->ctx->cq_timeouts,
- 			atomic_read(&req->ctx->cq_timeouts) + 1);
- 		list_del_init(&req->timeout.list);
--		io_fill_cqe_req(req, status, 0);
--		io_put_req_deferred(req);
-+		io_req_tw_queue_complete(req, status);
+-		if (!ignore_cqes) {
++		if (!ignore_cqes)
+ 			link->flags &= ~REQ_F_CQE_SKIP;
+-			io_fill_cqe_req(link, res, 0);
+-		}
+-		io_put_req_deferred(link);
++		/*
++		 * linked CQEs should be ordered, we rely on the tw
++		 * infrastructure executing them in the right order
++		 */
++		io_req_tw_queue_complete(link, res);
+ 		link = nxt;
  	}
  }
- 
-@@ -2595,6 +2595,19 @@ static void io_req_task_submit(struct io_kiocb *req, bool *locked)
- 		io_req_complete_failed(req, -EFAULT);
- }
- 
-+static void io_req_task_complete(struct io_kiocb *req, bool *locked)
-+{
-+	int res = req->result;
-+
-+	if (*locked) {
-+		io_req_complete_state(req, res, io_put_kbuf(req, 0));
-+		io_req_add_compl_list(req);
-+	} else {
-+		io_req_complete_post(req, res,
-+					io_put_kbuf(req, IO_URING_F_UNLOCKED));
-+	}
-+}
-+
- static void io_req_task_queue_fail(struct io_kiocb *req, int ret)
- {
- 	req->result = ret;
-@@ -2602,6 +2615,13 @@ static void io_req_task_queue_fail(struct io_kiocb *req, int ret)
- 	io_req_task_work_add(req, false);
- }
- 
-+static void io_req_tw_queue_complete(struct io_kiocb *req, u32 res)
-+{
-+	req->result = res;
-+	req->io_task_work.func = io_req_task_complete;
-+	io_req_task_work_add(req, false);
-+}
-+
- static void io_req_task_queue(struct io_kiocb *req)
- {
- 	req->io_task_work.func = io_req_task_submit;
-@@ -2987,19 +3007,6 @@ static bool __io_complete_rw_common(struct io_kiocb *req, long res)
- 	return false;
- }
- 
--static inline void io_req_task_complete(struct io_kiocb *req, bool *locked)
--{
--	int res = req->result;
--
--	if (*locked) {
--		io_req_complete_state(req, res, io_put_kbuf(req, 0));
--		io_req_add_compl_list(req);
--	} else {
--		io_req_complete_post(req, res,
--					io_put_kbuf(req, IO_URING_F_UNLOCKED));
--	}
--}
--
- static void __io_complete_rw(struct io_kiocb *req, long res,
- 			     unsigned int issue_flags)
- {
-@@ -6458,9 +6465,7 @@ static enum hrtimer_restart io_timeout_fn(struct hrtimer *timer)
- 	if (!(data->flags & IORING_TIMEOUT_ETIME_SUCCESS))
- 		req_set_fail(req);
- 
--	req->result = -ETIME;
--	req->io_task_work.func = io_req_task_complete;
--	io_req_task_work_add(req, false);
-+	io_req_tw_queue_complete(req, -ETIME);
- 	return HRTIMER_NORESTART;
- }
- 
 -- 
 2.35.1
 

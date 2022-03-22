@@ -2,63 +2,61 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 23C254E35DF
-	for <lists+io-uring@lfdr.de>; Tue, 22 Mar 2022 02:15:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B87A14E36F1
+	for <lists+io-uring@lfdr.de>; Tue, 22 Mar 2022 03:53:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234568AbiCVBPm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 21 Mar 2022 21:15:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41426 "EHLO
+        id S235601AbiCVCyZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 21 Mar 2022 22:54:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234503AbiCVBPl (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 21 Mar 2022 21:15:41 -0400
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C89F42AE0B
-        for <io-uring@vger.kernel.org>; Mon, 21 Mar 2022 18:14:14 -0700 (PDT)
-Received: by mail-pj1-x1029.google.com with SMTP id mz9-20020a17090b378900b001c657559290so1019006pjb.2
-        for <io-uring@vger.kernel.org>; Mon, 21 Mar 2022 18:14:14 -0700 (PDT)
+        with ESMTP id S235656AbiCVCyY (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 21 Mar 2022 22:54:24 -0400
+Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3120D5AA63
+        for <io-uring@vger.kernel.org>; Mon, 21 Mar 2022 19:52:58 -0700 (PDT)
+Received: by mail-pg1-x52c.google.com with SMTP id i184so849231pgc.1
+        for <io-uring@vger.kernel.org>; Mon, 21 Mar 2022 19:52:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:content-language:to:from
-         :subject:cc:content-transfer-encoding;
-        bh=negmXwx5l3Q/IGwH1HceiHNQnK1aq2/ZKvisCp/Lb7M=;
-        b=zUCS5R50ikSaWb8w/byv7vmlOW23iLqQtomeORU7S+slLVIFkhUd6LDrVyEhaEZ0jw
-         X8IouDdsaCNBX3svmXcKPh8QRs/aogMX36l+whplaFgq9PqqfKdtWBJvJ9kF/RWiPhKw
-         2eYsad+Yit0Ca27h/aVyufjdcMQt2KVkEiq2W/UgjJKVZkMUB39JXiIQwUN/ORrbqKTA
-         fLBGFeWcEa9PkUPkbklqIet6FshkAs1PQf3mPXEDR6D/FDLbaqZb7fQwPnsD/VzrYKIV
-         d/VYMVcXDstuWhHGHJJKjpNL/t7nAw0mjtTGnSRfDOQLUvF0sabImk+3b05AdQp3A58c
-         uPdQ==
+        h=from:to:in-reply-to:references:subject:message-id:date:mime-version
+         :content-transfer-encoding;
+        bh=yIRZ7GvOnJVLPwy0S5xtV6IPzSZKyTV0r6eqJQ/AFow=;
+        b=un90pA42ZbdxW9pxrVh0lihTk5gFjWGqMC2aazEyBhcqIuNrh0cT7xjaZHGMBZBYMt
+         G1qF5o6xoviMUAA0xoF7WPTz4golB8akU4ZFGJ5UMtsP+NhywTR6kfAzfuqIQUnC6Kle
+         BK1B3173aAgx4k1xjz6HIeqIJx1X4IKvJk4Ukm3D+xlTw6H9FKFtG4IS3P/gkkiM1HOh
+         btOCtKk0YwJlStK9m6s9iDla5VNi/9iPtgWVABHsvHNlVJ7D66NmkQjzddSnP06EJwGl
+         lFF6SmQZ3dlmaDtHUnPSmetinBJV+kJIHR+cNooV3os59UPEwZ/rANERxTSFeUblA5/j
+         fj/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent
-         :content-language:to:from:subject:cc:content-transfer-encoding;
-        bh=negmXwx5l3Q/IGwH1HceiHNQnK1aq2/ZKvisCp/Lb7M=;
-        b=yheGLR/iGU9RgtbrqlWwt4ietSyVfZSRywuBVZ1f0XDm13nYAeNsiAMG+XWG32svPg
-         0wIYWvid7V/0g0CaOeeZbb/Wbtt/icgQ418HMRPJiighhf9cSJLhfS1zmKPTINbDQ832
-         zL41opGH49H/h5lPaQYwB0eNPe8bZvxWAzJKTELHaqI5cpq3uOoD5tPOsdOJNRM1tUu3
-         q3X59WsiqplhHclsNKA73uPX3tX5LzydNXhnWp+qdDlAJ8pR3WtQdG7CnfPSDwG3YD93
-         r3L/duYZXLiqi2c91QgskJK4tctLtH7ZNk+/lhsPfPFofnhr6P49sFX3QswrWUrzQgHE
-         MNkQ==
-X-Gm-Message-State: AOAM533e3aAx++msQYF20Fofm8UMFl2me3EJPpWOpHQ9gahZbuVGfM4M
-        U4bqyD0YWw2FrbnLq7JJySVWvSX0qgOXBzj3
-X-Google-Smtp-Source: ABdhPJw0Q42yZ65sF4irrvzCPPkp9+bvMejrMDqLtKyAF1nUozwxTYtIikpns0xipppgkOZIEqHZgw==
-X-Received: by 2002:a17:90a:ba15:b0:1c6:7873:b192 with SMTP id s21-20020a17090aba1500b001c67873b192mr2060801pjr.76.1647911654053;
-        Mon, 21 Mar 2022 18:14:14 -0700 (PDT)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id o1-20020a637e41000000b003804d0e2c9esm15748557pgn.35.2022.03.21.18.14.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Mar 2022 18:14:13 -0700 (PDT)
-Message-ID: <d2c97527-2d98-fd6c-2e2d-45c486674be2@kernel.dk>
-Date:   Mon, 21 Mar 2022 19:14:12 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Content-Language: en-US
-To:     io-uring <io-uring@vger.kernel.org>
+        h=x-gm-message-state:from:to:in-reply-to:references:subject
+         :message-id:date:mime-version:content-transfer-encoding;
+        bh=yIRZ7GvOnJVLPwy0S5xtV6IPzSZKyTV0r6eqJQ/AFow=;
+        b=J6bDrl3IVhGXmqDa0VqXo8Pugzf4KNSgpp+zY4wXw12khrXfwceXuRuyKfegV5Z1ny
+         50EIbMkQQ/8SkPcSA+wWVfGhQLmn9l07TGUAsVJwb4+/CGVGFpFsQqZMhzY4lN45l3P5
+         kVx90SZ+O7fnqk0URB9TImCoRUkZOfB49FnmFqthqdwpaTWyJ2jTyXMjK5lJ3motpUvw
+         hLQTLK6/jtguYKBAvVrpflqHsxVfHPxnkTbRBF4jOHryOfgfgBCGgRAAggTLY54LRsUK
+         ZoMevpgRWWa5dBhx1V1Wpnvsg6/Ul3/CL2Zj6l5cBWMXkZAlYmJ7m4mHXkkEoNYWuIM8
+         zIbQ==
+X-Gm-Message-State: AOAM531M7yVh0oo9dnboZ2/yfLw6cJ9WFWoxhJvm9L2y0+pZ8qF5DUx/
+        2Z3vLpSQrF41g4FOI5az3YdWYeFpPtUgHObL
+X-Google-Smtp-Source: ABdhPJzPnieErnmyg7yq3f1HRzHEMGqS1qcIfNEDTdsnPPb0xriI2jnxyw3G9ZumTw7BQa4uwiRl6w==
+X-Received: by 2002:a63:1c7:0:b0:37c:4e86:25e9 with SMTP id 190-20020a6301c7000000b0037c4e8625e9mr20171504pgb.550.1647917577451;
+        Mon, 21 Mar 2022 19:52:57 -0700 (PDT)
+Received: from [127.0.1.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id h10-20020a056a00230a00b004faa0f67c3esm6146005pfh.23.2022.03.21.19.52.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Mar 2022 19:52:57 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring: remove poll entry from list when canceling all
-Cc:     Dylan Yudaken <dylany@fb.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+In-Reply-To: <cover.1647897811.git.asml.silence@gmail.com>
+References: <cover.1647897811.git.asml.silence@gmail.com>
+Subject: Re: [PATCH 0/6] completion path optimisations
+Message-Id: <164791757663.261330.6587536015396703190.b4-ty@kernel.dk>
+Date:   Mon, 21 Mar 2022 20:52:56 -0600
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
@@ -68,41 +66,37 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-When the ring is exiting, as part of the shutdown, poll requests are
-removed. But io_poll_remove_all() does not remove entries when finding
-them, and since completions are done out-of-band, we can find and remove
-the same entry multiple times.
+On Mon, 21 Mar 2022 22:02:18 +0000, Pavel Begunkov wrote:
+> Small optimisations and clean ups. 5/6 in particular removes some overhead
+> from io_free_batch_list(), which is hot enough to care about it.
+> 
+> Pavel Begunkov (6):
+>   io_uring: small optimisation of tctx_task_work
+>   io_uring: remove extra ifs around io_commit_cqring
+>   io_uring: refactor io_req_find_next
+>   io_uring: optimise io_free_batch_list
+>   io_uring: move poll recycling later in compl flushing
+>   io_uring: clean up io_queue_next()
+> 
+> [...]
 
-We do guard the poll execution by poll ownership, but that does not
-exclude us from reissuing a new one once the previous removal ownership
-goes away.
+Applied, thanks!
 
-This can race with poll execution as well, where we then end up seeing
-req->apoll be NULL because a previous task_work requeue finished the
-request.
+[1/6] io_uring: small optimisation of tctx_task_work
+      commit: 15071bf78bd3ee0253a3b57c2e092980dbd91a87
+[2/6] io_uring: remove extra ifs around io_commit_cqring
+      commit: c9be622494c012d56c71e00cb90be841820c3e34
+[3/6] io_uring: refactor io_req_find_next
+      commit: 096b50e6c27e3e983871a585116f2ae49a394196
+[4/6] io_uring: optimise io_free_batch_list
+      commit: 0eab1c46d7db864c6cb4405a4d9e6e75d541c97c
+[5/6] io_uring: move poll recycling later in compl flushing
+      commit: 2b095f5b2dfc49b79fdd68b03eec02ba278c7ea1
+[6/6] io_uring: clean up io_queue_next()
+      commit: b0b2d42c8384eb6068e751c4943452a756f433f1
 
-Remove the poll entry when we find it and get ownership of it. This
-prevents multiple invocations from finding it.
-
-Fixes: aa43477b0402 ("io_uring: poll rework")
-Reported-by: Dylan Yudaken <dylany@fb.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-
----
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 48f4540d7dd5..53bd71363a44 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -6275,6 +6275,7 @@ static __cold bool io_poll_remove_all(struct io_ring_ctx *ctx,
- 		list = &ctx->cancel_hash[i];
- 		hlist_for_each_entry_safe(req, tmp, list, hash_node) {
- 			if (io_match_task_safe(req, tsk, cancel_all)) {
-+				hlist_del_init(&req->hash_node);
- 				io_poll_cancel_req(req);
- 				found = true;
- 			}
-
+Best regards,
 -- 
 Jens Axboe
+
 

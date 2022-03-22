@@ -2,168 +2,88 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F2094E403A
-	for <lists+io-uring@lfdr.de>; Tue, 22 Mar 2022 15:10:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3587C4E42A6
+	for <lists+io-uring@lfdr.de>; Tue, 22 Mar 2022 16:18:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232821AbiCVOKo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 22 Mar 2022 10:10:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41202 "EHLO
+        id S238377AbiCVPTf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 22 Mar 2022 11:19:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32850 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234942AbiCVOKm (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 22 Mar 2022 10:10:42 -0400
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF7115E756
-        for <io-uring@vger.kernel.org>; Tue, 22 Mar 2022 07:09:14 -0700 (PDT)
-Received: by mail-wm1-x332.google.com with SMTP id h16so10603698wmd.0
-        for <io-uring@vger.kernel.org>; Tue, 22 Mar 2022 07:09:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=7adyoKToocj+FWztsOZRd9/JKiXd4wNghznE53QTCpo=;
-        b=f4JD6vPxvTuZn+td1D/AbHFVvIGrq0ekUVxaBa/9LaB01RUt0oAsJ/G0RFW36k1zVX
-         89SzD22LjY7btXqelatwj79gw/yWz3Ojl2dTsxRzouz4M5HFyfZwSEuOiL/mdoNd0dSJ
-         MI1mDvacvph/NEOsv5dNqIghtNtt/kY6Qec5n6a+Kp97YvEvhNBQxeuxwCGcGGDTkX6u
-         1EhanZXMDvSLhIMOLC8Tnih4D+fmT+JbPCuKh3WnRZcK2ciXtDvSzwOQR+PS2wjzom+g
-         PkEn/PUY9XaabOi8BqxYs3xbA5n1p85QxnmfbIlU2TClshv5sdi+a2yvYFqNUgkdZv7I
-         cfUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=7adyoKToocj+FWztsOZRd9/JKiXd4wNghznE53QTCpo=;
-        b=MBnnBTtx8btNEq3w8bbsRuW05o32lRRLd+9QrfOyuspobdXU/STrYNqN7uDRFR0Pac
-         fMwEGbYMIXYpahXv9D39rjEeMpQWfz1OluqgksIddoSKvVQjp3RF1Fbw3+fbq8uunnM1
-         0Zng+dlg5Is8UPe0zVeVftDgBke84ysoSwBDHQsEPv6gVs4AVt37UKR7HWf8/1rnaocg
-         oikhGsBkHRYksRp291kS/I2tXukjnmAxk9XBB4aT0aT75RG2WgBjJJN5oxBTj/MdbCTv
-         aIEScgr6dq9NyC8A9bgK9I20r99hWmW2LilTdRiRffMTAkByc1UQK971bwCaOBo92COz
-         73Ug==
-X-Gm-Message-State: AOAM533u+d+LsXBTxbF17d1qBrPvQ9LNvTr4nzndo48i34nxbbTCTa2Q
-        x5tVtEmaw/ZwbKXpHKzLyjLuDQInKnfRWQ==
-X-Google-Smtp-Source: ABdhPJzeveUHS5h8F2y1VrZFp8nqfoiipaogF0vur+Ic/abtVqP50PmcyGqdLc6A2UubgaNtqClQgA==
-X-Received: by 2002:a1c:f70a:0:b0:37c:533d:d296 with SMTP id v10-20020a1cf70a000000b0037c533dd296mr3920594wmh.147.1647958153027;
-        Tue, 22 Mar 2022 07:09:13 -0700 (PDT)
-Received: from 127.0.0.1localhost (82-132-222-32.dab.02.net. [82.132.222.32])
-        by smtp.gmail.com with ESMTPSA id m3-20020a5d64a3000000b00203ed35b0aesm21987733wrp.108.2022.03.22.07.09.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Mar 2022 07:09:12 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH 3/3] io_uring: optimise mutex locking for submit+iopoll
-Date:   Tue, 22 Mar 2022 14:07:58 +0000
-Message-Id: <034b6c41658648ad3ad3c9485ac8eb546f010bc4.1647957378.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <cover.1647957378.git.asml.silence@gmail.com>
-References: <cover.1647957378.git.asml.silence@gmail.com>
+        with ESMTP id S237034AbiCVPTd (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 22 Mar 2022 11:19:33 -0400
+Received: from SJSMAIL01.us.kioxia.com (usmailhost21.kioxia.com [12.0.68.226])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABF0862CA;
+        Tue, 22 Mar 2022 08:18:04 -0700 (PDT)
+Received: from SJSMAIL01.us.kioxia.com (10.90.133.90) by
+ SJSMAIL01.us.kioxia.com (10.90.133.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.14; Tue, 22 Mar 2022 08:18:03 -0700
+Received: from SJSMAIL01.us.kioxia.com ([fe80::b962:3005:acea:aa09]) by
+ SJSMAIL01.us.kioxia.com ([fe80::b962:3005:acea:aa09%5]) with mapi id
+ 15.01.2176.014; Tue, 22 Mar 2022 08:18:03 -0700
+From:   Clay Mayers <Clay.Mayers@kioxia.com>
+To:     Kanchan Joshi <joshi.k@samsung.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>, "hch@lst.de" <hch@lst.de>,
+        "kbusch@kernel.org" <kbusch@kernel.org>,
+        "asml.silence@gmail.com" <asml.silence@gmail.com>
+CC:     "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "sbates@raithlin.com" <sbates@raithlin.com>,
+        "logang@deltatee.com" <logang@deltatee.com>,
+        "pankydev8@gmail.com" <pankydev8@gmail.com>,
+        "javier@javigon.com" <javier@javigon.com>,
+        "mcgrof@kernel.org" <mcgrof@kernel.org>,
+        "a.manzanares@samsung.com" <a.manzanares@samsung.com>,
+        "joshiiitr@gmail.com" <joshiiitr@gmail.com>,
+        "anuj20.g@samsung.com" <anuj20.g@samsung.com>
+Subject: RE: [PATCH 05/17] nvme: wire-up support for async-passthru on
+ char-device.
+Thread-Topic: [PATCH 05/17] nvme: wire-up support for async-passthru on
+ char-device.
+Thread-Index: AQHYMwaP8WKeHTnbdEm2AUHWA0dFWKzLlXmw
+Date:   Tue, 22 Mar 2022 15:18:03 +0000
+Message-ID: <d66a6bb2d0974171b44777dd07889473@kioxia.com>
+References: <20220308152105.309618-1-joshi.k@samsung.com>
+ <CGME20220308152702epcas5p1eb1880e024ac8b9531c85a82f31a4e78@epcas5p1.samsung.com>
+ <20220308152105.309618-6-joshi.k@samsung.com>
+In-Reply-To: <20220308152105.309618-6-joshi.k@samsung.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.90.53.183]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Both submittion and iopolling requires holding uring_lock. IOPOLL can
-users do them together in a single syscall, however it would still do 2
-pairs of lock/unlock. Optimise this case combining locking into one
-lock/unlock pair, which especially nice for low QD.
-
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 40 +++++++++++++++++++++++-----------------
- 1 file changed, 23 insertions(+), 17 deletions(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index d7ca4f28cfa4..c87a4b18e370 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -2867,12 +2867,6 @@ static int io_iopoll_check(struct io_ring_ctx *ctx, long min)
- 	unsigned int nr_events = 0;
- 	int ret = 0;
- 
--	/*
--	 * We disallow the app entering submit/complete with polling, but we
--	 * still need to lock the ring to prevent racing with polled issue
--	 * that got punted to a workqueue.
--	 */
--	mutex_lock(&ctx->uring_lock);
- 	/*
- 	 * Don't enter poll loop if we already have events pending.
- 	 * If we do, we can potentially be spinning for commands that
-@@ -2881,7 +2875,7 @@ static int io_iopoll_check(struct io_ring_ctx *ctx, long min)
- 	if (test_bit(0, &ctx->check_cq_overflow))
- 		__io_cqring_overflow_flush(ctx, false);
- 	if (io_cqring_events(ctx))
--		goto out;
-+		return 0;
- 	do {
- 		/*
- 		 * If a submit got punted to a workqueue, we can have the
-@@ -2911,8 +2905,7 @@ static int io_iopoll_check(struct io_ring_ctx *ctx, long min)
- 		nr_events += ret;
- 		ret = 0;
- 	} while (nr_events < min && !need_resched());
--out:
--	mutex_unlock(&ctx->uring_lock);
-+
- 	return ret;
- }
- 
-@@ -10927,21 +10920,33 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
- 		ret = io_uring_add_tctx_node(ctx);
- 		if (unlikely(ret))
- 			goto out;
-+
- 		mutex_lock(&ctx->uring_lock);
- 		submitted = io_submit_sqes(ctx, to_submit);
--		mutex_unlock(&ctx->uring_lock);
--
--		if (submitted != to_submit)
-+		if (submitted != to_submit) {
-+			mutex_unlock(&ctx->uring_lock);
- 			goto out;
-+		}
-+		if ((flags & IORING_ENTER_GETEVENTS) && ctx->syscall_iopoll)
-+			goto iopoll_locked;
-+		mutex_unlock(&ctx->uring_lock);
- 	}
- 	if (flags & IORING_ENTER_GETEVENTS) {
--		min_complete = min(min_complete, ctx->cq_entries);
--
- 		if (ctx->syscall_iopoll) {
-+			/*
-+			 * We disallow the app entering submit/complete with
-+			 * polling, but we still need to lock the ring to
-+			 * prevent racing with polled issue that got punted to
-+			 * a workqueue.
-+			 */
-+			mutex_lock(&ctx->uring_lock);
-+iopoll_locked:
- 			ret = io_validate_ext_arg(flags, argp, argsz);
--			if (unlikely(ret))
--				goto out;
--			ret = io_iopoll_check(ctx, min_complete);
-+			if (likely(!ret)) {
-+				min_complete = min(min_complete, ctx->cq_entries);
-+				ret = io_iopoll_check(ctx, min_complete);
-+			}
-+			mutex_unlock(&ctx->uring_lock);
- 		} else {
- 			const sigset_t __user *sig;
- 			struct __kernel_timespec __user *ts;
-@@ -10949,6 +10954,7 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
- 			ret = io_get_ext_arg(flags, argp, &argsz, &ts, &sig);
- 			if (unlikely(ret))
- 				goto out;
-+			min_complete = min(min_complete, ctx->cq_entries);
- 			ret = io_cqring_wait(ctx, min_complete, sig, argsz, ts);
- 		}
- 	}
--- 
-2.35.1
-
+PiBGcm9tOiBLYW5jaGFuIEpvc2hpDQo+IFNlbnQ6IFR1ZXNkYXksIE1hcmNoIDgsIDIwMjIgNzoy
+MSBBTQ0KPiBUbzogYXhib2VAa2VybmVsLmRrOyBoY2hAbHN0LmRlOyBrYnVzY2hAa2VybmVsLm9y
+ZzsNCj4gYXNtbC5zaWxlbmNlQGdtYWlsLmNvbQ0KPiBDYzogaW8tdXJpbmdAdmdlci5rZXJuZWwu
+b3JnOyBsaW51eC1udm1lQGxpc3RzLmluZnJhZGVhZC5vcmc7IGxpbnV4LQ0KPiBibG9ja0B2Z2Vy
+Lmtlcm5lbC5vcmc7IHNiYXRlc0ByYWl0aGxpbi5jb207IGxvZ2FuZ0BkZWx0YXRlZS5jb207DQo+
+IHBhbmt5ZGV2OEBnbWFpbC5jb207IGphdmllckBqYXZpZ29uLmNvbTsgbWNncm9mQGtlcm5lbC5v
+cmc7DQo+IGEubWFuemFuYXJlc0BzYW1zdW5nLmNvbTsgam9zaGlpaXRyQGdtYWlsLmNvbTsgYW51
+ajIwLmdAc2Ftc3VuZy5jb20NCj4gU3ViamVjdDogW1BBVENIIDA1LzE3XSBudm1lOiB3aXJlLXVw
+IHN1cHBvcnQgZm9yIGFzeW5jLXBhc3N0aHJ1IG9uIGNoYXItDQo+IGRldmljZS4NCj4gDQoNCg0K
+PHNuaXA+DQo+ICtzdGF0aWMgdm9pZCBudm1lX3B0X3Rhc2tfY2Ioc3RydWN0IGlvX3VyaW5nX2Nt
+ZCAqaW91Y21kKQ0KPiArew0KPiArCXN0cnVjdCBudm1lX3VyaW5nX2NtZF9wZHUgKnBkdSA9IG52
+bWVfdXJpbmdfY21kX3BkdShpb3VjbWQpOw0KPiArCXN0cnVjdCByZXF1ZXN0ICpyZXEgPSBwZHUt
+PnJlcTsNCj4gKwlpbnQgc3RhdHVzOw0KPiArCXN0cnVjdCBiaW8gKmJpbyA9IHJlcS0+YmlvOw0K
+PiArDQo+ICsJaWYgKG52bWVfcmVxKHJlcSktPmZsYWdzICYgTlZNRV9SRVFfQ0FOQ0VMTEVEKQ0K
+PiArCQlzdGF0dXMgPSAtRUlOVFI7DQo+ICsJZWxzZQ0KPiArCQlzdGF0dXMgPSBudm1lX3JlcShy
+ZXEpLT5zdGF0dXM7DQo+ICsNCj4gKwkvKiB3ZSBjYW4gZnJlZSByZXF1ZXN0ICovDQo+ICsJYmxr
+X21xX2ZyZWVfcmVxdWVzdChyZXEpOw0KPiArCWJsa19ycV91bm1hcF91c2VyKGJpbyk7DQo+ICsN
+Cj4gKwlpZiAoIXN0YXR1cyAmJiBwZHUtPm1ldGFfYnVmZmVyKSB7DQo+ICsJCWlmIChjb3B5X3Rv
+X3VzZXIocGR1LT5tZXRhX2J1ZmZlciwgcGR1LT5tZXRhLCBwZHUtDQo+ID5tZXRhX2xlbikpDQoN
+ClRoaXMgY29weSBpcyBpbmNvcnJlY3RseSBjYWxsZWQgZm9yIHdyaXRlcy4NCg0KPiArCQkJc3Rh
+dHVzID0gLUVGQVVMVDsNCj4gKwl9DQo+ICsJa2ZyZWUocGR1LT5tZXRhKTsNCj4gKw0KPiArCWlv
+X3VyaW5nX2NtZF9kb25lKGlvdWNtZCwgc3RhdHVzKTsNCj4gK30NCjwvc25pcD4NCg==

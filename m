@@ -2,58 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D59F54E5224
-	for <lists+io-uring@lfdr.de>; Wed, 23 Mar 2022 13:28:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 105CC4E5227
+	for <lists+io-uring@lfdr.de>; Wed, 23 Mar 2022 13:29:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234287AbiCWM3w (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 23 Mar 2022 08:29:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59804 "EHLO
+        id S241269AbiCWMbF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 23 Mar 2022 08:31:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231716AbiCWM3u (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 23 Mar 2022 08:29:50 -0400
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95B21205E4
-        for <io-uring@vger.kernel.org>; Wed, 23 Mar 2022 05:28:17 -0700 (PDT)
-Received: by mail-pj1-x102a.google.com with SMTP id o68-20020a17090a0a4a00b001c686a48263so3560206pjo.1
-        for <io-uring@vger.kernel.org>; Wed, 23 Mar 2022 05:28:17 -0700 (PDT)
+        with ESMTP id S231716AbiCWMbF (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 23 Mar 2022 08:31:05 -0400
+Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E3544839F
+        for <io-uring@vger.kernel.org>; Wed, 23 Mar 2022 05:29:36 -0700 (PDT)
+Received: by mail-pg1-x531.google.com with SMTP id o13so972350pgc.12
+        for <io-uring@vger.kernel.org>; Wed, 23 Mar 2022 05:29:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=from:to:in-reply-to:references:subject:message-id:date:mime-version
          :content-transfer-encoding;
-        bh=3QUSlCPNSFDVUsCZtdpmCulnCj8TUzoY2eIV3HnCT0M=;
-        b=LBQMfBJiYBYfw6DUrvzLTYlfzo8Q4RwhAqv+3URyzxaZxpwpg/e15/+kPJCfnuBVJV
-         2pMKym5kQvbwjO2BJsUK90hcZE+hYPWMVq5fAYZdB1CL5XFmL1Ul2mikL+tjc4fbF2u0
-         xFJHlraMuqp90qY5pkIH2Gxcz2CWM7yTxAO+PkL/KFVW51BpkQONwkrHOoDACwz3mWLQ
-         l5tDie+c9D++2FdfmoSaqZV4QErbR7fis2PMt34FBiKDSbkXCErr+Qj+K/9xtU8NH8mf
-         Tkp3XS7JNuoLsnOrWujpx6WmSRt8XfKes6mNJPeMaELgQqDoBW0e4WWRvnP1fe2jZ5q5
-         Z+mA==
+        bh=AR6y2GpmspFEQuz6jvd6wROyZhk41z7w9g201D/IBhk=;
+        b=DQrUnR9RLmSnDoZKi8e0jVpp1Kn/21dsZzmIpimBsYT9dnAwnLqLNtitk+omyT8Sy+
+         JCM6edTfUQlHG+lIitD7xJaVIh3xNyhUs0/mOeK5g+UgdM/FLDwtEsW+k1/5F9YrhNXU
+         wAiklUmQEExb0dTJH3JbDbDrQ9SjDyjUB7whDBdHUVqLxbO2+Fd6L7i7q85F1HnWjj5u
+         axsGIJP49JCjnSIw5fJ/VEfZBxv/aemzI1UfF+03uvWAruTSTDtagQQlufLU3yjzLWe1
+         Hzju3ry+sE8921CtZim8eT/oiw8UtR8YqENTkB9J0K+nHm+LFQm9wNUPXKDyGty6imHp
+         bmAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:in-reply-to:references:subject
          :message-id:date:mime-version:content-transfer-encoding;
-        bh=3QUSlCPNSFDVUsCZtdpmCulnCj8TUzoY2eIV3HnCT0M=;
-        b=7UXOv6NiZDTWjSCekr5/fDl7zf2R8i/o8pWrkEX5QCbF8AUbZzFM3vUT7tK6WrZhIY
-         1kOAijPxcKYSHZN5EibaY755KFXlDIbluiL76rg3IVtTUxdSg1uu2UZbb6SiBYlDspJw
-         iDwiDWRNfcX42WZvxixpqK/vRUjjdxMzMI/U9l7zCNp5gPsb+KtepnlBlDXWxdfroHso
-         rjacOi49/WUlALRfjFdnmZmK1G/0tK5oabfv0hShxOKO91HM66sv+vpMKJEgbE6Jeizo
-         myDeWAum/Fw+85zGHgIkWhXn+P4PhD5IJWpAGvo3NJwr8I9xYyFUK2y/wDQGVzWZluX+
-         IvAQ==
-X-Gm-Message-State: AOAM531oEHwd1IYpC90yn9CFGqpGYRR9WdtVbb2fxikpEOlErpOd76KR
-        yKl5nU/wMFkv7VxDCLv6Zm2nfA==
-X-Google-Smtp-Source: ABdhPJxYTW2LDjYCz+Ew/pFmHXriKxWDWRbJWWSgcdiqTfdGsz+x+taloEyStPhqKqxQaubmasyHcg==
-X-Received: by 2002:a17:90b:3907:b0:1c6:a16b:12e3 with SMTP id ob7-20020a17090b390700b001c6a16b12e3mr11219485pjb.157.1648038497176;
-        Wed, 23 Mar 2022 05:28:17 -0700 (PDT)
+        bh=AR6y2GpmspFEQuz6jvd6wROyZhk41z7w9g201D/IBhk=;
+        b=zyvVpXRkZidPDFrG0Z3Yg2eAyoge773xA3GbWTOUEBskl7yCzi1iTB78v3WxHZ0tOo
+         67DaPszoTm3PqbwXr0F0aMydbOFLKH64K0GpMooz0rT77p8kizCObC11bUZQjFOu1Ea+
+         QuLgcXAFgwKJ3YbQfiCp7uIMqVuiIXWGPnWO1K37Ai9uog92jXFGihPfo1yNnceQeU0O
+         1blOYUwM7JXK2Y0QMUUaRHW5CUXsxzqQzvfaLKWvIaLnAIAotHNMeBKhahIO8g59Ptco
+         nW3T/MFrJitFtRNwjz1cJ93A5HNNbpRIJxlZk1r4jlYlW4UYyG9ulndwp3Oz1U2S3+wG
+         B3Jw==
+X-Gm-Message-State: AOAM533Hn52FpxIJOz2euZ5h4BLVapxzaITIrEL7aGyzAKeu6WzREObT
+        1fBHid2DWvDYeviwuc2tE5+4TWk5vLqtpEHD
+X-Google-Smtp-Source: ABdhPJyZxPiffaY9YuD9aHm6jgqg0Mt2Syaon1DrDnjM/jHvwpaa5x0iREBaiMlSV32UIZIYqKyJhw==
+X-Received: by 2002:a63:801:0:b0:382:a089:59d3 with SMTP id 1-20020a630801000000b00382a08959d3mr8970411pgi.350.1648038575655;
+        Wed, 23 Mar 2022 05:29:35 -0700 (PDT)
 Received: from [127.0.1.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id n52-20020a056a000d7400b004fad9132d73sm2416216pfv.129.2022.03.23.05.28.16
+        by smtp.gmail.com with ESMTPSA id c21-20020a637255000000b003822e80f132sm14252121pgn.12.2022.03.23.05.29.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Mar 2022 05:28:16 -0700 (PDT)
+        Wed, 23 Mar 2022 05:29:35 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-In-Reply-To: <669d91dd881a4f7c86104b9414fa3d12477b2669.1648032632.git.asml.silence@gmail.com>
-References: <669d91dd881a4f7c86104b9414fa3d12477b2669.1648032632.git.asml.silence@gmail.com>
-Subject: Re: [PATCH for-next] io_uring: null deref in early failed ring destruction
-Message-Id: <164803849637.11141.17827246402159702749.b4-ty@kernel.dk>
-Date:   Wed, 23 Mar 2022 06:28:16 -0600
+To:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <cover.1647957378.git.asml.silence@gmail.com>
+References: <cover.1647957378.git.asml.silence@gmail.com>
+Subject: Re: [PATCH 0/3] optimise submit+iopoll mutex locking
+Message-Id: <164803857464.12296.859321851786945843.b4-ty@kernel.dk>
+Date:   Wed, 23 Mar 2022 06:29:34 -0600
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -66,24 +66,26 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, 23 Mar 2022 11:14:54 +0000, Pavel Begunkov wrote:
-> [  830.443583] Running test nop-all-sizes:
-> [  830.551826] BUG: kernel NULL pointer dereference, address: 00000000000000c0
-> [  830.551900] RIP: 0010:io_kill_timeouts+0xc5/0xf0
-> [  830.551951] Call Trace:
-> [  830.551958]  <TASK>
-> [  830.551970]  io_ring_ctx_wait_and_kill+0xb0/0x117
-> [  830.551975]  io_uring_setup.cold+0x4dc/0xb97
-> [  830.551990]  __x64_sys_io_uring_setup+0x15/0x20
-> [  830.552003]  do_syscall_64+0x3b/0x80
-> [  830.552011]  entry_SYSCALL_64_after_hwframe+0x44/0xae
+On Tue, 22 Mar 2022 14:07:55 +0000, Pavel Begunkov wrote:
+> This saves one mutex lock/unlock pair per syscall when users do
+> submit + getevents. Perf tells that for QD1 iopoll this patch reduces overhead
+> on locking from ~4.3% to ~2.6%, iow cuts 1.3% - 1.9% of CPU time. Something
+> similar I see in final throughput.
+> 
+> It's a good win for smaller QD, especially considering that io_uring only
+> takes about 20-30% of all cycles, the rest goes to syscalling, the block
+> layer and below.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] io_uring: null deref in early failed ring destruction
-      commit: 0c25be9a68eb6475fc934782a4be404f13a6e025
+[1/3] io_uring: split off IOPOLL argument verifiction
+      (no commit info)
+[2/3] io_uring: pre-calculate syscall iopolling decision
+      (no commit info)
+[3/3] io_uring: optimise mutex locking for submit+iopoll
+      (no commit info)
 
 Best regards,
 -- 

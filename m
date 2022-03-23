@@ -2,559 +2,183 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D0A184E559B
-	for <lists+io-uring@lfdr.de>; Wed, 23 Mar 2022 16:45:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 52FC64E57E0
+	for <lists+io-uring@lfdr.de>; Wed, 23 Mar 2022 18:52:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232124AbiCWPqs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 23 Mar 2022 11:46:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41398 "EHLO
+        id S239878AbiCWRyA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 23 Mar 2022 13:54:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245212AbiCWPqp (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 23 Mar 2022 11:46:45 -0400
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5890F4B86F
-        for <io-uring@vger.kernel.org>; Wed, 23 Mar 2022 08:45:15 -0700 (PDT)
-Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 22N6wu7B008909
-        for <io-uring@vger.kernel.org>; Wed, 23 Mar 2022 08:45:14 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=facebook;
- bh=3TvNj5Voh3/vGY/Sfzxm8kJh6bA7uXvQaU1ccWyo0Wg=;
- b=ay91Fp17HnYvtd5ir1awJWgyLbi6YmScugRPSDbcvjYonii6yR77rqaGODjCxk/1S7/G
- X7YhHRgFMFs9MHLqYVutt1EgTrapVLQaeYJ3uLoTFCWk6JH2IxjAcwhnXLUq0ETR00PD
- 5ulQfwcyKv4m5VAAfVWxI0qXoISZGn9W+sA= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3eyj5t88kr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Wed, 23 Mar 2022 08:45:14 -0700
-Received: from twshared6486.05.ash9.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:83::7) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.21; Wed, 23 Mar 2022 08:45:13 -0700
-Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
-        id E441BCA02527; Wed, 23 Mar 2022 08:44:59 -0700 (PDT)
-From:   Stefan Roesch <shr@fb.com>
-To:     <io-uring@vger.kernel.org>, <kernel-team@fb.com>
-CC:     <shr@fb.com>
-Subject: [PATCH v2 4/4] liburing: Add new test program to verify xattr support
-Date:   Wed, 23 Mar 2022 08:44:57 -0700
-Message-ID: <20220323154457.3303391-5-shr@fb.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20220323154457.3303391-1-shr@fb.com>
-References: <20220323154457.3303391-1-shr@fb.com>
+        with ESMTP id S239821AbiCWRx7 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 23 Mar 2022 13:53:59 -0400
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47ADB8596B
+        for <io-uring@vger.kernel.org>; Wed, 23 Mar 2022 10:52:29 -0700 (PDT)
+Received: by mail-io1-f72.google.com with SMTP id w28-20020a05660205dc00b00645d3cdb0f7so1544525iox.10
+        for <io-uring@vger.kernel.org>; Wed, 23 Mar 2022 10:52:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=JGGdnfvE8NQt/Hsqyx0a3k4wVl66FIbV8KbT7INVJQo=;
+        b=WubuSUm6fULGmv2wlWQp4xbrQU1otiDfRjt+W7p+V+NTKzhu5D8/ye4QUBXxBWIdJJ
+         Cw5P1UoiJ9r8MEcewrRKLdzxCvzVFMkSNALxdp276UGaxF26XdNKMpvnRiHPErx4kiYz
+         THbxrfRVrB/f6QFwfBDY3mtXyLxA6FezykbTBQleBZIl+A0ebhv/Ug1d7hgcsVB+svbu
+         wIrbomdQb9gB1ZuwoGlBgS5ormoRZDDNkO52X9CfAohrhlaEW6Un4lGI+Ob5mn6Npkvg
+         pDu48zm37COr7MyQs8YzXEJA0eeX/yGVV2red8Gevk9nlN00W3S+pHxPe7AjpOLLfzE+
+         uzdA==
+X-Gm-Message-State: AOAM532Sv2ajF8d3yC0raOL1Sy04Agxdt3gm+c8MkH+pKZvXMDZlkPd2
+        ktI/xuT+4mw+4Pfdp0OpwX2RwFCXiNxrXRbqpsa23NWGDhNy
+X-Google-Smtp-Source: ABdhPJxEvuGA4NpKyX0id0+7kNbtjJ06SE7T/JaE/IW+vvNm1DgBFbs2jLYzaJvv4Btq/BCHOYf0+nMARGNUA7yXvDZwCdXg8xfY
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-GUID: rPPAm-cdlnzU0fGLpurI-wkqEU175Qh0
-X-Proofpoint-ORIG-GUID: rPPAm-cdlnzU0fGLpurI-wkqEU175Qh0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.850,Hydra:6.0.425,FMLib:17.11.64.514
- definitions=2022-03-23_07,2022-03-23_01,2022-02-23_01
-X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a05:6638:12c5:b0:321:38e0:64b with SMTP id
+ v5-20020a05663812c500b0032138e0064bmr615067jas.28.1648057948693; Wed, 23 Mar
+ 2022 10:52:28 -0700 (PDT)
+Date:   Wed, 23 Mar 2022 10:52:28 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000099e7a405dae66418@google.com>
+Subject: [syzbot] INFO: task hung in io_wq_put_and_exit (3)
+From:   syzbot <syzbot+adb05ed2853417be49ce@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Summary:
+Hello,
 
-This adds a new test program to test the xattr support:
-- fgetxattr
-- fsetxattr
-- getxattr
-- setxattr
+syzbot found the following issue on:
 
-It also includes test cases for failure conditions and
-for passing in an invalid sqe. The test case for checking
-of invalid SQE, must be enabled by defining
-DESTRUCTIVE_TESTING.
+HEAD commit:    b47d5a4f6b8d Merge tag 'audit-pr-20220321' of git://git.ke..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15e065dd700000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=63af44f0631a5c3a
+dashboard link: https://syzkaller.appspot.com/bug?extid=adb05ed2853417be49ce
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16d673db700000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14627e25700000
 
-Signed-off-by: Stefan Roesch <shr@fb.com>
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+adb05ed2853417be49ce@syzkaller.appspotmail.com
+
+INFO: task syz-executor123:3634 blocked for more than 143 seconds.
+      Tainted: G        W         5.17.0-syzkaller-01442-gb47d5a4f6b8d #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor123 state:D stack:28160 pid: 3634 ppid:  3633 flags:0x00000004
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:4995 [inline]
+ __schedule+0xa94/0x4910 kernel/sched/core.c:6304
+ schedule+0xd2/0x1f0 kernel/sched/core.c:6376
+ schedule_timeout+0x1db/0x2a0 kernel/time/timer.c:1857
+ do_wait_for_common kernel/sched/completion.c:85 [inline]
+ __wait_for_common+0x2af/0x360 kernel/sched/completion.c:106
+ io_wq_exit_workers fs/io-wq.c:1264 [inline]
+ io_wq_put_and_exit+0x4d6/0xe40 fs/io-wq.c:1299
+ io_uring_clean_tctx fs/io_uring.c:10512 [inline]
+ io_uring_cancel_generic+0x60b/0x695 fs/io_uring.c:10582
+ io_uring_files_cancel include/linux/io_uring.h:18 [inline]
+ do_exit+0x4f9/0x29d0 kernel/exit.c:761
+ do_group_exit+0xd2/0x2f0 kernel/exit.c:936
+ __do_sys_exit_group kernel/exit.c:947 [inline]
+ __se_sys_exit_group kernel/exit.c:945 [inline]
+ __x64_sys_exit_group+0x3a/0x50 kernel/exit.c:945
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x7fa616b7dbd9
+RSP: 002b:00007ffd0ba19358 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 00007fa616bf2350 RCX: 00007fa616b7dbd9
+RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffffffffffc0 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fa616bf2350
+R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000001
+ </TASK>
+INFO: lockdep is turned off.
+NMI backtrace for cpu 1
+CPU: 1 PID: 28 Comm: khungtaskd Tainted: G        W         5.17.0-syzkaller-01442-gb47d5a4f6b8d #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:106
+ nmi_cpu_backtrace.cold+0x47/0x144 lib/nmi_backtrace.c:111
+ nmi_trigger_cpumask_backtrace+0x1e6/0x230 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:146 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:212 [inline]
+ watchdog+0xc1d/0xf50 kernel/hung_task.c:369
+ kthread+0x2e9/0x3a0 kernel/kthread.c:377
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295
+ </TASK>
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0
+CPU: 0 PID: 3635 Comm: iou-wrk-3634 Tainted: G        W         5.17.0-syzkaller-01442-gb47d5a4f6b8d #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:__ldsem_down_read_nested+0x32/0x850 drivers/tty/tty_ldsem.c:297
+Code: ff df 41 57 41 56 41 89 f6 41 55 41 54 49 89 fc 55 4d 8d 7c 24 70 48 89 d5 53 48 81 ec c8 00 00 00 48 c7 44 24 28 b3 8a b5 41 <4c> 8d 6c 24 28 48 c7 44 24 30 c8 4d 47 8b 49 c1 ed 03 48 c7 44 24
+RSP: 0018:ffffc9000115f718 EFLAGS: 00000296
+RAX: dffffc0000000000 RBX: ffff88814a2bd000 RCX: 0000000000000000
+RDX: 7fffffffffffffff RSI: 0000000000000000 RDI: ffff88814a2bd028
+RBP: 7fffffffffffffff R08: 0000000000000000 R09: 0000000000000000
+R10: ffffffff843a08bd R11: 0000000000000000 R12: ffff88814a2bd028
+R13: 0000000000000000 R14: 0000000000000000 R15: ffff88814a2bd098
+FS:  000055555665d300(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055555665d2c0 CR3: 0000000072dfd000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ tty_ldisc_ref_wait+0x22/0x80 drivers/tty/tty_ldisc.c:244
+ tty_read+0x1a2/0x5d0 drivers/tty/tty_io.c:928
+ call_read_iter include/linux/fs.h:2068 [inline]
+ io_iter_do_read fs/io_uring.c:3789 [inline]
+ io_read+0x330/0x12a0 fs/io_uring.c:3859
+ io_issue_sqe+0x813/0x8390 fs/io_uring.c:7172
+ io_wq_submit_work+0x1ed/0x590 fs/io_uring.c:7340
+ io_worker_handle_work+0xad6/0x1b30 fs/io-wq.c:595
+ io_wqe_worker+0x606/0xd40 fs/io-wq.c:642
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295
+ </TASK>
+INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 1.426 msecs
+----------------
+Code disassembly (best guess), 1 bytes skipped:
+   0:	df 41 57             	filds  0x57(%rcx)
+   3:	41 56                	push   %r14
+   5:	41 89 f6             	mov    %esi,%r14d
+   8:	41 55                	push   %r13
+   a:	41 54                	push   %r12
+   c:	49 89 fc             	mov    %rdi,%r12
+   f:	55                   	push   %rbp
+  10:	4d 8d 7c 24 70       	lea    0x70(%r12),%r15
+  15:	48 89 d5             	mov    %rdx,%rbp
+  18:	53                   	push   %rbx
+  19:	48 81 ec c8 00 00 00 	sub    $0xc8,%rsp
+  20:	48 c7 44 24 28 b3 8a 	movq   $0x41b58ab3,0x28(%rsp)
+  27:	b5 41
+* 29:	4c 8d 6c 24 28       	lea    0x28(%rsp),%r13 <-- trapping instruction
+  2e:	48 c7 44 24 30 c8 4d 	movq   $0xffffffff8b474dc8,0x30(%rsp)
+  35:	47 8b
+  37:	49 c1 ed 03          	shr    $0x3,%r13
+  3b:	48                   	rex.W
+  3c:	c7                   	.byte 0xc7
+  3d:	44                   	rex.R
+  3e:	24                   	.byte 0x24
+
+
 ---
- test/Makefile |   1 +
- test/xattr.c  | 425 ++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 426 insertions(+)
- create mode 100644 test/xattr.c
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/test/Makefile b/test/Makefile
-index 84c23c8..a4a7caf 100644
---- a/test/Makefile
-+++ b/test/Makefile
-@@ -154,6 +154,7 @@ test_srcs :=3D \
- 	timeout-overflow.c \
- 	unlink.c \
- 	wakeup-hang.c \
-+	xattr.c \
- 	skip-cqe.c \
- 	# EOL
-=20
-diff --git a/test/xattr.c b/test/xattr.c
-new file mode 100644
-index 0000000..017017e
---- /dev/null
-+++ b/test/xattr.c
-@@ -0,0 +1,425 @@
-+#include <assert.h>
-+#include <fcntl.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/xattr.h>
-+#include <unistd.h>
-+
-+#include "helpers.h"
-+#include "liburing.h"
-+
-+/* Define constants. */
-+#define XATTR_SIZE  255
-+#define QUEUE_DEPTH 32
-+
-+#define FILENAME    "xattr.test"
-+#define KEY1        "user.val1"
-+#define KEY2        "user.val2"
-+#define VALUE1      "value1"
-+#define VALUE2      "value2-a-lot-longer"
-+
-+
-+/* Call fsetxattr. */
-+int io_uring_fsetxattr(struct io_uring *ring,
-+		       int              fd,
-+		       const char      *name,
-+		       const void      *value,
-+		       size_t           size,
-+		       int              flags)
-+{
-+	struct io_uring_sqe *sqe;
-+	struct io_uring_cqe *cqe;
-+	int ret;
-+
-+	sqe =3D io_uring_get_sqe(ring);
-+	if (!sqe) {
-+		fprintf(stderr, "Error cannot get sqe\n");
-+		return -1;
-+	}
-+
-+	io_uring_prep_fsetxattr(sqe, fd, name, value, flags, size);
-+
-+	ret =3D io_uring_submit(ring);
-+	if (ret !=3D 1) {
-+		fprintf(stderr, "Error io_uring_submit_and_wait: ret=3D%d\n", ret);
-+		return -1;
-+	}
-+
-+	ret =3D io_uring_wait_cqe(ring, &cqe);
-+	if (ret) {
-+		fprintf(stderr, "Error io_uring_wait_cqe: ret=3D%d\n", ret);
-+		return -1;
-+	}
-+
-+	ret =3D cqe->res;
-+	io_uring_cqe_seen(ring, cqe);
-+
-+	return ret;
-+}
-+
-+/* Submit fgetxattr request. */
-+int io_uring_fgetxattr(struct io_uring *ring,
-+		       int              fd,
-+		       const char      *name,
-+		       void            *value,
-+		       size_t           size)
-+{
-+	struct io_uring_sqe *sqe;
-+	struct io_uring_cqe *cqe;
-+	int ret;
-+
-+	sqe =3D io_uring_get_sqe(ring);
-+	if (!sqe) {
-+		fprintf(stderr, "Error cannot get sqe\n");
-+		return -1;
-+	}
-+
-+	io_uring_prep_fgetxattr(sqe, fd, name, value, size);
-+
-+	ret =3D io_uring_submit(ring);
-+	if (ret !=3D 1) {
-+		fprintf(stderr, "Error io_uring_submit_and_wait: ret=3D%d\n", ret);
-+		return -1;
-+	}
-+
-+	ret =3D io_uring_wait_cqe(ring, &cqe);
-+	if (ret) {
-+		fprintf(stderr, "Error io_uring_wait_cqe: ret=3D%d\n", ret);
-+		return -1;
-+	}
-+
-+	ret =3D cqe->res;
-+	if (ret =3D=3D -1) {
-+		fprintf(stderr, "Error couldn'tget value\n");
-+		return -1;
-+	}
-+
-+	io_uring_cqe_seen(ring, cqe);
-+	return ret;
-+}
-+
-+/* Call setxattr. */
-+int io_uring_setxattr(struct io_uring *ring,
-+		      const char      *path,
-+		      const char      *name,
-+		      const void      *value,
-+		      size_t           size,
-+		      int              flags)
-+{
-+	struct io_uring_sqe *sqe;
-+	struct io_uring_cqe *cqe;
-+	int ret;
-+
-+	sqe =3D io_uring_get_sqe(ring);
-+	if (!sqe) {
-+		fprintf(stderr, "Error cannot get sqe\n");
-+		return -1;
-+	}
-+
-+	io_uring_prep_setxattr(sqe, name, value, path, flags, size);
-+
-+	ret =3D io_uring_submit_and_wait(ring, 1);
-+	if (ret !=3D 1) {
-+		fprintf(stderr, "Error io_uring_submit_and_wait: ret=3D%d\n", ret);
-+		return -1;
-+	}
-+
-+	ret =3D io_uring_wait_cqe(ring, &cqe);
-+	if (ret) {
-+		fprintf(stderr, "Error io_uring_wait_cqe: ret=3D%d\n", ret);
-+		return -1;
-+	}
-+
-+	ret =3D cqe->res;
-+	io_uring_cqe_seen(ring, cqe);
-+
-+	return ret;
-+}
-+
-+/* Submit getxattr request. */
-+int io_uring_getxattr(struct io_uring *ring,
-+		      const char      *path,
-+		      const char      *name,
-+		      void            *value,
-+		      size_t           size)
-+{
-+	struct io_uring_sqe *sqe;
-+	struct io_uring_cqe *cqe;
-+	int ret;
-+
-+	sqe =3D io_uring_get_sqe(ring);
-+	if (!sqe) {
-+		fprintf(stderr, "Error cannot get sqe\n");
-+		return -1;
-+	}
-+
-+	io_uring_prep_getxattr(sqe, name, value, path, size);
-+
-+	ret =3D io_uring_submit(ring);
-+	if (ret !=3D 1) {
-+		fprintf(stderr, "Error io_uring_submit_and_wait: ret=3D%d\n", ret);
-+		return -1;
-+	}
-+
-+	ret =3D io_uring_wait_cqe(ring, &cqe);
-+	if (ret) {
-+		fprintf(stderr, "Error io_uring_wait_cqe: ret=3D%d\n", ret);
-+		return -1;
-+	}
-+
-+	ret =3D cqe->res;
-+	if (ret =3D=3D -1) {
-+		fprintf(stderr, "Error couldn'tget value\n");
-+		return -1;
-+	}
-+
-+	io_uring_cqe_seen(ring, cqe);
-+	return ret;
-+}
-+
-+/* Test driver for fsetxattr and fgetxattr. */
-+int test_fxattr(void)
-+{
-+	int rc =3D 0;
-+	size_t value_len;
-+	struct io_uring ring;
-+	char value[XATTR_SIZE];
-+
-+	/* Init io-uring queue. */
-+	int ret =3D io_uring_queue_init(QUEUE_DEPTH, &ring, 0);
-+	if (ret) {
-+		fprintf(stderr, "child: ring setup failed: %d\n", ret);
-+		return -1;
-+	}
-+
-+	/* Create the test file. */
-+	int fd =3D open(FILENAME, O_CREAT | O_RDWR);
-+	if (fd < 0) {
-+		fprintf(stderr, "Error: cannot open file: ret=3D%d\n", fd);
-+		return -1;
-+	}
-+
-+	/* Test writing attributes. */
-+	if (io_uring_fsetxattr(&ring, fd, KEY1, VALUE1, strlen(VALUE1), 0) =3D=3D=
- -1) {
-+		fprintf(stderr, "Error fsetxattr cannot write key1\n");
-+		rc =3D -1;
-+		goto Exit;
-+	}
-+
-+	if (io_uring_fsetxattr(&ring, fd, KEY2, VALUE2, strlen(VALUE2), 0) =3D=3D=
- -1) {
-+		fprintf(stderr, "Error fsetxattr cannot write key1\n");
-+		rc =3D -1;
-+		goto Exit;
-+	}
-+
-+	/* Test reading attributes. */
-+	value_len =3D io_uring_fgetxattr(&ring, fd, KEY1, value, XATTR_SIZE);
-+	if (value_len !=3D strlen(value) || strncmp(value, VALUE1, value_len)) =
-{
-+		fprintf(stderr, "Error: fgetxattr expectd value: %s, returned value: %=
-s\n", VALUE1, value);
-+		rc =3D -1;
-+		goto Exit;
-+	}
-+
-+	value_len =3D io_uring_fgetxattr(&ring, fd, KEY2, value, XATTR_SIZE);
-+	if (value_len !=3D strlen(value)|| strncmp(value, VALUE2, value_len)) {
-+		fprintf(stderr, "Error: fgetxattr expectd value: %s, returned value: %=
-s\n", VALUE2, value);
-+		rc =3D -1;
-+		goto Exit;
-+	}
-+
-+	/* Cleanup. */
-+Exit:
-+	close(fd);
-+	unlink(FILENAME);
-+
-+	io_uring_queue_exit(&ring);
-+
-+	return rc;
-+}
-+
-+/* Test driver for setxattr and getxattr. */
-+int test_xattr(void)
-+{
-+	int rc =3D 0;
-+	int value_len;
-+	struct io_uring ring;
-+	char value[XATTR_SIZE];
-+
-+	/* Init io-uring queue. */
-+	int ret =3D io_uring_queue_init(QUEUE_DEPTH, &ring, 0);
-+	if (ret) {
-+		fprintf(stderr, "child: ring setup failed: %d\n", ret);
-+		return -1;
-+	}
-+
-+	/* Create the test file. */
-+	t_create_file(FILENAME, 0);
-+
-+	/* Test writing attributes. */
-+	if (io_uring_setxattr(&ring, FILENAME, KEY1, VALUE1, strlen(VALUE1), 0)=
- =3D=3D -1) {
-+		fprintf(stderr, "Error setxattr cannot write key1\n");
-+		rc =3D -1;
-+		goto Exit;
-+	}
-+
-+	if (io_uring_setxattr(&ring, FILENAME, KEY2, VALUE2, strlen(VALUE2), 0)=
- =3D=3D -1) {
-+		fprintf(stderr, "Error setxattr cannot write key1\n");
-+		rc =3D -1;
-+		goto Exit;
-+	}
-+
-+	/* Test reading attributes. */
-+	value_len =3D io_uring_getxattr(&ring, FILENAME, KEY1, value, XATTR_SIZ=
-E);
-+	if (value_len !=3D strlen(VALUE1) || strncmp(value, VALUE1, value_len))=
- {
-+		fprintf(stderr, "Error: getxattr expectd value: %s, returned value: %s=
-\n", VALUE1, value);
-+		rc =3D -1;
-+		goto Exit;
-+	}
-+
-+	value_len =3D io_uring_getxattr(&ring, FILENAME, KEY2, value, XATTR_SIZ=
-E);
-+	if (value_len !=3D strlen(VALUE2) || strncmp(value, VALUE2, value_len))=
- {
-+		fprintf(stderr, "Error: getxattr expectd value: %s, returned value: %s=
-\n", VALUE2, value);
-+		rc =3D -1;
-+		goto Exit;
-+	}
-+
-+	/* Cleanup. */
-+Exit:
-+	io_uring_queue_exit(&ring);
-+	unlink(FILENAME);
-+
-+	return rc;
-+}
-+
-+/* Test driver for failure cases of fsetxattr and fgetxattr. */
-+int test_failure_fxattr(void)
-+{
-+	int rc =3D 0;
-+	struct io_uring ring;
-+	char value[XATTR_SIZE];
-+
-+	/* Init io-uring queue. */
-+	int ret =3D io_uring_queue_init(QUEUE_DEPTH, &ring, 0);
-+	if (ret) {
-+		fprintf(stderr, "child: ring setup failed: %d\n", ret);
-+		return -1;
-+	}
-+
-+	/* Create the test file. */
-+	int fd =3D open(FILENAME, O_CREAT | O_RDWR);
-+	if (fd < 0) {
-+		fprintf(stderr, "Error: cannot open file: ret=3D%d\n", fd);
-+		return -1;
-+	}
-+
-+	/* Test writing attributes. */
-+	assert(io_uring_fsetxattr(&ring, -1, KEY1, VALUE1, strlen(VALUE1), 0) <=
- 0);
-+	assert(io_uring_fsetxattr(&ring, fd, NULL, VALUE1, strlen(VALUE1), 0) <=
- 0);
-+	assert(io_uring_fsetxattr(&ring, fd, KEY1, NULL,   strlen(VALUE1), 0) <=
- 0);
-+	assert(io_uring_fsetxattr(&ring, fd, KEY1, VALUE1, 0,              0) =3D=
-=3D 0);
-+	assert(io_uring_fsetxattr(&ring, fd, KEY1, VALUE1, -1,             0) <=
- 0);
-+
-+	/* Test reading attributes. */
-+	assert(io_uring_fgetxattr(&ring, -1, KEY1, value, XATTR_SIZE) < 0);
-+	assert(io_uring_fgetxattr(&ring, fd, NULL, value, XATTR_SIZE) < 0);
-+	assert(io_uring_fgetxattr(&ring, fd, KEY1, value, 0)          =3D=3D 0)=
-;
-+
-+	/* Cleanup. */
-+	close(fd);
-+	unlink(FILENAME);
-+
-+	io_uring_queue_exit(&ring);
-+
-+	return rc;
-+}
-+
-+
-+/* Test driver for failure cases for setxattr and getxattr. */
-+int test_failure_xattr(void)
-+{
-+	int rc =3D 0;
-+	struct io_uring ring;
-+	char value[XATTR_SIZE];
-+
-+	/* Init io-uring queue. */
-+	int ret =3D io_uring_queue_init(QUEUE_DEPTH, &ring, 0);
-+	if (ret) {
-+		fprintf(stderr, "child: ring setup failed: %d\n", ret);
-+		return -1;
-+	}
-+
-+	/* Create the test file. */
-+	t_create_file(FILENAME, 0);
-+
-+	/* Test writing attributes. */
-+	assert(io_uring_setxattr(&ring, "complete garbage", KEY1, VALUE1, strle=
-n(VALUE1), 0) < 0);
-+	assert(io_uring_setxattr(&ring, NULL,     KEY1, VALUE1, strlen(VALUE1),=
- 0) < 0);
-+	assert(io_uring_setxattr(&ring, FILENAME, NULL, VALUE1, strlen(VALUE1),=
- 0) < 0);
-+	assert(io_uring_setxattr(&ring, FILENAME, KEY1, NULL,   strlen(VALUE1),=
- 0) < 0);
-+	assert(io_uring_setxattr(&ring, FILENAME, KEY1, VALUE1, 0,             =
- 0) =3D=3D 0);
-+
-+	/* Test reading attributes. */
-+	assert(io_uring_getxattr(&ring, "complete garbage", KEY1, value, XATTR_=
-SIZE) < 0);
-+	assert(io_uring_getxattr(&ring, NULL,     KEY1, value, XATTR_SIZE) < 0)=
-;
-+	assert(io_uring_getxattr(&ring, FILENAME, NULL, value, XATTR_SIZE) < 0)=
-;
-+	assert(io_uring_getxattr(&ring, FILENAME, KEY1, NULL,  XATTR_SIZE) =3D=3D=
- 0);
-+	assert(io_uring_getxattr(&ring, FILENAME, KEY1, value, 0)          =3D=3D=
- 0);
-+
-+	/* Cleanup. */
-+	io_uring_queue_exit(&ring);
-+	unlink(FILENAME);
-+
-+	return rc;
-+}
-+
-+/* Test for invalid SQE, this will cause a segmentation fault if enabled=
-. */
-+int test_invalid_sqe(void)
-+{
-+#ifdef DESTRUCTIVE_TEST
-+	struct io_uring_sqe *sqe =3D NULL;
-+	struct io_uring_cqe *cqe =3D NULL;
-+	struct io_uring ring;
-+
-+	/* Init io-uring queue. */
-+	int ret =3D io_uring_queue_init(QUEUE_DEPTH, &ring, 0);
-+	if (ret) {
-+		fprintf(stderr, "child: ring setup failed: %d\n", ret);
-+		return -1;
-+	}
-+
-+	/* Pass invalid SQE. */
-+	io_uring_prep_setxattr(sqe, FILENAME, KEY1, VALUE1, strlen(VALUE1), 0);
-+
-+	ret =3D io_uring_submit(&ring);
-+	if (ret !=3D 1) {
-+		fprintf(stderr, "Error io_uring_submit_and_wait: ret=3D%d\n", ret);
-+		return -1;
-+	}
-+
-+	ret =3D io_uring_wait_cqe(&ring, &cqe);
-+	if (ret) {
-+		fprintf(stderr, "Error io_uring_wait_cqe: ret=3D%d\n", ret);
-+		return -1;
-+	}
-+
-+	ret =3D cqe->res;
-+	io_uring_cqe_seen(&ring, cqe);
-+
-+	return ret;
-+#else
-+	return 0;
-+#endif
-+}
-+
-+/* Test driver. */
-+int main(int argc, char **argv) {
-+	if (test_fxattr()
-+		|| test_xattr()
-+	    || test_failure_fxattr()
-+		|| test_failure_xattr()
-+	    || test_invalid_sqe())
-+		return EXIT_FAILURE;
-+
-+	return EXIT_SUCCESS;
-+}
---=20
-2.30.2
-
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches

@@ -2,45 +2,45 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FC984E5BAA
-	for <lists+io-uring@lfdr.de>; Thu, 24 Mar 2022 00:06:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 162394E5BC0
+	for <lists+io-uring@lfdr.de>; Thu, 24 Mar 2022 00:17:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345420AbiCWXHq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 23 Mar 2022 19:07:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52840 "EHLO
+        id S1345470AbiCWXSx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 23 Mar 2022 19:18:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345404AbiCWXHl (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 23 Mar 2022 19:07:41 -0400
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 648939027C
-        for <io-uring@vger.kernel.org>; Wed, 23 Mar 2022 16:06:10 -0700 (PDT)
-Received: by mail-io1-f72.google.com with SMTP id z16-20020a05660217d000b006461c7cbee3so1957432iox.21
-        for <io-uring@vger.kernel.org>; Wed, 23 Mar 2022 16:06:10 -0700 (PDT)
+        with ESMTP id S1345467AbiCWXSq (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 23 Mar 2022 19:18:46 -0400
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72AA190CE8
+        for <io-uring@vger.kernel.org>; Wed, 23 Mar 2022 16:17:15 -0700 (PDT)
+Received: by mail-io1-f71.google.com with SMTP id b15-20020a05660214cf00b00648a910b964so1980829iow.19
+        for <io-uring@vger.kernel.org>; Wed, 23 Mar 2022 16:17:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
          :from:to;
-        bh=BPG9xBXVtHI7SqOcph7aAXtFUuz1YLWujJpqciFjI9s=;
-        b=ihsD8A8eurr6vNYvGsSsBj9axPkM574f4n4dEGMzLK/eIQ0YU9gqmDF2Sf0eZ+Nc2h
-         J8zF4/gD0wcSzTliT92S/uCqoblmo3eq+LzaHGZbuO593fsCTEvyxYVfuBCLdTwiG7j3
-         E3jqOg2StqSmjazlHSmiQnu0Pb/U07y2ZiJ/UjEg8R94yWNXUdLKOgx96LOQem6/hbDA
-         NPhdPcJAQWuhxPlKwqvj4gLWMcPKwKrVIR03eUaVGtL0guXFwPjo9RRAN+A/TWIMUrfJ
-         1s4u2KsylahH/UpyU0LSQ21Bu9LCdHRHmDPSWHl+TA1UDddt5e5YSp8wKA1xiVYclc0g
-         DkSw==
-X-Gm-Message-State: AOAM533zWSB69DFh22sb6apsBr6BvPEUAFxpdad7olOFs58GTuW40ldz
-        t7GwGBkaXuMxfFEmdmnKnGoq3eouMnLnHc6y99B6QlRQaY+L
-X-Google-Smtp-Source: ABdhPJzW2hn6snXH4MD7PSQws9/2DRz6Xvw5AA+D5cJZRJZNriiYKzLQAWzd4d/nPqH37ZkTIQ41c21b7hthlOKbtjxJRGPTDpXK
+        bh=clW1tH3ZC7Lm0X7T/4WUZGOowaN8nMkUH4EAKd7mMwA=;
+        b=FqEq6ceFpg3HjVrHGgsxmbuNhC1eTloJMU2+ss0Yq0wGHfLZeW93SCe/PUtPsF5XJw
+         K3Bl42BaC4EtFMFIfUiYpjNGgN9cZaEDZUzEnmlJTpyh7YPTt92R1BmbG8B7r295R1Pg
+         wOCxohf94U+CxKkbYEHu3ySul3/p+tykQ0jdWVH9tzgy3KudHC2l2juQaPElovGmpFnQ
+         wW0vku++3jfmNbSKI+4rJrQ7Xwok73AkANRMBLQOtGzbvrUkV2o1IhCRTXCUyuqtQllb
+         vMyUlD3SwWd6PXcto3bObGkxBGmL95Q/LIcmjwOPMcxk9S6CG8DI+4zfMQmbrSzTW9aB
+         N5rQ==
+X-Gm-Message-State: AOAM532UlJwi4LS6agcegeAasC+huizp0M1nWDyvElf9xRzPy3tDs5eo
+        xKgq4lrbnNW6XkTeoP9TuppKrhdqwFk0YKLMhpJj2cv30niX
+X-Google-Smtp-Source: ABdhPJx5oe25ghsA451wnyS8jAONpeOgSsVTFqm8sKVCgTUeGUlgGdMSvN/eNIS6+5zzG5XyESpkqmR7/ui7OT1nLeHmmeEH+AaQ
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:3711:b0:31a:e158:21ae with SMTP id
- k17-20020a056638371100b0031ae15821aemr1224335jav.4.1648076769765; Wed, 23 Mar
- 2022 16:06:09 -0700 (PDT)
-Date:   Wed, 23 Mar 2022 16:06:09 -0700
-In-Reply-To: <fa4d06d8-ac33-07b3-de75-3e7512f0e41e@gmail.com>
+X-Received: by 2002:a5d:860d:0:b0:649:be05:7b0b with SMTP id
+ f13-20020a5d860d000000b00649be057b0bmr1283401iol.22.1648077434896; Wed, 23
+ Mar 2022 16:17:14 -0700 (PDT)
+Date:   Wed, 23 Mar 2022 16:17:14 -0700
+In-Reply-To: <442f565c-b68c-9359-60d1-dd61213d3233@gmail.com>
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000006cac4e05daeac6e0@google.com>
-Subject: Re: [syzbot] general protection fault in io_kill_timeouts
-From:   syzbot <syzbot+f252f28df734e8521387@syzkaller.appspotmail.com>
+Message-ID: <00000000000011c72405daeaee81@google.com>
+Subject: Re: [syzbot] INFO: task hung in io_wq_put_and_exit (3)
+From:   syzbot <syzbot+adb05ed2853417be49ce@syzkaller.appspotmail.com>
 To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
@@ -58,14 +58,14 @@ Hello,
 
 syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Reported-and-tested-by: syzbot+f252f28df734e8521387@syzkaller.appspotmail.com
+Reported-and-tested-by: syzbot+adb05ed2853417be49ce@syzkaller.appspotmail.com
 
 Tested on:
 
 commit:         8a3e8ee5 io_uring: add flag for disabling provided buf..
 git tree:       git://git.kernel.dk/linux-block for-5.18/io_uring
-kernel config:  https://syzkaller.appspot.com/x/.config?x=173877d7a6cb7387
-dashboard link: https://syzkaller.appspot.com/bug?extid=f252f28df734e8521387
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3172c0bf8614827
+dashboard link: https://syzkaller.appspot.com/bug?extid=adb05ed2853417be49ce
 compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
 
 Note: no patches were applied.

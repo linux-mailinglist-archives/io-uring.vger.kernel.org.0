@@ -2,65 +2,68 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BA99A4E5940
-	for <lists+io-uring@lfdr.de>; Wed, 23 Mar 2022 20:38:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D93F4E5948
+	for <lists+io-uring@lfdr.de>; Wed, 23 Mar 2022 20:41:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238553AbiCWTjj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 23 Mar 2022 15:39:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57800 "EHLO
+        id S1344344AbiCWTnB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 23 Mar 2022 15:43:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41772 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344305AbiCWTji (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 23 Mar 2022 15:39:38 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BCACE0B8;
-        Wed, 23 Mar 2022 12:38:08 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id g20so3099133edw.6;
-        Wed, 23 Mar 2022 12:38:07 -0700 (PDT)
+        with ESMTP id S1344334AbiCWTm6 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 23 Mar 2022 15:42:58 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE8888BE14;
+        Wed, 23 Mar 2022 12:41:28 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id u26so3081257eda.12;
+        Wed, 23 Mar 2022 12:41:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :references:from:in-reply-to:content-transfer-encoding;
-        bh=nGTAh3VFxfF30v+szl0C7u8CzPhVgOsJVDuXB5GMlyg=;
-        b=UwlRQqOFj6+z4kxoIRPNhz8h13FCSRRYd7y05W7RHmOdYQNAWrdL/VqXbwy4sAqfME
-         QiZql6SLAvzWrU6I83Eh0T4L6DXMbP1nkiK8iz/KZF606StrpIDgYfGqLOtv46x4W7Ht
-         oIqqaIXXSPvAIf++mtXynMB/o9FmTJZazoXZ2ucUZt/i1qOriC5Emc47egS0pwwayxe1
-         pX9Tzlkcp9gv6a9oxjMhPZfIfagTO2kgfwQoYU6SY7bbN7PQGlrTl4ZM7O1rX86hkZw8
-         AbSb+V5KxwmRbn0+f4/HFBaEuSHlEv9HhS76VpRT/nRhXN+GQ6giaJD22V+8TWWRGikp
-         iVbQ==
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=x5jJcCWNND08a/kl1cxTrhN4wD14TcjxcSdn0klR8Qw=;
+        b=VoCz4F8clWIuOEdALXVnyNSFuOQ0p4ZDAKDuQdMbb1CHZfuP+1FZZQ3nsnw646cRYD
+         p6DmW/OSE+kW/fnzJHt8QMmWlqKpcJ8AVoGrsWQ2SjVMXLfhPQqBmlpRLnxusm7Q+Ht5
+         TzU2Nnd/gLJVk96rIDgIyIy6Rph8N+Fp8eCfR/TZrrhhKMmNvpNHfGfqeZsYEnM+tL2P
+         12Kt6YgxuanOUTvrHU99TFAUIN3c8tGylNboY56KHfsLYQNvC7WnC0dgweETk/ZumQSt
+         dTIw7yhLy9ojLLg2KxLYKAWFENnhMvTs7kU0oT5A1LfJXXGKkO7iiBL2t+eaS1BPct2L
+         jQFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:from:in-reply-to
+         :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=nGTAh3VFxfF30v+szl0C7u8CzPhVgOsJVDuXB5GMlyg=;
-        b=3OTUMFMOvEqOvjLYv/elo6nQKKqxgBr1U59hMfOuin1d8UzZMUIDcHcsRadz3b/c5/
-         14sgzzpUDO1kth41HJo0nJMHi7exbEiO/tKZS8tbWFZQD4mTM42vRA2EnZjiRs1U6352
-         N5b1yqthXAThLFRrBr03oiVF4hQx0NYxKWfcq37xWCZxEY56KUuxMZL32FQ4hxO0i7Y0
-         zcpnbFIYv6mnjI2tDCZB90YI0zDlCjxHZzbsXY0PjKytrlfS2/S8VAuerMnba366eMby
-         A64N8WfersRiMSu56FeV3rzgZDgboM42CfZlsohtF0Y1IFnkbu0gL2+7WyHfKHeCnHk5
-         aM7g==
-X-Gm-Message-State: AOAM530aWQS/ABJOVBfn32DZJVBt+1apvWfFaDmv5V1bVQCrraX2H26R
-        eUwrlxbUEqsAWdYvs8Hdp0A=
-X-Google-Smtp-Source: ABdhPJyPQG6hxldJ7qnrkTTN+HIBSIdhpt4u36wU3Yzl9GBmYTF367tK7mivPKqE7rT+s516Ph1LfQ==
-X-Received: by 2002:a05:6402:11d4:b0:419:5a50:75a4 with SMTP id j20-20020a05640211d400b004195a5075a4mr2260451edw.226.1648064286570;
-        Wed, 23 Mar 2022 12:38:06 -0700 (PDT)
+        bh=x5jJcCWNND08a/kl1cxTrhN4wD14TcjxcSdn0klR8Qw=;
+        b=KsAGQKUfobJob5VQiG6uI6KnhfhXcHKSsM1LhSC8ke7x5wgMoh+eetZKylUPOySa/o
+         N9Ve8NDKcDGVPkvBexkLhMi4tSVUaE1A480wtt1ldjuVmmNYwuE6L2wpY0aYSWFuC+DL
+         AGCVR6n54kPgS9BP9kgMD1Udz+HF/l92yF4e/7RIvGXyL+xPHYgJODM3JoEwMINVduk1
+         GctmJgciFTJXvfdM5Zx/ScEitxYDcTuR2FWDdo0S+bMK4nJ+m0kdxETtlmNI50J57Rs/
+         QdwRSDn+zZEkvePH9co46t5IFefd2Jn4wTJxvAhHfHl2vWVrzn/TMks/B3OvsnMfDD6I
+         zh4A==
+X-Gm-Message-State: AOAM530XE44LVwIPfnXToe2Bml0Ti0tZh12IF6BOluBssZ//VeLUY+kS
+        btXsl/MQ4pPVZO5oLyDpa2Y7oqFOsmUZ6w==
+X-Google-Smtp-Source: ABdhPJyj+501JuDpwR9KPC5PEbvLIaI5dgoqh+E3w83OqiTpoh7sP9qbmbaI9Enzy7gD/h8dgjPA0w==
+X-Received: by 2002:a05:6402:26d3:b0:418:d202:d5dc with SMTP id x19-20020a05640226d300b00418d202d5dcmr2285382edd.138.1648064487522;
+        Wed, 23 Mar 2022 12:41:27 -0700 (PDT)
 Received: from [192.168.1.114] ([85.105.239.232])
-        by smtp.gmail.com with ESMTPSA id y14-20020a056402440e00b00416046b623csm430859eda.2.2022.03.23.12.38.05
+        by smtp.gmail.com with ESMTPSA id e19-20020a056402105300b004162d0b4cbbsm370381edu.93.2022.03.23.12.41.26
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Mar 2022 12:38:06 -0700 (PDT)
-Message-ID: <442f565c-b68c-9359-60d1-dd61213d3233@gmail.com>
-Date:   Wed, 23 Mar 2022 19:36:57 +0000
+        Wed, 23 Mar 2022 12:41:26 -0700 (PDT)
+Message-ID: <8f3cc170-1c24-da8a-37ec-f2e73eade46c@gmail.com>
+Date:   Wed, 23 Mar 2022 19:40:18 +0000
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.6.0
-Subject: Re: [syzbot] INFO: task hung in io_wq_put_and_exit (3)
+Subject: Re: io_uring_enter() with opcode IORING_OP_RECV ignores MSG_WAITALL
+ in msg_flags
 Content-Language: en-US
-To:     syzbot <syzbot+adb05ed2853417be49ce@syzkaller.appspotmail.com>,
-        axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <00000000000099e7a405dae66418@google.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Constantine Gavrilov <CONSTG@il.ibm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc:     io-uring <io-uring@vger.kernel.org>
+References: <BYAPR15MB260078EC747F0F0183D1BB1BFA189@BYAPR15MB2600.namprd15.prod.outlook.com>
+ <7e6f6467-6ac2-3926-9d7b-09f52f751481@kernel.dk>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <00000000000099e7a405dae66418@google.com>
+In-Reply-To: <7e6f6467-6ac2-3926-9d7b-09f52f751481@kernel.dk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -73,25 +76,30 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/23/22 17:52, syzbot wrote:
-> Hello,
+On 3/23/22 12:19, Jens Axboe wrote:
+> On 3/23/22 4:31 AM, Constantine Gavrilov wrote:
+>> I get partial receives on TCP socket, even though I specify
+>> MSG_WAITALL with IORING_OP_RECV opcode. Looking at tcpdump in
+>> wireshark, I see entire reassambled packet (+4k), so it is not a
+>> disconnect. The MTU is smaller than 4k.
+>>
+>>  From the mailing list history, looks like this was discussed before
+>> and it seems the fix was supposed to be in. Can someone clarify the
+>> expected behavior?
+>>
+>> I do not think rsvmsg() has this issue.
 > 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    b47d5a4f6b8d Merge tag 'audit-pr-20220321' of git://git.ke..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=15e065dd700000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=63af44f0631a5c3a
-> dashboard link: https://syzkaller.appspot.com/bug?extid=adb05ed2853417be49ce
-> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16d673db700000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14627e25700000
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+adb05ed2853417be49ce@syzkaller.appspotmail.com
+> Do you have a test case? I added the io-uring list, that's the
+> appropriate forum for this kind of discussion.
 
-#syz test: git://git.kernel.dk/linux-block for-5.18/io_uring
+MSG_WAITALL (since Linux 2.2)
+        This flag requests that the operation block until the full
+        request is satisfied.  However, the call may still return
+        less data than requested if a signal is caught
 
+My guess would be that it's either due to signals (including
+task_works actively used by io_uring) or because of some
+interoperability problem with NOWAIT.
 
 -- 
 Pavel Begunkov

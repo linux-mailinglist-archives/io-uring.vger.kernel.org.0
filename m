@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 40D724E5116
-	for <lists+io-uring@lfdr.de>; Wed, 23 Mar 2022 12:15:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 609654E5117
+	for <lists+io-uring@lfdr.de>; Wed, 23 Mar 2022 12:16:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234132AbiCWLRX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 23 Mar 2022 07:17:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46416 "EHLO
+        id S243780AbiCWLRi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 23 Mar 2022 07:17:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47492 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241420AbiCWLRW (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 23 Mar 2022 07:17:22 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 676C87891C
-        for <io-uring@vger.kernel.org>; Wed, 23 Mar 2022 04:15:53 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id w4so1579251wrg.12
-        for <io-uring@vger.kernel.org>; Wed, 23 Mar 2022 04:15:53 -0700 (PDT)
+        with ESMTP id S241420AbiCWLRi (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 23 Mar 2022 07:17:38 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEA7C7891E
+        for <io-uring@vger.kernel.org>; Wed, 23 Mar 2022 04:16:08 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id r64so708798wmr.4
+        for <io-uring@vger.kernel.org>; Wed, 23 Mar 2022 04:16:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=PXKcpgRPh91JNlDv0HzmtaxAarJGUMhVxYAWng4Z3NM=;
-        b=EuYnlPVOOXKl8bjDs0wHhDHT2QCvTNpsS6d9t21fbFQb0aN2LV1AB3yZrbNxiMT8OB
-         fmpI5Fn9lLEVarzUjN87nTiE55rziq2eVK5cotfceX3/Rz14vsZpe+DBUMQ32qZv2Kjv
-         XXBDoS9qQNYKG3hr3NJCo1AxvEMcRQ0x21XviwU6rxCARyVcslQMb8lamOwqGoIG6orf
-         2rz1bN+oCvuKvADnsXICCQJ84nexWEUDj5qXvzYMSaEF06QvXe8tFMHK7w+sDa147yfp
-         g18ymPkDRCN4iKcCImSz7OzXyqm0EUdeFR1KR+k7jXUaDlGqhlk6j8HB5W7emE4cY2xq
-         wjPw==
+        bh=zkUPbewTemhzOCwHb3lkPnAhb3jPaZR8hBrdZO1jAxw=;
+        b=dm9eLiOkgk7EVxeyVWx5bpZPprcoi4ioqHj/N7TNGAeV/BHhA1rLtGCi47rxPhXZhz
+         a/j3Po/xlU0UMWWpdetwQpxPJzMyM+yZ571vmyXWnE1jIyOl7IMB1FlwGRW1zbfNZ4N6
+         GhVhg4YRwVmna7GnZ6DyCdrYvlyreiArm2be5Z8ytn1qppekLFGEloQO1QeoNLpDW+Un
+         TOJJbT1aSrGcJ/Se4TNRbbyhis1qeoHDVb1c5ZQekZpzeR60adjpfI4lYAcI+/Gynmuz
+         yt+7w0Q9nQ+ycbkSMqbd7F9dtB53FLHDBv28lstLzcaBrxnux+danG8wvNZqgRJMIT95
+         ZV5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=PXKcpgRPh91JNlDv0HzmtaxAarJGUMhVxYAWng4Z3NM=;
-        b=EypYQGPPWJS/JNWcSnz/jeQWyQogrx589kdvH/PkkGZ5Vt7meGdOkBo1P0KkbN85W6
-         jqoosW328uOQn552G9JTmyEzeiN8tJpTR8MCg/mdCl2I1k6ih2+keU2jK6Ln0lmDwt/U
-         m5LxMNUhgwB9Y6FJFgW0ASUiomMYgy3Wb329qRVPt9BC7zz8on1bqpIJwmeuiU0DAXOS
-         5lP6nA0Gz5VgRptDGBoFJiQ0ncHWt9H9MTnbfg0F/AU5HViLyLh3WTtt12G8uWTg7gqg
-         5MjeR2NxsP+HKtNTnjHzOXydexl8rGVEhZDxd4oPbPWDlDy4DIweTPqlRyevivaUGDsx
-         /elg==
-X-Gm-Message-State: AOAM532aRtVbUqcrdCJyAybb5+pwb2lHIro+YueASjjcIZOG4FFwnHom
-        Bl+wG3lJr1/mU11bHccu55eEw7GwEVMelA==
-X-Google-Smtp-Source: ABdhPJw1RON2GXCldbttwM7jNamhaQlCgizVrsFIGkBbsTU9AVk3U7X+b21HBFiGo6nMUaTcHSGXOA==
-X-Received: by 2002:adf:f949:0:b0:203:e87d:1d38 with SMTP id q9-20020adff949000000b00203e87d1d38mr25630750wrr.137.1648034151732;
-        Wed, 23 Mar 2022 04:15:51 -0700 (PDT)
+        bh=zkUPbewTemhzOCwHb3lkPnAhb3jPaZR8hBrdZO1jAxw=;
+        b=Ak8310zG8rcBsa+dZ7gDAsNRC0hojEeIXLEhKpPVrD5Fo8f/ZBvq/Bh1FpklMyWQk2
+         iiBvjygUBzd9pPsSDGEAxPz2mwRy/Fc+HKRDjzbsAmyJecnERBUEQuWYHYG670cK0Que
+         5hyi2NrePq/EFlC0Dzdph2hhhSVLeT9HEach1AGaVsdzD32JF1W6FciuejYLjf23ZZRt
+         EYwOs57XkhtXn5kiT8cggq+W5Ui/MYworWb5sO97b4AUCFb/uIBIShypzJp3V47sglor
+         xUqP5btYHfLdX4+pe30knrwv9bxCy/g49Pi4AZbqS1fmY7EG2/QUl15Cr2YYOdaMrf/d
+         Wn4A==
+X-Gm-Message-State: AOAM5301XJSj2qzhDrxLizmCXdmLTSiuxCoqZCdVQTwsRbRD80mn7RYV
+        QOK4NF/D7pIDhSDAq/kkQ4hSdtkohBlclQ==
+X-Google-Smtp-Source: ABdhPJz5iHNnQ4yvoWoDAi47p0/fnOXT+S0CwswEqQD05oHYOAf2pNsFM/XsM0GRczkvd/5vKrKPqg==
+X-Received: by 2002:a05:600c:3c8b:b0:37f:1546:40c9 with SMTP id bg11-20020a05600c3c8b00b0037f154640c9mr8516721wmb.161.1648034167245;
+        Wed, 23 Mar 2022 04:16:07 -0700 (PDT)
 Received: from 127.0.0.1localhost (82-132-233-253.dab.02.net. [82.132.233.253])
-        by smtp.gmail.com with ESMTPSA id 3-20020a5d47a3000000b0020412ba45f6sm8585066wrb.8.2022.03.23.04.15.50
+        by smtp.gmail.com with ESMTPSA id u7-20020a5d6da7000000b00203d9d1875bsm20107007wrs.73.2022.03.23.04.16.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Mar 2022 04:15:51 -0700 (PDT)
+        Wed, 23 Mar 2022 04:16:07 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH] io_uring: add overflow checks for poll refcounting
-Date:   Wed, 23 Mar 2022 11:14:36 +0000
-Message-Id: <0727ecf93ec31776d7b9c3ed6a6a3bb1b9058cf9.1648033233.git.asml.silence@gmail.com>
+Subject: [PATCH for-next] io_uring: null deref in early failed ring destruction
+Date:   Wed, 23 Mar 2022 11:14:54 +0000
+Message-Id: <669d91dd881a4f7c86104b9414fa3d12477b2669.1648032632.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -66,83 +66,74 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-We already got one bug with ->poll_refs overflows, let's add overflow
-checks for it in a similar way as we do for request refs. For that
-reserve the sign bit so underflows don't set IO_POLL_CANCEL_FLAG and
-making us able to catch them.
+[  830.443583] Running test nop-all-sizes:
+[  830.551826] BUG: kernel NULL pointer dereference, address: 00000000000000c0
+[  830.551900] RIP: 0010:io_kill_timeouts+0xc5/0xf0
+[  830.551951] Call Trace:
+[  830.551958]  <TASK>
+[  830.551970]  io_ring_ctx_wait_and_kill+0xb0/0x117
+[  830.551975]  io_uring_setup.cold+0x4dc/0xb97
+[  830.551990]  __x64_sys_io_uring_setup+0x15/0x20
+[  830.552003]  do_syscall_64+0x3b/0x80
+[  830.552011]  entry_SYSCALL_64_after_hwframe+0x44/0xae
 
+Apparently, not all io_commi_cqring() guarding was useless, some were
+protecting against cases where we call io_ring_ctx_wait_and_kill() for a
+ring failed early during creation. This particular one points to
+
+(gdb) l *(io_kill_timeouts+0xc5)
+0xffffffff81b26b19 is in io_kill_timeouts (fs/io_uring.c:1813).
+1808    }
+1809
+1810    static inline void io_commit_cqring(struct io_ring_ctx *ctx)
+1811    {
+1812            /* order cqe stores with ring update */
+1813            smp_store_release(&ctx->rings->cq.tail, ctx->cached_cq_tail);
+1814    }
+
+A better way to handle the problem is to not get into the request
+cancellation paths for when we don't have ctx->rings allocated.
+
+Fixes: c9be622494c01 ("io_uring: remove extra ifs around io_commit_cqring")
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 28 +++++++++++++++++++++-------
- 1 file changed, 21 insertions(+), 7 deletions(-)
+ fs/io_uring.c | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 245610494c3e..594ed8bc4585 100644
+index 594ed8bc4585..6ad81d39d81e 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -5803,8 +5803,13 @@ struct io_poll_table {
- 	int error;
- };
+@@ -10309,11 +10309,13 @@ static __cold void io_ring_ctx_wait_and_kill(struct io_ring_ctx *ctx)
+ 		io_unregister_personality(ctx, index);
+ 	mutex_unlock(&ctx->uring_lock);
  
--#define IO_POLL_CANCEL_FLAG	BIT(31)
--#define IO_POLL_REF_MASK	GENMASK(30, 0)
-+/* keep the sign bit unused to improve overflow detection */
-+#define IO_POLL_CANCEL_FLAG	BIT(30)
-+#define IO_POLL_REF_MASK	GENMASK(29, 0)
+-	io_kill_timeouts(ctx, NULL, true);
+-	io_poll_remove_all(ctx, NULL, true);
+-
+-	/* if we failed setting up the ctx, we might not have any rings */
+-	io_iopoll_try_reap_events(ctx);
++	/* failed during ring init, it couldn't have issued any requests */
++	if (ctx->rings) {
++		io_kill_timeouts(ctx, NULL, true);
++		io_poll_remove_all(ctx, NULL, true);
++		/* if we failed setting up the ctx, we might not have any rings */
++		io_iopoll_try_reap_events(ctx);
++	}
+ 
+ 	INIT_WORK(&ctx->exit_work, io_ring_exit_work);
+ 	/*
+@@ -10405,6 +10407,10 @@ static __cold void io_uring_try_cancel_requests(struct io_ring_ctx *ctx,
+ 	struct io_task_cancel cancel = { .task = task, .all = cancel_all, };
+ 	struct io_uring_task *tctx = task ? task->io_uring : NULL;
+ 
++	/* failed during ring init, it couldn't have issued any requests */
++	if (!ctx->rings)
++		return;
 +
-+/* 2^16 is choosen arbitrary, would be funky to have more than that */
-+#define io_poll_ref_check_overflow(refs) ((unsigned int)refs >= 65536u)
-+#define io_poll_ref_check_underflow(refs) ((int)refs < 0)
- 
- /*
-  * If refs part of ->poll_refs (see IO_POLL_REF_MASK) is 0, it's free. We can
-@@ -5814,7 +5819,18 @@ struct io_poll_table {
-  */
- static inline bool io_poll_get_ownership(struct io_kiocb *req)
- {
--	return !(atomic_fetch_inc(&req->poll_refs) & IO_POLL_REF_MASK);
-+	int ret = atomic_fetch_inc(&req->poll_refs) & IO_POLL_REF_MASK;
-+
-+	WARN_ON_ONCE(io_poll_ref_check_overflow(ret));
-+	return !ret;
-+}
-+
-+static inline int io_poll_put_ownership(struct io_kiocb *req, int nr)
-+{
-+	int ret = atomic_sub_return(nr, &req->poll_refs);
-+
-+	WARN_ON_ONCE(io_poll_ref_check_underflow(ret));
-+	return ret;
- }
- 
- static void io_poll_mark_cancelled(struct io_kiocb *req)
-@@ -5956,7 +5972,7 @@ static int io_poll_check_events(struct io_kiocb *req)
- 		 * Release all references, retry if someone tried to restart
- 		 * task_work while we were executing it.
- 		 */
--	} while (atomic_sub_return(v & IO_POLL_REF_MASK, &req->poll_refs));
-+	} while (io_poll_put_ownership(req, v & IO_POLL_REF_MASK));
- 
- 	return 1;
- }
-@@ -6157,7 +6173,6 @@ static int __io_arm_poll_handler(struct io_kiocb *req,
- 				 struct io_poll_table *ipt, __poll_t mask)
- {
- 	struct io_ring_ctx *ctx = req->ctx;
--	int v;
- 
- 	INIT_HLIST_NODE(&req->hash_node);
- 	io_init_poll_iocb(poll, mask, io_poll_wake);
-@@ -6204,8 +6219,7 @@ static int __io_arm_poll_handler(struct io_kiocb *req,
- 	 * Release ownership. If someone tried to queue a tw while it was
- 	 * locked, kick it off for them.
- 	 */
--	v = atomic_dec_return(&req->poll_refs);
--	if (unlikely(v & IO_POLL_REF_MASK))
-+	if (unlikely(io_poll_put_ownership(req, 1) & IO_POLL_REF_MASK))
- 		__io_poll_execute(req, 0, poll->events);
- 	return 0;
- }
+ 	while (1) {
+ 		enum io_wq_cancel cret;
+ 		bool ret = false;
 -- 
 2.35.1
 

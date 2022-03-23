@@ -2,74 +2,62 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BFC34E5A9A
-	for <lists+io-uring@lfdr.de>; Wed, 23 Mar 2022 22:24:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EA6684E5B67
+	for <lists+io-uring@lfdr.de>; Wed, 23 Mar 2022 23:41:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241096AbiCWV0T (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 23 Mar 2022 17:26:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53006 "EHLO
+        id S244356AbiCWWnL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 23 Mar 2022 18:43:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241085AbiCWV0S (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 23 Mar 2022 17:26:18 -0400
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCC30140A0
-        for <io-uring@vger.kernel.org>; Wed, 23 Mar 2022 14:24:47 -0700 (PDT)
-Received: by mail-pj1-x1036.google.com with SMTP id mr5-20020a17090b238500b001c67366ae93so7615557pjb.4
-        for <io-uring@vger.kernel.org>; Wed, 23 Mar 2022 14:24:47 -0700 (PDT)
+        with ESMTP id S240425AbiCWWnK (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 23 Mar 2022 18:43:10 -0400
+Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 584897CB23
+        for <io-uring@vger.kernel.org>; Wed, 23 Mar 2022 15:41:40 -0700 (PDT)
+Received: by mail-pj1-x1033.google.com with SMTP id o3-20020a17090a3d4300b001c6bc749227so3307146pjf.1
+        for <io-uring@vger.kernel.org>; Wed, 23 Mar 2022 15:41:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=of3lS3C4xyqKKbsU+moSs1ikc61qhvqtQqy+wDAMLrQ=;
-        b=uWtOwvftzxEvWzoBR1YkI6UbP8cyEw9daRerFL1t3O1UJ054Z8VWIZ4DH/7so5ciEo
-         OoSmA2EVdDoX3joCf5B0+Sf/qg3ijZmLrSvSkHNodw5d/cq6n4EQ8EByH+LzljzaKsWP
-         d1P2FBidP3lr4zGPtYoIT1rtdzOsi7YWwsulRVvnSb8kT01xtmX4xpvuHNNf4nt6E62V
-         zib91ALn4/lOMfsciR1QtcafKJpXNiD4Eec2+XftShRxvfx5XevJ3smDMhSa3jDWBnlv
-         oBVJ+JIhlO1APgPrtOMl7ijKrPOIvM/RNYTN4mNC8oK6vwD1VB7LjFL1HYtnhOSfzwUW
-         +FxA==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uUhJ05/cb+wi0vSCWraGIhfxIBINvn2YCv3QCXxjOT8=;
+        b=gYYhRY7FXxz208tV1zUubewxO65D0LYotNlMedbNpXAPduiYDF6lYkpSYqj2OUninI
+         qa3NedMNdpHaj0IDhKqLUi8bLu1yzUQ/qCER6DiWrHKSR61YDtFb6RMRWc5n3AlShRsC
+         JTrPFoxzDRKT0agZZnp5WNL/zFy+GiBejrx1hwIt3x9OepFCppskThcpZQmtTyFY6tQa
+         q2m3D9xDqlEAj2lkGiWJX9BAfd4jtU9Nh6s69EcH9O5JXXKya6362u9HFzn5kzZO+QQh
+         25X7xmIzs5r+Wlk4CAFoqUa/e8U3rH3eTpxAXxgAhURSARmmQaS2Rci2qNQ5rZbSiYec
+         bg+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=of3lS3C4xyqKKbsU+moSs1ikc61qhvqtQqy+wDAMLrQ=;
-        b=IJ4CVvmAwGM4AMNCaNvvdtXKUcMAUzAu+1KeR5TGtUxSGFEtr9lVf4TIfp1DXKb7KL
-         UdCmjuu47Aod+Js5HzWrd6O4uEaBUuRBH3sI8nUObax8PJ296NAcG7trrRJwESaJ1nGr
-         mYewO5GOCUBysmsF2jtN2RzggCOv+waHN01L7s2LcyehFR6bUBPYSKoBTYUdxaXSnrsm
-         ooECRv8A2xk9ftuVKTyQXdguDgtilU4M80OTiwV1z4/o0BwDEnm1MPzen/kZ7IwYBJZa
-         B9A2sC5U6mhuh+I0kltYEA5e8WKp4AoaekuKmQ2L+BWZ5JbgJIkEOBxQkXMuKkrqhYLS
-         qOqQ==
-X-Gm-Message-State: AOAM533ZZKZXeCzhr36aB+k2nmslXRUReUyYgtp1t5Zr4mGiJkf0NXl9
-        FCfmkaiu0pZA+OXO3xf/Pw6DUg==
-X-Google-Smtp-Source: ABdhPJxMoT3Z5lzX6OXWoclx16yN+dNVohLYbuDtj12rl00xmU/H1qEDtkkDt5s6wgOLfGGS7YA0MQ==
-X-Received: by 2002:a17:902:ea0c:b0:154:16a6:7025 with SMTP id s12-20020a170902ea0c00b0015416a67025mr2234091plg.104.1648070687213;
-        Wed, 23 Mar 2022 14:24:47 -0700 (PDT)
-Received: from ?IPV6:2600:380:6c2b:64bd:fe73:9dda:6321:7703? ([2600:380:6c2b:64bd:fe73:9dda:6321:7703])
-        by smtp.gmail.com with ESMTPSA id h10-20020a056a001a4a00b004f7c76f29c3sm818008pfv.24.2022.03.23.14.24.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Mar 2022 14:24:46 -0700 (PDT)
-Message-ID: <77fe836c-ee0e-1465-7469-46f202ad53e6@kernel.dk>
-Date:   Wed, 23 Mar 2022 15:24:44 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH 1/2] io_uring: ensure recv and recvmsg handle MSG_WAITALL
- correctly
-Content-Language: en-US
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Constantine Gavrilov <constantine.gavrilov@gmail.com>
-Cc:     io-uring@vger.kernel.org, stable@vger.kernel.org
-References: <20220323153947.142692-1-axboe@kernel.dk>
- <20220323153947.142692-2-axboe@kernel.dk>
- <64197456-87f2-e780-186d-272e06ae223b@gmail.com>
- <CAAL3td3_VFmOH1mNXiG6geFeONSm066Xba5ePqPwkMr-zxkDGg@mail.gmail.com>
- <fe48b17e-380f-7159-8c0c-d7c5208e61b2@gmail.com>
+        bh=uUhJ05/cb+wi0vSCWraGIhfxIBINvn2YCv3QCXxjOT8=;
+        b=KCksQikbt6xvb2Rn+oxIeoQjNf/JEeNES/dLC+tLHbEJ/Zvf9u5imbNHDYztODIhZc
+         ollStHTeiLA3Ay21f0Dj1yvDre+tzQWCH1FWBCz6PX+zhC2N+VTBJ94dFj/vJpEPRBTa
+         FCWL814nIjU8aua++6oiuwes6qFwTRaMfoKW0H9qMzFTLvpYE/F0wN6dfCiD1Q9utfun
+         GH78uvhrueGJnThxhAttZAwZYTQHr3zSA+fXUuQ8rOe10yLW0cbixB+m13dv1EbHcjxK
+         e/GNHF9iCICunSZiK5gJToYcG7pvdvF6Dtp+hUTrzTdpp++5JVTP7FSATpU2wMDs4WwA
+         NarA==
+X-Gm-Message-State: AOAM532cQGQXJcNMHM0LAPeYHyDzr2wMK7HUdbJ5CBjSDy/FL0vGngAb
+        QKaqHIkkgeFllnGnWO7Er8FUBsdh0TCw+lqD
+X-Google-Smtp-Source: ABdhPJyTzcgzjCBo5zwgiGW0L9BCoJL4uIVwvln4g+14rzFOseyodG/nJPcS4vhdhKuuyjAn5AegFg==
+X-Received: by 2002:a17:90a:4890:b0:1bf:654e:e1a0 with SMTP id b16-20020a17090a489000b001bf654ee1a0mr14462054pjh.113.1648075299595;
+        Wed, 23 Mar 2022 15:41:39 -0700 (PDT)
+Received: from localhost.localdomain ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id g5-20020a056a001a0500b004def10341e5sm867839pfv.22.2022.03.23.15.41.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Mar 2022 15:41:39 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <fe48b17e-380f-7159-8c0c-d7c5208e61b2@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To:     io-uring@vger.kernel.org
+Cc:     constantine.gavrilov@gmail.com
+Subject: [PATCHSET v2 0/2] Fix MSG_WAITALL for IORING_OP_RECV/RECVMSG
+Date:   Wed, 23 Mar 2022 16:41:29 -0600
+Message-Id: <20220323224131.370674-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.35.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -77,41 +65,18 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/23/22 2:52 PM, Pavel Begunkov wrote:
-> On 3/23/22 20:45, Constantine Gavrilov wrote:
->> On Wed, Mar 23, 2022 at 10:14 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
->>>
->>> On 3/23/22 15:39, Jens Axboe wrote:
->>>> We currently don't attempt to get the full asked for length even if
->>>> MSG_WAITALL is set, if we get a partial receive. If we do see a partial
->>>> receive, then just note how many bytes we did and return -EAGAIN to
->>>> get it retried.
->>>>
->>>> The iov is advanced appropriately for the vector based case, and we
->>>> manually bump the buffer and remainder for the non-vector case.
->>>
->>> How datagrams work with MSG_WAITALL? I highly doubt it coalesces 2+
->>> packets to satisfy the length requirement (e.g. because it may move
->>> the address back into the userspace). I'm mainly afraid about
->>> breaking io_uring users who are using the flag just to fail links
->>> when there is not enough data in a packet.
->>>
->>> -- 
->>> Pavel Begunkov
->>
->> Pavel:
->>
->> Datagrams have message boundaries and the MSG_WAITALL flag does not
->> make sense there. I believe it is ignored by receive code on daragram
->> sockets. MSG_WAITALL makes sends only on stream sockets, like TCP. The
->> manual page says "This flag has  no  effect  for datagram sockets.".
-> 
-> Missed the line this in mans, thanks, and it's exactly as expected.
-> The problem is on the io_uring side where with the patch it might
-> blindly do a second call into the network stack consuming 2+ packets.
+Hi,
 
-Right, it should not be applied for datagrams.
+If we get a partial receive, we don't retry even if MSG_WAITALL is set.
+Ensure that we retry for the remainder in that case.
+
+The ordering of patches may look a bit odd here, but it's done this way
+to make it easier to handle for the stable backport.
+
+v2:
+- Only do it for SOCK_STREAM/SOCK_SEQPACKET
 
 -- 
 Jens Axboe
+
 

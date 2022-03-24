@@ -2,61 +2,61 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 415D64E6A90
-	for <lists+io-uring@lfdr.de>; Thu, 24 Mar 2022 23:17:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D18F74E6B05
+	for <lists+io-uring@lfdr.de>; Fri, 25 Mar 2022 00:10:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345905AbiCXWTN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 24 Mar 2022 18:19:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55646 "EHLO
+        id S1346447AbiCXXLv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 24 Mar 2022 19:11:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47182 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230169AbiCXWTM (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Mar 2022 18:19:12 -0400
-Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33BD2A0BF8
-        for <io-uring@vger.kernel.org>; Thu, 24 Mar 2022 15:17:40 -0700 (PDT)
-Received: by mail-pl1-x62a.google.com with SMTP id w4so6195194ply.13
-        for <io-uring@vger.kernel.org>; Thu, 24 Mar 2022 15:17:40 -0700 (PDT)
+        with ESMTP id S244602AbiCXXLv (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Mar 2022 19:11:51 -0400
+Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD64638BEA
+        for <io-uring@vger.kernel.org>; Thu, 24 Mar 2022 16:10:14 -0700 (PDT)
+Received: by mail-pg1-x536.google.com with SMTP id c11so5004677pgu.11
+        for <io-uring@vger.kernel.org>; Thu, 24 Mar 2022 16:10:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=message-id:date:mime-version:user-agent:content-language:to:from
          :subject:content-transfer-encoding;
-        bh=iPS/F09BxMEvQU1Mfgn0jDBPJkXsNdfenSHWejqQS0o=;
-        b=ar9XHEq8gQA++WWwz+LN0f8ap8zbAVsa1UrCeKUngKjjJqnI63AerrkD7ARKwFKEdQ
-         RGSJAEjyOlLScyCOa/ZNRVjsdILYOV1UTdjo5zgMqK4lPzb3ckAYUkJDXQ7qNoHl7lr2
-         oqWrQUr4Wm2YDW1X3FkKguzPnWAVhnMZkOvwUik/fUAwTsoqQW8Dek7UjcZVEhpGWY2n
-         mLu0v/OZEAVUfLPqImzQsxRCmlWRtRLS0pnqTXjaQRWq9eovOkcv+6dESU8Cl2208OGF
-         dxP/nLJPSdEEYXOzhSCDmf2GCzils2wh40sJoIQiZpD9n0N8EMOZ7dyD5RhB7rDC4/qq
-         anFw==
+        bh=zEhI93Y3PhVbWj4XSEntk8XrMwdrkmIlgcg22Y2pu8E=;
+        b=42msovNjAt4Dw51HGyrO2dwAhQCl+1fw5WAwGrPlsYi1vMwW1F/4JQiYAZ8lTtB3Hm
+         LpAWmV4J9ZC02JvjDRCPB7ONoLpsIq7LeBqiVk5hroy0G/f5T+gh/ZFCurQpIDolspa4
+         6tOAPMSfl7ui4HwaQCn9Lu6gmEyUa8lAHTzSrQefeVY1dZmKBO3nLgoLEXPe0EsJBLFw
+         dDaAMyjnyudUoFB1qHGkyOnH1qv6JX2b6QABBW+dylySgVFjLU/59LvbY8neEe16LOmj
+         4FEFbRM1dBqVVUfeCNw9SpjW5dOF0xyqLFG4MEOLVFTmMzqphP8H3aWL4RA4x6L1xonk
+         SJ2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent
          :content-language:to:from:subject:content-transfer-encoding;
-        bh=iPS/F09BxMEvQU1Mfgn0jDBPJkXsNdfenSHWejqQS0o=;
-        b=RCZpQj3LTk4qkXh7QOXVTDTzQ3YD0E6hWz+Netch4y/+6eOyasB1LFOGMMCN1l5GkR
-         0GhzMxPl7Rm2YiSciVSkEf6LLLEaLHgBZXTqVhYsHVBDA2LLfwBJPuQnfTUwlRiCm6b7
-         2elc4E9USv7VC0Kszf3TErkVrroKwRVQgzEKgx68bIMywzivWf4bim2iEEJuHf88//ra
-         cRBFay3NQeMoAewIqqDgKF7Y9mQGslBAT7l4MNOqoDlzPzwq7hLcvC0rlSVc8LTpwQKL
-         j1FGN67ZWbdJ44y7ehnIit+TpbTzYXqr5/yBMz2MLfVvafC75ejOAC5+Avf55NgWobrV
-         WFyQ==
-X-Gm-Message-State: AOAM533iSLWs/Kj6GTubWaiHWSYSX8WH5xhRGcAn0En9a+tUNyd9umfH
-        l5HaD3WNg2YvgL4DAUQat8G7HhPTO0HviQ==
-X-Google-Smtp-Source: ABdhPJzNsWVAO4buub2syYDeyJcBQDONPkzHHzus0FT0L7F2t/lwc5GueWoJXy3RT8sTYEGeOGfAhg==
-X-Received: by 2002:a17:902:650e:b0:153:99d4:9151 with SMTP id b14-20020a170902650e00b0015399d49151mr8340269plk.20.1648160259282;
-        Thu, 24 Mar 2022 15:17:39 -0700 (PDT)
-Received: from ?IPV6:2600:380:6c11:f710:ef38:7e8d:293e:e1c5? ([2600:380:6c11:f710:ef38:7e8d:293e:e1c5])
-        by smtp.gmail.com with ESMTPSA id f66-20020a62db45000000b004fa8a7b8ad3sm4268509pfg.77.2022.03.24.15.17.38
+        bh=zEhI93Y3PhVbWj4XSEntk8XrMwdrkmIlgcg22Y2pu8E=;
+        b=N/vEjp/Uh05+qUrV+oIr5Yku2Oqu+9yAIISG1umUamVyYM4BEGQx+T4aMM4FnklMVl
+         t8UAOSTyf1mUTDFOPzwssz2e/EevsHxizNR+hlKz4JKsvJGnPB1eObFIM6ABkVkBhBd+
+         80yRxGuJr8WS8RF5WZRReEZUnjIkCgZ6kfrGGg+BnUi1VaPi8Ygy2+PYwHm+YCAFCl71
+         OaX2rDNfRRnRdYekcfa8gyKnBW7Azp9xvO/hOo2eUQ3R3xJhQtJaTsyAumZ5V/IlMKxW
+         tnYnSwTY8D1a0Qk09Yj685zGDlaYheHWL6c7DsklOtilZ+HL8I4s/75RaechdfBLM6hm
+         bMCg==
+X-Gm-Message-State: AOAM532FK0ImAJFzKCe2OVwq6tcRJFBa3LscVLSg129JE+RIiqhazRlc
+        HE0gZaSAfccZGaMTDH2ZcSC9jKtSKoWN3pmi
+X-Google-Smtp-Source: ABdhPJzZ6AKUdV6ReaM9kS++U5FvsuP/Wg2OiVR9ewPpGO6Q4dSgZthpVBK5IGEiJIe0Q4RJb+hBZA==
+X-Received: by 2002:a63:f24c:0:b0:383:c279:e662 with SMTP id d12-20020a63f24c000000b00383c279e662mr5679374pgk.303.1648163413828;
+        Thu, 24 Mar 2022 16:10:13 -0700 (PDT)
+Received: from [192.168.1.100] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id s141-20020a632c93000000b0038134d09219sm3493517pgs.55.2022.03.24.16.10.13
         for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Mar 2022 15:17:38 -0700 (PDT)
-Message-ID: <994f54a5-9124-f970-f663-2cf19ab076ae@kernel.dk>
-Date:   Thu, 24 Mar 2022 16:17:37 -0600
+        Thu, 24 Mar 2022 16:10:13 -0700 (PDT)
+Message-ID: <4f7b8a9c-5aab-e583-8f31-2cc49e9316bf@kernel.dk>
+Date:   Thu, 24 Mar 2022 17:10:12 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
  Thunderbird/91.7.0
 Content-Language: en-US
 To:     io-uring <io-uring@vger.kernel.org>
 From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH v2] io_uring: improve task work cache utilization
+Subject: [PATCH v3] io_uring: improve task work cache utilization
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -86,13 +86,11 @@ Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
 ---
 
-v2 - it's better to not move io_task_work, as it then moves both fixed
-buffers and file refs to the next cacheline. Instead, just prefetch
-the right cacheline instead. Move link as well, which brings kbuf into
-where it should be.
+v3 - apparently it's nicely documented that prefetch need not be a valid
+address, so just get rid of the next checking for it
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index a76e91fe277c..37150ca89289 100644
+index a76e91fe277c..bb40c80fd9ca 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
 @@ -928,7 +928,6 @@ struct io_kiocb {
@@ -111,31 +109,24 @@ index a76e91fe277c..37150ca89289 100644
  	const struct cred		*creds;
  	struct io_wq_work		work;
  };
-@@ -2450,6 +2450,11 @@ static void handle_prev_tw_list(struct io_wq_work_node *node,
- 		struct io_wq_work_node *next = node->next;
+@@ -2451,6 +2451,8 @@ static void handle_prev_tw_list(struct io_wq_work_node *node,
  		struct io_kiocb *req = container_of(node, struct io_kiocb,
  						    io_task_work.node);
-+		struct io_kiocb *nxt = container_of(next, struct io_kiocb,
-+						    io_task_work.node);
-+
-+		if (next)
-+			prefetch(nxt);
  
++		prefetch(container_of(next, struct io_kiocb, io_task_work.node));
++
  		if (req->ctx != *ctx) {
  			if (unlikely(!*uring_locked && *ctx))
-@@ -2482,6 +2487,11 @@ static void handle_tw_list(struct io_wq_work_node *node,
- 		struct io_wq_work_node *next = node->next;
+ 				ctx_commit_and_unlock(*ctx);
+@@ -2483,6 +2485,8 @@ static void handle_tw_list(struct io_wq_work_node *node,
  		struct io_kiocb *req = container_of(node, struct io_kiocb,
  						    io_task_work.node);
-+		struct io_kiocb *nxt = container_of(next, struct io_kiocb,
-+						    io_task_work.node);
-+
-+		if (next)
-+			prefetch(nxt);
  
++		prefetch(container_of(next, struct io_kiocb, io_task_work.node));
++
  		if (req->ctx != *ctx) {
  			ctx_flush_and_put(*ctx, locked);
-
+ 			*ctx = req->ctx;
 -- 
 Jens Axboe
 

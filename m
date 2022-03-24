@@ -2,107 +2,117 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F7A74E61E2
-	for <lists+io-uring@lfdr.de>; Thu, 24 Mar 2022 11:42:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D01C4E63B5
+	for <lists+io-uring@lfdr.de>; Thu, 24 Mar 2022 13:56:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349562AbiCXKoV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 24 Mar 2022 06:44:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34546 "EHLO
+        id S1350295AbiCXM5e (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 24 Mar 2022 08:57:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349559AbiCXKoT (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Mar 2022 06:44:19 -0400
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5243AA146F;
-        Thu, 24 Mar 2022 03:42:47 -0700 (PDT)
-Received: by mail-ej1-f42.google.com with SMTP id yy13so8302394ejb.2;
-        Thu, 24 Mar 2022 03:42:47 -0700 (PDT)
+        with ESMTP id S1350323AbiCXM5d (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Mar 2022 08:57:33 -0400
+Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C7B6694AF
+        for <io-uring@vger.kernel.org>; Thu, 24 Mar 2022 05:56:00 -0700 (PDT)
+Received: by mail-pg1-x52d.google.com with SMTP id q19so3763591pgm.6
+        for <io-uring@vger.kernel.org>; Thu, 24 Mar 2022 05:56:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:content-language:to:from
+         :subject:content-transfer-encoding;
+        bh=KTtcrac2ZaU4CN1X1YOLw1wfnq1M6J1rWHvMEJ1CrLQ=;
+        b=kE++lndd1nhj3QT/3r+l90qvHAy72BK0Xwej6ZnTNPnEOJS7g2RP6bC0ZDiTTuyuV5
+         zgCvBEhu8ufV1cQ2G0iqDVcFVnZ+mrQOK2zPC7ISZREVgSTiYF8oYwN+RQiW0cc1Fyxu
+         V/z4J9wvhdzAtNsdWiQEfPTBXxtL0Jztotow8Pp++xuojOUHeKk5xxl9ESGdbcAYQxGl
+         I0C9n52qnkIdg3EvkqMtq2Q3ioJkuSbHkaQFMwF2ICKs85H9W7Zwa7edvS7LcxbirIb7
+         dIZfJbx+HfOtNzPGau23Gv0BYqezm0t/LYSqm7k9FsJDjDJOTGoB90KmtI8Tg9AJ2Pse
+         UHDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=Z+tOhomyyHuPVoCuADsMsVAjnchfBPFbDYj/vr6ULFk=;
-        b=mV3bfzolQVC2jlxhUiJy06qFMco1LBQp2MWBzh+H/gm+zVPNYDjkalyOwMXvJsihuS
-         jMxwuMYBOfnekr1dNnNI2wvEeNurRqnZK5qTLWA0KMSuvw5P12ny5N4uOc+7NzgmwCac
-         SBiN+we2cwKiEZzzb1U5GBqAQGHu7M213R58uZgqJyuTNqRsn7G6f61We5J5KYm74iI8
-         ROipGr7beoUR0p0mS+qR1OkO+b2vbikVVGAKQFveLxA2TgvI9F/DbZ0/NSi5/W6rX7zP
-         IzC1XfRgKWhFHTKHQcUoPdWd/Z4g8VDDhtkO6skGQEWyVU0vBUA69d7AsGKNu8Rp/JK2
-         SXDg==
-X-Gm-Message-State: AOAM531F7N0rHnNzF6dEQCNP3WI7gXJiO1/SnD6W7r2Xqr/ZuWWr2O5O
-        BqXIyCd/MEA0m8RPQQ6+5AM=
-X-Google-Smtp-Source: ABdhPJwIdokZm/Y/j1GkNTRNcR1YxV/an65AItscWscYJKvj1/Qq6h7xM55DmHKiD8wf1owr5GZbZg==
-X-Received: by 2002:a17:906:6547:b0:6bd:e2ad:8c82 with SMTP id u7-20020a170906654700b006bde2ad8c82mr4794402ejn.693.1648118565765;
-        Thu, 24 Mar 2022 03:42:45 -0700 (PDT)
-Received: from [10.100.102.14] (85.65.206.129.dynamic.barak-online.net. [85.65.206.129])
-        by smtp.gmail.com with ESMTPSA id l2-20020a1709060cc200b006d3d91e88c7sm959117ejh.214.2022.03.24.03.42.43
+        h=x-gm-message-state:message-id:date:mime-version:user-agent
+         :content-language:to:from:subject:content-transfer-encoding;
+        bh=KTtcrac2ZaU4CN1X1YOLw1wfnq1M6J1rWHvMEJ1CrLQ=;
+        b=z8uswBWam2yGWmfA5DKvVfnY+XRR02Jx8JEFrt86gh1F0VvWbkIYO1vGyyPO9ynQmF
+         aB/4rVYEgSLyjRKDlcWLNnsCyvz5cspopsRwsVLbuLREXbfGh/TBH5QsmntLK1kQMXh3
+         uKkp/Qyi08vK18QVkB1RURTH2JbneuqClfX2ZrySkhxUE1JC66Ygy2TRqXZVAGLRpOWz
+         xL28eWbJEEStF+xiFZzubEL+LSXy5piVfNeZYvdx+/XEYNnLrEP39MHfkRSdn/O9ORqD
+         NreqiNvsy3jR+AZPjEe/M0jwzOvuL8VNcELUrygkMhpJ+eKBiS/X9UsIq05Fp7xmqibJ
+         vvmQ==
+X-Gm-Message-State: AOAM532tvFbMcB55GJFU5XGQZHbNCWuV3GvQ4enEaPdPdK+Z9KummW9F
+        A/dTHNwXYsZOnzjAocunDO+dmmhLEODeurnP
+X-Google-Smtp-Source: ABdhPJxwA9wCLfCNV8Aw3SQv7x8SN1FRW9gM1lj/1kuXs4ThSktVIhj1OkyJ7osCOXLSqdhyVIaZjw==
+X-Received: by 2002:a63:9345:0:b0:386:4fd7:1388 with SMTP id w5-20020a639345000000b003864fd71388mr1302512pgm.573.1648126559491;
+        Thu, 24 Mar 2022 05:55:59 -0700 (PDT)
+Received: from [192.168.1.100] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id c18-20020a056a000ad200b004f0f9696578sm4003092pfl.141.2022.03.24.05.55.56
+        for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Mar 2022 03:42:44 -0700 (PDT)
-Message-ID: <88827a86-1304-e699-ec11-2718e280f9ad@grimberg.me>
-Date:   Thu, 24 Mar 2022 12:42:42 +0200
+        Thu, 24 Mar 2022 05:55:58 -0700 (PDT)
+Message-ID: <c7b3291d-aafc-d4e1-f052-432dd7fb08a8@kernel.dk>
+Date:   Thu, 24 Mar 2022 06:55:55 -0600
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH 05/17] nvme: wire-up support for async-passthru on
- char-device.
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
 Content-Language: en-US
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, Kanchan Joshi <joshiiitr@gmail.com>,
-        Kanchan Joshi <joshi.k@samsung.com>,
-        Keith Busch <kbusch@kernel.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org, sbates@raithlin.com,
-        logang@deltatee.com, Pankaj Raghav <pankydev8@gmail.com>,
-        =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <javier@javigon.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Adam Manzanares <a.manzanares@samsung.com>,
-        Anuj Gupta <anuj20.g@samsung.com>
-References: <20220308152105.309618-6-joshi.k@samsung.com>
- <7a123895-1102-4b36-2d6e-1e00e978d03d@grimberg.me>
- <CA+1E3rK8wnABptQLQrEo8XRdsbua9t_88e3ZP-Ass3CnxHv+oA@mail.gmail.com>
- <8f45a761-5ecb-5911-1064-9625a285c93d@grimberg.me>
- <20220316092153.GA4885@test-zns>
- <11f9e933-cfc8-2e3b-c815-c49a4b7db4ec@grimberg.me>
- <CA+1E3r+_DEw5ABPbLzSp9Gvg6L8XU-2HBoLK7kuXucLjr=+Ezw@mail.gmail.com>
- <3ed01280-5487-7206-a326-0cd110118b65@grimberg.me>
- <666deb0e-fa10-8a39-c1aa-cf3908b3795c@kernel.dk>
- <28b53100-9930-92d4-ba3b-f9c5e8773808@grimberg.me>
- <20220324062053.GA12519@lst.de>
-From:   Sagi Grimberg <sagi@grimberg.me>
-In-Reply-To: <20220324062053.GA12519@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     io-uring <io-uring@vger.kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring: remove IORING_CQE_F_MSG
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+This was introduced with the message ring opcode, but isn't strictly
+required for the request itself. The sender can encode what is needed
+in user_data, which is passed to the receiver. It's unclear if having
+a separate flag that essentially says "This CQE did not originate from
+an SQE on this ring" provides any real utility to applications. While
+we can always re-introduce a flag to provide this information, we cannot
+take it away at a later point in time.
 
->>>> I know, and that was my original question, no one cares that this
->>>> interface completely lacks this capability? Maybe it is fine, but
->>>> it is not a trivial assumption given that this is designed to be more
->>>> than an interface to send admin/vs commands to the controller...
->>>
->>> Most people don't really care about or use multipath, so it's not a
->>> primary goal.
->>
->> This statement is generally correct. However what application would be
->> interested in speaking raw nvme to a device and gaining performance that
->> is even higher than the block layer (which is great to begin with)?
-> 
-> If passthrough is faster than the block I/O path we're doing someting
-> wrong.  At best it should be the same performance.
+Remove the flag while we still can, before it's in a released kernel.
 
-That is not what the changelog says.
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-> That being said multipathing is an integral part of the nvme driver
-> architecture, and the /dev/ngX devices.  If we want to support uring
-> async commands on /dev/ngX it will have to support multipath.
+---
 
-Couldn't agree more...
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 88556e654c5a..28b7a1b8abb6 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -4474,8 +4474,7 @@ static int io_msg_ring(struct io_kiocb *req, unsigned int issue_flags)
+ 	target_ctx = req->file->private_data;
+ 
+ 	spin_lock(&target_ctx->completion_lock);
+-	filled = io_fill_cqe_aux(target_ctx, msg->user_data, msg->len,
+-					IORING_CQE_F_MSG);
++	filled = io_fill_cqe_aux(target_ctx, msg->user_data, msg->len, 0);
+ 	io_commit_cqring(target_ctx);
+ 	spin_unlock(&target_ctx->completion_lock);
+ 
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index d2be4eb22008..784adc6f6ed2 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -201,11 +201,9 @@ struct io_uring_cqe {
+  *
+  * IORING_CQE_F_BUFFER	If set, the upper 16 bits are the buffer ID
+  * IORING_CQE_F_MORE	If set, parent SQE will generate more CQE entries
+- * IORING_CQE_F_MSG	If set, CQE was generated with IORING_OP_MSG_RING
+  */
+ #define IORING_CQE_F_BUFFER		(1U << 0)
+ #define IORING_CQE_F_MORE		(1U << 1)
+-#define IORING_CQE_F_MSG		(1U << 2)
+ 
+ enum {
+ 	IORING_CQE_BUFFER_SHIFT		= 16,
+
+-- 
+Jens Axboe
+

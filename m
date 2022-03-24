@@ -2,58 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B28564E6802
-	for <lists+io-uring@lfdr.de>; Thu, 24 Mar 2022 18:45:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 472B84E6805
+	for <lists+io-uring@lfdr.de>; Thu, 24 Mar 2022 18:45:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345707AbiCXRrO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 24 Mar 2022 13:47:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40408 "EHLO
+        id S1346885AbiCXRrU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 24 Mar 2022 13:47:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236793AbiCXRrN (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Mar 2022 13:47:13 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56BDCB246E;
-        Thu, 24 Mar 2022 10:45:40 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id p15so9317258lfk.8;
-        Thu, 24 Mar 2022 10:45:40 -0700 (PDT)
+        with ESMTP id S243676AbiCXRrU (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Mar 2022 13:47:20 -0400
+Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0B7CB2473;
+        Thu, 24 Mar 2022 10:45:47 -0700 (PDT)
+Received: by mail-lj1-x236.google.com with SMTP id bn33so7191023ljb.6;
+        Thu, 24 Mar 2022 10:45:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=/C6Wi8+apkAa+z6xDNWFQEkIKBR1nPVWir8FvzltVcE=;
-        b=I7bHlwMO0+f0zK0CXx5nTJxPc40eEjCuRLHcKBBftFa39fYh5SyIT6X82M8exBfiQJ
-         ZkFEmdDs2nmuxd++MxGwF0+xsZ6f9syPSL3/A9HV/XUeDpbDXt1uvpP3gQnZKKb6Hoev
-         I5R78+QLii543xhcz2fndbWH26D0v4PcJgQDt/5KCaFRmPXzY2MdVAmLGmTH+pDb5ux3
-         yTZTMY6RYtCbPQNeie4eExtqxpcupb6ilqamE78pQPV6ECflFjDKMBYfpy46uiHFsBqc
-         2rVAdR/QaYIh1CUQSp709+f7ZVqx+KNbNxyQX5dIkJjvUp2zJaffqa3xf5x/yRfDIKow
-         NS5w==
+        bh=XjdOGRorC0nLuKT+vnf4KghH4qK564bOF026m1uq2LM=;
+        b=qn5ODB5qgGzbNY6LyHQ1PpJ+e8WZnGb3VIdgWKJ4RWs7GjUS5wjCq7s+T4SpWzyyRz
+         X5Kv8cFbzPU1ALMGYa5T8WOKpm0YB33F4W56+qyixcVsxniuEIBj//m/DJEJnq38UrXs
+         Eza/doKWtG2viDJxbE93l6gb1wq/dqhYes8nQfFolowATEmhocCTqet3SrVAaIdCgFVH
+         ET9VDmte4nWETFRNYj9+ixpoXev6v5YAd2bMDMRF8A28SoDBtTRjFTNaR+7uOkgyQ58r
+         1JGivxE8gPTnFFm7NcbScjnOreo9c7fXFQrtZpcYtCUtAjcjyHiZpx6ghM0sQ8Nfvvx0
+         iMHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=/C6Wi8+apkAa+z6xDNWFQEkIKBR1nPVWir8FvzltVcE=;
-        b=qQ0KJQul/w8VsQlSi0MbfExaexD/CBAnf052Q7y8QFBZZ7TVIHxBx52ZQXA5tC5vHR
-         aSUqdWqbJtOD32OhuWGZ0ntCaOwG1xwZAhe/Ip4JOeRplJ7cCGYqSNc744Ub19j+Pn/e
-         LklH6nL58L4JiJq/1+51vwRll/tuV8UVrVDBsr8UTLlGNiwuZq8ZveVTX3nMsb9bMV7s
-         xC24np87VDu8xa7uif5nERO0jOixNNXU2CQ4Oy2qqCRqY4p5Dp6yrsxuc+AaTpzvcYzg
-         M1N3yST6IJgBkWfdOLa/XaieNL1zv9LCUHeEY//u4TcHOTNnWMG1GsjID85fPpIzjmZn
-         A9yw==
-X-Gm-Message-State: AOAM532CNXR0aZjI0ZYuKPJccuZMPy+DybS+mYlqfW7QIJQX+aiYp8D1
-        SQekx3csCYa9x1orVtm0CAzAYNxyuqMiPPvyLW0=
-X-Google-Smtp-Source: ABdhPJw3jE5bSMu2B/HgrDHj58EGXBtoUdyv0j3Jg45FwJ4h7wj3tyj6OLthkCoZbG/3dwSMNRXVSitCwaW7deOA0N4=
-X-Received: by 2002:a05:6512:3a95:b0:44a:6189:dad1 with SMTP id
- q21-20020a0565123a9500b0044a6189dad1mr2991299lfu.334.1648143938391; Thu, 24
- Mar 2022 10:45:38 -0700 (PDT)
+        bh=XjdOGRorC0nLuKT+vnf4KghH4qK564bOF026m1uq2LM=;
+        b=RCCHIx6CvWna5WLhhuYwj+cbgQf2byARXA2bJVXPNb/KupEDYU0TPuvY5reQNm5Wrm
+         dOusxIJ2IlwAQqPFQ7+uiMipndGogzzxwfvqOwM22EDQHwBhlpzGH34a5ujIEw1RIeA3
+         8+/wImD9c8kNkp1QZfCUkc9QdDIV7R5kO1rm8UwhPW/3RdPp3iq/7RTdPboMegkm+/iq
+         mR5WKYUoFrikvgJoyAhqWCiq9ASOZzd0TTurJZutA8rGXGDTriKckwWJ9TmLc6zDqGGZ
+         fyZ6udvfcSL/BL2vu0lh4GgwA3VKENemWh7WyeT+cBqysdTuAdmMCWOT8yvewG4R5Fj3
+         lOiA==
+X-Gm-Message-State: AOAM531B49aXZ3YBDK2KG0yYhql4mCKtddViUG+RLjLEmN9e4HuZGgs6
+        WOGpig55QJPITda0l5vJwrEcWtilVj+18SUv64c=
+X-Google-Smtp-Source: ABdhPJz0+kF30iUk1IKjKuHkn6OMlOdoGxgUwTrEvzpunKZL2D1zUDJ7ekei/or9tWttmHRiMEUXp+orM938M0EQA9Q=
+X-Received: by 2002:a2e:90d6:0:b0:246:e44:bcf6 with SMTP id
+ o22-20020a2e90d6000000b002460e44bcf6mr4820564ljg.501.1648143946143; Thu, 24
+ Mar 2022 10:45:46 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220308152105.309618-1-joshi.k@samsung.com> <CGME20220308152702epcas5p1eb1880e024ac8b9531c85a82f31a4e78@epcas5p1.samsung.com>
- <20220308152105.309618-6-joshi.k@samsung.com> <20220311070148.GA17881@lst.de>
- <20220314162356.GA13902@test-zns> <20220315085410.GA4132@lst.de>
- <20220316072727.GA2104@test-zns> <20220324062246.GB12519@lst.de>
-In-Reply-To: <20220324062246.GB12519@lst.de>
+References: <20220308152105.309618-1-joshi.k@samsung.com> <CGME20220308152716epcas5p3d38d2372c184259f1a10c969f7e4396f@epcas5p3.samsung.com>
+ <20220308152105.309618-12-joshi.k@samsung.com> <20220310083503.GE26614@lst.de>
+ <CA+1E3rLF7D4jThUPZYbxpXs9LLdQ7Ek=Qy+rXZE=xgwBcLoaWQ@mail.gmail.com> <20220324063011.GA12660@lst.de>
+In-Reply-To: <20220324063011.GA12660@lst.de>
 From:   Kanchan Joshi <joshiiitr@gmail.com>
-Date:   Thu, 24 Mar 2022 23:15:12 +0530
-Message-ID: <CA+1E3rJ6=t3DfcqMvpMpTM9jOk=LMq3qnspbcPXkmqbTGVOc_A@mail.gmail.com>
-Subject: Re: [PATCH 05/17] nvme: wire-up support for async-passthru on char-device.
+Date:   Thu, 24 Mar 2022 23:15:20 +0530
+Message-ID: <CA+1E3rJAK9fPuS6g_po_vpvde_LpOjkuoU=E5h=v9rnHhc3+mw@mail.gmail.com>
+Subject: Re: [PATCH 11/17] block: factor out helper for bio allocation from cache
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Kanchan Joshi <joshi.k@samsung.com>, Jens Axboe <axboe@kernel.dk>,
         Keith Busch <kbusch@kernel.org>,
@@ -76,47 +75,33 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Mar 24, 2022 at 11:52 AM Christoph Hellwig <hch@lst.de> wrote:
+On Thu, Mar 24, 2022 at 12:00 PM Christoph Hellwig <hch@lst.de> wrote:
 >
-> On Wed, Mar 16, 2022 at 12:57:27PM +0530, Kanchan Joshi wrote:
-> > So what is the picture that you have in mind for struct io_uring_cmd?
-> > Moving meta fields out makes it look like this -
+> On Thu, Mar 10, 2022 at 05:55:02PM +0530, Kanchan Joshi wrote:
+> > On Thu, Mar 10, 2022 at 2:05 PM Christoph Hellwig <hch@lst.de> wrote:
+> > >
+> > > On Tue, Mar 08, 2022 at 08:50:59PM +0530, Kanchan Joshi wrote:
+> > > > +struct bio *bio_alloc_kiocb(struct kiocb *kiocb, unsigned short nr_vecs,
+> > > > +                         struct bio_set *bs)
+> > > > +{
+> > > > +     if (!(kiocb->ki_flags & IOCB_ALLOC_CACHE))
+> > > > +             return bio_alloc_bioset(GFP_KERNEL, nr_vecs, bs);
+> > > > +
+> > > > +     return bio_from_cache(nr_vecs, bs);
+> > > > +}
+> > > >  EXPORT_SYMBOL_GPL(bio_alloc_kiocb);
+> > >
+> > > If we go down this route we might want to just kill the bio_alloc_kiocb
+> > > wrapper.
+> >
+> > Fine, will kill that in v2.
 >
+> As a headsup,  Mike Snitzer has been doing something similar in the
 >
-> > @@ -28,7 +28,10 @@ struct io_uring_cmd {
-> >        u32             cmd_op;
-> >        u16             cmd_len;
-> >        u16             unused;
-> > -       u8              pdu[28]; /* available inline for free use */
-> > +       void __user     *meta_buffer; /* nvme pt specific */
-> > +       u32             meta_len; /* nvme pt specific */
-> > +       u8              pdu[16]; /* available inline for free use */
-> > +
-> > };
-> > And corresponding nvme 16 byte pdu - struct nvme_uring_cmd_pdu {
-> > -       u32 meta_len;
-> >        union {
-> >                struct bio *bio;
-> >                struct request *req;
-> >        };
-> >        void *meta; /* kernel-resident buffer */
-> > -       void __user *meta_buffer;
-> > } __packed;
+> "block/dm: use BIOSET_PERCPU_CACHE from bio_alloc_bioset"
 >
-> No, I'd also move the meta field (and call it meta_buffer) to
-> struct io_uring_cmd, and replace the pdu array with a simple
->
->         void *private;
+> series.
 
-That clears up. Can go that route, but the tradeoff is -
-while we clean up one casting in nvme, we end up making async-cmd way
-too nvme-passthrough specific.
-People have talked about using async-cmd for other use cases; Darrick
-mentioned using for xfs-scrub, and Luis had some ideas (other than
-nvme) too.
-
-The pdu array of 28 bytes is being used to avoid fast path
-allocations. It got reduced to 8 bytes, and that is fine for one
-nvme-ioctl as we moved other fields out.
-But for other use-cases, 8 bytes of generic space may not be enough to
-help with fast-path allocations.
+Thanks, that can be reused here too. But to enable this feature - we
+need to move to a bioset from bio_kmalloc in nvme, and you did not
+seem fine with that.

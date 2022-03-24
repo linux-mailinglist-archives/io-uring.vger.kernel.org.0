@@ -2,65 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D01C4E63B5
-	for <lists+io-uring@lfdr.de>; Thu, 24 Mar 2022 13:56:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FCF24E6555
+	for <lists+io-uring@lfdr.de>; Thu, 24 Mar 2022 15:34:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350295AbiCXM5e (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 24 Mar 2022 08:57:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45856 "EHLO
+        id S1347622AbiCXOgY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 24 Mar 2022 10:36:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350323AbiCXM5d (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Mar 2022 08:57:33 -0400
-Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C7B6694AF
-        for <io-uring@vger.kernel.org>; Thu, 24 Mar 2022 05:56:00 -0700 (PDT)
-Received: by mail-pg1-x52d.google.com with SMTP id q19so3763591pgm.6
-        for <io-uring@vger.kernel.org>; Thu, 24 Mar 2022 05:56:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:content-language:to:from
-         :subject:content-transfer-encoding;
-        bh=KTtcrac2ZaU4CN1X1YOLw1wfnq1M6J1rWHvMEJ1CrLQ=;
-        b=kE++lndd1nhj3QT/3r+l90qvHAy72BK0Xwej6ZnTNPnEOJS7g2RP6bC0ZDiTTuyuV5
-         zgCvBEhu8ufV1cQ2G0iqDVcFVnZ+mrQOK2zPC7ISZREVgSTiYF8oYwN+RQiW0cc1Fyxu
-         V/z4J9wvhdzAtNsdWiQEfPTBXxtL0Jztotow8Pp++xuojOUHeKk5xxl9ESGdbcAYQxGl
-         I0C9n52qnkIdg3EvkqMtq2Q3ioJkuSbHkaQFMwF2ICKs85H9W7Zwa7edvS7LcxbirIb7
-         dIZfJbx+HfOtNzPGau23Gv0BYqezm0t/LYSqm7k9FsJDjDJOTGoB90KmtI8Tg9AJ2Pse
-         UHDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent
-         :content-language:to:from:subject:content-transfer-encoding;
-        bh=KTtcrac2ZaU4CN1X1YOLw1wfnq1M6J1rWHvMEJ1CrLQ=;
-        b=z8uswBWam2yGWmfA5DKvVfnY+XRR02Jx8JEFrt86gh1F0VvWbkIYO1vGyyPO9ynQmF
-         aB/4rVYEgSLyjRKDlcWLNnsCyvz5cspopsRwsVLbuLREXbfGh/TBH5QsmntLK1kQMXh3
-         uKkp/Qyi08vK18QVkB1RURTH2JbneuqClfX2ZrySkhxUE1JC66Ygy2TRqXZVAGLRpOWz
-         xL28eWbJEEStF+xiFZzubEL+LSXy5piVfNeZYvdx+/XEYNnLrEP39MHfkRSdn/O9ORqD
-         NreqiNvsy3jR+AZPjEe/M0jwzOvuL8VNcELUrygkMhpJ+eKBiS/X9UsIq05Fp7xmqibJ
-         vvmQ==
-X-Gm-Message-State: AOAM532tvFbMcB55GJFU5XGQZHbNCWuV3GvQ4enEaPdPdK+Z9KummW9F
-        A/dTHNwXYsZOnzjAocunDO+dmmhLEODeurnP
-X-Google-Smtp-Source: ABdhPJxwA9wCLfCNV8Aw3SQv7x8SN1FRW9gM1lj/1kuXs4ThSktVIhj1OkyJ7osCOXLSqdhyVIaZjw==
-X-Received: by 2002:a63:9345:0:b0:386:4fd7:1388 with SMTP id w5-20020a639345000000b003864fd71388mr1302512pgm.573.1648126559491;
-        Thu, 24 Mar 2022 05:55:59 -0700 (PDT)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id c18-20020a056a000ad200b004f0f9696578sm4003092pfl.141.2022.03.24.05.55.56
-        for <io-uring@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Mar 2022 05:55:58 -0700 (PDT)
-Message-ID: <c7b3291d-aafc-d4e1-f052-432dd7fb08a8@kernel.dk>
-Date:   Thu, 24 Mar 2022 06:55:55 -0600
+        with ESMTP id S1349229AbiCXOgY (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Mar 2022 10:36:24 -0400
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2219F1106
+        for <io-uring@vger.kernel.org>; Thu, 24 Mar 2022 07:34:51 -0700 (PDT)
+Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 22O8WoF3001644
+        for <io-uring@vger.kernel.org>; Thu, 24 Mar 2022 07:34:51 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=facebook; bh=KPUU1Du5qm7t4SwXQqJ6rzZvy6wrLHAy8CRb5xEndfg=;
+ b=bk+vxsKvjeZmx8A8PymiL8i40j5UokRJJeMbluqaDCAfkRgl7bkbry+MmRryg6xFtpg2
+ XgavdAka1Ev96ZxBXxVCc7VR+2C76C+TtOyL/vk4pG2+nPr0Vw50TkZqwRlEZZY9gAjQ
+ HZn3n0MSyjX4bQsKN9udAS+l4iQkTafuKX8= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3f0n7a1tne-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <io-uring@vger.kernel.org>; Thu, 24 Mar 2022 07:34:51 -0700
+Received: from twshared37304.07.ash9.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:83::5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.21; Thu, 24 Mar 2022 07:34:50 -0700
+Received: by devbig039.lla1.facebook.com (Postfix, from userid 572232)
+        id 2603C63CAFE7; Thu, 24 Mar 2022 07:34:38 -0700 (PDT)
+From:   Dylan Yudaken <dylany@fb.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        <io-uring@vger.kernel.org>
+CC:     <kernel-team@fb.com>, Dylan Yudaken <dylany@fb.com>
+Subject: [PATCH] io_uring: allow async accept on O_NONBLOCK sockets
+Date:   Thu, 24 Mar 2022 07:34:35 -0700
+Message-ID: <20220324143435.2875844-1-dylany@fb.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Content-Language: en-US
-To:     io-uring <io-uring@vger.kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring: remove IORING_CQE_F_MSG
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-GUID: 08d_JB4aWfVsegqP6LMaE2PJezx2ZLzf
+X-Proofpoint-ORIG-GUID: 08d_JB4aWfVsegqP6LMaE2PJezx2ZLzf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.850,Hydra:6.0.425,FMLib:17.11.64.514
+ definitions=2022-03-24_04,2022-03-24_01,2022-02-23_01
+X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -68,51 +61,40 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This was introduced with the message ring opcode, but isn't strictly
-required for the request itself. The sender can encode what is needed
-in user_data, which is passed to the receiver. It's unclear if having
-a separate flag that essentially says "This CQE did not originate from
-an SQE on this ring" provides any real utility to applications. While
-we can always re-introduce a flag to provide this information, we cannot
-take it away at a later point in time.
+Do not set REQ_F_NOWAIT if the socket is non blocking. When enabled this
+causes the accept to immediately post a CQE with EAGAIN, which means you
+cannot perform an accept SQE on a NONBLOCK socket asynchronously.
 
-Remove the flag while we still can, before it's in a released kernel.
+By removing the flag if there is no pending accept then poll is armed as
+usual and when a connection comes in the CQE is posted.
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+note: If multiple accepts are queued up, then when a single connection
+comes in they all complete, one with the connection, and the remaining
+with EAGAIN. This could be improved in the future but will require a lot
+of io_uring changes.
 
+Signed-off-by: Dylan Yudaken <dylany@fb.com>
 ---
+ fs/io_uring.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 88556e654c5a..28b7a1b8abb6 100644
+index 88556e654c5a..a2a71e76e0da 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -4474,8 +4474,7 @@ static int io_msg_ring(struct io_kiocb *req, unsigned int issue_flags)
- 	target_ctx = req->file->private_data;
- 
- 	spin_lock(&target_ctx->completion_lock);
--	filled = io_fill_cqe_aux(target_ctx, msg->user_data, msg->len,
--					IORING_CQE_F_MSG);
-+	filled = io_fill_cqe_aux(target_ctx, msg->user_data, msg->len, 0);
- 	io_commit_cqring(target_ctx);
- 	spin_unlock(&target_ctx->completion_lock);
- 
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index d2be4eb22008..784adc6f6ed2 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -201,11 +201,9 @@ struct io_uring_cqe {
-  *
-  * IORING_CQE_F_BUFFER	If set, the upper 16 bits are the buffer ID
-  * IORING_CQE_F_MORE	If set, parent SQE will generate more CQE entries
-- * IORING_CQE_F_MSG	If set, CQE was generated with IORING_OP_MSG_RING
-  */
- #define IORING_CQE_F_BUFFER		(1U << 0)
- #define IORING_CQE_F_MORE		(1U << 1)
--#define IORING_CQE_F_MSG		(1U << 2)
- 
- enum {
- 	IORING_CQE_BUFFER_SHIFT		= 16,
+@@ -5603,9 +5603,6 @@ static int io_accept(struct io_kiocb *req, unsigned=
+ int issue_flags)
+ 	struct file *file;
+ 	int ret, fd;
+=20
+-	if (req->file->f_flags & O_NONBLOCK)
+-		req->flags |=3D REQ_F_NOWAIT;
+-
+ 	if (!fixed) {
+ 		fd =3D __get_unused_fd_flags(accept->flags, accept->nofile);
+ 		if (unlikely(fd < 0))
 
--- 
-Jens Axboe
+base-commit: 8a3e8ee56417f5e0e66580d93941ed9d6f4c8274
+--=20
+2.30.2
 

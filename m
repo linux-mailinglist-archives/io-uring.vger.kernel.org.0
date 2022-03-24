@@ -2,101 +2,107 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 129244E6157
-	for <lists+io-uring@lfdr.de>; Thu, 24 Mar 2022 10:54:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F7A74E61E2
+	for <lists+io-uring@lfdr.de>; Thu, 24 Mar 2022 11:42:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349363AbiCXJzk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 24 Mar 2022 05:55:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55500 "EHLO
+        id S1349562AbiCXKoV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 24 Mar 2022 06:44:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347929AbiCXJzj (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Mar 2022 05:55:39 -0400
-Received: from mail-vs1-xe2f.google.com (mail-vs1-xe2f.google.com [IPv6:2607:f8b0:4864:20::e2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A16BB9F6C6
-        for <io-uring@vger.kernel.org>; Thu, 24 Mar 2022 02:54:07 -0700 (PDT)
-Received: by mail-vs1-xe2f.google.com with SMTP id s18so4308027vsr.1
-        for <io-uring@vger.kernel.org>; Thu, 24 Mar 2022 02:54:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=13+rXwGRPr4a9k2vxA2bU+fJEZZ58Un4R7s1pCG1lS8=;
-        b=pCqWJ6IEwu7H3b21M6lq+dvU7KcWEFQXW27HSvhLVqkPIWfnScMDIznjzeHY1Xr/Cv
-         55ZuLtP2jdmG3QSehqyHH0kuEMDnb3Qtp2et43HmoQLF07HfQu2lE2+C3N+xyrZaqGbj
-         T4s+M73Go7/u/mAw/v6bZ0mD8SLaTVqSbiZtRiFgjV0eLlBt0jA2yU0C7Xb77O5FBPBs
-         lTJv5zW7nsvyyRFh5gCEDxLQm30fj9nmLTeieOawV22TZZ85rr6HeeRC0NO2AZ0Kmgbe
-         YHs/PmYW/awPgHnVdvodLHHHqkPFcpg/Zk+T64BuoiqrN7zyKk5ftgmtLx9Y4y3iEDYy
-         UgMg==
+        with ESMTP id S1349559AbiCXKoT (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Mar 2022 06:44:19 -0400
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5243AA146F;
+        Thu, 24 Mar 2022 03:42:47 -0700 (PDT)
+Received: by mail-ej1-f42.google.com with SMTP id yy13so8302394ejb.2;
+        Thu, 24 Mar 2022 03:42:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=13+rXwGRPr4a9k2vxA2bU+fJEZZ58Un4R7s1pCG1lS8=;
-        b=TNXqRa9U/FeBKLe1kvA0dO/jpaohfjGKjaqHgYRZIQr5ZUfGDv0+ZlY4e/grRL+1/H
-         STX+zKBDq4dzdTks13+PtYE0+qOcADhCsmmGKtixrZ/c4onnWoNUMRl7x8te5fFLSfny
-         cPCB1acTsi66kuRw9cU3+A9kvXCnw7b6V0lP1Uv4RSXTj1bgxyUGEqVBhA7T6TSA3imz
-         rEg2ju5qxi3TPwG0LdBp/Hpw9Aw7bksHM0PXbqNwEALgn5xbslgGpLghuR16kOyP2tNg
-         B4lEC8YzDEs3oRv98W4ee5xs+KZbMey2/XEaRZELCMUMTS5RvHGaOrRJdxVKP5DLx4wu
-         35+g==
-X-Gm-Message-State: AOAM533x9l8Ervv4L0EmRyiI7/XY5bxAof07Tc+/MY7SqBu/FqkgZQnM
-        fFXHLWSlFBg31+jQzEUCqZhA72vzq/fm6Wm39l0=
-X-Google-Smtp-Source: ABdhPJw1WdongvX6cLj4accQ9JY6898x77nQqf/nyqhNrVP3DL+lMweVws+zRrqLv+M6shfeJovU3Xw1fXo7FCxwxvs=
-X-Received: by 2002:a67:eaca:0:b0:31b:f480:6de2 with SMTP id
- s10-20020a67eaca000000b0031bf4806de2mr2045479vso.24.1648115646656; Thu, 24
- Mar 2022 02:54:06 -0700 (PDT)
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=Z+tOhomyyHuPVoCuADsMsVAjnchfBPFbDYj/vr6ULFk=;
+        b=mV3bfzolQVC2jlxhUiJy06qFMco1LBQp2MWBzh+H/gm+zVPNYDjkalyOwMXvJsihuS
+         jMxwuMYBOfnekr1dNnNI2wvEeNurRqnZK5qTLWA0KMSuvw5P12ny5N4uOc+7NzgmwCac
+         SBiN+we2cwKiEZzzb1U5GBqAQGHu7M213R58uZgqJyuTNqRsn7G6f61We5J5KYm74iI8
+         ROipGr7beoUR0p0mS+qR1OkO+b2vbikVVGAKQFveLxA2TgvI9F/DbZ0/NSi5/W6rX7zP
+         IzC1XfRgKWhFHTKHQcUoPdWd/Z4g8VDDhtkO6skGQEWyVU0vBUA69d7AsGKNu8Rp/JK2
+         SXDg==
+X-Gm-Message-State: AOAM531F7N0rHnNzF6dEQCNP3WI7gXJiO1/SnD6W7r2Xqr/ZuWWr2O5O
+        BqXIyCd/MEA0m8RPQQ6+5AM=
+X-Google-Smtp-Source: ABdhPJwIdokZm/Y/j1GkNTRNcR1YxV/an65AItscWscYJKvj1/Qq6h7xM55DmHKiD8wf1owr5GZbZg==
+X-Received: by 2002:a17:906:6547:b0:6bd:e2ad:8c82 with SMTP id u7-20020a170906654700b006bde2ad8c82mr4794402ejn.693.1648118565765;
+        Thu, 24 Mar 2022 03:42:45 -0700 (PDT)
+Received: from [10.100.102.14] (85.65.206.129.dynamic.barak-online.net. [85.65.206.129])
+        by smtp.gmail.com with ESMTPSA id l2-20020a1709060cc200b006d3d91e88c7sm959117ejh.214.2022.03.24.03.42.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Mar 2022 03:42:44 -0700 (PDT)
+Message-ID: <88827a86-1304-e699-ec11-2718e280f9ad@grimberg.me>
+Date:   Thu, 24 Mar 2022 12:42:42 +0200
 MIME-Version: 1.0
-Received: by 2002:a59:5c12:0:b0:2a3:1110:6996 with HTTP; Thu, 24 Mar 2022
- 02:54:06 -0700 (PDT)
-Reply-To: ozkansahin.gbbva@gmail.com
-From:   OZKAN SAHIN <ahmeddiarra25@gmail.com>
-Date:   Thu, 24 Mar 2022 12:54:06 +0300
-Message-ID: <CAMpRB37ektaDdT_H7KzOV36sq3mADrNJQyELZRbhQ-ROx-9Qxg@mail.gmail.com>
-Subject: Greetings to You
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: Yes, score=5.6 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,FREEMAIL_REPLYTO,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,UNDISC_FREEM autolearn=no
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH 05/17] nvme: wire-up support for async-passthru on
+ char-device.
+Content-Language: en-US
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, Kanchan Joshi <joshiiitr@gmail.com>,
+        Kanchan Joshi <joshi.k@samsung.com>,
+        Keith Busch <kbusch@kernel.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-block@vger.kernel.org, sbates@raithlin.com,
+        logang@deltatee.com, Pankaj Raghav <pankydev8@gmail.com>,
+        =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <javier@javigon.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Adam Manzanares <a.manzanares@samsung.com>,
+        Anuj Gupta <anuj20.g@samsung.com>
+References: <20220308152105.309618-6-joshi.k@samsung.com>
+ <7a123895-1102-4b36-2d6e-1e00e978d03d@grimberg.me>
+ <CA+1E3rK8wnABptQLQrEo8XRdsbua9t_88e3ZP-Ass3CnxHv+oA@mail.gmail.com>
+ <8f45a761-5ecb-5911-1064-9625a285c93d@grimberg.me>
+ <20220316092153.GA4885@test-zns>
+ <11f9e933-cfc8-2e3b-c815-c49a4b7db4ec@grimberg.me>
+ <CA+1E3r+_DEw5ABPbLzSp9Gvg6L8XU-2HBoLK7kuXucLjr=+Ezw@mail.gmail.com>
+ <3ed01280-5487-7206-a326-0cd110118b65@grimberg.me>
+ <666deb0e-fa10-8a39-c1aa-cf3908b3795c@kernel.dk>
+ <28b53100-9930-92d4-ba3b-f9c5e8773808@grimberg.me>
+ <20220324062053.GA12519@lst.de>
+From:   Sagi Grimberg <sagi@grimberg.me>
+In-Reply-To: <20220324062053.GA12519@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
         autolearn_force=no version=3.4.6
-X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
-        *      https://www.dnswl.org/, no trust
-        *      [2607:f8b0:4864:20:0:0:0:e2f listed in]
-        [list.dnswl.org]
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4096]
-        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
-        *      provider
-        *      [ahmeddiarra25[at]gmail.com]
-        * -0.0 SPF_PASS SPF: sender matches SPF record
-        *  0.2 FREEMAIL_ENVFROM_END_DIGIT Envelope-from freemail username ends
-        *       in digit
-        *      [ahmeddiarra25[at]gmail.com]
-        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
-        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
-        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
-        *       valid
-        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
-        *      envelope-from domain
-        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
-        *      author's domain
-        * -0.0 T_SCC_BODY_TEXT_LINE No description available.
-        *  3.8 UNDISC_FREEM Undisclosed recipients + freemail reply-to
-        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
-        *      different freemails
-X-Spam-Level: *****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Greetings,
-I'm  Ozkan Sahin, and I work as a Financial Management Consultant. I'm
-thrilled to approach you and present you with a lucrative offer I've
-prepared. If you're interested in learning more, Please reply as soon
-as possible.
 
-Please contact me at (ozkansahin.gbbva@gmail.com).
-Respectfully,
-Ozkan Sahin
-Financial Management Consultant
+>>>> I know, and that was my original question, no one cares that this
+>>>> interface completely lacks this capability? Maybe it is fine, but
+>>>> it is not a trivial assumption given that this is designed to be more
+>>>> than an interface to send admin/vs commands to the controller...
+>>>
+>>> Most people don't really care about or use multipath, so it's not a
+>>> primary goal.
+>>
+>> This statement is generally correct. However what application would be
+>> interested in speaking raw nvme to a device and gaining performance that
+>> is even higher than the block layer (which is great to begin with)?
+> 
+> If passthrough is faster than the block I/O path we're doing someting
+> wrong.  At best it should be the same performance.
+
+That is not what the changelog says.
+
+> That being said multipathing is an integral part of the nvme driver
+> architecture, and the /dev/ngX devices.  If we want to support uring
+> async commands on /dev/ngX it will have to support multipath.
+
+Couldn't agree more...

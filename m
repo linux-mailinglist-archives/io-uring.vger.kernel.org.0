@@ -2,65 +2,84 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D18F74E6B05
-	for <lists+io-uring@lfdr.de>; Fri, 25 Mar 2022 00:10:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C65CC4E6B42
+	for <lists+io-uring@lfdr.de>; Fri, 25 Mar 2022 00:40:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346447AbiCXXLv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 24 Mar 2022 19:11:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47182 "EHLO
+        id S1346469AbiCXXjk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 24 Mar 2022 19:39:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244602AbiCXXLv (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Mar 2022 19:11:51 -0400
-Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD64638BEA
-        for <io-uring@vger.kernel.org>; Thu, 24 Mar 2022 16:10:14 -0700 (PDT)
-Received: by mail-pg1-x536.google.com with SMTP id c11so5004677pgu.11
-        for <io-uring@vger.kernel.org>; Thu, 24 Mar 2022 16:10:14 -0700 (PDT)
+        with ESMTP id S1356976AbiCXXiX (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Mar 2022 19:38:23 -0400
+Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BCD9986C7
+        for <io-uring@vger.kernel.org>; Thu, 24 Mar 2022 16:36:50 -0700 (PDT)
+Received: by mail-pl1-x629.google.com with SMTP id w8so6360736pll.10
+        for <io-uring@vger.kernel.org>; Thu, 24 Mar 2022 16:36:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:content-language:to:from
-         :subject:content-transfer-encoding;
-        bh=zEhI93Y3PhVbWj4XSEntk8XrMwdrkmIlgcg22Y2pu8E=;
-        b=42msovNjAt4Dw51HGyrO2dwAhQCl+1fw5WAwGrPlsYi1vMwW1F/4JQiYAZ8lTtB3Hm
-         LpAWmV4J9ZC02JvjDRCPB7ONoLpsIq7LeBqiVk5hroy0G/f5T+gh/ZFCurQpIDolspa4
-         6tOAPMSfl7ui4HwaQCn9Lu6gmEyUa8lAHTzSrQefeVY1dZmKBO3nLgoLEXPe0EsJBLFw
-         dDaAMyjnyudUoFB1qHGkyOnH1qv6JX2b6QABBW+dylySgVFjLU/59LvbY8neEe16LOmj
-         4FEFbRM1dBqVVUfeCNw9SpjW5dOF0xyqLFG4MEOLVFTmMzqphP8H3aWL4RA4x6L1xonk
-         SJ2g==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=GebMZe55xHN1I+0YXbeTh7daUrmbTo6OsaivpOl4mhM=;
+        b=ZTsDnLd6GGJ/CDNND38btHDAVkn3zbXuN/5tHhxkl/olLbx9B/SxKx7u3z/q25MPmm
+         6qCZwQ1+j7YORPvJZ9GBwsqPD1TGedIrtEMcCUlPYEu0Jwn+egh8rAG4RZyYYqFt83Ya
+         BmP837YpxGYX8Gi76uQZIT0sue2hPve4uK1ufIGT9LY665Jbi2T0P4MNc37dEhf/VdMe
+         z7c3t1lMbTUX+yAsG4sOCRETXzAWCu/ylwvScmtYLgvftncFBspdMgh/rZJSnrrugRti
+         l8DKyTe5OT6sdGIWlIA+1GeI6CjaTvHAfuVLE7dymwW1MYsyr6VQX0XaDPUSM0Qb1nmQ
+         2fIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent
-         :content-language:to:from:subject:content-transfer-encoding;
-        bh=zEhI93Y3PhVbWj4XSEntk8XrMwdrkmIlgcg22Y2pu8E=;
-        b=N/vEjp/Uh05+qUrV+oIr5Yku2Oqu+9yAIISG1umUamVyYM4BEGQx+T4aMM4FnklMVl
-         t8UAOSTyf1mUTDFOPzwssz2e/EevsHxizNR+hlKz4JKsvJGnPB1eObFIM6ABkVkBhBd+
-         80yRxGuJr8WS8RF5WZRReEZUnjIkCgZ6kfrGGg+BnUi1VaPi8Ygy2+PYwHm+YCAFCl71
-         OaX2rDNfRRnRdYekcfa8gyKnBW7Azp9xvO/hOo2eUQ3R3xJhQtJaTsyAumZ5V/IlMKxW
-         tnYnSwTY8D1a0Qk09Yj685zGDlaYheHWL6c7DsklOtilZ+HL8I4s/75RaechdfBLM6hm
-         bMCg==
-X-Gm-Message-State: AOAM532FK0ImAJFzKCe2OVwq6tcRJFBa3LscVLSg129JE+RIiqhazRlc
-        HE0gZaSAfccZGaMTDH2ZcSC9jKtSKoWN3pmi
-X-Google-Smtp-Source: ABdhPJzZ6AKUdV6ReaM9kS++U5FvsuP/Wg2OiVR9ewPpGO6Q4dSgZthpVBK5IGEiJIe0Q4RJb+hBZA==
-X-Received: by 2002:a63:f24c:0:b0:383:c279:e662 with SMTP id d12-20020a63f24c000000b00383c279e662mr5679374pgk.303.1648163413828;
-        Thu, 24 Mar 2022 16:10:13 -0700 (PDT)
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=GebMZe55xHN1I+0YXbeTh7daUrmbTo6OsaivpOl4mhM=;
+        b=NQxdcL9Wa2bDSDd3xNZM72UBSWCRjIAm9NK7EUFvfFseECvckmscaxwY0mzlCz1ZeM
+         oUhUsOQKN/41bnmGJhmDL5MdXtrfCsuTsHxUhY3KXNcIBAKHNccMK40MKrmk0HLS8QOg
+         MD4cwuZAWtobFRRejfDvGwvJehUPAgQnO8yBaBO+qVmN6jq8FG9RKySUp6EKP4iNE2nv
+         RLwNi1varzKj2d+v0hKzU14ysRTM/oP8/MW2gNhDYDPnWtVUVutnEtX9hdA+xheTW++R
+         TPP1pOVR6B/xdmd9LHP9rahNsieEQGoXeVmvTG+kN+xGb4HTFev8GIjeBd71FD0kuDsD
+         LTOQ==
+X-Gm-Message-State: AOAM531hD9+ChzmLQaZEV5T3bSaVc3RDNjYKK9y9bGXfASL0g3bNRlVJ
+        R2eL0EmAqce1Oy4ZhblOMSvi2w==
+X-Google-Smtp-Source: ABdhPJzqMNc0ahbFfodPumpJQOiINRzZGitX9G+hqCRFpKVPql6rpnnDAM2cR9akyaGDaLiOylrvLQ==
+X-Received: by 2002:a17:90b:4f86:b0:1c6:b3eb:99a3 with SMTP id qe6-20020a17090b4f8600b001c6b3eb99a3mr9261128pjb.66.1648165009872;
+        Thu, 24 Mar 2022 16:36:49 -0700 (PDT)
 Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id s141-20020a632c93000000b0038134d09219sm3493517pgs.55.2022.03.24.16.10.13
-        for <io-uring@vger.kernel.org>
+        by smtp.gmail.com with ESMTPSA id y9-20020a056a00180900b004faa45a2230sm4754641pfa.210.2022.03.24.16.36.47
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Mar 2022 16:10:13 -0700 (PDT)
-Message-ID: <4f7b8a9c-5aab-e583-8f31-2cc49e9316bf@kernel.dk>
-Date:   Thu, 24 Mar 2022 17:10:12 -0600
+        Thu, 24 Mar 2022 16:36:49 -0700 (PDT)
+Message-ID: <2e4e5faa-ca1e-75b1-b864-646270b708ed@kernel.dk>
+Date:   Thu, 24 Mar 2022 17:36:46 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
  Thunderbird/91.7.0
+Subject: Re: [PATCH 17/17] nvme: enable non-inline passthru commands
 Content-Language: en-US
-To:     io-uring <io-uring@vger.kernel.org>
+To:     Clay Mayers <Clay.Mayers@kioxia.com>,
+        Kanchan Joshi <joshi.k@samsung.com>, "hch@lst.de" <hch@lst.de>,
+        "kbusch@kernel.org" <kbusch@kernel.org>,
+        "asml.silence@gmail.com" <asml.silence@gmail.com>
+Cc:     "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "sbates@raithlin.com" <sbates@raithlin.com>,
+        "logang@deltatee.com" <logang@deltatee.com>,
+        "pankydev8@gmail.com" <pankydev8@gmail.com>,
+        "javier@javigon.com" <javier@javigon.com>,
+        "mcgrof@kernel.org" <mcgrof@kernel.org>,
+        "a.manzanares@samsung.com" <a.manzanares@samsung.com>,
+        "joshiiitr@gmail.com" <joshiiitr@gmail.com>,
+        "anuj20.g@samsung.com" <anuj20.g@samsung.com>
+References: <20220308152105.309618-1-joshi.k@samsung.com>
+ <CGME20220308152729epcas5p17e82d59c68076eb46b5ef658619d65e3@epcas5p1.samsung.com>
+ <20220308152105.309618-18-joshi.k@samsung.com>
+ <6a1cf782310d481aa5ef2fc172f55826@kioxia.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH v3] io_uring: improve task work cache utilization
+In-Reply-To: <6a1cf782310d481aa5ef2fc172f55826@kioxia.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -68,65 +87,62 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-While profiling task_work intensive workloads, I noticed that most of
-the time in tctx_task_work() is spending stalled on loading 'req'. This
-is one of the unfortunate side effects of using linked lists,
-particularly when they end up being passe around.
+On 3/24/22 3:09 PM, Clay Mayers wrote:
+>> From: Kanchan Joshi
+>> Sent: Tuesday, March 8, 2022 7:21 AM
+>> To: axboe@kernel.dk; hch@lst.de; kbusch@kernel.org;
+>> asml.silence@gmail.com
+>> Cc: io-uring@vger.kernel.org; linux-nvme@lists.infradead.org; linux-
+>> block@vger.kernel.org; sbates@raithlin.com; logang@deltatee.com;
+>> pankydev8@gmail.com; javier@javigon.com; mcgrof@kernel.org;
+>> a.manzanares@samsung.com; joshiiitr@gmail.com; anuj20.g@samsung.com
+>> Subject: [PATCH 17/17] nvme: enable non-inline passthru commands
+>>
+>> From: Anuj Gupta <anuj20.g@samsung.com>
+>>
+>> On submission,just fetch the commmand from userspace pointer and reuse
+>> everything else. On completion, update the result field inside the passthru
+>> command.
+>>
+>> Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
+>> Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
+>> ---
+>>  drivers/nvme/host/ioctl.c | 29 +++++++++++++++++++++++++----
+>>  1 file changed, 25 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/nvme/host/ioctl.c b/drivers/nvme/host/ioctl.c index
+>> 701feaecabbe..ddb7e5864be6 100644
+>> --- a/drivers/nvme/host/ioctl.c
+>> +++ b/drivers/nvme/host/ioctl.c
+>> @@ -65,6 +65,14 @@ static void nvme_pt_task_cb(struct io_uring_cmd
+>> *ioucmd)
+>>  	}
+>>  	kfree(pdu->meta);
+>>
+>> +	if (ioucmd->flags & IO_URING_F_UCMD_INDIRECT) {
+>> +		struct nvme_passthru_cmd64 __user *ptcmd64 = ioucmd-
+>>> cmd;
+>> +		u64 result = le64_to_cpu(nvme_req(req)->result.u64);
+>> +
+>> +		if (put_user(result, &ptcmd64->result))
+>> +			status = -EFAULT;
+> 
+> When the thread that submitted the io_uring_cmd has exited, the CB is
+> called by a system worker instead so put_user() fails.  The cqe is
+> still completed and the process sees a failed i/o status, but the i/o
+> did not fail.  The same is true for meta data being returned in patch
+> 5.
+> 
+> I can't say if it's a requirement to support this case.  It does break
+> our current proto-type but we can adjust.
 
-Prefetch the next request, if there is one. There's a sufficient amount
-of work in between that this makes it available for the next loop.
+Just don't do that then - it's all very much task based. If the task
+goes away and completions haven't been reaped, don't count on anything
+sane happening in terms of them completing successfully or not.
 
-While fiddling with the cache layout, move the link outside of the
-hot completion cacheline. It's rarely used in hot workloads, so better
-to bring in kbuf which is used for networked loads with provided buffers.
+The common case for this happening is offloading submit to a submit
+thread, which is utterly pointless with io_uring anyway.
 
-This reduces tctx_task_work() overhead from ~3% to 1-1.5% in my testing.
-
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-
----
-
-v3 - apparently it's nicely documented that prefetch need not be a valid
-address, so just get rid of the next checking for it
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index a76e91fe277c..bb40c80fd9ca 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -928,7 +928,6 @@ struct io_kiocb {
- 	struct io_wq_work_node		comp_list;
- 	atomic_t			refs;
- 	atomic_t			poll_refs;
--	struct io_kiocb			*link;
- 	struct io_task_work		io_task_work;
- 	/* for polled requests, i.e. IORING_OP_POLL_ADD and async armed poll */
- 	struct hlist_node		hash_node;
-@@ -939,6 +938,7 @@ struct io_kiocb {
- 	/* custom credentials, valid IFF REQ_F_CREDS is set */
- 	/* stores selected buf, valid IFF REQ_F_BUFFER_SELECTED is set */
- 	struct io_buffer		*kbuf;
-+	struct io_kiocb			*link;
- 	const struct cred		*creds;
- 	struct io_wq_work		work;
- };
-@@ -2451,6 +2451,8 @@ static void handle_prev_tw_list(struct io_wq_work_node *node,
- 		struct io_kiocb *req = container_of(node, struct io_kiocb,
- 						    io_task_work.node);
- 
-+		prefetch(container_of(next, struct io_kiocb, io_task_work.node));
-+
- 		if (req->ctx != *ctx) {
- 			if (unlikely(!*uring_locked && *ctx))
- 				ctx_commit_and_unlock(*ctx);
-@@ -2483,6 +2485,8 @@ static void handle_tw_list(struct io_wq_work_node *node,
- 		struct io_kiocb *req = container_of(node, struct io_kiocb,
- 						    io_task_work.node);
- 
-+		prefetch(container_of(next, struct io_kiocb, io_task_work.node));
-+
- 		if (req->ctx != *ctx) {
- 			ctx_flush_and_put(*ctx, locked);
- 			*ctx = req->ctx;
 -- 
 Jens Axboe
 

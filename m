@@ -2,51 +2,51 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 162394E5BC0
-	for <lists+io-uring@lfdr.de>; Thu, 24 Mar 2022 00:17:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D45DA4E5C5A
+	for <lists+io-uring@lfdr.de>; Thu, 24 Mar 2022 01:32:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345470AbiCWXSx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 23 Mar 2022 19:18:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53056 "EHLO
+        id S241661AbiCXAeA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 23 Mar 2022 20:34:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50218 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345467AbiCWXSq (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 23 Mar 2022 19:18:46 -0400
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72AA190CE8
-        for <io-uring@vger.kernel.org>; Wed, 23 Mar 2022 16:17:15 -0700 (PDT)
-Received: by mail-io1-f71.google.com with SMTP id b15-20020a05660214cf00b00648a910b964so1980829iow.19
-        for <io-uring@vger.kernel.org>; Wed, 23 Mar 2022 16:17:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=clW1tH3ZC7Lm0X7T/4WUZGOowaN8nMkUH4EAKd7mMwA=;
-        b=FqEq6ceFpg3HjVrHGgsxmbuNhC1eTloJMU2+ss0Yq0wGHfLZeW93SCe/PUtPsF5XJw
-         K3Bl42BaC4EtFMFIfUiYpjNGgN9cZaEDZUzEnmlJTpyh7YPTt92R1BmbG8B7r295R1Pg
-         wOCxohf94U+CxKkbYEHu3ySul3/p+tykQ0jdWVH9tzgy3KudHC2l2juQaPElovGmpFnQ
-         wW0vku++3jfmNbSKI+4rJrQ7Xwok73AkANRMBLQOtGzbvrUkV2o1IhCRTXCUyuqtQllb
-         vMyUlD3SwWd6PXcto3bObGkxBGmL95Q/LIcmjwOPMcxk9S6CG8DI+4zfMQmbrSzTW9aB
-         N5rQ==
-X-Gm-Message-State: AOAM532UlJwi4LS6agcegeAasC+huizp0M1nWDyvElf9xRzPy3tDs5eo
-        xKgq4lrbnNW6XkTeoP9TuppKrhdqwFk0YKLMhpJj2cv30niX
-X-Google-Smtp-Source: ABdhPJx5oe25ghsA451wnyS8jAONpeOgSsVTFqm8sKVCgTUeGUlgGdMSvN/eNIS6+5zzG5XyESpkqmR7/ui7OT1nLeHmmeEH+AaQ
+        with ESMTP id S237377AbiCXAd6 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 23 Mar 2022 20:33:58 -0400
+Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3291086E17;
+        Wed, 23 Mar 2022 17:32:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+        s=42; h=From:Cc:To:Date:Message-ID;
+        bh=CGXuE/lh/IrI3wTXY2imcHRR1CWO7A2UB3AXJZe0yPU=; b=H6YkGvSdL3i5Np/sjN9nrLYU16
+        tgwaU1xiF9MHuVvyQGnDUh8UMxbuIZyBwnAlH6U7O/fEpFO4SrtCojq86kbmeR9HWjXzhFXlBfCqA
+        3XqZ3iG1IxrBTTnHtw4MPEngJjWo3V6MqXmXZkf/f3XNwob5aWWFzH5MJL0rIIdp9DUhO8w5kefnv
+        0epm1H/8q3WVKhNaFr2hi8s8tDL8h9pG5Oc50JFNmXfaEA/HaNSfjggfNh19RsJQBjaSDQpHBodsZ
+        ssvVcYb1xzD/5IYZnne4mYoOOH9pEmQrWjjLgLu8tqURdUVEhJsAn+WskrmB+HHggxLPwoo7AGmf6
+        WFIyLjf9TK4QhNcMx3dy34QxffMLYVI6QMEsJ50Rc0GfVMvuyaq341nr1W0+j5A0m7yCTEbvrsXlu
+        MdY5ePB2sLvlAXbzhNjqOK1e7wzxnVckNwWae7HrUSeTpkPqVZHN8fJqNLnf16OeufPG3ZjsbUolp
+        0TMQilG59+v4PUQkU7Ru+ScY;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
+        (Exim)
+        id 1nXBOq-0038Tj-I0; Thu, 24 Mar 2022 00:32:24 +0000
+Message-ID: <51a79835-9186-695c-0304-bfd6e6a5d17d@samba.org>
+Date:   Thu, 24 Mar 2022 01:32:24 +0100
 MIME-Version: 1.0
-X-Received: by 2002:a5d:860d:0:b0:649:be05:7b0b with SMTP id
- f13-20020a5d860d000000b00649be057b0bmr1283401iol.22.1648077434896; Wed, 23
- Mar 2022 16:17:14 -0700 (PDT)
-Date:   Wed, 23 Mar 2022 16:17:14 -0700
-In-Reply-To: <442f565c-b68c-9359-60d1-dd61213d3233@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000011c72405daeaee81@google.com>
-Subject: Re: [syzbot] INFO: task hung in io_wq_put_and_exit (3)
-From:   syzbot <syzbot+adb05ed2853417be49ce@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Content-Language: en-US
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc:     constantine.gavrilov@gmail.com, stable@vger.kernel.org
+References: <20220323224131.370674-1-axboe@kernel.dk>
+ <20220323224131.370674-2-axboe@kernel.dk>
+From:   Stefan Metzmacher <metze@samba.org>
+Subject: Re: [PATCH 1/2] io_uring: ensure recv and recvmsg handle MSG_WAITALL
+ correctly
+In-Reply-To: <20220323224131.370674-2-axboe@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -54,19 +54,26 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
+Hi Jens,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+> @@ -5524,12 +5542,22 @@ static int io_recv(struct io_kiocb *req, unsigned int issue_flags)
+>   			return -EAGAIN;
+>   		if (ret == -ERESTARTSYS)
+>   			ret = -EINTR;
+> +		if (ret > 0 && io_net_retry(sock, flags)) {
+> +			sr->len -= ret;
+> +			sr->buf += ret;
+> +			sr->done_io += ret;
+> +			return -EAGAIN;
+> +		}
+>   		req_set_fail(req);
+>   	} else if ((flags & MSG_WAITALL) && (msg.msg_flags & (MSG_TRUNC | MSG_CTRUNC))) {
+>   out_free:
+>   		req_set_fail(req);
 
-Reported-and-tested-by: syzbot+adb05ed2853417be49ce@syzkaller.appspotmail.com
+The change only affects retry based socket io in the main thread, correct?
 
-Tested on:
+The truncated mesages still trigger req_set_fail if MSG_WAITALL was set?
 
-commit:         8a3e8ee5 io_uring: add flag for disabling provided buf..
-git tree:       git://git.kernel.dk/linux-block for-5.18/io_uring
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3172c0bf8614827
-dashboard link: https://syzkaller.appspot.com/bug?extid=adb05ed2853417be49ce
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+metze
 
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.

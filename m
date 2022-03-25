@@ -2,61 +2,64 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C8DAD4E7D81
-	for <lists+io-uring@lfdr.de>; Sat, 26 Mar 2022 01:22:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 03E1A4E7D90
+	for <lists+io-uring@lfdr.de>; Sat, 26 Mar 2022 01:22:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233748AbiCYWJS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 25 Mar 2022 18:09:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41870 "EHLO
+        id S233975AbiCYWn5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 25 Mar 2022 18:43:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52938 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233742AbiCYWJS (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 25 Mar 2022 18:09:18 -0400
-Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8F0932EE6
-        for <io-uring@vger.kernel.org>; Fri, 25 Mar 2022 15:07:42 -0700 (PDT)
-Received: by mail-pj1-x1035.google.com with SMTP id v4so8724332pjh.2
-        for <io-uring@vger.kernel.org>; Fri, 25 Mar 2022 15:07:42 -0700 (PDT)
+        with ESMTP id S233945AbiCYWn4 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 25 Mar 2022 18:43:56 -0400
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57CE520A3B8
+        for <io-uring@vger.kernel.org>; Fri, 25 Mar 2022 15:42:00 -0700 (PDT)
+Received: by mail-pl1-x62e.google.com with SMTP id y6so7124466plg.2
+        for <io-uring@vger.kernel.org>; Fri, 25 Mar 2022 15:42:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:in-reply-to:references:subject:message-id:date:mime-version
-         :content-transfer-encoding;
-        bh=vGdR4gnRgHJPSXtz4WMBxzpGoWitKsYNLNHXxLUJcKA=;
-        b=X1klt6w+fLciSiw7phBZVCnqSw2f41A/m83Av2NcKOpg57h/LmZuUkJ+KLsnFiWDt3
-         D1PHzQa0HA2HnJr/0eKiolFKgLPD6CqBLq0K0MCVTCcq1vwygufhGbt8NuhQY3GLNONT
-         RaWG312jUw58rfvRwLB2USTKIz52g7rsBwAOEocBUyTWQaQeDvPvhaEnUwDr1koFCnJP
-         Vlcbota51CZ6XC/HWWRF8wJrTT2dpwKsmsPjU37Fa+3F6CtRDP5lKwjApHbstZRU2K9q
-         JRxuYFmgt90b/7d/dCi0kQKFVrgaFghgf6CUgDN8cSQtGNDh8+oJU866sxK+jTQcvYPB
-         w4oQ==
+        h=message-id:date:mime-version:user-agent:content-language:to:from
+         :subject:content-transfer-encoding;
+        bh=nihN5BDVBEq8m2cIN165GkewzAwA6kcN/6wdBSSk+yU=;
+        b=u/XSCkdBFbHokltrB27RuKU8wFZ4YR9I4OKHnlrO75kkMJEaZ1tqVTz67A6ggB81QD
+         w6Rw9WVVaxKnu4flUgkGAcjtlpkpj3dEMUeMTz1RR/T8SkKQEUioAybCIjxW9ONUGGRA
+         IxjR9W7ZJzCzzsQBAlp97QXmJwH9dr4Mz4n6tGIm7ur1AdVFOSZQNJa3CiBvKaj73u7h
+         3ozTR8bQY60pKP6dgQHSn6NYCEMj7eBYwqK1sImMqkQ/xeCZiIXpFVG82hbEGU1lGNpo
+         SnknouHL6yYbyaO7/+l4ZqNrdxrnzxGC/4EJax8RGcNGx0cTwRy/392/DW6EPLjHH9tM
+         7w/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:in-reply-to:references:subject
-         :message-id:date:mime-version:content-transfer-encoding;
-        bh=vGdR4gnRgHJPSXtz4WMBxzpGoWitKsYNLNHXxLUJcKA=;
-        b=FLiR/90guRDTnwMVrx/QS7FOFLpJ0xZ51BXHrz8kSJhtOJ8TfRUL5xAiqinIqEp2Gb
-         pqpwwVGEk0FUhz4Lx0Is6rayDOLT8XSVBANKT8qcMVQZeZfTW4LUMvtKgLdgiNsJW1Kv
-         kr7m93sFRn2+9Ck6sCMDWkZ6jOdn2yWObATXZgZ6afL7/P+wtMed+/dX93k7IjSk8JEh
-         Iu0dybK2S1JIZJw1tbtIDKH29rId08yY6ar6m/NiGRIth84l/Z5myb5yGAbJKbfBbHK7
-         +QPyUnZCEU03+9XEE2f5pqgDdQ94Drvxwlz608bGoFce3hNTApQ+MLi9LaHiCIgUhRj6
-         4CJw==
-X-Gm-Message-State: AOAM5304sR2fRnt1UQB7mGlPC3odOlVAgsO6/bc5vqEOfFTBmubH0Q3M
-        GU7L2HxtL8tsi3R66ku7eK122RYcNEGMFU/z
-X-Google-Smtp-Source: ABdhPJzSQQnwMLnwI7ZBBgHPeqs9aOyf1D05naBZI/aWcO/DbJ6yfFCIqpgLHWKK/EYP4UdyVmNpSw==
-X-Received: by 2002:a17:90b:4c44:b0:1c7:1326:ec90 with SMTP id np4-20020a17090b4c4400b001c71326ec90mr26981503pjb.87.1648246062162;
-        Fri, 25 Mar 2022 15:07:42 -0700 (PDT)
-Received: from [127.0.1.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d16-20020a056a00245000b004f7728a4346sm8025575pfj.79.2022.03.25.15.07.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Mar 2022 15:07:41 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <accee442376f33ce8aaebb099d04967533efde92.1648226048.git.asml.silence@gmail.com>
-References: <accee442376f33ce8aaebb099d04967533efde92.1648226048.git.asml.silence@gmail.com>
-Subject: Re: [PATCH 5.18] io_uring: fix leaking uid in files registration
-Message-Id: <164824606076.470461.2361305622685411284.b4-ty@kernel.dk>
-Date:   Fri, 25 Mar 2022 16:07:40 -0600
+        h=x-gm-message-state:message-id:date:mime-version:user-agent
+         :content-language:to:from:subject:content-transfer-encoding;
+        bh=nihN5BDVBEq8m2cIN165GkewzAwA6kcN/6wdBSSk+yU=;
+        b=RBFD6yp8LtbFPruFMQUUm0LOQ6llLUF4+N4fO6hbEsfyZxi2+3f7RNWtoIDYx5gtyz
+         HQpHLbA67t3MygF3SuVZfifMNAivBaXuPe6iSt0lQHYQHl/+3tCEmklyFWu+japl8101
+         IXie9NG83IyphBpV/XdqGLT9qO0pyK6TEJXNu9H7KObi2+a5aP2jSmATEvBa6dQhm2cS
+         BIadia1HbekmBnBxNdN6bBqsLcwAMmfm7wQivO6YBpkOWuDDZuNgpR7Rimfc79GkWCwP
+         iU8bcdDG1nQm6H2F7ilEO1hGAzjdsZBlkH3ns0aaV36gdeW74xt9oF+UCBae9UAPJTJ+
+         eh1A==
+X-Gm-Message-State: AOAM533B3OFOcbaLvZb0dsu5DqmYyz0+hP+egDuRsyzGHX2XE2kgQ0MA
+        K277sozrucCNBhp262csAIuohvNqjCLektr1
+X-Google-Smtp-Source: ABdhPJwrn8jvvcMJ52/ngdkbQCDdTNeqi8n5OqijPlgTUtBriIxEVYPtGtmTkp8hU+hmHt90Qyyu8g==
+X-Received: by 2002:a17:902:9041:b0:14f:1c23:1eb1 with SMTP id w1-20020a170902904100b0014f1c231eb1mr13719760plz.173.1648248119519;
+        Fri, 25 Mar 2022 15:41:59 -0700 (PDT)
+Received: from [192.168.1.100] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id y24-20020a056a00181800b004fac7d687easm7580620pfa.66.2022.03.25.15.41.58
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Mar 2022 15:41:59 -0700 (PDT)
+Message-ID: <500b6713-5661-a260-ee24-69270fc4b0f8@kernel.dk>
+Date:   Fri, 25 Mar 2022 16:41:58 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Content-Language: en-US
+To:     io-uring <io-uring@vger.kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH for-next] io_uring: move finish_wait() outside of loop in
+ cqring_wait()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
@@ -66,19 +69,35 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, 25 Mar 2022 16:36:31 +0000, Pavel Begunkov wrote:
-> When there are no files for __io_sqe_files_scm() to process in the
-> range, it'll free everything and return. However, it forgets to put uid.
-> 
-> 
+We don't need to call this for every loop. This is particularly
+troublesome if we are task_work intensive, and get woken more often than
+we desire due to that.
 
-Applied, thanks!
+Just do it at the end, that's always safe as we initialize the waitqueue
+list head anyway. This can save a considerable amount of hammering on
+the waitqueue lock, which is also hot from the request completion side.
 
-[1/1] io_uring: fix leaking uid in files registration
-      commit: c86d18f4aa93e0e66cda0e55827cd03eea6bc5f8
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-Best regards,
+---
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 25aafb17d1e2..a83e7a036343 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -8359,10 +8359,10 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
+ 		prepare_to_wait_exclusive(&ctx->cq_wait, &iowq.wq,
+ 						TASK_INTERRUPTIBLE);
+ 		ret = io_cqring_wait_schedule(ctx, &iowq, timeout);
+-		finish_wait(&ctx->cq_wait, &iowq.wq);
+ 		cond_resched();
+ 	} while (ret > 0);
+ 
++	finish_wait(&ctx->cq_wait, &iowq.wq);
+ 	restore_saved_sigmask_unless(ret == -EINTR);
+ 
+ 	return READ_ONCE(rings->cq.head) == READ_ONCE(rings->cq.tail) ? ret : 0;
+
 -- 
 Jens Axboe
-
 

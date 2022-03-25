@@ -2,60 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AFB104E7386
+	by mail.lfdr.de (Postfix) with ESMTP id B9DC24E7387
 	for <lists+io-uring@lfdr.de>; Fri, 25 Mar 2022 13:32:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1359000AbiCYMds (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 25 Mar 2022 08:33:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39750 "EHLO
+        id S1355069AbiCYMdx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 25 Mar 2022 08:33:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355069AbiCYMdr (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 25 Mar 2022 08:33:47 -0400
-Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2357DD0839
-        for <io-uring@vger.kernel.org>; Fri, 25 Mar 2022 05:32:13 -0700 (PDT)
-Received: by mail-pg1-x536.google.com with SMTP id k14so6339910pga.0
-        for <io-uring@vger.kernel.org>; Fri, 25 Mar 2022 05:32:13 -0700 (PDT)
+        with ESMTP id S1359049AbiCYMdv (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 25 Mar 2022 08:33:51 -0400
+Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17817D0838
+        for <io-uring@vger.kernel.org>; Fri, 25 Mar 2022 05:32:17 -0700 (PDT)
+Received: by mail-pf1-x429.google.com with SMTP id p8so6335772pfh.8
+        for <io-uring@vger.kernel.org>; Fri, 25 Mar 2022 05:32:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=from:to:cc:in-reply-to:references:subject:message-id:date
          :mime-version:content-transfer-encoding;
-        bh=fDcpHlfwaaM4pBI+gLzz4WtCiQPvKnbLB36gAKLKSOg=;
-        b=35dyRvgOcBWcRZbbHdUbnE6HpXJEeTZEWaeYTuQWRLx+v2RLyZhgVUPR5cjhxwlJZa
-         jLJ2nDze8CQtH5EYFzs9VEu+7hzOFWp+1ca3RgTSNDkjuZ2ChHFFbIiBQzKdOYI8JKTU
-         80rjD1/cNC74gxagfFsAYF0EABpRtXcBqZd/WwpjLqD9eFA71QSgn+RoCAsVrtp6LLD/
-         XUX3aTIpZ2M6OH4pwDoos/Qw7eiwkBopl4w2LjdHG1rGTIjEIfg4gbD39F1Get5LENDr
-         FqAh6bcXTnI8VFFcRcu9g878sZzPR+9+kwkOZQ/kt7DAmRycvAXP4RhZcP3sBknpz2Ft
-         yFUw==
+        bh=NZoAlzzFEb5CaAalB2j3BTClFadk7iEYjAPWowva89k=;
+        b=DA24wueLt/VXAoBJt+loMWuXUTyRlkJ6QXy+fmluqtNsYjUiWWn22XYg6CSvBwx89G
+         dOPqqa2eVX+GgXFX8qjprOjqB7OV3Ugl2nZDh9wqESyzy2k6d9ff2V1x6MDfZDRb+sVM
+         DzpKEB4bqMM0Fq3JW7ENE0zuUovtPn+sZYwmEZcwUOh5N79/gCPMbC72D3YEnMAwwuKU
+         /lq7L6nPIagQi5PiXs+aQ8vpm7VyWAWTIkN06oXbmVUL6zr1H7wB4uCVjyYPK6Q4HQbY
+         CiV3Z9QMBPYAhTvCCGKNmJC0pLtxa0xtAnTXRCaZnuKM9UQ9JUofu8dnN1MyTUMFJrA5
+         aG6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
          :message-id:date:mime-version:content-transfer-encoding;
-        bh=fDcpHlfwaaM4pBI+gLzz4WtCiQPvKnbLB36gAKLKSOg=;
-        b=o9KJU/LfhtxAmxtLL9Q+H2YRtHawxk1qDbnXX5FUqbeXOIpygvD3Qkz95nELmPbYdJ
-         uLp6OVnyahgsQ7udTozC8Kn5hrWkvZbkr8PVkY9DsQ3T+Xo94jvDKn/4cO51kxRINQA/
-         pU7PxyOjwM3pxhJkiK7YYKPlkhPhuq2FSWrEmfiCMGxCAw37UF635ZaQMqwo3dIB5xwG
-         OQeY30EJEIT5s03/+FfOMwDzKVVKUz1w94Wp36c8f2gd56W0zft1JnHAan6xzUkLneV/
-         ziwN2Fx7f0z47Y5RTOVxeI15ag3odG6VHly0VwnaUc4D6+LRQc+8bYfCyspZg2Nw3PwG
-         x9mQ==
-X-Gm-Message-State: AOAM530QiJpnRT27zsOeG5KIxL8DW3TZkRCopTtVdGqqCUCTBJ+jgLPa
-        vhQx4d9zu+dEOG3W9KPR1lHh2Q==
-X-Google-Smtp-Source: ABdhPJyLRQ2mC88NjgQuGJd3IIZkK15+xlk4me7QbSoytWOUZYjSfXh/b7lv9oF7KhPGxtFrhXupNw==
-X-Received: by 2002:a63:b553:0:b0:374:87b5:fe64 with SMTP id u19-20020a63b553000000b0037487b5fe64mr7714580pgo.591.1648211532570;
-        Fri, 25 Mar 2022 05:32:12 -0700 (PDT)
+        bh=NZoAlzzFEb5CaAalB2j3BTClFadk7iEYjAPWowva89k=;
+        b=V4aBxN6IgPAbC7xc4T4tQxRVyKwCX3+7ilRO6bjbofXRyZcp3M/4PS2GqVE7Ec1nTw
+         6bz9fy4Ja/LvI7Lv58jqzckN5cH6kxsPCEF8RCpdnodNG+jIj9wsb5XxOcMDxGiCJSRN
+         GWtKTDOTtWJYU4eXZkd80/4Ck4plOcFwqBvsf2o+mDw4Qv4D39zgvOwDClcwxvAowdqq
+         U9ux16Cf+h2kwLw9bOAtrNDQdveGmHU7SK4wzfgNWH1NyfZ+eHJAFYBp+dY4i7CM4v4C
+         peeziehMF5UXY2AJBrGTPulSZiWjBmLOlTjVU9AFnFpurdT6qxj2U12GFP3TokxYsNez
+         zXxw==
+X-Gm-Message-State: AOAM531jtl62R0VL59THFIZoVSND+orbRhc4wKBlBZpMt04PUsM1sfOd
+        iSvtuUaehhkXdr38TS0OfIraoQ==
+X-Google-Smtp-Source: ABdhPJxz0j6yQTlfmg7KLm9+IAFU6zzR3YTqkiBhsxee6EkQyyHkaX1AiGv8p2fqBOT0vADho8EAiA==
+X-Received: by 2002:a63:101:0:b0:36c:6d40:5688 with SMTP id 1-20020a630101000000b0036c6d405688mr7809879pgb.554.1648211536365;
+        Fri, 25 Mar 2022 05:32:16 -0700 (PDT)
 Received: from [127.0.1.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d5-20020a056a0024c500b004fae56b2921sm6765069pfv.167.2022.03.25.05.32.11
+        by smtp.gmail.com with ESMTPSA id k6-20020a17090a7f0600b001c63352cadbsm5979409pjl.29.2022.03.25.05.32.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Mar 2022 05:32:12 -0700 (PDT)
+        Fri, 25 Mar 2022 05:32:15 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
-        Dylan Yudaken <dylany@fb.com>
+To:     Dylan Yudaken <dylany@fb.com>, io-uring@vger.kernel.org,
+        Pavel Begunkov <asml.silence@gmail.com>
 Cc:     kernel-team@fb.com
-In-Reply-To: <20220325093755.4123343-1-dylany@fb.com>
-References: <20220325093755.4123343-1-dylany@fb.com>
-Subject: Re: [PATCH] io_uring: enable EPOLLEXCLUSIVE for accept poll
-Message-Id: <164821153154.5919.10359312288843087112.b4-ty@kernel.dk>
-Date:   Fri, 25 Mar 2022 06:32:11 -0600
+In-Reply-To: <20220325094013.4132496-1-dylany@fb.com>
+References: <20220325094013.4132496-1-dylany@fb.com>
+Subject: Re: [PATCH liburing] Add test for multiple concurrent accepts
+Message-Id: <164821153537.5984.16482063295761850336.b4-ty@kernel.dk>
+Date:   Fri, 25 Mar 2022 06:32:15 -0600
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -68,20 +68,20 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, 25 Mar 2022 02:37:55 -0700, Dylan Yudaken wrote:
-> When polling sockets for accept, use EPOLLEXCLUSIVE. This is helpful
-> when multiple accept SQEs are submitted.
+On Fri, 25 Mar 2022 02:40:13 -0700, Dylan Yudaken wrote:
+> Add tests for accept that queues multiple accepts and then ensures the
+> correct things happen.
 > 
-> For O_NONBLOCK sockets multiple queued SQEs would previously have all
-> completed at once, but most with -EAGAIN as the result. Now only one
-> wakes up and completes.
+> Check that when connections arrive one at a time that only one CQE is
+> posted (in blocking and nonblocking sockets), as well as make sure that
+> closing the accept socket & cancellation all work as expected.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] io_uring: enable EPOLLEXCLUSIVE for accept poll
-      commit: 52dd86406dfa322c8d42b3a4328858abdc6f1d85
+[1/1] Add test for multiple concurrent accepts
+      commit: cbdf65e0484af93d3966f0f04eeeb7a5a518d673
 
 Best regards,
 -- 

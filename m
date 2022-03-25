@@ -2,65 +2,68 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B9DC24E7387
-	for <lists+io-uring@lfdr.de>; Fri, 25 Mar 2022 13:32:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FE874E7398
+	for <lists+io-uring@lfdr.de>; Fri, 25 Mar 2022 13:35:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355069AbiCYMdx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 25 Mar 2022 08:33:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39874 "EHLO
+        id S1350213AbiCYMh1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 25 Mar 2022 08:37:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51024 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1359049AbiCYMdv (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 25 Mar 2022 08:33:51 -0400
-Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17817D0838
-        for <io-uring@vger.kernel.org>; Fri, 25 Mar 2022 05:32:17 -0700 (PDT)
-Received: by mail-pf1-x429.google.com with SMTP id p8so6335772pfh.8
-        for <io-uring@vger.kernel.org>; Fri, 25 Mar 2022 05:32:16 -0700 (PDT)
+        with ESMTP id S239734AbiCYMh1 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 25 Mar 2022 08:37:27 -0400
+Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0448D21804
+        for <io-uring@vger.kernel.org>; Fri, 25 Mar 2022 05:35:54 -0700 (PDT)
+Received: by mail-pf1-x433.google.com with SMTP id y10so3011439pfa.7
+        for <io-uring@vger.kernel.org>; Fri, 25 Mar 2022 05:35:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:in-reply-to:references:subject:message-id:date
-         :mime-version:content-transfer-encoding;
-        bh=NZoAlzzFEb5CaAalB2j3BTClFadk7iEYjAPWowva89k=;
-        b=DA24wueLt/VXAoBJt+loMWuXUTyRlkJ6QXy+fmluqtNsYjUiWWn22XYg6CSvBwx89G
-         dOPqqa2eVX+GgXFX8qjprOjqB7OV3Ugl2nZDh9wqESyzy2k6d9ff2V1x6MDfZDRb+sVM
-         DzpKEB4bqMM0Fq3JW7ENE0zuUovtPn+sZYwmEZcwUOh5N79/gCPMbC72D3YEnMAwwuKU
-         /lq7L6nPIagQi5PiXs+aQ8vpm7VyWAWTIkN06oXbmVUL6zr1H7wB4uCVjyYPK6Q4HQbY
-         CiV3Z9QMBPYAhTvCCGKNmJC0pLtxa0xtAnTXRCaZnuKM9UQ9JUofu8dnN1MyTUMFJrA5
-         aG6w==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :references:from:in-reply-to:content-transfer-encoding;
+        bh=tUig/d0zeaBZ8zFx4sXbe+TqL7yxJNlhIpgACFnv/OE=;
+        b=ClUOI2mrdSdvKp5G2slR1aoyTDNvDBgyq2ArNAngV2AjfdpL4yylxIzBSZlURBuEDb
+         /aHFYhbgDEaJdG90Oh98N3ex6Q1X4/zdcXTCQHXloeuYVLnzp1o2af8NWYpnuab5vR4W
+         kOJ+chdfuWWZmeyI8VvsKfCeiAIh7N6AWeSgiD/LZswV9Jx35aUDyafPSLNzrIyhhWOu
+         ST45UBHk0GNNsQY1PtKjKdT+/InkFutm4lkJXj1CJDWHXkMyuMa4QWgCfmcSmqHhmL+L
+         ljvN1dPyaLWAIM7p4l4rpYlmKTkYsxsKPWHYf2868YtZKR9Qqql5afH2FIId+OX9I17H
+         rMWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
-         :message-id:date:mime-version:content-transfer-encoding;
-        bh=NZoAlzzFEb5CaAalB2j3BTClFadk7iEYjAPWowva89k=;
-        b=V4aBxN6IgPAbC7xc4T4tQxRVyKwCX3+7ilRO6bjbofXRyZcp3M/4PS2GqVE7Ec1nTw
-         6bz9fy4Ja/LvI7Lv58jqzckN5cH6kxsPCEF8RCpdnodNG+jIj9wsb5XxOcMDxGiCJSRN
-         GWtKTDOTtWJYU4eXZkd80/4Ck4plOcFwqBvsf2o+mDw4Qv4D39zgvOwDClcwxvAowdqq
-         U9ux16Cf+h2kwLw9bOAtrNDQdveGmHU7SK4wzfgNWH1NyfZ+eHJAFYBp+dY4i7CM4v4C
-         peeziehMF5UXY2AJBrGTPulSZiWjBmLOlTjVU9AFnFpurdT6qxj2U12GFP3TokxYsNez
-         zXxw==
-X-Gm-Message-State: AOAM531jtl62R0VL59THFIZoVSND+orbRhc4wKBlBZpMt04PUsM1sfOd
-        iSvtuUaehhkXdr38TS0OfIraoQ==
-X-Google-Smtp-Source: ABdhPJxz0j6yQTlfmg7KLm9+IAFU6zzR3YTqkiBhsxee6EkQyyHkaX1AiGv8p2fqBOT0vADho8EAiA==
-X-Received: by 2002:a63:101:0:b0:36c:6d40:5688 with SMTP id 1-20020a630101000000b0036c6d405688mr7809879pgb.554.1648211536365;
-        Fri, 25 Mar 2022 05:32:16 -0700 (PDT)
-Received: from [127.0.1.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id k6-20020a17090a7f0600b001c63352cadbsm5979409pjl.29.2022.03.25.05.32.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Mar 2022 05:32:15 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Dylan Yudaken <dylany@fb.com>, io-uring@vger.kernel.org,
-        Pavel Begunkov <asml.silence@gmail.com>
-Cc:     kernel-team@fb.com
-In-Reply-To: <20220325094013.4132496-1-dylany@fb.com>
-References: <20220325094013.4132496-1-dylany@fb.com>
-Subject: Re: [PATCH liburing] Add test for multiple concurrent accepts
-Message-Id: <164821153537.5984.16482063295761850336.b4-ty@kernel.dk>
-Date:   Fri, 25 Mar 2022 06:32:15 -0600
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=tUig/d0zeaBZ8zFx4sXbe+TqL7yxJNlhIpgACFnv/OE=;
+        b=KL9TC+mP1fuDXVq+m46E2SOMCmPaNiVqHq0cbGoq8wusf9Xg7vYdVIARYJEtESb3dq
+         7Krsy88a0UsmGKdS/K+wj6Z9Yag4pvj56adI5d/6Ln3qtjugNrU/fnnbnNq6MDTmE+SW
+         0qBW/K7liYXXmOrXl3VZ+PJvIo8Rdb+rA/ReWi6M6p5na7VD7Z62OuQ13/qAK8fLBPT3
+         Rqj91KfFJWBxUYvOgk7ruJQ0LhuMvV45llw0eALhKC9Jt4tL3WybprVOz7323X9HodUK
+         mUv3aCptgH4Mk5H6eM73NpkqpBhpVvnSXjs8wW3QvnuSiQbos2UZGm7UYlFZbpbCS7x6
+         ZV4A==
+X-Gm-Message-State: AOAM530rvCbOuRLeCJCnqLbR5luHWdSPYEbD4uURRhdVPh4p9zG/BiNC
+        x/KgW29smuoUmNqpddDfSD/1KxXfHuZOXtGM
+X-Google-Smtp-Source: ABdhPJyMAtPfGH5iu085bL+8vKdHkI5vDDOVPZ9AIf8R5hDDJeTeX+CPIzxV8QhIyuWX7xVqW7+w8A==
+X-Received: by 2002:a63:334c:0:b0:386:291f:3435 with SMTP id z73-20020a63334c000000b00386291f3435mr7704146pgz.264.1648211753501;
+        Fri, 25 Mar 2022 05:35:53 -0700 (PDT)
+Received: from [192.168.1.100] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id k13-20020aa7820d000000b004fa72a52040sm6663654pfi.172.2022.03.25.05.35.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Mar 2022 05:35:53 -0700 (PDT)
+Message-ID: <494268a9-63a2-e9f7-7bee-12dc3f44b9d9@kernel.dk>
+Date:   Fri, 25 Mar 2022 06:35:52 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH 3/5] io_uring: silence io_for_each_link() warning
+Content-Language: en-US
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <cover.1648209006.git.asml.silence@gmail.com>
+ <f0de77b0b0f8309554ba6fba34327b7813bcc3ff.1648209006.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <f0de77b0b0f8309554ba6fba34327b7813bcc3ff.1648209006.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -68,23 +71,13 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, 25 Mar 2022 02:40:13 -0700, Dylan Yudaken wrote:
-> Add tests for accept that queues multiple accepts and then ensures the
-> correct things happen.
-> 
-> Check that when connections arrive one at a time that only one CQE is
-> posted (in blocking and nonblocking sockets), as well as make sure that
-> closing the accept socket & cancellation all work as expected.
-> 
-> [...]
+On 3/25/22 5:52 AM, Pavel Begunkov wrote:
+> Some tooling keep complaining about self assignment in
+> io_for_each_link(), the code is correct but still let's workaround it.
 
-Applied, thanks!
+Honestly, it's worth it to avoid having to reply about reports on
+this. So thanks for doing that.
 
-[1/1] Add test for multiple concurrent accepts
-      commit: cbdf65e0484af93d3966f0f04eeeb7a5a518d673
-
-Best regards,
 -- 
 Jens Axboe
-
 

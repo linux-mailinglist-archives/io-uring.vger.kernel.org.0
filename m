@@ -2,100 +2,154 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EDF884E846B
-	for <lists+io-uring@lfdr.de>; Sat, 26 Mar 2022 22:30:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 09D844E8D5E
+	for <lists+io-uring@lfdr.de>; Mon, 28 Mar 2022 06:44:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235458AbiCZVcb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 26 Mar 2022 17:32:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33502 "EHLO
+        id S238062AbiC1EqW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 28 Mar 2022 00:46:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229890AbiCZVca (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 26 Mar 2022 17:32:30 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A9B32608
-        for <io-uring@vger.kernel.org>; Sat, 26 Mar 2022 14:30:52 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8FD3660E88
-        for <io-uring@vger.kernel.org>; Sat, 26 Mar 2022 21:30:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2873C2BBE4;
-        Sat, 26 Mar 2022 21:30:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648330250;
-        bh=sxJV6txc2UZIWQDVJdcaQ053Net9CcBE+RvtRs5vOgM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=aQtdE5tXSN79YA9n6tMoN4UReAKxjAVm94T4/ndi8eyuMGOmichOirfbi8aopAhGz
-         pOoB1rmwAoZuuI+AXYCdkOfu/bckl2AVJKN2O5PB4Lartqwpd8JIf1wLZtA7JriWco
-         x7W3ujEm+l2zlKzVND2IEyZS5FK62xFb54pHtDxukSUz4+MIoAGzi3rrsji+n2bEdg
-         4PAE8uXY9p5NPmTOTBWbA6NTGjxP98dBhZ9trjvMH2X9iE8pjnMSiUo8g+gBEuPkKC
-         x/MPxULinRqyAHHIMrN/SJW4kBWSd5KfLQK+NotiODIlqgbxcSwxTEw0kXHJmTsAar
-         x/3XVPw1BLlLA==
-Date:   Sat, 26 Mar 2022 14:30:49 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        io-uring <io-uring@vger.kernel.org>,
-        Olivier Langlois <olivier@trillion01.com>
-Subject: Re: [GIT PULL] io_uring updates for 5.18-rc1
-Message-ID: <20220326143049.671b463c@kernel.org>
-In-Reply-To: <f6203da1-1bf4-c5f4-4d8e-c5d1e10bd7ea@kernel.dk>
-References: <b7bbc124-8502-0ee9-d4c8-7c41b4487264@kernel.dk>
-        <20220326122838.19d7193f@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
-        <9a932cc6-2cb7-7447-769f-3898b576a479@kernel.dk>
-        <20220326130615.2d3c6c85@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
-        <234e3155-e8b1-5c08-cfa3-730cc72c642c@kernel.dk>
-        <f6203da1-1bf4-c5f4-4d8e-c5d1e10bd7ea@kernel.dk>
+        with ESMTP id S238061AbiC1EqW (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 28 Mar 2022 00:46:22 -0400
+Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36E86DFCE;
+        Sun, 27 Mar 2022 21:44:42 -0700 (PDT)
+Received: by mail-lj1-x22e.google.com with SMTP id b43so13028720ljr.10;
+        Sun, 27 Mar 2022 21:44:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=21sZB0cQIQyT4qQnFzBbbk2zGnmsUzVxHD9eQSWsXSM=;
+        b=O+KOuXPC6hePjUcR3JaYu2NtHEyI4LardvYhun3ke3JbEboM/6CkPnkJJDAwFmCcv7
+         XlcLW2To4Am+zfpcyU4zlLlZzHZI46nNlJyy1vUsFRXiPN7dcvH/twJeHnkgJPaoyRUh
+         fUyarJt5921dZk4m8OTY+6K5lNXhwvJqqSwhJvlJh8/9SPGCe9S/DNJeoaXJuSCxBKO0
+         f2vglgLp/NzEks/xBr5ok9jM+Sg6bLyOl24wwxTIneIEdSQPUxJlCwayzQ38atUrtbUF
+         hjR0CVFY+f0Vd6gWn+zf607BCtz0MUpVkAzRLoQwN8jIv4Y8mltXT8kuSaiey7EO+gmQ
+         AX6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=21sZB0cQIQyT4qQnFzBbbk2zGnmsUzVxHD9eQSWsXSM=;
+        b=p7wgUlKc5WOOdMwqLbGJTt0ogCBi/j4H0kFSvJRfHq5DtYzqDjZonWh07Y4z2QHCbr
+         TMHdmUsmnkfKnaCCqpWh5Z5q77VhNtSqc2M21VtivGNGNtP4nTczxzUL5ft8q560wwUp
+         gxcKdBr3o9ncL5JTB4zIzP6I4JcwktbaZ0WMZ9G81h6XYRDBo1luovAMgcpm0ZSSMngB
+         LwX7h1z9IUrVdc4XuTE8NRlee3t7ryPSz0K9flYi0IwtqsAkNrIC+fcvenTFw49QGWmS
+         8l0wRn/VtL4a0m/mAxpEx959OXQuRuFeELcKLyeRgomO5kqBA4hsus/PEnqflSs4AdeB
+         nNNg==
+X-Gm-Message-State: AOAM532hbr3uhcm6okbXEP4lLAEZ5nVB4+Vqsp828vpBzz3Ta56qUWNr
+        w/Qv6dW66qTsf1P2+/qUBw8BJRJSGsoXonKOeic=
+X-Google-Smtp-Source: ABdhPJxgExojDOUG55D0M4bMrvzsdvV63x26gqkghravOLYEjaWru8kgts2OevmizkhBxwU1zczAKfndxGYVXDqDtk4=
+X-Received: by 2002:a2e:302:0:b0:24a:c997:d34c with SMTP id
+ 2-20020a2e0302000000b0024ac997d34cmr7433761ljd.445.1648442680381; Sun, 27 Mar
+ 2022 21:44:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-7.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20220308152105.309618-1-joshi.k@samsung.com> <CGME20220308152729epcas5p17e82d59c68076eb46b5ef658619d65e3@epcas5p1.samsung.com>
+ <20220308152105.309618-18-joshi.k@samsung.com> <20220310083652.GF26614@lst.de>
+ <CA+1E3rLaQstG8LWUyJrbK5Qz+AnNpOnAyoK-7H5foFm67BJeFA@mail.gmail.com>
+ <20220310141945.GA890@lst.de> <CA+1E3rL3Q2noHW-cD20SZyo9EqbzjF54F6TgZoUMMuZGkhkqnw@mail.gmail.com>
+ <20220311062710.GA17232@lst.de> <CA+1E3rLGwHFbdbSTJBfWrw6RLErwcT2zPxGmmWbcLUj2y=16Qg@mail.gmail.com>
+ <20220324063218.GC12660@lst.de> <20220325133921.GA13818@test-zns>
+In-Reply-To: <20220325133921.GA13818@test-zns>
+From:   Kanchan Joshi <joshiiitr@gmail.com>
+Date:   Mon, 28 Mar 2022 10:14:13 +0530
+Message-ID: <CA+1E3rJW-NyOtnn2B5CbSusEs46X4O3Qzb_RGtoR1x_aXZfXsw@mail.gmail.com>
+Subject: Re: [PATCH 17/17] nvme: enable non-inline passthru commands
+To:     Kanchan Joshi <joshi.k@samsung.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Keith Busch <kbusch@kernel.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-block@vger.kernel.org, sbates@raithlin.com,
+        logang@deltatee.com, Pankaj Raghav <pankydev8@gmail.com>,
+        =?UTF-8?Q?Javier_Gonz=C3=A1lez?= <javier@javigon.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Adam Manzanares <a.manzanares@samsung.com>,
+        Anuj Gupta <anuj20.g@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Sat, 26 Mar 2022 15:06:40 -0600 Jens Axboe wrote:
-> On 3/26/22 2:57 PM, Jens Axboe wrote:
-> >> I'd also like to have a conversation about continuing to use
-> >> the socket as a proxy for NAPI_ID, NAPI_ID is exposed to user
-> >> space now. io_uring being a new interface I wonder if it's not 
-> >> better to let the user specify the request parameters directly.  
-> > 
-> > Definitely open to something that makes more sense, given we don't
-> > have to shoehorn things through the regular API for NAPI with
-> > io_uring.  
-> 
-> The most appropriate is probably to add a way to get/set NAPI settings
-> on a per-io_uring basis, eg through io_uring_register(2). It's a bit
-> more difficult if they have to be per-socket, as the polling happens off
-> what would normally be the event wait path.
-> 
-> What did you have in mind?
+> >I disagree.  Reusing the same opcode and/or structure for something
+> >fundamentally different creates major confusion.  Don't do it.
+>
+> Ok. If you are open to take new opcode/struct route, that is all we
+> require to pair with big-sqe and have this sorted. How about this -
+>
+> +/* same as nvme_passthru_cmd64 but expecting result field to be pointer */
+> +struct nvme_passthru_cmd64_ind {
+> +       __u8    opcode;
+> +       __u8    flags;
+> +       __u16   rsvd1;
+> +       __u32   nsid;
+> +       __u32   cdw2;
+> +       __u32   cdw3;
+> +       __u64   metadata;
+> +       __u64   addr;
+> +       __u32   metadata_len;
+> +       union {
+> +               __u32   data_len; /* for non-vectored io */
+> +               __u32   vec_cnt; /* for vectored io */
+> +       };
+> +       __u32   cdw10;
+> +       __u32   cdw11;
+> +       __u32   cdw12;
+> +       __u32   cdw13;
+> +       __u32   cdw14;
+> +       __u32   cdw15;
+> +       __u32   timeout_ms;
+> +       __u32   rsvd2;
+> +       __u64   presult; /* pointer to result */
+> +};
+> +
+>  #define nvme_admin_cmd nvme_passthru_cmd
+>
+> +#define NVME_IOCTL_IO64_CMD_IND        _IOWR('N', 0x50, struct nvme_passthru_cmd64_ind)
+>
+> Not heavy on code-volume too, because only one statement (updating
+> result) changes and we reuse everything else.
+>
+> >> >From all that we discussed, maybe the path forward could be this:
+> >> - inline-cmd/big-sqe is useful if paired with big-cqe. Drop big-sqe
+> >> for now if we cannot go the big-cqe route.
+> >> - use only indirect-cmd as this requires nothing special, just regular
+> >> sqe and cqe. We can support all passthru commands with a lot less
+> >> code. No new ioctl in nvme, so same semantics. For common commands
+> >> (i.e. read/write) we can still avoid updating the result (put_user
+> >> cost will go).
+> >>
+> >> Please suggest if we should approach this any differently in v2.
+> >
+> >Personally I think larger SQEs and CQEs are the only sensible interface
+> >here.  Everything else just fails like a horrible hack I would not want
+> >to support in NVMe.
+>
+> So far we have gathered three choices:
+>
+> (a) big-sqe + new opcode/struct in nvme
+> (b) big-sqe + big-cqe
+> (c) regular-sqe + regular-cqe
+>
+> I can post a RFC on big-cqe work if that is what it takes to evaluate
+> clearly what path to take. But really, the code is much more compared
+> to choice (a) and (c). Differentiating one CQE with another does not
+> seem very maintenance-friendly, particularly in liburing.
+>
+> For (c), I did not get what part feels like horrible hack.
+> It is same as how we do sync passthru - read passthru command from
+> user-space memory, and update result into that on completion.
+> But yes, (a) seems like the best option to me.
 
-Not sure I fully comprehend what the current code does. IIUC it uses
-the socket and the caches its napi_id, presumably because it doesn't
-want to hold a reference on the socket?
-
-This may give the user a false impression that the polling follows 
-the socket. NAPIs may get reshuffled underneath on pretty random
-reconfiguration / recovery events (random == driver dependent).
-
-I'm not entirely clear how the thing is supposed to be used with TCP
-socket, as from a quick grep it appears that listening sockets don't
-get napi_id marked at all.
-
-The commit mentions a UDP benchmark, Olivier can you point me to more
-info on the use case? I'm mostly familiar with NAPI busy poll with XDP
-sockets, where it's pretty obvious.
-
-My immediate reaction is that we should either explicitly call out NAPI
-instances by id in uAPI, or make sure we follow the socket in every
-case. Also we can probably figure out an easy way of avoiding the hash
-table lookups and cache a pointer to the NAPI struct.
-
-In any case, let's look in detail on Monday :)
+Thinking a bit more on "(b) big-sqe + big-cqe". Will that also require
+a new ioctl (other than NVME_IOCTL_IO64_CMD) in nvme? Because
+semantics will be slightly different (i.e. not updating the result
+inside the passthrough command but sending it out-of-band to
+io_uring). Or am I just overthinking it.

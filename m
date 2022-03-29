@@ -2,68 +2,62 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 234204EB271
-	for <lists+io-uring@lfdr.de>; Tue, 29 Mar 2022 19:04:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 637734EB275
+	for <lists+io-uring@lfdr.de>; Tue, 29 Mar 2022 19:07:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239278AbiC2RGd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 29 Mar 2022 13:06:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40532 "EHLO
+        id S240039AbiC2RJ3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 29 Mar 2022 13:09:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51758 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238507AbiC2RGc (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 29 Mar 2022 13:06:32 -0400
-Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 570F3AC065
-        for <io-uring@vger.kernel.org>; Tue, 29 Mar 2022 10:04:48 -0700 (PDT)
-Received: by mail-io1-xd2e.google.com with SMTP id 9so18584288iou.5
-        for <io-uring@vger.kernel.org>; Tue, 29 Mar 2022 10:04:48 -0700 (PDT)
+        with ESMTP id S238507AbiC2RJ3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 29 Mar 2022 13:09:29 -0400
+Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EC43258FCF
+        for <io-uring@vger.kernel.org>; Tue, 29 Mar 2022 10:07:46 -0700 (PDT)
+Received: by mail-io1-xd31.google.com with SMTP id z6so21796693iot.0
+        for <io-uring@vger.kernel.org>; Tue, 29 Mar 2022 10:07:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language
-         :from:to:references:in-reply-to:content-transfer-encoding;
-        bh=gtPRvL7XUCaQTFYQre5jOfseLQkx2q2Fbr3z/mqFTNk=;
-        b=lVRQAJd6DC8GOJpy+XUtsgHjkhs36dsU/qEBsP7ixlQwxF1aygnrzh+Msnu+44rC7j
-         /rwRCOPxH6dqcv+W3nkafCkvNERCp67Bd9RPye8PgzM1Bwcp6gmJP+32vHzmtjX7/K2v
-         GBW5LtO/6mN44VAw2kXyDZi4aqjLsTTiXjrXcHlE+GCDjtwqUPK6q896Evetl7lcghsp
-         Ic41z+LQde6fkrUUNXabCJ1hVDjiwXm6yMSNollSDL5EK7pj3Hunj6TL+F9zyXAc15/4
-         7W8LoXOYg2GN9mg3YkLtoCG5JFpXapOqLJuNLUJ1AjnAIYkP4Mxi0Wv7Czdr7yw15SUB
-         roCQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vNnvqn3cTsS8jE6Oj+nGIHZ9v3Kg9ka6yEmKQnLXhig=;
+        b=np42iMSWqwCIOeNnR7Khdr6T8jOL3LM7ms1Ai+s2evLori532ANgXedEuYx8KYrtFT
+         poRKKJxDLinbP3oHqxLye4dq8R1gvX2Op0lLjWbrnxB05iSUnWMNHOeZRcT8p1PNiroa
+         L0AbnTROTeiJykDIqq7Sg5zKO6h+ajrqi26EvGLWjyYe+9MGLjQaOq8MaV2kqx0P+MPX
+         nGCWD1CaRlXfZiCaFNzusqjY/cJ+Icm8Qw8pEI59+SG2/gxEx2hgyIk1Zzg/ZlVh4gBw
+         SjPbiZCGoYqfBounFFZVbMAaAfk8t6V1VikifLOaKf1YNtoxXZKm1nMGIIyUcSetRE7r
+         ZiFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:from:to:references:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=gtPRvL7XUCaQTFYQre5jOfseLQkx2q2Fbr3z/mqFTNk=;
-        b=OXI6lTri0EtxSEkgK3KxVm4tTS4/7yYHhMnBPfExY7NqYdFnrMJ+UDPvw8Dmrs0wSL
-         f87cg47+yvakiiH1Si9waHlbwr0AFDZGMnQXOz0WKc+eOrQ6IHyCwnKuD4feS6jOh99U
-         teHBh0y5Sgg2voIafblrs541n3OfD58F4x5s5HWgvMQswmxpqA42V1f54k6zFp4xkOXS
-         dN9KRE5xvTUvoa6SZ8L76GHXwu15WFiFLUAyqGFk4Shct7QLnhJQMwrnsznoG0GTJEaX
-         psKRPMmi05wOQ5H6ugeDeZMfyhpUv9Cq+m5vX9EyJw5jYJe2rsuBgMcq6bdSGCZ9dkiw
-         qyQA==
-X-Gm-Message-State: AOAM530VdY1llGhWBYyGNtBe45tc8yLBIbDYCzFbwnuO0g4f4aX5rcko
-        C0bsFd4NhWgWFKnWn3/IlBZIzg==
-X-Google-Smtp-Source: ABdhPJwX+yKv/HQ2KpADoqEoTmfyyMJKgNohVKuleTn1EgaLjehwBLx24VwSda/PnV0z2ffSjWZy0A==
-X-Received: by 2002:a6b:c842:0:b0:645:c339:38c7 with SMTP id y63-20020a6bc842000000b00645c33938c7mr9440200iof.26.1648573487446;
-        Tue, 29 Mar 2022 10:04:47 -0700 (PDT)
-Received: from [192.168.1.172] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id w3-20020a92db43000000b002c9ac8e7892sm4560373ilq.4.2022.03.29.10.04.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Mar 2022 10:04:47 -0700 (PDT)
-Message-ID: <c8872b69-f042-dc35-fa3d-6862f09a5385@kernel.dk>
-Date:   Tue, 29 Mar 2022 11:04:46 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: io_uring_prep_openat_direct() and link/drain
-Content-Language: en-US
+        bh=vNnvqn3cTsS8jE6Oj+nGIHZ9v3Kg9ka6yEmKQnLXhig=;
+        b=lXs6wNE302ZAIvrqTJ541Pp5rHJaBEVVg/+0QwXYn4rxs0L4hh+CUlQuBRBZpxIdZd
+         LrwsKK2318GshQrwDam3uTqSU56rFBML7VYP4zIufoC2KrPFogrmib039+4tRBcY/e+w
+         Fwv2nj80NTu+J8PKxr7l6DGDksmMDNgr0fz0m1ZSoyE5AWTfpybqjVN/aj3ahyZqV1n5
+         N7EBfTQ9T4GT1laK9HZA0HwG2Pg9m2SgowTAlV7AW2U2x2okiiL5C8AXdmxKYunlQhay
+         KnpnfsOj68dCj6CqeIraMXBdXtGLf1APDJ7z//nOroziAsMOZUqcBrvGDyLT4gXGVrCE
+         Bgfw==
+X-Gm-Message-State: AOAM532XYa430PKfCvc5RlfXANkEEH1lohr4Rb6YWO38mGDu13VP/dYO
+        6z8tvTVdj7tNdPZiGRHj65SDymKL+1PRUEcQ
+X-Google-Smtp-Source: ABdhPJz211RtR8NfyhDikdND+O10IdxJTEF2d30iSC/noSbpsLmFJ3p6L0QnZU8bZR/X9Y2Iqhsp3w==
+X-Received: by 2002:a05:6602:150c:b0:64c:6878:25ed with SMTP id g12-20020a056602150c00b0064c687825edmr8267255iow.27.1648573665247;
+        Tue, 29 Mar 2022 10:07:45 -0700 (PDT)
+Received: from m1.localdomain ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id v3-20020a5d9483000000b00640d3d4acabsm9383069ioj.44.2022.03.29.10.07.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Mar 2022 10:07:44 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-To:     Miklos Szeredi <miklos@szeredi.hu>, io-uring@vger.kernel.org
-References: <CAJfpegvVpFbDX5so8EVaHxubZLNQ4bo=myAYopWeRtMs0wa6nA@mail.gmail.com>
- <8145e724-d960-dd85-531e-16e564a02f05@kernel.dk>
-In-Reply-To: <8145e724-d960-dd85-531e-16e564a02f05@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To:     io-uring@vger.kernel.org
+Cc:     asml.silence@gmail.com
+Subject: [PATCHSET 0/5] Fix early file assignment for links
+Date:   Tue, 29 Mar 2022 11:07:37 -0600
+Message-Id: <20220329170742.164434-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.35.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -71,53 +65,14 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/29/22 10:08 AM, Jens Axboe wrote:
-> On 3/29/22 7:20 AM, Miklos Szeredi wrote:
->> Hi,
->>
->> I'm trying to read multiple files with io_uring and getting stuck,
->> because the link and drain flags don't seem to do what they are
->> documented to do.
->>
->> Kernel is v5.17 and liburing is compiled from the git tree at
->> 7a3a27b6a384 ("add tests for nonblocking accept sockets").
->>
->> Without those flags the attached example works some of the time, but
->> that's probably accidental since ordering is not ensured.
->>
->> Adding the drain or link flags make it even worse (fail in casese that
->> the unordered one didn't).
->>
->> What am I missing?
-> 
-> I don't think you're missing anything, it looks like a bug. What you
-> want here is:
-> 
-> prep_open_direct(sqe);
-> sqe->flags |= IOSQE_IO_LINK;
-> ...
-> prep_read(sqe);
-> 
-> submit();
-> 
-> You don't want link on the read, it just depends on that previous open.
-> And you don't need drain.
-> 
-> But there's an issue with file assignment, it's done with the read is
-> prepped, not before it is run. Hence it will fail with EBADF currently,
-> which is the issue at hand.
-> 
-> Let me write up a fix for this, would be great if you could test.
+Hi,
 
-Can you try and pull:
-
-git://git.kernel.dk/linux-block for-5.18/io_uring
-
-into v5.17 and see if that works for you? It will merge cleanly, no
-rejects.
-
-Thanks!
+Most of this is prep patches, but the purpose is to make sure that we
+treat file assignment for links appropriately. If not, then we cannot
+use direct open/accept with links while avoiding separate submit+wait
+cycles.
 
 -- 
 Jens Axboe
+
 

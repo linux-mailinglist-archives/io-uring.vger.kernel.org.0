@@ -2,64 +2,83 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CEDF4ECA62
-	for <lists+io-uring@lfdr.de>; Wed, 30 Mar 2022 19:14:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1648A4ECB0F
+	for <lists+io-uring@lfdr.de>; Wed, 30 Mar 2022 19:49:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349206AbiC3RQL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 30 Mar 2022 13:16:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40360 "EHLO
+        id S239952AbiC3Rve (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 30 Mar 2022 13:51:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349202AbiC3RQK (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 30 Mar 2022 13:16:10 -0400
-Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC3CB39820
-        for <io-uring@vger.kernel.org>; Wed, 30 Mar 2022 10:14:25 -0700 (PDT)
-Received: by mail-io1-xd2c.google.com with SMTP id h63so25528415iof.12
-        for <io-uring@vger.kernel.org>; Wed, 30 Mar 2022 10:14:25 -0700 (PDT)
+        with ESMTP id S1348079AbiC3Rvd (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 30 Mar 2022 13:51:33 -0400
+Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0568B6E550
+        for <io-uring@vger.kernel.org>; Wed, 30 Mar 2022 10:49:36 -0700 (PDT)
+Received: by mail-il1-x133.google.com with SMTP id y16so6943286ilc.7
+        for <io-uring@vger.kernel.org>; Wed, 30 Mar 2022 10:49:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=IDpsEkElS2DGneoJEOSrfwppr49QLsb4g1ikE9IVb/4=;
-        b=BBqIhsMa3+3h0LwcSR2yUT/+vsDOZhDb0ZI9KmABkZH1CcUS5uA1fXL9RQJTHY705j
-         YP7so5EUhtvaqbqmXGFeORgAnNc2nY5GHgNmA7sXJsG7HnwDGEVqpjrIF6hocawRltjN
-         Ne8Pi3cMSqY1jnD7Aesn8JEcippQl6BdLKiSlejPZqZTLhL2lmnHQDYXRzh8Tb6y6n0q
-         YPaP+XE/wOC7JiVCWbpFZWhcacS4RcND+wXmvZffTPc/NRofj1pdAlPKiQKlD/79X66c
-         W9qq9Z2Pkml2z9XaOufdTapYMBAHlPiG++2Zsuykzp/hkE+QblZ71U+rRa8tzX+DFONu
-         HVkQ==
+        h=message-id:date:mime-version:user-agent:subject:content-language
+         :from:to:cc:references:in-reply-to:content-transfer-encoding;
+        bh=JetUkGCT+ILg2Zfmrh4m8iENvaO8W7pR29oGldUxR7E=;
+        b=lv34UgwYHir3wxQNql3yPVBdhiNYsrjFYQmVEDuvPTjlr2+ccP3qbX/if2TeCYxaVI
+         rwkYUA4u8dC+93BJKfscEZzCjXdY6IOQXeN9/i/VjoerlJ5NK9fGLcwqwU6S4DEj2QTa
+         x4440v9rsLjd4ofEyMDWNk2+e39XWqoWhsx4xUPMmnxGiMzGoctVcoRkKgqbJkUiBybB
+         cQBnH/Hu4QvTU6HOFgzXKqGhJe4mCXL7OHcDtmhJRBw3u4arngBZzMVDrsiybXPWR+vB
+         6r5wiMXoxQNr/oBDeUP7jU+/xAi1bVA0g9b5NlmoNvU2pGzWTxBkFFefq/4XruY4Ryaf
+         wjEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=IDpsEkElS2DGneoJEOSrfwppr49QLsb4g1ikE9IVb/4=;
-        b=Lc96o6aSRRj6qwayzGMmoCg0en6Nvd5g9rjSO+NWnaCvcO1+1ssSV/VFe10dbVDBIs
-         4y8iliGyOXbDRtk7had/ngzo7GZGKYn/0UeXEjmvg4Lyz655FRjiKmudKskqhSEXRwgv
-         B5vu4KyrUDkjeWWmrKgx2rc4ee6gksbZqLVQOWqGudldbvdNI2mFUPUDiDJ4MOKcJrtT
-         QcViSQ3ZxYnxrAjiRTm0MpT3xbxcRXbwKTgx4t+FX3PLRSGI3EEmtbuYGiFkfvkud0st
-         zp0bT5I0QSNJwJb0g+h9bBKPFK12dCR5pQMUXd7gS1pnzYaQiJ2JgSW2DjqwbGNIqdDB
-         M7MQ==
-X-Gm-Message-State: AOAM531kNEzQLNpP4KSYYIR55vSbR83jLIqto1Trb7txRksNmPUmNADw
-        1uyWetRdXztbtJfYa+5HqCPirOEQgDBdHhVq
-X-Google-Smtp-Source: ABdhPJxXZB1cyVaJCAquXtU6XEtRsgm0Yhp2FNZjTlAPfRiNxhvg6MeITPCrko7oB5yz9wl+tSme8A==
-X-Received: by 2002:a5d:948a:0:b0:645:b742:87c0 with SMTP id v10-20020a5d948a000000b00645b74287c0mr11962326ioj.79.1648660464821;
-        Wed, 30 Mar 2022 10:14:24 -0700 (PDT)
-Received: from m1.localdomain ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id b24-20020a5d8d98000000b006409ad493fbsm11588920ioj.21.2022.03.30.10.14.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Mar 2022 10:14:24 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, stable@vger.kernel.org
-Subject: [PATCH 5/5] io_uring: defer file assignment for links
-Date:   Wed, 30 Mar 2022 11:14:16 -0600
-Message-Id: <20220330171416.152538-6-axboe@kernel.dk>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220330171416.152538-1-axboe@kernel.dk>
-References: <20220330171416.152538-1-axboe@kernel.dk>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:from:to:cc:references:in-reply-to
+         :content-transfer-encoding;
+        bh=JetUkGCT+ILg2Zfmrh4m8iENvaO8W7pR29oGldUxR7E=;
+        b=m8SQvaskHrpEaJSnE1KyHbeXuQPQp656iDTnMSfzkWwzMUJN4k72Z2O4ETJx7CbO8r
+         smbbo86hc7dQiFUSu8CoXKzOXW2WIDo3CS+sHGGx/dPxPJJXGmdEfoN4l96vrheksAs0
+         79JQ/mD/zOTuOZOtzU0225cdtf0almixg/g2K4lSovfjDN/P+ZCUPZjpvcoOT4CUbJFY
+         Q3X6Q86WIeDetdDa7HTkcFTzAQqm5CQ8HAGuzzMlygRBv8qwpxuzL0RHAmoq+0YxF1pp
+         eNLqWETtPmFIYHMrG/Veijyv/dP98jHYc6a9UiFAKjEvm8Ys6t6X/1a7HMYTo0hLeWQw
+         SiIQ==
+X-Gm-Message-State: AOAM530Ync+1CKdrm/gRM+luWvN0cxl3qhgH6yP9ir4kIybEQUhCGfnL
+        XLaHmlbV1BUA9ijSvmSuP4UfoFH+7eFVN9LY
+X-Google-Smtp-Source: ABdhPJxX8ZGwtuj+h+KnGQIIBvFRrG2Go4s6K4+L/3WDDqb3NZURJttknnFB9L3tXh8cPuYBkoD2Ew==
+X-Received: by 2002:a92:440c:0:b0:2be:5bd3:ac98 with SMTP id r12-20020a92440c000000b002be5bd3ac98mr11010326ila.323.1648662576077;
+        Wed, 30 Mar 2022 10:49:36 -0700 (PDT)
+Received: from [192.168.1.172] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id a14-20020a921a0e000000b002c993d9cf63sm7229310ila.64.2022.03.30.10.49.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Mar 2022 10:49:35 -0700 (PDT)
+Message-ID: <38436a44-5048-2062-c339-66679ae1e282@kernel.dk>
+Date:   Wed, 30 Mar 2022 11:49:34 -0600
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: io_uring_prep_openat_direct() and link/drain
+Content-Language: en-US
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     io-uring@vger.kernel.org
+References: <CAJfpegvVpFbDX5so8EVaHxubZLNQ4bo=myAYopWeRtMs0wa6nA@mail.gmail.com>
+ <115fc7d1-9b9c-712b-e75d-39b2041df437@kernel.dk>
+ <CAJfpegs=GcTuXcor-pbhaAxDKeS5XRy5rwTGXUcZM0BYYUK2LA@mail.gmail.com>
+ <89322bd1-5e6f-bcc6-7974-ffd22363a165@kernel.dk>
+ <CAJfpegtr+Bo0O=i9uShDJO_=--KAsFmvdzodwH6qF7f+ABeQ5g@mail.gmail.com>
+ <0c5745ab-5d3d-52c1-6a1d-e5e33d4078b5@kernel.dk>
+ <CAJfpegtob8ZWU1TDBoUf7SRMQJhEcEo2sPUumzpNd3Mcg+1aog@mail.gmail.com>
+ <52dca413-61b3-8ded-c4cc-dd6c8e8de1ed@kernel.dk>
+ <CAJfpegtEG2c3H8ZyOWPT69HJN2UWU1es-n9P+CSgV7jiZMPtGg@mail.gmail.com>
+ <23b62cca-8ec5-f250-e5a3-7e9ed983e190@kernel.dk>
+ <CAJfpeguZji8x+zXSADJ4m6VKbdmTb6ZQd5zA=HCt8acxvGSr3w@mail.gmail.com>
+ <CAJfpegsADrdURSUOrGTjbu1DoRr7-8itGx23Tn0wf6gNdO5dWA@mail.gmail.com>
+ <77229971-72cd-7d78-d790-3ef4789acc9e@kernel.dk>
+ <CAJfpeguiZ7U=YQhgGa-oPWO07tpBL6sf3zM=xtAk66njb1p2cw@mail.gmail.com>
+ <c5f27130-b4ad-3f4c-ce98-4414227db4fd@kernel.dk>
+ <61c2336f-0315-5f76-3022-18c80f79e0b5@kernel.dk>
+In-Reply-To: <61c2336f-0315-5f76-3022-18c80f79e0b5@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -67,145 +86,76 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-If an application uses direct open or accept, it knows in advance what
-direct descriptor value it will get as it picks it itself. This allows
-combined requests such as:
+On 3/30/22 9:53 AM, Jens Axboe wrote:
+> On 3/30/22 9:17 AM, Jens Axboe wrote:
+>> On 3/30/22 9:12 AM, Miklos Szeredi wrote:
+>>> On Wed, 30 Mar 2022 at 17:05, Jens Axboe <axboe@kernel.dk> wrote:
+>>>>
+>>>> On 3/30/22 8:58 AM, Miklos Szeredi wrote:
+>>>>> Next issue:  seems like file slot reuse is not working correctly.
+>>>>> Attached program compares reads using io_uring with plain reads of
+>>>>> proc files.
+>>>>>
+>>>>> In the below example it is using two slots alternately but the number
+>>>>> of slots does not seem to matter, read is apparently always using a
+>>>>> stale file (the prior one to the most recent open on that slot).  See
+>>>>> how the sizes of the files lag by two lines:
+>>>>>
+>>>>> root@kvm:~# ./procreads
+>>>>> procreads: /proc/1/stat: ok (313)
+>>>>> procreads: /proc/2/stat: ok (149)
+>>>>> procreads: /proc/3/stat: read size mismatch 313/150
+>>>>> procreads: /proc/4/stat: read size mismatch 149/154
+>>>>> procreads: /proc/5/stat: read size mismatch 150/161
+>>>>> procreads: /proc/6/stat: read size mismatch 154/171
+>>>>> ...
+>>>>>
+>>>>> Any ideas?
+>>>>
+>>>> Didn't look at your code yet, but with the current tree, this is the
+>>>> behavior when a fixed file is used:
+>>>>
+>>>> At prep time, if the slot is valid it is used. If it isn't valid,
+>>>> assignment is deferred until the request is issued.
+>>>>
+>>>> Which granted is a bit weird. It means that if you do:
+>>>>
+>>>> <open fileA into slot 1, slot 1 currently unused><read slot 1>
+>>>>
+>>>> the read will read from fileA. But for:
+>>>>
+>>>> <open fileB into slot 1, slot 1 is fileA currently><read slot 1>
+>>>>
+>>>> since slot 1 is already valid at prep time for the read, the read will
+>>>> be from fileA again.
+>>>>
+>>>> Is this what you are seeing? It's definitely a bit confusing, and the
+>>>> only reason why I didn't change it is because it could potentially break
+>>>> applications. Don't think there's a high risk of that, however, so may
+>>>> indeed be worth it to just bite the bullet and the assignment is
+>>>> consistent (eg always done from the perspective of the previous
+>>>> dependent request having completed).
+>>>>
+>>>> Is this what you are seeing?
+>>>
+>>> Right, this explains it.   Then the only workaround would be to wait
+>>> for the open to finish before submitting the read, but that would
+>>> defeat the whole point of using io_uring for this purpose.
+>>
+>> Honestly, I think we should just change it during this round, making it
+>> consistent with the "slot is unused" use case. The old use case is more
+>> more of a "it happened to work" vs the newer consistent behavior of "we
+>> always assign the file when execution starts on the request".
+>>
+>> Let me spin a patch, would be great if you could test.
+> 
+> Something like this on top of the current tree should work. Can you
+> test?
 
-sqe = io_uring_get_sqe(ring);
-io_uring_prep_openat_direct(sqe, ..., file_slot);
-sqe->flags |= IOSQE_IO_LINK | IOSQE_CQE_SKIP_SUCCESS;
+You can also just re-pull for-5.18/io_uring, it has been updated. A last
+minute edit make a 0 return from io_assign_file() which should've been
+'true'...
 
-sqe = io_uring_get_sqe(ring);
-io_uring_prep_read(sqe,file_slot, buf, buf_size, 0);
-sqe->flags |= IOSQE_FIXED_FILE;
-
-io_uring_submit(ring);
-
-where we prepare both a file open and read, and only get a completion
-event for the read when both have completed successfully.
-
-Currently links are fully prepared before the head is issued, but that
-fails if the dependent link needs a file assigned that isn't valid until
-the head has completed.
-
-Conversely, if the same chain is performed but the fixed file slot is
-already valid, then we would be unexpectedly returning data from the
-old file slot rather than the newly opened one. Make sure we're
-consistent here.
-
-Allow deferral of file setup, which makes this documented case work.
-
-Cc: stable@vger.kernel.org # v5.15+
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- fs/io_uring.c | 43 ++++++++++++++++++++++++++++++++++---------
- 1 file changed, 34 insertions(+), 9 deletions(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 84433dc57914..e73e333d4705 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -915,7 +915,11 @@ struct io_kiocb {
- 	unsigned int			flags;
- 
- 	u64				user_data;
--	u32				result;
-+	/* fd before execution, if valid, result after execution */
-+	union {
-+		u32			result;
-+		s32			fd;
-+	};
- 	u32				cflags;
- 
- 	struct io_ring_ctx		*ctx;
-@@ -7208,6 +7212,23 @@ static void io_clean_op(struct io_kiocb *req)
- 	req->flags &= ~IO_REQ_CLEAN_FLAGS;
- }
- 
-+static bool io_assign_file(struct io_kiocb *req)
-+{
-+	if (req->file || !io_op_defs[req->opcode].needs_file)
-+		return true;
-+
-+	req->file = io_file_get(req->ctx, req, req->fd,
-+					req->flags & REQ_F_FIXED_FILE);
-+	if (req->file) {
-+		req->result = 0;
-+		return 0;
-+	}
-+
-+	req_set_fail(req);
-+	req->result = -EBADF;
-+	return false;
-+}
-+
- static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags)
- {
- 	const struct cred *creds = NULL;
-@@ -7218,6 +7239,8 @@ static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags)
- 
- 	if (!io_op_defs[req->opcode].audit_skip)
- 		audit_uring_entry(req->opcode);
-+	if (unlikely(!io_assign_file(req)))
-+		return -EBADF;
- 
- 	switch (req->opcode) {
- 	case IORING_OP_NOP:
-@@ -7362,10 +7385,11 @@ static struct io_wq_work *io_wq_free_work(struct io_wq_work *work)
- static void io_wq_submit_work(struct io_wq_work *work)
- {
- 	struct io_kiocb *req = container_of(work, struct io_kiocb, work);
-+	const struct io_op_def *def = &io_op_defs[req->opcode];
- 	unsigned int issue_flags = IO_URING_F_UNLOCKED;
- 	bool needs_poll = false;
- 	struct io_kiocb *timeout;
--	int ret = 0;
-+	int ret = 0, err = -ECANCELED;
- 
- 	/* one will be dropped by ->io_free_work() after returning to io-wq */
- 	if (!(req->flags & REQ_F_REFCOUNT))
-@@ -7377,14 +7401,18 @@ static void io_wq_submit_work(struct io_wq_work *work)
- 	if (timeout)
- 		io_queue_linked_timeout(timeout);
- 
-+	if (!io_assign_file(req)) {
-+		work->flags |= IO_WQ_WORK_CANCEL;
-+		err = -EBADF;
-+	}
-+
- 	/* either cancelled or io-wq is dying, so don't touch tctx->iowq */
- 	if (work->flags & IO_WQ_WORK_CANCEL) {
--		io_req_task_queue_fail(req, -ECANCELED);
-+		io_req_task_queue_fail(req, err);
- 		return;
- 	}
- 
- 	if (req->flags & REQ_F_FORCE_ASYNC) {
--		const struct io_op_def *def = &io_op_defs[req->opcode];
- 		bool opcode_poll = def->pollin || def->pollout;
- 
- 		if (opcode_poll && file_can_poll(req->file)) {
-@@ -7720,6 +7748,8 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
- 	if (io_op_defs[opcode].needs_file) {
- 		struct io_submit_state *state = &ctx->submit_state;
- 
-+		req->fd = READ_ONCE(sqe->fd);
-+
- 		/*
- 		 * Plug now if we have more than 2 IO left after this, and the
- 		 * target is potentially a read/write to block based storage.
-@@ -7729,11 +7759,6 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
- 			state->need_plug = false;
- 			blk_start_plug_nr_ios(&state->plug, state->submit_nr);
- 		}
--
--		req->file = io_file_get(ctx, req, READ_ONCE(sqe->fd),
--					(sqe_flags & IOSQE_FIXED_FILE));
--		if (unlikely(!req->file))
--			return -EBADF;
- 	}
- 
- 	personality = READ_ONCE(sqe->personality);
 -- 
-2.35.1
+Jens Axboe
 

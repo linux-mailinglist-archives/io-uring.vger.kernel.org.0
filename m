@@ -2,113 +2,98 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 93DAE4ECBF5
-	for <lists+io-uring@lfdr.de>; Wed, 30 Mar 2022 20:25:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1508E4ECE15
+	for <lists+io-uring@lfdr.de>; Wed, 30 Mar 2022 22:41:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350005AbiC3SZK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 30 Mar 2022 14:25:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43978 "EHLO
+        id S244302AbiC3U3e (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 30 Mar 2022 16:29:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40638 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351208AbiC3SYh (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 30 Mar 2022 14:24:37 -0400
-Received: from mail-pg1-x52e.google.com (mail-pg1-x52e.google.com [IPv6:2607:f8b0:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8942D48312
-        for <io-uring@vger.kernel.org>; Wed, 30 Mar 2022 11:22:04 -0700 (PDT)
-Received: by mail-pg1-x52e.google.com with SMTP id t4so15129903pgc.1
-        for <io-uring@vger.kernel.org>; Wed, 30 Mar 2022 11:22:04 -0700 (PDT)
+        with ESMTP id S232353AbiC3U3d (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 30 Mar 2022 16:29:33 -0400
+Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6B3D36B70
+        for <io-uring@vger.kernel.org>; Wed, 30 Mar 2022 13:27:45 -0700 (PDT)
+Received: by mail-io1-xd30.google.com with SMTP id q11so26172061iod.6
+        for <io-uring@vger.kernel.org>; Wed, 30 Mar 2022 13:27:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=6PnxJaVdYHTfEoSreao3ANO+XeqxY/p/4dxKSObIH1I=;
-        b=BGpZ0SkxOm0fvRxqFYhC0b6sfacBYUvyfL63buMV2jU9Ji/4bjMz6Bgx+q8w9l+3i7
-         oxE1Y4C1sA4AIffKs8JUo8ZpNEBafV3A8OuIgci3rBYzZoVkLXhmGoH+PO2uZ54XMgJD
-         DcPiiZ8wLrGHKMNBP9VlXIEwNCXl+srU9PVfzEs/2LgGSV1IFHfg8Tc76RCdgJKGZSpH
-         Tf5Ti3XrmOEMkFSgSXO9jl17haSCNxqkN3r6FWhQfB8jRwun81Px/PsY+526WeHapPe2
-         dFXQcsbp2IOEnjr6xn5xH+zSt1z58gvkxZnvKDn/X3iGIlZHpqk4CYUgkOar58PEfT+I
-         i1dQ==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=from:to:cc:in-reply-to:references:subject:message-id:date
+         :mime-version:content-transfer-encoding;
+        bh=bO7j0SrMzPYX9+tPRcw8XwDRSLZtiJmDxQySnumKTUw=;
+        b=mvsSSIQCR2Lr9bhzy6pnBtpj3uqReTguuxE7BtSYf3jf8X0UdthyFqLJjbdo0HYlIL
+         WJP2xk0HV7Jf87RvACN1dxoZNPI+MUWkWPJByNXwK8asokjchD3+mzImnzIMZoTCaEOU
+         r5qC8A6XYydVrBwa2bbdVxf1uw5e0ZEah6/AyjRy0caSzA7AN66h8SxsHzC92WNmEou0
+         8pW1apce+FYmPjEor1iJK3DxHYvQaOKkUmCRZgPAERP+7dzByyL7lpOKY8UegRKp1O/d
+         MKv7mQq/xDoO1PC8fOGLRaSC62tD4jh7/OO0AGeQ/NF7X6cHwRbIm4oOQEu7/8pxModH
+         n66A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to:content-transfer-encoding;
-        bh=6PnxJaVdYHTfEoSreao3ANO+XeqxY/p/4dxKSObIH1I=;
-        b=OX0CzT30/lHeoS9hLhdBjkcz8VUaLHL3s1IKdfhjZw0EMgxdfgVj/ketYgUFkF1HWi
-         PQo6RIRGV39WPWDpCMt2dIrfy5MybKQtqDgyhsjytPcdHphlAdXhrQ6nKQB0wXUF4XU7
-         vCh+W6RgHcWIL0Yv80kGh3N8L2UgnWQs1KBXlE4XePd9mGQiYCjxy6vCXuNVuIH8g3Yi
-         voAu8f7L0B3iJV/FjhhYMEbIJTEAo/qTh922ODg7WtxaSTDnnOnlO5B84dOZxrmbdzgC
-         nMD5ecAmecSdxGbf2U+srGCdhVCde7hAti/H/e9Ox78H4WKnEvKd36isikweTYyutlza
-         p7BQ==
-X-Gm-Message-State: AOAM533Dlknis9vrIgcLmEd90yNhEH3Q0KFkaz2jWK7Pl0Zs7IA8n0+4
-        6nHbHrnWK5GnQrr+Y96EgUCFTS2jsRdE5/7I/w==
-X-Google-Smtp-Source: ABdhPJzIAeq+/R41QnmeTf5IiaDtWHXbVt+NvO3bYeenbjFLgU8mUq/BFMBO3OjSlb8Gtf2HDG+eF1axEYzSfrr8r6o=
-X-Received: by 2002:a05:6a00:1310:b0:4ca:cc46:20c7 with SMTP id
- j16-20020a056a00131000b004cacc4620c7mr845599pfu.44.1648664523252; Wed, 30 Mar
- 2022 11:22:03 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
+         :message-id:date:mime-version:content-transfer-encoding;
+        bh=bO7j0SrMzPYX9+tPRcw8XwDRSLZtiJmDxQySnumKTUw=;
+        b=VSRR7zWPeN7zuZxRUudzuypL0UWnddCKoVe4lErofoy5+NaVDQLipa2x7ZDlLXJ7YZ
+         OqFa5R8FzG3ZwvrSIyTndNh8CCwvZMEc2PyFKncmDC2mfrlXPC6UgaNinn4bJoLGnniY
+         BqZJfo5q6B9+dEeCREWBKdJlbR1Ds7eirVhDZEIDLkM2CMM3HiV5SCpv4hGtB+wlEIV6
+         K+xXhtyFaWrzhIlNMIhNi8xdSoxDppejR2mHJA/Bc/r04SMLFUyexBeLjkyA+WC+o0Ad
+         s4CR5SzWZVbGvfgAnid3Qu29GRGC4uOy2PViDZxgBOiajBQ21eTCO/SHhYWjIt708S3S
+         bI7g==
+X-Gm-Message-State: AOAM533/mkwmCU0JYl+dallgl8n4IU3RS694kKgpclJs3rb+k/wUIwx0
+        J2JH5c/VvA0IMvcZV4K122fu/g==
+X-Google-Smtp-Source: ABdhPJzLP8f34rH3mSZEj+s9WwKrpGWdjaSjRjDGXnMgQklV+T+EUCruxSaY9dFbPAotssJ0CfpwxQ==
+X-Received: by 2002:a5d:840e:0:b0:649:c671:6594 with SMTP id i14-20020a5d840e000000b00649c6716594mr12785783ion.19.1648672065238;
+        Wed, 30 Mar 2022 13:27:45 -0700 (PDT)
+Received: from [127.0.1.1] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id v3-20020a92ab03000000b002c9d9d896eesm2486877ilh.68.2022.03.30.13.27.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Mar 2022 13:27:44 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Stefan Roesch <shr@fb.com>, kernel-team@fb.com
+Cc:     viro@zeniv.linux.org.uk, christian.brauner@ubuntu.com
+In-Reply-To: <20220323154420.3301504-1-shr@fb.com>
+References: <20220323154420.3301504-1-shr@fb.com>
+Subject: Re: [PATCH v13 0/4] io_uring: add xattr support
+Message-Id: <164867206347.288397.17239948549986263927.b4-ty@kernel.dk>
+Date:   Wed, 30 Mar 2022 14:27:43 -0600
 MIME-Version: 1.0
-Reply-To: isabellasayouba0@gmail.com
-Sender: 040stherchurch@gmail.com
-Received: by 2002:a05:6a20:691d:b0:76:6cf5:d552 with HTTP; Wed, 30 Mar 2022
- 11:22:02 -0700 (PDT)
-From:   Mrs Isabella Sayouba <isabellasayouba0@gmail.com>
-Date:   Wed, 30 Mar 2022 18:22:02 +0000
-X-Google-Sender-Auth: YOktAgJDjfrHnqeTUc-upjh0fuc
-Message-ID: <CAAzQq743hy3bOESCa_Rphqp09qF8oY9KYfqiDLdzWH7zXQP38A@mail.gmail.com>
-Subject: =?UTF-8?B?44GC44GE44GV44Gk44CC?=
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-X-Spam-Status: No, score=3.8 required=5.0 tests=BAYES_99,BAYES_999,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        FREEMAIL_REPLYTO_END_DIGIT,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_HK_NAME_FM_MR_MRS,T_SCC_BODY_TEXT_LINE autolearn=no
-        autolearn_force=no version=3.4.6
-X-Spam-Level: ***
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-44GC44GE44GV44Gk44CCDQoNCua2meOCkua1geOBl+OBquOBjOOCieOBk+OBruODoeODvOODq+OC
-kuabuOOBhOOBpuOBhOOBvuOBmeOAguengeOBruebruOBq+OBr+Wkp+OBjeOBquaCsuOBl+OBv+OB
-jOOBguOCiuOBvuOBmeOAguengeOBruWQjeWJjeOBr+OCpOOCtuODmeODqeODu+OCteODqOOCpuOD
-kOOBleOCk+OBp+OBmeOAguODgeODpeODi+OCuOOCouWHuui6q+OBp+OAgeODluODq+OCreODiuOD
-leOCoeOCveOBrueXhemZouOBi+OCiemAo+e1oeOCkuWPluOCiuOBvuOBmeOAguengeOBr+OBguOB
-quOBn+OBq+W/g+OCkumWi+OBhOOBpuaEn+WLleOBl+OBn+OBruOBp+OAgeOBguOBquOBn+OBq+ip
-seOBmeS7peWkluOBq+mBuOaKnuiCouOBr+OBguOCiuOBvuOBm+OCk+OAguengeOBr+OAgTIwMTHl
-ubTjgavkuqHjgY/jgarjgovliY3jgavjg5bjg6vjgq3jg4rjg5XjgqHjgr3jga7jg4Hjg6Xjg4vj
-grjjgqLlpKfkvb/jgag55bm06ZaT5YON44GE44Gm44GE44GfU2F5b3ViYQ0KQnJvd27msI/jgajn
-tZDlqZrjgZfjgb7jgZfjgZ/jgILlrZDkvpvjgarjgZfjgacxMeW5tOmWk+e1kOWpmuOBl+OBn+OA
-gg0KDQrlvbzjga/jgZ/jgaPjgZ815pel6ZaT57aa44GE44Gf55+t44GE55eF5rCX44Gu5b6M44Gn
-5q2744Gr44G+44GX44Gf44CC5b2844Gu5q275b6M44CB56eB44Gv5YaN5ama44GX44Gq44GE44GT
-44Go44Gr5rG644KB44G+44GX44Gf44CC5Lqh44GP44Gq44Gj44Gf5aSr44GM55Sf44GN44Gm44GE
-44Gf44Go44GN44CB5b2844Gv57eP6aGNODUw5LiH44OJ44Or44KS6aCQ44GR44G+44GX44Gf44CC
-DQrvvIg4MDDkuIc1MDAw44OJ44Or77yJ6KW/44Ki44OV44Oq44Kr44Gu44OW44Or44Kt44OK44OV
-44Kh44K944Gu6aaW6YO944Ov44Ks44OJ44Kl44Kw44O844Gu6YqA6KGM44Gn44CC54++5Zyo44CB
-44GT44Gu44GK6YeR44Gv44G+44Gg6YqA6KGM44Gr44GC44KK44G+44GZ44CC5b2844Gv44GT44Gu
-44GK6YeR44KS44OW44Or44Kt44OK44OV44Kh44K944Gu6Ymx5qWt44GL44KJ44Gu6YeR44Gu6Ly4
-5Ye644Gr5Yip55So44Gn44GN44KL44KI44GG44Gr44GX44G+44GX44Gf44CCDQoNCuacgOi/keOA
-geengeOBruWMu+iAheOBr+engeOBjOeZjOOBqOiEs+WNkuS4reOBruWVj+mhjOOBruOBn+OCgeOB
-qzfjg7bmnIjplpPjga/ntprjgYvjgarjgYTjgaDjgo3jgYbjgajnp4HjgavoqIDjgYTjgb7jgZfj
-gZ/jgILnp4HjgpLmnIDjgoLmgqnjgb7jgZvjgabjgYTjgovjga7jga/ohLPljZLkuK3jga7nl4Xm
-sJfjgafjgZnjgILnp4Hjga7nirbmhYvjgpLnn6XjgaPjgZ/jga7jgafjgIHnp4Hjga/jgZPjga7j
-gYrph5HjgpLjgYLjgarjgZ/jgavmuKHjgZfjgabjgIHmgbXjgb7jgozjgarjgYTkurrjgIXjga7k
-uJboqbHjgpLjgZnjgovjgZPjgajjgavjgZfjgb7jgZfjgZ/jgILjgYLjgarjgZ/jga/jgZPjga7j
-gYrph5HjgpLnp4HjgYzjgZPjgZPjgafmjIfnpLrjgZnjgovmlrnms5XjgafliKnnlKjjgZnjgovj
-gafjgZfjgofjgYbjgILnp4Hjga/jgYLjgarjgZ/jgavjgYLjgarjgZ/jga7lgIvkurrnmoTjgark
-vb/nlKjjga7jgZ/jgoHjgavnt4/jgYrph5Hjga4zMOODkeODvOOCu+ODs+ODiOOCkuWPluOBo+OB
-puassuOBl+OBhOOBp+OBmeOAguOBiumHkeOBrjcw77yF44Gv56eB44Gu5ZCN5YmN44Gn5a2k5YWQ
-6Zmi44KS5bu644Gm44CB6YCa44KK44Gu6LKn44GX44GE5Lq644CF44KS5Yqp44GR44KL44Gf44KB
-44Gr5L2/44GG44Gn44GX44KH44GG44CC56eB44Gv5a2k5YWQ44Go44GX44Gm6IKy44Gh44G+44GX
-44Gf44GM44CB56We44Gu5a6244KS57at5oyB44GZ44KL44Gf44KB44Gg44GR44Gr44CB5a625peP
-44Gr44Gv6Kqw44KC44GE44G+44Gb44KT44CC44GT44Gu55eF5rCX44GM56eB44KS44Go44Gm44KC
-6Ium44GX44KB44Gf44Gu44Gn44CB56We44GM56eB44Gu572q44KS6LWm44GX44CB5qW95ZyS44Gn
-56eB44Gu6a2C44KS5Y+X44GR5YWl44KM44KL44KI44GG44Gr44GT44KM44KS44GX44Gm44GE44KL
-44Gu44Gn44GZ44CCDQoNCui/lOS/oeOCkuWPl+OBkeWPluOCiuasoeesrOOAgeODluODq+OCreOD
-iuODleOCoeOCveOBrumKgOihjOOBrumAo+e1oeWFiOOCkuOBiuefpeOCieOBm+OBl+OBvuOBmeOA
-guOBvuOBn+OAgemKgOihjOOBruePvuWcqOOBruWPl+WPluS6uuOBp+OBguOCi+OBk+OBqOOCkuio
-vOaYjuOBmeOCi+aoqemZkOabuOOCkueZuuihjOOBmeOCi+OCiOOBhumKgOihjOmVt+OBq+aMh+ek
-uuOBl+OBvuOBmeOAguengeOBjOOBk+OBk+OBp+i/sOOBueOBn+OCiOOBhuOBq+OBguOBquOBn+OB
-jOOBneOCjOOBq+W/nOOBmOOBpuihjOWLleOBmeOCi+OBk+OBqOOCkuengeOBq+S/neiovOOBl+OB
-puOBj+OBoOOBleOBhOOAgg0KDQrjgqTjgrbjg5njg6njg7vjgrXjg6jjgqbjg5DlpKvkurrjgYvj
-gonjgIINCg==
+On Wed, 23 Mar 2022 08:44:16 -0700, Stefan Roesch wrote:
+> This adds the xattr support to io_uring. The intent is to have a more
+> complete support for file operations in io_uring.
+> 
+> This change adds support for the following functions to io_uring:
+> - fgetxattr
+> - fsetxattr
+> - getxattr
+> - setxattr
+> 
+> [...]
+
+Applied, thanks!
+
+[1/4] fs: split off setxattr_copy and do_setxattr function from setxattr
+      commit: bbe6239e931bbb57983dcf94eacc8aaa757d26b0
+[2/4] fs: split off do_getxattr from getxattr
+      commit: 9c8ebeb51e866b9d0fa16fa628797d7e9483a6fc
+[3/4] io_uring: add fsetxattr and setxattr support
+      commit: 7c0773d493344a03e40a71c66fbe080c1fd87acb
+[4/4] io_uring: add fgetxattr and getxattr support
+      commit: b2fdcc6667b89e4da68b5543b641e809145432f8
+
+Best regards,
+-- 
+Jens Axboe
+
+

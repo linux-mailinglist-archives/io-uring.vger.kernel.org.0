@@ -2,96 +2,151 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9830E4ED941
-	for <lists+io-uring@lfdr.de>; Thu, 31 Mar 2022 14:06:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 100344EDF20
+	for <lists+io-uring@lfdr.de>; Thu, 31 Mar 2022 18:52:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234232AbiCaMHu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 31 Mar 2022 08:07:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52528 "EHLO
+        id S240254AbiCaQyK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 31 Mar 2022 12:54:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233982AbiCaMHt (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 31 Mar 2022 08:07:49 -0400
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A25483EABD
-        for <io-uring@vger.kernel.org>; Thu, 31 Mar 2022 05:06:02 -0700 (PDT)
-Received: by mail-pl1-x636.google.com with SMTP id x2so23203434plm.7
-        for <io-uring@vger.kernel.org>; Thu, 31 Mar 2022 05:06:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:in-reply-to:references:subject:message-id:date:mime-version
-         :content-transfer-encoding;
-        bh=AWiPUcw4u/78EyL+R5HOco7m2qLKGFC7N4h40AYC66s=;
-        b=p2vZ0dAilaxljpYsXLfKmdTFooYdX0Cy7eKddt+hr3w5p321TlogBTYHVCl/leoofp
-         38JtSMBIgXVj3UCnQ/0ebmWNhChVkpqjG0Gaza++JP5ppCfXrDQhTQOilh3wf/iZsIcs
-         T44m3iXEWBv6eA5gMNFHrbLLDN2ZlisJCjqxg1TK4VxdD2cqMUO8alTDEUl7nymIsBTz
-         zx8BkHI8uQRVFCd4/qUj2PCT2md6nvzeM5TnBMXR5wZBMTcLqeJP//Y0ZO676b4/1T/X
-         zcSAPRM7xUMVoqEm2WHG2wLLaVUjcsSqXgbvLCAWD1EMQTKImQb0/7Km3NWY4rCGLk4i
-         70+A==
+        with ESMTP id S240253AbiCaQyJ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 31 Mar 2022 12:54:09 -0400
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BAE9231AD3
+        for <io-uring@vger.kernel.org>; Thu, 31 Mar 2022 09:52:22 -0700 (PDT)
+Received: by mail-il1-f197.google.com with SMTP id u15-20020a92da8f000000b002c863d2f21dso148167iln.15
+        for <io-uring@vger.kernel.org>; Thu, 31 Mar 2022 09:52:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:in-reply-to:references:subject
-         :message-id:date:mime-version:content-transfer-encoding;
-        bh=AWiPUcw4u/78EyL+R5HOco7m2qLKGFC7N4h40AYC66s=;
-        b=N5O9UcT4KHy0+rlpfRDpnD6+Fk2YYvNX6uVIiRqSt1JtI/dvQBrOGAJxF2DFUC3Kuz
-         6vrdzWmiw4YBsajMJhIfcvizzoBLfSVCuk3fAtSe+0Mt5t7SMypXLmpPBLZurFGUUNn0
-         +l2THylyJdI+gCujW2jVcEu5BorZ8A1z0QPoRm9SZUp+9g7scHMbJe7+EUFMfNxOlhWU
-         fW080jiZNyNpho6YnL/w3Awtg26ge6dlOKTqBTi3LqFS+BMsPGNprT3UJH8GfAFrHmpa
-         AidSvf0KgwVvj6GGDGv5vUIvbRZRTO3saTkzmAr7E4o1BKb53BSgWS6sOg1kEJtplJdb
-         wRNg==
-X-Gm-Message-State: AOAM531NUIOzGT7a0o52zg1ECOgcEMCKNag0n4dGxaaPGAzpn4vMuB7C
-        l/R2uakY8vHk/hqwdTNY9qy+Rg==
-X-Google-Smtp-Source: ABdhPJwVG/HonqEkvNd80mIVqnjDWe50Vnj0Nwgy1il3/F6wiGeInf3b8Pjr+M2lyNL+j6ZyZ2tXZA==
-X-Received: by 2002:a17:90b:1c07:b0:1c7:5324:c68e with SMTP id oc7-20020a17090b1c0700b001c75324c68emr5724952pjb.202.1648728362083;
-        Thu, 31 Mar 2022 05:06:02 -0700 (PDT)
-Received: from [127.0.1.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id j18-20020a633c12000000b0038204629cc9sm22613616pga.10.2022.03.31.05.06.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Mar 2022 05:06:01 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     kernel-team@fb.com, Stefan Roesch <shr@fb.com>,
-        io-uring@vger.kernel.org
-In-Reply-To: <20220323154457.3303391-1-shr@fb.com>
-References: <20220323154457.3303391-1-shr@fb.com>
-Subject: Re: [PATCH v2 0/4] liburing: support xattr functions
-Message-Id: <164872836104.7822.14431301848392143198.b4-ty@kernel.dk>
-Date:   Thu, 31 Mar 2022 06:06:01 -0600
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=GaMCx1IhBeV8JT6zBDL6Q97AOSbpyw9US2EP5xW97F4=;
+        b=Bnv5rf7mHQq46nIn5jTzuUSffhbAI39/+nFl3TtHS5edjr3tigXp71nHmLRy5dai1U
+         0v3RPncoNsPhVbTe1935qmU7hyS8pDY3jOLWwD62XzLt3kjfxcBDhK8B2UX+ZvAWvzzU
+         OyHHMG3yLwa8TL4tb1Ye5PiUq4MPJ5sqiSTih4UTixlKUSYJVyaQLTwe1Sy2q0IrEEA8
+         sMtsbtvWbFZFV4B7fy7QjV0zeyjlS07OJk17a7Cioo7L/iZ9QUOfvKTAkZHPkP3gQXcl
+         xTBYft2f4roVJGdKVfgqBkeHG2sfNEKiQ56/RNrvpYSi5ZvlayvW91sUrQYCZjfLtvgV
+         7mrg==
+X-Gm-Message-State: AOAM530PsRw4jsZ3nHnzWM/YFIfplN891LHGqqBLJK7bQ4ai9I9YptRI
+        RiC95Sxo5crXkaytM5lfJqe1JLXG+7IQkOhSiPaOdmpFuA7d
+X-Google-Smtp-Source: ABdhPJwSBtmVHolwvqSVt7vHpCPsvlmQijiwmEY1yUfFY4rB9xmEQsRvhlazLDm2pxGm9Tm3ml0N6hsQTkZ4zBotXshAPPSQtnMU
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a5d:9249:0:b0:64c:8a57:b7ec with SMTP id
+ e9-20020a5d9249000000b0064c8a57b7ecmr8780372iol.65.1648745541581; Thu, 31 Mar
+ 2022 09:52:21 -0700 (PDT)
+Date:   Thu, 31 Mar 2022 09:52:21 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000054c03905db867c20@google.com>
+Subject: [syzbot] KASAN: null-ptr-deref Write in io_file_get_normal
+From:   syzbot <syzbot+c4b9303500a21750b250@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, 23 Mar 2022 08:44:53 -0700, Stefan Roesch wrote:
-> Add xattr support and testing to liburing
-> 
-> Patch 1: liburing: update io_uring
->   Update io_uring.h with io_uring kernel changes.
-> 
-> Patch 2: liburing: add fsetxattr and setxattr
->   Add new helper functions for fsetxattr and setxattr support
->   in liburing.
-> 
-> [...]
+Hello,
 
-Applied, thanks!
+syzbot found the following issue on:
 
-[1/4] liburing: Update io_uring in liburing
-      (no commit info)
-[2/4] liburing: add helper functions for setxattr and fsetxattr
-      (no commit info)
-[3/4] liburing: Add helper functions for fgetxattr and getxattr
-      (no commit info)
-[4/4] liburing: Add new test program to verify xattr support
-      (no commit info)
+HEAD commit:    fdcbcd1348f4 Add linux-next specific files for 20220331
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1146e5fd700000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=366ab475940a4177
+dashboard link: https://syzkaller.appspot.com/bug?extid=c4b9303500a21750b250
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1434c99b700000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1623e2f7700000
 
-Best regards,
--- 
-Jens Axboe
+The issue was bisected to:
+
+commit c686f7a5cbe2eff3c9b41f225fb7cf9e163cde5c
+Author: Jens Axboe <axboe@kernel.dk>
+Date:   Tue Mar 29 16:59:20 2022 +0000
+
+    io_uring: defer splice/tee file validity check until command issue
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12b0199b700000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=11b0199b700000
+console output: https://syzkaller.appspot.com/x/log.txt?x=16b0199b700000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+c4b9303500a21750b250@syzkaller.appspotmail.com
+Fixes: c686f7a5cbe2 ("io_uring: defer splice/tee file validity check until command issue")
+
+==================================================================
+BUG: KASAN: null-ptr-deref in instrument_atomic_read_write include/linux/instrumented.h:101 [inline]
+BUG: KASAN: null-ptr-deref in atomic_inc include/linux/atomic/atomic-instrumented.h:190 [inline]
+BUG: KASAN: null-ptr-deref in io_req_track_inflight fs/io_uring.c:1648 [inline]
+BUG: KASAN: null-ptr-deref in io_file_get_normal+0x33e/0x380 fs/io_uring.c:7518
+Write of size 4 at addr 0000000000000118 by task iou-wrk-3588/3589
+
+CPU: 1 PID: 3589 Comm: iou-wrk-3588 Not tainted 5.17.0-next-20220331-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:106
+ print_report mm/kasan/report.c:432 [inline]
+ kasan_report.cold+0x61/0x1c6 mm/kasan/report.c:491
+ check_region_inline mm/kasan/generic.c:183 [inline]
+ kasan_check_range+0x13d/0x180 mm/kasan/generic.c:189
+ instrument_atomic_read_write include/linux/instrumented.h:101 [inline]
+ atomic_inc include/linux/atomic/atomic-instrumented.h:190 [inline]
+ io_req_track_inflight fs/io_uring.c:1648 [inline]
+ io_file_get_normal+0x33e/0x380 fs/io_uring.c:7518
+ io_file_get fs/io_uring.c:7528 [inline]
+ io_tee fs/io_uring.c:4401 [inline]
+ io_issue_sqe+0x45f5/0x8f40 fs/io_uring.c:7354
+ io_wq_submit_work+0x2b6/0x770 fs/io_uring.c:7444
+ io_worker_handle_work+0xb1c/0x1ab0 fs/io-wq.c:597
+ io_wqe_worker+0x637/0xdb0 fs/io-wq.c:644
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:298
+ </TASK>
+==================================================================
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 0 PID: 3589 Comm: iou-wrk-3588 Not tainted 5.17.0-next-20220331-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:106
+ panic+0x2d7/0x636 kernel/panic.c:274
+ end_report.part.0+0x3f/0x7c mm/kasan/report.c:168
+ end_report include/trace/events/error_report.h:69 [inline]
+ kasan_report.cold+0x93/0x1c6 mm/kasan/report.c:493
+ check_region_inline mm/kasan/generic.c:183 [inline]
+ kasan_check_range+0x13d/0x180 mm/kasan/generic.c:189
+ instrument_atomic_read_write include/linux/instrumented.h:101 [inline]
+ atomic_inc include/linux/atomic/atomic-instrumented.h:190 [inline]
+ io_req_track_inflight fs/io_uring.c:1648 [inline]
+ io_file_get_normal+0x33e/0x380 fs/io_uring.c:7518
+ io_file_get fs/io_uring.c:7528 [inline]
+ io_tee fs/io_uring.c:4401 [inline]
+ io_issue_sqe+0x45f5/0x8f40 fs/io_uring.c:7354
+ io_wq_submit_work+0x2b6/0x770 fs/io_uring.c:7444
+ io_worker_handle_work+0xb1c/0x1ab0 fs/io-wq.c:597
+ io_wqe_worker+0x637/0xdb0 fs/io-wq.c:644
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:298
+ </TASK>
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches

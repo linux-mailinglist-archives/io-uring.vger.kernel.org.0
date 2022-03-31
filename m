@@ -2,78 +2,71 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E6104EE117
-	for <lists+io-uring@lfdr.de>; Thu, 31 Mar 2022 20:51:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4935A4EE158
+	for <lists+io-uring@lfdr.de>; Thu, 31 Mar 2022 21:06:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233605AbiCaSxH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 31 Mar 2022 14:53:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48434 "EHLO
+        id S237750AbiCaTIg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 31 Mar 2022 15:08:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43344 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229713AbiCaSxF (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 31 Mar 2022 14:53:05 -0400
-Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86CAB1D08F2
-        for <io-uring@vger.kernel.org>; Thu, 31 Mar 2022 11:51:17 -0700 (PDT)
-Received: by mail-io1-xd31.google.com with SMTP id z6so655088iot.0
-        for <io-uring@vger.kernel.org>; Thu, 31 Mar 2022 11:51:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :references:from:in-reply-to:content-transfer-encoding;
-        bh=4v5DRyGnf0vxSmxN7X0VgJqo5Go9H8Zl+asHDT6VjbQ=;
-        b=IQQ1YV5GPwEsuc/vUOhuNFn8ZQgFJvwTny3lyO4qK0SELdXf/fyGdOJhW1Iz3GXS42
-         PBJ8R4PuDM9LL7NAsWnjZV9wAwQDR3H4CrEM6CmUF9vxNKhWuVnRpSVRJ4kpeoFmfiJv
-         rXqoJFhY7mjpqrSw7ZbrDVN/MLRyIihnz8viVoAr2WV1uD2n6cLxPQLhzO497/7IeV05
-         WfL+2qxzIRzGHstmtfVfO0MdWlHLgLz/+2IbaxOwJedTmmWuGRKB/TdEZwgbx0Nt5RY8
-         dUSGMR8DSG0WltwJoAK6xcc25rB4A/hxnlmtKYEhlnr5fVsCmbQvz9p7BCsrYYC8Ewrk
-         OsmA==
+        with ESMTP id S239933AbiCaTID (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 31 Mar 2022 15:08:03 -0400
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAD58221BA9
+        for <io-uring@vger.kernel.org>; Thu, 31 Mar 2022 12:06:14 -0700 (PDT)
+Received: by mail-il1-f197.google.com with SMTP id y19-20020a056e02119300b002c2d3ef05bfso378271ili.18
+        for <io-uring@vger.kernel.org>; Thu, 31 Mar 2022 12:06:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=4v5DRyGnf0vxSmxN7X0VgJqo5Go9H8Zl+asHDT6VjbQ=;
-        b=c8MS5JvbH/nEvnlMkLbbuIxx6o0eO4hwXMESoGIpNGsFuZkLolKOtNt/BkvINMhbLt
-         mSCdUIzty3EHlOfjFxdI6BDLOGJYZBB/dh6xTB0mLwpYQSWhDNZOTPoF7h8ilwbL91B/
-         MuWxMbI3czH+Uq231mVpK2Be5kC48ZArAzvIbQincMw7tNeg8B4vZG33qgBp1CKepqE8
-         oComWWWhdvatPgO1SsHzV3WsEG8gI5qKshqUmiIRByNh1llz+Ydu3eeI7BsdzfjKp2VZ
-         X03eSsxc5FjJCo9tdv8JZqO8flUzgLwVAab7wrPRFjgMpfndnRGVBcl4VG0K07D2/rZd
-         AGYA==
-X-Gm-Message-State: AOAM533UD92TD85msogg/4TQlKddMYN0DzRlqKqcmg2Wj5RJhyAq2w2w
-        lkIBqETKfbESsPV0XjTcTzCHxg==
-X-Google-Smtp-Source: ABdhPJxxu1XdfZXFQJau6Elnzbj+jsxNY0DFGaZYuaLBhuhlo5iT0qsSjoJ0DCIxV3Hi//Tisj8gAg==
-X-Received: by 2002:a05:6602:154e:b0:649:f21c:9e60 with SMTP id h14-20020a056602154e00b00649f21c9e60mr14917104iow.12.1648752676778;
-        Thu, 31 Mar 2022 11:51:16 -0700 (PDT)
-Received: from [192.168.1.172] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id v3-20020a92ab03000000b002c9d9d896eesm110351ilh.68.2022.03.31.11.51.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 31 Mar 2022 11:51:16 -0700 (PDT)
-Message-ID: <7f56f140-ecf0-d72b-b891-171a0aaf21ca@kernel.dk>
-Date:   Thu, 31 Mar 2022 12:51:15 -0600
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=r/0Q/v7LxnQii6Wat+1eXZLZ1gIDdS2hR5mCVVjGKVU=;
+        b=aUhGWJkQwW3TPjC49+TJmOJ0L7O8FvSWKiPMzff0Nb8R5wgMcOHljusl2aEt8ktS2F
+         VbtVMJsa+FJFJME10uCuuyO2lnbFDwcLEI7B5Gd1sz2pVsztMvAf4sMVwAQQG5vY906F
+         vOJHpQNZ7JgJKrZkrh7eUUmhO81g3l22yOXhzy4+xIgMSla1C3nTOFSPGLyxkGuHvcfs
+         2RuNX847XVuNzsarDnu23PnOm+GK9p6b8r/eie3XSM+Ml7Sf5h7beLxE7Ds4P99WVyPe
+         j1b5ITOnXMk16fIEFcfKkx86/VcZir67gRYfokA+ztBx/pur/hejxPgizXSx6eq7cqvh
+         WJcw==
+X-Gm-Message-State: AOAM531Hs/X0W2imoIPmTStTusYce644cc0pEOUlVLeYQLRSUd0FMvy8
+        L6BhFeACzOCmWXx5I2wLC2YgZtQa57RG1rYCBmy2Ltysh1pd
+X-Google-Smtp-Source: ABdhPJxhLwKFZ45jya0LVhjew/uXFv5NxVPTM0yGlD2OYJVrGpYWtkpe4WTktB5ooY57V7udWcsSpk1vZJPjYdvTK/6ygZ7oJpx1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
+X-Received: by 2002:a02:b10f:0:b0:323:9bba:a956 with SMTP id
+ r15-20020a02b10f000000b003239bbaa956mr3701828jah.313.1648753574205; Thu, 31
+ Mar 2022 12:06:14 -0700 (PDT)
+Date:   Thu, 31 Mar 2022 12:06:14 -0700
+In-Reply-To: <7f56f140-ecf0-d72b-b891-171a0aaf21ca@kernel.dk>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001ce19705db885baa@google.com>
 Subject: Re: [syzbot] KASAN: null-ptr-deref Write in io_file_get_normal
-Content-Language: en-US
-To:     syzbot <syzbot+c4b9303500a21750b250@syzkaller.appspotmail.com>,
-        asml.silence@gmail.com, io-uring@vger.kernel.org,
+From:   syzbot <syzbot+c4b9303500a21750b250@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <00000000000054c03905db867c20@google.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <00000000000054c03905db867c20@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-#syz test: git://git.kernel.dk/linux-block for-next
+Hello,
 
--- 
-Jens Axboe
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
+Reported-and-tested-by: syzbot+c4b9303500a21750b250@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         9570a845 Merge branch 'for-5.18/io_uring' into for-next
+git tree:       git://git.kernel.dk/linux-block for-next
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6a82c1abd4cbb9ee
+dashboard link: https://syzkaller.appspot.com/bug?extid=c4b9303500a21750b250
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.

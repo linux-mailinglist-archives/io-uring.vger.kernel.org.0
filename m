@@ -2,151 +2,194 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 100344EDF20
-	for <lists+io-uring@lfdr.de>; Thu, 31 Mar 2022 18:52:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60EAA4EE115
+	for <lists+io-uring@lfdr.de>; Thu, 31 Mar 2022 20:50:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240254AbiCaQyK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 31 Mar 2022 12:54:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54970 "EHLO
+        id S237004AbiCaSvs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 31 Mar 2022 14:51:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240253AbiCaQyJ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 31 Mar 2022 12:54:09 -0400
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BAE9231AD3
-        for <io-uring@vger.kernel.org>; Thu, 31 Mar 2022 09:52:22 -0700 (PDT)
-Received: by mail-il1-f197.google.com with SMTP id u15-20020a92da8f000000b002c863d2f21dso148167iln.15
-        for <io-uring@vger.kernel.org>; Thu, 31 Mar 2022 09:52:22 -0700 (PDT)
+        with ESMTP id S230521AbiCaSvr (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 31 Mar 2022 14:51:47 -0400
+Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B347716BF90
+        for <io-uring@vger.kernel.org>; Thu, 31 Mar 2022 11:49:59 -0700 (PDT)
+Received: by mail-io1-xd33.google.com with SMTP id 125so544380iov.10
+        for <io-uring@vger.kernel.org>; Thu, 31 Mar 2022 11:49:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:content-language:to:from
+         :subject:content-transfer-encoding;
+        bh=+nKKBKvFmJyFVF7mMdVmADUzHO5gStJfg3RWBsvmA9Y=;
+        b=Rpzrv9USKnZoDXUPpiqaKjRnjCWk6r2lfmbjOX0RJu8wqsWYShRcSNNImG2f+E2caB
+         i3eoHwR979SgUmDVdMGuqgrZW2Jr+STGReZpmnrTQMmWvtMFCVTS1RWZIT6LpyPsqkP8
+         /AeVp1roWE/U8rpPB5JzdP7AsruJETNk5GQYl8UyWvKXGtVMFCAAIJhCH8hDfTwSu61u
+         nAvpq52uv1gbCOMx7kZEFov30m0BJ7z6JLt1cm807sQP0TO6JzIqcPCcmGRMNIMUk/Xm
+         UeN+QrXhbehwtqOdxYtbCPkUfHgTo0S8mSyJA3eXLx3rks4af8wQk7ECquOrlgXBIRXZ
+         B+ig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=GaMCx1IhBeV8JT6zBDL6Q97AOSbpyw9US2EP5xW97F4=;
-        b=Bnv5rf7mHQq46nIn5jTzuUSffhbAI39/+nFl3TtHS5edjr3tigXp71nHmLRy5dai1U
-         0v3RPncoNsPhVbTe1935qmU7hyS8pDY3jOLWwD62XzLt3kjfxcBDhK8B2UX+ZvAWvzzU
-         OyHHMG3yLwa8TL4tb1Ye5PiUq4MPJ5sqiSTih4UTixlKUSYJVyaQLTwe1Sy2q0IrEEA8
-         sMtsbtvWbFZFV4B7fy7QjV0zeyjlS07OJk17a7Cioo7L/iZ9QUOfvKTAkZHPkP3gQXcl
-         xTBYft2f4roVJGdKVfgqBkeHG2sfNEKiQ56/RNrvpYSi5ZvlayvW91sUrQYCZjfLtvgV
-         7mrg==
-X-Gm-Message-State: AOAM530PsRw4jsZ3nHnzWM/YFIfplN891LHGqqBLJK7bQ4ai9I9YptRI
-        RiC95Sxo5crXkaytM5lfJqe1JLXG+7IQkOhSiPaOdmpFuA7d
-X-Google-Smtp-Source: ABdhPJwSBtmVHolwvqSVt7vHpCPsvlmQijiwmEY1yUfFY4rB9xmEQsRvhlazLDm2pxGm9Tm3ml0N6hsQTkZ4zBotXshAPPSQtnMU
+        h=x-gm-message-state:message-id:date:mime-version:user-agent
+         :content-language:to:from:subject:content-transfer-encoding;
+        bh=+nKKBKvFmJyFVF7mMdVmADUzHO5gStJfg3RWBsvmA9Y=;
+        b=GAJhXvFtMb8KKb1GJTSDd1G2SLonHL/3Cs++8nILFRfXCfpju0v/CzjwALKkeo0YdB
+         xpLfwqKaWJZO3GmfXlqhYd7b69iH6bBCYhRdWBm2Fqx/rUfeOTedkii3sy07gYiL04lw
+         URRxRoLVLbP2gVscr1ll2EZBtoTKH/5s+hEve1gTki1Bp3OvTqQD8qy59+HYghWLRiZz
+         IEtx/CracSe19WMBhKv3GXGD28dyTOqzpfFwYt0KjDUE2dJrzfYZRc/NBCL7kL4PqujJ
+         QTlT25suhRMTDF12BYPzv7DnRScprwivmsnWTnw3dNVTP4HumAhBgi/M1NrjbhiDw7mR
+         asrw==
+X-Gm-Message-State: AOAM5326v9+1pS5KNVcNoziI74vMs3DHahMh9yHd3T37NsuoGWkEPOTY
+        v4wSfVqr1B5xOARbTphsQ81q4dgzoDvCnTeX
+X-Google-Smtp-Source: ABdhPJxK3Ls6smfwrLwC4OZayMRfoI9wkjLBll0jAwLKK9GCmdjySSOfLoZ5ntuD9nqD58kLXmiaVw==
+X-Received: by 2002:a02:224d:0:b0:321:370b:6d59 with SMTP id o74-20020a02224d000000b00321370b6d59mr3822179jao.104.1648752598743;
+        Thu, 31 Mar 2022 11:49:58 -0700 (PDT)
+Received: from [192.168.1.172] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id j4-20020a056e02218400b002c82f195e80sm113658ila.83.2022.03.31.11.49.58
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 31 Mar 2022 11:49:58 -0700 (PDT)
+Message-ID: <7bceb827-cea1-49c4-34dc-a03f457c96da@kernel.dk>
+Date:   Thu, 31 Mar 2022 12:49:57 -0600
 MIME-Version: 1.0
-X-Received: by 2002:a5d:9249:0:b0:64c:8a57:b7ec with SMTP id
- e9-20020a5d9249000000b0064c8a57b7ecmr8780372iol.65.1648745541581; Thu, 31 Mar
- 2022 09:52:21 -0700 (PDT)
-Date:   Thu, 31 Mar 2022 09:52:21 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000054c03905db867c20@google.com>
-Subject: [syzbot] KASAN: null-ptr-deref Write in io_file_get_normal
-From:   syzbot <syzbot+c4b9303500a21750b250@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Content-Language: en-US
+To:     io-uring <io-uring@vger.kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring: drop the old style inflight file tracking
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
+io_uring tracks requests that are referencing an io_uring descriptor to
+be able to cancel without worrying about loops in the references. Since
+we now assign the file at execution time, the easier approach is to drop
+a potentially problematic reference before we punt the request. This
+eliminates the need to special case these types of files beyond just
+marking them as such.
 
-syzbot found the following issue on:
+This also fixes a recent issue where an async punted tee operation would
+with the io_uring descriptor as the output file would crash when
+attempting to get a reference to the file from the io-wq worker. We
+could have worked around that, but this is the much cleaner fix.
 
-HEAD commit:    fdcbcd1348f4 Add linux-next specific files for 20220331
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1146e5fd700000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=366ab475940a4177
-dashboard link: https://syzkaller.appspot.com/bug?extid=c4b9303500a21750b250
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1434c99b700000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1623e2f7700000
-
-The issue was bisected to:
-
-commit c686f7a5cbe2eff3c9b41f225fb7cf9e163cde5c
-Author: Jens Axboe <axboe@kernel.dk>
-Date:   Tue Mar 29 16:59:20 2022 +0000
-
-    io_uring: defer splice/tee file validity check until command issue
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12b0199b700000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=11b0199b700000
-console output: https://syzkaller.appspot.com/x/log.txt?x=16b0199b700000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Fixes: 734a69489dd7 ("io_uring: defer file assignment")
 Reported-by: syzbot+c4b9303500a21750b250@syzkaller.appspotmail.com
-Fixes: c686f7a5cbe2 ("io_uring: defer splice/tee file validity check until command issue")
-
-==================================================================
-BUG: KASAN: null-ptr-deref in instrument_atomic_read_write include/linux/instrumented.h:101 [inline]
-BUG: KASAN: null-ptr-deref in atomic_inc include/linux/atomic/atomic-instrumented.h:190 [inline]
-BUG: KASAN: null-ptr-deref in io_req_track_inflight fs/io_uring.c:1648 [inline]
-BUG: KASAN: null-ptr-deref in io_file_get_normal+0x33e/0x380 fs/io_uring.c:7518
-Write of size 4 at addr 0000000000000118 by task iou-wrk-3588/3589
-
-CPU: 1 PID: 3589 Comm: iou-wrk-3588 Not tainted 5.17.0-next-20220331-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:106
- print_report mm/kasan/report.c:432 [inline]
- kasan_report.cold+0x61/0x1c6 mm/kasan/report.c:491
- check_region_inline mm/kasan/generic.c:183 [inline]
- kasan_check_range+0x13d/0x180 mm/kasan/generic.c:189
- instrument_atomic_read_write include/linux/instrumented.h:101 [inline]
- atomic_inc include/linux/atomic/atomic-instrumented.h:190 [inline]
- io_req_track_inflight fs/io_uring.c:1648 [inline]
- io_file_get_normal+0x33e/0x380 fs/io_uring.c:7518
- io_file_get fs/io_uring.c:7528 [inline]
- io_tee fs/io_uring.c:4401 [inline]
- io_issue_sqe+0x45f5/0x8f40 fs/io_uring.c:7354
- io_wq_submit_work+0x2b6/0x770 fs/io_uring.c:7444
- io_worker_handle_work+0xb1c/0x1ab0 fs/io-wq.c:597
- io_wqe_worker+0x637/0xdb0 fs/io-wq.c:644
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:298
- </TASK>
-==================================================================
-Kernel panic - not syncing: panic_on_warn set ...
-CPU: 0 PID: 3589 Comm: iou-wrk-3588 Not tainted 5.17.0-next-20220331-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:106
- panic+0x2d7/0x636 kernel/panic.c:274
- end_report.part.0+0x3f/0x7c mm/kasan/report.c:168
- end_report include/trace/events/error_report.h:69 [inline]
- kasan_report.cold+0x93/0x1c6 mm/kasan/report.c:493
- check_region_inline mm/kasan/generic.c:183 [inline]
- kasan_check_range+0x13d/0x180 mm/kasan/generic.c:189
- instrument_atomic_read_write include/linux/instrumented.h:101 [inline]
- atomic_inc include/linux/atomic/atomic-instrumented.h:190 [inline]
- io_req_track_inflight fs/io_uring.c:1648 [inline]
- io_file_get_normal+0x33e/0x380 fs/io_uring.c:7518
- io_file_get fs/io_uring.c:7528 [inline]
- io_tee fs/io_uring.c:4401 [inline]
- io_issue_sqe+0x45f5/0x8f40 fs/io_uring.c:7354
- io_wq_submit_work+0x2b6/0x770 fs/io_uring.c:7444
- io_worker_handle_work+0xb1c/0x1ab0 fs/io-wq.c:597
- io_wqe_worker+0x637/0xdb0 fs/io-wq.c:644
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:298
- </TASK>
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 00bc123ab5e7..1b929ca181a0 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -501,7 +501,6 @@ struct io_uring_task {
+ 	const struct io_ring_ctx *last;
+ 	struct io_wq		*io_wq;
+ 	struct percpu_counter	inflight;
+-	atomic_t		inflight_tracked;
+ 	atomic_t		in_idle;
+ 
+ 	spinlock_t		task_lock;
+@@ -1190,6 +1189,7 @@ static int __io_register_rsrc_update(struct io_ring_ctx *ctx, unsigned type,
+ static void io_clean_op(struct io_kiocb *req);
+ static struct file *io_file_get(struct io_ring_ctx *ctx,
+ 				struct io_kiocb *req, int fd, bool fixed);
++static void io_drop_inflight_file(struct io_kiocb *req);
+ static void __io_queue_sqe(struct io_kiocb *req);
+ static void io_rsrc_put_work(struct work_struct *work);
+ 
+@@ -1642,14 +1642,6 @@ static inline bool io_req_ffs_set(struct io_kiocb *req)
+ 	return req->flags & REQ_F_FIXED_FILE;
+ }
+ 
+-static inline void io_req_track_inflight(struct io_kiocb *req)
+-{
+-	if (!(req->flags & REQ_F_INFLIGHT)) {
+-		req->flags |= REQ_F_INFLIGHT;
+-		atomic_inc(&current->io_uring->inflight_tracked);
+-	}
+-}
+-
+ static struct io_kiocb *__io_prep_linked_timeout(struct io_kiocb *req)
+ {
+ 	if (WARN_ON_ONCE(!req->link))
+@@ -2560,6 +2552,8 @@ static void io_req_task_work_add(struct io_kiocb *req, bool priority)
+ 
+ 	WARN_ON_ONCE(!tctx);
+ 
++	io_drop_inflight_file(req);
++
+ 	spin_lock_irqsave(&tctx->task_lock, flags);
+ 	if (priority)
+ 		wq_list_add_tail(&req->io_task_work.node, &tctx->prior_task_list);
+@@ -7198,11 +7192,6 @@ static void io_clean_op(struct io_kiocb *req)
+ 		kfree(req->apoll);
+ 		req->apoll = NULL;
+ 	}
+-	if (req->flags & REQ_F_INFLIGHT) {
+-		struct io_uring_task *tctx = req->task->io_uring;
+-
+-		atomic_dec(&tctx->inflight_tracked);
+-	}
+ 	if (req->flags & REQ_F_CREDS)
+ 		put_cred(req->creds);
+ 	if (req->flags & REQ_F_ASYNC_DATA) {
+@@ -7487,6 +7476,19 @@ static inline struct file *io_file_get_fixed(struct io_ring_ctx *ctx,
+ 	return file;
+ }
+ 
++/*
++ * Drop the file for requeue operations. Only used of req->file is the
++ * io_uring descriptor itself.
++ */
++static void io_drop_inflight_file(struct io_kiocb *req)
++{
++	if (unlikely(req->flags & REQ_F_INFLIGHT)) {
++		fput(req->file);
++		req->file = NULL;
++		req->flags &= ~REQ_F_INFLIGHT;
++	}
++}
++
+ static struct file *io_file_get_normal(struct io_ring_ctx *ctx,
+ 				       struct io_kiocb *req, int fd)
+ {
+@@ -7495,8 +7497,8 @@ static struct file *io_file_get_normal(struct io_ring_ctx *ctx,
+ 	trace_io_uring_file_get(ctx, req, req->user_data, fd);
+ 
+ 	/* we don't allow fixed io_uring files */
+-	if (file && unlikely(file->f_op == &io_uring_fops))
+-		io_req_track_inflight(req);
++	if (unlikely(file && unlikely(file->f_op == &io_uring_fops)))
++		req->flags |= REQ_F_INFLIGHT;
+ 	return file;
+ }
+ 
+@@ -9412,7 +9414,6 @@ static __cold int io_uring_alloc_task_context(struct task_struct *task,
+ 	xa_init(&tctx->xa);
+ 	init_waitqueue_head(&tctx->wait);
+ 	atomic_set(&tctx->in_idle, 0);
+-	atomic_set(&tctx->inflight_tracked, 0);
+ 	task->io_uring = tctx;
+ 	spin_lock_init(&tctx->task_lock);
+ 	INIT_WQ_LIST(&tctx->task_list);
+@@ -10605,7 +10606,7 @@ static __cold void io_uring_clean_tctx(struct io_uring_task *tctx)
+ static s64 tctx_inflight(struct io_uring_task *tctx, bool tracked)
+ {
+ 	if (tracked)
+-		return atomic_read(&tctx->inflight_tracked);
++		return 0;
+ 	return percpu_counter_sum(&tctx->inflight);
+ }
+ 
+-- 
+Jens Axboe
+

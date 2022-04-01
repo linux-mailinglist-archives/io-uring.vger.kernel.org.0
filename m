@@ -2,114 +2,114 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D4AB4EEEE8
-	for <lists+io-uring@lfdr.de>; Fri,  1 Apr 2022 16:10:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF67B4EEEEA
+	for <lists+io-uring@lfdr.de>; Fri,  1 Apr 2022 16:11:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346699AbiDAOMm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 1 Apr 2022 10:12:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42882 "EHLO
+        id S1346679AbiDAOMt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 1 Apr 2022 10:12:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346700AbiDAOMl (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 1 Apr 2022 10:12:41 -0400
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6D8812AEB
-        for <io-uring@vger.kernel.org>; Fri,  1 Apr 2022 07:10:50 -0700 (PDT)
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20220401141048epoutp0228d20acb28baed4f3b17ab9a6c7746ff~hyxl7N1_a1725817258epoutp02h
-        for <io-uring@vger.kernel.org>; Fri,  1 Apr 2022 14:10:48 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20220401141048epoutp0228d20acb28baed4f3b17ab9a6c7746ff~hyxl7N1_a1725817258epoutp02h
+        with ESMTP id S1346700AbiDAOMt (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 1 Apr 2022 10:12:49 -0400
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4D101D4195
+        for <io-uring@vger.kernel.org>; Fri,  1 Apr 2022 07:10:58 -0700 (PDT)
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20220401141055epoutp01aa0be2d9c90e684289a130d518196a4e~hyxsbsS9m3134431344epoutp01L
+        for <io-uring@vger.kernel.org>; Fri,  1 Apr 2022 14:10:55 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20220401141055epoutp01aa0be2d9c90e684289a130d518196a4e~hyxsbsS9m3134431344epoutp01L
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1648822248;
-        bh=7+1Dq8yrmW6fow23FjCjNcBxU4f/v8mbCaJP+tB7F/8=;
+        s=mail20170921; t=1648822255;
+        bh=Hc5xXzpwjZD44aIEo0taGOc8FgWd+auSVJeKiNrii9w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CpsbnOXo3owZfPhj0205X6sS9GOGJE/zRPyd2q/R1E2ujTyCI+3j9/vCSO9tKA97y
-         EFypY8DP+2hel8rEl8JmhkYZbPAQ5fqEjAtwyq+ZAiSY8rueSKBM7lM8NQk0Hkx5+K
-         EQaP9Cakcs3FtRldnj3QfnInxvEQG/jBoEGata1g=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20220401141047epcas5p31587bad1e013c58eab84a346c706dc68~hyxk7C_NA1855818558epcas5p3i;
-        Fri,  1 Apr 2022 14:10:47 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.175]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4KVMX25vxvz4x9Pw; Fri,  1 Apr
-        2022 14:10:42 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        32.92.06423.2E707426; Fri,  1 Apr 2022 23:10:42 +0900 (KST)
+        b=iUSgST9p0mwZsII1/3ypa/76OjR6qFKF3/reBFHJKZML2skNVdTGqMhaJX7Nabu54
+         vomR2YIx9A3nP416zZWHjgo72Nn6OoC/RKRQs+CcZittF4Sr/EG+b+vxqe+EWi7h6z
+         UJl4SUogglWjJ7peyz5FaX2dHYD+fL4u20cFjRp0=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+        20220401141055epcas5p126001f302e40741f0794b91410360257~hyxrvkU-42341723417epcas5p1a;
+        Fri,  1 Apr 2022 14:10:55 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.180]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4KVMXC6mkpz4x9Pv; Fri,  1 Apr
+        2022 14:10:51 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        D6.D7.09952.BE707426; Fri,  1 Apr 2022 23:10:51 +0900 (KST)
 Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-        20220401110834epcas5p4d1e5e8d1beb1a6205d670bbcb932bf77~hwSexs-4V0831808318epcas5p4g;
-        Fri,  1 Apr 2022 11:08:34 +0000 (GMT)
+        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+        20220401110836epcas5p37bd59ab5a48cf77ca3ac05052a164b0b~hwSgjXGRE2406524065epcas5p3Q;
+        Fri,  1 Apr 2022 11:08:36 +0000 (GMT)
 Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
         epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220401110834epsmtrp2b1fcf121754edb997abfd0cbb217f7b7~hwSew33i12799827998epsmtrp2o;
-        Fri,  1 Apr 2022 11:08:34 +0000 (GMT)
-X-AuditID: b6c32a49-b01ff70000001917-ef-624707e26cb6
+        20220401110836epsmtrp2c483bdfb7743c8fb2683a25a48ff7a68~hwSgia4zx2799827998epsmtrp2t;
+        Fri,  1 Apr 2022 11:08:36 +0000 (GMT)
+X-AuditID: b6c32a4b-4b5ff700000226e0-14-624707eb70d9
 Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
         epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        53.63.24342.23DD6426; Fri,  1 Apr 2022 20:08:34 +0900 (KST)
+        34.63.24342.43DD6426; Fri,  1 Apr 2022 20:08:36 +0900 (KST)
 Received: from localhost.localdomain (unknown [107.110.206.5]) by
         epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20220401110833epsmtip1f505a4caa3c785b5ba47d434bb76fbe5~hwSdHZt5n0870608706epsmtip1x;
-        Fri,  1 Apr 2022 11:08:32 +0000 (GMT)
+        20220401110834epsmtip1545bc422309a60c847041436c5dd9a89~hwSe3TavS0870608706epsmtip1y;
+        Fri,  1 Apr 2022 11:08:34 +0000 (GMT)
 From:   Kanchan Joshi <joshi.k@samsung.com>
 To:     axboe@kernel.dk, hch@lst.de
 Cc:     io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
         asml.silence@gmail.com, ming.lei@redhat.com, mcgrof@kernel.org,
         pankydev8@gmail.com, javier@javigon.com, joshiiitr@gmail.com,
         anuj20.g@samsung.com
-Subject: [RFC 3/5] io_uring: add infra and support for IORING_OP_URING_CMD
-Date:   Fri,  1 Apr 2022 16:33:08 +0530
-Message-Id: <20220401110310.611869-4-joshi.k@samsung.com>
+Subject: [RFC 4/5] io_uring: add support for big-cqe
+Date:   Fri,  1 Apr 2022 16:33:09 +0530
+Message-Id: <20220401110310.611869-5-joshi.k@samsung.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220401110310.611869-1-joshi.k@samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrEJsWRmVeSWpSXmKPExsWy7bCmhu4jdvckgw9z9S2aJvxltpizahuj
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrCJsWRmVeSWpSXmKPExsWy7bCmlu5rdvckg+0PTS2aJvxltpizahuj
         xeq7/WwWK1cfZbJ413qOxaLz9AUmi/NvDzNZzF/2lN3ixoSnjBaHJjczWay5+ZTFgdtj56y7
         7B7NC+6weFw+W+qxaVUnm8fmJfUeu282sHm833eVzaNvyypGj8+b5AI4o7JtMlITU1KLFFLz
         kvNTMvPSbZW8g+Od403NDAx1DS0tzJUU8hJzU22VXHwCdN0yc4COVVIoS8wpBQoFJBYXK+nb
-        2RTll5akKmTkF5fYKqUWpOQUmBToFSfmFpfmpevlpZZYGRoYGJkCFSZkZxx4JV7QaVnR/v4N
-        ewPjar0uRg4OCQETiX2vI7oYuTiEBHYzSvzav4gZwvnEKLG7/w8ThPONUWLNuh3sXYycYB3v
-        N75ng0jsZZQ4ee0kI0hCSOAzo8SpJcwgY9kENCUuTC4FCYsIyEt8ub2WBaSeWeAao8TjV4fY
-        QBLCAl4SZxdsYAaxWQRUJW7Nvc4CYvMKWEos/fORDWKZvMTMS9/BFnMKWEkc+reRDaJGUOLk
-        zCdg9cxANc1bZ4OdLSEwl0Piw7ll7BC/uUgsu6UGMUdY4tXxLVAPSEl8frcXan6yROv2y1Dl
-        JRJLFqhDhO0lLu75ywQSZgZ6Zf0ufYiwrMTUU+uYILbySfT+fsIEEeeV2DEPxlaUuDfpKSuE
-        LS7xcMYSKNtDYuLa2yyQYOtllOjd+p15AqPCLCTfzELyzSyE1QsYmVcxSqYWFOempxabFhjm
-        pZbDYzg5P3cTIzjxannuYLz74IPeIUYmDsZDjBIczEoivFdjXZOEeFMSK6tSi/Lji0pzUosP
-        MZoCg3sis5Rocj4w9eeVxBuaWBqYmJmZmVgamxkqifOeTt+QKCSQnliSmp2aWpBaBNPHxMEp
-        1cDEXuFjcj57WcG0XnWLmmuVey3NzLKCdOdOz9ubPEGwun7NnWVOwX6r5322D+AWWjLLxua3
-        98yjQlen+MsZSvVM09v9p2KTlfr3bwnJ3bxhEaH9T8+7BzxyN9Odt/lbusJKr80B2bVzXrQL
-        tMsIKgfs6ylJUnxen254INA9y8RRqvFGj4Bb8tmLTI0sVyZqP17s+F1OIGHLZcf5P5drq13h
-        zMtLneR1wt4xRXjfruXTZ4kvlrtttWrTztP1vteuHMmfU8TK/HThGoF/C352WzcyPkyS3a1+
-        9dlJjsslWoE7TjO4fjS5IF8/+UHEjF1Zapk6LifjPokxTf2aoKZ+iXWKlt91B943LatXl+f2
-        TVBiKc5INNRiLipOBACja7CuRQQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrNLMWRmVeSWpSXmKPExsWy7bCSnK7RXbckgy07tS2aJvxltpizahuj
+        2RTll5akKmTkF5fYKqUWpOQUmBToFSfmFpfmpevlpZZYGRoYGJkCFSZkZ6y9PoW9oM2t4u6V
+        uYwNjFcsuhg5OCQETCSe7AEyuTiEBHYzSlyb/ZIRwvnEKLHuwQUo5xujxPuzn1i7GDnBOu69
+        uM8MkdjLKHFj5goo5zOjxP8ph5hA5rIJaEpcmFwK0iAiIC/x5fZaFpAaZoFrjBKPXx1iA0kI
+        A016vOwVmM0ioCrR/6gFzOYVsJTY0dDIBrFNXmLmpe/sIDangJXEoX8boWoEJU7OfMICYjMD
+        1TRvnQ12hITAQg6J9R23GCGaXSRWPn4ANUhY4tXxLewQtpTE53d7oeLJEq3bL7NDAqNEYskC
+        dYiwvcTFPX/BfmEG+mX9Ln2IsKzE1FPrmCDW8kn0/n7CBBHnldgxD8ZWlLg36Sk0sMQlHs5Y
+        wgox3UNid08EJKh6GSXmTGxmmcCoMAvJN7OQfDMLYfMCRuZVjJKpBcW56anFpgXGeanl8DhO
+        zs/dxAhOvlreOxgfPfigd4iRiYPxEKMEB7OSCO/VWNckId6UxMqq1KL8+KLSnNTiQ4ymwOCe
+        yCwlmpwPTP95JfGGJpYGJmZmZiaWxmaGSuK8p9I3JAoJpCeWpGanphakFsH0MXFwSjUwCT3c
+        tFS78evSkkkVlwy6DwWmXYmti1isHrNXt/vP5LtNiyNC4oLm9nKZPFLbc9yx/NrH6KojPtFn
+        ag4tefim+JJHfsxuv87NxjbTFc1eqznIdNZzmNpec/gdEfbV4tLWxq2aRt0nJu4/wdbqv8d1
+        JcfbBczLev3NtaUe/80z+seZ9UKzy+6b84Z1X/a+fnGF/cI6zbAD7x62+r1/rr/sWLeN4a5D
+        LT93MdX/cFNxU3kmL2l/RN7H63N05r27Sbs/b1TyVd79ccNnE7lZCmJORkkFl0RF9zyS2Fyz
+        w2RdNo9Ce0rhS2VZq5/aXStdPxUuTf0boRxaL7BGeIFGU/isY783/xLd9P1v5822aLFtSizF
+        GYmGWsxFxYkA1iHVsEcEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrLLMWRmVeSWpSXmKPExsWy7bCSnK7JXbckg0c3lSyaJvxltpizahuj
         xeq7/WwWK1cfZbJ413qOxaLz9AUmi/NvDzNZzF/2lN3ixoSnjBaHJjczWay5+ZTFgdtj56y7
         7B7NC+6weFw+W+qxaVUnm8fmJfUeu282sHm833eVzaNvyypGj8+b5AI4o7hsUlJzMstSi/Tt
-        ErgyDrwSL+i0rGh//4a9gXG1XhcjJ4eEgInE+43v2UBsIYHdjBLd/QoQcXGJ5ms/2CFsYYmV
-        /54D2VxANR8ZJa61X2buYuTgYBPQlLgwuRSkRkRAUWLjxyZGkBpmgQeMEven/wYbKizgJXF2
-        wQZmEJtFQFXi1tzrLCA2r4ClxNI/H9kgFshLzLz0HWwZp4CVxKF/G6EOspTYP3UeVL2gxMmZ
-        T8BsZqD65q2zmScwCsxCkpqFJLWAkWkVo2RqQXFuem6xYYFhXmq5XnFibnFpXrpecn7uJkZw
-        fGhp7mDcvuqD3iFGJg7GQ4wSHMxKIrxXY12ThHhTEiurUovy44tKc1KLDzFKc7AoifNe6DoZ
-        LySQnliSmp2aWpBaBJNl4uCUamBq+H0lI3btDm/TPyLfsu4mLjtWN2PJ/ApDYWPenoUWF0z/
-        Pbm4cWtNuyL/VwlLrTOf5eVD+vcYHEi6lXGyISVaxFK3ymYze2RVy0K+oDDNPIWy/qZFM15u
-        Wn3/jpXzpuun0pfdd3kcHniPUSohlfPDAtWD/OcvKCnenK5+uC+E14bzta/pyi0Tpjd5llyc
-        GinQfKreuvyKxDej6X4Mf1bsWltgYC2f0nNNZfPLgtds2a9CJ5oxPys+atVl8ye5udOl+p/n
-        F7flJQobXXoS3Z/ot7E5rTXZ/H7x22W3Gq1LA/6Fu01/aWZWtjCqR3hK0+qMu2nt5ncyLtoc
-        9PjXcmyVfcCKW9bCkSKbpRqn9yixFGckGmoxFxUnAgAfX9WL/gIAAA==
-X-CMS-MailID: 20220401110834epcas5p4d1e5e8d1beb1a6205d670bbcb932bf77
+        Ergy1l6fwl7Q5lZx98pcxgbGKxZdjJwcEgImEvde3GfuYuTiEBLYzSjxYkofK0RCXKL52g92
+        CFtYYuW/5+wQRR8ZJc4fmcLWxcjBwSagKXFhcilIjYiAosTGj02MIDXMAg8YJe5P/80GkhAG
+        2vB42Sswm0VAVaL/UQuYzStgKbGjoZENYoG8xMxL38GWcQpYSRz6txEsLgRUs3/qPBaIekGJ
+        kzOfgNnMQPXNW2czT2AUmIUkNQtJagEj0ypGydSC4tz03GLDAsO81HK94sTc4tK8dL3k/NxN
+        jOAY0dLcwbh91Qe9Q4xMHIyHGCU4mJVEeK/GuiYJ8aYkVlalFuXHF5XmpBYfYpTmYFES573Q
+        dTJeSCA9sSQ1OzW1ILUIJsvEwSnVwCR2iZvXZcHVpsk3N6j7qnGw9Qd7TH+pk+HyvXzjnBK+
+        27cvfzZZuEFjXe8rRUHhZM2SpNrWWzc/bkt4f+377PfTbmgZCr84cW6WcOzJlPLweJNlhhKv
+        d3B+UfhicfLApodN9rbvtZkmXp8kddo76IT405o3x//uuHi8sSZRyC+8fE3L8a+xq0Xjyyq2
+        Pb9nrz/lWkWDkL94y/RL8z013pw/lxv2e8OirCKheVvu/Z9vsqFB/9BNpg1cskVN5msD9PwW
+        ym35mxMS0iM6rag4Szjgzdv9Qb6u6Wc4J4Xbb/1+66LDRMXrPSvq9ApLdnDEVM92uW/hNe/X
+        vT6/1b4Tnz36mRYmW51tULuVcRbLxu9KLMUZiYZazEXFiQC4uOGcAAMAAA==
+X-CMS-MailID: 20220401110836epcas5p37bd59ab5a48cf77ca3ac05052a164b0b
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: REQ_APPROVE
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220401110834epcas5p4d1e5e8d1beb1a6205d670bbcb932bf77
+X-CMS-RootMailID: 20220401110836epcas5p37bd59ab5a48cf77ca3ac05052a164b0b
 References: <20220401110310.611869-1-joshi.k@samsung.com>
-        <CGME20220401110834epcas5p4d1e5e8d1beb1a6205d670bbcb932bf77@epcas5p4.samsung.com>
+        <CGME20220401110836epcas5p37bd59ab5a48cf77ca3ac05052a164b0b@epcas5p3.samsung.com>
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -117,245 +117,267 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Jens Axboe <axboe@kernel.dk>
+Add IORING_SETUP_CQE32 flag to allow setting up ring with big-cqe which
+is 32 bytes in size. Also modify uring-cmd completion infra to accept
+additional result and fill that up in big-cqe.
 
-This is a file private kind of request. io_uring doesn't know what's
-in this command type, it's for the file_operations->async_cmd()
-handler to deal with.
-
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
 Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
 ---
- fs/io_uring.c                 | 79 +++++++++++++++++++++++++++++++----
- include/linux/io_uring.h      | 29 +++++++++++++
- include/uapi/linux/io_uring.h |  8 +++-
- 3 files changed, 108 insertions(+), 8 deletions(-)
+ fs/io_uring.c                 | 82 +++++++++++++++++++++++++++++------
+ include/linux/io_uring.h      | 10 +++--
+ include/uapi/linux/io_uring.h | 11 +++++
+ 3 files changed, 87 insertions(+), 16 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 241ba1cd6dcf..bd0e6b102a7b 100644
+index bd0e6b102a7b..b819c0ad47fc 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -200,13 +200,6 @@ struct io_rings {
- 	struct io_uring_cqe	cqes[] ____cacheline_aligned_in_smp;
+@@ -211,8 +211,8 @@ struct io_mapped_ubuf {
+ struct io_ring_ctx;
+ 
+ struct io_overflow_cqe {
+-	struct io_uring_cqe cqe;
+ 	struct list_head list;
++	struct io_uring_cqe cqe; /* this must be kept at end */
  };
  
--enum io_uring_cmd_flags {
--	IO_URING_F_COMPLETE_DEFER	= 1,
--	IO_URING_F_UNLOCKED		= 2,
--	/* int's last bit, sign checks are usually faster than a bit test */
--	IO_URING_F_NONBLOCK		= INT_MIN,
--};
--
- struct io_mapped_ubuf {
- 	u64		ubuf;
- 	u64		ubuf_end;
-@@ -860,6 +853,7 @@ struct io_kiocb {
- 		struct io_mkdir		mkdir;
- 		struct io_symlink	symlink;
- 		struct io_hardlink	hardlink;
-+		struct io_uring_cmd	uring_cmd;
- 	};
+ struct io_fixed_file {
+@@ -1713,6 +1713,13 @@ static inline struct io_uring_cqe *io_get_cqe(struct io_ring_ctx *ctx)
+ 		return NULL;
  
- 	u8				opcode;
-@@ -1110,6 +1104,9 @@ static const struct io_op_def io_op_defs[] = {
- 	[IORING_OP_MKDIRAT] = {},
- 	[IORING_OP_SYMLINKAT] = {},
- 	[IORING_OP_LINKAT] = {},
-+	[IORING_OP_URING_CMD] = {
-+		.needs_file		= 1,
-+	},
- };
- 
- /* requests with any of those set should undergo io_disarm_next() */
-@@ -2464,6 +2461,22 @@ static void io_req_task_submit(struct io_kiocb *req, bool *locked)
- 		io_req_complete_failed(req, -EFAULT);
+ 	tail = ctx->cached_cq_tail++;
++
++	/* double index for large CQE */
++	if (ctx->flags & IORING_SETUP_CQE32) {
++		mask = 2 * ctx->cq_entries - 1;
++		tail <<= 1;
++	}
++
+ 	return &rings->cqes[tail & mask];
  }
  
-+static void io_uring_cmd_work(struct io_kiocb *req, bool *locked)
-+{
-+	req->uring_cmd.driver_cb(&req->uring_cmd);
-+}
-+
-+void io_uring_cmd_complete_in_task(struct io_uring_cmd *ioucmd,
-+			void (*driver_cb)(struct io_uring_cmd *))
-+{
-+	struct io_kiocb *req = container_of(ioucmd, struct io_kiocb, uring_cmd);
-+
-+	req->uring_cmd.driver_cb = driver_cb;
-+	req->io_task_work.func = io_uring_cmd_work;
-+	io_req_task_work_add(req, !!(req->ctx->flags & IORING_SETUP_SQPOLL));
-+}
-+EXPORT_SYMBOL_GPL(io_uring_cmd_complete_in_task);
-+
- static void io_req_task_queue_fail(struct io_kiocb *req, int ret)
- {
- 	req->result = ret;
-@@ -4109,6 +4122,51 @@ static int io_linkat(struct io_kiocb *req, unsigned int issue_flags)
- 	return 0;
+@@ -1792,13 +1799,16 @@ static bool __io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool force)
+ 	while (!list_empty(&ctx->cq_overflow_list)) {
+ 		struct io_uring_cqe *cqe = io_get_cqe(ctx);
+ 		struct io_overflow_cqe *ocqe;
++		int cqeshift = 0;
+ 
+ 		if (!cqe && !force)
+ 			break;
++		/* copy more for big-cqe */
++		cqeshift = ctx->flags & IORING_SETUP_CQE32 ? 1 : 0;
+ 		ocqe = list_first_entry(&ctx->cq_overflow_list,
+ 					struct io_overflow_cqe, list);
+ 		if (cqe)
+-			memcpy(cqe, &ocqe->cqe, sizeof(*cqe));
++			memcpy(cqe, &ocqe->cqe, sizeof(*cqe) << cqeshift);
+ 		else
+ 			io_account_cq_overflow(ctx);
+ 
+@@ -1884,11 +1894,17 @@ static __cold void io_uring_drop_tctx_refs(struct task_struct *task)
  }
  
-+/*
-+ * Called by consumers of io_uring_cmd, if they originally returned
-+ * -EIOCBQUEUED upon receiving the command.
-+ */
-+void io_uring_cmd_done(struct io_uring_cmd *ioucmd, ssize_t ret)
-+{
-+	struct io_kiocb *req = container_of(ioucmd, struct io_kiocb, uring_cmd);
-+
-+	if (ret < 0)
-+		req_set_fail(req);
-+	io_req_complete(req, ret);
-+}
-+EXPORT_SYMBOL_GPL(io_uring_cmd_done);
-+
-+static int io_uring_cmd_prep(struct io_kiocb *req,
-+			     const struct io_uring_sqe *sqe)
-+{
-+	struct io_uring_cmd *ioucmd = &req->uring_cmd;
-+
-+	if (!req->file->f_op->async_cmd)
-+		return -EOPNOTSUPP;
-+	if (req->ctx->flags & IORING_SETUP_IOPOLL)
-+		return -EOPNOTSUPP;
-+	ioucmd->cmd = (void *) &sqe->cmd;
-+	ioucmd->cmd_op = READ_ONCE(sqe->cmd_op);
-+	ioucmd->cmd_len = READ_ONCE(sqe->cmd_len);
-+	ioucmd->flags = 0;
-+	return 0;
-+}
-+
-+static int io_uring_cmd(struct io_kiocb *req, unsigned int issue_flags)
-+{
-+	struct file *file = req->file;
-+	int ret;
-+	struct io_uring_cmd *ioucmd = &req->uring_cmd;
-+
-+	ioucmd->flags |= issue_flags;
-+	ret = file->f_op->async_cmd(ioucmd);
-+	/* queued async, consumer will call io_uring_cmd_done() when complete */
-+	if (ret == -EIOCBQUEUED)
-+		return 0;
-+	io_uring_cmd_done(ioucmd, ret);
-+	return 0;
-+}
-+
- static int io_shutdown_prep(struct io_kiocb *req,
- 			    const struct io_uring_sqe *sqe)
+ static bool io_cqring_event_overflow(struct io_ring_ctx *ctx, u64 user_data,
+-				     s32 res, u32 cflags)
++				     s32 res, u32 cflags, u64 res2,
++				     int bigcqe)
  {
-@@ -6588,6 +6646,8 @@ static int io_req_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 		return io_symlinkat_prep(req, sqe);
- 	case IORING_OP_LINKAT:
- 		return io_linkat_prep(req, sqe);
-+	case IORING_OP_URING_CMD:
-+		return io_uring_cmd_prep(req, sqe);
+ 	struct io_overflow_cqe *ocqe;
++	int size = sizeof(*ocqe);
++
++	/* allocate more for big-cqe */
++	if (bigcqe)
++		size += sizeof(struct io_uring_cqe);
+ 
+-	ocqe = kmalloc(sizeof(*ocqe), GFP_ATOMIC | __GFP_ACCOUNT);
++	ocqe = kmalloc(size, GFP_ATOMIC | __GFP_ACCOUNT);
+ 	if (!ocqe) {
+ 		/*
+ 		 * If we're in ring overflow flush mode, or in task cancel mode,
+@@ -1907,6 +1923,11 @@ static bool io_cqring_event_overflow(struct io_ring_ctx *ctx, u64 user_data,
+ 	ocqe->cqe.user_data = user_data;
+ 	ocqe->cqe.res = res;
+ 	ocqe->cqe.flags = cflags;
++	if (bigcqe) {
++		struct io_uring_cqe32 *bcqe = (struct io_uring_cqe32 *)&ocqe->cqe;
++
++		bcqe->res2 = res2;
++	}
+ 	list_add_tail(&ocqe->list, &ctx->cq_overflow_list);
+ 	return true;
+ }
+@@ -1928,13 +1949,38 @@ static inline bool __fill_cqe(struct io_ring_ctx *ctx, u64 user_data,
+ 		WRITE_ONCE(cqe->flags, cflags);
+ 		return true;
  	}
+-	return io_cqring_event_overflow(ctx, user_data, res, cflags);
++	return io_cqring_event_overflow(ctx, user_data, res, cflags, 0, false);
+ }
  
- 	printk_once(KERN_WARNING "io_uring: unhandled opcode %d\n",
-@@ -6871,6 +6931,9 @@ static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags)
- 	case IORING_OP_LINKAT:
- 		ret = io_linkat(req, issue_flags);
- 		break;
-+	case IORING_OP_URING_CMD:
-+		ret = io_uring_cmd(req, issue_flags);
-+		break;
- 	default:
- 		ret = -EINVAL;
- 		break;
-@@ -11215,6 +11278,8 @@ static int __init io_uring_init(void)
- 	BUILD_BUG_ON(ARRAY_SIZE(io_op_defs) != IORING_OP_LAST);
- 	BUILD_BUG_ON(__REQ_F_LAST_BIT > 8 * sizeof(int));
- 
-+	BUILD_BUG_ON(sizeof(struct io_uring_cmd) > 64);
++static inline bool __fill_big_cqe(struct io_ring_ctx *ctx, u64 user_data,
++				 s32 res, u32 cflags, u64 res2)
++{
++	struct io_uring_cqe32 *bcqe;
 +
- 	req_cachep = KMEM_CACHE(io_kiocb, SLAB_HWCACHE_ALIGN | SLAB_PANIC |
- 				SLAB_ACCOUNT);
++	/*
++	 * If we can't get a cq entry, userspace overflowed the
++	 * submission (by quite a lot). Increment the overflow count in
++	 * the ring.
++	 */
++	bcqe = (struct io_uring_cqe32 *) io_get_cqe(ctx);
++	if (likely(bcqe)) {
++		WRITE_ONCE(bcqe->cqe.user_data, user_data);
++		WRITE_ONCE(bcqe->cqe.res, res);
++		WRITE_ONCE(bcqe->cqe.flags, cflags);
++		WRITE_ONCE(bcqe->res2, res2);
++		return true;
++	}
++	return io_cqring_event_overflow(ctx, user_data, res, cflags, res2,
++		       true);
++}
+ static inline bool __io_fill_cqe(struct io_kiocb *req, s32 res, u32 cflags)
+ {
+ 	trace_io_uring_complete(req->ctx, req, req->user_data, res, cflags);
+-	return __fill_cqe(req->ctx, req->user_data, res, cflags);
++	if (!(req->ctx->flags & IORING_SETUP_CQE32))
++		return __fill_cqe(req->ctx, req->user_data, res, cflags);
++	else
++		return __fill_big_cqe(req->ctx, req->user_data, res, cflags,
++				req->uring_cmd.res2);
+ }
+ 
+ static noinline void io_fill_cqe_req(struct io_kiocb *req, s32 res, u32 cflags)
+@@ -4126,10 +4172,12 @@ static int io_linkat(struct io_kiocb *req, unsigned int issue_flags)
+  * Called by consumers of io_uring_cmd, if they originally returned
+  * -EIOCBQUEUED upon receiving the command.
+  */
+-void io_uring_cmd_done(struct io_uring_cmd *ioucmd, ssize_t ret)
++void io_uring_cmd_done(struct io_uring_cmd *ioucmd, ssize_t ret, ssize_t res2)
+ {
+ 	struct io_kiocb *req = container_of(ioucmd, struct io_kiocb, uring_cmd);
+ 
++	/* store secondary result in res2 */
++	req->uring_cmd.res2 = res2;
+ 	if (ret < 0)
+ 		req_set_fail(req);
+ 	io_req_complete(req, ret);
+@@ -4163,7 +4211,7 @@ static int io_uring_cmd(struct io_kiocb *req, unsigned int issue_flags)
+ 	/* queued async, consumer will call io_uring_cmd_done() when complete */
+ 	if (ret == -EIOCBQUEUED)
+ 		return 0;
+-	io_uring_cmd_done(ioucmd, ret);
++	io_uring_cmd_done(ioucmd, ret, 0);
  	return 0;
+ }
+ 
+@@ -9026,13 +9074,20 @@ static void *io_mem_alloc(size_t size)
+ 	return (void *) __get_free_pages(gfp_flags, get_order(size));
+ }
+ 
+-static unsigned long rings_size(unsigned sq_entries, unsigned cq_entries,
+-				size_t *sq_offset)
++static unsigned long rings_size(struct io_uring_params *p,
++		size_t *sq_offset)
+ {
++	unsigned sq_entries, cq_entries;
+ 	struct io_rings *rings;
+ 	size_t off, sq_array_size;
+ 
+-	off = struct_size(rings, cqes, cq_entries);
++	sq_entries = p->sq_entries;
++	cq_entries = p->cq_entries;
++
++	if (p->flags & IORING_SETUP_CQE32)
++		off = struct_size(rings, cqes, 2 * cq_entries);
++	else
++		off = struct_size(rings, cqes, cq_entries);
+ 	if (off == SIZE_MAX)
+ 		return SIZE_MAX;
+ 
+@@ -10483,7 +10538,7 @@ static __cold int io_allocate_scq_urings(struct io_ring_ctx *ctx,
+ 	ctx->sq_entries = p->sq_entries;
+ 	ctx->cq_entries = p->cq_entries;
+ 
+-	size = rings_size(p->sq_entries, p->cq_entries, &sq_array_offset);
++	size = rings_size(p, &sq_array_offset);
+ 	if (size == SIZE_MAX)
+ 		return -EOVERFLOW;
+ 
+@@ -10713,7 +10768,8 @@ static long io_uring_setup(u32 entries, struct io_uring_params __user *params)
+ 	if (p.flags & ~(IORING_SETUP_IOPOLL | IORING_SETUP_SQPOLL |
+ 			IORING_SETUP_SQ_AFF | IORING_SETUP_CQSIZE |
+ 			IORING_SETUP_CLAMP | IORING_SETUP_ATTACH_WQ |
+-			IORING_SETUP_R_DISABLED | IORING_SETUP_SQE128))
++			IORING_SETUP_R_DISABLED | IORING_SETUP_SQE128 |
++			IORING_SETUP_CQE32))
+ 		return -EINVAL;
+ 
+ 	return  io_uring_create(entries, &p, params);
 diff --git a/include/linux/io_uring.h b/include/linux/io_uring.h
-index 649a4d7c241b..cedc68201469 100644
+index cedc68201469..0aba7b50cde6 100644
 --- a/include/linux/io_uring.h
 +++ b/include/linux/io_uring.h
-@@ -5,7 +5,29 @@
- #include <linux/sched.h>
- #include <linux/xarray.h>
+@@ -14,7 +14,10 @@ enum io_uring_cmd_flags {
  
-+enum io_uring_cmd_flags {
-+	IO_URING_F_COMPLETE_DEFER	= 1,
-+	IO_URING_F_UNLOCKED		= 2,
-+	/* int's last bit, sign checks are usually faster than a bit test */
-+	IO_URING_F_NONBLOCK		= INT_MIN,
-+};
-+
-+struct io_uring_cmd {
-+	struct file     *file;
-+	void            *cmd;
-+	/* for irq-completion - if driver requires doing stuff in task-context*/
-+	void (*driver_cb)(struct io_uring_cmd *cmd);
-+	u32             flags;
-+	u32             cmd_op;
-+	u16		cmd_len;
-+	u16		unused;
-+	u8		pdu[28]; /* available inline for free use */
-+};
-+
+ struct io_uring_cmd {
+ 	struct file     *file;
+-	void            *cmd;
++	union {
++		void            *cmd; /* used on submission */
++		u64		res2; /* used on completion */
++	};
+ 	/* for irq-completion - if driver requires doing stuff in task-context*/
+ 	void (*driver_cb)(struct io_uring_cmd *cmd);
+ 	u32             flags;
+@@ -25,7 +28,7 @@ struct io_uring_cmd {
+ };
+ 
  #if defined(CONFIG_IO_URING)
-+void io_uring_cmd_done(struct io_uring_cmd *cmd, ssize_t ret);
-+void io_uring_cmd_complete_in_task(struct io_uring_cmd *ioucmd,
-+			void (*driver_cb)(struct io_uring_cmd *));
+-void io_uring_cmd_done(struct io_uring_cmd *cmd, ssize_t ret);
++void io_uring_cmd_done(struct io_uring_cmd *cmd, ssize_t ret, ssize_t res2);
+ void io_uring_cmd_complete_in_task(struct io_uring_cmd *ioucmd,
+ 			void (*driver_cb)(struct io_uring_cmd *));
  struct sock *io_uring_get_socket(struct file *file);
- void __io_uring_cancel(bool cancel_all);
- void __io_uring_free(struct task_struct *tsk);
-@@ -26,6 +48,13 @@ static inline void io_uring_free(struct task_struct *tsk)
+@@ -48,7 +51,8 @@ static inline void io_uring_free(struct task_struct *tsk)
  		__io_uring_free(tsk);
  }
  #else
-+static inline void io_uring_cmd_done(struct io_uring_cmd *cmd, ssize_t ret)
-+{
-+}
-+static inline void io_uring_cmd_complete_in_task(struct io_uring_cmd *ioucmd,
-+			void (*driver_cb)(struct io_uring_cmd *))
-+{
-+}
- static inline struct sock *io_uring_get_socket(struct file *file)
+-static inline void io_uring_cmd_done(struct io_uring_cmd *cmd, ssize_t ret)
++static inline void io_uring_cmd_done(struct io_uring_cmd *cmd, ssize_t ret,
++		ssize_t ret2)
  {
- 	return NULL;
+ }
+ static inline void io_uring_cmd_complete_in_task(struct io_uring_cmd *ioucmd,
 diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index c5db68433ca5..d7a4bdb9bf3b 100644
+index d7a4bdb9bf3b..85b8ff046496 100644
 --- a/include/uapi/linux/io_uring.h
 +++ b/include/uapi/linux/io_uring.h
-@@ -22,10 +22,12 @@ struct io_uring_sqe {
- 	union {
- 		__u64	off;	/* offset into file */
- 		__u64	addr2;
-+		__u32	cmd_op;
- 	};
- 	union {
- 		__u64	addr;	/* pointer to buffer or iovecs */
- 		__u64	splice_off_in;
-+		__u16	cmd_len;
- 	};
- 	__u32	len;		/* buffer size or number of iovecs */
- 	union {
-@@ -60,7 +62,10 @@ struct io_uring_sqe {
- 		__s32	splice_fd_in;
- 		__u32	file_index;
- 	};
--	__u64	__pad2[2];
-+	union {
-+		__u64	__pad2[2];
-+		__u64	cmd;
-+	};
+@@ -113,6 +113,7 @@ enum {
+ #define IORING_SETUP_ATTACH_WQ	(1U << 5)	/* attach to existing wq */
+ #define IORING_SETUP_R_DISABLED	(1U << 6)	/* start with ring disabled */
+ #define IORING_SETUP_SQE128	(1U << 7)	/* SQEs are 128b */
++#define IORING_SETUP_CQE32	(1U << 8)	/* CQEs are 32b */
  
- 	/*
- 	 * If the ring is initializefd with IORING_SETUP_SQE128, then this field
-@@ -150,6 +155,7 @@ enum {
- 	IORING_OP_MKDIRAT,
- 	IORING_OP_SYMLINKAT,
- 	IORING_OP_LINKAT,
-+	IORING_OP_URING_CMD,
+ enum {
+ 	IORING_OP_NOP,
+@@ -207,6 +208,16 @@ struct io_uring_cqe {
+ 	__u32	flags;
+ };
  
- 	/* this goes last, obviously */
- 	IORING_OP_LAST,
++/*
++ * If the ring is initializefd with IORING_SETUP_CQE32, we setup large cqe.
++ * Large CQE is created by combining two adjacent regular CQES.
++ */
++struct io_uring_cqe32 {
++	struct io_uring_cqe	cqe;
++	__u64	res2;
++	__u64	unused;
++};
++
+ /*
+  * cqe->flags
+  *
 -- 
 2.25.1
 

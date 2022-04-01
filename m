@@ -2,179 +2,240 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F215D4EF79D
-	for <lists+io-uring@lfdr.de>; Fri,  1 Apr 2022 18:20:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7A864EF7F1
+	for <lists+io-uring@lfdr.de>; Fri,  1 Apr 2022 18:29:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346156AbiDAQLb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 1 Apr 2022 12:11:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49800 "EHLO
+        id S1343809AbiDAQam (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 1 Apr 2022 12:30:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45474 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351991AbiDAQLB (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 1 Apr 2022 12:11:01 -0400
-Received: from mail-il1-x12c.google.com (mail-il1-x12c.google.com [IPv6:2607:f8b0:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F5CF143C7E
-        for <io-uring@vger.kernel.org>; Fri,  1 Apr 2022 08:36:27 -0700 (PDT)
-Received: by mail-il1-x12c.google.com with SMTP id y16so2191754ilc.7
-        for <io-uring@vger.kernel.org>; Fri, 01 Apr 2022 08:36:27 -0700 (PDT)
+        with ESMTP id S1351580AbiDAQ3v (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 1 Apr 2022 12:29:51 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E91917B881
+        for <io-uring@vger.kernel.org>; Fri,  1 Apr 2022 09:02:53 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id lr4so6739386ejb.11
+        for <io-uring@vger.kernel.org>; Fri, 01 Apr 2022 09:02:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=JcuIO7mlr0OUifXwpXBrWm6kMzQVDkcTDqgugzIHvIQ=;
-        b=gCit9uoU6QDSlyzOPAPdDxlZD6WcMm7TNTvkkeac0jx/FQFU60/sLbOeN52nPrXQoi
-         V/FnFxQGjl7vkpRl5noRvOdZmDUT5p0memUGCAKvtgydSNIyIv+s2JVhmCwfNhI6T4GG
-         ECt+yCu4YUGx28r5+lrNweCdXz6/ZJIGD0kh+fD6uZ0U1RP8ZbfqSNdKkHWKeNrd1in0
-         yxBbF0RVpr9tvNJG2AN4yZMHHMHR1u8EKss2lRT/4CdK32+OKYlj3miNqaxAPBePERV7
-         Fzk9Cqy9ym9ugq+j3NXii4njQjwNNvq6QDX3rechhRsiIbtxxZsJmnTikyMAL4dlcdHh
-         eA2g==
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XojI5NG1Ngof+DXqgpy8fylrJvLLgcTEPWV9wOr8fTQ=;
+        b=DVZdN5f/SNejskyFVUDLPktpTitdcrdg9j0rCyGoqWJjEoZ+CKGXAnVVMZ8vptI81S
+         Eq+1zOhKnyyl/ggnQ2pobeILTbLBdG8l+Dz9WWuwG+TivGAhoaMJForW6yR6k0fgIQFI
+         NRumHVY31gRgznXK6XyF5nRxuHDp64UtJI4HE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=JcuIO7mlr0OUifXwpXBrWm6kMzQVDkcTDqgugzIHvIQ=;
-        b=CjQd+n6QNbAvizgwMNcZhOVgQA4FFXdtTFdo4d4+7XT2CjvwME/chHn8RD0PoMMZjT
-         bfhia9G3K+ms9JRFZw2V3O1W1V3e/nU57YhfNduOfKx2Z+WMIEsABohGBFU4AOSURVhL
-         /cR/xmRaEFbgGZAl8ck+6XOGO5PNk7kjgu9cxsTSYohZ7C7IEm1u3mn960QjqP+gYIe4
-         nB1XeEXd92LVOg50VdZVpgTTyNpTj1/MVn/Jb1z48G9nrnSs1AkKEZlV0ZGi/I5j/G5G
-         6SV3KIR5PQJQKLZNgD2I6gVPfCFFAxPyrRs0VnyqrvGQTyxufDlN6lhzlXnbJshp3IwZ
-         vr9g==
-X-Gm-Message-State: AOAM53130XpzRd+709j4oPE1ZFnDmqkDkGHnXbWjhW092dDTa4Dr0fNf
-        E5kUahHeHJcxwLz67J2H7iGCcC5SXNGDa8Og
-X-Google-Smtp-Source: ABdhPJzfCsx4SoQ0sa9RSN8WqADTLOS77xZxdarO7tN0A63VAt6lmsiXsIBiQR0Mra/hUqc9ajAKsg==
-X-Received: by 2002:a92:6012:0:b0:2c6:b0d:240e with SMTP id u18-20020a926012000000b002c60b0d240emr161344ilb.177.1648827387211;
-        Fri, 01 Apr 2022 08:36:27 -0700 (PDT)
-Received: from [192.168.1.172] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id j13-20020a056e02014d00b002c98acb8d32sm1453965ilr.45.2022.04.01.08.36.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Apr 2022 08:36:26 -0700 (PDT)
-Message-ID: <fbf3b195-7415-7f84-c0e6-bdfebf9692f2@kernel.dk>
-Date:   Fri, 1 Apr 2022 09:36:25 -0600
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XojI5NG1Ngof+DXqgpy8fylrJvLLgcTEPWV9wOr8fTQ=;
+        b=q1SUTWLUUQKq4VwFYAl/CW91bVbVxsw716rPn247sLp/WRWpRARDgrP4u/p28cL3Hh
+         69Z3l5vkmr5X81JAfypzWKh9qQ056moCVuujXhvMIxDo/LSRU2guy8hnF9iKQCsxV9xa
+         5TOPFH3JpbTeBN9U0sg6p9Nl2RJaKa9CkIbtCBlTLmaSkJnoDSfoMruipaGKxuygY0+R
+         QoVGs6kskHVpnGRbB10sWX2ic1777Su5hvsmiVjyw/akm5TfXmfvjwFfvMQhqBB3vKU+
+         6nJm0xkrFWsPIheb9u6JbUtZcpS68rxheiBtRSz56DiTOmgQzgOS3AlrW71WVjCICFvn
+         2/iA==
+X-Gm-Message-State: AOAM532JChM7cSgg/gijAeO+bY+Dmz0iUosgEk5p8IpLb+pxDj8ssj0v
+        Q1VMPvJFIL5Nm74AbXrDzftEffg3JlfTA4p3cWtHwW2N2YdHZA==
+X-Google-Smtp-Source: ABdhPJxVxTmCsiSNrZ1UbbYCiKNxxbMcSDejmF87PKv8TSfccvPLZWus5HTaACmPHYtAY+dSYJs/cqODo7/VWDOoyD4=
+X-Received: by 2002:a17:907:62aa:b0:6e0:f208:b869 with SMTP id
+ nd42-20020a17090762aa00b006e0f208b869mr443045ejc.270.1648828972426; Fri, 01
+ Apr 2022 09:02:52 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: io_uring_prep_openat_direct() and link/drain
-Content-Language: en-US
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     io-uring@vger.kernel.org
 References: <CAJfpegvVpFbDX5so8EVaHxubZLNQ4bo=myAYopWeRtMs0wa6nA@mail.gmail.com>
- <89322bd1-5e6f-bcc6-7974-ffd22363a165@kernel.dk>
- <CAJfpegtr+Bo0O=i9uShDJO_=--KAsFmvdzodwH6qF7f+ABeQ5g@mail.gmail.com>
- <0c5745ab-5d3d-52c1-6a1d-e5e33d4078b5@kernel.dk>
- <CAJfpegtob8ZWU1TDBoUf7SRMQJhEcEo2sPUumzpNd3Mcg+1aog@mail.gmail.com>
- <52dca413-61b3-8ded-c4cc-dd6c8e8de1ed@kernel.dk>
- <CAJfpegtEG2c3H8ZyOWPT69HJN2UWU1es-n9P+CSgV7jiZMPtGg@mail.gmail.com>
- <23b62cca-8ec5-f250-e5a3-7e9ed983e190@kernel.dk>
- <CAJfpeguZji8x+zXSADJ4m6VKbdmTb6ZQd5zA=HCt8acxvGSr3w@mail.gmail.com>
+ <89322bd1-5e6f-bcc6-7974-ffd22363a165@kernel.dk> <CAJfpegtr+Bo0O=i9uShDJO_=--KAsFmvdzodwH6qF7f+ABeQ5g@mail.gmail.com>
+ <0c5745ab-5d3d-52c1-6a1d-e5e33d4078b5@kernel.dk> <CAJfpegtob8ZWU1TDBoUf7SRMQJhEcEo2sPUumzpNd3Mcg+1aog@mail.gmail.com>
+ <52dca413-61b3-8ded-c4cc-dd6c8e8de1ed@kernel.dk> <CAJfpegtEG2c3H8ZyOWPT69HJN2UWU1es-n9P+CSgV7jiZMPtGg@mail.gmail.com>
+ <23b62cca-8ec5-f250-e5a3-7e9ed983e190@kernel.dk> <CAJfpeguZji8x+zXSADJ4m6VKbdmTb6ZQd5zA=HCt8acxvGSr3w@mail.gmail.com>
  <CAJfpegsADrdURSUOrGTjbu1DoRr7-8itGx23Tn0wf6gNdO5dWA@mail.gmail.com>
- <77229971-72cd-7d78-d790-3ef4789acc9e@kernel.dk>
- <CAJfpeguiZ7U=YQhgGa-oPWO07tpBL6sf3zM=xtAk66njb1p2cw@mail.gmail.com>
- <c5f27130-b4ad-3f4c-ce98-4414227db4fd@kernel.dk>
- <61c2336f-0315-5f76-3022-18c80f79e0b5@kernel.dk>
- <38436a44-5048-2062-c339-66679ae1e282@kernel.dk>
- <CAJfpegvM3LQ8nsJf=LsWjQznpOzC+mZFXB5xkZgZHR2tXXjxLQ@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CAJfpegvM3LQ8nsJf=LsWjQznpOzC+mZFXB5xkZgZHR2tXXjxLQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+ <77229971-72cd-7d78-d790-3ef4789acc9e@kernel.dk> <CAJfpeguiZ7U=YQhgGa-oPWO07tpBL6sf3zM=xtAk66njb1p2cw@mail.gmail.com>
+ <c5f27130-b4ad-3f4c-ce98-4414227db4fd@kernel.dk> <61c2336f-0315-5f76-3022-18c80f79e0b5@kernel.dk>
+ <38436a44-5048-2062-c339-66679ae1e282@kernel.dk> <CAJfpegvM3LQ8nsJf=LsWjQznpOzC+mZFXB5xkZgZHR2tXXjxLQ@mail.gmail.com>
+ <fbf3b195-7415-7f84-c0e6-bdfebf9692f2@kernel.dk>
+In-Reply-To: <fbf3b195-7415-7f84-c0e6-bdfebf9692f2@kernel.dk>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Fri, 1 Apr 2022 18:02:40 +0200
+Message-ID: <CAJfpeguq1bBDa9-gbk6tutME1kH4SdHvkUdLGKzfdmhpCtCt6g@mail.gmail.com>
+Subject: Re: io_uring_prep_openat_direct() and link/drain
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org
+Content-Type: multipart/mixed; boundary="000000000000329f7105db99e98f"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_INVALID,
+        DKIM_SIGNED,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/1/22 2:40 AM, Miklos Szeredi wrote:
-> On Wed, 30 Mar 2022 at 19:49, Jens Axboe <axboe@kernel.dk> wrote:
->>
->> On 3/30/22 9:53 AM, Jens Axboe wrote:
->>> On 3/30/22 9:17 AM, Jens Axboe wrote:
->>>> On 3/30/22 9:12 AM, Miklos Szeredi wrote:
->>>>> On Wed, 30 Mar 2022 at 17:05, Jens Axboe <axboe@kernel.dk> wrote:
->>>>>>
->>>>>> On 3/30/22 8:58 AM, Miklos Szeredi wrote:
->>>>>>> Next issue:  seems like file slot reuse is not working correctly.
->>>>>>> Attached program compares reads using io_uring with plain reads of
->>>>>>> proc files.
->>>>>>>
->>>>>>> In the below example it is using two slots alternately but the number
->>>>>>> of slots does not seem to matter, read is apparently always using a
->>>>>>> stale file (the prior one to the most recent open on that slot).  See
->>>>>>> how the sizes of the files lag by two lines:
->>>>>>>
->>>>>>> root@kvm:~# ./procreads
->>>>>>> procreads: /proc/1/stat: ok (313)
->>>>>>> procreads: /proc/2/stat: ok (149)
->>>>>>> procreads: /proc/3/stat: read size mismatch 313/150
->>>>>>> procreads: /proc/4/stat: read size mismatch 149/154
->>>>>>> procreads: /proc/5/stat: read size mismatch 150/161
->>>>>>> procreads: /proc/6/stat: read size mismatch 154/171
->>>>>>> ...
->>>>>>>
->>>>>>> Any ideas?
->>>>>>
->>>>>> Didn't look at your code yet, but with the current tree, this is the
->>>>>> behavior when a fixed file is used:
->>>>>>
->>>>>> At prep time, if the slot is valid it is used. If it isn't valid,
->>>>>> assignment is deferred until the request is issued.
->>>>>>
->>>>>> Which granted is a bit weird. It means that if you do:
->>>>>>
->>>>>> <open fileA into slot 1, slot 1 currently unused><read slot 1>
->>>>>>
->>>>>> the read will read from fileA. But for:
->>>>>>
->>>>>> <open fileB into slot 1, slot 1 is fileA currently><read slot 1>
->>>>>>
->>>>>> since slot 1 is already valid at prep time for the read, the read will
->>>>>> be from fileA again.
->>>>>>
->>>>>> Is this what you are seeing? It's definitely a bit confusing, and the
->>>>>> only reason why I didn't change it is because it could potentially break
->>>>>> applications. Don't think there's a high risk of that, however, so may
->>>>>> indeed be worth it to just bite the bullet and the assignment is
->>>>>> consistent (eg always done from the perspective of the previous
->>>>>> dependent request having completed).
->>>>>>
->>>>>> Is this what you are seeing?
->>>>>
->>>>> Right, this explains it.   Then the only workaround would be to wait
->>>>> for the open to finish before submitting the read, but that would
->>>>> defeat the whole point of using io_uring for this purpose.
->>>>
->>>> Honestly, I think we should just change it during this round, making it
->>>> consistent with the "slot is unused" use case. The old use case is more
->>>> more of a "it happened to work" vs the newer consistent behavior of "we
->>>> always assign the file when execution starts on the request".
->>>>
->>>> Let me spin a patch, would be great if you could test.
->>>
->>> Something like this on top of the current tree should work. Can you
->>> test?
->>
->> You can also just re-pull for-5.18/io_uring, it has been updated. A last
->> minute edit make a 0 return from io_assign_file() which should've been
->> 'true'...
-> 
-> Yep, this works now.
-> 
-> Next issue:  will get ENFILE even though there are just 40 slots.
-> When running as root, then it will get as far as invoking the OOM
-> killer, which is really bad.
-> 
-> There's no leak, this apparently only happens when the worker doing
-> the fputs can't keep up.  Simple solution:  do the fput() of the
-> previous file synchronously with the open_direct operation; fput
-> shouldn't be expensive...  Is there a reason why this wouldn't work?
+--000000000000329f7105db99e98f
+Content-Type: text/plain; charset="UTF-8"
 
-I take it you're continually reusing those slots? If you have a test
-case that'd be ideal. Agree that it sounds like we just need an
-appropriate breather to allow fput/task_work to run. Or it could be the
-deferral free of the fixed slot.
+On Fri, 1 Apr 2022 at 17:36, Jens Axboe <axboe@kernel.dk> wrote:
 
--- 
-Jens Axboe
+> I take it you're continually reusing those slots?
 
+Yes.
+
+>  If you have a test
+> case that'd be ideal. Agree that it sounds like we just need an
+> appropriate breather to allow fput/task_work to run. Or it could be the
+> deferral free of the fixed slot.
+
+Adding a breather could make the worst case latency be large.  I think
+doing the fput synchronously would be better in general.
+
+I test this on an VM with 8G of memory and run the following:
+
+./forkbomb 14 &
+# wait till 16k processes are forked
+for i in `seq 1 100`; do ./procreads u; done
+
+You can compare performance with plain reads (./procreads p), the
+other tests don't work on public kernels.
+
+Thanks,
+Miklos
+
+--000000000000329f7105db99e98f
+Content-Type: text/x-csrc; charset="US-ASCII"; name="procreads.c"
+Content-Disposition: attachment; filename="procreads.c"
+Content-Transfer-Encoding: base64
+Content-ID: <f_l1glslpr0>
+X-Attachment-Id: f_l1glslpr0
+
+I2RlZmluZSBfR05VX1NPVVJDRQoKI2luY2x1ZGUgPHN0ZGlvLmg+CiNpbmNsdWRlIDxmY250bC5o
+PgojaW5jbHVkZSA8c3RyaW5nLmg+CiNpbmNsdWRlIDxzdGRsaWIuaD4KI2luY2x1ZGUgPGRpcmVu
+dC5oPgojaW5jbHVkZSA8dW5pc3RkLmg+CiNpbmNsdWRlIDxlcnIuaD4KI2luY2x1ZGUgImxpYnVy
+aW5nLmgiCgojZGVmaW5lIENIRUNLX05FR0VSUihfZXhwcikgXAoJKHsgdHlwZW9mKF9leHByKSBf
+cmV0ID0gKF9leHByKTsgaWYgKF9yZXQgPCAwKSB7IGVycm5vID0gLV9yZXQ7IGVycigxLCAjX2V4
+cHIpOyB9IF9yZXQ7IH0pCiNkZWZpbmUgQ0hFQ0tfTlVMTChfZXhwcikgXAoJKHsgdHlwZW9mKF9l
+eHByKSBfcmV0ID0gKF9leHByKTsgaWYgKF9yZXQgPT0gTlVMTCkgeyBlcnJ4KDEsICNfZXhwciAi
+IHJldHVybmVkIE5VTEwiKTsgfSBfcmV0OyB9KQojZGVmaW5lIENIRUNLX0VSUihfZXhwcikgXAoJ
+KHsgdHlwZW9mKF9leHByKSBfcmV0ID0gKF9leHByKTsgaWYgKF9yZXQgPT0gLTEpIHsgZXJyKDEs
+ICNfZXhwcik7IH0gX3JldDsgfSkKCgpzdHJ1Y3QgbmFtZV92YWwgewoJY2hhciAqbmFtZTsJCS8q
+IGluICovCglzdHJ1Y3QgaW92ZWMgdmFsdWVfaW47CS8qIGluICovCglzdHJ1Y3QgaW92ZWMgdmFs
+dWVfb3V0OwkvKiBvdXQgKi8KCXVpbnQzMl90IGVycm9yOwkJLyogb3V0ICovCgl1aW50MzJfdCBy
+ZXNlcnZlZDsKfTsKCnN0YXRpYyBib29sIGRlYnVnOwpzdGF0aWMgY29uc3QgY2hhciAqcHJvY19s
+aXN0W10gPSB7ICJzdGF0IiwgInN0YXR1cyIsICJjbWRsaW5lIiwgImNncm91cCIgfTsKI2RlZmlu
+ZSBwcm9jX251bSAoc2l6ZW9mKHByb2NfbGlzdCkvc2l6ZW9mKHByb2NfbGlzdFswXSkpCiNkZWZp
+bmUgYmF0Y2ggMTAKCmludCBnZXR2YWx1ZXMoaW50IGRmZCwgY29uc3QgY2hhciAqcGF0aCwgc3Ry
+dWN0IG5hbWVfdmFsICp2ZWMsIHNpemVfdCBudW0sCgkgICAgICB1bnNpZ25lZCBpbnQgZmxhZ3Mp
+CnsKCXJldHVybiBzeXNjYWxsKDQ1MSwgZGZkLCBwYXRoLCB2ZWMsIG51bSwgZmxhZ3MpOwp9Cgpz
+dGF0aWMgdm9pZCBwcmludF92YWwoY29uc3QgY2hhciAqbmFtZSwgc3RydWN0IG5hbWVfdmFsICpu
+dikKewoJY29uc3QgY2hhciAqcyA9IG52LT52YWx1ZV9vdXQuaW92X2Jhc2U7CglzaXplX3QgbGVu
+ID0gbnYtPnZhbHVlX291dC5pb3ZfbGVuOwoJY29uc3Qgc2l6ZV90IHBybWF4ID0gNDA7CglpbnQg
+cHJsZW4gPSBsZW4gPCBwcm1heCA/IGxlbiA6IHBybWF4OwoJY29uc3QgY2hhciAqY29udCA9IGxl
+biA8IHBybWF4ID8gIiIgOiAiLi4uIjsKCglpZiAobnYtPmVycm9yKQoJCXByaW50ZigiL3Byb2Mv
+JXMvJXMgPSBFUlJPUiAlcyAoJWkpXG4iLAoJCSAgICAgICBuYW1lLCBudi0+bmFtZSwgc3RyZXJy
+b3IobnYtPmVycm9yKSwgbnYtPmVycm9yKTsKCWVsc2UgaWYgKGRlYnVnKQoJCXByaW50ZigiL3By
+b2MvJXMvJXMgPSBcIiUuKnNcIiVzIChsZW49JXppKVxuIiwKCQkgICAgICAgbmFtZSwgbnYtPm5h
+bWUsIHBybGVuLCBzLCBjb250LCBsZW4pOwp9CgpzdGF0aWMgdm9pZCBwcmludF92YWx1ZXMoY29u
+c3QgY2hhciAqbmFtZSwgc3RydWN0IG5hbWVfdmFsICp2ZWMsIHNpemVfdCBudW0sCgkJCSBzc2l6
+ZV90IHJldCkKewoJaW50IGk7CgoJaWYgKHJldCA8IDApIHsKCQllcnJubyA9IC1yZXQ7IHdhcm4o
+ImdldHZhbHVlcyBmYWlsZWQiKTsKCX0gZWxzZSB7CgkJaWYgKChzaXplX3QpIHJldCA8IG51bSkK
+CQkJd2FybngoIiV6aSB2YWx1ZXMgcmVhZCBvdXQgb2YgJXppIiwgcmV0LCBudW0pOwoJCWZvciAo
+aSA9IDA7IGkgPCByZXQ7IGkrKykKCQkJcHJpbnRfdmFsKG5hbWUsICZ2ZWNbaV0pOwoJfQp9Cgpz
+dGF0aWMgc3NpemVfdCByZWFkZmlsZV9wbGFpbihpbnQgZGZkLCBjb25zdCBjaGFyICpwYXRoLCBj
+aGFyICpidWYsIHNpemVfdCBzaXplKQp7CglpbnQgZmQ7Cglzc2l6ZV90IHJldDsKCglmZCA9IG9w
+ZW5hdChkZmQsIHBhdGgsIE9fUkRPTkxZKTsKCWlmIChmZCA9PSAtMSkKCQlyZXR1cm4gLWVycm5v
+OwoKCXJldCA9IHJlYWQoZmQsIGJ1Ziwgc2l6ZSk7CglpZiAocmV0ID09IC0xKQoJCXJldCA9IC1l
+cnJubzsKCWVsc2UgaWYgKChzaXplX3QpIHJldCA9PSBzaXplKQoJCXJldCA9IC1FT1ZFUkZMT1c7
+CgoJY2xvc2UoZmQpOwoKCXJldHVybiByZXQ7Cn0KCnN0YXRpYyBpbnQgcmVhZGZpbGVzX3BsYWlu
+KGludCBkZmQsIGNvbnN0IGNoYXIgKnBhdGgsIHN0cnVjdCBuYW1lX3ZhbCAqdmVjLAoJCQkgICBz
+aXplX3QgbnVtLCBpbnQgbW9kZSkKewoJc3RydWN0IG5hbWVfdmFsICpudjsKCXNzaXplX3QgcmV0
+OwoJc2l6ZV90IGk7CgoJaWYgKHBhdGhbMF0pCgkJZGZkID0gQ0hFQ0tfRVJSKG9wZW5hdChkZmQs
+IHBhdGgsIE9fUEFUSCkpOwoKCWZvciAoaSA9IDA7IGkgPCBudW07IGkrKykgewoJCW52ID0gJnZl
+Y1tpXTsKCQlpZiAobW9kZSkgewoJCQlDSEVDS19FUlIoZ2V0dmFsdWVzKGRmZCwgIiIsIG52LCAx
+LCBtb2RlID09IDIpKTsKCQl9IGVsc2UgewoJCQlyZXQgPSByZWFkZmlsZV9wbGFpbihkZmQsIG52
+LT5uYW1lLAoJCQkJCSAgICAgbnYtPnZhbHVlX2luLmlvdl9iYXNlLAoJCQkJCSAgICAgbnYtPnZh
+bHVlX2luLmlvdl9sZW4pOwoJCQlpZiAocmV0IDwgMCkgewoJCQkJbnYtPmVycm9yID0gLXJldDsK
+CQkJfSBlbHNlIHsKCQkJCW52LT5lcnJvciA9IDA7CgkJCQludi0+dmFsdWVfb3V0Lmlvdl9iYXNl
+ID0gbnYtPnZhbHVlX2luLmlvdl9iYXNlOwoJCQkJbnYtPnZhbHVlX291dC5pb3ZfbGVuID0gcmV0
+OwoJCQl9CgkJfQoJfQoJaWYgKHBhdGhbMF0pCgkJY2xvc2UoZGZkKTsKCglyZXR1cm4gbnVtOwp9
+CgpzdGF0aWMgaW50IHJlYWRmaWxlc191cmluZyhzdHJ1Y3QgaW9fdXJpbmcgKnJpbmcsIGludCBk
+ZmQsIGNvbnN0IGNoYXIgKnBhdGgsCgkJCSAgIHN0cnVjdCBuYW1lX3ZhbCAqdmVjLCBzaXplX3Qg
+bnVtKQp7CglzdHJ1Y3QgaW9fdXJpbmdfc3FlICpzcWU7CglzdHJ1Y3QgaW9fdXJpbmdfY3FlICpj
+cWU7CglzaXplX3Qgc2xvdDsKCWludCByZXQsIGk7CglzdGF0aWMgaW50IHNlcSA9IDE7CglzdHJ1
+Y3QgbmFtZV92YWwgKm52OwoKCWlmIChwYXRoWzBdKQoJCWRmZCA9IENIRUNLX0VSUihvcGVuYXQo
+ZGZkLCBwYXRoLCBPX1BBVEgpKTsKCglmb3IgKHNsb3QgPSAwOyBzbG90IDwgbnVtOyBzbG90Kysp
+IHsKCQludiA9ICZ2ZWNbc2xvdF07CgkJc3FlID0gaW9fdXJpbmdfZ2V0X3NxZShyaW5nKTsKCQlp
+b191cmluZ19wcmVwX29wZW5hdF9kaXJlY3Qoc3FlLCBkZmQsIG52LT5uYW1lLCBPX1JET05MWSwg
+MCwKCQkJCQkgICAgc2xvdCk7CgkJc3FlLT5mbGFncyA9IElPU1FFX0lPX0xJTksgfCBJT1NRRV9D
+UUVfU0tJUF9TVUNDRVNTOwoJCXNxZS0+dXNlcl9kYXRhID0gc2VxICsgc2xvdCAqIDI7CgoJCXNx
+ZSA9IGlvX3VyaW5nX2dldF9zcWUocmluZyk7CgkJaW9fdXJpbmdfcHJlcF9yZWFkKHNxZSwgc2xv
+dCwgbnYtPnZhbHVlX2luLmlvdl9iYXNlLAoJCQkJICAgbnYtPnZhbHVlX2luLmlvdl9sZW4sIDAp
+OwoJCXNxZS0+ZmxhZ3MgPSBJT1NRRV9GSVhFRF9GSUxFOwoJCXNxZS0+dXNlcl9kYXRhID0gc2Vx
+ICsgc2xvdCAqIDIgKyAxOwoJfQoKCXJldCA9IENIRUNLX05FR0VSUihpb191cmluZ19zdWJtaXRf
+YW5kX3dhaXQocmluZywgbnVtKSk7CglyZXQgLz0gMjsKCWZvciAoaSA9IDA7IGkgPCByZXQ7IGkr
+KykgewoJCUNIRUNLX05FR0VSUihpb191cmluZ193YWl0X2NxZShyaW5nLCAmY3FlKSk7CgkJc2xv
+dCA9IChjcWUtPnVzZXJfZGF0YSAtIHNlcSkgLyAyOwoJCW52ID0gJnZlY1tzbG90XTsKCQlpZiAo
+Y3FlLT5yZXMgPCAwKSB7CgkJCW52LT5lcnJvciA9IC1jcWUtPnJlczsKCQl9IGVsc2UgaWYgKChz
+aXplX3QpIGNxZS0+cmVzIDwgbnYtPnZhbHVlX2luLmlvdl9sZW4pIHsKCQkJbnYtPmVycm9yID0g
+MDsKCQkJbnYtPnZhbHVlX291dC5pb3ZfYmFzZSA9IG52LT52YWx1ZV9pbi5pb3ZfYmFzZTsKCQkJ
+bnYtPnZhbHVlX291dC5pb3ZfbGVuID0gY3FlLT5yZXM7CgkJfSBlbHNlIHsKCQkJbnYtPmVycm9y
+ID0gRU9WRVJGTE9XOwoJCX0KCQlpb191cmluZ19jcWVfc2VlbihyaW5nLCBjcWUpOwoJfQoJc2Vx
+ICs9IDIgKiBudW07CglpZiAocGF0aFswXSkKCQljbG9zZShkZmQpOwoKCXJldHVybiByZXQ7Cn0K
+CnN0YXRpYyBjb25zdCBjaGFyICpuZXh0X25hbWUoRElSICpkcCkKewoJY29uc3QgY2hhciAqbmFt
+ZTsKCXN0cnVjdCBkaXJlbnQgKmRlOwoKCXdoaWxlICgoZGUgPSByZWFkZGlyKGRwKSkpIHsKCQlu
+YW1lID0gZGUtPmRfbmFtZTsKCQlpZiAobmFtZVswXSA+ICcwJyAmJiBuYW1lWzBdIDw9ICc5JykK
+CQkJcmV0dXJuIG5hbWU7Cgl9CglyZXR1cm4gTlVMTDsKfQoKc3RhdGljIHNpemVfdCBuZXh0X2Jh
+dGNoKERJUiAqZHAsIHN0cnVjdCBuYW1lX3ZhbCAqdmVjLCBzaXplX3QgbnVtLAoJCQkgY29uc3Qg
+Y2hhciAqKm5hbWVwKQp7Cgljb25zdCBjaGFyICpuYW1lOwoJc2l6ZV90IGk7CgoJaWYgKGJhdGNo
+ID09IDEpIHsKCQluYW1lID0gbmV4dF9uYW1lKGRwKTsKCQlpZiAoIW5hbWUpCgkJCXJldHVybiAw
+OwoJCSpuYW1lcCA9IG5hbWU7CgkJcmV0dXJuIDE7Cgl9CgoJKm5hbWVwID0gIiI7Cglmb3IgKGkg
+PSAwOyBpIDwgbnVtOyBpKyspIHsKCQlpZiAoaSAlIHByb2NfbnVtID09IDAgJiYgKG5hbWUgPSBu
+ZXh0X25hbWUoZHApKSA9PSBOVUxMKQoJCQlicmVhazsKCQlmcmVlKHZlY1tpXS5uYW1lKTsKCQl2
+ZWNbaV0ubmFtZSA9IENIRUNLX05VTEwobWFsbG9jKDEyOCkpOwoJCXNwcmludGYodmVjW2ldLm5h
+bWUsICIlcy8lcyIsIG5hbWUsIHByb2NfbGlzdFtpICUgcHJvY19udW1dKTsKCX0KCXJldHVybiBp
+Owp9CgpzdGF0aWMgdm9pZCB0ZXN0X3VyaW5nKERJUiAqZHAsIHN0cnVjdCBuYW1lX3ZhbCAqdmVj
+LCBzaXplX3QgbnVtKQp7CglpbnQgZmRzW3Byb2NfbnVtICogYmF0Y2hdOwoJY29uc3Qgc2l6ZV90
+IG51bXNsb3RzID0gc2l6ZW9mKGZkcykvc2l6ZW9mKGZkc1swXSk7CglzdHJ1Y3QgaW9fdXJpbmcg
+cmluZzsKCWNvbnN0IGNoYXIgKm5hbWU7Cglzc2l6ZV90IHJldDsKCgltZW1zZXQoZmRzLCAtMSwg
+c2l6ZW9mKGZkcykpOwoJQ0hFQ0tfTkVHRVJSKGlvX3VyaW5nX3F1ZXVlX2luaXQobnVtICogMiwg
+JnJpbmcsIDApKTsKCUNIRUNLX05FR0VSUihpb191cmluZ19yZWdpc3Rlcl9maWxlcygmcmluZywg
+ZmRzLCBudW1zbG90cykpOwoKCXdoaWxlICgobnVtID0gbmV4dF9iYXRjaChkcCwgdmVjLCBudW0s
+ICZuYW1lKSkpIHsKCQlyZXQgPSByZWFkZmlsZXNfdXJpbmcoJnJpbmcsIGRpcmZkKGRwKSwgbmFt
+ZSwgdmVjLCBudW0pOwoJCXByaW50X3ZhbHVlcyhuYW1lLCB2ZWMsIG51bSwgcmV0KTsKCX0KCWlv
+X3VyaW5nX3F1ZXVlX2V4aXQoJnJpbmcpOwp9CgpzdGF0aWMgdm9pZCB0ZXN0X3BsYWluKERJUiAq
+ZHAsIHN0cnVjdCBuYW1lX3ZhbCAqdmVjLCBzaXplX3QgbnVtLCBpbnQgbW9kZSkKewoJY29uc3Qg
+Y2hhciAqbmFtZTsKCXNzaXplX3QgcmV0OwoKCXdoaWxlICgobnVtID0gbmV4dF9iYXRjaChkcCwg
+dmVjLCBudW0sICZuYW1lKSkpIHsKCQlyZXQgPSByZWFkZmlsZXNfcGxhaW4oZGlyZmQoZHApLCBu
+YW1lLCB2ZWMsIG51bSwgbW9kZSk7CgkJcHJpbnRfdmFsdWVzKG5hbWUsIHZlYywgbnVtLCByZXQp
+OwoJfQp9CgpzdGF0aWMgdm9pZCB0ZXN0X3ZhbHVlcyhESVIgKmRwLCBzdHJ1Y3QgbmFtZV92YWwg
+KnZlYywgc2l6ZV90IG51bSwgYm9vbCByZikKewoJY29uc3QgY2hhciAqbmFtZTsKCXNzaXplX3Qg
+cmV0OwoKCXdoaWxlICgobnVtID0gbmV4dF9iYXRjaChkcCwgdmVjLCBudW0sICZuYW1lKSkpIHsK
+CQlyZXQgPSBnZXR2YWx1ZXMoZGlyZmQoZHApLCBuYW1lLCB2ZWMsIG51bSwgcmYpOwoJCXByaW50
+X3ZhbHVlcyhuYW1lLCB2ZWMsIG51bSwgcmV0KTsKCX0KfQoKaW50IG1haW4oaW50IGFyZ2MsIGNo
+YXIgKmFyZ3ZbXSkKewoJY29uc3Qgc2l6ZV90IG51bSA9IHByb2NfbnVtICogYmF0Y2g7CgljaGFy
+IGJ1ZltudW1dWzQwOTZdOwoJc3RydWN0IG5hbWVfdmFsIHZlY1tudW1dOwoJRElSICpkcDsKCXNp
+emVfdCBpOwoJY2hhciB0eXBlID0gJ3AnOwoKCWlmIChhcmdjID4gMSkKCQl0eXBlID0gYXJndlsx
+XVswXTsKCglpZiAoYXJnYyA+IDIpCgkJZGVidWcgPSB0cnVlOwoKCWZvciAoaSA9IDA7IGkgPCBu
+dW07IGkrKykgewoJCXZlY1tpXS52YWx1ZV9pbi5pb3ZfYmFzZSA9ICh0eXBlICE9ICd3JyB8fCAh
+aSkgPyBidWZbaV0gOiBOVUxMOwoJCXZlY1tpXS52YWx1ZV9pbi5pb3ZfbGVuID0gc2l6ZW9mKGJ1
+ZltpXSk7Cgl9CgoJZHAgPSBDSEVDS19OVUxMKG9wZW5kaXIoIi9wcm9jIikpOwoJc3dpdGNoICh0
+eXBlKSB7CgljYXNlICdwJzoKCQl0ZXN0X3BsYWluKGRwLCB2ZWMsIG51bSwgMCk7CgkJYnJlYWs7
+CgljYXNlICdyJzoKCQl0ZXN0X3BsYWluKGRwLCB2ZWMsIG51bSwgMSk7CgkJYnJlYWs7CgljYXNl
+ICdzJzoKCQl0ZXN0X3BsYWluKGRwLCB2ZWMsIG51bSwgMik7CgkJYnJlYWs7CgljYXNlICd1JzoK
+CQl0ZXN0X3VyaW5nKGRwLCB2ZWMsIG51bSk7CgkJYnJlYWs7CgljYXNlICd3JzoKCQl2ZWNbMF0u
+dmFsdWVfaW4uaW92X2xlbiA9IHNpemVvZihidWZbMF0pICogbnVtOwoJCS8qIGZhbGx0aHJvdWdo
+ICovCgljYXNlICd2JzoKCWNhc2UgJ3onOgoJCXRlc3RfdmFsdWVzKGRwLCB2ZWMsIG51bSwgdHlw
+ZSA9PSAneicpOwoJCWJyZWFrOwoJfQoJY2xvc2VkaXIoZHApOwoJcmV0dXJuIDA7Cn0K
+--000000000000329f7105db99e98f
+Content-Type: text/x-csrc; charset="US-ASCII"; name="forkbomb.c"
+Content-Disposition: attachment; filename="forkbomb.c"
+Content-Transfer-Encoding: base64
+Content-ID: <f_l1gltctf1>
+X-Attachment-Id: f_l1gltctf1
+
+I2luY2x1ZGUgPHVuaXN0ZC5oPgojaW5jbHVkZSA8c3RkaW8uaD4KI2luY2x1ZGUgPGVyci5oPgoj
+aW5jbHVkZSA8cHRocmVhZC5oPgojaW5jbHVkZSA8c3RkbGliLmg+CgpzdGF0aWMgdm9pZCAqcnVu
+KHZvaWQgKikKewoJc2xlZXAoMTAwMCk7CglyZXR1cm4gTlVMTDsKfQoKaW50IG1haW4oaW50IGFy
+Z2MsIGNoYXIgKmFyZ3ZbXSkKewoJaW50IHBpZCwgbGV2ZWwsIGk7CglwdGhyZWFkX3QgdGhyOwoJ
+aW50IG1heGxldmVsID0gYXRvaShhcmd2WzFdKTsKCglmb3IgKGxldmVsID0gMDsgbGV2ZWwgPCBt
+YXhsZXZlbDsgbGV2ZWwrKykgewoJCXBpZCA9IGZvcmsoKTsKCQlpZiAocGlkID09IC0xKQoJCQll
+cnIoMSwgImZvcmsiKTsKCgkJZnByaW50ZihzdGRlcnIsICIuIik7CgkJI2lmIDAKCQlpZiAocGlk
+ID09IDApIHsKCQkJZm9yIChpID0gMDsgaSA8IDQ7IGkrKykKCQkJCXB0aHJlYWRfY3JlYXRlKCZ0
+aHIsIE5VTEwsIHJ1biwgTlVMTCk7CgoJCX0KCQkjZW5kaWYKCX0KCXNsZWVwKDEwMDApOwp9Cg==
+--000000000000329f7105db99e98f--

@@ -2,111 +2,111 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DF67B4EEEEA
-	for <lists+io-uring@lfdr.de>; Fri,  1 Apr 2022 16:11:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FD524EEEEB
+	for <lists+io-uring@lfdr.de>; Fri,  1 Apr 2022 16:11:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346679AbiDAOMt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 1 Apr 2022 10:12:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43302 "EHLO
+        id S1346700AbiDAOM4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 1 Apr 2022 10:12:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346700AbiDAOMt (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 1 Apr 2022 10:12:49 -0400
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4D101D4195
-        for <io-uring@vger.kernel.org>; Fri,  1 Apr 2022 07:10:58 -0700 (PDT)
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20220401141055epoutp01aa0be2d9c90e684289a130d518196a4e~hyxsbsS9m3134431344epoutp01L
-        for <io-uring@vger.kernel.org>; Fri,  1 Apr 2022 14:10:55 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20220401141055epoutp01aa0be2d9c90e684289a130d518196a4e~hyxsbsS9m3134431344epoutp01L
+        with ESMTP id S1346701AbiDAOMz (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 1 Apr 2022 10:12:55 -0400
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D0F61D41A5
+        for <io-uring@vger.kernel.org>; Fri,  1 Apr 2022 07:11:05 -0700 (PDT)
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20220401141103epoutp032ce439c6a1762550781d34121a0ae65c~hyxzwlSAU2561825618epoutp03q
+        for <io-uring@vger.kernel.org>; Fri,  1 Apr 2022 14:11:03 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20220401141103epoutp032ce439c6a1762550781d34121a0ae65c~hyxzwlSAU2561825618epoutp03q
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1648822255;
-        bh=Hc5xXzpwjZD44aIEo0taGOc8FgWd+auSVJeKiNrii9w=;
+        s=mail20170921; t=1648822263;
+        bh=r/KUjLt4Bg/gA0dLYWa5Eqs9yE5XqhklDfr+/HPLehQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iUSgST9p0mwZsII1/3ypa/76OjR6qFKF3/reBFHJKZML2skNVdTGqMhaJX7Nabu54
-         vomR2YIx9A3nP416zZWHjgo72Nn6OoC/RKRQs+CcZittF4Sr/EG+b+vxqe+EWi7h6z
-         UJl4SUogglWjJ7peyz5FaX2dHYD+fL4u20cFjRp0=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-        20220401141055epcas5p126001f302e40741f0794b91410360257~hyxrvkU-42341723417epcas5p1a;
-        Fri,  1 Apr 2022 14:10:55 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.180]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4KVMXC6mkpz4x9Pv; Fri,  1 Apr
-        2022 14:10:51 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        D6.D7.09952.BE707426; Fri,  1 Apr 2022 23:10:51 +0900 (KST)
+        b=Yegwej5NNU1Oy4n5Tf8KbXMoerJp+TKGAfzmsQXRWUKeIoy8Ufxok5rFgXZy/wcMF
+         OipRY3IdhRFkQjW5wQRBedeITxO8Io6LIbl11tGW8GMhqB/l7Gc25xmqoFCJFESqyj
+         H/q6q+oZ74yP5uKGN8wC5yBOaP47rID07slg1pMs=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+        20220401141103epcas5p2ba46f7074212a9c98c284b64bf54af3f~hyxzI-aNX2063220632epcas5p2x;
+        Fri,  1 Apr 2022 14:11:03 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.175]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4KVMXN0xfzz4x9Pp; Fri,  1 Apr
+        2022 14:11:00 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        FC.92.06423.3F707426; Fri,  1 Apr 2022 23:10:59 +0900 (KST)
 Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-        20220401110836epcas5p37bd59ab5a48cf77ca3ac05052a164b0b~hwSgjXGRE2406524065epcas5p3Q;
-        Fri,  1 Apr 2022 11:08:36 +0000 (GMT)
+        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+        20220401110838epcas5p2c1a2e776923dfe5bf65a3e7946820150~hwSiOqPHU0372703727epcas5p2L;
+        Fri,  1 Apr 2022 11:08:38 +0000 (GMT)
 Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
         epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220401110836epsmtrp2c483bdfb7743c8fb2683a25a48ff7a68~hwSgia4zx2799827998epsmtrp2t;
-        Fri,  1 Apr 2022 11:08:36 +0000 (GMT)
-X-AuditID: b6c32a4b-4b5ff700000226e0-14-624707eb70d9
+        20220401110838epsmtrp279e4817d21cc3e2584f1500f138ddf8c~hwSiN6kC02799827998epsmtrp2u;
+        Fri,  1 Apr 2022 11:08:38 +0000 (GMT)
+X-AuditID: b6c32a49-b01ff70000001917-11-624707f31d08
 Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
         epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        34.63.24342.43DD6426; Fri,  1 Apr 2022 20:08:36 +0900 (KST)
+        F4.63.24342.63DD6426; Fri,  1 Apr 2022 20:08:38 +0900 (KST)
 Received: from localhost.localdomain (unknown [107.110.206.5]) by
         epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20220401110834epsmtip1545bc422309a60c847041436c5dd9a89~hwSe3TavS0870608706epsmtip1y;
-        Fri,  1 Apr 2022 11:08:34 +0000 (GMT)
+        20220401110836epsmtip1fe2ae738631ac657a193c0ac0b10f28d~hwSgmR7A-2320023200epsmtip1Q;
+        Fri,  1 Apr 2022 11:08:36 +0000 (GMT)
 From:   Kanchan Joshi <joshi.k@samsung.com>
 To:     axboe@kernel.dk, hch@lst.de
 Cc:     io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
         asml.silence@gmail.com, ming.lei@redhat.com, mcgrof@kernel.org,
         pankydev8@gmail.com, javier@javigon.com, joshiiitr@gmail.com,
         anuj20.g@samsung.com
-Subject: [RFC 4/5] io_uring: add support for big-cqe
-Date:   Fri,  1 Apr 2022 16:33:09 +0530
-Message-Id: <20220401110310.611869-5-joshi.k@samsung.com>
+Subject: [RFC 5/5] nvme: wire-up support for async-passthru on char-device.
+Date:   Fri,  1 Apr 2022 16:33:10 +0530
+Message-Id: <20220401110310.611869-6-joshi.k@samsung.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220401110310.611869-1-joshi.k@samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrCJsWRmVeSWpSXmKPExsWy7bCmlu5rdvckg+0PTS2aJvxltpizahuj
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGJsWRmVeSWpSXmKPExsWy7bCmuu5ndvckg39bTSyaJvxltpizahuj
         xeq7/WwWK1cfZbJ413qOxaLz9AUmi/NvDzNZzF/2lN3ixoSnjBaHJjczWay5+ZTFgdtj56y7
         7B7NC+6weFw+W+qxaVUnm8fmJfUeu282sHm833eVzaNvyypGj8+b5AI4o7JtMlITU1KLFFLz
         kvNTMvPSbZW8g+Od403NDAx1DS0tzJUU8hJzU22VXHwCdN0yc4COVVIoS8wpBQoFJBYXK+nb
-        2RTll5akKmTkF5fYKqUWpOQUmBToFSfmFpfmpevlpZZYGRoYGJkCFSZkZ6y9PoW9oM2t4u6V
-        uYwNjFcsuhg5OCQETCSe7AEyuTiEBHYzSlyb/ZIRwvnEKLHuwQUo5xujxPuzn1i7GDnBOu69
-        uM8MkdjLKHFj5goo5zOjxP8ph5hA5rIJaEpcmFwK0iAiIC/x5fZaFpAaZoFrjBKPXx1iA0kI
-        A016vOwVmM0ioCrR/6gFzOYVsJTY0dDIBrFNXmLmpe/sIDangJXEoX8boWoEJU7OfMICYjMD
-        1TRvnQ12hITAQg6J9R23GCGaXSRWPn4ANUhY4tXxLewQtpTE53d7oeLJEq3bL7NDAqNEYskC
-        dYiwvcTFPX/BfmEG+mX9Ln2IsKzE1FPrmCDW8kn0/n7CBBHnldgxD8ZWlLg36Sk0sMQlHs5Y
-        wgox3UNid08EJKh6GSXmTGxmmcCoMAvJN7OQfDMLYfMCRuZVjJKpBcW56anFpgXGeanl8DhO
-        zs/dxAhOvlreOxgfPfigd4iRiYPxEKMEB7OSCO/VWNckId6UxMqq1KL8+KLSnNTiQ4ymwOCe
-        yCwlmpwPTP95JfGGJpYGJmZmZiaWxmaGSuK8p9I3JAoJpCeWpGanphakFsH0MXFwSjUwCT3c
-        tFS78evSkkkVlwy6DwWmXYmti1isHrNXt/vP5LtNiyNC4oLm9nKZPFLbc9yx/NrH6KojPtFn
-        ag4tefim+JJHfsxuv87NxjbTFc1eqznIdNZzmNpec/gdEfbV4tLWxq2aRt0nJu4/wdbqv8d1
-        JcfbBczLev3NtaUe/80z+seZ9UKzy+6b84Z1X/a+fnGF/cI6zbAD7x62+r1/rr/sWLeN4a5D
-        LT93MdX/cFNxU3kmL2l/RN7H63N05r27Sbs/b1TyVd79ccNnE7lZCmJORkkFl0RF9zyS2Fyz
-        w2RdNo9Ce0rhS2VZq5/aXStdPxUuTf0boRxaL7BGeIFGU/isY783/xLd9P1v5822aLFtSizF
-        GYmGWsxFxYkA1iHVsEcEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrLLMWRmVeSWpSXmKPExsWy7bCSnK7JXbckg0c3lSyaJvxltpizahuj
+        2RTll5akKmTkF5fYKqUWpOQUmBToFSfmFpfmpevlpZZYGRoYGJkCFSZkZ3z/eJq9oDG6YvnU
+        FSwNjL+8uxg5OSQETCQ+bdnJ3sXIxSEksJtR4vTBOawQzidGiTWbzkFlvjFKzL+6lRGm5VfH
+        ATaIxF5GiV93u6Ccz4wSfYe7gKo4ONgENCUuTC4FaRARkJf4cnstC0gNs8A1RonHrw6xgSSE
+        Bbwlls2/wgpiswioSjQs7wfbwCtgKXHt1jpWiG3yEjMvfWcHsTkFrCQO/dvIBlEjKHFy5hMW
+        EJsZqKZ562xmkAUSAks5JLrvzWCGaHaRmHvyCguELSzx6vgWdghbSuLzu71sEHayROv2y+wg
+        R0sIlEgsWaAOEbaXuLjnLxNImBnol/W79CHCshJTT61jgljLJ9H7+wkTRJxXYsc8GFtR4t6k
+        p1Dni0s8nLEEyvaQOL18AiMkrHoZJdYd/ck8gVFhFpJ3ZiF5ZxbC6gWMzKsYJVMLinPTU4tN
+        CwzzUsvhsZycn7uJEZyAtTx3MN598EHvECMTB+MhRgkOZiUR3quxrklCvCmJlVWpRfnxRaU5
+        qcWHGE2B4T2RWUo0OR+YA/JK4g1NLA1MzMzMTCyNzQyVxHlPp29IFBJITyxJzU5NLUgtgulj
+        4uCUamCaf+NA3vT6fZb7njxN+u3GfePKHeMWrzeb74nsUzHRe/wuIyjz3c+ucLcSpeSAQ/Vc
+        j2TvTXXZeEtIyLT94JxaDtUTaw+cventsOrntn6TlIu+iUFbtA7f6SjW5zdK2b85zfCYnU0a
+        W1VE7E/ZusW358z+5nSHbdP1AO0HVw+uZTu6NOdmboXs0QUPsxc+n9Obbz+pc8ndol2tCywr
+        tOLrFkRG8r6Xn5bP1d/tUGvntrez4Rbv1gUmyvEcKmxdQpcTuF1ES1NvX2p69Fx1/bd/Di/u
+        Z9q7NL9UeCYQrHkizaBAg3uNxTdOWYMjJ86t/TptbknB07prbf/L8h01GeYpfTibzNl2PMfj
+        YkO7CqsSS3FGoqEWc1FxIgCM/4AVSQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrLLMWRmVeSWpSXmKPExsWy7bCSnK7ZXbckgylfpSyaJvxltpizahuj
         xeq7/WwWK1cfZbJ413qOxaLz9AUmi/NvDzNZzF/2lN3ixoSnjBaHJjczWay5+ZTFgdtj56y7
         7B7NC+6weFw+W+qxaVUnm8fmJfUeu282sHm833eVzaNvyypGj8+b5AI4o7hsUlJzMstSi/Tt
-        Ergy1l6fwl7Q5lZx98pcxgbGKxZdjJwcEgImEvde3GfuYuTiEBLYzSjxYkofK0RCXKL52g92
-        CFtYYuW/5+wQRR8ZJc4fmcLWxcjBwSagKXFhcilIjYiAosTGj02MIDXMAg8YJe5P/80GkhAG
-        2vB42Sswm0VAVaL/UQuYzStgKbGjoZENYoG8xMxL38GWcQpYSRz6txEsLgRUs3/qPBaIekGJ
-        kzOfgNnMQPXNW2czT2AUmIUkNQtJagEj0ypGydSC4tz03GLDAsO81HK94sTc4tK8dL3k/NxN
-        jOAY0dLcwbh91Qe9Q4xMHIyHGCU4mJVEeK/GuiYJ8aYkVlalFuXHF5XmpBYfYpTmYFES573Q
-        dTJeSCA9sSQ1OzW1ILUIJsvEwSnVwCR2iZvXZcHVpsk3N6j7qnGw9Qd7TH+pk+HyvXzjnBK+
-        27cvfzZZuEFjXe8rRUHhZM2SpNrWWzc/bkt4f+377PfTbmgZCr84cW6WcOzJlPLweJNlhhKv
-        d3B+UfhicfLApodN9rbvtZkmXp8kddo76IT405o3x//uuHi8sSZRyC+8fE3L8a+xq0Xjyyq2
-        Pb9nrz/lWkWDkL94y/RL8z013pw/lxv2e8OirCKheVvu/Z9vsqFB/9BNpg1cskVN5msD9PwW
-        ym35mxMS0iM6rag4Szjgzdv9Qb6u6Wc4J4Xbb/1+66LDRMXrPSvq9ApLdnDEVM92uW/hNe/X
-        vT6/1b4Tnz36mRYmW51tULuVcRbLxu9KLMUZiYZazEXFiQC4uOGcAAMAAA==
-X-CMS-MailID: 20220401110836epcas5p37bd59ab5a48cf77ca3ac05052a164b0b
+        Ergyvn88zV7QGF2xfOoKlgbGX95djJwcEgImEr86DrB1MXJxCAnsZpSY+u4CO0RCXKL52g8o
+        W1hi5b/n7BBFHxklFiz7ytTFyMHBJqApcWFyKUiNiICixMaPTYwgNcwCDxgl7k//zQaSEBbw
+        llg2/woriM0ioCrRsLyfEcTmFbCUuHZrHSvEAnmJmZe+gy3jFLCSOPRvI1ivEFDN/qnzWCDq
+        BSVOznwCZjMD1Tdvnc08gVFgFpLULCSpBYxMqxglUwuKc9Nziw0LDPNSy/WKE3OLS/PS9ZLz
+        czcxgmNES3MH4/ZVH/QOMTJxMB5ilOBgVhLhvRrrmiTEm5JYWZValB9fVJqTWnyIUZqDRUmc
+        90LXyXghgfTEktTs1NSC1CKYLBMHp1QDk+URlRd6WuuC+C45HN/dOd18Ru0aE6UfBcFSkxxb
+        Zhw2TlJ7ez/1uduydbrvmkIKPs/2T7x8Tvqsx2Wu5wlzjHfPuaCZ59Ipr52VNDGK+2bFUUVm
+        j61ztpaf/z7390edUJOz/4Xbn1UZFsh9Lam6/8fs/Bkn2Tuff5euOzb/5DNHgX7fmf+PzDDY
+        7LnZ7lOIt/kun6XM/3R0vAP23tcIvHuqbor43i9q51r0V01v/cmYuuP0BqYjqnLOXNMjH+5U
+        ynict33anBnTzid0TopY98H72faTj38u7n8zOyDvQVDVtG8/fTe+nDbBYsfMmo6TE0Jnh8bq
+        /c/fplwovaXRd4mn9dIbz3i9yvKCr+w+pLRMiaU4I9FQi7moOBEAgdHejQADAAA=
+X-CMS-MailID: 20220401110838epcas5p2c1a2e776923dfe5bf65a3e7946820150
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: REQ_APPROVE
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220401110836epcas5p37bd59ab5a48cf77ca3ac05052a164b0b
+X-CMS-RootMailID: 20220401110838epcas5p2c1a2e776923dfe5bf65a3e7946820150
 References: <20220401110310.611869-1-joshi.k@samsung.com>
-        <CGME20220401110836epcas5p37bd59ab5a48cf77ca3ac05052a164b0b@epcas5p3.samsung.com>
+        <CGME20220401110838epcas5p2c1a2e776923dfe5bf65a3e7946820150@epcas5p2.samsung.com>
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
@@ -117,267 +117,345 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Add IORING_SETUP_CQE32 flag to allow setting up ring with big-cqe which
-is 32 bytes in size. Also modify uring-cmd completion infra to accept
-additional result and fill that up in big-cqe.
+Introduce handler for fops->async_cmd(), implementing async passthru
+on char device (/dev/ngX). The handler supports NVME_IOCTL_IO64_CMD.
 
 Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
 Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
 ---
- fs/io_uring.c                 | 82 +++++++++++++++++++++++++++++------
- include/linux/io_uring.h      | 10 +++--
- include/uapi/linux/io_uring.h | 11 +++++
- 3 files changed, 87 insertions(+), 16 deletions(-)
+ drivers/nvme/host/core.c      |   1 +
+ drivers/nvme/host/ioctl.c     | 187 ++++++++++++++++++++++++++++------
+ drivers/nvme/host/multipath.c |   1 +
+ drivers/nvme/host/nvme.h      |   3 +
+ 4 files changed, 161 insertions(+), 31 deletions(-)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index bd0e6b102a7b..b819c0ad47fc 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -211,8 +211,8 @@ struct io_mapped_ubuf {
- struct io_ring_ctx;
- 
- struct io_overflow_cqe {
--	struct io_uring_cqe cqe;
- 	struct list_head list;
-+	struct io_uring_cqe cqe; /* this must be kept at end */
+diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+index 961a5f8a44d2..38b9630c2cb7 100644
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -3665,6 +3665,7 @@ static const struct file_operations nvme_ns_chr_fops = {
+ 	.release	= nvme_ns_chr_release,
+ 	.unlocked_ioctl	= nvme_ns_chr_ioctl,
+ 	.compat_ioctl	= compat_ptr_ioctl,
++	.async_cmd	= nvme_ns_chr_async_cmd,
  };
  
- struct io_fixed_file {
-@@ -1713,6 +1713,13 @@ static inline struct io_uring_cqe *io_get_cqe(struct io_ring_ctx *ctx)
- 		return NULL;
- 
- 	tail = ctx->cached_cq_tail++;
-+
-+	/* double index for large CQE */
-+	if (ctx->flags & IORING_SETUP_CQE32) {
-+		mask = 2 * ctx->cq_entries - 1;
-+		tail <<= 1;
-+	}
-+
- 	return &rings->cqes[tail & mask];
+ static int nvme_add_ns_cdev(struct nvme_ns *ns)
+diff --git a/drivers/nvme/host/ioctl.c b/drivers/nvme/host/ioctl.c
+index 22314962842d..1d15694d411c 100644
+--- a/drivers/nvme/host/ioctl.c
++++ b/drivers/nvme/host/ioctl.c
+@@ -19,6 +19,81 @@ static void __user *nvme_to_user_ptr(uintptr_t ptrval)
+ 	return (void __user *)ptrval;
  }
- 
-@@ -1792,13 +1799,16 @@ static bool __io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool force)
- 	while (!list_empty(&ctx->cq_overflow_list)) {
- 		struct io_uring_cqe *cqe = io_get_cqe(ctx);
- 		struct io_overflow_cqe *ocqe;
-+		int cqeshift = 0;
- 
- 		if (!cqe && !force)
- 			break;
-+		/* copy more for big-cqe */
-+		cqeshift = ctx->flags & IORING_SETUP_CQE32 ? 1 : 0;
- 		ocqe = list_first_entry(&ctx->cq_overflow_list,
- 					struct io_overflow_cqe, list);
- 		if (cqe)
--			memcpy(cqe, &ocqe->cqe, sizeof(*cqe));
-+			memcpy(cqe, &ocqe->cqe, sizeof(*cqe) << cqeshift);
- 		else
- 			io_account_cq_overflow(ctx);
- 
-@@ -1884,11 +1894,17 @@ static __cold void io_uring_drop_tctx_refs(struct task_struct *task)
- }
- 
- static bool io_cqring_event_overflow(struct io_ring_ctx *ctx, u64 user_data,
--				     s32 res, u32 cflags)
-+				     s32 res, u32 cflags, u64 res2,
-+				     int bigcqe)
- {
- 	struct io_overflow_cqe *ocqe;
-+	int size = sizeof(*ocqe);
-+
-+	/* allocate more for big-cqe */
-+	if (bigcqe)
-+		size += sizeof(struct io_uring_cqe);
- 
--	ocqe = kmalloc(sizeof(*ocqe), GFP_ATOMIC | __GFP_ACCOUNT);
-+	ocqe = kmalloc(size, GFP_ATOMIC | __GFP_ACCOUNT);
- 	if (!ocqe) {
- 		/*
- 		 * If we're in ring overflow flush mode, or in task cancel mode,
-@@ -1907,6 +1923,11 @@ static bool io_cqring_event_overflow(struct io_ring_ctx *ctx, u64 user_data,
- 	ocqe->cqe.user_data = user_data;
- 	ocqe->cqe.res = res;
- 	ocqe->cqe.flags = cflags;
-+	if (bigcqe) {
-+		struct io_uring_cqe32 *bcqe = (struct io_uring_cqe32 *)&ocqe->cqe;
-+
-+		bcqe->res2 = res2;
-+	}
- 	list_add_tail(&ocqe->list, &ctx->cq_overflow_list);
- 	return true;
- }
-@@ -1928,13 +1949,38 @@ static inline bool __fill_cqe(struct io_ring_ctx *ctx, u64 user_data,
- 		WRITE_ONCE(cqe->flags, cflags);
- 		return true;
- 	}
--	return io_cqring_event_overflow(ctx, user_data, res, cflags);
-+	return io_cqring_event_overflow(ctx, user_data, res, cflags, 0, false);
- }
- 
-+static inline bool __fill_big_cqe(struct io_ring_ctx *ctx, u64 user_data,
-+				 s32 res, u32 cflags, u64 res2)
-+{
-+	struct io_uring_cqe32 *bcqe;
-+
-+	/*
-+	 * If we can't get a cq entry, userspace overflowed the
-+	 * submission (by quite a lot). Increment the overflow count in
-+	 * the ring.
-+	 */
-+	bcqe = (struct io_uring_cqe32 *) io_get_cqe(ctx);
-+	if (likely(bcqe)) {
-+		WRITE_ONCE(bcqe->cqe.user_data, user_data);
-+		WRITE_ONCE(bcqe->cqe.res, res);
-+		WRITE_ONCE(bcqe->cqe.flags, cflags);
-+		WRITE_ONCE(bcqe->res2, res2);
-+		return true;
-+	}
-+	return io_cqring_event_overflow(ctx, user_data, res, cflags, res2,
-+		       true);
-+}
- static inline bool __io_fill_cqe(struct io_kiocb *req, s32 res, u32 cflags)
- {
- 	trace_io_uring_complete(req->ctx, req, req->user_data, res, cflags);
--	return __fill_cqe(req->ctx, req->user_data, res, cflags);
-+	if (!(req->ctx->flags & IORING_SETUP_CQE32))
-+		return __fill_cqe(req->ctx, req->user_data, res, cflags);
-+	else
-+		return __fill_big_cqe(req->ctx, req->user_data, res, cflags,
-+				req->uring_cmd.res2);
- }
- 
- static noinline void io_fill_cqe_req(struct io_kiocb *req, s32 res, u32 cflags)
-@@ -4126,10 +4172,12 @@ static int io_linkat(struct io_kiocb *req, unsigned int issue_flags)
-  * Called by consumers of io_uring_cmd, if they originally returned
-  * -EIOCBQUEUED upon receiving the command.
-  */
--void io_uring_cmd_done(struct io_uring_cmd *ioucmd, ssize_t ret)
-+void io_uring_cmd_done(struct io_uring_cmd *ioucmd, ssize_t ret, ssize_t res2)
- {
- 	struct io_kiocb *req = container_of(ioucmd, struct io_kiocb, uring_cmd);
- 
-+	/* store secondary result in res2 */
-+	req->uring_cmd.res2 = res2;
- 	if (ret < 0)
- 		req_set_fail(req);
- 	io_req_complete(req, ret);
-@@ -4163,7 +4211,7 @@ static int io_uring_cmd(struct io_kiocb *req, unsigned int issue_flags)
- 	/* queued async, consumer will call io_uring_cmd_done() when complete */
- 	if (ret == -EIOCBQUEUED)
- 		return 0;
--	io_uring_cmd_done(ioucmd, ret);
-+	io_uring_cmd_done(ioucmd, ret, 0);
- 	return 0;
- }
- 
-@@ -9026,13 +9074,20 @@ static void *io_mem_alloc(size_t size)
- 	return (void *) __get_free_pages(gfp_flags, get_order(size));
- }
- 
--static unsigned long rings_size(unsigned sq_entries, unsigned cq_entries,
--				size_t *sq_offset)
-+static unsigned long rings_size(struct io_uring_params *p,
-+		size_t *sq_offset)
- {
-+	unsigned sq_entries, cq_entries;
- 	struct io_rings *rings;
- 	size_t off, sq_array_size;
- 
--	off = struct_size(rings, cqes, cq_entries);
-+	sq_entries = p->sq_entries;
-+	cq_entries = p->cq_entries;
-+
-+	if (p->flags & IORING_SETUP_CQE32)
-+		off = struct_size(rings, cqes, 2 * cq_entries);
-+	else
-+		off = struct_size(rings, cqes, cq_entries);
- 	if (off == SIZE_MAX)
- 		return SIZE_MAX;
- 
-@@ -10483,7 +10538,7 @@ static __cold int io_allocate_scq_urings(struct io_ring_ctx *ctx,
- 	ctx->sq_entries = p->sq_entries;
- 	ctx->cq_entries = p->cq_entries;
- 
--	size = rings_size(p->sq_entries, p->cq_entries, &sq_array_offset);
-+	size = rings_size(p, &sq_array_offset);
- 	if (size == SIZE_MAX)
- 		return -EOVERFLOW;
- 
-@@ -10713,7 +10768,8 @@ static long io_uring_setup(u32 entries, struct io_uring_params __user *params)
- 	if (p.flags & ~(IORING_SETUP_IOPOLL | IORING_SETUP_SQPOLL |
- 			IORING_SETUP_SQ_AFF | IORING_SETUP_CQSIZE |
- 			IORING_SETUP_CLAMP | IORING_SETUP_ATTACH_WQ |
--			IORING_SETUP_R_DISABLED | IORING_SETUP_SQE128))
-+			IORING_SETUP_R_DISABLED | IORING_SETUP_SQE128 |
-+			IORING_SETUP_CQE32))
- 		return -EINVAL;
- 
- 	return  io_uring_create(entries, &p, params);
-diff --git a/include/linux/io_uring.h b/include/linux/io_uring.h
-index cedc68201469..0aba7b50cde6 100644
---- a/include/linux/io_uring.h
-+++ b/include/linux/io_uring.h
-@@ -14,7 +14,10 @@ enum io_uring_cmd_flags {
- 
- struct io_uring_cmd {
- 	struct file     *file;
--	void            *cmd;
-+	union {
-+		void            *cmd; /* used on submission */
-+		u64		res2; /* used on completion */
-+	};
- 	/* for irq-completion - if driver requires doing stuff in task-context*/
- 	void (*driver_cb)(struct io_uring_cmd *cmd);
- 	u32             flags;
-@@ -25,7 +28,7 @@ struct io_uring_cmd {
- };
- 
- #if defined(CONFIG_IO_URING)
--void io_uring_cmd_done(struct io_uring_cmd *cmd, ssize_t ret);
-+void io_uring_cmd_done(struct io_uring_cmd *cmd, ssize_t ret, ssize_t res2);
- void io_uring_cmd_complete_in_task(struct io_uring_cmd *ioucmd,
- 			void (*driver_cb)(struct io_uring_cmd *));
- struct sock *io_uring_get_socket(struct file *file);
-@@ -48,7 +51,8 @@ static inline void io_uring_free(struct task_struct *tsk)
- 		__io_uring_free(tsk);
- }
- #else
--static inline void io_uring_cmd_done(struct io_uring_cmd *cmd, ssize_t ret)
-+static inline void io_uring_cmd_done(struct io_uring_cmd *cmd, ssize_t ret,
-+		ssize_t ret2)
- {
- }
- static inline void io_uring_cmd_complete_in_task(struct io_uring_cmd *ioucmd,
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index d7a4bdb9bf3b..85b8ff046496 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -113,6 +113,7 @@ enum {
- #define IORING_SETUP_ATTACH_WQ	(1U << 5)	/* attach to existing wq */
- #define IORING_SETUP_R_DISABLED	(1U << 6)	/* start with ring disabled */
- #define IORING_SETUP_SQE128	(1U << 7)	/* SQEs are 128b */
-+#define IORING_SETUP_CQE32	(1U << 8)	/* CQEs are 32b */
- 
- enum {
- 	IORING_OP_NOP,
-@@ -207,6 +208,16 @@ struct io_uring_cqe {
- 	__u32	flags;
- };
  
 +/*
-+ * If the ring is initializefd with IORING_SETUP_CQE32, we setup large cqe.
-+ * Large CQE is created by combining two adjacent regular CQES.
++ * This overlays struct io_uring_cmd pdu.
++ * Expect build errors if this grows larger than that.
 + */
-+struct io_uring_cqe32 {
-+	struct io_uring_cqe	cqe;
-+	__u64	res2;
-+	__u64	unused;
-+};
++struct nvme_uring_cmd_pdu {
++	union {
++		struct bio *bio;
++		struct request *req;
++	};
++	void *meta; /* kernel-resident buffer */
++	void __user *meta_buffer;
++	u32 meta_len;
++} __packed;
 +
- /*
-  * cqe->flags
-  *
++static struct nvme_uring_cmd_pdu *nvme_uring_cmd_pdu(struct io_uring_cmd *ioucmd)
++{
++	return (struct nvme_uring_cmd_pdu *)&ioucmd->pdu;
++}
++
++static void nvme_pt_task_cb(struct io_uring_cmd *ioucmd)
++{
++	struct nvme_uring_cmd_pdu *pdu = nvme_uring_cmd_pdu(ioucmd);
++	struct request *req = pdu->req;
++	struct bio *bio = req->bio;
++	bool write = (req_op(req) == REQ_OP_DRV_OUT);
++	int status;
++	u64 result;
++
++	if (nvme_req(req)->flags & NVME_REQ_CANCELLED)
++		status = -EINTR;
++	else
++		status = nvme_req(req)->status;
++
++	/* we can free request */
++	blk_mq_free_request(req);
++	blk_rq_unmap_user(bio);
++
++	if (pdu->meta && !status && !write) {
++		if (copy_to_user(pdu->meta_buffer, pdu->meta, pdu->meta_len))
++			status = -EFAULT;
++	}
++	kfree(pdu->meta);
++
++	result = le64_to_cpu(nvme_req(req)->result.u64);
++	io_uring_cmd_done(ioucmd, status, result);
++}
++
++static void nvme_end_async_pt(struct request *req, blk_status_t err)
++{
++	struct io_uring_cmd *ioucmd = req->end_io_data;
++	struct nvme_uring_cmd_pdu *pdu = nvme_uring_cmd_pdu(ioucmd);
++	/* extract bio before reusing the same field for request */
++	struct bio *bio = pdu->bio;
++
++	pdu->req = req;
++	req->bio = bio;
++
++	/* this takes care of moving rest of completion-work to task context */
++	io_uring_cmd_complete_in_task(ioucmd, nvme_pt_task_cb);
++}
++
++static void nvme_setup_uring_cmd_data(struct request *rq,
++		struct io_uring_cmd *ioucmd, void *meta,
++		void __user *meta_buffer, u32 meta_len)
++{
++	struct nvme_uring_cmd_pdu *pdu = nvme_uring_cmd_pdu(ioucmd);
++
++	/* to free bio on completion, as req->bio will be null at that time */
++	pdu->bio = rq->bio;
++	pdu->meta = meta;
++	pdu->meta_buffer = meta_buffer;
++	pdu->meta_len = meta_len;
++	rq->end_io_data = ioucmd;
++}
++
+ static void *nvme_add_user_metadata(struct bio *bio, void __user *ubuf,
+ 		unsigned len, u32 seed, bool write)
+ {
+@@ -56,7 +131,8 @@ static void *nvme_add_user_metadata(struct bio *bio, void __user *ubuf,
+ static int nvme_submit_user_cmd(struct request_queue *q,
+ 		struct nvme_command *cmd, void __user *ubuffer,
+ 		unsigned bufflen, void __user *meta_buffer, unsigned meta_len,
+-		u32 meta_seed, u64 *result, unsigned timeout)
++		u32 meta_seed, u64 *result, unsigned timeout,
++		struct io_uring_cmd *ioucmd)
+ {
+ 	bool write = nvme_is_write(cmd);
+ 	struct nvme_ns *ns = q->queuedata;
+@@ -93,6 +169,12 @@ static int nvme_submit_user_cmd(struct request_queue *q,
+ 		}
+ 	}
+ 
++	if (ioucmd) { /* async dispatch */
++		nvme_setup_uring_cmd_data(req, ioucmd, meta, meta_buffer,
++				meta_len);
++		blk_execute_rq_nowait(req, 0, nvme_end_async_pt);
++		return -EIOCBQUEUED;
++	}
+ 	ret = nvme_execute_passthru_rq(req);
+ 	if (result)
+ 		*result = le64_to_cpu(nvme_req(req)->result.u64);
+@@ -170,7 +252,7 @@ static int nvme_submit_io(struct nvme_ns *ns, struct nvme_user_io __user *uio)
+ 
+ 	return nvme_submit_user_cmd(ns->queue, &c,
+ 			nvme_to_user_ptr(io.addr), length,
+-			metadata, meta_len, lower_32_bits(io.slba), NULL, 0);
++			metadata, meta_len, lower_32_bits(io.slba), NULL, 0, NULL);
+ }
+ 
+ static bool nvme_validate_passthru_nsid(struct nvme_ctrl *ctrl,
+@@ -224,7 +306,7 @@ static int nvme_user_cmd(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
+ 	status = nvme_submit_user_cmd(ns ? ns->queue : ctrl->admin_q, &c,
+ 			nvme_to_user_ptr(cmd.addr), cmd.data_len,
+ 			nvme_to_user_ptr(cmd.metadata), cmd.metadata_len,
+-			0, &result, timeout);
++			0, &result, timeout, NULL);
+ 
+ 	if (status >= 0) {
+ 		if (put_user(result, &ucmd->result))
+@@ -235,45 +317,51 @@ static int nvme_user_cmd(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
+ }
+ 
+ static int nvme_user_cmd64(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
+-			struct nvme_passthru_cmd64 __user *ucmd)
++			struct nvme_passthru_cmd64 __user *ucmd,
++			struct io_uring_cmd *ioucmd)
+ {
+-	struct nvme_passthru_cmd64 cmd;
++	struct nvme_passthru_cmd64 cmd, *cptr;
+ 	struct nvme_command c;
+ 	unsigned timeout = 0;
+ 	int status;
+ 
+ 	if (!capable(CAP_SYS_ADMIN))
+ 		return -EACCES;
+-	if (copy_from_user(&cmd, ucmd, sizeof(cmd)))
+-		return -EFAULT;
+-	if (cmd.flags)
++	if (!ioucmd) {
++		if (copy_from_user(&cmd, ucmd, sizeof(cmd)))
++			return -EFAULT;
++		cptr = &cmd;
++	} else {
++		cptr = (struct nvme_passthru_cmd64 *)ioucmd->cmd;
++	}
++	if (cptr->flags)
+ 		return -EINVAL;
+-	if (!nvme_validate_passthru_nsid(ctrl, ns, cmd.nsid))
++	if (!nvme_validate_passthru_nsid(ctrl, ns, cptr->nsid))
+ 		return -EINVAL;
+ 
+ 	memset(&c, 0, sizeof(c));
+-	c.common.opcode = cmd.opcode;
+-	c.common.flags = cmd.flags;
+-	c.common.nsid = cpu_to_le32(cmd.nsid);
+-	c.common.cdw2[0] = cpu_to_le32(cmd.cdw2);
+-	c.common.cdw2[1] = cpu_to_le32(cmd.cdw3);
+-	c.common.cdw10 = cpu_to_le32(cmd.cdw10);
+-	c.common.cdw11 = cpu_to_le32(cmd.cdw11);
+-	c.common.cdw12 = cpu_to_le32(cmd.cdw12);
+-	c.common.cdw13 = cpu_to_le32(cmd.cdw13);
+-	c.common.cdw14 = cpu_to_le32(cmd.cdw14);
+-	c.common.cdw15 = cpu_to_le32(cmd.cdw15);
+-
+-	if (cmd.timeout_ms)
+-		timeout = msecs_to_jiffies(cmd.timeout_ms);
++	c.common.opcode = cptr->opcode;
++	c.common.flags = cptr->flags;
++	c.common.nsid = cpu_to_le32(cptr->nsid);
++	c.common.cdw2[0] = cpu_to_le32(cptr->cdw2);
++	c.common.cdw2[1] = cpu_to_le32(cptr->cdw3);
++	c.common.cdw10 = cpu_to_le32(cptr->cdw10);
++	c.common.cdw11 = cpu_to_le32(cptr->cdw11);
++	c.common.cdw12 = cpu_to_le32(cptr->cdw12);
++	c.common.cdw13 = cpu_to_le32(cptr->cdw13);
++	c.common.cdw14 = cpu_to_le32(cptr->cdw14);
++	c.common.cdw15 = cpu_to_le32(cptr->cdw15);
++
++	if (cptr->timeout_ms)
++		timeout = msecs_to_jiffies(cptr->timeout_ms);
+ 
+ 	status = nvme_submit_user_cmd(ns ? ns->queue : ctrl->admin_q, &c,
+-			nvme_to_user_ptr(cmd.addr), cmd.data_len,
+-			nvme_to_user_ptr(cmd.metadata), cmd.metadata_len,
+-			0, &cmd.result, timeout);
++			nvme_to_user_ptr(cptr->addr), cptr->data_len,
++			nvme_to_user_ptr(cptr->metadata), cptr->metadata_len,
++			0, &cptr->result, timeout, ioucmd);
+ 
+-	if (status >= 0) {
+-		if (put_user(cmd.result, &ucmd->result))
++	if (!ioucmd && status >= 0) {
++		if (put_user(cptr->result, &ucmd->result))
+ 			return -EFAULT;
+ 	}
+ 
+@@ -296,7 +384,7 @@ static int nvme_ctrl_ioctl(struct nvme_ctrl *ctrl, unsigned int cmd,
+ 	case NVME_IOCTL_ADMIN_CMD:
+ 		return nvme_user_cmd(ctrl, NULL, argp);
+ 	case NVME_IOCTL_ADMIN64_CMD:
+-		return nvme_user_cmd64(ctrl, NULL, argp);
++		return nvme_user_cmd64(ctrl, NULL, argp, NULL);
+ 	default:
+ 		return sed_ioctl(ctrl->opal_dev, cmd, argp);
+ 	}
+@@ -340,7 +428,7 @@ static int nvme_ns_ioctl(struct nvme_ns *ns, unsigned int cmd,
+ 	case NVME_IOCTL_SUBMIT_IO:
+ 		return nvme_submit_io(ns, argp);
+ 	case NVME_IOCTL_IO64_CMD:
+-		return nvme_user_cmd64(ns->ctrl, ns, argp);
++		return nvme_user_cmd64(ns->ctrl, ns, argp, NULL);
+ 	default:
+ 		return -ENOTTY;
+ 	}
+@@ -369,6 +457,29 @@ long nvme_ns_chr_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 	return __nvme_ioctl(ns, cmd, (void __user *)arg);
+ }
+ 
++static int nvme_ns_async_ioctl(struct nvme_ns *ns, struct io_uring_cmd *ioucmd)
++{
++	int ret;
++
++	switch (ioucmd->cmd_op) {
++	case NVME_IOCTL_IO64_CMD:
++		ret = nvme_user_cmd64(ns->ctrl, ns, NULL, ioucmd);
++		break;
++	default:
++		ret = -ENOTTY;
++	}
++
++	return ret;
++}
++
++int nvme_ns_chr_async_cmd(struct io_uring_cmd *ioucmd)
++{
++	struct nvme_ns *ns = container_of(file_inode(ioucmd->file)->i_cdev,
++			struct nvme_ns, cdev);
++	return nvme_ns_async_ioctl(ns, ioucmd);
++}
++
++
+ #ifdef CONFIG_NVME_MULTIPATH
+ static int nvme_ns_head_ctrl_ioctl(struct nvme_ns *ns, unsigned int cmd,
+ 		void __user *argp, struct nvme_ns_head *head, int srcu_idx)
+@@ -435,6 +546,20 @@ long nvme_ns_head_chr_ioctl(struct file *file, unsigned int cmd,
+ 	srcu_read_unlock(&head->srcu, srcu_idx);
+ 	return ret;
+ }
++
++int nvme_ns_head_chr_async_cmd(struct io_uring_cmd *ioucmd)
++{
++	struct cdev *cdev = file_inode(ioucmd->file)->i_cdev;
++	struct nvme_ns_head *head = container_of(cdev, struct nvme_ns_head, cdev);
++	int srcu_idx = srcu_read_lock(&head->srcu);
++	struct nvme_ns *ns = nvme_find_path(head);
++	int ret = -EWOULDBLOCK;
++
++	if (ns)
++		ret = nvme_ns_async_ioctl(ns, ioucmd);
++	srcu_read_unlock(&head->srcu, srcu_idx);
++	return ret;
++}
+ #endif /* CONFIG_NVME_MULTIPATH */
+ 
+ static int nvme_dev_user_cmd(struct nvme_ctrl *ctrl, void __user *argp)
+@@ -480,7 +605,7 @@ long nvme_dev_ioctl(struct file *file, unsigned int cmd,
+ 	case NVME_IOCTL_ADMIN_CMD:
+ 		return nvme_user_cmd(ctrl, NULL, argp);
+ 	case NVME_IOCTL_ADMIN64_CMD:
+-		return nvme_user_cmd64(ctrl, NULL, argp);
++		return nvme_user_cmd64(ctrl, NULL, argp, NULL);
+ 	case NVME_IOCTL_IO_CMD:
+ 		return nvme_dev_user_cmd(ctrl, argp);
+ 	case NVME_IOCTL_RESET:
+diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
+index f8bf6606eb2f..1d798d09456f 100644
+--- a/drivers/nvme/host/multipath.c
++++ b/drivers/nvme/host/multipath.c
+@@ -459,6 +459,7 @@ static const struct file_operations nvme_ns_head_chr_fops = {
+ 	.release	= nvme_ns_head_chr_release,
+ 	.unlocked_ioctl	= nvme_ns_head_chr_ioctl,
+ 	.compat_ioctl	= compat_ptr_ioctl,
++	.async_cmd	= nvme_ns_head_chr_async_cmd,
+ };
+ 
+ static int nvme_add_ns_head_cdev(struct nvme_ns_head *head)
+diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
+index a162f6c6da6e..7b801c241d26 100644
+--- a/drivers/nvme/host/nvme.h
++++ b/drivers/nvme/host/nvme.h
+@@ -16,6 +16,7 @@
+ #include <linux/rcupdate.h>
+ #include <linux/wait.h>
+ #include <linux/t10-pi.h>
++#include <linux/io_uring.h>
+ 
+ #include <trace/events/block.h>
+ 
+@@ -751,6 +752,8 @@ long nvme_ns_head_chr_ioctl(struct file *file, unsigned int cmd,
+ 		unsigned long arg);
+ long nvme_dev_ioctl(struct file *file, unsigned int cmd,
+ 		unsigned long arg);
++int nvme_ns_chr_async_cmd(struct io_uring_cmd *ioucmd);
++int nvme_ns_head_chr_async_cmd(struct io_uring_cmd *ioucmd);
+ int nvme_getgeo(struct block_device *bdev, struct hd_geometry *geo);
+ 
+ extern const struct attribute_group *nvme_ns_id_attr_groups[];
 -- 
 2.25.1
 

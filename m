@@ -2,59 +2,62 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DE9E4EE837
-	for <lists+io-uring@lfdr.de>; Fri,  1 Apr 2022 08:30:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38BCE4EE83A
+	for <lists+io-uring@lfdr.de>; Fri,  1 Apr 2022 08:33:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236300AbiDAGcF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 1 Apr 2022 02:32:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52008 "EHLO
+        id S235647AbiDAGed (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 1 Apr 2022 02:34:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58514 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233382AbiDAGcF (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 1 Apr 2022 02:32:05 -0400
-Received: from mail-ot1-x32d.google.com (mail-ot1-x32d.google.com [IPv6:2607:f8b0:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7476E5F27F;
-        Thu, 31 Mar 2022 23:30:15 -0700 (PDT)
-Received: by mail-ot1-x32d.google.com with SMTP id a7-20020a9d5c87000000b005ad1467cb59so1499179oti.5;
-        Thu, 31 Mar 2022 23:30:15 -0700 (PDT)
+        with ESMTP id S233382AbiDAGec (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 1 Apr 2022 02:34:32 -0400
+Received: from mail-oi1-x22c.google.com (mail-oi1-x22c.google.com [IPv6:2607:f8b0:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51FE7260C4C;
+        Thu, 31 Mar 2022 23:32:43 -0700 (PDT)
+Received: by mail-oi1-x22c.google.com with SMTP id 12so1870961oix.12;
+        Thu, 31 Mar 2022 23:32:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=oY5lxseEYvVi/FJqL+ODr3hkFa+xrcTeRJyj7dlR1ww=;
-        b=ArKGrA8IHpSZpGyk7d2dNujVyXNYuBtmPHXI5+93f64a3hkNVDs7C9VdJaglQySAvW
-         KrikZDmbySZcRnPeU4o5yIuUsbWqgJ4kHmzYxUWJrvt5s36wtJxPadxTBiCi867wFyJN
-         UC+5MDr5YgO5CYJ/xIfPIGx3sO15MXEwzxXfypm9GYZBlwymTlDwoFuKb0dPvwnhlIz5
-         Y2+b+wVztK72SxHNRtaBU5hWSRNzGEH0DcnDT1o83yYZbG+yVxx9SOiCHSvEPMR9ws57
-         8xpjrbsgioYiZeQuMIPjePThaYagXTafJtHKdr+sN0oxV3h99yBMxZodir/1LwWbqGi8
-         3Ucw==
+        bh=gK4aGIYEgAhXDfx1cDepQ0HM6CbjsNwz+Xvd4R4OCLM=;
+        b=VTta7BHgoG/FRAGIVOU4RMsh/ihKCZYnDPyCSQVY5CdQUnLvIjZRhVmOrDvdomVR2p
+         n9tCXXSnQVgRIlwBgHQLjWdGqBbS1Xk4+TYyYJO/ZfxlNkeFRVPx/dAVMHgCRIn17mGR
+         aL+ohpd5ha0c58kJQXvmYvRJ5Y/uOYhtlqRWwQ14Rgy1rfuHzXtNzof2LeCqAd5JPEtX
+         cc53yHhZ2GrloGI1tnTHiQF7tuaakavRDOpd1LgJkidyaA2MACVyJFiX5ekHLMSh7IRz
+         V/9rYJFDD2ZrzRJYIyFhzJPnL+VziDaUyZCEJAl8lCSeFUWhue6rSINy6m1XFnN07VCf
+         oBOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=oY5lxseEYvVi/FJqL+ODr3hkFa+xrcTeRJyj7dlR1ww=;
-        b=ODn86psPmj0GRTknQzBnb2hcpdMzqcIPp7sGnMCXGbq1c6400mnFvalSclk0OleGi2
-         ImEJBMNc8zAUsh028G1i7EIgjWkQwpczZNv8r0MYpUE/VsK7bPOTFIA2u802bdI8AvZn
-         6vQzFgjhXyZUXwr336BgLnxjlRmUg0I3yzJIL3mPHdCbZAyWizUXioKVdAcQl4cTJ8a4
-         dhFo9UVacjYZCV814h5bmtO/B9rxNEvHvoHUJvbhp7BjdP3rLueXkabTuenyg2RfJlKb
-         1C4N5ltjkCCP/zV9M7atL3K34GENcrpwY6lUvNb0w9M7uD39Tk5HUHN6EqQdZVAnEZYO
-         A99g==
-X-Gm-Message-State: AOAM532vqRft6mI7SOB2F+4tfeBgCw3CYKLssBy4605XDGn3aeaSzFGt
-        xPLIBsnrjbwEN65JPNGZhR2VT6G9T8KCog3//u0=
-X-Google-Smtp-Source: ABdhPJyUj9XIGjZCaZawYpyZ+T0i4GQnMMiMyV1w8XVN5XehPlnlO15JMAguEsmtRTIwsCX5KS8+D2zqe8yny8OcM44=
-X-Received: by 2002:a9d:6c8e:0:b0:5af:5113:1bd9 with SMTP id
- c14-20020a9d6c8e000000b005af51131bd9mr7063558otr.86.1648794614797; Thu, 31
- Mar 2022 23:30:14 -0700 (PDT)
+        bh=gK4aGIYEgAhXDfx1cDepQ0HM6CbjsNwz+Xvd4R4OCLM=;
+        b=mvyLFrRsXOnITxUyaDZeUjj1u2ko2QvpEkyFzzPEVLNv3X3k411M6tDTo4N+xk0ead
+         SOeOeTUn1QhmImj4ZRXhWCC0HE4p0qyDUz3aDu5R+qZ0cJP7s3FgatqK3w/7ANv3cuk1
+         ppmjX6StwSrbanlJmvKPHEYQyOz9pgFO2qvoJu/mTf+L+6Bh+Kcq42cGPTGkeDCeoPzT
+         z6jfclyARU1aomEJsaJXz3Gb2X7REVp5egjCzxStwhlpAA6dEb0CTWpJT7Nb7zYDtp9a
+         thvSfSmLlL66ppVjR96KkO2HhDtVwAxEjm7kUy4rhONymPGUQeVW0B7lmMQIh54qTzaE
+         BUtA==
+X-Gm-Message-State: AOAM530v4qm1DcrTsSfekcKA5feux4laZ1iDAOdnVkxk96tJeFk5ZoB3
+        edPrbP5S/YOzOnyMGN+pyGmBGKz3heFL6GlDAX4=
+X-Google-Smtp-Source: ABdhPJyl6sH5UieKP62jvxcmEFGr5+PCOf1hUKaBxMgKOisnVDIjfo1v3QE5lzXugafhF9mZkkAmfnBk9mN6d5T5aqw=
+X-Received: by 2002:aca:2407:0:b0:2ef:5c86:5a09 with SMTP id
+ n7-20020aca2407000000b002ef5c865a09mr4154475oic.160.1648794762589; Thu, 31
+ Mar 2022 23:32:42 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220308152105.309618-1-joshi.k@samsung.com> <CGME20220308152729epcas5p17e82d59c68076eb46b5ef658619d65e3@epcas5p1.samsung.com>
+References: <CGME20220308152729epcas5p17e82d59c68076eb46b5ef658619d65e3@epcas5p1.samsung.com>
  <20220308152105.309618-18-joshi.k@samsung.com> <20220310083652.GF26614@lst.de>
  <CA+1E3rLaQstG8LWUyJrbK5Qz+AnNpOnAyoK-7H5foFm67BJeFA@mail.gmail.com>
  <20220310141945.GA890@lst.de> <CA+1E3rL3Q2noHW-cD20SZyo9EqbzjF54F6TgZoUMMuZGkhkqnw@mail.gmail.com>
  <20220311062710.GA17232@lst.de> <CA+1E3rLGwHFbdbSTJBfWrw6RLErwcT2zPxGmmWbcLUj2y=16Qg@mail.gmail.com>
- <910afdf8-ec01-90b2-b7ec-a7644e53259e@kernel.dk>
-In-Reply-To: <910afdf8-ec01-90b2-b7ec-a7644e53259e@kernel.dk>
+ <20220324063218.GC12660@lst.de> <20220325133921.GA13818@test-zns>
+ <20220330130219.GB1938@lst.de> <CA+1E3r+Z9UyiNjmb-DzOpNrcbCO_nNFYUD5L5xJJCisx_D=wPQ@mail.gmail.com>
+ <a44e38d6-54b4-0d17-c274-b7d46f60a0cf@kernel.dk> <CA+1E3r+CSC6jaDBXpxQUDnk8G=RuQaa=DPJ=tt9O9qydH5B9SQ@mail.gmail.com>
+ <f3923d64-4f84-143b-cce2-fcf8366da0e6@kernel.dk>
+In-Reply-To: <f3923d64-4f84-143b-cce2-fcf8366da0e6@kernel.dk>
 From:   Kanchan Joshi <joshiiitr@gmail.com>
-Date:   Fri, 1 Apr 2022 11:59:49 +0530
-Message-ID: <CA+1E3r+6BgUCEu_7DYrN-+wnz9MU5x7S1u8-W2H5GwVS1y4Gbg@mail.gmail.com>
+Date:   Fri, 1 Apr 2022 12:02:17 +0530
+Message-ID: <CA+1E3rL+=h3enUGGe_4m++-NztfT-t84foiDVK4QZ4AfSxGPfQ@mail.gmail.com>
 Subject: Re: [PATCH 17/17] nvme: enable non-inline passthru commands
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Christoph Hellwig <hch@lst.de>,
@@ -79,37 +82,63 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, Apr 1, 2022 at 6:52 AM Jens Axboe <axboe@kernel.dk> wrote:
->
-> On 3/22/22 11:10 AM, Kanchan Joshi wrote:
-> >> We need to decouple the
-> >> uring cmd properly.  And properly in this case means not to add a
-> >> result pointer, but to drop the result from the _input_ structure
-> >> entirely, and instead optionally support a larger CQ entry that contains
-> >> it, just like the first patch does for the SQ.
+On Fri, Apr 1, 2022 at 8:14 AM Jens Axboe <axboe@kernel.dk> wrote:
+> >>>>> Ok. If you are open to take new opcode/struct route, that is all we
+> >>>>> require to pair with big-sqe and have this sorted. How about this -
+> >>>>
+> >>>> I would much, much, much prefer to support a bigger CQE.  Having
+> >>>> a pointer in there just creates a fair amount of overhead and
+> >>>> really does not fit into the model nvme and io_uring use.
+> >>>
+> >>> Sure, will post the code with bigger-cqe first.
+> >>
+> >> I can add the support, should be pretty trivial. And do the liburing
+> >> side as well, so we have a sane base.
 > >
-> > Creating a large CQE was my thought too. Gave that another stab.
-> > Dealing with two types of CQE felt nasty to fit in liburing's api-set
-> > (which is cqe-heavy).
-> >
-> > Jens: Do you already have thoughts (go/no-go) for this route?
+> >  I will post the big-cqe based work today. It works with fio.
+> >  It does not deal with liburing (which seems tricky), but hopefully it
+> > can help us move forward anyway .
 >
-> Yes, I think we should just add support for 32-byte CQEs as well. Only
-> pondering I've done here is if it makes sense to manage them separately,
-> or if you should just get both big sqe and cqe support in one setting.
-> For passthrough, you'd want both. But eg for zoned writes, you can make
-> do with a normal sized sqes and only do larger cqes.
+> Let's compare then, since I just did the support too :-)
 
-I had the same thought. That we may have other use-cases returning a
-second result.
-For now I am doing 32-byte cqe with the same big-sqe flag, but an
-independent flag can be done easily.
+:-) awesome
 
-Combinations are:
-(a) big-sqe with big-cqe  (for nvme-passthru)
-(b) big-sqe without big-cqe (inline submission but not requiring second result)
-(c) regular-sqe with big-cqe (for zone-append)
-(d) regular-sqe with regular-cqe (for cases when inline submission is
-not enough e.g. > 80 bytes of cmd)
+> Some limitations in what I pushed:
+>
+> 1) Doesn't support the inline completion path. Undecided if this is
+> super important or not, the priority here for me was to not pollute the
+> general completion path.
+>
+> 2) Doesn't support overflow. That can certainly be done, only
+> complication here is that we need 2x64bit in the io_kiocb for that.
+> Perhaps something can get reused for that, not impossible. But figured
+> it wasn't important enough for a first run.
 
-At this point (d) seems rare. And the other three can be done with two flags.
+We have the handling in my version. But that part is not tested, since
+that situation did not occur naturally.
+Maybe it requires slowing down completion-reaping (in user-space) to
+trigger that.
+
+> I also did the liburing support, but haven't pushed it yet. That's
+> another case where some care has to be taken to avoid makig the general
+> path slower.
+>
+> Oh, it's here, usual branch:
+>
+> https://git.kernel.dk/cgit/linux-block/log/?h=io_uring-big-sqe
+>
+> and based on top of the pending 5.18 bits and the current 5.19 bits.
+>
+> >> Then I'd suggest to collapse a few of the patches in the series,
+> >> the ones that simply modify or fix gaps in previous ones. Order
+> >> the series so we build the support and then add nvme support
+> >> nicely on top of that.
+> >
+> > I think we already did away with patches which were fixing only the
+> > gaps. But yes, patches still add infra for features incrementally.
+> > Do you mean having all io_uring infra (async, plug, poll) squashed
+> > into a single io_uring patch?
+>
+> At least async and plug, I'll double check on the poll bit.
+
+Sounds right, the plug should definitely go in the async one.

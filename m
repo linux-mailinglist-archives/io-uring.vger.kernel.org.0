@@ -2,39 +2,39 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FF194F0BBA
-	for <lists+io-uring@lfdr.de>; Sun,  3 Apr 2022 20:22:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14C134F0BBC
+	for <lists+io-uring@lfdr.de>; Sun,  3 Apr 2022 20:22:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239569AbiDCSYf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 3 Apr 2022 14:24:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41640 "EHLO
+        id S1359740AbiDCSYh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 3 Apr 2022 14:24:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1359738AbiDCSYe (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 3 Apr 2022 14:24:34 -0400
+        with ESMTP id S1359738AbiDCSYg (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 3 Apr 2022 14:24:36 -0400
 Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C302838BC7
-        for <io-uring@vger.kernel.org>; Sun,  3 Apr 2022 11:22:40 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D572339156
+        for <io-uring@vger.kernel.org>; Sun,  3 Apr 2022 11:22:42 -0700 (PDT)
 Received: from integral2.. (unknown [182.2.43.220])
-        by gnuweeb.org (Postfix) with ESMTPSA id DED6C7E35D;
-        Sun,  3 Apr 2022 18:22:38 +0000 (UTC)
+        by gnuweeb.org (Postfix) with ESMTPSA id 1EB477E36E;
+        Sun,  3 Apr 2022 18:22:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1649010160;
-        bh=oCDwsVKfNM71r1QpM+9S6NUpbCJtPTQA+3vGKHHb4JQ=;
+        s=default; t=1649010162;
+        bh=opTE2r/RtYgKezFARssHjOFWp5Faa6kfx61ORKnwuZs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fBhLMvqFkZryIiXzH30D8Ine/f6B7+lfSGEuUztD41gGDrCnst3FH0hBlYtosfOWW
-         CcRtvaMqNCayU4PBmZg5m5KG374gub4p5UJBpBCrrpNNeVCD61cdCczg0TK9xiGmZ5
-         ecqBq+jSvcsORX503GoXE0uPzOeh8W/jjdPGJ8xvSUvmWbJx9Cr7SWFfZtfjQLAV/C
-         1bIFWG9TGGgU+DY1oh1l718k5JvVt4Ey0/yyFbSwoOTzY+c0rqUxN+LjRI7+lUG3Vq
-         JWUTvrmCQxipTeu3gat1/TSE58UiKWVsiaaCxP3ek9sRQD2//uwroWowZrah3/7D5l
-         sjnr5QryNxsfA==
+        b=gvwylv/eSvna6O+Ll9s/NTAzdxgZ49xioQysBXwJbKfh0rzz6eRyWlVobruyeBD2v
+         Jkz3MTPcBU/0FEhLJB1rgF8WSExfJ2n6Kguicy+PF9e+GzJo2OQIWm+uaELyrKoVFo
+         dBAkql2MG/HBZ617tX/qjvmCv9vo7VgORI0q8G3in9pUHg8vqOqKMKHit+krXMqAnV
+         b0EdLUQN8dkiZemX1ZijAzYvItD75WXrVr5GNG8oVQl0VaV4N7cxM3iaGIKJpY0Fsu
+         VQbASungiImJZNRvk/xEOEDdI9x9SlDTBSVMPNnh5anUaEqLOFelrBhs5YDpsJ9RiT
+         guN1oPxcj7OWg==
 From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
         io-uring Mailing List <io-uring@vger.kernel.org>,
         GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>
-Subject: [PATCH liburing v2 2/3] test/Makefile: Append `-lpthread` to `LDFLAGS` for all tests
-Date:   Mon,  4 Apr 2022 01:21:59 +0700
-Message-Id: <20220403182200.259937-3-ammarfaizi2@gnuweeb.org>
+Subject: [PATCH liburing v2 3/3] test/Makefile: Append `.t` to the test binary
+Date:   Mon,  4 Apr 2022 01:22:00 +0700
+Message-Id: <20220403182200.259937-4-ammarfaizi2@gnuweeb.org>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20220403182200.259937-1-ammarfaizi2@gnuweeb.org>
 References: <20220403182200.259937-1-ammarfaizi2@gnuweeb.org>
@@ -49,58 +49,191 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Instead of overriding LDFLAGS one by one for tests that need pthread,
-append -lpthread to LDFLAGS for all tests. This makes the Makefile
-script simpler. It also saves some hassle when we add a new test
-that does use pthread.
+When adding a new test, we often forget to add the new test binary to
+`.gitignore`. Append `.t` to the test binary filename, this way we can
+use a wildcard matching "test/*.t" in `.gitignore` to ignore all
+test binary files.
+
+Goals:
+  - Make the .gitignore simpler.
+  - Avoid the burden of adding a new test to .gitignore.
 
 Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 ---
- test/Makefile | 24 +-----------------------
- 1 file changed, 1 insertion(+), 23 deletions(-)
+ .gitignore    | 131 +-------------------------------------------------
+ test/Makefile |   8 +--
+ 2 files changed, 6 insertions(+), 133 deletions(-)
 
+diff --git a/.gitignore b/.gitignore
+index 58fff7f..60fddd7 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -16,136 +16,7 @@
+ /examples/link-cp
+ /examples/ucontext-cp
+ 
+-/test/232c93d07b74
+-/test/35fa71a030ca
+-/test/500f9fbadef8
+-/test/7ad0e4b2f83c
+-/test/8a9973408177
+-/test/917257daa0fe
+-/test/a0908ae19763
+-/test/a4c0b3decb33
+-/test/accept
+-/test/accept-link
+-/test/accept-reuse
+-/test/accept-test
+-/test/across-fork
+-/test/b19062a56726
+-/test/b5837bd5311d
+-/test/ce593a6c480a
+-/test/close-opath
+-/test/config.local
+-/test/connect
+-/test/cq-full
+-/test/cq-overflow
+-/test/cq-overflow-peek
+-/test/cq-peek-batch
+-/test/cq-ready
+-/test/cq-size
+-/test/d4ae271dfaae
+-/test/d77a67ed5f27
+-/test/defer
+-/test/double-poll-crash
+-/test/drop-submit
+-/test/eeed8b54e0df
+-/test/empty-eownerdead
+-/test/eventfd
+-/test/eventfd-disable
+-/test/eventfd-reg
+-/test/eventfd-ring
+-/test/exit-no-cleanup
+-/test/fadvise
+-/test/fallocate
+-/test/fc2a85cb02ef
+-/test/file-register
+-/test/file-update
+-/test/file-verify
+-/test/files-exit-hang-poll
+-/test/files-exit-hang-timeout
+-/test/fixed-buf-iter
+-/test/fixed-link
+-/test/fixed-reuse
+-/test/fpos
+-/test/fsync
+-/test/hardlink
+-/test/io-cancel
+-/test/io_uring_enter
+-/test/io_uring_register
+-/test/io_uring_setup
+-/test/iopoll
+-/test/lfs-openat
+-/test/lfs-openat-write
+-/test/link
+-/test/link-timeout
+-/test/link_drain
+-/test/madvise
+-/test/mkdir
+-/test/msg-ring
+-/test/nop
+-/test/nop-all-sizes
+-/test/open-close
+-/test/open-direct-link
+-/test/openat2
+-/test/personality
+-/test/pipe-eof
+-/test/pipe-reuse
+-/test/poll
+-/test/poll-cancel
+-/test/poll-cancel-ton
+-/test/poll-link
+-/test/poll-many
+-/test/poll-ring
+-/test/poll-v-poll
+-/test/pollfree
+-/test/probe
+-/test/read-write
+-/test/recv-msgall
+-/test/recv-msgall-stream
+-/test/register-restrictions
+-/test/rename
+-/test/ring-leak
+-/test/ring-leak2
+-/test/self
+-/test/send_recv
+-/test/send_recvmsg
+-/test/sendmsg_fs_cve
+-/test/shared-wq
+-/test/short-read
+-/test/shutdown
+-/test/sigfd-deadlock
+-/test/socket-rw
+-/test/socket-rw-eagain
+-/test/socket-rw-offset
+-/test/splice
+-/test/sq-full
+-/test/sq-full-cpp
+-/test/sq-poll-dup
+-/test/sq-poll-kthread
+-/test/sq-poll-share
+-/test/sqpoll-disable-exit
+-/test/sqpoll-exit-hang
+-/test/sqpoll-sleep
+-/test/sq-space_left
+-/test/statx
+-/test/stdout
+-/test/submit-reuse
+-/test/symlink
+-/test/teardowns
+-/test/thread-exit
+-/test/timeout
+-/test/timeout-new
+-/test/timeout-overflow
+-/test/tty-write-dpoll
+-/test/unlink
+-/test/wakeup-hang
+-/test/multicqes_drain
+-/test/poll-mshot-update
+-/test/rsrc_tags
+-/test/rw_merge_test
+-/test/sqpoll-cancel-hang
+-/test/testfile
+-/test/submit-link-fail
+-/test/exec-target
+-/test/skip-cqe
++/test/*.t
+ /test/*.dmesg
+ /test/output/
+ 
 diff --git a/test/Makefile b/test/Makefile
-index 44a96b2..eb1e7d5 100644
+index eb1e7d5..d97341c 100644
 --- a/test/Makefile
 +++ b/test/Makefile
-@@ -31,7 +31,7 @@ override CFLAGS += $(XCFLAGS) -DLIBURING_BUILD_TEST
- override CXXFLAGS += $(XCFLAGS) -std=c++11 -DLIBURING_BUILD_TEST
+@@ -183,7 +183,9 @@ endif
+ all_targets += sq-full-cpp
  
- LDFLAGS ?=
--override LDFLAGS += -L../src/ -luring
-+override LDFLAGS += -L../src/ -luring -lpthread
  
- test_srcs := \
- 	232c93d07b74.c \
-@@ -211,28 +211,6 @@ helpers.o: helpers.c
+-test_targets := $(patsubst %.c,%,$(patsubst %.cc,%,$(test_srcs)))
++test_targets := $(patsubst %.c,%,$(test_srcs))
++test_targets := $(patsubst %.cc,%,$(test_targets))
++test_targets := $(patsubst %,%.t,$(test_targets))
+ all_targets += $(test_targets)
+ 
+ #
+@@ -204,10 +206,10 @@ all: $(test_targets)
+ helpers.o: helpers.c
+ 	$(QUIET_CC)$(CC) $(CPPFLAGS) $(CFLAGS) -o $@ -c $<
+ 
+-%: %.c $(helpers) helpers.h ../src/liburing.a
++%.t: %.c $(helpers) helpers.h ../src/liburing.a
+ 	$(QUIET_CC)$(CC) $(CPPFLAGS) $(CFLAGS) -o $@ $< $(helpers) $(LDFLAGS)
+ 
+-%: %.cc $(helpers) helpers.h ../src/liburing.a
++%.t: %.cc $(helpers) helpers.h ../src/liburing.a
  	$(QUIET_CXX)$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ $< $(helpers) $(LDFLAGS)
  
  
--35fa71a030ca: override LDFLAGS += -lpthread
--232c93d07b74: override LDFLAGS += -lpthread
--send_recv: override LDFLAGS += -lpthread
--send_recvmsg: override LDFLAGS += -lpthread
--poll-link: override LDFLAGS += -lpthread
--accept-link: override LDFLAGS += -lpthread
--submit-reuse: override LDFLAGS += -lpthread
--poll-v-poll: override LDFLAGS += -lpthread
--across-fork: override LDFLAGS += -lpthread
--ce593a6c480a: override LDFLAGS += -lpthread
--wakeup-hang: override LDFLAGS += -lpthread
--pipe-eof: override LDFLAGS += -lpthread
--timeout-new: override LDFLAGS += -lpthread
--thread-exit: override LDFLAGS += -lpthread
--ring-leak2: override LDFLAGS += -lpthread
--poll-mshot-update: override LDFLAGS += -lpthread
--exit-no-cleanup: override LDFLAGS += -lpthread
--pollfree: override LDFLAGS += -lpthread
--msg-ring: override LDFLAGS += -lpthread
--recv-msgall: override LDFLAGS += -lpthread
--recv-msgall-stream: override LDFLAGS += -lpthread
--
- install: $(test_targets) runtests.sh runtests-loop.sh
- 	$(INSTALL) -D -d -m 755 $(datadir)/liburing-test/
- 	$(INSTALL) -D -m 755 $(test_targets) $(datadir)/liburing-test/
 -- 
 Ammar Faizi
 

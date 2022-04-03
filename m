@@ -2,46 +2,52 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CBB494F089C
-	for <lists+io-uring@lfdr.de>; Sun,  3 Apr 2022 11:56:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D3314F0923
+	for <lists+io-uring@lfdr.de>; Sun,  3 Apr 2022 13:46:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236993AbiDCJ6Z (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 3 Apr 2022 05:58:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36140 "EHLO
+        id S1347994AbiDCLrj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 3 Apr 2022 07:47:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234350AbiDCJ6X (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 3 Apr 2022 05:58:23 -0400
-Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15F3235259
-        for <io-uring@vger.kernel.org>; Sun,  3 Apr 2022 02:56:30 -0700 (PDT)
-Received: from integral2.. (unknown [182.2.43.220])
-        by gnuweeb.org (Postfix) with ESMTPSA id CBF607E358;
-        Sun,  3 Apr 2022 09:56:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1648979789;
-        bh=SXtMmFIALsfMspxMczh6PfkutchIG8Nk+4CyJww+feo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GhA16LPctWuwX2hcjBhJMYWJa4PL5gpygQ7/byHqNrRhLyZ9rDPXCsjo3UBiDQFEk
-         gxLhDl217V4hoy8B2PWrcuE04ACtU5lm3HZTmMTUqUfkZjiOj5YGJ7/z7BBwE2j2jd
-         K7cCQrbWly7SubAkRzMhyGlq4zDSgay1E6JBZbGdrxflRdMTfXKEn7QQqQAdZSf6Hp
-         qeH5ZOOOQZ+6u92wMzsKmoAcZ5DYFpIq1VzBd9bOF47ceqAhqhl/vtIO5XiGmgILs+
-         cLv9MVwXYLN1iZLmvI+Z+uTNfuYa66nyUSpEM72Eps9WiWJ83bdfDGnmRKouRts42a
-         SihI3e5ouI5SQ==
-From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
-        io-uring Mailing List <io-uring@vger.kernel.org>,
-        GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>
-Subject: [PATCH liburing v1 2/2] test/Makefile: Append `.test` to the test binary filename
-Date:   Sun,  3 Apr 2022 16:56:02 +0700
-Message-Id: <20220403095602.133862-3-ammarfaizi2@gnuweeb.org>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220403095602.133862-1-ammarfaizi2@gnuweeb.org>
-References: <20220403095602.133862-1-ammarfaizi2@gnuweeb.org>
+        with ESMTP id S238387AbiDCLri (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 3 Apr 2022 07:47:38 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1B0D9240AF
+        for <io-uring@vger.kernel.org>; Sun,  3 Apr 2022 04:45:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1648986343;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=bZsjD689KmDflISKNsEEME2oVCsfAXBsTTv2eriqQVM=;
+        b=Ey2ioVkmLrr+QPYXDSlferoBG654enR00BICvdWFrnBaixcIBtnLKSOp24aFmVxWvnhafS
+        5hCEhuhR3vsv8LWQoQiGxD580FyGMi8IiBOov3EmTUg/mGZHr1ggbmqJY/JY8IqN3/A/tK
+        K0MDYSy26Psz8YYg33q0qreCTxndNXU=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-549-5B5_eGBROL6S3ZXUDVZgOg-1; Sun, 03 Apr 2022 07:45:41 -0400
+X-MC-Unique: 5B5_eGBROL6S3ZXUDVZgOg-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 896AF38041D5;
+        Sun,  3 Apr 2022 11:45:41 +0000 (UTC)
+Received: from localhost (ovpn-8-17.pek2.redhat.com [10.72.8.17])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AF19140D0300;
+        Sun,  3 Apr 2022 11:45:40 +0000 (UTC)
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc:     Ming Lei <ming.lei@redhat.com>, Mike Snitzer <snitzer@kernel.org>
+Subject: [RFC PATCH] io_uring: reissue in case -EAGAIN is returned after io issue returns
+Date:   Sun,  3 Apr 2022 19:45:32 +0800
+Message-Id: <20220403114532.180945-1-ming.lei@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
+X-Scanned-By: MIMEDefang 2.84 on 10.11.54.1
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -49,192 +55,211 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-When adding a new test, we often forget to add the new test binary to
-`.gitignore`. Append `.test` to the test binary filename, this way we
-can use a wildcard matching "test/*.test" in `.gitignore` to ignore all
-test binary files.
+-EAGAIN still may return after io issue returns, and REQ_F_REISSUE is
+set in io_complete_rw_iopoll(), but the req never gets chance to be handled.
+io_iopoll_check doesn't handle this situation, and io hang can be caused.
 
-Goals:
-  - Make the .gitignore simpler.
-  - Avoid the burden of adding a new test to .gitignore.
+Current dm io polling may return -EAGAIN after bio submission is
+returned, also blk-throttle might trigger this situation too.
 
-Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+Cc: Mike Snitzer <snitzer@kernel.org>
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
 ---
- .gitignore    | 132 +-------------------------------------------------
- test/Makefile |   8 +--
- 2 files changed, 6 insertions(+), 134 deletions(-)
+ fs/io-wq.h    |  13 +++++
+ fs/io_uring.c | 128 ++++++++++++++++++++++++++++----------------------
+ 2 files changed, 86 insertions(+), 55 deletions(-)
 
-diff --git a/.gitignore b/.gitignore
-index 4a6e585..0b0add0 100644
---- a/.gitignore
-+++ b/.gitignore
-@@ -15,137 +15,7 @@
- /examples/io_uring-test
- /examples/link-cp
- /examples/ucontext-cp
+diff --git a/fs/io-wq.h b/fs/io-wq.h
+index dbecd27656c7..4ca4863664fb 100644
+--- a/fs/io-wq.h
++++ b/fs/io-wq.h
+@@ -96,6 +96,19 @@ static inline void wq_list_add_head(struct io_wq_work_node *node,
+ 	WRITE_ONCE(list->first, node);
+ }
+ 
++static inline void wq_list_remove(struct io_wq_work_list *list,
++				  struct io_wq_work_node *prev,
++				  struct io_wq_work_node *node)
++{
++	if (!prev)
++		WRITE_ONCE(list->first, node->next);
++	else
++		prev->next = node->next;
++
++	if (node == list->last)
++		list->last = prev;
++}
++
+ static inline void wq_list_cut(struct io_wq_work_list *list,
+ 			       struct io_wq_work_node *last,
+ 			       struct io_wq_work_node *prev)
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 59e54a6854b7..6db5514e10ca 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -2759,6 +2759,65 @@ static inline bool io_run_task_work(void)
+ 	return false;
+ }
+ 
++#ifdef CONFIG_BLOCK
++static bool io_resubmit_prep(struct io_kiocb *req)
++{
++	struct io_async_rw *rw = req->async_data;
++
++	if (!req_has_async_data(req))
++		return !io_req_prep_async(req);
++	iov_iter_restore(&rw->s.iter, &rw->s.iter_state);
++	return true;
++}
++
++static bool io_rw_should_reissue(struct io_kiocb *req)
++{
++	umode_t mode = file_inode(req->file)->i_mode;
++	struct io_ring_ctx *ctx = req->ctx;
++
++	if (!S_ISBLK(mode) && !S_ISREG(mode))
++		return false;
++	if ((req->flags & REQ_F_NOWAIT) || (io_wq_current_is_worker() &&
++	    !(ctx->flags & IORING_SETUP_IOPOLL)))
++		return false;
++	/*
++	 * If ref is dying, we might be running poll reap from the exit work.
++	 * Don't attempt to reissue from that path, just let it fail with
++	 * -EAGAIN.
++	 */
++	if (percpu_ref_is_dying(&ctx->refs))
++		return false;
++	/*
++	 * Play it safe and assume not safe to re-import and reissue if we're
++	 * not in the original thread group (or in task context).
++	 */
++	if (!same_thread_group(req->task, current) || !in_task())
++		return false;
++	return true;
++}
++#else
++static bool io_resubmit_prep(struct io_kiocb *req)
++{
++	return false;
++}
++static bool io_rw_should_reissue(struct io_kiocb *req)
++{
++	return false;
++}
++#endif
++
++static void do_io_reissue(struct io_kiocb *req, int ret)
++{
++	if (req->flags & REQ_F_REISSUE) {
++		req->flags &= ~REQ_F_REISSUE;
++		if (io_resubmit_prep(req))
++			io_req_task_queue_reissue(req);
++		else
++			io_req_task_queue_fail(req, ret);
++	}
++}
++
++
+ static int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin)
+ {
+ 	struct io_wq_work_node *pos, *start, *prev;
+@@ -2786,6 +2845,13 @@ static int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin)
+ 		if (READ_ONCE(req->iopoll_completed))
+ 			break;
+ 
++		/*
++		 * Once REISSUE flag is set, the req has been done, and we
++		 * have to retry
++		 */
++		if (req->flags & REQ_F_REISSUE)
++			break;
++
+ 		ret = kiocb->ki_filp->f_op->iopoll(kiocb, &iob, poll_flags);
+ 		if (unlikely(ret < 0))
+ 			return ret;
+@@ -2807,6 +2873,12 @@ static int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin)
+ 	wq_list_for_each_resume(pos, prev) {
+ 		struct io_kiocb *req = container_of(pos, struct io_kiocb, comp_list);
+ 
++		if (req->flags & REQ_F_REISSUE) {
++			wq_list_remove(&ctx->iopoll_list, prev, pos);
++			do_io_reissue(req, -EIO);
++			break;
++		}
++
+ 		/* order with io_complete_rw_iopoll(), e.g. ->result updates */
+ 		if (!smp_load_acquire(&req->iopoll_completed))
+ 			break;
+@@ -2924,53 +2996,6 @@ static void kiocb_end_write(struct io_kiocb *req)
+ 	}
+ }
+ 
+-#ifdef CONFIG_BLOCK
+-static bool io_resubmit_prep(struct io_kiocb *req)
+-{
+-	struct io_async_rw *rw = req->async_data;
 -
--/test/232c93d07b74-test
--/test/35fa71a030ca-test
--/test/500f9fbadef8-test
--/test/7ad0e4b2f83c-test
--/test/8a9973408177-test
--/test/917257daa0fe-test
--/test/a0908ae19763-test
--/test/a4c0b3decb33-test
--/test/accept
--/test/accept-link
--/test/accept-reuse
--/test/accept-test
--/test/across-fork
--/test/b19062a56726-test
--/test/b5837bd5311d-test
--/test/ce593a6c480a-test
--/test/close-opath
--/test/config.local
--/test/connect
--/test/cq-full
--/test/cq-overflow
--/test/cq-overflow-peek
--/test/cq-peek-batch
--/test/cq-ready
--/test/cq-size
--/test/d4ae271dfaae-test
--/test/d77a67ed5f27-test
--/test/defer
--/test/double-poll-crash
--/test/drop-submit
--/test/eeed8b54e0df-test
--/test/empty-eownerdead
--/test/eventfd
--/test/eventfd-disable
--/test/eventfd-reg
--/test/eventfd-ring
--/test/exit-no-cleanup
--/test/fadvise
--/test/fallocate
--/test/fc2a85cb02ef-test
--/test/file-register
--/test/file-update
--/test/file-verify
--/test/files-exit-hang-poll
--/test/files-exit-hang-timeout
--/test/fixed-buf-iter
--/test/fixed-link
--/test/fixed-reuse
--/test/fpos
--/test/fsync
--/test/hardlink
--/test/io-cancel
--/test/io_uring_enter
--/test/io_uring_register
--/test/io_uring_setup
--/test/iopoll
--/test/lfs-openat
--/test/lfs-openat-write
--/test/link
--/test/link-timeout
--/test/link_drain
--/test/madvise
--/test/mkdir
--/test/msg-ring
--/test/nop
--/test/nop-all-sizes
--/test/open-close
--/test/open-direct-link
--/test/openat2
--/test/personality
--/test/pipe-eof
--/test/pipe-reuse
--/test/poll
--/test/poll-cancel
--/test/poll-cancel-ton
--/test/poll-link
--/test/poll-many
--/test/poll-ring
--/test/poll-v-poll
--/test/pollfree
--/test/probe
--/test/read-write
--/test/recv-msgall
--/test/recv-msgall-stream
--/test/register-restrictions
--/test/rename
--/test/ring-leak
--/test/ring-leak2
--/test/self
--/test/send_recv
--/test/send_recvmsg
--/test/sendmsg_fs_cve
--/test/shared-wq
--/test/short-read
--/test/shutdown
--/test/sigfd-deadlock
--/test/socket-rw
--/test/socket-rw-eagain
--/test/socket-rw-offset
--/test/splice
--/test/sq-full
--/test/sq-full-cpp
--/test/sq-poll-dup
--/test/sq-poll-kthread
--/test/sq-poll-share
--/test/sqpoll-disable-exit
--/test/sqpoll-exit-hang
--/test/sqpoll-sleep
--/test/sq-space_left
--/test/statx
--/test/stdout
--/test/submit-reuse
--/test/symlink
--/test/teardowns
--/test/thread-exit
--/test/timeout
--/test/timeout-new
--/test/timeout-overflow
--/test/tty-write-dpoll
--/test/unlink
--/test/wakeup-hang
--/test/multicqes_drain
--/test/poll-mshot-update
--/test/rsrc_tags
--/test/rw_merge_test
--/test/sqpoll-cancel-hang
--/test/testfile
--/test/submit-link-fail
--/test/exec-target
--/test/skip-cqe
-+/test/*.test
- /test/*.dmesg
- /test/output/
+-	if (!req_has_async_data(req))
+-		return !io_req_prep_async(req);
+-	iov_iter_restore(&rw->s.iter, &rw->s.iter_state);
+-	return true;
+-}
+-
+-static bool io_rw_should_reissue(struct io_kiocb *req)
+-{
+-	umode_t mode = file_inode(req->file)->i_mode;
+-	struct io_ring_ctx *ctx = req->ctx;
+-
+-	if (!S_ISBLK(mode) && !S_ISREG(mode))
+-		return false;
+-	if ((req->flags & REQ_F_NOWAIT) || (io_wq_current_is_worker() &&
+-	    !(ctx->flags & IORING_SETUP_IOPOLL)))
+-		return false;
+-	/*
+-	 * If ref is dying, we might be running poll reap from the exit work.
+-	 * Don't attempt to reissue from that path, just let it fail with
+-	 * -EAGAIN.
+-	 */
+-	if (percpu_ref_is_dying(&ctx->refs))
+-		return false;
+-	/*
+-	 * Play it safe and assume not safe to re-import and reissue if we're
+-	 * not in the original thread group (or in task context).
+-	 */
+-	if (!same_thread_group(req->task, current) || !in_task())
+-		return false;
+-	return true;
+-}
+-#else
+-static bool io_resubmit_prep(struct io_kiocb *req)
+-{
+-	return false;
+-}
+-static bool io_rw_should_reissue(struct io_kiocb *req)
+-{
+-	return false;
+-}
+-#endif
+-
+ static bool __io_complete_rw_common(struct io_kiocb *req, long res)
+ {
+ 	if (req->rw.kiocb.ki_flags & IOCB_WRITE)
+@@ -3264,14 +3289,7 @@ static void kiocb_done(struct io_kiocb *req, ssize_t ret,
+ 		__io_complete_rw(req, ret, issue_flags);
+ 	else
+ 		io_rw_done(&req->rw.kiocb, ret);
+-
+-	if (req->flags & REQ_F_REISSUE) {
+-		req->flags &= ~REQ_F_REISSUE;
+-		if (io_resubmit_prep(req))
+-			io_req_task_queue_reissue(req);
+-		else
+-			io_req_task_queue_fail(req, ret);
+-	}
++	do_io_reissue(req, ret);
+ }
  
-diff --git a/test/Makefile b/test/Makefile
-index 1526776..80b0f37 100644
---- a/test/Makefile
-+++ b/test/Makefile
-@@ -183,7 +183,9 @@ endif
- all_targets += sq-full-cpp
- 
- 
--test_targets := $(patsubst %.c,%,$(patsubst %.cc,%,$(test_srcs)))
-+test_targets := $(patsubst %.c,%,$(test_srcs))
-+test_targets := $(patsubst %.cc,%,$(test_targets))
-+test_targets := $(patsubst %,%.test,$(test_targets))
- all_targets += $(test_targets)
- 
- #
-@@ -204,10 +206,10 @@ all: $(test_targets)
- helpers.o: helpers.c
- 	$(QUIET_CC)$(CC) $(CPPFLAGS) $(CFLAGS) -o $@ -c $<
- 
--%: %.c $(helpers) helpers.h ../src/liburing.a
-+%.test: %.c $(helpers) helpers.h ../src/liburing.a
- 	$(QUIET_CC)$(CC) $(CPPFLAGS) $(CFLAGS) -o $@ $< $(helpers) $(LDFLAGS)
- 
--%: %.cc $(helpers) helpers.h ../src/liburing.a
-+%.test: %.cc $(helpers) helpers.h ../src/liburing.a
- 	$(QUIET_CXX)$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ $< $(helpers) $(LDFLAGS)
- 
- 
+ static int __io_import_fixed(struct io_kiocb *req, int rw, struct iov_iter *iter,
 -- 
-Ammar Faizi
+2.31.1
 

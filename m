@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 49A274F2104
-	for <lists+io-uring@lfdr.de>; Tue,  5 Apr 2022 06:08:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D8714F2114
+	for <lists+io-uring@lfdr.de>; Tue,  5 Apr 2022 06:08:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229909AbiDECjG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 4 Apr 2022 22:39:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41606 "EHLO
+        id S229974AbiDEC45 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 4 Apr 2022 22:56:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229918AbiDECi7 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 4 Apr 2022 22:38:59 -0400
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7329254951
-        for <io-uring@vger.kernel.org>; Mon,  4 Apr 2022 18:39:25 -0700 (PDT)
-Received: by mail-pj1-x1032.google.com with SMTP id gt4so4538903pjb.4
-        for <io-uring@vger.kernel.org>; Mon, 04 Apr 2022 18:39:25 -0700 (PDT)
+        with ESMTP id S230475AbiDEC4Q (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 4 Apr 2022 22:56:16 -0400
+Received: from mail-oa1-x2a.google.com (mail-oa1-x2a.google.com [IPv6:2001:4860:4864:20::2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4B51220FD1
+        for <io-uring@vger.kernel.org>; Mon,  4 Apr 2022 19:05:41 -0700 (PDT)
+Received: by mail-oa1-x2a.google.com with SMTP id 586e51a60fabf-dacc470e03so12929653fac.5
+        for <io-uring@vger.kernel.org>; Mon, 04 Apr 2022 19:05:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=oUSkiCIKDszKfMa2Axzg9BrbFIepg9ZI9Q2puU5x6rA=;
-        b=IvpqiESKT2bbOm8PxEjnVW7PRd2mEMS1DEOkcc5HHSBoVCS+RNmS2PJEDgd14+Neb8
-         bgcpnEaF27WXTCOTVPg5CxRNl4h3vUlaMdkP/55vHT/AvF3Uw+RjCsEkNA5vOBoZp75A
-         UEujNWpGtLbFNmrlqWbzO654dPb+Gk9BW/vmDbfmmGfEr9J/FE7ii3tS+fpza1C35Gmw
-         QMET71bIjB5to3Qwy2vRn3nq1DVel5jytfHbkr2VctYTnHv6aaGmM0Y0iwwanZNV+FhO
-         5cdPyXjTROYHf0KCI4hNy9v5xevAhV3z1ZaV1othnD2FdUAl7yQir9DaiDx8Z2/WdHOo
-         bEYQ==
+        bh=EoASACADHZW9hyAkhpjT8nEm+Pqkb+q7uqFEp3Yyy4g=;
+        b=wgvppesePXFqcNrIe0MZC1hqaBo8qFbli34GNIExbJ6bl+DJzz5OuPJ+3/Fw4RSPpg
+         iYrmtuipvHXxCVC/VgTZ7Y/qGrSeWj7T25gwHHQ724M26EQrZOwmtuQ60lLMf7Z59Wbf
+         prfeB9euPTKw5bWBCCZs7rheabu9XuKcNMF0SccaJr20UDeODSA7vtsnldSFrUGyRk9o
+         ivExC3KIN0IVqyowzKzIAx5T6mrjvChj0DBME2H974bkjhF6M0vMtheByPHPHvBLlmMC
+         QCg7WZ4hjMSchsxE7hLrAejGj5WBrx5x1eR5FjigTT4AXD8o6ASf0C6pqrBUjjHC4swJ
+         2k2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=oUSkiCIKDszKfMa2Axzg9BrbFIepg9ZI9Q2puU5x6rA=;
-        b=6W3kuxOjpFs1bBmSZNmQGfx/a57jVSiLeYK7SmB18RVdWZFuptT+F79zvlkp+uyeWZ
-         oIS1wPqAjsMJftZB4PvZfLVvpIH11Vuh2tT9SXXB9SwR2A2Bm5XappKIh+3l6dhkG+Pl
-         eViJ4ZRsDoAdUoeVuzj1UOaYyPxihucjD/urjX9Ndq4oQDnWE2fp1RuR5pAJcB86aY6U
-         0Fdgh25x/xRxk7g/um0+Ma/UtLw1srkwvwgbZHujanX1iNBAeSFJM1R5FhI209oQ9PpB
-         G3PKXEUNSY+yAUICnSZP7s8nXlafIIWY9RcfUUI47aNzUz2dqedx0R8+0h6UzJwktu95
-         4ehQ==
-X-Gm-Message-State: AOAM532o10LVAXfP1ePTuczkn661vouqzz2NaOzpGEbXaUHNxSbCR5aS
-        s6sAToXDr2hbtrmrlJfMur6rsyr3Nb/KZA==
-X-Google-Smtp-Source: ABdhPJwofPNRykDB98EX86mbuRhidKD3QC3l8EqNCZttbCCnJV2I5vX+2W8UEML7OhO4P5r/nQ5rYQ==
-X-Received: by 2002:a05:6a00:1c9e:b0:4fa:d946:378b with SMTP id y30-20020a056a001c9e00b004fad946378bmr598956pfw.46.1649116596282;
-        Mon, 04 Apr 2022 16:56:36 -0700 (PDT)
+        bh=EoASACADHZW9hyAkhpjT8nEm+Pqkb+q7uqFEp3Yyy4g=;
+        b=S3WsoxL7261HKQLFyyc1IbaQos/nm+L2m9zBNrg1RBLNh8Bgh5tu5d+woijKZ0z+XB
+         q6PLr+6Zo7AFw7owk6Y+2jn1xFlOJHgHWb94xcp9T4QArMDtRBVAyYDNvORAdrlXLxtb
+         BPoKeImyg+LreiiXyYWZJcFiG2c1C06vbv/rLdsnLx/rEB1MF6wBXxmA/Qx4radCpKSr
+         cEbwW7qfQaO7dsNyL+1u7301TJpmyPQ6rIdBvvKYdMvRBkwqAo/ETc4do7Nq9lIgpQ6Z
+         RnhdntRxIcQ1yVATIDmY/gyt/9XbYUfA3W0dq+5J8On0ztWEHcJoscEoK6h6ZqpizYI4
+         s/+w==
+X-Gm-Message-State: AOAM530dvIknzMvyRhrMm5XHPFfmxiJyOZRxb1tBiHbuJzofEDexiLdE
+        eRXWo7S94Wwq2T/hZx4eC0E7oHSgt9dnbg==
+X-Google-Smtp-Source: ABdhPJzToD9wRtFK/uXqTbqi/27R8M++xbxydWgcHSeLIQpDQV794EcehSfpKCxAHG1AyE2aljqrwg==
+X-Received: by 2002:a17:90a:cf94:b0:1ca:9374:97fc with SMTP id i20-20020a17090acf9400b001ca937497fcmr910059pju.162.1649116597298;
+        Mon, 04 Apr 2022 16:56:37 -0700 (PDT)
 Received: from localhost.localdomain ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id i7-20020a628707000000b004fa6eb33b02sm13157977pfe.49.2022.04.04.16.56.35
+        by smtp.gmail.com with ESMTPSA id i7-20020a628707000000b004fa6eb33b02sm13157977pfe.49.2022.04.04.16.56.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Apr 2022 16:56:35 -0700 (PDT)
+        Mon, 04 Apr 2022 16:56:36 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, stable@vger.kernel.org
-Subject: [PATCH 2/6] io_uring: defer splice/tee file validity check until command issue
-Date:   Mon,  4 Apr 2022 17:56:22 -0600
-Message-Id: <20220404235626.374753-3-axboe@kernel.dk>
+Subject: [PATCH 3/6] io_uring: move read/write file prep state into actual opcode handler
+Date:   Mon,  4 Apr 2022 17:56:23 -0600
+Message-Id: <20220404235626.374753-4-axboe@kernel.dk>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220404235626.374753-1-axboe@kernel.dk>
 References: <20220404235626.374753-1-axboe@kernel.dk>
@@ -60,152 +60,200 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-In preparation for not using the file at prep time, defer checking if this
-file refers to a valid io_uring instance until issue time.
-
-This also means we can get rid of the cleanup flag for splice and tee.
+In preparation for not necessarily having a file assigned at prep time,
+defer any initialization associated with the file to when the opcode
+handler is run.
 
 Cc: stable@vger.kernel.org # v5.15+
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/io_uring.c | 49 +++++++++++++++++++++----------------------------
- 1 file changed, 21 insertions(+), 28 deletions(-)
+ fs/io_uring.c | 101 ++++++++++++++++++++++++++------------------------
+ 1 file changed, 53 insertions(+), 48 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 9108c56bff5b..0152ef49cf46 100644
+index 0152ef49cf46..969f65de9972 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -654,10 +654,10 @@ struct io_epoll {
- 
- struct io_splice {
- 	struct file			*file_out;
--	struct file			*file_in;
- 	loff_t				off_out;
- 	loff_t				off_in;
- 	u64				len;
-+	int				splice_fd_in;
- 	unsigned int			flags;
+@@ -592,7 +592,8 @@ struct io_rw {
+ 	/* NOTE: kiocb has the file as the first member, so don't do it here */
+ 	struct kiocb			kiocb;
+ 	u64				addr;
+-	u64				len;
++	u32				len;
++	u32				flags;
  };
  
-@@ -1687,14 +1687,6 @@ static void io_prep_async_work(struct io_kiocb *req)
- 		if (def->unbound_nonreg_file)
- 			req->work.flags |= IO_WQ_WORK_UNBOUND;
- 	}
+ struct io_connect {
+@@ -3178,42 +3179,11 @@ static inline bool io_file_supports_nowait(struct io_kiocb *req)
+ 
+ static int io_prep_rw(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ {
+-	struct io_ring_ctx *ctx = req->ctx;
+ 	struct kiocb *kiocb = &req->rw.kiocb;
+-	struct file *file = req->file;
+ 	unsigned ioprio;
+ 	int ret;
+ 
+-	if (!io_req_ffs_set(req))
+-		req->flags |= io_file_get_flags(file) << REQ_F_SUPPORT_NOWAIT_BIT;
 -
--	switch (req->opcode) {
--	case IORING_OP_SPLICE:
--	case IORING_OP_TEE:
--		if (!S_ISREG(file_inode(req->splice.file_in)->i_mode))
--			req->work.flags |= IO_WQ_WORK_UNBOUND;
--		break;
+ 	kiocb->ki_pos = READ_ONCE(sqe->off);
+-	kiocb->ki_flags = iocb_flags(file);
+-	ret = kiocb_set_rw_flags(kiocb, READ_ONCE(sqe->rw_flags));
+-	if (unlikely(ret))
+-		return ret;
+-
+-	/*
+-	 * If the file is marked O_NONBLOCK, still allow retry for it if it
+-	 * supports async. Otherwise it's impossible to use O_NONBLOCK files
+-	 * reliably. If not, or it IOCB_NOWAIT is set, don't retry.
+-	 */
+-	if ((kiocb->ki_flags & IOCB_NOWAIT) ||
+-	    ((file->f_flags & O_NONBLOCK) && !io_file_supports_nowait(req)))
+-		req->flags |= REQ_F_NOWAIT;
+-
+-	if (ctx->flags & IORING_SETUP_IOPOLL) {
+-		if (!(kiocb->ki_flags & IOCB_DIRECT) || !file->f_op->iopoll)
+-			return -EOPNOTSUPP;
+-
+-		kiocb->ki_flags |= IOCB_HIPRI | IOCB_ALLOC_CACHE;
+-		kiocb->ki_complete = io_complete_rw_iopoll;
+-		req->iopoll_completed = 0;
+-	} else {
+-		if (kiocb->ki_flags & IOCB_HIPRI)
+-			return -EINVAL;
+-		kiocb->ki_complete = io_complete_rw;
 -	}
+ 
+ 	ioprio = READ_ONCE(sqe->ioprio);
+ 	if (ioprio) {
+@@ -3229,6 +3199,7 @@ static int io_prep_rw(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	req->imu = NULL;
+ 	req->rw.addr = READ_ONCE(sqe->addr);
+ 	req->rw.len = READ_ONCE(sqe->len);
++	req->rw.flags = READ_ONCE(sqe->rw_flags);
+ 	req->buf_index = READ_ONCE(sqe->buf_index);
+ 	return 0;
  }
- 
- static void io_prep_async_link(struct io_kiocb *req)
-@@ -4369,18 +4361,11 @@ static int __io_splice_prep(struct io_kiocb *req,
- 	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
- 		return -EINVAL;
- 
--	sp->file_in = NULL;
- 	sp->len = READ_ONCE(sqe->len);
- 	sp->flags = READ_ONCE(sqe->splice_flags);
--
- 	if (unlikely(sp->flags & ~valid_flags))
- 		return -EINVAL;
--
--	sp->file_in = io_file_get(req->ctx, req, READ_ONCE(sqe->splice_fd_in),
--				  (sp->flags & SPLICE_F_FD_IN_FIXED));
--	if (!sp->file_in)
--		return -EBADF;
--	req->flags |= REQ_F_NEED_CLEANUP;
-+	sp->splice_fd_in = READ_ONCE(sqe->splice_fd_in);
+@@ -3732,13 +3703,6 @@ static inline int io_rw_prep_async(struct io_kiocb *req, int rw)
  	return 0;
  }
  
-@@ -4395,20 +4380,27 @@ static int io_tee_prep(struct io_kiocb *req,
- static int io_tee(struct io_kiocb *req, unsigned int issue_flags)
- {
- 	struct io_splice *sp = &req->splice;
--	struct file *in = sp->file_in;
- 	struct file *out = sp->file_out;
- 	unsigned int flags = sp->flags & ~SPLICE_F_FD_IN_FIXED;
-+	struct file *in;
- 	long ret = 0;
+-static int io_read_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+-{
+-	if (unlikely(!(req->file->f_mode & FMODE_READ)))
+-		return -EBADF;
+-	return io_prep_rw(req, sqe);
+-}
+-
+ /*
+  * This is our waitqueue callback handler, registered through __folio_lock_async()
+  * when we initially tried to do the IO with the iocb armed our waitqueue.
+@@ -3826,6 +3790,49 @@ static bool need_read_all(struct io_kiocb *req)
+ 		S_ISBLK(file_inode(req->file)->i_mode);
+ }
  
- 	if (issue_flags & IO_URING_F_NONBLOCK)
- 		return -EAGAIN;
++static int io_rw_init_file(struct io_kiocb *req, fmode_t mode)
++{
++	struct kiocb *kiocb = &req->rw.kiocb;
++	struct io_ring_ctx *ctx = req->ctx;
++	struct file *file = req->file;
++	int ret;
 +
-+	in = io_file_get(req->ctx, req, sp->splice_fd_in,
-+				  (sp->flags & SPLICE_F_FD_IN_FIXED));
-+	if (!in) {
-+		ret = -EBADF;
-+		goto done;
++	if (unlikely(!file || !(file->f_mode & mode)))
++		return -EBADF;
++
++	if (!io_req_ffs_set(req))
++		req->flags |= io_file_get_flags(file) << REQ_F_SUPPORT_NOWAIT_BIT;
++
++	kiocb->ki_flags = iocb_flags(file);
++	ret = kiocb_set_rw_flags(kiocb, req->rw.flags);
++	if (unlikely(ret))
++		return ret;
++
++	/*
++	 * If the file is marked O_NONBLOCK, still allow retry for it if it
++	 * supports async. Otherwise it's impossible to use O_NONBLOCK files
++	 * reliably. If not, or it IOCB_NOWAIT is set, don't retry.
++	 */
++	if ((kiocb->ki_flags & IOCB_NOWAIT) ||
++	    ((file->f_flags & O_NONBLOCK) && !io_file_supports_nowait(req)))
++		req->flags |= REQ_F_NOWAIT;
++
++	if (ctx->flags & IORING_SETUP_IOPOLL) {
++		if (!(kiocb->ki_flags & IOCB_DIRECT) || !file->f_op->iopoll)
++			return -EOPNOTSUPP;
++
++		kiocb->ki_flags |= IOCB_HIPRI | IOCB_ALLOC_CACHE;
++		kiocb->ki_complete = io_complete_rw_iopoll;
++		req->iopoll_completed = 0;
++	} else {
++		if (kiocb->ki_flags & IOCB_HIPRI)
++			return -EINVAL;
++		kiocb->ki_complete = io_complete_rw;
 +	}
 +
- 	if (sp->len)
- 		ret = do_tee(in, out, sp->len, flags);
- 
- 	if (!(sp->flags & SPLICE_F_FD_IN_FIXED))
- 		io_put_file(in);
--	req->flags &= ~REQ_F_NEED_CLEANUP;
--
-+done:
- 	if (ret != sp->len)
- 		req_set_fail(req);
- 	io_req_complete(req, ret);
-@@ -4427,15 +4419,22 @@ static int io_splice_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- static int io_splice(struct io_kiocb *req, unsigned int issue_flags)
- {
- 	struct io_splice *sp = &req->splice;
--	struct file *in = sp->file_in;
- 	struct file *out = sp->file_out;
- 	unsigned int flags = sp->flags & ~SPLICE_F_FD_IN_FIXED;
- 	loff_t *poff_in, *poff_out;
-+	struct file *in;
- 	long ret = 0;
- 
- 	if (issue_flags & IO_URING_F_NONBLOCK)
- 		return -EAGAIN;
- 
-+	in = io_file_get(req->ctx, req, sp->splice_fd_in,
-+				  (sp->flags & SPLICE_F_FD_IN_FIXED));
-+	if (!in) {
-+		ret = -EBADF;
-+		goto done;
-+	}
++	return 0;
++}
 +
- 	poff_in = (sp->off_in == -1) ? NULL : &sp->off_in;
- 	poff_out = (sp->off_out == -1) ? NULL : &sp->off_out;
+ static int io_read(struct io_kiocb *req, unsigned int issue_flags)
+ {
+ 	struct io_rw_state __s, *s = &__s;
+@@ -3861,6 +3868,9 @@ static int io_read(struct io_kiocb *req, unsigned int issue_flags)
+ 		iov_iter_restore(&s->iter, &s->iter_state);
+ 		iovec = NULL;
+ 	}
++	ret = io_rw_init_file(req, FMODE_READ);
++	if (unlikely(ret))
++		return ret;
+ 	req->result = iov_iter_count(&s->iter);
  
-@@ -4444,8 +4443,7 @@ static int io_splice(struct io_kiocb *req, unsigned int issue_flags)
+ 	if (force_nonblock) {
+@@ -3964,13 +3974,6 @@ static int io_read(struct io_kiocb *req, unsigned int issue_flags)
+ 	return 0;
+ }
  
- 	if (!(sp->flags & SPLICE_F_FD_IN_FIXED))
- 		io_put_file(in);
--	req->flags &= ~REQ_F_NEED_CLEANUP;
+-static int io_write_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+-{
+-	if (unlikely(!(req->file->f_mode & FMODE_WRITE)))
+-		return -EBADF;
+-	return io_prep_rw(req, sqe);
+-}
 -
-+done:
- 	if (ret != sp->len)
- 		req_set_fail(req);
- 	io_req_complete(req, ret);
-@@ -7176,11 +7174,6 @@ static void io_clean_op(struct io_kiocb *req)
- 			kfree(io->free_iov);
- 			break;
- 			}
--		case IORING_OP_SPLICE:
--		case IORING_OP_TEE:
--			if (!(req->splice.flags & SPLICE_F_FD_IN_FIXED))
--				io_put_file(req->splice.file_in);
--			break;
- 		case IORING_OP_OPENAT:
- 		case IORING_OP_OPENAT2:
- 			if (req->open.filename)
+ static int io_write(struct io_kiocb *req, unsigned int issue_flags)
+ {
+ 	struct io_rw_state __s, *s = &__s;
+@@ -3991,6 +3994,9 @@ static int io_write(struct io_kiocb *req, unsigned int issue_flags)
+ 		iov_iter_restore(&s->iter, &s->iter_state);
+ 		iovec = NULL;
+ 	}
++	ret = io_rw_init_file(req, FMODE_WRITE);
++	if (unlikely(ret))
++		return ret;
+ 	req->result = iov_iter_count(&s->iter);
+ 
+ 	if (force_nonblock) {
+@@ -6987,11 +6993,10 @@ static int io_req_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	case IORING_OP_READV:
+ 	case IORING_OP_READ_FIXED:
+ 	case IORING_OP_READ:
+-		return io_read_prep(req, sqe);
+ 	case IORING_OP_WRITEV:
+ 	case IORING_OP_WRITE_FIXED:
+ 	case IORING_OP_WRITE:
+-		return io_write_prep(req, sqe);
++		return io_prep_rw(req, sqe);
+ 	case IORING_OP_POLL_ADD:
+ 		return io_poll_add_prep(req, sqe);
+ 	case IORING_OP_POLL_REMOVE:
 -- 
 2.35.1
 

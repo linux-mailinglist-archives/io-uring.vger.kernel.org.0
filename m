@@ -2,53 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 713E64F1B47
-	for <lists+io-uring@lfdr.de>; Mon,  4 Apr 2022 23:19:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C95494F1B45
+	for <lists+io-uring@lfdr.de>; Mon,  4 Apr 2022 23:19:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379577AbiDDVT7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 4 Apr 2022 17:19:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36852 "EHLO
+        id S1346376AbiDDVT6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 4 Apr 2022 17:19:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49346 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379010AbiDDQTD (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 4 Apr 2022 12:19:03 -0400
-Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 764D331922
-        for <io-uring@vger.kernel.org>; Mon,  4 Apr 2022 09:17:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-        s=42; h=Cc:To:From:Date:Message-ID;
-        bh=ZFxCCEmkcG7TzB+sNx6jNrK0KOuJctrVY/tctaS7dFM=; b=0Phof6ONLvZUIsXW+7BMNxXTCp
-        7s0DjkGRcxIMYm6IKYTxDOpgL6hPauLOOf/3YoaXx5HO+hiP8knVAUS0k6o2gNm3O1LuQg036REg7
-        63ctwXEUU19HOzYNzOLuf5saJX9QUDjEJcrhDM6BNFuU7DhBadfZGOK5rcDQJWyw9Vchy+m3KGdld
-        PIreQvSJvL4NbdfKfkC/llfGCaQZf8XmL9BhzUMwJQNuQSrzYM94eVth4MVexb4KPIFcxDIq9gwXb
-        +E0gWeqeTFQWuBWF3xxUHK7DapJ4KGVLjX5Y0nSZHfxUVhdWFH1eUDWiJW6UESWXDkP39b9KFIQns
-        Tgz1D8jY+y73tYr5gTsmRge2Sd5XGk3s73KtGnoqFfd35evE7zHQ35R5h0uwTy8h60+sNdIiFFrrY
-        AE5x3NOOVo5pUN3AiIZf85HGNqTw/p+bDH1vAqqZUshU5LHd3LnMeDwJ7k1xU6nshqX+pfAXKjaKj
-        5iNKzgPNPKYJEei7GHzFXCMB;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
-        (Exim)
-        id 1nbPO4-005GMs-LK; Mon, 04 Apr 2022 16:17:04 +0000
-Message-ID: <60f34e91-e8bf-a092-6958-388dcbf4e81c@samba.org>
-Date:   Mon, 4 Apr 2022 18:17:04 +0200
+        with ESMTP id S1379286AbiDDQx3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 4 Apr 2022 12:53:29 -0400
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7455C3B032
+        for <io-uring@vger.kernel.org>; Mon,  4 Apr 2022 09:51:33 -0700 (PDT)
+Received: by mail-qv1-f54.google.com with SMTP id i15so1993835qvh.0
+        for <io-uring@vger.kernel.org>; Mon, 04 Apr 2022 09:51:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=JKoTloSRnXPMusp2oIXFpQcP38oU5XFG4syu8CKcOWU=;
+        b=6JYhMwEJjNLAUgcst727WW8dj+fOot6hsjX5ud++6hjkktpW237ro9hKlb7rguCCPR
+         ZLvzmQ7TTNL1MbbOVw7iwYsgqmdTR9ddIkz1gs1STqQuhm8PcnZXGbdYr6684X7wdu/e
+         FAH28yUsL1vkLK7KyBN/N3tqwa4K/YhFLXE2LdbLihDBucux9CfXxK2ADSVnJyEmVwus
+         REAkYACeCNrVaXwAsC1t1K2BLy7S8KBvkMZHvu46SX6Kk6NsftCr3wgbj3TF3aWpZaGz
+         6BL6k3HKRE7kk1KHC+dPguTB2CfmjEIF/bkL7ntdKrZSZJT82H1reNBK48Kj01n5py05
+         ii2Q==
+X-Gm-Message-State: AOAM530FpCSr1y9/9lcdsEpU6DeqyT/lwrRiwJw4EtpnsiAdZjYGkcbZ
+        GD70G3WtOP39Xi2jS+nwx8Rs
+X-Google-Smtp-Source: ABdhPJx7IPqluhgdpjiDB8QIEhQE0G9Vx7/HAaw4p2DSDWh7Ck9Jafx3+N4Vvo1exetHheaSUfEEuA==
+X-Received: by 2002:a05:6214:769:b0:443:e16b:52aa with SMTP id f9-20020a056214076900b00443e16b52aamr866647qvz.3.1649091092556;
+        Mon, 04 Apr 2022 09:51:32 -0700 (PDT)
+Received: from localhost (pool-68-160-176-52.bstnma.fios.verizon.net. [68.160.176.52])
+        by smtp.gmail.com with ESMTPSA id 19-20020a05620a079300b0067d1537f35bsm6638715qka.83.2022.04.04.09.51.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Apr 2022 09:51:31 -0700 (PDT)
+Date:   Mon, 4 Apr 2022 12:51:30 -0400
+From:   Mike Snitzer <snitzer@kernel.org>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        dm-devel@redhat.com
+Subject: Re: [RFC PATCH] io_uring: reissue in case -EAGAIN is returned after
+ io issue returns
+Message-ID: <YksiEk+G5QuPG6o8@redhat.com>
+References: <20220403114532.180945-1-ming.lei@redhat.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Content-Language: en-US
-From:   Stefan Metzmacher <metze@samba.org>
-To:     Jens Axboe <axboe@kernel.dk>, Eric Wong <e@80x24.org>
-Cc:     io-uring@vger.kernel.org,
-        Liu Changcheng <changcheng.liu@aliyun.com>
-References: <20211116224456.244746-1-e@80x24.org>
- <20220121182635.1147333-1-e@80x24.org> <20220403084820.M206428@dcvr>
- <c53378f8-87eb-43a6-afbb-e506c566ad26@kernel.dk>
- <43ac1089-9823-2094-aafa-edfc31f1f6fe@samba.org>
-Subject: Re: [PULL|PATCH v3 0/7] liburing debian packaging fixes
-In-Reply-To: <43ac1089-9823-2094-aafa-edfc31f1f6fe@samba.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220403114532.180945-1-ming.lei@redhat.com>
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -56,82 +59,175 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Am 04.04.22 um 18:13 schrieb Stefan Metzmacher:
-> 
-> Am 03.04.22 um 16:54 schrieb Jens Axboe:
->> On 4/3/22 2:48 AM, Eric Wong wrote:
->>> Eric Wong <e@80x24.org> wrote:
->>>> The previous patch 8/7 in v2 is squashed into 3/7 in this series.
->>>> Apologies for the delay since v2, many bad things happened :<
->>>>
->>>> The following changes since commit bbcaabf808b53ef11ad9851c6b968140fb430500:
->>>>
->>>>    man/io_uring_enter.2: make it clear that chains terminate at submit (2022-01-19 18:09:40 -0700)
->>>>
->>>> are available in the Git repository at:
->>>>
->>>>    https://yhbt.net/liburing.git deb-v3
->>>>
->>>> for you to fetch changes up to 77b99bb1dbe237eef38eceb313501a9fd247d672:
->>>>
->>>>    make-debs: remove dependency on git (2022-01-21 16:54:42 +0000)
->>>
->>> Hi Jens, have you had a chance to look at this series?  Thanks.
->>> I mostly abandoned hacking for a few months :x
->>
->> I never build distro packages and know very little about it, so would
->> really like Stefan et al to sign off on this. I'm about to cut the next
->> version of liburing, and would indeed be great to have better packaging
->> sorted before that.
->>
->> Does it still apply to the curren tree?
-> 
-> I rebased it on current master.
-> 
-> The last patch with this seems dangerous (from reading the diff):
-> 
-> -git clean -dxf
-> +if git clean -dxf
-> +then
-> +       rm -rf .git
-> 
-> I'd just .git
-> 
-> On ubuntu 22.04 I get this error:
-> 
-> make[1]: Verzeichnis „/tmp/release/Ubuntu/liburing/liburing-2.2“ wird verlassen
-> dh_testdir
-> dh_testroot
-> dh_install -a
-> dh_install: warning: Compatibility levels before 10 are deprecated (level 9 in use)
-> dh_install: warning: Cannot find (any matches for) "lib/*/lib*.so.*" (tried in ., debian/tmp)
-> 
-> dh_install: warning: liburing2 missing files: lib/*/lib*.so.*
-> dh_install: warning: Cannot find (any matches for) "usr/include" (tried in ., debian/tmp)
-> 
-> dh_install: warning: liburing-dev missing files: usr/include
-> dh_install: warning: Cannot find (any matches for) "usr/lib/*/lib*.so" (tried in ., debian/tmp)
-> 
-> dh_install: warning: liburing-dev missing files: usr/lib/*/lib*.so
-> dh_install: warning: Cannot find (any matches for) "usr/lib/*/lib*.a" (tried in ., debian/tmp)
-> 
-> dh_install: warning: liburing-dev missing files: usr/lib/*/lib*.a
-> dh_install: error: missing files, aborting
-> make: *** [debian/rules:74: binary-arch] Fehler 25
-> dpkg-buildpackage: Fehler: Unterprozess debian/rules binary lieferte Exitstatus 2
-> debuild: fatal error at line 1182:
-> dpkg-buildpackage -us -uc -ui failed
+On Sun, Apr 03 2022 at  7:45P -0400,
+Ming Lei <ming.lei@redhat.com> wrote:
 
-I also found it changes the system path of the build host:
+> -EAGAIN still may return after io issue returns, and REQ_F_REISSUE is
+> set in io_complete_rw_iopoll(), but the req never gets chance to be handled.
+> io_iopoll_check doesn't handle this situation, and io hang can be caused.
+> 
+> Current dm io polling may return -EAGAIN after bio submission is
+> returned, also blk-throttle might trigger this situation too.
+> 
+> Cc: Mike Snitzer <snitzer@kernel.org>
+> Signed-off-by: Ming Lei <ming.lei@redhat.com>
 
-install -D -m 755 liburing.so.2.2 /lib/x86_64-linux-gnu/liburing.so.2.2
-ln -sf liburing.so.2.2 /lib/x86_64-linux-gnu/liburing.so.2
-ln -sf /lib/x86_64-linux-gnu/liburing.so.2.2 /usr/lib/x86_64-linux-gnu/liburing.so
+I first reverted commit 5291984004ed ("dm: fix bio polling to handle
+possibile BLK_STS_AGAIN") then applied this patch and verified this
+fixes the DM bio polling hangs.  Nice work!
 
-This should use some $DESTDIR magic...
+But interestingly with this fio test (against dm-linear ontop of
+null_blk with queue_mode=2 submit_queues=8 poll_queues=2 bs=4096 gb=16):
 
-Maybe the DESTDIR handling is broken in general and the reason
-why I got the above errors...
+fio --bs=4096 --ioengine=io_uring --fixedbufs --registerfiles --hipri=1 \
+--iodepth=16 --iodepth_batch_submit=16 --iodepth_batch_complete_min=16 \
+--filename=/dev/mapper/linear --direct=1 --runtime=20 --numjobs=16 \
+--rw=randread --name=test --group_reporting --norandommap
 
-metze
+I get 3186k IOPS with your patch to have io_uring retry (and commit
+5291984004ed reverted), but 4305k IOPS if leave commit 5291984004ed
+applied (and DM resorts to retrying any -EAGAIN _without_ polling).
 
+Jens rightly pointed out to me that polling tests that exhaust tags
+are bogus anyway (because such unbounded IO defeats the point of
+polling).  Jens also thinks my result, with commit 5291984004ed
+applied, is somehow bogus and not to be trusted ;)  He is very likely
+correct, and the failing likely in the null_blk driver -- I'm
+skeptical of that driver given it cannot pass fio verify testing
+(e.g. --do_verify=1 --verify=crc32c --verify_async=1) with or without
+polling.
+
+Review comments inlined below.
+
+> ---
+>  fs/io-wq.h    |  13 +++++
+>  fs/io_uring.c | 128 ++++++++++++++++++++++++++++----------------------
+>  2 files changed, 86 insertions(+), 55 deletions(-)
+> 
+> diff --git a/fs/io-wq.h b/fs/io-wq.h
+> index dbecd27656c7..4ca4863664fb 100644
+> --- a/fs/io-wq.h
+> +++ b/fs/io-wq.h
+> @@ -96,6 +96,19 @@ static inline void wq_list_add_head(struct io_wq_work_node *node,
+>  	WRITE_ONCE(list->first, node);
+>  }
+>  
+> +static inline void wq_list_remove(struct io_wq_work_list *list,
+> +				  struct io_wq_work_node *prev,
+> +				  struct io_wq_work_node *node)
+> +{
+> +	if (!prev)
+> +		WRITE_ONCE(list->first, node->next);
+> +	else
+> +		prev->next = node->next;
+> +
+> +	if (node == list->last)
+> +		list->last = prev;
+> +}
+> +
+>  static inline void wq_list_cut(struct io_wq_work_list *list,
+>  			       struct io_wq_work_node *last,
+>  			       struct io_wq_work_node *prev)
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 59e54a6854b7..6db5514e10ca 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -2759,6 +2759,65 @@ static inline bool io_run_task_work(void)
+>  	return false;
+>  }
+>  
+> +#ifdef CONFIG_BLOCK
+> +static bool io_resubmit_prep(struct io_kiocb *req)
+> +{
+> +	struct io_async_rw *rw = req->async_data;
+> +
+> +	if (!req_has_async_data(req))
+> +		return !io_req_prep_async(req);
+> +	iov_iter_restore(&rw->s.iter, &rw->s.iter_state);
+> +	return true;
+> +}
+> +
+> +static bool io_rw_should_reissue(struct io_kiocb *req)
+> +{
+> +	umode_t mode = file_inode(req->file)->i_mode;
+> +	struct io_ring_ctx *ctx = req->ctx;
+> +
+> +	if (!S_ISBLK(mode) && !S_ISREG(mode))
+> +		return false;
+> +	if ((req->flags & REQ_F_NOWAIT) || (io_wq_current_is_worker() &&
+> +	    !(ctx->flags & IORING_SETUP_IOPOLL)))
+> +		return false;
+> +	/*
+> +	 * If ref is dying, we might be running poll reap from the exit work.
+> +	 * Don't attempt to reissue from that path, just let it fail with
+> +	 * -EAGAIN.
+> +	 */
+> +	if (percpu_ref_is_dying(&ctx->refs))
+> +		return false;
+> +	/*
+> +	 * Play it safe and assume not safe to re-import and reissue if we're
+> +	 * not in the original thread group (or in task context).
+> +	 */
+> +	if (!same_thread_group(req->task, current) || !in_task())
+> +		return false;
+> +	return true;
+> +}
+> +#else
+> +static bool io_resubmit_prep(struct io_kiocb *req)
+> +{
+> +	return false;
+> +}
+> +static bool io_rw_should_reissue(struct io_kiocb *req)
+> +{
+> +	return false;
+> +}
+> +#endif
+> +
+> +static void do_io_reissue(struct io_kiocb *req, int ret)
+> +{
+> +	if (req->flags & REQ_F_REISSUE) {
+> +		req->flags &= ~REQ_F_REISSUE;
+> +		if (io_resubmit_prep(req))
+> +			io_req_task_queue_reissue(req);
+> +		else
+> +			io_req_task_queue_fail(req, ret);
+> +	}
+> +}
+
+Minor nit but: I'd leave caller to check for REQ_F_REISSUE.
+
+> +
+> +
+>  static int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin)
+>  {
+>  	struct io_wq_work_node *pos, *start, *prev;
+> @@ -2786,6 +2845,13 @@ static int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin)
+>  		if (READ_ONCE(req->iopoll_completed))
+>  			break;
+>  
+> +		/*
+> +		 * Once REISSUE flag is set, the req has been done, and we
+> +		 * have to retry
+> +		 */
+> +		if (req->flags & REQ_F_REISSUE)
+> +			break;
+> +
+>  		ret = kiocb->ki_filp->f_op->iopoll(kiocb, &iob, poll_flags);
+>  		if (unlikely(ret < 0))
+>  			return ret;
+> @@ -2807,6 +2873,12 @@ static int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin)
+>  	wq_list_for_each_resume(pos, prev) {
+>  		struct io_kiocb *req = container_of(pos, struct io_kiocb, comp_list);
+>  
+> +		if (req->flags & REQ_F_REISSUE) {
+> +			wq_list_remove(&ctx->iopoll_list, prev, pos);
+> +			do_io_reissue(req, -EIO);
+> +			break;
+> +		}
+> +
+
+That way you'll avoid redundant checks for REQ_F_REISSUE here.
+
+Other than that:
+
+Reviewed-by: Mike Snitzer <snitzer@kernel.org>

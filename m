@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DF9604F51D2
-	for <lists+io-uring@lfdr.de>; Wed,  6 Apr 2022 04:43:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04AC74F51BF
+	for <lists+io-uring@lfdr.de>; Wed,  6 Apr 2022 04:42:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345072AbiDFCVG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 5 Apr 2022 22:21:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42292 "EHLO
+        id S232816AbiDFCNk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 5 Apr 2022 22:13:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1457470AbiDEQDQ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 5 Apr 2022 12:03:16 -0400
-Received: from mail-oa1-x36.google.com (mail-oa1-x36.google.com [IPv6:2001:4860:4864:20::36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E031399
-        for <io-uring@vger.kernel.org>; Tue,  5 Apr 2022 08:50:09 -0700 (PDT)
-Received: by mail-oa1-x36.google.com with SMTP id 586e51a60fabf-de3ca1efbaso14812711fac.9
-        for <io-uring@vger.kernel.org>; Tue, 05 Apr 2022 08:50:09 -0700 (PDT)
+        with ESMTP id S1457664AbiDEQaX (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 5 Apr 2022 12:30:23 -0400
+Received: from mail-ot1-x32d.google.com (mail-ot1-x32d.google.com [IPv6:2607:f8b0:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C357D7C166
+        for <io-uring@vger.kernel.org>; Tue,  5 Apr 2022 09:28:25 -0700 (PDT)
+Received: by mail-ot1-x32d.google.com with SMTP id 88-20020a9d0ee1000000b005d0ae4e126fso7728182otj.5
+        for <io-uring@vger.kernel.org>; Tue, 05 Apr 2022 09:28:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=yUttHdvINpe5sVhWObI5vLGtPLNGhZcWSqGwgeAO4mE=;
-        b=qj9doXvWuOFIaHhB/lpA9JrLUjyYVB8c8gFdTvzSHt0jLW1387lWVvGH2dvNVwqeZj
-         qC1372+vgjT0U1CZ82ZkGR33s6RLxhvpRJWIvDVB4cULFhGxYaD5ucAn45Vs915PztCa
-         bGEkAZ1/Y96zbHwvuPSTfCvuBCqWRnqWr60V7wrP8N6YMNLLdPSeRMLTbv9CjlFlWKWZ
-         nuwb9tS5k5cpdDzewQaxniExFQV9GWpJ9Xd3vCHZyX7E6z+R4zBPk8mxAHJBPlJ82k4P
-         aNKch2pKombMdNEqfZOdonb387OTkOLF//3iKmeHGfgzNen5jy2z8Lp2CzqokwNbdKBI
-         buMg==
+        bh=74fq+cSNE2UwX6pLlf26dcG+/mwze9tFZ1WcAEZygc8=;
+        b=LpAFkybGhasHbCt7KixDHViit9dUHGlwfjDSlx6pX0JwmHWsv3Gxx8/Qo/O5eZ9Hs+
+         jrGe48NAH0Elud+crOnB5a9pJ9RUT75IdLc5HClO4+NWQ/SzA+zh3Y9wn4lLchO8eBV/
+         qfE1OqIRNl2FWbgtPpHHPwNJmkK0nJYYrV20DNWtWt1uS3N0px62Rb+FBQYvrfan4PWY
+         p7cg3kZMeazd9zW5zDrAuKskTuIkn6x6199o9AnXE4V9jN653fYqjZy84LjDW20HdNQc
+         fUa8DJuMZMHvafLQgtZQ6M8gQ0fvrfQD+JzCH7i6NM/2+ZcKub7AGb0UH5/3oMWq7nSk
+         XC6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=yUttHdvINpe5sVhWObI5vLGtPLNGhZcWSqGwgeAO4mE=;
-        b=1ITj89aTXFniJ5XG8tHOHEmSVM5u2WIzz0q4xaqHWCWoXqTEa4du1EwqN2zQHjmR1C
-         6+YEk5phiqdlcsCDHbBE0CQr9nEiIEkH5Gei3TQZ5jw4+r+IZ2UDdnBduSuIrAkjiEZ8
-         zMb8I9prxMH2dFIw0C9FhAZs9OBY9Uzz9MCglZTS3QlEJL5+gvSzNdaIEkNES4U4Ixss
-         q/ghoDMJ+RMamNPBppZdZlrMaJJKGfRDa1GEb6W+fLyJbWOZfwM20FPoAu0m1UVu1eMC
-         GP5GWHF11svnD9vb/34TnhIlcVVAwbQyxcJCOH5XGeIKCrGm/Cdw7Tg16N9H6RDKLxog
-         1HJA==
-X-Gm-Message-State: AOAM531I1ryE6m+TjCVCkcXUmaoPrp0IHyLDn3f3d1T7P4HP3eax1suy
-        tV9GLniMZgfOY3mdrsBh6jc34RcC/El5/Pu/mo0=
-X-Google-Smtp-Source: ABdhPJzP1wb3PsOcO9yDICUnJCahvxJb3BLsH5WxSrw8IQTqclqb+WJrKOKneWX0DaAUU7SGiWugYRW7oAcNoKNyP+k=
-X-Received: by 2002:a05:6870:d18b:b0:d9:f452:be90 with SMTP id
- a11-20020a056870d18b00b000d9f452be90mr1844465oac.15.1649173809200; Tue, 05
- Apr 2022 08:50:09 -0700 (PDT)
+        bh=74fq+cSNE2UwX6pLlf26dcG+/mwze9tFZ1WcAEZygc8=;
+        b=E7B/nEWFHQSL74m/JqoXHz8YLZLnVU6M1mSBYEUgc3zHdeZvhkC7Cml8tnju+Idc81
+         a/ga2cVlKg7c/zRk7btJ3AhkzYsCaPkBU6DzsvbAGF16C6TQGcplmKQ5pLGShTcvH54L
+         eTi1VGg8xmT8t3r+i43xIyG564hQVYHDjGqLng8DRbtvkcvS8LTpfARSBzNLTKp+MuoI
+         zz5fk2pob4n1GKtP3VXAcpnRR+H2EmRcWtmsYEeATu3Sxp0BOE0fMlFjkGvAJXcMP9S3
+         EngWjJJPcIxA4syDRhMwsI8QcIi1eJKV6aLrJ3g/36PliQdwfTY1TExQs2JxcxvR+Fvj
+         IcKQ==
+X-Gm-Message-State: AOAM5339j0VZ8bYTsVwkrxO6/zXyncea8e96tQVtUI/Mwi4A3F0QGeVq
+        vfr20zluFEWiJJ7ag7gS5LZjO6G4HXoSRsT5ufs=
+X-Google-Smtp-Source: ABdhPJx/xEqaSnm7xNLv/pKl+niTBDY4r88roIh4NAZzAyZwCI1PpgUtucZrmyHVtyBF5CIbZYjKV4FFaMoyQixjxiE=
+X-Received: by 2002:a9d:eef:0:b0:5d2:8e2f:6729 with SMTP id
+ 102-20020a9d0eef000000b005d28e2f6729mr1556194otj.86.1649176105139; Tue, 05
+ Apr 2022 09:28:25 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220401110310.611869-1-joshi.k@samsung.com> <CGME20220401110838epcas5p2c1a2e776923dfe5bf65a3e7946820150@epcas5p2.samsung.com>
- <20220401110310.611869-6-joshi.k@samsung.com> <20220404072016.GD444@lst.de>
- <CA+1E3rJ+iWAhUVzVrRDiFTUmp5sNF7wqw_7oVqru2qLCTBQrqQ@mail.gmail.com> <20220405060224.GE23698@lst.de>
-In-Reply-To: <20220405060224.GE23698@lst.de>
+References: <20220401110310.611869-1-joshi.k@samsung.com> <CGME20220401110834epcas5p4d1e5e8d1beb1a6205d670bbcb932bf77@epcas5p4.samsung.com>
+ <20220401110310.611869-4-joshi.k@samsung.com> <20220404071656.GC444@lst.de>
+ <CA+1E3r+nHBace_K1Zt-FrOgGF5d0=TDoNtU65bFuWX8R7p8+DQ@mail.gmail.com> <20220405060023.GD23698@lst.de>
+In-Reply-To: <20220405060023.GD23698@lst.de>
 From:   Kanchan Joshi <joshiiitr@gmail.com>
-Date:   Tue, 5 Apr 2022 21:19:43 +0530
-Message-ID: <CA+1E3rJXrUnmc08Zy3yO=0mGJv1q0CaJez4eUDnTpaJcSh_1FQ@mail.gmail.com>
-Subject: Re: [RFC 5/5] nvme: wire-up support for async-passthru on char-device.
+Date:   Tue, 5 Apr 2022 21:57:59 +0530
+Message-ID: <CA+1E3r+HAGsXeBY7e-r0bXn2N-yP9B4631gwXRwUJM-PU2YqZg@mail.gmail.com>
+Subject: Re: [RFC 3/5] io_uring: add infra and support for IORING_OP_URING_CMD
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Kanchan Joshi <joshi.k@samsung.com>, Jens Axboe <axboe@kernel.dk>,
         io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
@@ -73,47 +73,19 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Apr 5, 2022 at 11:32 AM Christoph Hellwig <hch@lst.de> wrote:
+On Tue, Apr 5, 2022 at 11:30 AM Christoph Hellwig <hch@lst.de> wrote:
 >
-> On Mon, Apr 04, 2022 at 07:55:05PM +0530, Kanchan Joshi wrote:
-> > > Something like this (untested) patch should help to separate
-> > > the much better:
+> On Mon, Apr 04, 2022 at 08:44:20PM +0530, Kanchan Joshi wrote:
+> > Another stuff that got left out from the previous series :-(
+> > Using this field for a bit of sanity checking at the moment. Like this in nvme:
 > >
-> > It does, thanks. But the only thing is - it would be good to support
-> > vectored-passthru too (i.e. NVME_IOCTL_IO64_CMD_VEC) for this path.
-> > For the new opcode "NVME_URING_CMD_IO" , either we can change the
-> > cmd-structure or flag-based handling so that vectored-io is supported.
-> > Or we introduce NVME_URING_CMD_IO_VEC also for that.
-> > Which one do you prefer?
+> > + if (ioucmd->cmd_len != sizeof(struct nvme_passthru_cmd64))
+> > + return -EINVAL;
+> > + cptr = (struct nvme_passthru_cmd64 *)ioucmd->cmd;
 >
-> I agree vectored I/O support is useful.
->
-> Do we even need to support the non-vectored case?
-Would be good to have, I suppose.
-Helps keeping it simple when user-space wants to use a single-buffer
-(otherwise it must carry psuedo iovec for that too).
+> Do we actually need that sanity checking?  Each command should have
+> a known length bound by the SQE size, right?
 
-> Also I think we'll want admin command passthrough on /dev/nvmeX as
-> well, but I'm fine solving the other items first.
->
-> > > +static int nvme_ioctl_finish_metadata(struct bio *bio, int ret,
-> > > +               void __user *meta_ubuf)
-> > > +{
-> > > +       struct bio_integrity_payload *bip = bio_integrity(bio);
-> > > +
-> > > +       if (bip) {
-> > > +               void *meta = bvec_virt(bip->bip_vec);
-> > > +
-> > > +               if (!ret && bio_op(bio) == REQ_OP_DRV_IN &&
-> > > +                   copy_to_user(meta_ubuf, meta, bip->bip_vec->bv_len))
-> > > +                       ret = -EFAULT;
-> >
-> > Maybe it is better to move the check "bio_op(bio) != REQ_OP_DRV_IN" outside.
-> > Because this can be common, and for that we can avoid entering into
-> > the function call itself (i.e. nvme_ioctl_finish_metadata).
->
-> Function calls are pretty cheap, but I'll see what we can do.  I'll try
-> to come up with a prep series to refactor the passthrough support for
-> easier adding of the io_uring in the next days.
-
-In that case we will base the newer version on its top.
+Right, and that check can go in io_uring without needing this field
+(as we keep cmd_len in sqe already).
+Will remove this from io_uring_cmd struct.

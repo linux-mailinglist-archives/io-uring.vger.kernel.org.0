@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E51704F6292
-	for <lists+io-uring@lfdr.de>; Wed,  6 Apr 2022 17:08:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2463B4F62A4
+	for <lists+io-uring@lfdr.de>; Wed,  6 Apr 2022 17:08:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235354AbiDFPC0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 6 Apr 2022 11:02:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33790 "EHLO
+        id S235205AbiDFPDo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 6 Apr 2022 11:03:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235322AbiDFPBy (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 6 Apr 2022 11:01:54 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2781ABF329
-        for <io-uring@vger.kernel.org>; Wed,  6 Apr 2022 04:46:21 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id dr20so3679095ejc.6
-        for <io-uring@vger.kernel.org>; Wed, 06 Apr 2022 04:46:21 -0700 (PDT)
+        with ESMTP id S235481AbiDFPCA (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 6 Apr 2022 11:02:00 -0400
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3ECDBF334
+        for <io-uring@vger.kernel.org>; Wed,  6 Apr 2022 04:46:22 -0700 (PDT)
+Received: by mail-ed1-x530.google.com with SMTP id k2so2256003edj.9
+        for <io-uring@vger.kernel.org>; Wed, 06 Apr 2022 04:46:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=SG6pO4W68lasv2c2yo8I8YutyRF+ZZXhM5T2CHVWrlY=;
-        b=PC6TPhm6HU+m1tGfQORbk9XoJnfVW5esxi2Ubi2sZWAO4kUzSoXX2nUmI0hhUT0kMz
-         Fcsh1OUhtIkXnjiBNqjw2XONJxG+U+t64pJPKdjOSxB+T+cdEZsxuzS7mAp4PWk7EzXF
-         RGP1OTISZRcGU4x5SNeJIG+oM/nadM6UdNUqtJPQAK7QBjZ7RaTUsnynTM1NnXXCQZzM
-         esrQX9wrLOxca2lZbUD1AS5sM6pUi8BjnwYZUUAAStMIkPQQd/oB/IEZp02plaR+2htV
-         ETkz4ZNKeBlzWH5iRrYKe6LKPRF0nr+A/YBo7WK74vLoClXwBbE9rLKhXITsSog2/TLN
-         JIXQ==
+        bh=J+/2Fjg9v+C27nvWBCqhNWd2OflMkdZna9b2IQzXbik=;
+        b=kg+Xf3pok9FW9yq63N2Subcjytrz88TicML7GUoToBHg2e1Dl4dmsMXh+pkr4trt/0
+         ASJK7buPmfzC7wXd2eVtvJqEGzY1GR1m/PBixXUwg53BZ6cJ9LMWxA8A60yj677WWUEt
+         vxrbuvkVGiw285LReA2cqUyFrUznpZi4n1UJQXiW7OAajOA4fBv9pXfNY/jF9UJauyhT
+         gN6sckUAfNV1AFfpOFA4v/cwGMjnQIcDxtQ+5HF+OMFDuX+1Xe0RUzKwfxz1IwlvnQXn
+         Ul1GueKTwuE/cXJ+OPwuy5UmToiGhHVpw8rrJua+2VH5uz8wLkc5UkjuXo648mlu/2+H
+         Yx+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=SG6pO4W68lasv2c2yo8I8YutyRF+ZZXhM5T2CHVWrlY=;
-        b=PgVGqDDm4R1n0+bhVNb5t/Q74/tIf3a8a1lwKLB34vZAQCGWKLTFZHr9ktHttLx2N6
-         OXcu76lVXnQRNvlFxNmCcrqXuBtut+2dp411C+cy2lsAciS2ljgKjg4eZVZulrNUd7EU
-         hv0iGQrDzmIKRMmsRwGWHAI0fkbS5UgYYZW0PyPVw6brmwww4PXP+1wmOrtAgehIDHZt
-         5F4j1E3NLeC4no4vcA5z18FX49vLXB7v6Qc7cdI51cFJ7uoCPEX7f89MouyTcI6EFw1j
-         qVQCkH7Rf23zZ8iqjcBKIzb44MNeMCHjDoIiJkf96rPbCOSAXton9OJzHTYl2E0P1Tft
-         BnUA==
-X-Gm-Message-State: AOAM530a2qqncMw5emlNmGQx5WlZfFE4AdSx8VZ0J6u3UjROSeuafmWw
-        C2FZzqINRxEMpLPt/1cxl5PEQ3G7NXM=
-X-Google-Smtp-Source: ABdhPJztqvlZ41+y3fXKSDwQAG/sf3SDHJkMHxIMhuOaPN13XCpIeKHxuyYhuWNAK/nMfj7ymIDG6w==
-X-Received: by 2002:a17:906:d54b:b0:6e7:f185:18d5 with SMTP id cr11-20020a170906d54b00b006e7f18518d5mr8302188ejc.155.1649245531014;
-        Wed, 06 Apr 2022 04:45:31 -0700 (PDT)
+        bh=J+/2Fjg9v+C27nvWBCqhNWd2OflMkdZna9b2IQzXbik=;
+        b=G9ItwyE1ifxhExW3g05jAM4geL9GIpLme2RIEA/kiNtbvnKEr2CpUqJrLDW61YRCUp
+         ZOvYn+rZDjLz+Dwo3Hv8WFapq0f0UDbl+NtPoQ6jK5//dL4NpOJfyI68E1be3lTwVT96
+         DAl8E6id6VW2+QtTMFbgYr3tc/KvJo+b3qIw6Em7TmUiqbbJL52EH8M2ctFpLSTDULA8
+         R1A/fZFKrCAm6CUI1y79Vm7BeSmw6dRoaRR8dEkndbAHUzPVd/QWUUrFOBZ2HIzxOyeT
+         y7Ypik1YA9r4/MWHjMgmLFftN8MT5vhl8ZrV2LQLQV1I1ULZAMxBoqa9Ompj9Uvkhlfx
+         jdhA==
+X-Gm-Message-State: AOAM532GKDCM75wbji3d3ivaaoJtr3MQ13KfGvqJpGvsdUCpMApyZH7X
+        ghV7IG5eaZ9vCa2nxauniHSrtYj9fsM=
+X-Google-Smtp-Source: ABdhPJx7xFZQPLYYsp+LxsnuvovsVnA0IqbVC/Qw1Csg2v4SU+iJP+e/ZlT1aGupurRRf3IXky8LDQ==
+X-Received: by 2002:aa7:d0cc:0:b0:41c:b59c:c461 with SMTP id u12-20020aa7d0cc000000b0041cb59cc461mr8307255edo.285.1649245532139;
+        Wed, 06 Apr 2022 04:45:32 -0700 (PDT)
 Received: from 127.0.0.1localhost ([148.252.129.65])
-        by smtp.gmail.com with ESMTPSA id g16-20020a170906521000b006d58773e992sm6506022ejm.188.2022.04.06.04.45.30
+        by smtp.gmail.com with ESMTPSA id g16-20020a170906521000b006d58773e992sm6506022ejm.188.2022.04.06.04.45.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Apr 2022 04:45:30 -0700 (PDT)
+        Wed, 06 Apr 2022 04:45:31 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH 1/2] io_uring: nospec index for tags on files update
-Date:   Wed,  6 Apr 2022 12:43:57 +0100
-Message-Id: <55c05506d6ade79de01f5f5677be2e738daf3e47.1649245017.git.asml.silence@gmail.com>
+Subject: [PATCH 2/2] io_uring: don't touch scm_fp_list after queueing skb
+Date:   Wed,  6 Apr 2022 12:43:58 +0100
+Message-Id: <28279689e4f94cf513d416287ee0b2faec5493b8.1649245017.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <cover.1649245017.git.asml.silence@gmail.com>
 References: <cover.1649245017.git.asml.silence@gmail.com>
@@ -68,29 +68,35 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Don't forget to array_index_nospec() for indexes before updating rsrc
-tags in __io_sqe_files_update(), just use already safe and precalculated
-index @i.
+It's safer to not touch scm_fp_list after we queued an skb to which it
+was assigned, there might be races lurking if we screw subtle sync
+guarantees on the io_uring side.
 
-Fixes: c3bdad0271834 ("io_uring: add generic rsrc update with tags")
+Fixes: 6b06314c47e14 ("io_uring: add file set registration")
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/io_uring.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index f95b44a91b7d..449d4ea419cb 100644
+index 449d4ea419cb..481e12115dbb 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -9294,7 +9294,7 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
- 				err = -EBADF;
- 				break;
- 			}
--			*io_get_tag_slot(data, up->offset + done) = tag;
-+			*io_get_tag_slot(data, i) = tag;
- 			io_fixed_file_set(file_slot, file);
- 			err = io_sqe_file_register(ctx, file, i);
- 			if (err) {
+@@ -8831,8 +8831,12 @@ static int __io_sqe_files_scm(struct io_ring_ctx *ctx, int nr, int offset)
+ 		refcount_add(skb->truesize, &sk->sk_wmem_alloc);
+ 		skb_queue_head(&sk->sk_receive_queue, skb);
+ 
+-		for (i = 0; i < nr_files; i++)
+-			fput(fpl->fp[i]);
++		for (i = 0; i < nr; i++) {
++			struct file *file = io_file_from_index(ctx, i + offset);
++
++			if (file)
++				fput(file);
++		}
+ 	} else {
+ 		kfree_skb(skb);
+ 		free_uid(fpl->user);
 -- 
 2.35.1
 

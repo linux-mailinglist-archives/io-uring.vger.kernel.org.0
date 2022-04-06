@@ -2,275 +2,205 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 79B414F6929
-	for <lists+io-uring@lfdr.de>; Wed,  6 Apr 2022 20:19:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D2D04F6CB2
+	for <lists+io-uring@lfdr.de>; Wed,  6 Apr 2022 23:29:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237378AbiDFSOx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 6 Apr 2022 14:14:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52896 "EHLO
+        id S229754AbiDFVbe (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 6 Apr 2022 17:31:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240310AbiDFSOn (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 6 Apr 2022 14:14:43 -0400
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67549228AA5
-        for <io-uring@vger.kernel.org>; Wed,  6 Apr 2022 09:52:13 -0700 (PDT)
-Received: by mail-qt1-f180.google.com with SMTP id s7so5319225qtk.6
-        for <io-uring@vger.kernel.org>; Wed, 06 Apr 2022 09:52:13 -0700 (PDT)
+        with ESMTP id S235653AbiDFVbE (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 6 Apr 2022 17:31:04 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1ABE7216FB3
+        for <io-uring@vger.kernel.org>; Wed,  6 Apr 2022 13:34:37 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id r13so4908671wrr.9
+        for <io-uring@vger.kernel.org>; Wed, 06 Apr 2022 13:34:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=q77BaAR9yUBtg43FTuAPRwXtFcLqvHQk5ZYB37v9gNE=;
+        b=ACI5lvoq0SUPPnu8hTANCgvOXO+wuEmm/bPIAvhKxpIGBSShrRjPcrFIxKaK/d7NUy
+         ZixiZ76Y0FeFhM7h0PiylMWvqTG/HeOneYgZuaaRP5z9P3xQP8PYUsAd0XC0cwLfGnWg
+         9tH+jk28hWts0yzc5hfQvIgFODFKtm0m9KIUbEXpXJ8x1cpK5YBwezc0p5/NsohnPf1s
+         is3AYBnhLbjdMTtuXBa4nBoCnhSWtT5APOLtFjHHvDS79Xw0NlbEblYxGDL8c9RAcfRO
+         PM4fbk3t7Qk/peeudm7cL4HdHcmh+5cNeiBdr3Spa742gdPFixa8cV0ewT7YTkkHNzln
+         M+QA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=0UyyMFvWOCB2BNkoIAffwKLA75E1qzGUQJVZnjoP6F8=;
-        b=GJdF1pnHHYQscsfvX1ddksWce2EIntXTbp/7ch1zuQE9A+T83GKFQz6JXA+N16AyLR
-         ENRDNZCJ9oKjBI4orEYao0hrq25+YbSUMgIj/u58XlM2PtRb4Y8E3IeccB2APCAOQTsC
-         mRmZBvAXj4kKZ4IUBEr+7hwB9++Cxteg/GgIA3trgllZ3ih0CoJ42Q77M9+B+hniniEM
-         XvssqJ//PdRJC93/zXI668OQcDpCFBC/34XL/MdA0fMIssH/a8JudpRYkjXzzEv2w5gm
-         fduil3Kdn9QNlrI5PKDY2DXxvzU8ffUKm/q8Va8dLoFwwMYCff3MN9mFvYDHSgCnvqcq
-         +Oxg==
-X-Gm-Message-State: AOAM530dR8Q1b8G+5oudtDKpH3D/eX4bRGz5vS4UzggPLehKyOO00bvK
-        4MFm38oowAn7UrS1scQnl8XH
-X-Google-Smtp-Source: ABdhPJxeGr9pRX+lQAkLZarPV0vNTSLVDiqNubmN+iUnTP6n78OWHiePsV1tyro38o409L4WN4X5aQ==
-X-Received: by 2002:ac8:5a4f:0:b0:2e1:a7be:2d13 with SMTP id o15-20020ac85a4f000000b002e1a7be2d13mr8247436qta.598.1649263932461;
-        Wed, 06 Apr 2022 09:52:12 -0700 (PDT)
-Received: from localhost (pool-68-160-176-52.bstnma.fios.verizon.net. [68.160.176.52])
-        by smtp.gmail.com with ESMTPSA id k13-20020a05622a03cd00b002e21621c243sm14231183qtx.39.2022.04.06.09.52.11
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=q77BaAR9yUBtg43FTuAPRwXtFcLqvHQk5ZYB37v9gNE=;
+        b=8BK9UCUjW2hwGQdK+2tD0H09b4UOcRm8X8L3mNQN7Djq0QN0rgZ/4+uqF7G4axclOQ
+         WjzJN0IHt6GParUvmsvzQx1Bj4r/dL1PQk+H789FzwnlJwpTHI6A/4TwzceB/r0ZDnPQ
+         1ipCI0Ozo8ZggntISzfdRP0lG8DTaIXMaaiHH6Z6tfhf2iYmosUxb0H5oJWccemSAVsF
+         z/0g1giZW3PHyntWWHoHmF5FmbVoSJXXsXHVEljvDK/YTCBDTJvTzTVfXkRVN1fEhcCZ
+         iDDFDjLB9ZvppDfIbMrzcykJqLzITB188PgUr5d664EPYHbWdoA2rDRS7F68Jc04VxZC
+         rqYg==
+X-Gm-Message-State: AOAM531owAy2ll8RVY9Re77wng/stgpaedf/Fe5Di/MzXq1eguQbjDQV
+        LLbSqryEJiIqLiaaEu9wnxAUtf3kzsY=
+X-Google-Smtp-Source: ABdhPJw5+IyuXUyJ512kV6z57YchZ2jDz1oeaLoKxBKpd/Hw6xQgH8gcoISe4DVZTfRe3atuVNt71A==
+X-Received: by 2002:adf:e583:0:b0:206:859:f816 with SMTP id l3-20020adfe583000000b002060859f816mr8103175wrm.429.1649277275607;
+        Wed, 06 Apr 2022 13:34:35 -0700 (PDT)
+Received: from 127.0.0.1localhost ([148.252.129.65])
+        by smtp.gmail.com with ESMTPSA id l6-20020a1c2506000000b0038e6fe8e8d8sm8266446wml.5.2022.04.06.13.34.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Apr 2022 09:52:12 -0700 (PDT)
-Date:   Wed, 6 Apr 2022 12:52:11 -0400
-From:   Mike Snitzer <snitzer@kernel.org>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, dm-devel@redhat.com,
-        io-uring@vger.kernel.org
-Subject: Re: [RFC PATCH] io_uring: reissue in case -EAGAIN is returned after
- io issue returns
-Message-ID: <Yk3FO6r59nTrDuiS@redhat.com>
-References: <20220403114532.180945-1-ming.lei@redhat.com>
- <YksiEk+G5QuPG6o8@redhat.com>
- <Ykz2aF3VgyyVG46m@T590>
+        Wed, 06 Apr 2022 13:34:35 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
+Subject: [PATCH 1/1] io_uring: don't scm-account for non af_unix sockets
+Date:   Wed,  6 Apr 2022 21:33:56 +0100
+Message-Id: <9c44ecf6e89d69130a8c4360cce2183ffc5ddd6f.1649277098.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Ykz2aF3VgyyVG46m@T590>
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=no autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Apr 05 2022 at 10:09P -0400,
-Ming Lei <ming.lei@redhat.com> wrote:
+io_uring deals with file reference loops by registering all fixed files
+in the SCM/GC infrastrucure. However, only a small subset of all file
+types can keep long-term references to other files and those that don't
+are not interesting for the garbage collector as they can't be in a
+reference loop. They neither can be directly recycled by GC nor affect
+loop searching.
 
-> On Mon, Apr 04, 2022 at 12:51:30PM -0400, Mike Snitzer wrote:
-> > On Sun, Apr 03 2022 at  7:45P -0400,
-> > Ming Lei <ming.lei@redhat.com> wrote:
-> > 
-> > > -EAGAIN still may return after io issue returns, and REQ_F_REISSUE is
-> > > set in io_complete_rw_iopoll(), but the req never gets chance to be handled.
-> > > io_iopoll_check doesn't handle this situation, and io hang can be caused.
-> > > 
-> > > Current dm io polling may return -EAGAIN after bio submission is
-> > > returned, also blk-throttle might trigger this situation too.
-> > > 
-> > > Cc: Mike Snitzer <snitzer@kernel.org>
-> > > Signed-off-by: Ming Lei <ming.lei@redhat.com>
-> > 
-> > I first reverted commit 5291984004ed ("dm: fix bio polling to handle
-> > possibile BLK_STS_AGAIN") then applied this patch and verified this
-> > fixes the DM bio polling hangs.  Nice work!
-> > 
-> > But interestingly with this fio test (against dm-linear ontop of
-> > null_blk with queue_mode=2 submit_queues=8 poll_queues=2 bs=4096 gb=16):
-> > 
-> > fio --bs=4096 --ioengine=io_uring --fixedbufs --registerfiles --hipri=1 \
-> > --iodepth=16 --iodepth_batch_submit=16 --iodepth_batch_complete_min=16 \
-> > --filename=/dev/mapper/linear --direct=1 --runtime=20 --numjobs=16 \
-> > --rw=randread --name=test --group_reporting --norandommap
-> 
-> 16jobs in io_uring/aio test is overkill.
+Let's skip io_uring SCM accounting for loop-less files, i.e. all but
+af_unix sockets, quite imroving fixed file updates performance and
+greatly helpnig with memory footprint.
 
-Sure, it is.. I was just exhausting driver resources.. could fiddle
-with it so that it exhausts quickly with even a single thread.
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ fs/io_uring.c | 51 ++++++++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 38 insertions(+), 13 deletions(-)
 
-Besides the point really.
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index b4c85d85f88d..be178694e8db 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -1211,6 +1211,18 @@ struct sock *io_uring_get_socket(struct file *file)
+ }
+ EXPORT_SYMBOL(io_uring_get_socket);
+ 
++#if defined(CONFIG_UNIX)
++static inline bool io_file_need_scm(struct file *filp)
++{
++	return !!unix_get_socket(filp);
++}
++#else
++static inline bool io_file_need_scm(struct file *filp)
++{
++	return 0;
++}
++#endif
++
+ static inline void io_tw_lock(struct io_ring_ctx *ctx, bool *locked)
+ {
+ 	if (!*locked) {
+@@ -8424,6 +8436,17 @@ static void io_free_file_tables(struct io_file_table *table)
+ 
+ static void __io_sqe_files_unregister(struct io_ring_ctx *ctx)
+ {
++	int i;
++
++	for (i = 0; i < ctx->nr_user_files; i++) {
++		struct file *file = io_file_from_index(ctx, i);
++
++		if (!file || io_file_need_scm(file))
++			continue;
++		io_fixed_file_slot(&ctx->file_table, i)->file_ptr = 0;
++		fput(file);
++	}
++
+ #if defined(CONFIG_UNIX)
+ 	if (ctx->ring_sock) {
+ 		struct sock *sock = ctx->ring_sock->sk;
+@@ -8432,16 +8455,6 @@ static void __io_sqe_files_unregister(struct io_ring_ctx *ctx)
+ 		while ((skb = skb_dequeue(&sock->sk_receive_queue)) != NULL)
+ 			kfree_skb(skb);
+ 	}
+-#else
+-	int i;
+-
+-	for (i = 0; i < ctx->nr_user_files; i++) {
+-		struct file *file;
+-
+-		file = io_file_from_index(ctx, i);
+-		if (file)
+-			fput(file);
+-	}
+ #endif
+ 	io_free_file_tables(&ctx->file_table);
+ 	io_rsrc_data_free(ctx->file_data);
+@@ -8590,7 +8603,9 @@ static struct io_sq_data *io_get_sq_data(struct io_uring_params *p,
+ /*
+  * Ensure the UNIX gc is aware of our file set, so we are certain that
+  * the io_uring can be safely unregistered on process exit, even if we have
+- * loops in the file referencing.
++ * loops in the file referencing. We account only files that can hold other
++ * files because otherwise they can't form a loop and so are not interesting
++ * for GC.
+  */
+ static int __io_sqe_files_scm(struct io_ring_ctx *ctx, int nr, int offset)
+ {
+@@ -8616,8 +8631,9 @@ static int __io_sqe_files_scm(struct io_ring_ctx *ctx, int nr, int offset)
+ 	for (i = 0; i < nr; i++) {
+ 		struct file *file = io_file_from_index(ctx, i + offset);
+ 
+-		if (!file)
++		if (!file || !io_file_need_scm(file))
+ 			continue;
++
+ 		fpl->fp[nr_files] = get_file(file);
+ 		unix_inflight(fpl->user, fpl->fp[nr_files]);
+ 		nr_files++;
+@@ -8634,7 +8650,7 @@ static int __io_sqe_files_scm(struct io_ring_ctx *ctx, int nr, int offset)
+ 		for (i = 0; i < nr; i++) {
+ 			struct file *file = io_file_from_index(ctx, i + offset);
+ 
+-			if (file)
++			if (file && io_file_need_scm(file))
+ 				fput(file);
+ 		}
+ 	} else {
+@@ -8676,6 +8692,7 @@ static int io_sqe_files_scm(struct io_ring_ctx *ctx)
+ 
+ 		if (file)
+ 			fput(file);
++		io_fixed_file_slot(&ctx->file_table, total)->file_ptr = 0;
+ 		total++;
+ 	}
+ 
+@@ -8697,6 +8714,11 @@ static void io_rsrc_file_put(struct io_ring_ctx *ctx, struct io_rsrc_put *prsrc)
+ 	struct sk_buff *skb;
+ 	int i;
+ 
++	if (!io_file_need_scm(file)) {
++		fput(file);
++		return;
++	}
++
+ 	__skb_queue_head_init(&list);
+ 
+ 	/*
+@@ -8889,6 +8911,9 @@ static int io_sqe_file_register(struct io_ring_ctx *ctx, struct file *file,
+ 	struct sk_buff_head *head = &sock->sk_receive_queue;
+ 	struct sk_buff *skb;
+ 
++	if (!io_file_need_scm(file))
++		return 0;
++
+ 	/*
+ 	 * See if we can merge this file into an existing skb SCM_RIGHTS
+ 	 * file set. If there's no room, fall back to allocating a new skb
+-- 
+2.35.1
 
-> > I get 3186k IOPS with your patch to have io_uring retry (and commit
-> > 5291984004ed reverted), but 4305k IOPS if leave commit 5291984004ed
-> > applied (and DM resorts to retrying any -EAGAIN _without_ polling).
-> 
-> IMO, commit 5291984004ed shouldn't be reverted, which is reasonable to
-> retry on underlying IO for dm.
-
-Right, I wasn't saying commit 5291984004ed should be reverted.  But I
-was testing to see if your patch covered the case commit 5291984004ed
-handles.
-
-Note that the DM retry isn't in terms of polling though, polling gets
-disabled when the bio is requeued to DM.
-
-> This patch is for making io_uring more reliable, since the current
-> io_uring code only handles -EAGAIN from submission code path, and
-> -EAGAIN/REISSUE isn't handled if it is returned during ->poll(),
-> then the io hang is caused.
-> 
-> Jens, what do you think of this patch? Does io_uring need to handle
-> -EAGAIN in this case?
-> 
-> > 
-> > Jens rightly pointed out to me that polling tests that exhaust tags
-> > are bogus anyway (because such unbounded IO defeats the point of
-> > polling).  Jens also thinks my result, with commit 5291984004ed
-> > applied, is somehow bogus and not to be trusted ;)  He is very likely
-> > correct, and the failing likely in the null_blk driver -- I'm
-> > skeptical of that driver given it cannot pass fio verify testing
-> > (e.g. --do_verify=1 --verify=crc32c --verify_async=1) with or without
-> > polling.
-> 
-> Because it is null block...
-
-Ha, yes.. very good point. I was expecting null_blk capability (read
-back written data) that it was never intended to provide. Sorry ;)
-
-> > 
-> > Review comments inlined below.
-> > 
-> > > ---
-> > >  fs/io-wq.h    |  13 +++++
-> > >  fs/io_uring.c | 128 ++++++++++++++++++++++++++++----------------------
-> > >  2 files changed, 86 insertions(+), 55 deletions(-)
-> > > 
-> > > diff --git a/fs/io-wq.h b/fs/io-wq.h
-> > > index dbecd27656c7..4ca4863664fb 100644
-> > > --- a/fs/io-wq.h
-> > > +++ b/fs/io-wq.h
-> > > @@ -96,6 +96,19 @@ static inline void wq_list_add_head(struct io_wq_work_node *node,
-> > >  	WRITE_ONCE(list->first, node);
-> > >  }
-> > >  
-> > > +static inline void wq_list_remove(struct io_wq_work_list *list,
-> > > +				  struct io_wq_work_node *prev,
-> > > +				  struct io_wq_work_node *node)
-> > > +{
-> > > +	if (!prev)
-> > > +		WRITE_ONCE(list->first, node->next);
-> > > +	else
-> > > +		prev->next = node->next;
-> > > +
-> > > +	if (node == list->last)
-> > > +		list->last = prev;
-> > > +}
-> > > +
-> > >  static inline void wq_list_cut(struct io_wq_work_list *list,
-> > >  			       struct io_wq_work_node *last,
-> > >  			       struct io_wq_work_node *prev)
-> > > diff --git a/fs/io_uring.c b/fs/io_uring.c
-> > > index 59e54a6854b7..6db5514e10ca 100644
-> > > --- a/fs/io_uring.c
-> > > +++ b/fs/io_uring.c
-> > > @@ -2759,6 +2759,65 @@ static inline bool io_run_task_work(void)
-> > >  	return false;
-> > >  }
-> > >  
-> > > +#ifdef CONFIG_BLOCK
-> > > +static bool io_resubmit_prep(struct io_kiocb *req)
-> > > +{
-> > > +	struct io_async_rw *rw = req->async_data;
-> > > +
-> > > +	if (!req_has_async_data(req))
-> > > +		return !io_req_prep_async(req);
-> > > +	iov_iter_restore(&rw->s.iter, &rw->s.iter_state);
-> > > +	return true;
-> > > +}
-> > > +
-> > > +static bool io_rw_should_reissue(struct io_kiocb *req)
-> > > +{
-> > > +	umode_t mode = file_inode(req->file)->i_mode;
-> > > +	struct io_ring_ctx *ctx = req->ctx;
-> > > +
-> > > +	if (!S_ISBLK(mode) && !S_ISREG(mode))
-> > > +		return false;
-> > > +	if ((req->flags & REQ_F_NOWAIT) || (io_wq_current_is_worker() &&
-> > > +	    !(ctx->flags & IORING_SETUP_IOPOLL)))
-> > > +		return false;
-> > > +	/*
-> > > +	 * If ref is dying, we might be running poll reap from the exit work.
-> > > +	 * Don't attempt to reissue from that path, just let it fail with
-> > > +	 * -EAGAIN.
-> > > +	 */
-> > > +	if (percpu_ref_is_dying(&ctx->refs))
-> > > +		return false;
-> > > +	/*
-> > > +	 * Play it safe and assume not safe to re-import and reissue if we're
-> > > +	 * not in the original thread group (or in task context).
-> > > +	 */
-> > > +	if (!same_thread_group(req->task, current) || !in_task())
-> > > +		return false;
-> > > +	return true;
-> > > +}
-> > > +#else
-> > > +static bool io_resubmit_prep(struct io_kiocb *req)
-> > > +{
-> > > +	return false;
-> > > +}
-> > > +static bool io_rw_should_reissue(struct io_kiocb *req)
-> > > +{
-> > > +	return false;
-> > > +}
-> > > +#endif
-> > > +
-> > > +static void do_io_reissue(struct io_kiocb *req, int ret)
-> > > +{
-> > > +	if (req->flags & REQ_F_REISSUE) {
-> > > +		req->flags &= ~REQ_F_REISSUE;
-> > > +		if (io_resubmit_prep(req))
-> > > +			io_req_task_queue_reissue(req);
-> > > +		else
-> > > +			io_req_task_queue_fail(req, ret);
-> > > +	}
-> > > +}
-> > 
-> > Minor nit but: I'd leave caller to check for REQ_F_REISSUE.
-> > 
-> > > +
-> > > +
-> > >  static int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin)
-> > >  {
-> > >  	struct io_wq_work_node *pos, *start, *prev;
-> > > @@ -2786,6 +2845,13 @@ static int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin)
-> > >  		if (READ_ONCE(req->iopoll_completed))
-> > >  			break;
-> > >  
-> > > +		/*
-> > > +		 * Once REISSUE flag is set, the req has been done, and we
-> > > +		 * have to retry
-> > > +		 */
-> > > +		if (req->flags & REQ_F_REISSUE)
-> > > +			break;
-> > > +
-> > >  		ret = kiocb->ki_filp->f_op->iopoll(kiocb, &iob, poll_flags);
-> > >  		if (unlikely(ret < 0))
-> > >  			return ret;
-> > > @@ -2807,6 +2873,12 @@ static int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin)
-> > >  	wq_list_for_each_resume(pos, prev) {
-> > >  		struct io_kiocb *req = container_of(pos, struct io_kiocb, comp_list);
-> > >  
-> > > +		if (req->flags & REQ_F_REISSUE) {
-> > > +			wq_list_remove(&ctx->iopoll_list, prev, pos);
-> > > +			do_io_reissue(req, -EIO);
-> > > +			break;
-> > > +		}
-> > > +
-> > 
-> > That way you'll avoid redundant checks for REQ_F_REISSUE here.
-> 
-> Another do_io_reissue() needn't to remove req from ->iopoll_list, that
-> is why the check is done here.
-
-All do_io_reissue callers would need to first check for REQ_F_REISSUE,
-but my point (purely about avoiding redundant checks) is moot if this
-patch isn't safe.
-
-Mike

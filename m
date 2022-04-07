@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 17B6D4F7F47
-	for <lists+io-uring@lfdr.de>; Thu,  7 Apr 2022 14:40:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84EF64F7F46
+	for <lists+io-uring@lfdr.de>; Thu,  7 Apr 2022 14:40:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245336AbiDGMmy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 7 Apr 2022 08:42:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57276 "EHLO
+        id S245331AbiDGMmx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 7 Apr 2022 08:42:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245377AbiDGMmo (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 7 Apr 2022 08:42:44 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9086454BC5
-        for <io-uring@vger.kernel.org>; Thu,  7 Apr 2022 05:40:44 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id c190-20020a1c35c7000000b0038e37907b5bso5621312wma.0
-        for <io-uring@vger.kernel.org>; Thu, 07 Apr 2022 05:40:44 -0700 (PDT)
+        with ESMTP id S245381AbiDGMmp (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 7 Apr 2022 08:42:45 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67EE128E0C
+        for <io-uring@vger.kernel.org>; Thu,  7 Apr 2022 05:40:45 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id z1so7682317wrg.4
+        for <io-uring@vger.kernel.org>; Thu, 07 Apr 2022 05:40:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Molm2KW7uFh68s6XqowD4nx7KTeoB73d3UMUuGy++vc=;
-        b=kXJa+KSB9FZDw3UAL89ubp4zd7544XB+wnbHLkeiydBW/GpzO9Kf3yKp1tXYBvh4Zr
-         efwhR1nyzve75AFpfXaYLBzaKpTqagMskY0oZVGEbsaooXU4CLlzWLBLMY2sxZJIQxG7
-         ZKZiQYBBwd5Vimc/6JW3s/76Px325quP1JZmqNoE44lkF2M5Q+qeM4aJpOm9brOtSGFi
-         pnsa6n9LNuavLQfTvLrHj765WlmsvKcuBeu94ugc2JJnVDbZXvUNcXR122zLP1CDEDUN
-         WNjuOhMlnjVXBhn9iigI9KTjrrPSN0I028DGKmcO0oF+z1POWMfaOmj9IxxINB90Amjf
-         UZtA==
+        bh=vOZO7W70b0lNVASaaHoHwDGmNiTzq7pmBWA6lAwShus=;
+        b=dQk9WD14bc615LDFg/XmiuDY8rv3cOgN0TyGkyGFt+WVHnYcln/fx0eg9V0SkiFJf8
+         PDZpb7Cl+XPMd+8kic2yQM1s/4/jxByd7rUG0aXMpuvEqE9eu6K2NpUgA7OthxP6+jDS
+         f34I4wPf7P6kwvRGqzC5k/gRYKb6ObI7pLIq9VWpxKFkujFZspa3kx+TKxjjHkfWWCMv
+         D0k9lE5MMPZH2XJ0UDPImSzKUngtiHNVBqgN8KqwaF5WFEo4R6LwRck/A9IFCSP+pzYo
+         MhSbxGbIeO5a7ZuU+pzhX/Y1op2eweDzxrEe8M/Ep0TTA4JI6cacuCRrwJCT+v3SWzGr
+         Wa9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Molm2KW7uFh68s6XqowD4nx7KTeoB73d3UMUuGy++vc=;
-        b=UJ6pQw1r5bxpzm4iQM7y5GKVvllXu7YSr7YeBq6BBuTx8mLlAVGdMmSdMDQkyYSzW3
-         7zaq9m7x5cuFspTceiOizBG8arZ4vztk36x4AB1Y/phy2naddvj1Bm0zi3u7PAxCbzrO
-         QUBJTgohPzurv6mfRvWAyODDUSb6m51eZA/i8j4zWwS1zi/4eJjxz3EiEKyiaYcBJ7e1
-         lYa68LMGbZg/CwrdXs18fDXX8JjU4RloHm4hcdrGV6ZF9rWMyyGsZefpFdosBX7J43Cw
-         +ePeOik+CchoZNYkHD0dXsrRO8USTAtr1mpKK9AElk3plpnmVXSyKVOB4VLn8mzq+pby
-         etRg==
-X-Gm-Message-State: AOAM532yK+D6X0YFmxEh9Nd+g16+2T0QW+/r5m4oXksc3wQt7dLcJXdF
-        5ZDbzpatOZovxNfviBSgRxDbxlTi/y0=
-X-Google-Smtp-Source: ABdhPJzedAE50Un3abCiWVX9Z4n+nuV1KzQMiM+WVNKB2tL6kofeuvh7sKl2s1Ti9YtNlFoaIo93GA==
-X-Received: by 2002:a05:600c:3512:b0:38c:be56:fc9c with SMTP id h18-20020a05600c351200b0038cbe56fc9cmr12110968wmq.197.1649335242644;
-        Thu, 07 Apr 2022 05:40:42 -0700 (PDT)
+        bh=vOZO7W70b0lNVASaaHoHwDGmNiTzq7pmBWA6lAwShus=;
+        b=RPC3fpqgOh25hNlhqxkuJctKME5oKW9U7No49DBSiF4nxlyiovJsBPb/Bt9K9yXDCM
+         B852D2VlmGHorzp2Iyp2AiX7APx5vEiaXBgvKGLMKZQifLMhl0tcl/0LV933bQbDKYoz
+         hyRRzuCBVyGv8+r+3XizQBd2BVngKXlRQGKyhD6qKWEN2ho08U4FOrDjBlrNAD7gB63V
+         DuxBzwCqUrj5nkDP8kiGWfJHscw/33ijbj0TA3wH9AfELs/nRN9y9BW7Jwa0Vnh77sZL
+         Iqh+5k1j8M44Rc4pYnbcIgCYYhMekNA13mDcHRVhdyAQkEY6NMKkyIXShRGz1Zz1p7XT
+         9lfw==
+X-Gm-Message-State: AOAM532jxJG8gqzDjBLeUAHHvvCfe6tGNgv6bXhN53Yis3mP9n8OV5cZ
+        vVNJk+WKTeRgz7tx03Ffxlpz8Kr+CbQ=
+X-Google-Smtp-Source: ABdhPJwI78qJ9P0vCN/K2m9v5+vU5iXof7L8KM3OJa8M/N4r6a5Np/yQLSc18kWY9dh5DeXJ4T2AIA==
+X-Received: by 2002:a5d:528b:0:b0:203:d928:834c with SMTP id c11-20020a5d528b000000b00203d928834cmr11040637wrv.500.1649335243835;
+        Thu, 07 Apr 2022 05:40:43 -0700 (PDT)
 Received: from 127.0.0.1localhost ([85.255.237.149])
-        by smtp.gmail.com with ESMTPSA id c11-20020a05600c0a4b00b0037c91e085ddsm9354781wmq.40.2022.04.07.05.40.41
+        by smtp.gmail.com with ESMTPSA id c11-20020a05600c0a4b00b0037c91e085ddsm9354781wmq.40.2022.04.07.05.40.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Apr 2022 05:40:42 -0700 (PDT)
+        Thu, 07 Apr 2022 05:40:43 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH 1/5] io_uring: uniform SCM accounting
-Date:   Thu,  7 Apr 2022 13:40:01 +0100
-Message-Id: <6c9afbeb22812777d0c43e52353b63db5b87ed1e.1649334991.git.asml.silence@gmail.com>
+Subject: [PATCH 2/5] io_uring: refactor __io_sqe_files_scm
+Date:   Thu,  7 Apr 2022 13:40:02 +0100
+Message-Id: <66b492bc66dc8356d45d64076bb31d677d11a7c9.1649334991.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <cover.1649334991.git.asml.silence@gmail.com>
 References: <cover.1649334991.git.asml.silence@gmail.com>
@@ -68,162 +68,92 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Channel all SCM accounting through io_sqe_file_register(), so we do it
-uniformely for updates and initial registration and can kill duplicated
-code. Registration might be slightly slower in some case, but first we
-skip most of SCM accounting now so it's not a problem. Moreover, it's
-nicer for an empty set registration as we don't even try to allocate
-skb for them anymore.
+__io_sqe_files_scm() is now called only from one place passing a single
+file, so nr argument can be killed and __io_sqe_files_scm() simplified.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 93 ++++++++++++++-------------------------------------
- 1 file changed, 25 insertions(+), 68 deletions(-)
+ fs/io_uring.c | 48 +++++++++++++-----------------------------------
+ 1 file changed, 13 insertions(+), 35 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 877753e5f569..6212a37eadc7 100644
+index 6212a37eadc7..582f402441ae 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -8651,48 +8651,6 @@ static int __io_sqe_files_scm(struct io_ring_ctx *ctx, int nr, int offset)
+@@ -8597,12 +8597,12 @@ static struct io_sq_data *io_get_sq_data(struct io_uring_params *p,
+  * files because otherwise they can't form a loop and so are not interesting
+  * for GC.
+  */
+-static int __io_sqe_files_scm(struct io_ring_ctx *ctx, int nr, int offset)
++static int __io_sqe_files_scm(struct io_ring_ctx *ctx, int offset)
+ {
++	struct file *file = io_file_from_index(ctx, offset);
+ 	struct sock *sk = ctx->ring_sock->sk;
+ 	struct scm_fp_list *fpl;
+ 	struct sk_buff *skb;
+-	int i, nr_files;
  
+ 	fpl = kzalloc(sizeof(*fpl), GFP_KERNEL);
+ 	if (!fpl)
+@@ -8616,39 +8616,17 @@ static int __io_sqe_files_scm(struct io_ring_ctx *ctx, int nr, int offset)
+ 
+ 	skb->sk = sk;
+ 
+-	nr_files = 0;
+ 	fpl->user = get_uid(current_user());
+-	for (i = 0; i < nr; i++) {
+-		struct file *file = io_file_from_index(ctx, i + offset);
+-
+-		if (!file || !io_file_need_scm(file))
+-			continue;
+-
+-		fpl->fp[nr_files] = get_file(file);
+-		unix_inflight(fpl->user, fpl->fp[nr_files]);
+-		nr_files++;
+-	}
+-
+-	if (nr_files) {
+-		fpl->max = SCM_MAX_FD;
+-		fpl->count = nr_files;
+-		UNIXCB(skb).fp = fpl;
+-		skb->destructor = unix_destruct_scm;
+-		refcount_add(skb->truesize, &sk->sk_wmem_alloc);
+-		skb_queue_head(&sk->sk_receive_queue, skb);
+-
+-		for (i = 0; i < nr; i++) {
+-			struct file *file = io_file_from_index(ctx, i + offset);
+-
+-			if (file && io_file_need_scm(file))
+-				fput(file);
+-		}
+-	} else {
+-		kfree_skb(skb);
+-		free_uid(fpl->user);
+-		kfree(fpl);
+-	}
+-
++	fpl->fp[0] = get_file(file);
++	unix_inflight(fpl->user, file);
++
++	fpl->max = SCM_MAX_FD;
++	fpl->count = 1;
++	UNIXCB(skb).fp = fpl;
++	skb->destructor = unix_destruct_scm;
++	refcount_add(skb->truesize, &sk->sk_wmem_alloc);
++	skb_queue_head(&sk->sk_receive_queue, skb);
++	fput(file);
  	return 0;
  }
--
--/*
-- * If UNIX sockets are enabled, fd passing can cause a reference cycle which
-- * causes regular reference counting to break down. We rely on the UNIX
-- * garbage collection to take care of this problem for us.
-- */
--static int io_sqe_files_scm(struct io_ring_ctx *ctx)
--{
--	unsigned left, total;
--	int ret = 0;
--
--	total = 0;
--	left = ctx->nr_user_files;
--	while (left) {
--		unsigned this_files = min_t(unsigned, left, SCM_MAX_FD);
--
--		ret = __io_sqe_files_scm(ctx, this_files, total);
--		if (ret)
--			break;
--		left -= this_files;
--		total += this_files;
--	}
--
--	if (!ret)
--		return 0;
--
--	while (total < ctx->nr_user_files) {
--		struct file *file = io_file_from_index(ctx, total);
--
--		if (file)
--			fput(file);
--		io_fixed_file_slot(&ctx->file_table, total)->file_ptr = 0;
--		total++;
--	}
--
--	return ret;
--}
--#else
--static int io_sqe_files_scm(struct io_ring_ctx *ctx)
--{
--	return 0;
--}
  #endif
- 
- static void io_rsrc_file_put(struct io_ring_ctx *ctx, struct io_rsrc_put *prsrc)
-@@ -8813,6 +8771,9 @@ static void io_rsrc_put_work(struct work_struct *work)
- 	}
- }
- 
-+static int io_sqe_file_register(struct io_ring_ctx *ctx, struct file *file,
-+				int index);
-+
- static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
- 				 unsigned nr_args, u64 __user *tags)
- {
-@@ -8837,27 +8798,31 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
- 	if (ret)
- 		return ret;
- 
--	ret = -ENOMEM;
--	if (!io_alloc_file_tables(&ctx->file_table, nr_args))
--		goto out_free;
-+	if (!io_alloc_file_tables(&ctx->file_table, nr_args)) {
-+		io_rsrc_data_free(ctx->file_data);
-+		ctx->file_data = NULL;
-+		return -ENOMEM;
-+	}
- 
- 	for (i = 0; i < nr_args; i++, ctx->nr_user_files++) {
-+		struct io_fixed_file *file_slot;
-+
- 		if (copy_from_user(&fd, &fds[i], sizeof(fd))) {
- 			ret = -EFAULT;
--			goto out_fput;
-+			goto fail;
- 		}
- 		/* allow sparse sets */
- 		if (fd == -1) {
- 			ret = -EINVAL;
- 			if (unlikely(*io_get_tag_slot(ctx->file_data, i)))
--				goto out_fput;
-+				goto fail;
- 			continue;
- 		}
- 
- 		file = fget(fd);
- 		ret = -EBADF;
- 		if (unlikely(!file))
--			goto out_fput;
-+			goto fail;
- 
- 		/*
- 		 * Don't allow io_uring instances to be registered. If UNIX
-@@ -8868,30 +8833,22 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
- 		 */
- 		if (file->f_op == &io_uring_fops) {
- 			fput(file);
--			goto out_fput;
-+			goto fail;
-+		}
-+		file_slot = io_fixed_file_slot(&ctx->file_table, i);
-+		io_fixed_file_set(file_slot, file);
-+		ret = io_sqe_file_register(ctx, file, i);
-+		if (ret) {
-+			file_slot->file_ptr = 0;
-+			fput(file);
-+			goto fail;
- 		}
--		io_fixed_file_set(io_fixed_file_slot(&ctx->file_table, i), file);
--	}
--
--	ret = io_sqe_files_scm(ctx);
--	if (ret) {
--		__io_sqe_files_unregister(ctx);
--		return ret;
+@@ -8892,7 +8870,7 @@ static int io_sqe_file_register(struct io_ring_ctx *ctx, struct file *file,
+ 		return 0;
  	}
  
- 	io_rsrc_node_switch(ctx, NULL);
--	return ret;
--out_fput:
--	for (i = 0; i < ctx->nr_user_files; i++) {
--		file = io_file_from_index(ctx, i);
--		if (file)
--			fput(file);
--	}
--	io_free_file_tables(&ctx->file_table);
--	ctx->nr_user_files = 0;
--out_free:
--	io_rsrc_data_free(ctx->file_data);
--	ctx->file_data = NULL;
-+	return 0;
-+fail:
-+	__io_sqe_files_unregister(ctx);
- 	return ret;
- }
- 
+-	return __io_sqe_files_scm(ctx, 1, index);
++	return __io_sqe_files_scm(ctx, index);
+ #else
+ 	return 0;
+ #endif
 -- 
 2.35.1
 

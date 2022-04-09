@@ -2,61 +2,63 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E214D4F86AD
-	for <lists+io-uring@lfdr.de>; Thu,  7 Apr 2022 19:55:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 756D24FA16C
+	for <lists+io-uring@lfdr.de>; Sat,  9 Apr 2022 03:53:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232194AbiDGR5J (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 7 Apr 2022 13:57:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41476 "EHLO
+        id S240376AbiDIBzT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 8 Apr 2022 21:55:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239237AbiDGR5I (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 7 Apr 2022 13:57:08 -0400
-Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0E2622F3DA
-        for <io-uring@vger.kernel.org>; Thu,  7 Apr 2022 10:55:07 -0700 (PDT)
-Received: by mail-io1-xd29.google.com with SMTP id q11so7736023iod.6
-        for <io-uring@vger.kernel.org>; Thu, 07 Apr 2022 10:55:07 -0700 (PDT)
+        with ESMTP id S229490AbiDIBzS (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 8 Apr 2022 21:55:18 -0400
+Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43EC81E5326
+        for <io-uring@vger.kernel.org>; Fri,  8 Apr 2022 18:53:12 -0700 (PDT)
+Received: by mail-pl1-x634.google.com with SMTP id be5so3423256plb.13
+        for <io-uring@vger.kernel.org>; Fri, 08 Apr 2022 18:53:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:in-reply-to:references:subject:message-id:date:mime-version
-         :content-transfer-encoding;
-        bh=6bglbZez7qX+4ahIZRP8tPyay3820xxGQG6wS6Ijfx4=;
-        b=0AKAp5aRBQDMf/r5yBNrUvYuYBYhuGK2q0J+Yi/wo7KKmKdDJYfrPqUGzxjaNdwCXh
-         f/RNfFsM5RgRYFUwk7ZNWK2R1W+zE1J+FTQ8sI+IX2SyxwBROGGdhxDU6LnVfmkdcKNa
-         XunJ5s4nD3JZCYISLBYjKqQBCW3f+dRsV6mUjb5RV3U5NGewVmSIxvpc0KIAx8aYlos1
-         YKuVpNEFKH80dq/Arm3cQYJ23vBn3uUIObrlNfVqkSzNUAGULQHb6RDE2iFuzsCj2KqG
-         fm7fc82vsOItY4AOKmgROHk7LguxxN4rG7KCtGhVQiVA6kpe1Ye0VEIRHSNOfPjLn06N
-         /sSA==
+        h=message-id:date:mime-version:user-agent:from:subject:to:cc
+         :content-language:content-transfer-encoding;
+        bh=Vf7PjGHcyYfW81kevmcwUcaoeA6yoDMSyC/b73s+nCk=;
+        b=Li+vHHAI/V0K5ikrwJ2w3epQaD2gCC3dqro3umX11tdrqOwwOgtH3iRFYpMfn9hCOW
+         Mow4/uo9BsPgWuDaZQ8YcrPP8LNX/wSzTPoRniXEdc68pg/UZAy4snyKo8UCqaxl7zCv
+         7161ZrBZFDpPnmkFqZPAnbWwLhQpkckiuUqjuPrrZJTMLffW53saX60kxqns9sl+p1H5
+         PrGEDVeU9al7+N0VcaiL1kAgzwiUtEVm3x62carwJuGp2gEmy8KkrHdvik8RtCJOdzOR
+         3YG21skLS9CC1exZX7bfFrknbDSDH2/vnzRzroCe60u2hy4Es9RwgSN7ZBXak0Thza6L
+         fgVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:in-reply-to:references:subject
-         :message-id:date:mime-version:content-transfer-encoding;
-        bh=6bglbZez7qX+4ahIZRP8tPyay3820xxGQG6wS6Ijfx4=;
-        b=2x4NUJjQMcOaJviR31ydealCSSj5dj90iPBxaP6wqwbxDdUuHOjk4Fm9hjjtJaXbw1
-         6VOCIIVVYDyTxSRuLKiauv+hfdrN/VAfQbtNnKgDMszy8yylvgciu5O44AzyQ91dSnD7
-         9DGrpFhft9OTkGXezsycPnpvYSpQLoe1H+BJH0RFJ/VaJq0Ga3klZKf4SFltD7wNeMYM
-         PZOp9IIl8pVv4hHlnOUm2OjQcf272g4KDAvJbId4T0ZYh/qpP8JdT12z8iDUtEOLO2c3
-         UG5sxCB7EDHUecZqJir35obg6J3jl3Tike+rc3PSsBGZzNjtS0vhK+7Mq+PDcCZH2A3L
-         1nSA==
-X-Gm-Message-State: AOAM530jMFRidsCq8Hw/KiwUPswxCARjgdj2ju3D/U/MX45oPHQ1RPEN
-        ShdruWiULpV9hheU/Uj6ou3KonRn0BjFAg==
-X-Google-Smtp-Source: ABdhPJwptGrTGqXg2wgs2kAwl4R67dxAg1BIcflzdzagBByPiF2tQ8OrkdSdV/G/vao0X8EBOUZh2g==
-X-Received: by 2002:a05:6638:144b:b0:321:589b:a8ea with SMTP id l11-20020a056638144b00b00321589ba8eamr7677913jad.296.1649354107150;
-        Thu, 07 Apr 2022 10:55:07 -0700 (PDT)
-Received: from [127.0.1.1] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id s7-20020a92c5c7000000b002ca7e65f3d7sm934790ilt.56.2022.04.07.10.55.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Apr 2022 10:55:06 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     asml.silence@gmail.com, io-uring@vger.kernel.org
-In-Reply-To: <cover.1649334991.git.asml.silence@gmail.com>
-References: <cover.1649334991.git.asml.silence@gmail.com>
-Subject: Re: [PATCH next 0/5] simplify SCM accounting
-Message-Id: <164935410648.218477.4736604874036916352.b4-ty@kernel.dk>
-Date:   Thu, 07 Apr 2022 11:55:06 -0600
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:from
+         :subject:to:cc:content-language:content-transfer-encoding;
+        bh=Vf7PjGHcyYfW81kevmcwUcaoeA6yoDMSyC/b73s+nCk=;
+        b=01+dO9Fb5zpJE/ta9Wrkoi5nzTqf/uqvSIqyd52UOiIHnTVs1iNoKoATmtXuTqMRqu
+         W3CB8v9e5OC6aXaJXR2cqdMlPeRPpKWsO17NgEAGgAj1eciMdSgrvm+wJnjH3oRH7eaZ
+         DEeBQzcjajGE0zkU+Oeeez7nkjtXJ8mpagd+6WtZEaffyeF/noWlfFNzatKZjyoU0SdT
+         I4B7GSbl1TieBZSP2ikknfXK3nQ/kkZlAagyOrbutOjE5WyTNVKQO6AvQ2n3ExV5gv+6
+         KF/DOZxj8km1WIUSUbFAtbI0qtYZHa4SauGuhPj+gLFCe1qasi3pXEIzcP/dkPUtbvuU
+         Xzaw==
+X-Gm-Message-State: AOAM533cgAOacyab/nDRVJMxYPS09TC3NcrfOzoVgPiyCGWNtJLPIZvQ
+        8ZpXmGV6ergOIDEVvCs2CAcxBspHuIYc5Q==
+X-Google-Smtp-Source: ABdhPJwuEO+I1RytaYLTDTyImTAQVe7WjGblKD8KWCTOQqAC2jOlEtfn1aDfkr/TRmJeB4WvFM+gOA==
+X-Received: by 2002:a17:90b:4f86:b0:1c9:b52d:9713 with SMTP id qe6-20020a17090b4f8600b001c9b52d9713mr24737629pjb.98.1649469191480;
+        Fri, 08 Apr 2022 18:53:11 -0700 (PDT)
+Received: from [192.168.1.100] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id k11-20020a056a00168b00b004f7e1555538sm27203145pfc.190.2022.04.08.18.53.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Apr 2022 18:53:10 -0700 (PDT)
+Message-ID: <3576e052-e303-1659-ceaa-91252cf667d4@kernel.dk>
+Date:   Fri, 8 Apr 2022 19:53:09 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring fixes for 5.18-rc2
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     io-uring <io-uring@vger.kernel.org>
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
@@ -66,34 +68,67 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, 7 Apr 2022 13:40:00 +0100, Pavel Begunkov wrote:
-> Just a refactoring series killing some lines of the SCM registration
-> side and making it simpler overall.
-> 
-> Pavel Begunkov (5):
->   io_uring: uniform SCM accounting
->   io_uring: refactor __io_sqe_files_scm
->   io_uring: don't pass around fixed index for scm
->   io_uring: deduplicate SCM accounting
->   io_uring: rename io_sqe_file_register
-> 
-> [...]
+Hi Linus,
 
-Applied, thanks!
+A bit bigger than usual post merge window, largely due to a revert and a
+fix of at what point files are assigned for requests. The latter fixing
+a linked request use case where a dependent link can rely on what file
+is assigned consistently. In detail:
 
-[1/5] io_uring: uniform SCM accounting
-      commit: b302191999697ac6972c70d38d16a8a3e9546216
-[2/5] io_uring: refactor __io_sqe_files_scm
-      commit: daee35f002ecabfaf6b9c6d5adc727b40aeaa048
-[3/5] io_uring: don't pass around fixed index for scm
-      commit: 6c5f2c03659346f28334b3c757c8e752d96c41e2
-[4/5] io_uring: deduplicate SCM accounting
-      commit: f8b9357ae7788235abc84ffc8fe1c66e8607aa47
-[5/5] io_uring: rename io_sqe_file_register
-      commit: d9ed9fcf4bd6b8997d7e7533b650e18fa6273ed1
+- 32-bit compat fix for IORING_REGISTER_IOWQ_AFF (Eugene)
 
-Best regards,
+- File assignment fixes (me)
+
+- Revert of the NAPI poll addition from this merge window. The author
+  isn't available right now to engage on this, so let's revert it and we
+  can retry for the 5.19 release (me, Jakub)
+
+- Fix a timeout removal race (me)
+
+- File update and SCM fixes (Pavel)
+
+Please pull!
+
+
+The following changes since commit 3123109284176b1532874591f7c81f3837bbdc17:
+
+  Linux 5.18-rc1 (2022-04-03 14:08:21 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux-block.git tags/io_uring-5.18-2022-04-08
+
+for you to fetch changes up to e677edbcabee849bfdd43f1602bccbecf736a646:
+
+  io_uring: fix race between timeout flush and removal (2022-04-08 14:50:05 -0600)
+
+----------------------------------------------------------------
+io_uring-5.18-2022-04-08
+
+----------------------------------------------------------------
+Eugene Syromiatnikov (1):
+      io_uring: implement compat handling for IORING_REGISTER_IOWQ_AFF
+
+Jens Axboe (8):
+      io_uring: don't check req->file in io_fsync_prep()
+      io_uring: defer splice/tee file validity check until command issue
+      io_uring: move read/write file prep state into actual opcode handler
+      io_uring: propagate issue_flags state down to file assignment
+      io_uring: defer file assignment
+      io_uring: drop the old style inflight file tracking
+      Revert "io_uring: Add support for napi_busy_poll"
+      io_uring: fix race between timeout flush and removal
+
+Pavel Begunkov (4):
+      io_uring: nospec index for tags on files update
+      io_uring: don't touch scm_fp_list after queueing skb
+      io_uring: zero tag on rsrc removal
+      io_uring: use nospec annotation for more indexes
+
+ fs/io-wq.h    |   1 +
+ fs/io_uring.c | 617 +++++++++++++++++++---------------------------------------
+ 2 files changed, 198 insertions(+), 420 deletions(-)
+
 -- 
 Jens Axboe
-
 

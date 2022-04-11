@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AAD834FC7FD
-	for <lists+io-uring@lfdr.de>; Tue, 12 Apr 2022 01:09:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A6B74FC7FE
+	for <lists+io-uring@lfdr.de>; Tue, 12 Apr 2022 01:09:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229540AbiDKXLm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 11 Apr 2022 19:11:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34072 "EHLO
+        id S231338AbiDKXLn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 11 Apr 2022 19:11:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231184AbiDKXLl (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 11 Apr 2022 19:11:41 -0400
-Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BD0213F44
-        for <io-uring@vger.kernel.org>; Mon, 11 Apr 2022 16:09:26 -0700 (PDT)
-Received: by mail-pf1-x430.google.com with SMTP id c29so1449544pfp.1
-        for <io-uring@vger.kernel.org>; Mon, 11 Apr 2022 16:09:26 -0700 (PDT)
+        with ESMTP id S231184AbiDKXLm (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 11 Apr 2022 19:11:42 -0400
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7870913F5C
+        for <io-uring@vger.kernel.org>; Mon, 11 Apr 2022 16:09:27 -0700 (PDT)
+Received: by mail-pj1-x1030.google.com with SMTP id h15-20020a17090a054f00b001cb7cd2b11dso836182pjf.5
+        for <io-uring@vger.kernel.org>; Mon, 11 Apr 2022 16:09:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=zMuHocXx7S5bI4xWNZ+ai42rlRPkJWSVZ+KJQHTyXiE=;
-        b=F3oESdqV6KCWZ4tAsmEorfwl8qwjbeu/LEGxIKzIdxxiGnXFYVNfJG9naPYjT7a3as
-         1VF7gA1MzOEUuq0RAgq5AveU/eFffjAYjdceKo3DXc0LilPV7K/PI1CuhCqv0N1nf5UH
-         idAU6k8u9LUwUJ5SsR5fVLwQ4rwi8earLII8jy76UZ+LcrOHV9QsIsaghMEEwKqJk3hs
-         oTgCpiTCJjdyuDTehm2UeQqig+7GqYaulJ1Oveu4+UjashJ598o/ATFQaRK+UYYRsv7J
-         XMKeGS70Rj7uMwfYsLGyhygJ/fwBiBnDTLk6LAMfRHOwhGzMUfq80YpOV11sdQtzIMjj
-         Xmug==
+        bh=DAOYZJC0q2r2aVhS/c1ZWD/XWpJyDZU9mIITzJRRoV4=;
+        b=fuYMjdma0Er5fhdSyyhGhsCJlkfFcGkUgCrnnzOBONQx+Kb52omvICOcgQQGsgaY9n
+         iDqStCzQz9f6kCWMiidtcFK98MOjlBCMt4/QitHiVUv2szTT7ZBK1cJHNQAaX0/+AVBV
+         E9aO+58h+BrEF+sjIQ/JQbQKkdrLVsbaXM2YR6sff5BD+FZteTr2x+jw5bkf7N0uZqR5
+         svyRk/sURWOBwyormLcgyp5X5dinMixwCgHG6cShIjJX2OKuInyp7pxVALTAICm4nQYk
+         L/RRAy20WZSPNYDQ2WUF1r7bg+EtJ3tQogO/t3t/rYBzha586MmCGQKVuraczukzzJbF
+         wudA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=zMuHocXx7S5bI4xWNZ+ai42rlRPkJWSVZ+KJQHTyXiE=;
-        b=FozG6sax2VdXZYH7vArGkxMOzdprryoFPOgT5RTQsarZME52pikr6nk0u0EwKYhiya
-         kwjYaQYSboh+lg3+RboG8Nhk+fIvu0WHq238RRatqmUSMrfOgwr9UlJ8EvD1xPG3TqnE
-         M+2hZlR3Qny2e/aSJoX0/euKRCXbreUqJC9w94PujRHbOOGzOnLdP5NgerNHPCi4oH09
-         vuIvvnlGVZ7W0+qwQJEx0oa8JyEomWpNl0aKJ/cK6Wr/UHDNlVl+z7oAzyHzU36fk4UK
-         /JQ5e/0BBneulGCuOoSdjIuFDItrJVL2UMBiygMRas6aEZKwTOP5uf5m2KClh8t7OuAw
-         QOUw==
-X-Gm-Message-State: AOAM533HHSqoyF968tH5UuwquLaGi5ik7wbs/7S2/kMqYcdQ14muQrL/
-        cvDrXpVyFDRVhwbNxyGKWGYO/KFHji8iKA==
-X-Google-Smtp-Source: ABdhPJzgiwLRGfpnXIkVu/msiSCPcMhi4YocB9jGJI36HUTKK8dTt/NlhSgRxCJMl3l5Tpz+67YJkA==
-X-Received: by 2002:aa7:9041:0:b0:4fe:3d6c:1739 with SMTP id n1-20020aa79041000000b004fe3d6c1739mr1654105pfo.13.1649718565741;
-        Mon, 11 Apr 2022 16:09:25 -0700 (PDT)
+        bh=DAOYZJC0q2r2aVhS/c1ZWD/XWpJyDZU9mIITzJRRoV4=;
+        b=eOLFX/SjvCAywKwlpjQbdd1+h9MWSSYeIiFiYcDmtGZ/IK+AdLM/SoaZceMRB6gdAV
+         ex3WztaobHkqRG9T3g4RWBQxiUs2ZFq+5Whsb2zfM19s1PYtT+xOwrq3eFQfMla8Bcu0
+         hhD858cpBUHZ+GKSzQNIb5KCHeJaPOG0Onn+gqLePhmEeDCo6TSjmKhror+L4FBfpIDl
+         jskkuccm+dhd+AOiKqKdAZGzqffqHhN4zOjiyY2rx8sFqSdmSppUwDb7sDqsg/jTM0Nt
+         YJcBeXNh2QWX2vWfQOcxC+TQBaBCcdFzptuknZXUyxRTqYT5fUTTTrfArgtuhf0wzIgi
+         uSoQ==
+X-Gm-Message-State: AOAM531MAEBUmul1pYSCsgL9QoQ5UAnj/MLNuld5SdpaMdor8WXMnjTV
+        Qo7jQBFf2mCOvf0ADUwqS1ZpGWZnAFB54g==
+X-Google-Smtp-Source: ABdhPJyTIy8Dc28kesiyG0IUytQKNAE4O4A1GjfuIlzEjj1uOhb24AVxDuB2nHRfwxEui2sIpNkKEw==
+X-Received: by 2002:a17:902:da8f:b0:156:9cc4:1b07 with SMTP id j15-20020a170902da8f00b001569cc41b07mr35099189plx.20.1649718566570;
+        Mon, 11 Apr 2022 16:09:26 -0700 (PDT)
 Received: from localhost.localdomain ([198.8.77.157])
         by smtp.gmail.com with ESMTPSA id 5-20020a631045000000b0039d942d18f0sm191614pgq.48.2022.04.11.16.09.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Apr 2022 16:09:25 -0700 (PDT)
+        Mon, 11 Apr 2022 16:09:26 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 3/4] io_uring: move apoll->events cache
-Date:   Mon, 11 Apr 2022 17:09:14 -0600
-Message-Id: <20220411230915.252477-4-axboe@kernel.dk>
+Subject: [PATCH 4/4] io_uring: stop using io_wq_work as an fd placeholder
+Date:   Mon, 11 Apr 2022 17:09:15 -0600
+Message-Id: <20220411230915.252477-5-axboe@kernel.dk>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220411230915.252477-1-axboe@kernel.dk>
 References: <20220411230915.252477-1-axboe@kernel.dk>
@@ -67,85 +67,74 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-In preparation for fixing a regression with pulling in an extra cacheline
-for IO that doesn't usually touch the last cacheline of the io_kiocb,
-move the cached location of apoll->events to space shared with some other
-completion data. Like cflags, this isn't used until after the request
-has been completed, so we can piggy back on top of comp_list.
+There are two reasons why this isn't the best idea:
 
-Fixes: 81459350d581 ("io_uring: cache req->apoll->events in req->cflags")
+- It's an odd area to grab a bit of storage space, hence it's an odd area
+  to grab storage from.
+- It puts the 3rd io_kiocb cacheline into the hot path, where normal hot
+  path just needs the first two.
+
+Use 'cflags' for joint fd/cflags storage. We only need fd until we
+successfully issue, and we only need cflags once a request is done and is
+completed.
+
+Fixes: 6bf9c47a3989 ("io_uring: defer file assignment")
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/io_uring.c | 21 ++++++++++++---------
- 1 file changed, 12 insertions(+), 9 deletions(-)
+ fs/io-wq.h    |  1 -
+ fs/io_uring.c | 12 ++++++++----
+ 2 files changed, 8 insertions(+), 5 deletions(-)
 
+diff --git a/fs/io-wq.h b/fs/io-wq.h
+index 04d374e65e54..dbecd27656c7 100644
+--- a/fs/io-wq.h
++++ b/fs/io-wq.h
+@@ -155,7 +155,6 @@ struct io_wq_work_node *wq_stack_extract(struct io_wq_work_node *stack)
+ struct io_wq_work {
+ 	struct io_wq_work_node list;
+ 	unsigned flags;
+-	int fd;
+ };
+ 
+ static inline struct io_wq_work *wq_next_work(struct io_wq_work *work)
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index b4a5e2a6aa9c..3a97535d0550 100644
+index 3a97535d0550..38e62b1c6297 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -916,8 +916,12 @@ struct io_kiocb {
- 	/* store used ubuf, so we can prevent reloading */
- 	struct io_mapped_ubuf		*imu;
+@@ -907,7 +907,11 @@ struct io_kiocb {
  
--	/* used by request caches, completion batching and iopoll */
--	struct io_wq_work_node		comp_list;
+ 	u64				user_data;
+ 	u32				result;
+-	u32				cflags;
++	/* fd initially, then cflags for completion */
 +	union {
-+		/* used by request caches, completion batching and iopoll */
-+		struct io_wq_work_node	comp_list;
-+		/* cache ->apoll->events */
-+		int apoll_events;
++		u32			cflags;
++		int			fd;
 +	};
- 	atomic_t			refs;
- 	atomic_t			poll_refs;
- 	struct io_task_work		io_task_work;
-@@ -5833,7 +5837,6 @@ static void io_poll_remove_entries(struct io_kiocb *req)
- static int io_poll_check_events(struct io_kiocb *req, bool locked)
- {
- 	struct io_ring_ctx *ctx = req->ctx;
--	struct io_poll_iocb *poll = io_poll_get_single(req);
- 	int v;
  
- 	/* req->task == current here, checking PF_EXITING is safe */
-@@ -5850,17 +5853,17 @@ static int io_poll_check_events(struct io_kiocb *req, bool locked)
- 			return -ECANCELED;
+ 	struct io_ring_ctx		*ctx;
+ 	struct task_struct		*task;
+@@ -7090,9 +7094,9 @@ static bool io_assign_file(struct io_kiocb *req, unsigned int issue_flags)
+ 		return true;
  
- 		if (!req->result) {
--			struct poll_table_struct pt = { ._key = req->cflags };
-+			struct poll_table_struct pt = { ._key = req->apoll_events };
- 
- 			if (unlikely(!io_assign_file(req, IO_URING_F_UNLOCKED)))
- 				req->result = -EBADF;
- 			else
--				req->result = vfs_poll(req->file, &pt) & req->cflags;
-+				req->result = vfs_poll(req->file, &pt) & req->apoll_events;
- 		}
- 
- 		/* multishot, just fill an CQE and proceed */
--		if (req->result && !(req->cflags & EPOLLONESHOT)) {
--			__poll_t mask = mangle_poll(req->result & poll->events);
-+		if (req->result && !(req->apoll_events & EPOLLONESHOT)) {
-+			__poll_t mask = mangle_poll(req->result & req->apoll_events);
- 			bool filled;
- 
- 			spin_lock(&ctx->completion_lock);
-@@ -5938,7 +5941,7 @@ static void __io_poll_execute(struct io_kiocb *req, int mask, int events)
- 	 * CPU. We want to avoid pulling in req->apoll->events for that
- 	 * case.
- 	 */
--	req->cflags = events;
-+	req->apoll_events = events;
- 	if (req->opcode == IORING_OP_POLL_ADD)
- 		req->io_task_work.func = io_poll_task_func;
+ 	if (req->flags & REQ_F_FIXED_FILE)
+-		req->file = io_file_get_fixed(req, req->work.fd, issue_flags);
++		req->file = io_file_get_fixed(req, req->fd, issue_flags);
  	else
-@@ -6330,7 +6333,7 @@ static int io_poll_add_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe
- 		return -EINVAL;
+-		req->file = io_file_get_normal(req, req->work.fd);
++		req->file = io_file_get_normal(req, req->fd);
+ 	if (req->file)
+ 		return true;
  
- 	io_req_set_refcount(req);
--	req->cflags = poll->events = io_poll_parse_events(sqe, flags);
-+	req->apoll_events = poll->events = io_poll_parse_events(sqe, flags);
- 	return 0;
- }
+@@ -7630,7 +7634,7 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
+ 	if (io_op_defs[opcode].needs_file) {
+ 		struct io_submit_state *state = &ctx->submit_state;
  
+-		req->work.fd = READ_ONCE(sqe->fd);
++		req->fd = READ_ONCE(sqe->fd);
+ 
+ 		/*
+ 		 * Plug now if we have more than 2 IO left after this, and the
 -- 
 2.35.1
 

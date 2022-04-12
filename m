@@ -2,63 +2,67 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C31FD4FE400
-	for <lists+io-uring@lfdr.de>; Tue, 12 Apr 2022 16:39:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 343094FE451
+	for <lists+io-uring@lfdr.de>; Tue, 12 Apr 2022 17:05:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245273AbiDLOmN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 12 Apr 2022 10:42:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56780 "EHLO
+        id S234926AbiDLPIL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 12 Apr 2022 11:08:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234174AbiDLOmM (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 12 Apr 2022 10:42:12 -0400
-Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B243A10FC8
-        for <io-uring@vger.kernel.org>; Tue, 12 Apr 2022 07:39:54 -0700 (PDT)
-Received: by mail-pl1-x633.google.com with SMTP id t12so4595121pll.7
-        for <io-uring@vger.kernel.org>; Tue, 12 Apr 2022 07:39:54 -0700 (PDT)
+        with ESMTP id S1351911AbiDLPIL (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 12 Apr 2022 11:08:11 -0400
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E90185BE6E
+        for <io-uring@vger.kernel.org>; Tue, 12 Apr 2022 08:05:52 -0700 (PDT)
+Received: by mail-pj1-x1034.google.com with SMTP id a16-20020a17090a6d9000b001c7d6c1bb13so3312347pjk.4
+        for <io-uring@vger.kernel.org>; Tue, 12 Apr 2022 08:05:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:in-reply-to:references:subject:message-id:date:mime-version
-         :content-transfer-encoding;
-        bh=1WO8XVacwQEyrO6yN2KmaZIXCUAZrFx47C0hWqfdjKM=;
-        b=dCaYOcUpf6j2XNUFOPK/jsgkvxiKEHbZ9U8oE7odyTzbIE8bm7BA6JV9unP8uvPWRU
-         vMwUBXtTqZCtj/iOJrKsAOBBDe6m+EfBDB3Nc1I9c9cc0f3avjVNT7IEHohUoRKeH+Bi
-         +Z8YmQGRSM24xFZVDBzYVqm/Kc4OXFNWASynkt8zECEFI2DM/CU6akDAw4jwcuCTO8i1
-         IbljgltVvCpwqudN6Pr0HXcDxZ8RESvABcC4YHQNs4MLzvWWfIKsjqiJxboqoVskeo17
-         yP/hkmyACAECHHC0RbvPx/uFqp4Vy2iCdfCqILkuBa43lk14xqPGfFAnXxGJuQXVzUKq
-         Lc9A==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :references:from:in-reply-to:content-transfer-encoding;
+        bh=575yhJWOwnhQtoZd2ow0ufojHTa2PUfqoNWRJf0qa1s=;
+        b=VRkKMQUHGuTf0cOje9lrnwLBUjYojyPIgqFvJ5VLDiYR5671J2MQF85WZzZRoROlik
+         GZkfp+cKETvLKIxmph2wmOsWAaqZpMxG0xUUKbzPRE1ohCJ+Wna3kiXqifA0ajqhNo0s
+         kZI/X31SZRgxjiHKFkKed2RMg8ntW+Mgc7pZuLFNnV4hTGRvI6DKjwVDo/DI2DVE1xKZ
+         kvMhFsaO5V77PAzqRo9PoCAjQz8PIfayzo/BQ7oHm8anc1miGupDFiI3rb+0CCzAsl5O
+         IlR9Qeum1F4BBZ0WOzYs7tHMMX0RFPC6SPIvPneEvh4CSEkO/QmiVDE10i//soGmsMS9
+         9PkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:in-reply-to:references:subject
-         :message-id:date:mime-version:content-transfer-encoding;
-        bh=1WO8XVacwQEyrO6yN2KmaZIXCUAZrFx47C0hWqfdjKM=;
-        b=os+D+Al6I+WeGLUqdOgc7l5RZnWOmQR2fM16+14yFlQq4sappkWTuaWpx0/DHxl/kn
-         erVcdzu7dfKHyz6U9FABdpfexD1zq3tkL074oNh8xxwB8ZB+NspfitAgYS18+qvTEpPw
-         aZhSLAnZs/H3WSNvOPrdA2/qujPUUHLo18vyxe3ns2vz29E5Z2vAEeDf3mGUctYypVCD
-         +mtJA5B7i1AhxuSlPwbrHKLzcKBs383nAI8Kl3BC9HXI6+O5GeoFLUKoRM1UC5flh4vI
-         3sAlolRkluqofbGHKdqp2As1hKiOyr4AkGcVZc/o6HpbSCf/1CEiPuXdeJMULh2b9cM/
-         mq7w==
-X-Gm-Message-State: AOAM533bpFzyaxZoy6FzcDdNtoL9zjyxIBRTCVzGY2T2EG4wx31A43lE
-        jvriEcso2PV81HHc0ymON8Ob6sQeXw9xI62g
-X-Google-Smtp-Source: ABdhPJzEiOcFLrjpwvwzK8YHYCMw1fHSouNqpmQWGjfFoa3JYvbw5+M9aBS+hGNHH3sbmnYgdUbCFg==
-X-Received: by 2002:a17:903:1251:b0:156:9d8e:1077 with SMTP id u17-20020a170903125100b001569d8e1077mr37251498plh.116.1649774393999;
-        Tue, 12 Apr 2022 07:39:53 -0700 (PDT)
-Received: from [127.0.1.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id w2-20020a056a0014c200b00505cd237193sm6778328pfu.218.2022.04.12.07.39.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Apr 2022 07:39:53 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     asml.silence@gmail.com, io-uring@vger.kernel.org
-In-Reply-To: <0d9b9f37841645518503f6a207e509d14a286aba.1649773463.git.asml.silence@gmail.com>
-References: <0d9b9f37841645518503f6a207e509d14a286aba.1649773463.git.asml.silence@gmail.com>
-Subject: Re: [PATCH 1/1] io_uring: fix assign file locking issues
-Message-Id: <164977439318.31918.13119052065490090284.b4-ty@kernel.dk>
-Date:   Tue, 12 Apr 2022 08:39:53 -0600
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=575yhJWOwnhQtoZd2ow0ufojHTa2PUfqoNWRJf0qa1s=;
+        b=db1Qyqjp3/KeFIe1gk+IKR5D+Mg58fpJOjhpd8Lxk4Jba8gat3YLBPRbuorC+i1IyJ
+         AkdDVqCMmXnvnbn0/mma0Vfh9juN8AKrZJttHTXsPOIaJCLPJvaKSXR2n+3h8jFQtw1b
+         58qcXbGI7hJ97Qm1m8aixypfnzr1nuuYQnS8WfTlXM7sX4yL10E3BWZ9tSjLf4DHcwvo
+         XMpElZIE9AeWq+uyJ0Ckjyut6/5F4x90wxLzuWmiaygsmG1IjogKbzbnfUj09DunkIit
+         4CLNOHPZUCNjFKS7PqBoDz64Q939h/+01GySvruucm/TyY71oqa3OOvFvrrvTRUb4ic0
+         c/Aw==
+X-Gm-Message-State: AOAM533PXLVXwNxYgLzaCnHkGRAlXaYkLREyJp5TmV9G8Odg/+CtdBI6
+        82xT5UPEvWIsbxv/1QCd2x0McZkL3hTS5/mT
+X-Google-Smtp-Source: ABdhPJwjOwvzvT0VIMyfJB6/2vNxkNjgSHe9FIJ0O0ZWBp9vsMXJ3flxdyz4e1rZseirWeYE6jYCdA==
+X-Received: by 2002:a17:902:b10f:b0:156:612f:318d with SMTP id q15-20020a170902b10f00b00156612f318dmr37577289plr.143.1649775952373;
+        Tue, 12 Apr 2022 08:05:52 -0700 (PDT)
+Received: from [192.168.1.100] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id h19-20020a632113000000b0039d9c5be7c8sm2285076pgh.21.2022.04.12.08.05.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Apr 2022 08:05:51 -0700 (PDT)
+Message-ID: <3a0e08f1-ec78-f91c-e260-318b6bda1335@kernel.dk>
+Date:   Tue, 12 Apr 2022 09:05:50 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH next 0/9] for-next clean ups and micro optimisation
+Content-Language: en-US
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <cover.1649771823.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <cover.1649771823.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-3.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -66,20 +70,26 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, 12 Apr 2022 15:24:43 +0100, Pavel Begunkov wrote:
-> io-wq work cancellation path can't take uring_lock as how it's done on
-> file assignment, we have to handle IO_WQ_WORK_CANCEL first, this fixes
-> encountered hangs.
+On 4/12/22 8:09 AM, Pavel Begunkov wrote:
+> nops benchmark: 40.3 -> 41.1 MIOPS, or +2%
 > 
+> Pavel Begunkov (9):
+>   io_uring: explicitly keep a CQE in io_kiocb
+>   io_uring: memcpy CQE from req
+>   io_uring: shrink final link flush
+>   io_uring: inline io_flush_cached_reqs
+>   io_uring: helper for empty req cache checks
+>   io_uring: add helper to return req to cache list
+>   io_uring: optimise submission loop invariant
+>   io_uring: optimise submission left counting
+>   io_uring: optimise io_get_cqe()
 > 
+>  fs/io_uring.c | 288 +++++++++++++++++++++++++++++---------------------
+>  1 file changed, 165 insertions(+), 123 deletions(-)
 
-Applied, thanks!
+Get about ~4% on aarch64. I like both main changes, memcpy of cqe and
+the improvements to io_get_cqe().
 
-[1/1] io_uring: fix assign file locking issues
-      commit: 0f8da75b51ac863b9435368bd50691718cc454b0
-
-Best regards,
 -- 
 Jens Axboe
-
 

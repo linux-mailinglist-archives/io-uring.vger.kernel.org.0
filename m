@@ -2,100 +2,123 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B8C1D4FE461
-	for <lists+io-uring@lfdr.de>; Tue, 12 Apr 2022 17:12:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43E944FE585
+	for <lists+io-uring@lfdr.de>; Tue, 12 Apr 2022 18:06:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242537AbiDLPOi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 12 Apr 2022 11:14:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58512 "EHLO
+        id S229919AbiDLQI1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 12 Apr 2022 12:08:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350304AbiDLPOg (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 12 Apr 2022 11:14:36 -0400
-Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B4715DA02
-        for <io-uring@vger.kernel.org>; Tue, 12 Apr 2022 08:12:18 -0700 (PDT)
-Received: by mail-pl1-x633.google.com with SMTP id q3so5801741plg.3
-        for <io-uring@vger.kernel.org>; Tue, 12 Apr 2022 08:12:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language
-         :from:to:references:in-reply-to:content-transfer-encoding;
-        bh=o1I72wHCuNc1ckb8DR5pmh9SArkXzs4YhMyoFxVlnnU=;
-        b=o3cCDHBl0gI6jAvOWL/TUknKSsqJGY64myF3/jVKwfxQ9pYLn3SL4ESvszIG1m8Z2K
-         eXyRXvRgPrMr0KvOFHnDp+ZnsilLtXiSTStbFnJW4WWp1v359FZH11z+ZAQhx0cBJomK
-         xl9Bc4/2vnq+QiPn5PbPO3epGDbIJ8nVxUxvpdjO5ZDMiAbqHUkSRbZqN6wPlHv/0JUX
-         9+WwTbSxRxPT0TzwYOhTjfg+DpL8Y4+MveJrGWK+hskVGHRTrZ8V7qjG8F2/jUZS+gho
-         AS98RAG7Usmw/dbUhowQvmCTpHXmNfZTOf4Hn5XV59kMFGYMMmbZqd2k28IUlvka2PKv
-         Xi2A==
+        with ESMTP id S229591AbiDLQI0 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 12 Apr 2022 12:08:26 -0400
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78240522FE
+        for <io-uring@vger.kernel.org>; Tue, 12 Apr 2022 09:06:06 -0700 (PDT)
+Received: by mail-wm1-f45.google.com with SMTP id h126-20020a1c2184000000b0038eb17fb7d6so2120442wmh.2
+        for <io-uring@vger.kernel.org>; Tue, 12 Apr 2022 09:06:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:from:to:references:in-reply-to
-         :content-transfer-encoding;
-        bh=o1I72wHCuNc1ckb8DR5pmh9SArkXzs4YhMyoFxVlnnU=;
-        b=frfyp70JDZUIaZwHOwU+ed0pL0iXAOkHteQuKkHx5XSgwpiUCRZyu5y6QJJ9pIINJu
-         0XWU4g2Ep0KT5pFhCrgNcTzDpiBsdeuinGpGIz1Rh2FSqCqU3feLU3O6qVrP2b/Mq0Sm
-         irwwB7Gb8+4jHaylAi0+WYU3/Pmrvo0xk0OPi6DHWJMgKn6YcPOdZRzzWew3NjeQmqgY
-         Uy5+yjWVg3zlNXjEEWc7UiX9HNMdZVh7gB90u0BG132qYwNNOFIBt5pR/L0N8I2PDf+c
-         Ot7hFJ8Z2oct8kMcdCVeMnNlBAmpPdJTqDXrCTuvSlLYzHUl8i4Yg2f60zReb1CU23WV
-         d9+w==
-X-Gm-Message-State: AOAM530HVv75xK40gLK/cdwpAo2SBYGV+b7z2PuQJlFEdAZ1wEjczaLO
-        64Iy+CP86s4XHB7xbTrYI+mHrA==
-X-Google-Smtp-Source: ABdhPJzfWJzfStc0etAO9C8sHpa+WopvIUX4UlX9voi12yWO9ssQ9lBtGX0eb10Kyvgz8ke7ngRD/g==
-X-Received: by 2002:a17:90b:1044:b0:1cd:2d00:9d23 with SMTP id gq4-20020a17090b104400b001cd2d009d23mr3031007pjb.124.1649776337873;
-        Tue, 12 Apr 2022 08:12:17 -0700 (PDT)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id y26-20020a056a00181a00b004fe3a6f02cesm26764759pfa.85.2022.04.12.08.12.17
+         :content-language:to:cc:references:from:in-reply-to;
+        bh=HIp+HBYo5UFn7aEcYfB9jcbAw1kgJ4tnwsuWiRR/VZA=;
+        b=ItQRDUam7ANotnUjPPGKhr67m1U+Dv5p6tegDhoy1lyr5lRZO6eGTREzCeTxvmzl+a
+         CgkZMw7QByA5sjbkV0MVZw6REDYJwaz0kVPH5qoHa4ouImUZw6DqqYD0KRPku1IlUPOv
+         6iz6S6soIgSZC0Fdqcg2AK9pTOB/qzRqu4GgQ3hAMIDvUlEtuq21DzeRF/SCnXPTQgG4
+         e4wN7+aRh9oHDKSG01dWYJ7jw1VM99tAYK0xwhIlCFJGMo4Wk/pIJvxU5vIPoA8LQVV8
+         BmTmvzl6CPNdhEOyy2nasqnGVRQaPiQu/WNHYPd2Y7+x6IQA53gyjiwdpadih7wbCnAX
+         AW8Q==
+X-Gm-Message-State: AOAM533fWHRSqj+kVvAr+NI9LHOVU2CVD2+bC0iVPlAAl5ZjG+A08WHh
+        tAyh/M9Li3n7ThZ5OMiAsno=
+X-Google-Smtp-Source: ABdhPJyrnpjEt3RzeIBVm8UZCB197Xjvnva+giHAEVyKCf2nnieyyY6na3a8krnSx3TemInFAiFysQ==
+X-Received: by 2002:a05:600c:4ece:b0:38c:7938:d73c with SMTP id g14-20020a05600c4ece00b0038c7938d73cmr4677317wmq.165.1649779564653;
+        Tue, 12 Apr 2022 09:06:04 -0700 (PDT)
+Received: from [192.168.188.10] (55d4d7c6.access.ecotel.net. [85.212.215.198])
+        by smtp.gmail.com with ESMTPSA id 20-20020a05600c22d400b0038c8dbdc1a3sm2661242wmg.38.2022.04.12.09.06.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Apr 2022 08:12:17 -0700 (PDT)
-Message-ID: <e564cc69-b234-d4d3-fd80-94a57fbf6070@kernel.dk>
-Date:   Tue, 12 Apr 2022 09:12:16 -0600
+        Tue, 12 Apr 2022 09:06:03 -0700 (PDT)
+Message-ID: <49f6ed82-0250-bb8c-d12a-c8cce1f72ad2@geekplace.eu>
+Date:   Tue, 12 Apr 2022 18:06:02 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH next 0/9] for-next clean ups and micro optimisation
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH 9/9] io_uring: optimise io_get_cqe()
 Content-Language: en-US
-From:   Jens Axboe <axboe@kernel.dk>
 To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>
 References: <cover.1649771823.git.asml.silence@gmail.com>
- <3a0e08f1-ec78-f91c-e260-318b6bda1335@kernel.dk>
-In-Reply-To: <3a0e08f1-ec78-f91c-e260-318b6bda1335@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+ <487eeef00f3146537b3d9c1a9cef2fc0b9a86f81.1649771823.git.asml.silence@gmail.com>
+From:   Florian Schmaus <flo@geekplace.eu>
+In-Reply-To: <487eeef00f3146537b3d9c1a9cef2fc0b9a86f81.1649771823.git.asml.silence@gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------UUkTXSZqsxnKu6aomxG6QA0n"
+X-Spam-Status: No, score=-2.5 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/12/22 9:05 AM, Jens Axboe wrote:
-> On 4/12/22 8:09 AM, Pavel Begunkov wrote:
->> nops benchmark: 40.3 -> 41.1 MIOPS, or +2%
->>
->> Pavel Begunkov (9):
->>   io_uring: explicitly keep a CQE in io_kiocb
->>   io_uring: memcpy CQE from req
->>   io_uring: shrink final link flush
->>   io_uring: inline io_flush_cached_reqs
->>   io_uring: helper for empty req cache checks
->>   io_uring: add helper to return req to cache list
->>   io_uring: optimise submission loop invariant
->>   io_uring: optimise submission left counting
->>   io_uring: optimise io_get_cqe()
->>
->>  fs/io_uring.c | 288 +++++++++++++++++++++++++++++---------------------
->>  1 file changed, 165 insertions(+), 123 deletions(-)
-> 
-> Get about ~4% on aarch64. I like both main changes, memcpy of cqe and
-> the improvements to io_get_cqe().
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------UUkTXSZqsxnKu6aomxG6QA0n
+Content-Type: multipart/mixed; boundary="------------wVVSPI0qRX1gpXmvwXRE1zTi";
+ protected-headers="v1"
+From: Florian Schmaus <flo@geekplace.eu>
+To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+Cc: Jens Axboe <axboe@kernel.dk>
+Message-ID: <49f6ed82-0250-bb8c-d12a-c8cce1f72ad2@geekplace.eu>
+Subject: Re: [PATCH 9/9] io_uring: optimise io_get_cqe()
+References: <cover.1649771823.git.asml.silence@gmail.com>
+ <487eeef00f3146537b3d9c1a9cef2fc0b9a86f81.1649771823.git.asml.silence@gmail.com>
+In-Reply-To: <487eeef00f3146537b3d9c1a9cef2fc0b9a86f81.1649771823.git.asml.silence@gmail.com>
 
-Ran the nop tests on the 12900K, and I see about an 8% improvement
-there, going from ~88M to 95M. I didn't split and check which part
-made the most improvement.
+--------------wVVSPI0qRX1gpXmvwXRE1zTi
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
--- 
-Jens Axboe
+T24gMTIvMDQvMjAyMiAxNi4wOSwgUGF2ZWwgQmVndW5rb3Ygd3JvdGU6DQo+IGlvX2dldF9j
+cWUoKSBpcyBleHBlbnNpdmUgYmVjYXVzZSBvZiBhIGJ1bmNoIG9mIGxvYWRzLCBtYXNraW5n
+LCBldGMuDQo+IEhvd2V2ZXIsIG1vc3Qgb2YgdGhlIHRpbWUgd2Ugc2hvdWxkIGhhdmUgZW5v
+dWdoIG9mIGVudHJpZXMgaW4gdGhlIENRLA0KPiBzbyB3ZSBjYW4gY2FjaGUgdHdvIHBvaW50
+ZXJzIHJlcHJlc2VudGluZyBhIHJhbmdlIG9mIGNvbnRpZ3VvdXMgQ1FFDQo+IG1lbW9yeSB3
+ZSBjYW4gdXNlLiBXaGVuIHRoZSByYW5nZSBpcyBleGhhdXN0ZWQgd2UnbGwgZ28gdGhyb3Vn
+aCBhIHNsb3dlcg0KPiBwYXRoIHRvIHNldCB1cCBhIG5ldyByYW5nZS4gV2hlbiB0aGVyZSBh
+cmUgbm8gQ1FFcyBhdmFsaWFibGUsIHBvaW50ZXJzDQo+IHdpbGwgbmF0dXJhbGx5IHBvaW50
+IHRvIHRoZSBzYW1lIGFkZHJlc3MuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBQYXZlbCBCZWd1
+bmtvdiA8YXNtbC5zaWxlbmNlQGdtYWlsLmNvbT4NCj4gLS0tDQo+ICAgZnMvaW9fdXJpbmcu
+YyB8IDQ2ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0N
+Cj4gICAxIGZpbGUgY2hhbmdlZCwgMzUgaW5zZXJ0aW9ucygrKSwgMTEgZGVsZXRpb25zKC0p
+DQo+IA0KPiBkaWZmIC0tZ2l0IGEvZnMvaW9fdXJpbmcuYyBiL2ZzL2lvX3VyaW5nLmMNCj4g
+aW5kZXggYjM0OWEzYzUyMzU0Li5mMjI2OWZmZTA5ZWIgMTAwNjQ0DQo+IC0tLSBhL2ZzL2lv
+X3VyaW5nLmMNCj4gKysrIGIvZnMvaW9fdXJpbmcuYw0KPiBAQCAtNDE2LDYgKzQxNiwxMyBA
+QCBzdHJ1Y3QgaW9fcmluZ19jdHggew0KPiAgIAl1bnNpZ25lZCBsb25nCQljaGVja19jcV9v
+dmVyZmxvdzsNCj4gICANCj4gICAJc3RydWN0IHsNCj4gKwkJLyoNCj4gKwkJICogV2UgY2Fj
+aGUgYSByYW5nZSBvZiBmcmVlIENRRXMgd2UgY2FuIHVzZSwgb25jZSBleGhhdXN0ZWQgaXQN
+Cj4gKwkJICogc2hvdWxkIGdvIHRocm91Z2ggYSBzbG93ZXIgcmFuZ2Ugc2V0dXAsIHNlZSBf
+X2lvX2dldF9jcWUoKQ0KPiArCQkgKi8NCj4gKwkJc3RydWN0IGlvX3VyaW5nX2NxZQkqY3Fl
+X2NhY2hlZDsNCj4gKwkJc3RydWN0IGlvX3VyaW5nX2NxZQkqY3FlX3NhbnRpbmVsOw0KDQpJ
+IHRoaW5rIHRoaXMgc2hvdWxkIHMvc2FudGluZWwvc2VudGluZWwuDQoNCi0gRmxvdw0K
 
+--------------wVVSPI0qRX1gpXmvwXRE1zTi--
+
+--------------UUkTXSZqsxnKu6aomxG6QA0n
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature"
+
+-----BEGIN PGP SIGNATURE-----
+
+wsB5BAABCAAjFiEEl3UFnzoh3OFr5PuuIjmn6PWFIFIFAmJVo2oFAwAAAAAACgkQIjmn6PWFIFLm
+kQf8CgEDVg2fP4Ab2b5reAIGgapdTLeBPgV1iHrhzEnlB7wGBQRaQWz5zMB1b93kx/RFvRlE3lVX
+eyQpjj0mEfYNbkV2zWMCsI50HsJyOdlKIlH3WsLnrF4y6jacoTYw83vz3PKndEH11pjZzLIOxPHn
+aJluTZX+CKbSHaDfgWzq5+JKPeLNycAzsqnlTqTdAcO/E9qCE8sGrtkh3lA8lR51frhXr2idb4EH
+cDfZPK/C+Aqyz+lwNkSkVtXYyBHNLZ1SzWwE0I1GzEGf8jCDgZQizDVjRADZEeHkLO2brD125N3N
+VSMpElwbzRsU4oXW9x8BLaQa7UL1nrMzRwIFDbxbcA==
+=hdtA
+-----END PGP SIGNATURE-----
+
+--------------UUkTXSZqsxnKu6aomxG6QA0n--

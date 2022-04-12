@@ -2,184 +2,95 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B74D4FE991
-	for <lists+io-uring@lfdr.de>; Tue, 12 Apr 2022 22:42:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E5974FE987
+	for <lists+io-uring@lfdr.de>; Tue, 12 Apr 2022 22:39:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230111AbiDLUnq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 12 Apr 2022 16:43:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60138 "EHLO
+        id S231174AbiDLUkd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 12 Apr 2022 16:40:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231266AbiDLUnZ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 12 Apr 2022 16:43:25 -0400
-Received: from mail-oa1-x2b.google.com (mail-oa1-x2b.google.com [IPv6:2001:4860:4864:20::2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5ADBA10EC46
-        for <io-uring@vger.kernel.org>; Tue, 12 Apr 2022 13:38:09 -0700 (PDT)
-Received: by mail-oa1-x2b.google.com with SMTP id 586e51a60fabf-e2afb80550so10095494fac.1
-        for <io-uring@vger.kernel.org>; Tue, 12 Apr 2022 13:38:09 -0700 (PDT)
+        with ESMTP id S230433AbiDLUkA (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 12 Apr 2022 16:40:00 -0400
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C576C765A6
+        for <io-uring@vger.kernel.org>; Tue, 12 Apr 2022 13:35:42 -0700 (PDT)
+Received: by mail-pf1-f182.google.com with SMTP id b15so61731pfm.5
+        for <io-uring@vger.kernel.org>; Tue, 12 Apr 2022 13:35:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=zf27ijhZ6DfOjYkh/DtQyUcCz+B8LVWzZLm6lKBsAd4=;
-        b=K6UWMKlZ8bGn9pFrvtfp3wp8/pqMdON9qMlVBNZ00YbV7rSBtD+oaoZfcKdZyRU7+Q
-         qCo137H4JtvBQtSa8XDiRRWrb3ETzP3dJGVd5lzFTIl/jP1AipH5UM/+aXAenFiE7Hpl
-         lV9q+w6it2qbUrFUtbI0IqFj6yMtDaG9j7FlgZUfRBU0ybRZVJh7Sni0KLxnRlRmeQdD
-         jtyA6DFMoQKdlA1aoB9mltVCEV/kINjxeZUnMbnqXoYG0oZUTunVipXB85OUPvpL1FyB
-         Rq+4dYBUwFpcJ6aVW20IhsubUOILVmjcmeTxVW+jQwrY+uOYut6zo2sgnnAUZhWod9y7
-         mlXg==
+        h=message-id:date:mime-version:user-agent:content-language:to:from
+         :subject:content-transfer-encoding;
+        bh=0Y/977pws4vP8z3KZlbishz7dcAJFpjJRsJxtUL6ugM=;
+        b=IcZO5QoACx9MBtRhQbp29xTKmSF8p3Ls4MeseYC3gojb/+0jvQBO/O4HRUjLolPEbO
+         9mIGC+pV2dcIwexdWxe2Ti+JzHGbErXYUG2HCM7AUde6cfx6tDUQxsHUI7pzbDulH3HN
+         1vN44qdJEDQwa3DUGzf95WqxCD9LDFDnZAwZ8CCWYpdhsf4apCJJjnefFUoDHzj1l/wo
+         VhjF4b0J8HSIueaPJo+/ZQxkT+NuFgT51yDfch9gLcpmR5BrsRgWDu4x2ng+ubTbispI
+         OATvpc9rqxB0vBqe2tuNzNJIKPe7PkmHx0j+l5wDgJVK3a8duLK4F2vNoxrsif+esebV
+         Zu0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=zf27ijhZ6DfOjYkh/DtQyUcCz+B8LVWzZLm6lKBsAd4=;
-        b=6M/NEhwW31JBmO547j3YMKkCXyWV+IxOWmy74p7vAG5LM00XsYMTC/xPvs6Qm78FDB
-         3boIhXVmOosPAKRRIEIXQ8NN8jDDeXK6MHkiVjvqeNcusGGaBa/5ZHKNbxj0jLpoTBkg
-         ixBR4WzQyKTetcrgEdiGa0GMiUR3KdLIG+uly4v7lWQch9x/5ysJd6IxUgmWYcpI3DQz
-         RjXLNhQS8BJN7sWiLMGc+O4D2Faq2OWDYNhMJ430WBM87Njnm4A04KMpSeK1G0SQ0SH1
-         3HcekDwdg/aBwY6limyjVFBP69x1zz6uS8aN+Rs36XGX2ZPo+fpD+nmtY6z2jL1iVc5z
-         8eyQ==
-X-Gm-Message-State: AOAM530meHNNKm7d2aHmVxxdlwFGapXTp2x8EdQ6FgUPA6CsxMgf/7zG
-        h9oH8I0WpdHgQ9pWY6EuxXelqVJs/aEywkgs
-X-Google-Smtp-Source: ABdhPJyGv6IcVqddymzY/44cjNsd2brF8YFhvMuJWIr10Rb4OGyLDBB681rPG4QjqjnJqkXPIRVWTA==
-X-Received: by 2002:a17:90a:d082:b0:1ca:be58:c692 with SMTP id k2-20020a17090ad08200b001cabe58c692mr6902747pju.238.1649795180090;
-        Tue, 12 Apr 2022 13:26:20 -0700 (PDT)
-Received: from localhost.localdomain ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id p12-20020a63ab0c000000b00381f7577a5csm3609084pgf.17.2022.04.12.13.26.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Apr 2022 13:26:19 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org, netdev@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4/4] io_uring: mark accept direct socket as no-lock
-Date:   Tue, 12 Apr 2022 14:26:13 -0600
-Message-Id: <20220412202613.234896-5-axboe@kernel.dk>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220412202613.234896-1-axboe@kernel.dk>
-References: <20220412202613.234896-1-axboe@kernel.dk>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent
+         :content-language:to:from:subject:content-transfer-encoding;
+        bh=0Y/977pws4vP8z3KZlbishz7dcAJFpjJRsJxtUL6ugM=;
+        b=gtQ+0gNyefOWJ0uld4Yt7aDuiSFlsYCXTrtzWNbGWLqqeBdux5q/FuRCACF2Ek42tE
+         2vN9pXuDyO+xUHnJ9cMzDi8UxvjYheA2z11vnKIUORyXsQiMIItM09OS5tOvWXgL934M
+         9KbflW9MQ6AYSqSXQcQR5nMOhZZh3VOy14vTG3tQtNDWIgfXNDk1SdUN/w8vY5J1mqqK
+         fFyv/phY+od6edrYqBpJQAgeKeD5hOQBCWSt00q4cY8tgO8SES5XfPkNFB1caASTyemD
+         HuYusweKPjIlQpMBTIAEqB3XmU7Zuqbm5MFMIkfdWsASmpXkO9Bdb6e6EKiM+cbO1rRP
+         mbbQ==
+X-Gm-Message-State: AOAM533HEtk3l1meKJYXm26UHW6OFcnovSSQDJkmpczJ5cssFO3e8xEI
+        6AXdWz9Z2Ynj0neinZsHtgCQZbVMJVYiQWqm
+X-Google-Smtp-Source: ABdhPJwfYhFw42ejVKV5CcdM7Iw1ftir1wPDFxZJ2HMN/vHJDV4nshnO3OMp8MxUNSwKmxqglqaWcQ==
+X-Received: by 2002:a63:1b20:0:b0:382:70f9:dc24 with SMTP id b32-20020a631b20000000b0038270f9dc24mr31168139pgb.485.1649795226900;
+        Tue, 12 Apr 2022 13:27:06 -0700 (PDT)
+Received: from [192.168.1.100] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id u25-20020aa78399000000b00505f75651e7sm3637468pfm.158.2022.04.12.13.27.06
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Apr 2022 13:27:06 -0700 (PDT)
+Message-ID: <ee10eb48-ee50-7efb-54a7-7cb55bb23c15@kernel.dk>
+Date:   Tue, 12 Apr 2022 14:27:05 -0600
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Content-Language: en-US
+To:     io-uring <io-uring@vger.kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring: allow direct descriptors for connect
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Mark a socket as nolock if we're accepting it directly, eg without
-installing it into the process file table.
-
-For direct issue or task_work issue, we already grab the uring_lock
-for those, and hence they are serializing access to the socket for
-send/recv already. The only case where we don't always grab the lock
-is for async issue. Add a helper to ensure that it gets done if this
-is a nolock socket.
+Looks like an oversight that this is currently disabled, but I guess it
+didn't matter before we had direct descriptor support for socket.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
+
 ---
- fs/io_uring.c | 48 ++++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 46 insertions(+), 2 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 0a6bcc077637..17b4dc9f130f 100644
+index 17b4dc9f130f..b83134906a3a 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -5918,6 +5918,19 @@ static int io_accept_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	return 0;
- }
+@@ -5982,8 +5982,7 @@ static int io_connect_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
  
-+/*
-+ * Mark the socket as not needing locking, io_uring will serialize access
-+ * to it. Note there's no matching clear of this condition, as this is only
-+ * applicable for a fixed/registerd file, and those go away when we unregister
-+ * anyway.
-+ */
-+static void io_sock_nolock_set(struct file *file)
-+{
-+	struct sock *sk = sock_from_file(file)->sk;
-+
-+	sk->sk_no_lock = true;
-+}
-+
- static int io_accept(struct io_kiocb *req, unsigned int issue_flags)
- {
- 	struct io_accept *accept = &req->accept;
-@@ -5947,6 +5960,7 @@ static int io_accept(struct io_kiocb *req, unsigned int issue_flags)
- 		fd_install(fd, file);
- 		ret = fd;
- 	} else {
-+		io_sock_nolock_set(file);
- 		ret = io_install_fixed_file(req, file, issue_flags,
- 					    accept->file_slot - 1);
- 	}
-@@ -7604,11 +7618,31 @@ static struct io_wq_work *io_wq_free_work(struct io_wq_work *work)
- 	return req ? &req->work : NULL;
- }
+ 	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
+ 		return -EINVAL;
+-	if (sqe->ioprio || sqe->len || sqe->buf_index || sqe->rw_flags ||
+-	    sqe->splice_fd_in)
++	if (sqe->ioprio || sqe->len || sqe->buf_index || sqe->rw_flags)
+ 		return -EINVAL;
  
-+/*
-+ * This could be improved with an FFS flag, but since it's only done for
-+ * the slower path of io-wq offload, no point in optimizing it further.
-+ */
-+static bool io_req_needs_lock(struct io_kiocb *req)
-+{
-+#if defined(CONFIG_NET)
-+	struct socket *sock;
-+
-+	if (!req->file)
-+		return false;
-+
-+	sock = sock_from_file(req->file);
-+	if (sock && sock->sk->sk_no_lock)
-+		return true;
-+#endif
-+	return false;
-+}
-+
- static void io_wq_submit_work(struct io_wq_work *work)
- {
- 	struct io_kiocb *req = container_of(work, struct io_kiocb, work);
- 	const struct io_op_def *def = &io_op_defs[req->opcode];
- 	unsigned int issue_flags = IO_URING_F_UNLOCKED;
-+	struct io_ring_ctx *ctx = req->ctx;
- 	bool needs_poll = false;
- 	struct io_kiocb *timeout;
- 	int ret = 0, err = -ECANCELED;
-@@ -7645,6 +7679,11 @@ static void io_wq_submit_work(struct io_wq_work *work)
- 		}
- 	}
- 
-+	if (io_req_needs_lock(req)) {
-+		mutex_lock(&ctx->uring_lock);
-+		issue_flags &= ~IO_URING_F_UNLOCKED;
-+	}
-+
- 	do {
- 		ret = io_issue_sqe(req, issue_flags);
- 		if (ret != -EAGAIN)
-@@ -7659,8 +7698,10 @@ static void io_wq_submit_work(struct io_wq_work *work)
- 			continue;
- 		}
- 
--		if (io_arm_poll_handler(req, issue_flags) == IO_APOLL_OK)
--			return;
-+		if (io_arm_poll_handler(req, issue_flags) == IO_APOLL_OK) {
-+			ret = 0;
-+			break;
-+		}
- 		/* aborted or ready, in either case retry blocking */
- 		needs_poll = false;
- 		issue_flags &= ~IO_URING_F_NONBLOCK;
-@@ -7669,6 +7710,9 @@ static void io_wq_submit_work(struct io_wq_work *work)
- 	/* avoid locking problems by failing it from a clean context */
- 	if (ret)
- 		io_req_task_queue_fail(req, ret);
-+
-+	if (!(issue_flags & IO_URING_F_UNLOCKED))
-+		mutex_unlock(&ctx->uring_lock);
- }
- 
- static inline struct io_fixed_file *io_fixed_file_slot(struct io_file_table *table,
+ 	conn->addr = u64_to_user_ptr(READ_ONCE(sqe->addr));
+
 -- 
-2.35.1
+Jens Axboe
 

@@ -2,58 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CA2A64FE642
-	for <lists+io-uring@lfdr.de>; Tue, 12 Apr 2022 18:47:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A022E4FE643
+	for <lists+io-uring@lfdr.de>; Tue, 12 Apr 2022 18:47:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244550AbiDLQtZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 12 Apr 2022 12:49:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41930 "EHLO
+        id S245117AbiDLQt2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 12 Apr 2022 12:49:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238549AbiDLQtY (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 12 Apr 2022 12:49:24 -0400
-Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A748B53B50
-        for <io-uring@vger.kernel.org>; Tue, 12 Apr 2022 09:47:06 -0700 (PDT)
-Received: by mail-pl1-x630.google.com with SMTP id p10so423942plf.9
-        for <io-uring@vger.kernel.org>; Tue, 12 Apr 2022 09:47:06 -0700 (PDT)
+        with ESMTP id S238549AbiDLQt1 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 12 Apr 2022 12:49:27 -0400
+Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66A8553B50
+        for <io-uring@vger.kernel.org>; Tue, 12 Apr 2022 09:47:09 -0700 (PDT)
+Received: by mail-pl1-x62c.google.com with SMTP id j8so17269893pll.11
+        for <io-uring@vger.kernel.org>; Tue, 12 Apr 2022 09:47:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:in-reply-to:references:subject:message-id:date:mime-version
-         :content-transfer-encoding;
-        bh=m87fq4MxHo3ZK8W+Fhnt2hiI8ALErz5L8bxnq3xNeuM=;
-        b=TEfQpvA4rEg0cFiLjm4zBgaPekJZ6didl2HjTkuP+AGhLAdQPZ+PUracchZPi82SvY
-         p30kmQsa5tCFZnkY+F4AUV7pv/BcqDPvX46vBGIrGAz5tgYA6gVM4LLK3KcEuo5VSRKP
-         SvBtfszN3bg+87UTKyNxaMzGqP8byjAjmPp4udJ00Jc1Zc/sc4WQLe+FO/51KV5KS+Jt
-         tho/6txjoiek6Tzhyj2sPrInJNwlJ2J2JPU6lSLrppcG42iLHx/Wv8nx0FyQag0Tj4Sk
-         3PhhmJTh/17Gz5UxBelxFFh4RaQk56Hf+nX13j3j1XUM2jjo54B0Ei4YhjHrvnbNKVjo
-         dcuw==
+        h=from:to:cc:in-reply-to:references:subject:message-id:date
+         :mime-version:content-transfer-encoding;
+        bh=PhC39VF2R378p6W0ZCW2YmZlmGvdiiDLiBtxpaG9HzA=;
+        b=ONFsu5ydyBNrt50qD8FlmpeUZiObYsYczg5RjhWWudTwvKio821KTd33tLQ0wobOnz
+         gb7H/fnpHnksjLRXPUUOY8/77oLGfCj1Y1nngq/5Y+iGPguU6t09pIhT6kmcDnBIvJ89
+         ll9L8dFko8/ga/hAjdBCVS/trSqspb3O57KxKzUtJbWF01SxQy8c1QWgHeRcgvP+Whey
+         gF+NOlFSiQNUug3Qybezbi6KUPVI4mGQrOCWxa0mvTyHLxP5cm6YepuEBZ3UW/KQno3I
+         xkweKg7YGXuS/FCAsNaKx25BPBzwcwjJ64JlnN6QgLB99Dq8kcXdqQ49sUo8UrtSTmuL
+         hzXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:in-reply-to:references:subject
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
          :message-id:date:mime-version:content-transfer-encoding;
-        bh=m87fq4MxHo3ZK8W+Fhnt2hiI8ALErz5L8bxnq3xNeuM=;
-        b=LqiEwrkPKgFFsvgRt8cZLEkLpEEAErtEp8msVXAhSfRCblVpp4ZetYm0rO61ysaOrz
-         2DTFUw3o/jMhOwj2UQI55csgzCQP7aY0Ds5IAPYq7ymwzBJBMriqsuirZ8952ypR+Fp5
-         EVQh0kj9t69lMsUei/Gt8m7/QhL6NXsuVVR+ocxwUpd7D0ZYRf5jqQ1TwPIlo3gxR44S
-         jUeMuG/85/UFR69JF2D1sbWUmR6F5swfTIbhbnnFxlyFb7IawTniVmqMixuxNUBNao1P
-         Cvn711AEXT+qGELzQ7OeGYLMedGtE2FHzDS0N3hITL4q6SiDx6a+iiv0jZlqbwaofnlI
-         oYkw==
-X-Gm-Message-State: AOAM5307exm+Y0pRGnnH4trZDBP7ypYURw54FZ/0mLjctZ8jv/ojAjdh
-        Z2yJCVpb+pJHXTbkDRVNr5l9AyaBXPVxj1cN
-X-Google-Smtp-Source: ABdhPJwrkL8ApiY9hs8F2QsmALSzf71PKJsl3ND5OILS4JiVHvv89e8lY2iLCwKNxrthXbj3O6ubJA==
-X-Received: by 2002:a17:90b:1186:b0:1cb:8e59:2a35 with SMTP id gk6-20020a17090b118600b001cb8e592a35mr6062334pjb.95.1649782025911;
-        Tue, 12 Apr 2022 09:47:05 -0700 (PDT)
+        bh=PhC39VF2R378p6W0ZCW2YmZlmGvdiiDLiBtxpaG9HzA=;
+        b=wPP20YDFSxLNZA8FIveZpDe3b4/a8BFfDvWLeEdOJ5wAA4MKo8CnKiw/LEgy7rLHwy
+         W0P7XsF+kw6jRw1rRjC0tuAlbKbBZ2LB8ILPSalqEu9efwePAuP27TN+PeR5+CYcJz9X
+         563P9Hzfyzzu9urMXpx7Ixa1DEdOSSe8A/AMGQr1oGzVxXwDzDIpRT1grcruCHoNFwlb
+         k/0AVrOcfuoAN3Coi4d98Xipjrz58SFvZfypq2eDFG5A8ZZnTJWBH9CiezH/B2NXscwk
+         Y0xQVFeaawll2sQofltSlpsoAKIGlBQBnjGYA2b4Q10/OlgfVH67d82baTrto/ki5ptX
+         BaUQ==
+X-Gm-Message-State: AOAM5326Pxpmg3eR7tFM3ZBfr2/dP7fS+JJvfugXH6apeUB62nnu6t/U
+        RsWeUyJAFiaYDzlf013DO2uyTw==
+X-Google-Smtp-Source: ABdhPJx1VAwSf2YNvbCRKsvPJbgkiPzq/4+uoiZK+MSiNZx/XK97x+1JA/2cEfmftG11Hvp4pNRwzA==
+X-Received: by 2002:a17:902:d2ce:b0:158:6aaa:94e with SMTP id n14-20020a170902d2ce00b001586aaa094emr10071752plc.51.1649782028892;
+        Tue, 12 Apr 2022 09:47:08 -0700 (PDT)
 Received: from [127.0.1.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id i2-20020a17090a138200b001cb6512b579sm18741pja.44.2022.04.12.09.47.05
+        by smtp.gmail.com with ESMTPSA id b2-20020a056a000a8200b004f1111c66afsm42963807pfl.148.2022.04.12.09.47.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Apr 2022 09:47:05 -0700 (PDT)
+        Tue, 12 Apr 2022 09:47:08 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-To:     asml.silence@gmail.com, io-uring@vger.kernel.org
-In-Reply-To: <cover.1649771823.git.asml.silence@gmail.com>
-References: <cover.1649771823.git.asml.silence@gmail.com>
-Subject: Re: [PATCH next 0/9] for-next clean ups and micro optimisation
-Message-Id: <164978202527.149933.3361512875935613287.b4-ty@kernel.dk>
-Date:   Tue, 12 Apr 2022 10:47:05 -0600
+To:     dylany@fb.com, io-uring@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com,
+        asml.silence@gmail.com
+In-Reply-To: <20220412163042.2788062-1-dylany@fb.com>
+References: <20220412163042.2788062-1-dylany@fb.com>
+Subject: Re: [PATCH 0/4] io_uring: verify that reserved fields are 0
+Message-Id: <164978202800.150007.4276154311788541180.b4-ty@kernel.dk>
+Date:   Tue, 12 Apr 2022 10:47:08 -0600
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -66,42 +68,26 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, 12 Apr 2022 15:09:42 +0100, Pavel Begunkov wrote:
-> nops benchmark: 40.3 -> 41.1 MIOPS, or +2%
+On Tue, 12 Apr 2022 09:30:38 -0700, Dylan Yudaken wrote:
+> A few reserved fields are not verified to be 0. In preparation for possibly using these fields later we should verify that they are passed as 0.
 > 
-> Pavel Begunkov (9):
->   io_uring: explicitly keep a CQE in io_kiocb
->   io_uring: memcpy CQE from req
->   io_uring: shrink final link flush
->   io_uring: inline io_flush_cached_reqs
->   io_uring: helper for empty req cache checks
->   io_uring: add helper to return req to cache list
->   io_uring: optimise submission loop invariant
->   io_uring: optimise submission left counting
->   io_uring: optimise io_get_cqe()
+> One extra field I do not have confidence in verifying is up.nr in io_register_files_update(). Should this also be checked to be zero?
+> 
+> Patch 1 in this series just moves a validation out of __io_register_rsrc_update as it was duplicated
+> Patch 2-4 add verifications for reserved fields
 > 
 > [...]
 
 Applied, thanks!
 
-[1/9] io_uring: explicitly keep a CQE in io_kiocb
-      (no commit info)
-[2/9] io_uring: memcpy CQE from req
-      (no commit info)
-[3/9] io_uring: shrink final link flush
-      (no commit info)
-[4/9] io_uring: inline io_flush_cached_reqs
-      (no commit info)
-[5/9] io_uring: helper for empty req cache checks
-      (no commit info)
-[6/9] io_uring: add helper to return req to cache list
-      (no commit info)
-[7/9] io_uring: optimise submission loop invariant
-      (no commit info)
-[8/9] io_uring: optimise submission left counting
-      (no commit info)
-[9/9] io_uring: optimise io_get_cqe()
-      (no commit info)
+[1/4] io_uring: move io_uring_rsrc_update2 validation
+      commit: 565c5e616e8061b40a2e1d786c418a7ac3503a8d
+[2/4] io_uring: verify that resv2 is 0 in io_uring_rsrc_update2
+      commit: d8a3ba9c143bf89c032deced8a686ffa53b46098
+[3/4] io_uring: verify resv is 0 in ringfd register/unregister
+      commit: 6fb53cf8ff2c4713247df523404d24f466b98f52
+[4/4] io_uring: verify pad field is 0 in io_get_ext_arg
+      commit: d2347b9695dafe5c388a5f9aeb70e27a7a4d29cf
 
 Best regards,
 -- 

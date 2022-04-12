@@ -2,118 +2,86 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CB56D4FCAA7
-	for <lists+io-uring@lfdr.de>; Tue, 12 Apr 2022 02:52:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 382CF4FE370
+	for <lists+io-uring@lfdr.de>; Tue, 12 Apr 2022 16:10:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244890AbiDLAyx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 11 Apr 2022 20:54:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58874 "EHLO
+        id S1355376AbiDLOMy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 12 Apr 2022 10:12:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244296AbiDLAyY (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 11 Apr 2022 20:54:24 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9AFF31DF5;
-        Mon, 11 Apr 2022 17:48:59 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 21544B819A7;
-        Tue, 12 Apr 2022 00:48:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A09DC385A3;
-        Tue, 12 Apr 2022 00:48:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649724536;
-        bh=IzWB9zuOtlx0ap+FM2xveq4TF2ZOm0iCy1ubW0oMJsY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RWgVuuR7WXOOCsLe6waJu0j1gY9pq34gkbErRrcVR0tzAPljO9a747kXQ3Bd2Miqc
-         gxEzuGymBF6b4WQITs/1aNkFygwynEkvTjgaeiVSDjAQzuMv7cpllkWzdkEVFZWaTW
-         tfcn67f4EboTV+eCiFYY6esuKiR+dQ87jZGlh511cFxew5A1aGtHhBwYAu1wWwAhHl
-         6HImdvnA1eSZgj5RVr361v5x3uhmg8gLlOkOvG9lO+lQLC3Ko+ZJjLpefUHl5cDcZm
-         8r+ydqqfe2KUjXGLayZ4k3PtgDSOsyl9Lx/ouWxn3T69NVBq4JU2zNuXA5QYUFNojx
-         WpbE+u9zdaXeQ==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        io-uring@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 39/41] io_uring: use nospec annotation for more indexes
-Date:   Mon, 11 Apr 2022 20:46:51 -0400
-Message-Id: <20220412004656.350101-39-sashal@kernel.org>
+        with ESMTP id S1350319AbiDLOMw (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 12 Apr 2022 10:12:52 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD1671CFD4
+        for <io-uring@vger.kernel.org>; Tue, 12 Apr 2022 07:10:34 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id u3so27933647wrg.3
+        for <io-uring@vger.kernel.org>; Tue, 12 Apr 2022 07:10:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=MLB88jBPzd+UKwTc/nTm9hN5u7OocLRwGb1wbBHBS9A=;
+        b=XFwaMfJq1OdeDsmrrnnilAWjGbjrtS6DfnI0kehJM95NFcyR+Czg6RBsKFc+ellLVK
+         Z5QjO5xN0JN8rZkcEeB49xHxT3YCA5I7F/gdibxfX+DLtRLlSX7NT9TgrGdRypSr1eYP
+         bK6Eqy/254uMtVXOX9RPjq2D03E701LAT8Ltn/CXJYJQo5SqEqbkKxJtKIUOxv8cnS9t
+         Lbe0tf4nQsFbqe3Qy1ZyKH9k0FroaedvyHAxzxTnf0s+S7GMEexz+47vh8wrK+qLP4+m
+         pDWKpTfZ7u61/o1f9Jjfc4nTW7nlEPBN+X73g9VPh6LW2kuRHY6tWhfp9clQnzrSQZ3P
+         t3IQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=MLB88jBPzd+UKwTc/nTm9hN5u7OocLRwGb1wbBHBS9A=;
+        b=Gkbdty1pZHVCSo7rjbQOoI6uTlsQC+tna1X++2zDE+HkHLhHOJnBUS1oY9m/HjFpDg
+         ipT55O1tYGSwG3uPZeoVyTrGkzIvzwrhaCLBIYa0XQiKUTXEV98sBdmZCYW8jm1pDkvK
+         fgqU/LJTHiXW6pxYWkl0j7k1or+BUivYHZQ6nYVakngmuL48BBGlPMOgCmtdIFdzlYdl
+         /oeRN7itiAilDfBbh1nwdY66Z2xpbgfV6GEMkaUXiUTNI9a70VmQwaLy/08GcAY/8wlg
+         6aCYuYoQApG8NoYMX7Z5OHs/RooSfZDzQTFzOuOCuz1q1vfRA0sr7NSAcLgY+eO/IiBe
+         bMHA==
+X-Gm-Message-State: AOAM530qUWocVMtrYE5YUk7FRucAOwZTVWQBpoLThvVWQ5KgW2FVsFh7
+        DcOyHm7b09S9BH686yxlnX34wNHkMTg=
+X-Google-Smtp-Source: ABdhPJzXZst0Y6djmDzrFESGlXNrmASJd6/x5wjRLJ91DXLtETAcOLtfCJAsByNqAku1ARe10VgjDg==
+X-Received: by 2002:adf:f307:0:b0:207:b0b5:999b with SMTP id i7-20020adff307000000b00207b0b5999bmr1967057wro.694.1649772633063;
+        Tue, 12 Apr 2022 07:10:33 -0700 (PDT)
+Received: from 127.0.0.1localhost ([148.252.129.222])
+        by smtp.gmail.com with ESMTPSA id ay41-20020a05600c1e2900b0038e75fda4edsm2363703wmb.47.2022.04.12.07.10.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Apr 2022 07:10:32 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
+Subject: [PATCH next 0/9] for-next clean ups and micro optimisation
+Date:   Tue, 12 Apr 2022 15:09:42 +0100
+Message-Id: <cover.1649771823.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220412004656.350101-1-sashal@kernel.org>
-References: <20220412004656.350101-1-sashal@kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Pavel Begunkov <asml.silence@gmail.com>
+nops benchmark: 40.3 -> 41.1 MIOPS, or +2%
 
-[ Upstream commit 4cdd158be9d09223737df83136a1fb65269d809a ]
+Pavel Begunkov (9):
+  io_uring: explicitly keep a CQE in io_kiocb
+  io_uring: memcpy CQE from req
+  io_uring: shrink final link flush
+  io_uring: inline io_flush_cached_reqs
+  io_uring: helper for empty req cache checks
+  io_uring: add helper to return req to cache list
+  io_uring: optimise submission loop invariant
+  io_uring: optimise submission left counting
+  io_uring: optimise io_get_cqe()
 
-There are still several places that using pre array_index_nospec()
-indexes, fix them up.
+ fs/io_uring.c | 288 +++++++++++++++++++++++++++++---------------------
+ 1 file changed, 165 insertions(+), 123 deletions(-)
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-Link: https://lore.kernel.org/r/b01ef5ee83f72ed35ad525912370b729f5d145f4.1649336342.git.asml.silence@gmail.com
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/io_uring.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index d49d83a99c9f..d0daa726b624 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -8495,7 +8495,7 @@ static int io_close_fixed(struct io_kiocb *req, unsigned int issue_flags)
- 	struct io_ring_ctx *ctx = req->ctx;
- 	struct io_fixed_file *file_slot;
- 	struct file *file;
--	int ret, i;
-+	int ret;
- 
- 	io_ring_submit_lock(ctx, !(issue_flags & IO_URING_F_NONBLOCK));
- 	ret = -ENXIO;
-@@ -8508,8 +8508,8 @@ static int io_close_fixed(struct io_kiocb *req, unsigned int issue_flags)
- 	if (ret)
- 		goto out;
- 
--	i = array_index_nospec(offset, ctx->nr_user_files);
--	file_slot = io_fixed_file_slot(&ctx->file_table, i);
-+	offset = array_index_nospec(offset, ctx->nr_user_files);
-+	file_slot = io_fixed_file_slot(&ctx->file_table, offset);
- 	ret = -EBADF;
- 	if (!file_slot->file_ptr)
- 		goto out;
-@@ -8565,8 +8565,7 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
- 
- 		if (file_slot->file_ptr) {
- 			file = (struct file *)(file_slot->file_ptr & FFS_MASK);
--			err = io_queue_rsrc_removal(data, up->offset + done,
--						    ctx->rsrc_node, file);
-+			err = io_queue_rsrc_removal(data, i, ctx->rsrc_node, file);
- 			if (err)
- 				break;
- 			file_slot->file_ptr = 0;
-@@ -9235,7 +9234,7 @@ static int __io_sqe_buffers_update(struct io_ring_ctx *ctx,
- 
- 		i = array_index_nospec(offset, ctx->nr_user_bufs);
- 		if (ctx->user_bufs[i] != ctx->dummy_ubuf) {
--			err = io_queue_rsrc_removal(ctx->buf_data, offset,
-+			err = io_queue_rsrc_removal(ctx->buf_data, i,
- 						    ctx->rsrc_node, ctx->user_bufs[i]);
- 			if (unlikely(err)) {
- 				io_buffer_unmap(ctx, &imu);
 -- 
 2.35.1
 

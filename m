@@ -2,71 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A1284FE5C6
-	for <lists+io-uring@lfdr.de>; Tue, 12 Apr 2022 18:25:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9ABC64FE5DD
+	for <lists+io-uring@lfdr.de>; Tue, 12 Apr 2022 18:31:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235689AbiDLQ1x (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 12 Apr 2022 12:27:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54956 "EHLO
+        id S1357675AbiDLQd3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 12 Apr 2022 12:33:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1357659AbiDLQ1u (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 12 Apr 2022 12:27:50 -0400
-Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AE6F57153
-        for <io-uring@vger.kernel.org>; Tue, 12 Apr 2022 09:25:31 -0700 (PDT)
-Received: by mail-pg1-x530.google.com with SMTP id s21so13180967pgv.13
-        for <io-uring@vger.kernel.org>; Tue, 12 Apr 2022 09:25:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :references:from:in-reply-to:content-transfer-encoding;
-        bh=PrSACCrvToYGEmGCqnMU/r5BWxXvoZymZ43mY63YUDQ=;
-        b=FnRbuVx5P5N5CadWF1bSTFbc/T8+mfBapFjmpnsll86jtobnAtHMpjBc0gM5c8SRDX
-         SpKXJ3Kv2GFFIZlBp4waEB5bkDrC/v28e8q4+M4Z3iYr7RU9uIk0/RMeWTm8n/IkCd+Y
-         pXvzNnxdx0zgPTaubP6iyeR9LBzmKJZQ5sjDDAN62vCnlZZENy+CTTw3W7VqbV/jb5cc
-         Qh3nZEV1Bg8D8Zrzg7jjq8ZR8hRAWlVYZxuyabkYrle+4UypQ2zcMUKdEQfnQ6TzaVur
-         NMKQVHMjgX6ElBcS8p5a6IEetZKF1TqRcca0FxlTCFj7PTQ2MG1Lef+td9dExHuK/ANy
-         Ntlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=PrSACCrvToYGEmGCqnMU/r5BWxXvoZymZ43mY63YUDQ=;
-        b=aVJnh/okl2bFSRtquwTKvPHUljls982hSaKYNH2q3sAfkuMh60DiisRToVEKwJab/w
-         h1YMdmPKQJYpvcOzdjT0zVFBkzgKIZ1C6g0f2896ysVHGYGG0bISk63WV84JHIoRYUMB
-         PLueJqhhBEfUinAkXxi/G/96RY+CV+2lAV5XfhoRUV+ESh+c8NeY1RO3NYDI1pBhNBDG
-         lzh6ahpeOrcBCjpdCyxHWiRSh5BP2xtHwuNm376InT6kYoXAC5bnF0fpC2ZIiuFJnqb8
-         zE7lZBFpYDxGpASi4GJZX84NdzWl1NVmoho9Qk7VocqOQ/h301NOyOsUC0bkV7vEW+3a
-         x2cA==
-X-Gm-Message-State: AOAM532nH9tLyDE4LV7pdIVv9vvEoXaPJl7smcFG8Q7t3PJV6eiQePIh
-        1aain3QjYbeBXd9sucohcLdkTfWyAvP3ox+Y
-X-Google-Smtp-Source: ABdhPJwYi/OY8HNe9bqk2PPBKL6H1FhskPsy87ZjlZB4YkxeVAQyvtJg3ZFhe74Vicebw+JBftxQNQ==
-X-Received: by 2002:a63:2266:0:b0:39c:f643:ee69 with SMTP id t38-20020a632266000000b0039cf643ee69mr18196208pgm.288.1649780730531;
-        Tue, 12 Apr 2022 09:25:30 -0700 (PDT)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id v4-20020a17090a00c400b001cb4f242c92sm3491266pjd.26.2022.04.12.09.25.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Apr 2022 09:25:30 -0700 (PDT)
-Message-ID: <01c568c3-8248-215c-1525-b78422f3910e@kernel.dk>
-Date:   Tue, 12 Apr 2022 10:25:28 -0600
+        with ESMTP id S1349863AbiDLQd2 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 12 Apr 2022 12:33:28 -0400
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39D0B5E147
+        for <io-uring@vger.kernel.org>; Tue, 12 Apr 2022 09:30:59 -0700 (PDT)
+Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 23C0jrtH032695
+        for <io-uring@vger.kernel.org>; Tue, 12 Apr 2022 09:30:59 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=facebook; bh=aieyOoQjElV+1yHY4ofNprLGHOfx4cTB9R/S9Mt9YWM=;
+ b=kTPBHuGjkQ4l/Mu81WgtVpG7SpzFExkrcLl3/kEHKJ3zoowyFxr5Z0Kk4RAuF633tzQX
+ EwzalpGbfkqbjBm8Vr6sLrslNLpntewyDuDE90dJoc/atgDT45snWZIUU/OpzbxHVSHS
+ y4v9IvWA/GDlicg45DdLMpJ1GnT2x83Esrk= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3fcy5qv47u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <io-uring@vger.kernel.org>; Tue, 12 Apr 2022 09:30:59 -0700
+Received: from twshared41237.03.ash8.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:82::d) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.21; Tue, 12 Apr 2022 09:30:57 -0700
+Received: by devbig039.lla1.facebook.com (Postfix, from userid 572232)
+        id 16E457456060; Tue, 12 Apr 2022 09:30:47 -0700 (PDT)
+From:   Dylan Yudaken <dylany@fb.com>
+To:     <io-uring@vger.kernel.org>
+CC:     <axboe@kernel.dk>, <asml.silence@gmail.com>,
+        <linux-kernel@vger.kernel.org>, <kernel-team@fb.com>,
+        Dylan Yudaken <dylany@fb.com>
+Subject: [PATCH 0/4] io_uring: verify that reserved fields are 0
+Date:   Tue, 12 Apr 2022 09:30:38 -0700
+Message-ID: <20220412163042.2788062-1-dylany@fb.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH 9/9] io_uring: optimise io_get_cqe()
-Content-Language: en-US
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Florian Schmaus <flo@geekplace.eu>, io-uring@vger.kernel.org
-References: <cover.1649771823.git.asml.silence@gmail.com>
- <487eeef00f3146537b3d9c1a9cef2fc0b9a86f81.1649771823.git.asml.silence@gmail.com>
- <49f6ed82-0250-bb8c-d12a-c8cce1f72ad2@geekplace.eu>
- <bfede80f-b712-f34e-47d7-a81bd7f17afb@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <bfede80f-b712-f34e-47d7-a81bd7f17afb@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-3.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: lg5y0r-wZgQhnodLxsCkm9W2tBi9sgVY
+X-Proofpoint-GUID: lg5y0r-wZgQhnodLxsCkm9W2tBi9sgVY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.486,FMLib:17.11.64.514
+ definitions=2022-04-12_06,2022-04-12_02,2022-02-23_01
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -74,39 +61,27 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/12/22 10:15 AM, Pavel Begunkov wrote:
-> On 4/12/22 17:06, Florian Schmaus wrote:
->> On 12/04/2022 16.09, Pavel Begunkov wrote:
->>> io_get_cqe() is expensive because of a bunch of loads, masking, etc.
->>> However, most of the time we should have enough of entries in the CQ,
->>> so we can cache two pointers representing a range of contiguous CQE
->>> memory we can use. When the range is exhausted we'll go through a slower
->>> path to set up a new range. When there are no CQEs avaliable, pointers
->>> will naturally point to the same address.
->>>
->>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
->>> ---
->>>   fs/io_uring.c | 46 +++++++++++++++++++++++++++++++++++-----------
->>>   1 file changed, 35 insertions(+), 11 deletions(-)
->>>
->>> diff --git a/fs/io_uring.c b/fs/io_uring.c
->>> index b349a3c52354..f2269ffe09eb 100644
->>> --- a/fs/io_uring.c
->>> +++ b/fs/io_uring.c
->>> @@ -416,6 +416,13 @@ struct io_ring_ctx {
->>>       unsigned long        check_cq_overflow;
->>>       struct {
->>> +        /*
->>> +         * We cache a range of free CQEs we can use, once exhausted it
->>> +         * should go through a slower range setup, see __io_get_cqe()
->>> +         */
->>> +        struct io_uring_cqe    *cqe_cached;
->>> +        struct io_uring_cqe    *cqe_santinel;
->>
->> I think this should s/santinel/sentinel.
+A few reserved fields are not verified to be 0. In preparation for possib=
+ly using these fields later we should verify that they are passed as 0.
 
-I fixed it up.
+One extra field I do not have confidence in verifying is up.nr in io_regi=
+ster_files_update(). Should this also be checked to be zero?
 
--- 
-Jens Axboe
+Patch 1 in this series just moves a validation out of __io_register_rsrc_=
+update as it was duplicated
+Patch 2-4 add verifications for reserved fields
+
+Dylan Yudaken (4):
+  io_uring: move io_uring_rsrc_update2 validation
+  io_uring: verify that resv2 is 0 in io_uring_rsrc_update2
+  io_uring: verify resv is 0 in ringfd register/unregister
+  io_uring: verify pad field is 0 in io_get_ext_arg
+
+ fs/io_uring.c | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
+
+
+base-commit: 0f8da75b51ac863b9435368bd50691718cc454b0
+--=20
+2.30.2
 

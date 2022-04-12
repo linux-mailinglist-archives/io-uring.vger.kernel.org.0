@@ -2,60 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C0EDD4FE379
-	for <lists+io-uring@lfdr.de>; Tue, 12 Apr 2022 16:11:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C76304FE3BF
+	for <lists+io-uring@lfdr.de>; Tue, 12 Apr 2022 16:26:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232342AbiDLONL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 12 Apr 2022 10:13:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60090 "EHLO
+        id S242247AbiDLO2A (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 12 Apr 2022 10:28:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355996AbiDLONB (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 12 Apr 2022 10:13:01 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB1F61CFD5
-        for <io-uring@vger.kernel.org>; Tue, 12 Apr 2022 07:10:43 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id c7so27995453wrd.0
-        for <io-uring@vger.kernel.org>; Tue, 12 Apr 2022 07:10:43 -0700 (PDT)
+        with ESMTP id S1356544AbiDLO1f (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 12 Apr 2022 10:27:35 -0400
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4382421255
+        for <io-uring@vger.kernel.org>; Tue, 12 Apr 2022 07:25:17 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id ay11-20020a05600c1e0b00b0038eb92fa965so1892768wmb.4
+        for <io-uring@vger.kernel.org>; Tue, 12 Apr 2022 07:25:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=OMv7TB98xCrL0O+0UD0g1DltjDoVm1IsGGdBYdoGTa8=;
-        b=EIwfJcibdwA/fU3d8VVPjXx70iNzMwSKxpLiMQskIacpgCtJA34vvgYNSEGaIbMBFe
-         fXT0dgKQ9rNnXkNmpfeDCeiquideA/e7TuOs4Wxghm8AckYCW22NPluYRZL/FDlW/Juh
-         i72IQttQyOs5l9jDW2heiRGKiZrlL0DL3FvyOA9rJ6mawvZ2jNTl5vX2WgCLfu9H1qev
-         q/uH4o5yHyDE47eCLpjFdA3i+whT1M5xk1OIP7OEo8hX7cIUYrCkPudyHv7acxN/95D8
-         dyQT2Izlt3uev9E6IjW+z9xpHvUP9PaVwMkVsH5ThR1uWU3U3JSiZrpRMcKSq5U2gnGW
-         uOkQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JYSPTGwe+4Z5itn4lRzCyeCI3Gpt38FzJyufXHZ4QAQ=;
+        b=A3fKt0rTrwP32gxv6P3jjSO7aDoJqatvabKSjdSIBiPlXs0OdpWk4KcQTLoRirIy7q
+         qzOYX0stZTWOv4kC1fPga2s0Pvqv63sFCukTEx82+hxBGMSgT9Eg4ak+/obXNF7TzYEa
+         SN9Tv5Jeue/aDQ91Ln2pr5sALdLHPZnv1lsKcWqA9Qnj7uUgdRInEUlS7qkdupPNL4AN
+         a06Ot2poJsMBoj4f5Z2V2ZeGqpFA1IeWw2jZKWZQSl25OXnY2NHICWUZIsU+0+3UNU2d
+         I8mZtz1+KbUGMLIp7Nw1Ra9SmU6ZtcW5avltn8czXtfUpdDcGJxeAC+HJdeKX0rst3cl
+         3nfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=OMv7TB98xCrL0O+0UD0g1DltjDoVm1IsGGdBYdoGTa8=;
-        b=m0gNE/GeWOOxu5YWORvwf2MQZxxLq9btqQ5PdZRRpuZyOklVtAhwRfKKIcrOklbNIe
-         DcNhV5AD/+SD4LR5aUPKb7xWwHubiPsgFyTKTLwM9YZ8jfKc9N5zi/elhB91VbmOZ//9
-         S+PO78ZbIxAkN8c+M7CqEfD9MAHc/CRbIywvVi2Gb7HejLf18DHa8OL8SCW5h0DBBVJ3
-         7wVzNz6jDL9YQOYN7Eu5t2cNEHtNWCUBQP4dBCR+6QoEyfDBy3BHNAQEuCmgOEKvDrmd
-         NGHQTZtQN4tlWNaNpXkq3UVEr0pFgX/ZhBTR/tJ3ydILMnw3PhwwatdCZNAm2Y5S51l3
-         b9SA==
-X-Gm-Message-State: AOAM531y6qXqfzl2mtaM0jQsZ7lvTMuttsj30ionYNWnW4Uu4dqHD7c7
-        6/1QJOdpnfQdVaaXia0gPrhca553jhk=
-X-Google-Smtp-Source: ABdhPJxYXyThDBfUVb+sbkIq4GJ+5zxW8sTmvFBX1n749d/Ztvw/KgxIOVNnqDW+03d1Kw5j0/QtYw==
-X-Received: by 2002:a05:6000:1c0f:b0:207:9b38:2d4c with SMTP id ba15-20020a0560001c0f00b002079b382d4cmr15314004wrb.326.1649772642089;
-        Tue, 12 Apr 2022 07:10:42 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JYSPTGwe+4Z5itn4lRzCyeCI3Gpt38FzJyufXHZ4QAQ=;
+        b=l2tjr0pzreI/FOrSW7yvzkWpXutBW7X49ZRKyfTowqNLBOLhjyCrsGjWyUSamq9wwX
+         bJWZ/JV9Arq9gemf4wlRkb2LmnxmpidUbo7iuNvt8OK824K/fw6BVuxZ8l/YPTiuySyq
+         a3QlHgfT5oW7smKA6QXrJttxJxOU3P1zbr1UXamIPQUZ05hXviruf75A7DvZiYCT7FhI
+         qFcpEolLP+vsad0u/b/OwXwdhCyE20yPv2Ipaokbu8Gd4tKt4lmpm8bjkIHL9/aPQPPu
+         o0NE+pNTSgNyUCBX+03YLjCcQCxmjzNOTE2I7BBUBiiiUIXL5ZwdwRwg4k2VRxDBsnIm
+         +9Lg==
+X-Gm-Message-State: AOAM530Kkx3YliRh1D36zQ62W7l38RzYQzR5WcJhmE79QnOcnGciRYCb
+        SozKzgVGG2pCP6yld507Ize+8g5yvps=
+X-Google-Smtp-Source: ABdhPJz4lUE2BG+KpcWbZOI0diC3IU+PMPw4oPfdxUdSwy5L0+ZGAYFhKBmKK/zDzYzm0zgtG8xNNw==
+X-Received: by 2002:a7b:c5d1:0:b0:37f:a8a3:9e17 with SMTP id n17-20020a7bc5d1000000b0037fa8a39e17mr4252936wmk.109.1649773515643;
+        Tue, 12 Apr 2022 07:25:15 -0700 (PDT)
 Received: from 127.0.0.1localhost ([148.252.129.222])
-        by smtp.gmail.com with ESMTPSA id ay41-20020a05600c1e2900b0038e75fda4edsm2363703wmb.47.2022.04.12.07.10.41
+        by smtp.gmail.com with ESMTPSA id h2-20020a05600c414200b0038ec7a4f07esm2120292wmm.33.2022.04.12.07.25.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Apr 2022 07:10:41 -0700 (PDT)
+        Tue, 12 Apr 2022 07:25:15 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH 9/9] io_uring: optimise io_get_cqe()
-Date:   Tue, 12 Apr 2022 15:09:51 +0100
-Message-Id: <487eeef00f3146537b3d9c1a9cef2fc0b9a86f81.1649771823.git.asml.silence@gmail.com>
+Subject: [PATCH 1/1] io_uring: fix assign file locking issues
+Date:   Tue, 12 Apr 2022 15:24:43 +0100
+Message-Id: <0d9b9f37841645518503f6a207e509d14a286aba.1649773463.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <cover.1649771823.git.asml.silence@gmail.com>
-References: <cover.1649771823.git.asml.silence@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -68,86 +66,43 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-io_get_cqe() is expensive because of a bunch of loads, masking, etc.
-However, most of the time we should have enough of entries in the CQ,
-so we can cache two pointers representing a range of contiguous CQE
-memory we can use. When the range is exhausted we'll go through a slower
-path to set up a new range. When there are no CQEs avaliable, pointers
-will naturally point to the same address.
+io-wq work cancellation path can't take uring_lock as how it's done on
+file assignment, we have to handle IO_WQ_WORK_CANCEL first, this fixes
+encountered hangs.
 
+Fixes: 6bf9c47a3989 ("io_uring: defer file assignment")
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 46 +++++++++++++++++++++++++++++++++++-----------
- 1 file changed, 35 insertions(+), 11 deletions(-)
+ fs/io_uring.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index b349a3c52354..f2269ffe09eb 100644
+index f2269ffe09eb..cbd876c023b1 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -416,6 +416,13 @@ struct io_ring_ctx {
- 	unsigned long		check_cq_overflow;
+@@ -7318,16 +7318,18 @@ static void io_wq_submit_work(struct io_wq_work *work)
+ 	if (timeout)
+ 		io_queue_linked_timeout(timeout);
  
- 	struct {
-+		/*
-+		 * We cache a range of free CQEs we can use, once exhausted it
-+		 * should go through a slower range setup, see __io_get_cqe()
-+		 */
-+		struct io_uring_cqe	*cqe_cached;
-+		struct io_uring_cqe	*cqe_santinel;
-+
- 		unsigned		cached_cq_tail;
- 		unsigned		cq_entries;
- 		struct io_ev_fd	__rcu	*io_ev_fd;
-@@ -1831,21 +1838,38 @@ static inline unsigned int __io_cqring_events(struct io_ring_ctx *ctx)
- 	return ctx->cached_cq_tail - READ_ONCE(ctx->rings->cq.head);
- }
+-	if (!io_assign_file(req, issue_flags)) {
+-		err = -EBADF;
+-		work->flags |= IO_WQ_WORK_CANCEL;
+-	}
  
--static inline struct io_uring_cqe *io_get_cqe(struct io_ring_ctx *ctx)
-+/*
-+ * writes to the cq entry need to come after reading head; the
-+ * control dependency is enough as we're using WRITE_ONCE to
-+ * fill the cq entry
-+ */
-+static noinline struct io_uring_cqe *__io_get_cqe(struct io_ring_ctx *ctx)
- {
- 	struct io_rings *rings = ctx->rings;
--	unsigned tail, mask = ctx->cq_entries - 1;
--
--	/*
--	 * writes to the cq entry need to come after reading head; the
--	 * control dependency is enough as we're using WRITE_ONCE to
--	 * fill the cq entry
--	 */
--	if (__io_cqring_events(ctx) == ctx->cq_entries)
-+	unsigned int off = ctx->cached_cq_tail & (ctx->cq_entries - 1);
-+	unsigned int free, queued, len;
-+
-+	/* userspace may cheat modifying the tail, be safe and do min */
-+	queued = min(__io_cqring_events(ctx), ctx->cq_entries);
-+	free = ctx->cq_entries - queued;
-+	/* we need a contiguous range, limit based on the current array offset */
-+	len = min(free, ctx->cq_entries - off);
-+	if (!len)
- 		return NULL;
- 
--	tail = ctx->cached_cq_tail++;
--	return &rings->cqes[tail & mask];
-+	ctx->cached_cq_tail++;
-+	ctx->cqe_cached = &rings->cqes[off];
-+	ctx->cqe_santinel = ctx->cqe_cached + len;
-+	return ctx->cqe_cached++;
-+}
-+
-+static inline struct io_uring_cqe *io_get_cqe(struct io_ring_ctx *ctx)
-+{
-+	if (likely(ctx->cqe_cached < ctx->cqe_santinel)) {
-+		ctx->cached_cq_tail++;
-+		return ctx->cqe_cached++;
+ 	/* either cancelled or io-wq is dying, so don't touch tctx->iowq */
+ 	if (work->flags & IO_WQ_WORK_CANCEL) {
++fail:
+ 		io_req_task_queue_fail(req, err);
+ 		return;
+ 	}
++	if (!io_assign_file(req, issue_flags)) {
++		err = -EBADF;
++		work->flags |= IO_WQ_WORK_CANCEL;
++		goto fail;
 +	}
-+	return __io_get_cqe(ctx);
- }
  
- static void io_eventfd_signal(struct io_ring_ctx *ctx)
+ 	if (req->flags & REQ_F_FORCE_ASYNC) {
+ 		bool opcode_poll = def->pollin || def->pollout;
 -- 
 2.35.1
 

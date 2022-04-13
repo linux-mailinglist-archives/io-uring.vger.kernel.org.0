@@ -2,79 +2,43 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 803334FED18
-	for <lists+io-uring@lfdr.de>; Wed, 13 Apr 2022 04:38:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4942D4FEE79
+	for <lists+io-uring@lfdr.de>; Wed, 13 Apr 2022 07:23:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229870AbiDMCk6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 12 Apr 2022 22:40:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37842 "EHLO
+        id S232397AbiDMF0F (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 13 Apr 2022 01:26:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231629AbiDMCk5 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 12 Apr 2022 22:40:57 -0400
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 150771EAEA
-        for <io-uring@vger.kernel.org>; Tue, 12 Apr 2022 19:38:37 -0700 (PDT)
-Received: by mail-pj1-x1033.google.com with SMTP id i24-20020a17090adc1800b001cd5529465aso193202pjv.0
-        for <io-uring@vger.kernel.org>; Tue, 12 Apr 2022 19:38:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=fLgDjeHVYbXkfhaYx0Do2mV56Jvy8fglOjLawJ1rbTc=;
-        b=P3MfXovjlQ2qgEWYmVCqkuXandknnLCXm8IY+usb3p1H22UXtH93guyKo53g49KDwl
-         8Tkz8jTU1yS3F7V2BrjAzcJUL9yhbhyi+MOT784mO1WaqjAxKIGtYb5Ilg7tZGwcz3ZR
-         1DjxqFKnJEx7hKjtmHsYTD4x6nOJGaJAgh857eD5oIiFge1p2afx7WgE3YLnfKvlQUis
-         mjo4JMHaFzPPRGZv+d8FDuIEAOTbm85fIB3PxTvJToLdVq/G0oZCBNK7Ro12LJTigsO/
-         IBOp1JhYMYDmNFQoMb8z9ZSXXiwTLRNsJe2B3pT4qxwJiLOPJ196X8H384gVUkE1m/3K
-         Mniw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=fLgDjeHVYbXkfhaYx0Do2mV56Jvy8fglOjLawJ1rbTc=;
-        b=FZCzp1EVZ7dfx7zKHAXb82VAHSx16Ke9OdCltrnSLyYAmISZwKTdzeDZXjtDVcfVsf
-         +q5Rn0Vnub0KucQKR6XJLvkFLp/Sv9w9hYGIkHB+iIDd5EQXpr06Bi55eg/YH7wDJwaa
-         +InS39VclN9m3A3bHMkGVNIH+qLqEHlKlq0+3k6mIO+EHL01CeegEDC6J9y8tJTAvs+z
-         fCw4Vwd+EY2eyjG1uedGSmVtY7ctF1BfsoOBKVJwwYBDhzr98ESuxIqI9F9qNEAVwYF2
-         Ro4KJJA2hp0KJ+Znw57HKtTau9x4xWDR9T9X3rL3EYocx4pCmwCLLIjTiDpb4pTb1AQQ
-         mT2g==
-X-Gm-Message-State: AOAM531Svc9Ammxe1icjoqaCDWGXlnJBe66Cm4LEd09RF31LinJ9WlD2
-        MZMyD9k94ol6fdRj4coA2Ckwa2d/2rLsSnw2
-X-Google-Smtp-Source: ABdhPJzKACTDxfOvoHXgoDtih2bWYIVirNbxvz45rdqdf2S0W8tv4ibDtfL1Vm8j4Af/khsZpObLQw==
-X-Received: by 2002:a17:90b:1d04:b0:1c7:1174:56ae with SMTP id on4-20020a17090b1d0400b001c7117456aemr8144046pjb.153.1649817516516;
-        Tue, 12 Apr 2022 19:38:36 -0700 (PDT)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id y16-20020a17090a6c9000b001cc3a8b4fd6sm907727pjj.7.2022.04.12.19.38.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Apr 2022 19:38:35 -0700 (PDT)
-Message-ID: <8a762692-3e0a-f7e8-ff80-38c0da73647e@kernel.dk>
-Date:   Tue, 12 Apr 2022 20:38:34 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCHSET 0/4] Add support for no-lock sockets
-Content-Language: en-US
-To:     Eric Dumazet <edumazet@google.com>
+        with ESMTP id S231326AbiDMF0E (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 13 Apr 2022 01:26:04 -0400
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C253A4F9E2;
+        Tue, 12 Apr 2022 22:23:43 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R621e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=dust.li@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0V9xrwJG_1649827420;
+Received: from localhost(mailfrom:dust.li@linux.alibaba.com fp:SMTPD_---0V9xrwJG_1649827420)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 13 Apr 2022 13:23:40 +0800
+Date:   Wed, 13 Apr 2022 13:23:39 +0800
+From:   "dust.li" <dust.li@linux.alibaba.com>
+To:     Jens Axboe <axboe@kernel.dk>, Eric Dumazet <edumazet@google.com>
 Cc:     Eric Dumazet <eric.dumazet@gmail.com>, io-uring@vger.kernel.org,
         netdev <netdev@vger.kernel.org>
+Subject: Re: [PATCHSET 0/4] Add support for no-lock sockets
+Message-ID: <20220413052339.GJ35207@linux.alibaba.com>
+Reply-To: dust.li@linux.alibaba.com
 References: <20220412202613.234896-1-axboe@kernel.dk>
  <e7631a6f-b614-da4c-4f47-571a7b0149fc@gmail.com>
  <80ba97f9-3705-8fd6-8e7d-a934512d7ec0@kernel.dk>
  <CANn89iJRCeB2HZyy49J60KReZKwrLysffy9cmLSw6+Wd4qJy-g@mail.gmail.com>
  <d772ae66-6c0f-4083-8530-400546743ef6@kernel.dk>
- <CANn89i+1UJHYwDocWuaxzHoiPrJwi0WR0mELMidYBXYuPcLumg@mail.gmail.com>
- <22271a21-2999-2f2f-9270-c7233aa79c6d@kernel.dk>
- <CANn89iKXTbDJ594KN5K8u4eowpTWKdxXJ4hBQOqkuiZGcS7x0A@mail.gmail.com>
- <d39a2713-9172-3dd6-4a37-dad178a5bb57@kernel.dk>
- <CANn89iKVtHLNUMRPP276-w31usKwWnFhQp04W1CbD-TqOnRAiw@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CANn89iKVtHLNUMRPP276-w31usKwWnFhQp04W1CbD-TqOnRAiw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d772ae66-6c0f-4083-8530-400546743ef6@kernel.dk>
+X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H5,
+        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -82,114 +46,127 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/12/22 8:32 PM, Eric Dumazet wrote:
-> On Tue, Apr 12, 2022 at 7:27 PM Jens Axboe <axboe@kernel.dk> wrote:
->>
->> On 4/12/22 8:19 PM, Eric Dumazet wrote:
->>> On Tue, Apr 12, 2022 at 7:12 PM Jens Axboe <axboe@kernel.dk> wrote:
->>>>
->>>> On 4/12/22 8:05 PM, Eric Dumazet wrote:
->>>>> On Tue, Apr 12, 2022 at 7:01 PM Jens Axboe <axboe@kernel.dk> wrote:
->>>>>>
->>>>>> On 4/12/22 7:54 PM, Eric Dumazet wrote:
->>>>>>> On Tue, Apr 12, 2022 at 6:26 PM Jens Axboe <axboe@kernel.dk> wrote:
->>>>>>>>
->>>>>>>> On 4/12/22 6:40 PM, Eric Dumazet wrote:
->>>>>>>>>
->>>>>>>>> On 4/12/22 13:26, Jens Axboe wrote:
->>>>>>>>>> Hi,
->>>>>>>>>>
->>>>>>>>>> If we accept a connection directly, eg without installing a file
->>>>>>>>>> descriptor for it, or if we use IORING_OP_SOCKET in direct mode, then
->>>>>>>>>> we have a socket for recv/send that we can fully serialize access to.
->>>>>>>>>>
->>>>>>>>>> With that in mind, we can feasibly skip locking on the socket for TCP
->>>>>>>>>> in that case. Some of the testing I've done has shown as much as 15%
->>>>>>>>>> of overhead in the lock_sock/release_sock part, with this change then
->>>>>>>>>> we see none.
->>>>>>>>>>
->>>>>>>>>> Comments welcome!
->>>>>>>>>>
->>>>>>>>> How BH handlers (including TCP timers) and io_uring are going to run
->>>>>>>>> safely ? Even if a tcp socket had one user, (private fd opened by a
->>>>>>>>> non multi-threaded program), we would still to use the spinlock.
->>>>>>>>
->>>>>>>> But we don't even hold the spinlock over lock_sock() and release_sock(),
->>>>>>>> just the mutex. And we do check for running eg the backlog on release,
->>>>>>>> which I believe is done safely and similarly in other places too.
->>>>>>>
->>>>>>> So lets say TCP stack receives a packet in BH handler... it proceeds
->>>>>>> using many tcp sock fields.
->>>>>>>
->>>>>>> Then io_uring wants to read/write stuff from another cpu, while BH
->>>>>>> handler(s) is(are) not done yet,
->>>>>>> and will happily read/change many of the same fields
->>>>>>
->>>>>> But how is that currently protected?
->>>>>
->>>>> It is protected by current code.
->>>>>
->>>>> What you wrote would break TCP stack quite badly.
->>>>
->>>> No offense, but your explanations are severely lacking. By "current
->>>> code"? So what you're saying is that it's protected by how the code
->>>> currently works? From how that it currently is? Yeah, that surely
->>>> explains it.
->>>>
->>>>> I suggest you setup/run a syzbot server/farm, then you will have a
->>>>> hundred reports quite easily.
->>>>
->>>> Nowhere am I claiming this is currently perfect, and it should have had
->>>> an RFC on it. Was hoping for some constructive criticism on how to move
->>>> this forward, as high frequency TCP currently _sucks_ in the stack.
->>>> Instead I get useless replies, not very encouraging.
->>>>
->>>> I've run this quite extensively on just basic send/receive over sockets,
->>>> so it's not like it hasn't been run at all. And it's been fine so far,
->>>> no ill effects observed. If we need to tighten down the locking, perhaps
->>>> a valid use would be to simply skip the mutex and retain the bh lock for
->>>> setting owner. As far as I can tell, should still be safe to skip on
->>>> release, except if we need to process the backlog. And it'd serialize
->>>> the owner setting with the BH, which seems to be your main objection in.
->>>> Mostly guessing here, based on the in-depth replies.
->>>>
->>>> But it'd be nice if we could have a more constructive dialogue about
->>>> this, rather than the weird dismisiveness.
->>>>
->>>>
+On Tue, Apr 12, 2022 at 08:01:10PM -0600, Jens Axboe wrote:
+>On 4/12/22 7:54 PM, Eric Dumazet wrote:
+>> On Tue, Apr 12, 2022 at 6:26 PM Jens Axboe <axboe@kernel.dk> wrote:
 >>>
->>> Sure. It would be nice that I have not received such a patch series
->>> the day I am sick.
->>
->> I'm sorry that you are sick - but if you are not in a state to reply,
->> then please just don't. It sets a bad example. It was sent to the list,
->> not to you personally.
-> 
-> I tried to be as constructive as possible, and Jakub pinged me about
+>>> On 4/12/22 6:40 PM, Eric Dumazet wrote:
+>>>>
+>>>> On 4/12/22 13:26, Jens Axboe wrote:
+>>>>> Hi,
+>>>>>
+>>>>> If we accept a connection directly, eg without installing a file
+>>>>> descriptor for it, or if we use IORING_OP_SOCKET in direct mode, then
+>>>>> we have a socket for recv/send that we can fully serialize access to.
+>>>>>
+>>>>> With that in mind, we can feasibly skip locking on the socket for TCP
+>>>>> in that case. Some of the testing I've done has shown as much as 15%
+>>>>> of overhead in the lock_sock/release_sock part, with this change then
+>>>>> we see none.
+>>>>>
+>>>>> Comments welcome!
+>>>>>
+>>>> How BH handlers (including TCP timers) and io_uring are going to run
+>>>> safely ? Even if a tcp socket had one user, (private fd opened by a
+>>>> non multi-threaded program), we would still to use the spinlock.
+>>>
+>>> But we don't even hold the spinlock over lock_sock() and release_sock(),
+>>> just the mutex. And we do check for running eg the backlog on release,
+>>> which I believe is done safely and similarly in other places too.
+>> 
+>> So lets say TCP stack receives a packet in BH handler... it proceeds
+>> using many tcp sock fields.
+>> 
+>> Then io_uring wants to read/write stuff from another cpu, while BH
+>> handler(s) is(are) not done yet,
+>> and will happily read/change many of the same fields
+>
+>But how is that currently protected? The bh spinlock is only held
+>briefly while locking the socket, and ditto on the relase. Outside of
+>that, the owner field is used. At least as far as I can tell. I'm
+>assuming the mutex exists solely to serialize acess to eg send/recv on
+>the system call side.
 
-Are you serious?! I don't think I've ever received less constructive
-feedback in 20+ years of working on the kernel.
+Hi jens,
 
-> this series,
-> so I really thought Jakub was okay with it.
-> 
-> So I am a bit concerned.
+I personally like the idea of using iouring to improve the performance
+of the socket API.
 
-I did show it to Jakub a week or so ago, probably that was why. But why
-the concern?! It's just a patchseries proposed for discussion. Something
-that happens every day.
+AFAIU, the bh spinlock will be held by the BH when trying to make
+changes to those protected fields on the socket, and the userspace
+will try to hold that spinlock before it can change the sock lock
+owner field.
 
->> Don't check email then, putting the blame on ME for posting a patchset
->> while you are sick is uncalled for and rude. If I had a crystal ball, I
->> would not be spending my time working on the kernel. You know what
->> would've been a better idea? Replying that you are sick and that you are
->> sorry for being an ass on the mailing list.
-> 
-> Wow.
+For example:
+in tcp_v4_rcv() we have
 
-Putting the blame on me for your emails, since I posted a patchset while
-you're sick, is just rude.
+        bh_lock_sock_nested(sk);
+        tcp_segs_in(tcp_sk(sk), skb);
+        ret = 0;
+        if (!sock_owned_by_user(sk)) {
+                ret = tcp_v4_do_rcv(sk, skb);
+        } else {
+                if (tcp_add_backlog(sk, skb, &drop_reason))
+                        goto discard_and_relse;
+        }
+        bh_unlock_sock(sk);
 
--- 
-Jens Axboe
+When this is called in the BH, it will first hold the bh spinlock
+and then check the owner field, tcp_v4_do_rcv() will always been
+protected by the bh spinlock.
 
+If the user thread tries to make changes to the socket, it first
+call lock_sock() which will also try to hold the bh spinlock, I
+think that prevent the race.
+
+  void lock_sock_nested(struct sock *sk, int subclass)
+  {
+          /* The sk_lock has mutex_lock() semantics here. */
+          mutex_acquire(&sk->sk_lock.dep_map, subclass, 0, _RET_IP_);
+
+          might_sleep();
+          spin_lock_bh(&sk->sk_lock.slock);
+          if (sock_owned_by_user_nocheck(sk))
+                  __lock_sock(sk);
+          sk->sk_lock.owned = 1;
+          spin_unlock_bh(&sk->sk_lock.slock);
+  }
+
+But if we remove the spinlock in the lock_sock() when sk_no_lock
+is set to true. When the the bh spinlock is already held by the BH,
+it seems the userspace won't respect that anymore ?
+
+Maybe I missed something too...
+
+>
+>Hence if we can just make the owner check/set sane, then it would seem
+>to be that it'd work just fine. Unless I'm still missing something here.
+>
+>> Writing a 1 and a 0 in a bit field to ensure mutual exclusion is not
+>> going to work,
+>> even with the smp_rmb() and smp_wmb() you added (adding more costs for
+>> non io_uring users
+>> which already pay a high lock tax)
+>
+>Right, that's what the set was supposed to improve :-)
+>
+>In all fairness, the rmb/wmb doesn't even measure compared to the
+>current socket locking, so I highly doubt that any high frequency TCP
+>would notice _any_ difference there. It's dwarfed by fiddling the mutex
+>and spinlock already.
+>
+>But I agree, it may not be 100% bullet proof. May need actual bitops to
+>be totally safe. Outside of that, I'm still failing to see what kind of
+>mutual exclusion exists between BH handlers and a system call doing a
+>send or receive on the socket.
+>
+>> If we want to optimize the lock_sock()/release_sock() for common cases
+>> (a single user thread per TCP socket),
+>> then maybe we can play games with some kind of cmpxchg() games, but
+>> that would be a generic change.
+>
+>Sure, not disagreeing on that, but you'd supposedly still need the mutex
+>to serialize send or receives on the socket for those cases.
+>
+>-- 
+>Jens Axboe

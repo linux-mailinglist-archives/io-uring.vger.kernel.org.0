@@ -2,99 +2,84 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DD5A4FF9CC
-	for <lists+io-uring@lfdr.de>; Wed, 13 Apr 2022 17:11:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 833CD4FFB39
+	for <lists+io-uring@lfdr.de>; Wed, 13 Apr 2022 18:26:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232646AbiDMPNg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 13 Apr 2022 11:13:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58780 "EHLO
+        id S236490AbiDMQ2b (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 13 Apr 2022 12:28:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234773AbiDMPNf (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 13 Apr 2022 11:13:35 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8BC93A70E
-        for <io-uring@vger.kernel.org>; Wed, 13 Apr 2022 08:11:13 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id g18so4565809ejc.10
-        for <io-uring@vger.kernel.org>; Wed, 13 Apr 2022 08:11:13 -0700 (PDT)
+        with ESMTP id S234221AbiDMQ2a (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 13 Apr 2022 12:28:30 -0400
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 069D64F9DF
+        for <io-uring@vger.kernel.org>; Wed, 13 Apr 2022 09:26:06 -0700 (PDT)
+Received: by mail-pj1-x102c.google.com with SMTP id g12-20020a17090a640c00b001cb59d7a57cso4234499pjj.1
+        for <io-uring@vger.kernel.org>; Wed, 13 Apr 2022 09:26:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=TJtiBC46TK7m8S59lkXw8Q7Xq4HghuPLu80OPR/hB8A=;
-        b=ov7UnAcK69EtEBAyjlS48F/D6tPlMNwmsWP6QeEjEjx0ygXnTrUo9nwhflvnJcBVw6
-         U8GnuAGaIHVeDQcNpXvo6Kh5X2OXaEAJUE4BL0J0hYhoFSHJIQgAEiVArmjYQ+4x5FL4
-         VElXaSFXl0zXlnRyq66/E2WVKlcG71fNSo1dY/Pie9X2Us4abyyNbkcPuoMWBEc6yjiT
-         ZnRtB3FiNZsIWM2ezH/LTv2lQVmLvKr47twyv7dyb0txRMM3OGoSMD3EwDtXzcEe9GB6
-         IwbpuCmiLQEsVLWF4fP9DbGoTmpOSVfmUXw6MiP9utVLU8feRW6eN5JPTaUHAdjd4vQg
-         kXZw==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=from:to:in-reply-to:references:subject:message-id:date:mime-version
+         :content-transfer-encoding;
+        bh=icLq0RS4aJKb4f64l926jTnyJSafOn3sGFTWOzwE0vM=;
+        b=urs9K05tFxkZsd23QDf09C49lCfL10DoJiTqcg3+rlF3GbXQbSY/p9x3veXq6H7ZyC
+         6R3tzj6CjtytQxyg1K4vqNZNzqkt7t2XxDUXAi9oOa67k251mZVgS5JvsZh4SzOo1Arp
+         UIqdSB+I4vxAcSXXPMf2wVxzdighhwt8OdfdPHF0Bsb5XW3bAA8P7k419q8ODMYbUzeH
+         48j5MDCHK5dMd8SN4EdelwtjUlSJGlsdoN7ie1u/FRwuHtkeCoDTeBn52E5kfNihLCGV
+         5L2gB08fLrCWLWtpkSljEmTNAR0XRVNYhwhWmmGyy2eGaKRXLDTsog12fh9wQwhq1CsY
+         M5ig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=TJtiBC46TK7m8S59lkXw8Q7Xq4HghuPLu80OPR/hB8A=;
-        b=5cGsCDfYE+svvAIXuH0USsLmj71uwbuWeiZLaKXh262Tld97JjgIHy6tfQn45rMezN
-         Au4RoGth5mdUSsM4UOpKW40o58dmEJlw2mkMWEIr4X/b1pxsCR7xcUex+G35Jw4JoPvs
-         wlC3iEn/vE7AwvHpmaliLKcSPF3VsXPdCHKUCieTktwuujCaGx9qax2Ls/LioeAHoVHC
-         34HDJ27eoYX8dP4vT+gTf69aLO6ddeWhPwsiHwxzQ/k43EZ7/Q4W6wNxf4XZMhQr9bgf
-         3PHCC6LF6THsLwY0XmoBaGGO0Ubodu41dAQfuo3YVONeddmy+IWX0Xy30m0JwbMJTq3M
-         yOPA==
-X-Gm-Message-State: AOAM532pPeg3/pZzVBVDc1n2Jsq+ZYeWREMJlRnhmFn7LVRnudJxqM05
-        Cl2Woel6Mrba3WEltDMTJSQStjuckW0=
-X-Google-Smtp-Source: ABdhPJzkmBcqU00bRdDIIKfUUkPNREZj1sIGkAwyGF6FtVIytQOwaiZifPG2ImycX5pdXZt8WU/06g==
-X-Received: by 2002:a17:906:830c:b0:6e8:7b71:2342 with SMTP id j12-20020a170906830c00b006e87b712342mr17198316ejx.226.1649862672171;
-        Wed, 13 Apr 2022 08:11:12 -0700 (PDT)
-Received: from 127.0.0.1localhost ([185.69.145.65])
-        by smtp.gmail.com with ESMTPSA id j2-20020a056402238200b0041f351a8b83sm1037152eda.43.2022.04.13.08.11.11
+        h=x-gm-message-state:from:to:in-reply-to:references:subject
+         :message-id:date:mime-version:content-transfer-encoding;
+        bh=icLq0RS4aJKb4f64l926jTnyJSafOn3sGFTWOzwE0vM=;
+        b=JKhBAD/e08fmSy8Ql0VCxcIFrE132j5jS2a50NfWtW5Q/eBt8IVUrusmYCJRZhspX0
+         zUsPN85qJEBz4GCWOCgTvgn6mjdwQBXuRTPGDAKnadhBQmmGfsHsydRtk3qlBEROr3XC
+         Bba2H2JG32ZWSY8XvO/D+rw4cz1Ay3Ila+OmtEcDTTV04jaUZAOPnIOKMCZUn+ftIvSP
+         KxEKvUPl7fWOUV7tYDmhhH5nlN+ANZ7pxBOrSdsmKgJ21nihzPssL5LgCD6fXyYNtcaC
+         zo4R+w3e8LZpAMQbcL0h7NGqS7kJwJfTfeqyh2+mYmfEusjAwo6qD2ZIQy0YxzN/hKh1
+         xabQ==
+X-Gm-Message-State: AOAM532Ph53mAX2z0NFrMCmvVQT0Gz+zLgRhfgYPG421KF80OGGiZNkm
+        ZgO1ifo2b8syDSwxpZoBEVk5kMyVc4fM6wJk
+X-Google-Smtp-Source: ABdhPJx9ThWTjDpKQHpNUtiA+EyDLkkBtpX+gJEhpWVsh3Xn6v5mGteAhJr0tr5ygazXRpv8H9IDrw==
+X-Received: by 2002:a17:90a:7145:b0:1ca:97b5:96ae with SMTP id g5-20020a17090a714500b001ca97b596aemr11849784pjs.64.1649867165020;
+        Wed, 13 Apr 2022 09:26:05 -0700 (PDT)
+Received: from [127.0.1.1] ([2600:380:7619:ef79:ffbd:c836:a5b0:a555])
+        by smtp.gmail.com with ESMTPSA id q4-20020a17090a7a8400b001cd4a0c3270sm3392756pjf.7.2022.04.13.09.26.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Apr 2022 08:11:11 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH 3/3] io_uring: fix poll error reporting
-Date:   Wed, 13 Apr 2022 16:10:35 +0100
-Message-Id: <5f03514ee33324dc811fb93df84aee0f695fb044.1649862516.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <cover.1649862516.git.asml.silence@gmail.com>
-References: <cover.1649862516.git.asml.silence@gmail.com>
+        Wed, 13 Apr 2022 09:26:04 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     io-uring@vger.kernel.org, axboe@kernel.dk, netdev@vger.kernel.org
+In-Reply-To: <20220412202240.234207-1-axboe@kernel.dk>
+References: <20220412202240.234207-1-axboe@kernel.dk>
+Subject: Re: [PATCHSET 0/2] Add io_uring socket(2) support
+Message-Id: <164986716390.2022.1994521571584523698.b4-ty@kernel.dk>
+Date:   Wed, 13 Apr 2022 10:26:03 -0600
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-We should not return an error code in req->result in
-io_poll_check_events(), because it may get mangled and returned as
-success. Just return the error code directly, the callers will fail the
-request or proceed accordingly.
+On Tue, 12 Apr 2022 14:22:38 -0600, Jens Axboe wrote:
+> The main motivator here is to allow creating a socket as a direct
+> descriptor, similarly to how we do it for the open/accept support.
+> 
 
-Fixes: 6bf9c47a3989 ("io_uring: defer file assignment")
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+Applied, thanks!
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index d06f1952fdfa..ab674a0d269b 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -5861,9 +5861,8 @@ static int io_poll_check_events(struct io_kiocb *req, bool locked)
- 			unsigned flags = locked ? 0 : IO_URING_F_UNLOCKED;
- 
- 			if (unlikely(!io_assign_file(req, flags)))
--				req->result = -EBADF;
--			else
--				req->result = vfs_poll(req->file, &pt) & req->apoll_events;
-+				return -EBADF;
-+			req->result = vfs_poll(req->file, &pt) & req->apoll_events;
- 		}
- 
- 		/* multishot, just fill an CQE and proceed */
+[1/2] net: add __sys_socket_file()
+      (no commit info)
+[2/2] io_uring: add socket(2) support
+      (no commit info)
+
+Best regards,
 -- 
-2.35.1
+Jens Axboe
+
 

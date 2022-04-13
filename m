@@ -2,58 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 833CD4FFB39
-	for <lists+io-uring@lfdr.de>; Wed, 13 Apr 2022 18:26:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A02234FFB3B
+	for <lists+io-uring@lfdr.de>; Wed, 13 Apr 2022 18:26:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236490AbiDMQ2b (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 13 Apr 2022 12:28:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51370 "EHLO
+        id S234221AbiDMQ2c (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 13 Apr 2022 12:28:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51366 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234221AbiDMQ2a (ORCPT
+        with ESMTP id S233956AbiDMQ2a (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Wed, 13 Apr 2022 12:28:30 -0400
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 069D64F9DF
-        for <io-uring@vger.kernel.org>; Wed, 13 Apr 2022 09:26:06 -0700 (PDT)
-Received: by mail-pj1-x102c.google.com with SMTP id g12-20020a17090a640c00b001cb59d7a57cso4234499pjj.1
-        for <io-uring@vger.kernel.org>; Wed, 13 Apr 2022 09:26:06 -0700 (PDT)
+Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC86529C88
+        for <io-uring@vger.kernel.org>; Wed, 13 Apr 2022 09:26:08 -0700 (PDT)
+Received: by mail-pl1-x634.google.com with SMTP id c23so2440726plo.0
+        for <io-uring@vger.kernel.org>; Wed, 13 Apr 2022 09:26:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=from:to:in-reply-to:references:subject:message-id:date:mime-version
          :content-transfer-encoding;
-        bh=icLq0RS4aJKb4f64l926jTnyJSafOn3sGFTWOzwE0vM=;
-        b=urs9K05tFxkZsd23QDf09C49lCfL10DoJiTqcg3+rlF3GbXQbSY/p9x3veXq6H7ZyC
-         6R3tzj6CjtytQxyg1K4vqNZNzqkt7t2XxDUXAi9oOa67k251mZVgS5JvsZh4SzOo1Arp
-         UIqdSB+I4vxAcSXXPMf2wVxzdighhwt8OdfdPHF0Bsb5XW3bAA8P7k419q8ODMYbUzeH
-         48j5MDCHK5dMd8SN4EdelwtjUlSJGlsdoN7ie1u/FRwuHtkeCoDTeBn52E5kfNihLCGV
-         5L2gB08fLrCWLWtpkSljEmTNAR0XRVNYhwhWmmGyy2eGaKRXLDTsog12fh9wQwhq1CsY
-         M5ig==
+        bh=lOSBRb8HAFrosUTLHZ3LpmLyemt1pxSH45KePhVmkAs=;
+        b=JnRBymikeKYcx+XXRIEVS9O9bQgUuasVL0vdIaBN/h7OTwefRbA/HzhzZrdHHSU3GN
+         +giuL1dQfWwaYHDwpB3JE0yxXD5ni6avhXbvlIfJ/BqeEXkII6N+VyUBKV16MR6Rb3MQ
+         +8olo+1d33ZzuTXtW2i+6X97SAz8oXH1MOfTZ65BLl/v+OA06KGUcCsbjIOI7FbyAMDm
+         Ic+QzTmBUm1Nl6i21+97mhBwnRpRiEssUba2lLdO1Z3faPiSdXeQw2392oBSLX/d5+Jd
+         sMw+hpcd69ENwwXY1I1n54AmH/4lrHVFuKhfOJBetK/0mrYR2wJ+8DiKzvMTVz2fs+6R
+         rLxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:in-reply-to:references:subject
          :message-id:date:mime-version:content-transfer-encoding;
-        bh=icLq0RS4aJKb4f64l926jTnyJSafOn3sGFTWOzwE0vM=;
-        b=JKhBAD/e08fmSy8Ql0VCxcIFrE132j5jS2a50NfWtW5Q/eBt8IVUrusmYCJRZhspX0
-         zUsPN85qJEBz4GCWOCgTvgn6mjdwQBXuRTPGDAKnadhBQmmGfsHsydRtk3qlBEROr3XC
-         Bba2H2JG32ZWSY8XvO/D+rw4cz1Ay3Ila+OmtEcDTTV04jaUZAOPnIOKMCZUn+ftIvSP
-         KxEKvUPl7fWOUV7tYDmhhH5nlN+ANZ7pxBOrSdsmKgJ21nihzPssL5LgCD6fXyYNtcaC
-         zo4R+w3e8LZpAMQbcL0h7NGqS7kJwJfTfeqyh2+mYmfEusjAwo6qD2ZIQy0YxzN/hKh1
-         xabQ==
-X-Gm-Message-State: AOAM532Ph53mAX2z0NFrMCmvVQT0Gz+zLgRhfgYPG421KF80OGGiZNkm
-        ZgO1ifo2b8syDSwxpZoBEVk5kMyVc4fM6wJk
-X-Google-Smtp-Source: ABdhPJx9ThWTjDpKQHpNUtiA+EyDLkkBtpX+gJEhpWVsh3Xn6v5mGteAhJr0tr5ygazXRpv8H9IDrw==
-X-Received: by 2002:a17:90a:7145:b0:1ca:97b5:96ae with SMTP id g5-20020a17090a714500b001ca97b596aemr11849784pjs.64.1649867165020;
-        Wed, 13 Apr 2022 09:26:05 -0700 (PDT)
+        bh=lOSBRb8HAFrosUTLHZ3LpmLyemt1pxSH45KePhVmkAs=;
+        b=y0LHOevN/CKWQWqIDMqNpkl0WZ6lb/PseTFLkmHeJca5+DRoqUz8aBb9KHcOmociHa
+         R+4IFCg5IA8doLmrdpdZ1X935sVFdcF//asJAH2GbTStL4a04Zau3gv0v9jSB66RSIrP
+         GoG8Acy6WT28hzE64k0RdrGPX4MyhZbaJw5IgMHwBa/2CxB94WQ7sW2/HX8eVYOHVuYI
+         kalezOXEz/inEaxiD6IgLNOQxm0to2UffI9GpQOAVldvkOeTlw3Kky28KtBzTg3Yw8V5
+         JLK8yEjeDWfdZD2ZHC55epPeXoawC3w1lYq/cb/lLsZnwn/AIVkpxk84I7oCzDDmGqvY
+         amqg==
+X-Gm-Message-State: AOAM530PZdSqfT7wwfirEtcVJ3Qq2TrZSknRDcmo4kgbDWPAmaZMG18k
+        8CP15gCBcU0JtmZ1jjQBgQQmJ6QwIGyfqUli
+X-Google-Smtp-Source: ABdhPJym5XL/qhcSzCUK9tkkvvOkmNxwmd6FGhPUjMN2cmoMO8fwp3xYJcvzg637sRcrdT5aOfXVGQ==
+X-Received: by 2002:a17:90a:de87:b0:1cb:b207:a729 with SMTP id n7-20020a17090ade8700b001cbb207a729mr11628526pjv.144.1649867168179;
+        Wed, 13 Apr 2022 09:26:08 -0700 (PDT)
 Received: from [127.0.1.1] ([2600:380:7619:ef79:ffbd:c836:a5b0:a555])
-        by smtp.gmail.com with ESMTPSA id q4-20020a17090a7a8400b001cd4a0c3270sm3392756pjf.7.2022.04.13.09.26.03
+        by smtp.gmail.com with ESMTPSA id lt5-20020a17090b354500b001cd3a3cfc0fsm3390618pjb.50.2022.04.13.09.26.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Apr 2022 09:26:04 -0700 (PDT)
+        Wed, 13 Apr 2022 09:26:07 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org, axboe@kernel.dk, netdev@vger.kernel.org
-In-Reply-To: <20220412202240.234207-1-axboe@kernel.dk>
-References: <20220412202240.234207-1-axboe@kernel.dk>
-Subject: Re: [PATCHSET 0/2] Add io_uring socket(2) support
-Message-Id: <164986716390.2022.1994521571584523698.b4-ty@kernel.dk>
-Date:   Wed, 13 Apr 2022 10:26:03 -0600
+To:     io-uring@vger.kernel.org, asml.silence@gmail.com
+In-Reply-To: <cover.1649862516.git.asml.silence@gmail.com>
+References: <cover.1649862516.git.asml.silence@gmail.com>
+Subject: Re: [PATCH 5.18 0/3] file assignment issues
+Message-Id: <164986716685.2100.9235875985695135457.b4-ty@kernel.dk>
+Date:   Wed, 13 Apr 2022 10:26:06 -0600
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -66,17 +66,24 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, 12 Apr 2022 14:22:38 -0600, Jens Axboe wrote:
-> The main motivator here is to allow creating a socket as a direct
-> descriptor, similarly to how we do it for the open/accept support.
+On Wed, 13 Apr 2022 16:10:32 +0100, Pavel Begunkov wrote:
+> small fixes for deferred file assignment
 > 
+> Pavel Begunkov (3):
+>   io_uring: use right issue_flags for splice/tee
+>   io_uring: fix poll file assign deadlock
+>   io_uring: fix poll error reporting
+> 
+> [...]
 
 Applied, thanks!
 
-[1/2] net: add __sys_socket_file()
-      (no commit info)
-[2/2] io_uring: add socket(2) support
-      (no commit info)
+[1/3] io_uring: use right issue_flags for splice/tee
+      commit: e941976659f1f6834077a1596bf53e6bdb10e90b
+[2/3] io_uring: fix poll file assign deadlock
+      commit: cce64ef01308b677a687d90927fc2b2e0e1cba67
+[3/3] io_uring: fix poll error reporting
+      commit: 7179c3ce3dbff646c55f7cd664a895f462f049e5
 
 Best regards,
 -- 

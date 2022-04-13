@@ -2,107 +2,111 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F9FF4FEC42
-	for <lists+io-uring@lfdr.de>; Wed, 13 Apr 2022 03:27:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8969F4FEC9D
+	for <lists+io-uring@lfdr.de>; Wed, 13 Apr 2022 03:54:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230171AbiDMB2q (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 12 Apr 2022 21:28:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45620 "EHLO
+        id S231624AbiDMB5N (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 12 Apr 2022 21:57:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229945AbiDMB2o (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 12 Apr 2022 21:28:44 -0400
-Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 142D8377EB
-        for <io-uring@vger.kernel.org>; Tue, 12 Apr 2022 18:26:24 -0700 (PDT)
-Received: by mail-pg1-x534.google.com with SMTP id t13so338399pgn.8
-        for <io-uring@vger.kernel.org>; Tue, 12 Apr 2022 18:26:24 -0700 (PDT)
+        with ESMTP id S231623AbiDMB5N (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 12 Apr 2022 21:57:13 -0400
+Received: from mail-yw1-x1134.google.com (mail-yw1-x1134.google.com [IPv6:2607:f8b0:4864:20::1134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88987101D9
+        for <io-uring@vger.kernel.org>; Tue, 12 Apr 2022 18:54:53 -0700 (PDT)
+Received: by mail-yw1-x1134.google.com with SMTP id 00721157ae682-2eba37104a2so7754387b3.0
+        for <io-uring@vger.kernel.org>; Tue, 12 Apr 2022 18:54:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :references:from:in-reply-to:content-transfer-encoding;
-        bh=kQf0pqlkyIN2VPnbRyTQkyx8KfLqZDPK38QYDmwlZ3s=;
-        b=2sT/9FogHDrn5GCCLwF+88y+y8HTuQXzIUKUXIggcscwpxQF0qG/jpvsP1bu8f1byT
-         B+UYICfVYXnhpAcnidOYG5G9UbCSlIZs5Z6m/IxbUoGe9IuXt7ht81NGb5yYOlSoQYHN
-         mhrPVqf9QFzzrigsGWkd3g+31hH3js7DkvpGfrGQuDn6nIXAByGMSXr+844Twp0yoROI
-         DP/Fkn4I/lOh5mU0EUq8R66MxmIci+YGvGH19bK0SoGAGEGM8RSHIYrCa5ckeadEMUIN
-         ermQKbF3TqoaffL2dlw9l86xwSsiqFROAY5kbkg/m1ImcPbrqIdJ+Ue67DusE7OHJ9v3
-         SNUg==
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gyK+tGWNxOJuJzppEib2DQHvN0JkXZ8FD8J9aYbMf6I=;
+        b=UllgAn666o261DEV7ZgNwRIT4RqRabRgXD+G9A8tnjP4qOrcBzuvTBOT19nJbxjvcz
+         5LELUkx7zC6VbmlOeZGaG+GaCQAIaRllZGmUNzkGqi7Uu9L9aj6ONyFGquG+9FMpBi5u
+         XnWwtzYpxHAIpByEWlYTLwPjmXI4d6DJ/5l4UYgTs/GxHDZKvFL5Sep95bHR/6crAmKU
+         AM6BKyD9wn8FkiQ4xgo1d11hMXE9IC+sP8kc/lieJtzAfy96PQTXl+Fub4ZjemXNjGaD
+         vxFuDZF0m+uCIxTHXQppRQ96eHJbgxObn9hTFjv7ejYbzkpyWz0gDLWnpaIKLZPaQKnL
+         RzmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=kQf0pqlkyIN2VPnbRyTQkyx8KfLqZDPK38QYDmwlZ3s=;
-        b=Xeyd30/WU1drQ+6qsfxlhU9qfG1bTHySop6b5KaPCF+paj52M+kujy3o6yqYMOgcW8
-         2yiTQz+Q64XBLT178upwo1vPqLVYdMBVk8U4hlR4i1vLuob1s7v69PrCb0r/vqpwwifJ
-         M0IH7zVC4XCLV6VSyYdcO0soJddralxqVSTt0DKPgesT4My610FQKgYVi8WaLGT3oo7w
-         QOwB8oXEAJI0uCEeUiFn5EFkLht23nFzFRGF3wkiP3m3qPH+Iox0kTL2Sj83m9VGMHsx
-         LmHSrgD6I0+1X7y1hGOOyYdibmurD1voYO0gg76yY7hakeyqJjN0lC7PtFHZh3OT+kFD
-         7DOg==
-X-Gm-Message-State: AOAM533DfTA1spPhquNSHvrS4xPhqFLgzouoMLEL5PlRF4hVCrXyBLo7
-        UvyT6AtzCKLwDKizKkMscVdp1g==
-X-Google-Smtp-Source: ABdhPJxubiYLkXRujz/RIeBzIUGCeyE2+hDTuZ9NPN7UdosoENU0UuZjgLU7FjxAY9xLK8ALqcPQbQ==
-X-Received: by 2002:a65:4188:0:b0:39d:2197:13b5 with SMTP id a8-20020a654188000000b0039d219713b5mr15082030pgq.368.1649813183528;
-        Tue, 12 Apr 2022 18:26:23 -0700 (PDT)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id s3-20020a056a00194300b004f6664d26eesm43294042pfk.88.2022.04.12.18.26.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Apr 2022 18:26:23 -0700 (PDT)
-Message-ID: <80ba97f9-3705-8fd6-8e7d-a934512d7ec0@kernel.dk>
-Date:   Tue, 12 Apr 2022 19:26:21 -0600
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gyK+tGWNxOJuJzppEib2DQHvN0JkXZ8FD8J9aYbMf6I=;
+        b=spxHY/0SUVFyYKBL2ghoScYQiJTXVDdEL7bI858zVvBPW3dk7C064r1bBzVvfXQsjA
+         eckNOlPsGjHr2mAKHHTAyphJ3r0IlLJXH6hYocwY2KyoEMYoGDbha9tjw73uFMY43OIu
+         9M2HVtusFmDbUivzY27i6+T44KBPOZUjWa2BdspUY1UuRIKi3GYzWsEJ9kTl3uqJ9aKz
+         bogSL6IVF20hYgm/87+UCdjFmpW7Gnm4cBC55cGAwR9XsHt1AnKB7At3znwMiWGXJSsK
+         uyZt976w5BbUspmWD85fN0JyWFrY022Ka3r6rCNd6uPsXg/eliJoZWXS64bgQ1mGQwzp
+         C9XQ==
+X-Gm-Message-State: AOAM5319caIivRtZWatncNaoAV6amT4sUyf+NIDKaXcZmM0PdzKw8oyI
+        oDx3XEg08NfhBclHvtexdC1miDzfIvzrdJvmDy6RXw==
+X-Google-Smtp-Source: ABdhPJwjuO0c397jUWUr68aKPwjqIlAgQjuQBYGyxfSeqE/B6EkoJoZ3dioG0f9MiDkXtG+kCgX83UYw26twuHZiR3s=
+X-Received: by 2002:a81:5409:0:b0:2eb:fea4:a240 with SMTP id
+ i9-20020a815409000000b002ebfea4a240mr13795146ywb.47.1649814892486; Tue, 12
+ Apr 2022 18:54:52 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
+References: <20220412202613.234896-1-axboe@kernel.dk> <e7631a6f-b614-da4c-4f47-571a7b0149fc@gmail.com>
+ <80ba97f9-3705-8fd6-8e7d-a934512d7ec0@kernel.dk>
+In-Reply-To: <80ba97f9-3705-8fd6-8e7d-a934512d7ec0@kernel.dk>
+From:   Eric Dumazet <edumazet@google.com>
+Date:   Tue, 12 Apr 2022 18:54:41 -0700
+Message-ID: <CANn89iJRCeB2HZyy49J60KReZKwrLysffy9cmLSw6+Wd4qJy-g@mail.gmail.com>
 Subject: Re: [PATCHSET 0/4] Add support for no-lock sockets
-Content-Language: en-US
-To:     Eric Dumazet <eric.dumazet@gmail.com>, io-uring@vger.kernel.org,
-        netdev@vger.kernel.org, edumazet@google.com
-References: <20220412202613.234896-1-axboe@kernel.dk>
- <e7631a6f-b614-da4c-4f47-571a7b0149fc@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <e7631a6f-b614-da4c-4f47-571a7b0149fc@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Eric Dumazet <eric.dumazet@gmail.com>, io-uring@vger.kernel.org,
+        netdev <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/12/22 6:40 PM, Eric Dumazet wrote:
-> 
-> On 4/12/22 13:26, Jens Axboe wrote:
->> Hi,
->>
->> If we accept a connection directly, eg without installing a file
->> descriptor for it, or if we use IORING_OP_SOCKET in direct mode, then
->> we have a socket for recv/send that we can fully serialize access to.
->>
->> With that in mind, we can feasibly skip locking on the socket for TCP
->> in that case. Some of the testing I've done has shown as much as 15%
->> of overhead in the lock_sock/release_sock part, with this change then
->> we see none.
->>
->> Comments welcome!
->>
-> How BH handlers (including TCP timers) and io_uring are going to run
-> safely ? Even if a tcp socket had one user, (private fd opened by a
-> non multi-threaded program), we would still to use the spinlock.
+On Tue, Apr 12, 2022 at 6:26 PM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 4/12/22 6:40 PM, Eric Dumazet wrote:
+> >
+> > On 4/12/22 13:26, Jens Axboe wrote:
+> >> Hi,
+> >>
+> >> If we accept a connection directly, eg without installing a file
+> >> descriptor for it, or if we use IORING_OP_SOCKET in direct mode, then
+> >> we have a socket for recv/send that we can fully serialize access to.
+> >>
+> >> With that in mind, we can feasibly skip locking on the socket for TCP
+> >> in that case. Some of the testing I've done has shown as much as 15%
+> >> of overhead in the lock_sock/release_sock part, with this change then
+> >> we see none.
+> >>
+> >> Comments welcome!
+> >>
+> > How BH handlers (including TCP timers) and io_uring are going to run
+> > safely ? Even if a tcp socket had one user, (private fd opened by a
+> > non multi-threaded program), we would still to use the spinlock.
+>
+> But we don't even hold the spinlock over lock_sock() and release_sock(),
+> just the mutex. And we do check for running eg the backlog on release,
+> which I believe is done safely and similarly in other places too.
 
-But we don't even hold the spinlock over lock_sock() and release_sock(),
-just the mutex. And we do check for running eg the backlog on release,
-which I believe is done safely and similarly in other places too.
+So lets say TCP stack receives a packet in BH handler... it proceeds
+using many tcp sock fields.
 
-> Maybe I am missing something, but so far your patches make no sense to
-> me.
+Then io_uring wants to read/write stuff from another cpu, while BH
+handler(s) is(are) not done yet,
+and will happily read/change many of the same fields
 
-It's probably more likely I'm missing something, since I don't know this
-area nearly as well as you. But it'd be great if you could be specific.
+Writing a 1 and a 0 in a bit field to ensure mutual exclusion is not
+going to work,
+even with the smp_rmb() and smp_wmb() you added (adding more costs for
+non io_uring users
+which already pay a high lock tax)
 
-
--- 
-Jens Axboe
-
+If we want to optimize the lock_sock()/release_sock() for common cases
+(a single user thread per TCP socket),
+then maybe we can play games with some kind of cmpxchg() games, but
+that would be a generic change.

@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D30E25030CA
-	for <lists+io-uring@lfdr.de>; Sat, 16 Apr 2022 01:09:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA6F550312F
+	for <lists+io-uring@lfdr.de>; Sat, 16 Apr 2022 01:09:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235014AbiDOVLn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        id S1344108AbiDOVLn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
         Fri, 15 Apr 2022 17:11:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44074 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344108AbiDOVLm (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 15 Apr 2022 17:11:42 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 062C28BE12
+        with ESMTP id S245670AbiDOVLn (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 15 Apr 2022 17:11:43 -0400
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDCA6AD103
         for <io-uring@vger.kernel.org>; Fri, 15 Apr 2022 14:09:13 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id k23so17136927ejd.3
-        for <io-uring@vger.kernel.org>; Fri, 15 Apr 2022 14:09:12 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id s25so10624489edi.13
+        for <io-uring@vger.kernel.org>; Fri, 15 Apr 2022 14:09:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=9qPI8Z6J5wThUH1MAIGvFkko5TEJKODd9DQFGoMGYZM=;
-        b=iqm8jBCmt0aGynl9/ZAfRsvpeAWKihpH9e9/WjanuRRoss9XJfCnuVcofo0zzBUVNC
-         vjW3wddNa3BpSLaUEin8hRkAT04+9OWz6QaIAMGuK4ioOWwXkwSeQJREgACaYOtS/EZh
-         9jbLmJ74UjpTDI8p/sisLQFoqe5HtL4meU3Ij5Snm3HWiS8uvq+hZrQ1SOOG3GsMaXtq
-         xsXOvDqE6rx/donh+XiUNWXCdgSAfdrjmYbBHMztwmzr2UDoYJM6trtS3OgXXq550ZAF
-         vzVRDyiEpni/4+aP+jVU1mnZ60bI3jCrD1k55atfV8Ryq02f2V+Nr7IMXZnXlcPe9BzS
-         Y9cw==
+        bh=eKjJ8fQrqV2IPByYLHFgnKn4p3KcHjXDSyza97rq/aw=;
+        b=VRE0R7cA1K0Z5zl/UiGGQ+DWbPB1nIzQO0Kftqt+XnzF2fJTt+08oIVEOennX4d2Uj
+         DNLX/xmsyIj/gwT0vnGBARu6cKl+Rz+mV064FpoRENabQ0yfXlAb8zDTxLkbZkymH52F
+         IkVljCBJmTZVvWr044ef00VoKfbPL0H9ymhuMrcLI2gV5j11mRd+ObMCi3SZU0ChSu+I
+         ciRjEnLZdMhVt6VnKhoK7vkgevl+pLUTuG3qHqL8Dxh6H9tUaC3j3/FfEKB7zUhFcVfj
+         gLYJFPmyvWwThxEAcZMtnbFN7V7e+DvM93zOE527mv5henVgVHYjGJdB0b+9p2RMhJbG
+         qkHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=9qPI8Z6J5wThUH1MAIGvFkko5TEJKODd9DQFGoMGYZM=;
-        b=cUr5Ppvn5PdvR9oxFXyjF/yyfE55o8YSPLsT8BD8EGOVnw/AAeSVcdBwjvmIMcpRAG
-         i3whP7TWO4OwvcV3SmeRn1mJ4+VC3sapbm253pHjcaNKjFr108HGPBLxcjNSv4KJqIXd
-         cdBvU3SDA9Gl8+X8XY4E4gMn+6aHBVztbPxllO7UwyTV8TKDyC+o2L/nMTF1OGzPjt/D
-         P/Sl5QiHB8j+nliszphRwbO0k28Iukwd5n1/1PiSp3iNm9hsWyuQ1t5QFrVVCrLjKoG5
-         LENmkyo41kyWPun3fNRdI9R915qVQi+0oLhg/FqgdL570AjSRtWDOWFoxmTmf9Jf4MAB
-         TC4A==
-X-Gm-Message-State: AOAM532gD36+SqzS/+Go6ot0sn36raSztFGwEx2iAmNaHxs1yIyqMEy7
-        jBmYqBbb4lbEwzmqlCjP3KVCHR/U7RU=
-X-Google-Smtp-Source: ABdhPJwSOMs4krjNdl87IAsvA3tnHjfyCERawjsmJRpzAnfbxd1o9s7qUMwEVXfIEE5qRrXKpLmnUA==
-X-Received: by 2002:a17:906:9b8f:b0:6e0:6bcb:fc59 with SMTP id dd15-20020a1709069b8f00b006e06bcbfc59mr682582ejc.624.1650056951454;
-        Fri, 15 Apr 2022 14:09:11 -0700 (PDT)
+        bh=eKjJ8fQrqV2IPByYLHFgnKn4p3KcHjXDSyza97rq/aw=;
+        b=PNszXqcIK2suCF7RNHXacrGvOLIdjsZrD0spNHFmHG6DOpKlFZeIqO4B+JRsIUeaHw
+         mPqdRHvJwqE+E9koefd8+EbC4FhZ0faqTKpom4D8wjbWm9QomgKYyXLZPSu0C4MZUtt1
+         84cny0aHl5y/bxa9QOOQyU6oM6G+rLnv1C7k2AjctmfB1MPCDWDolN8OG84DN5DM5pQO
+         q0efhUXBr02+VD/+PZyO59gpPnapLO8uvoNoOwS8yaIa+6yL2rHvlbZ3EuV6YXiq0YYq
+         JT4T+yv+0DoRorKXOHGvdH1bVfilcvPLoTrIeVZb0FM1BAe8mxOux8MQvp/JBR+Ie6q3
+         39JA==
+X-Gm-Message-State: AOAM5331YI+SNeqN5lrPW1Fm/kK/Yh5zR/is1owCsz5EjFXMbQNYVdtx
+        Zb6pg0/Sqig8Uz3fEEMClTTlgn2qzr0=
+X-Google-Smtp-Source: ABdhPJyZrF5OR9aM+kX+1r8g+7bXKSBpALnmA3jj9P8+tZmyEWzpyYFzUywZnjdDSBXy47lHSn/k+A==
+X-Received: by 2002:a05:6402:183:b0:410:fde:887a with SMTP id r3-20020a056402018300b004100fde887amr955701edv.243.1650056952360;
+        Fri, 15 Apr 2022 14:09:12 -0700 (PDT)
 Received: from 127.0.0.1localhost ([148.252.133.118])
-        by smtp.gmail.com with ESMTPSA id j10-20020aa7de8a000000b004215209b077sm2602938edv.37.2022.04.15.14.09.10
+        by smtp.gmail.com with ESMTPSA id j10-20020aa7de8a000000b004215209b077sm2602938edv.37.2022.04.15.14.09.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Apr 2022 14:09:11 -0700 (PDT)
+        Fri, 15 Apr 2022 14:09:12 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH 01/14] io_uring: clean poll tw PF_EXITING handling
-Date:   Fri, 15 Apr 2022 22:08:20 +0100
-Message-Id: <f0cc981af82a5b193658f8f44397eeb3bf838b7b.1650056133.git.asml.silence@gmail.com>
+Subject: [PATCH 02/14] io_uring: add a hepler for putting rsrc nodes
+Date:   Fri, 15 Apr 2022 22:08:21 +0100
+Message-Id: <865313e8a7eac34b6c01c047a4af6900eb6337ee.1650056133.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.35.2
 In-Reply-To: <cover.1650056133.git.asml.silence@gmail.com>
 References: <cover.1650056133.git.asml.silence@gmail.com>
@@ -68,28 +68,56 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-When we meet PF_EXITING in io_poll_check_events(), don't overcomplicate
-the code with io_poll_mark_cancelled() but just return -ECANCELED and
-the callers will deal with the rest.
+Add a simple helper to encapsulating dropping rsrc nodes references,
+it's cleaner and will help if we'd change rsrc refcounting or play with
+percpu_ref_put() [no]inlining.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/io_uring.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 99e6c14d2a47..4bc3b20b7f85 100644
+index 4bc3b20b7f85..b24d65480c08 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -5899,7 +5899,7 @@ static int io_poll_check_events(struct io_kiocb *req, bool locked)
+@@ -1327,6 +1327,11 @@ static inline void io_req_set_refcount(struct io_kiocb *req)
  
- 	/* req->task == current here, checking PF_EXITING is safe */
- 	if (unlikely(req->task->flags & PF_EXITING))
--		io_poll_mark_cancelled(req);
-+		return -ECANCELED;
+ #define IO_RSRC_REF_BATCH	100
  
- 	do {
- 		v = atomic_read(&req->poll_refs);
++static void io_rsrc_put_node(struct io_rsrc_node *node, int nr)
++{
++	percpu_ref_put_many(&node->refs, nr);
++}
++
+ static inline void io_req_put_rsrc_locked(struct io_kiocb *req,
+ 					  struct io_ring_ctx *ctx)
+ 	__must_hold(&ctx->uring_lock)
+@@ -1337,21 +1342,21 @@ static inline void io_req_put_rsrc_locked(struct io_kiocb *req,
+ 		if (node == ctx->rsrc_node)
+ 			ctx->rsrc_cached_refs++;
+ 		else
+-			percpu_ref_put(&node->refs);
++			io_rsrc_put_node(node, 1);
+ 	}
+ }
+ 
+ static inline void io_req_put_rsrc(struct io_kiocb *req, struct io_ring_ctx *ctx)
+ {
+ 	if (req->rsrc_node)
+-		percpu_ref_put(&req->rsrc_node->refs);
++		io_rsrc_put_node(req->rsrc_node, 1);
+ }
+ 
+ static __cold void io_rsrc_refs_drop(struct io_ring_ctx *ctx)
+ 	__must_hold(&ctx->uring_lock)
+ {
+ 	if (ctx->rsrc_cached_refs) {
+-		percpu_ref_put_many(&ctx->rsrc_node->refs, ctx->rsrc_cached_refs);
++		io_rsrc_put_node(ctx->rsrc_node, ctx->rsrc_cached_refs);
+ 		ctx->rsrc_cached_refs = 0;
+ 	}
+ }
 -- 
 2.35.2
 

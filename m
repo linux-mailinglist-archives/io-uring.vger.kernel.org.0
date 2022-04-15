@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EBB965030A5
-	for <lists+io-uring@lfdr.de>; Sat, 16 Apr 2022 01:09:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44F47503181
+	for <lists+io-uring@lfdr.de>; Sat, 16 Apr 2022 01:10:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349878AbiDOVLp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 15 Apr 2022 17:11:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44120 "EHLO
+        id S1350464AbiDOVLq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 15 Apr 2022 17:11:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345968AbiDOVLo (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 15 Apr 2022 17:11:44 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F091DC6EE7
-        for <io-uring@vger.kernel.org>; Fri, 15 Apr 2022 14:09:14 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id p15so17120708ejc.7
-        for <io-uring@vger.kernel.org>; Fri, 15 Apr 2022 14:09:14 -0700 (PDT)
+        with ESMTP id S245670AbiDOVLp (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 15 Apr 2022 17:11:45 -0400
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06A53DCE02
+        for <io-uring@vger.kernel.org>; Fri, 15 Apr 2022 14:09:16 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id b15so11086641edn.4
+        for <io-uring@vger.kernel.org>; Fri, 15 Apr 2022 14:09:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=JCRY0ldDYrWUs1x0cqLnyRmUU2ff3ZmuJlCI/F0mvUg=;
-        b=fKUt1ooVVcg8thk1xQj3spk4D6DkjjTaw2ueJDo5dSk3dwVvzEqidpLBg9QLjdLPMQ
-         TJS1WslSuk7oQaQQHr6GIIFx6nXd5yL0tdAFv0hJ6Ry8myI3xIKg/3EybJA6zKYScCtJ
-         zhfXTErxsPN+pkVxY13inuWh3ST9RnXJ0S4GGRBTouI2TWWgw95OJgMvNACeGuCqhwb6
-         73Iv0Jad2/nKg6fhDo9AWUdWYxVwvDf2xp9kxjyQrL9o8no3IFQou65gkqAWsBTsmGQM
-         s52Yu3BYWt85YTt9H8Mr5JRc6gN3K8yTTe9hZ4aJ8wfJGgHzMATtHYsEjlXUISVrZtpn
-         L9/w==
+        bh=F5/81X/En2x9Z2x66nUtMeT8QqY0522mstfOqT3H19Q=;
+        b=YNdqHuxvDSsoD4+Dq3LgVMxa1H09LAuHtQyz6/jm1ch8wjsDnMsMFbhxh1FQro5Yud
+         d3D2mk+KX/+YeruAR7Ji78Lrx3fyqhL5L2hMK1nE/4GaXXn2CV/A9E7WGws/mcDYx9Ih
+         DK5lZ5/gpBvpN8joBg1gt054sYU1hHf4z0Ka/ysROUKmIsNy7gZ/qJ+iCaY5N5tdSPVb
+         ZwCnu7wgQMWmPnanOf1xZvhu9i1vcSitudVBRYcxOjgf2HTs1zsklLZ9PasMSEM1cGsg
+         Le9T4aYky+qQhhz//wv7U3cgpmIap1rRxyTSMXYU8RUzaZq9LmVOhciGIb4gnOPaz5Yi
+         b3Hg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=JCRY0ldDYrWUs1x0cqLnyRmUU2ff3ZmuJlCI/F0mvUg=;
-        b=chOj+6Q0tha2LGvWaymgREH6nOvb6pBxBLzUJDE4Rx7/VODxoC8i9AComsHKsVIA0q
-         PRhBNn43APBAg+3dzhWpnkVDqavh4+o8MHoMklJO7illTABWL4KFDOZQFmRfbN1ujUCV
-         oXzb5ahNWgFNh+3+ozI4y6gxwTdn0AS2a8oQhEuOW52DzU8HcwjAGC4x7bgRcpfjkUUo
-         eWUODfY5BqizfRq67bWRRUvXzGBG02s3N2ihvKgptMaFNCGPao9zOWrM+5vhTEPXIVtr
-         5VFzCvOac4cafJsp5XJCtyrTsINje4I2rVHwm9zlUgBxUvNtsJatuychcjKRoHnwreLv
-         HDvg==
-X-Gm-Message-State: AOAM533UewYkB/pQ3ZaLfuoniD0cOfpezMJaKBeEpwaWwQK9D59qNrCp
-        5vrZ3aOwdT3e3rz98dHPRLohuggv90Q=
-X-Google-Smtp-Source: ABdhPJzItC2qowM01zhNiasK3K6/luZpOloumFJZM11xfs8zPIyIqJ+4Jcro7gquwZ4SAMZ5fLuYEg==
-X-Received: by 2002:a17:907:9493:b0:6ef:6ade:92da with SMTP id dm19-20020a170907949300b006ef6ade92damr675496ejc.630.1650056953350;
-        Fri, 15 Apr 2022 14:09:13 -0700 (PDT)
+        bh=F5/81X/En2x9Z2x66nUtMeT8QqY0522mstfOqT3H19Q=;
+        b=6vjT1xTaFud9a0ED0pgG1mWk1A0uc+WpjSJym7gI4mNpDtyoq8oDWv8EuCxj03FVsP
+         oa7aXJUbqE0UrbWL2CcwKPVlpVPh2ouTCWZITnak1kiKHYxbYn5WtRz3beMGo5FmEvPc
+         bvdnG58IrYGthVRl787bPUZ/1ItqNcg30ry3GML8O6CegYKpDjjEeM39aI7bAK+kpaAG
+         Cw4+L+iwuEYsqISUak/skrgNRe8zKO7TND98zVH0483piAFI0FHfXAHWaaOKfgM6tl5o
+         /uJAmxYr9EP/lTNnOYi2en4XtRn6bcAmAhBPNRw5gJYOXTufon187I9FzsrKHzTVQwKd
+         +3MA==
+X-Gm-Message-State: AOAM533Ohaa9J8EbxUbJIodzvrd3rGdAJeTqvhC2baEaLdpxTlCAb3Bw
+        dI/8aIAsP5/y/KhS7fgeUnA+mOVKCsc=
+X-Google-Smtp-Source: ABdhPJxZj6Fvs2dut7kQXtqBpAXzo1nuy0mjPETyNxx8YkSgS3kgH/56229VBQSwtoptimGTzO2jgg==
+X-Received: by 2002:a05:6402:681:b0:419:dbec:9909 with SMTP id f1-20020a056402068100b00419dbec9909mr982378edy.310.1650056954398;
+        Fri, 15 Apr 2022 14:09:14 -0700 (PDT)
 Received: from 127.0.0.1localhost ([148.252.133.118])
-        by smtp.gmail.com with ESMTPSA id j10-20020aa7de8a000000b004215209b077sm2602938edv.37.2022.04.15.14.09.12
+        by smtp.gmail.com with ESMTPSA id j10-20020aa7de8a000000b004215209b077sm2602938edv.37.2022.04.15.14.09.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Apr 2022 14:09:13 -0700 (PDT)
+        Fri, 15 Apr 2022 14:09:14 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH 03/14] io_uring: minor refactoring for some tw handlers
-Date:   Fri, 15 Apr 2022 22:08:22 +0100
-Message-Id: <7798327b684b7015f7e4300420142ddfcd317297.1650056133.git.asml.silence@gmail.com>
+Subject: [PATCH 04/14] io_uring: kill io_put_req_deferred()
+Date:   Fri, 15 Apr 2022 22:08:23 +0100
+Message-Id: <10672a538774ac8986bee6468d960527af59169d.1650056133.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.35.2
 In-Reply-To: <cover.1650056133.git.asml.silence@gmail.com>
 References: <cover.1650056133.git.asml.silence@gmail.com>
@@ -68,58 +68,127 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Get rid of some useless local variables
+We have several spots where a call to io_fill_cqe_req() is immediately
+followed by io_put_req_deferred(). Replace them with
+__io_req_complete_post() and get rid of io_put_req_deferred() and
+io_fill_cqe_req().
+
+> size ./fs/io_uring.o
+   text    data     bss     dec     hex filename
+  86942   13734       8  100684   1894c ./fs/io_uring.o
+> size ./fs/io_uring.o
+   text    data     bss     dec     hex filename
+  86438   13654       8  100100   18704 ./fs/io_uring.o
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 14 +++++---------
- 1 file changed, 5 insertions(+), 9 deletions(-)
+ fs/io_uring.c | 42 ++++++++----------------------------------
+ 1 file changed, 8 insertions(+), 34 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index b24d65480c08..986a2d640702 100644
+index 986a2d640702..92d7c7a0d234 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -1734,7 +1734,6 @@ static inline void io_req_add_compl_list(struct io_kiocb *req)
+@@ -1188,10 +1188,8 @@ static void io_uring_try_cancel_requests(struct io_ring_ctx *ctx,
+ 					 bool cancel_all);
+ static void io_uring_cancel_generic(bool cancel_all, struct io_sq_data *sqd);
  
- static void io_queue_async_work(struct io_kiocb *req, bool *dont_use)
- {
--	struct io_ring_ctx *ctx = req->ctx;
- 	struct io_kiocb *link = io_prep_linked_timeout(req);
- 	struct io_uring_task *tctx = req->task->io_uring;
- 
-@@ -1754,8 +1753,9 @@ static void io_queue_async_work(struct io_kiocb *req, bool *dont_use)
- 	if (WARN_ON_ONCE(!same_thread_group(req->task, current)))
- 		req->work.flags |= IO_WQ_WORK_CANCEL;
- 
--	trace_io_uring_queue_async_work(ctx, req, req->cqe.user_data, req->opcode, req->flags,
--					&req->work, io_wq_is_hashed(&req->work));
-+	trace_io_uring_queue_async_work(req->ctx, req, req->cqe.user_data,
-+					req->opcode, req->flags, &req->work,
-+					io_wq_is_hashed(&req->work));
- 	io_wq_enqueue(tctx->io_wq, &req->work);
- 	if (link)
- 		io_queue_linked_timeout(link);
-@@ -2647,18 +2647,14 @@ static void io_req_task_work_add(struct io_kiocb *req, bool priority)
- 
- static void io_req_task_cancel(struct io_kiocb *req, bool *locked)
- {
--	struct io_ring_ctx *ctx = req->ctx;
+-static void io_fill_cqe_req(struct io_kiocb *req, s32 res, u32 cflags);
 -
- 	/* not needed for normal modes, but SQPOLL depends on it */
--	io_tw_lock(ctx, locked);
-+	io_tw_lock(req->ctx, locked);
- 	io_req_complete_failed(req, req->cqe.res);
++static void __io_req_complete_post(struct io_kiocb *req, s32 res, u32 cflags);
+ static void io_put_req(struct io_kiocb *req);
+-static void io_put_req_deferred(struct io_kiocb *req);
+ static void io_dismantle_req(struct io_kiocb *req);
+ static void io_queue_linked_timeout(struct io_kiocb *req);
+ static int __io_register_rsrc_update(struct io_ring_ctx *ctx, unsigned type,
+@@ -1773,8 +1771,7 @@ static void io_kill_timeout(struct io_kiocb *req, int status)
+ 		atomic_set(&req->ctx->cq_timeouts,
+ 			atomic_read(&req->ctx->cq_timeouts) + 1);
+ 		list_del_init(&req->timeout.list);
+-		io_fill_cqe_req(req, status, 0);
+-		io_put_req_deferred(req);
++		__io_req_complete_post(req, status, 0);
+ 	}
  }
  
- static void io_req_task_submit(struct io_kiocb *req, bool *locked)
- {
--	struct io_ring_ctx *ctx = req->ctx;
+@@ -2137,12 +2134,6 @@ static inline bool __io_fill_cqe_req(struct io_kiocb *req, s32 res, u32 cflags)
+ 	return __io_fill_cqe(req->ctx, req->cqe.user_data, res, cflags);
+ }
+ 
+-static noinline void io_fill_cqe_req(struct io_kiocb *req, s32 res, u32 cflags)
+-{
+-	if (!(req->flags & REQ_F_CQE_SKIP))
+-		__io_fill_cqe_req(req, res, cflags);
+-}
 -
--	io_tw_lock(ctx, locked);
-+	io_tw_lock(req->ctx, locked);
- 	/* req->task == current here, checking PF_EXITING is safe */
- 	if (likely(!(req->task->flags & PF_EXITING)))
- 		__io_queue_sqe(req);
+ static noinline bool io_fill_cqe_aux(struct io_ring_ctx *ctx, u64 user_data,
+ 				     s32 res, u32 cflags)
+ {
+@@ -2376,9 +2367,7 @@ static bool io_kill_linked_timeout(struct io_kiocb *req)
+ 		link->timeout.head = NULL;
+ 		if (hrtimer_try_to_cancel(&io->timer) != -1) {
+ 			list_del(&link->timeout.list);
+-			/* leave REQ_F_CQE_SKIP to io_fill_cqe_req */
+-			io_fill_cqe_req(link, -ECANCELED, 0);
+-			io_put_req_deferred(link);
++			__io_req_complete_post(link, -ECANCELED, 0);
+ 			return true;
+ 		}
+ 	}
+@@ -2404,11 +2393,11 @@ static void io_fail_links(struct io_kiocb *req)
+ 		trace_io_uring_fail_link(req->ctx, req, req->cqe.user_data,
+ 					req->opcode, link);
+ 
+-		if (!ignore_cqes) {
++		if (ignore_cqes)
++			link->flags |= REQ_F_CQE_SKIP;
++		else
+ 			link->flags &= ~REQ_F_CQE_SKIP;
+-			io_fill_cqe_req(link, res, 0);
+-		}
+-		io_put_req_deferred(link);
++		__io_req_complete_post(link, res, 0);
+ 		link = nxt;
+ 	}
+ }
+@@ -2424,9 +2413,7 @@ static bool io_disarm_next(struct io_kiocb *req)
+ 		req->flags &= ~REQ_F_ARM_LTIMEOUT;
+ 		if (link && link->opcode == IORING_OP_LINK_TIMEOUT) {
+ 			io_remove_next_linked(req);
+-			/* leave REQ_F_CQE_SKIP to io_fill_cqe_req */
+-			io_fill_cqe_req(link, -ECANCELED, 0);
+-			io_put_req_deferred(link);
++			__io_req_complete_post(link, -ECANCELED, 0);
+ 			posted = true;
+ 		}
+ 	} else if (req->flags & REQ_F_LINK_TIMEOUT) {
+@@ -2695,11 +2682,6 @@ static void io_free_req(struct io_kiocb *req)
+ 	__io_free_req(req);
+ }
+ 
+-static void io_free_req_work(struct io_kiocb *req, bool *locked)
+-{
+-	io_free_req(req);
+-}
+-
+ static void io_free_batch_list(struct io_ring_ctx *ctx,
+ 				struct io_wq_work_node *node)
+ 	__must_hold(&ctx->uring_lock)
+@@ -2799,14 +2781,6 @@ static inline void io_put_req(struct io_kiocb *req)
+ 		io_free_req(req);
+ }
+ 
+-static inline void io_put_req_deferred(struct io_kiocb *req)
+-{
+-	if (req_ref_put_and_test(req)) {
+-		req->io_task_work.func = io_free_req_work;
+-		io_req_task_work_add(req, false);
+-	}
+-}
+-
+ static unsigned io_cqring_events(struct io_ring_ctx *ctx)
+ {
+ 	/* See comment at the top of this file */
 -- 
 2.35.2
 

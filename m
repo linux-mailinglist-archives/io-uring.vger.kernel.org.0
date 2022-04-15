@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E803502B01
+	by mail.lfdr.de (Postfix) with ESMTP id 46718502AFF
 	for <lists+io-uring@lfdr.de>; Fri, 15 Apr 2022 15:35:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354021AbiDONiI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 15 Apr 2022 09:38:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44272 "EHLO
+        id S240643AbiDONiG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 15 Apr 2022 09:38:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354016AbiDONfw (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 15 Apr 2022 09:35:52 -0400
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35B8C673CC
-        for <io-uring@vger.kernel.org>; Fri, 15 Apr 2022 06:33:24 -0700 (PDT)
-Received: by mail-pj1-x1029.google.com with SMTP id a16-20020a17090a6d9000b001c7d6c1bb13so8354802pjk.4
-        for <io-uring@vger.kernel.org>; Fri, 15 Apr 2022 06:33:24 -0700 (PDT)
+        with ESMTP id S1354021AbiDONfy (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 15 Apr 2022 09:35:54 -0400
+Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93EE8674D6
+        for <io-uring@vger.kernel.org>; Fri, 15 Apr 2022 06:33:25 -0700 (PDT)
+Received: by mail-pg1-x52c.google.com with SMTP id bg9so7280023pgb.9
+        for <io-uring@vger.kernel.org>; Fri, 15 Apr 2022 06:33:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=CMfeq2y50ep3iWgYcSAIfpUtrAVsbY3v5bbfxzN6s+Y=;
-        b=bnjU6z84y8rPth4BFSpl2jw3GvsBpM1xJ2NXWaTvW4Fs0319i815KSDVYKK1xvrqjo
-         QyocYWR5Zbto7nWt20+0M8iZEwGUh5erY+VPlsGDZfN+bh4dUuIKBITJuAbW4RHj+lVG
-         F8auWv0ZxUcNBiVojIBXXK2afqIJ0EGRSVf1dJku1jcquJjd6Sqip6FTanVgeQmqRolM
-         FkIYYbSYMFptle3uMdxrZxgWmAPqd8JISSYIEzci8w8vaRON9k3sWm0AWgQ9tCAp1EJE
-         HnxIPaivD8yXXWDsWO5zz6RpF2T0A1LkdyqonqJfBPqWKXX0qJxV5xMSYx1KjpmVF1zg
-         tj+w==
+        bh=L6FUFvPLmMwd/Xoznj6/mDk4ffdpoBfXfQeWLgt9omk=;
+        b=183PtIdpPfytJmjsFqQ3yAFvtNK6tvxej7XTY7T6mKMIx8LJbpzPZQdnolPUNKf/n7
+         8JCiUsY3WbU/4/rwnA1q+rZDUWmLUZwCADN0QUPblzlt2RdumZ3b7oqBKPiup4o2EX1U
+         XL2uHrL8aIkjuN5P6YU7cFiMRJNMrK2N1riarVzZGCE+vUXrWIR6SKEq4CmCyayqGm2/
+         cc2ZyqXgapqMnCo8yda2gP0MKwLbs4WxLI4z2gB2saYz6Gp7Rlg2AvyUax5D+TDjp1R9
+         fPIESdpKgwiiCzhg4UlQeisqAkkMfNq0oeOQinjmbvLqccWZngQFK+8C3NZu/If6GYHk
+         FE/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=CMfeq2y50ep3iWgYcSAIfpUtrAVsbY3v5bbfxzN6s+Y=;
-        b=QGVFW0uV2QXoof7v826bndd9ymNJIZu7Y639tvJ4Djzi+la8U3Nul83dajjJd8djlH
-         FZaSpMmjl4KnS3eLh25ZfzPwJtYoWBe1S5ZIcd7xWK2+lAf1KOJcaHMWsL79UCALo2kC
-         YQs8r9n8Q1a+lNzsyfRje4VLcbqEFw6cXFyT9R/zfYVD8nGHkigGQu6AOTultRFboYPT
-         066z1shzkqY5P611WH7X17nqoHRZRH2R4fhLwVsnGb1/7OqKcJqHy0I/skRPIfbmBg80
-         KStYMrNiCcTmJ4JOtLokwEEYsIEds8wxLKKmFhsTEHUAEKefnfSTdIHBiQ1iwln4s92u
-         TqyA==
-X-Gm-Message-State: AOAM531HFli8aCl0YoO8+UF2AxzcsIQeUpEMhqWNieV75MDQCVk+JntY
-        CznFr9Ov9mSrrb0sKoGECe5HAr3Ej8y4lA==
-X-Google-Smtp-Source: ABdhPJx5FNGE52gbMZ4jLeTnxdjvxOmeG+Ta0/KUTNCRBU6+Z/4n+5imV7s8XzXsc1EsCTTCxkDvgA==
-X-Received: by 2002:a17:90a:e7c6:b0:1c7:443:3fdf with SMTP id kb6-20020a17090ae7c600b001c704433fdfmr4269514pjb.3.1650029603425;
-        Fri, 15 Apr 2022 06:33:23 -0700 (PDT)
+        bh=L6FUFvPLmMwd/Xoznj6/mDk4ffdpoBfXfQeWLgt9omk=;
+        b=RipS6dGK9VLL2H6Q8omJxwqs4DCpGCYW4piwdDVUqPgLLrDRP0XR2Sd6sVFO0vODMi
+         qM9EpaNYv6HfjD/wwq5q4FtiEPvG6atgwhkPXFxMvfUG1Vo2ZOSgSfwidU3pmTLCKk+v
+         yFxcu+1PCnnS38F8qLRT8xFHg+Lupk68+FZaXUDQUcxwyfLWxHqCXX2BmBC/WulZ6rKJ
+         bjorSAai+F0vPhF/QcYy2TWQV+X1Ez3EfkEItWLvVh+Z21QtFTLOa+aQUbOUe9fhj9Z4
+         58blNMv1J01LR6vHupw7bPA8iKt7meBGLdz5x6DZbQdvKZYBCxT0XY8Dyu8pZAlcfSs7
+         8MnA==
+X-Gm-Message-State: AOAM533Vsu7iRV0W98wKj8mn+cPsXTKC5+nUTlSLU5uVifCGT33S2LQ6
+        +Ws8Cz6BwUbPevE6+ti94YXYYLbHQbQ89w==
+X-Google-Smtp-Source: ABdhPJwclhFwqeOjhH9D2TRMqCzLNdhaBjIw5zwEh8KhXBVb6JXyTbzlev74ns4Z6X2ZJ8k01RiRzA==
+X-Received: by 2002:aa7:920d:0:b0:505:c9d4:5819 with SMTP id 13-20020aa7920d000000b00505c9d45819mr8947068pfo.15.1650029604719;
+        Fri, 15 Apr 2022 06:33:24 -0700 (PDT)
 Received: from localhost.localdomain (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id n19-20020a635c53000000b0039dc2ea9876sm4576604pgm.49.2022.04.15.06.33.22
+        by smtp.gmail.com with ESMTPSA id n19-20020a635c53000000b0039dc2ea9876sm4576604pgm.49.2022.04.15.06.33.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Apr 2022 06:33:22 -0700 (PDT)
+        Fri, 15 Apr 2022 06:33:24 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 1/5] io_uring: remove dead 'poll_only' argument to io_poll_cancel()
-Date:   Fri, 15 Apr 2022 07:33:15 -0600
-Message-Id: <20220415133319.75077-2-axboe@kernel.dk>
+Subject: [PATCH 2/5] io_uring: pass in struct io_cancel_data consistently
+Date:   Fri, 15 Apr 2022 07:33:16 -0600
+Message-Id: <20220415133319.75077-3-axboe@kernel.dk>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220415133319.75077-1-axboe@kernel.dk>
 References: <20220415133319.75077-1-axboe@kernel.dk>
@@ -67,41 +67,144 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-It's only called from one location, and it always passes in 'false'.
-Kill the argument, and just pass in 'false' to io_poll_find().
+In preparation for being able to not only key cancel off the user_data,
+pass in the io_cancel_data struct.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/io_uring.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ fs/io_uring.c | 48 ++++++++++++++++++++++++++++--------------------
+ 1 file changed, 28 insertions(+), 20 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index d3fc0c5b4e82..878d30a31606 100644
+index 878d30a31606..a45ab678a455 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -6316,11 +6316,10 @@ static bool io_poll_disarm(struct io_kiocb *req)
+@@ -6316,10 +6316,15 @@ static bool io_poll_disarm(struct io_kiocb *req)
  	return true;
  }
  
--static int io_poll_cancel(struct io_ring_ctx *ctx, __u64 sqe_addr,
--			  bool poll_only)
-+static int io_poll_cancel(struct io_ring_ctx *ctx, __u64 sqe_addr)
+-static int io_poll_cancel(struct io_ring_ctx *ctx, __u64 sqe_addr)
++struct io_cancel_data {
++	struct io_ring_ctx *ctx;
++	u64 user_data;
++};
++
++static int io_poll_cancel(struct io_ring_ctx *ctx, struct io_cancel_data *cd)
  	__must_hold(&ctx->completion_lock)
  {
--	struct io_kiocb *req = io_poll_find(ctx, sqe_addr, poll_only);
-+	struct io_kiocb *req = io_poll_find(ctx, sqe_addr, false);
+-	struct io_kiocb *req = io_poll_find(ctx, sqe_addr, false);
++	struct io_kiocb *req = io_poll_find(ctx, cd->user_data, false);
  
  	if (!req)
  		return -ENOENT;
-@@ -6808,7 +6807,7 @@ static int io_try_cancel_userdata(struct io_kiocb *req, u64 sqe_addr)
+@@ -6752,11 +6757,6 @@ static int io_timeout(struct io_kiocb *req, unsigned int issue_flags)
+ 	return 0;
+ }
+ 
+-struct io_cancel_data {
+-	struct io_ring_ctx *ctx;
+-	u64 user_data;
+-};
+-
+ static bool io_cancel_cb(struct io_wq_work *work, void *data)
+ {
+ 	struct io_kiocb *req = container_of(work, struct io_kiocb, work);
+@@ -6765,17 +6765,16 @@ static bool io_cancel_cb(struct io_wq_work *work, void *data)
+ 	return req->ctx == cd->ctx && req->cqe.user_data == cd->user_data;
+ }
+ 
+-static int io_async_cancel_one(struct io_uring_task *tctx, u64 user_data,
+-			       struct io_ring_ctx *ctx)
++static int io_async_cancel_one(struct io_uring_task *tctx,
++			       struct io_cancel_data *cd)
+ {
+-	struct io_cancel_data data = { .ctx = ctx, .user_data = user_data, };
+ 	enum io_wq_cancel cancel_ret;
+ 	int ret = 0;
+ 
+ 	if (!tctx || !tctx->io_wq)
+ 		return -ENOENT;
+ 
+-	cancel_ret = io_wq_cancel_cb(tctx->io_wq, io_cancel_cb, &data, false);
++	cancel_ret = io_wq_cancel_cb(tctx->io_wq, io_cancel_cb, cd, false);
+ 	switch (cancel_ret) {
+ 	case IO_WQ_CANCEL_OK:
+ 		ret = 0;
+@@ -6791,14 +6790,14 @@ static int io_async_cancel_one(struct io_uring_task *tctx, u64 user_data,
+ 	return ret;
+ }
+ 
+-static int io_try_cancel_userdata(struct io_kiocb *req, u64 sqe_addr)
++static int io_try_cancel(struct io_kiocb *req, struct io_cancel_data *cd)
+ {
+ 	struct io_ring_ctx *ctx = req->ctx;
+ 	int ret;
+ 
+ 	WARN_ON_ONCE(!io_wq_current_is_worker() && req->task != current);
+ 
+-	ret = io_async_cancel_one(req->task->io_uring, sqe_addr, ctx);
++	ret = io_async_cancel_one(req->task->io_uring, cd);
+ 	/*
+ 	 * Fall-through even for -EALREADY, as we may have poll armed
+ 	 * that need unarming.
+@@ -6807,12 +6806,12 @@ static int io_try_cancel_userdata(struct io_kiocb *req, u64 sqe_addr)
  		return 0;
  
  	spin_lock(&ctx->completion_lock);
--	ret = io_poll_cancel(ctx, sqe_addr, false);
-+	ret = io_poll_cancel(ctx, sqe_addr);
+-	ret = io_poll_cancel(ctx, sqe_addr);
++	ret = io_poll_cancel(ctx, cd);
  	if (ret != -ENOENT)
  		goto out;
  
+ 	spin_lock_irq(&ctx->timeout_lock);
+-	ret = io_timeout_cancel(ctx, sqe_addr);
++	ret = io_timeout_cancel(ctx, cd->user_data);
+ 	spin_unlock_irq(&ctx->timeout_lock);
+ out:
+ 	spin_unlock(&ctx->completion_lock);
+@@ -6837,11 +6836,14 @@ static int io_async_cancel_prep(struct io_kiocb *req,
+ static int io_async_cancel(struct io_kiocb *req, unsigned int issue_flags)
+ {
+ 	struct io_ring_ctx *ctx = req->ctx;
+-	u64 sqe_addr = req->cancel.addr;
++	struct io_cancel_data cd = {
++		.ctx		= ctx,
++		.user_data	= req->cancel.addr,
++	};
+ 	struct io_tctx_node *node;
+ 	int ret;
+ 
+-	ret = io_try_cancel_userdata(req, sqe_addr);
++	ret = io_try_cancel(req, &cd);
+ 	if (ret != -ENOENT)
+ 		goto done;
+ 
+@@ -6851,7 +6853,7 @@ static int io_async_cancel(struct io_kiocb *req, unsigned int issue_flags)
+ 	list_for_each_entry(node, &ctx->tctx_list, ctx_node) {
+ 		struct io_uring_task *tctx = node->task->io_uring;
+ 
+-		ret = io_async_cancel_one(tctx, req->cancel.addr, ctx);
++		ret = io_async_cancel_one(tctx, &cd);
+ 		if (ret != -ENOENT)
+ 			break;
+ 	}
+@@ -7455,8 +7457,14 @@ static void io_req_task_link_timeout(struct io_kiocb *req, bool *locked)
+ 	int ret = -ENOENT;
+ 
+ 	if (prev) {
+-		if (!(req->task->flags & PF_EXITING))
+-			ret = io_try_cancel_userdata(req, prev->cqe.user_data);
++		if (!(req->task->flags & PF_EXITING)) {
++			struct io_cancel_data cd = {
++				.ctx		= req->ctx,
++				.user_data	= prev->cqe.user_data,
++			};
++
++			ret = io_try_cancel(req, &cd);
++		}
+ 		io_req_complete_post(req, ret ?: -ETIME, 0);
+ 		io_put_req(prev);
+ 	} else {
 -- 
 2.35.1
 

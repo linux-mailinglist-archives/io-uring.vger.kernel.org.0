@@ -2,102 +2,131 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 60E9D502648
-	for <lists+io-uring@lfdr.de>; Fri, 15 Apr 2022 09:36:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F562502AE5
+	for <lists+io-uring@lfdr.de>; Fri, 15 Apr 2022 15:24:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350272AbiDOHim (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 15 Apr 2022 03:38:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53286 "EHLO
+        id S234082AbiDON1N (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 15 Apr 2022 09:27:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37470 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242018AbiDOHil (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 15 Apr 2022 03:38:41 -0400
-Received: from mail-vs1-xe43.google.com (mail-vs1-xe43.google.com [IPv6:2607:f8b0:4864:20::e43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3465747565
-        for <io-uring@vger.kernel.org>; Fri, 15 Apr 2022 00:36:14 -0700 (PDT)
-Received: by mail-vs1-xe43.google.com with SMTP id a127so6499037vsa.3
-        for <io-uring@vger.kernel.org>; Fri, 15 Apr 2022 00:36:14 -0700 (PDT)
+        with ESMTP id S229982AbiDON1M (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 15 Apr 2022 09:27:12 -0400
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 565C6186D3
+        for <io-uring@vger.kernel.org>; Fri, 15 Apr 2022 06:24:43 -0700 (PDT)
+Received: by mail-pj1-x102e.google.com with SMTP id 2so7637085pjw.2
+        for <io-uring@vger.kernel.org>; Fri, 15 Apr 2022 06:24:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=KeMi8W+p20zdR41YZoRj2EapY7imNsLYkAgQIQsIzqY=;
-        b=KKGG111bGlLoLbtJ08SrbAwxsCbag1Sj4zim9cEcdNgK+K7O0bbfJu1ham4uzSqKZD
-         6GQh6jTTba5beq8oHPnwJYmmSjLvS6xuWvnXJNidpz/vyLxh96OMg+kocoz6YJG41aPQ
-         RtVgQUWjDTWWkIZRB3TqGaiXy+MV4J4X1Cxgy7L98nsY2v1bIjX2JZF0qcnh6iWbfGbS
-         /qOzfPK3GPcx1uDzUvuhIZrm2cDQjm7NYnX/UfkvPZmcTelWW6FVlsWwpMuQqTYxb9a3
-         OlG2R9zADByOFrq0C2HHYdDLo4CWvGMQbgpfGi4zANCv5M/JbzDS8Mp2bAJqrAeVyR/Z
-         7HVw==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:from:subject:to:cc
+         :content-language:content-transfer-encoding;
+        bh=/0ucfi1fHgao2WEXOWgxYBbPcaoI6nX+P2dzyIICVow=;
+        b=6vmDjKAzRV1wwdtQHqz4/cBNku64uAEECcAhgz06JHEksA0Z0WY9xq7AnnUH/Dg4F2
+         OX99fZNnozbcDeAHN2VdY/axnuqr/DomF4slicOi7tKZ4pPs1rkRfaZzDNDqW4fLl7M9
+         JJQKRu6J5osgIRC21fplPq7wQnBPf1WhKbVAsU6UAKq8nqX3+51OXQ78XokRWy0thVgd
+         js/SryqzKW8vpGtKYm08J1EEgGCoxISplrGeKyFnUsWpPDI5Yd3g/KoPWlh6IcSkrJL6
+         /lty/G/XTidrHjSiubujRYkiM9yP6NcLSGHVk3VPsmFfS0o8GEsnEsU8hDGR9RA/Ic8T
+         wZFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=KeMi8W+p20zdR41YZoRj2EapY7imNsLYkAgQIQsIzqY=;
-        b=RGKANrSFwVvlfUz3ZZmm/2bQgaDW51E1kE7RCDBXdiCFcr7G9C1QE3KSZMqUV4s1kx
-         nKaizKKgShsTfTXWoRM0naiEwgP7884lK9NItdUY28/3/gKLB6s9jMF7NtFF7yDH4MJl
-         daf7xu3v+7PmGL+4xEeDYAjYZJHde3Gpqy5S53D9YKyUFMA5oXbDVeVWcQRf/6I4s/fO
-         rtgOTWZdmev1cEB2BhgbKqA77qfCnlcswf8tHJDDbEbfb+6TBJZ3ct8muT/9bFPRMA0P
-         /FNumAW3T4kp12aWLBqybtebhJqTvDF7nMQRz7bButVSbEVPuJp0JmUVB+jf8ztJ7h6c
-         wiXQ==
-X-Gm-Message-State: AOAM533PAAgHoLv2y9J3U8IlsjL3jW26zFhmimoKLP0IaLPgmkYpf3rH
-        A6YeYYpKlKy3dtNU/HdyBnW/Xy6gQNq0qyYwl4I=
-X-Google-Smtp-Source: ABdhPJz+OMuew99L/sf8+WEj0anXgdzigE1x+1tEKCoqDua7UZoe0xqy/unJte2seOpm/fCkYmhLvJVBbNKsnDZbyzA=
-X-Received: by 2002:a67:dc82:0:b0:325:58cc:51c7 with SMTP id
- g2-20020a67dc82000000b0032558cc51c7mr2709059vsk.63.1650008173225; Fri, 15 Apr
- 2022 00:36:13 -0700 (PDT)
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:from
+         :subject:to:cc:content-language:content-transfer-encoding;
+        bh=/0ucfi1fHgao2WEXOWgxYBbPcaoI6nX+P2dzyIICVow=;
+        b=JVjgOUjuCcYAulqYRf0OTls0ZNobq5INpawFhLcRs/vmxGHRUsiZRlE4XG/PT61g0d
+         Hu7caZ97N8uGZtQ8oEDEBBma6SoW5NCg6gTuDC6fd5t5PufrculhTsN+b+iefUBNiEEX
+         7RtQCmDEFEdS7iSxljvTd1efYGPikGnbnnLJo3qVGFiMbN0aRn7Qc/v24wn43sOhC8Df
+         1PES9UL7TB+UkcU38CMvTOOVqP21Je2NuGz6EF1eLZUyc4ymUj4gcEpcXeJcOKAr6JKG
+         +Wrepfz5rofyhYebCGmLZ9ErSJ/xiQ4OEpsaaZRUIqo23F/OYBS61wPnJoi1djHm19y4
+         dtxQ==
+X-Gm-Message-State: AOAM530fK7Jmp2Ca12UYuPJ0lErC49Xm/qPOablkyFqjxWl2eLL5xldF
+        pN+bzUxwoWgTLtfWH55DeDiYWkDmk18s1g==
+X-Google-Smtp-Source: ABdhPJyj2NZLszPtzzCxm5Hd5Z4NPiQ3kLJfB31K2JOBcvTTwVUIy6t6S7BthfQMSWyrdXeMZm5qNA==
+X-Received: by 2002:a17:902:8ec8:b0:156:847b:a8f8 with SMTP id x8-20020a1709028ec800b00156847ba8f8mr53018530plo.121.1650029082705;
+        Fri, 15 Apr 2022 06:24:42 -0700 (PDT)
+Received: from [192.168.4.166] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
+        by smtp.gmail.com with ESMTPSA id y3-20020a056a00190300b004fa2411bb92sm3143519pfi.93.2022.04.15.06.24.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Apr 2022 06:24:42 -0700 (PDT)
+Message-ID: <948f7d10-526e-206b-6014-2654b5170d56@kernel.dk>
+Date:   Fri, 15 Apr 2022 07:24:41 -0600
 MIME-Version: 1.0
-Received: by 2002:ab0:76d9:0:0:0:0:0 with HTTP; Fri, 15 Apr 2022 00:36:12
- -0700 (PDT)
-Reply-To: daniel.seyba@yahoo.com
-From:   Seyba Daniel <hadissawilliams@gmail.com>
-Date:   Fri, 15 Apr 2022 09:36:12 +0200
-Message-ID: <CAAC2S9naSc=dYwuV_evRqU80pWgutL=HGerKY_TAh4P4U2e9JQ@mail.gmail.com>
-Subject: Hello,
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: Yes, score=5.3 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,FREEMAIL_REPLYTO,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        UNDISC_FREEM autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
-        *      https://www.dnswl.org/, no trust
-        *      [2607:f8b0:4864:20:0:0:0:e43 listed in]
-        [list.dnswl.org]
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        * -0.0 SPF_PASS SPF: sender matches SPF record
-        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
-        *      provider
-        *      [hadissawilliams[at]gmail.com]
-        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
-        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
-        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
-        *       valid
-        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
-        *      envelope-from domain
-        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
-        *      author's domain
-        * -0.0 T_SCC_BODY_TEXT_LINE No description available.
-        *  3.7 UNDISC_FREEM Undisclosed recipients + freemail reply-to
-        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
-        *      different freemails
-X-Spam-Level: *****
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring fixes for 5.18-rc3
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     io-uring <io-uring@vger.kernel.org>
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
+Hi Linus,
 
-I am so sorry contacting you in this means especially when we have never
-met before. I urgently seek your service to represent me in investing in
-your region / country and you will be rewarded for your service without
-affecting your present job with very little time invested in it.
+- Ensure we check and -EINVAL any use of reserved or struct padding.
+  Although we generally always do that, it's missed in two spots for
+  resource updates, one for the ring fd registration from this merge
+  window, and one for the extended arg. Make sure we have all of them
+  handled. (Dylan)
 
-My interest is in buying real estate, private schools or companies with
-potentials for rapid growth in long terms.
+- A few fixes for the deferred file assignment (me, Pavel)
 
-So please confirm interest by responding back.
+- Add a feature flag for the deferred file assignment so apps can tell
+  we handle it correctly (me)
 
-My dearest regards
+- Fix a small perf regression with the current file position fix in this
+  merge window (me)
 
-Seyba Daniel
+Please pull!
+
+
+The following changes since commit ce522ba9ef7e2d9fb22a39eb3371c0c64e2a433e:
+
+  Linux 5.18-rc2 (2022-04-10 14:21:36 -1000)
+
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux-block.git tags/io_uring-5.18-2022-04-14
+
+for you to fetch changes up to 701521403cfb228536b3947035c8a6eca40d8e58:
+
+  io_uring: abort file assignment prior to assigning creds (2022-04-14 20:23:40 -0600)
+
+----------------------------------------------------------------
+io_uring-5.18-2022-04-14
+
+----------------------------------------------------------------
+Dylan Yudaken (4):
+      io_uring: move io_uring_rsrc_update2 validation
+      io_uring: verify that resv2 is 0 in io_uring_rsrc_update2
+      io_uring: verify resv is 0 in ringfd register/unregister
+      io_uring: verify pad field is 0 in io_get_ext_arg
+
+Jens Axboe (5):
+      io_uring: flag the fact that linked file assignment is sane
+      io_uring: io_kiocb_update_pos() should not touch file for non -1 offset
+      io_uring: move apoll->events cache
+      io_uring: stop using io_wq_work as an fd placeholder
+      io_uring: abort file assignment prior to assigning creds
+
+Pavel Begunkov (4):
+      io_uring: fix assign file locking issue
+      io_uring: use right issue_flags for splice/tee
+      io_uring: fix poll file assign deadlock
+      io_uring: fix poll error reporting
+
+ fs/io-wq.h                    |  1 -
+ fs/io_uring.c                 | 98 +++++++++++++++++++++++++------------------
+ include/uapi/linux/io_uring.h |  1 +
+ 3 files changed, 59 insertions(+), 41 deletions(-)
+
+-- 
+Jens Axboe
+

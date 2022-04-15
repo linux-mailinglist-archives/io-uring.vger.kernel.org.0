@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F2AC550313D
-	for <lists+io-uring@lfdr.de>; Sat, 16 Apr 2022 01:09:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FADC5030A6
+	for <lists+io-uring@lfdr.de>; Sat, 16 Apr 2022 01:09:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352606AbiDOVMC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 15 Apr 2022 17:12:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44830 "EHLO
+        id S1352774AbiDOVMH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 15 Apr 2022 17:12:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350280AbiDOVL7 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 15 Apr 2022 17:11:59 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B615813E04
-        for <io-uring@vger.kernel.org>; Fri, 15 Apr 2022 14:09:28 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id bh17so17118972ejb.8
-        for <io-uring@vger.kernel.org>; Fri, 15 Apr 2022 14:09:28 -0700 (PDT)
+        with ESMTP id S1352224AbiDOVMA (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 15 Apr 2022 17:12:00 -0400
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1F341AF1D
+        for <io-uring@vger.kernel.org>; Fri, 15 Apr 2022 14:09:30 -0700 (PDT)
+Received: by mail-ed1-x529.google.com with SMTP id v15so11048986edb.12
+        for <io-uring@vger.kernel.org>; Fri, 15 Apr 2022 14:09:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=krzJsg9dTMkRXnUbxXEYzh74brLG9QhtuIf4fP4UhBg=;
-        b=HKdc39WbK8lJ+wKJs4WUEKZvY7kAMvz5vMCaIAYn/J+sBiGRWf7fRuN4meoFqLxf28
-         Qf++7R6n3/M1gaTpIykvRNsVulXZctFZILP9MXsozewvd/KZpbEHE1gL0BpAsBLfyMyk
-         lTEbxjlq6O1YplBK3zqk5BMg7B4HYiYC2SAAuFTkyUGSosEMIiKG6bTrOeAIVORYuDut
-         DxoWrxSNWPTHpvNMGkIeSkSE4x1/yaAZUA00dbHbENgOvaE9C9UzDt1jXVqoAJmRat4X
-         svNCR8uqLu2aiACTqDnVcDqtrmtrvsO1fPE1s9b63MnRVoaDE/XJtceFk8kG06XWHzPk
-         TAaA==
+        bh=/P9lPa526Y7saC7FO+K0V15ewpqEWruCUaC4rkymQ30=;
+        b=OncBBEygcJet//JlvFDEUXTd2insvqDbrAus7SOjImQU24IkZCMZwXr10lyz3OIptj
+         kRFvk5WyWIchEarC6U7AmDfSeL1AlvHTXKlncCQQbgp5K4RmTR45lfMmYtN1/jWmZujO
+         2pE4MUsJiavOaTPrfioKIp4wyzsuM2svaLyVHjOgMRBVXB8JnRE1ga9CAoLLhZvZDt3+
+         367yNQ+5dzMvxtTKRvOopXT892FrCPGj/gYBOAkze/RmOB3vlW1ZdrtD+8ThwvA0bLfa
+         s20c26ihPRRDyJhfvMFCKvTUEU9BuQLrnqFBkIm39xtKTbzttUSaBGDM2cCrI58UvuPZ
+         Vgzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=krzJsg9dTMkRXnUbxXEYzh74brLG9QhtuIf4fP4UhBg=;
-        b=wbyL6DrXnw0NVUngUKVThoSELI7yW8+RAJWZ4NLt3Uv8QCv2qRzrqhTQAPjDPb5jv3
-         zeP2heysVSVNiaR0YwdyaMJjE1hBCbRJMd9SMhHRUpTEe0i4r14RSu1pgHE7PuFcD3u5
-         gjPxfP4KN06t183+lW36Gn5JZSpgzsNNew5aC5uiehHKdS74WGOZIVuhQm2PmTDXPTaI
-         1vG7VEJlJsB+O5ezhMfsV2e/Ehtiq1AMPLYgvg8S62ovcVAM2UWYiTmUyxsvs57c8MbQ
-         rMvEj8l/Sb8nHNUX9dMKAkOGwwZqF4HBKjhezg25dC/2QxblNc3eDJTYAUqsEHPWL5Eu
-         piKA==
-X-Gm-Message-State: AOAM5320hQYGNJ9eKK6zYSBluRWjZM4bvqrfVHUs0hnTD0Aymgz+UY0b
-        NOyVsbQegL54hVsYuwlG7FLNnYNToxk=
-X-Google-Smtp-Source: ABdhPJyp2hGkjNEW4DkwetMUuitwqYAYUDZDcm3g5y4LvHX/y00eiCHbChCLVZ1ak2DnExbw95cL+w==
-X-Received: by 2002:a17:906:60c2:b0:6e7:681e:b4b7 with SMTP id f2-20020a17090660c200b006e7681eb4b7mr698346ejk.130.1650056967145;
-        Fri, 15 Apr 2022 14:09:27 -0700 (PDT)
+        bh=/P9lPa526Y7saC7FO+K0V15ewpqEWruCUaC4rkymQ30=;
+        b=pzZhMhTBT512eT5Ph0RjdoH/BDCvh2OneEz87A3ceON1gl8rR9RbU9CEa+oPdm9/VG
+         M35AzloT4M7UblVovQBndSKj1XxzRgunuUofAyliBVYCmzP0LQh2VbdmdaIhI0D0C1dl
+         TOcLcVAGbnD7AP3eQXq0KreSfnUd3FJhdKV5sc9BzAoZE9+bYMRirHaX91UOgaEcNOaD
+         H7RgJG/kHXRFgiYfDXDGJcio6uq67qZxB/Lj5D8JbEusWU9O1BQiRlKb/AG4wtPYHylN
+         5Ot4KyCEUWHr4jxeK3AONorez3rkfkPzXTIve/PHVyh5bNNHX/99LGaXLp/pYHEeA8WF
+         WJBw==
+X-Gm-Message-State: AOAM532dvRd0/hhTJ3++aDE3MUwmjWQI3ChIQgiRkdTh7PP498yuyGx0
+        QrNjM01fwSYsqGOtvRtHdVhdFERO4pw=
+X-Google-Smtp-Source: ABdhPJwNLzehxD3Hruv87r1VmVN45PZZY22LWjiH7vYss3JqWKfyD2oanpV/9sJwfTzb5Qpm6Nku7g==
+X-Received: by 2002:aa7:d494:0:b0:41d:704f:7718 with SMTP id b20-20020aa7d494000000b0041d704f7718mr997151edr.147.1650056969212;
+        Fri, 15 Apr 2022 14:09:29 -0700 (PDT)
 Received: from 127.0.0.1localhost ([148.252.133.118])
-        by smtp.gmail.com with ESMTPSA id j10-20020aa7de8a000000b004215209b077sm2602938edv.37.2022.04.15.14.09.25
+        by smtp.gmail.com with ESMTPSA id j10-20020aa7de8a000000b004215209b077sm2602938edv.37.2022.04.15.14.09.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Apr 2022 14:09:26 -0700 (PDT)
+        Fri, 15 Apr 2022 14:09:28 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH 12/14] io_uring: refactor io_submit_sqe()
-Date:   Fri, 15 Apr 2022 22:08:31 +0100
-Message-Id: <03183199d1bf494b4a72eca16d792c8a5945acb4.1650056133.git.asml.silence@gmail.com>
+Subject: [PATCH 13/14] io_uring: inline io_req_complete_fail_submit()
+Date:   Fri, 15 Apr 2022 22:08:32 +0100
+Message-Id: <fe5851af01dcd39fc84b71b8539c7cbe4658fb6d.1650056133.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.35.2
 In-Reply-To: <cover.1650056133.git.asml.silence@gmail.com>
 References: <cover.1650056133.git.asml.silence@gmail.com>
@@ -68,57 +68,53 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Remove one extra if for non-linked path of io_submit_sqe().
+Inline io_req_complete_fail_submit(), there is only one caller and the
+name doesn't tell us much.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 23 ++++++++++++++---------
- 1 file changed, 14 insertions(+), 9 deletions(-)
+ fs/io_uring.c | 21 ++++++++-------------
+ 1 file changed, 8 insertions(+), 13 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 9356e6ee8a97..0806ac554bcf 100644
+index 0806ac554bcf..a828ac740fb6 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -7745,7 +7745,7 @@ static inline int io_submit_sqe(struct io_ring_ctx *ctx, struct io_kiocb *req,
- 	 * submitted sync once the chain is complete. If none of those
- 	 * conditions are true (normal request), then just queue it.
- 	 */
--	if (link->head) {
-+	if (unlikely(link->head)) {
- 		ret = io_req_prep_async(req);
- 		if (unlikely(ret))
- 			return io_submit_fail_init(sqe, req, ret);
-@@ -7759,17 +7759,22 @@ static inline int io_submit_sqe(struct io_ring_ctx *ctx, struct io_kiocb *req,
- 		/* last request of the link, flush it */
- 		req = link->head;
- 		link->head = NULL;
--	} else if (req->flags & IO_REQ_LINK_FLAGS) {
--		link->head = req;
--		link->last = req;
-+		if (req->flags & (REQ_F_FORCE_ASYNC | REQ_F_FAIL))
-+			goto fallback;
-+
-+	} else if (unlikely(req->flags & (IO_REQ_LINK_FLAGS |
-+					  REQ_F_FORCE_ASYNC | REQ_F_FAIL))) {
-+		if (req->flags & IO_REQ_LINK_FLAGS) {
-+			link->head = req;
-+			link->last = req;
-+		} else {
-+fallback:
-+			io_queue_sqe_fallback(req);
-+		}
- 		return 0;
- 	}
- 
--	if (likely(!(req->flags & (REQ_F_FORCE_ASYNC | REQ_F_FAIL))))
--		io_queue_sqe(req);
--	else
--		io_queue_sqe_fallback(req);
--
-+	io_queue_sqe(req);
- 	return 0;
+@@ -2227,17 +2227,6 @@ static void io_req_complete_failed(struct io_kiocb *req, s32 res)
+ 	io_req_complete_post(req, res, io_put_kbuf(req, IO_URING_F_UNLOCKED));
  }
  
+-static void io_req_complete_fail_submit(struct io_kiocb *req)
+-{
+-	/*
+-	 * We don't submit, fail them all, for that replace hardlinks with
+-	 * normal links. Extra REQ_F_LINK is tolerated.
+-	 */
+-	req->flags &= ~REQ_F_HARDLINK;
+-	req->flags |= REQ_F_LINK;
+-	io_req_complete_failed(req, req->cqe.res);
+-}
+-
+ /*
+  * Don't initialise the fields below on every allocation, but do that in
+  * advance and keep them valid across allocations.
+@@ -7544,8 +7533,14 @@ static inline void io_queue_sqe(struct io_kiocb *req)
+ static void io_queue_sqe_fallback(struct io_kiocb *req)
+ 	__must_hold(&req->ctx->uring_lock)
+ {
+-	if (req->flags & REQ_F_FAIL) {
+-		io_req_complete_fail_submit(req);
++	if (unlikely(req->flags & REQ_F_FAIL)) {
++		/*
++		 * We don't submit, fail them all, for that replace hardlinks
++		 * with normal links. Extra REQ_F_LINK is tolerated.
++		 */
++		req->flags &= ~REQ_F_HARDLINK;
++		req->flags |= REQ_F_LINK;
++		io_req_complete_failed(req, req->cqe.res);
+ 	} else if (unlikely(req->ctx->drain_active)) {
+ 		io_drain_req(req);
+ 	} else {
 -- 
 2.35.2
 

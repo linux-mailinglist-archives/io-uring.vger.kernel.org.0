@@ -2,73 +2,62 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9910B5033CB
-	for <lists+io-uring@lfdr.de>; Sat, 16 Apr 2022 07:48:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8CBC503407
+	for <lists+io-uring@lfdr.de>; Sat, 16 Apr 2022 07:49:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241069AbiDOXxx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 15 Apr 2022 19:53:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49712 "EHLO
+        id S230035AbiDPA2h (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 15 Apr 2022 20:28:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52040 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229645AbiDOXxx (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 15 Apr 2022 19:53:53 -0400
-Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD80F954B6
-        for <io-uring@vger.kernel.org>; Fri, 15 Apr 2022 16:51:22 -0700 (PDT)
-Received: by mail-pg1-x52a.google.com with SMTP id u2so8971073pgq.10
-        for <io-uring@vger.kernel.org>; Fri, 15 Apr 2022 16:51:22 -0700 (PDT)
+        with ESMTP id S229585AbiDPA2g (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 15 Apr 2022 20:28:36 -0400
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77371193FE
+        for <io-uring@vger.kernel.org>; Fri, 15 Apr 2022 17:26:04 -0700 (PDT)
+Received: by mail-pj1-x102c.google.com with SMTP id o5so8727451pjr.0
+        for <io-uring@vger.kernel.org>; Fri, 15 Apr 2022 17:26:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language
-         :from:to:references:in-reply-to:content-transfer-encoding;
-        bh=tuyHE65Jh6X7NSujJbaDSg85VsJl9QAlWvwmoi5NTsI=;
-        b=MPWNqALsaEYFUNNWVp0ltJZBSgS9MALKCBimG0Dvww+kqmuDXJbi7wTfmH4UGjOsH3
-         KzWw0Ag8i1Hvlr2di4/at3PCbiLrRPVp5sGd41fAEqgzpKg0tklH7w+SSrVIVF40L4Cq
-         b93njyC6ILy/nWHKr9mGMLCUUZvoqiDi48dQKanorOR3VcmjIcMbL3H70ve5urF2X45y
-         AONhQj8d+3Aib6ab3V/A/qR9QILyDF+ZgUuD1gBPxavhQs1QU2o8BcAHY8qcb8uxsVue
-         +OA8gaSG0OYb1s11iW1zJxKT6ujAZsLnftxydCi9PbhuwnZN2fN1R/mQlj+DXy8wztM7
-         muXA==
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=J4P9X+6trL1Yp9xlONMoyp1zCs9RLnVfaC3p4NJxdxQ=;
+        b=29IA3AkhQ7zZYpbzuqNmIKT/pCSiuNUDW/oZurAvgXGmlbm6/0lt8UoovwdRSfgNVn
+         72M9N2c0yfnSFEDUG5gloZBlejIj1P/O3/58vcJb+GYXF/yISC0RTCLpnV+dld6Hw5Rt
+         Rz1WQiIOgsmPWszMBYV2fDNc1To+I9NmO3TwBQ/rWCwVZAWVpS9aJAaZ0L11EnSPZFmj
+         OKY1fd+NxncJXRfaFA3drNdN1ue/w2zJchr5aoF3Y8OH9Avpiot5WSQR/lFZcOSuRLyM
+         gNwxFUuJT/5h+KazsGxq9CN8yJ814OwkxaWTh4At2tl7aD+tuyqr36uSrQfTj+XHqOt/
+         SbIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:from:to:references:in-reply-to
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=tuyHE65Jh6X7NSujJbaDSg85VsJl9QAlWvwmoi5NTsI=;
-        b=OPqhLQw2+3C5jyErYL/yxE4D1dnDeJ+4BQ4cXLu/lravqq5XvMrM5MHi+ZchbDVCLy
-         moh9yVyTRGBC9+yI5VHBiFacEGMwxVzE82SZhpVbZZSZCg2K5HUmzFiVUcaF0dz4ci8K
-         dGU5t/ak4+MfB5cvyNDPRixzya59EQFsZ3GHip8HznWhPsNmoctD5PFgnKKyCWW2/Tuo
-         QnTHrwZdTB+K026CruHnVtnWiVGeBiAu8U59UsVa9f11LPzJBngAbs+fx2Ci+cuLtb8z
-         JhkACJP5WW9P+aydlNArVlvw3ESkFV0UYAuRgTCnm6tbBFrqXA9EckuSbFL0/eFswM8D
-         BhnA==
-X-Gm-Message-State: AOAM5328pyAVbS4KIrO/cCsvGJLTQXP1RIgrg4ov/QzuhLdzPkQRE9rQ
-        VZt6VOLmKlMlE1GTlyCKb801AsLiLcSmaQ==
-X-Google-Smtp-Source: ABdhPJyCoC+nXv4EWlcwgMrgkOk9TxfJ3NUN01uG1q7Rk0P6u5Owi80CZTZ+BuZBOfgtbO1OUTLi/w==
-X-Received: by 2002:a62:ed0e:0:b0:4fa:11ed:2ad1 with SMTP id u14-20020a62ed0e000000b004fa11ed2ad1mr1260739pfh.34.1650066682251;
-        Fri, 15 Apr 2022 16:51:22 -0700 (PDT)
-Received: from [192.168.4.166] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id b16-20020a056a00115000b004f6ff260c9esm3838352pfm.207.2022.04.15.16.51.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Apr 2022 16:51:21 -0700 (PDT)
-Message-ID: <c3cd7418-a8d4-456f-0ae1-a1b2b8750e5b@kernel.dk>
-Date:   Fri, 15 Apr 2022 17:51:20 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH 1/1] io_uring: fix leaks on IOPOLL and CQE_SKIP
-Content-Language: en-US
+        bh=J4P9X+6trL1Yp9xlONMoyp1zCs9RLnVfaC3p4NJxdxQ=;
+        b=2qFoHFIboQY/OsCBeXg/Figvi/6LYaMtiIiPE3xhlBJq8zxtfCFyJx711ZzZWxyW0u
+         sY5eDdOXWBkdBSRFpx3HthjwoG0o1SeNZjxlERkD3Fm/OMXeE9W99+K4aWIXXNkDGGkH
+         JRNDX4k5X2L4cIVdBTdnUAWUmorxZGlp/PdllM2F+rDfkdSl3m3YUdivQM2ZaIlccKYs
+         8HjYc512csy/2ND08Cky8mxDgY40o9LGdiuxMf1RXMYai6toOmnlCKiixd0k7ZSqT9U0
+         uUwObmXxo+nxXH694+g8rOt4/oyG8N3RyNQZ28WCATNrWcEVj0ZP9kUV+T427swOk9c2
+         LTdw==
+X-Gm-Message-State: AOAM530yV+Agb3WR/88AeljaKMI+a+GpcW2BaWyzb7gAoM2q0sRD4JV7
+        0AfNUriH81HoaCCICTIwf1X4whIuV31IEg==
+X-Google-Smtp-Source: ABdhPJyL3SzlSwlZwoCQUsdlhmzb+BDCSrqoe7xGrZhSJtCZVBPcV3BhfohjC0+AsfPYF9xCeMLKag==
+X-Received: by 2002:a17:90a:d58b:b0:1cd:65dc:6a62 with SMTP id v11-20020a17090ad58b00b001cd65dc6a62mr6709389pju.89.1650068763586;
+        Fri, 15 Apr 2022 17:26:03 -0700 (PDT)
+Received: from localhost.localdomain (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
+        by smtp.gmail.com with ESMTPSA id s20-20020aa78d54000000b004fac74c83b3sm3895375pfe.186.2022.04.15.17.26.02
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Apr 2022 17:26:02 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <c19df8bde9a9ab89425abf7339de3564c96fd858.1649780645.git.asml.silence@gmail.com>
- <7a6eef8a-d09b-89b2-f261-506ae6dae413@kernel.dk>
- <760bb119-6147-99b9-7e5a-c9c3566bfbfc@kernel.dk>
- <b837025e-4c18-322b-094c-6f518335c8ca@gmail.com>
- <aea01fb7-fa4f-c61a-2655-92129d727a74@kernel.dk>
- <e1b351c3-f18e-f3ce-f526-970447389a2d@gmail.com>
- <ef406bf3-bdad-ca4e-257b-80dc148f4f1f@kernel.dk>
-In-Reply-To: <ef406bf3-bdad-ca4e-257b-80dc148f4f1f@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-5.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+To:     io-uring@vger.kernel.org
+Subject: [PATCHSET v3 next 0/4] Extend cancelation support
+Date:   Fri, 15 Apr 2022 18:25:57 -0600
+Message-Id: <20220416002601.360026-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.35.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -76,64 +65,31 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/15/22 4:53 PM, Jens Axboe wrote:
-> On 4/15/22 4:41 PM, Pavel Begunkov wrote:
->> On 4/15/22 23:03, Jens Axboe wrote:
->>> On 4/15/22 3:05 PM, Pavel Begunkov wrote:
->>>> On 4/12/22 17:46, Jens Axboe wrote:
->>>>> On 4/12/22 10:41 AM, Jens Axboe wrote:
->>>>>> On 4/12/22 10:24 AM, Pavel Begunkov wrote:
->>>>>>> If all completed requests in io_do_iopoll() were marked with
->>>>>>> REQ_F_CQE_SKIP, we'll not only skip CQE posting but also
->>>>>>> io_free_batch_list() leaking memory and resources.
->>>>>>>
->>>>>>> Move @nr_events increment before REQ_F_CQE_SKIP check. We'll potentially
->>>>>>> return the value greater than the real one, but iopolling will deal with
->>>>>>> it and the userspace will re-iopoll if needed. In anyway, I don't think
->>>>>>> there are many use cases for REQ_F_CQE_SKIP + IOPOLL.
->>>>>>
->>>>>> Ah good catch - yes probably not much practical concern, as the lack of
->>>>>> ordering for file IO means that CQE_SKIP isn't really useful for that
->>>>>> scenario.
->>>>>
->>>>> One potential snag is with the change we're now doing
->>>>> io_cqring_ev_posted_iopoll() even if didn't post an event. Again
->>>>> probably not a practical concern, but it is theoretically a violation
->>>>> if an eventfd is used.
->>>> Looks this didn't get applied. Are you concerned about eventfd?
->>>
->>> Yep, was hoping to get a reply back, so just deferred it for now.
->>>
->>>> Is there any good reason why the userspace can't tolerate spurious
->>>> eventfd events? Because I don't think we should care this case
->>>
->>> I always forget the details on that, but we've had cases like this in
->>> the past where some applications assume that if they got N eventfd
->>> events, then are are also N events in the ring. Which granted is a bit
->>> odd, but it does also make some sense. Why would you have more eventfd
->>> events posted than events?
->>
->> For the same reason why it can get less eventfd events than there are
->> CQEs, as for me it's only a communication channel but not a
->> replacement for completion events.
-> 
-> That part is inherently racy in that we might get some CQEs while we
-> respond to the initial eventfd notifications. But I'm totally agreeing
-> with you, and it doesn't seem like a big deal to me.
-> 
->> Ok, we don't want to break old applications, but it's a new most
->> probably not widely used feature, and we can say that the userspace
->> has to handle spurious eventfd.
-> 
-> If I were to guess, I'd say it's probably epoll + eventfd conversions.
-> But it should just be made explicit. Since events reaped and checked
-> happen differently anyway, it seems like a bad assumption to make that
-> eventfd notifications == events available.
+Hi,
 
-The patch is against the 5.19 branch, but it might be a better idea
-to do this for 5.18 as the 5.17 backport will then not need
-assistance. Can you send it against io_uring-5.18?
+We currently only support looking up and canceling requests based on
+the user_data of the original request. Sometimes it can be useful to
+instead key off the fd used in the original request, eg if a socket
+goes away.
+
+Patch 1 is just a cleanup spotted while doing this, 2 is a prep patch,
+patch 3 adds support for IORING_ASYNC_CANCEL_ALL, and finally patch 4
+adds support for IORING_ASYNC_CANCEL_FD.
+
+If IORING_ASYNC_CANCEL_ALL is set, all requests matching the given
+criteria are canceled. Return value is number of requests canceled,
+and 0 if none were found, or any error encountered canceling requests.
+
+If IORING_ASYNC_CANCEL_FD is set, requests matching sqe->fd are
+canceled rather than matching on sqe->addr for user_data.
+
+v3:
+- Fixup issues with CANCEL_ALL
+- Combine two prep patches, and extent io_cancel_data propagation
+  further.
+- Get rid of buggy task_work running, we don't need it anymore.
 
 -- 
 Jens Axboe
+
 

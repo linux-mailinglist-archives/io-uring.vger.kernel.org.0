@@ -2,58 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A8CBC503407
-	for <lists+io-uring@lfdr.de>; Sat, 16 Apr 2022 07:49:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A81BC50336A
+	for <lists+io-uring@lfdr.de>; Sat, 16 Apr 2022 07:48:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230035AbiDPA2h (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 15 Apr 2022 20:28:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52040 "EHLO
+        id S229585AbiDPA2j (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 15 Apr 2022 20:28:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52194 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229585AbiDPA2g (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 15 Apr 2022 20:28:36 -0400
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77371193FE
-        for <io-uring@vger.kernel.org>; Fri, 15 Apr 2022 17:26:04 -0700 (PDT)
-Received: by mail-pj1-x102c.google.com with SMTP id o5so8727451pjr.0
-        for <io-uring@vger.kernel.org>; Fri, 15 Apr 2022 17:26:04 -0700 (PDT)
+        with ESMTP id S230052AbiDPA2i (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 15 Apr 2022 20:28:38 -0400
+Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A22A3CEE30
+        for <io-uring@vger.kernel.org>; Fri, 15 Apr 2022 17:26:05 -0700 (PDT)
+Received: by mail-pj1-x1031.google.com with SMTP id mp16-20020a17090b191000b001cb5efbcab6so12858795pjb.4
+        for <io-uring@vger.kernel.org>; Fri, 15 Apr 2022 17:26:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=J4P9X+6trL1Yp9xlONMoyp1zCs9RLnVfaC3p4NJxdxQ=;
-        b=29IA3AkhQ7zZYpbzuqNmIKT/pCSiuNUDW/oZurAvgXGmlbm6/0lt8UoovwdRSfgNVn
-         72M9N2c0yfnSFEDUG5gloZBlejIj1P/O3/58vcJb+GYXF/yISC0RTCLpnV+dld6Hw5Rt
-         Rz1WQiIOgsmPWszMBYV2fDNc1To+I9NmO3TwBQ/rWCwVZAWVpS9aJAaZ0L11EnSPZFmj
-         OKY1fd+NxncJXRfaFA3drNdN1ue/w2zJchr5aoF3Y8OH9Avpiot5WSQR/lFZcOSuRLyM
-         gNwxFUuJT/5h+KazsGxq9CN8yJ814OwkxaWTh4At2tl7aD+tuyqr36uSrQfTj+XHqOt/
-         SbIA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=CMfeq2y50ep3iWgYcSAIfpUtrAVsbY3v5bbfxzN6s+Y=;
+        b=1hsqMEm1UzCd52wjYjUUnKHVBVux/ecRX6ftwb8GgWD4+jAHU5Vs7tNo8zrpijQ9lz
+         34ZFHTCiRPflgft8bls82P/wzJR7VTbjkrOADyKrDmXov/kKRb13N9ipO8iFGpzrd4xB
+         FA5OmvQejGReWTcrT6AjCogE9xlLFM6GHk8gMNmwhEIsjEC1lQKvW63JLV3SJLDjPSSE
+         bf6YoOR/pK9WSgBhqR/HhJiFHk8j+NUdoYVaGcbVxk0AC9jwUA2KRYCElVQXa2Foql1D
+         UQPB9TYZToklCnmak2WxReVt4+szrczCsWxK7/f3V9exEmHrVq6c3jar5FpVzN6q/SeE
+         puMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=J4P9X+6trL1Yp9xlONMoyp1zCs9RLnVfaC3p4NJxdxQ=;
-        b=2qFoHFIboQY/OsCBeXg/Figvi/6LYaMtiIiPE3xhlBJq8zxtfCFyJx711ZzZWxyW0u
-         sY5eDdOXWBkdBSRFpx3HthjwoG0o1SeNZjxlERkD3Fm/OMXeE9W99+K4aWIXXNkDGGkH
-         JRNDX4k5X2L4cIVdBTdnUAWUmorxZGlp/PdllM2F+rDfkdSl3m3YUdivQM2ZaIlccKYs
-         8HjYc512csy/2ND08Cky8mxDgY40o9LGdiuxMf1RXMYai6toOmnlCKiixd0k7ZSqT9U0
-         uUwObmXxo+nxXH694+g8rOt4/oyG8N3RyNQZ28WCATNrWcEVj0ZP9kUV+T427swOk9c2
-         LTdw==
-X-Gm-Message-State: AOAM530yV+Agb3WR/88AeljaKMI+a+GpcW2BaWyzb7gAoM2q0sRD4JV7
-        0AfNUriH81HoaCCICTIwf1X4whIuV31IEg==
-X-Google-Smtp-Source: ABdhPJyL3SzlSwlZwoCQUsdlhmzb+BDCSrqoe7xGrZhSJtCZVBPcV3BhfohjC0+AsfPYF9xCeMLKag==
-X-Received: by 2002:a17:90a:d58b:b0:1cd:65dc:6a62 with SMTP id v11-20020a17090ad58b00b001cd65dc6a62mr6709389pju.89.1650068763586;
-        Fri, 15 Apr 2022 17:26:03 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=CMfeq2y50ep3iWgYcSAIfpUtrAVsbY3v5bbfxzN6s+Y=;
+        b=mFk8tvRROAmK/GyORfnHSeCONmE8q12Wj/MmwtBQV+T22ePeoXbLMYH+mfURjznuoq
+         ILUEMNenBFlVNHAVsHqtTIzSoc/2znCMGfvRMfEONfaVF+JEpJnKipzD9IlNiuWr6mcT
+         +uGb1YOkiBMy6QedFmbdau66Pfz+P0jiOthtTg/3/iPFQ0+yt8Vz7seGv7kryrj1LVHS
+         vWONJcDwqyXoW36DUOwtQK2fOxgdq1CJY1jv1E/Ld2wC9IpeXMgGviohvwlapDCJ5u2T
+         NYAoTLP3O02rJcM665u7Br1PzI0vz9trrF6sBVBxz4TMM7bOo8qbgcSuPT/r833lyvae
+         7z8g==
+X-Gm-Message-State: AOAM5303gmxVfGxeA5CEkqUtA3YTb9mw2Q/58ekMlG6ve9RcDb02UJU8
+        bjByx3iM+r1KUQLJRo/Gk7ssmiaRDBPqNw==
+X-Google-Smtp-Source: ABdhPJz99aZlmGIj8OVwE3Gcwc/c9TJJ2a4Q4FSW90GFzdWFSmWS2COLKg63W1UYgaAQW6DLRPoBQQ==
+X-Received: by 2002:a17:903:246:b0:153:87f0:a93e with SMTP id j6-20020a170903024600b0015387f0a93emr1472295plh.171.1650068764700;
+        Fri, 15 Apr 2022 17:26:04 -0700 (PDT)
 Received: from localhost.localdomain (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id s20-20020aa78d54000000b004fac74c83b3sm3895375pfe.186.2022.04.15.17.26.02
-        for <io-uring@vger.kernel.org>
+        by smtp.gmail.com with ESMTPSA id s20-20020aa78d54000000b004fac74c83b3sm3895375pfe.186.2022.04.15.17.26.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Apr 2022 17:26:02 -0700 (PDT)
+        Fri, 15 Apr 2022 17:26:04 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
-Subject: [PATCHSET v3 next 0/4] Extend cancelation support
-Date:   Fri, 15 Apr 2022 18:25:57 -0600
-Message-Id: <20220416002601.360026-1-axboe@kernel.dk>
+Cc:     Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 1/4] io_uring: remove dead 'poll_only' argument to io_poll_cancel()
+Date:   Fri, 15 Apr 2022 18:25:58 -0600
+Message-Id: <20220416002601.360026-2-axboe@kernel.dk>
 X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220416002601.360026-1-axboe@kernel.dk>
+References: <20220416002601.360026-1-axboe@kernel.dk>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -65,31 +67,41 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi,
+It's only called from one location, and it always passes in 'false'.
+Kill the argument, and just pass in 'false' to io_poll_find().
 
-We currently only support looking up and canceling requests based on
-the user_data of the original request. Sometimes it can be useful to
-instead key off the fd used in the original request, eg if a socket
-goes away.
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+---
+ fs/io_uring.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-Patch 1 is just a cleanup spotted while doing this, 2 is a prep patch,
-patch 3 adds support for IORING_ASYNC_CANCEL_ALL, and finally patch 4
-adds support for IORING_ASYNC_CANCEL_FD.
-
-If IORING_ASYNC_CANCEL_ALL is set, all requests matching the given
-criteria are canceled. Return value is number of requests canceled,
-and 0 if none were found, or any error encountered canceling requests.
-
-If IORING_ASYNC_CANCEL_FD is set, requests matching sqe->fd are
-canceled rather than matching on sqe->addr for user_data.
-
-v3:
-- Fixup issues with CANCEL_ALL
-- Combine two prep patches, and extent io_cancel_data propagation
-  further.
-- Get rid of buggy task_work running, we don't need it anymore.
-
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index d3fc0c5b4e82..878d30a31606 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -6316,11 +6316,10 @@ static bool io_poll_disarm(struct io_kiocb *req)
+ 	return true;
+ }
+ 
+-static int io_poll_cancel(struct io_ring_ctx *ctx, __u64 sqe_addr,
+-			  bool poll_only)
++static int io_poll_cancel(struct io_ring_ctx *ctx, __u64 sqe_addr)
+ 	__must_hold(&ctx->completion_lock)
+ {
+-	struct io_kiocb *req = io_poll_find(ctx, sqe_addr, poll_only);
++	struct io_kiocb *req = io_poll_find(ctx, sqe_addr, false);
+ 
+ 	if (!req)
+ 		return -ENOENT;
+@@ -6808,7 +6807,7 @@ static int io_try_cancel_userdata(struct io_kiocb *req, u64 sqe_addr)
+ 		return 0;
+ 
+ 	spin_lock(&ctx->completion_lock);
+-	ret = io_poll_cancel(ctx, sqe_addr, false);
++	ret = io_poll_cancel(ctx, sqe_addr);
+ 	if (ret != -ENOENT)
+ 		goto out;
+ 
 -- 
-Jens Axboe
-
+2.35.1
 

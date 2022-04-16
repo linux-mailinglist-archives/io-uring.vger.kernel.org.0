@@ -2,239 +2,122 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C75CF503320
-	for <lists+io-uring@lfdr.de>; Sat, 16 Apr 2022 07:48:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A330503539
+	for <lists+io-uring@lfdr.de>; Sat, 16 Apr 2022 10:35:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230147AbiDPA2n (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 15 Apr 2022 20:28:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52612 "EHLO
+        id S230351AbiDPIiM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 16 Apr 2022 04:38:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230052AbiDPA2m (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 15 Apr 2022 20:28:42 -0400
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C366EBB9C
-        for <io-uring@vger.kernel.org>; Fri, 15 Apr 2022 17:26:09 -0700 (PDT)
-Received: by mail-pl1-x62f.google.com with SMTP id j8so8183424pll.11
-        for <io-uring@vger.kernel.org>; Fri, 15 Apr 2022 17:26:09 -0700 (PDT)
+        with ESMTP id S229671AbiDPIiL (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 16 Apr 2022 04:38:11 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E10834A937
+        for <io-uring@vger.kernel.org>; Sat, 16 Apr 2022 01:35:39 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id b15so12280167edn.4
+        for <io-uring@vger.kernel.org>; Sat, 16 Apr 2022 01:35:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=dSXwdpuB52SuLjmFXAXoBCz/Q+io05P8oxRkfvN/SGc=;
-        b=W8u9yJIJ8g6C2q4v7r+EjXzt5ZAHGQzigfV4PgB7hY4NUm0dd378BoCNSVImOCHk4K
-         p2Sr1YEAM3iHEEVktwLqRF/PSOJCHacDGe0Iw9fwGjJRKtfpp+C4lgXOpinWC69TCF6V
-         J0Gc+SKGsr4TIHVPms/V5sfnjlFoyWXQuJmHQKKb/qljr/Fq4Ehafd829Il0eAFlMWYS
-         st0i/ofsVgc10H20JAE047zWEmLVejMO9cPeM0Lt9eIz6yWdMDzKFI7PaPVB4pZWunXO
-         vfLINhYjhCNZJh4SYHsG0IdvHKTIMhooVD3Gcfutz0/gmGBY8RoBMOQ+dXB14t/RjqBl
-         QcdQ==
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language
+         :from:to:references:in-reply-to:content-transfer-encoding;
+        bh=tJYLLfSj5mfRHYaP85yaL+KqmE3bZcNBZg1N/oK4hIc=;
+        b=I8ZSmmEZwN/2CcsuPHRWpKyBojanBitnfClBfJQwRxZfIIZEVNGGhNQPw6fWXL2Em9
+         ItyMA8gi8jjDzsTiiagWEW5bq0MO2KPxDtqNI7wHaQHxGP9hp7SprFB4PyEpxoBqT6Tq
+         vpkn2sVh02bhHOvQOtGfcOL/Z2Jzt2m1szce735/dYK8azeFRDa5DGQ8nRLk0S87sYLT
+         d75+m/K2hr+DdJArtRsATU9bw7MJW0F24OZhqjHekru8xPqiRs30mbzYFKBd0xCrjx/P
+         iJUjYfSb3XdEeB2zazdkA79M7XDRPHffU5XdvGbsJQRWfppjgq1wYYPpcNbgyQ6fvDiH
+         M9Jw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=dSXwdpuB52SuLjmFXAXoBCz/Q+io05P8oxRkfvN/SGc=;
-        b=UQxhiC7ByqPtPz5yQk0TimSMqsScSa8sdY4QGSfbSjV/6KB+SqcDFpNwrKWZJlFkXe
-         pTZyipG1zaBDLmrjSo08rktc8QZ5DbXPolOLB0knsDIeKjVTdQOq8ZRK8b5Gd851B3h+
-         sxAmpBtv4mfaS2LgWx5Hn85S1OIXtuAu1wi9MNW0Iffj4Tr/L+DYrzaN3NZeYNCCenA+
-         sA4pwVSx0/AIuWTMjA4a8G9TbG+0CyrR1IZV2h/MHStvoR5MPPPiiO4yAsgSY96QXouB
-         17Pl01faXOo4zzUfB3NQCGDhuXcY8m6rsln7vKyNLwHCryy0p09WSngl0Me5mudoExIo
-         LbuA==
-X-Gm-Message-State: AOAM531/YKtl13EHsVhSaUTEQ8Q04uqBrmfsfXQxEGRic1FjYxxxASll
-        9ab4tgkqxnC/KhHo/nOpVOeVXwxege0wRg==
-X-Google-Smtp-Source: ABdhPJwzVhGNafLAXRlN0xKTOSURUcrj3/AqJgN1MxrsZS4MNOD0A0vPwHrZm5ygqhlD6ZwjWvEMGg==
-X-Received: by 2002:a17:90a:be16:b0:1cd:5aef:69e8 with SMTP id a22-20020a17090abe1600b001cd5aef69e8mr1401405pjs.233.1650068768229;
-        Fri, 15 Apr 2022 17:26:08 -0700 (PDT)
-Received: from localhost.localdomain (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id s20-20020aa78d54000000b004fac74c83b3sm3895375pfe.186.2022.04.15.17.26.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Apr 2022 17:26:07 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4/4] io_uring: allow IORING_OP_ASYNC_CANCEL with 'fd' key
-Date:   Fri, 15 Apr 2022 18:26:01 -0600
-Message-Id: <20220416002601.360026-5-axboe@kernel.dk>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220416002601.360026-1-axboe@kernel.dk>
-References: <20220416002601.360026-1-axboe@kernel.dk>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:from:to:references:in-reply-to
+         :content-transfer-encoding;
+        bh=tJYLLfSj5mfRHYaP85yaL+KqmE3bZcNBZg1N/oK4hIc=;
+        b=wpu6SAfVPV71dvCmAX/YSm+kWbKMNGOdsbzZIW7dArYXVpHFWW+/tLHbr2nyBfRMIB
+         B19EQmsmX34hzcdIZ4y4dWdLBhqnZd2rCrp51t+cmeW7W6QkUlUlEScdDWBkl9eLiO1h
+         8ihUgeBt8HSLYvDovoRWxcs9gow81Mydt0g476kQCLdHT2sRr8icgaAh+Mn2o5oRfvc9
+         wrlCVxSLY266l/WuNsaWcHweZ2kVh7eN2bkC1E9N+MDjcgfqXJ2kOgze6DjkBWFvPzIa
+         YpL2Is0LVZhtZ7atRngON0gYnmP6v0NYjhnojMSZHqGtWuRszrnYDcp1t15SSYKkxG0o
+         3UwQ==
+X-Gm-Message-State: AOAM533sJ4kEQClH22rOdomBNjk4Jjcw1Rf5auHea3B62yG8lg1pxNON
+        Vc62ilJ+2+jl1Z1ffYjpwTA1JDzjqmg=
+X-Google-Smtp-Source: ABdhPJyU0EJeRoZDqRPEyyFdCZJXeAgDYElWOtws3Co4gFRfND/wuqwkRfylLe1X04jpONpIMH9d1g==
+X-Received: by 2002:a05:6402:442:b0:416:14b7:4d55 with SMTP id p2-20020a056402044200b0041614b74d55mr2809888edw.183.1650098138275;
+        Sat, 16 Apr 2022 01:35:38 -0700 (PDT)
+Received: from [192.168.8.198] ([148.252.133.118])
+        by smtp.gmail.com with ESMTPSA id p22-20020aa7c4d6000000b004209e0deb3esm3873142edr.30.2022.04.16.01.35.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 16 Apr 2022 01:35:37 -0700 (PDT)
+Message-ID: <073a5570-3d42-87f1-6a92-b43e83369753@gmail.com>
+Date:   Sat, 16 Apr 2022 09:34:47 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH 1/1] io_uring: fix leaks on IOPOLL and CQE_SKIP
+Content-Language: en-US
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <c19df8bde9a9ab89425abf7339de3564c96fd858.1649780645.git.asml.silence@gmail.com>
+ <7a6eef8a-d09b-89b2-f261-506ae6dae413@kernel.dk>
+ <760bb119-6147-99b9-7e5a-c9c3566bfbfc@kernel.dk>
+ <b837025e-4c18-322b-094c-6f518335c8ca@gmail.com>
+ <aea01fb7-fa4f-c61a-2655-92129d727a74@kernel.dk>
+ <e1b351c3-f18e-f3ce-f526-970447389a2d@gmail.com>
+In-Reply-To: <e1b351c3-f18e-f3ce-f526-970447389a2d@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-6.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Currently sqe->addr must contain the user_data of the request being
-canceled. Introduce the IORING_ASYNC_CANCEL_FD flag, which tells the
-kernel that we're keying off the file fd instead for cancelation. This
-allows canceling any request that a) uses a file, and b) was assigned the
-file based on the value being passed in.
+On 4/15/22 23:41, Pavel Begunkov wrote:
+> On 4/15/22 23:03, Jens Axboe wrote:
+>> On 4/15/22 3:05 PM, Pavel Begunkov wrote:
+>>> On 4/12/22 17:46, Jens Axboe wrote:
+>>>> On 4/12/22 10:41 AM, Jens Axboe wrote:
+>>>>> On 4/12/22 10:24 AM, Pavel Begunkov wrote:
+>>>>>> If all completed requests in io_do_iopoll() were marked with
+>>>>>> REQ_F_CQE_SKIP, we'll not only skip CQE posting but also
+>>>>>> io_free_batch_list() leaking memory and resources.
+>>>>>>
+>>>>>> Move @nr_events increment before REQ_F_CQE_SKIP check. We'll potentially
+>>>>>> return the value greater than the real one, but iopolling will deal with
+>>>>>> it and the userspace will re-iopoll if needed. In anyway, I don't think
+>>>>>> there are many use cases for REQ_F_CQE_SKIP + IOPOLL.
+>>>>>
+>>>>> Ah good catch - yes probably not much practical concern, as the lack of
+>>>>> ordering for file IO means that CQE_SKIP isn't really useful for that
+>>>>> scenario.
+>>>>
+>>>> One potential snag is with the change we're now doing
+>>>> io_cqring_ev_posted_iopoll() even if didn't post an event. Again
+>>>> probably not a practical concern, but it is theoretically a violation
+>>>> if an eventfd is used.
+>>> Looks this didn't get applied. Are you concerned about eventfd?
+>>
+>> Yep, was hoping to get a reply back, so just deferred it for now.
+>>
+>>> Is there any good reason why the userspace can't tolerate spurious
+>>> eventfd events? Because I don't think we should care this case
+>>
+>> I always forget the details on that, but we've had cases like this in
+>> the past where some applications assume that if they got N eventfd
+>> events, then are are also N events in the ring. Which granted is a bit
+>> odd, but it does also make some sense. Why would you have more eventfd
+>> events posted than events?
+> 
+> For the same reason why it can get less eventfd events than there are
+> CQEs, as for me it's only a communication channel but not a
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- fs/io_uring.c                 | 71 ++++++++++++++++++++++++++++++-----
- include/uapi/linux/io_uring.h |  3 ++
- 2 files changed, 65 insertions(+), 9 deletions(-)
+s/communication/notification/
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 79601a333903..07acf7199fa7 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -570,6 +570,7 @@ struct io_cancel {
- 	struct file			*file;
- 	u64				addr;
- 	u32				flags;
-+	s32				fd;
- };
- 
- struct io_timeout {
-@@ -975,7 +976,10 @@ struct io_defer_entry {
- 
- struct io_cancel_data {
- 	struct io_ring_ctx *ctx;
--	u64 data;
-+	union {
-+		u64 data;
-+		struct file *file;
-+	};
- 	u32 flags;
- 	int seq;
- };
-@@ -6322,6 +6326,29 @@ static struct io_kiocb *io_poll_find(struct io_ring_ctx *ctx, bool poll_only,
- 	return NULL;
- }
- 
-+static struct io_kiocb *io_poll_file_find(struct io_ring_ctx *ctx,
-+					  struct io_cancel_data *cd)
-+	__must_hold(&ctx->completion_lock)
-+{
-+	struct io_kiocb *req;
-+	int i;
-+
-+	for (i = 0; i < (1U << ctx->cancel_hash_bits); i++) {
-+		struct hlist_head *list;
-+
-+		list = &ctx->cancel_hash[i];
-+		hlist_for_each_entry(req, list, hash_node) {
-+			if (req->file != cd->file)
-+				continue;
-+			if (cd->seq == req->work.cancel_seq)
-+				continue;
-+			req->work.cancel_seq = cd->seq;
-+			return req;
-+		}
-+	}
-+	return NULL;
-+}
-+
- static bool io_poll_disarm(struct io_kiocb *req)
- 	__must_hold(&ctx->completion_lock)
- {
-@@ -6335,8 +6362,12 @@ static bool io_poll_disarm(struct io_kiocb *req)
- static int io_poll_cancel(struct io_ring_ctx *ctx, struct io_cancel_data *cd)
- 	__must_hold(&ctx->completion_lock)
- {
--	struct io_kiocb *req = io_poll_find(ctx, false, cd);
-+	struct io_kiocb *req;
- 
-+	if (cd->flags & IORING_ASYNC_CANCEL_FD)
-+		req = io_poll_file_find(ctx, cd);
-+	else
-+		req = io_poll_find(ctx, false, cd);
- 	if (!req)
- 		return -ENOENT;
- 	io_poll_cancel_req(req);
-@@ -6785,8 +6816,13 @@ static bool io_cancel_cb(struct io_wq_work *work, void *data)
- 
- 	if (req->ctx != cd->ctx)
- 		return false;
--	if (req->cqe.user_data != cd->data)
--		return false;
-+	if (cd->flags & IORING_ASYNC_CANCEL_FD) {
-+		if (req->file != cd->file)
-+			return false;
-+	} else {
-+		if (req->cqe.user_data != cd->data)
-+			return false;
-+	}
- 	if (cd->flags & IORING_ASYNC_CANCEL_ALL) {
- 		if (cd->seq == req->work.cancel_seq)
- 			return false;
-@@ -6841,9 +6877,11 @@ static int io_try_cancel(struct io_kiocb *req, struct io_cancel_data *cd)
- 	if (ret != -ENOENT)
- 		goto out;
- 
--	spin_lock_irq(&ctx->timeout_lock);
--	ret = io_timeout_cancel(ctx, cd);
--	spin_unlock_irq(&ctx->timeout_lock);
-+	if (!(cd->flags & IORING_ASYNC_CANCEL_FD)) {
-+		spin_lock_irq(&ctx->timeout_lock);
-+		ret = io_timeout_cancel(ctx, cd);
-+		spin_unlock_irq(&ctx->timeout_lock);
-+	}
- out:
- 	spin_unlock(&ctx->completion_lock);
- 	return ret;
-@@ -6854,15 +6892,17 @@ static int io_async_cancel_prep(struct io_kiocb *req,
- {
- 	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
- 		return -EINVAL;
--	if (unlikely(req->flags & (REQ_F_FIXED_FILE | REQ_F_BUFFER_SELECT)))
-+	if (unlikely(req->flags & REQ_F_BUFFER_SELECT))
- 		return -EINVAL;
- 	if (sqe->ioprio || sqe->off || sqe->len || sqe->splice_fd_in)
- 		return -EINVAL;
- 
- 	req->cancel.addr = READ_ONCE(sqe->addr);
- 	req->cancel.flags = READ_ONCE(sqe->cancel_flags);
--	if (req->cancel.flags & ~IORING_ASYNC_CANCEL_ALL)
-+	if (req->cancel.flags & ~(IORING_ASYNC_CANCEL_ALL|IORING_ASYNC_CANCEL_FD))
- 		return -EINVAL;
-+	if (req->cancel.flags & IORING_ASYNC_CANCEL_FD)
-+		req->cancel.fd = READ_ONCE(sqe->fd);
- 
- 	return 0;
- }
-@@ -6911,7 +6951,20 @@ static int io_async_cancel(struct io_kiocb *req, unsigned int issue_flags)
- 	};
- 	int ret;
- 
-+	if (cd.flags & IORING_ASYNC_CANCEL_FD) {
-+		if (req->flags & REQ_F_FIXED_FILE)
-+			req->file = io_file_get_fixed(req, req->cancel.fd, issue_flags);
-+		else
-+			req->file = io_file_get_normal(req, req->cancel.fd);
-+		if (!req->file) {
-+			ret = -EBADF;
-+			goto done;
-+		}
-+		cd.file = req->file;
-+	}
-+
- 	ret = __io_async_cancel(&cd, req, issue_flags);
-+done:
- 	if (ret < 0)
- 		req_set_fail(req);
- 	io_req_complete_post(req, ret, 0);
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 476e58a2837f..cc7fe82a1798 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -191,8 +191,11 @@ enum {
-  * ASYNC_CANCEL flags.
-  *
-  * IORING_ASYNC_CANCEL_ALL	Cancel all requests that match the given key
-+ * IORING_ASYNC_CANCEL_FD	Key off 'fd' for cancelation rather than the
-+ *				request 'user_data'
-  */
- #define IORING_ASYNC_CANCEL_ALL	(1U << 0)
-+#define IORING_ASYNC_CANCEL_FD	(1U << 1)
- 
- /*
-  * IO completion data structure (Completion Queue Entry)
+> replacement for completion events.
+
 -- 
-2.35.1
-
+Pavel Begunkov

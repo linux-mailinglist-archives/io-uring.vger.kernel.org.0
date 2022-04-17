@@ -2,60 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F865504757
-	for <lists+io-uring@lfdr.de>; Sun, 17 Apr 2022 11:10:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DF80504758
+	for <lists+io-uring@lfdr.de>; Sun, 17 Apr 2022 11:11:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233750AbiDQJMj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 17 Apr 2022 05:12:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57614 "EHLO
+        id S231699AbiDQJNv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 17 Apr 2022 05:13:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233779AbiDQJMi (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 17 Apr 2022 05:12:38 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70D262980B
-        for <io-uring@vger.kernel.org>; Sun, 17 Apr 2022 02:10:03 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id bv19so22330104ejb.6
-        for <io-uring@vger.kernel.org>; Sun, 17 Apr 2022 02:10:03 -0700 (PDT)
+        with ESMTP id S233283AbiDQJNu (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 17 Apr 2022 05:13:50 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF33A2A272
+        for <io-uring@vger.kernel.org>; Sun, 17 Apr 2022 02:11:14 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id b24so14539784edu.10
+        for <io-uring@vger.kernel.org>; Sun, 17 Apr 2022 02:11:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=iVc7wpSAVHRCsLgIOjeY2cxoPwGnEH78NuWW/7/6OBY=;
-        b=ZevE4E/SP5Iv7wSO5EcxjhwgQVzsFskVcHKFaEhpZkce6Tv8rHz6Tk+OIh/rxfnL0K
-         crR9TmjXAPre8D3PUyx2cK249IEfn+RgC8Py3OO6t8iO5iuL6qrODNQigO86MC9hsTtD
-         AvjRwP5JmFcO3HQLY5GnhGGO37zk8w9vuhfkQvg7Yz24T1eK21orKLH0ji/lagx4UZQZ
-         nWqafghXmSMmlfIRmQkedjlLyun57MczJUQ+NMwFbHmHFqprfiByM8S6VBqFJ1UQpxhF
-         b1melDm6sD3/i9v9uEGui3c3yBEF57qkUlDCAQ57vN6nPMmwlnGSWN0S00EJKD2LU1F+
-         q/Nw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ueMtHnt1FiuI41Ya01XLyvRyMPa/Grwlxwz2qs6IFZ4=;
+        b=msSv6EMpko5VN03TIdBQjUkQYvd/coy4oFnPz9BgIEkvP2CEpuh5Pb8JOVnNqg/Byu
+         uB8Dj3zTwVLublDeipDeGW43L9Ox4a9FLqrA/dglzj30GsTpUhMIa7i6UASCEa4ayq/o
+         r8ODj66cVNBzLii0a24XiX6QSagjQZhr7GKmE7WUQjJMp+lZfoWRLeZJ7Ac+Gk137F56
+         DHA088juXFRyEcybBayXI0whEZ0wLEGpwoggcwupxIDW/UxMUQxMCvmEkl9iD1rM00/F
+         DkEjT+9jknsBMa9TgZD8bseUBuWq+J28F2Ric5iVNwsAkh0tOgKKtAol9/lV6oVN+z2I
+         3C9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=iVc7wpSAVHRCsLgIOjeY2cxoPwGnEH78NuWW/7/6OBY=;
-        b=C80PE4NiXT547FOfujBi1vnuZFm9p6ls+HCYtV8I/23n10LO9WWQ1TqjBiZBvxpgyR
-         Xcpq9hOi7+LZSXtMcbTR+dFF+AjfMYmJVU4vm2N/DXOph6LfgUV4g4kzFvmA0az/i5JM
-         U6rf9vfWisevfZfBSefSNtu3WaoTgZOXH/NZo6pLV10E6l8w/D1TUXZwBV+eGi1+dyZQ
-         FnUWCmpxepcZGNgSmNOatihvNn/hx7mJuWq2QEyvzmg6rweQSJCbdFgKrebALwwLPTIo
-         sLNiVXECd6syjeogl2IZnL147ZqVsltE2lpyFZ7QsaX/hU+d8N+whC4vbvgcJFLZ3D0l
-         UrdA==
-X-Gm-Message-State: AOAM530zp9VevQ945+x8YQ+/nkXMLv+MLk4GyLxSPzEW8/mMHYr941ny
-        msCll5kRPrWhLdkZJB0CxQAxgh/H8YI=
-X-Google-Smtp-Source: ABdhPJyAXPNjcjQJrwNaMSM7U5fD2rnAj6hDM9jLOhHkuIesz/ZSqz3PcbwLqKDS1Ru4HIf/E40Umg==
-X-Received: by 2002:a17:907:7b99:b0:6ec:9746:b5b5 with SMTP id ne25-20020a1709077b9900b006ec9746b5b5mr5203905ejc.392.1650186601893;
-        Sun, 17 Apr 2022 02:10:01 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ueMtHnt1FiuI41Ya01XLyvRyMPa/Grwlxwz2qs6IFZ4=;
+        b=RIsKvCreYVT8e1gY0w7N3u/ifeCK9+vAJOzesiCl8kd37RFj6SiL9hak2IYERlNEuW
+         eHUBn0pcrvIBY6T+aQq3eQIpee7SEBQtjdTvQ2hi+MiarVZpm7y9Bk/DIulHnlQ1BB0P
+         zd4UY2HQB+kPTThbalxuHmcf4ks0E/kiSGe8g5I+qqcPnlztx8oMfSZnohrzAZ6PMkrV
+         INBsHPFI++lP56VfphAtTcR517NYaD+GMBtSFjow32egduA3nlAG/IdFuZzP4eXWn4rF
+         Q+oUIipqNDgCItKGLSF1ax8DJ7Sz196cbMz5hoGVxx+efMAaRQoujlFukIino6+AHIYN
+         Sy2Q==
+X-Gm-Message-State: AOAM531usklmfcc5J0QaqOo+4A/pvYLPiqdV55AMo+TbFb5QoEgdsMlc
+        YuJNpRm4f+jHtvtTlhwzksJ9DYWasvw=
+X-Google-Smtp-Source: ABdhPJxGg6sJiAmNX0jdAtYTDs7xXrcez6KMLYNTFeYo4sq7bo8JH4w8riQepYw33XJSSj7oaxJ+hA==
+X-Received: by 2002:a05:6402:4499:b0:41d:7e83:8565 with SMTP id er25-20020a056402449900b0041d7e838565mr7161902edb.332.1650186672630;
+        Sun, 17 Apr 2022 02:11:12 -0700 (PDT)
 Received: from 127.0.0.1localhost ([148.252.129.75])
-        by smtp.gmail.com with ESMTPSA id bw3-20020a170906c1c300b006e88cdfbc32sm3423746ejb.45.2022.04.17.02.10.01
+        by smtp.gmail.com with ESMTPSA id ee17-20020a056402291100b0041fe1e4e342sm5265431edb.27.2022.04.17.02.11.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Apr 2022 02:10:01 -0700 (PDT)
+        Sun, 17 Apr 2022 02:11:12 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH liburing 3/3] tests: add more file registration tests
-Date:   Sun, 17 Apr 2022 10:09:25 +0100
-Message-Id: <d50933f8313050ee43353a1f0f368df9f9ea00c0.1650186365.git.asml.silence@gmail.com>
+Subject: [PATCH v2] io_uring: fix leaks on IOPOLL and CQE_SKIP
+Date:   Sun, 17 Apr 2022 10:10:34 +0100
+Message-Id: <5072fc8693fbfd595f89e5d4305bfcfd5d2f0a64.1650186611.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.35.2
-In-Reply-To: <cover.1650186365.git.asml.silence@gmail.com>
-References: <cover.1650186365.git.asml.silence@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -68,128 +66,41 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Add tests for file registration failing in the middle of the fd set, and
-mixing files that need and don't SCM accounting + checking for
-underflows.
+If all completed requests in io_do_iopoll() were marked with
+REQ_F_CQE_SKIP, we'll not only skip CQE posting but also
+io_free_batch_list() leaking memory and resources.
 
+Move @nr_events increment before REQ_F_CQE_SKIP check. We'll potentially
+return the value greater than the real one, but iopolling will deal with
+it and the userspace will re-iopoll if needed. In anyway, I don't think
+there are many use cases for REQ_F_CQE_SKIP + IOPOLL.
+
+Fixes: 83a13a4181b0e ("io_uring: tweak iopoll CQE_SKIP event counting")
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- test/file-register.c | 95 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 95 insertions(+)
 
-diff --git a/test/file-register.c b/test/file-register.c
-index bd15408..ee2fdcd 100644
---- a/test/file-register.c
-+++ b/test/file-register.c
-@@ -745,7 +745,90 @@ static int test_fixed_removal_ordering(void)
- 	return 0;
- }
- 
-+/* mix files requiring SCM-accounting and not in a single register */
-+static int test_mixed_af_unix(void)
-+{
-+	struct io_uring ring;
-+	int i, ret, fds[2];
-+	int reg_fds[32];
-+	int sp[2];
-+
-+	ret = io_uring_queue_init(8, &ring, 0);
-+	if (ret < 0) {
-+		fprintf(stderr, "failed to init io_uring: %s\n", strerror(-ret));
-+		return ret;
-+	}
-+	if (pipe(fds)) {
-+		perror("pipe");
-+		return -1;
-+	}
-+	if (socketpair(AF_UNIX, SOCK_DGRAM, 0, sp) != 0) {
-+		perror("Failed to create Unix-domain socket pair\n");
-+		return 1;
-+	}
-+
-+	for (i = 0; i < 16; i++) {
-+		reg_fds[i * 2] = fds[0];
-+		reg_fds[i * 2 + 1] = sp[0];
-+	}
- 
-+	ret = io_uring_register_files(&ring, reg_fds, 32);
-+	if (!ret) {
-+		fprintf(stderr, "file_register: %d\n", ret);
-+		return ret;
-+	}
-+
-+	close(fds[0]);
-+	close(fds[1]);
-+	close(sp[0]);
-+	close(sp[1]);
-+	io_uring_queue_exit(&ring);
-+	return 0;
-+}
-+
-+static int test_partial_register_fail(void)
-+{
-+	char buffer[128];
-+	struct io_uring ring;
-+	int ret, fds[2];
-+	int reg_fds[5];
-+
-+	ret = io_uring_queue_init(8, &ring, 0);
-+	if (ret < 0) {
-+		fprintf(stderr, "failed to init io_uring: %s\n", strerror(-ret));
-+		return ret;
-+	}
-+	if (pipe(fds)) {
-+		perror("pipe");
-+		return -1;
-+	}
-+
-+	/*
-+	 * Expect register to fail as it doesn't support io_uring fds, shouldn't
-+	 * leave any fds referenced afterwards.
-+	 */
-+	reg_fds[0] = fds[0];
-+	reg_fds[1] = fds[1];
-+	reg_fds[2] = -1;
-+	reg_fds[3] = ring.ring_fd;
-+	reg_fds[4] = -1;
-+	ret = io_uring_register_files(&ring, reg_fds, 5);
-+	if (!ret) {
-+		fprintf(stderr, "file_register: %d\n", ret);
-+		return ret;
-+	}
-+
-+	/* ring should have fds referenced, can close them */
-+	close(fds[1]);
-+
-+	/* confirm that fds[1] is actually close and to ref'ed by io_uring */
-+	ret = read(fds[0], buffer, 10);
-+	if (ret < 0)
-+		perror("read");
-+	close(fds[0]);
-+	io_uring_queue_exit(&ring);
-+	return 0;
-+}
- 
- int main(int argc, char *argv[])
- {
-@@ -854,5 +937,17 @@ int main(int argc, char *argv[])
- 		return 1;
+v2: rebase onto 5.18
+
+ fs/io_uring.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 4479013854d2..43f7911ee555 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -2797,11 +2797,10 @@ static int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin)
+ 		/* order with io_complete_rw_iopoll(), e.g. ->result updates */
+ 		if (!smp_load_acquire(&req->iopoll_completed))
+ 			break;
++		nr_events++;
+ 		if (unlikely(req->flags & REQ_F_CQE_SKIP))
+ 			continue;
+-
+ 		__io_fill_cqe_req(req, req->result, io_put_kbuf(req, 0));
+-		nr_events++;
  	}
  
-+	ret = test_mixed_af_unix();
-+	if (ret) {
-+		printf("test_mixed_af_unix failed\n");
-+		return 1;
-+	}
-+
-+	ret = test_partial_register_fail();
-+	if (ret) {
-+		printf("test_partial_register_fail failed\n");
-+		return ret;
-+	}
-+
- 	return 0;
- }
+ 	if (unlikely(!nr_events))
 -- 
 2.35.2
 

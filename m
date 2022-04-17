@@ -2,105 +2,89 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DF80504758
-	for <lists+io-uring@lfdr.de>; Sun, 17 Apr 2022 11:11:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D29745047C8
+	for <lists+io-uring@lfdr.de>; Sun, 17 Apr 2022 14:54:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231699AbiDQJNv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 17 Apr 2022 05:13:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35220 "EHLO
+        id S234082AbiDQM5J (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 17 Apr 2022 08:57:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233283AbiDQJNu (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 17 Apr 2022 05:13:50 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF33A2A272
-        for <io-uring@vger.kernel.org>; Sun, 17 Apr 2022 02:11:14 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id b24so14539784edu.10
-        for <io-uring@vger.kernel.org>; Sun, 17 Apr 2022 02:11:14 -0700 (PDT)
+        with ESMTP id S231315AbiDQM5J (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 17 Apr 2022 08:57:09 -0400
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2AAC326FF
+        for <io-uring@vger.kernel.org>; Sun, 17 Apr 2022 05:54:33 -0700 (PDT)
+Received: by mail-pl1-x62d.google.com with SMTP id n18so10465257plg.5
+        for <io-uring@vger.kernel.org>; Sun, 17 Apr 2022 05:54:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=from:to:in-reply-to:references:subject:message-id:date:mime-version
          :content-transfer-encoding;
-        bh=ueMtHnt1FiuI41Ya01XLyvRyMPa/Grwlxwz2qs6IFZ4=;
-        b=msSv6EMpko5VN03TIdBQjUkQYvd/coy4oFnPz9BgIEkvP2CEpuh5Pb8JOVnNqg/Byu
-         uB8Dj3zTwVLublDeipDeGW43L9Ox4a9FLqrA/dglzj30GsTpUhMIa7i6UASCEa4ayq/o
-         r8ODj66cVNBzLii0a24XiX6QSagjQZhr7GKmE7WUQjJMp+lZfoWRLeZJ7Ac+Gk137F56
-         DHA088juXFRyEcybBayXI0whEZ0wLEGpwoggcwupxIDW/UxMUQxMCvmEkl9iD1rM00/F
-         DkEjT+9jknsBMa9TgZD8bseUBuWq+J28F2Ric5iVNwsAkh0tOgKKtAol9/lV6oVN+z2I
-         3C9Q==
+        bh=8yGP9A6TXDe0gE8hex3e5uPUeUznAEHYrR6n0spy4KQ=;
+        b=1TpWix6ramuO7Mphrdv0mdxSN9Z4z9FdFbGkFPENKrMmNHzkQCgVQP7heSpqjPywkF
+         +S7YAn5sgbWkaXe1W19FX7NvrTJumLFejL+HIHHZgCNpx1iwmJg4G4OLc53gWPLwJvgs
+         kbP3iGqwGeEXNhDrOMSo8T8mt5xkufQpGhPniyUAT7uOQEugIpgHh/cXIxIxGjtvClhC
+         V1PyVlYBvCT9e0CbPPc9mavTJA/LOGoecD6AZlC0wEsak/HW+al2COW8QRQU8ips0sac
+         PAxe/iit6GvyIAyixvVlVK6dV5x+fcTtNiuqIfYrXA37F/P6Pc1YpYEqGl2070xEURnZ
+         r1fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ueMtHnt1FiuI41Ya01XLyvRyMPa/Grwlxwz2qs6IFZ4=;
-        b=RIsKvCreYVT8e1gY0w7N3u/ifeCK9+vAJOzesiCl8kd37RFj6SiL9hak2IYERlNEuW
-         eHUBn0pcrvIBY6T+aQq3eQIpee7SEBQtjdTvQ2hi+MiarVZpm7y9Bk/DIulHnlQ1BB0P
-         zd4UY2HQB+kPTThbalxuHmcf4ks0E/kiSGe8g5I+qqcPnlztx8oMfSZnohrzAZ6PMkrV
-         INBsHPFI++lP56VfphAtTcR517NYaD+GMBtSFjow32egduA3nlAG/IdFuZzP4eXWn4rF
-         Q+oUIipqNDgCItKGLSF1ax8DJ7Sz196cbMz5hoGVxx+efMAaRQoujlFukIino6+AHIYN
-         Sy2Q==
-X-Gm-Message-State: AOAM531usklmfcc5J0QaqOo+4A/pvYLPiqdV55AMo+TbFb5QoEgdsMlc
-        YuJNpRm4f+jHtvtTlhwzksJ9DYWasvw=
-X-Google-Smtp-Source: ABdhPJxGg6sJiAmNX0jdAtYTDs7xXrcez6KMLYNTFeYo4sq7bo8JH4w8riQepYw33XJSSj7oaxJ+hA==
-X-Received: by 2002:a05:6402:4499:b0:41d:7e83:8565 with SMTP id er25-20020a056402449900b0041d7e838565mr7161902edb.332.1650186672630;
-        Sun, 17 Apr 2022 02:11:12 -0700 (PDT)
-Received: from 127.0.0.1localhost ([148.252.129.75])
-        by smtp.gmail.com with ESMTPSA id ee17-20020a056402291100b0041fe1e4e342sm5265431edb.27.2022.04.17.02.11.11
+        h=x-gm-message-state:from:to:in-reply-to:references:subject
+         :message-id:date:mime-version:content-transfer-encoding;
+        bh=8yGP9A6TXDe0gE8hex3e5uPUeUznAEHYrR6n0spy4KQ=;
+        b=N1wwCSCu6QUQNqoZprPUSh0Ilm/hO9ShUsaXfGRfrcMSMvMvi3XsBXpDRWJQEDZQXI
+         KhvsWCLBHqJXeDlmrqnf/pswtcewQoqP6zhrFJAbpMzbNaGCCdFVSDwfRPneOmef6IQd
+         grCzPSH1AvZr/znG2Rb3y35DuweFWsxYletoPt4Eye/z9qvoy6xkG0+gV8lM4YmMydZb
+         aS3q8KptVKCCidquitYBwv1AJG+m2W9DRdD7CnAcLEkSJJBUXgxSj0vSTE1xzyYgcv0F
+         xZMII+jwY/iShd1cGMdCBc9usDOWN0TikXyCFe2r8a9D0h/VkSaVszyn4erLAIprr0Ng
+         jLKQ==
+X-Gm-Message-State: AOAM531VNw1jfSOtQvuTov9frqmyokHfyEJTBTLyrd0gPESQ8AWnkk33
+        j5Q5mRxvVYdLIQOdxb63tMTeMlPPS8q8Z8qe
+X-Google-Smtp-Source: ABdhPJzAjaozGKxr/wIdebfAPmq5+1pzEu2xO5lFxvTajCm4N9eElY0PaatUKmNzw6N7EdYbRYFQeQ==
+X-Received: by 2002:a17:90b:3c01:b0:1d0:3c19:e1eb with SMTP id pb1-20020a17090b3c0100b001d03c19e1ebmr13879738pjb.48.1650200072807;
+        Sun, 17 Apr 2022 05:54:32 -0700 (PDT)
+Received: from [127.0.1.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id v27-20020aa799db000000b00509fbf03c91sm8665218pfi.171.2022.04.17.05.54.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Apr 2022 02:11:12 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH v2] io_uring: fix leaks on IOPOLL and CQE_SKIP
-Date:   Sun, 17 Apr 2022 10:10:34 +0100
-Message-Id: <5072fc8693fbfd595f89e5d4305bfcfd5d2f0a64.1650186611.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.35.2
+        Sun, 17 Apr 2022 05:54:31 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     io-uring@vger.kernel.org, asml.silence@gmail.com
+In-Reply-To: <5072fc8693fbfd595f89e5d4305bfcfd5d2f0a64.1650186611.git.asml.silence@gmail.com>
+References: <5072fc8693fbfd595f89e5d4305bfcfd5d2f0a64.1650186611.git.asml.silence@gmail.com>
+Subject: Re: [PATCH v2] io_uring: fix leaks on IOPOLL and CQE_SKIP
+Message-Id: <165020007118.8177.8238194933142878483.b4-ty@kernel.dk>
+Date:   Sun, 17 Apr 2022 06:54:31 -0600
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-If all completed requests in io_do_iopoll() were marked with
-REQ_F_CQE_SKIP, we'll not only skip CQE posting but also
-io_free_batch_list() leaking memory and resources.
+On Sun, 17 Apr 2022 10:10:34 +0100, Pavel Begunkov wrote:
+> If all completed requests in io_do_iopoll() were marked with
+> REQ_F_CQE_SKIP, we'll not only skip CQE posting but also
+> io_free_batch_list() leaking memory and resources.
+> 
+> Move @nr_events increment before REQ_F_CQE_SKIP check. We'll potentially
+> return the value greater than the real one, but iopolling will deal with
+> it and the userspace will re-iopoll if needed. In anyway, I don't think
+> there are many use cases for REQ_F_CQE_SKIP + IOPOLL.
+> 
+> [...]
 
-Move @nr_events increment before REQ_F_CQE_SKIP check. We'll potentially
-return the value greater than the real one, but iopolling will deal with
-it and the userspace will re-iopoll if needed. In anyway, I don't think
-there are many use cases for REQ_F_CQE_SKIP + IOPOLL.
+Applied, thanks!
 
-Fixes: 83a13a4181b0e ("io_uring: tweak iopoll CQE_SKIP event counting")
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
+[1/1] io_uring: fix leaks on IOPOLL and CQE_SKIP
+      commit: c0713540f6d55c53dca65baaead55a5a8b20552d
 
-v2: rebase onto 5.18
-
- fs/io_uring.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 4479013854d2..43f7911ee555 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -2797,11 +2797,10 @@ static int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin)
- 		/* order with io_complete_rw_iopoll(), e.g. ->result updates */
- 		if (!smp_load_acquire(&req->iopoll_completed))
- 			break;
-+		nr_events++;
- 		if (unlikely(req->flags & REQ_F_CQE_SKIP))
- 			continue;
--
- 		__io_fill_cqe_req(req, req->result, io_put_kbuf(req, 0));
--		nr_events++;
- 	}
- 
- 	if (unlikely(!nr_events))
+Best regards,
 -- 
-2.35.2
+Jens Axboe
+
 

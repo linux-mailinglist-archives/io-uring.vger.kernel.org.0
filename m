@@ -2,71 +2,111 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 160E35047EB
-	for <lists+io-uring@lfdr.de>; Sun, 17 Apr 2022 15:37:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 363A75047ED
+	for <lists+io-uring@lfdr.de>; Sun, 17 Apr 2022 15:43:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234183AbiDQNjs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 17 Apr 2022 09:39:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38260 "EHLO
+        id S234190AbiDQNp5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 17 Apr 2022 09:45:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233723AbiDQNjr (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 17 Apr 2022 09:39:47 -0400
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76EBE26F8
-        for <io-uring@vger.kernel.org>; Sun, 17 Apr 2022 06:37:11 -0700 (PDT)
-Received: by mail-il1-f197.google.com with SMTP id i14-20020a056e020ece00b002ca198245e6so6579501ilk.4
-        for <io-uring@vger.kernel.org>; Sun, 17 Apr 2022 06:37:11 -0700 (PDT)
+        with ESMTP id S229496AbiDQNp4 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 17 Apr 2022 09:45:56 -0400
+Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63A6FA1A7
+        for <io-uring@vger.kernel.org>; Sun, 17 Apr 2022 06:43:20 -0700 (PDT)
+Received: by mail-pg1-x536.google.com with SMTP id h5so14426280pgc.7
+        for <io-uring@vger.kernel.org>; Sun, 17 Apr 2022 06:43:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:content-language:to:from
+         :subject:content-transfer-encoding;
+        bh=EwILbNqj1En2gCk70iVQXMrRBjEytHgJAy3rmAfZ5Hw=;
+        b=qv+9U+4+4W4gqRY3OLtFoUUJqBDmuWXXd1GoCuuJXIyRdjnTr7CqEj8X63twWsfU3r
+         2YvCGwwQ0w54vyEiR+Aruz4gHc1G5WbuMrfSaIraDYiKKBELMLnG/1gDikFDC5TeKKd9
+         lwz2vg8x/T4RsmgcotuKDchLHIIfAonhc6slpO58zKw8Q+vJsOd+zOU6b50aMpiwaF8j
+         IJK8mclVBNw1EbHXbhB07BRjaerANTv0dzNbUcmBF5hVBM2qo8LsJhUKEz1IlbJRh6qx
+         +M53IZZIeofWZU7UZUuiISiLtl6KwZ8384nlLmLdJNkarIv6JrYqqWPgXidG3FCxAV/h
+         q3BA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=wA0FmzGAcRTrX+FnNeAVQOC1kod7R+OPRg+GRTVqKh8=;
-        b=yKiSETRYVkwFdsVU9ncAdu9dcXg3ZQp16N4CmlsxSGWlihGlmvWpotlcntbe0f/9s2
-         OeKjQXAi/W/J1znHR9wBGEDciwXhlRWW0o3ajNK2hiA539fj93FCTc+TG63stqyuONzk
-         2eGuF9wVfc38KKsZqYc60i1BoV2jHsYE0r8cdfXG/uARRO37h3QhiSfFXKOCWHdjk/ie
-         fceYyBIjU+825f9Kpf7IMER+fq5k7bbxiC1C4ZgNXK2r6MMugy+cO+kj5Mak+oKVl/Kw
-         JB/WZkqgJri8TYPjOAvXHqfssR2LCQRPQeJgthqxyc4w+RBQdLW7BzwiaFx/bM2PXkfN
-         ebig==
-X-Gm-Message-State: AOAM530bJ+e5ibKStxyDcxecA1NHSZ0z0sILqIUT4x5PcGJ9p/9imwJs
-        ehjgHJMbqb7MwQQ73P8q/iQEN9CrxLMEOJucnV+GlIB9Z3fb
-X-Google-Smtp-Source: ABdhPJzu8m14N1MFCoEmHDFz6ieSul9y+/6ERhmpPdxdOihDx3wppwzmzdQYIcOP91/UdZmPr8NDfGWK1J1CtfWUls48flDEJ4tM
+        h=x-gm-message-state:message-id:date:mime-version:user-agent
+         :content-language:to:from:subject:content-transfer-encoding;
+        bh=EwILbNqj1En2gCk70iVQXMrRBjEytHgJAy3rmAfZ5Hw=;
+        b=vyryU9S/3e10IYh3LKkt8znJm28gXcoO8MuLXeuGX3ROXoiXTkD4+t51eg0z3AYeBM
+         Um/SQeZTyrz9j9KXzsjrpLgUIXrEzPUit31NrcSY8l/4DLDfQGoYx2KAk2s6XsFdmrJE
+         AUGphwbnkPL/1ZOUv/uX84UGkKBfwNH4NeQlJi4gOgLJJ6bjVKO1UK0pvz90CysbY6+T
+         af0qZT2On7I/CT1goXiaJ1iPiDMplF/YNcp+Fq3JSciPMcXgNAXNQSCA/edHbSMmx1qI
+         lo9sqhieFlqrKWmIZbzbV3iL/ZUBUYWY3diHxzsTDi2xhO74+KIjQRKIIsdAQBNpb9Np
+         6fJA==
+X-Gm-Message-State: AOAM530dBUxtjD0XU2xmSE25iPdDdUn933oORIELszvPxK4WqbwtZ+pZ
+        Gw61g7vPwXwpVe7K64ZjPUdjukIYLnmU/4hu
+X-Google-Smtp-Source: ABdhPJx7spugmNioOc5cubLym2HNalA8GaO3Fc5iSHOCPqxc+kTCqiqg/meqEW0Rny9OjSt06B47nQ==
+X-Received: by 2002:a05:6a00:801:b0:50a:6a46:598c with SMTP id m1-20020a056a00080100b0050a6a46598cmr2307758pfk.54.1650202999642;
+        Sun, 17 Apr 2022 06:43:19 -0700 (PDT)
+Received: from [192.168.1.100] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id g17-20020a625211000000b005056a6313a7sm8790923pfb.87.2022.04.17.06.43.18
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 17 Apr 2022 06:43:19 -0700 (PDT)
+Message-ID: <e2f326d2-3533-654e-e040-44a71cdcc896@kernel.dk>
+Date:   Sun, 17 Apr 2022 07:43:18 -0600
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:214b:b0:2cc:1c95:8198 with SMTP id
- d11-20020a056e02214b00b002cc1c958198mr1316033ilv.231.1650202630786; Sun, 17
- Apr 2022 06:37:10 -0700 (PDT)
-Date:   Sun, 17 Apr 2022 06:37:10 -0700
-In-Reply-To: <6ab618f8-f88b-0771-a739-04cd9cdc1a3c@kernel.dk>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009d92dd05dcd9bd1c@google.com>
-Subject: Re: [syzbot] memory leak in iovec_from_user
-From:   syzbot <syzbot+96b43810dfe9c3bb95ed@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Content-Language: en-US
+To:     io-uring <io-uring@vger.kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring: free iovec if file assignment fails
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
+We just return failure in this case, but we need to release the iovec
+first. If we're doing IO with more than FAST_IOV segments, then the
+iovec is allocated and must be freed.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Reported-by: syzbot+96b43810dfe9c3bb95ed@syzkaller.appspotmail.com
+Fixes: 584b0180f0f4 ("io_uring: move read/write file prep state into actual opcode handler")
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-Reported-and-tested-by: syzbot+96b43810dfe9c3bb95ed@syzkaller.appspotmail.com
+---
 
-Tested on:
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 4479013854d2..24409dd07239 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -3832,8 +3832,10 @@ static int io_read(struct io_kiocb *req, unsigned int issue_flags)
+ 		iovec = NULL;
+ 	}
+ 	ret = io_rw_init_file(req, FMODE_READ);
+-	if (unlikely(ret))
++	if (unlikely(ret)) {
++		kfree(iovec);
+ 		return ret;
++	}
+ 	req->result = iov_iter_count(&s->iter);
+ 
+ 	if (force_nonblock) {
+@@ -3958,8 +3960,10 @@ static int io_write(struct io_kiocb *req, unsigned int issue_flags)
+ 		iovec = NULL;
+ 	}
+ 	ret = io_rw_init_file(req, FMODE_WRITE);
+-	if (unlikely(ret))
++	if (unlikely(ret)) {
++		kfree(iovec);
+ 		return ret;
++	}
+ 	req->result = iov_iter_count(&s->iter);
+ 
+ 	if (force_nonblock) {
 
-commit:         c0713540 io_uring: fix leaks on IOPOLL and CQE_SKIP
-git tree:       git://git.kernel.dk/linux-block io_uring-5.18
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b8f1a3425e05af27
-dashboard link: https://syzkaller.appspot.com/bug?extid=96b43810dfe9c3bb95ed
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+-- 
+Jens Axboe
 
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.

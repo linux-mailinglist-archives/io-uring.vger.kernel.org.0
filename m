@@ -2,110 +2,127 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DA57505EC3
-	for <lists+io-uring@lfdr.de>; Mon, 18 Apr 2022 21:53:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 207BE505EFC
+	for <lists+io-uring@lfdr.de>; Mon, 18 Apr 2022 22:50:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347791AbiDRT43 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 18 Apr 2022 15:56:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44812 "EHLO
+        id S1347820AbiDRUxg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 18 Apr 2022 16:53:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347790AbiDRT4Y (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 18 Apr 2022 15:56:24 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDD4A2C67A
-        for <io-uring@vger.kernel.org>; Mon, 18 Apr 2022 12:53:44 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id v15so18578644edb.12
-        for <io-uring@vger.kernel.org>; Mon, 18 Apr 2022 12:53:44 -0700 (PDT)
+        with ESMTP id S231984AbiDRUxe (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 18 Apr 2022 16:53:34 -0400
+Received: from mail-io1-xd2f.google.com (mail-io1-xd2f.google.com [IPv6:2607:f8b0:4864:20::d2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D54722BD7
+        for <io-uring@vger.kernel.org>; Mon, 18 Apr 2022 13:50:53 -0700 (PDT)
+Received: by mail-io1-xd2f.google.com with SMTP id p62so3012327iod.0
+        for <io-uring@vger.kernel.org>; Mon, 18 Apr 2022 13:50:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=uS9kjufEQ3GHPf9yIimoRvb67qLOD/GJWP4ExeC1+U8=;
-        b=I82yEFqlT3UA3jwwlkhs6eS0jija9wNswz4UR8GwILfYMDaAO9Bc7JpfNhRgAmRdbO
-         A8nvkid9KsfOtK33yAnm3j4GKNZ44UhyhSIa4/KxSvlqjRFaLTJyW55IKNPjQH+qV65o
-         4SaCW7/iBsAZS1s7Oongk37QJ/BlyZ34pH9hak+lmL9ISI1dy+uPigqD1lC8R0Vmam2t
-         MONpzE+fEAOdt5pRH53pbFggO/zaIoFwD0PSsP2Sd5iNOUU1g0Gi6+nSKjQTzU5uytic
-         lBEZm7WZUJS5lfrxgRndPnNzVO0w4AJuHdcO+Zs5fyZynkZynORB4otnHAbSvgoSeNdi
-         cNHQ==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :references:from:in-reply-to:content-transfer-encoding;
+        bh=t2H5LrFdRSniBP7BYPjftYKAlUXRf2wE+LsqyEhX938=;
+        b=yTIgefqqkz9mSPxx64xvXab8jwdzdbKWL4qd9e7CJ4nBmzVplMf5DH1U6naSIvjDVP
+         WxcyP7Rc9nI+XMY/TAT/aVwG1WvAUMW3KeOI3BhA5wgX2Mi9N+NH9USs2/AvudKUthzL
+         cDp2GZxp0eAJL8bwYEZ+YNFELt4VmPsPwigz6akSw9uJgdBY6P6knsaazqX1JTaStmJf
+         aZaO8usIlGwMs/MKvpiX0lljmLtZAqVNGts6c/+jJo9GQPfGOHy/nxEJ7tJSCd/WqxR/
+         E0yYxZ1cXGrEWIG1acDRCftRLPY4szIZtHjkyUtV1LOnFX3R2uFhNVF7SYgYUwKPkt6o
+         FL4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=uS9kjufEQ3GHPf9yIimoRvb67qLOD/GJWP4ExeC1+U8=;
-        b=VCZVJEodIEOm8Uvc7D/ZaDVp0eFOIWE3K2Pdm9jTYR2tGfQSyaRe3/YbcRbTjjeZUw
-         a4ve8EQnVWfpZkvzxTbif54hG1DDXxvIo/VIclbZ+hUHwYth59spSHB7dO/FXPk/KxCF
-         qHiYn+R/S2+yqHaOJp9INppt3/pNeg3GB3bWkfXoyBVeUuyQqG/IK0JtnznREn0p/IfE
-         ++uq1tqMNzoyVZUSoU/e3TplYocdNCaBlRfTpSPXFrwydszqJa/KuAuSba7402Wu3R2y
-         KML/ZtkeNbKGTs12prWTib9RtW0SssoFM65wTj4xV0IZaSndKsqnSWPxzNZTUJA4V5MZ
-         tcEA==
-X-Gm-Message-State: AOAM532btiydtL0+rnM+6YCONb/FnPNYk8qHUNB5uJZA2wdtNTyG92bR
-        fOm9U1/H70ZKNxSblKTSa2J6EYgvdtk=
-X-Google-Smtp-Source: ABdhPJxlZapwDZ/wIlAcAMS9TBn2mOLl/2jAVQJBiJb35rC2McqlvZP1Xyaj/jrmf95F6kBjIz02Sg==
-X-Received: by 2002:a50:8d8a:0:b0:423:d77b:a683 with SMTP id r10-20020a508d8a000000b00423d77ba683mr10868526edh.138.1650311623230;
-        Mon, 18 Apr 2022 12:53:43 -0700 (PDT)
-Received: from 127.0.0.1localhost ([148.252.129.70])
-        by smtp.gmail.com with ESMTPSA id bf11-20020a0564021a4b00b00423e997a3ccsm1629143edb.19.2022.04.18.12.53.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Apr 2022 12:53:42 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH 5/5] io_uring: kill ctx arg from io_req_put_rsrc
-Date:   Mon, 18 Apr 2022 20:51:15 +0100
-Message-Id: <bb51bf3ff02775b03e6ea21bc79c25d7870d1644.1650311386.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.35.2
-In-Reply-To: <cover.1650311386.git.asml.silence@gmail.com>
-References: <cover.1650311386.git.asml.silence@gmail.com>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=t2H5LrFdRSniBP7BYPjftYKAlUXRf2wE+LsqyEhX938=;
+        b=7YPmn4sRGksPlsmx4PjQFvOTXSJruFR1W2weWACCrCvoa9eqC84xniB3FTsMSMOToP
+         CvLuFP30rJSO242y+R80pQXOFWnvs6PvxH7Lq+Q937Ekc/SBCJ/JmxgN5hnEMMCTwmC6
+         RHVGoIm71B4+dWG1X2xXUAF9KxpxLXp3XEviq+jeh0vocG7k9X1tBwwyql0NtCWMIlRk
+         mpigQtvMd6BmFA/vNXZMX7gW7m14h+KbBsWP5PRlHEGSrMOERXNZs0x2u6uoTJvoAAZZ
+         QGmDtYWo3yLEVWF5lG/HWPCXXWnli1catJLFERbBe4xivPUV12T0z+0IAHp+askYpjjr
+         Q4Kg==
+X-Gm-Message-State: AOAM530gLl6n+TLAxrCQiaxvGa7tUSTcTctOJSPUyDQxNpvuab6a5Pjb
+        fzkEINSo3ihwXIz8hi2yEjVjrXkmayw5oQ==
+X-Google-Smtp-Source: ABdhPJxy7HSQxH0LTSpRFyB/vST60xPCCKV7ysTHod1GvVcFVdE/ZLhPieILLeVydaVN+UM1VrQSXA==
+X-Received: by 2002:a6b:ed06:0:b0:649:d35f:852c with SMTP id n6-20020a6bed06000000b00649d35f852cmr5419350iog.186.1650315052872;
+        Mon, 18 Apr 2022 13:50:52 -0700 (PDT)
+Received: from [192.168.1.172] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id x186-20020a6bc7c3000000b00648deae6630sm9063572iof.54.2022.04.18.13.50.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Apr 2022 13:50:52 -0700 (PDT)
+Message-ID: <edbfa8e8-c3a0-aa58-81ab-09e3841101f3@kernel.dk>
+Date:   Mon, 18 Apr 2022 14:50:51 -0600
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH 2/5] io_uring: refactor io_assign_file error path
+Content-Language: en-US
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <cover.1650311386.git.asml.silence@gmail.com>
+ <eff77fb1eac2b6a90cca5223813e6a396ffedec0.1650311386.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <eff77fb1eac2b6a90cca5223813e6a396ffedec0.1650311386.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-5.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The ctx argument of io_req_put_rsrc() is not used, kill it.
+On 4/18/22 1:51 PM, Pavel Begunkov wrote:
+> All io_assign_file() callers do error handling themselves,
+> req_set_fail() in the io_assign_file()'s fail path needlessly bloats the
+> kernel and is not the best abstraction to have. Simplify the error path.
+> 
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> ---
+>  fs/io_uring.c | 6 +-----
+>  1 file changed, 1 insertion(+), 5 deletions(-)
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 423427e2203f..9626bc1cb0a0 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -7117,12 +7117,8 @@ static bool io_assign_file(struct io_kiocb *req, unsigned int issue_flags)
+>  		req->file = io_file_get_fixed(req, req->cqe.fd, issue_flags);
+>  	else
+>  		req->file = io_file_get_normal(req, req->cqe.fd);
+> -	if (req->file)
+> -		return true;
+>  
+> -	req_set_fail(req);
+> -	req->cqe.res = -EBADF;
+> -	return false;
+> +	return !!req->file;
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Wouldn't it be cleaner to just do:
+
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index c67748eabbd5..3905b3ec87b8 100644
+index 7625b29153b9..b91bcd52cc95 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -1344,7 +1344,7 @@ static inline void io_req_put_rsrc_locked(struct io_kiocb *req,
- 	}
+@@ -7098,15 +7098,8 @@ static bool io_assign_file(struct io_kiocb *req, unsigned int issue_flags)
+ 		return true;
+ 
+ 	if (req->flags & REQ_F_FIXED_FILE)
+-		req->file = io_file_get_fixed(req, req->fd, issue_flags);
+-	else
+-		req->file = io_file_get_normal(req, req->fd);
+-	if (req->file)
+-		return true;
+-
+-	req_set_fail(req);
+-	req->result = -EBADF;
+-	return false;
++		return io_file_get_fixed(req, req->fd, issue_flags);
++	return io_file_get_normal(req, req->fd);
  }
  
--static inline void io_req_put_rsrc(struct io_kiocb *req, struct io_ring_ctx *ctx)
-+static inline void io_req_put_rsrc(struct io_kiocb *req)
- {
- 	if (req->rsrc_node)
- 		io_rsrc_put_node(req->rsrc_node, 1);
-@@ -2173,7 +2173,7 @@ static void __io_req_complete_post(struct io_kiocb *req, s32 res,
- 				req->link = NULL;
- 			}
- 		}
--		io_req_put_rsrc(req, ctx);
-+		io_req_put_rsrc(req);
- 		/*
- 		 * Selected buffer deallocation in io_clean_op() assumes that
- 		 * we don't hold ->completion_lock. Clean them here to avoid
-@@ -2336,7 +2336,7 @@ static __cold void io_free_req(struct io_kiocb *req)
- {
- 	struct io_ring_ctx *ctx = req->ctx;
- 
--	io_req_put_rsrc(req, ctx);
-+	io_req_put_rsrc(req);
- 	io_dismantle_req(req);
- 	io_put_task(req->task, 1);
- 
+ static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags)
+
 -- 
-2.35.2
+Jens Axboe
 

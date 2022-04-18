@@ -2,62 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DBC15505BD1
-	for <lists+io-uring@lfdr.de>; Mon, 18 Apr 2022 17:48:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BCB9505C92
+	for <lists+io-uring@lfdr.de>; Mon, 18 Apr 2022 18:44:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345602AbiDRPtz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 18 Apr 2022 11:49:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33846 "EHLO
+        id S239301AbiDRQqp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 18 Apr 2022 12:46:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345800AbiDRPtW (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 18 Apr 2022 11:49:22 -0400
-Received: from mail-il1-x135.google.com (mail-il1-x135.google.com [IPv6:2607:f8b0:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 425BB3D1F2
-        for <io-uring@vger.kernel.org>; Mon, 18 Apr 2022 08:24:33 -0700 (PDT)
-Received: by mail-il1-x135.google.com with SMTP id t4so8709941ilo.12
-        for <io-uring@vger.kernel.org>; Mon, 18 Apr 2022 08:24:33 -0700 (PDT)
+        with ESMTP id S237766AbiDRQqo (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 18 Apr 2022 12:46:44 -0400
+Received: from mail-il1-x136.google.com (mail-il1-x136.google.com [IPv6:2607:f8b0:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C6F9326E9
+        for <io-uring@vger.kernel.org>; Mon, 18 Apr 2022 09:44:05 -0700 (PDT)
+Received: by mail-il1-x136.google.com with SMTP id y16so8848017ilc.7
+        for <io-uring@vger.kernel.org>; Mon, 18 Apr 2022 09:44:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:in-reply-to:references:subject:message-id:date
-         :mime-version:content-transfer-encoding;
-        bh=aOnNCxMKq+/Rsz/pFginayE+NCwvi9hoip6Zb+pVRbQ=;
-        b=klhKmb1jMRt2vRyHrqlQ9ox3qk53pBSG3QZGDyuIe9pgcC3rqwjaEjIianiVQyGb2W
-         KzANTAiouGJJrgjeUyOhT8s+OZZH9rlIAcUNYr7Mqi4M0KVrVk9p5W+uq5DscvHZEJoP
-         CP+Jh+Ir4G2BAANOdlUPK+kSXdy5OP2nOqcNz07J5Rc/iPEUF/Bg8iJSNx5QC6u8RM/3
-         E4vE4hmeMS2Nd8DQTCqQCUOxtfapE+6WRF1fwmCWX4J+Aqmn18pFtz1GiMy8ZLCcHtlw
-         a7Htuy1fpHI7SkOX7x2p4RWi1Uw2qjtwso8I1C0leZQrHe9XKtbO5DLM6K/YbMiscnXF
-         XEIw==
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mAzN/QGXIaCGFp+0ToFKIB05z98FAbtwDj6HI0if2Xk=;
+        b=N0ICD/2RvA6v6xsc/tlxMGjUr6MxxwrtHakDeLwjXA1N8RucnRlgWZKDKdg80Q6eKL
+         0Ols4Of/TPtR6J/i7Tk+OJ2kyEEUdobJGxLDGDFKI4AETRzxmF/IJL3vsINXZN0w5Bqg
+         oKzf6LIqU075H2CZkrcl4T7o8J+ZnfDwARUtMPzeiNi+G3BFZ8sdkWITDHeoD1Su1mD/
+         dQ1H1drKZ8onY1fypqvBFQXCV1BnD2oY91vBkUdlrFYWT/KQV3L43+4Mu6ZMJVfVHFJo
+         0veokUXZnBpwci1FodQgm6v4C+Lo5fRT6ehh34IGGA0DH7mQc9vMKk6ERhKQDm5JATsL
+         0C8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
-         :message-id:date:mime-version:content-transfer-encoding;
-        bh=aOnNCxMKq+/Rsz/pFginayE+NCwvi9hoip6Zb+pVRbQ=;
-        b=CrECyQIv4t0PzH71i3dROzBpAIjffkvhrB0ZG5lMqNDvWgE4cNhzISKjG9VtTd5NK+
-         Mw0cx2uCR9JKkp6a1VAMEdl9TrBIfpMAzGF3LKLDhkyvJGzT9ux6pV+I/9yEAEA9t/DV
-         0LAqHOY19VnQ7nk5xpoOGD1pygu+6wc3Bq7KGarH3JaE7ZDRNIMpehqKNi481TpPH048
-         bfjeDQlXAtk+po3H0ENWKlZFQzFaXaTziMRER2TmvKLm2cTAzjyebritHc76uKojkbz9
-         KjhDggELIMMZITKA9WA7WBJ2LjXahyC84RGyco6ieGds9dMQpbVVmHW3mRb/PmsrZ7K4
-         8GiQ==
-X-Gm-Message-State: AOAM531AZJ4eFBdp33XRparDRfHH8s0/mi0E3PqXO03cKrrtxKx+jQAV
-        wblNxnGpIL6qcTua0Wnndb00dG0ZnVw20g==
-X-Google-Smtp-Source: ABdhPJz9HUZ6kVPeND7Cs/c7g4zZPPy2e4Fbz3C4BNaSq3Fv+CyojIRbKJTzL+BDsz5oveeee9YmvQ==
-X-Received: by 2002:a92:9406:0:b0:2be:6ace:7510 with SMTP id c6-20020a929406000000b002be6ace7510mr4670240ili.291.1650295472381;
-        Mon, 18 Apr 2022 08:24:32 -0700 (PDT)
-Received: from [127.0.1.1] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id 5-20020a6b1405000000b0065064262ef4sm7107892iou.30.2022.04.18.08.24.31
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mAzN/QGXIaCGFp+0ToFKIB05z98FAbtwDj6HI0if2Xk=;
+        b=bbBolJQhI8PZuYP1Nwhb2pTfaRksrDjFJn1UOSkhtYP0ZXXfuqyAu5yWjNlqicFBWM
+         6fScnk018p8pQ17KMS8Q4snSTUoxIdURl71PtFxN0ie3k23s4SOVB2B5QiJZXEaixPco
+         BVSFEPREWe7tKmmI5H5k4O/wLt4to7y9qO9p5sZ5PMLHaRv0UEuVBmPkURNg22gyQPxs
+         W27G5gsWLqbmYX2N5Bj0Kml2EM+jlqzsLxcC1cyNTHVjtINCJ3nepOi6i3glB/R+zlc4
+         pdLWu/Id0barMyMBYhNH4Am5j3BD4W1+cZIqrqQe/U1D38MKD3F9KTK8AGAs9oFM96sU
+         QxRg==
+X-Gm-Message-State: AOAM530RtSoh9kUgh46v1onnddCfvq6GIUUM0wtYOEhVnAYCJsnc3Ttx
+        V9aeG9H+rZqEZXIDMLXdy2iFvLTxm3Zm/w==
+X-Google-Smtp-Source: ABdhPJy/TN/4SVAIqBbYObKteiV349kPgkO1eJp2WCyaFT+/yzZUIOkt0OYLEbPW8Lehat+h8VYNgA==
+X-Received: by 2002:a92:4402:0:b0:2ca:b29a:9974 with SMTP id r2-20020a924402000000b002cab29a9974mr4751716ila.155.1650300244368;
+        Mon, 18 Apr 2022 09:44:04 -0700 (PDT)
+Received: from m1.localdomain ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id y19-20020a056e020f5300b002cc33e5997dsm1188926ilj.63.2022.04.18.09.44.03
+        for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Apr 2022 08:24:31 -0700 (PDT)
+        Mon, 18 Apr 2022 09:44:03 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-To:     ammarfaizi2@gnuweeb.org
-Cc:     gwml@vger.gnuweeb.org, alviro.iskandar@gnuweeb.org,
-        asml.silence@gmail.com, io-uring@vger.kernel.org
-In-Reply-To: <20220414224001.187778-1-ammar.faizi@intel.com>
-References: <20220414224001.187778-1-ammar.faizi@intel.com>
-Subject: Re: [PATCH liburing 0/3] Add x86 32-bit support for the nolibc build
-Message-Id: <165029547167.51424.16558504366840819458.b4-ty@kernel.dk>
-Date:   Mon, 18 Apr 2022 09:24:31 -0600
+To:     io-uring@vger.kernel.org
+Subject: [PATCHSET v4 next 0/5] Extend cancelation support
+Date:   Mon, 18 Apr 2022 10:43:57 -0600
+Message-Id: <20220418164402.75259-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
@@ -68,26 +65,39 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, 15 Apr 2022 05:41:37 +0700, Ammar Faizi wrote:
-> This series adds nolibc support for x86 32-bit. There are 3 patches in
-> this series:
-> 
-> 1) Use `__NR_mmap2` instead of `__NR_mmap` for x86 32-bit.
-> 2) Provide `get_page_size()` function for x86 32-bit.
-> 3) Add x86 32-bit native syscall support.
-> 
-> [...]
+Hi,
 
-Applied, thanks!
+We currently only support looking up and canceling requests based on
+the user_data of the original request. Sometimes it can be useful to
+instead key off the fd used in the original request, eg if a socket
+goes away.
 
-[1/3] arch/syscall-defs: Use `__NR_mmap2` instead of `__NR_mmap` for x86 32-bit
-      commit: 2afb268164ba99ebe720add3632b4051651296b6
-[2/3] arch/x86/lib: Provide `get_page_size()` function for x86 32-bit
-      commit: 48342e4c482349718eeecd34b3026d3d6aa78794
-[3/3] arch/x86/syscall: Add x86 32-bit native syscall support
-      commit: b7d8dd8bbf5b8550c8a0c1ed70431cd8050709f0
+Patch 1 is just a cleanup spotted while doing this, 2 is a prep patch,
+patch 3 adds support for IORING_ASYNC_CANCEL_ALL, patch 4 adds support
+for IORING_ASYNC_CANCEL_FD, and patch 5 adds support for matching
+any request (useful with CANCEL_ALL).
 
-Best regards,
+If IORING_ASYNC_CANCEL_ALL is set, all requests matching the given
+criteria are canceled. Return value is number of requests canceled,
+and 0 if none were found, or any error encountered canceling requests.
+
+If IORING_ASYNC_CANCEL_FD is set, requests matching sqe->fd are
+canceled rather than matching on sqe->addr for user_data.
+
+If IORING_ASYNC_CANCEL_ANY is set, all requests are matched vs using
+the fd or user_data key.
+
+There's some support in the below liburing branch:
+
+https://git.kernel.dk/cgit/liburing/log/?h=cancel-fd-all
+
+which also has various test cases.
+
+v4:
+- Minor cleanups
+- Rebase on current tree
+- Add IORING_ASYNC_CANCEL_ANY
+
 -- 
 Jens Axboe
 

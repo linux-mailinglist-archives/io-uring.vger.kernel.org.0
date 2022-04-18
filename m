@@ -2,63 +2,68 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A0A5450480B
-	for <lists+io-uring@lfdr.de>; Sun, 17 Apr 2022 16:39:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42E29504A25
+	for <lists+io-uring@lfdr.de>; Mon, 18 Apr 2022 02:05:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234232AbiDQOlo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 17 Apr 2022 10:41:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46622 "EHLO
+        id S233219AbiDRAH5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 17 Apr 2022 20:07:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229496AbiDQOln (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 17 Apr 2022 10:41:43 -0400
-Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A544413D22
-        for <io-uring@vger.kernel.org>; Sun, 17 Apr 2022 07:39:07 -0700 (PDT)
-Received: by mail-pg1-x531.google.com with SMTP id k29so14533687pgm.12
-        for <io-uring@vger.kernel.org>; Sun, 17 Apr 2022 07:39:07 -0700 (PDT)
+        with ESMTP id S233085AbiDRAH4 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 17 Apr 2022 20:07:56 -0400
+Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E5D112AC9
+        for <io-uring@vger.kernel.org>; Sun, 17 Apr 2022 17:05:19 -0700 (PDT)
+Received: by mail-pl1-x62b.google.com with SMTP id s14so11122719plk.8
+        for <io-uring@vger.kernel.org>; Sun, 17 Apr 2022 17:05:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:in-reply-to:references:subject:message-id:date:mime-version
-         :content-transfer-encoding;
-        bh=+c5bQA2c7ipx6WjQtw3y8SJmAhHJmN5ycEIOz8nML/E=;
-        b=bxG6cDxeVUJxkxwTp/SDf4rpH1D7PmVlSCFYwAjoZcw3QwdnU34EXI/fasU9pGzAkb
-         SjMQLXi0UAMLr8dnW5LKAD12RMCWDyze6YEwLwIYb6EMkPMfeXLLGOs5N+xXFwlVoOxp
-         ylfETl9eo8X5EyBr03ejTL6PVlyUpBC4Wlkfq4GWkFUkxmN51eKIXUTRpvtTNaUWY3wa
-         8OM0BPcWoEGlD0mFA8942Fnej3z3yOCe594wON6ieVc2PClfDLXnnD38tuW4QNj17yPA
-         mPcRqh+snd7QP5U56XDg6d1dYm/qjjNxo74ZKIkauF1LdDpGoX+hpGxzbpLOKsnQ3VAO
-         q4bg==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :references:from:in-reply-to:content-transfer-encoding;
+        bh=V/xyuatSSzUElNhqC2Y+YK97ekMkKlkCKrMCITjNfFM=;
+        b=aXkfpbxgmPO/TUfbiuWGZrWA3Zhm0ROdDvcvw1ltBIKHB6kClbpmymJ504K/vEA983
+         ZJjKPiwacja4NTjFATeKSbkKZFwB7BmAu+3/dmChCkhMiqgY9LOthINxxsg138czIqS/
+         5JjnF4hhLM4kEBay5nRcQbQphpRB4ONPUhsd1xYEqUQpMs7k2Qrdl8H5lDxUxYyaTOID
+         k++3Pjrv2RiG4CAh3SJ03mmpTPJRks+9Xgn1AcTZvcR2EtAvxeyv4qvWaXAaPR9rODPl
+         2d17v4Ym0LXkWU+Y4+u8VQb2A8AXd+LidxON1Jp4xYmjnvteIdn/uWlsxFG5Qwv/xVO/
+         UOdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:in-reply-to:references:subject
-         :message-id:date:mime-version:content-transfer-encoding;
-        bh=+c5bQA2c7ipx6WjQtw3y8SJmAhHJmN5ycEIOz8nML/E=;
-        b=10K0Akhd0UUN11OBi9Dy4BYOIC2iQnvTRub9Q6zOA2+1sUYLE12xvsXXsWQgNbF9EL
-         AvIP4HO6AnlqDIeXvpDj5p1hjPh4rLp0f3BV1aLqz+HelrA36X6CUlhlQBbkbWDjzlRQ
-         C994KUkYxAlQp3MmJrbfdJeUGwsXrx7+9PeqOXxmqHFH/KCU4BvCA8BAY67eP2ACU57E
-         IKsecILDf04mw/S3+VDKG7P+bfssjAzGupgxeLFCdA28Q/y05l86NhEajkf2vHw7zLLn
-         YiwS0Aqw0kGEIg7QedcnzHjx4HW66HtkRaR9+d3XIx8FkFYqn1vubrPCR1C91+m7ZjS7
-         xvTA==
-X-Gm-Message-State: AOAM530PYRH9v8eXaH1DXZ06dB1qlAJXb0AVltX9YgPCwxxprsqGcXYX
-        tnA8ttns31P8iCwAnG6BYvG84fmlsKevSzx2
-X-Google-Smtp-Source: ABdhPJzSpw1/W0YijzB6lZ49d5qLCBZ++z/dDGwgcWw6I6YNwCKO0nVnY45VuBChK0B/dLkzJq2W1w==
-X-Received: by 2002:a05:6a00:2489:b0:50a:754c:c557 with SMTP id c9-20020a056a00248900b0050a754cc557mr606645pfv.37.1650206346978;
-        Sun, 17 Apr 2022 07:39:06 -0700 (PDT)
-Received: from [127.0.1.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id h189-20020a636cc6000000b0039841f669bcsm10178605pgc.78.2022.04.17.07.39.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Apr 2022 07:39:06 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org, asml.silence@gmail.com
-In-Reply-To: <b868cdd8d996a53a196e9cfb8807d07d318ef876.1650205541.git.asml.silence@gmail.com>
-References: <b868cdd8d996a53a196e9cfb8807d07d318ef876.1650205541.git.asml.silence@gmail.com>
-Subject: Re: [PATCH liburing v2 1/1] tests: add more file registration tests
-Message-Id: <165020634582.44701.4913543269306468944.b4-ty@kernel.dk>
-Date:   Sun, 17 Apr 2022 08:39:05 -0600
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=V/xyuatSSzUElNhqC2Y+YK97ekMkKlkCKrMCITjNfFM=;
+        b=W3ZvK+oju9kKfX2DQOE2E2YeqjsyPtTHoEiGd/cIgw95a3JJ4WUu5aqbKV39jjaUfP
+         E3lKik6XJpvbTmtxcT4n+/lr27G9VaMLXyNd8ayhgzgAPitB+EPmBRUSl/sBbw0+MwkR
+         AhoamwdtIgXjv9J1wpYI8EYBxbJwxmz85K4VQmtIcJLeb1RbOMqusNsjuNxeOy+MdaQb
+         Tvx5GHjUnZHIprTF9HRCYE/OXtLBKOae0D2GZOkx65IBceWYgMNpFy3kQP4aSOrSfvSh
+         zQawqGqhcBXoYgulxfsnrcHtZHgRcU9cd6IIFC0aEUCyhCgtjPS2Rm/eHnngRm6xpTck
+         6ZFg==
+X-Gm-Message-State: AOAM531JfZ0WToGqVB2X+jVn8SAW9CgPOx/YlLi9jNDs9Mj93OC2Z919
+        Op/h9lqtCZsovYB38AI6QQm+QbeXoONXA+7R
+X-Google-Smtp-Source: ABdhPJxvMjEBqtQHRFbR/L/IchWCYS5E6e/SknReNXDsAmX3Z2qxuhjJbsTbXmn1e4os3S5bYDsuMQ==
+X-Received: by 2002:a17:90b:1044:b0:1cd:2d00:9d23 with SMTP id gq4-20020a17090b104400b001cd2d009d23mr15416339pjb.124.1650240318704;
+        Sun, 17 Apr 2022 17:05:18 -0700 (PDT)
+Received: from [192.168.1.100] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id a2-20020a17090ad80200b001d27824fc24sm3489947pjv.5.2022.04.17.17.05.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 17 Apr 2022 17:05:18 -0700 (PDT)
+Message-ID: <6ba23bd7-26c1-64fd-a312-f90c398b4062@kernel.dk>
+Date:   Sun, 17 Apr 2022 18:05:17 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH 02/14] io_uring: add a hepler for putting rsrc nodes
+Content-Language: en-US
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <cover.1650056133.git.asml.silence@gmail.com>
+ <865313e8a7eac34b6c01c047a4af6900eb6337ee.1650056133.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <865313e8a7eac34b6c01c047a4af6900eb6337ee.1650056133.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -66,20 +71,27 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Sun, 17 Apr 2022 15:29:27 +0100, Pavel Begunkov wrote:
-> Add tests for file registration failing in the middle of the fd set, and
-> mixing files that need and don't SCM accounting + checking for
-> underflows.
-> 
-> 
+On 4/15/22 3:08 PM, Pavel Begunkov wrote:
+> @@ -1337,21 +1342,21 @@ static inline void io_req_put_rsrc_locked(struct io_kiocb *req,
+>  		if (node == ctx->rsrc_node)
+>  			ctx->rsrc_cached_refs++;
+>  		else
+> -			percpu_ref_put(&node->refs);
+> +			io_rsrc_put_node(node, 1);
+>  	}
+>  }
+>  
+>  static inline void io_req_put_rsrc(struct io_kiocb *req, struct io_ring_ctx *ctx)
+>  {
+>  	if (req->rsrc_node)
+> -		percpu_ref_put(&req->rsrc_node->refs);
+> +		io_rsrc_put_node(req->rsrc_node, 1);
+>  }
 
-Applied, thanks!
+What's this against? I have req->fixed_rsrc_refs here.
 
-[1/1] tests: add more file registration tests
-      commit: da2f4ce1722b38fcf72641fea0bf6a296f0cfdc0
+Also, typo in subject s/hepler/helper.
 
-Best regards,
 -- 
 Jens Axboe
-
 

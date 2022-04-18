@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F22B505EBF
-	for <lists+io-uring@lfdr.de>; Mon, 18 Apr 2022 21:53:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EAE0505EC0
+	for <lists+io-uring@lfdr.de>; Mon, 18 Apr 2022 21:53:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346687AbiDRT4T (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 18 Apr 2022 15:56:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44704 "EHLO
+        id S236327AbiDRT4U (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 18 Apr 2022 15:56:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236327AbiDRT4S (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 18 Apr 2022 15:56:18 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED5002C65C
-        for <io-uring@vger.kernel.org>; Mon, 18 Apr 2022 12:53:38 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id t11so28694234eju.13
-        for <io-uring@vger.kernel.org>; Mon, 18 Apr 2022 12:53:38 -0700 (PDT)
+        with ESMTP id S1347775AbiDRT4U (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 18 Apr 2022 15:56:20 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4975A2C66A
+        for <io-uring@vger.kernel.org>; Mon, 18 Apr 2022 12:53:40 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id y20so8601366eju.7
+        for <io-uring@vger.kernel.org>; Mon, 18 Apr 2022 12:53:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=yCa1XIDjcq9bhoKrTDvbvAluNLEDSi6ZzmlY3iY87uM=;
-        b=iTsYGh9XJS9XMj02ClifHHCm+pgTKPRy0/8kXw2p6Ceia05OlmKNuIaDUrH0HNSK58
-         9WDEdQ+mb1i5ZWchFzAUlRlNMD9rCxsGrq0fDbpfA4fNMRoe6GR6EBHY/kaMEpGuGXOi
-         DIUzEkvm/li6Qda5/N4o+rz1hbNPyJcY/nYODumEmnTaqRTAdKP1SneCaCOPFvTlx4In
-         hr7lRNuTOdNHGt3l4UyIgqidEa8tVCaSf4sPYp1sMvdANhxh7PjoxLY9Ce8o/VWPD+3U
-         cakySCm2as8gc04Y3oPyK4gGcI2++EcA+lwMxGY4Np/ZqYhGkNzdyej7Al1xualR6JNx
-         S+Dg==
+        bh=8oUBP2573KGcKfmYGv4PyBxy1OXJ3dbbyhiWIov58rM=;
+        b=SRnamzRE/P/tvNQtp5xMJ60rvRR4rRxOXVTMTf9sxZjjw9Wmp1y0+xsTw3QUZ4IIa0
+         nXF18ls8z8BUC1FSmnqQw4et2w7S4YxnTgW33sB9ei3q1lEYyquTzdJ7FJdOF2cMhBcT
+         QWd+zywXKKHfcv9O3Lk4rINRUGYU3Vma3UmYWZDtQzkSyyJ4pg57Heop5xUVlv1AGwbg
+         VWIS0/j3GLCvB3QgVfHBYI5KIfj//gLjJvc/azApEmq1V03TAKIiw9lnevJtaBOHTxh2
+         n+aWJHLzOIGp9aSI3k2yYzPatLt0FMu2AhYRxLuPenPf3TBPrxuDo1S/u1Wj1cbTwJoI
+         mlhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=yCa1XIDjcq9bhoKrTDvbvAluNLEDSi6ZzmlY3iY87uM=;
-        b=g+Svf+i97OXV547YXKu+p/QHusPLCOU4NsspZ7y39gOtazUFHu7UOul7JTPqwwUvlx
-         /CsyijCaVXph61qI1q3c3ZfOT7CN2U5XpIQq8ErixEeeQQf4+rWGuBvXNzHR6WRixvbG
-         HGKGBw8kZyiMxZ50PaQGhMvPIXoIMAcf+jknvswTy5vBtSeqWAafg6mTlsdWO7KggTTA
-         xfj74VZvUfZGjRzMpeIbPQn25Ujke0mqpurCMJAFiU4CRgQ/vHN9tXuB0puKPUBnU/Ps
-         m1v9QqT70LO3rTJzSjOthDDv5Ph3Kg6OhYMJNGAB0/RyuqAWY3UsCQL09s830wm4pgNX
-         XrlQ==
-X-Gm-Message-State: AOAM531FpibgczpS30japdVvB7o5c/BDikUJsHk9gMr2wjj4a7MenVf6
-        ePuASNTB07QjHK4xG/rqnR+/uN9S7sY=
-X-Google-Smtp-Source: ABdhPJzkFro1fxucO7CB1j/IB66/TfKOR6p3mlox52af2wckhdSOI+Pm698talFI67pz6T8cdRhKJQ==
-X-Received: by 2002:a17:907:97c9:b0:6db:ab53:1fdf with SMTP id js9-20020a17090797c900b006dbab531fdfmr10427159ejc.406.1650311617274;
-        Mon, 18 Apr 2022 12:53:37 -0700 (PDT)
+        bh=8oUBP2573KGcKfmYGv4PyBxy1OXJ3dbbyhiWIov58rM=;
+        b=H+s198vcR+Ywd/9hLMwwF3gaUrwGteuaJtaWDEzi6a4igKUEpuQsW81kYueZ3AW1As
+         p9gpN+kotww6wUlO743QuyhDgVhxxV9896TEkrk2OLcI9zG0QO0lG6dza3LV1mNi8Rms
+         pIVI7E0/HYQnh4iGFF5EE+uc/t4IGC0QFirSItx9tvsTlslfZMi9eAv29Y8jxM3VuaAD
+         QN/E3y/EVP0oIZpgKLUIEyYwWsRF+4InWRr3Nce+ZCcD6e2uT+NXhadHKT4bwLZG1sWw
+         BdLLOJ4hbje71DELB15m0/ZgVR07xxb2dW8ibS0Avjzt+XasgpxJHcA/ammJEfbngWdR
+         LXtg==
+X-Gm-Message-State: AOAM532OUEoeft5Ynp5F8RfkEHH2JFtsZch5jMcgZLb4kQ1ltrIuU1vf
+        ZnCAb5IlClgqvs7z+l7/VssU7skx2Z8=
+X-Google-Smtp-Source: ABdhPJwn5M9Gd2CLAFaYjliUm7pd8TfrnoT+CCAei465cvEsBL7961HlTOpZftiXyP4CdR+PSSYirQ==
+X-Received: by 2002:a17:907:94c9:b0:6e8:ab67:829e with SMTP id dn9-20020a17090794c900b006e8ab67829emr10120857ejc.313.1650311618612;
+        Mon, 18 Apr 2022 12:53:38 -0700 (PDT)
 Received: from 127.0.0.1localhost ([148.252.129.70])
-        by smtp.gmail.com with ESMTPSA id bf11-20020a0564021a4b00b00423e997a3ccsm1629143edb.19.2022.04.18.12.53.36
+        by smtp.gmail.com with ESMTPSA id bf11-20020a0564021a4b00b00423e997a3ccsm1629143edb.19.2022.04.18.12.53.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Apr 2022 12:53:36 -0700 (PDT)
+        Mon, 18 Apr 2022 12:53:38 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH 1/5] io_uring: use right helpers for file assign locking
-Date:   Mon, 18 Apr 2022 20:51:11 +0100
-Message-Id: <c9c9ff1e046f6eb68da0a251962a697f8a2275fa.1650311386.git.asml.silence@gmail.com>
+Subject: [PATCH 2/5] io_uring: refactor io_assign_file error path
+Date:   Mon, 18 Apr 2022 20:51:12 +0100
+Message-Id: <eff77fb1eac2b6a90cca5223813e6a396ffedec0.1650311386.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.35.2
 In-Reply-To: <cover.1650311386.git.asml.silence@gmail.com>
 References: <cover.1650311386.git.asml.silence@gmail.com>
@@ -68,39 +68,33 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-We have io_ring_submit_[un]lock() functions helping us with conditional
-->uring_lock locking, use them in io_file_get_fixed() instead of hand
-coding.
+All io_assign_file() callers do error handling themselves,
+req_set_fail() in the io_assign_file()'s fail path needlessly bloats the
+kernel and is not the best abstraction to have. Simplify the error path.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ fs/io_uring.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 6988bdc182e4..423427e2203f 100644
+index 423427e2203f..9626bc1cb0a0 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -7371,8 +7371,7 @@ static inline struct file *io_file_get_fixed(struct io_kiocb *req, int fd,
- 	struct file *file = NULL;
- 	unsigned long file_ptr;
+@@ -7117,12 +7117,8 @@ static bool io_assign_file(struct io_kiocb *req, unsigned int issue_flags)
+ 		req->file = io_file_get_fixed(req, req->cqe.fd, issue_flags);
+ 	else
+ 		req->file = io_file_get_normal(req, req->cqe.fd);
+-	if (req->file)
+-		return true;
  
--	if (issue_flags & IO_URING_F_UNLOCKED)
--		mutex_lock(&ctx->uring_lock);
-+	io_ring_submit_lock(ctx, issue_flags);
- 
- 	if (unlikely((unsigned int)fd >= ctx->nr_user_files))
- 		goto out;
-@@ -7384,8 +7383,7 @@ static inline struct file *io_file_get_fixed(struct io_kiocb *req, int fd,
- 	req->flags |= (file_ptr << REQ_F_SUPPORT_NOWAIT_BIT);
- 	io_req_set_rsrc_node(req, ctx, 0);
- out:
--	if (issue_flags & IO_URING_F_UNLOCKED)
--		mutex_unlock(&ctx->uring_lock);
-+	io_ring_submit_unlock(ctx, issue_flags);
- 	return file;
+-	req_set_fail(req);
+-	req->cqe.res = -EBADF;
+-	return false;
++	return !!req->file;
  }
  
+ static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags)
 -- 
 2.35.2
 

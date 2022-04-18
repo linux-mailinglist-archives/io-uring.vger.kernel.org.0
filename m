@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EAE0505EC0
-	for <lists+io-uring@lfdr.de>; Mon, 18 Apr 2022 21:53:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64EA7505EC1
+	for <lists+io-uring@lfdr.de>; Mon, 18 Apr 2022 21:53:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236327AbiDRT4U (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 18 Apr 2022 15:56:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44722 "EHLO
+        id S1347775AbiDRT4X (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 18 Apr 2022 15:56:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44740 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347775AbiDRT4U (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 18 Apr 2022 15:56:20 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4975A2C66A
-        for <io-uring@vger.kernel.org>; Mon, 18 Apr 2022 12:53:40 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id y20so8601366eju.7
-        for <io-uring@vger.kernel.org>; Mon, 18 Apr 2022 12:53:40 -0700 (PDT)
+        with ESMTP id S1347788AbiDRT4W (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 18 Apr 2022 15:56:22 -0400
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A5B62C65C
+        for <io-uring@vger.kernel.org>; Mon, 18 Apr 2022 12:53:42 -0700 (PDT)
+Received: by mail-ed1-x52e.google.com with SMTP id b24so18605156edu.10
+        for <io-uring@vger.kernel.org>; Mon, 18 Apr 2022 12:53:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=8oUBP2573KGcKfmYGv4PyBxy1OXJ3dbbyhiWIov58rM=;
-        b=SRnamzRE/P/tvNQtp5xMJ60rvRR4rRxOXVTMTf9sxZjjw9Wmp1y0+xsTw3QUZ4IIa0
-         nXF18ls8z8BUC1FSmnqQw4et2w7S4YxnTgW33sB9ei3q1lEYyquTzdJ7FJdOF2cMhBcT
-         QWd+zywXKKHfcv9O3Lk4rINRUGYU3Vma3UmYWZDtQzkSyyJ4pg57Heop5xUVlv1AGwbg
-         VWIS0/j3GLCvB3QgVfHBYI5KIfj//gLjJvc/azApEmq1V03TAKIiw9lnevJtaBOHTxh2
-         n+aWJHLzOIGp9aSI3k2yYzPatLt0FMu2AhYRxLuPenPf3TBPrxuDo1S/u1Wj1cbTwJoI
-         mlhQ==
+        bh=osdROghO41qH2OJiZms7xWOh6Hdtw1J1vGY7bQ1lS+Y=;
+        b=oq6F2corIypCgkPtQcRGjbuqhAM7NWMuaKYLV6gC+XTisq8F/U6i57399xejsyeM21
+         lgPY+RiJylMg6or2eXGI6AKvwYjS2M88cdziUf/T5EkZwYVs0NX2YuAZBQXc6AaaDpg2
+         tqKmFfVKUREUhLZJk4YU5gBApS0xPZGhHhaKjEeN04C9rlJwjOfdgbCqGhA0vFuTHO8/
+         uv8C9jW6mGDM+QB0l7Ca1ugwnZ6N7RtaLxyLXsvB1siPlQ0SEEahD+Qtf8oWWXnk9o+j
+         ikonQzOOEK3EfyKrWM2MsJ1WSkJgd3MC1vz8+N8xiAKai7IjrCnZML8Q9oI91js0jbvk
+         AEjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=8oUBP2573KGcKfmYGv4PyBxy1OXJ3dbbyhiWIov58rM=;
-        b=H+s198vcR+Ywd/9hLMwwF3gaUrwGteuaJtaWDEzi6a4igKUEpuQsW81kYueZ3AW1As
-         p9gpN+kotww6wUlO743QuyhDgVhxxV9896TEkrk2OLcI9zG0QO0lG6dza3LV1mNi8Rms
-         pIVI7E0/HYQnh4iGFF5EE+uc/t4IGC0QFirSItx9tvsTlslfZMi9eAv29Y8jxM3VuaAD
-         QN/E3y/EVP0oIZpgKLUIEyYwWsRF+4InWRr3Nce+ZCcD6e2uT+NXhadHKT4bwLZG1sWw
-         BdLLOJ4hbje71DELB15m0/ZgVR07xxb2dW8ibS0Avjzt+XasgpxJHcA/ammJEfbngWdR
-         LXtg==
-X-Gm-Message-State: AOAM532OUEoeft5Ynp5F8RfkEHH2JFtsZch5jMcgZLb4kQ1ltrIuU1vf
-        ZnCAb5IlClgqvs7z+l7/VssU7skx2Z8=
-X-Google-Smtp-Source: ABdhPJwn5M9Gd2CLAFaYjliUm7pd8TfrnoT+CCAei465cvEsBL7961HlTOpZftiXyP4CdR+PSSYirQ==
-X-Received: by 2002:a17:907:94c9:b0:6e8:ab67:829e with SMTP id dn9-20020a17090794c900b006e8ab67829emr10120857ejc.313.1650311618612;
-        Mon, 18 Apr 2022 12:53:38 -0700 (PDT)
+        bh=osdROghO41qH2OJiZms7xWOh6Hdtw1J1vGY7bQ1lS+Y=;
+        b=ADhGNVroqYJfsmo5GdYiwb7Ms/Ii21SWrCVwEOZnVlLeklUXS9FPgnF0uDpA46LFZv
+         fRxZHPNfOkvjAfAxb90aoCLQ69A5QsFAs4+kWES7jyMTmpb730K2s3myK8w97I0Aj4tC
+         JkMZXgKKydyjfposPVAEF6oVv8DPCLdNyVwx35lzIje7/VPC8v16XkPjZCZKxtsDONQo
+         8NjuAn8HK0jQs77OBAJ0fpnjk4THmY8mrM5dd7pjw3KNBog1qlfMyjWMhK0JShd1IYHU
+         IkILnRrvqEoi1AdbIdQ9eT/kR8MGXRHeVyZbHVx6yBOuTUOQJnZzsORSjZj1BQxrsFaK
+         KnjQ==
+X-Gm-Message-State: AOAM530baWL8xaGY2YHtVaZEAOtAVE7uxaAywBxAIefRhvlxiyeeCvE/
+        NSPgM1LFWsOVukcR49O9ud3tohiJCC4=
+X-Google-Smtp-Source: ABdhPJxGxSWEDjfNlLPgMNlIq0wSPnWFy0J0Quunu+2X6UtaZ803Xsjqzj87D7ymmO5Dh6H66GnxCA==
+X-Received: by 2002:a05:6402:438f:b0:41b:51ca:f541 with SMTP id o15-20020a056402438f00b0041b51caf541mr13821790edc.80.1650311620335;
+        Mon, 18 Apr 2022 12:53:40 -0700 (PDT)
 Received: from 127.0.0.1localhost ([148.252.129.70])
-        by smtp.gmail.com with ESMTPSA id bf11-20020a0564021a4b00b00423e997a3ccsm1629143edb.19.2022.04.18.12.53.37
+        by smtp.gmail.com with ESMTPSA id bf11-20020a0564021a4b00b00423e997a3ccsm1629143edb.19.2022.04.18.12.53.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Apr 2022 12:53:38 -0700 (PDT)
+        Mon, 18 Apr 2022 12:53:39 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH 2/5] io_uring: refactor io_assign_file error path
-Date:   Mon, 18 Apr 2022 20:51:12 +0100
-Message-Id: <eff77fb1eac2b6a90cca5223813e6a396ffedec0.1650311386.git.asml.silence@gmail.com>
+Subject: [PATCH 3/5] io_uring: store rsrc node in req instead of refs
+Date:   Mon, 18 Apr 2022 20:51:13 +0100
+Message-Id: <cee1c86ec9023f3e4f6ce8940d58c017ef8782f4.1650311386.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.35.2
 In-Reply-To: <cover.1650311386.git.asml.silence@gmail.com>
 References: <cover.1650311386.git.asml.silence@gmail.com>
@@ -68,33 +68,84 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-All io_assign_file() callers do error handling themselves,
-req_set_fail() in the io_assign_file()'s fail path needlessly bloats the
-kernel and is not the best abstraction to have. Simplify the error path.
+req->fixed_rsrc_refs keeps a pointer to rsrc node pcpu references, but
+it's more natural just to store rsrc node directly. There were some
+reasons for that in the past but not anymore.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ fs/io_uring.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 423427e2203f..9626bc1cb0a0 100644
+index 9626bc1cb0a0..c26de427b05d 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -7117,12 +7117,8 @@ static bool io_assign_file(struct io_kiocb *req, unsigned int issue_flags)
- 		req->file = io_file_get_fixed(req, req->cqe.fd, issue_flags);
- 	else
- 		req->file = io_file_get_normal(req, req->cqe.fd);
--	if (req->file)
--		return true;
+@@ -931,7 +931,7 @@ struct io_kiocb {
+ 	struct io_ring_ctx		*ctx;
+ 	struct task_struct		*task;
  
--	req_set_fail(req);
--	req->cqe.res = -EBADF;
--	return false;
-+	return !!req->file;
+-	struct percpu_ref		*fixed_rsrc_refs;
++	struct io_rsrc_node		*rsrc_node;
+ 	/* store used ubuf, so we can prevent reloading */
+ 	struct io_mapped_ubuf		*imu;
+ 
+@@ -1329,20 +1329,20 @@ static inline void io_req_put_rsrc_locked(struct io_kiocb *req,
+ 					  struct io_ring_ctx *ctx)
+ 	__must_hold(&ctx->uring_lock)
+ {
+-	struct percpu_ref *ref = req->fixed_rsrc_refs;
++	struct io_rsrc_node *node = req->rsrc_node;
+ 
+-	if (ref) {
+-		if (ref == &ctx->rsrc_node->refs)
++	if (node) {
++		if (node == ctx->rsrc_node)
+ 			ctx->rsrc_cached_refs++;
+ 		else
+-			percpu_ref_put(ref);
++			percpu_ref_put(&node->refs);
+ 	}
  }
  
- static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags)
+ static inline void io_req_put_rsrc(struct io_kiocb *req, struct io_ring_ctx *ctx)
+ {
+-	if (req->fixed_rsrc_refs)
+-		percpu_ref_put(req->fixed_rsrc_refs);
++	if (req->rsrc_node)
++		percpu_ref_put(&req->rsrc_node->refs);
+ }
+ 
+ static __cold void io_rsrc_refs_drop(struct io_ring_ctx *ctx)
+@@ -1365,8 +1365,8 @@ static inline void io_req_set_rsrc_node(struct io_kiocb *req,
+ 					struct io_ring_ctx *ctx,
+ 					unsigned int issue_flags)
+ {
+-	if (!req->fixed_rsrc_refs) {
+-		req->fixed_rsrc_refs = &ctx->rsrc_node->refs;
++	if (!req->rsrc_node) {
++		req->rsrc_node = ctx->rsrc_node;
+ 
+ 		if (!(issue_flags & IO_URING_F_UNLOCKED)) {
+ 			lockdep_assert_held(&ctx->uring_lock);
+@@ -1374,7 +1374,7 @@ static inline void io_req_set_rsrc_node(struct io_kiocb *req,
+ 			if (unlikely(ctx->rsrc_cached_refs < 0))
+ 				io_rsrc_refs_refill(ctx);
+ 		} else {
+-			percpu_ref_get(req->fixed_rsrc_refs);
++			percpu_ref_get(&req->rsrc_node->refs);
+ 		}
+ 	}
+ }
+@@ -7606,7 +7606,7 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
+ 	req->flags = sqe_flags = READ_ONCE(sqe->flags);
+ 	req->cqe.user_data = READ_ONCE(sqe->user_data);
+ 	req->file = NULL;
+-	req->fixed_rsrc_refs = NULL;
++	req->rsrc_node = NULL;
+ 	req->task = current;
+ 
+ 	if (unlikely(opcode >= IORING_OP_LAST)) {
 -- 
 2.35.2
 

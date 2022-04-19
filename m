@@ -2,53 +2,50 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D181507B6C
-	for <lists+io-uring@lfdr.de>; Tue, 19 Apr 2022 22:57:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43905507B8C
+	for <lists+io-uring@lfdr.de>; Tue, 19 Apr 2022 22:58:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357857AbiDSU7l (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 19 Apr 2022 16:59:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49704 "EHLO
+        id S1357874AbiDSVBS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 19 Apr 2022 17:01:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50412 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1357861AbiDSU7k (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 19 Apr 2022 16:59:40 -0400
+        with ESMTP id S1355486AbiDSVBR (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 19 Apr 2022 17:01:17 -0400
 Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26F4941612
-        for <io-uring@vger.kernel.org>; Tue, 19 Apr 2022 13:56:57 -0700 (PDT)
-Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 23JGddlI002652
-        for <io-uring@vger.kernel.org>; Tue, 19 Apr 2022 13:56:57 -0700
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86E7C41FA5
+        for <io-uring@vger.kernel.org>; Tue, 19 Apr 2022 13:58:32 -0700 (PDT)
+Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 23JGdrc2024365
+        for <io-uring@vger.kernel.org>; Tue, 19 Apr 2022 13:58:32 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=facebook;
- bh=Zh96XF+5xyS4FtkPjuFF4QeOLlzLvjYnjLm6vwmVdmo=;
- b=ONes+bLUtiFB09jFxN9pkaX+qzVWtmrboayF7yb/uIMMkLEEgPEgUdXV58jg2rvh2Dq2
- 4Kg07D/cjlMyCtJmFD06T4mE6t1C2GBX37dbpb0oozHJOW9XFtTjougRcp3ecAe2Xijj
- QZ1+nXTgoM/UAcKqn03kd9mBvrMeStbMIrE= 
+ : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=facebook; bh=DqjLzNF903Ry9kByF/aH2YPJ7OCTuBQ9GpYnYw2S+Ss=;
+ b=RptCvrwVSNlpukMjpL5rTNF+aGokJR3uTajIcXgd+ooPuIyx3Esd4fFjsnvaLR8/xLMZ
+ 0WQntqsWmbCrHAPxwklA4VTwNd5pgSbgbIj8fmEcQW62/q2ZsdJL0l6QULeQZiwQ+8zt
+ O7KUUszMXur4zd2uEVRDTY/50pNG4UGQJy4= 
 Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3fhkk2659j-2
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3fhn4vnr6p-2
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Tue, 19 Apr 2022 13:56:56 -0700
-Received: from twshared4937.07.ash9.facebook.com (2620:10d:c0a8:1b::d) by
+        for <io-uring@vger.kernel.org>; Tue, 19 Apr 2022 13:58:32 -0700
+Received: from twshared10896.25.frc3.facebook.com (2620:10d:c0a8:1b::d) by
  mail.thefacebook.com (2620:10d:c0a8:83::7) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Tue, 19 Apr 2022 13:56:55 -0700
+ 15.1.2375.24; Tue, 19 Apr 2022 13:58:30 -0700
 Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
-        id 2B7DEDD45FF2; Tue, 19 Apr 2022 13:56:36 -0700 (PDT)
+        id 49BCEDD46114; Tue, 19 Apr 2022 13:58:26 -0700 (PDT)
 From:   Stefan Roesch <shr@fb.com>
 To:     <io-uring@vger.kernel.org>, <kernel-team@fb.com>
-CC:     <shr@fb.com>, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH v1 11/11] io_uring: support CQE32 for nop operation
-Date:   Tue, 19 Apr 2022 13:56:24 -0700
-Message-ID: <20220419205624.1546079-12-shr@fb.com>
+CC:     <shr@fb.com>
+Subject: [PATCH v1 0/6] liburing: add support for large CQE sizes
+Date:   Tue, 19 Apr 2022 13:58:11 -0700
+Message-ID: <20220419205817.1551377-1-shr@fb.com>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20220419205624.1546079-1-shr@fb.com>
-References: <20220419205624.1546079-1-shr@fb.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-GUID: cbnLjidPJIIHrWsN9D9IdoTUokDnrFmV
-X-Proofpoint-ORIG-GUID: cbnLjidPJIIHrWsN9D9IdoTUokDnrFmV
+X-Proofpoint-GUID: qoAFisgLhmvMAF5xEFMD5zwDSx_QI66G
+X-Proofpoint-ORIG-GUID: qoAFisgLhmvMAF5xEFMD5zwDSx_QI66G
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.486,FMLib:17.11.64.514
  definitions=2022-04-19_08,2022-04-15_01,2022-02-23_01
@@ -62,87 +59,60 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This adds support for filling the extra1 and extra2 fields for large
-CQE's.
+This adds support for large CQE sizes in the liburing layer. The large CQ=
+E
+sizes double the size compared to the default CQE size.
 
-Co-developed-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Stefan Roesch <shr@fb.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- fs/io_uring.c | 28 ++++++++++++++++++++++++++--
- 1 file changed, 26 insertions(+), 2 deletions(-)
+To support larger CQE sizes the mmap call needs to be modified to map a l=
+arger
+memory region for large CQE's. For default CQE's the size of the mapping =
+stays
+the same.
+Also the ring size calculation needs to change.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 70877f1ca0a9..dd00b77742ac 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -744,6 +744,12 @@ struct io_msg {
- 	u32 len;
- };
-=20
-+struct io_nop {
-+	struct file			*file;
-+	u64				extra1;
-+	u64				extra2;
-+};
-+
- struct io_async_connect {
- 	struct sockaddr_storage		address;
- };
-@@ -937,6 +943,7 @@ struct io_kiocb {
- 		struct io_msg		msg;
- 		struct io_xattr		xattr;
- 		struct io_socket	sock;
-+		struct io_nop		nop;
- 	};
-=20
- 	u8				opcode;
-@@ -4863,6 +4870,19 @@ static int io_splice(struct io_kiocb *req, unsigne=
-d int issue_flags)
- 	return 0;
- }
-=20
-+static int io_nop_prep(struct io_kiocb *req, const struct io_uring_sqe *=
-sqe)
-+{
-+	/*
-+	 * If the ring is setup with CQE32, relay back addr/addr
-+	 */
-+	if (req->ctx->flags & IORING_SETUP_CQE32) {
-+		req->nop.extra1 =3D READ_ONCE(sqe->addr);
-+		req->nop.extra2 =3D READ_ONCE(sqe->addr2);
-+	}
-+
-+	return 0;
-+}
-+
- /*
-  * IORING_OP_NOP just posts a completion event, nothing else.
-  */
-@@ -4873,7 +4893,11 @@ static int io_nop(struct io_kiocb *req, unsigned i=
-nt issue_flags)
- 	if (unlikely(ctx->flags & IORING_SETUP_IOPOLL))
- 		return -EINVAL;
-=20
--	__io_req_complete(req, issue_flags, 0, 0);
-+	if (!(ctx->flags & IORING_SETUP_CQE32))
-+		__io_req_complete(req, issue_flags, 0, 0);
-+	else
-+		__io_req_complete32(req, issue_flags, 0, 0, req->nop.extra1,
-+					req->nop.extra2);
- 	return 0;
- }
-=20
-@@ -7345,7 +7369,7 @@ static int io_req_prep(struct io_kiocb *req, const =
-struct io_uring_sqe *sqe)
- {
- 	switch (req->opcode) {
- 	case IORING_OP_NOP:
--		return 0;
-+		return io_nop_prep(req, sqe);
- 	case IORING_OP_READV:
- 	case IORING_OP_READ_FIXED:
- 	case IORING_OP_READ:
+Finally when large CQE's are indexed, they need to take into account the =
+bigger
+CQE size. The index manipulation remains unchanged, only when the CQE arr=
+ay is
+accessed, the offset is changed for large CQE's.
+
+The nop test has been modified to test that the new values are set correc=
+tly.
+
+Testing:
+The liburing test suite has been run with the four different configuratio=
+ns:
+- default
+- large SQE
+- large CQE
+- large SQE & large CQE
+To do this the default setting has been changed for the test run to the a=
+bove
+values.:
+
+To use these
+changes, also the corresponding kernel changes are required.
+
+
+Stefan Roesch (6):
+  liburing: Update io_uring.h with large CQE kernel changes
+  liburing: increase mmap size for large CQE's
+  liburing: return correct ring size for large CQE's
+  liburing: index large CQE's correctly
+  liburing: add large CQE tests to nop test
+  liburing: Test all configurations with NOP test
+
+ src/include/liburing.h          | 18 +++++++-
+ src/include/liburing/io_uring.h | 13 ++++++
+ src/queue.c                     |  6 ++-
+ src/setup.c                     | 13 ++++--
+ test/nop.c                      | 74 ++++++++++++++++++++-------------
+ test/test.h                     | 35 ++++++++++++++++
+ 6 files changed, 123 insertions(+), 36 deletions(-)
+ create mode 100644 test/test.h
+
+
+base-commit: c0ba24d1215e9f2b08266b28b35436988c6f3543
 --=20
 2.30.2
 

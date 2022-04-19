@@ -2,48 +2,48 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A7959507B8A
-	for <lists+io-uring@lfdr.de>; Tue, 19 Apr 2022 22:58:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F9FA507B8F
+	for <lists+io-uring@lfdr.de>; Tue, 19 Apr 2022 22:58:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357867AbiDSVBT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 19 Apr 2022 17:01:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50432 "EHLO
+        id S1357876AbiDSVBU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 19 Apr 2022 17:01:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50440 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1357872AbiDSVBS (ORCPT
+        with ESMTP id S1357875AbiDSVBS (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Tue, 19 Apr 2022 17:01:18 -0400
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2299F41FAD
+Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A013841FAE
         for <io-uring@vger.kernel.org>; Tue, 19 Apr 2022 13:58:33 -0700 (PDT)
-Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 23JGdrdL021335
+Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 23JGe4W4017910
         for <io-uring@vger.kernel.org>; Tue, 19 Apr 2022 13:58:32 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=facebook;
- bh=pYa4g3addtGNqV13Mi43MvmmofNWC/HcMOY/BfkWtfo=;
- b=pLgymH+Bzyic8GrbTITVs1yk23CtoK2IR1+jBNX0Ncyz5EBhmwogsyb8S/SS5zQhhxYS
- bZJCrQKIhT4rqQyCxcdTIJCv/KG3sV8Nkkv/xjESFCptDKanD61U40lDgNg3GUAWIv5q
- wziFezrxbaDl8bXMV0ZqcHhG/pJrUXuSQEo= 
+ bh=WVbI536hoxZ1wYZdlP7VE8Hmy7spTZOU9Wd2P1breuE=;
+ b=dDj2/vSHR2pxPnL9dJCdwZsUK1FB1q9iZ1tFLle5+XXsIc2FtL7lWfUlXl41r/BrORNm
+ Px3NhdooEBano+JRW4i8Giqlny/4pYUovfJiXQ78MLdi8En7zbVxWH6pz1IIL84ly1gp
+ gH95XVoZlHcLs2wYYd/jykHvY2dXVz2+rxk= 
 Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3fhn52ws18-1
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3fhn50wth0-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
         for <io-uring@vger.kernel.org>; Tue, 19 Apr 2022 13:58:32 -0700
 Received: from snc-exhub201.TheFacebook.com (2620:10d:c085:21d::7) by
- snc-exhub102.TheFacebook.com (2620:10d:c085:11d::6) with Microsoft SMTP
+ snc-exhub203.TheFacebook.com (2620:10d:c085:21d::6) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Tue, 19 Apr 2022 13:58:32 -0700
+ 15.1.2375.24; Tue, 19 Apr 2022 13:58:31 -0700
 Received: from twshared14141.02.ash7.facebook.com (2620:10d:c085:108::4) by
  mail.thefacebook.com (2620:10d:c085:21d::7) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
  15.1.2375.24; Tue, 19 Apr 2022 13:58:31 -0700
 Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
-        id 544A4DD46118; Tue, 19 Apr 2022 13:58:26 -0700 (PDT)
+        id 5BE36DD4611A; Tue, 19 Apr 2022 13:58:26 -0700 (PDT)
 From:   Stefan Roesch <shr@fb.com>
 To:     <io-uring@vger.kernel.org>, <kernel-team@fb.com>
 CC:     <shr@fb.com>
-Subject: [PATCH v1 2/6] liburing: increase mmap size for large CQE's
-Date:   Tue, 19 Apr 2022 13:58:13 -0700
-Message-ID: <20220419205817.1551377-3-shr@fb.com>
+Subject: [PATCH v1 3/6] liburing: return correct ring size for large CQE's
+Date:   Tue, 19 Apr 2022 13:58:14 -0700
+Message-ID: <20220419205817.1551377-4-shr@fb.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220419205817.1551377-1-shr@fb.com>
 References: <20220419205817.1551377-1-shr@fb.com>
@@ -51,8 +51,8 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-GUID: 8gao4c_kJwZm5cOChKPCYYLYDV4Pg4mO
-X-Proofpoint-ORIG-GUID: 8gao4c_kJwZm5cOChKPCYYLYDV4Pg4mO
+X-Proofpoint-GUID: xoqWVExbHut-1wOiWvZKNR5nWiHfLE4Y
+X-Proofpoint-ORIG-GUID: xoqWVExbHut-1wOiWvZKNR5nWiHfLE4Y
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.486,FMLib:17.11.64.514
  definitions=2022-04-19_08,2022-04-15_01,2022-02-23_01
@@ -66,33 +66,32 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This doubles the mmap size for large CQE's.
+Return the correct ring_size when large CQE's are used.
 
 Signed-off-by: Stefan Roesch <shr@fb.com>
 ---
- src/setup.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ src/setup.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
 diff --git a/src/setup.c b/src/setup.c
-index aec8b33..dd6a712 100644
+index dd6a712..d2adc7f 100644
 --- a/src/setup.c
 +++ b/src/setup.c
-@@ -21,8 +21,12 @@ static int io_uring_mmap(int fd, struct io_uring_param=
-s *p,
- 	size_t size;
- 	int ret;
+@@ -257,8 +257,11 @@ static size_t rings_size(struct io_uring_params *p, =
+unsigned entries,
+ {
+ 	size_t pages, sq_size, cq_size;
 =20
-+	size =3D sizeof(struct io_uring_cqe);
+-	cq_size =3D KRING_SIZE;
+-	cq_size +=3D cq_entries * sizeof(struct io_uring_cqe);
++	cq_size =3D sizeof(struct io_uring_cqe);
 +	if (p->flags & IORING_SETUP_CQE32)
-+		size +=3D sizeof(struct io_uring_cqe);
-+
- 	sq->ring_sz =3D p->sq_off.array + p->sq_entries * sizeof(unsigned);
--	cq->ring_sz =3D p->cq_off.cqes + p->cq_entries * sizeof(struct io_uring=
-_cqe);
-+	cq->ring_sz =3D p->cq_off.cqes + p->cq_entries * size;
++		cq_size +=3D sizeof(struct io_uring_cqe);
++	cq_size *=3D cq_entries;
++	cq_size +=3D KRING_SIZE;
+ 	cq_size =3D (cq_size + 63) & ~63UL;
+ 	pages =3D (size_t) 1 << npages(cq_size, page_size);
 =20
- 	if (p->features & IORING_FEAT_SINGLE_MMAP) {
- 		if (cq->ring_sz > sq->ring_sz)
 --=20
 2.30.2
 

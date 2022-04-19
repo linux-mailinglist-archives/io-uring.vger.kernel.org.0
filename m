@@ -2,135 +2,539 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A4C650783C
-	for <lists+io-uring@lfdr.de>; Tue, 19 Apr 2022 20:26:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 486FC507A41
+	for <lists+io-uring@lfdr.de>; Tue, 19 Apr 2022 21:30:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356976AbiDSS0t (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 19 Apr 2022 14:26:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38870 "EHLO
+        id S236882AbiDSTdI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 19 Apr 2022 15:33:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49310 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1357027AbiDSSZA (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 19 Apr 2022 14:25:00 -0400
-Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09EEC403DC
-        for <io-uring@vger.kernel.org>; Tue, 19 Apr 2022 11:19:04 -0700 (PDT)
-Received: by mail-il1-x133.google.com with SMTP id f5so11066363ilj.13
-        for <io-uring@vger.kernel.org>; Tue, 19 Apr 2022 11:19:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=wokerGmckRYYAuG7vnvwFGdqzKxOeMPs8itH9toPUxU=;
-        b=5AkJjFoLG48rzJfkn9rUwXkrViq/pEHLu/h2dyriVkRddxacAw04AnV751XlATXYOV
-         rrQTK0efnIZxBekjz9efpA8deIP2/EV5wUdDYTszpehfFohq/LAqKJJHBklKgM3gcPGk
-         zArXxopunBkFaC4RWFJmQILQggYpyVNyhgRa18K4p7UmSeHs+53NOMTqXZiGf0R4Azxm
-         D4l9hWJDkk7e+3YfkDz9m4TxKyQ+vCCzYxmH9sWCfl2s0+5oY/9wGbxb3fHRHUNCX9d2
-         bUziMkCj/WTpLK2YfXmZY6dDZSRRPnbFo6WFxOvIOCckVGqTRj7G7e4S2h2jvzAbzP+B
-         pAhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=wokerGmckRYYAuG7vnvwFGdqzKxOeMPs8itH9toPUxU=;
-        b=CYFHRpbasZRe9SxgV1hLFFNJIziSjjCvdLonpRsPmeUwlXBl9GpcWSIN9gQRrj7k6H
-         PYaFFWI+wymoZdXDDpuxpk72AZuaz8BuKWY4DErUcRQFAcW5M8XaYmpYuwJT4GnN7s1Q
-         +WtV1EFYLaLSypX5EaLQTfq+RrMBJyRQnEqV1maCn6rcqO5/R44C7b7LIANdxO28GZxe
-         9gaYFERA8JE1d3CTN5hyiVMIsP6tc5h+Ihtari/eyl1MqSjkpgqWzHJ6MfayKmYlTpE3
-         85GWf9NDMl7ccXKW2aGDUwB+hDUEa5Mq7NzlD8XQE/bNzlCd6H5bqg38IjY2M0whiPWW
-         wJBw==
-X-Gm-Message-State: AOAM530OdKZoklqY9H+7CfsS/QL9L7uRQnuLXFwGTEhNArcOaWEuGpvb
-        EYE6Vd0/b/9anmA4SGdOp8EGSg==
-X-Google-Smtp-Source: ABdhPJwkDanwvNiImGwk18e3bS6pqNiYmqfNcUDzvNso7qtDM5g7c1/buvdEr7oCYUwpJW5k8RTCww==
-X-Received: by 2002:a92:c561:0:b0:2cb:d912:bc83 with SMTP id b1-20020a92c561000000b002cbd912bc83mr7308075ilj.81.1650392343046;
-        Tue, 19 Apr 2022 11:19:03 -0700 (PDT)
-Received: from [192.168.1.172] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id e18-20020a5d85d2000000b00649254a855fsm9592310ios.26.2022.04.19.11.19.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Apr 2022 11:19:02 -0700 (PDT)
-Message-ID: <586ec702-fcaa-f12c-1752-bf262242a751@kernel.dk>
-Date:   Tue, 19 Apr 2022 12:19:01 -0600
+        with ESMTP id S234894AbiDSTdH (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 19 Apr 2022 15:33:07 -0400
+Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC18827B21;
+        Tue, 19 Apr 2022 12:30:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1650396622; x=1681932622;
+  h=date:from:to:cc:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=e6THYDkb8diYYyXW2oJvqfK4IRAs59NV4HszoRowTgg=;
+  b=nF4JUO384z3BrvYcQNng9B6eGYNXRxBwbtFqTxSV9DEgaSM3lJX26PVk
+   /MdI0YMkBNeGMXG2lNBigue6fFndrnz05UsPtMyPPvvR1+wEllgwjGRq3
+   bH6InvJ5LYoqz41LKM0OpycRVxGr5eCwfEzKC8a2hqg2zSjZD2Kq9043p
+   gOJ2CGA+Scbd9VOmYOGKGlXBTvcfGz2dXacBHERWXEae++jNrCrxvyyuo
+   FEHp+WRm5a1zhOR3YWHyS5DBdh1EVLLaNnNh7PXL57JXqcnvE+Xt+dn5O
+   k7iCh99dBq4IA+DtQsWuW4Ij1jx9/yyWCmmarVgzpJzQJytKI3sOvUlC4
+   Q==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10322"; a="264026529"
+X-IronPort-AV: E=Sophos;i="5.90,273,1643702400"; 
+   d="scan'208";a="264026529"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Apr 2022 12:30:22 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.90,273,1643702400"; 
+   d="scan'208";a="861859334"
+Received: from lkp-server01.sh.intel.com (HELO 3abc53900bec) ([10.239.97.150])
+  by fmsmga005.fm.intel.com with ESMTP; 19 Apr 2022 12:30:19 -0700
+Received: from kbuild by 3abc53900bec with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1ngtYJ-00067Y-0R;
+        Tue, 19 Apr 2022 19:30:19 +0000
+Date:   Wed, 20 Apr 2022 03:29:48 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mm@kvack.org, linux-media@vger.kernel.org,
+        linux-edac@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
+        io-uring@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        amd-gfx@lists.freedesktop.org,
+        Linux Memory Management List <linux-mm@kvack.org>
+Subject: [linux-next:master] BUILD REGRESSION
+ 634de1db0e9bbeb90d7b01020e59ec3dab4d38a1
+Message-ID: <625f0dac.FpRyWRTzc3sv78rQ%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH 17/17] nvme: enable non-inline passthru commands
-Content-Language: en-US
-To:     Kanchan Joshi <joshiiitr@gmail.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Kanchan Joshi <joshi.k@samsung.com>,
-        Keith Busch <kbusch@kernel.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org, sbates@raithlin.com,
-        logang@deltatee.com, Pankaj Raghav <pankydev8@gmail.com>,
-        =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <javier@javigon.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Adam Manzanares <a.manzanares@samsung.com>,
-        Anuj Gupta <anuj20.g@samsung.com>
-References: <CGME20220308152729epcas5p17e82d59c68076eb46b5ef658619d65e3@epcas5p1.samsung.com>
- <20220308152105.309618-18-joshi.k@samsung.com>
- <20220310083652.GF26614@lst.de>
- <CA+1E3rLaQstG8LWUyJrbK5Qz+AnNpOnAyoK-7H5foFm67BJeFA@mail.gmail.com>
- <20220310141945.GA890@lst.de>
- <CA+1E3rL3Q2noHW-cD20SZyo9EqbzjF54F6TgZoUMMuZGkhkqnw@mail.gmail.com>
- <20220311062710.GA17232@lst.de>
- <CA+1E3rLGwHFbdbSTJBfWrw6RLErwcT2zPxGmmWbcLUj2y=16Qg@mail.gmail.com>
- <20220324063218.GC12660@lst.de> <20220325133921.GA13818@test-zns>
- <20220330130219.GB1938@lst.de>
- <CA+1E3r+Z9UyiNjmb-DzOpNrcbCO_nNFYUD5L5xJJCisx_D=wPQ@mail.gmail.com>
- <a44e38d6-54b4-0d17-c274-b7d46f60a0cf@kernel.dk>
- <CA+1E3r+CSC6jaDBXpxQUDnk8G=RuQaa=DPJ=tt9O9qydH5B9SQ@mail.gmail.com>
- <f3923d64-4f84-143b-cce2-fcf8366da0e6@kernel.dk>
- <CA+1E3rJHgEan2yiVS882XouHgKNP4Rn6G2LrXyFu-0kgyu27=Q@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CA+1E3rJHgEan2yiVS882XouHgKNP4Rn6G2LrXyFu-0kgyu27=Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-5.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-6.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,HEXHASH_WORD,
+        RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/19/22 11:31 AM, Kanchan Joshi wrote:
-> Hi Jens,
-> Few thoughts below toward the next version -
-> 
-> On Fri, Apr 1, 2022 at 8:14 AM Jens Axboe <axboe@kernel.dk> wrote:
-> [snip]
->>>>> Sure, will post the code with bigger-cqe first.
->>>>
->>>> I can add the support, should be pretty trivial. And do the liburing
->>>> side as well, so we have a sane base.
->>>
->>>  I will post the big-cqe based work today. It works with fio.
->>>  It does not deal with liburing (which seems tricky), but hopefully it
->>> can help us move forward anyway .
->>
->> Let's compare then, since I just did the support too :-)
-> 
-> Major difference is generic support (rather than uring-cmd only) and
-> not touching the regular completion path. So plan is to use your patch
-> for the next version with some bits added (e.g. overflow-handling and
-> avoiding extra CQE tail increment). Hope that sounds fine.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
+branch HEAD: 634de1db0e9bbeb90d7b01020e59ec3dab4d38a1  Add linux-next specific files for 20220419
 
-I'll sanitize my branch today or tomorrow, it has overflow and proper cq
-ring management now, just hasn't been posted yet. So it should be
-complete.
+Error/Warning reports:
 
-> We have things working on top of your current branch
-> "io_uring-big-sqe". Since SQE now has 8 bytes of free space (post
-> xattr merge) and CQE infra is different (post cqe-caching in ctx) -
-> things needed to be done a bit differently. But all this is now tested
-> better with liburing support/util (plan is to post that too).
+https://lore.kernel.org/linux-mm/202204081656.6x4pfen4-lkp@intel.com
+https://lore.kernel.org/linux-mm/202204140108.DeRAhWEn-lkp@intel.com
+https://lore.kernel.org/linux-mm/202204192051.BH3Il8DE-lkp@intel.com
+https://lore.kernel.org/lkml/202204140043.Tx7BIBvI-lkp@intel.com
+https://lore.kernel.org/llvm/202203241958.Uw9bWfMD-lkp@intel.com
 
-Just still grab the 16 bytes, we don't care about addr3 for passthrough.
-Should be no changes required there.
+Error/Warning: (recently discovered and may have been fixed)
+
+drivers/bus/mhi/host/main.c:787:13: warning: parameter 'event_quota' set but not used [-Wunused-but-set-parameter]
+drivers/gpu/drm/amd/amdgpu/../display/dc/virtual/virtual_link_hwss.c:32:6: warning: no previous prototype for 'virtual_setup_stream_attribute' [-Wmissing-prototypes]
+kernel/sched/sched.h: linux/static_key.h is included more than once.
+ntb_perf.c:(.text+0x6052): undefined reference to `__umoddi3'
+
+Unverified Error/Warning (likely false positive, please contact us if interested):
+
+Makefile:684: arch/h8300/Makefile: No such file or directory
+arch/Kconfig:10: can't open file "arch/h8300/Kconfig"
+arch/s390/include/asm/spinlock.h:81:3: error: unexpected token in '.rept' directive
+arch/s390/include/asm/spinlock.h:81:3: error: unknown directive
+arch/s390/include/asm/spinlock.h:81:3: error: unmatched '.endr' directive
+arch/s390/lib/spinlock.c:78:3: error: unexpected token in '.rept' directive
+arch/s390/lib/spinlock.c:78:3: error: unknown directive
+arch/s390/lib/spinlock.c:78:3: error: unmatched '.endr' directive
+drivers/bus/mhi/host/main.c:1580:4: warning: Attempt to free released memory [clang-analyzer-unix.Malloc]
+drivers/dma-buf/st-dma-fence-unwrap.c:125:13: warning: variable 'err' set but not used [-Wunused-but-set-variable]
+drivers/edac/edac_device.c:73 edac_device_alloc_ctl_info() warn: Please consider using kcalloc instead
+drivers/edac/edac_mc.c:369 edac_mc_alloc() warn: Please consider using kcalloc instead
+drivers/gpu/drm/amd/amdgpu/../display/dc/dcn31/dcn31_hubp.c:57:6: warning: no previous prototype for 'hubp31_program_extended_blank' [-Wmissing-prototypes]
+drivers/gpu/drm/solomon/ssd130x.c:486:2: warning: Undefined or garbage value returned to caller [clang-analyzer-core.uninitialized.UndefReturn]
+drivers/hwmon/da9055-hwmon.c:201:9: warning: Call to function 'sprintf' is insecure as it does not provide bounding of the memory buffer or security checks introduced in the C11 standard. Replace with analogous functions that support length arguments or provides boundary checks such as 'sprintf_s' in case of C11 [clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling]
+drivers/hwmon/scpi-hwmon.c:121:9: warning: Call to function 'sprintf' is insecure as it does not provide bounding of the memory buffer or security checks introduced in the C11 standard. Replace with analogous functions that support length arguments or provides boundary checks such as 'sprintf_s' in case of C11 [clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling]
+drivers/hwmon/vt8231.c:634:9: warning: Call to function 'sprintf' is insecure as it does not provide bounding of the memory buffer or security checks introduced in the C11 standard. Replace with analogous functions that support length arguments or provides boundary checks such as 'sprintf_s' in case of C11 [clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling]
+drivers/tty/synclink_gt.c:3432:2: warning: Call to function 'sprintf' is insecure as it does not provide bounding of the memory buffer or security checks introduced in the C11 standard. Replace with analogous functions that support length arguments or provides boundary checks such as 'sprintf_s' in case of C11 [clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling]
+drivers/usb/chipidea/core.c:956:10: warning: Call to function 'sprintf' is insecure as it does not provide bounding of the memory buffer or security checks introduced in the C11 standard. Replace with analogous functions that support length arguments or provides boundary checks such as 'sprintf_s' in case of C11 [clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling]
+drivers/usb/gadget/udc/core.c:1664:9: warning: Call to function 'sprintf' is insecure as it does not provide bounding of the memory buffer or security checks introduced in the C11 standard. Replace with analogous functions that support length arguments or provides boundary checks such as 'sprintf_s' in case of C11 [clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling]
+drivers/video/fbdev/matrox/matroxfb_base.c:1094:5: warning: Call to function 'sprintf' is insecure as it does not provide bounding of the memory buffer or security checks introduced in the C11 standard. Replace with analogous functions that support length arguments or provides boundary checks such as 'sprintf_s' in case of C11 [clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling]
+drivers/vme/bridges/vme_tsi148.c:754:2: warning: Call to function 'sprintf' is insecure as it does not provide bounding of the memory buffer or security checks introduced in the C11 standard. Replace with analogous functions that support length arguments or provides boundary checks such as 'sprintf_s' in case of C11 [clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling]
+kernel/bpf/syscall.c:4944:13: warning: no previous prototype for function 'unpriv_ebpf_notify' [-Wmissing-prototypes]
+kernel/module/main.c:2189:4: warning: Null pointer passed as 1st argument to memory copy function [clang-analyzer-unix.cstring.NullArg]
+kernel/module/main.c:924:9: warning: Call to function 'sprintf' is insecure as it does not provide bounding of the memory buffer or security checks introduced in the C11 standard. Replace with analogous functions that support length arguments or provides boundary checks such as 'sprintf_s' in case of C11 [clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling]
+lib/vsprintf.c:2781:5: warning: Null pointer passed as 1st argument to memory copy function [clang-analyzer-unix.cstring.NullArg]
+lib/vsprintf.c:2801:12: warning: Dereference of null pointer (loaded from variable 'str') [clang-analyzer-core.NullDereference]
+make[1]: *** No rule to make target 'arch/h8300/Makefile'.
+mm/memory.c: linux/mm_inline.h is included more than once.
+net/ipv4/tcp_cong.c:430:32: warning: Division by zero [clang-analyzer-core.DivideZero]
+
+Error/Warning ids grouped by kconfigs:
+
+gcc_recent_errors
+|-- alpha-allmodconfig
+|   |-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-virtual-virtual_link_hwss.c:warning:no-previous-prototype-for-virtual_setup_stream_attribute
+|-- alpha-allyesconfig
+|   |-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-virtual-virtual_link_hwss.c:warning:no-previous-prototype-for-virtual_setup_stream_attribute
+|-- alpha-randconfig-r002-20220419
+|   `-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|-- arc-allmodconfig
+|   |-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-virtual-virtual_link_hwss.c:warning:no-previous-prototype-for-virtual_setup_stream_attribute
+|-- arc-allyesconfig
+|   |-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-virtual-virtual_link_hwss.c:warning:no-previous-prototype-for-virtual_setup_stream_attribute
+|-- arc-randconfig-r025-20220419
+|   `-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|-- arc-randconfig-r026-20220419
+|   `-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|-- arc-randconfig-r036-20220419
+|   `-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|-- arm-allmodconfig
+|   |-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-virtual-virtual_link_hwss.c:warning:no-previous-prototype-for-virtual_setup_stream_attribute
+|-- arm-allyesconfig
+|   |-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-virtual-virtual_link_hwss.c:warning:no-previous-prototype-for-virtual_setup_stream_attribute
+|-- arm-randconfig-c002-20220419
+|   `-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|-- arm64-allyesconfig
+|   |-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-virtual-virtual_link_hwss.c:warning:no-previous-prototype-for-virtual_setup_stream_attribute
+|-- arm64-randconfig-s031-20220419
+|   |-- fs-io_uring.c:sparse:sparse:marked-inline-but-without-a-definition
+|   |-- mm-memory.c:sparse:sparse:incorrect-type-in-initializer-(different-base-types)-expected-unsigned-long-zap_flags-got-restricted-zap_flags_t
+|   `-- mm-memory.c:sparse:sparse:symbol-vma_needs_copy-was-not-declared.-Should-it-be-static
+|-- csky-randconfig-r033-20220419
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-virtual-virtual_link_hwss.c:warning:no-previous-prototype-for-virtual_setup_stream_attribute
+|-- h8300-allmodconfig
+|   |-- Makefile:arch-h8300-Makefile:No-such-file-or-directory
+|   |-- arch-Kconfig:can-t-open-file-arch-h8300-Kconfig
+|   `-- make:No-rule-to-make-target-arch-h8300-Makefile-.
+|-- h8300-allyesconfig
+|   |-- Makefile:arch-h8300-Makefile:No-such-file-or-directory
+|   |-- arch-Kconfig:can-t-open-file-arch-h8300-Kconfig
+|   `-- make:No-rule-to-make-target-arch-h8300-Makefile-.
+|-- h8300-defconfig
+|   |-- Makefile:arch-h8300-Makefile:No-such-file-or-directory
+|   `-- make:No-rule-to-make-target-arch-h8300-Makefile-.
+|-- i386-allmodconfig
+|   |-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-dcn31-dcn31_hubp.c:warning:no-previous-prototype-for-hubp31_program_extended_blank
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-virtual-virtual_link_hwss.c:warning:no-previous-prototype-for-virtual_setup_stream_attribute
+|-- i386-allyesconfig
+|   |-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-dcn31-dcn31_hubp.c:warning:no-previous-prototype-for-hubp31_program_extended_blank
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-virtual-virtual_link_hwss.c:warning:no-previous-prototype-for-virtual_setup_stream_attribute
+|-- i386-randconfig-a001
+|   `-- ntb_perf.c:(.text):undefined-reference-to-__umoddi3
+|-- i386-randconfig-m021
+|   |-- drivers-edac-edac_device.c-edac_device_alloc_ctl_info()-warn:Please-consider-using-kcalloc-instead
+|   `-- drivers-edac-edac_mc.c-edac_mc_alloc()-warn:Please-consider-using-kcalloc-instead
+|-- i386-randconfig-s001
+|   |-- fs-io_uring.c:sparse:sparse:marked-inline-but-without-a-definition
+|   |-- mm-memory.c:sparse:sparse:incorrect-type-in-initializer-(different-base-types)-expected-unsigned-long-zap_flags-got-restricted-zap_flags_t
+|   `-- mm-memory.c:sparse:sparse:symbol-vma_needs_copy-was-not-declared.-Should-it-be-static
+|-- i386-randconfig-s002
+|   |-- fs-hugetlbfs-inode.c:sparse:sparse:incorrect-type-in-argument-(different-base-types)-expected-unsigned-long-zap_flags-got-restricted-zap_flags_t-usertype
+|   |-- mm-hugetlb.c:sparse:sparse:restricted-zap_flags_t-degrades-to-integer
+|   |-- mm-memory.c:sparse:sparse:incorrect-type-in-initializer-(different-base-types)-expected-unsigned-long-zap_flags-got-restricted-zap_flags_t
+|   `-- mm-memory.c:sparse:sparse:symbol-vma_needs_copy-was-not-declared.-Should-it-be-static
+|-- ia64-allmodconfig
+|   |-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-virtual-virtual_link_hwss.c:warning:no-previous-prototype-for-virtual_setup_stream_attribute
+|-- ia64-allyesconfig
+|   |-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-virtual-virtual_link_hwss.c:warning:no-previous-prototype-for-virtual_setup_stream_attribute
+|-- ia64-randconfig-p002-20220419
+|   `-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|-- ia64-randconfig-r003-20220419
+|   `-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|-- m68k-allmodconfig
+|   `-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|-- m68k-allyesconfig
+|   `-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|-- mips-allmodconfig
+|   |-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-virtual-virtual_link_hwss.c:warning:no-previous-prototype-for-virtual_setup_stream_attribute
+|-- mips-allyesconfig
+|   |-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-virtual-virtual_link_hwss.c:warning:no-previous-prototype-for-virtual_setup_stream_attribute
+|-- mips-randconfig-c023-20220419
+|   `-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|-- mips-randconfig-r001-20220419
+|   `-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|-- nios2-allmodconfig
+|   `-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|-- nios2-allyesconfig
+|   `-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|-- openrisc-randconfig-r022-20220419
+|   `-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|-- parisc-allmodconfig
+|   |-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-virtual-virtual_link_hwss.c:warning:no-previous-prototype-for-virtual_setup_stream_attribute
+|-- parisc-allyesconfig
+|   |-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-virtual-virtual_link_hwss.c:warning:no-previous-prototype-for-virtual_setup_stream_attribute
+|-- parisc-buildonly-randconfig-r003-20220419
+|   `-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|-- powerpc-allmodconfig
+|   |-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-virtual-virtual_link_hwss.c:warning:no-previous-prototype-for-virtual_setup_stream_attribute
+|-- powerpc-allyesconfig
+|   |-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-virtual-virtual_link_hwss.c:warning:no-previous-prototype-for-virtual_setup_stream_attribute
+|-- powerpc-buildonly-randconfig-r001-20220419
+|   `-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|-- powerpc64-randconfig-m031-20220419
+|   `-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|-- riscv-allmodconfig
+|   |-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-virtual-virtual_link_hwss.c:warning:no-previous-prototype-for-virtual_setup_stream_attribute
+|-- riscv-allyesconfig
+|   |-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-virtual-virtual_link_hwss.c:warning:no-previous-prototype-for-virtual_setup_stream_attribute
+|-- riscv-randconfig-r042-20220419
+|   `-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|-- s390-allmodconfig
+|   `-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|-- s390-allyesconfig
+|   |-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-virtual-virtual_link_hwss.c:warning:no-previous-prototype-for-virtual_setup_stream_attribute
+|-- sh-allmodconfig
+|   `-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|-- sparc-allyesconfig
+|   |-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-virtual-virtual_link_hwss.c:warning:no-previous-prototype-for-virtual_setup_stream_attribute
+|-- sparc-randconfig-r012-20220419
+|   `-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|-- sparc-randconfig-r013-20220419
+|   `-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|-- sparc64-randconfig-r031-20220419
+|   `-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|-- sparc64-randconfig-s032-20220419
+|   |-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|   |-- fs-hugetlbfs-inode.c:sparse:sparse:incorrect-type-in-argument-(different-base-types)-expected-unsigned-long-zap_flags-got-restricted-zap_flags_t-usertype
+|   |-- fs-io_uring.c:sparse:sparse:marked-inline-but-without-a-definition
+|   |-- mm-hugetlb.c:sparse:sparse:restricted-zap_flags_t-degrades-to-integer
+|   |-- mm-memory.c:sparse:sparse:incorrect-type-in-initializer-(different-base-types)-expected-unsigned-long-zap_flags-got-restricted-zap_flags_t
+|   `-- mm-memory.c:sparse:sparse:symbol-vma_needs_copy-was-not-declared.-Should-it-be-static
+|-- x86_64-allmodconfig
+|   |-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-virtual-virtual_link_hwss.c:warning:no-previous-prototype-for-virtual_setup_stream_attribute
+|-- x86_64-allnoconfig
+|   |-- kernel-sched-sched.h:linux-static_key.h-is-included-more-than-once.
+|   `-- mm-memory.c:linux-mm_inline.h-is-included-more-than-once.
+|-- x86_64-allyesconfig
+|   |-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-virtual-virtual_link_hwss.c:warning:no-previous-prototype-for-virtual_setup_stream_attribute
+|-- x86_64-randconfig-m001
+|   |-- drivers-edac-edac_device.c-edac_device_alloc_ctl_info()-warn:Please-consider-using-kcalloc-instead
+|   `-- drivers-edac-edac_mc.c-edac_mc_alloc()-warn:Please-consider-using-kcalloc-instead
+|-- x86_64-randconfig-s021
+|   |-- fs-io_uring.c:sparse:sparse:marked-inline-but-without-a-definition
+|   |-- mm-memory.c:sparse:sparse:incorrect-type-in-initializer-(different-base-types)-expected-unsigned-long-zap_flags-got-restricted-zap_flags_t
+|   `-- mm-memory.c:sparse:sparse:symbol-vma_needs_copy-was-not-declared.-Should-it-be-static
+|-- x86_64-randconfig-s022
+|   |-- fs-hugetlbfs-inode.c:sparse:sparse:incorrect-type-in-argument-(different-base-types)-expected-unsigned-long-zap_flags-got-restricted-zap_flags_t-usertype
+|   |-- mm-hugetlb.c:sparse:sparse:restricted-zap_flags_t-degrades-to-integer
+|   |-- mm-memory.c:sparse:sparse:incorrect-type-in-initializer-(different-base-types)-expected-unsigned-long-zap_flags-got-restricted-zap_flags_t
+|   `-- mm-memory.c:sparse:sparse:symbol-vma_needs_copy-was-not-declared.-Should-it-be-static
+|-- x86_64-rhel-8.3-kselftests
+|   |-- fs-hugetlbfs-inode.c:sparse:sparse:incorrect-type-in-argument-(different-base-types)-expected-unsigned-long-zap_flags-got-restricted-zap_flags_t-usertype
+|   |-- fs-io_uring.c:sparse:sparse:marked-inline-but-without-a-definition
+|   |-- mm-hugetlb.c:sparse:sparse:restricted-zap_flags_t-degrades-to-integer
+|   |-- mm-memory.c:sparse:sparse:incorrect-type-in-initializer-(different-base-types)-expected-unsigned-long-zap_flags-got-restricted-zap_flags_t
+|   `-- mm-memory.c:sparse:sparse:symbol-vma_needs_copy-was-not-declared.-Should-it-be-static
+|-- xtensa-allyesconfig
+|   |-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-virtual-virtual_link_hwss.c:warning:no-previous-prototype-for-virtual_setup_stream_attribute
+`-- xtensa-randconfig-r023-20220419
+    `-- drivers-dma-buf-st-dma-fence-unwrap.c:warning:variable-err-set-but-not-used
+
+clang_recent_errors
+|-- arm-randconfig-c002-20220419
+|   |-- drivers-bus-mhi-host-main.c:warning:parameter-event_quota-set-but-not-used
+|   |-- kernel-module-main.c:warning:Call-to-function-sprintf-is-insecure-as-it-does-not-provide-bounding-of-the-memory-buffer-or-security-checks-introduced-in-the-C11-standard.-Replace-with-analogous-functio
+|   `-- kernel-module-main.c:warning:Null-pointer-passed-as-1st-argument-to-memory-copy-function-clang-analyzer-unix.cstring.NullArg
+|-- hexagon-randconfig-r041-20220419
+|   |-- drivers-bus-mhi-host-main.c:warning:parameter-event_quota-set-but-not-used
+|   `-- kernel-bpf-syscall.c:warning:no-previous-prototype-for-function-unpriv_ebpf_notify
+|-- hexagon-randconfig-r045-20220419
+|   |-- drivers-bus-mhi-host-main.c:warning:parameter-event_quota-set-but-not-used
+|   `-- kernel-bpf-syscall.c:warning:no-previous-prototype-for-function-unpriv_ebpf_notify
+|-- i386-randconfig-a002
+|   `-- kernel-bpf-syscall.c:warning:no-previous-prototype-for-function-unpriv_ebpf_notify
+|-- i386-randconfig-a004
+|   `-- kernel-bpf-syscall.c:warning:no-previous-prototype-for-function-unpriv_ebpf_notify
+|-- i386-randconfig-a011
+|   |-- drivers-bus-mhi-host-main.c:warning:parameter-event_quota-set-but-not-used
+|   `-- kernel-bpf-syscall.c:warning:no-previous-prototype-for-function-unpriv_ebpf_notify
+|-- i386-randconfig-a013
+|   |-- drivers-bus-mhi-host-main.c:warning:parameter-event_quota-set-but-not-used
+|   `-- kernel-bpf-syscall.c:warning:no-previous-prototype-for-function-unpriv_ebpf_notify
+|-- i386-randconfig-a015
+|   |-- drivers-bus-mhi-host-main.c:warning:parameter-event_quota-set-but-not-used
+|   `-- kernel-bpf-syscall.c:warning:no-previous-prototype-for-function-unpriv_ebpf_notify
+|-- i386-randconfig-c001
+|   |-- drivers-bus-mhi-host-main.c:warning:parameter-event_quota-set-but-not-used
+|   |-- kernel-bpf-syscall.c:warning:no-previous-prototype-for-function-unpriv_ebpf_notify
+|   |-- kernel-module-main.c:warning:Call-to-function-sprintf-is-insecure-as-it-does-not-provide-bounding-of-the-memory-buffer-or-security-checks-introduced-in-the-C11-standard.-Replace-with-analogous-functio
+|   |-- kernel-module-main.c:warning:Null-pointer-passed-as-1st-argument-to-memory-copy-function-clang-analyzer-unix.cstring.NullArg
+|   |-- lib-vsprintf.c:warning:Dereference-of-null-pointer-(loaded-from-variable-str-)-clang-analyzer-core.NullDereference
+|   |-- lib-vsprintf.c:warning:Null-pointer-passed-as-1st-argument-to-memory-copy-function-clang-analyzer-unix.cstring.NullArg
+|   `-- net-ipv4-tcp_cong.c:warning:Division-by-zero-clang-analyzer-core.DivideZero
+|-- riscv-randconfig-c006-20220419
+|   |-- drivers-bus-mhi-host-main.c:warning:Attempt-to-free-released-memory-clang-analyzer-unix.Malloc
+|   |-- drivers-bus-mhi-host-main.c:warning:parameter-event_quota-set-but-not-used
+|   |-- drivers-gpu-drm-solomon-ssd13.c:warning:Undefined-or-garbage-value-returned-to-caller-clang-analyzer-core.uninitialized.UndefReturn
+|   |-- drivers-hwmon-da9055-hwmon.c:warning:Call-to-function-sprintf-is-insecure-as-it-does-not-provide-bounding-of-the-memory-buffer-or-security-checks-introduced-in-the-C11-standard.-Replace-with-analogous
+|   |-- drivers-hwmon-scpi-hwmon.c:warning:Call-to-function-sprintf-is-insecure-as-it-does-not-provide-bounding-of-the-memory-buffer-or-security-checks-introduced-in-the-C11-standard.-Replace-with-analogous-f
+|   |-- drivers-hwmon-vt8231.c:warning:Call-to-function-sprintf-is-insecure-as-it-does-not-provide-bounding-of-the-memory-buffer-or-security-checks-introduced-in-the-C11-standard.-Replace-with-analogous-funct
+|   |-- drivers-tty-synclink_gt.c:warning:Call-to-function-sprintf-is-insecure-as-it-does-not-provide-bounding-of-the-memory-buffer-or-security-checks-introduced-in-the-C11-standard.-Replace-with-analogous-fu
+|   |-- drivers-usb-chipidea-core.c:warning:Call-to-function-sprintf-is-insecure-as-it-does-not-provide-bounding-of-the-memory-buffer-or-security-checks-introduced-in-the-C11-standard.-Replace-with-analogous-
+|   |-- drivers-usb-gadget-udc-core.c:warning:Call-to-function-sprintf-is-insecure-as-it-does-not-provide-bounding-of-the-memory-buffer-or-security-checks-introduced-in-the-C11-standard.-Replace-with-analogou
+|   |-- drivers-video-fbdev-matrox-matroxfb_base.c:warning:Call-to-function-sprintf-is-insecure-as-it-does-not-provide-bounding-of-the-memory-buffer-or-security-checks-introduced-in-the-C11-standard.-Replace-
+|   |-- drivers-vme-bridges-vme_tsi148.c:warning:Call-to-function-sprintf-is-insecure-as-it-does-not-provide-bounding-of-the-memory-buffer-or-security-checks-introduced-in-the-C11-standard.-Replace-with-analo
+|   `-- kernel-module-main.c:warning:Call-to-function-sprintf-is-insecure-as-it-does-not-provide-bounding-of-the-memory-buffer-or-security-checks-introduced-in-the-C11-standard.-Replace-with-analogous-functio
+|-- s390-randconfig-c005-20220419
+|   |-- arch-s390-include-asm-spinlock.h:error:unexpected-token-in-.rept-directive
+|   |-- arch-s390-include-asm-spinlock.h:error:unknown-directive
+|   |-- arch-s390-include-asm-spinlock.h:error:unmatched-.endr-directive
+|   |-- arch-s390-lib-spinlock.c:error:unexpected-token-in-.rept-directive
+|   |-- arch-s390-lib-spinlock.c:error:unknown-directive
+|   |-- arch-s390-lib-spinlock.c:error:unmatched-.endr-directive
+|   `-- drivers-bus-mhi-host-main.c:warning:parameter-event_quota-set-but-not-used
+|-- s390-randconfig-r032-20220419
+|   |-- arch-s390-include-asm-spinlock.h:error:unexpected-token-in-.rept-directive
+|   |-- arch-s390-include-asm-spinlock.h:error:unknown-directive
+|   |-- arch-s390-include-asm-spinlock.h:error:unmatched-.endr-directive
+|   |-- arch-s390-lib-spinlock.c:error:unexpected-token-in-.rept-directive
+|   |-- arch-s390-lib-spinlock.c:error:unknown-directive
+|   |-- arch-s390-lib-spinlock.c:error:unmatched-.endr-directive
+|   `-- drivers-bus-mhi-host-main.c:warning:parameter-event_quota-set-but-not-used
+|-- s390-randconfig-r035-20220419
+|   |-- arch-s390-include-asm-spinlock.h:error:unexpected-token-in-.rept-directive
+|   |-- arch-s390-include-asm-spinlock.h:error:unknown-directive
+|   |-- arch-s390-include-asm-spinlock.h:error:unmatched-.endr-directive
+|   |-- arch-s390-lib-spinlock.c:error:unexpected-token-in-.rept-directive
+|   |-- arch-s390-lib-spinlock.c:error:unknown-directive
+|   |-- arch-s390-lib-spinlock.c:error:unmatched-.endr-directive
+|   |-- drivers-bus-mhi-host-main.c:warning:parameter-event_quota-set-but-not-used
+|   `-- kernel-bpf-syscall.c:warning:no-previous-prototype-for-function-unpriv_ebpf_notify
+|-- x86_64-allmodconfig
+|   |-- drivers-bus-mhi-host-main.c:warning:parameter-event_quota-set-but-not-used
+|   `-- kernel-bpf-syscall.c:warning:no-previous-prototype-for-function-unpriv_ebpf_notify
+|-- x86_64-randconfig-a001
+|   |-- drivers-bus-mhi-host-main.c:warning:parameter-event_quota-set-but-not-used
+|   `-- kernel-bpf-syscall.c:warning:no-previous-prototype-for-function-unpriv_ebpf_notify
+|-- x86_64-randconfig-a005
+|   `-- drivers-bus-mhi-host-main.c:warning:parameter-event_quota-set-but-not-used
+|-- x86_64-randconfig-a012
+|   |-- drivers-bus-mhi-host-main.c:warning:parameter-event_quota-set-but-not-used
+|   `-- kernel-bpf-syscall.c:warning:no-previous-prototype-for-function-unpriv_ebpf_notify
+|-- x86_64-randconfig-a014
+|   `-- drivers-bus-mhi-host-main.c:warning:parameter-event_quota-set-but-not-used
+|-- x86_64-randconfig-a016
+|   `-- drivers-bus-mhi-host-main.c:warning:parameter-event_quota-set-but-not-used
+`-- x86_64-randconfig-c007
+    |-- drivers-bus-mhi-host-main.c:warning:parameter-event_quota-set-but-not-used
+    |-- kernel-bpf-syscall.c:warning:no-previous-prototype-for-function-unpriv_ebpf_notify
+    |-- kernel-module-main.c:warning:Call-to-function-sprintf-is-insecure-as-it-does-not-provide-bounding-of-the-memory-buffer-or-security-checks-introduced-in-the-C11-standard.-Replace-with-analogous-functio
+    |-- kernel-module-main.c:warning:Null-pointer-passed-as-1st-argument-to-memory-copy-function-clang-analyzer-unix.cstring.NullArg
+    `-- net-ipv4-tcp_cong.c:warning:Division-by-zero-clang-analyzer-core.DivideZero
+
+elapsed time: 723m
+
+configs tested: 129
+configs skipped: 4
+
+gcc tested configs:
+arm                              allyesconfig
+arm                                 defconfig
+arm64                            allyesconfig
+arm64                               defconfig
+arm                              allmodconfig
+ia64                             allmodconfig
+i386                             allyesconfig
+ia64                             allyesconfig
+i386                          randconfig-c001
+parisc                           allyesconfig
+sh                               allmodconfig
+h8300                            allyesconfig
+alpha                            allyesconfig
+arc                              allyesconfig
+nios2                            allyesconfig
+arm                         axm55xx_defconfig
+openrisc                            defconfig
+sh                           se7724_defconfig
+sh                             espt_defconfig
+sh                          rsk7201_defconfig
+xtensa                       common_defconfig
+arm                         nhk8815_defconfig
+sh                            hp6xx_defconfig
+sh                               j2_defconfig
+sh                   secureedge5410_defconfig
+arm                        multi_v7_defconfig
+sparc                       sparc32_defconfig
+ia64                            zx1_defconfig
+powerpc                    klondike_defconfig
+powerpc                         ps3_defconfig
+mips                         tb0226_defconfig
+sh                             sh03_defconfig
+powerpc                     taishan_defconfig
+m68k                        stmark2_defconfig
+h8300                               defconfig
+powerpc                 mpc8540_ads_defconfig
+arm                          badge4_defconfig
+riscv                               defconfig
+sh                         microdev_defconfig
+sh                          rsk7203_defconfig
+powerpc                     pq2fads_defconfig
+arc                          axs103_defconfig
+riscv                            allyesconfig
+x86_64                        randconfig-c001
+arm                  randconfig-c002-20220419
+ia64                                defconfig
+m68k                                defconfig
+m68k                             allyesconfig
+m68k                             allmodconfig
+nios2                               defconfig
+alpha                               defconfig
+csky                                defconfig
+arc                                 defconfig
+xtensa                           allyesconfig
+parisc                              defconfig
+parisc64                            defconfig
+s390                             allmodconfig
+s390                                defconfig
+s390                             allyesconfig
+i386                   debian-10.3-kselftests
+i386                              debian-10.3
+i386                                defconfig
+sparc                               defconfig
+sparc                            allyesconfig
+mips                             allmodconfig
+mips                             allyesconfig
+powerpc                           allnoconfig
+powerpc                          allmodconfig
+powerpc                          allyesconfig
+x86_64                        randconfig-a004
+x86_64                        randconfig-a002
+x86_64                        randconfig-a006
+i386                          randconfig-a001
+i386                          randconfig-a003
+i386                          randconfig-a005
+x86_64                        randconfig-a013
+x86_64                        randconfig-a011
+x86_64                        randconfig-a015
+i386                          randconfig-a014
+i386                          randconfig-a012
+i386                          randconfig-a016
+riscv                randconfig-r042-20220419
+s390                 randconfig-r044-20220419
+arc                  randconfig-r043-20220419
+riscv                    nommu_k210_defconfig
+riscv                    nommu_virt_defconfig
+riscv                             allnoconfig
+riscv                          rv32_defconfig
+riscv                            allmodconfig
+x86_64                    rhel-8.3-kselftests
+um                             i386_defconfig
+um                           x86_64_defconfig
+x86_64                              defconfig
+x86_64                                  kexec
+x86_64                          rhel-8.3-func
+x86_64                               rhel-8.3
+x86_64                         rhel-8.3-kunit
+x86_64                           allyesconfig
+
+clang tested configs:
+arm                  randconfig-c002-20220419
+powerpc              randconfig-c003-20220419
+x86_64                        randconfig-c007
+mips                 randconfig-c004-20220419
+i386                          randconfig-c001
+s390                 randconfig-c005-20220419
+riscv                randconfig-c006-20220419
+arm                          collie_defconfig
+mips                      maltaaprp_defconfig
+mips                   sb1250_swarm_defconfig
+powerpc                        icon_defconfig
+arm                        neponset_defconfig
+powerpc                 mpc8272_ads_defconfig
+powerpc                      obs600_defconfig
+powerpc                        fsp2_defconfig
+riscv                    nommu_virt_defconfig
+mips                          malta_defconfig
+powerpc                     tqm8560_defconfig
+mips                        bcm63xx_defconfig
+arm                        mvebu_v5_defconfig
+x86_64                        randconfig-a001
+x86_64                        randconfig-a003
+x86_64                        randconfig-a005
+i386                          randconfig-a002
+i386                          randconfig-a006
+i386                          randconfig-a004
+x86_64                        randconfig-a012
+x86_64                        randconfig-a014
+x86_64                        randconfig-a016
+i386                          randconfig-a013
+i386                          randconfig-a011
+i386                          randconfig-a015
+hexagon              randconfig-r041-20220419
+hexagon              randconfig-r045-20220419
 
 -- 
-Jens Axboe
-
+0-DAY CI Kernel Test Service
+https://01.org/lkp

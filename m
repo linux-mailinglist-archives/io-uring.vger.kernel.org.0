@@ -2,44 +2,44 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8485D507B66
-	for <lists+io-uring@lfdr.de>; Tue, 19 Apr 2022 22:57:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95754507B6D
+	for <lists+io-uring@lfdr.de>; Tue, 19 Apr 2022 22:57:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357855AbiDSU7c (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 19 Apr 2022 16:59:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49560 "EHLO
+        id S1357860AbiDSU7k (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 19 Apr 2022 16:59:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49688 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355022AbiDSU73 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 19 Apr 2022 16:59:29 -0400
+        with ESMTP id S1357857AbiDSU7j (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 19 Apr 2022 16:59:39 -0400
 Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB433419B0
-        for <io-uring@vger.kernel.org>; Tue, 19 Apr 2022 13:56:45 -0700 (PDT)
-Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 23JJNwnq012385
-        for <io-uring@vger.kernel.org>; Tue, 19 Apr 2022 13:56:45 -0700
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01E0A41608
+        for <io-uring@vger.kernel.org>; Tue, 19 Apr 2022 13:56:55 -0700 (PDT)
+Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 23JGdo0K021282
+        for <io-uring@vger.kernel.org>; Tue, 19 Apr 2022 13:56:54 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=facebook;
- bh=tdP3GjTe3SB0xco0bVU4HQuoY1mOpWcTEfikWiHZHSI=;
- b=UP0zIkWOgl61X0uD5v5G9OwpttECGVyI6BtiRW+NgeAbRgp+ci6TyNBlcGq86gccSrEX
- 18zJsNdW3qx4iOsK9k17Rbue4PBa9am6/lGaqY0h0FjTJiud5vdQqnM7A8VVJsg075Hv
- 6WVyzKTpmM1KwezWVMkE6mu8djy3XKm6/3M= 
+ bh=5F92pawz3h/oEqVycRjp0db+7XvXLwsFL8r1nmzw2JE=;
+ b=hQfpIx0/atHPxf3+6XD2QCNG9QjH6atoVYYLzVyEEAtJHomAvVlqJbZp7vaLBXM0Lpr3
+ n2vf5K93JxclO/HNom+opH/O9zqQ4laJEJhyeIuY34Kbc2UCLPgk6YG9TV/x2ysaZ6sQ
+ yz7Hpsm59bxVd3vzjaEpxNBPQgbZrY+NvgU= 
 Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3fj36t0mva-1
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3fhn52wrmd-2
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Tue, 19 Apr 2022 13:56:45 -0700
-Received: from twshared6486.05.ash9.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:82::d) with Microsoft SMTP Server
+        for <io-uring@vger.kernel.org>; Tue, 19 Apr 2022 13:56:54 -0700
+Received: from twshared37304.07.ash9.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:82::c) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Tue, 19 Apr 2022 13:56:44 -0700
+ 15.1.2375.24; Tue, 19 Apr 2022 13:56:46 -0700
 Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
-        id 00C8BDD45FE3; Tue, 19 Apr 2022 13:56:36 -0700 (PDT)
+        id 070E5DD45FE5; Tue, 19 Apr 2022 13:56:36 -0700 (PDT)
 From:   Stefan Roesch <shr@fb.com>
 To:     <io-uring@vger.kernel.org>, <kernel-team@fb.com>
-CC:     <shr@fb.com>
-Subject: [PATCH v1 04/11] io_uring: add CQE32 setup processing
-Date:   Tue, 19 Apr 2022 13:56:17 -0700
-Message-ID: <20220419205624.1546079-5-shr@fb.com>
+CC:     <shr@fb.com>, Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH v1 05/11] io_uring: add CQE32 completion processing
+Date:   Tue, 19 Apr 2022 13:56:18 -0700
+Message-ID: <20220419205624.1546079-6-shr@fb.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220419205624.1546079-1-shr@fb.com>
 References: <20220419205624.1546079-1-shr@fb.com>
@@ -47,8 +47,8 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-GUID: 0FsQXQJIGk8rGD9TWQUv6whZZ7VSGVr6
-X-Proofpoint-ORIG-GUID: 0FsQXQJIGk8rGD9TWQUv6whZZ7VSGVr6
+X-Proofpoint-GUID: UIBFoJ7TvjkgYcmChSkOnE-hLmmO-mam
+X-Proofpoint-ORIG-GUID: UIBFoJ7TvjkgYcmChSkOnE-hLmmO-mam
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.486,FMLib:17.11.64.514
  definitions=2022-04-19_08,2022-04-15_01,2022-02-23_01
@@ -62,94 +62,114 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This adds two new function to setup and fill the CQE32 result structure.
+This adds the completion processing for the large CQE's and makes sure
+that the extra1 and extra2 fields are passed through.
 
+Co-developed-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Stefan Roesch <shr@fb.com>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/io_uring.c | 58 +++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 58 insertions(+)
+ fs/io_uring.c | 55 +++++++++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 47 insertions(+), 8 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 9712483d3a17..abbd2efbe255 100644
+index abbd2efbe255..c93a9353c88d 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -2175,12 +2175,70 @@ static inline bool __io_fill_cqe_req_filled(struc=
-t io_ring_ctx *ctx,
- 					req->cqe.res, req->cqe.flags);
+@@ -2247,18 +2247,15 @@ static noinline bool io_fill_cqe_aux(struct io_ri=
+ng_ctx *ctx, u64 user_data,
+ 	return __io_fill_cqe(ctx, user_data, res, cflags);
  }
 =20
-+static inline bool __io_fill_cqe32_req_filled(struct io_ring_ctx *ctx,
-+					      struct io_kiocb *req)
+-static void __io_req_complete_post(struct io_kiocb *req, s32 res,
+-				   u32 cflags)
++static void __io_req_complete_put(struct io_kiocb *req)
+ {
+-	struct io_ring_ctx *ctx =3D req->ctx;
+-
+-	if (!(req->flags & REQ_F_CQE_SKIP))
+-		__io_fill_cqe_req(req, res, cflags);
+ 	/*
+ 	 * If we're the last reference to this request, add to our locked
+ 	 * free_list cache.
+ 	 */
+ 	if (req_ref_put_and_test(req)) {
++		struct io_ring_ctx *ctx =3D req->ctx;
++
+ 		if (req->flags & IO_REQ_LINK_FLAGS) {
+ 			if (req->flags & IO_DISARM_MASK)
+ 				io_disarm_next(req);
+@@ -2281,8 +2278,23 @@ static void __io_req_complete_post(struct io_kiocb=
+ *req, s32 res,
+ 	}
+ }
+=20
+-static void io_req_complete_post(struct io_kiocb *req, s32 res,
+-				 u32 cflags)
++static void __io_req_complete_post(struct io_kiocb *req, s32 res,
++				   u32 cflags)
 +{
-+	struct io_uring_cqe *cqe;
-+	u64 extra1 =3D req->extra1;
-+	u64 extra2 =3D req->extra2;
-+
-+	trace_io_uring_complete(req->ctx, req, req->cqe.user_data,
-+				req->cqe.res, req->cqe.flags);
-+
-+	/*
-+	 * If we can't get a cq entry, userspace overflowed the
-+	 * submission (by quite a lot). Increment the overflow count in
-+	 * the ring.
-+	 */
-+	cqe =3D io_get_cqe(ctx);
-+	if (likely(cqe)) {
-+		memcpy(cqe, &req->cqe, sizeof(struct io_uring_cqe));
-+		cqe->b[0].extra1 =3D extra1;
-+		cqe->b[0].extra2 =3D extra2;
-+		return true;
-+	}
-+
-+	return io_cqring_event_overflow(ctx, req->cqe.user_data,
-+					req->cqe.res, req->cqe.flags, extra1, extra2);
++	if (!(req->flags & REQ_F_CQE_SKIP))
++		__io_fill_cqe_req(req, res, cflags);
++	__io_req_complete_put(req);
 +}
 +
- static inline bool __io_fill_cqe_req(struct io_kiocb *req, s32 res, u32 =
-cflags)
++static void __io_req_complete_post32(struct io_kiocb *req, s32 res,
++				   u32 cflags, u64 extra1, u64 extra2)
++{
++	if (!(req->flags & REQ_F_CQE_SKIP))
++		__io_fill_cqe32_req(req, res, cflags, extra1, extra2);
++	__io_req_complete_put(req);
++}
++
++static void io_req_complete_post(struct io_kiocb *req, s32 res, u32 cfla=
+gs)
  {
- 	trace_io_uring_complete(req->ctx, req, req->cqe.user_data, res, cflags)=
-;
- 	return __io_fill_cqe(req->ctx, req->cqe.user_data, res, cflags);
+ 	struct io_ring_ctx *ctx =3D req->ctx;
+=20
+@@ -2293,6 +2305,18 @@ static void io_req_complete_post(struct io_kiocb *=
+req, s32 res,
+ 	io_cqring_ev_posted(ctx);
  }
 =20
-+static void __io_fill_cqe32_req(struct io_kiocb *req, s32 res, u32 cflag=
-s,
-+				u64 extra1, u64 extra2)
++static void io_req_complete_post32(struct io_kiocb *req, s32 res,
++				   u32 cflags, u64 extra1, u64 extra2)
 +{
 +	struct io_ring_ctx *ctx =3D req->ctx;
-+	struct io_uring_cqe *cqe;
 +
-+	if (WARN_ON_ONCE(!(ctx->flags & IORING_SETUP_CQE32)))
-+		return;
-+	if (req->flags & REQ_F_CQE_SKIP)
-+		return;
-+
-+	trace_io_uring_complete(ctx, req, req->user_data, res, cflags);
-+
-+	/*
-+	 * If we can't get a cq entry, userspace overflowed the
-+	 * submission (by quite a lot). Increment the overflow count in
-+	 * the ring.
-+	 */
-+	cqe =3D io_get_cqe(ctx);
-+	if (likely(cqe)) {
-+		WRITE_ONCE(cqe->user_data, req->cqe.user_data);
-+		WRITE_ONCE(cqe->res, res);
-+		WRITE_ONCE(cqe->flags, cflags);
-+		WRITE_ONCE(cqe->b[0].extra1, extra1);
-+		WRITE_ONCE(cqe->b[0].extra2, extra2);
-+		return;
-+	}
-+
-+	io_cqring_event_overflow(ctx, req->cqe.user_data, res, cflags);
++	spin_lock(&ctx->completion_lock);
++	__io_req_complete_post32(req, res, cflags, extra1, extra2);
++	io_commit_cqring(ctx);
++	spin_unlock(&ctx->completion_lock);
++	io_cqring_ev_posted(ctx);
 +}
 +
- static noinline bool io_fill_cqe_aux(struct io_ring_ctx *ctx, u64 user_d=
-ata,
- 				     s32 res, u32 cflags)
+ static inline void io_req_complete_state(struct io_kiocb *req, s32 res,
+ 					 u32 cflags)
  {
+@@ -2310,6 +2334,21 @@ static inline void __io_req_complete(struct io_kio=
+cb *req, unsigned issue_flags,
+ 		io_req_complete_post(req, res, cflags);
+ }
+=20
++static inline void __io_req_complete32(struct io_kiocb *req,
++				       unsigned int issue_flags, s32 res,
++				       u32 cflags, u64 extra1, u64 extra2)
++{
++	if (issue_flags & IO_URING_F_COMPLETE_DEFER) {
++		req->cqe.res =3D res;
++		req->cqe.flags =3D cflags;
++		req->extra1 =3D extra1;
++		req->extra2 =3D extra2;
++		req->flags |=3D REQ_F_COMPLETE_INLINE;
++	} else {
++		io_req_complete_post32(req, res, cflags, extra1, extra2);
++	}
++}
++
+ static inline void io_req_complete(struct io_kiocb *req, s32 res)
+ {
+ 	__io_req_complete(req, 0, res, 0);
 --=20
 2.30.2
 

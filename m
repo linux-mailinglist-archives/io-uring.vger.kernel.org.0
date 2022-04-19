@@ -2,66 +2,67 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 38FF850696F
-	for <lists+io-uring@lfdr.de>; Tue, 19 Apr 2022 13:07:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D036506B49
+	for <lists+io-uring@lfdr.de>; Tue, 19 Apr 2022 13:42:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346610AbiDSLKY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 19 Apr 2022 07:10:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40526 "EHLO
+        id S1349594AbiDSLnS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 19 Apr 2022 07:43:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350894AbiDSLKX (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 19 Apr 2022 07:10:23 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19A5A2AC71
-        for <io-uring@vger.kernel.org>; Tue, 19 Apr 2022 04:07:41 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id t11so32077384eju.13
-        for <io-uring@vger.kernel.org>; Tue, 19 Apr 2022 04:07:41 -0700 (PDT)
+        with ESMTP id S1351996AbiDSLmj (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 19 Apr 2022 07:42:39 -0400
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9ADC738D93
+        for <io-uring@vger.kernel.org>; Tue, 19 Apr 2022 04:38:05 -0700 (PDT)
+Received: by mail-pl1-x62a.google.com with SMTP id q3so15508659plg.3
+        for <io-uring@vger.kernel.org>; Tue, 19 Apr 2022 04:38:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=scylladb-com.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:content-language:to:from
-         :subject:organization:content-transfer-encoding;
-        bh=SVzQZcyELwbjO6gcVnQuwsmE988o1HdnwZsLFPjqfmU=;
-        b=qvgYVU7DPdwmfTOZB3EbXI0M57I3Eqtv0rf3HdBU8exuwAYNR2xbMTrRBnYPhxxEC1
-         qJKOl1ruBo/T91gSczzfEQuVjdeI0bxLW73HMQyqufgLSnCqjHuVys1zQ3nG6oOQGBUi
-         uhnleXnIuNFL46irQnzIqxvChYjv2GwxO29RvLRHDQ2659bCJna0FOCtSOn+MjJLdrZ1
-         xaiYWj2IDxoj2Hn5xfL3qcWbZY4pPdSpLsgm4xclotOVKdQ3OOwz12+ONQHvWAAHjDOm
-         YmVXk+DKvFaGf+OVe1ajLkhz3f6gDCNX3d1j46GuJ+R7JmroRv839rTG0RaPxRsqNyfW
-         YzfQ==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :references:from:in-reply-to:content-transfer-encoding;
+        bh=6GFQOE1YeR9sSITNeLz+gFk0oDCAu4A6itQhrZvxCRk=;
+        b=AOk6EYOZsfJFoIcNMhVaje4rJ7b0C2cnLD/k0JgySyT7wG9qvt0Fy4eWd/vuS9wcG4
+         bQnFYMhjkIyzP88iVgP5b2jfTY7Nlago56AATp2XMOqCw4oymYlGK96QzALvps3vmjjO
+         BsZheFlknBxZp4YuyhJgAKhN6yqX9pnmdEaaxlMsTGhQGoVvf5yVmejoOwYlCY99gzqI
+         UMaIB54+vnGa+FCFwDSYkNQbUUuq3/qQdSGcP+GCNthJaUygx9Q4qSoFVMyi1k435w/H
+         CIV4+/Gap6G1wR8Iwjlen1sVfgMFjVUV1ZGyRriDUJ9kh1b9bGhyBBXNDtMIvVf4Cvmf
+         arSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent
-         :content-language:to:from:subject:organization
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=SVzQZcyELwbjO6gcVnQuwsmE988o1HdnwZsLFPjqfmU=;
-        b=VDozUlfoszlS8mK0n3g+J5h00QBD6OmnIz3YRf3ALYiUSxRDNIlrihysrnMecc+FaF
-         Z3vmUKmdaaSSgTysUl+ASIF1vKfkc/ERcMmsDG8rlcUpamfvHtld9RoAAKqbcUu5DlyX
-         zC4R0A7gm4lfqLRDKUMLgxoyJ70Ux/i0KCKWjdZwlAST1jKZ+ZMpnhxO3bGHiaV262Zh
-         KxeAxFZbV5PaCfJR/fs6kImYsL23yL81q4Ju178MsHGpOtmv1n7kUFiOTEOh+l7Bu0Lm
-         gm6Uecamj0l9MwrUYfHPH0oDbesqVb/dMCKhM30Oct7mZL6rSoiH0I99Vl2SRJXBDEnG
-         2AFQ==
-X-Gm-Message-State: AOAM530RsVxdx38/TBVWbhTPjGIB0JdX0UYm2TE7fWsecUHSnG+4YOyZ
-        xqSu7h5Xgz0mdE0H3lF+Fu6zPbOi9T0NlA==
-X-Google-Smtp-Source: ABdhPJww14ZQGbLDYZA2ypaXtduemWBPGQQtfCvc7EkuobJQEaQ0PAq3Ms7sxqaX4CikRgwXrmVJpA==
-X-Received: by 2002:a17:907:1c8f:b0:6e8:f898:63bb with SMTP id nb15-20020a1709071c8f00b006e8f89863bbmr13368609ejc.721.1650366459224;
-        Tue, 19 Apr 2022 04:07:39 -0700 (PDT)
-Received: from [10.0.0.1] (system.cloudius-systems.com. [199.203.229.89])
-        by smtp.gmail.com with ESMTPSA id e9-20020a17090618e900b006e8669f3941sm5499342ejf.209.2022.04.19.04.07.37
+        bh=6GFQOE1YeR9sSITNeLz+gFk0oDCAu4A6itQhrZvxCRk=;
+        b=MSenjmB7GhNUOV960cCXUBusQf7RxLu34CXNksoXT/DtvVIa+Pxwuljf3f2+44WE0I
+         qVIqEzB6fcK/t5Lm9Q75P2IZqQfrg4w7pQeMTjqLH9TIkXscub7Yja5Xq+3GG7a5vTPy
+         eIOV470tLl3opPRQu8Opk2J+6Lnl3Wskftslf66d8gkXoXXWvltA7vMTeS+6fwaLYTdx
+         Cd5k0GiRbu+YJwQKHKYQmFgHcveQXOk8oITpr7UQy6dcVxuEEae42IaFIJy8UFZiMPfr
+         6RvCH3/3f9QMuvgXcP/Axl8zFz2L4c2wp2mgZbvZq5Id2FDbG0hLSixj+XiHqyVEkyDV
+         VtfA==
+X-Gm-Message-State: AOAM532/nrZ1TiBKq5KLf+9yFKrqg6ogwFU423BuGC2uN7eRKDrkyEcV
+        qfgd5Ia4jDkSpe0AafWjfcuX9+V1LBCJvQ1b
+X-Google-Smtp-Source: ABdhPJwDS9JqV2rhOY3Fo7UhGzZ8iE3vs/d5glEdnr/YCUyruIuOlVW+d4Gwa8EcdFOGmAQAyYXyiQ==
+X-Received: by 2002:a17:90b:4d0a:b0:1d1:7bd:cb00 with SMTP id mw10-20020a17090b4d0a00b001d107bdcb00mr21474954pjb.242.1650368283458;
+        Tue, 19 Apr 2022 04:38:03 -0700 (PDT)
+Received: from [192.168.1.100] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id l8-20020a17090a150800b001cbaf536a3esm20277622pja.18.2022.04.19.04.38.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Apr 2022 04:07:38 -0700 (PDT)
-Message-ID: <9b749c99-0126-f9b2-99f5-5c33433c3a08@scylladb.com>
-Date:   Tue, 19 Apr 2022 14:07:36 +0300
+        Tue, 19 Apr 2022 04:38:02 -0700 (PDT)
+Message-ID: <9e277a23-84d7-9a90-0d3e-ba09c9437dc4@kernel.dk>
+Date:   Tue, 19 Apr 2022 05:38:01 -0600
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
  Thunderbird/91.8.0
+Subject: Re: IORING_OP_POLL_ADD slower than linux-aio IOCB_CMD_POLL
 Content-Language: en-US
-To:     io-uring@vger.kernel.org
-From:   Avi Kivity <avi@scylladb.com>
-Subject: IORING_OP_POLL_ADD slower than linux-aio IOCB_CMD_POLL
-Organization: ScyllaDB
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+To:     Avi Kivity <avi@scylladb.com>, io-uring@vger.kernel.org
+References: <9b749c99-0126-f9b2-99f5-5c33433c3a08@scylladb.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <9b749c99-0126-f9b2-99f5-5c33433c3a08@scylladb.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-5.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -69,58 +70,29 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-A simple webserver shows about 5% loss compared to linux-aio.
+On 4/19/22 5:07 AM, Avi Kivity wrote:
+> A simple webserver shows about 5% loss compared to linux-aio.
+> 
+> 
+> I expect the loss is due to an optimization that io_uring lacks -
+> inline completion vs workqueue completion:
 
+I don't think that's it, io_uring never punts to a workqueue for
+completions. The aio inline completions is more of a hack because it
+needs to do that, as always using a workqueue would lead to bad
+performance and higher overhead.
 
-I expect the loss is due to an optimization that io_uring lacks - inline 
-completion vs workqueue completion:
+So if there's a difference in performance, it's something else and we
+need to look at that. But your report is pretty lacking! What kernel are
+you running?
 
+Do you have a test case of sorts?
 
-static int aio_poll_wake(struct wait_queue_entry *wait, unsigned mode, 
-int sync,
-                 void *key)
-{
-         struct poll_iocb *req = container_of(wait, struct poll_iocb, wait);
-         struct aio_kiocb *iocb = container_of(req, struct aio_kiocb, poll);
-         __poll_t mask = key_to_poll(key);
-         unsigned long flags;
+For a performance oriented network setup, I'd normally not consider data
+readiness poll replacements to be that interesting, my recommendation
+would be to use async send/recv for that instead. That's how io_uring is
+supposed to be used, in a completion based model.
 
-         /* for instances that support it check for an event match first: */
-         if (mask && !(mask & req->events))
-                 return 0;
-
-         /*
-          * Complete the request inline if possible.  This requires that 
-three
-          * conditions be met:
-          *   1. An event mask must have been passed.  If a plain wakeup 
-was done
-          *      instead, then mask == 0 and we have to call vfs_poll() 
-to get
-          *      the events, so inline completion isn't possible.
-          *   2. The completion work must not have already been scheduled.
-          *   3. ctx_lock must not be busy.  We have to use trylock 
-because we
-          *      already hold the waitqueue lock, so this inverts the normal
-          *      locking order.  Use irqsave/irqrestore because not all
-          *      filesystems (e.g. fuse) call this function with IRQs 
-disabled,
-          *      yet IRQs have to be disabled before ctx_lock is obtained.
-          */
-         if (mask && !req->work_scheduled &&
-spin_trylock_irqsave(&iocb->ki_ctx->ctx_lock, flags)) {
-                 struct kioctx *ctx = iocb->ki_ctx;
-
-                 list_del_init(&req->wait.entry);
-                 list_del(&iocb->ki_list);
-                 iocb->ki_res.res = mangle_poll(mask);
-                 if (iocb->ki_eventfd && !eventfd_signal_allowed()) {
-                         iocb = NULL;
-                         INIT_WORK(&req->work, aio_poll_put_work);
-                         schedule_work(&req->work);
-                 }
-                 spin_unlock_irqrestore(&ctx->ctx_lock, flags);
-                 if (iocb)
-                         iocb_put(iocb);
-         } else {
+-- 
+Jens Axboe
 

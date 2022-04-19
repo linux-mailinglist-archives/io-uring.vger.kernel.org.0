@@ -2,191 +2,109 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 520A3507652
-	for <lists+io-uring@lfdr.de>; Tue, 19 Apr 2022 19:15:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F87A507694
+	for <lists+io-uring@lfdr.de>; Tue, 19 Apr 2022 19:32:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244124AbiDSRRN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 19 Apr 2022 13:17:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39912 "EHLO
+        id S1344945AbiDSRe5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 19 Apr 2022 13:34:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237020AbiDSRRM (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 19 Apr 2022 13:17:12 -0400
-Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E08473B578
-        for <io-uring@vger.kernel.org>; Tue, 19 Apr 2022 10:14:28 -0700 (PDT)
-Received: by mail-io1-xd30.google.com with SMTP id i196so12956306ioa.1
-        for <io-uring@vger.kernel.org>; Tue, 19 Apr 2022 10:14:28 -0700 (PDT)
+        with ESMTP id S1353804AbiDSRew (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 19 Apr 2022 13:34:52 -0400
+Received: from mail-oi1-x231.google.com (mail-oi1-x231.google.com [IPv6:2607:f8b0:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4155A38DBD;
+        Tue, 19 Apr 2022 10:32:09 -0700 (PDT)
+Received: by mail-oi1-x231.google.com with SMTP id e4so18889590oif.2;
+        Tue, 19 Apr 2022 10:32:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language
-         :from:to:references:in-reply-to:content-transfer-encoding;
-        bh=P0VhzWTtiWglpqEsLIIkys7l4c14UtMWJugXjxiKB90=;
-        b=TxFWEw7V8eUHQxXus9LdWXXxPSHtKlSd0raikrK5cVq+LGYH+SwrLwhvh48Qjp/MCH
-         Fn7mnAtuDcfmL5dVkOYBaCkBYAKwr+mDa0rqppdGQuB6UL9YcZahkauVVxKOoxDbfmjA
-         FPX0E3b2/kIEXkqmWbcBRD2esWAnO+cnApxusiH8Yzl+8D2FtYN9PJ/zm3Mlj4086a9g
-         vx8D2Sgg1eftWT2uVxJLcg6CSu+d0Zz6nvRW3wldKtZn2yT8/4LOLajxjTNsGelQINqL
-         zhnP6Jb4BpKg870UeQt8EoJGqp/AffGymPLi2KVdAQWaaCYeIlhu57DDnA/2w4WTBX1S
-         QUFQ==
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9TRLt0umpK42xe/joZUuCtcbZ6R6cAmp1bJxdUcgm8M=;
+        b=XJpQjzjjctWjfGZZgTtSKyIT83IHM45dieg4WsW3ak2hpJ3kPz5fBe7UBbK0wNxoIJ
+         ivMYTJzH5nSfURv5rAgqT6W3/nbjOJr+K2C8yMDpYzRAKNtea0GU2KQn1qWFcL5BXG+i
+         j3O4+GnfOhQgA4GdyKvqKANlfxsFsCSfIG/uYL+yg/zvZNcUEokQO28bOaFAJcgOSn25
+         aMaunSVG5GwIkyUnZCC/xZ/W0HCTmgipivwurrrbRbvCsYM3KAmnuJTz1Po7XK7xT3aW
+         WQF5eQ83vqBHR4woYK1i2LaQtI6OjFRYQuFmL3uxFhbr73u1aqNW6CJgmR3PWdWScj2a
+         t1vA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:from:to:references:in-reply-to
-         :content-transfer-encoding;
-        bh=P0VhzWTtiWglpqEsLIIkys7l4c14UtMWJugXjxiKB90=;
-        b=tmuXeZi7gNJYEecpwWRBb+EUOg6u6sYcrn230LMesxt1MtrfKETT/cTRfpfqGmGS3m
-         UgKsmL1od6YCF0bVhrPxzpQ+R/s7BjkbSUMjyk2Z7q7XlZ04llkS129esgQt9RIoml6I
-         tJoMThEIRZ5nDqKRCUBpesC5GRyozyMtenE4Fn4XdGKNYhlAZ+Hs4G+Skp6a0vxFHTP6
-         /vKCuK2R/IGVSA/RKDMUgF9SKAPcyMxDnjEYjal4BruAnfqWombM+GXqkLJGqUfPw32D
-         KhetnGTfboOgpeaNmfxIamUa8vDgV5KWzI0kfD0JVMBXP3GC0QFn0kmi73DgBemHWF9L
-         3upA==
-X-Gm-Message-State: AOAM530MbdcIj7v4emODUHjqCI4Wu4sx0UtuB7IJrb08MmAJlpUQZRtq
-        V1i54g9uROJqs9ibH9ZfMETL/FxdLfeh8Q==
-X-Google-Smtp-Source: ABdhPJx5+pQ0VDemhoKiltTuWlC7VsZHOTWjCnwPZKI9Az7+/9E5AjuF+WsIICDXKiIvpUTjcF3a6A==
-X-Received: by 2002:a6b:ed06:0:b0:649:d35f:852c with SMTP id n6-20020a6bed06000000b00649d35f852cmr7292045iog.186.1650388468196;
-        Tue, 19 Apr 2022 10:14:28 -0700 (PDT)
-Received: from [192.168.1.172] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id r14-20020a92d98e000000b002cbe036560bsm8960901iln.12.2022.04.19.10.14.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Apr 2022 10:14:27 -0700 (PDT)
-Message-ID: <4008a1db-ee26-92ba-320e-140932e801c1@kernel.dk>
-Date:   Tue, 19 Apr 2022 11:14:26 -0600
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9TRLt0umpK42xe/joZUuCtcbZ6R6cAmp1bJxdUcgm8M=;
+        b=pooYgMkI1s4tz8vGBRCvay0HGQbLTnnfMe90nY3d0OjfyIDYPXsQ6lu/wLDpZWf5B/
+         qN1sRiOC16v0/BtXqg59sKOCkztBX4eLRDbSHuMS+oQ8HsSDNNZ51Ti8wZ2QZTxguTaB
+         WWNexk0RRzukPBXCA01sbjz4jBeWQvxorwtJLVCFWRr3jrsBrpbzO+rqAvRLh+IL8AaH
+         OKLiyQB3uAqu+1O29PlWel7v0M+5EqF0OdUREmydGuiiV9TEPh8hRO0pscbl2Casb+iX
+         zojtzWyb3rQ/On/AUu/tLeKexBbtW+gvXDFPVXZDqUPfKxxrsK5J/TUiNThTYlIaROQq
+         Kyow==
+X-Gm-Message-State: AOAM532n2JaJ3KPqamoC7dn2rnwhDh4Vp/0ZiA2N3Sb+oBQ9CjeLKKRa
+        YdHM7M3O5PA/0TNw3mJaw7P/vLTqjvdoXujFdE8=
+X-Google-Smtp-Source: ABdhPJzjvbZzKw9AmTVeqJqXQyrX4Xm2mQCN5iTfSaun8qvgGqsIrB7jYyjuk+QaIV2MI5zrGwOmpJwfcJbb0uNqSDw=
+X-Received: by 2002:a05:6808:f8f:b0:322:b4ce:a10e with SMTP id
+ o15-20020a0568080f8f00b00322b4cea10emr2758955oiw.160.1650389528530; Tue, 19
+ Apr 2022 10:32:08 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: IORING_OP_POLL_ADD slower than linux-aio IOCB_CMD_POLL
-Content-Language: en-US
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Avi Kivity <avi@scylladb.com>, io-uring@vger.kernel.org
-References: <9b749c99-0126-f9b2-99f5-5c33433c3a08@scylladb.com>
- <9e277a23-84d7-9a90-0d3e-ba09c9437dc4@kernel.dk>
- <e7ffdf1e-b6a8-0e46-5879-30c25446223d@scylladb.com>
- <b585d3b4-42b3-b0db-1cef-5d6c8b815bb7@kernel.dk>
- <e90bfb07-c24f-0e4d-0ac6-bd67176641fb@scylladb.com>
- <8e816c1b-213b-5812-b48a-a815c0fe2b34@kernel.dk>
- <16030f8f-67b1-dbc9-0117-47c16bf78c34@kernel.dk>
-In-Reply-To: <16030f8f-67b1-dbc9-0117-47c16bf78c34@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-5.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+References: <CGME20220308152729epcas5p17e82d59c68076eb46b5ef658619d65e3@epcas5p1.samsung.com>
+ <20220308152105.309618-18-joshi.k@samsung.com> <20220310083652.GF26614@lst.de>
+ <CA+1E3rLaQstG8LWUyJrbK5Qz+AnNpOnAyoK-7H5foFm67BJeFA@mail.gmail.com>
+ <20220310141945.GA890@lst.de> <CA+1E3rL3Q2noHW-cD20SZyo9EqbzjF54F6TgZoUMMuZGkhkqnw@mail.gmail.com>
+ <20220311062710.GA17232@lst.de> <CA+1E3rLGwHFbdbSTJBfWrw6RLErwcT2zPxGmmWbcLUj2y=16Qg@mail.gmail.com>
+ <20220324063218.GC12660@lst.de> <20220325133921.GA13818@test-zns>
+ <20220330130219.GB1938@lst.de> <CA+1E3r+Z9UyiNjmb-DzOpNrcbCO_nNFYUD5L5xJJCisx_D=wPQ@mail.gmail.com>
+ <a44e38d6-54b4-0d17-c274-b7d46f60a0cf@kernel.dk> <CA+1E3r+CSC6jaDBXpxQUDnk8G=RuQaa=DPJ=tt9O9qydH5B9SQ@mail.gmail.com>
+ <f3923d64-4f84-143b-cce2-fcf8366da0e6@kernel.dk>
+In-Reply-To: <f3923d64-4f84-143b-cce2-fcf8366da0e6@kernel.dk>
+From:   Kanchan Joshi <joshiiitr@gmail.com>
+Date:   Tue, 19 Apr 2022 23:01:43 +0530
+Message-ID: <CA+1E3rJHgEan2yiVS882XouHgKNP4Rn6G2LrXyFu-0kgyu27=Q@mail.gmail.com>
+Subject: Re: [PATCH 17/17] nvme: enable non-inline passthru commands
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Kanchan Joshi <joshi.k@samsung.com>,
+        Keith Busch <kbusch@kernel.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-block@vger.kernel.org, sbates@raithlin.com,
+        logang@deltatee.com, Pankaj Raghav <pankydev8@gmail.com>,
+        =?UTF-8?Q?Javier_Gonz=C3=A1lez?= <javier@javigon.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Adam Manzanares <a.manzanares@samsung.com>,
+        Anuj Gupta <anuj20.g@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/19/22 9:21 AM, Jens Axboe wrote:
-> On 4/19/22 6:31 AM, Jens Axboe wrote:
->> On 4/19/22 6:21 AM, Avi Kivity wrote:
->>> On 19/04/2022 15.04, Jens Axboe wrote:
->>>> On 4/19/22 5:57 AM, Avi Kivity wrote:
->>>>> On 19/04/2022 14.38, Jens Axboe wrote:
->>>>>> On 4/19/22 5:07 AM, Avi Kivity wrote:
->>>>>>> A simple webserver shows about 5% loss compared to linux-aio.
->>>>>>>
->>>>>>>
->>>>>>> I expect the loss is due to an optimization that io_uring lacks -
->>>>>>> inline completion vs workqueue completion:
->>>>>> I don't think that's it, io_uring never punts to a workqueue for
->>>>>> completions.
->>>>>
->>>>> I measured this:
->>>>>
->>>>>
->>>>>
->>>>>   Performance counter stats for 'system wide':
->>>>>
->>>>>           1,273,756 io_uring:io_uring_task_add
->>>>>
->>>>>        12.288597765 seconds time elapsed
->>>>>
->>>>> Which exactly matches with the number of requests sent. If that's the
->>>>> wrong counter to measure, I'm happy to try again with the correct
->>>>> counter.
->>>> io_uring_task_add() isn't a workqueue, it's task_work. So that is
->>>> expected.
-> 
-> Might actually be implicated. Not because it's a async worker, but
-> because I think we might be losing some affinity in this case. Looking
-> at traces, we're definitely bouncing between the poll completion side
-> and then execution the completion.
-> 
-> Can you try this hack? It's against -git + for-5.19/io_uring. If you let
-> me know what base you prefer, I can do a version against that. I see
-> about a 3% win with io_uring with this, and was slower before against
-> linux-aio as you saw as well.
+Hi Jens,
+Few thoughts below toward the next version -
 
-Another thing to try - get rid of the IPI for TWA_SIGNAL, which I
-believe may be the underlying cause of it.
+On Fri, Apr 1, 2022 at 8:14 AM Jens Axboe <axboe@kernel.dk> wrote:
+[snip]
+> >>> Sure, will post the code with bigger-cqe first.
+> >>
+> >> I can add the support, should be pretty trivial. And do the liburing
+> >> side as well, so we have a sane base.
+> >
+> >  I will post the big-cqe based work today. It works with fio.
+> >  It does not deal with liburing (which seems tricky), but hopefully it
+> > can help us move forward anyway .
+>
+> Let's compare then, since I just did the support too :-)
 
+Major difference is generic support (rather than uring-cmd only) and
+not touching the regular completion path. So plan is to use your patch
+for the next version with some bits added (e.g. overflow-handling and
+avoiding extra CQE tail increment). Hope that sounds fine.
 
-diff --git a/fs/io-wq.c b/fs/io-wq.c
-index 32aeb2c581c5..59987dd212d8 100644
---- a/fs/io-wq.c
-+++ b/fs/io-wq.c
-@@ -871,7 +871,7 @@ static bool io_wq_for_each_worker(struct io_wqe *wqe,
- 
- static bool io_wq_worker_wake(struct io_worker *worker, void *data)
- {
--	set_notify_signal(worker->task);
-+	set_notify_signal(worker->task, true);
- 	wake_up_process(worker->task);
- 	return false;
- }
-@@ -991,7 +991,7 @@ static bool __io_wq_worker_cancel(struct io_worker *worker,
- {
- 	if (work && match->fn(work, match->data)) {
- 		work->flags |= IO_WQ_WORK_CANCEL;
--		set_notify_signal(worker->task);
-+		set_notify_signal(worker->task, true);
- 		return true;
- 	}
- 
-diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
-index 3c8b34876744..ac1f14973e09 100644
---- a/include/linux/sched/signal.h
-+++ b/include/linux/sched/signal.h
-@@ -359,10 +359,10 @@ static inline void clear_notify_signal(void)
-  * Called to break out of interruptible wait loops, and enter the
-  * exit_to_user_mode_loop().
-  */
--static inline void set_notify_signal(struct task_struct *task)
-+static inline void set_notify_signal(struct task_struct *task, bool need_ipi)
- {
- 	if (!test_and_set_tsk_thread_flag(task, TIF_NOTIFY_SIGNAL) &&
--	    !wake_up_state(task, TASK_INTERRUPTIBLE))
-+	    !wake_up_state(task, TASK_INTERRUPTIBLE) && need_ipi)
- 		kick_process(task);
- }
- 
-diff --git a/kernel/livepatch/transition.c b/kernel/livepatch/transition.c
-index 5d03a2ad1066..bff53f539933 100644
---- a/kernel/livepatch/transition.c
-+++ b/kernel/livepatch/transition.c
-@@ -367,7 +367,7 @@ static void klp_send_signals(void)
- 			 * Send fake signal to all non-kthread tasks which are
- 			 * still not migrated.
- 			 */
--			set_notify_signal(task);
-+			set_notify_signal(task, true);
- 		}
- 	}
- 	read_unlock(&tasklist_lock);
-diff --git a/kernel/task_work.c b/kernel/task_work.c
-index c59e1a49bc40..47d7024dc499 100644
---- a/kernel/task_work.c
-+++ b/kernel/task_work.c
-@@ -51,7 +51,7 @@ int task_work_add(struct task_struct *task, struct callback_head *work,
- 		set_notify_resume(task);
- 		break;
- 	case TWA_SIGNAL:
--		set_notify_signal(task);
-+		set_notify_signal(task, false);
- 		break;
- 	default:
- 		WARN_ON_ONCE(1);
-
--- 
-Jens Axboe
-
+We have things working on top of your current branch
+"io_uring-big-sqe". Since SQE now has 8 bytes of free space (post
+xattr merge) and CQE infra is different (post cqe-caching in ctx) -
+things needed to be done a bit differently. But all this is now tested
+better with liburing support/util (plan is to post that too).

@@ -2,58 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3721E508620
-	for <lists+io-uring@lfdr.de>; Wed, 20 Apr 2022 12:40:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71E37508623
+	for <lists+io-uring@lfdr.de>; Wed, 20 Apr 2022 12:40:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352341AbiDTKmv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 20 Apr 2022 06:42:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40058 "EHLO
+        id S1355631AbiDTKmx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 20 Apr 2022 06:42:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377798AbiDTKmo (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 20 Apr 2022 06:42:44 -0400
-Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3922F3F887
-        for <io-uring@vger.kernel.org>; Wed, 20 Apr 2022 03:39:59 -0700 (PDT)
-Received: by mail-pl1-x62c.google.com with SMTP id d15so1394511pll.10
-        for <io-uring@vger.kernel.org>; Wed, 20 Apr 2022 03:39:59 -0700 (PDT)
+        with ESMTP id S1377806AbiDTKms (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 20 Apr 2022 06:42:48 -0400
+Received: from mail-pg1-x529.google.com (mail-pg1-x529.google.com [IPv6:2607:f8b0:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 175AF3FBD0
+        for <io-uring@vger.kernel.org>; Wed, 20 Apr 2022 03:40:01 -0700 (PDT)
+Received: by mail-pg1-x529.google.com with SMTP id h5so1249145pgc.7
+        for <io-uring@vger.kernel.org>; Wed, 20 Apr 2022 03:40:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=3WnrEnYNg1g0Dh4Tvap8h2GTaws8qD5fgOoS1LiUEFc=;
-        b=Xuxr1GZJYJg/zeIBpiAKZU5dshbK9bjWtj3Skoa55KYBtT3V0eojpeqSr2UCxenUuZ
-         EG9wNUu/cdm0/GsCg5FelU6BGDP25uT8VAjbrGc1SMRtzUNA/w5F98jV9AAyF0QmJU/0
-         QsQgxMLaOxvztERzRaf0WIN0gxfYE2HynaRqEHKJWgEZtgukD4OQ9FJ1rmGSLrHSMhi7
-         Uu42wV4oH3ENUx9t/9w2j+yO6tx7Zu1BDP3Q/jYWZzetAwIl6acD98kr/SZV6qy/5buD
-         TZrQiULxj/WfG6s9cNBHJtXYRulfoZVprchDEzx5EnE5wDuUCvXAAb7IQaLR1JgAp4F0
-         dlDQ==
+        bh=sBpnDaMZyIyN1522GsoRas+uM6qAC1bVM/NRwDAyFxc=;
+        b=pyRhceee6wcSXtOKbu4pxxxDqtvsjJkb/PpkxIGY6mPFpe7Dfy3ykigjgGdXp7sbOG
+         ntaneCzrhBlhHvf2w/LG2TlwLEgi1tZeJ0Np52idVLmyC9Rn76cd3g34unk6GwXqDXVu
+         zhdc5CeIOm0JcXpvq+Ws2qQKXw8ab5e66vtSMKrNuRlGDaMWhltlhbJrLxWrluhPUBC6
+         9mJZYW9+p7sYGNATUY2Guh419RrwBDv8xXp78tfa4VPz3l5isvo8pksaqEGGgFFiHZcP
+         ASWjWLdmBMhv/P0HoAQbnGNfIa9JdYOgM4YYbIKDXbpfGFE2KWugC6hER38JfM0B6UDk
+         +5Iw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=3WnrEnYNg1g0Dh4Tvap8h2GTaws8qD5fgOoS1LiUEFc=;
-        b=DYitpRruxnVAYLz9JUvPAmmv14iOnWY6HZ/xD3iPTIOzBme3RdNl5i9W+SfKSCC5y5
-         qGrXLok5XDQr6oSRZ4CPeKva4n07KolN0PIg8BPy98ZokX8ockC9J/cJEG95Nt3qDhxK
-         ovx9q6wYw1KCju8Fz1z2BmfFOkTXqIX0zmWdhveTzvB1WYkIf+yHBi0d9QP4TdL4Yw5j
-         zOLHj1sxEQTaOTJ9FhbD9gXito1jdiWnu8kn84eKCxIm8gihAhASa2/7D8rUDaGl+Jmu
-         fYIrU9rV7QtU0Sg4TBabFp+rtscooCQKHXlKQkZ+9OjDWHbc9wLPZJRw1BbAUCRtmoMZ
-         0Ftg==
-X-Gm-Message-State: AOAM531KcdAt7Gx07fC/R/oOttHLCclKhMj4v+CAduigkOoyUh5MCeFg
-        a8NKd3cEj846z5p1kycDK72gXD/k1cAZfA==
-X-Google-Smtp-Source: ABdhPJxuljgYwk5A90rz9tGXaEkwaWfmZt3t7FEgjwvDhOthUyKyajiqB6lyj5alnBfrREh/ADuELg==
-X-Received: by 2002:a17:902:a714:b0:154:6dfe:bba9 with SMTP id w20-20020a170902a71400b001546dfebba9mr19913615plq.124.1650451198636;
-        Wed, 20 Apr 2022 03:39:58 -0700 (PDT)
+        bh=sBpnDaMZyIyN1522GsoRas+uM6qAC1bVM/NRwDAyFxc=;
+        b=fYVrRSWo4L3tHfhRgaJ4opnEsa2rt+Mw2iApNWDVjyPg6TDEu780rRXaR0qWtZb6he
+         +1kaahYsvnHcWXCkJ7w+QMqEVaha9DymAoPBe/ieqqEwJluEGDcdL8PhYr/24QdjL6j1
+         Lqj/VyA5suM602cdj24aF14Z+FhpBo5nVQKDEFHuK3s/ey3zQ8wheHIh+HmmHdC3HSby
+         CuT7nO/FGutfcC1QlAWMfNxBJMbDP2E6weB2BWQ35E1yBYfVPMqOCcRLmfE1KR0PR9Ej
+         fqVuvL+bMLAvbZKLA0RUJ/IpIX6V8viQNCIsr+vRGb7zD+H084yp4o0Ad/LZbvmEQ1p9
+         bLSw==
+X-Gm-Message-State: AOAM532Mef3T78Ij39zt3Kke9+UV3JG5uNxMcDBLafkRamQMUqV7Tnyy
+        5dojGkCJ1rgdyi8W77lJ4Trf24gvoYL8VQ==
+X-Google-Smtp-Source: ABdhPJyTjz609bWe+l0iSpK+7yDNs5nbE92r4d90XTTXQ6z9OrZQ+SNBQtDCZ1A1FoiqzgZSvRj0+g==
+X-Received: by 2002:a63:5917:0:b0:39c:c450:3143 with SMTP id n23-20020a635917000000b0039cc4503143mr18713969pgb.531.1650451200443;
+        Wed, 20 Apr 2022 03:40:00 -0700 (PDT)
 Received: from HOWEYXU-MB0.tencent.com ([106.53.4.151])
-        by smtp.gmail.com with ESMTPSA id y16-20020a63b510000000b00398d8b19bbfsm19491670pge.23.2022.04.20.03.39.57
+        by smtp.gmail.com with ESMTPSA id y16-20020a63b510000000b00398d8b19bbfsm19491670pge.23.2022.04.20.03.39.59
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Apr 2022 03:39:58 -0700 (PDT)
+        Wed, 20 Apr 2022 03:40:00 -0700 (PDT)
 From:   Hao Xu <haoxu.linux@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>,
         Pavel Begunkov <asml.silence@gmail.com>
-Subject: [PATCH 1/9] io-wq: add a worker flag for individual exit
-Date:   Wed, 20 Apr 2022 18:39:52 +0800
-Message-Id: <20220420104000.23214-2-haoxu.linux@gmail.com>
+Subject: [PATCH 2/9] io-wq: change argument of create_io_worker() for convienence
+Date:   Wed, 20 Apr 2022 18:39:53 +0800
+Message-Id: <20220420104000.23214-3-haoxu.linux@gmail.com>
 X-Mailer: git-send-email 2.36.0
 In-Reply-To: <20220420104000.23214-1-haoxu.linux@gmail.com>
 References: <20220420104000.23214-1-haoxu.linux@gmail.com>
@@ -71,52 +71,59 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 From: Hao Xu <howeyxu@tencent.com>
 
-Add a worker flag to control exit of an individual worker, this is
-needed for fixed worker in the next patches but also as a generic
-functionality.
+Change index to acct itself for create_io_worker() for convienence in
+the next patches.
 
 Signed-off-by: Hao Xu <howeyxu@tencent.com>
 ---
- fs/io-wq.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ fs/io-wq.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
 diff --git a/fs/io-wq.c b/fs/io-wq.c
-index 32aeb2c581c5..4239aa4e2c8b 100644
+index 4239aa4e2c8b..e4f5575750f4 100644
 --- a/fs/io-wq.c
 +++ b/fs/io-wq.c
-@@ -26,6 +26,7 @@ enum {
- 	IO_WORKER_F_RUNNING	= 2,	/* account as running */
- 	IO_WORKER_F_FREE	= 4,	/* worker on free list */
- 	IO_WORKER_F_BOUND	= 8,	/* is doing bounded work */
-+	IO_WORKER_F_EXIT	= 32,	/* worker is exiting */
+@@ -139,7 +139,8 @@ struct io_cb_cancel_data {
+ 	bool cancel_all;
  };
  
- enum {
-@@ -639,8 +640,12 @@ static int io_wqe_worker(void *data)
- 	while (!test_bit(IO_WQ_BIT_EXIT, &wq->state)) {
- 		long ret;
+-static bool create_io_worker(struct io_wq *wq, struct io_wqe *wqe, int index);
++static bool create_io_worker(struct io_wq *wq, struct io_wqe *wqe,
++			     struct io_wqe_acct *acct);
+ static void io_wqe_dec_running(struct io_worker *worker);
+ static bool io_acct_cancel_pending_work(struct io_wqe *wqe,
+ 					struct io_wqe_acct *acct,
+@@ -306,7 +307,7 @@ static bool io_wqe_create_worker(struct io_wqe *wqe, struct io_wqe_acct *acct)
+ 	raw_spin_unlock(&wqe->lock);
+ 	atomic_inc(&acct->nr_running);
+ 	atomic_inc(&wqe->wq->worker_refs);
+-	return create_io_worker(wqe->wq, wqe, acct->index);
++	return create_io_worker(wqe->wq, wqe, acct);
+ }
  
-+		if (worker->flags & IO_WORKER_F_EXIT)
-+			break;
-+
- 		set_current_state(TASK_INTERRUPTIBLE);
--		while (io_acct_run_queue(acct))
-+		while (!(worker->flags & IO_WORKER_F_EXIT) &&
-+		       io_acct_run_queue(acct))
- 			io_worker_handle_work(worker);
+ static void io_wqe_inc_running(struct io_worker *worker)
+@@ -335,7 +336,7 @@ static void create_worker_cb(struct callback_head *cb)
+ 	}
+ 	raw_spin_unlock(&wqe->lock);
+ 	if (do_create) {
+-		create_io_worker(wq, wqe, worker->create_index);
++		create_io_worker(wq, wqe, acct);
+ 	} else {
+ 		atomic_dec(&acct->nr_running);
+ 		io_worker_ref_put(wq);
+@@ -812,9 +813,10 @@ static void io_workqueue_create(struct work_struct *work)
+ 		kfree(worker);
+ }
  
- 		raw_spin_lock(&wqe->lock);
-@@ -656,6 +661,10 @@ static int io_wqe_worker(void *data)
- 		raw_spin_unlock(&wqe->lock);
- 		if (io_flush_signals())
- 			continue;
-+		if (worker->flags & IO_WORKER_F_EXIT) {
-+			__set_current_state(TASK_RUNNING);
-+			break;
-+		}
- 		ret = schedule_timeout(WORKER_IDLE_TIMEOUT);
- 		if (signal_pending(current)) {
- 			struct ksignal ksig;
+-static bool create_io_worker(struct io_wq *wq, struct io_wqe *wqe, int index)
++static bool create_io_worker(struct io_wq *wq, struct io_wqe *wqe,
++			     struct io_wqe_acct *acct)
+ {
+-	struct io_wqe_acct *acct = &wqe->acct[index];
++	int index = acct->index;
+ 	struct io_worker *worker;
+ 	struct task_struct *tsk;
+ 
 -- 
 2.36.0
 

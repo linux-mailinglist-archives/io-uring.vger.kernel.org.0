@@ -2,58 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D266250929F
-	for <lists+io-uring@lfdr.de>; Thu, 21 Apr 2022 00:24:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48D665092EC
+	for <lists+io-uring@lfdr.de>; Thu, 21 Apr 2022 00:37:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243053AbiDTW1j (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 20 Apr 2022 18:27:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60912 "EHLO
+        id S239734AbiDTWkU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 20 Apr 2022 18:40:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237210AbiDTW1i (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 20 Apr 2022 18:27:38 -0400
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3196710D7
-        for <io-uring@vger.kernel.org>; Wed, 20 Apr 2022 15:24:51 -0700 (PDT)
-Received: by mail-pj1-x102a.google.com with SMTP id u5so139071pjr.5
-        for <io-uring@vger.kernel.org>; Wed, 20 Apr 2022 15:24:51 -0700 (PDT)
+        with ESMTP id S233746AbiDTWkT (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 20 Apr 2022 18:40:19 -0400
+Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66355BC94
+        for <io-uring@vger.kernel.org>; Wed, 20 Apr 2022 15:37:32 -0700 (PDT)
+Received: by mail-pg1-x52a.google.com with SMTP id bg9so3008365pgb.9
+        for <io-uring@vger.kernel.org>; Wed, 20 Apr 2022 15:37:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=from:to:in-reply-to:references:subject:message-id:date:mime-version
          :content-transfer-encoding;
-        bh=mmyJuM0335L2mWS79P6/bbBxRGoFrxDgKdjGMMIsaCU=;
-        b=rSyDtGoZsyH6mMwJtnJwndfL/vJgMC4aEk+qCwN4RP0Hm+dyJ4E+GjhXz5f4gY4dgJ
-         mlLcgt5ofdodPLhcf1bJyQcQqyL6H9dM9SkjeCkLM/lw24qIU2I4txOqr0qEP3Dq6Pe3
-         A7luy+Yc/1xBeDKCedkxYm57tYXSEHTz+SKjbwsMAJGUVQWbnY2PS1bLLcvMXhttocni
-         Wm7YASokxAD2pdB+Sz5SRua9xigJcAXcm8TXMCiyHyUNT9+tUNY7UoRjkwNc+f+VLq9E
-         4cv/3d1DWeP3C1EmOFE7wZ6qswTThWgUbB3XjjnUZmjcEICcQxuyzpX3fGflgrBZzkJu
-         EnVA==
+        bh=cQ/QBSXXxy0ifM6PDkPba5fOj5qGHbCaOLtN26TXWps=;
+        b=M/rxi8MEe+cm1aoQCBdYioo8AOfWSBNF+grcjCz/+CNMdiVGUSOsFoAIC/7+0YVsQK
+         3NzD3Vj8kFirWZHnHFdohkh0C8y8LA92R7THNXFFnDrdpNX0llV6jktcn/RlwZsjufeA
+         HHQ7R4pfFWdVN8RA+3V02M5ry8vLvjOyuXEc6TuhJMWhF/k4XX1HEyhCEopU78EZrfmY
+         EZkAIkEPgVf8Zbr2f5X44KOCvSqyYQAmmtsoQlBESRuPKQeiG74ebe/l0xXYe0+h6Byf
+         bprSn3ey3ABpvkX7z7SF2z+ezLz6sgHuSiUm34HtZHCVnhFp2uJFEm5tZIKZdwv+hvs1
+         OsHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:in-reply-to:references:subject
          :message-id:date:mime-version:content-transfer-encoding;
-        bh=mmyJuM0335L2mWS79P6/bbBxRGoFrxDgKdjGMMIsaCU=;
-        b=25qgWBPswAbswGZK75F7Qb5PetnCA/o+FzmpTnA3LeotnxFjPk41iKy3Vdfv9Jzkv4
-         wfGDh9P4FuKN9CR2ums3CxFlj8fRtVqFC9hFpBLaWksvDDmmvbvVos7YoC7mFwGeN16Q
-         oc2QaJG1cYYZr2ijZJLCxAWplx2Z+vwBsUvkucQMJ5txgV6daVz+PF9VJc4oTkeT80pw
-         weR4+fUz0ZpAQzpQPa0/GLaAQr0ilqcnp1N1V7ctbV1KU+VZzrBeiCn6CC2YF107qmjQ
-         wFj+NVujgepEgGH0XzBScshaGH73dqWx2BRJhp4ex01SqHdPOY5phPq/FAfEbUAWW++O
-         LrjQ==
-X-Gm-Message-State: AOAM530U1bGx7ZyPJCs/wvSxNOoqhSQ8ZH4qFtfdsXGMtFsefQq2zSLW
-        EDRNrrK6+xA9l37kHDJ2yg00ibeEQKCZcA==
-X-Google-Smtp-Source: ABdhPJxIGhS44ME90gbQDOdbjLB4+fJRApE7Ki4E8aWbOBiEwkmUyusuNpLt6zgNYLGP1X97EuHaMw==
-X-Received: by 2002:a17:903:40cd:b0:158:fbc4:83ca with SMTP id t13-20020a17090340cd00b00158fbc483camr17009479pld.9.1650493490465;
-        Wed, 20 Apr 2022 15:24:50 -0700 (PDT)
+        bh=cQ/QBSXXxy0ifM6PDkPba5fOj5qGHbCaOLtN26TXWps=;
+        b=LHnHvMflDuu3UZ1mnJ96mA+CHAmS9ndbM1P0+jH7q7zcMVTclkC7WuArtzeuVBLMDj
+         7IOCAgxaTSACPU+s19XkL1v2EX1Y3daUGH+L44y7yELh1/I0QrLiMP4AievSueseZk6v
+         iqYq+Z3cuS5BPvf+btxdVr4C8qwegHgulWHJL4H1dlw/axBGCBNIfShGaVmsa//feemG
+         PwhelVkn/9udXSmBs5xrgTfdRkSEtwSCbnl+dSP7fWrzUOocx7qZ7Zyw7e5iVw/faBoB
+         HEaR7OaFJBLuYT7jdCrSnKDM5XfKCkJsZi1HMzx+zR08mGK7HQqfRvM+T6jU/mTAshoN
+         GW+w==
+X-Gm-Message-State: AOAM531co/qufYwC05NA4WSKy1OBsNCoaKxAltaklv4qBH55RLn7CCeo
+        DvDT0+AQUfsTNjP0g3z05qUBdrc9J9PLUg==
+X-Google-Smtp-Source: ABdhPJwgnnfQ8tf8dMdm9o+Z6pzbVIqueRxtWtYgzNw3RmcaezelOY+IkqHDO78ZwFlDf8yiHfwHDg==
+X-Received: by 2002:a63:6bc6:0:b0:39d:966d:2791 with SMTP id g189-20020a636bc6000000b0039d966d2791mr21411940pgc.407.1650494251618;
+        Wed, 20 Apr 2022 15:37:31 -0700 (PDT)
 Received: from [127.0.1.1] ([2600:380:4975:46c0:9a40:772a:e789:f8db])
-        by smtp.gmail.com with ESMTPSA id w22-20020a056a0014d600b0050a97172c4fsm8252892pfu.67.2022.04.20.15.24.49
+        by smtp.gmail.com with ESMTPSA id o34-20020a634e62000000b0039cc4376415sm20437900pgl.63.2022.04.20.15.37.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Apr 2022 15:24:50 -0700 (PDT)
+        Wed, 20 Apr 2022 15:37:31 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org, asml.silence@gmail.com
-In-Reply-To: <cover.1650458197.git.asml.silence@gmail.com>
-References: <cover.1650458197.git.asml.silence@gmail.com>
-Subject: Re: [PATCH for-next 0/3] timeout fixes & improvements
-Message-Id: <165049348971.521838.6622952784723391225.b4-ty@kernel.dk>
-Date:   Wed, 20 Apr 2022 16:24:49 -0600
+To:     io-uring@vger.kernel.org, axboe@kernel.dk
+In-Reply-To: <20220418164402.75259-2-axboe@kernel.dk>
+References: <20220418164402.75259-1-axboe@kernel.dk> <20220418164402.75259-2-axboe@kernel.dk>
+Subject: Re: [PATCH 1/5] io_uring: remove dead 'poll_only' argument to io_poll_cancel()
+Message-Id: <165049425084.530529.7480425889273735134.b4-ty@kernel.dk>
+Date:   Wed, 20 Apr 2022 16:37:30 -0600
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -66,25 +66,24 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, 20 Apr 2022 13:40:52 +0100, Pavel Begunkov wrote:
-> Fix the recent disarming syz report about deadlocking and brush a bit
-> up timeout/completion locking.
+On Mon, 18 Apr 2022 10:43:58 -0600, Jens Axboe wrote:
+> It's only called from one location, and it always passes in 'false'.
+> Kill the argument, and just pass in 'false' to io_poll_find().
 > 
-> Pavel Begunkov (3):
->   io_uring: fix nested timeout locking on disarming
->   io_uring: move tout locking in io_timeout_cancel()
->   io_uring: refactor io_disarm_next() locking
 > 
-> [...]
 
 Applied, thanks!
 
-[1/3] io_uring: fix nested timeout locking on disarming
-      (no commit info)
-[2/3] io_uring: move tout locking in io_timeout_cancel()
-      commit: 03b1df2dbcaf77c46f6cc64747fd9151e36842ab
-[3/3] io_uring: refactor io_disarm_next() locking
-      commit: a850c21e744eda43d5d296a315d5a4208d3e2281
+[1/5] io_uring: remove dead 'poll_only' argument to io_poll_cancel()
+      commit: 156afa36fd550c03953b9f55977de703f8c24b55
+[2/5] io_uring: pass in struct io_cancel_data consistently
+      commit: 36689d57c71ff79e2e63a36e8b48f210f77e453b
+[3/5] io_uring: add support for IORING_ASYNC_CANCEL_ALL
+      commit: 85222d8b6adb5bc2fb48e1bb61f16f3513d3d584
+[4/5] io_uring: allow IORING_OP_ASYNC_CANCEL with 'fd' key
+      commit: cd9ef41cd35944899861d3fb708ffcb9db15da7c
+[5/5] io_uring: add support for IORING_ASYNC_CANCEL_ANY
+      commit: 7c648b7d6186c59ed3a0e0ae4b774aaf4b415ef2
 
 Best regards,
 -- 

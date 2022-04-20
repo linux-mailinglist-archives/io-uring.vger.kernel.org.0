@@ -2,58 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C9C6E509322
-	for <lists+io-uring@lfdr.de>; Thu, 21 Apr 2022 00:46:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C48AF509335
+	for <lists+io-uring@lfdr.de>; Thu, 21 Apr 2022 00:51:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1382961AbiDTWss (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 20 Apr 2022 18:48:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35856 "EHLO
+        id S1377849AbiDTWyO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 20 Apr 2022 18:54:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1382964AbiDTWsr (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 20 Apr 2022 18:48:47 -0400
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A254827CDC
-        for <io-uring@vger.kernel.org>; Wed, 20 Apr 2022 15:46:00 -0700 (PDT)
-Received: by mail-pj1-x1033.google.com with SMTP id s14-20020a17090a880e00b001caaf6d3dd1so6146160pjn.3
-        for <io-uring@vger.kernel.org>; Wed, 20 Apr 2022 15:46:00 -0700 (PDT)
+        with ESMTP id S1356355AbiDTWyO (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 20 Apr 2022 18:54:14 -0400
+Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4376D2251E
+        for <io-uring@vger.kernel.org>; Wed, 20 Apr 2022 15:51:26 -0700 (PDT)
+Received: by mail-pg1-x52a.google.com with SMTP id x191so3048398pgd.4
+        for <io-uring@vger.kernel.org>; Wed, 20 Apr 2022 15:51:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=from:to:in-reply-to:references:subject:message-id:date:mime-version
          :content-transfer-encoding;
-        bh=yzci1Nf3MUucvbJpqB48YBSQZqjHq/CvPaOHf+bL13M=;
-        b=2tnIEjYT0Y9egwtv2NsouWPfGj8CcoZb5w7Ams0zLhDnZPUKiNT+A12v+f+7uXd+NH
-         54Q410ELMvHiY42yLI8lgOt7FhC9HIk9J3gb8m484maLyO2kucQdlri0HdQi8q6Sih9+
-         r1i+BKgnVI4/yni65+0Osl2SCVC4G5v7QyTPt54LeQt9a5qIemIuImnqYT1PsjuM75bm
-         BMuik4yxAqbt/EW58+b0aMEbyyJqJ4PpM5TbUzrrl2x+MZwQEWKG5t6h0VRG7Oe9qmXr
-         RwL5GWzM+zvYlSvEgkxuAIh7UBX6odpUbxqwevwCvrtorm4s57BKhk9QFPU8tCH0Mxl9
-         Gn/Q==
+        bh=Ut5Hlr9FZUAzXOlea/UmV64wKqZjWe43XM2WiAFcPgc=;
+        b=EK8/iMO2o0VmILnX6rhN/JXl18UWhyMNThiA+9RMnWQrqDDSFGNYbOVFrntnzKj3Ut
+         O240npaeR7/aweWrpo594iogXVpD/MRW2yyIt7JAAC2xg6piaSnzueEBXfDOZVq/qxwd
+         /9tGVID8j0xsieLCeDPBr5deB88goOeAVPZCZtx/QC175qmO8HR1OPfNqssLtWZ7M0IR
+         QbIcM2QImZckalcvID5UjOfh1K5xsDCCfGtmblvdvuKQBNn7hazj/ojQ1hMCj93xIzL9
+         wmHPJpXsuAHK/8mJy2doS5Jc2tUE6YMTQrIx93a0XQ5KvoEH552fVar74swiS+iQPJVx
+         HsMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:in-reply-to:references:subject
          :message-id:date:mime-version:content-transfer-encoding;
-        bh=yzci1Nf3MUucvbJpqB48YBSQZqjHq/CvPaOHf+bL13M=;
-        b=rKbC8k6Ik6ht76BieqO19sdD00cI3/I0950ZjyUnPrALVln/hS9hFpKLKpFGaPN4f1
-         d4SFYgjably/pJ0Q97qRrAfMCwUgs8FZrMyWR9YtqLq4L25FdyhlsP09ZxXDeIKkc2yB
-         UnQqU1ONnrL5cDW5hMhMINCsiKZMIaY0s+ObbvOJ0agIG39h1LPtmvtz4axPvbgOfUh9
-         j79EkfUKpofa4X+/m4WnTZ2cmuBw46DHryAvaRUm4Zcrpr0we6CYfBnTee6XRYG59lTf
-         Sy0NVJfg55a83z8WfW2/KgmMPI8Y4cT2OourEDGD6I5F5/xs4MbCDeuY/hzYO7WmTcDA
-         114Q==
-X-Gm-Message-State: AOAM532TSxMSaoK424Oewbq6f+PVmlfEtrKKQzHo6qK63/dp2RqSmH43
-        M2wyfALAjxQxE3wZiVO9l69SCg==
-X-Google-Smtp-Source: ABdhPJxDeCGMgmX/Roy6ENG3v3ePcev5TWOTIUyBS9WebQ5coI1ulLKZU2zrJZsoIlk/Bf4dxM9ChA==
-X-Received: by 2002:a17:90a:4581:b0:1bc:d215:8722 with SMTP id v1-20020a17090a458100b001bcd2158722mr6846835pjg.149.1650494760123;
-        Wed, 20 Apr 2022 15:46:00 -0700 (PDT)
+        bh=Ut5Hlr9FZUAzXOlea/UmV64wKqZjWe43XM2WiAFcPgc=;
+        b=APDKw4WCd5z0rla0FdZRQCSL8HOymG3JyhIJ0vydEj4BDUsUMySZDzPxq9Ad0teiIU
+         Atif0JXhpFnG9PT4DPKX0FDedccqHzaTJfqVEesyQOTLSXuzlOKUc+0Bts38Vz+NFcQ6
+         du+UUmtiZLtnpfyHLRZq8phbLrXXqtfjbxVBXqepLPDt56LAhKnyM1yGpiBa+q7+2/x8
+         RhHXLq+ir77kZeGJTx0tQI0uMr/3pdwP/E11wiDTjkGqLaIIckMJJ/nkeF4IYWh0W/D9
+         JzO4H9oTIyWvzk6Enrvy2NcZV1/j6fo/1pzIXfX680kNEcJl0uSqzPJky1nU9S33Lhu8
+         iV0w==
+X-Gm-Message-State: AOAM532cyZQ70LJ9OSHVRktyqvqbVRYRgMzbH1WqEhZ/ivTm31uvNsWC
+        iW+g+cTyW7SKEcIpYiT8ZNFzJFtD3sWEag==
+X-Google-Smtp-Source: ABdhPJwGt15taETkaEz+l5g53yHnu1HHTgsSRWHBAF5OLyCekCaS3kKtiku21q7uZbhb9kCN59oJjA==
+X-Received: by 2002:a63:5723:0:b0:3aa:3c53:35f0 with SMTP id l35-20020a635723000000b003aa3c5335f0mr8797936pgb.461.1650495085755;
+        Wed, 20 Apr 2022 15:51:25 -0700 (PDT)
 Received: from [127.0.1.1] ([2600:380:4975:46c0:9a40:772a:e789:f8db])
-        by smtp.gmail.com with ESMTPSA id t20-20020a63eb14000000b0039e28245722sm20592283pgh.54.2022.04.20.15.45.59
+        by smtp.gmail.com with ESMTPSA id n4-20020a637204000000b00398522203a2sm21362558pgc.80.2022.04.20.15.51.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Apr 2022 15:45:59 -0700 (PDT)
+        Wed, 20 Apr 2022 15:51:25 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-To:     kernel-team@fb.com, shr@fb.com, io-uring@vger.kernel.org
-In-Reply-To: <20220420191524.2906409-1-shr@fb.com>
-References: <20220420191524.2906409-1-shr@fb.com>
-Subject: Re: [PATCH v2 0/6] liburing: add support for large CQE sizes
-Message-Id: <165049475914.553406.15886198699125357825.b4-ty@kernel.dk>
-Date:   Wed, 20 Apr 2022 16:45:59 -0600
+To:     kernel-team@fb.com, io-uring@vger.kernel.org, shr@fb.com
+In-Reply-To: <20220420191451.2904439-1-shr@fb.com>
+References: <20220420191451.2904439-1-shr@fb.com>
+Subject: Re: [PATCH v2 00/12] add large CQE support for io-uring
+Message-Id: <165049508483.559887.15785156729960849643.b4-ty@kernel.dk>
+Date:   Wed, 20 Apr 2022 16:51:24 -0600
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -66,31 +66,42 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, 20 Apr 2022 12:15:18 -0700, Stefan Roesch wrote:
-> This adds support for large CQE sizes in the liburing layer. The large CQE
-> sizes double the size compared to the default CQE size.
+On Wed, 20 Apr 2022 12:14:39 -0700, Stefan Roesch wrote:
+> This adds the large CQE support for io-uring. Large CQE's are 16 bytes longer.
+> To support the longer CQE's the allocation part is changed and when the CQE is
+> accessed.
 > 
-> To support larger CQE sizes the mmap call needs to be modified to map a larger
-> memory region for large CQE's. For default CQE's the size of the mapping stays
-> the same.
-> Also the ring size calculation needs to change.
+> The allocation of the large CQE's is twice as big, so the allocation size is
+> doubled. The ring size calculation needs to take this into account.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/6] liburing: Update io_uring.h with large CQE kernel changes
-      commit: 80222605fa597ee72c3d89f9a7d59c6c24d5153a
-[2/6] liburing: increase mmap size for large CQE's
-      commit: b2f684deb583070ca0693ba630f98c166f977662
-[3/6] liburing: return correct ring size for large CQE's
-      commit: b4595bf204f5abbae94449f9f693d26e38bb67c1
-[4/6] liburing: index large CQE's correctly
-      commit: 5950be3737d71c67c4784bad0fa73801b82cada2
-[5/6] liburing: add large CQE tests to nop test
-      commit: b0d2bbcb0ed13347a4156000d6a5816247694ffc
-[6/6] liburing: Test all configurations with NOP test
-      commit: 0281392aa21209a97b7024f4fca26b717ad213c3
+[01/12] io_uring: support CQE32 in io_uring_cqe
+        commit: be428af6b204c2b366dd8b838bea87d1d4d9f2bd
+[02/12] io_uring: wire up inline completion path for CQE32
+        commit: 8fc4fbc38db6538056498c88f606f958fbb24bfd
+[03/12] io_uring: change ring size calculation for CQE32
+        commit: d09d3b8f2986899ff8f535c91d95c137b03595ec
+[04/12] io_uring: add CQE32 setup processing
+        commit: a81124f0283879a7c5e77c0def9c725e84e79cb1
+[05/12] io_uring: add CQE32 completion processing
+        commit: c7050dfe60c484f9084e57c2b1c88b8ab1f8a06d
+[06/12] io_uring: modify io_get_cqe for CQE32
+        commit: f23855c3511dffa54069c9a0ed513b79bec39938
+[07/12] io_uring: flush completions for CQE32
+        commit: 8a5be11b11449a412ef89c46a05e9bbeeab6652d
+[08/12] io_uring: overflow processing for CQE32
+        commit: 2f1bbef557e9b174361ecd2f7c59b683bbca4464
+[09/12] io_uring: add tracing for additional CQE32 fields
+        commit: b4df41b44f8f358f86533148aa0e56b27bca47d6
+[10/12] io_uring: support CQE32 in /proc info
+        commit: 9d1b8d722dc06b9ab96db6e2bb967187c6185727
+[11/12] io_uring: enable CQE32
+        commit: cae6c1bdf9704dee2d3c7803c36ef73ada19e238
+[12/12] io_uring: support CQE32 for nop operation
+        commit: 460527265a0a6aa5107a7e4e4640f8d4b2088455
 
 Best regards,
 -- 

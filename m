@@ -2,60 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B0EE8508786
-	for <lists+io-uring@lfdr.de>; Wed, 20 Apr 2022 13:56:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1504F5087C5
+	for <lists+io-uring@lfdr.de>; Wed, 20 Apr 2022 14:09:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378196AbiDTL7C (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 20 Apr 2022 07:59:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36276 "EHLO
+        id S1349813AbiDTML7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 20 Apr 2022 08:11:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378385AbiDTL7A (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 20 Apr 2022 07:59:00 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2A78427DE
-        for <io-uring@vger.kernel.org>; Wed, 20 Apr 2022 04:55:52 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id t25so1938757edt.9
-        for <io-uring@vger.kernel.org>; Wed, 20 Apr 2022 04:55:52 -0700 (PDT)
+        with ESMTP id S1348502AbiDTML6 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 20 Apr 2022 08:11:58 -0400
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9238C3FDB9
+        for <io-uring@vger.kernel.org>; Wed, 20 Apr 2022 05:09:12 -0700 (PDT)
+Received: by mail-pj1-x1036.google.com with SMTP id mm4-20020a17090b358400b001cb93d8b137so4784870pjb.2
+        for <io-uring@vger.kernel.org>; Wed, 20 Apr 2022 05:09:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=scylladb-com.20210112.gappssmtp.com; s=20210112;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :references:from:organization:in-reply-to:content-transfer-encoding;
-        bh=IQz/9Cztb3dtBD/iYxQFv7GAyM6M/oTQq+RD8iPKxCE=;
-        b=FpqCpA8wArrh/mBd08QxOvzIkoVBqNFoogbKyx2+tyULmQXfOtUOfyOd4SVqvzLbyY
-         UVo3EVJYEeKcUOePcO0tFpO9DCahdznf6wHgQZwscpOzhvG/Tfeq+D6qUxmnDhU+bCkQ
-         9CuJfa+7PYTObpSsVyTLJ3pcKRya0ITGgLcBKygTGNVo0bNDyhowHn74GIdsxSlhRZRE
-         mW4y+AD6OSqvt8CE4+r4Sh9aCDNa5okDAAkal/68yZSh8dZUufk1aXwkbrzy5te0Rn4F
-         yV4N80Ip/Egm3fE9JAiuL0vdpR5j6+erACiYbvC1wSaXD+eBZzAV/tiKLuAGg6JA8dg4
-         WaWQ==
+         :references:from:in-reply-to:content-transfer-encoding;
+        bh=u5pYgQJD0ceZLePnwuz+54HN/dfMnFT1Zj/nVYOeiFM=;
+        b=xT1Gr6vNUGbyYKGQJTWfc4IHBN80Cvcd7uoM1Fwa8ZA8KSaW35pgTqfqgxiGspJ1PC
+         gHKc7MnLS6S7OEAqyzVZjoPD9gzzosL3cxRYtqSfttoOEHoCuQZ+pS0XWcafIwlHRXx3
+         seLIryQIA8iedYuy/xIM6J8cDg4BxbnIVpWA60JqzIbD9Eq8lWIBmyPgb9H7NWtLzACe
+         xjJptGq0Cxk8Ib1RDTR9Pz/qH2AX0A95/rn4tMm47tmqJ3yccWZTnr8Yth7Tc6bUOQjS
+         ON9xdPKiLOggBYf10gHeOGdWq/o2q+cT24Y7QHzEx6a1X/6FOJSgzBYOut90+0sZCHXP
+         Asig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:from:organization:in-reply-to
+         :content-language:to:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=IQz/9Cztb3dtBD/iYxQFv7GAyM6M/oTQq+RD8iPKxCE=;
-        b=ZVXxBuczyjyqkMSuHnQGys6KHYibhC7GPUmZViBuGr1Y2HT/BH7yr4PQg2qawVjsYf
-         FlZOPB1f9yVyFi40KFolzyl99bPKY462AzfcKrNVIjA6SOy3YCuoC84IRSkrI0Ab5UL7
-         wkreHhO2y3WQ3E5aGa6yttbx+cLCxozDWd5Q3DdNFIG2XuG+0UlTa8/xNEoCThimPzE4
-         i8wpvJ6A6Fe3SpTLKTLFuvlgs9ZpjfInrl29UV372cfKJX8A3SryZyne3O8obPYKFYyv
-         O2LJPGOK1hBq/vPjh3euk1UFxsPrWOi6HAoZ/0SRv33mxtS0sHy5lCrBscfBObsS57p5
-         HVBw==
-X-Gm-Message-State: AOAM532afK3hZ7SAdypY4Z559gAEABh4YzFhtd3Tcd2XfUHKfHpxblj8
-        2ghMlqplwtPWQwwZrQ4ZHeo16A==
-X-Google-Smtp-Source: ABdhPJwqiRj27cL5G44dHK3Ul+gxNvcLtt7LGXJMM6y+F5RV5BgXZO67APQzFs+6KScFUCjHOjdLYw==
-X-Received: by 2002:aa7:cc90:0:b0:424:1f9d:eb9e with SMTP id p16-20020aa7cc90000000b004241f9deb9emr2436130edt.109.1650455751171;
-        Wed, 20 Apr 2022 04:55:51 -0700 (PDT)
-Received: from [10.0.0.1] (system.cloudius-systems.com. [199.203.229.89])
-        by smtp.gmail.com with ESMTPSA id d11-20020a056402400b00b00423e5bdd6e3sm4473531eda.84.2022.04.20.04.55.49
+        bh=u5pYgQJD0ceZLePnwuz+54HN/dfMnFT1Zj/nVYOeiFM=;
+        b=eh9XbUxHlcu1dTW8X1yrPL9L9tBtUd/5nXVxPNOoU3iE2NkFCYBP8UgLYTkGAR07dk
+         +CrXp+efT7kuZcaB1yiqveToAZf0R7aZ5SXQ/p9AhqnPlrj14OubDyAnKPCotrPB5NZb
+         d8UY1B/qU3gwfVrdMSQg1OBfHTSKE+BM/jSRiTo0osfqyKKBSe1S9gUc3+MGsF/6uRN6
+         RHgN8zLYlgS3U9OMDYoVW8ab9FVjMnLjH1NwcZrD6oEudzUEjS2v2QpXf7YVQitfoUgW
+         GhZ+qt4yVWa3CPW3jMbq+QsbLGxf19mUKh1px3weMY03KrQ641VkoDvIaOgfBY+j/8Bw
+         Kk4A==
+X-Gm-Message-State: AOAM533iNf7s008Y450fALeJqK269ViV7B9Dw8XNtUMf+6KbApPgUlzj
+        /Pw0/uRiv8OjA1g7i2qu8QqXPQ==
+X-Google-Smtp-Source: ABdhPJyVXujvlshGUYRhnWvgyQKqnRehdhjMEdv6c89bPTNpNC4oWqVUqq5iRM7iNYzcl+qwOCO8wQ==
+X-Received: by 2002:a17:902:6b0b:b0:156:4ab0:3ddc with SMTP id o11-20020a1709026b0b00b001564ab03ddcmr19555337plk.22.1650456551932;
+        Wed, 20 Apr 2022 05:09:11 -0700 (PDT)
+Received: from [192.168.1.100] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id x39-20020a056a0018a700b004fa7e6ceafesm21375835pfh.169.2022.04.20.05.09.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Apr 2022 04:55:50 -0700 (PDT)
-Message-ID: <1a7f2b1c-1373-7f17-d74a-eb9b546a7ba5@scylladb.com>
-Date:   Wed, 20 Apr 2022 14:55:47 +0300
+        Wed, 20 Apr 2022 05:09:11 -0700 (PDT)
+Message-ID: <1c65ed64-b528-5b0d-48d3-a948acb4520b@kernel.dk>
+Date:   Wed, 20 Apr 2022 06:09:10 -0600
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
  Thunderbird/91.8.0
 Subject: Re: IORING_OP_POLL_ADD slower than linux-aio IOCB_CMD_POLL
 Content-Language: en-US
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+To:     Avi Kivity <avi@scylladb.com>, io-uring@vger.kernel.org
 References: <9b749c99-0126-f9b2-99f5-5c33433c3a08@scylladb.com>
  <9e277a23-84d7-9a90-0d3e-ba09c9437dc4@kernel.dk>
  <e7ffdf1e-b6a8-0e46-5879-30c25446223d@scylladb.com>
@@ -66,10 +66,10 @@ References: <9b749c99-0126-f9b2-99f5-5c33433c3a08@scylladb.com>
  <4008a1db-ee26-92ba-320e-140932e801c1@kernel.dk>
  <96cdef5a-a818-158d-f109-e96f0038bf14@scylladb.com>
  <686bb243-268d-1749-e376-873077b8f3a3@kernel.dk>
-From:   Avi Kivity <avi@scylladb.com>
-Organization: ScyllaDB
-In-Reply-To: <686bb243-268d-1749-e376-873077b8f3a3@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+ <1a7f2b1c-1373-7f17-d74a-eb9b546a7ba5@scylladb.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <1a7f2b1c-1373-7f17-d74a-eb9b546a7ba5@scylladb.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-6.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
@@ -80,23 +80,22 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+On 4/20/22 5:55 AM, Avi Kivity wrote:
+> 
+> On 19/04/2022 22.58, Jens Axboe wrote:
+>>
+>>> I'll try it tomorrow (also the other patch).
+>> Thanks!
+>>
+> 
+> With the new kernel, I get
+> 
+> 
+> io_uring_setup(200, {flags=0, sq_thread_cpu=0, sq_thread_idle=0, sq_entries=256, cq_entries=512, features=IORING_FEAT_SINGLE_MMAP|IORING_FEAT_NODROP|IORING_FEAT_SUBMIT_STABLE|IORING_FEAT_RW_CUR_POS|IORING_FEAT_CUR_PERSONALITY|IORING_FEAT_FAST_POLL|IORING_FEAT_POLL_32BITS|IORING_FEAT_SQPOLL_NONFIXED|IORING_FEAT_EXT_ARG|IORING_FEAT_NATIVE_WORKERS|IORING_FEAT_RSRC_TAGS|0x1800, sq_off={head=0, tail=64, ring_mask=256, ring_entries=264, flags=276, dropped=272, array=8512}, cq_off={head=128, tail=192, ring_mask=260, ring_entries=268, overflow=284, cqes=320, flags=280}}) = 7
+> mmap(NULL, 9536, PROT_READ|PROT_WRITE, MAP_SHARED|MAP_POPULATE, 7, 0) = -1 EACCES (Permission denied)
 
-On 19/04/2022 22.58, Jens Axboe wrote:
->
->> I'll try it tomorrow (also the other patch).
-> Thanks!
->
+That looks odd, and not really related at all?
 
-With the new kernel, I get
-
-
-io_uring_setup(200, {flags=0, sq_thread_cpu=0, sq_thread_idle=0, 
-sq_entries=256, cq_entries=512, 
-features=IORING_FEAT_SINGLE_MMAP|IORING_FEAT_NODROP|IORING_FEAT_SUBMIT_STABLE|IORING_FEAT_RW_CUR_POS|IORING_FEAT_CUR_PERSONALITY|IORING_FEAT_FAST_POLL|IORING_FEAT_POLL_32BITS|IORING_FEAT_SQPOLL_NONFIXED|IORING_FEAT_EXT_ARG|IORING_FEAT_NATIVE_WORKERS|IORING_FEAT_RSRC_TAGS|0x1800, 
-sq_off={head=0, tail=64, ring_mask=256, ring_entries=264, flags=276, 
-dropped=272, array=8512}, cq_off={head=128, tail=192, ring_mask=260, 
-ring_entries=268, overflow=284, cqes=320, flags=280}}) = 7
-mmap(NULL, 9536, PROT_READ|PROT_WRITE, MAP_SHARED|MAP_POPULATE, 7, 0) = 
--1 EACCES (Permission denied)
-
+-- 
+Jens Axboe
 

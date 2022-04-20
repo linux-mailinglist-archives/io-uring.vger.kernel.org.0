@@ -2,44 +2,44 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 57F04509027
-	for <lists+io-uring@lfdr.de>; Wed, 20 Apr 2022 21:15:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7C93509026
+	for <lists+io-uring@lfdr.de>; Wed, 20 Apr 2022 21:15:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1381684AbiDTTSD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 20 Apr 2022 15:18:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36748 "EHLO
+        id S1348146AbiDTTSC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 20 Apr 2022 15:18:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358692AbiDTTSB (ORCPT
+        with ESMTP id S1349026AbiDTTSB (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Wed, 20 Apr 2022 15:18:01 -0400
-Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B4F6BE05
-        for <io-uring@vger.kernel.org>; Wed, 20 Apr 2022 12:15:14 -0700 (PDT)
-Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
-        by m0089730.ppops.net (8.16.1.2/8.16.1.2) with ESMTP id 23KILSNt020512
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A97BBBC9A
+        for <io-uring@vger.kernel.org>; Wed, 20 Apr 2022 12:15:13 -0700 (PDT)
+Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 23KILNag008704
         for <io-uring@vger.kernel.org>; Wed, 20 Apr 2022 12:15:13 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=facebook;
- bh=0dsqbiIYUpYGsz6SX+Aevv0g3blMuu1d1Q7h+Udsm+w=;
- b=YdrIR7zO+bSmv5Xmaci55dkhTYL/b7MhX8lPC1KCy6x1QqnWxfy/ID59tYEtRagse9zd
- oEMrUZn894HSpoWNXR3RSFpwbgxZ7STxmBN05X5u564CIhYr35EzdN0t2tIMuK2ja4Wl
- y3x4mv4rnTG3OzfELdeLqmsvbaUZzlA+eIE= 
+ bh=ulD/KHoDprLRTNxjJUHy1WAlDONDpaTtHukF4zqk2Jc=;
+ b=iGeA8ZJ9v8pLM/2zo5eQuJaY8c8rjeQhLTTQ7ygxmcYSqeCz00Z75LKew0Gg7i3SMzFO
+ U0ydRNEiKiTFbrgiqYwHkpuNLmIoUDY09Q3NRTALwO7ilHka1xxj3ziXdQw1ujBpDbBL
+ UhQmdKgoP4lFcAo25ZGZf0qmReU4O4zHbLA= 
 Received: from maileast.thefacebook.com ([163.114.130.16])
-        by m0089730.ppops.net (PPS) with ESMTPS id 3fhn4j4en4-1
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3fj9p1vy0j-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
         for <io-uring@vger.kernel.org>; Wed, 20 Apr 2022 12:15:13 -0700
-Received: from twshared8508.05.ash9.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:82::e) with Microsoft SMTP Server
+Received: from twshared4937.07.ash9.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:83::5) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Wed, 20 Apr 2022 12:15:12 -0700
+ 15.1.2375.24; Wed, 20 Apr 2022 12:15:11 -0700
 Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
-        id AFBC5DE0C414; Wed, 20 Apr 2022 12:14:53 -0700 (PDT)
+        id B59F4DE0C416; Wed, 20 Apr 2022 12:14:53 -0700 (PDT)
 From:   Stefan Roesch <shr@fb.com>
 To:     <io-uring@vger.kernel.org>, <kernel-team@fb.com>
 CC:     <shr@fb.com>, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH v2 08/12] io_uring: overflow processing for CQE32
-Date:   Wed, 20 Apr 2022 12:14:47 -0700
-Message-ID: <20220420191451.2904439-9-shr@fb.com>
+Subject: [PATCH v2 09/12] io_uring: add tracing for additional CQE32 fields
+Date:   Wed, 20 Apr 2022 12:14:48 -0700
+Message-ID: <20220420191451.2904439-10-shr@fb.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220420191451.2904439-1-shr@fb.com>
 References: <20220420191451.2904439-1-shr@fb.com>
@@ -47,8 +47,8 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-GUID: QvNNJh8KrmzgO-EWNo2U771qPe525Yv-
-X-Proofpoint-ORIG-GUID: QvNNJh8KrmzgO-EWNo2U771qPe525Yv-
+X-Proofpoint-ORIG-GUID: BK07-EIETMaK9t6wgyKCy15QR09Qj4av
+X-Proofpoint-GUID: BK07-EIETMaK9t6wgyKCy15QR09Qj4av
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.486,FMLib:17.11.64.514
  definitions=2022-04-20_05,2022-04-20_01,2022-02-23_01
@@ -62,123 +62,128 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This adds the overflow processing for large CQE's.
-
-This adds two parameters to the io_cqring_event_overflow function and
-uses these fields to initialize the large CQE fields.
-
-Allocate enough space for large CQE's in the overflow structue. If no
-large CQE's are used, the size of the allocation is unchanged.
-
-The cqe field can have a different size depending if its a large
-CQE or not. To be able to allocate different sizes, the two fields
-in the structure are re-ordered.
+This adds tracing for the extra1 and extra2 fields.
 
 Co-developed-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Stefan Roesch <shr@fb.com>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/io_uring.c | 26 +++++++++++++++++++-------
- 1 file changed, 19 insertions(+), 7 deletions(-)
+ fs/io_uring.c                   | 11 ++++++-----
+ include/trace/events/io_uring.h | 18 ++++++++++++++----
+ 2 files changed, 20 insertions(+), 9 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index ff6229b6df16..50efced63ec9 100644
+index 50efced63ec9..366f49969b31 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -220,8 +220,8 @@ struct io_mapped_ubuf {
- struct io_ring_ctx;
-=20
- struct io_overflow_cqe {
--	struct io_uring_cqe cqe;
- 	struct list_head list;
-+	struct io_uring_cqe cqe;
- };
-=20
- struct io_fixed_file {
-@@ -2016,13 +2016,17 @@ static bool __io_cqring_overflow_flush(struct io_=
-ring_ctx *ctx, bool force)
- 	while (!list_empty(&ctx->cq_overflow_list)) {
- 		struct io_uring_cqe *cqe =3D io_get_cqe(ctx);
- 		struct io_overflow_cqe *ocqe;
-+		size_t cqe_size =3D sizeof(struct io_uring_cqe);
-+
-+		if (ctx->flags & IORING_SETUP_CQE32)
-+			cqe_size <<=3D 1;
-=20
- 		if (!cqe && !force)
- 			break;
- 		ocqe =3D list_first_entry(&ctx->cq_overflow_list,
- 					struct io_overflow_cqe, list);
- 		if (cqe)
--			memcpy(cqe, &ocqe->cqe, sizeof(*cqe));
-+			memcpy(cqe, &ocqe->cqe, cqe_size);
- 		else
- 			io_account_cq_overflow(ctx);
-=20
-@@ -2111,11 +2115,15 @@ static __cold void io_uring_drop_tctx_refs(struct=
- task_struct *task)
- }
-=20
- static bool io_cqring_event_overflow(struct io_ring_ctx *ctx, u64 user_d=
-ata,
--				     s32 res, u32 cflags)
-+				     s32 res, u32 cflags, u64 extra1, u64 extra2)
- {
- 	struct io_overflow_cqe *ocqe;
-+	size_t ocq_size =3D sizeof(struct io_overflow_cqe);
-=20
--	ocqe =3D kmalloc(sizeof(*ocqe), GFP_ATOMIC | __GFP_ACCOUNT);
-+	if (ctx->flags & IORING_SETUP_CQE32)
-+		ocq_size +=3D sizeof(struct io_uring_cqe);
-+
-+	ocqe =3D kmalloc(ocq_size, GFP_ATOMIC | __GFP_ACCOUNT);
- 	if (!ocqe) {
- 		/*
- 		 * If we're in ring overflow flush mode, or in task cancel mode,
-@@ -2134,6 +2142,10 @@ static bool io_cqring_event_overflow(struct io_rin=
-g_ctx *ctx, u64 user_data,
- 	ocqe->cqe.user_data =3D user_data;
- 	ocqe->cqe.res =3D res;
- 	ocqe->cqe.flags =3D cflags;
-+	if (ctx->flags & IORING_SETUP_CQE32) {
-+		ocqe->cqe.b[0].extra1 =3D extra1;
-+		ocqe->cqe.b[0].extra2 =3D extra2;
-+	}
- 	list_add_tail(&ocqe->list, &ctx->cq_overflow_list);
- 	return true;
- }
-@@ -2155,7 +2167,7 @@ static inline bool __io_fill_cqe(struct io_ring_ctx=
- *ctx, u64 user_data,
- 		WRITE_ONCE(cqe->flags, cflags);
- 		return true;
- 	}
--	return io_cqring_event_overflow(ctx, user_data, res, cflags);
-+	return io_cqring_event_overflow(ctx, user_data, res, cflags, 0, 0);
- }
-=20
- static inline bool __io_fill_cqe_req_filled(struct io_ring_ctx *ctx,
-@@ -2177,7 +2189,7 @@ static inline bool __io_fill_cqe_req_filled(struct =
+@@ -2176,7 +2176,7 @@ static inline bool __io_fill_cqe_req_filled(struct =
 io_ring_ctx *ctx,
- 		return true;
- 	}
- 	return io_cqring_event_overflow(ctx, req->cqe.user_data,
--					req->cqe.res, req->cqe.flags);
-+					req->cqe.res, req->cqe.flags, 0, 0);
+ 	struct io_uring_cqe *cqe;
+=20
+ 	trace_io_uring_complete(req->ctx, req, req->cqe.user_data,
+-				req->cqe.res, req->cqe.flags);
++				req->cqe.res, req->cqe.flags, 0, 0);
+=20
+ 	/*
+ 	 * If we can't get a cq entry, userspace overflowed the
+@@ -2200,7 +2200,7 @@ static inline bool __io_fill_cqe32_req_filled(struc=
+t io_ring_ctx *ctx,
+ 	u64 extra2 =3D req->extra2;
+=20
+ 	trace_io_uring_complete(req->ctx, req, req->cqe.user_data,
+-				req->cqe.res, req->cqe.flags);
++				req->cqe.res, req->cqe.flags, extra1, extra2);
+=20
+ 	/*
+ 	 * If we can't get a cq entry, userspace overflowed the
+@@ -2221,7 +2221,7 @@ static inline bool __io_fill_cqe32_req_filled(struc=
+t io_ring_ctx *ctx,
+=20
+ static inline bool __io_fill_cqe_req(struct io_kiocb *req, s32 res, u32 =
+cflags)
+ {
+-	trace_io_uring_complete(req->ctx, req, req->cqe.user_data, res, cflags)=
+;
++	trace_io_uring_complete(req->ctx, req, req->cqe.user_data, res, cflags,=
+ 0, 0);
+ 	return __io_fill_cqe(req->ctx, req->cqe.user_data, res, cflags);
  }
 =20
- static inline bool __io_fill_cqe32_req_filled(struct io_ring_ctx *ctx,
-@@ -2241,7 +2253,7 @@ static void __io_fill_cqe32_req(struct io_kiocb *re=
+@@ -2236,7 +2236,8 @@ static void __io_fill_cqe32_req(struct io_kiocb *re=
 q, s32 res, u32 cflags,
+ 	if (req->flags & REQ_F_CQE_SKIP)
  		return;
- 	}
 =20
--	io_cqring_event_overflow(ctx, req->cqe.user_data, res, cflags);
-+	io_cqring_event_overflow(ctx, req->cqe.user_data, res, cflags, extra1, =
-extra2);
+-	trace_io_uring_complete(ctx, req, req->user_data, res, cflags);
++	trace_io_uring_complete(ctx, req, req->cqe.user_data, res, cflags,
++				extra1, extra2);
+=20
+ 	/*
+ 	 * If we can't get a cq entry, userspace overflowed the
+@@ -2260,7 +2261,7 @@ static noinline bool io_fill_cqe_aux(struct io_ring=
+_ctx *ctx, u64 user_data,
+ 				     s32 res, u32 cflags)
+ {
+ 	ctx->cq_extra++;
+-	trace_io_uring_complete(ctx, NULL, user_data, res, cflags);
++	trace_io_uring_complete(ctx, NULL, user_data, res, cflags, 0, 0);
+ 	return __io_fill_cqe(ctx, user_data, res, cflags);
  }
 =20
- static noinline bool io_fill_cqe_aux(struct io_ring_ctx *ctx, u64 user_d=
-ata,
+diff --git a/include/trace/events/io_uring.h b/include/trace/events/io_ur=
+ing.h
+index 8477414d6d06..2eb4f4e47de4 100644
+--- a/include/trace/events/io_uring.h
++++ b/include/trace/events/io_uring.h
+@@ -318,13 +318,16 @@ TRACE_EVENT(io_uring_fail_link,
+  * @user_data:		user data associated with the request
+  * @res:		result of the request
+  * @cflags:		completion flags
++ * @extra1:		extra 64-bit data for CQE32
++ * @extra2:		extra 64-bit data for CQE32
+  *
+  */
+ TRACE_EVENT(io_uring_complete,
+=20
+-	TP_PROTO(void *ctx, void *req, u64 user_data, int res, unsigned cflags)=
+,
++	TP_PROTO(void *ctx, void *req, u64 user_data, int res, unsigned cflags,
++		 u64 extra1, u64 extra2),
+=20
+-	TP_ARGS(ctx, req, user_data, res, cflags),
++	TP_ARGS(ctx, req, user_data, res, cflags, extra1, extra2),
+=20
+ 	TP_STRUCT__entry (
+ 		__field(  void *,	ctx		)
+@@ -332,6 +335,8 @@ TRACE_EVENT(io_uring_complete,
+ 		__field(  u64,		user_data	)
+ 		__field(  int,		res		)
+ 		__field(  unsigned,	cflags		)
++		__field(  u64,		extra1		)
++		__field(  u64,		extra2		)
+ 	),
+=20
+ 	TP_fast_assign(
+@@ -340,12 +345,17 @@ TRACE_EVENT(io_uring_complete,
+ 		__entry->user_data	=3D user_data;
+ 		__entry->res		=3D res;
+ 		__entry->cflags		=3D cflags;
++		__entry->extra1		=3D extra1;
++		__entry->extra2		=3D extra2;
+ 	),
+=20
+-	TP_printk("ring %p, req %p, user_data 0x%llx, result %d, cflags 0x%x",
++	TP_printk("ring %p, req %p, user_data 0x%llx, result %d, cflags 0x%x "
++		  "extra1 %llu extra2 %llu ",
+ 		__entry->ctx, __entry->req,
+ 		__entry->user_data,
+-		__entry->res, __entry->cflags)
++		__entry->res, __entry->cflags,
++		(unsigned long long) __entry->extra1,
++		(unsigned long long) __entry->extra2)
+ );
+=20
+ /**
 --=20
 2.30.2
 

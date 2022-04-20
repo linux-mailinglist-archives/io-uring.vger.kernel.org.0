@@ -2,94 +2,154 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 02CC3508C1B
-	for <lists+io-uring@lfdr.de>; Wed, 20 Apr 2022 17:29:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46299509020
+	for <lists+io-uring@lfdr.de>; Wed, 20 Apr 2022 21:15:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343516AbiDTPcM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 20 Apr 2022 11:32:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33140 "EHLO
+        id S1348639AbiDTTRy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 20 Apr 2022 15:17:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234586AbiDTPcL (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 20 Apr 2022 11:32:11 -0400
-Received: from mail-oa1-x36.google.com (mail-oa1-x36.google.com [IPv6:2001:4860:4864:20::36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A96A45AD3;
-        Wed, 20 Apr 2022 08:29:25 -0700 (PDT)
-Received: by mail-oa1-x36.google.com with SMTP id 586e51a60fabf-e604f712ecso2282984fac.9;
-        Wed, 20 Apr 2022 08:29:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=61FWMBiIp/oHQjo9zys3+M0sljyptQ7R0Qf5Z5MBknc=;
-        b=qfNMbgXhys2URznuKviywGFhiZ668686N57iwamEyUpsg6K+8Akv9WmUP8JSXHvMeq
-         yR2RgAVUH7lz2laj04BwucqPLvDlwoozfqrU+X65v0XJDcqHLYN1CbhKEqmchJSECnf+
-         bsc+AUzGz3Izx86rlagi0hkmDCCf1rc9h666nI3ifRO8yPETkeaa/AvqYkODLvVPtJMB
-         fhoDHF7Ptx5FQxTxBOasz4txQWj2g8CwXR95cjqxFrpKPAQVQalmKEu3LEumbvWZcQ3E
-         XUtN5b+KljnfaLAJJ4mbWA+msrFfSGYMoSlAicfOMN6CmLxdSOWNyRnYD+D92OiftegJ
-         ilMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=61FWMBiIp/oHQjo9zys3+M0sljyptQ7R0Qf5Z5MBknc=;
-        b=yiVbvRe0c5Pxyvdomzoa7m7IZwmdvFdWBElXN224pTVXijYzDbxXM51nYCfKAD9ky/
-         sUhV/FBTRux0JhCVepL+INrq9in9+RAWvgZRNUL0lU7b9raI7kZ/7QBLbVKMx+3yWPux
-         SGVRkZpczk1J5StIoa4hjqVvJYVymbQ6Sk4QnAMdTT74v9ACP4TGP/iDzE33R2n/ueKp
-         Cj2qDgcTDpD+0tow1+bM/XAqxjc+0AieOb0dDH4N679THwPO7+sH0yjruDld7UfZ3Jhn
-         7Yj0+9CV6M59wbtfS2gZRf4v3FHoTneEBajZq2B459eCzNT5Hnh0T/pXpRWLzA0iG6l+
-         fl6Q==
-X-Gm-Message-State: AOAM531BXMGgRzWX3fHZQwR2jidJpQBE06nGaYMR8VngU8zkU3361r9M
-        kRdSvLrjee0PJUKwkXY2j34HlrFVoAPV48Cb3QI=
-X-Google-Smtp-Source: ABdhPJyJir+zz5lALNTrCHI37Thw0c7JMdw6PttB1W2T0kT7Nu7IbPDTjNIPoeyBZNpGwUGQL9JrhoOXBbLRAf86Kvw=
-X-Received: by 2002:a05:6870:2190:b0:e6:26d2:abe0 with SMTP id
- l16-20020a056870219000b000e626d2abe0mr1750858oae.15.1650468564716; Wed, 20
- Apr 2022 08:29:24 -0700 (PDT)
+        with ESMTP id S245254AbiDTTRw (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 20 Apr 2022 15:17:52 -0400
+Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EECB5F58
+        for <io-uring@vger.kernel.org>; Wed, 20 Apr 2022 12:15:03 -0700 (PDT)
+Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
+        by m0001303.ppops.net (8.16.1.2/8.16.1.2) with ESMTP id 23KILRtU008189
+        for <io-uring@vger.kernel.org>; Wed, 20 Apr 2022 12:15:03 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=facebook; bh=W1/RoBuGT0olDtCGqJAF4D+uCYei4IGePSU6v67zbvE=;
+ b=Z2g9D0TO/Y/DeWiBJ6S5mV4e8x+W3JP5O2bTz7mGaRRTJtRqTfS91UxunvmlJYBCqvpi
+ xg5WFIV9POjmryCbSadxjjgdlXI3OOn9Ewq1WgVYiCbZVsh4M1uMqprcK2hQy4KRpIk1
+ J16qELR+Sv0tY50ngyF6+HPKwETR/isXVcg= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by m0001303.ppops.net (PPS) with ESMTPS id 3fj7k3dfgu-3
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <io-uring@vger.kernel.org>; Wed, 20 Apr 2022 12:15:02 -0700
+Received: from twshared14141.02.ash7.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:83::5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Wed, 20 Apr 2022 12:15:01 -0700
+Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
+        id 83AE4DE0C404; Wed, 20 Apr 2022 12:14:53 -0700 (PDT)
+From:   Stefan Roesch <shr@fb.com>
+To:     <io-uring@vger.kernel.org>, <kernel-team@fb.com>
+CC:     <shr@fb.com>
+Subject: [PATCH v2 00/12] add large CQE support for io-uring
+Date:   Wed, 20 Apr 2022 12:14:39 -0700
+Message-ID: <20220420191451.2904439-1-shr@fb.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-References: <CA+1E3rLGwHFbdbSTJBfWrw6RLErwcT2zPxGmmWbcLUj2y=16Qg@mail.gmail.com>
- <20220324063218.GC12660@lst.de> <20220325133921.GA13818@test-zns>
- <20220330130219.GB1938@lst.de> <CA+1E3r+Z9UyiNjmb-DzOpNrcbCO_nNFYUD5L5xJJCisx_D=wPQ@mail.gmail.com>
- <a44e38d6-54b4-0d17-c274-b7d46f60a0cf@kernel.dk> <CA+1E3r+CSC6jaDBXpxQUDnk8G=RuQaa=DPJ=tt9O9qydH5B9SQ@mail.gmail.com>
- <f3923d64-4f84-143b-cce2-fcf8366da0e6@kernel.dk> <CA+1E3rJHgEan2yiVS882XouHgKNP4Rn6G2LrXyFu-0kgyu27=Q@mail.gmail.com>
- <CGME20220420152003epcas5p3991e6941773690bcb425fd9d817105c3@epcas5p3.samsung.com>
- <586ec702-fcaa-f12c-1752-bf262242a751@kernel.dk> <20220420151454.GA30119@test-zns>
-In-Reply-To: <20220420151454.GA30119@test-zns>
-From:   Kanchan Joshi <joshiiitr@gmail.com>
-Date:   Wed, 20 Apr 2022 20:58:57 +0530
-Message-ID: <CA+1E3rKYapc2_un9F4MNB5Zf7KfRr9=ATqonGnvcuvThLFX2vg@mail.gmail.com>
-Subject: Re: [PATCH 17/17] nvme: enable non-inline passthru commands
-To:     Kanchan Joshi <joshi.k@samsung.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-        Keith Busch <kbusch@kernel.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org, sbates@raithlin.com,
-        logang@deltatee.com, Pankaj Raghav <pankydev8@gmail.com>,
-        =?UTF-8?Q?Javier_Gonz=C3=A1lez?= <javier@javigon.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Adam Manzanares <a.manzanares@samsung.com>,
-        Anuj Gupta <anuj20.g@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: 2XttdTJ8LGMGuyJp9-TagIfoKwKP79h9
+X-Proofpoint-GUID: 2XttdTJ8LGMGuyJp9-TagIfoKwKP79h9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.486,FMLib:17.11.64.514
+ definitions=2022-04-20_05,2022-04-20_01,2022-02-23_01
+X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-> >Just still grab the 16 bytes, we don't care about addr3 for passthrough.
-> >Should be no changes required there.
-> I was thinking of uring-cmd in general, but then also it does not seem
-> to collide with xattr. Got your point.
-> Measure was removing 8b "result" field from passthru-cmd, since 32b CQE
-> makes that part useless, and we are adding new opcode in nvme
-> anyway. Maybe we should still reduce passthu-cmd to 64b (rather than 72),
-> not very sure.
-Correction above: reduce passthru-cmd to 72b (rather than 80b).
+This adds the large CQE support for io-uring. Large CQE's are 16 bytes lo=
+nger.
+To support the longer CQE's the allocation part is changed and when the C=
+QE is
+accessed.
+
+The allocation of the large CQE's is twice as big, so the allocation size=
+ is
+doubled. The ring size calculation needs to take this into account.
+
+All accesses to the large CQE's need to be shifted by 1 to take the bigge=
+r size
+of each CQE into account. The existing index manipulation does not need t=
+o be
+changed and can stay the same.
+
+The setup and the completion processing needs to take the new fields into
+account and initialize them. For the completion processing these fields n=
+eed
+to be passed through.
+
+The flush completion processing needs to fill the additional CQE32 fields=
+.
+
+The code for overflows needs to be adapted accordingly: the allocation ne=
+eds to
+take large CQE's into account. This means that the order of the fields in=
+ the io
+overflow structure needs to be changed and the allocation needs to be enl=
+arged
+for big CQE's.
+In addition the two new fields need to be copied for large CQE's.
+
+The new fields are added to the tracing statements, so the extra1 and ext=
+ra2
+fields are exposed in tracing. The new fields are also exposed in the /pr=
+oc
+filesystem entry.
+
+For testing purposes the extra1 and extra2 fields are used by the nop ope=
+ration.
 
 
+Testing:
 
--- 
-Joshi
+The exisiting tests have been run with the following configurations and t=
+hey all
+pass:
+
+- Default config
+- Large SQE
+- Large CQE
+- Large SQE and large CQE.
+
+In addition a new test has been added to liburing to verify that extra1 a=
+nd extra2
+are set as expected for the nop operation.
+
+Note:
+To use this patch also the corresponding changes to the client library
+liburing are required. A different patch series is sent out for this.
+
+
+Changes:
+  V2: - added support for CQE32 in the /proc filesystem entry output func=
+tion
+      - the definition of the io_uring_cqe_extra field has been changed
+        to avoid warning with the /proc changes.
+
+
+Stefan Roesch (12):
+  io_uring: support CQE32 in io_uring_cqe
+  io_uring: wire up inline completion path for CQE32
+  io_uring: change ring size calculation for CQE32
+  io_uring: add CQE32 setup processing
+  io_uring: add CQE32 completion processing
+  io_uring: modify io_get_cqe for CQE32
+  io_uring: flush completions for CQE32
+  io_uring: overflow processing for CQE32
+  io_uring: add tracing for additional CQE32 fields
+  io_uring: support CQE32 in /proc info
+  io_uring: enable CQE32
+  io_uring: support CQE32 for nop operation
+
+ fs/io_uring.c                   | 224 +++++++++++++++++++++++++++-----
+ include/trace/events/io_uring.h |  18 ++-
+ include/uapi/linux/io_uring.h   |  12 ++
+ 3 files changed, 220 insertions(+), 34 deletions(-)
+
+
+base-commit: fd1cf8f1947eb7b009eb79807ec8af0e920fc57b
+--=20
+2.30.2
+

@@ -2,58 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F1AD508630
-	for <lists+io-uring@lfdr.de>; Wed, 20 Apr 2022 12:41:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3AF3508621
+	for <lists+io-uring@lfdr.de>; Wed, 20 Apr 2022 12:40:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343901AbiDTKob (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 20 Apr 2022 06:44:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40058 "EHLO
+        id S1377756AbiDTKmw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 20 Apr 2022 06:42:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377808AbiDTKmt (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 20 Apr 2022 06:42:49 -0400
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFC4BDEA7
-        for <io-uring@vger.kernel.org>; Wed, 20 Apr 2022 03:40:02 -0700 (PDT)
-Received: by mail-pj1-x1029.google.com with SMTP id z5-20020a17090a468500b001d2bc2743c4so1656555pjf.0
-        for <io-uring@vger.kernel.org>; Wed, 20 Apr 2022 03:40:02 -0700 (PDT)
+        with ESMTP id S1377812AbiDTKmu (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 20 Apr 2022 06:42:50 -0400
+Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3FDEB848
+        for <io-uring@vger.kernel.org>; Wed, 20 Apr 2022 03:40:04 -0700 (PDT)
+Received: by mail-pf1-x433.google.com with SMTP id y14so781653pfe.10
+        for <io-uring@vger.kernel.org>; Wed, 20 Apr 2022 03:40:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=FxtI5k+4FlY7wsO+RizlTOwYvGHriaYOxdBtSjMIgEI=;
-        b=TEeDycnofZP4GRymi6wdBsMJJvMVjTaD2jemHUW5nsFNYfuPVUkS4CdJ5drHBcZCaZ
-         x7jH+GVxKMFN9xWWm0+j51gNXb86kPWjGy5/ilm4iQsHy8Lze8lhnWJq7gSa2qnat8zq
-         nh7rU4dt8VJnpmOEZ8wYf0kyYbZpvmd0F4qOo5dx55O1PN6tBdlxM31qlZcgtSpZfbt9
-         OJZm8e9+fjWVMoM5fhBfa6J1rfdrS4aUOFq8+LlyohShW3ncdKLvq8cWrO5xFyw5Z8X9
-         UDTgPaPKkBNUAcSf2lMBhpMFzR9ujfFP6kI+hbIVkw8AbKOGjREkh0ysjSgJsCAhjhYG
-         ENNA==
+        bh=WAR2cEsTH0pMy733egywQNadVUxS4Ux6jVfPlwGC8FY=;
+        b=S83+99ish14K8Icw76InJfdKqU+/RKMCi6yZRNl65eZev/4w+O3yXpGPhAGcNIA/QH
+         bwSz3AJwPEEpwowb9MCWvEBfH4HAMLfzcTT6YTvEjM8ZzqDlDbxAaZTFn7YgJvg41E1p
+         J9WK6YB6PANoImhTU09bfAc6E9KHGx+6MwuvZ3KQyyMeNGjyXkS3pFlzRS+TWPzLDE1V
+         1QaSczdQiUPcZuNF0jN0eJ3s0LeUWxDmu9qFb7xnnusWtrqt5Pj2Atv2eqZJPrlKs58i
+         fno8M0zy0IUuAOqmwgxoANSDOvsHc7SrEh8/vNfuK+qbzPIXldmRO2dP30yfDecoXzpw
+         DPFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=FxtI5k+4FlY7wsO+RizlTOwYvGHriaYOxdBtSjMIgEI=;
-        b=P9ibfT0RgB43KCn5LVvxGbAGSLQgA1TnPDDpvxL0/RPreiTmvTFCR00/dKTgfo09ZE
-         DB6Yg3UQbIpY9UZ1de3Un2hm+lAzN5+7ZjpSlCVshEapxhc7BgaTSXmg297biAj3tn3o
-         bT+hdK13Pd4DjFvHhiwG9Xer2AFA5RoQIL3OYjOsCIeBCQrAK5Rf2RVSixDbHy1LJ13V
-         zevzhIrxOQ8pyMAx0XKWyImQfJP9HGoLvo2psahvw6/fkZ74rDw4A5niFvqlLBjsVa1O
-         Yqf9alayk+te6VxoXHm0j6KIW0uY/ZxJbMg5ZNiBZfatL4AbdIslZakuMm3+YgGsVZoI
-         KKEg==
-X-Gm-Message-State: AOAM532+XNR6QWeh4+hBv7mo1ggb0gbaQgLlk91pq9MNfwH9UVxPMd4L
-        Dc0OmkpoRB2/0YM+GZt2BXPpqZOZ+vAKQQ==
-X-Google-Smtp-Source: ABdhPJyZRGA1G92y6pHfaFDUGv++PkQ/P30Pi0G7mkRBJ0x5JSET032HUvqscAv3Nq5U/0tHFOFarQ==
-X-Received: by 2002:a17:90b:4a85:b0:1d2:aee9:23ce with SMTP id lp5-20020a17090b4a8500b001d2aee923cemr3673611pjb.99.1650451202354;
-        Wed, 20 Apr 2022 03:40:02 -0700 (PDT)
+        bh=WAR2cEsTH0pMy733egywQNadVUxS4Ux6jVfPlwGC8FY=;
+        b=n55PA2girvjObfWH8ezsrI/wXVgpndSiSUrULIFsgWXRJ0EQZEV4cfOvydfJgjENTu
+         ni5pWAbKEE5jC8gf1og1NGEnOeyAaN7/hcsgQxfpyJNreiCslzWQqMJ35EtLqwUXddVm
+         m0jlwSy1B7Ml418qt7SmgsJD6zr9fjQAZV9k7F1lIWQKhsuZaX1QM3aNocey1Z0yzKQp
+         EgP31enVlhDyDZ9P9YCAa/LzYXJjBYrSu3rxV/POV3xfbBgdJyaN3rCyVUPhn/KIYsct
+         prq1jUnqHI1XwDCGyUsbyHWS1I8kxP4grj7Qz6Z9IgKqV1cxlg1c70ILsiuPbkVeHWN9
+         gaWQ==
+X-Gm-Message-State: AOAM5306bdP5bvPaoPGSW9HKl/vpbG2aP4wLZJTtpowJTMLfROROvCLt
+        SHVUM2gnKvvR/A/3frBLhWHJN6RKSARDug==
+X-Google-Smtp-Source: ABdhPJyppJ+FR7EK79W+Vqgnez0vJPbLkaS+ZReXAUEDrg+x7KhHk7bwUK0jYLed+C/34PAmmIVOIQ==
+X-Received: by 2002:a63:981a:0:b0:398:49ba:a65e with SMTP id q26-20020a63981a000000b0039849baa65emr18857953pgd.231.1650451204087;
+        Wed, 20 Apr 2022 03:40:04 -0700 (PDT)
 Received: from HOWEYXU-MB0.tencent.com ([106.53.4.151])
-        by smtp.gmail.com with ESMTPSA id y16-20020a63b510000000b00398d8b19bbfsm19491670pge.23.2022.04.20.03.40.00
+        by smtp.gmail.com with ESMTPSA id y16-20020a63b510000000b00398d8b19bbfsm19491670pge.23.2022.04.20.03.40.02
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Apr 2022 03:40:02 -0700 (PDT)
+        Wed, 20 Apr 2022 03:40:03 -0700 (PDT)
 From:   Hao Xu <haoxu.linux@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>,
         Pavel Begunkov <asml.silence@gmail.com>
-Subject: [PATCH 3/9] io-wq: add infra data structure for fixed workers
-Date:   Wed, 20 Apr 2022 18:39:54 +0800
-Message-Id: <20220420104000.23214-4-haoxu.linux@gmail.com>
+Subject: [PATCH 4/9] io-wq: tweak io_get_acct()
+Date:   Wed, 20 Apr 2022 18:39:55 +0800
+Message-Id: <20220420104000.23214-5-haoxu.linux@gmail.com>
 X-Mailer: git-send-email 2.36.0
 In-Reply-To: <20220420104000.23214-1-haoxu.linux@gmail.com>
 References: <20220420104000.23214-1-haoxu.linux@gmail.com>
@@ -71,171 +71,55 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 From: Hao Xu <howeyxu@tencent.com>
 
-Add data sttructure and basic initialization for fixed worker.
+Add an argument for io_get_acct() to indicate fixed or normal worker
 
 Signed-off-by: Hao Xu <howeyxu@tencent.com>
 ---
- fs/io-wq.c | 98 ++++++++++++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 87 insertions(+), 11 deletions(-)
+ fs/io-wq.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
 diff --git a/fs/io-wq.c b/fs/io-wq.c
-index e4f5575750f4..451b8fb389d1 100644
+index 451b8fb389d1..f1c9e7936988 100644
 --- a/fs/io-wq.c
 +++ b/fs/io-wq.c
-@@ -26,6 +26,7 @@ enum {
- 	IO_WORKER_F_RUNNING	= 2,	/* account as running */
- 	IO_WORKER_F_FREE	= 4,	/* worker on free list */
- 	IO_WORKER_F_BOUND	= 8,	/* is doing bounded work */
-+	IO_WORKER_F_FIXED	= 16,	/* is a fixed worker */
- 	IO_WORKER_F_EXIT	= 32,	/* worker is exiting */
- };
+@@ -208,20 +208,24 @@ static void io_worker_release(struct io_worker *worker)
+ 		complete(&worker->ref_done);
+ }
  
-@@ -37,6 +38,61 @@ enum {
- 	IO_ACCT_STALLED_BIT	= 0,	/* stalled on hash */
- };
- 
-+struct io_wqe_acct {
-+	/*
-+	 * union {
-+	 *	1) for normal worker
-+	 *	struct {
-+	 *		unsigned nr_workers;
-+	 *		unsigned max_workers;
-+	 *		struct io_wq_work_list work_list;
-+	 *	};
-+	 *	2) for fixed worker
-+	 *	struct {
-+	 *		unsigned nr_workers; // not meaningful
-+	 *		unsigned max_workers; // not meaningful
-+	 *		unsigned nr_fixed;
-+	 *		unsigned max_works;
-+	 *		struct io_worker **fixed_workers;
-+	 *	};
-+	 *	3) for fixed worker's private acct
-+	 *	struct {
-+	 *		unsigned nr_works;
-+	 *		unsigned max_works;
-+	 *		struct io_wq_work_list work_list;
-+	 *	};
-+	 *};
-+	 */
-+	union {
-+		unsigned nr_workers;
-+		unsigned nr_works;
-+	};
-+	unsigned max_workers;
-+	unsigned nr_fixed;
-+	unsigned max_works;
-+	union {
-+		struct io_wq_work_list work_list;
-+		struct io_worker **fixed_workers;
-+	};
-+	/*
-+	 * nr_running is not meaningful for fixed worker
-+	 * but still keep the same logic for it for the
-+	 * convinence for now. So do nr_workers and
-+	 * max_workers.
-+	 */
-+	atomic_t nr_running;
-+	/*
-+	 * For 1), it protects the work_list, the other two member nr_workers
-+	 * and max_workers are protected by wqe->lock.
-+	 * For 2), it protects nr_fixed, max_works, fixed_workers
-+	 * For 3), it protects nr_works, max_works and work_list.
-+	 */
-+	raw_spinlock_t lock;
-+	int index;
-+	unsigned long flags;
-+	bool fixed_worker_registered;
-+};
-+
- /*
-  * One for each thread in a wqe pool
-  */
-@@ -62,6 +118,8 @@ struct io_worker {
- 		struct rcu_head rcu;
- 		struct work_struct work;
- 	};
-+	int index;
-+	struct io_wqe_acct acct;
- };
- 
- #if BITS_PER_LONG == 64
-@@ -72,16 +130,6 @@ struct io_worker {
- 
- #define IO_WQ_NR_HASH_BUCKETS	(1u << IO_WQ_HASH_ORDER)
- 
--struct io_wqe_acct {
--	unsigned nr_workers;
--	unsigned max_workers;
--	int index;
--	atomic_t nr_running;
--	raw_spinlock_t lock;
--	struct io_wq_work_list work_list;
--	unsigned long flags;
--};
--
- enum {
- 	IO_WQ_ACCT_BOUND,
- 	IO_WQ_ACCT_UNBOUND,
-@@ -94,6 +142,7 @@ enum {
- struct io_wqe {
- 	raw_spinlock_t lock;
- 	struct io_wqe_acct acct[IO_WQ_ACCT_NR];
-+	struct io_wqe_acct fixed_acct[IO_WQ_ACCT_NR];
- 
- 	int node;
- 
-@@ -1205,6 +1254,31 @@ struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data)
- 			atomic_set(&acct->nr_running, 0);
- 			INIT_WQ_LIST(&acct->work_list);
- 			raw_spin_lock_init(&acct->lock);
-+
-+			acct = &wqe->fixed_acct[i];
-+			acct->index = i;
-+			INIT_WQ_LIST(&acct->work_list);
-+			raw_spin_lock_init(&acct->lock);
-+			/*
-+			 * nr_running for a fixed worker is meaningless
-+			 * for now, init it to 1 to wround around the
-+			 * io_wqe_dec_running logic
-+			 */
-+			atomic_set(&acct->nr_running, 1);
-+			/*
-+			 * max_workers for a fixed worker is meaningless
-+			 * for now, init it so since number of fixed workers
-+			 * should be controlled by users.
-+			 */
-+			acct->max_workers = task_rlimit(current, RLIMIT_NPROC);
-+			raw_spin_lock_init(&acct->lock);
-+			/*
-+			 * For fixed worker, not necessary
-+			 * but do it explicitly for clearity
-+			 */
-+			acct->nr_fixed = 0;
-+			acct->max_works = 0;
-+			acct->fixed_workers = NULL;
- 		}
- 		wqe->wq = wq;
- 		raw_spin_lock_init(&wqe->lock);
-@@ -1287,7 +1361,7 @@ static void io_wq_exit_workers(struct io_wq *wq)
- 
- static void io_wq_destroy(struct io_wq *wq)
+-static inline struct io_wqe_acct *io_get_acct(struct io_wqe *wqe, bool bound)
++static inline struct io_wqe_acct *io_get_acct(struct io_wqe *wqe, bool bound,
++					      bool fixed)
  {
--	int node;
-+	int i, node;
+-	return &wqe->acct[bound ? IO_WQ_ACCT_BOUND : IO_WQ_ACCT_UNBOUND];
++	unsigned index = bound ? IO_WQ_ACCT_BOUND : IO_WQ_ACCT_UNBOUND;
++
++	return fixed ? &wqe->fixed_acct[index] : &wqe->acct[index];
+ }
  
- 	cpuhp_state_remove_instance_nocalls(io_wq_online, &wq->cpuhp_node);
+ static inline struct io_wqe_acct *io_work_get_acct(struct io_wqe *wqe,
+ 						   struct io_wq_work *work)
+ {
+-	return io_get_acct(wqe, !(work->flags & IO_WQ_WORK_UNBOUND));
++	return io_get_acct(wqe, !(work->flags & IO_WQ_WORK_UNBOUND), false);
+ }
  
-@@ -1299,6 +1373,8 @@ static void io_wq_destroy(struct io_wq *wq)
- 		};
- 		io_wqe_cancel_pending_work(wqe, &match);
- 		free_cpumask_var(wqe->cpu_mask);
-+		for (i = 0; i < IO_WQ_ACCT_NR; i++)
-+			kfree(wqe->fixed_acct[i].fixed_workers);
- 		kfree(wqe);
- 	}
- 	io_wq_put_hash(wq->hash);
+ static inline struct io_wqe_acct *io_wqe_get_acct(struct io_worker *worker)
+ {
+-	return io_get_acct(worker->wqe, worker->flags & IO_WORKER_F_BOUND);
++	return io_get_acct(worker->wqe, worker->flags & IO_WORKER_F_BOUND,
++			   worker->flags & IO_WORKER_F_FIXED);
+ }
+ 
+ static void io_worker_ref_put(struct io_wq *wq)
+@@ -1124,7 +1128,7 @@ static void io_wqe_cancel_pending_work(struct io_wqe *wqe,
+ 	int i;
+ retry:
+ 	for (i = 0; i < IO_WQ_ACCT_NR; i++) {
+-		struct io_wqe_acct *acct = io_get_acct(wqe, i == 0);
++		struct io_wqe_acct *acct = io_get_acct(wqe, i == 0, false);
+ 
+ 		if (io_acct_cancel_pending_work(wqe, acct, match)) {
+ 			if (match->cancel_all)
 -- 
 2.36.0
 

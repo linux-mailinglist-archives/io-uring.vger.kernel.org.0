@@ -2,166 +2,106 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E30D2508560
-	for <lists+io-uring@lfdr.de>; Wed, 20 Apr 2022 12:01:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D7A2550861E
+	for <lists+io-uring@lfdr.de>; Wed, 20 Apr 2022 12:40:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377472AbiDTKDj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 20 Apr 2022 06:03:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37090 "EHLO
+        id S1352316AbiDTKmv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 20 Apr 2022 06:42:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377496AbiDTKDZ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 20 Apr 2022 06:03:25 -0400
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 533563F30E
-        for <io-uring@vger.kernel.org>; Wed, 20 Apr 2022 03:00:33 -0700 (PDT)
-Received: by mail-il1-f200.google.com with SMTP id q9-20020a056e02106900b002cbc8d479eeso615013ilj.1
-        for <io-uring@vger.kernel.org>; Wed, 20 Apr 2022 03:00:33 -0700 (PDT)
+        with ESMTP id S1377793AbiDTKmn (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 20 Apr 2022 06:42:43 -0400
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 641EBB848
+        for <io-uring@vger.kernel.org>; Wed, 20 Apr 2022 03:39:57 -0700 (PDT)
+Received: by mail-pl1-x630.google.com with SMTP id n18so1412661plg.5
+        for <io-uring@vger.kernel.org>; Wed, 20 Apr 2022 03:39:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uErnz2OB9JlX36dfUkPdexUmyQJfsb8t6dmzRETf+KQ=;
+        b=ADuUZwbDp4GtWOVTIvVTlxpANIViI7DvOikEqA1cJIcZpHjm5hmG+2RvRvma8OHnF9
+         sw4+rJRwcK609qbLG4KE9lDPCWxFlWxh/rCDtUJNN96FGOtFMIbdiWZ/Mv+Z+tY8XyKk
+         vhxVPgWhx2+2QCGQHYBlcr9McUClmQxurRz58vO0+HGe2dyX4gNN1KaOcHyX7fq/xDXT
+         UW9nl5E6NCnyfHIkVR+KL+NdC87FFfa70JxqsnH4KMmQtThj/MHGOXJVhtzVkkZLtePR
+         IWZn+D8DrCtY3vP2pkfD/LdyZwehnVwtyF3BypXrzdrOaSnQLI22gTbdVjjtqIHwaQ/T
+         lzgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=NuMJFaN/tuN5msi//LVAfmhcWDCzrafOzikhw8nF8H8=;
-        b=Smq60BgHqyd+OkIKwjBWvla8IW/4BCh21+rfPRD91otIe/in8d1GuOu2NW1xwWMS0Z
-         9xrtG+Z6WMHj+Fc5NANfqyUOlO4k8vt/k2VaTmU44h5+dKrTZystQ8mvyqDEMFevt5KH
-         3JG1LpDJSkOTl8tH5OOZLh5TseC4JLsYXOj0NKfeqLkubpijrptYy7jlg+vHut8MQYdO
-         15sCXTZuwxl6Jjc5noSrujUK1VF5nIsOWoD6nFlU6mWkGbvyWXbA8SVhwUWPLi70oR8H
-         ENbe01f+/Lr9NHm9lQM1Nm1rZmC1lg6htKLdOZpo7NEsiffw6CFwcd2HCfmrjb14MTAy
-         tIWg==
-X-Gm-Message-State: AOAM532828isfX5QtA1f8xckZOwPIR7wyKEnHwMimbTSVLF8QJzppO6t
-        v2TVf8Q1WIrvJD+vvQ1lEGxBuzu0jITVqpKFokHo9+luNKhV
-X-Google-Smtp-Source: ABdhPJwOvtnWn0yqKUpPHiJDtFrabRFJqwryKPHVhcMyAeURtE5+kBJLIwru1nJz/4alVuUrMf++ohg3rCiAPnCgUwndiPyonkTK
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uErnz2OB9JlX36dfUkPdexUmyQJfsb8t6dmzRETf+KQ=;
+        b=GW5bISiiZ6zQGi/e8q+TIQfHi5X/dKQRMpkbnhmkGg7+1mNZbXXVh2Zk34eGEMMzCb
+         zziRUj4ow/RqicOZXUwiVY1DeD4qIBaWXZa6+WIUC5Ubjvh8AWQwj7qwkdkh7ThjQrm5
+         XcKp3jag8y7xC5kQTwXcIJgWm2gAXWJzYqhpODS1d2FUwR2uRBqK2rUnhg+gFBz7/F1h
+         cb9s7gMhuP6Zn6Y7TFiceonfIGj3s/7SMfKKpq4O41RkF1yKEZ4VT0AhyB46ivvhz7TH
+         TuTggS12yUGXyFp20HwLtHuK9t+GB2y0rzUzG63aSSKgvjOrbh2kDAjepxo4zMeCt9Ik
+         U1Ow==
+X-Gm-Message-State: AOAM531vx+hmNCs+uepmiySkc47Z9m5FoqbLkD2YYoEc+yrU8CCfNuYs
+        y+MwyPp1QIXAb+TsVcAOTSQCrfP+0G6Dxg==
+X-Google-Smtp-Source: ABdhPJwoEEn79OkLkTtPMe5TWlScBXHtVDtZqYEQhNWHLc1RaIew6rxRQZjTF6pbPByA8ZUjo+ND9Q==
+X-Received: by 2002:a17:902:690b:b0:159:65c:9044 with SMTP id j11-20020a170902690b00b00159065c9044mr11883086plk.47.1650451196814;
+        Wed, 20 Apr 2022 03:39:56 -0700 (PDT)
+Received: from HOWEYXU-MB0.tencent.com ([106.53.4.151])
+        by smtp.gmail.com with ESMTPSA id y16-20020a63b510000000b00398d8b19bbfsm19491670pge.23.2022.04.20.03.39.55
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 20 Apr 2022 03:39:56 -0700 (PDT)
+From:   Hao Xu <haoxu.linux@gmail.com>
+To:     io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Subject: [RFC v2 0/9] fixed worker
+Date:   Wed, 20 Apr 2022 18:39:51 +0800
+Message-Id: <20220420104000.23214-1-haoxu.linux@gmail.com>
+X-Mailer: git-send-email 2.36.0
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:2e05:b0:657:28bd:ca2c with SMTP id
- o5-20020a0566022e0500b0065728bdca2cmr170391iow.210.1650448832554; Wed, 20 Apr
- 2022 03:00:32 -0700 (PDT)
-Date:   Wed, 20 Apr 2022 03:00:32 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000626ce805dd13108c@google.com>
-Subject: [syzbot] possible deadlock in io_disarm_next
-From:   syzbot <syzbot+57e67273f92d7f5f1931@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
+This is the second version of fixed worker implementation.
+Wrote a nop test program to test it, 3 fixed-workers VS 3 normal workers.
+normal workers:
+./run_nop_wqe.sh nop_wqe_normal 200000 100 3 1-3
+        time spent: 10464397 usecs      IOPS: 1911242
+        time spent: 9610976 usecs       IOPS: 2080954
+        time spent: 9807361 usecs       IOPS: 2039284
 
-syzbot found the following issue on:
+fixed workers:
+./run_nop_wqe.sh nop_wqe_fixed 200000 100 3 1-3
+        time spent: 17314274 usecs      IOPS: 1155116
+        time spent: 17016942 usecs      IOPS: 1175299
+        time spent: 17908684 usecs      IOPS: 1116776
 
-HEAD commit:    634de1db0e9b Add linux-next specific files for 20220419
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=10c92db8f00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bbd6f9b0a89865b0
-dashboard link: https://syzkaller.appspot.com/bug?extid=57e67273f92d7f5f1931
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10a02f68f00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=138e3008f00000
+About 2x improvement. From perf result, almost no acct->lock contension.
+Test program: https://github.com/HowHsu/liburing/tree/fixed_worker
+liburing/test/nop_wqe.c
 
-The issue was bisected to:
+Hao Xu (9):
+  io-wq: add a worker flag for individual exit
+  io-wq: change argument of create_io_worker() for convienence
+  io-wq: add infra data structure for fixed workers
+  io-wq: tweak io_get_acct()
+  io-wq: fixed worker initialization
+  io-wq: fixed worker exit
+  io-wq: implement fixed worker logic
+  io-wq: batch the handling of fixed worker private works
+  io_uring: add register fixed worker interface
 
-commit 78bfbdd1a4977df1dded20f9783a6ec174e67ef8
-Author: Pavel Begunkov <asml.silence@gmail.com>
-Date:   Fri Apr 15 21:08:23 2022 +0000
+ fs/io-wq.c                    | 457 ++++++++++++++++++++++++++++++----
+ fs/io-wq.h                    |   8 +
+ fs/io_uring.c                 |  71 ++++++
+ include/uapi/linux/io_uring.h |  11 +
+ 4 files changed, 498 insertions(+), 49 deletions(-)
 
-    io_uring: kill io_put_req_deferred()
+-- 
+2.36.0
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13039c0cf00000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=10839c0cf00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=17039c0cf00000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+57e67273f92d7f5f1931@syzkaller.appspotmail.com
-Fixes: 78bfbdd1a497 ("io_uring: kill io_put_req_deferred()")
-
-============================================
-WARNING: possible recursive locking detected
-5.18.0-rc3-next-20220419-syzkaller #0 Not tainted
---------------------------------------------
-syz-executor162/3588 is trying to acquire lock:
-ffff888011a453d8 (&ctx->timeout_lock){....}-{2:2}, at: spin_lock_irq include/linux/spinlock.h:379 [inline]
-ffff888011a453d8 (&ctx->timeout_lock){....}-{2:2}, at: io_disarm_next+0x545/0xaa0 fs/io_uring.c:2452
-
-but task is already holding lock:
-ffff888011a453d8 (&ctx->timeout_lock){....}-{2:2}, at: spin_lock_irq include/linux/spinlock.h:379 [inline]
-ffff888011a453d8 (&ctx->timeout_lock){....}-{2:2}, at: io_kill_timeouts+0x4c/0x227 fs/io_uring.c:10432
-
-other info that might help us debug this:
- Possible unsafe locking scenario:
-
-       CPU0
-       ----
-  lock(&ctx->timeout_lock);
-  lock(&ctx->timeout_lock);
-
- *** DEADLOCK ***
-
- May be due to missing lock nesting notation
-
-2 locks held by syz-executor162/3588:
- #0: ffff888011a45398 (&ctx->completion_lock){+.+.}-{2:2}, at: spin_lock include/linux/spinlock.h:354 [inline]
- #0: ffff888011a45398 (&ctx->completion_lock){+.+.}-{2:2}, at: io_kill_timeouts+0x38/0x227 fs/io_uring.c:10431
- #1: ffff888011a453d8 (&ctx->timeout_lock){....}-{2:2}, at: spin_lock_irq include/linux/spinlock.h:379 [inline]
- #1: ffff888011a453d8 (&ctx->timeout_lock){....}-{2:2}, at: io_kill_timeouts+0x4c/0x227 fs/io_uring.c:10432
-
-stack backtrace:
-CPU: 1 PID: 3588 Comm: syz-executor162 Not tainted 5.18.0-rc3-next-20220419-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:106
- print_deadlock_bug kernel/locking/lockdep.c:2988 [inline]
- check_deadlock kernel/locking/lockdep.c:3031 [inline]
- validate_chain kernel/locking/lockdep.c:3816 [inline]
- __lock_acquire.cold+0x1f5/0x3b4 kernel/locking/lockdep.c:5053
- lock_acquire kernel/locking/lockdep.c:5665 [inline]
- lock_acquire+0x1ab/0x570 kernel/locking/lockdep.c:5630
- __raw_spin_lock_irq include/linux/spinlock_api_smp.h:119 [inline]
- _raw_spin_lock_irq+0x32/0x50 kernel/locking/spinlock.c:170
- spin_lock_irq include/linux/spinlock.h:379 [inline]
- io_disarm_next+0x545/0xaa0 fs/io_uring.c:2452
- __io_req_complete_post+0x794/0xd90 fs/io_uring.c:2200
- io_kill_timeout fs/io_uring.c:1815 [inline]
- io_kill_timeout+0x210/0x21d fs/io_uring.c:1803
- io_kill_timeouts+0xe2/0x227 fs/io_uring.c:10435
- io_ring_ctx_wait_and_kill+0x1eb/0x360 fs/io_uring.c:10462
- io_uring_release+0x42/0x46 fs/io_uring.c:10483
- __fput+0x277/0x9d0 fs/file_table.c:317
- task_work_run+0xdd/0x1a0 kernel/task_work.c:164
- exit_task_work include/linux/task_work.h:37 [inline]
- do_exit+0xaff/0x2a00 kernel/exit.c:796
- do_group_exit+0xd2/0x2f0 kernel/exit.c:926
- __do_sys_exit_group kernel/exit.c:937 [inline]
- __se_sys_exit_group kernel/exit.c:935 [inline]
- __x64_sys_exit_group+0x3a/0x50 kernel/exit.c:935
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-RIP: 0033:0x7f786cb8ccb9
-Code: Unable to access opcode bytes at RIP 0x7f786cb8cc8f.
-RSP: 002b:00007ffcf6b5b088 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 00007f786cc01350 RCX: 00007f786cb8ccb9
-RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffffffffffffffc0 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f786cc01350
-R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000001
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches

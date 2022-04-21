@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C58925094AD
-	for <lists+io-uring@lfdr.de>; Thu, 21 Apr 2022 03:39:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EC645094AA
+	for <lists+io-uring@lfdr.de>; Thu, 21 Apr 2022 03:39:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1383653AbiDUBmh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 20 Apr 2022 21:42:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58800 "EHLO
+        id S231248AbiDUBmg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 20 Apr 2022 21:42:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58816 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1383655AbiDUBm3 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 20 Apr 2022 21:42:29 -0400
-Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 318E015803
-        for <io-uring@vger.kernel.org>; Wed, 20 Apr 2022 18:39:42 -0700 (PDT)
-Received: by mail-pj1-x1035.google.com with SMTP id m14-20020a17090a34ce00b001d5fe250e23so423917pjf.3
-        for <io-uring@vger.kernel.org>; Wed, 20 Apr 2022 18:39:42 -0700 (PDT)
+        with ESMTP id S1383657AbiDUBma (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 20 Apr 2022 21:42:30 -0400
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3638D1573F
+        for <io-uring@vger.kernel.org>; Wed, 20 Apr 2022 18:39:43 -0700 (PDT)
+Received: by mail-pl1-x62d.google.com with SMTP id n18so3424259plg.5
+        for <io-uring@vger.kernel.org>; Wed, 20 Apr 2022 18:39:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=wS4trcaEUQWL3t8wO2Pnm8spD5DYBeNtEulm2wwW7zw=;
-        b=wIzvKvWq/P7XzIRsyF21Y1BnWgW1BGo8cK/UQJSyUxF2K+icxBy6uS/VoEOrPgeWZo
-         0JcCtKN2jeoCESgyTqUWpLpKkcrW4fHR0+6YdOvPckciyTNCBrEXVjU2Vl0bff0cwWDc
-         ZCEamNX+Kcum88XdjRAMUHqonswLOyteLFAwS8t8NMCnNYNnrWhJ5PWlIei6ld4EOsmL
-         PS8OpRANsATwsj+2mOZBFpqnNpDTzumQFRGMMM3jcQNrNXYnLt9RtYH8w3BqJLKem07U
-         VHwvZID09hluriM1C1m2Mr//nsoYnobb/w+pya9qKErZsSLkkFYOPQ8qQdKfcAU946Ri
-         LeUg==
+        bh=sE6MbuGzDdOmszMq7QI+E6tmyTZCupPhHYbF+23tiLc=;
+        b=SGfz/0h/ihfU7lFbzLbQbrADMLuoJ1rH1czYowCBHK4OgSxmC/Ex8zDD6krLus3SYj
+         5lfBVirGc2AF4m/jv3f9rZcv6MA56VoryxBuHyZYjZFsdRArYzCoiEG7+WeQgXGWmlBT
+         cpR1BFBsNSVSgv5jnOq6vVnghjkexHSawGFqiQ7chUNvVK3gQxousncLJ8IOko2mf4xz
+         UaM8M/Aq6SKYaZH0aA8NHCavP5nmK5LN1q9UuljkxDWr/eis00TR4EV8NfJjnEGbQYba
+         lZBsy8ovBACfa01k4H5GZ7vbwTopiRnE8W5+07l/RrSnc2y9fevO38+a/SWIGZP4OHMu
+         ZgKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=wS4trcaEUQWL3t8wO2Pnm8spD5DYBeNtEulm2wwW7zw=;
-        b=L0lIFqg1Gbl/53LZoTIN28+2aG+SUA09TW4ViE+oOo15imwFk05YY/oAKkMj4QKrkr
-         GXXusStJVJSv3at9oTGi4SgBYdMq9S4NBmMbVja8j/mastxasoJ9iJzKrT0OHBortdeN
-         9P/50z3Dbu0BQtBrzoJrLrFqwY1+yZRtIwFTnBR8q0CxusuQEy4WfeLmIgupt5wuL+Fo
-         mAOeLiKYeWd4hQBxciqJ5FYnjK/62f9nijr507vRRBuH8P9R8yOjQX4FgytRHUz4ByVK
-         hOezJPTQNpzZuJcWF5I5uf6Aug3X24K+b7I9Vjl/kv1mdJ9H2eRtFg2gjJ9kFkXdNF/K
-         Yn+A==
-X-Gm-Message-State: AOAM533WwEqNEOT6pSfbRVwZyk4oSQY3T92xiXdFY3NM6ff/Kcu1sOcX
-        FaoyBr0NSnGP5qRXhXuDsToeUVwVsCDjSM/2
-X-Google-Smtp-Source: ABdhPJyRdyFi+15H5UPk+Y8utNQo/Wbrtd9r40pEsckfNwLmFFjSq47UHtAnCKxdvo8nh21pghgr7w==
-X-Received: by 2002:a17:90a:ec09:b0:1d5:dd77:d050 with SMTP id l9-20020a17090aec0900b001d5dd77d050mr1144131pjy.53.1650505181475;
-        Wed, 20 Apr 2022 18:39:41 -0700 (PDT)
+        bh=sE6MbuGzDdOmszMq7QI+E6tmyTZCupPhHYbF+23tiLc=;
+        b=TC5z72Lo6SXtE6R+G9AtWqY6RqPETcVvHErHK2wK+amYqXrDSsnf4UxNpXd3pGqYI4
+         4hjUHav0+HBW8+9XbWuzkCzVw2Tve2+mY0bxVgKyPlIaDcg/JdP1RwL27OjHNrkaTo0v
+         8WjNjiJFeiwZrQqnatZHGlXjEIbgUhuzlCYV/D1BLBlUqQ69GASFRIciW2Wc+PYAuWna
+         Gpz/tZySU6X0Vg0L+79XhEAS4LM+tb3+x2u3T4uBdb+DeU3Kxx0N0UV0XDz6l4nTUNxr
+         zbjctIguqQ44bVQVJ6m2bT2Y7vHeGvVjO7EihyKLGsL6+lfECp12IW8NO34T6p0B7O1i
+         7FpA==
+X-Gm-Message-State: AOAM531EWaUJh0tda6YUxDRlwLMG3hGvhVEi3+oZEQkKaWKYcuWJUcBl
+        l23NPYQBdQHA6s7a32q5Z6jdlelav7lB2ThY
+X-Google-Smtp-Source: ABdhPJykmmJdazCuqWOhqQvog2pbWF4c3MqHogutz0a5rqoWYL//76mKEv+T0jq4RAoWf/DgFIiaLQ==
+X-Received: by 2002:a17:90a:d082:b0:1ca:be58:c692 with SMTP id k2-20020a17090ad08200b001cabe58c692mr7670111pju.238.1650505182483;
+        Wed, 20 Apr 2022 18:39:42 -0700 (PDT)
 Received: from localhost.localdomain ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id x16-20020a17090ab01000b001cd4989ff4bsm460115pjq.18.2022.04.20.18.39.40
+        by smtp.gmail.com with ESMTPSA id x16-20020a17090ab01000b001cd4989ff4bsm460115pjq.18.2022.04.20.18.39.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Apr 2022 18:39:40 -0700 (PDT)
+        Wed, 20 Apr 2022 18:39:42 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 1/2] io_uring: support MSG_WAITALL for IORING_OP_SEND(MSG)
-Date:   Wed, 20 Apr 2022 19:39:36 -0600
-Message-Id: <20220421013937.697501-2-axboe@kernel.dk>
+Subject: [PATCH 2/2] io_uring: allow re-poll if we made progress
+Date:   Wed, 20 Apr 2022 19:39:37 -0600
+Message-Id: <20220421013937.697501-3-axboe@kernel.dk>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220421013937.697501-1-axboe@kernel.dk>
 References: <20220421013937.697501-1-axboe@kernel.dk>
@@ -68,104 +68,49 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Like commit 7ba89d2af17a for recv/recvmsg, support MSG_WAITALL for the
-send side. If this flag is set and we do a short send, retry for a
-stream of seqpacket socket.
+We currently check REQ_F_POLLED before arming async poll for a
+notification to retry. If it's set, then we don't allow poll and will
+punt to io-wq instead. This is done to prevent a situation where a buggy
+driver will repeatedly return that there's space/data available yet we
+get -EAGAIN.
+
+However, if we already transferred data, then it should be safe to rely
+on poll again. Gate the check on whether or not REQ_F_PARTIAL_IO is
+also set.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/io_uring.c | 36 +++++++++++++++++++++++++++++-------
- 1 file changed, 29 insertions(+), 7 deletions(-)
+ fs/io_uring.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 7e1d5243bbbc..f06c6fed540b 100644
+index f06c6fed540b..6a4460cad9c0 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -5232,6 +5232,13 @@ static int io_sync_file_range(struct io_kiocb *req, unsigned int issue_flags)
- }
+@@ -6263,7 +6263,9 @@ static int io_arm_poll_handler(struct io_kiocb *req, unsigned issue_flags)
  
- #if defined(CONFIG_NET)
-+static bool io_net_retry(struct socket *sock, int flags)
-+{
-+	if (!(flags & MSG_WAITALL))
-+		return false;
-+	return sock->type == SOCK_STREAM || sock->type == SOCK_SEQPACKET;
-+}
-+
- static int io_setup_async_msg(struct io_kiocb *req,
- 			      struct io_async_msghdr *kmsg)
- {
-@@ -5290,12 +5297,14 @@ static int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	if (req->ctx->compat)
- 		sr->msg_flags |= MSG_CMSG_COMPAT;
- #endif
-+	sr->done_io = 0;
- 	return 0;
- }
+ 	if (!def->pollin && !def->pollout)
+ 		return IO_APOLL_ABORTED;
+-	if (!file_can_poll(req->file) || (req->flags & REQ_F_POLLED))
++	if (!file_can_poll(req->file))
++		return IO_APOLL_ABORTED;
++	if ((req->flags & (REQ_F_POLLED|REQ_F_PARTIAL_IO)) == REQ_F_POLLED)
+ 		return IO_APOLL_ABORTED;
  
- static int io_sendmsg(struct io_kiocb *req, unsigned int issue_flags)
- {
- 	struct io_async_msghdr iomsg, *kmsg;
-+	struct io_sr_msg *sr = &req->sr_msg;
- 	struct socket *sock;
- 	unsigned flags;
- 	int min_ret = 0;
-@@ -5327,12 +5336,21 @@ static int io_sendmsg(struct io_kiocb *req, unsigned int issue_flags)
- 			return io_setup_async_msg(req, kmsg);
- 		if (ret == -ERESTARTSYS)
- 			ret = -EINTR;
-+		if (ret > 0 && io_net_retry(sock, flags)) {
-+			sr->done_io += ret;
-+			req->flags |= REQ_F_PARTIAL_IO;
-+			return io_setup_async_msg(req, kmsg);
-+		}
- 		req_set_fail(req);
+ 	if (def->pollin) {
+@@ -6278,8 +6280,10 @@ static int io_arm_poll_handler(struct io_kiocb *req, unsigned issue_flags)
  	}
- 	/* fast path, check for non-NULL to avoid function call */
- 	if (kmsg->free_iov)
- 		kfree(kmsg->free_iov);
- 	req->flags &= ~REQ_F_NEED_CLEANUP;
-+	if (ret >= 0)
-+		ret += sr->done_io;
-+	else if (sr->done_io)
-+		ret = sr->done_io;
- 	__io_req_complete(req, issue_flags, ret, 0);
- 	return 0;
- }
-@@ -5373,8 +5391,19 @@ static int io_send(struct io_kiocb *req, unsigned int issue_flags)
- 			return -EAGAIN;
- 		if (ret == -ERESTARTSYS)
- 			ret = -EINTR;
-+		if (ret > 0 && io_net_retry(sock, flags)) {
-+			sr->len -= ret;
-+			sr->buf += ret;
-+			sr->done_io += ret;
-+			req->flags |= REQ_F_PARTIAL_IO;
-+			return -EAGAIN;
-+		}
- 		req_set_fail(req);
- 	}
-+	if (ret >= 0)
-+		ret += sr->done_io;
-+	else if (sr->done_io)
-+		ret = sr->done_io;
- 	__io_req_complete(req, issue_flags, ret, 0);
- 	return 0;
- }
-@@ -5506,13 +5535,6 @@ static int io_recvmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	return 0;
- }
- 
--static bool io_net_retry(struct socket *sock, int flags)
--{
--	if (!(flags & MSG_WAITALL))
--		return false;
--	return sock->type == SOCK_STREAM || sock->type == SOCK_SEQPACKET;
--}
--
- static int io_recvmsg(struct io_kiocb *req, unsigned int issue_flags)
- {
- 	struct io_async_msghdr iomsg, *kmsg;
+ 	if (def->poll_exclusive)
+ 		mask |= EPOLLEXCLUSIVE;
+-	if (!(issue_flags & IO_URING_F_UNLOCKED) &&
+-	    !list_empty(&ctx->apoll_cache)) {
++	if (req->flags & REQ_F_POLLED) {
++		apoll = req->apoll;
++	} else if (!(issue_flags & IO_URING_F_UNLOCKED) &&
++		   !list_empty(&ctx->apoll_cache)) {
+ 		apoll = list_first_entry(&ctx->apoll_cache, struct async_poll,
+ 						poll.wait.entry);
+ 		list_del_init(&apoll->poll.wait.entry);
 -- 
 2.35.1
 

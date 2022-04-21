@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BAE150A10E
-	for <lists+io-uring@lfdr.de>; Thu, 21 Apr 2022 15:45:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E42AC50A110
+	for <lists+io-uring@lfdr.de>; Thu, 21 Apr 2022 15:45:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354829AbiDUNsD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 21 Apr 2022 09:48:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58724 "EHLO
+        id S1386729AbiDUNsG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 21 Apr 2022 09:48:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58746 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1386686AbiDUNsC (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 21 Apr 2022 09:48:02 -0400
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0C73B1C3
-        for <io-uring@vger.kernel.org>; Thu, 21 Apr 2022 06:45:12 -0700 (PDT)
-Received: by mail-wm1-x332.google.com with SMTP id l62-20020a1c2541000000b0038e4570af2fso3432236wml.5
-        for <io-uring@vger.kernel.org>; Thu, 21 Apr 2022 06:45:12 -0700 (PDT)
+        with ESMTP id S1386691AbiDUNsD (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 21 Apr 2022 09:48:03 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C95FAE6C
+        for <io-uring@vger.kernel.org>; Thu, 21 Apr 2022 06:45:13 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id bg25so2527020wmb.4
+        for <io-uring@vger.kernel.org>; Thu, 21 Apr 2022 06:45:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=KEvqRy0N9PclazQqew6MevxkU4I4mKDIT57s+2Dre5A=;
-        b=kp0V/sM4Ip142L3rdZ3bIWaFuG76xsRy/vQE0St/pkES9Dp3qFdm3virATzuJNcY/R
-         dLRqpDtNfR3SH07vqrV9ghuaUoDimDwpS8AhdL1EM9yZZU9+28YV/dC3ekri8CXbEIDu
-         NAZnqDpcMwq/Ea14ipoAZNp2Mrls8EI+sL7IbXxLXCdfTDVI9d5r95tlpNEAp+hxJyW8
-         at9IKavVGD4x/7sAEEHquV54ZlGwEcUWp42AlZz7684CXndSL94ReOwW+457sezq4AYZ
-         267e7C8jedda3LejM53ufXnPY2OwKqMftgye5/u1dwrbvyZKkl07m8tnu6SMuD0BtAU6
-         HSew==
+        bh=iwf7B/JoObKukmaAm7gltrLYGrS6GCfPNu+o9swiNC0=;
+        b=MofLb1xS4gd/3a/vyjdEDkC3T5v8FNu3+c0rPDkSTDqcB/IHhVcociPazVYbynn8gi
+         4O4H4wKyvC5woL6WzNe0Pma5Qr/BiDGGjjkuKUEwdrB4/DEpbJAO7av1KxJkrS51exqe
+         tKYoUZvHU3hI0f9A3L8NyogV/1Kmah5Rjoi/Zrm0HQgA2nUm3yW/iv6SjQ9HRPZefwm9
+         uo5fPOHD6SQ5+/Mpx5S2TaXJ3LdH8LP5xfgCWGzI9v8edqPIm03EPzREROmtKpiTxoYp
+         MVM2Vs8NF7sqNMA3hYS9KUv/BFq/KSl8saadun+nZMehAYCtf2V2IbYEyYlNKcrwbfN2
+         0ACw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=KEvqRy0N9PclazQqew6MevxkU4I4mKDIT57s+2Dre5A=;
-        b=sZlomqtEr3IhOURD+BvXl0in2YUgWtK+uEmrDlISUUMd/Buz4z4LYfVdEEyZwdKWBg
-         4KDPn0JA1NmhwWpV5/UyicbMkKdDxsNCsEnr2I6eBRQJXJHI6q1pK5iG0Nn+shU150Hf
-         DGILBPkQcUK1cAVNG9+ACAzh75GulxD32PzBX92UBIVmC16NUOoxYHerUh0lFW8hCMak
-         sYiJdYcKBbu3Lmm5wd560zyoFSKAsRl8vHhWh49MV4Hf2P7rdW7v2jZOnpUmWWVRYEuT
-         B3S3xcoHT++A7w+Mc33FsuMg299q5TA2mqQYbnSfeaF0V5uHTAAgkD1Atj4s2Q92Ebbe
-         SCmw==
-X-Gm-Message-State: AOAM5334S2W6+M+78yxoXUZuio4E5d6t/tsHKgTg3bXQZ9tczL7YOvMV
-        6tSHxWx4Fv12+VXVmFVipBKHl55VhRU=
-X-Google-Smtp-Source: ABdhPJx1MyNAemEzqgjjRapYesHeLeZ3QFpePFz/bs4lX4OU/gMJvKSNrSuHpiL05eEFeCIK2MTr9g==
-X-Received: by 2002:a05:600c:211:b0:38e:d0f2:8a3f with SMTP id 17-20020a05600c021100b0038ed0f28a3fmr8834148wmi.8.1650548711070;
+        bh=iwf7B/JoObKukmaAm7gltrLYGrS6GCfPNu+o9swiNC0=;
+        b=ky4mdLCN585aVbnMrT/WbQ5YYt5qaGcb4NCHZkadb9TRbKzmpaBIsuwyLp5cutZFz6
+         BG0Vikl5J7Sn+3DNkEEeZ4c2rThz8uUY2RRjIoPa3yHvB+eqpPsTEP5xTjMr3Kgx1baY
+         hLUyPT9z7z276araBfP9hqH2rYfX1a2CtZCBGyPLg87khdBt5hPoZpF281Imw2+7yiXX
+         x9yzKTaVmuK5eUlBa2zyVoLF+CqG6Ewy/RFQrLQPjUsUXpqVi78X261JXOSbR1wRE4ja
+         4XF43uKWYGDr+rAc0jMyRY2osmPQDcRbnMv9mloiWSF8YlTCXmaKNNcocIBthxJZCB8a
+         TqUQ==
+X-Gm-Message-State: AOAM532zoOodOjUzuvtdE1e5t+vVlPXpKOEkVm7r8DjmVpK0w1DgqDLt
+        WZG96VN/gBj1TQG9AE3xOl2GAjQbPkQ=
+X-Google-Smtp-Source: ABdhPJxR/22gW7liJGIe4s2okqxNdsah+az48ygUQxb8tbOgDfhOR+eF2G3cSNj34FUwL3j//MMbyg==
+X-Received: by 2002:a05:600c:4e87:b0:38e:ada5:5c6f with SMTP id f7-20020a05600c4e8700b0038eada55c6fmr8546158wmq.21.1650548711961;
         Thu, 21 Apr 2022 06:45:11 -0700 (PDT)
 Received: from 127.0.0.1localhost ([148.252.129.218])
-        by smtp.gmail.com with ESMTPSA id m7-20020adfe0c7000000b002060e7bbe49sm2837821wri.45.2022.04.21.06.45.10
+        by smtp.gmail.com with ESMTPSA id m7-20020adfe0c7000000b002060e7bbe49sm2837821wri.45.2022.04.21.06.45.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Apr 2022 06:45:10 -0700 (PDT)
+        Thu, 21 Apr 2022 06:45:11 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [RFC 03/11] io_uring: ban tw queue for exiting processes
-Date:   Thu, 21 Apr 2022 14:44:16 +0100
-Message-Id: <4c8fc40551c5b991fc6560cba2ffe37f47375a1e.1650548192.git.asml.silence@gmail.com>
+Subject: [RFC 04/11] io_uring: don't take ctx refs in tctx_task_work()
+Date:   Thu, 21 Apr 2022 14:44:17 +0100
+Message-Id: <92eb2d1f934ad16752cc3b764d8be75ca04d1ffe.1650548192.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.36.0
 In-Reply-To: <cover.1650548192.git.asml.silence@gmail.com>
 References: <cover.1650548192.git.asml.silence@gmail.com>
@@ -68,80 +68,46 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-We rely on PF_EXITING and task_work infrastructure for preventing adding
-new task_work items to a dying task, which is a bit more convoluted than
-desired.
-
-Ban new tw items earlier in io_uring_cancel_generic() by relying on
-->in_idle. io_req_task_work_add() will check the flag, set REQ_F_FAIL
-and push requests to the fallback path. task_work handlers will find it
-and cancel requests just as it was with PF_EXITING.
+Now we ban any new req-task_works to be added after we start the task
+cancellation. Because tctx is removed from ctx lists only during
+task cancellation, and considering that it's removed from the task
+context, we'll have current accounted in all rings tctx_task_work() is
+working with and so they will stay alive at least awhile it's running.
+Don't takes extra ctx refs.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ fs/io_uring.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 272a180ab7ee..ec5fe55ab265 100644
+index ec5fe55ab265..8d5aff1ecb4c 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -1306,7 +1306,7 @@ static inline void req_ref_get(struct io_kiocb *req)
- 
- static inline bool io_should_fail_tw(struct io_kiocb *req)
- {
--	return unlikely(req->task->flags & PF_EXITING);
-+	return unlikely(req->flags & REQ_F_FAIL);
+@@ -2475,7 +2475,6 @@ static void ctx_flush_and_put(struct io_ring_ctx *ctx, bool *locked)
+ 		mutex_unlock(&ctx->uring_lock);
+ 		*locked = false;
+ 	}
+-	percpu_ref_put(&ctx->refs);
  }
  
- static inline void io_submit_flush_completions(struct io_ring_ctx *ctx)
-@@ -2577,10 +2577,6 @@ static void tctx_task_work(struct callback_head *cb)
- 	}
- 
- 	ctx_flush_and_put(ctx, &uring_locked);
--
--	/* relaxed read is enough as only the task itself sets ->in_idle */
--	if (unlikely(atomic_read(&tctx->in_idle)))
--		io_uring_drop_tctx_refs(current);
- }
- 
- static void io_req_task_work_add(struct io_kiocb *req, bool priority)
-@@ -2600,6 +2596,9 @@ static void io_req_task_work_add(struct io_kiocb *req, bool priority)
- 	spin_lock_irqsave(&tctx->task_lock, flags);
- 	list = priority ? &tctx->prior_task_list : &tctx->task_list;
- 	wq_list_add_tail(&req->io_task_work.node, list);
-+	if (unlikely(atomic_read(&tctx->in_idle)))
-+		goto cancel_locked;
-+
- 	running = tctx->task_running;
- 	if (!running)
- 		tctx->task_running = true;
-@@ -2623,12 +2622,13 @@ static void io_req_task_work_add(struct io_kiocb *req, bool priority)
- 	}
- 
- 	spin_lock_irqsave(&tctx->task_lock, flags);
--	tctx->task_running = false;
-+cancel_locked:
- 	node = wq_list_merge(&tctx->prior_task_list, &tctx->task_list);
- 	spin_unlock_irqrestore(&tctx->task_lock, flags);
- 
- 	while (node) {
- 		req = container_of(node, struct io_kiocb, io_task_work.node);
-+		req_set_fail(req);
- 		node = node->next;
- 		if (llist_add(&req->io_task_work.fallback_node,
- 			      &req->ctx->fallback_llist))
-@@ -10352,7 +10352,10 @@ static __cold void io_uring_cancel_generic(bool cancel_all,
- 	if (tctx->io_wq)
- 		io_wq_exit_start(tctx->io_wq);
- 
-+	spin_lock_irq(&tctx->task_lock);
- 	atomic_inc(&tctx->in_idle);
-+	spin_unlock_irq(&tctx->task_lock);
-+
- 	do {
- 		io_uring_drop_tctx_refs(current);
- 		/* read completions before cancelations */
+ static inline void ctx_commit_and_unlock(struct io_ring_ctx *ctx)
+@@ -2506,7 +2505,6 @@ static void handle_prev_tw_list(struct io_wq_work_node *node,
+ 			*ctx = req->ctx;
+ 			/* if not contended, grab and improve batching */
+ 			*uring_locked = mutex_trylock(&(*ctx)->uring_lock);
+-			percpu_ref_get(&(*ctx)->refs);
+ 			if (unlikely(!*uring_locked))
+ 				spin_lock(&(*ctx)->completion_lock);
+ 		}
+@@ -2537,7 +2535,6 @@ static void handle_tw_list(struct io_wq_work_node *node,
+ 			*ctx = req->ctx;
+ 			/* if not contended, grab and improve batching */
+ 			*locked = mutex_trylock(&(*ctx)->uring_lock);
+-			percpu_ref_get(&(*ctx)->refs);
+ 		}
+ 		req->io_task_work.func(req, locked);
+ 		node = next;
 -- 
 2.36.0
 

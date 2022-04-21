@@ -2,104 +2,90 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 61121509EDD
-	for <lists+io-uring@lfdr.de>; Thu, 21 Apr 2022 13:44:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0849509FA1
+	for <lists+io-uring@lfdr.de>; Thu, 21 Apr 2022 14:28:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356721AbiDULrU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 21 Apr 2022 07:47:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37816 "EHLO
+        id S1354079AbiDUMb1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 21 Apr 2022 08:31:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231807AbiDULrT (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 21 Apr 2022 07:47:19 -0400
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6ABF2E082
-        for <io-uring@vger.kernel.org>; Thu, 21 Apr 2022 04:44:29 -0700 (PDT)
-Received: by mail-pj1-x102f.google.com with SMTP id n33-20020a17090a5aa400b001d28f5ee3f9so4944126pji.4
-        for <io-uring@vger.kernel.org>; Thu, 21 Apr 2022 04:44:29 -0700 (PDT)
+        with ESMTP id S1352588AbiDUMb0 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 21 Apr 2022 08:31:26 -0400
+Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4F7A30F5F
+        for <io-uring@vger.kernel.org>; Thu, 21 Apr 2022 05:28:35 -0700 (PDT)
+Received: by mail-pf1-x435.google.com with SMTP id x80so4898040pfc.1
+        for <io-uring@vger.kernel.org>; Thu, 21 Apr 2022 05:28:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:content-language:to:cc
-         :references:from:subject:in-reply-to:content-transfer-encoding;
-        bh=Cp5Up0LrSho0GDgkM58ffKNnMeqDgC1ngKbkriHUeDE=;
-        b=DCOasWnT/TubABiEGuyI0X+v+QATOqQorp/1q3AFJyrFhSOFII1DRR71QaumRx+F22
-         W6yAswj8ifjQ9xXU32ElNSRkuN79g2NjUM2k85dyJcbooxWjST6zVclLLArVy9ShMR+u
-         FMfyRh+swoFCFsjCCu2+V4DRhBKhIGpM2vSSK99wfvMMjIGMONCmv+7S3SqAjpiqT0cA
-         +4HASk1DIAQmDfCUOnnNjyqfP7KfoAkjHLwXewsGMKVfy4p3mngIO0yvHlBW/CnT40VL
-         +IyD9b7YDwMtpLjgLwNzxUTdfe/wmZAHak4oisJGULH+f1wDBStrugki9OmZOWNQPz8y
-         r5eQ==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=from:to:cc:in-reply-to:references:subject:message-id:date
+         :mime-version:content-transfer-encoding;
+        bh=G/vvqdJtFqhZushQhXNz602vz/+jNdTl3gFwEbfQ3C4=;
+        b=M6NOQhfTH+3QVIrWf9c1sNIzK82E4qY3D2hgekNfcWA0LXqp1gdiASEBNannqFY/EU
+         nMYty9NPjRKWlOI0KVNtmtnNom6gYiRPQ1rRw2CFycmfN+L5NBx4ZeqHfuVWm/r7DpZl
+         8c5wQ8hUkNUCcu5jfnMrJUhAOosV1ROREFI97mUNhcDquGsHV4d3gvaNtTQL6o2t8MX3
+         cHZKQ789lU6FZ6aS3rTcwv9J47+oMfh6fpIsVYG7Wf/vbdV7QfmGw9UlbDi7dAKW1hva
+         T7YPrvVWOMttaC4guHR4LW9QN1SWx5xTKjTCI9bzTYEtiCtt0ffyuGb35hmLXlw7ArV2
+         vAVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent
-         :content-language:to:cc:references:from:subject:in-reply-to
-         :content-transfer-encoding;
-        bh=Cp5Up0LrSho0GDgkM58ffKNnMeqDgC1ngKbkriHUeDE=;
-        b=knVbFEApbv3CnYx39Rt+wBAwDyB5ZFvQ7tl4kikUNh87KO6+LJ05TBbVMvbUNhEcDb
-         UtHLkKbSawzhHCLivjUi6dz3PgfH6S10wFRslryHTpAZoSVbk0z0bU0bt7BsKkyUX5O7
-         SHhSo+a5niCgw0Pe9kWyAh3a2tGc20HhCQBTkQXpupVSW/tNLRjVjtFMrn/ZugcvmoXg
-         HTItNhU89Newg7w5hrgoQckxqJ3fY55Vgcx8Jet2cJ39rfdiF0+r06txD7k0Zgeu9oCG
-         adhPnir7qV3akZwAfMFZAL9Nw1jJxMREm80ab+6Ix9IiaXzRrx2/bboYVNF2q4BqkT00
-         hXEQ==
-X-Gm-Message-State: AOAM531QaVwvxFoRvZYfEzEwVmw2eG+/p40ZnuL59MeKOrkm9W9zbKsy
-        +PLDVhYEWjsuXrIPffOT3WI=
-X-Google-Smtp-Source: ABdhPJwgjulZoDidtGIATXbgK3CaN+ZiGQFtY9e0gIflthwIqWRt2krPdE9pMYBNX50PoYTZshnqDg==
-X-Received: by 2002:a17:903:40ce:b0:158:8178:8563 with SMTP id t14-20020a17090340ce00b0015881788563mr24470764pld.167.1650541469220;
-        Thu, 21 Apr 2022 04:44:29 -0700 (PDT)
-Received: from [192.168.88.87] ([36.72.213.118])
-        by smtp.gmail.com with ESMTPSA id x71-20020a62864a000000b0050ad2c24a39sm3439780pfd.205.2022.04.21.04.44.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Apr 2022 04:44:28 -0700 (PDT)
-Message-ID: <b98c1c0c-fcc8-4c0a-86bd-e95f0c0ab25a@gmail.com>
-Date:   Thu, 21 Apr 2022 18:44:23 +0700
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
+         :message-id:date:mime-version:content-transfer-encoding;
+        bh=G/vvqdJtFqhZushQhXNz602vz/+jNdTl3gFwEbfQ3C4=;
+        b=B1iiJGBxr23yrmo85/PJN3H8qxIOAXGQwWbVJT0PYV5CsS5K4nDbiHW/qY50Xmvp8n
+         TgyfAhuuz+GI3CCJ9OzJ4AybMuZXzkJEUEcEUzQR6q8w/4zfCds+m755WxMis4ak7LiO
+         RGEqCM9VbUmYZQXCgGUuRSDoqBzv0l7TSRYDOMQ3aWglsNdLowGwSRF6U1rSA3fJElBM
+         rhKum0S1dLcPijPj8E8j5PvM1/tMepGk8Ug57FXV58DulcoTd75GqmKpIys6eqVzaPjr
+         +O8PeUmlCAWDt2ya5k+Tm6fHFvdJf1o6BDmmMfyaAsc2OyH9UdjPsYsUm7i9X+fWy2ej
+         8Bww==
+X-Gm-Message-State: AOAM532b7OXUwWsWbIBxNZQSTTPVHWTY8upSi4+jwy8cY3dE8dmvGL45
+        aSgzFodODM+KACNdb9QF0qAmvUCEXCaeoi+X
+X-Google-Smtp-Source: ABdhPJzaTaSUFbIsugM0YiTK+jHFkfdrbsH/4Mzd4L+IS4+/4PWzxuVSrtmVbAfglRZ618LEBrFenQ==
+X-Received: by 2002:a63:1141:0:b0:39c:b664:c508 with SMTP id 1-20020a631141000000b0039cb664c508mr24162407pgr.49.1650544115261;
+        Thu, 21 Apr 2022 05:28:35 -0700 (PDT)
+Received: from [127.0.1.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id pv7-20020a17090b3c8700b001cd4989ff43sm2787184pjb.10.2022.04.21.05.28.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Apr 2022 05:28:34 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     ammarfaizi2@gnuweeb.org
+Cc:     alviro.iskandar@gnuweeb.org, gwml@vger.gnuweeb.org,
+        io-uring@vger.kernel.org
+In-Reply-To: <20220421075205.98770-1-ammar.faizi@intel.com>
+References: <20220421075205.98770-1-ammar.faizi@intel.com>
+Subject: Re: [PATCH liburing] arch/x86/syscall: Remove TODO comment
+Message-Id: <165054411437.17122.17438818450360023359.b4-ty@kernel.dk>
+Date:   Thu, 21 Apr 2022 06:28:34 -0600
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Content-Language: en-US
-To:     Dylan Yudaken <dylany@fb.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring Mailing List <io-uring@vger.kernel.org>,
-        kernel-team@fb.com
-References: <20220421091427.2118151-1-dylany@fb.com>
- <20220421091427.2118151-6-dylany@fb.com>
-From:   Ammar Faizi <ammarfaizi2@gmail.com>
-Subject: Re: [PATCH liburing 5/5] overflow: add tests
-In-Reply-To: <20220421091427.2118151-6-dylany@fb.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,SPF_HELO_NONE,SPF_PASS
+        autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Level: *
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/21/22 4:14 PM, Dylan Yudaken wrote:
-> Add tests that verify that overflow conditions behave appropriately.
-> Specifically:
->   * if overflow is continually flushed, then CQEs should arrive mostly in
->   order to prevent starvation of some completions
->   * if CQEs are dropped due to GFP_ATOMIC allocation failures it is
->   possible to terminate cleanly. This is not tested by default as it
->   requires debug kernel config, and also has system-wide effects
+On Thu, 21 Apr 2022 14:52:30 +0700, Ammar Faizi wrote:
+> From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 > 
-> Signed-off-by: Dylan Yudaken <dylany@fb.com>
-> ---
+> nolibc support for x86 32-bit has been added in commit b7d8dd8bbf5b855
+> ("arch/x86/syscall: Add x86 32-bit native syscall support"). But I
+> forgot to remove the comment that says "We can't use CONFIG_NOLIBC for
+> x86 (32-bit)".
+> 
+> [...]
 
-Dylan, this breaks -Werror build with clang-15.
+Applied, thanks!
 
-```
-   cq-overflow.c:188:15: error: variable 'drop_count' set but not used [-Werror,-Wunused-but-set-variable]
-           unsigned int drop_count = 0;
-                        ^
-   1 error generated.
-   make[1]: *** [Makefile:210: cq-overflow.t] Error 1
-   make[1]: *** Waiting for unfinished jobs....
-```
+[1/1] arch/x86/syscall: Remove TODO comment
+      commit: 4ad972d6d1b16e4fb069fc2f006265942cf33103
 
-Maybe you miss something that you forgot to use the value of @drop_count?
-
+Best regards,
 -- 
-Ammar Faizi
+Jens Axboe
+
+

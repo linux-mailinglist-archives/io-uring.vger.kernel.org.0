@@ -2,64 +2,70 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F5E350A116
-	for <lists+io-uring@lfdr.de>; Thu, 21 Apr 2022 15:45:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C5B1A50A1F3
+	for <lists+io-uring@lfdr.de>; Thu, 21 Apr 2022 16:16:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1386713AbiDUNsM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 21 Apr 2022 09:48:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58844 "EHLO
+        id S1389085AbiDUOTW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 21 Apr 2022 10:19:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1386772AbiDUNsL (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 21 Apr 2022 09:48:11 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9480B1C3
-        for <io-uring@vger.kernel.org>; Thu, 21 Apr 2022 06:45:19 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id u17-20020a05600c211100b0038eaf4cdaaeso5932184wml.1
-        for <io-uring@vger.kernel.org>; Thu, 21 Apr 2022 06:45:19 -0700 (PDT)
+        with ESMTP id S1389099AbiDUOTU (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 21 Apr 2022 10:19:20 -0400
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B07A3BBD6
+        for <io-uring@vger.kernel.org>; Thu, 21 Apr 2022 07:16:30 -0700 (PDT)
+Received: by mail-pj1-x1036.google.com with SMTP id z5-20020a17090a468500b001d2bc2743c4so5341809pjf.0
+        for <io-uring@vger.kernel.org>; Thu, 21 Apr 2022 07:16:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=PB9POyQ9nWSEKrWVEnmzbo/vhTy+U8yHXmjsWbTC3Pg=;
-        b=bJR1T4iKBUWzAcbV9jfxsNhCZaxNmttS1R7gbNpcC8Y0x/VAnpfaMsJeJwTae9H78S
-         NPMNiTbw4s+bX7DPI5NgcDgTZptjzTTMPEWsOPIUH7fDuMQSnFAUbJF09AZUJgH6qIeP
-         Pt9srmxOaYLyrCW7okZ2bWUjhMw4GZMC4UxYYF/bSZOu4yoNo82xI1al6zWhFXJyLqWI
-         5Ryi95zEgW13iLd/T1eK7YGGz36NOEB7AlRvotyRvMYFvq3ofNrdo8z37jf534ofwQyn
-         uUvYWp+CKqL21HzTIPMq2igzFHbaRHAljOCVdlc97UJNxf9jHUARbWVGeFAPDDEOFq/h
-         r/Fg==
+        h=message-id:date:mime-version:user-agent:subject:to:cc:references
+         :from:in-reply-to:content-transfer-encoding;
+        bh=rhYRlMJdKbatlOGE9qE2j3pT+oa7XCZ+FesqjZZD180=;
+        b=E/lCbAmvgwuqZQL+YZzoIZftDhKM/oGvSDDe3bSwaT80j1ruxhPlSywB2J7/bDk8rq
+         2zGbEYi+JNnI3vy/qL5dsYHmEXv7McjpQhTAf7GGoXjP0NFxtKyEWg6BIezwTrVTU204
+         DXGH7XS9IqD2gCeVb+CUN2pRQvjI7T6Rbw01L8DzaPNy1Ak8hDlGRf10J2MHHvGnDHKK
+         W9yS0WvTK+vNlnNrUNmJ543gGosJZxnWmJz1yfHi9cL78Li/6wX+VrIzsrBHzIyWKnW4
+         4gzxjr0wnzGIjFsHK5fL29jmGWEWIc2hz+0iZJJlDTeqCHPR9BAjUBThk/aCzS09yarc
+         uC9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=PB9POyQ9nWSEKrWVEnmzbo/vhTy+U8yHXmjsWbTC3Pg=;
-        b=WvhHHIOd94mf+ZkUIG+c0TCVtDpwgSGlx93aqHp8ZaBSDd6G2qxlP2HrhdMHqxIgXh
-         QADCmwnujppyxK0fRSxoSzyDW3YkDmO6r9KOHUClAKN1heddEQ3ixUMHsoHvHN5vvj3X
-         lYvrabFboEGmUcxL3qbEOKsfcV13OC5SrGG2k3omcKmA/3s5xYrZsOVn8DwYhMqVeT+N
-         eJXxR695WpoJbaMwHPIHuaKs1mlhJfzlIpiwMFOCPDxEX57ESbmxQ8zn07EhtWuegeTd
-         3TbN8NcyxI5cla5+/GYinNujLfz2mLn/Gua2AcT3bg95wswSI3x3uuP8qYGEiQ99CMS4
-         Ej6Q==
-X-Gm-Message-State: AOAM531dHJPYvSiDd8iaTyf2ULaLomSXhcT8dz6BzCf74AUxDSN6IQU6
-        Vpa1ghp+Erwct8XIiJV/8zMdShihlTM=
-X-Google-Smtp-Source: ABdhPJwlH2RbKx43yo32E4poCNpid8Q0v1FsZGAXkbp+QAUabYKGPE23Vjo2ZvKS3QmsLtkJbIwaWw==
-X-Received: by 2002:a05:600c:3641:b0:38e:4b2f:330 with SMTP id y1-20020a05600c364100b0038e4b2f0330mr8780378wmq.180.1650548718208;
-        Thu, 21 Apr 2022 06:45:18 -0700 (PDT)
-Received: from 127.0.0.1localhost ([148.252.129.218])
-        by smtp.gmail.com with ESMTPSA id m7-20020adfe0c7000000b002060e7bbe49sm2837821wri.45.2022.04.21.06.45.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Apr 2022 06:45:17 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [RFC 11/11] io_uring: lock-free task_work stack
-Date:   Thu, 21 Apr 2022 14:44:24 +0100
-Message-Id: <c7c3d1a6d7a038f414658314eeeadbbd186c1435.1650548192.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.36.0
-In-Reply-To: <cover.1650548192.git.asml.silence@gmail.com>
-References: <cover.1650548192.git.asml.silence@gmail.com>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :to:cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=rhYRlMJdKbatlOGE9qE2j3pT+oa7XCZ+FesqjZZD180=;
+        b=atqDl91T5wSdhT+e0zNiXWQZSMX+FQwbinNL1Mh/6c9GZm4+bNie3KjfFZm5uWn8d+
+         6NNTGOhVOS+huL2Y7FwAOonfPxaNS0E8Af6XEDr7rJHgRlNVeh6ZirjO2bRr3p8mjvqh
+         DUPPWpkZHRP8HIFMXnptRL73InehrdaBzy3QO7t5h16ZYl5+YvidqEW7WpkJVK1tjZRi
+         yE38uTHfRWKqoiJlY5AopkFEGxr0/xIcnp/jLjv0PNT0JPtxYI3NtTeVa3Sz3+h3zZFs
+         EKeRlGxPbGGr2dsqsn7ltgg6/oOz2HCQCj3JKRUEOOmTIesjWDmRc6rcJ8xVC1i4op+6
+         6uHQ==
+X-Gm-Message-State: AOAM532krt8w7QxFG/n6k+wF66fKfnPufziuI8cI9hbsy46qJ+8Gm8R9
+        gbvsa8AvUhEMfSL+UJxIJrM=
+X-Google-Smtp-Source: ABdhPJyLaY6ozjJYTtr+w4xIMVmuDjxcxd7nCvacagjgGZwO18H95MiUoopmmiacg0steuDI42Px0w==
+X-Received: by 2002:a17:902:d543:b0:15a:4629:791b with SMTP id z3-20020a170902d54300b0015a4629791bmr4294409plf.40.1650550589895;
+        Thu, 21 Apr 2022 07:16:29 -0700 (PDT)
+Received: from [192.168.255.10] ([203.205.141.112])
+        by smtp.gmail.com with ESMTPSA id d16-20020a056a00245000b004f771b48736sm25458536pfj.194.2022.04.21.07.16.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Apr 2022 07:16:29 -0700 (PDT)
+Message-ID: <1ec0bd06-09bf-6f36-503e-46eb579d5736@gmail.com>
+Date:   Thu, 21 Apr 2022 22:16:35 +0800
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.8.1
+Subject: Re: [PATCH] io_uring: add io_uring_enter(2) fixed file support
+To:     Jens Axboe <axboe@kernel.dk>,
+        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
+        io-uring@vger.kernel.org
+Cc:     asml.silence@gmail.com
+References: <20220303052811.31470-1-xiaoguang.wang@linux.alibaba.com>
+ <4f197b0e-6066-b59e-aae0-2218e9c1b643@kernel.dk>
+ <528ce414-c0fe-3318-483a-f51aa8a407b9@kernel.dk>
+From:   Hao Xu <haoxu.linux@gmail.com>
+In-Reply-To: <528ce414-c0fe-3318-483a-f51aa8a407b9@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+X-Spam-Status: No, score=-5.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
         RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -68,246 +74,63 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Instead of keeping a list of task_work items keep them in a lock-free
-stack. However, we still would like to keep the ordering guarantees, so
-reverse the list upon execution in io_uring_task_work_run().
+Hi all,
 
-First, for each tw add it a spin_lock/unlock_irq() pair with a single
-cmpxchg(). Same on the execution side but per batch. And it also kills
-the final lock/unlock at the end of io_uring_task_work_run().
+在 3.3.22 下午10:36, Jens Axboe 写道:
+> On 3/3/22 6:38 AM, Jens Axboe wrote:
+>> On 3/2/22 10:28 PM, Xiaoguang Wang wrote:
+>>> IORING_REGISTER_FILES is a good feature to reduce fget/fput overhead for
+>>> each IO we do on file, but still left one, which is io_uring_enter(2).
+>>> In io_uring_enter(2), it still fget/fput io_ring fd. I have observed
+>>> this overhead in some our internal oroutine implementations based on
+>>> io_uring with low submit batch. To totally remove fget/fput overhead in
+>>> io_uring, we may add a small struct file cache in io_uring_task and add
+>>> a new IORING_ENTER_FIXED_FILE flag. Currently the capacity of this file
+>>> cache is 16, wihcih I think it maybe enough, also not that this cache is
+>>> per-thread.
+>> Would indeed be nice to get rid of, can be a substantial amount of time
+>> wasted in fdget/fdput. Does this resolve dependencies correctly if
+>> someone passes the ring fd? Adding ring registration to test/ring-leak.c
+>> from the liburing repo would be a useful exercise.
+> Seems to pass that fine, but I did miss on first read through that you
+> add that hook to files_cancel() which should break that dependency.
+>
+> Since I think this is a potentially big win for certain workloads, maybe
+> we should consider making this easier to use? I don't think we
+> necessarily need to tie this to the regular file registration. What if
+> we instead added a SETUP flag for this, and just return the internal
+> offset for that case? Then we don't need an enter flag, we don't need to
+> add register/unregister opcodes for it.
+[1]
+>
+> This does pose a problem when we fill the array. We can easily go beyond
+> 16 here, that's just an arbitrary limit, but at some point we do have to
+> handle the case where SETUP_REGISTERED (or whatever we call it) can't
+> get a slot. I think we just clear the flag and setup the fd normally in
+> that case. The user doesn't need to know, all the application needs to
+> are about is that it can use the passed back 'fd' to call the other
+> io_uring functions.
+>
+> The only potential oddity here is that the fd passed back is not a
+> legitimate fd. io_uring does support poll(2) on its file descriptor,
+[2]
+> so
+> that could cause some confusion even if I don't think anyone actually
+> does poll(2) on io_uring.
+>
+> What do you think?
 
-The main downside here is that we need to reverse the tw list on
-execution messing up with caches.
+Can we use something like a heap based on the registered_rings arrray so 
+that we can return the
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 120 +++++++++++++++++++++++---------------------------
- 1 file changed, 56 insertions(+), 64 deletions(-)
+real fd to the userspace meanwhilely. The disadvantage is the time cost 
+is O(lgn) for each fd
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 51b6ee2b70f2..97b5559bb660 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -506,10 +506,8 @@ struct io_uring_task {
- 	struct percpu_counter	inflight;
- 	atomic_t		in_idle;
- 
--	spinlock_t		task_lock;
--	struct io_wq_work_list	task_list;
-+	struct io_task_work	*task_list;
- 	struct file		**registered_rings;
--	bool			task_running;
- };
- 
- /*
-@@ -860,7 +858,7 @@ typedef void (*io_req_tw_func_t)(struct io_kiocb *req, bool *locked);
- 
- struct io_task_work {
- 	union {
--		struct io_wq_work_node	node;
-+		struct io_task_work	*next;
- 		struct llist_node	fallback_node;
- 	};
- 	io_req_tw_func_t		func;
-@@ -2482,15 +2480,29 @@ static inline void ctx_commit_and_unlock(struct io_ring_ctx *ctx)
- 	io_cqring_ev_posted(ctx);
- }
- 
--static void handle_tw_list(struct io_wq_work_node *node,
-+static struct io_task_work tw_work_exited; /* all we need is ->next == NULL */
-+
-+static void handle_tw_list(struct io_task_work *node,
- 			   struct io_ring_ctx **ctx, bool *locked)
- {
-+	struct io_task_work *next;
-+	struct io_task_work *prev = NULL;
-+
-+	/* reverse the list */
-+	while (node->next) {
-+		next = node->next;
-+		node->next = prev;
-+		prev = node;
-+		node = next;
-+	}
-+	node->next = prev;
-+
- 	do {
--		struct io_wq_work_node *next = node->next;
- 		struct io_kiocb *req = container_of(node, struct io_kiocb,
--						    io_task_work.node);
-+						    io_task_work);
- 
--		prefetch(container_of(next, struct io_kiocb, io_task_work.node));
-+		next = node->next;
-+		prefetch(container_of(next, struct io_kiocb, io_task_work));
- 
- 		if (req->ctx != *ctx) {
- 			ctx_flush_and_put(*ctx, locked);
-@@ -2511,25 +2523,27 @@ void io_uring_task_work_run(void)
- 
- 	if (!tctx)
- 		return;
-+	/*
-+	 * The poison is only assigned from the task context we're currently in.
-+	 * Nobody can set it while io_uring_task_work_run() is running
-+	 */
-+	if (READ_ONCE(tctx->task_list) == &tw_work_exited)
-+		return;
- 
--	while (1) {
--		struct io_wq_work_node *node2;
--
--		spin_lock_irq(&tctx->task_lock);
--		node2 = tctx->task_list.first;
--		INIT_WQ_LIST(&tctx->task_list);
--		if (!node2)
--			tctx->task_running = false;
--		spin_unlock_irq(&tctx->task_lock);
--		if (!node2)
-+	do {
-+		struct io_task_work *head = xchg(&tctx->task_list, NULL);
-+
-+		if (unlikely(!head))
- 			break;
-+		handle_tw_list(head, &ctx, &uring_locked);
- 
--		handle_tw_list(node2, &ctx, &uring_locked);
- 		cond_resched();
--
--		if (data_race(!tctx->task_list.first) && uring_locked)
--			io_submit_flush_completions(ctx);
--	}
-+		if (READ_ONCE(tctx->task_list))
-+			continue;
-+		if (!uring_locked)
-+			break;
-+		io_submit_flush_completions(ctx);
-+	} while (READ_ONCE(tctx->task_list));
- 
- 	ctx_flush_and_put(ctx, &uring_locked);
- }
-@@ -2538,26 +2552,26 @@ static void io_req_task_work_add(struct io_kiocb *req, bool priority)
- {
- 	struct task_struct *tsk = req->task;
- 	struct io_uring_task *tctx = tsk->io_uring;
--	struct io_wq_work_node *node;
--	unsigned long flags;
--	bool running;
-+	struct io_task_work *head;
- 
- 	WARN_ON_ONCE(!tctx);
- 
- 	io_drop_inflight_file(req);
- 
--	spin_lock_irqsave(&tctx->task_lock, flags);
--	wq_list_add_tail(&req->io_task_work.node, &tctx->task_list);
--	if (unlikely(atomic_read(&tctx->in_idle)))
--		goto cancel_locked;
-+	do {
-+		head = READ_ONCE(tctx->task_list);
-+		if (unlikely(head == &tw_work_exited)) {
-+			req_set_fail(req);
-+			if (llist_add(&req->io_task_work.fallback_node,
-+				      &req->ctx->fallback_llist))
-+				schedule_delayed_work(&req->ctx->fallback_work, 1);
-+			return;
-+		}
- 
--	running = tctx->task_running;
--	if (!running)
--		tctx->task_running = true;
--	spin_unlock_irqrestore(&tctx->task_lock, flags);
-+		req->io_task_work.next = head;
-+	} while (cmpxchg(&tctx->task_list, head, &req->io_task_work) != head);
- 
--	/* task_work already pending, we're done */
--	if (!running) {
-+	if (!head) {
- 		/*
- 		 * SQPOLL kernel thread doesn't need notification, just a wakeup. For
- 		 * all other cases, use TWA_SIGNAL unconditionally to ensure we're
-@@ -2569,22 +2583,6 @@ static void io_req_task_work_add(struct io_kiocb *req, bool priority)
- 		else
- 			task_work_notify(tsk, TWA_SIGNAL);
- 	}
--	return;
--
--	spin_lock_irqsave(&tctx->task_lock, flags);
--cancel_locked:
--	node = tctx->task_list.first;
--	INIT_WQ_LIST(&tctx->task_list);
--	spin_unlock_irqrestore(&tctx->task_lock, flags);
--
--	while (node) {
--		req = container_of(node, struct io_kiocb, io_task_work.node);
--		req_set_fail(req);
--		node = node->next;
--		if (llist_add(&req->io_task_work.fallback_node,
--			      &req->ctx->fallback_llist))
--			schedule_delayed_work(&req->ctx->fallback_work, 1);
--	}
- }
- 
- static void io_req_task_cancel(struct io_kiocb *req, bool *locked)
-@@ -7977,7 +7975,7 @@ static int io_sq_thread(void *data)
- 			if (!sqt_spin && (ret > 0 || !wq_list_empty(&ctx->iopoll_list)))
- 				sqt_spin = true;
- 		}
--		if (tctx->task_running) {
-+		if (READ_ONCE(tctx->task_list)) {
- 			io_uring_task_work_run();
- 			sqt_spin = true;
- 		}
-@@ -7990,7 +7988,7 @@ static int io_sq_thread(void *data)
- 		}
- 
- 		prepare_to_wait(&sqd->wait, &wait, TASK_INTERRUPTIBLE);
--		if (!io_sqd_events_pending(sqd) && !tctx->task_running) {
-+		if (!io_sqd_events_pending(sqd) && !READ_ONCE(tctx->task_list)) {
- 			bool needs_sched = true;
- 
- 			list_for_each_entry(ctx, &sqd->ctx_list, sqd_list) {
-@@ -9088,8 +9086,6 @@ static __cold int io_uring_alloc_task_context(struct task_struct *task,
- 	init_waitqueue_head(&tctx->wait);
- 	atomic_set(&tctx->in_idle, 0);
- 	task->io_uring = tctx;
--	spin_lock_init(&tctx->task_lock);
--	INIT_WQ_LIST(&tctx->task_list);
- 	return 0;
- }
- 
-@@ -10301,16 +10297,16 @@ static __cold void io_uring_cancel_generic(bool cancel_all,
- 
- 	if (!current->io_uring)
- 		return;
-+	if (WARN_ON_ONCE(READ_ONCE(tctx->task_list) == &tw_work_exited))
-+		return;
- 	if (tctx->io_wq)
- 		io_wq_exit_start(tctx->io_wq);
-+	while (cmpxchg(&tctx->task_list, NULL, &tw_work_exited) != NULL)
-+		io_uring_task_work_run();
- 
--	spin_lock_irq(&tctx->task_lock);
- 	atomic_inc(&tctx->in_idle);
--	spin_unlock_irq(&tctx->task_lock);
--
- 	do {
- 		io_uring_drop_tctx_refs(current);
--		io_run_task_work();
- 		/* read completions before cancelations */
- 		inflight = tctx_inflight(tctx, !cancel_all);
- 		if (!inflight)
-@@ -10335,10 +10331,6 @@ static __cold void io_uring_cancel_generic(bool cancel_all,
- 
- 		prepare_to_wait(&tctx->wait, &wait, TASK_INTERRUPTIBLE);
- 		io_run_task_work();
--		if (tctx->task_running) {
--			__set_current_state(TASK_RUNNING);
--			io_uring_task_work_run();
--		}
- 		io_uring_drop_tctx_refs(current);
- 
- 		/*
--- 
-2.36.0
+registration/searching. Then we can achieve [1] and avoid [2].
 
+
+Regards,
+
+Hao
+
+>

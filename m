@@ -2,90 +2,135 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E0849509FA1
-	for <lists+io-uring@lfdr.de>; Thu, 21 Apr 2022 14:28:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 976C5509FB4
+	for <lists+io-uring@lfdr.de>; Thu, 21 Apr 2022 14:33:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354079AbiDUMb1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 21 Apr 2022 08:31:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38084 "EHLO
+        id S1384802AbiDUMfH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 21 Apr 2022 08:35:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352588AbiDUMb0 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 21 Apr 2022 08:31:26 -0400
-Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4F7A30F5F
-        for <io-uring@vger.kernel.org>; Thu, 21 Apr 2022 05:28:35 -0700 (PDT)
-Received: by mail-pf1-x435.google.com with SMTP id x80so4898040pfc.1
-        for <io-uring@vger.kernel.org>; Thu, 21 Apr 2022 05:28:35 -0700 (PDT)
+        with ESMTP id S1384790AbiDUMfH (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 21 Apr 2022 08:35:07 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F01AE3191C
+        for <io-uring@vger.kernel.org>; Thu, 21 Apr 2022 05:32:11 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id y10so9687475ejw.8
+        for <io-uring@vger.kernel.org>; Thu, 21 Apr 2022 05:32:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:in-reply-to:references:subject:message-id:date
-         :mime-version:content-transfer-encoding;
-        bh=G/vvqdJtFqhZushQhXNz602vz/+jNdTl3gFwEbfQ3C4=;
-        b=M6NOQhfTH+3QVIrWf9c1sNIzK82E4qY3D2hgekNfcWA0LXqp1gdiASEBNannqFY/EU
-         nMYty9NPjRKWlOI0KVNtmtnNom6gYiRPQ1rRw2CFycmfN+L5NBx4ZeqHfuVWm/r7DpZl
-         8c5wQ8hUkNUCcu5jfnMrJUhAOosV1ROREFI97mUNhcDquGsHV4d3gvaNtTQL6o2t8MX3
-         cHZKQ789lU6FZ6aS3rTcwv9J47+oMfh6fpIsVYG7Wf/vbdV7QfmGw9UlbDi7dAKW1hva
-         T7YPrvVWOMttaC4guHR4LW9QN1SWx5xTKjTCI9bzTYEtiCtt0ffyuGb35hmLXlw7ArV2
-         vAVg==
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Lh828Yrhk3RT/O9ogfgnIki+uJ9VN1M1Mm/MjWXiRpE=;
+        b=hyhnUTRbWLmvo4mUKjHN65JwSm75vRdjPWbg7TTB/zUXX7lZeSUWcjkDiNJM4ZBTKF
+         nYWcoGZuZnkH6JPEYPVL2eOoTBJi+BPFNKoIlyKobRb7D8L2/N0GboJa0rxxp9ynAooU
+         pK/PzywgGf4w3nMjULLUb9BIkIDZOTTv/bSp0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
-         :message-id:date:mime-version:content-transfer-encoding;
-        bh=G/vvqdJtFqhZushQhXNz602vz/+jNdTl3gFwEbfQ3C4=;
-        b=B1iiJGBxr23yrmo85/PJN3H8qxIOAXGQwWbVJT0PYV5CsS5K4nDbiHW/qY50Xmvp8n
-         TgyfAhuuz+GI3CCJ9OzJ4AybMuZXzkJEUEcEUzQR6q8w/4zfCds+m755WxMis4ak7LiO
-         RGEqCM9VbUmYZQXCgGUuRSDoqBzv0l7TSRYDOMQ3aWglsNdLowGwSRF6U1rSA3fJElBM
-         rhKum0S1dLcPijPj8E8j5PvM1/tMepGk8Ug57FXV58DulcoTd75GqmKpIys6eqVzaPjr
-         +O8PeUmlCAWDt2ya5k+Tm6fHFvdJf1o6BDmmMfyaAsc2OyH9UdjPsYsUm7i9X+fWy2ej
-         8Bww==
-X-Gm-Message-State: AOAM532b7OXUwWsWbIBxNZQSTTPVHWTY8upSi4+jwy8cY3dE8dmvGL45
-        aSgzFodODM+KACNdb9QF0qAmvUCEXCaeoi+X
-X-Google-Smtp-Source: ABdhPJzaTaSUFbIsugM0YiTK+jHFkfdrbsH/4Mzd4L+IS4+/4PWzxuVSrtmVbAfglRZ618LEBrFenQ==
-X-Received: by 2002:a63:1141:0:b0:39c:b664:c508 with SMTP id 1-20020a631141000000b0039cb664c508mr24162407pgr.49.1650544115261;
-        Thu, 21 Apr 2022 05:28:35 -0700 (PDT)
-Received: from [127.0.1.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id pv7-20020a17090b3c8700b001cd4989ff43sm2787184pjb.10.2022.04.21.05.28.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Apr 2022 05:28:34 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     ammarfaizi2@gnuweeb.org
-Cc:     alviro.iskandar@gnuweeb.org, gwml@vger.gnuweeb.org,
-        io-uring@vger.kernel.org
-In-Reply-To: <20220421075205.98770-1-ammar.faizi@intel.com>
-References: <20220421075205.98770-1-ammar.faizi@intel.com>
-Subject: Re: [PATCH liburing] arch/x86/syscall: Remove TODO comment
-Message-Id: <165054411437.17122.17438818450360023359.b4-ty@kernel.dk>
-Date:   Thu, 21 Apr 2022 06:28:34 -0600
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Lh828Yrhk3RT/O9ogfgnIki+uJ9VN1M1Mm/MjWXiRpE=;
+        b=PqF0WJndzCaGd0KxjDcueY3HvVcL66bRpJqc9ll4/hhSvrLCLyja5BGeKYaY8TcmSQ
+         vSRkilDgUDvsLLFbkNto0IruiCB22QlrOagZnYBi4+HP73eaOVt72gknfhRljHPArcwc
+         kfUDvW5jIGsToRqxiQutE4Eh6QJdWGHTZTvjg38WlgdRHW9g0RnOh8BGLwPjdXXbXtre
+         rL/qQbWPl/YjKWg2LizzrJ811IGufQVd0Fhh7v7E9b5NiWzRHA2LnjJ6WoAAnzCp3byY
+         d+RuIi9l1RLNVgmqTvaG6W2CIJWCDyxlIpNxqvC5kvjV9Ry3y+YmICBK5X7KnFLfMqlA
+         smQg==
+X-Gm-Message-State: AOAM5308K5ZdDPuL3U/ud8QAXF10imZS0gG1pd8F/XYy7HK1TWtKyjDY
+        SS0b59i417HqYDL/izEavyM/ZugoGbJHsOyQo+GMGA==
+X-Google-Smtp-Source: ABdhPJwE9jULwzbY0bPzBMu0ZWWz4sAucpNZ/OP8Cu58bY7syvSuie0c4Gn4osXVSqZnpR8CR3kvjVGloBq41NN2MJc=
+X-Received: by 2002:a17:906:280b:b0:6ce:f3c7:688f with SMTP id
+ r11-20020a170906280b00b006cef3c7688fmr22645761ejc.468.1650544330461; Thu, 21
+ Apr 2022 05:32:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,SPF_HELO_NONE,SPF_PASS
-        autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: *
+References: <CAJfpegvVpFbDX5so8EVaHxubZLNQ4bo=myAYopWeRtMs0wa6nA@mail.gmail.com>
+ <CAJfpegtEG2c3H8ZyOWPT69HJN2UWU1es-n9P+CSgV7jiZMPtGg@mail.gmail.com>
+ <23b62cca-8ec5-f250-e5a3-7e9ed983e190@kernel.dk> <CAJfpeguZji8x+zXSADJ4m6VKbdmTb6ZQd5zA=HCt8acxvGSr3w@mail.gmail.com>
+ <CAJfpegsADrdURSUOrGTjbu1DoRr7-8itGx23Tn0wf6gNdO5dWA@mail.gmail.com>
+ <77229971-72cd-7d78-d790-3ef4789acc9e@kernel.dk> <CAJfpeguiZ7U=YQhgGa-oPWO07tpBL6sf3zM=xtAk66njb1p2cw@mail.gmail.com>
+ <c5f27130-b4ad-3f4c-ce98-4414227db4fd@kernel.dk> <61c2336f-0315-5f76-3022-18c80f79e0b5@kernel.dk>
+ <38436a44-5048-2062-c339-66679ae1e282@kernel.dk> <CAJfpegvM3LQ8nsJf=LsWjQznpOzC+mZFXB5xkZgZHR2tXXjxLQ@mail.gmail.com>
+ <fbf3b195-7415-7f84-c0e6-bdfebf9692f2@kernel.dk> <CAJfpeguq1bBDa9-gbk6tutME1kH4SdHvkUdLGKzfdmhpCtCt6g@mail.gmail.com>
+ <b9964d20-1c87-502b-a1b6-1deb538b7842@kernel.dk> <47912c4c-ccc2-0678-6c2f-3e3c0dd1f04b@kernel.dk>
+ <CAJfpeguWv7kJn2RReTp0Hfv8hCoAbGSjGmRyNGQnPcU2exrewQ@mail.gmail.com> <ca3e4b7e-e9df-5988-5dc1-6d20ce27bdbf@kernel.dk>
+In-Reply-To: <ca3e4b7e-e9df-5988-5dc1-6d20ce27bdbf@kernel.dk>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Thu, 21 Apr 2022 14:31:58 +0200
+Message-ID: <CAJfpegsa8uza8bc1aMD7hLzrD6n1=wbxAmQH2KEOnrw7Rxkz2A@mail.gmail.com>
+Subject: Re: io_uring_prep_openat_direct() and link/drain
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_INVALID,
+        DKIM_SIGNED,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, 21 Apr 2022 14:52:30 +0700, Ammar Faizi wrote:
-> From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
-> 
-> nolibc support for x86 32-bit has been added in commit b7d8dd8bbf5b855
-> ("arch/x86/syscall: Add x86 32-bit native syscall support"). But I
-> forgot to remove the comment that says "We can't use CONFIG_NOLIBC for
-> x86 (32-bit)".
-> 
-> [...]
+On Tue, 5 Apr 2022 at 16:44, Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 4/5/22 1:45 AM, Miklos Szeredi wrote:
+> > On Sat, 2 Apr 2022 at 03:17, Jens Axboe <axboe@kernel.dk> wrote:
+> >>
+> >> On 4/1/22 10:21 AM, Jens Axboe wrote:
+> >>> On 4/1/22 10:02 AM, Miklos Szeredi wrote:
+> >>>> On Fri, 1 Apr 2022 at 17:36, Jens Axboe <axboe@kernel.dk> wrote:
+> >>>>
+> >>>>> I take it you're continually reusing those slots?
+> >>>>
+> >>>> Yes.
+> >>>>
+> >>>>>  If you have a test
+> >>>>> case that'd be ideal. Agree that it sounds like we just need an
+> >>>>> appropriate breather to allow fput/task_work to run. Or it could be the
+> >>>>> deferral free of the fixed slot.
+> >>>>
+> >>>> Adding a breather could make the worst case latency be large.  I think
+> >>>> doing the fput synchronously would be better in general.
+> >>>
+> >>> fput() isn't sync, it'll just offload to task_work. There are some
+> >>> dependencies there that would need to be checked. But we'll find a way
+> >>> to deal with it.
+> >>>
+> >>>> I test this on an VM with 8G of memory and run the following:
+> >>>>
+> >>>> ./forkbomb 14 &
+> >>>> # wait till 16k processes are forked
+> >>>> for i in `seq 1 100`; do ./procreads u; done
+> >>>>
+> >>>> You can compare performance with plain reads (./procreads p), the
+> >>>> other tests don't work on public kernels.
+> >>>
+> >>> OK, I'll check up on this, but probably won't have time to do so before
+> >>> early next week.
+> >>
+> >> Can you try with this patch? It's not complete yet, there's actually a
+> >> bunch of things we can do to improve the direct descriptor case. But
+> >> this one is easy enough to pull off, and I think it'll fix your OOM
+> >> case. Not a proposed patch, but it'll prove the theory.
+> >
+> > Sorry for the delay..
+> >
+> > Patch works like charm.
+>
+> OK good, then it is the issue I suspected. Thanks for testing!
 
-Applied, thanks!
+Tested with v5.18-rc3 and performance seems significantly worse than
+with the test patch:
 
-[1/1] arch/x86/syscall: Remove TODO comment
-      commit: 4ad972d6d1b16e4fb069fc2f006265942cf33103
+test patch:
+        avg     min     max     stdev
+real    0.205   0.190   0.266   0.011
+user    0.017   0.007   0.029   0.004
+sys     0.374   0.336   0.503   0.022
 
-Best regards,
--- 
-Jens Axboe
+5.18.0-rc3-00016-gb253435746d9:
+        avg     min     max     stdev
+real    0.725   0.200   18.090  2.279
+user    0.019   0.005   0.046   0.006
+sys     0.454   0.241   1.022   0.199
 
-
+Thanks,
+Miklos

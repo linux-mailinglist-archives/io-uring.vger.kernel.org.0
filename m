@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E42AC50A110
+	by mail.lfdr.de (Postfix) with ESMTP id 9882650A10F
 	for <lists+io-uring@lfdr.de>; Thu, 21 Apr 2022 15:45:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1386729AbiDUNsG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 21 Apr 2022 09:48:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58746 "EHLO
+        id S1386691AbiDUNsH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 21 Apr 2022 09:48:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1386691AbiDUNsD (ORCPT
+        with ESMTP id S1386711AbiDUNsD (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Thu, 21 Apr 2022 09:48:03 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C95FAE6C
-        for <io-uring@vger.kernel.org>; Thu, 21 Apr 2022 06:45:13 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id bg25so2527020wmb.4
-        for <io-uring@vger.kernel.org>; Thu, 21 Apr 2022 06:45:13 -0700 (PDT)
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 519CBB7C4
+        for <io-uring@vger.kernel.org>; Thu, 21 Apr 2022 06:45:14 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id m15-20020a7bca4f000000b0038fdc1394b1so5925843wml.2
+        for <io-uring@vger.kernel.org>; Thu, 21 Apr 2022 06:45:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=iwf7B/JoObKukmaAm7gltrLYGrS6GCfPNu+o9swiNC0=;
-        b=MofLb1xS4gd/3a/vyjdEDkC3T5v8FNu3+c0rPDkSTDqcB/IHhVcociPazVYbynn8gi
-         4O4H4wKyvC5woL6WzNe0Pma5Qr/BiDGGjjkuKUEwdrB4/DEpbJAO7av1KxJkrS51exqe
-         tKYoUZvHU3hI0f9A3L8NyogV/1Kmah5Rjoi/Zrm0HQgA2nUm3yW/iv6SjQ9HRPZefwm9
-         uo5fPOHD6SQ5+/Mpx5S2TaXJ3LdH8LP5xfgCWGzI9v8edqPIm03EPzREROmtKpiTxoYp
-         MVM2Vs8NF7sqNMA3hYS9KUv/BFq/KSl8saadun+nZMehAYCtf2V2IbYEyYlNKcrwbfN2
-         0ACw==
+        bh=FcFlkg3/vyorXeLlS4jT5KFHTrI8AgCCGDmsSvORBCo=;
+        b=M0E2g0atnxlfNxwRkJAJtGYmQtmLHjoNiSxQ98xxWdxmNTnljX+md1KolkmlzwobGY
+         kZ/8IjQT4/rj+P2HJeBzDSRy5HLFYzD7HFSgXUINthrB7URmWzvkUnFarOkfC/TC084a
+         ry56CSNDzKWyORwkfVGDvqzbJZX1xK8Mb3vkeoOYmiSreGfQXUQwBQGg/Kx0Cu4bnyUj
+         zc/UKikFxkkDuXd+hrrCtvA+lfxV5EF4+IKF52qj8/mrcrCXipZRkzdM33BuTTvXDss4
+         QSKiNr1kTUC+XhOCIKfVkQc9bVrE1gmgersl/B/6rNjTaD/3t4EKkSZTX5mmhP+u5jVx
+         pXnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=iwf7B/JoObKukmaAm7gltrLYGrS6GCfPNu+o9swiNC0=;
-        b=ky4mdLCN585aVbnMrT/WbQ5YYt5qaGcb4NCHZkadb9TRbKzmpaBIsuwyLp5cutZFz6
-         BG0Vikl5J7Sn+3DNkEEeZ4c2rThz8uUY2RRjIoPa3yHvB+eqpPsTEP5xTjMr3Kgx1baY
-         hLUyPT9z7z276araBfP9hqH2rYfX1a2CtZCBGyPLg87khdBt5hPoZpF281Imw2+7yiXX
-         x9yzKTaVmuK5eUlBa2zyVoLF+CqG6Ewy/RFQrLQPjUsUXpqVi78X261JXOSbR1wRE4ja
-         4XF43uKWYGDr+rAc0jMyRY2osmPQDcRbnMv9mloiWSF8YlTCXmaKNNcocIBthxJZCB8a
-         TqUQ==
-X-Gm-Message-State: AOAM532zoOodOjUzuvtdE1e5t+vVlPXpKOEkVm7r8DjmVpK0w1DgqDLt
-        WZG96VN/gBj1TQG9AE3xOl2GAjQbPkQ=
-X-Google-Smtp-Source: ABdhPJxR/22gW7liJGIe4s2okqxNdsah+az48ygUQxb8tbOgDfhOR+eF2G3cSNj34FUwL3j//MMbyg==
-X-Received: by 2002:a05:600c:4e87:b0:38e:ada5:5c6f with SMTP id f7-20020a05600c4e8700b0038eada55c6fmr8546158wmq.21.1650548711961;
-        Thu, 21 Apr 2022 06:45:11 -0700 (PDT)
+        bh=FcFlkg3/vyorXeLlS4jT5KFHTrI8AgCCGDmsSvORBCo=;
+        b=HJPKxYKxjAousdSNYRb4+ydbiqLIDBBNe2SoRq6Pnb+SOYVtH4fbAr/xaSnUiBA/4O
+         kclRMG9f3PY/Nhcu92Zz86TJnV7L3PZ0BTTXG/tyS7jhjvq0KC4YzgF9e6UNrACg5aZv
+         QEN8fc/E0rQpNFw3NFBbpLUS/jJ+5bebKRsXnqA2dZP19NqFffKTzGii3WjDLngwKLzE
+         E19F405P/J/moszEToqQg2lGVx2rK0srPtmrihZdQ+jQpcOsk/54B0h2UPWnmjn8Da63
+         hiqckotKj1ApEsf++Zzhz4ZD2MKYAAqYJJUKokydUoL2JgelfiaMEsFVVaJIyObKK+fX
+         YumA==
+X-Gm-Message-State: AOAM532rQHx1q7sHFbqFKW3nTRnHm5sEZRtEJCwDKO6to+pQaQnV3Nra
+        fv3nLI/B4NMKOG/Vr94gQUv8RpMAZNA=
+X-Google-Smtp-Source: ABdhPJzWzl0sN/ybruCKxRD8km5qrGo5zB6bn/8O0vjSHmLAyU4FObvjhY73BCrARvyCE7HaNZM6kA==
+X-Received: by 2002:a7b:c347:0:b0:37e:68e6:d85c with SMTP id l7-20020a7bc347000000b0037e68e6d85cmr8981101wmj.176.1650548712721;
+        Thu, 21 Apr 2022 06:45:12 -0700 (PDT)
 Received: from 127.0.0.1localhost ([148.252.129.218])
-        by smtp.gmail.com with ESMTPSA id m7-20020adfe0c7000000b002060e7bbe49sm2837821wri.45.2022.04.21.06.45.11
+        by smtp.gmail.com with ESMTPSA id m7-20020adfe0c7000000b002060e7bbe49sm2837821wri.45.2022.04.21.06.45.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Apr 2022 06:45:11 -0700 (PDT)
+        Thu, 21 Apr 2022 06:45:12 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [RFC 04/11] io_uring: don't take ctx refs in tctx_task_work()
-Date:   Thu, 21 Apr 2022 14:44:17 +0100
-Message-Id: <92eb2d1f934ad16752cc3b764d8be75ca04d1ffe.1650548192.git.asml.silence@gmail.com>
+Subject: [RFC 05/11] io_uring: add dummy io_uring_task_work_run()
+Date:   Thu, 21 Apr 2022 14:44:18 +0100
+Message-Id: <45c494988922fd5f155f81bca6216b06cadc14a7.1650548192.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.36.0
 In-Reply-To: <cover.1650548192.git.asml.silence@gmail.com>
 References: <cover.1650548192.git.asml.silence@gmail.com>
@@ -68,46 +68,29 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Now we ban any new req-task_works to be added after we start the task
-cancellation. Because tctx is removed from ctx lists only during
-task cancellation, and considering that it's removed from the task
-context, we'll have current accounted in all rings tctx_task_work() is
-working with and so they will stay alive at least awhile it's running.
-Don't takes extra ctx refs.
+Preparing to decoupling io_uring from task_works, add a new helper. It's
+empty for now but will be used for running io_uring's task work items.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 3 ---
- 1 file changed, 3 deletions(-)
+ include/linux/io_uring.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index ec5fe55ab265..8d5aff1ecb4c 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -2475,7 +2475,6 @@ static void ctx_flush_and_put(struct io_ring_ctx *ctx, bool *locked)
- 		mutex_unlock(&ctx->uring_lock);
- 		*locked = false;
- 	}
--	percpu_ref_put(&ctx->refs);
- }
+diff --git a/include/linux/io_uring.h b/include/linux/io_uring.h
+index 1814e698d861..e87ed946214f 100644
+--- a/include/linux/io_uring.h
++++ b/include/linux/io_uring.h
+@@ -5,6 +5,10 @@
+ #include <linux/sched.h>
+ #include <linux/xarray.h>
  
- static inline void ctx_commit_and_unlock(struct io_ring_ctx *ctx)
-@@ -2506,7 +2505,6 @@ static void handle_prev_tw_list(struct io_wq_work_node *node,
- 			*ctx = req->ctx;
- 			/* if not contended, grab and improve batching */
- 			*uring_locked = mutex_trylock(&(*ctx)->uring_lock);
--			percpu_ref_get(&(*ctx)->refs);
- 			if (unlikely(!*uring_locked))
- 				spin_lock(&(*ctx)->completion_lock);
- 		}
-@@ -2537,7 +2535,6 @@ static void handle_tw_list(struct io_wq_work_node *node,
- 			*ctx = req->ctx;
- 			/* if not contended, grab and improve batching */
- 			*locked = mutex_trylock(&(*ctx)->uring_lock);
--			percpu_ref_get(&(*ctx)->refs);
- 		}
- 		req->io_task_work.func(req, locked);
- 		node = next;
++static inline void io_uring_task_work_run(void)
++{
++}
++
+ #if defined(CONFIG_IO_URING)
+ struct sock *io_uring_get_socket(struct file *file);
+ void __io_uring_cancel(bool cancel_all);
 -- 
 2.36.0
 

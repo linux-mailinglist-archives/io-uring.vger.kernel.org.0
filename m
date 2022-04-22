@@ -2,100 +2,148 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 20B2F50ABFC
-	for <lists+io-uring@lfdr.de>; Fri, 22 Apr 2022 01:33:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28CEF50AD33
+	for <lists+io-uring@lfdr.de>; Fri, 22 Apr 2022 03:26:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1442562AbiDUXgA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 21 Apr 2022 19:36:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38456 "EHLO
+        id S1443049AbiDVB3I (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 21 Apr 2022 21:29:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1442558AbiDUXf7 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 21 Apr 2022 19:35:59 -0400
-Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60DD13F89E
-        for <io-uring@vger.kernel.org>; Thu, 21 Apr 2022 16:33:07 -0700 (PDT)
-Received: by mail-pf1-x42d.google.com with SMTP id l127so6369957pfl.6
-        for <io-uring@vger.kernel.org>; Thu, 21 Apr 2022 16:33:07 -0700 (PDT)
+        with ESMTP id S236892AbiDVB3H (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 21 Apr 2022 21:29:07 -0400
+Received: from mail-oi1-x22c.google.com (mail-oi1-x22c.google.com [IPv6:2607:f8b0:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70FFD4991B
+        for <io-uring@vger.kernel.org>; Thu, 21 Apr 2022 18:26:16 -0700 (PDT)
+Received: by mail-oi1-x22c.google.com with SMTP id a10so7488927oif.9
+        for <io-uring@vger.kernel.org>; Thu, 21 Apr 2022 18:26:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:from:subject:to:cc
-         :references:content-language:in-reply-to:content-transfer-encoding;
-        bh=8PUlXciI2A9evvTWD64wT0yzak9WMui2iFOCoQYp1Qo=;
-        b=M644v8gEFmCO5jX3JuVj80cOKUPZYNigSrWDmIKTxN4iBYN7RRx17H/WXIKtybkzOs
-         gHuGCuUb5/2Y4q0PAwBhVwIAH7NEdJUAXNk0R3bvWjKaauknVSIE+osK6C31khyWSGqV
-         +/MIN30NvG/1bL/x64Ej4XKH14WrlwlOEbvkequaDw82s5dagxGthjJHsa3E36Vzd2um
-         1RGwRHC37VQU52cdbBupVxlkWqO0+6u0VHlVAgx4qg31wljljZeki2AIAmXbQu2T6NCh
-         GAFSLCJw84pZSfkw2JFKYn4dgW5RciQPm368mB4wGdkuDVFjwKuw/rAhmlCbLu+HnBiq
-         iGcw==
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=e5xjJcY2IvXvl336wRr+GG0dQ4Cu3i4RocXC4IltrlM=;
+        b=bh+AdA9s9Z/JTNIn0Ju9Mu849EjjPwkZ8ypjhEwDxL8Gw/SbV1+VrNXWvGlpb/jfvE
+         +T5iOr6QTWWJ2UdvpC/M7YQdHWiUudAGl6d3xXWIoSLGrCwwlkJJfA1HmfhMsQMs8LCb
+         rlDu87i0tfCtfhqZgbGSL5baOqMlDUQYiMpLCKaa7CefeeJm2eGBJlFb69kIbg4NXjql
+         xmbLX2Fh3BYy4pWEeEv9i7Dxa4EvwNnHRGmFsQDJzKP114J3H9RTQHXNPGJCOH5pmZGj
+         A0mUrK/cWighxXLeW5aVY3CMT6yVTVrqJC3Lff74BgH7Q3+0S+0PY3l1j/13H6FMlDJ0
+         8WKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:from
-         :subject:to:cc:references:content-language:in-reply-to
-         :content-transfer-encoding;
-        bh=8PUlXciI2A9evvTWD64wT0yzak9WMui2iFOCoQYp1Qo=;
-        b=HPqeYxbUeP9OVPf2AmE7uRLcdM+MWXJ7VMGRgjJ4q9GIEPbw9EHypndwJHZCjcCV5l
-         Bn6ZoYjMXezyWRAbXY9Lbus1HuyYoaoHrKVhX2VJwwwHXmXEStGOEBG6P3Sl+JjI8oWx
-         JgPbqmutrAlj16BvEbdRyHmFpK4Nv2N6peUbf9n1r3814KpNenzJgaGWQGb5HAbOTTMO
-         vb4UvsAvMfZU5+a5w+2Q8iAq4cqCwxfY5Jy8W19PiSDMqIcLG6IOAWaKAjA4n74dPXVz
-         0rAyIufZGEedCFFATFqROF7w1KWqFJx84anVA6ws54wtswIldMYPJ7AMYGM4PaP8hDJ1
-         E2Lg==
-X-Gm-Message-State: AOAM530BCOansEUMcEroCg3Uy6QAxnv6e1TY03CPHJUjBJ+I9kMSnT3T
-        SHd3mTlHh1f6Zh4NA5PcJXY/BA==
-X-Google-Smtp-Source: ABdhPJzuZYv0sW9q8OZoDmmfbOPX+UHh3VAIdTDWRpkMgZKFtpJVJq2u5sEBYNthTN9h5ACG9jDyYQ==
-X-Received: by 2002:a65:60c1:0:b0:39d:9c28:909a with SMTP id r1-20020a6560c1000000b0039d9c28909amr1552046pgv.352.1650583986827;
-        Thu, 21 Apr 2022 16:33:06 -0700 (PDT)
-Received: from ?IPV6:2600:380:4927:368a:ac15:d192:1695:2335? ([2600:380:4927:368a:ac15:d192:1695:2335])
-        by smtp.gmail.com with ESMTPSA id w7-20020aa79547000000b0050ad0e82e6dsm194749pfq.215.2022.04.21.16.33.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Apr 2022 16:33:06 -0700 (PDT)
-Message-ID: <b32cf3e2-a68c-b1b0-f3da-72e5f0b9d86c@kernel.dk>
-Date:   Thu, 21 Apr 2022 17:33:04 -0600
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=e5xjJcY2IvXvl336wRr+GG0dQ4Cu3i4RocXC4IltrlM=;
+        b=CUi4vhLmxVbsk3vo79sRH5m5CzZ75NIfOHLSM8rESUBKTOIm/6fpI4J4F8Zl+jwkRZ
+         WYiL4Vp852dDPBcQLFa4xHjr8+ujHmtuUakIiqmEuUYGKF5vx7OYzyMfXPS43oKeUn+N
+         8TrRPV83a4nSjBehl5G9YVqHxcvc824FVshQ4Ng4ZrZ2k5gM80K+xj8elMVzvmP5oBku
+         3sqYhBbmzaZjpX6w2aZM1Z7YCav7fS1XkuQgsb5O+lmQ8Jr6/zseqeN6d7V7zJOw8omS
+         b0ICyUHDTTANCKOnpsKawQIxiO52ujPh7hpRQS1UTIaWmQFfI0pbExyoguXhXTYP9uzp
+         mb6A==
+X-Gm-Message-State: AOAM533BTylPmzlnJE7mq2dYzhs19aESsYWcO8mMd9QCRR41nvsac6L5
+        52ElH3ZloApKs/Wc8ShEXiBBEEOhB97FBqRIxXTKQeujP5E=
+X-Google-Smtp-Source: ABdhPJylscnP0C8gkcXlsd86wzgzjuWBdtaw4B7wSVuPJ15ZDoy43r53vpemJdEBak4mJXSvxhfaTImBlhOFtAEhsVQ=
+X-Received: by 2002:a05:6808:f88:b0:323:c50f:8442 with SMTP id
+ o8-20020a0568080f8800b00323c50f8442mr506689oiw.160.1650590775767; Thu, 21 Apr
+ 2022 18:26:15 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH 6/6] io_uring: allow NOP opcode in IOPOLL mode
-To:     Dylan Yudaken <dylany@fb.com>
-Cc:     io-uring <io-uring@vger.kernel.org>,
-        "Pavel Begunkov (Silence)" <asml.silence@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        FB Kernel Team <kernel-team@fb.com>,
-        Dylan Yudaken <dylany@fb.com>
-References: <20220421091345.2115755-1-dylany@fb.com>
- <20220421091345.2115755-7-dylany@fb.com>
-Content-Language: en-US
-In-Reply-To: <20220421091345.2115755-7-dylany@fb.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-5.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+References: <20220420191451.2904439-1-shr@fb.com> <20220420191451.2904439-7-shr@fb.com>
+In-Reply-To: <20220420191451.2904439-7-shr@fb.com>
+From:   Kanchan Joshi <joshiiitr@gmail.com>
+Date:   Fri, 22 Apr 2022 06:55:49 +0530
+Message-ID: <CA+1E3rKEr4ULc=065kRu_p1265vTE4x+0q+XNa49ie-YRXabdA@mail.gmail.com>
+Subject: Re: [PATCH v2 06/12] io_uring: modify io_get_cqe for CQE32
+To:     Stefan Roesch <shr@fb.com>
+Cc:     io-uring@vger.kernel.org, kernel-team@fb.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Apr 21, 2022 at 3:17 AM Dylan Yudaken <dylany@fb.com> wrote:
+On Thu, Apr 21, 2022 at 3:54 PM Stefan Roesch <shr@fb.com> wrote:
 >
-> This is useful for tests so that IOPOLL can be tested without requiring
-> files. NOP is acceptable in IOPOLL as it always completes immediately.
+> Modify accesses to the CQE array to take large CQE's into account. The
+> index needs to be shifted by one for large CQE's.
+>
+> Signed-off-by: Stefan Roesch <shr@fb.com>
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> ---
+>  fs/io_uring.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+>
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index c93a9353c88d..bd352815b9e7 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -1909,8 +1909,12 @@ static noinline struct io_uring_cqe *__io_get_cqe(struct io_ring_ctx *ctx)
+>  {
+>         struct io_rings *rings = ctx->rings;
+>         unsigned int off = ctx->cached_cq_tail & (ctx->cq_entries - 1);
+> +       unsigned int shift = 0;
+>         unsigned int free, queued, len;
+>
+> +       if (ctx->flags & IORING_SETUP_CQE32)
+> +               shift = 1;
+> +
+>         /* userspace may cheat modifying the tail, be safe and do min */
+>         queued = min(__io_cqring_events(ctx), ctx->cq_entries);
+>         free = ctx->cq_entries - queued;
+> @@ -1922,12 +1926,13 @@ static noinline struct io_uring_cqe *__io_get_cqe(struct io_ring_ctx *ctx)
+>         ctx->cached_cq_tail++;
+>         ctx->cqe_cached = &rings->cqes[off];
+>         ctx->cqe_sentinel = ctx->cqe_cached + len;
+> -       return ctx->cqe_cached++;
+> +       ctx->cqe_cached++;
+> +       return &rings->cqes[off << shift];
+>  }
+>
+>  static inline struct io_uring_cqe *io_get_cqe(struct io_ring_ctx *ctx)
+>  {
+> -       if (likely(ctx->cqe_cached < ctx->cqe_sentinel)) {
+> +       if (likely(ctx->cqe_cached < ctx->cqe_sentinel && !(ctx->flags & IORING_SETUP_CQE32))) {
+>                 ctx->cached_cq_tail++;
+>                 return ctx->cqe_cached++;
+>         }
 
-This one actually breaks two liburing test cases (link and defer) that
-assume NOP on IOPOLL will return -EINVAL. Not a huge deal, but we do
-need to figure out how to make them reliably -EINVAL in a different
-way then.
+This excludes CQE-caching for 32b CQEs.
+How about something like below to have that enabled (adding
+io_get_cqe32 for the new ring) -
 
-Maybe add a nop_flags to the usual flags spot in the sqe, and define
-a flag that says NOP_IOPOLL or something. Require this flag set for
-allowing NOP on iopoll. That'd allow testing, but still retain the
--EINVAL behavior if not set.
-
-Alternatively, modify test cases...
-
-I'll drop this one for now, just because it fails the regression
-tests.
-
--- 
-Jens Axboe
-
++static noinline struct io_uring_cqe *__io_get_cqe32(struct io_ring_ctx *ctx)
++{
++       struct io_rings *rings = ctx->rings;
++       unsigned int off = ctx->cached_cq_tail & (ctx->cq_entries - 1);
++       unsigned int free, queued, len;
++
++       /* userspace may cheat modifying the tail, be safe and do min */
++       queued = min(__io_cqring_events(ctx), ctx->cq_entries);
++       free = ctx->cq_entries - queued;
++       /* we need a contiguous range, limit based on the current
+array offset */
++       len = min(free, ctx->cq_entries - off);
++       if (!len)
++               return NULL;
++
++       ctx->cached_cq_tail++;
++       /* double increment for 32 CQEs */
++       ctx->cqe_cached = &rings->cqes[off << 1];
++       ctx->cqe_sentinel = ctx->cqe_cached + (len << 1);
++       return ctx->cqe_cached;
++}
++
++static inline struct io_uring_cqe *io_get_cqe32(struct io_ring_ctx *ctx)
++{
++       struct io_uring_cqe *cqe32;
++       if (likely(ctx->cqe_cached < ctx->cqe_sentinel)) {
++               ctx->cached_cq_tail++;
++               cqe32 = ctx->cqe_cached;
++       } else
++               cqe32 = __io_get_cqe32(ctx);
++       /* double increment for 32b CQE*/
++       ctx->cqe_cached += 2;
++       return cqe32;
++}

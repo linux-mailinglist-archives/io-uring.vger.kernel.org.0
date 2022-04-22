@@ -2,144 +2,106 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 72EDD50B482
-	for <lists+io-uring@lfdr.de>; Fri, 22 Apr 2022 11:58:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F6E350B5C7
+	for <lists+io-uring@lfdr.de>; Fri, 22 Apr 2022 12:58:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1446324AbiDVKB0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 22 Apr 2022 06:01:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41104 "EHLO
+        id S1446973AbiDVLBG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 22 Apr 2022 07:01:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1446319AbiDVKBZ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 22 Apr 2022 06:01:25 -0400
-Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2A4953E32;
-        Fri, 22 Apr 2022 02:58:32 -0700 (PDT)
-Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
-        by m0001303.ppops.net (8.16.1.2/8.16.1.2) with ESMTP id 23LNWeQ0017797;
-        Fri, 22 Apr 2022 02:58:31 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=JuWKBF5k6qXSWhJS4Kwqt/qLz2M/kqFX5ilC77EQRIo=;
- b=EqZ+OLB/lzINf5rEc4JguzvTBdRhH4cV5wP0vNbw4S+un0rrYyFpJVqgQqPOzfTYA8xn
- vWOiGCkLPxAP9ZdGUxeMx1qpP9yJSsbqkZsA4h3GaJS5ft7EVwx20qQ+0ya+kBnleZx8
- IJZQlcuW5ABtT/0yrL5ODc7VoDdDqGItQjw= 
-Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2106.outbound.protection.outlook.com [104.47.70.106])
-        by m0001303.ppops.net (PPS) with ESMTPS id 3fkc2vcmx7-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 22 Apr 2022 02:58:31 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mgTaLuOyuHnbZhEoRyM2q93CMENW5emetnCl6gaemntthFDZ+zMmJWb1z0Eun4RKXDX0MSluQYABigy1MxfSbOkheD0xgNRLTKPOGcDkvojkT1oCHOABTn6mXuo6KqkLfhMp6o4fjZIfTv7x3ERjWT9dFQoxKz93yApm86/ay+yEIKMfNOsq/SG54O+Ym+ShzlwMkiSvtaZhWEkKx+m1+TdSORyvJidqJrY/P2K6d/rDdaNQa7p99qv5Vd4TiOtWUkaNL6W4kEVTcWQ+E6DyPBGgOtqG/FU3OSjxCAnx2I1kxPlxDhfG6fMKtij46V9GRAlPSnmeY+9rjofHdQobzg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JuWKBF5k6qXSWhJS4Kwqt/qLz2M/kqFX5ilC77EQRIo=;
- b=RaR0CnB1sewj7sXLTkwruNTCyKz3G4Iv0CqX17txz6qgrqrorz7UUrmBqHmOJfIVA526337TWS03s6gTddSYsHFyP11DWQnqogtgooEvMrpBrdZ2T4FYU6nxTrsFRtNgpqyH0KXWHj6gp2ytt2Swj6tc9vJZclG/eDxFrRGgW/vWujei8Atsiqb5BxCIX2UbBi1P3iG7QsJnB8HfpUO9YFIA9p7HQLWjeOBm1/6X23xKQu/z1/vsZhv+EsPbru+ZRQlamHzibJ2GbpPVt4DwsbJT5vSKAKa5IAp7a5gBIEi9lfvhWFILyJcqiaCUZ3EXv11+NH3PMYtDKqDC9Wkg1g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-Received: from SA1PR15MB4854.namprd15.prod.outlook.com (2603:10b6:806:1e1::19)
- by CY4PR15MB1253.namprd15.prod.outlook.com (2603:10b6:903:109::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5186.15; Fri, 22 Apr
- 2022 09:58:29 +0000
-Received: from SA1PR15MB4854.namprd15.prod.outlook.com
- ([fe80::9c42:4b28:839d:9788]) by SA1PR15MB4854.namprd15.prod.outlook.com
- ([fe80::9c42:4b28:839d:9788%6]) with mapi id 15.20.5186.015; Fri, 22 Apr 2022
- 09:58:29 +0000
-From:   Dylan Yudaken <dylany@fb.com>
-To:     "axboe@kernel.dk" <axboe@kernel.dk>
-CC:     Kernel Team <Kernel-team@fb.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "asml.silence@gmail.com" <asml.silence@gmail.com>
-Subject: Re: [PATCH 6/6] io_uring: allow NOP opcode in IOPOLL mode
-Thread-Topic: [PATCH 6/6] io_uring: allow NOP opcode in IOPOLL mode
-Thread-Index: AQHYVWCVousbcGntV020vJwJE0RJiaz7BYoAgACuvAA=
-Date:   Fri, 22 Apr 2022 09:58:29 +0000
-Message-ID: <39c5d7b8da489a1f802960fa575d904ddc2ab9eb.camel@fb.com>
-References: <20220421091345.2115755-1-dylany@fb.com>
-         <20220421091345.2115755-7-dylany@fb.com>
-         <b32cf3e2-a68c-b1b0-f3da-72e5f0b9d86c@kernel.dk>
-In-Reply-To: <b32cf3e2-a68c-b1b0-f3da-72e5f0b9d86c@kernel.dk>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 5e399c5b-a0bc-411d-66db-08da2446a6d3
-x-ms-traffictypediagnostic: CY4PR15MB1253:EE_
-x-microsoft-antispam-prvs: <CY4PR15MB125346C12D41FC1782EC24C6B6F79@CY4PR15MB1253.namprd15.prod.outlook.com>
-x-fb-source: Internal
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: l9aTonAMntpoJ8lBNQqENzKMVyWEtjsmhuZuMfCjRZjVswQshSxLaMoLBkR0A1Wwp3FO+49o3z51zwW/+CWMu5ouDrXfGw6Le23y6iIDFPvUP6ayyWyydxKUwFv7G7RwPQTHM/XucalQugRS1quGyMpVK0SFXhUNGlOQabbCVAanmxA0Z22VmKT4J0Gk/s1kj7dpw4/wxHTij135yriW4hllWSrhkyjYF1eDkb/kTwj67/vxtiuBU06LLTCmpZDGf6jc4IZbWfF8RHxGF5HaejoEIlpgp+n2OWDhEZU6vujfoqQAo/vCExlN7ffzpxnVfsi4JY+Q1rSmt1+HZULa31cGldhyosuvq00e1nFsujQ76VZ9A4Wc56nkmgQ3YVXOZDsIrmz/96oU+HMJfH5iu27lJZTZAQkzFWoknROmq0SIxRogW2jpz73yMj4S+y7xYkaWk98arEZTR+u6vlqB4bz4oPLTHV/UTiCTwxcOZUD7/Bgmo2d2tKk2uG85VM9ZrusGp+Fi7gV0kISwp3lyvmwU3lEEKsV82N2oNZunG1LMp6aEVhpTdh4hbUBqCjaN3eJax3JGGnkT9ZG3STveq+uWbRtdINLRXC1VvD42T35B7e4h4+p+cY6wz08bOSfEsWL+dtXT7q0N5rg5TyZJ88r0BJow/XElTfkZYBFG0db0eT/f71T9vtD9FNPLJQcCMUBzV3YK5fL8xr5SSGHHIw==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR15MB4854.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(366004)(2616005)(6506007)(6512007)(86362001)(316002)(2906002)(5660300002)(53546011)(8936002)(6916009)(54906003)(38100700002)(71200400001)(186003)(508600001)(38070700005)(6486002)(122000001)(36756003)(91956017)(8676002)(4326008)(66446008)(66476007)(66556008)(66946007)(76116006)(64756008)(83380400001);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?V2NUMlIrQjBFaEZkRmE5WDgwWm1TWlNBOUdXZk5wSkIwajAvanpLV3VzdXJM?=
- =?utf-8?B?V3R2QVBmZGlPeWsySjU5Tk1EazIxaUVYWnhtV2tFNzRWUjEzMU92SFFLM0I3?=
- =?utf-8?B?UWN4QTFMMFVrS3dVRXVZMzRSVHN1dlA0VHhuaVc0RXhiT0c3azh6dTJDd1hX?=
- =?utf-8?B?cmIveVhNNHhiaFBCRGw0Um1QQUdHUitKWUpRT01xdXNNUTdvSzltcHMxYklB?=
- =?utf-8?B?dTJnSlZCOGtDQnpOa2ZFdlRoWXc1LzhJZk5tSHUwMzMxRFIvci9Uak05cFph?=
- =?utf-8?B?YzQ4UVA3Mnp6djA0L3lDWFVubHE1MEptS3AxNHBCRmpBSElsVis3M3BRUm4w?=
- =?utf-8?B?SmRjUVpaSkFqTWlYLzRhajVqSFhXcWRZNThDbEg2RGpMWjJMcHlXMDl1ZHZQ?=
- =?utf-8?B?eVdDNk9INjh2a1ltWTBVaXdBa25VckV4MnhGUlRYd0NvTGQ5ZE9oU0JhWkl1?=
- =?utf-8?B?TEhSSXFFNE5JM1cyUzFkU1lyclBFUU1OYnl6TGtybTdaNGc5Nkd5ekQvOFRU?=
- =?utf-8?B?N0pBTXFUMFFHeUxTZXE0Z2E1UzFWUDYweFZTZWs0WlZBWDZ0a1FEUGtLWkRE?=
- =?utf-8?B?OGM3WFR3TGZxZEFGaFJzVUlYbFFDRllXWmdoc01MaHI4czlqeWdERnB6a0hs?=
- =?utf-8?B?WldHeGR1LzByM2V1WHZwaWZhQnFRSTYrVGNXZUR0NkhFdDgvK0w2S21Nbzgr?=
- =?utf-8?B?dmxtSnlObGNrekJ4K3VmTVlNVzl0YlFRazliaWpLUnVVRkd0dENETzY4Q0xF?=
- =?utf-8?B?VjdpcTd3Ti9vZ3lJaHAyT0R3QThKVmdQTkZ6UkJQZm5iWWYwTDc3Wkg1bUls?=
- =?utf-8?B?U1JFbG5QWWNFWGpqZGFVZnZ6SXBlb1R0VW43V1VSWEl5TmtmVjhHS2tUWUIy?=
- =?utf-8?B?Q1B5eVhZd2IzbExJVjFwSEMxVk5RdHdMYzU5S051RUc2SmlUK2pTVjlVUGlF?=
- =?utf-8?B?bTBLSXdjZW5aUStFWVBFOWhxZ3A3RCtQUlVXQ3krUGU2RDE4QjJnTndKSWE4?=
- =?utf-8?B?RHh6ZmR4Z2J5UlJ2RHlpRSsvK3U2ZUFzNjgvczNQWjN1a3E3L2pNcnhVZDgz?=
- =?utf-8?B?NFhSVitjdjd5aHpHV0xOMmVpVEc4ZU5ZUVNoYUxIUVRKZ2VGZG1OREthQkNF?=
- =?utf-8?B?OTBSYjFjYUk2ZUlDdVJ4Y3dINTd1KzlQd1NvcndjWjdCRGNDbHdnVmhMZ01U?=
- =?utf-8?B?Qlc1cHAxb0hUbENFekdoODNpQVBRZmVKbElUakIzTWczc3ZDM0N4M2w0cWdq?=
- =?utf-8?B?NTVGNHRQVGZRQUlTbXdKUnZ3MThVbEhkSHRlSU1nMGh1a1dmZUxEZU9ybVh1?=
- =?utf-8?B?YXNmd1VUVnUzUFR5bkZPTUpyaFNDT256L0xobS85dG1VeCtVVEFJQUowSFN0?=
- =?utf-8?B?emxFcmJxSWRZS1RRbHh0V0x5RlN5Q3pFaTZSay85YVVibG1WS1g1ckh1Mmgv?=
- =?utf-8?B?WHV2NXAyUUJvVkZEL2drQjJIYkZZZU9sQkVPV05wOXYrVi9aYUNVeEc2WVRZ?=
- =?utf-8?B?SS9EYTJiSXc4alBLNUlyOGJsejlEMkF3VUNwRmxKcHZUK3YrN2hBSkhJcGo3?=
- =?utf-8?B?RnExZXpGenl3Z21nYjFLc05xeWFpUVlEWE0za3FGNFNQNjZVVndDQThsK3ds?=
- =?utf-8?B?dGRXdmxmYklPdUkrczhzMU1GYlpOVWJhMWRFc1VRM3FIWk1WWlVOdTFXcGEw?=
- =?utf-8?B?NGpqa3puVkh4dzdDcTJoeStpZ2NaOHVQRHQ5UUI0cTlmckxBaU1zY2NYWVp6?=
- =?utf-8?B?em5ERXk2cklpVlJ6NnI3ME5WeXJ1cmRkMS9vREM4RjZjLzAyRU15azlVa2p0?=
- =?utf-8?B?R3Q0RVNEMzlqTUgwekYyQ01MK096cDRWSXIwUmlLbXNkRlIyYXpDRUpwWFJJ?=
- =?utf-8?B?TEQ0Zzl6SjBQSTNLNnRxT01QcnJmbSt3cG12bHNTRnNVczZCSjJNc0o3SHR4?=
- =?utf-8?B?ZEhZUDRyMDg5ZWNQRjd2VnBFSmFKb1d3Z2tCNElCaUFyWlJUbU9leDVOZG5z?=
- =?utf-8?B?WnBCSW5oNjR5QjVaQlRPUHNyaVQ0eDdEdVo0VW94N0krTzE4dWdpK0lqYVVZ?=
- =?utf-8?B?TVFQV2JHeEkraUptUGVRSmF4M2VRSC91aFN1YkxkNmVoa2piUlArbG5sV1Uy?=
- =?utf-8?B?MTNjUStYMCtEZUdjUHh1eWg3dmhQMmRjNWNNb004eFd3c3ZOeEVpeDFMSTRk?=
- =?utf-8?B?QzlsSVQ2dnF0ZVY1ZzNSU3g3WWx4bFdQMGVySnN6cDJaSHcyNWpRSjgrK0N3?=
- =?utf-8?B?VENaTmoybzJnT05PUE9PWmRyczRDYnB4ZjNuNUJLUGFCK01MT0RLNFhwbkR3?=
- =?utf-8?B?bDBwMGhEK0oxY1lpYStXbm1HdEVXbWU2cXZZR1hGUWwvaStzai9UdzR1RGgy?=
- =?utf-8?Q?4f0fou2+JKqpdM3Q=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <4A1DBFFD4232CC4CB3160AE50BCD9D21@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        with ESMTP id S245078AbiDVLBF (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 22 Apr 2022 07:01:05 -0400
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5E195623C
+        for <io-uring@vger.kernel.org>; Fri, 22 Apr 2022 03:58:11 -0700 (PDT)
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20220422105809epoutp017fac8a4b6e0d21950d534bf02c3c9907~oMsYE_xSj3169631696epoutp01D
+        for <io-uring@vger.kernel.org>; Fri, 22 Apr 2022 10:58:09 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20220422105809epoutp017fac8a4b6e0d21950d534bf02c3c9907~oMsYE_xSj3169631696epoutp01D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1650625089;
+        bh=wSban962LSknykig1+Yye9ZUnqSBjf+ro2Nmaj/db/M=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=sdoJl4qWxQ2QSucmsEFuW2oMAT0VUgwA42dfAt6eQv2BSUjQsEkynexRtwT3Yoll5
+         sQsr9bhe/HzTz53CutyCBF3ZfRJtoUoeCcomLQBy2ud8pSuclDDg76ddEpvHLwcGC1
+         ncaDqcHOi4UWLG6c6XuDj74Vm0W+6SVWDJ/Y/KJ4=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+        20220422105809epcas5p19209f0dbe9e0fff827d74f51b6b082fe~oMsX4tR0N2944029440epcas5p1F;
+        Fri, 22 Apr 2022 10:58:09 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.182]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4KlBG657mqz4x9Py; Fri, 22 Apr
+        2022 10:58:06 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        6E.0A.06423.E3A82626; Fri, 22 Apr 2022 19:58:06 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+        20220422101608epcas5p22e9c82eb1b3beef6bf6e1c2e83b4b19b~oMHso1LIm2025120251epcas5p2u;
+        Fri, 22 Apr 2022 10:16:08 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220422101608epsmtrp2b99d7abc4a019c0b855a0b1f10cdbdf0~oMHsoNh3c2966929669epsmtrp2E;
+        Fri, 22 Apr 2022 10:16:08 +0000 (GMT)
+X-AuditID: b6c32a49-b13ff70000001917-77-62628a3e7885
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        6D.4F.03370.86082626; Fri, 22 Apr 2022 19:16:08 +0900 (KST)
+Received: from localhost.localdomain (unknown [107.110.206.5]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20220422101608epsmtip22be50ab41f36c26835a9d3366efe29bd~oMHr7hMk42944029440epsmtip2D;
+        Fri, 22 Apr 2022 10:16:08 +0000 (GMT)
+From:   Kanchan Joshi <joshi.k@samsung.com>
+To:     axboe@kernel.dk, io-uring@vger.kernel.org
+Cc:     hch@lst.de
+Subject: [PATCH] io_uring: cleanup error-handling around io_req_complete
+Date:   Fri, 22 Apr 2022 15:40:48 +0530
+Message-Id: <20220422101048.419942-1-joshi.k@samsung.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-X-OriginatorOrg: fb.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR15MB4854.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5e399c5b-a0bc-411d-66db-08da2446a6d3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Apr 2022 09:58:29.0871
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 9IGt/YHa4v6S7UjxhYh8POAS40kV4f/nKpdCmPIaBJ8GcD8Bl9s7QIES1fCiH6D7
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR15MB1253
-X-Proofpoint-GUID: 9wexYiIJBAxfOA2OP97Mj1Hso30yM0cg
-X-Proofpoint-ORIG-GUID: 9wexYiIJBAxfOA2OP97Mj1Hso30yM0cg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.486,FMLib:17.11.64.514
- definitions=2022-04-22_02,2022-04-21_01,2022-02-23_01
-X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrMKsWRmVeSWpSXmKPExsWy7bCmuq5dV1KSweNf8har7/azWaxcfZTJ
+        4l3rORYHZo/LZ0s9dt9sYPP4vEkugDkq2yYjNTEltUghNS85PyUzL91WyTs43jne1MzAUNfQ
+        0sJcSSEvMTfVVsnFJ0DXLTMHaI+SQlliTilQKCCxuFhJ386mKL+0JFUhI7+4xFYptSAlp8Ck
+        QK84Mbe4NC9dLy+1xMrQwMDIFKgwITtj++5v7AW/lSsaO04wNzB+k+li5OSQEDCROHv2KFsX
+        IxeHkMBuRolJr5qZIZxPjBIHfr2Hcj4zSnTdO8gG03J8/TFGiMQuRonGEy+Y4Kr2f7oK1MLB
+        wSagKXFhcilIg4iArsTW6zcYQWxmAT6Jaxv2gg0SFvCQmH5kEROIzSKgKjH9cjeYzStgKfFp
+        5iaoZfISMy99Z4eIC0qcnPmEBWKOvETz1tlg10kILGKXuL2ukwWiwUVixoqF7BC2sMSr41ug
+        bCmJz+/2Qg1Nlmjdfpkd5E4JgRKJJQvUIcL2Ehf3/GUCCTMDnb9+lz5EWFZi6ql1TDDn9/5+
+        wgQR55XYMQ/GVpS4N+kpK4QtLvFwxhIo20Pi6b3PYLaQQKzE5cVTWCYwys9C8s0sJN/MQti8
+        gJF5FaNkakFxbnpqsWmBYV5qOTxek/NzNzGCU5uW5w7Guw8+6B1iZOJgPMQowcGsJMIbOjM+
+        SYg3JbGyKrUoP76oNCe1+BCjKTCIJzJLiSbnA5NrXkm8oYmlgYmZmZmJpbGZoZI47+n0DYlC
+        AumJJanZqakFqUUwfUwcnFINTAqWeVqqBbt2Vuz9v/SXsQbXexbDz5fPtrdnBZp6cvlvUJd4
+        5L3zwNkfRa3HNsny3irkP7clSHBRc3Irf+eys7cfp0seqLY68fhKsWWBkcpb+9Lvpzv6s/id
+        5i+ZPOmVBtvLmZydRnUuF1IlmH8GijWoCxcfzw+b9XOaSmloXsoOpzfKk+KPf05/Ib5ePWwn
+        z/kvt5rzj1md9ol8vUmt8bNteYLEoohUjs8yjCVOkmZL93Cbv4n6tKDLL96tZbpuV7mki6u3
+        bWy6dvyOBZ9Mri2WXMFzvGFnf57SpujAD+yMMQIOUyymBrXJdh326zool2a1cMcsxnkeqZG1
+        s0qErFVduc7Plr72f7e89HwlluKMREMt5qLiRACAdKK39gMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupnluLIzCtJLcpLzFFi42LZdlhJXjejISnJYMMfM4vVd/vZLFauPspk
+        8a71HIsDs8fls6Ueu282sHl83iQXwBzFZZOSmpNZllqkb5fAlbF99zf2gt/KFY0dJ5gbGL/J
+        dDFyckgImEgcX3+MsYuRi0NIYAejxNL/x9ghEuISzdd+QNnCEiv/PWeHKPrIKLH5/k2mLkYO
+        DjYBTYkLk0tBakQE9CX2NX5gAbGZBfgkrm3YywZiCwt4SEw/sogJxGYRUJWYfrkbzOYVsJT4
+        NHMTG8R8eYmZl76zQ8QFJU7OfAI1R16ieets5gmMfLOQpGYhSS1gZFrFKJlaUJybnltsWGCU
+        l1quV5yYW1yal66XnJ+7iREcZlpaOxj3rPqgd4iRiYPxEKMEB7OSCG/ozPgkId6UxMqq1KL8
+        +KLSnNTiQ4zSHCxK4rwXuk7GCwmkJ5akZqemFqQWwWSZODilGpjkrn2bbrQxZ/Gj7VNMhWf4
+        d17gz5eLZZzCwzCRUcnkZew28fKejx/PCs3mNI49UFIR1uZpJpKd5rOS81ngNfeKwnbbzL9z
+        pxr9DfRJsnFY1j2DaalL8/XczpaX+5bcOd7w2jrm1sy7P9/J8KmIVfv1Xtm1O2n3kf/1je0y
+        83xnOad6/N+V877DeIeJe7RmWN77kktrY2KMuURu8PGrKRlx7gtb23PholP/jCN9fetqZ4Yo
+        PdeManwcvuZ9i+IE68lFzP5TtTmdHycePXyqWpBzdXbEJ2MXc/X0zbWizQdbpT7NmGZx+lje
+        2w2rBBI87V+9msB8evoyyUVtVv+ntzm4h8299OTk///90xe9DlFiKc5INNRiLipOBABRgBus
+        ogIAAA==
+X-CMS-MailID: 20220422101608epcas5p22e9c82eb1b3beef6bf6e1c2e83b4b19b
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220422101608epcas5p22e9c82eb1b3beef6bf6e1c2e83b4b19b
+References: <CGME20220422101608epcas5p22e9c82eb1b3beef6bf6e1c2e83b4b19b@epcas5p2.samsung.com>
+X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -147,22 +109,159 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-T24gVGh1LCAyMDIyLTA0LTIxIGF0IDE3OjMzIC0wNjAwLCBKZW5zIEF4Ym9lIHdyb3RlOg0KPiBP
-biBUaHUsIEFwciAyMSwgMjAyMiBhdCAzOjE3IEFNIER5bGFuIFl1ZGFrZW4gPGR5bGFueUBmYi5j
-b20+IHdyb3RlOg0KPiA+IA0KPiA+IFRoaXMgaXMgdXNlZnVsIGZvciB0ZXN0cyBzbyB0aGF0IElP
-UE9MTCBjYW4gYmUgdGVzdGVkIHdpdGhvdXQNCj4gPiByZXF1aXJpbmcNCj4gPiBmaWxlcy4gTk9Q
-IGlzIGFjY2VwdGFibGUgaW4gSU9QT0xMIGFzIGl0IGFsd2F5cyBjb21wbGV0ZXMNCj4gPiBpbW1l
-ZGlhdGVseS4NCj4gDQo+IFRoaXMgb25lIGFjdHVhbGx5IGJyZWFrcyB0d28gbGlidXJpbmcgdGVz
-dCBjYXNlcyAobGluayBhbmQgZGVmZXIpDQo+IHRoYXQNCj4gYXNzdW1lIE5PUCBvbiBJT1BPTEwg
-d2lsbCByZXR1cm4gLUVJTlZBTC4gTm90IGEgaHVnZSBkZWFsLCBidXQgd2UgZG8NCj4gbmVlZCB0
-byBmaWd1cmUgb3V0IGhvdyB0byBtYWtlIHRoZW0gcmVsaWFibHkgLUVJTlZBTCBpbiBhIGRpZmZl
-cmVudA0KPiB3YXkgdGhlbi4NCj4gDQo+IE1heWJlIGFkZCBhIG5vcF9mbGFncyB0byB0aGUgdXN1
-YWwgZmxhZ3Mgc3BvdCBpbiB0aGUgc3FlLCBhbmQgZGVmaW5lDQo+IGEgZmxhZyB0aGF0IHNheXMg
-Tk9QX0lPUE9MTCBvciBzb21ldGhpbmcuIFJlcXVpcmUgdGhpcyBmbGFnIHNldCBmb3INCj4gYWxs
-b3dpbmcgTk9QIG9uIGlvcG9sbC4gVGhhdCdkIGFsbG93IHRlc3RpbmcsIGJ1dCBzdGlsbCByZXRh
-aW4gdGhlDQo+IC1FSU5WQUwgYmVoYXZpb3IgaWYgbm90IHNldC4NCj4gDQo+IEFsdGVybmF0aXZl
-bHksIG1vZGlmeSB0ZXN0IGNhc2VzLi4uDQo+IA0KPiBJJ2xsIGRyb3AgdGhpcyBvbmUgZm9yIG5v
-dywganVzdCBiZWNhdXNlIGl0IGZhaWxzIHRoZSByZWdyZXNzaW9uDQo+IHRlc3RzLg0KPiANCg0K
-VGhhdCdzIGZpbmUgLSBzb3JyeSBJIGRpZG4ndCBub3RpY2UgdGhhdC4gSSB0aGluayBmaXhpbmcg
-dGhlIHRlc3RzIGlzDQp0aGUgYmV0dGVyIGFwcHJvYWNoIGhlcmUuIEl0IHNob3VsZCBiZSBlYXN5
-IHRvIGdldCBhbiAtRUlOVkFMIGZyb20gaXQuDQo=
+Move common error-handling to io_req_complete, so that various callers
+avoid repeating that. Few callers (io_tee, io_splice) require slightly
+different handling. These are changed to use __io_req_complete instead.
+
+Suggested-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
+---
+ fs/io_uring.c | 34 +++++-----------------------------
+ 1 file changed, 5 insertions(+), 29 deletions(-)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 2052a796436c..fcbe885a3175 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -2287,6 +2287,8 @@ static inline void __io_req_complete(struct io_kiocb *req, unsigned issue_flags,
+ 
+ static inline void io_req_complete(struct io_kiocb *req, s32 res)
+ {
++	if (res < 0)
++		req_set_fail(req);
+ 	__io_req_complete(req, 0, res, 0);
+ }
+ 
+@@ -4214,8 +4216,6 @@ static int io_renameat(struct io_kiocb *req, unsigned int issue_flags)
+ 				ren->newpath, ren->flags);
+ 
+ 	req->flags &= ~REQ_F_NEED_CLEANUP;
+-	if (ret < 0)
+-		req_set_fail(req);
+ 	io_req_complete(req, ret);
+ 	return 0;
+ }
+@@ -4236,9 +4236,6 @@ static void io_xattr_finish(struct io_kiocb *req, int ret)
+ 	req->flags &= ~REQ_F_NEED_CLEANUP;
+ 
+ 	__io_xattr_finish(req);
+-	if (ret < 0)
+-		req_set_fail(req);
+-
+ 	io_req_complete(req, ret);
+ }
+ 
+@@ -4514,8 +4511,6 @@ static int io_unlinkat(struct io_kiocb *req, unsigned int issue_flags)
+ 		ret = do_unlinkat(un->dfd, un->filename);
+ 
+ 	req->flags &= ~REQ_F_NEED_CLEANUP;
+-	if (ret < 0)
+-		req_set_fail(req);
+ 	io_req_complete(req, ret);
+ 	return 0;
+ }
+@@ -4557,8 +4552,6 @@ static int io_mkdirat(struct io_kiocb *req, unsigned int issue_flags)
+ 	ret = do_mkdirat(mkd->dfd, mkd->filename, mkd->mode);
+ 
+ 	req->flags &= ~REQ_F_NEED_CLEANUP;
+-	if (ret < 0)
+-		req_set_fail(req);
+ 	io_req_complete(req, ret);
+ 	return 0;
+ }
+@@ -4606,8 +4599,6 @@ static int io_symlinkat(struct io_kiocb *req, unsigned int issue_flags)
+ 	ret = do_symlinkat(sl->oldpath, sl->new_dfd, sl->newpath);
+ 
+ 	req->flags &= ~REQ_F_NEED_CLEANUP;
+-	if (ret < 0)
+-		req_set_fail(req);
+ 	io_req_complete(req, ret);
+ 	return 0;
+ }
+@@ -4657,8 +4648,6 @@ static int io_linkat(struct io_kiocb *req, unsigned int issue_flags)
+ 				lnk->newpath, lnk->flags);
+ 
+ 	req->flags &= ~REQ_F_NEED_CLEANUP;
+-	if (ret < 0)
+-		req_set_fail(req);
+ 	io_req_complete(req, ret);
+ 	return 0;
+ }
+@@ -4694,8 +4683,6 @@ static int io_shutdown(struct io_kiocb *req, unsigned int issue_flags)
+ 		return -ENOTSOCK;
+ 
+ 	ret = __sys_shutdown_sock(sock, req->shutdown.how);
+-	if (ret < 0)
+-		req_set_fail(req);
+ 	io_req_complete(req, ret);
+ 	return 0;
+ #else
+@@ -4756,7 +4743,7 @@ static int io_tee(struct io_kiocb *req, unsigned int issue_flags)
+ done:
+ 	if (ret != sp->len)
+ 		req_set_fail(req);
+-	io_req_complete(req, ret);
++	__io_req_complete(req, 0, ret, 0);
+ 	return 0;
+ }
+ 
+@@ -4801,7 +4788,7 @@ static int io_splice(struct io_kiocb *req, unsigned int issue_flags)
+ done:
+ 	if (ret != sp->len)
+ 		req_set_fail(req);
+-	io_req_complete(req, ret);
++	__io_req_complete(req, 0, ret, 0);
+ 	return 0;
+ }
+ 
+@@ -4888,8 +4875,6 @@ static int io_fsync(struct io_kiocb *req, unsigned int issue_flags)
+ 	ret = vfs_fsync_range(req->file, req->sync.off,
+ 				end > 0 ? end : LLONG_MAX,
+ 				req->sync.flags & IORING_FSYNC_DATASYNC);
+-	if (ret < 0)
+-		req_set_fail(req);
+ 	io_req_complete(req, ret);
+ 	return 0;
+ }
+@@ -4918,9 +4903,7 @@ static int io_fallocate(struct io_kiocb *req, unsigned int issue_flags)
+ 		return -EAGAIN;
+ 	ret = vfs_fallocate(req->file, req->sync.mode, req->sync.off,
+ 				req->sync.len);
+-	if (ret < 0)
+-		req_set_fail(req);
+-	else
++	if (ret >= 0)
+ 		fsnotify_modify(req->file);
+ 	io_req_complete(req, ret);
+ 	return 0;
+@@ -5332,8 +5315,6 @@ static int io_madvise(struct io_kiocb *req, unsigned int issue_flags)
+ 		return -EAGAIN;
+ 
+ 	ret = do_madvise(current->mm, ma->addr, ma->len, ma->advice);
+-	if (ret < 0)
+-		req_set_fail(req);
+ 	io_req_complete(req, ret);
+ 	return 0;
+ #else
+@@ -5419,9 +5400,6 @@ static int io_statx(struct io_kiocb *req, unsigned int issue_flags)
+ 
+ 	ret = do_statx(ctx->dfd, ctx->filename, ctx->flags, ctx->mask,
+ 		       ctx->buffer);
+-
+-	if (ret < 0)
+-		req_set_fail(req);
+ 	io_req_complete(req, ret);
+ 	return 0;
+ }
+@@ -5521,8 +5499,6 @@ static int io_sync_file_range(struct io_kiocb *req, unsigned int issue_flags)
+ 
+ 	ret = sync_file_range(req->file, req->sync.off, req->sync.len,
+ 				req->sync.flags);
+-	if (ret < 0)
+-		req_set_fail(req);
+ 	io_req_complete(req, ret);
+ 	return 0;
+ }
+-- 
+2.25.1
+

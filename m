@@ -2,55 +2,55 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A22F50AD41
-	for <lists+io-uring@lfdr.de>; Fri, 22 Apr 2022 03:35:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D3BE50AD7C
+	for <lists+io-uring@lfdr.de>; Fri, 22 Apr 2022 03:53:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348265AbiDVBiQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 21 Apr 2022 21:38:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37140 "EHLO
+        id S1443177AbiDVByc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 21 Apr 2022 21:54:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44088 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344083AbiDVBiP (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 21 Apr 2022 21:38:15 -0400
-Received: from mail-oi1-x22a.google.com (mail-oi1-x22a.google.com [IPv6:2607:f8b0:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F38547543
-        for <io-uring@vger.kernel.org>; Thu, 21 Apr 2022 18:35:24 -0700 (PDT)
-Received: by mail-oi1-x22a.google.com with SMTP id a10so7505640oif.9
-        for <io-uring@vger.kernel.org>; Thu, 21 Apr 2022 18:35:24 -0700 (PDT)
+        with ESMTP id S1443193AbiDVByb (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 21 Apr 2022 21:54:31 -0400
+Received: from mail-ot1-x330.google.com (mail-ot1-x330.google.com [IPv6:2607:f8b0:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57C734A3F6
+        for <io-uring@vger.kernel.org>; Thu, 21 Apr 2022 18:51:39 -0700 (PDT)
+Received: by mail-ot1-x330.google.com with SMTP id i11-20020a9d4a8b000000b005cda3b9754aso4483987otf.12
+        for <io-uring@vger.kernel.org>; Thu, 21 Apr 2022 18:51:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=AQCUCDX4xC64zMyc99+FcBV7ZY0Bjs+sh1od4bIPR7o=;
-        b=pSmPlQIJ5pISkmDXvqUJa0B0ql8D+1+i2sO+ax4W0N0UK85u9tFkGB/2q04G7b7Fie
-         HbU/A6A+lY1/JCOY7JNB2aO2RH5vkBH39QQDHtFZQbT1dmcKQGQ7K0lvNOXDMrYkeOU+
-         0XCav++hGuJ/1txY2c7HnkrIoejjuN0qxTQ6MinsSDnc+LWVXYeycJ3P/upgwlhGM+PA
-         upxM0kPV1ijqGVhMlKDSXnGw2THJTEIVJLhjKEblR8mGtQ9Bx/FaaWkqw+afEKlj5G1S
-         CDBaizDLrY3thFIAVkcsL5PpxqwK5SlLwXNouIys14PVLKKShkD7ZaU2QKnowNGDOLdh
-         Q6nw==
+        bh=RbPgAJpwyTltewryTCHRP6PSiXTnCpNjZf2qNCYCqfY=;
+        b=p3Fv2EOaj3weUFQdv3g6o9SEjVGXmpWeBh/1UVOGAk5N1TkAdtRpOnC10EC1tFFnhX
+         pwI/J3C36eK7DaQoO1ZLQTR2sTh3CmV6n0CCyfuMBSZDnRtQjhtNxqAkpMUEG/Dw29pA
+         zR9+fnGklSKu1OOLLTvwhoRyMcs5OUYqTTIJTa+l2J48ZiaulF1jVIboSIA+cyfqI/B8
+         dbTqiFVQXwqCBukgl6EV12VWhplGYO4wzK1/fzI1KKg9mgvXb2OcqPtuKmdD8QqEe1EE
+         fOavFTA6mZq0FdVk9uurr9BGH/UKgFqqP6aN8t7AuqCI1pgj4JpWDZsbRtUFH7UGzmt6
+         9K8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=AQCUCDX4xC64zMyc99+FcBV7ZY0Bjs+sh1od4bIPR7o=;
-        b=t2y30YV9XVt7H7FjyntPkyDG00pI9HLVqtCiYN7TQKXxx4Cpw0JvdIT5sqQVS7TNLu
-         u8r9aFZknO5F6WaF9B0AnRwOiimfjHtzDdB5PMsXk3bS0QGhjqd6ZS0iaCCjMBOf9G1X
-         Y6CfCCE0ReOW0URiCYEfuzbOKZndHvRl43pN6QbyVjdCrlyQ5DTFCxgRMlRGIM1ouLQc
-         kviD4+TS6UUOhcRkU5O/xins3qcl926vdKKic8Lx8tu+xXMxDW28Glxi5D938BfMW0VU
-         9n4gu7aFB4V43gLIeSx9KcomsxVUmQ0loDfMPyGAXTMisSQZ5fJdZBe65nALTqIwsLO0
-         kQ8A==
-X-Gm-Message-State: AOAM530v+XYvfRJAChZ9PnksPgIFRdTas0bytkZEpQoMahJ0E8MIw7GR
-        nC00vOo1NaM+VZDG6fZcf2Gm4He5MnMOq23FPzU=
-X-Google-Smtp-Source: ABdhPJz1vAlr9wTwcFgWnrYN8yfNUdwuHX5MfUUEoHjieSkI2M2PZBBYVcmjWMq1yBsx7E/ya6EZHVi/L7s3F2Gl/YY=
-X-Received: by 2002:a05:6808:1929:b0:322:695e:3576 with SMTP id
- bf41-20020a056808192900b00322695e3576mr5263489oib.15.1650591323686; Thu, 21
- Apr 2022 18:35:23 -0700 (PDT)
+        bh=RbPgAJpwyTltewryTCHRP6PSiXTnCpNjZf2qNCYCqfY=;
+        b=adfv7WkfYeIRNTMw0FIFH9E8o+d3FinUTOpfc4YIE4M0uyQdKD8k9T+qqGC06dMyMs
+         /hFYDoyTVjW1AUrL4BohrpCa+FEkst7NNM5vHpgeetn7ofyAgG3kEQjZ/sGRmmzWLrvi
+         3tkJg/MM+aeAbKo2eeftyeHvmlfkGnntAtWITOLiYWJJlpVkkArY0DUP/clPQngYb4hq
+         85M8HmsmA3slZIKbePYHKCDU+SsHnNFZTK1QPHwK78gar9C3MpJah6pVwLxUa5r0NaVu
+         jKskJ6/vL1hq2y0n5kPq4Q83D0DEBXDpK4poQ8XjcQxf/aJEF39F98fGASgQRX9wvix+
+         pqlg==
+X-Gm-Message-State: AOAM532idrCNR7zIXJgys7v0/Kdp7+2RCz8cX43eYnifEKJOBc7B7Fa9
+        yThr12zbkvlz/SZTk873hD9cmJVwa9Ma74Qy0Qc=
+X-Google-Smtp-Source: ABdhPJzlaXuWv9VEjq3u07yR1jGIzKFFv/8RHNPRpNpXad//dPrrslsyVgYQ4n41jhGvRwvIdC1LKTB7b04Wpu5T+gA=
+X-Received: by 2002:a05:6830:142:b0:601:a01e:95c1 with SMTP id
+ j2-20020a056830014200b00601a01e95c1mr980796otp.86.1650592298646; Thu, 21 Apr
+ 2022 18:51:38 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220420191451.2904439-1-shr@fb.com> <20220420191451.2904439-6-shr@fb.com>
-In-Reply-To: <20220420191451.2904439-6-shr@fb.com>
+References: <20220419205624.1546079-1-shr@fb.com> <20220419205624.1546079-2-shr@fb.com>
+In-Reply-To: <20220419205624.1546079-2-shr@fb.com>
 From:   Kanchan Joshi <joshiiitr@gmail.com>
-Date:   Fri, 22 Apr 2022 07:04:57 +0530
-Message-ID: <CA+1E3rLpz3FE76++pQK4rhHKN6xdhcF8YoUV_g+75rEwwj4OyA@mail.gmail.com>
-Subject: Re: [PATCH v2 05/12] io_uring: add CQE32 completion processing
+Date:   Fri, 22 Apr 2022 07:21:12 +0530
+Message-ID: <CA+1E3rLem2p+FMhni3DLek5Bcwt_HtYRFmfuQirdRhBEz=Qabg@mail.gmail.com>
+Subject: Re: [PATCH v1 01/11] io_uring: support CQE32 in io_uring_cqe
 To:     Stefan Roesch <shr@fb.com>
 Cc:     io-uring@vger.kernel.org, kernel-team@fb.com,
         Jens Axboe <axboe@kernel.dk>
@@ -65,103 +65,54 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Apr 21, 2022 at 10:44 AM Stefan Roesch <shr@fb.com> wrote:
+On Thu, Apr 21, 2022 at 12:02 PM Stefan Roesch <shr@fb.com> wrote:
 >
-> This adds the completion processing for the large CQE's and makes sure
-> that the extra1 and extra2 fields are passed through.
+> This adds the struct io_uring_cqe_extra in the structure io_uring_cqe to
+> support large CQE's.
 >
 > Co-developed-by: Jens Axboe <axboe@kernel.dk>
 > Signed-off-by: Stefan Roesch <shr@fb.com>
 > Signed-off-by: Jens Axboe <axboe@kernel.dk>
 > ---
->  fs/io_uring.c | 55 +++++++++++++++++++++++++++++++++++++++++++--------
->  1 file changed, 47 insertions(+), 8 deletions(-)
+>  include/uapi/linux/io_uring.h | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 >
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index abbd2efbe255..c93a9353c88d 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -2247,18 +2247,15 @@ static noinline bool io_fill_cqe_aux(struct io_ring_ctx *ctx, u64 user_data,
->         return __io_fill_cqe(ctx, user_data, res, cflags);
->  }
+> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+> index ee677dbd6a6d..6f9f9b6a9d15 100644
+> --- a/include/uapi/linux/io_uring.h
+> +++ b/include/uapi/linux/io_uring.h
+> @@ -111,6 +111,7 @@ enum {
+>  #define IORING_SETUP_R_DISABLED        (1U << 6)       /* start with ring disabled */
+>  #define IORING_SETUP_SUBMIT_ALL        (1U << 7)       /* continue submit on error */
+>  #define IORING_SETUP_SQE128    (1U << 8)       /* SQEs are 128b */
+> +#define IORING_SETUP_CQE32     (1U << 9)       /* CQEs are 32b */
 >
-> -static void __io_req_complete_post(struct io_kiocb *req, s32 res,
-> -                                  u32 cflags)
-> +static void __io_req_complete_put(struct io_kiocb *req)
->  {
-> -       struct io_ring_ctx *ctx = req->ctx;
-> -
-> -       if (!(req->flags & REQ_F_CQE_SKIP))
-> -               __io_fill_cqe_req(req, res, cflags);
->         /*
->          * If we're the last reference to this request, add to our locked
->          * free_list cache.
->          */
->         if (req_ref_put_and_test(req)) {
-> +               struct io_ring_ctx *ctx = req->ctx;
+>  enum {
+>         IORING_OP_NOP,
+> @@ -201,6 +202,11 @@ enum {
+>  #define IORING_POLL_UPDATE_EVENTS      (1U << 1)
+>  #define IORING_POLL_UPDATE_USER_DATA   (1U << 2)
+>
+> +struct io_uring_cqe_extra {
+> +       __u64   extra1;
+> +       __u64   extra2;
+> +};
 > +
->                 if (req->flags & IO_REQ_LINK_FLAGS) {
->                         if (req->flags & IO_DISARM_MASK)
->                                 io_disarm_next(req);
-> @@ -2281,8 +2278,23 @@ static void __io_req_complete_post(struct io_kiocb *req, s32 res,
->         }
->  }
->
-> -static void io_req_complete_post(struct io_kiocb *req, s32 res,
-> -                                u32 cflags)
-> +static void __io_req_complete_post(struct io_kiocb *req, s32 res,
-> +                                  u32 cflags)
-> +{
-> +       if (!(req->flags & REQ_F_CQE_SKIP))
-> +               __io_fill_cqe_req(req, res, cflags);
-> +       __io_req_complete_put(req);
-> +}
+>  /*
+>   * IO completion data structure (Completion Queue Entry)
+>   */
+> @@ -208,6 +214,12 @@ struct io_uring_cqe {
+>         __u64   user_data;      /* sqe->data submission passed back */
+>         __s32   res;            /* result code for this event */
+>         __u32   flags;
 > +
-> +static void __io_req_complete_post32(struct io_kiocb *req, s32 res,
-> +                                  u32 cflags, u64 extra1, u64 extra2)
-> +{
-> +       if (!(req->flags & REQ_F_CQE_SKIP))
-> +               __io_fill_cqe32_req(req, res, cflags, extra1, extra2);
-> +       __io_req_complete_put(req);
-> +}
-> +
-> +static void io_req_complete_post(struct io_kiocb *req, s32 res, u32 cflags)
->  {
->         struct io_ring_ctx *ctx = req->ctx;
->
-> @@ -2293,6 +2305,18 @@ static void io_req_complete_post(struct io_kiocb *req, s32 res,
->         io_cqring_ev_posted(ctx);
->  }
->
-> +static void io_req_complete_post32(struct io_kiocb *req, s32 res,
-> +                                  u32 cflags, u64 extra1, u64 extra2)
-> +{
-> +       struct io_ring_ctx *ctx = req->ctx;
-> +
-> +       spin_lock(&ctx->completion_lock);
-> +       __io_req_complete_post32(req, res, cflags, extra1, extra2);
-> +       io_commit_cqring(ctx);
-> +       spin_unlock(&ctx->completion_lock);
-> +       io_cqring_ev_posted(ctx);
-> +}
-> +
->  static inline void io_req_complete_state(struct io_kiocb *req, s32 res,
->                                          u32 cflags)
->  {
-> @@ -2310,6 +2334,21 @@ static inline void __io_req_complete(struct io_kiocb *req, unsigned issue_flags,
->                 io_req_complete_post(req, res, cflags);
->  }
->
-> +static inline void __io_req_complete32(struct io_kiocb *req,
-> +                                      unsigned int issue_flags, s32 res,
-> +                                      u32 cflags, u64 extra1, u64 extra2)
-> +{
-> +       if (issue_flags & IO_URING_F_COMPLETE_DEFER) {
-> +               req->cqe.res = res;
-> +               req->cqe.flags = cflags;
-> +               req->extra1 = extra1;
-> +               req->extra2 = extra2;
-> +               req->flags |= REQ_F_COMPLETE_INLINE;
+> +       /*
+> +        * If the ring is initialized with IORING_SETUP_CQE32, then this field
+> +        * contains 16-bytes of padding, doubling the size of the CQE.
+> +        */
+> +       struct io_uring_cqe_extra       b[0];
+>  };
+Will it be any better to replace struct b[0]  with "u64 extra[ ]" ?
+With that new fields will be referred as cqe->extra[0] and cqe->extra[1].
 
-nit: we can use the existing helper (io_req_complete_state) to
-populate these fields rather than open-coding.
+And if we go that route, maybe "aux" sounds better than "extra".

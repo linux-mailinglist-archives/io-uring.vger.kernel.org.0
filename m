@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CA16750C2AB
-	for <lists+io-uring@lfdr.de>; Sat, 23 Apr 2022 01:09:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FEA950C45E
+	for <lists+io-uring@lfdr.de>; Sat, 23 Apr 2022 01:12:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233016AbiDVWnI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 22 Apr 2022 18:43:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43520 "EHLO
+        id S233278AbiDVWnK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 22 Apr 2022 18:43:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234093AbiDVWm5 (ORCPT
+        with ESMTP id S234089AbiDVWm5 (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Fri, 22 Apr 2022 18:42:57 -0400
-Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14AC415279D
-        for <io-uring@vger.kernel.org>; Fri, 22 Apr 2022 14:42:22 -0700 (PDT)
-Received: by mail-pl1-x62b.google.com with SMTP id n8so13641454plh.1
-        for <io-uring@vger.kernel.org>; Fri, 22 Apr 2022 14:42:22 -0700 (PDT)
+Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B5EC1527AD
+        for <io-uring@vger.kernel.org>; Fri, 22 Apr 2022 14:42:23 -0700 (PDT)
+Received: by mail-pl1-x636.google.com with SMTP id d15so13592143pll.10
+        for <io-uring@vger.kernel.org>; Fri, 22 Apr 2022 14:42:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=zPD3oXUSwzncZySFSn5YaDl6CFJYMTeuwOOKTNcfZLQ=;
-        b=teLd7LKBbD9eJeb6tUNL8+euaXv2rgG0vlh1gClbuqGXZ6g2sTGVTECQVCsgMAzmMa
-         jssWj2JpCfGF5L7KWiT9rRmDA1GcfyKnaivvdM9CN+m+m4R5sdUgMh715XLog5bVof7J
-         +jPpGMXBXl9HBbB0oPRo5KwflGYubLSbXBnhD6aUdosDbA9wJTNPjrIuM2taE1G1CWdw
-         A4aiPLwo+fOVX36me+EgRal0LZPW8D5VlRFN4gIqqfchvQQPfVRMbFruyfSrY6wrZUQV
-         B0eF/IalmGixtU3QKi9nvOQKv9EwX86/MP6GA9dKINlPJg9bJMLujqdY4QMnqPcakKt/
-         mTig==
+        bh=J60j/97MmKcQjPJOhpn7OPo3XA8ASXaP7Rv2l62NYsE=;
+        b=0KC8yBMMQvzpsmn4ciPk8PxzbyZWYhFQVZgajOKgbwC+Nvs8CQ6S5+cHk5vZltkXpt
+         jUIIYsdQgtglWWpD9vh0kptx4BN/uS2eYmMOX5yybzZK7Dh+JApVQiOIwrouZ/Yf6NiL
+         b7yPfYxycPZDj9vTBGaFT8gZ3GqxCy21OcoRQJvvgsxwnSQI7dw9XARrT5hfblknLXhg
+         G5SnNPQ0D3wUYragCbjicYia3JagOqlSBE4b2bvZkR48/EYczuQVdWWFlafMzDytMeo4
+         OXXqTkcynfE5pPkMYJnkJyHsr8TBiVc6BeciSKgcAU8E+y/zRORGFtbkZRyNvQnXiXIL
+         6ocw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=zPD3oXUSwzncZySFSn5YaDl6CFJYMTeuwOOKTNcfZLQ=;
-        b=4lE8IkBEML4AagEMAIyz4/9GwyJNAzUwTt6wvz4YFc+divtCLRQz7U3/1QhEYuUYMU
-         jLZ4aHCVWcmA0UZuP6o3J7tmvl1+3lbfvwMpwxkPMLCYGEALNj8m4yTLs7YQ7V7mlTg/
-         J99kz+kgkzHliJJ6EKYfWPzBy8U8MHU/kHM7E5DAvJNAj01LiOMVJezqUEJESt3X9VuW
-         CTNNhbste0d6+ybf8yLCpV8MC/bZFxpqcJ2JbX0lcgZDH6EKHJLP1eYX6otzGCvJWflG
-         hr4qqjhW5xmSFms8l+C39YtLiWLlhWuCzPxmZ9i6btujsBAiYL+BtyijOcwmOP60SSpB
-         CaYA==
-X-Gm-Message-State: AOAM532ASTq7XrP3MYyoc0W4PpOKoQTqFyx4ZQ10dWTm/NWR7VY3i06f
-        1SuMgterLINPLUZhrJYMEg9tcLZQhwMr456B
-X-Google-Smtp-Source: ABdhPJxOODfvu4zvvrUL/r7Br10CEPeqUuHq7Nn3FPkktDyHRc65IthHNlpe+Gcsac/GUN3He2EI8w==
-X-Received: by 2002:a17:903:1108:b0:156:73a7:7c1 with SMTP id n8-20020a170903110800b0015673a707c1mr6425576plh.101.1650663741247;
-        Fri, 22 Apr 2022 14:42:21 -0700 (PDT)
+        bh=J60j/97MmKcQjPJOhpn7OPo3XA8ASXaP7Rv2l62NYsE=;
+        b=2AL27iQAP0DRzIzb3xWfZ4Yre8yb7TSH7VXMezSnAm4IpvamPwNH0kqLj4Pen/LREr
+         trpBz+hTal9tPgCT/k4o1Lw8C2TpRmhootr3N7uCukPFJxnCOS9z8yjgGgvSja5baUR9
+         ckcD21yRrpeUy0hoHivH+FO2x5+McNbvs1tQ6k8cFhJBsFZMC3ojmFgLZZpKvrruPC5o
+         ekQqCm395xqW0aUHbRzqbhMMrjp7RhBFCVjYfljDuVWJ+pl2wD+l1GzIA8v2iGs1XYQS
+         lKcAbgRG0clKxFq3RNDxoLzkveiFJBybh6tlWGicyUAWm9PWYfgUYwfhxtAyMXm/Ps1j
+         v9xw==
+X-Gm-Message-State: AOAM532tK02SKg5W3e2rBqfW3xSYHMpuOEK0aM5XxgoIwKr+jfjjNo0d
+        AjTU1t0g4kDzxvUFNUjvDiYw2LFcnm6OE9R0
+X-Google-Smtp-Source: ABdhPJzz0JgkQnqGYS7OZdboJoH/ZaOMk2FfgK6qEPUHIlu32Q0/+b7ZQ6R291XZDJzQOQt4mRUA8Q==
+X-Received: by 2002:a17:90b:1c0b:b0:1d2:7a8f:5e1b with SMTP id oc11-20020a17090b1c0b00b001d27a8f5e1bmr18305122pjb.237.1650663742306;
+        Fri, 22 Apr 2022 14:42:22 -0700 (PDT)
 Received: from localhost.localdomain ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id c5-20020a62f845000000b0050ceac49c1dsm3473098pfm.125.2022.04.22.14.42.20
+        by smtp.gmail.com with ESMTPSA id c5-20020a62f845000000b0050ceac49c1dsm3473098pfm.125.2022.04.22.14.42.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Apr 2022 14:42:20 -0700 (PDT)
+        Fri, 22 Apr 2022 14:42:21 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 3/5] io-wq: use __set_notify_signal() to wake workers
-Date:   Fri, 22 Apr 2022 15:42:12 -0600
-Message-Id: <20220422214214.260947-4-axboe@kernel.dk>
+Subject: [PATCH 4/5] io_uring: set task_work notify method at init time
+Date:   Fri, 22 Apr 2022 15:42:13 -0600
+Message-Id: <20220422214214.260947-5-axboe@kernel.dk>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220422214214.260947-1-axboe@kernel.dk>
 References: <20220422214214.260947-1-axboe@kernel.dk>
@@ -68,38 +68,72 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The only difference between set_notify_signal() and __set_notify_signal()
-is that the former checks if it needs to deliver an IPI to force a
-reschedule. As the io-wq workers never leave the kernel, and IPI is never
-needed, they simply need a wakeup.
+While doing so, switch SQPOLL to TWA_SIGNAL_NO_IPI as well, as that
+just does a task wakeup and then we can remove the special wakeup we
+have in task_work_add.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/io-wq.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/io_uring.c | 23 +++++++++++------------
+ 1 file changed, 11 insertions(+), 12 deletions(-)
 
-diff --git a/fs/io-wq.c b/fs/io-wq.c
-index 32aeb2c581c5..824623bcf1a5 100644
---- a/fs/io-wq.c
-+++ b/fs/io-wq.c
-@@ -871,7 +871,7 @@ static bool io_wq_for_each_worker(struct io_wqe *wqe,
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 38e58fe4963d..20297fe4300b 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -366,6 +366,7 @@ struct io_ring_ctx {
  
- static bool io_wq_worker_wake(struct io_worker *worker, void *data)
+ 		struct io_rings		*rings;
+ 		unsigned int		flags;
++		enum task_work_notify_mode	notify_method;
+ 		unsigned int		compat: 1;
+ 		unsigned int		drain_next: 1;
+ 		unsigned int		restricted: 1;
+@@ -2650,8 +2651,8 @@ static void tctx_task_work(struct callback_head *cb)
+ static void io_req_task_work_add(struct io_kiocb *req, bool priority)
  {
--	set_notify_signal(worker->task);
-+	__set_notify_signal(worker->task);
- 	wake_up_process(worker->task);
- 	return false;
- }
-@@ -991,7 +991,7 @@ static bool __io_wq_worker_cancel(struct io_worker *worker,
- {
- 	if (work && match->fn(work, match->data)) {
- 		work->flags |= IO_WQ_WORK_CANCEL;
--		set_notify_signal(worker->task);
-+		__set_notify_signal(worker->task);
- 		return true;
- 	}
+ 	struct task_struct *tsk = req->task;
++	struct io_ring_ctx *ctx = req->ctx;
+ 	struct io_uring_task *tctx = tsk->io_uring;
+-	enum task_work_notify_mode notify;
+ 	struct io_wq_work_node *node;
+ 	unsigned long flags;
+ 	bool running;
+@@ -2674,18 +2675,8 @@ static void io_req_task_work_add(struct io_kiocb *req, bool priority)
+ 	if (running)
+ 		return;
  
+-	/*
+-	 * SQPOLL kernel thread doesn't need notification, just a wakeup. For
+-	 * all other cases, use TWA_SIGNAL unconditionally to ensure we're
+-	 * processing task_work. There's no reliable way to tell if TWA_RESUME
+-	 * will do the job.
+-	 */
+-	notify = (req->ctx->flags & IORING_SETUP_SQPOLL) ? TWA_NONE : TWA_SIGNAL;
+-	if (likely(!task_work_add(tsk, &tctx->task_work, notify))) {
+-		if (notify == TWA_NONE)
+-			wake_up_process(tsk);
++	if (likely(!task_work_add(tsk, &tctx->task_work, ctx->notify_method)))
+ 		return;
+-	}
+ 
+ 	spin_lock_irqsave(&tctx->task_lock, flags);
+ 	tctx->task_running = false;
+@@ -11360,6 +11351,14 @@ static __cold int io_uring_create(unsigned entries, struct io_uring_params *p,
+ 	if (!capable(CAP_IPC_LOCK))
+ 		ctx->user = get_uid(current_user());
+ 
++	/*
++	 * For SQPOLL, we just need a wakeup, always.
++	 */
++	if (ctx->flags & IORING_SETUP_SQPOLL)
++		ctx->notify_method = TWA_SIGNAL_NO_IPI;
++	else
++		ctx->notify_method = TWA_SIGNAL;
++
+ 	/*
+ 	 * This is just grabbed for accounting purposes. When a process exits,
+ 	 * the mm is exited and dropped before the files, hence we need to hang
 -- 
 2.35.1
 

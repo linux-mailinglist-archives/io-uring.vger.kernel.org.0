@@ -2,51 +2,54 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 05FD850B66C
-	for <lists+io-uring@lfdr.de>; Fri, 22 Apr 2022 13:48:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31E3F50B67B
+	for <lists+io-uring@lfdr.de>; Fri, 22 Apr 2022 13:49:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1447157AbiDVLvc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 22 Apr 2022 07:51:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51902 "EHLO
+        id S1447156AbiDVLvk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 22 Apr 2022 07:51:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1380235AbiDVLvb (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 22 Apr 2022 07:51:31 -0400
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21F8441FAA
-        for <io-uring@vger.kernel.org>; Fri, 22 Apr 2022 04:48:37 -0700 (PDT)
-Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 23M5bo5L002085
-        for <io-uring@vger.kernel.org>; Fri, 22 Apr 2022 04:48:36 -0700
+        with ESMTP id S1447160AbiDVLvj (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 22 Apr 2022 07:51:39 -0400
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6BC856419
+        for <io-uring@vger.kernel.org>; Fri, 22 Apr 2022 04:48:46 -0700 (PDT)
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 23LNWeBq008636
+        for <io-uring@vger.kernel.org>; Fri, 22 Apr 2022 04:48:46 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-transfer-encoding :
- content-type; s=facebook; bh=MKGTvS4zGryhoQsE3DntuGBBRJeH/2T8Ecybn+X05O4=;
- b=e+JBfTZpbkBH7/IdgRUZARQA7EFl5U2Q2+fPDytHSINYVdqinedPsTmCY2pLbaqupOKE
- twge4MZW7SuyLA7sSI3p6KVXrqUNTMMA4grIifD3BKaXVx9gcsp3fu35g2r3ndtOqL/Z
- gJxsuFyXssEtuuABgSgQATcg5pC/iFWy8Pg= 
+ : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding : content-type; s=facebook;
+ bh=+CMYUwIy0ADLCyzRaPQCP3M911g2i8eQE9gvJ5GkkcM=;
+ b=j8/zFBSpzG31p70c/YViTqougRVcESrWqV5FGy/ib+iaShlpB5o8EW8XX7wSG9OXQOjd
+ tpcrP3jk02vi5/rB8G/mtPfbXk2o85vlnGuEyNrSy1XUXMARD+N+xpmnxJ+DgLwf76JI
+ 7ZU+my+xz2MGpPEybzWxE+VSSSP4MxClKXo= 
 Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3fkpcmhpqv-2
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3fka366j24-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Fri, 22 Apr 2022 04:48:36 -0700
-Received: from twshared8508.05.ash9.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:83::6) with Microsoft SMTP Server
+        for <io-uring@vger.kernel.org>; Fri, 22 Apr 2022 04:48:46 -0700
+Received: from twshared41237.03.ash8.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:83::4) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Fri, 22 Apr 2022 04:48:35 -0700
+ 15.1.2375.24; Fri, 22 Apr 2022 04:48:45 -0700
 Received: by devbig039.lla1.facebook.com (Postfix, from userid 572232)
-        id 7E03F7DC56AD; Fri, 22 Apr 2022 04:48:31 -0700 (PDT)
+        id 8068A7DC56AF; Fri, 22 Apr 2022 04:48:31 -0700 (PDT)
 From:   Dylan Yudaken <dylany@fb.com>
 To:     <io-uring@vger.kernel.org>
 CC:     <axboe@kernel.dk>, <asml.silence@gmail.com>, <Kernel-team@fb.com>,
         Dylan Yudaken <dylany@fb.com>
-Subject: [PATCH liburing 0/7] run tests in parallel
-Date:   Fri, 22 Apr 2022 04:48:08 -0700
-Message-ID: <20220422114815.1124921-1-dylany@fb.com>
+Subject: [PATCH liburing 1/7] test: handle mmap return failures in pollfree test
+Date:   Fri, 22 Apr 2022 04:48:09 -0700
+Message-ID: <20220422114815.1124921-2-dylany@fb.com>
 X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20220422114815.1124921-1-dylany@fb.com>
+References: <20220422114815.1124921-1-dylany@fb.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: PBrSTQDSykTj1oxg07mApij6jB49s_Yp
-X-Proofpoint-GUID: PBrSTQDSykTj1oxg07mApij6jB49s_Yp
+X-Proofpoint-ORIG-GUID: Q0zRQjBPhsz4sYwym7RONP6ziEnibRzs
+X-Proofpoint-GUID: Q0zRQjBPhsz4sYwym7RONP6ziEnibRzs
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.486,FMLib:17.11.64.514
  definitions=2022-04-22_03,2022-04-22_01,2022-02-23_01
@@ -60,50 +63,31 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This series allows tests to be run in parallel, which speeds up
-iterating. Rather than build this functionality into the shell scripts, i=
-t
-seemed much easier to use make's parallel execution to do this.
+Sometimes these mmap's fail, and it causes SEGFAULTS.
+I assume this was accidentally left off when this was originally landed.
 
-My bash/make skills are not top notch, so I might have missed something
-obvious, however it does seem to work locally very nicely.
+Signed-off-by: Dylan Yudaken <dylany@fb.com>
+---
+ test/pollfree.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-
-Patch #1 is a bug that seems to trigger quite often when running in paral=
-lel
-Patch #2-5 fix bugs that prevent tests running in parallel
-Patch #6 adds a make target that depends on running each test
-Patch #7 Is not related to parallel tests. It is a prep for a later serie=
-s to use nop to test IOPOLL.
-
-Dylan Yudaken (7):
-  test: handle mmap return failures in pollfree test
-  test: use unique path for socket
-  test: use unique ports
-  test: use unique filenames
-  test: mkdir -p output folder
-  test: add make targets for each test
-  test: use remove_buffers instead of nop to generate error codes
-
- test/232c93d07b74.c    |  2 +-
- test/Makefile          | 10 +++++++++-
- test/accept-test.c     |  2 +-
- test/defer.c           | 28 ++++++++++++++++++++--------
- test/link.c            |  6 +++---
- test/openat2.c         |  6 +++---
- test/pollfree.c        |  4 ++--
- test/recv-msgall.c     |  2 +-
- test/runtests-quiet.sh | 10 ++++++++++
- test/runtests.sh       |  2 +-
- test/send_recv.c       |  2 +-
- test/send_recvmsg.c    |  2 +-
- test/sq-poll-dup.c     |  2 +-
- test/sq-poll-share.c   |  2 +-
- 14 files changed, 55 insertions(+), 25 deletions(-)
- create mode 100755 test/runtests-quiet.sh
-
-
-base-commit: b7d8dd8bbf5b8550c8a0c1ed70431cd8050709f0
+diff --git a/test/pollfree.c b/test/pollfree.c
+index e2511df..d753ffe 100644
+--- a/test/pollfree.c
++++ b/test/pollfree.c
+@@ -406,10 +406,10 @@ int main(int argc, char *argv[])
+   ret =3D mmap((void *)0x1ffff000ul, 0x1000ul, 0ul, 0x32ul, -1, 0ul);
+   if (ret =3D=3D MAP_FAILED)
+     return 0;
+-  mmap((void *)0x20000000ul, 0x1000000ul, 7ul, 0x32ul, -1, 0ul);
++  ret =3D mmap((void *)0x20000000ul, 0x1000000ul, 7ul, 0x32ul, -1, 0ul);
+   if (ret =3D=3D MAP_FAILED)
+     return 0;
+-  mmap((void *)0x21000000ul, 0x1000ul, 0ul, 0x32ul, -1, 0ul);
++  ret =3D mmap((void *)0x21000000ul, 0x1000ul, 0ul, 0x32ul, -1, 0ul);
+   if (ret =3D=3D MAP_FAILED)
+     return 0;
+   loop();
 --=20
 2.30.2
 

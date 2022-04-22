@@ -2,171 +2,181 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C1A9F50B290
-	for <lists+io-uring@lfdr.de>; Fri, 22 Apr 2022 10:09:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD6C750B28D
+	for <lists+io-uring@lfdr.de>; Fri, 22 Apr 2022 10:09:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1445445AbiDVIFT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 22 Apr 2022 04:05:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44466 "EHLO
+        id S1445449AbiDVIFY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 22 Apr 2022 04:05:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1445436AbiDVIFS (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 22 Apr 2022 04:05:18 -0400
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0B51527CA
-        for <io-uring@vger.kernel.org>; Fri, 22 Apr 2022 01:02:23 -0700 (PDT)
+        with ESMTP id S1445447AbiDVIFW (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 22 Apr 2022 04:05:22 -0400
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D6BD527CA
+        for <io-uring@vger.kernel.org>; Fri, 22 Apr 2022 01:02:27 -0700 (PDT)
 Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20220422080217epoutp02e545d7182d6c0026a7a0f22ae11820b6~oKS1ClSsq3072130721epoutp024
-        for <io-uring@vger.kernel.org>; Fri, 22 Apr 2022 08:02:17 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20220422080217epoutp02e545d7182d6c0026a7a0f22ae11820b6~oKS1ClSsq3072130721epoutp024
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20220422080223epoutp0161c887fd9802da056436afa66e606ff0~oKS6s5hl93177931779epoutp01b
+        for <io-uring@vger.kernel.org>; Fri, 22 Apr 2022 08:02:23 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20220422080223epoutp0161c887fd9802da056436afa66e606ff0~oKS6s5hl93177931779epoutp01b
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1650614537;
-        bh=RLzKBvT9SOShPFNH/DQI0qT+9lkcGhnADM9VOdfiQbk=;
+        s=mail20170921; t=1650614543;
+        bh=qvC6U5XQAed16ncQMRpoN5eTEk3Cxt5oi9kVbMzo9Uk=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=LMAa66TstxesuInV0RFXQZIM0A48qolh/iw1i+2sgXvygwPYZhk/k47jAexs+RRTa
-         aFIJoUsq9gr6GUkIes51zr9TxTYpUk6rDz+e5hYNhztX36h0HAATsngDML1F809TvH
-         AZvTPNunJGnj+CKtcL8FpWw665ANIazR8wDrkBxA=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-        20220422080217epcas5p2fdc3eecd93a52d41df070b19be07e059~oKS0zVrK_0550305503epcas5p2U;
-        Fri, 22 Apr 2022 08:02:17 +0000 (GMT)
-Received: from epsmges5p2new.samsung.com (unknown [182.195.38.175]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4Kl6M957rRz4x9Q2; Fri, 22 Apr
-        2022 08:02:13 +0000 (GMT)
+        b=U/dEUJozUsBR12fpgD81n6HFw1Ez/vXU3Xpt99lEwRnAY99Z7lCPvR561/gf95RFR
+         DpMbvR3cBxHCzFeJQeHsL1RhEcdWICtYSH60IICUGLjyGAJKfi1zZ3/Z392Ta13B3Z
+         Q1WdM1zhtghFHwszryz5KKQrjXm6zp5MQ0bYVyXE=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+        20220422080223epcas5p1b78cc67d9cd30f5908afed47a4a1df85~oKS6d8R2f2354623546epcas5p1t;
+        Fri, 22 Apr 2022 08:02:23 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.181]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4Kl6MH2NtTz4x9QN; Fri, 22 Apr
+        2022 08:02:19 +0000 (GMT)
 Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
         epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        6C.74.12523.30162626; Fri, 22 Apr 2022 17:02:11 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-        20220422051113epcas5p23ba82e97111807737064be383e593cb2~oH9dgUU_E0135601356epcas5p2a;
-        Fri, 22 Apr 2022 05:11:13 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220422051113epsmtrp15ac7dceba40962603b53927e43427799~oH9dfgGBT1466614666epsmtrp1b;
-        Fri, 22 Apr 2022 05:11:13 +0000 (GMT)
-X-AuditID: b6c32a4a-5b7ff700000030eb-2f-6262610377c1
+        70.84.12523.B0162626; Fri, 22 Apr 2022 17:02:19 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+        20220422052335epcas5p4cba87896faca5be8818015f883b63041~oIIRCj-H21476214762epcas5p43;
+        Fri, 22 Apr 2022 05:23:35 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220422052335epsmtrp28bc2dc2ee7aad5344bd38634b48afc34~oIIRB6TOy0790707907epsmtrp2b;
+        Fri, 22 Apr 2022 05:23:35 +0000 (GMT)
+X-AuditID: b6c32a4a-5b7ff700000030eb-44-6262610b10e7
 Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        99.7E.03370.1F832626; Fri, 22 Apr 2022 14:11:13 +0900 (KST)
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        6A.3A.24342.7DB32626; Fri, 22 Apr 2022 14:23:35 +0900 (KST)
 Received: from test-zns (unknown [107.110.206.5]) by epsmtip2.samsung.com
         (KnoxPortal) with ESMTPA id
-        20220422051112epsmtip27c3813dd37648c8e9ac783b16cd59baa~oH9cl1bFi0076900769epsmtip2L;
-        Fri, 22 Apr 2022 05:11:12 +0000 (GMT)
-Date:   Fri, 22 Apr 2022 10:36:05 +0530
+        20220422052334epsmtip2d8a9359f6a3e9eb95a389cb2686833ff~oIIQGcy0x0732407324epsmtip2c;
+        Fri, 22 Apr 2022 05:23:34 +0000 (GMT)
+Date:   Fri, 22 Apr 2022 10:48:27 +0530
 From:   Kanchan Joshi <joshi.k@samsung.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        Stefan Roesch <shr@fb.com>, kernel-team@fb.com,
-        io-uring@vger.kernel.org
-Subject: Re: [PATCH v2 00/12] add large CQE support for io-uring
-Message-ID: <20220422050605.GA14949@test-zns>
+To:     Kanchan Joshi <joshiiitr@gmail.com>
+Cc:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
+        kernel-team@fb.com, Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH v1 01/11] io_uring: support CQE32 in io_uring_cqe
+Message-ID: <20220422051827.GC14949@test-zns>
 MIME-Version: 1.0
-In-Reply-To: <20220422030918.GA20692@test-zns>
+In-Reply-To: <CA+1E3rLem2p+FMhni3DLek5Bcwt_HtYRFmfuQirdRhBEz=Qabg@mail.gmail.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupgk+LIzCtJLcpLzFFi42LZdlhTU5c5MSnJYOFTC4s5q7YxWqy+289m
-        8a71HIvFsb73rBZXXx5gd2D1mNj8jt1j56y77B6Xz5Z6fN4kF8ASlW2TkZqYklqkkJqXnJ+S
-        mZduq+QdHO8cb2pmYKhraGlhrqSQl5ibaqvk4hOg65aZA7RWSaEsMacUKBSQWFyspG9nU5Rf
-        WpKqkJFfXGKrlFqQklNgUqBXnJhbXJqXrpeXWmJlaGBgZApUmJCd0XiyumCKYMXzM7fZGhg3
-        8XUxcnBICJhIHLnq1sXIxSEksJtR4snipcwQzidGiUUNrVDOZ0aJzc8/s3QxcoJ1bJnfxQKR
-        2MUo0XB9H5TzjFHixM6j7CBVLAKqEi+Pd7KB7GAT0JS4MLkUJCwioCDR83slWJhZoFzi33JH
-        kLCwgIPEza97wDp5BXQlJry+ygxhC0qcnPkEbC+ngJ7E5eZ1jCC2qICyxIFtx5lA1koIPGKX
-        2LnkHzPEcS4Sl/48ZIewhSVeHd8CZUtJvOxvg7KTJVq3X2aHeL9EYskCdYiwvcTFPX+ZQGxm
-        gQyJ28efQJXLSkw9tQ4qzifR+/sJE0ScV2LHPBhbUeLepKesELa4xMMZS6BsD4k5Z5axQoJn
-        PbPE5MmP2Ccwys9C8tssJPsgbCuJzg9NrLPAQSQtsfwfB4SpKbF+l/4CRtZVjJKpBcW56anF
-        pgVGeanl8NhOzs/dxAhOklpeOxgfPvigd4iRiYPxEKMEB7OSCG/ozPgkId6UxMqq1KL8+KLS
-        nNTiQ4ymwJiayCwlmpwPTNN5JfGGJpYGJmZmZiaWxmaGSuK8p9M3JAoJpCeWpGanphakFsH0
-        MXFwSjUwrWeqV95gKOe770eZ34GZRX2PU1sT99rdfa5u8SuYqytz+32tIMFPTl4VhkaJwRMv
-        dy9+2l95IVygOGKnyTQZNcXy1dpbZmceN1U5dbz5pu9FA9+g84vSYmadMHVgqqy+7HuzxG53
-        ioTGt8bJ77Jq/RWb2o4fWrtV6cLaf4crtvXeMLzTnBFWtfrVBME45k3yif3/9etfpFlqpcu9
-        ulh/3uH58XduSclnz09ecVrf/+/ViDXldrn2M459lmc0PGWyKObc1ECR9bISJt3R839nMh3k
-        XfbXYDsf35qr+/Kacor7Hi26fHdP0gOfggatddGiaj83tG5eH312y6Fq+039S44b/Dv1TD3c
-        u6K8O3a+EktxRqKhFnNRcSIAcsduMBsEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNLMWRmVeSWpSXmKPExsWy7bCSvO5Hi6Qkg9sPuC3mrNrGaLH6bj+b
-        xbvWcywWx/res1pcfXmA3YHVY2LzO3aPnbPusntcPlvq8XmTXABLFJdNSmpOZllqkb5dAlfG
-        oSN/WAuO8VXcmFzQwPiPu4uRk0NCwERiy/wuli5GLg4hgR2MEnNmPWKHSIhLNF/7AWULS6z8
-        95wdougJo8SVbZvYQBIsAqoSL493AtkcHGwCmhIXJpeChEUEFCR6fq8ECzMLlEv8W+4IEhYW
-        cJC4+XUP2EheAV2JCa+vMkOMXM8ssXnVPEaIhKDEyZlPWEBsZgEziXmbHzJDzJGWWP6PAyTM
-        KaAncbl5HVi5qICyxIFtx5kmMArOQtI9C0n3LITuBYzMqxglUwuKc9Nziw0LjPJSy/WKE3OL
-        S/PS9ZLzczcxgsNbS2sH455VH/QOMTJxMB5ilOBgVhLhDZ0ZnyTEm5JYWZValB9fVJqTWnyI
-        UZqDRUmc90LXyXghgfTEktTs1NSC1CKYLBMHp1QDk6jNn09XG2f7P3qzQXy525q5Itv+/flh
-        0X3oy2eLp8WHea6uOvPH8lbd+ghH1sOOTo/YC5g+MzTatikZPfFb+vbfhA2iywO61u1Z/+9r
-        DsOfsyEv93hrupTVW88I0k7bMv3yQ+uj5fXtXlwKhtkBn72iu56tOW74vGHB+lPqN9+f3zb5
-        LdN02WDDFOUnbdy8x4w3zDgdsCIow83eWu2s6AKjPZzu+ycY1lpbCMvnmb47sT56UskTq/2r
-        We0nRTyXdvRomdmXP8le7g2zcuGuuFWXtzWLCHhdmbd50Y7W2WfPzb3K/GBW6XT2G2Ibu0ts
-        Lmj+t1TLu/lBTZyFo7n26SnBLeZdez0jwyX5V3F8iVNiKc5INNRiLipOBABqdeVd3gIAAA==
-X-CMS-MailID: 20220422051113epcas5p23ba82e97111807737064be383e593cb2
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupmk+LIzCtJLcpLzFFi42LZdlhTU5c7MSnJoGWfgMXqu/1sFu9az7FY
+        nH97mMniWN97VourLw+wO7B6TGx+x+6xc9Zddo/LZ0s9Pm+SC2CJyrbJSE1MSS1SSM1Lzk/J
+        zEu3VfIOjneONzUzMNQ1tLQwV1LIS8xNtVVy8QnQdcvMAVqrpFCWmFMKFApILC5W0rezKcov
+        LUlVyMgvLrFVSi1IySkwKdArTswtLs1L18tLLbEyNDAwMgUqTMjOmDftNlvBGeGK13dmsDQw
+        TuLvYuTkkBAwkTj08ixTFyMXh5DAbkaJt/+mMkI4nxglnt/uYoFwvjFKbHnTygbT8u3MITaI
+        xF5GibtN16BanjFKLDn3gBmkikVAVWLnhHtAVRwcbAKaEhcml4KERQTUJb6sn8gIYjML5Ehs
+        e3kBbKiwgKvE+ZOrweK8AroSCx9OgbIFJU7OfMICYnMKBEpsfH0WbLyogLLEgW3Hwe6WEHjJ
+        LtHWuIQF4joXiX2znjBB2MISr45vYYewpSQ+v9sL9UGyROv2y+wgt0kIlEgsWaAOEbaXuLjn
+        LxPEbRkSD46uZ4aIy0pMPbUOKs4n0fsbZjyvxI55MLaixL1JT1khbHGJhzOWQNkeEteXXGeH
+        hM8XRokf+54zTWCUn4Xkt1lI9kHYVhKdH5pYZwGdxywgLbH8HweEqSmxfpf+AkbWVYySqQXF
+        uempxaYFRnmp5fAIT87P3cQITpVaXjsYHz74oHeIkYmD8RCjBAezkghv6Mz4JCHelMTKqtSi
+        /Pii0pzU4kOMpsComsgsJZqcD0zWeSXxhiaWBiZmZmYmlsZmhkrivKfTNyQKCaQnlqRmp6YW
+        pBbB9DFxcEo1MM0Xu7T8zJoXnNtcDjq8b8/MW7r70Oblj5QWe2UwcSh6Z3XNkLhe/1y4Sd/I
+        1zxz1nvBqndMx833LZXuswjLmb5X9h3T/DS3/nOFG7P2SV5Py1DLTVr2MzTolrrwOcWDTB+n
+        z03nnnGp2Gyu6eNFxyO+Fjz8kTJPwqvvNcuOB+cMny7Pj+WusLb98LLXWe9ISYKzxOzdiiW/
+        s3e8u/de8aTthd/akzZOZeu7+0Lywu1my0dTV/21tDrz6c1Bo+6EKwprXl17ZebbG28zVebN
+        4aezJE5eu3sj9X5irHSbfMiDApGL5b/6Em9ctFoSEPnucJfhVDWG3PD9kXs281f0L1ePTXt8
+        MkC40a0uifv7DEYlluKMREMt5qLiRADtFDshHgQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrLLMWRmVeSWpSXmKPExsWy7bCSvO5166Qkg13XtSxW3+1ns3jXeo7F
+        4vzbw0wWx/res1pcfXmA3YHVY2LzO3aPnbPusntcPlvq8XmTXABLFJdNSmpOZllqkb5dAlfG
+        9pZ7TAX/BCq2duxib2C8x9PFyMkhIWAi8e3MIbYuRi4OIYHdjBKXjnxngkiISzRf+8EOYQtL
+        rPz3nB2i6AmjxL5PT1lBEiwCqhI7J9wD6ubgYBPQlLgwuRQkLCKgLvFl/URGEJtZIEdi28sL
+        bCC2sICrxPmTq8HivAK6EgsfTmGEmPmFUaJ9110WiISgxMmZT1ggms0k5m1+yAwyn1lAWmL5
+        Pw6QMKdAoMTG12eZQWxRAWWJA9uOM01gFJyFpHsWku5ZCN0LGJlXMUqmFhTnpucWGxYY5qWW
+        6xUn5haX5qXrJefnbmIEh7iW5g7G7as+6B1iZOJgPMQowcGsJMIbOjM+SYg3JbGyKrUoP76o
+        NCe1+BCjNAeLkjjvha6T8UIC6YklqdmpqQWpRTBZJg5OqQamZr7ue0K2rtyu8537lln9SPJx
+        8HGcH2/wYIWsjJ30f5eG6JeeLTYWTD/qK/8ZlpjvM04L2rxfICZz35RtyU9late95u9Zdj/8
+        rJ2H4TXbpIV/XwRLHBAy2Prw1uaNkzVmzvlzrDrPeaZtm2NAfNyK8A894W/b9816/8K9eGXK
+        keBbGx2Wd5Z+m9KclB7ar5HU29i2t3Cl8CNpjgUXt9l2f+jvYwpP4lkdFP7x0R65lNWXJM2/
+        nFtd9CRTsHpTpUnlhl9Xn97h3G3MbTJdoMAyWmS6dJTMfeWLk5z4eOLu8FRsKokxVVd32rpk
+        Vv+7lL+ue17OTzJhsLfXTQlkiF+8e9snnbPBE06cvdS2hU2JpTgj0VCLuag4EQAqqdh34AIA
+        AA==
+X-CMS-MailID: 20220422052335epcas5p4cba87896faca5be8818015f883b63041
 X-Msg-Generator: CA
 Content-Type: multipart/mixed;
-        boundary="----bXrsurgr15J7UbflK9zl7HSxJJpTHU7VPymi_DL2Is9zFqXn=_9eaca_"
+        boundary="----9xePhvBs7L.CmQYP2EuM5i8QaKGj7GHgcW4toGXxqW8MJ5yL=_9f168_"
 X-Sendblock-Type: REQ_APPROVE
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220421190013epcas5p45c713cd8b430f41a8e33e36c7a21fffa
-References: <20220420191451.2904439-1-shr@fb.com>
-        <165049508483.559887.15785156729960849643.b4-ty@kernel.dk>
-        <5676b135-b159-02c3-21f8-9bf25bd4e2c9@gmail.com>
-        <2fa5238c-6617-5053-7661-f2c1a6d70356@fb.com>
-        <5008091b-c0c7-548b-bfd4-af33870b8886@gmail.com>
-        <CGME20220421190013epcas5p45c713cd8b430f41a8e33e36c7a21fffa@epcas5p4.samsung.com>
-        <7dfcf6e8-ac16-5ab1-cb71-6ef81849af82@kernel.dk>
-        <20220422030918.GA20692@test-zns>
+X-CMS-RootMailID: 20220422015157epcas5p1b55ef38322371b8a301833c8b38cdc38
+References: <20220419205624.1546079-1-shr@fb.com>
+        <20220419205624.1546079-2-shr@fb.com>
+        <CGME20220422015157epcas5p1b55ef38322371b8a301833c8b38cdc38@epcas5p1.samsung.com>
+        <CA+1E3rLem2p+FMhni3DLek5Bcwt_HtYRFmfuQirdRhBEz=Qabg@mail.gmail.com>
 X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_PASS,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-------bXrsurgr15J7UbflK9zl7HSxJJpTHU7VPymi_DL2Is9zFqXn=_9eaca_
+------9xePhvBs7L.CmQYP2EuM5i8QaKGj7GHgcW4toGXxqW8MJ5yL=_9f168_
 Content-Type: text/plain; charset="utf-8"; format="flowed"
 Content-Disposition: inline
 
-On Fri, Apr 22, 2022 at 08:39:18AM +0530, Kanchan Joshi wrote:
->On Thu, Apr 21, 2022 at 12:59:42PM -0600, Jens Axboe wrote:
->>On 4/21/22 12:57 PM, Pavel Begunkov wrote:
->>>On 4/21/22 19:49, Stefan Roesch wrote:
->>>>On 4/21/22 11:42 AM, Pavel Begunkov wrote:
->>>>>On 4/20/22 23:51, Jens Axboe wrote:
->>>>>>On Wed, 20 Apr 2022 12:14:39 -0700, Stefan Roesch wrote:
->>>>>>>This adds the large CQE support for io-uring. Large CQE's are 16 bytes longer.
->>>>>>>To support the longer CQE's the allocation part is changed and when the CQE is
->>>>>>>accessed.
->>>>>>>
->>>>>>>The allocation of the large CQE's is twice as big, so the allocation size is
->>>>>>>doubled. The ring size calculation needs to take this into account.
->>>>>
->>>>>I'm missing something here, do we have a user for it apart
->>>>>from no-op requests?
->>>>>
->>>>
->>>>Pavel, what started this work is the patch series "io_uring passthru over nvme" from samsung.
->>>>(https://lore.kernel.org/io-uring/20220308152105.309618-1-joshi.k@samsung.com/)
->>>>
->>>>They will use the large SQE and CQE support.
->>>
->>>I see, thanks for clarifying. I saw it used in passthrough
->>>patches, but it only got me more confused why it's applied
->>>aforehand separately from the io_uring-cmd and passthrough
+On Fri, Apr 22, 2022 at 07:21:12AM +0530, Kanchan Joshi wrote:
+>On Thu, Apr 21, 2022 at 12:02 PM Stefan Roesch <shr@fb.com> wrote:
 >>
->>It's just applied to a branch so the passthrough folks have something to
->>base on, io_uring-big-sqe. It's not queued for 5.19 or anything like
->>that yet.
+>> This adds the struct io_uring_cqe_extra in the structure io_uring_cqe to
+>> support large CQE's.
 >>
->Thanks for putting this up.
->I am bit confused whether these (big-cqe) and big-sqe patches should
->continue be sent (to nvme list too) as part of next
->uring-cmd/passthrough series?
+>> Co-developed-by: Jens Axboe <axboe@kernel.dk>
+>> Signed-off-by: Stefan Roesch <shr@fb.com>
+>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>> ---
+>>  include/uapi/linux/io_uring.h | 12 ++++++++++++
+>>  1 file changed, 12 insertions(+)
+>>
+>> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+>> index ee677dbd6a6d..6f9f9b6a9d15 100644
+>> --- a/include/uapi/linux/io_uring.h
+>> +++ b/include/uapi/linux/io_uring.h
+>> @@ -111,6 +111,7 @@ enum {
+>>  #define IORING_SETUP_R_DISABLED        (1U << 6)       /* start with ring disabled */
+>>  #define IORING_SETUP_SUBMIT_ALL        (1U << 7)       /* continue submit on error */
+>>  #define IORING_SETUP_SQE128    (1U << 8)       /* SQEs are 128b */
+>> +#define IORING_SETUP_CQE32     (1U << 9)       /* CQEs are 32b */
+>>
+>>  enum {
+>>         IORING_OP_NOP,
+>> @@ -201,6 +202,11 @@ enum {
+>>  #define IORING_POLL_UPDATE_EVENTS      (1U << 1)
+>>  #define IORING_POLL_UPDATE_USER_DATA   (1U << 2)
+>>
+>> +struct io_uring_cqe_extra {
+>> +       __u64   extra1;
+>> +       __u64   extra2;
+>> +};
+>> +
+>>  /*
+>>   * IO completion data structure (Completion Queue Entry)
+>>   */
+>> @@ -208,6 +214,12 @@ struct io_uring_cqe {
+>>         __u64   user_data;      /* sqe->data submission passed back */
+>>         __s32   res;            /* result code for this event */
+>>         __u32   flags;
+>> +
+>> +       /*
+>> +        * If the ring is initialized with IORING_SETUP_CQE32, then this field
+>> +        * contains 16-bytes of padding, doubling the size of the CQE.
+>> +        */
+>> +       struct io_uring_cqe_extra       b[0];
+>>  };
+>Will it be any better to replace struct b[0]  with "u64 extra[ ]" ?
+>With that new fields will be referred as cqe->extra[0] and cqe->extra[1].
 >
->And does it make sense to squash somes patches of this series; at
->high-level there is 32b-CQE support, and no-op support.
+>And if we go that route, maybe "aux" sounds better than "extra".
 
-Maybe as part of v3, as there seems some scope for that (I made comments
-at respective places).
+sorry, picked v1 (rather than v2) here. This part in same though.
 
-------bXrsurgr15J7UbflK9zl7HSxJJpTHU7VPymi_DL2Is9zFqXn=_9eaca_
+------9xePhvBs7L.CmQYP2EuM5i8QaKGj7GHgcW4toGXxqW8MJ5yL=_9f168_
 Content-Type: text/plain; charset="utf-8"
 
 
-------bXrsurgr15J7UbflK9zl7HSxJJpTHU7VPymi_DL2Is9zFqXn=_9eaca_--
+------9xePhvBs7L.CmQYP2EuM5i8QaKGj7GHgcW4toGXxqW8MJ5yL=_9f168_--

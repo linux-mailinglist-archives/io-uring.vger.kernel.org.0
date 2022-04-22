@@ -2,66 +2,61 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E13350B696
-	for <lists+io-uring@lfdr.de>; Fri, 22 Apr 2022 13:54:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 474D750B7A6
+	for <lists+io-uring@lfdr.de>; Fri, 22 Apr 2022 14:54:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235150AbiDVL5n (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 22 Apr 2022 07:57:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56140 "EHLO
+        id S233902AbiDVM5e (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 22 Apr 2022 08:57:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234007AbiDVL5n (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 22 Apr 2022 07:57:43 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97E015642B
-        for <io-uring@vger.kernel.org>; Fri, 22 Apr 2022 04:54:49 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id c10so10731025wrb.1
-        for <io-uring@vger.kernel.org>; Fri, 22 Apr 2022 04:54:49 -0700 (PDT)
+        with ESMTP id S234000AbiDVMzL (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 22 Apr 2022 08:55:11 -0400
+Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32D95527F5
+        for <io-uring@vger.kernel.org>; Fri, 22 Apr 2022 05:52:18 -0700 (PDT)
+Received: by mail-pg1-x533.google.com with SMTP id t13so7257435pgn.8
+        for <io-uring@vger.kernel.org>; Fri, 22 Apr 2022 05:52:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=K66nqswH2g9RoKUeC1Y6RweLKwPwTF6ycgHWWGeMj/k=;
-        b=oosNpxnytCQXunQqAv/4Aip5R+rbCPfyUWxdAHgE1b9sUeiHV0gCojrQ4Qp9txofGP
-         4TJq2C54zwAQlYEmGIzcoFw9QMfFD5aQAKPI3Mbva5MsZaueeJ5LF1z5N4ZXEIBuzb+J
-         CjOwyFhZN/yO3afZNGryKj5/I8LMdfeCWCgfCuUifQXhvket+XI2B7hgDu6r5zvaSm/j
-         1FnVTXzha99Polfdc5SQjIPxGhsrBh4hc2SdaM2jil4FP5LRMJtr9VZmMWpndTDhvxj4
-         2uvdw4IS/Z3h0wLFtQSm3LEG756vqds4aBX2HdJf1GTBIXdL1NYi6JoD8+G+EXiA4YUd
-         QZxw==
+        h=message-id:date:mime-version:user-agent:from:subject:to:references
+         :in-reply-to:content-transfer-encoding;
+        bh=ZseMclVzfI8W03arRkRHTHhSpk1XBxW0ythQHRsKfr0=;
+        b=oMHFt1yHBKS3RgU5l90JsoTWCfWAzZiYqTGBLW2MunFAJkznhvAEjZS4NyCtMgaGKK
+         UNtkX54BqWrp9fiuylULdSDXZ+lgD2PLbNJQQE2HGLVD5REJ4v76qk0ShxBl/ilE2gpn
+         UV21Z5jhuyeZcEjINLfjlZl9Etd3WyPf8LVyPEpHdN9N0PoPgJB/fzkoVpl+CWpvj7QA
+         VNtPGsYQaHxeL/25PcaW3HNRqaiUSWmey6WFTrxrEAe/GNPREYsm/XTAjIv5M815MsHV
+         hnlXpUC7PGjNzAg+rIQ80HU169vVFQ0RpRiJ44xB+3B10vgrbhayxr/1FsxjaLVm6+DQ
+         Rjfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=K66nqswH2g9RoKUeC1Y6RweLKwPwTF6ycgHWWGeMj/k=;
-        b=fvg0tQPZkJCLZ9C9M2a7J6AwQNEjpwAn7GIi6YscBsq4q5jDqyIfWhKOu67tS9QJ9A
-         jsLhpbKACisJASnWnjUqOab0+HEKvmghiJJqbUjvbJCNdl4v6VptbR7aXzZR6qD7NuRB
-         8cdInUirj8SeO7AZo/gw8Xg3qiHnrDNtLYg/C2JdjGjQXBMN+cs35cW0hzeMvO5UvdMI
-         svWuni5FVXqtpMhmRHeRdUqb1yaywgaA54xJkEht+ZkRf0ELaX939edHXjNnFhXgz8BO
-         EgeZ5HYcUkJbzMp0mH0Qx8vf8q5OjEFMKIMrHFZq/p/N77SjUz/JNJkuyWFhQAYpYwUq
-         +4aA==
-X-Gm-Message-State: AOAM531+EMi8/zFr+3MLBK40TBxpkMrH9iUBVnD3FjGiIVGaq+Jc8Qiu
-        Lxg04U8seBQKdwzq4oohnWbqV1jUalI=
-X-Google-Smtp-Source: ABdhPJwK+LEK1AkiOzI+f3xw/C68oHhf+7nfVlPHOk5Q5Zgxi9wJ6Ye9X7dsy3zUuDN5GiXextM1Hw==
-X-Received: by 2002:adf:e3c1:0:b0:20a:aba9:9b38 with SMTP id k1-20020adfe3c1000000b0020aaba99b38mr3297880wrm.673.1650628488120;
-        Fri, 22 Apr 2022 04:54:48 -0700 (PDT)
-Received: from [192.168.8.198] ([185.69.144.28])
-        by smtp.gmail.com with ESMTPSA id l14-20020adffe8e000000b00207af9cdd90sm1497094wrr.39.2022.04.22.04.54.47
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:from
+         :subject:to:references:in-reply-to:content-transfer-encoding;
+        bh=ZseMclVzfI8W03arRkRHTHhSpk1XBxW0ythQHRsKfr0=;
+        b=QwIwUoEacGQvfX4jrRyVoFv4YkUDbCzyi5fGsLWPwwz2/RkIPXtYdRolVDQ5hLRs8D
+         PAUGB+xUKNfVLppgUf9IhD0zsg8Bt20yr/sRy7kzKAL4X8LgnNCzDXidIVMrclnOkrij
+         xTRO6l/0RzcngZH5oP1dgB7C8lsF2KeTJ+QnmWjDW5JmgQcERP6RAP/epgIvQkyi0fjj
+         8oiOW7tKWswqXVTb46f3Ojzg0RqNGlBiXofXDKxPW9TQXiDvcizPlkoTGmVq6VioLy5T
+         YpWPubrhZH3UzHnIjucQtN+50PDNnIbrH+MptHSuYmWipsmJl1SgjPQeIlSaOJO1c4PL
+         41kw==
+X-Gm-Message-State: AOAM533n7KrOcZ6cdR8SSLJzci09c3yKUAcwf58+Efob9R4Lvviiq5Uj
+        NkeOwOevsNfYiZp6y1kb1UKoOn5/z4PU4g==
+X-Google-Smtp-Source: ABdhPJys9S/k0d+46LJOvZmp/wK6bw3K9HfZK1GAbI/LM63LIzMax/M2x45DDSLvjjFFQmVWiW4X9A==
+X-Received: by 2002:a63:e04a:0:b0:39f:ea06:e203 with SMTP id n10-20020a63e04a000000b0039fea06e203mr3880002pgj.146.1650631937791;
+        Fri, 22 Apr 2022 05:52:17 -0700 (PDT)
+Received: from [192.168.255.10] ([106.53.33.166])
+        by smtp.gmail.com with ESMTPSA id mp9-20020a17090b190900b001cd4989feb6sm6187593pjb.2.2022.04.22.05.52.16
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Apr 2022 04:54:47 -0700 (PDT)
-Message-ID: <5799d69a-6212-b270-ee61-102ab2abad6d@gmail.com>
-Date:   Fri, 22 Apr 2022 12:54:02 +0100
+        Fri, 22 Apr 2022 05:52:17 -0700 (PDT)
+Message-ID: <9fef64ff-d13d-f9ff-a230-0d8fe928097e@gmail.com>
+Date:   Fri, 22 Apr 2022 20:52:18 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [RFC 00/11] io_uring specific task_work infra
-Content-Language: en-US
-To:     Hao Xu <haoxu.linux@gmail.com>, io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>
-References: <cover.1650548192.git.asml.silence@gmail.com>
- <6088470f-d7f8-f5d3-1860-2f5aeda32935@gmail.com>
- <5d12619b-73c8-24c0-065c-d9322e7776e9@gmail.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <5d12619b-73c8-24c0-065c-d9322e7776e9@gmail.com>
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.8.1
+From:   Hao Xu <haoxu.linux@gmail.com>
+Subject: Re: memory access op ideas
+To:     Avi Kivity <avi@scylladb.com>, io-uring@vger.kernel.org
+References: <e2de976d-c3d1-8bd2-72a8-a7e002641d6c@scylladb.com>
+In-Reply-To: <e2de976d-c3d1-8bd2-72a8-a7e002641d6c@scylladb.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -74,70 +69,42 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/22/22 09:45, Hao Xu wrote:
-> Hi,
-> 在 2022/4/21 下午10:50, Pavel Begunkov 写道:
->> On 4/21/22 14:44, Pavel Begunkov wrote:
->>> For experiments only. If proves to be useful would need to make it
->>> nicer on the non-io_uring side.
->>>
->>> 0-10 save 1 spinlock/unlock_irq pair and 2 cmpxchg per batch. 11/11 in
->>> general trades 1 per tw add spin_lock/unlock_irq and 2 per batch spinlocking
->>> with 2 cmpxchg to 1 per tw add cmpxchg and 1 per batch cmpxchg.
->>
->> null_blk irqmode=1 completion_nsec=0 submit_queues=32 poll_queues=32
->> echo -n 0 > /sys/block/nullb0/queue/iostats
->> echo -n 2 > /sys/block/nullb0/queue/nomerges
->> io_uring -d<QD> -s<QD> -c<QD> -p0 -B1 -F1 -b512 /dev/nullb0
-> This series looks good to me, by the way, what does -s and -c mean? and
-> what is the tested workload?
+Hi Avi,
+在 4/13/22 6:33 PM, Avi Kivity 写道:
+> Unfortunately, only ideas, no patches. But at least the first seems very 
+> easy.
+> 
+> 
+> - IORING_OP_MEMCPY_IMMEDIATE - copy some payload included in the op 
+> itself (1-8 bytes) to a user memory location specified by the op.
+> 
+> 
+> Linked to another op, this can generate an in-memory notification useful 
+> for busy-waiters or the UMWAIT instruction
+> 
+> 
+> This would be useful for Seastar, which looks at a timer-managed memory 
+> location to check when to break computation loops.
+> 
+> 
+> - IORING_OP_MEMCPY - asynchronously copy memory
+> 
+> 
+> Some CPUs include a DMA engine, and io_uring is a perfect interface to 
+> exercise it. It may be difficult to find space for two iovecs though.
 
-It was a standard testing tool from fio/t/. It just does random reads
-keeping QD. The flags are submission and completion batching respectively,
-i.e. how many requests it submits and waits per syscall.
+I have a question about the 'DMA' here, do you mean DMA device for
+memory copy? My understanding is you want async memcpy so that the
+cpu can relax when the specific hardware is doing memory copy. the
+thing is for cases like busy waiting or UMAIT, the length of the memory
+to be copied is usually small(otherwise we don't use busy waiting or
+UMAIT, right?). Then making it async by io_uring's iowq may introduce
+much more overhead(the context switch).
 
-
+Regards,
+Hao
 
 > 
-> Regards,
-> Hao
->>
->>
->>       | base | 1-10         | 1-11
->> ___________________________________________
->> QD1  | 1.88 | 2.15 (+14%)  | 2.19 (+16.4%)
->> QD4  | 2.8  | 3.06 (+9.2%) | 3.11 (+11%)
->> QD32 | 3.61 | 3.81 (+5.5%) | 3.96 (+9.6%)
->>
->> The numbers are in MIOPS, (%) is relative diff with the baseline.
->> It gives more than I expected, but the testing is not super
->> consistent, so a part of it might be due to variance.
->>
->>
->>> Pavel Begunkov (11):
->>>    io_uring: optimise io_req_task_work_add
->>>    io_uringg: add io_should_fail_tw() helper
->>>    io_uring: ban tw queue for exiting processes
->>>    io_uring: don't take ctx refs in tctx_task_work()
->>>    io_uring: add dummy io_uring_task_work_run()
->>>    task_work: add helper for signalling a task
->>>    io_uring: run io_uring task_works on TIF_NOTIFY_SIGNAL
->>>    io_uring: wire io_uring specific task work
->>>    io_uring: refactor io_run_task_work()
->>>    io_uring: remove priority tw list
->>>    io_uring: lock-free task_work stack
->>>
->>>   fs/io-wq.c                |   1 +
->>>   fs/io_uring.c             | 213 +++++++++++++++-----------------------
->>>   include/linux/io_uring.h  |   4 +
->>>   include/linux/task_work.h |   4 +
->>>   kernel/entry/kvm.c        |   1 +
->>>   kernel/signal.c           |   2 +
->>>   kernel/task_work.c        |  33 +++---
->>>   7 files changed, 115 insertions(+), 143 deletions(-)
->>>
->>
 > 
+>
 
--- 
-Pavel Begunkov

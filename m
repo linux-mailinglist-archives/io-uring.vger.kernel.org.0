@@ -2,58 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 12E0450CCA8
+	by mail.lfdr.de (Postfix) with ESMTP id 5B47B50CCA9
 	for <lists+io-uring@lfdr.de>; Sat, 23 Apr 2022 19:40:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236637AbiDWRmM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 23 Apr 2022 13:42:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49502 "EHLO
+        id S236638AbiDWRmN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 23 Apr 2022 13:42:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236599AbiDWRmM (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 23 Apr 2022 13:42:12 -0400
-Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 108751C82C8
+        with ESMTP id S236599AbiDWRmN (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 23 Apr 2022 13:42:13 -0400
+Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F21501C82D1
         for <io-uring@vger.kernel.org>; Sat, 23 Apr 2022 10:39:15 -0700 (PDT)
-Received: by mail-pl1-x629.google.com with SMTP id k4so6223721plk.7
+Received: by mail-pg1-x52b.google.com with SMTP id q19so9912644pgm.6
         for <io-uring@vger.kernel.org>; Sat, 23 Apr 2022 10:39:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=cBDOnD6PE89fA5NB0k+XIgLS3kV4y38p84ECag9wjkE=;
-        b=e8mVRFvIguy7s6IlYWL2KBtTIDqJ5IAKfe1Jfw5QQuQXpnwzh27dHAda9sV2ODK5TC
-         EECeVMi76x8JmWokEoAj4sUp7pAIR0o06xaeE/BZPRXDI/NmoM8hMLxI9KcclR8hlQ1Q
-         6HpGzMIx0Nv0OZgfgTm+DJE09QkMuCTu2K0iM2vdC7QlibiFjKqHhD1/Ra6E+Sapfl4n
-         RG4he2C2OIilYCQm2/UeOpTELB4fOYu54U9WVRrIUsxpuKUWS9YfeRkcKBAqh47Vf0mV
-         /GUwUrD1w8pOV9VAC//jikIlLZNNju7yHvb1/8vcRBXEvhfJy6ElK/MIed3md5vgpQ+V
-         K9Mg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=lEau4k6lbTQ9lqJfBFgL32mD1tqEjCcVozijP5814T8=;
+        b=k8/X2Umrw7Sadwq9rV1w2TrOyZ5jKQ/v0Xw4Enl6ltcqaYox4ZDUyUsPuAZs4wzdBU
+         C6JQKeciWrv+zzaLMGRV5FaDY6wrQGtPkZ/6J9wc4ada/GlFM86qp5L8W5dNPh7+T+Q1
+         Th1O0CtuZZaSEe2akZy/y6lI2kL/cRkTPNgACapVoX0i9r5Vk3vneNqJJQ+wakrSVg2I
+         zJx5dVQMxJZfQRAf79O61Fn83OmbBRIJNbch/6XgaHf2+YhKxtLnIGfzobN8N7JulKzb
+         3s/ll03IVnAbML0iivKFz2rZozCwE2rvgKXtNmjpquvWc2km/YgiSIPDRuaFpZDENlSw
+         HhoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=cBDOnD6PE89fA5NB0k+XIgLS3kV4y38p84ECag9wjkE=;
-        b=6BGVkDAI6kEXHfDWmm8W3N/79/d4SiPGaIPLlhBbSB8geaEYsBVHRmJa5P8gZEKX25
-         3xbBHaZ91kVqysfQXdcrPPYM3W5RuNTHwDwXSKZAfjPQI5vc8ih3sK/++hC2RvsJe4eb
-         qQ3QOLPNkEs+GLPJ4Y57vJWGFs/YDZUwU9hOD9pQzicqlBBahGbcIoYCy8+PS56q9QOR
-         b6v6EXLvnc7bcbJgGVZh+zkw38oGmoUvg8GYjra9c1G0SwgbY0sNM+zIOAI/zdoReMaF
-         fYg8lIHlgVRUDKVftAZvcrsxoka0myKW5OXbvPCQ3ir5aWF4Yv51SrTzKfosBIt4GPaq
-         Almg==
-X-Gm-Message-State: AOAM533od6LlEnNeSIaF+nKSeTreM4AV3WwbQZuscbg7VP8xPEb4BkHw
-        yRyMQHnNy1kHU9/AYOf2z1iTJW3qE2smHG1R
-X-Google-Smtp-Source: ABdhPJxS+VuYZs1eSVfrFbFmVOTqbtSM3cKOJp3LFF0ulVFM8aRbbpLpzNvdUZ0+S937K83tAn+OZA==
-X-Received: by 2002:a17:902:f64c:b0:156:4349:7e9b with SMTP id m12-20020a170902f64c00b0015643497e9bmr10444461plg.139.1650735554313;
-        Sat, 23 Apr 2022 10:39:14 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=lEau4k6lbTQ9lqJfBFgL32mD1tqEjCcVozijP5814T8=;
+        b=IXZCn/KURSOtKMWo/5WvbbESFR/tyzIPmfbHVpAih4CKxC84wWRNA9rwahxTESXiyN
+         e5nKRVGL2LydxGfn8JuXzo0mK5WmKiAFsafsagNyew7h2gKSq+EP5jFi8iO5CH+wWDKl
+         DTV1wvPjriRtwSWt83nrq8EZQnW8MQS4E4iBNYMvvrXYr6I+vtOQOtaAwiyY15isOUKN
+         eguDkORkn6Xuav/9Hy7RzBTsqR7n1re0n5aFohVpSppO/edwX6ZFgJWoQtmXag2s7kbP
+         1Q9wxVxF2nfS/rvdcLaH8d+Zxxr8UeGnF2Lc/GHD9kIokrF8jgrn+cPzH69Cji1ro5Qf
+         xXpw==
+X-Gm-Message-State: AOAM532vG1+JkIhPlGAq8W1vDvNy66lkyLXlCEOLAz85qUlY4Ee3zjx6
+        wAsodWfwZ6T2ZK/oxmNO7ZtcYISGjLlXDF79
+X-Google-Smtp-Source: ABdhPJzH9qtteNL0vmTeiVg1Li+r+zywJOMcUWj0ZL8byvLD/lrrQ2jctdR7UFgBF7kS8xqb3DWfUg==
+X-Received: by 2002:a63:b24c:0:b0:398:9594:a140 with SMTP id t12-20020a63b24c000000b003989594a140mr8862916pgo.292.1650735555104;
+        Sat, 23 Apr 2022 10:39:15 -0700 (PDT)
 Received: from localhost.localdomain ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id e16-20020a63ee10000000b0039d1c7e80bcsm5198854pgi.75.2022.04.23.10.39.13
-        for <io-uring@vger.kernel.org>
+        by smtp.gmail.com with ESMTPSA id e16-20020a63ee10000000b0039d1c7e80bcsm5198854pgi.75.2022.04.23.10.39.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 23 Apr 2022 10:39:13 -0700 (PDT)
+        Sat, 23 Apr 2022 10:39:14 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
-Subject: [PATCHSET v2 next 0/5] Add support for non-IPI task_work
-Date:   Sat, 23 Apr 2022 11:39:06 -0600
-Message-Id: <20220423173911.651905-1-axboe@kernel.dk>
+Cc:     Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 1/5] task_work: allow TWA_SIGNAL without a rescheduling IPI
+Date:   Sat, 23 Apr 2022 11:39:07 -0600
+Message-Id: <20220423173911.651905-2-axboe@kernel.dk>
 X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220423173911.651905-1-axboe@kernel.dk>
+References: <20220423173911.651905-1-axboe@kernel.dk>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -65,24 +67,93 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi,
+Some use cases don't always need an IPI when sending a TWA_SIGNAL
+notification. Add TWA_SIGNAL_NO_IPI, which is just like TWA_SIGNAL,
+except it doesn't send an IPI to the target task. It merely sets
+TIF_NOTIFY_SIGNAL and wakes up the task.
 
-Unless we're using SQPOLL, any task_work queue will result in an IPI
-to the target task unless it's running in the kernel already. This isn't
-always needed, particularly not for the common case of not sharing the
-ring. In certain workloads, this can provide a 5-10% improvement. Some
-of this is due the cost of the IPI, and some from needlessly
-interrupting the target task when the work could just get run when
-completions are being waited for.
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+---
+ include/linux/sched/signal.h | 13 +++++++++++--
+ include/linux/task_work.h    |  1 +
+ kernel/task_work.c           | 15 ++++++++++-----
+ 3 files changed, 22 insertions(+), 7 deletions(-)
 
-Patches 1..4 are prep patches, patch 5 is the actual change.
-
-v2:
-- Switch sq_flags to atomic_t and use atomic bitop helpers rather than
-  add helpers using try_cmpxchg() for setting/clearing of flags.
-  Suggested by Pavel.
-
+diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
+index 3c8b34876744..66b689f6cfcb 100644
+--- a/include/linux/sched/signal.h
++++ b/include/linux/sched/signal.h
+@@ -355,14 +355,23 @@ static inline void clear_notify_signal(void)
+ 	smp_mb__after_atomic();
+ }
+ 
++/*
++ * Returns 'true' if kick_process() is needed to force a transition from
++ * user -> kernel to guarantee expedient run of TWA_SIGNAL based task_work.
++ */
++static inline bool __set_notify_signal(struct task_struct *task)
++{
++	return !test_and_set_tsk_thread_flag(task, TIF_NOTIFY_SIGNAL) &&
++	       !wake_up_state(task, TASK_INTERRUPTIBLE);
++}
++
+ /*
+  * Called to break out of interruptible wait loops, and enter the
+  * exit_to_user_mode_loop().
+  */
+ static inline void set_notify_signal(struct task_struct *task)
+ {
+-	if (!test_and_set_tsk_thread_flag(task, TIF_NOTIFY_SIGNAL) &&
+-	    !wake_up_state(task, TASK_INTERRUPTIBLE))
++	if (__set_notify_signal(task))
+ 		kick_process(task);
+ }
+ 
+diff --git a/include/linux/task_work.h b/include/linux/task_work.h
+index 897494b597ba..795ef5a68429 100644
+--- a/include/linux/task_work.h
++++ b/include/linux/task_work.h
+@@ -17,6 +17,7 @@ enum task_work_notify_mode {
+ 	TWA_NONE,
+ 	TWA_RESUME,
+ 	TWA_SIGNAL,
++	TWA_SIGNAL_NO_IPI,
+ };
+ 
+ static inline bool task_work_pending(struct task_struct *task)
+diff --git a/kernel/task_work.c b/kernel/task_work.c
+index c59e1a49bc40..fa8fdd04aa17 100644
+--- a/kernel/task_work.c
++++ b/kernel/task_work.c
+@@ -13,11 +13,13 @@ static struct callback_head work_exited; /* all we need is ->next == NULL */
+  *
+  * Queue @work for task_work_run() below and notify the @task if @notify
+  * is @TWA_RESUME or @TWA_SIGNAL. @TWA_SIGNAL works like signals, in that the
+- * it will interrupt the targeted task and run the task_work. @TWA_RESUME
+- * work is run only when the task exits the kernel and returns to user mode,
+- * or before entering guest mode. Fails if the @task is exiting/exited and thus
+- * it can't process this @work. Otherwise @work->func() will be called when the
+- * @task goes through one of the aforementioned transitions, or exits.
++ * it will interrupt the targeted task and run the task_work. @TWA_SIGNAL_NO_IPI
++ * works like @TWA_SIGNAL, except it doesn't send a reschedule IPI to force the
++ * targeted task to reschedule and run task_work. @TWA_RESUME work is run only
++ * when the task exits the kernel and returns to user mode, or before entering
++ * guest mode. Fails if the @task is exiting/exited and thus it can't process
++ * this @work. Otherwise @work->func() will be called when the @task goes
++ * through one of the aforementioned transitions, or exits.
+  *
+  * If the targeted task is exiting, then an error is returned and the work item
+  * is not queued. It's up to the caller to arrange for an alternative mechanism
+@@ -53,6 +55,9 @@ int task_work_add(struct task_struct *task, struct callback_head *work,
+ 	case TWA_SIGNAL:
+ 		set_notify_signal(task);
+ 		break;
++	case TWA_SIGNAL_NO_IPI:
++		__set_notify_signal(task);
++		break;
+ 	default:
+ 		WARN_ON_ONCE(1);
+ 		break;
 -- 
-Jens Axboe
-
+2.35.1
 

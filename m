@@ -2,85 +2,129 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AF26F50D650
-	for <lists+io-uring@lfdr.de>; Mon, 25 Apr 2022 02:33:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1135A50D65D
+	for <lists+io-uring@lfdr.de>; Mon, 25 Apr 2022 02:45:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238382AbiDYAgI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 24 Apr 2022 20:36:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54430 "EHLO
+        id S236781AbiDYAs0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 24 Apr 2022 20:48:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231969AbiDYAgH (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 24 Apr 2022 20:36:07 -0400
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A236B50E28
-        for <io-uring@vger.kernel.org>; Sun, 24 Apr 2022 17:33:05 -0700 (PDT)
-Received: by mail-pl1-x62e.google.com with SMTP id u7so8089697plg.13
-        for <io-uring@vger.kernel.org>; Sun, 24 Apr 2022 17:33:05 -0700 (PDT)
+        with ESMTP id S240022AbiDYAsY (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 24 Apr 2022 20:48:24 -0400
+Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E01663CC
+        for <io-uring@vger.kernel.org>; Sun, 24 Apr 2022 17:45:15 -0700 (PDT)
+Received: by mail-pf1-x42e.google.com with SMTP id w16so6930436pfj.2
+        for <io-uring@vger.kernel.org>; Sun, 24 Apr 2022 17:45:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:in-reply-to:references:subject:message-id:date
-         :mime-version:content-transfer-encoding;
-        bh=Q86C8AwH47IjPaOFgodwqV2gbd1atN/JWCdIhc8bRmk=;
-        b=h/ShNirQesAhqSgp4PDxoxDYPW5Z5A1kyEusvdHOuqCfDNk/6mvhccH3CljWpUe0GZ
-         I0COzt72cAzWoB0V9tB3XXUKHMXtp3kiOEeSw475opWHFOay/B4AbVOm/vrkeuCC1eB+
-         b8VJqW0dqc6brII0hoY6pFXmgYOp8uRjHLQucU4EfFjdAQM0O4JUfR3GsiNj/d5RcJPQ
-         4f5ig1THtLAk8DQ1fkAe4kpCFHFl5kDUysShUe1lgKBFM2zHAIvukAo1+G7kW+5t8d/z
-         YDZxkiIh7txsamMWu1jsj+3TsIqhWyNE0t8XWjmeZBYcoSRl9nW3vsXXkqUGI/bAJkxJ
-         4qOQ==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :references:from:in-reply-to:content-transfer-encoding;
+        bh=plTac+a+MZOjMaIyNjl//97G6tUJYZXF7aSDx85RTz4=;
+        b=qs+tGe4kcc53+c6qdnmArN+d4An5vra34Z2KwbaoyTW65GUH3Sbxa0FOcrw55w8s6c
+         tAV2keh/prGUwy8K1WXTIybAD/59/0QZYOFyFgb0LRxhYIpD6iscbT9/YDsEc4qhwF83
+         VoNDUqKneDxYqFei4RDx0HPkYt1oM1q2bgUNFcWcKg8/M4fphWGpLnKRC//EIPMEHiU6
+         rGq9d7w7xBcf+5JNwgT52w9pGXZyhhw4uijGUjZ7KMhmHs8hNntXtOg1R4yvH3AMIIv1
+         XvXGT9L50JS7Himw/DU4IGfDH1SVt9JSSGBseq6LTH0DBEj9tCLcnnp3Td/wNobnynsi
+         IelQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
-         :message-id:date:mime-version:content-transfer-encoding;
-        bh=Q86C8AwH47IjPaOFgodwqV2gbd1atN/JWCdIhc8bRmk=;
-        b=EvxmZvvC5HoSl7dN0C+qShYM74s7+gsqKtXic9mL3u+nkZFmm5R+INrx029HmL4Gl3
-         59zmUDnFdehdYZIR/1so0Kn6CqXQCRu56tTQF/dDX/uQ3ZlBMPUZ6u3lHg+UgK3bNnDD
-         BkFi71xh4loyg9KW3MDT5c98+PEXWbsUGg32QO/oatq91rVhSAq8LaPIKMLMsGrZvaFH
-         1c7aRki7dNj+XFuNTsEGCGsaIaAPQ9QtfjMBtoJ7kZc0ObryN3aeZrveU41i19S0eqJB
-         0fR+dVADeH67gee4IChW2NRR/MwWseaGlXVGf6+Ciu4jrOqb8LIaooh/ohhP5+nciZuA
-         AnGQ==
-X-Gm-Message-State: AOAM530yj1Cep+aKRjzpQnzqKSK5yg8s0REsB6+5o2q/r3s2OiITo51o
-        9EeIQwnWJx/OG5mWqUHxGb0bdPnQN3jK8z1n
-X-Google-Smtp-Source: ABdhPJw5GqvD0W7pJ4X6lyL758uMBIdI/MO2oeSntAnyqKUtUl+Ixqb+Eu6xA76YZnJ1FYgvbyGCqg==
-X-Received: by 2002:a17:902:9309:b0:156:983d:2193 with SMTP id bc9-20020a170902930900b00156983d2193mr15423071plb.158.1650846785087;
-        Sun, 24 Apr 2022 17:33:05 -0700 (PDT)
-Received: from [127.0.1.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id b20-20020a62a114000000b0050d231e08ffsm5299638pff.37.2022.04.24.17.33.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Apr 2022 17:33:04 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org, joshi.k@samsung.com
-Cc:     Christoph Hellwig <hch@lst.de>
-In-Reply-To: <20220422101048.419942-1-joshi.k@samsung.com>
-References: <CGME20220422101608epcas5p22e9c82eb1b3beef6bf6e1c2e83b4b19b@epcas5p2.samsung.com> <20220422101048.419942-1-joshi.k@samsung.com>
-Subject: Re: [PATCH] io_uring: cleanup error-handling around io_req_complete
-Message-Id: <165084678436.1236498.2151364265856264200.b4-ty@kernel.dk>
-Date:   Sun, 24 Apr 2022 18:33:04 -0600
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=plTac+a+MZOjMaIyNjl//97G6tUJYZXF7aSDx85RTz4=;
+        b=gPnbZpItyaRLnKdXNz6IbbmwJjGPRmuG2hX30FLZhv4FwWLCgyF1kJsYlpZGTVFFx7
+         jL1b1hOB9IyqFhEJem8cb9XOBOCjMmdlI42MJWtlZ+xTHU+xYGvcg2TT+aOXjceZlK8/
+         rMrCtO3rtEr+QKJ9lO6PMW96kjP2G4AQg3f8JN9u1VdCDSZ+D7O1i0HztflB6ydwT7lR
+         NWmMIoPRPE/7xLn4faxmNwOmR4S+1m7z2Ttz91ue1hGPkC6IYfjAxrdGNiOZ1AKr5/+V
+         UPPxY4cOrs4aHNdVWx4Y1NWummez2vzZYarRUhbt+T72CcsUiLnDSeIdYRSZb/27g+dZ
+         WdHg==
+X-Gm-Message-State: AOAM530MxHRxzAQG8MHBFQTGD1+cajh+VTXaXiInu4B0iA6mjGzynyTM
+        C+9gpVDcMwZg6WFPxy4TsMf0QQ==
+X-Google-Smtp-Source: ABdhPJweIt115DL/iBy3UwiYQH/MK73guVdweQklk+i9UgG+WsBJ9+Kd5KXERen9Tv5R2OXZ9TgxKg==
+X-Received: by 2002:a63:3f8f:0:b0:386:3116:a1f3 with SMTP id m137-20020a633f8f000000b003863116a1f3mr13179497pga.136.1650847515093;
+        Sun, 24 Apr 2022 17:45:15 -0700 (PDT)
+Received: from [192.168.1.100] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id g12-20020a056a001a0c00b004e1307b249csm9670707pfv.69.2022.04.24.17.45.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 24 Apr 2022 17:45:14 -0700 (PDT)
+Message-ID: <c925572e-9509-77bd-0992-3ac439fb0aac@kernel.dk>
+Date:   Sun, 24 Apr 2022 18:45:13 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: memory access op ideas
+Content-Language: en-US
+To:     Avi Kivity <avi@scylladb.com>, io-uring@vger.kernel.org
+References: <e2de976d-c3d1-8bd2-72a8-a7e002641d6c@scylladb.com>
+ <17ea341d-156a-c374-daab-2ed0c0fbee49@kernel.dk>
+ <c03c4041-ed0f-2f6f-ed84-c5afe5555b4f@scylladb.com>
+ <1acd11b7-12e7-d31b-775a-4f62895ac2f7@kernel.dk>
+ <ee3f7e59-e7a1-9638-cb9a-4b2c15a5f945@scylladb.com>
+ <d4321b8e-7d6a-7279-5e89-7e688a087a36@kernel.dk>
+ <14e61ff5-2985-3ca5-b227-8d36db95b7bd@scylladb.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <14e61ff5-2985-3ca5-b227-8d36db95b7bd@scylladb.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-3.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, 22 Apr 2022 15:40:48 +0530, Kanchan Joshi wrote:
-> Move common error-handling to io_req_complete, so that various callers
-> avoid repeating that. Few callers (io_tee, io_splice) require slightly
-> different handling. These are changed to use __io_req_complete instead.
+On 4/24/22 8:56 AM, Avi Kivity wrote:
+> 
+> On 24/04/2022 16.30, Jens Axboe wrote:
+>> On 4/24/22 7:04 AM, Avi Kivity wrote:
+>>> On 23/04/2022 20.30, Jens Axboe wrote:
+>>>> On 4/23/22 10:23 AM, Avi Kivity wrote:
+>>>>> Perhaps the interface should be kept separate from io_uring. e.g. use
+>>>>> a pidfd to represent the address space, and then issue
+>>>>> IORING_OP_PREADV/IORING_OP_PWRITEV to initiate dma. Then one can copy
+>>>>> across process boundaries.
+>>>> Then you just made it a ton less efficient, particularly if you used the
+>>>> vectored read/write. For this to make sense, I think it has to be a
+>>>> separate op. At least that's the only implementation I'd be willing to
+>>>> entertain for the immediate copy.
+>>>
+>>> Sorry, I caused a lot of confusion by bundling immediate copy and a
+>>> DMA engine interface. For sure the immediate copy should be a direct
+>>> implementation like you posted!
+>>>
+>>> User-to-user copies are another matter. I feel like that should be a
+>>> stand-alone driver, and that io_uring should be an io_uring-y way to
+>>> access it. Just like io_uring isn't an NVMe driver.
+>> Not sure I understand your logic here or the io_uring vs nvme driver
+>> reference, to be honest. io_uring _is_ a standalone way to access it,
+>> you can use it sync or async through that.
+>>
+>> If you're talking about a standalone op vs being useful from a command
+>> itself, I do think both have merit and I can see good use cases for
+>> both.
 > 
 > 
+> I'm saying that if dma is exposed to userspace, it should have a
+> regular synchronous interface (maybe open("/dev/dma"), maybe something
+> else). io_uring adds asynchrony to everything, but it's not
+> everything's driver.
 
-Applied, thanks!
+Sure, my point is that if/when someone wants to add that, they should be
+free to do so. It's not a fair requirement to put on someone doing the
+initial work on wiring this up. It may not be something they would want
+to use to begin with, and it's perfectly easy to run io_uring in sync
+mode should you wish to do so. The hard part is making the
+issue+complete separate actions, rolling a sync API on top of that would
+be trivial.
 
-[1/1] io_uring: cleanup error-handling around io_req_complete
-      commit: 4ffaa94b9c047fe0e82b1f271554f31f0e2e2867
+> Anyway maybe we drifted off somewhere and this should be decided by
+> pragmatic concerns (like whatever the author of the driver prefers).
 
-Best regards,
+Indeed!
+
 -- 
 Jens Axboe
-
 

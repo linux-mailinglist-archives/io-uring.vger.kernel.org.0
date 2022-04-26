@@ -2,63 +2,70 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 347A65100A3
-	for <lists+io-uring@lfdr.de>; Tue, 26 Apr 2022 16:40:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE593510150
+	for <lists+io-uring@lfdr.de>; Tue, 26 Apr 2022 17:03:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235377AbiDZOnK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 26 Apr 2022 10:43:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55606 "EHLO
+        id S1348454AbiDZPGt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 26 Apr 2022 11:06:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59416 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345295AbiDZOnI (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 26 Apr 2022 10:43:08 -0400
-Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 780A55FCC
-        for <io-uring@vger.kernel.org>; Tue, 26 Apr 2022 07:40:00 -0700 (PDT)
-Received: by mail-io1-xd30.google.com with SMTP id r12so20106386iod.6
-        for <io-uring@vger.kernel.org>; Tue, 26 Apr 2022 07:40:00 -0700 (PDT)
+        with ESMTP id S1348182AbiDZPGs (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 26 Apr 2022 11:06:48 -0400
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AF856D4FC
+        for <io-uring@vger.kernel.org>; Tue, 26 Apr 2022 08:03:41 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id kq17so13528923ejb.4
+        for <io-uring@vger.kernel.org>; Tue, 26 Apr 2022 08:03:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:in-reply-to:references:subject:message-id:date:mime-version
-         :content-transfer-encoding;
-        bh=XiA39nfCd8iHof+9p2RDPlzQzgnEYfU74wp9AV2yMdE=;
-        b=gjtb+1fV4h/yNUnNITavENGrRNUBoIJ+Kuiy3CqdE5C6/QOzbIM/KySf5pfIBej+ID
-         zClC8gt3Myi0egHujCU4YboCWAsYq32iGioPD2nXu1bHWueSnXo3Kfw3u/HWn6NFxiwJ
-         HubrPAgNbWRWJwMO5xznyoWp4LSuU0iyXUtjk+ju80p4rcNgB6VqdxS5fbFoxEK8lXIZ
-         o+qDNf8mtPhIZyNHnG0a6z90L6DgXMQ3GsJ23sZaJKamlqBMTonB1HFWsz8gBClecitC
-         0bvbc8ymfXRUzHj/g89Qr7DYZelApjo2pPAUP3kODIIf2kN0jffIXagQYr6McBPFEcTT
-         y+6A==
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :references:from:in-reply-to:content-transfer-encoding;
+        bh=C6G9SgucYL2CMjHU7k2Ctcqcxoq8B9zBMPFc+v8ONPI=;
+        b=EnkVdErq1wc1RL4g6RYN8qI3ROnE2rpY57udOjgzhCOTVR0DBRtQYpN36aFzzzq/ni
+         viZNbbtN2wCQPAEUrecJvjWr0ZCt6wpdp31UTpucpO4GAoh6n3/7uV70zlGXkxq7z61t
+         BLSqJVDyuIS75ft2dzrr02NBLo28IrXgYYovFmzzepGrYEfo5CddMnp2W3TwA/GYh0xV
+         IpjFgWeNmOJsTLou+bp4LTJ7KM+6P70P6KV6zE8BxcYwOmz2dMuuhQOf0Tyc5Oy/tu9M
+         ca4kaGCYir0hA4Z9540EjiIBjZYNwU3TrrrwNXhsQEyHH0zRNB+iocMc2LURa9qSX7/o
+         8E+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:in-reply-to:references:subject
-         :message-id:date:mime-version:content-transfer-encoding;
-        bh=XiA39nfCd8iHof+9p2RDPlzQzgnEYfU74wp9AV2yMdE=;
-        b=A9ju0b9PoHieNst0kJlX3vEp1duoSKgRieloQCAfmmFHD9f+dEnvo4grW8wtUdOy2e
-         MNaqinT1RLM19ez/m7jr/4wz3X4F6MDUqZNs+ATJT3lZEApZoesrN/VCHx2kug1LpE5+
-         IJ7Nb7FgbSvi3ug5wR8tYGdTIQTGaU5Unkf9Pry/MnssijBe0tA0KBk8H0sbtjvHxejn
-         LMPuBxsFTKddH4oDoEhfeIU2PWHj+EOSnqBbOhA09vbj3wStrVeNXY3Jkdv3uRPKrqTk
-         UN+xtkpz1m8yj4EbDofJ3ew79aXxz1s54LfkgJ1nF3djtY5byXRI0FV8+SQmzadiWfBA
-         IZgw==
-X-Gm-Message-State: AOAM533vk8KBL99n9stweChMp4NmFl9RlCo62j/SBO0bcwe481pHXa02
-        KH2n5yVzloij0s3+CwMzXBRWnPUAG1PCgg==
-X-Google-Smtp-Source: ABdhPJyeLrEG/qWQDaPHDoyX6JvhNcEBq43hM0ZhjXotI+Q79Qk2LAJQH395VGA1XGbxJBlqff8vGQ==
-X-Received: by 2002:a05:6e02:1647:b0:2cd:9073:eb with SMTP id v7-20020a056e02164700b002cd907300ebmr4997779ilu.267.1650983999441;
-        Tue, 26 Apr 2022 07:39:59 -0700 (PDT)
-Received: from [127.0.1.1] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id h22-20020a056e021d9600b002cd79a5cfd4sm7417061ila.23.2022.04.26.07.39.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Apr 2022 07:39:58 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org, axboe@kernel.dk
-In-Reply-To: <20220426014904.60384-2-axboe@kernel.dk>
-References: <20220426014904.60384-1-axboe@kernel.dk> <20220426014904.60384-2-axboe@kernel.dk>
-Subject: Re: [PATCH 1/6] task_work: allow TWA_SIGNAL without a rescheduling IPI
-Message-Id: <165098399823.32677.2200735205292292397.b4-ty@kernel.dk>
-Date:   Tue, 26 Apr 2022 08:39:58 -0600
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=C6G9SgucYL2CMjHU7k2Ctcqcxoq8B9zBMPFc+v8ONPI=;
+        b=hAd9S4jlJH2r1THHuG2j4S/cl7dgS/e4mfkn7/nnWUBmzgtaSYXFVbCJr4MKUmQpY/
+         4tI/txqCUbXvpw102HHU/Bii9JVuhm/KSP/e9YG/oh76H7IOuYGaLjJ6+KpQ8em4LDHp
+         lmA5gjmOXzbNK0P7dLZshWT64tJymuARauth04vO2gKbFWxh8X8sa0wQcaVGNY7uiZtH
+         chUzQEzR1Iwa+zTMqwuxgONQ5tqk584A1K/GQv40l8pY3hy25OICBHBEpYzMSSYLbHKL
+         TlfVSas0iW4Uav8VRYtkAdTlPAnGcl6Gnw1aRE7LtfvzW+n93A7Yb/ecxoF07oGqVj2v
+         VwCA==
+X-Gm-Message-State: AOAM532+yNS+IPA0oWxb8RvSrKLkMW+c2bqE8nFkayFZX81IC5+zzWWg
+        ClLl2TWG3bTVTi38kpnUNU4=
+X-Google-Smtp-Source: ABdhPJyreRtsTZgh67qVXe8Jdgy80zLej+JbDfwvXMzcb/eRVGR0vMCXyS/eOmzR6/kgZl/5Ab1PqA==
+X-Received: by 2002:a17:907:2159:b0:6f3:a307:d01d with SMTP id rk25-20020a170907215900b006f3a307d01dmr7210396ejb.760.1650985419232;
+        Tue, 26 Apr 2022 08:03:39 -0700 (PDT)
+Received: from [10.0.2.15] (93-172-44-128.bb.netvision.net.il. [93.172.44.128])
+        by smtp.gmail.com with ESMTPSA id h8-20020a1709066d8800b006e09a49a713sm5043182ejt.159.2022.04.26.08.03.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Apr 2022 08:03:38 -0700 (PDT)
+Message-ID: <a85e2dd8-a9c6-6fbb-30b3-40087ac1c77d@gmail.com>
+Date:   Tue, 26 Apr 2022 18:03:30 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH 2/6] io_uring: serialize ctx->rings->sq_flags with
+ atomic_or/and
+Content-Language: en-US
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <20220426014904.60384-1-axboe@kernel.dk>
+ <20220426014904.60384-3-axboe@kernel.dk>
+From:   Almog Khaikin <almogkh@gmail.com>
+In-Reply-To: <20220426014904.60384-3-axboe@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -66,31 +73,14 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, 25 Apr 2022 19:48:59 -0600, Jens Axboe wrote:
-> Some use cases don't always need an IPI when sending a TWA_SIGNAL
-> notification. Add TWA_SIGNAL_NO_IPI, which is just like TWA_SIGNAL,
-> except it doesn't send an IPI to the target task. It merely sets
-> TIF_NOTIFY_SIGNAL and wakes up the task.
-> 
-> 
+On 4/26/22 04:49, Jens Axboe wrote:
+> Rather than require ctx->completion_lock for ensuring that we don't
+> clobber the flags, use the atomic bitop helpers instead. This removes
+> the need to grab the completion_lock, in preparation for needing to set
+> or clear sq_flags when we don't know the status of this lock.
 
-Applied, thanks!
+The smp_mb() in io_sq_thread() should also be changed to
+smp_mb__after_atomic()
 
-[1/6] task_work: allow TWA_SIGNAL without a rescheduling IPI
-      commit: c0c84594c0234aac5d09af8a595d25d822c6dcc8
-[2/6] io_uring: serialize ctx->rings->sq_flags with atomic_or/and
-      commit: 8018823e6987032d3d751263872b5385359c2819
-[3/6] io-wq: use __set_notify_signal() to wake workers
-      commit: 8a68648b353bb6e20a3dc8c0b914792ce0a0391f
-[4/6] io_uring: set task_work notify method at init time
-      commit: 35ac0da1d1346d182003db278c2d7b2ac32420a7
-[5/6] io_uring: use TWA_SIGNAL_NO_IPI if IORING_SETUP_COOP_TASKRUN is used
-      commit: a933a9031e40c972c24ce6406e7cea73657728a5
-[6/6] io_uring: add IORING_SETUP_TASKRUN_FLAG
-      commit: 6f07a54a90ee98ae13b37ac358624d7cc7e57850
-
-Best regards,
 -- 
-Jens Axboe
-
-
+Almog Khaikin

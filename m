@@ -2,86 +2,112 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 34B15510C52
-	for <lists+io-uring@lfdr.de>; Wed, 27 Apr 2022 00:56:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A551C510C59
+	for <lists+io-uring@lfdr.de>; Wed, 27 Apr 2022 00:58:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242612AbiDZXAD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 26 Apr 2022 19:00:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53342 "EHLO
+        id S243859AbiDZXBq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 26 Apr 2022 19:01:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236170AbiDZXAC (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 26 Apr 2022 19:00:02 -0400
-Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 59A582FFFE;
-        Tue, 26 Apr 2022 15:56:54 -0700 (PDT)
-Received: from dread.disaster.area (pa49-195-62-197.pa.nsw.optusnet.com.au [49.195.62.197])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 8A89410E5DF1;
-        Wed, 27 Apr 2022 08:56:53 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1njU72-004vYA-Du; Wed, 27 Apr 2022 08:56:52 +1000
-Date:   Wed, 27 Apr 2022 08:56:52 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Stefan Roesch <shr@fb.com>
-Cc:     io-uring@vger.kernel.org, kernel-team@fb.com, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH v1 11/18] xfs: add async buffered write support
-Message-ID: <20220426225652.GS1544202@dread.disaster.area>
-References: <20220426174335.4004987-1-shr@fb.com>
- <20220426174335.4004987-12-shr@fb.com>
+        with ESMTP id S1346075AbiDZXBp (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 26 Apr 2022 19:01:45 -0400
+Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25C6466206
+        for <io-uring@vger.kernel.org>; Tue, 26 Apr 2022 15:58:36 -0700 (PDT)
+Received: by mail-pf1-x433.google.com with SMTP id t13so106207pfg.2
+        for <io-uring@vger.kernel.org>; Tue, 26 Apr 2022 15:58:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=from:to:cc:in-reply-to:references:subject:message-id:date
+         :mime-version:content-transfer-encoding;
+        bh=VsZTkYBDAVKt9NvM53yZwr1vvVFb7lg5gLMBYeVrZfI=;
+        b=PBmJeextCz4u0h5ot8v+I+0BvmisD7c7SNhVQmq43Kgnr/cvLiPTblrftl4cRTTno0
+         rxI39CeSVhtUz7jYm7H9Xy3yjg7aDCbKRiWWUolrnPgHARDrlkVu4asvAjBKzESdDGzl
+         7+SQvaHl3sZ12IC6a2ZqdphdZoXuzFFyP7OyZBNUvc4DEo1vAPZiBr/QFPiCZE9rPIxr
+         oDtUIOuPqhfzCNGPDfOWMEG9iGeTeKjqmSheF/TSx32JtKfZH2CBqP2HPfbxGT013M2T
+         jFEexfOwvNFeS1NhUx7QgijzDUQtTFGqpXfk8KkSMGeO/l+EOWGrx/Fmx8e7ESio1kaj
+         uP4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
+         :message-id:date:mime-version:content-transfer-encoding;
+        bh=VsZTkYBDAVKt9NvM53yZwr1vvVFb7lg5gLMBYeVrZfI=;
+        b=GkzyKk7Pay+8enRxtKV2chHEEFIViYKZBFjLFWy+hIzQjIzWe8of5BPv7QBKdHfvtu
+         h+PWiDc9ZllBav/hQzQtb7jcNpjw5PQhPsw7E4mU/4QROKwnBNw3UJWk0Pc9zMChQejO
+         RjuYazqC4KeXCjsDVwvOKs9FqAXMiwZmxRCCTJUSq5zrL2Mz4MUTSnjTkbbz5zaPKLVB
+         qKMy1ac+JR4JqlVrR/+ouP8TDbEZa/quzSo0bxh9BVTf8IfUoVYKUhULCmbxHdYWBvVF
+         Yw+DuKUb8obBFXQOdpwpM7e8Ibfpxx9Mbyg6w+F4R2yljRz0yeUpQ+EZ4jEjeoN/lc2J
+         NYxg==
+X-Gm-Message-State: AOAM532ayIHkX7FjaXPHVszp9l6LO9v707RzR6Oj5ib4Xee5+0aKCiUN
+        w0W/dD3gylX5y+8kwluMYNf0hmE2HrUbyoHE
+X-Google-Smtp-Source: ABdhPJzQD9b/3DUGAcmR/GBQ2L5JCE7nnad8t/eXE8G7QGXJI91ISwRDB9gErP86URA/6sif5ECnaA==
+X-Received: by 2002:a05:6a00:1506:b0:50a:754e:5d4c with SMTP id q6-20020a056a00150600b0050a754e5d4cmr26829801pfu.37.1651013915603;
+        Tue, 26 Apr 2022 15:58:35 -0700 (PDT)
+Received: from [127.0.1.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id s10-20020a63e80a000000b0039e5c888996sm14032559pgh.86.2022.04.26.15.58.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Apr 2022 15:58:35 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     io-uring@vger.kernel.org, shr@fb.com,
+        linux-nvme@lists.infradead.org, kernel-team@fb.com
+Cc:     joshi.k@samsung.com
+In-Reply-To: <20220426182134.136504-1-shr@fb.com>
+References: <20220426182134.136504-1-shr@fb.com>
+Subject: Re: [PATCH v4 00/12] add large CQE support for io-uring
+Message-Id: <165101391469.210637.11826028295180623775.b4-ty@kernel.dk>
+Date:   Tue, 26 Apr 2022 16:58:34 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220426174335.4004987-12-shr@fb.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=VuxAv86n c=1 sm=1 tr=0 ts=626878b5
-        a=KhGSFSjofVlN3/cgq4AT7A==:117 a=KhGSFSjofVlN3/cgq4AT7A==:17
-        a=kj9zAlcOel0A:10 a=z0gMJWrwH1QA:10 a=FOH2dFAWAAAA:8 a=7-415B0cAAAA:8
-        a=8LbIn2TR6hID6WZiys8A:9 a=CjuIK1q_8ugA:10 a=i3VuKzQdj-NEYjvDI-p3:22
-        a=biEYGPWJfzWAr4FL6Ov7:22
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_PASS,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,SPF_HELO_NONE,SPF_PASS
+        autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Level: *
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Apr 26, 2022 at 10:43:28AM -0700, Stefan Roesch wrote:
-> This adds the async buffered write support to XFS. For async buffered
-> write requests, the request will return -EAGAIN if the ilock cannot be
-> obtained immediately.
+On Tue, 26 Apr 2022 11:21:22 -0700, Stefan Roesch wrote:
+> This adds the large CQE support for io-uring. Large CQE's are 16 bytes longer.
+> To support the longer CQE's the allocation part is changed and when the CQE is
+> accessed.
 > 
-> Signed-off-by: Stefan Roesch <shr@fb.com>
-> ---
->  fs/xfs/xfs_file.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
+> The allocation of the large CQE's is twice as big, so the allocation size is
+> doubled. The ring size calculation needs to take this into account.
 > 
-> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-> index 6f9da1059e8b..49d54b939502 100644
-> --- a/fs/xfs/xfs_file.c
-> +++ b/fs/xfs/xfs_file.c
-> @@ -739,12 +739,14 @@ xfs_file_buffered_write(
->  	bool			cleared_space = false;
->  	int			iolock;
->  
-> -	if (iocb->ki_flags & IOCB_NOWAIT)
-> -		return -EOPNOTSUPP;
-> -
->  write_retry:
->  	iolock = XFS_IOLOCK_EXCL;
-> -	xfs_ilock(ip, iolock);
-> +	if (iocb->ki_flags & IOCB_NOWAIT) {
-> +		if (!xfs_ilock_nowait(ip, iolock))
-> +			return -EAGAIN;
-> +	} else {
-> +		xfs_ilock(ip, iolock);
-> +	}
+> [...]
 
-xfs_ilock_iocb().
+Applied, thanks!
 
--Dave.
+[01/12] io_uring: support CQE32 in io_uring_cqe
+        commit: 5c8bcc8e97123e3e68a6b1aa4c3eb6c5d5b9d174
+[02/12] io_uring: store add. return values for CQE32
+        commit: 04c3f8c8deae29e184d54b2cd815f39fd46c6b2e
+[03/12] io_uring: change ring size calculation for CQE32
+        commit: 9291ac41fda10ba7e80fc2147ca39a3b1d130ef9
+[04/12] io_uring: add CQE32 setup processing
+        commit: bc6bda624e953fcf42c6075fe35a219ce6df4bc4
+[05/12] io_uring: add CQE32 completion processing
+        commit: 22b76e8c5fd312701a1827b970230ee66aa24f69
+[06/12] io_uring: modify io_get_cqe for CQE32
+        commit: 771c7f07faf909b9993fd5e42581c8c82531fb58
+[07/12] io_uring: flush completions for CQE32
+        commit: b8e5029ed965c01066009bcb172c082b60ff436c
+[08/12] io_uring: overflow processing for CQE32
+        commit: 3ee1cd786a668ba2a6e8dfefacb8f29e1d995c12
+[09/12] io_uring: add tracing for additional CQE32 fields
+        commit: 225afd24978b55a771660fb4c6ad90cac75e7da8
+[10/12] io_uring: support CQE32 in /proc info
+        commit: 41a971975a3ae2b498b9f5ecad34c34280f0ffdc
+[11/12] io_uring: enable CQE32
+        commit: bb30aab40bcb6e9b80321615a2847a9491c95bf9
+[12/12] io_uring: support CQE32 for nop operation
+        commit: 0fde61fe729221b43d9c8374cb57e571f4fb2a16
 
+Best regards,
 -- 
-Dave Chinner
-david@fromorbit.com
+Jens Axboe
+
+

@@ -2,60 +2,110 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0050E50F5CB
-	for <lists+io-uring@lfdr.de>; Tue, 26 Apr 2022 10:54:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AAE5950FCC9
+	for <lists+io-uring@lfdr.de>; Tue, 26 Apr 2022 14:19:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345302AbiDZIlu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 26 Apr 2022 04:41:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58678 "EHLO
+        id S241585AbiDZMVZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 26 Apr 2022 08:21:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345831AbiDZIjg (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 26 Apr 2022 04:39:36 -0400
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 274DB42EEB
-        for <io-uring@vger.kernel.org>; Tue, 26 Apr 2022 01:32:02 -0700 (PDT)
-Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 23Q1NjUb018344
-        for <io-uring@vger.kernel.org>; Tue, 26 Apr 2022 01:32:02 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=facebook;
- bh=hJIWOdcrz9SLISrO4cmSGthZYGUaqX2+mnwihV4GgDI=;
- b=o1Med8SEE9yeDQd401p7P78hMllkPVmu2InJx9LTRag1t0ATOOu7Rhxq4whpQK9lh6Zx
- 0UhSEUwwwQtYB9FMxCOy+WaTV6xNEhXRFiQPGhxN5JVaa/VgW+2KPrSO/KXMacbN0ec1
- VcXCFlBb4k7GTpJt/NSw8wEtM4VBzo1uTLg= 
-Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3fp6a89r34-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Tue, 26 Apr 2022 01:32:01 -0700
-Received: from twshared4937.07.ash9.facebook.com (2620:10d:c085:108::8) by
- mail.thefacebook.com (2620:10d:c085:21d::6) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Tue, 26 Apr 2022 01:32:00 -0700
-Received: by devbig039.lla1.facebook.com (Postfix, from userid 572232)
-        id 659A381D5954; Tue, 26 Apr 2022 01:29:16 -0700 (PDT)
-From:   Dylan Yudaken <dylany@fb.com>
-To:     <io-uring@vger.kernel.org>
-CC:     <axboe@kernel.dk>, <asml.silence@gmail.com>, <Kernel-team@fb.com>,
-        Dylan Yudaken <dylany@fb.com>
-Subject: [PATCH v3 4/4] io_uring: use the text representation of ops in trace
-Date:   Tue, 26 Apr 2022 01:29:07 -0700
-Message-ID: <20220426082907.3600028-5-dylany@fb.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20220426082907.3600028-1-dylany@fb.com>
-References: <20220426082907.3600028-1-dylany@fb.com>
+        with ESMTP id S1349930AbiDZMVQ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 26 Apr 2022 08:21:16 -0400
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A7412C66D
+        for <io-uring@vger.kernel.org>; Tue, 26 Apr 2022 05:16:56 -0700 (PDT)
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20220426121654epoutp04edacfbe579898adfc49993bb46edc58c~pcWRjktSl2403224032epoutp04A
+        for <io-uring@vger.kernel.org>; Tue, 26 Apr 2022 12:16:54 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20220426121654epoutp04edacfbe579898adfc49993bb46edc58c~pcWRjktSl2403224032epoutp04A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1650975414;
+        bh=zH98b48edWAcbuGFMqRYxjx1SKH0zljZEL+gYb87BsE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=pQ9K2949QiNSG8WUuoB6j41DHPwhU6cxOOz2utgWGiJy1gaJOkc/0BvtXkTjb2J38
+         tDV2HPJ3wDnt0iGvpJTcGD/+lb7B4XFwjAbxhXoN8PO/cCWVVl9gbZP7umn5qOiAVS
+         r6E4iutIKzX/T7GtpwaZxs1rJwphZxplakxIhDuY=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+        20220426121654epcas5p2fa05885afa9281e4510dffd11f78256a~pcWRW7EOa2624626246epcas5p2P;
+        Tue, 26 Apr 2022 12:16:54 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.181]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 4Kngq74rnsz4x9Pv; Tue, 26 Apr
+        2022 12:16:51 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        A9.8F.09827.2B2E7626; Tue, 26 Apr 2022 21:16:50 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+        20220426114249epcas5p238c9b454b6131672830beb8e44c6d721~pb4hT5ZDJ2078820788epcas5p24;
+        Tue, 26 Apr 2022 11:42:49 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20220426114249epsmtrp13cc1aa19ab1ae2316d2b50297eaa6be4~pb4hTUs4E0719507195epsmtrp1y;
+        Tue, 26 Apr 2022 11:42:49 +0000 (GMT)
+X-AuditID: b6c32a4a-b51ff70000002663-3d-6267e2b2eecc
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        85.AF.08924.9BAD7626; Tue, 26 Apr 2022 20:42:49 +0900 (KST)
+Received: from test-zns (unknown [107.110.206.5]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20220426114248epsmtip2415b2b81438eb9ecc949162cc589f4f8~pb4gaTL0p1469814698epsmtip2I;
+        Tue, 26 Apr 2022 11:42:48 +0000 (GMT)
+Date:   Tue, 26 Apr 2022 17:07:41 +0530
+From:   Kanchan Joshi <joshi.k@samsung.com>
+To:     Stefan Roesch <shr@fb.com>
+Cc:     io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
+        kernel-team@fb.com
+Subject: Re: [PATCH v3 00/12] add large CQE support for io-uring
+Message-ID: <20220426113741.GA22115@test-zns>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-GUID: H2cWVjwC0dqtGQ8Kd4UWHHk2jPUxaNWu
-X-Proofpoint-ORIG-GUID: H2cWVjwC0dqtGQ8Kd4UWHHk2jPUxaNWu
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.486,FMLib:17.11.64.514
- definitions=2022-04-26_02,2022-04-25_03,2022-02-23_01
-X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
+In-Reply-To: <20220425182530.2442911-1-shr@fb.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpgk+LIzCtJLcpLzFFi42LZdlhTQ3fTo/Qkg71rxC3etZ5jsTjW957V
+        Yv6yp+wWV18eYHdg8ZjY/I7dY/OSeo/Pm+QCmKOybTJSE1NSixRS85LzUzLz0m2VvIPjneNN
+        zQwMdQ0tLcyVFPISc1NtlVx8AnTdMnOAlikplCXmlAKFAhKLi5X07WyK8ktLUhUy8otLbJVS
+        C1JyCkwK9IoTc4tL89L18lJLrAwNDIxMgQoTsjP+v3nBUnCdtWLChatMDYyfWLoYOTkkBEwk
+        Lh84ztTFyMUhJLCbUeLh+61gCSGBT4wSE35LQCQ+M0q8f7ETrmP6v40sEIldjBInnk6Dan/G
+        KDFpzlNWkCoWAVWJxofbGLsYOTjYBDQlLkwuBQmLCMhJzFq6nw3EZhYIkuic380OYgsLOEj8
+        v/8WLM4roCvxZtZFRghbUOLkzCdgizkFjCROv2gFs0UFlCUObIM4W0LgGrvEnA9XmCGuc5G4
+        cmgXlC0s8er4FnYIW0riZX8blJ0s0br9MjvIbRICJRJLFqhDhO0lLu75ywRxW4bEtn1dTBBx
+        WYmpp9ZBxfkken8/gYrzSuyYB2MrStybBPG6hIC4xMMZS6BsD4nlM26yQsKnlVGid/sr5gmM
+        8rOQ/DYLyT4I20qi80MT6yyg85gFpCWW/+OAMDUl1u/SX8DIuopRMrWgODc9tdi0wCgvtRwe
+        38n5uZsYwUlRy2sH48MHH/QOMTJxMB5ilOBgVhLhnaqaliTEm5JYWZValB9fVJqTWnyI0RQY
+        VROZpUST84FpOa8k3tDE0sDEzMzMxNLYzFBJnPd0+oZEIYH0xJLU7NTUgtQimD4mDk6pBqZK
+        DclTt859vMoYv+fYj4oJ2bPS2u7HhQU83d3q58bVl6PfVDKr3WH1U67V3/PimYNiayx8e/jj
+        u8IUU3X2ZxwsdZjaaMrRk8kU+VQ8jE1ybudmz28RYXw87hfnsfNJ3ajO/fxVT91EinFe2//2
+        SS3PGJxNZT32cDFsnfdokoRBctRpxqSzZ0OueHryn/dw+q9w+LiukJ1X9c+jcy7MW73VYtnm
+        ZfvPNy7bUvl365KTC5PuVRRvFGm0el2bO7sgSC8k6XLb/6V5bqVfnj3bst6jzzV/W4Y3T1pa
+        8YxZNofjZCYtquyc6JprPr+tyYPZ3pax3/TRgS0HOitszk094fS98cq8OMOqcuF58clvlViK
+        MxINtZiLihMBQUX9VhMEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrELMWRmVeSWpSXmKPExsWy7bCSvO7OW+lJBrcXqVi8az3HYnGs7z2r
+        xfxlT9ktrr48wO7A4jGx+R27x+Yl9R6fN8kFMEdx2aSk5mSWpRbp2yVwZZzebl7QyVzx8PIx
+        5gbGfUxdjJwcEgImEtP/bWTpYuTiEBLYwSix+tA1VoiEuETztR/sELawxMp/z9khip4wSmy/
+        +BOsiEVAVaLx4TbGLkYODjYBTYkLk0tBwiICchKzlu5nA7GZBYIkOud3g80RFnCQ+H//LVic
+        V0BX4s2si4wQM1sZJb68v8EKkRCUODnzCQtEs5nEvM0PmUHmMwtISyz/xwES5hQwkjj9ohWs
+        RFRAWeLAtuNMExgFZyHpnoWkexZC9wJG5lWMkqkFxbnpucWGBUZ5qeV6xYm5xaV56XrJ+bmb
+        GMHBrKW1g3HPqg96hxiZOBgPMUpwMCuJ8E5VTUsS4k1JrKxKLcqPLyrNSS0+xCjNwaIkznuh
+        62S8kEB6YklqdmpqQWoRTJaJg1Oqgcma28/fqWTaA8d7LJqrrDbonhJWD2U4uurL/8arzFNW
+        yYld545unKbsUvDb2Cb2Vcslxemu/p8LJk/dr2+cdtd5xkcxVqn7K4MWbs6U6OMIX9K+X65F
+        7kmyqUHB9S3+X+/f/HP1+YTLF862rVxj956j58Er62UGyf/DND3nTDhs+eNTo6uu7vO/Jxmm
+        3bj1NyyEY3KJzN6Mu88OdrLEGJ3e9/FO2h+58kvXwtXnx/z9dPLn5bYbNzdd+TLX1rlf+/cV
+        s8dL3ZoKt/2/mXL2zOOy+p3JgX9TmHfIXG6Q2CRynTcm8Y+M1I4a71dlvw8saD79WOHmCeWv
+        Aoc/TjlrffZ1aoCbaz7/719H3gS3Len8psRSnJFoqMVcVJwIAGKYODjVAgAA
+X-CMS-MailID: 20220426114249epcas5p238c9b454b6131672830beb8e44c6d721
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+        boundary="----NkeN6qpQV9bWnUH8GpeMhqJsD.tVVWOHd.rlqQ8kZmeldXuV=_10337_"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220425182557epcas5p2e1b72edf0fcc4c21b2b96a32910a2736
+References: <CGME20220425182557epcas5p2e1b72edf0fcc4c21b2b96a32910a2736@epcas5p2.samsung.com>
+        <20220425182530.2442911-1-shr@fb.com>
+X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -63,138 +113,24 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-It is annoying to translate opcodes to textwhen tracing io_uring. Use the
-io_uring_get_opcode function instead to use the text representation.
+------NkeN6qpQV9bWnUH8GpeMhqJsD.tVVWOHd.rlqQ8kZmeldXuV=_10337_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Disposition: inline
 
-A downside here might have been that if the opcode is invalid it will not
-be obvious, however the opcode is already overridden in these cases to
-0 (NOP) in io_init_req(). Therefore this is a non issue.
+On Mon, Apr 25, 2022 at 11:25:18AM -0700, Stefan Roesch wrote:
+>This adds the large CQE support for io-uring. Large CQE's are 16 bytes longer.
+>To support the longer CQE's the allocation part is changed and when the CQE is
+>accessed.
 
-Signed-off-by: Dylan Yudaken <dylany@fb.com>
----
- include/trace/events/io_uring.h | 42 ++++++++++++++++++++-------------
- 1 file changed, 25 insertions(+), 17 deletions(-)
+Few nits that I commented on, mostly on commit-messages.
+Regardless of that, things look good.
 
-diff --git a/include/trace/events/io_uring.h b/include/trace/events/io_ur=
-ing.h
-index 42c7e1a3c6ae..4d225a6afa1d 100644
---- a/include/trace/events/io_uring.h
-+++ b/include/trace/events/io_uring.h
-@@ -7,6 +7,7 @@
-=20
- #include <linux/tracepoint.h>
- #include <uapi/linux/io_uring.h>
-+#include <linux/io_uring.h>
-=20
- struct io_wq_work;
-=20
-@@ -87,9 +88,11 @@ TRACE_EVENT(io_uring_register,
- 		__entry->ret		=3D ret;
- 	),
-=20
--	TP_printk("ring %p, opcode %d, nr_user_files %d, nr_user_bufs %d, "
-+	TP_printk("ring %p, opcode %s, nr_user_files %d, nr_user_bufs %d, "
- 			  "ret %ld",
--			  __entry->ctx, __entry->opcode, __entry->nr_files,
-+			  __entry->ctx,
-+			  io_uring_get_opcode(__entry->opcode),
-+			  __entry->nr_files,
- 			  __entry->nr_bufs, __entry->ret)
- );
-=20
-@@ -169,8 +172,9 @@ TRACE_EVENT(io_uring_queue_async_work,
- 		__entry->rw		=3D rw;
- 	),
-=20
--	TP_printk("ring %p, request %p, user_data 0x%llx, opcode %d, flags 0x%x=
-, %s queue, work %p",
--		__entry->ctx, __entry->req, __entry->user_data, __entry->opcode,
-+	TP_printk("ring %p, request %p, user_data 0x%llx, opcode %s, flags 0x%x=
-, %s queue, work %p",
-+		__entry->ctx, __entry->req, __entry->user_data,
-+		io_uring_get_opcode(__entry->opcode),
- 		__entry->flags, __entry->rw ? "hashed" : "normal", __entry->work)
- );
-=20
-@@ -205,8 +209,9 @@ TRACE_EVENT(io_uring_defer,
- 		__entry->opcode	=3D opcode;
- 	),
-=20
--	TP_printk("ring %p, request %p, user_data 0x%llx, opcode %d",
--		__entry->ctx, __entry->req, __entry->data, __entry->opcode)
-+	TP_printk("ring %p, request %p, user_data 0x%llx, opcode %s",
-+		__entry->ctx, __entry->req, __entry->data,
-+		io_uring_get_opcode(__entry->opcode))
- );
-=20
- /**
-@@ -305,9 +310,9 @@ TRACE_EVENT(io_uring_fail_link,
- 		__entry->link		=3D link;
- 	),
-=20
--	TP_printk("ring %p, request %p, user_data 0x%llx, opcode %d, link %p",
--		__entry->ctx, __entry->req, __entry->user_data, __entry->opcode,
--		__entry->link)
-+	TP_printk("ring %p, request %p, user_data 0x%llx, opcode %s, link %p",
-+		__entry->ctx, __entry->req, __entry->user_data,
-+		io_uring_get_opcode(__entry->opcode), __entry->link)
- );
-=20
- /**
-@@ -389,9 +394,9 @@ TRACE_EVENT(io_uring_submit_sqe,
- 		__entry->sq_thread	=3D sq_thread;
- 	),
-=20
--	TP_printk("ring %p, req %p, user_data 0x%llx, opcode %d, flags 0x%x, "
-+	TP_printk("ring %p, req %p, user_data 0x%llx, opcode %s, flags 0x%x, "
- 		  "non block %d, sq_thread %d", __entry->ctx, __entry->req,
--		  __entry->user_data, __entry->opcode,
-+		  __entry->user_data, io_uring_get_opcode(__entry->opcode),
- 		  __entry->flags, __entry->force_nonblock, __entry->sq_thread)
- );
-=20
-@@ -433,8 +438,9 @@ TRACE_EVENT(io_uring_poll_arm,
- 		__entry->events		=3D events;
- 	),
-=20
--	TP_printk("ring %p, req %p, user_data 0x%llx, opcode %d, mask 0x%x, eve=
-nts 0x%x",
--		  __entry->ctx, __entry->req, __entry->user_data, __entry->opcode,
-+	TP_printk("ring %p, req %p, user_data 0x%llx, opcode %s, mask 0x%x, eve=
-nts 0x%x",
-+		  __entry->ctx, __entry->req, __entry->user_data,
-+		  io_uring_get_opcode(__entry->opcode),
- 		  __entry->mask, __entry->events)
- );
-=20
-@@ -470,8 +476,9 @@ TRACE_EVENT(io_uring_task_add,
- 		__entry->mask		=3D mask;
- 	),
-=20
--	TP_printk("ring %p, req %p, user_data 0x%llx, opcode %d, mask %x",
--		__entry->ctx, __entry->req, __entry->user_data, __entry->opcode,
-+	TP_printk("ring %p, req %p, user_data 0x%llx, opcode %s, mask %x",
-+		__entry->ctx, __entry->req, __entry->user_data,
-+		io_uring_get_opcode(__entry->opcode),
- 		__entry->mask)
- );
-=20
-@@ -530,12 +537,13 @@ TRACE_EVENT(io_uring_req_failed,
- 	),
-=20
- 	TP_printk("ring %p, req %p, user_data 0x%llx, "
--		  "opcode %d, flags 0x%x, prio=3D%d, off=3D%llu, addr=3D%llu, "
-+		  "opcode %s, flags 0x%x, prio=3D%d, off=3D%llu, addr=3D%llu, "
- 		  "len=3D%u, rw_flags=3D0x%x, buf_index=3D%d, "
- 		  "personality=3D%d, file_index=3D%d, pad=3D0x%llx, addr3=3D%llx, "
- 		  "error=3D%d",
- 		  __entry->ctx, __entry->req, __entry->user_data,
--		  __entry->opcode, __entry->flags, __entry->ioprio,
-+		  io_uring_get_opcode(__entry->opcode),
-+		  __entry->flags, __entry->ioprio,
- 		  (unsigned long long)__entry->off,
- 		  (unsigned long long) __entry->addr, __entry->len,
- 		  __entry->op_flags,
---=20
-2.30.2
+Reviewed-by: Kanchan Joshi <joshi.k@samsung.com>
 
+
+
+------NkeN6qpQV9bWnUH8GpeMhqJsD.tVVWOHd.rlqQ8kZmeldXuV=_10337_
+Content-Type: text/plain; charset="utf-8"
+
+
+------NkeN6qpQV9bWnUH8GpeMhqJsD.tVVWOHd.rlqQ8kZmeldXuV=_10337_--

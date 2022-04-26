@@ -2,96 +2,145 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 238E650FDA3
-	for <lists+io-uring@lfdr.de>; Tue, 26 Apr 2022 14:51:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25C2950FDB4
+	for <lists+io-uring@lfdr.de>; Tue, 26 Apr 2022 14:53:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347133AbiDZMyQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 26 Apr 2022 08:54:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45906 "EHLO
+        id S233690AbiDZM45 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 26 Apr 2022 08:56:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57832 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350196AbiDZMyP (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 26 Apr 2022 08:54:15 -0400
-Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A4CD179EB9
-        for <io-uring@vger.kernel.org>; Tue, 26 Apr 2022 05:51:07 -0700 (PDT)
-Received: by mail-pl1-x631.google.com with SMTP id p6so2188059plf.9
-        for <io-uring@vger.kernel.org>; Tue, 26 Apr 2022 05:51:07 -0700 (PDT)
+        with ESMTP id S235085AbiDZM4z (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 26 Apr 2022 08:56:55 -0400
+Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 961E217D48D
+        for <io-uring@vger.kernel.org>; Tue, 26 Apr 2022 05:53:48 -0700 (PDT)
+Received: by mail-pl1-x62b.google.com with SMTP id s14so30059075plk.8
+        for <io-uring@vger.kernel.org>; Tue, 26 Apr 2022 05:53:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:in-reply-to:references:subject:message-id:date
-         :mime-version:content-transfer-encoding;
-        bh=Pz57Ghwlp6ifNH6m/KUmY8sb+fuj+WwLqXWt5iAfEx8=;
-        b=rMhiaul/YWKa1xD4BeI3VR6vKGBOf7WM85UP+K2bajuV5gzbAHSeYggryNpuOLDv5k
-         zCa0JLuc+sf10ikDyK1rGToH+/ni6kVJH28m0W2rWDxeoFzj0Je5kBWj8MmsRIQ4dA1r
-         8urHt4E/Ud0MM0yldJWMk4aQtCu4soV8GARpYz2HOmbmgHuaQ0LU4z8V/SOYit8X6xbk
-         UZ2YzP3+hKvc0fVQpCBlo/aJMEys6FoHEunFToZ2ciz5UqEO1mKPv29UmWAuHi1yv8zQ
-         d7+ABEkL+/pdFVIXc4VKc6dhL13DxT/hy+s7fJkQfpLbNubZ/KzewuX0H02czn2XjFZl
-         Du8A==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=XGZuj6mfM0WiW7dFClmKDN/m8Wp8N5NVkKRnuNf5FHI=;
+        b=jUW+XerKm+gckNXcPR28kn671NB9irnirM7ke2RCRs49GzhQfZMNn6mc3xAym1/8Gz
+         XUvegXuQo6TlMheUzNqzVDwv6nolmPNKjYQ7Oo/NO+t1B2vD/fHU4sbkctaA0LE1jb/X
+         OvC5Fv2iyqHlI4wNq+jvO/8WpfmflFPbGW0WNOwgo3EOocCKMbOy3o0hoo5x4ilJ//Jn
+         L8qNyv32alr3Q/9go11ew4oiij4atIIxXNVf7vDEWMeuOFaoir54dM8WAYH/2gU4wL5+
+         15JnMsYugKBlY7Ol0I4KmNdySqkmR/ojxWf0uOsQGQlQ2NimozxK5atRqr7AdvTjGvB4
+         zLog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
-         :message-id:date:mime-version:content-transfer-encoding;
-        bh=Pz57Ghwlp6ifNH6m/KUmY8sb+fuj+WwLqXWt5iAfEx8=;
-        b=FyjD0qJDxQXoF1wukmZ0Wcr5acKfdnLK8esp6a6wmNWhJVvqGR5JGJVPQLIKJRd2n0
-         O7n1dlJwGXSGTVqj7PcgiB2G1oiOTnZ7/h/kH4a2O01wiPaaQAye7rdGnK9jCqjLRucy
-         KIHKY3Op4gPZXwYSwBDWNYlv3WknXfdJh5Hdl/MuFFz8asyf3LEgGzWf/P5LQJPk7dUK
-         RdD2X/lWSliSclT4WIJ2ZSqsAVb2KJBARBGlSP3/V6IG8WlFBxWAFPGVzP/bxLCptqkc
-         qoGIFxQwNiGs/S0xsb7I5ofuHI3nzR2QmuvVzil+ZNChHw+qK7Sp+lfXOhbQVDAmJ1/R
-         pM2w==
-X-Gm-Message-State: AOAM531DgQZqsT62X4tvw35Pi7CRNJaZ5TCF9Xe2UPZX0aPD0kplgiMz
-        b8ewhfJlc9AQWQZirwCMbfR15x/2YApbmGBA
-X-Google-Smtp-Source: ABdhPJyzsltO1xgaWhua9FqZiBiVI+kyjPr5d5O/3+FrknN61iWrO7g9Ak90vpnFycmQT96dwTAqAQ==
-X-Received: by 2002:a17:902:76ca:b0:157:1c6:5660 with SMTP id j10-20020a17090276ca00b0015701c65660mr23280633plt.105.1650977466801;
-        Tue, 26 Apr 2022 05:51:06 -0700 (PDT)
-Received: from [127.0.1.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id ns21-20020a17090b251500b001d9b7fa9562sm2105876pjb.28.2022.04.26.05.51.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Apr 2022 05:51:06 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org, dylany@fb.com
-Cc:     Kernel-team@fb.com, asml.silence@gmail.com
-In-Reply-To: <20220426082907.3600028-1-dylany@fb.com>
-References: <20220426082907.3600028-1-dylany@fb.com>
-Subject: Re: [PATCH v3 0/4] io_uring: text representation of opcode in trace
-Message-Id: <165097746566.8372.12503074441658351941.b4-ty@kernel.dk>
-Date:   Tue, 26 Apr 2022 06:51:05 -0600
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=XGZuj6mfM0WiW7dFClmKDN/m8Wp8N5NVkKRnuNf5FHI=;
+        b=RcThiYSbnmmP7jM6RiIt0aFVrUQjaaQU+5esZPmrL+fGAJ51qWGQ90+4qV15Vw7vYx
+         oAgJrI2LxL+UU/53QsYE2Snu3mErfaB5Qb7Phc+6qC5Zszu+00y2F4+n6g7ZTx1fIdfo
+         RWUg1xWHFK7iLKLH7WI9psqpSkj+/uUUuXxubmegkTw6DanvGdyasMhR47gy78nTc/oU
+         thsjyZGoQYtNzFlvgLfS6+doha7mJc810qhQRnDV/8w95vdLZE70AkOBkyXf8+Jire8B
+         V8pG/sBtEmoEMu6B/imr+bm/2jGog7UHwSLuCX3mu26EUe9BV5oQ2buKB7Ik2dgS2eSk
+         CLRg==
+X-Gm-Message-State: AOAM533a94X1Fh3t0gwOZ5h/RlwxfK8K0cm5xIchM6K43bIcNCZlrzOu
+        7Ls3f+LDuEe4cDxs2/dxq70ujg==
+X-Google-Smtp-Source: ABdhPJy/WEj9zweDE/V+h2hN87dJgN2vLon9Ml/lvxLnl0k+2f2FZENIKar4FtjLlI8bpwfUnSa4ZQ==
+X-Received: by 2002:a17:902:7045:b0:157:144:57c5 with SMTP id h5-20020a170902704500b00157014457c5mr23215069plt.86.1650977627984;
+        Tue, 26 Apr 2022 05:53:47 -0700 (PDT)
+Received: from [192.168.1.100] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id p12-20020a63ab0c000000b00381f7577a5csm12498921pgf.17.2022.04.26.05.53.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Apr 2022 05:53:47 -0700 (PDT)
+Message-ID: <53b9382d-83a0-5d20-784b-3a7403713f94@kernel.dk>
+Date:   Tue, 26 Apr 2022 06:53:46 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH v3 08/12] io_uring: overflow processing for CQE32
+Content-Language: en-US
+To:     Kanchan Joshi <joshi.k@samsung.com>, Stefan Roesch <shr@fb.com>
+Cc:     io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
+        kernel-team@fb.com
+References: <20220425182530.2442911-1-shr@fb.com>
+ <CGME20220425182611epcas5p2c999ed62c22300b8483c576523198c4e@epcas5p2.samsung.com>
+ <20220425182530.2442911-9-shr@fb.com> <20220426062826.GC14174@test-zns>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20220426062826.GC14174@test-zns>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-3.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, 26 Apr 2022 01:29:03 -0700, Dylan Yudaken wrote:
-> This series adds the text representation of opcodes into the trace. This
-> makes it much quicker to understand traces without having to translate
-> opcodes in your head.
+On 4/26/22 12:28 AM, Kanchan Joshi wrote:
+> On Mon, Apr 25, 2022 at 11:25:26AM -0700, Stefan Roesch wrote:
+>> This adds the overflow processing for large CQE's.
+>>
+>> This adds two parameters to the io_cqring_event_overflow function and
+>> uses these fields to initialize the large CQE fields.
+>>
+>> Allocate enough space for large CQE's in the overflow structue. If no
+>> large CQE's are used, the size of the allocation is unchanged.
+>>
+>> The cqe field can have a different size depending if its a large
+>> CQE or not. To be able to allocate different sizes, the two fields
+>> in the structure are re-ordered.
+>>
+>> Co-developed-by: Jens Axboe <axboe@kernel.dk>
+>> Signed-off-by: Stefan Roesch <shr@fb.com>
+>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>> ---
+>> fs/io_uring.c | 31 ++++++++++++++++++++++---------
+>> 1 file changed, 22 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>> index 68b61d2b356d..3630671325ea 100644
+>> --- a/fs/io_uring.c
+>> +++ b/fs/io_uring.c
+>> @@ -220,8 +220,8 @@ struct io_mapped_ubuf {
+>> struct io_ring_ctx;
+>>
+>> struct io_overflow_cqe {
+>> -    struct io_uring_cqe cqe;
+>>     struct list_head list;
+>> +    struct io_uring_cqe cqe;
+>> };
+>>
+>> struct io_fixed_file {
+>> @@ -2017,10 +2017,14 @@ static void io_cqring_ev_posted_iopoll(struct io_ring_ctx *ctx)
+>> static bool __io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool force)
+>> {
+>>     bool all_flushed, posted;
+>> +    size_t cqe_size = sizeof(struct io_uring_cqe);
+>>
+>>     if (!force && __io_cqring_events(ctx) == ctx->cq_entries)
+>>         return false;
+>>
+>> +    if (ctx->flags & IORING_SETUP_CQE32)
+>> +        cqe_size <<= 1;
+>> +
+>>     posted = false;
+>>     spin_lock(&ctx->completion_lock);
+>>     while (!list_empty(&ctx->cq_overflow_list)) {
+>> @@ -2032,7 +2036,7 @@ static bool __io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool force)
+>>         ocqe = list_first_entry(&ctx->cq_overflow_list,
+>>                     struct io_overflow_cqe, list);
+>>         if (cqe)
+>> -            memcpy(cqe, &ocqe->cqe, sizeof(*cqe));
+>> +            memcpy(cqe, &ocqe->cqe, cqe_size);
 > 
-> Patch 1 adds a type to io_uring opcodes
-> Patch 2 is the translation function.
-> Patch 3 is a small cleanup
-> Patch 4 uses the translator in the trace logic
-> 
-> [...]
+> Maybe a nit, but if we do it this way -
+> memcpy(cqe, &ocqe->cqe,     sizeof(*cqe) << (ctx->flags & IORING_SETUP_CQE32));
 
-Applied, thanks!
+Unless you make that:
 
-[1/4] io_uring: add type to op enum
-      (no commit info)
-[2/4] io_uring: add io_uring_get_opcode
-      (no commit info)
-[3/4] io_uring: rename op -> opcode
-      (no commit info)
-[4/4] io_uring: use the text representation of ops in trace
-      (no commit info)
+memcpy(cqe, &ocqe->cqe, sizeof(*cqe) << !!(ctx->flags & IORING_SETUP_CQE32));
 
-Best regards,
+that will end in tears, and that just makes it less readable. So I don't
+think that's a good idea at all.
+
 -- 
 Jens Axboe
-
 

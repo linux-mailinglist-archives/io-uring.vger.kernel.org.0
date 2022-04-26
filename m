@@ -2,89 +2,95 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6344D5101F3
-	for <lists+io-uring@lfdr.de>; Tue, 26 Apr 2022 17:33:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7507D510364
+	for <lists+io-uring@lfdr.de>; Tue, 26 Apr 2022 18:34:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229581AbiDZPgH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 26 Apr 2022 11:36:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39208 "EHLO
+        id S1353013AbiDZQh2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 26 Apr 2022 12:37:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57396 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237431AbiDZPgG (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 26 Apr 2022 11:36:06 -0400
-Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 898E73F30A
-        for <io-uring@vger.kernel.org>; Tue, 26 Apr 2022 08:32:58 -0700 (PDT)
-Received: by mail-io1-xd2e.google.com with SMTP id g21so20368384iom.13
-        for <io-uring@vger.kernel.org>; Tue, 26 Apr 2022 08:32:58 -0700 (PDT)
+        with ESMTP id S235283AbiDZQh1 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 26 Apr 2022 12:37:27 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BE18162240
+        for <io-uring@vger.kernel.org>; Tue, 26 Apr 2022 09:34:19 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id kq17so14066251ejb.4
+        for <io-uring@vger.kernel.org>; Tue, 26 Apr 2022 09:34:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :references:from:in-reply-to:content-transfer-encoding;
-        bh=LR/YLQSiTEbxpoqURu1Z8un9GiPFO5XnSLh/MpVXNm0=;
-        b=xoEclltp0xxYpjhypk9hxXGpwS5AyjLixMI4M9kS66Ngb5AeQTGnhbYH1UsFHmGlw4
-         Eq7aL4OJ0yTAyU74cxW1rVbPKNclSS8QECqfTpXqCJtJrGq1n8G997tLOIColdwkXy7X
-         6RjVlZ4o0/ik/xuvYPtdv7qn5rcEnTB6Ntb4reQhAh8hRGTqGJLwSBa32KPCQTPAUgtU
-         SRnoKJ9LqLJ/3CP4/KO6IDDMXvEcjOmnzPQlTKzWS+HbKib1lyvq2w1SQOr/Ldb7/OrL
-         sAi7Yw99AGMGQboDei91Rr7oTnVqm+8HYfFd6LV5G58sO8uZ8EYw5uMXwN+MNI6DLU5S
-         KA/Q==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=d4UcUWbzPRfqSh4bVDMfxb1HbauhZHzgiQB9yv1VzOA=;
+        b=DgFbo+URPfol1kCT2JyLq3GBwlpmeYYRj4gZ1M8Q5U4AJRMibqI1Yo7xZ4Ps9KmE3F
+         GlZvBNDl0wCM4Yr+9jyhMudcfckJHVngHKUu/zehWVBXiAdTwSrXiuyPbrUQjzYqIggF
+         f5IoSQWfyUu6rHd80FhhsfbdAGJ6fgmehOrfnqS7FEJ6UPRayURlf93gCIihNWbAhC3n
+         1EZV0Dt02CZI4+lC0Z0RP494v8ZST09Yvn4Vqgmz2/Cf8cLcLXlSk4vNRJGk0w/7DRsV
+         9v/Wd2Q1cL7AaRdP/M7FDzh/1rPKvpPdm07kfgJTiZYTtTBtV0W93TN+/CLvyFFu831F
+         jKtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:from:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=LR/YLQSiTEbxpoqURu1Z8un9GiPFO5XnSLh/MpVXNm0=;
-        b=UqOYCIfP3teg13uRGLnoHR1q3j1TdviaN5WmUQ6lyJhl7GE5F0Fw3KuO7Sh10zkDam
-         GdmriP5tFz01j/cSboQvYVZo76nvUZRmUw2zsttUTp/eQfzXgfkTEHjpJsxac9FEio+1
-         6cWiXF0sXxm7d0UTvK7QzLkqJdcQiwoBaebHpjbRNUqMdFYA62mGPqJ9WRFze3aYHw3b
-         YaBjt7ysCo1NwrPiZp6I+FCqWAi6Z5+DuFNQAHgumtzrjlKKXuSaUoJevToOidI3QdkX
-         plJwFPuQthXr/LSVI8x6niWGHJP60HsS6e6clu+W071AO0iCiaLRxgEJijvc8nRVeGey
-         6djQ==
-X-Gm-Message-State: AOAM5329ZAx4mygvDFZdbVmmSg0SsVe+a5JvlHB6qR9K56HzkNFKlS3k
-        3sDUnCc5gZDPbs/R8T9j7rpI2E2xdFhS3g==
-X-Google-Smtp-Source: ABdhPJyixc8015KL8n6O6TSbEJLwlW5w58NRep42BpGwWM1FdPcqZRLDYNylbKXLjo8QIHyUYGAGZg==
-X-Received: by 2002:a05:6638:4303:b0:328:95b9:f8b0 with SMTP id bt3-20020a056638430300b0032895b9f8b0mr10388688jab.288.1650987177821;
-        Tue, 26 Apr 2022 08:32:57 -0700 (PDT)
-Received: from [192.168.1.172] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id k6-20020a056e02134600b002cd812ace1dsm6355689ilr.88.2022.04.26.08.32.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Apr 2022 08:32:57 -0700 (PDT)
-Message-ID: <feae3e9e-3ccb-c8ea-162f-41a153536a28@kernel.dk>
-Date:   Tue, 26 Apr 2022 09:32:56 -0600
+        bh=d4UcUWbzPRfqSh4bVDMfxb1HbauhZHzgiQB9yv1VzOA=;
+        b=AK+5fhQRydPQQsY4QnAeV5cML8/jBpn/hxYtG+DyD8YpYbTI11OtqnDC05uMbgdlTb
+         NKgWW3ft+LAuCe6deIksvwfdsc5t+r8z45jOV1GlE6QMFfyxfRXAgUkHzdYvAKII1tT6
+         9gUvWDITOjfZP/x+OFPVf6SSok9pOyEZpM3l+L+FGIYYt7w4tzqbeTiTqaS7cqhOD+JT
+         8PIIAHs7JIghHb6TSMk9PvrzFyjvpJvZkMvemI8J91u+raLoN0+X/FbTRoRdN0NsvCpy
+         K8NbN57YUHFmTFHKdla7mjeiFGbk3nH8I+8FZ8gxEaVx403lTHFDEZQGivyvn7THvRWF
+         QgDw==
+X-Gm-Message-State: AOAM531skERLN39hANi6YX78K6YfvrxqgriDktjGz/TDxeVJo5YWcxBY
+        /AcOhUserVuxVKVnG090MT8=
+X-Google-Smtp-Source: ABdhPJygLlmUQ1ad+nmVJISSToOVQGvXactGVGNMrk+z6a3vGOn2PuWzGyvBMuI/4U+8T5f07aLdsQ==
+X-Received: by 2002:a17:907:970c:b0:6f3:a902:9599 with SMTP id jg12-20020a170907970c00b006f3a9029599mr5539621ejc.371.1650990857641;
+        Tue, 26 Apr 2022 09:34:17 -0700 (PDT)
+Received: from localhost.localdomain (93-172-44-128.bb.netvision.net.il. [93.172.44.128])
+        by smtp.gmail.com with ESMTPSA id l3-20020aa7cac3000000b00422c961c8c9sm6491892edt.78.2022.04.26.09.34.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Apr 2022 09:34:17 -0700 (PDT)
+From:   Almog Khaikin <almogkh@gmail.com>
+To:     axboe@kernel.dk
+Cc:     io-uring@vger.kernel.org
+Subject: [PATCH] io_uring: replace smp_mb() with smp_mb__after_atomic() in io_sq_thread()
+Date:   Tue, 26 Apr 2022 19:34:03 +0300
+Message-Id: <20220426163403.112692-1-almogkh@gmail.com>
+X-Mailer: git-send-email 2.36.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH 2/6] io_uring: serialize ctx->rings->sq_flags with
- atomic_or/and
-Content-Language: en-US
-To:     Almog Khaikin <almogkh@gmail.com>, io-uring@vger.kernel.org
-References: <20220426014904.60384-1-axboe@kernel.dk>
- <20220426014904.60384-3-axboe@kernel.dk>
- <a85e2dd8-a9c6-6fbb-30b3-40087ac1c77d@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <a85e2dd8-a9c6-6fbb-30b3-40087ac1c77d@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/26/22 9:03 AM, Almog Khaikin wrote:
-> On 4/26/22 04:49, Jens Axboe wrote:
->> Rather than require ctx->completion_lock for ensuring that we don't
->> clobber the flags, use the atomic bitop helpers instead. This removes
->> the need to grab the completion_lock, in preparation for needing to set
->> or clear sq_flags when we don't know the status of this lock.
-> 
-> The smp_mb() in io_sq_thread() should also be changed to
-> smp_mb__after_atomic()
+The IORING_SQ_NEED_WAKEUP flag is now set using atomic_or() which
+implies a full barrier on some architectures but it is not required to
+do so. Use the more appropriate smp_mb__after_atomic() which avoids the
+extra barrier on those architectures.
 
-Indeed, want to send a patch?
+Signed-off-by: Almog Khaikin <almogkh@gmail.com>
+---
+ fs/io_uring.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 72cb2d50125c..1e7466079af7 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -8229,7 +8229,7 @@ static int io_sq_thread(void *data)
+ 				 * Ensure the store of the wakeup flag is not
+ 				 * reordered with the load of the SQ tail
+ 				 */
+-				smp_mb();
++				smp_mb__after_atomic();
+ 
+ 				if (io_sqring_entries(ctx)) {
+ 					needs_sched = false;
+
+base-commit: 6f07a54a90ee98ae13b37ac358624d7cc7e57850
 -- 
-Jens Axboe
+2.36.0
 

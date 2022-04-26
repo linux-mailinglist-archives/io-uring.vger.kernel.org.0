@@ -2,67 +2,66 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 25C2950FDB4
-	for <lists+io-uring@lfdr.de>; Tue, 26 Apr 2022 14:53:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1118B50FDD5
+	for <lists+io-uring@lfdr.de>; Tue, 26 Apr 2022 14:55:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233690AbiDZM45 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 26 Apr 2022 08:56:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57832 "EHLO
+        id S1350253AbiDZM5w (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 26 Apr 2022 08:57:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235085AbiDZM4z (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 26 Apr 2022 08:56:55 -0400
-Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 961E217D48D
-        for <io-uring@vger.kernel.org>; Tue, 26 Apr 2022 05:53:48 -0700 (PDT)
-Received: by mail-pl1-x62b.google.com with SMTP id s14so30059075plk.8
-        for <io-uring@vger.kernel.org>; Tue, 26 Apr 2022 05:53:48 -0700 (PDT)
+        with ESMTP id S1350308AbiDZM5w (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 26 Apr 2022 08:57:52 -0400
+Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6F6B17E21D
+        for <io-uring@vger.kernel.org>; Tue, 26 Apr 2022 05:54:44 -0700 (PDT)
+Received: by mail-pf1-x430.google.com with SMTP id b15so17885046pfm.5
+        for <io-uring@vger.kernel.org>; Tue, 26 Apr 2022 05:54:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=XGZuj6mfM0WiW7dFClmKDN/m8Wp8N5NVkKRnuNf5FHI=;
-        b=jUW+XerKm+gckNXcPR28kn671NB9irnirM7ke2RCRs49GzhQfZMNn6mc3xAym1/8Gz
-         XUvegXuQo6TlMheUzNqzVDwv6nolmPNKjYQ7Oo/NO+t1B2vD/fHU4sbkctaA0LE1jb/X
-         OvC5Fv2iyqHlI4wNq+jvO/8WpfmflFPbGW0WNOwgo3EOocCKMbOy3o0hoo5x4ilJ//Jn
-         L8qNyv32alr3Q/9go11ew4oiij4atIIxXNVf7vDEWMeuOFaoir54dM8WAYH/2gU4wL5+
-         15JnMsYugKBlY7Ol0I4KmNdySqkmR/ojxWf0uOsQGQlQ2NimozxK5atRqr7AdvTjGvB4
-         zLog==
+        bh=ZqW7zvBAkMd51AgVSVsJQFVitcUOc0dr0M/KiG1Psiw=;
+        b=ODcY1qBX6Jq+yj5zj0HaI/wmj86npUEaej2F8o1gOQnRrPXw1zqDu9Ax+0Y/QTG+9T
+         YWwBiNe3fIsIYg6UWfFQIfo27clvFYHBNj7nxyYSAVgCEQRwS4fqBYVkQZa38ja17arl
+         CPPbMbUGC1vD/agaiaKnXzJWvjupHwXJxWf4zJTkj33kYbRIpBaLOvWA3UN5KmagjYKK
+         GZfSR/Wy6Wv2bCDhewowP/Nrd1Fx48sKl0VhJ8qjQC9e2XEzIFfRIFacRKXJkhWyf8mx
+         Q2rVyXctRIyxNPl0u50UWN0c5i1wgUY8vTvmUjGk2t7AlMlUWRoIPbSXvxI/yxrrR2+x
+         iLqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=XGZuj6mfM0WiW7dFClmKDN/m8Wp8N5NVkKRnuNf5FHI=;
-        b=RcThiYSbnmmP7jM6RiIt0aFVrUQjaaQU+5esZPmrL+fGAJ51qWGQ90+4qV15Vw7vYx
-         oAgJrI2LxL+UU/53QsYE2Snu3mErfaB5Qb7Phc+6qC5Zszu+00y2F4+n6g7ZTx1fIdfo
-         RWUg1xWHFK7iLKLH7WI9psqpSkj+/uUUuXxubmegkTw6DanvGdyasMhR47gy78nTc/oU
-         thsjyZGoQYtNzFlvgLfS6+doha7mJc810qhQRnDV/8w95vdLZE70AkOBkyXf8+Jire8B
-         V8pG/sBtEmoEMu6B/imr+bm/2jGog7UHwSLuCX3mu26EUe9BV5oQ2buKB7Ik2dgS2eSk
-         CLRg==
-X-Gm-Message-State: AOAM533a94X1Fh3t0gwOZ5h/RlwxfK8K0cm5xIchM6K43bIcNCZlrzOu
-        7Ls3f+LDuEe4cDxs2/dxq70ujg==
-X-Google-Smtp-Source: ABdhPJy/WEj9zweDE/V+h2hN87dJgN2vLon9Ml/lvxLnl0k+2f2FZENIKar4FtjLlI8bpwfUnSa4ZQ==
-X-Received: by 2002:a17:902:7045:b0:157:144:57c5 with SMTP id h5-20020a170902704500b00157014457c5mr23215069plt.86.1650977627984;
-        Tue, 26 Apr 2022 05:53:47 -0700 (PDT)
+        bh=ZqW7zvBAkMd51AgVSVsJQFVitcUOc0dr0M/KiG1Psiw=;
+        b=v+7y7E3Cp2wpffqIdNtBd4yFWsyR7jlI4OG3YUUY0nUbCYuO0TrkSllCs7NpARLvvQ
+         K2eJHmjoxZ7pUsQBaWdo7oyplNrCp2ej0zGcRriQIJfrVSF5+LFUYE6Y60on4+j11rg/
+         suxtv152dR0+Fhnfco90RYNVQxrdYooJOQrVjowDR5+sHc0nlN/qES3oHlqNOkL3yc4R
+         DtQ5Af2j5DXsRxT+fmfEXDKmmUDDvcHba4ohWVMpOywyPQikq2ndXPDWpRYStl3cQ14L
+         kM3Ekiy3sGDWfT+YJqqUpRD2tlNfz271phkgX8fJINWdERERNEPSc2WVnY6vFkz0sS7T
+         Lb+A==
+X-Gm-Message-State: AOAM530DsLKCseD5yIuleeVqKfXqj+z6ObPJwPLIV6u/MGDyytCCpwxF
+        zsJaM/kPuJyYM9mfYq8FSFS1JcdKV6r8iTkx
+X-Google-Smtp-Source: ABdhPJxhyyQ2DDiUpHZz1TcTaVa3xu5irO0mNpVNFYiW2LXOJcclBaQ0v0hEZa+PUPh+qjKSRnv2Uw==
+X-Received: by 2002:a63:e355:0:b0:39d:7956:6d3c with SMTP id o21-20020a63e355000000b0039d79566d3cmr19527497pgj.385.1650977684229;
+        Tue, 26 Apr 2022 05:54:44 -0700 (PDT)
 Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id p12-20020a63ab0c000000b00381f7577a5csm12498921pgf.17.2022.04.26.05.53.47
+        by smtp.gmail.com with ESMTPSA id o34-20020a634e62000000b0039cc4376415sm12803817pgl.63.2022.04.26.05.54.43
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Apr 2022 05:53:47 -0700 (PDT)
-Message-ID: <53b9382d-83a0-5d20-784b-3a7403713f94@kernel.dk>
-Date:   Tue, 26 Apr 2022 06:53:46 -0600
+        Tue, 26 Apr 2022 05:54:43 -0700 (PDT)
+Message-ID: <9c8c0f8d-3495-b411-7ef4-27bbc0dc1141@kernel.dk>
+Date:   Tue, 26 Apr 2022 06:54:42 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
  Thunderbird/91.8.0
-Subject: Re: [PATCH v3 08/12] io_uring: overflow processing for CQE32
+Subject: Re: [PATCH v3 00/12] add large CQE support for io-uring
 Content-Language: en-US
 To:     Kanchan Joshi <joshi.k@samsung.com>, Stefan Roesch <shr@fb.com>
 Cc:     io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
         kernel-team@fb.com
-References: <20220425182530.2442911-1-shr@fb.com>
- <CGME20220425182611epcas5p2c999ed62c22300b8483c576523198c4e@epcas5p2.samsung.com>
- <20220425182530.2442911-9-shr@fb.com> <20220426062826.GC14174@test-zns>
+References: <CGME20220425182557epcas5p2e1b72edf0fcc4c21b2b96a32910a2736@epcas5p2.samsung.com>
+ <20220425182530.2442911-1-shr@fb.com> <20220426113741.GA22115@test-zns>
 From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20220426062826.GC14174@test-zns>
+In-Reply-To: <20220426113741.GA22115@test-zns>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-3.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -74,72 +73,18 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/26/22 12:28 AM, Kanchan Joshi wrote:
-> On Mon, Apr 25, 2022 at 11:25:26AM -0700, Stefan Roesch wrote:
->> This adds the overflow processing for large CQE's.
->>
->> This adds two parameters to the io_cqring_event_overflow function and
->> uses these fields to initialize the large CQE fields.
->>
->> Allocate enough space for large CQE's in the overflow structue. If no
->> large CQE's are used, the size of the allocation is unchanged.
->>
->> The cqe field can have a different size depending if its a large
->> CQE or not. To be able to allocate different sizes, the two fields
->> in the structure are re-ordered.
->>
->> Co-developed-by: Jens Axboe <axboe@kernel.dk>
->> Signed-off-by: Stefan Roesch <shr@fb.com>
->> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->> ---
->> fs/io_uring.c | 31 ++++++++++++++++++++++---------
->> 1 file changed, 22 insertions(+), 9 deletions(-)
->>
->> diff --git a/fs/io_uring.c b/fs/io_uring.c
->> index 68b61d2b356d..3630671325ea 100644
->> --- a/fs/io_uring.c
->> +++ b/fs/io_uring.c
->> @@ -220,8 +220,8 @@ struct io_mapped_ubuf {
->> struct io_ring_ctx;
->>
->> struct io_overflow_cqe {
->> -    struct io_uring_cqe cqe;
->>     struct list_head list;
->> +    struct io_uring_cqe cqe;
->> };
->>
->> struct io_fixed_file {
->> @@ -2017,10 +2017,14 @@ static void io_cqring_ev_posted_iopoll(struct io_ring_ctx *ctx)
->> static bool __io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool force)
->> {
->>     bool all_flushed, posted;
->> +    size_t cqe_size = sizeof(struct io_uring_cqe);
->>
->>     if (!force && __io_cqring_events(ctx) == ctx->cq_entries)
->>         return false;
->>
->> +    if (ctx->flags & IORING_SETUP_CQE32)
->> +        cqe_size <<= 1;
->> +
->>     posted = false;
->>     spin_lock(&ctx->completion_lock);
->>     while (!list_empty(&ctx->cq_overflow_list)) {
->> @@ -2032,7 +2036,7 @@ static bool __io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool force)
->>         ocqe = list_first_entry(&ctx->cq_overflow_list,
->>                     struct io_overflow_cqe, list);
->>         if (cqe)
->> -            memcpy(cqe, &ocqe->cqe, sizeof(*cqe));
->> +            memcpy(cqe, &ocqe->cqe, cqe_size);
+On 4/26/22 5:37 AM, Kanchan Joshi wrote:
+> On Mon, Apr 25, 2022 at 11:25:18AM -0700, Stefan Roesch wrote:
+>> This adds the large CQE support for io-uring. Large CQE's are 16 bytes longer.
+>> To support the longer CQE's the allocation part is changed and when the CQE is
+>> accessed.
 > 
-> Maybe a nit, but if we do it this way -
-> memcpy(cqe, &ocqe->cqe,     sizeof(*cqe) << (ctx->flags & IORING_SETUP_CQE32));
+> Few nits that I commented on, mostly on commit-messages.
+> Regardless of that, things look good.
+> 
+> Reviewed-by: Kanchan Joshi <joshi.k@samsung.com>
 
-Unless you make that:
-
-memcpy(cqe, &ocqe->cqe, sizeof(*cqe) << !!(ctx->flags & IORING_SETUP_CQE32));
-
-that will end in tears, and that just makes it less readable. So I don't
-think that's a good idea at all.
+Thanks for reviewing it.
 
 -- 
 Jens Axboe

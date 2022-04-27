@@ -2,193 +2,88 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 80578510E5C
-	for <lists+io-uring@lfdr.de>; Wed, 27 Apr 2022 04:07:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E733510FBD
+	for <lists+io-uring@lfdr.de>; Wed, 27 Apr 2022 05:57:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356991AbiD0B5p (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 26 Apr 2022 21:57:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54714 "EHLO
+        id S241317AbiD0EA1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 27 Apr 2022 00:00:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229840AbiD0B5o (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 26 Apr 2022 21:57:44 -0400
-Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B7B5106DDC
-        for <io-uring@vger.kernel.org>; Tue, 26 Apr 2022 18:54:35 -0700 (PDT)
-Received: by mail-pg1-x531.google.com with SMTP id s137so324006pgs.5
-        for <io-uring@vger.kernel.org>; Tue, 26 Apr 2022 18:54:35 -0700 (PDT)
+        with ESMTP id S229651AbiD0EAZ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 27 Apr 2022 00:00:25 -0400
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54B7470910
+        for <io-uring@vger.kernel.org>; Tue, 26 Apr 2022 20:57:15 -0700 (PDT)
+Received: by mail-pj1-x1030.google.com with SMTP id bd19-20020a17090b0b9300b001d98af6dcd1so3906364pjb.4
+        for <io-uring@vger.kernel.org>; Tue, 26 Apr 2022 20:57:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=i1aB7baOTOtfguv73/RGQy7V3neLA9jkIvAZ8OCKIZs=;
-        b=masP8Eu0L4/C5H52X5JqAfxqWUigpQx2w2/YWbQwl6jVR3scmI5xFEZupqOc8uiLzm
-         9ceJNSLLVNG20DUBCQPG184xPM6bPVyTginBPhIPR8IYBSHpSfJjS8gxM2cWUK1RoKak
-         cUU3c4LYXeJ/4ApWQrfF77GgJaeikuvtlhDRyspk1B3bp+re6Pqty3y+xK4nuDdcibAY
-         3SrSF4NMdUMwGChioM8bj6UAFbef/L2rT3qFkBGGlWaCBtH2WYMjkYCO1jpZYL6Bmupv
-         ShIJOZ/UPSxDBdOvnvNCbkIc58t6KQCycykhC+WLy9AtCHlmzzdqw+fXYpxOrtiPn9hg
-         NxWg==
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:to:references:from
+         :in-reply-to:content-transfer-encoding;
+        bh=gjDzr4jN+9IV8/Av6hZJPqUgDrXSe5n+214s66b/29w=;
+        b=OmQe7vQPm+CnfP3eoUvIrSGaWMCBWqB7nRvEQfK7wtu+EMGoO07vmrdIilyCmNOTAT
+         lp3TMoTImYJPLMxP5uAgswqf9CCLBZnbTHTpaIQ+65vN0eNaB6KGiNF3xyMVCeOWu1Ht
+         X3XshIJ4exNR77nXYa7km9XUP6oZpsLkP2ECPMWt9dJBtDM9jR2WIbIjYnJ/wlZNpVsd
+         vTvOxdqJr4k7uZB1dspGZynsExeQhJZ80ayqObDcjNttZwSV6nv92mVGucBhWHOz8wsP
+         +k7Q1Kwpn41Y1z4LdkPqvHQe3Zm5jGUTZAQAefw3CSs4uNVRiLIT1dz3+NZgU4rlsWcw
+         gdaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=i1aB7baOTOtfguv73/RGQy7V3neLA9jkIvAZ8OCKIZs=;
-        b=PT7kby60daYZPsZZ3DMK6NYArKAQ8//NFZUzCVkYc6Z/6LglV3HohJw1rtFeG4W3d0
-         xN92cUbKCSpZXrubuwKmTwCxXAcdSNytD2BpoXturhdhHCGgROP59unioY4vlS/6m9Vs
-         pMqc0j1H896SmpOVCeWJgjkoDR1MC31GyKI5fYZPtmX0nGpemDxIXmZaCXUk3o41jtA4
-         Jvy/sgBQ4IFPMTIdtOYtOf5pp/cGnGdh7sELvIrEPuWeevTcajwaYclGw6xjHcMWs8Sg
-         YHsepir9/8x/E61EqXI2zmETktVCtESJDbcLP7QaNdRVHFmNUVv++a6f+Bbe4Q6wOx52
-         7jrQ==
-X-Gm-Message-State: AOAM5326Ntj0eknEec9nvnV9EcRUoXk/UtszVrdH39WXYxo80cpzrIcq
-        JRq2yEfmWklO++jgvx9mt7bTP0Av7Z8vr/0b
-X-Google-Smtp-Source: ABdhPJzi2SEaoejHkYDtxXzJP423C4j7jIQ2XdrUh5ONWcQV/tZt8uwPRrmVt92cHUOpN2gzlB54Gw==
-X-Received: by 2002:a63:2a8b:0:b0:3ab:971a:4058 with SMTP id q133-20020a632a8b000000b003ab971a4058mr3992025pgq.223.1651024473672;
-        Tue, 26 Apr 2022 18:54:33 -0700 (PDT)
-Received: from localhost.localdomain ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id p185-20020a62d0c2000000b0050d1f7c515esm13194998pfg.219.2022.04.26.18.54.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Apr 2022 18:54:32 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 2/2] io_uring: add POLL_FIRST support for send/sendmsg and recv/recvmsg
-Date:   Tue, 26 Apr 2022 19:54:28 -0600
-Message-Id: <20220427015428.322496-3-axboe@kernel.dk>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220427015428.322496-1-axboe@kernel.dk>
-References: <20220427015428.322496-1-axboe@kernel.dk>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :to:references:from:in-reply-to:content-transfer-encoding;
+        bh=gjDzr4jN+9IV8/Av6hZJPqUgDrXSe5n+214s66b/29w=;
+        b=49ve/RrCOMV73XGiMw8NnZH24n6xWbuM1EOK9X3f/6+IW865deHNGIPqjVMPVhM+UA
+         R9DOouiReWLFnoWX314G73vp9THNYXLySCDdS4yvRcKJWbYWCO8k7KZJ60KW8Sus2uYq
+         lGD0DTSmEutmVMXWvxf2MNHQ7T3/WpDad9kSs01pXHK2RBCL+kNgxPGpVJQu+rQ/u+G/
+         KmP3W0BKYfif0Js3SncpHnUOTPE4mahFUpEsK2bVkOK6fCs36TkCoUdnNkjIcjXOy6gy
+         l1N8Cbclq21/I0BO1oRHYqP4SmDgrITBZjsHavp+0iUDs4geO6X0egfNtF/WUOAVr9L1
+         0Csg==
+X-Gm-Message-State: AOAM5318rYctxh84KcQ8WoShsYQfqIA2nAtK2u7VebxAwpmH0UPDzYgE
+        XDUIZAIwxjsKgmIHz93s9hg=
+X-Google-Smtp-Source: ABdhPJwBrCY7TVu8C+1aZNANqQEj7TpNzdEBiRYH1dB4050P7/fYF0YoZeZsQ2IPe6GGaB/b5vDFgw==
+X-Received: by 2002:a17:902:ce0a:b0:15d:917:fad4 with SMTP id k10-20020a170902ce0a00b0015d0917fad4mr15039060plg.3.1651031834749;
+        Tue, 26 Apr 2022 20:57:14 -0700 (PDT)
+Received: from [192.168.255.10] ([106.53.33.166])
+        by smtp.gmail.com with ESMTPSA id 18-20020a17090a1a1200b001da160621d1sm526740pjk.45.2022.04.26.20.57.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Apr 2022 20:57:14 -0700 (PDT)
+Message-ID: <fa60c17f-a7eb-f075-e3eb-75f468a5df17@gmail.com>
+Date:   Wed, 27 Apr 2022 11:57:19 +0800
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.8.1
+Subject: Re: [PATCHSET 0/2] Add support for IORING_RECVSEND_POLL_FIRST
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <20220427015428.322496-1-axboe@kernel.dk>
+From:   Hao Xu <haoxu.linux@gmail.com>
+In-Reply-To: <20220427015428.322496-1-axboe@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,SPF_HELO_NONE,SPF_PASS
-        autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: *
+X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-If IORING_RECVSEND_POLL_FIRST is set for recv/recvmsg or send/sendmsg,
-then we arm poll first rather than attempt a receive or send upfront.
-This can be useful if we expect there to be no data (or space) available
-for the request, as we can then avoid wasting time on the initial
-issue attempt.
+在 4/27/22 9:54 AM, Jens Axboe 写道:
+> Hi,
+> 
+> I had a re-think on the flags2 addition [1] that was posted earlier
+> today, and I don't really like the fact that flags2 then can't work
+> with ioprio for read/write etc. We might also want to extend the
+> ioprio field for other types of IO in the future.
+> 
+> So rather than do that, do a simpler approach and just add an io_uring
+> specific flag set for send/recv and friends. This then allow setting
+> IORING_RECVSEND_POLL_FIRST in sqe->addr2 for those, and if set, io_uring
+> will arm poll first rather than attempt a send/recv operation.
+> 
+> [1] https://lore.kernel.org/io-uring/20220426183343.150273-1-axboe@kernel.dk/
+> 
+Looks good to me,
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- fs/io_uring.c                 | 27 +++++++++++++++++++++++++--
- include/uapi/linux/io_uring.h | 10 ++++++++++
- 2 files changed, 35 insertions(+), 2 deletions(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 39325e469738..a14bd5f55028 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -637,6 +637,7 @@ struct io_sr_msg {
- 	int				bgid;
- 	size_t				len;
- 	size_t				done_io;
-+	unsigned int			flags;
- };
- 
- struct io_open {
-@@ -5269,11 +5270,14 @@ static int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- {
- 	struct io_sr_msg *sr = &req->sr_msg;
- 
--	if (unlikely(sqe->addr2 || sqe->file_index))
-+	if (unlikely(sqe->file_index))
- 		return -EINVAL;
- 
- 	sr->umsg = u64_to_user_ptr(READ_ONCE(sqe->addr));
- 	sr->len = READ_ONCE(sqe->len);
-+	sr->flags = READ_ONCE(sqe->addr2);
-+	if (sr->flags & ~IORING_RECVSEND_POLL_FIRST)
-+		return -EINVAL;
- 	sr->msg_flags = READ_ONCE(sqe->msg_flags) | MSG_NOSIGNAL;
- 	if (sr->msg_flags & MSG_DONTWAIT)
- 		req->flags |= REQ_F_NOWAIT;
-@@ -5308,6 +5312,10 @@ static int io_sendmsg(struct io_kiocb *req, unsigned int issue_flags)
- 		kmsg = &iomsg;
- 	}
- 
-+	if (!(req->flags & REQ_F_POLLED) &&
-+	    (sr->flags & IORING_RECVSEND_POLL_FIRST))
-+		return io_setup_async_msg(req, kmsg);
-+
- 	flags = req->sr_msg.msg_flags;
- 	if (issue_flags & IO_URING_F_NONBLOCK)
- 		flags |= MSG_DONTWAIT;
-@@ -5350,6 +5358,10 @@ static int io_send(struct io_kiocb *req, unsigned int issue_flags)
- 	int min_ret = 0;
- 	int ret;
- 
-+	if (!(req->flags & REQ_F_POLLED) &&
-+	    (sr->flags & IORING_RECVSEND_POLL_FIRST))
-+		return -EAGAIN;
-+
- 	sock = sock_from_file(req->file);
- 	if (unlikely(!sock))
- 		return -ENOTSOCK;
-@@ -5502,11 +5514,14 @@ static int io_recvmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- {
- 	struct io_sr_msg *sr = &req->sr_msg;
- 
--	if (unlikely(sqe->addr2 || sqe->file_index))
-+	if (unlikely(sqe->file_index))
- 		return -EINVAL;
- 
- 	sr->umsg = u64_to_user_ptr(READ_ONCE(sqe->addr));
- 	sr->len = READ_ONCE(sqe->len);
-+	sr->flags = READ_ONCE(sqe->addr2);
-+	if (sr->flags & ~IORING_RECVSEND_POLL_FIRST)
-+		return -EINVAL;
- 	sr->bgid = READ_ONCE(sqe->buf_group);
- 	sr->msg_flags = READ_ONCE(sqe->msg_flags) | MSG_NOSIGNAL;
- 	if (sr->msg_flags & MSG_DONTWAIT)
-@@ -5543,6 +5558,10 @@ static int io_recvmsg(struct io_kiocb *req, unsigned int issue_flags)
- 		kmsg = &iomsg;
- 	}
- 
-+	if (!(req->flags & REQ_F_POLLED) &&
-+	    (sr->flags & IORING_RECVSEND_POLL_FIRST))
-+		return io_setup_async_msg(req, kmsg);
-+
- 	if (req->flags & REQ_F_BUFFER_SELECT) {
- 		kbuf = io_recv_buffer_select(req, issue_flags);
- 		if (IS_ERR(kbuf))
-@@ -5600,6 +5619,10 @@ static int io_recv(struct io_kiocb *req, unsigned int issue_flags)
- 	int ret, min_ret = 0;
- 	bool force_nonblock = issue_flags & IO_URING_F_NONBLOCK;
- 
-+	if (!(req->flags & REQ_F_POLLED) &&
-+	    (sr->flags & IORING_RECVSEND_POLL_FIRST))
-+		return -EAGAIN;
-+
- 	sock = sock_from_file(req->file);
- 	if (unlikely(!sock))
- 		return -ENOTSOCK;
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index fad63564678a..51f972ecaba0 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -213,6 +213,16 @@ enum {
- #define IORING_ASYNC_CANCEL_FD	(1U << 1)
- #define IORING_ASYNC_CANCEL_ANY	(1U << 2)
- 
-+/*
-+ * send/sendmsg and recv/recvmsg flags (sqe->addr2)
-+ *
-+ * IORING_RECVSEND_POLL_FIRST	If set, instead of first attempting to send
-+ *				or receive and arm poll if that yields an
-+ *				-EAGAIN result, arm poll upfront and skip
-+ *				the initial transfer attempt.
-+ */
-+#define IORING_RECVSEND_POLL_FIRST	(1U << 1)
-+
- /*
-  * IO completion data structure (Completion Queue Entry)
-  */
--- 
-2.35.1
-
+Reviewed-by: Hao Xu <howeyxu@tencent.com>

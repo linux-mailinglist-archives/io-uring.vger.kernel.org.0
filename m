@@ -2,99 +2,78 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F7D75117DB
-	for <lists+io-uring@lfdr.de>; Wed, 27 Apr 2022 14:47:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32A44513872
+	for <lists+io-uring@lfdr.de>; Thu, 28 Apr 2022 17:34:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233553AbiD0MKn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 27 Apr 2022 08:10:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39842 "EHLO
+        id S1347620AbiD1Pha (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 28 Apr 2022 11:37:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233551AbiD0MKl (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 27 Apr 2022 08:10:41 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65A4E1EC7D;
-        Wed, 27 Apr 2022 05:07:30 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id CDEC4CE24BB;
-        Wed, 27 Apr 2022 12:07:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51833C385A9;
-        Wed, 27 Apr 2022 12:07:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1651061247;
-        bh=VfXSpAbry2B4XiKgswh2qeTUbT/mzrWFYlX4Tdrzl6g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=b2Xc1pJMOg84lf+VdPwO2jdpef2Yn9NTMPROLKoVrRFo6Kk/UV8eOY7I9p3+NS8Tb
-         uk+qKrL57LCpm9jwGXODz+78Dw+WUuBBoYo/oZW8gqZ6ZW/bhE8noxkCRargA7v1Rs
-         YJCOYz9aWD8OFH+8HEAJnH5GzSRm9aI7tMSn8jmoY2YajiGwjrdBXtygGj7ezXadfX
-         PT0YDagK6RUCGgGe2uyXIdbhq20JCuYza/CV1yYGkX0k+qSTN3GXOc3XYhy00vgN72
-         DGSdxh+IPYONxQDaGFJooizFy2FZ70uMrcz6VfIEiqC6ZksVy3PC8QNi0AFR2ZQ0AE
-         qq6bw9p0zg/ig==
-Date:   Wed, 27 Apr 2022 14:07:21 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Stefan Roesch <shr@fb.com>
-Cc:     io-uring@vger.kernel.org, kernel-team@fb.com, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        david@fromorbit.com
-Subject: Re: [RFC PATCH v1 10/18] xfs: Enable async write file modification
- handling.
-Message-ID: <20220427120721.55tde42m4wsjgkfl@wittgenstein>
-References: <20220426174335.4004987-1-shr@fb.com>
- <20220426174335.4004987-11-shr@fb.com>
+        with ESMTP id S1349248AbiD1Pha (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 28 Apr 2022 11:37:30 -0400
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5025056C3B
+        for <io-uring@vger.kernel.org>; Thu, 28 Apr 2022 08:34:14 -0700 (PDT)
+Received: by mail-il1-f198.google.com with SMTP id j16-20020a056e02125000b002cc39632ab9so1951882ilq.9
+        for <io-uring@vger.kernel.org>; Thu, 28 Apr 2022 08:34:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=EwMmxxB70GQgJ7u1Zrn5Cilc9vL4oRzYW0xvX1vsow0=;
+        b=evmiBQm5QUr0jiawqD2cHXGkeOI2rxORm2wPjJhN3ib0S3mAfauNsWP6hBWtZLs/Na
+         FmbV1AekQazEwffZLuA8FBjRvCoouXC9nyq30KOF9fInapNsrg2mzGZiXbZk+KagVmj5
+         hH9eIYEhCHrez7J5BR3iQsyIVvAGbY3DfDAPybxs2tQUkmhtOasQqxyBW3NIHyRNwaG+
+         bvTPUROmz4Zeq5gJztsK4PdVuy+eVG1wvqjg+oO2Zage813dh2YgSaGIO3BxNrLhecfo
+         i/AbbulqXgpVBWXEk72ubrwSl0YQ/XvxDtUl/0nrqmb2utMJTvlunA9NUlBBX28zTbwU
+         anhw==
+X-Gm-Message-State: AOAM530lfaz3QAJMniApYxSGZnzAur7YqKWwvdarJV4ijT/gCWXN1X8j
+        iy4V8guNnbeinTfRAFKeYyF0mQUTqQxA+hbjvLaoxCMQknJS
+X-Google-Smtp-Source: ABdhPJzrnc8aaDPPy8hiBYilBlWFtxk5NFe/XwVn3JfG3hYu7MIAfPPPIVXngUhRoa2edWTe4oBAsrysbQjR1xKK/21PxatM+TEM
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20220426174335.4004987-11-shr@fb.com>
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a05:6e02:1585:b0:2c2:5b2c:e3e5 with SMTP id
+ m5-20020a056e02158500b002c25b2ce3e5mr13726563ilu.76.1651160053601; Thu, 28
+ Apr 2022 08:34:13 -0700 (PDT)
+Date:   Thu, 28 Apr 2022 08:34:13 -0700
+In-Reply-To: <00000000000012e22c05dacabb11@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000765a6105ddb8a8b9@google.com>
+Subject: Re: [syzbot] KASAN: use-after-free Read in add_wait_queue
+From:   syzbot <syzbot+950cee6d91e62329be2c@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk,
+        gregkh@linuxfoundation.org, io-uring@vger.kernel.org,
+        jirislaby@kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Apr 26, 2022 at 10:43:27AM -0700, Stefan Roesch wrote:
-> This modifies xfs write checks to return -EAGAIN if the request either
-> requires to remove privileges or needs to update the file modification
-> time. This is required for async buffered writes, so the request gets
-> handled in the io worker.
-> 
-> Signed-off-by: Stefan Roesch <shr@fb.com>
-> ---
->  fs/xfs/xfs_file.c | 39 ++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 38 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-> index 5bddb1e9e0b3..6f9da1059e8b 100644
-> --- a/fs/xfs/xfs_file.c
-> +++ b/fs/xfs/xfs_file.c
-> @@ -299,6 +299,43 @@ xfs_file_read_iter(
->  	return ret;
->  }
->  
-> +static int xfs_file_modified(struct file *file, int flags)
+syzbot suspects this issue was fixed by commit:
 
-This should probably be in fs/inode.c as:
+commit d89a4fac0fbc6fe5fc24d1c9a889440dcf410368
+Author: Jens Axboe <axboe@kernel.dk>
+Date:   Tue Mar 22 19:11:28 2022 +0000
 
-int file_modified_async(struct file *file, int flags)
+    io_uring: fix assuming triggered poll waitqueue is the single poll
 
-and then file_modified() can simply become:
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17b70e42f00000
+start commit:   b47d5a4f6b8d Merge tag 'audit-pr-20220321' of git://git.ke..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=63af44f0631a5c3a
+dashboard link: https://syzkaller.appspot.com/bug?extid=950cee6d91e62329be2c
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14506ddb700000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=139b2093700000
 
-int file_modified(struct file *file)
-{
-	return file_modified_async(file, 0);
-}
+If the result looks correct, please mark the issue as fixed by replying with:
 
-or even:
+#syz fix: io_uring: fix assuming triggered poll waitqueue is the single poll
 
-int file_modified_async(struct file *file, bool async)
-
-int file_modified(struct file *file)
-{
-	return file_modified_async(file, false);
-}
-
-to avoid piecing this together specifically in xfs (as Dave mentioned
-this is all pretty generic).
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection

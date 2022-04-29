@@ -2,68 +2,65 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 41DFD5153BF
-	for <lists+io-uring@lfdr.de>; Fri, 29 Apr 2022 20:32:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4741F5153E3
+	for <lists+io-uring@lfdr.de>; Fri, 29 Apr 2022 20:41:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1380017AbiD2SfD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 29 Apr 2022 14:35:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43150 "EHLO
+        id S1359165AbiD2SoV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 29 Apr 2022 14:44:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38790 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1380021AbiD2SfD (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 29 Apr 2022 14:35:03 -0400
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C473D6A435
-        for <io-uring@vger.kernel.org>; Fri, 29 Apr 2022 11:31:43 -0700 (PDT)
-Received: by mail-pj1-x102f.google.com with SMTP id bd19-20020a17090b0b9300b001d98af6dcd1so11233944pjb.4
-        for <io-uring@vger.kernel.org>; Fri, 29 Apr 2022 11:31:43 -0700 (PDT)
+        with ESMTP id S1380182AbiD2SoA (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 29 Apr 2022 14:44:00 -0400
+Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6924D116E
+        for <io-uring@vger.kernel.org>; Fri, 29 Apr 2022 11:40:40 -0700 (PDT)
+Received: by mail-io1-xd32.google.com with SMTP id i20so8996245ion.0
+        for <io-uring@vger.kernel.org>; Fri, 29 Apr 2022 11:40:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:from:subject:to:references
-         :content-language:in-reply-to:content-transfer-encoding;
-        bh=Nydb2OkBDtppCQEc3lJNsVExaegvRBKpFB6tFOI9J2g=;
-        b=BltNBwIlAc9e7/F/O9ISHTTsvr1EyCsTAnFv0yvtLLtOK67lKZGbTWGxBcQ86KTTst
-         3HOjlw0cLbTwGYJiUceNDGAan+JDewIwGXhVqAegQxpyF8h3ty66F/ULq27oCwzaCij2
-         vmu5HKqmcHPkpYlJA0F6QKCdIY31NE3WjgFXrWg0rDYemIy/hcs/k4UOpGtj2CqEq+6x
-         nr8L1Sg3ZZa7/coNRJu8yZFhG6ecr4FqL2PmBJ7dq/PBCFtEfp9WRZGatA9k9ztK9JNO
-         gy0/MKfDlBylgGYTwtknqubA+ovl3wnFEFidEyYuafG0pFrfRq87hmSC6VdDQfJrwY92
-         Tgww==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:from:subject:to:cc
+         :content-language:content-transfer-encoding;
+        bh=2X5ouyCAFBkj8WcDY3cZjsGmSHJxyflynhWLefMBPlg=;
+        b=OcBDzzIKX2pdJcHy5EQUWIydYMOp1/F0BivtbsB7G9l9ZO7lOs6Pd2uB7ZoCIe4j/C
+         URJ3OOOLXVoN1S/ujwqgrhvME+4rop0Lg5+d7s1VGhBwzaS/nM8q29LxendFLWpO6/mu
+         RgKpfW6QcIlOSUFFt8PVUhGSe8ZgCgILW3ICnyBfa/G39NaEGZn8gVdypGDwJzp56icA
+         2fGdiP3Iv2EAZSReIleJ7w4to5RGv+c1wG5cI1ZpuzKPzwyN4VOrN1n5gtwohldF976F
+         BnesLldwC5x97WvFKVSlGrkgffH9EDqnCutG+p65Tt3OK3tIq5rUC5M/S2bayp1ur5JS
+         iz3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:from
-         :subject:to:references:content-language:in-reply-to
-         :content-transfer-encoding;
-        bh=Nydb2OkBDtppCQEc3lJNsVExaegvRBKpFB6tFOI9J2g=;
-        b=oYzPwh6i322TAqw9x3DQLFmuvCpfnkRkVG2lVqZWI9QWc4BsoZCpKPBBensz8Bu+2z
-         BOyouqFpmcPp79wo12xeV7d+KhRWLVrJCwzPuuNJGG3lA1N0QSKjoYBos+eX/gwTMali
-         H2NxZxSNdvnnHaClQEGetRkEcSRqZMUehv9Zqf4BiNAmQUqffEYMabbuRpbRWnUxywgQ
-         kpk+zQbbLseisuBySGu/RzLB+YRqwJJeJ6LyhA+KXulSmYyxMfO+Vjo5RgXx6WUpxcXI
-         BnIZB7pUdx6EnkOOp8TBhicUkQx7IX+fgY5MpoJmkNj5vX8p2Y0RuoGR/zvhdKr8foPr
-         dgPA==
-X-Gm-Message-State: AOAM533JElqaF8Fr5BHjPgyStzabrwImvyJvgtZHT8x5B2uS9f/aWEOi
-        JwI7wsZD88e+HkN30KWQaxouAM5PoPBaTg==
-X-Google-Smtp-Source: ABdhPJzyGA1qp8mXi8h4KuHwK5u33u/kcDaoBxL+RA07ADmUFiLz0OEHDO4Zrrv0E1jcN7oRBXCcSg==
-X-Received: by 2002:a17:90b:1bcd:b0:1da:5010:ff44 with SMTP id oa13-20020a17090b1bcd00b001da5010ff44mr5369770pjb.1.1651257103328;
-        Fri, 29 Apr 2022 11:31:43 -0700 (PDT)
-Received: from [127.0.0.1] ([103.121.210.106])
-        by smtp.gmail.com with ESMTPSA id e12-20020a63e00c000000b003c14af505f9sm6054396pgh.17.2022.04.29.11.31.41
+         :subject:to:cc:content-language:content-transfer-encoding;
+        bh=2X5ouyCAFBkj8WcDY3cZjsGmSHJxyflynhWLefMBPlg=;
+        b=1yX5n4W052HN0gRDASw1DxbakmYJsY96N29x/wPASaG39B6ViDgONHBVFiRvqMEsMc
+         zCNf5+NOgMNqTuL0TXxjUXjSnEP7kQoVxDq5RrnHSv9NKGHLfKv/xTCMNF+C/epvqIjf
+         5BDY7oM+LHHgRzL5udKRA/3SHrj3gVZduE8z0bwJhh61060Rqf5pv+Ngybon7y/W0N7B
+         LyXSIvN+V0WyujnxskQ0w3CUnr4ffr8Or4VeehPdYtrvGTBggxFNBuGUiZfDXL20f5XF
+         gCuLhh16nFjNRUhXePQOpVM49oF0wSayzJIHK2y9/COCn60pmxXAJwO3YIe+Xiw1k5fb
+         8QEQ==
+X-Gm-Message-State: AOAM532ERDmaBKISVMeqSWncWfnUkZ/Q1wKCPjI4+bjA03bd3MJI49qJ
+        hJwrAGanj3AjsxKhDvub01OiLF4URKD2Ag==
+X-Google-Smtp-Source: ABdhPJwQk7dCnPlUlbw5YuKxb51RGtWQoAD50ytJr/nBm/sCNZ48gQm0srhypMfXLvS5mesNF6Fjwg==
+X-Received: by 2002:a05:6638:3183:b0:32a:7cb1:a13 with SMTP id z3-20020a056638318300b0032a7cb10a13mr276061jak.89.1651257640134;
+        Fri, 29 Apr 2022 11:40:40 -0700 (PDT)
+Received: from [192.168.1.172] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id j18-20020a023212000000b0032b3a7817e1sm762319jaa.165.2022.04.29.11.40.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Apr 2022 11:31:43 -0700 (PDT)
-Message-ID: <7368ecc8-1255-09a5-0d1e-e4250062f84e@gmail.com>
-Date:   Sat, 30 Apr 2022 02:31:37 +0800
+        Fri, 29 Apr 2022 11:40:39 -0700 (PDT)
+Message-ID: <af70231e-157b-1a74-f6e8-81282c5fce28@kernel.dk>
+Date:   Fri, 29 Apr 2022 12:40:37 -0600
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
  Thunderbird/91.8.1
-From:   Hao Xu <haoxu.linux@gmail.com>
-Subject: Re: [PATCHSET 0/2] Add support for IORING_RECVSEND_POLL_FIRST
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-References: <20220427015428.322496-1-axboe@kernel.dk>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring fixes for 5.18-rc5
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     io-uring <io-uring@vger.kernel.org>
 Content-Language: en-US
-In-Reply-To: <20220427015428.322496-1-axboe@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -71,30 +68,47 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/27/22 09:54, Jens Axboe wrote:
-> Hi,
->
-> I had a re-think on the flags2 addition [1] that was posted earlier
-> today, and I don't really like the fact that flags2 then can't work
-> with ioprio for read/write etc. We might also want to extend the
-> ioprio field for other types of IO in the future.
->
-> So rather than do that, do a simpler approach and just add an io_uring
-> specific flag set for send/recv and friends. This then allow setting
-> IORING_RECVSEND_POLL_FIRST in sqe->addr2 for those, and if set, io_uring
-> will arm poll first rather than attempt a send/recv operation.
->
-> [1] 
-> https://lore.kernel.org/io-uring/20220426183343.150273-1-axboe@kernel.dk/
->
+Hi Linus,
 
-Hi Jens,
-Could we use something like the high bits of sqe->fd to store general flags2
-since I saw the number of open FDs can be about (1<<20) at most.
-Though I'm not sure if we can assume the limitation of fd won't change
-in the future..
+Pretty boring:
 
-Regards,
-Hao
+- 3 patches just adding reserved field checks (me, Eugene)
 
+- Fixing a potential regression with IOPOLL caused by a block change
+  (Joseph)
+
+Please pull!
+
+
+The following changes since commit c0713540f6d55c53dca65baaead55a5a8b20552d:
+
+  io_uring: fix leaks on IOPOLL and CQE_SKIP (2022-04-17 06:54:11 -0600)
+
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux-block.git tags/io_uring-5.18-2022-04-29
+
+for you to fetch changes up to 303cc749c8659d5f1ccf97973591313ec0bdacd3:
+
+  io_uring: check that data field is 0 in ringfd unregister (2022-04-29 08:39:43 -0600)
+
+----------------------------------------------------------------
+io_uring-5.18-2022-04-29
+
+----------------------------------------------------------------
+Eugene Syromiatnikov (1):
+      io_uring: check that data field is 0 in ringfd unregister
+
+Jens Axboe (2):
+      io_uring: check reserved fields for send/sendmsg
+      io_uring: check reserved fields for recv/recvmsg
+
+Joseph Ravichandran (1):
+      io_uring: fix uninitialized field in rw io_kiocb
+
+ fs/io_uring.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+-- 
+Jens Axboe
 

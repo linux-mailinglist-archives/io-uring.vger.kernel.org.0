@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E23751494A
+	by mail.lfdr.de (Postfix) with ESMTP id A1BE751494B
 	for <lists+io-uring@lfdr.de>; Fri, 29 Apr 2022 14:28:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1359152AbiD2Mbi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 29 Apr 2022 08:31:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44736 "EHLO
+        id S1359148AbiD2Mbm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 29 Apr 2022 08:31:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1359148AbiD2Mbg (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 29 Apr 2022 08:31:36 -0400
-Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E85DAC8BED
-        for <io-uring@vger.kernel.org>; Fri, 29 Apr 2022 05:28:17 -0700 (PDT)
-Received: by mail-pf1-x429.google.com with SMTP id a11so6805053pff.1
-        for <io-uring@vger.kernel.org>; Fri, 29 Apr 2022 05:28:17 -0700 (PDT)
+        with ESMTP id S1359151AbiD2Mbh (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 29 Apr 2022 08:31:37 -0400
+Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DDE4C90CA
+        for <io-uring@vger.kernel.org>; Fri, 29 Apr 2022 05:28:19 -0700 (PDT)
+Received: by mail-pg1-x534.google.com with SMTP id i62so6409545pgd.6
+        for <io-uring@vger.kernel.org>; Fri, 29 Apr 2022 05:28:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=QPWZQXPik/l0zx/mj7hc4QqEQbNToqIKASj6Uie6OLo=;
-        b=H2it66w6eERhHjYfwhuixlHV9Wr4w9514rGayWmHt1juz0K7qlnynl7xYBeKOuB/ob
-         5jr87hK5AQ9V4YnZpcBaqrB+2H9LYvxJfr5vr8XEFVqXxQ4bVXscG3EJhplwZTVJQX+0
-         UAT/0hM0ta6poBTTMCvtIiprm6ba39Ja6ZzGID6CSIQ86361Ylblv5uoRK9BHSalNW43
-         8/rg4cgVs7mfusQancAEUB982rdxUPbUsCAhAyGSPy9fSLaonDKT312hEvBGSpQ+0noh
-         gZZ1A1uNJtcWKvh8J60Qkl64fm+Q0bZ2ofofo/FuiMcrBIoSF0KCwqclMVxvrV5QrKNm
-         cUmA==
+        bh=GKrcOv9pG1lneRAWczG4a2bMEv/yL32HG8D7qHOkWaA=;
+        b=aysWaOkaeZbDgE2zklAFp712PKn3NPsePud87O3z5zTkyzwg74dM8hpzfqf7cBtTHq
+         C3aUOmmcaWztHOhaCZldV7Jg0Z89lI0CGiGjP+Psbn/gnSO1NSCntUu8VcJCRXnc8tlP
+         4oqv9k9wEWWkSFUh/8zdo6DwY21lAlmnWdlTcEeKsqxO6csjen3oC6VrJfUKuwqzafc2
+         WPKBYN9ByK2mKjyoa/SkqCx8z0YLUfERqmzLHHSEcSt00JnCSjD3kjAWGsz4P1bbyKj1
+         gvPmE4zPyTPvNJDaDSHr6tNgUgHiyWK2WTMfZa/pzQK9i0Bxvj6VjXiwx4kSopquuCsC
+         Z1KQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=QPWZQXPik/l0zx/mj7hc4QqEQbNToqIKASj6Uie6OLo=;
-        b=jhMUbBabrXo+C2pZutRYwHm4lrP93USRtBp6RZrzpaTmB6SxfCOWaJeb1NcDiCEq4I
-         Eu5fvma5cjMySgGQf5VKikQrdUSN96okBeyGglqf64XfdjvVWn6brSZPF+p0ttkIFha7
-         yodp+GaQhfA7XBe7Oxjhl5ijoNnQcHAlzj0ZLEYNkBwekrSG0DUKO7We7OgkWh1TgSqX
-         VhpQF0Dm0CAgWEtszdQItw07iFJs1ZKpRDjewAKaomOf4yYIIPqn9SIZulDx4TVhaJvn
-         p3OpcqipjupTPDicwXYg3cGfv/qKvPyDTU8rj+CBhWFrYLc4M3gZtTpJHoZk/Eb3qatF
-         d7bQ==
-X-Gm-Message-State: AOAM5303QHB/RvNCmQGeMTLsqvPhUIZKeYIiqQYkYl6QZUWzzfQ6PW46
-        FrIHMkOwDh9B55nR9QWE73sWGCeU6MG5HvwH
-X-Google-Smtp-Source: ABdhPJyAxW7AQO7iB/Lq8XPQtqctaCzrWc0eCwGi3j3+OsG2SAuSswmKSRotA2bn9CQ83gw4J6SpWA==
-X-Received: by 2002:a63:5c6:0:b0:3ab:a0ef:9711 with SMTP id 189-20020a6305c6000000b003aba0ef9711mr13652330pgf.426.1651235297146;
-        Fri, 29 Apr 2022 05:28:17 -0700 (PDT)
+        bh=GKrcOv9pG1lneRAWczG4a2bMEv/yL32HG8D7qHOkWaA=;
+        b=hgCH0/YYMzr+dipLaoaxuOR9SSdksgU5b4swrX1ke+tKHI1DajB+q2HdHu1T3+igPH
+         QLRz8810rrNsbqs8zxrE/xC8kGONK7DbKtRkxk8C+qQ48l1OCfkq4td92TtZlvpDtFrk
+         Jby5+o8aA/saT1M+vCvjLJpVnOEkQa8GHEIYPpbqaLw6/8h73gPfrLoyF0B5zxhVv/68
+         ifa2i35uzJNkaCIXVTyhjN9ZNj54X2Uu3Y/Bj364ol7eXBIjgDXKBDXJiWJsVifIYu9W
+         B0ij4Vzc0zEw/eZZSqaQfG+5jT+TT4/fXWRouIbEfdDsT9vyXoXuAZxREI16EuajuKZO
+         +fJA==
+X-Gm-Message-State: AOAM533TN2YAXi8tpsArxFbyQBU6hIAFEhevgFvUfhJ2PHvQa63Erwvs
+        T2Uumxzaxt/ihZ+vVS+zbUpfaLN2VKqMYGlj
+X-Google-Smtp-Source: ABdhPJyVeyYm/JacXBjr3oK0zYItBzbKCk1W8XyZgfNtrA432txI9NSkO0eBfTaoLPqGTeI32PXCSw==
+X-Received: by 2002:a62:cec4:0:b0:50d:9030:722c with SMTP id y187-20020a62cec4000000b0050d9030722cmr9756934pfg.41.1651235298396;
+        Fri, 29 Apr 2022 05:28:18 -0700 (PDT)
 Received: from localhost.localdomain ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id o26-20020a629a1a000000b0050d5d7a02b8sm2895837pfe.192.2022.04.29.05.28.16
+        by smtp.gmail.com with ESMTPSA id o26-20020a629a1a000000b0050d5d7a02b8sm2895837pfe.192.2022.04.29.05.28.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Apr 2022 05:28:16 -0700 (PDT)
+        Fri, 29 Apr 2022 05:28:17 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 08/10] io_uring: abstract out provided buffer list selection
-Date:   Fri, 29 Apr 2022 06:28:01 -0600
-Message-Id: <20220429122803.41101-9-axboe@kernel.dk>
+Subject: [PATCH 09/10] io_uring: relocate io_buffer_get_list()
+Date:   Fri, 29 Apr 2022 06:28:02 -0600
+Message-Id: <20220429122803.41101-10-axboe@kernel.dk>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220429122803.41101-1-axboe@kernel.dk>
 References: <20220429122803.41101-1-axboe@kernel.dk>
@@ -68,72 +68,74 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-In preparation for providing another way to select a buffer, move the
-existing logic into a helper.
+In preparation for calling it from __io_put_kbuf(), move it up a bit to
+avoid a forward declaration.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/io_uring.c | 33 +++++++++++++++++++++------------
- 1 file changed, 21 insertions(+), 12 deletions(-)
+ fs/io_uring.c | 42 +++++++++++++++++++++---------------------
+ 1 file changed, 21 insertions(+), 21 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index f8816c61d455..7f9b9aa57ddb 100644
+index 7f9b9aa57ddb..5b0deba430ca 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -3581,32 +3581,41 @@ static void io_buffer_add_list(struct io_ring_ctx *ctx,
- 	list_add(&bl->list, list);
+@@ -1558,6 +1558,27 @@ static inline void io_req_set_rsrc_node(struct io_kiocb *req,
+ 	}
  }
  
-+static void __user *io_provided_buffer_select(struct io_kiocb *req, size_t *len,
-+					      struct io_buffer_list *bl,
-+					      unsigned int issue_flags)
++static struct io_buffer_list *io_buffer_get_list(struct io_ring_ctx *ctx,
++						 unsigned int bgid)
 +{
-+	struct io_buffer *kbuf;
++	struct list_head *hash_list;
++	struct io_buffer_list *bl;
 +
-+	kbuf = list_first_entry(&bl->buf_list, struct io_buffer, list);
-+	list_del(&kbuf->list);
-+	if (*len > kbuf->len)
-+		*len = kbuf->len;
-+	req->flags |= REQ_F_BUFFER_SELECTED;
-+	req->kbuf = kbuf;
-+	io_ring_submit_unlock(req->ctx, issue_flags);
-+	return u64_to_user_ptr(kbuf->addr);
++	if (bgid == ctx->io_bl_bgid)
++		return ctx->io_bl_last;
++
++	hash_list = &ctx->io_buffers[hash_32(bgid, IO_BUFFERS_HASH_BITS)];
++	list_for_each_entry(bl, hash_list, list) {
++		if (bl->bgid == bgid || bgid == -1U) {
++			ctx->io_bl_bgid = bgid;
++			ctx->io_bl_last = bl;
++			return bl;
++		}
++	}
++
++	return NULL;
 +}
 +
- static void __user *io_buffer_select(struct io_kiocb *req, size_t *len,
- 				     unsigned int issue_flags)
+ static unsigned int __io_put_kbuf(struct io_kiocb *req, struct list_head *list)
  {
--	struct io_buffer *kbuf = req->kbuf;
- 	struct io_ring_ctx *ctx = req->ctx;
- 	struct io_buffer_list *bl;
- 
- 	if (req->flags & REQ_F_BUFFER_SELECTED)
--		return u64_to_user_ptr(kbuf->addr);
-+		return u64_to_user_ptr(req->kbuf->addr);
- 
- 	io_ring_submit_lock(req->ctx, issue_flags);
- 
- 	bl = io_buffer_get_list(ctx, req->buf_index);
--	if (bl && !list_empty(&bl->buf_list)) {
--		kbuf = list_first_entry(&bl->buf_list, struct io_buffer, list);
--		list_del(&kbuf->list);
--		if (*len > kbuf->len)
--			*len = kbuf->len;
--		req->flags |= REQ_F_BUFFER_SELECTED;
--		req->kbuf = kbuf;
-+	if (unlikely(!bl)) {
- 		io_ring_submit_unlock(req->ctx, issue_flags);
--		return u64_to_user_ptr(kbuf->addr);
-+		return ERR_PTR(-ENOBUFS);
- 	}
- 
--	io_ring_submit_unlock(req->ctx, issue_flags);
--	return ERR_PTR(-ENOBUFS);
-+	/* selection helpers drop the submit lock again, if needed */
-+	return io_provided_buffer_select(req, len, bl, issue_flags);
+ 	struct io_buffer *kbuf = req->kbuf;
+@@ -1614,27 +1635,6 @@ static inline unsigned int io_put_kbuf(struct io_kiocb *req,
+ 	return cflags;
  }
  
- #ifdef CONFIG_COMPAT
+-static struct io_buffer_list *io_buffer_get_list(struct io_ring_ctx *ctx,
+-						 unsigned int bgid)
+-{
+-	struct list_head *hash_list;
+-	struct io_buffer_list *bl;
+-
+-	if (bgid == ctx->io_bl_bgid)
+-		return ctx->io_bl_last;
+-
+-	hash_list = &ctx->io_buffers[hash_32(bgid, IO_BUFFERS_HASH_BITS)];
+-	list_for_each_entry(bl, hash_list, list) {
+-		if (bl->bgid == bgid || bgid == -1U) {
+-			ctx->io_bl_bgid = bgid;
+-			ctx->io_bl_last = bl;
+-			return bl;
+-		}
+-	}
+-
+-	return NULL;
+-}
+-
+ static void io_kbuf_recycle(struct io_kiocb *req, unsigned issue_flags)
+ {
+ 	struct io_ring_ctx *ctx = req->ctx;
 -- 
 2.35.1
 

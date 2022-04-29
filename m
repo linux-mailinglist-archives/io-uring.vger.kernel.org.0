@@ -2,84 +2,169 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 07C6E514DB2
-	for <lists+io-uring@lfdr.de>; Fri, 29 Apr 2022 16:41:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93BFE514E95
+	for <lists+io-uring@lfdr.de>; Fri, 29 Apr 2022 16:57:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1359740AbiD2Oob (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 29 Apr 2022 10:44:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33026 "EHLO
+        id S1378091AbiD2PBM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 29 Apr 2022 11:01:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378078AbiD2OoY (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 29 Apr 2022 10:44:24 -0400
-Received: from mail-il1-x131.google.com (mail-il1-x131.google.com [IPv6:2607:f8b0:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B65949F2B
-        for <io-uring@vger.kernel.org>; Fri, 29 Apr 2022 07:40:08 -0700 (PDT)
-Received: by mail-il1-x131.google.com with SMTP id i8so4106043ila.5
-        for <io-uring@vger.kernel.org>; Fri, 29 Apr 2022 07:40:08 -0700 (PDT)
+        with ESMTP id S1378094AbiD2PBM (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 29 Apr 2022 11:01:12 -0400
+Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D47CB1884
+        for <io-uring@vger.kernel.org>; Fri, 29 Apr 2022 07:57:53 -0700 (PDT)
+Received: by mail-il1-x133.google.com with SMTP id g10so4139796ilf.6
+        for <io-uring@vger.kernel.org>; Fri, 29 Apr 2022 07:57:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:in-reply-to:references:subject:message-id:date
-         :mime-version:content-transfer-encoding;
-        bh=c7/rTrXWfT9qI0T+ZC8VZTvuLtN6jGScG/El1dcOs4U=;
-        b=2+DUz1PUat7L5aT5Nt0Xr1HZYzE3RRY47+qmLTM5XNp+B2R2nHGUF1oLgstwwAV5Hf
-         LzVCmcfiBjYQ0dzuNwhhHhqoxCon2Izie2AKkXkVtl0dAwOmeqVW0sJ4fPBeU5kWdRka
-         usEncyFBET/crDoiU0zG8ZlbImSz9oP2zaOwmcuTztwA1lCgDGAXe37lF5bz4nf49ueL
-         Fm/Wfl6WGJZXwOkjrYqKZuvSX8rkd5OkRLAKeEYSz+eo0NHc8WqpeGmHsWVYaX5AfjIA
-         SOHXsP0JUd+c8dbEoxX6umeejbBxUbnTDxvigpW9rGmoi4atUJf8t3ktzbGs0cCDHscW
-         +JJQ==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=Cr3Zt15MQjCzCNKsSqxMTPsVbsWgRFV0S7vyyuG8sbM=;
+        b=nY1dyv5w83XyODNYvjrS7chHOeIc+yJnNWPAwrJOPO123XvcEKgvsM09h7YhAZYH2L
+         3bWFFsmV1/zmZ2/4F9wiqImI2gsz6TdCyYSqgauxcLTe9cocNC62UDBMQIpbw5++nqog
+         3Q10o2otI22CgM5Oq9qlXLyYn0U1j2N783Y1PmytIBvQoJYg9aeFYibqjsXCsXPqveT3
+         ZuxY3R67hqFE13Ungi9+5PFt05+kk3ty/VRz5CNmBft5NcCoQqFA14tUp22/dWPCbat9
+         PMGyfx5AmVrHf4jo1czLD5rPhBCKTirJPS1Bh2WgdSrB3zG0J5bU37ncydLOkHLle1zA
+         T4pQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
-         :message-id:date:mime-version:content-transfer-encoding;
-        bh=c7/rTrXWfT9qI0T+ZC8VZTvuLtN6jGScG/El1dcOs4U=;
-        b=h4ZQaOo3V3Ts+LwCzmn1ZkfiMYr2lQY9RXfd3k4/OYBSrIhBi1eFK8mHeJ14ZJE1h8
-         ILT8HoNrbNPc8pL+pWRnx+XdM9CmEja5h+QLXAEoi7VCP7UQBmmpC/tVXcYw/YJkgv3Y
-         RVEQ399a2gPfojJU723hGo++0UPqnX45dkrsrR9quuiLPlm7lB+t5JTkSupJcjXRnDdR
-         Wnf17DkU430OlPeO6AsbJ631rjBxFDXzTmLHWn2t4+YV3jXmhaS4xOly+694x8wfLR7j
-         rrRdsTjGQHg1GpGsE+3KyazZ9quHDdPYD6jfE12jU/foMyLmVQJvDCRwcV/6+gICinHC
-         9qdw==
-X-Gm-Message-State: AOAM532l9I6smcGvJRh3x1J1iH0sk6JEExjYPwCG6LtXvjCyiFShtRUe
-        iHl52p8BMP7FLyBuL9yZGfCKeNV866EjPQ==
-X-Google-Smtp-Source: ABdhPJz8KUTHUGi/Jbg3iuSMPI5uAMcIELrjGnIOHfrHWTAJ3wUhOfXNQwmGDCtFKsrZsDTlmR4ZlQ==
-X-Received: by 2002:a05:6e02:b2b:b0:2cd:a289:15f9 with SMTP id e11-20020a056e020b2b00b002cda28915f9mr10058227ilu.36.1651243207272;
-        Fri, 29 Apr 2022 07:40:07 -0700 (PDT)
-Received: from [127.0.1.1] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id t13-20020a02ccad000000b0032b3a7817afsm617994jap.115.2022.04.29.07.40.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Apr 2022 07:40:06 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     esyr@redhat.com, asml.silence@gmail.com
-Cc:     linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-In-Reply-To: <20220429142218.GA28696@asgard.redhat.com>
-References: <20220429142218.GA28696@asgard.redhat.com>
-Subject: Re: [PATCH] io_uring: check that data field is 0 in ringfd unregister
-Message-Id: <165124320648.74951.15737346713763033828.b4-ty@kernel.dk>
-Date:   Fri, 29 Apr 2022 08:40:06 -0600
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=Cr3Zt15MQjCzCNKsSqxMTPsVbsWgRFV0S7vyyuG8sbM=;
+        b=xbJZiWMb8pNpnMyvIrmY8b8P8/3CxSkS5jRm0iYUq3mhuUJ+Q74PI1RYhC1zPT16x7
+         ZZXrhyoCHZbhrWMOEG8RAJ0/kmVE2AWw7GvVzeIlt4QVq4m+SFG4ZXBHbM9/fSOTiMbB
+         zdZwB5BASy6zYOYRVG8jVqIK78aiz7uQG25GYSqfABcHzDykTbDeHaMg6fIbgaZt0sEj
+         nDuHivSlWg3whzB8LT6/1qOi04TRTfNiTINJ0FpFyhTB1DTCjbTElMUfM08F0zZQbzvc
+         NeesnyTIoSHgdXwFF7E01d03Sej96iEoeeQIz2qblCXJzzruX4gTxOntQoBlTFtH/nbL
+         x53g==
+X-Gm-Message-State: AOAM532ifpdofFbowaRKHpi++CZmg5KhTlXRy9TSK1ZJ9IJovypux4k7
+        QnwG74aLsZjI066xP+YX/NHb+GpfcXfg5A==
+X-Google-Smtp-Source: ABdhPJyp0QqOyHM1xhrKHIFym4BhvQF9Cqws/ZuBL1YjzdyUPBCbLQuUhGELrMM0kL8JvObUkIPgdA==
+X-Received: by 2002:a05:6e02:1d04:b0:2cc:4c42:9b99 with SMTP id i4-20020a056e021d0400b002cc4c429b99mr14630135ila.168.1651244272475;
+        Fri, 29 Apr 2022 07:57:52 -0700 (PDT)
+Received: from [192.168.1.172] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id u23-20020a02aa97000000b0032b3a78174csm630064jai.16.2022.04.29.07.57.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Apr 2022 07:57:52 -0700 (PDT)
+Message-ID: <a513e86d-747e-8439-71b6-7d1b22299eac@kernel.dk>
+Date:   Fri, 29 Apr 2022 08:57:51 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH 10/10] io_uring: add support for ring mapped supplied
+ buffers
+Content-Language: en-US
+To:     Victor Stewart <v@nametag.social>
+Cc:     io-uring@vger.kernel.org
+References: <20220429122803.41101-1-axboe@kernel.dk>
+ <20220429122803.41101-11-axboe@kernel.dk>
+ <CAM1kxwhyPpZFQ2ZEhWGdENz6Bw6a0QN-NWMkmAuYjVxDDHP_Aw@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <CAM1kxwhyPpZFQ2ZEhWGdENz6Bw6a0QN-NWMkmAuYjVxDDHP_Aw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, 29 Apr 2022 16:22:18 +0200, Eugene Syromiatnikov wrote:
-> Only allow data field to be 0 in struct io_uring_rsrc_update user
-> arguments to allow for future possible usage.
+On 4/29/22 7:21 AM, Victor Stewart wrote:
+> top posting because this is a tangential but related comment.
 > 
+> the way i manage memory in my network server is by initializing with a
+> fixed maximum number of supported clients, and then mmap an enormous
+> contiguous buffer of something like (100MB + 100MB) * nMaxClients, and
+> then for each client assign a fixed 100MB range for receive and
+> another for send.
 > 
+> then with transparent huge pages disabled, only the pages with bytes
+> in them are ever resident, memset-ing bytes to 0 as they?re consumed
+> by the send or receive paths.
+> 
+> so this provides a perfectly optimal deterministic memory
+> architecture, which makes client memory management effortless, while
+> costing nothing? without the hassle of recycling buffers or worrying
+> about what range to recv into or write into.
+> 
+> but i know that registered buffers as is have some restriction on
+> maximum number of bytes one can register (i forget exactly).
 
-Applied, thanks!
+You can have 64K groups, and 64K buffers in each. Each buffer can be
+INT_MAX.
 
-[1/1] io_uring: check that data field is 0 in ringfd unregister
-      commit: 303cc749c8659d5f1ccf97973591313ec0bdacd3
+> so maybe there?s some way in the future to accommodate this scheme as
+> well, which i believe is optimal out of all options.
 
-Best regards,
+As you noted, this patch doesn't change how provided buffers work, it
+merely changes the mechanism with which they can be provided and
+consumed to be more efficient.
+
+One idea that we have entertained internally is to allow incremental
+consumption of a buffer. Let's assume your setup. I'm going to exclude
+send as those aren't relevant for this discussion. This means you have
+100MB of buffer space for receive per client. Each client would have a
+buffer group ID associated with it, for their receive buffers. If you
+know what size your receives will be, then you'd provide your 100MB in
+chunks of that. Each receive would pick a chunk, recv data, then post
+the completion that holds information on what buffer was picked for it.
+When the client is done with the data, it puts it back into the provided
+pool.
+
+If you have wildly different receive sizes, and no idea how much you'd
+get at any point in time, then this scheme doesn't work so well as you
+have to then either do multiple receive requests to get all the data, or
+size your chunks such that any receive will fit. Obviously that can be
+wasteful, as you end up with fewer available chunks, and maybe you need
+to throw more than 100MB at it at that point.
+
+If we allowed incremental consumption, you could provide your 100MB as
+just one chunk. When a recv request is posted for eg 1500 bytes, you'd
+simply chop 1500 off the front of that buffer and use it. You're now
+left with a single chunk that's 100MB-1500B in size.
+
+One complication here is that we don't have enough room in the CQE to
+tell the app where we consumed from. Hence we'd need to ensure that the
+kernel and application agree on where data is consumed from for any
+given receive. Given full ordering of completions wrt data receive, this
+isn't impossible, but it does seem a bit fragile to me.
+
+We do have pending patches that allow for bigger CQEs, with the initial
+use case being the passthrough support for eg NVMe. With that, you have
+two u64 extra fields for any CQE, if you configure your ring to use big
+CQEs. With that, we could do incremental consumption and just have the
+recv completion be:
+
+cqe = {
+	.user_data	/* whatever app set user_data to for recv */
+	.res		/* bytes received */
+	.flags		/* IORING_CQE_F_INC_BUFFER */
+	.extra1		/* start address of where data landed */
+	.extra2		/* still unused */
+}
+
+and the client now knows that data was received into the address at
+.extra1 and of .res bytes in length. This would not supported vectored
+recv, but that seems like a minor thing as you can just do big buffers.
+
+This does suffer from the fragmentation issue again. Your case probably
+does not as you have a group per client, but other use cases might have
+shared groups.
+
+That was a long winded way of saying that "yes this patch doesn't
+fundamentally change how provided buffers work, it just makes it more
+efficient to use and allows easy re-provide options that previously
+made provided buffers too slow to use for some use cases".
+
+I welcome feedback! It's not entirely clear to me what your suggestion
+is, it looks more like you're describing your use cases and soliciting
+ideas on how provided buffers could work better for that?
+
 -- 
 Jens Axboe
-
 

@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BA72515312
-	for <lists+io-uring@lfdr.de>; Fri, 29 Apr 2022 19:56:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14CE9515313
+	for <lists+io-uring@lfdr.de>; Fri, 29 Apr 2022 19:56:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379834AbiD2SAI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 29 Apr 2022 14:00:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53958 "EHLO
+        id S1379842AbiD2SAJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 29 Apr 2022 14:00:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379836AbiD2SAF (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 29 Apr 2022 14:00:05 -0400
-Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF35DD0AA8
-        for <io-uring@vger.kernel.org>; Fri, 29 Apr 2022 10:56:46 -0700 (PDT)
-Received: by mail-io1-xd2a.google.com with SMTP id i20so8877606ion.0
-        for <io-uring@vger.kernel.org>; Fri, 29 Apr 2022 10:56:46 -0700 (PDT)
+        with ESMTP id S236055AbiD2SAH (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 29 Apr 2022 14:00:07 -0400
+Received: from mail-il1-x129.google.com (mail-il1-x129.google.com [IPv6:2607:f8b0:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0D5DD1148
+        for <io-uring@vger.kernel.org>; Fri, 29 Apr 2022 10:56:47 -0700 (PDT)
+Received: by mail-il1-x129.google.com with SMTP id z12so4457757ilp.8
+        for <io-uring@vger.kernel.org>; Fri, 29 Apr 2022 10:56:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=BWepBErWF/DJjzuLEOb1afuCPgdaTwd8ujyEo/Nnt3Y=;
-        b=nUJXbZ6W0Noq/AE5F9DzAPu3afRh9zUny95zWI+MvQRCpoW2bjiSoLAfN9F7XTavhH
-         6yDrzpMn+lYJWhzvy1T7jTeCTwI3V7tZqQWEXixEM4d9U7qVKeMD/6Cb3y9EA3BCY/Cv
-         rq3QUAwBaiXU7CpWU1Kj2Nh6z5GtQA2lI6BQQBokAuKpXESAwIfXSLYVfNfqbcvoxTCA
-         aiQmLDEYGxcVijQhrZKAyC0K2AO5tGSdoitU00q9eXbytUxb71jPIEdXZKYJG85IC00c
-         sr3+XWiF8Vag9oWlk3lVoScr5Cdyd309W916AUaBklG5okCuq5Xs5NzbqGGlt3OlYizM
-         V6IQ==
+        bh=kfjqnZOL38qe4ExfZMYi4Qy/yUWn7cNXVBJBAlUBZio=;
+        b=c0KcuuJv/GgSJQq9xEvPQbII96nEIrPHc1RQVVXWAROZOZkpK/o7nU9lsoA7lBKYZQ
+         CN9eb0AB6zNek2A/Abgx8tji6Gmb8pEtapQ+GI2NX+o6jHMhRkVY9WiU1WMa21BA5oFC
+         7Xy26d6IYjCcB6RZQK0ECacX+ez+tfnf8xsKDf9YXrLS1zUurvrau1xolatTubIh0b1/
+         aw7BlJKdAIM9CfVr7EH6rrtYW1EJJKpGV+LyDqknTlHVQc7zoVh/BMZPEC6crBbXW/ya
+         K1KK0w3qkMFho92ICJ/fGxRCelpmk5KmFyRfmxu9rBAAXK2jgHvPro7Cf0BdBbpPBZbV
+         QVgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=BWepBErWF/DJjzuLEOb1afuCPgdaTwd8ujyEo/Nnt3Y=;
-        b=KFO2noiZPbSkj+khBf9stgpryxIh8cIqzoUHn/7EcwzD7iooOc38N65cqI5JdEwxAl
-         RDUDI6fN8/nSg3g1VFuQ15VYn0l4JISbnSyRDRV5TvIIWpthAhd5oJuTOAUdn/OV0qHJ
-         yAXdJFFL5L6kf8rOfqTaaMspLvXo1DTf5vF7YmrRu/ClV3HkzpiAxJhtEGfhD9M4hK1w
-         lhi8rsfI2yUrpbCN77f8NhFEOCKVoYmSaenR72XON2lJs9yfEx6+OnMkanl7CyqPaCzO
-         LpXYcrJxaMQC+BJhNScs1+X9kvmHVbjYh+hoGq290OJTEALICC1qqI+OhJiyPF/CDJ9k
-         36tA==
-X-Gm-Message-State: AOAM532RdR395b3DytSkFWNDJ65w6hDktN5qyNEI/zj5n2lutWIls22d
-        cCBfEGDUHGgSdUvkiSyaIw2NZ85voNfdLA==
-X-Google-Smtp-Source: ABdhPJydGPyfxp/v6n5N+7YDXK1lGOqPjpL31YBWEcA4S68BJIlWdIYUTt1QgqfQtzBgrhV/TWneIg==
-X-Received: by 2002:a02:62c6:0:b0:32a:b876:218f with SMTP id d189-20020a0262c6000000b0032ab876218fmr229352jac.240.1651255005828;
-        Fri, 29 Apr 2022 10:56:45 -0700 (PDT)
+        bh=kfjqnZOL38qe4ExfZMYi4Qy/yUWn7cNXVBJBAlUBZio=;
+        b=pU036W8FHSo4nUxzpBwHPnIrk42IfBdxNf9G5BAmuCwqVcsTpDpkOFlfKMTnGPRhXp
+         FXniSfvSKWN2bRrDF7qBGcMBY50lmk5gYls+XsJlCQvMENglPoQkhDVTe8IKD3SdSnZ1
+         KGliGcAVrTDKJlVGp3njViNsPtrh5tmnhFUc1nd8WBsEPul1DbbnUJ0LKUFY3707Mr00
+         kR0BxPiulcSeE+6X4Qi71iTe90mss2MOkQj+/WzEvz+U04H950mmWI7fn/hP2J/F+/ez
+         E5GpuWkfSTaBck5RPSEMSIA9FpIRnmNQfaXqdixdFoA2wgX6eZsbcHu67GCS5LGYkXRf
+         3V7w==
+X-Gm-Message-State: AOAM53338A94IeJJb93ZtjbLf7eNwKaOSyELjagx1sTVNhANb8KlJcWS
+        P4/RBp4RrvFd9BAEdjM/tqxdF2WaeCQgoA==
+X-Google-Smtp-Source: ABdhPJzaAhyzmnXEfWEHKgVW0PvXTydjn3PcnAyVj9BveqX+cNBYqK9Ucrr1p5G8JLdWdx1l5KtYnQ==
+X-Received: by 2002:a05:6e02:1bc1:b0:2cd:5db6:d9e8 with SMTP id x1-20020a056e021bc100b002cd5db6d9e8mr218418ilv.276.1651255007088;
+        Fri, 29 Apr 2022 10:56:47 -0700 (PDT)
 Received: from m1.localdomain ([207.135.234.126])
         by smtp.gmail.com with ESMTPSA id o9-20020a02cc29000000b0032b3a78179dsm744082jap.97.2022.04.29.10.56.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Apr 2022 10:56:45 -0700 (PDT)
+        Fri, 29 Apr 2022 10:56:46 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 06/11] io_uring: cache last io_buffer_list lookup
-Date:   Fri, 29 Apr 2022 11:56:30 -0600
-Message-Id: <20220429175635.230192-7-axboe@kernel.dk>
+Subject: [PATCH 07/11] io_uring: add buffer selection support to IORING_OP_NOP
+Date:   Fri, 29 Apr 2022 11:56:31 -0600
+Message-Id: <20220429175635.230192-8-axboe@kernel.dk>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220429175635.230192-1-axboe@kernel.dk>
 References: <20220429175635.230192-1-axboe@kernel.dk>
@@ -67,68 +67,51 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Most use cases have 1 or few buffer groups, and even if they have
-multiple, there's often some locality in looking them up. Add a basic
-one-hit cache to avoid hashing the group ID and starting the list
-iteration.
+Obviously not really useful since it's not transferring data, but it
+is helpful in benchmarking overhead of provided buffers.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/io_uring.c | 20 +++++++++++++++-----
- 1 file changed, 15 insertions(+), 5 deletions(-)
+ fs/io_uring.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 41205548180d..4bd2f4d868c2 100644
+index 4bd2f4d868c2..d4004c3a88a1 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -411,14 +411,16 @@ struct io_ring_ctx {
- 		struct io_mapped_ubuf	**user_bufs;
+@@ -1052,7 +1052,9 @@ struct io_op_def {
+ };
  
- 		struct io_submit_state	submit_state;
-+		struct list_head	*io_buffers;
-+		struct io_buffer_list	*io_bl_last;
-+		unsigned int		io_bl_bgid;
-+		u32			pers_next;
-+		struct list_head	io_buffers_cache;
- 		struct list_head	timeout_list;
- 		struct list_head	ltimeout_list;
- 		struct list_head	cq_overflow_list;
--		struct list_head	*io_buffers;
--		struct list_head	io_buffers_cache;
- 		struct list_head	apoll_cache;
- 		struct xarray		personalities;
--		u32			pers_next;
- 		unsigned		sq_thread_idle;
- 	} ____cacheline_aligned_in_smp;
+ static const struct io_op_def io_op_defs[] = {
+-	[IORING_OP_NOP] = {},
++	[IORING_OP_NOP] = {
++		.buffer_select		= 1,
++	},
+ 	[IORING_OP_READV] = {
+ 		.needs_file		= 1,
+ 		.unbound_nonreg_file	= 1,
+@@ -4905,11 +4907,20 @@ static int io_splice(struct io_kiocb *req, unsigned int issue_flags)
+ static int io_nop(struct io_kiocb *req, unsigned int issue_flags)
+ {
+ 	struct io_ring_ctx *ctx = req->ctx;
++	void __user *buf;
  
-@@ -1616,10 +1618,17 @@ static struct io_buffer_list *io_buffer_get_list(struct io_ring_ctx *ctx,
- 	struct list_head *hash_list;
- 	struct io_buffer_list *bl;
+ 	if (unlikely(ctx->flags & IORING_SETUP_IOPOLL))
+ 		return -EINVAL;
  
-+	if (bgid == ctx->io_bl_bgid)
-+		return ctx->io_bl_last;
+-	__io_req_complete(req, issue_flags, 0, 0);
++	if (req->flags & REQ_F_BUFFER_SELECT) {
++		size_t len = 1;
 +
- 	hash_list = &ctx->io_buffers[hash_32(bgid, IO_BUFFERS_HASH_BITS)];
--	list_for_each_entry(bl, hash_list, list)
--		if (bl->bgid == bgid || bgid == -1U)
-+	list_for_each_entry(bl, hash_list, list) {
-+		if (bl->bgid == bgid || bgid == -1U) {
-+			ctx->io_bl_bgid = bgid;
-+			ctx->io_bl_last = bl;
- 			return bl;
-+		}
++		buf = io_buffer_select(req, &len, issue_flags);
++		if (IS_ERR(buf))
++			return PTR_ERR(buf);
 +	}
- 
- 	return NULL;
++
++	__io_req_complete(req, issue_flags, 0, io_put_kbuf(req, issue_flags));
+ 	return 0;
  }
-@@ -1760,6 +1769,7 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
- 		goto err;
- 	for (i = 0; i < (1U << IO_BUFFERS_HASH_BITS); i++)
- 		INIT_LIST_HEAD(&ctx->io_buffers[i]);
-+	ctx->io_bl_bgid = -1U;
  
- 	if (percpu_ref_init(&ctx->refs, io_ring_ctx_ref_free,
- 			    PERCPU_REF_ALLOW_REINIT, GFP_KERNEL))
 -- 
 2.35.1
 

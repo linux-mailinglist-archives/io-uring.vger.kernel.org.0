@@ -2,104 +2,72 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 80EDC5153E8
-	for <lists+io-uring@lfdr.de>; Fri, 29 Apr 2022 20:44:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98FCC5158F7
+	for <lists+io-uring@lfdr.de>; Sat, 30 Apr 2022 01:29:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1380105AbiD2Srv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 29 Apr 2022 14:47:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45948 "EHLO
+        id S1381791AbiD2Xc5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 29 Apr 2022 19:32:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378784AbiD2Sru (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 29 Apr 2022 14:47:50 -0400
-Received: from mail-il1-x12b.google.com (mail-il1-x12b.google.com [IPv6:2607:f8b0:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69DF7CE650
-        for <io-uring@vger.kernel.org>; Fri, 29 Apr 2022 11:44:31 -0700 (PDT)
-Received: by mail-il1-x12b.google.com with SMTP id e1so4534694ile.2
-        for <io-uring@vger.kernel.org>; Fri, 29 Apr 2022 11:44:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :references:from:in-reply-to:content-transfer-encoding;
-        bh=/hOqfPof6MGoQyHiGJJBxx3mVIUhm+cWYPpkYdkl/LU=;
-        b=0lyHe+A8lY+849yDj1Fxa+sGKdOGYX0HrqlflKP0miLo2RbGfypbQpSypXp5Ob5Zgb
-         ujI0mO1FWlqhgEEJuyR0DsyBlCSJKBRBqN6prjIP7fN2b+ssgpJgZ0BOY2xntlyzQbfu
-         Cs2bJUhhYqJFmTKaz9tvBCznPxlo98U2ImezWpw3lUxNOUqjTRIk9rWx11eJCNCRbnGL
-         eNY1SBkxCGlSP41MiDhLlH0RIA9x3MGyQH7OQ2b5/E9Rkq4BAQ5DImJ6DBoH7EIXIDCe
-         pTTXGiqQWUxclcWLzP+cWQLLE60w6ha/WekUuEI2Wf+vG4gXIqtD7yKgl3QLDmGMB0u+
-         ERLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=/hOqfPof6MGoQyHiGJJBxx3mVIUhm+cWYPpkYdkl/LU=;
-        b=rRwxaa0vDUyyXDTQKOBViacOCJRLModCWZrUQmLwLv32h9dFnOqDTl2IAhTZGVshnb
-         ovg1FCIlyR6PYk2pCXzpdiwPGW9ov/uBaVlNToh3dA4w3cPuSDQuBFJtKbICiKGDEmII
-         RqusPrEfKu9ttuwei/bYc5XONi0M1kcQ9WeNDvvcv+3xi3mZJM+NX8oJd4qz0uPg3yAZ
-         vwMjNj2qpfn916OhT2DCgRunQe+WKe9Zrl5NiBhE1OaeQ3YwAHRFeErx+edxGu5nDIU+
-         BPmWIBx83M7VPuAnXOzRDwKyEL1VQ30iLmoYk1RANXAo1DqBDe7At2XGum8zLpRkUcsS
-         EovA==
-X-Gm-Message-State: AOAM533cB4uc+VgbeYX6DNscN76/Xj+o6/IrDjiWoEvro8PQKV95AO3N
-        GBIFotGmr7wH4zUXkS/b15pzJGuWBJ2O6g==
-X-Google-Smtp-Source: ABdhPJyU1PcKMZb3njYswo1ghmOZNU4URT/mY6Gee4lQJpOXCNPCrqEXb4j5Bc8K8NJsYr3RbEuYSg==
-X-Received: by 2002:a05:6e02:1748:b0:2cd:a0ea:8ff4 with SMTP id y8-20020a056e02174800b002cda0ea8ff4mr263265ill.269.1651257870818;
-        Fri, 29 Apr 2022 11:44:30 -0700 (PDT)
-Received: from [192.168.1.172] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id k18-20020a056e02135200b002cde6e352c6sm729937ilr.16.2022.04.29.11.44.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Apr 2022 11:44:30 -0700 (PDT)
-Message-ID: <065df62a-a4bd-27d7-58eb-437d11995890@kernel.dk>
-Date:   Fri, 29 Apr 2022 12:44:29 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCHSET 0/2] Add support for IORING_RECVSEND_POLL_FIRST
-Content-Language: en-US
-To:     Hao Xu <haoxu.linux@gmail.com>, io-uring@vger.kernel.org
-References: <20220427015428.322496-1-axboe@kernel.dk>
- <7368ecc8-1255-09a5-0d1e-e4250062f84e@gmail.com>
- <cc44706e-a249-86b6-55f5-38683ad110af@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <cc44706e-a249-86b6-55f5-38683ad110af@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+        with ESMTP id S1381789AbiD2Xc4 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 29 Apr 2022 19:32:56 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B27F881663
+        for <io-uring@vger.kernel.org>; Fri, 29 Apr 2022 16:29:36 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4E0AA623C2
+        for <io-uring@vger.kernel.org>; Fri, 29 Apr 2022 23:29:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B41A4C385A4;
+        Fri, 29 Apr 2022 23:29:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1651274975;
+        bh=yDxGxmYF+oblbjuP/GDIwU1H+BlMuxsRIstRXtHXHJw=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=Ag0cXa6nBa+7u5q90hnaVy5xcu4/NnKlVmJBuwP310guH6x4ZyU+FLO7KbuPHTBpA
+         zRN8Gd9vPtHUQRonYKy5/syV1Vsii/NxMJjeoPIYOsKr3oLEi7b7mdsZPHQMFtix8N
+         VaRl2h9flvaO06n/eVezeGVtqS6vSB4PyD5ZUiXNR2hOxSIFzRztStc1/YHXMoKhRn
+         CAGzwY0gQSp9K4AO2juDrzWxptPMDcnWg3/hLFINmhzb6S/hP1hvQDUMMtbiTelXPL
+         tkp57zGst21hgvA36SZE5JFR68UsP/ot8mIcPn4IzRm5gFBnR38eaeyKx6VY5igkq6
+         nMot52hhTa42A==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id A0C97F67CA0;
+        Fri, 29 Apr 2022 23:29:35 +0000 (UTC)
+Subject: Re: [GIT PULL] io_uring fixes for 5.18-rc5
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <af70231e-157b-1a74-f6e8-81282c5fce28@kernel.dk>
+References: <af70231e-157b-1a74-f6e8-81282c5fce28@kernel.dk>
+X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
+X-PR-Tracked-Message-Id: <af70231e-157b-1a74-f6e8-81282c5fce28@kernel.dk>
+X-PR-Tracked-Remote: git://git.kernel.dk/linux-block.git tags/io_uring-5.18-2022-04-29
+X-PR-Tracked-Commit-Id: 303cc749c8659d5f1ccf97973591313ec0bdacd3
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 63b7b3ea9442f1342299ddc58f7366e7ecd7e29f
+Message-Id: <165127497565.20495.16641912276294457921.pr-tracker-bot@kernel.org>
+Date:   Fri, 29 Apr 2022 23:29:35 +0000
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        io-uring <io-uring@vger.kernel.org>
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/29/22 12:40 PM, Hao Xu wrote:
-> 
-> 
-> On 4/30/22 02:31, Hao Xu wrote:
->> On 4/27/22 09:54, Jens Axboe wrote:
->>> Hi,
->>>
->>> I had a re-think on the flags2 addition [1] that was posted earlier
->>> today, and I don't really like the fact that flags2 then can't work
->>> with ioprio for read/write etc. We might also want to extend the
->>> ioprio field for other types of IO in the future.
->>>
->>> So rather than do that, do a simpler approach and just add an io_uring
->>> specific flag set for send/recv and friends. This then allow setting
->>> IORING_RECVSEND_POLL_FIRST in sqe->addr2 for those, and if set, io_uring
->>> will arm poll first rather than attempt a send/recv operation.
->>>
->>> [1] https://lore.kernel.org/io-uring/20220426183343.150273-1-axboe@kernel.dk/
->>>
->>
->> Hi Jens,
->> Could we use something like the high bits of sqe->fd to store general flags2
->> since I saw the number of open FDs can be about (1<<20) at most.
-> 
-> oops, sorry my bad, (1<<20) is just a default value..
+The pull request you sent on Fri, 29 Apr 2022 12:40:37 -0600:
 
-Indeed, you can certainly go higher and people do.
+> git://git.kernel.dk/linux-block.git tags/io_uring-5.18-2022-04-29
+
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/63b7b3ea9442f1342299ddc58f7366e7ecd7e29f
+
+Thank you!
 
 -- 
-Jens Axboe
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html

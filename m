@@ -2,103 +2,108 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 05B0B515D8A
-	for <lists+io-uring@lfdr.de>; Sat, 30 Apr 2022 15:27:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 431E251608C
+	for <lists+io-uring@lfdr.de>; Sat, 30 Apr 2022 22:54:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1382714AbiD3Nai (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 30 Apr 2022 09:30:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45882 "EHLO
+        id S245109AbiD3Uzj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 30 Apr 2022 16:55:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60536 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1382715AbiD3Nah (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 30 Apr 2022 09:30:37 -0400
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A23D36169
-        for <io-uring@vger.kernel.org>; Sat, 30 Apr 2022 06:27:15 -0700 (PDT)
-Received: by mail-pj1-x1030.google.com with SMTP id w5-20020a17090aaf8500b001d74c754128so12792367pjq.0
-        for <io-uring@vger.kernel.org>; Sat, 30 Apr 2022 06:27:15 -0700 (PDT)
+        with ESMTP id S245095AbiD3Uxu (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 30 Apr 2022 16:53:50 -0400
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78C3913F70
+        for <io-uring@vger.kernel.org>; Sat, 30 Apr 2022 13:50:26 -0700 (PDT)
+Received: by mail-pj1-x102e.google.com with SMTP id m14-20020a17090a34ce00b001d5fe250e23so9956622pjf.3
+        for <io-uring@vger.kernel.org>; Sat, 30 Apr 2022 13:50:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=oCzWgWhhG7IWlDHkgweCLD8r25SvqJ41BjsLlfD+agc=;
-        b=WLndbh79Pv5SNg8DK8nNF3XTxXb4916n15htOIRK+dLom00X4DHQK8aEbj1TwjiyGy
-         uJqnz7des0BNwWrGA5r3wSLRJTg4PDz/bSMDEeTVcMc3nAzg7cjPtxPT6n7ELnkM5ZLC
-         jU1tFwFkLOSNg+Ddk8RyBZ74EE5MmLS72gnghffxVEilAsLc8i9RmbB0Ih01mHBSlJA1
-         bF0SH75cbBJHrw27r1g9xWPDrEn/tvM3siGr+G4k0ErWtNrZ1cYp3Q5r1L3BYMlveYV4
-         GVwMNcPkd2ySCT8YT8FRH5beDo1i1r9xY05VF4MSGGE2NKa5Ol8QRMhbfoiygPb5ukK6
-         fUwg==
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PjWgR1h1fKdvS3YyRmsbCkFB9vbVcOXVuG6naj23CyY=;
+        b=Q4ZPGAsmB1yMyF4mMqI7Aa1GH//ayM76qTlVD8jYwbo4Fg3sKrRndulE1ssd0dqoLo
+         TAjAC+tqZzYklhGAUR/Qapa1/fBfwjzk9VYluSHus57hYRIMysC+pjOVkD9sfIdiUCDS
+         8R+fD0I8q3VuYYBItviGL/kPw9BPmORtdJqwSbi2xjD7sy2mZNQF94sxbdH4rzDnUVKD
+         DAw64qDcwVoO6FCTNOn3NjSLnpY+d8gmjfjIUH63lR31vWMX6ZdJu7kbVjyeWLgVXYEZ
+         TZqxhbCQWrGVoIkvAizLBd4Xd15h5V2CBnWM3rldYyVVthDtYbfynK7WRAsKWsB9JdV6
+         vDOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=oCzWgWhhG7IWlDHkgweCLD8r25SvqJ41BjsLlfD+agc=;
-        b=cxESJJXga+K+mpEvUzW/LPMXZh6ytCacTRxR4LYYnFxY52xjm/Mloc56Ui9wBz8qOA
-         MsdaOazhBuQ9Pet+OqQBYKUxknP75TgdT3l2fndZLGQxsBoeGxq605zMdTI4PMi6eXye
-         6fVwrAh6ecgsWXZ2xhIOZ6i7UNj0Rb+A9Tgy5Z03dw0ORp4porMjY4HB/Rui7B2Tn0Kt
-         CVP9EuqnH9RpbDuXcUTqMoKTOzEB2pT0Z7qaW8gS/faemV0U566wBTxaQI/yJXPGwpnz
-         3KV0TAqvQWl/yXLYg1QjXV6ISRUjVtUcjhpHc/+QeBZpcIJkT06TvC8AkEAJjfNO+nQ9
-         /TZg==
-X-Gm-Message-State: AOAM532TDimDv9QC5Eg2xt7zt9FgmSbThEPfsutrISujp49ou2ik+Zn+
-        GYHl71vJMJuOdbgKhGDuCm1CQg==
-X-Google-Smtp-Source: ABdhPJyoZXoUeWNbVxt926XEaxMdZ9eiVvwyjxDOMovIluronLbzZA9Kp3RQvuXCK5E6r0FoMJ8UlA==
-X-Received: by 2002:a17:902:9005:b0:156:8a9d:ba49 with SMTP id a5-20020a170902900500b001568a9dba49mr3922744plp.42.1651325234978;
-        Sat, 30 Apr 2022 06:27:14 -0700 (PDT)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id v12-20020a17090331cc00b0015e8d4eb247sm1439220ple.145.2022.04.30.06.27.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 30 Apr 2022 06:27:14 -0700 (PDT)
-Message-ID: <015f58ed-09c1-cd27-064a-b6c0cc5580d2@kernel.dk>
-Date:   Sat, 30 Apr 2022 07:27:13 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH 7/9] io-wq: implement fixed worker logic
-Content-Language: en-US
-To:     Hao Xu <haoxu.linux@gmail.com>, io-uring@vger.kernel.org
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220429101858.90282-1-haoxu.linux@gmail.com>
- <20220429101858.90282-8-haoxu.linux@gmail.com>
+        bh=PjWgR1h1fKdvS3YyRmsbCkFB9vbVcOXVuG6naj23CyY=;
+        b=ibN0Pga68JMV/irATpvbUSREpZ30CqOczfqbJJxTeS+/CTmAJcz0xgb/+Qb3xZ8djF
+         jAMD2PFrKinPyBxUTScnYo0EEx2MZO0vbJApR8OYU53OhR0RChLU63TIM2Zx5EZAZjBb
+         pv+0TPFbyEYYSFF0Vq2rpVCw9UmDcfUZx+717QQDGGKwWswm2j+CdMRi9DnQKKtrGB3O
+         NUI+qi497h76o8TwMwM/3RQTzrr+x0xrySikyfmyZkb5Ol5O30bJxEjQ2WQGajUMlQ4z
+         l3iElObUBMrO9QGpUkzvkKKQQOi/r7MWGbHZWOjCKdpfTeCnFNB5rbcZUN7nmcKvZu7z
+         ip+A==
+X-Gm-Message-State: AOAM530k8ic2sK1nIBI/6RtXqg/HCPFn97jdN2xkLMuT8B+MlCG84Edu
+        gkoAlzrya77wHAYAqqqmrmZyS0GxABmkiJNY
+X-Google-Smtp-Source: ABdhPJzCkC+CY+EpocCJ2vB51OL52BQTg1nE77A1N5NdKtGtkHGyC0JA7ph50quGxdMcCKJGFpc30A==
+X-Received: by 2002:a17:90b:124a:b0:1d9:de12:520f with SMTP id gx10-20020a17090b124a00b001d9de12520fmr5607849pjb.28.1651351825892;
+        Sat, 30 Apr 2022 13:50:25 -0700 (PDT)
+Received: from localhost.localdomain ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id t13-20020a17090340cd00b0015e8d4eb1c4sm1854066pld.14.2022.04.30.13.50.23
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 30 Apr 2022 13:50:24 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20220429101858.90282-8-haoxu.linux@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+To:     io-uring@vger.kernel.org
+Subject: [PATCHSET v3 0/12] Add support for ring mapped provided buffers
+Date:   Sat, 30 Apr 2022 14:50:10 -0600
+Message-Id: <20220430205022.324902-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.35.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/29/22 4:18 AM, Hao Xu wrote:
-> @@ -1030,6 +1101,7 @@ static bool io_wq_work_match_item(struct io_wq_work *work, void *data)
->  static void io_wqe_enqueue(struct io_wqe *wqe, struct io_wq_work *work)
->  {
->  	struct io_wqe_acct *acct = io_work_get_acct(wqe, work);
-> +	struct io_wqe_acct *fixed_acct;
->  	struct io_cb_cancel_data match;
->  	unsigned work_flags = work->flags;
->  	bool do_create;
-> @@ -1044,8 +1116,14 @@ static void io_wqe_enqueue(struct io_wqe *wqe, struct io_wq_work *work)
->  		return;
->  	}
->  
-> +	fixed_acct = io_get_acct(wqe, !acct->index, true);
-> +	if (fixed_acct->fixed_worker_registered && !io_wq_is_hashed(work)) {
-> +		if (io_wqe_insert_private_work(wqe, work, fixed_acct))
-> +			return;
-> +	}
-> +
+Hi,
 
-As per previous email, I was going to comment back saying "why don't we
-just always do hashed work on the non-fixed workers?" - but that's
-already what you are doing. Isn't this fine, does anything else need to
-get done here in terms of hashed work and fixed workers? If you need
-per-iowq serialization, then you don't get a fixed worker.
+This series builds to adding support for a different way of doing
+provided buffers. The interesting bits here are patch 12, which also has
+some performance numbers an an explanation of it.
+
+Patches 1..5 are cleanups that should just applied separately, I
+think the clean up the existing code quite nicely.
+
+Patch 6 is a generic optimization for the buffer list lookups.
+
+Patch 7 has the caller use already selected buffer information rather
+than rely on io_buffer_select() returning it for REQ_F_BUFFER_SELECTED.
+
+Patch 8 adds NOP support for provided buffers, just so that we can
+benchmark the last change.
+
+Patches 9..11 are prep for patch 12.
+
+Patch 12 finally adds the feature.
+
+This passes the full liburing suite, and various test cases I adopted
+to use ring provided buffers.
+
+v3:	- Speedups
+	- Add patch unifying how io_buffer_select() is called when a buffer
+	  has already been selected.
+	- Build on above change to ensure we handle async + poll retry
+	  correctly.
+
+Can also be found in my git repo, for-5.19/io_uring-pbuf branch:
+
+https://git.kernel.dk/cgit/linux-block/log/?h=for-5.19/io_uring-pbuf
+
+ fs/io_uring.c                 | 475 +++++++++++++++++++++++++---------
+ include/uapi/linux/io_uring.h |  26 ++
+ 2 files changed, 382 insertions(+), 119 deletions(-)
 
 -- 
 Jens Axboe
+
 

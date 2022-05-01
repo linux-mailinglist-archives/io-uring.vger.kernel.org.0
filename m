@@ -2,72 +2,62 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 083245164DA
-	for <lists+io-uring@lfdr.de>; Sun,  1 May 2022 17:00:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 180625167E2
+	for <lists+io-uring@lfdr.de>; Sun,  1 May 2022 22:57:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232359AbiEAPEE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 1 May 2022 11:04:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49376 "EHLO
+        id S1354792AbiEAVAY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 1 May 2022 17:00:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347897AbiEAPDu (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 1 May 2022 11:03:50 -0400
-Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 254A86547
-        for <io-uring@vger.kernel.org>; Sun,  1 May 2022 08:00:23 -0700 (PDT)
-Received: by mail-pg1-x52f.google.com with SMTP id 15so10012633pgf.4
-        for <io-uring@vger.kernel.org>; Sun, 01 May 2022 08:00:23 -0700 (PDT)
+        with ESMTP id S238355AbiEAVAX (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 1 May 2022 17:00:23 -0400
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0A2518398
+        for <io-uring@vger.kernel.org>; Sun,  1 May 2022 13:56:56 -0700 (PDT)
+Received: by mail-pj1-x1036.google.com with SMTP id e24so11247148pjt.2
+        for <io-uring@vger.kernel.org>; Sun, 01 May 2022 13:56:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language
-         :from:to:references:in-reply-to:content-transfer-encoding;
-        bh=8G2C9emCXDfVJuBrzWPJ7SMvH1mmb2+VFwsM3bLzvME=;
-        b=YYmHcXb4f5LZ6RFJHqMl441o3ewu2WlPeYnziBtl9d17WBuY+sYBnLWwUfZYakkRuN
-         P/6vfie4mUfdqT/0B7YLbpYcuCKLJ/qTKVqBDrmFZlbGTveShQNZ4TjmHOmqHMFGG4Gy
-         Qy0S6X6/WBZbFSLqtiHQQJSliXt7VGHB6dq8TpVsjTqtLqyn/qpJDhdvtzFMLDFY+YzJ
-         awsD5fovFS5xHWuw5yFRNQ0enNg4DQdkEqYTTFJjxBLpZrerZg7/XSqd7nzmi4GVr+Hd
-         ntCjZs1LLjb0VXXZU9xmUW2o55oocK4USywRAFvE4CIJcSSkT5GYUhtImVKsWFW3BhHt
-         9IHQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=DCjDZJR+4VcKHW9/13acFz19EHglURVM6I0inYsDJ8k=;
+        b=V6rPJlcdtQlJprxL5XOYpReJx5B8ocQspxouFdpbPfhg/OoldaMa4HZdaJhynvbsmJ
+         QUOB4E1pnW4EEdXiwRyGCUPi8W9x1qA+v6Wl5PiJt9jALVMg9SrA86ZccdXArhc1tR9G
+         zj1l2Nls7IABLuJcLJQiVl/yp38J6vGqP2D1nQ4hzwtats3nzNeRfA/DbkLXIq34Vuvr
+         rAHwdYjSNeG3PayBGujACQv5JSmBkcfj3euozAUMWjrXN9PhuCP/KVkW3w+SU6DwVvRd
+         p6NH8c4DBGFzUZdsBEQp8ISTs+8h8Kly68Xn1ieTqatUrtK8bbxndVWceerlNW/FZHIv
+         yVTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:from:to:references:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=8G2C9emCXDfVJuBrzWPJ7SMvH1mmb2+VFwsM3bLzvME=;
-        b=GTS7dkTxMEPJdu32+bOr1Aisj8WrdjQNaaLVQiuTSxP7NwRP2CbnGd+szFeKRHTZhz
-         eBMtLpNbMXl8rW1SrjZsBXyJ1Yg5joX1ENS7Pa2fz1BbTAF6pHoXwZkkgjYLAt0U/agK
-         kJ28XJ9EV/UV905ETiWtxkCwbX2Y0wWXJlHnUln+zkpaNwKI52qUXQ2KuBi5NTc+pWpe
-         uvcvqB7SKoeYv0g4+BZDrXEKOJVkN4yc/bcG8Hdle8pHC0fZK2BSYKmwTjAb1l593PzD
-         PwUlF8ZQ9/vqbhHEm+yihjXXJRqxvDx/4ZwxKMdtBgCn9+37fJi/cYjVMDq4ELQHof03
-         BDLg==
-X-Gm-Message-State: AOAM533ejP68WR/FTsFhfFPg40VWQP8yHmxdp3i1G7GCMfj6dOGYwZwL
-        AzUdMD31w06vIW8/JT6NkD0hkC0EAI7putg+
-X-Google-Smtp-Source: ABdhPJypiaLNvrG9oWTXORIw4tj943/mnrwJ7H0Z8wn2rrnDZaiFr2XVGPrQ2nSjPFRNNOw5V/EQew==
-X-Received: by 2002:aa7:9472:0:b0:50d:cc22:5269 with SMTP id t18-20020aa79472000000b0050dcc225269mr6553071pfq.58.1651417222533;
-        Sun, 01 May 2022 08:00:22 -0700 (PDT)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id g18-20020a62e312000000b0050dc7628195sm2980090pfh.111.2022.05.01.08.00.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 01 May 2022 08:00:21 -0700 (PDT)
-Message-ID: <26ffce05-5e49-9d4b-79bf-bade48a7aa8a@kernel.dk>
-Date:   Sun, 1 May 2022 09:00:20 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCHSET v2 RFC 0/11] Add support for ring mapped provided
- buffers
-Content-Language: en-US
+        bh=DCjDZJR+4VcKHW9/13acFz19EHglURVM6I0inYsDJ8k=;
+        b=ze75C/Udjp8WKJIQtkyZ+1evE9o35ECTONL8NCLDn+2EZwJL0yMt3XyngyVuf8oCG/
+         GiuclHj7yVHr0S6ohILeXHSzyhwzJUhwh/lAs4no/8h++MALIZ6fxC4C6NCwjTxhgu+D
+         R0Z0rhqivRmeK4wjnqQcIkaP3+QOoEqdx364Qdi7PAyW4Gy+FvHLY7Q8iW85CbgGPaeJ
+         RrQfmwYpwDMlU/Dzfx8AXMQL5QsxE1X6HBvGAW6Tm2sy+juAmQj/3fBgpJkpWQb6vFzL
+         0EkBl/Vk2ZUJvV1SuwVeB1aFGTtyIs0VAY9/j2AE21MBojvBxrGsSJZF1Dwn5xz7J2GB
+         rPUw==
+X-Gm-Message-State: AOAM530/cW25Rs4o1Q6Zg62I6a3u6bsNPDgNzFS4S8zJr0tOdNn+923u
+        PEuFE3UNSHx7OLlxjTQoDvGG1gpqM4MLTg==
+X-Google-Smtp-Source: ABdhPJyWT2J6iVEhbtO3mc/tg1vZwY2GXAYO0GvDZq9Q4qpiI9EUt1XyrymqIuGWhyN+sDtRHGxn8A==
+X-Received: by 2002:a17:902:edd0:b0:15c:6f65:d06b with SMTP id q16-20020a170902edd000b0015c6f65d06bmr8623791plk.91.1651438616125;
+        Sun, 01 May 2022 13:56:56 -0700 (PDT)
+Received: from localhost.localdomain (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
+        by smtp.gmail.com with ESMTPSA id l8-20020a17090270c800b0015e8d4eb1e9sm1894013plt.51.2022.05.01.13.56.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 01 May 2022 13:56:55 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <20220429175635.230192-1-axboe@kernel.dk>
- <69fc3830-8b2e-7b40-ad68-394c7c9fbf60@gmail.com>
- <f7e46c2f-5f38-5d9a-9e29-d04363961a97@kernel.dk>
- <170e4200-fb7b-9496-4fcf-48d64212702e@gmail.com>
- <f7e7a485-7bc3-bf7c-3c05-73e356608913@kernel.dk>
-In-Reply-To: <f7e7a485-7bc3-bf7c-3c05-73e356608913@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+To:     io-uring@vger.kernel.org
+Cc:     asml.silence@gmail.com
+Subject: [PATCHSET v4 0/16] Add support for ring mapped provided buffers
+Date:   Sun,  1 May 2022 14:56:37 -0600
+Message-Id: <20220501205653.15775-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.35.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -75,26 +65,47 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/1/22 8:25 AM, Jens Axboe wrote:
-> On 5/1/22 7:39 AM, Pavel Begunkov wrote:
->> I'd suggest for mapped pbuffers to have an old plain array with
->> sequential indexing, just how we do it for fixed buffers. Do normal
->> and mapped pbuffers share something that would prevent it?
-> 
-> Ah yes, we could do that. Registering it returns the group ID instead of
-> providing it up front.
+Hi,
 
-Actually I'd rather just have the app provide it, but recommendations
-can be made in terms of using mostly sequential indexes. I suspect
-that's what most would naturally do anyway.
+This series builds to adding support for a different way of doing
+provided buffers. The interesting bits here are patch 16, which also has
+some performance numbers an an explanation of it.
 
-I'm thinking just straight array of X entries, and then a fallback to
-xarray if we go beyond that to ensure we don't grow the buffer group
-array to crazy values.
+Patches 1..6 are cleanups that should just applied separately, I
+think the clean up the existing code quite nicely.
 
-I'll do this as a prep patch, not really related to the actual change
-here, but will benefit both the classic and ring buffers alike.
+Patch 7 switches provided buffers from the hashed list approach to
+using an array (for up to 64 groups), and using an xarray for a
+larger sparse space.
+
+Patches 8..13 are just cleanups and generic optimizations.
+
+Patch 14 adds NOP support for provided buffers, just so that we can
+benchmark the last change.
+
+Patch 15 just abstracts out the pinning code.
+
+Patch 16 finally adds the feature.
+
+This passes the full liburing suite, and various test cases I adopted
+to use ring provided buffers.
+
+v4:	- Shrink io_kiocb compared to before this series (-8 bytes)
+	- Save some space in io_buffer_list
+	- Add patch moving provided buffers to array + xarray
+	- Add comments
+	- Unify cflags handling for classic/ring buffers
+	- Fix bid/bgid types
+
+Can also be found in my git repo, for-5.19/io_uring-pbuf branch:
+
+https://git.kernel.dk/cgit/linux-block/log/?h=for-5.19/io_uring-pbuf
+
+ fs/io_uring.c                 | 599 ++++++++++++++++++++++++----------
+ include/uapi/linux/io_uring.h |  28 ++
+ 2 files changed, 462 insertions(+), 165 deletions(-)
 
 -- 
 Jens Axboe
+
 

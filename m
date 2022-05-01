@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D2225167ED
-	for <lists+io-uring@lfdr.de>; Sun,  1 May 2022 22:57:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3D595167EE
+	for <lists+io-uring@lfdr.de>; Sun,  1 May 2022 22:57:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354896AbiEAVAg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 1 May 2022 17:00:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46806 "EHLO
+        id S1354851AbiEAVAh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 1 May 2022 17:00:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354856AbiEAVAe (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 1 May 2022 17:00:34 -0400
-Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4289E26111
-        for <io-uring@vger.kernel.org>; Sun,  1 May 2022 13:57:08 -0700 (PDT)
-Received: by mail-pg1-x532.google.com with SMTP id 77so816212pgb.13
-        for <io-uring@vger.kernel.org>; Sun, 01 May 2022 13:57:08 -0700 (PDT)
+        with ESMTP id S1354821AbiEAVAf (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 1 May 2022 17:00:35 -0400
+Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3613F2B257
+        for <io-uring@vger.kernel.org>; Sun,  1 May 2022 13:57:09 -0700 (PDT)
+Received: by mail-pg1-x531.google.com with SMTP id g3so10371972pgg.3
+        for <io-uring@vger.kernel.org>; Sun, 01 May 2022 13:57:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=eaJGzAFZXHCiQicKKVtnivj4K5L/i7O1QjTPs/xkhfQ=;
-        b=YXn5f53YzSRaGExtCczpndNo7GDbji5W3IrbjYP0wqVvp/Ommozl31K+vE859bKdST
-         rzYDU32RHwOdtIJ4BVXw097GiXtwfPyyhaqxoHgr+ECq5uUQlH4tfpOyxTdSNA7XzNls
-         V0Auq0HEHSBm+qi9lDOVWOunqP/kZ57XPROjvMaMduLupiXHDj4XmmEssukKixJZfbeC
-         mBJ6BMUyt5vdKb7jiyjrPR1i3OkDAbTA8g4uJUPFapWp9DyWJQx+GpRBpv1hM8b4hcVN
-         CGTu4gO5EhFQ6QwNxoKB5H8fNeqk2rt+FDkVDwCm4E7vgrOfsxleVu6F2bpJFaQR8Hj8
-         8d0Q==
+        bh=PdTyUdrAZFBULfyLT4yrnFB4kj/sTAlzuaLFKuZ79Lo=;
+        b=fr9ig34BEWnkaYM8fnSLMr8BwXaWtQmRVv60+hXnvuIa83JZyHUS3cKz+R5IYn6V+5
+         IO6dTKot6rRW7SI8iN05bRTxqW01BNJ8iDq7MyBdEvbDjY+I4c+wSDVdz/hPQ1Rm2ibw
+         Q748bSrT0PLJuirtN3Ca42+QI19TkOOHL+jKBZ3Q1FcWLFsISz5nf8dZIY/ywlSoh3Cx
+         bsgTpPfqXLM7UGTHuav9Akt+fnDvKBGqcfD7tSC4lJtkJ/bKUVrrLd5LNQh7+EjjftOl
+         5KHrZQe92lfIyPcjy1QZ2F6IVxAFUNs+zWBVhGyrqh2o9cEhZAOhblCO7g+J9S/owzcL
+         cepw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=eaJGzAFZXHCiQicKKVtnivj4K5L/i7O1QjTPs/xkhfQ=;
-        b=le9gcyYE73/fxVgAt5vXnUUZe208H145GYQCm/hGYhhvGZj5PsDpYaTQwancw4O8Jv
-         iPrLXCkGrsqgf4UOnUhHFAnXAr0lVPswiW53+kae7L3/Xp6/hIyFZc3+aPKmZXX/JIIP
-         bF73DiodndvGo27FPNUTMzFm9kPepH9UwR31Q4tsz8bjkUMQYPJtG9p+Q6BBwpRq1uZ/
-         S3lVZcrmH4/ebUag9NKOBA5M/a3upfrNcMIWpWqjMXRi2KjD6Y/Yxmkd6WUAlE9k41Ap
-         nljSWtk4kQl/5iTS4+yLuHbB5IlPIK7ItjJbce95M1gsqnxuyLqK4Fr8DeYFMjE27XSe
-         v/dw==
-X-Gm-Message-State: AOAM5307JGzWUizbKLm5GdS4TbrxzP5WPZM/+Bq4ry5OZGdbkbTcY7Rv
-        nUU56tYv8BgZvQmNwBI9egzmtfrL93+Z1w==
-X-Google-Smtp-Source: ABdhPJxws/ii4KHI+WRkrgTJo1+1knMhdB7KrzjGfZjW/mQcL9EDi1nbUGZ/AdNn1SQ7HENAiad8CQ==
-X-Received: by 2002:a65:4006:0:b0:3aa:1cb6:e2f8 with SMTP id f6-20020a654006000000b003aa1cb6e2f8mr7247213pgp.274.1651438627518;
-        Sun, 01 May 2022 13:57:07 -0700 (PDT)
+        bh=PdTyUdrAZFBULfyLT4yrnFB4kj/sTAlzuaLFKuZ79Lo=;
+        b=IjqpX60MIP+pfNS3gmM+93IJMRuGnCgCTgsl4lKwu5v5IbnS4EXuCG9OOWoRYjRpmq
+         JDowGMe0R2X6MlHTDPP50HkHu4O3Dwt3CHXE/oqyaTYxUKAEHxT1+u512nWKJkrnFmOJ
+         MndzxwwBZKCe2QkpXZkvxdu+v84SKSbXJnzgysTxJELQiAY8G95TlUeunrRQMNxji2Nv
+         yep0W9fad7y1BtoezRd7yLV0IiyaeZOKm833p8NW1Lob+vQZPyhpzG2UyFU/MAyjNH14
+         /WSwKyXAF14V47aE08O20wxpJ1kgmjNIo/abRDuiG07tsahXeY/4+uUC2eHo1KAzrXGT
+         fM2g==
+X-Gm-Message-State: AOAM533Pnb/LvyQ/3GrP0hAgYJPtU3RI9EJKvr1UOQuvYSBcAondAI2/
+        aVhJVONMDcHOrcUpiBDx++/W32wzgyyl5A==
+X-Google-Smtp-Source: ABdhPJzFo6xfzIX/9gvViDYhg+nuY/auTlgYYnZH7Nhg5o0XoGaHFX9C+BiPM0icZ2vfW/9EHBjh9A==
+X-Received: by 2002:a05:6a00:ad0:b0:4e1:2d96:2ab0 with SMTP id c16-20020a056a000ad000b004e12d962ab0mr8123608pfl.3.1651438628464;
+        Sun, 01 May 2022 13:57:08 -0700 (PDT)
 Received: from localhost.localdomain (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id l8-20020a17090270c800b0015e8d4eb1e9sm1894013plt.51.2022.05.01.13.57.06
+        by smtp.gmail.com with ESMTPSA id l8-20020a17090270c800b0015e8d4eb1e9sm1894013plt.51.2022.05.01.13.57.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 May 2022 13:57:07 -0700 (PDT)
+        Sun, 01 May 2022 13:57:08 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     asml.silence@gmail.com, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 11/16] io_uring: move provided buffer state closer to submit state
-Date:   Sun,  1 May 2022 14:56:48 -0600
-Message-Id: <20220501205653.15775-12-axboe@kernel.dk>
+Subject: [PATCH 12/16] io_uring: eliminate the need to track provided buffer ID separately
+Date:   Sun,  1 May 2022 14:56:49 -0600
+Message-Id: <20220501205653.15775-13-axboe@kernel.dk>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220501205653.15775-1-axboe@kernel.dk>
 References: <20220501205653.15775-1-axboe@kernel.dk>
@@ -67,36 +67,69 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The timeout and other items that follow are less hot, so let's move the
-provided buffer state above that.
+We have io_kiocb->buf_index which is used for either fixed buffers, or
+for provided buffers. For the latter, it's used to hold the buffer group
+ID for buffer selection. Post selection, req->kbuf->bid is used to get
+the buffer ID.
+
+Store the buffer ID, when selected, in req->buf_index. If we do end up
+recycling the buffer, reset it back to the buffer group ID.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/io_uring.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ fs/io_uring.c | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 84b867cff785..23de92f5934f 100644
+index 23de92f5934f..ff3b803cf749 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -410,12 +410,14 @@ struct io_ring_ctx {
- 		struct io_mapped_ubuf	**user_bufs;
+@@ -968,6 +968,11 @@ struct io_kiocb {
+ 	u8				opcode;
+ 	/* polled IO has completed */
+ 	u8				iopoll_completed;
++	/*
++	 * Can be either a fixed buffer index, or used with provided buffers.
++	 * For the latter, before issue it points to the buffer group ID,
++	 * and after selection it points to the buffer ID itself.
++	 */
+ 	u16				buf_index;
+ 	unsigned int			flags;
  
- 		struct io_submit_state	submit_state;
--		struct list_head	timeout_list;
--		struct list_head	ltimeout_list;
--		struct list_head	cq_overflow_list;
+@@ -1562,14 +1567,11 @@ static inline void io_req_set_rsrc_node(struct io_kiocb *req,
+ 
+ static unsigned int __io_put_kbuf(struct io_kiocb *req, struct list_head *list)
+ {
+-	struct io_buffer *kbuf = req->kbuf;
+-	unsigned int cflags;
+-
+-	cflags = IORING_CQE_F_BUFFER | (kbuf->bid << IORING_CQE_BUFFER_SHIFT);
+ 	req->flags &= ~REQ_F_BUFFER_SELECTED;
+-	list_add(&kbuf->list, list);
++	list_add(&req->kbuf->list, list);
+ 	req->kbuf = NULL;
+-	return cflags;
 +
- 		struct io_buffer_list	*io_bl;
- 		struct xarray		io_bl_xa;
- 		struct list_head	io_buffers_cache;
-+
-+		struct list_head	timeout_list;
-+		struct list_head	ltimeout_list;
-+		struct list_head	cq_overflow_list;
- 		struct list_head	apoll_cache;
- 		struct xarray		personalities;
- 		u32			pers_next;
++	return IORING_CQE_F_BUFFER | (req->buf_index << IORING_CQE_BUFFER_SHIFT);
+ }
+ 
+ static inline unsigned int io_put_kbuf_comp(struct io_kiocb *req)
+@@ -1643,6 +1645,7 @@ static void io_kbuf_recycle(struct io_kiocb *req, unsigned issue_flags)
+ 	bl = io_buffer_get_list(ctx, buf->bgid);
+ 	list_add(&buf->list, &bl->buf_list);
+ 	req->flags &= ~REQ_F_BUFFER_SELECTED;
++	req->buf_index = buf->bgid;
+ 	req->kbuf = NULL;
+ 
+ 	io_ring_submit_unlock(ctx, issue_flags);
+@@ -3582,6 +3585,7 @@ static void __user *io_provided_buffer_select(struct io_kiocb *req, size_t *len,
+ 		*len = kbuf->len;
+ 	req->flags |= REQ_F_BUFFER_SELECTED;
+ 	req->kbuf = kbuf;
++	req->buf_index = kbuf->bid;
+ 	io_ring_submit_unlock(req->ctx, issue_flags);
+ 	return u64_to_user_ptr(kbuf->addr);
+ }
 -- 
 2.35.1
 

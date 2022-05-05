@@ -2,111 +2,111 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F14A851B7D1
-	for <lists+io-uring@lfdr.de>; Thu,  5 May 2022 08:14:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE58151B7D0
+	for <lists+io-uring@lfdr.de>; Thu,  5 May 2022 08:14:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230304AbiEEGRw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 5 May 2022 02:17:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36294 "EHLO
+        id S240558AbiEEGRv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 5 May 2022 02:17:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233888AbiEEGRv (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 5 May 2022 02:17:51 -0400
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C67746650
+        with ESMTP id S230304AbiEEGRu (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 5 May 2022 02:17:50 -0400
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5689D46651
         for <io-uring@vger.kernel.org>; Wed,  4 May 2022 23:14:10 -0700 (PDT)
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20220505061405epoutp042650dbb36a7bf8faa3e7bf7ef2142fc9~sINEaZuKA0907709077epoutp04c
-        for <io-uring@vger.kernel.org>; Thu,  5 May 2022 06:14:05 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20220505061405epoutp042650dbb36a7bf8faa3e7bf7ef2142fc9~sINEaZuKA0907709077epoutp04c
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20220505061408epoutp036f5ff62d0742f4ba140b74baf7d04f5b~sINGmLD4l0353303533epoutp03C
+        for <io-uring@vger.kernel.org>; Thu,  5 May 2022 06:14:08 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20220505061408epoutp036f5ff62d0742f4ba140b74baf7d04f5b~sINGmLD4l0353303533epoutp03C
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1651731245;
-        bh=SG0rv+fzq+y5lGRhA3Re3PZvbCpBh0wfsH6jXqaiOG8=;
+        s=mail20170921; t=1651731248;
+        bh=CVed3Z3YZc93hCbD8g1ECRDV0d2jrCr3Ug9GDANzeQY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DpFQB3aOeOBxuzTApYuW04ryuwJwLzdk4+rCVojzV6O3irWxhanMnUsbdHkNPjSKk
-         pGw4Jnan4yg4hhm0RconYFCnwX2shHO3ZxckS9MZ3VBwz1uwp/x+zJrSu17FkcL8FU
-         H7YWmiWekeJ+3wNW0qzKe0/t+1F65U++i5QIO18U=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-        20220505061405epcas5p22f0cbfd67a0274b8b4ffaa8d085831f7~sIND6hGmn2126321263epcas5p2A;
-        Thu,  5 May 2022 06:14:05 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.182]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4Kv3LH5Tnkz4x9Pq; Thu,  5 May
-        2022 06:13:59 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+        b=gBS+oKzfdeb+Q9Hx64k+M8P/ky6EEFzuCBIhMTunTc8TF8cORNFJiT3YjyiFA1yX4
+         ZTQMrGTO5zdH2wIjSI1dC+mol1QIXTwlhqLcoMTa25V/AV6XOopTkRsH76vdoyo0FI
+         NXldyO0MH4xMpAcTcYSk6ToKIwgQGF1EBNzQJuW4=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+        20220505061407epcas5p3f6421f716036b0a3ef03be1d33ff8344~sINF66aCV1851218512epcas5p3L;
+        Thu,  5 May 2022 06:14:07 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.178]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4Kv3LL5V2lz4x9Q1; Thu,  5 May
+        2022 06:14:02 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
         epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        F9.A7.09762.52B63726; Thu,  5 May 2022 15:13:57 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        00.B7.09762.A2B63726; Thu,  5 May 2022 15:14:02 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
         epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-        20220505061144epcas5p3821a9516dad2b5eff5a25c56dbe164df~sILA0j7aJ0533505335epcas5p3S;
-        Thu,  5 May 2022 06:11:44 +0000 (GMT)
+        20220505061146epcas5p3919c48d58d353a62a5858ee10ad162a0~sILCl8gSm0533505335epcas5p3V;
+        Thu,  5 May 2022 06:11:46 +0000 (GMT)
 Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220505061144epsmtrp21a4d5a6211b40c6abd5daa20a5a0f13a~sILAzxc441668816688epsmtrp24;
-        Thu,  5 May 2022 06:11:44 +0000 (GMT)
-X-AuditID: b6c32a4b-1fdff70000002622-0a-62736b25c87c
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20220505061146epsmtrp16fc8f6e4f583f50b666af5c11100806d~sILCkDceK1114811148epsmtrp13;
+        Thu,  5 May 2022 06:11:46 +0000 (GMT)
+X-AuditID: b6c32a4b-1fdff70000002622-1a-62736b2a90af
 Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
         epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        13.1A.08853.0AA63726; Thu,  5 May 2022 15:11:44 +0900 (KST)
+        F4.1A.08853.2AA63726; Thu,  5 May 2022 15:11:46 +0900 (KST)
 Received: from localhost.localdomain (unknown [107.110.206.5]) by
         epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20220505061142epsmtip2649c83be91692a117add6468d12ff8ba~sIK-M4-b-0719607196epsmtip2U;
-        Thu,  5 May 2022 06:11:42 +0000 (GMT)
+        20220505061144epsmtip297d8cf29f4ae2bfda0913592e76a906f~sILA8EyFn0269602696epsmtip2W;
+        Thu,  5 May 2022 06:11:44 +0000 (GMT)
 From:   Kanchan Joshi <joshi.k@samsung.com>
 To:     axboe@kernel.dk, hch@lst.de
 Cc:     io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
         asml.silence@gmail.com, ming.lei@redhat.com, mcgrof@kernel.org,
         shr@fb.com, joshiiitr@gmail.com, anuj20.g@samsung.com,
         gost.dev@samsung.com
-Subject: [PATCH v4 1/5] fs,io_uring: add infrastructure for uring-cmd
-Date:   Thu,  5 May 2022 11:36:12 +0530
-Message-Id: <20220505060616.803816-2-joshi.k@samsung.com>
+Subject: [PATCH v4 2/5] block: wire-up support for passthrough plugging
+Date:   Thu,  5 May 2022 11:36:13 +0530
+Message-Id: <20220505060616.803816-3-joshi.k@samsung.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220505060616.803816-1-joshi.k@samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrCJsWRmVeSWpSXmKPExsWy7bCmpq5qdnGSwZedqhZNE/4yW8xZtY3R
-        YvXdfjaLmwd2MlmsXH2UyeJd6zkWi/NvDzNZzF/2lN3ixoSnjBaHJjczWVx9eYDdgdtjYvM7
-        do+ds+6ye1w+W+qxaVUnm8fmJfUeu282sHm833eVzaNvyypGj8+b5AI4o7JtMlITU1KLFFLz
-        kvNTMvPSbZW8g+Od403NDAx1DS0tzJUU8hJzU22VXHwCdN0yc4COVVIoS8wpBQoFJBYXK+nb
-        2RTll5akKmTkF5fYKqUWpOQUmBToFSfmFpfmpevlpZZYGRoYGJkCFSZkZ3w9vJyx4ItTxbPN
-        t1gaGNebdTFyckgImEg0bjvG1sXIxSEksJtRYteuCcwQzidGibWX77FDON8YJc7M/AWU4QBr
-        2XtWDyK+l1HiZG8fE4TzmVFi1azp7CBFbAKaEhcml4KsEBGQl/hyey0LSA2zwFlGiWm3DrGC
-        JIQFXCU23ZvLAlLPIqAqsXc+I0iYV8BSYuqu00wQ58lLzLz0nR3E5hSwkug42ssCUSMocXLm
-        EzCbGaimeetssKslBJZySDw+voIFotlFoqN5AzOELSzx6vgWdghbSuLzu71sEHayROv2y+wQ
-        j5VILFmgDhG2l7i45y8TSJgZ6JX1u/QhwrISU0+tY4JYyyfR+/sJ1Jm8EjvmwdiKEvcmPWWF
-        sMUlHs5YAmV7SFxuvQAN6V5GicWbD7NMYFSYheSdWUjemYWwegEj8ypGydSC4tz01GLTAuO8
-        1HJ4HCfn525iBCdfLe8djI8efNA7xMjEwXiIUYKDWUmE13lpQZIQb0piZVVqUX58UWlOavEh
-        RlNgcE9klhJNzgem/7ySeEMTSwMTMzMzE0tjM0Mlcd5T6RsShQTSE0tSs1NTC1KLYPqYODil
-        Gph6f6ueSdR22cIzLSZ66rVtnL/3/F7/8Tyb2c0l396tcEjgOPuZp+X8+jkM5vfPn7kfvYff
-        UbP/yJ0GNUfebzxX+BZL/mDmeMdpGdqXYLCyVijyz45fF965bN89699+n9jP5RMWzXzZ2rNY
-        yDtskvzVWHPj0tTusga+/9PtGgtqtE5zcup6MVlpefZtnxQxRWw37/mVy68t/Hk2/MSir0We
-        dwLLJxxNOxsnuTsqYVLXvHUP8rvFmaaX7q1aL5EZNSv3QsiGKx+f3pt4w8joSq9BUslibddJ
-        WSpTKr/LXl2z/HHKmhk9OY+qlHTeub8OkJ+kJvLivXdVZmuY1P4Y5yNrPDk3iMzsKZqk/c91
-        dn++EktxRqKhFnNRcSIAuna0+EcEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrFLMWRmVeSWpSXmKPExsWy7bCSvO6CrOIkg6NfJS2aJvxltpizahuj
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMJsWRmVeSWpSXmKPExsWy7bCmlq5WdnGSQf95bYumCX+ZLeas2sZo
+        sfpuP5vFzQM7mSxWrj7KZPGu9RyLxfm3h5ks5i97ym5xY8JTRotDk5uZLK6+PMDuwO0xsfkd
+        u8fOWXfZPS6fLfXYtKqTzWPzknqP3Tcb2Dze77vK5tG3ZRWjx+dNcgGcUdk2GamJKalFCql5
+        yfkpmXnptkrewfHO8aZmBoa6hpYW5koKeYm5qbZKLj4Bum6ZOUDHKimUJeaUAoUCEouLlfTt
+        bIryS0tSFTLyi0tslVILUnIKTAr0ihNzi0vz0vXyUkusDA0MjEyBChOyMyas72EsWCRbsXvR
+        L6YGxikSXYycHBICJhIzextZQWwhgd2MEhuecHYxcgHZnxglVj/cwwzhfGOUOP7/JxNMx7UT
+        y9ghEnsZJSb9uARV9ZlR4vT0pYxdjBwcbAKaEhcml4I0iAjIS3y5vZYFpIZZ4CyjxLRbh1hB
+        aoQF3CUmfvMCqWERUJVobp3CDmLzClhK3Dl7EGqZvMTMS9/B4pwCVhIdR3tZIGoEJU7OfAJm
+        MwPVNG+dDXaDhMBCDomeyV1sEM0uEi/ffmKFsIUlXh3fwg5hS0m87G+DspMlWrdfZge5R0Kg
+        RGLJAnWIsL3ExT1/mUDCzECvrN+lDxGWlZh6ah0TxFo+id7fT6DO5JXYMQ/GVpS4N+kp1FZx
+        iYczlrBCTPeQeH4HGmy9jBJP25tZJjAqzELyzSwk38xC2LyAkXkVo2RqQXFuemqxaYFxXmo5
+        PIqT83M3MYJTr5b3DsZHDz7oHWJk4mA8xCjBwawkwuu8tCBJiDclsbIqtSg/vqg0J7X4EKMp
+        MLgnMkuJJucDk39eSbyhiaWBiZmZmYmlsZmhkjjvqfQNiUIC6YklqdmpqQWpRTB9TBycUg1M
+        vjOkQu2cJ6yTPnL/e+q/ZdkytibCwkfZFZfbXXa8/L3z55kTK06uK2iqmTsvLLRJnGX/sy+L
+        Nm0WckyfLHZa/uTvq+3cHIXaL3Z1NzO/dbVhN61JuCPns+WfQPXeP7MeXOzm2Bsi1t+4jXui
+        U/Oy9Ff/TQQtZtS4zWmfcI3Zg6md/4OTZqm6nvWWMuW02anxu2T+yqszrFazsRA/Z5seMUNd
+        jy3w+sz6gAeJLQ+dFHWF1WrKk85PPv363eS3TGKRm295GlisKFlvf4Lhpr5vZ3dblKHUMz9n
+        i841NztSNZP4Djy9K7Qi/uV77k+XfD4v/lh8lKk6s9Bn4s+1/xV3TJp91euux8mek+udv15U
+        YinOSDTUYi4qTgQAyvZ7h0YEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrNLMWRmVeSWpSXmKPExsWy7bCSvO6irOIkg0krBC2aJvxltpizahuj
         xeq7/WwWNw/sZLJYufook8W71nMsFuffHmaymL/sKbvFjQlPGS0OTW5msrj68gC7A7fHxOZ3
         7B47Z91l97h8ttRj06pONo/NS+o9dt9sYPN4v+8qm0ffllWMHp83yQVwRnHZpKTmZJalFunb
-        JXBlfD28nLHgi1PFs823WBoY15t1MXJwSAiYSOw9q9fFyMUhJLCbUWLH/gksXYycQHFxieZr
-        P9ghbGGJlf+eg9lCAh8ZJSZ0eYD0sgloSlyYXAoSFhFQlNj4sYkRZA6zwE1Gicet15hBEsIC
-        rhKb7s1lAalnEVCV2DufESTMK2ApMXXXaSaI8fISMy99BxvPKWAl0XG0lwVilaXE/e7VLBD1
-        ghInZz4Bs5mB6pu3zmaewCgwC0lqFpLUAkamVYySqQXFuem5xYYFhnmp5XrFibnFpXnpesn5
-        uZsYwdGhpbmDcfuqD3qHGJk4GA8xSnAwK4nwOi8tSBLiTUmsrEotyo8vKs1JLT7EKM3BoiTO
-        e6HrZLyQQHpiSWp2ampBahFMlomDU6qBib3x9c5JjS3cVVGHNh6dtUpe/a5g+Y3LH29UbZhp
-        zvbnjeaO/hjGy7kKqvFrI3v4N9mHJzVv/KLGk3/ko0TTd/eWX8+9KnTSZ3ycmrikf9OZ4+yi
-        ixMPOezjOPVL7GHpdyfWR9e79vr/SfnnNncNy+4TC6enVRmu7VoRK/SYv/SV8P1nVw4KR1TU
-        39QOPsD2R4+N7XjBppDvhTMeVMiavTo3lVlcJPyA21bOV0o+TAyq+4+sWf9ALT/My/3LAcbn
-        l6JaZL7eWKOgP4tdwzVb3nf9st+CPHluK/78OHxyQp3bxPd3VJ3XLMiofPw1fu6PDQ7L/xx7
-        cvxugZ1onXmtEufmJy4cxnujyza9qEjsmKbEUpyRaKjFXFScCACd8UmC/QIAAA==
-X-CMS-MailID: 20220505061144epcas5p3821a9516dad2b5eff5a25c56dbe164df
+        JXBlTFjfw1iwSLZi96JfTA2MUyS6GDk5JARMJK6dWMYOYgsJ7GaUeHJfByIuLtF87Qc7hC0s
+        sfLfcyCbC6jmI6PEuuc72LoYOTjYBDQlLkwuBakREVCU2PixiRGkhlngJqPE49ZrzCA1wgLu
+        EhO/eYHUsAioSjS3TgGbyStgKXHn7EEmiPnyEjMvfQeLcwpYSXQc7WWBuMdS4n73ahaIekGJ
+        kzOfgNnMQPXNW2czT2AUmIUkNQtJagEj0ypGydSC4tz03GLDAsO81HK94sTc4tK8dL3k/NxN
+        jOD40NLcwbh91Qe9Q4xMHIyHGCU4mJVEeJ2XFiQJ8aYkVlalFuXHF5XmpBYfYpTmYFES573Q
+        dTJeSCA9sSQ1OzW1ILUIJsvEwSnVwLR1XgUbt65Y6y7nC8FcByXlu+X+BpxsFTM5P33XJL5i
+        q7jdx+eJJK0wP8flua1kBnfh411Bfnp3Ypz2Op+/MiMqcXqK985Mm8xz/7YWX1O/NK1jJt+K
+        5lOv1te+2ssx96zvhaZJHhzdzH8tFtmvWh92bK33jtOpZS/jy79YhjZdjXicKPRjtszKefkV
+        26b03ObiXrpMbc8CmUybNt9L3/qjlr5YWbTHePFWFVHrA1u/BBktNWktNCmSrjiiWsy/vvPX
+        kSlLpM/fflnct5Eh5uAB2Wtxp9f/2Kj2R+Lg10l9iWweeRzTVBu4X622PM4ioi8ffkG/LXbF
+        0SVK4na3X0i6/j/33uJszs1j6VufX9FVYinOSDTUYi4qTgQAQEi5A/4CAAA=
+X-CMS-MailID: 20220505061146epcas5p3919c48d58d353a62a5858ee10ad162a0
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: REQ_APPROVE
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220505061144epcas5p3821a9516dad2b5eff5a25c56dbe164df
+X-CMS-RootMailID: 20220505061146epcas5p3919c48d58d353a62a5858ee10ad162a0
 References: <20220505060616.803816-1-joshi.k@samsung.com>
-        <CGME20220505061144epcas5p3821a9516dad2b5eff5a25c56dbe164df@epcas5p3.samsung.com>
+        <CGME20220505061146epcas5p3919c48d58d353a62a5858ee10ad162a0@epcas5p3.samsung.com>
 X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
@@ -119,280 +119,117 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 From: Jens Axboe <axboe@kernel.dk>
 
-file_operations->uring_cmd is a file private handler.
-This is somewhat similar to ioctl but hopefully a lot more sane and
-useful as it can be used to enable many io_uring capabilities for the
-underlying operation.
+Add support for plugging in passthrough path. When plugging is enabled, the
+requests are added to a plug instead of getting dispatched to the driver.
+And when the plug is finished, the whole batch gets dispatched via
+->queue_rqs which turns out to be more efficient. Otherwise dispatching
+used to happen via ->queue_rq, one request at a time.
 
-IORING_OP_URING_CMD is a file private kind of request. io_uring doesn't
-know what is in this command type, it's for the provider of ->uring_cmd()
-to deal with. This operation can be issued only on the ring that is
-setup with both IORING_SETUP_SQE128 and IORING_SETUP_CQE32 flags.
-
-Co-developed-by: Kanchan Joshi <joshi.k@samsung.com>
-Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/io_uring.c                 | 82 ++++++++++++++++++++++++++++++++---
- include/linux/fs.h            |  2 +
- include/linux/io_uring.h      | 27 ++++++++++++
- include/uapi/linux/io_uring.h | 21 +++++----
- 4 files changed, 117 insertions(+), 15 deletions(-)
+ block/blk-mq.c | 73 +++++++++++++++++++++++++++-----------------------
+ 1 file changed, 39 insertions(+), 34 deletions(-)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index c7e3f7e74d92..3436507f04eb 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -202,13 +202,6 @@ struct io_rings {
- 	struct io_uring_cqe	cqes[] ____cacheline_aligned_in_smp;
- };
- 
--enum io_uring_cmd_flags {
--	IO_URING_F_COMPLETE_DEFER	= 1,
--	IO_URING_F_UNLOCKED		= 2,
--	/* int's last bit, sign checks are usually faster than a bit test */
--	IO_URING_F_NONBLOCK		= INT_MIN,
--};
--
- struct io_mapped_ubuf {
- 	u64		ubuf;
- 	u64		ubuf_end;
-@@ -969,6 +962,7 @@ struct io_kiocb {
- 		struct io_xattr		xattr;
- 		struct io_socket	sock;
- 		struct io_nop		nop;
-+		struct io_uring_cmd	uring_cmd;
- 	};
- 
- 	u8				opcode;
-@@ -1254,6 +1248,10 @@ static const struct io_op_def io_op_defs[] = {
- 	[IORING_OP_SOCKET] = {
- 		.audit_skip		= 1,
- 	},
-+	[IORING_OP_URING_CMD] = {
-+		.needs_file		= 1,
-+		.plug			= 1,
-+	},
- };
- 
- /* requests with any of those set should undergo io_disarm_next() */
-@@ -1393,6 +1391,8 @@ const char *io_uring_get_opcode(u8 opcode)
- 		return "GETXATTR";
- 	case IORING_OP_SOCKET:
- 		return "SOCKET";
-+	case IORING_OP_URING_CMD:
-+		return "URING_CMD";
- 	case IORING_OP_LAST:
- 		return "INVALID";
- 	}
-@@ -4907,6 +4907,67 @@ static int io_linkat(struct io_kiocb *req, unsigned int issue_flags)
- 	return 0;
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index 84d749511f55..2cf011b57cf9 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -2340,6 +2340,40 @@ void __blk_mq_insert_request(struct blk_mq_hw_ctx *hctx, struct request *rq,
+ 	blk_mq_hctx_mark_pending(hctx, ctx);
  }
  
-+static void io_uring_cmd_work(struct io_kiocb *req, bool *locked)
-+{
-+	req->uring_cmd.task_work_cb(&req->uring_cmd);
-+}
-+
-+void io_uring_cmd_complete_in_task(struct io_uring_cmd *ioucmd,
-+			void (*task_work_cb)(struct io_uring_cmd *))
-+{
-+	struct io_kiocb *req = container_of(ioucmd, struct io_kiocb, uring_cmd);
-+
-+	req->uring_cmd.task_work_cb = task_work_cb;
-+	req->io_task_work.func = io_uring_cmd_work;
-+	io_req_task_work_add(req, !!(req->ctx->flags & IORING_SETUP_SQPOLL));
-+}
-+EXPORT_SYMBOL_GPL(io_uring_cmd_complete_in_task);
-+
 +/*
-+ * Called by consumers of io_uring_cmd, if they originally returned
-+ * -EIOCBQUEUED upon receiving the command.
++ * Allow 2x BLK_MAX_REQUEST_COUNT requests on plug queue for multiple
++ * queues. This is important for md arrays to benefit from merging
++ * requests.
 + */
-+void io_uring_cmd_done(struct io_uring_cmd *ioucmd, ssize_t ret, ssize_t res2)
++static inline unsigned short blk_plug_max_rq_count(struct blk_plug *plug)
 +{
-+	struct io_kiocb *req = container_of(ioucmd, struct io_kiocb, uring_cmd);
-+
-+	if (ret < 0)
-+		req_set_fail(req);
-+	__io_req_complete32(req, 0, ret, 0, res2, 0);
-+}
-+EXPORT_SYMBOL_GPL(io_uring_cmd_done);
-+
-+static int io_uring_cmd_prep(struct io_kiocb *req,
-+			     const struct io_uring_sqe *sqe)
-+{
-+	struct io_uring_cmd *ioucmd = &req->uring_cmd;
-+	struct io_ring_ctx *ctx = req->ctx;
-+
-+	if (ctx->flags & IORING_SETUP_IOPOLL)
-+		return -EOPNOTSUPP;
-+	/* do not support uring-cmd without big SQE/CQE */
-+	if (!(ctx->flags & IORING_SETUP_SQE128))
-+		return -EOPNOTSUPP;
-+	if (!(ctx->flags & IORING_SETUP_CQE32))
-+		return -EOPNOTSUPP;
-+	if (sqe->ioprio || sqe->rw_flags)
-+		return -EINVAL;
-+	ioucmd->cmd = sqe->cmd;
-+	ioucmd->cmd_op = READ_ONCE(sqe->cmd_op);
-+	return 0;
++	if (plug->multiple_queues)
++		return BLK_MAX_REQUEST_COUNT * 2;
++	return BLK_MAX_REQUEST_COUNT;
 +}
 +
-+static int io_uring_cmd(struct io_kiocb *req, unsigned int issue_flags)
++static void blk_add_rq_to_plug(struct blk_plug *plug, struct request *rq)
 +{
-+	struct file *file = req->file;
-+	struct io_uring_cmd *ioucmd = &req->uring_cmd;
++	struct request *last = rq_list_peek(&plug->mq_list);
 +
-+	if (!req->file->f_op->uring_cmd)
-+		return -EOPNOTSUPP;
-+	file->f_op->uring_cmd(ioucmd, issue_flags);
-+	return 0;
++	if (!plug->rq_count) {
++		trace_block_plug(rq->q);
++	} else if (plug->rq_count >= blk_plug_max_rq_count(plug) ||
++		   (!blk_queue_nomerges(rq->q) &&
++		    blk_rq_bytes(last) >= BLK_PLUG_FLUSH_SIZE)) {
++		blk_mq_flush_plug_list(plug, false);
++		trace_block_plug(rq->q);
++	}
++
++	if (!plug->multiple_queues && last && last->q != rq->q)
++		plug->multiple_queues = true;
++	if (!plug->has_elevator && (rq->rq_flags & RQF_ELV))
++		plug->has_elevator = true;
++	rq->rq_next = NULL;
++	rq_list_add(&plug->mq_list, rq);
++	plug->rq_count++;
 +}
 +
- static int io_shutdown_prep(struct io_kiocb *req,
- 			    const struct io_uring_sqe *sqe)
+ /**
+  * blk_mq_request_bypass_insert - Insert a request at dispatch list.
+  * @rq: Pointer to request to be inserted.
+@@ -2353,7 +2387,12 @@ void blk_mq_request_bypass_insert(struct request *rq, bool at_head,
+ 				  bool run_queue)
  {
-@@ -7764,6 +7825,8 @@ static int io_req_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 		return io_getxattr_prep(req, sqe);
- 	case IORING_OP_SOCKET:
- 		return io_socket_prep(req, sqe);
-+	case IORING_OP_URING_CMD:
-+		return io_uring_cmd_prep(req, sqe);
- 	}
+ 	struct blk_mq_hw_ctx *hctx = rq->mq_hctx;
++	struct blk_plug *plug = current->plug;
  
- 	printk_once(KERN_WARNING "io_uring: unhandled opcode %d\n",
-@@ -8085,6 +8148,9 @@ static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags)
- 	case IORING_OP_SOCKET:
- 		ret = io_socket(req, issue_flags);
- 		break;
-+	case IORING_OP_URING_CMD:
-+		ret = io_uring_cmd(req, issue_flags);
-+		break;
- 	default:
- 		ret = -EINVAL;
- 		break;
-@@ -12688,6 +12754,8 @@ static int __init io_uring_init(void)
- 	BUILD_BUG_ON(ARRAY_SIZE(io_op_defs) != IORING_OP_LAST);
- 	BUILD_BUG_ON(__REQ_F_LAST_BIT > 8 * sizeof(int));
- 
-+	BUILD_BUG_ON(sizeof(struct io_uring_cmd) > 64);
-+
- 	req_cachep = KMEM_CACHE(io_kiocb, SLAB_HWCACHE_ALIGN | SLAB_PANIC |
- 				SLAB_ACCOUNT);
- 	return 0;
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index bbde95387a23..30c98d9993df 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1953,6 +1953,7 @@ struct dir_context {
- #define REMAP_FILE_ADVISORY		(REMAP_FILE_CAN_SHORTEN)
- 
- struct iov_iter;
-+struct io_uring_cmd;
- 
- struct file_operations {
- 	struct module *owner;
-@@ -1995,6 +1996,7 @@ struct file_operations {
- 				   struct file *file_out, loff_t pos_out,
- 				   loff_t len, unsigned int remap_flags);
- 	int (*fadvise)(struct file *, loff_t, loff_t, int);
-+	void (*uring_cmd)(struct io_uring_cmd *ioucmd, unsigned int issue_flags);
- } __randomize_layout;
- 
- struct inode_operations {
-diff --git a/include/linux/io_uring.h b/include/linux/io_uring.h
-index 24651c229ed2..e4cbc80949ce 100644
---- a/include/linux/io_uring.h
-+++ b/include/linux/io_uring.h
-@@ -5,7 +5,26 @@
- #include <linux/sched.h>
- #include <linux/xarray.h>
- 
-+enum io_uring_cmd_flags {
-+	IO_URING_F_COMPLETE_DEFER	= 1,
-+	IO_URING_F_UNLOCKED		= 2,
-+	/* int's last bit, sign checks are usually faster than a bit test */
-+	IO_URING_F_NONBLOCK		= INT_MIN,
-+};
-+
-+struct io_uring_cmd {
-+	struct file	*file;
-+	const u8	*cmd;
-+	/* callback to defer completions to task context */
-+	void (*task_work_cb)(struct io_uring_cmd *cmd);
-+	u32		cmd_op;
-+	u8		pdu[32]; /* available inline for free use */
-+};
-+
- #if defined(CONFIG_IO_URING)
-+void io_uring_cmd_done(struct io_uring_cmd *cmd, ssize_t ret, ssize_t res2);
-+void io_uring_cmd_complete_in_task(struct io_uring_cmd *ioucmd,
-+			void (*task_work_cb)(struct io_uring_cmd *));
- struct sock *io_uring_get_socket(struct file *file);
- void __io_uring_cancel(bool cancel_all);
- void __io_uring_free(struct task_struct *tsk);
-@@ -30,6 +49,14 @@ static inline void io_uring_free(struct task_struct *tsk)
- 		__io_uring_free(tsk);
++	if (plug) {
++		blk_add_rq_to_plug(plug, rq);
++		return;
++	}
+ 	spin_lock(&hctx->lock);
+ 	if (at_head)
+ 		list_add(&rq->queuelist, &hctx->dispatch);
+@@ -2676,40 +2715,6 @@ void blk_mq_try_issue_list_directly(struct blk_mq_hw_ctx *hctx,
+ 		hctx->queue->mq_ops->commit_rqs(hctx);
  }
- #else
-+static inline void io_uring_cmd_done(struct io_uring_cmd *cmd, ssize_t ret,
-+		ssize_t ret2)
-+{
-+}
-+static inline void io_uring_cmd_complete_in_task(struct io_uring_cmd *ioucmd,
-+			void (*task_work_cb)(struct io_uring_cmd *))
-+{
-+}
- static inline struct sock *io_uring_get_socket(struct file *file)
- {
- 	return NULL;
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 881e508767f8..92af2169ef58 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -22,6 +22,7 @@ struct io_uring_sqe {
- 	union {
- 		__u64	off;	/* offset into file */
- 		__u64	addr2;
-+		__u32	cmd_op;
- 	};
- 	union {
- 		__u64	addr;	/* pointer to buffer or iovecs */
-@@ -61,14 +62,17 @@ struct io_uring_sqe {
- 		__s32	splice_fd_in;
- 		__u32	file_index;
- 	};
--	__u64	addr3;
--	__u64	__pad2[1];
+ 
+-/*
+- * Allow 2x BLK_MAX_REQUEST_COUNT requests on plug queue for multiple
+- * queues. This is important for md arrays to benefit from merging
+- * requests.
+- */
+-static inline unsigned short blk_plug_max_rq_count(struct blk_plug *plug)
+-{
+-	if (plug->multiple_queues)
+-		return BLK_MAX_REQUEST_COUNT * 2;
+-	return BLK_MAX_REQUEST_COUNT;
+-}
 -
--	/*
--	 * If the ring is initialized with IORING_SETUP_SQE128, then this field
--	 * contains 64-bytes of padding, doubling the size of the SQE.
--	 */
--	__u64	__big_sqe_pad[0];
-+	union {
-+		struct {
-+			__u64	addr3;
-+			__u64	__pad2[1];
-+		};
-+		/*
-+		 * If the ring is initialized with IORING_SETUP_SQE128, then
-+		 * this field is used for 80 bytes of arbitrary command data
-+		 */
-+		__u8	cmd[0];
-+	};
- };
- 
- enum {
-@@ -160,6 +164,7 @@ enum io_uring_op {
- 	IORING_OP_FGETXATTR,
- 	IORING_OP_GETXATTR,
- 	IORING_OP_SOCKET,
-+	IORING_OP_URING_CMD,
- 
- 	/* this goes last, obviously */
- 	IORING_OP_LAST,
+-static void blk_add_rq_to_plug(struct blk_plug *plug, struct request *rq)
+-{
+-	struct request *last = rq_list_peek(&plug->mq_list);
+-
+-	if (!plug->rq_count) {
+-		trace_block_plug(rq->q);
+-	} else if (plug->rq_count >= blk_plug_max_rq_count(plug) ||
+-		   (!blk_queue_nomerges(rq->q) &&
+-		    blk_rq_bytes(last) >= BLK_PLUG_FLUSH_SIZE)) {
+-		blk_mq_flush_plug_list(plug, false);
+-		trace_block_plug(rq->q);
+-	}
+-
+-	if (!plug->multiple_queues && last && last->q != rq->q)
+-		plug->multiple_queues = true;
+-	if (!plug->has_elevator && (rq->rq_flags & RQF_ELV))
+-		plug->has_elevator = true;
+-	rq->rq_next = NULL;
+-	rq_list_add(&plug->mq_list, rq);
+-	plug->rq_count++;
+-}
+-
+ static bool blk_mq_attempt_bio_merge(struct request_queue *q,
+ 				     struct bio *bio, unsigned int nr_segs)
+ {
 -- 
 2.25.1
 

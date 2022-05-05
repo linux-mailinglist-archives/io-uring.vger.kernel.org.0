@@ -2,59 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 53B0451C7A7
-	for <lists+io-uring@lfdr.de>; Thu,  5 May 2022 20:36:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D4CC51C80E
+	for <lists+io-uring@lfdr.de>; Thu,  5 May 2022 20:37:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1381187AbiEESff (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 5 May 2022 14:35:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56310 "EHLO
+        id S234315AbiEESkW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 5 May 2022 14:40:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1385156AbiEESaK (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 5 May 2022 14:30:10 -0400
-Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12ED6140DD
-        for <io-uring@vger.kernel.org>; Thu,  5 May 2022 11:20:45 -0700 (PDT)
-Received: by mail-pf1-x434.google.com with SMTP id c14so4290814pfn.2
-        for <io-uring@vger.kernel.org>; Thu, 05 May 2022 11:20:45 -0700 (PDT)
+        with ESMTP id S1385218AbiEESjr (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 5 May 2022 14:39:47 -0400
+Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 263A160ABB
+        for <io-uring@vger.kernel.org>; Thu,  5 May 2022 11:29:30 -0700 (PDT)
+Received: by mail-pj1-x102f.google.com with SMTP id c1-20020a17090a558100b001dca2694f23so4698587pji.3
+        for <io-uring@vger.kernel.org>; Thu, 05 May 2022 11:29:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=1wleVqZQjFGRt46QIYxqPep0CD/JCBA/ddZDSj+HddI=;
-        b=HN5+C6RfB8Rji1MsNRalF9wxLyomoBX3GImk2iWU2RcgKCVSd+HLDPDA6U3CVNqobx
-         LQ4O6fTv9ixniphwKYtBn0GRdyzBYp7m+5Kl9OzdTvx55HdY7lo0V+NIw+uX8S9Z1t+k
-         Si6GLcRxA4QvtyYS2hjRH6jyo6VQtFsB9dTqPLxttvmzv42BxaDGzgmgmlivenXvS8s7
-         8/1GVeFa+r0sghvXGFPSE3y8nqacKaDL4ABWM5R+++hVFMWzgDLNywyCIK79BW2O3C6y
-         ycz+fO+sbS+wbArMe1BAnLwIQVVV1G8InKWU9jyJC9wGkCU3znBaw0xxCfWsVHqQXfuX
-         8VCg==
+        h=message-id:date:mime-version:user-agent:subject:content-language
+         :from:to:cc:references:in-reply-to:content-transfer-encoding;
+        bh=qJDsBNaU0WtP3zGJAVGJc1XV1UGinZSSPR/pmXCT3fg=;
+        b=MsfJI7wgJazaq5lFNIqyg/2hjMk8meBjzjrd37sw7/Yk7hKbq6mcHgHKyfNrzPrwpo
+         0E1Rhuc4JhEujqO3Ymm23DCQb1xvZhdoYQeeH+XZVHL1soFc+SIj43noHv6Iy8jJGrZF
+         sh/+BF52lPIHxSSD0OLbL2P8hDReNZAUe/tmmvkUFfLQmKVNzbZP38QmNZXhrU+cy72m
+         52jkMVElSfjXcglvj6sKvuLxDlZCb5KBH9dMTxZPfZSUn45mMeDk/RphA3UbmnpfW/3n
+         KegiPP91o1WbPuGBlYgwClPlgjyMZJecmcGFZhwF7/JWNOflDDtINsW2zLF48xa8I5+y
+         HXYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+         :content-language:from:to:cc:references:in-reply-to
          :content-transfer-encoding;
-        bh=1wleVqZQjFGRt46QIYxqPep0CD/JCBA/ddZDSj+HddI=;
-        b=fNOZFxXCJt05IoZeZ/G+ILbqcrH8lKeiQFKeWkzxb3Z38U/H+B+wN6EOkbLrnirGTD
-         3P/9yNu0bxeXg0amvod/Cl0+OECHYhIQKqJs9qKqTwwVfuFPDCJFuzWRwhZCZQH++tG8
-         CVnlhV73gDAKNl0t4fthaQSBqrfRRZXiq4SykIFdORsjnPRY34fv8yecW50dMZoLTQK6
-         JFmnSlm3P35Z7mjnEZyYcyiBVcjztVn0G2lVPtTm9oj2oW6NCauFgCZExTQHQGluwfKk
-         7uGh/kOQXtvfuF4xhTPF7YT2QXP6ZO2zwdL3bi6k1spAWYeD+OqdDpbO9kt91y/wgDDz
-         3zgA==
-X-Gm-Message-State: AOAM533oMLTJVu6f3Pa2egVvfAvd3Ect4Lmyyc2V6ESkqIVVRAEWgNg2
-        0Sie5agUTe9BIaM/3PazLCKMwQ==
-X-Google-Smtp-Source: ABdhPJzv4gHa7MpsIdjCMkM5gCRgVPL0TG5ZiLod7uVPMmwscXff8JCY/HmX8uEPJPGxDurpbscjYg==
-X-Received: by 2002:a05:6a00:140f:b0:4e0:6995:9c48 with SMTP id l15-20020a056a00140f00b004e069959c48mr27012945pfu.59.1651774840056;
-        Thu, 05 May 2022 11:20:40 -0700 (PDT)
+        bh=qJDsBNaU0WtP3zGJAVGJc1XV1UGinZSSPR/pmXCT3fg=;
+        b=Xl64KZW0wOC+Vsp9GEw7bbrL02BKWlyIbDMBEII9FLgTf1L4N4YJhiW4iRcP5dcms1
+         8iLUZWot5Ue9zJjMNOCmCwZS+tx76LuAOGdg0N4v0ATyK0kQFDyHOcpitdg99mjRddpy
+         ZbyDGS/5iQ5S4YMuVjn59ScOH3RjO5wIurcZnzPOHSkFhAYO05NnveEkGOs55xTMTBmq
+         LJ6n2mL7ID8Gsr6ry5n1wqWBPsAtHgJuY4c0NhBpqGYNcwRdAr3Y9XhXaF69opTdTv3z
+         4hO93ncna+I8S+mbAcC7jekOzEm9w1pfL56Fi0/s0NngAuwIQjLyOavf8AvZC01BBmHZ
+         i+Sg==
+X-Gm-Message-State: AOAM532nf9SISAyS9+BCuTHrNzH2jAWUPm4QDN5kI2b3hvEvrnWjtUBB
+        k/fm2b38VoajfapxEMOwmXKWGQ==
+X-Google-Smtp-Source: ABdhPJzkMXHdKGEICRUdE4gyAEM++LbBaogm7oaZDoNke0R5SMMnkNorn/rvTJeSWr6sGKgr+fDWxw==
+X-Received: by 2002:a17:902:dad2:b0:15e:9faa:e924 with SMTP id q18-20020a170902dad200b0015e9faae924mr23518649plx.94.1651775369465;
+        Thu, 05 May 2022 11:29:29 -0700 (PDT)
 Received: from [192.168.4.166] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id c24-20020a17090aa61800b001cd4989fec6sm5675834pjq.18.2022.05.05.11.20.38
+        by smtp.gmail.com with ESMTPSA id e14-20020a17090301ce00b0015e8d4eb1d3sm1934883plh.29.2022.05.05.11.29.28
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 May 2022 11:20:39 -0700 (PDT)
-Message-ID: <d99a828b-94ed-97a0-8430-cfb49dd56b74@kernel.dk>
-Date:   Thu, 5 May 2022 12:20:37 -0600
+        Thu, 05 May 2022 11:29:29 -0700 (PDT)
+Message-ID: <a715cc61-97e7-2292-ec7d-59389b00e779@kernel.dk>
+Date:   Thu, 5 May 2022 12:29:27 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
  Thunderbird/91.8.1
 Subject: Re: [PATCH v4 0/5] io_uring passthrough for nvme
 Content-Language: en-US
+From:   Jens Axboe <axboe@kernel.dk>
 To:     Kanchan Joshi <joshi.k@samsung.com>, hch@lst.de
 Cc:     io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
         asml.silence@gmail.com, ming.lei@redhat.com, mcgrof@kernel.org,
@@ -62,8 +63,8 @@ Cc:     io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
         gost.dev@samsung.com
 References: <CGME20220505061142epcas5p2c943572766bfd5088138fe0f7873c96c@epcas5p2.samsung.com>
  <20220505060616.803816-1-joshi.k@samsung.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20220505060616.803816-1-joshi.k@samsung.com>
+ <d99a828b-94ed-97a0-8430-cfb49dd56b74@kernel.dk>
+In-Reply-To: <d99a828b-94ed-97a0-8430-cfb49dd56b74@kernel.dk>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -75,19 +76,23 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/5/22 12:06 AM, Kanchan Joshi wrote:
-> This iteration is against io_uring-big-sqe brach (linux-block).
-> On top of a739b2354 ("io_uring: enable CQE32").
+On 5/5/22 12:20 PM, Jens Axboe wrote:
+> On 5/5/22 12:06 AM, Kanchan Joshi wrote:
+>> This iteration is against io_uring-big-sqe brach (linux-block).
+>> On top of a739b2354 ("io_uring: enable CQE32").
+>>
+>> fio testing branch:
+>> https://github.com/joshkan/fio/tree/big-cqe-pt.v4
 > 
-> fio testing branch:
-> https://github.com/joshkan/fio/tree/big-cqe-pt.v4
+> I folded in the suggested changes, the branch is here:
+> 
+> https://git.kernel.dk/cgit/linux-block/log/?h=for-5.19/io_uring-passthrough
+> 
+> I'll try and run the fio test branch, but please take a look and see what
+> you think.
 
-I folded in the suggested changes, the branch is here:
-
-https://git.kernel.dk/cgit/linux-block/log/?h=for-5.19/io_uring-passthrough
-
-I'll try and run the fio test branch, but please take a look and see what
-you think.
+Tested that fio branch and it works for me with what I had pushed out.
+Also tested explicit deferral of requests.
 
 -- 
 Jens Axboe

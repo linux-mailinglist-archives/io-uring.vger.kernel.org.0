@@ -2,143 +2,71 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3394F51C189
-	for <lists+io-uring@lfdr.de>; Thu,  5 May 2022 15:56:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25B5051C1AD
+	for <lists+io-uring@lfdr.de>; Thu,  5 May 2022 15:57:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1380227AbiEEN57 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 5 May 2022 09:57:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45958 "EHLO
+        id S242789AbiEEN5U (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 5 May 2022 09:57:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45258 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1380051AbiEEN56 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 5 May 2022 09:57:58 -0400
-Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FFF758E45
-        for <io-uring@vger.kernel.org>; Thu,  5 May 2022 06:54:16 -0700 (PDT)
-Received: by mail-pf1-x434.google.com with SMTP id bo5so3706331pfb.4
-        for <io-uring@vger.kernel.org>; Thu, 05 May 2022 06:54:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=ODL/RZp3B3RfrFH5GlLl86qa0DgQB+nmVNbtBUgHocc=;
-        b=NS3DBt+ILaQtVBQLrA0NoEjJCJFhRoyZCB/Kw2nO7Bv80S7rbh8LSdFLipJA/Z/tz+
-         WPs3kGZo4JrIR19XIVbSSTyMyuTW0NmioDgx1NXFdzTqA3vtGeTcM8joftbZU0WoOs6Q
-         KuDNsgfRC321/2L4zPaFNtEW8aSlvNT5YH2I2Nt+r2IBzjV5fOET5ieWk1spJ2wWsrnL
-         N5xm0CCC+DL8jAnEMP2gSpzYAyy4E9byrObe17Hh5g197gXVrmnzYcg77rqvF0N+Mu0E
-         u8x9tpv1dVImAfGl/8PVRIZzJn6CRVrQtyKJFGr3mGPmAOEDX6Ke/4N8ryOVn5pdsvmY
-         USUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=ODL/RZp3B3RfrFH5GlLl86qa0DgQB+nmVNbtBUgHocc=;
-        b=SAegwMuisk6U75+GMiUvHnwdbMQPd9kTui95EUEAEc7bJaBDk31osfTunvHD0jF8YG
-         fS5aM1jxU2QSTiGMluLNOXn17DhAKIFw3lb875bLbtHMDa8IIgqgmnrPDJk9wGTtvMF/
-         9+ieSvh25w3H225dy7RjAEdKBgO6ScLlb+0dDN8Mohb/FkdVMgiAOm4AI5Vqt4i/GFoM
-         Ul1RkleEcHInbB0UW6Nv3KqdkHmuwEBfOszvLDSJrvsEUYzQYs0ItSCWJaX4pqJa5yEG
-         N86atQxXJXfFz2V9lpTaEGDAKxqcnBUZ2N1+Awbz06nd2mdQw0paRuPXq9Mk4R5V+dVn
-         4yiw==
-X-Gm-Message-State: AOAM533xIqDxki3viejNWqkOXkZnYAnMRhPYTv84ysE0tx8rmNC2udHy
-        qJxO6wv0v/TCdV8ItDAqLWcsQg==
-X-Google-Smtp-Source: ABdhPJxWuqQiO4TJLigOa7txXWeQbIwY3pwXIa2+sxXkpiFsFG0B1d7FswwCnpZfv9bi+QTFQiRMMA==
-X-Received: by 2002:a63:a18:0:b0:3c6:12b1:a8d0 with SMTP id 24-20020a630a18000000b003c612b1a8d0mr3114898pgk.534.1651758855507;
-        Thu, 05 May 2022 06:54:15 -0700 (PDT)
-Received: from [192.168.4.166] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id f12-20020aa7968c000000b0050dc762813fsm1409512pfk.25.2022.05.05.06.54.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 May 2022 06:54:15 -0700 (PDT)
-Message-ID: <a91d43b7-9d97-385e-190f-a26b078d2f36@kernel.dk>
-Date:   Thu, 5 May 2022 07:54:13 -0600
+        with ESMTP id S1346749AbiEEN5R (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 5 May 2022 09:57:17 -0400
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48DA92FE52;
+        Thu,  5 May 2022 06:53:37 -0700 (PDT)
+Received: from kwepemi500019.china.huawei.com (unknown [172.30.72.54])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4KvFX900GxzhYr7;
+        Thu,  5 May 2022 21:53:12 +0800 (CST)
+Received: from kwepemm600004.china.huawei.com (7.193.23.242) by
+ kwepemi500019.china.huawei.com (7.221.188.117) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Thu, 5 May 2022 21:53:34 +0800
+Received: from huawei.com (10.175.124.27) by kwepemm600004.china.huawei.com
+ (7.193.23.242) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Thu, 5 May
+ 2022 21:53:34 +0800
+From:   Guo Xuenan <guoxuenan@huawei.com>
+To:     <axboe@kernel.dk>, <asml.silence@gmail.com>
+CC:     <lee.jones@linaro.org>, <linux-kernel@vger.kernel.org>,
+        <io-uring@vger.kernel.org>, <guoxuenan@huawei.com>,
+        <yi.zhang@huawei.com>, <houtao1@huawei.com>
+Subject: linux-stable-5.10-y CVE-2022-1508 of io_uring module
+Date:   Thu, 5 May 2022 22:11:59 +0800
+Message-ID: <20220505141159.3182874-1-guoxuenan@huawei.com>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <dd122760-5f87-10b1-e50d-388c2631c01a@kernel.dk>
+References: <dd122760-5f87-10b1-e50d-388c2631c01a@kernel.dk>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH v4 1/5] fs,io_uring: add infrastructure for uring-cmd
-Content-Language: en-US
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Kanchan Joshi <joshi.k@samsung.com>, hch@lst.de,
-        io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
-        asml.silence@gmail.com, mcgrof@kernel.org, shr@fb.com,
-        joshiiitr@gmail.com, anuj20.g@samsung.com, gost.dev@samsung.com
-References: <20220505060616.803816-1-joshi.k@samsung.com>
- <CGME20220505061144epcas5p3821a9516dad2b5eff5a25c56dbe164df@epcas5p3.samsung.com>
- <20220505060616.803816-2-joshi.k@samsung.com>
- <f9051783-5105-45ba-99b3-bc5d9254656d@kernel.dk> <YnPVtiRbYBYCGkCi@T590>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <YnPVtiRbYBYCGkCi@T590>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.124.27]
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemm600004.china.huawei.com (7.193.23.242)
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/5/22 7:48 AM, Ming Lei wrote:
-> On Thu, May 05, 2022 at 06:52:25AM -0600, Jens Axboe wrote:
->> On 5/5/22 12:06 AM, Kanchan Joshi wrote:
->>> From: Jens Axboe <axboe@kernel.dk>
->>>
->>> file_operations->uring_cmd is a file private handler.
->>> This is somewhat similar to ioctl but hopefully a lot more sane and
->>> useful as it can be used to enable many io_uring capabilities for the
->>> underlying operation.
->>>
->>> IORING_OP_URING_CMD is a file private kind of request. io_uring doesn't
->>> know what is in this command type, it's for the provider of ->uring_cmd()
->>> to deal with. This operation can be issued only on the ring that is
->>> setup with both IORING_SETUP_SQE128 and IORING_SETUP_CQE32 flags.
->>
->> One thing that occured to me that I think we need to change is what you
->> mention above, code here:
->>
->>> +static int io_uring_cmd_prep(struct io_kiocb *req,
->>> +			     const struct io_uring_sqe *sqe)
->>> +{
->>> +	struct io_uring_cmd *ioucmd = &req->uring_cmd;
->>> +	struct io_ring_ctx *ctx = req->ctx;
->>> +
->>> +	if (ctx->flags & IORING_SETUP_IOPOLL)
->>> +		return -EOPNOTSUPP;
->>> +	/* do not support uring-cmd without big SQE/CQE */
->>> +	if (!(ctx->flags & IORING_SETUP_SQE128))
->>> +		return -EOPNOTSUPP;
->>> +	if (!(ctx->flags & IORING_SETUP_CQE32))
->>> +		return -EOPNOTSUPP;
->>> +	if (sqe->ioprio || sqe->rw_flags)
->>> +		return -EINVAL;
->>> +	ioucmd->cmd = sqe->cmd;
->>> +	ioucmd->cmd_op = READ_ONCE(sqe->cmd_op);
->>> +	return 0;
->>> +}
->>
->> I've been thinking of this mostly in the context of passthrough for
->> nvme, but it originally started as a generic feature to be able to wire
->> up anything for these types of commands. The SQE128/CQE32 requirement is
->> really an nvme passthrough restriction, we don't necessarily need this
->> for any kind of URING_CMD. Ditto IOPOLL as well. These are all things
->> that should be validated further down, but there's no way to do that
->> currently.
->>
->> Let's not have that hold up merging this, but we do need it fixed up for
->> 5.19-final so we don't have this restriction. Suggestions welcome...
-> 
-> The validation has to be done in consumer of SQE128/CQE32(nvme). One
-> way is to add SQE128/CQE32 io_uring_cmd_flags and pass them via
-> ->uring_cmd(issue_flags).
+Hi, Pavel & Jens
 
-Right, that's what I tried to say, it needs to be validated further down
-as we can (and will) have URING_CMD users that don't care about any of
-those 3 things and can work fine with whatever sqe/cqe size we have.
-IOPOLL also only applies if the handler potentially can block.
+CVE-2022-1508[1] contains an patch[2] of io_uring. As Jones reported,
+it is not enough only apply [2] to stable-5.10. 
+Io_uring is very valuable and active module of linux kernel.
+I've tried to apply these two patches[3] [4] to my local 5.10 code, I
+found my understanding of io_uring is not enough to resolve all conflicts.
 
-Using the issue_flags makes sense to me, it's probably the easiest
-approach. Doesn't take space in the command itself, and there's plenty
-of room in that flag space to pass in the ring sqe/cqe/iopoll state.
+Since 5.10 is an important stable branch of linux, we would appreciate
+your help in soloving this problem.
 
--- 
-Jens Axboe
+[1] https://access.redhat.com/security/cve/cve-2022-1508
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=89c2b3b7491
+[3] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=8fb0f47a9d7
+[4] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=cd65869512a
 
+Best regards
+Xuenan

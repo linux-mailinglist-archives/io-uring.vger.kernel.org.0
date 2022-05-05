@@ -2,316 +2,108 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A07251C8DE
-	for <lists+io-uring@lfdr.de>; Thu,  5 May 2022 21:21:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C20F51C905
+	for <lists+io-uring@lfdr.de>; Thu,  5 May 2022 21:30:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352708AbiEETYt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 5 May 2022 15:24:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41520 "EHLO
+        id S1384353AbiEETdq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 5 May 2022 15:33:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238070AbiEETYs (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 5 May 2022 15:24:48 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54069532E3
-        for <io-uring@vger.kernel.org>; Thu,  5 May 2022 12:21:06 -0700 (PDT)
-Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=bjornoya.blackshift.org)
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mkl@pengutronix.de>)
-        id 1nmh1x-0006U1-H7; Thu, 05 May 2022 21:20:53 +0200
-Received: from pengutronix.de (unknown [46.183.103.8])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (Client did not present a certificate)
-        (Authenticated sender: mkl-all@blackshift.org)
-        by smtp.blackshift.org (Postfix) with ESMTPSA id DAF3E76CDB;
-        Thu,  5 May 2022 19:20:48 +0000 (UTC)
-Date:   Thu, 5 May 2022 21:20:46 +0200
-From:   Marc Kleine-Budde <mkl@pengutronix.de>
-To:     Steffen Trumtrar <s.trumtrar@pengutronix.de>
-Cc:     linux-crypto@vger.kernel.org, io-uring@vger.kernel.org,
-        kernel@pengutronix.de,
-        Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
-        Pankaj Gupta <pankaj.gupta@nxp.com>,
-        Gaurav Jain <gaurav.jain@nxp.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Boris Pismenny <borisp@nvidia.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
-Subject: Re: [BUG] Layerscape CAAM+kTLS+io_uring
-Message-ID: <20220505192046.hczmzg7k6tz2rjv3@pengutronix.de>
-References: <878rrqrgaj.fsf@pengutronix.de>
+        with ESMTP id S237870AbiEETdp (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 5 May 2022 15:33:45 -0400
+Received: from SJSMAIL01.us.kioxia.com (usmailhost21.kioxia.com [12.0.68.226])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF4AE34652
+        for <io-uring@vger.kernel.org>; Thu,  5 May 2022 12:30:04 -0700 (PDT)
+Received: from SJSMAIL01.us.kioxia.com (10.90.133.90) by
+ SJSMAIL01.us.kioxia.com (10.90.133.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Thu, 5 May 2022 12:30:04 -0700
+Received: from SJSMAIL01.us.kioxia.com ([fe80::c557:f37d:d981:76df]) by
+ SJSMAIL01.us.kioxia.com ([fe80::c557:f37d:d981:76df%3]) with mapi id
+ 15.01.2375.024; Thu, 5 May 2022 12:30:04 -0700
+From:   Clay Mayers <Clay.Mayers@kioxia.com>
+To:     Jens Axboe <axboe@kernel.dk>, Kanchan Joshi <joshi.k@samsung.com>,
+        "hch@lst.de" <hch@lst.de>
+CC:     "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "asml.silence@gmail.com" <asml.silence@gmail.com>,
+        "ming.lei@redhat.com" <ming.lei@redhat.com>,
+        "mcgrof@kernel.org" <mcgrof@kernel.org>, "shr@fb.com" <shr@fb.com>,
+        "joshiiitr@gmail.com" <joshiiitr@gmail.com>,
+        "anuj20.g@samsung.com" <anuj20.g@samsung.com>,
+        "gost.dev@samsung.com" <gost.dev@samsung.com>
+Subject: RE: [PATCH v4 3/5] nvme: refactor nvme_submit_user_cmd()
+Thread-Topic: [PATCH v4 3/5] nvme: refactor nvme_submit_user_cmd()
+Thread-Index: AQHYYEffNsZGDQ8MAEyuOCh/GTUQpa0QnLIAgAB9pYCAAAIxAP//jjdA
+Date:   Thu, 5 May 2022 19:30:03 +0000
+Message-ID: <0b16682a30434d9c820a888ae0dc9ac5@kioxia.com>
+References: <20220505060616.803816-1-joshi.k@samsung.com>
+ <CGME20220505061148epcas5p188618b5b15a95cbe48c8c1559a18c994@epcas5p1.samsung.com>
+ <20220505060616.803816-4-joshi.k@samsung.com>
+ <80cde2cfd566454fa4b160492c7336c2@kioxia.com>
+ <ce25812c-9cf4-efe5-ac9e-13afd5803e64@kernel.dk>
+ <93e697b1-42c5-d2f4-8fb8-7b5d1892e871@kernel.dk>
+In-Reply-To: <93e697b1-42c5-d2f4-8fb8-7b5d1892e871@kernel.dk>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.93.77.13]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="xmctf7v3rssq5mte"
-Content-Disposition: inline
-In-Reply-To: <878rrqrgaj.fsf@pengutronix.de>
-X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: io-uring@vger.kernel.org
-X-Spam-Status: No, score=-0.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
-        RCVD_IN_SBL_CSS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-
---xmctf7v3rssq5mte
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hello,
-
-no one seems to care about this problem. :/
-
-Maybe too many components are involved, I'm the respective maintainers
-on Cc.
-
-Cc +=3D the CAAM maintainers
-Cc +=3D the io_uring maintainers
-Cc +=3D the kTLS maintainers
-
-On 27.04.2022 10:20:40, Steffen Trumtrar wrote:
-> Hi all,
->=20
-> I have a Layerscape-1046a based board where I'm trying to use a
-> combination of liburing (v2.0) with splice, kTLS and CAAM (kernel
-> v5.17). The problem I see is that on shutdown the last bytes are
-> missing. It looks like io_uring is not waiting for all completions
-> from the CAAM driver.
->=20
-> With ARM-ASM instead of the CAAM, the setup works fine.
-
-What's the difference between the CAAM and ARM-ASM crypto? Without
-looking into the code I think the CAAM is asynchron while ARM-ASM is
-synchron. Is this worth investigating?
-
-> I tried to debug with ftrace and see where it goes wrong. Here is what
-> seems to be (at least to me) some of the last bytes:
->=20
->  webserver-612     [002] .....   135.300350: io_uring_file_get: ring 0000=
-000078f4a859, fd 6 00078f4a859, fd 7
->        webserver-612     [002] .....   135.300352: io_uring_submit_sqe: r=
-ing 0000000078f4a859, req 00000000fbb9b849, op 30, data 0xf3e096f0, flags 8=
-196, non block 1, sq_thread 0
->        webserver-612     [002] .....   135.300353: io_uring_submit_sqe: r=
-ing 0000000078f4a859, req 00000000ff858bdf, op 15, data 0x0, flags 2097152,=
- non block 1, sq_thread 0
->        webserver-612     [002] .....   135.300353: io_uring_link: ring 00=
-00000078f4a859, request 00000000ff858bdf linked after 00000000fbb9b849
->        webserver-612     [002] .....   135.300354: io_uring_queue_async_w=
-ork: ring 0000000078f4a859, request 00000000fbb9b849, flags 798724, normal =
-queue, work 0000000060cd323f
->        webserver-612     [002] .....   135.300358: io_uring_cqring_wait: =
-ring 0000000078f4a859, min_events 1
->      iou-wrk-612-647     [003] ...1.   135.300375: io_uring_complete: rin=
-g 0000000078f4a859, user_data 0xf3e096f0, result 4352, cflags 0
->      iou-wrk-612-647     [003] d..2.   135.300379: io_uring_complete: rin=
-g 0000000078f4a859, user_data 0x0, result -125, cflags 0
->        webserver-612     [002] .....   135.300388: io_uring_file_get: rin=
-g 0000000078f4a859, fd 6
->        webserver-612     [002] .....   135.300389: io_uring_file_get: rin=
-g 0000000078f4a859, fd 7 0000078f4a859, req 000000008c2bf2be, op 30, data 0=
-xf3e096f0, flags 8196, non block 1, sq_thread 0
->        webserver-612     [002] .....   135.300390: io_uring_submit_sqe: r=
-ing 0000000078f4a859, req 00000000fe4e50d1, op 15, data 0x0, flags 2097152,=
- non block 1, sq_thread 0
->        webserver-612     [002] .....   135.300391: io_uring_link: ring 00=
-00000078f4a859, request 00000000fe4e50d1 linked after 000000008c2bf2be
->        webserver-612     [002] .....   135.300392: io_uring_queue_async_w=
-ork: ring 0000000078f4a859, request 000000008c2bf2be, flags 798724, normal =
-queue, work 00000000f2b434fc
->        webserver-612     [002] .....   135.300396: io_uring_cqring_wait: =
-ring 0000000078f4a859, min_events 1
->      iou-wrk-612-647     [003] ...1.   135.300410: io_uring_complete: rin=
-g 0000000078f4a859, user_data 0xf3e096f0, result 4352, cflags 0
->      iou-wrk-612-647     [003] d..2.   135.300414: io_uring_complete: rin=
-g 0000000078f4a859, user_data 0x0, result -125, cflags 0
->        webserver-612     [002] .....   135.300423: io_uring_file_get: rin=
-g 0000000078f4a859, fd 6
->        webserver-612     [002] .....   135.300424: io_uring_file_get: rin=
-g 0000000078f4a859, fd 7
->        webserver-612     [002] .....   135.300424: io_uring_submit_sqe: r=
-ing 0000000078f4a859, req 00000000e48f3098, op 30, data 0xf3e096f0, flags 8=
-196, non block 1, sq_thread 0
->        webserver-612     [002] .....   135.300426: io_uring_submit_sqe: r=
-ing 0000000078f4a859, req 00000000ec67d53c, op 15, data 0x0, flags 2097152,=
- non block 1, sq_thread 0
->        webserver-612     [002] .....   135.300426: io_uring_link: ring 00=
-00000078f4a859, request 00000000ec67d53c linked after 00000000e48f3098
->        webserver-612     [002] .....   135.300427: io_uring_queue_async_w=
-ork: ring 0000000078f4a859, request 00000000e48f3098, flags 798724, normal =
-queue, work 000000009e3701da
->        webserver-612     [002] .....   135.300431: io_uring_cqring_wait: =
-ring 0000000078f4a859, min_events 1
->      iou-wrk-612-647     [003] ...1.   135.300447: io_uring_complete: rin=
-g 0000000078f4a859, user_data 0xf3e096f0, result 4352, cflags 0
->      iou-wrk-612-647     [003] d..2.   135.300452: io_uring_complete: rin=
-g 0000000078f4a859, user_data 0x0, result -125, cflags 0
->        webserver-612     [002] .....   135.300461: io_uring_file_get: rin=
-g 0000000078f4a859, fd 6
->        webserver-612     [002] .....   135.300462: io_uring_file_get: rin=
-g 0000000078f4a859, fd 7
->        webserver-612     [002] .....   135.300462: io_uring_submit_sqe: r=
-ing 0000000078f4a859, req 00000000f658f96f, op 30, data 0xf3e096f0, flags 8=
-196, non block 1, sq_thread 0, sq_thread 0
->        webserver-612     [002] .....   135.300464: io_uring_link: ring 00=
-00000078f4a859, request 000000006c29e721 linked after 00000000f658f96f
->        webserver-612     [002] .....   135.300465: io_uring_queue_async_w=
-ork: ring 0000000078f4a859, request 00000000f658f96f, flags 798724, normal =
-queue, work 000000007434c68b
->        webserver-612     [002] .....   135.300469: io_uring_cqring_wait: =
-ring 0000000078f4a859, min_events 1
->      iou-wrk-612-647     [003] ...1.   135.300479: io_uring_complete: rin=
-g 0000000078f4a859, user_data 0xf3e096f0, result 4608, cflags 0
->      iou-wrk-612-647     [003] d..2.   135.300483: io_uring_complete: rin=
-g 0000000078f4a859, user_data 0x0, result -125, cflags 0
->        webserver-612     [002] .....   135.300492: io_uring_file_get: rin=
-g 0000000078f4a859, fd 6
->        webserver-612     [002] .....   135.300493: io_uring_file_get: rin=
-g 0000000078f4a859, fd 7
->        webserver-612     [002] .....   135.300494: io_uring_submit_sqe: r=
-ing 0000000078f4a859, req 00000000757ef148, op 30, data 0xf3e096f0, flags 8=
-196, non block 1, sq_thread 0
->        webserver-612     [002] .....   135.300495: io_uring_submit_sqe: r=
-ing 0000000078f4a859, req 00000000e5c82137, op 15, data 0x0, flags 2097152,=
- non block 1, sq_thread 0 8f4a859, request 00000000e5c82137 linked after 00=
-000000757ef148
->        webserver-612     [002] .....   135.300496: io_uring_queue_async_w=
-ork: ring 0000000078f4a859, request 00000000757ef148, flags 798724, normal =
-queue, work 00000000b55630dd
->        webserver-612     [002] .....   135.300500: io_uring_cqring_wait: =
-ring 0000000078f4a859, min_events 1
->      iou-wrk-612-647     [003] ...1.   135.300516: io_uring_complete: rin=
-g 0000000078f4a859, user_data 0xf3e096f0, result 4608, cflags 0
->      iou-wrk-612-647     [003] d..2.   135.300520: io_uring_complete: rin=
-g 0000000078f4a859, user_data 0x0, result -125, cflags 0
->        webserver-612     [002] .....   135.300529: io_uring_file_get: rin=
-g 0000000078f4a859, fd 6
->        webserver-612     [002] .....   135.300530: io_uring_file_get: rin=
-g 0000000078f4a859, fd 7
->        webserver-612     [002] .....   135.300531: io_uring_submit_sqe: r=
-ing 0000000078f4a859, req 0000000085e5cac4, op 30, data 0xf3e096f0, flags 8=
-196, non block 1, sq_thread 0
->        webserver-612     [002] .....   135.300532: io_uring_submit_sqe: r=
-ing 0000000078f4a859, req 0000000008e6a863, op 15, data 0x0, flags 2097152,=
- non block 1, sq_thread 0
->        webserver-612     [002] .....   135.300532: io_uring_link: ring 00=
-00000078f4a859, request 0000000008e6a863 linked after 0000000085e5cac4 ng 0=
-000000078f4a859, request 0000000085e5cac4, flags 798724, normal queue, work=
- 0000000036c4ff52
->        webserver-612     [002] .....   135.300537: io_uring_cqring_wait: =
-ring 0000000078f4a859, min_events 1
->      iou-wrk-612-647     [003] ...1.   135.300553: io_uring_complete: rin=
-g 0000000078f4a859, user_data 0xf3e096f0, result 4608, cflags 0
->      iou-wrk-612-647     [003] d..2.   135.300557: io_uring_complete: rin=
-g 0000000078f4a859, user_data 0x0, result -125, cflags 0
->        webserver-612     [002] .....   135.300566: io_uring_file_get: rin=
-g 0000000078f4a859, fd 6
->        webserver-612     [002] .....   135.300567: io_uring_file_get: rin=
-g 0000000078f4a859, fd 7
->        webserver-612     [002] .....   135.300567: io_uring_submit_sqe: r=
-ing 0000000078f4a859, req 000000000f7fdd39, op 30, data 0xf3e096f0, flags 8=
-196, non block 1, sq_thread 0
->        webserver-612     [002] .....   135.300568: io_uring_submit_sqe: r=
-ing 0000000078f4a859, req 00000000741c64e1, op 15, data 0x0, flags 2097152,=
- non block 1, sq_thread 0
->        webserver-612     [002] .....   135.300569: io_uring_link: ring 00=
-00000078f4a859, request 00000000741c64e1 linked after 000000000f7fdd39
->        webserver-612     [002] .....   135.300570: io_uring_queue_async_w=
-ork: ring 0000000078f4a859, request 000000000f7fdd39, flags 798724, normal =
-queue, work 00000000fc4accf1
->        webserver-612     [002] .....   135.300574: io_uring_cqring_wait: =
-ring 0000000078f4a859, min_events 1
->      iou-wrk-612-647     [003] ...1.   135.300594: io_uring_complete: rin=
-g 0000000078f4a859, user_data 0xf3e096f0, result 4352, cflags 0
->      iou-wrk-612-647     [003] d..2.   135.300598: io_uring_complete: rin=
-g 0000000078f4a859, user_data 0x0, result -125, cflags 0
->        webserver-612     [002] .....   135.300607: io_uring_file_get: rin=
-g 0000000078f4a859, fd 6
->        webserver-612     [002] .....   135.300608: io_uring_file_get: rin=
-g 0000000078f4a859, fd 7
->        webserver-612     [002] .....   135.300608: io_uring_submit_sqe: r=
-ing 0000000078f4a859, req 0000000052b47765, op 30, data 0xf3e096f0, flags 8=
-196, non block 1, sq_thread 0
->        webserver-612     [002] .....   135.300610: io_uring_submit_sqe: r=
-ing 0000000078f4a859, req 000000003904ded9, op 15, data 0x0, flags 2097152,=
- non block 1, sq_thread 0
->        webserver-612     [002] .....   135.300611: io_uring_link: ring 00=
-00000078f4a859, request 000000003904ded9 linked after 0000000052b47765
->        webserver-612     [002] .....   135.300612: io_uring_queue_async_w=
-ork: ring 0000000078f4a859, request 0000000052b47765, flags 798724, normal =
-queue, work 00000000e11c8599
->        webserver-612     [002] .....   135.300615: io_uring_cqring_wait: =
-ring 0000000078f4a859, min_events 1
->      iou-wrk-612-647     [003] ...1.   135.300631: io_uring_complete: rin=
-g 0000000078f4a859, user_data 0xf3e096f0, result 768, cflags 0
->      iou-wrk-612-647     [003] d..2.   135.300634: io_uring_complete: rin=
-g 0000000078f4a859, user_data 0x0, result -125, cflags 0
->        webserver-612     [002] .....   135.301668: io_uring_file_get: rin=
-g 0000000078f4a859, fd 6
->        webserver-612     [002] .....   135.301669: io_uring_submit_sqe: r=
-ing 0000000078f4a859, req 0000000012863980, op 34, data 0x0, flags 8, non b=
-lock 1, sq_thread 0
->        webserver-612     [002] .....   135.301670: io_uring_submit_sqe: r=
-ing 0000000078f4a859, req 00000000f4b07ff9, op 19, data 0x0, flags 0, non b=
-lock 1, sq_thread 0
->        webserver-612     [002] .....   135.301671: io_uring_link: ring 00=
-00000078f4a859, request 00000000f4b07ff9 linked after 0000000012863980
->        webserver-612     [002] .....   135.301672: io_uring_queue_async_w=
-ork: ring 0000000078f4a859, request 0000000012863980, flags 262152, normal =
-queue, work 00000000102270ed
->        webserver-612     [002] .....   135.301740: io_uring_cqring_wait: =
-ring 0000000078f4a859, min_events 1
->      iou-wrk-612-648     [000] ...1.   135.301757: io_uring_complete: rin=
-g 0000000078f4a859, user_data 0x0, result 0, cflags 0
->      iou-wrk-612-648     [000] ...1.   135.301767: io_uring_complete: rin=
-g 0000000078f4a859, user_data 0x0, result 0, cflags 0
->        webserver-612     [002] .....   135.301769: io_uring_cqring_wait: =
-ring 0000000078f4a859, min_events 1
->=20
->=20
-> Userspace said that 768 bytes where missing.
->=20
-> Any ideas for how to debug this or why the async work queue doesn't work =
-with
-> the CAMM but does with ARM-ASM?
-> If I can provide more info that might help, I'll try to produce and
-> provide it. As there are multiple components involved, I'm not sure
-> where to start or what information is useful. Currently looks like CAAM
-> is the culprit.
-
-Can you provide test code or at least illustrate with code how you plug
-the components together?
-
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde           |
-Embedded Linux                   | https://www.pengutronix.de  |
-Vertretung West/Dortmund         | Phone: +49-231-2826-924     |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-5555 |
-
---xmctf7v3rssq5mte
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEBsvAIBsPu6mG7thcrX5LkNig010FAmJ0I4wACgkQrX5LkNig
-011SSAf+LZh93GgtIwBJ809iPElSMdRYIi9XWArqcAF+wPlT5Ra3dPIBk51lecnM
-DMi2jJeefRP6KYLUkBTOcw6BD44WOPLDHmxe6HukF/B0kVyAMNorQQmnWyRZOrk4
-VCxeILebccTs75nSY+vM0lPDOpcGp6Nk+i95yQ7HQcRRcLf2baRvocLy8vuWEFl1
-Jfg4SzSOIngWcG9Dp8gL44Ey7UXeC/UxvB7ieTivKX0M5VZjadxHQiGn/R1txef5
-Z5ZmB9sQNxy6AnnPz31xLccydqrPi+5DLewYth1pCNaoHuUFmxMnOXd0keUv9R9i
-YXHR8vvtAF0n4isRU8aHD9YoTrLXkA==
-=J+2o
------END PGP SIGNATURE-----
-
---xmctf7v3rssq5mte--
+T24gNS81LzIyIDEyOjExIFBNLCBKZW5zIEF4Ym9lIHdyb3RlOg0KPiBPbiA1LzUvMjIgMTowMyBQ
+TSwgSmVucyBBeGJvZSB3cm90ZToNCj4gPiBPbiA1LzUvMjIgMTI6MzcgUE0sIENsYXkgTWF5ZXJz
+IHdyb3RlOg0KPiA+Pj4gRnJvbTogS2FuY2hhbiBKb3NoaQ0KPiA+Pj4gU2VudDogV2VkbmVzZGF5
+LCBNYXkgNCwgMjAyMiAxMTowNiBQTQ0KPiA+Pj4gLS0tDQo+ID4+DQo+ID4+PiAgZHJpdmVycy9u
+dm1lL2hvc3QvaW9jdGwuYyB8IDQ3ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKyst
+LS0NCj4gLS0NCj4gPj4+ICAxIGZpbGUgY2hhbmdlZCwgNDIgaW5zZXJ0aW9ucygrKSwgNSBkZWxl
+dGlvbnMoLSkNCj4gPj4+DQo+ID4+PiArc3RhdGljIGludCBudm1lX2V4ZWN1dGVfdXNlcl9ycShz
+dHJ1Y3QgcmVxdWVzdCAqcmVxLCB2b2lkIF9fdXNlcg0KPiA+Pj4gKm1ldGFfYnVmZmVyLA0KPiA+
+Pj4gKwkJdW5zaWduZWQgbWV0YV9sZW4sIHU2NCAqcmVzdWx0KQ0KPiA+Pj4gK3sNCj4gPj4+ICsJ
+c3RydWN0IGJpbyAqYmlvID0gcmVxLT5iaW87DQo+ID4+PiArCWJvb2wgd3JpdGUgPSBiaW9fb3Ao
+YmlvKSA9PSBSRVFfT1BfRFJWX09VVDsNCj4gPj4NCj4gPj4gSSdtIGdldHRpbmcgYSBOVUxMIHB0
+ciBhY2Nlc3Mgb24gdGhlIGZpcnN0DQo+IGlvY3RsKE5WTUVfSU9DVExfQURNSU42NF9DTUQpDQo+
+ID4+IEkgc2VuZCAtIGl0IGhhcyBubyB1YnVmZmVyIHNvIEkgdGhpbmsgdGhlcmUncyBubyByZXEt
+PmJpby4NCj4gPg0KPiA+IERvZXMgdGhpcyB3b3JrPw0KDQpJdCBkaWQgbm90ISAgU2FtZSBudWxs
+IHB0ciBkZXJlZiBhdCBuZWFybHkgaWYgbm90IHRoZSBzYW1lIGxvY2F0aW9uLg0KSSBkaWRuJ3Qg
+aW52ZXN0aWdhdGUgdG8gc2VlIHRoZSBsaW5lIG9mIGNvZGUgc2luY2UgeW91IGhhZCBzZW50IHYy
+Lg0KDQo+IA0KPiBUaGlzIG1pZ2h0IGJlIGJldHRlciwgdGhvdWdoIHlvdSdkIG9ubHkgbm90aWNl
+IGlmIHlvdSBoYWQgaW50ZWdyaXR5DQo+IGVuYWJsZWQuIENocmlzdG9waCwgSSdtIGZvbGRpbmcg
+dGhpcyBpbiB3aXRoIHBhdGNoIDMuLi4NCj4gDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9u
+dm1lL2hvc3QvaW9jdGwuYyBiL2RyaXZlcnMvbnZtZS9ob3N0L2lvY3RsLmMNCj4gaW5kZXggOGZl
+N2FkMThhNzA5Li4zZDgyNzc4OWI1MzYgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvbnZtZS9ob3N0
+L2lvY3RsLmMNCj4gKysrIGIvZHJpdmVycy9udm1lL2hvc3QvaW9jdGwuYw0KPiBAQCAtMjEsOSAr
+MjEsMTMgQEAgc3RhdGljIHZvaWQgX191c2VyICpudm1lX3RvX3VzZXJfcHRyKHVpbnRwdHJfdCBw
+dHJ2YWwpDQo+IA0KPiAgc3RhdGljIGlubGluZSB2b2lkICpudm1lX21ldGFfZnJvbV9iaW8oc3Ry
+dWN0IGJpbyAqYmlvKQ0KPiAgew0KPiAtCXN0cnVjdCBiaW9faW50ZWdyaXR5X3BheWxvYWQgKmJp
+cCA9IGJpb19pbnRlZ3JpdHkoYmlvKTsNCj4gKwlpZiAoYmlvKSB7DQo+ICsJCXN0cnVjdCBiaW9f
+aW50ZWdyaXR5X3BheWxvYWQgKmJpcCA9IGJpb19pbnRlZ3JpdHkoYmlvKTsNCj4gDQo+IC0JcmV0
+dXJuIGJpcCA/IGJ2ZWNfdmlydChiaXAtPmJpcF92ZWMpIDogTlVMTDsNCj4gKwkJcmV0dXJuIGJp
+cCA/IGJ2ZWNfdmlydChiaXAtPmJpcF92ZWMpIDogTlVMTDsNCj4gKwl9DQo+ICsNCj4gKwlyZXR1
+cm4gTlVMTDsNCj4gIH0NCj4gDQo+ICAvKg0KPiBAQCAtMjA1LDE5ICsyMDksMjAgQEAgc3RhdGlj
+IGludCBudm1lX2V4ZWN1dGVfdXNlcl9ycShzdHJ1Y3QgcmVxdWVzdCAqcmVxLA0KPiB2b2lkIF9f
+dXNlciAqbWV0YV9idWZmZXIsDQo+ICAJCXVuc2lnbmVkIG1ldGFfbGVuLCB1NjQgKnJlc3VsdCkN
+Cj4gIHsNCj4gIAlzdHJ1Y3QgYmlvICpiaW8gPSByZXEtPmJpbzsNCj4gLQlib29sIHdyaXRlID0g
+YmlvX29wKGJpbykgPT0gUkVRX09QX0RSVl9PVVQ7DQo+IC0JaW50IHJldDsNCj4gIAl2b2lkICpt
+ZXRhID0gbnZtZV9tZXRhX2Zyb21fYmlvKGJpbyk7DQo+ICsJaW50IHJldDsNCj4gDQo+ICAJcmV0
+ID0gbnZtZV9leGVjdXRlX3Bhc3N0aHJ1X3JxKHJlcSk7DQo+IA0KPiAgCWlmIChyZXN1bHQpDQo+
+ICAJCSpyZXN1bHQgPSBsZTY0X3RvX2NwdShudm1lX3JlcShyZXEpLT5yZXN1bHQudTY0KTsNCj4g
+LQlpZiAobWV0YSAmJiAhcmV0ICYmICF3cml0ZSkgew0KPiAtCQlpZiAoY29weV90b191c2VyKG1l
+dGFfYnVmZmVyLCBtZXRhLCBtZXRhX2xlbikpDQo+ICsJaWYgKG1ldGEpIHsNCj4gKwkJYm9vbCB3
+cml0ZSA9IGJpb19vcChiaW8pID09IFJFUV9PUF9EUlZfT1VUOw0KPiArDQo+ICsJCWlmICghcmV0
+ICYmICF3cml0ZSAmJiBjb3B5X3RvX3VzZXIobWV0YV9idWZmZXIsIG1ldGEsDQo+IG1ldGFfbGVu
+KSkNCj4gIAkJCXJldCA9IC1FRkFVTFQ7DQo+ICsJCWtmcmVlKG1ldGEpOw0KPiAgCX0NCj4gLQlr
+ZnJlZShtZXRhKTsNCj4gIAlpZiAoYmlvKQ0KPiAgCQlibGtfcnFfdW5tYXBfdXNlcihiaW8pOw0K
+PiAgCWJsa19tcV9mcmVlX3JlcXVlc3QocmVxKTsNCj4gDQo+IC0tDQo+IEplbnMgQXhib2UNCg0K
+VGhpcyBkb2VzIHdvcmsgYW5kIGdvdCBtZSBwYXN0IHRoZSBudWxsIHB0ciBzZWdmYXVsdC4NCg0K
+Q2xheS4NCg==

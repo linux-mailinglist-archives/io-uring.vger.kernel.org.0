@@ -2,151 +2,141 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A538851C254
-	for <lists+io-uring@lfdr.de>; Thu,  5 May 2022 16:21:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ACE6451C4FE
+	for <lists+io-uring@lfdr.de>; Thu,  5 May 2022 18:17:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1380563AbiEEOZc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 5 May 2022 10:25:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50596 "EHLO
+        id S235386AbiEEQV0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 5 May 2022 12:21:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43966 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1380581AbiEEOZa (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 5 May 2022 10:25:30 -0400
-Received: from us-smtp-delivery-74.mimecast.com (us-smtp-delivery-74.mimecast.com [170.10.129.74])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B9EAA5A5B9
-        for <io-uring@vger.kernel.org>; Thu,  5 May 2022 07:21:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1651760505;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=PV6wBZmVtTcLzLdqX7LnKeJ6D+LpJnxwl2ACNXXhtMk=;
-        b=LGgYF3MLA4m4ebIpj/zJxO5NAwTcnUgjOCfUNF32U8wEJSTax4KPE3q57O7pDvCppw13UR
-        yXwcZRqrqr+pxsOiB9REgfMQ+l8zrldbwC7aLCPYS2o98Yn5J/wvW1vfzw1jYy6Gg9i4TV
-        IXmANyRwR2FIZL6qL0yYLb4yxlG8YR0=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-329-uFpv01qhPQeVUzK0NZtdMg-1; Thu, 05 May 2022 10:21:43 -0400
-X-MC-Unique: uFpv01qhPQeVUzK0NZtdMg-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id CA684395AFE1;
-        Thu,  5 May 2022 14:21:30 +0000 (UTC)
-Received: from T590 (ovpn-8-24.pek2.redhat.com [10.72.8.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B9DCF416157;
-        Thu,  5 May 2022 14:21:21 +0000 (UTC)
-Date:   Thu, 5 May 2022 22:21:15 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Kanchan Joshi <joshi.k@samsung.com>
-Cc:     axboe@kernel.dk, hch@lst.de, io-uring@vger.kernel.org,
-        linux-nvme@lists.infradead.org, asml.silence@gmail.com,
-        mcgrof@kernel.org, shr@fb.com, joshiiitr@gmail.com,
-        anuj20.g@samsung.com, gost.dev@samsung.com
-Subject: Re: [PATCH v4 2/5] block: wire-up support for passthrough plugging
-Message-ID: <YnPdW7T8JVRsNeno@T590>
-References: <20220505060616.803816-1-joshi.k@samsung.com>
- <CGME20220505061146epcas5p3919c48d58d353a62a5858ee10ad162a0@epcas5p3.samsung.com>
- <20220505060616.803816-3-joshi.k@samsung.com>
+        with ESMTP id S230456AbiEEQVY (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 5 May 2022 12:21:24 -0400
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C45E05BD11
+        for <io-uring@vger.kernel.org>; Thu,  5 May 2022 09:17:42 -0700 (PDT)
+Received: by mail-pj1-x102d.google.com with SMTP id t11-20020a17090ad50b00b001d95bf21996so8457115pju.2
+        for <io-uring@vger.kernel.org>; Thu, 05 May 2022 09:17:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=XpEfJwZXAttT4SE3ez9GJgKqMQHTmELAKwKHFiFRKJ8=;
+        b=y5pm16LZdhbwVc02RrBbqrkH7GlcIxhswde72UVKlz12Zf/6rukkdt9DcoCVRFjVcv
+         3Z1Huc128c1QS+18rGGTaPg4RPf0ehnXva3NUvszjTTLEREkWRtE/i/jbzTW5lpuP7AK
+         0y+v2Y+n1VEn6O95BDk9VTeV7F9TUKbzZIRGsNU8OqJVhv+jaKb2dx2MIUB0Mf1sPWwb
+         RGnv8sH44WrftruKVD0TecPnt4B30bATwyqTHTE+G92+K6KUsYNnHkkZuDD+hvYzrOJo
+         rUyIKDdfgEth/U6AUTnpCXw4ti+8jRqRjMFMIgX2tBx/CzcWr9bIQU5kkXb7xFxc8hpt
+         aqsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=XpEfJwZXAttT4SE3ez9GJgKqMQHTmELAKwKHFiFRKJ8=;
+        b=y0AYPESc5geoikLmjAe5jWcQlukvx0iUUWIRUnHK67VV3/wKA+vgEOXg14Zh10WImp
+         q5GExiB7rWfYIXVbQe5ZsWGakaWLjjWx1RJa2JEDW26JLx7NzPzDsNQLGLJ0RsRa+JUR
+         XSvMz4o6n/Jp8NVsJ2MLwfk4UwEHQ5UscUGF+bP16FkBozjdZ0E8y7g+ASHRbYHFtMrR
+         oVN15Ue/+XU7jIEviafsNp9F8IQlJ2OFRqt8txJHsZKv5/+RWinq9pB2SsgpMKn7Qxj/
+         dbXet9DJ7U4Uiw064Es7CxujA2htLZNu7a1OnBsceRnvGuUGwVDU699b0mynye0b+1B3
+         RLsA==
+X-Gm-Message-State: AOAM532XeNpBUY5i/YrD44lEtCpj3U4cJeYCs2J7wyw22F4uHu/K0BAg
+        o+IIF/gkaKUAM3oltr82SD0YzQ==
+X-Google-Smtp-Source: ABdhPJzUJaZxFJ3VIVHned8hOSB58hXS65Ia/i3cW5fG+fWjdM5G/EEO4OJEX88iWIh/FNrMwQhBpw==
+X-Received: by 2002:a17:90b:3b8e:b0:1dc:94f2:1bc3 with SMTP id pc14-20020a17090b3b8e00b001dc94f21bc3mr7126632pjb.193.1651767462144;
+        Thu, 05 May 2022 09:17:42 -0700 (PDT)
+Received: from [192.168.4.166] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
+        by smtp.gmail.com with ESMTPSA id e14-20020a6558ce000000b003c14af50639sm1519783pgu.81.2022.05.05.09.17.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 May 2022 09:17:41 -0700 (PDT)
+Message-ID: <1af73495-d4a6-d6fd-0a03-367016385c92@kernel.dk>
+Date:   Thu, 5 May 2022 10:17:39 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220505060616.803816-3-joshi.k@samsung.com>
-X-Scanned-By: MIMEDefang 2.85 on 10.11.54.10
-X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH v4 1/5] fs,io_uring: add infrastructure for uring-cmd
+Content-Language: en-US
+To:     Kanchan Joshi <joshi.k@samsung.com>, hch@lst.de
+Cc:     io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
+        asml.silence@gmail.com, ming.lei@redhat.com, mcgrof@kernel.org,
+        shr@fb.com, joshiiitr@gmail.com, anuj20.g@samsung.com,
+        gost.dev@samsung.com
+References: <20220505060616.803816-1-joshi.k@samsung.com>
+ <CGME20220505061144epcas5p3821a9516dad2b5eff5a25c56dbe164df@epcas5p3.samsung.com>
+ <20220505060616.803816-2-joshi.k@samsung.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20220505060616.803816-2-joshi.k@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, May 05, 2022 at 11:36:13AM +0530, Kanchan Joshi wrote:
-> From: Jens Axboe <axboe@kernel.dk>
-> 
-> Add support for plugging in passthrough path. When plugging is enabled, the
-> requests are added to a plug instead of getting dispatched to the driver.
-> And when the plug is finished, the whole batch gets dispatched via
-> ->queue_rqs which turns out to be more efficient. Otherwise dispatching
-> used to happen via ->queue_rq, one request at a time.
-> 
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> ---
->  block/blk-mq.c | 73 +++++++++++++++++++++++++++-----------------------
->  1 file changed, 39 insertions(+), 34 deletions(-)
-> 
-> diff --git a/block/blk-mq.c b/block/blk-mq.c
-> index 84d749511f55..2cf011b57cf9 100644
-> --- a/block/blk-mq.c
-> +++ b/block/blk-mq.c
-> @@ -2340,6 +2340,40 @@ void __blk_mq_insert_request(struct blk_mq_hw_ctx *hctx, struct request *rq,
->  	blk_mq_hctx_mark_pending(hctx, ctx);
->  }
->  
-> +/*
-> + * Allow 2x BLK_MAX_REQUEST_COUNT requests on plug queue for multiple
-> + * queues. This is important for md arrays to benefit from merging
-> + * requests.
-> + */
-> +static inline unsigned short blk_plug_max_rq_count(struct blk_plug *plug)
+On 5/5/22 12:06 AM, Kanchan Joshi wrote:
+> +static int io_uring_cmd_prep(struct io_kiocb *req,
+> +			     const struct io_uring_sqe *sqe)
 > +{
-> +	if (plug->multiple_queues)
-> +		return BLK_MAX_REQUEST_COUNT * 2;
-> +	return BLK_MAX_REQUEST_COUNT;
+> +	struct io_uring_cmd *ioucmd = &req->uring_cmd;
+> +	struct io_ring_ctx *ctx = req->ctx;
+> +
+> +	if (ctx->flags & IORING_SETUP_IOPOLL)
+> +		return -EOPNOTSUPP;
+> +	/* do not support uring-cmd without big SQE/CQE */
+> +	if (!(ctx->flags & IORING_SETUP_SQE128))
+> +		return -EOPNOTSUPP;
+> +	if (!(ctx->flags & IORING_SETUP_CQE32))
+> +		return -EOPNOTSUPP;
+> +	if (sqe->ioprio || sqe->rw_flags)
+> +		return -EINVAL;
+> +	ioucmd->cmd = sqe->cmd;
+> +	ioucmd->cmd_op = READ_ONCE(sqe->cmd_op);
+> +	return 0;
 > +}
-> +
-> +static void blk_add_rq_to_plug(struct blk_plug *plug, struct request *rq)
-> +{
-> +	struct request *last = rq_list_peek(&plug->mq_list);
-> +
-> +	if (!plug->rq_count) {
-> +		trace_block_plug(rq->q);
-> +	} else if (plug->rq_count >= blk_plug_max_rq_count(plug) ||
-> +		   (!blk_queue_nomerges(rq->q) &&
-> +		    blk_rq_bytes(last) >= BLK_PLUG_FLUSH_SIZE)) {
-> +		blk_mq_flush_plug_list(plug, false);
-> +		trace_block_plug(rq->q);
-> +	}
-> +
-> +	if (!plug->multiple_queues && last && last->q != rq->q)
-> +		plug->multiple_queues = true;
-> +	if (!plug->has_elevator && (rq->rq_flags & RQF_ELV))
-> +		plug->has_elevator = true;
-> +	rq->rq_next = NULL;
-> +	rq_list_add(&plug->mq_list, rq);
-> +	plug->rq_count++;
-> +}
-> +
->  /**
->   * blk_mq_request_bypass_insert - Insert a request at dispatch list.
->   * @rq: Pointer to request to be inserted.
-> @@ -2353,7 +2387,12 @@ void blk_mq_request_bypass_insert(struct request *rq, bool at_head,
->  				  bool run_queue)
->  {
->  	struct blk_mq_hw_ctx *hctx = rq->mq_hctx;
-> +	struct blk_plug *plug = current->plug;
->  
-> +	if (plug) {
-> +		blk_add_rq_to_plug(plug, rq);
-> +		return;
-> +	}
 
-This way looks a bit fragile.
+While looking at the other suggested changes, I noticed a more
+fundamental issue with the passthrough support. For any other command,
+SQE contents are stable once prep has been done. The above does do that
+for the basic items, but this case is special as the lower level command
+itself resides in the SQE.
 
-blk_mq_request_bypass_insert() is called for dispatching io request too,
-such as blk_insert_cloned_request(), then the request may be inserted to
-scheduler finally from blk_mq_flush_plug_list().
+For cases where the command needs deferral, it's problematic. There are
+two main cases where this can happen:
 
-Another issue in blk_execute_rq(), the request may stay in plug list
-before polling, then hang forever.
+- The issue attempt yields -EAGAIN (we ran out of requests, etc). If you
+  look at other commands, if they have data that doesn't fit in the
+  io_kiocb itself, then they need to allocate room for that data and have
+  it be persistent
 
-Just wondering why not adding the pt request to plug in blk_execute_rq_nowait()
-explicitly?
+- Deferral is specified by the application, using eg IOSQE_IO_LINK or
+  IOSQE_ASYNC.
 
+We're totally missing support for both of these cases. Consider the case
+where the ring is setup with an SQ size of 1. You prep a passthrough
+command (request A) and issue it with io_uring_submit(). Due to one of
+the two above mentioned conditions, the internal request is deferred.
+Either it was sent to ->uring_cmd() but we got -EAGAIN, or it was
+deferred even before that happened. The application doesn't know this
+happened, it gets another SQE to submit a new request (request B). Fills
+it in, calls io_uring_submit(). Since we only have one SQE available in
+that ring, when request A gets re-issued, it's now happily reading SQE
+contents from command B. Oops.
 
-Thanks, 
-Ming
+This is why prep handlers are the only ones that get an sqe passed to
+them. They are supposed to ensure that we no longer read from the SQE
+past that. Applications can always rely on that fact that once
+io_uring_submit() has been done, which consumes the SQE in the SQ ring,
+that no further reads are done from that SQE.
+
+IOW, we need io_req_prep_async() handling for URING_CMD, which needs to
+allocate the full 80 bytes and copy them over. Subsequent issue attempts
+will then use that memory rather than the SQE parts. Just need to find a
+sane way to do that so we don't need to make the usual prep + direct
+issue path any slower.
+
+-- 
+Jens Axboe
 

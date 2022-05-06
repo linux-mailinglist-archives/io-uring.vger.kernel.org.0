@@ -2,66 +2,66 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DA81A51DA65
-	for <lists+io-uring@lfdr.de>; Fri,  6 May 2022 16:19:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC95951DA93
+	for <lists+io-uring@lfdr.de>; Fri,  6 May 2022 16:32:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1442032AbiEFOWs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 6 May 2022 10:22:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45432 "EHLO
+        id S234940AbiEFOgC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 6 May 2022 10:36:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1391048AbiEFOWp (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 6 May 2022 10:22:45 -0400
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D24FF68F92
-        for <io-uring@vger.kernel.org>; Fri,  6 May 2022 07:19:01 -0700 (PDT)
-Received: by mail-pj1-x1033.google.com with SMTP id iq2-20020a17090afb4200b001d93cf33ae9so10929065pjb.5
-        for <io-uring@vger.kernel.org>; Fri, 06 May 2022 07:19:01 -0700 (PDT)
+        with ESMTP id S1346332AbiEFOgB (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 6 May 2022 10:36:01 -0400
+Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D2BA69294
+        for <io-uring@vger.kernel.org>; Fri,  6 May 2022 07:32:18 -0700 (PDT)
+Received: by mail-pl1-x631.google.com with SMTP id i17so7601637pla.10
+        for <io-uring@vger.kernel.org>; Fri, 06 May 2022 07:32:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=accQPhvfmiVPCnKwN/hY47uLVNCNPpovQkDbWH1UEwg=;
-        b=aH7yUmqD5X4ykrrVGRfBk4DNO4T60/XMN8rKenJoObEBazV5ls1eqC10Y1bNfC68k5
-         JG9za2jNfe9e4ASYfASUva3yplGfuHE5sRog/S3qE8Kmus9STW2yfYdPu9/4spDd1xBU
-         MxEJ8hngBwW33vxZtVFEmWN7omp7ivfnKYLQVHmMxaWC+pj+Pvj8bIAH8PglFO563Oxx
-         R7kvaO1fl1XC6rlIZPK7DGPs9i/afNhoBlhYUFKyBBupgMG0wonDirIpduCpy6zHaafT
-         GkI+Ap1caWdeQDzxaHE6RwR8cUmn9y7U3/nEWULhNpwq9vU7eR4M0dS7mB9FcMmdAD4x
-         3+rg==
+        bh=IKnXMed6jjWK05WYFoholdPPT2WTMXKXyNFJA5ty2Dk=;
+        b=0kcU7geC2AF508oHhQS9Aw5hC5iqBBoisB+DWdgDAmQYPIJ2O/4jUueZ78D02Yd2LQ
+         OUN1VDfPfgyoRSDtWDQK8jb3VfQXYCRR4IzNQYQ3ut427FFO7QTLye+05E9x9zEXhr2F
+         wlJ102s3dIPqTpCCTth4dsluVPd3FdGvhpJUl6NVrBAnEZIS1cwbij+kmqjxuab3grqE
+         ti4uAHJY1Gce2w08VRZb4Tug+1v1RNH5/X/e6Ib7dRPhvSyGY+9ta/Eja+uyQ67Mfv0h
+         K3XaKKIDr2asH+uZLMvaFbwmplP2XJCqIUDiFbqTtALM+5WISexAHhuyzz/kMigmsI5D
+         o0OA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=accQPhvfmiVPCnKwN/hY47uLVNCNPpovQkDbWH1UEwg=;
-        b=M8XVAxky6/nx4M5GN4zxBkZbvgplJcVdC8hl5WqxdfaKJYViHwxF8oTXdwq0Llscjz
-         ZZG4K7cflBmTz4RVnlhuuWDeBgRpAWCCFzz3PxcDYZuBtf00ic2vXyqNCNawea4Bwh2Z
-         fXUqi2eHOnevHwrEFdT8PumnPZAwQlkDUP8i2DQ9BgilBwa0rU2k4jsbt90RTbBu68ge
-         7zZvTxtQvn9PuNJHW6j5C5a9SrRy/flFStNmFpanS89Db8BzYZ0jDGGtcaccQ8j4whG/
-         /ZQVm3IZRK7X8qCdkUOeRR4Ji9JPRTo6PVOT9hTLzt3R1JQMiOqMaNnvcFr6N3hgYBeF
-         nOhA==
-X-Gm-Message-State: AOAM531XAQlD4kEG+htsdBIE3ZKRPBLuyiLaTal33slsW6pyNNNf7k1l
-        oxzjbprfuQaf1Txl6oIB04igbw==
-X-Google-Smtp-Source: ABdhPJz5gul93CFq40i2+RgsWY+4sxcteyEwA3CJMkl6btcXC8rTR7O03Ius5LHBYbIyxGarxOG6Sw==
-X-Received: by 2002:a17:902:f64d:b0:14f:fb63:f1a with SMTP id m13-20020a170902f64d00b0014ffb630f1amr3807560plg.159.1651846741310;
-        Fri, 06 May 2022 07:19:01 -0700 (PDT)
+        bh=IKnXMed6jjWK05WYFoholdPPT2WTMXKXyNFJA5ty2Dk=;
+        b=gt4fv6EXV79wJ2qtGfttalIX+rPKbVqQ602hF7RaypwHqPny6Y+l6/ygeg20V+944s
+         XdILjACx0/47+jdfYbN1QgDx66imIPVdonMqE/7lHb8dn+Rce46wrKITHFLE15FknFq3
+         v3PTG+zuRvDPoFyF2/vrWcVLgCWd6wSh7pFKD6cVVdV4s6FwoDoxoo/eDEdm25Uu00HT
+         1wHfsVygnI4d56UoKTn2j44/L44/3vdY3fNhg5Rr7AZs6PiRmyKqE9bz24Us0azb+8Jk
+         6Zjgnmi4ZGUElTD/plHB5U+zM4U3ltQGsysDOe4zUtdzTlyjrSkXAyy0iFDAUU34rnuM
+         xMPQ==
+X-Gm-Message-State: AOAM533r0cyW+4epiU5TP4/mdU+KzqIT8WJGbHMVxjrM0Uic0d43cVfp
+        0Wi1j5bXaOJ+0NVXiDwz7WLQgg==
+X-Google-Smtp-Source: ABdhPJwVyFybgmdHBomugJ71MT4xk5tQqyokCS5kc4G+IAjCk8YTvnuhoAqBC71a7VwwMtOibv+lAg==
+X-Received: by 2002:a17:903:2ca:b0:156:f1cc:7cb6 with SMTP id s10-20020a17090302ca00b00156f1cc7cb6mr3939764plk.174.1651847537881;
+        Fri, 06 May 2022 07:32:17 -0700 (PDT)
 Received: from [192.168.4.166] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id f4-20020a17090274c400b0015ea4173bd6sm1764099plt.195.2022.05.06.07.19.00
+        by smtp.gmail.com with ESMTPSA id w5-20020a170902ca0500b0015e8d4eb285sm1773280pld.207.2022.05.06.07.32.16
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 May 2022 07:19:00 -0700 (PDT)
-Message-ID: <5ce3d6c7-42f9-28c3-0800-4da399adaaea@kernel.dk>
-Date:   Fri, 6 May 2022 08:18:59 -0600
+        Fri, 06 May 2022 07:32:17 -0700 (PDT)
+Message-ID: <b60eb1c5-4836-5f62-315e-211a0fe03362@kernel.dk>
+Date:   Fri, 6 May 2022 08:32:16 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
  Thunderbird/91.8.1
-Subject: Re: [PATCH v2 0/5] fast poll multishot mode
+Subject: Re: [PATCH 1/5] io_uring: add IORING_ACCEPT_MULTISHOT for accept
 Content-Language: en-US
 To:     Hao Xu <haoxu.linux@gmail.com>, io-uring@vger.kernel.org
 Cc:     Pavel Begunkov <asml.silence@gmail.com>,
         linux-kernel@vger.kernel.org
 References: <20220506070102.26032-1-haoxu.linux@gmail.com>
- <b4d23f42-36f4-353a-1f44-c12178f0a2b3@gmail.com>
+ <20220506070102.26032-2-haoxu.linux@gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <b4d23f42-36f4-353a-1f44-c12178f0a2b3@gmail.com>
+In-Reply-To: <20220506070102.26032-2-haoxu.linux@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -74,20 +74,34 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/6/22 1:36 AM, Hao Xu wrote:
-> Hi All,
-> I actually had a question about the current poll code, from the code it
-> seems when we cancel a poll-like request, it will ignore the existing
-> events and just raise a -ECANCELED cqe though I haven't tested it. Is
-> this by design or am I missing something?
+On 5/6/22 1:00 AM, Hao Xu wrote:
+> From: Hao Xu <howeyxu@tencent.com>
+> 
+> add an accept_flag IORING_ACCEPT_MULTISHOT for accept, which is to
+> support multishot.
+> 
+> Signed-off-by: Hao Xu <howeyxu@tencent.com>
+> ---
+>  include/uapi/linux/io_uring.h | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+> index fad63564678a..73bc7e54ac18 100644
+> --- a/include/uapi/linux/io_uring.h
+> +++ b/include/uapi/linux/io_uring.h
+> @@ -213,6 +213,11 @@ enum {
+>  #define IORING_ASYNC_CANCEL_FD	(1U << 1)
+>  #define IORING_ASYNC_CANCEL_ANY	(1U << 2)
+>  
+> +/*
+> + * accept flags stored in accept_flags
+> + */
+> +#define IORING_ACCEPT_MULTISHOT	(1U << 15)
 
-That's by design, but honestly I don't think anyone considered the case
-where it's being canceled but has events already. For that case, I think
-we should follow the usual logic of only returning an error (canceled)
-if we don't have events, if we have events just return them. For
-multi-shot, obviously also terminate, but same logic there.
-
-Care to do a separate patch for that?
+It isn't stored in accept_flags, is it? This is an io_uring private
+flag, and it's in ioprio. Which is honestly a good place for per-op
+private flags, since nobody really uses ioprio outside of read/write
+style requests. But the comment is wrong :-)
 
 -- 
 Jens Axboe

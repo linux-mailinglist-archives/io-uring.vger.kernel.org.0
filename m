@@ -2,49 +2,61 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C610B51D4AB
-	for <lists+io-uring@lfdr.de>; Fri,  6 May 2022 11:33:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7811551D62F
+	for <lists+io-uring@lfdr.de>; Fri,  6 May 2022 13:05:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1390653AbiEFJdt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 6 May 2022 05:33:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44860 "EHLO
+        id S242030AbiEFLJh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 6 May 2022 07:09:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40748 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1390575AbiEFJde (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 6 May 2022 05:33:34 -0400
-Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A350B65D27;
-        Fri,  6 May 2022 02:29:20 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-2-147.pa.nsw.optusnet.com.au [49.181.2.147])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id D916110E6631;
-        Fri,  6 May 2022 19:29:18 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1nmuGx-008fB5-EV; Fri, 06 May 2022 19:29:15 +1000
-Date:   Fri, 6 May 2022 19:29:15 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Stefan Roesch <shr@fb.com>
-Cc:     io-uring@vger.kernel.org, kernel-team@fb.com, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH v1 11/18] xfs: add async buffered write support
-Message-ID: <20220506092915.GI1098723@dread.disaster.area>
-References: <20220426174335.4004987-1-shr@fb.com>
- <20220426174335.4004987-12-shr@fb.com>
- <20220426225652.GS1544202@dread.disaster.area>
- <30f2920c-5262-7cb0-05b5-6e84a76162a7@fb.com>
- <20220428215442.GW1098723@dread.disaster.area>
- <19d411e5-fe1f-a3f8-36e0-87284a1c02f3@fb.com>
+        with ESMTP id S233719AbiEFLJg (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 6 May 2022 07:09:36 -0400
+Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 821462B1A2;
+        Fri,  6 May 2022 04:05:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1651835152; x=1683371152;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/COp8gUNtv/XMz0nfxIIgbYPQUzYcinwKw57ktyNo6g=;
+  b=EDOWJefL2kjeDVss2qb+KwExVf49dfaIPQyi5E8z8b15fe38hjKGPN71
+   nYz2ByZJBWFc+I9ELfWloYfqVH3TjIChD+s6kz/mAsAfbV0D5j42H1wTs
+   8DASpao2qTBIV8eNEO64Jp9ruotRstFEBXFgJm1X7Pn+FX9ccGqEowiFQ
+   6KyhkJRa85PRg73XfUOyyflJB1brVlpFCQxFXSCqpoqfm6wgWEoWCZUxL
+   S3ueBXrcAVfNeCiB/ixy/ma7wj+iLQHsBUUJNylZ9rqAF8uUmiQ2uEBQC
+   JfCoxfpS2y7l8zHMVPtI8Zkm1Lb+Q47Lp/C1BuE5irElWTZRvqmaCEr/F
+   A==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10338"; a="268582732"
+X-IronPort-AV: E=Sophos;i="5.91,203,1647327600"; 
+   d="scan'208";a="268582732"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2022 04:05:52 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.91,203,1647327600"; 
+   d="scan'208";a="621781981"
+Received: from lkp-server01.sh.intel.com (HELO 5056e131ad90) ([10.239.97.150])
+  by fmsmga008.fm.intel.com with ESMTP; 06 May 2022 04:05:50 -0700
+Received: from kbuild by 5056e131ad90 with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1nmvmP-000DNW-Uk;
+        Fri, 06 May 2022 11:05:49 +0000
+Date:   Fri, 6 May 2022 19:04:50 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Hao Xu <haoxu.linux@gmail.com>, io-uring@vger.kernel.org
+Cc:     kbuild-all@lists.01.org, Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/5] io_uring: add a helper for poll clean
+Message-ID: <202205061844.HxnOWhwG-lkp@intel.com>
+References: <20220506070102.26032-5-haoxu.linux@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <19d411e5-fe1f-a3f8-36e0-87284a1c02f3@fb.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=6274ea6f
-        a=ivVLWpVy4j68lT4lJFbQgw==:117 a=ivVLWpVy4j68lT4lJFbQgw==:17
-        a=kj9zAlcOel0A:10 a=oZkIemNP1mAA:10 a=FOH2dFAWAAAA:8 a=7-415B0cAAAA:8
-        a=y0LPT60VOqdp-VbHO3cA:9 a=CjuIK1q_8ugA:10 a=i3VuKzQdj-NEYjvDI-p3:22
-        a=biEYGPWJfzWAr4FL6Ov7:22
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+In-Reply-To: <20220506070102.26032-5-haoxu.linux@gmail.com>
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -52,107 +64,64 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, May 02, 2022 at 02:21:17PM -0700, Stefan Roesch wrote:
-> 
-> 
-> On 4/28/22 2:54 PM, Dave Chinner wrote:
-> > On Thu, Apr 28, 2022 at 12:58:59PM -0700, Stefan Roesch wrote:
-> >>
-> >>
-> >> On 4/26/22 3:56 PM, Dave Chinner wrote:
-> >>> On Tue, Apr 26, 2022 at 10:43:28AM -0700, Stefan Roesch wrote:
-> >>>> This adds the async buffered write support to XFS. For async buffered
-> >>>> write requests, the request will return -EAGAIN if the ilock cannot be
-> >>>> obtained immediately.
-> >>>>
-> >>>> Signed-off-by: Stefan Roesch <shr@fb.com>
-> >>>> ---
-> >>>>  fs/xfs/xfs_file.c | 10 ++++++----
-> >>>>  1 file changed, 6 insertions(+), 4 deletions(-)
-> >>>>
-> >>>> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-> >>>> index 6f9da1059e8b..49d54b939502 100644
-> >>>> --- a/fs/xfs/xfs_file.c
-> >>>> +++ b/fs/xfs/xfs_file.c
-> >>>> @@ -739,12 +739,14 @@ xfs_file_buffered_write(
-> >>>>  	bool			cleared_space = false;
-> >>>>  	int			iolock;
-> >>>>  
-> >>>> -	if (iocb->ki_flags & IOCB_NOWAIT)
-> >>>> -		return -EOPNOTSUPP;
-> >>>> -
-> >>>>  write_retry:
-> >>>>  	iolock = XFS_IOLOCK_EXCL;
-> >>>> -	xfs_ilock(ip, iolock);
-> >>>> +	if (iocb->ki_flags & IOCB_NOWAIT) {
-> >>>> +		if (!xfs_ilock_nowait(ip, iolock))
-> >>>> +			return -EAGAIN;
-> >>>> +	} else {
-> >>>> +		xfs_ilock(ip, iolock);
-> >>>> +	}
-> >>>
-> >>> xfs_ilock_iocb().
-> >>>
-> >>
-> >> The helper xfs_ilock_iocb cannot be used as it hardcoded to use iocb->ki_filp to
-> >> get a pointer to the xfs_inode.
-> > 
-> > And the problem with that is?
-> > 
-> > I mean, look at what xfs_file_buffered_write() does to get the
-> > xfs_inode 10 lines about that change:
-> > 
-> > xfs_file_buffered_write(
-> >         struct kiocb            *iocb,
-> >         struct iov_iter         *from)
-> > {
-> >         struct file             *file = iocb->ki_filp;
-> >         struct address_space    *mapping = file->f_mapping;
-> >         struct inode            *inode = mapping->host;
-> >         struct xfs_inode        *ip = XFS_I(inode);
-> > 
-> > In what cases does file_inode(iocb->ki_filp) point to a different
-> > inode than iocb->ki_filp->f_mapping->host? The dio write path assumes
-> > that file_inode(iocb->ki_filp) is correct, as do both the buffered
-> > and dio read paths.
-> > 
-> > What makes the buffered write path special in that
-> > file_inode(iocb->ki_filp) is not correctly set whilst
-> > iocb->ki_filp->f_mapping->host is?
-> > 
-> 
-> In the function xfs_file_buffered_write() the code calls the function 
-> xfs_ilock(). The xfs_inode pointer that is passed in is iocb->ki_filp->f_mapping->host.
-> The one used in xfs_ilock_iocb is ki_filp->f_inode.
-> 
-> After getting the lock, the code in xfs_file_buffered_write calls the
-> function xfs_buffered_write_iomap_begin(). In this function the code
-> calls xfs_ilock() for ki_filp->f_inode in exclusive mode.
-> 
-> If I replace the first xfs_ilock() call with xfs_ilock_iocb(), then it looks
-> like I get a deadlock.
-> 
-> Am I missing something?
+Hi Hao,
 
-Yes. They take different locks. xfs_file_buffered_write() takes the
-IOLOCK, xfs_buffered_write_iomap_begin() takes the ILOCK....
+Thank you for the patch! Yet something to improve:
 
-> I can:
-> - replace the pointer to iocb with pointer to xfs_inode in the function xfs_ilock_iocb()
->   and also pass in the flags value as a parameter.
-> or
-> - create function xfs_ilock_inode(), which xfs_ilock_iocb() calls. The existing
->   calls will not need to change, only the xfs_ilock in xfs_file_buffered_write()
->   will use xfs_ilock_inode().
+[auto build test ERROR on f2e030dd7aaea5a937a2547dc980fab418fbc5e7]
 
-You're making this way more complex than it needs to be. As I said:
+url:    https://github.com/intel-lab-lkp/linux/commits/Hao-Xu/fast-poll-multishot-mode/20220506-150750
+base:   f2e030dd7aaea5a937a2547dc980fab418fbc5e7
+config: m68k-randconfig-r025-20220506 (https://download.01.org/0day-ci/archive/20220506/202205061844.HxnOWhwG-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 11.3.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/acb232e81643bd097278ebdc17038e6f280e7212
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Hao-Xu/fast-poll-multishot-mode/20220506-150750
+        git checkout acb232e81643bd097278ebdc17038e6f280e7212
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.3.0 make.cross W=1 O=build_dir ARCH=m68k SHELL=/bin/bash
 
-> > Regardless, if this is a problem, then just pass the XFS inode to
-> > xfs_ilock_iocb() and this is a moot point.
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
 
-Cheers,
+All errors (new ones prefixed by >>):
 
-Dave.
+   fs/io_uring.c: In function '__io_submit_flush_completions':
+   fs/io_uring.c:2785:40: warning: variable 'prev' set but not used [-Wunused-but-set-variable]
+    2785 |         struct io_wq_work_node *node, *prev;
+         |                                        ^~~~
+   fs/io_uring.c: In function 'io_apoll_task_func':
+>> fs/io_uring.c:6067:9: error: implicit declaration of function '__io_poll_clean'; did you mean '__io_fill_cqe'? [-Werror=implicit-function-declaration]
+    6067 |         __io_poll_clean(req);
+         |         ^~~~~~~~~~~~~~~
+         |         __io_fill_cqe
+   cc1: some warnings being treated as errors
+
+
+vim +6067 fs/io_uring.c
+
+  6058	
+  6059	static void io_apoll_task_func(struct io_kiocb *req, bool *locked)
+  6060	{
+  6061		int ret;
+  6062	
+  6063		ret = io_poll_check_events(req, locked);
+  6064		if (ret > 0)
+  6065			return;
+  6066	
+> 6067		__io_poll_clean(req);
+  6068	
+  6069		if (!ret)
+  6070			io_req_task_submit(req, locked);
+  6071		else
+  6072			io_req_complete_failed(req, ret);
+  6073	}
+  6074	
+
 -- 
-Dave Chinner
-david@fromorbit.com
+0-DAY CI Kernel Test Service
+https://01.org/lkp

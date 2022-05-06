@@ -2,257 +2,253 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 56B4351DE94
-	for <lists+io-uring@lfdr.de>; Fri,  6 May 2022 20:03:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EB3E51DF0C
+	for <lists+io-uring@lfdr.de>; Fri,  6 May 2022 20:22:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1386395AbiEFSH3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 6 May 2022 14:07:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54280 "EHLO
+        id S1391788AbiEFSZx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 6 May 2022 14:25:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46018 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345265AbiEFSH2 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 6 May 2022 14:07:28 -0400
-Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D99F62BE8;
-        Fri,  6 May 2022 11:03:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1651860224; x=1683396224;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=OEeiocmrZj4jCiG19y+euPcErILSfJpaxWvMo3EnA18=;
-  b=QTtbuzxzZOAEbjazWj+MyrtZleqM6J9lJzwEdXuk8gwCdQjdVpBaMQ8O
-   KxU1eaNcmBdb92GLPH+yFX26bsTtqQLkYeQsdsjEq6PANGA0xXSP0AZ+B
-   FGkg8BQ8SHtmq3yuKfYcmlYGFBvAzQg+Div/Mb0MuXoOv/YEwpLhs1Kvx
-   8TOAhCQRRsCO+fxAABz+Y8LQ4Qv5GInIYssaFKut2JZ22mp5WyV9/0kLn
-   urIKPvVKXRcSTaciV7rgb/M3WbEvP71pXjFhr0muXyU55imh5iK2K/5pe
-   8tMq+zxCdiiFAOMzBKgrAemJumFwDrwbftCFCtEXJFBS0VOYsCrlszRmD
-   A==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10339"; a="249069964"
-X-IronPort-AV: E=Sophos;i="5.91,205,1647327600"; 
-   d="scan'208";a="249069964"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2022 11:03:27 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.91,205,1647327600"; 
-   d="scan'208";a="600670596"
-Received: from lkp-server01.sh.intel.com (HELO 5056e131ad90) ([10.239.97.150])
-  by orsmga001.jf.intel.com with ESMTP; 06 May 2022 11:03:24 -0700
-Received: from kbuild by 5056e131ad90 with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1nn2IV-000Djb-Rm;
-        Fri, 06 May 2022 18:03:23 +0000
-Date:   Sat, 7 May 2022 02:02:36 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Hao Xu <haoxu.linux@gmail.com>, io-uring@vger.kernel.org
-Cc:     kbuild-all@lists.01.org, Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5] io_uring: let fast poll support multishot
-Message-ID: <202205070134.WJEE4sX5-lkp@intel.com>
-References: <20220506070102.26032-4-haoxu.linux@gmail.com>
+        with ESMTP id S1346024AbiEFSZw (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 6 May 2022 14:25:52 -0400
+Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 064C068FB3
+        for <io-uring@vger.kernel.org>; Fri,  6 May 2022 11:22:06 -0700 (PDT)
+Received: by mail-pg1-x532.google.com with SMTP id g3so6737467pgg.3
+        for <io-uring@vger.kernel.org>; Fri, 06 May 2022 11:22:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language
+         :from:to:cc:references:in-reply-to:content-transfer-encoding;
+        bh=1Bn6Fj0TZ3zGdE4UsPeAIY1KIpMO6I3COOb6LVgm5QM=;
+        b=k1mPzfH8bNMMBToxDKvurgphXSGrDcJjmoP7k2lH3ZL1n7AEcjQtChmQQNsTFpv/Ub
+         27bb5/4uvjqUEhel5uJOHOGGV3ybtQQutaheYUQ2O0vbFG7SFAnWTUPIdy3vLlrpGWOy
+         PMpzjdVloEDB0WqV+Ubp4r0O/xsPdZkZXxrVnHeBxbyExNR/dZaXwZRQDqdYLPMdwphG
+         0HwuI0+My5YnhRHlclWjhT2J3osLnRmlAZ4M0ukVVvfia3XvRKyxn2WPZuwsUM1Rnbk3
+         SLR/rSeCVgcbudtssulz+gjOVU1PYSrSUFrLYC2PeGssRbDOyPYIl1+e/US4EwXl90T8
+         RbOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:from:to:cc:references:in-reply-to
+         :content-transfer-encoding;
+        bh=1Bn6Fj0TZ3zGdE4UsPeAIY1KIpMO6I3COOb6LVgm5QM=;
+        b=KLgUNCNYLFLhnc1+1HJAT36lcbL17iG+bZqMQ9OjP0zVAtNBXwSVWAyNwVCbjCcr+u
+         N7ETCf+vtVn2y49mqx2M+k88tCDkTOs5LQ9E6OZIZGPcbUzMANVmY6fXkBMKlwvE8PD0
+         TB9bht97HmHSLchw6GI7mPcoC0RX3bBeb9vQoOz8ySt79DlgdjMfKOQYshYxH4wdyog0
+         u6BFMZoL/oceTYESD2XzEBsDXU3MnCj/KyIbgsMqm8FhatPZGBDJ9yMHllDAh04hqf0o
+         UA1MGJ66ajWEuyrc847Tvn0R28/6fxZDRorWnlDioELDvd6Pt+jcNb7/dynpVHLADo3a
+         rZIA==
+X-Gm-Message-State: AOAM533M/YE8CY1afeYmQOncTyWVLSP4B96tw3Q4zvgvPa1fe5XGHr9s
+        NxXUjq44PpDSpe4UzfSaTD4F6A==
+X-Google-Smtp-Source: ABdhPJxNuWDQCcDn422nk7Ac5VbSjn/9TFQs3vXE0ndMEe/9s/U+8P3RxatnzrpBV925WgRr8xissA==
+X-Received: by 2002:a63:2a4a:0:b0:3c1:5f7e:beb3 with SMTP id q71-20020a632a4a000000b003c15f7ebeb3mr3690362pgq.441.1651861324894;
+        Fri, 06 May 2022 11:22:04 -0700 (PDT)
+Received: from [192.168.4.166] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
+        by smtp.gmail.com with ESMTPSA id h19-20020a170902eed300b0015eaa9797e8sm2071976plb.172.2022.05.06.11.22.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 May 2022 11:22:04 -0700 (PDT)
+Message-ID: <4fc454ca-8b3a-28f6-2246-3ffb998f9f11@kernel.dk>
+Date:   Fri, 6 May 2022 12:22:03 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220506070102.26032-4-haoxu.linux@gmail.com>
-X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: linux-stable-5.10-y CVE-2022-1508 of io_uring module
+Content-Language: en-US
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Guo Xuenan <guoxuenan@huawei.com>
+Cc:     lee.jones@linaro.org, linux-kernel@vger.kernel.org,
+        io-uring@vger.kernel.org, yi.zhang@huawei.com, houtao1@huawei.com
+References: <dd122760-5f87-10b1-e50d-388c2631c01a@kernel.dk>
+ <20220505141159.3182874-1-guoxuenan@huawei.com>
+ <7d54523e-372b-759b-1ebb-e0dbc181f18d@kernel.dk>
+ <31ae3426-b835-3a3f-f6d1-aecad24066e8@gmail.com>
+ <6c417ba7-d677-5076-5ce3-d3e174eb8899@kernel.dk>
+In-Reply-To: <6c417ba7-d677-5076-5ce3-d3e174eb8899@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Hao,
+On 5/6/22 10:15 AM, Jens Axboe wrote:
+> On 5/6/22 9:57 AM, Pavel Begunkov wrote:
+>> On 5/6/22 03:16, Jens Axboe wrote:
+>>> On 5/5/22 8:11 AM, Guo Xuenan wrote:
+>>>> Hi, Pavel & Jens
+>>>>
+>>>> CVE-2022-1508[1] contains an patch[2] of io_uring. As Jones reported,
+>>>> it is not enough only apply [2] to stable-5.10.
+>>>> Io_uring is very valuable and active module of linux kernel.
+>>>> I've tried to apply these two patches[3] [4] to my local 5.10 code, I
+>>>> found my understanding of io_uring is not enough to resolve all conflicts.
+>>>>
+>>>> Since 5.10 is an important stable branch of linux, we would appreciate
+>>>> your help in solving this problem.
+>>>
+>>> Yes, this really needs to get buttoned up for 5.10. I seem to recall
+>>> there was a reproducer for this that was somewhat saner than the
+>>> syzbot one (which doesn't do anything for me). Pavel, do you have one?
+>>
+>> No, it was the only repro and was triggering the problem
+>> just fine back then
+> 
+> I modified it a bit and I can now trigger it.
 
-Thank you for the patch! Perhaps something to improve:
+Pavel, why don't we just keep it really simple and just always save the
+iter state in read/write, and use the restore instead of the revert?
 
-[auto build test WARNING on f2e030dd7aaea5a937a2547dc980fab418fbc5e7]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Hao-Xu/fast-poll-multishot-mode/20220506-150750
-base:   f2e030dd7aaea5a937a2547dc980fab418fbc5e7
-config: x86_64-randconfig-s021 (https://download.01.org/0day-ci/archive/20220507/202205070134.WJEE4sX5-lkp@intel.com/config)
-compiler: gcc-11 (Debian 11.2.0-20) 11.2.0
-reproduce:
-        # apt-get install sparse
-        # sparse version: v0.6.4-dirty
-        # https://github.com/intel-lab-lkp/linux/commit/6001c3e95550875d4328aa2ca8b342c42b0e644e
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Hao-Xu/fast-poll-multishot-mode/20220506-150750
-        git checkout 6001c3e95550875d4328aa2ca8b342c42b0e644e
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        make W=1 C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__' O=build_dir ARCH=x86_64 SHELL=/bin/bash
-
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
+Then it's just a trivial backport of ff6165b2d7f6 and the trivial
+io_uring patch after that.
 
 
-sparse warnings: (new ones prefixed by >>)
-   fs/io_uring.c: note: in included file (through include/trace/trace_events.h, include/trace/define_trace.h, include/trace/events/io_uring.h):
-   include/trace/events/io_uring.h:488:1: sparse: sparse: incorrect type in assignment (different base types) @@     expected unsigned int [usertype] op_flags @@     got restricted __kernel_rwf_t const [usertype] rw_flags @@
-   include/trace/events/io_uring.h:488:1: sparse:     expected unsigned int [usertype] op_flags
-   include/trace/events/io_uring.h:488:1: sparse:     got restricted __kernel_rwf_t const [usertype] rw_flags
-   fs/io_uring.c: note: in included file (through include/trace/perf.h, include/trace/define_trace.h, include/trace/events/io_uring.h):
-   include/trace/events/io_uring.h:488:1: sparse: sparse: incorrect type in assignment (different base types) @@     expected unsigned int [usertype] op_flags @@     got restricted __kernel_rwf_t const [usertype] rw_flags @@
-   include/trace/events/io_uring.h:488:1: sparse:     expected unsigned int [usertype] op_flags
-   include/trace/events/io_uring.h:488:1: sparse:     got restricted __kernel_rwf_t const [usertype] rw_flags
-   fs/io_uring.c:3280:23: sparse: sparse: incorrect type in assignment (different base types) @@     expected unsigned int [usertype] flags @@     got restricted __kernel_rwf_t @@
-   fs/io_uring.c:3280:23: sparse:     expected unsigned int [usertype] flags
-   fs/io_uring.c:3280:23: sparse:     got restricted __kernel_rwf_t
-   fs/io_uring.c:3477:24: sparse: sparse: incorrect type in return expression (different address spaces) @@     expected void [noderef] __user * @@     got struct io_buffer *[assigned] kbuf @@
-   fs/io_uring.c:3477:24: sparse:     expected void [noderef] __user *
-   fs/io_uring.c:3477:24: sparse:     got struct io_buffer *[assigned] kbuf
-   fs/io_uring.c:3864:48: sparse: sparse: incorrect type in argument 2 (different base types) @@     expected restricted __kernel_rwf_t [usertype] flags @@     got unsigned int [usertype] flags @@
-   fs/io_uring.c:3864:48: sparse:     expected restricted __kernel_rwf_t [usertype] flags
-   fs/io_uring.c:3864:48: sparse:     got unsigned int [usertype] flags
-   fs/io_uring.c:5187:14: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct file *file @@     got struct file [noderef] __rcu * @@
-   fs/io_uring.c:5187:14: sparse:     expected struct file *file
-   fs/io_uring.c:5187:14: sparse:     got struct file [noderef] __rcu *
-   fs/io_uring.c:5974:68: sparse: sparse: incorrect type in initializer (different base types) @@     expected restricted __poll_t [usertype] _key @@     got int apoll_events @@
-   fs/io_uring.c:5974:68: sparse:     expected restricted __poll_t [usertype] _key
-   fs/io_uring.c:5974:68: sparse:     got int apoll_events
-   fs/io_uring.c:5979:48: sparse: sparse: restricted __poll_t degrades to integer
-   fs/io_uring.c:5983:59: sparse: sparse: restricted __poll_t degrades to integer
-   fs/io_uring.c:5991:74: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected restricted __poll_t [usertype] val @@     got int @@
-   fs/io_uring.c:5991:74: sparse:     expected restricted __poll_t [usertype] val
-   fs/io_uring.c:5991:74: sparse:     got int
-   fs/io_uring.c:5991:60: sparse: sparse: incorrect type in initializer (different base types) @@     expected restricted __poll_t [usertype] mask @@     got unsigned short @@
-   fs/io_uring.c:5991:60: sparse:     expected restricted __poll_t [usertype] mask
-   fs/io_uring.c:5991:60: sparse:     got unsigned short
-   fs/io_uring.c:5997:58: sparse: sparse: incorrect type in argument 3 (different base types) @@     expected signed int [usertype] res @@     got restricted __poll_t [usertype] mask @@
-   fs/io_uring.c:5997:58: sparse:     expected signed int [usertype] res
-   fs/io_uring.c:5997:58: sparse:     got restricted __poll_t [usertype] mask
-   fs/io_uring.c:6027:68: sparse: sparse: restricted __poll_t degrades to integer
-   fs/io_uring.c:6027:57: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected restricted __poll_t [usertype] val @@     got unsigned int @@
-   fs/io_uring.c:6027:57: sparse:     expected restricted __poll_t [usertype] val
-   fs/io_uring.c:6027:57: sparse:     got unsigned int
-   fs/io_uring.c:6108:45: sparse: sparse: incorrect type in argument 3 (different base types) @@     expected int events @@     got restricted __poll_t [usertype] events @@
-   fs/io_uring.c:6108:45: sparse:     expected int events
-   fs/io_uring.c:6108:45: sparse:     got restricted __poll_t [usertype] events
-   fs/io_uring.c:6143:40: sparse: sparse: incorrect type in argument 2 (different base types) @@     expected int mask @@     got restricted __poll_t [usertype] mask @@
-   fs/io_uring.c:6143:40: sparse:     expected int mask
-   fs/io_uring.c:6143:40: sparse:     got restricted __poll_t [usertype] mask
-   fs/io_uring.c:6143:50: sparse: sparse: incorrect type in argument 3 (different base types) @@     expected int events @@     got restricted __poll_t [usertype] events @@
-   fs/io_uring.c:6143:50: sparse:     expected int events
-   fs/io_uring.c:6143:50: sparse:     got restricted __poll_t [usertype] events
-   fs/io_uring.c:6235:24: sparse: sparse: incorrect type in return expression (different base types) @@     expected int @@     got restricted __poll_t [assigned] [usertype] mask @@
-   fs/io_uring.c:6235:24: sparse:     expected int
-   fs/io_uring.c:6235:24: sparse:     got restricted __poll_t [assigned] [usertype] mask
-   fs/io_uring.c:6252:40: sparse: sparse: incorrect type in argument 2 (different base types) @@     expected int mask @@     got restricted __poll_t [assigned] [usertype] mask @@
-   fs/io_uring.c:6252:40: sparse:     expected int mask
-   fs/io_uring.c:6252:40: sparse:     got restricted __poll_t [assigned] [usertype] mask
-   fs/io_uring.c:6252:50: sparse: sparse: incorrect type in argument 3 (different base types) @@     expected int events @@     got restricted __poll_t [usertype] events @@
-   fs/io_uring.c:6252:50: sparse:     expected int events
-   fs/io_uring.c:6252:50: sparse:     got restricted __poll_t [usertype] events
-   fs/io_uring.c:6262:47: sparse: sparse: incorrect type in argument 3 (different base types) @@     expected int events @@     got restricted __poll_t [usertype] events @@
-   fs/io_uring.c:6262:47: sparse:     expected int events
-   fs/io_uring.c:6262:47: sparse:     got restricted __poll_t [usertype] events
->> fs/io_uring.c:6287:33: sparse: sparse: incorrect type in initializer (different base types) @@     expected restricted __poll_t [usertype] mask @@     got int @@
-   fs/io_uring.c:6287:33: sparse:     expected restricted __poll_t [usertype] mask
-   fs/io_uring.c:6287:33: sparse:     got int
-   fs/io_uring.c:6300:22: sparse: sparse: invalid assignment: |=
-   fs/io_uring.c:6300:22: sparse:    left side has type restricted __poll_t
-   fs/io_uring.c:6300:22: sparse:    right side has type int
-   fs/io_uring.c:6305:30: sparse: sparse: invalid assignment: &=
-   fs/io_uring.c:6305:30: sparse:    left side has type restricted __poll_t
-   fs/io_uring.c:6305:30: sparse:    right side has type int
-   fs/io_uring.c:6307:22: sparse: sparse: invalid assignment: |=
-   fs/io_uring.c:6307:22: sparse:    left side has type restricted __poll_t
-   fs/io_uring.c:6307:22: sparse:    right side has type int
-   fs/io_uring.c:6335:33: sparse: sparse: incorrect type in argument 5 (different base types) @@     expected int mask @@     got restricted __poll_t [assigned] [usertype] mask @@
-   fs/io_uring.c:6335:33: sparse:     expected int mask
-   fs/io_uring.c:6335:33: sparse:     got restricted __poll_t [assigned] [usertype] mask
-   fs/io_uring.c:6335:50: sparse: sparse: incorrect type in argument 6 (different base types) @@     expected int events @@     got restricted __poll_t [usertype] events @@
-   fs/io_uring.c:6335:50: sparse:     expected int events
-   fs/io_uring.c:6335:50: sparse:     got restricted __poll_t [usertype] events
-   fs/io_uring.c:6449:24: sparse: sparse: invalid assignment: |=
-   fs/io_uring.c:6449:24: sparse:    left side has type unsigned int
-   fs/io_uring.c:6449:24: sparse:    right side has type restricted __poll_t
-   fs/io_uring.c:6450:65: sparse: sparse: restricted __poll_t degrades to integer
-   fs/io_uring.c:6450:29: sparse: sparse: restricted __poll_t degrades to integer
-   fs/io_uring.c:6450:38: sparse: sparse: incorrect type in return expression (different base types) @@     expected restricted __poll_t @@     got unsigned int @@
-   fs/io_uring.c:6450:38: sparse:     expected restricted __poll_t
-   fs/io_uring.c:6450:38: sparse:     got unsigned int
-   fs/io_uring.c:6502:27: sparse: sparse: incorrect type in assignment (different base types) @@     expected int apoll_events @@     got restricted __poll_t [usertype] events @@
-   fs/io_uring.c:6502:27: sparse:     expected int apoll_events
-   fs/io_uring.c:6502:27: sparse:     got restricted __poll_t [usertype] events
-   fs/io_uring.c:6541:43: sparse: sparse: invalid assignment: &=
-   fs/io_uring.c:6541:43: sparse:    left side has type restricted __poll_t
-   fs/io_uring.c:6541:43: sparse:    right side has type int
-   fs/io_uring.c:6542:62: sparse: sparse: restricted __poll_t degrades to integer
-   fs/io_uring.c:6542:43: sparse: sparse: invalid assignment: |=
-   fs/io_uring.c:6542:43: sparse:    left side has type restricted __poll_t
-   fs/io_uring.c:6542:43: sparse:    right side has type unsigned int
-   fs/io_uring.c:2536:17: sparse: sparse: context imbalance in 'handle_prev_tw_list' - different lock contexts for basic block
-   fs/io_uring.c:7610:39: sparse: sparse: marked inline, but without a definition
-   fs/io_uring.c:7610:39: sparse: sparse: marked inline, but without a definition
-   fs/io_uring.c:7610:39: sparse: sparse: marked inline, but without a definition
-   fs/io_uring.c:7610:39: sparse: sparse: marked inline, but without a definition
-
-vim +6287 fs/io_uring.c
-
-  6280	
-  6281	static int io_arm_poll_handler(struct io_kiocb *req, unsigned issue_flags)
-  6282	{
-  6283		const struct io_op_def *def = &io_op_defs[req->opcode];
-  6284		struct io_ring_ctx *ctx = req->ctx;
-  6285		struct async_poll *apoll;
-  6286		struct io_poll_table ipt;
-> 6287		__poll_t mask = POLLERR | POLLPRI;
-  6288		int ret;
-  6289	
-  6290		if (!def->pollin && !def->pollout)
-  6291			return IO_APOLL_ABORTED;
-  6292		if (!file_can_poll(req->file))
-  6293			return IO_APOLL_ABORTED;
-  6294		if ((req->flags & (REQ_F_POLLED|REQ_F_PARTIAL_IO)) == REQ_F_POLLED)
-  6295			return IO_APOLL_ABORTED;
-  6296		if (!(req->flags & REQ_F_APOLL_MULTISHOT))
-  6297			mask |= EPOLLONESHOT;
-  6298	
-  6299		if (def->pollin) {
-  6300			mask |= POLLIN | POLLRDNORM;
-  6301	
-  6302			/* If reading from MSG_ERRQUEUE using recvmsg, ignore POLLIN */
-  6303			if ((req->opcode == IORING_OP_RECVMSG) &&
-  6304			    (req->sr_msg.msg_flags & MSG_ERRQUEUE))
-  6305				mask &= ~POLLIN;
-  6306		} else {
-  6307			mask |= POLLOUT | POLLWRNORM;
-  6308		}
-  6309		if (def->poll_exclusive)
-  6310			mask |= EPOLLEXCLUSIVE;
-  6311		if (req->flags & REQ_F_POLLED) {
-  6312			apoll = req->apoll;
-  6313		} else if (!(issue_flags & IO_URING_F_UNLOCKED) &&
-  6314			   !list_empty(&ctx->apoll_cache)) {
-  6315			apoll = list_first_entry(&ctx->apoll_cache, struct async_poll,
-  6316							poll.wait.entry);
-  6317			list_del_init(&apoll->poll.wait.entry);
-  6318		} else {
-  6319			apoll = kmalloc(sizeof(*apoll), GFP_ATOMIC);
-  6320			if (unlikely(!apoll))
-  6321				return IO_APOLL_ABORTED;
-  6322		}
-  6323		apoll->double_poll = NULL;
-  6324		req->apoll = apoll;
-  6325		req->flags |= REQ_F_POLLED;
-  6326		ipt.pt._qproc = io_async_queue_proc;
-  6327	
-  6328		io_kbuf_recycle(req, issue_flags);
-  6329	
-  6330		ret = __io_arm_poll_handler(req, &apoll->poll, &ipt, mask);
-  6331		if (ret || ipt.error)
-  6332			return ret ? IO_APOLL_READY : IO_APOLL_ABORTED;
-  6333	
-  6334		trace_io_uring_poll_arm(ctx, req, req->cqe.user_data, req->opcode,
-  6335					mask, apoll->poll.events);
-  6336		return IO_APOLL_OK;
-  6337	}
-  6338	
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index ab9290ab4cae..138f204db72a 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -3429,6 +3429,7 @@ static int io_read(struct io_kiocb *req, bool force_nonblock,
+ 	struct kiocb *kiocb = &req->rw.kiocb;
+ 	struct iov_iter __iter, *iter = &__iter;
+ 	struct io_async_rw *rw = req->async_data;
++	struct iov_iter_state iter_state;
+ 	ssize_t io_size, ret, ret2;
+ 	bool no_async;
+ 
+@@ -3458,6 +3459,7 @@ static int io_read(struct io_kiocb *req, bool force_nonblock,
+ 	if (unlikely(ret))
+ 		goto out_free;
+ 
++	iov_iter_save_state(iter, &iter_state);
+ 	ret = io_iter_do_read(req, iter);
+ 
+ 	if (!ret) {
+@@ -3473,7 +3475,7 @@ static int io_read(struct io_kiocb *req, bool force_nonblock,
+ 		if (req->file->f_flags & O_NONBLOCK)
+ 			goto done;
+ 		/* some cases will consume bytes even on error returns */
+-		iov_iter_revert(iter, io_size - iov_iter_count(iter));
++		iov_iter_restore(iter, &iter_state);
+ 		ret = 0;
+ 		goto copy_iov;
+ 	} else if (ret < 0) {
+@@ -3557,6 +3559,7 @@ static int io_write(struct io_kiocb *req, bool force_nonblock,
+ 	struct kiocb *kiocb = &req->rw.kiocb;
+ 	struct iov_iter __iter, *iter = &__iter;
+ 	struct io_async_rw *rw = req->async_data;
++	struct iov_iter_state iter_state;
+ 	ssize_t ret, ret2, io_size;
+ 
+ 	if (rw)
+@@ -3574,6 +3577,8 @@ static int io_write(struct io_kiocb *req, bool force_nonblock,
+ 	else
+ 		kiocb->ki_flags |= IOCB_NOWAIT;
+ 
++	iov_iter_save_state(iter, &iter_state);
++
+ 	/* If the file doesn't support async, just async punt */
+ 	if (force_nonblock && !io_file_supports_async(req->file, WRITE))
+ 		goto copy_iov;
+@@ -3626,7 +3631,7 @@ static int io_write(struct io_kiocb *req, bool force_nonblock,
+ 	} else {
+ copy_iov:
+ 		/* some cases will consume bytes even on error returns */
+-		iov_iter_revert(iter, io_size - iov_iter_count(iter));
++		iov_iter_restore(iter, &iter_state);
+ 		ret = io_setup_async_rw(req, iovec, inline_vecs, iter, false);
+ 		if (!ret)
+ 			return -EAGAIN;
+diff --git a/include/linux/uio.h b/include/linux/uio.h
+index 27ff8eb786dc..cedb68e49e4f 100644
+--- a/include/linux/uio.h
++++ b/include/linux/uio.h
+@@ -26,6 +26,12 @@ enum iter_type {
+ 	ITER_DISCARD = 64,
+ };
+ 
++struct iov_iter_state {
++	size_t iov_offset;
++	size_t count;
++	unsigned long nr_segs;
++};
++
+ struct iov_iter {
+ 	/*
+ 	 * Bit 0 is the read/write bit, set if we're writing.
+@@ -55,6 +61,14 @@ static inline enum iter_type iov_iter_type(const struct iov_iter *i)
+ 	return i->type & ~(READ | WRITE);
+ }
+ 
++static inline void iov_iter_save_state(struct iov_iter *iter,
++				       struct iov_iter_state *state)
++{
++	state->iov_offset = iter->iov_offset;
++	state->count = iter->count;
++	state->nr_segs = iter->nr_segs;
++}
++
+ static inline bool iter_is_iovec(const struct iov_iter *i)
+ {
+ 	return iov_iter_type(i) == ITER_IOVEC;
+@@ -226,6 +240,7 @@ ssize_t iov_iter_get_pages(struct iov_iter *i, struct page **pages,
+ ssize_t iov_iter_get_pages_alloc(struct iov_iter *i, struct page ***pages,
+ 			size_t maxsize, size_t *start);
+ int iov_iter_npages(const struct iov_iter *i, int maxpages);
++void iov_iter_restore(struct iov_iter *i, struct iov_iter_state *state);
+ 
+ const void *dup_iter(struct iov_iter *new, struct iov_iter *old, gfp_t flags);
+ 
+diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+index 1b0a349fbcd9..00a66229d182 100644
+--- a/lib/iov_iter.c
++++ b/lib/iov_iter.c
+@@ -1857,3 +1857,39 @@ int iov_iter_for_each_range(struct iov_iter *i, size_t bytes,
+ 	return err;
+ }
+ EXPORT_SYMBOL(iov_iter_for_each_range);
++
++/**
++ * iov_iter_restore() - Restore a &struct iov_iter to the same state as when
++ *     iov_iter_save_state() was called.
++ *
++ * @i: &struct iov_iter to restore
++ * @state: state to restore from
++ *
++ * Used after iov_iter_save_state() to bring restore @i, if operations may
++ * have advanced it.
++ *
++ * Note: only works on ITER_IOVEC, ITER_BVEC, and ITER_KVEC
++ */
++void iov_iter_restore(struct iov_iter *i, struct iov_iter_state *state)
++{
++	if (WARN_ON_ONCE(!iov_iter_is_bvec(i) && !iter_is_iovec(i)) &&
++			 !iov_iter_is_kvec(i))
++		return;
++	i->iov_offset = state->iov_offset;
++	i->count = state->count;
++	/*
++	 * For the *vec iters, nr_segs + iov is constant - if we increment
++	 * the vec, then we also decrement the nr_segs count. Hence we don't
++	 * need to track both of these, just one is enough and we can deduct
++	 * the other from that. ITER_KVEC and ITER_IOVEC are the same struct
++	 * size, so we can just increment the iov pointer as they are unionzed.
++	 * ITER_BVEC _may_ be the same size on some archs, but on others it is
++	 * not. Be safe and handle it separately.
++	 */
++	BUILD_BUG_ON(sizeof(struct iovec) != sizeof(struct kvec));
++	if (iov_iter_is_bvec(i))
++		i->bvec -= state->nr_segs - i->nr_segs;
++	else
++		i->iov -= state->nr_segs - i->nr_segs;
++	i->nr_segs = state->nr_segs;
++}
 
 -- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+Jens Axboe
+

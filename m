@@ -2,67 +2,67 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F21A51DCA5
-	for <lists+io-uring@lfdr.de>; Fri,  6 May 2022 17:57:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 372E651DCBD
+	for <lists+io-uring@lfdr.de>; Fri,  6 May 2022 18:01:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1381295AbiEFQBW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 6 May 2022 12:01:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60318 "EHLO
+        id S1443304AbiEFQFh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 6 May 2022 12:05:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37138 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1381488AbiEFQBV (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 6 May 2022 12:01:21 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C82566AA4B;
-        Fri,  6 May 2022 08:57:37 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id q20so4704825wmq.1;
-        Fri, 06 May 2022 08:57:37 -0700 (PDT)
+        with ESMTP id S245722AbiEFQFh (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 6 May 2022 12:05:37 -0400
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CABD04FC76;
+        Fri,  6 May 2022 09:01:53 -0700 (PDT)
+Received: by mail-wr1-x430.google.com with SMTP id d5so10620121wrb.6;
+        Fri, 06 May 2022 09:01:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=EeZj1dGWsQkVJ1iS0n/s/P2JaTRMKlII01rLO3gK3+Q=;
-        b=L8qWpjdJmgzu7fDGSTAGk13x7NsF9WIouXk64i8UQIdN98QXayan/y2ugDETkqowNH
-         8scLRKPZdbOotJ5yqGqRfAttKwXwZ5vmRjBXVA6QY/2suWwFmeGtoWSRWpDbCHv4hZzu
-         FnREcqHiLA3g7Q3DIC+V4SQXSOQRhUkxX0CuS5Ijg+AIiZOVVtd5xPtvPg8Z/38WEmeF
-         bCvKeOATw885JpXVGOrb4xMSWrLrSMJ1Jix18l8OifseWpsOJ6JnomrcHj5PDuDWqoAR
-         Ii1QVU2KGjaexiIhtcygEGkHaafxYKxosx2kua4aj9M12xO/ciVnTe22ZurQt1aprnJ1
-         lP0w==
+        bh=AwSYpzjiuqhVZgVPF7sxtuhyEtMKkN0i872NpkdZC/o=;
+        b=K4ZCXudwqosKXBiPTFH14TBwZpj5m6O78LEVT7YneZpZBQiBG19Qbwn/jB0RIQHD5V
+         bCi1BEccpXG0iBXo+uYUcTbcDyXZmgBM/G1XPXH01W4KzzfMKtG/sd1hU5cg7xIdwstC
+         tg9pfsTRDvhwMViw4CnA1TukBbBilgJUq4T2nrBHiNhqGU1asEXvV2yyQhFCQl4huUTv
+         Hi4zlJagsH3CD3gbwcKbjIuLufD+UlF9rE/xS81VH8zJz49qrg2nMw3A5NwIrG3IQQZ0
+         2Ei3TU1eI5thG0LYe6hP+m/gAWzvZ7IqdpbZq6N9wNfUSDm6U1iGjERhywvMsM4S1zqJ
+         gbWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=EeZj1dGWsQkVJ1iS0n/s/P2JaTRMKlII01rLO3gK3+Q=;
-        b=rBPpFtAUG+Emc8NKokEd7QqgOp1nLffRvMS7UnRXB6ZZTvXohdqnPem1RkD7sZ2A+G
-         40AlfXtQ6jPYh4FO8NbMmJvf8s9wGzQeo/pHUfae1aoThz9SSq19bhR5rwN4ShR+3SKb
-         BKBfI6xTz7zveuMy5EZxfni2YRhQGG6G42OhbWsfQ/9n5nNPD0XYIB9TU7CNYwIevcdv
-         UMISGrguNUBy1GC5MM0it3f5bARRLrrL7htbetqjPsdqSoEv6ffywvn+r+wz5A8dFWdM
-         A6FJo9u4tm0MHTd5YE7eE1LTWPSGlofFgag0Dv1HqXewUIcEY0hIhEMeKK3YnYKyCN+7
-         wSpQ==
-X-Gm-Message-State: AOAM5302M1hpy8NuurHh8n181EmlT16viPZWxyUb/Mqzp/bcTD7G/PMJ
-        +AnP1EbPM8hSP+YD1DveCXY=
-X-Google-Smtp-Source: ABdhPJy+PqqaPA+OnQJ7/hVk4A0vwg56Hg6gEahabjoKMAAZiiBABLtRdHtOZHfJmBMBGHMJQjDFZg==
-X-Received: by 2002:a1c:f413:0:b0:37b:d1de:5762 with SMTP id z19-20020a1cf413000000b0037bd1de5762mr3991836wma.108.1651852656311;
-        Fri, 06 May 2022 08:57:36 -0700 (PDT)
+        bh=AwSYpzjiuqhVZgVPF7sxtuhyEtMKkN0i872NpkdZC/o=;
+        b=HVXbf2QFfHRDNxIXcSnZyrvMgxOFc6s76McXMsPIa7tdYDYiIOQGsY178MNPv8TAQ+
+         LkyOCp81TEiVnImXOQdt8W8qneYwEH8iqYtKEYf5uq1mbCTI3Gt2/AeeElkS479Erti5
+         RBu8SIIGfWKIhEr+HSEfIOuZ0yRT6fzpfP87hrN2Jof+Aly1THdYyqLL4uKG8e/hM9H0
+         Ws0lgpiB9IJDLoppdfQT5HhMVSdB6rILg2tispx5nIoF1OXcyCyuRvkbb76lpO54tWsE
+         UG/pCJHTTpee5Sg+dlj/DjbbMU9nisEZish29I/Qs2QlEIf31J7A9qG8+meMi2n3hxLI
+         O1wQ==
+X-Gm-Message-State: AOAM530Kr4PuHW/SaW4HxxO7Kdpz+TN1b5BsFYzc14bYS+IWfO/u5uDJ
+        cT3KmOpQhUtLT9vchE1/mSI=
+X-Google-Smtp-Source: ABdhPJzL7lS0966E7B6W4dvbvOQeEUGgPCOuIk2MX/tVqezgIyS8z33FYy1vbahu5shC4On0eo14eA==
+X-Received: by 2002:adf:d1ec:0:b0:20c:61ef:93b6 with SMTP id g12-20020adfd1ec000000b0020c61ef93b6mr3263663wrd.694.1651852912296;
+        Fri, 06 May 2022 09:01:52 -0700 (PDT)
 Received: from [192.168.8.198] ([85.255.237.75])
-        by smtp.gmail.com with ESMTPSA id d10-20020adffd8a000000b0020c5253d925sm3850318wrr.113.2022.05.06.08.57.34
+        by smtp.gmail.com with ESMTPSA id x18-20020adfdd92000000b0020c5253d915sm3907343wrl.97.2022.05.06.09.01.51
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 May 2022 08:57:35 -0700 (PDT)
-Message-ID: <31ae3426-b835-3a3f-f6d1-aecad24066e8@gmail.com>
-Date:   Fri, 6 May 2022 16:57:09 +0100
+        Fri, 06 May 2022 09:01:51 -0700 (PDT)
+Message-ID: <3f940dad-73ce-4ea6-dc76-f877c64dbb9a@gmail.com>
+Date:   Fri, 6 May 2022 17:01:25 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.8.1
-Subject: Re: linux-stable-5.10-y CVE-2022-1508 of io_uring module
+Subject: Re: [PATCH v2 0/5] fast poll multishot mode
 Content-Language: en-US
-To:     Jens Axboe <axboe@kernel.dk>, Guo Xuenan <guoxuenan@huawei.com>
-Cc:     lee.jones@linaro.org, linux-kernel@vger.kernel.org,
-        io-uring@vger.kernel.org, yi.zhang@huawei.com, houtao1@huawei.com
-References: <dd122760-5f87-10b1-e50d-388c2631c01a@kernel.dk>
- <20220505141159.3182874-1-guoxuenan@huawei.com>
- <7d54523e-372b-759b-1ebb-e0dbc181f18d@kernel.dk>
+To:     Jens Axboe <axboe@kernel.dk>, Hao Xu <haoxu.linux@gmail.com>,
+        io-uring@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org
+References: <20220506070102.26032-1-haoxu.linux@gmail.com>
+ <b4d23f42-36f4-353a-1f44-c12178f0a2b3@gmail.com>
+ <5ce3d6c7-42f9-28c3-0800-4da399adaaea@kernel.dk>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <7d54523e-372b-759b-1ebb-e0dbc181f18d@kernel.dk>
+In-Reply-To: <5ce3d6c7-42f9-28c3-0800-4da399adaaea@kernel.dk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-5.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -75,25 +75,22 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/6/22 03:16, Jens Axboe wrote:
-> On 5/5/22 8:11 AM, Guo Xuenan wrote:
->> Hi, Pavel & Jens
->>
->> CVE-2022-1508[1] contains an patch[2] of io_uring. As Jones reported,
->> it is not enough only apply [2] to stable-5.10.
->> Io_uring is very valuable and active module of linux kernel.
->> I've tried to apply these two patches[3] [4] to my local 5.10 code, I
->> found my understanding of io_uring is not enough to resolve all conflicts.
->>
->> Since 5.10 is an important stable branch of linux, we would appreciate
->> your help in solving this problem.
+On 5/6/22 15:18, Jens Axboe wrote:
+> On 5/6/22 1:36 AM, Hao Xu wrote:
+>> Hi All,
+>> I actually had a question about the current poll code, from the code it
+>> seems when we cancel a poll-like request, it will ignore the existing
+>> events and just raise a -ECANCELED cqe though I haven't tested it. Is
+>> this by design or am I missing something?
 > 
-> Yes, this really needs to get buttoned up for 5.10. I seem to recall
-> there was a reproducer for this that was somewhat saner than the
-> syzbot one (which doesn't do anything for me). Pavel, do you have one?
+> That's by design, but honestly I don't think anyone considered the case
+> where it's being canceled but has events already. For that case, I think
+> we should follow the usual logic of only returning an error (canceled)
+> if we don't have events, if we have events just return them. For
+> multi-shot, obviously also terminate, but same logic there.
 
-No, it was the only repro and was triggering the problem
-just fine back then
+Why would we care? It's inherently racy in any case and any
+user not handling this is already screwed.
 
 -- 
 Pavel Begunkov

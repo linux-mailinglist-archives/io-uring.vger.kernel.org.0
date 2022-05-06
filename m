@@ -2,93 +2,65 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6143F51CEF3
-	for <lists+io-uring@lfdr.de>; Fri,  6 May 2022 04:17:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3584951D0EF
+	for <lists+io-uring@lfdr.de>; Fri,  6 May 2022 07:56:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1388300AbiEFCUg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 5 May 2022 22:20:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37354 "EHLO
+        id S241386AbiEFF7r (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 6 May 2022 01:59:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1388297AbiEFCUf (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 5 May 2022 22:20:35 -0400
-Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12B5760045
-        for <io-uring@vger.kernel.org>; Thu,  5 May 2022 19:16:54 -0700 (PDT)
-Received: by mail-pl1-x630.google.com with SMTP id p6so5548964plr.12
-        for <io-uring@vger.kernel.org>; Thu, 05 May 2022 19:16:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=SobKQmbF1fKCHMmPWDVkqQstRTu1KoW1l73xQAN+d9Y=;
-        b=SjeuZvQM+koWskDGbzXd+jrXvXy0jpIOlPb97l9XjeAkAFMEtUOic95cMKkp9wsqDL
-         IbSzfdLMoQ37iDRd0NINzkquwRClLL9Y8ffnl8N2BvuqB3/b8avdqGxR6tTGJ0BT+p2X
-         jZmJ5eZGF1LtWXvXJMrloG3WS3AVUhGXi/yd1kd8KrZ93mDRtL9+U7hEqYocYnYZwSmI
-         I8gDkvO6lRXAHRU6Umufvq0UIhbrmqi3XRkqRe1yvC589+6NxzSs6tNPHoJuKPEVXTxG
-         qceY8a2QqsOW4ywTpVTcJkmZrphT+IuMcPfm1bqoqKF13pL75VQQiclvYjRZPxHZl4Bn
-         nE4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=SobKQmbF1fKCHMmPWDVkqQstRTu1KoW1l73xQAN+d9Y=;
-        b=wvhC5CVHzBrvp4OlSMd5DKbsQta05ERHhHG14togXZ2gTfb/16J50DmikAa1+PHmDr
-         kBVxZsuKRL7ltWKp7VcxVsJ1ytvXT9UG0ORDrJXfzE3dXiLyN5FrhD+9/ce85cj7uQZv
-         WGiQHDMAfQC1007tL93Lqzobbn/ekQm2SkeTwwam5ZfAHMvefIUQNvy5YWT2o0IQXHdf
-         21M2W7eZ2o0lI7XAqYCDCl9mLxRuiQoXJfkmJj4DHa66FXnTQjij22uEfBIKmcdKGdjg
-         tfTgG/tZX1n1WN8UPfoNMmIH450mOfpHzcgfGi1pHuOuMRtLaTJzoc6zLgiTj7ic04hU
-         n89Q==
-X-Gm-Message-State: AOAM533iaqIWU/YCKIxOQoBbFFB9X8s5o+X0otPV5J+sIAgAgPeqbRFi
-        bmriCVmBuyd+iE8Mut/Ixrfhul9KlY2fQQ==
-X-Google-Smtp-Source: ABdhPJyvxeWW6xAMVmfxkAArQMbJYLnVVM4g+5G/bs+5RVlqE8t9aXu0LinrUmSITFrmDwVHNxizFQ==
-X-Received: by 2002:a17:902:c24c:b0:15c:fa6f:263c with SMTP id 12-20020a170902c24c00b0015cfa6f263cmr1234139plg.66.1651803413500;
-        Thu, 05 May 2022 19:16:53 -0700 (PDT)
-Received: from [192.168.4.166] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id mu6-20020a17090b388600b001d960eaed66sm2227957pjb.42.2022.05.05.19.16.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 May 2022 19:16:52 -0700 (PDT)
-Message-ID: <7d54523e-372b-759b-1ebb-e0dbc181f18d@kernel.dk>
-Date:   Thu, 5 May 2022 20:16:51 -0600
+        with ESMTP id S1389281AbiEFF7q (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 6 May 2022 01:59:46 -0400
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47923612A3
+        for <io-uring@vger.kernel.org>; Thu,  5 May 2022 22:56:04 -0700 (PDT)
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 5FDB768AA6; Fri,  6 May 2022 07:56:00 +0200 (CEST)
+Date:   Fri, 6 May 2022 07:56:00 +0200
+From:   "hch@lst.de" <hch@lst.de>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     "hch@lst.de" <hch@lst.de>, Clay Mayers <Clay.Mayers@kioxia.com>,
+        Kanchan Joshi <joshi.k@samsung.com>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "asml.silence@gmail.com" <asml.silence@gmail.com>,
+        "ming.lei@redhat.com" <ming.lei@redhat.com>,
+        "mcgrof@kernel.org" <mcgrof@kernel.org>, "shr@fb.com" <shr@fb.com>,
+        "joshiiitr@gmail.com" <joshiiitr@gmail.com>,
+        "anuj20.g@samsung.com" <anuj20.g@samsung.com>,
+        "gost.dev@samsung.com" <gost.dev@samsung.com>
+Subject: Re: [PATCH v4 3/5] nvme: refactor nvme_submit_user_cmd()
+Message-ID: <20220506055600.GA22544@lst.de>
+References: <20220505060616.803816-1-joshi.k@samsung.com> <CGME20220505061148epcas5p188618b5b15a95cbe48c8c1559a18c994@epcas5p1.samsung.com> <20220505060616.803816-4-joshi.k@samsung.com> <80cde2cfd566454fa4b160492c7336c2@kioxia.com> <ce25812c-9cf4-efe5-ac9e-13afd5803e64@kernel.dk> <93e697b1-42c5-d2f4-8fb8-7b5d1892e871@kernel.dk> <0b16682a30434d9c820a888ae0dc9ac5@kioxia.com> <70c1a8d3-ed82-0a5b-907a-7d6bedd73ccc@kernel.dk> <20220505195039.GA7032@lst.de> <06a03ddf-215a-b558-4ff6-bae46c33d51d@kernel.dk>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: linux-stable-5.10-y CVE-2022-1508 of io_uring module
-Content-Language: en-US
-To:     Guo Xuenan <guoxuenan@huawei.com>, asml.silence@gmail.com
-Cc:     lee.jones@linaro.org, linux-kernel@vger.kernel.org,
-        io-uring@vger.kernel.org, yi.zhang@huawei.com, houtao1@huawei.com
-References: <dd122760-5f87-10b1-e50d-388c2631c01a@kernel.dk>
- <20220505141159.3182874-1-guoxuenan@huawei.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20220505141159.3182874-1-guoxuenan@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <06a03ddf-215a-b558-4ff6-bae46c33d51d@kernel.dk>
+User-Agent: Mutt/1.5.17 (2007-11-01)
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/5/22 8:11 AM, Guo Xuenan wrote:
-> Hi, Pavel & Jens
+On Thu, May 05, 2022 at 02:44:40PM -0600, Jens Axboe wrote:
+> On 5/5/22 1:50 PM, hch@lst.de wrote:
+> > On Thu, May 05, 2022 at 01:31:28PM -0600, Jens Axboe wrote:
+> >>>> Jens Axboe
+> >>>
+> >>> This does work and got me past the null ptr segfault.
+> >>
+> >> OK good, thanks for testing. I did fold it in.
+> > 
+> > It might make sense to just kill nvme_meta_from_bio and pass the
+> > meta pointer directly with this version of the code.
 > 
-> CVE-2022-1508[1] contains an patch[2] of io_uring. As Jones reported,
-> it is not enough only apply [2] to stable-5.10. 
-> Io_uring is very valuable and active module of linux kernel.
-> I've tried to apply these two patches[3] [4] to my local 5.10 code, I
-> found my understanding of io_uring is not enough to resolve all conflicts.
-> 
-> Since 5.10 is an important stable branch of linux, we would appreciate
-> your help in solving this problem.
+> Do you want to do an incremental for that? Looking at
+> nvme_execute_user_rq() and nvme_uring_task_cb() there's a fair bit of
+> duplication of the meta copy.
 
-Yes, this really needs to get buttoned up for 5.10. I seem to recall
-there was a reproducer for this that was somewhat saner than the
-syzbot one (which doesn't do anything for me). Pavel, do you have one?
-
--- 
-Jens Axboe
-
+Yes, there is.  And the right way is to keep the integrity payload alive
+longer, but I'm not sure we are going to get that done in time..

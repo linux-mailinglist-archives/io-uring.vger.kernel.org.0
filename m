@@ -2,62 +2,75 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 78CD251D826
-	for <lists+io-uring@lfdr.de>; Fri,  6 May 2022 14:47:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FF0C51D88F
+	for <lists+io-uring@lfdr.de>; Fri,  6 May 2022 15:14:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349759AbiEFMvL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 6 May 2022 08:51:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49602 "EHLO
+        id S1392263AbiEFNRu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 6 May 2022 09:17:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245378AbiEFMvK (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 6 May 2022 08:51:10 -0400
-Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9A9911A19;
-        Fri,  6 May 2022 05:47:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1651841247; x=1683377247;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=1JBwQExLjRf+shqSc42QfV8mXfEQe1cLSimGmvbq6XQ=;
-  b=WMtueZu5wxcA7fvc6SS8kjFq9azBoI9+qlUoIJZ0Uvgd2wAHcGyUfsD8
-   8EnLrcZgRsOt5/KK77gz0R2bLU7Hti5eFfYcYO5HW8JympOqSAvFUgKQN
-   uI2IL1AkMmv28n+V8O6sXZ7hlJZEX6pEOlXPyGAX6tS5dyr+Xmvttr9pj
-   aPYn9aD++pYLcos5Vv4bqLNP8wI8pqOsmJ1aLUR8shIuftD+mTG3lUydn
-   LhOku1tofd9GCwVufDo232otP5HjxnA1R76ox2ahWRPkUgWv8xyAg/nzo
-   b1S9CEIqac7vuNt/BxHFUE1OQqJs95TepumbMqHCTypntSBDBYieFfXzb
-   A==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10338"; a="293664437"
-X-IronPort-AV: E=Sophos;i="5.91,203,1647327600"; 
-   d="scan'208";a="293664437"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2022 05:47:27 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.91,203,1647327600"; 
-   d="scan'208";a="537872611"
-Received: from lkp-server01.sh.intel.com (HELO 5056e131ad90) ([10.239.97.150])
-  by orsmga006.jf.intel.com with ESMTP; 06 May 2022 05:47:25 -0700
-Received: from kbuild by 5056e131ad90 with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1nmxMi-000DTq-IJ;
-        Fri, 06 May 2022 12:47:24 +0000
-Date:   Fri, 6 May 2022 20:47:05 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Hao Xu <haoxu.linux@gmail.com>, io-uring@vger.kernel.org
-Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/5] io_uring: add a helper for poll clean
-Message-ID: <202205062033.yS62xm5Z-lkp@intel.com>
-References: <20220506070102.26032-5-haoxu.linux@gmail.com>
+        with ESMTP id S1343648AbiEFNRt (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 6 May 2022 09:17:49 -0400
+Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BAAE5B893
+        for <io-uring@vger.kernel.org>; Fri,  6 May 2022 06:14:05 -0700 (PDT)
+Received: by mail-pf1-x430.google.com with SMTP id y41so1406280pfw.12
+        for <io-uring@vger.kernel.org>; Fri, 06 May 2022 06:14:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=ihidgXYB4xhjPn48/H5XkAMtFgyfgQGRP//jjSqAZfI=;
+        b=7mtkz5L+M6CyMpuvSrwmf/po6soshccZkNmunBuH8V68CckpXuXwnPczrcP8Zarrqw
+         wlEISzVXGgr3lE/+qnQXce9zh/MWgauJ09HVHypP+wQ+ZKlUWGWQV20qtf3E9eaHM4uO
+         itgDW03k+VhpYeAx8L8yDX2zfAPjjRO4XstYqMvOCX1LFKn61uSiYRa55ZgnEh0BYsef
+         4F098W0akvQnlNELLFIWuPxCghX8RToOcCzZALCu9LUy4UA5cisgcnmBiKxGtaNUAnFB
+         1q0iZr9MOaZoYUOsZh8dqSC28pA2VuCPCQRuPD+SBAzj2LbwDPrrzpLvi6o13jp0gKwq
+         TqVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=ihidgXYB4xhjPn48/H5XkAMtFgyfgQGRP//jjSqAZfI=;
+        b=bpGkVCRl7I1XAqu+VZVdIX+Ul3uF/aBnmLdZSafkV7TenpA9wC+UkyZLAxIoLDdHdg
+         TwovJ1ylkgzhgzdkTo/IkzYFlGgG+dBa3ke6m14RY09zo5wVv/U/BGWAMGM+dlyV/BK7
+         nkurSYbMcVvYtlmxUrhYR55qVOZ4HNqFJlut9666xzPBJuSZgZUnPraS5KiBqKP+hi/P
+         YRVZbwyuD55XyPv/7fBh6L8dZ4PPsgrSFInjVp7oopCX/PY+zryKAH/vCbT9n7Nlqkt6
+         LikZ9cf3tUyEu83W9fzDNnyeBFcP00WmIJbA94bBzBqBz9gxW22+lEG8o2BWqejqa5tj
+         a3vw==
+X-Gm-Message-State: AOAM532iGTqoTbAW6ohdAuNsL+wETyAqclH6il6UIAxax0rNy9qH60Oa
+        ybr+NYw1bOvdYtULYOQS3gQZCkWEptjfdQ==
+X-Google-Smtp-Source: ABdhPJxbgh99Uq2Q8nb4hWzt4D5dqalKDU8yUhhAXreQdsMJpNz9gHsObYxtOvni+z64QBRJbROaeA==
+X-Received: by 2002:a05:6a00:1784:b0:50d:d8cb:7a4f with SMTP id s4-20020a056a00178400b0050dd8cb7a4fmr3481979pfg.23.1651842844406;
+        Fri, 06 May 2022 06:14:04 -0700 (PDT)
+Received: from [192.168.4.166] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
+        by smtp.gmail.com with ESMTPSA id j8-20020aa783c8000000b0050dc762818asm3322528pfn.100.2022.05.06.06.14.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 May 2022 06:14:03 -0700 (PDT)
+Message-ID: <ac5bc77c-16a3-77b6-df57-823e16c89a70@kernel.dk>
+Date:   Fri, 6 May 2022 07:14:01 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220506070102.26032-5-haoxu.linux@gmail.com>
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH v4 0/5] io_uring passthrough for nvme
+Content-Language: en-US
+To:     Kanchan Joshi <joshi.k@samsung.com>
+Cc:     hch@lst.de, io-uring@vger.kernel.org,
+        linux-nvme@lists.infradead.org, asml.silence@gmail.com,
+        ming.lei@redhat.com, mcgrof@kernel.org, shr@fb.com,
+        joshiiitr@gmail.com, anuj20.g@samsung.com, gost.dev@samsung.com
+References: <CGME20220505061142epcas5p2c943572766bfd5088138fe0f7873c96c@epcas5p2.samsung.com>
+ <20220505060616.803816-1-joshi.k@samsung.com>
+ <d99a828b-94ed-97a0-8430-cfb49dd56b74@kernel.dk>
+ <a715cc61-97e7-2292-ec7d-59389b00e779@kernel.dk>
+ <20220506064249.GA20217@test-zns>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20220506064249.GA20217@test-zns>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -65,64 +78,64 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Hao,
+On 5/6/22 12:42 AM, Kanchan Joshi wrote:
+> On Thu, May 05, 2022 at 12:29:27PM -0600, Jens Axboe wrote:
+>> On 5/5/22 12:20 PM, Jens Axboe wrote:
+>>> On 5/5/22 12:06 AM, Kanchan Joshi wrote:
+>>>> This iteration is against io_uring-big-sqe brach (linux-block).
+>>>> On top of a739b2354 ("io_uring: enable CQE32").
+>>>>
+>>>> fio testing branch:
+>>>> https://protect2.fireeye.com/v1/url?k=b0d23f72-d1592a52-b0d3b43d-74fe485fb347-02541f801e3b5f5f&q=1&e=ef4bb07a-7707-4854-819c-98abcabb5d2d&u=https%3A%2F%2Fgithub.com%2Fjoshkan%2Ffio%2Ftree%2Fbig-cqe-pt.v4
+>>>
+>>> I folded in the suggested changes, the branch is here:
+>>>
+>>> https://protect2.fireeye.com/v1/url?k=40e9c3d0-2162d6f0-40e8489f-74fe485fb347-f8e801be1f796980&q=1&e=ef4bb07a-7707-4854-819c-98abcabb5d2d&u=https%3A%2F%2Fgit.kernel.dk%2Fcgit%2Flinux-block%2Flog%2F%3Fh%3Dfor-5.19%2Fio_uring-passthrough
+>>>
+>>> I'll try and run the fio test branch, but please take a look and see what
+>>> you think.
+>>
+>> Tested that fio branch and it works for me with what I had pushed out.
+>> Also tested explicit deferral of requests.
+> 
+> Thanks for sorting everything out! I could test this out now only :-(
+> Fio scripts ran fine (post refreshing SQE128/CQE32 flag values;repushed fio).
+> 
+> I think these two changes are needed in your branch:
+> 
+> 1. since uring-cmd can be without large-cqe, we need to add that
+> condition in io_uring_cmd_done(). This change in patch 1 -
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 884f40f51536..c24469564ebc 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -4938,7 +4938,10 @@ void io_uring_cmd_done(struct io_uring_cmd *ioucmd, ssize_t ret, ssize_t res2)
+> 
+>        if (ret < 0)
+>                req_set_fail(req);
+> -       __io_req_complete32(req, 0, ret, 0, res2, 0);
+> +       if (req->ctx->flags & IORING_SETUP_CQE32)
+> +               __io_req_complete32(req, 0, ret, 0, res2, 0);
+> +       else
+> +               io_req_complete(req, ret);
+> }
+> EXPORT_SYMBOL_GPL(io_uring_cmd_done);
 
-Thank you for the patch! Yet something to improve:
+Ah yes, good catch, I missed that it's cqe32 exclusive right now.
 
-[auto build test ERROR on f2e030dd7aaea5a937a2547dc980fab418fbc5e7]
+> 2. In the commit-message of patch 1, we should delete last line.
+> i.e.
+> "This operation can be issued only on the ring that is
+> setup with both IORING_SETUP_SQE128 and IORING_SETUP_CQE32 flags."
+> 
+> And/or we can move this commit-message of patch 4.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Hao-Xu/fast-poll-multishot-mode/20220506-150750
-base:   f2e030dd7aaea5a937a2547dc980fab418fbc5e7
-config: mips-pic32mzda_defconfig (https://download.01.org/0day-ci/archive/20220506/202205062033.yS62xm5Z-lkp@intel.com/config)
-compiler: clang version 15.0.0 (https://github.com/llvm/llvm-project 5e004fb787698440a387750db7f8028e7cb14cfc)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # install mips cross compiling tool for clang build
-        # apt-get install binutils-mips-linux-gnu
-        # https://github.com/intel-lab-lkp/linux/commit/acb232e81643bd097278ebdc17038e6f280e7212
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Hao-Xu/fast-poll-multishot-mode/20220506-150750
-        git checkout acb232e81643bd097278ebdc17038e6f280e7212
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=mips SHELL=/bin/bash
+I killed the line.
 
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
+> You can either take these changes in, or I can respin the series. LMK.
 
-All errors (new ones prefixed by >>):
-
->> fs/io_uring.c:6067:2: error: call to undeclared function '__io_poll_clean'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-           __io_poll_clean(req);
-           ^
-   fs/io_uring.c:6067:2: note: did you mean '__io_fill_cqe'?
-   fs/io_uring.c:2141:20: note: '__io_fill_cqe' declared here
-   static inline bool __io_fill_cqe(struct io_ring_ctx *ctx, u64 user_data,
-                      ^
-   1 error generated.
-
-
-vim +/__io_poll_clean +6067 fs/io_uring.c
-
-  6058	
-  6059	static void io_apoll_task_func(struct io_kiocb *req, bool *locked)
-  6060	{
-  6061		int ret;
-  6062	
-  6063		ret = io_poll_check_events(req, locked);
-  6064		if (ret > 0)
-  6065			return;
-  6066	
-> 6067		__io_poll_clean(req);
-  6068	
-  6069		if (!ret)
-  6070			io_req_task_submit(req, locked);
-  6071		else
-  6072			io_req_complete_failed(req, ret);
-  6073	}
-  6074	
+I folded it in and will process Christoph's suggestions.
 
 -- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+Jens Axboe
+

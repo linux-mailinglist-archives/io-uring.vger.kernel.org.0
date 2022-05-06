@@ -2,102 +2,97 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B130251E053
-	for <lists+io-uring@lfdr.de>; Fri,  6 May 2022 22:50:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16ACC51E0A1
+	for <lists+io-uring@lfdr.de>; Fri,  6 May 2022 23:05:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1443621AbiEFUyh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 6 May 2022 16:54:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48898 "EHLO
+        id S1444070AbiEFVJe (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 6 May 2022 17:09:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1443700AbiEFUyg (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 6 May 2022 16:54:36 -0400
-Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 835A66D3B0
-        for <io-uring@vger.kernel.org>; Fri,  6 May 2022 13:50:51 -0700 (PDT)
-Received: by mail-pl1-x632.google.com with SMTP id p6so8019280plr.12
-        for <io-uring@vger.kernel.org>; Fri, 06 May 2022 13:50:51 -0700 (PDT)
+        with ESMTP id S1444360AbiEFVJF (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 6 May 2022 17:09:05 -0400
+Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F345B9E
+        for <io-uring@vger.kernel.org>; Fri,  6 May 2022 14:05:20 -0700 (PDT)
+Received: by mail-pl1-x642.google.com with SMTP id s14so8590312plk.8
+        for <io-uring@vger.kernel.org>; Fri, 06 May 2022 14:05:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=svtm70vhrtwaUzMmCsUIT6Egi2IpF5lFJHBTBSUBifA=;
-        b=k93eJcUdX4CDEojINJyEsXxp6BPwyVW0KU81y0Fd5DXNq0r3T3Jeg9kORS0Pslclu7
-         qQBednLjdPTuAgXRX8k+dnJCDa38FqSlf/fRGoognCApgzR9LJ39k0X0tEdOwsDj+Yk8
-         yHioi/AfZUJFw91f/azWral+2pdGQm7lPu5MIXCzuw0I0Ymd6euxNkkwrXuaDqZ4L+Mh
-         iYnM61GI/pQVI/bY3g1GcH4dzeEYDnTewGQh1mJciqNVDJwWZwDGklWYX9KazGwqBNIY
-         EX0Wzq83DRzhpKoeoPLOo6N6t49kYd+3kj/9udQGiIOnD/GwLKnQQdkMlmmc7NAtZ4kR
-         Xmfg==
+        d=gmail.com; s=20210112;
+        h=mime-version:reply-to:in-reply-to:references:from:date:message-id
+         :subject:to;
+        bh=VSSUIwdzgxQxnEkB7+u7pnweyPajIQMP3nQqWYs8VX0=;
+        b=Pikzf05RvlgsNiSN1x8VQddbQlHNU8w6b4F5093LpuzcM0ntMpgrUYdcKzhnhHB48+
+         nxofPjncbzlNuBNgooKcMle2Y5ylBJZ6O8MOl6jmb+4GXhkX7JY7QlgBzU7KDKtY2S+t
+         hdYkJvFaRkTyMTuFzz2JqLAY96/AXzO6tgScVG1YJD9G5UO3G+tZ8nGL14yI0+9uPzhC
+         wx/zFVXeSa1h7d0nK/9Qv4fLpnyxu41DB2or0mzOQHpWd2RcmeWfuVLsEUjsRWphAt0g
+         4hy8H6gBdpRcYFXBRhobSZg5COn6SmVmFJv6lpApXA5BMZTju/Hca9z5AiK8OWFQZRyE
+         91pg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=svtm70vhrtwaUzMmCsUIT6Egi2IpF5lFJHBTBSUBifA=;
-        b=yzn5ATyO6cbRbXX0ga6xCNwMOzecLpoILm85Neq4FgOVznvMjCY+DJkbRTqdvb7P9B
-         be2uGfE9UVfljAJXxs+53Tz5DkAKKOZ3EzCZWIODoFAnx+cIjMb/fOJ/mz/XqGZJA6+5
-         thRH7tlAYFGpgAakh4E+EBuEXAy3/Na6KXLThlYgc9gpIL8Lxg/raW6wlWFRjKQx8xEb
-         UM2kWS50JKWoo8xqqxtSAWFK+9r4FF3lcYlKijqCpn7JzPqJuksDJ7uwhcR9KK0pskLa
-         n5udxwK0gMGsM1N7f5uyPxInFSEKkbUtbB5+s7LdACbdWpjcLnS0aC4CPTuUWDWcR8KN
-         UyPw==
-X-Gm-Message-State: AOAM531dCT+oAwu+Etlnh/9+BsLs1w6iwZPoZxQK9ZWeA3xfZ+Z4zYix
-        MaeyA6NYYjXJyEqc/jkpSvjS1w==
-X-Google-Smtp-Source: ABdhPJzopfreODKpfWBSy4m9Jlxx414DAMKUaiFGwW300IDx3Eid79W0qvrPDksQwXeQ4gBlT/S2oA==
-X-Received: by 2002:a17:903:32c4:b0:15e:9f30:75e9 with SMTP id i4-20020a17090332c400b0015e9f3075e9mr5560293plr.123.1651870251011;
-        Fri, 06 May 2022 13:50:51 -0700 (PDT)
-Received: from [192.168.4.166] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id g5-20020a17090a7d0500b001d7faf357b7sm7880977pjl.4.2022.05.06.13.50.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 May 2022 13:50:50 -0700 (PDT)
-Message-ID: <3b302e60-cb5a-a193-db13-5ca0ef5603cc@kernel.dk>
-Date:   Fri, 6 May 2022 14:50:49 -0600
+        h=x-gm-message-state:mime-version:reply-to:in-reply-to:references
+         :from:date:message-id:subject:to;
+        bh=VSSUIwdzgxQxnEkB7+u7pnweyPajIQMP3nQqWYs8VX0=;
+        b=X7eCC/JxwT5dTrNgWkcKnS+ls6nqD2nxOiVtCu4b698gD/3zupqmVsX8KOSyuW1DvU
+         7IILQimE8dWkAhEskmTSrh7YEz+4Ckapf5/caOoGY8OftZ8TRiGaNOw7tHqaU+1heBLe
+         ++BcK000uwTExIy1vfHw8j4skPrR2Qlfcr28DAoqVOUZgPR6C1g13plHnR1w0za6xuUl
+         4qu+5r0ZFbXYHJfXi8ArlaDc0GhmLX8wfP6jHG3xbKvK/1E777reepE2E3qeDQcnSCSH
+         Z6+w3FEk7YKUqJjDjH+jLa5ElJsG/WJPIWQ2B4elG+aH4FKaSaLyJL9wFaTVBu8ONVz2
+         fvFg==
+X-Gm-Message-State: AOAM53109kCDGL9kDgzK2PdcmOd+/xF9eCwLD3xU1I8rJzE4Ge6Mi+/M
+        VAnMIwD++SPE62SzENjYZNYs6PBkCbKJ1gYCeg==
+X-Google-Smtp-Source: ABdhPJx7z4moOE2gpr/KlS+3C9TQAnAO3wCwszoE5VU4KaQgpBr5SM/EngTmKFwvPUIFIAmNZ9KZadvdCoWslU4jbxM=
+X-Received: by 2002:a17:90a:b106:b0:1d9:7cde:7914 with SMTP id
+ z6-20020a17090ab10600b001d97cde7914mr6294782pjq.56.1651871119761; Fri, 06 May
+ 2022 14:05:19 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH 5/5] io_uring: implement multishot mode for accept
-Content-Language: en-US
-To:     Hao Xu <haoxu.linux@gmail.com>, io-uring@vger.kernel.org
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        linux-kernel@vger.kernel.org
-References: <20220506070102.26032-1-haoxu.linux@gmail.com>
- <20220506070102.26032-6-haoxu.linux@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20220506070102.26032-6-haoxu.linux@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Received: by 2002:ac4:9906:0:b0:4ba:807b:b8f3 with HTTP; Fri, 6 May 2022
+ 14:05:18 -0700 (PDT)
+Reply-To: warren001buffett@gmail.com
+In-Reply-To: <CAD_xG_pvNZK6BFCW+28Xv4DE=_5rbDZXDok2BYNn9xw6Ma7iow@mail.gmail.com>
+References: <CAD_xG_pvNZK6BFCW+28Xv4DE=_5rbDZXDok2BYNn9xw6Ma7iow@mail.gmail.com>
+From:   Warren Buffett <guidayema@gmail.com>
+Date:   Fri, 6 May 2022 21:05:18 +0000
+Message-ID: <CAD_xG_pXizBD6pW=-K0ttmT_EZuS+8BZv7pSZcaHdzR-qQhVZA@mail.gmail.com>
+Subject: Fwd: My name is Warren Buffett, an American businessman.
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: Yes, score=5.1 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,FREEMAIL_REPLYTO,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        UNDISC_FREEM autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
+        *      https://www.dnswl.org/, no trust
+        *      [2607:f8b0:4864:20:0:0:0:642 listed in]
+        [list.dnswl.org]
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4977]
+        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
+        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
+        *      provider
+        *      [guidayema[at]gmail.com]
+        * -0.0 SPF_PASS SPF: sender matches SPF record
+        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
+        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
+        *      envelope-from domain
+        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
+        *       valid
+        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
+        *      author's domain
+        * -0.0 T_SCC_BODY_TEXT_LINE No description available.
+        *  3.5 UNDISC_FREEM Undisclosed recipients + freemail reply-to
+        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
+        *      different freemails
+X-Spam-Level: *****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/6/22 1:01 AM, Hao Xu wrote:
-> @@ -5748,8 +5758,12 @@ static int io_accept(struct io_kiocb *req, unsigned int issue_flags)
->  		if (!fixed)
->  			put_unused_fd(fd);
->  		ret = PTR_ERR(file);
-> -		if (ret == -EAGAIN && force_nonblock)
-> -			return -EAGAIN;
-> +		if (ret == -EAGAIN && force_nonblock) {
-> +			if ((req->flags & REQ_F_APOLL_MULTI_POLLED) ==
-> +			    REQ_F_APOLL_MULTI_POLLED)
-> +				ret = 0;
-> +			return ret;
+My name is Warren Buffett, an American businessman and investor I have
+something important to discuss with you.
 
-FWIW, this
-
-	if ((req->flags & REQ_F_APOLL_MULTI_POLLED) == REQ_F_APOLL_MULTI_POLLED)
-
-is identical to
-
-	if (req->flags & REQ_F_APOLL_MULTI_POLLED)
-
-but I suspect this used to check more flags (??), because as it stands
-it seems a bit nonsensical.
-
--- 
-Jens Axboe
-
+Mr. Warren Buffett
+warren001buffett@gmail.com
+Chief Executive Officer: Berkshire Hathaway
+aphy/Warren-Edward-Buffett

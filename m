@@ -2,140 +2,140 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E024051E18A
-	for <lists+io-uring@lfdr.de>; Sat,  7 May 2022 00:02:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27E6951E27D
+	for <lists+io-uring@lfdr.de>; Sat,  7 May 2022 01:41:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1444662AbiEFWGU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 6 May 2022 18:06:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52504 "EHLO
+        id S1355633AbiEFW1U (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 6 May 2022 18:27:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1444665AbiEFWGT (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 6 May 2022 18:06:19 -0400
-Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E61F56D959
-        for <io-uring@vger.kernel.org>; Fri,  6 May 2022 15:02:35 -0700 (PDT)
-Received: by mail-pl1-x629.google.com with SMTP id d17so8726219plg.0
-        for <io-uring@vger.kernel.org>; Fri, 06 May 2022 15:02:35 -0700 (PDT)
+        with ESMTP id S1355587AbiEFW1T (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 6 May 2022 18:27:19 -0400
+Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 088C546B3D
+        for <io-uring@vger.kernel.org>; Fri,  6 May 2022 15:23:32 -0700 (PDT)
+Received: by mail-pg1-x52d.google.com with SMTP id e5so7156218pgc.5
+        for <io-uring@vger.kernel.org>; Fri, 06 May 2022 15:23:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=cIzYna/YEl2NhWK3pU6KnqI6mAaFoXTCE8kbRq6Vi0s=;
-        b=wW20NCXgQpd2v7jNG5eADv5lYiVGQxYZACu+zWNdwR4kp4fX0K4Y/L8LaPfgIL7NnX
-         c9TmyUBdYqNqBQsthH4wED6t/gk69f9rAVG0ZDrh8JMotKamqjbSj4CMgDHYULSDYasv
-         czLMWrZs2Y8wGiQXok4+o4zw9+mUfNXS+k4QREjl6Km50nwmz0xjoXGDPWO1wg25Ca8i
-         KwCWl07nN47Z45UUG7rvFMjhs0tg1RChYmZQHMtxdJvyaoygZC1spfCta7nuK8ZynqvI
-         0IRQJ//4uoifcIUhYglbAX7nGgwBP1Kq2GYnHCrTUSdd0IzN2wRio0q9T9crCSl0F4KY
-         /+mg==
+        bh=bQeusQtiIQTrk2ZgH2dBYFeZ0i4dvp2O1iwsKg+hU0U=;
+        b=NxJhpCy+SP3Ka8ewEpH1clLBW8XMdH+yZjoVHxhVRQ2yy9MJqWEdzT204ft8gOvs5e
+         4BmycVG9glwY3k8nJw75QNkoJAoktOFblrZi9rsENb/vFaFgBe2wscptEu2VTBbrxjLW
+         q/Z8MITZL9pVQq7GyKxeS2EBqF1ZbIVlwCnr9nwHtWOHQ/VLJi6PkXN8g6rheDpdHCfg
+         eeg9TFkTrGch2YSV8pFoG2IAVfDODcqI3WeawzpY6zUW3OzXEVqDp1zuVzEmbim9jCTd
+         sqk3hBiY60X+niIszukI9E+vKia4eKtMRgPQcK4Aj2cFKGw7LiFO8uzWkvZcsdvxv7tE
+         /gmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=cIzYna/YEl2NhWK3pU6KnqI6mAaFoXTCE8kbRq6Vi0s=;
-        b=UsGCwb8/uDdaXNsguDFPB9dbdZD4kUNwhWqqfZvAJDJWVk9YqHD4hVH2P8Cok9r2ZA
-         UhMqp89hZOc5SKzQ9GQhK9I+DG13jGz31dDcMFfGNwULeRlzkVjlYodijil765wxfi/2
-         qPIdz8XMLLZ3CT6B3vvkwse6nTpMwz+HbBGMm8qBgG+oF5pm08nfpdypap1M3rEv/GzU
-         491X6tdpP5Ld1iXFgfpq6OIHcYUg13CeHMtwWfuhDaoTPwni0AoZmpsB2ENrFSYOfFOj
-         jC+kJiartnpeIBUINwyjI/fVtMFZ1hd2eWZxHiAL9CVAujaTMIXb6WEysM1XiPRku9ZJ
-         qjBQ==
-X-Gm-Message-State: AOAM533Uty4E7rlRxlqVE4Z7/9lCTcEb4AAMyI6sf4xwQ4KwiRk6a0cO
-        aX1eFb9EeedbDhcHmV201m6RRprbSMwofw==
-X-Google-Smtp-Source: ABdhPJyCz+3zBak6a3HzIwwi6Mpi98YDzL4KdwBqjl+i7Qt3MYrW+j9aPZ8qrMRaujKNDE256Z6WGA==
-X-Received: by 2002:a17:90b:1b03:b0:1dc:a80b:8004 with SMTP id nu3-20020a17090b1b0300b001dca80b8004mr14653328pjb.182.1651874554739;
-        Fri, 06 May 2022 15:02:34 -0700 (PDT)
+        bh=bQeusQtiIQTrk2ZgH2dBYFeZ0i4dvp2O1iwsKg+hU0U=;
+        b=zGTHF4PEHqBgyoBwMU7kqd3LcvYtZP3Nxndxrn+WR6D5jYb9YmoKVUxUFelveFEwsB
+         kh4edudiW+hSypNlyNrsMgWC9TQKUo6wqy5yHsnQIzMa2ynR/Pu5JR+0bMGz23NF75yU
+         J2vc+J35hlpozdyA399cVGhOv5THdLww7iTQcgkhz7Z8ZRdzELPQSUWN8EPw6t5wxlsr
+         f0vXSJ6qg2JABZViTh61G1MhagxdkRwm8bHn3Arx8URbf9QX0NiEGnleKzDuoEuTGXi+
+         22a/PmGu4HJiGZpRyFwCcw9i1cxkru1JmpmKZuFGqsDAglEFZlm2ICcev86MpVRsc9ki
+         CIdA==
+X-Gm-Message-State: AOAM532KaR0OtmaSd3DM1qrhRd6jhH4zEt3wUzMt6Ks6nCDbD5Wecfvd
+        e1O4B5YuJ4RUwDCknURTKlNXA1Oc0bLjTA==
+X-Google-Smtp-Source: ABdhPJxM5R1ryAs2VQlGEpU/WX9KsBXK7e7/PznQ1F7qwsU29rndvcUvz0/dnm/nbYu1frJAgqCSXQ==
+X-Received: by 2002:aa7:84d1:0:b0:510:8796:4f38 with SMTP id x17-20020aa784d1000000b0051087964f38mr3289040pfn.8.1651875811461;
+        Fri, 06 May 2022 15:23:31 -0700 (PDT)
 Received: from [192.168.4.166] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id y15-20020a170902b48f00b0015e8d4eb211sm2243226plr.91.2022.05.06.15.02.33
+        by smtp.gmail.com with ESMTPSA id j2-20020a17090276c200b0015e8da1fb07sm2247413plt.127.2022.05.06.15.23.30
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 May 2022 15:02:34 -0700 (PDT)
-Message-ID: <8e81111d-398c-3810-50b4-e1475e956b6f@kernel.dk>
-Date:   Fri, 6 May 2022 16:02:33 -0600
+        Fri, 06 May 2022 15:23:31 -0700 (PDT)
+Message-ID: <9157fe69-b5d4-2478-7a0d-e037b5550168@kernel.dk>
+Date:   Fri, 6 May 2022 16:23:30 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
  Thunderbird/91.8.1
-Subject: Re: [PATCH 3/5] io_uring: let fast poll support multishot
+Subject: Re: [PATCH v2 0/5] fast poll multishot mode
 Content-Language: en-US
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Hao Xu <haoxu.linux@gmail.com>, io-uring@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org
+To:     Hao Xu <haoxu.linux@gmail.com>, io-uring@vger.kernel.org
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        linux-kernel@vger.kernel.org
 References: <20220506070102.26032-1-haoxu.linux@gmail.com>
- <20220506070102.26032-4-haoxu.linux@gmail.com>
- <d68381cf-a9fc-33b8-8a9c-ff8485ba8d19@gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <d68381cf-a9fc-33b8-8a9c-ff8485ba8d19@gmail.com>
+In-Reply-To: <20220506070102.26032-1-haoxu.linux@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/6/22 11:19 AM, Pavel Begunkov wrote:
-> On 5/6/22 08:01, Hao Xu wrote:
->> From: Hao Xu <howeyxu@tencent.com>
->>
->> For operations like accept, multishot is a useful feature, since we can
->> reduce a number of accept sqe. Let's integrate it to fast poll, it may
->> be good for other operations in the future.
->>
->> Signed-off-by: Hao Xu <howeyxu@tencent.com>
->> ---
->>   fs/io_uring.c | 41 ++++++++++++++++++++++++++---------------
->>   1 file changed, 26 insertions(+), 15 deletions(-)
->>
->> diff --git a/fs/io_uring.c b/fs/io_uring.c
->> index 8ebb1a794e36..d33777575faf 100644
->> --- a/fs/io_uring.c
->> +++ b/fs/io_uring.c
->> @@ -5952,7 +5952,7 @@ static void io_poll_remove_entries(struct io_kiocb *req)
->>    * either spurious wakeup or multishot CQE is served. 0 when it's done with
->>    * the request, then the mask is stored in req->cqe.res.
->>    */
->> -static int io_poll_check_events(struct io_kiocb *req, bool locked)
->> +static int io_poll_check_events(struct io_kiocb *req, bool *locked)
->>   {
->>       struct io_ring_ctx *ctx = req->ctx;
->>       int v;
->> @@ -5981,17 +5981,26 @@ static int io_poll_check_events(struct io_kiocb *req, bool locked)
->>             /* multishot, just fill an CQE and proceed */
->>           if (req->cqe.res && !(req->apoll_events & EPOLLONESHOT)) {
->> -            __poll_t mask = mangle_poll(req->cqe.res & req->apoll_events);
->> -            bool filled;
->> -
->> -            spin_lock(&ctx->completion_lock);
->> -            filled = io_fill_cqe_aux(ctx, req->cqe.user_data, mask,
->> -                         IORING_CQE_F_MORE);
->> -            io_commit_cqring(ctx);
->> -            spin_unlock(&ctx->completion_lock);
->> -            if (unlikely(!filled))
->> -                return -ECANCELED;
->> -            io_cqring_ev_posted(ctx);
->> +            if (req->flags & REQ_F_APOLL_MULTISHOT) {
->> +                io_tw_lock(req->ctx, locked);
->> +                if (likely(!(req->task->flags & PF_EXITING)))
->> +                    io_queue_sqe(req);
+On 5/6/22 1:00 AM, Hao Xu wrote:
+> Let multishot support multishot mode, currently only add accept as its
+> first comsumer.
+> theoretical analysis:
+>   1) when connections come in fast
+>     - singleshot:
+>               add accept sqe(userpsace) --> accept inline
+>                               ^                 |
+>                               |-----------------|
+>     - multishot:
+>              add accept sqe(userspace) --> accept inline
+>                                               ^     |
+>                                               |--*--|
 > 
-> That looks dangerous, io_queue_sqe() usually takes the request
-> ownership and doesn't expect that someone, i.e.
-> io_poll_check_events(), may still be actively using it.
+>     we do accept repeatedly in * place until get EAGAIN
+> 
+>   2) when connections come in at a low pressure
+>     similar thing like 1), we reduce a lot of userspace-kernel context
+>     switch and useless vfs_poll()
+> 
+> 
+> tests:
+> Did some tests, which goes in this way:
+> 
+>   server    client(multiple)
+>   accept    connect
+>   read      write
+>   write     read
+>   close     close
+> 
+> Basically, raise up a number of clients(on same machine with server) to
+> connect to the server, and then write some data to it, the server will
+> write those data back to the client after it receives them, and then
+> close the connection after write return. Then the client will read the
+> data and then close the connection. Here I test 10000 clients connect
+> one server, data size 128 bytes. And each client has a go routine for
+> it, so they come to the server in short time.
+> test 20 times before/after this patchset, time spent:(unit cycle, which
+> is the return value of clock())
+> before:
+>   1930136+1940725+1907981+1947601+1923812+1928226+1911087+1905897+1941075
+>   +1934374+1906614+1912504+1949110+1908790+1909951+1941672+1969525+1934984
+>   +1934226+1914385)/20.0 = 1927633.75
+> after:
+>   1858905+1917104+1895455+1963963+1892706+1889208+1874175+1904753+1874112
+>   +1874985+1882706+1884642+1864694+1906508+1916150+1924250+1869060+1889506
+>   +1871324+1940803)/20.0 = 1894750.45
+> 
+> (1927633.75 - 1894750.45) / 1927633.75 = 1.65%
+> 
+> 
+> A liburing test is here:
+> https://github.com/HowHsu/liburing/blob/multishot_accept/test/accept.c
 
-I took a look at this, too. We do own the request at this point, but
-it's still on the poll list. If io_accept() fails, then we do run the
-poll_clean.
+Wish I had seen that, I wrote my own! But maybe that's good, you tend to
+find other issues through that.
 
-> E.g. io_accept() fails on fd < 0, return an error, io_queue_sqe() ->
-> io_queue_async() -> io_req_complete_failed() kills it. Then
-> io_poll_check_events() and polling in general carry on using the freed
-> request => UAF. Didn't look at it too carefully, but there might other
-> similar cases.
+Anyway, works for me in testing, and I can see this being a nice win for
+accept intensive workloads. I pushed a bunch of cleanup patches that
+should just get folded in. Can you fold them into your patches and
+address the other feedback, and post a v3? I pushed the test branch
+here:
 
-But we better have done poll_clean() before returning the error. What am
-I missing here?
+https://git.kernel.dk/cgit/linux-block/log/?h=fastpoll-mshot
 
 -- 
 Jens Axboe

@@ -2,67 +2,65 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F1EE151E499
-	for <lists+io-uring@lfdr.de>; Sat,  7 May 2022 08:32:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B78851E4A6
+	for <lists+io-uring@lfdr.de>; Sat,  7 May 2022 08:37:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351761AbiEGGfk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 7 May 2022 02:35:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45018 "EHLO
+        id S229980AbiEGGk6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 7 May 2022 02:40:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48044 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237563AbiEGGfj (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 7 May 2022 02:35:39 -0400
-Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D6C645AD3;
-        Fri,  6 May 2022 23:31:53 -0700 (PDT)
-Received: by mail-pl1-x632.google.com with SMTP id c11so9360204plg.13;
-        Fri, 06 May 2022 23:31:53 -0700 (PDT)
+        with ESMTP id S1445545AbiEGGk4 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 7 May 2022 02:40:56 -0400
+Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 082835A2CA;
+        Fri,  6 May 2022 23:37:11 -0700 (PDT)
+Received: by mail-pf1-x434.google.com with SMTP id a11so7990713pff.1;
+        Fri, 06 May 2022 23:37:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:mime-version:user-agent:subject:to:cc:references
          :from:in-reply-to:content-transfer-encoding;
-        bh=OzdNfZxxmkcZgQmcrr/fMou7WbepUbdCKxZFmXlJ3Vg=;
-        b=dWYzdn9T7cKZ5BiAcTVmluX1pOnqbUbNreFbH0//vZnGggWaVlZW+O57dO7TuM12Ls
-         SNV3kyQJ8IbthKLO2CN+gO4B9DReUhXGRssVl3K72uNQZq34R2+Jf0VbDZPFzFwKB0mh
-         yYBpuVl+In0oM2FYXDnRVnk3RfCjqYbBEJvOBqWBbCGBUmuzYn2HlYADzgVJyTsKb1/k
-         3fEeXK9jXsYZhSKxQ6HCLjOcQ5slnnUDe8JFCZIlY2oGcl7EY4sPLtFrxcTMmew1WDTr
-         sHuE6shWmpWr3yqiGOYMue1MKl64YHsZL6A4hIWkcY4HV3lRVIYpTeRE6mn5yubgv6aA
-         D3Mg==
+        bh=XVfJ8nCtUSBBvI+zDOE/2bDYhHDKVITWrA5qgxBXiTY=;
+        b=Ky30jMVp0A5EloSd/uvgoVZWJMggqEBvSHIvF8qkkqBUmHYOTv/0oaXT9rXHY5ZRCr
+         2HboNER3xMVsdYi5xDf5DUPksp4lYmjGhDGbnd6Gd8/ZBhaI8KZhkjD4WU9a6pD1iHJE
+         d0kc6wkfS6wh+g+SRhFThwDLKlNld5ZJe867jI1BMjoq1y92K8wNJ9Vapwl4WNqGFj5i
+         tQ9Eoxwk0PwL5qRoX1TRu8o61SgCVMgnH8pHFi4CeNZeLoAlZbK2tg/vGuyp0TYp1+3V
+         JVAZEhDWvm0vB192UuHA9m6I1pjjGkgvmAoB1ECRYzZklvtYlQsJHg6bz5mkJt/qOxlh
+         zckQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :to:cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=OzdNfZxxmkcZgQmcrr/fMou7WbepUbdCKxZFmXlJ3Vg=;
-        b=1Y0ndhpXSrk31S6D7WBxN5S0P6CIx8n9zI/3jH7svr0PpIHGfkTswyMnb2L+cM0hwB
-         fa/KgkYKgSFKGp+tcPivezdvVWBmeHO3L8R8jUt0QLGKv6B5dSH4VRVo0iGiQvfLXT2F
-         kVnQfehbs3cR42wzxaWJIjRtGb1yTm7RgefDDcVtenbdFzZHhXQDHxAWKnIWg+cMQRNf
-         YzElbNfzEtCKo93pOMaoyBRwCqj7dj9iIS6B4zuNH/TU4Ke8mEt/x2ybiiVEiXWyRRwn
-         0/icQM2skVcTbulFqHgQ+WDejp4T7qLUn5BXZ13OUZGCHxbDETeGNlyWInyJ9hlXkmr7
-         DArw==
-X-Gm-Message-State: AOAM5330o1WgXsl3VtUEdIIqYgU7bpwKIO4sKUuYmL8+ZqxRX4cuMa6f
-        ZXtRR2gPQExEO4rYmtxbqUE=
-X-Google-Smtp-Source: ABdhPJx9jxhTeN3M6bgGkiygyBhgaQPxXrSuzcd5ZXTT+szK8WkXknBBhK6G6NHJJpQZHyS/el2Mlg==
-X-Received: by 2002:a17:90b:1e49:b0:1dc:81d9:2d97 with SMTP id pi9-20020a17090b1e4900b001dc81d92d97mr16627343pjb.221.1651905113104;
-        Fri, 06 May 2022 23:31:53 -0700 (PDT)
+        bh=XVfJ8nCtUSBBvI+zDOE/2bDYhHDKVITWrA5qgxBXiTY=;
+        b=sXvpvNZ/3DGvO5Db/Hfx3wWvI5VbjaqjxphIltONT/uP5ls3cO9a1g388LTX+d0bjl
+         eU4oHnplaRoI0mRUAo1ubb7bRbAHDoKEOTa71qJ27KCo4As2nEBpkiHE27y0HUyIWndX
+         sq89Zj4lvdY0MM1Ui7HdiaYa5Dt2iXQh2PxAlna/8jpAOJzNXcfvC6bOxa/6hDOG02Wm
+         KSQTmZe53ScX9+VLMAaYV9E904gbrpvAewp84KMWEBAdVb83ujkEWdc+22mLQnwpXy37
+         DrISgisvSlNyrLq5yqcwKdlqrNGgHI6wDHUJX3Iss/PNJMKoplBIfzsVAmYYAI9lLhsx
+         f4TA==
+X-Gm-Message-State: AOAM533OKXA62mQIDRFW1gUvWwzp0FMvszgIb5VcXZg45m0ki8TM+3X1
+        UTc3R4WQw5rhqg2xRw9V0Go=
+X-Google-Smtp-Source: ABdhPJxiso2UD2UL3k/fmkVCNB4D3llu6b96K3fxRnmTTQ1LCQlJVOfh0KHpp1j1w1H454XdkLXF2g==
+X-Received: by 2002:a65:60d3:0:b0:39c:f431:5859 with SMTP id r19-20020a6560d3000000b0039cf4315859mr5679923pgv.442.1651905430555;
+        Fri, 06 May 2022 23:37:10 -0700 (PDT)
 Received: from [192.168.255.10] ([106.53.4.151])
-        by smtp.gmail.com with ESMTPSA id b2-20020a056a0002c200b0050dc7628143sm4394648pft.29.2022.05.06.23.31.50
+        by smtp.gmail.com with ESMTPSA id 16-20020a056a00071000b0050dc76281efsm4459770pfl.201.2022.05.06.23.37.07
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 May 2022 23:31:52 -0700 (PDT)
-Message-ID: <8b934240-4388-d0ff-0d36-69acb253a2a6@gmail.com>
-Date:   Sat, 7 May 2022 14:32:01 +0800
+        Fri, 06 May 2022 23:37:10 -0700 (PDT)
+Message-ID: <2551f97c-aa19-cb36-bb6f-fae93cc86f17@gmail.com>
+Date:   Sat, 7 May 2022 14:37:19 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
  Gecko/20100101 Thunderbird/91.9.0
-Subject: Re: [PATCH 3/5] io_uring: let fast poll support multishot
-To:     Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/5] io_uring: add a helper for poll clean
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        linux-kernel@vger.kernel.org
 References: <20220506070102.26032-1-haoxu.linux@gmail.com>
- <20220506070102.26032-4-haoxu.linux@gmail.com>
- <d68381cf-a9fc-33b8-8a9c-ff8485ba8d19@gmail.com>
- <8e81111d-398c-3810-50b4-e1475e956b6f@kernel.dk>
+ <20220506070102.26032-5-haoxu.linux@gmail.com>
+ <7ea9cb04-3f80-d8a0-ab3c-40cf5049f614@kernel.dk>
 From:   Hao Xu <haoxu.linux@gmail.com>
-In-Reply-To: <8e81111d-398c-3810-50b4-e1475e956b6f@kernel.dk>
+In-Reply-To: <7ea9cb04-3f80-d8a0-ab3c-40cf5049f614@kernel.dk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-5.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -75,70 +73,16 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-在 2022/5/7 上午6:02, Jens Axboe 写道:
-> On 5/6/22 11:19 AM, Pavel Begunkov wrote:
->> On 5/6/22 08:01, Hao Xu wrote:
->>> From: Hao Xu <howeyxu@tencent.com>
->>>
->>> For operations like accept, multishot is a useful feature, since we can
->>> reduce a number of accept sqe. Let's integrate it to fast poll, it may
->>> be good for other operations in the future.
->>>
->>> Signed-off-by: Hao Xu <howeyxu@tencent.com>
->>> ---
->>>    fs/io_uring.c | 41 ++++++++++++++++++++++++++---------------
->>>    1 file changed, 26 insertions(+), 15 deletions(-)
->>>
->>> diff --git a/fs/io_uring.c b/fs/io_uring.c
->>> index 8ebb1a794e36..d33777575faf 100644
->>> --- a/fs/io_uring.c
->>> +++ b/fs/io_uring.c
->>> @@ -5952,7 +5952,7 @@ static void io_poll_remove_entries(struct io_kiocb *req)
->>>     * either spurious wakeup or multishot CQE is served. 0 when it's done with
->>>     * the request, then the mask is stored in req->cqe.res.
->>>     */
->>> -static int io_poll_check_events(struct io_kiocb *req, bool locked)
->>> +static int io_poll_check_events(struct io_kiocb *req, bool *locked)
->>>    {
->>>        struct io_ring_ctx *ctx = req->ctx;
->>>        int v;
->>> @@ -5981,17 +5981,26 @@ static int io_poll_check_events(struct io_kiocb *req, bool locked)
->>>              /* multishot, just fill an CQE and proceed */
->>>            if (req->cqe.res && !(req->apoll_events & EPOLLONESHOT)) {
->>> -            __poll_t mask = mangle_poll(req->cqe.res & req->apoll_events);
->>> -            bool filled;
->>> -
->>> -            spin_lock(&ctx->completion_lock);
->>> -            filled = io_fill_cqe_aux(ctx, req->cqe.user_data, mask,
->>> -                         IORING_CQE_F_MORE);
->>> -            io_commit_cqring(ctx);
->>> -            spin_unlock(&ctx->completion_lock);
->>> -            if (unlikely(!filled))
->>> -                return -ECANCELED;
->>> -            io_cqring_ev_posted(ctx);
->>> +            if (req->flags & REQ_F_APOLL_MULTISHOT) {
->>> +                io_tw_lock(req->ctx, locked);
->>> +                if (likely(!(req->task->flags & PF_EXITING)))
->>> +                    io_queue_sqe(req);
+在 2022/5/6 下午10:36, Jens Axboe 写道:
+> On 5/6/22 1:01 AM, Hao Xu wrote:
+>> From: Hao Xu <howeyxu@tencent.com>
 >>
->> That looks dangerous, io_queue_sqe() usually takes the request
->> ownership and doesn't expect that someone, i.e.
->> io_poll_check_events(), may still be actively using it.
+>> Add a helper for poll clean, it will be used in the multishot accept in
+>> the later patches.
 > 
-> I took a look at this, too. We do own the request at this point, but
-> it's still on the poll list. If io_accept() fails, then we do run the
-> poll_clean.
+> Should this just go into io_clean_op()? Didn't look at it thoroughly,
+> but it'd remove some cases from the next patch if it could.
 > 
->> E.g. io_accept() fails on fd < 0, return an error, io_queue_sqe() ->
->> io_queue_async() -> io_req_complete_failed() kills it. Then
->> io_poll_check_events() and polling in general carry on using the freed
->> request => UAF. Didn't look at it too carefully, but there might other
->> similar cases.
-> 
-> But we better have done poll_clean() before returning the error. What am
-> I missing here?
-
-Sorry, I don't get it. I've done the poll_clean() before returnning
-error in io_accept()
-> 
-
+Actually this was my first version, here I put it in io_accept() to make
+it happen as early as possible. I rethinked about this, seems it's ok to
+put it into the io_clean_op().

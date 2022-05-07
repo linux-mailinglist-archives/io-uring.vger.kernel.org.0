@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E664B51E7CF
-	for <lists+io-uring@lfdr.de>; Sat,  7 May 2022 16:30:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F141B51E7D0
+	for <lists+io-uring@lfdr.de>; Sat,  7 May 2022 16:30:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234096AbiEGOeY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 7 May 2022 10:34:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38096 "EHLO
+        id S1352506AbiEGOe0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 7 May 2022 10:34:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352506AbiEGOeX (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 7 May 2022 10:34:23 -0400
-Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A63611582D
-        for <io-uring@vger.kernel.org>; Sat,  7 May 2022 07:30:36 -0700 (PDT)
-Received: by mail-pf1-x434.google.com with SMTP id v11so8587410pff.6
-        for <io-uring@vger.kernel.org>; Sat, 07 May 2022 07:30:36 -0700 (PDT)
+        with ESMTP id S1347909AbiEGOeZ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 7 May 2022 10:34:25 -0400
+Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87D2F1580B
+        for <io-uring@vger.kernel.org>; Sat,  7 May 2022 07:30:37 -0700 (PDT)
+Received: by mail-pj1-x1035.google.com with SMTP id c1-20020a17090a558100b001dca2694f23so9069810pji.3
+        for <io-uring@vger.kernel.org>; Sat, 07 May 2022 07:30:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=RvQ0Od73rlc6DodE1rZhJePXq4Ikq2/INgC0EIZyYtw=;
-        b=Y5mlt4LmlZyxz9C+YeFIkXU34XXDMJTLB+M3PgQsPmZOpC6f7K9OEh1ePEFqjSAxeU
-         c0oYGOMWOZc3qwX4OGphhXxTecG41Jz6mA7k08ZlX5j8YYZeZP4KGjuVUJhKsi8gTDbT
-         WnWNGvsc/Wp6NF4Dr4tTdwAEbyHAmMNev3TfamYWZUcnwTGezXwaZroIT8R0Jy3FYAdx
-         AwOlxnbQYHoaTm+x6jaUKX2OyiHGUIquAadO288/60b9m53G496hE2jF++cbJ7DKDTtm
-         quJJjM4xJc726IQde8DWjTlBJfKAAUhkiYptcpfItjN8/7CJnfczxjQnMrjx4xbPtcMi
-         xOWA==
+        bh=+2JF6VhWHyd6FlEiIjIGB1X+UZ4g8MHE8TFDdF1g2Ec=;
+        b=F10s3Tw9VmXW9izxIvMbTnVuE6PGtyMS+tajNgAT70Uqd4n5Es4Z078vsdc/8oqtF+
+         +261OY9YV2ONqkCw88yuMAvIPzXfT9MNDrLQdoawVF0G2eztlM8PKNRlU2sVa9LlWGYn
+         E8yv8h4Vv0CC7yabGeGkQIaRFk4LxeLoNq29uOhiydLCW3Is/s0HaqCqImjBsgmawpc7
+         Q7chw855+RKjntcaN9a71FHsC3WgmCeA0M/93l6nlNzQPc8pLU3suajpi06fegrl/sl0
+         ZT8pTLCmRFyvB2j+m3JBK8Ahgz+DC7BYELXAFhBNyJfWarKB/dHbW/Eu+O4YKwiO9JY4
+         lBpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=RvQ0Od73rlc6DodE1rZhJePXq4Ikq2/INgC0EIZyYtw=;
-        b=BWuyT6YkVYEbNS3LTrFOBSeMdIhCnLOVhbeahY2+RgyU6QfPctRyIXMr6C0YALKFny
-         iMSQClf7vlQ1UZXmrVvsmktGaXSODPv4YgAoWnA8mrJfAL09F4pY5bPG5sn1+INfZptN
-         M+fBbVY5kjnydTPwoaQVwIukbbwlhKAsZUmWTt8VahS0LDt/UwHy5i0AklLfflvZGdN0
-         jD0kusJjXfDu/ogccvleaTXZVjLPco2JYgGXpfwHzOP69dua6/Ln880AH0kh9z08SZ8h
-         bJ0mNTouJqCEwUCvUv5wHgLw6KFl+Z8CoM3ZtYMgqeH07z08BPyC18SHVjMTJAQGyidW
-         A94g==
-X-Gm-Message-State: AOAM530rRTTaCYxjf9KCauOYSXEJxFM9qX5XFg7cHKUp1+G4wluM8V8z
-        X1aXkrEJUboMvW9C0GoOcz3oiYuCgZIwWA==
-X-Google-Smtp-Source: ABdhPJznq2KyzFIxXLG2mCSAJOQr6itgJNqLTbV6LrhVo82fAVYt9iUGhWrD7j3ex6jvZj09mkkmxw==
-X-Received: by 2002:a63:5746:0:b0:3c2:363b:a88d with SMTP id h6-20020a635746000000b003c2363ba88dmr6638859pgm.17.1651933835679;
-        Sat, 07 May 2022 07:30:35 -0700 (PDT)
+        bh=+2JF6VhWHyd6FlEiIjIGB1X+UZ4g8MHE8TFDdF1g2Ec=;
+        b=KBYGtZ3iq68yJFmW6NuAHagRscAEYiBmDkOmehYZRsfhf+ZplHNYuMBTgmrNEJAH9D
+         e9QA663rcUg4jmvtZUrXcOvfZliIimdg3CtiTfhDtHeNBA+5H2V7ruPsDJfXgnk7B5ig
+         jBzOxPHlapImneHwwxYK4nj4K+oVKz77NqVFJi59Mov7dUuJOgbKMw0j1UHrloFhZzTe
+         Et2aKLxG2n6MR0AGwYMyGXOH1wzfzjuJ9R07YmFmIDDLRGVrqArWxH2eYeDx5cOH9eSh
+         Cun3k4Gz9aUWiuvYA/631WEAlH+cSMYkD/dZo614a3Yd4qUFWeRuo9VAH4OVdsEMSBby
+         hWWA==
+X-Gm-Message-State: AOAM532PzWl61HD0ZRkk+ipEeL9dx/sVKzM0Zza8shjWvdWxlmKSqjJP
+        6DselzqBTcMQXuhVfStp11FnDOITIWU2kA==
+X-Google-Smtp-Source: ABdhPJwQQlOHkb09JE8d7inn6GUKz+t/6MdVcmHLlX19p5KLyVF98dyIZucTFEQ7U54UwClH/BWQmw==
+X-Received: by 2002:a17:902:e5cc:b0:15e:b847:2936 with SMTP id u12-20020a170902e5cc00b0015eb8472936mr8473141plf.138.1651933836792;
+        Sat, 07 May 2022 07:30:36 -0700 (PDT)
 Received: from localhost.localdomain (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id h7-20020aa796c7000000b0050dc76281e3sm5332936pfq.189.2022.05.07.07.30.34
+        by smtp.gmail.com with ESMTPSA id h7-20020aa796c7000000b0050dc76281e3sm5332936pfq.189.2022.05.07.07.30.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 May 2022 07:30:35 -0700 (PDT)
+        Sat, 07 May 2022 07:30:36 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     asml.silence@gmail.com, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 1/3] io_uring: add buffer selection support to IORING_OP_NOP
-Date:   Sat,  7 May 2022 08:30:29 -0600
-Message-Id: <20220507143031.48321-2-axboe@kernel.dk>
+Subject: [PATCH 2/3] io_uring: add io_pin_pages() helper
+Date:   Sat,  7 May 2022 08:30:30 -0600
+Message-Id: <20220507143031.48321-3-axboe@kernel.dk>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220507143031.48321-1-axboe@kernel.dk>
 References: <20220507143031.48321-1-axboe@kernel.dk>
@@ -67,43 +67,149 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Obviously not really useful since it's not transferring data, but it
-is helpful in benchmarking overhead of provided buffers.
+Abstract this out from io_sqe_buffer_register() so we can use it
+elsewhere too without duplicating this code.
+
+No intended functional changes in this patch.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/io_uring.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ fs/io_uring.c | 77 +++++++++++++++++++++++++++++++++------------------
+ 1 file changed, 50 insertions(+), 27 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index b6d491c9a25f..667bb96cec98 100644
+index 667bb96cec98..fe68de1ce308 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -1051,6 +1051,7 @@ static const struct io_op_def io_op_defs[] = {
- 	[IORING_OP_NOP] = {
- 		.audit_skip		= 1,
- 		.iopoll			= 1,
-+		.buffer_select		= 1,
- 	},
- 	[IORING_OP_READV] = {
- 		.needs_file		= 1,
-@@ -4527,7 +4528,17 @@ static int io_splice(struct io_kiocb *req, unsigned int issue_flags)
-  */
- static int io_nop(struct io_kiocb *req, unsigned int issue_flags)
+@@ -9686,30 +9686,18 @@ static int io_buffer_account_pin(struct io_ring_ctx *ctx, struct page **pages,
+ 	return ret;
+ }
+ 
+-static int io_sqe_buffer_register(struct io_ring_ctx *ctx, struct iovec *iov,
+-				  struct io_mapped_ubuf **pimu,
+-				  struct page **last_hpage)
++static struct page **io_pin_pages(unsigned long ubuf, unsigned long len,
++				  int *npages)
  {
--	__io_req_complete(req, issue_flags, 0, 0);
-+	void __user *buf;
+-	struct io_mapped_ubuf *imu = NULL;
++	unsigned long start, end, nr_pages;
+ 	struct vm_area_struct **vmas = NULL;
+ 	struct page **pages = NULL;
+-	unsigned long off, start, end, ubuf;
+-	size_t size;
+-	int ret, pret, nr_pages, i;
+-
+-	if (!iov->iov_base) {
+-		*pimu = ctx->dummy_ubuf;
+-		return 0;
+-	}
++	int i, pret, ret = -ENOMEM;
+ 
+-	ubuf = (unsigned long) iov->iov_base;
+-	end = (ubuf + iov->iov_len + PAGE_SIZE - 1) >> PAGE_SHIFT;
++	end = (ubuf + len + PAGE_SIZE - 1) >> PAGE_SHIFT;
+ 	start = ubuf >> PAGE_SHIFT;
+ 	nr_pages = end - start;
+ 
+-	*pimu = NULL;
+-	ret = -ENOMEM;
+-
+ 	pages = kvmalloc_array(nr_pages, sizeof(struct page *), GFP_KERNEL);
+ 	if (!pages)
+ 		goto done;
+@@ -9719,10 +9707,6 @@ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, struct iovec *iov,
+ 	if (!vmas)
+ 		goto done;
+ 
+-	imu = kvmalloc(struct_size(imu, bvec, nr_pages), GFP_KERNEL);
+-	if (!imu)
+-		goto done;
+-
+ 	ret = 0;
+ 	mmap_read_lock(current->mm);
+ 	pret = pin_user_pages(ubuf, nr_pages, FOLL_WRITE | FOLL_LONGTERM,
+@@ -9740,6 +9724,7 @@ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, struct iovec *iov,
+ 				break;
+ 			}
+ 		}
++		*npages = nr_pages;
+ 	} else {
+ 		ret = pret < 0 ? pret : -EFAULT;
+ 	}
+@@ -9753,14 +9738,53 @@ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, struct iovec *iov,
+ 			unpin_user_pages(pages, pret);
+ 		goto done;
+ 	}
++	ret = 0;
++done:
++	kvfree(vmas);
++	if (ret < 0) {
++		kvfree(pages);
++		pages = ERR_PTR(ret);
++	}
++	return pages;
++}
+ 
+-	ret = io_buffer_account_pin(ctx, pages, pret, imu, last_hpage);
++static int io_sqe_buffer_register(struct io_ring_ctx *ctx, struct iovec *iov,
++				  struct io_mapped_ubuf **pimu,
++				  struct page **last_hpage)
++{
++	struct io_mapped_ubuf *imu = NULL;
++	struct page **pages = NULL;
++	unsigned long off;
++	size_t size;
++	int ret, nr_pages, i;
 +
-+	if (req->flags & REQ_F_BUFFER_SELECT) {
-+		size_t len = 1;
-+
-+		buf = io_buffer_select(req, &len, issue_flags);
-+		if (IS_ERR(buf))
-+			return PTR_ERR(buf);
++	if (!iov->iov_base) {
++		*pimu = ctx->dummy_ubuf;
++		return 0;
 +	}
 +
-+	__io_req_complete(req, issue_flags, 0, io_put_kbuf(req, issue_flags));
- 	return 0;
++	*pimu = NULL;
++	ret = -ENOMEM;
++
++	pages = io_pin_pages((unsigned long) iov->iov_base, iov->iov_len,
++				&nr_pages);
++	if (IS_ERR(pages)) {
++		ret = PTR_ERR(pages);
++		pages = NULL;
++		goto done;
++	}
++
++	imu = kvmalloc(struct_size(imu, bvec, nr_pages), GFP_KERNEL);
++	if (!imu)
++		goto done;
++
++	ret = io_buffer_account_pin(ctx, pages, nr_pages, imu, last_hpage);
+ 	if (ret) {
+-		unpin_user_pages(pages, pret);
++		unpin_user_pages(pages, nr_pages);
+ 		goto done;
+ 	}
+ 
+-	off = ubuf & ~PAGE_MASK;
++	off = (unsigned long) iov->iov_base & ~PAGE_MASK;
+ 	size = iov->iov_len;
+ 	for (i = 0; i < nr_pages; i++) {
+ 		size_t vec_len;
+@@ -9773,8 +9797,8 @@ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, struct iovec *iov,
+ 		size -= vec_len;
+ 	}
+ 	/* store original address for later verification */
+-	imu->ubuf = ubuf;
+-	imu->ubuf_end = ubuf + iov->iov_len;
++	imu->ubuf = (unsigned long) iov->iov_base;
++	imu->ubuf_end = imu->ubuf + iov->iov_len;
+ 	imu->nr_bvecs = nr_pages;
+ 	*pimu = imu;
+ 	ret = 0;
+@@ -9782,7 +9806,6 @@ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, struct iovec *iov,
+ 	if (ret)
+ 		kvfree(imu);
+ 	kvfree(pages);
+-	kvfree(vmas);
+ 	return ret;
  }
  
 -- 

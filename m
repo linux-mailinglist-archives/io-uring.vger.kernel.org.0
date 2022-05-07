@@ -2,196 +2,108 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 48EC851E7A7
-	for <lists+io-uring@lfdr.de>; Sat,  7 May 2022 16:07:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A72E051E7B7
+	for <lists+io-uring@lfdr.de>; Sat,  7 May 2022 16:16:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1446509AbiEGOKO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 7 May 2022 10:10:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52274 "EHLO
+        id S1380867AbiEGOUP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 7 May 2022 10:20:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1446516AbiEGOKM (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 7 May 2022 10:10:12 -0400
-Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DD8145526;
-        Sat,  7 May 2022 07:06:25 -0700 (PDT)
-Received: by mail-pg1-x52d.google.com with SMTP id e5so8360772pgc.5;
-        Sat, 07 May 2022 07:06:25 -0700 (PDT)
+        with ESMTP id S1354008AbiEGOUO (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 7 May 2022 10:20:14 -0400
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B422141312
+        for <io-uring@vger.kernel.org>; Sat,  7 May 2022 07:16:26 -0700 (PDT)
+Received: by mail-pj1-x1036.google.com with SMTP id p6so9436069pjm.1
+        for <io-uring@vger.kernel.org>; Sat, 07 May 2022 07:16:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=GWQlqvW5av/MtO8yCNmmjt4jG3JJ3yBcvjIk01r0GHM=;
-        b=qxoTKuQx/zjhyFQ+JyZmCAuRJU5gKWkKTXH+vhx6IlmPr4UIzx8qQBT1d0dNmwlsu3
-         7sA/GB19v32FdCxCvwMsksYtvjED0o6lwoNO1+GTHWYTqQmCb7vv+MPSIbyHUlm4LPqq
-         E2QWigAn01WxQraD4FfwY1/xfTuA/P8YYBId/yAr3PSQpfoCHLjZ9pUGmFH0NSettN5F
-         dsfPOvO0aYaSTbbpb7Tw9Ej97aGJjAmGxhJ7646ImzEii9Cf1i7MGtqIhgVrsLCwlbmR
-         rukNbBV4p90r5zRER4kEIrS12/8VA+YjmsIFwbL+su1qoKWuFVHQzjgYNsSmdTs2G3XM
-         UAFg==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=V53ybjNDIR64uWsnk5UET/HbnU6X5f+PNP2IOjTo9Go=;
+        b=PtnlY1gnHBy0DixsZp6Dcxn7UuylJTNR/SHFPHKnGaJ37obj7YFJxB2xz9FmIjN7OL
+         FdscGNnHWi3mLy1DXsRVSS1/0g7fuch//nPbj31s3GYfsxn/LeZlokCLxUW59zdWzo18
+         Ybc6mKrMnDEZEDPxfLv7bzNmKE8ivaHHYshf0NWd5IcCHY5TggQ4MvtcUIh7A8bV4hWn
+         pPOIC8Nsqom/ozaS0Pktka92lEBV+GCjfnY8E0oPEX9HT+XM7EDRAJs7L0qoQ/jRldj6
+         ycxIPP9dRVxGAzjBQiR53bGD7jynM1Gu7Zg/jwpAN5lSUiWm8a0PoqkwcGexXv1fobx7
+         NvxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=GWQlqvW5av/MtO8yCNmmjt4jG3JJ3yBcvjIk01r0GHM=;
-        b=5kGG0Jq+DTl8aO2Nx+ZBXwtD7sdONBo+J8aCLM+OCYeHHS7rSzKjs+py9pRkcGrQUy
-         2eftOtxmZ5oA8V77zaoqu1Ag0dEzlTK7bn+YxFSu9cvm/GIMLj+f5pC9sEdivagESpid
-         d8cnbgQQlCsyvTrE/PpH2EoR6z6rSLTFV+uqy+p9xLXwWUoz1Yfppg0d5AHajT0AVyh0
-         llP8/44FpQVLmSNcecMWa2FdIrvMACtttJfd2TiigiNG/6Q/9NgFiGecn8Iv8BJAJ7rH
-         Q6FnF25jGxPe+Ah5aJGZ5SGKxJqSYwhoblK/KdVaI5mvYag0ozWaAkQZmJi9v3s8VJ7R
-         3sSA==
-X-Gm-Message-State: AOAM531KMTGSYlhfTn7vYuxIZJFTwCN6f+DkxsnApegjUlPvgJNA9gyE
-        JFrsAUVH4KlkJPpOEiW45VCKKGoAS0TJ5w==
-X-Google-Smtp-Source: ABdhPJzAiLKoptVZbG+LjHRRp45n05E0JiPSgE7jy66qYHNLfHCzXqlM2n8i8AGS219bkFEjZK2Gaw==
-X-Received: by 2002:a65:6e8b:0:b0:3ab:a3fb:e95a with SMTP id bm11-20020a656e8b000000b003aba3fbe95amr6622654pgb.433.1651932384347;
-        Sat, 07 May 2022 07:06:24 -0700 (PDT)
-Received: from HOWEYXU-MB0.tencent.com ([106.53.33.166])
-        by smtp.gmail.com with ESMTPSA id j13-20020a170902c3cd00b0015e8d4eb2acsm3674813plj.246.2022.05.07.07.06.20
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 07 May 2022 07:06:24 -0700 (PDT)
-From:   Hao Xu <haoxu.linux@gmail.com>
-To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 3/4] io_uring: let fast poll support multishot
-Date:   Sat,  7 May 2022 22:06:19 +0800
-Message-Id: <20220507140620.85871-4-haoxu.linux@gmail.com>
-X-Mailer: git-send-email 2.36.0
-In-Reply-To: <20220507140620.85871-1-haoxu.linux@gmail.com>
-References: <20220507140620.85871-1-haoxu.linux@gmail.com>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=V53ybjNDIR64uWsnk5UET/HbnU6X5f+PNP2IOjTo9Go=;
+        b=X03fCiQHXkIa8tlL3WNzcYkbeF5Yt4YaQMDdo+QuMHamCTYmtTxM2Dic8omprEwghL
+         qKUh9tDEpyDUzpXdQRYpVM9/HKxkJ+GLJDxqnB2SN6k6Q8lXEsiaflvsvsP1hWFuVAfn
+         dCgB++W0JbYImZaHc/NIhUWh+pZ3JBXRHQuIc1bEVHFvJXZxaZukNLFnXL9b4y/QQuUb
+         wlzGDnWK3EVuGl6uK39rUFjClohMvixrz2dFn3GDp5QcN/wg8vWILY0Opf5jZaSpZ/Yi
+         NsbM/UBPIS0tdg5UnVdAzArQA5H7G46ZEQEZrHIRGKtzeRQMSgyZnEub9C/iJXAu/Yyg
+         EOCA==
+X-Gm-Message-State: AOAM530VEndG7onU1bBFBRY3FXdr0H5lw9xnU1ZZMK1rH+VJsE4vczUE
+        /ottT3ZpNZWUlSy8lpoCBnm5TQ==
+X-Google-Smtp-Source: ABdhPJzNMImt9jDJpUexhsyBh2o7xe0e4/7BXGyxz7u8kl9rsxaGKNB/MxE0RNmvbC3GIMQOQPQX0g==
+X-Received: by 2002:a17:90a:7c4c:b0:1dc:26a1:b82f with SMTP id e12-20020a17090a7c4c00b001dc26a1b82fmr9568656pjl.148.1651932986168;
+        Sat, 07 May 2022 07:16:26 -0700 (PDT)
+Received: from [192.168.4.166] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
+        by smtp.gmail.com with ESMTPSA id h2-20020a170902f70200b0015e8d4eb2cbsm3712190plo.277.2022.05.07.07.16.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 07 May 2022 07:16:25 -0700 (PDT)
+Message-ID: <21e1f932-f5fd-9b7e-2b34-fc3a82bbb297@kernel.dk>
+Date:   Sat, 7 May 2022 08:16:24 -0600
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH 1/4] io_uring: add IORING_ACCEPT_MULTISHOT for accept
+Content-Language: en-US
+To:     Hao Xu <haoxu.linux@gmail.com>, io-uring@vger.kernel.org
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        linux-kernel@vger.kernel.org
+References: <20220507140620.85871-1-haoxu.linux@gmail.com>
+ <20220507140620.85871-2-haoxu.linux@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20220507140620.85871-2-haoxu.linux@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Hao Xu <howeyxu@tencent.com>
+On 5/7/22 8:06 AM, Hao Xu wrote:
+> From: Hao Xu <howeyxu@tencent.com>
+> 
+> add an accept_flag IORING_ACCEPT_MULTISHOT for accept, which is to
+> support multishot.
+> 
+> Signed-off-by: Hao Xu <howeyxu@tencent.com>
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-For operations like accept, multishot is a useful feature, since we can
-reduce a number of accept sqe. Let's integrate it to fast poll, it may
-be good for other operations in the future.
+Heh, don't add my SOB. Guessing this came from the folding in?
 
-Signed-off-by: Hao Xu <howeyxu@tencent.com>
-[fold in cleaning up]
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- fs/io_uring.c | 47 ++++++++++++++++++++++++++++++++---------------
- 1 file changed, 32 insertions(+), 15 deletions(-)
+> ---
+>  include/uapi/linux/io_uring.h | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+> index 06621a278cb6..f4d9ca62a5a6 100644
+> --- a/include/uapi/linux/io_uring.h
+> +++ b/include/uapi/linux/io_uring.h
+> @@ -223,6 +223,11 @@ enum {
+>   */
+>  #define IORING_RECVSEND_POLL_FIRST	(1U << 0)
+>  
+> +/*
+> + * accept flags stored in accept_flags
+> + */
+> +#define IORING_ACCEPT_MULTISHOT	(1U << 15)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index c2ee184ac693..e0d12af04cd1 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -5955,6 +5955,7 @@ static void io_poll_remove_entries(struct io_kiocb *req)
- 	rcu_read_unlock();
- }
- 
-+static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags);
- /*
-  * All poll tw should go through this. Checks for poll events, manages
-  * references, does rewait, etc.
-@@ -5963,10 +5964,10 @@ static void io_poll_remove_entries(struct io_kiocb *req)
-  * either spurious wakeup or multishot CQE is served. 0 when it's done with
-  * the request, then the mask is stored in req->cqe.res.
-  */
--static int io_poll_check_events(struct io_kiocb *req, bool locked)
-+static int io_poll_check_events(struct io_kiocb *req, bool *locked)
- {
- 	struct io_ring_ctx *ctx = req->ctx;
--	int v;
-+	int v, ret;
- 
- 	/* req->task == current here, checking PF_EXITING is safe */
- 	if (unlikely(req->task->flags & PF_EXITING))
-@@ -5990,23 +5991,37 @@ static int io_poll_check_events(struct io_kiocb *req, bool locked)
- 			req->cqe.res = vfs_poll(req->file, &pt) & req->apoll_events;
- 		}
- 
--		/* multishot, just fill an CQE and proceed */
--		if (req->cqe.res && !(req->apoll_events & EPOLLONESHOT)) {
--			__poll_t mask = mangle_poll(req->cqe.res & req->apoll_events);
-+		if ((unlikely(!req->cqe.res)))
-+			continue;
-+		if (req->apoll_events & EPOLLONESHOT)
-+			return 0;
-+
-+		/* multishot, just fill a CQE and proceed */
-+		if (!(req->flags & REQ_F_APOLL_MULTISHOT)) {
-+			__poll_t mask = mangle_poll(req->cqe.res &
-+						    req->apoll_events);
- 			bool filled;
- 
- 			spin_lock(&ctx->completion_lock);
--			filled = io_fill_cqe_aux(ctx, req->cqe.user_data, mask,
--						 IORING_CQE_F_MORE);
-+			filled = io_fill_cqe_aux(ctx, req->cqe.user_data,
-+						 mask, IORING_CQE_F_MORE);
- 			io_commit_cqring(ctx);
- 			spin_unlock(&ctx->completion_lock);
--			if (unlikely(!filled))
--				return -ECANCELED;
--			io_cqring_ev_posted(ctx);
--		} else if (req->cqe.res) {
--			return 0;
-+			if (filled) {
-+				io_cqring_ev_posted(ctx);
-+				continue;
-+			}
-+			return -ECANCELED;
- 		}
- 
-+		io_tw_lock(req->ctx, locked);
-+		if (unlikely(req->task->flags & PF_EXITING))
-+			return -EFAULT;
-+		ret = io_issue_sqe(req,
-+				   IO_URING_F_NONBLOCK|IO_URING_F_COMPLETE_DEFER);
-+		if (ret)
-+			return ret;
-+
- 		/*
- 		 * Release all references, retry if someone tried to restart
- 		 * task_work while we were executing it.
-@@ -6021,7 +6036,7 @@ static void io_poll_task_func(struct io_kiocb *req, bool *locked)
- 	struct io_ring_ctx *ctx = req->ctx;
- 	int ret;
- 
--	ret = io_poll_check_events(req, *locked);
-+	ret = io_poll_check_events(req, locked);
- 	if (ret > 0)
- 		return;
- 
-@@ -6046,7 +6061,7 @@ static void io_apoll_task_func(struct io_kiocb *req, bool *locked)
- 	struct io_ring_ctx *ctx = req->ctx;
- 	int ret;
- 
--	ret = io_poll_check_events(req, *locked);
-+	ret = io_poll_check_events(req, locked);
- 	if (ret > 0)
- 		return;
- 
-@@ -6286,7 +6301,7 @@ static int io_arm_poll_handler(struct io_kiocb *req, unsigned issue_flags)
- 	struct io_ring_ctx *ctx = req->ctx;
- 	struct async_poll *apoll;
- 	struct io_poll_table ipt;
--	__poll_t mask = EPOLLONESHOT | POLLERR | POLLPRI;
-+	__poll_t mask = POLLERR | POLLPRI;
- 	int ret;
- 
- 	if (!def->pollin && !def->pollout)
-@@ -6295,6 +6310,8 @@ static int io_arm_poll_handler(struct io_kiocb *req, unsigned issue_flags)
- 		return IO_APOLL_ABORTED;
- 	if ((req->flags & (REQ_F_POLLED|REQ_F_PARTIAL_IO)) == REQ_F_POLLED)
- 		return IO_APOLL_ABORTED;
-+	if (!(req->flags & REQ_F_APOLL_MULTISHOT))
-+		mask |= EPOLLONESHOT;
- 
- 	if (def->pollin) {
- 		mask |= POLLIN | POLLRDNORM;
+Looks like the git send-email is still acting up, this looks like
+v2?
+
 -- 
-2.36.0
+Jens Axboe
 

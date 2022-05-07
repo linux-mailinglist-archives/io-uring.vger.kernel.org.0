@@ -2,65 +2,65 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 04A8151E81F
-	for <lists+io-uring@lfdr.de>; Sat,  7 May 2022 17:24:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56E2F51E824
+	for <lists+io-uring@lfdr.de>; Sat,  7 May 2022 17:29:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233883AbiEGP1v (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 7 May 2022 11:27:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47756 "EHLO
+        id S245705AbiEGPcs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 7 May 2022 11:32:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231445AbiEGP1u (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 7 May 2022 11:27:50 -0400
-Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E1DE43498
-        for <io-uring@vger.kernel.org>; Sat,  7 May 2022 08:24:03 -0700 (PDT)
-Received: by mail-pf1-x429.google.com with SMTP id v11so8659882pff.6
-        for <io-uring@vger.kernel.org>; Sat, 07 May 2022 08:24:03 -0700 (PDT)
+        with ESMTP id S245458AbiEGPcr (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 7 May 2022 11:32:47 -0400
+Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 362563ED06
+        for <io-uring@vger.kernel.org>; Sat,  7 May 2022 08:29:01 -0700 (PDT)
+Received: by mail-pj1-x1031.google.com with SMTP id j8-20020a17090a060800b001cd4fb60dccso9279315pjj.2
+        for <io-uring@vger.kernel.org>; Sat, 07 May 2022 08:29:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=cIpd969Y/rWkv3l4A4Fd61OrAM0/TLCY6M6nV2C3hPE=;
-        b=NxGTyaXjoIEnxW0NSDK7tru0dYp5A7PZkDR89QnqFSM8tGcei+gPI51wFqXcalI5Gn
-         qZJOFZKSlhKz1OfTMZVenJ/iHDtwgHunZ+7R1BR0nnhwqUwCpJRd7pTd3lOGKT6ylUms
-         m6ybRnswuwQT8+3nbvO1zNbk10+yGiaugNODSvU55LplZhnW6fIzliH85o7PGrY2VYlp
-         g4wryEdqgFWqLIkMoNlkTKDygabD1IKmyfRjrGeEE4kDVoxXBCld03usL+qKfEhORt+v
-         RbwcozxKmcmHxg0VwOAGN3rxme7+/4dVvYRX2T1chL5CnoqW0n0HUB+QMe5K1rAv7P1p
-         3fGA==
+        bh=w5snkalLPq8nNKOldyfRBHJYjmO4+itefoaZvRQgmGs=;
+        b=xtgbspjUF4DnU28FtWKzjI/Ell1hoJjF5Xi+fKe8rYp1SabQQ/QznBC7owlz8g5g1V
+         2lcb5scyidVo0HyYDIMS+NHLAyU9iHTUxi6MRSX9zUBmGeGvw8wesjQ00aAV2iEBZcyZ
+         08IUsexauv/Wea4ZwrA7YS8YbsqGKK7bdt4ziBOSqqHj/FIQQwb48Y9waBXeUg3a2e9B
+         D3AcW7a04Jps69qFV9h7PNodTtClxM4uxAgK4L2SHTMtZ9u9/pzukVepGn1ZDIPk0Oil
+         ULkxVt6faR6ktw4aOwOdO0qX8kf2dtLD66gC4b7E8Ypphj9+z8f9cehv8hPmUXy9rz7V
+         WzjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=cIpd969Y/rWkv3l4A4Fd61OrAM0/TLCY6M6nV2C3hPE=;
-        b=Dbe1hNfilKCCT1yCjQJZXonqGvmq6SbA3C+wFaeUN4gmWzlf4niy29hZFKk3SLDDFN
-         YwL87w3twjAKFDI5q+tv5kZ1g2cQ0ak1zec+xWr/DK/6N3QO/iql5v7EB+tP4KENjWPj
-         UNVAFw6w7td3oIhakPcT3qpJnrcr9Im465zW1z4rmDkpztJHa2LwshaUezKseCTR10sF
-         /A9bLmLLZjf4AfHaHoXyBl3yzEwkDb0AFN+JRHkwIdxITNxXwZgTo2yH+5iZ3JsHwBsT
-         I64C8baFRd+MIsolsSQF7v0aQsl5D1/0dDFR6VR74L/9B99OnTb1jEpSF6DmhKjuD+SI
-         bWyg==
-X-Gm-Message-State: AOAM533FMy4gGytrgEgLsGMSjBTttBrpCXzkr0dvOIOdPcgSu9Q91b2p
-        /eobVJVt0lP4H4YQ/qMH0tzpW7t6lcenCA==
-X-Google-Smtp-Source: ABdhPJyy1URP1Cd21C7fsRt50SKMrJwwXb+qgRFZ+9F4Nz2CeKF2SuSQVWv7aqFir2HGqxXamM039A==
-X-Received: by 2002:a63:5752:0:b0:3c2:1c59:666f with SMTP id h18-20020a635752000000b003c21c59666fmr6728612pgm.59.1651937041478;
-        Sat, 07 May 2022 08:24:01 -0700 (PDT)
+        bh=w5snkalLPq8nNKOldyfRBHJYjmO4+itefoaZvRQgmGs=;
+        b=mSko6TZ1Njl0DpO4cLueWanBsD2AeHi4GmpA00ToOm068SZ34jc8cxuC0y4Zw+pii7
+         b8Y/6Dy5yx5zYiAOyK8ZNz+C0Yol8ftRkd7SkfzYnspdxBXy15ZT+zA1uLNQAtGMyIDR
+         KU53KaW7sMmVSor5TdA47mlTbSiurT20Tzh+JL5r71jFphh1e/cYPbma+QXUgk9rlW27
+         EgyO8/Ma8lneruPZondsNVxOInXp4IgFRu32LwTSCG2E811OjRvw9Olxwvt66pKRG0CW
+         3/AsEx3s8K9Zlcn8v+Sv6XQTMORxyyK6KUgvk9jeoB4KROOCr8QaHy0hd8XUsuzBaVzY
+         4rCA==
+X-Gm-Message-State: AOAM530NEvgfWac9CGNUtjxu4lBmeemCby77AtL9s+gkJSUaXAqWp0EW
+        NCGaOgnq6J4D2jrswOqFnS6Rqg==
+X-Google-Smtp-Source: ABdhPJxVUUqh4+Tw57N1Q8d0H/9lV/Oj8vMGbxsAPaB4cjbVjpTkLE3kfvuVDxRDNHy0FTfsdhhvtQ==
+X-Received: by 2002:a17:903:2288:b0:15e:8da2:fcc0 with SMTP id b8-20020a170903228800b0015e8da2fcc0mr8917589plh.125.1651937340615;
+        Sat, 07 May 2022 08:29:00 -0700 (PDT)
 Received: from [192.168.4.166] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id 24-20020a630e58000000b003c18e0768e3sm5218337pgo.78.2022.05.07.08.24.00
+        by smtp.gmail.com with ESMTPSA id x20-20020aa78f14000000b0050dc76281e7sm5413751pfr.193.2022.05.07.08.28.59
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 07 May 2022 08:24:00 -0700 (PDT)
-Message-ID: <a41a1f47-ad05-3245-8ac8-7d8e95ebde44@kernel.dk>
-Date:   Sat, 7 May 2022 09:23:59 -0600
+        Sat, 07 May 2022 08:28:59 -0700 (PDT)
+Message-ID: <305fd65b-310c-9a9b-cb8c-6cbc3d00dbcb@kernel.dk>
+Date:   Sat, 7 May 2022 09:28:58 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
  Thunderbird/91.8.1
-Subject: Re: [PATCH 4/4] io_uring: implement multishot mode for accept
+Subject: Re: [PATCH v3 0/4] fast poll multishot mode
 Content-Language: en-US
 To:     Hao Xu <haoxu.linux@gmail.com>, io-uring@vger.kernel.org
 Cc:     Pavel Begunkov <asml.silence@gmail.com>,
         linux-kernel@vger.kernel.org
-References: <20220507152009.87367-1-haoxu.linux@gmail.com>
+References: <20220507140620.85871-1-haoxu.linux@gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20220507152009.87367-1-haoxu.linux@gmail.com>
+In-Reply-To: <20220507140620.85871-1-haoxu.linux@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -73,64 +73,39 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/7/22 9:20 AM, Hao Xu wrote:
-> @@ -5757,8 +5771,26 @@ static int io_accept(struct io_kiocb *req, unsigned int issue_flags)
->  		ret = io_install_fixed_file(req, file, issue_flags,
->  					    accept->file_slot - 1);
->  	}
-> -	__io_req_complete(req, issue_flags, ret, 0);
-> -	return 0;
-> +
-> +	if (!(req->flags & REQ_F_APOLL_MULTISHOT)) {
-> +		__io_req_complete(req, issue_flags, ret, 0);
-> +		return 0;
-> +	}
-> +	if (ret >= 0) {
-> +		bool filled;
-> +
-> +		spin_lock(&ctx->completion_lock);
-> +		filled = io_fill_cqe_aux(ctx, req->cqe.user_data, ret,
-> +					 IORING_CQE_F_MORE);
-> +		io_commit_cqring(ctx);
-> +		spin_unlock(&ctx->completion_lock);
-> +		if (!filled)
-> +			return -ECANCELED;
-> +		io_cqring_ev_posted(ctx);
-> +		goto retry;
-> +	}
-> +
-> +	return ret;
+On 5/7/22 8:06 AM, Hao Xu wrote:
+> Let multishot support multishot mode, currently only add accept as its
+> first comsumer.
 
-I'd still make that:
+consumer
 
-	if (filled) {
-		io_cqring_ev_posted(ctx);
-		goto retry;
-	}
-	ret = -ECANCELED;
+> theoretical analysis:
+>   1) when connections come in fast
+>     - singleshot:
+>               add accept sqe(userpsace) --> accept inline
 
-as it flows better and shows what the likely outcome is.
+userspace
 
->  static int io_connect_prep_async(struct io_kiocb *req)
-> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-> index f4d9ca62a5a6..7c3d70d12428 100644
-> --- a/include/uapi/linux/io_uring.h
-> +++ b/include/uapi/linux/io_uring.h
-> @@ -224,9 +224,9 @@ enum {
->  #define IORING_RECVSEND_POLL_FIRST	(1U << 0)
->  
->  /*
-> - * accept flags stored in accept_flags
-> + * accept flags stored in sqe->ioprio
->   */
-> -#define IORING_ACCEPT_MULTISHOT	(1U << 15)
-> +#define IORING_ACCEPT_MULTISHOT	(1U << 0)
->  
->  /*
->   * IO completion data structure (Completion Queue Entry)
+>                               ^                 |
+>                               |-----------------|
+>     - multishot:
+>              add accept sqe(userspace) --> accept inline
+>                                               ^     |
+>                                               |--*--|
+> 
+>     we do accept repeatedly in * place until get EAGAIN
+> 
+>   2) when connections come in at a low pressure
+>     similar thing like 1), we reduce a lot of userspace-kernel context
+>     switch and useless vfs_poll()
 
-This hunk needs to get folded in to the patch that adds the flag in the
-first place.
+Overall this looks better than v2 for sure, just some minor tweaks
+needed I believe.
+
+But we still need to consider direct accept with multishot... Should
+probably be an add-on patch as I think it'd get a bit more complicated
+if we need to be able to cheaply find an available free fixed fd slot.
+I'll try and play with that.
 
 -- 
 Jens Axboe

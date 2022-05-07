@@ -2,67 +2,68 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EA9B51E50B
-	for <lists+io-uring@lfdr.de>; Sat,  7 May 2022 09:08:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CCDA251E5DE
+	for <lists+io-uring@lfdr.de>; Sat,  7 May 2022 11:13:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346562AbiEGHL6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 7 May 2022 03:11:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52328 "EHLO
+        id S1383812AbiEGJQs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 7 May 2022 05:16:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51324 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239988AbiEGHL6 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 7 May 2022 03:11:58 -0400
-Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C52F05C666;
-        Sat,  7 May 2022 00:08:12 -0700 (PDT)
-Received: by mail-pl1-x62b.google.com with SMTP id q4so6535077plr.11;
-        Sat, 07 May 2022 00:08:12 -0700 (PDT)
+        with ESMTP id S230191AbiEGJQs (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 7 May 2022 05:16:48 -0400
+Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AB403152E;
+        Sat,  7 May 2022 02:13:02 -0700 (PDT)
+Received: by mail-pg1-x530.google.com with SMTP id l11so2427096pgt.13;
+        Sat, 07 May 2022 02:13:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:mime-version:user-agent:subject:to:cc:references
          :from:in-reply-to:content-transfer-encoding;
-        bh=awliyi+kCIvNX2z6aujZlzd03dTxPLU8kWaR2tWe1kk=;
-        b=P+zW8iI0IbkFaZZ9UEYGGU2h252N0+v+tAi4Icwmo7mIaUElEvc9+VyCF1qOaGyB2N
-         D9RuRZQ10SLbz2ttCOOWEyHggVVGTu2qaTJnuC9OIPFVzAB10gAlzDimACC6t0YhZoSQ
-         CaRDX8PR2tbwlKhGrYyC8zPDsHAnbqoGdqVgWV+cNDg7lGSpmEzCxPR6x5roMTn95U32
-         Z1ZO3l9DqvWpqvMwvkMlN70nZsFr4y7UzgRdAf3jfnTKvMPs/tfpAhNiybHvMU3O0sDC
-         /DMeec9jU2aP1+IQYFJ0rkp0+BOs4BBZXBzTEilRLsj7dGo+vMI3HLBKXqE4jr5k2CbU
-         4JBg==
+        bh=bV6Fic4FC7WhnbPqNw/owaN+8XIB8Y3rXX1tGv2mwJc=;
+        b=KXjPj+DFEpZNOYusBws3oxjiy2Ifoo/09c8LCm5Zge3K/Su0UFdqDS0hj5fl5OvrfW
+         uT4Aeym2wNHGL4HDuIz48Yd2wrgf7p0x/K+VAzpGuVLM0Lk8Q4rjGkf8LhdE3aTSYUib
+         OxssIiJ5YhIF6L1hORr9s0NEkmMAhTCCLJGdeP6m5kGbc2a9LsVK4SuJM85CdywiPDhf
+         ld6wwGm4CrV26jknvAZX2LeVToSeUHXTiKtmOgpH08P+PT7FkKSonITuovdVKaRXBT7O
+         GOoFWZ9euC5SZoiR/lSvKL+zWHGEjXKHz+Wbx6aLJUErVdxA1h22tACfgFxU0HM7oMhh
+         nuqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :to:cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=awliyi+kCIvNX2z6aujZlzd03dTxPLU8kWaR2tWe1kk=;
-        b=o3Mm9giN4HEIKTNw7PhS3JRnyZxqIR3I0RV7fl+yD9VNlpdoSEDyOVGAiUhT3cDvqr
-         WO2h7M63zT74ArDDcTftu47CtK1Dh/tdtB//cG9jSA3V3ZtA0fd+0RRHrztct78H2Ufg
-         2cm0EyTOkkUWTYm5gD9u3P3W/CFyJUb4IeMK8Hmwq3zCgCZ7NTenVW0LR+MHC7m9XxWx
-         zUWNA3F+b7WCLFi8/9IjmWwwRkLQNYwPuyFdK65bL2s7adKkswAMFq6mZalSZg97qTLO
-         l6uA4NaHagxMk3npNKlGpnYPMr9BdyNO1sygm5n8UYp+HAq4qKLfBsq0nCkGf2PyuUUm
-         hTIg==
-X-Gm-Message-State: AOAM533tRSKkx4sc+jzg0al3qNHxCnbvxFN1u7Ikuf58k7a4AwVJbDaK
-        XeoniZkwBK+D0bR+rorvqik=
-X-Google-Smtp-Source: ABdhPJz5LZF6eTrh/zxulRXbyTA6Du8i8dNZINn88gq6oaMXfsBEC1RjyGqeSHLr0Xu5/f1+1v9X8w==
-X-Received: by 2002:a17:90a:b106:b0:1d9:7cde:7914 with SMTP id z6-20020a17090ab10600b001d97cde7914mr8396395pjq.56.1651907292308;
-        Sat, 07 May 2022 00:08:12 -0700 (PDT)
-Received: from [192.168.255.10] ([106.53.33.166])
-        by smtp.gmail.com with ESMTPSA id o11-20020a056a001bcb00b0050dc76281cesm4480772pfw.168.2022.05.07.00.08.08
+        bh=bV6Fic4FC7WhnbPqNw/owaN+8XIB8Y3rXX1tGv2mwJc=;
+        b=LtNih2+RY0SroMAJlFtXVPMJr+TnWRGGW6OY7uViTguu00uidHqc9C3IZjS5p2K1NF
+         0h9ZUhzaNeZsd7xxu9eIs1sgXomaH2AhLiSNLYKCqxSUUCegZeZvfcNFpXlY6CrFI7ZT
+         pUr6KLwp3oB0zQZYMmXhMxLvuaDOXGELtsXk6rUWaUSp7Xk1KelanDH4iosjUTWykoHV
+         NrDUYU353K5+S0/B7QnL9+p6s7zW360j4m0ENCkHclf8OpQRocYTaTu48Sml5AFdDEgV
+         JvHeoVcYUAKoep1nXLU2AJb0dQ9Eeco3l8hyYOvwznIJlCRCWMzW+jPilYKbsWn3b7Mm
+         kRyA==
+X-Gm-Message-State: AOAM532c0tiKeFY+gjoR/PtLgDr7w7sQsSeQBGAzq30y03XPFFqtTMar
+        wPTnd/mSRaGw02MVDgKRIdo=
+X-Google-Smtp-Source: ABdhPJxtll5dm9eFbbNc1DcqQW32XJOYp3JHlPUPkbuR11b9Ui8z8VJVQhsMGvYmHW7fZ7vkZjxlLA==
+X-Received: by 2002:a05:6a00:23ca:b0:50e:827:9253 with SMTP id g10-20020a056a0023ca00b0050e08279253mr7601346pfc.20.1651914781709;
+        Sat, 07 May 2022 02:13:01 -0700 (PDT)
+Received: from [192.168.255.10] ([106.53.4.151])
+        by smtp.gmail.com with ESMTPSA id t12-20020a17090b018c00b001d92e2e5694sm8911919pjs.1.2022.05.07.02.12.58
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 07 May 2022 00:08:11 -0700 (PDT)
-Message-ID: <135b16e4-f316-cb25-9cdd-09bd63eb4aef@gmail.com>
-Date:   Sat, 7 May 2022 15:08:20 +0800
+        Sat, 07 May 2022 02:13:00 -0700 (PDT)
+Message-ID: <8917973f-7286-1023-ad85-9f3d57302dbc@gmail.com>
+Date:   Sat, 7 May 2022 17:13:10 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
  Gecko/20100101 Thunderbird/91.9.0
-Subject: Re: [PATCH 3/5] io_uring: let fast poll support multishot
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/5] io_uring: implement multishot mode for accept
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        linux-kernel@vger.kernel.org
 References: <20220506070102.26032-1-haoxu.linux@gmail.com>
- <20220506070102.26032-4-haoxu.linux@gmail.com>
- <d68381cf-a9fc-33b8-8a9c-ff8485ba8d19@gmail.com>
+ <20220506070102.26032-6-haoxu.linux@gmail.com>
+ <afb1be12-5284-79bf-8006-26448e594443@kernel.dk>
 From:   Hao Xu <haoxu.linux@gmail.com>
-In-Reply-To: <d68381cf-a9fc-33b8-8a9c-ff8485ba8d19@gmail.com>
+In-Reply-To: <afb1be12-5284-79bf-8006-26448e594443@kernel.dk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-5.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-2.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
         RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
@@ -72,105 +73,131 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-在 2022/5/7 上午1:19, Pavel Begunkov 写道:
-> On 5/6/22 08:01, Hao Xu wrote:
->> From: Hao Xu <howeyxu@tencent.com>
->>
->> For operations like accept, multishot is a useful feature, since we can
->> reduce a number of accept sqe. Let's integrate it to fast poll, it may
->> be good for other operations in the future.
->>
->> Signed-off-by: Hao Xu <howeyxu@tencent.com>
->> ---
->>   fs/io_uring.c | 41 ++++++++++++++++++++++++++---------------
->>   1 file changed, 26 insertions(+), 15 deletions(-)
->>
+在 2022/5/6 下午10:42, Jens Axboe 写道:
+> On 5/6/22 1:01 AM, Hao Xu wrote:
 >> diff --git a/fs/io_uring.c b/fs/io_uring.c
->> index 8ebb1a794e36..d33777575faf 100644
+>> index 0a83ecc457d1..9febe7774dc3 100644
 >> --- a/fs/io_uring.c
 >> +++ b/fs/io_uring.c
->> @@ -5952,7 +5952,7 @@ static void io_poll_remove_entries(struct 
->> io_kiocb *req)
->>    * either spurious wakeup or multishot CQE is served. 0 when it's 
->> done with
->>    * the request, then the mask is stored in req->cqe.res.
->>    */
->> -static int io_poll_check_events(struct io_kiocb *req, bool locked)
->> +static int io_poll_check_events(struct io_kiocb *req, bool *locked)
->>   {
->>       struct io_ring_ctx *ctx = req->ctx;
->>       int v;
->> @@ -5981,17 +5981,26 @@ static int io_poll_check_events(struct 
->> io_kiocb *req, bool locked)
->>           /* multishot, just fill an CQE and proceed */
->>           if (req->cqe.res && !(req->apoll_events & EPOLLONESHOT)) {
->> -            __poll_t mask = mangle_poll(req->cqe.res & 
->> req->apoll_events);
->> -            bool filled;
->> -
->> -            spin_lock(&ctx->completion_lock);
->> -            filled = io_fill_cqe_aux(ctx, req->cqe.user_data, mask,
->> -                         IORING_CQE_F_MORE);
->> -            io_commit_cqring(ctx);
->> -            spin_unlock(&ctx->completion_lock);
->> -            if (unlikely(!filled))
->> -                return -ECANCELED;
->> -            io_cqring_ev_posted(ctx);
->> +            if (req->flags & REQ_F_APOLL_MULTISHOT) {
->> +                io_tw_lock(req->ctx, locked);
->> +                if (likely(!(req->task->flags & PF_EXITING)))
->> +                    io_queue_sqe(req);
+>> @@ -1254,6 +1254,7 @@ static int io_close_fixed(struct io_kiocb *req, unsigned int issue_flags);
+>>   static enum hrtimer_restart io_link_timeout_fn(struct hrtimer *timer);
+>>   static void io_eventfd_signal(struct io_ring_ctx *ctx);
+>>   static void io_req_tw_post_queue(struct io_kiocb *req, s32 res, u32 cflags);
+>> +static void io_poll_remove_entries(struct io_kiocb *req);
+>>   
+>>   static struct kmem_cache *req_cachep;
+>>   
+>> @@ -5690,24 +5691,29 @@ static int io_recv(struct io_kiocb *req, unsigned int issue_flags)
+>>   static int io_accept_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>>   {
+>>   	struct io_accept *accept = &req->accept;
+>> +	bool multishot;
+>>   
+>>   	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
+>>   		return -EINVAL;
+>> -	if (sqe->ioprio || sqe->len || sqe->buf_index)
+>> +	if (sqe->len || sqe->buf_index)
+>>   		return -EINVAL;
+>>   
+>>   	accept->addr = u64_to_user_ptr(READ_ONCE(sqe->addr));
+>>   	accept->addr_len = u64_to_user_ptr(READ_ONCE(sqe->addr2));
+>>   	accept->flags = READ_ONCE(sqe->accept_flags);
+>>   	accept->nofile = rlimit(RLIMIT_NOFILE);
+>> +	multishot = !!(READ_ONCE(sqe->ioprio) & IORING_ACCEPT_MULTISHOT);
 > 
-> That looks dangerous, io_queue_sqe() usually takes the request ownership
-> and doesn't expect that someone, i.e. io_poll_check_events(), may still be
-> actively using it.
+> I tend to like:
 > 
-> E.g. io_accept() fails on fd < 0, return an error,
-> io_queue_sqe() -> io_queue_async() -> io_req_complete_failed()
-> kills it. Then io_poll_check_events() and polling in general
-> carry on using the freed request => UAF. Didn't look at it
-> too carefully, but there might other similar cases.
+> 	multishot = READ_ONCE(sqe->ioprio) & IORING_ACCEPT_MULTISHOT) != 0;
 > 
-I checked this when I did the coding, it seems the only case is
-while (atomic_sub_return(v & IO_POLL_REF_MASK, &req->poll_refs));
-uses req again after req recycled in io_queue_sqe() path like you
-pointed out above, but this case should be ok since we haven't
-reuse the struct req{} at that point.
-In my first version, I skiped the do while{} in io_poll_check_events()
-for multishot apoll and do the reap in io_req_task_submit()
-
-static void io_apoll_task_func(struct io_kiocb *req, bool *locked) 
-
-   { 
-
-           int ret; 
-
- 
-
-           ret = io_poll_check_events(req, locked); 
-
-           if (ret > 0) 
-
-                   return; 
-
- 
-
-           __io_poll_clean(req); 
-
- 
-
-           if (!ret) 
-
-                   io_req_task_submit(req, locked);   <------here 
-
-           else 
-
-                   io_req_complete_failed(req, ret); 
-
-   }
-
-But the disadvantage is in high frequent workloads case, it may loop in
-io_poll_check_events for long time, then finally generating cqes in the
-above io_req_task_submit() which is not good in terms of latency. 
-
+> as I think it's more readable. But I think we really want it ala:
 > 
+> 	u16 poll_flags;
+> 
+> 	poll_flags = READ_ONCE(sqe->ioprio);
+> 	if (poll_flags & ~IORING_ACCEPT_MULTISHOT)
+> 		return -EINVAL;
+> 
+> 	...
+> 
+> to ensure that we can add more flags later, hence only accepting this
+> single flag right now.
+> 
+> Do we need REQ_F_APOLL_MULTI_POLLED, or can we just store whether this
+> is a multishot request in struct io_accept?
+I think we can do it in this way, but it may be a bit inconvenient if we
+add other multishot OPCODE. With REQ_F_APOLL_MULTI_POLLED we can just
+check req->flags in the poll arming path, which keeps it op unrelated.
+> 
+>> @@ -5760,7 +5774,35 @@ static int io_accept(struct io_kiocb *req, unsigned int issue_flags)
+>>   		ret = io_install_fixed_file(req, file, issue_flags,
+>>   					    accept->file_slot - 1);
+>>   	}
+>> -	__io_req_complete(req, issue_flags, ret, 0);
+>> +
+>> +	if (req->flags & REQ_F_APOLL_MULTISHOT) {
+>> +		if (ret >= 0) {
+>> +			bool filled;
+>> +
+>> +			spin_lock(&ctx->completion_lock);
+>> +			filled = io_fill_cqe_aux(ctx, req->cqe.user_data, ret,
+>> +						 IORING_CQE_F_MORE);
+>> +			io_commit_cqring(ctx);
+>> +			spin_unlock(&ctx->completion_lock);
+>> +			if (unlikely(!filled)) {
+>> +				io_poll_clean(req);
+>> +				return -ECANCELED;
+>> +			}
+>> +			io_cqring_ev_posted(ctx);
+>> +			goto retry;
+>> +		} else {
+>> +			/*
+>> +			 * the apoll multishot req should handle poll
+>> +			 * cancellation by itself since the upper layer
+>> +			 * who called io_queue_sqe() cannot get errors
+>> +			 * happened here.
+>> +			 */
+>> +			io_poll_clean(req);
+>> +			return ret;
+>> +		}
+>> +	} else {
+>> +		__io_req_complete(req, issue_flags, ret, 0);
+>> +	}
+>>   	return 0;
+>>   }
+> 
+> I'd probably just make that:
+> 
+> 	if (!(req->flags & REQ_F_APOLL_MULTISHOT)) {
+> 		__io_req_complete(req, issue_flags, ret, 0);
+> 		return 0;
+> 	}
+> 	if (ret >= 0) {
+> 		bool filled;
+> 
+> 		spin_lock(&ctx->completion_lock);
+> 		filled = io_fill_cqe_aux(ctx, req->cqe.user_data, ret,
+> 					 IORING_CQE_F_MORE);
+> 		io_commit_cqring(ctx);
+> 		spin_unlock(&ctx->completion_lock);
+> 		if (filled) {
+> 			io_cqring_ev_posted(ctx);
+> 			goto retry;
+> 		}
+> 		/* fall through to error case */
+> 		ret = -ECANCELED;
+> 	}
+> 
+> 	/*
+> 	 * the apoll multishot req should handle poll
+> 	 * cancellation by itself since the upper layer
+> 	 * who called io_queue_sqe() cannot get errors
+> 	 * happened here.
+> 	 */
+> 	io_poll_clean(req);
+> 	return ret;
+> 
+> which I think is a lot easier to read and keeps the indentation at a
+> manageable level and reduces duplicate code.
+Great, thanks, it's better.
+> 
+

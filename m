@@ -2,67 +2,72 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CCDA251E5DE
-	for <lists+io-uring@lfdr.de>; Sat,  7 May 2022 11:13:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A16E751E5F7
+	for <lists+io-uring@lfdr.de>; Sat,  7 May 2022 11:17:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1383812AbiEGJQs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 7 May 2022 05:16:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51324 "EHLO
+        id S1383843AbiEGJVV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 7 May 2022 05:21:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56278 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230191AbiEGJQs (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 7 May 2022 05:16:48 -0400
-Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AB403152E;
-        Sat,  7 May 2022 02:13:02 -0700 (PDT)
-Received: by mail-pg1-x530.google.com with SMTP id l11so2427096pgt.13;
-        Sat, 07 May 2022 02:13:02 -0700 (PDT)
+        with ESMTP id S229515AbiEGJVV (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 7 May 2022 05:21:21 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B025657123;
+        Sat,  7 May 2022 02:17:34 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id e24so12997383wrc.9;
+        Sat, 07 May 2022 02:17:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:to:cc:references
-         :from:in-reply-to:content-transfer-encoding;
-        bh=bV6Fic4FC7WhnbPqNw/owaN+8XIB8Y3rXX1tGv2mwJc=;
-        b=KXjPj+DFEpZNOYusBws3oxjiy2Ifoo/09c8LCm5Zge3K/Su0UFdqDS0hj5fl5OvrfW
-         uT4Aeym2wNHGL4HDuIz48Yd2wrgf7p0x/K+VAzpGuVLM0Lk8Q4rjGkf8LhdE3aTSYUib
-         OxssIiJ5YhIF6L1hORr9s0NEkmMAhTCCLJGdeP6m5kGbc2a9LsVK4SuJM85CdywiPDhf
-         ld6wwGm4CrV26jknvAZX2LeVToSeUHXTiKtmOgpH08P+PT7FkKSonITuovdVKaRXBT7O
-         GOoFWZ9euC5SZoiR/lSvKL+zWHGEjXKHz+Wbx6aLJUErVdxA1h22tACfgFxU0HM7oMhh
-         nuqQ==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=gYHAJahK4aFx5yhwaNZC95xNZdXWvLOzC1m0kiecvQ0=;
+        b=RjhlQrji4Dvf+RBTCfI7lj7YO9ESDYT5EERE7DGVSFoBflB50W4BRYv1Mxo/orM5r4
+         6kCaHOUXVj99kxw17c9YR9o4L17kTWPYr/Z/pSDSEzPe4jBi9wAFEekKrpvv9MTk7uLN
+         mwU/vTnTh6gixFhWxaAB2/KTocG3AQIU0asl7tJ3vOofx7WGKavIyFgDE9Sr2pvseYDj
+         5iOL2umy3jXRJbYGSDxeMbaHlFAl7Zm3+s4C8b3xjvp3CADcPV2l1lZ8c2SCvuUA6zAe
+         UQ+uMGFHDpqk4Dsi2d6jT2fc+EHNPxAwIM2IoZ2LNn9eniVzI5vfr4nyI1T0skf+pdeu
+         RpiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :to:cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=bV6Fic4FC7WhnbPqNw/owaN+8XIB8Y3rXX1tGv2mwJc=;
-        b=LtNih2+RY0SroMAJlFtXVPMJr+TnWRGGW6OY7uViTguu00uidHqc9C3IZjS5p2K1NF
-         0h9ZUhzaNeZsd7xxu9eIs1sgXomaH2AhLiSNLYKCqxSUUCegZeZvfcNFpXlY6CrFI7ZT
-         pUr6KLwp3oB0zQZYMmXhMxLvuaDOXGELtsXk6rUWaUSp7Xk1KelanDH4iosjUTWykoHV
-         NrDUYU353K5+S0/B7QnL9+p6s7zW360j4m0ENCkHclf8OpQRocYTaTu48Sml5AFdDEgV
-         JvHeoVcYUAKoep1nXLU2AJb0dQ9Eeco3l8hyYOvwznIJlCRCWMzW+jPilYKbsWn3b7Mm
-         kRyA==
-X-Gm-Message-State: AOAM532c0tiKeFY+gjoR/PtLgDr7w7sQsSeQBGAzq30y03XPFFqtTMar
-        wPTnd/mSRaGw02MVDgKRIdo=
-X-Google-Smtp-Source: ABdhPJxtll5dm9eFbbNc1DcqQW32XJOYp3JHlPUPkbuR11b9Ui8z8VJVQhsMGvYmHW7fZ7vkZjxlLA==
-X-Received: by 2002:a05:6a00:23ca:b0:50e:827:9253 with SMTP id g10-20020a056a0023ca00b0050e08279253mr7601346pfc.20.1651914781709;
-        Sat, 07 May 2022 02:13:01 -0700 (PDT)
-Received: from [192.168.255.10] ([106.53.4.151])
-        by smtp.gmail.com with ESMTPSA id t12-20020a17090b018c00b001d92e2e5694sm8911919pjs.1.2022.05.07.02.12.58
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=gYHAJahK4aFx5yhwaNZC95xNZdXWvLOzC1m0kiecvQ0=;
+        b=ZR1W7dm/qki4cHqxJke3aoFywM3Mg6lwPl1+zr26d/xC3CkYhv6vuXuP60DJTfTFUn
+         LkXijU08cBrx+SZftHvyr2paAnAn/J2fb0ZhC+YYkxffdHgd9N9vtB734u687HHL0Mmz
+         ab4qAQ7uFxLtTU5dpu8Xl3zzJdrYHcigF1TRc6mys2t2TZXm1wIeam90a0Uelh2N4CrF
+         1CUxkIvOa4+t75mCtWxAaOIerjfGQvOR9NUpn90r800xLIJMrBCTTIO3Q+LMKLtUbpzV
+         0/bZf8ADi+4ZroEPJqtExBdG4O/S4BSUrY+6HB+oDwMKPq/tTJSq/5VMg2GRPfECxatp
+         5e6g==
+X-Gm-Message-State: AOAM531c4cfFsj0vPHm9gNiZX37F5oFidnfW6cBaqctj+EPo/nLZf9lr
+        61uPLtSoBoFKiswTBn65W3p1V1gmPd8=
+X-Google-Smtp-Source: ABdhPJx7pP8UICrd5MzoKSTyWN955VaL5dWfQNCslzmGqjz9WkZlC0LSE+KvWXdJbHsk8Yycf6kYOg==
+X-Received: by 2002:a5d:66c8:0:b0:20a:c807:6061 with SMTP id k8-20020a5d66c8000000b0020ac8076061mr5714915wrw.399.1651915053027;
+        Sat, 07 May 2022 02:17:33 -0700 (PDT)
+Received: from [192.168.8.198] ([85.255.237.69])
+        by smtp.gmail.com with ESMTPSA id p11-20020a1c544b000000b003942a244f30sm12455397wmi.9.2022.05.07.02.17.32
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 07 May 2022 02:13:00 -0700 (PDT)
-Message-ID: <8917973f-7286-1023-ad85-9f3d57302dbc@gmail.com>
-Date:   Sat, 7 May 2022 17:13:10 +0800
+        Sat, 07 May 2022 02:17:32 -0700 (PDT)
+Message-ID: <9c4cff81-ff0f-4819-c41d-54f28dba2929@gmail.com>
+Date:   Sat, 7 May 2022 10:16:54 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.9.0
-Subject: Re: [PATCH 5/5] io_uring: implement multishot mode for accept
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        linux-kernel@vger.kernel.org
-References: <20220506070102.26032-1-haoxu.linux@gmail.com>
- <20220506070102.26032-6-haoxu.linux@gmail.com>
- <afb1be12-5284-79bf-8006-26448e594443@kernel.dk>
-From:   Hao Xu <haoxu.linux@gmail.com>
-In-Reply-To: <afb1be12-5284-79bf-8006-26448e594443@kernel.dk>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: linux-stable-5.10-y CVE-2022-1508 of io_uring module
+Content-Language: en-US
+To:     Jens Axboe <axboe@kernel.dk>, Guo Xuenan <guoxuenan@huawei.com>
+Cc:     lee.jones@linaro.org, linux-kernel@vger.kernel.org,
+        io-uring@vger.kernel.org, yi.zhang@huawei.com, houtao1@huawei.com
+References: <dd122760-5f87-10b1-e50d-388c2631c01a@kernel.dk>
+ <20220505141159.3182874-1-guoxuenan@huawei.com>
+ <7d54523e-372b-759b-1ebb-e0dbc181f18d@kernel.dk>
+ <31ae3426-b835-3a3f-f6d1-aecad24066e8@gmail.com>
+ <6c417ba7-d677-5076-5ce3-d3e174eb8899@kernel.dk>
+ <4fc454ca-8b3a-28f6-2246-3ffb998f9f11@kernel.dk>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <4fc454ca-8b3a-28f6-2246-3ffb998f9f11@kernel.dk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-2.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
         RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
@@ -73,131 +78,187 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-在 2022/5/6 下午10:42, Jens Axboe 写道:
-> On 5/6/22 1:01 AM, Hao Xu wrote:
->> diff --git a/fs/io_uring.c b/fs/io_uring.c
->> index 0a83ecc457d1..9febe7774dc3 100644
->> --- a/fs/io_uring.c
->> +++ b/fs/io_uring.c
->> @@ -1254,6 +1254,7 @@ static int io_close_fixed(struct io_kiocb *req, unsigned int issue_flags);
->>   static enum hrtimer_restart io_link_timeout_fn(struct hrtimer *timer);
->>   static void io_eventfd_signal(struct io_ring_ctx *ctx);
->>   static void io_req_tw_post_queue(struct io_kiocb *req, s32 res, u32 cflags);
->> +static void io_poll_remove_entries(struct io_kiocb *req);
->>   
->>   static struct kmem_cache *req_cachep;
->>   
->> @@ -5690,24 +5691,29 @@ static int io_recv(struct io_kiocb *req, unsigned int issue_flags)
->>   static int io_accept_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
->>   {
->>   	struct io_accept *accept = &req->accept;
->> +	bool multishot;
->>   
->>   	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
->>   		return -EINVAL;
->> -	if (sqe->ioprio || sqe->len || sqe->buf_index)
->> +	if (sqe->len || sqe->buf_index)
->>   		return -EINVAL;
->>   
->>   	accept->addr = u64_to_user_ptr(READ_ONCE(sqe->addr));
->>   	accept->addr_len = u64_to_user_ptr(READ_ONCE(sqe->addr2));
->>   	accept->flags = READ_ONCE(sqe->accept_flags);
->>   	accept->nofile = rlimit(RLIMIT_NOFILE);
->> +	multishot = !!(READ_ONCE(sqe->ioprio) & IORING_ACCEPT_MULTISHOT);
+On 5/6/22 19:22, Jens Axboe wrote:
+> On 5/6/22 10:15 AM, Jens Axboe wrote:
+>> On 5/6/22 9:57 AM, Pavel Begunkov wrote:
+>>> On 5/6/22 03:16, Jens Axboe wrote:
+>>>> On 5/5/22 8:11 AM, Guo Xuenan wrote:
+>>>>> Hi, Pavel & Jens
+>>>>>
+>>>>> CVE-2022-1508[1] contains an patch[2] of io_uring. As Jones reported,
+>>>>> it is not enough only apply [2] to stable-5.10.
+>>>>> Io_uring is very valuable and active module of linux kernel.
+>>>>> I've tried to apply these two patches[3] [4] to my local 5.10 code, I
+>>>>> found my understanding of io_uring is not enough to resolve all conflicts.
+>>>>>
+>>>>> Since 5.10 is an important stable branch of linux, we would appreciate
+>>>>> your help in solving this problem.
+>>>>
+>>>> Yes, this really needs to get buttoned up for 5.10. I seem to recall
+>>>> there was a reproducer for this that was somewhat saner than the
+>>>> syzbot one (which doesn't do anything for me). Pavel, do you have one?
+>>>
+>>> No, it was the only repro and was triggering the problem
+>>> just fine back then
+>>
+>> I modified it a bit and I can now trigger it.
 > 
-> I tend to like:
+> Pavel, why don't we just keep it really simple and just always save the
+> iter state in read/write, and use the restore instead of the revert?
+
+The problem here is where we're doing revert. If it's done deep in
+the stack and then while unwinding someone decides to revert it again,
+e.g. blkdev_read_iter(), we're screwed.
+
+The last attempt was backporting 20+ patches that would move revert
+into io_read/io_write, i.e. REQ_F_REISSUE, back that failed some of
+your tests back then. (was it read retry tests iirc?)
+
+
+> Then it's just a trivial backport of ff6165b2d7f6 and the trivial
+> io_uring patch after that.
 > 
-> 	multishot = READ_ONCE(sqe->ioprio) & IORING_ACCEPT_MULTISHOT) != 0;
 > 
-> as I think it's more readable. But I think we really want it ala:
-> 
-> 	u16 poll_flags;
-> 
-> 	poll_flags = READ_ONCE(sqe->ioprio);
-> 	if (poll_flags & ~IORING_ACCEPT_MULTISHOT)
-> 		return -EINVAL;
-> 
-> 	...
-> 
-> to ensure that we can add more flags later, hence only accepting this
-> single flag right now.
-> 
-> Do we need REQ_F_APOLL_MULTI_POLLED, or can we just store whether this
-> is a multishot request in struct io_accept?
-I think we can do it in this way, but it may be a bit inconvenient if we
-add other multishot OPCODE. With REQ_F_APOLL_MULTI_POLLED we can just
-check req->flags in the poll arming path, which keeps it op unrelated.
-> 
->> @@ -5760,7 +5774,35 @@ static int io_accept(struct io_kiocb *req, unsigned int issue_flags)
->>   		ret = io_install_fixed_file(req, file, issue_flags,
->>   					    accept->file_slot - 1);
->>   	}
->> -	__io_req_complete(req, issue_flags, ret, 0);
->> +
->> +	if (req->flags & REQ_F_APOLL_MULTISHOT) {
->> +		if (ret >= 0) {
->> +			bool filled;
->> +
->> +			spin_lock(&ctx->completion_lock);
->> +			filled = io_fill_cqe_aux(ctx, req->cqe.user_data, ret,
->> +						 IORING_CQE_F_MORE);
->> +			io_commit_cqring(ctx);
->> +			spin_unlock(&ctx->completion_lock);
->> +			if (unlikely(!filled)) {
->> +				io_poll_clean(req);
->> +				return -ECANCELED;
->> +			}
->> +			io_cqring_ev_posted(ctx);
->> +			goto retry;
->> +		} else {
->> +			/*
->> +			 * the apoll multishot req should handle poll
->> +			 * cancellation by itself since the upper layer
->> +			 * who called io_queue_sqe() cannot get errors
->> +			 * happened here.
->> +			 */
->> +			io_poll_clean(req);
->> +			return ret;
->> +		}
->> +	} else {
->> +		__io_req_complete(req, issue_flags, ret, 0);
->> +	}
->>   	return 0;
->>   }
-> 
-> I'd probably just make that:
-> 
-> 	if (!(req->flags & REQ_F_APOLL_MULTISHOT)) {
-> 		__io_req_complete(req, issue_flags, ret, 0);
-> 		return 0;
-> 	}
-> 	if (ret >= 0) {
-> 		bool filled;
-> 
-> 		spin_lock(&ctx->completion_lock);
-> 		filled = io_fill_cqe_aux(ctx, req->cqe.user_data, ret,
-> 					 IORING_CQE_F_MORE);
-> 		io_commit_cqring(ctx);
-> 		spin_unlock(&ctx->completion_lock);
-> 		if (filled) {
-> 			io_cqring_ev_posted(ctx);
-> 			goto retry;
-> 		}
-> 		/* fall through to error case */
-> 		ret = -ECANCELED;
-> 	}
-> 
-> 	/*
-> 	 * the apoll multishot req should handle poll
-> 	 * cancellation by itself since the upper layer
-> 	 * who called io_queue_sqe() cannot get errors
-> 	 * happened here.
-> 	 */
-> 	io_poll_clean(req);
-> 	return ret;
-> 
-> which I think is a lot easier to read and keeps the indentation at a
-> manageable level and reduces duplicate code.
-Great, thanks, it's better.
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index ab9290ab4cae..138f204db72a 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -3429,6 +3429,7 @@ static int io_read(struct io_kiocb *req, bool force_nonblock,
+>   	struct kiocb *kiocb = &req->rw.kiocb;
+>   	struct iov_iter __iter, *iter = &__iter;
+>   	struct io_async_rw *rw = req->async_data;
+> +	struct iov_iter_state iter_state;
+>   	ssize_t io_size, ret, ret2;
+>   	bool no_async;
+>   
+> @@ -3458,6 +3459,7 @@ static int io_read(struct io_kiocb *req, bool force_nonblock,
+>   	if (unlikely(ret))
+>   		goto out_free;
+>   
+> +	iov_iter_save_state(iter, &iter_state);
+>   	ret = io_iter_do_read(req, iter);
+>   
+>   	if (!ret) {
+> @@ -3473,7 +3475,7 @@ static int io_read(struct io_kiocb *req, bool force_nonblock,
+>   		if (req->file->f_flags & O_NONBLOCK)
+>   			goto done;
+>   		/* some cases will consume bytes even on error returns */
+> -		iov_iter_revert(iter, io_size - iov_iter_count(iter));
+> +		iov_iter_restore(iter, &iter_state);
+>   		ret = 0;
+>   		goto copy_iov;
+>   	} else if (ret < 0) {
+> @@ -3557,6 +3559,7 @@ static int io_write(struct io_kiocb *req, bool force_nonblock,
+>   	struct kiocb *kiocb = &req->rw.kiocb;
+>   	struct iov_iter __iter, *iter = &__iter;
+>   	struct io_async_rw *rw = req->async_data;
+> +	struct iov_iter_state iter_state;
+>   	ssize_t ret, ret2, io_size;
+>   
+>   	if (rw)
+> @@ -3574,6 +3577,8 @@ static int io_write(struct io_kiocb *req, bool force_nonblock,
+>   	else
+>   		kiocb->ki_flags |= IOCB_NOWAIT;
+>   
+> +	iov_iter_save_state(iter, &iter_state);
+> +
+>   	/* If the file doesn't support async, just async punt */
+>   	if (force_nonblock && !io_file_supports_async(req->file, WRITE))
+>   		goto copy_iov;
+> @@ -3626,7 +3631,7 @@ static int io_write(struct io_kiocb *req, bool force_nonblock,
+>   	} else {
+>   copy_iov:
+>   		/* some cases will consume bytes even on error returns */
+> -		iov_iter_revert(iter, io_size - iov_iter_count(iter));
+> +		iov_iter_restore(iter, &iter_state);
+>   		ret = io_setup_async_rw(req, iovec, inline_vecs, iter, false);
+>   		if (!ret)
+>   			return -EAGAIN;
+> diff --git a/include/linux/uio.h b/include/linux/uio.h
+> index 27ff8eb786dc..cedb68e49e4f 100644
+> --- a/include/linux/uio.h
+> +++ b/include/linux/uio.h
+> @@ -26,6 +26,12 @@ enum iter_type {
+>   	ITER_DISCARD = 64,
+>   };
+>   
+> +struct iov_iter_state {
+> +	size_t iov_offset;
+> +	size_t count;
+> +	unsigned long nr_segs;
+> +};
+> +
+>   struct iov_iter {
+>   	/*
+>   	 * Bit 0 is the read/write bit, set if we're writing.
+> @@ -55,6 +61,14 @@ static inline enum iter_type iov_iter_type(const struct iov_iter *i)
+>   	return i->type & ~(READ | WRITE);
+>   }
+>   
+> +static inline void iov_iter_save_state(struct iov_iter *iter,
+> +				       struct iov_iter_state *state)
+> +{
+> +	state->iov_offset = iter->iov_offset;
+> +	state->count = iter->count;
+> +	state->nr_segs = iter->nr_segs;
+> +}
+> +
+>   static inline bool iter_is_iovec(const struct iov_iter *i)
+>   {
+>   	return iov_iter_type(i) == ITER_IOVEC;
+> @@ -226,6 +240,7 @@ ssize_t iov_iter_get_pages(struct iov_iter *i, struct page **pages,
+>   ssize_t iov_iter_get_pages_alloc(struct iov_iter *i, struct page ***pages,
+>   			size_t maxsize, size_t *start);
+>   int iov_iter_npages(const struct iov_iter *i, int maxpages);
+> +void iov_iter_restore(struct iov_iter *i, struct iov_iter_state *state);
+>   
+>   const void *dup_iter(struct iov_iter *new, struct iov_iter *old, gfp_t flags);
+>   
+> diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+> index 1b0a349fbcd9..00a66229d182 100644
+> --- a/lib/iov_iter.c
+> +++ b/lib/iov_iter.c
+> @@ -1857,3 +1857,39 @@ int iov_iter_for_each_range(struct iov_iter *i, size_t bytes,
+>   	return err;
+>   }
+>   EXPORT_SYMBOL(iov_iter_for_each_range);
+> +
+> +/**
+> + * iov_iter_restore() - Restore a &struct iov_iter to the same state as when
+> + *     iov_iter_save_state() was called.
+> + *
+> + * @i: &struct iov_iter to restore
+> + * @state: state to restore from
+> + *
+> + * Used after iov_iter_save_state() to bring restore @i, if operations may
+> + * have advanced it.
+> + *
+> + * Note: only works on ITER_IOVEC, ITER_BVEC, and ITER_KVEC
+> + */
+> +void iov_iter_restore(struct iov_iter *i, struct iov_iter_state *state)
+> +{
+> +	if (WARN_ON_ONCE(!iov_iter_is_bvec(i) && !iter_is_iovec(i)) &&
+> +			 !iov_iter_is_kvec(i))
+> +		return;
+> +	i->iov_offset = state->iov_offset;
+> +	i->count = state->count;
+> +	/*
+> +	 * For the *vec iters, nr_segs + iov is constant - if we increment
+> +	 * the vec, then we also decrement the nr_segs count. Hence we don't
+> +	 * need to track both of these, just one is enough and we can deduct
+> +	 * the other from that. ITER_KVEC and ITER_IOVEC are the same struct
+> +	 * size, so we can just increment the iov pointer as they are unionzed.
+> +	 * ITER_BVEC _may_ be the same size on some archs, but on others it is
+> +	 * not. Be safe and handle it separately.
+> +	 */
+> +	BUILD_BUG_ON(sizeof(struct iovec) != sizeof(struct kvec));
+> +	if (iov_iter_is_bvec(i))
+> +		i->bvec -= state->nr_segs - i->nr_segs;
+> +	else
+> +		i->iov -= state->nr_segs - i->nr_segs;
+> +	i->nr_segs = state->nr_segs;
+> +}
 > 
 
+-- 
+Pavel Begunkov

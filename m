@@ -2,32 +2,32 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B683651EEB7
-	for <lists+io-uring@lfdr.de>; Sun,  8 May 2022 17:51:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1490951EEA3
+	for <lists+io-uring@lfdr.de>; Sun,  8 May 2022 17:51:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234970AbiEHPly (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 8 May 2022 11:41:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52160 "EHLO
+        id S234013AbiEHPl4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 8 May 2022 11:41:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234013AbiEHPlx (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 8 May 2022 11:41:53 -0400
+        with ESMTP id S234972AbiEHPlz (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 8 May 2022 11:41:55 -0400
 Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01olkn2096.outbound.protection.outlook.com [40.92.53.96])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 626036300
-        for <io-uring@vger.kernel.org>; Sun,  8 May 2022 08:38:03 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91439E08C
+        for <io-uring@vger.kernel.org>; Sun,  8 May 2022 08:38:04 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=IlMRgXvqpcfRb8v8x6p0IlUCis426kOsnqdOnRBEDD/VKPHsLdv4fBxTXPzxSzvrfdZPFwb26GZh0dsB5Az4mtk73+fmjGZMBEcBXod8vM74GEWZwcgDJReXC+UNO0/T4vtu0bUBVz2e5E5f4s5RehG0ENx1Brl6zN/XbARXt1tIDeT+/RChNImKKqxhSXtMwbW3n95JQQk54dh4KaIjn4EYYuxs6TCx2l49AB9rHimwsaxP5d2YtWqZ4y8TQ2d03gaLZ3NVyaGej7BbUM3CsZATz23sv5ezi8LFS4dRHtGWFbg+HiQsFaVyoQREzb1nGxuAK6CvCfNodUz7mYCRZQ==
+ b=kQph/u5Wajp0q2H+uNt/XhvDqdmXhTuVMNy7CWQBZBZcswnknCTaAeAa1osxSRYoS5HQ8e0qhKay1JIs66Oz0UKjD3ON+InaPugIzBWK33BRvuLD3h36r0TCzMXNCfslolJPCrIJAmjxVzdEUjqDzgTkY6lR8TZrGnLsyqGZNJxIJdOEjYrXIB6xY3qwW3K2P8tZhFOXKpGoStWFlyJWLSD56WJldAbnuEoiekVTAZkHWxejqQ2lpUIQSizxMy8rMfJ68d/UrmLTIOdvNmxahd7wa4nAG5Ctwrd8la28FHkIOghgFCjxf9Rclo/PeT0uz6RlEWVVem6ormgbZZnlhQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WT245C0vvnBEu1WIcBRmsxn7sTaTPu5eMdcA1Qtj8aY=;
- b=NUDGiSzLpI25Z2hhNGcs84/8Y15w369KHhgZcr7jNvn8oX5t3dVJsHObKUf1SUlyFAHDrksZpToZep+f3LrHLNeQqLQae7qHpJbiDLgEBrvHhWhjXlyzqC1mHWwprzST13mXsAQom1C76yIs55uiGujcEnRpUbHC/Py8KrF1Yt7qPItXS8y33BqdM1HC3bet918dNaH46A1KD7TRnwL/P1RKgVAKdGyqHAIyiIeme2VXbuQjLSzUo9rThYFRLFw1y6d8zGvTKc9Rc8V8U08pLIZG+I+kgBPIBKq1qSbDuz8xZFag4tUdSdejzUOvH4OvBjWP+4a5+gIp+vCkRHtvZQ==
+ bh=1SNo7VpwdkzEaOlsl0AyRshC/t/ymJnTRXUpGnoHmt0=;
+ b=P84O8j0fRlvBqOjMDcBAm0pFrrfX2HmmXFyE2VHN8tX/b5VLiq5cH1uMiS5Wu2pQF89HgantWRoJUYKEi2U07cLeoQvjE+2vtOBTGeKXNQNEqrW3wvnWRcGOftH10Qr/ZLzFrLJo3CLOc2ka0pRsegAJGRaYdMhPs3HQfjYj+oIpfTTQ5dNbZ/f2ABZHLbZep0k9RyqbPCGoxmrW5x6Dx39IcrScQ3OIxpCDHQSURzMMmY8up/06YcKQHmJK/IW34pcGNJWI9yi6VY5fqh3xMjkHtmsr1SkVfbzcPQiYwryfboA9L/00Yy19DBSaHJibft43VP4+0C3+wmrz0AlDHQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
  dkim=none; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WT245C0vvnBEu1WIcBRmsxn7sTaTPu5eMdcA1Qtj8aY=;
- b=vC6NKSLO/wv6TMhCut0uglnRUsg31LRbQS/FRhDAJFGHG15crNiuXB/ocLAHsILfoKLKnoIB7KqwKUH3bHmxkWh1W5b8KGVYZqhOlCM9pZy9r2mpsN6BjdPjeaPuQti6ZzbbDGp52akA7bNgV9nRYF4RDRXTkp8GQlqd6ABOEi2ayy8I80OuKcys1KRDh3MgPeepV2CWE+mGmL6caqJ0F54XZjtHSJXltRxTYwQN63s6r3S+mdfn3ArepqI/jeuWFpcEjNDz2Rbq/zcstWENd+O1HvXSRjIAW9sTC6ld9ghcUJXQHmv0xTfcNTu6FEP0IZY16/L/3vboUEM5LbtF8g==
+ bh=1SNo7VpwdkzEaOlsl0AyRshC/t/ymJnTRXUpGnoHmt0=;
+ b=mnpabaxth/SKFB31yE1QSI2ue9Xs7r/xC2qlPkBc/+qx7PIMeEnwRz/WF3oyt27+3tKlBvRCWt8XMX8oylvWFQ3/jnOuViCa+inBbI8/T3suJ0rPgxhG9tr4F4BGYongspC0Bf1rCXaJKy3d28xu0m+H6LPQMmiqgX9gNelSB6DW68p1Mw53wBEHx7ghdk+77o4DgHcC0Fh9MBFfBwH1tt6WbRhe2W5578/wLMUxYBM0nArI18tSw3q23R/VSaG+DsKVN4e2+UEL62YummsXyVPzwxDsATE5YuLxvB0ztCmMNBQVmKwsWGpMGtcMlw+HqJBcsADDF/Sb5zag6CsOoQ==
 Received: from SG2PR01MB2411.apcprd01.prod.exchangelabs.com
  (2603:1096:4:4f::14) by PSAPR01MB3910.apcprd01.prod.exchangelabs.com
  (2603:1096:301:17::11) with Microsoft SMTP Server (version=TLS1_2,
@@ -41,58 +41,58 @@ From:   Hao Xu <haoxu.linux@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>,
         Pavel Begunkov <asml.silence@gmail.com>
-Subject: [PATCH 3/4] io_uring: let fast poll support multishot
-Date:   Sun,  8 May 2022 23:37:46 +0800
-Message-ID: <SG2PR01MB24116B26642ADE00F8AF9B71FFC79@SG2PR01MB2411.apcprd01.prod.exchangelabs.com>
+Subject: [PATCH 4/4] io_uring: implement multishot mode for accept
+Date:   Sun,  8 May 2022 23:37:47 +0800
+Message-ID: <SG2PR01MB2411A0DC1DB76D0CEF00D328FFC79@SG2PR01MB2411.apcprd01.prod.exchangelabs.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220508153747.6184-1-haoxu.linux@gmail.com>
 References: <20220508153747.6184-1-haoxu.linux@gmail.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-TMN:  [L03PSQ0RYcL2FFMNtf1GUnQzRtDrdpqf]
+X-TMN:  [kk6D0JQgcehsctJ1e1bTRRLMv7h8WvrS]
 X-ClientProxiedBy: HK2PR0302CA0005.apcprd03.prod.outlook.com
  (2603:1096:202::15) To SG2PR01MB2411.apcprd01.prod.exchangelabs.com
  (2603:1096:4:4f::14)
-X-Microsoft-Original-Message-ID: <20220508153747.6184-4-haoxu.linux@gmail.com>
+X-Microsoft-Original-Message-ID: <20220508153747.6184-5-haoxu.linux@gmail.com>
 MIME-Version: 1.0
 Sender: Hao Xu <outlook_CA44A5BC8B94E9F7@outlook.com>
 X-MS-Exchange-MessageSentRepresentingType: 2
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 50b5b125-3b9e-4ade-628c-08da3108baa7
+X-MS-Office365-Filtering-Correlation-Id: 30b6de00-eae4-4b80-a8bd-08da3108bb31
 X-MS-TrafficTypeDiagnostic: PSAPR01MB3910:EE_
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: gjuxEuJ4B+QYMh2hD+jXM9RP6l5WjI22bOeV6M47Y++g/+kFb/AmXdkzEaGZIp/cdOqKO8CzSKwseteGbawXlDAgCbIacea60RuDQUEAhnbREsW6VyTvZBoDjNaKvKKp3+ugIxPpcTIfBiKvDLH/BPE31GJQwVgJse5gVvRslsO2EwOjn1NA3t1/sM0+Vjtd7kpXwJPvcKiPFCHxVyqAvMJ0UTm6amP4bp0QCxGmO57emgLUBpy/e1G4QogVSvVs4bxlktPkPCEA3FnpJxT3qTNCPpLjI/E6uSzJTWvFA1jzrPWUYFjDR9jWlgjhNtKcDSjS6XTQc6+g3nGNMwnZQIv6TN4LCQb7aaoRo30g3ffJ8upwl01FM5BT4WsjMI2+hyCTnJW4UkMQPqUtkPVMu4EJLtI9FK2Nw93+ImXEmrbMPqXMq5Xmn7gQFFZhp9fSQXH8BpwnKUCVpX8lwyfCIdj2gcCsku8/EVR61uRMNoQpHybvEobeNp9Uchbo4zJz8upM0v6a+J77Z+yYUaXqg6IptPfsW7JOfkjxp5hlzLWe3Apw+kwkd9MxEdv+uCjFrTvinSs5t0ppu6/6b7Vfi1qDEfgfE8lKMw2nFWdex9VX9U9mUM6b/f/EJxlWzHdN
+X-Microsoft-Antispam-Message-Info: DglhtveFDf4wgMZ+IhVWgyOfXc5ug2/FdzNBIeQY5zdRZATcrStR6qMC/V8E7eizyo3r3fvJnVMnIW9Iw4BPyCjbANFsiyr0bllxev8o0vLgWLigxcpFvX88/ZEfWCFLDrLKwqa/j+HCFvsHS3HQ5r5faNHZWcREZN2WUIDoZbVUb4u52H9grTGn48vZDHeAy/ZFmIaloVn6tpj7DpVRuMBdWbU1C0fudEvPz4RwhDjTUBHGFQ0e0cUqabmb5CyT0NaAeGNGBPQbttWqxjSqekQ+CHtxpKBAqh3yiWrtursFMbbgdko8wpXyN1McgkSaR0BaJU6AIpnH4mCivsO3CYUBFnqnFqRk/Ebq6iHHU0cJ+FaG4d9pIyOKhibkAQgnwriwICWZQLtAKSU+D/LBgNPnIsM0/HJQk6wIcIO7jfQhQ0Y3UOu/pygkhaP4rnLBDrERAvHiuQoHF6Nimlr1f8wOD+MW/Oo2a76DTBlsFmBJAFjg1kiBC5bOLrf2Ql3psjBvMjukDH9U/Wf8fLQ2jPXWS+NS0ek04JGkLIpevqAMrS+go+MXkoJjYjkkICNIJ8dErI/IjPc2aWFySpNA/5CefrM9RYzQ2tJ1QkbLLW2XjT22Kf+8eg8Ja0CJ+So7
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?HQY7GTUSvUpmbKNjVW6RpKjBjPhvPMKlRgfeLMFo+gFQyD+WsIfFjiisQFEk?=
- =?us-ascii?Q?BZJM4rpCr/PkJ73gtkjGTrSV3OL0VIQSCY6RuNj3wSAc/HoWh7IZ6ZL0e546?=
- =?us-ascii?Q?Bj1lJU8VtVuKdJG9s74ZXJNursO5h16JoII+H89bolNsrL9F79es3Xq6NCC2?=
- =?us-ascii?Q?LeqbP7A6oUvGXSAEhRn9DSrb4N0mSWBxByrgdEkT6i+UVyUEXQc1RJRnygcX?=
- =?us-ascii?Q?myBsFJrXo4M31wO0REGNzWtLXT3uR/4uYL+BTde99D+MM4JCjMnGtBhQYelr?=
- =?us-ascii?Q?3ryQOndMsrTqU7jnuF7DbkB40BXcchRVNC2dkn33XSmJZ/SS9wio8hgCHe+Q?=
- =?us-ascii?Q?seSWbmBWYhCFz2ZyXQY34lSBhw/NB5RrS7GIEfy0LWNQdLYCL3JXDtZ3Fzxw?=
- =?us-ascii?Q?Hg92IB9ynxSnAdPfL5JcamZrck5ZL/vWPZNi/ySva7HYPyICqLzTrVsi/i1a?=
- =?us-ascii?Q?ZP8TbAfTGyFjtz1IlmzhT/O4ELwhJNR1h0z3JMndMIZYQPOh/431a4yfNf16?=
- =?us-ascii?Q?0TZudTxGYBW4DDAaAhhMMR8W9TbzMP3yRl2Dh1OsXPrOBNz+OhlNGaIOBCnn?=
- =?us-ascii?Q?4SdswpAALY6eoi7vSHn9CQJIdNRp3F3txdhZMlpMSUViG8jYrp1Qaim1xpP3?=
- =?us-ascii?Q?h9wk58cNdnmubvFM+27PzXJbSvlXs+MK0uJ7ujSvoq6gLJ7FjXY7EFR62o55?=
- =?us-ascii?Q?K9OpBP+70BshSfxkVzgjr8CWNmFb+CCqVZlRAnLHqPka7N7D8hjhfBv0eKHS?=
- =?us-ascii?Q?sudLSmcuwjGLsZixo9ISuqUrB2kKzK/QYd+7t1cBUvGgjnJ2bCGBTdSeo26Q?=
- =?us-ascii?Q?Y4c/vKYUzX22Hma6c3l5+grfxcgVAoBYEi792nDiebsVTYnJbZwvdHbNdZGG?=
- =?us-ascii?Q?d30Sv6+Ymgw7JmgGmM4jSTU/JMfyf5yS5ttxzNwXuruYY6GWXQOSJDC1KUHt?=
- =?us-ascii?Q?lBozWeU1Eis3r9CL3Cqa8isdcL9Dob9gJwZaXn0Frxxog6lRzAS4lU4hMYAQ?=
- =?us-ascii?Q?bATf2+S4pYMQk0fcYnCPvbpQNFE55GVIMQPnEhydSDQr4FfrnBQmewyA3b0D?=
- =?us-ascii?Q?RipHQcCSNRZpnGl7V2VddhkcN4VlLq24SQplwURpb8tkPvxu0awfXyKWPlpx?=
- =?us-ascii?Q?29InsQ5b7b4AwFcNkBl7LGyY6p1gsBGLxzA6IIjHZKQzK/0DHHOP/GPCyd1a?=
- =?us-ascii?Q?Pk3I1lTu3xyQI9MQURr8yKSh/nLQ3j2jaF9B/duyeCy/CxYfNtLwthdU+VE+?=
- =?us-ascii?Q?9aL9gyBJveo29HgDoVyhm75PyKYkLVaVjaVri2gNkc5ggBboU4pInYto2dhC?=
- =?us-ascii?Q?m3He2ec6v0orZNCmzLMV7+sD1sKauWHa20nyt2x0Klmhtckrtu7512FsUttN?=
- =?us-ascii?Q?WwP442PbCbS5PCNz6bTrUOCukRhaCJnic8pqmwPPuIVxuMa1vrdNidlWGHng?=
- =?us-ascii?Q?jmG2HjlLzeu9Ebn8v9Lpp0vxbE/YK6iV+cnM3Cssy0DWlWCFk7QxIg=3D=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?S8gAmNZnDRjtNK6LBUPJmqVfxQvNz8kUShjr2EOZiZ8tCbetIZ2rwrBI1zBB?=
+ =?us-ascii?Q?3S73M1yNVFRDn6yh7nCsYPYALrxdTsHgem9YG8RDRhcfXNSG29JGyL5TetzP?=
+ =?us-ascii?Q?uDajN3g+6J9VpSgwTXNVoqZKiF5HspiTBa4gH7oJ9lOOkyHpoJclSegSwwX3?=
+ =?us-ascii?Q?xVcF2Xnyvpr+DNnrtNKL2Zj/H33l4ONx+D67zKO6NvRKk4jyF8e3WCJl0Ob2?=
+ =?us-ascii?Q?dMMkIAbyYJmVSrqoPQ517YuI6MHlbQ2NxJX+e74xIET3zuyZF+1w/x+xM9m/?=
+ =?us-ascii?Q?o+BeFw41iBqOjcv0uZs8JcsYmjmZTPmBe7JlP77Mt3q4XxERpvRACRVzZPey?=
+ =?us-ascii?Q?tTDNH+jKmLshNdN+vhFC2QD2LdV7hoSeoXMtECKPTsvs+dJBwUTR743LpyVY?=
+ =?us-ascii?Q?UOtIVTQvAyWJHQQHox5LS03CGAtzt3AaF+ESwV7gJBEE0FlOY13axDVc1v2+?=
+ =?us-ascii?Q?FjOEAbN05yr9KtFNs+a6YpvR/KHoORlg5kf+4rG75pZatPrBTkjPr19J66je?=
+ =?us-ascii?Q?gI2J9hPdbJqExh0+201t/Qt+kQjUvvKC84kYqIGxZ3XCIOtLzAD5dj1iZjG4?=
+ =?us-ascii?Q?wbYAxaSvN+B6Kj+LAzVPxb1oHJZ9I0Ke+54V26tJdbg49AwhSPJuSc/gYKTi?=
+ =?us-ascii?Q?nYdVGeiLgw4STTNIJGLArh6v9iXdDETQIPE042OE1mz8LDJYwYHCGtJvdwNX?=
+ =?us-ascii?Q?tIWNz63or60fqlO/u5CJBdBsjO3rncBXjX0aXWaSNY7jiIfleFKddycDj0xI?=
+ =?us-ascii?Q?TRIxUPyBh4t2QZ/AxpQm6kVAJ9EtdYGxqCSPjERz9T7SqXsM3HQZEMZyqC/w?=
+ =?us-ascii?Q?4YFvViQFt+TEle9B4I00kZNwhMduYkUHNX5uDPj7qnKp/PcTwrEoJGmF2f8+?=
+ =?us-ascii?Q?Iil2iUolAezy6+gN1ct7B/pe7ezNuUaSBXITZlKf5hLdUpp5OJVvKPxPglp8?=
+ =?us-ascii?Q?vnagHK8OARDATCWpNdcWP/p203m7Q972T1R04wGrYpHOWhHn4jknjhtZAfsl?=
+ =?us-ascii?Q?G3taVd6pnvgPuX7Fyd9CaWeqbatvkr4BTjZe3Mj7dRIoocUrLVMjEMR3o4Yt?=
+ =?us-ascii?Q?E00V/D908fy/+gql0QQgtTYtMoKBc0fuCyMOJZBAvkPj/eOwpkZ3LZ1nz8yr?=
+ =?us-ascii?Q?jpsEzHLf8uZXmb7KKho8WvcLAyOngYWoGQ+F0tmSQNJUEkGDbWcYnHVwhJd5?=
+ =?us-ascii?Q?Ki4j1md9um5z88iQ/TDz0DUoPctyoaLL1QZqJzwCPNAm1zc5NVAplvER3o+/?=
+ =?us-ascii?Q?694SiBaqPRR2VzB9CDJkjwfvNTyJYUJkdFxQ9gOrUVMugTmN5iIur0Sn04mk?=
+ =?us-ascii?Q?rvP3n3WtZUQ4/jAt1ScDbCy2+A9bGgyIcgJLFK2LSEjTAd5hvUGXQ9PmXpCp?=
+ =?us-ascii?Q?2NVkOWrzBCSpPLUCdHg8FFJwbyPe5jvmog7aUDsjXOuGghuQgBKN46+d2V/w?=
+ =?us-ascii?Q?pa8JZv3wcfev8ECTzFKfEk4o0P4YJ0tasND9xAacFkc2jjDI/vO4Rw=3D=3D?=
 X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 50b5b125-3b9e-4ade-628c-08da3108baa7
+X-MS-Exchange-CrossTenant-Network-Message-Id: 30b6de00-eae4-4b80-a8bd-08da3108bb31
 X-MS-Exchange-CrossTenant-AuthSource: SG2PR01MB2411.apcprd01.prod.exchangelabs.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2022 15:37:58.9877
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2022 15:37:59.8158
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
@@ -112,124 +112,159 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 From: Hao Xu <howeyxu@tencent.com>
 
-For operations like accept, multishot is a useful feature, since we can
-reduce a number of accept sqe. Let's integrate it to fast poll, it may
-be good for other operations in the future.
+Refactor io_accept() to support multishot mode.
+
+theoretical analysis:
+  1) when connections come in fast
+    - singleshot:
+              add accept sqe(userpsace) --> accept inline
+                              ^                 |
+                              |-----------------|
+    - multishot:
+             add accept sqe(userspace) --> accept inline
+                                              ^     |
+                                              |--*--|
+
+    we do accept repeatedly in * place until get EAGAIN
+
+  2) when connections come in at a low pressure
+    similar thing like 1), we reduce a lot of userspace-kernel context
+    switch and useless vfs_poll()
+
+tests:
+Did some tests, which goes in this way:
+
+  server    client(multiple)
+  accept    connect
+  read      write
+  write     read
+  close     close
+
+Basically, raise up a number of clients(on same machine with server) to
+connect to the server, and then write some data to it, the server will
+write those data back to the client after it receives them, and then
+close the connection after write return. Then the client will read the
+data and then close the connection. Here I test 10000 clients connect
+one server, data size 128 bytes. And each client has a go routine for
+it, so they come to the server in short time.
+test 20 times before/after this patchset, time spent:(unit cycle, which
+is the return value of clock())
+before:
+  1930136+1940725+1907981+1947601+1923812+1928226+1911087+1905897+1941075
+  +1934374+1906614+1912504+1949110+1908790+1909951+1941672+1969525+1934984
+  +1934226+1914385)/20.0 = 1927633.75
+after:
+  1858905+1917104+1895455+1963963+1892706+1889208+1874175+1904753+1874112
+  +1874985+1882706+1884642+1864694+1906508+1916150+1924250+1869060+1889506
+  +1871324+1940803)/20.0 = 1894750.45
+
+(1927633.75 - 1894750.45) / 1927633.75 = 1.65%
 
 Signed-off-by: Hao Xu <howeyxu@tencent.com>
 ---
- fs/io_uring.c | 47 ++++++++++++++++++++++++++++++++---------------
- 1 file changed, 32 insertions(+), 15 deletions(-)
+ fs/io_uring.c | 42 +++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 37 insertions(+), 5 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index c2ee184ac693..e0d12af04cd1 100644
+index e0d12af04cd1..f21172913336 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -5955,6 +5955,7 @@ static void io_poll_remove_entries(struct io_kiocb *req)
- 	rcu_read_unlock();
+@@ -1146,6 +1146,7 @@ static const struct io_op_def io_op_defs[] = {
+ 		.unbound_nonreg_file	= 1,
+ 		.pollin			= 1,
+ 		.poll_exclusive		= 1,
++		.ioprio			= 1,	/* used for flags */
+ 	},
+ 	[IORING_OP_ASYNC_CANCEL] = {
+ 		.audit_skip		= 1,
+@@ -5706,6 +5707,7 @@ static int io_recv(struct io_kiocb *req, unsigned int issue_flags)
+ static int io_accept_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ {
+ 	struct io_accept *accept = &req->accept;
++	unsigned flags;
+ 
+ 	if (sqe->len || sqe->buf_index)
+ 		return -EINVAL;
+@@ -5714,19 +5716,26 @@ static int io_accept_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	accept->addr_len = u64_to_user_ptr(READ_ONCE(sqe->addr2));
+ 	accept->flags = READ_ONCE(sqe->accept_flags);
+ 	accept->nofile = rlimit(RLIMIT_NOFILE);
++	flags = READ_ONCE(sqe->ioprio);
++	if (flags & ~IORING_ACCEPT_MULTISHOT)
++		return -EINVAL;
+ 
+ 	accept->file_slot = READ_ONCE(sqe->file_index);
+-	if (accept->file_slot && (accept->flags & SOCK_CLOEXEC))
++	if (accept->file_slot && ((accept->flags & SOCK_CLOEXEC) ||
++	   flags & IORING_ACCEPT_MULTISHOT))
+ 		return -EINVAL;
+ 	if (accept->flags & ~(SOCK_CLOEXEC | SOCK_NONBLOCK))
+ 		return -EINVAL;
+ 	if (SOCK_NONBLOCK != O_NONBLOCK && (accept->flags & SOCK_NONBLOCK))
+ 		accept->flags = (accept->flags & ~SOCK_NONBLOCK) | O_NONBLOCK;
++	if (flags & IORING_ACCEPT_MULTISHOT)
++		req->flags |= REQ_F_APOLL_MULTISHOT;
+ 	return 0;
  }
  
-+static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags);
- /*
-  * All poll tw should go through this. Checks for poll events, manages
-  * references, does rewait, etc.
-@@ -5963,10 +5964,10 @@ static void io_poll_remove_entries(struct io_kiocb *req)
-  * either spurious wakeup or multishot CQE is served. 0 when it's done with
-  * the request, then the mask is stored in req->cqe.res.
-  */
--static int io_poll_check_events(struct io_kiocb *req, bool locked)
-+static int io_poll_check_events(struct io_kiocb *req, bool *locked)
+ static int io_accept(struct io_kiocb *req, unsigned int issue_flags)
  {
- 	struct io_ring_ctx *ctx = req->ctx;
--	int v;
-+	int v, ret;
++	struct io_ring_ctx *ctx = req->ctx;
+ 	struct io_accept *accept = &req->accept;
+ 	bool force_nonblock = issue_flags & IO_URING_F_NONBLOCK;
+ 	unsigned int file_flags = force_nonblock ? O_NONBLOCK : 0;
+@@ -5734,6 +5743,7 @@ static int io_accept(struct io_kiocb *req, unsigned int issue_flags)
+ 	struct file *file;
+ 	int ret, fd;
  
- 	/* req->task == current here, checking PF_EXITING is safe */
- 	if (unlikely(req->task->flags & PF_EXITING))
-@@ -5990,23 +5991,37 @@ static int io_poll_check_events(struct io_kiocb *req, bool locked)
- 			req->cqe.res = vfs_poll(req->file, &pt) & req->apoll_events;
- 		}
- 
--		/* multishot, just fill an CQE and proceed */
--		if (req->cqe.res && !(req->apoll_events & EPOLLONESHOT)) {
--			__poll_t mask = mangle_poll(req->cqe.res & req->apoll_events);
-+		if ((unlikely(!req->cqe.res)))
-+			continue;
-+		if (req->apoll_events & EPOLLONESHOT)
-+			return 0;
-+
-+		/* multishot, just fill a CQE and proceed */
-+		if (!(req->flags & REQ_F_APOLL_MULTISHOT)) {
-+			__poll_t mask = mangle_poll(req->cqe.res &
-+						    req->apoll_events);
- 			bool filled;
- 
- 			spin_lock(&ctx->completion_lock);
--			filled = io_fill_cqe_aux(ctx, req->cqe.user_data, mask,
--						 IORING_CQE_F_MORE);
-+			filled = io_fill_cqe_aux(ctx, req->cqe.user_data,
-+						 mask, IORING_CQE_F_MORE);
- 			io_commit_cqring(ctx);
- 			spin_unlock(&ctx->completion_lock);
--			if (unlikely(!filled))
--				return -ECANCELED;
--			io_cqring_ev_posted(ctx);
--		} else if (req->cqe.res) {
--			return 0;
-+			if (filled) {
-+				io_cqring_ev_posted(ctx);
-+				continue;
-+			}
-+			return -ECANCELED;
- 		}
- 
-+		io_tw_lock(req->ctx, locked);
-+		if (unlikely(req->task->flags & PF_EXITING))
-+			return -EFAULT;
-+		ret = io_issue_sqe(req,
-+				   IO_URING_F_NONBLOCK|IO_URING_F_COMPLETE_DEFER);
-+		if (ret)
++retry:
+ 	if (!fixed) {
+ 		fd = __get_unused_fd_flags(accept->flags, accept->nofile);
+ 		if (unlikely(fd < 0))
+@@ -5745,8 +5755,12 @@ static int io_accept(struct io_kiocb *req, unsigned int issue_flags)
+ 		if (!fixed)
+ 			put_unused_fd(fd);
+ 		ret = PTR_ERR(file);
+-		if (ret == -EAGAIN && force_nonblock)
+-			return -EAGAIN;
++		if (ret == -EAGAIN && force_nonblock) {
++			if ((req->flags & IO_APOLL_MULTI_POLLED) ==
++			    IO_APOLL_MULTI_POLLED)
++				ret = 0;
 +			return ret;
++		}
+ 		if (ret == -ERESTARTSYS)
+ 			ret = -EINTR;
+ 		req_set_fail(req);
+@@ -5757,8 +5771,26 @@ static int io_accept(struct io_kiocb *req, unsigned int issue_flags)
+ 		ret = io_install_fixed_file(req, file, issue_flags,
+ 					    accept->file_slot - 1);
+ 	}
+-	__io_req_complete(req, issue_flags, ret, 0);
+-	return 0;
 +
- 		/*
- 		 * Release all references, retry if someone tried to restart
- 		 * task_work while we were executing it.
-@@ -6021,7 +6036,7 @@ static void io_poll_task_func(struct io_kiocb *req, bool *locked)
- 	struct io_ring_ctx *ctx = req->ctx;
- 	int ret;
++	if (!(req->flags & REQ_F_APOLL_MULTISHOT)) {
++		__io_req_complete(req, issue_flags, ret, 0);
++		return 0;
++	}
++	if (ret >= 0) {
++		bool filled;
++
++		spin_lock(&ctx->completion_lock);
++		filled = io_fill_cqe_aux(ctx, req->cqe.user_data, ret,
++					 IORING_CQE_F_MORE);
++		io_commit_cqring(ctx);
++		spin_unlock(&ctx->completion_lock);
++		if (!filled)
++			return -ECANCELED;
++		io_cqring_ev_posted(ctx);
++		goto retry;
++	}
++
++	return ret;
+ }
  
--	ret = io_poll_check_events(req, *locked);
-+	ret = io_poll_check_events(req, locked);
- 	if (ret > 0)
- 		return;
- 
-@@ -6046,7 +6061,7 @@ static void io_apoll_task_func(struct io_kiocb *req, bool *locked)
- 	struct io_ring_ctx *ctx = req->ctx;
- 	int ret;
- 
--	ret = io_poll_check_events(req, *locked);
-+	ret = io_poll_check_events(req, locked);
- 	if (ret > 0)
- 		return;
- 
-@@ -6286,7 +6301,7 @@ static int io_arm_poll_handler(struct io_kiocb *req, unsigned issue_flags)
- 	struct io_ring_ctx *ctx = req->ctx;
- 	struct async_poll *apoll;
- 	struct io_poll_table ipt;
--	__poll_t mask = EPOLLONESHOT | POLLERR | POLLPRI;
-+	__poll_t mask = POLLERR | POLLPRI;
- 	int ret;
- 
- 	if (!def->pollin && !def->pollout)
-@@ -6295,6 +6310,8 @@ static int io_arm_poll_handler(struct io_kiocb *req, unsigned issue_flags)
- 		return IO_APOLL_ABORTED;
- 	if ((req->flags & (REQ_F_POLLED|REQ_F_PARTIAL_IO)) == REQ_F_POLLED)
- 		return IO_APOLL_ABORTED;
-+	if (!(req->flags & REQ_F_APOLL_MULTISHOT))
-+		mask |= EPOLLONESHOT;
- 
- 	if (def->pollin) {
- 		mask |= POLLIN | POLLRDNORM;
+ static int io_connect_prep_async(struct io_kiocb *req)
 -- 
 2.25.1
 

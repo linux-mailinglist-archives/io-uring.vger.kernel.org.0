@@ -2,95 +2,97 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B06051EEAD
-	for <lists+io-uring@lfdr.de>; Sun,  8 May 2022 17:51:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22B5351EEA9
+	for <lists+io-uring@lfdr.de>; Sun,  8 May 2022 17:51:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234961AbiEHPlu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 8 May 2022 11:41:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52112 "EHLO
+        id S234966AbiEHPlw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 8 May 2022 11:41:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234013AbiEHPlt (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 8 May 2022 11:41:49 -0400
+        with ESMTP id S234013AbiEHPlv (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 8 May 2022 11:41:51 -0400
 Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01olkn2096.outbound.protection.outlook.com [40.92.53.96])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3A6921B6
-        for <io-uring@vger.kernel.org>; Sun,  8 May 2022 08:37:58 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38D0F6300
+        for <io-uring@vger.kernel.org>; Sun,  8 May 2022 08:38:00 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=UIyps+L214Nrx0uGTq117vgzS/u8SqHyyMJoZ7MNG+HJIvH9O12qggCQFVYIn9+pqGpWlhupppSeNejSFGTSfuTWGjpIIcbF45u2Sk4eww+MUTbFsqNOp/I/GaaKJjg53GkjmwXJsmkplsckZMmZxyylEM4f6YMfLrG8withpg0TOVJXQw0wzkrrmto834ienuk+b5a2398cUInHoDASVt5MKKyvcfuj3MMrhwmQC2EpZNS+S+cFTiMx0dMrPxJZLbaxavKYJg/OGKkwG1ElsmH2JDHHkWRS1ARvR69UfoCey1tpVHfBhWqIAZyUG0pJQrz/K0vrwjYFefRYUDAeGQ==
+ b=kZb/4xRXEYBMwMcTeH5FQYCPRQjDMHP6AJWdJyfoZZ/ZAcrVHRnfgBe/+5Osb8of7YyZMmplWGDGyd1UHLf4Eu7DlPvTK3Dho4UEsuWhHUfwcOwv+4QIy7gdRFgxzpbsCh8hUdodPFjp517Kl1mqZIl4fr278UYxaunpOauVOjvW+8xqdTplGqpSxz5K0SWvZkjqzgRyX8fEcm6yy6Itk+HBMzdCrzssKGlB7gH7d1zL3N8nN1Sr5HnSrnPKbQqfAg3vfZJFoK8lpvzoGWE8ZoZGkGMpoGD+M5l+hYqroH5/cb0ybxPykjrcScas4ZxFLImIdRSzXW7uGi7/eFlfqg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2KG7AOEkD7Dd7kAM4qXi3ol9p7mnkcQifJs0wOx2TzU=;
- b=LPGaHQZu4hzTOKMZ4S/uTChl3+NAMTUTGcWoDre2zOyxUws5zRjgrmvKbEgNCbszFdVNkLlkaJnGz8qjoGk3qMA8ejWcfsInseIvL1VAeCW+rCGJdT99MuBRxr2x54Qlr3e/O0Jbkx3GhX2JVJG2JgaV7Fg1h+7r0doRnxGsqThKIUPiJeWnJ9+MxJGd/d3QvDn0ct4x+jhREbzNihMPEkmsAClxbVoGd1go2PgameYviM2C3U7kJLdse2fBumVBhF0SlkN73iocdy/JRIW+rYwyLG2jMV5OmRLO4O2VNXuB5CpxAl4kGUOdUo1MkQ8RZlRTQ63lLASF1L0imQciaQ==
+ bh=CTmfeQYmoKpOzmPx2QTFs47NY5SS0xt187uvNKmpg+c=;
+ b=A2VTuk7LTulLwCv7kgRsTmHy3MetzDn3C3xl2C3Qroci9qeH8EWMSkJqebL2LlHdKiRIaOzquoT+4RmFOcCvCmB+84lxfN3ZF+fNS/ZRZexArNZNAOX2DZ3Bli6qF7JzMcWcYISPXPYZLOMPMwuOgDAg2fzC3FnB9+XYxEuEjU/+crnCaX4+5zpuCeW7Z1T2Yip6/JxS5vH2536NhCw4dbjc9Y5vYKxVlHHotGLM3QTGdFTH0+blRkTgtnu+MCFDRmW4hQ2ks3PQGTs/F1BZpdqRyTNKDDfWCv5QG8g+98bNMWMvJ+X1paoH7O1llu0kxOhUdiqgUdGGlrv+kQx8zA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
  dkim=none; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2KG7AOEkD7Dd7kAM4qXi3ol9p7mnkcQifJs0wOx2TzU=;
- b=nhp29hVNfA8tWywpzeCpLMbEPNpoJt5fOKc99aIWdf91p3/DJ3r60E8Ywh7Cy8Y7dF0tKummaR6w/nbKPD8nih373npusRL6cVu8OLgbnAg1L9wbYjtGFs7v1HD3PnXSl6TG9NHW1opLttnvYxNWZHjFDJKTONZ+hBN+A9Pbz9EwxdbmRt5dBmWIlUV+LbR1uiuTCrHXkdZFvShMoG/5a96m3QfxR93y35XMK3HXgggAsYXTY5RfWSAmhpGcrLZY2wbok4MZUOWjsr07Rl4txoRC41U5oedWlPPRmeoaDYxS/hkd25Ri/3Z1f1EuELI9UHb/LjrUlBWaZX5G8U7/Qw==
+ bh=CTmfeQYmoKpOzmPx2QTFs47NY5SS0xt187uvNKmpg+c=;
+ b=DXx6ekHLlKAeeVJ0ubofw0x2WBlNAj5M48pR122VsPQiN2lgnZQy1mrK1XbxuCdGS0FUQtGNn0WM5ulW9QCmZXDKFrKNrbxvvEWt/xxWGuXxGbSSE7SrcSIXOxUgNR8qsUpjZ0bNCu8grT+K8I63NWzsvQM+2+2Ugd19aRbrC1ZuJE98dATNKgPfGpvif9ciIlmGcLPQxSr9ko5w9uXIPTjHjgn7H2K6RSgG3hW6M0rKWZ7lpvv6XhlHRhWJfqriobAXVLdP4xizYOKZCLKf0WxNtT1HTtlo0GoeSB4ukt3y7UnFzFQRaYoXQhat3TEfhYAOougui4hz3+KIrVRodg==
 Received: from SG2PR01MB2411.apcprd01.prod.exchangelabs.com
  (2603:1096:4:4f::14) by PSAPR01MB3910.apcprd01.prod.exchangelabs.com
  (2603:1096:301:17::11) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5227.23; Sun, 8 May
- 2022 15:37:56 +0000
+ 2022 15:37:57 +0000
 Received: from SG2PR01MB2411.apcprd01.prod.exchangelabs.com
  ([fe80::f50a:7a05:5565:fda2]) by SG2PR01MB2411.apcprd01.prod.exchangelabs.com
  ([fe80::f50a:7a05:5565:fda2%5]) with mapi id 15.20.5227.023; Sun, 8 May 2022
- 15:37:56 +0000
+ 15:37:57 +0000
 From:   Hao Xu <haoxu.linux@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>,
         Pavel Begunkov <asml.silence@gmail.com>
-Subject: [PATCH v5 0/4] fast poll multishot mode
-Date:   Sun,  8 May 2022 23:37:43 +0800
-Message-ID: <SG2PR01MB241138EDCD004D6C19374E80FFC79@SG2PR01MB2411.apcprd01.prod.exchangelabs.com>
+Subject: [PATCH 1/4] io_uring: add IORING_ACCEPT_MULTISHOT for accept
+Date:   Sun,  8 May 2022 23:37:44 +0800
+Message-ID: <SG2PR01MB2411F38C785EA60B6988A726FFC79@SG2PR01MB2411.apcprd01.prod.exchangelabs.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220508153747.6184-1-haoxu.linux@gmail.com>
+References: <20220508153747.6184-1-haoxu.linux@gmail.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-TMN:  [SITJU3/+bqyZH5yMmP3e1Bm0JBN5N7/d]
+X-TMN:  [AZ4XqeqnrgsP0B3+0QlRbKqTxffu9+Qe]
 X-ClientProxiedBy: HK2PR0302CA0005.apcprd03.prod.outlook.com
  (2603:1096:202::15) To SG2PR01MB2411.apcprd01.prod.exchangelabs.com
  (2603:1096:4:4f::14)
-X-Microsoft-Original-Message-ID: <20220508153747.6184-1-haoxu.linux@gmail.com>
+X-Microsoft-Original-Message-ID: <20220508153747.6184-2-haoxu.linux@gmail.com>
 MIME-Version: 1.0
 Sender: Hao Xu <outlook_CA44A5BC8B94E9F7@outlook.com>
 X-MS-Exchange-MessageSentRepresentingType: 2
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 3e585af8-dceb-4fa8-2d8f-08da3108b906
+X-MS-Office365-Filtering-Correlation-Id: 5076f1e8-8458-43af-614f-08da3108b97d
 X-MS-TrafficTypeDiagnostic: PSAPR01MB3910:EE_
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: A0Q+LZaFfeRryqg7Vkrm2jKcHmsAAqZWAjtXJjTU6HGXhop7PsUswxCXfeCnPqNo/MIsZFxyki7Efgus32M3qj3M9hyJ7J2I8XBQ3B15IwwvudvzUV6GmChhX1XFMWJwjrSGpzjtSG3J3N8mwkIfkOZoV88v2jmGaHvkeTw7RSvIVSBFtMjhzqFXPEei9biEpAWciB9ICKSAq/bT76U6NmWPclZyHUgmI73Ua05LnvCeXKuWAh3rHDL9BQ4x+m4H3TCzkQ/HL3KqtZkfIgkerfl+IzRor/fd3lMoXae/DKK7fw/yPoGqQ1e/0RxgGRfHAaqYm1tKfcW0fMOB/h9CSWBwdetvBomd9XBSIG66mGOG0p2p+1+A10KLr7VGfRNZ9ZT5YKZ/y1D+vU6eRWAMKgvPNYxgOB3Z1aJyl/ByRrvmQASRr80ys65DwolrIqBbIpTg5Hsohz6iaLPxAVvkLcLTdKmZDOP6qg4SljSljHgv3u2/sjqs4cklThwD+eEQfoXFH5gsmlq+2KvvC56F+lgCFDJjHBAF7jytSsEHEfA6AHMCO8RWjcH1s4Fr2bWQ4EyicUeALwxouUtdwr1LgJ41ZiGTgk/61CjegK8rppbxi7U7+FEW4bOz/zUfQaIG
+X-Microsoft-Antispam-Message-Info: eByNJxgMKRW31TBZiD6ZObw3g/2Gbyq4OqRc1wzlJYuuDsYesxrvYDm0Q9NfIj5rUcawsD9mRpOfsRSmGmn6AvF3a2tmX21YoiYj/2h2v+l/BQVjmfXEG48CmW0XrZ94rt11bBW8JzsZMs9jKNLg0h3ZUzKc1VOr9k/3axks+6lb3lvpBRWtfr0XbUXxHErc3IA07V/neJkL4EBizpNI/dY1fCkJiQDz05GBnarDeNPtYQ6cFM46CVvONdL7pA8T9jCJTTSXtufEaTxF0WmWIl1iOJK12ZTC8hZQ3BtS+bx6Y8eozJKGY2ovmY+wK/nrDWMMLRvsFxeTd8adC885GV3vRtb6b9FP/MuqmJOE/weJSFHj6QHdIKeEZXu4HJfSf+y3Sdxjs4yALmd4vzeaXRBZq1/gaFnjefT2xFbl+1LffvrzKw9EkbKtJddsm1+WY3eHliEA+E4CI7LrdsM7wqq7Xpo5IRjqsI59YzFBcinmAXs4m/gQg4KWWjeIAnhWEUgrjJsjwWpg3Xjm4BP1ePH7JbuXuY2r54b8QG/U+uDzKXl7bXTE0NlZq/fBk2j+gNFBBLn2fcQ6GjPg7ta9deXIgOx0sWu0grWScnxDHuhT6U52SdT5gIElC2ORepcv
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?SBYMBSL3v8gN4qnphIbu/BsP7DgnC0hK8mJ2zoDGjlZ0Qg9Em31kETAiWd/B?=
- =?us-ascii?Q?0RDUxIatmvrbzB4kkUHJb0pf0DVgs7mtrBbJH9KQAlziGK//Q3tDtZBhJmHZ?=
- =?us-ascii?Q?a/nA+KDrB9rgO52/+HORFGhQnboyVh3ybUNxRY7c9UcdjVCsOLxvuVjUZJl0?=
- =?us-ascii?Q?VA+mgLfC4gDK5cxM39wZu+K3zmJlCD4434Pn64nFwS1a7mNasUQUCvZuMxhg?=
- =?us-ascii?Q?QrhIjGa/qScNDp4d8mmLp9Py8ICvKvP/LuvJS3LjHGAOWgGxP3yd2wIlHmEi?=
- =?us-ascii?Q?Wo4aDhcN36kwmoH6MDVwcDE88T0rvSIEiKuvs+ifCPRwtl3u1P32V9fdsNPw?=
- =?us-ascii?Q?XGQSUwtNM97SieL++sqky4IfB7xarX4mOQIqCY6y/7dZiOurM7zjK38gt9VZ?=
- =?us-ascii?Q?koPbBkw7oe2C04K4kJGBj9OINePlCu8erQtdww/E8tJ+WurT/S9Jf89EhOVF?=
- =?us-ascii?Q?XavLf/Cig0eOyWq3bWJDwhlw0cvfi5D/AMnN/G8JSQXte7tXvf0t3eH+vGOQ?=
- =?us-ascii?Q?gEvi88RZctgsyTVApsETc3UX/AkiKSq0hO+q9KSYRzeb4v9hTqCw97lqHmlx?=
- =?us-ascii?Q?Hvtwj4RW5Ox9Q5UXQ8Gk+JemUd4PftJZmc23XQ3/3PH2mwuYG2UWUC4ZlGte?=
- =?us-ascii?Q?GGqOIcdMTNbvfPt5zl126RDklaRP4txdG6BCLjTsLfG9se5SW7edH4r7YRbe?=
- =?us-ascii?Q?1zZFIdQq+3FA9tZ8skYb6iAIp4kGCagjf40GSxb/7ihk97Dw3Z88Um0ixoU0?=
- =?us-ascii?Q?Girr+38PSfCJCsddkSXpLlg84WeSQfsyeZakCAclJ+/s1/EOAL9sQkMDjw58?=
- =?us-ascii?Q?M/DyZLp8k8wXgmbxHdCDA42PA6ofPEkoJdMvR3lKGj+KDR3G+UgxOt9t0iU2?=
- =?us-ascii?Q?Gim+lkmid612k33MtJUZ9G4RQsWrrK81A6sTICJhXU58dULb/VCPtSdKEkCZ?=
- =?us-ascii?Q?+0v+QZKhVqyoU8SfJP25wQIhqxGc0irxvK2Qke1V+bz8laQ7CcOMFMKI4JwG?=
- =?us-ascii?Q?jMooDM7dhrKwHoml4l631xdkuOOX64UH35RWdRgcEHdNWx0spnIayL4NfPWq?=
- =?us-ascii?Q?DO0Ewl+ceFdbPUnQWE+SUypY5hJ1ggILR5JObQ6OcMSQI/yVGwlbsyEB0K+K?=
- =?us-ascii?Q?SVicFbhU9mbMnp4WsX2mQr4gTtvPbVScSQbs31Dg6N6vmdVtzUX8tvqpU5k0?=
- =?us-ascii?Q?SoHNABOWelZ/tUFMztlkdsGTtS56j+fc9iFKs/zJzZo/YIMxnF6B123wVeDI?=
- =?us-ascii?Q?0oXXh+30cvVBuWcw52qJrLYaa055dI1yq5OTBYAud+ulq27QnLPLBb/typsg?=
- =?us-ascii?Q?MkBVpsyvq1zTCFrGd9xJ81UA9EBlURh6t+6+kKD2MNwB/Q3d9K5mh+rxU+t1?=
- =?us-ascii?Q?FuZiitQaHPEJTF8deRcvxR7xJYHzpR1SqoCKXj+WgqU0lQlw4uyYPybOhMB/?=
- =?us-ascii?Q?qwewN496XUfsm1TBj3Lx9+q0LKwjlX4TKv6q24WJh37tAwWvLJ/3pA=3D=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Tvfci9N1JMpW7R9RWLc+Es+CRzxs5muhoJ9vfa+IsXgMyKY+gQZFpRAIxZXU?=
+ =?us-ascii?Q?L+KQmFY916sjrkgVsBQsgKuIg4SPtsCIdmLgGAbc1crAgcxc+rnCZYbfg9pN?=
+ =?us-ascii?Q?Gtkg+O7INY2bdZE2W5ArJp4vAOOw3WESGCXrKe0DJQKdkEeIOvZX/0K1lIyn?=
+ =?us-ascii?Q?h2M3bHrusUURlO1zsYOV9p1HYawxlDdFdXhEU6g/FI0YIjIFK6Eg5czA43Xu?=
+ =?us-ascii?Q?vVZ0HK7lEKB+zDfiMiGkYIZqJ7sVKN46QTgE3+CH/F2UL5YVtSBO/cGN7SnR?=
+ =?us-ascii?Q?Bin5LrFb1hQv9iLfKLyIBLHz+OJdr1ygZZmmqhAQp2OtkmVgZSUtHxYoqhpN?=
+ =?us-ascii?Q?C1yRN5bhn5oRJBZE7qe+qw23DTYqI8PRZ6v3WA5a8R8NZyjXY2zam82HEC0N?=
+ =?us-ascii?Q?0XILcQwxqjqVnH+Q4Tc0vRGLeKiroPBPyvFzz9vI+maj+7zOVv8qScT7E6VQ?=
+ =?us-ascii?Q?HOMfKG8nDfwRjx+sSy+y8bE4Tr+FP2m+KXQn+pl0+0F+krw1S3zleBSvR+IE?=
+ =?us-ascii?Q?pYxIsZ287sh0vW8S2OdrWSEIZ/q149nk9bhh5ojLpk8Sr5Q6sw3e6x+4xIvX?=
+ =?us-ascii?Q?1RLakNaa+vbJmZQ9bXHVwFFnvI18zZrn+yZyEKFNyy+GO5b4RrOX4YImjeqQ?=
+ =?us-ascii?Q?V0ySOJ24oC7jRxx4/EA+dMJk8CGq2nhq+pWeacbPK10wV1DgheD/HwBT0Ym0?=
+ =?us-ascii?Q?7mcCvXS/v9MlI7lmIg7oWyR730LDaO/74nU+cPDCSqSQj1JG/KcFXb2IIETx?=
+ =?us-ascii?Q?MCR/10ze4KfwKCqWYE3fh6X0Gg90ycpLeRAmCXwuStNTwW04+agFAGv2kCyz?=
+ =?us-ascii?Q?AS/oEl+Rk32PaWQ0Ehso+cSYOaCKJ9q0qdap/rLigNt2cCNQOwxec/OH6YEz?=
+ =?us-ascii?Q?+eeGB/AXRe3GjUSFSz4CQwgjTGni5rLJ98BWX1maTcX6ExwL4My8MAI8lPID?=
+ =?us-ascii?Q?6HlbQOGt1VIdwtB+Jaipf+ucXktZslRuj2g4MU9GTFg7fnCJTk1aSzxX1uRi?=
+ =?us-ascii?Q?AUYRoWyyxVnDRo8LABZgPXHRQ+wzgTWNGycOQmTg02o7uMPIvwweaY0WzhqF?=
+ =?us-ascii?Q?/X34BvCuTnYtmmfPUm/KJGBuV64DfgSUFxldSbR97hO4I5jDAMAvUECNs0ak?=
+ =?us-ascii?Q?lz3KUX7gfxWpNalB8/CiqQDW2ALxPrrLiTr3Vx4YjsY0xmTK04SFdnKT4bmZ?=
+ =?us-ascii?Q?3B81XzCC/He0lkKRkrlyLrj/QAvFJLx8AcOc7K0JzLLEJiZhi5eRNa+/f9a4?=
+ =?us-ascii?Q?MWWkK0VpRgxbpoPbfDq6/ISmdgn+CLYIaJU8R3L6d40QOR/HNdTvs01XBQ83?=
+ =?us-ascii?Q?B1fhPq/y51RdxKFAXr3b/l1PYyvjP8Wvg6sZXilvg7qbAXYoZURmuylCnCiR?=
+ =?us-ascii?Q?cd5X8uEIXH5D1XTId5nZoqjg3gbZ12H48JdMyriIbvZN/DcTy85UxiKPTn/U?=
+ =?us-ascii?Q?5N6LInTI/nCL+5+9IBsmS6smqA/q1uu80idbhnr9WVkKYM/NwErFMQ=3D=3D?=
 X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3e585af8-dceb-4fa8-2d8f-08da3108b906
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5076f1e8-8458-43af-614f-08da3108b97d
 X-MS-Exchange-CrossTenant-AuthSource: SG2PR01MB2411.apcprd01.prod.exchangelabs.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2022 15:37:56.1598
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2022 15:37:56.9878
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
@@ -110,85 +112,30 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 From: Hao Xu <howeyxu@tencent.com>
 
-Let multishot support multishot mode, currently only add accept as its
-first consumer.
-theoretical analysis:
-  1) when connections come in fast
-    - singleshot:
-              add accept sqe(userspace) --> accept inline
-                              ^                 |
-                              |-----------------|
-    - multishot:
-             add accept sqe(userspace) --> accept inline
-                                              ^     |
-                                              |--*--|
+add an accept_flag IORING_ACCEPT_MULTISHOT for accept, which is to
+support multishot.
 
-    we do accept repeatedly in * place until get EAGAIN
+Signed-off-by: Hao Xu <howeyxu@tencent.com>
+---
+ include/uapi/linux/io_uring.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-  2) when connections come in at a low pressure
-    similar thing like 1), we reduce a lot of userspace-kernel context
-    switch and useless vfs_poll()
-
-
-tests:
-Did some tests, which goes in this way:
-
-  server    client(multiple)
-  accept    connect
-  read      write
-  write     read
-  close     close
-
-Basically, raise up a number of clients(on same machine with server) to
-connect to the server, and then write some data to it, the server will
-write those data back to the client after it receives them, and then
-close the connection after write return. Then the client will read the
-data and then close the connection. Here I test 10000 clients connect
-one server, data size 128 bytes. And each client has a go routine for
-it, so they come to the server in short time.
-test 20 times before/after this patchset, time spent:(unit cycle, which
-is the return value of clock())
-before:
-  1930136+1940725+1907981+1947601+1923812+1928226+1911087+1905897+1941075
-  +1934374+1906614+1912504+1949110+1908790+1909951+1941672+1969525+1934984
-  +1934226+1914385)/20.0 = 1927633.75
-after:
-  1858905+1917104+1895455+1963963+1892706+1889208+1874175+1904753+1874112
-  +1874985+1882706+1884642+1864694+1906508+1916150+1924250+1869060+1889506
-  +1871324+1940803)/20.0 = 1894750.45
-
-(1927633.75 - 1894750.45) / 1927633.75 = 1.65%
-
-v1->v2:
- - re-implement it against the reworked poll code
-
-v2->v3:
- - fold in code tweak and clean from Jens
- - use io_issue_sqe rather than io_queue_sqe, since the former one
-   return the internal error back which makes more sense
- - remove io_poll_clean() and its friends since they are not needed
-
-v3->v4:
- - move the accept multishot flag to the proper patch
- - typo correction
- - remove improperly added signed-off-by
-
-v4->v5:
- - address some email account issue..
-
-
-Hao Xu (4):
-  io_uring: add IORING_ACCEPT_MULTISHOT for accept
-  io_uring: add REQ_F_APOLL_MULTISHOT for requests
-  io_uring: let fast poll support multishot
-  io_uring: implement multishot mode for accept
-
- fs/io_uring.c                 | 94 +++++++++++++++++++++++++++--------
- include/uapi/linux/io_uring.h |  5 ++
- 2 files changed, 79 insertions(+), 20 deletions(-)
-
-
-base-commit: 0a194603ba7ee67b4e39ec0ee5cda70a356ea618
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index 06621a278cb6..7c3d70d12428 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -223,6 +223,11 @@ enum {
+  */
+ #define IORING_RECVSEND_POLL_FIRST	(1U << 0)
+ 
++/*
++ * accept flags stored in sqe->ioprio
++ */
++#define IORING_ACCEPT_MULTISHOT	(1U << 0)
++
+ /*
+  * IO completion data structure (Completion Queue Entry)
+  */
 -- 
 2.25.1
 

@@ -2,108 +2,108 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B729251EEB4
-	for <lists+io-uring@lfdr.de>; Sun,  8 May 2022 17:51:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72BF151EEA1
+	for <lists+io-uring@lfdr.de>; Sun,  8 May 2022 17:51:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234934AbiEHPgL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 8 May 2022 11:36:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49608 "EHLO
+        id S234930AbiEHPgM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 8 May 2022 11:36:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50092 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234930AbiEHPgG (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 8 May 2022 11:36:06 -0400
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01olkn2041.outbound.protection.outlook.com [40.92.107.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3FD910FFA
-        for <io-uring@vger.kernel.org>; Sun,  8 May 2022 08:32:16 -0700 (PDT)
+        with ESMTP id S234935AbiEHPgJ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 8 May 2022 11:36:09 -0400
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01olkn2048.outbound.protection.outlook.com [40.92.107.48])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4CEC10FF4
+        for <io-uring@vger.kernel.org>; Sun,  8 May 2022 08:32:18 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=h4RB/jBTwyvOtcF9dxWXNiLzkHWeXkv077uoSf/I9eris02jXtt9FI2Y0BvJS343/7Qb6JlNnjFCHgYtnxmAo+BAygIDaUMPKFfRIxFHm0w2P3SZn64ZQpJUzCJHZ1LlFtkZXTYFjdTR8L3uemr+7zkIY0+5Wv38YEtKv9dkYSIbX1f5Mxra5Fi5U9BCHj2TfQAkQsoRaXCCia18v9nTAFn/zxPlnBg0tv4ttjbf6k8YjW88pcBo1loj61ii7lHJOZPaWzDwRIjIO9kYkMwPeMSAxDtYLA3s4Yhpi/8FYJ0Qa5HmGgbVZclcurPm7w2MMQNWH/lnDq8DXzc4Q4Kz3A==
+ b=Xw3gOM8sdmDgP6KqvU1sYLTZKxngyaxrv52I1RLS+8CseGU1vfvXLroMsHLWYQuPvEI3Wa7uDkQv5EtbxhEMXPaso3dkv4kjJ+oKVomi7kB02yCHoElMSOTJKTVP+zEb5ZTy5k30XBeYk3qP3FFqMn0WGHX1cLcI9b/ID2eirh4o1lcKtoaXh5jWzSNbKE0Eu6duoqk3FnCVsAAsklKfBKiABFIliGHEdJsQ1fs91jp2FFld5Q+zNTk5CiyfrXRHcaQHr5ApL0MpGe5JDivtW7cmDxMC9qbLJOqg1Xm7SRlCYX4UgqW2SAjm7Jw0XV999AYc7zp0USgeTevVASoL6g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=APVbNQhOP9OKApoqtEFZDpdTbO1Y7stkIQa0UP0d2dw=;
- b=bWHO/h0Y4/kwjt1mGDEzZde8ejBBNsO3552NUjErWenGbt8B9PCoScHU/NnsZsFIj3+yQMhx2fb6jtb953aHfLDUYTwpJpNUroP6H81K60nEuAnuj75JCdO6rwiRgP2IHBAeHdHvJrzw7OiflXaQDZpdKo7zlJMkB7j/t6VoqrSUEAnT2u0GE6R8SIaKqOPzGinud1N0lTjW+mZG1vwLYM63w1KFwYnAvOBaAqeTTlyKfXEJmTS0vT0jDbTtZ1W3OmKSjt3jc6akNqbM1hSEdooMltrPAFUUbDbsBUVcoBnW4EXsNOIqvNFtTUyHbGASxesVXggToZNXdmlt446E8g==
+ bh=WT245C0vvnBEu1WIcBRmsxn7sTaTPu5eMdcA1Qtj8aY=;
+ b=OI4lLqwhy9bMiv1xrmA18QaFNCLf3e5RVFaVt/8dTPAMxlNpWV04J7b62Xd3T7XiDNqnYz2QCy6+7jVbwFaac9CdzTtC47luqkcKG8CwczB5Fe1Df95NR1L1f3f3CJXfMagfmMy2DSMPjdl+oW3SdwfrHA9JtVPEQzoYlYtkdDn8qP8NY4jpMU7os5m/4G1mBrzYFF3n+KT7TpRpXlLL4q7rlVAOl+znXAl0mmuXTSRK9uqJoXUw8Ix8iB5l2qK4txdPhvs+QlMIWb+dvRsAOEtAJBUZ+w9+P4mYbBMPCDvK/ZK8lo/aJaVYrCwsGB+SeRtg1NX404TaB4cxzoO1pw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
  dkim=none; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=APVbNQhOP9OKApoqtEFZDpdTbO1Y7stkIQa0UP0d2dw=;
- b=SfjmEgFggItjWcJNS1QGRcmas7qAXt8dvTgVdFLPkIWnOF1Li7gWaUUhMBNmuMNHKkB1CEK2GKGJjR2myPjzvQ+lpbgtqitjwrkwi35D7gp878YjhKPq0/zYqwMlkESjDmRqHqTSfnK90oJ53OM1xJb6PbuhwHwPK2D4+WJwyILgVCvJeSA5Widlm+PB7mndTZohcyg1b00uPTa4QtJ77ayA4RynSDJ7OX3DCJ2kWMyRktFOW/12DhiuSxPU6tbZoirVLdX7cknHqCROfuAC1uoEy/mGtR0t1jTMkpqJF7b76+TWVWWwXXcySkiLR00MsiUd12rB9HCkDpzNjZ40hw==
+ bh=WT245C0vvnBEu1WIcBRmsxn7sTaTPu5eMdcA1Qtj8aY=;
+ b=iKCYr0DL89YjP8DWhj17t5+vJv1P2vuaScrCOVus/NeBdLZv94W9T7m1ZKqSNzq44GXFOoPIHsJrKwRcdh9tNz1kNdHkTK1LAJrR9Zbsiw3B660gGDsGrueanSnBf5BK7BVIhDW7MaqKCZ2KAcBL1d+gtO8n0lmCBDCankbPgSd0f9/fHMpzym8zd6ic0aX5U513sQrXgSnBzjwH/FHI6B8gN9ZELhCR7Jft4/Dms+MEnvJ+an1YJzHY+flGiK/BWPiig4K8KOqiD3VVTYr1R9w8wbfEF1nBWmUtu6odom7kZZ1E0jnYWCsg1SLdldaHYrs0HWEI7DhJKaECQ2h5rQ==
 Received: from SG2PR01MB2411.apcprd01.prod.exchangelabs.com
- (2603:1096:4:4f::14) by TY0PR0101MB4360.apcprd01.prod.exchangelabs.com
- (2603:1096:400:1b7::9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5227.22; Sun, 8 May
- 2022 15:32:14 +0000
+ (2603:1096:4:4f::14) by TY2PR0101MB3104.apcprd01.prod.exchangelabs.com
+ (2603:1096:404:e8::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5227.23; Sun, 8 May
+ 2022 15:32:16 +0000
 Received: from SG2PR01MB2411.apcprd01.prod.exchangelabs.com
  ([fe80::f50a:7a05:5565:fda2]) by SG2PR01MB2411.apcprd01.prod.exchangelabs.com
  ([fe80::f50a:7a05:5565:fda2%5]) with mapi id 15.20.5227.023; Sun, 8 May 2022
- 15:32:14 +0000
+ 15:32:15 +0000
 From:   Hao Xu <haoxu.linux@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>,
         Pavel Begunkov <asml.silence@gmail.com>
-Subject: [PATCH 2/4] io_uring: add REQ_F_APOLL_MULTISHOT for requests
-Date:   Sun,  8 May 2022 23:32:01 +0800
-Message-ID: <SG2PR01MB24116AD710C92CEB3EC2417CFFC79@SG2PR01MB2411.apcprd01.prod.exchangelabs.com>
+Subject: [PATCH 3/4] io_uring: let fast poll support multishot
+Date:   Sun,  8 May 2022 23:32:02 +0800
+Message-ID: <SG2PR01MB24118EC72D64732E308F6061FFC79@SG2PR01MB2411.apcprd01.prod.exchangelabs.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220508153203.5544-1-haoxu.linux@gmail.com>
 References: <20220508153203.5544-1-haoxu.linux@gmail.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-TMN:  [UjDnvXiOYEULkgHCclheIragpMKPKgUe]
+X-TMN:  [vUoMWEeXeio6M0CL3vE9+tQVyYtlsMa5]
 X-ClientProxiedBy: HK2PR04CA0051.apcprd04.prod.outlook.com
  (2603:1096:202:14::19) To SG2PR01MB2411.apcprd01.prod.exchangelabs.com
  (2603:1096:4:4f::14)
-X-Microsoft-Original-Message-ID: <20220508153203.5544-3-haoxu.linux@gmail.com>
+X-Microsoft-Original-Message-ID: <20220508153203.5544-4-haoxu.linux@gmail.com>
 MIME-Version: 1.0
 Sender: Hao Xu <outlook_CA44A5BC8B94E9F7@outlook.com>
 X-MS-Exchange-MessageSentRepresentingType: 2
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 709e3f95-1ef7-4297-b35c-08da3107ed70
-X-MS-TrafficTypeDiagnostic: TY0PR0101MB4360:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2e3cfc58-5062-4c43-fb71-08da3107eddb
+X-MS-TrafficTypeDiagnostic: TY2PR0101MB3104:EE_
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: UeT0d3z3D/VJAD8ILTcPA4kKWTB3duN5Ebtd3tuZWoMLgjqkRbXoMSIIEIZ2qOPgbGnUE7WsRlaZ1xPho7p5srWG1lbEDxsHU7xiyzj/L9I9M+9W+d0FLxBkT1okBMzv9G8pgqm3UfCXfC7uqE1kSR9W1olV08sHWhwIs0WENg7yo1rVAXujGXmEesZ4yeEGQZfDua6YTQ35obAAna1yqA7Lmtn776KsQYSJCMqoRiBKSVWvrUPPJVps7DXDbw48KMtiktaD9PK07pPqXlFeM+06tG42zOnN3j3YWOnkcVK9CH58of+l6IbmZQ292WH0fBtfOoexJFtva59nV8FI7H81lAWHfqfy1kEVjUdIkgx2bcItxqyTcO5ah5Pq9SbD4DbjK9KC5Z7vmxNRDAoOCBjPNfRcHOE1hQkl6ZiBM7nY49P+DC5wSPFcJ+7fnrV2uIzZD9pwMCMMmYqEAdrw5lI+nZV429jbV5AHRaXU8FjVfceuXmOplxzMJV3fMWbED3z9JM4IHiblY+MV6x8vtcXDb1vYtOr8Uetj2cHmqmcUhY0iB8mO+QKtvhwoybaIdv2DQJnScp5XgoYp0qq2TwaWewfQemT8DTsr5GvDTVk5Qbzjkx9SvD13HpZT8Hnh
+X-Microsoft-Antispam-Message-Info: +y27V1vB45RgDEavZinUcZEXTkp7xOK9uhfe5wiYVCvzg2k/HOZuxF4DoBZ5Hhpgo+rewFTIH1H4+3I49IWg8YpnWmAGYxXrlDxA1tZnV/f22ubIpuRApmj0M/HC6H9IsZ7UAxaMcNUo86I0sNTGwa68uRx0NWp1/u/Y2AlDRnPlFPsg6r1eiSOYm7IDUItx/uq5o85G7i8MdPnEOXgCEvJtClqvI/LHgJaev06mTkCgq4+nV3a382C3MfMHGrJl5NbNVoAy9mBqiqctqZLZgJSW0Be51X6UZ6Mc7GeFzKIhx2OXqWIdvXweakBVpcDksiJHcpm9+xPyX9ut3NDJDHXYqGyLPeulglUxIcEYTJ2yzixlYeAV33hfsak5GhxiYGX6Vw3SVmnvZNWyoqT7tE0DmwvBQT+jGlUCMIdwJwvTYK9NA6icZLw9dgMWOAx7wZwsn032GG3fpaObPi3VxGHsjwo+ILPGanL6W4yskisDJU2wMCMzDQ2GMZTaFnuqVOpWD9rkcIDuMjG8Vk02vNNCVGUIz0UbmP1LiEdCKxPrQpXzTJKtYS/Ft58uXROvzYNl85vlLuJUWaa0Ix0QCbBxxXVHppgIDUO1j6495XaqAT9BwfTHn4YV0GaEpHai
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?9ZTsd8Wl4h7+S4kuwgMonUCC9vVEd5L1+ryoEn9+rY3u0QePulee6lVTDapX?=
- =?us-ascii?Q?8xKY3xodUXLd2tV97DUsB+LnZeg9jwinHdXjhInUBS2+w1v+xSTToO/5tGk3?=
- =?us-ascii?Q?e6TUApsVfaBlHiYb/pLi5TiFN2Wa1+fqsxBux5DRqaQIspqqcgdQywjN5bBL?=
- =?us-ascii?Q?Kdn/Oak0zW2qQRsDBm7SRqqT+xwmCxQX5m/BJauFnE2r6fX9am480qf3zWMk?=
- =?us-ascii?Q?zPgYdQye4bIOOIqTp9sRgxFmajgRrLQW6XIRrXb3v1BJ2fbwdhunhM1l2iXZ?=
- =?us-ascii?Q?rQsUybpYgMltfl0t2AK8h+wMRz+HikfWF3riqQcTBeFLkz9fmBV5JW1P7ffZ?=
- =?us-ascii?Q?udTtCPWL5RRXnEoHZBfMJfZ1xCmDcZGxfNHXBQnYrquZkKEEQiUPNc7gL3OJ?=
- =?us-ascii?Q?fiyY9NsVqIBkxuMxnc/jBc2O7Nxrkn69EpmiRN/STxlh8JJM6weGpOA9RF8C?=
- =?us-ascii?Q?IqypJ7nnuxyEYv/Oq2PLYuL8JSsKvYhCVhViKA4w56Qn3zYISqyw5MvHEg7R?=
- =?us-ascii?Q?dpHFIOmrjF8K3SDmg/ZCNA3uwxulwMIb5qba10NCuwc1dJAZxIv1kMK5+sfm?=
- =?us-ascii?Q?jFrHpq7E/1B8ia2ryDh1NponIGKIefzM3VUusTLwoq45AASw702TqAjw7ipg?=
- =?us-ascii?Q?4AN4acDo5wnLGkPqs/o4VKm8idvBzXKq4hN1n9zIYeSu8T4Jgy3UOSEVlMII?=
- =?us-ascii?Q?RVZl34j99dB8sNVgOlEOXU4/+MfvLbZB4SDmDDgFrtnxxndgFjNVett3SKOp?=
- =?us-ascii?Q?BPM8nROUFHCRxClZokupKzkozHnRI1rNr1+FwA24qr7ZqOES5gB0AyFvD0hN?=
- =?us-ascii?Q?oxtv1DLV8vmYV7VmQpQI/eAcf2hYKyKhwwjwJzTzBi/sJUaLWx/B6lQOUzf0?=
- =?us-ascii?Q?PIs6urI8xSZx6so+NFoGQcP4XFXlPpMdBYrUP0p3XZJn04DwoOFcgHvaOO4+?=
- =?us-ascii?Q?KPjjOdl5ZV5qpg1KAHIf5QGlNZwFVQKHhWfXQcKswB0XDP1e1BrCIYUu39Fz?=
- =?us-ascii?Q?WLeL5F3QNYMEC2k+/zMBBjnPsv1xwNt2K09j7fRD6VFBzCyLJSPPslMlYCAC?=
- =?us-ascii?Q?JZu5+p8Tj66DkHVnbeNWaRMLFtpVk48XaKqBKI5P6TOiotC9bLqnlWng1Fm+?=
- =?us-ascii?Q?CwayefECBxScjGUKhIpFDQPgVtHHwrSY00jlYVFsTYZ1W8XHp7KHA3LMoeVV?=
- =?us-ascii?Q?oFjC3/DzlcfOeePv05EAtqnvpfjXaCLgp/T/mfOoXKQ+buZwQyYM9dKs0LmX?=
- =?us-ascii?Q?Ycj3A18npzwEAaXoQ1Kl4bq8OShE9sowb5KRw8Vh4WjNJcrk67ga8MNWepGb?=
- =?us-ascii?Q?SZEFNjSqo1YCchwNOtbGosgm0rpiXTFuPHdpSvqxIrkMfBwsImROEvCTZENN?=
- =?us-ascii?Q?8IAdSg0/yYYZjKSQEO0Lgl1jPJMPhbASEEfJFwJmxSbio+QWGPJsJcjAx40O?=
- =?us-ascii?Q?GcOPdoYx6/TivHsGi8QGj4z+udUwp6jubgArBMqWB3UFkCTMUIeWgA=3D=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Rx6Zxu3SSH8U0UqVll2xWx1hyUs0Jd3xDCm7cGGwCCfvYyMBtNnKAs94gr/7?=
+ =?us-ascii?Q?n0j8MZ3HAf5D3mNQnbUagVpqfEIrka1QoO5kEcd3rd4uAHvEsWQ4Suk2I1HB?=
+ =?us-ascii?Q?0d3mTpsYQ6UzIDb8nzWShGSVhkHBd8pTtl8pT6L7DFaatwkzbMgf0lUTRAiz?=
+ =?us-ascii?Q?L0Q059uExc8OvHuzjK8OVsqYP5C0oy/T1V9y09AiJv/aKpqSVz5Ped90ASUi?=
+ =?us-ascii?Q?TRjO9aDDi278zIlJolo7qXN8chYZzSCgxf9j8eHGIjnzVhAiOfJQy4V8H2Dm?=
+ =?us-ascii?Q?Hqz6ZXLWrY+L3GoG9gXWnxOZFaUcNET6k8BzhRXQEJ2hALQWlNRvROtLZka4?=
+ =?us-ascii?Q?8VUVSp0x7BCsOJ4KukXxIBE0k/7QkbJ5JWWdnluYdwUn60sYR3/eIYS81L7v?=
+ =?us-ascii?Q?TjOmB+3AY8fwp8hTKH+nLZH3wUEeotcHxwb2jhWzfScd8zDQyX9vFdPbdzQp?=
+ =?us-ascii?Q?Jfy7lnrOBVem3mEofpENDvfygrto7HVxsJdFypIyQxNYnRLypoaiOgT7KV0O?=
+ =?us-ascii?Q?0DQxvYPdftUeZHfNpZD2MAq44voJB0f7GpwVsFLzVC8wC6pWOYdNiHpT0HUb?=
+ =?us-ascii?Q?tW829LS7teTdTw/6d4Kh6xdnF0Ih8zuiTUFVCUt1E1Kj7ppt/E1xrF7X+fll?=
+ =?us-ascii?Q?QoCk195v40MZ3j/Ydmpau025M8WwABjOSugsZC95D1vpI7CLxF9/5fu/azsG?=
+ =?us-ascii?Q?g0mE7DzpNqXp5jXoLhm5aVVSECa19JLHM7roYz9rRus768y77UWBT9iHJIhv?=
+ =?us-ascii?Q?+y9x/81UsdOpd4nMFkJg0M1FxAvgv/BEWAGMsfceI0h6CjqS1+v3OHt1LuhE?=
+ =?us-ascii?Q?v4515VPKyv5EdXcVUgXOgVRo3A/sRxPAMDIIOFpnh2KnyMT3N5TBOhJ6go0e?=
+ =?us-ascii?Q?PbYHoPIc2Xa5p8pYNrAQ0RtwSJNNpA9sjkjuZGjaFxmz7Lk3XwjV5jWvw81q?=
+ =?us-ascii?Q?IUUydxJsn615RtxP+0Pg7iP6aEZ9pdqLwUH4O5JOAjDHf7oIuCg4x6MiYqDk?=
+ =?us-ascii?Q?l5l2Aab6TQVdsNhNRiMp8tPE/feHcMmJXUIxIgZXO1kbZgrKUaGU1lZLrq0y?=
+ =?us-ascii?Q?2UYEHgOIC1lC9SnxXRjWG02pCNQzDMat2M7vKQo42J3y7cwX7/nRFpHHwqjQ?=
+ =?us-ascii?Q?NBdI1LbjlWZ67Fj1WvkjqJGXheT5YgPs0fSq4rc7au64bv9eW5KPeqbHKu96?=
+ =?us-ascii?Q?ehwkKqQC2tJtZViw2aCzDPC71kKi/7CGQq1DHnX/ki3kFHI1i6u3YIp1r/he?=
+ =?us-ascii?Q?p54QWOSZ7s+UeN07rpjVlony5gLED2XsCUAXGtX0G2LwMYiXEOkO/OpAWsxi?=
+ =?us-ascii?Q?ubzZbYurwZ7FFVorjATrVb0TI0oryITGtaV+4KW7UEdEMEigEHQCzj4Jyodp?=
+ =?us-ascii?Q?RxYouEklcfQMrUazKTus6hyKfgEgYTeiVDRDavFL6PIQdQMnkVyuvzp6ukVq?=
+ =?us-ascii?Q?O92u871qW6j5LPnihwmY9tDDxL7re75ci4AYH8pWKpdNgLccRprqtQ=3D=3D?=
 X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 709e3f95-1ef7-4297-b35c-08da3107ed70
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2e3cfc58-5062-4c43-fb71-08da3107eddb
 X-MS-Exchange-CrossTenant-AuthSource: SG2PR01MB2411.apcprd01.prod.exchangelabs.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2022 15:32:14.6339
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2022 15:32:15.3526
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
 X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR0101MB4360
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PR0101MB3104
 X-Spam-Status: No, score=0.6 required=5.0 tests=BAYES_00,DKIM_ADSP_CUSTOM_MED,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,FORGED_GMAIL_RCVD,
         FREEMAIL_ENVFROM_END_DIGIT,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
         HEADER_FROM_DIFFERENT_DOMAINS,NML_ADSP_CUSTOM_MED,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=no autolearn_force=no version=3.4.6
+        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -112,46 +112,124 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 From: Hao Xu <howeyxu@tencent.com>
 
-Add a flag to indicate multishot mode for fast poll. currently only
-accept use it, but there may be more operations leveraging it in the
-future. Also add a mask IO_APOLL_MULTI_POLLED which stands for
-REQ_F_APOLL_MULTI | REQ_F_POLLED, to make the code short and cleaner.
+For operations like accept, multishot is a useful feature, since we can
+reduce a number of accept sqe. Let's integrate it to fast poll, it may
+be good for other operations in the future.
 
 Signed-off-by: Hao Xu <howeyxu@tencent.com>
 ---
- fs/io_uring.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ fs/io_uring.c | 47 ++++++++++++++++++++++++++++++++---------------
+ 1 file changed, 32 insertions(+), 15 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index b6d491c9a25f..c2ee184ac693 100644
+index c2ee184ac693..e0d12af04cd1 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -116,6 +116,8 @@
- #define IO_REQ_CLEAN_SLOW_FLAGS (REQ_F_REFCOUNT | REQ_F_LINK | REQ_F_HARDLINK |\
- 				 IO_REQ_CLEAN_FLAGS)
+@@ -5955,6 +5955,7 @@ static void io_poll_remove_entries(struct io_kiocb *req)
+ 	rcu_read_unlock();
+ }
  
-+#define IO_APOLL_MULTI_POLLED (REQ_F_APOLL_MULTISHOT | REQ_F_POLLED)
++static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags);
+ /*
+  * All poll tw should go through this. Checks for poll events, manages
+  * references, does rewait, etc.
+@@ -5963,10 +5964,10 @@ static void io_poll_remove_entries(struct io_kiocb *req)
+  * either spurious wakeup or multishot CQE is served. 0 when it's done with
+  * the request, then the mask is stored in req->cqe.res.
+  */
+-static int io_poll_check_events(struct io_kiocb *req, bool locked)
++static int io_poll_check_events(struct io_kiocb *req, bool *locked)
+ {
+ 	struct io_ring_ctx *ctx = req->ctx;
+-	int v;
++	int v, ret;
+ 
+ 	/* req->task == current here, checking PF_EXITING is safe */
+ 	if (unlikely(req->task->flags & PF_EXITING))
+@@ -5990,23 +5991,37 @@ static int io_poll_check_events(struct io_kiocb *req, bool locked)
+ 			req->cqe.res = vfs_poll(req->file, &pt) & req->apoll_events;
+ 		}
+ 
+-		/* multishot, just fill an CQE and proceed */
+-		if (req->cqe.res && !(req->apoll_events & EPOLLONESHOT)) {
+-			__poll_t mask = mangle_poll(req->cqe.res & req->apoll_events);
++		if ((unlikely(!req->cqe.res)))
++			continue;
++		if (req->apoll_events & EPOLLONESHOT)
++			return 0;
 +
- #define IO_TCTX_REFS_CACHE_NR	(1U << 10)
++		/* multishot, just fill a CQE and proceed */
++		if (!(req->flags & REQ_F_APOLL_MULTISHOT)) {
++			__poll_t mask = mangle_poll(req->cqe.res &
++						    req->apoll_events);
+ 			bool filled;
  
- struct io_uring {
-@@ -810,6 +812,7 @@ enum {
- 	REQ_F_SINGLE_POLL_BIT,
- 	REQ_F_DOUBLE_POLL_BIT,
- 	REQ_F_PARTIAL_IO_BIT,
-+	REQ_F_APOLL_MULTISHOT_BIT,
- 	/* keep async read/write and isreg together and in order */
- 	REQ_F_SUPPORT_NOWAIT_BIT,
- 	REQ_F_ISREG_BIT,
-@@ -874,6 +877,8 @@ enum {
- 	REQ_F_DOUBLE_POLL	= BIT(REQ_F_DOUBLE_POLL_BIT),
- 	/* request has already done partial IO */
- 	REQ_F_PARTIAL_IO	= BIT(REQ_F_PARTIAL_IO_BIT),
-+	/* fast poll multishot mode */
-+	REQ_F_APOLL_MULTISHOT	= BIT(REQ_F_APOLL_MULTISHOT_BIT),
- };
+ 			spin_lock(&ctx->completion_lock);
+-			filled = io_fill_cqe_aux(ctx, req->cqe.user_data, mask,
+-						 IORING_CQE_F_MORE);
++			filled = io_fill_cqe_aux(ctx, req->cqe.user_data,
++						 mask, IORING_CQE_F_MORE);
+ 			io_commit_cqring(ctx);
+ 			spin_unlock(&ctx->completion_lock);
+-			if (unlikely(!filled))
+-				return -ECANCELED;
+-			io_cqring_ev_posted(ctx);
+-		} else if (req->cqe.res) {
+-			return 0;
++			if (filled) {
++				io_cqring_ev_posted(ctx);
++				continue;
++			}
++			return -ECANCELED;
+ 		}
  
- struct async_poll {
++		io_tw_lock(req->ctx, locked);
++		if (unlikely(req->task->flags & PF_EXITING))
++			return -EFAULT;
++		ret = io_issue_sqe(req,
++				   IO_URING_F_NONBLOCK|IO_URING_F_COMPLETE_DEFER);
++		if (ret)
++			return ret;
++
+ 		/*
+ 		 * Release all references, retry if someone tried to restart
+ 		 * task_work while we were executing it.
+@@ -6021,7 +6036,7 @@ static void io_poll_task_func(struct io_kiocb *req, bool *locked)
+ 	struct io_ring_ctx *ctx = req->ctx;
+ 	int ret;
+ 
+-	ret = io_poll_check_events(req, *locked);
++	ret = io_poll_check_events(req, locked);
+ 	if (ret > 0)
+ 		return;
+ 
+@@ -6046,7 +6061,7 @@ static void io_apoll_task_func(struct io_kiocb *req, bool *locked)
+ 	struct io_ring_ctx *ctx = req->ctx;
+ 	int ret;
+ 
+-	ret = io_poll_check_events(req, *locked);
++	ret = io_poll_check_events(req, locked);
+ 	if (ret > 0)
+ 		return;
+ 
+@@ -6286,7 +6301,7 @@ static int io_arm_poll_handler(struct io_kiocb *req, unsigned issue_flags)
+ 	struct io_ring_ctx *ctx = req->ctx;
+ 	struct async_poll *apoll;
+ 	struct io_poll_table ipt;
+-	__poll_t mask = EPOLLONESHOT | POLLERR | POLLPRI;
++	__poll_t mask = POLLERR | POLLPRI;
+ 	int ret;
+ 
+ 	if (!def->pollin && !def->pollout)
+@@ -6295,6 +6310,8 @@ static int io_arm_poll_handler(struct io_kiocb *req, unsigned issue_flags)
+ 		return IO_APOLL_ABORTED;
+ 	if ((req->flags & (REQ_F_POLLED|REQ_F_PARTIAL_IO)) == REQ_F_POLLED)
+ 		return IO_APOLL_ABORTED;
++	if (!(req->flags & REQ_F_APOLL_MULTISHOT))
++		mask |= EPOLLONESHOT;
+ 
+ 	if (def->pollin) {
+ 		mask |= POLLIN | POLLRDNORM;
 -- 
 2.25.1
 

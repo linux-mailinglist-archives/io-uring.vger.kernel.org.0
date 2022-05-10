@@ -2,45 +2,45 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B123521F51
-	for <lists+io-uring@lfdr.de>; Tue, 10 May 2022 17:44:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EDEF521F89
+	for <lists+io-uring@lfdr.de>; Tue, 10 May 2022 17:46:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346273AbiEJPsO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 10 May 2022 11:48:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60186 "EHLO
+        id S1346480AbiEJPuf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 10 May 2022 11:50:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59524 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346190AbiEJPsL (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 10 May 2022 11:48:11 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E14D2802C4;
-        Tue, 10 May 2022 08:44:02 -0700 (PDT)
+        with ESMTP id S1346250AbiEJPuZ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 10 May 2022 11:50:25 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7686E285ECE;
+        Tue, 10 May 2022 08:44:47 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6FD9461329;
-        Tue, 10 May 2022 15:44:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C307C385C2;
-        Tue, 10 May 2022 15:44:01 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id EDE9A61381;
+        Tue, 10 May 2022 15:44:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8D2DC385CA;
+        Tue, 10 May 2022 15:44:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1652197441;
-        bh=yH5M1c0ldN5R+FkK/zu3biDlTtfEvvdoiBULCRmiLhA=;
+        s=k20201202; t=1652197486;
+        bh=/1Y0d87/4tbN+DLBfRrfe0cvxhj9hPhwOquuR7yBFqo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fkoQ5I6F9BF5mV19aHe3/YQ4iYqZTHaCQXSKYsZk8cLxEpRKL1XCieZ9icBO9RYee
-         sawe9fWx9vFYD4DNM+058n6JEMvl/9waAfg1/n/WQC2roAIqVoX8rIlcVTZoMSZ2zA
-         GKw/51cAgZ7wZ3FHTZsarc32WlKW0tZuJhSwo51af6l0RfzlA22QWJi3bvfoat/8it
-         Ji6BMKSpYhOdZv5+zGS8JiqDpixXqlU7sGtLO4uyPWrJkwOnqW0n4G139Gl4Mxbcce
-         W8xcL+MvtgOZ/BuG9kNcVNoxtFitboOdFYeUvN/FeKNmXAlyygQdTCgNvmn2jxNotY
-         Dm0+4pSW0VNJQ==
+        b=DRIEJzlkG7o8OywZeMLFaxwgkLrlZ9AAWc3TfdxeqgTMAfz7OgV6XurSCMlTEFD1o
+         dbYMQrPqP1DHvz2foxj6ZPr0SooLBBnTsIf9cx37POAareKTFZ8lNaQcd6X3pK+4oZ
+         aW7NuHj3bYJnKx5kHISliHtb1JjCtD0F/WeLMu6kPvU2RyLi+OXHkrG7DJZK/Pfu8I
+         0y/Ye3hCudPpTgB4FAoJejDtUG6Kugmp5m4pu4M2j+4knEM71B0x85O1683KiULV/O
+         C8/qWe4Ijm4X5e8ZPdT0YfM8aY/3O1t3Cuvs0Qg7vcrbbJEUyULrstLhT2TM7VTIR+
+         SKOgcWCELjn6g==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
         io-uring@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.17 10/21] io_uring: assign non-fixed early for async work
-Date:   Tue, 10 May 2022 11:43:29 -0400
-Message-Id: <20220510154340.153400-10-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.15 09/19] io_uring: assign non-fixed early for async work
+Date:   Tue, 10 May 2022 11:44:19 -0400
+Message-Id: <20220510154429.153677-9-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220510154340.153400-1-sashal@kernel.org>
-References: <20220510154340.153400-1-sashal@kernel.org>
+In-Reply-To: <20220510154429.153677-1-sashal@kernel.org>
+References: <20220510154429.153677-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -74,10 +74,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 6 insertions(+), 1 deletion(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 87df37912055..a0680046ff3c 100644
+index 7aad4bde92e9..2f7ac8df9a0c 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -6572,7 +6572,12 @@ static int io_req_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+@@ -6506,7 +6506,12 @@ static int io_req_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
  
  static int io_req_prep_async(struct io_kiocb *req)
  {
@@ -89,7 +89,7 @@ index 87df37912055..a0680046ff3c 100644
 +		req->file = io_file_get_normal(req, req->fd);
 +	if (!def->needs_async_setup)
  		return 0;
- 	if (WARN_ON_ONCE(req_has_async_data(req)))
+ 	if (WARN_ON_ONCE(req->async_data))
  		return -EFAULT;
 -- 
 2.35.1

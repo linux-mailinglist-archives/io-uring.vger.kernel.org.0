@@ -2,95 +2,94 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EDEF521F89
-	for <lists+io-uring@lfdr.de>; Tue, 10 May 2022 17:46:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 710BF521FDA
+	for <lists+io-uring@lfdr.de>; Tue, 10 May 2022 17:48:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346480AbiEJPuf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 10 May 2022 11:50:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59524 "EHLO
+        id S1346599AbiEJPwk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 10 May 2022 11:52:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346250AbiEJPuZ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 10 May 2022 11:50:25 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7686E285ECE;
-        Tue, 10 May 2022 08:44:47 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id EDE9A61381;
-        Tue, 10 May 2022 15:44:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8D2DC385CA;
-        Tue, 10 May 2022 15:44:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1652197486;
-        bh=/1Y0d87/4tbN+DLBfRrfe0cvxhj9hPhwOquuR7yBFqo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DRIEJzlkG7o8OywZeMLFaxwgkLrlZ9AAWc3TfdxeqgTMAfz7OgV6XurSCMlTEFD1o
-         dbYMQrPqP1DHvz2foxj6ZPr0SooLBBnTsIf9cx37POAareKTFZ8lNaQcd6X3pK+4oZ
-         aW7NuHj3bYJnKx5kHISliHtb1JjCtD0F/WeLMu6kPvU2RyLi+OXHkrG7DJZK/Pfu8I
-         0y/Ye3hCudPpTgB4FAoJejDtUG6Kugmp5m4pu4M2j+4knEM71B0x85O1683KiULV/O
-         C8/qWe4Ijm4X5e8ZPdT0YfM8aY/3O1t3Cuvs0Qg7vcrbbJEUyULrstLhT2TM7VTIR+
-         SKOgcWCELjn6g==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        io-uring@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 09/19] io_uring: assign non-fixed early for async work
-Date:   Tue, 10 May 2022 11:44:19 -0400
-Message-Id: <20220510154429.153677-9-sashal@kernel.org>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220510154429.153677-1-sashal@kernel.org>
-References: <20220510154429.153677-1-sashal@kernel.org>
+        with ESMTP id S1347192AbiEJPwE (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 10 May 2022 11:52:04 -0400
+Received: from mail-io1-xd35.google.com (mail-io1-xd35.google.com [IPv6:2607:f8b0:4864:20::d35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 432D228B689
+        for <io-uring@vger.kernel.org>; Tue, 10 May 2022 08:47:16 -0700 (PDT)
+Received: by mail-io1-xd35.google.com with SMTP id a10so1484527ioe.9
+        for <io-uring@vger.kernel.org>; Tue, 10 May 2022 08:47:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=nVSRi5wIDVHYpu1ojocgQkPMvGst2Aq+pvqCJIj4u9U=;
+        b=nFOSEcSgCpgBBmL0TyKyaBVjPh73Ju0Q2KaPb7KCGh6PN1pcC8PB/DGUjucpqWozeR
+         +NbJvR0+4rtIpirPaTw/xPISfWRVjDmxo4LY4zFzO4BN6rYwhbuzjCUVA8b5nZtlqpMs
+         UWBGIYR978FvUWmx8cGw2nKJvy+DwAby2lp3ZPd2JDpoPnHAbIOmC/DgIpWD7Ht1uVwb
+         FvaqA9sSjqBZFCwMcXeNr/sKgc7NE8sUkII2gFBGHpoqh1ytOfl4mpLYDrfi2r1uhVsK
+         ZwCYb2dHYoH3p/Kib8Lj3MfG9k0DUFedUrYo1oTIf2LhQNvQc0CSaW5GQK1IFfL0xOgc
+         mVUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=nVSRi5wIDVHYpu1ojocgQkPMvGst2Aq+pvqCJIj4u9U=;
+        b=if1TgYUJHAcV5LqpfLw2gU+UmSQsKJnUY84wBkYDHmQwLT1KE8c49Mvg9+jDejGBLu
+         xYChJFIhRl4nLaWj2B3fCDa/qf9PcQ+OK772v4KNyRuRJi8boZ4LS89e8D5ReIEamUDM
+         MZ8Dh0VBqEA2DjFOTqlNywgYMxmVN8ToZC44HJV7sfH6TdTFUiV4EpzwXIkqcWo0JiT2
+         Y1vz8jkFvB5l19iA+PspvD6GyBjmyFidkTiw+tyBTujEbAoTAloKB+N1ocaRC7Kdse5k
+         udcomLXCUYiH+R+0KXGX/mMSyF1Y+VKw5vAYck306RZalOm67ORAF/ukeR+KznoKJlQv
+         QFaw==
+X-Gm-Message-State: AOAM531xT1td+QW5NHuIX9OjWEpGS+aCfis0/fzDLn0ymc8xc0irCL+u
+        1gl+7/KpkxN4sBwg4ZZCd8mb9Q==
+X-Google-Smtp-Source: ABdhPJzJk2EhDRZC5gyjdHD0MJkfj4xYHJ2O8ogCT7cH9cIpmdxqbnx0pshNm6IQHgMhKlN5tXXIFA==
+X-Received: by 2002:a05:6602:314c:b0:649:a265:72ee with SMTP id m12-20020a056602314c00b00649a26572eemr8750978ioy.100.1652197635312;
+        Tue, 10 May 2022 08:47:15 -0700 (PDT)
+Received: from [192.168.1.172] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id m9-20020a056638224900b0032b3a78173csm4452139jas.0.2022.05.10.08.47.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 May 2022 08:47:14 -0700 (PDT)
+Message-ID: <6e611c42-fea2-defe-80d1-e1b427d6ccc0@kernel.dk>
+Date:   Tue, 10 May 2022 09:47:13 -0600
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH AUTOSEL 5.15 09/19] io_uring: assign non-fixed early for
+ async work
+Content-Language: en-US
+To:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Cc:     io-uring@vger.kernel.org
+References: <20220510154429.153677-1-sashal@kernel.org>
+ <20220510154429.153677-9-sashal@kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20220510154429.153677-9-sashal@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Jens Axboe <axboe@kernel.dk>
+On 5/10/22 9:44 AM, Sasha Levin wrote:
+> From: Jens Axboe <axboe@kernel.dk>
+> 
+> [ Upstream commit a196c78b5443fc61af2c0490213b9d125482cbd1 ]
+> 
+> We defer file assignment to ensure that fixed files work with links
+> between a direct accept/open and the links that follow it. But this has
+> the side effect that normal file assignment is then not complete by the
+> time that request submission has been done.
+> 
+> For deferred execution, if the file is a regular file, assign it when
+> we do the async prep anyway.
 
-[ Upstream commit a196c78b5443fc61af2c0490213b9d125482cbd1 ]
+This one should only go into 5.17-stable, not anything earlier.
 
-We defer file assignment to ensure that fixed files work with links
-between a direct accept/open and the links that follow it. But this has
-the side effect that normal file assignment is then not complete by the
-time that request submission has been done.
-
-For deferred execution, if the file is a regular file, assign it when
-we do the async prep anyway.
-
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/io_uring.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 7aad4bde92e9..2f7ac8df9a0c 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -6506,7 +6506,12 @@ static int io_req_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 
- static int io_req_prep_async(struct io_kiocb *req)
- {
--	if (!io_op_defs[req->opcode].needs_async_setup)
-+	const struct io_op_def *def = &io_op_defs[req->opcode];
-+
-+	/* assign early for deferred execution for non-fixed file */
-+	if (def->needs_file && !(req->flags & REQ_F_FIXED_FILE))
-+		req->file = io_file_get_normal(req, req->fd);
-+	if (!def->needs_async_setup)
- 		return 0;
- 	if (WARN_ON_ONCE(req->async_data))
- 		return -EFAULT;
 -- 
-2.35.1
+Jens Axboe
 

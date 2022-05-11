@@ -2,103 +2,207 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 133A952349F
-	for <lists+io-uring@lfdr.de>; Wed, 11 May 2022 15:48:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48AB952364F
+	for <lists+io-uring@lfdr.de>; Wed, 11 May 2022 16:56:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237778AbiEKNsH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 11 May 2022 09:48:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39856 "EHLO
+        id S245246AbiEKO4o (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 11 May 2022 10:56:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59938 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231463AbiEKNsH (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 11 May 2022 09:48:07 -0400
-Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86FE324F3D
-        for <io-uring@vger.kernel.org>; Wed, 11 May 2022 06:48:06 -0700 (PDT)
-Received: by mail-pf1-x42c.google.com with SMTP id p8so2029703pfh.8
-        for <io-uring@vger.kernel.org>; Wed, 11 May 2022 06:48:06 -0700 (PDT)
+        with ESMTP id S235040AbiEKO4j (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 11 May 2022 10:56:39 -0400
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5822F67D2C
+        for <io-uring@vger.kernel.org>; Wed, 11 May 2022 07:56:38 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id m2-20020a1ca302000000b003943bc63f98so1387151wme.4
+        for <io-uring@vger.kernel.org>; Wed, 11 May 2022 07:56:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:in-reply-to:references:subject:message-id:date
-         :mime-version:content-transfer-encoding;
-        bh=7dUFOAr9HRSYaQk2tNQyvAWNs1vBs/f30/GWbXxlFcM=;
-        b=RqEFXzLoP5oTZ+qyubaAnAlP+7ZVBm8acmBYu9H/Xiv36LUl8vBFMhqaO5mN3dGDS/
-         e1xytbvscTavXRwgrErr3Apm05V4/rjqB0CpwyrAe3mX50a2UZ6S0xy0iy3vbTZR+Ydq
-         a7m99ftDKbYx7ZSuIJu7jO/L9tiw+JJmOSyZQp1o+HamBuMNc0uiHDLBzch+C4yd7le8
-         YztLRGpmqkGoR1+s80VBb+VlHwvEdniJYMPbLJXcuAgbfD7+GDacrYE3hHp8nvt6RJYw
-         K6JSsis7tPhZVZbOwM1RBRSSl1z+duTVi9LFlQbKLn+RLqAns09XTBP1Gu//zXHADtzH
-         kqGw==
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gcbDcYG7+QPOIYJ8lK24KY0F1UOaq5oQS6VcoqUorgI=;
+        b=npyauA23HuVGnk6+OcJSiefJXK8Dpfu1Iylo2F8SWUkiclgKMWV1P4MJAXkSc+OpbW
+         WaDYH6GRHk0YitskKSo69+PGq69l7gzi8T39ycmXcO4Q77jO7E3/fTFCymSvbnP4KhwK
+         EUosF9DXmTrhZ7JC5tq/NXYwakpwIFNivoqA89XgCfNycbiJu/ZzcMXNU4HsiTgxoD2Q
+         kLOtrbr4oa5/oegvyMGO9SrOV1FneZuF0skKQY2nungbGv7s0wpwhIt1ZOKmR1ZeNv/a
+         3ZL684UVuEswiZ+MopJ7li6yyztEmtKaTgUCqh/WxDBhciJYqp4Wp6TEeVX4bupVSAq7
+         sBIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
-         :message-id:date:mime-version:content-transfer-encoding;
-        bh=7dUFOAr9HRSYaQk2tNQyvAWNs1vBs/f30/GWbXxlFcM=;
-        b=IAN2II9uXMzWNRYOxqZnmSMaoynew1WMyGxWfY8c6GuaWUcuZw9A1K/qnlddF+t36/
-         hW+KmF0KfQf1XjNp1u36k1pHFnDneBD7KUOFcAi+NJKE+Q7rpWZE5t3dm9DWN/z5/JMW
-         UheMY4G1nZjRtq5/ho4J1ryiiOGjVKiKzy8pwNtKD3NbLw+7B07Ib/UO85yiz86Q8s7U
-         m11IaS/i4409AvHtXXa4LUqKjpSKBsrbZC3KLe8Th2YYojSBsyv939BGOOQK9ZxlYFQH
-         wzkN2Rp5X6oSxIps7D0tAxtF1Dwrx8No+l439AXJ4lMxz+xggEY5Mg2QEqUA6A8dbB2k
-         2mOg==
-X-Gm-Message-State: AOAM5303+FLMokOYolk8H92FOltEMAruWjABzAAOQw4GdVUQ73GmBd2K
-        IfHB9RRviJBCXigcF/8N2Kc1aQ==
-X-Google-Smtp-Source: ABdhPJxH4Q61wDahvW9YLo4TjvGtuXz0L3U7Z+ppbQpBtxhTE0wQq+/OhEsP7FJ/0EZ7O2smzzv6AQ==
-X-Received: by 2002:a63:5d0a:0:b0:399:40fd:2012 with SMTP id r10-20020a635d0a000000b0039940fd2012mr21291391pgb.454.1652276885996;
-        Wed, 11 May 2022 06:48:05 -0700 (PDT)
-Received: from [127.0.1.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id y19-20020a170902d65300b0015e8d4eb273sm1888009plh.189.2022.05.11.06.48.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 May 2022 06:48:05 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Christoph Hellwig <hch@lst.de>, joshi.k@samsung.com
-Cc:     joshiiitr@gmail.com, anuj20.g@samsung.com, shr@fb.com,
-        ming.lei@redhat.com, linux-nvme@lists.infradead.org,
-        io-uring@vger.kernel.org, mcgrof@kernel.org, gost.dev@samsung.com,
-        asml.silence@gmail.com
-In-Reply-To: <20220511054750.20432-1-joshi.k@samsung.com>
-References: <CGME20220511055306epcas5p3bf3b4c1e32d2bb43db12785bd7caf5da@epcas5p3.samsung.com> <20220511054750.20432-1-joshi.k@samsung.com>
-Subject: Re: [PATCH v5 0/6] io_uring passthrough for nvme
-Message-Id: <165227688477.38900.11020258804345924077.b4-ty@kernel.dk>
-Date:   Wed, 11 May 2022 07:48:04 -0600
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gcbDcYG7+QPOIYJ8lK24KY0F1UOaq5oQS6VcoqUorgI=;
+        b=tuoxWf1JRW2QJowOpfKxAjzZCRTr7rGVR1j/mKmyHvOca1Z8uDGRF2xda/2qSKOmZX
+         2hmGanJE9vuI0X+1pBqhox9A/3EU+MOn9ZblQCea28LYcdJcWBtYwWByAoWnzl+12OCr
+         6uf+kJotri2CL/kfXRkN0TKwcr9lE2a0LJQvuXM7iIaQh2jUq/v86kfXATGWrLkDv+tE
+         vQTtIfEp1CAf64uIJUkBwWKbWz7Woqbo7IUbWe6vFg9aMPOpeqX/RwjjQvOycgE9R+gC
+         7T41TVuKt9hVr8q3/756F32FbPdWI63VIoMz1QGFn8HkO0wSY6F6kBlpU1Qke9pdGDhc
+         9cqg==
+X-Gm-Message-State: AOAM531bTDn5OiMqSUEEcYLUtTMRjwkw7pm0eXy4SMA54bLdbIKUBiU7
+        7ZX/8fGS7rCBPc046a14M3e40nvQRVCymw7wNZP3p0fd
+X-Google-Smtp-Source: ABdhPJzALdfOk8etHwwM2uRTdgxDIxGjIpFxv5DTiQmkY8Mc44Tb09siaUQAwbcPVDskGu4oWtl68SfLj+SucBu1mv0=
+X-Received: by 2002:a7b:c04d:0:b0:394:61ea:4fa2 with SMTP id
+ u13-20020a7bc04d000000b0039461ea4fa2mr5296361wmc.40.1652280996683; Wed, 11
+ May 2022 07:56:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+References: <CAAL3td0UD3Ht-rCpR5xUfmOLzeEzRSedCVXH4nTQKLR1b16+vA@mail.gmail.com>
+ <6fc53990-1814-a45d-7c05-a4385246406c@kernel.dk> <CAAL3td3Em=MBPa9iJitYTAkndymzuj2DbSnbQRf=0Emsr5qHVw@mail.gmail.com>
+ <744d4b58-e7df-a5fb-dfba-77fe952fe1f8@kernel.dk> <71956172-5406-0636-060d-a7c123a2bfab@kernel.dk>
+In-Reply-To: <71956172-5406-0636-060d-a7c123a2bfab@kernel.dk>
+From:   Constantine Gavrilov <constantine.gavrilov@gmail.com>
+Date:   Wed, 11 May 2022 17:56:25 +0300
+Message-ID: <CAAL3td2X4a9RESdSt_xFxNN3mYHBUn88cjbUH9O5wAfL86iB1Q@mail.gmail.com>
+Subject: Re: Short sends returned in IORING
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, 11 May 2022 11:17:44 +0530, Kanchan Joshi wrote:
-> This series is against "for-5.19/io_uring-passthrough" branch (linux-block).
-> Patches to be refreshed on top of 2bb04df7c ("io_uring: support CQE32").
-> 
-> uring-cmd is the facility to enable io_uring capabilities (async is one
-> of those) for any arbitrary command (ioctl, fsctl or whatever else)
-> exposed by the command-providers (driver, fs etc.). The series
-> introduces uring-cmd, and connects nvme passthrough (over generic device
-> /dev/ngXnY) to it.
-> 
-> [...]
+On Wed, May 4, 2022 at 6:55 PM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 5/4/22 9:28 AM, Jens Axboe wrote:
+> > On 5/4/22 9:21 AM, Constantine Gavrilov wrote:
+> >> On Wed, May 4, 2022 at 4:54 PM Jens Axboe <axboe@kernel.dk> wrote:
+> >>>
+> >>> On 5/3/22 5:05 PM, Constantine Gavrilov wrote:
+> >>>> Jens:
+> >>>>
+> >>>> This is related to the previous thread "Fix MSG_WAITALL for
+> >>>> IORING_OP_RECV/RECVMSG".
+> >>>>
+> >>>> We have a similar issue with TCP socket sends. I see short sends
+> >>>> regarding of the method (I tried write, writev, send, and sendmsg
+> >>>> opcodes, while using MSG_WAITALL for send and sendmsg). It does not
+> >>>> make a difference.
+> >>>>
+> >>>> Most of the time, sends are not short, and I never saw short sends
+> >>>> with loopback and my app. But on real network media, I see short
+> >>>> sends.
+> >>>>
+> >>>> This is a real problem, since because of this it is not possible to
+> >>>> implement queue size of > 1 on a TCP socket, which limits the benefit
+> >>>> of IORING. When we have a short send, the next send in queue will
+> >>>> "corrupt" the stream.
+> >>>>
+> >>>> Can we have complete send before it completes, unless the socket is
+> >>>> disconnected?
+> >>>
+> >>> I'm guessing that this happens because we get a task_work item queued
+> >>> after we've processed some of the send, but not all. What kernel are you
+> >>> using?
+> >>>
+> >>> This:
+> >>>
+> >>> https://git.kernel.dk/cgit/linux-block/commit/?h=for-5.19/io_uring&id=4c3c09439c08b03d9503df0ca4c7619c5842892e
+> >>>
+> >>> is queued up for 5.19, would be worth trying.
+> >>>
+> >>> --
+> >>> Jens Axboe
+> >>>
+> >>
+> >> Jens:
+> >>
+> >> Thank you for your reply.
+> >>
+> >> The kernel is 5.17.4-200.fc35.x86_64. I have looked at the patch. With
+> >> the solution in place, I am wondering whether it will be possible to
+> >> use multiple uring send IOs on the same socket. I expect that Linux
+> >> TCP will serialize multiple send operations on the same socket. I am
+> >> not sure it happens with uring (meaning that socket is blocked for
+> >> processing a new IO until the pending IO completes). Do I need
+> >> IOSQE_IO_DRAIN / IOSQE_IO_LINK for this to work? Would not be optimal
+> >> because of multiple different sockets in the same uring. While I
+> >> already have a workaround in the form of a "software" queue for
+> >> streaming data on TCP sockets, I would rather have kernel to do
+> >> "native" queueing in sockets layer, and have exrtra CPU cycles
+> >> available to the  application.
+> >
+> > The patch above will mess with ordering potentially. If the cause is as
+> > I suspect, task_work causing it to think it's signaled, then the better
+> > approach may indeed be to just flush that work and retry without
+> > re-queueing the current one. I can try a patch against 5.18 if you are
+> > willing and able to test?
+>
+> You can try something like this, if you run my for-5.19/io_uring branch.
+> I'd be curious to know if this solves the short send issue for you.
+>
+>
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index f6b6db216478..b835e80be1fa 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -5684,6 +5684,7 @@ static int io_sendmsg(struct io_kiocb *req, unsigned int issue_flags)
+>         if (flags & MSG_WAITALL)
+>                 min_ret = iov_iter_count(&kmsg->msg.msg_iter);
+>
+> +retry:
+>         ret = __sys_sendmsg_sock(sock, &kmsg->msg, flags);
+>
+>         if (ret < min_ret) {
+> @@ -5694,6 +5695,8 @@ static int io_sendmsg(struct io_kiocb *req, unsigned int issue_flags)
+>                 if (ret > 0 && io_net_retry(sock, flags)) {
+>                         sr->done_io += ret;
+>                         req->flags |= REQ_F_PARTIAL_IO;
+> +                       if (io_run_task_work())
+> +                               goto retry;
+>                         return io_setup_async_msg(req, kmsg);
+>                 }
+>                 req_set_fail(req);
+> @@ -5744,6 +5747,7 @@ static int io_send(struct io_kiocb *req, unsigned int issue_flags)
+>                 min_ret = iov_iter_count(&msg.msg_iter);
+>
+>         msg.msg_flags = flags;
+> +retry:
+>         ret = sock_sendmsg(sock, &msg);
+>         if (ret < min_ret) {
+>                 if (ret == -EAGAIN && (issue_flags & IO_URING_F_NONBLOCK))
+> @@ -5755,6 +5759,8 @@ static int io_send(struct io_kiocb *req, unsigned int issue_flags)
+>                         sr->buf += ret;
+>                         sr->done_io += ret;
+>                         req->flags |= REQ_F_PARTIAL_IO;
+> +                       if (io_run_task_work())
+> +                               goto retry;
+>                         return -EAGAIN;
+>                 }
+>                 req_set_fail(req);
+>
+> --
+> Jens Axboe
+>
 
-Applied, thanks!
+Jens:
 
-[1/6] fs,io_uring: add infrastructure for uring-cmd
-      commit: ee692a21e9bf8354bd3ec816f1cf4bff8619ed77
-[2/6] block: wire-up support for passthrough plugging
-      commit: 1c2d2fff6dc04662dc8e86b537989643e1abeed9
-[3/6] nvme: refactor nvme_submit_user_cmd()
-      commit: bcad2565b5d64700cf68cc9d48618ab817ff5bc4
-[4/6] nvme: wire-up uring-cmd support for io-passthru on char-device.
-      commit: 456cba386e94f22fa1b1426303fdcac9e66b1417
-[5/6] nvme: add vectored-io support for uring-cmd
-      commit: f569add47119fa910ed7711b26b8d38e21f7ea77
-[6/6] io_uring: finish IOPOLL/ioprio prep handler removal
-      (no commit info)
+I was able to test the first change on the top of Linus kernel git (5.18.0-rc6).
 
-Best regards,
+I do not get short sends anymore, but I get corruption in  sent
+packets (corruption is detected by the receiver). It looks like short
+sends handled by the patch intermix data from multiple send SQEs in
+the stream, so ordering of multiple SQEs in URING becomes broken.
+
+To test it, I had two implementations of the send functions:
+1. Uses SEND opcode, asserts on short sends. No asserts but data corruption.
+2. Uses TCP send queue implementation (internally uses SEND and
+SENDMSG opcodes in URING, only one pending send at a time, and tail of
+the short sends is resent until all data is sent). This always works.
+
+I would like to test the second patch now. Is it on the top of the
+first patch or by itself? Do I really need your tree for that? If yes,
+can you send me the git pull info, please?
+
 -- 
-Jens Axboe
-
-
+----------------------------------------
+Constantine Gavrilov
+Storage Architect
+Master Inventor
+Tel-Aviv IBM Storage Lab
+1 Azrieli Center, Tel-Aviv
+----------------------------------------

@@ -2,78 +2,67 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0793B52346F
-	for <lists+io-uring@lfdr.de>; Wed, 11 May 2022 15:39:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 133A952349F
+	for <lists+io-uring@lfdr.de>; Wed, 11 May 2022 15:48:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239492AbiEKNjL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 11 May 2022 09:39:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34492 "EHLO
+        id S237778AbiEKNsH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 11 May 2022 09:48:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230389AbiEKNjK (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 11 May 2022 09:39:10 -0400
-Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DD491BDAED
-        for <io-uring@vger.kernel.org>; Wed, 11 May 2022 06:39:08 -0700 (PDT)
-Received: by mail-pf1-x42b.google.com with SMTP id 204so2029554pfx.3
-        for <io-uring@vger.kernel.org>; Wed, 11 May 2022 06:39:08 -0700 (PDT)
+        with ESMTP id S231463AbiEKNsH (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 11 May 2022 09:48:07 -0400
+Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86FE324F3D
+        for <io-uring@vger.kernel.org>; Wed, 11 May 2022 06:48:06 -0700 (PDT)
+Received: by mail-pf1-x42c.google.com with SMTP id p8so2029703pfh.8
+        for <io-uring@vger.kernel.org>; Wed, 11 May 2022 06:48:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=a5pA5aIxORn31gOeVUCZ7gdchDq/GlpHL8GDXDDRARI=;
-        b=rKNaL+SS7CnnjaBYAviIhhQI1e5lSwJ33aHBU+S9tGfgmbis4smAzOt86brGwATbIu
-         cCO6km0Bx42c7+pjlMBcYUDVwUcYhZonwnH/ALLEFM3XabiOjitGUJ5H5dmfW5SlbS5T
-         FaOe8PuXaPUtplRd1QE8uNBQ0kwoNNL1+AcSyHGg/VVG1MsqI7WolEqdDtm6OslubYOx
-         meej5SVJM2Y/rR6sYjQx7hV38yG/ub3qcFfLCY7xPEJsXUdPGyi/H64VwHNc2LMoUmkr
-         PFKIpOlyKE7WPleNXD6+rOy17rBpXn1atmqxZYbG1XFkMni8ujSZ//szh2LWIWlxGqRO
-         mqzw==
+        h=from:to:cc:in-reply-to:references:subject:message-id:date
+         :mime-version:content-transfer-encoding;
+        bh=7dUFOAr9HRSYaQk2tNQyvAWNs1vBs/f30/GWbXxlFcM=;
+        b=RqEFXzLoP5oTZ+qyubaAnAlP+7ZVBm8acmBYu9H/Xiv36LUl8vBFMhqaO5mN3dGDS/
+         e1xytbvscTavXRwgrErr3Apm05V4/rjqB0CpwyrAe3mX50a2UZ6S0xy0iy3vbTZR+Ydq
+         a7m99ftDKbYx7ZSuIJu7jO/L9tiw+JJmOSyZQp1o+HamBuMNc0uiHDLBzch+C4yd7le8
+         YztLRGpmqkGoR1+s80VBb+VlHwvEdniJYMPbLJXcuAgbfD7+GDacrYE3hHp8nvt6RJYw
+         K6JSsis7tPhZVZbOwM1RBRSSl1z+duTVi9LFlQbKLn+RLqAns09XTBP1Gu//zXHADtzH
+         kqGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=a5pA5aIxORn31gOeVUCZ7gdchDq/GlpHL8GDXDDRARI=;
-        b=mIul33xLBs1I6c0kAHOd3Rs0x4Lz0JYT+AaurZBQ1aNeNNggCXJtMJuQMp0kbDEcE9
-         lJdgwqVcLIrwdfmofjVFO7Fd+m8sffb/G1b4AEs3MboouzCPWlkePMlJ41/AhJ3tZrLz
-         XEphr6NcdZNYzuxTsXCRDt2eE2+dv4eIdOO0OPXDGnIOe3OI/NQIGDlqnTcYXbbF4nm7
-         0NKl472ymgS0fqJ7I4Bu9Kilv98McaUXWRdr6E7i06X6iL5vNWYh6JZ7UW2ZPNdZOfKu
-         uP9poVqWui2LQLNQkLSVXohC5C9k3lsJg6glOWldjp71URLQa/U53ez0VWK3Hjsu1qUd
-         akbg==
-X-Gm-Message-State: AOAM530vr/LeQFrrvNOmCxnWdNoI+2RjkHpcxFvhm0gEKhqPXLqtIdsU
-        KmqJJuq/N7CtoV54gmU96XgiNA==
-X-Google-Smtp-Source: ABdhPJwJ3MHxH/51EknoHEeEnx5QcTJ8lYf39MphB2xHMd3lorw0Jx0ugjpXflx6o+rMHN6EgpSHXQ==
-X-Received: by 2002:a63:6705:0:b0:3c1:976d:bd68 with SMTP id b5-20020a636705000000b003c1976dbd68mr21140536pgc.133.1652276347591;
-        Wed, 11 May 2022 06:39:07 -0700 (PDT)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id w186-20020a6230c3000000b0050dc7628134sm1794251pfw.14.2022.05.11.06.39.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 May 2022 06:39:07 -0700 (PDT)
-Message-ID: <9541e45e-76cc-1b62-8f8c-239585354e40@kernel.dk>
-Date:   Wed, 11 May 2022 07:39:05 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH v5 0/6] io_uring passthrough for nvme
-Content-Language: en-US
-To:     Kanchan Joshi <joshiiitr@gmail.com>
-Cc:     Kanchan Joshi <joshi.k@samsung.com>,
-        Christoph Hellwig <hch@lst.de>, io-uring@vger.kernel.org,
-        linux-nvme@lists.infradead.org,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Ming Lei <ming.lei@redhat.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Stefan Roesch <shr@fb.com>, Anuj Gupta <anuj20.g@samsung.com>,
-        gost.dev@samsung.com
-References: <CGME20220511055306epcas5p3bf3b4c1e32d2bb43db12785bd7caf5da@epcas5p3.samsung.com>
- <20220511054750.20432-1-joshi.k@samsung.com>
- <b7f8258a-8a63-3e5c-7a1a-d2a0eedf7b00@kernel.dk>
- <CA+1E3rLe0QASNQFMwSjOe-xn_JMzrtG416cAKBTdore+hYYk5g@mail.gmail.com>
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
+         :message-id:date:mime-version:content-transfer-encoding;
+        bh=7dUFOAr9HRSYaQk2tNQyvAWNs1vBs/f30/GWbXxlFcM=;
+        b=IAN2II9uXMzWNRYOxqZnmSMaoynew1WMyGxWfY8c6GuaWUcuZw9A1K/qnlddF+t36/
+         hW+KmF0KfQf1XjNp1u36k1pHFnDneBD7KUOFcAi+NJKE+Q7rpWZE5t3dm9DWN/z5/JMW
+         UheMY4G1nZjRtq5/ho4J1ryiiOGjVKiKzy8pwNtKD3NbLw+7B07Ib/UO85yiz86Q8s7U
+         m11IaS/i4409AvHtXXa4LUqKjpSKBsrbZC3KLe8Th2YYojSBsyv939BGOOQK9ZxlYFQH
+         wzkN2Rp5X6oSxIps7D0tAxtF1Dwrx8No+l439AXJ4lMxz+xggEY5Mg2QEqUA6A8dbB2k
+         2mOg==
+X-Gm-Message-State: AOAM5303+FLMokOYolk8H92FOltEMAruWjABzAAOQw4GdVUQ73GmBd2K
+        IfHB9RRviJBCXigcF/8N2Kc1aQ==
+X-Google-Smtp-Source: ABdhPJxH4Q61wDahvW9YLo4TjvGtuXz0L3U7Z+ppbQpBtxhTE0wQq+/OhEsP7FJ/0EZ7O2smzzv6AQ==
+X-Received: by 2002:a63:5d0a:0:b0:399:40fd:2012 with SMTP id r10-20020a635d0a000000b0039940fd2012mr21291391pgb.454.1652276885996;
+        Wed, 11 May 2022 06:48:05 -0700 (PDT)
+Received: from [127.0.1.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id y19-20020a170902d65300b0015e8d4eb273sm1888009plh.189.2022.05.11.06.48.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 May 2022 06:48:05 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CA+1E3rLe0QASNQFMwSjOe-xn_JMzrtG416cAKBTdore+hYYk5g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+To:     Christoph Hellwig <hch@lst.de>, joshi.k@samsung.com
+Cc:     joshiiitr@gmail.com, anuj20.g@samsung.com, shr@fb.com,
+        ming.lei@redhat.com, linux-nvme@lists.infradead.org,
+        io-uring@vger.kernel.org, mcgrof@kernel.org, gost.dev@samsung.com,
+        asml.silence@gmail.com
+In-Reply-To: <20220511054750.20432-1-joshi.k@samsung.com>
+References: <CGME20220511055306epcas5p3bf3b4c1e32d2bb43db12785bd7caf5da@epcas5p3.samsung.com> <20220511054750.20432-1-joshi.k@samsung.com>
+Subject: Re: [PATCH v5 0/6] io_uring passthrough for nvme
+Message-Id: <165227688477.38900.11020258804345924077.b4-ty@kernel.dk>
+Date:   Wed, 11 May 2022 07:48:04 -0600
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -81,41 +70,35 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/11/22 7:14 AM, Kanchan Joshi wrote:
-> On Wed, May 11, 2022 at 6:09 PM Jens Axboe <axboe@kernel.dk> wrote:
->>
->> Which patches had changes in this series? I'm assuming it's just patch
->> 1, but the changelog doesn't actually say. Would save me from comparing
->> to what's in-tree already.
+On Wed, 11 May 2022 11:17:44 +0530, Kanchan Joshi wrote:
+> This series is against "for-5.19/io_uring-passthrough" branch (linux-block).
+> Patches to be refreshed on top of 2bb04df7c ("io_uring: support CQE32").
 > 
-> Compared to in-tree, it is Patch 1 and Patch 4.
-> This part in patch 4:
-> +int nvme_ns_head_chr_uring_cmd(struct io_uring_cmd *ioucmd,
-> +               unsigned int issue_flags)
-> +{
-> +       struct cdev *cdev = file_inode(ioucmd->file)->i_cdev;
-> +       struct nvme_ns_head *head = container_of(cdev, struct
-> nvme_ns_head, cdev);
-> +       int srcu_idx = srcu_read_lock(&head->srcu);
-> +       struct nvme_ns *ns = nvme_find_path(head);
-> +       int ret = -EINVAL;
-> +
-> +       if (ns)
-> +               ret = nvme_ns_uring_cmd(ns, ioucmd, issue_flags);
-> +       srcu_read_unlock(&head->srcu, srcu_idx);
-> +       return ret;
-> +}
-> Initializing ret to -EINVAL rather than 0.
-> We do not support admin commands yet, so ns can be null only if
-> something goes wrong with multipath.
-> So if at all anything goes wrong and ns is null, it is better to
-> return failure than success.
+> uring-cmd is the facility to enable io_uring capabilities (async is one
+> of those) for any arbitrary command (ioctl, fsctl or whatever else)
+> exposed by the command-providers (driver, fs etc.). The series
+> introduces uring-cmd, and connects nvme passthrough (over generic device
+> /dev/ngXnY) to it.
 > 
-> And I removed the lore links from commit-messages, thinking those will
-> be refreshed too.
+> [...]
 
-OK all good, that's what I expected. I'll update the series.
+Applied, thanks!
 
+[1/6] fs,io_uring: add infrastructure for uring-cmd
+      commit: ee692a21e9bf8354bd3ec816f1cf4bff8619ed77
+[2/6] block: wire-up support for passthrough plugging
+      commit: 1c2d2fff6dc04662dc8e86b537989643e1abeed9
+[3/6] nvme: refactor nvme_submit_user_cmd()
+      commit: bcad2565b5d64700cf68cc9d48618ab817ff5bc4
+[4/6] nvme: wire-up uring-cmd support for io-passthru on char-device.
+      commit: 456cba386e94f22fa1b1426303fdcac9e66b1417
+[5/6] nvme: add vectored-io support for uring-cmd
+      commit: f569add47119fa910ed7711b26b8d38e21f7ea77
+[6/6] io_uring: finish IOPOLL/ioprio prep handler removal
+      (no commit info)
+
+Best regards,
 -- 
 Jens Axboe
+
 

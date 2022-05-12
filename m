@@ -2,135 +2,90 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 751B15247C3
-	for <lists+io-uring@lfdr.de>; Thu, 12 May 2022 10:21:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E74C552481C
+	for <lists+io-uring@lfdr.de>; Thu, 12 May 2022 10:45:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350586AbiELIUx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 12 May 2022 04:20:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51826 "EHLO
+        id S1351681AbiELIot (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 12 May 2022 04:44:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51024 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235236AbiELIUw (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 12 May 2022 04:20:52 -0400
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8DA52E0A2
-        for <io-uring@vger.kernel.org>; Thu, 12 May 2022 01:20:50 -0700 (PDT)
-Received: by mail-pl1-x636.google.com with SMTP id n18so4203544plg.5
-        for <io-uring@vger.kernel.org>; Thu, 12 May 2022 01:20:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:from:subject:to:cc
-         :references:in-reply-to:content-transfer-encoding;
-        bh=AjAp+/wLFGV0k5bBOaOSeUaKIS76zE7L2xzIKrjl2RA=;
-        b=CCZoMT6XZCJnVcAO8A4a5oW+80tYszqiHLH9tOSOAlqst9Mc3F0wzCue6lSSfeTeYQ
-         l3af7H4CiTMG7aM15HUVtWzdF9KmTBkoRT0eMEdTpOIv33KyE3tue4VIHGk49BVxWh2V
-         0r/oX8nsOBjNSndJJIq53VIC8R7zOUwpTh7Cs+e7irJp/P4wJOpQFc63dGwVtELvs5c3
-         1lOYVZS2ENISzieEmX05sNSDqlcXQAn//9CBqfLM/pyRo52WqFoBWlGFN6WX2hTPpVhL
-         AB9wmrwOgwKkqIxAOrA2LZ+Iic6V3HQjnBbbqKQK2n/Bx6pq1Sy80Hfi/lLcbkp6D/fe
-         M/Cw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:from
-         :subject:to:cc:references:in-reply-to:content-transfer-encoding;
-        bh=AjAp+/wLFGV0k5bBOaOSeUaKIS76zE7L2xzIKrjl2RA=;
-        b=FpOk2VIt1nowc8RWpnSEYZJpPPNL3CnY7JCbc8Uc0uR9+OH+PnWfTv8cZ5dyfXdqSg
-         YZLs5yAigCBLJefnH4hzj6aiUzeNBdsQA4MEPl99iCCWdQX9+iwXAGlrPOQT/nPEUB7U
-         ILVysFJW6jr8fwRhxB6YoiaOJuZs33l/LShekAXnwDCctDun+aJJEXeeW2QAmtPShmE4
-         XhFwgvdYRyZNQUM4DuZQN8splEWdVLuUR9IPYLcecthmI/ZSjYmLtPDgELTIieQoqcIh
-         8MnVOb0iS+52WUGK+/6NE1241HIDEct4Crvqi7IHZXXt+Py09gR0pya7T6E/mMd3bBY1
-         5xYg==
-X-Gm-Message-State: AOAM532loYJqDdWR06whddSOJMUXVx81bTEPVHbmEPIm8OZ3MzW/Pks7
-        xJPro71IedjSrRZTYSy8u4g=
-X-Google-Smtp-Source: ABdhPJxeN52P5OgfPMk5osRUNWRadyb/PJRCFw1fm5j5MA+dQ//YYYu1ME42ygEVnMETWkkoquaziA==
-X-Received: by 2002:a17:902:dac5:b0:15e:8ba0:a73d with SMTP id q5-20020a170902dac500b0015e8ba0a73dmr28903147plx.22.1652343650436;
-        Thu, 12 May 2022 01:20:50 -0700 (PDT)
-Received: from [192.168.255.10] ([106.53.4.151])
-        by smtp.gmail.com with ESMTPSA id t3-20020aa79463000000b0050dc7628159sm3121034pfq.51.2022.05.12.01.20.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 May 2022 01:20:50 -0700 (PDT)
-Message-ID: <e2b53efa-32d5-4732-bce3-c8b8d55ec0b9@gmail.com>
-Date:   Thu, 12 May 2022 16:21:02 +0800
+        with ESMTP id S1351673AbiELIos (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 12 May 2022 04:44:48 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7214F2265C7
+        for <io-uring@vger.kernel.org>; Thu, 12 May 2022 01:44:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1652345082;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=c8Uv33sQzQ6sncxKZAh6lI3KSUSZf2EKQdApwYwgjD4=;
+        b=MHyFK+OfYSsNUs5/MmVYHVSV+YLMVUNYibrXHwwNFuwAeX3+jVGLiaADOC9k+TojohzUIP
+        sLaG4DjSzCUBu6nh2K7l7FzMdhHGJAkC26prEo8RjJ9aocf6S4P2ApmMGNWl5++BiSbI/K
+        jxWrkIqoB/Eq5uu/813i1jlmKuxtpIU=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-292-HPDrJzHyN6mGuunDkRHdWQ-1; Thu, 12 May 2022 04:44:41 -0400
+X-MC-Unique: HPDrJzHyN6mGuunDkRHdWQ-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 51ED43C161A6;
+        Thu, 12 May 2022 08:44:40 +0000 (UTC)
+Received: from T590 (ovpn-8-19.pek2.redhat.com [10.72.8.19])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id E4BFCC28106;
+        Thu, 12 May 2022 08:44:33 +0000 (UTC)
+Date:   Thu, 12 May 2022 16:44:28 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Kanchan Joshi <joshi.k@samsung.com>, axboe@kernel.dk,
+        io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
+        asml.silence@gmail.com, mcgrof@kernel.org, shr@fb.com,
+        joshiiitr@gmail.com, anuj20.g@samsung.com, gost.dev@samsung.com
+Subject: Re: [PATCH v5 2/6] block: wire-up support for passthrough plugging
+Message-ID: <YnzI7CgI+KOHNKPb@T590>
+References: <20220511054750.20432-1-joshi.k@samsung.com>
+ <CGME20220511055310epcas5p46650f5b6fe963279f686b8f50a98a286@epcas5p4.samsung.com>
+ <20220511054750.20432-3-joshi.k@samsung.com>
+ <YnyaRB+u1x6nIVp1@T590>
+ <20220512080912.GA26882@lst.de>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.9.0
-From:   Hao Xu <haoxu.linux@gmail.com>
-Subject: Re: [PATCH 3/6] io_uring: allow allocated fixed files for
- openat/openat2
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc:     asml.silence@gmail.com
-References: <20220509155055.72735-1-axboe@kernel.dk>
- <20220509155055.72735-4-axboe@kernel.dk>
-In-Reply-To: <20220509155055.72735-4-axboe@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220512080912.GA26882@lst.de>
+X-Scanned-By: MIMEDefang 2.85 on 10.11.54.8
+X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-在 2022/5/9 下午11:50, Jens Axboe 写道:
-> If the application passes in IORING_FILE_INDEX_ALLOC as the file_slot,
-> then that's a hint to allocate a fixed file descriptor rather than have
-> one be passed in directly.
+On Thu, May 12, 2022 at 10:09:12AM +0200, Christoph Hellwig wrote:
+> On Thu, May 12, 2022 at 01:25:24PM +0800, Ming Lei wrote:
+> > This way may cause nested plugging, and breaks xfstests generic/131.
+> > Also may cause io hang since request can't be polled before flushing
+> > plug in blk_execute_rq().
 > 
-> This can be useful for having io_uring manage the direct descriptor space.
+> Looking at this again, yes blk_mq_request_bypass_insert is probably the
+> wrong place.
 > 
-> Normal open direct requests will complete with 0 for success, and < 0
-> in case of error. If io_uring is asked to allocated the direct descriptor,
-> then the direct descriptor is returned in case of success.
+> > I'd suggest to apply the plug in blk_execute_rq_nowait(), such as:
 > 
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> ---
->   fs/io_uring.c                 | 32 +++++++++++++++++++++++++++++---
->   include/uapi/linux/io_uring.h |  9 +++++++++
->   2 files changed, 38 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 8c40411a7e78..ef999d0e09de 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -4697,7 +4697,7 @@ static int io_openat2_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
->   	return __io_openat_prep(req, sqe);
->   }
->   
-> -static int __maybe_unused io_file_bitmap_get(struct io_ring_ctx *ctx)
-> +static int io_file_bitmap_get(struct io_ring_ctx *ctx)
->   {
->   	struct io_file_table *table = &ctx->file_table;
->   	unsigned long nr = ctx->nr_user_files;
-> @@ -4722,6 +4722,32 @@ static int __maybe_unused io_file_bitmap_get(struct io_ring_ctx *ctx)
->   	return -ENFILE;
->   }
->   
-> +static int io_fixed_fd_install(struct io_kiocb *req, unsigned int issue_flags,
-> +			       struct file *file, unsigned int file_slot)
-> +{
-> +	int alloc_slot = file_slot == IORING_FILE_INDEX_ALLOC;
-> +	struct io_ring_ctx *ctx = req->ctx;
-> +	int ret;
-> +
-> +	if (alloc_slot) {
-> +		io_ring_submit_lock(ctx, issue_flags);
-> +		file_slot = io_file_bitmap_get(ctx);
-> +		if (unlikely(file_slot < 0)) {
-> +			io_ring_submit_unlock(ctx, issue_flags);
-> +			return file_slot;
-> +		}
-> +	}
+> Do we really need the use_plug parameter and the extra helper?  If
+> someone holds a plug over passthrough command submission I think
+> we can assume they actually do want to use it.  Otherwise this does
+> indeed look like the better plan.
 
-if (alloc_slot) {
-  ...
-} else {
-         file_slot -= 1;
-}
+use_plug is just for avoiding hang in blk_rq_poll_completion(), so
+I think we can bypass plug if one polled rq is executed inside
+blk_execute_rq().
 
-Otherwise there is off-by-one error.
 
-Others looks good,
-
-Reviewed-by: Hao Xu <howeyxu@tencent.com>
+Thanks,
+Ming
 

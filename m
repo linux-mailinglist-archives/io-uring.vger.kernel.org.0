@@ -2,116 +2,111 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E2FFB524C85
-	for <lists+io-uring@lfdr.de>; Thu, 12 May 2022 14:18:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D7E9A524C5D
+	for <lists+io-uring@lfdr.de>; Thu, 12 May 2022 14:05:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353589AbiELMSd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 12 May 2022 08:18:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45060 "EHLO
+        id S1353529AbiELMFe (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 12 May 2022 08:05:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353588AbiELMSd (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 12 May 2022 08:18:33 -0400
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1304E2469F5
-        for <io-uring@vger.kernel.org>; Thu, 12 May 2022 05:18:27 -0700 (PDT)
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20220512121822epoutp016f16391f5da5f97f1e16adde176ee738~uWsIZO2dU2852528525epoutp018
-        for <io-uring@vger.kernel.org>; Thu, 12 May 2022 12:18:22 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20220512121822epoutp016f16391f5da5f97f1e16adde176ee738~uWsIZO2dU2852528525epoutp018
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1652357903;
-        bh=rdRj1H6RQhhqPD9H/KcMD/zAmzUXc8wXmotwmhPc0k8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=ckJqJgkUupS+S/0hvf2HY2vzuSA4dOBuvvQKxHDOmAYQBWV30/8c6wW6pdWG5h3pD
-         P5UOU0AflSiI8EwSVualh2w7spBKnjgudcN/UJpzMlqiJHV4D1FV5EGmRPpgihwrYb
-         AuIw2sCcwkn5DxIMWliMJ8b6VOWstte+KtAJG2MQ=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20220512121822epcas5p352901ab17caca0aed72347840ceb6528~uWsH3mvhO1345613456epcas5p3V;
-        Thu, 12 May 2022 12:18:22 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.180]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4KzW5P5RClz4x9Pv; Thu, 12 May
-        2022 12:18:17 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        91.F1.10063.20BFC726; Thu, 12 May 2022 21:18:10 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-        20220512115606epcas5p44dc12b04dc5e5280201c783a761eafe6~uWYrmmaMW1202512025epcas5p4C;
-        Thu, 12 May 2022 11:56:06 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220512115606epsmtrp2c6ca213698b90a79869bdb32cd48e817~uWYrlxBGE0758907589epsmtrp2i;
-        Thu, 12 May 2022 11:56:06 +0000 (GMT)
-X-AuditID: b6c32a49-4b5ff7000000274f-b9-627cfb02a184
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        4C.5B.08924.6D5FC726; Thu, 12 May 2022 20:56:06 +0900 (KST)
-Received: from test-zns (unknown [107.110.206.5]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20220512115604epsmtip2f3dc53d6e420382671308295eea11afe~uWYpzDTBl1924219242epsmtip2c;
-        Thu, 12 May 2022 11:56:04 +0000 (GMT)
-Date:   Thu, 12 May 2022 17:20:47 +0530
-From:   Anuj Gupta <anuj20.g@samsung.com>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Kanchan Joshi <joshi.k@samsung.com>, axboe@kernel.dk, hch@lst.de,
-        io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
-        asml.silence@gmail.com, mcgrof@kernel.org, shr@fb.com,
-        joshiiitr@gmail.com, gost.dev@samsung.com
-Subject: Re: [PATCH v5 2/6] block: wire-up support for passthrough plugging
-Message-ID: <20220512114623.GA11657@test-zns>
+        with ESMTP id S243140AbiELMFc (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 12 May 2022 08:05:32 -0400
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2096.outbound.protection.outlook.com [40.107.255.96])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3595F245C7B;
+        Thu, 12 May 2022 05:05:27 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=HJy0fMdgDTI8/d7NBweopSrKZ/yD8y9De5QYT+cHq3k5u6Bo3DuudvMSYoSo3TfITazwE+ABFeU7OZXz0sUeDRrJ0AyvsGg16TuvKx6HJKSF21sIYyMJLjU1c2Y1i5KgsdjnNn6YzBmOnAyWYUY7BIWfxeVN/NBkmldvKZX8eZPM8nf0D6pHkW9tT9MJcpVNv3K8yfK9qXxcdjyYdhvYpcRNUNjg/I0UwQfusBVgEiGBRFLyu8eebEW0/F01ldKCu0cGxEaY1/hRJwYAvu1a2funL3cCG2FqaTw4lh7aDBTvKt8gAXSDctffe6STHfiwHVoM3F02i5AiQ8EXItayOQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jBZa/nlhWR2bx+wC6ySsVi6vOIYyM8jFjPptoLkq+iU=;
+ b=eMLWRx2fPzx1AdZhKFzDX2bA0EwCathQBzNgTBusy8gkdRrKWA75ORCLbmPof8aFb0h72GRhzPE1cWWMPepGDeIdmHxSZoHqacZJsiZ5UT3Dlw9DoSqp+KH8BczYou6K1pNJ4/g8D/WlHKMN4zXV3qdAW6YqkzgCNjGQ0Pejblnbm+o3sMmWtimzYkuOf8+C2D2zTo2bR2txCQhJcKvyr6RxrFvd61TGNLVsUOiwrwex+7MUzr/Nmr7cNYs04mZrzRvU/ZsOtowHczcLyqBxHWvnZt6WledXUG5eENTPEAF9Xi3ER/h+AjYJUNLFb3RjDQYZ094Ef3ZdH+DIpxZpTg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo0.onmicrosoft.com;
+ s=selector2-vivo0-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jBZa/nlhWR2bx+wC6ySsVi6vOIYyM8jFjPptoLkq+iU=;
+ b=i/PxsHHNpzB/sC7H3Xg9I7Zv4s53cm/aNDJvLsU4kCH+0q25xiLYhaCYUSoFKue8mUgikDPHmUwfE4R7HxpHPF0Szhl54MPMbaH6XYKarp3pibWXwKOa9r8aXFY9QyUKdalpQ9khjCbU901b82I+kIZZTOP2k8Pc7waAK5PpaI0=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SG2PR06MB3367.apcprd06.prod.outlook.com (2603:1096:4:78::19) by
+ HK2PR06MB3426.apcprd06.prod.outlook.com (2603:1096:202:38::21) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5227.21; Thu, 12 May 2022 12:05:24 +0000
+Received: from SG2PR06MB3367.apcprd06.prod.outlook.com
+ ([fe80::4591:4f3e:f951:6c8c]) by SG2PR06MB3367.apcprd06.prod.outlook.com
+ ([fe80::4591:4f3e:f951:6c8c%7]) with mapi id 15.20.5227.022; Thu, 12 May 2022
+ 12:05:24 +0000
+From:   Wan Jiabing <wanjiabing@vivo.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Wan Jiabing <wanjiabing@vivo.com>
+Subject: [PATCH] io_uring: Fix incorrect variable type in io_fixed_fd_install
+Date:   Thu, 12 May 2022 20:05:11 +0800
+Message-Id: <20220512120511.4306-1-wanjiabing@vivo.com>
+X-Mailer: git-send-email 2.35.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: HK2PR0302CA0021.apcprd03.prod.outlook.com
+ (2603:1096:202::31) To SG2PR06MB3367.apcprd06.prod.outlook.com
+ (2603:1096:4:78::19)
 MIME-Version: 1.0
-In-Reply-To: <YnyaRB+u1x6nIVp1@T590>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrAJsWRmVeSWpSXmKPExsWy7bCmui7T75okg6e/1S3mrNrGaLH6bj+b
-        xc0DO5ksVq4+ymTxrvUci8XR/2/ZLM6/PcxkMX/ZU3aLGxOeMlocmtzMZHH15QF2B26Pic3v
-        2D12zrrL7nH5bKnHplWdbB6bl9R77L7ZwObxft9VNo++LasYPT5vkgvgjMq2yUhNTEktUkjN
-        S85PycxLt1XyDo53jjc1MzDUNbS0MFdSyEvMTbVVcvEJ0HXLzAE6VkmhLDGnFCgUkFhcrKRv
-        Z1OUX1qSqpCRX1xiq5RakJJTYFKgV5yYW1yal66Xl1piZWhgYGQKVJiQnfHsvkjBY6eKb89O
-        sTcwHjbtYuTkkBAwkdh69SlTFyMXh5DAbkaJHy2LWCCcT4wS688+YIdwPjNKnO88xQzTcmbT
-        DGaIxC5GiVObrrOAJIQEnjFKNJ8T7WLk4GARUJWYclgCJMwmoC5x5HkrI4gtIqAkcffuarCh
-        zCDla9raWUESwgLeEqcObQCzeQV0Je7uuwRlC0qcnPkEbD6ngIrE1uXTweKiAsoSB7YdB7tb
-        QmAPh8Scw/PZIa5zkZiydC3UpcISr45vgYpLSXx+t5cNws6W2DPvBwuEXSAx88h2JgjbXuLi
-        nr9gNrNAhsSKxrtQcVmJqafWQcX5JHp/P4GK80rsmAdjK0m0r5wDZUtI7D3XwAQKCAkBD4lT
-        TdmQwLrMKHF43Wr2CYzys5D8NgvJOghbR2LB7k9ss4DamQWkJZb/44AwNSXW79JfwMi6ilEy
-        taA4Nz212LTAMC+1HB7fyfm5mxjBSVnLcwfj3Qcf9A4xMnEwHmKU4GBWEuGtaa5JEuJNSays
-        Si3Kjy8qzUktPsRoCoyricxSosn5wLyQVxJvaGJpYGJmZmZiaWxmqCTOezp9Q6KQQHpiSWp2
-        ampBahFMHxMHp1QDU2SgQ6/Pv2xmkzlPPtusNjRmWfpR12Rz6PYWtpS46F9rrOby3niz5aDY
-        OlvWD+xbt6Vsd8/bOcPgU2mJyVKRM5cO1q+OXBke5nfeoP/ei4lbo5J4E39fsaycnF7H4/vo
-        ius+9qCT5Q6Pa3sZJBgyjmuUvP5k/kEhmH+z7hlpAcGP/8Jal5os4Z4Svtq/+yQfy7R7uXPM
-        71xlfKjalVuva7zB+eON7SnJwQbPmFek3n7Nb3g9rXzrWQmXp0zrr7evWrXDtK2gUrCSZ3n7
-        LXfu3591jzdUhHOW7P1+ue/1xUgmrQjvG4JF+SUXvk9aqWlx7ojwc66rDyf/azWZdvqn4cR9
-        Oxq+X7SqPj9Xkau9QomlOCPRUIu5qDgRACHsIdVTBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmphkeLIzCtJLcpLzFFi42LZdlhJXvfa15okg1tnhSzmrNrGaLH6bj+b
-        xc0DO5ksVq4+ymTxrvUci8XR/2/ZLM6/PcxkMX/ZU3aLGxOeMlocmtzMZHH15QF2B26Pic3v
-        2D12zrrL7nH5bKnHplWdbB6bl9R77L7ZwObxft9VNo++LasYPT5vkgvgjOKySUnNySxLLdK3
-        S+DKaNr7lq1gsUNFy8k5TA2Mc4y7GDk5JARMJM5smsHcxcjFISSwg1Fi7sFXTBAJCYlTL5cx
-        QtjCEiv/PWeHKHrCKLFl9XHWLkYODhYBVYkphyVAatgE1CWOPG8FqxcRUJK4e3c1WD2zwDNG
-        iQVPvoMNFRbwljh1aAMriM0roCtxd98lVoihVxkl/j2ezAyREJQ4OfMJC4jNLKAlcePfSyaQ
-        ZcwC0hLL/3GAhDkFVCS2Lp8ONkdUQFniwLbjTBMYBWch6Z6FpHsWQvcCRuZVjJKpBcW56bnF
-        hgVGeanlesWJucWleel6yfm5mxjBEaWltYNxz6oPeocYmTgYDzFKcDArifDWNNckCfGmJFZW
-        pRblxxeV5qQWH2KU5mBREue90HUyXkggPbEkNTs1tSC1CCbLxMEp1cCkOanD+4yP5aMzGbe7
-        +yfduri2/V/6dOlTcccS7x1rF5G6sVKe+8LPdqmWtos+j17vrRKz/CG9kXvzsm9zd2xP+ati
-        scvxDtd0Efu3ISw2T94zRj5SqjLpNufpuBh+e8n2U+bvTd1k3weoHTs/5airm5n10n06lx9L
-        bD63PEBi/sbD3ls+shqk897o/Pfg74olBc9E1u5oDLPxn1Q6XcahLHyZNmPLonU9TMtzI7dP
-        5jTO5X5+cM+W8JK+Wh0H32svCl8c9v85qTFky+zFd6JyDNxNVteeXpat8+fcqpemh/9aSfrc
-        /Lus/d+KwrLVWR2y6RkTRTNEM7UV4vbpSj6a2Tj5+I3VnzrXl/O2s34vUWIpzkg01GIuKk4E
-        AIGvnK0XAwAA
-X-CMS-MailID: 20220512115606epcas5p44dc12b04dc5e5280201c783a761eafe6
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-        boundary="----s9reHD3dvq.Swzu4OgS99nNlXP7CLa0djtt04wdzZepsPVyA=_67a5b_"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220511055310epcas5p46650f5b6fe963279f686b8f50a98a286
-References: <20220511054750.20432-1-joshi.k@samsung.com>
-        <CGME20220511055310epcas5p46650f5b6fe963279f686b8f50a98a286@epcas5p4.samsung.com>
-        <20220511054750.20432-3-joshi.k@samsung.com> <YnyaRB+u1x6nIVp1@T590>
-X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: bff757c1-13b6-401a-1e73-08da340fb1d3
+X-MS-TrafficTypeDiagnostic: HK2PR06MB3426:EE_
+X-Microsoft-Antispam-PRVS: <HK2PR06MB3426E264333F11B5A155C8B1ABCB9@HK2PR06MB3426.apcprd06.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 8jxFFRt5zuxZDpRulgfSSK1dYta6Yt0FaP0jSkrroerjac2sq2mmqQ2HkKMhuE0w6h3Ol6yFpz26uNipCVOX6svnSE7A+Cyq/yKPhFtKa+Gp7BhVcgN0OCvrJFF+eDJEIxXLoWdd62X1JD17RUjOjizw3lwLSO8oi1GE0ZYwMRAOTyaVahX6I9FipBgzp3DVcf9/aeYxoXZpAd45WBbPwF3w3VN0PKncYfwof2jYnEorTnyY9pFR3Ppo9DBmCX8oeXEBEy75rKVveTo5JEOxHoifbZvSZU0uRtz5zIGo3uI6pKSaLcG8pivoFFRiYEA6M+LrsFiXvroiGMCNcvH9eivCRRYCWZ7FBosZux/GJn4+431AZWlVsj1XS4SkGTdT/c5ipcNqUxBaFKO3VAqizSaTo3bEfSp6PeLj2j58Egmo69LwFP6wiZgg/0FmYOysfEKCVI6+Q0XF9RDDEEHzIh24Z8A3NDWWvOfsFYlKXXMjddOWWLIZHVCKu1aKwiL1lV/jSWiw5JNgc8C24EqQ70wlf8fE34nsUfPuU8vyFeqhYUNrF0t9h/demdb5Xu980D4enMtEe745xkwdkyx+4pqQ0jFUfhnHlf+WT273VsZV5qbi93NgC4HJDzckToqKf3G5LMKSG1Ba0oAjUbVUjUTxDLtQBSsXN1QjSK4H6sGO9gMwjYq+LZurgZmC2kda
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SG2PR06MB3367.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(86362001)(1076003)(38350700002)(36756003)(2616005)(316002)(8936002)(6506007)(38100700002)(66556008)(66476007)(110136005)(66946007)(52116002)(8676002)(4326008)(107886003)(83380400001)(2906002)(508600001)(6486002)(5660300002)(6512007)(26005)(186003)(6666004);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Qq2Cx0LPgb4RvRNT9D6P7Vj3dnr8umWywypGmuwOO2s7T6uky/ZnZ9NQPZJb?=
+ =?us-ascii?Q?8pMgXrw6A4QOe0zJZGE9ZV3tlVCZm5Ib8dKBK04GwSliV2h/sae+KtPWG84V?=
+ =?us-ascii?Q?A64h3l5s+dhbSasjnXPncqiLZ9UPo5e9cL9CzwLEB2F6t22+vGmLnZYTsJqu?=
+ =?us-ascii?Q?5O4dG//J/N8og1xxEOkmfSVs5untdp2uOxCsSsDazQLpYUj0KM6zXN216v2f?=
+ =?us-ascii?Q?HnNPHxVT1/TlCxSxauj8kdGqNBwsdNRl0h0SH4Grhn4l2khHUa2JqWOpFSgW?=
+ =?us-ascii?Q?pn2LyXR6WD6cWb6qx70XRaC3CrsX0m2u8DzW1oKBoZkZVACZd8YR6Hrk8iAg?=
+ =?us-ascii?Q?cT4bidIMeFBgf7kPcN59HDcki8ruf8n4uBIUVR06+yJXdOpmOXZ9lDJjI/t2?=
+ =?us-ascii?Q?P3EZLsz30qM87IF4IGKhQ8yMrpZ2B/vNJvTb+mM8HZPAj0S7pOdUDfAXA+zr?=
+ =?us-ascii?Q?zARWJufd/Lo5tQNYrO9+ERefhavKi/5JSoYqhewqELyP+7N8mUMUsagLLkYx?=
+ =?us-ascii?Q?E5VEo6tfhgveaAD10pytseHyAVX9/+prJZ3Fw9J/T2brrKvmoidjTzzMBQqq?=
+ =?us-ascii?Q?TA4vsHoKIkMgZ3j6Y1nmNsqJqScE6ZKatkh39DpQM+IHKWme83oCsAFLqbx6?=
+ =?us-ascii?Q?CqxOinPy83qI4HaK2JqDU/gP5JzAMVNXqToVkkTRv8lvwEk4LkITAapaAiT7?=
+ =?us-ascii?Q?Otg61OTnxNA1zZ7kBv9DaNy5JbFf0RhYP5wBKZHik9reahedD0/Nd2mQNtgo?=
+ =?us-ascii?Q?+Z3N8EpMlybegu+BEhPb8yyJicjsUu3NLXoHA2Jq9emzBbyiTF4JBsavoe6d?=
+ =?us-ascii?Q?35nALcksMOw519uqTZbU2k8ACSnWiySe7K3A3Dsdda3g29LKi7XTO5YWSZyN?=
+ =?us-ascii?Q?3Y+dAldeyFAmEwAZenDMHzsD9mBwlM0chM1a0dw3wvCIi5dgxYbQhL0jaKrm?=
+ =?us-ascii?Q?4XJDjg5NITfQ5YiTv+BwNZKhNlib7cuAVkGKm1aJ42at57F3XkGsFXAPzHLG?=
+ =?us-ascii?Q?qYv+YnwGOW4Fj7Wz0Ln4Mhs06Sjud7RCaa9F84345t/e8etKg9X+EZIU1FOo?=
+ =?us-ascii?Q?17WAJQsBZeJhxZuX3vAhW2HSUxip/9rRWB+cADCn8Kb2DiG9JHbkqY1m4Mh7?=
+ =?us-ascii?Q?g9ErKHB2N3BF0dLx2w+5HK0QoOrfnrHYhdGGN5KDtLMedbzjHBsJyKs8lFwq?=
+ =?us-ascii?Q?qrCIZmwgTC6rgFiN1zv7hqSM3/gC1KhfPFwVNDq9bgo6NF9QrudFbB5wv3/b?=
+ =?us-ascii?Q?e2n2olK+G3PDOwXW4IFtFeRAwdXA7xtAqePq9wUXqE1tlqjFgF7Ev5qDnA8V?=
+ =?us-ascii?Q?sReoghs59hrtgeBRCARC2S1vUx+V9OuUu3ePieBErCzoPMPDh6MoNwsoGXrT?=
+ =?us-ascii?Q?EI+O0OGsc+gpxQ7C4zPrqOVXaIydFQ5ei9/x3brx9o/giY6k6SF7ac+0sDc5?=
+ =?us-ascii?Q?5X+HJL3v+rGv1A0TCpy9+G6Dt/P6zjpD9kgdJftVrCoZck4haDJ/YKkM2YSq?=
+ =?us-ascii?Q?6g41Mb8NSUKdnV37P0yBc+bSl+tu+IPYBJDTAriuFsXmJFoYkXmbQ8ZhJvVS?=
+ =?us-ascii?Q?kHHxpOy5X1wpd2TvHYocvAt4I/I/vTaWP7DFWm4Lj4ErcmdQDaANU5n24SyE?=
+ =?us-ascii?Q?dtpbw39Vqm/Hmrk9Q3/JRc+BoQLNYo+73t3C2le+r5z8UKsAxwr2GVxt02i7?=
+ =?us-ascii?Q?xbo1/ab6l4/K7yKUqzmdjDWNQie1szmqaWoyEjK5OlxKj1reVtoJKI3Hnoe+?=
+ =?us-ascii?Q?/2Bu7cKZcA=3D=3D?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bff757c1-13b6-401a-1e73-08da340fb1d3
+X-MS-Exchange-CrossTenant-AuthSource: SG2PR06MB3367.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 May 2022 12:05:24.1090
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: W32HJUgSBsQGuNcpobgL/7Xwn6Ai4PiLeDaUvluIYKBYdTrNqmkflZtQbzrv4xdH8S6Ajq9FngXO8M2PxOUjvg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HK2PR06MB3426
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -119,264 +114,48 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-------s9reHD3dvq.Swzu4OgS99nNlXP7CLa0djtt04wdzZepsPVyA=_67a5b_
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
+Fix following coccicheck warning:
+fs/io_uring.c:5352:15-24: WARNING: Unsigned expression compared with zero: file_slot < 0
 
-On Thu, May 12, 2022 at 01:25:24PM +0800, Ming Lei wrote:
-> Hello,
-> 
-> On Wed, May 11, 2022 at 11:17:46AM +0530, Kanchan Joshi wrote:
-> > From: Jens Axboe <axboe@kernel.dk>
-> > 
-> > Add support for plugging in passthrough path. When plugging is enabled, the
-> > requests are added to a plug instead of getting dispatched to the driver.
-> > And when the plug is finished, the whole batch gets dispatched via
-> > ->queue_rqs which turns out to be more efficient. Otherwise dispatching
-> > used to happen via ->queue_rq, one request at a time.
-> > 
-> > Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> > ---
-> >  block/blk-mq.c | 73 +++++++++++++++++++++++++++-----------------------
-> >  1 file changed, 39 insertions(+), 34 deletions(-)
-> > 
-> > diff --git a/block/blk-mq.c b/block/blk-mq.c
-> > index 84d749511f55..2cf011b57cf9 100644
-> > --- a/block/blk-mq.c
-> > +++ b/block/blk-mq.c
-> > @@ -2340,6 +2340,40 @@ void __blk_mq_insert_request(struct blk_mq_hw_ctx *hctx, struct request *rq,
-> >  	blk_mq_hctx_mark_pending(hctx, ctx);
-> >  }
-> >  
-> > +/*
-> > + * Allow 2x BLK_MAX_REQUEST_COUNT requests on plug queue for multiple
-> > + * queues. This is important for md arrays to benefit from merging
-> > + * requests.
-> > + */
-> > +static inline unsigned short blk_plug_max_rq_count(struct blk_plug *plug)
-> > +{
-> > +	if (plug->multiple_queues)
-> > +		return BLK_MAX_REQUEST_COUNT * 2;
-> > +	return BLK_MAX_REQUEST_COUNT;
-> > +}
-> > +
-> > +static void blk_add_rq_to_plug(struct blk_plug *plug, struct request *rq)
-> > +{
-> > +	struct request *last = rq_list_peek(&plug->mq_list);
-> > +
-> > +	if (!plug->rq_count) {
-> > +		trace_block_plug(rq->q);
-> > +	} else if (plug->rq_count >= blk_plug_max_rq_count(plug) ||
-> > +		   (!blk_queue_nomerges(rq->q) &&
-> > +		    blk_rq_bytes(last) >= BLK_PLUG_FLUSH_SIZE)) {
-> > +		blk_mq_flush_plug_list(plug, false);
-> > +		trace_block_plug(rq->q);
-> > +	}
-> > +
-> > +	if (!plug->multiple_queues && last && last->q != rq->q)
-> > +		plug->multiple_queues = true;
-> > +	if (!plug->has_elevator && (rq->rq_flags & RQF_ELV))
-> > +		plug->has_elevator = true;
-> > +	rq->rq_next = NULL;
-> > +	rq_list_add(&plug->mq_list, rq);
-> > +	plug->rq_count++;
-> > +}
-> > +
-> >  /**
-> >   * blk_mq_request_bypass_insert - Insert a request at dispatch list.
-> >   * @rq: Pointer to request to be inserted.
-> > @@ -2353,7 +2387,12 @@ void blk_mq_request_bypass_insert(struct request *rq, bool at_head,
-> >  				  bool run_queue)
-> >  {
-> >  	struct blk_mq_hw_ctx *hctx = rq->mq_hctx;
-> > +	struct blk_plug *plug = current->plug;
-> >  
-> > +	if (plug) {
-> > +		blk_add_rq_to_plug(plug, rq);
-> > +		return;
-> > +	}
-> 
-> This way may cause nested plugging, and breaks xfstests generic/131.
-> Also may cause io hang since request can't be polled before flushing
-> plug in blk_execute_rq().
->
-Hi Ming,
-Could you please share your test setup.
-I tried test 131 with xfs and it passed.
+'file_slot' is an unsigned variable and it can't be less than 0.
+Use 'ret' instead to check the error code from io_file_bitmap_get().
 
-I followed these steps:
-1) mkfs.xfs -f /dev/nvme0n1
-2) mount /dev/nvme0n1 /mnt/test
-3) ./check tests/generic/131
+And using bool to declare 'alloc_slot' makes the code better.  
 
-Tried the same with ext4 and it passed as well.
+Fixes: 08cf52bc6eb4 ("io_uring: allow allocated fixed files for openat/openat2")
+Signed-off-by: Wan Jiabing <wanjiabing@vivo.com>
+---
+ fs/io_uring.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-Thanks,
-Anuj
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index e8f5106434ad..92d0321bdefe 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -5342,17 +5342,19 @@ static int io_file_bitmap_get(struct io_ring_ctx *ctx)
+ static int io_fixed_fd_install(struct io_kiocb *req, unsigned int issue_flags,
+ 			       struct file *file, unsigned int file_slot)
+ {
+-	int alloc_slot = file_slot == IORING_FILE_INDEX_ALLOC;
++	bool alloc_slot = file_slot == IORING_FILE_INDEX_ALLOC;
+ 	struct io_ring_ctx *ctx = req->ctx;
+ 	int ret;
+ 
+ 	if (alloc_slot) {
+ 		io_ring_submit_lock(ctx, issue_flags);
+-		file_slot = io_file_bitmap_get(ctx);
+-		if (unlikely(file_slot < 0)) {
++		ret = io_file_bitmap_get(ctx);
++		if (unlikely(ret < 0)) {
+ 			io_ring_submit_unlock(ctx, issue_flags);
+-			return file_slot;
++			return ret;
+ 		}
++
++		file_slot = ret;
+ 	}
+ 
+ 	ret = io_install_fixed_file(req, file, issue_flags, file_slot);
+-- 
+2.35.1
 
-> I'd suggest to apply the plug in blk_execute_rq_nowait(), such as:
-> 
-> 
-> diff --git a/block/blk-mq.c b/block/blk-mq.c
-> index 2cf011b57cf9..60c29c0229d5 100644
-> --- a/block/blk-mq.c
-> +++ b/block/blk-mq.c
-> @@ -1169,6 +1169,62 @@ static void blk_end_sync_rq(struct request *rq, blk_status_t error)
->  	complete(waiting);
->  }
->  
-> +/*
-> + * Allow 2x BLK_MAX_REQUEST_COUNT requests on plug queue for multiple
-> + * queues. This is important for md arrays to benefit from merging
-> + * requests.
-> + */
-> +static inline unsigned short blk_plug_max_rq_count(struct blk_plug *plug)
-> +{
-> +	if (plug->multiple_queues)
-> +		return BLK_MAX_REQUEST_COUNT * 2;
-> +	return BLK_MAX_REQUEST_COUNT;
-> +}
-> +
-> +static void blk_add_rq_to_plug(struct blk_plug *plug, struct request *rq)
-> +{
-> +	struct request *last = rq_list_peek(&plug->mq_list);
-> +
-> +	if (!plug->rq_count) {
-> +		trace_block_plug(rq->q);
-> +	} else if (plug->rq_count >= blk_plug_max_rq_count(plug) ||
-> +		   (!blk_queue_nomerges(rq->q) &&
-> +		    blk_rq_bytes(last) >= BLK_PLUG_FLUSH_SIZE)) {
-> +		blk_mq_flush_plug_list(plug, false);
-> +		trace_block_plug(rq->q);
-> +	}
-> +
-> +	if (!plug->multiple_queues && last && last->q != rq->q)
-> +		plug->multiple_queues = true;
-> +	if (!plug->has_elevator && (rq->rq_flags & RQF_ELV))
-> +		plug->has_elevator = true;
-> +	rq->rq_next = NULL;
-> +	rq_list_add(&plug->mq_list, rq);
-> +	plug->rq_count++;
-> +}
-> +
-> +static void __blk_execute_rq_nowait(struct request *rq, bool at_head,
-> +		rq_end_io_fn *done, bool use_plug)
-> +{
-> +	WARN_ON(irqs_disabled());
-> +	WARN_ON(!blk_rq_is_passthrough(rq));
-> +
-> +	rq->end_io = done;
-> +
-> +	blk_account_io_start(rq);
-> +
-> +	if (use_plug && current->plug) {
-> +		blk_add_rq_to_plug(current->plug, rq);
-> +		return;
-> +	}
-> +	/*
-> +	 * don't check dying flag for MQ because the request won't
-> +	 * be reused after dying flag is set
-> +	 */
-> +	blk_mq_sched_insert_request(rq, at_head, true, false);
-> +}
-> +
-> +
->  /**
->   * blk_execute_rq_nowait - insert a request to I/O scheduler for execution
->   * @rq:		request to insert
-> @@ -1184,18 +1240,8 @@ static void blk_end_sync_rq(struct request *rq, blk_status_t error)
->   */
->  void blk_execute_rq_nowait(struct request *rq, bool at_head, rq_end_io_fn *done)
->  {
-> -	WARN_ON(irqs_disabled());
-> -	WARN_ON(!blk_rq_is_passthrough(rq));
-> -
-> -	rq->end_io = done;
-> -
-> -	blk_account_io_start(rq);
-> +	__blk_execute_rq_nowait(rq, at_head, done, true);
->  
-> -	/*
-> -	 * don't check dying flag for MQ because the request won't
-> -	 * be reused after dying flag is set
-> -	 */
-> -	blk_mq_sched_insert_request(rq, at_head, true, false);
->  }
->  EXPORT_SYMBOL_GPL(blk_execute_rq_nowait);
->  
-> @@ -1234,7 +1280,7 @@ blk_status_t blk_execute_rq(struct request *rq, bool at_head)
->  	unsigned long hang_check;
->  
->  	rq->end_io_data = &wait;
-> -	blk_execute_rq_nowait(rq, at_head, blk_end_sync_rq);
-> +	__blk_execute_rq_nowait(rq, at_head, blk_end_sync_rq, false);
->  
->  	/* Prevent hang_check timer from firing at us during very long I/O */
->  	hang_check = sysctl_hung_task_timeout_secs;
-> @@ -2340,40 +2386,6 @@ void __blk_mq_insert_request(struct blk_mq_hw_ctx *hctx, struct request *rq,
->  	blk_mq_hctx_mark_pending(hctx, ctx);
->  }
->  
-> -/*
-> - * Allow 2x BLK_MAX_REQUEST_COUNT requests on plug queue for multiple
-> - * queues. This is important for md arrays to benefit from merging
-> - * requests.
-> - */
-> -static inline unsigned short blk_plug_max_rq_count(struct blk_plug *plug)
-> -{
-> -	if (plug->multiple_queues)
-> -		return BLK_MAX_REQUEST_COUNT * 2;
-> -	return BLK_MAX_REQUEST_COUNT;
-> -}
-> -
-> -static void blk_add_rq_to_plug(struct blk_plug *plug, struct request *rq)
-> -{
-> -	struct request *last = rq_list_peek(&plug->mq_list);
-> -
-> -	if (!plug->rq_count) {
-> -		trace_block_plug(rq->q);
-> -	} else if (plug->rq_count >= blk_plug_max_rq_count(plug) ||
-> -		   (!blk_queue_nomerges(rq->q) &&
-> -		    blk_rq_bytes(last) >= BLK_PLUG_FLUSH_SIZE)) {
-> -		blk_mq_flush_plug_list(plug, false);
-> -		trace_block_plug(rq->q);
-> -	}
-> -
-> -	if (!plug->multiple_queues && last && last->q != rq->q)
-> -		plug->multiple_queues = true;
-> -	if (!plug->has_elevator && (rq->rq_flags & RQF_ELV))
-> -		plug->has_elevator = true;
-> -	rq->rq_next = NULL;
-> -	rq_list_add(&plug->mq_list, rq);
-> -	plug->rq_count++;
-> -}
-> -
->  /**
->   * blk_mq_request_bypass_insert - Insert a request at dispatch list.
->   * @rq: Pointer to request to be inserted.
-> @@ -2387,12 +2399,7 @@ void blk_mq_request_bypass_insert(struct request *rq, bool at_head,
->  				  bool run_queue)
->  {
->  	struct blk_mq_hw_ctx *hctx = rq->mq_hctx;
-> -	struct blk_plug *plug = current->plug;
->  
-> -	if (plug) {
-> -		blk_add_rq_to_plug(plug, rq);
-> -		return;
-> -	}
->  	spin_lock(&hctx->lock);
->  	if (at_head)
->  		list_add(&rq->queuelist, &hctx->dispatch);
-> 
-> 
-> Thanks,
-> Ming
-> 
-> 
-
-------s9reHD3dvq.Swzu4OgS99nNlXP7CLa0djtt04wdzZepsPVyA=_67a5b_
-Content-Type: text/plain; charset="utf-8"
-
-
-------s9reHD3dvq.Swzu4OgS99nNlXP7CLa0djtt04wdzZepsPVyA=_67a5b_--

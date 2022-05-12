@@ -2,88 +2,140 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F659524C96
-	for <lists+io-uring@lfdr.de>; Thu, 12 May 2022 14:21:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50BB8524CA0
+	for <lists+io-uring@lfdr.de>; Thu, 12 May 2022 14:23:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353619AbiELMVY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 12 May 2022 08:21:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52692 "EHLO
+        id S1353651AbiELMX1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 12 May 2022 08:23:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33092 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353623AbiELMVX (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 12 May 2022 08:21:23 -0400
-Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AEAC6162A
-        for <io-uring@vger.kernel.org>; Thu, 12 May 2022 05:21:22 -0700 (PDT)
-Received: by mail-pg1-x52d.google.com with SMTP id 202so4425667pgc.9
-        for <io-uring@vger.kernel.org>; Thu, 12 May 2022 05:21:22 -0700 (PDT)
+        with ESMTP id S1349641AbiELMXZ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 12 May 2022 08:23:25 -0400
+Received: from mail-pg1-x529.google.com (mail-pg1-x529.google.com [IPv6:2607:f8b0:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CA0310F7F4
+        for <io-uring@vger.kernel.org>; Thu, 12 May 2022 05:23:24 -0700 (PDT)
+Received: by mail-pg1-x529.google.com with SMTP id 137so4445251pgb.5
+        for <io-uring@vger.kernel.org>; Thu, 12 May 2022 05:23:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :references:from:in-reply-to:content-transfer-encoding;
-        bh=Jgm8O8QZGGLjUWsD23VHBOnQF7wIvt3edd/9XoWMzcU=;
-        b=juxKek8KLq57IuDoeCVxD1MW+MnPDdbkH7xLyUUk4e4h5EB/BfI1umGD3SG4XLSnBm
-         nxz4w7SXVNYER069+B8cInWuQpa6p3ktEqMJya3Dz179u8l38J9MGJilFYpc7dXkXMc3
-         AJoWj8yKGBZjvlb8z5Dwyqysnxyj+yXF3CXBdXWUGuj+mGsgkc0frCnzB0qQProF4MoB
-         uMDWtrmK+bEwJaQOmr1tsU6FxeshEwEFMQ9usC83cKbd40mQe5avw0H97vfzU4lQ7FMK
-         OLBemcxYt4u4pD/p/7VN/jKSpQzpshhL3cxDl6ZVHcJuCGVgnBbbjiOyMgrhIRG8oqOX
-         0tFA==
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=3tMCRRSUjLPjs9SHMUsBfmr3dWXz1TqtKlbw80jipfQ=;
+        b=WFNk2zx2mM6xdz0rh2bGyyxj4wW6UAfKjxUQW95XAdta+y6oDbSp3LpsWhm7vBwJzM
+         EkXOdl3NQTqpjCz75ABxk+7TzbM44G6MMu5VUDJlcpMWjK9ZMZOAdmMNkT43Ilp0vH74
+         RdBBpsWCEderrCzLRiseOFog40SFY1EfMZysCrdpM9YdelmwkpZzrK0jpt20m4xXZKD3
+         JmDKlEpsRabTC9Sy3PNCtgxkZlrt4JEGfd4cqIOF9aPkxJ+4xeSbtcYehzsQYGrlWbFt
+         ygMTv0mh2py1j+NbFkm/9QUAlNWz5WZdppbg1zpiN1BrR39acxVQlB9viVK/HesaWj9w
+         cTcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:from:in-reply-to
+         :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=Jgm8O8QZGGLjUWsD23VHBOnQF7wIvt3edd/9XoWMzcU=;
-        b=hkDsaRhUTw4KrJcm4AK6MRRzxLDG39D0qShbGAGS+xVxaZz8Pz3jXeaLX4UjxcaFV1
-         BXuCDnkXS+EhJGaDX8DaSTJW2MM/M+N4PFi6AZAGpczB2iKZuMGN+dpPWwhxRQMLqb03
-         7xhcjV5kV3D6HgyK/vg8MAvu1OGInDgXj1KIldr8kpVqUVtkwcXvOLYAMJPRHmoIqEtx
-         1k4bqjCZsJFzNyQ0oipSSEiGJbBxX/fzsFwEk+w42Bp7rlWTNfXz5VU+soNaSRNaN1gA
-         fJ2uqOHOhM4bqqyp5GnB2D1mJHk+WWQGq26cuE51JLxdWUn9sfMKqAKQ8o5FhoqXa0gy
-         AbjA==
-X-Gm-Message-State: AOAM532h1ep8B1jzVZa9OIdOSTtyGlYJ1vnq3F78xMed6EmQFNOAAdsx
-        MHGqSTziuiIx9OfV/LgDosWOsQ==
-X-Google-Smtp-Source: ABdhPJyxNnUrVAwCXlEhKqTYnXL1NS8M/Xz/9h5vBdFJvEbq+nNoBYUOZuexz28QXw63vGphXJn9Ww==
-X-Received: by 2002:a63:5151:0:b0:3db:6074:1180 with SMTP id r17-20020a635151000000b003db60741180mr2609998pgl.310.1652358081523;
-        Thu, 12 May 2022 05:21:21 -0700 (PDT)
+        bh=3tMCRRSUjLPjs9SHMUsBfmr3dWXz1TqtKlbw80jipfQ=;
+        b=ckeHQ/rnGFZ21sF7cmgaVGI4K9d6g+yIqavhrIApuVgfdUxfEJqfv+9oD58EIWKZRu
+         ZkDL68DGfjjLMcKpaB72zQLSrqchCpUk/xWCSkRR6kgxpdJzLtJRAQ+GZAWHv1hWnlk5
+         O/xCy/aczzWb8DrPCgWViRUoPfJ7aduVFxua592eoSKzaTgkcR099yrkFtsCmP7AVeTK
+         yV6nE9Ks4I8AbqPrBy+EyeQqCukol7fwTSDdfWcmcrbSzqOomA+tbc0cuIG1dqna3ztD
+         it7WPrbBj+K/sc/AHgtLH2jOLav9ELodO66Rb43/zsrxQ8/AfxGQVhoVRzAiLVYZB2Mc
+         5sng==
+X-Gm-Message-State: AOAM532SbrUzACWnwRKyb+ih7LqFIYZ4++WdUqrw3PprHh/B4pEV/gdp
+        3EZB6RuZhyU50O0bSSny2NIN0Q==
+X-Google-Smtp-Source: ABdhPJxYWc4TPGzueER8ipNCqKNvkO1YnT7XefXtfYOB1GPyqP2Sk0qT9U7LkpIDsdhneY6457wQjA==
+X-Received: by 2002:a05:6a00:15d0:b0:50e:b15:cc43 with SMTP id o16-20020a056a0015d000b0050e0b15cc43mr29805131pfu.28.1652358203570;
+        Thu, 12 May 2022 05:23:23 -0700 (PDT)
 Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id v4-20020aa78504000000b0050dc762819esm3639779pfn.120.2022.05.12.05.21.20
+        by smtp.gmail.com with ESMTPSA id y24-20020a63de58000000b003c14af50643sm1719935pgi.91.2022.05.12.05.23.22
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 May 2022 05:21:20 -0700 (PDT)
-Message-ID: <7427ccc1-c830-56c1-1577-dee5afff3809@kernel.dk>
-Date:   Thu, 12 May 2022 06:21:19 -0600
+        Thu, 12 May 2022 05:23:22 -0700 (PDT)
+Message-ID: <bac35aa1-02ee-d241-2427-207a1931c444@kernel.dk>
+Date:   Thu, 12 May 2022 06:23:21 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
  Thunderbird/91.8.1
-Subject: Re: [PATCH] io_uring: Fix incorrect variable type in
- io_fixed_fd_install
+Subject: Re: [PATCH 3/6] io_uring: allow allocated fixed files for
+ openat/openat2
 Content-Language: en-US
-To:     Wan Jiabing <wanjiabing@vivo.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220512120511.4306-1-wanjiabing@vivo.com>
+To:     Hao Xu <haoxu.linux@gmail.com>, io-uring@vger.kernel.org
+Cc:     asml.silence@gmail.com
+References: <20220509155055.72735-1-axboe@kernel.dk>
+ <20220509155055.72735-4-axboe@kernel.dk>
+ <e2b53efa-32d5-4732-bce3-c8b8d55ec0b9@gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20220512120511.4306-1-wanjiabing@vivo.com>
+In-Reply-To: <e2b53efa-32d5-4732-bce3-c8b8d55ec0b9@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-4.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/12/22 6:05 AM, Wan Jiabing wrote:
-> Fix following coccicheck warning:
-> fs/io_uring.c:5352:15-24: WARNING: Unsigned expression compared with zero: file_slot < 0
+On 5/12/22 2:21 AM, Hao Xu wrote:
+> ? 2022/5/9 ??11:50, Jens Axboe ??:
+>> If the application passes in IORING_FILE_INDEX_ALLOC as the file_slot,
+>> then that's a hint to allocate a fixed file descriptor rather than have
+>> one be passed in directly.
+>>
+>> This can be useful for having io_uring manage the direct descriptor space.
+>>
+>> Normal open direct requests will complete with 0 for success, and < 0
+>> in case of error. If io_uring is asked to allocated the direct descriptor,
+>> then the direct descriptor is returned in case of success.
+>>
+>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>> ---
+>>   fs/io_uring.c                 | 32 +++++++++++++++++++++++++++++---
+>>   include/uapi/linux/io_uring.h |  9 +++++++++
+>>   2 files changed, 38 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>> index 8c40411a7e78..ef999d0e09de 100644
+>> --- a/fs/io_uring.c
+>> +++ b/fs/io_uring.c
+>> @@ -4697,7 +4697,7 @@ static int io_openat2_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>>       return __io_openat_prep(req, sqe);
+>>   }
+>>   -static int __maybe_unused io_file_bitmap_get(struct io_ring_ctx *ctx)
+>> +static int io_file_bitmap_get(struct io_ring_ctx *ctx)
+>>   {
+>>       struct io_file_table *table = &ctx->file_table;
+>>       unsigned long nr = ctx->nr_user_files;
+>> @@ -4722,6 +4722,32 @@ static int __maybe_unused io_file_bitmap_get(struct io_ring_ctx *ctx)
+>>       return -ENFILE;
+>>   }
+>>   +static int io_fixed_fd_install(struct io_kiocb *req, unsigned int issue_flags,
+>> +                   struct file *file, unsigned int file_slot)
+>> +{
+>> +    int alloc_slot = file_slot == IORING_FILE_INDEX_ALLOC;
+>> +    struct io_ring_ctx *ctx = req->ctx;
+>> +    int ret;
+>> +
+>> +    if (alloc_slot) {
+>> +        io_ring_submit_lock(ctx, issue_flags);
+>> +        file_slot = io_file_bitmap_get(ctx);
+>> +        if (unlikely(file_slot < 0)) {
+>> +            io_ring_submit_unlock(ctx, issue_flags);
+>> +            return file_slot;
+>> +        }
+>> +    }
 > 
-> 'file_slot' is an unsigned variable and it can't be less than 0.
-> Use 'ret' instead to check the error code from io_file_bitmap_get().
+> if (alloc_slot) {
+>  ...
+> } else {
+>         file_slot -= 1;
+> }
 > 
-> And using bool to declare 'alloc_slot' makes the code better.  
+> Otherwise there is off-by-one error.
+> 
+> Others looks good,
+> 
+> Reviewed-by: Hao Xu <howeyxu@tencent.com>
 
-Thanks, I'm going to fold this one in.
+Thanks, you are correct, I've folded that in.
 
 -- 
 Jens Axboe

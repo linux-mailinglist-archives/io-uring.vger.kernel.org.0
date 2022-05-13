@@ -2,106 +2,158 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B70BB52604C
-	for <lists+io-uring@lfdr.de>; Fri, 13 May 2022 12:58:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 279475261C9
+	for <lists+io-uring@lfdr.de>; Fri, 13 May 2022 14:26:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231867AbiEMK4Z (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 13 May 2022 06:56:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50818 "EHLO
+        id S232430AbiEMM01 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 13 May 2022 08:26:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232124AbiEMK4D (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 13 May 2022 06:56:03 -0400
-Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97EEB31922
-        for <io-uring@vger.kernel.org>; Fri, 13 May 2022 03:56:00 -0700 (PDT)
-Received: by mail-pj1-x1031.google.com with SMTP id l7-20020a17090aaa8700b001dd1a5b9965so7469012pjq.2
-        for <io-uring@vger.kernel.org>; Fri, 13 May 2022 03:56:00 -0700 (PDT)
+        with ESMTP id S1359612AbiEMM0B (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 13 May 2022 08:26:01 -0400
+Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B9B5B40
+        for <io-uring@vger.kernel.org>; Fri, 13 May 2022 05:25:59 -0700 (PDT)
+Received: by mail-pg1-x531.google.com with SMTP id x12so7352393pgj.7
+        for <io-uring@vger.kernel.org>; Fri, 13 May 2022 05:25:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:to:cc:references
-         :from:in-reply-to:content-transfer-encoding;
-        bh=bLUocIuCSugMrpq0bJ+l+vLwclGHmzOrxPmDFuwEO94=;
-        b=G/07VDSSbbEuVb5d4B7k2CEVARVGwMmMxI5Qe1hICKeFQvV0MK9NLYRW8wh4eUmJg0
-         4W8lqxA7Af0qcS+DuRO/d9scWQs6Bh6fUOT1sy0ZGWxyzzMrCZj9M8Kz3n2Ui28MgnnF
-         DVa5WX2Vk1oOot1a3EhTTK80kl2lwafla7WWqYobEVXpn/H3dQU6mhZ4w6R84RP0Vd8a
-         UWiOcBYDoW36DRDJuR1ZTdrul4EZLsByRlK3h5Z1QHc0IOGvXFpuPYX8tnnzCe3wBdli
-         XcKXs3DvPj75YT/oZ8BgDQQuGBaC040SSBEI6XHC/6kZAwBEwlCIHZEJ8htKrtUIqVzQ
-         gq/w==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=mgbd48TW30rg0ViY3f/60iyt3qhcJ1kMIO+coZN5Ba4=;
+        b=dsaow0EHqUawKAdqLkbtuhJzbw61moNEcs0bSupQsz4inuyYSzs4kpZCiNsyptZbPf
+         PFTopfj5O7iTjAsRzcvMyvc7CMn/0qtHsJJekdkevfEdp2WuNBrO46fmu7FMYWvIC3l/
+         dffvRPq9UHGfMcD80j6OaTJPWHEWDRXXUuSxXKW5Vbo5v31gBLGfXq8v1QtQ4oaOH2wo
+         vpLUEKKoulg4rUGAN7Lyu734+/I2U9tORs+Z+DMizsmnNzZKDRCTQFib+vasE5fGxcKe
+         QYCz8agAq0F8ITs2iIqB6ezcHkO32wwSFc6R7EGb0cxMviPzFnrYx6HTz0S/o4wSYkLc
+         gjdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :to:cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=bLUocIuCSugMrpq0bJ+l+vLwclGHmzOrxPmDFuwEO94=;
-        b=u5VpNee/7SPzCYRIPVDcqJsMZbBeYh7KbWYfvy2iCWnEADLOVY6ngmyKFrzo+Rvq62
-         Y1TzBBTY/FJ5nx3K6GQkU1N7i+3m0Pur9iDFhS+jY3uKJpVAazcKPE4+20u2kMLy/Jtr
-         xkjAPevPv7kKNKXdbspCQv8f2whbDdsgyZwhrpCB20gFw8CLAYk45gs7/6tjz8Hhr85d
-         n1IvO2JKPUnV6MV+tldvj+JH991tk9n8AaAXQKDjMPDYKcZqUvMKmeyxrc6ktY9reTtR
-         KuB22Fef7y//4seZ+2A8lx98FKDXDmjPldr4j9EkelWl4C293VaxavuALTfYJic9JPKV
-         p65w==
-X-Gm-Message-State: AOAM531kJAdmuM+1v4lsrFX8utsha0UMi+umxTHslYZyc5RsJN8azU+j
-        ObWX+vfrltlDLlqMVwAXV8KU/WlGsXU=
-X-Google-Smtp-Source: ABdhPJw/FX2br+unfoN58P6WuvhAMmTFikiFT364qapoY8Tq5wqnT2E/MHUEf49C8EhkBaI3vSV/jw==
-X-Received: by 2002:a17:902:e94e:b0:158:91e6:501 with SMTP id b14-20020a170902e94e00b0015891e60501mr4182894pll.29.1652439360108;
-        Fri, 13 May 2022 03:56:00 -0700 (PDT)
-Received: from [192.168.255.10] ([106.53.4.151])
-        by smtp.gmail.com with ESMTPSA id m28-20020a62a21c000000b0050dc76281f5sm1459301pff.207.2022.05.13.03.55.57
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=mgbd48TW30rg0ViY3f/60iyt3qhcJ1kMIO+coZN5Ba4=;
+        b=dxJ2dOgX7V4Ws99jPHD9SKiW04XNulLyaZu6JXVVvooJlBp6Cfo+6kyMbbKapm6L84
+         DflsJG4ruw/mdgImZZr1FatLvVvg0Y132bu1leMPtMwFmE/1MG7VdySteKlfwXDE8VEB
+         CECf7RsfN2izfuooIrsIly3uN8PiCZb+Z/tW6hDPa25sETOH7lbKHibj0VDqM0omP93l
+         wkkm8o8DtHmXgR0ZSsq4l5LKSe5JrnJmQmW+3MTu6J+j3OAcz1AzOIYNfR9gA/yoXFp5
+         hPLN9pqr6jahveT6wjaKyT2TCNacUJP0Ez4XJyLh6RnTik4zm1ItHjrnkA1Dg+jxd2Ky
+         cMaA==
+X-Gm-Message-State: AOAM5333KeOFZEK+EZq24x5xMfczeOUkGrtwdfiGJBqthFABd9eiGAh9
+        8puEZUhRY70vQaEG97TkCOm/Otb4zGcGRw==
+X-Google-Smtp-Source: ABdhPJzAlkVG4jwLSkZ7eWMTgTW0tZwoDoWMr29A6erPx1c98MPfUk22bvp8qhcxcK52aGwoLNTn0Q==
+X-Received: by 2002:a05:6a00:806:b0:50d:dd03:a03a with SMTP id m6-20020a056a00080600b0050ddd03a03amr4607285pfk.57.1652444758621;
+        Fri, 13 May 2022 05:25:58 -0700 (PDT)
+Received: from [192.168.1.100] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 4-20020a170902c20400b0015ef8ef0cddsm1677232pll.213.2022.05.13.05.25.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 May 2022 03:55:59 -0700 (PDT)
-Message-ID: <b7f610d8-4afe-9876-2dc5-6933cfa6ee06@gmail.com>
-Date:   Fri, 13 May 2022 18:56:13 +0800
+        Fri, 13 May 2022 05:25:57 -0700 (PDT)
+Message-ID: <e7726450-8004-a3e0-e5c7-b315eb0e9b6e@kernel.dk>
+Date:   Fri, 13 May 2022 06:25:56 -0600
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.9.0
-Subject: Re: [PATCHSET v2 0/6] Allow allocated direct descriptors
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH 3/6] io_uring: allow allocated fixed files for
+ openat/openat2
+Content-Language: en-US
+To:     Hao Xu <haoxu.linux@gmail.com>, io-uring@vger.kernel.org
 Cc:     asml.silence@gmail.com
 References: <20220509155055.72735-1-axboe@kernel.dk>
-From:   Hao Xu <haoxu.linux@gmail.com>
-In-Reply-To: <20220509155055.72735-1-axboe@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+ <20220509155055.72735-4-axboe@kernel.dk>
+ <e2b53efa-32d5-4732-bce3-c8b8d55ec0b9@gmail.com>
+ <bac35aa1-02ee-d241-2427-207a1931c444@kernel.dk>
+ <ac6d7ee0-3bff-3f33-c492-d5861af2d277@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <ac6d7ee0-3bff-3f33-c492-d5861af2d277@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-在 2022/5/9 下午11:50, Jens Axboe 写道:
-> Hi,
+On 5/12/22 11:28 PM, Hao Xu wrote:
+> ? 2022/5/12 ??8:23, Jens Axboe ??:
+>> On 5/12/22 2:21 AM, Hao Xu wrote:
+>>> ? 2022/5/9 ??11:50, Jens Axboe ??:
+>>>> If the application passes in IORING_FILE_INDEX_ALLOC as the file_slot,
+>>>> then that's a hint to allocate a fixed file descriptor rather than have
+>>>> one be passed in directly.
+>>>>
+>>>> This can be useful for having io_uring manage the direct descriptor space.
+>>>>
+>>>> Normal open direct requests will complete with 0 for success, and < 0
+>>>> in case of error. If io_uring is asked to allocated the direct descriptor,
+>>>> then the direct descriptor is returned in case of success.
+>>>>
+>>>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>>>> ---
+>>>>    fs/io_uring.c                 | 32 +++++++++++++++++++++++++++++---
+>>>>    include/uapi/linux/io_uring.h |  9 +++++++++
+>>>>    2 files changed, 38 insertions(+), 3 deletions(-)
+>>>>
+>>>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>>>> index 8c40411a7e78..ef999d0e09de 100644
+>>>> --- a/fs/io_uring.c
+>>>> +++ b/fs/io_uring.c
+>>>> @@ -4697,7 +4697,7 @@ static int io_openat2_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>>>>        return __io_openat_prep(req, sqe);
+>>>>    }
+>>>>    -static int __maybe_unused io_file_bitmap_get(struct io_ring_ctx *ctx)
+>>>> +static int io_file_bitmap_get(struct io_ring_ctx *ctx)
+>>>>    {
+>>>>        struct io_file_table *table = &ctx->file_table;
+>>>>        unsigned long nr = ctx->nr_user_files;
+>>>> @@ -4722,6 +4722,32 @@ static int __maybe_unused io_file_bitmap_get(struct io_ring_ctx *ctx)
+>>>>        return -ENFILE;
+>>>>    }
+>>>>    +static int io_fixed_fd_install(struct io_kiocb *req, unsigned int issue_flags,
+>>>> +                   struct file *file, unsigned int file_slot)
+>>>> +{
+>>>> +    int alloc_slot = file_slot == IORING_FILE_INDEX_ALLOC;
+>>>> +    struct io_ring_ctx *ctx = req->ctx;
+>>>> +    int ret;
+>>>> +
+>>>> +    if (alloc_slot) {
+>>>> +        io_ring_submit_lock(ctx, issue_flags);
+>>>> +        file_slot = io_file_bitmap_get(ctx);
+>>>> +        if (unlikely(file_slot < 0)) {
+>>>> +            io_ring_submit_unlock(ctx, issue_flags);
+>>>> +            return file_slot;
+>>>> +        }
+>>>> +    }
+>>>
+>>> if (alloc_slot) {
+>>>   ...
+>>> } else {
+>>>          file_slot -= 1;
+>>> }
+>>>
+>>> Otherwise there is off-by-one error.
+>>>
+>>> Others looks good,
+>>>
+>>> Reviewed-by: Hao Xu <howeyxu@tencent.com>
+>>
+>> Thanks, you are correct, I've folded that in.
+>>
 > 
-> Currently using direct descriptors with open or accept requires the
-> application to manage the descriptor space, picking which slot to use
-> for any given file. However, there are cases where it's useful to just
-> get a direct descriptor and not care about which value it is, instead
-> just return it like a normal open or accept would.
+> Hi Jens,
+> I've rebased multishot accept based on your fixed-alloc branch:
 > 
-> This will also be useful for multishot accept support, where allocated
-> direct descriptors are a requirement to make that feature work with
-> these kinds of files.
+> https://github.com/HowHsu/linux/commits/for-5.19/io_uring_multishot_accept_v6
 > 
-> This adds support for allocating a new fixed descriptor. This is chosen
-> by passing in IORING_FILE_INDEX_ALLOC as the fixed slot, which is beyond
-> any valid value for the file_index.
-> 
-> Can also be found here:
-> 
-> https://git.kernel.dk/cgit/linux-block/log/?h=for-5.19/io_uring-fixed-alloc
-> 
->   fs/io_uring.c                 | 113 +++++++++++++++++++++++++++++++---
->   include/uapi/linux/io_uring.h |  17 ++++-
->   2 files changed, 120 insertions(+), 10 deletions(-)
-> 
-> v2:	- Fix unnecessary clear (Hao)
-> 	- Add define for allocating a descriptor rather than use
-> 	  UINT_MAX.
-> 	- Add patch bumping max file table size to 1M (from 32K)
-> 	- Add ability to register a sparse file table upfront rather
-> 	  then have the application pass in a big array of -1.
-> 
+> Let me know when ixed-alloc is ready, then I'll do the final rebase
+> for multishot accept and send it to the list, including the liburing
+> change.
 
-Reviewed-by: Hao Xu <howeyxu@tencent.com>
+Just base it against for-5.19/io_uring, I'm fixing the one-off and
+pushing it out.
+
+-- 
+Jens Axboe
 

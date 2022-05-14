@@ -2,58 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 48D6B527210
-	for <lists+io-uring@lfdr.de>; Sat, 14 May 2022 16:35:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10EFA527211
+	for <lists+io-uring@lfdr.de>; Sat, 14 May 2022 16:35:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233358AbiENOf2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 14 May 2022 10:35:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55554 "EHLO
+        id S233382AbiENOf3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 14 May 2022 10:35:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55594 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233361AbiENOf1 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 14 May 2022 10:35:27 -0400
-Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3652020199
-        for <io-uring@vger.kernel.org>; Sat, 14 May 2022 07:35:25 -0700 (PDT)
-Received: by mail-pl1-x632.google.com with SMTP id d17so10564323plg.0
-        for <io-uring@vger.kernel.org>; Sat, 14 May 2022 07:35:25 -0700 (PDT)
+        with ESMTP id S233371AbiENOf2 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 14 May 2022 10:35:28 -0400
+Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD767201AC
+        for <io-uring@vger.kernel.org>; Sat, 14 May 2022 07:35:26 -0700 (PDT)
+Received: by mail-pl1-x62c.google.com with SMTP id n8so10541365plh.1
+        for <io-uring@vger.kernel.org>; Sat, 14 May 2022 07:35:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=kqTCYzXPj2qvNDeP69xecjDJXh7/toCrwC41GgwtH4k=;
-        b=fHLaUuUKJu0aPXHPeZnjZGTh4T/kzGSQyqAEcOyj3O6lLAE6ERApZMwPg9kXf6QEU3
-         4NK39YEyqntxMsk2wmSfV80rHMibiXrukijfrwln/mBQBhdjJseh0sXL5f1mgeAPQret
-         R8amBzcHKK6Xq3NJUsAOmDN5JnBmP89KYHF1jplGxhPXIk16V5nzx6LwFEN2lI8cu5+J
-         6SXOdgsJS8IqFZdiVcJKy3iwcTjOmOP2SNEosaMO/Namu0ppN+WrQsC+mR5JU+Xwbyl4
-         w23JMA0v6WQJMFvm+IIBFoejTJuBtExmq/w95bZItdrrCHymg3sQz8w4HPi93Qmd6aWD
-         ZvQA==
+        bh=ke3NsMb/k6GmJxHAaVqzEhETE1JXVl1Gx40uFduFsTM=;
+        b=cjEN0irl/DPst1CLee+zIuurLTXP5xW69YpdZqiBPe/EtXm1AyxPzYjinB+P0M8UQw
+         o9MbEYXDwJ7O/oFgMMnYvwIqzUO0eTfOi8odU9WyUvtx8e8v85lusIkSHdjVs/swZ28L
+         CPBp5Mw3byXScHuNSImNWGNDD3GvubA4i+0o4/h7L0qYLHRu+2i7PsaG8WN4JkRbe38x
+         z6ER/xf6oCrj9PgiJ0iv6U7PO2/HFR4ofqgKMXSIUWsnU1k/EsmsjpxSR/y0WkaUciu3
+         TLKDr+wjRq9SmiGMwoMczavhP7jrW6Ceu9PcoRhAl3YMj+27ZINq2gCsXP7UwCNFQdWj
+         taXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=kqTCYzXPj2qvNDeP69xecjDJXh7/toCrwC41GgwtH4k=;
-        b=NVzPsFoaLAVQKktvpZte93GMaeWBqPGNUaA2MSaPnAAi1Ni2dJLFm9TRZOx9mZoYos
-         lkkglpSdUWQ8n/CwbliXyF9/REqd9BDTQCSSCP+FwcZBfyNif388w81Op2VLQWiD628B
-         AFftbEYL+GIkxqJAhw8a47d5wTRUlpx3KVNXukznBbV0jrHaDz+7El4zjRBrT+r1LUYA
-         Xrc9YZpPLx7vT+Qq9yvbervhvjF2TLk5mOhK80ec/6IWt1ndI1kbmRSDDia/C3NkPfI1
-         byi8T/GJ6VTsPcuwr6+y/GmWZK+fc1VG7ahU7mnK01n2cjt5eASFB2LghlwHLXeXgG6w
-         ayTQ==
-X-Gm-Message-State: AOAM533PYqlwfvuLY0MzRsUtSuRgfHpIFDBBbigjeIn/107KT185rXMs
-        0p7kPFR8/yJW2/jYzXzAYzOPVFUsBdaRxFjQ
-X-Google-Smtp-Source: ABdhPJxjYZKtAo01RpOhCmcxPWN1zTVe+bU9fRwjR9IqC4GUG3FyDj+3uELo4JoXp8LAoNQw+CHqbQ==
-X-Received: by 2002:a17:90b:3a86:b0:1dc:2343:2429 with SMTP id om6-20020a17090b3a8600b001dc23432429mr10147810pjb.206.1652538924684;
-        Sat, 14 May 2022 07:35:24 -0700 (PDT)
+        bh=ke3NsMb/k6GmJxHAaVqzEhETE1JXVl1Gx40uFduFsTM=;
+        b=t7B9Gilbx0O+qccvV7idGLUzQrEJLNQ0TqrGOp7KfZqD23sqfpfLLS8b48QjSanzwM
+         HO62FC3oxwfx90Tm1cg4BRqX4QK8ZatGoIR4ApMbs8M87iUTeU/AMYO0vmqYbI+buUJ1
+         DCep9V3Ncbz8PIvaIwUR+Wduv7SXyXvDaZ+3moESUN+FdPqCpIhIO1jLG9xFj4TNMdgr
+         My0T3u8UaJw+Afb72NJYyPKmHDdFapW4vJzkFVfbuwoMfGDzWJXSI4x0xOqGT9SGqPFe
+         Lv7XqfDtDeQgtpXC8c8g864V9lias0T32hJz3eMz2QnWLg4FcpZfvEUh3hZ6sNQw0VUs
+         Iu1A==
+X-Gm-Message-State: AOAM530ENfjn8qc3Gbcwdss/aeb3gGR7nCnjkZQ/eZx1W2435Jh424vr
+        nArZceJndEt2r87+lYb8X1/9Rpy7FwdrLdL5
+X-Google-Smtp-Source: ABdhPJy5OXhIeaSj+8q9Zjm4juW/K1Ni9NU47SE25ivoACiR5yWF3CyVkl4jHHfq6UX+QdAtRpCZmQ==
+X-Received: by 2002:a17:902:f64c:b0:156:4349:7e9b with SMTP id m12-20020a170902f64c00b0015643497e9bmr9682964plg.139.1652538926330;
+        Sat, 14 May 2022 07:35:26 -0700 (PDT)
 Received: from HOWEYXU-MB0.tencent.com ([203.205.141.20])
-        by smtp.gmail.com with ESMTPSA id j13-20020a170902c3cd00b0015ea95948ebsm3762179plj.134.2022.05.14.07.35.23
+        by smtp.gmail.com with ESMTPSA id j13-20020a170902c3cd00b0015ea95948ebsm3762179plj.134.2022.05.14.07.35.24
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 14 May 2022 07:35:24 -0700 (PDT)
+        Sat, 14 May 2022 07:35:26 -0700 (PDT)
 From:   Hao Xu <haoxu.linux@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>,
         Pavel Begunkov <asml.silence@gmail.com>
-Subject: [PATCH 5/6] test/accept.c: test for multishot direct accept with wrong arg
-Date:   Sat, 14 May 2022 22:35:33 +0800
-Message-Id: <20220514143534.59162-6-haoxu.linux@gmail.com>
+Subject: [PATCH 6/6] man/io_uring_prep_accept.3: add man info for multishot accept
+Date:   Sat, 14 May 2022 22:35:34 +0800
+Message-Id: <20220514143534.59162-7-haoxu.linux@gmail.com>
 X-Mailer: git-send-email 2.36.0
 In-Reply-To: <20220514143534.59162-1-haoxu.linux@gmail.com>
 References: <20220514143534.59162-1-haoxu.linux@gmail.com>
@@ -71,75 +71,111 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 From: Hao Xu <howeyxu@tencent.com>
 
-Add a test for multishot direct accept, where don't set the file index
-to IORING_FILE_INDEX_ALLOC.
+Add man info for multishot accept APIs, including non-direct and direct.
 
 Signed-off-by: Hao Xu <howeyxu@tencent.com>
 ---
- test/accept.c | 43 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 43 insertions(+)
+ man/io_uring_prep_accept.3                  | 51 +++++++++++++++++----
+ man/io_uring_prep_multishot_accept.3        |  1 +
+ man/io_uring_prep_multishot_accept_direct.3 |  1 +
+ 3 files changed, 44 insertions(+), 9 deletions(-)
+ create mode 120000 man/io_uring_prep_multishot_accept.3
+ create mode 120000 man/io_uring_prep_multishot_accept_direct.3
 
-diff --git a/test/accept.c b/test/accept.c
-index 897278a2a3c3..921c79b862db 100644
---- a/test/accept.c
-+++ b/test/accept.c
-@@ -541,6 +541,43 @@ static int test_multishot_accept(int count, bool before)
- 	return ret;
- }
+diff --git a/man/io_uring_prep_accept.3 b/man/io_uring_prep_accept.3
+index 779bcd92fd2f..e52c13ee1288 100644
+--- a/man/io_uring_prep_accept.3
++++ b/man/io_uring_prep_accept.3
+@@ -18,11 +18,23 @@ io_uring_prep_accept  - prepare an accept request
+ .BI "                          int " flags ");"
+ .BI "
+ .BI "void io_uring_prep_accept_direct(struct io_uring_sqe *" sqe ","
+-.BI "                                int " sockfd ","
+-.BI "                                struct sockaddr *" addr ","
+-.BI "                                socklen_t " addrlen ","
+-.BI "                                int " flags ","
+-.BI "                                unsigned int " file_index ");"
++.BI "                                 int " sockfd ","
++.BI "                                 struct sockaddr *" addr ","
++.BI "                                 socklen_t " addrlen ","
++.BI "                                 int " flags ","
++.BI "                                 unsigned int " file_index ");"
++.BI "
++.BI "void io_uring_prep_multishot_accept(struct io_uring_sqe *" sqe ","
++.BI "                                    int " sockfd ","
++.BI "                                    struct sockaddr *" addr ","
++.BI "                                    socklen_t " addrlen ","
++.BI "                                    int " flags ");"
++.BI "
++.BI "void io_uring_prep_multishot_accept_direct(struct io_uring_sqe *" sqe ","
++.BI "                                           int " sockfd ","
++.BI "                                           struct sockaddr *" addr ","
++.BI "                                           socklen_t " addrlen ","
++.BI "                                           int " flags ");"
+ .PP
+ .SH DESCRIPTION
+ .PP
+@@ -72,6 +84,25 @@ CQE
+ .I res
+ return.
  
-+static int test_accept_multishot_wrong_arg()
-+{
-+	struct io_uring m_io_uring;
-+	struct io_uring_cqe *cqe;
-+	struct io_uring_sqe *sqe;
-+	int fd, ret;
++For a direct descriptor accept request, the
++.I file_index
++argument can be set to
++.B IORING_FILE_INDEX_ALLOC
++In this case a free entry in io_uring file table will
++be used automatically and the file index will be returned as CQE
++.I res.
++.B -ENFILE
++is otherwise returned if there is no free entries in the io_uring file table.
 +
-+	ret = io_uring_queue_init(4, &m_io_uring, 0);
-+	assert(ret >= 0);
++The multishot version accept and accept_direct perform a bit different with the
++normal ones. Users only need to issue one this kind of request to listen all
++the comming fds, each fd accepted is returned in a CQE. One thing to notice is
++io_uring_prep_multishot_accept_direct() only works in
++.B IORING_FILE_INDEX_ALLOC
++mode, which means the CQE
++.I res
++returned is a file index counted from 1 not a real fd.
 +
-+	fd = start_accept_listen(NULL, 0, 0);
-+
-+	sqe = io_uring_get_sqe(&m_io_uring);
-+	io_uring_prep_multishot_accept_direct(sqe, fd, NULL, NULL, 0);
-+	sqe->file_index = 1;
-+	ret = io_uring_submit(&m_io_uring);
-+	assert(ret == 1);
-+
-+	ret = io_uring_wait_cqe(&m_io_uring, &cqe);
-+	assert(!ret);
-+	if (cqe->res != -EINVAL) {
-+		fprintf(stderr, "file index should be IORING_FILE_INDEX_ALLOC \
-+				if its accept in multishot direct mode\n");
-+		goto err;
-+	}
-+	io_uring_cqe_seen(&m_io_uring, cqe);
-+
-+	io_uring_queue_exit(&m_io_uring);
-+	close(fd);
-+	return 0;
-+err:
-+	io_uring_queue_exit(&m_io_uring);
-+	close(fd);
-+	return 1;
-+}
-+
-+
- static int test_accept_nonblock(bool queue_before_connect, int count)
- {
- 	struct io_uring m_io_uring;
-@@ -673,6 +710,12 @@ int main(int argc, char *argv[])
- 		return ret;
- 	}
- 
-+	ret = test_accept_multishot_wrong_arg();
-+	if (ret) {
-+		fprintf(stderr, "test_accept_multishot_wrong_arg failed\n");
-+		return ret;
-+	}
-+
- 	ret = test_accept_sqpoll();
- 	if (ret) {
- 		fprintf(stderr, "test_accept_sqpoll failed\n");
+ This function prepares an async
+ .BR accept4 (2)
+ request. See that man page for details.
+@@ -81,12 +112,14 @@ None
+ .SH ERRORS
+ The CQE
+ .I res
+-field will contain the result of the operation. While the non-direct accept
+-returns the installed file descriptor as its value, the direct accept
+-returns
++field will contain the result of the operation. For singleshot accept,the
++non-direct accept returns the installed file descriptor as its value, the
++direct accept returns
+ .B 0
+ on success. The caller must know which direct descriptor was picked for this
+-request. See the related man page for details on possible values for the
++request. For multishot accept, the non-direct accept returns the installed
++file descriptor as its value, the direct accept returns the file index used on
++success. See the related man page for details on possible values for the
+ non-direct accept. Note that where synchronous system calls will return
+ .B -1
+ on failure and set
+diff --git a/man/io_uring_prep_multishot_accept.3 b/man/io_uring_prep_multishot_accept.3
+new file mode 120000
+index 000000000000..0404bf59f71a
+--- /dev/null
++++ b/man/io_uring_prep_multishot_accept.3
+@@ -0,0 +1 @@
++io_uring_prep_accept.3
+\ No newline at end of file
+diff --git a/man/io_uring_prep_multishot_accept_direct.3 b/man/io_uring_prep_multishot_accept_direct.3
+new file mode 120000
+index 000000000000..0404bf59f71a
+--- /dev/null
++++ b/man/io_uring_prep_multishot_accept_direct.3
+@@ -0,0 +1 @@
++io_uring_prep_accept.3
+\ No newline at end of file
 -- 
 2.36.0
 

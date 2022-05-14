@@ -2,58 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EBA552720C
-	for <lists+io-uring@lfdr.de>; Sat, 14 May 2022 16:35:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A3DB52720D
+	for <lists+io-uring@lfdr.de>; Sat, 14 May 2022 16:35:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233331AbiENOfW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 14 May 2022 10:35:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55362 "EHLO
+        id S233346AbiENOfY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 14 May 2022 10:35:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55410 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233346AbiENOfU (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 14 May 2022 10:35:20 -0400
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 987331FCEE
-        for <io-uring@vger.kernel.org>; Sat, 14 May 2022 07:35:19 -0700 (PDT)
-Received: by mail-pl1-x62f.google.com with SMTP id d22so10514677plr.9
-        for <io-uring@vger.kernel.org>; Sat, 14 May 2022 07:35:19 -0700 (PDT)
+        with ESMTP id S233355AbiENOfW (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 14 May 2022 10:35:22 -0400
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02C1F1FCDF
+        for <io-uring@vger.kernel.org>; Sat, 14 May 2022 07:35:21 -0700 (PDT)
+Received: by mail-pj1-x1029.google.com with SMTP id e24so10497053pjt.2
+        for <io-uring@vger.kernel.org>; Sat, 14 May 2022 07:35:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=qdGAXSdby4zffm1iNWyctAoBMUKn7tqhTgOmt6ZtLYk=;
-        b=NzTwuHZ2sltYPrY7Qa550g1DAGQv/5Hn6ISNjvELJR86t3dDlNYstvSYiA1sazmS5Y
-         MwrHa+DfuslIaHzAing8DbDqh/yeApfM+RYlPJHve8EsTjt5qGvTwwLlhRnBcWPPX0dl
-         F1gIZZJ1D2Y4p1DDASSoMqP1V8jwcf+Wpbiv9m8AveYMwqpG/8C2mc59aI8tlBvVb//A
-         qsckKHCcyZzFfFSXn2cr3rlfRpkZQpC2I3YtZrgMO4vJHCt4myJyStJHvA6Zz1ayo4dx
-         IbqEukDYSQO8E250abKgoGoPOAVUI8gXIq2wLWoNOaFqpktPHGzcI/1NXz45P+KsRz7g
-         oqBA==
+        bh=SCjl+YC+JNe7Q33BVVsOysWmiV2FuA+j2DYhAMrotF8=;
+        b=ONfgolvi2DASS3lj93zU62f9+c+uDBT501dG90coaEDzFbKILspA6Qo++gqlI/c1Ax
+         e9auEOleqmTww7+kyd2WxzcdKr8QYlxdqDoLcePjR4C6tTZQ0F6U74e6xAt0YTvA6tEC
+         0fkeGP74J3Gc7Zo8gxJwRzPDgoPbLmrE9BSMthB3US7WwscILEyW6I53aAIp2Px2pE7m
+         6gF3Zv68H0aAcYokuc5avOaoTu9+/YbrPwBK0jmahcbjRdCfs2j7qMeN7LcXg+9mG1JE
+         9Lp66WmLmdxykwwq4oLf1pDRtgAv3tqrMUGDEz1rJb8HGNTf8cfgHqwGraTsupHoOcoL
+         qgFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=qdGAXSdby4zffm1iNWyctAoBMUKn7tqhTgOmt6ZtLYk=;
-        b=JKH9xsjmsGkeraTwM/qHA+JyldWTD/B1fJv8G+eYvheQx4CLYmDmSJmJHqrwIQCMmu
-         OcHMLTV0o90KVRj0rYs7kmvDCfQbphTODOxPLmim00nBS44/9QyMw1jzJ6fdozOYo14d
-         7gRVzuGFN+28t4NyDSJLR6YultbKidK4b35vhfCUbq1wG09ZgjWV5atEQ8chw0piHHQ8
-         wT7TlkkVfOAl2+K4MyEX4zgiip2k6iiZd/buhBqmnOC+yREmTBdW2J+tpfmjuSusaMfY
-         lKanSf/Sr3CeWwwR398yEOHcbR9QEaKxvVKyfhtcnTdpAJ613Y7fnlES/wjqzn/6W7Zx
-         pAqw==
-X-Gm-Message-State: AOAM532CzRiYmT0ByTWr8njKnJXrZTPMMddDnrjJxKtrpzjkZb2pLCuy
-        /toeTcMH45rUNIBKru8ifT4rFeEY40PgxNi5
-X-Google-Smtp-Source: ABdhPJz9rBnbg+grWSToFpBPnqVnBcB09bDj7Ez9qUqXVrsmOVmpDlrZkq8f1xnZJCCeiJBttooQlw==
-X-Received: by 2002:a17:90b:1001:b0:1d8:4978:c7d5 with SMTP id gm1-20020a17090b100100b001d84978c7d5mr10219920pjb.167.1652538919064;
-        Sat, 14 May 2022 07:35:19 -0700 (PDT)
+        bh=SCjl+YC+JNe7Q33BVVsOysWmiV2FuA+j2DYhAMrotF8=;
+        b=Futn433xi5bSZUfL6YJSVQfMswftzvRnMUVJh8kH7cz5uvvbyAwQ4ZNaGsNqNptEfd
+         +SHMzzLfpcXCwcfLvKABOU7WI4tdDwx7Jd1arrHlSYlxmvvSh6worVzgcQd4Yv8xMayS
+         ZT3q/xqXtvFBbWxb4YM4iLZ217mAUXWGQaNjjjjZGPvzIUt5TdmzbC0lxCBBP9LV22t3
+         9PWU0GsROnAtRhioZWSAoadgKgdVDXxKUbBKErwSwD9AGf0O+FKwTv5kk7kcnhHWYI2f
+         w2YBBJrNrWgO5Vaj839wWdYAcyRGKC5Azki94jYL1C3evON1cEubf1VpjF64fWDmr1++
+         8LuQ==
+X-Gm-Message-State: AOAM531WkFiovq+Aq/uUjZzNYQqflGMBqfwL8weEowAXCZH81+V8ZYYd
+        VLHQTBrWw28LiaSao5dXCDFzfFd079ZPeTXC
+X-Google-Smtp-Source: ABdhPJwqLPsAljKSeA5KbV2r1DRM9YlYGQNxplrbuW53jdX+EelLCKESzV5oJ8G+Rmo+eEEloI3gEQ==
+X-Received: by 2002:a17:90b:350d:b0:1dc:6680:6f1d with SMTP id ls13-20020a17090b350d00b001dc66806f1dmr21395597pjb.27.1652538920429;
+        Sat, 14 May 2022 07:35:20 -0700 (PDT)
 Received: from HOWEYXU-MB0.tencent.com ([203.205.141.20])
-        by smtp.gmail.com with ESMTPSA id j13-20020a170902c3cd00b0015ea95948ebsm3762179plj.134.2022.05.14.07.35.17
+        by smtp.gmail.com with ESMTPSA id j13-20020a170902c3cd00b0015ea95948ebsm3762179plj.134.2022.05.14.07.35.19
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 14 May 2022 07:35:18 -0700 (PDT)
+        Sat, 14 May 2022 07:35:20 -0700 (PDT)
 From:   Hao Xu <haoxu.linux@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>,
         Pavel Begunkov <asml.silence@gmail.com>
-Subject: [PATCH 1/6] test/accept.c: close the listen fd at the end of the test
-Date:   Sat, 14 May 2022 22:35:29 +0800
-Message-Id: <20220514143534.59162-2-haoxu.linux@gmail.com>
+Subject: [PATCH 2/6] liburing.h: support multishot accept
+Date:   Sat, 14 May 2022 22:35:30 +0800
+Message-Id: <20220514143534.59162-3-haoxu.linux@gmail.com>
 X-Mailer: git-send-email 2.36.0
 In-Reply-To: <20220514143534.59162-1-haoxu.linux@gmail.com>
 References: <20220514143534.59162-1-haoxu.linux@gmail.com>
@@ -71,30 +71,52 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 From: Hao Xu <howeyxu@tencent.com>
 
-Close the listen fd when it goes to the end, otherwise it may causes
-issues for the next tests
+Add a new api to leverage the multishot mode accept, this feature is to
+achieve one accept request for all listened events.
 
 Signed-off-by: Hao Xu <howeyxu@tencent.com>
 ---
- test/accept.c | 2 ++
- 1 file changed, 2 insertions(+)
+ src/include/liburing.h          | 10 ++++++++++
+ src/include/liburing/io_uring.h |  5 +++++
+ 2 files changed, 15 insertions(+)
 
-diff --git a/test/accept.c b/test/accept.c
-index c591e761b43b..a0f4a13f5975 100644
---- a/test/accept.c
-+++ b/test/accept.c
-@@ -425,9 +425,11 @@ static int test_accept_cancel(unsigned usecs, unsigned int nr)
- 	}
- 
- 	io_uring_queue_exit(&m_io_uring);
-+	close(fd);
- 	return 0;
- err:
- 	io_uring_queue_exit(&m_io_uring);
-+	close(fd);
- 	return 1;
+diff --git a/src/include/liburing.h b/src/include/liburing.h
+index 5c03061388aa..cf50383c8e63 100644
+--- a/src/include/liburing.h
++++ b/src/include/liburing.h
+@@ -502,6 +502,16 @@ static inline void io_uring_prep_accept_direct(struct io_uring_sqe *sqe, int fd,
+ 	__io_uring_set_target_fixed_file(sqe, file_index);
  }
  
++static inline void io_uring_prep_multishot_accept(struct io_uring_sqe *sqe,
++						  int fd, struct sockaddr *addr,
++						  socklen_t *addrlen, int flags)
++{
++	io_uring_prep_rw(IORING_OP_ACCEPT, sqe, fd, addr, 0,
++				(__u64) (unsigned long) addrlen);
++	sqe->accept_flags = (__u32) flags;
++	sqe->ioprio |= IORING_ACCEPT_MULTISHOT;
++}
++
+ static inline void io_uring_prep_cancel(struct io_uring_sqe *sqe,
+ 					__u64 user_data, int flags)
+ {
+diff --git a/src/include/liburing/io_uring.h b/src/include/liburing/io_uring.h
+index bfb3548fff96..46765d2697ba 100644
+--- a/src/include/liburing/io_uring.h
++++ b/src/include/liburing/io_uring.h
+@@ -434,6 +434,11 @@ struct io_uring_getevents_arg {
+ 	__u64	ts;
+ };
+ 
++/*
++ * accept flags stored in sqe->ioprio
++ */
++#define IORING_ACCEPT_MULTISHOT	(1U << 0)
++
+ #ifdef __cplusplus
+ }
+ #endif
 -- 
 2.36.0
 

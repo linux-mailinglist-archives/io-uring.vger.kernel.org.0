@@ -2,115 +2,74 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 31D45527848
-	for <lists+io-uring@lfdr.de>; Sun, 15 May 2022 16:52:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DFDFC527854
+	for <lists+io-uring@lfdr.de>; Sun, 15 May 2022 17:08:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237314AbiEOOwo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 15 May 2022 10:52:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57066 "EHLO
+        id S237342AbiEOPH6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 15 May 2022 11:07:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237325AbiEOOwf (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 15 May 2022 10:52:35 -0400
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8645118B0C
-        for <io-uring@vger.kernel.org>; Sun, 15 May 2022 07:52:23 -0700 (PDT)
-Received: by mail-io1-f71.google.com with SMTP id n5-20020a056602340500b0065a9f426e7aso8784403ioz.0
-        for <io-uring@vger.kernel.org>; Sun, 15 May 2022 07:52:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=CDM6KLJWHiUdyyYgu+q/QybYO2uV3H4N8wCbvfHehAE=;
-        b=WLr1cRYoIsYQn+Fv1nJ95FGQhJoj6dVUu66/Q4n64DM0zcLx7trgMg1QAls68JraEx
-         7u3lkpFLNc6IPnoQu71tanaG85xP7YVNtvs5Up7qWt6UcWFCrX1tNjS4cnq3zVbk28Mw
-         aOW5p7ooyktUEased+SNDZfMhBq+rfjvtjfsN87mECgIL8M5Ekmr/UbpR/2rvGiwW2l3
-         49fDETVNo1SlHGU58rLPwLcgMNBCsAnR9OoyzzqwuKsAZMysItXyB2x40Rt0GCzO9KzY
-         n87//uaHQ3WxAc/nPJ1Gq1UUKhGADIGhhYwfEZbUStsr/ns0r7kPFjSbwnzwWPFNROjq
-         tIuA==
-X-Gm-Message-State: AOAM531HLX/1XQQZfhCizLrznTqMSEHaL667hKEVwhdCf9TAPr7ORQE7
-        /kkFefi75+8Nha+qGMoZwgDhg1VpeVD8aCP5Jj2Vud3ejkGE
-X-Google-Smtp-Source: ABdhPJy+c3igZ6REoGHXaRIHK/l8izrNbiLeqCZutXsVaftSfsxCHQYdN0Hli0eV1B2jfCu/Kee8cDqe9vXVpoQcHKHRgcgs4pdF
+        with ESMTP id S236488AbiEOPH5 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 15 May 2022 11:07:57 -0400
+Received: from pv50p00im-zteg10011501.me.com (pv50p00im-zteg10011501.me.com [17.58.6.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FA463123F
+        for <io-uring@vger.kernel.org>; Sun, 15 May 2022 08:07:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+        s=1a1hai; t=1652627276;
+        bh=7kfnBr7oduNV3oGO9elY3+KmpdYoC+cs7xv4N7gYU10=;
+        h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+        b=rTv73p6r1+OOpkF7W6Juc8638PlGiMTCYJ6a478qAeNX+n8SWQyp8JmN/LpwH2I7a
+         WAX20pNUI+zCUy4tYiqjjLnlsyYQCxPQM2zIZc4AuXnAcyV9bRG3ujugW05ibN4aJV
+         LsB04Wz0Cf2ooP5VKxt9Y7HpvZvQCT53zPoey5tgbAh8zsidHBHPhZ0MocZLvNAqXU
+         IfIrNhiovEa5HdEPfsHarVVZdLsZ5LCmYgH90DzWpqSmjOyQb8U3KkeKta/zyL4iHC
+         3BHZqCuMk3X524YqDGEOWE1kRg90Vy2O8QoYj3eWO9Bb3hEc49JYKvjIUjWUsAqY+b
+         oJW5b7P+0FQLg==
+Received: from [192.168.31.208] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+        by pv50p00im-zteg10011501.me.com (Postfix) with ESMTPSA id 2A05B2E00B5;
+        Sun, 15 May 2022 15:07:53 +0000 (UTC)
+Message-ID: <d025270d-aa1d-899b-4188-7ac627bbbdc5@icloud.com>
+Date:   Sun, 15 May 2022 23:07:49 +0800
 MIME-Version: 1.0
-X-Received: by 2002:a6b:e406:0:b0:657:baed:ec0b with SMTP id
- u6-20020a6be406000000b00657baedec0bmr6242365iog.27.1652626342805; Sun, 15 May
- 2022 07:52:22 -0700 (PDT)
-Date:   Sun, 15 May 2022 07:52:22 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000001c058f05df0e0eea@google.com>
-Subject: [syzbot] WARNING: still has locks held in io_ring_submit_lock
-From:   syzbot <syzbot+987d7bb19195ae45208c@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, f.fainelli@gmail.com,
-        io-uring@vger.kernel.org, kuba@kernel.org,
-        linux-kernel@vger.kernel.org, olteanv@gmail.com,
-        syzkaller-bugs@googlegroups.com, xiam0nd.tong@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH] io_uring: avoid iowq again trap
+Content-Language: en-US
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>
+References: <f168b4f24181942f3614dd8ff648221736f572e6.1652433740.git.asml.silence@gmail.com>
+ <5b4e6d37-f25d-099a-81a7-9125eb958251@icloud.com>
+ <05310b9c-bfe1-3c75-f3e2-eb9d87925db0@gmail.com>
+From:   Hao Xu <haoxu.linux@icloud.com>
+In-Reply-To: <05310b9c-bfe1-3c75-f3e2-eb9d87925db0@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.486,18.0.858
+ definitions=2022-05-15_08:2022-05-13,2022-05-15 signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 clxscore=1015 mlxscore=0
+ mlxlogscore=628 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-2009150000 definitions=main-2205150083
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    1e1b28b936ae Add linux-next specific files for 20220513
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=10872211f00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e4eb3c0c4b289571
-dashboard link: https://syzkaller.appspot.com/bug?extid=987d7bb19195ae45208c
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1141bd21f00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=167ebdbef00000
-
-The issue was bisected to:
-
-commit 6da69b1da130e7d96766042750cd9f902e890eba
-Author: Xiaomeng Tong <xiam0nd.tong@gmail.com>
-Date:   Mon Mar 28 03:24:31 2022 +0000
-
-    net: dsa: bcm_sf2_cfp: fix an incorrect NULL check on list iterator
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1652eb11f00000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=1552eb11f00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1152eb11f00000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+987d7bb19195ae45208c@syzkaller.appspotmail.com
-Fixes: 6da69b1da130 ("net: dsa: bcm_sf2_cfp: fix an incorrect NULL check on list iterator")
-
-====================================
-WARNING: iou-wrk-3613/3623 still has locks held!
-5.18.0-rc6-next-20220513-syzkaller #0 Not tainted
-------------------------------------
-1 lock held by iou-wrk-3613/3623:
- #0: ffff888140bfe0a8 (&ctx->uring_lock){+.+.}-{3:3}, at: io_ring_submit_lock+0x75/0xc0 fs/io_uring.c:1494
-
-stack backtrace:
-CPU: 0 PID: 3623 Comm: iou-wrk-3613 Not tainted 5.18.0-rc6-next-20220513-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:106
- try_to_freeze include/linux/freezer.h:66 [inline]
- get_signal+0x1424/0x2600 kernel/signal.c:2647
- io_wqe_worker+0x64b/0xdb0 fs/io-wq.c:663
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:297
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+On 5/15/22 22:21, Pavel Begunkov wrote:
+> On 5/15/22 08:31, Hao Xu wrote:
+>> On 5/13/22 18:24, Pavel Begunkov wrote:
+>>> If an opcode handler semi-reliably returns -EAGAIN, io_wq_submit_work()
+>>
+>> Hi Pavel,
+>> When would it return -EAGAIN in non-IOPOLL mode?
+> 
+> I didn't see it in the wild but stumbled upon while preparing some
+> future patches. I hope it's not a real issue, but it's better to not
+> leave a way for some driver/etc. to abuse it.
+> 
+> 
+Gotcha, thanks.

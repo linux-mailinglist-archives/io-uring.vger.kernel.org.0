@@ -2,64 +2,32 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 330B7528CA9
-	for <lists+io-uring@lfdr.de>; Mon, 16 May 2022 20:14:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43EEF528CC2
+	for <lists+io-uring@lfdr.de>; Mon, 16 May 2022 20:18:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343736AbiEPSOA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 16 May 2022 14:14:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41290 "EHLO
+        id S237428AbiEPSSX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 16 May 2022 14:18:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344636AbiEPSN6 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 16 May 2022 14:13:58 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 897B23DA69;
-        Mon, 16 May 2022 11:13:55 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id j6so30195290ejc.13;
-        Mon, 16 May 2022 11:13:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=jCwtnCEtWoS4wCjhgbr7CWNZGicJaxfw2KD2HwoiN7Y=;
-        b=ZpDsG84gAHO20eeA/45nqEQP+jYfssQPEG6EJ+xcAQ+4lGfKv+LNKKXd+SkJumRz3i
-         C4SpaCavvJ+qFkHMCgVoeI1Fc8LH5oWO1Sgf1GbvHplcd9Kv3n4kkZzjsUVi8yDowmJt
-         AhaLEznUoGZs3CcLNEG3xs9CLFZOf2wcYLN7paaQ7c9j2ocCVkr9yPU63JSSIx8YxX5R
-         RM/JEVoWf4eB/GRv1WZUTx+dnYFSiDk0+KMu8vsRX0G6lKclc4JcLsHB2b5EJ2Eq59jH
-         jGHefHaOaPGH+CE0R6OHn5tkz+nxVXWQRUA1/phMyFe0q83wjcqBgAhedZjssz10W7F3
-         NxqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=jCwtnCEtWoS4wCjhgbr7CWNZGicJaxfw2KD2HwoiN7Y=;
-        b=dgFT7gQb4U5ST2kS89TU1NwWYARSkGvgBp4VI+zeL9GO66bXGsWDAwdn4QdJwP/Ym8
-         VvphKCEtQo8sdnWO/xelasj+RZPI9aN1rtmi9el3ZOL6lnNO0xQrcNq4JTGrsyVwgxTg
-         kcR/gldnpUjzVPhUKOxKhRz/JO469yPQ1BkcEDZhT/a0sUKT9EKzK9/oJKmzNnFtFAnd
-         vBFHNl17mIXiqyiGPCu4qhaK77ASCauD/xR6QScIxSKvEbuFTYb8JvGGyIAzRxUF/Dau
-         Dz5LAJEHZrNgL6hQU3Omoq2+stz8ZLYEJip209MbUU+a8mLdeSXxd1ylu6HtqNeCOLca
-         dmQg==
-X-Gm-Message-State: AOAM532dbL7gxMf+cYTD1C1mPlW2LS9nt+dFD9qzh9zqhs9NswzMB+xE
-        gfybpZB1p0pALyZnHmW7my0isguSuWo=
-X-Google-Smtp-Source: ABdhPJzQaHtbrzv5AT/9yYAuuoygzwcm04GUa6WVFkn9kftMNYAKDPXLWGTDMMY3HX/Y4UyEy342yQ==
-X-Received: by 2002:a17:906:dc8f:b0:6f4:e6df:a48d with SMTP id cs15-20020a170906dc8f00b006f4e6dfa48dmr16746939ejc.206.1652724833996;
-        Mon, 16 May 2022 11:13:53 -0700 (PDT)
-Received: from [192.168.8.198] ([85.255.232.74])
-        by smtp.gmail.com with ESMTPSA id my35-20020a1709065a6300b006f3ef214dd2sm33950ejc.56.2022.05.16.11.13.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 May 2022 11:13:53 -0700 (PDT)
-Message-ID: <152e8d96-28e9-0dda-8782-10690195643b@gmail.com>
-Date:   Mon, 16 May 2022 19:13:05 +0100
+        with ESMTP id S1344716AbiEPSSU (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 16 May 2022 14:18:20 -0400
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [IPv6:2a01:488:42:1000:50ed:8234::])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDEAD2AC77;
+        Mon, 16 May 2022 11:17:59 -0700 (PDT)
+Received: from [2a02:8108:963f:de38:eca4:7d19:f9a2:22c5]; authenticated
+        by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        id 1nqfI5-0007Uo-CC; Mon, 16 May 2022 20:17:57 +0200
+Message-ID: <469e5a9b-c7e0-6365-c353-d831ff1c5071@leemhuis.info>
+Date:   Mon, 16 May 2022 20:17:56 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
+ Thunderbird/91.9.0
 Subject: Re: [REGRESSION] lxc-stop hang on 5.17.x kernels
 Content-Language: en-US
-To:     Daniel Harding <dharding@living180.net>
+To:     Daniel Harding <dharding@living180.net>,
+        Pavel Begunkov <asml.silence@gmail.com>
 Cc:     regressions@lists.linux.dev, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Thorsten Leemhuis <regressions@leemhuis.info>,
-        Jens Axboe <axboe@kernel.dk>,
+        linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
         Christian Brauner <christian.brauner@ubuntu.com>
 References: <7925e262-e0d4-6791-e43b-d37e9d693414@living180.net>
  <6ad38ecc-b2a9-f0e9-f7c7-f312a2763f97@kernel.dk>
@@ -78,21 +46,24 @@ References: <7925e262-e0d4-6791-e43b-d37e9d693414@living180.net>
  <da56fa5f-0624-413e-74a1-545993940d27@gmail.com>
  <3fc08243-f9e0-9cec-4207-883c55ccff78@living180.net>
  <13028ff4-3565-f09e-818c-19e5f95fa60f@living180.net>
-From:   Pavel Begunkov <asml.silence@gmail.com>
+From:   Thorsten Leemhuis <regressions@leemhuis.info>
 In-Reply-To: <13028ff4-3565-f09e-818c-19e5f95fa60f@living180.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1652725079;9603d8f0;
+X-HE-SMSGID: 1nqfI5-0007Uo-CC
+X-Spam-Status: No, score=-2.3 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/16/22 16:13, Daniel Harding wrote:
+
+
+On 16.05.22 17:13, Daniel Harding wrote:
 > On 5/16/22 16:57, Daniel Harding wrote:
 >> On 5/16/22 16:25, Pavel Begunkov wrote:
 >>> On 5/16/22 13:12, Pavel Begunkov wrote:
@@ -115,7 +86,8 @@ On 5/16/22 16:13, Daniel Harding wrote:
 >>>>>>>>>>>>>>>>> config is a
 >>>>>>>>>>>>>>>>> very lightly modified version of Fedora's generic kernel
 >>>>>>>>>>>>>>>>> config. After
->>>>>>>>>>>>>>>>> moving from the 5.16.x series to the 5.17.x kernel series, I
+>>>>>>>>>>>>>>>>> moving from the 5.16.x series to the 5.17.x kernel
+>>>>>>>>>>>>>>>>> series, I
 >>>>>>>>>>>>>>>>> started
 >>>>>>>>>>>>>>>>> noticed frequent hangs in lxc-stop. It doesn't happen 100%
 >>>>>>>>>>>>>>>>> of the
@@ -123,22 +95,31 @@ On 5/16/22 16:13, Daniel Harding wrote:
 >>>>>>>>>>>>>>>>> narrowed
 >>>>>>>>>>>>>>>>> down the issue to commit
 >>>>>>>>>>>>>>>>> aa43477b040251f451db0d844073ac00a8ab66ee:
->>>>>>>>>>>>>>>>> io_uring: poll rework. Testing indicates the problem is still
+>>>>>>>>>>>>>>>>> io_uring: poll rework. Testing indicates the problem is
+>>>>>>>>>>>>>>>>> still
 >>>>>>>>>>>>>>>>> present
->>>>>>>>>>>>>>>>> in 5.18-rc5. Unfortunately I do not have the expertise with the
->>>>>>>>>>>>>>>>> codebases of either lxc or io-uring to try to debug the problem
->>>>>>>>>>>>>>>>> further on my own, but I can easily apply patches to any of the
->>>>>>>>>>>>>>>>> involved components (lxc, liburing, kernel) and rebuild for
+>>>>>>>>>>>>>>>>> in 5.18-rc5. Unfortunately I do not have the expertise
+>>>>>>>>>>>>>>>>> with the
+>>>>>>>>>>>>>>>>> codebases of either lxc or io-uring to try to debug the
+>>>>>>>>>>>>>>>>> problem
+>>>>>>>>>>>>>>>>> further on my own, but I can easily apply patches to
+>>>>>>>>>>>>>>>>> any of the
+>>>>>>>>>>>>>>>>> involved components (lxc, liburing, kernel) and rebuild
+>>>>>>>>>>>>>>>>> for
 >>>>>>>>>>>>>>>>> testing or
 >>>>>>>>>>>>>>>>> validation.  I am also happy to provide any further
 >>>>>>>>>>>>>>>>> information that
->>>>>>>>>>>>>>>>> would be helpful with reproducing or debugging the problem.
->>>>>>>>>>>>>>>> Do you have a recipe to reproduce the hang? That would make it
+>>>>>>>>>>>>>>>>> would be helpful with reproducing or debugging the
+>>>>>>>>>>>>>>>>> problem.
+>>>>>>>>>>>>>>>> Do you have a recipe to reproduce the hang? That would
+>>>>>>>>>>>>>>>> make it
 >>>>>>>>>>>>>>>> significantly easier to figure out.
 >>>>>>>>>>>>>>> I can reproduce it with just the following:
 >>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>       sudo lxc-create --n lxc-test --template download --bdev
->>>>>>>>>>>>>>> dir --dir /var/lib/lxc/lxc-test/rootfs -- -d ubuntu -r bionic
+>>>>>>>>>>>>>>>       sudo lxc-create --n lxc-test --template download
+>>>>>>>>>>>>>>> --bdev
+>>>>>>>>>>>>>>> dir --dir /var/lib/lxc/lxc-test/rootfs -- -d ubuntu -r
+>>>>>>>>>>>>>>> bionic
 >>>>>>>>>>>>>>> -a amd64
 >>>>>>>>>>>>>>>       sudo lxc-start -n lxc-test
 >>>>>>>>>>>>>>>       sudo lxc-stop -n lxc-test
@@ -146,11 +127,13 @@ On 5/16/22 16:13, Daniel Harding wrote:
 >>>>>>>>>>>>>>> The lxc-stop command never exits and the container continues
 >>>>>>>>>>>>>>> running.
 >>>>>>>>>>>>>>> If that isn't sufficient to reproduce, please let me know.
->>>>>>>>>>>>>> Thanks, that's useful! I'm at a conference this week and hence have
+>>>>>>>>>>>>>> Thanks, that's useful! I'm at a conference this week and
+>>>>>>>>>>>>>> hence have
 >>>>>>>>>>>>>> limited amount of time to debug, hopefully Pavel has time to
 >>>>>>>>>>>>>> take a look
 >>>>>>>>>>>>>> at this.
->>>>>>>>>>>>> Didn't manage to reproduce. Can you try, on both the good and bad
+>>>>>>>>>>>>> Didn't manage to reproduce. Can you try, on both the good
+>>>>>>>>>>>>> and bad
 >>>>>>>>>>>>> kernel, to do:
 >>>>>>>>>>>> Same here, it doesn't reproduce for me
 >>>>>>>>>>> OK, sorry it wasn't something simple.
@@ -159,23 +142,30 @@ On 5/16/22 16:13, Daniel Harding wrote:
 >>>>>>>>>>>>>
 >>>>>>>>>>>>> # cp /sys/kernel/debug/tracing/trace ~/iou-trace
 >>>>>>>>>>>>>
->>>>>>>>>>>>> so we can see what's going on? Looking at the source, lxc is just
+>>>>>>>>>>>>> so we can see what's going on? Looking at the source, lxc
+>>>>>>>>>>>>> is just
 >>>>>>>>>>>>> using
->>>>>>>>>>>>> plain POLL_ADD, so I'm guessing it's not getting a notification
+>>>>>>>>>>>>> plain POLL_ADD, so I'm guessing it's not getting a
+>>>>>>>>>>>>> notification
 >>>>>>>>>>>>> when it
->>>>>>>>>>>>> expects to, or it's POLL_REMOVE not doing its job. If we have a
+>>>>>>>>>>>>> expects to, or it's POLL_REMOVE not doing its job. If we
+>>>>>>>>>>>>> have a
 >>>>>>>>>>>>> trace
->>>>>>>>>>>>> from both a working and broken kernel, that might shed some light
+>>>>>>>>>>>>> from both a working and broken kernel, that might shed some
+>>>>>>>>>>>>> light
 >>>>>>>>>>>>> on it.
 >>>>>>>>>>> It's late in my timezone, but I'll try to work on getting those
 >>>>>>>>>>> traces tomorrow.
 >>>>>>>>>> I think I got it, I've attached a trace.
 >>>>>>>>>>
->>>>>>>>>> What's interesting is that it issues a multi shot poll but I don't
->>>>>>>>>> see any kind of cancellation, neither cancel requests nor task/ring
+>>>>>>>>>> What's interesting is that it issues a multi shot poll but I
+>>>>>>>>>> don't
+>>>>>>>>>> see any kind of cancellation, neither cancel requests nor
+>>>>>>>>>> task/ring
 >>>>>>>>>> exit. Perhaps have to go look at lxc to see how it's supposed
 >>>>>>>>>> to work
->>>>>>>>> Yes, that looks exactly like my bad trace.  I've attached good trace
+>>>>>>>>> Yes, that looks exactly like my bad trace.  I've attached good
+>>>>>>>>> trace
 >>>>>>>>> (captured with linux-5.16.19) and a bad trace (captured with
 >>>>>>>>> linux-5.17.5).  These are the differences I noticed with just a
 >>>>>>>>> visual scan:
@@ -185,17 +175,21 @@ On 5/16/22 16:13, Daniel Harding wrote:
 >>>>>>>>> io_uring_submit_sqe calls throughout the trace, while in the bad
 >>>>>>>>> trace, there are none.
 >>>>>>>>> * The good trace uses a mask of c3 for io_uring_task_add much more
->>>>>>>>> often than the bad trace:  the bad trace uses a mask of c3 only for
+>>>>>>>>> often than the bad trace:  the bad trace uses a mask of c3 only
+>>>>>>>>> for
 >>>>>>>>> the very last call to io_uring_task_add, but a mask of 41 for the
 >>>>>>>>> other calls.
 >>>>>>>>> * In the good trace, many of the io_uring_complete calls have a
->>>>>>>>> result of 195, while in the bad trace, they all have a result of 1.
+>>>>>>>>> result of 195, while in the bad trace, they all have a result
+>>>>>>>>> of 1.
 >>>>>>>>>
->>>>>>>>> I don't know whether any of those things are significant or not, but
+>>>>>>>>> I don't know whether any of those things are significant or
+>>>>>>>>> not, but
 >>>>>>>>> that's what jumped out at me.
 >>>>>>>>>
 >>>>>>>>> I have also attached a copy of the script I used to generate the
->>>>>>>>> traces.  If there is anything further I can to do help debug, please
+>>>>>>>>> traces.  If there is anything further I can to do help debug,
+>>>>>>>>> please
 >>>>>>>>> let me know.
 >>>>>>>> Good observations! thanks for traces.
 >>>>>>>>
@@ -204,24 +198,47 @@ On 5/16/22 16:13, Daniel Harding wrote:
 >>>>>>>> didn't fully support some cases. If that's the reason, than
 >>>>>>>> the userspace/lxc is misusing the ABI. At least, that's the
 >>>>>>>> working hypothesis for now, need to check lxc.
->>>>>>> So, I looked at the lxc source code, and it appears to at least try to
+>>>>>>> So, I looked at the lxc source code, and it appears to at least
+>>>>>>> try to
 >>>>>>> handle the case of multi-shot being downgraded to one-shot.  I don't
 >>>>>>> know enough to know if the code is actually correct however:
 >>>>>>>
 >>>>>>> https://github.com/lxc/lxc/blob/7e37cc96bb94175a8e351025d26cc35dc2d10543/src/lxc/mainloop.c#L165-L189
+>>>>>>>
 >>>>>>> https://github.com/lxc/lxc/blob/7e37cc96bb94175a8e351025d26cc35dc2d10543/src/lxc/mainloop.c#L254
+>>>>>>>
 >>>>>>> https://github.com/lxc/lxc/blob/7e37cc96bb94175a8e351025d26cc35dc2d10543/src/lxc/mainloop.c#L288-L290
->>>>>> Hi, this is your Linux kernel regression tracker. Nothing happened here
+>>>>>>>
+>>>>>> Hi, this is your Linux kernel regression tracker. Nothing happened
+>>>>>> here
 >>>>>> for round about ten days now afaics; or did the discussion continue
 >>>>>> somewhere else.
 >>>>>>
->>>>>>  From what I gathered from this discussion is seems the root cause might
+>>>>>>  From what I gathered from this discussion is seems the root cause
+>>>>>> might
 >>>>>> be in LXC, but it was exposed by kernel change. That makes it sill a
->>>>>> kernel regression that should be fixed; or is there a strong reason why
+>>>>>> kernel regression that should be fixed; or is there a strong
+>>>>>> reason why
 >>>>>> we should let this one slip?
 >>>>>
->>>>> No, there hasn't been any discussion since the email you replied to. I've done a bit more testing on my end, but without anything conclusive.  The one thing I can say is that my testing shows that LXC does correctly handle multi-shot poll requests which were being downgraded to one-shot in 5.16.x kernels, which I think invalidates Pavel's theory.  In 5.17.x kernels, those same poll requests are no longer being downgraded to one-shot requests, and thus under 5.17.x LXC is no longer re-arming those poll requests (but also shouldn't need to, according to what is being returned by the kernel). I don't know if this change in kernel behavior is related to the hang, or if it is just a side effect of other io-uring changes that made it into 5.17.  Nothing in the LXC's usage of io-uring seems obviously incorrect to me, but I am far from an expert.  I also did some work toward creating a simpler reproducer, without success (I was able to get a simple program using io-uring 
->>>>> running, but never could get it to hang).  ISTM that this is still a kernel regression, unless someone can point out a definite fault in the way LXC is using io-uring.
+>>>>> No, there hasn't been any discussion since the email you replied
+>>>>> to. I've done a bit more testing on my end, but without anything
+>>>>> conclusive.  The one thing I can say is that my testing shows that
+>>>>> LXC does correctly handle multi-shot poll requests which were being
+>>>>> downgraded to one-shot in 5.16.x kernels, which I think invalidates
+>>>>> Pavel's theory.  In 5.17.x kernels, those same poll requests are no
+>>>>> longer being downgraded to one-shot requests, and thus under 5.17.x
+>>>>> LXC is no longer re-arming those poll requests (but also shouldn't
+>>>>> need to, according to what is being returned by the kernel). I
+>>>>> don't know if this change in kernel behavior is related to the
+>>>>> hang, or if it is just a side effect of other io-uring changes that
+>>>>> made it into 5.17.  Nothing in the LXC's usage of io-uring seems
+>>>>> obviously incorrect to me, but I am far from an expert.  I also did
+>>>>> some work toward creating a simpler reproducer, without success (I
+>>>>> was able to get a simple program using io-uring running, but never
+>>>>> could get it to hang).  ISTM that this is still a kernel
+>>>>> regression, unless someone can point out a definite fault in the
+>>>>> way LXC is using io-uring.
 >>>>
 >>>> Haven't had time to debug it. Apparently LXC is stuck on
 >>>> read(2) terminal fd. Not yet clear what is the reason.
@@ -240,7 +257,8 @@ On 5/16/22 16:13, Daniel Harding wrote:
 >>> 1: kernel: poll fires, add CQE1
 >>> 2: kernel: poll fires again, add CQE2
 >>> 3: userspace: get CQE1
->>> 4: userspace: read(terminal_fd); // reads all data, for both CQE1 and CQE2
+>>> 4: userspace: read(terminal_fd); // reads all data, for both CQE1 and
+>>> CQE2
 >>> 5: userspace: get CQE2
 >>> 6: userspace: read(terminal_fd); // nothing to read, hangs here
 >>>
@@ -252,17 +270,48 @@ On 5/16/22 16:13, Daniel Harding wrote:
 >>> Cc: Christian Brauner
 >>>
 >>> Christian, in case you may have some input on the LXC side of things.
->>> Daniel reported an LXC problem when it uses io_uring multishot poll requests.
->>> Before aa43477b04025 ("io_uring: poll rework"), multishot poll requests for
->>> tty/pty and some other files were always downgraded to oneshots, which had
->>> been fixed by the commit and exposed the problem. I hope the example above
+>>> Daniel reported an LXC problem when it uses io_uring multishot poll
+>>> requests.
+>>> Before aa43477b04025 ("io_uring: poll rework"), multishot poll
+>>> requests for
+>>> tty/pty and some other files were always downgraded to oneshots,
+>>> which had
+>>> been fixed by the commit and exposed the problem. I hope the example
+>>> above
 >>> explains it, but please let me know if it needs more details
 >>
->> Pavel, I had actually just started a draft email with the same theory (although you stated it much more clearly than I could have).  I'm working on debugging the LXC side, but I'm pretty sure the issue is due to LXC using blocking reads and getting stuck exactly as you describe.  If I can confirm this, I'll go ahead and mark this regression as invalid and file an issue with LXC. Thanks for your help and patience.
+>> Pavel, I had actually just started a draft email with the same theory
+>> (although you stated it much more clearly than I could have).  I'm
+>> working on debugging the LXC side, but I'm pretty sure the issue is
+>> due to LXC using blocking reads and getting stuck exactly as you
+>> describe.  If I can confirm this, I'll go ahead and mark this
+>> regression as invalid and file an issue with LXC. Thanks for your help
+>> and patience.
 > 
-> Yes, it does appear that was the problem.  The attach POC patch against LXC fixes the hang.  The kernel is working as intended.
+> Yes, it does appear that was the problem.  The attach POC patch against
+> LXC fixes the hang.  The kernel is working as intended.
+> 
+> #regzbot invalid:  userspace programming error
 
-Daniel, that's great, thanks for confirming!
+Hmmm, not sure if I like this. So yes, this might be a bug in LXC, but
+afaics it's a bug that was exposed by kernel change in 5.17 (correct me
+if I'm wrong!). The problem thus still qualifies as a kernel regression
+that normally needs to be fixed, as can be seen my some of the quotes
+from Linus in this file:
+https://www.kernel.org/doc/html/latest/process/handling-regressions.html
 
--- 
-Pavel Begunkov
+Reg. the "normally": there are situations when we let a regression like
+this slip -- for example if this particular use case is really odd, so
+that the regression only occurs for very very few users. Is that the
+case here? Or will most systems with a current or older version of LXC
+show the reported problem if they are updated to 5.17 without updating
+to a fixed LXC version as well? Then I'd say we likely should try to
+find a workaround, as Linus otherwise won't be happy if he ever stumbles
+about this thread.
+
+Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
+
+P.S.: As the Linux kernel's regression tracker I deal with a lot of
+reports and sometimes miss something important when writing mails like
+this. If that's the case here, don't hesitate to tell me in a public
+reply, it's in everyone's interest to set the public record straight

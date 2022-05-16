@@ -2,60 +2,29 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 06CE5528CCC
-	for <lists+io-uring@lfdr.de>; Mon, 16 May 2022 20:22:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7677B528D23
+	for <lists+io-uring@lfdr.de>; Mon, 16 May 2022 20:34:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344704AbiEPSWP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 16 May 2022 14:22:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59656 "EHLO
+        id S236252AbiEPSeX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 16 May 2022 14:34:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344665AbiEPSWM (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 16 May 2022 14:22:12 -0400
-Received: from mail-il1-x12c.google.com (mail-il1-x12c.google.com [IPv6:2607:f8b0:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAF682BB00
-        for <io-uring@vger.kernel.org>; Mon, 16 May 2022 11:22:10 -0700 (PDT)
-Received: by mail-il1-x12c.google.com with SMTP id l15so11085656ilh.3
-        for <io-uring@vger.kernel.org>; Mon, 16 May 2022 11:22:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=fi2MKK4RDnx6306yvIj3WqOA9+3aIysOXF+Rc+RJb4Y=;
-        b=ZoeYipp1srp2zffS6xSdw3auO/PUsqr9RF6aFDmflEnta+cN9h3QQekvih8nXjtLzx
-         denBn/B1SfVOfEOGy2MF80u8pStM64jj/Q2zsXN+0DFTuPMdMb/kksBYYo5pDGgM6Yt+
-         fQrwdiKbkUsAUy4DQF5f5RGSkh1OWCthVya+Z8j8X4Bt7hdKTcT7PU0zWixT1OJgcek/
-         srWG6vzSTBHbi3Je60NibFukSh1mtN5de+TrSHi34uZCkJcKJYnVvJECuvwSJucjknSV
-         D6xDfmCN71FptFkL1m+92AWgmDlknvKgLHAtCLgI4FND7h1wZvCv4Q/JcGlY1n3RjpjN
-         00JA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=fi2MKK4RDnx6306yvIj3WqOA9+3aIysOXF+Rc+RJb4Y=;
-        b=JuV+tNW70+Sg1FiaDx4UyXe4z/i7/cMQog9e8tDv++Q3LjZq9oDMFDJZDLIz3sd01O
-         lsLfOI2CMRl7i2Ray5czMe/RgwcdD6617ZP5qfnMXEdtd0av3uiy9h2DTKHBzhJI0b3N
-         GDczfUT3QbA6zfHjgowznKVtcGeWbUiKMPDV+0PNhcR+lsKCTTx/ngoFzpNO2ih8DVM6
-         EyHFtZAE2qydyBL3tNpIw8HMaE4Fz28+8Tnp08gt2Gq6QJpuVI41G8tZMgpPPSZmvc/1
-         +TqbrYv8MmJfqimw/YO3bNW43PhYlGH2FVK6VgkGB1JOMpdA5ZtMCDP4aRH5N5WPbYZj
-         0MbA==
-X-Gm-Message-State: AOAM532lavbinc8ypd936b51+XorBkqxXdf2sB8W7NblguSR0b6xk3tI
-        dt/qG0KPw3Za9eYDt4X5yUOIbw==
-X-Google-Smtp-Source: ABdhPJwu+uko3W1bDT97qFkqQc86IbLg5bTX+TVEm+Bg5/uK411UrX/M11NqCONlxy6V9sq7qROTPA==
-X-Received: by 2002:a05:6e02:1c27:b0:2cf:6de9:5342 with SMTP id m7-20020a056e021c2700b002cf6de95342mr9584457ilh.176.1652725329933;
-        Mon, 16 May 2022 11:22:09 -0700 (PDT)
-Received: from [192.168.1.172] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id l44-20020a026a2c000000b0032b3a7817d3sm2964148jac.151.2022.05.16.11.22.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 May 2022 11:22:08 -0700 (PDT)
-Message-ID: <eaee4ea1-8e5a-dde8-472d-44241d992037@kernel.dk>
-Date:   Mon, 16 May 2022 12:22:07 -0600
+        with ESMTP id S229681AbiEPSeW (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 16 May 2022 14:34:22 -0400
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [IPv6:2a01:488:42:1000:50ed:8234::])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1A0CA1B7;
+        Mon, 16 May 2022 11:34:20 -0700 (PDT)
+Received: from [2a02:8108:963f:de38:eca4:7d19:f9a2:22c5]; authenticated
+        by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        id 1nqfXu-0001nq-QR; Mon, 16 May 2022 20:34:18 +0200
+Message-ID: <1ce76b24-9185-6b2e-844e-d6a0ce42bb0f@leemhuis.info>
+Date:   Mon, 16 May 2022 20:34:17 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
 Subject: Re: [REGRESSION] lxc-stop hang on 5.17.x kernels
 Content-Language: en-US
-To:     Thorsten Leemhuis <regressions@leemhuis.info>,
+To:     Jens Axboe <axboe@kernel.dk>,
         Daniel Harding <dharding@living180.net>,
         Pavel Begunkov <asml.silence@gmail.com>
 Cc:     regressions@lists.linux.dev, io-uring@vger.kernel.org,
@@ -79,50 +48,59 @@ References: <7925e262-e0d4-6791-e43b-d37e9d693414@living180.net>
  <3fc08243-f9e0-9cec-4207-883c55ccff78@living180.net>
  <13028ff4-3565-f09e-818c-19e5f95fa60f@living180.net>
  <469e5a9b-c7e0-6365-c353-d831ff1c5071@leemhuis.info>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <469e5a9b-c7e0-6365-c353-d831ff1c5071@leemhuis.info>
+ <eaee4ea1-8e5a-dde8-472d-44241d992037@kernel.dk>
+From:   Thorsten Leemhuis <regressions@leemhuis.info>
+In-Reply-To: <eaee4ea1-8e5a-dde8-472d-44241d992037@kernel.dk>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1652726061;02ccf4ca;
+X-HE-SMSGID: 1nqfXu-0001nq-QR
+X-Spam-Status: No, score=-2.3 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/16/22 12:17 PM, Thorsten Leemhuis wrote:
->>> Pavel, I had actually just started a draft email with the same theory
->>> (although you stated it much more clearly than I could have).  I'm
->>> working on debugging the LXC side, but I'm pretty sure the issue is
->>> due to LXC using blocking reads and getting stuck exactly as you
->>> describe.  If I can confirm this, I'll go ahead and mark this
->>> regression as invalid and file an issue with LXC. Thanks for your help
->>> and patience.
+On 16.05.22 20:22, Jens Axboe wrote:
+> On 5/16/22 12:17 PM, Thorsten Leemhuis wrote:
+>>>> Pavel, I had actually just started a draft email with the same theory
+>>>> (although you stated it much more clearly than I could have).  I'm
+>>>> working on debugging the LXC side, but I'm pretty sure the issue is
+>>>> due to LXC using blocking reads and getting stuck exactly as you
+>>>> describe.  If I can confirm this, I'll go ahead and mark this
+>>>> regression as invalid and file an issue with LXC. Thanks for your help
+>>>> and patience.
+>>>
+>>> Yes, it does appear that was the problem.  The attach POC patch against
+>>> LXC fixes the hang.  The kernel is working as intended.
+>>>
+>>> #regzbot invalid:  userspace programming error
 >>
->> Yes, it does appear that was the problem.  The attach POC patch against
->> LXC fixes the hang.  The kernel is working as intended.
->>
->> #regzbot invalid:  userspace programming error
+>> Hmmm, not sure if I like this. So yes, this might be a bug in LXC, but
+>> afaics it's a bug that was exposed by kernel change in 5.17 (correct me
+>> if I'm wrong!). The problem thus still qualifies as a kernel regression
+>> that normally needs to be fixed, as can be seen my some of the quotes
+>> from Linus in this file:
+>> https://www.kernel.org/doc/html/latest/process/handling-regressions.html
 > 
-> Hmmm, not sure if I like this. So yes, this might be a bug in LXC, but
-> afaics it's a bug that was exposed by kernel change in 5.17 (correct me
-> if I'm wrong!). The problem thus still qualifies as a kernel regression
-> that normally needs to be fixed, as can be seen my some of the quotes
-> from Linus in this file:
-> https://www.kernel.org/doc/html/latest/process/handling-regressions.html
+> Sorry, but that's really BS in this particularly case. This could always
+> have triggered, it's the way multishot works. Will we count eg timing
+> changes as potential regressions, because an application relied on
+> something there? That does not make it ABI.
+> 
+> In general I agree with Linus on this, a change in behavior breaking
+> something should be investigated and figured out (and reverted, if need
+> be). This is not that.
 
-Sorry, but that's really BS in this particularly case. This could always
-have triggered, it's the way multishot works. Will we count eg timing
-changes as potential regressions, because an application relied on
-something there? That does not make it ABI.
+Sorry, I have to deal with various subsystems and a lot of regressions
+reports. I can't know the details of each of issue and there are
+developers around that are not that familiar with all the practical
+implications of the "no regressions". That's why I was just trying to
+ensure that this is something safe to ignore. If you say it is, than I'm
+totally happy and now rest my case. :-D
 
-In general I agree with Linus on this, a change in behavior breaking
-something should be investigated and figured out (and reverted, if need
-be). This is not that.
+Ciao, Thorsten
 
--- 
-Jens Axboe
-I

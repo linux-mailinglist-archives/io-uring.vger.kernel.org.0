@@ -2,70 +2,101 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EFB4527D95
-	for <lists+io-uring@lfdr.de>; Mon, 16 May 2022 08:28:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD57052817C
+	for <lists+io-uring@lfdr.de>; Mon, 16 May 2022 12:08:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235673AbiEPG2N (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 16 May 2022 02:28:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36546 "EHLO
+        id S242290AbiEPKIG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 16 May 2022 06:08:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32942 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239936AbiEPG2M (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 16 May 2022 02:28:12 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5809427169;
-        Sun, 15 May 2022 23:28:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=rB4GSRFuLVvoeQQc4eYld/JEkwZTPI8rf+K6L4jpkHw=; b=5ErsTIgFUwyLBBOzQryGfX6cPA
-        UN4ZwTWUoREruPBX/CfxuNhllpqtCA0Fl2kaxLl152e/yvzVtAuX/xnVrAdcxB1TLV6RrVq9RT4Il
-        dWFoAFl7EbnHO4Q01twYofRY6VklciT3Q48Co7X+iz7+ndVb+WWoJeXMC9frTM5eX7xDesPQD7YY+
-        E1C1k1n8T4FgLXNnDsegRb424M3nlwVKZ4vJ0fsTnTCf6CzO5s2UQfkEfzs1PCxxgpR7Uwi9c1H67
-        Rxt9fFX1Df1yaGJKZzczyd+S6jSVSBRnLcRhMZpYi0E2+g1cTC+7h2glT8Qe/V+hcQSZjqWlpvnvj
-        Sn9v5+Kw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nqUDA-006C1S-Uv; Mon, 16 May 2022 06:28:08 +0000
-Date:   Sun, 15 May 2022 23:28:08 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Vasily Averin <vvs@openvz.org>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>, kernel@openvz.org,
-        linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>, io-uring@vger.kernel.org
-Subject: Re: [PATCH] sparse: use force attribute for __kernel_rwf_t casts
-Message-ID: <YoHu+HvaDcIpC7gI@infradead.org>
-References: <45e8576e-5fcc-bc52-8805-0b5cc3fc1a84@openvz.org>
+        with ESMTP id S242315AbiEPKH0 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 16 May 2022 06:07:26 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B89F49FC7
+        for <io-uring@vger.kernel.org>; Mon, 16 May 2022 03:07:20 -0700 (PDT)
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0] helo=igor.pengutronix.de)
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <s.trumtrar@pengutronix.de>)
+        id 1nqXd9-0000Hs-8p; Mon, 16 May 2022 12:07:11 +0200
+References: <878rrqrgaj.fsf@pengutronix.de>
+ <20220505192046.hczmzg7k6tz2rjv3@pengutronix.de>
+ <20220505171000.48a9155b@kernel.org>
+User-agent: mu4e 1.4.13; emacs 29.0.50
+From:   Steffen Trumtrar <s.trumtrar@pengutronix.de>
+To:     Jakub Kicinski <kuba@kernel.org>
+Cc:     Marc Kleine-Budde <mkl@pengutronix.de>,
+        linux-crypto@vger.kernel.org, io-uring@vger.kernel.org,
+        kernel@pengutronix.de,
+        Horia =?utf-8?Q?Geant?= =?utf-8?Q?=C4=83?= 
+        <horia.geanta@nxp.com>, Pankaj Gupta <pankaj.gupta@nxp.com>,
+        Gaurav Jain <gaurav.jain@nxp.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Boris Pismenny <borisp@nvidia.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org
+Subject: Re: [BUG] Layerscape CAAM+kTLS+io_uring
+Date:   Mon, 16 May 2022 12:06:27 +0200
+In-reply-to: <20220505171000.48a9155b@kernel.org>
+Message-ID: <87sfp9vlig.fsf@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <45e8576e-5fcc-bc52-8805-0b5cc3fc1a84@openvz.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: s.trumtrar@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: io-uring@vger.kernel.org
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Please stop sprinkling random __force casts.  95% of them are simplify
-wrong, and the others need to go into properly documented helpers.
 
-The right fixes here are thing like:
+Jakub Kicinski <kuba@kernel.org> writes:
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 4479013854d20..a5d8b5109d3a7 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -585,7 +585,7 @@ struct io_rw {
- 	struct kiocb			kiocb;
- 	u64				addr;
- 	u32				len;
--	u32				flags;
-+	rwf_t				flags;
- };
- 
- struct io_connect {
+> On Thu, 5 May 2022 21:20:46 +0200 Marc Kleine-Budde wrote:
+>> Hello,
+>>
+>> no one seems to care about this problem. :/
+>>
+>> Maybe too many components are involved, I'm the respective maintainers
+>> on Cc.
+>>
+>> Cc += the CAAM maintainers
+>> Cc += the io_uring maintainers
+>> Cc += the kTLS maintainers
+>>
+>> On 27.04.2022 10:20:40, Steffen Trumtrar wrote:
+>> > Hi all,
+>> >
+>> > I have a Layerscape-1046a based board where I'm trying to use a
+>> > combination of liburing (v2.0) with splice, kTLS and CAAM (kernel
+>> > v5.17). The problem I see is that on shutdown the last bytes are
+>> > missing. It looks like io_uring is not waiting for all completions
+>> > from the CAAM driver.
+>> >
+>> > With ARM-ASM instead of the CAAM, the setup works fine.
+>>
+>> What's the difference between the CAAM and ARM-ASM crypto? Without
+>> looking into the code I think the CAAM is asynchron while ARM-ASM is
+>> synchron. Is this worth investigating?
+>
+> Sounds like
+> 20ffc7adf53a ("net/tls: missing received data after fast remote close")
+
+That fixes something in tls_sw. I have a kernel that includes this
+patch. So this sounds right, but can't be it, right?
+
+
+Best regards,
+Steffen
+
+--
+Pengutronix e.K.                | Dipl.-Inform. Steffen Trumtrar |
+Steuerwalder Str. 21            | https://www.pengutronix.de/    |
+31137 Hildesheim, Germany       | Phone: +49-5121-206917-0       |
+Amtsgericht Hildesheim, HRA 2686| Fax:   +49-5121-206917-5555    |

@@ -2,88 +2,141 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 092D452AB2B
-	for <lists+io-uring@lfdr.de>; Tue, 17 May 2022 20:46:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A15C452AB34
+	for <lists+io-uring@lfdr.de>; Tue, 17 May 2022 20:48:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230506AbiEQSqp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 17 May 2022 14:46:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50942 "EHLO
+        id S1352346AbiEQSsM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 17 May 2022 14:48:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351014AbiEQSqo (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 17 May 2022 14:46:44 -0400
-Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 174773983F
-        for <io-uring@vger.kernel.org>; Tue, 17 May 2022 11:46:43 -0700 (PDT)
-Received: by mail-io1-xd2a.google.com with SMTP id z18so20262599iob.5
-        for <io-uring@vger.kernel.org>; Tue, 17 May 2022 11:46:43 -0700 (PDT)
+        with ESMTP id S1352376AbiEQSsL (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 17 May 2022 14:48:11 -0400
+Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A954E49F9F
+        for <io-uring@vger.kernel.org>; Tue, 17 May 2022 11:48:09 -0700 (PDT)
+Received: by mail-io1-xd2b.google.com with SMTP id e194so20217680iof.11
+        for <io-uring@vger.kernel.org>; Tue, 17 May 2022 11:48:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :references:from:in-reply-to:content-transfer-encoding;
-        bh=YIMbxTsLbrtbEFkaDSucwQrnGbAU6ETE/HBk7HXw4BM=;
-        b=ASYaeDqOr6ZY8Y43feyxwUMnrIDRCO57Y0tCwbWFl1fPRaCrgk/PQQRdq2efcvraln
-         /X+FbfFi9Q7SGYrJGRc0XaOjGtseOysVsi+cTdhgdSw1qncp9S3OgZB5D6DbqMyiJ5hN
-         86YVYr8OEX0vDEhnAx/TE5NQmgBAFAwiHUMFkJ37NIGbDJ70ANJQWV1RjiSHL8rUc81z
-         x3WLf6UbNTuBElaOYFc4+qMVk9N8FDx13MuSQJ2yk4WG7UtrEW81OFX7nRoxlOooDEUk
-         Q0b5EjP7m4bBifoBEtc0mcnsvU18uL2OjPW/kEmoXC36Mo2Clp5Bl/Gr/WczDz9LUWtq
-         GmOA==
+        h=message-id:date:mime-version:user-agent:subject:content-language
+         :from:to:references:in-reply-to:content-transfer-encoding;
+        bh=SE+11+vbzkl43f1OuB5o/lCcOtNG/64RJownFy9+GFU=;
+        b=QeSfzHE4QwpBGdEObHa6quTTI1/CVpU0s8rm+w6vCvj0/lyDzOyDv8Y/BCP231kUe5
+         KG4/vramgin7DFRwQDlhErPPQZi7VnQ+XZW88noEV/uHI3fOB/m97rCYK9otgjayWg9C
+         Ck6PEljHbBiAM6NLIioAyQ1WVyxnVb27TWyK0R0yRbZWDuZcy6asYDSCpAoO/rdpCrxk
+         Agvze7GnSUBXOmmFj+UFx/Xd4IsMok+O4QnFDy3b4ejB6mFgOBWIJbzV9riNbJbx0uGb
+         dRWfxOXxqcyZSUlexc5Rj8qqwDw14ONFDmq9sgykedgDtLlcTgnSt/GaNG8vILp53n1f
+         sclQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:from:in-reply-to
+         :content-language:from:to:references:in-reply-to
          :content-transfer-encoding;
-        bh=YIMbxTsLbrtbEFkaDSucwQrnGbAU6ETE/HBk7HXw4BM=;
-        b=CW3ZxCABaKQeRwE0IdCf2vlr4MCuhfeQiZ1kf3Ez4KUGxE4G26Bzvldi0Y6d8hPcOU
-         Zf3pd3wBj8NfHAvGW59Yko1pWOyWy3Z1h9KDo7vE2eOES7aM5tS6q2vX+AJ8plRB9kdT
-         AWPXp9LAvLewIsUC6VSUnJrD8SL98n51MgvFWSSjql57HmjSVl8UX30z0MMNHceb7ovB
-         Mu5L+5NWhqtymQoqxOMM+l4A3R44HeFUB3KufEk0P0AS6Du+2pWZ48Mawgka2+2x0F+v
-         H/ghF4bDNdzcqGRFfjdfNUKHUhUzTON7REjjjZNh6ASJDqI1xf77IDzSspCR7vj7ojh0
-         MAzA==
-X-Gm-Message-State: AOAM531JCh8Szaaq7H3T3BTINFOGH8hQyNZgCH+XWVOq7g2va4qf5Xil
-        iCK9o0z4mclcI0geoQ5tvxAiTA==
-X-Google-Smtp-Source: ABdhPJwhs6oUxOuuvG3hk5YOfiQ6EgXRITTlIrL7zUmPYKqYM4mtvC+cg2zwyv9nGK+ZbzyvqCoyFg==
-X-Received: by 2002:a05:6602:1510:b0:65a:edd4:cdb4 with SMTP id g16-20020a056602151000b0065aedd4cdb4mr10853963iow.143.1652813202389;
-        Tue, 17 May 2022 11:46:42 -0700 (PDT)
+        bh=SE+11+vbzkl43f1OuB5o/lCcOtNG/64RJownFy9+GFU=;
+        b=u7M9X/LaY4i750cxpQ4jVBWFre2Um6aDBAfVbWHuWaBTFURQwMix0SzfhmT1QKyH7w
+         8OSR2ff/6HV9q6JPbHz5pF4sIuqlNhiq4+5jnko5RKuUATuWB8CIwRn9yqpnnRwBf2lg
+         MA4XujoNJP7X7HrI2dkHOPo/8L0/HnoTMeo0uMdI49+G44dpbqgbzguO15rkJYCQ1TSQ
+         7exJUA9dXPyrakdn6k5yR64/kNSpLyTiIQsDJfMYDb3XU7hBcr4ojo3EQnKkb+TJaseF
+         7rurb+AtyRwsRqzFanWOxkQWwoL5wSyc2I2QUx86lSr0i6birqZ1sA9C6ELJymUJYZPW
+         AlCg==
+X-Gm-Message-State: AOAM5338cmkXosNTRZtNDI7odDpRgd0oYFTzPvze5M9PmKbChMRjnnkI
+        6AvYAimX6yN/dt+myS3KKGGvJfuZdbgw4A==
+X-Google-Smtp-Source: ABdhPJz3ziYaKo1zpAPH/Te0RtHhSAtcW5q8XCsE86pA0MKOqAWaz8+nqCWtz1m+paDqLYukjWCb/Q==
+X-Received: by 2002:a5d:9bd9:0:b0:65e:1a97:fa70 with SMTP id d25-20020a5d9bd9000000b0065e1a97fa70mr3622076ion.48.1652813288683;
+        Tue, 17 May 2022 11:48:08 -0700 (PDT)
 Received: from [192.168.1.172] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id o13-20020a056638124d00b0032e30453802sm1804804jas.47.2022.05.17.11.46.41
+        by smtp.gmail.com with ESMTPSA id e20-20020a6b6914000000b0065a47e16f3bsm14619ioc.13.2022.05.17.11.48.07
+        for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 May 2022 11:46:41 -0700 (PDT)
-Message-ID: <b6f36795-97ac-fac0-ab07-98de8255e4f9@kernel.dk>
-Date:   Tue, 17 May 2022 12:46:40 -0600
+        Tue, 17 May 2022 11:48:08 -0700 (PDT)
+Message-ID: <3b5508aa-29f6-d9fc-815b-cd4c65eff819@kernel.dk>
+Date:   Tue, 17 May 2022 12:48:00 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
  Thunderbird/91.8.1
-Subject: Re: [syzbot] BUG: unable to handle kernel NULL pointer dereference in
- io_do_iopoll
+Subject: Re: [PATCH] io_uring: don't attempt to IOPOLL for MSG_RING requests
 Content-Language: en-US
-To:     syzbot <syzbot+1a0a53300ce782f8b3ad@syzkaller.appspotmail.com>,
-        asml.silence@gmail.com, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <000000000000c1bd6505df39865e@google.com>
 From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <000000000000c1bd6505df39865e@google.com>
+To:     io-uring <io-uring@vger.kernel.org>
+References: <38094d23-9f0d-d257-1adc-79f50501b3cd@kernel.dk>
+In-Reply-To: <38094d23-9f0d-d257-1adc-79f50501b3cd@kernel.dk>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/17/22 12:44 PM, syzbot wrote:
-> Hello,
+On 5/17/22 12:34 PM, Jens Axboe wrote:
+> We gate whether to IOPOLL for a request on whether the opcode is allowed
+> on a ring setup for IOPOLL and if it's got a file assigned. MSG_RING
+> is the only one that allows a file yet isn't pollable, it's merely
+> supported to allow communication on an IOPOLL ring, not because we can
+> poll for completion of it.
 > 
-> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-> BUG: unable to handle kernel NULL pointer dereference in io_do_iopoll
+> Put the assigned file early and clear it, so we don't attempt to poll
+> for it.
+> 
+> Reported-by: syzbot+1a0a53300ce782f8b3ad@syzkaller.appspotmail.com
+> Fixes: 3f1d52abf098 ("io_uring: defer msg-ring file validity check until command issue")
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> 
+> ---
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 91de361ea9ab..3cb0bc68d822 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -5007,6 +5007,9 @@ static int io_fadvise(struct io_kiocb *req, unsigned int issue_flags)
+>  	if (ret < 0)
+>  		req_set_fail(req);
+>  	__io_req_complete(req, issue_flags, ret, 0);
+> +	/* put file to avoid an attempt to IOPOLL the req */
+> +	io_put_file(req->file);
+> +	req->file = NULL;
+>  	return 0;
+>  }
 
-Gah, backport ended up putting the hunk in the wrong spot, not very useful.
+patch unhelpfully applying to the wrong function when ported from
+for-next to 5.18. Here's the right one:
 
-#syz test git://git.kernel.dk/linux-block io_uring-5.18
+commit aa184e8671f0f911fc2fb3f68cd506e4d7838faa
+Author: Jens Axboe <axboe@kernel.dk>
+Date:   Tue May 17 12:32:05 2022 -0600
 
+    io_uring: don't attempt to IOPOLL for MSG_RING requests
+    
+    We gate whether to IOPOLL for a request on whether the opcode is allowed
+    on a ring setup for IOPOLL and if it's got a file assigned. MSG_RING
+    is the only one that allows a file yet isn't pollable, it's merely
+    supported to allow communication on an IOPOLL ring, not because we can
+    poll for completion of it.
+    
+    Put the assigned file early and clear it, so we don't attempt to poll
+    for it.
+    
+    Reported-by: syzbot+1a0a53300ce782f8b3ad@syzkaller.appspotmail.com
+    Fixes: 3f1d52abf098 ("io_uring: defer msg-ring file validity check until command issue")
+    Signed-off-by: Jens Axboe <axboe@kernel.dk>
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 91de361ea9ab..e0823f58f795 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -4481,6 +4481,9 @@ static int io_msg_ring(struct io_kiocb *req, unsigned int issue_flags)
+ 	if (ret < 0)
+ 		req_set_fail(req);
+ 	__io_req_complete(req, issue_flags, ret, 0);
++	/* put file to avoid an attempt to IOPOLL the req */
++	io_put_file(req->file);
++	req->file = NULL;
+ 	return 0;
+ }
+ 
 -- 
 Jens Axboe
 

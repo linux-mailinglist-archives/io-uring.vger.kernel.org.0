@@ -2,134 +2,149 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FCD252A16B
-	for <lists+io-uring@lfdr.de>; Tue, 17 May 2022 14:25:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FDF652A1A0
+	for <lists+io-uring@lfdr.de>; Tue, 17 May 2022 14:36:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345986AbiEQMZc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 17 May 2022 08:25:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51854 "EHLO
+        id S234654AbiEQMgu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 17 May 2022 08:36:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345981AbiEQMZW (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 17 May 2022 08:25:22 -0400
-Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A59F7483A1
-        for <io-uring@vger.kernel.org>; Tue, 17 May 2022 05:25:19 -0700 (PDT)
-Received: by mail-pl1-x629.google.com with SMTP id c9so17201904plh.2
-        for <io-uring@vger.kernel.org>; Tue, 17 May 2022 05:25:19 -0700 (PDT)
+        with ESMTP id S231401AbiEQMgt (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 17 May 2022 08:36:49 -0400
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D48DD30F59
+        for <io-uring@vger.kernel.org>; Tue, 17 May 2022 05:36:46 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id h14so4917383wrc.6
+        for <io-uring@vger.kernel.org>; Tue, 17 May 2022 05:36:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=IrIkpbmuHKrrFsBUcjgqjjP93rmoX31NTGTCvMbPP4Y=;
-        b=NBnYbNP+J+JpzURJ6Bf3exMaOrCVSX0qu7AbJU/g5utF6PrfU0h0Z3iopcGlBvlMaC
-         GPNDDKiTgAOxADt5l7Ze5F7iIYg0EeQWUaoI2NkGxf4FSSIbbwRwWPxUNQHvoCM9b3Fd
-         RbW2rvRzAo+Kf46ym8S/g4GDjZXkuFzjGEU4H3BLIEeBLDIPm0KvzYVaZDnPOKrlJalB
-         LrmgUM3YBO579B1Rq/5vGNGBTpVc80eg0Z+iMNjWSBL4pDDBAUriFACI5YQWiy0QYXAt
-         foThqezPvxPmiwv0HisQ9imencOBCyxh/lJ9aQxB2Y3NH3Iqr81CvzDrcRTWh0DqwQ6S
-         gtwg==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=yh9KCD3prrmtE3wT14QIp/KiLRwsEOgLjY+dd/br9aM=;
+        b=u05Y8niqeoVzLfYO77y8i8hMVDuTewNJJbexl4ODRci2203r1K0fKY9bvVdGOB5mn4
+         bVMrP0r7GneRcIBIMgJD1BTN62sLCJoi+oea9YFo/9f+Wk4USFY06kuEH3e0bBcWSvnA
+         s5zAgVJ5eW3eI9YDtRlTRW451z/7sZcSTX7FMd0tcr8XF58BIpU+VNjFNNTu1wQKLB8R
+         3c7Yz9FfDQENoh9AtnPWRQNEosyPPMP2G4Bg2Il3d3N8HEvGVNvUmNVw7t8EDUjp1flv
+         WVslgR3Bi4vqE6pZ7Nvzlkd7Ss/ZlRYMrBXaFsjiqgwKJhD+5LJo09Q723axwUxUqpPa
+         AG5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=IrIkpbmuHKrrFsBUcjgqjjP93rmoX31NTGTCvMbPP4Y=;
-        b=PqhQ9OOcNgl2azjyAlxrSvXz952Gz2L2PIypG5Tv7zD1NmrwDqdqey9toE5F1GZkVB
-         2ZXWpj03y/tx/j0tBFkt9mZRifbke9453ozU1BG9X7FVPgrfFEmZXtb4JLyCcGLiLA7K
-         Tz0n9ZqZ29Ow7pCMdS5cg3+Uv54tgpbGGZTW2qH4e6P7rXRnuI7AbaRuMYXMn1lvKlL4
-         cQCJdl5hXgMsnJyrm/3OlkBT4erh1XiEsqNcPkOnA6OPpCIx7bzKCp6/1WOioA47vwHc
-         WusBbMSh/QelOytfKI2BjQKUBDL5hZ+zQkVZwkp9QHjOZZhqLS+Olx0fFkGCdNdG/zeJ
-         TIIg==
-X-Gm-Message-State: AOAM532KabS1RhoVE4frmcKRPD/s0QtpY4o0iBpg8fJZDr3R2ENfiocY
-        2WD1sAyixvKdgpq60OWdqNhAbg==
-X-Google-Smtp-Source: ABdhPJz+aD1l14DXBGFrAfTzh04KGDyvg7BAjkXVZnm/y60aPmtYxeB2+8D7hg4SfmHCGxIXoIkF7g==
-X-Received: by 2002:a17:90b:4a51:b0:1df:7617:bcfb with SMTP id lb17-20020a17090b4a5100b001df7617bcfbmr6584943pjb.207.1652790319084;
-        Tue, 17 May 2022 05:25:19 -0700 (PDT)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id b8-20020a17090a990800b001df6216e89dsm1542814pjp.28.2022.05.17.05.25.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 May 2022 05:25:18 -0700 (PDT)
-Message-ID: <d503d5ff-4bc5-2bd0-00d3-cd7b0a0724cb@kernel.dk>
-Date:   Tue, 17 May 2022 06:25:17 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [REPORT] Use-after-free Read in __fdget_raw in v5.10.y
-Content-Language: en-US
-To:     Lee Jones <lee.jones@linaro.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=yh9KCD3prrmtE3wT14QIp/KiLRwsEOgLjY+dd/br9aM=;
+        b=1c7bxjlBTLUa5YLm0RYCvKStEyBgaeFGF3daAy3Z1OOVTeKMPq4fGfgfjYRAZFtypo
+         4TfyXdV6+f9w4TS0DgGyL5/eW9Jj2P3j27NZy38v5H+8pbmfA9PJ1gJKrbyve4uGPM+/
+         6XHJrJYpkLGZRlSxvTMWnngO5E1KziVD6+ghepyN7j5ziqGfWZ6bCPKE+gPALAv9COO0
+         0lIGkUKFQGilaMazSK4zhsRqA8PklaVZvwn8mNVJuRVwMgwK7JavIuIKhLxBuirdo2bD
+         oJ/uN/vxNj3Bl7vxr1soAjnQpENS1lXYxathrUa5NAx+NP5DjP4kXnTBMAD/6ieSw13b
+         3juQ==
+X-Gm-Message-State: AOAM530l9D0zW2vT/QuRoujMpIA3vqIy5Jo02WHM6UvtGlezb5uOprdv
+        eWREx7EkocCO5TlcRpKTul6+OQ==
+X-Google-Smtp-Source: ABdhPJzKrtC8VWaJvzTf7lZpSvoGPSyOvAwojNTFmifbEtZlEYHySohWNBzK0i2sBlEfWLbMT4VAag==
+X-Received: by 2002:a5d:470c:0:b0:20d:135:2fb3 with SMTP id y12-20020a5d470c000000b0020d01352fb3mr12009595wrq.559.1652791005419;
+        Tue, 17 May 2022 05:36:45 -0700 (PDT)
+Received: from google.com (cpc155339-bagu17-2-0-cust87.1-3.cable.virginm.net. [86.27.177.88])
+        by smtp.gmail.com with ESMTPSA id g2-20020adfa482000000b0020c5253d8dfsm12328385wrb.43.2022.05.17.05.36.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 May 2022 05:36:44 -0700 (PDT)
+Date:   Tue, 17 May 2022 13:36:43 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org
+Subject: Re: [REPORT] Use-after-free Read in __fdget_raw in v5.10.y
+Message-ID: <YoOW2+ov8KF1YcYF@google.com>
 References: <YoOJ/T4QRKC+fAZE@google.com>
  <97cba3e1-4ef7-0a17-8456-e0787d6702c6@kernel.dk>
  <YoOT7Cyobsed5IE3@google.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <YoOT7Cyobsed5IE3@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+ <d503d5ff-4bc5-2bd0-00d3-cd7b0a0724cb@kernel.dk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d503d5ff-4bc5-2bd0-00d3-cd7b0a0724cb@kernel.dk>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/17/22 6:24 AM, Lee Jones wrote:
-> On Tue, 17 May 2022, Jens Axboe wrote:
-> 
->> On 5/17/22 5:41 AM, Lee Jones wrote:
->>> Good afternoon Jens, Pavel, et al.,
->>>
->>> Not sure if you are presently aware, but there appears to be a
->>> use-after-free issue affecting the io_uring worker driver (fs/io-wq.c)
->>> in Stable v5.10.y.
->>>
->>> The full sysbot report can be seen below [0].
->>>
->>> The C-reproducer has been placed below that [1].
->>>
->>> I had great success running this reproducer in an infinite loop.
->>>
->>> My colleague reverse-bisected the fixing commit to:
->>>
->>>   commit fb3a1f6c745ccd896afadf6e2d6f073e871d38ba
->>>   Author: Jens Axboe <axboe@kernel.dk>
->>>   Date:   Fri Feb 26 09:47:20 2021 -0700
->>>
->>>        io-wq: have manager wait for all workers to exit
->>>
->>>        Instead of having to wait separately on workers and manager, just have
->>>        the manager wait on the workers. We use an atomic_t for the reference
->>>        here, as we need to start at 0 and allow increment from that. Since the
->>>        number of workers is naturally capped by the allowed nr of processes,
->>>        and that uses an int, there is no risk of overflow.
->>>
->>>        Signed-off-by: Jens Axboe <axboe@kernel.dk>
->>>
->>>     fs/io-wq.c | 30 ++++++++++++++++++++++--------
->>>     1 file changed, 22 insertions(+), 8 deletions(-)
->>
->> Does this fix it:
->>
->> commit 886d0137f104a440d9dfa1d16efc1db06c9a2c02
->> Author: Jens Axboe <axboe@kernel.dk>
->> Date:   Fri Mar 5 12:59:30 2021 -0700
->>
->>     io-wq: fix race in freeing 'wq' and worker access
->>
->> Looks like it didn't make it into 5.10-stable, but we can certainly
->> rectify that.
-> 
-> Thanks for your quick response Jens.
-> 
-> This patch doesn't apply cleanly to v5.10.y.
+On Tue, 17 May 2022, Jens Axboe wrote:
 
-This is probably why it never made it into 5.10-stable :-/
+> On 5/17/22 6:24 AM, Lee Jones wrote:
+> > On Tue, 17 May 2022, Jens Axboe wrote:
+> > 
+> >> On 5/17/22 5:41 AM, Lee Jones wrote:
+> >>> Good afternoon Jens, Pavel, et al.,
+> >>>
+> >>> Not sure if you are presently aware, but there appears to be a
+> >>> use-after-free issue affecting the io_uring worker driver (fs/io-wq.c)
+> >>> in Stable v5.10.y.
+> >>>
+> >>> The full sysbot report can be seen below [0].
+> >>>
+> >>> The C-reproducer has been placed below that [1].
+> >>>
+> >>> I had great success running this reproducer in an infinite loop.
+> >>>
+> >>> My colleague reverse-bisected the fixing commit to:
+> >>>
+> >>>   commit fb3a1f6c745ccd896afadf6e2d6f073e871d38ba
+> >>>   Author: Jens Axboe <axboe@kernel.dk>
+> >>>   Date:   Fri Feb 26 09:47:20 2021 -0700
+> >>>
+> >>>        io-wq: have manager wait for all workers to exit
+> >>>
+> >>>        Instead of having to wait separately on workers and manager, just have
+> >>>        the manager wait on the workers. We use an atomic_t for the reference
+> >>>        here, as we need to start at 0 and allow increment from that. Since the
+> >>>        number of workers is naturally capped by the allowed nr of processes,
+> >>>        and that uses an int, there is no risk of overflow.
+> >>>
+> >>>        Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> >>>
+> >>>     fs/io-wq.c | 30 ++++++++++++++++++++++--------
+> >>>     1 file changed, 22 insertions(+), 8 deletions(-)
+> >>
+> >> Does this fix it:
+> >>
+> >> commit 886d0137f104a440d9dfa1d16efc1db06c9a2c02
+> >> Author: Jens Axboe <axboe@kernel.dk>
+> >> Date:   Fri Mar 5 12:59:30 2021 -0700
+> >>
+> >>     io-wq: fix race in freeing 'wq' and worker access
+> >>
+> >> Looks like it didn't make it into 5.10-stable, but we can certainly
+> >> rectify that.
+> > 
+> > Thanks for your quick response Jens.
+> > 
+> > This patch doesn't apply cleanly to v5.10.y.
+> 
+> This is probably why it never made it into 5.10-stable :-/
 
-> I'll have a go at back-porting it.  Please bear with me.
+Right.  It doesn't apply at all unfortunately.
 
-Let me know if you into issues with that and I can help out.
+> > I'll have a go at back-porting it.  Please bear with me.
+> 
+> Let me know if you into issues with that and I can help out.
+
+I think the dependency list is too big.
+
+Too much has changed that was never back-ported.
+
+Actually the list of patches pertaining to fs/io-wq.c alone isn't so
+bad, I did start to back-port them all but some of the big ones have
+fs/io_uring.c changes incorporated and that list is huge (256 patches
+from v5.10 to the fixing patch mentioned above).
 
 -- 
-Jens Axboe
-
+Lee Jones [李琼斯]
+Principal Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog

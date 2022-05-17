@@ -2,157 +2,130 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DCF552A1E8
-	for <lists+io-uring@lfdr.de>; Tue, 17 May 2022 14:47:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE18252A22B
+	for <lists+io-uring@lfdr.de>; Tue, 17 May 2022 14:56:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346447AbiEQMrk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 17 May 2022 08:47:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42720 "EHLO
+        id S1345513AbiEQMzj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 17 May 2022 08:55:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35310 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346384AbiEQMrX (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 17 May 2022 08:47:23 -0400
-Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C81053C729
-        for <io-uring@vger.kernel.org>; Tue, 17 May 2022 05:47:21 -0700 (PDT)
-Received: by mail-pf1-x433.google.com with SMTP id p12so16837584pfn.0
-        for <io-uring@vger.kernel.org>; Tue, 17 May 2022 05:47:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=uPzI2NrDruMsQhpRvojLxqAMj39DRNPyO6rdqBSN6WI=;
-        b=8MnH6yhBAp56fktUprxfKAWWVHVAc10JTu9Cu3lZkdbut6LdHfKVs6lUqV0hKis3kO
-         7JHDLaQBSlglECY2YwhiCXKBAMuAgpb+/S5hPklqFZFOYsn4jvR59jxlTfEZKb+7muhg
-         pXBAxpnN5Uca1L5YFqmvqN+PEnBkZDtH4Yn85SwLx8RsNnhmdVwIbcww7HXHUsAXRSn7
-         +eYmoHri323IPMJd4LYxD8DVMWIp8bgb8A8HUJZ7ODKO/WqkLJYPevkR/amqvi+HJ8Xs
-         n3Hw5W28f1Oopd7cfnE3q5CE6xaMOUvNBj2wCMuYMIitIlZ6vktHucsRjoseTHV1XQwe
-         vqeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=uPzI2NrDruMsQhpRvojLxqAMj39DRNPyO6rdqBSN6WI=;
-        b=Oq23IT38RaIhGomR5p41ndivrTptF0UtbtQeeGNpZoxtg0ZrLFXEYjN4PvrYb1f7lf
-         7MaqPcn1Z6wcvPsoOX/ME+2S3Lnh+IsiA1Vpuj+AXYHHtxal6PchaMkYcQ321BI/5/1P
-         8Mt6ujjyz2HTKVnENuEXt7vW6ooK7YlPM7lwKnl8dTV+kOGNOQ776tecj+OmmNUXIA/n
-         l85euQ5D/N37mCKuJ/c4zTjgm71QdUCS7MLhrFAI8kDEFXcgGDdWOgH4V24Pyewz2B3L
-         FNPLMfXzrpEq/yi7oxLygcXpNmQh3o5vZbsJlIA41omYHR+VOlzy8WoHRD9mc0A6veu8
-         aOBg==
-X-Gm-Message-State: AOAM5316fUwA25Ybcw8Cv4ClTunK8kR7nRrKFCA8HKQBj3DM16CKkKOO
-        jSFo1qVywmPcQhI/8vD6MNp7TQ==
-X-Google-Smtp-Source: ABdhPJx1CPqw/ut3dzEX3LKjQ08PsOTU2iRbFD2/TlBgCe3+4sFB4uej65dGSXc4brDcrHOKXOCGuQ==
-X-Received: by 2002:a05:6a00:2484:b0:50e:68e:d5a5 with SMTP id c4-20020a056a00248400b0050e068ed5a5mr22340952pfv.47.1652791641262;
-        Tue, 17 May 2022 05:47:21 -0700 (PDT)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id y13-20020a170902b48d00b00161ac982b52sm1372754plr.95.2022.05.17.05.47.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 May 2022 05:47:19 -0700 (PDT)
-Message-ID: <3d271554-9ddc-07ad-3ff8-30aba31f8bf2@kernel.dk>
-Date:   Tue, 17 May 2022 06:47:17 -0600
+        with ESMTP id S243754AbiEQMzj (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 17 May 2022 08:55:39 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5543C21834
+        for <io-uring@vger.kernel.org>; Tue, 17 May 2022 05:55:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1652792137;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=CCBYm7JRURrb8ISptdPCXIyZxDNW+RgvRlpoFcroHpc=;
+        b=Vcnzkr5Sm5A+VjeYv6CEcWTWb5+WL0i86lE/N8WGn92c1uo+7NMelAm0YDqgo4TCIl0cIN
+        ENWBue1xjcr6wDxKhGn7FUeeCyxor2Cbs+Qye9Rs6oH5ISXWq/3VmhHxz0c+cwiAT39VkG
+        laTEqm/uA98zsdOrD/bvyoUQ2tdkNNQ=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-653-QoLd5d2PMYWgONyitcW1ZQ-1; Tue, 17 May 2022 08:55:32 -0400
+X-MC-Unique: QoLd5d2PMYWgONyitcW1ZQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A900C811E84;
+        Tue, 17 May 2022 12:55:31 +0000 (UTC)
+Received: from T590 (ovpn-8-20.pek2.redhat.com [10.72.8.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D81F140CF8F6;
+        Tue, 17 May 2022 12:55:25 +0000 (UTC)
+Date:   Tue, 17 May 2022 20:55:20 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Ziyang Zhang <ZiyangZhang@linux.alibaba.com>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Harris James R <james.r.harris@intel.com>,
+        io-uring@vger.kernel.org,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH V2 1/1] ubd: add io_uring based userspace block driver
+Message-ID: <YoObOMur7x/u0w1C@T590>
+References: <20220517055358.3164431-1-ming.lei@redhat.com>
+ <20220517055358.3164431-2-ming.lei@redhat.com>
+ <55d724a8-ed7d-ae92-ca6d-3582e13587db@linux.alibaba.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [REPORT] Use-after-free Read in __fdget_raw in v5.10.y
-Content-Language: en-US
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <YoOJ/T4QRKC+fAZE@google.com>
- <97cba3e1-4ef7-0a17-8456-e0787d6702c6@kernel.dk>
- <YoOT7Cyobsed5IE3@google.com>
- <d503d5ff-4bc5-2bd0-00d3-cd7b0a0724cb@kernel.dk>
- <YoOW2+ov8KF1YcYF@google.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <YoOW2+ov8KF1YcYF@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <55d724a8-ed7d-ae92-ca6d-3582e13587db@linux.alibaba.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.11.54.1
+X-Spam-Status: No, score=-2.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/17/22 6:36 AM, Lee Jones wrote:
-> On Tue, 17 May 2022, Jens Axboe wrote:
+On Tue, May 17, 2022 at 06:00:57PM +0800, Ziyang Zhang wrote:
+> On 2022/5/17 13:53, Ming Lei wrote:
 > 
->> On 5/17/22 6:24 AM, Lee Jones wrote:
->>> On Tue, 17 May 2022, Jens Axboe wrote:
->>>
->>>> On 5/17/22 5:41 AM, Lee Jones wrote:
->>>>> Good afternoon Jens, Pavel, et al.,
->>>>>
->>>>> Not sure if you are presently aware, but there appears to be a
->>>>> use-after-free issue affecting the io_uring worker driver (fs/io-wq.c)
->>>>> in Stable v5.10.y.
->>>>>
->>>>> The full sysbot report can be seen below [0].
->>>>>
->>>>> The C-reproducer has been placed below that [1].
->>>>>
->>>>> I had great success running this reproducer in an infinite loop.
->>>>>
->>>>> My colleague reverse-bisected the fixing commit to:
->>>>>
->>>>>   commit fb3a1f6c745ccd896afadf6e2d6f073e871d38ba
->>>>>   Author: Jens Axboe <axboe@kernel.dk>
->>>>>   Date:   Fri Feb 26 09:47:20 2021 -0700
->>>>>
->>>>>        io-wq: have manager wait for all workers to exit
->>>>>
->>>>>        Instead of having to wait separately on workers and manager, just have
->>>>>        the manager wait on the workers. We use an atomic_t for the reference
->>>>>        here, as we need to start at 0 and allow increment from that. Since the
->>>>>        number of workers is naturally capped by the allowed nr of processes,
->>>>>        and that uses an int, there is no risk of overflow.
->>>>>
->>>>>        Signed-off-by: Jens Axboe <axboe@kernel.dk>
->>>>>
->>>>>     fs/io-wq.c | 30 ++++++++++++++++++++++--------
->>>>>     1 file changed, 22 insertions(+), 8 deletions(-)
->>>>
->>>> Does this fix it:
->>>>
->>>> commit 886d0137f104a440d9dfa1d16efc1db06c9a2c02
->>>> Author: Jens Axboe <axboe@kernel.dk>
->>>> Date:   Fri Mar 5 12:59:30 2021 -0700
->>>>
->>>>     io-wq: fix race in freeing 'wq' and worker access
->>>>
->>>> Looks like it didn't make it into 5.10-stable, but we can certainly
->>>> rectify that.
->>>
->>> Thanks for your quick response Jens.
->>>
->>> This patch doesn't apply cleanly to v5.10.y.
->>
->> This is probably why it never made it into 5.10-stable :-/
+> > +
+> > +static void ubd_cancel_queue(struct ubd_queue *ubq)
+> > +{
+> > +	int i;
+> > +
+> > +	for (i = 0; i < ubq->q_depth; i++) {
+> > +		struct ubd_io *io = &ubq->ios[i];
+> > +
+> > +		if (io->flags & UBD_IO_FLAG_ACTIVE) {
+> > +			io->flags &= ~UBD_IO_FLAG_ACTIVE;
+> > +			io_uring_cmd_done(io->cmd, UBD_IO_RES_ABORT, 0);
+> > +		}
+> > +	}
+> > +}
 > 
-> Right.  It doesn't apply at all unfortunately.
+> Hi Ming,
 > 
->>> I'll have a go at back-porting it.  Please bear with me.
->>
->> Let me know if you into issues with that and I can help out.
-> 
-> I think the dependency list is too big.
-> 
-> Too much has changed that was never back-ported.
-> 
-> Actually the list of patches pertaining to fs/io-wq.c alone isn't so
-> bad, I did start to back-port them all but some of the big ones have
-> fs/io_uring.c changes incorporated and that list is huge (256 patches
-> from v5.10 to the fixing patch mentioned above).
+> When ubdsrv sends STOP_DEV and all active IOs in ubd_drv are done(UBD_IO_RES_ABORT),
+> there may be still some IOs handled by ubdsrv(UBD_IO_FLAG_ACTIVE not set).
+> When these IOs complete and return to ubd_drv, how to handle them?
 
-The problem is that 5.12 went to the new worker setup, and this patch
-landed after that even though it also applies to the pre-native workers.
-Hence the dependency chain isn't really as long as it seems, probably
-just a few patches backporting the change references and completions.
+Either UBD_IO_COMMIT_AND_FETCH_REQ or UBD_IO_COMMIT_REQ will be sent to ubd_drv
+for completing these IOs. And finally ubd_cancel_dev() in ubd driver will
+cancel all pending io commands, so io_uring can be exited. I guess
+UBD_IO_COMMIT_REQ can be removed too.
 
-I'll take a look this afternoon.
+> I find that UBD_IO_FETCH_REQ are still set,
+> so will these IOs be issued to ubdsrv again or canceled?
+> (I see ubd_drv fails IOs when the daemon is dying 
+> but maybe here the daemon is still alive)
 
--- 
-Jens Axboe
+If daemon is alive, ubd_drv will rely on ubq_daemon for completing
+all inflight IOs. Otherwise, the monitor work will be triggered for
+completing/failing inflight IOs. The mechanism is actually very simple:
+
+static void ubd_stop_dev(struct ubd_device *ub)
+{
+        mutex_lock(&ub->mutex);
+        if (!disk_live(ub->ub_disk))
+                goto unlock;
+
+        del_gendisk(ub->ub_disk);	// drain & wait in-flight IOs
+        ub->dev_info.state = UBD_S_DEV_DEAD;
+        ub->dev_info.ubdsrv_pid = -1;
+        ubd_cancel_dev(ub);	   //No IO is possible now, so cancel pending io commands
+ unlock:
+        mutex_unlock(&ub->mutex);
+        cancel_delayed_work_sync(&ub->monitor_work);
+}
+
+When waiting for IO completion in del_gendisk(), in case that ubq_daemon
+is exiting/dying, monitor work will be triggered to call ubd_abort_queue() to
+fail in-flight requests for making forward progress. ubd_abort_queue() may
+looks a bit tricky to try using task work for aborting request, that
+is just for sync with ubd_rq_task_work_fn().
+
+
+Thanks, 
+Ming
 

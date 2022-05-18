@@ -2,46 +2,46 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 717BE52C7C4
-	for <lists+io-uring@lfdr.de>; Thu, 19 May 2022 01:38:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37AA052C7BB
+	for <lists+io-uring@lfdr.de>; Thu, 19 May 2022 01:38:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231575AbiERXiM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 18 May 2022 19:38:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53368 "EHLO
+        id S231698AbiERXiI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 18 May 2022 19:38:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231565AbiERXiG (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 18 May 2022 19:38:06 -0400
+        with ESMTP id S231512AbiERXiF (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 18 May 2022 19:38:05 -0400
 Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BE578B0A2
-        for <io-uring@vger.kernel.org>; Wed, 18 May 2022 16:37:42 -0700 (PDT)
-Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24IN6AdP017366
-        for <io-uring@vger.kernel.org>; Wed, 18 May 2022 16:37:42 -0700
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0848C65D29
+        for <io-uring@vger.kernel.org>; Wed, 18 May 2022 16:37:41 -0700 (PDT)
+Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24IN6BlV005549
+        for <io-uring@vger.kernel.org>; Wed, 18 May 2022 16:37:40 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=facebook;
- bh=LWT7/rgVKJvUBvBuLFTZOcg1EE8pCJNmk5mdhmfBzd4=;
- b=i6RESA2kBFbZf2YcYKS9NClp2rdwS4z3e5YrkTDrp5aQB3JPLVdlytwpVGLaoojFgIFG
- fOUNWAAU+p9M23iJxh3uuhMsjYlkvF+SRyBlyCNt0jLDi1Sv6Nr8XAD0gZrBAN1rVLay
- VV1wCr4qjitYxB6F7cIAO1jZh82uTcaZ7Ec= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3g4ck0m9vj-1
+ bh=fdXvE+WWGkZbdDWaaWcycrFeF07NZ6/Rt8YdakSfT7c=;
+ b=obXWAbHm9xVuJ4SSxrm0Tz5QiPhr9yomkEgpd2BpiO4WjPjtVfdP+NfmD/+Rahtfr1qE
+ BVQPaeHZ3q0u27VHwxJLnznlMx+U2+rjgmOF3SLios3XkSHoZoRaq4K6lLVRLtfeHEmO
+ yIrXm1iQDSdjidF4EICsYYmEwEsXycHESaI= 
+Received: from mail.thefacebook.com ([163.114.132.120])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3g4ey1k1nu-5
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Wed, 18 May 2022 16:37:41 -0700
-Received: from twshared4937.07.ash9.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:83::5) with Microsoft SMTP Server
+        for <io-uring@vger.kernel.org>; Wed, 18 May 2022 16:37:40 -0700
+Received: from twshared35748.07.ash9.facebook.com (2620:10d:c085:108::8) by
+ mail.thefacebook.com (2620:10d:c085:11d::5) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.28; Wed, 18 May 2022 16:37:38 -0700
+ 15.1.2375.28; Wed, 18 May 2022 16:37:39 -0700
 Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
-        id E5A10F3ED865; Wed, 18 May 2022 16:37:12 -0700 (PDT)
+        id EBEC6F3ED867; Wed, 18 May 2022 16:37:12 -0700 (PDT)
 From:   Stefan Roesch <shr@fb.com>
 To:     <io-uring@vger.kernel.org>, <kernel-team@fb.com>,
         <linux-mm@kvack.org>, <linux-xfs@vger.kernel.org>,
         <linux-fsdevel@vger.kernel.org>
 CC:     <shr@fb.com>, <david@fromorbit.com>, <jack@suse.cz>
-Subject: [RFC PATCH v3 10/18] xfs: Add async buffered write support
-Date:   Wed, 18 May 2022 16:37:01 -0700
-Message-ID: <20220518233709.1937634-11-shr@fb.com>
+Subject: [RFC PATCH v3 11/18] io_uring: Add support for async buffered writes
+Date:   Wed, 18 May 2022 16:37:02 -0700
+Message-ID: <20220518233709.1937634-12-shr@fb.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220518233709.1937634-1-shr@fb.com>
 References: <20220518233709.1937634-1-shr@fb.com>
@@ -49,8 +49,8 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-GUID: 8pmB-yTAsCab-LSHtkSBvvNt_tKmov2D
-X-Proofpoint-ORIG-GUID: 8pmB-yTAsCab-LSHtkSBvvNt_tKmov2D
+X-Proofpoint-ORIG-GUID: 260VseMQb3egmBx7cqa4T-jewUuELmOh
+X-Proofpoint-GUID: 260VseMQb3egmBx7cqa4T-jewUuELmOh
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.874,Hydra:6.0.486,FMLib:17.11.64.514
  definitions=2022-05-18_06,2022-05-17_02,2022-02-23_01
@@ -65,122 +65,81 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This adds the async buffered write support to XFS. For async buffered
-write requests, the request will return -EAGAIN if the ilock cannot be
-obtained immediately.
-
-This splits off a new helper xfs_ilock_inode from the existing helper
-xfs_ilock_iocb so it can be used for this function. The exising helper
-cannot be used as it hardcoded the inode to be used.
+This enables the async buffered writes for the filesystems that support
+async buffered writes in io-uring. Buffered writes are enabled for
+blocks that are already in the page cache or can be acquired with noio.
 
 Signed-off-by: Stefan Roesch <shr@fb.com>
 ---
- fs/xfs/xfs_file.c | 32 +++++++++++++++-----------------
- 1 file changed, 15 insertions(+), 17 deletions(-)
+ fs/io_uring.c | 29 ++++++++++++++++++++++++-----
+ 1 file changed, 24 insertions(+), 5 deletions(-)
 
-diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-index 793918c83755..ad3175b7d366 100644
---- a/fs/xfs/xfs_file.c
-+++ b/fs/xfs/xfs_file.c
-@@ -190,14 +190,13 @@ xfs_file_fsync(
- 	return error;
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 91de361ea9ab..f3aaac286509 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -3746,7 +3746,7 @@ static inline int io_iter_do_read(struct io_kiocb *=
+req, struct iov_iter *iter)
+ 		return -EINVAL;
  }
 =20
--static int
--xfs_ilock_iocb(
--	struct kiocb		*iocb,
-+static inline int
-+xfs_ilock_xfs_inode(
-+	struct xfs_inode	*ip,
-+	int			flags,
- 	unsigned int		lock_mode)
+-static bool need_read_all(struct io_kiocb *req)
++static bool need_complete_io(struct io_kiocb *req)
  {
--	struct xfs_inode	*ip =3D XFS_I(file_inode(iocb->ki_filp));
--
--	if (iocb->ki_flags & IOCB_NOWAIT) {
-+	if (flags & IOCB_NOWAIT) {
- 		if (!xfs_ilock_nowait(ip, lock_mode))
- 			return -EAGAIN;
- 	} else {
-@@ -222,7 +221,7 @@ xfs_file_dio_read(
-=20
- 	file_accessed(iocb->ki_filp);
-=20
--	ret =3D xfs_ilock_iocb(iocb, XFS_IOLOCK_SHARED);
-+	ret =3D xfs_ilock_xfs_inode(ip, iocb->ki_flags, XFS_IOLOCK_SHARED);
- 	if (ret)
- 		return ret;
- 	ret =3D iomap_dio_rw(iocb, to, &xfs_read_iomap_ops, NULL, 0, 0);
-@@ -244,7 +243,7 @@ xfs_file_dax_read(
- 	if (!iov_iter_count(to))
- 		return 0; /* skip atime */
-=20
--	ret =3D xfs_ilock_iocb(iocb, XFS_IOLOCK_SHARED);
-+	ret =3D xfs_ilock_xfs_inode(ip, iocb->ki_flags, XFS_IOLOCK_SHARED);
- 	if (ret)
- 		return ret;
- 	ret =3D dax_iomap_rw(iocb, to, &xfs_read_iomap_ops);
-@@ -264,7 +263,7 @@ xfs_file_buffered_read(
-=20
- 	trace_xfs_file_buffered_read(iocb, to);
-=20
--	ret =3D xfs_ilock_iocb(iocb, XFS_IOLOCK_SHARED);
-+	ret =3D xfs_ilock_xfs_inode(ip, iocb->ki_flags, XFS_IOLOCK_SHARED);
- 	if (ret)
- 		return ret;
- 	ret =3D generic_file_read_iter(iocb, to);
-@@ -343,7 +342,7 @@ xfs_file_write_checks(
- 	if (*iolock =3D=3D XFS_IOLOCK_SHARED && !IS_NOSEC(inode)) {
- 		xfs_iunlock(ip, *iolock);
- 		*iolock =3D XFS_IOLOCK_EXCL;
--		error =3D xfs_ilock_iocb(iocb, *iolock);
-+		error =3D xfs_ilock_xfs_inode(ip, iocb->ki_flags, *iolock);
- 		if (error) {
- 			*iolock =3D 0;
- 			return error;
-@@ -516,7 +515,7 @@ xfs_file_dio_write_aligned(
- 	int			iolock =3D XFS_IOLOCK_SHARED;
- 	ssize_t			ret;
-=20
--	ret =3D xfs_ilock_iocb(iocb, iolock);
-+	ret =3D xfs_ilock_xfs_inode(ip, iocb->ki_flags, iolock);
- 	if (ret)
- 		return ret;
- 	ret =3D xfs_file_write_checks(iocb, from, &iolock);
-@@ -583,7 +582,7 @@ xfs_file_dio_write_unaligned(
- 		flags =3D IOMAP_DIO_FORCE_WAIT;
+ 	return req->flags & REQ_F_ISREG ||
+ 		S_ISBLK(file_inode(req->file)->i_mode);
+@@ -3875,7 +3875,7 @@ static int io_read(struct io_kiocb *req, unsigned i=
+nt issue_flags)
+ 	} else if (ret =3D=3D -EIOCBQUEUED) {
+ 		goto out_free;
+ 	} else if (ret =3D=3D req->result || ret <=3D 0 || !force_nonblock ||
+-		   (req->flags & REQ_F_NOWAIT) || !need_read_all(req)) {
++		   (req->flags & REQ_F_NOWAIT) || !need_complete_io(req)) {
+ 		/* read all, failed, already did sync or don't want to retry */
+ 		goto done;
  	}
+@@ -3971,9 +3971,10 @@ static int io_write(struct io_kiocb *req, unsigned=
+ int issue_flags)
+ 		if (unlikely(!io_file_supports_nowait(req)))
+ 			goto copy_iov;
 =20
--	ret =3D xfs_ilock_iocb(iocb, iolock);
-+	ret =3D xfs_ilock_xfs_inode(ip, iocb->ki_flags, iolock);
- 	if (ret)
- 		return ret;
+-		/* file path doesn't support NOWAIT for non-direct_IO */
+-		if (force_nonblock && !(kiocb->ki_flags & IOCB_DIRECT) &&
+-		    (req->flags & REQ_F_ISREG))
++		/* File path supports NOWAIT for non-direct_IO only for block devices.=
+ */
++		if (!(kiocb->ki_flags & IOCB_DIRECT) &&
++			!(kiocb->ki_filp->f_mode & FMODE_BUF_WASYNC) &&
++			(req->flags & REQ_F_ISREG))
+ 			goto copy_iov;
 =20
-@@ -659,7 +658,7 @@ xfs_file_dax_write(
- 	ssize_t			ret, error =3D 0;
- 	loff_t			pos;
-=20
--	ret =3D xfs_ilock_iocb(iocb, iolock);
-+	ret =3D xfs_ilock_xfs_inode(ip, iocb->ki_flags, iolock);
- 	if (ret)
- 		return ret;
- 	ret =3D xfs_file_write_checks(iocb, from, &iolock);
-@@ -702,12 +701,11 @@ xfs_file_buffered_write(
- 	bool			cleared_space =3D false;
- 	int			iolock;
-=20
--	if (iocb->ki_flags & IOCB_NOWAIT)
--		return -EOPNOTSUPP;
--
- write_retry:
- 	iolock =3D XFS_IOLOCK_EXCL;
--	xfs_ilock(ip, iolock);
-+	ret =3D xfs_ilock_xfs_inode(ip, iocb->ki_flags, iolock);
-+	if (ret)
-+		return ret;
-=20
- 	ret =3D xfs_file_write_checks(iocb, from, &iolock);
- 	if (ret)
+ 		kiocb->ki_flags |=3D IOCB_NOWAIT;
+@@ -4027,6 +4028,24 @@ static int io_write(struct io_kiocb *req, unsigned=
+ int issue_flags)
+ 		/* IOPOLL retry should happen for io-wq threads */
+ 		if (ret2 =3D=3D -EAGAIN && (req->ctx->flags & IORING_SETUP_IOPOLL))
+ 			goto copy_iov;
++
++		if (ret2 !=3D req->result && ret2 >=3D 0 && need_complete_io(req)) {
++			struct io_async_rw *rw;
++
++			/* This is a partial write. The file pos has already been
++			 * updated, setup the async struct to complete the request
++			 * in the worker. Also update bytes_done to account for
++			 * the bytes already written.
++			 */
++			iov_iter_save_state(&s->iter, &s->iter_state);
++			ret =3D io_setup_async_rw(req, iovec, s, true);
++
++			rw =3D req->async_data;
++			if (rw)
++				rw->bytes_done +=3D ret2;
++
++			return ret ? ret : -EAGAIN;
++		}
+ done:
+ 		kiocb_done(req, ret2, issue_flags);
+ 	} else {
 --=20
 2.30.2
 

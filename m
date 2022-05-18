@@ -2,39 +2,39 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D1FD352C778
-	for <lists+io-uring@lfdr.de>; Thu, 19 May 2022 01:25:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3389652C77D
+	for <lists+io-uring@lfdr.de>; Thu, 19 May 2022 01:28:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231254AbiERXZT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 18 May 2022 19:25:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37184 "EHLO
+        id S231293AbiERX20 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 18 May 2022 19:28:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48350 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231238AbiERXZR (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 18 May 2022 19:25:17 -0400
+        with ESMTP id S229674AbiERX2O (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 18 May 2022 19:28:14 -0400
 Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8A87F584;
-        Wed, 18 May 2022 16:25:16 -0700 (PDT)
-Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24IN6CGp005571;
-        Wed, 18 May 2022 16:25:10 -0700
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBFD05F246;
+        Wed, 18 May 2022 16:28:12 -0700 (PDT)
+Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24IN6B4m013664;
+        Wed, 18 May 2022 16:28:06 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=message-id : date :
  subject : to : cc : references : from : in-reply-to : content-type :
  content-transfer-encoding : mime-version; s=facebook;
- bh=XgeJoVHKy6AK+747dXs4bfaUhzYh1vnB1CMiW362sDk=;
- b=fgGweO/s/Rw/K3cKUh1me1D6cOLop0FE0msoK03Br1QhZlmwm3JZwsOhvMClBBq0H5lk
- jWPZ5FOUYU/HP8Ye4UCT6+m+H+55bY9aVgtyGk9khFDJGwOq9Mp683cwqNaoOvEQNjrN
- KEL2GFd7CsyZH8bHbiamgk8CZ5WO//GxEQw= 
-Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2101.outbound.protection.outlook.com [104.47.70.101])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3g4ey1jysj-1
+ bh=J/TGzakSnBYnf82zAMFxa3XcB+ioNYtOJPcMDqkXz2I=;
+ b=ox3qh8QvtHrRf5qwVaIu8rDN/2VmCVJBZYKmU9KcEgLKuhUaBM59MmVPccssJ+n/kYGa
+ +4NWDJFKb8ZKpWEwG0zsXVA81L3dOen8pfz49vSbWb9felXbP3wPjbGIpuHvaVBlcFKL
+ GHLogDz+KsmwVbFFYLwQPB2k86ATZ95xqHA= 
+Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2109.outbound.protection.outlook.com [104.47.70.109])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3g4d823w30-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 18 May 2022 16:25:10 -0700
+        Wed, 18 May 2022 16:28:06 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=VrgjCrWrWeVD/vabbG6YT8iWZhsiPAdEJnQjoo5MAciQm4opPLQzQINI84ZW6H9zI/W9WC3+nFp+jhFmSy6g8rc1QT3ltoSiAQZo/HyWvoja6f8+Bg/JxExS+eKbGs9DQLhdPMpjEvaKhBqc6k+tntpz+hCRrZCnJMBbYxdIRBdzvi8CxGJnOkv/ICh0wDEgOjzFw7L9rZOb6FKB5CbDmFrdcvHSfxaeGFZnhMrPdWNcNZlvGQAGmpLuo0wRcJ5NHjGAFF+X/jPZA/pbZkMQdbaTUdpQuo4Ad+FF7ViX9LAkkJ9bIGGgmMqNAX67ZGM9ZrPa0Iu+tFIffLG2UVomdw==
+ b=Zje1/dKvTbg3V/1eZWCBHlTJmrlp8dmcGcduILfsxi9V69ns/0xTfF722HrxJgyCLcrc/ymanE129RRhB51Qn7l+W2Lme1X3vBSh75Tbd6FKCm39LIl/zOnM8rEEdFRJNHHucU2KpLnlm5++6K80gG1ukFX7AYo1mMqXI6zQOepXNzyqVKmjUzWXEQvlmR4TVtm1FcI6YK/iyg3ezJQamYOKvP5b1dGd6vcFfKHM94iS7ILDE9D00KmKNwImZBTUI/Htz0HmQKab/ALqPTgQY3Lspdgr4FQeE8y080Ohsc9rCjwTSVBnAyu1DFaPZuJMa4llD4MSksVLY042/vgqJw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XgeJoVHKy6AK+747dXs4bfaUhzYh1vnB1CMiW362sDk=;
- b=XCcrcE2EceTh8xPGaatut0xtF6+ohPJ/xWD7ZDLvijpUOjN/auNxEhXNWE6y6tSAF5ZqHVCZx6TbtIapcF7he3Pph1cqR6mYACsmLFnXyufom1dO3U5igNX8tIZP9vhIKZBLfK4biacG7SZKD6XW9jJilJ+tXI0psC7G2UhpcAzzfAtjg2K7qNEDEFfg6c6/Pk1W83YPKrS0xeBD4Q0m6wk9rLpqYLFIgQs3XLq2etJISC+iMbRJCWjsHA9pigwbvTNyZ9pcJuyZRX5mt7BNz2Yio8oWepwBxxNeuDnnQxBAFNPjJ161m01VoDfzU2wk7Qgr6jV0tOTg2cmHIYW0Cg==
+ bh=J/TGzakSnBYnf82zAMFxa3XcB+ioNYtOJPcMDqkXz2I=;
+ b=IhxwMUjFL3rD19/7IsanF4qmXtKFQhfNlkQLb+cckM0urE2JIj6YWwnRJMFxkPKQjRNqdaT8XwbfErbPsDCvy80Q7mTZHjswlmdMUWeKRLqL7TVL7kJUe9Qil34vsxshqlTke2/LOyEt/ZUAF7/oI3xv/xuj+QxI5m54LFhLHd02Hi6l/pjtMumr1Y4WLwzFgVFIaCvcwl33t1FQhKbIF949WeCmiQ0QK2FcqqKz28XXc7CHOwdFph64/o6jZvgHXdM6acBMh9cP2rOyYZcI8Ph36sxp8bC+cDH2vljkaq4nRsmFcpvNjpk9TTWPyZNJS0RIcPPKYCEDTEeVl31VXQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
  header.d=fb.com; arc=none
@@ -42,98 +42,97 @@ Received: from PH0SPR01MB0020.namprd15.prod.outlook.com (2603:10b6:510:76::6)
  by BYAPR15MB2773.namprd15.prod.outlook.com (2603:10b6:a03:150::10) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5273.13; Wed, 18 May
- 2022 23:25:07 +0000
+ 2022 23:28:02 +0000
 Received: from PH0SPR01MB0020.namprd15.prod.outlook.com
  ([fe80::ad90:787e:697e:3ed1]) by PH0SPR01MB0020.namprd15.prod.outlook.com
  ([fe80::ad90:787e:697e:3ed1%2]) with mapi id 15.20.5273.015; Wed, 18 May 2022
- 23:25:07 +0000
-Message-ID: <56aa7777-c8bf-3718-b37e-956ce331ddb6@fb.com>
-Date:   Wed, 18 May 2022 16:25:06 -0700
+ 23:28:02 +0000
+Message-ID: <bca738a3-2276-a6c3-7851-a4b048ead961@fb.com>
+Date:   Wed, 18 May 2022 16:28:00 -0700
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
  Gecko/20100101 Thunderbird/91.8.0
-Subject: Re: [RFC PATCH v2 06/16] fs: split off need_remove_file_privs()
- do_remove_file_privs()
+Subject: Re: [RFC PATCH v2 07/16] fs: split off need_file_update_time and
+ do_file_update_time
 Content-Language: en-US
 To:     Christian Brauner <brauner@kernel.org>
 Cc:     io-uring@vger.kernel.org, kernel-team@fb.com, linux-mm@kvack.org,
         linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         david@fromorbit.com, jack@suse.cz
 References: <20220516164718.2419891-1-shr@fb.com>
- <20220516164718.2419891-7-shr@fb.com>
- <20220517131841.wjuy7mmqo3w2rdsv@wittgenstein>
+ <20220516164718.2419891-8-shr@fb.com>
+ <20220517134049.tfxbsbdscalblsmv@wittgenstein>
 From:   Stefan Roesch <shr@fb.com>
-In-Reply-To: <20220517131841.wjuy7mmqo3w2rdsv@wittgenstein>
+In-Reply-To: <20220517134049.tfxbsbdscalblsmv@wittgenstein>
 Content-Type: text/plain; charset=UTF-8
-X-ClientProxiedBy: BY3PR03CA0009.namprd03.prod.outlook.com
- (2603:10b6:a03:39a::14) To PH0SPR01MB0020.namprd15.prod.outlook.com
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BY3PR04CA0019.namprd04.prod.outlook.com
+ (2603:10b6:a03:217::24) To PH0SPR01MB0020.namprd15.prod.outlook.com
  (2603:10b6:510:76::6)
+MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: c482884a-48ff-4a0c-f9cf-08da3925a53f
+X-MS-Office365-Filtering-Correlation-Id: f0213e98-d00d-419b-c506-08da39260d3e
 X-MS-TrafficTypeDiagnostic: BYAPR15MB2773:EE_
-X-Microsoft-Antispam-PRVS: <BYAPR15MB277337EFDC08A34DEDFD08C8D8D19@BYAPR15MB2773.namprd15.prod.outlook.com>
+X-Microsoft-Antispam-PRVS: <BYAPR15MB277311F3EFCB94E1FD629130D8D19@BYAPR15MB2773.namprd15.prod.outlook.com>
 X-FB-Source: Internal
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: idMVwRNJpGEn5M2VhqKHwZbwW8J0djzmidTpGHA3NYDch47h4GobSm+BOtkuByAmiH5yIDnMKz/15p7+/EZAyBamxsFKa8ccwWRkv2TP6ntZySlafiKNMxsAWVyG9GzVN295veFbG0lxOqAuDLpzwQXPQInS9lVHLhTIsImJmGOTut5Wq/yRZ/e433Ld1qXx6e6iBQJdHbLGq8fqJKRtjaBGbN4UziIxXy6a2iKuF+HC83bDO5GPIHgh/KX2Z+QJo7Mif/gmDxfTeG9AR1XZauIx7S6WtpGy3xHzWxO3tIOVOAWJytswJTs06mPqtPXl+sFaMr5j8fPfMA+7pXFI7RuELpjHNO34II9+Ji5ROX1Egca/o2GXphBuqKWbmkltW/SVZTo5NZbWiS/zQh7nn0yke4tdzntGDnr34CgzUPyWtPH8LwgtlXecch66b5oDJR2rpf2jm53BcfJGvHfiYGRcPVldERQJQGCHdQARCd28KDbW+dfUVADP2qwwBmrx8Frh11vbe0FpyA/nGgXndTbM6bPjnSavF765k5vwSKWeW1Mz1iH7MjwlJADbMc54S4GLdI+sNhamvWeepAZC0rDw4priSE9pD358gELnJ1pR5yhyMP5kAtCSDfsJ44NjYL8PZjVnmwcYBjq4GFJ6cT3RZTIViPMWLxTDapyibFuGU5tZhgKo8MIthvBXCZGsQeGXdkM/1Fe0gTGOzk6jzzcDeo41SHsYizzBR4/74SxClYC3MOz802YJLE8THeZS8nTNlgdhlIS7ncCorJuyqP05ndXAIjnw9LqGVAGcPBLRWh/dt2s55x2z08NsmPkKGgO/rQTHEYsjeiegSvnU1w==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0SPR01MB0020.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(53546011)(31696002)(86362001)(6506007)(186003)(84970400001)(2616005)(83380400001)(38100700002)(2906002)(8936002)(6512007)(66556008)(8676002)(66946007)(4326008)(66476007)(5660300002)(31686004)(966005)(6486002)(6916009)(508600001)(316002)(36756003)(43740500002)(45980500001);DIR:OUT;SFP:1102;
+X-Microsoft-Antispam-Message-Info: IcVNoS7EWepUQN/ljEBT22DjXjm+Ra7M+toGinDwa9SxmnmyPA+cqZkAmk2trh6b8GBmjRvMK50C5wujMu2UEc0mw1H12k2H+0TpZ8hjxigHuH3agh4zNWkL/uY6Pxg7DVLwD/pqtJgwbEgXqFK9Ldey3y5XaMjN+QefeJ3SHoN6kKdpiWY8gpXpeCv7BzdomM5viG8NM1aViHOApH+atRY2kWJhwUQjnilgx3L0yBozEQzlVIuX08+UJDJl8yKRj2jHbDLLFcM7/ur5Hb2kDC5QzGDDikflStTs0VcgKOOgm2RLg4P1YrMEXF95UQNmpJ4giJ2a8ZpBlWFPO6WfodFdnBVef8fIU0N1P0HhzTcvh+mEz18V+UOWODSV0xoBDOZzaako0uMAG9BIPlGjAE3KHsyH44rknvwj0UOtgRhS9mVLGYb3af3ErdmZROEv4FP+YktMVUJFxgZ2adH6IjcWp2HcSFnxQhtOP8h46hb+9H6UVfiJkfBU6XGb/xNMf6uIkirsSUAyYo18iy53Y41A96nHylouBJRjnGzRSIVY46FKUsqK6wLJ8ev1SukU6reITXa/Nk55zsgIy9n2A1fvb8vMAK6pURDTvGHFVHnXuA7SCm4BOUTwCwkf5sfTw6JifQi3sk9C3lbdSWJrqT+oXP1c3xpkMbNDf54/JNUwK40VXuIt7UB5CfZIJIzxRyjXaP/KgFT1nH++eJ2hSjVI+D3O8hWFZwOMnehUwxr4V/527s4rIdAziwI2DCQe
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0SPR01MB0020.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(53546011)(31696002)(86362001)(6506007)(186003)(2616005)(83380400001)(38100700002)(2906002)(8936002)(6512007)(66556008)(8676002)(66946007)(4326008)(66476007)(5660300002)(31686004)(6486002)(6916009)(508600001)(316002)(36756003)(43740500002)(45980500001);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?VjdvMDdhWFkxUzY4eWNKL3JBWEdUM2l1aUhZVUpURmRYeEtPYjhZeVJwSnRH?=
- =?utf-8?B?N1N0MkZ5RXo1N0dra2lRUEUxN1paL0xpOG83NTVsUlpGWjFhN2NCdTNXYjlu?=
- =?utf-8?B?cTA0UHVYRUVTZlZxendlelBoT0pzbTYwa2t2dXNPRUExN0NCcEFuSzBST0Vs?=
- =?utf-8?B?b2tPY1p5N0FaMCt5TlVwYmtUalMxcU9wQ1RMaWRjeEgvbWNZd3VyRWxFaThQ?=
- =?utf-8?B?UXpkcWRVTDFJaFBjNW5KaDJpODU0NXVMY3haYXpzcS9sSlUrVjMxTENZQldz?=
- =?utf-8?B?Mk0yNVBibU5JbWwwRCtGcG9hT1pRN3IzSmYxaGlqY0RnclUzZG5kVDZWY05K?=
- =?utf-8?B?SjExclhXYUpZMXNKQ0wxbGttRmEzRGRqNnpxOERMUk9Tb09MaWsxcGV2TUNr?=
- =?utf-8?B?MjZ6SDJzWUZkY0VWL0NVdlRoVytRcTdYUkV0M3c4Q1dyT3FJS0oyN2pPWVBG?=
- =?utf-8?B?TFowbzhlRG1QNmYvT0FqNWRlN1N0SUJZdG93dXFoZzRSdWwwcjVqUzhBRS9o?=
- =?utf-8?B?TUNTVUZtMEpwTkw5MXoyVVhwRXBsWkE0cHdLdEllZm5tZm03U2dzTGtxUWV4?=
- =?utf-8?B?bm1HdjZEMkNzS1BOQlQ2UlkwVW1WUHJ3eHZxbUxJc2YrcmZVaUl0MGRTVjA1?=
- =?utf-8?B?NXJlZzhxNGVxeWlBd1MwVU1DSllxVzFpWHNVd3hHUU1qTXJLMGVVcnNVVGVG?=
- =?utf-8?B?Z1AzZWJvNGpSR2k4VEppNmZQYVI4NmNQY0Nsb3Z5R0xhaFpCM0hwZmV6TEhP?=
- =?utf-8?B?WHhKMHF5R3JqQkFpKy9PVUhEY0FGNWZ6ZXBhcU9KRloyaVhqWkppdjl2VHJ6?=
- =?utf-8?B?ZVNhcnV2b25mU0VyU0VGaGZDM0FYbkNxSG9JZWlsYXdKcjlXQzBkTFhQcU53?=
- =?utf-8?B?KzZid3MyOHJqcWl4Mk9WVlBQQkxsU2NlRjFXb0pqK09yaHpBNU1zWUg0Q3da?=
- =?utf-8?B?RlJ3aGpyUlkxaUVSNDI2Wm5MOWVHQjFnU3hMc1VRNElXRm5CS3RVanBmazVB?=
- =?utf-8?B?Q054VnZ2R2t1ZFNzbXQ1Mmo4K2pqdHNmWi90cEp0ZDBaRmg4aUhBMkdyRmpC?=
- =?utf-8?B?T0wrUU9SankxS2JpNFFYd0VhWmZXRVNVL1d1eXNWc2ErbVR6bXdnRkM4T1lG?=
- =?utf-8?B?dUVqWFN0VDY0Mm1QR0kwU1BNMXhYbXRscVFsL2FKRkpkaGJuRUJPeklCdTVP?=
- =?utf-8?B?ZWg1cUxsN2lLdHo0bW1NUFpvWXJjaVBlQ2dSVGtBMjZ5eHIxbE9OV3o0QVIv?=
- =?utf-8?B?SXlqQUpEbTVuMHNETFJrZm42bWVQaEIxSXUvanpDcEFJM1dZdXBva29TU3k2?=
- =?utf-8?B?eSsrVDNPdllBU0hiaUVLSTRDUnRWMHVhSmxURW1yQWNuUnRONDVhOU15a0hG?=
- =?utf-8?B?UzFZSEV1cWMxRzVkdVVqOFlOMFpGUElINmZuZnBMbVRLdUtJVnlhNEJLeWRC?=
- =?utf-8?B?d0k4SWV6UmhZWVJiN1BjanUzbm10dHFxeng2UVhHQTE2Zy9nRXg5Z1NkMExO?=
- =?utf-8?B?czQ5V0NjQ2ltcG9tZWtrWE5MdjVpZFp6N2ZiMnB1b005OVc0dzI5eE8zUmxL?=
- =?utf-8?B?ZGlFZ1lZVHlnb2tyTE45TFd0M1llVmpvSk04UURoSTB0NXhYNmQwQTdzcU9X?=
- =?utf-8?B?VlVWWkpsYzA0bkZLME9oRlZrZVpndTZ1UU02MnNTckpWeC96SmUyNWlRNXBE?=
- =?utf-8?B?OTE2d256YUFiTG5ZYkxEak4yaVg1czA0NmJEWDZQUzEvdUREb3hyY1lNQjQy?=
- =?utf-8?B?TnEyd3dpdW9hSC9XWFgrMm1qVGV1TzFwL2VobmhlRWl4dTNJWGtGbWRrV1Zj?=
- =?utf-8?B?enJmTkgvWTNWTUcyNnpCUC9zV0p0WS91L0duek9UVGZpT1g4V242NUcxVnl5?=
- =?utf-8?B?eThCbEdzRkFTS2pKZ3A2QUd4TGdCYXZUblpUR1dIWUVTVkRxNUJhZ2JwRzFT?=
- =?utf-8?B?ZnVhdHdsVW95eGo4NGJPUzhxYTZxM0tRWWFxQXF4Y0I1SFljWTBtN1J5U2pS?=
- =?utf-8?B?Nnh3aUNNWlYwZ2pneWFGTndYcUozSXdHcG1rMkptVWh2Mm9KT2VrVzVWQk5B?=
- =?utf-8?B?c1ZoZTd1RnNYNDBZaHgzRzdvYzFjaWNwc2ZNTmRQdVdVM1pucjhmdVU3VmJ2?=
- =?utf-8?B?alBRbUQ3KzJzSWlKZFhxS0FXWEt0b1lpUzFKa1hEN1d2UU5wSjdiQTFnbUZT?=
- =?utf-8?B?dGpXQ1IxNWpUUStzdkV5bmNFdzQ2TUswNkxVcGZnZTd6OG1uWnNUUHJzMU1P?=
- =?utf-8?B?enkzRHVyc1B0WWQyU2xtc3pGZFVTL2dTRW94SWxTeGZTanV1d3B6QlpGajQ3?=
- =?utf-8?B?ZUFFQmh4TGN1QlVOSXpDeVJzYmpNNGZEdTdLNTBQR1N1MVZlYWhhdGkzbkZG?=
- =?utf-8?Q?THGVfB65GOKgcK6g=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?SFV3OFV1bWpTTlc1U3NLM3hFb040ZFFJQVNqZFdCdlltYXdsQ3dsQUhvUGtz?=
+ =?utf-8?B?V3d1OE9vZmhwRTVDSTF4TDE3bU9aTGFZdHlkVDNTQXZZWituamVldUg1c3VE?=
+ =?utf-8?B?U3p6ancwc1ZjVnYrS240S0NIakZBSmcxb2g5WXNRSjRsdG55MWVvdUloVjJh?=
+ =?utf-8?B?ajdEQ3VQTis5OVpmSmN2YWRtb3RWNFA2TmdDWWsyWG1HTVI1TGx1KytmeDNG?=
+ =?utf-8?B?WEN0alBGYWFuRjRSSkhTSEU5ZGE4RkdFd0JGNjdCYkpVbTB5bVpvUnNpTlU5?=
+ =?utf-8?B?cSthVUdIaXZhMHVoNkw1UkNQcC9aMkNySW12TmlhcnE3VC9vd3h6WXZvM2Yw?=
+ =?utf-8?B?QTlXQy9mV21yZnUzZDRjQ1gwaW1POHVFaTRYYlhlcE5zdytzTTJiZ29YdDRi?=
+ =?utf-8?B?ZWo2ZHlPSUtpU1plNThrNFl6b0M3VGNhRzEvdTVsbGhDRHg5aUtIZ2VZT0Nk?=
+ =?utf-8?B?a1F2Sk1Hemg5WVJBSFFUL040aTYzUkJveWY1RW5WVWFnTlZJQ010VHhUMnFq?=
+ =?utf-8?B?c2JHVlYwUXJvVU96MWZUbVc4V3Z4cDVkUVBmY1l4a3UveHVKWG5PZjNuR0pz?=
+ =?utf-8?B?VzUxS1laelNEdHF2RnJQOXFXem40c3BSWUlWNUYyRzIwbHgvNVRGTTZIYUIz?=
+ =?utf-8?B?WTBVLzR3VHBQNnF2bU5RdWVjcDdObXBQNkY5cGZWaW5sYlFzWE55S2FueEtK?=
+ =?utf-8?B?RzdYcWtna0FvSUVwdmlVeU1PQzFwL25RMzAzY1JHVmU3aFhQZzgwa0lBWmtR?=
+ =?utf-8?B?UllraGlDTGwwaE0rTmpQQTVqeGo5T0JuZWUwNXdJWi9LL2FmTzRLeW5Hd3M2?=
+ =?utf-8?B?bVk2ZkoxbXV2enJHSEZNa2l2SHh4dFZtdDkzK3F1SjZ4NlhwTWZxVEFsS2FX?=
+ =?utf-8?B?Z2plWWRpcUhmblBJT0hoeEcvdDlONHdjZHhKM1didmE3Y1F4eE9QR3Vxc0pJ?=
+ =?utf-8?B?M09UbWM0YktIZXhJNmUrT2hnNDFSSTFvTmZMY2JvbWdRYzBkT3BhS3gwUC9q?=
+ =?utf-8?B?dWQ1bERRNnN1SXRXQWJOQWxsbHozaWpSUDRzUGp3VHp5ZVA5czVyZ3pPTXR4?=
+ =?utf-8?B?TXdzaXg1SWZ4SXNPeVdMeDNWcHlmL3JLTzhPOHhlNFhTUjRyZjIzUVhJZDRx?=
+ =?utf-8?B?cTgxenh2Z0swUzVXakdrTDlkd1RJUWdkeDFWZ3FFenQxWENTSVVrVnl3b2U4?=
+ =?utf-8?B?VklGTFI3VXQ2clZUSXlPaEt2cjVJd2xHUEtaRGdaR0xVRzN0Sms2d3NZOUl5?=
+ =?utf-8?B?TWNTZVJtUzlKeitVU0VoQ1RhWjNYQnNnLzl1dXRSenRGZWY3c3lvT0F6djFH?=
+ =?utf-8?B?SUU4SjBMenpkNEhLUnI2SjhaRm5jbXB5S2tKNW91RTMyOVlSMEZFdFJmemJJ?=
+ =?utf-8?B?QWxxOXZtTnppT0ptMENwYkt1ZFA0bXJDbHgzUFFMZjMySHFtUzcybUtZRk11?=
+ =?utf-8?B?VStQU1FsWmk4aXEzd3hvYVI3azlESFN5REVWM3o4emp5ME5mQmJjN1puRk0y?=
+ =?utf-8?B?YnYxdGFsVFEzRk5PN04zaDMwYnZzSFVXbXBaVWx0VUdyb2RGRXhvRUFxK0ZG?=
+ =?utf-8?B?dGR0SDlPRHRuamxMTTNkUTk5a3pXdUlpMEo5V3JsQnhtT1RyMG1ERWZJRlpX?=
+ =?utf-8?B?VTdPOTZXUVArZU8reU5qSTI1NkpacGUzQ0Vnb2gxbXdLSytZSEVGdDhiYWdM?=
+ =?utf-8?B?ZFZFUDNtVEVpV1dMT09CT1p6RWI0Y1dGS0dGa29YbzIwUDUyMGZ4WktzenZP?=
+ =?utf-8?B?VjNJSU1tOC84YUxRalp1YnIwWnJrejBHbEIwaTZ4L25QOW5PVEkzb2ZCU1hJ?=
+ =?utf-8?B?TC9aTm1QZUVUZS9EcGdlbFdaeVNKWVdER0g2bWR5RHRXcm1rYThvVnNwcC9Y?=
+ =?utf-8?B?Kzc3UktiWUpITkNIS2N1NGVrRS95dkFDMWkzVnFTSlQ4aFRJalA0RHVINmJo?=
+ =?utf-8?B?dVBCbjNuMUZ2V2NyNmZ0K1dEeEdFK0YwOGE4QUxlQll6bzl1am5aQjV1QVRL?=
+ =?utf-8?B?NTNnOFJQRWVjNzZ6WkFMaFBDWHpmNnZrNTRLdzNDQ0gxaVFPZjVRdHVqb3BF?=
+ =?utf-8?B?bjVJYUFDbEhORGIrWnh1c0hRSVYyTytFaGo1enpGemxpVWJOa3dpcldKa0xr?=
+ =?utf-8?B?QVltMXVtM1Uva1BzREZhTnRncCtuMThOUVRpUFBXNVAyOEY4dlNvanZSdG5x?=
+ =?utf-8?B?Q3AyUjNGRTZ6L2VWWG1IdmV6ZVFRS0J1STJDQTIzMXIvUStmTVBEQWZMZE5Z?=
+ =?utf-8?B?eUs1ZHEwRUs2dVNZNStDSXBHVk5QKyttUjhTUHNQb01oZ2lIbUpXcS9wZWJ6?=
+ =?utf-8?B?akhhR0tJY0RsMGVOM1Vmb2F2eVM1Sy9lL1VubDRJZVBQcEs2UDNGYnFqaU5Z?=
+ =?utf-8?Q?sI1bill2yqsJbpbg=3D?=
 X-OriginatorOrg: fb.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c482884a-48ff-4a0c-f9cf-08da3925a53f
+X-MS-Exchange-CrossTenant-Network-Message-Id: f0213e98-d00d-419b-c506-08da39260d3e
 X-MS-Exchange-CrossTenant-AuthSource: PH0SPR01MB0020.namprd15.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 May 2022 23:25:07.6914
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 May 2022 23:28:02.1041
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: VTJuZwaWwVYIYqzTTMpL+1iwIz7j0SRLWHWgYdhqNCZFwm/+jzMIJ+nJzx7raaLv
+X-MS-Exchange-CrossTenant-UserPrincipalName: WJv0pmThExoDQVaDMgno0vHHY+DXmMYazX2typzT0jsA5NRFv2MPpLIL2b+lwjd0
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB2773
-X-Proofpoint-ORIG-GUID: NMi10r3T0CCLd42twFiHxoB0qmGm8gVD
-X-Proofpoint-GUID: NMi10r3T0CCLd42twFiHxoB0qmGm8gVD
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
-MIME-Version: 1.0
+X-Proofpoint-GUID: h5e-f4OWOASlGgbMdtwIa9CAigCg_qSv
+X-Proofpoint-ORIG-GUID: h5e-f4OWOASlGgbMdtwIa9CAigCg_qSv
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.874,Hydra:6.0.486,FMLib:17.11.64.514
  definitions=2022-05-18_06,2022-05-17_02,2022-02-23_01
@@ -150,185 +149,210 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 
 
-On 5/17/22 6:18 AM, Christian Brauner wrote:
-> On Mon, May 16, 2022 at 09:47:08AM -0700, Stefan Roesch wrote:
->> This splits off the function need_remove_file_privs() from the function
->> do_remove_file_privs() from the function file_remove_privs().
+On 5/17/22 6:40 AM, Christian Brauner wrote:
+> On Mon, May 16, 2022 at 09:47:09AM -0700, Stefan Roesch wrote:
+>> This splits off the functions need_file_update_time() and
+>> do_file_update_time() from the function file_update_time().
 >>
+>> This is required to support async buffered writes.
 >> No intended functional changes in this patch.
 >>
 >> Signed-off-by: Stefan Roesch <shr@fb.com>
 >> ---
-> 
-> Just a few nits...
-> 
->>  fs/inode.c | 57 ++++++++++++++++++++++++++++++++++++------------------
->>  1 file changed, 38 insertions(+), 19 deletions(-)
+>>  fs/inode.c | 71 ++++++++++++++++++++++++++++++++++++------------------
+>>  1 file changed, 47 insertions(+), 24 deletions(-)
 >>
 >> diff --git a/fs/inode.c b/fs/inode.c
->> index 9d9b422504d1..a6d70a1983f8 100644
+>> index a6d70a1983f8..1d0b02763e98 100644
 >> --- a/fs/inode.c
 >> +++ b/fs/inode.c
->> @@ -2010,17 +2010,8 @@ static int __remove_privs(struct user_namespace *mnt_userns,
->>  	return notify_change(mnt_userns, dentry, &newattrs, NULL);
+>> @@ -2054,35 +2054,22 @@ int file_remove_privs(struct file *file)
 >>  }
->>  
->> -/*
->> - * Remove special file priviledges (suid, capabilities) when file is written
->> - * to or truncated.
->> - */
->> -int file_remove_privs(struct file *file)
->> +static int need_file_remove_privs(struct inode *inode, struct dentry *dentry)
-> 
-> I'd rather call this file_needs_remove_privs()?
-> 
-Renamed to file_needs_remove_privs()
-
->>  {
->> -	struct dentry *dentry = file_dentry(file);
->> -	struct inode *inode = file_inode(file);
->> -	int kill;
->> -	int error = 0;
->> -
->>  	/*
->>  	 * Fast path for nothing security related.
->>  	 * As well for non-regular files, e.g. blkdev inodes.
->> @@ -2030,16 +2021,37 @@ int file_remove_privs(struct file *file)
->>  	if (IS_NOSEC(inode) || !S_ISREG(inode->i_mode))
->>  		return 0;
->>  
->> -	kill = dentry_needs_remove_privs(dentry);
->> -	if (kill < 0)
->> -		return kill;
->> -	if (kill)
->> -		error = __remove_privs(file_mnt_user_ns(file), dentry, kill);
->> +	return dentry_needs_remove_privs(dentry);
->> +}
->> +
->> +static int do_file_remove_privs(struct file *file, struct inode *inode,
->> +				struct dentry *dentry, int kill)
-> 
-> and that __file_remove_privs() which matches the rest of the file since
-> here we don't have a lot of do_* but rather __* convention afaict.
-> 
-
-Renamed the function to __file_remove_privs().
-
->> +{
->> +	int error = 0;
->> +
->> +	error = __remove_privs(file_mnt_user_ns(file), dentry, kill);
->>  	if (!error)
->>  		inode_has_no_xattr(inode);
->>  
->>  	return error;
->>  }
->> +
->> +/*
->> + * Remove special file privileges (suid, capabilities) when file is written
->> + * to or truncated.
->> + */
->> +int file_remove_privs(struct file *file)
-> 
-> This is a generic comment, not aimed specifically at your change but we
-> really need to get better at kernel-doc...
-> 
-> Since you're already touching this code could you at least to the
-> exported function you're modifying add sm like:
-> 
-
-I added the kernel documentation.
-
-> /**
->  * file_remove_privs - remove special file privileges (suid, capabilities) 
->  * @file: file to remove privileges from
->  * 
->  * When file is modified by a write or truncation ensure that special
->  * file privileges are removed.
->  *
->  * Return: 0 on success, negative errno on failure.
->  */
-> int file_remove_privs(struct file *file)
-> 
-> This will then render on kernel.org/doc see e.g. lookup_one():
-> https://www.kernel.org/doc/html/latest/filesystems/api-summary.html?highlight=lookup_one#c.lookup_one
-> 
->> +{
->> +	struct dentry *dentry = file_dentry(file);
->> +	struct inode *inode = file_inode(file);
->> +	int kill;
->> +
->> +	kill = need_file_remove_privs(inode, dentry);
->> +	if (kill <= 0)
->> +		return kill;
->> +
->> +	return do_file_remove_privs(file, inode, dentry, kill);
->> +}
 >>  EXPORT_SYMBOL(file_remove_privs);
 >>  
->>  /**
->> @@ -2093,15 +2105,22 @@ EXPORT_SYMBOL(file_update_time);
->>  /* Caller must hold the file's inode lock */
->>  int file_modified(struct file *file)
+>> -/**
+>> - *	file_update_time	-	update mtime and ctime time
+>> - *	@file: file accessed
+>> - *
+>> - *	Update the mtime and ctime members of an inode and mark the inode
+>> - *	for writeback.  Note that this function is meant exclusively for
+>> - *	usage in the file write path of filesystems, and filesystems may
+>> - *	choose to explicitly ignore update via this function with the
+>> - *	S_NOCMTIME inode flag, e.g. for network filesystem where these
+>> - *	timestamps are handled by the server.  This can return an error for
+>> - *	file systems who need to allocate space in order to update an inode.
+>> - */
+>> -
+>> -int file_update_time(struct file *file)
+>> +static int need_file_update_time(struct inode *inode, struct file *file,
+>> +				struct timespec64 *now)
 > 
-> Similar I'd add sm like:
+> I think file_need_update_time() is easier to understand.
 > 
 
-I added the kernel documentation.
+I renamed the function to file_needs_update_time().
 
+>>  {
+>> -	struct inode *inode = file_inode(file);
+>> -	struct timespec64 now;
+>>  	int sync_it = 0;
+>> -	int ret;
+>> +
+>> +	if (unlikely(file->f_mode & FMODE_NOCMTIME))
+>> +		return 0;
+> 
+> Moving this into this generic helper and using the generic helper
+> directly in file_update_atime() leads to a change in behavior for
+> file_update_time() callers. Currently they'd get time settings updated
+> even if FMODE_NOCMTIME is set but with this change they'd not get it
+> updated anymore if FMODE_NOCMTIME is set. Am I reading this right?
+> 
+
+Correct, this was not intended and will be addressed with the next version of the patch.
+
+> Is this a bugfix? And if so it should be split into a separate commit...
+> 
+>>  
+>>  	/* First try to exhaust all avenues to not sync */
+>>  	if (IS_NOCMTIME(inode))
+>>  		return 0;
+>>  
+>> -	now = current_time(inode);
+>> -	if (!timespec64_equal(&inode->i_mtime, &now))
+>> +	if (!timespec64_equal(&inode->i_mtime, now))
+>>  		sync_it = S_MTIME;
+>>  
+>> -	if (!timespec64_equal(&inode->i_ctime, &now))
+>> +	if (!timespec64_equal(&inode->i_ctime, now))
+>>  		sync_it |= S_CTIME;
+>>  
+>>  	if (IS_I_VERSION(inode) && inode_iversion_need_inc(inode))
+>> @@ -2091,15 +2078,49 @@ int file_update_time(struct file *file)
+>>  	if (!sync_it)
+>>  		return 0;
+>>  
+>> +	return sync_it;
+>> +}
+>> +
+>> +static int do_file_update_time(struct inode *inode, struct file *file,
+>> +			struct timespec64 *now, int sync_mode)
+>> +{
+>> +	int ret;
+>> +
+>>  	/* Finally allowed to write? Takes lock. */
+>>  	if (__mnt_want_write_file(file))
+>>  		return 0;
+>>  
+>> -	ret = inode_update_time(inode, &now, sync_it);
+>> +	ret = inode_update_time(inode, now, sync_mode);
+>>  	__mnt_drop_write_file(file);
+>>  
+>>  	return ret;
+>>  }
+> 
+> Maybe
+> 
+> static int __file_update_time(struct inode *inode, struct file *file,
+> 			      struct timespec64 *now, int sync_mode)
+> {
+> 	int ret = 0;
+> 
+> 	/* try to update time settings */
+> 	if (!__mnt_want_write_file(file)) {
+> 		ret = inode_update_time(inode, now, sync_mode);
+> 		__mnt_drop_write_file(file);
+> 	}
+> 
+> 	return ret;
+> }
+> 
+> reads a little easier and the old comment is a bit confusing imho. I'd
+> just say we keep it short. 
+> 
+
+I made the change.
+
+>> +
+>> +/**
+>> + *	file_update_time	-	update mtime and ctime time
+>> + *	@file: file accessed
+>> + *
+>> + *	Update the mtime and ctime members of an inode and mark the inode
+>> + *	for writeback.  Note that this function is meant exclusively for
+>> + *	usage in the file write path of filesystems, and filesystems may
+>> + *	choose to explicitly ignore update via this function with the
+>> + *	S_NOCMTIME inode flag, e.g. for network filesystem where these
+>> + *	timestamps are handled by the server.  This can return an error for
+>> + *	file systems who need to allocate space in order to update an inode.
+>> + */
+>> +
+>> +int file_update_time(struct file *file)
+> 
+> My same lame complaint as before to make this kernel-doc. :)
+> 
 > /**
->  * file_modified - handle mandated vfs changes when modifying a file
->  * @file: file that was was modified
->  * 
->  * When file has been modified ensure that special
->  * file privileges are removed and time settings are updated.
+>  * file_update_time - update mtime and ctime time
+>  * @file: file accessed
 >  *
->  * Context: Caller must hold the file's inode lock.
+>  * Update the mtime and ctime members of an inode and mark the inode or
+>  * writeback. Note that this function is meant exclusively for sage in
+>  * the file write path of filesystems, and filesystems may hoose to
+>  * explicitly ignore update via this function with the _NOCMTIME inode
+>  * flag, e.g. for network filesystem where these imestamps are handled
+>  * by the server. This can return an error for ile systems who need to
+>  * allocate space in order to update an inode.
 >  *
 >  * Return: 0 on success, negative errno on failure.
 >  */
-> int file_remove_privs(struct file *file)
+> int file_update_time(struct file *file)
 > 
->>  {
->> -	int err;
->> +	int ret;
->> +	struct dentry *dentry = file_dentry(file);
+
+I added the above kernel documentation, I only fixed a couple of typos.
+
+>> +{
+>> +	int err;
 >> +	struct inode *inode = file_inode(file);
+>> +	struct timespec64 now = current_time(inode);
+>> +
+>> +	err = need_file_update_time(inode, file, &now);
+>> +	if (err < 0)
+>> +		return err;
+> 
+> I may misread this but shouldn't this be err <= 0, i.e., if it returns 0
+> then we don't need to update time?
+> 
+
+Good catch. Fixed.
+
+>> +
+>> +	return do_file_update_time(inode, file, &now, err);
+>> +}
+>>  EXPORT_SYMBOL(file_update_time);
+>>  
+>>  /* Caller must hold the file's inode lock */
+>> @@ -2108,6 +2129,7 @@ int file_modified(struct file *file)
+>>  	int ret;
+>>  	struct dentry *dentry = file_dentry(file);
+>>  	struct inode *inode = file_inode(file);
+>> +	struct timespec64 now = current_time(inode);
 >>  
 >>  	/*
 >>  	 * Clear the security bits if the process is not being run by root.
->>  	 * This keeps people from modifying setuid and setgid binaries.
->>  	 */
->> -	err = file_remove_privs(file);
->> -	if (err)
->> -		return err;
->> +	ret = need_file_remove_privs(inode, dentry);
->> +	if (ret < 0) {
->> +		return ret;
->> +	} else if (ret > 0) {
->> +		ret = do_file_remove_privs(file, inode, dentry, ret);
->> +		if (ret)
->> +			return ret;
->> +	}
-> 
-> The else-if branch looks a bit unorthodox to me. I'd probably rather
-> make this:
-> 
-> 	ret = need_file_remove_privs(inode, dentry);
-> 	if (ret < 0)
-> 		return ret;
-> 	
-> 	if (ret > 0) {
-> 		ret = do_file_remove_privs(file, inode, dentry, ret);
-> 		if (ret)
-> 			return ret;
-> 	}
+>> @@ -2122,10 +2144,11 @@ int file_modified(struct file *file)
+>>  			return ret;
+>>  	}
 >>  
->>  	if (unlikely(file->f_mode & FMODE_NOCMTIME))
->>  		return 0;
-
-I replaced the else if.
-
+>> -	if (unlikely(file->f_mode & FMODE_NOCMTIME))
+>> -		return 0;
+>> +	ret = need_file_update_time(inode, file, &now);
+>> +	if (ret <= 0)
+>> +		return ret;
+>>  
+>> -	return file_update_time(file);
+>> +	return do_file_update_time(inode, file, &now, ret);
+>>  }
+>>  EXPORT_SYMBOL(file_modified);
+>>  
 >> -- 
 >> 2.30.2
 >>

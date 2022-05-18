@@ -2,77 +2,66 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F31F52BF91
-	for <lists+io-uring@lfdr.de>; Wed, 18 May 2022 18:14:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9444952BF2B
+	for <lists+io-uring@lfdr.de>; Wed, 18 May 2022 18:13:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239490AbiERPjv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 18 May 2022 11:39:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49400 "EHLO
+        id S239692AbiERPtN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 18 May 2022 11:49:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34860 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239459AbiERPjs (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 18 May 2022 11:39:48 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29304163F7D
-        for <io-uring@vger.kernel.org>; Wed, 18 May 2022 08:39:45 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id r23so3284580wrr.2
-        for <io-uring@vger.kernel.org>; Wed, 18 May 2022 08:39:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=va36wAAbe1qwf1LlQtJWUtJ487aIheuZ8ahX4EnVGY0=;
-        b=rrxMp0leGCqtFXpUL693a8d5Zr9B6GTX+dmMnYmV9qdB1BT8cEuMtwd/q2LYEtdRJY
-         DPAgL5NJXZe5w32S4SOcjFTA8LOBYyksdsQcnu1/SwPHEgEkGIXjXg3pBBq4+C0sfhye
-         C2JS1HeYsa8OyqyqnxLnNduo9bSn4ut8vaM4w7cMl3DLq7/VcojkwDk5a4Gjs4m3yBog
-         vush9wqkzsTJ/oD7gwWnYLvG/UR59JQFTKR8JylNRy0vh2AtZok+OHJpVppVl3FLTuG7
-         DsoFoAXnDuRmp4XY4BJgD/HYwIhnXssaCxtpm0b45AM4XLs/bHiS6BxQ6WzdOJu0F4AG
-         Ke2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=va36wAAbe1qwf1LlQtJWUtJ487aIheuZ8ahX4EnVGY0=;
-        b=VFjTwahWZD+C8Z3bvh8w+VnlyXASCIhMLgykyySV/a4E7mdmCEVwrt8aBhilyGKhk7
-         MVyrnG2JjsP6DlnxWTSIo4s0+NzASlHYMQBH2DUBkyg3/sQMTvs9tsouMNl5Qdk/FAuS
-         FahRTcoPlKBrZLboT/Qum6TrCrAtk/F4iT1Vc8/5hDx1MV7ktdwtz4nOFD8tmchqlOTL
-         jQn7ftSev0PHUsT9yX0VZgYXAh9XhBmnU1HA+xUGCk6vXdl8QDtgFDfcozumPR03Vy1g
-         JE/xZPNJH4PtzJWYk3wNfJvnQwx7FmSpD4txPYiags3AUEbsG6hObm0B8AZIQ9OlzV+y
-         0opQ==
-X-Gm-Message-State: AOAM530k3X4y/VfwNvHSmoRIVw1WfOX0R3VBzWXLl+qPmKQmvQK8AACt
-        YdTD7KTlehQk+E2GJ99Oo+J3vw==
-X-Google-Smtp-Source: ABdhPJwMG6FJWeSOQTwckjRdnUHx9eOJsaj47hUtiMwXKtMQbP/1AmLji7q7DsvO5phgtWq467uhog==
-X-Received: by 2002:a5d:5309:0:b0:20d:124:90b1 with SMTP id e9-20020a5d5309000000b0020d012490b1mr245670wrv.21.1652888383499;
-        Wed, 18 May 2022 08:39:43 -0700 (PDT)
-Received: from google.com (cpc155339-bagu17-2-0-cust87.1-3.cable.virginm.net. [86.27.177.88])
-        by smtp.gmail.com with ESMTPSA id l9-20020a5d6d89000000b0020c5253d8f3sm2869082wrs.63.2022.05.18.08.39.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 May 2022 08:39:42 -0700 (PDT)
-Date:   Wed, 18 May 2022 16:39:40 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [REPORT] Use-after-free Read in __fdget_raw in v5.10.y
-Message-ID: <YoUTPIVOhLlnIO04@google.com>
-References: <YoOW2+ov8KF1YcYF@google.com>
- <3d271554-9ddc-07ad-3ff8-30aba31f8bf2@kernel.dk>
- <YoOcYR15Jhkw2XwL@google.com>
- <f34c85cc-71a5-59d4-dd7a-cc07e2af536c@kernel.dk>
- <YoTrmjuct3ctvFim@google.com>
- <b7dc2992-e2d6-8e76-f089-b33561f8471f@kernel.dk>
- <f821d544-78d5-a227-1370-b5f0895fb184@kernel.dk>
- <06710b30-fec8-b593-3af4-1318515b41d8@kernel.dk>
- <YoUNQlzU0W4ShA85@google.com>
- <49609b89-f2f0-44b3-d732-dfcb4f73cee1@kernel.dk>
+        with ESMTP id S239685AbiERPtM (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 18 May 2022 11:49:12 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6847318DAC6
+        for <io-uring@vger.kernel.org>; Wed, 18 May 2022 08:49:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1652888949;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=CPMtpCANwEoxwHK48M0Snd0aiOyfZBKw+8aByA2ZSdo=;
+        b=C3e+FLYuFaPfiGc7wqA57NYWgiKaINpLTXtxjk9JvDrPBYOXPkhGI1c539MG/V7gZwEVEw
+        QTGN47mC/FU+2h1+GRj41k0jxwlx4GSyDzXm0YPFtF/x1mdePgIRBqnX/Xd90nm33VNdCk
+        moS40zfMTMtA0ZwcGklg5MUpoA6OzIo=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-624-YbbNmX4VOyusgVngS6orDQ-1; Wed, 18 May 2022 11:49:05 -0400
+X-MC-Unique: YbbNmX4VOyusgVngS6orDQ-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 587AA294EDCB;
+        Wed, 18 May 2022 15:49:05 +0000 (UTC)
+Received: from localhost (unknown [10.39.192.212])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BFAE140C1438;
+        Wed, 18 May 2022 15:49:04 +0000 (UTC)
+Date:   Wed, 18 May 2022 16:49:03 +0100
+From:   Stefan Hajnoczi <stefanha@redhat.com>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Harris James R <james.r.harris@intel.com>,
+        io-uring@vger.kernel.org,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        ZiyangZhang <ZiyangZhang@linux.alibaba.com>,
+        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+Subject: Re: [PATCH V2 0/1] ubd: add io_uring based userspace block driver
+Message-ID: <YoUVb8CeWRIErJBY@stefanha-x1.localdomain>
+References: <20220517055358.3164431-1-ming.lei@redhat.com>
+ <YoOr6jBfgVm8GvWg@stefanha-x1.localdomain>
+ <YoSbuvT88sG5UkfG@T590>
+ <YoTOTCooQfQQxyA8@stefanha-x1.localdomain>
+ <YoTsYvnACbCNIMPE@T590>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="hPQQNyCAeGrb5boE"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <49609b89-f2f0-44b3-d732-dfcb4f73cee1@kernel.dk>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+In-Reply-To: <YoTsYvnACbCNIMPE@T590>
+X-Scanned-By: MIMEDefang 2.84 on 10.11.54.2
+X-Spam-Status: No, score=-3.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -80,132 +69,301 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, 18 May 2022, Jens Axboe wrote:
 
-> On 5/18/22 9:14 AM, Lee Jones wrote:
-> > On Wed, 18 May 2022, Jens Axboe wrote:
-> > 
-> >> On 5/18/22 6:54 AM, Jens Axboe wrote:
-> >>> On 5/18/22 6:52 AM, Jens Axboe wrote:
-> >>>> On 5/18/22 6:50 AM, Lee Jones wrote:
-> >>>>> On Tue, 17 May 2022, Jens Axboe wrote:
-> >>>>>
-> >>>>>> On 5/17/22 7:00 AM, Lee Jones wrote:
-> >>>>>>> On Tue, 17 May 2022, Jens Axboe wrote:
-> >>>>>>>
-> >>>>>>>> On 5/17/22 6:36 AM, Lee Jones wrote:
-> >>>>>>>>> On Tue, 17 May 2022, Jens Axboe wrote:
-> >>>>>>>>>
-> >>>>>>>>>> On 5/17/22 6:24 AM, Lee Jones wrote:
-> >>>>>>>>>>> On Tue, 17 May 2022, Jens Axboe wrote:
-> >>>>>>>>>>>
-> >>>>>>>>>>>> On 5/17/22 5:41 AM, Lee Jones wrote:
-> >>>>>>>>>>>>> Good afternoon Jens, Pavel, et al.,
-> >>>>>>>>>>>>>
-> >>>>>>>>>>>>> Not sure if you are presently aware, but there appears to be a
-> >>>>>>>>>>>>> use-after-free issue affecting the io_uring worker driver (fs/io-wq.c)
-> >>>>>>>>>>>>> in Stable v5.10.y.
-> >>>>>>>>>>>>>
-> >>>>>>>>>>>>> The full sysbot report can be seen below [0].
-> >>>>>>>>>>>>>
-> >>>>>>>>>>>>> The C-reproducer has been placed below that [1].
-> >>>>>>>>>>>>>
-> >>>>>>>>>>>>> I had great success running this reproducer in an infinite loop.
-> >>>>>>>>>>>>>
-> >>>>>>>>>>>>> My colleague reverse-bisected the fixing commit to:
-> >>>>>>>>>>>>>
-> >>>>>>>>>>>>>   commit fb3a1f6c745ccd896afadf6e2d6f073e871d38ba
-> >>>>>>>>>>>>>   Author: Jens Axboe <axboe@kernel.dk>
-> >>>>>>>>>>>>>   Date:   Fri Feb 26 09:47:20 2021 -0700
-> >>>>>>>>>>>>>
-> >>>>>>>>>>>>>        io-wq: have manager wait for all workers to exit
-> >>>>>>>>>>>>>
-> >>>>>>>>>>>>>        Instead of having to wait separately on workers and manager, just have
-> >>>>>>>>>>>>>        the manager wait on the workers. We use an atomic_t for the reference
-> >>>>>>>>>>>>>        here, as we need to start at 0 and allow increment from that. Since the
-> >>>>>>>>>>>>>        number of workers is naturally capped by the allowed nr of processes,
-> >>>>>>>>>>>>>        and that uses an int, there is no risk of overflow.
-> >>>>>>>>>>>>>
-> >>>>>>>>>>>>>        Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> >>>>>>>>>>>>>
-> >>>>>>>>>>>>>     fs/io-wq.c | 30 ++++++++++++++++++++++--------
-> >>>>>>>>>>>>>     1 file changed, 22 insertions(+), 8 deletions(-)
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> Does this fix it:
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> commit 886d0137f104a440d9dfa1d16efc1db06c9a2c02
-> >>>>>>>>>>>> Author: Jens Axboe <axboe@kernel.dk>
-> >>>>>>>>>>>> Date:   Fri Mar 5 12:59:30 2021 -0700
-> >>>>>>>>>>>>
-> >>>>>>>>>>>>     io-wq: fix race in freeing 'wq' and worker access
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> Looks like it didn't make it into 5.10-stable, but we can certainly
-> >>>>>>>>>>>> rectify that.
-> >>>>>>>>>>>
-> >>>>>>>>>>> Thanks for your quick response Jens.
-> >>>>>>>>>>>
-> >>>>>>>>>>> This patch doesn't apply cleanly to v5.10.y.
-> >>>>>>>>>>
-> >>>>>>>>>> This is probably why it never made it into 5.10-stable :-/
-> >>>>>>>>>
-> >>>>>>>>> Right.  It doesn't apply at all unfortunately.
-> >>>>>>>>>
-> >>>>>>>>>>> I'll have a go at back-porting it.  Please bear with me.
-> >>>>>>>>>>
-> >>>>>>>>>> Let me know if you into issues with that and I can help out.
-> >>>>>>>>>
-> >>>>>>>>> I think the dependency list is too big.
-> >>>>>>>>>
-> >>>>>>>>> Too much has changed that was never back-ported.
-> >>>>>>>>>
-> >>>>>>>>> Actually the list of patches pertaining to fs/io-wq.c alone isn't so
-> >>>>>>>>> bad, I did start to back-port them all but some of the big ones have
-> >>>>>>>>> fs/io_uring.c changes incorporated and that list is huge (256 patches
-> >>>>>>>>> from v5.10 to the fixing patch mentioned above).
-> >>>>>>>>
-> >>>>>>>> The problem is that 5.12 went to the new worker setup, and this patch
-> >>>>>>>> landed after that even though it also applies to the pre-native workers.
-> >>>>>>>> Hence the dependency chain isn't really as long as it seems, probably
-> >>>>>>>> just a few patches backporting the change references and completions.
-> >>>>>>>>
-> >>>>>>>> I'll take a look this afternoon.
-> >>>>>>>
-> >>>>>>> Thanks Jens.  I really appreciate it.
-> >>>>>>
-> >>>>>> Can you see if this helps? Untested...
-> >>>>>
-> >>>>> What base does this apply against please?
-> >>>>>
-> >>>>> I tried Mainline and v5.10.116 and both failed.
-> >>>>
-> >>>> It's against 5.10.116, so that's puzzling. Let me double check I sent
-> >>>> the right one...
-> >>>
-> >>> Looks like I sent the one from the wrong directory, sorry about that.
-> >>> This one should be better:
-> >>
-> >> Nope, both are the right one. Maybe your mailer is mangling the patch?
-> >> I'll attach it gzip'ed here in case that helps.
-> > 
-> > Okay, that applied, thanks.
-> > 
-> > Unfortunately, I am still able to crash the kernel in the same way.
-> 
-> Alright, maybe it's not enough. I can't get your reproducer to crash,
-> unfortunately. I'll try on a different box.
+--hPQQNyCAeGrb5boE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-You need to have fuzzing and kasan enabled.
+On Wed, May 18, 2022 at 08:53:54PM +0800, Ming Lei wrote:
+> On Wed, May 18, 2022 at 11:45:32AM +0100, Stefan Hajnoczi wrote:
+> > On Wed, May 18, 2022 at 03:09:46PM +0800, Ming Lei wrote:
+> > > On Tue, May 17, 2022 at 03:06:34PM +0100, Stefan Hajnoczi wrote:
+> > > > Here are some more thoughts on the ubd-control device:
+> > > >=20
+> > > > The current patch provides a ubd-control device for processes with
+> > > > suitable permissions (i.e. root) to create, start, stop, and fetch
+> > > > information about devices.
+> > > >=20
+> > > > There is no isolation between devices created by one process and th=
+ose
+> > >=20
+> > > I understand linux hasn't device namespace yet, so can you share the
+> > > rational behind the idea of device isolation, is it because ubd device
+> > > is served by ubd daemon which belongs to one pid NS? Or the user crea=
+ting
+> > > /dev/ubdbN belongs to one user NS?
+> >=20
+> > With the current model a process with access to ubd-control has control
+> > over all ubd devices. This is not desirable for most container use cases
+> > because ubd-control usage within a container means that container could
+> > stop any ubd device on the system.
+> >=20
+> > Even for non-container use cases it's problematic that two applications
+> > that use ubd can interfere with each other. If an application passes the
+> > wrong device ID they can stop the other application's device, for
+> > example.
+> >=20
+> > I think it's worth supporting a model where there are multiple ubd
+> > daemons that are not cooperating/aware of each other. They should be
+> > isolated from each other.
+>=20
+> Maybe I didn't mention it clearly, I meant the following model in last em=
+ail:
+>=20
+> 1) every user can send UBD_CMD_ADD_DEV to /dev/ubd-control
+>=20
+> 2) the created /dev/ubdcN & /dev/udcbN are owned by the user who creates
+> it
 
-Here's the .config I'm using: https://termbin.com/3lvp
+How does this work? Does userspace (udev) somehow get the uid/gid from
+the uevent so it can set the device node permissions?
 
-Pop the invocation in a while loop:
+> 3) only the user who has permission to /dev/ubdcN can send other control
+> commands(START_DEV/STOP_DEV/GET_DEV_INFO/GET_QUEUE_AFFINITY/DEL_DEV);
+> and same with /dev/ubdbN
+>=20
+> 4) for unprivileged user who owns /dev/ubdbN, limit kernel behavior,
+> such as, not probed for partitions and LVM, only allow unprivileged
+> mounts,...
+>=20
+> So ubd device can be isolated wrt. user NS.
 
-  while true; do ./repro; done
+Cool!
 
-This has a 100% success rate for me.
+>=20
+> >=20
+> > > IMO, ubd device is one file in VFS, and FS permission should be appli=
+ed,
+> > > then here the closest model should be user NS, and process privilege &
+> > > file ownership.
+> >=20
+> > Yes, /dev/ubdbN can has file ownership/permissions and the cgroup device
+> > controller can restrict access too. That works fine when the device was
+> > created previously.
+> >=20
+> > But what about ubd device creation via ubd-control?
+> >=20
+> > The problem is a global control interface like ubd-control gives access
+> > to all ubd devices. There is no way to let an application/container
+> > control (create/start/stop/etc) some ubd devices but not all. I think
+> > ubd-control must be more fine-grained so multiple
+> > applications/containers can use it without the possibility of
+> > interference.
+> >=20
+> > /dev/ubdcN is a separate problem. The cgroup device controller can limit
+> > the device nodes that are accessible from a process. However, this
+> > requires reserving device minor number ranges for each
+> > application/container so they can only mknod/open their own ubd devices
+> > and not devices that don't belong to them. Maybe there is a better
+> > solution?
+> >=20
+> > /dev/ubdbN has similar requirements to /dev/ubdcN. It should be possible
+> > to create a new /dev/ubdbN but not access an existing device that belong
+> >=20
+> > So if we want to let containers create ubd devices without granting them
+> > access to all devices on the system, then the ubd-control interface
+> > needs to be changed (see below) and the container needs a reserved range
+> > of ubdcN minor numbers. Any container using ubdbN needs the cgroup
+> > device controller and file ownership/permissions to open the block
+> > device.
+> >=20
+> > > > created by another. Therefore two processes that do not trust each =
+other
+> > > > cannot both use UBD without potential interference. There is also no
+> > >=20
+> > > Can you share what the expectation is for this situation?
+> >=20
+> > Two users should be able to run ubd daemons on the same system without
+> > being able to stop each other's devices.
+>=20
+> Yeah, the above process privilege & file ownership based way can reach
+> the goal in user NS.
+>=20
+> >=20
+> > > It is the created UBD which can only be used in this NS, or can only =
+be
+> > > visible inside this NS? I guess the latter isn't possible since we do=
+n't
+> > > have this kind of isolation framework yet.
+> >=20
+> > It should be possible to access the ubd device according to file
+> > ownership/permissions. No new isolation framework is needed for that.
+> >=20
+> > But ubd-control should not grant global access to all ubd devices, at
+> > least not in the typical case of a ubd daemon that just wishes to
+> > create/start/stop its own devices.
+>=20
+> Yeah, I agree.
+>=20
+> >=20
+> > > > isolation for containers.
+> > > >=20
+> > > > I think it would be a mistake to keep the ubd-control interface in =
+its
+> > > > current form since the current global/root model is limited. Instea=
+d I
+> > > > suggest:
+> > > > - Creating a device returns a new file descriptor instead of a glob=
+al
+> > > >   dev_id. The device can be started/stopped/configured through this=
+ (and
+> > > >   only through this) per-device file descriptor. The device is not
+> > > >   visible to other processes through ubd-control so interference is=
+ not
+> > > >   possible. In order to give another process control over the devic=
+e the
+> > > >   fd can be passed (e.g. SCM_RIGHTS).=20
+> > > >=20
+> > >=20
+> > > /dev/ubdcN can only be opened by the process which is the descendant =
+of
+> > > the process which creates the device by sending ADD_DEV.
+> > >=20
+> > > But the device can be deleted/queried by other processes, however, I
+> > > think it is reasonable if all these processes has permission to do th=
+at,
+> > > such as all processes owns the device with same uid.
+> >=20
+> > I don't think it's a good idea to require all ubd daemons to have
+> > CAP_SYS_ADMIN/same uid. That's the main point I'm trying to make and the
+> > discussion is based on that.
+>=20
+> I meant only the user who owns /dev/ubdcN can send the command to
+> /dev/ubd-control for controlling /dev/ubdcN. I believe this way is
+> straightforward.
+>=20
+> >=20
+> > > So can we apply process privilege & file ownership for isolating ubd =
+device?
+> > >=20
+> > > If per-process FD is used, it may confuse people, because process can
+> > > not delete/query ubd device even though its uid shows it has the
+> > > privilege.
+> >=20
+> > Is it better to stop the device via ubd-control instead of a
+> > daemon-specific command (or just killing the daemon process)?
+> >=20
+> > Regarding querying the device, the daemon has more information
+> > associated with the device (e.g. if it's an iSCSI initiator it will have
+> > the iSCSI URI). The ubd driver can only tell you the daemon pid and the
+> > block device attributes that should already be available via sysfs.
+> > Quering the daemon will yield more useful information than using
+> > ubd-control.
+>=20
+> I don't think it is good to interrupt daemon for this admin/control job,
+> which may distract daemon from handling normal IO tasks, also not necessa=
+ry
+> to make daemon implementation more complicated.
+>=20
+> We should separate admin task from normal IO handling, which is one
+> common design pattern.
+>=20
+> >=20
+> > > > Now multiple applications/containers/etc can use ubd-control without
+> > > > interfering with each other. The security model still requires root
+> > > > though since devices can be malicious.
+> > > >=20
+> > > > FUSE allows unprivileged mounts (see fuse_allow_current_process()).=
+ Only
+> > > > processes with the same uid as the FUSE daemon can access such moun=
+ts
+> > > > (in the default configuration). This prevents security issues while
+> > > > still allowing unprivileged use cases.
+> > >=20
+> > > OK, looks FUSE applies process privilege & file ownership for dealing
+> > > with unprivileged mounts.
+> > >=20
+> > > >=20
+> > > > I suggest adapting the FUSE security model to block devices:
+> > > > - Devices can be created without CAP_SYS_ADMIN but they have an
+> > > >   'unprivileged' flag set to true.
+> > > > - Unprivileged devices are not probed for partitions and LVM doesn't
+> > > >   touch them. This means the kernel doesn't access these devices via
+> > > >   code paths that might be exploitable.
+> > >=20
+> > > The above two makes sense.
+> > >=20
+> > > > - When another process with a different uid from ubdsrv opens an
+> > > >   unprivileged device, -EACCES is returned. This protects other
+> > > >   uids from the unprivileged device.
+> > >=20
+> > > OK, only the user who owns the device can access unprivileged device.
+> > >=20
+> > > > - When another process with a different uid from ubdsrv opens a
+> > > >   _privileged_ device there is no special access check because ubds=
+rv is
+> > > >   privileged.
+> > >=20
+> > > IMO, it depends if uid of this process has permission to access the
+> > > ubd device, and we can set ubd device's owership by the process
+> > > credentials.
+> >=20
+> > Yes, file ownership/permissions are still relevant.
+> >=20
+> > >=20
+> > > >=20
+> > > > With these changes UBD can be used by unprivileged processes and
+> > > > containers. I think it's worth discussing the details and having th=
+is
+> > > > model from the start so UBD can be used in a wide range of use case=
+s.
+> > >=20
+> > > I am pretty happy to discuss & figure out the details, but not sure
+> > > it is one blocker for ubd:
+> > >=20
+> > > 1) kernel driver of loop/nbd or others haven't support the isolation
+> >=20
+> > It may be better to compare it with FUSE where unprivileged users can
+> > run their own servers. Imagine FUSE required a global root control
+> > interface like ubd-control, then it wouldn't be possible to have
+> > unprivileged FUSE mounts.
+> >=20
+> > > 2) still don't know exact ubd use case for containers
+> >=20
+> > There are two common use cases for block devices:
+> > 1. File systems or volume managers
+> > 2. Direct access for databases, backup tools, disk image tools, etc
+> >=20
+> > The file system use case involved kernel code and probably needs to be
+> > restricted to untrusted containers cannot exploit the kernel file system
+> > implementations. I'll ignore this use case and containers probably
+> > shouldn't do this.
+> >=20
+> > The second use case is when you have any program that can operate on a
+> > block device. It could be an application that imports/exports a block
+> > device from network storage. This kind of application should be able to
+> > do its job without CAP_SYS_ADMIN and it should be able to run in a
+> > container. It might be part of KubeVirt's Containerized Data Importer,
+> > for example, and is deployed as a container.
+> >=20
+> > If ubd supports unprivileged operation then this container use case is
+> > straightforward. If not, then it's problematic because it either
+> > requires a privileged container or some kind of privileged helper
+> > outside the container. At that point people may avoid ubd because it's
+> > too hard to deploy with privilege requirements.
+>=20
+> OK, thanks for the sharing. In short, container requires unprivileged
+> operation on block device. I think it makes sense.
 
--- 
-Lee Jones [李琼斯]
-Principal Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Thanks!
+
+Stefan
+
+--hPQQNyCAeGrb5boE
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmKFFW8ACgkQnKSrs4Gr
+c8gl4gf/af2Wh8d//orm/DrB4u5zPE6iRY7WWi8cKLS0lLx9gBqTGh2Yn3516lDd
+PnujQYCS05Nn8QeQtNvzXTUGunhse85gey/a0p35+pwU+dhJCeOQR70/0gdYM4j7
+iyr2RNaJgulxY+g/1E8FpxqQ9hRB/QX54iYyfSRjqWeltLmQhspJeTo+JTmry4+/
+jdxqTedrXxciq89R0DV+q3B69nw1EybWGWJue6MWSn2PzuAAZ+KWIM0PNdzAoJQp
+8rQgC5DpKGNyJDpaRJUqywwIXUEjioqAXPIXrRobD7PoPaWBkdQn8CtCJAk42cZ4
+UDTTg/pfM/U/9HAXi9avOLg+L/EnaA==
+=jsUe
+-----END PGP SIGNATURE-----
+
+--hPQQNyCAeGrb5boE--
+

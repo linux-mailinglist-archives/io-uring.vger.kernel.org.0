@@ -2,63 +2,77 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CA0452BD59
-	for <lists+io-uring@lfdr.de>; Wed, 18 May 2022 16:18:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 939DD52BEB3
+	for <lists+io-uring@lfdr.de>; Wed, 18 May 2022 17:26:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237615AbiERNTJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 18 May 2022 09:19:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44240 "EHLO
+        id S234502AbiERPQF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 18 May 2022 11:16:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55614 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237632AbiERNTE (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 18 May 2022 09:19:04 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4507BD8084
-        for <io-uring@vger.kernel.org>; Wed, 18 May 2022 06:19:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1652879941;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=2DQALIgDOHGNkvengitHc0v197uadYCpWLUueswTRnU=;
-        b=HN+rdHQ4Yc75aKuj7J7px3oMaxv4d2MZiSLg2QMemhaZbAODlnCz2xF76YnMY7wLzTNplv
-        z13GuTJJUSwNiKjUySMz5D4o3PYPfN8BIaRf+F17fMeTjHrmH+Iu9HUoZMqQho4pQ/SgGv
-        6z3W4OGusry+zrgpHhkcZZeeEJI/Djs=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-651-Tss1-yDPNfiFC43WVtTzsg-1; Wed, 18 May 2022 09:18:58 -0400
-X-MC-Unique: Tss1-yDPNfiFC43WVtTzsg-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id AF95C38035A5;
-        Wed, 18 May 2022 13:18:57 +0000 (UTC)
-Received: from T590 (ovpn-8-21.pek2.redhat.com [10.72.8.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2A87A1410F36;
-        Wed, 18 May 2022 13:18:50 +0000 (UTC)
-Date:   Wed, 18 May 2022 21:18:45 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Liu Xiaodong <xiaodong.liu@intel.com>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Harris James R <james.r.harris@intel.com>,
-        io-uring@vger.kernel.org,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        ZiyangZhang <ZiyangZhang@linux.alibaba.com>,
-        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>, ming.lei@redhat.com
-Subject: Re: [PATCH V2 0/1] ubd: add io_uring based userspace block driver
-Message-ID: <YoTyNVccpIYDpx9q@T590>
-References: <20220517055358.3164431-1-ming.lei@redhat.com>
- <20220518063808.GA168577@storage2.sh.intel.com>
+        with ESMTP id S239242AbiERPOP (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 18 May 2022 11:14:15 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 359E01E0106
+        for <io-uring@vger.kernel.org>; Wed, 18 May 2022 08:14:14 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id s28so3028848wrb.7
+        for <io-uring@vger.kernel.org>; Wed, 18 May 2022 08:14:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=+LQogaNeLDAS97QlCWLMJmUyFddvKMyNGiPi+yDq2F0=;
+        b=n5xi3tHdutaDh9rrQj2apRUFkB6OjbZliJwoJ7XQIWlnrUW5F05sPh42Hwf1rzAIuW
+         DrAS9zX6HFAMvX6Iy2qQj8RQx9k5H32X8iai7ZKcAcuWhfLvCaYYxA0g9D4o9/mtRHub
+         6DsUvK8S7vdORqiMsNa/FGE1H6kw9smloxYwFWsCd2WC8dwdmD8UZAmRJtlnvLjX6hLd
+         U5fn3xRN5vF0bf39UvDCNgWWAE6WGFRVrsmLd+ClR1EFvgI1x5rta1xjKDpuWSB+GXHE
+         nRmsIj+MddXNS9FoJs3cMF39J982LzjbOixh+vpd1ckXvAVBjBY6c/02qwpkoX2VpOvg
+         /q3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=+LQogaNeLDAS97QlCWLMJmUyFddvKMyNGiPi+yDq2F0=;
+        b=MaVEc75ygc3Tl1otl8zR52/klbvC1DnESeh4+1pD3+5g3BHfxs7boH8tcyr9dJ1eeg
+         J+47RPPUJg2SqhkpA5Pg+OSCCOth0TIZ3kQMnZTGzH7FHdSpEjxFTDrVm/CMJoj7Dwny
+         ddmoSmGyEdVIJA+kCYRr03TdbqbaA+ZiYYIwUW+/Q05rUKHhs+rthanRJyNPxq5DKLc+
+         ZysFYbBODoJvDcFKrmZE973FdIvzPVxH6wmJmVny3wP7gl0z+dWFraPepCfpwc+RZtZ8
+         Ucb1q21Q2jvlI2HWv+aLYpdUhnHUwzbmgPKUewti5BAf6fKtcItomz2KjIHAfVDKoOMw
+         nWtA==
+X-Gm-Message-State: AOAM532X/0uymqwuxMLIOxz28Ukrrt30a8Ut2Tq9Pliav2dOdBmHPoi6
+        gMml4Bbw8k2BWizvyjocDPDsag==
+X-Google-Smtp-Source: ABdhPJyXcejc46FtV9lcG+iVTF5hR4aDmYrlea0kN4aHfbpAK+gmuRJ4CMZkLDs62u6ZfzkTCUPTWw==
+X-Received: by 2002:a5d:620f:0:b0:20c:c1ba:cf8e with SMTP id y15-20020a5d620f000000b0020cc1bacf8emr163475wru.426.1652886852771;
+        Wed, 18 May 2022 08:14:12 -0700 (PDT)
+Received: from google.com (cpc155339-bagu17-2-0-cust87.1-3.cable.virginm.net. [86.27.177.88])
+        by smtp.gmail.com with ESMTPSA id p11-20020a5d59ab000000b0020e615bab7bsm2127288wrr.7.2022.05.18.08.14.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 May 2022 08:14:12 -0700 (PDT)
+Date:   Wed, 18 May 2022 16:14:10 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [REPORT] Use-after-free Read in __fdget_raw in v5.10.y
+Message-ID: <YoUNQlzU0W4ShA85@google.com>
+References: <YoOT7Cyobsed5IE3@google.com>
+ <d503d5ff-4bc5-2bd0-00d3-cd7b0a0724cb@kernel.dk>
+ <YoOW2+ov8KF1YcYF@google.com>
+ <3d271554-9ddc-07ad-3ff8-30aba31f8bf2@kernel.dk>
+ <YoOcYR15Jhkw2XwL@google.com>
+ <f34c85cc-71a5-59d4-dd7a-cc07e2af536c@kernel.dk>
+ <YoTrmjuct3ctvFim@google.com>
+ <b7dc2992-e2d6-8e76-f089-b33561f8471f@kernel.dk>
+ <f821d544-78d5-a227-1370-b5f0895fb184@kernel.dk>
+ <06710b30-fec8-b593-3af4-1318515b41d8@kernel.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20220518063808.GA168577@storage2.sh.intel.com>
-X-Scanned-By: MIMEDefang 2.85 on 10.11.54.7
-X-Spam-Status: No, score=-3.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <06710b30-fec8-b593-3af4-1318515b41d8@kernel.dk>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -66,95 +80,116 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello Liu,
+On Wed, 18 May 2022, Jens Axboe wrote:
 
-On Wed, May 18, 2022 at 02:38:08AM -0400, Liu Xiaodong wrote:
-> On Tue, May 17, 2022 at 01:53:57PM +0800, Ming Lei wrote:
-> > Hello Guys,
+> On 5/18/22 6:54 AM, Jens Axboe wrote:
+> > On 5/18/22 6:52 AM, Jens Axboe wrote:
+> >> On 5/18/22 6:50 AM, Lee Jones wrote:
+> >>> On Tue, 17 May 2022, Jens Axboe wrote:
+> >>>
+> >>>> On 5/17/22 7:00 AM, Lee Jones wrote:
+> >>>>> On Tue, 17 May 2022, Jens Axboe wrote:
+> >>>>>
+> >>>>>> On 5/17/22 6:36 AM, Lee Jones wrote:
+> >>>>>>> On Tue, 17 May 2022, Jens Axboe wrote:
+> >>>>>>>
+> >>>>>>>> On 5/17/22 6:24 AM, Lee Jones wrote:
+> >>>>>>>>> On Tue, 17 May 2022, Jens Axboe wrote:
+> >>>>>>>>>
+> >>>>>>>>>> On 5/17/22 5:41 AM, Lee Jones wrote:
+> >>>>>>>>>>> Good afternoon Jens, Pavel, et al.,
+> >>>>>>>>>>>
+> >>>>>>>>>>> Not sure if you are presently aware, but there appears to be a
+> >>>>>>>>>>> use-after-free issue affecting the io_uring worker driver (fs/io-wq.c)
+> >>>>>>>>>>> in Stable v5.10.y.
+> >>>>>>>>>>>
+> >>>>>>>>>>> The full sysbot report can be seen below [0].
+> >>>>>>>>>>>
+> >>>>>>>>>>> The C-reproducer has been placed below that [1].
+> >>>>>>>>>>>
+> >>>>>>>>>>> I had great success running this reproducer in an infinite loop.
+> >>>>>>>>>>>
+> >>>>>>>>>>> My colleague reverse-bisected the fixing commit to:
+> >>>>>>>>>>>
+> >>>>>>>>>>>   commit fb3a1f6c745ccd896afadf6e2d6f073e871d38ba
+> >>>>>>>>>>>   Author: Jens Axboe <axboe@kernel.dk>
+> >>>>>>>>>>>   Date:   Fri Feb 26 09:47:20 2021 -0700
+> >>>>>>>>>>>
+> >>>>>>>>>>>        io-wq: have manager wait for all workers to exit
+> >>>>>>>>>>>
+> >>>>>>>>>>>        Instead of having to wait separately on workers and manager, just have
+> >>>>>>>>>>>        the manager wait on the workers. We use an atomic_t for the reference
+> >>>>>>>>>>>        here, as we need to start at 0 and allow increment from that. Since the
+> >>>>>>>>>>>        number of workers is naturally capped by the allowed nr of processes,
+> >>>>>>>>>>>        and that uses an int, there is no risk of overflow.
+> >>>>>>>>>>>
+> >>>>>>>>>>>        Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> >>>>>>>>>>>
+> >>>>>>>>>>>     fs/io-wq.c | 30 ++++++++++++++++++++++--------
+> >>>>>>>>>>>     1 file changed, 22 insertions(+), 8 deletions(-)
+> >>>>>>>>>>
+> >>>>>>>>>> Does this fix it:
+> >>>>>>>>>>
+> >>>>>>>>>> commit 886d0137f104a440d9dfa1d16efc1db06c9a2c02
+> >>>>>>>>>> Author: Jens Axboe <axboe@kernel.dk>
+> >>>>>>>>>> Date:   Fri Mar 5 12:59:30 2021 -0700
+> >>>>>>>>>>
+> >>>>>>>>>>     io-wq: fix race in freeing 'wq' and worker access
+> >>>>>>>>>>
+> >>>>>>>>>> Looks like it didn't make it into 5.10-stable, but we can certainly
+> >>>>>>>>>> rectify that.
+> >>>>>>>>>
+> >>>>>>>>> Thanks for your quick response Jens.
+> >>>>>>>>>
+> >>>>>>>>> This patch doesn't apply cleanly to v5.10.y.
+> >>>>>>>>
+> >>>>>>>> This is probably why it never made it into 5.10-stable :-/
+> >>>>>>>
+> >>>>>>> Right.  It doesn't apply at all unfortunately.
+> >>>>>>>
+> >>>>>>>>> I'll have a go at back-porting it.  Please bear with me.
+> >>>>>>>>
+> >>>>>>>> Let me know if you into issues with that and I can help out.
+> >>>>>>>
+> >>>>>>> I think the dependency list is too big.
+> >>>>>>>
+> >>>>>>> Too much has changed that was never back-ported.
+> >>>>>>>
+> >>>>>>> Actually the list of patches pertaining to fs/io-wq.c alone isn't so
+> >>>>>>> bad, I did start to back-port them all but some of the big ones have
+> >>>>>>> fs/io_uring.c changes incorporated and that list is huge (256 patches
+> >>>>>>> from v5.10 to the fixing patch mentioned above).
+> >>>>>>
+> >>>>>> The problem is that 5.12 went to the new worker setup, and this patch
+> >>>>>> landed after that even though it also applies to the pre-native workers.
+> >>>>>> Hence the dependency chain isn't really as long as it seems, probably
+> >>>>>> just a few patches backporting the change references and completions.
+> >>>>>>
+> >>>>>> I'll take a look this afternoon.
+> >>>>>
+> >>>>> Thanks Jens.  I really appreciate it.
+> >>>>
+> >>>> Can you see if this helps? Untested...
+> >>>
+> >>> What base does this apply against please?
+> >>>
+> >>> I tried Mainline and v5.10.116 and both failed.
+> >>
+> >> It's against 5.10.116, so that's puzzling. Let me double check I sent
+> >> the right one...
 > > 
-> > ubd driver is one kernel driver for implementing generic userspace block
-> > device/driver, which delivers io request from ubd block device(/dev/ubdbN) into
-> > ubd server[1] which is the userspace part of ubd for communicating
-> > with ubd driver and handling specific io logic by its target module.
-> > 
-> > Another thing ubd driver handles is to copy data between user space buffer
-> > and request/bio's pages, or take zero copy if mm is ready for support it in
-> > future. ubd driver doesn't handle any IO logic of the specific driver, so
-> > it is small/simple, and all io logics are done by the target code in ubdserver.
-> > 
-> > The above two are main jobs done by ubd driver.
+> > Looks like I sent the one from the wrong directory, sorry about that.
+> > This one should be better:
 > 
-> Hi, Lei
-> 
-> Your UBD implementation looks great. Its io_uring based design is interesting
-> and brilliant.
-> Towards the purpose of userspace block device, last year,
-> VDUSE initialized by Yongji is going to do a similar work. But VDUSE is under
-> vdpa. VDUSE will present a virtio-blk device to other userspace process
-> like containers, while serving virtio-blk req also by an userspace target.
-> https://lists.linuxfoundation.org/pipermail/iommu/2021-June/056956.html 
-> 
-> I've been working and thinking on serving RUNC container by SPDK efficiently.
-> But this work requires a new proper userspace block device module in kernel.
-> The highlevel design idea for userspace block device implementations
-> should be that: Using ring for IO request, so client and target can exchange
-> req/resp quickly in batch; Map bounce buffer between kernel and userspace
-> target, so another extra IO data copy like NBD can be avoid. (Oh, yes, SPDK
-> needs this kernel module has some more minor functions)
-> 
-> UBD and VDUSE are both implemented in this way, while of course each of
-> them has specific features and advantages.
-> 
-> Not like UBD which is straightforward and starts from scratch, VDUSE is
-> embedded in virtio framework. So its implementation is more complicated, but
-> all virtio frontend utilities can be leveraged.
-> When considering security/permission issues, feels UBD would be easier to
-> solve them.
+> Nope, both are the right one. Maybe your mailer is mangling the patch?
+> I'll attach it gzip'ed here in case that helps.
 
-Stefan Hajnoczi and I are discussing related security/permission
-issues, can you share more details in your case?
+Okay, that applied, thanks.
 
-> 
-> So my questions are:
-> 1. what do you think about the purpose overlap between UBD and VDUSE?
+Unfortunately, I am still able to crash the kernel in the same way.
 
-Sorry, I am not familiar with VDUSE, motivation of ubd is just to make one
-high performance generic userspace block driver. ubd driver(kernel part) is
-just responsible for communication and copying data between userspace buffers
-and kernel io request pages, and the ubdsrv(userspace) target handles io
-logic.
-
-> 2. Could UBD be implemented with SPDK friendly functionalities? (mainly about
-> io data mapping, since HW devices in SPDK need to access the mapped data
-> buffer. Then, in function ubdsrv.c/ubdsrv_init_io_bufs(),
-> "addr = mmap(,,,,dev->cdev_fd,)",
-
-No, that code is actually for supporting zero copy.
-
-But each request's buffer is allocated by ubdsrv and definitely available for any
-target, please see loop_handle_io_async() which handles IO from /dev/ubdbN about
-how to use the buffer. Fro READ, the target code needs to implement READ
-logic and fill data to the buffer, then the buffer will be copied to
-kernel io request pages; for WRITE, the target code needs to use the buffer to handle
-WRITE and the buffer has been updated with kernel io request.
-
-> SPDK needs to know the PA of "addr".
-
-What is PA? and why?
-
-Userspace can only see VM of each buffer. 
-
-> Also memory pointed by "addr" should be pinned all the time.)
-
-The current implementation only pins pages when copying data between
-userspace buffers and kernel io request pages. But I plan to support
-three pin behavior:
-
-- never (current behavior, just pin pages when copying pages)
-- lazy (pin pages until the request is idle for enough time)
-- always (all pages in userpace VM are pinned during the device lifetime)
-
-
-Thanks, 
-Ming
-
+-- 
+Lee Jones [李琼斯]
+Principal Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog

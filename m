@@ -2,45 +2,45 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C5BDD52CE0D
-	for <lists+io-uring@lfdr.de>; Thu, 19 May 2022 10:18:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0A6952CE22
+	for <lists+io-uring@lfdr.de>; Thu, 19 May 2022 10:20:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235347AbiESISY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 19 May 2022 04:18:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44590 "EHLO
+        id S235321AbiESITJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 19 May 2022 04:19:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235197AbiESIST (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 19 May 2022 04:18:19 -0400
+        with ESMTP id S235426AbiESISv (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 19 May 2022 04:18:51 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE40E65D3B;
-        Thu, 19 May 2022 01:17:17 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB0CB66AD2;
+        Thu, 19 May 2022 01:18:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
         :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=vsLx1/spK6mJV5vHHVr4BL4tfcrdDPT/6wGxnfZrwzQ=; b=Nueh0SVjlOcrYRUmlBQHIDStKp
-        q/JvdZWEKOA5UXUsvj37TSFUhVV2uWFXDbOuq93KlW5L4pDnA/cTiawA+Lz+Tgd8dPqZg/7bHWYNr
-        6cyCAUf7pd93hmnOetbaWxTqMmT5OY7Yz2ylPys5QmGdjNW5lgZKP8vNcKsZxCgEyzV/Sw5k+zmWI
-        lhLr1emyyulQrvY0od1NIv1cwaVflU4ZOM6d7hWVTD4iMOPcfbbKn1p0tbSdZ8ntpp54OVilGIA1E
-        CeTKwCHoO2IWsMIQwknGmZfRiqycfNxeJ57amsIU/0LIrjtt9Xh/vLHKuNp0DSr6VdJLZ0moyd3xz
-        eyiJA/ug==;
+        bh=ZB+WcPRihjvJB66nTSpRcM0fwO19ta8ZY92q52kEtEo=; b=TRU1vsxraCiNP2wKIH1sxGogi7
+        KRi7lmoAFEwfbbRdZWKVfG0M7UkSz0m3Rr4uJalbzroPHb6wI1YcEi18mvjxANJYTPto1ZU2OWmJT
+        ceXTwUImwwjbyUkOzP45fdh5bN/mWwz5OYG+wj8MYGHJ7PNolhavbxElk1GqOJD1jnZkv7yHsr6FF
+        4/4DoBdJ0pP3k1lDmKaaAvU948qzj2mniOqW7g7wJL8H5d92OWh/w67XWNOp0B1huc/9oLFj7D5XA
+        YPpCiLt5Kxp2APgpD6wHnU69nglLtc99MZsXa6j/iX+8E+cyOXx5QiHcOC+jvWv64XD32Tv0V9ajP
+        IAmIHLIw==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nrbLR-005kBD-Ai; Thu, 19 May 2022 08:17:17 +0000
-Date:   Thu, 19 May 2022 01:17:17 -0700
+        id 1nrbMo-005kr7-Bj; Thu, 19 May 2022 08:18:42 +0000
+Date:   Thu, 19 May 2022 01:18:42 -0700
 From:   Christoph Hellwig <hch@infradead.org>
 To:     Stefan Roesch <shr@fb.com>
 Cc:     io-uring@vger.kernel.org, kernel-team@fb.com, linux-mm@kvack.org,
         linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         david@fromorbit.com, jack@suse.cz
-Subject: Re: [RFC PATCH v3 01/18] block: Add check for async buffered writes
- to generic_write_checks
-Message-ID: <YoX9DVU5ds+GbKOK@infradead.org>
+Subject: Re: [RFC PATCH v3 02/18] iomap: Add iomap_page_create_gfp to
+ allocate iomap_pages
+Message-ID: <YoX9YgEsnL743FiD@infradead.org>
 References: <20220518233709.1937634-1-shr@fb.com>
- <20220518233709.1937634-2-shr@fb.com>
+ <20220518233709.1937634-3-shr@fb.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220518233709.1937634-2-shr@fb.com>
+In-Reply-To: <20220518233709.1937634-3-shr@fb.com>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
@@ -52,34 +52,45 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, May 18, 2022 at 04:36:52PM -0700, Stefan Roesch wrote:
-> @@ -1633,7 +1633,9 @@ int generic_write_checks_count(struct kiocb *iocb, loff_t *count)
->  	if (iocb->ki_flags & IOCB_APPEND)
->  		iocb->ki_pos = i_size_read(inode);
+ * This function returns a newly allocated iomap for the folio with the settings
+> + * specified in the gfp parameter.
+> + *
+> + **/
+>  static struct iomap_page *
+> -iomap_page_create(struct inode *inode, struct folio *folio)
+> +iomap_page_create_gfp(struct inode *inode, struct folio *folio,
+> +		unsigned int nr_blocks, gfp_t gfp)
+>  {
+> -	struct iomap_page *iop = to_iomap_page(folio);
+> -	unsigned int nr_blocks = i_blocks_per_folio(inode, folio);
+> +	struct iomap_page *iop;
 >  
-> -	if ((iocb->ki_flags & IOCB_NOWAIT) && !(iocb->ki_flags & IOCB_DIRECT))
-> +	if ((iocb->ki_flags & IOCB_NOWAIT) &&
-> +		!((iocb->ki_flags & IOCB_DIRECT) ||
-> +		  (file->f_mode & FMODE_BUF_WASYNC)))
-
-This is some really odd indentation.  I'd expect something like:
-
-	if ((iocb->ki_flags & IOCB_NOWAIT) &&
-	    !((iocb->ki_flags & IOCB_DIRECT) ||
-	      (file->f_mode & FMODE_BUF_WASYNC)))
-
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index bbde95387a23..3b479d02e210 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -177,6 +177,9 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
->  /* File supports async buffered reads */
->  #define FMODE_BUF_RASYNC	((__force fmode_t)0x40000000)
+> -	if (iop || nr_blocks <= 1)
+> +	iop = kzalloc(struct_size(iop, uptodate, BITS_TO_LONGS(nr_blocks)), gfp);
+> +	if (!iop)
+>  		return iop;
 >  
-> +/* File supports async nowait buffered writes */
-> +#define FMODE_BUF_WASYNC	((__force fmode_t)0x80000000)
+> -	iop = kzalloc(struct_size(iop, uptodate, BITS_TO_LONGS(nr_blocks)),
+> -			GFP_NOFS | __GFP_NOFAIL);
+>  	spin_lock_init(&iop->uptodate_lock);
+>  	if (folio_test_uptodate(folio))
+>  		bitmap_fill(iop->uptodate, nr_blocks);
+> @@ -61,6 +71,18 @@ iomap_page_create(struct inode *inode, struct folio *folio)
+>  	return iop;
+>  }
+>  
+> +static struct iomap_page *
+> +iomap_page_create(struct inode *inode, struct folio *folio)
+> +{
+> +	struct iomap_page *iop = to_iomap_page(folio);
+> +	unsigned int nr_blocks = i_blocks_per_folio(inode, folio);
+> +
+> +	if (iop || nr_blocks <= 1)
+> +		return iop;
+> +
+> +	return iomap_page_create_gfp(inode, folio, nr_blocks, GFP_NOFS | __GFP_NOFAIL);
 
-This is the last available flag in fmode_t.
+Overly long line here.
 
-At some point we should probably move the static capabilities to
-a member of file_operations.
+Mor importantly why do you need a helper that does not do the number
+of blocks check?  Why can't we just pass a gfp_t to iomap_page_create?

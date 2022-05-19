@@ -2,89 +2,73 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 27E3752C7D7
-	for <lists+io-uring@lfdr.de>; Thu, 19 May 2022 01:38:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69D1752C8A7
+	for <lists+io-uring@lfdr.de>; Thu, 19 May 2022 02:35:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231682AbiERXif (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 18 May 2022 19:38:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55702 "EHLO
+        id S232133AbiESAf1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 18 May 2022 20:35:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231559AbiERXiI (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 18 May 2022 19:38:08 -0400
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2DB6DFF52
-        for <io-uring@vger.kernel.org>; Wed, 18 May 2022 16:37:54 -0700 (PDT)
-Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24IN6GVZ013659
-        for <io-uring@vger.kernel.org>; Wed, 18 May 2022 16:37:54 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=facebook;
- bh=mezo8o29O3Ay9l7JyNHPANH1KNPPbed3umcUOpvhL7Q=;
- b=AXaNpkBRTlHVDouo3dfP7d6mMFiRffsqWjgdgfUxOoDy4dobjmpAndPQE4XiA+YczwK3
- k73HxMN3ht/VMAcus+WZEisJSH6zWna/S0sTdrM7CtkIuDMzzjVFRWfGAtDnU3Wve8a3
- Dt1pwplw+INpAv7tCg2x4FgmmC3Z1KxGqig= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3g4dea3tms-7
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Wed, 18 May 2022 16:37:54 -0700
-Received: from twshared11660.23.frc3.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:82::c) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.28; Wed, 18 May 2022 16:37:51 -0700
-Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
-        id 26EB2F3ED875; Wed, 18 May 2022 16:37:13 -0700 (PDT)
-From:   Stefan Roesch <shr@fb.com>
-To:     <io-uring@vger.kernel.org>, <kernel-team@fb.com>,
-        <linux-mm@kvack.org>, <linux-xfs@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>
-CC:     <shr@fb.com>, <david@fromorbit.com>, <jack@suse.cz>
-Subject: [RFC PATCH v3 18/18] xfs: Enable async buffered write support
-Date:   Wed, 18 May 2022 16:37:09 -0700
-Message-ID: <20220518233709.1937634-19-shr@fb.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20220518233709.1937634-1-shr@fb.com>
-References: <20220518233709.1937634-1-shr@fb.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: Y2_gz8M8avIVg2KiSQnO1IuLOJjo5QiQ
-X-Proofpoint-GUID: Y2_gz8M8avIVg2KiSQnO1IuLOJjo5QiQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.874,Hydra:6.0.486,FMLib:17.11.64.514
- definitions=2022-05-18_06,2022-05-17_02,2022-02-23_01
-X-Spam-Status: No, score=-3.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        with ESMTP id S232124AbiESAfZ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 18 May 2022 20:35:25 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C03E8CE31
+        for <io-uring@vger.kernel.org>; Wed, 18 May 2022 17:35:24 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5E0356171E
+        for <io-uring@vger.kernel.org>; Thu, 19 May 2022 00:35:24 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C4342C385A5;
+        Thu, 19 May 2022 00:35:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1652920523;
+        bh=vxedWSOg9J8MwfCmTfLWGwtH7Sz0423nQEHPGLF06E8=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=qNuoh1CGP6NmyitmLvAoDmGvU5M1dobusrkbb9vKngPAGZ9vFusewwaeZPVJ8PE87
+         WtWrSl+EyahuPKXHd4Y4QJ32WnPSie3NqS5m9X0rqK6C9ImpwdPGNHVBxepv4G30Rv
+         4IJmOcdllM6hjaf3p6pR6wT2Wiv2NzBGXZvSybSWK/8DT/vzx+0cE813mzD/U4CZ40
+         WKfpBFxkFM5LZTbwNYRtF54iLrk9PZUUptuqZIYWHBy/P+/CKEHXViwdaizDhv31ZU
+         dP0mCIz2nMhtkr1o36Pc4rmWEOS+d5WbuWW9XNJJN/5Aq5SVhwTijnKSAlN59hEwT3
+         7jrMBA8rdM17w==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B2C32F0392C;
+        Thu, 19 May 2022 00:35:23 +0000 (UTC)
+Subject: Re: [GIT PULL] io_uring fixes for 5.18-final
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <4db3b8db-7fea-f366-0c55-a5a68c6cc0ec@kernel.dk>
+References: <4db3b8db-7fea-f366-0c55-a5a68c6cc0ec@kernel.dk>
+X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
+X-PR-Tracked-Message-Id: <4db3b8db-7fea-f366-0c55-a5a68c6cc0ec@kernel.dk>
+X-PR-Tracked-Remote: git://git.kernel.dk/linux-block.git tags/io_uring-5.18-2022-05-18
+X-PR-Tracked-Commit-Id: aa184e8671f0f911fc2fb3f68cd506e4d7838faa
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 01464a73a6387b45aa4cf6ea522abd4f9e44dce5
+Message-Id: <165292052372.29647.2255525474087813677.pr-tracker-bot@kernel.org>
+Date:   Thu, 19 May 2022 00:35:23 +0000
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        io-uring <io-uring@vger.kernel.org>
+X-Spam-Status: No, score=-7.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This turns on the async buffered write support for XFS.
+The pull request you sent on Wed, 18 May 2022 17:11:47 -0600:
 
-Signed-off-by: Stefan Roesch <shr@fb.com>
----
- fs/xfs/xfs_file.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> git://git.kernel.dk/linux-block.git tags/io_uring-5.18-2022-05-18
 
-diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-index ad3175b7d366..af4fdc852da5 100644
---- a/fs/xfs/xfs_file.c
-+++ b/fs/xfs/xfs_file.c
-@@ -1169,7 +1169,7 @@ xfs_file_open(
- 		return -EFBIG;
- 	if (xfs_is_shutdown(XFS_M(inode->i_sb)))
- 		return -EIO;
--	file->f_mode |=3D FMODE_NOWAIT | FMODE_BUF_RASYNC;
-+	file->f_mode |=3D FMODE_NOWAIT | FMODE_BUF_RASYNC | FMODE_BUF_WASYNC;
- 	return 0;
- }
-=20
---=20
-2.30.2
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/01464a73a6387b45aa4cf6ea522abd4f9e44dce5
 
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html

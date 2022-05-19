@@ -2,150 +2,121 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BACF352D423
-	for <lists+io-uring@lfdr.de>; Thu, 19 May 2022 15:34:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69B4352D617
+	for <lists+io-uring@lfdr.de>; Thu, 19 May 2022 16:30:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232861AbiESNdz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 19 May 2022 09:33:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33316 "EHLO
+        id S239760AbiESOaz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 19 May 2022 10:30:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235765AbiESNdy (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 19 May 2022 09:33:54 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A1B277E1F3
-        for <io-uring@vger.kernel.org>; Thu, 19 May 2022 06:33:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1652967231;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=eMu0TlQoEPsu5A0dNqyE4kosLWfd95ivJDcxXU5XZ9k=;
-        b=CEXAuFXaZieNhIBXI+9JxCg3XOtY6ox8WhhvmA6MGrZ7b09G4ZjiWZP+LcWatjrCwJDPaR
-        A+ZhCLal6CrjfyYUZL9OqCGn/I4WGbRbrDkxQ9dh/Mq530hFRY2D+eqeE9tDw7yg3eSBeE
-        1oXNxb/nHU2t4avSbBksMod2JewGOPU=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-310-B37KWeoPNrm0MpDgCivevw-1; Thu, 19 May 2022 09:33:47 -0400
-X-MC-Unique: B37KWeoPNrm0MpDgCivevw-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 78B1E185A7BA;
-        Thu, 19 May 2022 13:33:46 +0000 (UTC)
-Received: from T590 (ovpn-8-21.pek2.redhat.com [10.72.8.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id F1AF67AE4;
-        Thu, 19 May 2022 13:33:39 +0000 (UTC)
-Date:   Thu, 19 May 2022 21:33:34 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Harris James R <james.r.harris@intel.com>,
-        io-uring@vger.kernel.org,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        ZiyangZhang <ZiyangZhang@linux.alibaba.com>,
-        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>, ming.lei@redhat.com
-Subject: Re: [PATCH V2 0/1] ubd: add io_uring based userspace block driver
-Message-ID: <YoZHLrxE87t6T+Tz@T590>
-References: <20220517055358.3164431-1-ming.lei@redhat.com>
+        with ESMTP id S236267AbiESOay (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 19 May 2022 10:30:54 -0400
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BA7EC32
+        for <io-uring@vger.kernel.org>; Thu, 19 May 2022 07:30:52 -0700 (PDT)
+Received: by mail-lf1-x131.google.com with SMTP id f4so9405361lfu.12
+        for <io-uring@vger.kernel.org>; Thu, 19 May 2022 07:30:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=openvz-org.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:from:subject:to:cc
+         :references:content-language:in-reply-to:content-transfer-encoding;
+        bh=v/9u8Imy9wLRfYHBxZ32XU6PyvAPyOYsjrvd7MK9l3c=;
+        b=eaOE6+Y20AmRa6nSUYi7geIR7y/yn/2PASJIV5qzYyDB6uR6xRAVOuFN3V/UnNIH5M
+         26SZQjvVd+k+L58xBa0lL+d/7x36ah8wc87F8UlsMb5wc09DF4Pc5bn1Ue9CNrngxEmQ
+         rujvItsfN8DHXlCNtjEY9sOnjgY9+qPcFxdpugQM+pL8o3a9pjz/zI2ByEpjrazS9jj7
+         RxRiQ2McaC+Q1r0odu1Huw8tyIP9HnMsjz+7KMrlms6HUv3h5dGyFqEn+lOxlHWKHapY
+         fG61sn3MSGPU7p9Zu9P4jkwlQ5oJYJXIZun/HOlHmFqzFhu0XGxWPN44Grct9Rn5NWjz
+         yXUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:from
+         :subject:to:cc:references:content-language:in-reply-to
+         :content-transfer-encoding;
+        bh=v/9u8Imy9wLRfYHBxZ32XU6PyvAPyOYsjrvd7MK9l3c=;
+        b=7xr61p6MTFsjvhwsBSLizYRz6iOEZc0zOcS0ifyAxrhTVh5Gtxig1E90REGH+Txjy5
+         Wu9ruVNRxBiyxdWiRLUeRER5xChO+I18CylTc8kWHsvi2rfvzJOWT5gzLp5G0MDGGqcU
+         KvaUgnB1GKGroc9Iw2MRNTRwlHbeBDRLjYK/4WmPALpClgVxiKtEx0+cBbDiAjFhWHh/
+         Cb6zBg4MALWXmX3iZ3HZK+ItDK6gKonQ4YjF3dThYZXzCt053Y0SMl9kRwY1OcYWORT4
+         g5TrT3Sc5TCqYY11YZcLhWqte00zoRnPtz5C5uaCf701GF8BiW5ITGG8JEW/Kqf1rzeS
+         mMcw==
+X-Gm-Message-State: AOAM5337l/AqJQhAe4e9Fo9YzJdUkwTPC2dckMXHkkF4ebt+J43Tj3Ka
+        0IJ0cIwR827mIWyaFt4IXujhDJSvm2l9IA==
+X-Google-Smtp-Source: ABdhPJyRZHYDd6kSYR3c0rhv9w4eYdGNQxiFk/lUQ+ZunBiRsQGfvCDxNyRijOiVzLAzMZqW6VekGw==
+X-Received: by 2002:ac2:482f:0:b0:472:47d5:ef32 with SMTP id 15-20020ac2482f000000b0047247d5ef32mr3587303lft.344.1652970650876;
+        Thu, 19 May 2022 07:30:50 -0700 (PDT)
+Received: from [192.168.1.65] ([46.188.121.185])
+        by smtp.gmail.com with ESMTPSA id d25-20020ac24c99000000b00477b624c0a8sm304402lfl.180.2022.05.19.07.30.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 May 2022 07:30:50 -0700 (PDT)
+Message-ID: <6f009241-a63f-ae43-a04b-62841aaef293@openvz.org>
+Date:   Thu, 19 May 2022 17:30:49 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220517055358.3164431-1-ming.lei@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+From:   Vasily Averin <vvs@openvz.org>
+Subject: [PATCH v3] io_uring: fix incorrect __kernel_rwf_t cast
+To:     Christoph Hellwig <hch@infradead.org>, Jens Axboe <axboe@kernel.dk>
+Cc:     kernel@openvz.org, linux-kernel@vger.kernel.org,
+        io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>
+References: <2eb22fb3-40cc-48f6-8ba9-5faeae0b43ff@kernel.dk>
+Content-Language: en-US
+In-Reply-To: <2eb22fb3-40cc-48f6-8ba9-5faeae0b43ff@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, May 17, 2022 at 01:53:57PM +0800, Ming Lei wrote:
-> Hello Guys,
-> 
-> ubd driver is one kernel driver for implementing generic userspace block
-> device/driver, which delivers io request from ubd block device(/dev/ubdbN) into
-> ubd server[1] which is the userspace part of ubd for communicating
-> with ubd driver and handling specific io logic by its target module.
-> 
-> Another thing ubd driver handles is to copy data between user space buffer
-> and request/bio's pages, or take zero copy if mm is ready for support it in
-> future. ubd driver doesn't handle any IO logic of the specific driver, so
-> it is small/simple, and all io logics are done by the target code in ubdserver.
-> 
-> The above two are main jobs done by ubd driver.
-> 
-> ubd driver can help to move IO logic into userspace, in which the
-> development work is easier/more effective than doing in kernel, such as,
-> ubd-loop takes < 200 lines of loop specific code to get basically same 
-> function with kernel loop block driver, meantime the performance is
-> still good. ubdsrv[1] provide built-in test for comparing both by running
-> "make test T=loop".
-> 
-> Another example is high performance qcow2 support[2], which could be built with
-> ubd framework more easily than doing it inside kernel.
-> 
-> Also there are more people who express interests on userspace block driver[3],
-> Gabriel Krisman Bertazi proposes this topic in lsf/mm/ebpf 2022 and mentioned
-> requirement from Google. Ziyang Zhang from Alibaba said they "plan to
-> replace TCMU by UBD as a new choice" because UBD can get better throughput than
-> TCMU even with single queue[4], meantime UBD is simple. Also there is userspace
-> storage service for providing storage to containers.
-> 
-> It is io_uring based: io request is delivered to userspace via new added
-> io_uring command which has been proved as very efficient for making nvme
-> passthrough IO to get better IOPS than io_uring(READ/WRITE). Meantime one
-> shared/mmap buffer is used for sharing io descriptor to userspace, the
-> buffer is readonly for userspace, each IO just takes 24bytes so far.
-> It is suggested to use io_uring in userspace(target part of ubd server)
-> to handle IO request too. And it is still easy for ubdserver to support
-> io handling by non-io_uring, and this work isn't done yet, but can be
-> supported easily with help o eventfd.
-> 
-> This way is efficient since no extra io command copy is required, no sleep
-> is needed in transferring io command to userspace. Meantime the communication
-> protocol is simple and efficient, one single command of
-> UBD_IO_COMMIT_AND_FETCH_REQ can handle both fetching io request desc and commit
-> command result in one trip. IO handling is often batched after single
-> io_uring_enter() returns, both IO requests from ubd server target and
-> IO commands could be handled as a whole batch.
-> 
-> Remove RFC now because ubd driver codes gets lots of cleanup, enhancement and
-> bug fixes since V1:
-> 
-> - cleanup uapi: remove ubd specific error code,  switch to linux error code,
-> remove one command op, remove one field from cmd_desc
-> 
-> - add monitor mechanism to handle ubq_daemon being killed, ubdsrv[1]
->   includes builtin tests for covering heavy IO with deleting ubd / killing
->   ubq_daemon at the same time, and V2 pass all the two tests(make test T=generic),
->   and the abort/stop mechanism is simple
-> 
-> - fix MQ command buffer mmap bug, and now 'xfstetests -g auto' works well on
->   MQ ubd-loop devices(test/scratch)
-> 
-> - improve batching submission as suggested by Jens
-> 
-> - improve handling for starting device, replace random wait/poll with
-> completion
-> 
-> - all kinds of cleanup, bug fix,..
-> 
-> And the patch by patch change since V1 can be found in the following
-> tree:
-> 
-> https://github.com/ming1/linux/commits/my_for-5.18-ubd-devel_v2
+Currently 'make C=1 fs/io_uring.o' generates sparse warning:
 
-BTW, a one-line fix[1] is added to above branch, which fixes performance
-obviously on small BS(< 128k) test. If anyone run performance test,
-please include this fix.
+  CHECK   fs/io_uring.c
+fs/io_uring.c: note: in included file (through
+include/trace/trace_events.h, include/trace/define_trace.h, i
+nclude/trace/events/io_uring.h):
+./include/trace/events/io_uring.h:488:1:
+ warning: incorrect type in assignment (different base types)
+    expected unsigned int [usertype] op_flags
+    got restricted __kernel_rwf_t const [usertype] rw_flags
 
-[1] https://github.com/ming1/linux/commit/fa91354b418e83953304a3efad4ee6ac40ea6110
+This happen on cast of sqe->rw_flags which is defined as __kernel_rwf_t,
+this type is bitwise and requires __force attribute for any casts.
+However rw_flags is a member of the union, and its access can be safely
+replaced by using of its neighbours, so let's use poll32_events to fix
+the sparse warning.
 
-Thanks,
-Ming
+Signed-off-by: Vasily Averin <vvs@openvz.org>
+---
+v3:
+  1) fix only hunk in TRACE_EVENT(io_uring_req_failed),
+     rest ones was fixed by Christoph Hellwig already.
+  2) updated patch description
+
+v2: updated according to comments by Christoph Hellwig
+
+---
+ include/trace/events/io_uring.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/trace/events/io_uring.h b/include/trace/events/io_uring.h
+index 80d2588a090c..6ba87a290a24 100644
+--- a/include/trace/events/io_uring.h
++++ b/include/trace/events/io_uring.h
+@@ -520,7 +520,7 @@ TRACE_EVENT(io_uring_req_failed,
+ 		__entry->off		= sqe->off;
+ 		__entry->addr		= sqe->addr;
+ 		__entry->len		= sqe->len;
+-		__entry->op_flags	= sqe->rw_flags;
++		__entry->op_flags	= sqe->poll32_events;
+ 		__entry->buf_index	= sqe->buf_index;
+ 		__entry->personality	= sqe->personality;
+ 		__entry->file_index	= sqe->file_index;
+-- 
+2.31.1
 

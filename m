@@ -2,120 +2,247 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BC2CE52CEBC
-	for <lists+io-uring@lfdr.de>; Thu, 19 May 2022 10:55:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DDC952CF58
+	for <lists+io-uring@lfdr.de>; Thu, 19 May 2022 11:27:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233498AbiESIyP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 19 May 2022 04:54:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34434 "EHLO
+        id S236101AbiESJ0c (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 19 May 2022 05:26:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231418AbiESIyO (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 19 May 2022 04:54:14 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB4BB9CF5C;
-        Thu, 19 May 2022 01:54:13 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 87D632190C;
-        Thu, 19 May 2022 08:54:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1652950452; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Fcqmrpxaer0Q0d9KKEW1aRv2ycWgGPdWyzaSn+WUbBk=;
-        b=MCqflNXNG3ngH2MmJW00KgKiExOrIVLN0FjbU1tW/EjTGsQoOt4VFLU44GX9dgv4k0vDWj
-        oiGvElYDh1fZtGPXkj4GrjWCc4A2LzW2xS7tI5XSE5jLbx9+Qaj+1ajb/FG1EX2xEp6VHy
-        /TTH4BL7tSch0QManLpc1RCH/PFlWkY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1652950452;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Fcqmrpxaer0Q0d9KKEW1aRv2ycWgGPdWyzaSn+WUbBk=;
-        b=CSE0dPEFDF1WBQ1nOUVh0VvJ3pzuB+V0rQ9k1XNYeePdsxTD4zd1GicWO9Gw9VSL9LgghM
-        lUuBj/2cI6p+HwBg==
-Received: from quack3.suse.cz (unknown [10.100.224.230])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 76B932C143;
-        Thu, 19 May 2022 08:54:12 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 17A81A062F; Thu, 19 May 2022 10:54:12 +0200 (CEST)
-Date:   Thu, 19 May 2022 10:54:12 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
-        kernel-team@fb.com, linux-mm@kvack.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, david@fromorbit.com, jack@suse.cz
-Subject: Re: [RFC PATCH v3 15/18] mm: Add
- balance_dirty_pages_ratelimited_async() function
-Message-ID: <20220519085412.ngnnhsf6iy35vqn3@quack3.lan>
-References: <20220518233709.1937634-1-shr@fb.com>
- <20220518233709.1937634-16-shr@fb.com>
- <YoX/4fwQOYyTL34a@infradead.org>
+        with ESMTP id S236097AbiESJ0R (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 19 May 2022 05:26:17 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E657258E60
+        for <io-uring@vger.kernel.org>; Thu, 19 May 2022 02:26:14 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id t6so6272814wra.4
+        for <io-uring@vger.kernel.org>; Thu, 19 May 2022 02:26:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=U7CWZtaUgg241mV7Lt3xruBxG2pYUXKmRKpcYqgh8Eg=;
+        b=PYGkNhuK5Y+VcRxXPEdPFo186tRGpytygwARJKMCJCuk1FziFrVCP7xR5sQnGXSieB
+         mIoebzr9mrYJB764qpt5v/nmO8uasR45/gruqJwN3B0SRu7NLyiVE0Gbm85QkvQzO0G4
+         oNpScDJE7i2dFgmQPo4csIWgV6yf2HUT3GEZBGyapklrVGuCjt6xvyPufVGJh4c7Lekl
+         EiJ99vr+pSgYTsOovJ8NhCM19wm/qsi82LdKBrWLTigt1sWGfz541+KsP11DvakTCDjW
+         FsP1QEuAxDKYIoRLznW/9BpVCGPCRCQsitqpb/4n4nXT7h0hJXnVmA7P5/v2Uht64UY/
+         OCgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=U7CWZtaUgg241mV7Lt3xruBxG2pYUXKmRKpcYqgh8Eg=;
+        b=dK2HocGmp1nR7whX1iUi3XDFKy0Gx9T5p0bDDbrg5a/wApqCTu6dV+WHmYhfTu8P9r
+         YIm1fvTK2qinv/Bco6jCffK7maAioBNGWzm7sHCzPQoASewGi2Yd4nf8BYN9l/LXVo3J
+         ENzsK5aNiGgMwV3SpjYZxf9lkJbH0C7NPM+dB+n6wnjX1nGtXQdIsyP3OzXqz0fW30kU
+         Im15faH3eW132U9HmJlZrlWsyyz18X8E41uMr0FNzbz9STd0G1zxmgkkKvrdp81U+Z89
+         YUMaW8In4/q+gOzOBW8MRNANTFDiQJP6Pj+PxJttnThu3PkFo/92ohPggExcgJXTkT3/
+         v6Gw==
+X-Gm-Message-State: AOAM531ABffn/IlsKbayoHRk5L8g3g/6gNdJnQ8+1uCCdVvOjxnkm4Gy
+        hc9eo9HIkteIjt9X7NbArx60vw==
+X-Google-Smtp-Source: ABdhPJzpigCJ9ZTp35pQMOpSOXDBsHMK2phsvkqXJ9XlfwaT3joEX6NUk0vE/CQ9X3XqRok3v0nKMg==
+X-Received: by 2002:a05:6000:38b:b0:20c:53af:747d with SMTP id u11-20020a056000038b00b0020c53af747dmr3038647wrf.22.1652952373417;
+        Thu, 19 May 2022 02:26:13 -0700 (PDT)
+Received: from google.com (cpc155339-bagu17-2-0-cust87.1-3.cable.virginm.net. [86.27.177.88])
+        by smtp.gmail.com with ESMTPSA id b5-20020a05600c4e0500b00397243d3dbcsm2592590wmq.31.2022.05.19.02.26.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 May 2022 02:26:13 -0700 (PDT)
+Date:   Thu, 19 May 2022 10:26:11 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [REPORT] Use-after-free Read in __fdget_raw in v5.10.y
+Message-ID: <YoYNM0eQPBSUietG@google.com>
+References: <YoTrmjuct3ctvFim@google.com>
+ <b7dc2992-e2d6-8e76-f089-b33561f8471f@kernel.dk>
+ <f821d544-78d5-a227-1370-b5f0895fb184@kernel.dk>
+ <06710b30-fec8-b593-3af4-1318515b41d8@kernel.dk>
+ <YoUNQlzU0W4ShA85@google.com>
+ <49609b89-f2f0-44b3-d732-dfcb4f73cee1@kernel.dk>
+ <YoUTPIVOhLlnIO04@google.com>
+ <1e64d20a-42cc-31cd-0fd8-2718dd8b1f31@kernel.dk>
+ <YoUgHjHn+UFvj0o1@google.com>
+ <38f63cda-b208-0d83-6aec-25115bd1c021@kernel.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <YoX/4fwQOYyTL34a@infradead.org>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <38f63cda-b208-0d83-6aec-25115bd1c021@kernel.dk>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu 19-05-22 01:29:21, Christoph Hellwig wrote:
-> > +static int balance_dirty_pages_ratelimited_flags(struct address_space *mapping,
-> > +						bool no_wait)
-> >  {
+On Wed, 18 May 2022, Jens Axboe wrote:
+
+> On 5/18/22 10:34 AM, Lee Jones wrote:
+> > On Wed, 18 May 2022, Jens Axboe wrote:
+> > 
+> >> On 5/18/22 09:39, Lee Jones wrote:
+> >>> On Wed, 18 May 2022, Jens Axboe wrote:
+> >>>
+> >>>> On 5/18/22 9:14 AM, Lee Jones wrote:
+> >>>>> On Wed, 18 May 2022, Jens Axboe wrote:
+> >>>>>
+> >>>>>> On 5/18/22 6:54 AM, Jens Axboe wrote:
+> >>>>>>> On 5/18/22 6:52 AM, Jens Axboe wrote:
+> >>>>>>>> On 5/18/22 6:50 AM, Lee Jones wrote:
+> >>>>>>>>> On Tue, 17 May 2022, Jens Axboe wrote:
+> >>>>>>>>>
+> >>>>>>>>>> On 5/17/22 7:00 AM, Lee Jones wrote:
+> >>>>>>>>>>> On Tue, 17 May 2022, Jens Axboe wrote:
+> >>>>>>>>>>>
+> >>>>>>>>>>>> On 5/17/22 6:36 AM, Lee Jones wrote:
+> >>>>>>>>>>>>> On Tue, 17 May 2022, Jens Axboe wrote:
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>>> On 5/17/22 6:24 AM, Lee Jones wrote:
+> >>>>>>>>>>>>>>> On Tue, 17 May 2022, Jens Axboe wrote:
+> >>>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>>> On 5/17/22 5:41 AM, Lee Jones wrote:
+> >>>>>>>>>>>>>>>>> Good afternoon Jens, Pavel, et al.,
+> >>>>>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>>>> Not sure if you are presently aware, but there appears to be a
+> >>>>>>>>>>>>>>>>> use-after-free issue affecting the io_uring worker driver (fs/io-wq.c)
+> >>>>>>>>>>>>>>>>> in Stable v5.10.y.
+> >>>>>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>>>> The full sysbot report can be seen below [0].
+> >>>>>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>>>> The C-reproducer has been placed below that [1].
+> >>>>>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>>>> I had great success running this reproducer in an infinite loop.
+> >>>>>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>>>> My colleague reverse-bisected the fixing commit to:
+> >>>>>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>>>>   commit fb3a1f6c745ccd896afadf6e2d6f073e871d38ba
+> >>>>>>>>>>>>>>>>>   Author: Jens Axboe <axboe@kernel.dk>
+> >>>>>>>>>>>>>>>>>   Date:   Fri Feb 26 09:47:20 2021 -0700
+> >>>>>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>>>>        io-wq: have manager wait for all workers to exit
+> >>>>>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>>>>        Instead of having to wait separately on workers and manager, just have
+> >>>>>>>>>>>>>>>>>        the manager wait on the workers. We use an atomic_t for the reference
+> >>>>>>>>>>>>>>>>>        here, as we need to start at 0 and allow increment from that. Since the
+> >>>>>>>>>>>>>>>>>        number of workers is naturally capped by the allowed nr of processes,
+> >>>>>>>>>>>>>>>>>        and that uses an int, there is no risk of overflow.
+> >>>>>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>>>>        Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> >>>>>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>>>>     fs/io-wq.c | 30 ++++++++++++++++++++++--------
+> >>>>>>>>>>>>>>>>>     1 file changed, 22 insertions(+), 8 deletions(-)
+> >>>>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>>> Does this fix it:
+> >>>>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>>> commit 886d0137f104a440d9dfa1d16efc1db06c9a2c02
+> >>>>>>>>>>>>>>>> Author: Jens Axboe <axboe@kernel.dk>
+> >>>>>>>>>>>>>>>> Date:   Fri Mar 5 12:59:30 2021 -0700
+> >>>>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>>>     io-wq: fix race in freeing 'wq' and worker access
+> >>>>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>>> Looks like it didn't make it into 5.10-stable, but we can certainly
+> >>>>>>>>>>>>>>>> rectify that.
+> >>>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>> Thanks for your quick response Jens.
+> >>>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>> This patch doesn't apply cleanly to v5.10.y.
+> >>>>>>>>>>>>>>
+> >>>>>>>>>>>>>> This is probably why it never made it into 5.10-stable :-/
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> Right.  It doesn't apply at all unfortunately.
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>>>> I'll have a go at back-porting it.  Please bear with me.
+> >>>>>>>>>>>>>>
+> >>>>>>>>>>>>>> Let me know if you into issues with that and I can help out.
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> I think the dependency list is too big.
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> Too much has changed that was never back-ported.
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> Actually the list of patches pertaining to fs/io-wq.c alone isn't so
+> >>>>>>>>>>>>> bad, I did start to back-port them all but some of the big ones have
+> >>>>>>>>>>>>> fs/io_uring.c changes incorporated and that list is huge (256 patches
+> >>>>>>>>>>>>> from v5.10 to the fixing patch mentioned above).
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> The problem is that 5.12 went to the new worker setup, and this patch
+> >>>>>>>>>>>> landed after that even though it also applies to the pre-native workers.
+> >>>>>>>>>>>> Hence the dependency chain isn't really as long as it seems, probably
+> >>>>>>>>>>>> just a few patches backporting the change references and completions.
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> I'll take a look this afternoon.
+> >>>>>>>>>>>
+> >>>>>>>>>>> Thanks Jens.  I really appreciate it.
+> >>>>>>>>>>
+> >>>>>>>>>> Can you see if this helps? Untested...
+> >>>>>>>>>
+> >>>>>>>>> What base does this apply against please?
+> >>>>>>>>>
+> >>>>>>>>> I tried Mainline and v5.10.116 and both failed.
+> >>>>>>>>
+> >>>>>>>> It's against 5.10.116, so that's puzzling. Let me double check I sent
+> >>>>>>>> the right one...
+> >>>>>>>
+> >>>>>>> Looks like I sent the one from the wrong directory, sorry about that.
+> >>>>>>> This one should be better:
+> >>>>>>
+> >>>>>> Nope, both are the right one. Maybe your mailer is mangling the patch?
+> >>>>>> I'll attach it gzip'ed here in case that helps.
+> >>>>>
+> >>>>> Okay, that applied, thanks.
+> >>>>>
+> >>>>> Unfortunately, I am still able to crash the kernel in the same way.
+> >>>>
+> >>>> Alright, maybe it's not enough. I can't get your reproducer to crash,
+> >>>> unfortunately. I'll try on a different box.
+> >>>
+> >>> You need to have fuzzing and kasan enabled.
+> >>
+> >> I do have kasan enabled. What's fuzzing?
+> > 
+> > CONFIG_KCOV
 > 
-> This doesn't actully take flags, but a single boolean argument.  So
-> either it needs a new name, or we actually pass a descriptiv flag.
->
-> > +/**
-> > + * balance_dirty_pages_ratelimited_async - balance dirty memory state
-> > + * @mapping: address_space which was dirtied
-> > + *
-> > + * Processes which are dirtying memory should call in here once for each page
-> > + * which was newly dirtied.  The function will periodically check the system's
-> > + * dirty state and will initiate writeback if needed.
-> > + *
-> > + * Once we're over the dirty memory limit we decrease the ratelimiting
-> > + * by a lot, to prevent individual processes from overshooting the limit
-> > + * by (ratelimit_pages) each.
-> > + *
-> > + * This is the async version of the API. It only checks if it is required to
-> > + * balance dirty pages. In case it needs to balance dirty pages, it returns
-> > + * -EAGAIN.
-> > + */
-> > +int  balance_dirty_pages_ratelimited_async(struct address_space *mapping)
-> > +{
-> > +	return balance_dirty_pages_ratelimited_flags(mapping, true);
-> > +}
-> > +EXPORT_SYMBOL(balance_dirty_pages_ratelimited_async);
+> Ah ok - I don't think that's needed for this.
 > 
-> I'd much rather export the underlying
-> balance_dirty_pages_ratelimited_flags helper than adding a pointless
-> wrapper here.  And as long as only iomap is supported there is no need
-> to export it at all.
+> Looking a bit deeper at this, I'm now convinced your bisect went off the
+> rails at some point. Probably because this can be timing specific.
+> 
+> Can you try with this patch?
+> 
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 4330603eae35..3ecf71151fb1 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -4252,12 +4252,8 @@ static int io_statx(struct io_kiocb *req, bool force_nonblock)
+>  	struct io_statx *ctx = &req->statx;
+>  	int ret;
+>  
+> -	if (force_nonblock) {
+> -		/* only need file table for an actual valid fd */
+> -		if (ctx->dfd == -1 || ctx->dfd == AT_FDCWD)
+> -			req->flags |= REQ_F_NO_FILE_TABLE;
+> +	if (force_nonblock)
+>  		return -EAGAIN;
+> -	}
+>  
+>  	ret = do_statx(ctx->dfd, ctx->filename, ctx->flags, ctx->mask,
+>  		       ctx->buffer);
 
-This was actually my suggestion so I take the blame ;) I have suggested
-this because I don't like non-static functions with bool arguments (it is
-unnecessarily complicated to understand what the argument means or grep for
-it etc.). If you don't like the wrapper, creating
+This does appear to solve the issue. :)
 
-int balance_dirty_pages_ratelimited_flags(struct address_space *mapping,
-					  unsigned int flags)
+Thanks so much for working on this.
 
-and have something like:
+What are the next steps?
 
-#define BDP_NOWAIT 0x0001
+Are you able to submit this to Stable?
 
-is fine with me as well.
-
-								Honza
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Lee Jones [李琼斯]
+Principal Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog

@@ -2,136 +2,82 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6148B52C9E1
-	for <lists+io-uring@lfdr.de>; Thu, 19 May 2022 04:42:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2FD752CC5B
+	for <lists+io-uring@lfdr.de>; Thu, 19 May 2022 09:03:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232960AbiESCmp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 18 May 2022 22:42:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57142 "EHLO
+        id S230401AbiESHDL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 19 May 2022 03:03:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57790 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232959AbiESCmm (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 18 May 2022 22:42:42 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 586E2A30BA
-        for <io-uring@vger.kernel.org>; Wed, 18 May 2022 19:42:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1652928160;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=OLLmfXiXzvWZFrGfu99utiSX147UCnqhw6D8tGfkdG0=;
-        b=cOOHKmzDERcBYGbPpsEZuvBGKZXrZc5h5dhb8NLNHC90V+Fn4UW99VQX9hUircEreAmu+o
-        Qg5p9uvX5tXRCsWhYLPiksUr90LI2epFKPHAfhazxBzqkv3cCoekI7kUEPDzZd6t0OUpqS
-        afrfyvfmbIcnrE7KidLsPVEoO68lPPU=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-31-4kio-BwRMTSeYgIXtcsBrA-1; Wed, 18 May 2022 22:42:36 -0400
-X-MC-Unique: 4kio-BwRMTSeYgIXtcsBrA-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A1096101AA42;
-        Thu, 19 May 2022 02:42:35 +0000 (UTC)
-Received: from T590 (ovpn-8-21.pek2.redhat.com [10.72.8.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id A36061410DD5;
-        Thu, 19 May 2022 02:42:29 +0000 (UTC)
-Date:   Thu, 19 May 2022 10:42:22 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Stefan Hajnoczi <stefanha@redhat.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        with ESMTP id S230056AbiESHDK (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 19 May 2022 03:03:10 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84540275;
+        Thu, 19 May 2022 00:03:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=7u2c7SfZw4F2WE/l0TOBqN1etCbMDPzaGXFTwtFLUR4=; b=AozOtmYYEJqF6EhHgojTQIbAQ+
+        p4IjDmwTWU9+pgZ6DB8MVOw/rbIOQCCOaHvHL2taHp0oJjgTNG8OEo9S0iC+9jT90vFelThaNKpca
+        S1jtSV3FfNZCatApiHLF4UwsoZz/Upju/uMnezte0iIWzC/RUQVJhDKeTKeI1dpA1VerZpDJIZGrj
+        QGkzfk6zSr3L9nLOtiOXHtGziqiVAjw286fOk70iEwYEDlZTW2EUAiKF59gGCshI21dMM9zODBa3e
+        7Wfb6EnmcPgFm4V0xQuEnFiouW4IvqU4VCVlTJi6ifnm3HHOdiluCVCeypiP6WdNFTzU8lDrNP2IZ
+        fRyVRfow==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nraBf-005Pls-LU; Thu, 19 May 2022 07:03:07 +0000
+Date:   Thu, 19 May 2022 00:03:07 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Vasily Averin <vvs@openvz.org>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>, kernel@openvz.org,
         linux-kernel@vger.kernel.org,
-        Harris James R <james.r.harris@intel.com>,
-        io-uring@vger.kernel.org,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        ZiyangZhang <ZiyangZhang@linux.alibaba.com>,
-        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
-        ming.lei@redhat.com
-Subject: Re: [PATCH V2 0/1] ubd: add io_uring based userspace block driver
-Message-ID: <YoWujjFArHaXuqYS@T590>
-References: <20220517055358.3164431-1-ming.lei@redhat.com>
- <YoOr6jBfgVm8GvWg@stefanha-x1.localdomain>
- <YoSbuvT88sG5UkfG@T590>
- <YoTOTCooQfQQxyA8@stefanha-x1.localdomain>
- <YoTsYvnACbCNIMPE@T590>
- <YoUVb8CeWRIErJBY@stefanha-x1.localdomain>
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>, io-uring@vger.kernel.org
+Subject: Re: [PATCH v2] io_uring: fix sparce warnings about __kernel_rwf_t
+ casts
+Message-ID: <YoXrq23tjl1v3YD0@infradead.org>
+References: <YoHu+HvaDcIpC7gI@infradead.org>
+ <7de7721b-d090-6400-9a74-30ecb696761b@openvz.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YoUVb8CeWRIErJBY@stefanha-x1.localdomain>
-X-Scanned-By: MIMEDefang 2.85 on 10.11.54.7
-X-Spam-Status: No, score=-3.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+In-Reply-To: <7de7721b-d090-6400-9a74-30ecb696761b@openvz.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, May 18, 2022 at 04:49:03PM +0100, Stefan Hajnoczi wrote:
-> On Wed, May 18, 2022 at 08:53:54PM +0800, Ming Lei wrote:
-> > On Wed, May 18, 2022 at 11:45:32AM +0100, Stefan Hajnoczi wrote:
-> > > On Wed, May 18, 2022 at 03:09:46PM +0800, Ming Lei wrote:
-> > > > On Tue, May 17, 2022 at 03:06:34PM +0100, Stefan Hajnoczi wrote:
-> > > > > Here are some more thoughts on the ubd-control device:
-> > > > > 
-> > > > > The current patch provides a ubd-control device for processes with
-> > > > > suitable permissions (i.e. root) to create, start, stop, and fetch
-> > > > > information about devices.
-> > > > > 
-> > > > > There is no isolation between devices created by one process and those
-> > > > 
-> > > > I understand linux hasn't device namespace yet, so can you share the
-> > > > rational behind the idea of device isolation, is it because ubd device
-> > > > is served by ubd daemon which belongs to one pid NS? Or the user creating
-> > > > /dev/ubdbN belongs to one user NS?
-> > > 
-> > > With the current model a process with access to ubd-control has control
-> > > over all ubd devices. This is not desirable for most container use cases
-> > > because ubd-control usage within a container means that container could
-> > > stop any ubd device on the system.
-> > > 
-> > > Even for non-container use cases it's problematic that two applications
-> > > that use ubd can interfere with each other. If an application passes the
-> > > wrong device ID they can stop the other application's device, for
-> > > example.
-> > > 
-> > > I think it's worth supporting a model where there are multiple ubd
-> > > daemons that are not cooperating/aware of each other. They should be
-> > > isolated from each other.
-> > 
-> > Maybe I didn't mention it clearly, I meant the following model in last email:
-> > 
-> > 1) every user can send UBD_CMD_ADD_DEV to /dev/ubd-control
-> > 
-> > 2) the created /dev/ubdcN & /dev/udcbN are owned by the user who creates
-> > it
+On Wed, May 18, 2022 at 12:20:46PM +0300, Vasily Averin wrote:
+> __kernel_rwf_t type is bitwise and requires __force attribute for casts.
 > 
-> How does this work? Does userspace (udev) somehow get the uid/gid from
-> the uevent so it can set the device node permissions?
+> To fix the warnings, the patch changes the type of fields in the
+> corresponding structures: poll32_events and rw_flags are neighbours
+> in the same union.
 
-We can let 'ubd list' export the owner info, then udev may override the default
-owner with exported info.
+Jens actually picked up a series from me that picked up most of this,
+except for this hunk:
 
-Or it can be done inside devtmpfs_create_node() by passing ubd's uid/gid
-at default.
+> index cddf5b6fbeb4..34839f30caee 100644
+> --- a/include/trace/events/io_uring.h
+> +++ b/include/trace/events/io_uring.h
+> @@ -520,7 +520,7 @@ TRACE_EVENT(io_uring_req_failed,
+>  		__entry->off		= sqe->off;
+>  		__entry->addr		= sqe->addr;
+>  		__entry->len		= sqe->len;
+> -		__entry->op_flags	= sqe->rw_flags;
+> +		__entry->op_flags	= sqe->poll32_events;
+>  		__entry->buf_index	= sqe->buf_index;
+>  		__entry->personality	= sqe->personality;
+>  		__entry->file_index	= sqe->file_index;
 
-For /dev/ubdcN, I think it is safe, since the driver is only
-communicating with the userspace daemon, and both belong to same owner.
-Also ubd driver is simple enough to get full audited.
-
-For /dev/ubdbN, even though FS isn't allowed to mount, there is still
-lots of kernel code path involved, and some code path may not be run
-with unprivileged user before, that needs careful audit.
-
-So the biggest problem is if it is safe to export block disk to unprivileged
-user, and that is the one which can't be bypassed for any approach.
-
-
-
-
-Thanks, 
-Ming
-
+For which I did not see a warning even if it looks real to me.
+But this union with basically a lot of __u32s here looks pretty
+strange to start with to me.

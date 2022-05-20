@@ -2,47 +2,47 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 66A0752F336
-	for <lists+io-uring@lfdr.de>; Fri, 20 May 2022 20:37:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74DC852F333
+	for <lists+io-uring@lfdr.de>; Fri, 20 May 2022 20:37:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352904AbiETShp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 20 May 2022 14:37:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59716 "EHLO
+        id S1352892AbiETShn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 20 May 2022 14:37:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352966AbiETShi (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 20 May 2022 14:37:38 -0400
-Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EB5019593E
-        for <io-uring@vger.kernel.org>; Fri, 20 May 2022 11:37:36 -0700 (PDT)
-Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
-        by m0089730.ppops.net (8.17.1.5/8.17.1.5) with ESMTP id 24KHSWR1022741
-        for <io-uring@vger.kernel.org>; Fri, 20 May 2022 11:37:36 -0700
+        with ESMTP id S1352972AbiETShk (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 20 May 2022 14:37:40 -0400
+Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F318E195BC0
+        for <io-uring@vger.kernel.org>; Fri, 20 May 2022 11:37:39 -0700 (PDT)
+Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24KHSJuC010763
+        for <io-uring@vger.kernel.org>; Fri, 20 May 2022 11:37:39 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=facebook;
- bh=wRT/wXmzHcgMsrcASISsv+kuIl+EmEXecNfLk2i1H+Q=;
- b=XZrWJQHbaazjv8esO8Kc/bK15skibCixwrQ7jpANZNLfbjUqwyCylvw4FH2ea8UKDX7J
- EhgVadqEQCPBd+S5SxZhF/mWIt8v7uAY48LtwCoSp0HDD1YnQ9zcb3/ltDtRiDzpm7YK
- nAs8YkoYA8YxIRYTEguvgDc6hhuDh9J++eE= 
+ bh=Z1kN9YKTgEbNSBC9L24GXepXSpkzS0zypoYUBMrIH50=;
+ b=QQazOYI9Fg9iDNGiaOl286kJEqjBASOXM/UPxyBi+8pz4TglXnVDOyKWO3Wziql6WAzd
+ ykjjVwikRsvXNudYOuqXbOm4nHEqKNt7Zr9gkF/p1U3f2Xt4l1YfyhPPzKHPFsKqqaxt
+ M+QqeAMIS3as2Oashn2mfYiAV3T9INbrG+w= 
 Received: from mail.thefacebook.com ([163.114.132.120])
-        by m0089730.ppops.net (PPS) with ESMTPS id 3g6bja2avx-2
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3g6341cjer-2
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Fri, 20 May 2022 11:37:36 -0700
-Received: from twshared35748.07.ash9.facebook.com (2620:10d:c085:208::11) by
- mail.thefacebook.com (2620:10d:c085:21d::4) with Microsoft SMTP Server
+        for <io-uring@vger.kernel.org>; Fri, 20 May 2022 11:37:39 -0700
+Received: from twshared6696.05.ash7.facebook.com (2620:10d:c085:108::4) by
+ mail.thefacebook.com (2620:10d:c085:11d::7) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.28; Fri, 20 May 2022 11:37:34 -0700
+ 15.1.2375.28; Fri, 20 May 2022 11:37:37 -0700
 Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
-        id 82E0DF5E5B2D; Fri, 20 May 2022 11:37:16 -0700 (PDT)
+        id 88DF4F5E5B2F; Fri, 20 May 2022 11:37:16 -0700 (PDT)
 From:   Stefan Roesch <shr@fb.com>
 To:     <io-uring@vger.kernel.org>, <kernel-team@fb.com>,
         <linux-mm@kvack.org>, <linux-xfs@vger.kernel.org>,
         <linux-fsdevel@vger.kernel.org>
 CC:     <shr@fb.com>, <david@fromorbit.com>, <jack@suse.cz>,
         <hch@infradead.org>
-Subject: [RFC PATCH v4 07/17] iomap: Use balance_dirty_pages_ratelimited_flags in iomap_write_iter
-Date:   Fri, 20 May 2022 11:36:36 -0700
-Message-ID: <20220520183646.2002023-8-shr@fb.com>
+Subject: [RFC PATCH v4 08/17] fs: Add check for async buffered writes to generic_write_checks
+Date:   Fri, 20 May 2022 11:36:37 -0700
+Message-ID: <20220520183646.2002023-9-shr@fb.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220520183646.2002023-1-shr@fb.com>
 References: <20220520183646.2002023-1-shr@fb.com>
@@ -50,11 +50,11 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-GUID: KvSzHVL-qR2RWz5Fb9MTmhOBgwpz73we
-X-Proofpoint-ORIG-GUID: KvSzHVL-qR2RWz5Fb9MTmhOBgwpz73we
+X-Proofpoint-GUID: 4i5I4MGrpdXhS3Ans6x6zvhckXuIzlTO
+X-Proofpoint-ORIG-GUID: 4i5I4MGrpdXhS3Ans6x6zvhckXuIzlTO
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.874,Hydra:6.0.486,FMLib:17.11.64.514
- definitions=2022-05-20_05,2022-05-20_02,2022-02-23_01
+ definitions=2022-05-20_06,2022-05-20_02,2022-02-23_01
 X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
         RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
@@ -66,73 +66,47 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This replaces the call to balance_dirty_pages_ratelimited() with the
-call to balance_dirty_pages_ratelimited_flags. This allows to specify if
-the write request is async or not.
-
-In addition this also moves the above function call to the beginning of
-the function. If the function call is at the end of the function and the
-decision is made to throttle writes, then there is no request that
-io-uring can wait on. By moving it to the beginning of the function, the
-write request is not issued, but returns -EAGAIN instead. io-uring will
-punt the request and process it in the io-worker.
-
-By moving the function call to the beginning of the function, the write
-throttling will happen one page later.
+This introduces the flag FMODE_BUF_WASYNC. If devices support async
+buffered writes, this flag can be set. It also modifies the check in
+generic_write_checks to take async buffered writes into consideration.
 
 Signed-off-by: Stefan Roesch <shr@fb.com>
 ---
- fs/iomap/buffered-io.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ fs/read_write.c    | 4 +++-
+ include/linux/fs.h | 3 +++
+ 2 files changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 187f4ddd7ba7..020452467ca8 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -765,14 +765,22 @@ static loff_t iomap_write_iter(struct iomap_iter *i=
-ter, struct iov_iter *i)
- 	do {
- 		struct folio *folio;
- 		struct page *page;
-+		struct address_space *mapping =3D iter->inode->i_mapping;
- 		unsigned long offset;	/* Offset into pagecache page */
- 		unsigned long bytes;	/* Bytes to write to page */
- 		size_t copied;		/* Bytes copied from user */
-+		unsigned int bdp_flags =3D
-+			(iter->flags & IOMAP_NOWAIT) ? BDP_ASYNC : 0;
+diff --git a/fs/read_write.c b/fs/read_write.c
+index e643aec2b0ef..175d98713b9a 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -1633,7 +1633,9 @@ int generic_write_checks_count(struct kiocb *iocb, =
+loff_t *count)
+ 	if (iocb->ki_flags & IOCB_APPEND)
+ 		iocb->ki_pos =3D i_size_read(inode);
 =20
- 		offset =3D offset_in_page(pos);
- 		bytes =3D min_t(unsigned long, PAGE_SIZE - offset,
- 						iov_iter_count(i));
- again:
-+		status =3D balance_dirty_pages_ratelimited_flags(mapping,
-+							       bdp_flags);
-+		if (unlikely(status))
-+			break;
+-	if ((iocb->ki_flags & IOCB_NOWAIT) && !(iocb->ki_flags & IOCB_DIRECT))
++	if ((iocb->ki_flags & IOCB_NOWAIT) &&
++	    !((iocb->ki_flags & IOCB_DIRECT) ||
++	      (file->f_mode & FMODE_BUF_WASYNC)))
+ 		return -EINVAL;
+=20
+ 	return generic_write_check_limits(iocb->ki_filp, iocb->ki_pos, count);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index bbde95387a23..3b479d02e210 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -177,6 +177,9 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t=
+ offset,
+ /* File supports async buffered reads */
+ #define FMODE_BUF_RASYNC	((__force fmode_t)0x40000000)
+=20
++/* File supports async nowait buffered writes */
++#define FMODE_BUF_WASYNC	((__force fmode_t)0x80000000)
 +
- 		if (bytes > length)
- 			bytes =3D length;
-=20
-@@ -796,7 +804,7 @@ static loff_t iomap_write_iter(struct iomap_iter *ite=
-r, struct iov_iter *i)
- 			break;
-=20
- 		page =3D folio_file_page(folio, pos >> PAGE_SHIFT);
--		if (mapping_writably_mapped(iter->inode->i_mapping))
-+		if (mapping_writably_mapped(mapping))
- 			flush_dcache_page(page);
-=20
- 		copied =3D copy_page_from_iter_atomic(page, offset, bytes, i);
-@@ -821,8 +829,6 @@ static loff_t iomap_write_iter(struct iomap_iter *ite=
-r, struct iov_iter *i)
- 		pos +=3D status;
- 		written +=3D status;
- 		length -=3D status;
--
--		balance_dirty_pages_ratelimited(iter->inode->i_mapping);
- 	} while (iov_iter_count(i) && length);
-=20
- 	return written ? written : status;
+ /*
+  * Attribute flags.  These should be or-ed together to figure out what
+  * has been changed!
 --=20
 2.30.2
 

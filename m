@@ -2,277 +2,199 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 53EBB52FDA9
-	for <lists+io-uring@lfdr.de>; Sat, 21 May 2022 17:15:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4481852FFCD
+	for <lists+io-uring@lfdr.de>; Sun, 22 May 2022 01:17:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233473AbiEUPP1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 21 May 2022 11:15:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38676 "EHLO
+        id S232201AbiEUXN6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 21 May 2022 19:13:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232553AbiEUPP1 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 21 May 2022 11:15:27 -0400
-Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9665156210
-        for <io-uring@vger.kernel.org>; Sat, 21 May 2022 08:15:25 -0700 (PDT)
-Received: by mail-pg1-x52c.google.com with SMTP id t28so2466716pga.6
-        for <io-uring@vger.kernel.org>; Sat, 21 May 2022 08:15:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:content-language:to:from
-         :subject:cc:content-transfer-encoding;
-        bh=s0wlKp1fVp2rMZ9q9cHDbusyEzhgRJLlRKgP7xg7r/Q=;
-        b=BkrVTODOErN/ChEuy6sH0rRpxYVCaHP3OEpt+m6MTBCNcM9rqWaSaFt4i0DQZw8Z2V
-         9sX0hgfxsykWdzZdzwHTzIg5/mJmgw7loFQtgTicXXso/15h/TMqpNSoJbt8Yk9OZBGs
-         nGGH2ufzbj3aEQIQZ41wVSnhg0G0Ji95gUnCJ9cryZbcvmJ5uaGhdvFRuHsPCQFUWGA6
-         VRCrU8e1/ii+p7yFK0/0qedMOZWsWsRlDJBct3UvQg/QvdmMAO0S6epux/Gq+BISR5Oj
-         RxlKVw5SqA4RetZRcJ88k/nD24NoNQxsvl2XBS+6Hg8JaJFumQs1HjKV2tEeGe5pZaeX
-         lNZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent
-         :content-language:to:from:subject:cc:content-transfer-encoding;
-        bh=s0wlKp1fVp2rMZ9q9cHDbusyEzhgRJLlRKgP7xg7r/Q=;
-        b=vGtO5zfMw+xleDwkzQJ8ELY8tFqjl0HF/EGeEBNhqTWUkmyCNE6v7aw2l7IuRGqmeJ
-         C69RaN+yVf3FXzHvy/nkm5FPQVfq+nXIF4R+zGcixpT8bIVR5vkP6OD2K/kqlsv31doi
-         /leScA2g+E5cLwBHKeML/oULHpdN1pzfoj8luWxuyfVA66Xt9Y9yxIhwAiZ1Tu44ABW4
-         fXI2S2kAp62JoK1Y6rGcOgrTjal97OVLEMXDrwbL4n/FMGdyZtAtT1mC920yUo0FgjZK
-         vx+9GXpPshGKWY2jVZRxn6iZWae24KSOqtzXm4LNnyc/VmtEqB30+xc8pIBJXP/eNpJ6
-         p66A==
-X-Gm-Message-State: AOAM532hTx5a9up1WZh/o5+GZxOK3K77253ulQMe8J691G1iZivIdSH1
-        EkbVFlP3F8SPyN779bFyg7WL8aeu223aWQ==
-X-Google-Smtp-Source: ABdhPJzStvP/R7HzU8vckquwabusS5N+5dBKjRqQFhaYmyFfUA4EO25cvemEHNIaXqzSqP0M2FYbyQ==
-X-Received: by 2002:a63:8bc8:0:b0:3f9:f41d:5bb9 with SMTP id j191-20020a638bc8000000b003f9f41d5bb9mr2399955pge.256.1653146124659;
-        Sat, 21 May 2022 08:15:24 -0700 (PDT)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d66-20020a621d45000000b005182fd977e4sm3807200pfd.108.2022.05.21.08.15.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 21 May 2022 08:15:23 -0700 (PDT)
-Message-ID: <ee17c4dc-80b6-d980-eac2-bb81e936019b@kernel.dk>
-Date:   Sat, 21 May 2022 09:15:22 -0600
+        with ESMTP id S231722AbiEUXN5 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 21 May 2022 19:13:57 -0400
+Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D20873CFE8;
+        Sat, 21 May 2022 16:13:55 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-2-147.pa.nsw.optusnet.com.au [49.181.2.147])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id EDF285345CF;
+        Sun, 22 May 2022 09:13:52 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1nsYIA-00Eoqu-QQ; Sun, 22 May 2022 09:13:50 +1000
+Date:   Sun, 22 May 2022 09:13:50 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Zorro Lang <zlang@redhat.com>, fstests <fstests@vger.kernel.org>,
+        Eryu Guan <guaneryu@gmail.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Darrick J. Wong" <djwong@kernel.org>, io-uring@vger.kernel.org
+Subject: Re: [PATCH v2 00/13] rename & split tests
+Message-ID: <20220521231350.GY2306852@dread.disaster.area>
+References: <20220512165250.450989-1-brauner@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Content-Language: en-US
-To:     io-uring <io-uring@vger.kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring: cleanup handling of the two task_work lists
-Cc:     Hao Xu <haoxu@linux.alibaba.com>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220512165250.450989-1-brauner@kernel.org>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=VuxAv86n c=1 sm=1 tr=0 ts=62897232
+        a=ivVLWpVy4j68lT4lJFbQgw==:117 a=ivVLWpVy4j68lT4lJFbQgw==:17
+        a=kj9zAlcOel0A:10 a=oZkIemNP1mAA:10 a=VwQbUJbxAAAA:8 a=7-415B0cAAAA:8
+        a=3bHb4aL3uS5y75ZLPDYA:9 a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22
+        a=biEYGPWJfzWAr4FL6Ov7:22
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Rather than pass in a bool for whether or not this work item needs to go
-into the priority list or not, provide separate helpers for it. For most
-use cases, this also then gets rid of the branch for non-priority task
-work.
+[cc io_uring]
 
-While at it, rename the prior_task_list to prio_task_list. Prior is
-a confusing name for it, as it would seem to indicate that this is the
-previous task_work list. prio makes it clear that this is a priority
-task_work list.
+On Thu, May 12, 2022 at 06:52:37PM +0200, Christian Brauner wrote:
+> From: "Christian Brauner (Microsoft)" <brauner@kernel.org>
+> 
+> Hey everyone,
+> 
+> Please note that this patch series contains patches that will be
+> rejected by the fstests mailing list because of the amount of changes
+> they contain. So tools like b4 will not be able to find the whole patch
+> series on a mailing list. In case it's helpful I've added the
+> "fstests.vfstest.for-next" tag which can be pulled. Otherwise it's
+> possible to simply use the patch series as it appears in your inbox.
+> 
+> All vfstests pass:
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+[...]
 
----
+> #### xfs ####
+> ubuntu@imp1-vm:~/src/git/xfstests$ sudo ./check -g idmapped
+> FSTYP         -- xfs (debug)
+> PLATFORM      -- Linux/x86_64 imp1-vm 5.18.0-rc4-fs-mnt-hold-writers-8a2e2350494f #107 SMP PREEMPT_DYNAMIC Mon May 9 12:12:34 UTC 2022
+> MKFS_OPTIONS  -- -f /dev/sda4
+> MOUNT_OPTIONS -- /dev/sda4 /mnt/scratch
+> 
+> generic/633 58s ...  58s
+> generic/644 62s ...  60s
+> generic/645 161s ...  161s
+> generic/656 62s ...  63s
+> xfs/152 133s ...  133s
+> xfs/153 94s ...  92s
+> Ran: generic/633 generic/644 generic/645 generic/656 xfs/152 xfs/153
+> Passed all 6 tests
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 15faacd6d62c..fd47002e669d 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -544,7 +544,7 @@ struct io_uring_task {
- 
- 	spinlock_t		task_lock;
- 	struct io_wq_work_list	task_list;
--	struct io_wq_work_list	prior_task_list;
-+	struct io_wq_work_list	prio_task_list;
- 	struct callback_head	task_work;
- 	struct file		**registered_rings;
- 	bool			task_running;
-@@ -2951,10 +2951,10 @@ static void tctx_task_work(struct callback_head *cb)
- 		struct io_wq_work_node *node1, *node2;
- 
- 		spin_lock_irq(&tctx->task_lock);
--		node1 = tctx->prior_task_list.first;
-+		node1 = tctx->prio_task_list.first;
- 		node2 = tctx->task_list.first;
- 		INIT_WQ_LIST(&tctx->task_list);
--		INIT_WQ_LIST(&tctx->prior_task_list);
-+		INIT_WQ_LIST(&tctx->prio_task_list);
- 		if (!node2 && !node1)
- 			tctx->task_running = false;
- 		spin_unlock_irq(&tctx->task_lock);
-@@ -2968,7 +2968,7 @@ static void tctx_task_work(struct callback_head *cb)
- 		cond_resched();
- 
- 		if (data_race(!tctx->task_list.first) &&
--		    data_race(!tctx->prior_task_list.first) && uring_locked)
-+		    data_race(!tctx->prio_task_list.first) && uring_locked)
- 			io_submit_flush_completions(ctx);
- 	}
- 
-@@ -2979,24 +2979,19 @@ static void tctx_task_work(struct callback_head *cb)
- 		io_uring_drop_tctx_refs(current);
- }
- 
--static void io_req_task_work_add(struct io_kiocb *req, bool priority)
-+static void __io_req_task_work_add(struct io_kiocb *req,
-+				   struct io_uring_task *tctx,
-+				   struct io_wq_work_list *list)
- {
--	struct task_struct *tsk = req->task;
- 	struct io_ring_ctx *ctx = req->ctx;
--	struct io_uring_task *tctx = tsk->io_uring;
- 	struct io_wq_work_node *node;
- 	unsigned long flags;
- 	bool running;
- 
--	WARN_ON_ONCE(!tctx);
--
- 	io_drop_inflight_file(req);
- 
- 	spin_lock_irqsave(&tctx->task_lock, flags);
--	if (priority)
--		wq_list_add_tail(&req->io_task_work.node, &tctx->prior_task_list);
--	else
--		wq_list_add_tail(&req->io_task_work.node, &tctx->task_list);
-+	wq_list_add_tail(&req->io_task_work.node, list);
- 	running = tctx->task_running;
- 	if (!running)
- 		tctx->task_running = true;
-@@ -3009,12 +3004,12 @@ static void io_req_task_work_add(struct io_kiocb *req, bool priority)
- 	if (ctx->flags & IORING_SETUP_TASKRUN_FLAG)
- 		atomic_or(IORING_SQ_TASKRUN, &ctx->rings->sq_flags);
- 
--	if (likely(!task_work_add(tsk, &tctx->task_work, ctx->notify_method)))
-+	if (likely(!task_work_add(req->task, &tctx->task_work, ctx->notify_method)))
- 		return;
- 
- 	spin_lock_irqsave(&tctx->task_lock, flags);
- 	tctx->task_running = false;
--	node = wq_list_merge(&tctx->prior_task_list, &tctx->task_list);
-+	node = wq_list_merge(&tctx->prio_task_list, &tctx->task_list);
- 	spin_unlock_irqrestore(&tctx->task_lock, flags);
- 
- 	while (node) {
-@@ -3026,6 +3021,23 @@ static void io_req_task_work_add(struct io_kiocb *req, bool priority)
- 	}
- }
- 
-+static void io_req_task_work_add(struct io_kiocb *req)
-+{
-+	struct io_uring_task *tctx = req->task->io_uring;
-+
-+	__io_req_task_work_add(req, tctx, &tctx->task_list);
-+}
-+
-+static void io_req_task_prio_work_add(struct io_kiocb *req)
-+{
-+	struct io_uring_task *tctx = req->task->io_uring;
-+
-+	if (req->ctx->flags & IORING_SETUP_SQPOLL)
-+		__io_req_task_work_add(req, tctx, &tctx->prio_task_list);
-+	else
-+		__io_req_task_work_add(req, tctx, &tctx->task_list);
-+}
-+
- static void io_req_tw_post(struct io_kiocb *req, bool *locked)
- {
- 	io_req_complete_post(req, req->cqe.res, req->cqe.flags);
-@@ -3036,7 +3048,7 @@ static void io_req_tw_post_queue(struct io_kiocb *req, s32 res, u32 cflags)
- 	req->cqe.res = res;
- 	req->cqe.flags = cflags;
- 	req->io_task_work.func = io_req_tw_post;
--	io_req_task_work_add(req, false);
-+	io_req_task_work_add(req);
- }
- 
- static void io_req_task_cancel(struct io_kiocb *req, bool *locked)
-@@ -3060,19 +3072,19 @@ static void io_req_task_queue_fail(struct io_kiocb *req, int ret)
- {
- 	req->cqe.res = ret;
- 	req->io_task_work.func = io_req_task_cancel;
--	io_req_task_work_add(req, false);
-+	io_req_task_work_add(req);
- }
- 
- static void io_req_task_queue(struct io_kiocb *req)
- {
- 	req->io_task_work.func = io_req_task_submit;
--	io_req_task_work_add(req, false);
-+	io_req_task_work_add(req);
- }
- 
- static void io_req_task_queue_reissue(struct io_kiocb *req)
- {
- 	req->io_task_work.func = io_queue_iowq;
--	io_req_task_work_add(req, false);
-+	io_req_task_work_add(req);
- }
- 
- static void io_queue_next(struct io_kiocb *req)
-@@ -3480,7 +3492,7 @@ static void io_complete_rw(struct kiocb *kiocb, long res)
- 		return;
- 	req->cqe.res = res;
- 	req->io_task_work.func = io_req_task_complete;
--	io_req_task_work_add(req, !!(req->ctx->flags & IORING_SETUP_SQPOLL));
-+	io_req_task_prio_work_add(req);
- }
- 
- static void io_complete_rw_iopoll(struct kiocb *kiocb, long res)
-@@ -5013,7 +5025,7 @@ void io_uring_cmd_complete_in_task(struct io_uring_cmd *ioucmd,
- 
- 	req->uring_cmd.task_work_cb = task_work_cb;
- 	req->io_task_work.func = io_uring_cmd_work;
--	io_req_task_work_add(req, !!(req->ctx->flags & IORING_SETUP_SQPOLL));
-+	io_req_task_prio_work_add(req);
- }
- EXPORT_SYMBOL_GPL(io_uring_cmd_complete_in_task);
- 
-@@ -6999,7 +7011,7 @@ static void __io_poll_execute(struct io_kiocb *req, int mask, __poll_t events)
- 		req->io_task_work.func = io_apoll_task_func;
- 
- 	trace_io_uring_task_add(req->ctx, req, req->cqe.user_data, req->opcode, mask);
--	io_req_task_work_add(req, false);
-+	io_req_task_work_add(req);
- }
- 
- static inline void io_poll_execute(struct io_kiocb *req, int res,
-@@ -7504,7 +7516,7 @@ static enum hrtimer_restart io_timeout_fn(struct hrtimer *timer)
- 
- 	req->cqe.res = -ETIME;
- 	req->io_task_work.func = io_req_task_complete;
--	io_req_task_work_add(req, false);
-+	io_req_task_work_add(req);
- 	return HRTIMER_NORESTART;
- }
- 
-@@ -8627,7 +8639,7 @@ static enum hrtimer_restart io_link_timeout_fn(struct hrtimer *timer)
- 	spin_unlock_irqrestore(&ctx->timeout_lock, flags);
- 
- 	req->io_task_work.func = io_req_task_link_timeout;
--	io_req_task_work_add(req, false);
-+	io_req_task_work_add(req);
- 	return HRTIMER_NORESTART;
- }
- 
-@@ -10340,7 +10352,7 @@ static __cold int io_uring_alloc_task_context(struct task_struct *task,
- 	task->io_uring = tctx;
- 	spin_lock_init(&tctx->task_lock);
- 	INIT_WQ_LIST(&tctx->task_list);
--	INIT_WQ_LIST(&tctx->prior_task_list);
-+	INIT_WQ_LIST(&tctx->prio_task_list);
- 	init_task_work(&tctx->task_work, tctx_task_work);
- 	return 0;
- }
+I'm not sure if it's this series that has introduced a test bug or
+triggered a latent issue in the kernel, but I've started seeing
+generic/633 throw audit subsystem warnings on a single test machine
+as of late Friday:
 
+[ 7285.015888] WARNING: CPU: 3 PID: 2147118 at kernel/auditsc.c:2035 __audit_syscall_entry+0x113/0x140
+[ 7285.019973] Modules linked in:
+[ 7285.021281] CPU: 3 PID: 2147118 Comm: vfstest Not tainted 5.18.0-rc7-dgc+ #1250
+[ 7285.024341] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+[ 7285.027782] RIP: 0010:__audit_syscall_entry+0x113/0x140
+[ 7285.029923] Code: 24 e8 c1 6b ff ff 48 8b 34 24 85 c0 48 8b 54 24 08 48 8b 4c 24 10 4c 8b 44 24 18 0f 84 72 ff ff ff 48 83 c4 20 5b 5d 41 5c c3 <0f> 0b 85 c0 75 14 48 83 c4 20 48 c7 c7 70 45 7f 82 5b 5d 41 5c e9
+[ 7285.037563] RSP: 0018:ffffc900012f7ed0 EFLAGS: 00010202
+[ 7285.039748] RAX: 0000000000000000 RBX: ffff8880aaf18800 RCX: 000000000000003c
+[ 7285.043126] RDX: 00000000000000e7 RSI: 0000000000000000 RDI: ffff888102104f00
+[ 7285.046120] RBP: 00000000000000e7 R08: fffffffffffffe2c R09: 0000000000000002
+[ 7285.049108] R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000000
+[ 7285.052058] R13: ffffc900012f7f58 R14: 00000000000000e7 R15: 0000000000000000
+[ 7285.055030] FS:  00007f7906d6c740(0000) GS:ffff88813bd80000(0000) knlGS:0000000000000000
+[ 7285.058396] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 7285.060788] CR2: 00007f3ffa7e9bb8 CR3: 000000010bb00000 CR4: 00000000000006e0
+[ 7285.063735] Call Trace:
+[ 7285.064796]  <TASK>
+[ 7285.065759]  syscall_trace_enter.constprop.0+0x122/0x1a0
+[ 7285.067978]  do_syscall_64+0x16/0x80
+[ 7285.069497]  entry_SYSCALL_64_after_hwframe+0x44/0xae
+[ 7285.071590] RIP: 0033:0x7f7906e35f49
+[ 7285.073118] Code: 00 4c 8b 05 29 6f 10 00 be e7 00 00 00 ba 3c 00 00 00 eb 12 0f 1f 44 00 00 89 d0 0f 05 48 3d 00 f0 ff ff 77 1c f4 89 f0 0f 05 <48> 3d 00 f0 ff ff 76 e7 f7 d8 64 41 89 00 eb df 0f 1f 80 00 00 00
+[ 7285.078021] RSP: 002b:00007ffeee52db88 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+[ 7285.079995] RAX: ffffffffffffffda RBX: 00007f7906f39920 RCX: 00007f7906e35f49
+[ 7285.081869] RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000000
+[ 7285.083729] RBP: 0000000000000000 R08: ffffffffffffff88 R09: 0000000000000001
+[ 7285.085594] R10: fffffffffffffe2c R11: 0000000000000246 R12: 00007f7906f39920
+[ 7285.087457] R13: 0000000000000001 R14: 00007f7906f3ee28 R15: 0000000000000000
+[ 7285.089320]  </TASK>
+[ 7285.089949] ---[ end trace 0000000000000000 ]---
+[ 7285.091182] audit_panic: 22 callbacks suppressed
+[ 7285.091185] audit: unrecoverable error in audit_syscall_entry()
+
+Adn faddr_to_line tells me it is this:
+
+void __audit_syscall_entry(int major, unsigned long a1, unsigned long a2,
+                           unsigned long a3, unsigned long a4)
+{
+        struct audit_context *context = audit_context();
+        enum audit_state     state;
+
+        if (!audit_enabled || !context)
+                return;
+
+>>>>>>  WARN_ON(context->context != AUDIT_CTX_UNUSED);  <<<<<<
+        WARN_ON(context->name_count);
+        if (context->context != AUDIT_CTX_UNUSED || context->name_count) {
+                audit_panic("unrecoverable error in audit_syscall_entry()");
+                return;
+        }
+.....
+
+I have no clue how the audit subsystem works, I don't even know how
+to enable it, and I've never seen audit messages on the console of
+this test machine. I have other test machines that have audit
+enabled, and they do not dump warnings like this - the only thing I
+see in the logs for those machines is this:
+
+ run xfstest generic/633
+ process 'vfstest' launched '/dev/fd/4/file1' with NULL argv: empty string added
+ XFS (pmem0): Unmounting Filesystem
+ XFS (pmem0): Mounting V5 Filesystem
+ XFS (pmem0): Ending clean mount
+ run xfstest generic/634
+
+That's waht I was seeing from this test machine earlier in the week,
+too - I've been running 5.18-rc7 as the base kernel all week - so
+I'm not sure .....
+
+Oooooohhhh.
+
+/* The per-task audit context. */
+struct audit_context {
+        int                 dummy;      /* must be the first element */
+        enum {
+                AUDIT_CTX_UNUSED,       /* audit_context is currently unused */
+                AUDIT_CTX_SYSCALL,      /* in use by syscall */
+                AUDIT_CTX_URING,        /* in use by io_uring */
+        } context;
+....
+
+And that reminded me of something. I commented on #xfs on Friday
+afternoon:
+
+[20/5/22 15:04] <dchinner> so of the 3.5 hours run time on the machine that jsut completed, it looks like about a dozen tests are responsible for an hour of that runtime...
+[20/5/22 15:05] <dchinner> but it was a clean run with no failures in 1055 tests run.
+[20/5/22 15:06] <dchinner> But there's some WTFs like this in it:
+[20/5/22 15:06] <dchinner> generic/678     [not run] kernel does not support IO_URING
+[20/5/22 15:08] <dchinner> yet the same kernel on a different machine:
+[20/5/22 15:08] <dchinner> generic/678 11s ...  3s
+[20/5/22 15:08] <dchinner> and they have the same userspace, too....
+
+Yeah, the machine that complained about "kernel does not support
+IO_URING" is the one that is throwing these warnings now. It wasn't
+that the kernel didn't support io-uring, it was that the machine was
+missing the liburing-dev library. I installed it and rebuilt
+fstests. These audit failures co-incide with the first test runs
+with io-uring enabled. And vfstest uses io_uring if fstests enables
+it.
+
+Hence this now smells like a pre-existing issue -  either a test bug
+or an io_uring task audit context leak. Anyone got any ideas?
+
+Cheers,
+
+Dave.
 -- 
-Jens Axboe
-
+Dave Chinner
+david@fromorbit.com

@@ -2,68 +2,67 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D6FE2530621
-	for <lists+io-uring@lfdr.de>; Sun, 22 May 2022 23:26:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A7CD530623
+	for <lists+io-uring@lfdr.de>; Sun, 22 May 2022 23:26:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232512AbiEVV02 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 22 May 2022 17:26:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39564 "EHLO
+        id S242120AbiEVV03 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 22 May 2022 17:26:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39860 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351614AbiEVV0G (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 22 May 2022 17:26:06 -0400
-Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 568569584
-        for <io-uring@vger.kernel.org>; Sun, 22 May 2022 14:26:04 -0700 (PDT)
-Received: by mail-pg1-x533.google.com with SMTP id h186so12106147pgc.3
-        for <io-uring@vger.kernel.org>; Sun, 22 May 2022 14:26:04 -0700 (PDT)
+        with ESMTP id S1351676AbiEVV0M (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 22 May 2022 17:26:12 -0400
+Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63CA9B497
+        for <io-uring@vger.kernel.org>; Sun, 22 May 2022 14:26:11 -0700 (PDT)
+Received: by mail-pj1-x1033.google.com with SMTP id o13-20020a17090a9f8d00b001df3fc52ea7so15799193pjp.3
+        for <io-uring@vger.kernel.org>; Sun, 22 May 2022 14:26:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=message-id:date:mime-version:user-agent:from:subject:to:cc
          :content-language:content-transfer-encoding;
-        bh=t27NbU/sEvE5Ri3vCjzv2EKdw2O05IpZ7eJRF2bYoK4=;
-        b=RkEA05HftNb+833WE+hkgAgBfYDRUxUfmQevrXLQAVTwdyx099x+9eo6GxUIjiGZS7
-         /mCGbxxosldwH/QywT3xBj12LCaPxcFrb1mukFqd2iJNsSOKOg3WCq6BRCEHz1D2T6dY
-         edJmz0uPynehCT+Kn6WXisEcT9pzHn5xDGCHlCNx1zv9cx2gUfbO9lCKeBWsjbDShCiD
-         QrHBVP0dfQQWw4bw9q3u+yOymWVf/NdiccFJw7kgvkouYQ1jDFaUSgca33KpZzaqc+lN
-         Km9mJGecJr0TFtOqPN7rKzrB+tMRXzu1avMLPKkgzOkHS7Gn8Re7kbYntxO/PrVx3hIi
-         0AyA==
+        bh=klPtpfVebj7qpp/HWa+7GmUKNI89zXY7lQgHDVc8P54=;
+        b=nGROBti2c3acqWuQ4Ke024irl5LO5tU6x7GvvqUNXx+91xtZ1IkQnglmSLbroZfs51
+         j511TWCciTgzFDjla/1KPIB2z07g1oFNLlbEEz3MjtdSCELLmVOi7+FqPhhcWgZkGwR9
+         tJxOLJfzcRLxpWnVScTkKjzfzEvnrss2H0C5/kZ9/uyeeThhoxN+9DA3iEXImNFU4Km0
+         qjSbwK771/4c1/UT4Tyr4qUiED5ayZR7QwWDsQNCTpfCri4ez6EalAVIDuDAQ/0gzx9x
+         T9QHTzTavu9UYpeGLm3ujqvq+c9IMw4hMQeBmNzjLxYyGh0r6bx2SQ24fCrvgOClK6+d
+         TLyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:from
          :subject:to:cc:content-language:content-transfer-encoding;
-        bh=t27NbU/sEvE5Ri3vCjzv2EKdw2O05IpZ7eJRF2bYoK4=;
-        b=I4qDHJWfc8ah2SGnCZ+UK13NfqZrb4rgDhrzheUXiEHWvvwVpFuQEi3sGwCQr39UVv
-         hgYoAtXs4n/bVfynkxWb3gpUqTStrRXQL+RkBR8F9hXpv4R85l7HyUi6zpwm0+5lUizY
-         jrz63TlBv+mH3GXzhiylROfPVINAlpBkI7OURZZLjd9qiv4sRiZvpQFlcwqpg7f7ZiVK
-         8opoR3ghURi7ByuZI9cW4Mx5eonKcw2kYba0ljcE2M4WOtFdhTQzD0abgTRPDyNjGegy
-         fkI+sAcIbcULnVts+znr5Fwz2gMUUyP2DxIFbXH9xap+4VK8SBUNeFv6R+NSWTdOrgyw
-         B76g==
-X-Gm-Message-State: AOAM530BTJRzaTA4IYlf03l8BWM+csDUFap6etv+bQbYYT6DamYI3UmU
-        fTNFY4HeECAfO1lGRGOS/ZG0WoYcRldoiw==
-X-Google-Smtp-Source: ABdhPJzQFCH+sLZxxfeHLmxK2BD6Qv+DIbuzmqy2Hfd8NvSxtQHTLt2PtzL71WQP/jFJCUfzXbJ66A==
-X-Received: by 2002:a05:6a00:1a53:b0:510:a045:b92e with SMTP id h19-20020a056a001a5300b00510a045b92emr20451649pfv.64.1653254763797;
-        Sun, 22 May 2022 14:26:03 -0700 (PDT)
+        bh=klPtpfVebj7qpp/HWa+7GmUKNI89zXY7lQgHDVc8P54=;
+        b=URDVa8i03/Lh/iP3ClzGyuAi0RDEvwaRP0NWfnqUCrChsEhRu8+AuJLw4GjOzsoClx
+         Pd1l+pu3aQs2ZUh7zO3Lh3ymDBBvL6ytCMOOlvnpGLiu5sSFz1CuDzglsXEE4aYzSzaa
+         Zg/5bw6vvCe1bILSVGhJSnfNfKmCbHcim1OarhO9aYHKsrOOd+BxB+DjET9eK5EZ8AcH
+         EMzLup9Xb2XgNCmnZO8GVh0O+rFvKUHpqM0YWqB7PjizFuANcvwZRyuqk35lNHeErRN8
+         lTFZ295zImG/YeP0CaX/eCmvTeBfGf1oPqqcsbpZFaNCv4KGnJ/oRBGw9mHHxG3ak+TD
+         T6cQ==
+X-Gm-Message-State: AOAM531ORKoFydB4s0e3t4I2gmUcI9jfFWyNtTvtrKQUJ760jb4r4USr
+        xL0a53jQyeAHEqLiuF67evKuWQ==
+X-Google-Smtp-Source: ABdhPJwp12w9ELo/9xhzfw/yw1xp4+8Efhj/rRUW5aO2tBkfVkbUXKT/RCQr9qWorgv3mp3spzAbYA==
+X-Received: by 2002:a17:90a:ca97:b0:1df:9b8e:c6f0 with SMTP id y23-20020a17090aca9700b001df9b8ec6f0mr23238805pjt.12.1653254770783;
+        Sun, 22 May 2022 14:26:10 -0700 (PDT)
 Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d10-20020a170902f14a00b00161955fe0d5sm2794219plb.274.2022.05.22.14.26.02
+        by smtp.gmail.com with ESMTPSA id o62-20020a62cd41000000b0051850716942sm5767667pfg.140.2022.05.22.14.26.09
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 22 May 2022 14:26:03 -0700 (PDT)
-Message-ID: <d94a4e55-c4f2-73d8-9e2c-e55ae8436622@kernel.dk>
-Date:   Sun, 22 May 2022 15:26:02 -0600
+        Sun, 22 May 2022 14:26:10 -0700 (PDT)
+Message-ID: <9a8aa863-58a8-c8cd-7d05-80f095cf217e@kernel.dk>
+Date:   Sun, 22 May 2022 15:26:09 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
  Thunderbird/91.8.1
 From:   Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] io_uring xattr support
+Subject: [GIT PULL] io_uring socket(2) support
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     io-uring <io-uring@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+        netdev <netdev@vger.kernel.org>
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -72,46 +71,52 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 Hi Linus,
 
-On top of the core io_uring changes, this pull request includes support
-for the xattr variants.
+On top of the core and xattr branches, this pull request adds support
+for socket(2) for io_uring. This is handy when using direct / registered
+file descriptors with io_uring.
+
+Outside of those two patches, a small series from Dylan on top that
+improves the tracing by providing a text representation of the opcode
+rather than needing to decode this by reading the header file every
+time. Sits in this branch as it was the last opcode added (until it
+wasn't...).
 
 Please pull!
 
 
-The following changes since commit 155bc9505dbd6613585abbf0be6466f1c21536c4:
+The following changes since commit 0200ce6a57c5de802f4e438485c14cc9d63d5f4b:
 
-  io_uring: return an error when cqe is dropped (2022-04-24 18:18:18 -0600)
+  io_uring: fix trace for reduced sqe padding (2022-04-24 18:18:46 -0600)
 
 are available in the Git repository at:
 
-  git://git.kernel.dk/linux-block.git tags/for-5.19/io_uring-xattr-2022-05-22
+  git://git.kernel.dk/linux-block.git tags/for-5.19/io_uring-socket-2022-05-22
 
-for you to fetch changes up to 4ffaa94b9c047fe0e82b1f271554f31f0e2e2867:
+for you to fetch changes up to 033b87d24f7257c45506bd043ad85ed24a9925e2:
 
-  io_uring: cleanup error-handling around io_req_complete (2022-04-24 18:29:33 -0600)
-
-----------------------------------------------------------------
-for-5.19/io_uring-xattr-2022-05-22
+  io_uring: use the text representation of ops in trace (2022-04-28 17:06:03 -0600)
 
 ----------------------------------------------------------------
-Jens Axboe (1):
-      io_uring: fix trace for reduced sqe padding
+for-5.19/io_uring-socket-2022-05-22
 
-Kanchan Joshi (1):
-      io_uring: cleanup error-handling around io_req_complete
+----------------------------------------------------------------
+Dylan Yudaken (4):
+      io_uring: add type to op enum
+      io_uring: add io_uring_get_opcode
+      io_uring: rename op -> opcode
+      io_uring: use the text representation of ops in trace
 
-Stefan Roesch (4):
-      fs: split off setxattr_copy and do_setxattr function from setxattr
-      fs: split off do_getxattr from getxattr
-      io_uring: add fsetxattr and setxattr support
-      io_uring: add fgetxattr and getxattr support
+Jens Axboe (2):
+      net: add __sys_socket_file()
+      io_uring: add socket(2) support
 
- fs/internal.h                   |  29 ++++
- fs/io_uring.c                   | 322 ++++++++++++++++++++++++++++++++++++----
- fs/xattr.c                      | 143 ++++++++++++------
- include/trace/events/io_uring.h |   9 +-
- include/uapi/linux/io_uring.h   |   8 +-
- 5 files changed, 434 insertions(+), 77 deletions(-)
+ fs/io_uring.c                   | 177 ++++++++++++++++++++++++++++++++++++++++
+ include/linux/io_uring.h        |   5 ++
+ include/linux/socket.h          |   1 +
+ include/trace/events/io_uring.h |  36 ++++----
+ include/uapi/linux/io_uring.h   |   3 +-
+ net/socket.c                    |  52 +++++++++---
+ 6 files changed, 248 insertions(+), 26 deletions(-)
 
 -- 
 Jens Axboe

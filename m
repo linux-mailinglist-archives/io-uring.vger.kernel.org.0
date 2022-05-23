@@ -2,183 +2,121 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D9F4531AD6
-	for <lists+io-uring@lfdr.de>; Mon, 23 May 2022 22:56:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C28B2531B2C
+	for <lists+io-uring@lfdr.de>; Mon, 23 May 2022 22:56:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238881AbiEWQ1N (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 23 May 2022 12:27:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34186 "EHLO
+        id S231613AbiEWTnY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 23 May 2022 15:43:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237048AbiEWQ1G (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 23 May 2022 12:27:06 -0400
-Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD68062CC3
-        for <io-uring@vger.kernel.org>; Mon, 23 May 2022 09:27:03 -0700 (PDT)
-Received: by mail-pf1-x435.google.com with SMTP id v11so14156911pff.6
-        for <io-uring@vger.kernel.org>; Mon, 23 May 2022 09:27:03 -0700 (PDT)
+        with ESMTP id S234708AbiEWTmw (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 23 May 2022 15:42:52 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3030C265
+        for <io-uring@vger.kernel.org>; Mon, 23 May 2022 12:41:41 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id gi33so22479740ejc.3
+        for <io-uring@vger.kernel.org>; Mon, 23 May 2022 12:41:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=uoJYpBJ6QLJVLsDS6atWy2np3lENkAg6JVyz8O1lfUY=;
-        b=JZCLpmgx9+39/An9f85kW9g0CZcciBGg/YNr866pIWExky6MAjp3Xjjow9uMciMWc1
-         cD9v+2aT3r3/JSvfs6JHRn6rjywNCf40ydQ/G1AxKVu1dBV4PhGN0nsbiO6RvXZ08W+2
-         0q0JzP+7XfDwq/3KGlRLm1tEf/xAqzyJxtacNtOeV4Bg/09WQJZuzs/9dJGW+tfXeZXn
-         i553hfDiiT977qM0CRtKJRTLIlLfAHdIrmf0TNIUAhCXEhXhA6Jc1TuU0mbug3pPE8VG
-         ZYg4uh3iwj+Ku6M0Th+CHnJIIJH7fYEy6zH219+s034wT8A0pBaofFoXq1ESXtiaPPQA
-         XbOw==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HnMg9PaJ6KDavvSY7bvDnr4e+cLVAv92In4gmvI8qTo=;
+        b=HCaV3MV+Wk0Z923y3RiL9cz3mSUV0XeHVnP4FDh3NRxQZA+nm0aJ/Epv8MQnI8vcSc
+         7zBAZSQ5t7wRZ8+gtBpm/ooAo0kdVyNyfRYoOO+JacEkD/OOyTn1L5NpMsVymQAbAwZu
+         uYpqxRnwshqaGtIGG+BQ7pA8+4kShZx1czvPg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=uoJYpBJ6QLJVLsDS6atWy2np3lENkAg6JVyz8O1lfUY=;
-        b=yoWd5bG/LnmFDihCTbUvrnJhDGoj9H5EJAE0yqLXWUY7OcjZW4WMxU4k8CfGtrKj+Z
-         SZ24FlYgAMXIZLgeDOAYa4my1Oj6WLtDkx9fQwKlksVdCGz/Qp5dlGav5hdcBDwAhYcM
-         L5ify4vhx9GL6Hafa3m1h3G0OMjHxfowXbZVt4uHNQJZAADKG9P2N3tZdcOdR6V6V/xu
-         i/8hXjrgIzirbvI5efg+QqCoY8Nrbf8hTTaTc+5K8oTAOngsOvW2RhA/HOLWUJ9KkqNB
-         0SrFFlsgDVcqaegRkJbiGfa2GQOYYGRYp81kvHRsBjr+/GbmiSobPoRd0DyjJimKTPJI
-         gDWQ==
-X-Gm-Message-State: AOAM530zZYRKYGa5VpJv032S2kcG3eNNxOo6H1vhG2mh+cD5bP/qrfPD
-        qBHNxre8jpt+M5RSy6io0+N4UDUoL0IZjg==
-X-Google-Smtp-Source: ABdhPJzaTeyB1iPLquXDw9Y+TMFzBZIqFPok72UvRWCtVeSz8X7/YbHcdcjSVZPEz+nhvxyPJ2eMPQ==
-X-Received: by 2002:a65:5c48:0:b0:382:2c7:28e9 with SMTP id v8-20020a655c48000000b0038202c728e9mr21176213pgr.472.1653323223144;
-        Mon, 23 May 2022 09:27:03 -0700 (PDT)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d10-20020a62f80a000000b0050e0a43712esm7391647pfh.63.2022.05.23.09.27.01
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HnMg9PaJ6KDavvSY7bvDnr4e+cLVAv92In4gmvI8qTo=;
+        b=36gkMQ33nQjNOkTgKtMljK7f5aKB2tg1kCblCuM4NyZA/RPaDKEZ7kFNV1RJ0sRTcV
+         aeCvplNXq2qU7k0+ypXrnU3k37BTdYKZ0dkomMolo6dqpiFLaFCoouifheR242CIwt7T
+         DflTQ83s6r5RLCz5+ARdM3rlVQ5lHHBu6/r+sT/OKv0NWyMNYq5lGTS82TtA9qg9ykPm
+         3rSX73+vhAAXEqezXz9xDv6jBmAMJ7tpc55Lz5TpJ6/qPeYYEtlxTLTUltelEMdSE31e
+         y5nVHAj9uo49Dy8edGHaShJAcRYV57reususpWReab1H4V8wlLVj2y19XFjb5U3sEriy
+         7YTg==
+X-Gm-Message-State: AOAM532RlNeRAkBoTbwhBNO+y3HMpvMuKj7z/ZN42PlAf/quS+0WMtAR
+        C83KBUQBiGDai+XRoyCVH75Hfi1b+3n2wnM/jBM=
+X-Google-Smtp-Source: ABdhPJxTNwclXPQxjXJRlBFXtTAlb1kweI8OOFahVus4OrZ7LkEzpq6HFuGSdAsRT4HlEiUA2FQaTg==
+X-Received: by 2002:a17:907:3e99:b0:6fe:f823:ab96 with SMTP id hs25-20020a1709073e9900b006fef823ab96mr3493734ejc.428.1653334899450;
+        Mon, 23 May 2022 12:41:39 -0700 (PDT)
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com. [209.85.128.41])
+        by smtp.gmail.com with ESMTPSA id 11-20020a17090602cb00b006f3ef214e59sm6453874ejk.191.2022.05.23.12.41.38
+        for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 May 2022 09:27:02 -0700 (PDT)
-Message-ID: <717768b3-4f3c-a5d8-5ca3-189a49b4c481@kernel.dk>
-Date:   Mon, 23 May 2022 10:27:01 -0600
+        Mon, 23 May 2022 12:41:39 -0700 (PDT)
+Received: by mail-wm1-f41.google.com with SMTP id y24so1667756wmq.5
+        for <io-uring@vger.kernel.org>; Mon, 23 May 2022 12:41:38 -0700 (PDT)
+X-Received: by 2002:a05:600c:4f06:b0:394:836b:1552 with SMTP id
+ l6-20020a05600c4f0600b00394836b1552mr518911wmq.145.1653334898506; Mon, 23 May
+ 2022 12:41:38 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH] io_uring: add a schedule condition in io_submit_sqes
-Content-Language: en-US
-To:     Guo Xuenan <guoxuenan@huawei.com>, asml.silence@gmail.com,
-        io-uring@vger.kernel.org
-Cc:     houtao1@huawei.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
-        linux-kernel@vger.kernel.org
-References: <20220521143327.3959685-1-guoxuenan@huawei.com>
- <00772002-8df8-3a41-6e6c-20e3854ad3f0@kernel.dk>
- <a2b0340c-7bf7-a00e-6338-aca8ca02a1e2@huawei.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <a2b0340c-7bf7-a00e-6338-aca8ca02a1e2@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-5.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+References: <d94a4e55-c4f2-73d8-9e2c-e55ae8436622@kernel.dk>
+In-Reply-To: <d94a4e55-c4f2-73d8-9e2c-e55ae8436622@kernel.dk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 23 May 2022 12:41:22 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wg54n0DONm_2Fqtpq63ZgfQUef0WLNhW_KaJX4HTh19YQ@mail.gmail.com>
+Message-ID: <CAHk-=wg54n0DONm_2Fqtpq63ZgfQUef0WLNhW_KaJX4HTh19YQ@mail.gmail.com>
+Subject: Re: [GIT PULL] io_uring xattr support
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/23/22 8:45 AM, Guo Xuenan wrote:
-> Hi Jens
-> 
-> On 2022/5/22 10:42, Jens Axboe wrote:
->> On 5/21/22 8:33 AM, Guo Xuenan wrote:
->>> when set up sq ring size with IORING_MAX_ENTRIES, io_submit_sqes may
->>> looping ~32768 times which may trigger soft lockups. add need_resched
->>> condition to avoid this bad situation.
->>>
->>> set sq ring size 32768 and using io_sq_thread to perform stress test
->>> as follows:
->>> watchdog: BUG: soft lockup - CPU#2 stuck for 26s! [iou-sqp-600:601]
->>> Kernel panic - not syncing: softlockup: hung tasks
->>> CPU: 2 PID: 601 Comm: iou-sqp-600 Tainted: G L 5.18.0-rc7+ #3
->>> Hardware name: linux,dummy-virt (DT)
->>> Call trace:
->>>   dump_backtrace+0x218/0x228
->>>   show_stack+0x20/0x68
->>>   dump_stack_lvl+0x68/0x84
->>>   dump_stack+0x1c/0x38
->>>   panic+0x1ec/0x3ec
->>>   watchdog_timer_fn+0x28c/0x300
->>>   __hrtimer_run_queues+0x1d8/0x498
->>>   hrtimer_interrupt+0x238/0x558
->>>   arch_timer_handler_virt+0x48/0x60
->>>   handle_percpu_devid_irq+0xdc/0x270
->>>   generic_handle_domain_irq+0x50/0x70
->>>   gic_handle_irq+0x8c/0x4bc
->>>   call_on_irq_stack+0x2c/0x38
->>>   do_interrupt_handler+0xc4/0xc8
->>>   el1_interrupt+0x48/0xb0
->>>   el1h_64_irq_handler+0x18/0x28
->>>   el1h_64_irq+0x74/0x78
->>>   console_unlock+0x5d0/0x908
->>>   vprintk_emit+0x21c/0x470
->>>   vprintk_default+0x40/0x50
->>>   vprintk+0xd0/0x128
->>>   _printk+0xb4/0xe8
->>>   io_issue_sqe+0x1784/0x2908
->>>   io_submit_sqes+0x538/0x2880
->>>   io_sq_thread+0x328/0x7b0
->>>   ret_from_fork+0x10/0x20
->>> SMP: stopping secondary CPUs
->>> Kernel Offset: 0x40f1e8600000 from 0xffff800008000000
->>> PHYS_OFFSET: 0xfffffa8c80000000
->>> CPU features: 0x110,0000cf09,00001006
->>> Memory Limit: none
->>> ---[ end Kernel panic - not syncing: softlockup: hung tasks ]---
->>>
->>> Signed-off-by: Guo Xuenan <guoxuenan@huawei.com>
->>> ---
->>>   fs/io_uring.c | 2 +-
->>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/fs/io_uring.c b/fs/io_uring.c
->>> index 92ac50f139cd..d897c6798f00 100644
->>> --- a/fs/io_uring.c
->>> +++ b/fs/io_uring.c
->>> @@ -7864,7 +7864,7 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr)
->>>               if (!(ctx->flags & IORING_SETUP_SUBMIT_ALL))
->>>                   break;
->>>           }
->>> -    } while (submitted < nr);
->>> +    } while (submitted < nr && !need_resched());
->>>         if (unlikely(submitted != nr)) {
->>>           int ref_used = (submitted == -EAGAIN) ? 0 : submitted;
->> This is wrong, you'll potentially end up doing random short submits for
->> non-sqpoll as well.
-> Sorry, Indeed, this is not a good solution. Since, the function
-> io_submit_sqes not only called by io_sq_thread, it also called by
-> syscall io_uring_enter sending large amounts of requests, will also
-> trigger soft lockup.
-
-Exactly.
-
->> sqpoll already supports capping how many it submits in one go, it just
->> doesn't do it if it's only running one ring. As simple as the below,
->> with 1024 pulled out of thin air. Would be great if you could experiment
->> and submit a v2 based on this principle instead. Might still need a
+On Sun, May 22, 2022 at 2:26 PM Jens Axboe <axboe@kernel.dk> wrote:
 >
-> yes, Jens, your patch sloved sq-poll-thread problem, but the problem
-> may not completely solved; when using syscall io_uring_enter to
-> subimit large amounts of requests.So in my opinion How about 1) add
-> cond_resched() in the while cycle part of io_submit_sqes ?. OR 2) set
-> macro IORING_MAX_ENTRIES smaller? (i'm curious about the value,why we
-> set it with 32768)
+> On top of the core io_uring changes, this pull request includes support
+> for the xattr variants.
 
-I did suspect this isn't specific to SQPOLL at all.
+So I don't mind the code (having seen the earlier versions), but
+looking at this all I *do* end up reacting to this part:
 
-Might make sense to cap batches of non-sqpoll as well, and for each
-batch, have a cond_resched() just in case. If you change
-IORING_MAX_ENTRIES to something smaller, you risk breaking applications
-that currently (for whatever reason) may have set up an SQ ring of that
-side. So that is not a viable solution, and honestly wouldn't be a good
-option even if that weren't the case.
+    [torvalds@ryzen linux]$ wc -l fs/io_uring.c
+    12744 fs/io_uring.c
 
-So the simple solution is just to do it in io_submit_sqes() itself, but
-would need to be carefully benchmarked to make sure that it doesn't
-regress anything. It's the very fast path, and for real use cases you'd
-never run into this problem. Even for a synthetic use case, it sounds
-highly suspicious that nothing in the call path ends up doing a
-conditional reschedule. What kind of requests are being submitted when
-you hit this?
+and no, this is not due to this xattr pull, but the xattr code did add
+another few hundred lines of "io_uring command boilerplate for another
+command" to this file that is a nasty file from hell.
 
--- 
-Jens Axboe
+I really think that it might be time to start thinking about splitting
+that io_uring.c file up. Make it a directory, and have the core
+command engine in io_uring/core.c, and then have the different actual
+IO_URING_OP_xyz handling in separate files.
 
+And yes, that would probably necessitate making the OP handling use
+more of a dispatch table approach, but wouldn't that be good anyway?
+That io_uring.c file is starting to have a lot of *big* switch
+statements for the different cases.
+
+Wouldn't it be nice to have a "op descriptor array" instead of the
+
+        switch (req->opcode) {
+        ...
+        case IORING_OP_WRITE:
+                return io_prep_rw(req, sqe);
+        ...
+
+kind of tables?
+
+Yes, the compiler may end up generating a binary-tree
+compare-and-branch thing for a switch like that, and it might be
+better than an indirect branch in these days of spectre costs for
+branch prediction safety, but if we're talking a few tens of cycles
+per op, that's probably not really a big deal.
+
+And from a maintenenace standpoint, I really think it would be good to
+try to try to walk away from those "case IORING_OP_xyz" things, and
+try to split things up into more manageable pieces.
+
+Hmm?
+
+               Linus

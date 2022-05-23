@@ -2,153 +2,98 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7022F531904
-	for <lists+io-uring@lfdr.de>; Mon, 23 May 2022 22:54:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A6EA6531682
+	for <lists+io-uring@lfdr.de>; Mon, 23 May 2022 22:51:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231933AbiEWT7T (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 23 May 2022 15:59:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49202 "EHLO
+        id S232559AbiEWUQ1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 23 May 2022 16:16:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52390 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231951AbiEWT7S (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 23 May 2022 15:59:18 -0400
-Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CF0479830
-        for <io-uring@vger.kernel.org>; Mon, 23 May 2022 12:59:16 -0700 (PDT)
-Received: by mail-pf1-x432.google.com with SMTP id j6so14578915pfe.13
-        for <io-uring@vger.kernel.org>; Mon, 23 May 2022 12:59:16 -0700 (PDT)
+        with ESMTP id S233389AbiEWUQQ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 23 May 2022 16:16:16 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1E801FA6B
+        for <io-uring@vger.kernel.org>; Mon, 23 May 2022 13:16:14 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id n23so20615608edy.0
+        for <io-uring@vger.kernel.org>; Mon, 23 May 2022 13:16:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=rX4IiCNid2HeUSQHi+fLuxHYFKgICAtdWuid37aWMsM=;
-        b=OwVuoJnVGGp8CHIBxbaKF2wDvnC1VRQgX7FqyKaVgo42Ayu2qXouYEobpaAgf7LtK6
-         afVE/APRNd999vCii0N6vd1o2VYwlouvjHlHjvqmI+Vq4f+an6GDXreWy8wVceSPRtgy
-         xFWVpFx63QcKl97UHBmW2//d783lRXiZqXQZIKWx8leNOwMReWd1iPZiYCYO+4lWAlYg
-         YJTRTR5FFt2IoCdvss6CxclqItuizgd9PaOG8rGOveTPtrWFa6Rq2DRFlOD05KZCoYGL
-         da5Hqy8IATSc13B2XmumjVkEaoLjfO0tukrsnwBqB+pTJ/vD9KEh58MyRVHfQ6/CS/mG
-         KKyA==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=EA3FIBNNDoj02Qd5UyhoYbcYuhDKnQDkuCoIXsHPGWY=;
+        b=Nfn7ww9o3d0ammGcjT3qgI9xxfAGwUBtkBtWkmxyujjnhZ5owJd6qJrN9TUYSY4B0G
+         C8sS56B0FTy0zY8TGSBy7mCZaTgAYNDgfE2spXBFYauQ0VIko+BXGY6hGxZXyllmvji6
+         JZ9lWCVYiTDJz49RoARM4qI73Jd0TIJVA2Yow=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=rX4IiCNid2HeUSQHi+fLuxHYFKgICAtdWuid37aWMsM=;
-        b=RvOnSCNnPPoARdy9l+mhq3TlenG4DnAeddgxNHHs5cq2cGNkj4fIbsbJqn7x4eO4bA
-         /vFRJbxL1SeORTFhUcaxx7a+/ZH4EXgsoKfeL2XY4eNd/pYNsDi/1rH92jEvicr1TemZ
-         h8DMhw6L+JwMSSNoJQa9Kx4yGeiuDBMdzN8i8DK8rrOWzBHCVyufrYNRDRS2zHS3huxf
-         W7uDS+ceO65bH1giF6eNuJ8NjU9xyqOXOtd1/SccnF9DktR7CEwqRxkGAyRmljOZDAje
-         95ABjlZjwG0wsBzw9GuMhprarUebwGS7YpAR920FM/WkPCOhIrwwMZHCQO82/KkDAF3y
-         pI/g==
-X-Gm-Message-State: AOAM531nAXkE7DUzCAdxwomqxHMfJvnnLotZiTeUAmtMWd6sAFhhzCZP
-        lqSo6NUul3eASYgDQx3qA22m/Q==
-X-Google-Smtp-Source: ABdhPJwYsqzCh77kq63IWp/7Ve18+MbVu94/wALJNksAiWMakr2h64pGW/KKpV+6FsP7iiyluY5A9A==
-X-Received: by 2002:a63:f407:0:b0:3fa:91cf:270 with SMTP id g7-20020a63f407000000b003fa91cf0270mr2278519pgi.428.1653335955992;
-        Mon, 23 May 2022 12:59:15 -0700 (PDT)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id i23-20020aa78b57000000b005187ed76a78sm5683918pfd.174.2022.05.23.12.59.14
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EA3FIBNNDoj02Qd5UyhoYbcYuhDKnQDkuCoIXsHPGWY=;
+        b=MjlEucPKNaX+4aLr+R/QAZzgUhr8uG3W1sjlJK6G+JQhkSvHUzGetlHBlayvs3GRlN
+         gwu51sil2BUhVzOy+CUPaGOmsjahE5c0U1HNOu2FSnlmwts4DZguZZ8GgFv5rBFH6E4Z
+         8mxRIxY5o7YFQmWnT0a1TmBhVEeFHnxD2egiGjoTK/sQhGcsCcMGnGF2FpaBH2HcQVP6
+         7yDZONB3J9ZrXLdKMvGSUeRFBsBdiIg0RXpccCCqJxOiGVWyS+vJl5rroil8kWZUSIhc
+         kqVN+RRL4lV5lMGOwIbnsysJ2uqUivXGlnnExbeef1AADLMoTSo+euBCcT7qZ4nlmGSS
+         W3lQ==
+X-Gm-Message-State: AOAM532xFy/GOs22XYg8I4nGmGpeeeJ/WHAVVx72Fd8jT9LFCDkkeGMM
+        X6vN4Xc+Yxms2VFqvHZz8zt6jwdRECaKfuIgiH0=
+X-Google-Smtp-Source: ABdhPJxYDBHZATQpsxa/FEW0x8+H6TE5a9eL9hNqP9wefbbX2tBxQhucP380CKoCEGs00BBUeA4SjA==
+X-Received: by 2002:a05:6402:368b:b0:42b:42c7:f63f with SMTP id ej11-20020a056402368b00b0042b42c7f63fmr13107905edb.409.1653336972886;
+        Mon, 23 May 2022 13:16:12 -0700 (PDT)
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com. [209.85.221.45])
+        by smtp.gmail.com with ESMTPSA id j11-20020a17090686cb00b006feb047502bsm3932677ejy.151.2022.05.23.13.16.12
+        for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 May 2022 12:59:15 -0700 (PDT)
-Message-ID: <d9b44d03-2060-86ef-2864-be263fbcba84@kernel.dk>
-Date:   Mon, 23 May 2022 13:59:14 -0600
+        Mon, 23 May 2022 13:16:12 -0700 (PDT)
+Received: by mail-wr1-f45.google.com with SMTP id r23so22944527wrr.2
+        for <io-uring@vger.kernel.org>; Mon, 23 May 2022 13:16:12 -0700 (PDT)
+X-Received: by 2002:a5d:6da6:0:b0:20f:bc8a:9400 with SMTP id
+ u6-20020a5d6da6000000b0020fbc8a9400mr14025325wrs.274.1653336971796; Mon, 23
+ May 2022 13:16:11 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [GIT PULL] io_uring xattr support
-Content-Language: en-US
-To:     Linus Torvalds <torvalds@linux-foundation.org>
+References: <6f712c75-c849-ae89-d763-b2a18da52844@kernel.dk>
+In-Reply-To: <6f712c75-c849-ae89-d763-b2a18da52844@kernel.dk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 23 May 2022 13:15:55 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whfi3FE3O7KrziqPbyGvAmNFas3xxLz2O+ttzBkCOQmfw@mail.gmail.com>
+Message-ID: <CAHk-=whfi3FE3O7KrziqPbyGvAmNFas3xxLz2O+ttzBkCOQmfw@mail.gmail.com>
+Subject: Re: [GIT PULL] io_uring passthrough support
+To:     Jens Axboe <axboe@kernel.dk>
 Cc:     io-uring <io-uring@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-References: <d94a4e55-c4f2-73d8-9e2c-e55ae8436622@kernel.dk>
- <CAHk-=wg54n0DONm_2Fqtpq63ZgfQUef0WLNhW_KaJX4HTh19YQ@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CAHk-=wg54n0DONm_2Fqtpq63ZgfQUef0WLNhW_KaJX4HTh19YQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-5.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/23/22 1:41 PM, Linus Torvalds wrote:
-> On Sun, May 22, 2022 at 2:26 PM Jens Axboe <axboe@kernel.dk> wrote:
->>
->> On top of the core io_uring changes, this pull request includes support
->> for the xattr variants.
-> 
-> So I don't mind the code (having seen the earlier versions), but
-> looking at this all I *do* end up reacting to this part:
-> 
->     [torvalds@ryzen linux]$ wc -l fs/io_uring.c
->     12744 fs/io_uring.c
-> 
-> and no, this is not due to this xattr pull, but the xattr code did add
-> another few hundred lines of "io_uring command boilerplate for another
-> command" to this file that is a nasty file from hell.
+On Sun, May 22, 2022 at 2:26 PM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> This will cause a merge conflict as well, with the provided buffer
+> change from the core branch, and adding CQE32 support for NOP in this
+> branch.
 
-I know, it really is a monster file at this point...
+Ugh, that really hits home how ugly this CQE32 support was.
 
-> I really think that it might be time to start thinking about splitting
-> that io_uring.c file up. Make it a directory, and have the core
-> command engine in io_uring/core.c, and then have the different actual
-> IO_URING_OP_xyz handling in separate files.
+Dammit, it shouldn't have been done this way. That io_nop() code is
+disgusting, and how it wants that separate "with extra info" case is
+just nasty.
 
-I've been pondering that for a while actually, and yes I agree it's time
-to organize this a bit differently. When you are in this code all the
-time you notice less as you know where everything is, but it would be
-nice to take the time to split it into some manageable and separately
-readable/maintainable pieces.
+I've pulled this, but with some swearing. That whole "extra1" and
+"extra2" is ugly as hell, and just the naming shows that it has no
+sane semantics, much less documentation.
 
-> And yes, that would probably necessitate making the OP handling use
-> more of a dispatch table approach, but wouldn't that be good anyway?
-> That io_uring.c file is starting to have a lot of *big* switch
-> statements for the different cases.
-> 
-> Wouldn't it be nice to have a "op descriptor array" instead of the
-> 
->         switch (req->opcode) {
->         ...
->         case IORING_OP_WRITE:
->                 return io_prep_rw(req, sqe);
->         ...
-> 
-> kind of tables?
-> 
-> Yes, the compiler may end up generating a binary-tree
-> compare-and-branch thing for a switch like that, and it might be
-> better than an indirect branch in these days of spectre costs for
-> branch prediction safety, but if we're talking a few tens of cycles
-> per op, that's probably not really a big deal.
+And the way it's randomly hidden in 'struct io_nop' *and* then a union
+with that hash_node is just disgusting beyond words. Why do you need
+both fields when you just copy one to the other at cmd start and then
+back at cmd end?
 
-I was resistant to the indirect function call initially because of the
-spectre overhead, but that was when the table was a lot smaller. The
-tides may indeed have shifted on this now that the table has grown to
-the size that it has. Plus we have both a prep handler and issue handler
-for each, so you end up with two massive switches to deal with that.
+I must be missing something, but that it is incredibly ugly is clear.
 
-> And from a maintenenace standpoint, I really think it would be good to
-> try to try to walk away from those "case IORING_OP_xyz" things, and
-> try to split things up into more manageable pieces.
-> 
-> Hmm?
-
-As mentioned, it's something that I have myself been thinking about for
-the past few releases. It's not difficult work and can be done in a
-sequential kind of manner, but it will add some pain in terms of
-backports. Nothing _really_ major, but... Longer term it'll be nicer for
-sure, which is the most important bit.
-
-I've got some ideas on how to split the core bits, and the
-related-op-per file kind of idea for the rest makes sense. Eg net
-related bits can go in one, or maybe we can even go finer grained and
-(almost) do per-op.
-
-I'll spend some time after the merge window to try and get this sorted
-out.
-
--- 
-Jens Axboe
-
+                 Linus

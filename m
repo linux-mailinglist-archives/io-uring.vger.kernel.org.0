@@ -2,89 +2,73 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (unknown [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A1F2B533BDA
-	for <lists+io-uring@lfdr.de>; Wed, 25 May 2022 13:37:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 79C15533C40
+	for <lists+io-uring@lfdr.de>; Wed, 25 May 2022 14:08:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237348AbiEYLh4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 25 May 2022 07:37:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54438 "EHLO
+        id S234048AbiEYMIS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 25 May 2022 08:08:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232506AbiEYLhz (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 25 May 2022 07:37:55 -0400
-Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FF9A9EB5F
-        for <io-uring@vger.kernel.org>; Wed, 25 May 2022 04:37:54 -0700 (PDT)
-Received: by mail-pl1-x629.google.com with SMTP id n8so18332739plh.1
-        for <io-uring@vger.kernel.org>; Wed, 25 May 2022 04:37:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=h7GQWKwKz0wGAe1N3tFIztIJ46eFV4zbsB1fU2eRxP4=;
-        b=J4VSi6vpJAy7tPHcXH7tWFqEhM0dyN9m5DD4RKM/OFnR4nN3YpYdD593PlnAV7MIJ/
-         VgIEDGGRzUm+yaeDMi1Mj8+GSZrDO4dQavnLNZwGQVfMpBqUqz0kA70tyKVvHh2cj3SH
-         ujotcThM06qCdsj9v8YKO4yHzoJPlgEc5wUzXcjhz4uLwhB+xDjvUEr4F/vcSupCB7x/
-         s+T+nHBW+cOoEOzfe7yeNNiu1XFC8XKPq+R9jtjIohc4ny1uU/aPBLaGremzWYzmsDD8
-         wXJ8qsaWopEReAKXaC0FYyLLlBhCyZAffTDF8vb14IMnDeOnidATk57mX5zP/1JuxRBk
-         QcEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=h7GQWKwKz0wGAe1N3tFIztIJ46eFV4zbsB1fU2eRxP4=;
-        b=6PGEtHKqBY+kJKyF2QZ1teHj3hQBROYFgGxVvRMz0X1UYlEGdcMH3id6hzNm7T0kWX
-         9htHbLjVghK4e84pYQcy1NCFxu9A3gSN9fBoQCLTDKJMsCCmiEDVqB4LMjdf0hRG3KWG
-         YGEZ05UiTTyrd1RmnLswqv33kHdlGH+mI3CK78pg5yOMkogVdBWKT71zuesQF9OOEVh6
-         PyZqmQTIUygKYc7dSsV/TmT+2MrWXoox/UYrNd5qtsjtNjF7/RaLv1k2sO7zHV+TifVS
-         9QYJ/61g4Rx9qnVmMXkuK72pl6u+ywZAyqak23tb6fVFzGot6uYNAlzjUaJ3rEdXBjek
-         gB+g==
-X-Gm-Message-State: AOAM533kHNcn40LleOOWo/Umo93W5QFpX5zcEIiDpVRywfT01APCwLxA
-        PiLF5rMhEbQPNQKkuobtUi9aB0onwCpJgg==
-X-Google-Smtp-Source: ABdhPJyxnE6OE0uHLVF6nA3rQ0LB9R15IQHhjwVSm0UkQm2V/a5b0wswhZcrtUHrrLxwfCQiAB/bxQ==
-X-Received: by 2002:a17:902:8687:b0:161:f0ac:723a with SMTP id g7-20020a170902868700b00161f0ac723amr26031803plo.128.1653478673746;
-        Wed, 25 May 2022 04:37:53 -0700 (PDT)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id n10-20020a056a00212a00b0050dc762816bsm11228643pfj.69.2022.05.25.04.37.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 May 2022 04:37:53 -0700 (PDT)
-Message-ID: <7af3347a-a89b-50bc-2fe7-50b5dffe11a9@kernel.dk>
-Date:   Wed, 25 May 2022 05:37:52 -0600
+        with ESMTP id S230511AbiEYMIR (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 25 May 2022 08:08:17 -0400
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09DA213F01
+        for <io-uring@vger.kernel.org>; Wed, 25 May 2022 05:08:15 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04357;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0VENKOlQ_1653480493;
+Received: from 30.225.28.160(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0VENKOlQ_1653480493)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 25 May 2022 20:08:13 +0800
+Message-ID: <d8829873-4e68-1da0-f326-0af2dc40c3e1@linux.alibaba.com>
+Date:   Wed, 25 May 2022 20:08:12 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH 3/6] io_uring: add io_op_defs 'def' pointer in req init
- and issue
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.9.0
 Content-Language: en-US
-To:     Kanchan Joshi <joshi.k@samsung.com>
-Cc:     io-uring@vger.kernel.org
-References: <20220524213727.409630-1-axboe@kernel.dk>
- <CGME20220524213742epcas5p19444ad9556b07159c8fca0512792ea48@epcas5p1.samsung.com>
- <20220524213727.409630-4-axboe@kernel.dk> <20220525064159.GD4491@test-zns>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20220525064159.GD4491@test-zns>
+To:     io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>
+From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+Subject: improve register file feature's usability
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/25/22 12:41 AM, Kanchan Joshi wrote:
-> On Tue, May 24, 2022 at 03:37:24PM -0600, Jens Axboe wrote:
->> Define and set it when appropriate, and use it consistently in the
->> function rather than using io_op_defs[opcode].
-> 
-> seems you skipped doing this inside io_alloc_async_data() because
-> access is not that repetitive.
+hello,
 
-Right, and because it won't get impacted by abstracting out opcode
-handlers.
+I raised this issue last year and have had some discussions with Pavel, but
+didn't come to an agreement and didn't come up with better solution. You
+can see my initial patch and discussions in below mail:
+    https://lore.kernel.org/all/20211012084811.29714-1-xiaoguang.wang@linux.alibaba.com/T/
 
--- 
-Jens Axboe
+The most biggest issue with file registration feature is that it needs user
+space apps to maintain free slot info about io_uring's fixed file table, which
+really is a burden. Now I see io_uring starts to return file slot from kernel by
+using IORING_FILE_INDEX_ALLOC flag in accept or open operations, but
+they need app to uses direct accept or direct open, which is not convenient.
+As far as I know, some apps are not prepared to use direct accept or open:
+  1) App uses one io_uring instance to accept one connection, but later it will
+route this new connection to another io_uring instance to complete read/write,
+which achieves load balance. In this case, direct accept won't work. We still
+need a valid fd, then another io_uring instance can register it again.
+  2) After getting a new connection, if later apps wants to call fcntl(2) or
+setsockopt or similar on it, we will need a true fd, not a flle slot in io_uring's
+file table, unless we can make io_uring support all existing syscalls which use fd.
 
+So we may still need to make io_uring file registration feature easier to use.
+I'd like io_uring in kernel returns prepared file slot. For example, for
+IORING_OP_FILES_UPDATE, we support user passes one fd and returns
+found free slot in cqe->res, just like what IORING_FILE_INDEX_ALLOC does.
+
+This is my current rough idea, any more thoughts? Thanks.
+
+
+Regards,
+Xiaoguang Wang

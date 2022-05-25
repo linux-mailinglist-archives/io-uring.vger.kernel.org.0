@@ -2,143 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B32BC53467C
-	for <lists+io-uring@lfdr.de>; Thu, 26 May 2022 00:33:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D87E6534686
+	for <lists+io-uring@lfdr.de>; Thu, 26 May 2022 00:34:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231262AbiEYWdO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 25 May 2022 18:33:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36288 "EHLO
+        id S244460AbiEYWen (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 25 May 2022 18:34:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229695AbiEYWdN (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 25 May 2022 18:33:13 -0400
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C575DEE6;
-        Wed, 25 May 2022 15:33:09 -0700 (PDT)
-Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24PGtdXQ023267;
-        Wed, 25 May 2022 15:32:59 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=message-id : date :
- subject : to : cc : references : from : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=facebook;
- bh=NPAxKGO+OLS88PIoH1vcl+HlEBaWJG5xq8poHkLZY24=;
- b=cC7nDHovNOFqFkvSasYATHWorovKT+L+R7CUZccAwym8C7oU5kric6LNl83dMMhwn3cp
- 0n7z0BcUCsiwbMqeVlDmFbiAMmx0IilZA0EbqMcGE65G1s9gLwEreiknhd4+Q8qZpm2y
- 5OKVV/RyhB6pV5OY1KDvCQYRqq6+QwwwnLA= 
-Received: from nam02-sn1-obe.outbound.protection.outlook.com (mail-sn1anam02lp2047.outbound.protection.outlook.com [104.47.57.47])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3g93upsd05-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 25 May 2022 15:32:59 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Xl6QYHmREtRNZ5Du9z/lgl6agwsr1W2C15ZsDf43iRDKd9+qa1c7IvSxzwk5rdS+HRQ1DcrKSQlBdrvZMmX9LRWWB6FtjqmilyNjwaGJgs5FNrn/KjSSmaTqAy7fquO/GanYqqm57ptkPt2VdCURCGW9M7Y6CUTUzyexzEHnUqNyw+VHRAkysfsfLxr4sQwdnkqRpYODL8mgiM/IMv0pTT6R2r1/Jug5+gdYdcjNfDXYKmV/cQ//TjwgWWEposx/kEdGxyGyLVzbvVYhUa2eTufQaaiZcaxuAwCH4XyJSVzBpKfd+jPsccrOwB13EXoKYDyDmjN85T5zbJz+iew+cg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NPAxKGO+OLS88PIoH1vcl+HlEBaWJG5xq8poHkLZY24=;
- b=QqOSi9jT1EMuGi8oAZzTTvuv58UUl8EQNQDh0RXn86WZ7gtJ8jddDBCraznbNJ4Rlbh3fK24B6U5B2ldZeDegAGkuL9Gf5k++z2xilappTYG/rIIAS02QK71uRETh+sWQGyKV5YC5CMJ3uZQ5lob4LuKf24UulhVpgnHCBtEHk4HECS7jOCykb904cntwW82eJbloO6i+h5odMfAepy7w4ndRsuo/jXP+To+gcrFJt0wey1Qrvbo2s7BjBdyYWyrd8ElZTNUYS9nNvb/9tavUKqSiSt+Xb8I7E4VX8iEu8zwKz5CQuLyXFDSBH8UzVJaZi0sf7w9n6uat6ms3j+dCg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-Received: from MWHPR15MB1791.namprd15.prod.outlook.com (2603:10b6:301:4e::20)
- by MN2PR15MB3261.namprd15.prod.outlook.com (2603:10b6:208:3b::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5293.13; Wed, 25 May
- 2022 22:32:56 +0000
-Received: from MWHPR15MB1791.namprd15.prod.outlook.com
- ([fe80::e17e:e90d:7675:24b8]) by MWHPR15MB1791.namprd15.prod.outlook.com
- ([fe80::e17e:e90d:7675:24b8%11]) with mapi id 15.20.5293.013; Wed, 25 May
- 2022 22:32:56 +0000
-Message-ID: <29c47ff8-61aa-5357-9189-a0664dc88c84@fb.com>
-Date:   Wed, 25 May 2022 15:32:53 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.9.1
-Subject: Re: [RFC PATCH v4 10/17] fs: Split off file_needs_update_time and
- __file_update_time
-Content-Language: en-US
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     io-uring@vger.kernel.org, kernel-team@fb.com, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        david@fromorbit.com, jack@suse.cz
-References: <20220520183646.2002023-1-shr@fb.com>
- <20220520183646.2002023-11-shr@fb.com> <YonmadckyAqakY7d@infradead.org>
+        with ESMTP id S1344619AbiEYWem (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 25 May 2022 18:34:42 -0400
+Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 956C5101DE
+        for <io-uring@vger.kernel.org>; Wed, 25 May 2022 15:34:40 -0700 (PDT)
+Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24PGtg15008885
+        for <io-uring@vger.kernel.org>; Wed, 25 May 2022 15:34:39 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=facebook; bh=V+M0+asPd4p6VJFrx94xej6b1kWvQg4WWYpIKD3FxTY=;
+ b=BDV2I+WDCtD884ATaYsqy2Hl1GB2n8n87iKrh7M7ObncX+wDHWH/uP3Ka08R8W9IxmP+
+ VpXyAsY/43U5Xahe7K6i7l8f/OAGCbYeGH9xSpQl72xNELzfAT/AwOmgDmVqZkvBofnS
+ dzTvGVIcG8GeW22PzST87tz6NPaV9ovn6zU= 
+Received: from mail.thefacebook.com ([163.114.132.120])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3g93vuseec-4
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <io-uring@vger.kernel.org>; Wed, 25 May 2022 15:34:39 -0700
+Received: from twshared6696.05.ash7.facebook.com (2620:10d:c085:108::4) by
+ mail.thefacebook.com (2620:10d:c085:21d::5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.28; Wed, 25 May 2022 15:34:37 -0700
+Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
+        id E387DF9E1B3C; Wed, 25 May 2022 15:34:34 -0700 (PDT)
 From:   Stefan Roesch <shr@fb.com>
-In-Reply-To: <YonmadckyAqakY7d@infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR13CA0224.namprd13.prod.outlook.com
- (2603:10b6:a03:2c1::19) To MWHPR15MB1791.namprd15.prod.outlook.com
- (2603:10b6:301:4e::20)
+To:     <io-uring@vger.kernel.org>, <kernel-team@fb.com>,
+        <linux-mm@kvack.org>, <linux-xfs@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>
+CC:     <shr@fb.com>, <david@fromorbit.com>, <jack@suse.cz>,
+        <hch@infradead.org>
+Subject: [PATCH v5 00/16] io-uring/xfs: support async buffered writes
+Date:   Wed, 25 May 2022 15:34:16 -0700
+Message-ID: <20220525223432.205676-1-shr@fb.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: f1ab2157-6bd8-40dc-ccd6-08da3e9e83b8
-X-MS-TrafficTypeDiagnostic: MN2PR15MB3261:EE_
-X-Microsoft-Antispam-PRVS: <MN2PR15MB3261FB02519DB312DEB7DEBFD8D69@MN2PR15MB3261.namprd15.prod.outlook.com>
-X-FB-Source: Internal
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 1nnfg51CmAv5yN4RLD/njCyHQbl5ZpWh8Rhy5vZllvaCf07vi6dJhhTXkQy8mMi1Wh/GdrVHNvcK9uzAtukePDozEf1z/80SVJETOgO3Kk16z8bWpSLRh5LwpHRsgIWrUkooBBGrueCXmz7orZJmu83/hYnwLp9WsgjUopAh0AI+KjDkEFP7hZc+lXM42dsleBc0DX2WgCZnI9ycYWjMs7A92bHsPhFJRMmaoaiDBBwRXsnP7KIVzvSBn9scd/yO/ArDBjUbu+6kT9n3GsCn7FT5pOlOLG1d7drPxYrPGULMZn1fLHbIjphZRz5LF71pQy9zccN1BJERo+8zD5UmERK2/P+3yTkRTQo9Vi7L++PwoKnSNbz40yD3sceJo71DN0WtzxAlGtqmY1Z5eBTQpHFnlq77+TANr7G/MHXG7OrULTbpRYZXcIUJNRSgQbat9axpXVajni2n0R4J9IQbEcBDWcO/WPFvWtj5O+yV8T8ipszR1iKrt3iDKNHg0Iap4GbnLOgRLhbksi2h3DZAQTPDeAbn1Jukf2i5h+6NU+0rWfkgllykzDDA7tuqO00yIkfNwfDpU640GKoPRWFVHYDD9qlw+ULtb2da0ic7nfIX7FBmn8nvFLDDNHuMSsEjeZOma+I30Zyoorz/ws6RRXn8yO6N+ROH8qdnC0c0A0f9RyLag8ycpmLpcbpW8sX3vRCfvSnwdiMuq1KaMcP2FuBKxgA12rRVJExnHoXuVSmS7SQrRZd351T1rJVO0mmf
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR15MB1791.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(508600001)(8936002)(6486002)(186003)(83380400001)(5660300002)(6666004)(2906002)(53546011)(6916009)(316002)(6512007)(2616005)(36756003)(4326008)(8676002)(66556008)(38100700002)(66476007)(66946007)(86362001)(6506007)(31686004)(31696002)(43740500002)(45980500001);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?U2p1NE94bHhEVW4yRmNYYWlDandQdnVwMGRwL1hHQWRBTFd5cXptWExwTjFn?=
- =?utf-8?B?aDF4bmYvSDJhVERnNlZ0TVF6ajhjMWo4ZjR5WGUvTWRmdGozLzZId3htK1pR?=
- =?utf-8?B?M01UbW1hd2xOMXZyWGdLTGJLTlRiVmxIdFY2NXVDRDJrSXJ3bnZoNm1rNHVR?=
- =?utf-8?B?bjZMN013cUVVMy9tY0ZobmNhcng0eVh4RUp3ZWREVXpIUzZZMmlYbm5oOHJE?=
- =?utf-8?B?WHVja00rWW9oYTR2RHpkR0pMWEkxRk14Zkw0aEZ1TWdqZGZWWlJQc2pLUWx2?=
- =?utf-8?B?RTRUUk40RkJOcnU5aDBjbmVNSVl5WWg3cU1ybk1tbmUxRHFZOVlnTUF6RVB5?=
- =?utf-8?B?Slh2N0QvZmw4eTRBc0QzL1ZoTFk2SGhzN21qRERma0JnS0lLMjFZU0hwMCtG?=
- =?utf-8?B?ZXMwd215UUphRmQvNUFORkNrWkRIQkdSWno1MmdJWUJGUHFyQVFGTHQvYnV3?=
- =?utf-8?B?YTM2UFhzUVFsaFRheEtyVExpSWhRQUVJU2xadnpQT2lkL1VaNS9abGxGUFhS?=
- =?utf-8?B?T3BHa00yZldLdzBKV29xR1hpY0E5M1FnMW9McU8zalpiL1NCeHdnL2REenBv?=
- =?utf-8?B?Y1BXTnprUDRVS25YVEJRUHhwdXVudi9uK2w5di9RWXZSSWkvMGl2VjU2SkN4?=
- =?utf-8?B?NTlEUVJxNVAwbmx3eEhvM285SWhNOS9iYzFJQ1JpRzhxK0srNkRmTncza2dz?=
- =?utf-8?B?Vi9TcTZSYmJYR2xXSmVBdExvam43dWd1eWZLN2dGSXNvM0lsYzVrbjJHeFVp?=
- =?utf-8?B?TE9ITTQ5SEFUTk53SkIwQXRVKzhuMUQyazZzN0tvQUV6OWNKanJWVFc4TDc4?=
- =?utf-8?B?aUZwTkltZTFSNmhLelF3dm9PRTJIcndUWDZYa0hkdFBCcEFGcFhMOGZIbFZl?=
- =?utf-8?B?YSs3dFJlWU45SjVJaURXTnBKeWE2b1l0UWQ3VDF1amptMjhQL1ZCdHVCNXN0?=
- =?utf-8?B?UGJSNHR0MkNVcXNjZnNDbVh5OU9YbkplbFJVYkNWYzcybjI3MWhMT2JJcnRU?=
- =?utf-8?B?dS9zY3JQREtEeExkZFd4VWZsOUZQeGJDVWExdmVuakNqTndNaktLMFRrYS9u?=
- =?utf-8?B?Ky9meUxMcE5IZVRjaUJiV3huenNHYUpiQ25JUEkrZjlSb2xWNnhScytYM1pv?=
- =?utf-8?B?cFczTFZzVjdKQlNwa3hJeHNCODEvUjIzalpsTURYSjFTUzVuT2xGdFN6U0tj?=
- =?utf-8?B?L2t3MkcvaEI4dnpJSklnQzVaZDNhOUhZTG03WlhmaS9MbFVESVVGTTdaRlRJ?=
- =?utf-8?B?OUZseGhnRWlJaUxybm1pRUw1ZzNzMVFOcmkvWG9SY1ZXdUliTzY4RUlHQWlX?=
- =?utf-8?B?NUIrKzZwRzRLek1lRE5zTGFtZm50clBFY0NPWlVnMXpSYld0MmNjb3M5NjVR?=
- =?utf-8?B?VFo0ekFtRGNXdHg1M1VjODc4OFIyc1MxYlFjcjVMZkU2OEFIL3R2YnpRNGpR?=
- =?utf-8?B?VmExQ3ZNS05tZm9KSXZTQUlGanlCZVFERS9WTkxma2pubVBXd0QrcVlzOW0x?=
- =?utf-8?B?anBGRFlEcG5jdkxhVkZFQzI2Y2duRUZaTDhKZUhja1oxWDFqRFhqT3NiZld0?=
- =?utf-8?B?Z2REdGg4aStEeFA2T0xNcUxMQUE5Nmo1cGZSRkFYK2h5VkpVTjF1Uit3Yjg1?=
- =?utf-8?B?OUVnbHNjaXdmZHVRNVovNk03UmZ5VEp1YTQ0UzJzc1RKYnVobHFtZzR2Y1NE?=
- =?utf-8?B?Vk1TdzZwaWFLNnJVRnl1WEdqQ2MrQnAxT2drR0dxRnVVby9pam5hdlFYOXZh?=
- =?utf-8?B?UThDS2hwSFoyckpHRjdPQUk3bUM0K2lJc0l5Q2dEaGdkeXNsNDlhUC9TcTEx?=
- =?utf-8?B?UE0rU3FrUlplTXV1ZTRPS01jY3o4MjZOM21Hc2hzL0ZFYks2dWlMVk1pWVJC?=
- =?utf-8?B?RUpRaXp0anhXeUxRa0NiamsxSkJvZkRGQ3FUcGRnUDIzd0hwUmdIeFpoaFZJ?=
- =?utf-8?B?M1owTW1rY09WdjdhOXRCWWJtQWpkRUdQOFIzdWhWVjF6WkJVdHdYNE4wTVVz?=
- =?utf-8?B?NmxlZFEwaUd5SDUrcGZkK1czNGpnOTJFRXJaSHNpbWo1bllFN01qRHlrc1JV?=
- =?utf-8?B?UkhZRnY5QXhjZkNFcHVRRE5vY3J3eUNQWW10bUljNlpkMkQ2QjRpeCtHSnRM?=
- =?utf-8?B?WlU2RisyN2xJSGR5bWcrL3pVekxhREtPdEFDVHdoVmhTMnhqeVM1LzVIWER5?=
- =?utf-8?B?MGdCcHcvWXppQkRpQVErMWJyR0dqeEI4RHl1V0RFZTRuQ0xmcC9DbS8wczRU?=
- =?utf-8?B?N0x5WUpvQlhIUlJuUVJnVWV3U0tUalBsN3RReWtndEpVQSsvUUZhc3hWaGhJ?=
- =?utf-8?B?QTFONW1aYkExQTBTY2FIR0pENXBNenYyZWtXZlp3SUZYYXlkZjZpT2tPZXdQ?=
- =?utf-8?Q?ZLLgDaTaBauPnkmY=3D?=
-X-OriginatorOrg: fb.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f1ab2157-6bd8-40dc-ccd6-08da3e9e83b8
-X-MS-Exchange-CrossTenant-AuthSource: MWHPR15MB1791.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 May 2022 22:32:56.3746
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vgaUj51/uX2V9z8zcf13yW55xXefkYuN6B5gEMLuvzg6P+fQ2duURGgtFLpAQ1EY
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR15MB3261
-X-Proofpoint-ORIG-GUID: o5t0jI4rNjdtpORhOrzP19KGF-ueCyzi
-X-Proofpoint-GUID: o5t0jI4rNjdtpORhOrzP19KGF-ueCyzi
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-GUID: ckd9qjYS1V-I46NrNFg7tAiE1XkTxfTe
+X-Proofpoint-ORIG-GUID: ckd9qjYS1V-I46NrNFg7tAiE1XkTxfTe
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.874,Hydra:6.0.486,FMLib:17.11.64.514
- definitions=2022-05-25_07,2022-05-25_02,2022-02-23_01
+ definitions=2022-05-25_06,2022-05-25_02,2022-02-23_01
 X-Spam-Status: No, score=-3.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -146,37 +63,244 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+This patch series adds support for async buffered writes when using both
+xfs and io-uring. Currently io-uring only supports buffered writes in the
+slow path, by processing them in the io workers. With this patch series i=
+t is
+now possible to support buffered writes in the fast path. To be able to u=
+se
+the fast path the required pages must be in the page cache, the required =
+locks
+in xfs can be granted immediately and no additional blocks need to be rea=
+d
+form disk.
+
+Updating the inode can take time. An optimization has been implemented fo=
+r
+the time update. Time updates will be processed in the slow path. While t=
+here
+is already a time update in process, other write requests for the same fi=
+le,
+can skip the update of the modification time.
+ =20
+
+Performance results:
+  For fio the following results have been obtained with a queue depth of
+  1 and 4k block size (runtime 600 secs):
+
+                 sequential writes:
+                 without patch           with patch      libaio     psync
+  iops:              77k                    209k          195K       233K
+  bw:               314MB/s                 854MB/s       790MB/s    953M=
+B/s
+  clat:            9600ns                   120ns         540ns     3000n=
+s
 
 
-On 5/22/22 12:29 AM, Christoph Hellwig wrote:
-> On Fri, May 20, 2022 at 11:36:39AM -0700, Stefan Roesch wrote:
->> +static int file_needs_update_time(struct inode *inode, struct file *file,
->> +				struct timespec64 *now)
->>  {
->>  	int sync_it = 0;
-> 
-> No need to pass both and inode and a file as the former can be trivially
-> derived from the latter.  But if I'm not misreading the patch, file is
-> entirely unused here anyway, so can't we just drop it and rename the
-> function to inode_needs_update_time?
-> 
+For an io depth of 1, the new patch improves throughput by over three tim=
+es
+(compared to the exiting behavior, where buffered writes are processed by=
+ an
+io-worker process) and also the latency is considerably reduced. To achie=
+ve the
+same or better performance with the exisiting code an io depth of 4 is re=
+quired.
+Increasing the iodepth further does not lead to improvements.
 
-I renamed the function to inode_needs_update_time and only pass the inode
-pointer.
+In addition the latency of buffered write operations is reduced considera=
+bly.
 
->> +static int __file_update_time(struct inode *inode, struct file *file,
->> +			struct timespec64 *now, int sync_mode)
->> +{
->> +	int ret = 0;
->>  
->> +	/* try to update time settings */
->> +	if (!__mnt_want_write_file(file)) {
->> +		ret = inode_update_time(inode, now, sync_mode);
->> +		__mnt_drop_write_file(file);
->> +	}
-> 
-> I'd be tempted to just open code this in the two callers, but either
-> way works for me.  If we keep the function please don't pass the
-> inode separately.
 
-The inode is no longer passed in.
+
+Support for async buffered writes:
+
+  To support async buffered writes the flag FMODE_BUF_WASYNC is introduce=
+d. In
+  addition the check in generic_write_checks is modified to allow for asy=
+nc
+  buffered writes that have this flag set.
+
+  Changes to the iomap page create function to allow the caller to specif=
+y
+  the gfp flags. Sets the IOMAP_NOWAIT flag in iomap if IOCB_NOWAIT has b=
+een set
+  and specifies the requested gfp flags.
+
+  Adds the iomap async buffered write support to the xfs iomap layer.
+  Adds async buffered write support to the xfs iomap layer.
+
+Support for async buffered write support and inode time modification
+
+  Splits the functions for checking if the file privileges need to be rem=
+oved in
+  two functions: check function and a function for the removal of file pr=
+ivileges.
+  The same split is also done for the function to update the file modific=
+ation time.
+
+  Implement an optimization that while a file modification time is pendin=
+g other
+  requests for the same file don't need to wait for the file modification=
+ update.=20
+  This avoids that a considerable number of buffered async write requests=
+ get
+  punted.
+
+  Take the ilock in nowait mode if async buffered writes are enabled and =
+enable
+  the async buffered writes optimization in io_uring.
+
+Support for write throttling of async buffered writes:
+
+  Add a no_wait parameter to the exisiting balance_dirty_pages() function=
+. The
+  function will return -EAGAIN if the parameter is true and write throttl=
+ing is
+  required.
+
+  Add a new function called balance_dirty_pages_ratelimited_async() that =
+will be
+  invoked from iomap_write_iter() if an async buffered write is requested=
+.
+ =20
+Enable async buffered write support in xfs
+   This enables async buffered writes for xfs.
+
+
+Testing:
+  This patch has been tested with xfstests and fio.
+
+
+Changes:
+  V5:
+  - Refreshed to 5.19-rc1
+  - Merged patch 3 and patch 4
+    "mm: Prepare balance_dirty_pages() for async buffered writes" and
+    "mm: Add balance_dirty_pages_ratelimited_flags() function"
+  - Reformatting long file in iomap_page_create()
+  - Replacing gfp parameter with flags parameter in iomap_page_create()
+    This makes sure that the gfp setting is done in one location.
+  - Moved variable definition outside of loop in iomap_write_iter()
+  - Merged patch 7 with patch 6.
+  - Introduced __file_remove_privs() that get the iocb_flags passed in
+    as an additional parameter
+  - Removed file_needs_remove_privs() function
+  - Renamed file_needs_update_time() inode_needs_update_time()
+  - inode_needs_update_time() no longer passes the file pointer
+  - Renamed file_modified_async() to file_modified_flags()
+  - Made file_modified_flags() an internal function
+  - Removed extern keyword in file_modified_async definition
+  - Added kiocb_modified function.
+  - Separate patch for changes to xfs_ilock_for_iomap()
+  - Separate patch for changes to xfs_ilock_inode()
+  - Renamed xfs_ilock_xfs_inode()n back to xfs_ilock_iocb()
+  - Renamed flags parameter to iocb_flags in function xfs_ilock_iocb()
+  - Used inode_set_flags() to manipulate inode flags in the function
+    file_modified_flags()
+
+  V4:
+  - Reformat new code in generic_write_checks_count().
+  - Removed patch that introduced new function iomap_page_create_gfp().
+  - Add gfp parameter to iomap_page_create() and change all callers
+    All users will enforce the number of blocks check
+  - Removed confusing statement in iomap async buffer support patch
+  - Replace no_wait variable in __iomap_write_begin with check of
+    IOMAP_NOWAIT for easier readability.
+  - Moved else if clause in __iomap_write_begin into else clause for
+    easier readability
+  - Removed the balance_dirty_pages_ratelimited_async() function and
+    reverted back to the earlier version that used the function
+    balance_dirty_pages_ratelimited_flags()
+  - Introduced the flag BDP_ASYNC.
+  - Renamed variable in iomap_write_iter from i_mapping to mapping.
+  - Directly call balance_dirty_pages_ratelimited_flags() in the function
+    iomap_write_iter().
+  - Re-ordered the patches.
+ =20
+  V3:
+  - Reformat new code in generic_write_checks_count() to line lengthof 80=
+.
+  - Remove if condition in __iomap_write_begin to maintain current behavi=
+or.
+  - use GFP_NOWAIT flag in __iomap_write_begin
+  - rename need_file_remove_privs() function to file_needs_remove_privs()
+  - rename do_file_remove_privs to __file_remove_privs()
+  - add kernel documentation to file_remove_privs() function
+  - rework else if branch in file_remove_privs() function
+  - add kernel documentation to file_modified() function
+  - add kernel documentation to file_modified_async() function
+  - rename err variable in file_update_time to ret
+  - rename function need_file_update_time() to file_needs_update_time()
+  - rename function do_file_update_time() to __file_update_time()
+  - don't move check for FMODE_NOCMTIME in generic helper
+  - reformat __file_update_time for easier reading
+  - add kernel documentation to file_update_time() function
+  - fix if in file_update_time from < to <=3D
+  - move modification of inode flags from do_file_update_time to file_mod=
+ified()
+    When this function is called, the caller must hold the inode lock.
+  - 3 new patches from Jan to add new no_wait flag to balance_dirty_pages=
+(),
+    remove patch 12 from previous series
+  - Make balance_dirty_pages_ratelimited_flags() a static function
+  - Add new balance_dirty_pages_ratelimited_async() function
+ =20
+  V2:
+  - Remove atomic allocation
+  - Use direct write in xfs_buffered_write_iomap_begin()
+  - Use xfs_ilock_for_iomap() in xfs_buffered_write_iomap_begin()
+  - Remove no_wait check at the end of xfs_buffered_write_iomap_begin() f=
+or
+    the COW path.
+  - Pass xfs_inode pointer to xfs_ilock_iocb and rename function to
+    xfs_lock_xfs_inode
+  - Replace existing uses of xfs_ilock_iocb with xfs_ilock_xfs_inode
+  - Use xfs_ilock_xfs_inode in xfs_file_buffered_write()
+  - Callers of xfs_ilock_for_iomap need to initialize lock mode. This is
+    required so writes use an exclusive lock
+  - Split of _balance_dirty_pages() from balance_dirty_pages() and return
+    sleep time
+  - Call _balance_dirty_pages() in balance_dirty_pages_ratelimited_flags(=
+)
+  - Move call to balance_dirty_pages_ratelimited_flags() in iomap_write_i=
+ter()
+    to the beginning of the loop
+
+
+Jan Kara (3):
+  mm: Move starting of background writeback into the main balancing loop
+  mm: Move updates of dirty_exceeded into one place
+  mm: Add balance_dirty_pages_ratelimited_flags() function
+
+Stefan Roesch (13):
+  iomap: Add flags parameter to iomap_page_create()
+  iomap: Add async buffered write support
+  fs: Add check for async buffered writes to generic_write_checks
+  fs: add __remove_file_privs() with flags parameter
+  fs: Split off inode_needs_update_time and __file_update_time
+  fs: Add async write file modification handling.
+  fs: Optimization for concurrent file time updates.
+  io_uring: Add support for async buffered writes
+  io_uring: Add tracepoint for short writes
+  xfs: Specify lockmode when calling xfs_ilock_for_iomap()
+  xfs: Change function signature of xfs_ilock_iocb()
+  xfs: Add async buffered write support
+  xfs: Enable async buffered write support
+
+ fs/inode.c                      | 177 ++++++++++++++++++++++++--------
+ fs/io_uring.c                   |  32 +++++-
+ fs/iomap/buffered-io.c          |  50 +++++++--
+ fs/read_write.c                 |   4 +-
+ fs/xfs/xfs_file.c               |  34 +++---
+ fs/xfs/xfs_iomap.c              |  11 +-
+ include/linux/fs.h              |   7 ++
+ include/linux/writeback.h       |   7 ++
+ include/trace/events/io_uring.h |  25 +++++
+ mm/page-writeback.c             |  86 +++++++++-------
+ 10 files changed, 311 insertions(+), 122 deletions(-)
+
+
+base-commit: 140e40e39a29c7dbc188d9b43831c3d5e089c960
+--=20
+2.30.2
+

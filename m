@@ -2,47 +2,47 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CE095352B3
-	for <lists+io-uring@lfdr.de>; Thu, 26 May 2022 19:39:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC8225352B2
+	for <lists+io-uring@lfdr.de>; Thu, 26 May 2022 19:39:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348333AbiEZRj2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        id S1348327AbiEZRj2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
         Thu, 26 May 2022 13:39:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59994 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348336AbiEZRjO (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 26 May 2022 13:39:14 -0400
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C5109A986
-        for <io-uring@vger.kernel.org>; Thu, 26 May 2022 10:39:13 -0700 (PDT)
-Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24QFNann023171
-        for <io-uring@vger.kernel.org>; Thu, 26 May 2022 10:39:13 -0700
+        with ESMTP id S1348362AbiEZRj0 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 26 May 2022 13:39:26 -0400
+Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5D16A503A
+        for <io-uring@vger.kernel.org>; Thu, 26 May 2022 10:39:21 -0700 (PDT)
+Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
+        by m0001303.ppops.net (8.17.1.5/8.17.1.5) with ESMTP id 24QGdrUO012054
+        for <io-uring@vger.kernel.org>; Thu, 26 May 2022 10:39:21 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=facebook;
- bh=BE5eLO5Z7AZICxMCDTAcJeiKudbeydb7d4UMFp50BLA=;
- b=N3U1xiAxFgkogIuPm/YPEzp/VBDYT+eTo3MN4OpBH2ZNhSGIxTq5DO+IAH/aMQBdP5r6
- jT8Wlm+vYWcwTmJUjz5Cm/90vk5hV7KOj2slqX2078krc7m6R7qYhKwTkme+HZwQwhiG
- YYNCbJ82vON6zeV3isv8llcNQhz/EI7FY6E= 
-Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3g93upxw6c-2
+ bh=Yh7+qvp7wia1iDmc7QPLBPdsuYBbsRWXU5abdWcnXVM=;
+ b=FkQOZ7AgbpD0Zmfnz+d6T7ROkYlKPY+1GD8HQ7aSf28yu8TZesqUewdsmP+szhV8jU3v
+ SbF6XojRsJL6lZj9ij+/ZG3Ndel7t0XLdJ8xD13S7Gdgxw6L5qnVdGFkJ++IND2rsTKi
+ TdPtGAAyGxk5i/roWUE+yry3N8nhzKZCogU= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by m0001303.ppops.net (PPS) with ESMTPS id 3g9qtug2hr-3
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Thu, 26 May 2022 10:39:13 -0700
-Received: from twshared8508.05.ash9.facebook.com (2620:10d:c085:208::f) by
- mail.thefacebook.com (2620:10d:c085:11d::4) with Microsoft SMTP Server
+        for <io-uring@vger.kernel.org>; Thu, 26 May 2022 10:39:20 -0700
+Received: from twshared10276.08.ash9.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:82::d) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.28; Thu, 26 May 2022 10:39:11 -0700
+ 15.1.2375.28; Thu, 26 May 2022 10:39:19 -0700
 Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
-        id 965C7FA621E0; Thu, 26 May 2022 10:38:45 -0700 (PDT)
+        id 9BF83FA621E2; Thu, 26 May 2022 10:38:45 -0700 (PDT)
 From:   Stefan Roesch <shr@fb.com>
 To:     <io-uring@vger.kernel.org>, <kernel-team@fb.com>,
         <linux-mm@kvack.org>, <linux-xfs@vger.kernel.org>,
         <linux-fsdevel@vger.kernel.org>
 CC:     <shr@fb.com>, <david@fromorbit.com>, <jack@suse.cz>,
         <hch@infradead.org>
-Subject: [PATCH v6 10/16] fs: Optimization for concurrent file time updates.
-Date:   Thu, 26 May 2022 10:38:34 -0700
-Message-ID: <20220526173840.578265-11-shr@fb.com>
+Subject: [PATCH v6 11/16] io_uring: Add support for async buffered writes
+Date:   Thu, 26 May 2022 10:38:35 -0700
+Message-ID: <20220526173840.578265-12-shr@fb.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220526173840.578265-1-shr@fb.com>
 References: <20220526173840.578265-1-shr@fb.com>
@@ -50,8 +50,8 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: PW-dvJjd60ppZBouAuwPvfke-bTbQlwy
-X-Proofpoint-GUID: PW-dvJjd60ppZBouAuwPvfke-bTbQlwy
+X-Proofpoint-GUID: L4-HEwdVw9AzQ8Y3Lxp0fLtr0XNin3di
+X-Proofpoint-ORIG-GUID: L4-HEwdVw9AzQ8Y3Lxp0fLtr0XNin3di
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.874,Hydra:6.0.486,FMLib:17.11.64.514
  definitions=2022-05-26_09,2022-05-25_02,2022-02-23_01
@@ -66,70 +66,81 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This introduces the S_PENDING_TIME flag. If an async buffered write
-needs to update the time, it cannot be processed in the fast path of
-io-uring. When a time update is pending this flag is set for async
-buffered writes. Other concurrent async buffered writes for the same
-file do not need to wait while this time update is pending.
-
-This reduces the number of async buffered writes that need to get punted
-to the io-workers in io-uring.
+This enables the async buffered writes for the filesystems that support
+async buffered writes in io-uring. Buffered writes are enabled for
+blocks that are already in the page cache or can be acquired with noio.
 
 Signed-off-by: Stefan Roesch <shr@fb.com>
 ---
- fs/inode.c         | 11 +++++++++--
- include/linux/fs.h |  3 +++
- 2 files changed, 12 insertions(+), 2 deletions(-)
+ fs/io_uring.c | 29 ++++++++++++++++++++++++-----
+ 1 file changed, 24 insertions(+), 5 deletions(-)
 
-diff --git a/fs/inode.c b/fs/inode.c
-index 4503bed063e7..7185d860d423 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -2150,10 +2150,17 @@ static int file_modified_flags(struct file *file,=
- int flags)
- 	ret =3D inode_needs_update_time(inode, &now);
- 	if (ret <=3D 0)
- 		return ret;
--	if (flags & IOCB_NOWAIT)
-+	if (flags & IOCB_NOWAIT) {
-+		if (IS_PENDING_TIME(inode))
-+			return 0;
-+
-+		inode_set_flags(inode, S_PENDING_TIME, S_PENDING_TIME);
- 		return -EAGAIN;
-+	}
-=20
--	return __file_update_time(file, &now, ret);
-+	ret =3D __file_update_time(file, &now, ret);
-+	inode_set_flags(inode, 0, S_PENDING_TIME);
-+	return ret;
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 9f1c682d7caf..c0771e215669 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -4257,7 +4257,7 @@ static inline int io_iter_do_read(struct io_kiocb *=
+req, struct iov_iter *iter)
+ 		return -EINVAL;
  }
 =20
- /**
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 2d9b3afcb4a5..5924c90eab1d 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2143,6 +2143,8 @@ struct super_operations {
- #define S_CASEFOLD	(1 << 15) /* Casefolded file */
- #define S_VERITY	(1 << 16) /* Verity file (using fs/verity/) */
- #define S_KERNEL_FILE	(1 << 17) /* File is in use by the kernel (eg. fs/=
-cachefiles) */
-+#define S_PENDING_TIME (1 << 18) /* File update time is pending */
+-static bool need_read_all(struct io_kiocb *req)
++static bool need_complete_io(struct io_kiocb *req)
+ {
+ 	return req->flags & REQ_F_ISREG ||
+ 		S_ISBLK(file_inode(req->file)->i_mode);
+@@ -4386,7 +4386,7 @@ static int io_read(struct io_kiocb *req, unsigned i=
+nt issue_flags)
+ 	} else if (ret =3D=3D -EIOCBQUEUED) {
+ 		goto out_free;
+ 	} else if (ret =3D=3D req->cqe.res || ret <=3D 0 || !force_nonblock ||
+-		   (req->flags & REQ_F_NOWAIT) || !need_read_all(req)) {
++		   (req->flags & REQ_F_NOWAIT) || !need_complete_io(req)) {
+ 		/* read all, failed, already did sync or don't want to retry */
+ 		goto done;
+ 	}
+@@ -4482,9 +4482,10 @@ static int io_write(struct io_kiocb *req, unsigned=
+ int issue_flags)
+ 		if (unlikely(!io_file_supports_nowait(req)))
+ 			goto copy_iov;
+=20
+-		/* file path doesn't support NOWAIT for non-direct_IO */
+-		if (force_nonblock && !(kiocb->ki_flags & IOCB_DIRECT) &&
+-		    (req->flags & REQ_F_ISREG))
++		/* File path supports NOWAIT for non-direct_IO only for block devices.=
+ */
++		if (!(kiocb->ki_flags & IOCB_DIRECT) &&
++			!(kiocb->ki_filp->f_mode & FMODE_BUF_WASYNC) &&
++			(req->flags & REQ_F_ISREG))
+ 			goto copy_iov;
+=20
+ 		kiocb->ki_flags |=3D IOCB_NOWAIT;
+@@ -4538,6 +4539,24 @@ static int io_write(struct io_kiocb *req, unsigned=
+ int issue_flags)
+ 		/* IOPOLL retry should happen for io-wq threads */
+ 		if (ret2 =3D=3D -EAGAIN && (req->ctx->flags & IORING_SETUP_IOPOLL))
+ 			goto copy_iov;
 +
-=20
- /*
-  * Note that nosuid etc flags are inode-specific: setting some file-syst=
-em
-@@ -2185,6 +2187,7 @@ static inline bool sb_rdonly(const struct super_blo=
-ck *sb) { return sb->s_flags
- #define IS_ENCRYPTED(inode)	((inode)->i_flags & S_ENCRYPTED)
- #define IS_CASEFOLDED(inode)	((inode)->i_flags & S_CASEFOLD)
- #define IS_VERITY(inode)	((inode)->i_flags & S_VERITY)
-+#define IS_PENDING_TIME(inode) ((inode)->i_flags & S_PENDING_TIME)
-=20
- #define IS_WHITEOUT(inode)	(S_ISCHR(inode->i_mode) && \
- 				 (inode)->i_rdev =3D=3D WHITEOUT_DEV)
++		if (ret2 !=3D req->cqe.res && ret2 >=3D 0 && need_complete_io(req)) {
++			struct io_async_rw *rw;
++
++			/* This is a partial write. The file pos has already been
++			 * updated, setup the async struct to complete the request
++			 * in the worker. Also update bytes_done to account for
++			 * the bytes already written.
++			 */
++			iov_iter_save_state(&s->iter, &s->iter_state);
++			ret =3D io_setup_async_rw(req, iovec, s, true);
++
++			rw =3D req->async_data;
++			if (rw)
++				rw->bytes_done +=3D ret2;
++
++			return ret ? ret : -EAGAIN;
++		}
+ done:
+ 		kiocb_done(req, ret2, issue_flags);
+ 	} else {
 --=20
 2.30.2
 

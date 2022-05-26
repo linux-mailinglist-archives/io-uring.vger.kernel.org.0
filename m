@@ -2,108 +2,94 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 63D1B535024
-	for <lists+io-uring@lfdr.de>; Thu, 26 May 2022 15:44:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D938535294
+	for <lists+io-uring@lfdr.de>; Thu, 26 May 2022 19:36:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239082AbiEZNoA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 26 May 2022 09:44:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49110 "EHLO
+        id S1348302AbiEZRgQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 26 May 2022 13:36:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231330AbiEZNn7 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 26 May 2022 09:43:59 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0412CDFEB;
-        Thu, 26 May 2022 06:43:58 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id A970821A06;
-        Thu, 26 May 2022 13:43:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1653572636; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=UpK3/+mflNhNMKFUzS8sRLaHIEJ6kOwAbvdU09gMH7s=;
-        b=3LryFXFDC3AdXNd2lRAYNMZxlZT+62FzmWr4B8ftgsP6BcWFelARCV2g3tqqyflpefmbZC
-        V0TO6tAhWU4d11Zz3OOY5idYus/ihMFEAn8xbzx5CbrfPymCOPoAiHnLNWT/XQO4v7rXUF
-        JKZP6bbyQG8k+ISKbPJmd0FYmlUNVDE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1653572636;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=UpK3/+mflNhNMKFUzS8sRLaHIEJ6kOwAbvdU09gMH7s=;
-        b=51eEm0IOMH3zxagbLh+mvwGB43Gpbh0I3m8y+KDeUxONAAfQ+Q4NcRdjBVzAmxjnQ89Y9M
-        yNq1pS9sp/GMhKAA==
-Received: from quack3.suse.cz (unknown [10.100.224.230])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 9A9C32C141;
-        Thu, 26 May 2022 13:43:56 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 26532A0632; Thu, 26 May 2022 15:43:56 +0200 (CEST)
-Date:   Thu, 26 May 2022 15:43:56 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Stefan Roesch <shr@fb.com>
-Cc:     io-uring@vger.kernel.org, kernel-team@fb.com, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        david@fromorbit.com, jack@suse.cz, hch@infradead.org
-Subject: Re: [PATCH v5 04/16] iomap: Add flags parameter to
- iomap_page_create()
-Message-ID: <20220526134356.volr3q5ysewszfwo@quack3.lan>
-References: <20220525223432.205676-1-shr@fb.com>
- <20220525223432.205676-5-shr@fb.com>
+        with ESMTP id S1344134AbiEZRgQ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 26 May 2022 13:36:16 -0400
+Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B6BD1EAE0
+        for <io-uring@vger.kernel.org>; Thu, 26 May 2022 10:36:14 -0700 (PDT)
+Received: by mail-io1-xd2a.google.com with SMTP id d198so2236916iof.12
+        for <io-uring@vger.kernel.org>; Thu, 26 May 2022 10:36:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:content-language:to:from
+         :subject:content-transfer-encoding;
+        bh=nA9C9Zqy0/zetHpSiqtRzY51iIPmDddriXFJdyHKqk8=;
+        b=RhXsSv5KyPzqGyjzeqhFAprrwp4EBss7Ru+5A+6hVDF2RQEVdxDF17eSWjSMg1AWmN
+         rWr5SxT7ooc0HQCevND0xog9LBJGoQrpUfiD0rm/2OnVuHldyXyPI1BQFzGuHP0t33f2
+         tdkIZe2QTcyc/5UVAnyyKAVQzfs6wH6tkJ0VJxznX2bjrpwBZ1vC680hbRvQsihii+30
+         MC7/VCJqErWxMHr3JA4m+YvCy1Hm6q4Yf16dhuhLXx+rKBQCdNt1ZoQJJ7TSOxq3f5I/
+         xrD6W5YAqr3EJOOZhPE+/S9TnUs+AK3mXNrL6KzRCV3XpPactRZN0eKxVjfFHwYDEwxd
+         d1NA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent
+         :content-language:to:from:subject:content-transfer-encoding;
+        bh=nA9C9Zqy0/zetHpSiqtRzY51iIPmDddriXFJdyHKqk8=;
+        b=IXgcd49du5mY+sYlzyGeg6i8b30sji5f7rECYuKv7BC6DSV/3jsbeNuoCxRisylXZ9
+         cftQ/j8rVtRdDCuqUXw12ZJOxTi3QrEI6yWedJuZm7yCs5QuIGGH5ubOrbNN/vXzGCHF
+         inHJbw2IY9xuhVFWB7S3wpLth7PN33afp0efrHKN4aycnDv3nvZlnC/+uJUtphvrtvpG
+         fhWwLu2qi/wU5GEVBhU1k9K66QzJIom/AmAK6k4rV4dnwprEW9uCaWYXWtVcFL8wJ8LZ
+         2DGmGsMJpL5HC59cpxqoKr24k3t2/PjMlCkEUvH2fUK1DQReCe6pAPfQzrcxmAbQ/PNV
+         nWow==
+X-Gm-Message-State: AOAM531aO1pOOFN9M3ttNcJ6SVJ+m2rY4i74DaqrQmCqzC9Ssmlv3u0G
+        qywK0sLccC10bvYPGwOl5eW0sXKpvDP3FQ==
+X-Google-Smtp-Source: ABdhPJx5Yj7psqYj74nqsJzQkanbFEv7nhwFtV3NucYNDoQ12sj4YDr8IMmsXizBRB9IB77RKse96Q==
+X-Received: by 2002:a05:6638:218b:b0:32e:9612:109e with SMTP id s11-20020a056638218b00b0032e9612109emr18235664jaj.192.1653586573762;
+        Thu, 26 May 2022 10:36:13 -0700 (PDT)
+Received: from [192.168.1.172] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id y8-20020a029048000000b0032b5e78bfcbsm539829jaf.135.2022.05.26.10.36.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 May 2022 10:36:12 -0700 (PDT)
+Message-ID: <2328dcd7-f9dd-3ca2-510e-60269d64c352@kernel.dk>
+Date:   Thu, 26 May 2022 11:36:11 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220525223432.205676-5-shr@fb.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Content-Language: en-US
+To:     io-uring <io-uring@vger.kernel.org>,
+        Pavel Begunkov <asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring: fix a memory leak of buffer group list on exit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed 25-05-22 15:34:20, Stefan Roesch wrote:
-> Add the kiocb flags parameter to the function iomap_page_create().
-> Depending on the value of the flags parameter it enables different gfp
-> flags.
-> 
-> No intended functional changes in this patch.
-> 
-> Signed-off-by: Stefan Roesch <shr@fb.com>
+If we use a buffer group ID that is large enough to require io_uring
+to allocate it, then we don't correctly free it if the cleanup is
+deferred to the ring exit. The explicit removal paths are fine.
 
-Just one nit below:
+Fixes: 9cfc7e94e42b ("io_uring: get rid of hashed provided buffer groups")
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-> @@ -226,7 +231,7 @@ static int iomap_read_inline_data(const struct iomap_iter *iter,
->  	if (WARN_ON_ONCE(size > iomap->length))
->  		return -EIO;
->  	if (offset > 0)
-> -		iop = iomap_page_create(iter->inode, folio);
-> +		iop = iomap_page_create(iter->inode, folio, 0);
->  	else
->  		iop = to_iomap_page(folio);
->  
-> @@ -264,7 +269,7 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
->  		return iomap_read_inline_data(iter, folio);
->  
->  	/* zero post-eof blocks as the page may be mapped */
-> -	iop = iomap_page_create(iter->inode, folio);
-> +	iop = iomap_page_create(iter->inode, folio, 0);
->  	iomap_adjust_read_range(iter->inode, folio, &pos, length, &poff, &plen);
->  	if (plen == 0)
->  		goto done;
+---
 
-Shouldn't we pass iter->flags to iomap_page_create() in the above two call
-sites? I know functionally it is no different currently but in the future
-it might be less surprising...
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index f7e1fc85d266..ccb47d87a65a 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -11065,6 +11065,7 @@ static void io_destroy_buffers(struct io_ring_ctx *ctx)
+ 	xa_for_each(&ctx->io_bl_xa, index, bl) {
+ 		xa_erase(&ctx->io_bl_xa, bl->bgid);
+ 		__io_remove_buffers(ctx, bl, -1U);
++		kfree(bl);
+ 	}
+ 
+ 	while (!list_empty(&ctx->io_buffers_pages)) {
 
-With this fixed, feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Jens Axboe
+

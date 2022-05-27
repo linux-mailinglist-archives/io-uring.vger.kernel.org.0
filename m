@@ -2,192 +2,121 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3422D53662B
-	for <lists+io-uring@lfdr.de>; Fri, 27 May 2022 18:54:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCC1153662A
+	for <lists+io-uring@lfdr.de>; Fri, 27 May 2022 18:54:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232531AbiE0Qxn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        id S233988AbiE0Qxn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
         Fri, 27 May 2022 12:53:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59488 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59498 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233988AbiE0Qxl (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 27 May 2022 12:53:41 -0400
-Received: from out30-45.freemail.mail.aliyun.com (out30-45.freemail.mail.aliyun.com [115.124.30.45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EAF8ED70C
-        for <io-uring@vger.kernel.org>; Fri, 27 May 2022 09:53:37 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0VEY.2mw_1653670414;
-Received: from localhost(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0VEY.2mw_1653670414)
+        with ESMTP id S236944AbiE0Qxn (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 27 May 2022 12:53:43 -0400
+Received: from out30-56.freemail.mail.aliyun.com (out30-56.freemail.mail.aliyun.com [115.124.30.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C4AAED70E
+        for <io-uring@vger.kernel.org>; Fri, 27 May 2022 09:53:39 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0VEXwEoG_1653670415;
+Received: from localhost(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0VEXwEoG_1653670415)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Sat, 28 May 2022 00:53:34 +0800
+          Sat, 28 May 2022 00:53:35 +0800
 From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
 To:     io-uring@vger.kernel.org
 Cc:     axboe@kernel.dk, asml.silence@gmail.com
-Subject: [PATCH 1/2] io_uring: fix file leaks around io_fixed_fd_install()
-Date:   Sat, 28 May 2022 00:53:32 +0800
-Message-Id: <20220527165333.55212-2-xiaoguang.wang@linux.alibaba.com>
+Subject: [PATCH 2/2] io_uring: defer alloc_hint update to io_file_bitmap_set()
+Date:   Sat, 28 May 2022 00:53:33 +0800
+Message-Id: <20220527165333.55212-3-xiaoguang.wang@linux.alibaba.com>
 X-Mailer: git-send-email 2.14.4.44.g2045bb6
 In-Reply-To: <20220527165333.55212-1-xiaoguang.wang@linux.alibaba.com>
 References: <20220527165333.55212-1-xiaoguang.wang@linux.alibaba.com>
 X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,
+        USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-io_fixed_fd_install() may fail for many reasons, such as short of
-free fixed file bitmap, memory allocation failures, etc. When these
-errors happen, current code forgets to fput(file) correspondingly.
+io_file_bitmap_get() returns a free bitmap slot, but if it isn't
+used later, such as io_queue_rsrc_removal() returns error, in this
+case, we should not update alloc_hint at all, which still should
+be considered as a valid candidate for next io_file_bitmap_get()
+calls.
 
-This patch will fix resource leaks around io_fixed_fd_install(),
-meanwhile io_fixed_fd_install() and io_install_fixed_file() are
-basically similar, fold them into one function.
+To fix this issue, only update alloc_hint in io_file_bitmap_set().
 
 Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
 ---
- fs/io_uring.c | 77 ++++++++++++++++++++++++++---------------------------------
- 1 file changed, 34 insertions(+), 43 deletions(-)
+ fs/io_uring.c | 23 +++++++++++------------
+ 1 file changed, 11 insertions(+), 12 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index d50bbf8de4fb..ff50e5f1753d 100644
+index ff50e5f1753d..811007e055c6 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -1364,8 +1364,8 @@ static void io_req_task_queue(struct io_kiocb *req);
- static void __io_submit_flush_completions(struct io_ring_ctx *ctx);
- static int io_req_prep_async(struct io_kiocb *req);
+@@ -5419,15 +5419,11 @@ static int io_file_bitmap_get(struct io_ring_ctx *ctx)
+ 	unsigned long nr = ctx->nr_user_files;
+ 	int ret;
  
--static int io_install_fixed_file(struct io_kiocb *req, struct file *file,
--				 unsigned int issue_flags, u32 slot_index);
-+static int io_install_fixed_file(struct io_kiocb *req, unsigned int issue_flags,
-+				 struct file *file, u32 slot);
- static int io_close_fixed(struct io_kiocb *req, unsigned int issue_flags);
- 
- static enum hrtimer_restart io_link_timeout_fn(struct hrtimer *timer);
-@@ -5438,36 +5438,6 @@ static int io_file_bitmap_get(struct io_ring_ctx *ctx)
- 	return -ENFILE;
- }
- 
--static int io_fixed_fd_install(struct io_kiocb *req, unsigned int issue_flags,
--			       struct file *file, unsigned int file_slot)
--{
--	bool alloc_slot = file_slot == IORING_FILE_INDEX_ALLOC;
--	struct io_ring_ctx *ctx = req->ctx;
--	int ret;
+-	if (table->alloc_hint >= nr)
+-		table->alloc_hint = 0;
 -
--	if (alloc_slot) {
--		io_ring_submit_lock(ctx, issue_flags);
--		ret = io_file_bitmap_get(ctx);
--		if (unlikely(ret < 0)) {
--			io_ring_submit_unlock(ctx, issue_flags);
--			return ret;
+ 	do {
+ 		ret = find_next_zero_bit(table->bitmap, nr, table->alloc_hint);
+-		if (ret != nr) {
+-			table->alloc_hint = ret + 1;
++		if (ret != nr)
+ 			return ret;
 -		}
--
--		file_slot = ret;
--	} else {
--		file_slot--;
--	}
--
--	ret = io_install_fixed_file(req, file, issue_flags, file_slot);
--	if (alloc_slot) {
--		io_ring_submit_unlock(ctx, issue_flags);
--		if (!ret)
--			return file_slot;
--	}
--
--	return ret;
--}
--
- static int io_openat2(struct io_kiocb *req, unsigned int issue_flags)
- {
- 	struct open_flags op;
-@@ -5520,11 +5490,14 @@ static int io_openat2(struct io_kiocb *req, unsigned int issue_flags)
- 		file->f_flags &= ~O_NONBLOCK;
- 	fsnotify_open(file);
- 
--	if (!fixed)
-+	if (!fixed) {
- 		fd_install(ret, file);
--	else
--		ret = io_fixed_fd_install(req, issue_flags, file,
--						req->open.file_slot);
-+	} else {
-+		ret = io_install_fixed_file(req, issue_flags, file,
-+					    req->open.file_slot);
-+		if (ret < 0)
-+			fput(file);
-+	}
- err:
- 	putname(req->open.filename);
- 	req->flags &= ~REQ_F_NEED_CLEANUP;
-@@ -6603,8 +6576,10 @@ static int io_accept(struct io_kiocb *req, unsigned int issue_flags)
- 		fd_install(fd, file);
- 		ret = fd;
- 	} else {
--		ret = io_fixed_fd_install(req, issue_flags, file,
--						accept->file_slot);
-+		ret = io_install_fixed_file(req, issue_flags, file,
-+					    accept->file_slot);
-+		if (ret < 0)
-+			fput(file);
- 	}
- 
- 	if (!(req->flags & REQ_F_APOLL_MULTISHOT)) {
-@@ -6676,8 +6651,10 @@ static int io_socket(struct io_kiocb *req, unsigned int issue_flags)
- 		fd_install(fd, file);
- 		ret = fd;
- 	} else {
--		ret = io_fixed_fd_install(req, issue_flags, file,
-+		ret = io_install_fixed_file(req, issue_flags, file,
- 					    sock->file_slot);
-+		if (ret < 0)
-+			fput(file);
- 	}
- 	__io_req_complete(req, issue_flags, ret, 0);
- 	return 0;
-@@ -10130,15 +10107,27 @@ static int io_queue_rsrc_removal(struct io_rsrc_data *data, unsigned idx,
- 	return 0;
- }
- 
--static int io_install_fixed_file(struct io_kiocb *req, struct file *file,
--				 unsigned int issue_flags, u32 slot_index)
-+static int io_install_fixed_file(struct io_kiocb *req, unsigned int issue_flags,
-+				 struct file *file, u32 slot)
- {
- 	struct io_ring_ctx *ctx = req->ctx;
- 	bool needs_switch = false;
- 	struct io_fixed_file *file_slot;
- 	int ret = -EBADF;
-+	bool alloc_slot = slot == IORING_FILE_INDEX_ALLOC;
-+	int slot_index;
- 
- 	io_ring_submit_lock(ctx, issue_flags);
-+	if (alloc_slot) {
-+		slot_index = io_file_bitmap_get(ctx);
-+		if (unlikely(slot_index < 0)) {
-+			io_ring_submit_unlock(ctx, issue_flags);
-+			return slot_index;
-+		}
-+	} else {
-+		slot_index = slot - 1;
-+	}
 +
- 	if (file->f_op == &io_uring_fops)
- 		goto err;
- 	ret = -ENXIO;
-@@ -10178,8 +10167,10 @@ static int io_install_fixed_file(struct io_kiocb *req, struct file *file,
- 	if (needs_switch)
- 		io_rsrc_node_switch(ctx, ctx->file_data);
- 	io_ring_submit_unlock(ctx, issue_flags);
--	if (ret)
--		fput(file);
-+	if (alloc_slot) {
-+		if (!ret)
-+			return slot_index;
-+	}
- 	return ret;
+ 		if (!table->alloc_hint)
+ 			break;
+ 
+@@ -9650,12 +9646,15 @@ static void io_free_file_tables(struct io_file_table *table)
+ 	table->bitmap = NULL;
  }
+ 
+-static inline void io_file_bitmap_set(struct io_file_table *table, int bit)
++static inline void io_file_bitmap_set(struct io_ring_ctx *ctx, int bit)
+ {
++	struct io_file_table *table = &ctx->file_table;
++
+ 	WARN_ON_ONCE(test_bit(bit, table->bitmap));
+ 	__set_bit(bit, table->bitmap);
+-	if (bit == table->alloc_hint)
+-		table->alloc_hint++;
++	table->alloc_hint = bit + 1;
++	if (table->alloc_hint >= ctx->nr_user_files)
++		table->alloc_hint = 0;
+ }
+ 
+ static inline void io_file_bitmap_clear(struct io_file_table *table, int bit)
+@@ -10080,7 +10079,7 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
+ 		}
+ 		file_slot = io_fixed_file_slot(&ctx->file_table, i);
+ 		io_fixed_file_set(file_slot, file);
+-		io_file_bitmap_set(&ctx->file_table, i);
++		io_file_bitmap_set(ctx, i);
+ 	}
+ 
+ 	io_rsrc_node_switch(ctx, NULL);
+@@ -10161,7 +10160,7 @@ static int io_install_fixed_file(struct io_kiocb *req, unsigned int issue_flags,
+ 	if (!ret) {
+ 		*io_get_tag_slot(ctx->file_data, slot_index) = 0;
+ 		io_fixed_file_set(file_slot, file);
+-		io_file_bitmap_set(&ctx->file_table, slot_index);
++		io_file_bitmap_set(ctx, slot_index);
+ 	}
+ err:
+ 	if (needs_switch)
+@@ -10284,7 +10283,7 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+ 			}
+ 			*io_get_tag_slot(data, i) = tag;
+ 			io_fixed_file_set(file_slot, file);
+-			io_file_bitmap_set(&ctx->file_table, i);
++			io_file_bitmap_set(ctx, i);
+ 		}
+ 	}
  
 -- 
 2.14.4.44.g2045bb6

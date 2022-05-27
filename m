@@ -2,118 +2,186 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BA95553638B
-	for <lists+io-uring@lfdr.de>; Fri, 27 May 2022 15:50:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A23AF536410
+	for <lists+io-uring@lfdr.de>; Fri, 27 May 2022 16:29:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346092AbiE0Nud (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 27 May 2022 09:50:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33392 "EHLO
+        id S235072AbiE0O3Y (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 27 May 2022 10:29:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241191AbiE0Nuc (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 27 May 2022 09:50:32 -0400
-Received: from mail-il1-x135.google.com (mail-il1-x135.google.com [IPv6:2607:f8b0:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D7E018358
-        for <io-uring@vger.kernel.org>; Fri, 27 May 2022 06:50:31 -0700 (PDT)
-Received: by mail-il1-x135.google.com with SMTP id q3so2875903ilt.9
-        for <io-uring@vger.kernel.org>; Fri, 27 May 2022 06:50:31 -0700 (PDT)
+        with ESMTP id S234895AbiE0O3Y (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 27 May 2022 10:29:24 -0400
+Received: from USAT19PA25.eemsg.mail.mil (USAT19PA25.eemsg.mail.mil [214.24.22.199])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3796F12388A
+        for <io-uring@vger.kernel.org>; Fri, 27 May 2022 07:29:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=Q4HlnP4M3KnRD2xQ+3g55EAyPzM5QsgR4RqaiwyAk1A=;
-        b=Zsb9cEvreybbucDkNAONb+JKPAYw0lVzUav+MMbR6lOumdV74bMWuEyUxWDRZ8LYUk
-         S/l/5LAYWqOO88JZlNJlDIrpucEzX39HWnSB771muMIVK4U3FYMhcWL9QMRMsMPXcTvn
-         qhGMbs49nltl0iKMV+9eQp1xBJwLUYzGes3PkzPy2IdCthjIqaM5im5e0GyKVnnKmUAT
-         oGCZDzfDb7CtDx2wZO2ezLCy61nT+G+K67Rz2YnJ44JTWH9zAuJ1DP8cNnHv4mxsFbon
-         t4n64Al/RHZ3rxkZIaPSVfrks5u/juAFmHUhJDOEodEqrB0BbWOJrAW1MLL1c8wysVAU
-         0ewA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=Q4HlnP4M3KnRD2xQ+3g55EAyPzM5QsgR4RqaiwyAk1A=;
-        b=DiPvAsogupXNVr57Ef33SAlAJ8iWrB6Nwl+IWROBEUrBVlcPOWqI3oUaZcAqseaiOc
-         BkvTbS3+ABhdT70oBTq+3/2FUa2pDtSxkQsBVn0WBLAffJfEtHtAoaXr6VAiuUjEkq+9
-         ThM2sI+IV+lpHO9MirzGLoErZPxLSsB1TyV7f/nMA03kqigVHaLDpAsef7zi3ngZ5UMV
-         X02Y+atk2Y00T4u9bHq22UFreL1kQHgcstiKtIqVNK8GASsi7WntbF9sxE33yymJEB7Q
-         +iA/ZyniwE2Lqx5iPG+NrlsPp5vGv5n3bokDgRcXtokyKZN+ZoIZYSSZ/V6FBJ5+cwc5
-         OSEQ==
-X-Gm-Message-State: AOAM531MnSLGlWdcXiRDdcJRxII3IJx1Om+FgFw0Q95Hcva3BHX7jvhO
-        cSzAv7pRClRZAMVEs+jlNIxEkA==
-X-Google-Smtp-Source: ABdhPJzflBDP+8KeLHSwwPSvMDerBpNFXjto1MRZdAl991s8Idyks4+WKMogwIQgTljrfXPNPfD/cw==
-X-Received: by 2002:a05:6e02:1a83:b0:2d1:bb9a:bade with SMTP id k3-20020a056e021a8300b002d1bb9abademr11282606ilv.189.1653659430312;
-        Fri, 27 May 2022 06:50:30 -0700 (PDT)
-Received: from [192.168.1.172] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id a4-20020a056e0208a400b002d1a5afa79bsm1281521ilt.86.2022.05.27.06.50.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 May 2022 06:50:29 -0700 (PDT)
-Message-ID: <2085bfef-a91c-8adb-402b-242e8c5d5c55@kernel.dk>
-Date:   Fri, 27 May 2022 07:50:27 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [io_uring] 584b0180f0:
- phoronix-test-suite.fio.SequentialWrite.IO_uring.Yes.Yes.1MB.DefaultTestDirectory.mb_s
- -10.2% regression
+  d=mail.mil; i=@mail.mil; q=dns/txt; s=EEMSG2021v1a;
+  t=1653661762; x=1685197762;
+  h=from:to:subject:date:message-id:
+   content-transfer-encoding:mime-version;
+  bh=i02930sXU1EtfBW1MpKWnDShQRpx3ZfQtOdXvksbCvI=;
+  b=VrX/PBGdDu8s/aa8qT7pbAHkBYRRs6NQwrHzhztPW8zps0zULiqaTujS
+   8E9WjpSV9o2RY29/POABv5hAFIxhpU52UH2vmkzMbvC/CzbyRe5Y3jG58
+   BI3rlqd2fuvAbFuoemDBh7ruuN1YjwgHdgZXaqM62XjrZIcKH6d7PndGI
+   BRQzVliHTCZTF+BmaK6/x54R2UR89ajc4j4eHFnNRy5j4uzJ5okglLrjr
+   OyAL0Wo/FB4zDLQTK9aQTQc+uMp74HeKA+pj4cPj0IRrEbI0eQ7UYNRrs
+   UoUuxb0zqaRgPJqob2csTeZhyHFd2tOMpcEDJJpcvseC+k43igs99zrkb
+   Q==;
+X-EEMSG-check-017: 333644635|USAT19PA25_ESA_OUT06.csd.disa.mil
+X-IronPort-AV: E=Sophos;i="5.91,255,1647302400"; 
+   d="scan'208";a="333644635"
+IronPort-Data: A9a23:/0WjjKt72yruCcry7xnHJG2gKufnVJVcMUV32f8akzHdYApBsoF/q
+ tZmKW+COKrcYjb3ft5/Yd7i8kgP75WDndQyQFZp/383EipB9ZOVVN+UEBz9bniYRiHhoOOLz
+ Cm8hv3odp1cokf0/0zrav69xZVF/fngqoDUUIYoAQgsA149IMsdoUg7wbRh39Q32YLR7z6l4
+ bseneWOYDdJ5BYpagr424rbwP9elKyaVAEw5zTSVtgS1LPqrET5ObpETU2Hw9sUdaEPdgKyb
+ 76rILhUZQo19T91Yj+uuu6TnkHn3tfv0QayZnp+A8BOgzBPqiM/l6M2P/pEMAFSgjSN2dVwz
+ L2ht7TqEFtvZPSKwb9FFUAAS0mSPoUfkFPDCXWivsGVwgvINWThyfh0UQc9PJMw/+92BSdL9
+ PhwxDUlNUvY2b7qnunmIgVrroF5RCXxB6sevTR91zDfAt44Tp3ZBabH/9lV2HE3nM8mIBp0T
+ 6L1chJiYBvNJhhCMVdPUdQ7leaswHz+d1VlRJuujfJfywDuIMZZidAB7PK9lgS2ePho
+IronPort-HdrOrdr: A9a23:H2Mo0Kya+zQdZrq6L5RgKrPwCr1zdoMgy1knxilNoH1uA7Slfq
+ WV98jzuiWbtN98YhwdcJO7Scy9qArnlKKduLNwAV7AZniFhILLFvAa0WKK+VSJcREWndQz6U
+ 4PScRD4ZLLfDxHZGvBkW6FOsdl6uOutIqvgf7az39rRw0vUad99A10YzzrcXGeADM2Y6YEKA
+ ==
+Received: from edge-mech01.mail.mil ([214.21.130.100])
+  by USAT19PA25.eemsg.mail.mil with ESMTP/TLS/ECDHE-RSA-AES256-SHA384; 27 May 2022 14:29:20 +0000
+Received: from UMECHPAOI.easf.csd.disa.mil (214.21.130.36) by
+ edge-mech01.mail.mil (214.21.130.100) with Microsoft SMTP Server (TLS) id
+ 14.3.498.0; Fri, 27 May 2022 14:29:19 +0000
+Received: from UMECHPA66.easf.csd.disa.mil ([169.254.8.113]) by
+ umechpaoi.easf.csd.disa.mil ([1.213.132.154]) with mapi id 14.03.0513.000;
+ Fri, 27 May 2022 14:29:19 +0000
+From:   "Weber, Eugene F Jr CIV (USA)" <eugene.f.weber5.civ@mail.mil>
+To:     "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
+Subject: Erroneous socket connect pass?
+Thread-Topic: Erroneous socket connect pass?
+Thread-Index: Adhx1ia4T2jTbCZGRESVYsEn7LQPqw==
+Date:   Fri, 27 May 2022 14:29:19 +0000
+Message-ID: <60DCCBD6DDA29F4A9EFF6DB52DEE2AB1D866F5D3@UMECHPA66.easf.csd.disa.mil>
+Accept-Language: en-US
 Content-Language: en-US
-To:     kernel test robot <oliver.sang@intel.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, io-uring@vger.kernel.org,
-        lkp@lists.01.org, lkp@intel.com, ying.huang@intel.com,
-        feng.tang@intel.com, zhengjun.xing@linux.intel.com,
-        fengwei.yin@intel.com, guobing.chen@intel.com,
-        ming.a.chen@intel.com, frank.du@intel.com, Shuhua.Fan@intel.com,
-        wangyang.guo@intel.com, Wenhuan.Huang@intel.com,
-        jessica.ji@intel.com, shan.kang@intel.com, guangli.li@intel.com,
-        tiejun.li@intel.com, yu.ma@intel.com, dapeng1.mi@intel.com,
-        jiebin.sun@intel.com, gengxin.xie@intel.com, fan.zhao@intel.com
-References: <20220527092432.GE11731@xsang-OptiPlex-9020>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20220527092432.GE11731@xsang-OptiPlex-9020>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [214.21.97.85]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-Spam-Status: No, score=-7.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/27/22 3:24 AM, kernel test robot wrote:
-> 
-> 
-> Greeting,
-> 
-> FYI, we noticed a -10.2% regression of phoronix-test-suite.fio.SequentialWrite.IO_uring.Yes.Yes.1MB.DefaultTestDirectory.mb_s due to commit:
-> 
-> 
-> commit: 584b0180f0f4d67d7145950fe68c625f06c88b10 ("io_uring: move read/write file prep state into actual opcode handler")
-> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
-> 
-> in testcase: phoronix-test-suite
-> on test machine: 96 threads 2 sockets Intel(R) Xeon(R) Gold 6252 CPU @ 2.10GHz with 512G memory
-> with following parameters:
-> 
-> 	test: fio-1.14.1
-> 	option_a: Sequential Write
-> 	option_b: IO_uring
-> 	option_c: Yes
-> 	option_d: Yes
-> 	option_e: 1MB
-> 	option_f: Default Test Directory
-> 	cpufreq_governor: performance
-> 	ucode: 0x500320a
-> 
-> test-description: The Phoronix Test Suite is the most comprehensive testing and benchmarking platform available that provides an extensible framework for which new tests can be easily added.
-> test-url: http://www.phoronix-test-suite.com/
-
-I'm a bit skeptical on this, but I'd like to try and run the test case.
-Since it's just a fio test case, why can't I find it somewhere? Seems
-very convoluted to have to setup lkp-tests just for this. Besides, I
-tried, but it doesn't work on aarch64...
-
--- 
-Jens Axboe
-
+=0A=
+Hi,=0A=
+=0A=
+Thanks for creating liburing. Great stuff.=0A=
+=0A=
+I **may** have found a bug. I would expect a socket connect using io_uring =
+to fail as it does using connect() if the port is not setup to listen. In t=
+he simple test case attached it does not. If this is pilot error, please le=
+t me know what I'm doing wrong, or why my expectation is incorrect. Version=
+ information is in the code header. Please let me know if any additional in=
+formation is needed.=0A=
+=0A=
+Thanks,=0A=
+=0A=
+Gene=0A=
+=0A=
+=0A=
+//=0A=
+// Simple program to demonstrate erroneous connect pass.=0A=
+//=0A=
+// liburing Version: 2.2=0A=
+// Linux 5.13.0-1025-aws #27~20.04.1-Ubuntu=0A=
+// g++ (Ubuntu 9.4.0-1ubuntu1~20.04.1) 9.4.0=0A=
+// g++ -Wall -O3 -o cnct_test cnct_test.cpp -luring=0A=
+//=0A=
+#include <stdlib.h>=0A=
+#include <arpa/inet.h>=0A=
+#include <stdio.h>=0A=
+#include <sys/socket.h>=0A=
+#include <cstring>=0A=
+#include <linux/time_types.h>=0A=
+#include <liburing.h>=0A=
+#define PORT 8080=0A=
+#define ADDRESS "127.0.0.1"=0A=
+=0A=
+int main(int argc, char const* argv[]) {=0A=
+    int sock =3D 0;=0A=
+    struct sockaddr_in serv_addr;=0A=
+    memset(&serv_addr, 0, sizeof(serv_addr));=0A=
+=0A=
+    if (argc !=3D 2) {=0A=
+        fprintf(stderr, "\nUsage: %s test_number(1 or 2)\n\n", argv[0]);=0A=
+        exit(EXIT_FAILURE);=0A=
+    }=0A=
+=0A=
+    if ((sock =3D socket(AF_INET, SOCK_STREAM, 0)) < 0) {=0A=
+        perror("Create socket failed");=0A=
+        exit(EXIT_FAILURE);=0A=
+    }=0A=
+=0A=
+    serv_addr.sin_family =3D AF_INET;=0A=
+    serv_addr.sin_port =3D htons(PORT);=0A=
+=0A=
+    if (inet_pton(AF_INET, ADDRESS, &serv_addr.sin_addr) <=3D 0) {=0A=
+        perror("Invalid address/ Address not supported");=0A=
+        exit(EXIT_FAILURE);=0A=
+    }=0A=
+=0A=
+    if (*argv[1] =3D=3D '1') {=0A=
+        fprintf(stdout, "\nTesting that connect() fails if port isn't liste=
+ning.\n");=0A=
+        if (connect(sock, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) =
+< 0) {=0A=
+            perror("Connect failed");=0A=
+            exit(EXIT_FAILURE);=0A=
+        }=0A=
+    }=0A=
+=0A=
+    if (*argv[1] =3D=3D '2') {=0A=
+        fprintf(stdout, "\nTesting that connect using io_uring fails if por=
+t isn't listening.\n");=0A=
+        int job_info =3D 42; // The meaning of life.=0A=
+        struct __kernel_timespec cnct_wait;=0A=
+        cnct_wait.tv_sec =3D 15;=0A=
+        struct io_uring_cqe *cqe;=0A=
+=0A=
+        struct io_uring io_uring_sq;=0A=
+        int rtrn_val =3D io_uring_queue_init(256, &io_uring_sq, 0);=0A=
+        if (rtrn_val < 0) {=0A=
+            fprintf(stderr, "io_uring_queue_init failed: %d", -rtrn_val);=
+=0A=
+            exit (EXIT_FAILURE);=0A=
+        }=0A=
+        struct io_uring_sqe *sqe =3D io_uring_get_sqe(&io_uring_sq);=0A=
+=0A=
+        io_uring_prep_connect(sqe, sock, (struct sockaddr *) &serv_addr, si=
+zeof(serv_addr));=0A=
+        io_uring_sqe_set_data(sqe, &job_info);=0A=
+=0A=
+        rtrn_val =3D io_uring_submit(&io_uring_sq);=0A=
+        if (rtrn_val < 0) {=0A=
+            fprintf(stderr, "io_uring_submit failed: %d", -rtrn_val);=0A=
+            exit (EXIT_FAILURE);=0A=
+        }=0A=
+=0A=
+        rtrn_val =3D io_uring_wait_cqe_timeout(&io_uring_sq, &cqe, &cnct_wa=
+it);=0A=
+        //Same result: rtrn_val =3D io_uring_wait_cqe(&io_uring_sq, &cqe);=
+=0A=
+        if (rtrn_val < 0) {=0A=
+            fprintf(stderr, "io_uring_wait_cqe failed: %d", -rtrn_val);=0A=
+            exit (EXIT_FAILURE);=0A=
+        }=0A=
+        fprintf(stdout, "Why doesn't io_uring_wait_cqe_timeout fail or time=
+out?\n\n");=0A=
+    }=0A=
+=0A=
+    return 0;=0A=
+}=0A=
+=0A=

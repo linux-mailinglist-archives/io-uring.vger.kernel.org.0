@@ -2,119 +2,74 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D98FE535BBC
-	for <lists+io-uring@lfdr.de>; Fri, 27 May 2022 10:42:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2086536323
+	for <lists+io-uring@lfdr.de>; Fri, 27 May 2022 15:03:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233348AbiE0ImL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 27 May 2022 04:42:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36258 "EHLO
+        id S1351558AbiE0NDl convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+io-uring@lfdr.de>); Fri, 27 May 2022 09:03:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348426AbiE0ImL (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 27 May 2022 04:42:11 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8497A2AC64;
-        Fri, 27 May 2022 01:42:09 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id D605321AAA;
-        Fri, 27 May 2022 08:42:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1653640927; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=K3kR8Rvk9ywh6jthWa6f6W+fh5ln2gc1wOBcFNlUoZo=;
-        b=jGTVN/VJ3aSzzuzLCGlGXqp2VGAkPu00h7wV9ZnWD7SUhij0Sx6zjHEASn2lgODJlpPSGL
-        lev8mFDaDbK6ok1HMGyWePK8KX6SVj4N+YhmBx3qY4RWc/V+0qPCx1PTQYsPUR+wkaELOX
-        9K/jx31qvClXXqCSvgbXcA59TOs/vqI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1653640927;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=K3kR8Rvk9ywh6jthWa6f6W+fh5ln2gc1wOBcFNlUoZo=;
-        b=Pxxqrkvw7XHONluBWcBzyxmvH2RJ91//IYl9VyNDBu1px+Fb3HIb1DWpWHUvAQPYhCP6Fa
-        6NhUNoRZqFwLFwAw==
-Received: from quack3.suse.cz (unknown [10.100.224.230])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id AA8FC2C141;
-        Fri, 27 May 2022 08:42:07 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id F3BFBA0632; Fri, 27 May 2022 10:42:03 +0200 (CEST)
-Date:   Fri, 27 May 2022 10:42:03 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
-        kernel-team@fb.com, linux-mm@kvack.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, jack@suse.cz, hch@infradead.org
-Subject: Re: [PATCH v6 05/16] iomap: Add async buffered write support
-Message-ID: <20220527084203.jzufgln7oqfdghvy@quack3.lan>
-References: <20220526173840.578265-1-shr@fb.com>
- <20220526173840.578265-6-shr@fb.com>
- <20220526223705.GJ1098723@dread.disaster.area>
+        with ESMTP id S1351885AbiE0NDj (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 27 May 2022 09:03:39 -0400
+X-Greylist: delayed 6804 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 27 May 2022 06:03:37 PDT
+Received: from mail.composit.net (mail.composit.net [195.49.185.119])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C50BD37BDD;
+        Fri, 27 May 2022 06:03:36 -0700 (PDT)
+Received: from mail.composit.net (localhost.localdomain [127.0.0.1])
+        by mail.composit.net (Proxmox) with ESMTP id BD0D73961E1;
+        Fri, 27 May 2022 14:06:23 +0300 (MSK)
+Received: from mail.composit.net (mail.industrial-flow.com [192.168.101.14])
+        by mail.composit.net (Proxmox) with SMTP id 885C8395F95;
+        Fri, 27 May 2022 14:06:23 +0300 (MSK)
+Received: from [192.168.1.105] (Unknown [197.234.219.23])
+        by mail.composit.net with ESMTPSA
+        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256)
+        ; Fri, 27 May 2022 14:06:24 +0300
+Message-ID: <B009B092-64EF-4D8B-B5BD-BB44579469CF@mail.composit.net>
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220526223705.GJ1098723@dread.disaster.area>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: Greetings From Ukraine.  
+To:     Recipients <heiss@dnet.it>
+From:   "Kostiantyn Chichkov" <heiss@dnet.it>
+Date:   Fri, 27 May 2022 12:06:06 +0100
+Reply-To: kostiantync@online.ee
+X-Spam-Status: Yes, score=5.1 required=5.0 tests=BAYES_50,
+        RCVD_IN_BL_SPAMCOP_NET,RCVD_IN_SBL,RCVD_IN_SORBS_WEB,
+        RCVD_IN_VALIDITY_RPBL,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Report: *  1.3 RCVD_IN_BL_SPAMCOP_NET RBL: Received via a relay in
+        *      bl.spamcop.net
+        *      [Blocked - see <https://www.spamcop.net/bl.shtml?195.49.185.119>]
+        *  0.1 RCVD_IN_SBL RBL: Received via a relay in Spamhaus SBL
+        *      [197.234.219.23 listed in zen.spamhaus.org]
+        *  1.3 RCVD_IN_VALIDITY_RPBL RBL: Relay in Validity RPBL,
+        *      https://senderscore.org/blocklistlookup/
+        *      [195.49.185.119 listed in bl.score.senderscore.com]
+        *  1.5 RCVD_IN_SORBS_WEB RBL: SORBS: sender is an abusable web server
+        *      [197.234.219.23 listed in dnsbl.sorbs.net]
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
+        *  0.0 SPF_NONE SPF: sender does not publish an SPF Record
+        * -0.0 T_SCC_BODY_TEXT_LINE No description available.
+X-Spam-Level: *****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri 27-05-22 08:37:05, Dave Chinner wrote:
-> On Thu, May 26, 2022 at 10:38:29AM -0700, Stefan Roesch wrote:
-> > This adds async buffered write support to iomap.
-> > 
-> > This replaces the call to balance_dirty_pages_ratelimited() with the
-> > call to balance_dirty_pages_ratelimited_flags. This allows to specify if
-> > the write request is async or not.
-> > 
-> > In addition this also moves the above function call to the beginning of
-> > the function. If the function call is at the end of the function and the
-> > decision is made to throttle writes, then there is no request that
-> > io-uring can wait on. By moving it to the beginning of the function, the
-> > write request is not issued, but returns -EAGAIN instead. io-uring will
-> > punt the request and process it in the io-worker.
-> > 
-> > By moving the function call to the beginning of the function, the write
-> > throttling will happen one page later.
-> 
-> Won't it happen one page sooner? I.e. on single page writes we'll
-> end up throttling *before* we dirty the page, not *after* we dirty
-> the page. IOWs, we can't wait for the page that we just dirtied to
-> be cleaned to make progress and so this now makes the loop dependent
-> on pages dirtied by other writers being cleaned to guarantee
-> forwards progress?
-> 
-> That seems like a subtle but quite significant change of
-> algorithm...
+Good Morning,
 
-So I'm convinced the difference will be pretty much in the noise because of
-how many dirty pages there have to be to even start throttling processes
-but some more arguments are:
+We are Kostiantyn Chychkov and Maryna Chudnovska from Ukraine, we need your service, we have gone through your profile and we will like to work with you on an important service that needs urgent attention due to the ongoing war in our country. Kindly acknowledge this inquiry as soon as possible for a detailed discussion about the service.
 
-* we ratelimit calls to balance_dirty_pages() based on number of pages
-  dirtied by the current process in balance_dirty_pages_ratelimited()
+Thank you.
 
-* balance_dirty_pages() uses number of pages dirtied by the current process
-  to decide about the delay.
+Yours expectantly,
 
-So the only situation where I could see this making a difference would be
-if dirty limit is a handful of pages and even there I have hard time to see
-how exactly. So I'm ok with the change and in the case we see it causes
-problems somewhere, we'll think how to fix it based on the exact scenario.
+Kostiantyn Chichkov & Ms. Maryna Chudnovska,
+From Ukraine.
 
-I guess the above two points are the reason why Stefan writes about throttling
-one page later because we count only number of pages dirtied until this
-moment so the page dirtied by this iteration of loop in iomap_write_iter()
-will get reflected only by the call to balance_dirty_pages_ratelimited() in
-the next iteration (or the next call to iomap_write_iter()).
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR

@@ -2,74 +2,118 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E2086536323
-	for <lists+io-uring@lfdr.de>; Fri, 27 May 2022 15:03:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA95553638B
+	for <lists+io-uring@lfdr.de>; Fri, 27 May 2022 15:50:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351558AbiE0NDl convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+io-uring@lfdr.de>); Fri, 27 May 2022 09:03:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50648 "EHLO
+        id S1346092AbiE0Nud (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 27 May 2022 09:50:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351885AbiE0NDj (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 27 May 2022 09:03:39 -0400
-X-Greylist: delayed 6804 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 27 May 2022 06:03:37 PDT
-Received: from mail.composit.net (mail.composit.net [195.49.185.119])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C50BD37BDD;
-        Fri, 27 May 2022 06:03:36 -0700 (PDT)
-Received: from mail.composit.net (localhost.localdomain [127.0.0.1])
-        by mail.composit.net (Proxmox) with ESMTP id BD0D73961E1;
-        Fri, 27 May 2022 14:06:23 +0300 (MSK)
-Received: from mail.composit.net (mail.industrial-flow.com [192.168.101.14])
-        by mail.composit.net (Proxmox) with SMTP id 885C8395F95;
-        Fri, 27 May 2022 14:06:23 +0300 (MSK)
-Received: from [192.168.1.105] (Unknown [197.234.219.23])
-        by mail.composit.net with ESMTPSA
-        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256)
-        ; Fri, 27 May 2022 14:06:24 +0300
-Message-ID: <B009B092-64EF-4D8B-B5BD-BB44579469CF@mail.composit.net>
-Content-Type: text/plain; charset="iso-8859-1"
+        with ESMTP id S241191AbiE0Nuc (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 27 May 2022 09:50:32 -0400
+Received: from mail-il1-x135.google.com (mail-il1-x135.google.com [IPv6:2607:f8b0:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D7E018358
+        for <io-uring@vger.kernel.org>; Fri, 27 May 2022 06:50:31 -0700 (PDT)
+Received: by mail-il1-x135.google.com with SMTP id q3so2875903ilt.9
+        for <io-uring@vger.kernel.org>; Fri, 27 May 2022 06:50:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=Q4HlnP4M3KnRD2xQ+3g55EAyPzM5QsgR4RqaiwyAk1A=;
+        b=Zsb9cEvreybbucDkNAONb+JKPAYw0lVzUav+MMbR6lOumdV74bMWuEyUxWDRZ8LYUk
+         S/l/5LAYWqOO88JZlNJlDIrpucEzX39HWnSB771muMIVK4U3FYMhcWL9QMRMsMPXcTvn
+         qhGMbs49nltl0iKMV+9eQp1xBJwLUYzGes3PkzPy2IdCthjIqaM5im5e0GyKVnnKmUAT
+         oGCZDzfDb7CtDx2wZO2ezLCy61nT+G+K67Rz2YnJ44JTWH9zAuJ1DP8cNnHv4mxsFbon
+         t4n64Al/RHZ3rxkZIaPSVfrks5u/juAFmHUhJDOEodEqrB0BbWOJrAW1MLL1c8wysVAU
+         0ewA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=Q4HlnP4M3KnRD2xQ+3g55EAyPzM5QsgR4RqaiwyAk1A=;
+        b=DiPvAsogupXNVr57Ef33SAlAJ8iWrB6Nwl+IWROBEUrBVlcPOWqI3oUaZcAqseaiOc
+         BkvTbS3+ABhdT70oBTq+3/2FUa2pDtSxkQsBVn0WBLAffJfEtHtAoaXr6VAiuUjEkq+9
+         ThM2sI+IV+lpHO9MirzGLoErZPxLSsB1TyV7f/nMA03kqigVHaLDpAsef7zi3ngZ5UMV
+         X02Y+atk2Y00T4u9bHq22UFreL1kQHgcstiKtIqVNK8GASsi7WntbF9sxE33yymJEB7Q
+         +iA/ZyniwE2Lqx5iPG+NrlsPp5vGv5n3bokDgRcXtokyKZN+ZoIZYSSZ/V6FBJ5+cwc5
+         OSEQ==
+X-Gm-Message-State: AOAM531MnSLGlWdcXiRDdcJRxII3IJx1Om+FgFw0Q95Hcva3BHX7jvhO
+        cSzAv7pRClRZAMVEs+jlNIxEkA==
+X-Google-Smtp-Source: ABdhPJzflBDP+8KeLHSwwPSvMDerBpNFXjto1MRZdAl991s8Idyks4+WKMogwIQgTljrfXPNPfD/cw==
+X-Received: by 2002:a05:6e02:1a83:b0:2d1:bb9a:bade with SMTP id k3-20020a056e021a8300b002d1bb9abademr11282606ilv.189.1653659430312;
+        Fri, 27 May 2022 06:50:30 -0700 (PDT)
+Received: from [192.168.1.172] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id a4-20020a056e0208a400b002d1a5afa79bsm1281521ilt.86.2022.05.27.06.50.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 27 May 2022 06:50:29 -0700 (PDT)
+Message-ID: <2085bfef-a91c-8adb-402b-242e8c5d5c55@kernel.dk>
+Date:   Fri, 27 May 2022 07:50:27 -0600
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: Greetings From Ukraine.  
-To:     Recipients <heiss@dnet.it>
-From:   "Kostiantyn Chichkov" <heiss@dnet.it>
-Date:   Fri, 27 May 2022 12:06:06 +0100
-Reply-To: kostiantync@online.ee
-X-Spam-Status: Yes, score=5.1 required=5.0 tests=BAYES_50,
-        RCVD_IN_BL_SPAMCOP_NET,RCVD_IN_SBL,RCVD_IN_SORBS_WEB,
-        RCVD_IN_VALIDITY_RPBL,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Report: *  1.3 RCVD_IN_BL_SPAMCOP_NET RBL: Received via a relay in
-        *      bl.spamcop.net
-        *      [Blocked - see <https://www.spamcop.net/bl.shtml?195.49.185.119>]
-        *  0.1 RCVD_IN_SBL RBL: Received via a relay in Spamhaus SBL
-        *      [197.234.219.23 listed in zen.spamhaus.org]
-        *  1.3 RCVD_IN_VALIDITY_RPBL RBL: Relay in Validity RPBL,
-        *      https://senderscore.org/blocklistlookup/
-        *      [195.49.185.119 listed in bl.score.senderscore.com]
-        *  1.5 RCVD_IN_SORBS_WEB RBL: SORBS: sender is an abusable web server
-        *      [197.234.219.23 listed in dnsbl.sorbs.net]
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
-        *  0.0 SPF_NONE SPF: sender does not publish an SPF Record
-        * -0.0 T_SCC_BODY_TEXT_LINE No description available.
-X-Spam-Level: *****
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [io_uring] 584b0180f0:
+ phoronix-test-suite.fio.SequentialWrite.IO_uring.Yes.Yes.1MB.DefaultTestDirectory.mb_s
+ -10.2% regression
+Content-Language: en-US
+To:     kernel test robot <oliver.sang@intel.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, io-uring@vger.kernel.org,
+        lkp@lists.01.org, lkp@intel.com, ying.huang@intel.com,
+        feng.tang@intel.com, zhengjun.xing@linux.intel.com,
+        fengwei.yin@intel.com, guobing.chen@intel.com,
+        ming.a.chen@intel.com, frank.du@intel.com, Shuhua.Fan@intel.com,
+        wangyang.guo@intel.com, Wenhuan.Huang@intel.com,
+        jessica.ji@intel.com, shan.kang@intel.com, guangli.li@intel.com,
+        tiejun.li@intel.com, yu.ma@intel.com, dapeng1.mi@intel.com,
+        jiebin.sun@intel.com, gengxin.xie@intel.com, fan.zhao@intel.com
+References: <20220527092432.GE11731@xsang-OptiPlex-9020>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20220527092432.GE11731@xsang-OptiPlex-9020>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-3.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Good Morning,
+On 5/27/22 3:24 AM, kernel test robot wrote:
+> 
+> 
+> Greeting,
+> 
+> FYI, we noticed a -10.2% regression of phoronix-test-suite.fio.SequentialWrite.IO_uring.Yes.Yes.1MB.DefaultTestDirectory.mb_s due to commit:
+> 
+> 
+> commit: 584b0180f0f4d67d7145950fe68c625f06c88b10 ("io_uring: move read/write file prep state into actual opcode handler")
+> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+> 
+> in testcase: phoronix-test-suite
+> on test machine: 96 threads 2 sockets Intel(R) Xeon(R) Gold 6252 CPU @ 2.10GHz with 512G memory
+> with following parameters:
+> 
+> 	test: fio-1.14.1
+> 	option_a: Sequential Write
+> 	option_b: IO_uring
+> 	option_c: Yes
+> 	option_d: Yes
+> 	option_e: 1MB
+> 	option_f: Default Test Directory
+> 	cpufreq_governor: performance
+> 	ucode: 0x500320a
+> 
+> test-description: The Phoronix Test Suite is the most comprehensive testing and benchmarking platform available that provides an extensible framework for which new tests can be easily added.
+> test-url: http://www.phoronix-test-suite.com/
 
-We are Kostiantyn Chychkov and Maryna Chudnovska from Ukraine, we need your service, we have gone through your profile and we will like to work with you on an important service that needs urgent attention due to the ongoing war in our country. Kindly acknowledge this inquiry as soon as possible for a detailed discussion about the service.
+I'm a bit skeptical on this, but I'd like to try and run the test case.
+Since it's just a fio test case, why can't I find it somewhere? Seems
+very convoluted to have to setup lkp-tests just for this. Besides, I
+tried, but it doesn't work on aarch64...
 
-Thank you.
-
-Yours expectantly,
-
-Kostiantyn Chichkov & Ms. Maryna Chudnovska,
-From Ukraine.
-
+-- 
+Jens Axboe
 

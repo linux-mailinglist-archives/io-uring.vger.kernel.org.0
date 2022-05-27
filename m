@@ -2,90 +2,112 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D52965366D0
-	for <lists+io-uring@lfdr.de>; Fri, 27 May 2022 20:03:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B97253690E
+	for <lists+io-uring@lfdr.de>; Sat, 28 May 2022 00:56:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344784AbiE0SDL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 27 May 2022 14:03:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35138 "EHLO
+        id S1355061AbiE0Wwo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 27 May 2022 18:52:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230493AbiE0SDK (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 27 May 2022 14:03:10 -0400
-Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A4E9EC335
-        for <io-uring@vger.kernel.org>; Fri, 27 May 2022 11:03:09 -0700 (PDT)
-Received: by mail-io1-xd31.google.com with SMTP id e3so5399028ios.6
-        for <io-uring@vger.kernel.org>; Fri, 27 May 2022 11:03:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=5ie/HR1hbmrS5lwYhUC7z0fo4VgdjvdRtjlnI9FabTU=;
-        b=1QARBhEnh8b3XRNC0GhYrrqtp+kRckStM7wEQYL2JRN8poQjMhHuolDMKnoktdoGYx
-         6ovcXHBgu/9TwEWbQxlrL24fP3XcOKliJmEf+G91ABYypc/D5xQLBE6vi9H7AGrovRgH
-         /DCMolTUAJnalEaGd0x3DVTz6wvLKdWBZevFjWmeAerzTQfYg3AqUuzY5CvnnAcwXazy
-         b05DZZ81cskjiN2PbZiFI7vKoDWkUGhGdquS5qxzpLJpauxwZUedN4WjSXsVvpjUIke8
-         tOqdkd9KQtsg3iksDEgXK1ctaG6ahxmr4fyGGJVIM0eIQhnkUH4rn/FeH2AFRw9woHeC
-         H4bw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=5ie/HR1hbmrS5lwYhUC7z0fo4VgdjvdRtjlnI9FabTU=;
-        b=EADqG6nq8L8DRfuK9Az1c/gnicLCPiqi1ifUZrpFP3bVfqfR9yfCN+j462iZHrxuEI
-         cvM7XCNaDaPGh9adA1yxeHVW6f51c8je8yE0j/jMOBjysCiNJlS2bI/sS2r2XnjJ7jLU
-         RCMiHE8IQ80sxFdmrJvd380VtBr8Tpr6XaqglmVOSom9HCuau5NoS9u3PEYldWNnQu6d
-         34s8QRk+rmKg9FJTynK/g49s279rAEuk1+9AFCq6JK0FHZ6O+nbeyEiO8dzUs1m+FNli
-         ZgR8wEwbptHrK57ifI7UEVaaYnHEHzjNuMHNbIYgN1zbt1MJyO21oE2kCUxkP5aVAZfB
-         PzKA==
-X-Gm-Message-State: AOAM533D6fjO9XJDplZErT2qih3cyLzHr/K5h2wfwjU3hMviyndzRT6o
-        mNaNlYh+rT72SsaW3mSxAK8aGA==
-X-Google-Smtp-Source: ABdhPJyUlBo8DclJOw5tA751BOhUh1uXqP3MgeOPAXKNqAOtg16cI08gn4UY9IILLuNExuDqUp0kzQ==
-X-Received: by 2002:a05:6638:1409:b0:331:53:a88c with SMTP id k9-20020a056638140900b003310053a88cmr1165522jad.27.1653674588991;
-        Fri, 27 May 2022 11:03:08 -0700 (PDT)
-Received: from [192.168.1.172] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id x5-20020a056e021bc500b002cf846fe476sm1446297ilv.77.2022.05.27.11.03.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 May 2022 11:03:08 -0700 (PDT)
-Message-ID: <587a9737-9979-302e-4484-dfdbebe29d78@kernel.dk>
-Date:   Fri, 27 May 2022 12:03:07 -0600
+        with ESMTP id S233958AbiE0Wwo (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 27 May 2022 18:52:44 -0400
+Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 17278126992;
+        Fri, 27 May 2022 15:52:43 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-2-147.pa.nsw.optusnet.com.au [49.181.2.147])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id AD254537B91;
+        Sat, 28 May 2022 08:52:41 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1nuioy-00HBur-8l; Sat, 28 May 2022 08:52:40 +1000
+Date:   Sat, 28 May 2022 08:52:40 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
+        kernel-team@fb.com, linux-mm@kvack.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, hch@infradead.org
+Subject: Re: [PATCH v6 05/16] iomap: Add async buffered write support
+Message-ID: <20220527225240.GV1098723@dread.disaster.area>
+References: <20220526173840.578265-1-shr@fb.com>
+ <20220526173840.578265-6-shr@fb.com>
+ <20220526223705.GJ1098723@dread.disaster.area>
+ <20220527084203.jzufgln7oqfdghvy@quack3.lan>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH v2] io_uring: defer alloc_hint update to
- io_file_bitmap_set()
-Content-Language: en-US
-To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
-        io-uring@vger.kernel.org
-Cc:     asml.silence@gmail.com
-References: <dce4572c-fecf-bb84-241e-2ea7b4093fef@kernel.dk>
- <20220527173914.50320-1-xiaoguang.wang@linux.alibaba.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20220527173914.50320-1-xiaoguang.wang@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220527084203.jzufgln7oqfdghvy@quack3.lan>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=6291563a
+        a=ivVLWpVy4j68lT4lJFbQgw==:117 a=ivVLWpVy4j68lT4lJFbQgw==:17
+        a=kj9zAlcOel0A:10 a=oZkIemNP1mAA:10 a=7-415B0cAAAA:8
+        a=56L3rgyCVsvNkpJbsA4A:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/27/22 11:39 AM, Xiaoguang Wang wrote:
-> io_file_bitmap_get() returns a free bitmap slot, but if it isn't
-> used later, such as io_queue_rsrc_removal() returns error, in this
-> case, we should not update alloc_hint at all, which still should
-> be considered as a valid candidate for next io_file_bitmap_get()
-> calls.
+On Fri, May 27, 2022 at 10:42:03AM +0200, Jan Kara wrote:
+> On Fri 27-05-22 08:37:05, Dave Chinner wrote:
+> > On Thu, May 26, 2022 at 10:38:29AM -0700, Stefan Roesch wrote:
+> > > This adds async buffered write support to iomap.
+> > > 
+> > > This replaces the call to balance_dirty_pages_ratelimited() with the
+> > > call to balance_dirty_pages_ratelimited_flags. This allows to specify if
+> > > the write request is async or not.
+> > > 
+> > > In addition this also moves the above function call to the beginning of
+> > > the function. If the function call is at the end of the function and the
+> > > decision is made to throttle writes, then there is no request that
+> > > io-uring can wait on. By moving it to the beginning of the function, the
+> > > write request is not issued, but returns -EAGAIN instead. io-uring will
+> > > punt the request and process it in the io-worker.
+> > > 
+> > > By moving the function call to the beginning of the function, the write
+> > > throttling will happen one page later.
+> > 
+> > Won't it happen one page sooner? I.e. on single page writes we'll
+> > end up throttling *before* we dirty the page, not *after* we dirty
+> > the page. IOWs, we can't wait for the page that we just dirtied to
+> > be cleaned to make progress and so this now makes the loop dependent
+> > on pages dirtied by other writers being cleaned to guarantee
+> > forwards progress?
+> > 
+> > That seems like a subtle but quite significant change of
+> > algorithm...
 > 
-> To fix this issue, only update alloc_hint in io_file_bitmap_set().
+> So I'm convinced the difference will be pretty much in the noise because of
+> how many dirty pages there have to be to even start throttling processes
+> but some more arguments are:
+> 
+> * we ratelimit calls to balance_dirty_pages() based on number of pages
+>   dirtied by the current process in balance_dirty_pages_ratelimited()
+> 
+> * balance_dirty_pages() uses number of pages dirtied by the current process
+>   to decide about the delay.
+> 
+> So the only situation where I could see this making a difference would be
+> if dirty limit is a handful of pages and even there I have hard time to see
+> how exactly.
 
-Why are you changing the io_file_bitmap_set() type?
+That's kinda what worries me - we do see people winding the dirty
+thresholds way down to work around various niche problems with
+dirty page buildup.
 
+We also have small extra accounting overhead for cases where we've
+stacked layers to so the lower layers don't dirty throttle before
+the higher layer. If the lower layer throttles first, then the
+higher layer can't clean pages and we can deadlock.
 
+Those are the sorts of subtle, niche situations where I worry that
+the subtle "throttle first, write second" change could manifest...
+
+Cheers,
+
+Dave.
 -- 
-Jens Axboe
-
+Dave Chinner
+david@fromorbit.com

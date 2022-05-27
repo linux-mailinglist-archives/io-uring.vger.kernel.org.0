@@ -2,88 +2,119 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B7F65358E8
-	for <lists+io-uring@lfdr.de>; Fri, 27 May 2022 07:57:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D98FE535BBC
+	for <lists+io-uring@lfdr.de>; Fri, 27 May 2022 10:42:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240765AbiE0F5A (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 27 May 2022 01:57:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35238 "EHLO
+        id S233348AbiE0ImL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 27 May 2022 04:42:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36258 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235470AbiE0F47 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 27 May 2022 01:56:59 -0400
-Received: from pv50p00im-tydg10011801.me.com (pv50p00im-tydg10011801.me.com [17.58.6.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FFF13467D
-        for <io-uring@vger.kernel.org>; Thu, 26 May 2022 22:56:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-        s=1a1hai; t=1653631018;
-        bh=juBI7kLyX/MUe0t733hEOkq0Czmjv+jG00B0hHXpQ8c=;
-        h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-        b=xEVTPfmMGgY5Xdcsb5Ni4SeKKEgit6Du8YhujYYI72dFrvXxvnMFvDWAc3z26M7WD
-         LLL4py/mvmL1uCLozb3stNHWAxwyKsPsHLPFZzn6olliNgVSClRf2zD8dJLeL2W5nZ
-         MY5XAE6LvRDybE3Y0Ci8GUG25/QUnAgXa3ayQg/xRvTRy2ZYtMBLTWnKwRsylUDWgp
-         n5DViE3seQV/Snj1eLvvssMnygknmB5BJ8ZmV4rZ3+l9qb1/xAPwO1Acu/eWo7HEY3
-         EuK9LzShUV/R2dCLhNK4lyGO9MQ2GGVBWZUPCUOCmLFR9+a12Ux2p/j1vq1+v1vLEz
-         lkFR8Bty/ZV9A==
-Received: from [10.97.63.88] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-        by pv50p00im-tydg10011801.me.com (Postfix) with ESMTPSA id 227B38003C0;
-        Fri, 27 May 2022 05:56:56 +0000 (UTC)
-Message-ID: <a994fa74-0aec-d345-7375-8388368d1354@icloud.com>
-Date:   Fri, 27 May 2022 13:56:52 +0800
+        with ESMTP id S1348426AbiE0ImL (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 27 May 2022 04:42:11 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8497A2AC64;
+        Fri, 27 May 2022 01:42:09 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id D605321AAA;
+        Fri, 27 May 2022 08:42:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1653640927; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=K3kR8Rvk9ywh6jthWa6f6W+fh5ln2gc1wOBcFNlUoZo=;
+        b=jGTVN/VJ3aSzzuzLCGlGXqp2VGAkPu00h7wV9ZnWD7SUhij0Sx6zjHEASn2lgODJlpPSGL
+        lev8mFDaDbK6ok1HMGyWePK8KX6SVj4N+YhmBx3qY4RWc/V+0qPCx1PTQYsPUR+wkaELOX
+        9K/jx31qvClXXqCSvgbXcA59TOs/vqI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1653640927;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=K3kR8Rvk9ywh6jthWa6f6W+fh5ln2gc1wOBcFNlUoZo=;
+        b=Pxxqrkvw7XHONluBWcBzyxmvH2RJ91//IYl9VyNDBu1px+Fb3HIb1DWpWHUvAQPYhCP6Fa
+        6NhUNoRZqFwLFwAw==
+Received: from quack3.suse.cz (unknown [10.100.224.230])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id AA8FC2C141;
+        Fri, 27 May 2022 08:42:07 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id F3BFBA0632; Fri, 27 May 2022 10:42:03 +0200 (CEST)
+Date:   Fri, 27 May 2022 10:42:03 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
+        kernel-team@fb.com, linux-mm@kvack.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, jack@suse.cz, hch@infradead.org
+Subject: Re: [PATCH v6 05/16] iomap: Add async buffered write support
+Message-ID: <20220527084203.jzufgln7oqfdghvy@quack3.lan>
+References: <20220526173840.578265-1-shr@fb.com>
+ <20220526173840.578265-6-shr@fb.com>
+ <20220526223705.GJ1098723@dread.disaster.area>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH] io_uring: wire up allocated direct descriptors for socket
-Content-Language: en-US
-To:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
-References: <fdf98193-26d2-b543-acac-82e9557d3072@kernel.dk>
-From:   Hao Xu <haoxu.linux@icloud.com>
-In-Reply-To: <fdf98193-26d2-b543-acac-82e9557d3072@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.486,18.0.874
- definitions=2022-05-27_01:2022-05-25,2022-05-27 signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 clxscore=1015 mlxscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-2009150000 definitions=main-2205270029
-X-Spam-Status: No, score=-4.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220526223705.GJ1098723@dread.disaster.area>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/27/22 07:05, Jens Axboe wrote:
-> The socket support was merged in an earlier branch that didn't yet
-> have support for allocating direct descriptors, hence only open
-> and accept got support for that.
+On Fri 27-05-22 08:37:05, Dave Chinner wrote:
+> On Thu, May 26, 2022 at 10:38:29AM -0700, Stefan Roesch wrote:
+> > This adds async buffered write support to iomap.
+> > 
+> > This replaces the call to balance_dirty_pages_ratelimited() with the
+> > call to balance_dirty_pages_ratelimited_flags. This allows to specify if
+> > the write request is async or not.
+> > 
+> > In addition this also moves the above function call to the beginning of
+> > the function. If the function call is at the end of the function and the
+> > decision is made to throttle writes, then there is no request that
+> > io-uring can wait on. By moving it to the beginning of the function, the
+> > write request is not issued, but returns -EAGAIN instead. io-uring will
+> > punt the request and process it in the io-worker.
+> > 
+> > By moving the function call to the beginning of the function, the write
+> > throttling will happen one page later.
 > 
-> Do the one-liner to enable it now, so we have consistent support for
-> any request that can instantiate a file/direct descriptor.
+> Won't it happen one page sooner? I.e. on single page writes we'll
+> end up throttling *before* we dirty the page, not *after* we dirty
+> the page. IOWs, we can't wait for the page that we just dirtied to
+> be cleaned to make progress and so this now makes the loop dependent
+> on pages dirtied by other writers being cleaned to guarantee
+> forwards progress?
 > 
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> 
-> ---
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index ccb47d87a65a..d50bbf8de4fb 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -6676,8 +6676,8 @@ static int io_socket(struct io_kiocb *req, unsigned int issue_flags)
->   		fd_install(fd, file);
->   		ret = fd;
->   	} else {
-> -		ret = io_install_fixed_file(req, file, issue_flags,
-> -					    sock->file_slot - 1);
-> +		ret = io_fixed_fd_install(req, issue_flags, file,
-> +					    sock->file_slot);
->   	}
->   	__io_req_complete(req, issue_flags, ret, 0);
->   	return 0;
-> 
+> That seems like a subtle but quite significant change of
+> algorithm...
 
+So I'm convinced the difference will be pretty much in the noise because of
+how many dirty pages there have to be to even start throttling processes
+but some more arguments are:
 
-Reviewed-by: Hao Xu <howeyxu@tencent.com>
+* we ratelimit calls to balance_dirty_pages() based on number of pages
+  dirtied by the current process in balance_dirty_pages_ratelimited()
+
+* balance_dirty_pages() uses number of pages dirtied by the current process
+  to decide about the delay.
+
+So the only situation where I could see this making a difference would be
+if dirty limit is a handful of pages and even there I have hard time to see
+how exactly. So I'm ok with the change and in the case we see it causes
+problems somewhere, we'll think how to fix it based on the exact scenario.
+
+I guess the above two points are the reason why Stefan writes about throttling
+one page later because we count only number of pages dirtied until this
+moment so the page dirtied by this iteration of loop in iomap_write_iter()
+will get reflected only by the call to balance_dirty_pages_ratelimited() in
+the next iteration (or the next call to iomap_write_iter()).
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR

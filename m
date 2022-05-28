@@ -2,59 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 574CB536A20
-	for <lists+io-uring@lfdr.de>; Sat, 28 May 2022 04:14:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53765536A21
+	for <lists+io-uring@lfdr.de>; Sat, 28 May 2022 04:14:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351982AbiE1COW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 27 May 2022 22:14:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39736 "EHLO
+        id S1352312AbiE1COZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 27 May 2022 22:14:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229496AbiE1COV (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 27 May 2022 22:14:21 -0400
-Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31BA35FF3E
-        for <io-uring@vger.kernel.org>; Fri, 27 May 2022 19:14:20 -0700 (PDT)
-Received: by mail-pg1-x533.google.com with SMTP id x12so5361300pgj.7
-        for <io-uring@vger.kernel.org>; Fri, 27 May 2022 19:14:20 -0700 (PDT)
+        with ESMTP id S229496AbiE1COY (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 27 May 2022 22:14:24 -0400
+Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD8C6633BD
+        for <io-uring@vger.kernel.org>; Fri, 27 May 2022 19:14:23 -0700 (PDT)
+Received: by mail-pl1-x632.google.com with SMTP id q4so5600826plr.11
+        for <io-uring@vger.kernel.org>; Fri, 27 May 2022 19:14:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=from:to:cc:in-reply-to:references:subject:message-id:date
          :mime-version:content-transfer-encoding;
-        bh=ZT+WoV+uB7k9vADqq0AldkNF/2qFfZlzXS9NX44RLa0=;
-        b=dAKWXAG56OFa5SBzzTBDff6cGU268HfEhNLzFtaU/WfgwgLtc9oMFTfP+ViDGWBR3I
-         1cBhY/ztS0CJkgVNH0Cr0ev0AFrXEU05+zBAr1iDHIpzARSP97j7Fsf0olf7U6OHHk9S
-         HtPuC2XSwzbRzWu9rft6GGyfxVV45l6Y4RIyFCGJSkPZx1a/A8p639wu5m8sZhFBMdPi
-         uxn4aH3RPOt7Sx8I4oZ/3LmntfWyiwGDx/Zj3aeOUIAL+F3AZwkGs2hVuuKQ/zBwKQdT
-         4YU7i8InUcLxywyigQCJgUTg5MjnQ/r9BP8YgXWzx7R9MEkQCBWOqTOm2lYoG+E5MDg4
-         qkKQ==
+        bh=Na8hMEY8lBHm6RSzcTnwQathpiBPKq8T6QIyfb00CFQ=;
+        b=G7pQ4KgZNMhy6mVPcezN4s7eyrFGLGAIynIqJ4TxRMNlIqY1QB2AzzVCXxb5sD8/w6
+         PduW7++9xzBiX0rfo76jETUftpuXp+F/BXjRRa4C0QCluUJ5dcqRGUMn2GFGrIvDO1t/
+         RQGH/jOBhtmOJcRt9rX45iJmcfaiy55Y9UdfaXUhfr0oChU83HOYTMjhiKpnKuclWJMR
+         JegVMCZocK/peupZc6pnTWFHYOn1yperFiYN8SbGrxLzS4nwOR1m5YU2DVHXym157HEs
+         niC1DjD3v5Zin3B5SAtG+I9QGWLdQAwTwse/CRMTEyBjfyPfcqJGNNiS0zt7kCA8/iCW
+         WxCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
          :message-id:date:mime-version:content-transfer-encoding;
-        bh=ZT+WoV+uB7k9vADqq0AldkNF/2qFfZlzXS9NX44RLa0=;
-        b=P8qsqqXQJ3hkTgFspCIKF4i5wnd9Klm9clRCBdTZwnlZUPHPRxUHz97PuMvidL+C00
-         CBuqa4HVPgYzdZ3RfI2LDOOw2m2sgJe/4fndONgNvFVA9EiQDArnKenHT8x8q7DeFJg/
-         hBO8e/IiNJ9PnUTbvVY0yoBYdxkezn5YL57nKpc0mQ9whwJYV5jRyggMHpFRdJ5uaR7M
-         iyXXX6pvCRv7Gke0hnQHA980dSp9iVfnSX4OU0VQmvPampwUUHYLL0AgWchusSdDNPNh
-         OYlH3yQt5reQxl3+H+uPLXDGuauGLfWQucICuuf29ZI3GsfUTV1asao59TUnElEkvVtQ
-         RxTA==
-X-Gm-Message-State: AOAM532QyCaGnhLDYi5NeacvHGbABvIlV0kkBGM9TIkdeTKxFcKaA0HW
-        R28QDn6LUaDh6nJR8K4ODdgszc0BazdL6w==
-X-Google-Smtp-Source: ABdhPJzJpKho3dudDExNFPnwvrENFGncGDgtGatOdaiksACKfhv0GkxAomjmcffmD4K9ZRNUsXTCRQ==
-X-Received: by 2002:a05:6a02:11a:b0:3fb:d90c:b3f8 with SMTP id bg26-20020a056a02011a00b003fbd90cb3f8mr657379pgb.192.1653704059496;
-        Fri, 27 May 2022 19:14:19 -0700 (PDT)
+        bh=Na8hMEY8lBHm6RSzcTnwQathpiBPKq8T6QIyfb00CFQ=;
+        b=arR1OUWJLBmNdkwR6CsCJ6dfU5APp3FtzFYdv2zxKhuHm9X7xsMow2aEOQE0vLxtI4
+         zIc34lok9FQ++Mj/UYijJl04O5AlhKgNrMlwjACzlP+rGJjSh/mj2WYVmyA8DgOqvq/R
+         Eai1df3+e/Gm9o4x1U4g4OcV7dUT+pGQul6dFqdcNxQ2jQMHbFctpfYy29LCPfH8hzIP
+         BFILSWFgmh3OYmDZ8ROf4p6Zj6zeqBAExUXZKiuhal1nJlbJylsTvHTSdF0V5gY7FKeX
+         Ij4gYFnPXTtN/ApOX4dCsWqmFLbwQ2B6rxcgfa9LyJ9/C9I+JkpqEngW5Wd26AnvZedH
+         oZpA==
+X-Gm-Message-State: AOAM530JxJge8+uid2QT7gLNEvcQ9IlfNEiIz6NMqdmVPgwpcSIVj9yC
+        H9uIYl0q7OtJB8nbXnCdMtQZ8w==
+X-Google-Smtp-Source: ABdhPJyApEQ4pufj4++SCgUTPJNclxe/5FevlyXdDzvfhf1sfQwVQgbq1MXLISxKz4CFbIKuG4T9Gg==
+X-Received: by 2002:a17:90a:4615:b0:1df:40e6:6474 with SMTP id w21-20020a17090a461500b001df40e66474mr11543903pjg.194.1653704063314;
+        Fri, 27 May 2022 19:14:23 -0700 (PDT)
 Received: from [127.0.1.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id h24-20020aa796d8000000b0050df474e4d2sm4137599pfq.218.2022.05.27.19.14.18
+        by smtp.gmail.com with ESMTPSA id p10-20020a170902ebca00b00161ac982b52sm4397555plg.95.2022.05.27.19.14.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 May 2022 19:14:18 -0700 (PDT)
+        Fri, 27 May 2022 19:14:22 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org, xiaoguang.wang@linux.alibaba.com
+To:     xiaoguang.wang@linux.alibaba.com, io-uring@vger.kernel.org
 Cc:     asml.silence@gmail.com
-In-Reply-To: <20220527025400.51048-1-xiaoguang.wang@linux.alibaba.com>
-References: <20220527025400.51048-1-xiaoguang.wang@linux.alibaba.com>
-Subject: Re: [PATCH] io_uring: ensure fput() called correspondingly when direct install fails
-Message-Id: <165370405851.572238.16555901056195715889.b4-ty@kernel.dk>
-Date:   Fri, 27 May 2022 20:14:18 -0600
+In-Reply-To: <20220528015109.48039-1-xiaoguang.wang@linux.alibaba.com>
+References: <587a9737-9979-302e-4484-dfdbebe29d78@kernel.dk> <20220528015109.48039-1-xiaoguang.wang@linux.alibaba.com>
+Subject: Re: [PATCH v3] io_uring: defer alloc_hint update to io_file_bitmap_set()
+Message-Id: <165370406243.574042.17161014772371599664.b4-ty@kernel.dk>
+Date:   Fri, 27 May 2022 20:14:22 -0600
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -67,16 +67,21 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, 27 May 2022 10:54:00 +0800, Xiaoguang Wang wrote:
-> io_fixed_fd_install() may fail for short of free fixed file bitmap,
-> in this case, need to call fput() correspondingly.
+On Sat, 28 May 2022 09:51:09 +0800, Xiaoguang Wang wrote:
+> io_file_bitmap_get() returns a free bitmap slot, but if it isn't
+> used later, such as io_queue_rsrc_removal() returns error, in this
+> case, we should not update alloc_hint at all, which still should
+> be considered as a valid candidate for next io_file_bitmap_get()
+> calls.
 > 
+> To fix this issue, only update alloc_hint in io_file_bitmap_set().
 > 
+> [...]
 
 Applied, thanks!
 
-[1/1] io_uring: ensure fput() called correspondingly when direct install fails
-      commit: 1c145c7f3616ec48725edeac8edf26ee6ed4b661
+[1/1] io_uring: defer alloc_hint update to io_file_bitmap_set()
+      commit: e2d547c6e3caa4b6278bcb30686e1faf6777b3f6
 
 Best regards,
 -- 

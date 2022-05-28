@@ -2,89 +2,143 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 53765536A21
-	for <lists+io-uring@lfdr.de>; Sat, 28 May 2022 04:14:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7E0B536C0A
+	for <lists+io-uring@lfdr.de>; Sat, 28 May 2022 11:45:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352312AbiE1COZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 27 May 2022 22:14:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39762 "EHLO
+        id S233322AbiE1JpS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 28 May 2022 05:45:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229496AbiE1COY (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 27 May 2022 22:14:24 -0400
-Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD8C6633BD
-        for <io-uring@vger.kernel.org>; Fri, 27 May 2022 19:14:23 -0700 (PDT)
-Received: by mail-pl1-x632.google.com with SMTP id q4so5600826plr.11
-        for <io-uring@vger.kernel.org>; Fri, 27 May 2022 19:14:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:in-reply-to:references:subject:message-id:date
-         :mime-version:content-transfer-encoding;
-        bh=Na8hMEY8lBHm6RSzcTnwQathpiBPKq8T6QIyfb00CFQ=;
-        b=G7pQ4KgZNMhy6mVPcezN4s7eyrFGLGAIynIqJ4TxRMNlIqY1QB2AzzVCXxb5sD8/w6
-         PduW7++9xzBiX0rfo76jETUftpuXp+F/BXjRRa4C0QCluUJ5dcqRGUMn2GFGrIvDO1t/
-         RQGH/jOBhtmOJcRt9rX45iJmcfaiy55Y9UdfaXUhfr0oChU83HOYTMjhiKpnKuclWJMR
-         JegVMCZocK/peupZc6pnTWFHYOn1yperFiYN8SbGrxLzS4nwOR1m5YU2DVHXym157HEs
-         niC1DjD3v5Zin3B5SAtG+I9QGWLdQAwTwse/CRMTEyBjfyPfcqJGNNiS0zt7kCA8/iCW
-         WxCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
-         :message-id:date:mime-version:content-transfer-encoding;
-        bh=Na8hMEY8lBHm6RSzcTnwQathpiBPKq8T6QIyfb00CFQ=;
-        b=arR1OUWJLBmNdkwR6CsCJ6dfU5APp3FtzFYdv2zxKhuHm9X7xsMow2aEOQE0vLxtI4
-         zIc34lok9FQ++Mj/UYijJl04O5AlhKgNrMlwjACzlP+rGJjSh/mj2WYVmyA8DgOqvq/R
-         Eai1df3+e/Gm9o4x1U4g4OcV7dUT+pGQul6dFqdcNxQ2jQMHbFctpfYy29LCPfH8hzIP
-         BFILSWFgmh3OYmDZ8ROf4p6Zj6zeqBAExUXZKiuhal1nJlbJylsTvHTSdF0V5gY7FKeX
-         Ij4gYFnPXTtN/ApOX4dCsWqmFLbwQ2B6rxcgfa9LyJ9/C9I+JkpqEngW5Wd26AnvZedH
-         oZpA==
-X-Gm-Message-State: AOAM530JxJge8+uid2QT7gLNEvcQ9IlfNEiIz6NMqdmVPgwpcSIVj9yC
-        H9uIYl0q7OtJB8nbXnCdMtQZ8w==
-X-Google-Smtp-Source: ABdhPJyApEQ4pufj4++SCgUTPJNclxe/5FevlyXdDzvfhf1sfQwVQgbq1MXLISxKz4CFbIKuG4T9Gg==
-X-Received: by 2002:a17:90a:4615:b0:1df:40e6:6474 with SMTP id w21-20020a17090a461500b001df40e66474mr11543903pjg.194.1653704063314;
-        Fri, 27 May 2022 19:14:23 -0700 (PDT)
-Received: from [127.0.1.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id p10-20020a170902ebca00b00161ac982b52sm4397555plg.95.2022.05.27.19.14.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 May 2022 19:14:22 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     xiaoguang.wang@linux.alibaba.com, io-uring@vger.kernel.org
-Cc:     asml.silence@gmail.com
-In-Reply-To: <20220528015109.48039-1-xiaoguang.wang@linux.alibaba.com>
-References: <587a9737-9979-302e-4484-dfdbebe29d78@kernel.dk> <20220528015109.48039-1-xiaoguang.wang@linux.alibaba.com>
-Subject: Re: [PATCH v3] io_uring: defer alloc_hint update to io_file_bitmap_set()
-Message-Id: <165370406243.574042.17161014772371599664.b4-ty@kernel.dk>
-Date:   Fri, 27 May 2022 20:14:22 -0600
+        with ESMTP id S232644AbiE1JpR (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 28 May 2022 05:45:17 -0400
+Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77ACD1C11F
+        for <io-uring@vger.kernel.org>; Sat, 28 May 2022 02:45:15 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04357;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0VEamy97_1653731111;
+Received: from 192.168.0.107(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0VEamy97_1653731111)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Sat, 28 May 2022 17:45:12 +0800
+Message-ID: <76746921-0d10-2e8b-db30-26f1143b953b@linux.alibaba.com>
+Date:   Sat, 28 May 2022 17:45:11 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.9.1
+Subject: Re: [RFC] io_uring: let IORING_OP_FILES_UPDATE support to choose
+ fixed file slot
+Content-Language: en-US
+To:     Hao Xu <haoxu.linux@icloud.com>, io-uring@vger.kernel.org
+Cc:     axboe@kernel.dk, asml.silence@gmail.com
+References: <20220526123848.18998-1-xiaoguang.wang@linux.alibaba.com>
+ <aff94898-3642-99c4-e640-39139214dbc7@icloud.com>
+From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+In-Reply-To: <aff94898-3642-99c4-e640-39139214dbc7@icloud.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-12.1 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Sat, 28 May 2022 09:51:09 +0800, Xiaoguang Wang wrote:
-> io_file_bitmap_get() returns a free bitmap slot, but if it isn't
-> used later, such as io_queue_rsrc_removal() returns error, in this
-> case, we should not update alloc_hint at all, which still should
-> be considered as a valid candidate for next io_file_bitmap_get()
-> calls.
-> 
-> To fix this issue, only update alloc_hint in io_file_bitmap_set().
-> 
-> [...]
+hi Hao,
 
-Applied, thanks!
+> Hi Xiaoguang,
+>
+> On 5/26/22 20:38, Xiaoguang Wang wrote:
+>> One big issue with file registration feature is that it needs user
+>> space apps to maintain free slot info about io_uring's fixed file
+>> table, which really is a burden for development. Now since io_uring
+>> starts to choose free file slot for user space apps by using
+>> IORING_FILE_INDEX_ALLOC flag in accept or open operations, but they
+>> need app to uses direct accept or direct open, which as far as I know,
+>> some apps are not prepared to use direct accept or open yet.
+>>
+>> To support apps, who still need real fds, use registration feature
+>> easier, let IORING_OP_FILES_UPDATE support to choose fixed file slot,
+>> which will return free file slot in cqe->res.
+>>
+>> TODO list:
+>>      Need to prepare liburing corresponding helpers.
+>>
+>> Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+>> ---
+>>   fs/io_uring.c                 | 50 ++++++++++++++++++++++++++++++++++---------
+>>   include/uapi/linux/io_uring.h |  1 +
+>>   2 files changed, 41 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>> index 9f1c682d7caf..d77e6bbec81c 100644
+>> --- a/fs/io_uring.c
+>> +++ b/fs/io_uring.c
+>> @@ -680,6 +680,7 @@ struct io_rsrc_update {
+>>       u64                arg;
+>>       u32                nr_args;
+>>       u32                offset;
+>> +    u32                flags;
+>>   };
+>>     struct io_fadvise {
+>> @@ -7970,14 +7971,23 @@ static int io_async_cancel(struct io_kiocb *req, unsigned int issue_flags)
+>>       return 0;
+>>   }
+>>   +#define IORING_FILES_UPDATE_INDEX_ALLOC 1
+>> +
+>>   static int io_rsrc_update_prep(struct io_kiocb *req,
+>>                   const struct io_uring_sqe *sqe)
+>>   {
+>> +    u32 flags = READ_ONCE(sqe->files_update_flags);
+>> +
+>>       if (unlikely(req->flags & (REQ_F_FIXED_FILE | REQ_F_BUFFER_SELECT)))
+>>           return -EINVAL;
+>> -    if (sqe->rw_flags || sqe->splice_fd_in)
+>> +    if (sqe->splice_fd_in)
+>> +        return -EINVAL;
+>> +    if (flags & ~IORING_FILES_UPDATE_INDEX_ALLOC)
+>> +        return -EINVAL;
+>> +    if ((flags & IORING_FILES_UPDATE_INDEX_ALLOC) && READ_ONCE(sqe->len) != 1)
+>
+> How about allowing multiple fd update in IORING_FILES_UPDATE_INDEX_ALLOC
+> case? For example, using the sqe->addr(the fd array) to store the slots we allocated, and let cqe return the number of slots allocated.
+Good idea, I'll try in patch v2, thanks.
+Jens, any comments about this patch? At least It's really helpful to our
+internal apps based on io_uring :)
 
-[1/1] io_uring: defer alloc_hint update to io_file_bitmap_set()
-      commit: e2d547c6e3caa4b6278bcb30686e1faf6777b3f6
+Regards,
+Xiaoguang Wang
 
-Best regards,
--- 
-Jens Axboe
-
+> By the way, another way, we can levarage up->offset == IORING_FILE_INDEX_ALLOC
+> to do the mode check since seems it is not used in this mode. Though
+> I'm not sure that is better..
+>
+>>           return -EINVAL;
+>>   +    req->rsrc_update.flags = flags;
+>>       req->rsrc_update.offset = READ_ONCE(sqe->off);
+>>       req->rsrc_update.nr_args = READ_ONCE(sqe->len);
+>>       if (!req->rsrc_update.nr_args)
+>> @@ -7990,18 +8000,38 @@ static int io_files_update(struct io_kiocb *req, unsigned int issue_flags)
+>>   {
+>>       struct io_ring_ctx *ctx = req->ctx;
+>>       struct io_uring_rsrc_update2 up;
+>> +    struct file *file;
+>>       int ret;
+>>   -    up.offset = req->rsrc_update.offset;
+>> -    up.data = req->rsrc_update.arg;
+>> -    up.nr = 0;
+>> -    up.tags = 0;
+>> -    up.resv = 0;
+>> -    up.resv2 = 0;
+>> +    if (req->rsrc_update.flags & IORING_FILES_UPDATE_INDEX_ALLOC) {
+>> +        int fd;
+>>   -    io_ring_submit_lock(ctx, issue_flags);
+>> -    ret = __io_register_rsrc_update(ctx, IORING_RSRC_FILE,
+>> -                    &up, req->rsrc_update.nr_args);
+>> +        if (copy_from_user(&fd, (int *)req->rsrc_update.arg, sizeof(fd))) {
+>
+>                                           ^ (void __user *) ?
+>
+> Regards,
+> Hao
 

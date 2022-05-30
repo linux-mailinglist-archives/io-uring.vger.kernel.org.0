@@ -2,82 +2,96 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 42D14537AD1
-	for <lists+io-uring@lfdr.de>; Mon, 30 May 2022 14:53:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 091C5537AD6
+	for <lists+io-uring@lfdr.de>; Mon, 30 May 2022 14:54:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236207AbiE3MxZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 30 May 2022 08:53:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47712 "EHLO
+        id S229782AbiE3Mys (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 30 May 2022 08:54:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229782AbiE3MxY (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 30 May 2022 08:53:24 -0400
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39AFF814AC
-        for <io-uring@vger.kernel.org>; Mon, 30 May 2022 05:53:23 -0700 (PDT)
-Received: by mail-pj1-x102e.google.com with SMTP id pq9-20020a17090b3d8900b001df622bf81dso10655756pjb.3
-        for <io-uring@vger.kernel.org>; Mon, 30 May 2022 05:53:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=0u8XMK7DXWnPZ+iZhhH9I35wjtyMi4yFCwMhO1qP+1c=;
-        b=WaVx9XBv0kkw06CfRxCjGIQg9ftcUKeTNGwIlBx6SURJufxOBk6AdGceowJyZPewBy
-         yaJeY53mosw2qu5wds7bH8EdbV/6JeZBNKONgjt9rkDmOIvfhxUGH4rR61t//z61Mwq+
-         ktFlb9zZYHI+oJB+aaB6FOQjWOB83SGkuolTK+f1cX0ZNYJjNuqT3yyARd3/tidyGIvL
-         UXJhJEYYEtYcKSzDZKdS7OE7ygDS1az/uJ7wYdE7aPjkPY2/t0rrlNOuCN4fZPIA2ZrH
-         OjHyFAKrkbJwXMEODSC2qKrKnTLbJ8JKPqOdHPOf0HnFVA/cvoGosap1AogsswjR1WMF
-         XOKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=0u8XMK7DXWnPZ+iZhhH9I35wjtyMi4yFCwMhO1qP+1c=;
-        b=A8JRSDWnEdXLWpI445E6QFRgRYdNAsuhaBUMHsxRgKSPObBe7Ot9gEhZC0ISTyspq1
-         ioxUVls+XOw2q2Hwn+ywnElbB4U7lEVRSrj7tnV7HdWuNiWTXJD6z8VK3cEjfR8J+DUv
-         lkmZdGetIg5quUBlakNoZUyVO6NrO7aDX37cIEtNPuOeIGefrR8CYDI49FTLbVLBjOqN
-         3wCiF8tj+ADBMBazOOK2Cy2dinf3jmI0zmBcsenj+P43cZQn6vAYwownnsVpr+vGZDcp
-         8gqQClNO1TYVq/rjY7QeyXb4dZzn4fLhSaCJANorcx1oWZpBk2/QteQTO4tlqJFadSR5
-         WW5A==
-X-Gm-Message-State: AOAM532mtMr+r3FUsjjl7iV0vpTuvK+IWtrQT2JnzhHHofh4BpV1Hddm
-        jmfga32n1p34mYNVagZfWaNW1g==
-X-Google-Smtp-Source: ABdhPJzNGkJ/lMz4GgbYVwBr2ttejXH16zgsNjLibG9xjRYant3FxpOBxJUlJK5aQFz9i+0hACYPUA==
-X-Received: by 2002:a17:902:ef47:b0:156:646b:58e7 with SMTP id e7-20020a170902ef4700b00156646b58e7mr55549426plx.57.1653915202572;
-        Mon, 30 May 2022 05:53:22 -0700 (PDT)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id n1-20020a17090aab8100b001e0d197898dsm11591169pjq.3.2022.05.30.05.53.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 May 2022 05:53:22 -0700 (PDT)
-Message-ID: <84974aeb-7354-6473-4c80-a1a190f80e91@kernel.dk>
-Date:   Mon, 30 May 2022 06:53:20 -0600
+        with ESMTP id S236208AbiE3Myr (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 30 May 2022 08:54:47 -0400
+Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1239814AC
+        for <io-uring@vger.kernel.org>; Mon, 30 May 2022 05:54:44 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0VEq6flO_1653915281;
+Received: from 30.82.254.106(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0VEq6flO_1653915281)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 30 May 2022 20:54:42 +0800
+Message-ID: <ce0427aa-291a-c42a-02c8-7e80ec978f1a@linux.alibaba.com>
+Date:   Mon, 30 May 2022 20:54:41 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.9.1
 Subject: Re: [PATCH] io_uring: let IORING_OP_FILES_UPDATE support to choose
  fixed file slots
 Content-Language: en-US
-To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
-        io-uring@vger.kernel.org
-Cc:     asml.silence@gmail.com
+From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+To:     io-uring@vger.kernel.org
+Cc:     axboe@kernel.dk, asml.silence@gmail.com
 References: <20220530124654.22349-1-xiaoguang.wang@linux.alibaba.com>
-From:   Jens Axboe <axboe@kernel.dk>
 In-Reply-To: <20220530124654.22349-1-xiaoguang.wang@linux.alibaba.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-10.4 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/30/22 6:46 AM, Xiaoguang Wang wrote:
+hi,
+
+Forgot to add "Suggested-by: Hao Xu <howeyxu@tencent.com>". If this
+patch can be merged directly, please kindly add this, thanks.
+
+Regards,
+Xiaoguang Wang
+> One big issue with file registration feature is that it needs user
+> space apps to maintain free slot info about io_uring's fixed file
+> table, which really is a burden for development. Now since io_uring
+> starts to choose free file slot for user space apps by using
+> IORING_FILE_INDEX_ALLOC flag in accept or open operations, but they
+> need app to uses direct accept or direct open, which as far as I know,
+> some apps are not prepared to use direct accept or open yet.
+>
+> To support apps, who still need real fds, use registration feature
+> easier, let IORING_OP_FILES_UPDATE support to choose fixed file slots,
+> which will store picked fixed files slots in fd array and let cqe return
+> the number of slots allocated.
+>
+> Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+> ---
+>  fs/io_uring.c                 | 85 +++++++++++++++++++++++++++++++++++--------
+>  include/uapi/linux/io_uring.h |  1 +
+>  2 files changed, 70 insertions(+), 16 deletions(-)
+>
 > diff --git a/fs/io_uring.c b/fs/io_uring.c
 > index 6d91148e9679..58514b8048da 100644
 > --- a/fs/io_uring.c
 > +++ b/fs/io_uring.c
+> @@ -574,6 +574,7 @@ struct io_close {
+>  	struct file			*file;
+>  	int				fd;
+>  	u32				file_slot;
+> +	u32				flags;
+>  };
+>  
+>  struct io_timeout_data {
+> @@ -1366,7 +1367,9 @@ static int io_req_prep_async(struct io_kiocb *req);
+>  
+>  static int io_install_fixed_file(struct io_kiocb *req, struct file *file,
+>  				 unsigned int issue_flags, u32 slot_index);
+> -static int io_close_fixed(struct io_kiocb *req, unsigned int issue_flags);
+> +static int __io_close_fixed(struct io_kiocb *req, unsigned int issue_flags,
+> +			    unsigned int offset);
+> +static inline int io_close_fixed(struct io_kiocb *req, unsigned int issue_flags);
+>  
+>  static enum hrtimer_restart io_link_timeout_fn(struct hrtimer *timer);
+>  static void io_eventfd_signal(struct io_ring_ctx *ctx);
 > @@ -5945,16 +5948,20 @@ static int io_statx(struct io_kiocb *req, unsigned int issue_flags)
 >  	return 0;
 >  }
@@ -96,14 +110,6 @@ On 5/30/22 6:46 AM, Xiaoguang Wang wrote:
 >  	req->close.file_slot = READ_ONCE(sqe->file_index);
 > -	if (req->close.file_slot && req->close.fd)
 > +	req->close.flags = READ_ONCE(sqe->close_flags);
-
-This needs a:
-
-	if (req->closeflags & ~IORING_CLOSE_FD_AND_FILE_SLOT)
-		return -EINVAL;
-
-to be future proof in terms of new flags.
-
 > +	if (!(req->close.flags & IORING_CLOSE_FD_AND_FILE_SLOT) &&
 > +	    req->close.file_slot && req->close.fd)
 >  		return -EINVAL;
@@ -180,11 +186,53 @@ to be future proof in terms of new flags.
 > +		up.tags = 0;
 > +		up.resv = 0;
 > +		up.resv2 = 0;
-
-Move 'up' into this branch?
-
-Do you have a liburing test case for this as well?
-
--- 
-Jens Axboe
+>  
+> -	io_ring_submit_lock(ctx, issue_flags);
+> -	ret = __io_register_rsrc_update(ctx, IORING_RSRC_FILE,
+> -					&up, req->rsrc_update.nr_args);
+> -	io_ring_submit_unlock(ctx, issue_flags);
+> +		io_ring_submit_lock(ctx, issue_flags);
+> +		ret = __io_register_rsrc_update(ctx, IORING_RSRC_FILE,
+> +				&up, req->rsrc_update.nr_args);
+> +		io_ring_submit_unlock(ctx, issue_flags);
+> +	}
+>  
+>  	if (ret < 0)
+>  		req_set_fail(req);
+> @@ -10183,9 +10231,9 @@ static int io_install_fixed_file(struct io_kiocb *req, struct file *file,
+>  	return ret;
+>  }
+>  
+> -static int io_close_fixed(struct io_kiocb *req, unsigned int issue_flags)
+> +static int __io_close_fixed(struct io_kiocb *req, unsigned int issue_flags,
+> +			    unsigned int offset)
+>  {
+> -	unsigned int offset = req->close.file_slot - 1;
+>  	struct io_ring_ctx *ctx = req->ctx;
+>  	struct io_fixed_file *file_slot;
+>  	struct file *file;
+> @@ -10222,6 +10270,11 @@ static int io_close_fixed(struct io_kiocb *req, unsigned int issue_flags)
+>  	return ret;
+>  }
+>  
+> +static inline int io_close_fixed(struct io_kiocb *req, unsigned int issue_flags)
+> +{
+> +	return __io_close_fixed(req, issue_flags, req->close.file_slot - 1);
+> +}
+> +
+>  static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+>  				 struct io_uring_rsrc_update2 *up,
+>  				 unsigned nr_args)
+> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+> index 53e7dae92e42..e347b3fea4e4 100644
+> --- a/include/uapi/linux/io_uring.h
+> +++ b/include/uapi/linux/io_uring.h
+> @@ -47,6 +47,7 @@ struct io_uring_sqe {
+>  		__u32		unlink_flags;
+>  		__u32		hardlink_flags;
+>  		__u32		xattr_flags;
+> +		__u32		close_flags;
+>  	};
+>  	__u64	user_data;	/* data to be passed back at completion time */
+>  	/* pack this to avoid bogus arm OABI complaints */
 

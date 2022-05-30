@@ -2,45 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DBF653739F
-	for <lists+io-uring@lfdr.de>; Mon, 30 May 2022 04:48:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04BA55374EA
+	for <lists+io-uring@lfdr.de>; Mon, 30 May 2022 09:23:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232305AbiE3CsA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 29 May 2022 22:48:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38656 "EHLO
+        id S232936AbiE3GiW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 30 May 2022 02:38:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232304AbiE3Cr7 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 29 May 2022 22:47:59 -0400
-Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 161843E5FC
-        for <io-uring@vger.kernel.org>; Sun, 29 May 2022 19:47:56 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0VEgpr6c_1653878873;
-Received: from 30.82.254.106(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0VEgpr6c_1653878873)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 30 May 2022 10:47:54 +0800
-Message-ID: <2333ef08-250b-6f8d-10e9-d3c9040bcc47@linux.alibaba.com>
-Date:   Mon, 30 May 2022 10:47:53 +0800
+        with ESMTP id S231825AbiE3GiV (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 30 May 2022 02:38:21 -0400
+Received: from pv50p00im-ztdg10021901.me.com (pv50p00im-ztdg10021901.me.com [17.58.6.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73BBD19C0D
+        for <io-uring@vger.kernel.org>; Sun, 29 May 2022 23:38:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+        s=1a1hai; t=1653892700;
+        bh=tA3Nii9CNGxKYW/YSQxFuTscgNq9xe/LMk37rOL/+Ls=;
+        h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+        b=iGvO8vTrgFZCQDG7KcdoaG1NGzByZTV/wTMucdRDu4Br46Zg2qb/QQeZv8iC3J+or
+         zNk73vawfq0Lg1ODisO2asPpJmGWfdH8tlKTBF+WRez+SMo0AxNF4edhJlRIiVoEqt
+         YnGclyQjoUEr8lmCOxrtd2fp3L76DldpiRuugSZWfvUus1faoRieju37NJ0Qxf/da0
+         rDSNyT8H+hBgmnesB+qBxvSozUNfvp/Sge9DdFPkB0W5L9hpqQlPte/0I6o0a7LE3H
+         56wXo4l7mm2r0ZE6ac8zK/D4ldZNQvEgDNdvSaCIeWYsQwtFpExXL82UXcbwYuaTla
+         yJzWGNgPpTg7w==
+Received: from [192.168.31.207] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+        by pv50p00im-ztdg10021901.me.com (Postfix) with ESMTPSA id E91BC8149E;
+        Mon, 30 May 2022 06:38:17 +0000 (UTC)
+Message-ID: <5aa1d864-f4ee-643d-500d-0542d6fb72f3@icloud.com>
+Date:   Mon, 30 May 2022 14:38:13 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.9.1
-Subject: Re: [RFC] io_uring: let IORING_OP_FILES_UPDATE support to choose
- fixed file slot
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH 2/2] io_uring: switch cancel_hash to use per list spinlock
 Content-Language: en-US
-To:     Jens Axboe <axboe@kernel.dk>, Hao Xu <haoxu.linux@icloud.com>,
-        io-uring@vger.kernel.org
-Cc:     asml.silence@gmail.com
-References: <20220526123848.18998-1-xiaoguang.wang@linux.alibaba.com>
- <aff94898-3642-99c4-e640-39139214dbc7@icloud.com>
- <76746921-0d10-2e8b-db30-26f1143b953b@linux.alibaba.com>
- <58d62354-0dab-e6a6-662d-26253bcb8123@kernel.dk>
- <8e6585df-10d6-9f12-5e82-7d7bc905e741@kernel.dk>
-From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-In-Reply-To: <8e6585df-10d6-9f12-5e82-7d7bc905e741@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-11.8 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <20220529162000.32489-1-haoxu.linux@icloud.com>
+ <20220529162000.32489-3-haoxu.linux@icloud.com>
+ <37c50986-8a47-5eb4-d416-cbbfd54497b0@kernel.dk>
+ <2c7bf862-5d94-892c-4026-97e85ba78593@icloud.com>
+ <2ed2d510-759b-86fb-8f31-4cb7522c77e6@kernel.dk>
+ <d476c344-56ea-db57-052a-876605662362@gmail.com>
+From:   Hao Xu <haoxu.linux@icloud.com>
+In-Reply-To: <d476c344-56ea-db57-052a-876605662362@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.486,18.0.874
+ definitions=2022-05-30_02:2022-05-27,2022-05-30 signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 clxscore=1015 mlxscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-2009150000 definitions=main-2205300034
+X-Spam-Status: No, score=-4.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -48,78 +62,129 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-hi,
-
-> On 5/28/22 6:28 AM, Jens Axboe wrote:
->> On 5/28/22 3:45 AM, Xiaoguang Wang wrote:
->>> hi Hao,
->>>
->>>> Hi Xiaoguang,
+On 5/30/22 06:50, Pavel Begunkov wrote:
+> On 5/29/22 19:40, Jens Axboe wrote:
+>> On 5/29/22 12:07 PM, Hao Xu wrote:
+>>> On 5/30/22 00:25, Jens Axboe wrote:
+>>>> On 5/29/22 10:20 AM, Hao Xu wrote:
+>>>>> From: Hao Xu <howeyxu@tencent.com>
+>>>>>
+>>>>> From: Hao Xu <howeyxu@tencent.com>
+>>>>>
+>>>>> Use per list lock for cancel_hash, this removes some completion lock
+>>>>> invocation and remove contension between different cancel_hash entries
 >>>>
->>>> On 5/26/22 20:38, Xiaoguang Wang wrote:
->>>>> One big issue with file registration feature is that it needs user
->>>>> space apps to maintain free slot info about io_uring's fixed file
->>>>> table, which really is a burden for development. Now since io_uring
->>>>> starts to choose free file slot for user space apps by using
->>>>> IORING_FILE_INDEX_ALLOC flag in accept or open operations, but they
->>>>> need app to uses direct accept or direct open, which as far as I know,
->>>>> some apps are not prepared to use direct accept or open yet.
->>>>>
->>>>> To support apps, who still need real fds, use registration feature
->>>>> easier, let IORING_OP_FILES_UPDATE support to choose fixed file slot,
->>>>> which will return free file slot in cqe->res.
->>>>>
->>>>> TODO list:
->>>>>      Need to prepare liburing corresponding helpers.
->>>>>
->>>>> Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
->>>>> ---
->>>>>   fs/io_uring.c                 | 50 ++++++++++++++++++++++++++++++++++---------
->>>>>   include/uapi/linux/io_uring.h |  1 +
->>>>>   2 files changed, 41 insertions(+), 10 deletions(-)
->>>>>
->>>>> diff --git a/fs/io_uring.c b/fs/io_uring.c
->>>>> index 9f1c682d7caf..d77e6bbec81c 100644
->>>>> --- a/fs/io_uring.c
->>>>> +++ b/fs/io_uring.c
->>>>> @@ -680,6 +680,7 @@ struct io_rsrc_update {
->>>>>       u64                arg;
->>>>>       u32                nr_args;
->>>>>       u32                offset;
->>>>> +    u32                flags;
->>>>>   };
->>>>>     struct io_fadvise {
->>>>> @@ -7970,14 +7971,23 @@ static int io_async_cancel(struct io_kiocb *req, unsigned int issue_flags)
->>>>>       return 0;
->>>>>   }
->>>>>   +#define IORING_FILES_UPDATE_INDEX_ALLOC 1
->>>>> +
->>>>>   static int io_rsrc_update_prep(struct io_kiocb *req,
->>>>>                   const struct io_uring_sqe *sqe)
->>>>>   {
->>>>> +    u32 flags = READ_ONCE(sqe->files_update_flags);
->>>>> +
->>>>>       if (unlikely(req->flags & (REQ_F_FIXED_FILE | REQ_F_BUFFER_SELECT)))
->>>>>           return -EINVAL;
->>>>> -    if (sqe->rw_flags || sqe->splice_fd_in)
->>>>> +    if (sqe->splice_fd_in)
->>>>> +        return -EINVAL;
->>>>> +    if (flags & ~IORING_FILES_UPDATE_INDEX_ALLOC)
->>>>> +        return -EINVAL;
->>>>> +    if ((flags & IORING_FILES_UPDATE_INDEX_ALLOC) && READ_ONCE(sqe->len) != 1)
->>>> How about allowing multiple fd update in IORING_FILES_UPDATE_INDEX_ALLOC
->>>> case? For example, using the sqe->addr(the fd array) to store the slots we allocated, and let cqe return the number of slots allocated.
->>> Good idea, I'll try in patch v2, thanks.
->>> Jens, any comments about this patch? At least It's really helpful to our
->>> internal apps based on io_uring :)
->> I like this suggestion too, other thoughts in reply to the original.
-> BTW, if you have time, would be great to get this done for 5.19. It
-> makes the whole thing more consistent and makes it so that 5.19 has
-> (hopefully) all the alloc bits for direct descriptors.
-Yeah, I have free time now, will prepare new version today.
+>>>> Interesting, do you have any numbers on this?
+>>>
+>>> Just Theoretically for now, I'll do some tests tomorrow. This is
+>>> actually RFC, forgot to change the subject.
+>>>
+>>>>
+>>>> Also, I'd make a hash bucket struct:
+>>>>
+>>>> struct io_hash_bucket {
+>>>>      spinlock_t lock;
+>>>>      struct hlist_head list;
+>>>> };
+>>>>
+>>>> rather than two separate structs, that'll have nicer memory locality 
+>>>> too
+>>>> and should further improve it. Could be done as a prep patch with the
+>>>> old locking in place, making the end patch doing the per-bucket lock
+>>>> simpler as well.
+>>>
+>>> Sure, if the test number make sense, I'll send v2. I'll test the
+>>> hlist_bl list as well(the comment of it says it is much slower than
+>>> normal spin_lock, but we may not care the efficiency of poll
+>>> cancellation very much?).
+>>
+>> I don't think the bit spinlocks are going to be useful, we should
+>> stick with a spinlock for this. They are indeed slower and generally not
+>> used for that reason. For a use case where you need a ton of locks and
+>> saving the 4 bytes for a spinlock would make sense (or maybe not
+>> changing some struct?), maybe they have a purpose. But not for this.
+> 
+> We can put the cancel hashes under uring_lock and completely kill
+> the hash spinlocking (2 lock/unlock pairs per single-shot). The code
+> below won't even compile and missing cancellation bits, I'll pick it
+> up in a week.
+> 
+> Even better would be to have two hash tables, and auto-magically apply
+> the feature to SINGLE_SUBMITTER, SQPOLL (both will have uring_lock held)
+> and apoll (need uring_lock after anyway).
+> 
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 6be21967959d..191fa7f31610 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -7120,12 +7120,20 @@ static void io_poll_task_func(struct io_kiocb 
+> *req, bool *locked)
+>       }
+> 
+>       io_poll_remove_entries(req);
+> -    spin_lock(&ctx->completion_lock);
+> -    hash_del(&req->hash_node);
+> -    __io_req_complete_post(req, req->cqe.res, 0);
+> -    io_commit_cqring(ctx);
+> -    spin_unlock(&ctx->completion_lock);
+> -    io_cqring_ev_posted(ctx);
+> +
+> +    if (ctx->flags & IORING_MUTEX_HASH) {
+> +        io_tw_lock(ctx, locked);
+> +        hash_del(&req->hash_node);
+> +        io_req_complete_state(req, req->cqe.res, 0);
+> +        io_req_add_compl_list(req);
+> +    } else {
+> +        spin_lock(&ctx->completion_lock);
+> +        hash_del(&req->hash_node);
+> +        __io_req_complete_post(req, req->cqe.res, 0);
+> +        io_commit_cqring(ctx);
+> +        spin_unlock(&ctx->completion_lock);
+> +        io_cqring_ev_posted(ctx);
+> +    }
+>   }
+> 
+>   static void io_apoll_task_func(struct io_kiocb *req, bool *locked)
+> @@ -7138,9 +7146,14 @@ static void io_apoll_task_func(struct io_kiocb 
+> *req, bool *locked)
+>           return;
+> 
+>       io_poll_remove_entries(req);
+> -    spin_lock(&ctx->completion_lock);
+> -    hash_del(&req->hash_node);
+> -    spin_unlock(&ctx->completion_lock);
+> +    if (ctx->flags & IORING_MUTEX_HASH) {
+> +        io_tw_lock(ctx, locked);
+> +        hash_del(&req->hash_node);
+> +    } else {
+> +        spin_lock(&ctx->completion_lock);
+> +        hash_del(&req->hash_node);
+> +        spin_unlock(&ctx->completion_lock);
+> +    }
+> 
+>       if (!ret)
+>           io_req_task_submit(req, locked);
+> @@ -7332,9 +7345,13 @@ static int __io_arm_poll_handler(struct io_kiocb 
+> *req,
+>           return 0;
+>       }
+> 
+> -    spin_lock(&ctx->completion_lock);
+> -    io_poll_req_insert(req);
+> -    spin_unlock(&ctx->completion_lock);
+> +    if (ctx->flags & IORING_MUTEX_HASH) {
 
-Regards,
-Xiaoguang Wang
+Does IORING_MUTEX_HASH exclude IOSQE_ASYNC as well? though IOSQE_ASYNC
+is uncommon but users may do that.
 
->
+> +        io_poll_req_insert(req);
+> +    } else {
+> +        spin_lock(&ctx->completion_lock);
+> +        io_poll_req_insert(req);
+> +        spin_unlock(&ctx->completion_lock);
+> +    }
+> 
+>       if (mask) {
+>           /* can't multishot if failed, just queue the event we've got */
 

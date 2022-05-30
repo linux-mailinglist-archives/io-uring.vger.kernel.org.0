@@ -2,237 +2,179 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 091C5537AD6
-	for <lists+io-uring@lfdr.de>; Mon, 30 May 2022 14:54:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D729537ADA
+	for <lists+io-uring@lfdr.de>; Mon, 30 May 2022 14:56:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229782AbiE3Mys (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 30 May 2022 08:54:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52280 "EHLO
+        id S234887AbiE3M4W (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 30 May 2022 08:56:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236208AbiE3Myr (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 30 May 2022 08:54:47 -0400
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1239814AC
-        for <io-uring@vger.kernel.org>; Mon, 30 May 2022 05:54:44 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0VEq6flO_1653915281;
-Received: from 30.82.254.106(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0VEq6flO_1653915281)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 30 May 2022 20:54:42 +0800
-Message-ID: <ce0427aa-291a-c42a-02c8-7e80ec978f1a@linux.alibaba.com>
-Date:   Mon, 30 May 2022 20:54:41 +0800
+        with ESMTP id S234641AbiE3M4W (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 30 May 2022 08:56:22 -0400
+Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53939814AC
+        for <io-uring@vger.kernel.org>; Mon, 30 May 2022 05:56:20 -0700 (PDT)
+Received: by mail-pj1-x1031.google.com with SMTP id v5-20020a17090a7c0500b001df84fa82f8so10657017pjf.5
+        for <io-uring@vger.kernel.org>; Mon, 30 May 2022 05:56:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=K6VzgG1AJe4Xd+5hJRY/oqKoGn5IvIO2rEcozSWX0Ic=;
+        b=xvfJ92XLHM6Kg7CsqAs7zGoeKKLABjxDJXoxDnnWHT0HchU+Cq+Ln9U/F2AlaeXFJI
+         Tx8bdbmnq2DRdQOZ2hwpVKyPVzUO16qDDmhWgAByCtiZnxwhUrNPPZo4SRsCJFE2uHwP
+         Sn70UTSteOA1xdgS5UVN9gBQH8O0//3h/Wu+cOYVTWOrOKoY0KXxD7CLS1Prhg/LrLz1
+         CfkOZ+HSiVbLm70gG6o6cezO0dYmf+u9bEETIMwmjuDd0aMK2YjsNYQsGyvdCtn9CMUm
+         RsnrWvJbskAcd/9QOXYBiM7xPYVTjbXxP1QX6FnacTMhKgyeDrPjX3KP22xR1cqqZIaP
+         qsnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=K6VzgG1AJe4Xd+5hJRY/oqKoGn5IvIO2rEcozSWX0Ic=;
+        b=8Qt5b/KAEzUNTcvmEWEwOtDfu0KQGGN5tSlnW8yNDXSHNR2Jd3yxAqtECXfJXJPqyR
+         3NkuEL2i2GHD8wlCRvMjiNZ/1+er6SJRZ0/4vzMhAmdp7RueBQXiA979wbgRqhh5BUhz
+         kme1o3a/Fg5eXd76PcNn2LJgHtFpbmjtY0uE6zPdz3wW/uwn9FoKdd6HKjHQQ3NJy03v
+         aUeZcRcpBHjzQKTL8yQuHSThT8yqYsWXz08D6N8yyXGQQfRSjaJ0hGyODKQ0AMnfcTjo
+         mgdLsrsSITzeDNvTniYH/faCrNsQXPR6N6++Tyh9kwWoSP/qZ8tNBN4aIA/kaYlvPWsm
+         nzJg==
+X-Gm-Message-State: AOAM531fSCEkFMo0psP479ayxKVXwroKteTF+iIP64IM5ULtd+2jQk/X
+        1ewvKeI3/q9C7N+ImPKlTwjUFg==
+X-Google-Smtp-Source: ABdhPJzlp4QcUl2poIbkjGWdEicdK/5zLzaGFZkQpMTFKI5iFd9nmULRN7AQyyqpCN1AeR+BDJv+0Q==
+X-Received: by 2002:a17:902:b107:b0:161:db34:61ea with SMTP id q7-20020a170902b10700b00161db3461eamr54746022plr.27.1653915379769;
+        Mon, 30 May 2022 05:56:19 -0700 (PDT)
+Received: from [192.168.1.100] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id l8-20020a17090aec0800b001e30207ae98sm1902200pjy.7.2022.05.30.05.56.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 May 2022 05:56:19 -0700 (PDT)
+Message-ID: <0a27cbbb-2d14-132b-2892-885389f1da5b@kernel.dk>
+Date:   Mon, 30 May 2022 06:56:18 -0600
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.9.1
-Subject: Re: [PATCH] io_uring: let IORING_OP_FILES_UPDATE support to choose
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [LIBURING PATCH] Let IORING_OP_FILES_UPDATE support to choose
  fixed file slots
 Content-Language: en-US
-From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-To:     io-uring@vger.kernel.org
-Cc:     axboe@kernel.dk, asml.silence@gmail.com
-References: <20220530124654.22349-1-xiaoguang.wang@linux.alibaba.com>
-In-Reply-To: <20220530124654.22349-1-xiaoguang.wang@linux.alibaba.com>
+To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
+        io-uring@vger.kernel.org
+Cc:     asml.silence@gmail.com
+References: <20220530124827.23756-1-xiaoguang.wang@linux.alibaba.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20220530124827.23756-1-xiaoguang.wang@linux.alibaba.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-10.4 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-hi,
+On 5/30/22 6:48 AM, Xiaoguang Wang wrote:
+> Allocate available direct descriptors instead of having the
+> application pass free fixed file slots. To use it, pass
+> IORING_FILE_INDEX_ALLOC to io_uring_prep_files_update(), then
+> io_uring in kernel will store picked fixed file slots in fd
+> array and let cqe return the number of slots allocated.
 
-Forgot to add "Suggested-by: Hao Xu <howeyxu@tencent.com>". If this
-patch can be merged directly, please kindly add this, thanks.
+Ah thanks, didn't see this before replying. A few minor comments:
 
-Regards,
-Xiaoguang Wang
-> One big issue with file registration feature is that it needs user
-> space apps to maintain free slot info about io_uring's fixed file
-> table, which really is a burden for development. Now since io_uring
-> starts to choose free file slot for user space apps by using
-> IORING_FILE_INDEX_ALLOC flag in accept or open operations, but they
-> need app to uses direct accept or direct open, which as far as I know,
-> some apps are not prepared to use direct accept or open yet.
->
-> To support apps, who still need real fds, use registration feature
-> easier, let IORING_OP_FILES_UPDATE support to choose fixed file slots,
-> which will store picked fixed files slots in fd array and let cqe return
-> the number of slots allocated.
->
-> Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-> ---
->  fs/io_uring.c                 | 85 +++++++++++++++++++++++++++++++++++--------
->  include/uapi/linux/io_uring.h |  1 +
->  2 files changed, 70 insertions(+), 16 deletions(-)
->
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 6d91148e9679..58514b8048da 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -574,6 +574,7 @@ struct io_close {
->  	struct file			*file;
->  	int				fd;
->  	u32				file_slot;
-> +	u32				flags;
->  };
->  
->  struct io_timeout_data {
-> @@ -1366,7 +1367,9 @@ static int io_req_prep_async(struct io_kiocb *req);
->  
->  static int io_install_fixed_file(struct io_kiocb *req, struct file *file,
->  				 unsigned int issue_flags, u32 slot_index);
-> -static int io_close_fixed(struct io_kiocb *req, unsigned int issue_flags);
-> +static int __io_close_fixed(struct io_kiocb *req, unsigned int issue_flags,
-> +			    unsigned int offset);
-> +static inline int io_close_fixed(struct io_kiocb *req, unsigned int issue_flags);
->  
->  static enum hrtimer_restart io_link_timeout_fn(struct hrtimer *timer);
->  static void io_eventfd_signal(struct io_ring_ctx *ctx);
-> @@ -5945,16 +5948,20 @@ static int io_statx(struct io_kiocb *req, unsigned int issue_flags)
->  	return 0;
+> diff --git a/src/include/liburing.h b/src/include/liburing.h
+> index 6429dff..9b95ad5 100644
+> --- a/src/include/liburing.h
+> +++ b/src/include/liburing.h
+> @@ -614,6 +614,14 @@ static inline void io_uring_prep_close_direct(struct io_uring_sqe *sqe,
+>  	__io_uring_set_target_fixed_file(sqe, file_index);
 >  }
 >  
-> +#define IORING_CLOSE_FD_AND_FILE_SLOT 1
-> +
->  static int io_close_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
->  {
-> -	if (sqe->off || sqe->addr || sqe->len || sqe->rw_flags || sqe->buf_index)
-> +	if (sqe->off || sqe->addr || sqe->len || sqe->buf_index)
->  		return -EINVAL;
->  	if (req->flags & REQ_F_FIXED_FILE)
->  		return -EBADF;
->  
->  	req->close.fd = READ_ONCE(sqe->fd);
->  	req->close.file_slot = READ_ONCE(sqe->file_index);
-> -	if (req->close.file_slot && req->close.fd)
-> +	req->close.flags = READ_ONCE(sqe->close_flags);
-> +	if (!(req->close.flags & IORING_CLOSE_FD_AND_FILE_SLOT) &&
-> +	    req->close.file_slot && req->close.fd)
->  		return -EINVAL;
->  
->  	return 0;
-> @@ -5970,7 +5977,8 @@ static int io_close(struct io_kiocb *req, unsigned int issue_flags)
->  
->  	if (req->close.file_slot) {
->  		ret = io_close_fixed(req, issue_flags);
-> -		goto err;
-> +		if (ret || !(req->close.flags & IORING_CLOSE_FD_AND_FILE_SLOT))
-> +			goto err;
->  	}
->  
->  	spin_lock(&files->file_lock);
-> @@ -8003,23 +8011,63 @@ static int io_files_update_prep(struct io_kiocb *req,
->  	return 0;
->  }
->  
-> +static int io_files_update_with_index_alloc(struct io_kiocb *req,
-> +					    unsigned int issue_flags)
+> +static inline void io_uring_prep_close_all(struct io_uring_sqe *sqe,
+> +					   int fd, unsigned file_index)
 > +{
-> +	__s32 __user *fds = u64_to_user_ptr(req->rsrc_update.arg);
-> +	struct file *file;
-> +	unsigned int done, nr_fds = req->rsrc_update.nr_args;
-> +	int ret, fd;
+> +	io_uring_prep_close(sqe, fd);
+> +	__io_uring_set_target_fixed_file(sqe, file_index);
+> +	sqe->close_flags = 1;
+> +}
+
+This needs a man page addition as well to io_uring_prep_close.3.
+
+> diff --git a/test/file-update-index-alloc.c b/test/file-update-index-alloc.c
+> new file mode 100644
+> index 0000000..774cbb5
+> --- /dev/null
+> +++ b/test/file-update-index-alloc.c
+> @@ -0,0 +1,129 @@
+> +/* SPDX-License-Identifier: MIT */
+> +/*
+> + * Description: test IORING_OP_FILES_UPDATE can support io_uring
+> + * allocates an available direct descriptor instead of having the
+> + * application pass one.
+> + */
 > +
-> +	for (done = 0; done < nr_fds; done++) {
-> +		if (copy_from_user(&fd, &fds[done], sizeof(fd))) {
-> +			ret = -EFAULT;
-> +			break;
-> +		}
+> +#include <errno.h>
+> +#include <stdio.h>
+> +#include <unistd.h>
+> +#include <stdlib.h>
+> +#include <string.h>
+> +#include <fcntl.h>
+> +#include <sys/uio.h>
 > +
-> +		file = fget(fd);
-> +		if (!file) {
-> +			ret = -EBADF;
-> +			goto out;
-> +		}
-> +		ret = io_fixed_fd_install(req, issue_flags, file,
-> +					  IORING_FILE_INDEX_ALLOC);
-> +		if (ret < 0)
-> +			goto out;
-> +		if (copy_to_user(&fds[done], &ret, sizeof(ret))) {
-> +			ret = -EFAULT;
-> +			__io_close_fixed(req, issue_flags, ret);
-> +			break;
-> +		}
+> +#include "helpers.h"
+> +#include "liburing.h"
+> +
+> +int main(int argc, char *argv[])
+> +{
+> +	struct io_uring_cqe *cqe;
+> +	struct io_uring_sqe *sqe;
+> +	char wbuf[1] = { 0xef }, rbuf[1] = {0x0};
+> +	struct io_uring ring;
+> +	int i, ret, pipe_fds[2], fds[2] = { -1, -1};
+> +
+> +	ret = io_uring_queue_init(8, &ring, 0);
+> +	if (ret) {
+> +		fprintf(stderr, "ring setup failed\n");
+> +		return -1;
 > +	}
 > +
-> +out:
-> +	if (done)
-> +		return done;
-> +	return ret;
-> +}
-> +
->  static int io_files_update(struct io_kiocb *req, unsigned int issue_flags)
->  {
->  	struct io_ring_ctx *ctx = req->ctx;
->  	struct io_uring_rsrc_update2 up;
->  	int ret;
->  
-> -	up.offset = req->rsrc_update.offset;
-> -	up.data = req->rsrc_update.arg;
-> -	up.nr = 0;
-> -	up.tags = 0;
-> -	up.resv = 0;
-> -	up.resv2 = 0;
-> +	if (req->rsrc_update.offset == IORING_FILE_INDEX_ALLOC) {
-> +		ret = io_files_update_with_index_alloc(req, issue_flags);
-> +	} else {
-> +		up.offset = req->rsrc_update.offset;
-> +		up.data = req->rsrc_update.arg;
-> +		up.nr = 0;
-> +		up.tags = 0;
-> +		up.resv = 0;
-> +		up.resv2 = 0;
->  
-> -	io_ring_submit_lock(ctx, issue_flags);
-> -	ret = __io_register_rsrc_update(ctx, IORING_RSRC_FILE,
-> -					&up, req->rsrc_update.nr_args);
-> -	io_ring_submit_unlock(ctx, issue_flags);
-> +		io_ring_submit_lock(ctx, issue_flags);
-> +		ret = __io_register_rsrc_update(ctx, IORING_RSRC_FILE,
-> +				&up, req->rsrc_update.nr_args);
-> +		io_ring_submit_unlock(ctx, issue_flags);
+> +	ret = io_uring_register_files(&ring, fds, 2);
+> +	if (ret) {
+> +		fprintf(stderr, "%s: register ret=%d\n", __func__, ret);
+> +		return -1;
 > +	}
->  
->  	if (ret < 0)
->  		req_set_fail(req);
-> @@ -10183,9 +10231,9 @@ static int io_install_fixed_file(struct io_kiocb *req, struct file *file,
->  	return ret;
->  }
->  
-> -static int io_close_fixed(struct io_kiocb *req, unsigned int issue_flags)
-> +static int __io_close_fixed(struct io_kiocb *req, unsigned int issue_flags,
-> +			    unsigned int offset)
->  {
-> -	unsigned int offset = req->close.file_slot - 1;
->  	struct io_ring_ctx *ctx = req->ctx;
->  	struct io_fixed_file *file_slot;
->  	struct file *file;
-> @@ -10222,6 +10270,11 @@ static int io_close_fixed(struct io_kiocb *req, unsigned int issue_flags)
->  	return ret;
->  }
->  
-> +static inline int io_close_fixed(struct io_kiocb *req, unsigned int issue_flags)
-> +{
-> +	return __io_close_fixed(req, issue_flags, req->close.file_slot - 1);
-> +}
 > +
->  static int __io_sqe_files_update(struct io_ring_ctx *ctx,
->  				 struct io_uring_rsrc_update2 *up,
->  				 unsigned nr_args)
-> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-> index 53e7dae92e42..e347b3fea4e4 100644
-> --- a/include/uapi/linux/io_uring.h
-> +++ b/include/uapi/linux/io_uring.h
-> @@ -47,6 +47,7 @@ struct io_uring_sqe {
->  		__u32		unlink_flags;
->  		__u32		hardlink_flags;
->  		__u32		xattr_flags;
-> +		__u32		close_flags;
->  	};
->  	__u64	user_data;	/* data to be passed back at completion time */
->  	/* pack this to avoid bogus arm OABI complaints */
+> +	if (pipe2(pipe_fds, O_NONBLOCK)) {
+> +		fprintf(stderr, "pipe() failed\n");
+> +		return -1;
+> +	}
+> +
+> +	/*
+> +	 * Pass IORING_FILE_INDEX_ALLOC, so io_uring in kernel will allocate
+> +	 * available direct descriptors.
+> +	 */
+> +	fds[0] = pipe_fds[0];
+> +	fds[1] = pipe_fds[1];
+> +	sqe = io_uring_get_sqe(&ring);
+> +	io_uring_prep_files_update(sqe, fds, 2, IORING_FILE_INDEX_ALLOC);
+> +	ret = io_uring_submit(&ring);
+> +	if (ret != 1) {
+> +		fprintf(stderr, "sqe submit failed: %d\n", ret);
+> +		return -1;
+> +	}
+> +	ret = io_uring_wait_cqe(&ring, &cqe);
+> +	if (ret < 0 || cqe->res < 0) {
+> +		fprintf(stderr, "io_uring_prep_files_update failed: %d\n", ret);
+> +		return ret;
+> +	}
+
+If cqe->res == -EINVAL, then the feature isn't supported. We should not
+fail the test for that, we should just skip it and return 0. Otherwise
+this test case will fail on older kernels, which is annoying noise.
+
+Apart from that, test case looks good, and it's nice that it also uses
+the fd post updating to ensure everything is sane.
+
+-- 
+Jens Axboe
 

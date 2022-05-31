@@ -2,132 +2,116 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C30AE538D74
-	for <lists+io-uring@lfdr.de>; Tue, 31 May 2022 11:08:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6E35538D7E
+	for <lists+io-uring@lfdr.de>; Tue, 31 May 2022 11:10:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245071AbiEaJHY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 31 May 2022 05:07:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45234 "EHLO
+        id S241551AbiEaJKH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 31 May 2022 05:10:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245103AbiEaJHR (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 31 May 2022 05:07:17 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6DBB24948
-        for <io-uring@vger.kernel.org>; Tue, 31 May 2022 02:07:13 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id x17so8686303wrg.6
-        for <io-uring@vger.kernel.org>; Tue, 31 May 2022 02:07:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=Da7CpUzfigAT4CIYpAa4S3dnkp2cNQHn7AtCXpqTizs=;
-        b=lIHzKa+jSnfytsD+Mp7xDDDZi7o4cUhwyisi0ts+8d3JRUbjVIV38DYCJHOl8pq2ib
-         UB6/+hbLc2Sy2SYynmoqY/YWspccNUcJhI3/Sr2/+C9rg4S+digPGeenGn/SlFQCtKTd
-         Gv8Jb+u/6n3HRS+vVcBKXeNKB2B40wlgPmWTbJqat3UipFJjX4oQmjTNENDYcMOvWUoT
-         Eps+CWDrirAYSy07eTbSUzozxFjnoTuWQ/RyWsrs3m2UCCUU29fSVVaiJfWmtkAL/bUq
-         Km2FcwbmPjMSMDx2wv+6XivFP7x6QJGHUYpyBcr4ouSR3yHAjaFL0T/YPnPy47UxTgIY
-         jJlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=Da7CpUzfigAT4CIYpAa4S3dnkp2cNQHn7AtCXpqTizs=;
-        b=KM3mfhTADMRCz72h3UNmNtQir5ti6jrxJtOh7YjnPdfUUQRY/0GZUdOm2usM9ZE1C/
-         3cKIyO26u5Tix796Vs8E7XebqcbU77F8daag2YO9MUL3PYr9YwNJQBZPI10cKdwOTiY7
-         YBxt2VuOhDimnqrjcH8HQXURyUHYdHchzYOKKTMLvwfes7jGN1tTaOmHX6fXdd/EYpa4
-         PFHxuuxoFazKwm1eqCb2n6TaXaegLDvyBo83NVzv1hdTsL0jFqusUs9nZsxftrQ7Yq2v
-         OlYlYoHnYKGw52h/MQeeXq00DQG2yXeRM1N3v2Lfv5mMGlhWZtEwkn5xMZRg7BXWlROE
-         wqyw==
-X-Gm-Message-State: AOAM532qItMtAo+78drYZVXfefhkLWxeVZ9oBzBKTdmJHlGG9q3pH5Eo
-        gTwtf43oVsh1Ch9eurotAP8GCQ==
-X-Google-Smtp-Source: ABdhPJynCOtAl39IHyypdJg+WREtGlQuCJn0fX9jFpVVRkxUzkTM3i4oHVsc21wrbJlrvrSbtW7hUg==
-X-Received: by 2002:a5d:4fc2:0:b0:210:940:b1fd with SMTP id h2-20020a5d4fc2000000b002100940b1fdmr21151584wrw.134.1653988031891;
-        Tue, 31 May 2022 02:07:11 -0700 (PDT)
-Received: from [10.188.163.71] (cust-east-parth2-46-193-73-98.wb.wifirst.net. [46.193.73.98])
-        by smtp.gmail.com with ESMTPSA id m10-20020a7bcb8a000000b00397243d3dbcsm1545690wmi.31.2022.05.31.02.07.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 31 May 2022 02:07:11 -0700 (PDT)
-Message-ID: <7c582099-0eef-6689-203a-606cb2f69391@kernel.dk>
-Date:   Tue, 31 May 2022 03:07:10 -0600
+        with ESMTP id S235570AbiEaJKG (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 31 May 2022 05:10:06 -0400
+Received: from pv50p00im-hyfv10011601.me.com (pv50p00im-hyfv10011601.me.com [17.58.6.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72273443E4
+        for <io-uring@vger.kernel.org>; Tue, 31 May 2022 02:10:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+        s=1a1hai; t=1653988205;
+        bh=gkhFdOG92aiYomQp2AZs9QqucYRolJ3/+E9SiBBpsY4=;
+        h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+        b=Z5vnjwhcmnwow12TTDQulq44WiNv2hSctOV6875pohGSIdAsH+DHKCANbSmzv03NY
+         gv9O32Uj6h1sjbzeWDDNEoU6vel+CnuUqIK0OvcGby5IRslRQTjaNDh9K1GApABw6e
+         UGNSCibcxOkWTaR69OeeRk9lbxs5D/cnWgCTJDoBbQyVttp604duWuyohhicGg/eXn
+         pTDjI+hG7qHdjsE+zcCiRyACiCU2oEkJWoeIe6YWMK+8oxIXFaL0kuhwMroJCMIpV+
+         nz5IjqRj7Bf9qVnYsLMtym2OfVl7MQC/8dYpZ4C6EPrKA4vXQAHoLWYMtna4oU1JwC
+         mCGoVAWwKpKnQ==
+Received: from [10.97.63.88] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+        by pv50p00im-hyfv10011601.me.com (Postfix) with ESMTPSA id C9FF69601C0;
+        Tue, 31 May 2022 09:10:02 +0000 (UTC)
+Message-ID: <1eb545e8-c5ca-4f00-b225-d81ce8bc2b53@icloud.com>
+Date:   Tue, 31 May 2022 17:09:58 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [syzbot] UBSAN: array-index-out-of-bounds in io_submit_sqes
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH v4 00/11] fixed worker
 Content-Language: en-US
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Hao Xu <haoxu.linux@icloud.com>,
-        syzbot <syzbot+b6c9b65b6753d333d833@syzkaller.appspotmail.com>,
-        asml.silence@gmail.com, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <000000000000f0b26205e04a183b@google.com>
- <3d3c6b5f-84cd-cb25-812e-dac77e02ddbf@kernel.dk>
- <e0867860-12c6-e958-07de-cfbcf644b9fe@icloud.com>
- <bcac089a-36e5-0d85-1ec3-b683dac68b4f@kernel.dk>
- <CACT4Y+aqriNp1F5CJofqaxNMM+-3cxNR2nY0tHEtb4YDqDuHtg@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CACT4Y+aqriNp1F5CJofqaxNMM+-3cxNR2nY0tHEtb4YDqDuHtg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc:     Pavel Begunkov <asml.silence@gmail.com>
+References: <20220515131230.155267-1-haoxu.linux@icloud.com>
+ <1071c09c-8670-b883-5b64-2cd1fb69d943@icloud.com>
+ <6e0e18e8-79d6-92e5-99cc-0b074a04fb69@kernel.dk>
+ <2e40c83a-c482-9cbb-0319-dae47e6a966d@icloud.com>
+ <fe039776-eb95-e451-b372-aafa56db45c7@kernel.dk>
+From:   Hao Xu <haoxu.linux@icloud.com>
+In-Reply-To: <fe039776-eb95-e451-b372-aafa56db45c7@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.517,18.0.874
+ definitions=2022-05-31_03:2022-05-30,2022-05-31 signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 clxscore=1015 mlxscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-2009150000 definitions=main-2205310048
+X-Spam-Status: No, score=-5.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/31/22 3:05 AM, Dmitry Vyukov wrote:
-> On Tue, 31 May 2022 at 11:01, Jens Axboe <axboe@kernel.dk> wrote:
->>
->> On 5/31/22 3:00 AM, Hao Xu wrote:
->>> On 5/31/22 16:45, Jens Axboe wrote:
->>>> On 5/31/22 1:55 AM, syzbot wrote:
->>>>> Hello,
+On 5/31/22 17:02, Jens Axboe wrote:
+> On 5/31/22 2:55 AM, Hao Xu wrote:
+>> On 5/31/22 16:46, Jens Axboe wrote:
+>>> On 5/31/22 1:05 AM, Hao Xu wrote:
+>>>> On 5/15/22 21:12, Hao Xu wrote:
+>>>>> From: Hao Xu <howeyxu@tencent.com>
 >>>>>
->>>>> syzbot found the following issue on:
+>>>>> This is the second version of fixed worker implementation.
+>>>>> Wrote a nop test program to test it, 3 fixed-workers VS 3 normal workers.
+>>>>> normal workers:
+>>>>> ./run_nop_wqe.sh nop_wqe_normal 200000 100 3 1-3
+>>>>>            time spent: 10464397 usecs      IOPS: 1911242
+>>>>>            time spent: 9610976 usecs       IOPS: 2080954
+>>>>>            time spent: 9807361 usecs       IOPS: 2039284
 >>>>>
->>>>> HEAD commit:    3b46e4e44180 Add linux-next specific files for 20220531
->>>>> git tree:       linux-next
->>>>> console output: https://syzkaller.appspot.com/x/log.txt?x=16e151f5f00000
->>>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=ccb8d66fc9489ef
->>>>> dashboard link: https://syzkaller.appspot.com/bug?extid=b6c9b65b6753d333d833
->>>>> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+>>>>> fixed workers:
+>>>>> ./run_nop_wqe.sh nop_wqe_fixed 200000 100 3 1-3
+>>>>>            time spent: 17314274 usecs      IOPS: 1155116
+>>>>>            time spent: 17016942 usecs      IOPS: 1175299
+>>>>>            time spent: 17908684 usecs      IOPS: 1116776
 >>>>>
->>>>> Unfortunately, I don't have any reproducer for this issue yet.
+>>>>> About 2x improvement. From perf result, almost no acct->lock contension.
+>>>>> Test program: https://github.com/HowHsu/liburing/tree/fixed_worker
+>>>>> liburing/test/nop_wqe.c
 >>>>>
->>>>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
->>>>> Reported-by: syzbot+b6c9b65b6753d333d833@syzkaller.appspotmail.com
+>>>>> v3->v4:
+>>>>>     - make work in fixed worker's private worfixed worker
+>>>>>     - tweak the io_wqe_acct struct to make it clearer
 >>>>>
->>>>> ================================================================================
->>>>> ================================================================================
->>>>> UBSAN: array-index-out-of-bounds in fs/io_uring.c:8860:19
->>>>> index 75 is out of range for type 'io_op_def [47]'
 >>>>
->>>> 'def' is just set here, it's not actually used after 'opcode' has been
->>>> verified.
->>>>
+>>>> Hi Jens and Pavel,
+>>>> Any comments on this series? There are two coding style issue and I'm
+>>>> going to send v5, before this I'd like to get some comment if there is
+>>>> any.
 >>>
->>> Maybe we can move it to be below the opcode check to comfort UBSAN.
+>>> I'll try to find some time to review it, doing a conference this week.
 >>
->> Yeah that's what I did, just rebased it to get rid of it:
+>> No worries.
 >>
->> https://git.kernel.dk/cgit/linux-block/commit/?h=io_uring-5.19&id=fcde59feb1affb6d56aecadc3868df4631480da5
+>>> Rebasing on the current for-5.20/io_uring branch would be a good idea
+>>> anyway.
+>>
+>> I'll do that.
 > 
-> If you are rebasing it, please add the following tag so that the bug
-> is closed later:
+> When you do, most/all patches also have:
 > 
-> Tested-by: syzbot+b6c9b65b6753d333d833@syzkaller.appspotmail.com
+> From: Hao Xu <haoxu.linux@gmail.com>
+> 
+> From: Hao Xu <howeyxu@tencent.com>
+> 
+> which is a bit confusing, so probably choose one and go with that :-)
+> 
 
-Sorry, missed that, would be a bit confusing? 5.20 branch is rebased
-on top of that too. Can we just do:
-
-#syz fix: io_uring: add io_op_defs 'def' pointer in req init and issue
-
-?
-
--- 
-Jens Axboe
-
+Sure

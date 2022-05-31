@@ -2,58 +2,67 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C6E35538D7E
-	for <lists+io-uring@lfdr.de>; Tue, 31 May 2022 11:10:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2ECE5538D8A
+	for <lists+io-uring@lfdr.de>; Tue, 31 May 2022 11:14:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241551AbiEaJKH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 31 May 2022 05:10:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51926 "EHLO
+        id S245095AbiEaJOT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 31 May 2022 05:14:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235570AbiEaJKG (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 31 May 2022 05:10:06 -0400
-Received: from pv50p00im-hyfv10011601.me.com (pv50p00im-hyfv10011601.me.com [17.58.6.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72273443E4
-        for <io-uring@vger.kernel.org>; Tue, 31 May 2022 02:10:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-        s=1a1hai; t=1653988205;
-        bh=gkhFdOG92aiYomQp2AZs9QqucYRolJ3/+E9SiBBpsY4=;
-        h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-        b=Z5vnjwhcmnwow12TTDQulq44WiNv2hSctOV6875pohGSIdAsH+DHKCANbSmzv03NY
-         gv9O32Uj6h1sjbzeWDDNEoU6vel+CnuUqIK0OvcGby5IRslRQTjaNDh9K1GApABw6e
-         UGNSCibcxOkWTaR69OeeRk9lbxs5D/cnWgCTJDoBbQyVttp604duWuyohhicGg/eXn
-         pTDjI+hG7qHdjsE+zcCiRyACiCU2oEkJWoeIe6YWMK+8oxIXFaL0kuhwMroJCMIpV+
-         nz5IjqRj7Bf9qVnYsLMtym2OfVl7MQC/8dYpZ4C6EPrKA4vXQAHoLWYMtna4oU1JwC
-         mCGoVAWwKpKnQ==
-Received: from [10.97.63.88] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-        by pv50p00im-hyfv10011601.me.com (Postfix) with ESMTPSA id C9FF69601C0;
-        Tue, 31 May 2022 09:10:02 +0000 (UTC)
-Message-ID: <1eb545e8-c5ca-4f00-b225-d81ce8bc2b53@icloud.com>
-Date:   Tue, 31 May 2022 17:09:58 +0800
+        with ESMTP id S235570AbiEaJOS (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 31 May 2022 05:14:18 -0400
+Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 736598A308
+        for <io-uring@vger.kernel.org>; Tue, 31 May 2022 02:14:17 -0700 (PDT)
+Received: by mail-lj1-x236.google.com with SMTP id s13so2249012ljd.4
+        for <io-uring@vger.kernel.org>; Tue, 31 May 2022 02:14:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2OVCYgnsO9VXl16r4mJF3rP7SyoUZlqXKC/WkfdR69g=;
+        b=IxMvO2t21VERLlSdrkYYqyhbafynN+JdXxRfPRaHs6HlX74d9/yOVOADN5kTCiot21
+         0IMp6fqZVuZMS0IEunaEfFezW/0I+sNne8Mrko8HpoQRlYPolzW1q8eShNKCmsDIyJN/
+         GQIvYIRJiiaunondXzFA8/WVkbiu4GYCG7/ewtlBZLs4wakX719AbAtsOQCyUoDFCW1a
+         eeG3gfAnSx5rSelHxnEPKg+9X2u/jJhbYfTm08NsFDhhmM5kH//WSdNTrJ3A6zvwzHTX
+         h5Tv35LSNgGm8wd/Qpnywp3VHpX6i1LesCW1Fl+AuUwLY84vScRuasvZDmzEka69CBbM
+         Srcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2OVCYgnsO9VXl16r4mJF3rP7SyoUZlqXKC/WkfdR69g=;
+        b=OZmDQAKdw2lL5xCcCsM0gLl+W9nSthEAs8McDuENaMMMfRh96VOQs0ztndfU4uP9hG
+         Y9qHGvkbdFN7meTPN6DrWkWWfsvy9WYPlQNMScYKxZYVN5YxXFIIZK9f2O3cX8ZKq01J
+         5wm1htalMTvkjty31QSdRJ5rBTAZvPWh4qD738mV2r+kyrrBdT/E61dibphqeKRcN0fz
+         2bEpJbnJxiuKAS6QjJrYXjFEV6GrFNSdeb24LdwSTxgcbosdFlQGYjqhQ0124sRI8+f1
+         mLgGjnT96N2M0hV1Ppqsyg5Plz7EwcTfMvLonVTFWdUZZFoZd+HRYCVnoB9C9cjtTQ6A
+         Kisg==
+X-Gm-Message-State: AOAM5304gT92GvowQYndnehCaiYiGvatw2SeLXJVmbV7DHa7lzPZEct8
+        DBQAHb0r+Q5b0Z5TXvksdCTYoFnYvr4gG53yhyI6Cr7jIVM=
+X-Google-Smtp-Source: ABdhPJyuV+gxkk4LkVlziu4ujj3riLftL53ZxueuE2wl3swI6nn1fiyJkXzEaqwLINDRRBA/HoxZ3LJA6Yom9ycDV4Y=
+X-Received: by 2002:a2e:90da:0:b0:255:4d38:f21e with SMTP id
+ o26-20020a2e90da000000b002554d38f21emr6842287ljg.92.1653988455515; Tue, 31
+ May 2022 02:14:15 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH v4 00/11] fixed worker
-Content-Language: en-US
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc:     Pavel Begunkov <asml.silence@gmail.com>
-References: <20220515131230.155267-1-haoxu.linux@icloud.com>
- <1071c09c-8670-b883-5b64-2cd1fb69d943@icloud.com>
- <6e0e18e8-79d6-92e5-99cc-0b074a04fb69@kernel.dk>
- <2e40c83a-c482-9cbb-0319-dae47e6a966d@icloud.com>
- <fe039776-eb95-e451-b372-aafa56db45c7@kernel.dk>
-From:   Hao Xu <haoxu.linux@icloud.com>
-In-Reply-To: <fe039776-eb95-e451-b372-aafa56db45c7@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.517,18.0.874
- definitions=2022-05-31_03:2022-05-30,2022-05-31 signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 clxscore=1015 mlxscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-2009150000 definitions=main-2205310048
-X-Spam-Status: No, score=-5.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+References: <000000000000f0b26205e04a183b@google.com> <3d3c6b5f-84cd-cb25-812e-dac77e02ddbf@kernel.dk>
+ <e0867860-12c6-e958-07de-cfbcf644b9fe@icloud.com> <bcac089a-36e5-0d85-1ec3-b683dac68b4f@kernel.dk>
+ <CACT4Y+aqriNp1F5CJofqaxNMM+-3cxNR2nY0tHEtb4YDqDuHtg@mail.gmail.com> <7c582099-0eef-6689-203a-606cb2f69391@kernel.dk>
+In-Reply-To: <7c582099-0eef-6689-203a-606cb2f69391@kernel.dk>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Tue, 31 May 2022 11:14:04 +0200
+Message-ID: <CACT4Y+bEKD7fREyiTst2oA7rjTz3u3LWLe23QmSBAQ=Piir3Ww@mail.gmail.com>
+Subject: Re: [syzbot] UBSAN: array-index-out-of-bounds in io_submit_sqes
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Hao Xu <haoxu.linux@icloud.com>,
+        syzbot <syzbot+b6c9b65b6753d333d833@syzkaller.appspotmail.com>,
+        asml.silence@gmail.com, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -61,57 +70,65 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/31/22 17:02, Jens Axboe wrote:
-> On 5/31/22 2:55 AM, Hao Xu wrote:
->> On 5/31/22 16:46, Jens Axboe wrote:
->>> On 5/31/22 1:05 AM, Hao Xu wrote:
->>>> On 5/15/22 21:12, Hao Xu wrote:
->>>>> From: Hao Xu <howeyxu@tencent.com>
->>>>>
->>>>> This is the second version of fixed worker implementation.
->>>>> Wrote a nop test program to test it, 3 fixed-workers VS 3 normal workers.
->>>>> normal workers:
->>>>> ./run_nop_wqe.sh nop_wqe_normal 200000 100 3 1-3
->>>>>            time spent: 10464397 usecs      IOPS: 1911242
->>>>>            time spent: 9610976 usecs       IOPS: 2080954
->>>>>            time spent: 9807361 usecs       IOPS: 2039284
->>>>>
->>>>> fixed workers:
->>>>> ./run_nop_wqe.sh nop_wqe_fixed 200000 100 3 1-3
->>>>>            time spent: 17314274 usecs      IOPS: 1155116
->>>>>            time spent: 17016942 usecs      IOPS: 1175299
->>>>>            time spent: 17908684 usecs      IOPS: 1116776
->>>>>
->>>>> About 2x improvement. From perf result, almost no acct->lock contension.
->>>>> Test program: https://github.com/HowHsu/liburing/tree/fixed_worker
->>>>> liburing/test/nop_wqe.c
->>>>>
->>>>> v3->v4:
->>>>>     - make work in fixed worker's private worfixed worker
->>>>>     - tweak the io_wqe_acct struct to make it clearer
->>>>>
->>>>
->>>> Hi Jens and Pavel,
->>>> Any comments on this series? There are two coding style issue and I'm
->>>> going to send v5, before this I'd like to get some comment if there is
->>>> any.
->>>
->>> I'll try to find some time to review it, doing a conference this week.
->>
->> No worries.
->>
->>> Rebasing on the current for-5.20/io_uring branch would be a good idea
->>> anyway.
->>
->> I'll do that.
-> 
-> When you do, most/all patches also have:
-> 
-> From: Hao Xu <haoxu.linux@gmail.com>
-> 
-> From: Hao Xu <howeyxu@tencent.com>
-> 
-> which is a bit confusing, so probably choose one and go with that :-)
-> 
+On Tue, 31 May 2022 at 11:07, Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 5/31/22 3:05 AM, Dmitry Vyukov wrote:
+> > On Tue, 31 May 2022 at 11:01, Jens Axboe <axboe@kernel.dk> wrote:
+> >>
+> >> On 5/31/22 3:00 AM, Hao Xu wrote:
+> >>> On 5/31/22 16:45, Jens Axboe wrote:
+> >>>> On 5/31/22 1:55 AM, syzbot wrote:
+> >>>>> Hello,
+> >>>>>
+> >>>>> syzbot found the following issue on:
+> >>>>>
+> >>>>> HEAD commit:    3b46e4e44180 Add linux-next specific files for 20220531
+> >>>>> git tree:       linux-next
+> >>>>> console output: https://syzkaller.appspot.com/x/log.txt?x=16e151f5f00000
+> >>>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=ccb8d66fc9489ef
+> >>>>> dashboard link: https://syzkaller.appspot.com/bug?extid=b6c9b65b6753d333d833
+> >>>>> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+> >>>>>
+> >>>>> Unfortunately, I don't have any reproducer for this issue yet.
+> >>>>>
+> >>>>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> >>>>> Reported-by: syzbot+b6c9b65b6753d333d833@syzkaller.appspotmail.com
+> >>>>>
+> >>>>> ================================================================================
+> >>>>> ================================================================================
+> >>>>> UBSAN: array-index-out-of-bounds in fs/io_uring.c:8860:19
+> >>>>> index 75 is out of range for type 'io_op_def [47]'
+> >>>>
+> >>>> 'def' is just set here, it's not actually used after 'opcode' has been
+> >>>> verified.
+> >>>>
+> >>>
+> >>> Maybe we can move it to be below the opcode check to comfort UBSAN.
+> >>
+> >> Yeah that's what I did, just rebased it to get rid of it:
+> >>
+> >> https://git.kernel.dk/cgit/linux-block/commit/?h=io_uring-5.19&id=fcde59feb1affb6d56aecadc3868df4631480da5
+> >
+> > If you are rebasing it, please add the following tag so that the bug
+> > is closed later:
+> >
+> > Tested-by: syzbot+b6c9b65b6753d333d833@syzkaller.appspotmail.com
+>
+> Sorry, missed that, would be a bit confusing?
 
-Sure
+Why confusing? It tested it, no?
+
+> 5.20 branch is rebased
+> on top of that too. Can we just do:
+>
+> #syz fix: io_uring: add io_op_defs 'def' pointer in req init and issue
+>
+> ?
+
+In most cases it will work. However, there is no way to distinguish
+unfixed and fixed versions of the patch based on the title.
+So if the unfixed version manages to reach all syzbot builds, it will
+close the bug at that point. And then can start reporting duplicates
+since the bug is still present. But practically unlikely to happen.
+The tag allows to distinguish unfixed and fixed versions of the patch,
+so it will work reliably w/o possible duplicates.

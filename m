@@ -2,155 +2,85 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C00453A939
-	for <lists+io-uring@lfdr.de>; Wed,  1 Jun 2022 16:29:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4BB653AB05
+	for <lists+io-uring@lfdr.de>; Wed,  1 Jun 2022 18:24:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354757AbiFAO3d (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 1 Jun 2022 10:29:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53934 "EHLO
+        id S1344314AbiFAQYc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 1 Jun 2022 12:24:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33318 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355037AbiFAO3T (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 1 Jun 2022 10:29:19 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6149A10D1
-        for <io-uring@vger.kernel.org>; Wed,  1 Jun 2022 07:29:14 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id k16so2616802wrg.7
-        for <io-uring@vger.kernel.org>; Wed, 01 Jun 2022 07:29:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=zYZxJSsiDIqWtlLkaHGpFEMWr8SnCqLLTeuEdEKFBw0=;
-        b=kH2c+fwUAFopecg7ijWVuMh4VjCBzqqrOEP8XCrob3azsdGv71QMDvUc7v80Nbcef8
-         jsFwHD/akcJHLRfiDWq0NuEAoAhJWRr1bJGmjF5FY0YkWoq63JwDB84L9yCyeBqMxBuo
-         l4wLZx5GwuI6SvqVOucYWXUwbx+U4ZpfbG/4ZW4xGnnQqrpP3n7+/W/kHkm477oMZeLA
-         jepxhly4H9Ssn5qY7PksWvI3tiOFuVr2bBP/U1NsCmkYPL0I8abgVm2E0Hkh9arxH4LF
-         c6gfXyfqeiL/rwfYysZCqQhpVYjROOPzubo9a6QRHVQ09v3NRTZyANtmqRjoszLP4cZZ
-         68vg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=zYZxJSsiDIqWtlLkaHGpFEMWr8SnCqLLTeuEdEKFBw0=;
-        b=tfNlNlfB6jFiQgbmkCwjaeCvvkCXVhXuHtjLGR1WOBt9yb0zOCWDsf/myKgZ3QTXGR
-         j9ztbPrh8HqgzaQGscUeEYc/YnYQ6Pr+Fna0DAesGcycXkGv+W5z7IfCSdUUxzoXZq62
-         UluNvFUFWStKObqbPYEpXL55NxkzxS1QgKETBcFOwI3KtgE2HfiqsE88cTmGhN/HSruQ
-         T2OOGjIg1IdQMB/XY11p2iRzYi9X40ci7vTHjf7vUt8SFutYzzg0lVG4gF5M4NNf7hDu
-         4RLSXDOFjA4jZ1GEfYNt1zCTRODgARH3fAfzDj3dxLq7ekZ8BrrdLxIgqJq1nGvTASTB
-         MCig==
-X-Gm-Message-State: AOAM532AXu5vh+HdBfGMY6z7tSaa9e4PURZNnoupkf8yW5oL3BGz430E
-        ZIthY1T8ip2+JAkxvJB5o5gyJJ64WWw/rQ==
-X-Google-Smtp-Source: ABdhPJwYIybMnqm355Cai/l3Q+1jOcOJb0LByXj3RmCMejZHkJ3ZFrObamI30Mrk3T1DK6l2cSA6/g==
-X-Received: by 2002:a5d:5954:0:b0:20c:4d55:1388 with SMTP id e20-20020a5d5954000000b0020c4d551388mr103816wri.90.1654093752737;
-        Wed, 01 Jun 2022 07:29:12 -0700 (PDT)
-Received: from 127.0.0.1localhost (82-132-236-74.dab.02.net. [82.132.236.74])
-        by smtp.gmail.com with ESMTPSA id v5-20020a5d4b05000000b0020d0c37b350sm2198094wrq.27.2022.06.01.07.29.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Jun 2022 07:29:12 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [RFC net-next v3 1/1] io_uring: fix deadlock on iowq file slot alloc
-Date:   Wed,  1 Jun 2022 15:28:44 +0100
-Message-Id: <64116172a9d0b85b85300346bb280f3657aafc26.1654087283.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.36.1
+        with ESMTP id S1347929AbiFAQYc (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 1 Jun 2022 12:24:32 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1C0B8D6A5
+        for <io-uring@vger.kernel.org>; Wed,  1 Jun 2022 09:24:30 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3E65761597
+        for <io-uring@vger.kernel.org>; Wed,  1 Jun 2022 16:24:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 696F1C3411C;
+        Wed,  1 Jun 2022 16:24:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1654100669;
+        bh=yk5oVwOf9gF45vUfOuLMNv53AupSiVNfzVWdnWWAcGM=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=jS3d5JY6vWIl/Ggg4fGkN+2OLXpWNo1IvJ/JYWoJHJcK1qztTjzvgM1gRRYiC3CFU
+         I82b2MWnDwaD6Tdp52r9VgH3OhIeNAmvIPRfbMZKuyQgwGnQ9GGfroKRZSL+4smWGj
+         BXj6kKy2rKPKY7pgvvPkMtr5HaOXfs/NHkGnZvlyt+c667VgqxrXqPi7jUPMpm2XvK
+         50reInHbGESqaA7YQdhdjf+pSSj18HwZmFB7u+18CiX0GGFf7y0bPPandJfUSnqaQ4
+         mUspSUjrypm/nYedqyd+nLbeoWAMApeDuycmiE+4YHOF1pKm+fDJOynjqSOM2WYgVw
+         +shEI4tojXsbg==
+Date:   Wed, 1 Jun 2022 09:24:28 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Olivier Langlois <olivier@trillion01.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        io-uring <io-uring@vger.kernel.org>
+Subject: Re: [GIT PULL] io_uring updates for 5.18-rc1
+Message-ID: <20220601092428.6e7a13a7@kernel.org>
+In-Reply-To: <78d9a5e2eaad11058f54b1392662099549aa925f.camel@trillion01.com>
+References: <b7bbc124-8502-0ee9-d4c8-7c41b4487264@kernel.dk>
+        <20220326122838.19d7193f@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+        <9a932cc6-2cb7-7447-769f-3898b576a479@kernel.dk>
+        <20220326130615.2d3c6c85@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+        <234e3155-e8b1-5c08-cfa3-730cc72c642c@kernel.dk>
+        <f6203da1-1bf4-c5f4-4d8e-c5d1e10bd7ea@kernel.dk>
+        <20220326143049.671b463c@kernel.org>
+        <78d9a5e2eaad11058f54b1392662099549aa925f.camel@trillion01.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-io_fixed_fd_install() can grab uring_lock in the slot allocation path
-when called from io-wq, and then call into io_install_fixed_file(),
-which will lock it again. Pull all locking out of
-io_install_fixed_file() into io_fixed_fd_install().
+On Wed, 01 Jun 2022 02:59:12 -0400 Olivier Langlois wrote:
+> > I'm not entirely clear how the thing is supposed to be used with TCP
+> > socket, as from a quick grep it appears that listening sockets don't
+> > get napi_id marked at all.
+> > 
+> > The commit mentions a UDP benchmark, Olivier can you point me to more
+> > info on the use case? I'm mostly familiar with NAPI busy poll with
+> > XDP
+> > sockets, where it's pretty obvious.  
+> 
+> https://github.com/lano1106/io_uring_udp_ping
+> 
+> IDK what else I can tell you. I choose to unit test the new feature
+> with an UDP app because it was the simplest setup for testing. AFAIK,
+> the ultimate goal of busy polling is to minimize latency in packets
+> reception and the NAPI busy polling code should not treat differently
+> packets whether they are UDP or TCP or whatever the type of frames the
+> NIC does receive...
 
-Fixes: 1339f24b336db ("io_uring: allow allocated fixed files for openat/openat2")
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 33 +++++++++++++--------------------
- 1 file changed, 13 insertions(+), 20 deletions(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 78990a130b66..051586a5371b 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -5791,26 +5791,22 @@ static int io_fixed_fd_install(struct io_kiocb *req, unsigned int issue_flags,
- 	struct io_ring_ctx *ctx = req->ctx;
- 	int ret;
- 
-+	io_ring_submit_lock(ctx, issue_flags);
-+
- 	if (alloc_slot) {
--		io_ring_submit_lock(ctx, issue_flags);
- 		ret = io_file_bitmap_get(ctx);
--		if (unlikely(ret < 0)) {
--			io_ring_submit_unlock(ctx, issue_flags);
--			return ret;
--		}
--
-+		if (unlikely(ret < 0))
-+			goto err;
- 		file_slot = ret;
- 	} else {
- 		file_slot--;
- 	}
- 
- 	ret = io_install_fixed_file(req, file, issue_flags, file_slot);
--	if (alloc_slot) {
--		io_ring_submit_unlock(ctx, issue_flags);
--		if (!ret)
--			return file_slot;
--	}
--
-+	if (!ret && alloc_slot)
-+		ret = file_slot;
-+err:
-+	io_ring_submit_unlock(ctx, issue_flags);
- 	return ret;
- }
- 
-@@ -10663,21 +10659,19 @@ static int io_queue_rsrc_removal(struct io_rsrc_data *data, unsigned idx,
- 
- static int io_install_fixed_file(struct io_kiocb *req, struct file *file,
- 				 unsigned int issue_flags, u32 slot_index)
-+	__must_hold(&req->ctx->uring_lock)
- {
- 	struct io_ring_ctx *ctx = req->ctx;
- 	bool needs_switch = false;
- 	struct io_fixed_file *file_slot;
--	int ret = -EBADF;
-+	int ret;
- 
--	io_ring_submit_lock(ctx, issue_flags);
- 	if (file->f_op == &io_uring_fops)
--		goto err;
--	ret = -ENXIO;
-+		return -EBADF;
- 	if (!ctx->file_data)
--		goto err;
--	ret = -EINVAL;
-+		return -ENXIO;
- 	if (slot_index >= ctx->nr_user_files)
--		goto err;
-+		return -EINVAL;
- 
- 	slot_index = array_index_nospec(slot_index, ctx->nr_user_files);
- 	file_slot = io_fixed_file_slot(&ctx->file_table, slot_index);
-@@ -10708,7 +10702,6 @@ static int io_install_fixed_file(struct io_kiocb *req, struct file *file,
- err:
- 	if (needs_switch)
- 		io_rsrc_node_switch(ctx, ctx->file_data);
--	io_ring_submit_unlock(ctx, issue_flags);
- 	if (ret)
- 		fput(file);
- 	return ret;
--- 
-2.36.1
-
+IDK how you use the busy polling, so I'm asking you to describe what
+your app does. You said elsewhere that you don't have dedicated thread
+per queue so it's not a server app (polling for requests) but a client
+app (polling for responses)?

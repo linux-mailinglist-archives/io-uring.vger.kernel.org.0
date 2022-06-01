@@ -2,125 +2,91 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 43AF05398D7
-	for <lists+io-uring@lfdr.de>; Tue, 31 May 2022 23:35:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4439E539AB6
+	for <lists+io-uring@lfdr.de>; Wed,  1 Jun 2022 03:24:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345544AbiEaVfv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 31 May 2022 17:35:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49882 "EHLO
+        id S241193AbiFABYS convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+io-uring@lfdr.de>); Tue, 31 May 2022 21:24:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346162AbiEaVfu (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 31 May 2022 17:35:50 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F02A50E06
-        for <io-uring@vger.kernel.org>; Tue, 31 May 2022 14:35:49 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id e25so9696316wra.11
-        for <io-uring@vger.kernel.org>; Tue, 31 May 2022 14:35:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=q7cPNpK/kLXhrzfLG8hpxXs2i5SQM9UbFaXm5pBmiWk=;
-        b=PV1FkrmCwNgQDmI8q8xLaJ2XXBLk0bNuhuDAAdA7z4qZycq5Kcw00mLFrAIu2AIerb
-         aJ4XncmF1wRGhrUBOJwYE2sY42AwXhyxj+2MGoQf+bXIPVUkYNW77hJDONwaiqlOTO9b
-         BtiMM4rWkZaUNlXNxA+N1HVP09ugDb+rIgPHBswnSKcLTO/PNaHzvTrV2tfuBryAVzBa
-         TwPLTSz7WrYluB/KbKVt7WUxqS/gOs8qZeglcJFpA9cw2QEShrMQ0vFQywI7rrt0gmmZ
-         htLEJNTq5WnH0e/YcE/ed7oZXgJxRwpxbG78X5YFRt1oKKpR+4Rj+cIHhSE8/puDCU6P
-         kQUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=q7cPNpK/kLXhrzfLG8hpxXs2i5SQM9UbFaXm5pBmiWk=;
-        b=jn6lpyt1R+WPoc4K6b7a2HwrRg4KIygNg7YUr7yVqqGVUvw00FXZ0vQmc6dypur9W1
-         z5DIr/UNwFG1I3J/lNEu/+Tpa11wH5p8dXVI9xg6XNahokiOyoMJxm9+UFK5HcWr9PU8
-         kv6jG92E/faY/icdXpyeNjYpRiwJXMogkTfYU+AIlONyFxjJIV1K10nWf7VYltwrs4GE
-         yob0WhUvlJPy6dq2TpWspMk9ODGnw8Pi1AxA2wCd6K/O8sVgVjvml8m/ryBajq8/2Zjg
-         xofS2wbjapv/qx32mIk2PCUxOnO4qwPuZCOrfp/msMO/CarTqMs+B4q1hXHUkv4gr3Lf
-         XsQA==
-X-Gm-Message-State: AOAM530VeKUVVtm6Liz3EArYrqSgwb2mP8gDbmPV49y9r5XMv0ecMguK
-        4K/LZy1K8vufyJuld4bU4iuysg==
-X-Google-Smtp-Source: ABdhPJw4Mim9U84gjy0lO8KtDTbCtU1/Xmv0b6riP55K6OPLXzvaiil7aFdrqwfGiT3xnn8hZaBnYg==
-X-Received: by 2002:adf:d1ca:0:b0:210:1945:34c6 with SMTP id b10-20020adfd1ca000000b00210194534c6mr18528567wrd.334.1654032947950;
-        Tue, 31 May 2022 14:35:47 -0700 (PDT)
-Received: from ?IPV6:2a02:6b6a:b497:0:359:2800:e38d:e04f? ([2a02:6b6a:b497:0:359:2800:e38d:e04f])
-        by smtp.gmail.com with ESMTPSA id s14-20020a7bc38e000000b003942a244ee7sm3138190wmj.44.2022.05.31.14.35.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 31 May 2022 14:35:47 -0700 (PDT)
-Message-ID: <f7a4cdf2-78f2-fead-5a10-713e3dc9ea34@bytedance.com>
-Date:   Tue, 31 May 2022 22:35:46 +0100
+        with ESMTP id S231534AbiFABYR (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 31 May 2022 21:24:17 -0400
+X-Greylist: delayed 2991 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 31 May 2022 18:24:16 PDT
+Received: from cloud48395.mywhc.ca (cloud48395.mywhc.ca [173.209.37.211])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A71948CB21;
+        Tue, 31 May 2022 18:24:16 -0700 (PDT)
+Received: from [45.44.224.220] (port=40386 helo=[192.168.1.179])
+        by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.95)
+        (envelope-from <olivier@olivierlanglois.net>)
+        id 1nwCJa-0005jM-Mx;
+        Tue, 31 May 2022 20:34:22 -0400
+Message-ID: <12a76c029e9f3cac279c025776dfb2f59331dca0.camel@olivierlanglois.net>
+Subject: Re: [PATCH v6 04/16] iomap: Add flags parameter to
+ iomap_page_create()
+From:   Olivier Langlois <olivier@olivierlanglois.net>
+To:     "Darrick J. Wong" <djwong@kernel.org>, Stefan Roesch <shr@fb.com>
+Cc:     io-uring@vger.kernel.org, kernel-team@fb.com, linux-mm@kvack.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        david@fromorbit.com, jack@suse.cz, hch@infradead.org
+Date:   Tue, 31 May 2022 20:34:20 -0400
+In-Reply-To: <Yo/GIF1EoK7Acvmy@magnolia>
+References: <20220526173840.578265-1-shr@fb.com>
+         <20220526173840.578265-5-shr@fb.com> <Yo/GIF1EoK7Acvmy@magnolia>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 8BIT
+User-Agent: Evolution 3.44.1 
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH 0/5] io_uring: add opcodes for current working directory
-Content-Language: en-US
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     fam.zheng@bytedance.com
-References: <20220531184125.2665210-1-usama.arif@bytedance.com>
- <da4e94f7-94ce-ad57-ad15-c9117c4fef2d@kernel.dk>
- <7a311f7e-a404-4ebe-f90b-af9068bab2fc@bytedance.com>
- <d466213e-81e0-4b0e-c1a4-824bcbe42f74@kernel.dk>
-From:   Usama Arif <usama.arif@bytedance.com>
-In-Reply-To: <d466213e-81e0-4b0e-c1a4-824bcbe42f74@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - olivierlanglois.net
+X-Get-Message-Sender-Via: cloud48395.mywhc.ca: authenticated_id: olivier@olivierlanglois.net
+X-Authenticated-Sender: cloud48395.mywhc.ca: olivier@olivierlanglois.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+On Thu, 2022-05-26 at 11:25 -0700, Darrick J. Wong wrote:
+> On Thu, May 26, 2022 at 10:38:28AM -0700, Stefan Roesch wrote:
+> > 
+> >  static struct iomap_page *
+> > -iomap_page_create(struct inode *inode, struct folio *folio)
+> > +iomap_page_create(struct inode *inode, struct folio *folio,
+> > unsigned int flags)
+> >  {
+> >         struct iomap_page *iop = to_iomap_page(folio);
+> >         unsigned int nr_blocks = i_blocks_per_folio(inode, folio);
+> > +       gfp_t gfp = GFP_NOFS | __GFP_NOFAIL;
+> >  
+> >         if (iop || nr_blocks <= 1)
+> >                 return iop;
+> >  
+> > +       if (flags & IOMAP_NOWAIT)
+> > +               gfp = GFP_NOWAIT;
+> 
+> Hmm.  GFP_NOWAIT means we don't wait for reclaim or IO or filesystem
+> callbacks, and NOFAIL means we retry indefinitely.  What happens in
+> the
+> NOWAIT|NOFAIL case?  Does that imply that the kzalloc loops without
+> triggering direct reclaim until someone else frees enough memory?
+> 
+> --D
 
+I have a question that is a bit offtopic but since it is concerning GFP
+flags and this is what is discussed here maybe a participant will
+kindly give me some hints about this mystery that has burned me for so
+long...
 
-On 31/05/2022 20:22, Jens Axboe wrote:
-> On 5/31/22 1:18 PM, Usama Arif wrote:
->>
->>
->> On 31/05/2022 19:58, Jens Axboe wrote:
->>> On 5/31/22 12:41 PM, Usama Arif wrote:
->>>> This provides consistency between io_uring and the respective I/O syscall
->>>> and avoids having the user of liburing specify the cwd in sqe when working
->>>> with current working directory, for e.g. the user can directly call with
->>>> IORING_OP_RENAME instead of IORING_OP_RENAMEAT and providing AT_FDCWD in
->>>> sqe->fd and sqe->len, similar to syscall interface.
->>>>
->>>> This is done for rename, unlink, mkdir, symlink and link in this
->>>> patch-series.
->>>>
->>>> The tests for these opcodes in liburing are present at
->>>> https://github.com/uarif1/liburing/tree/cwd_opcodes. If the patches are
->>>> acceptable, I am happy to create a PR in above for the tests.
->>>
->>> Can't we just provide prep helpers for them in liburing?
->>>
->>
->> We could add a io_uring_prep_unlink with IORING_OP_UNLINKAT and
->> AT_FDCWD in liburing. But i guess adding in kernel adds a more
->> consistent interface? and allows to make calls bypassing liburing
->> (although i guess people probably don't bypass liburing that much :))
-> 
-> I'm not really aware of much that doesn't use the library, and even
-> those would most likely use the liburing man pages as that's all we
-> have. The kernel API is raw. If you use that, I would expect you to know
-> that you can just use AT_FDCWD!
-> 
->> Making the changes in both kernel and liburing provides more of a
->> standard interface in my opinion so maybe it looks better. But happy
->> to just create a PR in liburing only with prep helpers as you
->> suggested if you think that is better?
-> 
-> I don't disagree with that, but it seems silly to waste 5 opcodes on
-> something that is a strict subset of something that is already there.
-> Hence my suggestion would be to just add io_uring_prep_link() etc
-> helpers to make it simpler to use, without having to add 5 extra
-> opcodes.
-> 
+Why does out_of_memory() requires GFP_FS to kill a process? AFAIK, no
+filesystem-dependent operations are needed to kill a process...
 
-Thanks, I have created a PR for it on 
-https://github.com/axboe/liburing/pull/588. We can review it there if it 
-makes sense!

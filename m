@@ -2,31 +2,31 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6147F539E22
-	for <lists+io-uring@lfdr.de>; Wed,  1 Jun 2022 09:24:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A14FD539EE8
+	for <lists+io-uring@lfdr.de>; Wed,  1 Jun 2022 10:02:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229509AbiFAHYW convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+io-uring@lfdr.de>); Wed, 1 Jun 2022 03:24:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44560 "EHLO
+        id S245583AbiFAICD convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+io-uring@lfdr.de>); Wed, 1 Jun 2022 04:02:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236450AbiFAHYV (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 1 Jun 2022 03:24:21 -0400
+        with ESMTP id S1350533AbiFAIB7 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 1 Jun 2022 04:01:59 -0400
 Received: from cloud48395.mywhc.ca (cloud48395.mywhc.ca [173.209.37.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B77744EA3A
-        for <io-uring@vger.kernel.org>; Wed,  1 Jun 2022 00:24:20 -0700 (PDT)
-Received: from [45.44.224.220] (port=40500 helo=[192.168.1.179])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9383714D05
+        for <io-uring@vger.kernel.org>; Wed,  1 Jun 2022 01:01:57 -0700 (PDT)
+Received: from [45.44.224.220] (port=40520 helo=[192.168.1.179])
         by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.95)
         (envelope-from <olivier@trillion01.com>)
-        id 1nwIK1-0004JD-LK;
-        Wed, 01 Jun 2022 02:59:13 -0400
-Message-ID: <78d9a5e2eaad11058f54b1392662099549aa925f.camel@trillion01.com>
+        id 1nwJIh-0008Fc-Um;
+        Wed, 01 Jun 2022 04:01:55 -0400
+Message-ID: <c7f754734a851ec1e7bd4d0d37da7b858972c76c.camel@trillion01.com>
 Subject: Re: [GIT PULL] io_uring updates for 5.18-rc1
 From:   Olivier Langlois <olivier@trillion01.com>
 To:     Jakub Kicinski <kuba@kernel.org>, Jens Axboe <axboe@kernel.dk>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         io-uring <io-uring@vger.kernel.org>
-Date:   Wed, 01 Jun 2022 02:59:12 -0400
+Date:   Wed, 01 Jun 2022 04:01:55 -0400
 In-Reply-To: <20220326143049.671b463c@kernel.org>
 References: <b7bbc124-8502-0ee9-d4c8-7c41b4487264@kernel.dk>
          <20220326122838.19d7193f@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
@@ -86,31 +86,10 @@ On Sat, 2022-03-26 at 14:30 -0700, Jakub Kicinski wrote:
 > Not sure I fully comprehend what the current code does. IIUC it uses
 > the socket and the caches its napi_id, presumably because it doesn't
 > want to hold a reference on the socket?
-
-Again, the io_uring napi busy_poll integration is strongly inspired
-from epoll implementation which caches a single napi_id.
-
-I guess that I did reverse engineer the rational justifying the epoll
-design decisions.
-
-If you were to busy poll receive queues for a socket set containing
-hundreds of thousands of sockets, would you rather scan the whole
-socket set to retrieve which queues to poll or simple iterate through a
-list containing a dozen of so of ids?
 > 
 > This may give the user a false impression that the polling follows 
 > the socket. NAPIs may get reshuffled underneath on pretty random
 > reconfiguration / recovery events (random == driver dependent).
-
-There is nothing random. When a socket is added to the poll set, its
-receive queue is added to the short list of queues to poll.
-
-A very common usage pattern among networking applications it is to
-reinsert the socket into the polling set after each polling event. In
-recognition to this pattern and to avoid allocating/deallocating memory
-to modify the napi_id list all the time, each napi id is kept in the
-list until a very long period of inactivity is reached where it is
-finally removed to stop the receive queue busy polling.
 > 
 > I'm not entirely clear how the thing is supposed to be used with TCP
 > socket, as from a quick grep it appears that listening sockets don't
@@ -120,15 +99,6 @@ finally removed to stop the receive queue busy polling.
 > info on the use case? I'm mostly familiar with NAPI busy poll with
 > XDP
 > sockets, where it's pretty obvious.
-
-https://github.com/lano1106/io_uring_udp_ping
-
-IDK what else I can tell you. I choose to unit test the new feature
-with an UDP app because it was the simplest setup for testing. AFAIK,
-the ultimate goal of busy polling is to minimize latency in packets
-reception and the NAPI busy polling code should not treat differently
-packets whether they are UDP or TCP or whatever the type of frames the
-NIC does receive...
 > 
 > My immediate reaction is that we should either explicitly call out
 > NAPI
@@ -137,8 +107,22 @@ NIC does receive...
 > hash
 > table lookups and cache a pointer to the NAPI struct.
 > 
-That is an interesting idea. If this is something that NAPI API would
-offer, I would gladly use that to avoid the hash lookup but IMHO, I see
-it as a very interesting improvement but hopefully this should not
-block my patch...
+> In any case, let's look in detail on Monday :)
 
+On second reading of this email, my understanding of it has become
+clearer.
+
+1. epoll design is exposed to the same NAPIs reshuffling and it seems
+to be resilient to that event
+2. By assuming the NAPI functions manage well the case where they are
+passed an expired NAPI id, io_uring integration would rapidly drop the
+expired ids and start using the new ones.
+3. With my igb nic, after 2 months of non-stop usage, I have never ever
+seen napi ids change. The id values appear to solely depend on
+CONFIG_NR_CPUS value
+4. If random napi ids reshuffling is a thing, this kinda eliminate the
+option of skipping the hash lookup by storing directly the pointer.
+With the reshuffling thing, storing a pointer seems like a dangerous
+proposal...
+
+Greetings,

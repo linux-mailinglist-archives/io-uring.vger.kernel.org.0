@@ -2,142 +2,118 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CC51F53AFF0
-	for <lists+io-uring@lfdr.de>; Thu,  2 Jun 2022 00:51:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8194353B210
+	for <lists+io-uring@lfdr.de>; Thu,  2 Jun 2022 05:22:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231272AbiFAVIL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 1 Jun 2022 17:08:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49486 "EHLO
+        id S233548AbiFBDUM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 1 Jun 2022 23:20:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231267AbiFAVIL (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 1 Jun 2022 17:08:11 -0400
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EA394CD6D
-        for <io-uring@vger.kernel.org>; Wed,  1 Jun 2022 14:08:09 -0700 (PDT)
-Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 251KQDXj028690
-        for <io-uring@vger.kernel.org>; Wed, 1 Jun 2022 14:08:09 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=facebook;
- bh=nQH2lmMMGXtJ/jcy4qJSIzXTyuwO7PWxs6HFqy0bsS4=;
- b=lGs5wtkaRUSFoIsEjC46E4CLsggKbpn3Ugw4yPQahhmLhNYdKNW2ovbSiE6EpKoMz/4R
- wW6nkR5bi8GfWfc56GP4JxT9IrjDDBOkF9mB2Ju5/E0bpwV8aEOsYHoq+uO3RxKZRuCY
- g7qXpKCKi4r7eq9pHSSNqC6EHfbdmNlqhOs= 
-Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3gdt5jqgua-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Wed, 01 Jun 2022 14:08:08 -0700
-Received: from twshared19572.14.frc2.facebook.com (2620:10d:c085:108::4) by
- mail.thefacebook.com (2620:10d:c085:21d::6) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.28; Wed, 1 Jun 2022 14:08:08 -0700
-Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
-        id 1CA19FEB23B3; Wed,  1 Jun 2022 14:01:43 -0700 (PDT)
-From:   Stefan Roesch <shr@fb.com>
-To:     <io-uring@vger.kernel.org>, <kernel-team@fb.com>,
-        <linux-mm@kvack.org>, <linux-xfs@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>
-CC:     <shr@fb.com>, <david@fromorbit.com>, <jack@suse.cz>,
-        <hch@infradead.org>, <axboe@kernel.dk>,
-        Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v7 15/15] xfs: Add async buffered write support
-Date:   Wed, 1 Jun 2022 14:01:41 -0700
-Message-ID: <20220601210141.3773402-16-shr@fb.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20220601210141.3773402-1-shr@fb.com>
-References: <20220601210141.3773402-1-shr@fb.com>
+        with ESMTP id S233569AbiFBDT6 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 1 Jun 2022 23:19:58 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4597A2432E5
+        for <io-uring@vger.kernel.org>; Wed,  1 Jun 2022 20:19:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1654139995;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=VAgArk0BcNk+9GP0AOx8PMvAT8X1PDlB7xL7ZWCfJ7g=;
+        b=D4lx3MnqG/NhFTQHXoxc9bQY5xGdCoF/C7JNFlua5z78m64DS1IIGfcfd0vKE3UHvN73wJ
+        +7CWMkGBIQmnJrkNOfVeDhQS9deE3LdF40/j/JemUpFaK/tG0YJE9N+krnWM1C3iUKFvvF
+        tFpx3NmO2jXpzGKfr1uC1RJ9yXkC5ik=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-170-Uw4D5aDwNOa_EmLS7mxQdw-1; Wed, 01 Jun 2022 23:19:54 -0400
+X-MC-Unique: Uw4D5aDwNOa_EmLS7mxQdw-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id B0CA38032E5;
+        Thu,  2 Jun 2022 03:19:53 +0000 (UTC)
+Received: from T590 (ovpn-8-29.pek2.redhat.com [10.72.8.29])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5F8C140CF8EB;
+        Thu,  2 Jun 2022 03:19:47 +0000 (UTC)
+Date:   Thu, 2 Jun 2022 11:19:42 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        ZiyangZhang <ZiyangZhang@linux.alibaba.com>,
+        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+Subject: Re: [RFC PATCH] ubd: add io_uring based userspace block driver
+Message-ID: <YpgsTojc4mVKghZA@T590>
+References: <20220509092312.254354-1-ming.lei@redhat.com>
+ <20220530070700.GF1363@bug>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-GUID: BwEN7fmGkP0uIfgaug9k9g0p3sounaR2
-X-Proofpoint-ORIG-GUID: BwEN7fmGkP0uIfgaug9k9g0p3sounaR2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.874,Hydra:6.0.517,FMLib:17.11.64.514
- definitions=2022-06-01_08,2022-06-01_01,2022-02-23_01
-X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220530070700.GF1363@bug>
+X-Scanned-By: MIMEDefang 2.84 on 10.11.54.1
+X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This adds the async buffered write support to XFS. For async buffered
-write requests, the request will return -EAGAIN if the ilock cannot be
-obtained immediately.
+Hello Pavel,
 
-Signed-off-by: Stefan Roesch <shr@fb.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
----
- fs/xfs/xfs_file.c  | 11 +++++------
- fs/xfs/xfs_iomap.c |  5 ++++-
- 2 files changed, 9 insertions(+), 7 deletions(-)
+On Mon, May 30, 2022 at 09:07:00AM +0200, Pavel Machek wrote:
+> Hi!
+> 
+> > This is the driver part of userspace block driver(ubd driver), the other
+> > part is userspace daemon part(ubdsrv)[1].
+> 
+> > @@ -0,0 +1,1193 @@
+> > +// SPDX-License-Identifier: GPL-2.0-or-later
+> > +/*
+> > + * Userspace block device - block device which IO is handled from userspace
+> > + *
+> > + * Take full use of io_uring passthrough command for communicating with
+> > + * ubd userspace daemon(ubdsrvd) for handling basic IO request.
+> 
+> > +
+> > +static inline unsigned int ubd_req_build_flags(struct request *req)
+> > +{
+> ...
+> > +	if (req->cmd_flags & REQ_SWAP)
+> > +		flags |= UBD_IO_F_SWAP;
+> > +
+> > +	return flags;
+> > +}
+> 
+> Does it work? How do you guarantee operation will be deadlock-free with swapping and
+> writebacks going on?
 
-diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-index a60632ecc3f0..4d65ff007c7d 100644
---- a/fs/xfs/xfs_file.c
-+++ b/fs/xfs/xfs_file.c
-@@ -410,7 +410,7 @@ xfs_file_write_checks(
- 		spin_unlock(&ip->i_flags_lock);
-=20
- out:
--	return file_modified(file);
-+	return kiocb_modified(iocb);
- }
-=20
- static int
-@@ -700,12 +700,11 @@ xfs_file_buffered_write(
- 	bool			cleared_space =3D false;
- 	unsigned int		iolock;
-=20
--	if (iocb->ki_flags & IOCB_NOWAIT)
--		return -EOPNOTSUPP;
--
- write_retry:
- 	iolock =3D XFS_IOLOCK_EXCL;
--	xfs_ilock(ip, iolock);
-+	ret =3D xfs_ilock_iocb(iocb, iolock);
-+	if (ret)
-+		return ret;
-=20
- 	ret =3D xfs_file_write_checks(iocb, from, &iolock);
- 	if (ret)
-@@ -1165,7 +1164,7 @@ xfs_file_open(
- {
- 	if (xfs_is_shutdown(XFS_M(inode->i_sb)))
- 		return -EIO;
--	file->f_mode |=3D FMODE_NOWAIT | FMODE_BUF_RASYNC;
-+	file->f_mode |=3D FMODE_NOWAIT | FMODE_BUF_RASYNC | FMODE_BUF_WASYNC;
- 	return generic_file_open(inode, file);
- }
-=20
-diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-index bcf7c3694290..5d50fed291b4 100644
---- a/fs/xfs/xfs_iomap.c
-+++ b/fs/xfs/xfs_iomap.c
-@@ -886,6 +886,7 @@ xfs_buffered_write_iomap_begin(
- 	bool			eof =3D false, cow_eof =3D false, shared =3D false;
- 	int			allocfork =3D XFS_DATA_FORK;
- 	int			error =3D 0;
-+	unsigned int		lockmode =3D XFS_ILOCK_EXCL;
-=20
- 	if (xfs_is_shutdown(mp))
- 		return -EIO;
-@@ -897,7 +898,9 @@ xfs_buffered_write_iomap_begin(
-=20
- 	ASSERT(!XFS_IS_REALTIME_INODE(ip));
-=20
--	xfs_ilock(ip, XFS_ILOCK_EXCL);
-+	error =3D xfs_ilock_for_iomap(ip, flags, &lockmode);
-+	if (error)
-+		return error;
-=20
- 	if (XFS_IS_CORRUPT(mp, !xfs_ifork_has_extents(&ip->i_df)) ||
- 	    XFS_TEST_ERROR(false, mp, XFS_ERRTAG_BMAPIFORMAT)) {
---=20
-2.30.2
+The above is just for providing command flags to user side, so that the
+user side can understand/handle the request better.
+
+prtrl(PR_SET_IO_FLUSHER) has been merged for avoiding the deadlock.
+
+> 
+> What are restriction on ubdsrv? What happens when it needs to allocate memory, or is
+> swapped out?
+
+Yeah, ubd_copy_pages() needs to pin pages for copying data between
+user VM and block request pages, and get_user_pages may run out of pages.
+But I think forward progress can still be provided by reserving one VM buffer
+with single page locked.
+
+> Have mm people seen this?
+
+I remembered that the early RFC with related discussion is CCed to mm
+list, and all follow-up are CC to linux-kernel.
+
+Not one big deal, will Cc mm list in the future post.
+
+
+thanks,
+Ming
 

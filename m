@@ -2,100 +2,114 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CD4CA53DF9F
-	for <lists+io-uring@lfdr.de>; Mon,  6 Jun 2022 04:15:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9530553E31C
+	for <lists+io-uring@lfdr.de>; Mon,  6 Jun 2022 10:55:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349084AbiFFCPn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 5 Jun 2022 22:15:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38036 "EHLO
+        id S229674AbiFFGMj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 6 Jun 2022 02:12:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232360AbiFFCPm (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 5 Jun 2022 22:15:42 -0400
-Received: from out30-42.freemail.mail.aliyun.com (out30-42.freemail.mail.aliyun.com [115.124.30.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2332D366A4;
-        Sun,  5 Jun 2022 19:15:39 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R541e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0VFPsTeZ_1654481735;
-Received: from B-P7TQMD6M-0146.local(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0VFPsTeZ_1654481735)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 06 Jun 2022 10:15:37 +0800
-Date:   Mon, 6 Jun 2022 10:15:35 +0800
-From:   Gao Xiang <hsiangkao@linux.alibaba.com>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Pavel Machek <pavel@ucw.cz>, Jens Axboe <axboe@kernel.dk>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        io-uring@vger.kernel.org,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        ZiyangZhang <ZiyangZhang@linux.alibaba.com>,
-        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-Subject: Re: [RFC PATCH] ubd: add io_uring based userspace block driver
-Message-ID: <Yp1jRw6kiUf5jCrW@B-P7TQMD6M-0146.local>
-Mail-Followup-To: Ming Lei <ming.lei@redhat.com>,
-        Pavel Machek <pavel@ucw.cz>, Jens Axboe <axboe@kernel.dk>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        io-uring@vger.kernel.org,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        ZiyangZhang <ZiyangZhang@linux.alibaba.com>,
-        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-References: <20220509092312.254354-1-ming.lei@redhat.com>
- <20220530070700.GF1363@bug>
- <YpgsTojc4mVKghZA@T590>
+        with ESMTP id S229802AbiFFGMe (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 6 Jun 2022 02:12:34 -0400
+Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2B8E2642
+        for <io-uring@vger.kernel.org>; Sun,  5 Jun 2022 23:12:31 -0700 (PDT)
+Received: from integral2.. (unknown [36.73.79.120])
+        by gnuweeb.org (Postfix) with ESMTPSA id 23DAD7E582;
+        Mon,  6 Jun 2022 06:12:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
+        s=default; t=1654495951;
+        bh=gj0GtIs0va16fY980Ta5awB1nXkVh39xAdN2e1h6gCA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=X8MBKc+KldFaDHbstb1SYwftXN61C3v5f+B6LUmYWQIin9YIw1sSsS88qaUZYSJ1N
+         99R6LKa3o1cS70D17Z0EldhI0fH1wgbDUWxFfNX+4TaVb61lSZiMO/UjSZ48kQ8d7c
+         Uwk1lNQ4bZsWGl6bv4qbLX19ni0XyWeasGZV07t20xDK3kGExQfX5OR6ni6pZeW7He
+         WyWJjqxsKw2JKCtIH0nUp+3Mvc717Mf1eIW8RqWrWwe777MQIHSY1HOEIvUVEN/f/f
+         +yQygRwm5E6bJ3IKDIIXBqFdwti8mTqhoCgkv8vhtwPKdi1n4NzLWdTwp4fqnMGLzl
+         wz+GmFsFAQfYQ==
+From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        "Fernanda Ma'rouf" <fernandafmr12@gnuweeb.org>,
+        Hao Xu <howeyxu@tencent.com>,
+        Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
+        io-uring Mailing List <io-uring@vger.kernel.org>,
+        GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>
+Subject: [RFC PATCH v1 0/5] Ensure io_uring data structure consistentcy in liburing
+Date:   Mon,  6 Jun 2022 13:12:04 +0700
+Message-Id: <20220606061209.335709-1-ammarfaizi2@gnuweeb.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <YpgsTojc4mVKghZA@T590>
-X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Jun 02, 2022 at 11:19:42AM +0800, Ming Lei wrote:
-> Hello Pavel,
-> 
-> On Mon, May 30, 2022 at 09:07:00AM +0200, Pavel Machek wrote:
-> > Hi!
-> > 
-> > > This is the driver part of userspace block driver(ubd driver), the other
-> > > part is userspace daemon part(ubdsrv)[1].
-> > 
-> > > @@ -0,0 +1,1193 @@
-> > > +// SPDX-License-Identifier: GPL-2.0-or-later
-> > > +/*
-> > > + * Userspace block device - block device which IO is handled from userspace
-> > > + *
-> > > + * Take full use of io_uring passthrough command for communicating with
-> > > + * ubd userspace daemon(ubdsrvd) for handling basic IO request.
-> > 
-> > > +
-> > > +static inline unsigned int ubd_req_build_flags(struct request *req)
-> > > +{
-> > ...
-> > > +	if (req->cmd_flags & REQ_SWAP)
-> > > +		flags |= UBD_IO_F_SWAP;
-> > > +
-> > > +	return flags;
-> > > +}
-> > 
-> > Does it work? How do you guarantee operation will be deadlock-free with swapping and
-> > writebacks going on?
-> 
-> The above is just for providing command flags to user side, so that the
-> user side can understand/handle the request better.
-> 
-> prtrl(PR_SET_IO_FLUSHER) has been merged for avoiding the deadlock.
->
 
-I've pointed out a case before that (I think) PR_SET_IO_FLUSHER doesn't work:
-https://lore.kernel.org/all/YhbYOeMUv5+U1XdQ@B-P7TQMD6M-0146.local
+Hi,
 
-I don't think handling writeback in the userspace under the direct reclaim
-context is _safe_ honestly. Because userspace program can call any system
-call under direct reclaim, which can interconnect to another process context
-and wait for it. yet I don't look into ubd implementation.
+This is an RFC for liburing-2.3.
 
-Thanks,
-Gao Xiang
+## Introduction:
+This series adds compile time assertions for liburing. They are taken
+from the io_uring source in the kernel tree. The point of this series
+is to make sure the shared struct is consistent between the kernel
+space and user space.
+
+
+## Implementation detail:
+We use `static_assert()` macro from <assert.h> that can yield compile
+error if the expression given to it evaluates to false. This way we
+can create a `BUILD_BUG_ON()` macro that we usually use inside the
+kernel. The assertions are placed inside a header file named
+build_assert.h, this header is included via compile flag `-include`
+when compiling the core liburing sources.
+
+
+## How to maintain this?
+This is pretty much easy to maintain, we just need to sync the
+`BUILD_BUG_ON()` macro calls that check the shared struct from
+io_uring. See patch #5 for detail.
+
+
+## Patches summary:
+
+  - Patch 1 is just a small code style cleanup.
+  - Patch 2 is to add BUILD_BUG_ON() macro.
+  - Patch 3 is to add sizeof_field() macro.
+  - Patch 4 is to avoid macro redefinition warnings.
+  - Patch 5 is the main part, it adds io_uring data structure
+    assertions.
+
+
+Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+---
+
+Ammar Faizi (5):
+  lib: Don't indent in `#ifdef -> #define -> #endif` block
+  lib: Add `BUILD_BUG_ON()` macro
+  lib: Add `sizeof_field()` macro
+  Avoid macro redefinition warnings
+  Add io_uring data structure build assertion
+
+ src/Makefile       |  3 ++-
+ src/build_assert.h | 57 ++++++++++++++++++++++++++++++++++++++++++++++
+ src/lib.h          | 18 +++++++++++----
+ src/queue.c        |  2 ++
+ src/register.c     |  2 ++
+ src/setup.c        |  2 ++
+ src/syscall.c      |  2 ++
+ 7 files changed, 80 insertions(+), 6 deletions(-)
+ create mode 100644 src/build_assert.h
+
+
+base-commit: 4633a2d0fe9bd1f3dbb5b6d2788a08a264803146
+-- 
+Ammar Faizi
+
